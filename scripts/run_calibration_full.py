@@ -3763,6 +3763,7 @@ def solve_and_persist(
     campd_outage_merit_order_guard: bool | None = None,
     netload_drag_layup_window_mask: bool | None = None,
     netload_drag_merit_allocation: bool | None = None,
+    vre_curtailment_oversupply_allocation: bool | None = None,
     cc_winter_capability_basis: bool | None = None,
     ramp_limits: bool | None = None,
     local_capacity_constraints: bool | None = None,
@@ -5165,6 +5166,10 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 netload_drag_merit_allocation=netload_drag_merit_allocation
             )
+        if vre_curtailment_oversupply_allocation is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                vre_curtailment_oversupply_allocation=vre_curtailment_oversupply_allocation
+            )
         if cc_winter_capability_basis is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 cc_winter_capability_basis=cc_winter_capability_basis
@@ -5619,6 +5624,7 @@ def solve_and_persist(
             campd_outage_merit_order_guard=campd_outage_merit_order_guard,
             netload_drag_layup_window_mask=netload_drag_layup_window_mask,
             netload_drag_merit_allocation=netload_drag_merit_allocation,
+            vre_curtailment_oversupply_allocation=vre_curtailment_oversupply_allocation,
             cc_winter_capability_basis=cc_winter_capability_basis,
             ramp_limits=ramp_limits,
             local_capacity_constraints=local_capacity_constraints,
@@ -6579,6 +6585,7 @@ def solve_and_persist(
         "campd_outage_merit_order_guard": campd_outage_merit_order_guard,
         "netload_drag_layup_window_mask": netload_drag_layup_window_mask,
         "netload_drag_merit_allocation": netload_drag_merit_allocation,
+        "vre_curtailment_oversupply_allocation": vre_curtailment_oversupply_allocation,
         "cc_winter_capability_basis": cc_winter_capability_basis,
         "ramp_limits": ramp_limits,
         "local_capacity_constraints": local_capacity_constraints,
@@ -8806,6 +8813,7 @@ def run_replay_bundle(
     campd_outage_merit_order_guard: bool | None = None,
     netload_drag_layup_window_mask: bool | None = None,
     netload_drag_merit_allocation: bool | None = None,
+    vre_curtailment_oversupply_allocation: bool | None = None,
     egrid_family_heat_rates: bool | None = None,
     egrid_steam_collapse_heat_rates: bool | None = None,
     caiso_dsw_daytime_evening_trim: bool | None = None,
@@ -8993,6 +9001,12 @@ def run_replay_bundle(
         # replay path, so the single-field A/B arm is the keeper's recorded
         # recipe plus exactly this one flag.
         kwargs["netload_drag_merit_allocation"] = netload_drag_merit_allocation
+    if vre_curtailment_oversupply_allocation is not None:
+        # SPP-51c: the curtailment ALLOCATION arm is the keeper's recorded
+        # recipe plus exactly this one flag.
+        kwargs["vre_curtailment_oversupply_allocation"] = (
+            vre_curtailment_oversupply_allocation
+        )
     if egrid_family_heat_rates is not None:
         # nyiso-184: the eGRID family heat-rate construction rides the same
         # replay path, so the single-field A/B arm is the keeper's recorded
@@ -12024,6 +12038,26 @@ def main() -> None:
         "postings are a different time/area aggregation under one series name.",
     )
     parser.add_argument(
+        "--vre-curtailment-oversupply-allocation",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Allocate the reference-rate curtailment energy onto the "
+        "OVERSUPPLY hours instead of flat across all 8,760 "
+        "(ScenarioConfig.vre_curtailment_oversupply_allocation, SPP-51c). A "
+        "high-curtailment fallback ISO's renewable bound is today "
+        "delivered/(1-rate) -- a FLAT per-hour gross-up. Delivered is already "
+        "NET of curtailment, so the measured annual spill is spread uniformly, "
+        "i.e. everywhere except where it happened: SPP's keeper re-curtails "
+        "0.0003-0.0017%% against a measured 9.65%%, and prices below zero in "
+        "0-7 hours a year against ~1,000 measured. This flag water-fills the "
+        "SAME frozen annual energy onto the lowest-net-load hours, capped by "
+        "the fleet's own online-capacity headroom, at the level that makes the "
+        "annual identity hold. Annual potential is unchanged in every year, so "
+        "the measured reference rate (rule 23) is untouched; zero new free "
+        "parameters (rule 21); forward-native (rule 13); ISO-agnostic "
+        "(rule 25). Default off -- every keeper replays byte-identical.",
+    )
+    parser.add_argument(
         "--netload-drag-merit-allocation",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -13103,6 +13137,7 @@ def main() -> None:
             ),
             netload_drag_layup_window_mask=args.netload_drag_layup_window_mask,
             netload_drag_merit_allocation=args.netload_drag_merit_allocation,
+            vre_curtailment_oversupply_allocation=args.vre_curtailment_oversupply_allocation,
             campd_outage_merit_order_guard=(
                 args.campd_outage_merit_order_guard
                 if "--campd-outage-merit-order-guard" in sys.argv
@@ -13516,6 +13551,7 @@ def main() -> None:
         ct_netload_drag=args.ct_netload_drag,
         netload_drag_layup_window_mask=args.netload_drag_layup_window_mask,
         netload_drag_merit_allocation=args.netload_drag_merit_allocation,
+        vre_curtailment_oversupply_allocation=args.vre_curtailment_oversupply_allocation,
         pjm_interface_feed_admissibility_gate=args.pjm_interface_feed_admissibility_gate,
         gas_offer_margin_anchor_vintage=args.gas_offer_margin_anchor_vintage,
         nyiso_local_selfsupply=args.nyiso_local_selfsupply,

@@ -164,6 +164,13 @@ from market_sim.data.fleet import (
 logger = logging.getLogger(__name__)
 
 # Capacity factors are physically bounded to the closed interval [0, 1].
+# Bisection steps for the oversupply curtailment water-fill
+# (:func:`_oversupply_curtailment_allocation`). The bracket is the net-load
+# range (order 1e4 MW), so 200 halvings drive it far below float resolution --
+# the annual-energy identity reproduces to machine precision. Not a tunable:
+# any value that converges gives the same level.
+_WATER_FILL_ITERS: int = 200
+
 _CF_MIN: float = 0.0
 _CF_MAX: float = 1.0
 
@@ -961,6 +968,168 @@ def _forecast_uncurtailed_cf(
     if not 0.0 <= rate < 1.0:
         return None
     return np.clip(delivered_cf / (1.0 - rate), _CF_MIN, _CF_MAX)
+
+
+def _oversupply_curtailment_allocation(
+    net_load_mw: np.ndarray,
+    headroom_mw: np.ndarray,
+    target_mwh: float,
+) -> tuple[np.ndarray, float] | None:
+    """Water-fill ``target_mwh`` onto the lowest-net-load hours, or ``None``.
+
+    Solves for the unique level ``lambda`` at which
+
+    ``sum_t min(max(0, lambda - net_load_mw[t]), headroom_mw[t]) == target_mwh``
+
+    and returns ``(curtailment_mw, lambda)``. The level is **determined by that
+    identity, never chosen** — it is the oversupply analogue of the flat rule's
+    ``1 / (1 - rate)`` factor and carries no degree of freedom (rule 21
+    ``[R-DOF]``). Its physical reading is the net-load level below which the
+    system could not turn further down and had to spill.
+
+    ``headroom_mw`` caps each hour at the fleet's own online capacity less its
+    delivered output, so a reconstructed potential can never exceed nameplate.
+
+    Args:
+        net_load_mw: Hourly net load (load less delivered variable generation).
+        headroom_mw: Hourly non-negative cap on reconstructed curtailment.
+        target_mwh: The frozen annual curtailment energy to allocate.
+
+    Returns:
+        ``(curtailment_mw, lambda)``, or ``None`` when the capped headroom
+        cannot hold ``target_mwh`` (no root — the caller must fall back rather
+        than silently allocate less than the measured annual energy).
+    """
+    if target_mwh <= 0.0:
+        return np.zeros_like(net_load_mw), float("nan")
+    hi = float(net_load_mw.max()) + 1.0
+    if (
+        float(np.minimum(np.maximum(hi - net_load_mw, 0.0), headroom_mw).sum())
+        < target_mwh
+    ):
+        return None
+    lo = float(net_load_mw.min()) - 1.0
+    for _ in range(_WATER_FILL_ITERS):
+        mid = 0.5 * (lo + hi)
+        filled = float(
+            np.minimum(np.maximum(mid - net_load_mw, 0.0), headroom_mw).sum()
+        )
+        if filled < target_mwh:
+            lo = mid
+        else:
+            hi = mid
+    level = 0.5 * (lo + hi)
+    return np.minimum(np.maximum(level - net_load_mw, 0.0), headroom_mw), level
+
+
+def _oversupply_uncurtailed_cf(
+    iso: str,
+    year: int,
+    fuel: str,
+    monthly_capacity: np.ndarray,
+    iso_config: ISOConfig,
+) -> np.ndarray | None:
+    """Return an OVERSUPPLY-allocated uncurtailed CF profile, or ``None``.
+
+    The ``vre_curtailment_oversupply_allocation`` construction (SPP-51c). It
+    distributes exactly the same annual curtailment energy
+    :func:`_forecast_uncurtailed_cf` does — ``rate / (1 - rate)`` times annual
+    delivered output, from the ISO's frozen measured reference rate — but
+    across the hours the system had **nowhere to put the energy** instead of
+    uniformly across all 8,760.
+
+    Delivered generation is already net of curtailment, so a flat per-hour
+    gross-up hands the LP its headroom everywhere *except* where the spill
+    actually happened, and the dispatch cannot re-curtail where the market did.
+    Real curtailment is availability meeting low net load and congestion, so the
+    allocation is keyed on the ISO's own net load
+    ``NL(t) = load(t) - delivered wind(t) - delivered solar(t)``: the frozen
+    annual energy is water-filled onto the hours where ``NL`` sits lowest,
+    capped per hour by the fleet's online-capacity headroom
+    (:func:`_oversupply_curtailment_allocation`).
+
+    **Zero new free parameters** (rule 21 ``[R-DOF]``): the rate is the frozen
+    measured reference rate (rule 23 ``[R-FROZEN-DERIVE]``), the fill level is
+    the unique root of the annual identity rather than a chosen threshold, the
+    cap is measured EIA-860 capacity, and load and delivered output are inputs
+    the LP already consumes. **Forward-native** (rule 13 ``[R-MEASURED]``): a
+    forecast year has all three legs, so the construction regenerates and
+    responds to changed conditions. It **replaces** the flat gross-up rather
+    than stacking on it (rule 19 ``[R-ONE-MECH]``), and is ISO-agnostic — it
+    fires wherever the reference-rate path fires (rule 25 ``[R-ISO-SCOPE]``).
+
+    Returns ``None`` — signalling the caller to fall back to
+    :func:`_forecast_uncurtailed_cf` — when any leg is unavailable: no delivered
+    series, no reference rate, no EIA-860 monthly capacity, an unreadable demand
+    array, a clock-length mismatch, or capped headroom too small to hold the
+    annual energy.
+    """
+    rate_info = _reference_curtailment_rate(iso, fuel)
+    if rate_info is None:
+        return None
+    rate, _ = rate_info
+    if not 0.0 <= rate < 1.0:
+        return None
+    gen = load_eia_hourly_renewable_gen(iso, year)
+    if gen is None or fuel not in gen:
+        return None
+    delivered = np.asarray(gen[fuel], dtype=float)
+    if delivered.shape != (HOURS_PER_YEAR,) or delivered.sum() <= 0.0:
+        return None
+
+    # Net load on DELIVERED variable generation: the oversupply axis. Both legs
+    # come off the ISO's own EIA-930 frame, the same clock the dispatch runs on.
+    from market_sim.data.eia930.demand import load_demand
+
+    try:
+        zonal_demand = load_demand(iso, year, iso_config)
+    except Exception:  # noqa: BLE001 - a missing/unreadable demand array no-ops
+        return None
+    if zonal_demand is None or zonal_demand.shape[-1] != HOURS_PER_YEAR:
+        return None
+    net_load = zonal_demand.sum(axis=0).astype(float)
+    for other in ("wind", "solar"):
+        series = gen.get(other)
+        if series is not None and np.shape(series) == (HOURS_PER_YEAR,):
+            net_load = net_load - np.asarray(series, dtype=float)
+
+    online_cap = monthly_capacity.sum(axis=0)[_hour_to_month_index(HOURS_PER_YEAR)]
+    headroom = np.maximum(online_cap - delivered, 0.0)
+    target = float(delivered.sum()) * rate / (1.0 - rate)
+    result = _oversupply_curtailment_allocation(net_load, headroom, target)
+    if result is None:
+        logger.warning(
+            "%s %s %d: oversupply curtailment allocation has no root "
+            "(capped headroom %.1f GWh < annual curtailment %.1f GWh); "
+            "falling back to the flat reference-rate gross-up",
+            iso,
+            fuel,
+            year,
+            headroom.sum() / 1e3,
+            target / 1e3,
+        )
+        return None
+    curtailment, level = result
+
+    # Arming proof, the ERCOT-113 silent-inertness discipline: an overlay that
+    # no-ops through a full solve is invisible, so announce the level the
+    # identity chose and the footprint it implies. Both are checkable against
+    # the source data without a re-solve.
+    allocated_hours = int((curtailment > 0.0).sum())
+    logger.info(
+        "%s %s %d oversupply curtailment allocation: %.1f GWh over %d hour(s) "
+        "(%.1f%% of the year) at net-load level %.0f MW; annual potential "
+        "%.3f TWh, unchanged from the flat gross-up",
+        iso,
+        fuel,
+        year,
+        curtailment.sum() / 1e3,
+        allocated_hours,
+        allocated_hours / HOURS_PER_YEAR * 100.0,
+        level,
+        (delivered.sum() + curtailment.sum()) / 1e6,
+    )
+    return _mw_to_cf(delivered + curtailment, monthly_capacity)
 
 
 def _as_float(value: object) -> float | None:
@@ -2636,7 +2805,21 @@ def load_renewable_profiles(
                     # the LP re-curtails endogenously instead of inheriting the
                     # curtailment baked into delivered output (see
                     # :func:`_forecast_uncurtailed_cf`).
-                    measured_cf = _forecast_uncurtailed_cf(iso, year, fuel, monthly)
+                    #
+                    # SPP-51c: when ``vre_curtailment_oversupply_allocation`` is
+                    # armed the SAME frozen annual energy is instead allocated
+                    # onto the hours the system had nowhere to put it, rather
+                    # than uniformly across all 8,760 (rule 19 [R-ONE-MECH]: it
+                    # REPLACES the flat gross-up, never stacks on it). Any
+                    # unavailable leg returns ``None`` and falls back here, so
+                    # an armed run can never silently lose the headroom.
+                    measured_cf = None
+                    if getattr(config, "vre_curtailment_oversupply_allocation", False):
+                        measured_cf = _oversupply_uncurtailed_cf(
+                            iso, year, fuel, monthly, iso_config
+                        )
+                    if measured_cf is None:
+                        measured_cf = _forecast_uncurtailed_cf(iso, year, fuel, monthly)
                 if measured_cf is None:
                     # Every other ISO (and the high-curtailment ISOs when no
                     # reference rate exists) keeps the delivered EIA-930 profile.
