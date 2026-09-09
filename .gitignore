@@ -1590,7 +1590,7 @@ results/calibration/pjm_fuelvintage_A/hourly/class_band_hourly_*.parquet
 # render_calibration_html.build_payload needs), and they already live on their
 # own branches claude/pjm-fuelvintage-1-h{1,2}. Rule 31 [R-RETAIN]: gitignored,
 # NOT deleted -- they stay on local disk until the owner rules on promotion.
-results/calibration/pjm_fuelvintage_H1/
+results/pjm_fuelvintage_H1_shard/
 results/calibration/pjm_fuelvintage_H2/
 results/calibration/pjm_fuelvintage_TP/
 results/pjm_fuelvintage_TP/
