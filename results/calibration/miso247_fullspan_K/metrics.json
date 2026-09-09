@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-09-08-miso-245-ladderfix",
+  "run_id": "2026-09-09-miso-247-p19-posture",
   "iso": "MISO",
-  "label": "miso 245 ladderfix",
+  "label": "miso 247 p19 posture",
   "target_years": [
     2023,
     2024,
@@ -19,9 +19,9 @@
     "1 ledgered caveat(s) (measured-input or model-class) \u2014 REPORTED, and NOT determination-downgrading under rubric v3.3: C3c price tail / scarcity (RT hourly)"
   ],
   "notes": [
-    "C8 2023 CT_PEAKER: grounded above budget \u2014 41.2% forced (5.3948 of 13.102 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.976 (\u22650.8) & off-peak CV ratio 1.757 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
-    "C8 2024 CT_PEAKER: grounded above budget \u2014 26.2% forced (4.0488 of 15.4692 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.983 (\u22650.8) & off-peak CV ratio 1.547 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
-    "C8 2025 CT_PEAKER: grounded above budget \u2014 23.9% forced (4.0142 of 16.8275 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.982 (\u22650.8) & off-peak CV ratio 1.641 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+    "C8 2023 CT_PEAKER: grounded above budget \u2014 30.5% forced (4.7651 of 15.6239 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.984 (\u22650.8) & off-peak CV ratio 1.569 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+    "C8 2024 CT_PEAKER: grounded above budget \u2014 19.9% forced (3.4258 of 17.2302 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.984 (\u22650.8) & off-peak CV ratio 1.48 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+    "C8 2025 CT_PEAKER: grounded above budget \u2014 21.7% forced (3.7391 of 17.2554 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.983 (\u22650.8) & off-peak CV ratio 1.631 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
   ],
   "criteria": {
     "fuelmix": {
@@ -89,16 +89,16 @@
       "label": "C5a CO2 vs eGRID (REPORTED-ONLY, v2.9 \u2014 see the CRITERIA note)",
       "years": {
         "2023": "-4.2%",
-        "2024": "-4.5%",
+        "2024": "-4.4%",
         "2025": "-0.3%"
       }
     },
     "diurnal_amplitude": {
       "label": "D-A diurnal price amplitude, hour-of-day (REPORTED-ONLY, BAND-FREE, v3.5 \u2014 no external comparable exists to band it; see the note)",
       "years": {
-        "2023": "amplitude 43.0% of measured (hod range $9.61 vs $22.36); peak h17 vs h16, trough h02 vs h01 \u2014 phase OK; hod r +0.898; 365 complete days",
-        "2024": "amplitude 39.2% of measured (hod range $11.22 vs $28.59); peak h17 vs h16, trough h02 vs h02 \u2014 phase OK; hod r +0.900; 365 complete days",
-        "2025": "amplitude 27.2% of measured (hod range $14.48 vs $53.27); peak h18 vs h17, trough h02 vs h01 \u2014 phase OK; hod r +0.881; 364 complete days"
+        "2023": "amplitude 40.8% of measured (hod range $9.11 vs $22.36); peak h17 vs h16, trough h02 vs h01 \u2014 phase OK; hod r +0.894; 365 complete days",
+        "2024": "amplitude 36.3% of measured (hod range $10.37 vs $28.59); peak h17 vs h16, trough h02 vs h02 \u2014 phase OK; hod r +0.896; 365 complete days",
+        "2025": "amplitude 25.7% of measured (hod range $13.66 vs $53.27); peak h18 vs h17, trough h02 vs h01 \u2014 phase OK; hod r +0.881; 364 complete days"
       }
     }
   },

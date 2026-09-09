@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-08T06:19:06",
+  "timestamp": "2026-09-09T02:49:57",
   "iso": "MISO",
   "years": [
     2023,
@@ -350,6 +350,7 @@
   "priced_interchange": true,
   "hydro_backfill_year": 2024,
   "hydro_eia930_monthly": true,
+  "hydro_budget_period_by_instrument": false,
   "hydro_forecast_budget": false,
   "hydro_year": "normal",
   "interchange_shaping": false,
@@ -416,6 +417,8 @@
   "campd_per_unit_attribution": null,
   "campd_outage_merit_order_guard": null,
   "netload_drag_layup_window_mask": null,
+  "netload_drag_merit_allocation": null,
+  "vre_curtailment_oversupply_allocation": null,
   "cc_winter_capability_basis": null,
   "ramp_limits": null,
   "local_capacity_constraints": null,
@@ -476,6 +479,7 @@
   "pjm_seam_flow_percentile": null,
   "pjm_seam_export_limit": false,
   "pjm_seam_measured_ladder": false,
+  "pjm_seam_neighbour_hourly_ladder": false,
   "gas_hub_basis_overlay": null,
   "chp_export_floor_measured": false,
   "ercot_gtc_limits_measured": false,
@@ -498,8 +502,8 @@
     "unit_outages_e923": "../_shared/MISO/unit_outages_e923-d0232b7c77b7.parquet",
     "unit_outages_layup": "../_shared/MISO/unit_outages_layup-ec855c2a24ba.parquet"
   },
-  "git_sha": "d059fcf7",
-  "basis_sha": "19f9a4d4d9f6d712ebc2edb22db6deab4c6543d7",
+  "git_sha": "b668d88d",
+  "basis_sha": "f29b7ab022d399f40904379d86eb2324f08535e6",
   "highspy_version": "1.14.0",
   "environment": {
     "python_version": "3.11.15",

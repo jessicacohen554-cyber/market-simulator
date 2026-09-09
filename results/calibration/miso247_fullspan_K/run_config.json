@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-09-08T06:19:06",
+  "timestamp": "2026-09-09T02:49:57",
   "git": {
-    "sha": "d059fcf7",
-    "basis_sha": "19f9a4d4d9f6d712ebc2edb22db6deab4c6543d7",
-    "branch": "claude/miso-backcast-calibration-s6uhiw",
+    "sha": "b668d88d",
+    "basis_sha": "f29b7ab022d399f40904379d86eb2324f08535e6",
+    "branch": "claude/youthful-cray-qnij56",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "miso-245: MISO_SEAM_LADDER_BY_YEAR reconciled to its own frozen derive (3 entries; 189 byte-identical). Rule-23 re-derive citing a source-data change, argued on rule 14 and the frozen estimator's own output, never on a residual. Zero free parameters. Screen year 2024 cleared all four structural STOP-only gates.",
+  "model_changes_note": "miso-247 FULL SPAN on the P19 posture (owner ruling P19 2026-09-08: f923 gas-price plausibility screen ON by HEAD default + the ungated eGRID simple-cycle heat-rate floor). Rules 1/14: two measured-input construction repairs, zero free parameters. Spent on the OWNER instruction, NOT on the screen's authority -- G-1 FAILED at ST_GAS 3.279x.",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "MISO",
@@ -226,7 +226,7 @@
     "nyiso_dynamic_reserve_requirements": null,
     "nyiso_hydro_reserve_eligible": null,
     "nyiso_scr_edrp_reserve_eligible": null,
-    "git_sha": "d059fcf7"
+    "git_sha": "b668d88d"
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -277,6 +277,7 @@
     "retirement_aggressiveness": "mid",
     "hydro_year": "normal",
     "hydro_dispatch_envelope": false,
+    "hydro_budget_period_by_instrument": false,
     "hydro_min_flow_floor": false,
     "hydro_ror_split": false,
     "hydro_budget_nameplate_aware": false,
@@ -785,6 +786,7 @@
     "ct_drag_ramp_start": 10,
     "ct_drag_ramp_end": 21,
     "netload_drag_layup_window_mask": false,
+    "netload_drag_merit_allocation": false,
     "ercot_ct_offer_surface": false,
     "ercot_offer_surface_conditional": false,
     "ercot_offer_surface_midcurve_conditional": false,
@@ -1131,6 +1133,8 @@
     "nearby_fuel_price_fallback": true,
     "nearby_fuel_price_min_state_plants": 2,
     "nearby_fuel_price_zone_donor_guard": false,
+    "f923_gas_price_plausibility_screen": true,
+    "vre_curtailment_oversupply_allocation": false,
     "fleet_state_from_eia860": false,
     "class_aware_fuel_price_fallback": true,
     "plant_level_fleet": true,
@@ -1162,6 +1166,7 @@
     "pjm_seam_flow_percentile": null,
     "pjm_seam_export_limit": false,
     "pjm_seam_measured_ladder": false,
+    "pjm_seam_neighbour_hourly_ladder": false,
     "ercot_zonal_gas_basis": false,
     "ercot_ep_gas_basis_monthly": false,
     "ercot_zonal_spread_ep_referenced": false,
@@ -1219,11 +1224,11 @@
   "solve_surface": {
     "schema": 1,
     "iso": "MISO",
-    "fingerprint": "8ee657ee4c7c49b0",
-    "rows": 208,
+    "fingerprint": "9f0845000dc8af6e",
+    "rows": 210,
     "moved": {},
     "epochs": [],
-    "git_sha": "d059fcf7"
+    "git_sha": "b668d88d"
   },
   "environment": {
     "python_version": "3.11.15",
