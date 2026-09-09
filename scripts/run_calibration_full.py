@@ -8923,6 +8923,13 @@ def run_replay_bundle(
     kwargs["hours"] = int(meta.get("hours", 8760))
     enforce_holdout_year_gate(kwargs["years"], kwargs["iso"], holdout_authorized)
     kwargs["reference"] = _load_reference()
+    # COMPOSITE per-year recipe (ercot-260), the SAME consumer replay_keeper.main
+    # calls so the two replay entry points cannot diverge: meta.json carries ONE
+    # config, and a composite bundle's other years solved under a recorded
+    # overlay. Consume it for the requested span — or refuse a span that mixes
+    # recipes — BEFORE the per-flag overrides below, so an explicit override
+    # still wins. A bundle with no overlay block is unaffected.
+    rk.enforce_single_recipe_partition(meta, kwargs["years"], kwargs)
     if out_dir is not None:
         kwargs["run_dir"] = out_dir
     if note:
