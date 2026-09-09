@@ -1567,6 +1567,10 @@ results/calibration/ercot261_*/
 # Every number this lane cites lives in
 # docs/PRECOMMIT-pjm-fuelvintage-2026-09-09.md and its RESULT doc.
 results/screen/pjm_ep_level_2023/
+# ...and the solve-written derived input cache beside it. Same class as
+# results/calibration/_shared/ above (regenerable from data/raw + data/clean,
+# no bundle carries one), so it gets the same treatment.
+results/screen/_shared/
 results/pjm_fuelvintage_T1/
 results/pjm_fuelvintage_T2/
 results/pjm_fuelvintage_H1/
