@@ -735,8 +735,12 @@ class TestNetloadDragMinRunPersistence(unittest.TestCase):
             plant_group="CT_PEAKER",
             plant_code=777,
         )
-        gens_c = [Generator(unit_id="p777_committed", pmax_mw=100.0, heat_rate=10.5, **shared)]
-        gens_p = [Generator(unit_id="p777_committed", pmax_mw=100.0, heat_rate=10.5, **shared)]
+        gens_c = [
+            Generator(unit_id="p777_committed", pmax_mw=100.0, heat_rate=10.5, **shared)
+        ]
+        gens_p = [
+            Generator(unit_id="p777_committed", pmax_mw=100.0, heat_rate=10.5, **shared)
+        ]
         nl = self._diurnal_netload()
         cfg = dict(
             ct_netload_drag=True,
@@ -772,9 +776,7 @@ class TestNetloadDragMinRunPersistence(unittest.TestCase):
             _circular_centred_mean(np.full(240, 0.3), 24), 0.3, atol=1e-12
         )
         wave = np.sin(2.0 * np.pi * (np.arange(240) % 24) / 24.0)
-        np.testing.assert_allclose(
-            _circular_centred_mean(wave, 24), 0.0, atol=1e-12
-        )
+        np.testing.assert_allclose(_circular_centred_mean(wave, 24), 0.0, atol=1e-12)
 
 
 class TestNetloadDragLayupWindowMask(unittest.TestCase):

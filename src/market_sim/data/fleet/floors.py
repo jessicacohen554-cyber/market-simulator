@@ -403,9 +403,7 @@ def apply_netload_reliability_floor(
                 if wt.sum() > 0
                 else np.asarray(floor_frac, dtype=float)
             )
-        targets = _netload_drag_merit_targets(
-            rows, generators, pmax, basis, merit_frac
-        )
+        targets = _netload_drag_merit_targets(rows, generators, pmax, basis, merit_frac)
     else:
         targets = {
             g: np.minimum(_frac_for(g) * pmax[g], basis[g] * pmax[g]) for g in rows
