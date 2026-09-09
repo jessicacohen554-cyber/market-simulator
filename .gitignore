@@ -1568,3 +1568,19 @@ results/calibration/ercot261_*/
 # promotes is force-added (git add -f) in the promotion commit.
 results/screen/pjm_ep_level_*/
 results/pjm_fuelvintage_*/
+
+# Solve-time shared input store and the screen bundle family. Never committed:
+# the screen is a rule-29 throwaway (its every cited number lives in the
+# PRECOMMIT/RESULT docs), and _shared/ is a large regenerable input cache.
+# Rule 31 [R-RETAIN]: gitignored, NOT deleted — both stay on local disk.
+results/_shared/
+results/calibration/_shared/
+results/screen/
+# Heavy per-run outputs of the registered fuelvintage bundle. Rule 15 commits
+# the slim files + the class_hourly/system/reserve_family/storage sidecars only,
+# exactly the file set the incumbent PJM keeper carries.
+results/calibration/pjm_fuelvintage_A/dispatch/
+results/calibration/pjm_fuelvintage_A/floors/
+results/calibration/pjm_fuelvintage_A/*.parquet
+results/calibration/pjm_fuelvintage_A/hourly/network_*.parquet
+results/calibration/pjm_fuelvintage_A/hourly/class_band_hourly_*.parquet

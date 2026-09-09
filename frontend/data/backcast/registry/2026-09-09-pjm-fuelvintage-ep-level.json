@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-09-pjm-fuelvintage-ep-level",
+  "label": "pjm fuelvintage ep level",
+  "date": "2026-09-09",
+  "shorthand": "pjm-fuelvintage-ep-level",
+  "definition": "EP monthly gas level + 2019-2022 retiree window, full span",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-09-09-pjm-fuelvintage-ep-level.js",
+  "bundle": "results/calibration/pjm_fuelvintage_A"
+}

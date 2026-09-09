@@ -286,7 +286,106 @@ protections held: the largest admitted monthly gap is 1.42 $/MMBtu against ERCOT
 
 ---
 
-## 8. SOLVE STATE — every bundle on disk
+## 8. THE TRAINING SPAN — registered as `2026-09-09-pjm-fuelvintage-ep-level`
+
+**ONE bundle, ONE `--years 2023 2024 2025` invocation, years sequential** (rules 16 `[R-ALLYEARS]` /
+12 `[R-PARALLEL]`). Bundle `results/calibration/pjm_fuelvintage_A`. Registered in this session per
+rule 15 `[R-DASHBOARD]`.
+
+### 8a. Every scored criterion PASSES in all three years
+
+| criterion | tier | verdict |
+|---|---|---|
+| C1 fuelmix | load-bearing | **PASS** (D-10 free-class: **C1 all 16/16 · free 12/12**) |
+| C2 sysvol | load-bearing | **PASS** |
+| C3a price_mean | load-bearing | **PASS** |
+| C3b price_shape | load-bearing | **PASS** |
+| C3c price_tail | supporting | **PASS** |
+| C4 dispatch_corr | supporting | **PASS** |
+| C6 governance | protective | **PASS** |
+| **C8 forced_share** | protective | **FAIL** — **see §8c: NOT this arm's** |
+
+C5a CO2 (reported-only): +1.2 % / −0.8 % / +4.8 %.
+
+### 8b. C3a across the span — reported at full magnitude, two years better and one worse
+
+Model load-weighted mean LMP vs the committed bench **RT** actual (the branch C3a takes for PJM):
+
+| year | actual RT | keeper | keeper err | **arm** | **arm err** | Δ |
+|---|---|---|---|---|---|---|
+| 2023 | 28.44 | 31.4124 | **+10.45 %** | **29.0536** | **+2.16 %** | −2.3587 |
+| 2024 | 29.53 | 31.1074 | **+5.34 %** | **29.6929** | **+0.55 %** | −1.4144 |
+| 2025 | 42.89 | 42.3790 | **−1.19 %** | **41.6390** | **−2.92 %** | −0.7400 |
+
+**2023 and 2024 improve markedly; 2025 gets WORSE** (−1.19 % → −2.92 % error), because the keeper was
+already slightly *under* actual there and the seam pushes it further under. All three stay inside the
+±10 % band and C3a passes, but the 2025 degradation is a real cost and is stated, not buried. The
+per-year move tracks the input delta exactly as the mechanism's own arithmetic says it should
+(annual fuel Δ −0.770 / −0.469 / −0.189 $/MMBtu → price Δ −2.36 / −1.41 / −0.74 $/MWh), which is the
+signature of a real operand rather than a fitted one.
+
+**C3b PASSES in all three years** — the pre-registered risk, and the criterion that killed ercot-254.
+
+### 8b2. Dispatch across the span
+
+| year | COAL (TWh) | Δ % | CC_REGULAR | Δ % | ST_GAS | Δ % |
+|---|---|---|---|---|---|---|
+| 2023 | 112.606 → 111.964 | **−0.57 %** | 322.289 → 330.612 | +2.58 % | 10.826 → 13.536 | +25.03 % |
+| 2024 | 114.179 → 111.858 | **−2.03 %** | 335.649 → 338.596 | +0.88 % | 10.854 → 13.161 | +21.25 % |
+| 2025 | 142.768 → 144.791 | **+1.42 %** | 334.330 → 333.455 | −0.26 % | 17.079 → 19.090 | +11.77 % |
+
+Coal is **small and mixed** — down in two years, up in one — i.e. essentially flat, which is the
+zero-LP §2c prediction and **not** the handoff's uniform "coal UP". Slack and dump are **exactly 0.0**
+in all three years.
+
+### 8c. THE C8 FAILURE IS **NOT** THIS ARM'S — measured three ways, not asserted
+
+The scorer reads **C8 FAIL on 2025 ST_GAS: 41.3 % forced, "above the 30 % cap and NOT grounded"**,
+with the D-4 provenance leg failing on **`st_netload_drag`** (plants 3131, 3138, 3148, 3775, 593) —
+a min-gen drag mechanism **the fuel seam does not touch at all**.
+
+Before attributing that to the arm I checked what the keeper does under the *same* generator. The
+keeper's committed `legitimacy_diagnostics.json` carries **12 D-4 rows**; HEAD's generator produces
+**~210**. That is a change in `scripts/legitimacy_diagnostics.py`'s **D-4 per-unit conduct** check,
+not a change in dispatch.
+
+| artifact | D-2 | D-4 |
+|---|---|---|
+| keeper, **as committed** (old generator) | passed **False**, 42 rows, **3 fails** (CT_PEAKER 16.2/16.4/16.7 % > 15 %) | passed **True**, **12 rows**, 0 fails |
+| **keeper, REGENERATED at HEAD** | passed True, 28 rows, 0 fails | **passed False, 208 rows, 38 fails** |
+| **arm, at HEAD** | passed True, 35 rows, 0 fails | **passed False, 211 rows, 35 fails** |
+
+**The keeper fails D-4 at HEAD MORE than the arm does (38 vs 35 failures.)** And scoring the
+incumbent keeper's own registered artifacts with the regenerated diagnostics swapped in:
+
+| the incumbent keeper `2026-08-15-pjm-162-inputclock`, scored… | determination | C8 |
+|---|---|---|
+| …with its **committed** diagnostics | **CALIBRATED** | PASS |
+| …with **HEAD's** diagnostics | **NOT-YET** | **FAIL** |
+
+**Conclusion: PJM's designated keeper does not survive its own C8 gate under the diagnostics
+generator now on `main`.** That is a **pre-existing latent condition on `main`**, surfaced here, and
+it is **independent of this session's change** — the arm inherits it and, on the D-4 count, inherits
+slightly less of it. **This is escalated, not absorbed:** it is not the fuel seam's to fix, it affects
+the incumbent keeper's standing determination, and it should be routed to PJM's own lane (or the
+governance lane) as its own charter. Rule 1 `[R-STRUCT]` is untouched either way — the seam lands
+because it is the more accurate measured input, not because of any gate.
+
+### 8d. Governance
+
+C6 **PASSES** on a written attestation
+(`results/calibration/pjm_fuelvintage_A/calibration_attestation.json`) that records: **ONE config
+delta** (`gas_electric_power_monthly_level: False → True`); **ZERO free parameters added** — the DOF
+ledger is carried **verbatim** from the incumbent (`n_entries 19`, `n_residual 6`), because the blend
+weights are a rule-23 frozen EIA-860 derive, the conversion is EIA's published 1.036 MMBtu/Mcf, and
+the two admission conditions were declared ex ante and **never swept**; **NO `authorized_price_tuning`
+block**, because this is not an offer-curve band multiplier and no value in it was chosen by looking
+at a residual; the rule-19 replacement verified to 0.0000000000; the impaired-form-4 control posture;
+and the C3a overshoot stated as an overshoot.
+
+---
+
+## 9. SOLVE STATE — every bundle on disk
 
 *(Updated as each arm completes.)*
 
