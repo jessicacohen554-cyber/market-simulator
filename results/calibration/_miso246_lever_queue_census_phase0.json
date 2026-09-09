@@ -213,15 +213,15 @@
     "PASS": true
    },
    "L3_provenance": {
-    "head": "c4ba68a16b9d9111a3214cbbb58a3352654ae6d1",
-    "head_short": "c4ba68a1",
+    "head": "e408f9c7d20e643993bfd8057c98396524f0a46c",
+    "head_short": "e408f9c7",
     "dirty": false,
     "blob_sha": {
      "base": "e07ace50aa127b3699c54799522f02657d3609d5",
      "ERCOT": "6cdad757e059126a977d2c3a99aa3d78d438ba4f",
      "CAISO": "3a67b82280c42f2c9d5a5de176aebd27957a70ee",
      "PJM": "d554108cbe959db06f62a060e89abe973926bf27",
-     "MISO": "ba1ff46aa7252d1cb63865c30ddf62dd30626922",
+     "MISO": "6fdc6b4845fca38aee242a2f44901c802a6b6071",
      "NYISO": "2ceef5e14cfe679ee8c08ed1e066c0a4fe2adeda",
      "NEISO": "86339d219db5727d31b5a9aadd1dbbf5c1e5658c",
      "SPP": "76848183d520a3fad921ea828a2c8d7054dfb082"
@@ -922,15 +922,15 @@
   }
  },
  "provenance": {
-  "head": "c4ba68a16b9d9111a3214cbbb58a3352654ae6d1",
-  "head_short": "c4ba68a1",
+  "head": "e408f9c7d20e643993bfd8057c98396524f0a46c",
+  "head_short": "e408f9c7",
   "dirty": false,
   "blob_sha": {
    "base": "e07ace50aa127b3699c54799522f02657d3609d5",
    "ERCOT": "6cdad757e059126a977d2c3a99aa3d78d438ba4f",
    "CAISO": "3a67b82280c42f2c9d5a5de176aebd27957a70ee",
    "PJM": "d554108cbe959db06f62a060e89abe973926bf27",
-   "MISO": "ba1ff46aa7252d1cb63865c30ddf62dd30626922",
+   "MISO": "6fdc6b4845fca38aee242a2f44901c802a6b6071",
    "NYISO": "2ceef5e14cfe679ee8c08ed1e066c0a4fe2adeda",
    "NEISO": "86339d219db5727d31b5a9aadd1dbbf5c1e5658c",
    "SPP": "76848183d520a3fad921ea828a2c8d7054dfb082"

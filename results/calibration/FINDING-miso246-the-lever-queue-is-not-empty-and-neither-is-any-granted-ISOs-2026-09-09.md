@@ -16,8 +16,16 @@ probe (`2d0767a5`) before either ran. Addendum 1
 `ADDENDUM-miso246-my-own-gate-G-PARSE-failed-because-main-moved-under-it-2026-09-08.md` (`56d70600`).
 Addendum 2 `ADDENDUM-miso246-M-a4-failed-and-item-a-is-unresolved-2026-09-08.md` (`718811a0`).
 Probes `_miso246_lever_queue_census_phase0.py` (`c4ba68a1`, repaired, pushed before it re-ran) and
-`_miso246_census_adjudication.py`. Machine records `_miso246_lever_queue_census_phase0.json`
-(provenance-stamped, HEAD `c4ba68a1`, tree clean) and `_miso246_census_adjudication.json`.
+`_miso246_census_adjudication.py`. Machine records `_miso246_lever_queue_census_phase0.json` and
+`_miso246_census_adjudication.json`.
+
+**AND `G-PARSE′`'s provenance limb immediately earned itself.** `origin/main` moved **twice more**
+during this session, so the census was **re-run after the final rebase** and the committed artifact
+is stamped at HEAD **`e408f9c7`**, tree clean. **Every measured number in this document is
+byte-identical between the two runs** — the only diff in the JSON is the provenance block itself
+(the HEAD sha, and MISO's shard blob sha, which moved because of this session's own `ev` edits).
+That is the check `G-PARSE`'s original literal could not perform, doing its job on its first
+outing.
 
 **Basis, named on every statement below.** `p_bus` = the keeper's committed **P1** price at
 **`MISO_external`**; the seam regressor and every ladder anchor are the Indiana-hub **DA**
