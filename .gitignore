@@ -722,6 +722,13 @@ results/calibration/*/clean_*/
 #    their heavy contents are already ignored by §8.
 # -----------------------------------------------------------------------------
 results/calibration/*probe*/
+# miso-248 SPP-ladder clock re-derive: the rule-29 screen arm + its EARNED
+# control (G-DRIFT found one LIVE hunk, so form 4 is falsified) and, if the
+# screen clears, the full-span bundle. Rule 29(c) DELETE-BEFORE-MERGE is
+# discharged by keeping them out of `main`, which this rule does; rule 31
+# [R-RETAIN] forbids removing them from disk before the owner rules on
+# promotion. A promoted bundle's slim set overrides this rule via `git add -f`.
+results/calibration/miso248_*/
 # ercot-235 2023-discrete offer-sweep grid points (PRECOMMIT-ercot235: local
 # W-2 probe bundles; each point's record is its ercot235_point_score.json +
 # official_2023.json, quoted in the FINDING/log; the selected WINNER is
