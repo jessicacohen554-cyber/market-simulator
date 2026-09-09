@@ -1,0 +1,748 @@
+{
+ "note": "caiso-266 reproduction artifact. ZERO LP. Keeper 2026-09-06-caiso-260-b1-demand (bundle caiso260_demand_vintage), unchanged. Model basis = the scorer's own zone-demand-weighted C3a model side; the decomposition weight vector is the model's own hourly demand, applied to BOTH sides, so contributions sum to the printed gap. Rule 22: 2023-2025 only.",
+ "m0_additive_vs_proportional": {
+  "n_months": 36,
+  "corr_absolute_delta_vs_actual_price": -0.572,
+  "corr_pct_error_vs_actual_price": -0.575,
+  "mean_absolute_delta_usd_per_mwh": 2.683,
+  "min_absolute_delta": -4.73,
+  "max_absolute_delta": 10.62
+ },
+ "m11_offer_band_sign": {
+  "bands": {
+   "committed": {
+    "armed": 1.0,
+    "measured_pooled": 1.03,
+    "pooled_below_armed": false,
+    "per_year": {
+     "2023": 1.042,
+     "2024": 1.022,
+     "2025": 1.071
+    },
+    "per_year_below_armed": 0
+   },
+   "econ_low": {
+    "armed": 1.066,
+    "measured_pooled": 1.066,
+    "pooled_below_armed": false,
+    "per_year": {
+     "2023": 1.063,
+     "2024": 1.027,
+     "2025": 1.085
+    },
+    "per_year_below_armed": 2
+   },
+   "econ_high": {
+    "armed": 1.072,
+    "measured_pooled": 1.072,
+    "pooled_below_armed": false,
+    "per_year": {
+     "2023": 1.06,
+     "2024": 1.099,
+     "2025": 1.098
+    },
+    "per_year_below_armed": 1
+   },
+   "peak": {
+    "armed": 1.386,
+    "measured_pooled": 1.386,
+    "pooled_below_armed": false,
+    "per_year": {
+     "2023": 1.306,
+     "2024": 1.503,
+     "2025": 1.457
+    },
+    "per_year_below_armed": 1
+   }
+  },
+  "pooled_bands_below_armed": 0,
+  "verdict": "CLOSED",
+  "note": "The pooled 3-year value is the only admissible one: rule 1 [R-STRUCT] condition (b) requires ONE config across every scored year, so a per-year multiplier cannot be selected."
+ },
+ "years": {
+  "2023": {
+   "m1_price_bins": {
+    "total_gap": 1.3309,
+    "bins": {
+     "<0": {
+      "hours": 410,
+      "weight": 0.0366,
+      "contrib": 0.4915,
+      "mean_actual": -11.32,
+      "mean_model": 1.38
+     },
+     "0-10": {
+      "hours": 350,
+      "weight": 0.034,
+      "contrib": 0.4729,
+      "mean_actual": 5.4,
+      "mean_model": 18.25
+     },
+     "10-20": {
+      "hours": 668,
+      "weight": 0.0689,
+      "contrib": 0.9807,
+      "mean_actual": 15.5,
+      "mean_model": 29.29
+     },
+     "20-30": {
+      "hours": 931,
+      "weight": 0.1011,
+      "contrib": 1.2124,
+      "mean_actual": 25.16,
+      "mean_model": 36.62
+     },
+     "30-45": {
+      "hours": 1863,
+      "weight": 0.2139,
+      "contrib": 1.7893,
+      "mean_actual": 37.75,
+      "mean_model": 45.91
+     },
+     "45-60": {
+      "hours": 1738,
+      "weight": 0.2061,
+      "contrib": 0.7887,
+      "mean_actual": 52.02,
+      "mean_model": 55.52
+     },
+     "60-100": {
+      "hours": 1942,
+      "weight": 0.2375,
+      "contrib": -2.0441,
+      "mean_actual": 75.19,
+      "mean_model": 66.38
+     },
+     ">100": {
+      "hours": 810,
+      "weight": 0.0963,
+      "contrib": -2.3605,
+      "mean_actual": 145.16,
+      "mean_model": 124.89
+     }
+    },
+    "sub_20_contrib": 1.9451,
+    "sub_20_share_of_gap": 1.461,
+    "model_min_price": -20.0,
+    "actual_min_price": -97.19,
+    "hours_in_0_to_15_model": 251,
+    "hours_in_0_to_15_actual": 625
+   },
+   "m3_regime_split": {
+    "F": {
+     "hours": 337,
+     "contrib": -0.2871,
+     "mean_model": -15.38,
+     "mean_actual": -5.72
+    },
+    "G": {
+     "hours": 8228,
+     "contrib": 1.5132,
+     "mean_model": 58.48,
+     "mean_actual": 55.53
+    },
+    "M": {
+     "hours": 195,
+     "contrib": 0.1048,
+     "mean_model": 21.45,
+     "mean_actual": 15.81
+    }
+   },
+   "m4_composition": {
+    "hours": 1001,
+    "contrib": 2.0252,
+    "model_price": 29.28,
+    "actual_price": 9.4,
+    "model_dump_mw": 0.0,
+    "solar": {
+     "model": 9266.0,
+     "metered_ba": 8051.0
+    },
+    "import": {
+     "model": 4027.0,
+     "metered_net_ba": 2400.0
+    },
+    "gas_vs_BA_NG_TRAP": {
+     "model": 2130.0,
+     "eia930_BA_NG": 5722.0,
+     "note": "EIA-930 NG:NG is the WHOLE CISO balancing authority's gas, which is NOT the model's 85-plant CAMPD panel. Comparing them reads as a 3.6-5.5 GW model deficit that does not exist. Use the bench CEMS panel (m10) instead."
+    },
+    "battery_charge_caiso256_basis": {
+     "model_li_ion": 1211.0,
+     "metered_NG_OTH": 799.0,
+     "model_pumped_storage": 1093.0
+    },
+    "congestion": {
+     "la_basin_minus_dsw": 6.03,
+     "np15_minus_pnw": 10.22,
+     "dsw_price": 22.93
+    },
+    "hod_contrib": {
+     "0": 0.0464,
+     "1": 0.0508,
+     "2": 0.0572,
+     "3": 0.0485,
+     "4": 0.0238,
+     "5": 0.0371,
+     "6": 0.1219,
+     "7": 0.204,
+     "8": 0.2029,
+     "9": 0.195,
+     "10": 0.14,
+     "11": 0.1047,
+     "12": 0.1244,
+     "13": 0.1398,
+     "14": 0.1931,
+     "15": 0.144,
+     "16": 0.0558,
+     "17": 0.0223,
+     "18": 0.005,
+     "19": 0.002,
+     "20": 0.0062,
+     "21": 0.0162,
+     "22": 0.0458,
+     "23": 0.0381
+    },
+    "month_contrib": {
+     "1": 0.0127,
+     "2": 0.1485,
+     "3": 0.2846,
+     "4": 0.1557,
+     "5": 0.654,
+     "6": 0.2907,
+     "7": 0.016,
+     "8": 0.0221,
+     "9": 0.1197,
+     "10": 0.1617,
+     "11": 0.1069,
+     "12": 0.0526
+    }
+   },
+   "m10_commitment_state": {
+    "panel_plants": 85,
+    "panel_nameplate_mw": 27823.0,
+    "measured_online_cap_mw": 7204.0,
+    "measured_gen_mw": 2511.0,
+    "measured_loading_when_online": 0.349,
+    "model_gas_mw": 2130.0,
+    "measured_minus_model_gen_mw": 381.0,
+    "model_gas_at_binding_floors_mw": 813.0,
+    "per_class": {
+     "CC_CHP": {
+      "nameplate": 1651.0,
+      "measured_online_cap": 1274.0,
+      "measured_gen": 686.0,
+      "model_gen": 867.0
+     },
+     "CC_REGULAR": {
+      "nameplate": 15676.0,
+      "measured_online_cap": 5036.0,
+      "measured_gen": 1693.0,
+      "model_gen": 1127.0
+     },
+     "CT_CHP": {
+      "nameplate": 360.0,
+      "measured_online_cap": 47.0,
+      "measured_gen": 34.0,
+      "model_gen": 136.0
+     },
+     "CT_PEAKER": {
+      "nameplate": 6370.0,
+      "measured_online_cap": 269.0,
+      "measured_gen": 68.0,
+      "model_gen": 0.0
+     },
+     "ST_GAS": {
+      "nameplate": 3766.0,
+      "measured_online_cap": 578.0,
+      "measured_gen": 29.0,
+      "model_gen": 0.0
+     }
+    }
+   },
+   "m12_sizing": {
+    "model_lambda": 29.28,
+    "actual": 9.4,
+    "required_move": -19.89,
+    "carbon_usd_per_t": 33.03,
+    "cc_zero_fuel_floor_usd_per_mwh": 16.01,
+    "ct_zero_fuel_floor_usd_per_mwh": 23.95,
+    "share_gap_hours_below_cc_zero_fuel_floor": 0.705,
+    "cc_zero_fuel_floor_epa_factor": 15.04,
+    "share_below_cc_floor_epa_factor": 0.65,
+    "share_gap_hours_below_zero": 0.167,
+    "model_gas_mw": 2130.0,
+    "model_gas_at_binding_floors_mw": 813.0,
+    "model_gas_economic_mw": 1317.0,
+    "required_over_economic_ratio": 1.62,
+    "prereg_kill_bar": 2.0,
+    "prereg_kill_bar_fires": false
+   },
+   "m13_export_outlet": {
+    "model_annual_import_twh": 37.37,
+    "metered_annual_net_import_twh": 28.45,
+    "gap_hours_model_import_mw": 4027.0,
+    "gap_hours_metered_net_import_mw": 2400.0,
+    "metered_net_export_hours": 1235,
+    "metered_net_export_hours_in_gap_set": 236,
+    "model_net_export_hours": 0
+   }
+  },
+  "2024": {
+   "m1_price_bins": {
+    "total_gap": 2.3523,
+    "bins": {
+     "<0": {
+      "hours": 868,
+      "weight": 0.0776,
+      "contrib": 1.3284,
+      "mean_actual": -17.8,
+      "mean_model": -1.98
+     },
+     "0-10": {
+      "hours": 418,
+      "weight": 0.0411,
+      "contrib": 0.5456,
+      "mean_actual": 5.51,
+      "mean_model": 18.1
+     },
+     "10-20": {
+      "hours": 694,
+      "weight": 0.0741,
+      "contrib": 0.9187,
+      "mean_actual": 15.34,
+      "mean_model": 27.46
+     },
+     "20-30": {
+      "hours": 1422,
+      "weight": 0.159,
+      "contrib": 1.2014,
+      "mean_actual": 25.8,
+      "mean_model": 33.18
+     },
+     "30-45": {
+      "hours": 3239,
+      "weight": 0.38,
+      "contrib": 1.0493,
+      "mean_actual": 37.04,
+      "mean_model": 39.68
+     },
+     "45-60": {
+      "hours": 1479,
+      "weight": 0.186,
+      "contrib": -0.5889,
+      "mean_actual": 51.13,
+      "mean_model": 47.92
+     },
+     "60-100": {
+      "hours": 509,
+      "weight": 0.0659,
+      "contrib": -0.9307,
+      "mean_actual": 69.28,
+      "mean_model": 55.62
+     },
+     ">100": {
+      "hours": 131,
+      "weight": 0.0163,
+      "contrib": -1.1716,
+      "mean_actual": 182.44,
+      "mean_model": 122.81
+     }
+    },
+    "sub_20_contrib": 2.7927,
+    "sub_20_share_of_gap": 1.187,
+    "model_min_price": -20.38,
+    "actual_min_price": -57.84,
+    "hours_in_0_to_15_model": 259,
+    "hours_in_0_to_15_actual": 739
+   },
+   "m3_regime_split": {
+    "F": {
+     "hours": 609,
+     "contrib": 0.1022,
+     "mean_model": -15.36,
+     "mean_actual": -18.16
+    },
+    "G": {
+     "hours": 7960,
+     "contrib": 2.0322,
+     "mean_model": 40.46,
+     "mean_actual": 37.53
+    },
+    "M": {
+     "hours": 191,
+     "contrib": 0.2179,
+     "mean_model": 16.63,
+     "mean_actual": 6.39
+    }
+   },
+   "m4_composition": {
+    "hours": 1222,
+    "contrib": 2.4498,
+    "model_price": 26.04,
+    "actual_price": 6.81,
+    "model_dump_mw": 0.0,
+    "solar": {
+     "model": 10418.0,
+     "metered_ba": 8383.0
+    },
+    "import": {
+     "model": 4343.0,
+     "metered_net_ba": 2628.0
+    },
+    "gas_vs_BA_NG_TRAP": {
+     "model": 2459.0,
+     "eia930_BA_NG": 7131.0,
+     "note": "EIA-930 NG:NG is the WHOLE CISO balancing authority's gas, which is NOT the model's 85-plant CAMPD panel. Comparing them reads as a 3.6-5.5 GW model deficit that does not exist. Use the bench CEMS panel (m10) instead."
+    },
+    "battery_charge_caiso256_basis": {
+     "model_li_ion": 2174.0,
+     "metered_NG_OTH": 1725.0,
+     "model_pumped_storage": 845.0
+    },
+    "congestion": {
+     "la_basin_minus_dsw": 11.38,
+     "np15_minus_pnw": 8.06,
+     "dsw_price": 14.75
+    },
+    "hod_contrib": {
+     "0": 0.027,
+     "1": 0.0323,
+     "2": 0.0308,
+     "3": 0.0273,
+     "4": 0.0254,
+     "5": 0.0381,
+     "6": 0.1944,
+     "7": 0.2873,
+     "8": 0.3071,
+     "9": 0.2955,
+     "10": 0.2314,
+     "11": 0.1572,
+     "12": 0.1459,
+     "13": 0.1312,
+     "14": 0.1729,
+     "15": 0.167,
+     "16": 0.0897,
+     "17": 0.0194,
+     "18": -0.0002,
+     "19": 0.0015,
+     "20": 0.0097,
+     "21": 0.0119,
+     "22": 0.0189,
+     "23": 0.0282
+    },
+    "month_contrib": {
+     "1": 0.0832,
+     "2": 0.1799,
+     "3": 0.3027,
+     "4": 0.2912,
+     "5": 0.5725,
+     "6": 0.3249,
+     "7": 0.1246,
+     "8": 0.1984,
+     "9": 0.1383,
+     "10": 0.0829,
+     "11": 0.0865,
+     "12": 0.0645
+    }
+   },
+   "m10_commitment_state": {
+    "panel_plants": 85,
+    "panel_nameplate_mw": 27181.0,
+    "measured_online_cap_mw": 7080.0,
+    "measured_gen_mw": 2641.0,
+    "measured_loading_when_online": 0.373,
+    "model_gas_mw": 2459.0,
+    "measured_minus_model_gen_mw": 183.0,
+    "model_gas_at_binding_floors_mw": 1004.0,
+    "per_class": {
+     "CC_CHP": {
+      "nameplate": 1651.0,
+      "measured_online_cap": 1030.0,
+      "measured_gen": 495.0,
+      "model_gen": 751.0
+     },
+     "CC_REGULAR": {
+      "nameplate": 15676.0,
+      "measured_online_cap": 5659.0,
+      "measured_gen": 2018.0,
+      "model_gen": 1543.0
+     },
+     "CT_CHP": {
+      "nameplate": 360.0,
+      "measured_online_cap": 41.0,
+      "measured_gen": 32.0,
+      "model_gen": 138.0
+     },
+     "CT_PEAKER": {
+      "nameplate": 6549.0,
+      "measured_online_cap": 266.0,
+      "measured_gen": 86.0,
+      "model_gen": 23.0
+     },
+     "ST_GAS": {
+      "nameplate": 2945.0,
+      "measured_online_cap": 84.0,
+      "measured_gen": 9.0,
+      "model_gen": 4.0
+     }
+    }
+   },
+   "m12_sizing": {
+    "model_lambda": 26.04,
+    "actual": 6.81,
+    "required_move": -19.22,
+    "carbon_usd_per_t": 35.23,
+    "cc_zero_fuel_floor_usd_per_mwh": 16.94,
+    "ct_zero_fuel_floor_usd_per_mwh": 25.31,
+    "share_gap_hours_below_cc_zero_fuel_floor": 0.817,
+    "cc_zero_fuel_floor_epa_factor": 15.91,
+    "share_below_cc_floor_epa_factor": 0.765,
+    "share_gap_hours_below_zero": 0.236,
+    "model_gas_mw": 2459.0,
+    "model_gas_at_binding_floors_mw": 1004.0,
+    "model_gas_economic_mw": 1454.0,
+    "required_over_economic_ratio": 1.69,
+    "prereg_kill_bar": 2.0,
+    "prereg_kill_bar_fires": false
+   },
+   "m13_export_outlet": {
+    "model_annual_import_twh": 39.15,
+    "metered_annual_net_import_twh": 30.69,
+    "gap_hours_model_import_mw": 4343.0,
+    "gap_hours_metered_net_import_mw": 2628.0,
+    "metered_net_export_hours": 963,
+    "metered_net_export_hours_in_gap_set": 166,
+    "model_net_export_hours": 0
+   }
+  },
+  "2025": {
+   "m1_price_bins": {
+    "total_gap": 1.7276,
+    "bins": {
+     "<0": {
+      "hours": 605,
+      "weight": 0.0524,
+      "contrib": 0.5574,
+      "mean_actual": -13.84,
+      "mean_model": -3.67
+     },
+     "0-10": {
+      "hours": 426,
+      "weight": 0.0416,
+      "contrib": 0.4758,
+      "mean_actual": 5.28,
+      "mean_model": 16.24
+     },
+     "10-20": {
+      "hours": 736,
+      "weight": 0.0758,
+      "contrib": 0.8206,
+      "mean_actual": 15.52,
+      "mean_model": 25.95
+     },
+     "20-30": {
+      "hours": 1266,
+      "weight": 0.1401,
+      "contrib": 1.0653,
+      "mean_actual": 25.29,
+      "mean_model": 32.76
+     },
+     "30-45": {
+      "hours": 3507,
+      "weight": 0.4151,
+      "contrib": 1.1973,
+      "mean_actual": 38.04,
+      "mean_model": 40.84
+     },
+     "45-60": {
+      "hours": 1745,
+      "weight": 0.2133,
+      "contrib": -0.9371,
+      "mean_actual": 50.67,
+      "mean_model": 46.19
+     },
+     "60-100": {
+      "hours": 455,
+      "weight": 0.0588,
+      "contrib": -1.048,
+      "mean_actual": 68.99,
+      "mean_model": 51.42
+     },
+     ">100": {
+      "hours": 20,
+      "weight": 0.0028,
+      "contrib": -0.4037,
+      "mean_actual": 206.53,
+      "mean_model": 50.61
+     }
+    },
+    "sub_20_contrib": 1.8539,
+    "sub_20_share_of_gap": 1.073,
+    "model_min_price": -20.37,
+    "actual_min_price": -77.79,
+    "hours_in_0_to_15_model": 279,
+    "hours_in_0_to_15_actual": 723
+   },
+   "m3_regime_split": {
+    "F": {
+     "hours": 528,
+     "contrib": -0.1287,
+     "mean_model": -13.26,
+     "mean_actual": -11.23
+    },
+    "G": {
+     "hours": 7836,
+     "contrib": 1.626,
+     "mean_model": 39.89,
+     "mean_actual": 37.65
+    },
+    "M": {
+     "hours": 396,
+     "contrib": 0.2302,
+     "mean_model": 19.99,
+     "mean_actual": 13.94
+    }
+   },
+   "m4_composition": {
+    "hours": 1020,
+    "contrib": 1.6708,
+    "model_price": 26.45,
+    "actual_price": 10.39,
+    "model_dump_mw": 0.0,
+    "solar": {
+     "model": 12056.0,
+     "metered_ba": 9931.0
+    },
+    "import": {
+     "model": 4387.0,
+     "metered_net_ba": 2780.0
+    },
+    "gas_vs_BA_NG_TRAP": {
+     "model": 2351.0,
+     "eia930_BA_NG": 7826.0,
+     "note": "EIA-930 NG:NG is the WHOLE CISO balancing authority's gas, which is NOT the model's 85-plant CAMPD panel. Comparing them reads as a 3.6-5.5 GW model deficit that does not exist. Use the bench CEMS panel (m10) instead."
+    },
+    "battery_charge_caiso256_basis": {
+     "model_li_ion": 3589.0,
+     "metered_NG_OTH": 2926.0,
+     "model_pumped_storage": 955.0
+    },
+    "congestion": {
+     "la_basin_minus_dsw": 9.78,
+     "np15_minus_pnw": 6.31,
+     "dsw_price": 16.75
+    },
+    "hod_contrib": {
+     "0": 0.0134,
+     "1": 0.013,
+     "2": 0.0163,
+     "3": 0.0148,
+     "4": 0.0162,
+     "5": 0.025,
+     "6": 0.1339,
+     "7": 0.225,
+     "8": 0.2055,
+     "9": 0.2173,
+     "10": 0.154,
+     "11": 0.1125,
+     "12": 0.1127,
+     "13": 0.1083,
+     "14": 0.1269,
+     "15": 0.0951,
+     "16": 0.029,
+     "17": 0.0018,
+     "18": 0.0057,
+     "19": 0.0061,
+     "20": 0.006,
+     "21": 0.0105,
+     "22": 0.0109,
+     "23": 0.0109
+    },
+    "month_contrib": {
+     "1": 0.0659,
+     "2": 0.1339,
+     "3": 0.1853,
+     "4": 0.2518,
+     "5": 0.2272,
+     "6": 0.1749,
+     "7": 0.0557,
+     "8": 0.0318,
+     "9": 0.1111,
+     "10": 0.1807,
+     "11": 0.0499,
+     "12": 0.2026
+    }
+   },
+   "m10_commitment_state": {
+    "panel_plants": 85,
+    "panel_nameplate_mw": 27218.0,
+    "measured_online_cap_mw": 5952.0,
+    "measured_gen_mw": 2278.0,
+    "measured_loading_when_online": 0.383,
+    "model_gas_mw": 2351.0,
+    "measured_minus_model_gen_mw": -72.0,
+    "model_gas_at_binding_floors_mw": 1103.0,
+    "per_class": {
+     "CC_CHP": {
+      "nameplate": 1651.0,
+      "measured_online_cap": 974.0,
+      "measured_gen": 529.0,
+      "model_gen": 766.0
+     },
+     "CC_REGULAR": {
+      "nameplate": 15763.0,
+      "measured_online_cap": 4580.0,
+      "measured_gen": 1638.0,
+      "model_gen": 1447.0
+     },
+     "CT_CHP": {
+      "nameplate": 360.0,
+      "measured_online_cap": 45.0,
+      "measured_gen": 34.0,
+      "model_gen": 137.0
+     },
+     "CT_PEAKER": {
+      "nameplate": 6499.0,
+      "measured_online_cap": 248.0,
+      "measured_gen": 63.0,
+      "model_gen": 0.0
+     },
+     "ST_GAS": {
+      "nameplate": 2945.0,
+      "measured_online_cap": 105.0,
+      "measured_gen": 15.0,
+      "model_gen": 0.0
+     }
+    }
+   },
+   "m12_sizing": {
+    "model_lambda": 26.45,
+    "actual": 10.39,
+    "required_move": -16.06,
+    "carbon_usd_per_t": 28.06,
+    "cc_zero_fuel_floor_usd_per_mwh": 13.9,
+    "ct_zero_fuel_floor_usd_per_mwh": 20.87,
+    "share_gap_hours_below_cc_zero_fuel_floor": 0.562,
+    "cc_zero_fuel_floor_epa_factor": 13.08,
+    "share_below_cc_floor_epa_factor": 0.517,
+    "share_gap_hours_below_zero": 0.128,
+    "model_gas_mw": 2351.0,
+    "model_gas_at_binding_floors_mw": 1103.0,
+    "model_gas_economic_mw": 1247.0,
+    "required_over_economic_ratio": 1.88,
+    "prereg_kill_bar": 2.0,
+    "prereg_kill_bar_fires": false
+   },
+   "m13_export_outlet": {
+    "model_annual_import_twh": 39.16,
+    "metered_annual_net_import_twh": 35.8,
+    "gap_hours_model_import_mw": 4387.0,
+    "gap_hours_metered_net_import_mw": 2780.0,
+    "metered_net_export_hours": 799,
+    "metered_net_export_hours_in_gap_set": 119,
+    "model_net_export_hours": 0
+   }
+  }
+ }
+}
