@@ -732,3 +732,85 @@ NOT survive the lane's ephemeral container, so no hourly/ sidecars exist and a l
 full ~13 min re-solve). The repaired wind parquets STAY on main by the same ruling, so keeper-3 is knowingly
 carried as a keeper that does not reproduce from the repository's own wind input — an accepted, recorded
 condition, and the reason rule 29(b) form 4 no longer holds unqualified for SPP (desk note, r#15).
+
+## 2026-09-09 — spp-19: SPP-51c — the oversupply curtailment ALLOCATION is built, screened, KILLED on its own gate and PROMOTED anyway by owner ruling; and SPP's actual-LMP sidecar was on UTC
+
+**Two owner instructions, both executed in-session.** *"Just fix it so it's not on utc anymore and
+then fix so results are local time."* and *"Is this a recommended keeper candidate? If so plz
+promote. If structural integrity improves but gates regress that may still be a keeper."*
+
+**THE CLOCK DEFECT, found while validating the instrument and not looked for.**
+`data/raw/_validation-source/actual_lmp_hourly_SPP.parquet` — the series C3a/C3b/C3c score SPP
+against — was indexed on **SPP's GMT market interval** while the model's 8760 calendar is **fixed
+Central Standard Time**. Rubric v2.4 scores C3a against `rt_lw`, the committed hourly actual
+weighted by the same measured demand the model dispatches — an **hour-matched** pairing — so the
+offset landed on a load-bearing criterion. Direction and magnitude were fixed by physical markers
+**before any scored number was computed**: EIA-930 solar peaks at index 12/13 (solar noon) and load
+at 17; the sidecar's RT peaked at 22/23; SPP's own explicitly GMT-stamped GenMix load peaks at UTC
+hour 22, the very index the sidecar peaked at. A **six-ISO census isolates the defect to SPP alone**
+(CAISO/PJM/MISO/NEISO lag 0, NYISO −1, ERCOT +2, SPP +5) — the other six go through
+`derive_actual_lmp._STD_TZ`; SPP's sidecar is staged pre-built by `build_spp_lmp_reference.py` and
+bypassed it. **The magnitude is a CONSTANT +6, not the seasonal 6/5 the first lag-scan reading
+suggested** — corrected in-session on a measurement against GenMix restricted to the DST months,
+where the two hypotheses differ (fixed CST wins in all three years, corr 0.9913/0.9391/0.9652 vs
+0.9815/0.9309/0.9588). Repaired at the source plus a `--repair-clock` re-index (the portal is
+blocked and the raw exports are not committed, so the emitted sidecars cannot be re-fetched).
+**A pure re-indexing, verified:** sorted value sets identical, equal-hour annual means unchanged to
+four decimals, RT peak hour 23/22/23 → **17/16/17** matching load's 17, `actual_amplitude`'s SPP
+`rt_peak_hour` 23/22/23 → 17/16/17 and `rt_trough_hour` 7 → 1 with `rt_range` essentially unmoved.
+`rt_lw` **24.438/24.531/27.957 → 25.133/25.450/28.598**. `actual_tail.json` regenerated with a
+**zero diff**, which also proves no other ISO moved. **EVERY SPP C3a/C3b NUMBER OLDER THAN
+2026-09-09 IS ON THE UNREPAIRED CLOCK AND IS NOT COMPARABLE.** Stale and deliberately not
+regenerated (rule 25): the SPP sidecar is a neighbour anchor for `derive_miso_seam_ladders.py` and
+`derive_neighbor_hr_by_year.py` — MISO's and PJM's desks' call.
+
+**THE MECHANISM.** `vre_curtailment_oversupply_allocation` (gated, default off, ISO-agnostic)
+re-allocates the **hours** of SPP's measured wind curtailment and changes **no annual total**. The
+flat gross-up `delivered/(1−0.096501)` is flat to 99.94/99.93/99.98 % of hours and delivered is
+already net of curtailment, so the measured 9.65 % was spread uniformly — everywhere except where it
+happened. The field water-fills the **same frozen annual energy** onto the lowest-net-load hours at
+the level λ (16.15/16.48/17.58 GW) that makes the annual identity hold. **Zero new free parameters**;
+DOF ledger unchanged at 3 entries / 1 residual; annual potential identical to the flat rule's in
+every year (rule 23 untouched).
+
+**THE SCREEN KILLED IT AND THE LANE SAID SO.** 2025, named by largest reallocated energy (13.587
+TWh), not by residual. It **created SPP's negative-price regime for the first time** — 177
+interior-wind hours, 159 system-LW hours < $0 from a control of essentially zero, pricing at
+**exactly −$26.00** — and still missed every band: G-1a 177 vs a predicted 871 (band 348–2178),
+G-1b 159 vs 592 (band 237–1480), G-3 the wind identity 1.10681 → 1.10489. G-2 also failed as
+written (53.67 % vs 90 %) but **was mis-specified by the lane** — it measured against the flat
+bound, which the mechanism moves in every hour by construction; the property it meant to test reads
+100.0 % and is a diagnostic, never a gate pass. Phase-0 bars **F-2 (≥45 %, got 40.75/42.68/43.71 %)
+and F-4 (+3.0–8.0 GW, got +2.63/+2.38/+3.11) also MISSED** and are reported in the words they were
+written in.
+
+**ROOT CAUSE, AND IT RE-POINTS THE OBJECT.** The LP **absorbs 98.2 %** of the concentrated headroom
+by displacing thermal instead of spilling wind: in the 2,848 allocated 2025 hours where wind did not
+go interior, thermal averaged 8,454 MW and still had **8,200 MW of turn-down available** (2,624 with
+over 2 GW spare), and the model's thermal **annual minimum is 254.3 MW across a ~40 GW fleet**
+because SPP carries zero commitment floors and zero bridges. That is **direct measured evidence
+against SPP-51b's own sizing note**, which placed the deficit on the wind side. The binding limb is
+**R-2**, and rule 19 requires any successor floor to be **reconciled with** this allocation, never
+stacked on it.
+
+**PROMOTED ANYWAY — SPP KEEPER 4, `2026-09-09-spp-51c-oversupply-curtailment`.** Full span in ONE
+invocation; the 2025 P0 objective reproduces the screen's to the cent (188,653,999.5344). All three
+runs **re-scored on the same repaired bench**: C1 failing rows keeper-3 **2** / SPP-50 1 / **this 1**
+(2024 ST_GAS −8.23, the routed Harrington object); C3a failing years keeper-3 1 (+11.0 %) / SPP-50
+**2** (+11.9, +11.6) / **this 1** (2025 +10.3 %); C3b failing years keeper-3 2 / SPP-50 **3** /
+**this 1** (2025 0.204). **Against its own control it is better on every criterion and worse on
+none.** C2/C4/C6/C8 PASS; C5a −2.4/−1.8/+3.1 %; D-10 free-class 11/12. **Determination NOT-YET**,
+unchanged — C3c fails all three years (no scarcity mechanism at all; SPP-55) and C3a/C3b-2025 are
+marginal. **The failed gate is not withdrawn**; the owner overrode the lane's recommendation on the
+standing structural-improvement rule.
+
+**Retention (rules 15/31):** bundle slimmed to keeper-3's committed shape (3.1 MB); the 121 MB of
+`dispatch/`/`floors/`/extra hourly parts **moved to a gitignored sibling, not deleted**. SPP is now
+at **keeper-only retention** (one registered run), which required converting this lane's predecessor
+citations to lane/FINDING form — the convention keeper-3's own note recorded. DOF labels carried
+forward from keeper-3's committed ledger; the builder-vs-committed discrepancy stays **SPP-50 R-3**.
+**Disclosed:** the post-solve report stage was killed (~4.8 GB, no traceback) after the 2025
+price-duration block — the LP completed and wrote every hourly sidecar, and `metrics.json` is a
+registration artifact, not a solve one. Cell `vre_curtailment_oversupply_allocation` **R → K**.
+Records: `docs/handoffs/FINDING-spp-51c-2026-09-09.md` (+ ADDENDUM 2),
+`PRECOMMIT-spp-51c-2026-09-09.md` + ADDENDUM.
