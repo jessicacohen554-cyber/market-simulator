@@ -1558,3 +1558,11 @@ results/calibration/_spp52a_heavy/
 # (git add -f) their own bundle onto a scratch branch to ship results back;
 # nothing here reaches main unless the owner promotes the run.
 results/calibration/ercot261_*/
+# neiso-fuelvintage-1 working bundles: the 2019-2022 retiree-window fleet fix
+# (holdout touchpoints 2020/2021/2022) and the 2023-2025 training-span
+# bit-identity re-solve (charter task 3). Ignored so they can never reach a
+# commit — the only thing rule 29 [R-SCREEN] (c) requires, and what rule 31
+# [R-RETAIN] names as the mechanism that discharges it. Ignoring is NOT a
+# licence to delete: these stay on local disk until the OWNER rules on
+# promotion. A promoted bundle's slim set overrides this rule via `git add -f`.
+results/calibration/neiso107_*/

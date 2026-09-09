@@ -2604,17 +2604,41 @@ NUCLEAR_MONTHLY_CF_BY_YEAR: dict[str, dict[int, list[float]]] = {
     # 2021 0.003, 2022 0.001: TIGHTER than the committed tuned years (2023
     # 0.001, 2024 0.004, 2025 0.007). Oct-2021 reads 0.43 (923) vs 0.426 (930),
     # so the deep refuelling outage is confirmed by hourly telemetry.
-    #   CAVEAT (fleet vintage, material for 2019 ONLY): the CF is measured
-    #   against the MODEL fleet's pmax, and the model's NEISO nuclear fleet is
-    #   the current 2-plant EIA-860 snapshot. Pilgrim (EIA 1590, 677 MW) ran
-    #   Jan-May 2019 and generated 2.177 TWh before retiring 31 May 2019, but
-    #   is absent from that snapshot, so the 2019 row anchors the 3,355 MW
-    #   Millstone+Seabrook fleet only — it does NOT restore Pilgrim. The
-    #   EIA-930 cross-check shows this directly: Jan-May 2019 telemetry implies
-    #   a fleet CF of 1.18-1.20 (physically impossible for 3,355 MW) and the
-    #   923-930 gap collapses to 0.003-0.005 from June onward, exactly when
-    #   Pilgrim stops. A 2019 solve is short ~2.18 TWh of nuclear regardless of
-    #   this overlay. 2020-2022 are unaffected (Pilgrim absent from both).
+    #   CAVEAT (fleet vintage, material for 2019 ONLY) — RETIRED 2026-09-09 by
+    #   session neiso-fuelvintage-1 (fleet-vintage charter task 4). It read:
+    #   the CF is measured against the MODEL fleet's pmax, the model's NEISO
+    #   nuclear fleet is the 2-plant EIA-860 operable snapshot (566 Millstone +
+    #   6115 Seabrook, 3,355.4 MW), Pilgrim (EIA 1590, 673.6 MW net summer) ran
+    #   Jan-May 2019 and generated 2.177 TWh before retiring 31 May 2019 but is
+    #   absent from that snapshot, so "a 2019 solve is short ~2.18 TWh of
+    #   nuclear regardless of this overlay". The EIA-930 cross-check showed it
+    #   directly: Jan-May 2019 telemetry implied a fleet CF of 1.18-1.20
+    #   (physically impossible for 3,355 MW) and the 923-930 gap collapsed to
+    #   0.003-0.005 from June onward, exactly when Pilgrim stopped.
+    #   WHAT CLOSED IT: the 2019-2022 retiree window (`RETIREMENT_WINDOW_START`
+    #   2019, commit 7934e92c) puts Pilgrim in the parquet
+    #   `eia860_generator_retired_within_window.parquet`, so
+    #   `load_retired_within_window` injects it into a backcast fleet and the
+    #   COD ramp (same plant code) zeros it after May 2019. It is the ONLY
+    #   nuclear unit in NEISO's retiree window, so 2020-2025 are untouched.
+    #   MEASURED against EIA-923 (2019 nuclear energy, GWh): actual incl.
+    #   Pilgrim 29,818; this overlay on the OLD 2-plant fleet 27,698
+    #   (-2.119 TWh, reproducing the caveat); on the retiree-window fleet
+    #   29,879 (-0.061 TWh, -0.2 %). The shortfall is CLOSED.
+    #   WHAT IS NOT CLOSED, stated rather than absorbed: the 2019 row's
+    #   DENOMINATOR is still the 2-plant fleet (`derive_nuclear_monthly_cf.py`
+    #   builds its fleet from `load_fleet_from_csv`, which does not union the
+    #   retiree window), so Jan-May carries a monthly shape error even though
+    #   the annual nets out. Re-derived on the 4,028.6 MW augmented fleet the
+    #   five months read [0.98, 1.00, 0.99, 0.74, 0.76] against the committed
+    #   [1.00, 1.00, 0.99, 0.69, 0.79] — worst month April, +130 GWh. NOT
+    #   re-derived here on purpose: this constant is on the solve surface
+    #   (`solve_surface_declared.py`), so editing it re-keys every ISO's
+    #   configs, and it would do so to repair a year that is locked-test tier
+    #   under an ACTIVE spend freeze and cannot be solved by anyone. The
+    #   re-derive (and the derive script's fleet union behind it) is owed the
+    #   day 2019 is authorized, and not before. 2020-2022 are unaffected
+    #   either way (Pilgrim absent from both fleets).
     #   2026 is deliberately ABSENT: EIA-923 carries only Jan-Apr 2026, so a
     #   2026 anchor would post a false zero for H1's May-Jun.
     "NEISO": {
