@@ -1588,3 +1588,7 @@ results/screen/pjm_ep_level_2023_control/
 results/nyiso_fuelvintage_*/
 results/calibration/nyiso_fuelvintage_*/
 results/screen/nyiso_ep_level_*/
+
+# Derived per-ISO shared-input cache written by every solve (meta.json's
+# shared_inputs points into it). Derived and disposable, like data/clean.
+results/_shared/
