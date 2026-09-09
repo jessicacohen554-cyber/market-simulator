@@ -82,6 +82,37 @@ channel 1 is throttled. **The census says channel 1 is roughly half open, so it 
 PRECOMMIT records, before any dispatch was seen, that a coal move in **either** direction is
 consistent with the mechanism and that **neither sign will be read as a success**.
 
+### 2c. CHANNEL 2 MEASURED — the coal offer DOES fall, but the merit order barely moves
+
+The two channels of §2b are separable at zero LP cost, because they act on different arrays. G-2 already
+showed the coal **fuel price** moves **exactly 0.0**, so channel 2 can only appear in the assembled
+**offer** (`mc_base`). Measured on the same `fleet_only` arm/control pair, capacity-weighted, per hour:
+
+| class | rows | capacity | `mc_base` control | arm | **Δ $/MWh** | Δ % | rows moved | MW moved |
+|---|---|---|---|---|---|---|---|---|
+| **coal** | 553 | 49,371.7 MW | 23.782 | 20.725 | **−3.057** | **−12.85 %** | 393 | 33,156.4 |
+| **gas** | 1,744 | 100,451.1 MW | 40.168 | 36.909 | **−3.259** | −8.11 % | 964 | 53,165.6 |
+| **other** | 1,492 | 81,420.0 MW | 84.448 | 84.448 | **0.000** | 0.00 % | **0** | **0.0** |
+
+**Three readings, all pre-solve:**
+
+1. **Channel 2 is LIVE and large.** The coal offer falls 12.85 % on two-thirds of PJM's coal capacity,
+   driven entirely by the PRB passthrough sigmoid reading the lower ISO `_gas_series` — because the
+   coal *fuel price* itself does not move at all (G-2). This is exactly the indirect route §2b
+   enumerated, and it is now measured rather than argued.
+2. **But the MERIT ORDER barely moves, and it moves the *other* way.** Coal falls −3.057 and gas falls
+   −3.259, so the coal-minus-gas offer gap goes **−16.386 → −16.184**, a change of **+0.202 $/MWh**:
+   coal becomes marginally **less** competitive against gas, not more. **The two channels very nearly
+   cancel.**
+3. **G-2's confinement is stronger than the gate asked for.** 1,492 non-coal, non-gas rows / 81,420 MW
+   move **exactly** 0.0 in the assembled offer, not merely in the fuel price.
+
+**So the pre-solve prediction, on the mechanism's own arithmetic, is: coal ≈ FLAT with a slight
+DOWNWARD bias, and prices down by roughly 3 $/MWh on the marginal offer.** That **contradicts the
+handoff's and FINDING §5b's confident "coal UP"**, which assumed channel 1 was throttled by the print
+path. It is recorded here **before any LP**, which is precisely what rule 29 `[R-SCREEN]` clause (0)
+exists to extract — an arm's structural behaviour, established for the cost of two fleet builds.
+
 ---
 
 ## 3. THE FLEET FIX (Card A) — inert in 2023-2025, **PROVEN not asserted**
