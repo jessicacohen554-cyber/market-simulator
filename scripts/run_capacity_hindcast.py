@@ -2406,27 +2406,6 @@ def main(argv: list[str] | None = None) -> int:
         y for y in range(start_year, end_year + 1) if y not in promised_solve_years
     ]
 
-    # Governance record (FH-1, plan §5.3): the holdout freeze is read and the
-    # run's legality stated EXPLICITLY at launch — deliberate, not accidental.
-    # A T1-FF/hindcast window is freeze-legal by construction (solves = the
-    # training years + the {2021} seed; scoring never leaves 2023-2025; the
-    # 2022/2026 quarantine is bridged), which _validate_window has already
-    # fail-closed enforced above. The freeze state is recorded in the meta.
-    freeze_path = _ROOT / holdout_policy.FREEZE_FILE
-    freeze_active = False
-    if freeze_path.exists():
-        freeze_active = bool(json.loads(freeze_path.read_text()).get("active"))
-    if freeze_active:
-        print(
-            "[governance] HOLDOUT SPEND FREEZE is ACTIVE "
-            f"({holdout_policy.FREEZE_FILE}). This run remains legal under it: "
-            "solve years are the rule-22 training window "
-            f"{sorted(holdout_policy.CALIBRATION_YEARS)} plus the enumerated "
-            f"seed {sorted(holdout_policy.HINDCAST_SEED_YEARS)} (never scored), "
-            "and scoring is bounded to the training window on both sides "
-            "(score_crossover). No out-of-training year is solved, scored, or "
-            "registered; no marker is spent."
-        )
     # Stated for EVERY run, freeze or not, and stated as THIS window's own
     # resolved sets rather than the static bridge constant — a banner that
     # names {2022, 2026} unconditionally is true of the constant, not of the
@@ -2617,7 +2596,6 @@ def main(argv: list[str] | None = None) -> int:
         "forward_from_base": forward_from_base,
         "arm": arm if forward_from_base else None,
         "base_year": start_year if forward_from_base else None,
-        "holdout_freeze_active_at_launch": freeze_active,
         # -- 2. config-describing block (solved-sourced by construction) ---- #
         # Built from the SEAM-RESOLVED config, not the request config: the
         # runner applies ``apply_iso_scenario_defaults`` internally before

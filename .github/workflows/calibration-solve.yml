@@ -43,7 +43,8 @@
 #
 # HOLDOUT. Rule 22 [R-HOLDOUT] is enforced where it always is — inside
 # replay_keeper / run_calibration_full, which refuse a year outside 2023-2025
-# without --holdout-authorized AND the ISO's tier marker. This workflow passes
+# (Historical: this once required --holdout-authorized AND a tier marker;
+# [R-HOLDOUT] was removed 2026-09-09 and no year is gated.) This workflow passes
 # the flag through but grants nothing; CI is not a way around the marker gate.
 name: Calibration solve (large-memory)
 
@@ -78,10 +79,6 @@ on:
         description: "Run note recorded in the bundle's run_config.json"
         default: ""
         type: string
-      holdout_authorized:
-        description: "Pass --holdout-authorized (still requires the ISO's tier marker)"
-        default: false
-        type: boolean
       runner_label:
         description: >-
           Runner to solve on. ubuntu-latest is 2-core/7 GB and is TOO SMALL for a
@@ -227,7 +224,6 @@ jobs:
           fi
           EXTRA=()
           if [ -n "${{ inputs.note }}" ]; then EXTRA+=(--note "${{ inputs.note }}"); fi
-          if [ "${{ inputs.holdout_authorized }}" = "true" ]; then EXTRA+=(--holdout-authorized); fi
           echo "::group::resolved command"
           set -x
           python3 scripts/replay_keeper.py "${{ inputs.source_bundle }}" \

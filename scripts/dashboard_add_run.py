@@ -48,7 +48,7 @@ sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "src"))
 
 from scripts import render_backcast as rb  # noqa: E402  (after sys.path insert)
-from scripts.lib import holdout_policy, keeper_store  # noqa: E402
+from scripts.lib import keeper_store  # noqa: E402
 
 from market_sim.config.constants import STATMODE_PROBE_RUNS  # noqa: E402
 
@@ -160,59 +160,6 @@ def _load_json_doc(path: Path) -> dict:
     return json.loads(path.read_text())
 
 
-def enforce_registration_marker_gate(iso: str, years, repo: Path | None = None) -> None:
-    """Refuse to register a run whose solve years are not authorized NOW.
-
-    The registration-time half of the rule-22 spend gate, minted by owner
-    ruling **R-AZ** (audit-program director sitting 2026-09-06, card "Marker
-    gate": *"Re-check at registration"*). The launch-time gate
-    (``run_calibration_full.enforce_holdout_year_gate``) reads the marker once,
-    when the LP starts; a multi-hour solve can outlive the authorization it
-    launched under. Z-6 is the case
-    (``docs/handoffs/holdout-2022-completeness-ercot-nyiso-2026-09-05.md``
-    §1a): a NYISO 2022 solve launched under the D56-R ``complete`` marker,
-    ``main`` withdrew that marker (nyiso-193) mid-solve, and only the lane's
-    own discipline kept the run un-registered at merge. This closes that at
-    the seam where solve years become a committed artifact.
-
-    The policy itself is NOT re-implemented here — the tier map, the freeze
-    precedence and the marker lookup all come from
-    ``scripts.lib.holdout_policy`` (rule 19 ``[R-ONE-MECH]`` in spirit: one
-    policy module), so this gate and the launch gate can never disagree about
-    which year needs which block. Both marker documents are read from disk on
-    every call, which is the freshness the ruling is about.
-
-    There is deliberately NO bypass flag: a registration that fails this check
-    is not a registration. It runs before the sidecar, the ``runs/<id>.js``
-    payload and the bench parts are written, so a refused run leaves nothing
-    behind.
-
-    Args:
-        iso: Model ISO id of the run being registered.
-        years: The run's solve years (the bundle ``meta.json`` ``years``).
-        repo: Repo root; defaults to the module ``REPO`` read at call time.
-
-    Raises:
-        SystemExit: with the ISO, years, tier, marker/freeze state and the
-            ruling, when any out-of-training year is unauthorized.
-    """
-    root = repo or REPO
-    marker_doc = _load_json_doc(root / holdout_policy.MARKER_FILE)
-    freeze_doc = _load_json_doc(root / holdout_policy.FREEZE_FILE)
-    refusals = holdout_policy.registration_refusals(years, iso, marker_doc, freeze_doc)
-    if not refusals:
-        return
-    sys.exit(
-        "error: REGISTRATION REFUSED (CLAUDE.md rule 22 [R-HOLDOUT]; owner "
-        "ruling R-AZ, 2026-09-06 — the tier marker is re-checked at "
-        "registration, not only at solve launch).\n  "
-        + "\n  ".join(refusals)
-        + "\nThere is no bypass flag. Either the ISO's marker is restored by "
-        "an explicit owner act and the run is re-registered, or the run is "
-        "not registered — git history is the record (rule 15)."
-    )
-
-
 def prune_iso(
     iso: str, *, keep: int = KEEP_PER_ISO, dry_run: bool = False
 ) -> list[str]:
@@ -315,11 +262,6 @@ def main() -> None:
     # can list the run without ever opening the bundle.
     entry = rb.manifest_entry(args.label, bundle)
     rid, iso = entry["id"], entry["iso"]
-
-    # Rule 22 / R-AZ: re-check the tier marker HERE, at the seam where the
-    # run's solve years become a committed sidecar — before anything is
-    # written, so a refused registration leaves no artifact behind.
-    enforce_registration_marker_gate(iso, entry.get("years") or [])
 
     # Store the bundle path relative to the repo root so the sidecar is portable
     # across checkouts (CI clones to a different absolute path).

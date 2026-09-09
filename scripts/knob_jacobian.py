@@ -211,7 +211,6 @@ def solve_year(
     out_dir: Path,
     reference: dict | None = None,
     *,
-    holdout_authorized: bool = False,
     enable_legacy_p2: bool = False,
 ) -> Path:
     """Real one-year replay solve of ``bundle``'s keeper config plus ``overrides``.
@@ -257,7 +256,6 @@ def solve_year(
     kwargs["years"] = [int(year)]
     kwargs["iso"] = iso
     kwargs["hours"] = int(meta.get("hours", 8760))
-    rcf.enforce_holdout_year_gate(kwargs["years"], iso, holdout_authorized)
     rcf.enforce_legacy_p2_kwargs(kwargs, enable_legacy_p2)
     kwargs["reference"] = reference if reference is not None else rcf._load_reference()
     kwargs["run_dir"] = out_dir
@@ -548,15 +546,6 @@ def main() -> None:
         help="dir to solve the perturbed bundles into (default: a temp dir)",
     )
     ap.add_argument(
-        "--holdout-authorized",
-        action="store_true",
-        help=(
-            "acknowledge a rule-22 out-of-training --year. Still fails closed "
-            "unless the ISO carries that year's tier marker AND the holdout "
-            "spend freeze is inactive."
-        ),
-    )
-    ap.add_argument(
         "--enable-legacy-p2",
         action="store_true",
         help=(
@@ -577,7 +566,6 @@ def main() -> None:
         out_root=args.solve_root,
         solve_fn=functools.partial(
             solve_year,
-            holdout_authorized=args.holdout_authorized,
             enable_legacy_p2=args.enable_legacy_p2,
         ),
     )
