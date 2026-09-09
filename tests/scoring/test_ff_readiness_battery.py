@@ -322,8 +322,27 @@ def test_marker_state_reflects_committed_markers():
     # and is corrected here by SPP-38
     # (docs/handoffs/FINDING-spp-38-2026-09-07.md §3, row 12; NOT an SPP
     # failure).
+    #
+    # NYISO RE-KEYED AGAIN 2026-09-09 (session nyiso-fuelvintage-1, rule 22
+    # D-5(b)): the promotion of the 2019-2022 EIA-860 retiree window and
+    # gas_electric_power_monthly_level, under the owner ruling of 2026-09-09
+    # ("these should be promoted as keepers on both 860 and gas shape counts
+    # regardless of inertness"), moved the `complete` marker's keeper
+    # 2026-09-07-nyiso-213-summer-seam -> 2026-09-09-nyiso-221-fuelvintage-span.
+    # The D-5(b) re-verification was artifact-only (scripts/calibration_verdict.py
+    # on the committed bundle, never a solve) and read CALIBRATED with a criterion
+    # table BYTE-IDENTICAL to the superseded keeper's -- zero flips in either
+    # direction -- so the "a WORSE determination STOPS the promotion" clause did
+    # not fire. `declared`, `by` and `keeper_at_declaration` are untouched by a
+    # re-key, so again only the one string moves.
+    #
+    # THIS TIME THE ASSERTION MOVES IN THE PROMOTING LANE'S OWN PR, which is what
+    # every comment above says should happen and what the last two re-keys failed
+    # to do (nyiso-213's was corrected later by SPP-38; nyiso-202's by the merge
+    # of #4516). The desync class this file keeps recording is closed here rather
+    # than handed to the next lane.
     nyiso = B._marker_state("NYISO")
-    assert nyiso["keeper"] == "2026-09-07-nyiso-213-summer-seam"
+    assert nyiso["keeper"] == "2026-09-09-nyiso-221-fuelvintage-span"
     assert nyiso["declared"] == "2026-09-06"
 
 
