@@ -1490,3 +1490,6 @@ results/calibration/ercot259_screen_*/
 # and rule 31 forbids deleting it from local disk before the owner rules on
 # promotion. Every number the lane cites lives in the PRECOMMIT/FINDING.
 results/capxd88-screen/
+
+# SPP-51c screen/control bundles (rule 29(c) delete-before-merge via gitignore; rule 31 [R-RETAIN] keeps them on local disk)
+results/calibration/_spp51c_*
