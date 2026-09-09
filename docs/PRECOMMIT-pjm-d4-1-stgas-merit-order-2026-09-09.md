@@ -229,3 +229,132 @@ per the handoff's step 4.)*
 - **Rule 22 / 30(c):** 2020-2022 are diagnostic touchpoints. **Nothing is tuned on them.** No 2019 or
   H1-2026 work of any kind (locked tier, `final` empty, freeze ACTIVE).
 - **Rule 31 `[R-RETAIN]`:** no bundle is deleted; the promotion question goes to the owner.
+
+---
+
+## 5b. STEP 4 MEASURED — **THERE IS ONE CHANNEL, NOT TWO**
+
+On-recipe `run_year(..., fleet_only=True)` builds through `replay_keeper.run_year_kwargs`
+(3,789 rows, reproducing the keeper's own fleet). Capacity-weighted `mc_base`, annual mean over
+8,760 h:
+
+| year | ST_GAS $/MWh | CT_PEAKER | **ST − CT** | hours ST_GAS **below** CT | CC_REGULAR | ST − CC |
+|---|---|---|---|---|---|---|
+| 2023 | 49.149 | 49.575 | **−0.426** | 4,344 / 8,760 = **49.6 %** | 29.436 | +19.713 |
+| 2024 | 48.548 | 47.273 | **+1.276** | 960 / 8,760 = **11.0 %** | 28.164 | +20.384 |
+| 2025 | 63.312 | 61.477 | **+1.835** | 1,128 / 8,760 = **12.9 %** | 37.826 | +25.487 |
+
+**The offer stack is not inverted.** ST_GAS is priced *above* CT_PEAKER in two of three years and
+sits within 0.43 $/MWh of it — a coin flip — in the third; and it is unambiguously above CC_REGULAR
+(+19.7 / +20.4 / +25.5, **0 %** of hours below) in all three. The handoff's premise — *"steam gas
+should sit ABOVE peakers in the stack, not below them"* — is **already satisfied by the model's
+offers in 2024 and 2025**.
+
+**What this changes about the card.** The displacement does not need a price inversion; it only needs
+the two classes to be **adjacent**, and they are (within ~2 $/MWh of each other against a ~50 $/MWh
+level). A 4.4 – 7.2 TWh mandate landed on ST_GAS therefore displaces the marginal CT_PEAKER
+essentially one-for-one, which is exactly the 2021 (+8.17 / −6.64) and 2022 (+8.97 / −4.60) signature.
+**So the FLOOR is the whole story, and there is no second offer-side channel to separate.** The
+handoff's step-4 warning — *"if ST_GAS clears ahead of CTs on PRICE as well as on the FLOOR there are
+TWO channels"* — resolves to **one**.
+
+*(For completeness, the authorized price-tuning bands are asymmetric — CT_PEAKER 1.05/1.25/1.65 vs
+ST_GAS 1.00/1.00/1.00 — but the assembled offers above are the answer to the question, and they say
+the asymmetry does not produce an inversion.)*
+
+---
+
+## 5c. THE C8 FAILURE IS **PURELY PROVENANCE**, AND IT GATES IN EXACTLY ONE YEAR
+
+Scored through `calibration_verdict.score_forced_share` on the committed artifacts:
+
+| year | ST_GAS C8 | why |
+|---|---|---|
+| 2020 | SKIPPED | immaterial — 1.5 % of ISO load < 2 % floor (D-2 reads **54.3 %** forced) |
+| 2021 | SKIPPED | immaterial — 1.5 % (D-2 reads **64.0 %**) |
+| 2022 | SKIPPED | immaterial — 1.8 % (D-2 reads **46.5 %**) |
+| 2023 | SKIPPED | immaterial — 1.7 % (D-2 reads **39.1 %**) |
+| 2024 | SKIPPED | immaterial — 1.6 % (D-2 reads **36.6 %**) |
+| **2025** | **FAIL** | material at **2.2 %** — 41.3 % forced, above the 30 % cap **and NOT grounded** |
+
+The failure text names one cause and only one:
+
+> *"provenance — **floors a unit its own meter says is offline** (D-4 per-unit conduct FAIL):
+> `st_netload_drag` (plant 3131), (3138), (3148), (3775), (593)"*
+
+**The 30 % cap is not what fails PJM.** Rubric v2.2's grounded-above-budget escalation is available
+and the D-1 shape leg is not cited — the whole gap is the D-4 conduct leg. **So the mandate's LEVEL
+does not have to move for C8; its MEMBERSHIP does.**
+
+---
+
+## 5d. THE ALLOCATION FAMILY IS FALSIFIED PRE-SOLVE — rule 29 `[R-SCREEN]` clause (0)
+
+Four fleet builds per year off the keeper's recipe, armed through the same `prb_overrides` bag
+`replay_keeper --set` uses. The conduct rider is scored on `{min_gen > 0}` — a **superset** of the
+solve's `at_floor_mask`, hence the **more forgiving** basis, so a mechanism that cannot improve here
+cannot improve on the real one for a better reason than noise.
+
+| arm | delta | provenance |
+|---|---|---|
+| **C** | keeper | — |
+| **M** | `netload_drag_merit_allocation=True` | ercot-259: fills the SAME hourly aggregate cheapest-first, commitment blocks before economic tranches |
+| **P** | `netload_drag_min_run_persistence=True` | pjm-177: centred circular moving average of `floor_frac` over each row's own `min_run_hours` |
+| **MP** | both | the composition **pjm-177 §5 item 3 explicitly names**: *"the HOURS are now right and the PLANTS are still wrong … `netload_drag_merit_allocation`'s object, and the two would have to compose to close the mask properly"* |
+
+**Identity and confinement first (arm M, 2023):**
+
+| gate | measured |
+|---|---|
+| **aggregate preserved** | control 8.8093 TWh → arm 8.8093 TWh, **Δ = 0.000000**; **max hourly \|Δ\| = 0.000000 MW** |
+| **confinement** | **42 of 3,789 rows move, all ST_GAS**; `mc_base` max \|Δ\| = **0.0000000000 $/MWh** |
+
+So M does exactly what its docstring says: same MW, different plants, no price effect.
+
+**And it does not clear the conduct rider — in any year:**
+
+| year | **C** | **M** | **P** | **MP** |
+|---|---|---|---|---|
+| 2023 | 4 FAIL | **4** | **4** | **5** |
+| 2025 | 2 FAIL | **2** | **2** | **3** |
+| mandate TWh 2023 | 8.8093 | 8.8093 | 8.8481 | 8.8481 |
+| mandate TWh 2025 | 11.5063 | 11.5063 | 11.5332 | 11.5332 |
+
+**Not one plant flips FAIL → pass under any arm, in either year — and the composition is strictly
+WORSE than either half**, adding a conviction in both years, and **the same plant both times**
+(3148: `pass → FAIL`). Persistence widens each plant's binding window toward all 8,760 h while merit
+allocation concentrates the mandate onto fewer plants; on 3148 the widening wins and the median falls
+through zero.
+
+**This falsifies, at zero LP cost, the explicit successor hypothesis pjm-177 left on the record.**
+Four LP arms at ~70 min each were not spent to learn it.
+
+### 5d-i. WHY IT CANNOT WORK — the mandate's hours against the meter's
+
+Per plant: hours the drag binds, versus hours the plant's own meter reads > 0. A passing median needs
+more than half the binding hours non-zero, so the largest floorable window is ≈ 2 × the meter's
+non-zero hours.
+
+| plant | year | mandate h | meter > 0 h | **mandate ÷ max floorable** | conduct |
+|---|---|---|---|---|---|
+| **3775** | 2023 | 7,666 | **707** | **5.42** | FAIL |
+| **3149** | 2023 | 7,666 | 1,253 | **3.06** | FAIL |
+| **593** | 2023 | 7,625 | 1,414 | **2.70** | FAIL |
+| 384 | 2023 | 2,759 | 1,437 | 0.96 | FAIL |
+| **3775** | 2024 | 7,579 | 1,348 | **2.81** | FAIL |
+| **593** | 2024 | 5,818 | 1,922 | **1.51** | FAIL |
+| **3775** | 2025 | 7,885 | 1,985 | **1.99** | FAIL |
+| **593** | 2025 | 7,718 | 2,860 | **1.35** | FAIL |
+| 1353 / 3131 / 3138 / 3140 | all | — | — | **0.45 – 0.85** | pass |
+| **fleet TOTAL** | 2023 / 2024 / 2025 | 56,110 / 49,424 / 59,617 | 30,723 / 35,152 / 39,212 | **0.91 / 0.70 / 0.76** | — |
+
+**Read the last row against the ones above it.** In aggregate the mandate's hours are *comfortably
+supportable* by the metered fleet (0.70 – 0.91). The failure is entirely **distributional**: the
+mandate is placed on plants that barely run. Plant 3775 is floored for **87 % of the year on a unit
+whose meter reads non-zero in 8 % of it.**
+
+That is why an ALLOCATION swap cannot fix it. `merit_allocation`'s merit signal is **bid heat rate**,
+and heat rate is not duty — its own docstring records the weakness rather than tuning around it
+(*"Spearman(heat rate, CAMPD online fraction) … only −0.286 (p = 0.49) in 2025"*). The right signal
+is **membership**, not order: which plants are eligible to carry a reliability-commitment floor at
+all.
