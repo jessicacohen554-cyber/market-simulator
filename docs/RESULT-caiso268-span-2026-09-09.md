@@ -270,12 +270,38 @@ what §6.1 requires and what a hand-composed bundle cannot give.
    `caiso_st_gas_committed_measured` and `caiso_st_gas_peak_measured` are both armed and resolve
    those bands per plant for `ST_GAS_PEAKER_PLANTS` members. ST_GAS carries 0.02–0.19 TWh — a
    completeness note, not a material one.
-4. **The three sibling per-year shards did not land.** `claude/caiso268-y2023`, `-y2024` and
-   `-y2025` are **absent from the remote** at the time of writing (checked after the solve:
-   `origin/claude/caiso268-span` is the only `caiso268` branch). **The per-year vs one-invocation
-   cross-check the charter asked for could not be performed**, and no divergence is reported
-   because none could be measured. It is a gap, not a clean result. If those shards land later,
-   the numbers to compare against are §2.1's C3a and §2.2's C4 per year.
+4. **CORRECTED 2026-09-09, after this RESULT was first pushed: the shard picture was both worse
+   and better than stated.** The original text read that all three sibling per-year shards were
+   absent from the remote and that the cross-check "could not be performed". That was true when
+   written and is now stale in three ways, all recorded rather than silently edited:
+
+   * **FIVE shards were launched, not four.** Besides Y2023 / Y2024 / Y2025 / SPAN, the launcher
+     also created **`caiso-268 shard H2 (2022 validation touchpoint)`** on branch
+     `claude/caiso268-h2-2022`. This shard is **not in the PRECOMMIT's §6.2 shard table**, so the
+     charter under-declared the launch. A 2022 solve is a rule 22 `[R-HOLDOUT]` **validation-tier
+     spend**; CAISO does hold the `complete` marker (declared 2026-09-06, re-keyed to the
+     fuelvintage keeper), so the spend was **authorized** — this is a shard-plan disclosure gap,
+     not a governance breach.
+   * **Y2025 LANDED, and it agrees with this bundle EXACTLY.** `claude/caiso268-y2025` is on the
+     remote (PR #5789) carrying `docs/RESULT-caiso268-y2025-2026-09-09.md`. Its single-year 2025
+     solve reports **C4 gas 0.298 → 0.308**, **C3a 37.26 → 35.54 (+3.2 %)**, **Δλ −1.7201**,
+     **C3b 0.111 → 0.082** — against this bundle's **0.298 → 0.308**, **37.26 → 35.54 (+3.2 %)**,
+     **−1.720**, **0.111 → 0.082**. **Zero divergence.** The cross-check the charter asked for is
+     therefore **performed for 2025 and clean**. Note what this does and does not say: it shows a
+     single-year 2025 solve reproduces the span's 2025, which does **not** disturb §6.1's finding —
+     that concerns *composing* several shards' years into one bundle across different input
+     snapshots, which is a different operation and is still refused.
+   * **Three shards produced nothing.** `-y2023` (session bucket **FAILED**), `-y2024` (last seen
+     mid-LP and stalled) and `-h2-2022` (**ARCHIVED with no branch on the remote**) never pushed.
+     The 2023/2024 legs of the cross-check remain unperformed. **The H2-2022 case is the worst of
+     the three and is the one to learn from**: it was archived as *completed* while having produced
+     nothing that reached the remote, so its container — and anything it solved — is gone
+     (rule 31 `[R-RETAIN]`: a gitignored bundle does not survive its session). 2022 is validation
+     tier and rule 22 makes it **iterable by design**, so nothing is permanently lost; it can simply
+     be re-run. The protocol written to stop exactly this is
+     `docs/handoffs/shard-launcher-protocol-2026-09-09.md` §4 — **a branch on the remote is the only
+     acceptable proof of life**, and an archived session with no branch is a failure, not a
+     completion.
 5. **The container needed six things installed or rebuilt before the first LP** and none is a model
    change: the pinned solve stack (highspy 1.14.0, numpy 2.4.6, scipy 1.17.1, pandas 3.0.3,
    pyarrow 24.0.0, pydantic 2.13.4), `openpyxl` (eGRID sheet reads), `tzdata` (`US/Pacific` for the
