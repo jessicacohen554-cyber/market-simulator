@@ -159,8 +159,46 @@ it owns, the seam cannot reach.
 | `partial_plant_exit_carry` | absent (False) | §A5 item 2 disarmed |
 | `gas_electric_power_monthly_level` | absent (False) | the control posture |
 
-**RESULT: see the RESULT/FINDING document — the census number is reported there and is quoted in the
-matrix cell. Per §A7 it SIZES the promotion; it does not gate it.**
+### THE CENSUS NUMBER — measured 2026-09-09, before the screen solve
+
+Measured through the real path: `run_calibration.run_year(..., fleet_only=True)` off the keeper's own
+`meta.json`, then `apply_plant_monthly_fuel_prices(base, fleet_arrays, config, 2023)` reading its
+returned `(n_gen, T)` written-cell mask, restricted to gas rows (`_GAS_FUEL_IDX = (0, 1, 10, 14)`) and
+weighted by `pmax`.
+
+| quantity | PJM 2023 |
+|---|---|
+| generators in the LP | 3,789 |
+| **gas rows** | **1,744** |
+| **gas capacity** | **100,451.1 MW** |
+| **print-path-owned share of gas CAPACITY-HOURS** | **51.794 %** |
+| print-path-owned share of gas cells, unweighted | 49.871 % |
+| gas rows the print path owns in **all 8,760 hours** | 780 (**47,285.5 MW**) |
+| gas rows the print path **never touches** | 844 (**46,825.4 MW**, 46.6 % of gas capacity) |
+| gas rows partially owned | 120 |
+
+**WHAT THIS MEANS, and it is not what §A2 expected.** §A2 flagged the per-plant print path as "THE MOST
+LIKELY WAY THIS ARM COMES BACK INERT", and for MISO the matrix already records **100 %** print
+ownership. **PJM is not that case.** The print path owns barely half, so **48.2 % of PJM's gas
+capacity-hours are reachable by the seam directly** and **46,825.4 MW of gas capacity is untouched by
+the print path in every hour of the year**. Both channels enumerated below are therefore LIVE, and the
+arm is **not** inert by construction.
+
+**The consequence for the coal prediction, registered before the solve.** With channel 1 roughly half
+open rather than closed, the sign of the coal move is **genuinely contested** between the two channels
+rather than settled by channel 2. The handoff and FINDING §5b predict **coal UP**; that reading assumed
+channel 1 was throttled. I am recording, before seeing any dispatch, that **the census does not support
+that assumption**, and that a coal move in **either** direction is consistent with the mechanism. I
+will report which channel won, at full magnitude, and will not treat either sign as a success.
+
+**Per §A7 this number SIZES the promotion; it does not gate it.** The owner has ruled promote-regardless
+of inertness, and this measurement says the promotion is worth substantially more in PJM than the inert
+case §A2 feared: about half of PJM's gas fleet prices off the seam.
+
+**G-3 anchor, fixed here before the solve.** `iso_electric_power_monthly_level('PJM', 2023)` =
+[3.8617, 3.4389, 2.6920, 2.2664, 2.0334, 1.9419, 2.2058, 1.9799, 2.0993, 2.1397, 2.6888, 2.5357]
+$/MMBtu, mean **2.4903**. The armed run's ISO monthly level must equal this array **exactly** (rule 19:
+replaced, never blended).
 
 ### The two channels, enumerated before the number is known (rule 19 `[R-ONE-MECH]`)
 
