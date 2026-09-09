@@ -1574,3 +1574,12 @@ results/pjm_fuelvintage_H2/
 results/pjm_fuelvintage_A/
 
 results/screen/pjm_ep_level_2023_control/
+
+# caiso-fuelvintage-1 solve bundles: kept on local disk under rule 31 [R-RETAIN]
+# (nothing is deleted before the owner rules on promotion) while being kept OUT of
+# `main`, which is what discharges rule 29(c) [R-SCREEN] and the parity gate.
+results/screen/caiso_ep_level_2023/
+results/caiso_fuelvintage_H1/
+results/caiso_fuelvintage_H2/
+results/caiso_fuelvintage_T1/
+results/caiso_fuelvintage_T2/
