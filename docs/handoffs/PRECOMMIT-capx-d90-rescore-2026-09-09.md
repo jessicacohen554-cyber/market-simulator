@@ -399,3 +399,44 @@ years of the arm itself**, which is the identical object: D88's own PRECOMMIT §
 `config.end_year` reaches only the year-loop bound and two warning-message builders in
 `policy/carbon.py`, entering no price, no screen and no decision. Same test, one fewer solve, and no
 second partial bundle to retain. The pass/fail branches of §3.5 are unchanged.
+
+---
+
+## ADDENDUM B — a foreseen FC-7 artifact, and its handling rule, fixed BEFORE the solve
+
+**The trap.** `build_forecast_dof_ledger.py` enumerates **non-default** `ScenarioConfig` fields, which
+is why d60's own ledger has 7 entries and carries no CCS row at all (Q42 had made
+`ccs_retrofit_capex_co2_scaling` the default — the standing verdict's P20 records exactly this). The
+two §3.4 pins were **defaults when d60 was solved** and are **non-default now**, so the arm's ledger
+will list them; and `CURATED_IDENTIFICATIONS` has a row for `ccs_retrofit_capex_co2_scaling` but
+**none** for `ccs_retrofit_fixed_cost_co2_scaling` or `ccs_retrofit_vom_adder`. They would therefore
+land **UNIDENTIFIED**, which by the instrument's own contract keeps the `unattested` token and pushes
+**FC-7 PASS → CAVEAT**.
+
+**Why that would be a false reading.** The pins are **restorations of the scored run's own recipe**,
+not new degrees of freedom. §A.1 measured the arm's resolved config as a **zero-field diff** against
+d60's committed `config.yaml`: the arm has *exactly* the free parameters d60 had. What changed is the
+*ledger's description* of an unchanged recipe, because the dataclass defaults moved underneath it.
+An FC-7 movement here would be **this lane's instrumentation, not D88** — the precise contamination
+this re-score exists to avoid.
+
+**Pre-registered handling rule — fixed now so it cannot be chosen by the result:**
+
+1. Generate the arm's ledger with the standard instrument and score FC-7 on it. **If it reads PASS,
+   that is the reading, full stop.**
+2. **If and only if** it reads other than PASS *solely* because the two restoration pins appear as
+   non-default/UNIDENTIFIED, report **both**, neither hidden:
+   * **(i) the as-generated verdict** — the primary, headline number; and
+   * **(ii) a secondary reading with d60's own committed `dof_ledger.json` carried**, which is
+     admissible on exactly the ground the FC-6 carry is (§A.2): the input is held byte-identical on
+     both sides, and here it is additionally *correct*, since the recipe is field-identical.
+3. **Any other FC-7 movement — an UNIDENTIFIED entry from any other field, a failed attestation
+   assertion, a `run_config` or overlay-off row change — is REAL and is reported as a real FAIL.**
+   The carve-out is exactly two named fields and nothing else.
+4. The DOF-ledger instrument is **not edited** to make this go away. Adding curated identifications
+   would change the ledger for every other run in the program, which is not this lane's to do.
+
+**P9 is graded against clause 1, not clause 2.** §5's P9 predicted "PASS, 8–9 entries, all
+IDENTIFIED". On the evidence above the *entry count* half looks right and the *all IDENTIFIED* half
+looks wrong, and P9 will be scored a **MISS** if the as-generated ledger carries an UNIDENTIFIED
+entry — recorded here, before the solve, rather than reinterpreted afterwards.
