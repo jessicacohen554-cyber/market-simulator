@@ -76,17 +76,17 @@ _IGNORE = {
     # loud non-fatal WARNING; here it must be ignored so build_kwargs (and the
     # --reuse-solved comparator that calls it) does not treat it as unmapped.
     "environment",
-    # Composite per-year recipe overlay (ercot-256). A composite bundle's
-    # meta.json carries ONE config — for ERCOT the forward one — while its
-    # carve-out years solved under a different recipe. This block records the
-    # EXACT per-year key overlay a replay needs, so the two-config provenance
-    # defect that blocked ercot-254 and ercot-255 (replay silently applying the
-    # forward config to a carve-out year) is at least VISIBLE in the artifact
-    # rather than absent from it. Pure provenance here: build_kwargs must not
-    # treat it as a solve_and_persist kwarg, exactly like "environment". A
-    # replay that wants a carve-out year still applies the overlay explicitly
-    # (--set), which is what the ercot-256 promotion did; consuming this block
-    # automatically is the FIX, and it is deliberately not attempted here.
+    # Composite per-year recipe overlay (ercot-256, CONSUMED since ercot-260).
+    # A composite bundle's meta.json carries ONE config — for ERCOT the
+    # forward one — while its carve-out years solved under a different recipe.
+    # This block records the EXACT per-year key overlay a replay needs, which
+    # closes the two-config provenance defect that blocked ercot-254, -255 and
+    # -259 (replay silently applying the forward config to a carve-out year).
+    # It is not itself a solve_and_persist kwarg, so build_kwargs must skip it
+    # exactly like "environment"; the overlay reaches the solve through
+    # enforce_single_recipe_partition, which routes each key down the same two
+    # channels --set uses. ercot-256 applied it by hand (--set); consuming it
+    # automatically is the FIX, and it IS attempted here.
     "config_partition_overrides",
     "iso",
     "years",
@@ -304,6 +304,149 @@ def build_kwargs(meta: dict) -> dict:
     ):
         kwargs["coal_econ_marginal_hr_bound"] = False
     return kwargs
+
+
+#: ``meta.json`` schema tag of the composite per-year recipe overlay
+#: (:data:`CONFIG_PARTITION_KEY`). Written by
+#: ``scripts/stamp_config_partition.py``; consumed by
+#: :func:`config_partition_overlay`.
+CONFIG_PARTITION_SCHEMA = "composite-per-year-recipe/v1"
+
+#: The ``meta.json`` key carrying that overlay.
+CONFIG_PARTITION_KEY = "config_partition_overrides"
+
+
+def config_partition_overlay(meta: dict, year: int) -> dict:
+    """The extra ``ScenarioConfig`` keys ``year`` actually solved under.
+
+    A COMPOSITE bundle spans years that solved under DIFFERENT configs, but
+    ``meta.json`` can record only one — for the ERCOT two-config keeper the
+    FORWARD one (owner ruling 2026-08-26; ``keepers/ERCOT.json``
+    ``config_partition``). Its carve-out years additionally carried
+    ``ercot_offer_swcap_clip=true`` and the x33.0 ``offer_curve_by_group``
+    peak bands, neither of which is a ``solve_and_persist`` kwarg and neither
+    of which any ``meta.json`` recorded — so a replay silently solved the
+    FORWARD config on a carve-out year and reported that as the keeper
+    (measured: ercot-259's control replayed the keeper on 2023 and solved
+    ``swcap=False`` / CC_REGULAR ``peak=4.576``, C3a -39.6 %, against the
+    keeper's own ``peak=151.008`` and C3a -7.3 %).
+
+    :data:`CONFIG_PARTITION_KEY` closes that: it records, per year, the EXACT
+    key overlay on top of the meta recipe. This reads it. Years absent from
+    the block solved the base recipe and return ``{}``, so a one-config bundle
+    (no block at all) is unaffected.
+
+    Returns:
+        The year's overlay, ``_``-prefixed schema/annotation keys stripped.
+    """
+    block = meta.get(CONFIG_PARTITION_KEY) or {}
+    entry = block.get(str(int(year))) or {}
+    return {k: v for k, v in entry.items() if not k.startswith("_")}
+
+
+def partition_years_by_recipe(
+    meta: dict, years: "list[int]"
+) -> "list[tuple[dict, list[int]]]":
+    """Group ``years`` by the overlay each one solved under, in first-seen order.
+
+    One ``solve_and_persist`` call carries ONE config, so a span whose years
+    do not share an overlay cannot be replayed by a single invocation — see
+    :func:`enforce_single_recipe_partition`.
+    """
+    groups: "list[tuple[dict, list[int]]]" = []
+    for y in years:
+        overlay = config_partition_overlay(meta, y)
+        for g_overlay, g_years in groups:
+            if g_overlay == overlay:
+                g_years.append(int(y))
+                break
+        else:
+            groups.append((overlay, [int(y)]))
+    return groups
+
+
+def apply_config_overlay(kwargs: dict, overlay: dict) -> None:
+    """Apply a per-year recipe overlay to reconstructed replay ``kwargs``.
+
+    Routes each key through the SAME two channels ``--set`` uses — the
+    explicit ``solve_and_persist`` kwarg when one exists AND the generic
+    ``prb_overrides`` ``ScenarioConfig`` channel when the key is a config
+    field — because ``run_year``'s application order is mixed and a
+    single-channel write is silently re-stomped by the other (the ERCOT-65
+    defect class; see the ``--set`` comment in :func:`main`). This is exactly
+    the channel the ercot-256 promotion set these keys through by hand, so a
+    consumed overlay reproduces the leg rather than approximating it.
+
+    Applied BEFORE ``--set`` so an operator override still wins.
+
+    Raises:
+        SystemExit: a key nothing would consume — never a silent drop
+            (the miso-50..53 lossy-reconstruction class ``build_kwargs``
+            exists to prevent).
+    """
+    if not overlay:
+        return
+    from market_sim.config.scenarios import ScenarioConfig
+
+    cfg_fields = {f.name for f in dataclasses.fields(ScenarioConfig)}
+    solve_params = set(inspect.signature(rcf.solve_and_persist).parameters)
+    # DEFENSIVE COPY, not setdefault-and-mutate: ``build_kwargs`` binds the
+    # override bag straight off ``meta``, so writing through it would mutate
+    # the caller's parsed meta.json — contaminating the BASE recipe for every
+    # later group of the same span (measured: a forward-leg replay picked up
+    # the carve-out's swcap/peak from a preceding carve-out leg). Same guard
+    # the per-flag override blocks in ``run_replay_bundle`` already use.
+    kwargs["prb_overrides"] = dict(kwargs.get("prb_overrides") or {})
+    for key, val in overlay.items():
+        routed = False
+        if key in solve_params:
+            kwargs[key] = val
+            routed = True
+        if key in cfg_fields:
+            kwargs["prb_overrides"][key] = val
+            routed = True
+        if not routed:
+            raise SystemExit(
+                f"{CONFIG_PARTITION_KEY} records {key!r}, which is neither a "
+                "solve_and_persist kwarg nor a ScenarioConfig field at HEAD — "
+                "nothing would consume it, so the replay would solve a "
+                "DIFFERENT recipe than the bundle records"
+            )
+
+
+def enforce_single_recipe_partition(
+    meta: dict, years: "list[int]", kwargs: dict
+) -> None:
+    """Consume the per-year recipe overlay for ``years``, or refuse the span.
+
+    A composite bundle's span is replayable one RECIPE GROUP at a time,
+    because ``solve_and_persist`` carries one config per call. When ``years``
+    share an overlay it is applied and the replay is faithful; when they do
+    not, this HARD FAILS and names the groups, rather than silently solving
+    one group's config over the whole span — which is the defect itself.
+
+    The mixed span is solved by chaining one invocation per group with
+    ``--years`` and ``--reuse-solved`` (CLAUDE.md rule 12's per-year chain,
+    already the idiom for an ERCOT full span, whose single-year LP needs
+    6-9 GB).
+    """
+    groups = partition_years_by_recipe(meta, [int(y) for y in years])
+    if len(groups) > 1:
+        detail = "; ".join(
+            f"{sorted(g_years)} -> "
+            + (", ".join(sorted(g_overlay)) if g_overlay else "the base recipe")
+            for g_overlay, g_years in groups
+        )
+        raise SystemExit(
+            f"bundle records a {CONFIG_PARTITION_KEY} overlay that splits the "
+            f"requested span into {len(groups)} recipe groups ({detail}). One "
+            "solve carries ONE config, so replaying them together would solve "
+            "a single group's recipe over every year — the two-config replay "
+            "defect this block exists to close. Chain one invocation per "
+            "group with --years (and --reuse-solved to carry solved years "
+            "forward)."
+        )
+    apply_config_overlay(kwargs, groups[0][0] if groups else {})
 
 
 #: ``run_year`` parameters that are NEVER part of a bundle's recipe: the four
@@ -733,6 +876,11 @@ def main() -> None:
     kwargs["run_dir"] = Path(args.out_dir) if args.out_dir else bundle
     if args.reuse_solved is not None:
         kwargs["reuse_solved"] = Path(args.reuse_solved)
+    # COMPOSITE per-year recipe (ercot-260). meta.json carries ONE config; a
+    # composite bundle's other years solved under a recorded overlay. Consume
+    # it for the requested span — or refuse a span that mixes recipes — BEFORE
+    # the --set loop, so an explicit operator override still wins.
+    enforce_single_recipe_partition(meta, kwargs["years"], kwargs)
     # --set routes through BOTH channels: the explicit solve_and_persist kwarg
     # (when one exists) AND the generic prb_overrides ScenarioConfig channel
     # (when the key is a config field). run_year's override application order
