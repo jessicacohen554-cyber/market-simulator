@@ -1,0 +1,24 @@
+{
+ "probe": "miso-248 screen gates",
+ "prereg": "results/calibration/PREREG-miso248-the-spp-hourly-ladder-rederive-on-the-repaired-clock-2026-09-09.md",
+ "screen_year": 2023,
+ "provenance": {
+  "git_head": "86f6f3c285029f9e854764f70edb404376c8df79",
+  "dirty": true
+ },
+ "G2_confinement": {
+  "year": 2023,
+  "n_rows_total": 48,
+  "n_rows_moved": 16,
+  "n_non_spp_rows_moved": 5,
+  "offending": [
+   "MISO_external_refimp_SPP#1: want -2.8200000000000003, got -2.8200000000000003 std 2.5639502485114184e-16",
+   "MISO_external_refexp_SPP#1: want 2.63, got 2.629999999999999 std 1.3612499392689693e-15",
+   "MISO_external_refimp_SPP#2: want -4.57, got -4.569999999999993 std 5.127900497022837e-16",
+   "MISO_external_refimp_SPP#3: want -7.75, got -7.75 std 3.2834583959630877e-15",
+   "MISO_external_refimp_SPP#5: want -39.349999999999994, got -39.34999999999998 std 7.674738709330906e-15"
+  ],
+  "all_moves_exact_and_hour_constant": false,
+  "PASS": false
+ }
+}

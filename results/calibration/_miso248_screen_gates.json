@@ -1,0 +1,59 @@
+{
+ "probe": "miso-248 screen gates",
+ "prereg": "results/calibration/PREREG-miso248-the-spp-hourly-ladder-rederive-on-the-repaired-clock-2026-09-09.md",
+ "screen_year": 2023,
+ "provenance": {
+  "git_head": "2f1c1a8398f0e178703adb643548ecaad582e37f",
+  "dirty": true
+ },
+ "G2_confinement": {
+  "year": 2023,
+  "n_rows_total": 48,
+  "n_rows_moved": 16,
+  "n_non_spp_rows_moved": 0,
+  "offending": [],
+  "all_moves_exact_and_hour_constant": true,
+  "PASS": true
+ },
+ "G1_direction_magnitude": {
+  "year": 2023,
+  "dE_pred_TWh": 0.2085,
+  "arm": {
+   "available": true,
+   "n_rows": 16,
+   "net_import_TWh": 1.429726,
+   "import_TWh": 2.432965,
+   "export_TWh": -1.003238
+  },
+  "control": {
+   "available": true,
+   "n_rows": 16,
+   "net_import_TWh": 1.177267,
+   "import_TWh": 1.8907,
+   "export_TWh": -0.713433
+  },
+  "FALLBACK_USED": false,
+  "realised_TWh": 0.252459,
+  "ratio": 1.2108,
+  "same_sign": true,
+  "form": "A",
+  "PASS": true
+ },
+ "G3_identity_arm": {
+  "label": "arm/NEW",
+  "available": true,
+  "rows_checked": 16,
+  "hours_violating_atol_0.01": 0,
+  "max_abs_err": 1.4e-05,
+  "PASS": true
+ },
+ "G3_identity_control": {
+  "label": "control/OLD",
+  "available": true,
+  "rows_checked": 16,
+  "hours_violating_atol_0.01": 0,
+  "max_abs_err": 1.3e-05,
+  "PASS": true
+ },
+ "G3_PASS": true
+}
