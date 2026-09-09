@@ -91,6 +91,7 @@ def main() -> int:
 
     import market_sim.data.fleet.eia860 as eia860
     import market_sim.data.fuel.plant_prices as pp
+    from market_sim.data.fuel.resolve import _GAS_FUEL_IDX
     from scripts.run_calibration import run_year
 
     meta = json.loads((BUNDLE / "meta.json").read_text())
@@ -166,42 +167,48 @@ def main() -> int:
 
         pp.screen_gas_plant_month_prices = _spy_screen
 
-    # --- C: instrument the plant-monthly overwrite's written-cell mask --------
+    # --- C: the plant-monthly overwrite's written-cell mask (ADDENDUM A2) ----
+    # apply_plant_monthly_fuel_prices RETURNS the (n_gen, T) boolean mask of the
+    # cells it wrote, so the census is the return value -- no reconstruction.
     write_mask: dict = {}
     _orig_apply = pp.apply_plant_monthly_fuel_prices
 
-    def _spy_apply(*a, **kw):
-        sig = inspect.signature(_orig_apply)
-        bound = sig.bind_partial(*a, **kw)
-        fa = bound.arguments.get("fleet_arrays") or (a[0] if a else None)
-        before = None
-        if fa is not None and getattr(fa, "fuel_price", None) is not None:
-            before = np.array(fa.fuel_price, copy=True)
-        out = _orig_apply(*a, **kw)
-        target = out if getattr(out, "fuel_price", None) is not None else fa
-        if before is not None and target is not None:
-            after = np.asarray(target.fuel_price)
-            if after.shape == before.shape:
-                moved = ~np.isclose(before, after, equal_nan=True)
-                gas = None
-                ft = getattr(target, "fuel_type", None)
-                if ft is not None:
-                    ft = np.asarray(ft).astype(str)
-                    gas = np.char.find(np.char.lower(ft), "gas") >= 0
-                write_mask["cells_total"] = int(before.size)
-                write_mask["cells_written"] = int(moved.sum())
-                if gas is not None and moved.ndim == 2 and gas.size == moved.shape[0]:
-                    pmax = np.asarray(getattr(target, "pmax", np.ones(gas.size)))
-                    gas_ch = float((pmax[gas, None] * np.ones(moved.shape[1])).sum())
-                    gas_written_ch = float(
-                        (pmax[gas, None] * moved[gas]).sum())
-                    write_mask["gas_capacity_hours"] = round(gas_ch, 1)
-                    write_mask["gas_capacity_hours_written"] = round(gas_written_ch, 1)
-                    write_mask["gas_capacity_hours_written_pct"] = (
-                        round(100.0 * gas_written_ch / gas_ch, 3) if gas_ch else None)
-        return out
+    def _spy_apply(fuel_prices, fleet, config, year, *a, **kw):
+        written = _orig_apply(fuel_prices, fleet, config, year, *a, **kw)
+        m = np.asarray(written, dtype=bool)
+        gas_idx = np.flatnonzero(
+            np.isin(np.asarray(fleet.fuel_type_idx), list(_GAS_FUEL_IDX))
+        )
+        pmax = np.asarray(fleet.pmax, dtype=float)
+        write_mask["cells_total"] = int(m.size)
+        write_mask["cells_written"] = int(m.sum())
+        write_mask["cells_written_pct"] = round(100.0 * m.sum() / m.size, 3)
+        if gas_idx.size:
+            gm = m[gas_idx]
+            gp = pmax[gas_idx]
+            ch = float(gp.sum() * m.shape[1])
+            wch = float((gp[:, None] * gm).sum())
+            write_mask["gas_units"] = int(gas_idx.size)
+            write_mask["gas_capacity_hours"] = round(ch, 1)
+            write_mask["gas_capacity_hours_written"] = round(wch, 1)
+            write_mask["gas_capacity_hours_written_pct"] = (
+                round(100.0 * wch / ch, 3) if ch else None
+            )
+            write_mask["gas_units_with_any_written"] = int((gm.any(axis=1)).sum())
+        return written
 
     pp.apply_plant_monthly_fuel_prices = _spy_apply
+    # resolve.py does `from .plant_prices import apply_plant_monthly_fuel_prices`,
+    # so the module-attribute patch above never reaches its call site.
+    import market_sim.data.fuel.resolve as _resolve
+
+    _resolve.apply_plant_monthly_fuel_prices = _spy_apply
+    # ...and the keeper's own path calls it from run_calibration directly:
+    # resolve_fuel_prices is invoked with apply_monthly=False whenever a
+    # coal-supply base (lignite/PRB) is set first, which this recipe does.
+    import scripts.run_calibration as _rc
+
+    _rc.apply_plant_monthly_fuel_prices = _spy_apply
 
     for year in args.years:
         hr_hits.clear()
