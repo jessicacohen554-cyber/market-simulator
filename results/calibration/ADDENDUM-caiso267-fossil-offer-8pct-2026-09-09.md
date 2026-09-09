@@ -135,6 +135,24 @@ Every fossil group in `offer_curve_by_group`; nothing else exists in it.
 | COAL_WC | 0.850 → 0.78200 | 0.900 → 0.82800 | 1.020 → 0.93840 | 1.200 → 1.10400 |
 | COAL | 0.900 → 0.82800 | 0.950 → 0.87400 | 1.100 → 1.01200 | 1.450 → 1.33400 |
 
+### §D.1 — PRE-SOLVE CORRECTION (mechanical, forced by the validator, no choice exercised)
+
+The §D table as first written named **13** classes / 52 bands. The
+`--offer-curve-json` validator refused three of them:
+`CC_INTERMEDIATE`, `CT_INTERMEDIATE`, `ST_GAS_INTERMEDIATE` — **the offer-curve
+router does not read them at all** (it reads exactly `CC_CHP`, `CC_REGULAR`,
+`COAL`, `COAL_BIT`, `COAL_LIGNITE`, `COAL_PRB`, `COAL_WC`, `CT_CHP`,
+`CT_PEAKER`, `ST_CHP`, `ST_GAS`). The declaration is therefore corrected to
+**10 classes / 40 bands**, and `results/calibration/_caiso267_fossil92_offer_curve.json`
+regenerated to match. **This is a no-op in substance**: all three dropped
+classes carry **zero** CAISO energy in all three years (`cc_intermediate_split`
+and `ct_intermediate_split` are both `false`), which §D already recorded before
+the refusal. `ST_CHP` is readable by the router but has **no entry in the
+keeper's resolved curve** and no CAISO energy, so it is **not added** — adding
+it would inject a band set the keeper never had, which is a new parameter, not a
+cut of an existing one. The correction was made and pushed **before the arm
+solved**; the factor 0.92 is untouched.
+
 **Which of these actually carry CAISO energy** (keeper P1, committed
 `class_hourly_<y>` sidecars, TWh): CC_REGULAR 48.40/46.10/40.33 · CC_CHP
 8.48/7.53/7.56 · CT_PEAKER 2.04/1.67/0.79 · CT_CHP 1.24/1.23/1.20 · ST_GAS
