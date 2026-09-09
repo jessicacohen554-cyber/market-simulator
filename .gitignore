@@ -683,6 +683,10 @@ results/calibration/*-capdel-probe.log
 results/calibration/*.launch.log
 results/calibration/*/_shared/
 results/calibration/_shared/
+# Same derived shared-input cache when a run uses an --out-dir OUTSIDE
+# results/calibration/ (e.g. --out-dir results/<probe>): the sibling
+# _shared/ then lands at results/_shared/, which the two rules above miss.
+results/_shared/
 results/calibration/logs/
 # ISO-scoped (two-level) bundle internals — the single-* rules above miss them.
 results/calibration/*/*/model_changes.diff
