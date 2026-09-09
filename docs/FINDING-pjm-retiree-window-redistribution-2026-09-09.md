@@ -151,3 +151,44 @@ python3 scripts/probes/_pjm_fuelvintage_ep_level_census.py 2023
 Each builds the PJM 2023 fleet twice through `run_calibration.run_year(fleet_only=True)` on the
 keeper's own recipe, swapping only the retiree parquet via a symlinked temp EIA-860 vintage. No
 LP, no write under `data/raw`.
+
+---
+
+## 7. INDEPENDENT CORROBORATION — the CAISO lane found the same defect class, separately
+
+While this was being measured, `caiso-fuelvintage-1` (session `012aNt8CFETU5cCW3EiWzmXf`)
+stopped and escalated to the owner with:
+
+> "2019-2022 retiree window: 16 scoring failures remain; **plant-356 COD defect blocks 5 parallel
+> lanes**" — needs_action: "choose repair approach: **(a) exclude retiree rows before plant
+> latest, (b) per-unit dates on Generator, or (c) bin by (plant, vintage)**"
+
+Two lanes, different ISOs, different symptoms, **same root cause**: the per-plant binning collapses
+units that share a plant code but not a retirement date, so a unit's COD cannot be honoured
+per-unit. This session reached it through a capacity A/B on W H Sammis; CAISO reached it through
+scoring failures on plant 356. Neither knew of the other.
+
+That convergence matters for the repair decision: CAISO's option **(c) bin by (plant, vintage)**
+and option **(b) per-unit dates** would both fix the Sammis redistribution, because both stop a
+2020 retiree and a 2023 retiree from sharing one binned tranche. Option **(a) exclude retiree rows
+before the plant's latest** would also fix Sammis — but by *discarding* the 2019-2022 rows for any
+plant with a later exit, which is the opposite of what commit `7934e92c` set out to do and would
+silently re-empty part of the window it added. Whichever is chosen, **the fix is one shared repair
+serving both lanes, not two.**
+
+## 8. Environment note — PJM cannot be solved in a default container, and why that matters here
+
+Measured in this session while validating the control leg: a PJM per-plant year peaks at
+**13.92 GiB anon RSS**, against a `claude-code-bash` cgroup RSS cap of **14,327,676,928 bytes
+(13.34 GiB)**. The solve is OOM-killed a few minutes in, leaving an **empty `dispatch/` directory
+and a misleading exit code 0** (the code observed is the tail pipeline's, not python's).
+Allocator tuning is not the answer — `MALLOC_ARENA_MAX=2` plus single-threaded BLAS moved the peak
+by **3 MB** (13.920 → 13.917 GiB), i.e. the peak is real data, not fragmentation.
+
+`memory.memsw.limit_in_bytes` on that cgroup is **unlimited**, so swap counts as headroom and the
+container simply ships with none. Adding 3 GB (`fallocate` / `mkswap` / `swapon`) lets the solve
+run; it draws ~1.8 GB. This restores the configuration the previous PJM lane solved under —
+`PRECOMMIT-pjm177-…-2026-09-09.md` §4 records "13.34 GiB cgroup **+ swap**".
+
+Recorded here because it is a **silent** failure: a lane that trusts the exit code will register a
+bundle that was never solved.
