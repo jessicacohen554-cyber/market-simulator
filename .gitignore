@@ -1,5 +1,4 @@
-# =============================================================================
-# .gitignore — organized into pattern rules. Sections:
+# ======================================================================# .gitignore — organized into pattern rules. Sections:
 #   1. Python / build / OS
 #   2. Secrets & local environment
 #   3. Root-level detritus & stray downloads
@@ -13,8 +12,7 @@
 # One-off, session-specific scratch-dir names are intentionally NOT enumerated:
 # any bundle's heavy contents are already covered by the §8 slim-bundle rules,
 # and the recurring scratch families are covered by §9.
-# =============================================================================
-
+# ======================================================================
 # -----------------------------------------------------------------------------
 # 1. Python / build / OS
 # -----------------------------------------------------------------------------
@@ -683,6 +681,10 @@ results/calibration/*-capdel-probe.log
 results/calibration/*.launch.log
 results/calibration/*/_shared/
 results/calibration/_shared/
+# Same derived shared-input cache when a run uses an --out-dir OUTSIDE
+# results/calibration/ (e.g. --out-dir results/<probe>): the sibling
+# _shared/ then lands at results/_shared/, which the two rules above miss.
+results/_shared/
 results/calibration/logs/
 # ISO-scoped (two-level) bundle internals — the single-* rules above miss them.
 results/calibration/*/*/model_changes.diff
@@ -1557,6 +1559,66 @@ results/calibration/_spp52a_heavy/
 # sweep green, since that sweep only ever sees COMMITTED dirs. Shards force-add
 # (git add -f) their own bundle onto a scratch branch to ship results back;
 # nothing here reaches main unless the owner promotes the run.
+results/calibration/ercot261_arm_*/
+results/calibration/ercot261_ctl_*/
+# NOT the composed five-year bundle: the owner ruled it promotable
+# (2026-09-09), so it is a KEEPER and rule 15 [R-DASHBOARD] requires it
+# committed. The slim-bundle rules above still drop its heavy parquet.
+
+# pjm-fuelvintage-1 (gas_electric_power_monthly_level + the 2019-2022 retiree
+# window). Rule 29 [R-SCREEN](c) keeps a screen/control bundle OUT of `main` --
+# .gitignore discharges that duty in full, and the parity gate only ever sees
+# COMMITTED dirs. Rule 31 [R-RETAIN] FORBIDS deleting any of them from local
+# disk before the OWNER has ruled on promotion; `rm` is not the remedy here.
+# Every number this lane cites lives in
+# docs/PRECOMMIT-pjm-fuelvintage-2026-09-09.md and its RESULT doc.
+results/screen/pjm_ep_level_2023/
+# ...and the solve-written derived input cache beside it. Same class as
+# results/calibration/_shared/ above (regenerable from data/raw + data/clean,
+# no bundle carries one), so it gets the same treatment.
+results/screen/_shared/
+results/pjm_fuelvintage_T1/
+results/pjm_fuelvintage_T2/
+results/pjm_fuelvintage_H1/
+results/pjm_fuelvintage_H2/
+results/pjm_fuelvintage_A/
+
+results/screen/pjm_ep_level_2023_control/
+
+# caiso-fuelvintage-1 solve bundles: kept on local disk under rule 31 [R-RETAIN]
+# (nothing is deleted before the owner rules on promotion) while being kept OUT of
+# `main`, which is what discharges rule 29(c) [R-SCREEN] and the parity gate.
+results/screen/caiso_ep_level_2023/
+results/caiso_fuelvintage_H1/
+results/caiso_fuelvintage_H2/
+results/caiso_fuelvintage_T1/
+results/caiso_fuelvintage_T2/
+# caiso-fuelvintage-1 zero-LP probe outputs and A/B scratch (rule 31 [R-RETAIN]:
+# kept on local disk, kept OUT of main; every number they carry is in
+# docs/FINDING-caiso-fuelvintage-1-2026-09-09.md per rule 29 [R-SCREEN] (c)).
+results/calibration/_caiso_fuelvintage_*.json
+results/calibration/_caiso_retiree_*.json
+scripts/probes/_caiso_retiree_ab_tmp/
+
+# nyiso-fuelvintage-1 solve bundles (the training-span shards T1/T2, the holdout
+# touchpoint shards H1/H2, the composed span, and the CARD-1 ordering screen).
+# Rule 31 [R-RETAIN]: these are NEVER deleted from local disk until the OWNER has
+# ruled on promotion -- gitignoring is what discharges rule 29(c)'s
+# delete-before-merge duty, since check_registry_payload_parity's bundle sweep
+# only ever sees COMMITTED dirs. Nothing here reaches main unless promoted.
+results/nyiso_fuelvintage_*/
+results/calibration/nyiso_fuelvintage_*/
+results/screen/nyiso_ep_level_*/
+
+# neiso-fuelvintage-1 (2026-09-09): screen/shard bundles, kept on local disk under
+# rule 31 [R-RETAIN] until the owner rules on promotion, and kept OUT of `main`
+# by this ignore rather than by deletion (rule 29 [R-SCREEN] clause (c) as amended).
+results/neiso_fuelvintage_*/
+results/screen/neiso_ep_level_*/
+# The hand-composed scratch bundles superseded by the single-invocation full-span
+# solves; kept on disk under rule 31, never registered, never on `main`.
+results/calibration/neiso_fuelvintage_*/
+
 results/calibration/ercot261_*/
 
 # pjm-fuelvintage-1 solve bundles (the screen, the training span, the two
@@ -1594,3 +1656,11 @@ results/pjm_fuelvintage_H1_shard/
 results/calibration/pjm_fuelvintage_H2/
 results/calibration/pjm_fuelvintage_TP/
 results/pjm_fuelvintage_TP/
+# neiso-fuelvintage-1 working bundles: the 2019-2022 retiree-window fleet fix
+# (holdout touchpoints 2020/2021/2022) and the 2023-2025 training-span
+# bit-identity re-solve (charter task 3). Ignored so they can never reach a
+# commit — the only thing rule 29 [R-SCREEN] (c) requires, and what rule 31
+# [R-RETAIN] names as the mechanism that discharges it. Ignoring is NOT a
+# licence to delete: these stay on local disk until the OWNER rules on
+# promotion. A promoted bundle's slim set overrides this rule via `git add -f`.
+results/calibration/neiso107_*/

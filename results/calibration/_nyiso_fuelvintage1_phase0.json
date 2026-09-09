@@ -1,0 +1,69 @@
+{
+ "iso": "NYISO",
+ "bundle": "nyiso213_summer_seam",
+ "years": {
+  "2023": {
+   "n_gen": 870,
+   "fleet_arrays_fingerprint": {
+    "availability": "9d5441e8f183a630|(870, 8760)|float64",
+    "efficiency_bin": "8354e2734c5177f2|(870,)|<U10",
+    "emission_rate": "83493caccd3728c1|(870,)|float64",
+    "fuel_type_idx": "3d19531bd985a4cd|(870,)|int64",
+    "heat_rate": "8f0c1d9147775b49|(870,)|float64",
+    "min_gen": "89e5b87466673be3|(870, 8760)|float64",
+    "min_gen_mechanism": "5d71b9391649f98c|(870, 8760)|int8",
+    "nox_rate": "afe729ab84a8b9a7|(870,)|float64",
+    "plant_code": "49ed541a6d40b7f4|(870,)|int64",
+    "plant_group": "57e5c9598cacdff4|(870,)|object",
+    "pmax": "e96bfe12142054ef|(870,)|float64",
+    "pmin": "917230d1cc444397|(870,)|float64",
+    "ramp10": "661e908851ce22c1|(870,)|float64",
+    "so2_rate": "8bc8ef4a2d4dd3f9|(870,)|float64",
+    "state": "46b247dc53147688|(870,)|object",
+    "unit_ids": "541741651357d35b|len=870",
+    "vom": "5dfd6d3bf6a0ae5f|(870,)|float64",
+    "zone_idx": "fad76daf8ebd49f4|(870,)|int64"
+   },
+   "zero_availability_units": 69,
+   "zero_availability_pmax_mw": 3741.963,
+   "total_pmax_mw": 46534.424,
+   "A_simple_cycle_hr_floor_hits": {
+    "2681": {
+     "plant_name": "Greenport",
+     "rows": 3,
+     "hr_before": 8.0,
+     "hr_after": 9.0,
+     "pmax_sum_mw": NaN
+    },
+    "57186": {
+     "plant_name": "Chautauqua LFGTE Facility",
+     "rows": 6,
+     "hr_before": 6.0531,
+     "hr_after": 9.0,
+     "pmax_sum_mw": NaN
+    },
+    "59453": {
+     "plant_name": "Albany Medical Ctr Cogen Plant",
+     "rows": 1,
+     "hr_before": 5.7728,
+     "hr_after": 9.0,
+     "pmax_sum_mw": NaN
+    }
+   },
+   "B_f923_plausibility_screen": {
+    "rows_in": 68919,
+    "rows_moved": 0
+   },
+   "C_plant_monthly_write_mask": {
+    "cells_total": 7621200,
+    "cells_written": 2742240,
+    "cells_written_pct": 35.982,
+    "gas_units": 492,
+    "gas_capacity_hours": 207963483.8,
+    "gas_capacity_hours_written": 117993919.4,
+    "gas_capacity_hours_written_pct": 56.738,
+    "gas_units_with_any_written": 265
+   }
+  }
+ }
+}

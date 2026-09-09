@@ -1,342 +1,460 @@
 # PRECOMMIT — PJM: the measured monthly gas LEVEL + the 2019-2022 retiree window
 
-**Session:** `pjm-fuelvintage-1` · **Date:** 2026-09-09 · **Branch:** `claude/pjm-fuelvintage-1`
-**HEAD at writing:** `f51c287d8e1655ba4bf4e9ff9ebe2857fa4a733e`
-**Keeper / control:** `results/calibration/pjm_debugb_inputclock_A` = run `2026-08-15-pjm-162-inputclock`
-**Scope:** PJM ONLY. No other ISO's keeper shard, matrix shard, status part or calibration log is touched.
+**Session:** `pjm-fuelvintage-1`, 2026-09-09. **ISO scope: PJM only.**
+**Branch:** `claude/pjm-fuelvintage-1`, off `origin/main` @ `87ad084b`.
+**Arm:** `ScenarioConfig.gas_electric_power_monthly_level = True` (commit `7648daa0`), plus the
+2019-2022 retiree window already on `main` (commit `7934e92c`, no flag).
+**Control (declared posture, see §2):** the committed keeper bundle
+`results/calibration/pjm_debugb_inputclock_A` = run `2026-08-15-pjm-162-inputclock`.
 
-> **The owner has already ruled (§A7, 2026-09-09, verbatim: *"these should be promoted as keepers on
-> both 860 and gas shape counts regardless of inertness"*).** This session is PROMOTING, not deciding.
-> Everything below is measurement duty, which §A7 explicitly does not relax: the phase-0 census, every
-> criterion at full magnitude, rule 1 `[R-STRUCT]`'s ban on gating a mechanism on its target residual,
-> rule 16 `[R-ALLYEARS]`'s ONE registered bundle over 2023-2025, and rule 31 `[R-RETAIN]`.
-
----
-
-## (a) G-DRIFT (rule 29(b)) — **NOT RUNNABLE FOR PJM, and the control posture is IMPAIRED**
-
-**This is a negative result, stated before any solve, not an assertion of cleanliness.**
-
-**Reason 1 — the keeper's recorded sha is dead.** `meta.json` / `run_config.json` record
-`git_sha = 457ae04`. It does not resolve at HEAD (`git cat-file -t 457ae04` → *"Not a valid object
-name"*), and it has **no entry in `docs/governance/citation-commit-map.txt`**. The keeper was solved
-2026-08-15T08:42:21, one day before the 2026-08-16 `cleanup-large-blobs` history rewrite, which
-CLAUDE.md records as making every pre-rewrite sha citation outside that map dead. Deepening the
-shallow clone from 506 to 5,553 commits (back to 2026-08-09) does not recover it — the rewrite
-replaced the object, it did not hide it.
-
-**Session `pjm-177` reached the identical conclusion earlier TODAY**
-(`results/calibration/FINDING-pjm177-st-gas-commitment-persistence-2026-09-09.md` §4, verbatim):
-
-> *"The keeper's recorded `git_sha` `457ae04` **does not resolve at HEAD** and has no entry in
-> `docs/governance/citation-commit-map.txt`, so G-DRIFT could not be run against it and G-CTRL form 4
-> is void."*
-
-**Reason 2 — the surrogate window is too large to audit honestly.** The nearest defensible base is
-`acf784ec5cb6a0b1f3328f2249d9eb2bbc872009` (2026-08-15 08:09:40 UTC, the last `origin/main` commit
-before the keeper's solve timestamp — 33 minutes ahead of it). Measured on the rule-29(b) paths:
-
-```
-git diff --stat acf784ec HEAD -- src/market_sim scripts/run_calibration.py \
-    scripts/run_calibration_full.py scripts/lib data/raw/_validation-source data/raw/reference
-  -> 221 files changed, 187,385 insertions(+), 28,868 deletions(-)
-```
-
-Rule 29(b)'s premise is that the audit "costs seconds" and is *stronger* than a control solve because
-"it says which line did it". At 221 files / 187k insertions over a 25-day window that premise does not
-hold. Declaring all of it INERT without reading it would be exactly the unbacked heuristic rule 29(b)
-refuses — in the permissive direction, which is worse. **So this PRECOMMIT does not claim it.**
-
-**Reason 3 — there is DIRECT MEASURED EVIDENCE of LIVE drift, at today's HEAD, on this exact keeper.**
-`pjm-177` spent the same-HEAD control that reason 1 earned it, and published the result:
-
-| class (2023) | committed keeper | same-HEAD control | drift |
-|---|---|---|---|
-| every class except the one below | — | — | **≤ 0.25 %** |
-| **C1 CT_PEAKER annual TWh** | **19.363** | **18.911** | **−2.34 %** |
-
-pjm-177's own words: *"HEAD drift in a class this mechanism never touches, which form-4 differencing
-would have charged to the arm."*
-
-### The posture this session adopts, and why
-
-**G-CTRL form 4 is used — the committed keeper IS the control — but it is declared IMPAIRED, and no
-control solve is spent.** Under rule 29(b)'s own terms a LIVE hunk earns a control solve, and a
-*measured* live drift is stronger evidence of liveness than a hunk. I am nonetheless not spending one,
-for three reasons stated ex ante:
-
-1. **The handoff forbids it explicitly and repeatedly** (§2c, §A6 item 3), on the owner-relayed
-   grounds that PJM's control solve was the largest single cost in the failed predecessor session.
-2. **Under §A7 the differencing decides nothing.** The owner has ruled promote-regardless, so the
-   arm-vs-control comparison sizes the promotion; it does not select it. A control solve would buy
-   reporting precision, not a decision.
-3. **The drift is already published for the screen year at today's HEAD** (the table above), so it can
-   be carried as a stated correction rather than re-measured at LP cost.
-
-**The binding consequence, pre-registered so it cannot be written to fit the result:** any
-keeper-differenced class move within **±0.25 %** (and within **±2.4 %** for **CT_PEAKER**) is **NOT
-SEPARABLE** from HEAD drift and will be reported as such — never claimed for or against the arm. Moves
-outside those bands are attributable. This band is set from pjm-177's measurement, before my solve.
-
-### What IS audited at zero cost, and is clean
-
-| object | verdict | evidence |
-|---|---|---|
-| `data/raw/reference/iso-gas-capacity-state-weights.csv` | **NEW; LIVE only when the flag is armed** | absent from the keeper's recipe; read only by `iso_electric_power_monthly_level` |
-| retiree parquet, 2019-2022 | **LIVE** | see (a2) |
-| retiree parquet, 2023-2025 | **INERT — PROVEN, not asserted** | see (a2) |
-| `partial_plant_exit_carry` (§A5 item 2 double-count) | **STRUCTURALLY IMPOSSIBLE for PJM** | see (a3) |
-
-### (a2) The retiree window is INERT in 2023-2025 — proven
-
-Measured directly off `data/raw/eia-860/eia860_generator_retired_within_window.parquet` (1,094 rows),
-PJM rows only (393 rows / 19,703.0 MW net summer). A row can contribute months to solve year *Y* only
-if `planned_retirement_year >= Y`. Partitioning on the pre-widening window boundary:
-
-| | rows | MW (net summer) |
-|---|---|---|
-| shipped set (`retirement_year >= 2023`) | 188 | 6,408.1 |
-| **added by the widening (`retirement_year <= 2022`)** | **205** | **13,294.9** |
-
-**Capacity the widening ADDS, per solve year:**
-
-| solve year | 2019 | 2020 | 2021 | 2022 | **2023** | **2024** | **2025** |
-|---|---|---|---|---|---|---|---|
-| rows | 205 | 151 | 108 | 78 | **0** | **0** | **0** |
-| MW | 13,294.9 | 8,094.5 | 5,687.1 | 4,535.9 | **0.0** | **0.0** | **0.0** |
-
-Every one of the 205 added rows carries `planned_retirement_year <= 2022`, so **zero** of them
-contribute a single month to 2023, 2024 or 2025. The artifact's own max retirement year is 2024 and
-its min is 2019. This reproduces the handoff's PJM figures **exactly** (205 units / 13,294.9 MW;
-2020 +8,094.5; 2021 +5,687.1; 2022 +4,535.9), which is an independent check on the whole chain.
-
-Class mix of the 205 added rows: **Conventional Steam Coal 10,649.9 MW** (80.1 %), gas-CC 968.6,
-petroleum liquids 547.4, gas-ST 431.1, gas-CT 364.5, landfill gas 168.0, wood biomass 83.0,
-batteries 47.6.
-
-### (a3) §A5 item 2 — the partial-plant double-count cannot occur in PJM
-
-`market_sim.data.fleet.eia860._partial_plant_exit_rows(data/raw, ba)` returns **`None` for every BA
-tested** (PJM, MISO, CISO, ERCO, NYIS, ISNE, and `None`) in this container, so it contributes no rows
-at all. Independently and decisively, `partial_plant_exit_carry` is **absent from the keeper's
-`run_config.json`**, i.e. at its `False` default, so the channel is disarmed in every run this session
-solves. **No overlap is possible.** (Reported honestly: the all-`None` reading may reflect a source
-file outside the `pjm` hydration profile rather than an empty channel. The flag being off is the
-load-bearing half and does not depend on that.)
+Written **before any LP**. Rule 29 `[R-SCREEN]` clause (0): an arm with a computable pre-solve
+gate does not reach a solve until that gate passes.
 
 ---
 
-## (b) THE SCREEN YEAR — **2023**, named here, BEFORE the screen runs
+## 0. STEP-0 verification (done)
 
-**2023**, on the mechanism's own **largest measured footprint**: FINDING §3's PJM rows give 2023 the
-largest mae (**0.775 $/MMBtu**) and the largest annual gap (**−0.770**) of all seven admitted years,
-and its largest single month (Feb, 1.415). It is a **training** year. It is **not** named on any
-residual, and the footprint ranking is a property of the input table, computed before any solve.
-
-Ranking, from FINDING §3 (`mae`, all seven admitted): **2023 0.775** > 2019 0.704 > 2022 0.646 >
-2020 0.552 > 2021 0.527 > 2025 0.479 > 2024 0.473.
-
----
-
-## (b2) PHASE 0 — the written-cell census (handoff §4)
-
-**The question.** PJM's keeper carries `gas_plant_monthly_fuel_pricing = True`, so
-`apply_plant_monthly_fuel_prices` runs **after** the new seam and overwrites gas plants with their own
-F923 monthly prints. What fraction of PJM's **gas capacity-hours** does that print path own? Whatever
-it owns, the seam cannot reach.
-
-**Keeper fuel recipe, read from `run_config.json` (not `meta.json` — FINDING §1):**
-
-| field | value | consequence |
-|---|---|---|
-| `gas_plant_monthly_fuel_pricing` | **True** | the print path prices gas — the seam is overwritten wherever it writes |
-| `nearby_fuel_price_fallback` | **True** | a plant-month with no print is filled from the state/zone pool — this **widens** print ownership well beyond own-reported months |
-| `gas_monthly_actuals` | True | the ISO-month receipt level the seam REPLACES |
-| `gas_hub_basis_overlay` | **False** | **no hub index supersedes the seam** — PJM is the only in-scope ISO where the seam is the operative level |
-| `gas_daily_shape` | True | mean-preserving within month; rides on top, untouched (rule 19) |
-| `pjm_zonal_gas_basis` | True | mean-zero spread; orthogonal (rule 19) |
-| `coal_prb_passthrough_sigmoid` | True | **keyed to the ISO `_gas_series`** — see the two-channel note below |
-| `partial_plant_exit_carry` | absent (False) | §A5 item 2 disarmed |
-| `gas_electric_power_monthly_level` | absent (False) | the control posture |
-
-### THE CENSUS NUMBER — measured 2026-09-09, before the screen solve
-
-Measured through the real path: `run_calibration.run_year(..., fleet_only=True)` off the keeper's own
-`meta.json`, then `apply_plant_monthly_fuel_prices(base, fleet_arrays, config, 2023)` reading its
-returned `(n_gen, T)` written-cell mask, restricted to gas rows (`_GAS_FUEL_IDX = (0, 1, 10, 14)`) and
-weighted by `pmax`.
-
-| quantity | PJM 2023 |
+| check | result |
 |---|---|
-| generators in the LP | 3,789 |
-| **gas rows** | **1,744** |
-| **gas capacity** | **100,451.1 MW** |
-| **print-path-owned share of gas CAPACITY-HOURS** | **51.794 %** |
-| print-path-owned share of gas cells, unweighted | 49.871 % |
-| gas rows the print path owns in **all 8,760 hours** | 780 (**47,285.5 MW**) |
-| gas rows the print path **never touches** | 844 (**46,825.4 MW**, 46.6 % of gas capacity) |
-| gas rows partially owned | 120 |
+| HEAD tree vs `origin/main` tree | **identical** (`580144d81299e55b241e2273f244c5d17dc80864`). Launch HEAD `b9fcb160` was merged to main as `87ad084b`; branched off `origin/main`. |
+| `src/market_sim/data/fuel/electric_power.py` | present |
+| `grep -c gas_electric_power_monthly_level scenarios.py` | **4** (expected 4) |
+| retiree parquet | **1,094 rows, min `planned_retirement_year` 2019** (expected 1094 / 2019) |
+| PJM keeper shard | `2026-08-15-pjm-162-inputclock` — **unchanged** by the 51 post-handoff commits |
 
-**WHAT THIS MEANS, and it is not what §A2 expected.** §A2 flagged the per-plant print path as "THE MOST
-LIKELY WAY THIS ARM COMES BACK INERT", and for MISO the matrix already records **100 %** print
-ownership. **PJM is not that case.** The print path owns barely half, so **48.2 % of PJM's gas
-capacity-hours are reachable by the seam directly** and **46,825.4 MW of gas capacity is untouched by
-the print path in every hour of the year**. Both channels enumerated below are therefore LIVE, and the
-arm is **not** inert by construction.
+## 0a. Keeper control baseline, re-scored at HEAD from committed artifacts only
 
-**The consequence for the coal prediction, registered before the solve.** With channel 1 roughly half
-open rather than closed, the sign of the coal move is **genuinely contested** between the two channels
-rather than settled by channel 2. The handoff and FINDING §5b predict **coal UP**; that reading assumed
-channel 1 was throttled. I am recording, before seeing any dispatch, that **the census does not support
-that assumption**, and that a coal move in **either** direction is consistent with the mechanism. I
-will report which channel won, at full magnitude, and will not treat either sign as a success.
+`scripts/calibration_verdict.py --run-id 2026-08-15-pjm-162-inputclock` (no solve):
+**CALIBRATED**, every criterion PASS, governance attested, zero caveats.
 
-**Per §A7 this number SIZES the promotion; it does not gate it.** The owner has ruled promote-regardless
-of inertness, and this measurement says the promotion is worth substantially more in PJM than the inert
-case §A2 feared: about half of PJM's gas fleet prices off the seam.
-
-**G-3 anchor, fixed here before the solve.** `iso_electric_power_monthly_level('PJM', 2023)` =
-[3.8617, 3.4389, 2.6920, 2.2664, 2.0334, 1.9419, 2.2058, 1.9799, 2.0993, 2.1397, 2.6888, 2.5357]
-$/MMBtu, mean **2.4903**. The armed run's ISO monthly level must equal this array **exactly** (rule 19:
-replaced, never blended).
-
-### The two channels, enumerated before the number is known (rule 19 `[R-ONE-MECH]`)
-
-The seam can reach PJM's dispatch by exactly two routes, and they push **opposite ways on coal**:
-
-1. **DIRECT (per-generator gas price).** Only through gas cells the print path does *not* write.
-   Cheaper gas ⇒ gas CC moves **down** the stack ⇒ **coal DOWN**, prices down. This channel is
-   throttled by the census fraction: at 100 % print ownership it is **dead**.
-2. **INDIRECT (the ISO-level `_gas_series`).** The seam sets the ISO gas series that keys the **coal
-   PRB passthrough sigmoid**, which the keeper arms. A lower gas series ⇒ lower coal passthrough ⇒
-   coal offers **fall** ⇒ **coal UP**. This channel survives the per-plant overwrite entirely.
-
-The handoff and FINDING §5b predict **"coal UP, prices DOWN"**. That is channel 2 dominating, which is
-only coherent if channel 1 is largely closed — i.e. if the census is high. **I am pre-registering the
-census as the discriminator between the two channels**, and I am recording here, before seeing it,
-that a naive reading of channel 1 alone would predict the opposite sign on coal. If the census comes
-back low and coal still goes UP, that is a result to investigate, not to bank.
-
----
-
-## (c) PER-YEAR PREDICTIONS — registered before any solve
-
-Copied from FINDING §3/§5b and made specific. **Rule 1 `[R-STRUCT]`: none of these is a gate.** They
-exist so the measurement can surprise me on the record.
-
-### Fuel input (the mechanism's own arithmetic, not a dispatch claim)
-
-| year | model annual | measured annual | **Δ annual** | max month gap | mae |
-|---|---|---|---|---|---|
-| 2020 | 2.484 | 1.936 | **−0.548** | 1.178 (Feb) | 0.552 |
-| 2021 | 4.109 | 3.581 | **−0.528** | 1.075 (Dec) | 0.527 |
-| 2022 | 7.121 | 6.479 | **−0.641** | 1.374 (Feb) | 0.646 |
-| **2023** | 3.255 | 2.485 | **−0.770** | 1.415 (Feb) | **0.775** |
-| 2024 | 2.856 | 2.387 | **−0.469** | 0.736 (Feb) | 0.473 |
-| 2025 | 3.934 | 3.745 | **−0.189** | 1.720 (Jan) | 0.479 |
-
-**Gas DOWN in every year**, by −0.19 to −0.77 $/MMBtu on the annual. **Every month of 2023 lower**, by
-−0.31 to −1.42 $/MMBtu. At 7.5 MMBtu/MWh that is roughly −1.4 to −5.8 $/MWh on a CC-marginal hour.
-
-### Dispatch and price
-
-- **C3a (mean LMP): predicted DOWN in every year**, and predicted to **improve** — PJM's keeper runs
-  **above** actual (pjm-177 measures control 31.418 vs actual 29.58 in 2023, **+6.22 %**), and a
-  uniform gas-level cut moves the marginal offer down. Predicted 2023 magnitude **−0.5 to −2.0 $/MWh**
-  (i.e. toward actual). *This is a prediction, never a gate — rule 1.*
-- **Coal: predicted UP** (channel 2 dominating, per (b2)). Predicted small — **under +2 % of coal
-  annual TWh** in 2023, because the passthrough sigmoid is a bounded transform, not a price swap.
-- **Gas CC: predicted DOWN slightly**, as coal takes share.
-- **2020/2021/2022 (Card A + Card B together, no attribution arms):** **prices FALL** and **coal
-  generation UP** — and here the two changes push the *same* way, since the widening restores
-  8,094.5 / 5,687.1 / 4,535.9 MW that is **80 % coal**. **2020 is the largest effect year.** Rule 30(c)
-  is noted in advance: a held-out year never downgrades PJM.
-
-### C3b — **PJM IS THE HIGHEST-RISK ISO IN THE PROGRAM, and here is why in my own words**
-
-C3b scores the **shape** of the price distribution/duration curve, not its level. A mechanism that
-moves the level *uniformly* is nearly free for C3b; a mechanism that moves it *unevenly across the
-year* re-ranks hours and can break it. PJM is the worst case on both counts that matter:
-
-1. **It is the only in-scope ISO with no hub overlay.** For NYISO, NEISO and CAISO the measured
-   constrained-hub index supersedes the seam, so their level barely moves and their shape cannot. PJM
-   has nothing above the seam — the full move lands.
-2. **The move is not uniform.** It is −0.31 to −1.42 $/MMBtu across the twelve months of 2023 — a
-   **4.6× spread**, concentrated in **February** (the largest gap, 1.415). So the winter months fall
-   ~3× harder than the mild ones. C3b is measured on exactly that monthly shape.
-3. **PJM's marginal unit is overwhelmingly gas CC**, so essentially every hour's price moves — there
-   is no insulated block of hours to absorb the change.
-4. **This is the ercot-254 failure mode's own family.** ercot-254 broke because a monthly level was
-   smeared flat across a month whose real event lasted five days. PJM's saving graces are that its
-   largest admitted gap is **1.42 $/MMBtu**, not ERCOT's 49.53 — **35× smaller** — and that
-   `gas_daily_shape` is already armed in the keeper, so the monthly level is redistributed across days
-   by the measured Henry Hub daily swing rather than laid down flat. That is why I predict a miss is
-   unlikely, not impossible.
-
-**Pre-registered C3b prediction: within ±0.03 of the keeper, in every year, and more likely to improve
-than degrade** (the seam removes a level that is biased high in 12/12 months, and a bias that varies
-by month is itself a shape error). **Pre-registered STOP (rule 29):** if the 2023 screen flips any
-load-bearing criterion (C1 / C2 / C3a / C3b) **PASS → FAIL**, the fuel arm dies at the screen, the
-remaining years are not spent on it, and that is reported as the session's result. Card A is **not**
-gated by the screen — it is an input-correctness fix with no flag (rule 14 `[R-ACCURATE]`).
-
----
-
-## (d) THE SCREEN'S STOP GATES — structural only, none references the target residual
-
-A screen **may kill an arm; it may never promote one** (rule 29).
-
-| gate | claim | bar |
-|---|---|---|
-| **G-1** | the delivered gas array moves in the direction and order of magnitude the pre-solve arithmetic implies | monthly means vs FINDING §3's PJM 2023 row; sign correct in 12/12 months |
-| **G-2** | confinement | **non-gas fuel prices move EXACTLY 0.0** |
-| **G-3** | rule 19 — REPLACED, not blended | the armed ISO monthly level equals `iso_electric_power_monthly_level('PJM', 2023)` exactly |
-| **G-4** | no collateral damage | **no NON-TARGET load-bearing criterion (C1/C2/C3a/C3b) flips PASS → FAIL** |
-| **G-5** | LP integrity | slack and dump stay **0.0** |
-
----
-
-## (e) EXECUTION PLAN — and one declared deviation from §A1's shard table
-
-**Container prep (§A6), done and verified in this container before any solve:**
-`python3 scripts/prepare_solve_container.py` → swap provisioned, **RAM 15.7 + swap 8.0 = 23.7 GiB**
-(the container ships with **zero** swap; PJM's measured single-solve peak is 13.0 GB, the highest of
-any ISO, which is what SIGKILL'd the predecessor). Env pins exported for every solve —
-`MALLOC_ARENA_MAX=2`, `MARKET_SIM_HIGHS_THREADS=1`, `OMP_NUM_THREADS=1` — which do **not** change the
-LP optimum (thread count is a factorization-workspace choice).
-
-**A setup cost this program has not recorded, found here and reported rather than absorbed.** A fresh
-container needs, before its first PJM LP: `hydrate_data.py --profile pjm` (2.3 GB), **`regenerate_clean.py`
-over ~55 datatypes** (`data/clean` is gitignored and ships empty), **and a re-fetch of
-`data/raw/pjm-da-virtuals/`** — a gitignored DataMiner corpus (`pjm_da_virtual_bids` is armed in the
-keeper and `virtual_bids.py` hard-fails rather than silently no-op) requiring
-`scripts/data/fetch_pjm_da_virtuals.py` for **six** years. That is on the order of **1.5-2 hours of
-non-LP setup per container**, and §A1's five-shard plan pays it **five times**.
-
-**Declared deviation.** §A1 shards the training span as T1 (2023 2024) + T2 (2025) and requires them
-composed into one bundle. Given the setup cost above, and that **rule 16 `[R-ALLYEARS]` asks for one
-bundle from one `--year 2023 2024 2025` invocation** while **rule 12 `[R-PARALLEL]` requires years
-sequential within an invocation anyway**, the training span is solved here as a **single three-year
-invocation**. This is *more* rule-16-faithful than composing two fragments, removes the
-cross-session composition step that has failed repeatedly in this program, and costs nothing: §A1's
-split was a RAM workaround, and the RAM is now backed by 8 GiB of swap. The holdout groups remain
-sharded. **No fragment is registered as a keeper under any plan.**
-
-| shard | years | `--out-dir` | where |
+| criterion | 2023 | 2024 | 2025 |
 |---|---|---|---|
-| **S** screen | 2023 | `results/screen/pjm_ep_level_2023` | this container, **first** |
-| **T** training | 2023 2024 2025 | `results/pjm_fuelvintage_A` | this container, one invocation |
-| **H1** validation | 2020 2021 | `results/pjm_fuelvintage_H1` | `--holdout-authorized` |
-| **H2** validation | 2022 | `results/pjm_fuelvintage_H2` | `--holdout-authorized` |
+| C3a mean LMP | **+6.2 %** (31.41 vs 29.58) | −0.8 % (31.11 vs 31.36) | **−7.7 %** (42.38 vs 45.89) |
+| C3b NRMSE | 0.160 | 0.123 | 0.139 |
+| C3c h>$200 | 4 vs 6 | 10 vs 18 | 32 vs 59 |
+| C1 / C2 / C4 / C6 / C8 | PASS | PASS | PASS |
 
-All arms: `scripts/replay_keeper.py results/calibration/pjm_debugb_inputclock_A --set
-gas_electric_power_monthly_level=true`.
+Band for C3a is **±10 %** (target and commercial). **2025 sits at −7.7 %, i.e. 2.3 pp of
+headroom on the side this arm pushes.** That is recorded here, before the solve, as the arm's
+single largest pre-registered gate risk — see §4.
 
-**Markers (§6).** PJM holds `complete`, so **2020 / 2021 / 2022 are OPEN** with `--holdout-authorized`.
-**2019 is REFUSED for every ISO** (locked tier, `final` empty, freeze ACTIVE) and is neither attempted
-nor designed around.
+---
 
-**Rule 31 `[R-RETAIN]`.** Nothing is deleted. Bundle families are added to `.gitignore` — which is what
-discharges rule 29(c)'s delete-before-merge duty, per rule 31's own correction of the ercot-255
-incident — and kept on local disk. This container is ephemeral, so the promotion question is asked
-explicitly in the final report.
+## 1. ADDITION-0 items, checked rather than assumed
+
+1. **`ercot-261`'s corroborated ERCOT monthly gas level** (`data/raw/ercot_gas_corroborator_monthly.csv`,
+   `src/market_sim/data/fuel/basis/ercot.py`) is ERCOT-scoped, touches neither
+   `gas_electric_power_monthly_level` nor PJM. Read as prior art; **no transfer** (rule 25
+   `[R-ISO-SCOPE]`). Whether PJM's uniform cut wants a second independent corroborating source
+   is a real question and is answered in §6 by the census, not by importing ERCOT's table.
+2. **`partial_plant_exit_carry` double-count risk: NOT PRESENT in PJM.** The field's dataclass
+   default is `False` (`scenarios.py:14173`), the PJM keeper's `run_config.json` does not set it,
+   and the 2022/2021 touchpoint bundle records it explicitly `False`. The partial-plant channel
+   is **off in every PJM run in scope**, so its `_PARTIAL_EXIT_WINDOW_START = 2019` cannot
+   overlap the whole-plant retiree window here. Nothing further owed.
+3. **`pjm-177` landed** (ST_GAS commitment shape). Its keeper is unchanged, so the designated
+   keeper for this lane is still `2026-08-15-pjm-162-inputclock`.
+
+---
+
+## 2. G-DRIFT (rule 29(b)) — **THE AUDIT IS UNRUNNABLE, AND FORM 4 IS VOID**
+
+The rule-29(b) audit requires `git diff <keeper git_sha> HEAD`. **It cannot be run:**
+
+| sha | source | resolves at HEAD? |
+|---|---|---|
+| `457ae04` | keeper bundle `run_config.json` `git.sha` | **NO** — `git cat-file` fails |
+| `c447199c9009…` | same bundle, `git.basis_sha` | **NO** |
+| `f36cee6e` | `pjm169_tp2022_2021_f2arm` (2026-09-07 touchpoint) | **NO** |
+| `a269fb77b4a0…` | same bundle, `basis_sha` | **NO** |
+
+Neither carries an entry in `docs/governance/citation-commit-map.txt`. The keeper's shas predate
+the 2026-08-16 history rewrite; the **touchpoint's do not**, and they still fail — these are
+feature-branch tip shas that squash-merge discarded. **So the failure is not only the rewrite:
+no PJM bundle's recorded `git_sha` is resolvable from `origin/main` at all.** Recorded here as a
+finding in its own right, because rule 29(b) makes that sha the sole input to the audit it
+mandates.
+
+`PRECOMMIT-pjm177-…-2026-09-09.md` §4 reached the same conclusion independently for `457ae04`
+and additionally named **two LIVE hunks** on the PJM backcast path since the keeper:
+`f923_gas_price_plausibility_screen` (default `True`, and absent from the keeper's recorded
+config) and `EGRID_CT_HR_PHYSICAL_FLOOR`. Either one alone voids form 4.
+
+**Declared control posture, therefore:**
+
+- **A same-HEAD control solve is EARNED for the screen year (2023) but is spent CONDITIONALLY,
+  and only on a failure.** Rule 29(b)'s LIVE-hunk case licenses a control "only for the years the
+  screen needs", and on inspection the screen does not need one *up front*: **G-4's bar is a
+  PASS → FAIL flip, and PASS/FAIL is scored absolutely against actuals**, not against a control.
+  The committed keeper is all-PASS in 2023 (§0a), so an arm that comes back all-PASS clears G-4
+  with no control in existence. A control is needed only to **attribute** a failure — to separate
+  this arm from the two LIVE hunks §2 names. So: **run the arm; spend the 2023 control if and
+  only if a load-bearing criterion fails.** Declared here, before the solve, so it cannot be read
+  as a post-hoc economy.
+- **For the full span (2023-2025) and the touchpoints (2020-2022) no control is solved.** Those
+  runs are scored **absolutely against actuals** by `calibration_verdict.py`; a determination
+  needs no control. The committed keeper's numbers in §0a are quoted alongside them as
+  **context, explicitly contaminated by HEAD drift**, never as a clean A/B attribution. The
+  screen's control−arm pair at 2023 is what carries the attribution claim.
+
+`data/raw/reference/iso-gas-capacity-state-weights.csv` is NEW and is **LIVE only when the flag
+is armed** (read exclusively by `electric_power._load_iso_weights`). The retiree parquet is
+**LIVE for 2019-2022** and asserted INERT for 2023-2025 — **that second half is PROVEN, not
+asserted, in §5 gate G-6**, not taken on the construction's word.
+
+---
+
+## 3. SCREEN YEAR, NAMED BEFORE THE SCREEN RUNS: **2023**
+
+Named on the **mechanism's own measured footprint**, never on a residual: FINDING §3 gives PJM
+2023 the largest measured level gap of any PJM year — annual **−0.770 $/MMBtu**, `mae` **0.775**,
+and **all twelve months lower** (−0.31 to −1.42). Reproduced independently here from
+`iso_electric_power_monthly_level('PJM', y)`:
+
+| year | basket cov. | measured annual $/MMBtu | monthly min / max |
+|---|---|---|---|
+| 2020 | 0.781 | 1.937 | 1.638 / 2.689 |
+| 2021 | 0.721 | 3.588 | 2.427 / 5.095 |
+| 2022 | 0.975 | 6.469 | 4.640 / 8.361 |
+| **2023** | **0.975** | **2.490** | 1.942 / 3.862 |
+| 2024 | 0.975 | 2.380 | 1.776 / 5.074 |
+| 2025 | 0.912 | 3.745 | 2.331 / 8.511 |
+
+(Every year admitted; the annuals reproduce FINDING §3 to ≤0.010 $/MMBtu, the residue being an
+unweighted-vs-weighted annual-mean convention.) **The basket's composition varies BETWEEN years**
+(2021 drops IL/MD/MI, 2020 drops IL/IN) and is constant **within** each year, which is exactly
+what the module's admission rule requires — noted so a cross-year level comparison is read with
+that in mind.
+
+---
+
+## 4. PRE-REGISTERED PREDICTIONS (rule 1: reported at full magnitude, gating nothing)
+
+**Direction, from §3 and FINDING §5b:** the measured delivered level is **BELOW** the keeper's
+level in every month of every PJM year ⇒ **gas cheaper ⇒ coal displaced UP, gas CC down, LMP
+DOWN.** PJM is the largest and most uniform fuel move in the program.
+
+**Magnitude, as an upper bound.** A Δgas of −0.770 (2023) / −0.469 (2024) / −0.189 (2025)
+$/MMBtu at a 7.5 MMBtu/MWh CC heat rate is **−5.8 / −3.5 / −1.4 $/MWh** of marginal-cost move,
+~1.4× that in a CT-marginal hour. **Passed through in full** to the load-weighted mean, that is
+**−18.4 / −11.3 / −3.3 %** of the keeper's model mean. The realised move will be smaller by the
+non-gas-marginal hour share **and, decisively, by whatever fraction of PJM gas capacity-hours the
+F923 print path already owns** (§6). Both legs are unknown before the census; the bound is stated
+so the screen cannot be read as confirming a number it never predicted.
+
+**Per-criterion, pre-registered:**
+
+| criterion | 2023 | 2024 | 2025 |
+|---|---|---|---|
+| **C3a** | +6.2 % moves **down**. Improves, then overshoots. PASS unless the pass-through exceeds ~16 pp | −0.8 % moves down. **Risk of leaving the −10 % band if pass-through > 9 pp** | **−7.7 % moves down. THE TIGHTEST CELL IN THE RUN: only 2.3 pp of headroom; a full-pass-through −3.3 pp puts 2025 at ≈ −11 % ⇒ FAIL** |
+| **C3b** | ±0.03 of 0.160 | ±0.03 of 0.123 | ±0.03 of 0.139 |
+| **C1 / C2** | coal UP, gas CC DOWN; both should stay in band | same | same |
+| **C3c** | may rise slightly (cheaper gas ⇒ lower prices ⇒ *fewer* >$200 h, if anything) | same | same |
+
+**Why PJM is the program's highest C3b risk, in my own words, before I see a number.** C3b is a
+*monthly-shape* NRMSE, and this seam is the only mechanism in the program that rewrites the gas
+level **month by month with a different number in each month**. Every other PJM monthly gas
+mechanism in the recipe is mean-preserving by construction — `gas_daily_shape` normalises within
+each month, and `gas_hh_monthly_shape` normalises to the annual — so none of them can move C3b's
+own axis. This one can, and it does so with no hub overlay above it to supersede the change and
+no measured constrained-hub index to keep it anchored: PJM is the only in-scope ISO where the
+seam reaches the operative level in 12/12 months of 7/7 years. That is the whole exposure. What
+makes it survivable, and why I do not predict an ercot-254 repeat: ercot-254 broke because a
+**single 49.5 $/MMBtu Uri month** was smeared flat across 672 hours; PJM's largest single-month
+gap in any year is **1.72 $/MMBtu** (Jan-2025), 29× smaller, and `gas_daily_shape` — armed in
+this keeper, and *not* armed in ercot-254's arm — already redistributes each month's cost across
+its days by the real commodity swing. The failure mode scales with the outlier, and PJM has no
+outlier.
+
+**Card A (2019-2022 fleet), pre-registered:** PJM gains 205 units / 13,294.9 MW net summer,
+coal-dominated (10,649.9 MW) — per solve year **2020 +8,094.5 MW, 2021 +5,687.1, 2022 +4,535.9,
+and ZERO in 2023-2025**. Prediction: **coal generation UP and prices DOWN in all three touchpoint
+years, 2020 the largest**. Both fixes are carried together in the touchpoint shards per the owner
+instruction (no attribution arms), so the touchpoint deltas are **joint** and will be reported as
+joint.
+
+---
+
+## 5. SCREEN GATES — pre-registered, **STOP-ONLY**, none of them the target residual
+
+A screen **may kill this arm; it may never promote it** (rule 29). None of C1/C2/C3a/C3b/C3c is a
+gate *in the improving direction*: G-4 fires only on a PASS → FAIL flip, which is a stop, never a
+promotion.
+
+| gate | claim it tests | bar |
+|---|---|---|
+| **G-1 direction & magnitude** | the delivered gas array moves the way the pre-solve arithmetic says | armed − control monthly mean gas price over gas rows is **negative in all 12 months of 2023**, and its capacity-weighted annual mean is within **±25 %** of the census-predicted move of §6 |
+| **G-2 confinement** | only gas moves | `max|Δ|` over **coal, oil, biomass, nuclear, hydrogen** rows of `fuel_prices` = **exactly 0.0** |
+| **G-3 rule 19 — replaced, not blended** | the seam supersedes rather than stacks | on the rows the seam actually reaches, the armed monthly level equals `iso_electric_power_monthly_level('PJM', 2023)` **exactly** (≤1e-9 $/MMBtu) before `gas_daily_shape`'s mean-preserving multiplier |
+| **G-4 no non-target regression** | no load-bearing criterion breaks | none of **C1, C2, C3a, C3b** flips **PASS → FAIL** in 2023. **If it does, THE ARM DIES HERE**, the remaining years are never spent, and that is reported as a successful screen |
+| **G-5 feasibility** | the LP is not being rescued by slack | `slack` and `dump` **= 0.0** |
+| **G-6 Card-A inertness in-window** | the retiree window really is 2019-2022 only | `max |class-hour delta|` between the armed 2023 fleet and the keeper's committed `class_hourly_2023.parquet` attributable to the fleet = **0.000000 MW**; proven by a `fleet_only` array comparison, **not asserted from the parquet's own construction** |
+
+G-4's own baseline is the **same-HEAD control** of §2, not the committed keeper — that is what the
+control solve is spent on.
+
+---
+
+## 6. PHASE-0 CENSUS (ADDITION 1) — the gate that can kill the arm at zero LP cost
+
+**The question.** The PJM keeper carries `gas_plant_monthly_fuel_pricing = True`.
+`apply_plant_monthly_fuel_prices` runs **after** the new seam (`resolve.py:152` seam →
+`resolve.py:~225` overlay) and overwrites each gas plant's price with that plant's own F923
+monthly print where one exists. The seam may therefore reach only (a) the gas cells the print
+path does **not** write and (b) the ISO-level `_gas_series` that keys the coal passthrough
+sigmoid. **If the print path owns ~all of PJM's gas capacity-hours, the arm is inert on gas
+offers and the screen must not be spent.**
+
+Note this is sharper than the FINDING's own table: FINDING §3's "model level" column is the
+monthly mean of the ISO-level `_gas_series`, which is **not** what a PJM gas plant pays under this
+keeper's recipe.
+
+**Method (zero LP).** Two on-recipe `run_calibration.run_year(..., fleet_only=True)` rebuilds off
+`results/calibration/pjm_debugb_inputclock_A/meta.json`, differing **only** in
+`gas_electric_power_monthly_level`, routed through the generic `prb_overrides` channel — which is
+byte-identical to what `replay_keeper.py --set gas_electric_power_monthly_level=true` does, since
+the field is a `ScenarioConfig` field and **not** a `solve_and_persist` parameter, so `--set`
+routes it through `prb_overrides` and nothing else (`replay_keeper.py:905-914`). The payload's
+`fuel_prices` is the fully-resolved array **after every overlay**, so the armed−control delta over
+gas rows IS the answer, and the print-cell mask returned by `apply_plant_monthly_fuel_prices` is
+reported alongside it as the mechanism.
+
+**RESULT — the arm is NOT inert. THE GATE PASSES and the screen is justified.**
+
+PJM 2023, `fuel_prices` after every overlay, capacity-weighted over the 1,744 gas rows
+(3,789 LP rows total, 8,760 h):
+
+| quantity | value |
+|---|---|
+| **F923 print path owns (cap-weighted gas capacity-hours)** | **51.794 %** |
+| **the seam reaches** | **48.206 %** |
+| moved **and** print-written | **0.0000 %** |
+| moved **nor** print-written | **0.0000 %** |
+| delta on the cells the seam reaches | mean **−0.7721**, min −1.5954, max −0.3001 $/MMBtu, **100 % negative** |
+| delta cap-weighted over **all** gas cells | **−0.3721 $/MMBtu** |
+| **max \|Δ\| over coal / oil / biomass / nuclear / hydrogen rows** | **exactly 0.0000000000** |
+
+Three things this settles at zero LP cost:
+
+1. **The partition is EXACT.** `moved ∧ print-written` and `¬moved ∧ ¬print-written` are both
+   **0.0000 %**: the seam reaches precisely the complement of the print path's written-cell mask,
+   with no cell double-written and no cell left unpriced. That is rule 19 `[R-ONE-MECH]` holding
+   by measurement rather than by assertion.
+2. **On the cells it owns, the seam REPLACES rather than blends.** The mean delta there,
+   **−0.7721 $/MMBtu**, reproduces FINDING §3's PJM-2023 annual **−0.770** to three decimals —
+   i.e. the reached cells land on `iso_electric_power_monthly_level('PJM', 2023)` itself. **G-3 is
+   effectively satisfied pre-solve**; the screen re-checks it against the solved array.
+3. **G-2 is satisfied pre-solve**: every non-gas row moves **exactly** 0.0.
+
+Monthly, the reach is a two-step function of F923 coverage — **46.62 %** Jan–Sep, **52.93 %**
+Oct–Dec — and the cap-weighted delta over all gas cells runs −0.144 (Jul) to −0.660 (Feb):
+
+| month | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| cw Δ $/MMBtu | −0.519 | −0.660 | −0.397 | −0.409 | −0.395 | −0.240 | −0.144 | −0.156 | −0.252 | −0.356 | −0.480 | −0.482 |
+| cw moved % | 46.6 | 46.6 | 46.6 | 46.6 | 46.6 | 46.6 | 46.6 | 46.6 | 46.6 | 52.9 | 52.9 | 52.9 |
+
+**§4's magnitude prediction is therefore SHARPENED before the solve, not after.** The effective
+gas move is **48.2 %** of the headline, so the full-pass-through bound becomes **−2.79 $/MWh**
+(2023), and — carrying the same reach forward as the only estimate available pre-solve —
+**−1.69** (2024) and **−0.68** (2025) $/MWh. Against the keeper's model means that is
+**−8.9 % / −5.4 % / −1.6 %**, giving pre-registered C3a landing points of roughly
+**−2.7 % / −6.2 % / −9.3 %**. **2025 remains the tight cell** — ≈0.7 pp inside the ±10 % band on
+this arithmetic — and its basket coverage (0.912) differs from 2023's (0.975), so its reach is
+the one number in this table that is extrapolated rather than measured. Reported at full
+magnitude either way; **none of it gates anything** (rule 1 `[R-STRUCT]`).
+
+**A rule-19 observation this census surfaced, recorded not absorbed.** The F923 plausibility
+screen (`f923_gas_price_plausibility_screen`, default `True` — one of the two LIVE hunks §2
+names) already reads **the same EIA `N3045<ST>3` series** this seam blends, as the out-of-band
+fallback reference: for PJM 2023 it moved **24 plant-months across 9 plants** onto that
+reference. So a small, bounded part of the print path's 51.8 % is *already* N3045-priced, by a
+different route. That is a **different quantity** — a per-plant, per-state reference used as an
+implausibility backstop, versus a footprint-blended ISO-level replacement — and the two do not
+stack on any cell (the partition above is exact). Recorded here so the interaction is on the
+record before the solve rather than discovered in the residual.
+
+---
+
+## 6a. THE OFFER-LEVEL FOOTPRINT — and a pre-registered prediction I am REVISING, before the solve
+
+The §6 census measures `fuel_prices`. The LP solves on `mc_base`. Measuring the second (same two
+`fleet_only` builds, PJM 2023) found a second live channel the FINDING's tables do not carry, and
+it **contradicts one of my own §4 predictions**. Revised here, on the mechanism's own arithmetic,
+**before any LP** — never on a residual.
+
+| fuel | rows | cells moved | max \|Δ\| $/MWh | cap-weighted mean Δ $/MWh |
+|---|---|---|---|---|
+| gas | 1,744 | 50.13 % | 65.612 | **−3.2588** |
+| **coal** | **553** | **71.07 %** | **61.278** | **−3.0571** |
+| oil | 507 | 0.00 % | **0.00000** | 0.00000 |
+| biomass | 672 | 0.00 % | **0.00000** | 0.00000 |
+| nuclear | 32 | 0.00 % | **0.00000** | 0.00000 |
+| other (hydro / storage / renewable rows) | 281 | 0.00 % | **0.00000** | 0.00000 |
+
+**Coal offers move almost as much as gas offers do, and in the same direction.** The route is the
+keeper's own coal passthrough sigmoids (`coal_prb_passthrough_sigmoid` and
+`coal_bit_passthrough_sigmoid`, both `True`), which are keyed on the ISO-level `_gas_series` —
+the series this seam replaces. Cheaper gas ⇒ a lower passthrough ⇒ coal discounts to hold its
+place in merit. **That is a real market behaviour and it is structurally correct** (rule 1
+`[R-STRUCT]`: a structurally-correct mechanism is never judged by the residual), and it is *not*
+a G-2 violation — G-2 is stated over **fuel prices**, where coal moves exactly 0.0; this is the
+**offer** layer, one step downstream, and it is the sigmoid doing exactly its declared job.
+
+Monthly, cap-weighted:
+
+| month | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| gas Δ $/MWh | −4.55 | −5.78 | −3.48 | −3.58 | −3.46 | −2.11 | −1.26 | −1.36 | −2.20 | −3.12 | −4.20 | −4.22 |
+| coal Δ $/MWh | −2.88 | −6.50 | −5.53 | −3.62 | −2.19 | −0.79 | −0.66 | −0.45 | −1.19 | −1.87 | −6.25 | −5.06 |
+
+**What I am revising.** §4 predicted "**coal displaced UP, gas CC down**", inherited from FINDING
+§5b. On this measurement that prediction is **wrong in its mechanism and probably wrong in its
+sign**: coal's offer falls by −3.06 $/MWh against gas's −3.26, so the coal-vs-gas **spread** moves
+only ~0.20 $/MWh on the annual cap-weighted mean, and in **five of twelve months (Feb, Mar, Apr,
+Nov, Dec) coal falls by MORE than gas**, which pushes coal *down* the merit order relative to gas,
+not up. **Revised prediction: the coal/gas substitution is second-order and its sign is
+month-dependent; C1/C2 should move much less than FINDING §5b implies, and a large coal-up move
+would now be the surprise.**
+
+**What this does to the C3a risk — it raises it.** The price effect is no longer a gas-only
+channel. Roughly **85 %** of PJM's thermal rows (gas + coal) see a **−3.1 to −3.3 $/MWh** offer
+cut, so a marginal hour is cheaper whichever of the two sets it. Against the keeper's 2023 model
+mean of $31.41 that is up to **−10.4 %** at full marginal pass-through, versus the −8.9 % §6
+projected from the gas leg alone. **The §4 landing points are therefore soft on the low side, and
+2025 — at −7.7 % with 2.3 pp of headroom — remains the cell that can fail.** Stated at full
+magnitude and gating nothing.
+
+**A consequence for gate G-2, made explicit so the screen cannot be mis-scored:** G-2's bar is
+`max|Δ|` over non-gas rows of **`fuel_prices`** = exactly 0.0 — measured, satisfied. It is **not**
+a bar on `mc_base`, where coal is *expected* to move. A screen that reported the coal offer move
+as a confinement failure would be reading the wrong array.
+
+---
+
+## 6b. THE CENSUS EXTENDED TO 2024 AND 2025 — 2025's reach is now MEASURED, not extrapolated
+
+§6 flagged 2025's reach as the one extrapolated number in its table. It no longer is: the same
+two-build census was run for 2024 and 2025 (six `fleet_only` builds in total, still zero LP).
+
+| PJM year | seam reach, cap-wt gas cap-hours | cw Δ over **all** gas cells $/MMBtu | Δ on the **reached** cells | share negative | `mc_base` gas $/MWh | `mc_base` **coal** $/MWh | non-gas `fuel_prices` Δ | non-thermal `mc_base` Δ |
+|---|---|---|---|---|---|---|---|---|
+| **2023** | 48.206 % | **−0.3721** | −0.7721 | **100.0 %** | −3.2588 | −3.0571 | **0.0** | **0.0** |
+| **2024** | 52.923 % | **−0.2483** | −0.4691 | 91.5 % | −2.1747 | −1.1142 | **0.0** | **0.0** |
+| **2025** | 52.923 % | **−0.0999** | −0.1887 | 91.5 % | −0.8748 | −1.6255 | **0.0** | **0.0** |
+
+Three things worth stating before the solve:
+
+1. **The extrapolation was good but not exact.** §6 projected a 48.2 % reach forward and got
+   −0.091 (2025) / −0.225 (2024) $/MMBtu; measured, they are **−0.0999** and **−0.2483** on a
+   **52.92 %** reach. The measured numbers supersede §6's projections wherever the two disagree.
+2. **2024 and 2025 are NOT uniformly negative.** 2023's reached cells are 100 % negative; 2024's
+   and 2025's are **91.5 %** — so ~8.5 % of reached cells price *higher* under the measured level
+   in those years. FINDING §5b's "gas **DOWN** in every year, every month of 2023 lower" is exact
+   for 2023 and is an **annual-mean statement only** for 2024/2025. Recorded so a positive cell
+   in the screen is not mistaken for a defect.
+3. **The coal/gas ordering flips between years.** Coal's offer cut is smaller than gas's in 2024
+   (−1.11 vs −2.17) and **almost twice as large** in 2025 (−1.63 vs −0.87). §6a's revision holds
+   and is if anything understated: the coal-vs-gas spread moves in **both** directions across the
+   span, so a single directional C1/C2 prediction for the whole run is not available and none is
+   made.
+
+### The C3a projection, pre-registered at full magnitude
+
+Capacity-weighting the offer cut across the whole thermal fleet (100.5 GW gas + 49.4 GW coal) and
+passing it through **in full** to the load-weighted mean — an upper bound, since the marginal
+unit's cut is not the fleet mean and the LP re-dispatches:
+
+| year | thermal cw offer Δ | as % of model mean | keeper C3a | **projected C3a** | band |
+|---|---|---|---|---|---|
+| 2023 | −3.1923 $/MWh | −10.16 % | +6.2 % | **−4.61 %** | comfortably inside ±10 % |
+| 2024 | −1.8253 $/MWh | −5.87 % | −0.8 % | **−6.62 %** | inside |
+| **2025** | **−1.1225 $/MWh** | **−2.65 %** | **−7.7 %** | **−10.09 %** | **AT / JUST OUTSIDE the ±10 % band** |
+
+**So the pre-registered expectation is that 2025 C3a is a coin-flip on the band edge, and 2023 —
+the screen year, and the year with the largest fuel move — is the SAFEST of the three.** That
+inversion is worth naming: the screen year was chosen on the mechanism's **footprint** (rule 29's
+requirement) and the gate risk sits in a **different** year, which is precisely why the screen is
+a STOP gate on structure and not a proxy for the span's determination. If 2025's C3a comes back
+outside the band, that is **a real, reported result — not a reason to revert to the estimate**
+(rule 14 `[R-ACCURATE]`): the successor investigation is the price-formation level PJM's C3a
+already leaned negative on at the keeper (−7.7 % before this arm touches anything), not this
+measured input.
+
+---
+
+## 6c. Gate baselines measured on THIS tree (ADDITION 5), before any edit of mine
+
+| gate | result here | expected |
+|---|---|---|
+| `pytest tests/scoring` | **16 failed, 1,532 passed, 12 skipped** | matches the A3 baseline exactly — **zero new failures** |
+| `check_cache_key_registration --base origin/main` | **RED**, `HYDRO_BUDGET_PERIOD_HOURS_BY_PLANT` only | pre-existing on `main`, not this lane's |
+| `check_mechanism_matrix --base origin/main` | **exit 0** (pre-existing anchor warnings only) | green |
+| `check_registry_payload_parity` | **OK** — 25 runs, 58 bundle dirs, 0 tolerated | green |
+| `audit_keepers --iso PJM` | **PASS**, 0 failures / 0 warnings | green |
+| `build_status --check --iso PJM` | **in sync** (1 keeper) | green |
+
+CAISO's red `build_status` / `audit_keepers` are CAISO's lane's (rule 25 `[R-ISO-SCOPE]`) and are
+not touched here.
+
+---
+
+## 7. Markers, read authoritatively (ADDITION 4)
+
+`scripts/lib/holdout_policy.registration_refusals(years, 'PJM', marker_doc, freeze_doc)` at HEAD:
+
+| years | refusals |
+|---|---|
+| 2023, 2024, 2025 | **none** (train tier) |
+| 2020, 2021 | **none** — PJM holds `complete` (declared 2026-07-31, keyed to this keeper) |
+| 2022 | **none** |
+| **2019** | **REFUSED** — locked-test tier, under an ACTIVE tier-scoped freeze (`frozen_tiers = {'locked_test'}`), and PJM is absent from `final` (`final` holds only `_note`) |
+
+2019 is **not attempted, not requested, and not designed around.** Validation numbers are
+iterable model-selection evidence, never a certified out-of-sample skill number (rule 22), and
+**no parameter is identified against 2020/2021/2022** — structurally guaranteed, since both
+changes have **zero free parameters**: the seam is a frozen blend of a published series over a
+rule-23 frozen weight table, and the retiree window is an EIA-860 fact.
+
+Rule 30(c) `[R-TOUCHPOINT-FOLD]`: a held-out year **never downgrades PJM's determination**. PJM's
+headline is the 2023-2025 train-tier verdict and nothing else.
+
+---
+
+## 8. ENVIRONMENT FINDINGS — this container could not have solved PJM as handed over
+
+Recorded because they are the session's first real result and they bind every PJM shard.
+
+1. **`data/clean/` was EMPTY.** It is gitignored (derived, disposable) and must be rebuilt with
+   `scripts/regenerate_clean.py` before any solve. The PJM fleet build hard-fails — by design,
+   "the mechanism never silently no-ops" — on each missing partition in turn:
+   `transfer-interface-limits`, then `ramp-capability`, …
+2. **Six PJM-relevant `data/raw` corpora are payload-less** (the corpus-conversion class of
+   `docs/bloat-removal-plan-2026-08.md` §4 — README + `SHA256SUMS.txt` tracked, payload
+   gitignored, and stripped from history by the 2026-08-16 rewrite, so **re-fetch is the only
+   recovery route**): `pjm-da-virtuals`, `pjm-energy-offers`, `pjm-zonal-lmp`,
+   `pjm-binding-constraints`, `pjm-ehv-lmp`, `lmp-components`.
+   **`pjm-da-virtuals` is REQUIRED by the keeper recipe** (`pjm_da_virtual_bids = True` in both
+   the keeper's and the touchpoint bundle's `run_config.json`) and is being re-fetched here from
+   PJM DataMiner2 for 2020-2025.
+3. **Consequence for the shard plan (ADDITION 2):** every child session gets a fresh container
+   and therefore inherits an empty `data/clean` and the same payload-less corpora. Each child's
+   launch prompt must carry the clean rebuild and the DataMiner re-fetch, or it will fail the
+   same way ~4 minutes into its first fleet build.
+
+---
+
+## 9. Governance
+
+- **Rule 31 `[R-RETAIN]`** — no solve output is deleted before the owner rules on promotion. The
+  bundle families are **gitignored**, not `rm`'d; they live on local disk and **will not survive
+  this session's container**. The promotion question is asked explicitly in the final report.
+- **Rule 15 `[R-DASHBOARD]`** — every completed run is registered in this session, keeper or
+  rejected probe. Screen and control bundles are **throwaway probes**: never registered, never
+  committed, gitignored (rule 29(c) as amended 2026-09-07 — `.gitignore`, not `rm`).
+- **Rule 16 `[R-ALLYEARS]` + ADDITION 3** — sharding the SOLVE is not registering FRAGMENTS. T1
+  (2023, 2024) and T2 (2025) compose into **one** bundle covering 2023-2025 before registration.
+- **Rules 1 / 14** — these land because they are **correct**. A worse fit is a root-cause
+  investigation, never a revert to the estimate. No gate reads the target residual.
+- **Rule 28 `[R-MECH-MATRIX]`** — only `docs/codebase-site/data/mechanism-matrix/PJM.js`, cell
+  `gas_electric_power_monthly_level` (currently `O`), is edited.

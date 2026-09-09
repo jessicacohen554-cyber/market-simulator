@@ -195,6 +195,51 @@ Even were it reachable, rule 22 makes 2021 a **re-test, never a fit target**: a
 factor selected because it moved 2021 would be per-criterion selection against a
 holdout year, which condition (c) refuses.
 
+## §6b — 2022, the validation RE-TEST: the same trade, in a held-out year
+
+Solved in a **parallel shard** (separate container — two CAISO per-plant LPs OOM
+each other on one 15 GB box, §8 disclosure 2), same committed override file
+byte-for-byte. Run **`2026-09-09-caiso-267-fossil92-2022`**, branch
+`claude/caiso267-shard-2022`, merged here. Full record:
+`RESULT-caiso267-shard-2022-retest-2026-09-09.md`.
+
+Authorized and verified before the solve: CAISO holds `complete` (2026-09-06),
+the freeze is scoped to `locked_test` alone, `--holdout-authorized` passed, and
+**2019 / H1-2026 were not touched**.
+
+| criterion | baseline (`caiso-262` touchpoint) | **arm ×0.92** | move |
+|---|---|---|---|
+| **C3a** mean LMP | FAIL **+13.3 %** (95.73 vs rt_lw 84.49) | **PASS +8.1 %** (91.34) | **FAIL → PASS** |
+| **C3b** price shape | FAIL **0.242** | **PASS 0.174** | **FAIL → PASS** |
+| **C1** fuel-mix | PASS | **FAIL** — CC_REGULAR +7.33 TWh, share +2.8 pp | **PASS → FAIL** |
+| C2, C3c, C4, C6, C8 | PASS | PASS | — |
+| **determination** | **NOT-YET** | **NOT-YET** | unchanged, **different cause** |
+
+Δλ = **−4.39 $/MWh**. C5a CO2 −6.4 % → **−1.1 %**.
+
+**The 2022 rung reproduces the training-window trade exactly**, on the other side
+of the holdout line: the two *price* criteria improve decisively and both cross
+**into** tolerance; a *volume* criterion degrades and crosses **out**.
+CC_REGULAR goes 55.19 → 58.93 TWh against an actual 51.61 — i.e. the cut pulls
+fossil in against non-fossil, which is the same mechanism §5b measures hour by
+hour in 2025. **CT_PEAKER moves *toward* its actual** (3.10 → 3.79 vs 4.48); it
+is CC_REGULAR that overshoots.
+
+**Rule 30(c) `[R-TOUCHPOINT-FOLD]`: this certifies nothing and decertifies
+nothing.** A validation-tier number is iterable model-SELECTION evidence, never a
+skill claim, and CAISO's determination is its train-tier verdict alone. **Nothing
+was fitted to 2022**: 0.92 was fixed ex ante, and the shard neither resized nor
+re-proposed it.
+
+**THE BASIS TRAP WAS ALREADY DISCHARGED, verified rather than assumed.** The
+shard was briefed that a 2022 run would rewrite the bench part and silently move
+the touchpoint +21.1 % → +13.3 %. It measured instead that caiso-265 had already
+re-solved and re-registered the rung on the like-for-like basis (commit
+`9f6b8864`), and that `bench/CAISO/2022.json.gz` is **md5-identical before and
+after** its own solve and registration. So this run contributes **zero** of the
+−7.8 pp basis move, and its **+8.1 % is directly comparable to +13.3 %**. Neither
+number is ever compared against the retired +21.1 %.
+
 ## §7 — Governance record
 
 * **Rule 29 `[R-SCREEN]`** — zero-LP step 0 first (the offer-array delta of
@@ -257,7 +302,20 @@ holdout year, which condition (c) refuses.
    pinned to the keeper's recorded versions incl. **highspy 1.14.0**) and
    rebuilt the gitignored `data/clean/capacity-deliverability` partition, absent
    at session start.
-7. **The caiso-266 corpus lane produced one measurement before the pivot** and it
+7. **The shard found a real defect in my own attestation generator, and I record
+   it as its find, not mine.** `gen_caiso267_attestation.py` hardcoded
+   `years_held = (2023, 2024, 2025)`, but rule 1 (b) is checked by **exact set
+   equality against the RUN's own scored years**
+   (`calibration_verdict._authorized_tuning_finding`), so as generated the
+   declaration made **C6 FAIL outright** on a 2022-only bundle. The shard
+   corrected that one factual field in place, flagged it, and left every other
+   field byte-for-byte as generated. **Fixed at the source here** — the generator
+   now reads the bundle's own `meta.json` span. Rule 1 (b)'s substance never
+   moved and is the point: ONE config, the single ex-ante constant 0.92 over the
+   same 40 bands, held identically across 2022 *and* 2023–2025; **no per-year
+   value exists**. The full-span attestation regenerates byte-identically and
+   C6 still PASSES.
+8. **The caiso-266 corpus lane produced one measurement before the pivot** and it
    is recorded so the next session does not re-pay for it: OASIS `PUB_DAM_GRP` is
    **reachable** — 2024-04-10 returned a 382,728 B zip in 1.3 s (10.99 MB CSV,
    41,616 rows, all 28 expected columns). Corpus cost: **0.38 MB/day**, ~7.3 s per
@@ -267,8 +325,22 @@ holdout year, which condition (c) refuses.
 
 ## §9 — The promotion question (rule 31 `[R-RETAIN]`, put explicitly)
 
-**This is the owner's decision and I have not pre-empted it.** The arm is
-registered and committed; the keeper is unchanged.
+**DECIDED BY THE OWNER, 2026-09-09: DO NOT PROMOTE.** The keeper stays
+**`2026-09-06-caiso-260-b1-demand`** and CAISO stays **CALIBRATED**. The
+caiso-267 arm and its 2022 rung stay **registered as evidence**, which is what
+rule 15 `[R-DASHBOARD]` requires of a rejection. `audit_keepers --iso CAISO`
+passes 0 failures / 0 warnings after the status rebuild.
+
+The recommendation put to the owner, and the reason it was the recommendation:
+**§5b**. The arm buys its better price by making the *dispatch* worse — overnight
+gas error +668 → +1,329 MW at h0–6, because a flat multiplier applies in all
+8,760 hours and pulls gas in against imports the real fleet was running. Rule 1
+`[R-STRUCT]` is explicit that a more-accurate number reached through a mechanism
+that degrades real structure is not a keeper, and the 2022 rung (§6b) shows the
+same trade on the other side of the holdout line. The carve-out made the *tuning*
+admissible; it never made this particular trade a good one.
+
+The record below is preserved as it stood when the decision was taken.
 
 The trade, stated once, **after** the owner's C3c ruling: the cut **halves the
 price-level error** (mean |C3a| 7.17 % → 2.82 %), leaves 7 of 8 criteria clean,

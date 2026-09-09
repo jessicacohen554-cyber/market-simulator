@@ -13309,3 +13309,90 @@ passes; `check_mechanism_matrix.py` exit 0 with the pre-existing anchor warnings
 rather than inherited: the five named files give **84 passed, 2 skipped, 0 failed** — **the
 `test_gate_a_provenance::test_live_board_passes` failure the handoff reported at `ad78cc3e` is GONE
 at this HEAD**, repaired by the ERCOT lane; nothing was inherited or "fixed" here.
+
+## 2026-09-09 — nyiso-fuelvintage-1: the retiree window is provably in-sample-inert, the EP-level fuel seam is provably inert outright, and BOTH verdicts cost zero LP
+
+Session `nyiso-fuelvintage-1` (PROMPT 3 of
+`docs/handoffs/xiso-fuelvintage-per-iso-lp-prompts-2026-09-09.md` + ADDENDUM A1–A4).
+Pre-registration: `results/calibration/PRECOMMIT-nyiso-fuelvintage-1.md` (`7f211902`, written
+before every number below). Full record: `docs/FINDING-nyiso-fuelvintage-1-2026-09-09.md`.
+
+**G-DRIFT, and a method a later NYISO lane will need.** The keeper's recorded `git_sha`
+`51f2fc2d` is **permanently unreachable** — its branch `claude/nyiso-backcast-calibration-b6er34`
+was squash-merged and deleted, so the commit survives only under `refs/pull/*`; `cat-file`, a
+direct `fetch` of the sha and a fetch of the branch ref all fail. (nyiso-220 could still resolve it
+on 2026-09-06.) The base was therefore anchored **by content**: recomputing the capx D79
+`solve_surface.surface_rows("NYISO")` over `origin/main`'s last 400 commits reproduces the bundle's
+recorded `48353917f7510af3` / 206 rows **exactly at `2084dc8a` and at no later state**, which is a
+conservative superset base. The fingerprint alone proves **zero shared registry rows changed value**
+for NYISO, closing all seven `SURFACE_MODULES` in one step; three new names entered and were
+classified individually.
+
+**TWO LIVE hunks, both then MEASURED rather than assumed.** (L1)
+`f923_gas_price_plausibility_screen` defaults `True` since 2026-09-08 and its `__post_init__`
+coercion does **not** fire for this keeper (`mode="backcast"` **and**
+`gas_plant_monthly_fuel_pricing`), so the screen is armed where the keeper solved without it —
+but it examined **68,919 rows and moved NONE**: every own-reported NYISO gas plant-month already
+sits inside `[0.5, 2.0] ×` its state N3045 reference. (L2) `_apply_simple_cycle_hr_floor` (SPP-49)
+is unconditional by design and **fires on 3 plants / 10 rows**: Greenport 2681 8.000→9.000,
+Chautauqua LFGTE 57186 6.053→9.000, Albany Medical Ctr Cogen 59453 5.773→9.000. Everything else is
+INERT with its reason cited — including `_PARTIAL_EXIT_WINDOW_START 2023→2019` (ercot-261), gated
+on `partial_plant_exit_carry`, which is **`False`** here, so the handoff's double-count question
+cannot arise for NYISO. **Consequence declared before any number existed:** the committed keeper is
+not a valid control for a zero-delta claim, and **no control solve was spent** (rule 29(b)).
+
+**CARD 1 — the fuel seam is PROVABLY LP-INERT; SHARD F was never spent.** Pre-registered: *"C3b
+unchanged to three decimals, and more strongly the assembled generator gas price expected
+byte-identical."* Measured with `gas_electric_power_monthly_level` armed on the keeper recipe:
+`fuel_prices` **and** `mc_base` are **byte-identical in 2023, 2024 and 2025**, max |Δ| = 0.0 each
+year. Those arrays are the LP's input, so the LP is byte-identical and no dispatch answer needed
+buying (rule 29 `[R-SCREEN]` clause (0)). The reason is the seam, not the residual: `resolve.py`
+applies the EP seam at `:151`, the F923 prints at `:228` and `apply_hub_basis_overlay` at **`:229`**,
+and Transco Z6 covers **12/12 months in all seven years 2019–2025** (hub − N3045 blend, annual:
++0.040 / −0.034 / +0.533 / +1.377 / +0.432 / +0.106 / +1.180; max month 5.107, Jan-2025). **This is
+the same finding, for the same reason, as the 2026-07-19 `gas_daily_shape` entry above** ("NYISO
+exactly price-inert (Transco hub overlay supersedes)") — a third mechanism now dies on the same
+overlay. Two corrections to the handoff's account: the overlay supersedes the **prints** as well as
+the seam, and the print path alone would **not** have sufficed — the ADDENDUM-A2 written-cell census
+measures it at **56.738 % of NYISO gas capacity-hours** (265 of 492 gas units; 35.982 % of all
+cells), **not** the ~100 % MISO shows. Matrix cell moved **O → I** with a DO-NOT-REDO condition
+naming what could reopen it: a month the hub index does not cover, not a re-run.
+
+**GATE T3 / charter task 3 — PASS in all three training years, after I corrected my own test.** The
+first formulation demanded an identical `n_gen`, which is wrong: the charter itself says the COD
+ramp never touches `pmax`, so the added units are *supposed* to enter `FleetArrays`. The correct
+test — artifact swapped (not one call site, since `load_retired_within_window` is reached from
+`runner`, `outages` and the COD map) at identical code — requires strict additivity, added columns
+**pinned to zero**, common columns byte-identical in matched order, and non-generator-axis inputs
+byte-identical. Result: 812→870 / 809→867 / 809→867 gens, **58 added columns at 3,694.643 MW with
+max availability 0.0 and max `min_gen` 0.0**, **0 removed**, all common columns and inputs identical.
+A non-negative-cost column with upper bound 0 contributes exactly 0 to any optimum, so this **forces**
+`max |class-hour delta| = 0.000000 MW` by construction where a dispatch comparison could merely
+coincide — and it cancels L1/L2, which are identical in both arms. The pre-change reconstruction is
+exact (477 rows / 141 plants / 2023–2024 only). Grains reconcile: the loader injects **45** gens /
+4,187.600 MW on the shipped window vs **14** / 491.900 MW on the reconstruction — a difference of
+**31 gens / 3,695.700 MW / 16 plants**, i.e. the handoff's 31 units on a nameplate rather than
+net-summer basis, becoming 58 LP columns under CAMPD per-plant binning.
+
+**Charter task 4 — the `NUCLEAR_MONTHLY_CF_BY_YEAR['NYISO']` caveat is RETIRED, and REPLACED.** "A
+2018-2021 solve is short that capacity regardless of this overlay" is now false; the CF overlays are
+intensive and never could have restored capacity, and the fleet channel did. Not a deletion: reading
+the seam produced the successor caveat, now in the file — the table is still **derived** on the
+operable fleet (`derive_nuclear_monthly_cf.py` builds from `load_fleet_from_csv`, which the retiree
+injection does not feed, so every value is byte-unchanged and `--check` still passes), while
+`fleet/arrays.py` **applies** the CF uniformly to every nuclear row, so the restored Indian Point
+units carry the upstate fleet's measured monthly CF rather than their own metered output — presence
+and retirement timing measured, within-year shape not. Re-deriving over the injected fleet is a
+change to the derive's **fleet definition**, not a rule-23 data refresh, so it is **routed back to
+the charter, not absorbed**.
+
+**Gate baselines re-measured on this tree** (not inherited): `pytest tests/scoring` **16 failed /
+1,532 passed / 12 skipped** — exactly A3's corrected baseline, so this branch adds none;
+`check_cache_key_registration --base origin/main` RED on `HYDRO_BUDGET_PERIOD_HOURS_BY_PLANT`
+(the named pre-existing red); `check_mechanism_matrix` **exit 0**, still 0 after the cell edit.
+`constants.py` blob verified against the server after push (5,580 lines, sha `a53e74f6`, rule 27).
+
+**Operational finding for every lane:** `data/clean/` is gitignored, derived and **absent in a fresh
+container**, and a NYISO solve dies deep in `run_year` on a hard `FileNotFoundError`
+(capacity-deliverability, then `nyiso-interface-flows`) rather than no-opping.
+`scripts/regenerate_clean.py` must precede any solve and took **well over 30 minutes** here.
