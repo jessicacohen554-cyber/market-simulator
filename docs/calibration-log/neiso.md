@@ -3256,3 +3256,89 @@ measured blast radius and a proposed one-line fix in
 own pre-committed stop rule** — do not re-size this scalar. The live objects are unchanged: C3c
 (frontier declared, needs a new measured identification and its own charter) and the diurnal
 amplitude gap (needs its own charter; see the neiso-76 adjudication before proposing anything).
+
+## neiso-107 — 2026-09-09 (session `neiso-fuelvintage-1`)
+
+**Two deliverables: the gas index-vs-delivered gap SETTLED (zero LP), and the 2019-2022 retiree
+window solved across the training span and the validation ladder.** Docs:
+`docs/FINDING-neiso-gas-index-vs-delivered-2026-09-09.md` (the fuel investigation, read first) and
+`docs/RESULT-neiso-fuelvintage-1-2026-09-09.md` (everything else).
+
+### A — the index is right, and NEISO has no gas level gap
+
+The xiso lane handed NEISO the one discrepancy the program had not resolved: for Jan-2023 the
+ISO-NE published Algonquin index reads **$4.73/MMBtu** and the EIA `N3045` MA/CT/RI/NH/ME blend
+reads **$15.35** — 3.2×, and the reason NEISO's series was recorded as **+2.303 $/MMBtu below
+measured**, the largest level gap in the cross-ISO table. Settled by four independent zero-LP tests:
+
+1. **Small-denominator hypothesis REFUTED.** The `N3045` *volume* series is **98.4 %** of
+   CAMPD-metered burn (29.76 vs 29.29 million MMBtu, Jan-2023) and implies a **7.33-7.65
+   MMBtu/MWh** fleet heat rate in every month of 2022-2024. `$15.35` is the average delivered cost
+   of essentially *all* the gas the fleet burned.
+2. **The index is corroborated** by an independent publisher (NGI daily AGT: $3.22-4.23 through
+   Jan-2023, spiking 01-31).
+3. **The market falsifies the delivered series as a marginal cost.** It implies a market heat rate
+   below the **6.3 MMBtu/MWh** best-CC physical floor in **7 of 35 months** (Jan-2023: **3.29**);
+   the index never once does (min 7.39). In dollars: the merchant fleet would have burned
+   **$449.6M** of fuel in Jan-2023 to earn **$203.2M** of energy revenue.
+4. **There is no model gap.** The keeper's gas series reproduces the published index in **73 of 84
+   months exactly**. The 2.303 is a reference-choice artifact.
+
+Both series are real and measure different things: `N3045` is EIA-923 Schedule-2 delivered cost
+*including transportation* — an **average total cost** whose wedge over the index is
+winter-concentrated (DJF mean +3.80, other months +0.83) — while the merit order prices the
+**marginal** commodity. Rule 14 `[R-ACCURATE]`'s misalignment exception, now evidenced.
+
+`gas_electric_power_monthly_level` proven **EXACTLY inert** (0.000000000 $/MMBtu, all seven years;
+the hub overlay repriced **463/463** gas generators in **12/12** months). **SHARD F was cancelled.**
+Matrix cell `O` → **`I`**. A NEISO copy of the ercot-261 corroborator is **recommended against**:
+public EIA-923 gas receipts for 2023 are **2 municipal plants** in MA and **zero** in
+CT/RI/NH/ME/VT — ~0.1 % of the fleet's burn (TX: 37 plants).
+
+### B — the retiree window: registered, every band unchanged
+
+`2026-09-09-neiso-107-retiree-window` (2023-2025) and `2026-09-09-neiso-107-holdout-touchpoints`
+(2020-2022, `--holdout-authorized` under the `complete` marker). Both **CALIBRATED**, 8 scored /
+0 fails / the same lone ledgered C3c — **identical to the incumbent keeper**. Zero free parameters.
+
+Touchpoints vs the committed prior touchpoint bundle (G-CTRL form 4, no control solve): annual mean
+price **falls −0.190 / −0.281 / −0.101 $/MWh**, 2022 immaterial (−0.0020 TWh; max hourly Δprice
+4.31 vs 117.27 / 94.40) — both pre-registrations hold, and the charter's "large 2022 move is a BUG"
+did not occur. `ST_GAS` **+333/+355/+142 GWh** against `CC_REGULAR` **−599/−307/−141 GWh`: the
+restored steam and CT units (Mystic 7, Essential Power MA, Capitol District, Pawtucket) taking load
+off the CC fleet. Stamped to the keeper; `build_status --iso NEISO` in sync; every criterion **HELD**.
+
+### C — what this does NOT close
+
+**Charter task 3's literal bar was NOT met and is reported, not waved through.** Max |class-hour
+delta| vs the committed keeper is **426.95 / 371.44 / 442.34 MW**, not 0.000000. Root-caused: the
+added units are dispatch-inert (all 44 read `cap_mw` 0.000 and 0.000 GWh in every training year,
+and the 24 added plants are **disjoint** from the operable snapshot — ADDITION 1's overlap
+assertion verified), `demand`/`slack`/`dump`/`reserve_price` are bit-identical, net class energy
+moves **3e-9 to 3e-6** of the total and the annual mean price **1-3 parts in 100,000**, and
+`hydro`'s net delta is **exactly zero** across 1,192 tied hours under its binding monthly budget.
+That is **alternate-optimum reshuffling of a degenerate LP**. Two perturbation channels are
+disclosed and deliberately **not separated by a control solve** (rule 29(b)): the 44 units enter
+`FleetArrays` at `pmax > 0` with availability 0 — the channel the charter itself predicted — and
+HEAD drift (solve-surface fingerprint `531e4805` → `9d35c270`, 195 → 197 rows). If bit-identity is
+wanted as a standing invariant the fix is to drop zero-availability-all-year units from the LP
+column set, which is a **shared-path** change no single ISO's lane should make.
+
+**A second gap, routed not absorbed:** the window restores **774.1 of 956.0 MW** in 2020
+(788.3/949.0 in 2021; 199.1/201.3 in 2022). The ~101 MW difference is plants carrying zero capacity
+all year, almost all **waste-to-energy, landfill gas, biomass, small hydro and wind** — classes
+driven by measured budgets/CFs rather than unit capacity, so possibly by design. 0.4 % of the
+fleet; named so it is not lost.
+
+**Charter task 4 done:** the `NUCLEAR_MONTHLY_CF_BY_YEAR['NEISO']` 2019 caveat is retired — the
+shortfall goes **−2.119 TWh → −0.061 TWh** with Pilgrim restored. What is not closed is written
+into the comment: the row's denominator is still the 2-plant fleet, so Jan-May carries a shape
+error (April worst, +130 GWh). Re-deriving is **deferred on purpose** — the constant is on the
+solve surface and would re-key every ISO to repair a year that is frozen and unsolvable. **2019 and
+H1-2026 were not touched.**
+
+**Next shorthand: `neiso-108`.** The offer-level lane stays CLOSED. The fuel lane is now CLOSED
+too — the index-vs-delivered question is answered and `gas_electric_power_monthly_level` is
+adjudicated `I`; do not re-open either without new evidence (rule 28 DO-NOT-REDO). The live objects
+are unchanged: C3c (frontier, needs its own charter) and the diurnal amplitude gap.
+**OPEN FOR THE OWNER: whether to promote `2026-09-09-neiso-107-retiree-window` as the keeper.**
