@@ -1494,9 +1494,13 @@ results/capxd88-screen/
 # SPP-51c screen/control bundles (rule 29(c) delete-before-merge via gitignore; rule 31 [R-RETAIN] keeps them on local disk)
 results/calibration/_spp51c_*
 
-# caiso-267 screen/control bundles (rule 29(c) delete-before-merge, rule 31 [R-RETAIN]:
-# gitignored so they never reach main; NEVER rm -rf them)
-results/calibration/caiso267_*/
+# caiso-267 SCREEN + CONTROL bundles only (rule 29(c) delete-before-merge, rule 31
+# [R-RETAIN]: gitignored so they never reach main; NEVER rm -rf them). The
+# FULL-SPAN bundle caiso267_fossil92/ and the 2022 re-test bundle are
+# deliberately NOT ignored — rule 15 [R-DASHBOARD] requires them registered and
+# committed.
+results/calibration/caiso267_fossil92_screen2023/
+results/calibration/caiso267_ctrl_screen2023/
 # miso-247 working bundles (the P19 posture screen + its EARNED control). Ignored
 # so they can never reach a commit — the only thing rule 29 [R-SCREEN] (c)
 # requires, and what rule 31 [R-RETAIN] names as the mechanism that discharges

@@ -1,0 +1,383 @@
+{
+ "iso": "CAISO",
+ "year": 2023,
+ "arms": {
+  "ctrl": {
+   "fuelmix": {
+    "status": "PASS",
+    "detail": [
+     {
+      "criterion": "fuelmix",
+      "key": "CC_REGULAR",
+      "year": 2023,
+      "status": "PASS",
+      "classification": null,
+      "metric": "CC_REGULAR grid-delivered TWh + share of generation",
+      "model": 48.396,
+      "actual": 51.837,
+      "share_pp": -1.33,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b15.27 TWh & \u00b13pp share",
+      "completeness": "complete",
+      "magnitude": "-3.44 TWh, share -1.3pp"
+     },
+     {
+      "criterion": "fuelmix",
+      "key": "CC_CHP",
+      "year": 2023,
+      "status": "PASS",
+      "classification": null,
+      "metric": "CC_CHP grid-delivered TWh + share of generation",
+      "model": 8.482,
+      "actual": 7.71,
+      "share_pp": 0.55,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b15.27 TWh & \u00b13pp share",
+      "completeness": "complete",
+      "magnitude": "+0.77 TWh, share +0.5pp"
+     },
+     {
+      "criterion": "fuelmix",
+      "key": "CT_PEAKER",
+      "year": 2023,
+      "status": "PASS",
+      "classification": null,
+      "metric": "CT_PEAKER grid-delivered TWh + share of generation",
+      "model": 2.026,
+      "actual": 4.128,
+      "share_pp": -1.17,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b15.27 TWh & \u00b13pp share",
+      "completeness": "complete",
+      "magnitude": "-2.10 TWh, share -1.2pp"
+     },
+     {
+      "criterion": "fuelmix",
+      "key": "ST_GAS",
+      "year": 2023,
+      "status": "PASS",
+      "classification": null,
+      "metric": "ST_GAS grid-delivered TWh + share of generation",
+      "model": 0.119,
+      "actual": 1.308,
+      "share_pp": -0.68,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b15.27 TWh & \u00b13pp share",
+      "completeness": "complete",
+      "magnitude": "-1.19 TWh, share -0.7pp"
+     },
+     {
+      "criterion": "fuelmix",
+      "key": "ST_CHP",
+      "year": 2023,
+      "status": "PASS",
+      "classification": null,
+      "metric": "ST_CHP grid-delivered TWh + share of generation",
+      "model": 0.0,
+      "actual": 0.059,
+      "share_pp": -0.03,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b15.27 TWh & \u00b13pp share",
+      "completeness": "complete",
+      "magnitude": "-0.06 TWh, share -0.0pp"
+     },
+     {
+      "criterion": "fuelmix",
+      "key": "COAL_BIT",
+      "year": 2023,
+      "status": "PASS",
+      "classification": null,
+      "metric": "COAL_BIT grid-delivered TWh + share of generation",
+      "model": 0.0,
+      "actual": 0.063,
+      "share_pp": -0.04,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b15.27 TWh & \u00b13pp share",
+      "completeness": "complete",
+      "magnitude": "-0.06 TWh, share -0.0pp"
+     }
+    ]
+   },
+   "sysvol": {
+    "status": "PASS",
+    "detail": [
+     {
+      "criterion": "sysvol",
+      "key": "gas",
+      "year": 2023,
+      "status": "PASS",
+      "classification": null,
+      "metric": "gas family \u2014 fully reported; per-class volume/share governed by the C1 universal gate (no family netting/percent band)",
+      "model": 59.02,
+      "actual": 65.04,
+      "tol": "per-class \u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b15.27 TWh & \u00b13pp share (via C1)",
+      "magnitude": "all classes in band (C1)",
+      "source": "EIA-923 \u2212 BTM (grid-delivered), per-class via C1",
+      "vintage_reconciled": false
+     },
+     {
+      "criterion": "sysvol",
+      "key": "coal",
+      "year": 2023,
+      "status": "SKIPPED",
+      "classification": null,
+      "metric": "C2 system volume (gas/coal families)",
+      "model": null,
+      "actual": null,
+      "tol": null,
+      "magnitude": "coal family immaterial (<10 TWh); governed by the C1 per-class absolute band"
+     }
+    ]
+   },
+   "price_shape": {
+    "status": "PASS",
+    "detail": {
+     "criterion": "price_shape",
+     "key": null,
+     "year": 2023,
+     "status": "PASS",
+     "classification": null,
+     "metric": "monthly load-weighted price NRMSE (load-weighted actual)",
+     "model": 0.083,
+     "actual": null,
+     "tol": "\u22640.20 target / \u22640.20 commercial",
+     "magnitude": "NRMSE 0.083"
+    }
+   },
+   "dispatch_corr": {
+    "status": "PASS",
+    "detail": [
+     {
+      "criterion": "dispatch_corr",
+      "key": "gas",
+      "year": 2023,
+      "status": "PASS",
+      "classification": null,
+      "metric": "gas fleet hourly r / NRMSE (CEMS hourly + flat cogen block; 930 NG cell corrupted \u2014 FINDING 2026-07-12)",
+      "model": "r=0.882 nrmse=0.287",
+      "actual": null,
+      "tol": "r\u22650.70, NRMSE\u22640.30",
+      "magnitude": "r=0.882, NRMSE=0.287"
+     },
+     {
+      "criterion": "dispatch_corr",
+      "key": "coal",
+      "year": 2023,
+      "status": "SKIPPED",
+      "classification": null,
+      "metric": "C4 fleet hourly dispatch correlation",
+      "model": null,
+      "actual": null,
+      "tol": null,
+      "magnitude": "coal fleet immaterial (<5 TWh); hourly correlation degenerate"
+     }
+    ]
+   },
+   "price_mean_TARGET": {
+    "status": "PASS",
+    "detail": {
+     "criterion": "price_mean",
+     "key": null,
+     "year": 2023,
+     "status": "PASS",
+     "classification": null,
+     "metric": "system load-weighted mean LMP $/MWh (vs RT (load-weighted))",
+     "benchmark": "RT",
+     "model": 56.55,
+     "actual": 54.17,
+     "tol": "\u00b110% target / \u00b110% commercial",
+     "magnitude": "+4.4%"
+    }
+   }
+  },
+  "arm": {
+   "fuelmix": {
+    "status": "PASS",
+    "detail": [
+     {
+      "criterion": "fuelmix",
+      "key": "CC_REGULAR",
+      "year": 2023,
+      "status": "PASS",
+      "classification": null,
+      "metric": "CC_REGULAR grid-delivered TWh + share of generation",
+      "model": 50.505,
+      "actual": 51.837,
+      "share_pp": -0.5,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b15.27 TWh & \u00b13pp share",
+      "completeness": "complete",
+      "magnitude": "-1.33 TWh, share -0.5pp"
+     },
+     {
+      "criterion": "fuelmix",
+      "key": "CC_CHP",
+      "year": 2023,
+      "status": "PASS",
+      "classification": null,
+      "metric": "CC_CHP grid-delivered TWh + share of generation",
+      "model": 8.513,
+      "actual": 7.71,
+      "share_pp": 0.5,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b15.27 TWh & \u00b13pp share",
+      "completeness": "complete",
+      "magnitude": "+0.80 TWh, share +0.5pp"
+     },
+     {
+      "criterion": "fuelmix",
+      "key": "CT_PEAKER",
+      "year": 2023,
+      "status": "PASS",
+      "classification": null,
+      "metric": "CT_PEAKER grid-delivered TWh + share of generation",
+      "model": 2.253,
+      "actual": 4.128,
+      "share_pp": -1.06,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b15.27 TWh & \u00b13pp share",
+      "completeness": "complete",
+      "magnitude": "-1.88 TWh, share -1.1pp"
+     },
+     {
+      "criterion": "fuelmix",
+      "key": "ST_GAS",
+      "year": 2023,
+      "status": "PASS",
+      "classification": null,
+      "metric": "ST_GAS grid-delivered TWh + share of generation",
+      "model": 0.075,
+      "actual": 1.308,
+      "share_pp": -0.7,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b15.27 TWh & \u00b13pp share",
+      "completeness": "complete",
+      "magnitude": "-1.23 TWh, share -0.7pp"
+     },
+     {
+      "criterion": "fuelmix",
+      "key": "ST_CHP",
+      "year": 2023,
+      "status": "PASS",
+      "classification": null,
+      "metric": "ST_CHP grid-delivered TWh + share of generation",
+      "model": 0.0,
+      "actual": 0.059,
+      "share_pp": -0.03,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b15.27 TWh & \u00b13pp share",
+      "completeness": "complete",
+      "magnitude": "-0.06 TWh, share -0.0pp"
+     },
+     {
+      "criterion": "fuelmix",
+      "key": "COAL_BIT",
+      "year": 2023,
+      "status": "PASS",
+      "classification": null,
+      "metric": "COAL_BIT grid-delivered TWh + share of generation",
+      "model": 0.0,
+      "actual": 0.063,
+      "share_pp": -0.04,
+      "tol": "\u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b15.27 TWh & \u00b13pp share",
+      "completeness": "complete",
+      "magnitude": "-0.06 TWh, share -0.0pp"
+     }
+    ]
+   },
+   "sysvol": {
+    "status": "PASS",
+    "detail": [
+     {
+      "criterion": "sysvol",
+      "key": "gas",
+      "year": 2023,
+      "status": "PASS",
+      "classification": null,
+      "metric": "gas family \u2014 fully reported; per-class volume/share governed by the C1 universal gate (no family netting/percent band)",
+      "model": 61.35,
+      "actual": 65.04,
+      "tol": "per-class \u00b1min(max(2.0% ISO-load, 3% actual-gen), 8 TWh) = \u00b15.27 TWh & \u00b13pp share (via C1)",
+      "magnitude": "all classes in band (C1)",
+      "source": "EIA-923 \u2212 BTM (grid-delivered), per-class via C1",
+      "vintage_reconciled": false
+     },
+     {
+      "criterion": "sysvol",
+      "key": "coal",
+      "year": 2023,
+      "status": "SKIPPED",
+      "classification": null,
+      "metric": "C2 system volume (gas/coal families)",
+      "model": null,
+      "actual": null,
+      "tol": null,
+      "magnitude": "coal family immaterial (<10 TWh); governed by the C1 per-class absolute band"
+     }
+    ]
+   },
+   "price_shape": {
+    "status": "PASS",
+    "detail": {
+     "criterion": "price_shape",
+     "key": null,
+     "year": 2023,
+     "status": "PASS",
+     "classification": null,
+     "metric": "monthly load-weighted price NRMSE (load-weighted actual)",
+     "model": 0.093,
+     "actual": null,
+     "tol": "\u22640.20 target / \u22640.20 commercial",
+     "magnitude": "NRMSE 0.093"
+    }
+   },
+   "dispatch_corr": {
+    "status": "PASS",
+    "detail": [
+     {
+      "criterion": "dispatch_corr",
+      "key": "gas",
+      "year": 2023,
+      "status": "PASS",
+      "classification": null,
+      "metric": "gas fleet hourly r / NRMSE (CEMS hourly + flat cogen block; 930 NG cell corrupted \u2014 FINDING 2026-07-12)",
+      "model": "r=0.882 nrmse=0.275",
+      "actual": null,
+      "tol": "r\u22650.70, NRMSE\u22640.30",
+      "magnitude": "r=0.882, NRMSE=0.275"
+     },
+     {
+      "criterion": "dispatch_corr",
+      "key": "coal",
+      "year": 2023,
+      "status": "SKIPPED",
+      "classification": null,
+      "metric": "C4 fleet hourly dispatch correlation",
+      "model": null,
+      "actual": null,
+      "tol": null,
+      "magnitude": "coal fleet immaterial (<5 TWh); hourly correlation degenerate"
+     }
+    ]
+   },
+   "price_mean_TARGET": {
+    "status": "PASS",
+    "detail": {
+     "criterion": "price_mean",
+     "key": null,
+     "year": 2023,
+     "status": "PASS",
+     "classification": null,
+     "metric": "system load-weighted mean LMP $/MWh (vs RT (load-weighted))",
+     "benchmark": "RT",
+     "model": 53.7,
+     "actual": 54.17,
+     "tol": "\u00b110% target / \u00b110% commercial",
+     "magnitude": "-0.9%"
+    }
+   }
+  }
+ },
+ "gates": {
+  "G_NOFLIP": {
+   "flips": [],
+   "pass": true
+  }
+ },
+ "summary": {
+  "fuelmix": "ctrl PASS -> arm PASS",
+  "sysvol": "ctrl PASS -> arm PASS",
+  "price_shape": "ctrl PASS -> arm PASS",
+  "dispatch_corr": "ctrl PASS -> arm PASS",
+  "price_mean_TARGET": "ctrl PASS -> arm PASS"
+ }
+}

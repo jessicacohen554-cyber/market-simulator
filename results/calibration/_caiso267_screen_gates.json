@@ -1,0 +1,113 @@
+{
+ "year": 2023,
+ "gates": {
+  "G_IDENT": {
+   "max_abs_demand_delta_mw": 0.0,
+   "zone_hours": 61320,
+   "pass": true
+  },
+  "G_FOOT": {
+   "fossil_delta_twh": 2.3444,
+   "nonfossil_delta_twh": -2.3475,
+   "conservation_residual_twh": -0.0031,
+   "pass": true
+  },
+  "G_DIR": {
+   "lw_price_control": 56.5477,
+   "lw_price_arm": 53.698,
+   "d_lambda": -2.8497,
+   "predicted_mean_dmc": 2.845,
+   "band": [
+    -8.0,
+    -0.5
+   ],
+   "pass": true
+  }
+ },
+ "class_twh": {
+  "CC_CHP": {
+   "control": 8.4824,
+   "arm": 8.5133,
+   "delta": 0.0309
+  },
+  "CC_REGULAR": {
+   "control": 48.4074,
+   "arm": 50.5217,
+   "delta": 2.1143
+  },
+  "COAL": {
+   "control": 0.0896,
+   "arm": 0.0892,
+   "delta": -0.0004
+  },
+  "CT_CHP": {
+   "control": 1.24,
+   "arm": 1.252,
+   "delta": 0.012
+  },
+  "CT_PEAKER": {
+   "control": 2.0312,
+   "arm": 2.2628,
+   "delta": 0.2316
+  },
+  "OTHER": {
+   "control": 9.259,
+   "arm": 9.259,
+   "delta": 0.0
+  },
+  "ST_GAS": {
+   "control": 0.1189,
+   "arm": 0.0748,
+   "delta": -0.044
+  },
+  "biomass": {
+   "control": 4.477,
+   "arm": 4.477,
+   "delta": 0.0
+  },
+  "hydro": {
+   "control": 24.3312,
+   "arm": 24.3291,
+   "delta": -0.0021
+  },
+  "import": {
+   "control": 37.3685,
+   "arm": 35.0445,
+   "delta": -2.324
+  },
+  "nuclear": {
+   "control": 17.6263,
+   "arm": 17.6263,
+   "delta": 0.0
+  },
+  "oil": {
+   "control": 0.0001,
+   "arm": 0.0001,
+   "delta": -0.0
+  },
+  "solar": {
+   "control": 39.3019,
+   "arm": 39.2806,
+   "delta": -0.0213
+  },
+  "wind": {
+   "control": 16.5545,
+   "arm": 16.5545,
+   "delta": 0.0
+  }
+ },
+ "head_drift": {
+  "lw_price_committed_keeper": 56.5435,
+  "lw_price_control_at_head": 56.5477,
+  "drift_d_lambda": 0.0043,
+  "note": "control minus committed keeper: the same recipe re-solved at HEAD. This MEASURES the drift the G-DRIFT audit could not classify (94 files / +46,838 lines), which is why the control was spent."
+ },
+ "context": {
+  "actual_lw_basis_note": "C3a scores against the bench rt_lw (54.17 in 2023)",
+  "dump_mwh_control": 0.0,
+  "dump_mwh_arm": 0.0,
+  "slack_mwh_control": 0.0,
+  "slack_mwh_arm": 0.0
+ },
+ "screen_verdict": "PROCEED"
+}
