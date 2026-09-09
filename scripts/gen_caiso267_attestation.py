@@ -103,8 +103,15 @@ def _tail_counts(bundle: Path) -> dict[int, int]:
     return out
 
 
-def _tuning_declaration() -> dict:
-    """The rule 1 [R-STRUCT] carve-out declaration, conditions (a)-(e)."""
+def _tuning_declaration(years: list[int]) -> dict:
+    """The rule 1 [R-STRUCT] carve-out declaration, conditions (a)-(e).
+
+    Args:
+        years: The bundle's OWN scored years — condition (b) is checked by exact
+            set equality against them, so a 2022-only bundle must declare
+            ``[2022]`` and a full-span bundle ``[2023, 2024, 2025]``. The factor
+            is identical either way; only the span differs.
+    """
     curve = json.loads(CURVE.read_text())
     return {
         "channel": "offer_curve_by_group",
@@ -136,7 +143,15 @@ def _tuning_declaration() -> dict:
             ),
             "file": "results/calibration/_caiso267_fossil92_offer_curve.json",
         },
-        "years_held": list(YEARS),
+        # Rule 1 (b) is tested by EXACT SET EQUALITY against the RUN's own scored
+        # years (calibration_verdict._authorized_tuning_finding), so this must be
+        # the bundle's span, not this module's default. Hardcoding YEARS here made
+        # C6 FAIL outright on the 2022-only shard bundle — found by the caiso-267
+        # shard, RESULT-caiso267-shard-2022-retest-2026-09-09.md §4(1). The
+        # SUBSTANCE of (b) is untouched and is the point: ONE config, the single
+        # ex-ante constant 0.92 over the same 40 bands, held identically across
+        # every year any bundle scores. No per-year value exists.
+        "years_held": years,
         "set_ex_ante": True,
         "not_swept": True,
         "identification": (
@@ -178,7 +193,10 @@ def main() -> None:
     att = json.loads((KEEPER / "calibration_attestation.json").read_text())
     att = {"schema": "calibration-attestation/v1", **att}
     att["governance"]["attested_by"] = _ATTEST
-    att["governance"]["authorized_price_tuning"] = _tuning_declaration()
+    _bundle_years = sorted(
+        int(y) for y in json.loads((args.bundle / "meta.json").read_text())["years"]
+    )
+    att["governance"]["authorized_price_tuning"] = _tuning_declaration(_bundle_years)
 
     counts = _tail_counts(args.bundle)
     tag = "caiso-267 fossil offer-band x0.92 arm"
