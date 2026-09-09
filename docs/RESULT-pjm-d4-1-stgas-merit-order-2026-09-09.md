@@ -423,6 +423,24 @@ committed recipe and carry no result the documents do not.
 > merit allocation, adds one), and the lane re-chartered onto the `ST_GAS_PEAKER_PLANTS` membership
 > object in §12?
 
+### 13a. GATE BASELINE — this tree changes NO source code
+
+The diff against `origin/main` is two docs, a `.gitignore` block, PJM's matrix shard and PJM's
+calibration log.
+
+| gate | result |
+|---|---|
+| `check_mechanism_matrix --base origin/main` | **integrity OK**; keeper stamps and §5.x prose headers match every `keepers/<ISO>.json`; all four ratchets OK |
+| `audit_keepers --iso PJM` | **PASS — 0 failures, 0 warnings** |
+| `build_status --check --iso PJM` | **status parts in sync** |
+| `check_cache_key_registration --base origin/main` | **green** — no new fields; 832 fields / 287 registered / 304 solve-surface names all declared. *(The `HYDRO_BUDGET_PERIOD_HOURS_BY_PLANT` RED the handoff expected is no longer present on `main`.)* |
+| `check_registry_payload_parity` | fails on the **five pre-existing `ercot262_arm_*`** bundles only — ERCOT's, committed on `main`; rule 25 `[R-ISO-SCOPE]` says leave them. **This tree adds none**, and wrote no bundle at all. |
+| `pytest tests/scoring` | **15 failed / 1,533 passed / 12 skipped**, all in `test_golden_manifest_provenance.py` and `test_registration_marker_gate.py` — files this diff cannot reach. The handoff's expected baseline was 16, i.e. `main` moved by one; **this session adds none.** |
+| `pytest tests/unit/config/test_mechanism_matrix_*` | **33 passed** |
+
+No `ruff` run was owed: no repository Python was written (the probe scripts live in the session
+scratchpad and are not committed).
+
 **Rule 28 duty discharged:** PJM's matrix shard is re-stamped in this session with the
 `netload_drag_floors` cell verdicts for both sub-gates. No other ISO's shard, keeper, status part or
 calibration log was touched.
