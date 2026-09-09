@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-09-09T07:21:29",
+  "timestamp": "2026-09-09T06:53:47",
   "git": {
-    "sha": "4eb866ab",
-    "basis_sha": "4eb866ab9907346ddf581b55645dfbf01d262b17",
-    "branch": "HEAD",
+    "sha": "654c3aa9",
+    "basis_sha": "654c3aa93452008ad3b61a249e94da584e8d778f",
+    "branch": "claude/ercot262-arm-2021",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
@@ -335,7 +335,7 @@
     "nyiso_dynamic_reserve_requirements": null,
     "nyiso_hydro_reserve_eligible": null,
     "nyiso_scr_edrp_reserve_eligible": null,
-    "git_sha": "4eb866ab"
+    "git_sha": "654c3aa9"
   },
   "scenario_config": {
     "weather_year": 2021,
@@ -16231,7 +16231,7 @@
       "NUCLEAR_MONTHLY_CF_BY_YEAR": "00a8e8726fd0edd6"
     },
     "epochs": [],
-    "git_sha": "4eb866ab"
+    "git_sha": "654c3aa9"
   },
   "environment": {
     "python_version": "3.11.15",

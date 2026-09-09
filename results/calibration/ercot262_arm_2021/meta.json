@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-09T07:21:29",
+  "timestamp": "2026-09-09T06:53:47",
   "iso": "ERCOT",
   "years": [
     2021
@@ -597,8 +597,8 @@
     "unit_outages": "../_shared/ERCOT/unit_outages-b33eb9c5dd84.parquet",
     "unit_outages_layup": "../_shared/ERCOT/unit_outages_layup-f26daaceaab4.parquet"
   },
-  "git_sha": "4eb866ab",
-  "basis_sha": "4eb866ab9907346ddf581b55645dfbf01d262b17",
+  "git_sha": "654c3aa9",
+  "basis_sha": "654c3aa93452008ad3b61a249e94da584e8d778f",
   "highspy_version": "1.14.0",
   "environment": {
     "python_version": "3.11.15",
