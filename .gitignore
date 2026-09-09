@@ -1525,3 +1525,8 @@ results/calibration/pjm177_*/
 # before the OWNER has ruled on promotion. Every number cited from them lives
 # in results/calibration/FINDING-pjm177b-touchpoints-2026-09-09.md.
 results/calibration/pjm177b_*/
+
+# capx D90-R (rule 31 [R-RETAIN]): the re-score arm bundle family stays on local
+# disk and never reaches main. Gitignoring is what discharges rule 29 [R-SCREEN](c);
+# `rm` is forbidden by rule 31.
+/results/ff-t3-neiso-golden/d90-rescore/

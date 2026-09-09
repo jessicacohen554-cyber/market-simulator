@@ -440,3 +440,158 @@ this re-score exists to avoid.
 IDENTIFIED". On the evidence above the *entry count* half looks right and the *all IDENTIFIED* half
 looks wrong, and P9 will be scored a **MISS** if the as-generated ledger carries an UNIDENTIFIED
 entry — recorded here, before the solve, rather than reinterpreted afterwards.
+
+---
+
+## ADDENDUM C — the key situation RE-MEASURED at the D90-R head, before any LP is spent
+
+**Lane:** capx **D90-R** (the completion lane for D90) · **Date:** 2026-09-09 · **Model:** Opus
+**Session branch:** `claude/zen-volta-qo9avm`. *(The charter names the lane
+`claude/capx-d90r-neiso-t3-rescore`; this session's harness-designated branch is the one above, and
+that is where the work lands. Naming only — no content difference.)*
+**Base:** `33f405f5` = `origin/main` exactly (`HEAD == origin/main`, verified, not merely descended).
+
+D90 §3.1 was explicit that its key finding was a **HEAD-relative measurement** and had to be re-taken
+rather than inherited. It is re-taken here, and **it has changed.**
+
+### C.1 D91 HAS LANDED — the arm now realizes the SCORED key
+
+`origin/main` at this head is the merge of **PR #5720** (`claude/capx-d91-cache-key-pins-phrx2p`),
+which is exactly the repair D91 was chartered for. `pjm_seam_neighbour_hourly_ladder` is now
+registered:
+
+```
+config/scenarios.py:1647   "pjm_seam_neighbour_hourly_ladder",              <- _CACHE_KEY_OPTIONAL_FIELDS
+config/scenarios.py:2264   "pjm_seam_neighbour_hourly_ladder": "False",    <- frozen drop value
+```
+
+D90 §3.1 recorded the pre-repair state (0/173 payloads reproducing their key; `bau-d60` landing at
+`ae317e63263c8eef`). That state no longer holds. **This is the charter's second branch: the arm
+realizes `f04fd06348e1623d` — the scored key — which is a BETTER ADDRESS, not a different score.**
+The arm still writes under its own `--out-dir` (`results/ff-t3-neiso-golden/d90-rescore`), so it
+still cannot cache-hit or clobber the stale `bau-d60` bundle; what changes is only that the arm's
+directory name now agrees with the recipe it ran, which is what a correct registration means.
+
+**The score is unaffected either way** — the two lanes were ruled independent (§0bh.3(b)) precisely
+because addressing is not scoring, and nothing in this addendum touches a solve input.
+
+### C.2 The §4 pre-solve STOP re-verified at THIS head — 0 real field diffs, key MATCH
+
+Re-run of A.1's construction (`reference_config("NEISO", 2026, 2050, cmc=False,
+golden_posture=True, ccs_retrofit_fixed_cost_co2_scaling=False)`, the `ccs_retrofit_vom_adder=8.0`
+pin, then `apply_iso_scenario_defaults(cfg, "NEISO")`) against the committed `config.yaml`:
+
+| measure | value |
+|---|---|
+| committed keys / arm keys | 799 / **830** |
+| **REAL value diffs (the STOP)** | **0** |
+| `yaml` list↔tuple round-trip only | 6 |
+| absent from committed (channel B) | **31** |
+| …of those, NOT at their dataclass default | **0** |
+| pinned+resolved cache key | **`f04fd06348e1623d`** |
+| committed recipe key | `f04fd06348e1623d` — **IDENTICAL** |
+
+**The STOP PASSES and the arm IS the scored recipe**, now confirmed twice on two different heads.
+Two re-measurements worth recording rather than silently absorbing:
+
+* **Channel B is 31 fields here, not D90's 29.** The schema grew by two between the two heads
+  (among them `vre_curtailment_oversupply_allocation`). **All 31 sit at their dataclass default**, so
+  §3.2's conclusion — no behavioural drift from schema growth — is re-established at this head on the
+  wider set, not carried.
+* The 6 remaining apparent diffs are `yaml.safe_dump` → `safe_load` **list-vs-tuple** round-trip
+  artifacts on the offer-surface percentile/bin sequences, equal element-for-element. D90's A.1
+  reported "0 field diffs" on a normalized comparison; this addendum reports the normalization
+  explicitly so the two numbers are reconcilable rather than merely consistent.
+
+### C.3 Two operational facts this container adds
+
+* **`data/clean` was EMPTY at session start (0 datatypes)** — the same cold-start D90 §3.5 flagged,
+  so CHANNEL E stays **open** and T-REPRO (read off the arm's own 2026–2031 per A.5) still decides
+  attribution. It is rebuilt here via `scripts/regenerate_clean.py` before the arm is re-launched.
+  The first arm launch **refused to degrade** rather than solving on an absent registry —
+  `confirmed-retirements: clean partition for NEISO is absent while confirmed_exits_enabled is on` —
+  which is the guard working, and it cost 0.5 min and no LP.
+* This is a **FULL clone** (`hydrate_data.py` reports every blob already local), so the `neiso`
+  profile needed no hydration.
+
+### C.4 Unchanged from D90, and NOT re-litigated
+
+§1 (the run identified), §3.2–§3.4 (channels B/C/D, including the two LIVE pins that are pinned out),
+A.2 (the scorer validated; FC-6 carried from `bau-d46` and structurally incapable of moving, so **no
+FC-6 reading in this lane is evidence about D88**), A.3 (P6 graded on **direction only**: HIT iff
+`co2@2040` < **8.559 Mt**), A.4 (the control trajectory and the sawtooth caveat against P1), and
+ADDENDUM B's four-clause FC-7 rule with **P9 pre-graded a likely MISS**.
+
+**Boundary re-affirmed:** no file under `src/market_sim/` is edited by this lane.
+`check_mechanism_matrix.py` is EXIT 1 on `main` over another desk's
+`vre_curtailment_oversupply_allocation` — noted, not this lane's, stepped past.
+
+---
+
+## ADDENDUM D — the scorer control RE-ESTABLISHED in this container, and the carried-input set NAMED
+
+D90's A.2 validated the scorer in *its* container. A validation is a property of the container it was
+run in — the artifacts are committed, but the interpreter, the resolved constants and this session's
+`data/clean` are not — so it is **re-run here rather than inherited**, before any arm exists to score.
+
+### D.1 Result — byte-for-byte, at this head
+
+```
+forecast_verdict.py --tier t3   over the COMMITTED bau-d60 artifacts
+  vs results/ff-t3-neiso-golden/bau-d60/forecast_verdict.json
+
+  NON-PROVENANCE IDENTICAL : True      (every category, row, status and detail string)
+  determination            : HOLD  ->  HOLD
+  rubric_version           : 1.1  ==  1.1
+```
+
+**The re-score is therefore a controlled swap at this head too**: the arm's `full_horizon_summary.json`
+and `run_config.json` replace d60's, every other input is held byte-identical, and any verdict
+movement is attributable to the solve alone.
+
+### D.2 The exact carried-input set, NAMED — including one D90 did not pin down
+
+A.2 named `bau-d46`'s two `fc6/` files. It did **not** name which of the two committed NEISO crossover
+artifacts d60 was scored on, and **the choice is discriminating**. Both exist at the same cache key
+`07e416f3f8072e7c` under different run ids, and they disagree on four FC-4 numbers:
+
+| FC-4 detail | `…-crossover-capxd14` | `…-crossover-rcrepair` | committed d60 verdict |
+|---|---|---|---|
+| price 2025 | 21.8 % | **21.3 %** | **21.3 %** |
+| co2 2024 | 11.1 % | **11.3 %** | **11.3 %** |
+| gas_twh 2024 | 12.6 % | **13.2 %** | **13.2 %** |
+| coal_twh 2024 | 66.4 % | **84.0 %** | **84.0 %** |
+
+**d60 was scored on `rcrepair`.** Found by experiment, not assumption: the `capxd14` invocation
+reproduced everything *except* FC-4, and swapping to `rcrepair` closed the file exactly. Recorded so
+the re-score cannot silently move FC-4 through an input choice — the leg D88 is *provably* unable to
+reach (P8).
+
+The full carried set, frozen for the arm:
+
+| flag | artifact | status in the re-score |
+|---|---|---|
+| `--summary` | `bau-d60/full_horizon_summary.json` | **SWAPPED for the arm's** |
+| `--run-config` | `bau-d60/run_config.json` | **SWAPPED for the arm's** |
+| `--dof-ledger` | `bau-d60/dof_ledger.json` | **SWAPPED for the arm's** (ADDENDUM B clause 1) |
+| `--attestation` | `bau-d60/forecast_attestation.json` | carried |
+| `--hindcast-score` | `hindcast/neiso-2021-2025-realized-t1h-d46/NEISO/da19b85495178949/score.json` | carried (FC-3; P8) |
+| `--crossover-score` | `hindcast/neiso-2023-2027-crossover-rcrepair/NEISO/07e416f3f8072e7c/crossover_score.json` | carried (FC-4; P8) |
+| `--driver-battery` | `bau-d46/fc6/driver-battery-neiso-2026-09-03.json` | carried (FC-6; A.2) |
+| `--paired-invariants` | `bau-d46/fc6/paired_invariants.json` | carried (FC-6; A.2) |
+| `--corridor` | `ff-corridor/dispositions/neiso-t3.json` | carried (FC-5 table) |
+| `--benchmark-corridor` | `ff-corridor/benchmark-corridor-anchors.json` | carried |
+
+### D.3 One consequence worth stating: FC-1 and FC-2 read from the summary, so they DO move
+
+No `--invariants` file was needed for the reproduction, which establishes that **I1–I14 and the FC-2
+adequacy rows are embedded in `full_horizon_summary.json`**. Since the summary is the swapped input,
+**FC-1 and FC-2 are computed on the arm's own solve** — exactly the legs P1–P5 predict against — while
+FC-3, FC-4 and FC-6 are carried and structurally cannot move. FC-5's model side likewise comes from
+the summary; only its comparison table is carried. This is what makes P8 a proof and not a hope.
+
+### D.4 Container note
+
+`data/clean` was rebuilt here with `scripts/regenerate_clean.py` (all datatypes) before the arm was
+re-launched; the first launch refused to solve without it. CHANNEL E (§3.5) remains open and is
+decided by **T-REPRO read off the arm's own 2026–2031** per A.5 — not assumed either way.
