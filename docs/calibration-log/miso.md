@@ -13313,3 +13313,74 @@ Records: `PREREG-miso245-attribute-the-incumbent-ladder-drift-2026-09-08.md`; th
 `FINDING-miso245-the-drift-is-attributed-and-the-ladder-is-reconciled-2026-09-08.md`; probes
 `_miso245_ladder_drift_attribution_phase0.py`, `_miso245_gclamp_n.py`, `_miso245_screen_gates.py`,
 `_miso245_s3b_prime.py` with their JSONs.
+
+## miso-246 — 2026-09-09 — **THE BACKCAST LEVER-QUEUE CENSUS: `QUEUE NON-EMPTY`, 33 LIVE ROUTES — AND NEITHER IS ANY GRANTED ISO'S (MISO 44 backcast-reachable `O`/`U` cells vs PJM 60, median-over-`complete` 55).** ZERO LP. Two of my own gates FAILED and are published first
+
+**Keeper UNCHANGED at `2026-09-08-miso-245-ladderfix`** (CALIBRATED, C3c the single ledgered caveat,
+DOF **41/2**). **Nothing solved, screened, registered or promoted; no cell verdict moved; no marker
+sought, inferred or granted.** Rule 22: 2023–2025 only.
+
+**Queue item (rule 28(a)):** the handoff's RECOMMENDED item — the PJM-standard census
+`ASSESSMENT-miso245-complete-declaration-2026-09-08.md` §6 names as the one respect in which MISO's
+`complete` case is weaker than PJM's.
+
+**THE VERDICT, on a rule fixed before the enumeration ran** and a **conservative default that costs
+the convenient answer** (an AMBIGUOUS or SILENT record ⇒ `LIVE`): **`QUEUE NON-EMPTY`** — E1 (44
+shard cells at mode `B`/`BF`) **34 LIVE / 4 I / 4 S / 1 A / 1 B**; E2 (13 curated items) **2 LIVE /
+4 Q / 2 A / 2 G / 2 D / 1 B**; E3 (the three handoff items) **1 LIVE / 2 Q**. **33 LIVE routes**
+after the rule 19 merge of `gas_variable_transport` with `gas_marginal_commodity_pricing`. **The §6
+gap is NOT closed in the direction a grant would want**, and the assessment's §4 pattern reading is
+corrected: miso-235…245 armed nothing because they were **all seam sessions**, and the seam family
+**is** exhausted — the **fuel** and **CC capacity-basis** families are not. MISO's most advanced open
+route is `gas_variable_transport` (owner-ruled, phase-0 sourced with zero fitted scalars, minted,
+**died on ONE gate by 37 MW** at miso-225).
+
+**THE NUMBER THAT MAKES IT READABLE.** §3a's PRIMARY bar was fixed against a comparator not yet
+measured — MISO `N_bc` ≤ the median over the five `complete` holders — and **CLEARS: 44 ≤ 55**
+(PJM 60, NEISO 66, ERCOT 55, CAISO 49, NYISO 31; secondary share 0.299, second-lowest of six).
+**PJM was granted on "structural lever queue measured EMPTY" while carrying 60 such cells**, so the
+phrase never meant this grain. **A comparison, not a standard.**
+
+**TWO GATES OF MINE FAILED.** (i) **`G-PARSE`** froze `== 312 cells` from a pre-PREREG reading at
+session-start HEAD; `origin/main` then landed `5df6192f` (`hydro_budget_period_by_instrument`, `U` at
+mode `BF` in all seven shards) and the count became **313**. Measured at three commits, the added
+cell shifts **every** ISO by +1, so `median − MISO` is **11** at both and **no verdict moves**. The
+literal is **DELETED, not widened** (rule 26) for three limbs with no hand-copied count — cross-shard
+identity, an upper-bound identity per shard, a provenance stamp — on **seven** shards where the
+original checked one. (ii) **`M-a4`**, declared in a pushed addendum before its number existed and
+written so it could **only refuse**, **FAILED in 2023**: limb (ii) |Δσ| **$1.0027** against a $0.05
+bar (limb (i) passes at 0.9993 / 0.9999 / **1.0000**). It was **SATISFIABLE** — 2024 and 2025 clear
+both, 2025 to the bit — so **no bar moves and no repair is made**; `M-a3`'s enumeration also did not
+close.
+
+**ITEM (a) IS `UNRESOLVED`, AND IT IS NOT A SEAM OBJECT.** `M-a2` fired at `R_rung` **1.0000** in all
+three years and the PREREG's own required decomposition **falsified its stated ground** —
+ladder-EXCLUSIVE **0.0007 / 0.0001 / 0.0000** against zone-EXCLUSIVE **0.8478 / 0.8492 / 0.8758**.
+`p_bus` **IS the model's own internal Midwest price, to the cent, in 8,754 / 8,759 / 8,760 hours**;
+every exception is a top-decile scarcity hour where the tie is fully loaded and the duals correctly
+separate. So miso-242's Q-B is filed as a seam object and is not one — it is the model's own price
+distribution, already scored at **C3b (PASS)** and **C3c (the designated frontier)** — and the SPP
+seam is spread-driven **by construction**. **ITEM (b) INHERITS IT**: `M-b2` answered its own question
+(**MERIT 3–0**; `Γ_ceiling` **−0.1290 / −0.1912** / +0.1254, i.e. the model is *more* templated than
+reality in ceiling hours, as the envelope requires) and handed the object to a leg that did not
+answer its own.
+
+**ITEM (c) IS `LIVE` WITH ITS DIRECTION NAMED.** The model runs CC_REGULAR in **excess overnight**
+(shape argmin h0 every year) and **short at h19**; span 270.8 → 593.2 → **1,254.8 MW**.
+`gas_commitment_bridge` is **DIRECTION-ADVERSE**; the four per-plant offer cells are `S` (masked
+corpus, miso-192); the **CC capacity-basis family** is direction-matched, untested here and DOF-free
+in kind. **Successor's zero-LP pre-check, named and deliberately not run: does CC_REGULAR have
+headroom at h19, or is it capacity-bound?**
+
+**POST-HOC AND LABELLED — the ONE live hunk.** `G-DRIFT` since the keeper's own sha `d059fcf7` is
+**not empty** (25 files, +1,817/−36) and carries exactly one declared default flip:
+**`f923_gas_price_plausibility_screen` → `True`** (`203c031e`, **49 min after** the keeper's solve
+commit), **absent from the keeper's recorded config**. The keeper's bundle is a valid rule 29(b)
+form-4 control at HEAD **only with that field explicitly `False`**. `actual_lmp.json` also moved;
+**MISO's block is byte-identical** (only CAISO's moved).
+
+**Records:** `PREREG-miso246-the-backcast-lever-queue-census-2026-09-08.md` (pushed with its probe
+before either ran); `ADDENDUM-miso246-my-own-gate-G-PARSE-failed-because-main-moved-under-it-2026-09-08.md`;
+`ADDENDUM-miso246-M-a4-failed-and-item-a-is-unresolved-2026-09-08.md`;
+`FINDING-miso246-the-lever-queue-is-not-empty-and-neither-is-any-granted-ISOs-2026-09-09.md`; probes
+`_miso246_lever_queue_census_phase0.py`, `_miso246_census_adjudication.py` with their JSONs.
