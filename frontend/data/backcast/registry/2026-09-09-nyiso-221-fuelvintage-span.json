@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-09-nyiso-221-fuelvintage-span",
+  "label": "nyiso 221 fuelvintage span",
+  "date": "2026-09-09",
+  "shorthand": "nyiso-221-fuelvintage-span",
+  "definition": "nyiso-fuelvintage-1: the COMPOSED 2023-2025 training span (rule 16) \u2014 2019-2022 retiree window in-artifact + gas_electric_power_monthly_level ARMED per owner ruling A7",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-09-09-nyiso-221-fuelvintage-span.js",
+  "bundle": "results/calibration/nyiso_fuelvintage_A"
+}

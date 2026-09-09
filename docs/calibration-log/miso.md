@@ -13438,3 +13438,103 @@ defect is unreachable by construction. **Stated, not acted on:** no `--holdout-a
 out-of-training solve, no marker file touched.
 
 Artifacts: `docs/FINDING-miso249-ep-gas-level-inert-2026-09-09.md`.
+
+## miso-250 — 2026-09-09 — **KEEPER → `2026-09-09-miso-250-ep-gas`, CALIBRATED. THE MEASURED MONTHLY GAS LEVEL IS ARMED ON THE OWNER'S RULING AND IS MEASURED INERT — and the promotion turned up a cross-ISO finding: "zero MW" is not "zero effect".**
+
+**PROMOTED ON A RULING, NEVER ON A RESIDUAL.** Owner, 2026-09-09 (handoff ADDENDUM §A7, verbatim):
+*"these should be promoted as keepers on both 860 and gas shape counts regardless of inertness."*
+That **supersedes miso-249's disposition of 41 minutes earlier** — commit `7577449a` at 04:44 UTC
+("keep BUILT and DEFAULT-OFF"); the ruling is `ff3afcf3` at 05:25 UTC and explicitly overrides
+"the disposition guidance in PROMPT 1-5 and in §A2". miso-249 acted on guidance that was correct
+when written. The single delta against miso-248 is **one** `ScenarioConfig` field,
+`gas_electric_power_monthly_level=True`, via the generic `prb_overrides` channel and recorded in
+`run_config.json` (rule 24); **zero free parameters** (rule 21).
+
+**TWO CORRECTIONS TO THE HANDOFF, both made before any LP.** (a) It names
+`miso247_fullspan_K` as MISO's keeper; miso-248 had already promoted
+`2026-09-09-miso-248-spp-ladder` / `miso248_fullspan_K`, and miso247 was pruned and is not on
+`main` — this also corrects `FINDING-miso249` §1, which states "the keeper did not move at
+miso-248" (it did, three minutes before miso-249 committed). (b) The 2025 coverage drop-outs are
+dominated by **LA .238 and MI .147**, not the "MN and MS" the handoff names.
+
+**THE CENSUS, FIRST. 100.000 % of MISO gas capacity-hours are F923 PRINT-DERIVED in 2023, 2024
+AND 2025** — all 1,609 / 1,616 / 1,614 gas rows. `apply_plant_monthly_fuel_prices` runs **after**
+the seam and overwrites every gas cell, so the seam's level never survives into `fuel_prices`
+(the rule 19 `[R-ONE-MECH]` answer PROMPT 2 card 0(d) asks for, settled at zero LP). Delivered gas
+moves **0.0** and non-gas fuels **0.0** in every year; the whole pre-LP state is identical
+arm-vs-control in all three. Harness power demonstrated, not assumed:
+`gas_plant_monthly_fuel_pricing=False` moves `mc_base` **292.467**,
+`coal_plant_monthly_pricing=False` **60.855**, `f923_gas_price_plausibility_screen=False`
+**2,730.599**. An independent re-measurement of miso-249's census on a different harness and
+against the *current* keeper — same numbers.
+
+**CONFIRMED ON REAL SOLVES.** Screen year **2024**, named in the PRECOMMIT before the screen ran
+on the mechanism's **largest measured footprint** (Jan +1.551 $/MMBtu vs 2023's +1.000), never on
+a residual. **ARM vs CONTROL both at HEAD = 0 differing cells** across `system` / `class_hourly` /
+`class_band_hourly` / `reserve_family` / `storage`, the **same simplex iteration count 388,398**
+and the **same objective 4,777,088,612.6964**. The seam DOES fire, on the ISO-level `_gas_series`
+alone: 2023 annual 2.8392 → 3.0187, 2024 2.4893 → 2.5580 (max month gaps +1.0003 / +1.5513 Jan),
+reproducing `FINDING-xiso` §3's MISO rows to three decimals; **2025 byte-identical**, the
+pre-registered inert-by-coverage check confirmed (basket 0.400). Every `_gas_series` consumer is
+off on this recipe.
+
+**SCORING: `CALIBRATED`, every criterion status IDENTICAL to the incumbent** (C1/C2/C3a/C3b/C4/C6/C8
+PASS, C3c the single ledgered non-downgrading caveat; scored 8 / target 7 / ledgered 1 / fails 0).
+**2024 and 2025 score identically on every value**; 2023 moves in the third decimal — C3a
++5.2 % → **+4.9 %**, C3b 0.092 → **0.091**, C3c 3 h → **1 h** against 30 h actual — and **none of
+it is the arm**: ARM-vs-keeper equals CONTROL-vs-keeper **cell for cell**. C8's CT_PEAKER rows are
+over the 15 % cap in all three years (30.8 / 19.8 / 21.7 %) and PASS through rule 20's
+grounded-above-budget escalation; **the incumbent carries the same three** (29.9 / 19.5 / 21.2 %).
+
+**MY OWN GATE G-0 FAILED, AND THAT IS WHAT EARNED THE CONTROL SOLVE** (rule 29 `[R-SCREEN]`
+clause (b)), exactly as the PRECOMMIT pre-registered. It bought the root cause:
+
+**THE CROSS-ISO FINDING — "ZERO MW" IS NOT "ZERO EFFECT".** G-DRIFT found two changes absent from
+the keeper's tree: **`7934e92c`** (the xiso program's own Card A retiree parquet, 477 → 1,094 rows
+— a `data/raw/eia-860/` change the prescribed G-DRIFT path list **does not cover**) and
+**`43edf7b1`** (ercot-261's `_PARTIAL_EXIT_WINDOW_START` 2023 → 2019, live here because this
+recipe carries `partial_plant_exit_carry=True`). Measured at zero LP through the real
+`run_year(fleet_only=True)` path on stable `unit_ids`, they add **171 rows / 3,298.899 MW
+nameplate** to the 2023, 2024 and 2025 fleets at **exactly 0.000000000 effective MW in every
+hour**, 0.0 `min_gen`, 0.0 `pmin`, **0 rows removed**, every shared row byte-identical including
+`mc_base`. **Yet the LP solution moves — through degeneracy:** 2024 shows 6,920 of 70,080 price
+cells differing (mean −0.008560 $/MWh, max 8.1215), total energy +0.000038 %, slack total
+identical at 19,566.9151 MWh but **4,678.43 MW reallocated between zones**, dump 0.0 both, and
+**max |class-hour delta| 854.720 MW**. This **contradicts the STOP condition pre-registered in the
+sibling PJM / NYISO / NEISO / CAISO prompts** (*"max |class-hour delta| = 0.000000 MW … A nonzero
+delta is a STOP"*): a lane treating its nonzero delta as that STOP would halt on a **non-defect**.
+Recommended replacement for the charter's task-3 wording: a **capacity** identity (added rows carry
+0.000000 MW of effective capacity and `min_gen`; every shared row byte-identical) plus a **bounded**
+dispatch tolerance — an exact-zero *dispatch* identity is not achievable across a fleet-row-count
+change and never was. Rules 1/14: the widened window is the more accurate input and **stays**; the
+incumbent's committed numbers were simply **stale at HEAD**, which this bundle also repairs.
+
+**A GOVERNANCE OBSERVATION, reported and NOT acted on** (ERCOT's lane's change, rule 25):
+`_PARTIAL_EXIT_WINDOW_START` is a bare module constant — no `ScenarioConfig` field, and
+`data/fleet/eia860.py` is not one of the seven `solve_surface.py` `SURFACE_MODULES` — so a
+fleet-composition change of this class **moves no cache key** in any ISO arming
+`partial_plant_exit_carry`.
+
+**A RULE-21 REGRESSION I INTRODUCED AND REPAIRED, disclosed rather than hidden.** Running
+`scripts/build_dof_ledger.py` on the new bundle rebuilt the ledger from its fixed derivation and
+**silently dropped 16 hand-declared MISO entries** (41 → 25) — `partial_plant_exit_carry`,
+`summer_wefor_share_override`, `online_rho`, `cc_steam_part_capacity`, the four `unit_outage_*`
+boolean arms and others. The generator now **carries the incumbent's ledger verbatim** and appends
+only the new field's zero-DOF measured entry: **42 / 2**.
+
+**THE SUCCESSOR, recommended with evidence and NOT built** (out of scope): **EIA-923 Schedule-5**
+quantity-weighted plant receipts — already on disk, already read every solve — cover **every MISO
+footprint state in all twelve months of every year 2019-2025**, footprint coverage **1.000**,
+Louisiana included, against N3045's 0.30-0.34 in 2019-2021 and 0.40 in 2025. Blended on the same
+weights (zero new parameters) it **prices Uri: MISO Feb-2021 = 13.9023 $/MMBtu** against the
+model's 4.42. Independently re-derived here and matching `FINDING-miso249` §7 **to four decimals on
+all seven years**. Three conditions stated with it: it must be **daily** (a monthly form reproduces
+`RESULT-ercot254` §3b exactly), MISO holds **no `complete` marker** so it cannot score 2021, and
+there is little for it to do in 2023-2025.
+
+**Rule 22:** 2023-2025 ONLY. MISO holds **no** `complete` marker; `--holdout-authorized` was never
+passed, no out-of-training year was solved or scored, and no marker file was touched.
+
+Artifacts: `docs/RESULT-miso-fuelvintage-ep-level-2026-09-09.md`,
+`docs/PRECOMMIT-miso-fuelvintage-ep-level-2026-09-09.md`,
+`scripts/gen_miso250_attestation.py`.
