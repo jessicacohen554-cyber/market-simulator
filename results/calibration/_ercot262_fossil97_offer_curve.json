@@ -1,0 +1,539 @@
+{
+ "_declared": {
+  "across_the_board": 0.97,
+  "cc_regular_peak_total": 0.9409,
+  "bands": [
+   "committed",
+   "econ_low",
+   "econ_high",
+   "peak"
+  ],
+  "untouched": [
+   "phys_*",
+   "econ_low_share",
+   "pct_peaking",
+   "peak_ladder capacity shares"
+  ],
+  "note": "peak_ladder HEIGHTS follow `peak` by the same factor (the ladder IS the peak band expressed as rungs; leaving it would make the peak cut inert because the conditional surface prices the rungs). Capacity shares untouched.",
+  "scope": "8 GAS classes \u2014 the resolved ERCOT offer_curve_by_group carries no COAL class. ERCOT coal's offer is set by the CAMPD bin CSV HR_Mult_* columns, which is measured data outside rule 1's authorized channel and is NOT touched."
+ },
+ "carveout_2021_2022": {
+  "CC_REGULAR": {
+   "committed": 0.96806,
+   "econ_low": 0.70131,
+   "econ_high": 1.28428,
+   "peak": 142.083427,
+   "econ_low_share": 0.5,
+   "pct_peaking": 8.0,
+   "phys_committed": 1.006,
+   "phys_econ_low": 0.825,
+   "phys_econ_high": 0.95,
+   "phys_peak": 74.25,
+   "peak_ladder": [
+    [
+     0.2,
+     142.083427
+    ],
+    [
+     0.2,
+     142.083427
+    ],
+    [
+     0.2,
+     142.083427
+    ],
+    [
+     0.2,
+     142.083427
+    ],
+    [
+     0.2,
+     142.083427
+    ]
+   ]
+  },
+  "CC_INTERMEDIATE": {
+   "committed": 0.8924,
+   "econ_low": 0.9215,
+   "econ_high": 1.0476,
+   "peak": 72.0225,
+   "econ_low_share": 0.5,
+   "pct_peaking": 8.0
+  },
+  "CC_CHP": {
+   "committed": 0.99813,
+   "econ_low": 0.91762,
+   "econ_high": 1.80129,
+   "peak": 119.97348,
+   "econ_low_share": 0.5,
+   "pct_peaking": 4.0,
+   "phys_committed": 0.982,
+   "phys_econ_low": 0.793,
+   "phys_econ_high": 0.941,
+   "phys_peak": 74.25,
+   "peak_ladder": [
+    [
+     0.2,
+     119.97348
+    ],
+    [
+     0.2,
+     119.97348
+    ],
+    [
+     0.2,
+     119.97348
+    ],
+    [
+     0.2,
+     119.97348
+    ],
+    [
+     0.2,
+     119.97348
+    ]
+   ]
+  },
+  "CT_CHP": {
+   "committed": 0.873,
+   "econ_low": 1.0864,
+   "econ_high": 1.261,
+   "peak": 42.2532,
+   "econ_low_share": 0.5,
+   "phys_committed": 1.556,
+   "phys_econ_low": 0.948,
+   "phys_econ_high": 0.921,
+   "phys_peak": 33.0
+  },
+  "CT_PEAKER": {
+   "committed": 1.1058,
+   "econ_low": 1.2319,
+   "econ_high": 2.1146,
+   "peak": 420.9315,
+   "econ_low_share": 0.526,
+   "pct_peaking": 7.0,
+   "phys_committed": 1.022,
+   "phys_econ_low": 0.723,
+   "phys_econ_high": 0.727,
+   "phys_peak": 33.0,
+   "peak_ladder": [
+    [
+     0.2,
+     420.9315
+    ],
+    [
+     0.2,
+     420.9315
+    ],
+    [
+     0.2,
+     420.9315
+    ],
+    [
+     0.2,
+     420.9315
+    ],
+    [
+     0.2,
+     420.9315
+    ]
+   ]
+  },
+  "CT_INTERMEDIATE": {
+   "committed": 0.97,
+   "econ_low": 0.97,
+   "econ_high": 1.164,
+   "peak": 96.03,
+   "econ_low_share": 0.5,
+   "pct_peaking": 5.0
+  },
+  "ST_GAS": {
+   "committed": 0.8827,
+   "econ_low": 0.9894,
+   "econ_high": 1.164,
+   "peak": 102.432,
+   "econ_low_share": 0.5,
+   "pct_peaking": 15.0,
+   "phys_committed": 1.36,
+   "phys_econ_low": 0.815,
+   "phys_econ_high": 0.871,
+   "phys_peak": 33.0,
+   "peak_ladder": [
+    [
+     0.2,
+     102.432
+    ],
+    [
+     0.2,
+     102.432
+    ],
+    [
+     0.2,
+     102.432
+    ],
+    [
+     0.2,
+     102.432
+    ],
+    [
+     0.2,
+     102.432
+    ]
+   ]
+  },
+  "ST_GAS_INTERMEDIATE": {
+   "committed": 0.97,
+   "econ_low": 0.97,
+   "econ_high": 1.1155,
+   "peak": 70.422,
+   "econ_low_share": 0.5,
+   "pct_peaking": 6.0
+  }
+ },
+ "carveout_2023": {
+  "CC_REGULAR": {
+   "committed": 0.96806,
+   "econ_low": 0.70131,
+   "econ_high": 1.28428,
+   "peak": 142.083427,
+   "econ_low_share": 0.5,
+   "pct_peaking": 8.0,
+   "phys_committed": 1.006,
+   "phys_econ_low": 0.825,
+   "phys_econ_high": 0.95,
+   "phys_peak": 74.25,
+   "peak_ladder": [
+    [
+     0.2,
+     142.083427
+    ],
+    [
+     0.2,
+     142.083427
+    ],
+    [
+     0.2,
+     142.083427
+    ],
+    [
+     0.2,
+     142.083427
+    ],
+    [
+     0.2,
+     142.083427
+    ]
+   ]
+  },
+  "CC_INTERMEDIATE": {
+   "committed": 0.8924,
+   "econ_low": 0.9215,
+   "econ_high": 1.0476,
+   "peak": 72.0225,
+   "econ_low_share": 0.5,
+   "pct_peaking": 8.0
+  },
+  "CC_CHP": {
+   "committed": 0.99813,
+   "econ_low": 0.91762,
+   "econ_high": 1.80129,
+   "peak": 119.97348,
+   "econ_low_share": 0.5,
+   "pct_peaking": 4.0,
+   "phys_committed": 0.982,
+   "phys_econ_low": 0.793,
+   "phys_econ_high": 0.941,
+   "phys_peak": 74.25,
+   "peak_ladder": [
+    [
+     0.2,
+     119.97348
+    ],
+    [
+     0.2,
+     119.97348
+    ],
+    [
+     0.2,
+     119.97348
+    ],
+    [
+     0.2,
+     119.97348
+    ],
+    [
+     0.2,
+     119.97348
+    ]
+   ]
+  },
+  "CT_CHP": {
+   "committed": 0.873,
+   "econ_low": 1.0864,
+   "econ_high": 1.261,
+   "peak": 42.2532,
+   "econ_low_share": 0.5,
+   "phys_committed": 1.556,
+   "phys_econ_low": 0.948,
+   "phys_econ_high": 0.921,
+   "phys_peak": 33.0
+  },
+  "CT_PEAKER": {
+   "committed": 1.1058,
+   "econ_low": 1.2319,
+   "econ_high": 2.1146,
+   "peak": 420.9315,
+   "econ_low_share": 0.526,
+   "pct_peaking": 7.0,
+   "phys_committed": 1.022,
+   "phys_econ_low": 0.723,
+   "phys_econ_high": 0.727,
+   "phys_peak": 33.0,
+   "peak_ladder": [
+    [
+     0.2,
+     420.9315
+    ],
+    [
+     0.2,
+     420.9315
+    ],
+    [
+     0.2,
+     420.9315
+    ],
+    [
+     0.2,
+     420.9315
+    ],
+    [
+     0.2,
+     420.9315
+    ]
+   ]
+  },
+  "CT_INTERMEDIATE": {
+   "committed": 0.97,
+   "econ_low": 0.97,
+   "econ_high": 1.164,
+   "peak": 96.03,
+   "econ_low_share": 0.5,
+   "pct_peaking": 5.0
+  },
+  "ST_GAS": {
+   "committed": 0.8827,
+   "econ_low": 0.9894,
+   "econ_high": 1.164,
+   "peak": 102.432,
+   "econ_low_share": 0.5,
+   "pct_peaking": 15.0,
+   "phys_committed": 1.36,
+   "phys_econ_low": 0.815,
+   "phys_econ_high": 0.871,
+   "phys_peak": 33.0,
+   "peak_ladder": [
+    [
+     0.2,
+     102.432
+    ],
+    [
+     0.2,
+     102.432
+    ],
+    [
+     0.2,
+     102.432
+    ],
+    [
+     0.2,
+     102.432
+    ],
+    [
+     0.2,
+     102.432
+    ]
+   ]
+  },
+  "ST_GAS_INTERMEDIATE": {
+   "committed": 0.97,
+   "econ_low": 0.97,
+   "econ_high": 1.1155,
+   "peak": 70.422,
+   "econ_low_share": 0.5,
+   "pct_peaking": 6.0
+  }
+ },
+ "forward_2024_2025": {
+  "CC_REGULAR": {
+   "committed": 0.96806,
+   "econ_low": 0.70131,
+   "econ_high": 1.28428,
+   "peak": 4.305558,
+   "econ_low_share": 0.5,
+   "pct_peaking": 8.0,
+   "phys_committed": 1.006,
+   "phys_econ_low": 0.825,
+   "phys_econ_high": 0.95,
+   "phys_peak": 2.25,
+   "peak_ladder": [
+    [
+     0.2,
+     4.305558
+    ],
+    [
+     0.2,
+     4.305558
+    ],
+    [
+     0.2,
+     4.305558
+    ],
+    [
+     0.2,
+     4.305558
+    ],
+    [
+     0.2,
+     4.305558
+    ]
+   ]
+  },
+  "CC_INTERMEDIATE": {
+   "committed": 0.8924,
+   "econ_low": 0.9215,
+   "econ_high": 1.0476,
+   "peak": 2.1825,
+   "econ_low_share": 0.5,
+   "pct_peaking": 8.0
+  },
+  "CC_CHP": {
+   "committed": 0.99813,
+   "econ_low": 0.91762,
+   "econ_high": 1.80129,
+   "peak": 3.63556,
+   "econ_low_share": 0.5,
+   "pct_peaking": 4.0,
+   "phys_committed": 0.982,
+   "phys_econ_low": 0.793,
+   "phys_econ_high": 0.941,
+   "phys_peak": 2.25,
+   "peak_ladder": [
+    [
+     0.2,
+     3.63556
+    ],
+    [
+     0.2,
+     3.63556
+    ],
+    [
+     0.2,
+     3.63556
+    ],
+    [
+     0.2,
+     3.63556
+    ],
+    [
+     0.2,
+     3.63556
+    ]
+   ]
+  },
+  "CT_CHP": {
+   "committed": 0.873,
+   "econ_low": 1.0864,
+   "econ_high": 1.261,
+   "peak": 1.2804,
+   "econ_low_share": 0.5,
+   "phys_committed": 1.556,
+   "phys_econ_low": 0.948,
+   "phys_econ_high": 0.921,
+   "phys_peak": 1.0
+  },
+  "CT_PEAKER": {
+   "committed": 1.1058,
+   "econ_low": 1.2319,
+   "econ_high": 2.1146,
+   "peak": 12.7555,
+   "econ_low_share": 0.526,
+   "pct_peaking": 7.0,
+   "phys_committed": 1.022,
+   "phys_econ_low": 0.723,
+   "phys_econ_high": 0.727,
+   "phys_peak": 1.0,
+   "peak_ladder": [
+    [
+     0.2,
+     12.7555
+    ],
+    [
+     0.2,
+     12.7555
+    ],
+    [
+     0.2,
+     12.7555
+    ],
+    [
+     0.2,
+     12.7555
+    ],
+    [
+     0.2,
+     12.7555
+    ]
+   ]
+  },
+  "CT_INTERMEDIATE": {
+   "committed": 0.97,
+   "econ_low": 0.97,
+   "econ_high": 1.164,
+   "peak": 2.91,
+   "econ_low_share": 0.5,
+   "pct_peaking": 5.0
+  },
+  "ST_GAS": {
+   "committed": 0.8827,
+   "econ_low": 0.9894,
+   "econ_high": 1.164,
+   "peak": 3.104,
+   "econ_low_share": 0.5,
+   "pct_peaking": 15.0,
+   "phys_committed": 1.36,
+   "phys_econ_low": 0.815,
+   "phys_econ_high": 0.871,
+   "phys_peak": 1.0,
+   "peak_ladder": [
+    [
+     0.2,
+     3.104
+    ],
+    [
+     0.2,
+     3.104
+    ],
+    [
+     0.2,
+     3.104
+    ],
+    [
+     0.2,
+     3.104
+    ],
+    [
+     0.2,
+     3.104
+    ]
+   ]
+  },
+  "ST_GAS_INTERMEDIATE": {
+   "committed": 0.97,
+   "econ_low": 0.97,
+   "econ_high": 1.1155,
+   "peak": 2.134,
+   "econ_low_share": 0.5,
+   "pct_peaking": 6.0
+  }
+ }
+}
