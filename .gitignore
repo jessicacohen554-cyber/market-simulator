@@ -1536,3 +1536,10 @@ results/calibration/_spp52a_*
 
 # SPP-52a heavy bundle parts retained off-repo (rule 31 [R-RETAIN]: never rm)
 results/calibration/_spp52a_heavy/
+
+# capx D90 (owner ruling Q63) — the same-container PRE-D88 CONTROL solve earned by
+# rule 29(b)'s LIVE case when T-REPRO failed. Rule 29(c) keeps a control bundle OUT
+# of `main` (the parity gate only ever sees committed dirs); rule 31 [R-RETAIN]
+# keeps it ON LOCAL DISK until the owner has ruled on promotion. Every number this
+# lane cites from it is in docs/handoffs/FINDING-capx-d90-rescore-2026-09-09.md.
+/results/ff-t3-neiso-golden/d90-pre-d88-control/

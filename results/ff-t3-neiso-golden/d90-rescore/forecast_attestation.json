@@ -1,0 +1,41 @@
+{
+ "schema": "forecast-attestation/v1",
+ "bundle": "results/ff-t3-neiso-golden/d90-rescore",
+ "run_id": "neiso-2026-2050-t3-golden3-d90-rescore",
+ "attested_by": "capx D90-RESCORE, 2026-09-09 \u2014 THE PRODUCING SESSION (rubric \u00a75's default author): this lane solved the bundle it attests. The assertions are read from committed bytes, not judged at authoring time, and an assertion that reads FALSE is recorded FALSE and FC-7 fails on it at full magnitude rather than the attestation being re-scoped to fit (PRECOMMIT-capx-d90-rescore-2026-09-09.md Addendum B, pushed before this bundle existed).",
+ "predeclaration": "docs/handoffs/PRECOMMIT-capx-d90-rescore-2026-09-09.md (\u00a74-\u00a75 + Addenda A/B, all pushed before the solve)",
+ "assertions": {
+  "dof_ledger_complete": {
+   "value": false,
+   "read_from": "dof_ledger.json built by the committed scripts/build_forecast_dof_ledger.py from this bundle's own run_config.json",
+   "evidence": "9 entries, 7 IDENTIFIED, 2 UNIDENTIFIED (2 unattested). The two UNIDENTIFIED entries are exactly the lane's RESTORATION PINS \u2014 ccs_retrofit_fixed_cost_co2_scaling=False and ccs_retrofit_vom_adder=8.0 \u2014 which restore the SCORED run's own recipe (zero-field diff vs bau-d60's committed config.yaml) but are non-default at this HEAD because capx D65 Act A/B moved the defaults after d60 was solved. Recorded FALSE exactly as PRECOMMIT Addendum B pre-registered; it is this lane's instrumentation, not a property of the model or of capx D88."
+  },
+  "run_config_reproducible": {
+   "value": true,
+   "read_from": "run_config.json",
+   "evidence": "mode=forecast; sha 09ef52a3; cache_key ae317e63263c8eef \u2014 the key this recipe realizes at a HEAD whose ScenarioConfig registration is missing pjm_seam_neighbour_hourly_ladder (PRECOMMIT \u00a73.1). Under a correct registration the identical config hashes to f04fd06348e1623d, the scored bundle's own key; the resolved config is a ZERO-FIELD diff against it."
+  },
+  "honest_unfit_referenced": {
+   "value": true,
+   "read_from": "full_horizon_summary.json invariants + FINDING-capx-d90-rescore-2026-09-09.md",
+   "evidence": "14 invariants carried into the verdict; every failing FC row, the graded per-leg predictions (hits AND misses), and the finding that code drift since d60 dominates capx D88's own effect are named in the FINDING, not only in the sidecar."
+  },
+  "quarantine_attested": {
+   "value": true,
+   "read_from": "run_config.json solved_years",
+   "evidence": "25 solved years, 2026..2050 inclusive \u2014 forecast mode, no measured actuals, no holdout tier touched (rule 22)."
+  },
+  "no_off_registry_knobs": {
+   "value": true,
+   "read_from": "run_config.json scenario_config vs ScenarioConfig fields",
+   "evidence": "Every solve-affecting field is a declared ScenarioConfig field; zero stray keys; no env knob, no per-plant dict, no getattr fallback (rule 24). The two --set/--no- pins are recorded in run_config.json and ledgered in dof_ledger.json."
+  },
+  "registered": {
+   "value": true,
+   "read_from": "scripts/register_forecast_run.py",
+   "evidence": "Registered through the SINGLE register_forecast_run.py path; verdict key neiso-t3."
+  }
+ },
+ "what_this_attestation_does_not_claim": "It does NOT claim the arm isolates capx D88 against the STANDING verdict's bundle: it does not. Code landing on main since bau-d60 was solved moves CO2 by more than 50% in the conversion window on its own. D88's own effect is isolated ONLY against this lane's same-container pre-D88 control (results/ff-t3-neiso-golden/d90-pre-d88-control), and that is the comparison the FINDING grades. FC-3, FC-4 and FC-6 are CARRIED byte-identically from the standing verdict's own inputs and are therefore incapable of moving here; no reading of them is evidence about D88.",
+ "authored_utc": "2026-09-09T03:20:06Z"
+}
