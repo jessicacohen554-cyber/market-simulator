@@ -3256,3 +3256,91 @@ measured blast radius and a proposed one-line fix in
 own pre-committed stop rule** — do not re-size this scalar. The live objects are unchanged: C3c
 (frontier declared, needs a new measured identification and its own charter) and the diurnal
 amplitude gap (needs its own charter; see the neiso-76 adjudication before proposing anything).
+
+## neiso-108 — 2026-09-09 (session `neiso-fuelvintage-1`)
+
+**KEEPER PROMOTED → `2026-09-09-neiso-108-fuelvintage`, DETERMINATION CALIBRATED.** Two changes
+promoted on the **owner ruling of 2026-09-09**, verbatim: *"these should be promoted as keepers on
+both 860 and gas shape counts regardless of inertness."* (a) `gas_electric_power_monthly_level`
+→ `True` — the one config delta against neiso-106; (b) the flagless 2019-2022 retiree-window
+widening (`RETIREMENT_WINDOW_START` 2023 → 2019, commit `7934e92c`) that reached `main` under it.
+**Zero new free parameters.** The neiso-106 `authorized_price_tuning` declaration (0.95470 on 12
+`offer_curve_by_group` markup bands) is carried forward **unchanged** — neither re-sized nor
+re-swept, and the offer-level lane stays closed by its own stop rule.
+
+**THE SESSION'S HEADLINE IS A ZERO-LP RESULT, NOT THE PROMOTION.**
+`docs/FINDING-neiso-index-vs-delivered-gas-2026-09-09.md` closes the one cross-ISO discrepancy the
+fuel-vintage program had not resolved. NEISO's 3.24× January-2023 gap between the ISO-NE published
+Algonquin index ($4.73/MMBtu) and the EIA `N3045` MA/CT/RI/ME/NH blend ($15.35) is a
+**respondent-composition artifact in N3045**, falsified **physically**: across 84 months
+(2019-01…2025-12) the implied marginal heat rate (monthly mean ISO-NE hub RT LMP ÷ gas price) never
+once falls below **7.99** MMBtu/MWh on the index, while the N3045 blend drives it below NEISO's
+**6.3** CC floor in **13 of 84** months and to **3.29** in Jan-2023 — a ~104 %-efficient heat
+engine. Four corroborations: N3045 prices Jan-2023 and Jan-2025 the same (15.346 vs 15.316) while
+the market priced them $50.51 vs $135.08/MWh and gas ran *harder* in the cheap month (49.3 % vs
+46.8 % share); the Algonquin daily prints read $3.22-4.23 for four weeks of Jan-2023; the entire
+disclosed EIA-923 New England gas-receipt panel that month is **one 58 MW peaker** (plant 1660
+Potter Station 2 — 28,703 MMBtu, 0.09 % of the ~31.4 million MMBtu ISO-NE burned, against 419
+plants nationally); MA/CT dispersion inside one month reaches **4.13×** on the same pipeline.
+Log-price correlation with realised LMP: index **0.9324**, N3045 **0.8452**. **Consequence:** rule
+14 `[R-ACCURATE]`'s misalignment exception is **earned**, not merely invoked — the hub index keeps
+priority because it is the marginal series — and the 2.303 $/MMBtu "level gap" the cross-ISO table
+reports for NEISO 2023 **measures the survey panel, not the model**. An ercot-261-style
+corroborator is **recommended against** for NEISO and was not built.
+
+**BOTH PROMOTED CHANGES ARE PROVABLY INERT ON 2023-2025** — measured at zero LP *before* the solve
+(rule 29 `[R-SCREEN]` clause (0)), reported as a property of the result rather than as a reason to
+withhold. The gas seam writes **0 of 22,837,320** fuel cells, and a full-payload sweep of all **38**
+arrays `run_year(fleet_only=True)` returns (**38,518,653** numeric cells) finds **not one** that
+differs — the LP is literally the same LP, so the scheduled LP screen was **cancelled, not
+skipped**. The retiree window injects 59/59/61 rows carrying 1,696.374/1,696.374/1,697.490 MW of
+nameplate at **exactly 0.0000000000** effective MW-h and moves **no** shared row's `pmax`,
+`availability` or `mc_base`. **Charter task 3 discharged for NEISO at the input layer** — stronger
+than the dispatch A/B the charter specified, and it was at real risk:
+`FINDING-pjm-retiree-window-redistribution-2026-09-09.md` proved the "zero effect by construction"
+claim FALSE for PJM (720 MW of May-2020 coal redistributed onto live siblings at W H Sammis) and put
+NEISO's exposure at 521.5 MW (Mystic). **NEISO's realised leak is 0.0 MW.** Also verified per §A5
+item 2: the whole-plant channel and `partial_plant_exit_carry` share **zero** (plant, unit) keys and
+zero plants (69 vs 24 ISNE rows).
+
+**HEAD DRIFT, REPORTED AT FULL MAGNITUDE.** The incumbent's `git_sha 70ee7fca` does **not resolve**
+(the 2026-08-16 history rewrite) and its bundle predates capx D79, so rule 29(b)'s G-DRIFT audit
+cannot be run literally — as the PJM lane also found. **No control solve was spent**, and none is
+informative: the arm-vs-control comparison at HEAD is a proven identity across all 38 payload
+arrays. So every difference against neiso-106's committed numbers is HEAD drift from other lanes,
+and none is attributable to either promoted change: max |class-hour delta| 426.95 MW (2023) /
+371.44 MW (2024), concentrated in `CC_REGULAR` and **hydro** (the budget-constrained flat-cost
+variable whose intertemporal placement is a numerical tie); annual class energy moves ≤ 0.00067 TWh
+on 52.7 TWh (13 ppm); mean |price delta| 0.0039 / 0.0055 $/MWh on means of 36.72 / 42.07; slack and
+dump exactly 0.0 both sides. **Alternate optima of the same LP.**
+
+**VALIDATION TOUCHPOINTS 2020 / 2021 / 2022** — `2026-09-09-neiso-108-fuelvintage-touchpoints`,
+`--holdout-authorized` under NEISO's `complete` marker, stamped to the keeper under rule 30
+`[R-TOUCHPOINT-FOLD]`. **CALIBRATED, and every criterion HELD** in-sample → holdout: C1/C2/C3a/C3b/
+C4/C6/C8 PASS → PASS, C3c CAVEAT → CAVEAT (rubric v3.6). Per-year ladder: 2020 CALIBRATED, 2021
+CALIBRATED, 2022 CALIBRATED. The retiree window is **live** here (+956.0 / +949.0 / +201.3 MW).
+Rule 30(c): a held-out year never downgrades NEISO, and rule 22 makes these numbers iterable
+selection evidence, never a certified out-of-sample skill claim. **This supersedes**
+`2026-09-05-neiso-2022-touchpoint-k99` and `2026-09-06-neiso-106-touchpoints-2020`, both pruned.
+
+**CHARTER TASK 4 DISCHARGED.** The standing `constants.py` caveat on
+`NUCLEAR_MONTHLY_CF_BY_YEAR['NEISO']` — *"a 2019 solve is short ~2.18 TWh of nuclear regardless of
+this overlay"* — is **RETIRED, its premise now false**. `monthly_online_mask(1972, 12, 2019, 5, y)`
+gives Pilgrim exactly **5** online months in 2019 and **0** in every year 2020+, and the committed
+CF row applied to the restored **4,029.0 MW** Jan-May fleet lands at **13.042 TWh** against
+EIA-923's **13.002 TWh** actual — **+0.040 TWh**, where the pre-fix 3,355.4 MW fleet was
+**−2.140 TWh**. The row is left **unchanged** and needs no re-derivation; the +0.3 % residual and
+the exact re-derived row are recorded in the constants comment for whoever eventually spends 2019.
+**No 2019 solve, score or registration** — 2019 is locked-test tier, `final` empty, freeze ACTIVE;
+every number is EIA-923 / EIA-860 data inspection plus the COD-ramp mask.
+
+**Governance.** `complete.NEISO` re-keyed with its rule-22 D-5(b) determination re-verification
+(CALIBRATED, not worse). Forecast gate-(a) stamp re-keyed **in this same session** (R-T / Q34).
+Site retention swept to keeper + folded twin. **Inherited and named, not buried:** NEISO's
+`perfb-stage0` golden captures `neiso99_joint_B` and was *already* stale against neiso-106; the
+R-AI re-capture obligation applies to this lane and is **not** discharged here.
+
+**Next shorthand: `neiso-109`.** No new NEISO lever is open. The live objects are unchanged — C3c
+(frontier declared; needs a new measured identification and its own charter) and the diurnal
+amplitude gap. **Do not re-open the index-vs-delivered question without new measured evidence: it
+is adjudicated, with a physical falsification behind it.**
