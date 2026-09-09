@@ -181,6 +181,18 @@ LP dual is free to exceed. So the tail is *mistimed and under-held*, not under-p
 **This is a hypothesis about where to look, not a diagnosis.** It was measured from committed
 artifacts with no solve, and it names no mechanism.
 
+## 6c. The object was then traced to its cause and KILLED at phase 0 — no LP
+
+`docs/handoffs/ADDENDUM-ercot263-february-object-phase0-2026-09-09.md`. The keeper prices Feb-2021
+gas as an ordinary month (raw EIA N3045TX3 basis **+54.376 $/MMBtu**; keeper uses **+0.390**), because
+`ercot_ep_gas_basis_corroborated` replaces the two 2021 months failing EIA-923 corroboration. **That
+removal is the 95.7%, and it is correct** — the print is a monthly cost/volume ratio over a month
+that traded ~$3 for 24 days and $100–1,200 for 4, and ercot-254 measured the alternative at C3c
+688 h vs 258 actual. All three routes are closed (raw monthly = ercot-254 refused under rule 1;
+**daily basis = the right repair and un-armable, no Waha/HSC daily file exists**; offer-band =
+ercot-262). Not capacity-short: zero slack and zero dump in every Uri hour. **The five-year shard
+fan-out was not launched** — it would have re-measured an adjudicated defect at hours of LP cost.
+
 ## 7. Governance
 
 - **Rule 29 `[R-SCREEN]`:** phase 0 first; it killed the handoff's construction at zero LP cost, so

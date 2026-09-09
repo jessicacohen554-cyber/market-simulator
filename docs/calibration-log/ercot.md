@@ -14014,6 +14014,29 @@ hypothesis about where to look, not a diagnosis, and it names no mechanism.
 it makes the target harder and **correctly measured**. Every arm screened against 2021 C3b before
 today was screened against a number wrong by 0.32.
 
+**THE FEBRUARY OBJECT WAS THEN TRACED AND KILLED AT PHASE 0 — no LP, no shard fan-out**
+(`docs/handoffs/ADDENDUM-ercot263-february-object-phase0-2026-09-09.md`). The keeper prices Feb-2021
+gas as an ORDINARY month: the EIA N3045TX3 raw print is **+54.376 $/MMBtu** of basis and the keeper
+uses **+0.390**, because `ercot_ep_gas_basis_corroborated` (ercot-261) replaces the two 2021 months
+that fail corroboration against EIA-923 Schedule-5 (Feb and Dec) with the corroborated-month mean.
+**That removal IS the 95.7%** — and it is CORRECT: the print is a monthly cost/volume RATIO, Texas
+gas traded ~$3 for ~24 days and $100-1,200 for ~4, so at monthly resolution the cheapest February
+day still prices gas at $31.26/MMBtu and all 672 hours clear $200/MWh on fuel alone. **ercot-254
+already tested exactly that and it blew C3c to 688 h against 258 actual.** All three routes are
+closed and none of the closures is new: (1) restore the raw monthly basis = ercot-254, refused under
+rule 1 `[R-STRUCT]` (24 cheap days made expensive to fix 4); (2) resolve the basis DAILY = the
+correct repair and **un-armable** — `gas_hub_basis_daily` exists and is proven in NEISO/CAISO/MISO/
+NYISO, but `ercot_zonal_gas_hub.csv` is ANNUAL differentials and there is **no Waha or HSC daily
+file anywhere in `data/raw`**; (3) offer-band scale = ercot-262, +-0.004, and arithmetically
+hopeless since no level shift moves one month by -$345 while the other eleven are already +12% to
++23% HIGH. Non-fuel candidates fail the evidence: **zero slack and zero dump in every Uri hour**
+(not capacity-short) and model demand tracks measured load through the onset (Feb 14 peak 68.02 GW).
+The model is **mis-priced, not mis-committed**. **VERDICT: C3b 2021 is not closable in-session and
+the blocker is one named measured input.** The handoff's own DO-NOT ("a DAILY delivered series needs
+licensed Waha/HSC data = procurement") is reached independently from the residual side and now
+QUANTIFIED: that procurement is worth **0.559 -> ~0.116** on the ISO's last rubric failure, with no
+new mechanism, no new parameter and no fitted value. **OWNER DECISION: procure daily Waha/HSC.**
+
 **Rule 28:** ERCOT matrix shard + §5.1 prose header re-stamped to the current keeper (a duty the
 ercot-261 promotion left owed). **No cell moved — no mechanism was tested.**
 
