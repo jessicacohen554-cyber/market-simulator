@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "record": "key-provenance exceptions -- committed run_config.json records whose recorded cache_key today's ScenarioConfig.cache_key() cannot recompute",
-  "authority": "capx D85 (owner ruling Q59, capx ledger \u00a70bb.3(a), r#57) derived every entry below to its exact recorded literal under a named recipe, zero unclassified, and ruled the item BOOKKEEPING, NOT A DEFECT. capx D85-R (\u00a70bc.3(c)) committed the derivation as this checked record.",
+  "authority": "capx D85 (owner ruling Q59, capx ledger \u00a70bb.3(a), r#57) derived every entry below to its exact recorded literal under a named recipe, zero unclassified, and ruled the item BOOKKEEPING, NOT A DEFECT. capx D85-R (\u00a70bc.3(c)) committed the derivation as this checked record. capx D91 (owner ruling Q64, \u00a70bh.3(a)) appended the single `lag` row its own registration repair creates, having counted it before the edit; the count was 1 and so did not change the repair's recommendation.",
   "what_this_is_not": [
     "NOT a licence to rewrite a committed cache_key. A committed key is what that bundle actually solved under; rewriting it makes the artifact lie about its own provenance (D85 \u00a75 refuses repair (iv)).",
     "NOT a licence to re-register or un-register a lagging field. Curing the 6 `lag` rows that way orphans every key produced since 2026-09-02 that carries the field (D85 \u00a75 refuses repair (iii)).",
@@ -28,12 +28,27 @@
     "resolve_iso_overrides": "with vintage_sha: first apply that vintage's ISO default_scenario_overrides to the payload"
   },
   "class_totals": {
-    "lag": 6,
+    "lag": 7,
     "pre-ledger-flip": 3,
     "pre-ledger-flip+split-root": 5,
     "vintage+resolved": 1
   },
   "entries": [
+    {
+      "run_config": "docs/handoffs/scn-ws5b-neiso/REF/run_config.json",
+      "iso": "NEISO",
+      "recorded_cache_key": "1b452c457ca786a6",
+      "solved_at": "2026-09-09T01:57:16Z",
+      "solve_git_sha": "4e28ee41",
+      "class": "lag",
+      "recipe": {
+        "undrop": [
+          "pjm_seam_neighbour_hourly_ladder"
+        ]
+      },
+      "why": "Registration lag, and the ONLY record capx D91's repair orphans -- counted and disclosed in that lane's PRECOMMIT BEFORE the edit, not discovered after it. `pjm_seam_neighbour_hourly_ladder` landed in f2a834de (pjm-174) WITHOUT its `_CACHE_KEY_OPTIONAL_FIELDS` entry and was registered 2026-09-09 by capx D91 under owner ruling Q64. This is the one committed payload solved inside that ~33-hour window (2026-09-08T16:21Z -> 2026-09-09T01:57Z), so the solving code HASHED the field at False; today's rule DROPS it at False. Un-dropping that one field reproduces the literal exactly. It is the identical species as the `caiso_offer_surface_measured_ungrounded` lag rows -- same defect, same cure, same class -- and it is not a keeper, not a dashboard-registered run, and not a key-named bundle directory: two JSON files addressed by path. The inverse cost of NOT registering the field was 199 of 200 committed records unable to reconstruct their own key.",
+      "citation": "docs/handoffs/FINDING-capx-d91-2026-09-09.md \u00a76 (orphan census) and \u00a75 (the registration); owner ruling Q64, capx ledger \u00a70bh.3(a)"
+    },
     {
       "run_config": "results/ff-t1f-s123/verify/run_config.json",
       "iso": "MISO",

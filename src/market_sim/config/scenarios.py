@@ -1629,6 +1629,22 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # end, per HOUSE-3. Registered IN THE SAME COMMIT as the field (the
     # nyiso-119 discipline).
     "pjm_interface_feed_admissibility_gate",
+    # pjm-174: the measured hourly neighbour-anchored PJM seam ladder
+    # (PRECOMMIT-pjm174-seam-neighbour-hourly-ladder-2026-09-08.md; GATED
+    # default False => the seam keeps its flat envelope exactly as before,
+    # byte-identical). REGISTERED RETROACTIVELY by capx D91 (owner ruling Q64,
+    # 2026-09-09): the field landed at `f2a834de` WITHOUT this entry or its
+    # ledger entry below, so it entered the digest at its own default and moved
+    # the key of EVERY config in the program -- 199 of the 200 committed
+    # run_config records stopped reproducing their own recorded cache_key, all
+    # six ISOs' keepers among them, and the pinned default key came off its
+    # literal (547053bdfccd4264 -> 72341e34fd261997). This entry RESTORES those
+    # keys rather than moving them anywhere new: dropping the field at its
+    # frozen False reproduces each record's own recorded literal, verified over
+    # all 200 (docs/handoffs/FINDING-capx-d91-2026-09-09.md section 2). An
+    # ARMED run still carries True into the hash and so still keys distinctly.
+    # PJM cluster -- end of its run, per HOUSE-3.
+    "pjm_seam_neighbour_hourly_ladder",
     # pjm-169 F4: the solve-year vintage identification point of the gas-offer
     # net-revenue margin (PRECOMMIT-pjm169-f4-anchor-vintage-2026-09-06.md §2;
     # GATED default False => the anchor stays the frozen 2023-2025 window mean
@@ -2241,6 +2257,11 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "capacity_screen_peak_measured_hindcast": "False",
     "eia860_vintage_tracks_solve_year": "False",
     "pjm_interface_feed_admissibility_gate": "False",
+    # capx D91 (owner ruling Q64): the frozen drop value of the retroactive
+    # pjm-174 registration above. False is the value the field held from
+    # f2a834de onward and holds at HEAD -- this is a REGISTRATION, not a
+    # default flip, so no (b'-1) key advance is designed or observed.
+    "pjm_seam_neighbour_hourly_ladder": "False",
     "gas_offer_margin_anchor_vintage": "False",
     "cc_summer_derate_reconciled_basis": "False",
     # SPP-49: the F923 plausibility screen, registered at the PRE-REPAIR posture
