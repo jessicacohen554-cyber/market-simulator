@@ -296,7 +296,38 @@
         "p95": 81.01,
         "p99": 8866.15,
         "max": 9024.06
-      }
+      },
+      "rt_lw": 165.53,
+      "rt_lw_mon": [
+        21.82,
+        1767.07,
+        21.74,
+        54.95,
+        25.43,
+        44.22,
+        40.73,
+        38.1,
+        46.08,
+        52.31,
+        43.47,
+        27.59
+      ],
+      "da_lw": 162.0,
+      "da_lw_mon": [
+        22.62,
+        1706.7,
+        22.34,
+        32.93,
+        27.15,
+        48.0,
+        45.82,
+        44.38,
+        48.88,
+        57.33,
+        41.36,
+        29.89
+      ],
+      "src_lw": "zonal LZ settlement prices (RTM 15-min / DAM hourly) load-weighted by measured zonal demand (eia_loader.load_demand), model-zone crosswalk ERCOT_MODEL_ZONE_TO_LZ"
     },
     "2022": {
       "src": "ERCOT HB_HUBAVG settlement point price (DAM hourly / RTM 15-min)",
@@ -355,7 +386,38 @@
         "p95": 111.38,
         "p99": 389.02,
         "max": 5087.27
-      }
+      },
+      "rt_lw": 74.44,
+      "rt_lw_mon": [
+        31.38,
+        55.82,
+        36.44,
+        56.25,
+        103.27,
+        70.3,
+        164.72,
+        93.79,
+        67.56,
+        52.85,
+        43.54,
+        67.7
+      ],
+      "da_lw": 75.77,
+      "da_lw_mon": [
+        34.31,
+        43.16,
+        40.79,
+        59.28,
+        99.35,
+        90.28,
+        137.2,
+        107.45,
+        74.27,
+        51.3,
+        46.82,
+        77.41
+      ],
+      "src_lw": "zonal LZ settlement prices (RTM 15-min / DAM hourly) load-weighted by measured zonal demand (eia_loader.load_demand), model-zone crosswalk ERCOT_MODEL_ZONE_TO_LZ"
     },
     "2023": {
       "src": "ERCOT HB_HUBAVG settlement point price (DAM hourly / RTM 15-min)",

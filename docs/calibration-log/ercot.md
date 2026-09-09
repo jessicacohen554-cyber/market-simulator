@@ -13945,5 +13945,107 @@ with `git rm --cached` (rule 31 — the bundles stay on disk).
 
 **THE FINDING: 2021 and 2023 move in OPPOSITE directions** — 2023 (train) **+4.3 pt worse**, 2021 (validation) **−1.1 pt better** — and it is consistent with the mechanism's own theory, since the uniform allocation's error is largest where the fleet is least committed (2021 holds Lake Hubbard at 1.22 TWh against 0.36 measured, 3.4× over, while holding Braunig at 1.50 against 3.72). **The promotion tension is genuine and is the owner's**: rule 1 `[R-STRUCT]` says a structurally-correct, zero-DOF, forward-native repair stays in even when the residual worsens; rule 22 `[R-HOLDOUT]` says promoting *because* a validation year improved while a training year degraded is selecting on the held-out year. Record: `docs/RESULT-ercot260-merit-allocation-2021-touchpoint-2026-09-09.md`. **Keeper unchanged; nothing registered.** Both probe bundles sit outside `results/calibration/` under `.git/info/exclude`, on local disk only — they will not survive this container.
 
-**Next shorthand: ercot-261** (ercot-199 and ercot-257 remain unclaimed).
+## ercot-263 — 2026-09-09 — the 2021 C3b failure was measured against a deprecated benchmark basis (ZERO LP)
+
+**Scope:** data + benchmark + docs. No LP solved, no `ScenarioConfig` field changed, keeper payload
+byte-identical, no `src/`/`scripts/` edit. Records:
+`docs/handoffs/PRECOMMIT-ercot263-c3b-basis-2026-09-09.md` (`3964ff00`, predictions sealed first),
+`docs/RESULT-ercot263-c3b-basis-2026-09-09.md`.
+
+**Phase 0 killed the handoff's own construction before an LP was spent.** The brief named October
+(+140.3%) as the first object. C3b is an **absolute-dollar** monthly NRMSE, not a percentage one:
+on the keeper's committed payload February carried **58.5%** of the 2021 SSE against October's
+25.4%, and **zeroing October outright still scored 0.2055 > 0.20 — still FAIL.** The recommended
+object could not close the gate under any outcome.
+
+**The defect.** Asking why February's error was large found it: `score_price_shape` labelled the
+2021 actual **"LEGACY equal-hour basis"** while 2023–2025 read **"load-weighted actual"**. ERCOT
+2021/2022 were scoring a load-weighted model against an equal-hour actual — the basis the owner
+deprecated at rubric **v2.4** in 2026-07, whose header names the wedge and predicts where it bites:
+*"a wedge that grows with tail realism."* 2021 is ERCOT's most tail-heavy year. **Not a data gap:**
+`--lw-retrofit` had run on ERCOT for {2019, 2020} and {2023, 2024, 2025} and simply skipped the two
+years between; both carry complete inputs (8,760 h / 0 NaN system, 131,385 rows / 15 SPs / 0 NaN
+zonal). **ERCOT was the only ISO with an interior hole in `rt_lw_mon`** — every other ISO's legacy
+years are a contiguous prefix.
+
+**The repair** (rule 14 `[R-ACCURATE]` + rule 22; zero free parameters; blind to the model):
+`derive_actual_lmp.py --lw-retrofit --isos ERCOT --years 2021 2022`, then the committed
+`write_bench_part` writer. Faithfulness verified rather than asserted — `_actual_avg_lmp` reproduces
+the committed `avgLMP` **exactly** for 2023/2024/2025 and a full write round-trip leaves those parts
+**byte-identical**; the 2021/2022 diff is **four keys ADDED**, nothing changed or removed.
+
+**RESULT — the number moved the WRONG way and it stays (rule 14).**
+
+| | 2021 | 2022 | 2023/24/25 |
+|---|---|---|---|
+| C3b | 0.238 → **0.559** FAIL | 0.099 → **0.172** PASS | unchanged, byte-identical |
+| C3a | +4.2% → **−6.7%** PASS | +9.8% → **−8.1%** PASS | unchanged |
+
+Both C3a rows **sign-flipped**: the model was believed 4.2%/9.8% rich and is in fact 6.7%/8.1%
+cheap, and 2022 had been sitting 0.2 pts inside the ±10% FAIL boundary on a basis overstating it.
+No criterion status changed; determination stays **NOT-YET on `price_shape` alone**; train tier
+unmoved, so **ERCOT stays CALIBRATED** (rule 30(c)). `audit_keepers --iso ERCOT` all passed;
+`check_bench_freshness --iso ERCOT` 0 STALE.
+
+**Sealed prediction P2 cut against the session and decided it.** It predicted the Uri February
+actual would rise (load/price correlate; `rt_lw` exceeds `rt` by +12%…+33% in every ERCOT year
+carrying both) and therefore that the model's miss would get **worse**: $1,521.84 → **$1,767.07**,
+error −$99.71 → **−$344.94**. P5 bound the session to keep the repair either way, and it did — no
+offsetting mechanism was sought.
+
+**THE 2021 OBJECT IS NOW SINGULAR.** On the corrected basis **February is 95.7% of the C3b SSE**
+(model $1,422.13 vs actual $1,767.07, −19.5%); **making it exact scores 0.1156, a clean PASS.**
+October is **2.9%** (zeroing it: 0.5593 → 0.5511) and all eleven non-February months combined are
+4.3%. The next lane's question is one question: **why is the model's Uri February 19.5% too cheap?**
+**Do not open it with an offer-band scale** — ercot-262 measured that channel at ~0.5% of price per
+1% of band and ±0.004 on C3b, and no level shift moves one month by −$345 without wrecking eleven.
+
+**CHARACTERIZED, zero LP (from the keeper's committed hourly, for the next lane):** February's
+error is **half an ONSET miss and half a depth miss** — Feb 11–14 contributes **−$179.00 (52.6%)**
+and Feb 15–19 **−$156.07 (45.9%)**; Feb 1–10 and 20–28 are ~0. **The model's storm starts about two
+days late**: on Feb 13 the actual was above $1,000/MWh for **23 of 24 hours and the model for 1**
+(Feb 14: 19 vs 6). Once joined it tracks well — Feb 15–18 reach $5,556/$7,896/$8,147/$8,528 against
+$6,765/$8,970/$9,002/$8,989, and Feb 19 is **+$66 over**. The model holds **38 h at/above $9,000
+against the actual's 83** and its dual peaks at **$10,771**, above the $9,000 HCAP an energy-only LP
+dual may exceed. So the tail is **mistimed and under-held, not under-priced at its peak.** A
+hypothesis about where to look, not a diagnosis, and it names no mechanism.
+
+**What this does NOT claim.** A benchmark correction is not a market mechanism and closes nothing;
+it makes the target harder and **correctly measured**. Every arm screened against 2021 C3b before
+today was screened against a number wrong by 0.32.
+
+**THE FEBRUARY OBJECT WAS THEN TRACED AND KILLED AT PHASE 0 — no LP, no shard fan-out**
+(`docs/handoffs/ADDENDUM-ercot263-february-object-phase0-2026-09-09.md`). The keeper prices Feb-2021
+gas as an ORDINARY month: the EIA N3045TX3 raw print is **+54.376 $/MMBtu** of basis and the keeper
+uses **+0.390**, because `ercot_ep_gas_basis_corroborated` (ercot-261) replaces the two 2021 months
+that fail corroboration against EIA-923 Schedule-5 (Feb and Dec) with the corroborated-month mean.
+**That removal IS the 95.7%** — and it is CORRECT: the print is a monthly cost/volume RATIO, Texas
+gas traded ~$3 for ~24 days and $100-1,200 for ~4, so at monthly resolution the cheapest February
+day still prices gas at $31.26/MMBtu and all 672 hours clear $200/MWh on fuel alone. **ercot-254
+already tested exactly that and it blew C3c to 688 h against 258 actual.** All three routes are
+closed and none of the closures is new: (1) restore the raw monthly basis = ercot-254, refused under
+rule 1 `[R-STRUCT]` (24 cheap days made expensive to fix 4); (2) resolve the basis DAILY = the
+correct repair and **un-armable** — `gas_hub_basis_daily` exists and is proven in NEISO/CAISO/MISO/
+NYISO, but `ercot_zonal_gas_hub.csv` is ANNUAL differentials and there is **no Waha or HSC daily
+file anywhere in `data/raw`**; (3) offer-band scale = ercot-262, +-0.004, and arithmetically
+hopeless since no level shift moves one month by -$345 while the other eleven are already +12% to
++23% HIGH. Non-fuel candidates fail the evidence: **zero slack and zero dump in every Uri hour**
+(not capacity-short) and model demand tracks measured load through the onset (Feb 14 peak 68.02 GW).
+The model is **mis-priced, not mis-committed**. **VERDICT: C3b 2021 is not closable in-session and
+the blocker is one named measured input.** The handoff's own DO-NOT ("a DAILY delivered series needs
+licensed Waha/HSC data = procurement") is reached independently from the residual side and now
+QUANTIFIED: that procurement is worth **0.559 -> ~0.116** on the ISO's last rubric failure, with no
+new mechanism, no new parameter and no fitted value. **OWNER DECISION: procure daily Waha/HSC.**
+
+**Rule 28:** ERCOT matrix shard + §5.1 prose header re-stamped to the current keeper (a duty the
+ercot-261 promotion left owed). **No cell moved — no mechanism was tested.**
+
+**PRE-EXISTING RED, not this lane's, NOT fixed here.** `check_registry_payload_parity` fails on
+`results/calibration/ercot262_arm_{2021..2025}` — 79 tracked files that reached `main` via
+ercot-262's shard commits instead of being kept out of it (rule 29(c)). **Rule 31 `[R-RETAIN]`
+forbids this session deleting them**: the owner has not ruled on ercot-262's promotion question,
+and destroying solved bundles ahead of that ruling is the exact ercot-255 incident rule 31 exists to
+prevent. This branch touches no bundle directory and does not worsen the RED. Owner decision needed.
+
+**Next shorthand: ercot-264** (ercot-199 and ercot-257 remain unclaimed).
 
