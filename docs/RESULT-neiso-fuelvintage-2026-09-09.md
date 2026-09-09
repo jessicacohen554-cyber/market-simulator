@@ -119,12 +119,19 @@ Therefore **every** difference against the incumbent's committed numbers is HEAD
 lanes' commits, and **none** of it is attributable to either promoted change — an attribution
 established by measurement, not by inference. Measured:
 
-| | 2023 | 2024 |
-|---|---|---|
-| max abs class-hour Δ | 426.95 MW | 371.44 MW |
-| largest annual class energy Δ | +0.00067 TWh on 52.7 TWh (**13 ppm**) | −0.00035 TWh |
-| mean abs price Δ | 0.0039 $/MWh (mean 36.72) | 0.0055 (mean 42.07) |
-| slack / dump | 0.0 / 0.0 both sides | 0.0 / 0.0 both sides |
+| | 2023 | 2024 | 2025 |
+|---|---|---|---|
+| max abs class-hour Δ | 426.95 MW | 371.44 MW | 442.34 MW |
+| total class energy Δ | +0.000033 % | +0.000100 % | −0.000261 % |
+| largest annual class energy Δ | +0.00067 TWh on 52.7 TWh (**13 ppm**) | −0.00035 TWh | — |
+| mean abs price Δ | 0.0039 $/MWh (mean 36.72) | 0.0055 (mean 42.07) | — |
+| slack / dump | 0.0 / 0.0 both sides | 0.0 / 0.0 both sides | 0.0 / 0.0 both sides |
+
+**Two independent solves of the same year agree exactly.** 2023 and 2024 were solved twice in this
+session — once in the T1 shard, once in the registered single-invocation full-span bundle — and the
+delta against the incumbent is **identical to four decimals in both** (426.9502 / 371.4380 MW). The
+residual is therefore reproducible, not solve-to-solve noise, which is what a HEAD-drift explanation
+predicts and a nondeterminism explanation does not.
 
 The movement sits in `CC_REGULAR` and **hydro** — the budget-constrained, flat-marginal-cost
 variable whose intertemporal placement is a numerical tie. **The two solutions are alternate optima
