@@ -1,0 +1,125 @@
+{
+ "iso": "NYISO",
+ "bundle": "nyiso213_summer_seam",
+ "years": {
+  "2021": {
+   "n_gen": 870,
+   "fleet_arrays_fingerprint": {
+    "availability": "e8063c18cacbebc4|(870, 8760)|float64",
+    "efficiency_bin": "7f6386391c6f8421|(870,)|<U10",
+    "emission_rate": "cd2435001988e0db|(870,)|float64",
+    "fuel_type_idx": "3d19531bd985a4cd|(870,)|int64",
+    "heat_rate": "a08d797b9a8ee9ee|(870,)|float64",
+    "min_gen": "38bd705402c2d2c5|(870, 8760)|float64",
+    "min_gen_mechanism": "8efafec3021826d2|(870, 8760)|int8",
+    "nox_rate": "f08caab0321eda75|(870,)|float64",
+    "plant_code": "6d166fdacb5e1c08|(870,)|int64",
+    "plant_group": "9f2b2c6dd3d61429|(870,)|object",
+    "pmax": "84fd9088eb8cce14|(870,)|float64",
+    "pmin": "917230d1cc444397|(870,)|float64",
+    "ramp10": "f2edcd5f0b998594|(870,)|float64",
+    "so2_rate": "cae525dd0fe08cb7|(870,)|float64",
+    "state": "9d49c0ff37ba3551|(870,)|object",
+    "unit_ids": "35b7e2c2fc3a0152|len=870",
+    "vom": "41c382422b53c699|(870,)|float64",
+    "zone_idx": "e7880f9d93d2b5b6|(870,)|int64"
+   },
+   "zero_availability_units": 48,
+   "zero_availability_pmax_mw": 2100.067,
+   "total_pmax_mw": 46771.124,
+   "A_simple_cycle_hr_floor_hits": {
+    "2681": {
+     "plant_name": "Greenport",
+     "rows": 3,
+     "hr_before": 8.0,
+     "hr_after": 9.0,
+     "pmax_sum_mw": NaN
+    },
+    "57186": {
+     "plant_name": "Chautauqua LFGTE Facility",
+     "rows": 6,
+     "hr_before": 6.0531,
+     "hr_after": 9.0,
+     "pmax_sum_mw": NaN
+    },
+    "59453": {
+     "plant_name": "Albany Medical Ctr Cogen Plant",
+     "rows": 1,
+     "hr_before": 5.7728,
+     "hr_after": 9.0,
+     "pmax_sum_mw": NaN
+    }
+   },
+   "B_f923_plausibility_screen": {
+    "rows_in": 68919,
+    "rows_moved": 0
+   },
+   "C_plant_monthly_write_mask": {
+    "cells_total": 7621200,
+    "cells_written": 2741520,
+    "cells_written_pct": 35.972,
+    "gas_units": 492,
+    "gas_capacity_hours": 207810183.8,
+    "gas_capacity_hours_written": 117993919.4,
+    "gas_capacity_hours_written_pct": 56.78,
+    "gas_units_with_any_written": 265
+   }
+  },
+  "2022": {
+   "n_gen": 873,
+   "fleet_arrays_fingerprint": {
+    "availability": "b44a4e3d685a8a06|(873, 8760)|float64",
+    "efficiency_bin": "b2a11de27963b278|(873,)|<U10",
+    "emission_rate": "4004692bac7a7393|(873,)|float64",
+    "fuel_type_idx": "82cd0b86dee9ce4d|(873,)|int64",
+    "heat_rate": "9eec1904f42a8070|(873,)|float64",
+    "min_gen": "fb38ef866a2e4bc1|(873, 8760)|float64",
+    "min_gen_mechanism": "15d50ef98dbc2206|(873, 8760)|int8",
+    "nox_rate": "3654f06b76576cb8|(873,)|float64",
+    "plant_code": "928827bc4fe0e657|(873,)|int64",
+    "plant_group": "58d7d472cdc84e72|(873,)|object",
+    "pmax": "5fd546e870cee8c0|(873,)|float64",
+    "pmin": "be432c672af2ba66|(873,)|float64",
+    "ramp10": "f86e560080519b3b|(873,)|float64",
+    "so2_rate": "fae8b24ed8c6b55e|(873,)|float64",
+    "state": "7a737a2a1de73b69|(873,)|object",
+    "unit_ids": "377f0de516c1e2dc|len=873",
+    "vom": "9ceec5111f31970c|(873,)|float64",
+    "zone_idx": "d8a4646bb206ca68|(873,)|int64"
+   },
+   "zero_availability_units": 40,
+   "zero_availability_pmax_mw": 3251.663,
+   "total_pmax_mw": 47005.424,
+   "A_simple_cycle_hr_floor_hits": {
+    "2681": {
+     "plant_name": "Greenport",
+     "rows": 3,
+     "hr_before": 8.0,
+     "hr_after": 9.0,
+     "pmax_sum_mw": NaN
+    },
+    "57186": {
+     "plant_name": "Chautauqua LFGTE Facility",
+     "rows": 6,
+     "hr_before": 6.0531,
+     "hr_after": 9.0,
+     "pmax_sum_mw": NaN
+    }
+   },
+   "B_f923_plausibility_screen": {
+    "rows_in": 68919,
+    "rows_moved": 0
+   },
+   "C_plant_monthly_write_mask": {
+    "cells_total": 7647480,
+    "cells_written": 2740800,
+    "cells_written_pct": 35.839,
+    "gas_units": 492,
+    "gas_capacity_hours": 207963483.8,
+    "gas_capacity_hours_written": 117993919.4,
+    "gas_capacity_hours_written_pct": 56.738,
+    "gas_units_with_any_written": 265
+   }
+  }
+ }
+}

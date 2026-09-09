@@ -1,0 +1,17 @@
+{
+  "id": "2026-09-09-ercot261-corroborated-gas-level",
+  "label": "ercot261 corroborated gas level",
+  "date": "2026-09-09",
+  "shorthand": "ercot261-corroborated-gas-level",
+  "definition": "ercot-261 ARM 2025: corroborated monthly gas LEVEL + partial-plant exit carry",
+  "years": [
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-09-09-ercot261-corroborated-gas-level.js",
+  "bundle": "results/calibration/ercot261_five_year_keeper"
+}

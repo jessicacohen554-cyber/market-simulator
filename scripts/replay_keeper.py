@@ -97,6 +97,14 @@ _IGNORE = {
     # year fresh (which is exactly what "reused years are not fresh
     # evidence" demands of a re-gate).
     "reuse",
+    # Free-text note naming the model changes a bundle's session landed
+    # (ercot-261 writes one). Recorded-only provenance in the same class as
+    # "timestamp"/"git_sha"/"basis_sha" — it selects no mechanism and has no
+    # solve_and_persist kwarg, so a replay carries the REPLAY's own note (the
+    # --note flag) and never the original's. Ignored deliberately per this
+    # guard's own instruction; verified to be the SOLE unmapped key of
+    # ercot261_five_year_keeper, which it was blocking from replay entirely.
+    "model_changes_note",
 }
 # Recorded-only env-gated probe values: resolved inside backcast_config from
 # env vars (ERCOT_ZONAL_GAS / ERCOT_WEST_NETLOAD_GAS /

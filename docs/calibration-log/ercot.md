@@ -13851,6 +13851,74 @@ bundle dirs), cache-key registration ok, status parts in sync, matrix cell **`K`
 
 **Next shorthand: ercot-260** (ercot-199 and ercot-257 remain unclaimed).
 
+## ercot-261 — 2026-09-09
+
+**PROMOTED (owner ruling, verbatim: "This should be promoted on both 860 and gas shape
+counts regardless of inertness"). New keeper: `2026-09-09-ercot261-corroborated-gas-level`,
+superseding `2026-09-08-ercot256-drag-layup-mask`.**
+
+**The object.** ERCOT priced all 8,760 hours of 2021 off ONE annual delivered-gas basis
+(+5.278 $/MMBtu, against +0.004/-0.086/-0.463 in 2023/24/25) because the measured level was
+collapsed to an annual mean before differencing. February 2021 (Uri) prints $59.73/MMBtu —
+a monthly **cost/volume ratio**, not a price, since Texas gas traded near $3 for ~24 days
+and $100-1,200 for ~4 — so the annual mean lifted every ordinary hour and took that same
+cost out of February.
+
+**What the handoff asked for was measured DEAD at zero LP.** Its construction (monthly LEVEL
+times the already-armed Henry Hub daily shape) leaves the cheapest February 2021 day at
+**31.26 $/MMBtu**, so all 672 hours clear $200/MWh on fuel alone — failing the handoff's own
+pre-registered gate ("Feb 2021 must STAY right"). That independently reproduces
+`FINDING-ercot258`'s arithmetic closure of the same successor; no adjudicated cell was
+re-opened. Reported before any solve, which is what made the redesign possible.
+
+**What was promoted instead.** `ercot_ep_gas_basis_corroborated` — a sub-gate INSIDE
+`ercot_ep_gas_basis_monthly` (rule 19), admitting a month at monthly resolution only where a
+SECOND independent measurement corroborates it (EIA-923 Schedule-5 TX plant receipts vs the
+EIA N3045TX3 survey, within `ERCOT_GAS_CORROBORATION_TOL_USD_MMBTU` = 1.00). The two series
+agree within $0.85 in **82 of 84 months** 2019-2025 and disagree only in 2021-02 ($13.77) and
+2021-12 ($3.47), with no month in the factor-4.1 gap. One ledgered DOF, identified on the
+fuel series alone, registered above the solve, never swept. Plus the **860 count**:
+`_PARTIAL_EXIT_WINDOW_START` 2023 -> 2019, restoring the mirror the fleet-vintage charter
+left broken.
+
+**Measured (arm vs a same-HEAD control, five years, one container per year, pinned commit
+`6bc43501`):**
+
+| | 2021 | 2022 | 2023 | 2024 | 2025 |
+|---|---|---|---|---|---|
+| C3a control | +26.4 % | +9.8 % | +23.5 % | +15.8 % | +3.2 % |
+| **C3a arm** | **+4.2 %** | +9.8 % | +24.3 % | +15.1 % | +4.0 % |
+| Δ LW LMP | −32.87 | −0.02 | +0.41 | −0.18 | +0.28 |
+
+February 2021 −3.3 % -> **−6.6 %** (intact); ex-Feb bias +146.2 % -> **+53.8 %**; December
++131.6 % -> **+19.2 %**; C3c 2021 230 -> **223 h** against 214 actual.
+
+**Registered verdict: C3a FAIL -> PASS, C8 FAIL -> PASS, C3b improves 0.334 -> 0.238 but
+still FAILs the 0.20 gate and is the sole remaining failure.** Five-year determination
+NOT-YET on C3b alone (predecessor: NOT-YET on C3a + C3b + C8). Every failing row is 2021, a
+validation-tier year, so the train tier carries none and the ISO stays **CALIBRATED** under
+rule 30(c).
+
+**Card B is INERT and was promoted with that on the record.** `dcap` is exactly 0.0 MW for
+every plant; Decker Creek reads 61.0 MW in both legs. ERCOT builds its fleet per-plant from
+the CAMPD bin sheet and plant 3548 has zero rows there — **0 of 1,721 MW (unarmed) and 0 of
+2,609 MW (armed) of ERCOT's retiree injection is on that sheet.** A pre-existing ERCOT defect
+this run exposes and does not fix, routed to the fleet lane; it also settles attribution —
+the whole 2021 gain is the gas level.
+
+**Mistakes, recorded.** (a) My G-5 shed gate was mis-specified and fires on the control too;
+Uri load shed is the real event, and the arm nearly halves unserved energy (1,764 -> 961 MWh).
+(b) Three of eight pre-registered predictions were wrong: P2 (+53.8 %, not under +40 %),
+P5 (C3b neutral, not improved) and P7 (2022 moved −0.02, not "modestly"). (c) The addendum's
++888.4 MW Card-B footprint was measured at the loader, not the fleet the LP receives.
+(d) A first registration scored on a payload whose root `system.parquet` held only 2025,
+producing a vacuous C3a/C3b PASS and a spurious C1 FAIL; caught before promotion and rebuilt
+across all five years. (e) An earlier `git add -A` swept 183 bundle files onto `main`; removed
+with `git rm --cached` (rule 31 — the bundles stay on disk).
+
+**Open:** October 2021 at +140.3 %; the ERCOT bin-sheet retiree gap (fleet lane).
+
+
 ## ercot-260 — 2026-09-09 — THE TWO-CONFIG REPLAY DEFECT IS FIXED: a composite bundle's per-year recipe map is now **DERIVED** from its own committed run_config legs and **CONSUMED** by both replay entry points, and the keeper's 2023 carve-out year replays **BIT-IDENTICALLY**. Plumbing, not a mechanism. **1 LP, purely as proof.**
 
 **Charter:** the ercot-260 card 1 — `RESULT-ercot256` §10's unfixed open item, restated by `RESULT-ercot259` §4 as the thing blocking **any** ERCOT full-span re-solve by any lane. Record: `docs/RESULT-ercot260-two-config-replay-2026-09-09.md`. No PRECOMMIT: no `ScenarioConfig` field, no CLI flag, nothing under `src/market_sim/` — rule 29 `[R-SCREEN]` governs mechanism arms, and this is neither.
