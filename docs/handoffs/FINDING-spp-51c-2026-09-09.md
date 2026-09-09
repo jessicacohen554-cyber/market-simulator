@@ -345,3 +345,108 @@ main and not fixed here: run_calibration_full.py --help raises ValueError on an 
 argument's help text.
 FINDING: docs/handoffs/FINDING-spp-51c-2026-09-09.md
 ```
+
+---
+
+# ADDENDUM 2 (2026-09-09, same session) — the owner ruled: PROMOTED, and the clock is REPAIRED
+
+Two owner instructions, both executed in-session:
+
+> *"Just fix it so it's not on utc anymore and then fix so results are local time."*
+> *"Is this a recommended keeper candidate? If so plz promote. If structural integrity improves but
+> gates regress that may still be a keeper."*
+
+## A2.1 A CORRECTION TO THIS DOCUMENT'S OWN ADDENDUM: the offset is a CONSTANT +6, not 6/5
+
+§1 and the ADDENDUM read the offset as "**6 h in CST months and 5 h in CDT**", inferred from a
+price-vs-load lag scan. **That is wrong on the DST detail and it changes the fix, so it is corrected
+here rather than left to stand.** The model's 8760 calendar is **fixed Central Standard Time all
+year** — `derive_actual_lmp._STD_TZ`'s `Etc/GMT+N` convention, the clock
+`eia_loader._eia_hourly_frame` produces by sorting rows by UTC from local **standard** midnight —
+so the correction is a constant **+6**.
+
+Settled empirically, not by reading the convention: measured against SPP's own GMT-stamped GenMix
+load **restricted to the DST months, the only hours where the two hypotheses differ**, fixed CST
+beats prevailing time in all three years — corr **0.9913 / 0.9391 / 0.9652** vs 0.9815 / 0.9309 /
+0.9588, MAPE **2.499 / 5.316 / 3.878 %** vs 3.314 / 5.564 / 4.208 %. The summer peak of the original
+lag scan is flat to within 0.015 correlation across lags 4–6, which is why it could not resolve this
+and should not have been read as if it could.
+
+**The defect itself is unchanged and unaffected**: the sidecar was on SPP's GMT market interval.
+Only the magnitude of the shift moves.
+
+## A2.2 The repair, and how it is verified
+
+`build_spp_lmp_reference.py` asserted SPP's monthly wide files were "already hourly on the local
+clock". They are GMT. Fixed at the source (`gmt_dense_to_model_clock`, the **single** definition of
+the conversion) for any future fetch, plus a `--repair-clock` mode that re-indexes the
+already-emitted sidecars — required because the SPP portal is blocked and the raw monthly exports
+are not committed, so the affected files cannot be re-fetched.
+
+**It is a pure re-indexing, verified rather than asserted:** the sorted value set is identical on
+every common observation in all three years, the equal-hour annual mean is unchanged to four
+decimals (23.4732 / 23.3135 / 27.1112), and non-null counts are preserved.
+
+**Verified against the markers that found the defect:** the sidecar's RT hour-of-day peak moves
+**23 / 22 / 23 → 17 / 16 / 17**, matching EIA-930 load's own peak at 17, and the load-vs-price lag
+scan moves **+5 → −1**, into the same range as the other six ISOs. Independent corroboration from a
+statistic nothing here targets: `actual_amplitude.json`'s SPP `rt_peak_hour` moves 23/22/23 →
+**17/16/17** and `rt_trough_hour` **7 → 1** — an overnight trough and an evening peak — while
+`rt_range` barely moves (29.53→29.48, 37.37→37.29, 47.12→47.28), as a permutation must.
+
+Downstream, each verified **SPP-only**: `actual_lmp.json` `rt_lw` **24.438 / 24.531 / 27.957 →
+25.133 / 25.450 / 28.598**; `actual_tail.json` regenerated with a **zero diff** (C3c's 42/59/68 are
+clock-invariant counts, which also proves no other ISO moved); `actual_amplitude.json` as above.
+
+**Stale and deliberately NOT regenerated (rule 25 `[R-ISO-SCOPE]`):** the SPP sidecar is also a
+neighbour anchor for `derive_miso_seam_ladders.py` and `derive_neighbor_hr_by_year.py`. Those
+committed artifacts and MISO's/PJM's keepers are unchanged by this lane, but are now stale against
+their source. Re-deriving them is those desks' call.
+
+## A2.3 The promotion — SPP keeper 4, `2026-09-09-spp-51c-oversupply-curtailment`
+
+Full span `--year 2023 2024 2025`, one invocation, years sequential (rules 12 / 16); keeper-3's
+recipe plus **exactly one** field. Reproducibility check: the full-span 2025 P0 objective is
+**188,653,999.5344**, identical to the screen's to the cent.
+
+**All three runs re-scored on the same repaired bench**, so this is like-for-like and not a basis
+artifact:
+
+| | keeper-3 | SPP-50 (the control) | **this run** |
+|---|---|---|---|
+| C1 failing rows | **2** (2024 CC_REGULAR −8.60, CT_PEAKER +9.94) | 1 (2024 ST_GAS −8.71) | **1** (2024 ST_GAS −8.23) |
+| C3a failing years | 1 (2023 +11.0 %) | **2** (2023 +11.9, 2025 +11.6) | **1** (2025 +10.3 %) |
+| C3b failing years | 2 (0.225, 0.233) | **3** (0.235, 0.239, 0.248) | **1** (2025 0.204) |
+| C3c | 0/3/1 h vs 42/59/68 | 0/3/2 h | 0/4/2 h |
+| C2 / C4 / C6 / C8 | PASS | PASS | **PASS** |
+
+**Against its own control it is better on every criterion and worse on none.** C5a CO2 −2.4 / −1.8 /
++3.1 %; D-10 free-class C1 11/12, all-class 15/16. **Determination NOT-YET**, unchanged from
+keeper-3 — C3c fails in all three years (SPP has no scarcity mechanism at all; SPP-55's object) and
+C3a/C3b-2025 are marginal misses of a ±10 % and a ≤0.20 band.
+
+**The failed gate is not withdrawn.** §3 stands exactly as recorded: the mechanism failed G-1a,
+G-1b and G-3, and the session recommended against promotion. The owner overrode that, on the
+standing rule that a structural improvement can be a keeper even when gates do not clear. What the
+promotion does **not** do is make the mechanism sufficient: it still reaches only ~15–23 % of the
+measured negative hours, and §3.2's root cause — the LP absorbing 98.2 % of the headroom by turning
+thermal down to a **254.3 MW annual minimum across a ~40 GW fleet** — is now the SPP desk's leading
+lever (SPP-51b **R-2**), with rule 19 `[R-ONE-MECH]` requiring any successor floor to be
+**reconciled with** this allocation rather than stacked on it.
+
+**Retention, rules 15 / 31.** The registered bundle is slimmed to exactly keeper-3's committed shape
+(4 JSONs + `hourly/{class_band_hourly,class_hourly,storage,system}_<year>`, 3.1 MB). The 121 MB of
+`dispatch/`, `floors/` and the extra hourly parts were **moved to a gitignored sibling, not
+deleted**. SPP is now at **keeper-only retention** — one registered run — which required converting
+this lane's own predecessor citations from run ids to lane/FINDING form, the convention keeper-3's
+note had itself recorded.
+
+**DOF ledger unchanged at 3 entries / 1 residual.** The two `identification` labels the builder
+defaults to `residual` were carried forward from keeper-3's committed ledger, where the same two
+entries with the same values read `measured-physical`; the builder-vs-committed discrepancy is **not
+resolved here** and remains SPP-50 R-3.
+
+**Disclosed:** the post-solve report stage was killed again (~4.8 GB, no traceback) after the 2025
+price-duration block. The LP completed and wrote every hourly sidecar for all three years, which are
+the artifacts the scorer reads; `metrics.json` is written by the **registration** step, not the
+solve, so the bundle was never incomplete.

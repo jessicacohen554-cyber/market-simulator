@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-09-07-spp-3-screened-input",
+  "run_id": "2026-09-09-spp-51c-oversupply-curtailment",
   "iso": "SPP",
-  "label": "spp 3 screened input",
+  "label": "spp 51c oversupply curtailment",
   "target_years": [
     2023,
     2024,
@@ -81,17 +81,17 @@
     "co2": {
       "label": "C5a CO2 vs eGRID (REPORTED-ONLY, v2.9 \u2014 see the CRITERIA note)",
       "years": {
-        "2023": "-3.1%",
-        "2024": "-3.3%",
-        "2025": "+1.2%"
+        "2023": "-2.4%",
+        "2024": "-1.8%",
+        "2025": "+3.1%"
       }
     },
     "diurnal_amplitude": {
       "label": "D-A diurnal price amplitude, hour-of-day (REPORTED-ONLY, BAND-FREE, v3.5 \u2014 no external comparable exists to band it; see the note)",
       "years": {
-        "2023": "amplitude 22.6% of measured (hod range $6.67 vs $29.53); peak h17 vs h23, trough h02 vs h07 \u2014 phase OFF; hod r +0.082; 364 complete days",
-        "2024": "amplitude 21.8% of measured (hod range $8.15 vs $37.37); peak h15 vs h22, trough h02 vs h07 \u2014 phase OFF; hod r +0.049; 364 complete days",
-        "2025": "amplitude 20.1% of measured (hod range $9.46 vs $47.12); peak h11 vs h23, trough h01 vs h07 \u2014 phase OFF; hod r -0.040; 364 complete days"
+        "2023": "amplitude 38.9% of measured (hod range $11.47 vs $29.48); peak h17 vs h17, trough h02 vs h01 \u2014 phase OK; hod r +0.944; 364 complete days",
+        "2024": "amplitude 36.8% of measured (hod range $13.71 vs $37.29); peak h15 vs h16, trough h02 vs h01 \u2014 phase OK; hod r +0.968; 364 complete days",
+        "2025": "amplitude 30.3% of measured (hod range $14.30 vs $47.28); peak h12 vs h17, trough h01 vs h01 \u2014 phase OFF; hod r +0.881; 364 complete days"
       }
     }
   },
@@ -111,13 +111,13 @@
       "ST_CHP"
     ],
     "all": {
-      "pass": 14,
+      "pass": 15,
       "total": 16
     },
     "free": {
-      "pass": 10,
+      "pass": 11,
       "total": 12
     },
-    "headline": "C1 all 14/16 \u00b7 free 10/12"
+    "headline": "C1 all 15/16 \u00b7 free 11/12"
   }
 }

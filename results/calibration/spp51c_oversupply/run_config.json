@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-09-07T05:58:58",
+  "timestamp": "2026-09-09T02:24:19",
   "git": {
-    "sha": "623184f3",
-    "basis_sha": "dcb609f4487e93708d49442bcb87b44077758185",
-    "branch": "claude/spp-43-screened-rebaseline-2ro0x8",
+    "sha": "86e45462",
+    "basis_sha": "78edeeb73ee5a5494028037a56e843dd624ca9ca",
+    "branch": "claude/spp-51c-curtailment-allocation-izd5x2",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "spp-43: keeper-2's recipe (spp42_crosswalk_B) byte-for-byte, re-solved through the SPP-41 screened EIA-930 loader seam. The only changed input is SPP 2023 wind: -27.476 GWh on the LP bound at h3907 (one artifact hour, the NG: WND unit slip). 2024 and 2025 carry no moved LP input (27-array identity census, PRECOMMIT-spp-43-2026-09-07.md 2c). No flag, band, default or mechanism differs from keeper-2.",
+  "model_changes_note": "",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "SPP",
@@ -55,7 +55,7 @@
     "nyiso_dynamic_reserve_requirements": null,
     "nyiso_hydro_reserve_eligible": null,
     "nyiso_scr_edrp_reserve_eligible": null,
-    "git_sha": "623184f3"
+    "git_sha": "86e45462"
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -106,6 +106,7 @@
     "retirement_aggressiveness": "mid",
     "hydro_year": "normal",
     "hydro_dispatch_envelope": false,
+    "hydro_budget_period_by_instrument": false,
     "hydro_min_flow_floor": false,
     "hydro_ror_split": false,
     "hydro_budget_nameplate_aware": false,
@@ -388,6 +389,7 @@
     "nyiso_gas_bridge_plant_min_run": false,
     "nyiso_gas_bridge_online_hours": false,
     "nyiso_gas_bridge_state_floor_min_run": false,
+    "spp_gas_commitment_bridge": false,
     "nyiso_chp_btm_measured": false,
     "nyiso_spin_reserve_online": false,
     "nyiso_synchronised_reserve": false,
@@ -612,6 +614,8 @@
     "ct_drag_cap": 0.47,
     "ct_drag_ramp_start": 15,
     "ct_drag_ramp_end": 22,
+    "netload_drag_layup_window_mask": false,
+    "netload_drag_merit_allocation": false,
     "ercot_ct_offer_surface": false,
     "ercot_offer_surface_conditional": false,
     "ercot_offer_surface_midcurve_conditional": false,
@@ -935,6 +939,8 @@
     "nearby_fuel_price_fallback": true,
     "nearby_fuel_price_min_state_plants": 2,
     "nearby_fuel_price_zone_donor_guard": false,
+    "f923_gas_price_plausibility_screen": true,
+    "vre_curtailment_oversupply_allocation": true,
     "fleet_state_from_eia860": false,
     "class_aware_fuel_price_fallback": false,
     "plant_level_fleet": true,
@@ -966,8 +972,10 @@
     "pjm_seam_flow_percentile": null,
     "pjm_seam_export_limit": false,
     "pjm_seam_measured_ladder": false,
+    "pjm_seam_neighbour_hourly_ladder": false,
     "ercot_zonal_gas_basis": false,
     "ercot_ep_gas_basis_monthly": false,
+    "ercot_zonal_spread_ep_referenced": false,
     "ercot_gas_delivered_floor_basis": null,
     "ercot_gas_contract_haircut": false,
     "oil_primary_bin_fuel": false,
@@ -1016,16 +1024,17 @@
     "capacity_adequacy_requirement_published_by_iso": null,
     "capacity_no_default_cap_convention_by_iso": null,
     "capacity_screen_peak_measured_hindcast": false,
-    "pjm_vre_accreditation_vintage": false
+    "pjm_vre_accreditation_vintage": false,
+    "pjm_thermal_accreditation_vintage": false
   },
   "solve_surface": {
     "schema": 1,
     "iso": "SPP",
-    "fingerprint": "3b63229a16cae77d",
-    "rows": 178,
+    "fingerprint": "7ab7e3b0c4741dc3",
+    "rows": 182,
     "moved": {},
     "epochs": [],
-    "git_sha": "623184f3"
+    "git_sha": "86e45462"
   },
   "environment": {
     "python_version": "3.11.15",
@@ -1037,7 +1046,14 @@
       "pandas": "3.0.3",
       "pyarrow": "24.0.0",
       "pydantic": "2.13.4"
-    }
+    },
+    "cache_key_path_roots": [
+      [
+        "<repo>",
+        "/home/user/market-simulator"
+      ]
+    ],
+    "market_sim_data_root": ""
   },
   "resolved_inputs": {
     "schema_version": 1,
