@@ -1122,10 +1122,60 @@ pointer to rule 31 and a note that gitignoring the family satisfies it. No other
 moves: the screen is still STOP-only, still never promotes, still never reads the target residual,
 and a screen bundle is still never registered.
 
-## 17. Changes to this file
+## 17. Rule 32 `[R-SHARD]` — every solve runs in a shard, 20 minutes per shard commit (owner, 2026-09-09)
+
+**Owner instruction, verbatim (session ercot-264, 2026-09-09):** *"SHARDS ... I want runs to only
+use shards from now on that limit runtime to 20 min per shard commit as a rule with directions on
+successfully launching shards"*.
+
+**The incident.** Session ercot-264 was asked to run all five ERCOT years. It launched two of them
+as `nohup` background jobs **inside its own container**, two at a time under rule 12
+`[R-PARALLEL]`'s memory cap for ERCOT per-plant multi-zone LPs, and planned three waves. That is
+~70 minutes of independent LP serialised into one ephemeral box — the same box that had to stay
+alive to orchestrate, compose and register. Five idle containers were available for the asking, and
+the session's own handoff had specified the shard fan-out. The owner corrected it mid-run; the
+local solves were stopped (their partial output kept on disk, per rule 31) and all five years were
+relaunched as shards.
+
+**Why rule 12 did not already cover this.** Rule 12 governs *how many* invocations may run at once
+and forbids parallel years **inside** one invocation. It is silent on *where* they run, so a
+session could obey it exactly while still bottlenecking every solve through its own container. Rule
+32 supplies the missing half: the parent orchestrates and never solves, and the unit of sharded
+work is bounded in time (20 minutes per commit) rather than only in count. The two compose
+cleanly — per-year sharding is what rule 12's sequential-years constraint already implies, so
+obeying rule 32 costs nothing under rule 12 and buys full parallelism.
+
+**The 20-minute bound is a subdivision trigger, not a timeout.** A unit that cannot finish inside it
+is not run long — it is split further, and *shards launch shards* (per zone family, per pass, per
+stage). A shard approaching the bound with no artifact stops and reports rather than pushing a
+half-written bundle, which keeps rule 27 `[R-PUSH]`'s integrity duty intact.
+
+**The launch directions are the substance.** Clause (c) collects what previous lanes learned the
+expensive way, each item traceable to a specific loss: pin an immutable 40-character SHA and never
+a branch name (ercot-261 — branches here auto-merge and are deleted within minutes; ten shards
+cloned a vanishing branch or "synced" themselves and all ten were discarded); its own out-dir,
+branch and `git add -f` of only its own path with a `git status --short` proof (ercot-261 — a
+`git add -A` swept 183 unrelated bundle files onto `main`); self-checkable hard stops including the
+leg's config signature and the rule-22 holdout posture; a numeric report in the final message
+because the parent may never read the shard's disk; an explicit by-name prohibition on the shared
+generated dashboard files (five shards writing them will collide) and on any `src/`/`scripts/` edit
+(ercot-262 — one shard patched `replay_keeper.py` and burned its whole budget, and a second then
+deduped the same patch); and the framing sentence *"a shard that stops with a clear report is a
+SUCCESS; a shard that repairs infrastructure is a FAILURE."*
+
+**Nothing scored moves.** Rule 32 governs *where and how* a solve executes, not what is solved,
+what it is compared against, or how it is graded. No rubric constant, criterion, tier, band, caveat
+budget or determination changes, and no already-registered run is affected. Rule 15
+`[R-DASHBOARD]`, rule 16 `[R-ALLYEARS]`, rule 22 `[R-HOLDOUT]`, rule 29 `[R-SCREEN]` and rule 31
+`[R-RETAIN]` are untouched and still bind the parent at the composition/registration seam, which
+clause (d) names explicitly so per-year shard dirs do not become the Class-E parity RED that rule
+29 (c) already forbids.
+
+## 18. Changes to this file
 
 | date | change |
 |---|---|
+| 2026-09-09 | Added §17: rule 32 `[R-SHARD]` (owner instruction, verbatim above) — every solve runs in a shard and the orchestrating session never runs an LP itself; one shard commit is bounded at 20 minutes, and a unit that cannot fit subdivides (shards launch shards) rather than running long. Clause (c) is the launch protocol, each item traced to a prior loss (ercot-261's raced branch and `git add -A`; ercot-262's shard patching `scripts/`). Rule 12 `[R-PARALLEL]` is unchanged and composes with it: rule 12 bounds concurrency and forbids parallel years within an invocation, rule 32 bounds where the work runs and how long one commit may take. Nothing scored moves. "Changes to this file" renumbered §17 → §18 (no external reference cited §17). |
 | 2026-09-07 | Added §16: rule 31 `[R-RETAIN]` (owner instruction, verbatim above) — a solve's results are never deleted until the OWNER has ruled on promotion; a session's own “not a keeper” reading is never a licence to delete. Names `.gitignore`, not `rm`, as what discharges rule 29 `[R-SCREEN]` (c) and rule 15's retention, since the parity gate only sweeps committed dirs. Adds the ephemeral-container duty (surface the promotion question before the session ends) and the cost-estimate-before-re-solving duty. Rule 29 (c) amended in place to say what it always meant — keep it out of `main`, not erase it from disk; every other clause of rule 29 unchanged. “Changes to this file” renumbered §16 → §17 (no external reference cited §16). |
 | 2026-09-06 | Added §15: rule 30 `[R-TOUCHPOINT-FOLD]`(a) amended AGAIN the same day by owner instruction (verbatim above) — the Run Explorer's Report is **scores and charts only**. The run-definition panel (the per-year determination essay the instruction names), the rule-22 footnote §14 had kept, the zero-forcing ablation twin + market story, and the auto-generated diagnostics are **deleted** (rule 26); run identity moves to the page sub-header. Rule 22's reading now rests entirely on clause (b)'s status-page year table (Tier column + "reported, not gating"), and the guard was re-pointed there with negative controls. Fold fix: a **dangling** `holdout.keeper` stamp (keeper pruned under rule 15) now reads as unstamped, so a promotion cannot drop an ISO's held-out years. Presentation only — no scorer path, marker, freeze, shard or determination touched; verified by headless render across all six ISOs. "Changes to this file" renumbered §15 → §16 (no external reference cited §15). |
 | 2026-09-06 | Added §14: rule 30 `[R-TOUCHPOINT-FOLD]`(a) amended by owner instruction (verbatim above) — a folded held-out year renders as an ORDINARY YEAR COLUMN in the Run Explorer's Report, with the mandated *Validation Touchpoints* panel, year-selector optgroup split, tier suffix and held-out banner **deleted** (rule 26), and rule 22's tier caveat kept as a single footnote. Presentation only: no scorer path touched, all three affected keepers re-score identically, clause (b)'s status-page ladder and clause (c) untouched, no holdout marker or freeze moved. Verified by headless render across all six ISOs with a negative control on `main`. "Changes to this file" renumbered §14 → §15 (no external reference cited §14). Executed by session neiso-103. |

@@ -599,6 +599,63 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
       session states the LP cost of reproducing them and waits, rather than silently launching
       hours of solves.
 
+1. `[R-SHARD]` **EVERY SOLVE RUNS IN A SHARD. THE SESSION YOU ARE READING THIS IN NEVER RUNS AN LP,
+    AND ONE SHARD COMMIT IS AT MOST 20 MINUTES OF RUNTIME.** *(Owner instruction 2026-09-09,
+    verbatim: "I want runs to only use shards from now on that limit runtime to 20 min per shard
+    commit as a rule with directions on successfully launching shards". The incident: session
+    ercot-264 ran two ERCOT years as background jobs inside its own container, two at a time under
+    rule 12's memory cap, while five idle containers were available for the asking — serialising
+    ~70 min of independent LP into one ephemeral box that also had to stay alive to orchestrate.)*
+    - **(a) THE PARENT NEVER SOLVES.** A session that receives a run request is an ORCHESTRATOR: it
+      does phase 0, writes the PRECOMMIT, launches shards, then composes, scores and registers what
+      comes back. It does not call `run_calibration_full.py`, `run_calibration.py` or
+      `replay_keeper.py` itself — not in the foreground, not with `nohup`, not "just this one year".
+      Its container is ephemeral and single; a shard's is neither. **Zero-LP work — phase 0 census,
+      offer-array deltas, replaying committed sidecars, scoring, composition — stays in the parent**,
+      because none of it is a solve.
+    - **(b) ONE SHARD = ONE COMMIT = ≤ 20 MINUTES.** The unit of work is what a shard can solve and
+      push inside 20 minutes. A multi-year span shards **per year** (rule 12 already forbids
+      parallel years inside one invocation, so this costs nothing and buys full parallelism). **If
+      one unit still cannot finish in 20 minutes, SHARDS LAUNCH SHARDS** — the shard subdivides
+      further (per zone family, per pass, per stage) and launches its own children exactly as this
+      rule directs, rather than running long. A shard approaching 20 minutes with no artifact
+      **stops and reports**; it never pushes a half-written bundle (rule 27 `[R-PUSH]`).
+    - **(c) HOW TO LAUNCH ONE SO IT ACTUALLY WORKS.** `mcp__Claude_Code_Remote__create_session`, and
+      every one of these or the shard is wasted:
+      1. **`source_revision` is a FULL 40-CHARACTER IMMUTABLE SHA — never a branch name.** Branches
+         here are auto-merged and DELETED within minutes; a shard that clones one races a tombstone.
+         Push your PRECOMMIT first, pin its SHA, and give the shard `git rev-parse HEAD` must equal
+         `<sha>` as its first hard stop. A SHA cannot be raced. **The shard NEVER rebases, NEVER
+         `git pull`s, and NEVER "syncs" itself** — in ercot-261 ten shards did and all ten were
+         discarded.
+      2. **`source_url` is the repo**, and the prompt names the `DATA PROFILE` so the shard hydrates
+         only its own ISO's subtree.
+      3. **Its own everything, so nothing collides**: its own `--out-dir`
+         (`results/calibration/<lane>_<year>/`), its own branch (`claude/<lane>-<year>`), and it
+         commits **only** its own bundle path — `git add -f <that path>` then `git status --short`,
+         which MUST show nothing outside it.
+      4. **Give it self-checkable HARD STOPS** — the pinned SHA; the config signature its leg must
+         show (for ERCOT: carve-out `ercot_offer_swcap_clip: true` + `CC_REGULAR.peak 151.008`
+         versus forward `false` + `4.576`); which years take `--holdout-authorized` and which must
+         not (rule 22). **A shard that sees otherwise STOPS and does not push.**
+      5. **Tell it what to REPORT**, in numbers, in its final message — the parent may never get to
+         read its disk.
+      6. **FORBID, explicitly and by name**: `git add -A` and `git add .` (ercot-261 swept 183
+         unrelated bundle files onto `main` that way); `dashboard_add_run.py`, `build_manifest.py`,
+         `build_status.py`, `prune_iso_runs.py` and anything under `frontend/data/backcast/**`
+         (shared generated files — five shards writing them WILL collide, and registration is the
+         parent's job, once, at the end); any edit under `src/` or `scripts/` (in ercot-262 one
+         shard patched `replay_keeper.py` and burned its whole budget, and a second then deduped the
+         same patch); opening a PR; and deleting any result (rule 31 `[R-RETAIN]`).
+      7. **"A shard that stops with a clear report is a SUCCESS; a shard that repairs
+         infrastructure is a FAILURE."** Put that sentence in the prompt.
+    - **(d) THE PARENT OWNS THE SEAM.** Composition, `stamp_config_partition.py --check`, scoring,
+      the dashboard registration (rule 15) and the promotion question (rule 31) happen ONCE, in the
+      parent, after the shards land. Per-year shard bundle dirs are **kept out of `main`** — the
+      composite is what gets registered, and an unregistered per-year dir left committed is the
+      exact Class-E parity RED rule 29(c) already forbids.
+    Genealogy: `docs/governance/rule-history.md` §17.
+
 Rules 17–26 are the protective rules from `docs/model-legitimacy-audit-2026-07.md` §8, numbered
 **16–25 there** — a doc reference to "audit rule N" maps to rule N+1 here. Mapping table, per-rule
 amendment genealogy and the incident record: `docs/governance/rule-history.md`.
