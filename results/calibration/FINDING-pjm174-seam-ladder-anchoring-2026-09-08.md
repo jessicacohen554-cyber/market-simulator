@@ -293,3 +293,58 @@ error — phantom CC availability would put CC at the overnight margin, which is
 trough signature (model overnight implied heat rate 7.9–9.3 vs actual 5.9–7.0). That is a
 hypothesis this session did not test, stated as such.
 
+
+
+---
+
+## 7. FULL-SPAN RESULT AND THE OWNER'S RULING — **NOT PROMOTED** (2026-09-09)
+
+The owner asked for the promotion question to be answered, so the full span was solved:
+`pjm175_span_arm`, `--year 2023 2024 2025`, ONE invocation and ONE bundle (rule 16 `[R-ALLYEARS]`),
+arm recipe = keeper + `pjm_seam_neighbour_hourly_ladder=true`, HEAD `17152745`, mechanism armed in
+all three years.
+
+**Scored: every load-bearing criterion PASSES**, and so do both supporting ones —
+C1 `fuelmix` PASS · C2 `sysvol` PASS · C3a `price_mean` PASS · C3b `price_shape` PASS ·
+C3c `price_tail` PASS · C4 `dispatch_corr` PASS. `screen_collateral_gate` against the keeper:
+**0 flips across all three years**, with the per-class moves predominantly TOWARD the actuals.
+
+| year | measured | keeper | arm | Δ volume | miss keeper → arm | r keeper | r arm | **Δr** |
+|---|---|---|---|---|---|---|---|---|
+| 2023 | 39.974 | 27.468 | 28.897 | **+1.430** | −12.506 → −11.076 | 0.632 | 0.593 | **−0.039** |
+| 2024 | 32.825 | 20.448 | 21.237 | **+0.789** | −12.377 → −11.588 | 0.626 | 0.510 | **−0.116** |
+| 2025 | 32.925 | 23.233 | 25.070 | **+1.837** | −9.691 → −7.854 | 0.588 | 0.556 | **−0.032** |
+
+**THE OWNER RULED IT NOT PROMOTABLE, AND THE RULING IS CORRECT ON THE EVIDENCE.** The reason is
+not the gates — they pass. It is that **the mechanism's own central structural claim is
+contradicted by the solve.** Its justification is that a seam should clear on the SPREAD because
+the neighbour's supply cost is the real driver, so the seam's hourly response should improve.
+Readout A predicted exactly that on the measured record (a sign flip, NYISO +0.235 → +0.723).
+**The LP delivered the opposite, in all three years.** A volume improvement without its mechanism
+confirmed is not "structurally more correct" — it is a volume adjustment that happens to move the
+right way, and rule 1 `[R-STRUCT]` is precisely the rule against banking that.
+
+**Two things that are NOT the reason, recorded so a successor does not re-litigate them:**
+
+1. **C8 `forced_share` FAIL is NOT this mechanism's.** The bundle fails C8 on 2025 ST_GAS
+   (48.6 % forced, D-4 conduct FAIL on `st_netload_drag` plants 3131/3138/3148/3775/593). The
+   **same-HEAD control, with the mechanism OFF, reads 50.6 %** (7.7265 of 15.2728 TWh) against the
+   registered keeper's grounded 39.9 %. Both replays fail; **the arm is marginally BETTER**. This
+   is a replay-path artifact and it must not be attributed to the seam ladder.
+2. **C6 was UNATTESTED only because a replay bundle carries no attestation** — a procedural gap,
+   not a substantive finding. The owner attested in session; no attestation was written because the
+   run is not promoted.
+
+**Per-border-link check (the decisive test attempted, reported with its own weakness):** on the
+solved bundles, 4 of 5 `PJM_external→border` links improve their tracking of the measured seam
+(EMAAC +0.011, ATSI +0.069, AEP-Ohio +0.073, Dominion +0.020; ComEd −0.016) while the aggregate net
+position degrades −0.123. **All these correlations are weak (|r| < 0.26) and the zone→seam mapping
+is approximate**, so this is not strong evidence in either direction and is reported as
+inconclusive rather than as support for the arm.
+
+**Disposition.** Keeper `2026-08-15-pjm-162-inputclock` and PJM's CALIBRATED headline are
+UNCHANGED. The run was registered (rule 15) and then pruned to keeper-only retention; the three
+bundles were deleted under rule 31 `[R-RETAIN]` trigger (i) — **the owner ruled on promotion first**,
+which is the whole point of that rule. `pjm_seam_neighbour_hourly_ladder` remains in `main`,
+**default off and byte-identical off**, with its table, tests and derive pin intact: it is available
+to a successor that can demonstrate the hourly claim, and it costs nothing while unarmed.
