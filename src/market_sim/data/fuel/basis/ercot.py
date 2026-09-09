@@ -347,6 +347,7 @@ def ercot_electric_power_gas_basis_monthly(
     henry_hub_path: Path | None = None,
     corroborated: bool = False,
     corroborator_path: Path | None = None,
+    receipts_fallback: bool = False,
 ) -> np.ndarray | None:
     """Return the SAME measured TX electric-power gas basis, resolved MONTHLY.
 
@@ -450,8 +451,38 @@ def ercot_electric_power_gas_basis_monthly(
         return basis
     # The fallback is the year's own CORROBORATED central value, never the
     # annual mean (which the inadmissible month itself produced).
+    #
+    # ercot-265 RECEIPTS FALLBACK (``receipts_fallback``, gated by
+    # ``ScenarioConfig.ercot_ep_gas_basis_receipts_fallback``, default OFF).
+    # The corroboration test above asks whether TWO independent measurements of
+    # the same delivered-gas quantity agree. When they do not, the incumbent
+    # fallback discards BOTH and substitutes the year's other months -- so a
+    # month in which ERCOT's generators demonstrably paid an extraordinary price
+    # is priced at an ordinary one. Rule 14 [R-ACCURATE] says prefer the
+    # accurate measurement, and between the two the EIA-923 Schedule-5 receipt
+    # series is the better-grounded: it is what the plants ACTUALLY PAID,
+    # quantity-weighted over the same population (Feb-2021: $45.96/MMBtu across
+    # 36 plants on 28.4 million MMBtu, the year's LARGEST burn month), against a
+    # survey cost/volume RATIO this module's own docstring records as
+    # unreliable in a month whose within-month price distribution is extreme.
+    # So a held-out month takes the CORROBORATOR's own basis (receipts minus the
+    # same monthly hub) rather than the year's central value.
+    #
+    # Rule 21 [R-DOF]: ZERO free parameters. The tolerance constant, the
+    # admissibility test and the fail-closed incompleteness discipline are all
+    # UNTOUCHED; only which measured series fills a held-out month changes, and
+    # it is filled from a series already committed and already read here. No
+    # multiplier, offset, adder or threshold is introduced or moved.
+    # Rule 19 [R-ONE-MECH]: no new mechanism and no second code path -- the same
+    # filter, the same rows, the same months; only the fallback VALUE changes.
+    # Rule 13 [R-MEASURED]: the substitute is a measured physical input on the
+    # identical construction, so it regenerates for a forward year exactly as
+    # the incumbent basis does, and it is not an outcome fed back in.
     out = basis.copy()
-    out[~admissible] = float(basis[admissible].mean())
+    if receipts_fallback:
+        out[~admissible] = second[~admissible] - hub[~admissible]
+    else:
+        out[~admissible] = float(basis[admissible].mean())
     logger.info(
         "ERCOT EP gas basis (%d): corroboration filter held out month(s) %s "
         "(|survey - receipts| up to %.2f $/MMBtu vs tol %.2f); basis -> %+.3f "
@@ -794,6 +825,9 @@ def apply_ercot_zonal_gas_basis(
             year,
             corroborated=bool(
                 getattr(config, "ercot_ep_gas_basis_corroborated", False)
+            ),
+            receipts_fallback=bool(
+                getattr(config, "ercot_ep_gas_basis_receipts_fallback", False)
             ),
         )
         if getattr(config, "ercot_ep_gas_basis_monthly", False)

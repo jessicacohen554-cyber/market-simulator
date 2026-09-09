@@ -76,6 +76,7 @@ window.MECH_MATRIX_SHARDS.NYISO = {
     ercot_ep_gas_basis_monthly: { cell: ".", ev: "ERCOT-gated in code (apply_ercot_zonal_gas_basis returns early unless iso == ERCOT); row minted ercot-254 2026-09-07. No verdict transfers (rule 25 [R-ISO-SCOPE])." },
     ercot_zonal_spread_ep_referenced: { cell: ".", ev: "ERCOT-exclusive by construction: the mechanism is gated on iso == \"ERCOT\" inside apply_ercot_zonal_gas_basis and reads a table this ISO does not have, so this cell can never be anything but n/a (rule 25 [R-ISO-SCOPE])." },
     ercot_ep_gas_basis_corroborated: { cell: ".", ev: "ERCOT-gated in code (apply_ercot_zonal_gas_basis returns early unless iso == ERCOT); row minted ercot-261 2026-09-09. No verdict transfers (rule 25 [R-ISO-SCOPE])." },
+    ercot_ep_gas_basis_receipts_fallback: { cell: ".", ev: "ERCOT-gated in code (the receipts fallback is a sub-gate inside ercot_ep_gas_basis_corroborated, which apply_ercot_zonal_gas_basis reaches only for ERCOT), so this ISO cannot reach it and the cell is n/a. Minted by the rule-28(c) same-PR duty (ercot-265, 2026-09-09) — NO adjudication made or implied for this ISO." },
     nyiso_local_selfsupply: { cell: "K", ev: "keeper DOF ledger (residual); caiso-155 (D-4 filing); nyiso-113 (row added)" },
     nyiso_firm_imports: { cell: "K", ev: "caiso-155 stub (D-2/D-4 visibility fix); nyiso-113 (row added)" },
     nyiso_rcpf_postsolve_overlay: { cell: "G", ev: "reserves/spec.py::_nyiso_design rule-19 guard; nyiso-113 (row added)" },
