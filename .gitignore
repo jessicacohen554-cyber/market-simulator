@@ -1653,6 +1653,40 @@ results/screen/neiso_ep_level_*/
 results/calibration/neiso_fuelvintage_*/
 
 results/calibration/ercot261_*/
+
+# pjm-fuelvintage-1 solve bundles (the screen, the training span, the two
+# validation touchpoint shards). Rule 31 [R-RETAIN]: NEVER deleted from local
+# disk until the owner rules on promotion -- gitignoring is what discharges
+# rule 29(c)'s delete-before-merge duty (rule 31's own correction of the
+# ercot-255 incident) and keeps check_registry_payload_parity's bundle sweep
+# green, since that sweep only ever sees COMMITTED dirs. A bundle the owner
+# promotes is force-added (git add -f) in the promotion commit.
+results/screen/pjm_ep_level_*/
+results/pjm_fuelvintage_*/
+
+# Solve-time shared input store and the screen bundle family. Never committed:
+# the screen is a rule-29 throwaway (its every cited number lives in the
+# PRECOMMIT/RESULT docs), and _shared/ is a large regenerable input cache.
+# Rule 31 [R-RETAIN]: gitignored, NOT deleted — both stay on local disk.
+results/_shared/
+results/calibration/_shared/
+results/screen/
+# Heavy per-run outputs of the registered fuelvintage bundle. Rule 15 commits
+# the slim files + the class_hourly/system/reserve_family/storage sidecars only,
+# exactly the file set the incumbent PJM keeper carries.
+results/calibration/pjm_fuelvintage_A/dispatch/
+results/calibration/pjm_fuelvintage_A/floors/
+results/calibration/pjm_fuelvintage_A/*.parquet
+results/calibration/pjm_fuelvintage_A/hourly/network_*.parquet
+results/calibration/pjm_fuelvintage_A/hourly/class_band_hourly_*.parquet
+# Shard bundles fetched back from the H1/H2 cloud sessions, and the local
+# re-solve of the same validation touchpoints. The shard bundles are NOT
+# registrable here (their pushes omitted the bundle-root system.parquet that
+# render_calibration_html.build_payload needs), and they already live on their
+# own branches claude/pjm-fuelvintage-1-h{1,2}. Rule 31 [R-RETAIN]: gitignored,
+# NOT deleted -- they stay on local disk until the owner rules on promotion.
+results/pjm_fuelvintage_H1_shard/
+results/calibration/pjm_fuelvintage_H2/
 # neiso-fuelvintage-1 working bundles: the 2019-2022 retiree-window fleet fix
 # (holdout touchpoints 2020/2021/2022) and the 2023-2025 training-span
 # bit-identity re-solve (charter task 3). Ignored so they can never reach a
@@ -1661,3 +1695,9 @@ results/calibration/ercot261_*/
 # licence to delete: these stay on local disk until the OWNER rules on
 # promotion. A promoted bundle's slim set overrides this rule via `git add -f`.
 results/calibration/neiso107_*/
+results/calibration/pjm_fuelvintage_TP/dispatch/
+results/calibration/pjm_fuelvintage_TP/floors/
+results/calibration/pjm_fuelvintage_TP/*.parquet
+results/calibration/pjm_fuelvintage_TP/hourly/network_*.parquet
+results/calibration/pjm_fuelvintage_TP/hourly/class_band_hourly_*.parquet
+results/calibration/pjm_fuelvintage_TP/hourly/unit_hourly_*.parquet
