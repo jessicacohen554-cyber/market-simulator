@@ -638,3 +638,69 @@ SHA (§A4), and **put everything a child needs in its launch prompt** — a clou
 messaged after launch, so a stale one must be archived and relaunched rather than corrected.
 Every lane is additionally told to **re-baseline `pytest tests/scoring` on its own tree**: the
 16-failure figure in §A3 was measured on the pre-merge base and 51 commits have landed since.
+
+### A6. THE PJM OOM — diagnosed, fixed, and the fix is standing tooling
+
+**Symptom.** `pjm-fuelvintage-1` reported *"control solve at 13.75 GiB RSS past OOM wall"*.
+
+**Diagnosis, from the repo's own measured registry — not a guess.**
+`scripts/run_isos_concurrent.py` puts **PJM's single-solve peak RSS at 13.0 GB**, the highest
+of any ISO (MISO 11.5, SPP/ERCOT 6.0, CAISO 4.5, NYISO/NEISO 4.0), and it is the only ISO that
+is both `per_plant` **and** `co_opt`. A CCR container is **15.7 GiB with ZERO swap**. The
+wallclock/RSS baseline those numbers were measured on had a **pre-existing `/swapfile`**
+(`docs/handoffs/perf-recheck-2026-08.md` §1.2). That is precisely why PJM "has run in this
+container before" and is dying now: the box is the same, the **swap backstop is gone**, so a
+13 GB peak that used to page now gets SIGKILL'd (child return code −9).
+
+**Three causes, in order of size:**
+
+1. **No swap.** Fixed by new standing tooling, `scripts/prepare_solve_container.py` —
+   provisions a swapfile up to a RAM+swap target (default 24 GiB), bounded by free disk with a
+   6 GiB reserve for solve output. **Verified end to end in this container class**: `fallocate`
+   + `mkswap` + `swapon` all succeed as root, `free` confirms the swap, and the script
+   correctly reports a disk-bound partial provision rather than failing silently.
+2. **Missing env pins.** The canonical single-thread / arena-pinned profile
+   (`MALLOC_ARENA_MAX=2`, `MARKET_SIM_HIGHS_THREADS=1`, `OMP_NUM_THREADS=1`) is already used by
+   five scripts and by `run_isos_concurrent._CHILD_ENV_PINS`, and `model/lp/model.py`'s own
+   comment records the OOM it exists to prevent. **They do not change the LP optimum** — thread
+   count is a factorization-workspace choice. The lanes were never told to set them.
+3. **PJM was running a CONTROL SOLVE, which rule 29(b) forbids.** "NO CONTROL SOLVES — the
+   committed keeper bundle IS the control (G-CTRL form 4)." That is a governance deviation
+   *and* it doubles the LP work on the heaviest ISO in the program. Removing it is the largest
+   single saving available.
+
+Every relaunched lane now runs `prepare_solve_container.py` before its first solve, exports the
+pins, and is reminded that a control solve is refused.
+
+### A7. OWNER RULING 2026-09-09 — PROMOTE ON BOTH COUNTS, REGARDLESS OF INERTNESS
+
+Verbatim: *"these should be promoted as keepers on both 860 and gas shape counts regardless of
+inertness."*
+
+This **overrides the disposition guidance in PROMPT 1-5 and in §A2**, which told each lane to
+report an inert arm as its result and not spend the span. It does **not** override any
+measurement duty. Concretely, for every lane:
+
+- **Both changes are promoted**: the EIA-860 retiree-window widening **and** the measured
+  monthly gas LEVEL. Neither waits on the other, and neither waits on a favourable residual.
+- **Inertness is not a disqualifier.** An arm measured inert in dispatch is still promoted; the
+  lane reports the inertness at full magnitude as a property of the result, not as a reason to
+  withhold. This is the owner's standing formula — *"If structural integrity improves but gates
+  regress that may still be a keeper"* — applied a step further.
+- **Everything else still binds, and none of it is relaxed**: the phase-0 census is still run
+  and still reported (it now tells you *what the promotion is worth*, not *whether to promote*);
+  every criterion is still reported at full magnitude; a screen may still kill an *arm variant*
+  on structural grounds; rule 1 `[R-STRUCT]`'s ban on gating a mechanism on its target residual
+  is untouched; and rule 16 `[R-ALLYEARS]` still requires ONE registered bundle per ISO covering
+  2023-2025.
+- **Rule 31 `[R-RETAIN]` is now doubly binding**: results are promoted, so nothing may be
+  deleted before the owner rules — and the ruling here is *promote*, not *delete*.
+
+### A8. REBASE BEFORE MERGE
+
+Each lane rebases (or merges) its branch onto the latest `origin/main` before its work is
+merged, and resolves conflicts in its own ISO's files. `main` moved 51 commits during the last
+handoff alone, so a lane that solves for an hour will be behind by the time it pushes. Lanes
+edit disjoint files by rule 25 `[R-ISO-SCOPE]` — each ISO's keeper shard, matrix shard, status
+part and calibration log — so conflicts should be confined to shared surfaces (the mechanism
+matrix base row, the handoff docs). Re-run the full gate list after the rebase, never before.
