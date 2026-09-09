@@ -114,3 +114,59 @@ NYISO's authorization for that is already in hand and **still unspent**.
 The 2020 rung was **not attempted** — no LP was spent discovering a failure that a zero-LP read
 had already proved. NYISO's validation ladder for this session is therefore **2021 and 2022**, and
 2020 is reported as **data-blocked, authorization unspent**, not as a miss.
+
+---
+
+## 7. ADDENDUM (v4 run, same session) — **2021 IS DATA-BLOCKED TOO, for a DIFFERENT input**
+
+The v3 run concluded *"NYISO's validation ladder for this session is therefore **2021 and 2022**"*.
+**Measured by attempting it: 2021 is blocked as well, and the ladder is 2022 ALONE.**
+
+The 2021 touchpoint was launched on the frozen keeper recipe
+(`replay_keeper … --years 2021 --holdout-authorized`) and died before the LP, in
+`pipeline/kwargs.apply_reserve_coopt` → `reserves/spec._nyiso_design` →
+`data/reserve_requirements.load_nyiso_reserve_requirements`:
+
+```
+FileNotFoundError: nyiso_dynamic_reserve_requirements=True but the measured requirement
+series is absent: data/raw/NYISO-AS/requirements/NYISO_reserve_requirements_2021.csv.
+This is the Ask-B external data intake (docs/handoffs/nyiso-data-asks-2026-07.md); the
+flag must not solve on the static requirements it claims to replace.
+```
+
+**The intake covers 2022–2025 and nothing earlier** (measured, git-tracked):
+`NYISO_reserve_requirements_{2022,2023,2024,2025}.csv` — four files, no 2021, no 2020, no 2019.
+
+**The refusal is the mechanism working correctly, and it must not be worked around.** The
+error message states the reason itself: the flag *"must not solve on the static requirements it
+claims to replace"*. There is exactly one way to make 2021 solve today — disarm
+`nyiso_dynamic_reserve_requirements` for that year — and it is **refused on rule 22
+`[R-HOLDOUT]`**: a validation touchpoint *is* the designated keeper's frozen recipe replayed on
+a held-out year, so a per-year recipe variant is not a touchpoint at all, it is per-year fitting
+wearing a touchpoint's name. The keeper carries the flag in 2022–2025; a 2021 rung must carry it
+too or not exist.
+
+**So NYISO's exposure is two rungs, not one, and the two have different causes:**
+
+| rung | status | binding input | scope of the gap |
+|---|---|---|---|
+| **2019** | REFUSED (governance) | — | locked-test tier, `final` empty, freeze ACTIVE, every ISO |
+| **2020** | **DATA-BLOCKED** | `eia_generation_profiles.parquet` starts 2021 | reached only by NYISO (§3), because NYISO alone reports zero utility-scale solar to EIA-930 |
+| **2021** | **DATA-BLOCKED** | `NYISO-AS/requirements/` starts 2022 | **NYISO-only by construction** — it is a NYISO-specific intake for a NYISO-specific mechanism |
+| **2022** | **SOLVED, SCORED, REGISTERED** | — | the whole of NYISO's spendable ladder at HEAD |
+
+**Neither is a governance state and neither spends anything.** `holdout_policy` returns no
+refusal for 2020 or 2021, the `complete` marker is present and correctly re-keyed, and the freeze
+is scoped to the locked-test tier alone. Rule 22's own split is what makes this clean: *"what is
+held out is the SCORE, never the DATA"* — these are **data-readiness gaps on the input side**, so
+**both authorizations remain real and entirely UNSPENT**. No LP was spent discovering the 2020
+block (a zero-LP read proved it); the 2021 block cost one aborted process that died in input
+assembly, before any matrix was built.
+
+**The route for 2021**, and it is a genuine intake rather than a fetch-and-go: extend the Ask-B
+NYISO reserve-requirement intake backward to 2021 (and 2020, and 2019 if the source carries it),
+under the same rule-22 clause that makes intake unrestricted — *"collected once and applied
+CONSISTENTLY ACROSS ALL YEARS"*. `data/raw/NYISO-AS/requirements/README.md` and
+`docs/handoffs/nyiso-data-asks-2026-07.md` own the source and its conventions. Until that lands,
+**a NYISO 2021 rung cannot exist on the keeper's recipe**, and quoting one built on a disarmed
+flag would be quoting a different model.

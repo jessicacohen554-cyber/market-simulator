@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-09T05:25:58",
+  "timestamp": "2026-09-09T06:20:18",
   "iso": "NYISO",
   "years": [
     2022
@@ -102,7 +102,8 @@
     "egrid_steam_collapse_heat_rates": true,
     "unit_outage_extract_basis_share": true,
     "nyiso_gas_bridge_startup_aware": true,
-    "cc_summer_derate_reconciled_basis": true
+    "cc_summer_derate_reconciled_basis": true,
+    "gas_electric_power_monthly_level": true
   },
   "coal_bit_passthrough_sigmoid": false,
   "coal_bit_sigmoid_overrides": {},
@@ -376,8 +377,8 @@
     "unit_outages_layup": "../_shared/NYISO/unit_outages_layup-4f007d991881.parquet",
     "capacity_deliverability": "../_shared/NYISO/capacity_deliverability-a315d4a5cd46.parquet"
   },
-  "git_sha": "d862fa94",
-  "basis_sha": "d862fa94f6e50361651c5b53776004fde4ddce02",
+  "git_sha": "c430970e",
+  "basis_sha": "cfc66722814990232e22f98f9ac2c63744ffef98",
   "highspy_version": "1.14.0",
   "environment": {
     "python_version": "3.11.15",

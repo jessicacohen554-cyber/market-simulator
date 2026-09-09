@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-09-09-nyiso-214-tp2022-retiree",
+  "run_id": "2026-09-09-nyiso-221-fuelvintage-tp2022",
   "iso": "NYISO",
-  "label": "nyiso 214 tp2022 retiree",
+  "label": "nyiso 221 fuelvintage tp2022",
   "target_years": [
     2022
   ],

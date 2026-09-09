@@ -1,14 +1,16 @@
 {
-  "timestamp": "2026-09-09T05:25:58",
+  "timestamp": "2026-09-09T06:20:18",
   "git": {
-    "sha": "d862fa94",
-    "basis_sha": "d862fa94f6e50361651c5b53776004fde4ddce02",
-    "branch": "HEAD",
-    "dirty": false,
-    "changed_files": [],
+    "sha": "c430970e",
+    "basis_sha": "cfc66722814990232e22f98f9ac2c63744ffef98",
+    "branch": "claude/nyiso-fuelvintage-1",
+    "dirty": true,
+    "changed_files": [
+      "scripts/probes/nyiso_fuelvintage1_classhour_delta.py"
+    ],
     "diffstat": ""
   },
-  "model_changes_note": "nyiso-fuelvintage-1 H2: 2022 validation touchpoint on the CORRECTED 2019-2022 retiree fleet; supersedes 2026-09-06-nyiso-209-2022-touchpoint",
+  "model_changes_note": "nyiso-fuelvintage-1 H2: 2022 validation touchpoint on the CORRECTED 2019-2022 fleet (retiree window) with the promoted gas seam armed; supersedes 2026-09-06-nyiso-209-2022-touchpoint",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "NYISO",
@@ -91,7 +93,8 @@
       "egrid_steam_collapse_heat_rates": true,
       "unit_outage_extract_basis_share": true,
       "nyiso_gas_bridge_startup_aware": true,
-      "cc_summer_derate_reconciled_basis": true
+      "cc_summer_derate_reconciled_basis": true,
+      "gas_electric_power_monthly_level": true
     },
     "coal_bit_passthrough_sigmoid": false,
     "coal_bit_sigmoid_overrides": {},
@@ -108,7 +111,7 @@
     "nyiso_dynamic_reserve_requirements": true,
     "nyiso_hydro_reserve_eligible": true,
     "nyiso_scr_edrp_reserve_eligible": true,
-    "git_sha": "d862fa94"
+    "git_sha": "c430970e"
   },
   "scenario_config": {
     "weather_year": 2022,
@@ -1040,7 +1043,7 @@
     "pumped_storage_dispatch_adder": null,
     "battery_dispatch_adder": 0.0,
     "gas_monthly_actuals": true,
-    "gas_electric_power_monthly_level": false,
+    "gas_electric_power_monthly_level": true,
     "gas_hh_monthly_shape": false,
     "gas_daily_shape": true,
     "gas_hub_basis_overlay": true,
@@ -1128,7 +1131,7 @@
     "rows": 209,
     "moved": {},
     "epochs": [],
-    "git_sha": "d862fa94"
+    "git_sha": "c430970e"
   },
   "environment": {
     "python_version": "3.11.15",

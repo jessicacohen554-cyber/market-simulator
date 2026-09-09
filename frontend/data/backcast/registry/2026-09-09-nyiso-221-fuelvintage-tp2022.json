@@ -1,19 +1,19 @@
 {
- "id": "2026-09-09-nyiso-214-tp2022-retiree",
- "label": "nyiso 214 tp2022 retiree",
+ "id": "2026-09-09-nyiso-221-fuelvintage-tp2022",
+ "label": "nyiso 221 fuelvintage tp2022",
  "date": "2026-09-09",
- "shorthand": "nyiso-214-tp2022-retiree",
- "definition": "nyiso-fuelvintage-1 H2: 2022 validation touchpoint on the CORRECTED 2019-2022 retiree fleet; supersedes 2026-09-06-nyiso-209-2022-touchpoint",
+ "shorthand": "nyiso-221-fuelvintage-tp2022",
+ "definition": "nyiso-fuelvintage-1 H2: 2022 validation touchpoint on the CORRECTED 2019-2022 fleet (retiree window) with the promoted gas seam armed; supersedes 2026-09-06-nyiso-209-2022-touchpoint",
  "years": [
   2022
  ],
  "iso": "NYISO",
- "file": "frontend/data/backcast/runs/2026-09-09-nyiso-214-tp2022-retiree.js",
- "bundle": "results/calibration/nyiso214_tp2022_retiree",
+ "file": "frontend/data/backcast/runs/2026-09-09-nyiso-221-fuelvintage-tp2022.js",
+ "bundle": "results/calibration/nyiso_fuelvintage_H2",
  "holdout": {
   "tier": "validation",
   "year": 2022,
-  "keeper": "2026-09-07-nyiso-213-summer-seam",
+  "keeper": "2026-09-09-nyiso-221-fuelvintage-span",
   "keeperDetermination": "CALIBRATED",
   "keeperYears": [
    2023,

@@ -1623,6 +1623,25 @@ results/calibration/_shared
 results/nyiso_fuelvintage_*/
 results/calibration/nyiso_fuelvintage_*/
 results/screen/nyiso_ep_level_*/
+# ...EXCEPT the two bundles that are REGISTERED deliverables (rule 15
+# [R-DASHBOARD]: a keeper commits its slim files plus its hourly/ sidecars,
+# and a registered touchpoint the same, so later sessions read the keeper's
+# class-dispatch hourlies instead of replaying the solve). The throwaway
+# T1/T2 shards stay ignored -- they are superseded by _A and are never
+# registered (rule 29 [R-SCREEN] clause (c), discharged by .gitignore).
+!results/calibration/nyiso_fuelvintage_A/
+!results/calibration/nyiso_fuelvintage_H2/
+
+
+# Derived per-ISO shared-input cache written by every solve (meta.json's
+# shared_inputs points into it). Derived and disposable, like data/clean.
+results/_shared/
+
+# The _shared SYMLINK itself (the directory pattern above has a trailing slash and
+# does not match a symlink). It points at the gitignored results/_shared/ cache and
+# exists only so a bundle solved outside results/calibration/ can resolve its own
+# meta.json shared_inputs paths after being moved in.
+results/calibration/_shared
 
 # neiso-fuelvintage-1 (2026-09-09): screen/shard bundles, kept on local disk under
 # rule 31 [R-RETAIN] until the owner rules on promotion, and kept OUT of `main`
