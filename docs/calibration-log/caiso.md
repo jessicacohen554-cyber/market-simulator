@@ -14339,3 +14339,61 @@ an owner funding question (gitignored corpus, re-fetch only), not a lever.
 Matrix (rule 28(b)): evidence appended to `negative_renewable_offers` and
 `gas_offer_curve_tranches` in the CAISO shard; **no verdict moved**. Next:
 caiso-267.
+
+## caiso-268 — 2026-09-09 — the fossil offer-band ×0.92 cut on the LIVE keeper: NOT-YET on C4-2025 alone (0.298 → 0.308), the §5b overnight objection CONFIRMED, and the run is a REPLICATION of caiso-267 to three decimal places. Registered as a rejection; keeper unchanged.
+
+**Run `2026-09-09-caiso-268-fossil92-span`** (bundle `caiso268_fossil92_span`), 2023–2025 in
+**ONE invocation, years sequential**, shard SPAN of a four-shard launch (branch
+`claude/caiso268-span`). Owner instruction: *"move offer curve down 8% from current levels and
+launch shards for each year of the run"*. "Current levels" resolved to the LIVE keeper
+`2026-09-09-caiso-fuelvintage-860-gas`, **not** to the caiso-267 arm the owner had refused the same
+day, so the cut is ×0.92 and not ×0.92². Same 40 bands / 10 classes, same committed override file
+(md5 `fc46efab534211a96600f8664a8b6779`). **KEEPER UNCHANGED. NOT PROMOTED.**
+
+**Determination NOT-YET, on C4-2025 alone.** C1/C2/C3a/C3b/C6/C8 all PASS→PASS; C3c ledgered;
+**C4 gas NRMSE 0.287 / 0.260 / 0.298 → 0.275 / 0.254 / 0.308**, failing 2025 by 0.008 while
+improving the other two. C3a **+4.4 / +8.9 / +8.3 % → −0.9 / +4.3 / +3.2 %** (mean |gap|
+7.20 % → 2.80 %; 2023 crosses *below* actual and still passes). Reported-only C5a CO2 improves in
+all three years (−11.0 / −5.2 / −4.3 % → −7.8 / −2.2 / +0.5 %).
+
+**All four rule-29 STOP gates PASS**, and **G-CTRL form 4 was earned by a code audit with no control
+solve spent** — the keeper's `git_sha 873f7564` resolves, the backcast-path diff is two files (102
+comment-only lines in `NUCLEAR_MONTHLY_CF_BY_YEAR`'s NYISO/NEISO keys, 0 non-comment lines; one
+NYISO-scoped `solve_surface_declared` line), and CAISO's capx-D79 fingerprint recomputes at HEAD to
+`cba92d202f32f9fd` / 204 rows, byte-identical to the keeper's recorded block. G-IDENT max |Δdemand|
+**0.000000 MW** over 61,320 zone-hours per year; G-DIR Δλ **−2.850 / −1.580 / −1.720** with the 2023
+value **$0.005** from the pre-solve prediction.
+
+**Two findings, both against this session's own premise.**
+
+1. **The caiso-267 §5b structural objection is CONFIRMED on the new baseline, not dissolved.**
+   2025 overnight h0–6 mean gas error **+202.4 → +764.4 MW**, evening +766.1 → +1,030.9, fleet mean
+   error crossing **−107.2 → +209.0 MW**, RMSE 1,730.5 → 1,785.7 — while the belly improves
+   −1,031.8 → −862.0. The cut is uniformly *more gas* in all 8,760 hours, so it helps the two years
+   the keeper under-dispatches gas (2023 −969, 2024 −489 MW) and **breaks the one year the keeper is
+   already near-unbiased**. 2025 is that year *and* the C4 failure — the same fact. G-FOOT names the
+   substitution at annual scale: the displaced non-fossil is **essentially all imports**
+   (−2.32 / −1.97 / −2.78 TWh) against CC_REGULAR (+2.12 / +1.81 / +2.59).
+2. **This run and caiso-267 are the same experiment.** The two arms return identical r, identical
+   NRMSE and identical hourly gas error **to ~1 MW in every year**, because the two stated baselines
+   are themselves indistinguishable on the C4 basis (caiso-260 and the fuelvintage keeper both read
+   0.881/0.287/−969.4, 0.912/0.260/−488.8, 0.877/0.298/−107.2) and agree on C3a to the second
+   decimal. The fuelvintage promotion **armed** two real mechanisms but **moved** no scored
+   criterion, so caiso-268 is a **replication**, not an independent re-test. The PRECOMMIT §2 claim
+   that caiso-260's C3a *FAILED* in 2024/2025 is also wrong — caiso-267's own scorecard reads PASS
+   and the band is ±10 % — and is corrected in `docs/RESULT-caiso268-span-2026-09-09.md` §3.
+
+**Recommendation to the owner: DO NOT PROMOTE**, on §5b rather than on the scorecard — the arm buys
+a better price by making the dispatch worse in the year the dispatch was right. The factor was
+**not resized** (carve-out condition (c)) and no second value was tried. The promotion question is
+put explicitly in the RESULT §8, together with the statement that the bundle lives on local disk in
+an ephemeral container (its committed slim set is pushed, so a promotion needs **no re-solve**).
+
+**Disclosed gap:** the three sibling per-year shards (`claude/caiso268-y2023/-y2024/-y2025`) never
+landed on the remote, so the per-year vs one-invocation cross-check the charter asked for **could
+not be performed**. No divergence is reported because none could be measured.
+
+Matrix (rule 28(b)): `offer_curve_by_group` cell updated in the CAISO shard with this session's
+evidence and a DO-NOT-REDO note (a third flat-multiplier arm on an unmoved baseline buys nothing;
+an hour-scoped cut is a different mechanism needing its own driver). **Cell stays K** — the channel
+is armed and live on the keeper; the ×0.92 arm is a registered rejection. Next: caiso-269.
