@@ -171,10 +171,8 @@ def p2_half_applied() -> dict:
         return {"available": False, "reason": blob.stderr.decode()[:400]}
     scratch.write_bytes(blob.stdout)
 
-    from market_sim.data.eia_loader import (
-        MISO_SPP_ANCHOR_HUB,
-        measured_miso_spp_hub_prices,
-    )
+    from market_sim.data.eia930.envelopes import MISO_SPP_ANCHOR_HUB
+    from market_sim.data.eia_loader import measured_miso_spp_hub_prices
 
     old_frame = pd.read_parquet(scratch)
     out: dict = {"available": True, "hub": MISO_SPP_ANCHOR_HUB, "per_year": {}}
