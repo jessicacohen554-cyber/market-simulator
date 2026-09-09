@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-09-spp-51c-oversupply-curtailment",
+  "label": "spp 51c oversupply curtailment",
+  "date": "2026-09-09",
+  "shorthand": "spp-51c-oversupply-curtailment",
+  "definition": "Calibration run from bundle spp51c_oversupply.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "SPP",
+  "file": "frontend/data/backcast/runs/2026-09-09-spp-51c-oversupply-curtailment.js",
+  "bundle": "results/calibration/spp51c_oversupply"
+}

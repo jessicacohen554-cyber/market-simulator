@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-07T05:58:58",
+  "timestamp": "2026-09-09T02:24:19",
   "iso": "SPP",
   "years": [
     2023,
@@ -176,6 +176,7 @@
   "priced_interchange": false,
   "hydro_backfill_year": 2024,
   "hydro_eia930_monthly": true,
+  "hydro_budget_period_by_instrument": false,
   "hydro_forecast_budget": false,
   "hydro_year": "normal",
   "interchange_shaping": false,
@@ -235,6 +236,9 @@
   "unit_outage_per_unit_clip": null,
   "campd_per_unit_attribution": null,
   "campd_outage_merit_order_guard": null,
+  "netload_drag_layup_window_mask": null,
+  "netload_drag_merit_allocation": null,
+  "vre_curtailment_oversupply_allocation": true,
   "cc_winter_capability_basis": null,
   "ramp_limits": null,
   "local_capacity_constraints": null,
@@ -251,6 +255,7 @@
   "nyiso_east_reserve_families": null,
   "reliability_floor_overrides": null,
   "nyiso_gas_commitment_bridge": null,
+  "spp_gas_commitment_bridge": null,
   "miso_coal_night_floor": null,
   "nyiso_gas_bridge_cc_min_load_frac": null,
   "nyiso_gas_bridge_st_min_load_frac": null,
@@ -294,6 +299,7 @@
   "pjm_seam_flow_percentile": null,
   "pjm_seam_export_limit": false,
   "pjm_seam_measured_ladder": false,
+  "pjm_seam_neighbour_hourly_ladder": false,
   "gas_hub_basis_overlay": null,
   "chp_export_floor_measured": false,
   "ercot_gtc_limits_measured": false,
@@ -315,8 +321,8 @@
     "unit_outages_e923": "../_shared/SPP/unit_outages_e923-7c8d728413db.parquet",
     "unit_outages_layup": "../_shared/SPP/unit_outages_layup-7de9ff1be257.parquet"
   },
-  "git_sha": "623184f3",
-  "basis_sha": "dcb609f4487e93708d49442bcb87b44077758185",
+  "git_sha": "86e45462",
+  "basis_sha": "78edeeb73ee5a5494028037a56e843dd624ca9ca",
   "highspy_version": "1.14.0",
   "environment": {
     "python_version": "3.11.15",
@@ -328,6 +334,13 @@
       "pandas": "3.0.3",
       "pyarrow": "24.0.0",
       "pydantic": "2.13.4"
-    }
+    },
+    "cache_key_path_roots": [
+      [
+        "<repo>",
+        "/home/user/market-simulator"
+      ]
+    ],
+    "market_sim_data_root": ""
   }
 }
