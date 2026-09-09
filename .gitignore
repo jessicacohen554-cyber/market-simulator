@@ -1516,3 +1516,12 @@ results/calibration/miso247_fullspan_*/
 # never reaches main; .gitignore discharges that duty in full, and rule 31
 # [R-RETAIN] forbids deleting them before the owner rules on promotion).
 results/calibration/pjm177_*/
+
+# pjm-177 shard B 2020-2022 validation-touchpoint bundles (control + arm). The
+# parent's `pjm177_*/` rule does NOT match `pjm177b_…` (the shard letter sits
+# before the underscore), so the shard carries its own line. Same standing:
+# rule 29 [R-SCREEN] (c) keeps them out of `main` and .gitignore discharges
+# that duty in full; rule 31 [R-RETAIN] forbids deleting them from local disk
+# before the OWNER has ruled on promotion. Every number cited from them lives
+# in results/calibration/FINDING-pjm177b-touchpoints-2026-09-09.md.
+results/calibration/pjm177b_*/
