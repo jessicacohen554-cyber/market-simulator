@@ -289,3 +289,28 @@ prompt:
 * **Rule 12 `[R-PARALLEL]`** — separate invocations concurrent, years sequential within one.
 
 **Next number: caiso-269.**
+
+---
+
+## §8 — LAUNCH RECORD (appended after the four `create_session` calls, before any LP result)
+
+All four shards were created against the **immutable commit SHA**
+`3ac68fff8be219cb44e766ef572fcefab2556657` — never a branch name. That is the handoff §A4 fix,
+and it held: **all four returned `connection_status: connected`, `status_bucket: WORKING`, with
+no `last_init_error`**, where the previous launch's five branch-named shards all failed with
+`ref_not_found`.
+
+| shard | branch (`outcome_branch`) | years | session id |
+|---|---|---|---|
+| **Y2023** (carries the rule-29 screen) | `claude/caiso268-y2023` | 2023 | `session_01FX3etuzcZvF34YMsBNkNqF` |
+| **Y2024** | `claude/caiso268-y2024` | 2024 | `session_014kWXtJiyhQ3fbzhDmvEaBh` |
+| **Y2025** (carries the C4 knife edge) | `claude/caiso268-y2025` | 2025 | `session_01DCGGcorJygHcx7chZDYLun` |
+| **SPAN** (the only registerable bundle) | `claude/caiso268-span` | 2023 2024 2025, one invocation | `session_01CLyRzkUvySdS9a3Xv2gULr` |
+
+Each carries `source_url` = the repository and `source_revision` = that SHA, so the repo is
+attached to every shard at the exact tree this PRECOMMIT and the override file were committed on.
+Each is pinned to its own `outcome_branch`, so no two shards can push to the same ref. The
+disjoint write sets of §6.3 are restated in full inside each shard's own prompt, and the three
+per-year shards are additionally forbidden `frontend/data/backcast/**` — the bench parts are the
+sharp edge, since any CAISO solve rewrites `bench/CAISO/<year>.json.gz` and three shards
+committing them would collide on all three files at once.
