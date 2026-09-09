@@ -1646,6 +1646,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # SHARED field — very end, per HOUSE-3. Registered IN THE SAME COMMIT as
     # the field.
     "f923_gas_price_plausibility_screen",
+    # SPP-51c: the oversupply water-fill allocation of the reference-rate
+    # curtailment energy (default off). Dropped from the hash at its default so
+    # every pre-existing cached run -- every ISO's keepers included -- keeps its
+    # key; an armed run hands the LP a genuinely different renewable upper bound
+    # and so earns a distinct key. SHARED field -- very end, per HOUSE-3.
+    # Registered IN THE SAME COMMIT as the field.
+    "vre_curtailment_oversupply_allocation",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -2230,6 +2237,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # it ships default ON — the (b'-1) construction: the frozen drop value is
     # the superseded posture, the flip is declared in the ledger below.
     "f923_gas_price_plausibility_screen": "False",
+    # SPP-51c: the oversupply water-fill curtailment allocation, registered at
+    # its shipped default (the flat per-hour gross-up).
+    "vre_curtailment_oversupply_allocation": "False",
 }
 
 
@@ -15389,6 +15399,50 @@ class ScenarioConfig:
     # a config the screen can touch re-keys (18 committed backcast configs,
     # 0 off-target — PRECOMMIT §3.1). Zero DOF: a declared band, never swept.
     f923_gas_price_plausibility_screen: bool = True
+
+    # SPP-51c — the HOURLY ALLOCATION of the reference-rate curtailment energy
+    # (GATED, default off, ISO-AGNOSTIC). It changes WHEN a fallback ISO's
+    # measured annual curtailment is available to be re-curtailed, never HOW
+    # MUCH: the annual potential is identical to the flat rule's in every year,
+    # so the reference rate (rule 23 [R-FROZEN-DERIVE]) is untouched.
+    #
+    # THE DEFECT. ``_forecast_uncurtailed_cf`` hands the LP
+    # ``delivered(t) / (1 - r)`` — a FLAT per-hour gross-up, verified flat to
+    # 99.94 / 99.93 / 99.98 % of SPP's hours. Delivered is already NET of
+    # curtailment, so a flat factor puts the spilled energy uniformly across all
+    # 8,760 hours — everywhere except where it happened. SPP's keeper therefore
+    # re-curtails 0.0003-0.0017 % against a measured 9.65 %, wind sits at its
+    # bound in ~99.9 % of hours, and the LP can price below zero in 0-7 hours a
+    # year against ~1,000 measured. The energy is present; its allocation is not
+    # (docs/handoffs/FINDING-spp-51b-2026-09-09.md §0.4).
+    #
+    # THE CONSTRUCTION. Curtailment is availability MEETING NOWHERE TO GO, so
+    # the key is OVERSUPPLY, not availability (a wind-shape reallocation was
+    # costed in 51b §3 and recovers only a third of the negative hours). With
+    # ``NL(t) = load(t) - delivered_wind(t) - delivered_solar(t)`` the ISO's own
+    # net load, ``H(t)`` the fleet's online-capacity headroom over delivered,
+    # and ``C = r/(1-r) * sum_t delivered(t)`` the FROZEN annual energy:
+    #     curt(t) = min( max(0, lambda - NL(t)), H(t) ),
+    # with lambda the UNIQUE root of ``sum_t curt(t) = C``. The bound becomes
+    # ``delivered(t) + curt(t)``.
+    #
+    # Rule 21 [R-DOF]: ZERO new free parameters. ``r`` is the frozen measured
+    # rate; ``lambda`` is not chosen but determined by that annual identity (it
+    # is REPORTED, never set), exactly as 51b's ``A_hat`` was; the cap is the
+    # fleet's own EIA-860 capacity; the inputs are already-committed measured
+    # series the LP consumes today. Nothing is a multiplier on a residual.
+    # Rule 13 [R-MEASURED]: forward-native on every leg — a forecast year has a
+    # load array, wind/solar profiles and a fleet capacity, so NL regenerates
+    # and lambda re-solves, and it responds correctly to changed conditions
+    # (more wind or flatter load lowers NL and allocates MORE to the low-net-load
+    # hours). It reads no target-year price, dispatch outcome or residual.
+    # Rule 19 [R-ONE-MECH]: it REPLACES the flat gross-up at the one seam that
+    # builds the bound; it never stacks on it.
+    # Rule 25 [R-ISO-SCOPE]: ISO-agnostic — no per-ISO number exists to
+    # transfer, and it fires wherever the reference-rate path already fires.
+    # Default off so every existing keeper replays byte-identical.
+    # Pre-registered: docs/handoffs/PRECOMMIT-spp-51c-2026-09-09.md.
+    vre_curtailment_oversupply_allocation: bool = False
 
     # caiso-243 — repair form (c), the ROOT CAUSE of defect D1: the CAMPD-bin
     # / plant_level_fleet path (``fleet/assembly.py::bins_to_fleet``) never

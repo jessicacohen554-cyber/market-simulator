@@ -734,6 +734,7 @@ def run_year(
     campd_outage_merit_order_guard: bool | None = None,
     netload_drag_layup_window_mask: bool | None = None,
     netload_drag_merit_allocation: bool | None = None,
+    vre_curtailment_oversupply_allocation: bool | None = None,
     # caiso-186 published seasonal CC capability basis. run_calibration_full
     # .solve_and_persist has threaded this to run_year since the caiso-186
     # merge, but the parameter was never added here, so EVERY solve through
@@ -1659,6 +1660,15 @@ def run_year(
         # _BACKCAST_ONLY_OVERLAY_FIELDS (rule 13 [R-MEASURED]).
         config = config.with_overrides(
             netload_drag_layup_window_mask=netload_drag_layup_window_mask
+        )
+    if vre_curtailment_oversupply_allocation is not None:
+        # SPP-51c: the hourly ALLOCATION of the frozen reference-rate
+        # curtailment energy. One field, one seam (the renewable bound), and the
+        # annual potential is identical either way — so it rides this replay
+        # path as a single-field A/B arm. Forward-native (rule 13), so it is NOT
+        # in _BACKCAST_ONLY_OVERLAY_FIELDS.
+        config = config.with_overrides(
+            vre_curtailment_oversupply_allocation=vre_curtailment_oversupply_allocation
         )
     if netload_drag_merit_allocation is not None:
         # ercot-259: the net-load drag mandate's MERIT ALLOCATION. Same driver,
