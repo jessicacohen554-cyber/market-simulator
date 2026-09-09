@@ -297,6 +297,10 @@ from .plant_prices import (
     iso_monthly_oil_prices,
     load_oil_burn_budget,
 )
+from .electric_power import (
+    iso_electric_power_monthly_level,
+    iso_footprint_basket,
+)
 from .dual_fuel import (
     NY_HARBOR_ULSD_DAILY_PATH,
     _ny_harbor_ulsd_daily_dated as _ny_harbor_ulsd_daily_dated,
@@ -424,6 +428,8 @@ __all__ = [
     "pjm_zonal_gas_basis_by_zone",
     # plant_prices
     "apply_plant_monthly_fuel_prices",
+    "iso_electric_power_monthly_level",
+    "iso_footprint_basket",
     "iso_monthly_gas_prices",
     "iso_monthly_oil_prices",
     "load_oil_burn_budget",

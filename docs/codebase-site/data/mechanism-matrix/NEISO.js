@@ -170,6 +170,7 @@ window.MECH_MATRIX_SHARDS.NEISO = {
     negative_renewable_offers: { cell: "." },
     wind_ptc_vintage_offers: { cell: "." },
     gas_offer_curve_tranches: { cell: "K" },
+    gas_electric_power_monthly_level: { cell: "O", ev: "BUILT not tested (xiso-fuelvintage-1, 2026-09-09). Admissible in all seven years (basket 0.70-1.00). Superseded in practice by the keeper's gas_hub_basis_overlay (Algonquin Citygate via the ISO-NE MA gas index, 12/12 months every year). PHASE-0 CARRIES A LOUD, DELIBERATELY UNRESOLVED DISCREPANCY: for Jan-2023 the ISO-NE published AGT index gives HH 3.273 + 1.46 = 4.73 $/MMBtu while N3045 MA/CT/RI delivered-to-electric-power reads 15.34 \u2014 a 3.2x gap between two measured sources for nominally the same quantity, and the reason NEISO's keeper series sits 2.303 $/MMBtu below measured on the 2023 annual. The two measure different things (a day-ahead index vs the average delivered cost actually paid, including intraday/balancing purchases by generators without firm transport) and the marginal OFFER is set by the index, so the hub index correctly keeps priority \u2014 this is rule 14's misalignment exception, stated not absorbed. Handed off for the NEISO lane, whose real question is the index-vs-delivered gap, not this flag." },
     gas_monthly_actuals: { cell: "K" },
     gas_plant_monthly_pricing: { cell: "K" },
     gas_daily_shape: { cell: "K" },

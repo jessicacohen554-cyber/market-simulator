@@ -170,6 +170,7 @@ window.MECH_MATRIX_SHARDS.PJM = {
     negative_renewable_offers: { cell: "." },
     wind_ptc_vintage_offers: { cell: "." },
     gas_offer_curve_tranches: { cell: "K" },
+    gas_electric_power_monthly_level: { cell: "O", ev: "BUILT not tested (xiso-fuelvintage-1, 2026-09-09). ADMISSIBLE IN ALL SEVEN YEARS 2019-2025 (basket 0.58-0.98 of PJM gas capacity). No hub overlay on the PJM keeper, so this REPLACES the keeper's gas_monthly_actuals EIA-923 ISO-month receipt level. Phase-0: the receipt level runs ABOVE measured delivered in EVERY month of EVERY year (annual -0.19 to -0.77 $/MMBtu; 2023 all twelve months -0.31 to -1.42), so the predicted move is gas DOWN, coal up, prices down. Handed off for the PJM lane's own A/B." },
     gas_monthly_actuals: { cell: "K" },
     gas_plant_monthly_pricing: { cell: "K" },
     gas_daily_shape: { cell: "K", ev: "pjm-107 (adopted, leg A); pjm-139 W0/W1 (cell confirmed K; all-ISO day-scale resolution bound)" },
