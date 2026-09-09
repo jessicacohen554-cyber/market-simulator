@@ -576,3 +576,65 @@ STEP-0 checkout verification (`git log --oneline -4`, plus an existence check on
 branch introduces) with an explicit `git fetch` + `git checkout -B <own> FETCH_HEAD` recovery,
 so a child that lands on `main` by accident repairs itself instead of silently rebuilding work
 that already exists.
+
+### A5. THE BRANCH MERGED TO MAIN, MAIN MOVED 51 COMMITS, AND ALL FIVE SHARDS WERE RELAUNCHED AT THE TIP
+
+**This program's branch is on `main`.** PRs **#5734** and **#5735** merged
+`claude/xiso-fuelvintage-retirements-96sbx9`, so the retiree-window widening, the
+`gas_electric_power_monthly_level` seam, the weight table, the tests, the FINDING and these
+prompts are all on `main` — nothing here is branch-only any more.
+
+**Main then moved 51 commits ahead**, and the A4 shards were pinned to `33f6c061`, i.e. 51
+commits stale. `origin/main` was merged into the branch (clean, zero conflicts), verified, and
+pushed: the tip is now **`b9fcb160d92dadbe86dcec5f6c8e2ba1793a5f1c`**, which is `origin/main`
+**plus nothing** (`git rev-list --count origin/main ^HEAD` = 0).
+
+**Verified on the merged tree before relaunching** — the merge changed none of this program's
+work: `data/raw/eia-860/eia860_generator_retired_within_window.parquet` still 1,094 rows /
+min year 2019 / 477 rows at ≥2023; `RETIREMENT_WINDOW_START = 2019`;
+`src/market_sim/data/fuel/electric_power.py` present; `gas_electric_power_monthly_level` in
+`scenarios.py` (4), `run_calibration_full.py` (2), `resolve.py` (1), `trajectories.py` (2);
+`test_retiree_window_extension.py` + `test_gas_electric_power_level.py` +
+`test_partial_plant_exit_carry.py` + `tests/regression/test_fuel_facade.py` **50 passed**;
+`check_mechanism_matrix --base origin/main` green.
+
+**Three things landed on main that every lane must now account for**, and each carries them in
+its own prompt:
+
+1. **ercot-261 built an ERCOT-scoped SIBLING of the seam** — a *corroborated* monthly gas LEVEL
+   (`data/raw/ercot_gas_corroborator_monthly.csv`,
+   `scripts/data/derive_ercot_gas_corroborator.py`, `src/market_sim/data/fuel/basis/ercot.py`,
+   `tests/unit/data/fuel/test_ercot_gas_corroboration.py`). It touches neither
+   `gas_electric_power_monthly_level` nor any non-ERCOT ISO, but it is the closest prior art to
+   every lane's arm — and checking one measured series against a second is the one legitimate
+   line of attack on **MISO's Louisiana coverage hole** and on **NEISO's 3.2× index-vs-delivered
+   gap** (§6a). Lanes are told to **recommend**, not to build a copy unilaterally.
+2. **ercot-261 added a PARTIAL-PLANT exit channel** —
+   `src/market_sim/data/fleet/eia860.py::_partial_plant_exit_rows`, gated
+   `ScenarioConfig.partial_plant_exit_carry`, `_PARTIAL_EXIT_WINDOW_START = 2019`. It is the
+   exact complement of the whole-plant window this program widened: same 2019 floor, units whose
+   *plant survives*. Its docstring asserts zero overlap with the whole-plant parquet by
+   construction; **every lane is told to verify that for its own ISO rather than trust it**,
+   because a double-count would be invisible and, in PJM (13,294.9 MW restored), material.
+3. **Each ISO's own lane moved** — pjm-177, miso-248, caiso-267, NEISO capx-D90, spp-52a. Lanes
+   must run **G-DRIFT against `origin/main`**, not the handoff base, and **re-read their keeper
+   shard** in case the keeper moved. CAISO is told explicitly that caiso-267 may already have
+   spent its 2022 touchpoint, and that its lane's `build_status` red may already be cleared.
+
+**Relaunch.** SendMessage cannot reach a cloud sibling, so the five stale sessions were
+interrupted, archived, and **relaunched pinned to `b9fcb160`** (~5 minutes of work lost, all of
+it setup). All five came up `connected` / `WORKING` with no `last_init_error`:
+
+| session | ISO |
+|---|---|
+| `session_01BudZjmibLgP6M6EtSxCkwp` | PJM (carries the program screen) |
+| `session_011LP4g5bi8YHsaH5yeZVvh2` | MISO |
+| `session_012VikC6mGbPmctE9gVS3QcF` | NYISO |
+| `session_01RWLcg3XCMyDuGy45WAXoyM` | NEISO |
+| `session_012aNt8CFETU5cCW3EiWzmXf` | CAISO |
+
+**Two operational rules this cost us, now in every prompt:** pin `source_revision` to a commit
+SHA (§A4), and **put everything a child needs in its launch prompt** — a cloud sibling cannot be
+messaged after launch, so a stale one must be archived and relaunched rather than corrected.
+Every lane is additionally told to **re-baseline `pytest tests/scoring` on its own tree**: the
+16-failure figure in §A3 was measured on the pre-merge base and 51 commits have landed since.
