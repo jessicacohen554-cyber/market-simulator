@@ -1558,3 +1558,10 @@ results/calibration/_spp52a_heavy/
 # (git add -f) their own bundle onto a scratch branch to ship results back;
 # nothing here reaches main unless the owner promotes the run.
 results/calibration/ercot261_*/
+
+# caiso-fuelvintage-1 zero-LP probe outputs and A/B scratch (rule 31 [R-RETAIN]:
+# kept on local disk, kept OUT of main; every number they carry is in
+# docs/FINDING-caiso-fuelvintage-1-2026-09-09.md per rule 29 [R-SCREEN] (c)).
+results/calibration/_caiso_fuelvintage_*.json
+results/calibration/_caiso_retiree_*.json
+scripts/probes/_caiso_retiree_ab_tmp/
