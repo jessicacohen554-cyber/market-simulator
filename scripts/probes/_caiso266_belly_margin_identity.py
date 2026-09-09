@@ -405,6 +405,15 @@ def m12_sizing(df: pd.DataFrame, year: int) -> dict:
         "share_gap_hours_below_cc_zero_fuel_floor": round(
             float((g.pa < floor_cc).mean()), 3
         ),
+        # Sensitivity on the emission factor: the committed surface uses
+        # 0.057 t/MMBtu; EPA's pipeline-gas factor is 0.05306. The conclusion
+        # does not turn on which is used, so both are reported.
+        "cc_zero_fuel_floor_epa_factor": round(
+            float(0.05306 * hr_cc * carbon + vom_cc), 2
+        ),
+        "share_below_cc_floor_epa_factor": round(
+            float((g.pa < 0.05306 * hr_cc * carbon + vom_cc).mean()), 3
+        ),
         "share_gap_hours_below_zero": round(float((g.pa < 0).mean()), 3),
         "model_gas_mw": round(gas, 0),
         "model_gas_at_binding_floors_mw": round(float(g.m_gas_committed.mean()), 0),

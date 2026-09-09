@@ -14310,6 +14310,12 @@ statistic: in **70.5 / 81.7 / 56.2 %** of the carrying hours the market cleared
 **below the carbon + VOM cost of a CAISO CC burning FREE GAS**
 ($16.01 / $16.94 / $13.90 at CARB $33.03 / $35.23 / $28.06 and the measured 7.442
 base HR). CARB alone puts a $12–15/MWh floor under every CA gas offer.
+**Verified load-bearing:** the keeper charges this cost —
+`state_carbon_pricing: true` with `carbon_price: 0.0`, and
+`STATE_CARBON_PRICE_BY_ISO["CAISO"]` is exactly the measured surface's
+`carbon_basis`. On EPA's 0.05306 t/MMBtu instead of the committed surface's
+0.057 the floor is $15.04 / $15.91 / $13.08 and the shares are 65.0 / 76.5 /
+51.7 % — the conclusion does not turn on the factor.
 
 **Three routes that fail, so nobody re-spends them.** (1) Representing the missing
 **local** curtailment (caiso-232) moves this residual the **wrong way** — as a

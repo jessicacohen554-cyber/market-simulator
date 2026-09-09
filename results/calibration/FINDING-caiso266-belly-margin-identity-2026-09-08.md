@@ -242,6 +242,17 @@ stronger:
 | **share of carrying hours below the CC zero-fuel floor** | **70.5 %** | **81.7 %** | **56.2 %** |
 | share below $0 | 16.7 % | 23.6 % | 12.8 % |
 
+**VERIFIED, because this leg is load-bearing:** the keeper actually charges this
+cost. `run_config.json` carries `state_carbon_pricing: true` with
+`carbon_price: 0.0` (no federal/scenario carbon on top), and
+`STATE_CARBON_PRICE_BY_ISO["CAISO"]` is **exactly** the $33.03 / $35.23 / $28.06
+the measured offer surface's own `carbon_basis` uses — so the floor above is
+inside the model's gas offer, not only inside reality's. **Sensitivity:** the
+0.057 t/MMBtu factor is the committed surface's; at EPA's 0.05306 for pipeline
+gas the floor is **$15.04 / $15.91 / $13.08** and the shares move to
+**65.0 / 76.5 / 51.7 %** (measured, not estimated). The conclusion does not turn
+on the factor.
+
 **In the majority of the hours that carry the entire C3a residual, the market
 cleared below what a CAISO combined-cycle costs with its fuel given away free.**
 California cap-and-trade alone puts a $12–15/MWh floor under every CA gas
