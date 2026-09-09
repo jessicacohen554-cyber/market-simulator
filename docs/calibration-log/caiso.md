@@ -14383,7 +14383,7 @@ value **$0.005** from the pre-solve prediction.
    that caiso-260's C3a *FAILED* in 2024/2025 is also wrong — caiso-267's own scorecard reads PASS
    and the band is ±10 % — and is corrected in `docs/RESULT-caiso268-span-2026-09-09.md` §3.
 
-**Recommendation to the owner: DO NOT PROMOTE**, on §5b rather than on the scorecard — the arm buys
+**OWNER RULED 2026-09-09: DO NOT PROMOTE.** Keeper stays `2026-09-09-caiso-fuelvintage-860-gas`, CAISO stays CALIBRATED, the arm stays registered as evidence (rule 15). The recommendation put to the owner was the same, on §5b rather than on the scorecard — the arm buys
 a better price by making the dispatch worse in the year the dispatch was right. The factor was
 **not resized** (carve-out condition (c)) and no second value was tried. The promotion question is
 put explicitly in the RESULT §8, together with the statement that the bundle lives on local disk in
