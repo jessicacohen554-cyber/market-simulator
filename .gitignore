@@ -1497,3 +1497,13 @@ results/calibration/_spp51c_*
 # caiso-267 screen/control bundles (rule 29(c) delete-before-merge, rule 31 [R-RETAIN]:
 # gitignored so they never reach main; NEVER rm -rf them)
 results/calibration/caiso267_*/
+# miso-247 working bundles (the P19 posture screen + its EARNED control). Ignored
+# so they can never reach a commit — the only thing rule 29 [R-SCREEN] (c)
+# requires, and what rule 31 [R-RETAIN] names as the mechanism that discharges
+# it. Ignoring is NOT a licence to delete: these stay on local disk until the
+# OWNER has ruled on promotion (rule 31; the ercot-255 incident,
+# docs/governance/rule-history.md §16). A full-span bundle that is REGISTERED is
+# added with `git add -f` of its slim set, overriding this rule.
+results/calibration/miso247_screen_*/
+results/calibration/miso247_control_*/
+results/calibration/miso247_fullspan_*/

@@ -58,6 +58,10 @@ NON_FLEET_KLASS = frozenset({"wind", "solar"})
 COAL_KLASS = frozenset({"COAL_PRB", "COAL_BIT", "COAL_LIGNITE", "COAL"})
 
 
+#: ``FUEL_TYPE_MAP`` is name -> index; the attribution needs the inverse.
+_FUEL_NAME: dict[int, str] = {v: k for k, v in FUEL_TYPE_MAP.items()}
+
+
 def klass_of(fleet_arrays, i: int) -> str:
     """Attribute row ``i`` to a class. Addendum 2 §4(b) -- never blank."""
     pg = getattr(fleet_arrays, "plant_group", None)
@@ -65,7 +69,7 @@ def klass_of(fleet_arrays, i: int) -> str:
         v = str(pg[i]).strip()
         if v:
             return v
-    return FUEL_TYPE_MAP[int(fleet_arrays.fuel_type_idx[i])]
+    return _FUEL_NAME[int(fleet_arrays.fuel_type_idx[i])]
 
 
 def thermal_target(year: int) -> np.ndarray:
