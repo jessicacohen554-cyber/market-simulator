@@ -200,6 +200,38 @@ quoted as a certified out-of-sample skill number.
 
 ---
 
+## 3.2 AN INDEPENDENT END-TO-END CONFIRMATION OF THE SEAM'S INERTNESS, unplanned
+
+This session's own v3 run had launched cloud shards before the §A7 ruling arrived, and one of them
+— SHARD H2 — solved and registered **the same 2022 touchpoint on the same corrected fleet with the
+flag OFF**, landing on `main` as `2026-09-09-nyiso-214-tp2022-retiree` while this run solved its
+flag-ON twin in this container.
+
+**The two bundles were solved separately, in different containers, and score identically to every
+reported digit:**
+
+| criterion | flag OFF (`nyiso-214-tp2022-retiree`, `main`) | flag ON (`nyiso-221-fuelvintage-tp2022`, here) |
+|---|---|---|
+| C1 fuel-mix | FAIL 2022 CC_REGULAR **+4.99 TWh, +3.8 pp** | FAIL 2022 CC_REGULAR **+4.99 TWh, +3.8 pp** |
+| C3a mean LMP | FAIL **−13.8 %** | FAIL **−13.8 %** |
+| C3b price shape | FAIL **NRMSE 0.242** | FAIL **NRMSE 0.242** |
+| C3c price tail | CAVEAT **10 h vs 101 h** | CAVEAT **10 h vs 101 h** |
+| C2 / C4 / C6 / C8 | PASS | PASS |
+| C5a CO2 | **+1.4 %** | **+1.4 %** |
+| determination | NOT-YET | NOT-YET |
+
+§2 proves the seam inert at the **LP's input arrays**; this proves it **end to end, through the
+solver and the scorer**, on two independently produced bundles. It was not designed as a control —
+it is an accident of the relaunch — but it is the strongest available evidence and it is reported
+as such rather than discarded with the duplicate.
+
+**Disposition:** `2026-09-09-nyiso-214-tp2022-retiree` is **pruned** under rule 15
+`[R-DASHBOARD]`'s keeper-only retention (`scripts/prune_iso_runs.py --iso NYISO` names it as the
+one uncited, superseded run) — it is the same year on the same fleet, stamped to the now-superseded
+keeper, and rule 30 exists precisely so a reader does not open two cards for one configuration. Its
+numbers are the table above, so **this document is the record and git history holds the bytes**,
+exactly as rules 15 and 29(c) provide.
+
 ## 4. G-DRIFT — the committed keeper is not a valid zero-delta control, and why that was fine
 
 The keeper's recorded `git_sha 51f2fc2d` is **unreachable** (squash-merged branch; this clone is
