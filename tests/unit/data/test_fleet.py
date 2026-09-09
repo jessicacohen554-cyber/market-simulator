@@ -39,6 +39,11 @@ from market_sim.data.floor_mechanisms import (
     MECH_ST_GAS_MUSTRUN_PER_PLANT,
     MECH_ST_NETLOAD_DRAG,
 )
+from market_sim.config.constants import ST_GAS_COMMITMENT_PARAMS
+from market_sim.data.fleet.floors import (
+    _circular_centred_mean,
+    _min_run_hours,
+)
 
 
 def _sample_generators() -> list[Generator]:
@@ -617,6 +622,161 @@ class TestGasStNetloadDragFloor(unittest.TestCase):
         np.testing.assert_allclose(fa.min_gen[1], frac * 200.0, rtol=1e-6)
         # the _peak scarcity tranche is never floored.
         np.testing.assert_allclose(fa.min_gen[2], 0.0)
+
+
+class TestNetloadDragMinRunPersistence(unittest.TestCase):
+    """pjm-177: the drag's hour-eligibility persisted across each unit's min-run.
+
+    The mechanism replaces WHICH HOURS the same mandate lands in and nothing
+    else (rule 19 [R-ONE-MECH]) — same rows, same coefficients, same mechanism
+    id — so these tests pin the three properties the screen rests on: the flag
+    is byte-identical off, the transform is mean-preserving on the fraction,
+    and a WINDOWED floor (the CT evening-ramp limb) is never persisted.
+    """
+
+    @staticmethod
+    def _st_tranches():
+        """An ST_GAS plant: 200 MW committed + 200 MW econ + 100 MW peak."""
+        shared = dict(
+            name="ST",
+            zone="North",
+            fuel_type="gas_st",
+            online_year=1975,
+            plant_group="ST_GAS",
+            plant_code=555,
+        )
+        return [
+            Generator(
+                unit_id="p555_committed", pmax_mw=200.0, heat_rate=11.0, **shared
+            ),
+            Generator(unit_id="p555_econc00", pmax_mw=200.0, heat_rate=12.0, **shared),
+            Generator(unit_id="p555_peak", pmax_mw=100.0, heat_rate=14.0, **shared),
+        ]
+
+    @staticmethod
+    def _diurnal_netload(hours: int = 8760) -> np.ndarray:
+        """A net-load with a strong diurnal wave straddling the zero-crossing."""
+        t = np.arange(hours)
+        return 70_000.0 + 25_000.0 * np.sin(2.0 * np.pi * (t % 24) / 24.0)
+
+    def _cfg(self, **kw) -> ScenarioConfig:
+        return ScenarioConfig(
+            gas_st_netload_drag=True,
+            gas_st_drag_slope_per_gw=0.01029,
+            gas_st_drag_intercept=-0.7263,
+            gas_st_drag_cap=0.39,
+            **kw,
+        )
+
+    def test_flag_off_is_byte_identical(self):
+        """The default path must not move a single float (every keeper replays)."""
+        nl = self._diurnal_netload()
+        gens_a, gens_b = self._st_tranches(), self._st_tranches()
+        fa_a = generators_to_fleet_arrays(gens_a, ["North"], hours=8760)
+        fa_b = generators_to_fleet_arrays(gens_b, ["North"], hours=8760)
+        apply_gas_st_netload_drag_floor(fa_a, gens_a, nl, self._cfg())
+        apply_gas_st_netload_drag_floor(
+            fa_b, gens_b, nl, self._cfg(netload_drag_min_run_persistence=False)
+        )
+        self.assertTrue(np.array_equal(fa_a.min_gen, fa_b.min_gen))
+
+    def test_persistence_is_mean_preserving_and_flattens_the_day(self):
+        """Same annual mandate, no diurnal cycle — the whole claim, in one test."""
+        nl = self._diurnal_netload()
+        gens_c, gens_p = self._st_tranches(), self._st_tranches()
+        fa_c = generators_to_fleet_arrays(gens_c, ["North"], hours=8760)
+        fa_p = generators_to_fleet_arrays(gens_p, ["North"], hours=8760)
+        apply_gas_st_netload_drag_floor(fa_c, gens_c, nl, self._cfg())
+        apply_gas_st_netload_drag_floor(
+            fa_p, gens_p, nl, self._cfg(netload_drag_min_run_persistence=True)
+        )
+        # availability is 1.0 in this fixture, so the clip never binds and the
+        # mandate is preserved exactly rather than approximately.
+        ctrl = fa_c.min_gen[:2].sum(axis=0)
+        pers = fa_p.min_gen[:2].sum(axis=0)
+        self.assertAlmostEqual(float(ctrl.sum()), float(pers.sum()), places=3)
+        hod = np.arange(8760) % 24
+        prof_c = np.array([ctrl[hod == h].mean() for h in range(24)])
+        prof_p = np.array([pers[hod == h].mean() for h in range(24)])
+        self.assertGreater(prof_c.max() / max(prof_c.min(), 1e-9), 3.0)
+        self.assertAlmostEqual(prof_p.max() / prof_p.min(), 1.0, places=6)
+        # the _peak scarcity tranche is still never floored.
+        np.testing.assert_allclose(fa_p.min_gen[2], 0.0)
+
+    def test_window_comes_from_the_frozen_table_not_the_bin(self):
+        """Zero DOF: the window is the heat-rate-keyed commitment table (rule 21).
+
+        A CAMPD-binned fleet carries ``min_run_hours = 0`` on every tranche, so
+        reading the generator would silently disable the mechanism.
+        """
+        gens = self._st_tranches()
+        self.assertTrue(all(g.min_run_hours == 0 for g in gens))
+        self.assertEqual(_min_run_hours(gens[0], ST_GAS_COMMITMENT_PARAMS), 48)
+        efficient = Generator(
+            unit_id="p556_committed",
+            name="ST",
+            zone="North",
+            fuel_type="gas_st",
+            online_year=1975,
+            plant_group="ST_GAS",
+            plant_code=556,
+            pmax_mw=100.0,
+            heat_rate=9.0,
+        )
+        self.assertEqual(_min_run_hours(efficient, ST_GAS_COMMITMENT_PARAMS), 24)
+
+    def test_ct_ramp_window_limb_is_never_persisted(self):
+        """A WINDOWED floor keeps its window (rule 17 / rule 18: CTs cycle)."""
+        shared = dict(
+            name="CT",
+            zone="North",
+            fuel_type="gas_ct",
+            online_year=2000,
+            plant_group="CT_PEAKER",
+            plant_code=777,
+        )
+        gens_c = [
+            Generator(unit_id="p777_committed", pmax_mw=100.0, heat_rate=10.5, **shared)
+        ]
+        gens_p = [
+            Generator(unit_id="p777_committed", pmax_mw=100.0, heat_rate=10.5, **shared)
+        ]
+        nl = self._diurnal_netload()
+        cfg = dict(
+            ct_netload_drag=True,
+            ct_drag_slope_per_gw=0.01108,
+            ct_drag_intercept=-0.9987,
+            ct_drag_cap=0.46,
+            ct_drag_ramp_start=15,
+            ct_drag_ramp_end=22,
+        )
+        fa_c = generators_to_fleet_arrays(gens_c, ["North"], hours=8760)
+        fa_p = generators_to_fleet_arrays(gens_p, ["North"], hours=8760)
+        apply_ct_netload_drag_floor(fa_c, gens_c, nl, ScenarioConfig(**cfg))
+        apply_ct_netload_drag_floor(
+            fa_p,
+            gens_p,
+            nl,
+            ScenarioConfig(netload_drag_min_run_persistence=True, **cfg),
+        )
+        self.assertTrue(np.array_equal(fa_c.min_gen, fa_p.min_gen))
+        hod = np.arange(8760) % 24
+        self.assertTrue(np.all(fa_p.min_gen[0][(hod < 15) | (hod >= 22)] == 0.0))
+
+    def test_circular_centred_mean_is_exact_and_wraps(self):
+        """The kernel is circular and mean-preserving (the LP's 8760 is cyclic)."""
+        rng = np.random.default_rng(177)
+        x = rng.random(240)
+        for w in (24, 48):
+            y = _circular_centred_mean(x, w)
+            self.assertEqual(y.size, x.size)
+            self.assertAlmostEqual(float(y.mean()), float(x.mean()), places=12)
+        # a constant series is a fixed point; a pure 24 h wave is annihilated.
+        np.testing.assert_allclose(
+            _circular_centred_mean(np.full(240, 0.3), 24), 0.3, atol=1e-12
+        )
+        wave = np.sin(2.0 * np.pi * (np.arange(240) % 24) / 24.0)
+        np.testing.assert_allclose(_circular_centred_mean(wave, 24), 0.0, atol=1e-12)
 
 
 class TestNetloadDragLayupWindowMask(unittest.TestCase):

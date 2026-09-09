@@ -20,6 +20,7 @@ from market_sim.data.floor_mechanisms import (
     MECH_ST_NETLOAD_DRAG,
     ensure_mechanism,
 )
+from market_sim.config.constants import ST_GAS_COMMITMENT_PARAMS
 from market_sim.data.outages import ST_GAS_PEAKER_PLANTS
 from pathlib import Path
 from market_sim.data.fleet.models import FleetArrays, Generator
@@ -137,6 +138,60 @@ def _netload_drag_merit_targets(
     return {g: take[i] for i, g in enumerate(order) if float(take[i].max()) > 0.0}
 
 
+def _circular_centred_mean(x: np.ndarray, window: int) -> np.ndarray:
+    """Return the centred circular moving average of ``x`` over ``window`` hours.
+
+    Circular because the LP's 8760 clock is cyclic (the convention the storage
+    SOC boundary already uses), so the transform needs no edge rule and no
+    calendar. Centred so it is MEAN-PRESERVING: ``result.mean() == x.mean()``
+    to floating-point, which is what makes the pjm-177 persistence swap a
+    reallocation of the drag's mandate in time rather than a level knob.
+
+    Args:
+        x: The hourly series, shape ``(T,)``.
+        window: Averaging length in hours (``2 <= window < T``).
+
+    Returns:
+        The smoothed series, shape ``(T,)``.
+    """
+    w = int(window)
+    kernel = np.ones(w, dtype=float) / float(w)
+    # Wrap enough of each end to make the convolution exactly circular.
+    pad = w
+    wrapped = np.concatenate((x[-pad:], x, x[:pad]))
+    smoothed = np.convolve(wrapped, kernel, mode="same")
+    return smoothed[pad : pad + x.size]
+
+
+def _min_run_hours(
+    generator: "Generator", table: "list[tuple[float, dict[str, float]]]"
+) -> int:
+    """Return a generator's minimum run length from a commitment-params table.
+
+    The identical heat-rate lookup ``model.commitment._commitment_params``
+    performs for a legacy generator: the table is keyed by ascending heat-rate
+    cutoff and the first row whose cutoff exceeds the generator's heat rate
+    applies, with the last row as the fallback. Deliberately NOT
+    ``generator.min_run_hours`` — a CAMPD-binned fleet carries ``0`` on every
+    tranche (which is why ``ScenarioConfig.class_commitment_overrides``
+    exists), so the frozen table is the only zero-DOF source (rule 21 [R-DOF]).
+
+    Args:
+        generator: The dispatch-fleet row.
+        table: A ``*_COMMITMENT_PARAMS`` table from ``config.constants``.
+
+    Returns:
+        The minimum run length in hours (``0`` when the table carries none).
+    """
+    heat_rate = float(getattr(generator, "heat_rate", 0.0) or 0.0)
+    params = table[-1][1]
+    for cutoff, entry in table:
+        if heat_rate < cutoff:
+            params = entry
+            break
+    return int(params.get("min_run_hours", 0) or 0)
+
+
 def apply_netload_reliability_floor(
     fleet_arrays: "FleetArrays",
     generators: list[Generator],
@@ -151,6 +206,7 @@ def apply_netload_reliability_floor(
     mech_id: int = MECH_CT_NETLOAD_DRAG,
     layup_removed: dict[tuple[int, str], np.ndarray] | None = None,
     merit_allocation: bool = False,
+    persist_params: "list[tuple[float, dict[str, float]]] | None" = None,
 ) -> bool:
     """Impose a net-load-indexed reliability-commitment min-gen floor on a class.
 
@@ -222,6 +278,36 @@ def apply_netload_reliability_floor(
     because the diagnostic went blind, not because the forcing stopped).
     See ``docs/handoffs/FINDING-ercot259-c8-allocation-2026-09-08.md``.
 
+    ``persist_params`` (``config.netload_drag_min_run_persistence``, pjm-177)
+    replaces the HOUR-ELIGIBILITY of the same mandate, and nothing else — same
+    rows, same membership, same ``(slope, intercept, cap)``, same ``mech_id``,
+    no second floor (rule 19 [R-ONE-MECH]). ``floor_frac`` is read off the
+    net-load curve hour by hour, so the floor collapses to zero whenever
+    net-load crosses below the curve's own zero-crossing and returns when it
+    rises — i.e. the mechanism representing a gas-steam boiler's COMMITMENT
+    cycles that boiler on the diurnal net-load wave. The class's own frozen
+    ``*_COMMITMENT_PARAMS`` table (NREL/SR-5500-55433) says it cannot: min-run
+    24 h efficient / 48 h older-subcritical, because a stop-start costs more
+    than idling at minimum load across a sustained event. Measured on PJM
+    2023-25 raw CAMPD ``opTime``, the fleet's online capacity is FLAT across
+    the day (hour-of-day max/min 1.19 / 1.07 / 1.05; hour-of-day R^2
+    0.003 / 0.001 / 0.001) with multi-day run lengths (median 25 / 28 / 57 h),
+    while the drag's binding excursions run a median 7-8 h.
+
+    When supplied, each row's ``floor_frac`` becomes a CENTRED CIRCULAR moving
+    average over that row's own ``min_run_hours`` — resolved from this table by
+    the row's own heat rate, the identical lookup
+    ``model.commitment._commitment_params`` performs for a legacy generator —
+    re-clipped to ``[0, cap]``. Circular because the LP's 8760 clock is cyclic;
+    centred so the transform is mean-preserving on the fraction. It CANNOT read
+    ``gen.min_run_hours``: a CAMPD-binned fleet carries ``min_run_hours = 0`` on
+    every tranche, which is why ``class_commitment_overrides`` exists. Zero free
+    parameters (rules 21/24) and the curve's coefficients are untouched (rule 23
+    — this is the driver's FORM, never its numbers). Only the ALL-HOURS boiler
+    applier passes a table, so a floor carrying a ``ramp_window`` can never be
+    smoothed across its own window (rule 17 [R-FLOOR-WINDOW]); ``None`` is
+    byte-identical.
+
     Modifies ``fleet_arrays`` in place. Returns ``True`` when a floor was
     applied, ``False`` (byte-identical) when the class has no reliability units.
     """
@@ -246,6 +332,22 @@ def apply_netload_reliability_floor(
         start, end = ramp_window
         hod = np.arange(hours) % 24
         floor_frac = np.where((hod >= start) & (hod < end), floor_frac, 0.0)
+
+    # pjm-177: per-row min-run persistence of the SAME mandate (hour-eligibility
+    # only). Resolved once per distinct window so the convolution runs at most
+    # twice for a real fleet.
+    frac_by_row: dict[int, np.ndarray] = {}
+    if persist_params is not None:
+        for g in rows:
+            w = _min_run_hours(generators[g], persist_params)
+            if w <= 1 or w >= hours:
+                continue
+            if w not in frac_by_row:
+                frac_by_row[w] = np.clip(
+                    _circular_centred_mean(np.asarray(floor_frac, dtype=float), w),
+                    0.0,
+                    cap,
+                )
 
     if fleet_arrays.min_gen is None:
         # min_gen replaces pmin as the LP lower bound for EVERY generator, so a
@@ -278,13 +380,33 @@ def apply_netload_reliability_floor(
                 b = np.maximum(0.0, b - np.asarray(lu, dtype=float)[:hours])
         basis[g] = b
 
+    def _frac_for(g: int) -> np.ndarray:
+        """This row's floor fraction — persisted when armed, else the curve."""
+        if persist_params is None:
+            return np.asarray(floor_frac, dtype=float)
+        w = _min_run_hours(generators[g], persist_params)
+        got = frac_by_row.get(w)
+        return got if got is not None else np.asarray(floor_frac, dtype=float)
+
     if merit_allocation:
-        targets = _netload_drag_merit_targets(
-            rows, generators, pmax, basis, np.asarray(floor_frac, dtype=float)
-        )
+        # The merit fill takes ONE hourly fleet target, so persistence composes
+        # with it through the capacity-weighted mean of the per-row fractions —
+        # identical to ``floor_frac`` when persistence is off, and identical
+        # across rows whenever the fleet resolves to a single window.
+        if persist_params is None:
+            merit_frac = np.asarray(floor_frac, dtype=float)
+        else:
+            wt = np.array([pmax[g] for g in rows], dtype=float)
+            stack = np.stack([_frac_for(g) for g in rows])
+            merit_frac = (
+                (stack * wt[:, None]).sum(axis=0) / wt.sum()
+                if wt.sum() > 0
+                else np.asarray(floor_frac, dtype=float)
+            )
+        targets = _netload_drag_merit_targets(rows, generators, pmax, basis, merit_frac)
     else:
         targets = {
-            g: np.minimum(floor_frac * pmax[g], basis[g] * pmax[g]) for g in rows
+            g: np.minimum(_frac_for(g) * pmax[g], basis[g] * pmax[g]) for g in rows
         }
 
     for g, target in targets.items():
@@ -446,6 +568,15 @@ def apply_gas_st_netload_drag_floor(
         layup_removed=layup_removed,
         # ercot-259: allocation-only swap of the SAME mandated MW (rule 19).
         merit_allocation=bool(getattr(config, "netload_drag_merit_allocation", False)),
+        # pjm-177: hour-eligibility-only swap of the SAME mandate (rule 19). The
+        # frozen NREL table is passed ONLY here — the CT limb below carries a
+        # ramp window and fast-start peakers genuinely cycle, so it is never
+        # persisted (rule 17 [R-FLOOR-WINDOW] / rule 18 [R-PHYSICS]).
+        persist_params=(
+            ST_GAS_COMMITMENT_PARAMS
+            if getattr(config, "netload_drag_min_run_persistence", False)
+            else None
+        ),
     )
 
 

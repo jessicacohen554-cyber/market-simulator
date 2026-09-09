@@ -734,6 +734,7 @@ def run_year(
     campd_outage_merit_order_guard: bool | None = None,
     netload_drag_layup_window_mask: bool | None = None,
     netload_drag_merit_allocation: bool | None = None,
+    netload_drag_min_run_persistence: bool | None = None,
     vre_curtailment_oversupply_allocation: bool | None = None,
     # caiso-186 published seasonal CC capability basis. run_calibration_full
     # .solve_and_persist has threaded this to run_year since the caiso-186
@@ -1678,6 +1679,15 @@ def run_year(
         # so it is NOT in _BACKCAST_ONLY_OVERLAY_FIELDS.
         config = config.with_overrides(
             netload_drag_merit_allocation=netload_drag_merit_allocation
+        )
+    if netload_drag_min_run_persistence is not None:
+        # pjm-177: the net-load drag mandate's HOUR ELIGIBILITY. Same driver,
+        # same rows, same coefficients and the same mechanism id — only WHICH
+        # HOURS the mandate lands in changes (rule 19 [R-ONE-MECH]), so it rides
+        # this same replay path as a single-field A/B arm. Forward-native, so it
+        # is NOT in _BACKCAST_ONLY_OVERLAY_FIELDS.
+        config = config.with_overrides(
+            netload_drag_min_run_persistence=netload_drag_min_run_persistence
         )
     if cc_winter_capability_basis is not None:
         config = config.with_overrides(

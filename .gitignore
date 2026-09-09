@@ -1511,3 +1511,8 @@ results/calibration/caiso267_ctrl_screen2023/
 results/calibration/miso247_screen_*/
 results/calibration/miso247_control_*/
 results/calibration/miso247_fullspan_*/
+
+# pjm-177 screen + control bundles (rule 29 [R-SCREEN] (c): a screen bundle
+# never reaches main; .gitignore discharges that duty in full, and rule 31
+# [R-RETAIN] forbids deleting them before the owner rules on promotion).
+results/calibration/pjm177_*/
