@@ -9229,6 +9229,23 @@ def main() -> None:
         "--ercot-ep-gas-basis-monthly. Off by default.",
     )
     parser.add_argument(
+        "--ercot-ep-gas-basis-receipts-fallback",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="ERCOT only (ercot-265). RECEIPTS FALLBACK sub-gate inside the "
+        "corroboration filter above: when the two independent measurements "
+        "disagree, fill the held-out month from the EIA-923 Schedule-5 receipt "
+        "series (what the plants ACTUALLY PAID, quantity-weighted over the same "
+        "population) instead of from the year's corroborated mean, which "
+        "discards BOTH measurements and prices an extraordinary month at an "
+        "ordinary level. Feb-2021 receipts are $45.96/MMBtu across 36 plants on "
+        "28.4 million MMBtu, the year's largest burn month. Rule 14 "
+        "[R-ACCURATE]; zero free parameters (the tolerance, the admissibility "
+        "test and the fail-closed discipline are untouched). Fires in no year "
+        "but 2021, so the 2023-2025 train tier is byte-identical. Requires "
+        "--ercot-ep-gas-basis-corroborated. Off by default.",
+    )
+    parser.add_argument(
         "--ct-deployment",
         action=argparse.BooleanOptionalAction,
         default=False,
@@ -13390,6 +13407,9 @@ def main() -> None:
             ),
             "ercot_ep_gas_basis_corroborated": (
                 True if args.ercot_ep_gas_basis_corroborated else None
+            ),
+            "ercot_ep_gas_basis_receipts_fallback": (
+                True if args.ercot_ep_gas_basis_receipts_fallback else None
             ),
             "ct_deployment_overlay": True if args.ct_deployment else None,
             "ct_deployment_floor_frac": (

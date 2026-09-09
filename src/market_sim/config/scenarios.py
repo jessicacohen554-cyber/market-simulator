@@ -1384,6 +1384,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # different delivered-gas array) and hashes distinctly.
     # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
     "ercot_ep_gas_basis_corroborated",
+    # ercot-265 receipts fallback for the corroboration filter's held-out
+    # months, default off: dropped from the hash at its False default so every
+    # pre-existing ERCOT key (the designated keeper's included) stays valid, and
+    # ON it produces a different delivered-gas array (2021 months 2/12) and
+    # hashes distinctly. Registered IN THE SAME COMMIT as the field (the
+    # nyiso-119 discipline).
+    "ercot_ep_gas_basis_receipts_fallback",
     # ercot-255 EP-reference of the F923-sourced rows of the ERCOT zonal gas
     # SPREAD, default off: dropped from the hash at its False default so every
     # pre-existing ERCOT key (the designated keeper's included) stays
@@ -2134,6 +2141,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "ercot_ep_gas_basis_monthly": "False",
     "gas_electric_power_monthly_level": "False",
     "ercot_ep_gas_basis_corroborated": "False",
+    # Added by ercot-265 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "ercot_ep_gas_basis_receipts_fallback": "False",
     # Added by ercot-255 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "ercot_zonal_spread_ep_referenced": "False",
@@ -16344,6 +16354,41 @@ class ScenarioConfig:
     # .basis.ercot.ercot_electric_power_gas_basis_monthly.
     ercot_ep_gas_basis_corroborated: bool = False
 
+    # Tier 3 (calibration) — ercot-265. RECEIPTS FALLBACK for the corroboration
+    # filter above. A SUB-GATE inside `ercot_ep_gas_basis_corroborated`, never a
+    # mechanism beside it (rule 19 [R-ONE-MECH]): it requires that flag, uses the
+    # same filter, the same held-out months and the same fail-closed discipline,
+    # and changes ONLY the value a held-out month is filled with.
+    #
+    # THE DEFECT. The corroboration test asks whether two independent
+    # measurements of the same delivered-gas quantity agree. When they do not it
+    # currently discards BOTH and substitutes the year's other corroborated
+    # months -- so a month in which ERCOT's generators demonstrably paid an
+    # extraordinary price is priced at an ordinary one. It fires in exactly one
+    # year on the whole 2019-2025 span: 2021, months 2 and 12 (Feb +54.376 and
+    # Dec +5.055 $/MMBtu basis, both -> +0.390). February 2021 is Winter Storm
+    # Uri and carries 94.8 % of that year's C3b SSE.
+    #
+    # THE REPAIR, and it is rule 14 [R-ACCURATE], not a residual. Between the two
+    # measurements the EIA-923 Schedule-5 receipt series is the better grounded:
+    # it is what the plants ACTUALLY PAID, quantity-weighted over the same
+    # population -- Feb-2021 $45.96/MMBtu across 36 plants on 28.4 million MMBtu,
+    # the year's LARGEST burn month -- while the N3045TX3 survey print is a
+    # monthly cost/volume RATIO that .basis.ercot's own docstring records as
+    # unreliable exactly when a month's within-month price distribution is
+    # extreme. So a held-out month takes the corroborator's own basis.
+    #
+    # ZERO free parameters (rule 21 [R-DOF]): the tolerance constant, the
+    # admissibility test and the incompleteness discipline are untouched; the
+    # substitute comes from a series already committed and already read by this
+    # filter. Rule 13 [R-MEASURED]: identical construction (receipts minus the
+    # same monthly hub), so it regenerates for a forward year and is not an
+    # outcome fed back in. Default OFF and byte-identical off; inert in every
+    # year but 2021 by construction (no other year holds out a month), so the
+    # 2023-2025 TRAIN TIER is byte-identical and every other ISO and every
+    # forecast is untouched.
+    ercot_ep_gas_basis_receipts_fallback: bool = False
+
     # Tier 3 (calibration) — ercot-255. Reference the EIA-923-MEASURED rows of
     # the ERCOT zonal gas table to the SAME statewide series that carries the
     # level, instead of to Henry Hub.
@@ -20358,6 +20403,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_zonal_gas_basis": 3,
     "ercot_ep_gas_basis_monthly": 3,
     "ercot_ep_gas_basis_corroborated": 3,
+    "ercot_ep_gas_basis_receipts_fallback": 3,
     "ercot_zonal_spread_ep_referenced": 3,
     "ercot_gas_delivered_floor_basis": 3,
     "ercot_gas_contract_haircut": 3,
