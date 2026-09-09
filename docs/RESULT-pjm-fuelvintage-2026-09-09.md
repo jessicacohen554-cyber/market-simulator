@@ -385,16 +385,52 @@ and the C3a overshoot stated as an overshoot.
 
 ---
 
-## 9. SOLVE STATE — every bundle on disk
+## 9. THE VALIDATION TOUCHPOINTS — `2026-09-09-pjm-fuelvintage-touchpoints`
+
+2020 / 2021 / 2022 on the keeper's frozen recipe, under PJM's `complete` marker with
+`--holdout-authorized`. **2019 was neither attempted nor designed around** (locked tier, `final`
+empty, freeze ACTIVE). Stamped to the keeper (rule 30(a)) so it FOLDS into the keeper's own year
+selector rather than appearing as a second card; status part rebuilt for the per-year ladder
+(rule 30(b)).
+
+Unlike the training span, these three years carry the **retiree-window widening LIVE** —
++8,094.5 / +5,687.1 / +4,535.9 MW, 80.1 % Conventional Steam Coal. Both fixes are carried together
+with **no attribution arms** (owner instruction), so nothing here separates the fleet fix from the
+fuel seam.
+
+| criterion | verdict |
+|---|---|
+| C2 sysvol, C4 dispatch_corr, C6 governance | **held** (PASS) |
+| **C8 forced_share** | **IMPROVED** — in-sample FAIL → **holdout PASS** |
+| C1 fuelmix | degraded — 2020 COAL_BIT +21.10 TWh / CC_REGULAR +9.16; 2021 CC_REGULAR +27.59 / ST_GAS +8.17; 2022 CC_REGULAR +24.84 / ST_GAS +8.97 |
+| C3a | degraded — 2020 **+21.0 %**, 2022 **−13.0 %**; **2021 PASSES** |
+| C3b | degraded — 2020 NRMSE 0.232, 2022 0.270; **2021 PASSES** |
+| C3c | ledgered CAVEAT on 2021/2022 (rubric v3.6) |
+
+**2021 is the strongest rung** — it passes C3a and C3b outright.
+
+**Rule 30(c): none of this downgrades PJM.** The ISO's determination is the train-tier verdict and
+nothing else, and rule 22 makes a validation number iterable model-SELECTION evidence that must
+never be quoted as a certified out-of-sample skill number.
+
+**One reading worth carrying forward:** C8 is the single criterion that moves *the other way* —
+it PASSES on all three holdout years while the train tier fails it on 2025 ST_GAS. That is further
+evidence that the C8 failure is the `main`-side D-4 generator condition of §8c rather than anything
+this recipe does.
+
+---
+
+## 10. SOLVE STATE — every bundle on disk
 
 *(Updated as each arm completes.)*
 
 | arm | years | bundle | status |
 |---|---|---|---|
 | **S** screen | 2023 | `results/screen/pjm_ep_level_2023` | **DONE — all five gates PASS** |
-| **T** training | 2023 2024 2025 | `results/pjm_fuelvintage_A` | solving (one invocation, years sequential) |
-| **H1** validation | 2020 2021 | `results/pjm_fuelvintage_H1` | cloud shard `session_01PKfXTug2YjguSNzphQFyBs` |
-| **H2** validation | 2022 | `results/pjm_fuelvintage_H2` | cloud shard `session_01S7TSEZwEWRPkLFcNiHT9Jd` |
+| **T** training | 2023 2024 2025 | `results/calibration/pjm_fuelvintage_A` | **DONE — REGISTERED `2026-09-09-pjm-fuelvintage-ep-level` and PROMOTED to PJM's keeper** |
+| **TP** validation | 2020 2021 2022 | `results/calibration/pjm_fuelvintage_TP` | **DONE — REGISTERED `2026-09-09-pjm-fuelvintage-touchpoints`, stamped/folded to the keeper** |
+| H1 shard | 2020 2021 | `results/pjm_fuelvintage_H1_shard` | cloud shard done; its push omitted the bundle-root `system.parquet` the payload builder needs, so it is NOT registrable here — superseded by TP, RETAINED on disk |
+| H2 shard | 2022 | branch `claude/pjm-fuelvintage-1-h2` | same limitation; superseded by TP |
 
 **Rule 31 `[R-RETAIN]`: nothing is deleted.** The bundle families are gitignored, which is what
 discharges rule 29(c), and they stay on local disk. **This container is ephemeral — see §9.**
