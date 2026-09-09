@@ -75,6 +75,8 @@ window.MECH_MATRIX_SHARDS.MISO = {
     nyiso_downstate_ct_gas_basis: { cell: "." },
     ercot_ep_gas_basis_monthly: { cell: ".", ev: "ERCOT-gated in code (apply_ercot_zonal_gas_basis returns early unless iso == ERCOT); row minted ercot-254 2026-09-07. No verdict transfers (rule 25 [R-ISO-SCOPE])." },
     ercot_zonal_spread_ep_referenced: { cell: ".", ev: "ERCOT-exclusive by construction: the mechanism is gated on iso == \"ERCOT\" inside apply_ercot_zonal_gas_basis and reads a table this ISO does not have, so this cell can never be anything but n/a (rule 25 [R-ISO-SCOPE])." },
+    ercot_ep_gas_basis_corroborated: { cell: ".", ev: "ERCOT-gated in code (apply_ercot_zonal_gas_basis returns early unless iso == ERCOT); row minted ercot-261 2026-09-09. No verdict transfers (rule 25 [R-ISO-SCOPE])." },
+    retiree_window_start_year: { cell: "U", ev: "Not ISO-gated in code, but ercot-261 (2026-09-09) is scoped to ERCOT by owner instruction and derived no parameter here; row minted 2026-09-09. Untested in this ISO -- a transfer candidate enters as U and this ISO's own lane must test it (rule 25 [R-ISO-SCOPE])." },
     nyiso_local_selfsupply: { cell: "." },
     nyiso_firm_imports: { cell: "." },
     nyiso_rcpf_postsolve_overlay: { cell: "." },
