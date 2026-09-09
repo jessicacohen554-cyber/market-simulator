@@ -120,8 +120,18 @@ _DISCLOSURE = (
 
 
 def build(bundle: Path) -> dict:
-    """Return the arm's attestation, based on the incumbent keeper's."""
+    """Return the arm's attestation, based on the incumbent keeper's.
+
+    ``years_held`` is derived from THIS bundle's own ``meta.json``, never
+    hardcoded: ``calibration_verdict._authorized_tuning_finding`` requires it to
+    equal the bundle's scored years exactly, so the train-span bundle declares
+    [2023, 2024, 2025] and the 2022 validation touchpoint declares [2022]. The
+    rule 1 (b) "ONE config across every scored year" duty is satisfied by the
+    override file being byte-identical across both, which ``declaration`` below
+    states in words and the shared ``CURVE`` path proves.
+    """
     att = json.loads((KEEPER / "calibration_attestation.json").read_text())
+    years = sorted(json.loads((bundle / "meta.json").read_text())["years"])
     override = json.loads(CURVE.read_text())
     base = json.loads((KEEPER / "run_config.json").read_text())
     base_curve = base["scenario_config"]["offer_curve_by_group"]
@@ -156,13 +166,32 @@ def build(bundle: Path) -> dict:
             "excluded": _EXCLUDED,
             "file": str(CURVE.relative_to(REPO)),
         },
-        "years_held": list(YEARS),
+        "years_held": years,
         "set_ex_ante": True,
         "not_swept": True,
         "identification": _IDENTIFICATION,
         "prereg": (
             "docs/PRECOMMIT-nyiso222-offer-curve-plus5-2026-09-09.md "
             "(pushed BEFORE the first LP)"
+            + (
+                " + docs/ADDENDUM-nyiso222-2022-touchpoint-2026-09-09.md "
+                "(pushed BEFORE the 2022 solve)"
+                if years == [2022]
+                else ""
+            )
+        ),
+        "declaration": (
+            "ONE CONFIG, held across 2022-2025. This bundle's years_held names "
+            f"its own scored years ({years}) because that is what the C6 check "
+            "compares against; the SAME override file "
+            f"({CURVE.relative_to(REPO)}) is consumed byte-identically by the "
+            "train-span bundle (2023-2025) and by the 2022 validation "
+            "touchpoint, so rule 1 condition (b) holds across the pair. 2022 is "
+            "an ITERABLE validation-tier touchpoint under rule 22: it is "
+            "model-selection evidence, never a certified out-of-sample skill "
+            "number, it never downgrades NYISO (rule 30(c)), and NOTHING is "
+            "fitted to it -- the 1.05 was fixed before 2022 was solved and is "
+            "not resized by whatever 2022 returns."
         ),
         "disclosure": _DISCLOSURE,
     }
