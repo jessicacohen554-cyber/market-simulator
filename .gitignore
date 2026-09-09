@@ -1578,3 +1578,13 @@ results/pjm_fuelvintage_H2/
 results/pjm_fuelvintage_A/
 
 results/screen/pjm_ep_level_2023_control/
+
+# nyiso-fuelvintage-1 solve bundles (the training-span shards T1/T2, the holdout
+# touchpoint shards H1/H2, the composed span, and the CARD-1 ordering screen).
+# Rule 31 [R-RETAIN]: these are NEVER deleted from local disk until the OWNER has
+# ruled on promotion -- gitignoring is what discharges rule 29(c)'s
+# delete-before-merge duty, since check_registry_payload_parity's bundle sweep
+# only ever sees COMMITTED dirs. Nothing here reaches main unless promoted.
+results/nyiso_fuelvintage_*/
+results/calibration/nyiso_fuelvintage_*/
+results/screen/nyiso_ep_level_*/
