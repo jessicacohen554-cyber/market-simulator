@@ -841,8 +841,6 @@ BRIDGE_MECHS: tuple[int, ...] = (
 # block for the touch-once locked test. Tier membership and the block mapping
 # live in scripts/lib/holdout_policy.py. Extend only when a new year is
 # formally promoted from holdout to in-sample with a new designated holdout.
-D6_CALIBRATION_YEARS: frozenset[int] = holdout_policy.CALIBRATION_YEARS
-D6_MARKER_FILE = holdout_policy.MARKER_FILE
 
 
 # ---------------------------------------------------------------------------
@@ -2249,79 +2247,6 @@ def run_d10(
     return res
 
 
-def load_calibration_complete(repo_root: Path) -> dict[str, dict]:
-    """Return the per-ISO VALIDATION-tier marker map (``complete``; may be empty).
-
-    Kept for the ``complete``-block consumers that predate the two-tier split;
-    :func:`load_marker_doc` is what the tier-aware D-6 gate reads.
-    """
-    return load_marker_doc(repo_root).get("complete", {})
-
-
-def load_marker_doc(repo_root: Path) -> dict:
-    """Return the whole parsed marker document (both tier blocks), or ``{}``."""
-    path = repo_root / D6_MARKER_FILE
-    if not path.exists():
-        return {}
-    return json.loads(path.read_text())
-
-
-def run_d6_quarantine(repo_root: Path) -> GateResult:
-    """D-6 holdout quarantine across EVERY registered bundle (CI mode).
-
-    CLAUDE.md rule 22 (audit D-6, amended 2026-07-04; TIER-AWARE 2026-07-31):
-    every year outside ``D6_CALIBRATION_YEARS`` is quarantined until the
-    target ISO carries **the marker for that year's tier** — ``complete`` for
-    the iterable validation ladder, ``final`` for the touch-once locked test
-    (``scripts.lib.holdout_policy``). A bundle mixing tiers needs both. Sweeps
-    all registered runs (keepers AND probes): a quarantine breach is a breach
-    wherever it is registered.
-    """
-    res = GateResult("D-6 holdout quarantine (all registered bundles)")
-    marker_doc = load_marker_doc(repo_root)
-    reg_dir = repo_root / "frontend/data/backcast/registry"
-    for path in sorted(reg_dir.glob("*.json")):
-        side = json.loads(path.read_text())
-        iso = side.get("iso", "?")
-        years = [int(y) for y in side.get("years", [])]
-        by_tier = holdout_policy.split_breach_by_tier(years)
-        if not by_tier:
-            continue
-        for tier, tier_years in sorted(by_tier.items()):
-            block = holdout_policy.TIER_MARKER_BLOCK[tier]
-            marked = holdout_policy.authorized(marker_doc, iso, tier)
-            res.rows.append(
-                {
-                    "run": path.stem,
-                    "iso": iso,
-                    "holdout_years": tier_years,
-                    "tier": tier,
-                    "marker_block": block,
-                    "authorized": marked,
-                    "verdict": "authorized one-shot" if marked else "FAIL",
-                }
-            )
-            if not marked:
-                res.failures.append(
-                    f"{path.stem}: solve year(s) {tier_years} are {tier}-tier, "
-                    f"outside the calibration window "
-                    f"{sorted(D6_CALIBRATION_YEARS)}, with no {iso} entry in "
-                    f"the '{block}' block of {D6_MARKER_FILE} — holdout "
-                    "quarantine breach (CLAUDE.md rule 22)"
-                )
-    if not res.rows:
-        res.notes.append(
-            "no registered bundle carries a year outside "
-            f"{sorted(D6_CALIBRATION_YEARS)} — quarantine intact."
-        )
-    return res
-
-
-# ---------------------------------------------------------------------------
-# Bundle / bench / payload data access
-# ---------------------------------------------------------------------------
-
-
 def _decode_cf_bytes(b64: str, annual_twh: float | None, npl: float) -> np.ndarray:
     """Decode an 8760-byte CF%-encoded series to hourly MW.
 
@@ -2969,7 +2894,6 @@ _JSON_KEYS = {
     "D-4": "D4",
     "D-5": "D5",
     "D-9": "D9",
-    "D-6": "D6",
 }
 
 
@@ -3396,7 +3320,6 @@ def main(argv: list[str] | None = None) -> int:
     bundle_label, iso, years = "-", args.iso or "-", args.years or []
     if args.keepers:
         results.append(run_d9_keepers(REPO_ROOT))
-        results.append(run_d6_quarantine(REPO_ROOT))
         if not args.no_d2_recompute:
             results.append(run_d2_keepers_verify(REPO_ROOT))
         bundle_label = "all keepers"

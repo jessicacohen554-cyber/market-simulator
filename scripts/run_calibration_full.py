@@ -120,7 +120,6 @@ from market_sim.pipeline.flags import (  # noqa: E402
 from market_sim.pipeline.backcast_config import backcast_config  # noqa: E402
 from market_sim.pipeline.timing import log_year_phase_timing  # noqa: E402
 from market_sim.results.calibration import check_cf_band_occupancy  # noqa: E402
-from scripts.lib import holdout_policy  # noqa: E402
 from scripts.lib.bundle_io import (  # noqa: E402
     bundle_input_path,
     write_derived_solve_inputs,
@@ -8605,111 +8604,6 @@ HOLDOUT_MARKER_FILE = "frontend/data/backcast/calibration-complete.json"
 # Deliberately additive — calibration-complete.json is untouched, so already-
 # registered out-of-training bundles stay CI-legal and no prior one-shot is
 # invalidated. Checked BEFORE the marker test below (fail closed).
-HOLDOUT_FREEZE_FILE = "frontend/data/backcast/holdout-freeze.json"
-
-
-def enforce_holdout_year_gate(
-    years: list[int], iso: str, holdout_authorized: bool, repo: Path = REPO
-) -> None:
-    """Hard-fail a solve over a holdout year unless explicitly authorized.
-
-    docs/handoffs/holdout-policy-memo-2026-07.md (b)(2): direct invocation of
-    this script with ``--year 2022``/``--year 2026`` solved today with no
-    code-level gate — only the GH-Actions ``workflow_dispatch`` wrapper
-    (calibration-run.yml, since removed) validated the year. This closes that gap at the
-    script entry point itself. Authorization requires BOTH ``--holdout-
-    authorized`` on the command line AND the target ISO already carrying a
-    ``calibration-complete`` marker (the marker is what turns a holdout year
-    into an authorized one-shot score, never the flag alone).
-    """
-    breach = sorted(set(years) - HOLDOUT_CALIBRATION_YEARS)
-    if not breach:
-        return
-    # Freeze first, fail closed: an active freeze outranks BOTH the flag and
-    # the marker for every tier within its scope, so a frozen tier cannot be
-    # spent by an authorized one-shot. TIER-SCOPED (2026-08-26 owner ruling):
-    # holdout_policy.frozen_tiers reads the freeze's scope and fails closed —
-    # no parseable scope means every tier is frozen — so a breach year whose
-    # tier is NOT frozen (today: the validation ladder) falls through to the
-    # tier-marker check below, which is what governs it.
-    freeze_path = repo / HOLDOUT_FREEZE_FILE
-    if freeze_path.exists():
-        freeze = json.loads(freeze_path.read_text())
-        frozen = holdout_policy.frozen_tiers(freeze)
-        frozen_breach = sorted(
-            y for y in breach if holdout_policy.tier_for_year(y) in frozen
-        )
-        if frozen_breach:
-            frozen_tier_names = sorted(
-                {holdout_policy.tier_for_year(y) for y in frozen_breach}
-            )
-            raise SystemExit(
-                f"error: --year {frozen_breach} ({'/'.join(frozen_tier_names)}"
-                " tier) is under an ACTIVE HOLDOUT SPEND FREEZE "
-                f"(declared {freeze.get('declared', '?')}, frozen tiers "
-                f"{sorted(frozen)}), which suspends every ISO's "
-                "authorization for those tiers regardless of "
-                "--holdout-authorized or a calibration-complete marker. "
-                f"Reason: {freeze.get('reason', 'see the freeze file')} "
-                f"Lifts when: {freeze.get('lifts_when', 'owner action')} "
-                f"See {HOLDOUT_FREEZE_FILE} and CLAUDE.md rule 22."
-            )
-    marker_path = repo / HOLDOUT_MARKER_FILE
-    marker_doc = {}
-    if marker_path.exists():
-        marker_doc = json.loads(marker_path.read_text())
-    # Tier-aware since 2026-07-31: each breach year needs the marker for ITS
-    # tier — 'complete' for the iterable validation ladder, 'final' for the
-    # touch-once locked test. A --year spanning both needs both, and the
-    # strictest unmet tier is what the error names.
-    by_tier = holdout_policy.split_breach_by_tier(breach)
-    unauthorized = {
-        tier: yrs
-        for tier, yrs in by_tier.items()
-        if not holdout_policy.authorized(marker_doc, iso, tier)
-    }
-    if holdout_authorized and not unauthorized:
-        for tier, yrs in sorted(by_tier.items()):
-            # The two tiers carry DIFFERENT spend semantics, so say which one
-            # is being spent: validation is iterable model-selection evidence,
-            # the locked test is touch-once and unrepeatable.
-            spend = (
-                "the TOUCH-ONCE frozen-config locked-test score — it may be "
-                "scored exactly once and no calibration change may respond to it"
-                if tier == holdout_policy.TIER_LOCKED
-                else "an ITERABLE validation-tier score — model-SELECTION "
-                "evidence, never quotable as a certified out-of-sample number"
-            )
-            logger.warning(
-                "%s: solving designated %s-tier holdout year(s) %s under "
-                "--holdout-authorized ('%s' marker present) — %s "
-                "(CLAUDE.md rule 22).",
-                iso,
-                tier,
-                yrs,
-                holdout_policy.TIER_MARKER_BLOCK[tier],
-                spend,
-            )
-        return
-    if not holdout_authorized:
-        reason = "--holdout-authorized not passed"
-    else:
-        reason = "; ".join(
-            f"{yrs} are {tier}-tier and {iso} is not in the "
-            f"'{holdout_policy.TIER_MARKER_BLOCK[tier]}' block"
-            for tier, yrs in sorted(unauthorized.items())
-        )
-    raise SystemExit(
-        f"error: --year {breach} falls outside the calibration window "
-        f"{sorted(HOLDOUT_CALIBRATION_YEARS)} for {iso} — {reason}. "
-        "Out-of-training years are quarantined per tier (CLAUDE.md rule 22): "
-        "the validation ladder needs the ISO's 'complete' marker, the "
-        "touch-once locked test (2019, H1-2026) needs its 'final' marker, and "
-        "either way only the one-shot frozen-config score, authorized with "
-        f"both --holdout-authorized and the tier's marker in "
-        f"{HOLDOUT_MARKER_FILE}. See "
-        "docs/handoffs/holdout-policy-memo-2026-07.md."
-    )
 
 
 def _enforce_legacy_p2_gate(parser: argparse.ArgumentParser, args) -> None:
@@ -8847,7 +8741,6 @@ def run_replay_bundle(
             holdout-gated either way (rule 22).
         note: Provenance note recorded in ``run_config.json`` (empty keeps
             the replay default).
-        holdout_authorized: Forwarded to :func:`enforce_holdout_year_gate`.
         zero_forcing_ablation: Solve the recipe's D-3 zero-forcing ablation
             twin instead (composes exactly like the flag on a direct solve).
         reliability_floor_plant_exclusions: Override the bundle's setting for the
@@ -8929,7 +8822,6 @@ def run_replay_bundle(
     kwargs["iso"] = meta["iso"]
     kwargs["years"] = [int(y) for y in (years or meta["years"])]
     kwargs["hours"] = int(meta.get("hours", 8760))
-    enforce_holdout_year_gate(kwargs["years"], kwargs["iso"], holdout_authorized)
     kwargs["reference"] = _load_reference()
     # COMPOSITE per-year recipe (ercot-260), the SAME consumer replay_keeper.main
     # calls so the two replay entry points cannot diverge: meta.json carries ONE
@@ -9077,17 +8969,6 @@ def main() -> None:
         "solve, persist, report."
     )
     parser.add_argument("--year", nargs="+", type=int, default=[2023, 2024])
-    parser.add_argument(
-        "--holdout-authorized",
-        action="store_true",
-        help="Authorize a solve over a designated holdout year (2022, "
-        "H1-2026) outside the 2023-2025 calibration window. Also requires "
-        "the target ISO to already carry a calibration-complete marker in "
-        "frontend/data/backcast/calibration-complete.json — the one-shot "
-        "frozen-config holdout score (CLAUDE.md rule 22). Without both, "
-        "--year outside 2023-2025 hard-fails. See "
-        "docs/handoffs/holdout-policy-memo-2026-07.md.",
-    )
     parser.add_argument(
         "--iso",
         default="ERCOT",
@@ -13164,7 +13045,6 @@ def main() -> None:
             out_dir=Path(args.out_dir) if args.out_dir else None,
             years=args.year if "--year" in sys.argv else None,
             note=args.note,
-            holdout_authorized=args.holdout_authorized,
             zero_forcing_ablation=args.zero_forcing_ablation,
             reliability_floor_plant_exclusions=(
                 args.reliability_floor_plant_exclusions
@@ -13280,7 +13160,6 @@ def main() -> None:
         return
 
     iso = args.iso.upper()
-    enforce_holdout_year_gate(args.year, iso, args.holdout_authorized)
     # Resolve the reference-price interface: explicit CLI flag OR the per-ISO
     # default-on set (MISO). Drives both the node selection and priced
     # interchange below, so MISO's plain run command activates the import node

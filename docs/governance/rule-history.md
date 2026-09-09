@@ -1171,10 +1171,70 @@ budget or determination changes, and no already-registered run is affected. Rule
 clause (d) names explicitly so per-year shard dirs do not become the Class-E parity RED that rule
 29 (c) already forbids.
 
-## 18. Changes to this file
+## 18. `[R-HOLDOUT]` REMOVED — the holdout year machinery is gone; its ordinal now carries `[R-C3C]` (owner, 2026-09-09)
+
+**Owner instruction, verbatim: "Remove the holdout year rule".** Asked how far the
+removal should go, the owner selected **"Year machinery only, keep C3c"**.
+
+### What was removed
+
+The three-tier train / validation / locked-test regime and **every gate that enforced
+it**:
+
+| removed | was |
+|---|---|
+| `holdout-freeze.json` | the tier-scoped spend freeze (deleted from the repo) |
+| `--holdout-authorized` | the CLI flag on `run_calibration_full`, `run_calibration`, `replay_keeper`, `knob_jacobian`, and the `calibration-solve` workflow input |
+| `run_calibration_full.enforce_holdout_year_gate` | the `--year` refusal at solve launch |
+| `dashboard_add_run.enforce_registration_marker_gate` | the R-AZ registration re-check (§4, 2026-09-06) |
+| `legitimacy_diagnostics.run_d6_quarantine` + `load_marker_doc` + `load_calibration_complete` + `D6_*` | the D-6 quarantine gate |
+| `audit_keepers.holdout_quarantine_failures` | the H1 sweep |
+| `holdout_policy.authorized` / `frozen_tiers` / `registration_refusals` / `marker_blocks` / `split_breach_by_tier` / `TIER_MARKER_BLOCK` / `MARKER_FILE` / `FREEZE_FILE` | the whole authorization surface |
+| CI job title "Rule-22 quarantine gates" | retitled **"Keeper-integrity gates"** — the job SURVIVES; only its holdout legs are gone, and its parity / golden-manifest / keeper-text steps are untouched |
+| `tests/scoring/test_holdout_year_gate.py`, `tests/scoring/test_registration_marker_gate.py`, `TestD6Quarantine`, `HoldoutQuarantineTests`, `D6ParityTests`, `TestKnobJacobianSolveYearGates` | the gate suites |
+
+**Any year may now be solved, scored and registered with no authorization, no marker
+and no one-shot.** The cost is stated rather than hidden: there is no longer a certified
+out-of-sample number anywhere in this program, because no year is protected from being
+iterated against. A skill claim built on a year that has been tuned against is not a
+skill claim.
+
+### What was deliberately KEPT, and why
+
+- **The C3c standing rule, entire** — it is a SCORING rule that merely lived inside rule
+  22's text. It is now rule 22's ordinal under the ID `[R-C3C]`. Both limbs survive,
+  including the **v3.6 out-of-training limb** (lone-failure condition dropped outside
+  2023–2025), which is why the classifier below had to survive with it.
+- **`holdout_policy.tier_for_year` + the year sets** — demoted to a **pure classifier
+  carrying no permission meaning**. Two live consumers need it: `_apply_c3c_standing_rule`
+  and the dashboard/`rubric_consts` tier labels.
+- **`calibration-complete.json`** — survives for the two jobs it did that were never
+  authorization: naming each ISO's current designated keeper (`audit_keepers` M1, whose
+  `MARKER_FILE` was re-homed as a plain path constant), and feeding the forecast
+  program's gate (a).
+- **Rule 30 `[R-TOUCHPOINT-FOLD]`** — presentation, not authorization; kept, with its
+  rule-22 cross-references rewritten to be truthful.
+- **`hindcast_solve_year_violations` / `HINDCAST_*`** — a separate forecast-program
+  window concern, untouched.
+
+### Measured effect: ZERO
+
+Every registered run carrying an out-of-training year (15 of them, across all six ISOs)
+was scored twice — once with the tier classifier live, once with it forced to `train` —
+and **0 determinations flipped**. The removal changes what is *permitted*, not what any
+run *scores*.
+
+### Ordinal and ID handling
+
+The **ordinal does not move**: `[R-C3C]` occupies rule 22's slot, so the 31-rule
+numbering is unchanged and a doc reference to "rule 22" still lands on the right entry.
+Only the ID changed. The audit N↔N+1 mapping in §1 is unaffected.
+
+## 19. Changes to this file
 
 | date | change |
 |---|---|
+| 2026-09-09 | Added §18: **`[R-HOLDOUT]` REMOVED** (owner instruction, verbatim above; scope selected by the owner as “Year machinery only, keep C3c”). The three-tier regime and all four spend gates are gone — markers as authorizations, the freeze file, `--holdout-authorized`, the launch gate, the registration gate (§4's R-AZ), D-6, H1, and the whole `holdout_policy` authorization surface; the CI job survives, retitled. KEPT: the C3c standing rule entire (now `[R-C3C]`, on rule 22's unchanged ordinal), `tier_for_year` demoted to a pure classifier its v3.6 limb still needs, `calibration-complete.json` as keeper designation + forecast gate (a), and rule 30. Measured over all 15 registered out-of-training runs: **0 determination flips**. “Changes to this file” renumbered §17 → §18 (no external reference cited §17). |
 | 2026-09-09 | Added §17: rule 32 `[R-SHARD]` (owner instruction, verbatim above) — every solve runs in a shard and the orchestrating session never runs an LP itself; one shard commit is bounded at 20 minutes, and a unit that cannot fit subdivides (shards launch shards) rather than running long. Clause (c) is the launch protocol, each item traced to a prior loss (ercot-261's raced branch and `git add -A`; ercot-262's shard patching `scripts/`). Rule 12 `[R-PARALLEL]` is unchanged and composes with it: rule 12 bounds concurrency and forbids parallel years within an invocation, rule 32 bounds where the work runs and how long one commit may take. Nothing scored moves. "Changes to this file" renumbered §17 → §18 (no external reference cited §17). |
 | 2026-09-07 | Added §16: rule 31 `[R-RETAIN]` (owner instruction, verbatim above) — a solve's results are never deleted until the OWNER has ruled on promotion; a session's own “not a keeper” reading is never a licence to delete. Names `.gitignore`, not `rm`, as what discharges rule 29 `[R-SCREEN]` (c) and rule 15's retention, since the parity gate only sweeps committed dirs. Adds the ephemeral-container duty (surface the promotion question before the session ends) and the cost-estimate-before-re-solving duty. Rule 29 (c) amended in place to say what it always meant — keep it out of `main`, not erase it from disk; every other clause of rule 29 unchanged. “Changes to this file” renumbered §16 → §17 (no external reference cited §16). |
 | 2026-09-06 | Added §15: rule 30 `[R-TOUCHPOINT-FOLD]`(a) amended AGAIN the same day by owner instruction (verbatim above) — the Run Explorer's Report is **scores and charts only**. The run-definition panel (the per-year determination essay the instruction names), the rule-22 footnote §14 had kept, the zero-forcing ablation twin + market story, and the auto-generated diagnostics are **deleted** (rule 26); run identity moves to the page sub-header. Rule 22's reading now rests entirely on clause (b)'s status-page year table (Tier column + "reported, not gating"), and the guard was re-pointed there with negative controls. Fold fix: a **dangling** `holdout.keeper` stamp (keeper pruned under rule 15) now reads as unstamped, so a promotion cannot drop an ISO's held-out years. Presentation only — no scorer path, marker, freeze, shard or determination touched; verified by headless render across all six ISOs. "Changes to this file" renumbered §15 → §16 (no external reference cited §15). |

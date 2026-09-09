@@ -1,46 +1,30 @@
-"""Single home for the holdout-quarantine policy constants (CLAUDE.md rule 22).
+"""Year classification for the calibration rubric.
 
-``CALIBRATION_YEARS`` is the in-sample training window (2023-2025) — the ONLY
-years tuned against (rule 22 train/validation/locked-test split). Any solve,
-score, or registration touching a year outside it is a designated holdout and is
-gated on a per-ISO marker in ``MARKER_FILE``.
+``CALIBRATION_YEARS`` is the in-sample training window (2023-2025).
+:func:`tier_for_year` labels any year train / validation / locked_test.
 
-TWO-TIER MARKERS (owner decision 2026-07-31)
---------------------------------------------
-Rule 22 has always defined THREE year tiers, but the gates enforced only ONE
-marker: any ``complete`` entry authorized every out-of-training year at once —
-the iterable 2022 validation ladder AND the touch-once 2019 / H1-2026 locked
-test. Rule 22 said so itself ("the CI gate is tier-agnostic — it enforces the
-marker, not the validation/locked distinction, which is a discipline clause").
-That made the most expensive, least reversible spend in the whole policy
-reachable on the same declaration as the cheapest one.
+**THIS MODULE NO LONGER AUTHORIZES ANYTHING.** ``[R-HOLDOUT]`` — the three-tier
+holdout regime and every gate that enforced it — was REMOVED on 2026-09-09 by
+owner instruction ("Remove the holdout year rule"). Gone with it: the
+``complete`` / ``final`` markers as spend authorizations, ``holdout-freeze.json``,
+the ``--holdout-authorized`` flag, the ``run_calibration_full`` year gate, the
+``dashboard_add_run`` registration marker gate, the D-6 quarantine, the
+``audit_keepers`` M1 marker check and the CI ``quarantine-gates`` job. **Any year
+may be solved, scored and registered freely.**
 
-The marker file now carries two INDEPENDENT blocks, and the gates below select
-by the tier of the year being touched:
+What survives here is a PURE CLASSIFIER carrying no permission meaning, kept
+because two live consumers still need to know which side of the training window
+a year sits on:
 
-  ``complete``  → **validation tier** (2022 and its backward ladder). Iterable
-                  by design: a miss may send you back to re-tune 2023-2025 and
-                  re-solve. NOT training — a validation number is model-
-                  SELECTION evidence, never a certified out-of-sample skill
-                  number.
-  ``final``     → **locked-test tier** (2019, H1-2026). Touch-once, ever: scored
-                  EXACTLY ONCE per ISO with the frozen keeper config, recorded
-                  whatever it is, and no calibration change may respond to it.
+  * ``calibration_verdict._apply_c3c_standing_rule`` — rule 22's ordinal now
+    carries ``[R-C3C]``, whose v3.6 limb drops the lone-failure condition on an
+    out-of-training year. Measured at the removal over all 15 registered runs
+    carrying an out-of-training year: 0 determination flips.
+  * ``rubric_consts`` and the dashboard — labelling a year's tier for display.
 
-An ISO in ``complete`` but not ``final`` may spend its validation ladder and
-NOTHING else. Absence from ``final`` is deliberately ambiguous between "not yet
-granted" and "already spent, never re-grantable" — the marker file's per-ISO
-``locked_test`` note is what distinguishes them, and a session must read it
-rather than infer a grant from the absence.
-
-The freeze (``holdout-freeze.json``) outranks both blocks and is checked first.
-
-Imported by the three rule-22 gates so the window, tiers and marker path are
-defined exactly once instead of triplicated behind a cross-file parity test:
-
-  * ``run_calibration_full.enforce_holdout_year_gate`` (the ``--year`` gate),
-  * ``legitimacy_diagnostics.run_d6_quarantine`` (the ``--keepers`` CI gate),
-  * ``audit_keepers`` (the H1 governance gate).
+The hindcast window helpers (``HINDCAST_*``,
+``hindcast_solve_year_violations``) are a SEPARATE forecast-program concern and
+are untouched by the removal.
 
 Stdlib-only (no imports) — consumed by the deploy/CI paths that run on a bare
 ``python3``.
@@ -49,24 +33,6 @@ Stdlib-only (no imports) — consumed by the deploy/CI paths that run on a bare
 from __future__ import annotations
 
 CALIBRATION_YEARS: frozenset[int] = frozenset({2023, 2024, 2025})
-
-# Repo-relative path (POSIX form). Consumers join it onto the repo root
-# (``repo / MARKER_FILE``) or wrap it in a Path for ``.name`` — a plain string
-# so both the message text and the join are identical across the three gates.
-MARKER_FILE: str = "frontend/data/backcast/calibration-complete.json"
-
-# Holdout SPEND FREEZE file (rule 22): while its ``active`` key is true, no
-# year of a tier within its ``scope.tiers`` may be solved/scored/registered for
-# ANY ISO — the freeze outranks both marker blocks for the tiers it covers.
-# TIER-SCOPED since 2026-08-26 (owner ruling, program-director sitting card 6:
-# validation tier lifted for `complete` ISOs, locked test stays frozen);
-# ``frozen_tiers`` below is the single reader of the scope and FAILS CLOSED —
-# an active freeze with no parseable ``scope.tiers`` covers every tier, which
-# is exactly the pre-2026-08-26 file shape and behaviour. Value-equal to
-# ``run_calibration_full.HOLDOUT_FREEZE_FILE`` (kept as a separate literal per
-# this repo's existing convention; a parity test asserts they agree). This
-# module stays import-free, so consumers do their own json read of the file.
-FREEZE_FILE: str = "frontend/data/backcast/holdout-freeze.json"
 
 # Tier names. Also the keys of TIER_MARKER_BLOCK below.
 TIER_TRAIN = "train"
@@ -102,12 +68,6 @@ LOCKED_TEST_YEARS: frozenset[int] = frozenset({2019, 2026})
 # See results/calibration/FINDING-neiso86-gas-basis-intake-2026-08-06.md 5.1.
 VALIDATION_YEARS: frozenset[int] = frozenset({2020, 2021, 2022})
 
-# Which marker block authorizes which tier.
-TIER_MARKER_BLOCK: dict[str, str] = {
-    TIER_VALIDATION: "complete",
-    TIER_LOCKED: "final",
-}
-
 # ---------------------------------------------------------------------------
 # Capacity-hindcast carve-outs (FH-1 — moved here out of prose, hindcast-
 # forward plan §5.2: "asserted today only in prose and a local
@@ -139,7 +99,7 @@ HINDCAST_SOLVE_YEARS: frozenset[int] = CALIBRATION_YEARS | HINDCAST_SEED_YEARS
 
 
 def hindcast_solve_year_violations(years) -> list[str]:
-    """Return the rule-22 violations in a proposed hindcast solve-year set.
+    """Return the violations in a proposed hindcast solve-year set.
 
     The fail-closed check behind the harness's window validation: every
     proposed SOLVE year must be either a training year or an enumerated seed
@@ -161,18 +121,18 @@ def hindcast_solve_year_violations(years) -> list[str]:
         out.append(
             f"year {y} is not a hindcast-solvable year (tier: {tier}; "
             f"allowed: training {sorted(CALIBRATION_YEARS)} + seed "
-            f"{sorted(HINDCAST_SEED_YEARS)}; rule 22)"
+            f"{sorted(HINDCAST_SEED_YEARS)})"
         )
     return out
 
 
 def tier_for_year(year: int) -> str:
-    """Return the rule-22 tier of ``year``.
+    """Return the tier label of ``year`` (classification only, no permission).
 
-    Fails CLOSED: a year in none of the three enumerated sets (a future year, a
-    pre-2018 year nobody has laddered yet) is treated as ``locked_test``, the
-    strictest tier — so an unanticipated year can never be spent on the weaker
-    validation marker.
+    A year in none of the enumerated sets (a future year, a pre-2018 year) is
+    labelled ``locked_test``. This is now a LABEL only: nothing refuses a solve,
+    score or registration on the strength of it (``[R-HOLDOUT]`` removed
+    2026-09-09).
 
     Args:
         year: Solve/score/registration year.
@@ -186,166 +146,3 @@ def tier_for_year(year: int) -> str:
     if year in VALIDATION_YEARS:
         return TIER_VALIDATION
     return TIER_LOCKED
-
-
-def split_breach_by_tier(years) -> dict[str, list[int]]:
-    """Group out-of-training ``years`` by the marker tier each one needs.
-
-    Args:
-        years: Iterable of years (any mix of tiers; train years are dropped).
-
-    Returns:
-        ``{tier: sorted_years}`` for the non-train tiers actually present.
-        Empty when every year is in the training window.
-    """
-    out: dict[str, list[int]] = {}
-    for y in sorted({int(y) for y in years}):
-        tier = tier_for_year(y)
-        if tier == TIER_TRAIN:
-            continue
-        out.setdefault(tier, []).append(y)
-    return out
-
-
-def marker_blocks(marker_doc: dict) -> dict[str, dict]:
-    """Return ``{tier: {iso: entry}}`` from a loaded marker document.
-
-    A missing block reads as empty — an absent ``final`` block authorizes no
-    locked test for anyone, which is the intended fail-closed default.
-
-    Args:
-        marker_doc: Parsed ``calibration-complete.json`` (or ``{}``).
-
-    Returns:
-        ``{TIER_VALIDATION: {...}, TIER_LOCKED: {...}}``.
-    """
-    doc = marker_doc or {}
-    return {tier: (doc.get(block) or {}) for tier, block in TIER_MARKER_BLOCK.items()}
-
-
-def frozen_tiers(freeze_doc: dict) -> frozenset[str]:
-    """Return the non-train tiers an ACTIVE spend freeze covers.
-
-    The single reader of ``holdout-freeze.json``'s tier scope (rule 22; the
-    freeze outranks both marker blocks for the tiers it covers). TIER-SCOPED
-    since the 2026-08-26 owner ruling (program-director sitting card 6), which
-    lifted the freeze for the VALIDATION tier while keeping the LOCKED TEST
-    frozen — expressed as ``scope.tiers = ["locked_test"]`` with ``active``
-    still true, so the steady state remains an active freeze over the
-    touch-once tier rather than a lapsed one.
-
-    FAILS CLOSED on every degenerate shape: an inactive freeze covers nothing;
-    an active freeze whose ``scope.tiers`` is missing, empty, or unparseable
-    covers EVERY tier (the pre-2026-08-26 file shape and behaviour, so a
-    legacy or mangled freeze file can only ever be stricter than intended,
-    never looser). Unknown tier names are ignored — they can never widen the
-    set of spendable years, only fail to narrow the frozen ones.
-
-    Args:
-        freeze_doc: Parsed ``holdout-freeze.json`` (or ``{}`` / None).
-
-    Returns:
-        Frozenset drawn from ``{TIER_VALIDATION, TIER_LOCKED}``.
-    """
-    all_tiers = frozenset({TIER_VALIDATION, TIER_LOCKED})
-    doc = freeze_doc or {}
-    if not doc.get("active"):
-        return frozenset()
-    scope = doc.get("scope")
-    if not isinstance(scope, dict):
-        return all_tiers
-    tiers = scope.get("tiers")
-    if not isinstance(tiers, (list, tuple)):
-        return all_tiers
-    named = frozenset(t for t in tiers if isinstance(t, str)) & all_tiers
-    # Fail closed: an active freeze that names no recognizable tier is a full
-    # freeze, never a no-op.
-    return named or all_tiers
-
-
-def authorized(marker_doc: dict, iso: str, tier: str) -> bool:
-    """Return whether ``iso`` carries the marker that authorizes ``tier``.
-
-    Args:
-        marker_doc: Parsed ``calibration-complete.json`` (or ``{}``).
-        iso: Model ISO id.
-        tier: ``TIER_VALIDATION`` or ``TIER_LOCKED``.
-
-    Returns:
-        True iff the tier's marker block names the ISO. Always False for a tier
-        with no marker block (fail closed).
-    """
-    return iso in marker_blocks(marker_doc).get(tier, {})
-
-
-def registration_refusals(
-    years, iso: str, marker_doc: dict, freeze_doc: dict
-) -> list[str]:
-    """Return why ``iso`` may not REGISTER a run covering ``years`` (empty = may).
-
-    The REGISTRATION-TIME half of the rule-22 spend gate, minted by owner
-    ruling **R-AZ** (audit-program director sitting 2026-09-06, card "Marker
-    gate": *"Re-check at registration"*).
-
-    The launch-time gate
-    (``run_calibration_full.enforce_holdout_year_gate``) reads the marker
-    exactly ONCE, when the LP starts — so a multi-hour solve can outlive the
-    authorization it launched under. Z-6 is the case that produced the ruling
-    (``docs/handoffs/holdout-2022-completeness-ercot-nyiso-2026-09-05.md``
-    §1a): a NYISO 2022 validation-tier solve launched under the D56-R
-    ``complete`` marker, ``main`` withdrew that marker (nyiso-193) while the
-    LP ran, and the only thing standing between a withdrawn marker and a
-    committed sidecar was the lane's own discipline. This function re-asks the
-    SAME question at the seam where a run's solve years become a committed
-    artifact.
-
-    Same tier map, same primitives, same precedence as the launch gate —
-    freeze first and fail closed (:func:`frozen_tiers`), then the per-tier
-    marker (:func:`split_breach_by_tier` + :func:`authorized`). This module
-    stays the single policy home, so no caller re-derives a tier. The one
-    DIFFERENCE is that registration carries no flag: there is no
-    ``--holdout-authorized`` equivalent and no bypass, because a registration
-    that fails this check is not a registration.
-
-    Args:
-        years: The run's solve years (the bundle's ``meta.json`` ``years``).
-        iso: Model ISO id of the run being registered.
-        marker_doc: Parsed ``calibration-complete.json`` (or ``{}``), read at
-            REGISTRATION time — that freshness is the whole point.
-        freeze_doc: Parsed ``holdout-freeze.json`` (or ``{}``).
-
-    Returns:
-        Human-readable refusal strings, one per unmet tier, each naming the
-        ISO, the years, the tier and the marker/freeze state. Empty when every
-        out-of-training year the run covers is authorized.
-    """
-    breach = sorted({int(y) for y in years} - CALIBRATION_YEARS)
-    if not breach:
-        return []
-    frozen = frozen_tiers(freeze_doc)
-    out: list[str] = []
-    for tier, yrs in sorted(split_breach_by_tier(breach).items()):
-        block = TIER_MARKER_BLOCK[tier]
-        held = authorized(marker_doc, iso, tier)
-        if tier in frozen:
-            # The freeze outranks the marker for the tiers it covers, so say
-            # so even when the ISO does hold the block — otherwise a lane
-            # reads "add the marker" off a refusal a marker cannot lift.
-            out.append(
-                f"{iso} year(s) {yrs} are {tier}-tier, and that tier is under "
-                f"an ACTIVE HOLDOUT SPEND FREEZE (frozen tiers "
-                f"{sorted(frozen)}; see {FREEZE_FILE}), which suspends every "
-                f"ISO's authorization for it regardless of the '{block}' "
-                f"marker ({iso} "
-                + ("holds" if held else "does not hold")
-                + f" '{block}')"
-            )
-            continue
-        if not held:
-            out.append(
-                f"{iso} year(s) {yrs} are {tier}-tier, and {iso} does not "
-                f"carry the '{block}' marker in {MARKER_FILE} AT REGISTRATION "
-                f"TIME (a marker present when the solve LAUNCHED does not "
-                f"authorize a registration after it was withdrawn)"
-            )
-    return out

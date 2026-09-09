@@ -6916,15 +6916,6 @@ def _build_parser() -> argparse.ArgumentParser:
         "--no-coal-p2 are hidden and inert unless this is passed.",
     )
     parser.add_argument(
-        "--holdout-authorized",
-        action="store_true",
-        help="Acknowledge a solve over a designated holdout year (any --year "
-        "outside 2023-2025). Requires the target ISO's tier marker in "
-        "frontend/data/backcast/calibration-complete.json as well — the flag "
-        "alone never authorizes (CLAUDE.md rule 22 [R-HOLDOUT]); an active "
-        "holdout spend freeze outranks both.",
-    )
-    parser.add_argument(
         "--commitment",
         action="store_true",
         # ARCHIVED P2 trigger — hidden from --help, gated behind --enable-legacy-p2.
@@ -7126,9 +7117,7 @@ def main(argv: list[str] | None = None) -> None:
     # first and fails closed (tier map from scripts/lib/holdout_policy.py).
     if str(REPO) not in sys.path:
         sys.path.insert(0, str(REPO))
-    from scripts import run_calibration_full as rcf
 
-    rcf.enforce_holdout_year_gate(args.year, iso, args.holdout_authorized)
     # The reference-price interface is on when the CLI flag is set OR the ISO is
     # in the per-ISO default-on set (MISO); see resolve_reference_price_interface.
     reference_price_interface = resolve_reference_price_interface(

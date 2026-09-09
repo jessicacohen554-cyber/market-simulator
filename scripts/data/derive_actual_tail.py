@@ -99,42 +99,22 @@ ALLOWED_YEARS = tuple(sorted(holdout_policy.CALIBRATION_YEARS))
 # locked-tier is unlocked for anyone: 2019 and 2026 stay absent for all six ISOs,
 # and ERCOT/CAISO/MISO gain nothing because they hold no marker at all.
 
-_MARKER_PATH = (
-    Path(__file__).resolve().parent.parent.parent / holdout_policy.MARKER_FILE
-)
-
-
-def _marker_doc() -> dict:
-    """Parsed ``calibration-complete.json``; ``{}`` when absent/unreadable.
-
-    An empty document authorizes nothing out-of-training — fail closed.
-    """
-    try:
-        return json.loads(_MARKER_PATH.read_text())
-    except (OSError, ValueError):
-        return {}
-
 
 def _year_emittable(iso: str, year: int, marker_doc: dict) -> bool:
-    """Whether ``iso``'s ``year`` may be emitted under the rule-22 tier gate.
+    """Always True — every year is emittable.
 
-    Training years always emit. An out-of-training year emits only when the ISO
-    holds the marker block for THAT YEAR'S TIER (``complete`` for the validation
-    ladder, ``final`` for the locked test) — the single point of control, per
-    the note above. Fails closed through
-    :func:`holdout_policy.tier_for_year`: a year in none of the enumerated sets
-    is treated as locked-test, the strictest tier.
+    ``[R-HOLDOUT]`` was removed 2026-09-09 (owner instruction), so no year is
+    gated on a marker any more. Kept as a named seam, and kept taking its old
+    arguments, so the call sites below read unchanged and a future per-year
+    policy has one place to live.
     """
-    tier = holdout_policy.tier_for_year(year)
-    if tier == holdout_policy.TIER_TRAIN:
-        return True
-    return holdout_policy.authorized(marker_doc, iso.upper(), tier)
+    return True
 
 
 def derive() -> dict:
     """Compute the per-(ISO, year) DA/RT tail counts from the hub series."""
     isos: dict[str, dict] = {}
-    marker_doc = _marker_doc()
+    marker_doc: dict = {}
     for iso, thr in sorted(TAIL_THRESHOLD.items()):
         p = SRC_DIR / f"actual_lmp_hourly_{iso}.parquet"
         if not p.exists():
