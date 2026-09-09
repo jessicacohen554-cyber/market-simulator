@@ -1,4 +1,4 @@
-# RESULT — caiso-268 SPAN: the fossil offer-band ×0.92 cut on the LIVE keeper reproduces caiso-267 **to three decimal places**, fails on the **same single number** (C4-2025 gas NRMSE 0.298 → **0.308**), and the §5b structural objection the owner refused caiso-267 on is **CONFIRMED, not dissolved** — overnight h0–6 gas error 2025 **+202 → +764 MW**. Determination **NOT-YET on C4-2025 alone**. Registered as the rejection it scores as. **NOT promoted.**
+# RESULT — caiso-268 SPAN: the fossil offer-band ×0.92 cut on the LIVE keeper reproduces caiso-267 **to three decimal places**, fails on the **same single number** (C4-2025 gas NRMSE 0.298 → **0.308**), and the §5b structural objection the owner refused caiso-267 on is **CONFIRMED, not dissolved** — overnight h0–6 gas error 2025 **+202 → +764 MW**. Determination **NOT-YET on C4-2025 alone**. Registered as the rejection it scores as. **OWNER RULED 2026-09-09: DO NOT PROMOTE.**
 
 **Session caiso-268, shard SPAN, branch `claude/caiso268-span`, 2026-09-09.**
 Run **`2026-09-09-caiso-268-fossil92-span`**, bundle `results/calibration/caiso268_fossil92_span`,
@@ -291,7 +291,14 @@ what §6.1 requires and what a hand-composed bundle cannot give.
 
 ## §8 — THE PROMOTION QUESTION, PUT EXPLICITLY TO THE OWNER (rule 31 `[R-RETAIN]`)
 
-**I have NOT promoted this run and will not without an explicit ruling.** The keeper stays
+**DECIDED BY THE OWNER, 2026-09-09: DO NOT PROMOTE.** The keeper stays
+**`2026-09-09-caiso-fuelvintage-860-gas`** and CAISO stays **CALIBRATED**. The caiso-268 arm
+stays **registered as evidence**, which is what rule 15 `[R-DASHBOARD]` requires of a rejection.
+No keeper shard was edited, no `calibration-complete.json` entry re-keyed, no status part rebuilt.
+The recommendation below was option (b) and the owner took it; the record is preserved as it stood
+when the decision was taken.
+
+**I have NOT promoted this run.** The keeper stays
 `2026-09-09-caiso-fuelvintage-860-gas`; the arm stands registered as evidence, which is what rule 15
 requires of a rejection.
 
