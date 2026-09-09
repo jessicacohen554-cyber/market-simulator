@@ -5,12 +5,6 @@
   "econ_high": 0.98624,
   "peak": 1.27512
  },
- "CC_INTERMEDIATE": {
-  "committed": 0.8464,
-  "econ_low": 0.874,
-  "econ_high": 0.9936,
-  "peak": 2.07
- },
  "CC_CHP": {
   "committed": 0.92,
   "econ_low": 0.98072,
@@ -29,23 +23,11 @@
   "econ_high": 1.05432,
   "peak": 1.06168
  },
- "CT_INTERMEDIATE": {
-  "committed": 0.92,
-  "econ_low": 0.92,
-  "econ_high": 1.104,
-  "peak": 2.76
- },
  "ST_GAS": {
   "committed": 0.7452,
   "econ_low": 1.01476,
   "econ_high": 1.05432,
   "peak": 1.06168
- },
- "ST_GAS_INTERMEDIATE": {
-  "committed": 0.92,
-  "econ_low": 0.92,
-  "econ_high": 1.058,
-  "peak": 2.024
  },
  "COAL_LIGNITE": {
   "committed": 0.874,
