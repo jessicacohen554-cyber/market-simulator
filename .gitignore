@@ -724,6 +724,15 @@ results/calibration/*/clean_*/
 #    their heavy contents are already ignored by §8.
 # -----------------------------------------------------------------------------
 results/calibration/*probe*/
+# miso-fuelvintage-1 (2026-09-09) working bundles: the rule-29 [R-SCREEN] screen
+# arm (2024) and the full-span promotion candidate for
+# gas_electric_power_monthly_level. Ignored so they can never reach `main`, which
+# is the ONLY thing rule 29(c) DELETE-BEFORE-MERGE requires; rule 31 [R-RETAIN]
+# names gitignoring — never `rm` — as what discharges it, so these stay on local
+# disk until the OWNER has ruled on promotion. The promoted bundle's slim set
+# overrides this rule via `git add -f`.
+results/screen/miso_ep_level_*/
+results/calibration/miso_fuelvintage_*/
 # miso-248 SPP-ladder clock re-derive: the rule-29 screen arm + its EARNED
 # control (G-DRIFT found one LIVE hunk, so form 4 is falsified) and, if the
 # screen clears, the full-span bundle. Rule 29(c) DELETE-BEFORE-MERGE is

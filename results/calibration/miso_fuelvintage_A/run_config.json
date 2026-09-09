@@ -1,16 +1,14 @@
 {
-  "timestamp": "2026-09-09T04:25:34",
+  "timestamp": "2026-09-09T07:13:27",
   "git": {
-    "sha": "70493448",
-    "basis_sha": "e48b334662da367b48942ee6e5ac4ddf9d8044e6",
-    "branch": "claude/miso-seam-ladder-spp-rederive-2i2p9t",
-    "dirty": true,
-    "changed_files": [
-      "rc/market_sim/model/interchange/spec.py"
-    ],
-    "diffstat": "src/market_sim/model/interchange/spec.py | 91 ++++++++++++++++++++++++--------\n 1 file changed, 69 insertions(+), 22 deletions(-)"
+    "sha": "7167b99a",
+    "basis_sha": "9dc1c694786c64aff70ddde89f92b458a7724408",
+    "branch": "claude/miso-fuelvintage-1",
+    "dirty": false,
+    "changed_files": [],
+    "diffstat": ""
   },
-  "model_changes_note": "BTM-basis re-solve: byte-faithful replay of the committed keeper config from meta.json, adding btm.parquet (behind-the-meter CHP held out of the LP) so the benchmark scores on the grid-delivered basis.",
+  "model_changes_note": "miso-fuelvintage-1: measured monthly gas LEVEL (gas_electric_power_monthly_level) ARMED on MISO's keeper recipe, full span 2023-2025, per owner ruling 2026-09-09 (promote on the gas-shape count regardless of inertness). Solved at origin/main 9dc1c694.",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "MISO",
@@ -211,7 +209,8 @@
       "ct_netload_drag": true,
       "miso_seam_neighbour_anchored_ladder": true,
       "miso_seam_neighbour_hourly_ladder": true,
-      "miso_seam_neighbour_hourly_spp": true
+      "miso_seam_neighbour_hourly_spp": true,
+      "gas_electric_power_monthly_level": true
     },
     "coal_bit_passthrough_sigmoid": false,
     "coal_bit_sigmoid_overrides": {},
@@ -228,7 +227,7 @@
     "nyiso_dynamic_reserve_requirements": null,
     "nyiso_hydro_reserve_eligible": null,
     "nyiso_scr_edrp_reserve_eligible": null,
-    "git_sha": "70493448"
+    "git_sha": "7167b99a"
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -1145,6 +1144,7 @@
     "pumped_storage_dispatch_adder": null,
     "battery_dispatch_adder": 0.0,
     "gas_monthly_actuals": false,
+    "gas_electric_power_monthly_level": true,
     "gas_hh_monthly_shape": false,
     "gas_daily_shape": true,
     "gas_hub_basis_overlay": false,
@@ -1172,6 +1172,7 @@
     "pjm_seam_neighbour_hourly_ladder": false,
     "ercot_zonal_gas_basis": false,
     "ercot_ep_gas_basis_monthly": false,
+    "ercot_ep_gas_basis_corroborated": false,
     "ercot_zonal_spread_ep_referenced": false,
     "ercot_gas_delivered_floor_basis": null,
     "ercot_gas_contract_haircut": false,
@@ -1231,7 +1232,7 @@
     "rows": 210,
     "moved": {},
     "epochs": [],
-    "git_sha": "70493448"
+    "git_sha": "7167b99a"
   },
   "environment": {
     "python_version": "3.11.15",
