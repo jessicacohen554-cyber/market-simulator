@@ -82,11 +82,38 @@ methodologically identical (no per-year 5-minute-vs-hourly seam) and avoids a
 ~10 GB download.
 
 Hour calendar (identical to ``scripts/data/derive_actual_lmp.py`` so the SPP sidecar
-lines up with every other ISO): the model's fixed non-leap 8760-hour LOCAL
-clock. The monthly wide files are already local-clock hour-ending HE01..HE24
-(SPP pre-folds the DST 23/25-hour days into 24 columns), mapped HE-nn ->
-hour-beginning nn-1; Feb 29 is then dropped so a leap year still lands on 8760
-rows. SPP runs on Central Prevailing Time, the model's dispatch clock.
+lines up with every other ISO): the model's fixed non-leap 8760-hour clock, which
+is FIXED CENTRAL STANDARD TIME (UTC-6) all year -- ``derive_actual_lmp._STD_TZ``'s
+``Etc/GMT+N`` convention, *not* the prevailing DST clock. ``HE01..HE24`` maps
+HE-nn -> hour-beginning nn-1 and Feb 29 is dropped so a leap year still lands on
+8760 rows.
+
+**SPP's monthly wide files are stamped on SPP's GMT MARKET INTERVAL, not on the
+local clock** (SPP-51c, 2026-09-09). This module previously asserted the
+opposite -- "already hourly on the local clock" -- and mapped the GMT-labelled
+HE columns straight onto the model calendar, leaving the emitted sidecar SIX
+HOURS AHEAD of every series the model dispatches on. Because rubric v2.4 scores
+C3a against ``rt_lw`` -- the committed hourly actual weighted by the same
+measured demand the model dispatches, an HOUR-MATCHED pairing -- the offset
+landed directly on a load-bearing criterion.
+
+The defect and the sign are established by four clock-independent markers, none
+of them a residual (``docs/handoffs/FINDING-spp-51c-2026-09-09.md`` section 1):
+EIA-930 SPP solar peaks at hour-index 12/13 (solar noon) and load at 17, while
+the emitted sidecar's RT LMP peaked at 22/23 -- a 22:00 local RT peak is not
+physical; SPP's own explicitly ``GMT MKT Interval``-stamped generation-mix file
+(``data/raw/spp-genmix/``) peaks at UTC hour 22, the very index the sidecar
+peaked at; and a six-ISO control census isolates the defect to SPP alone (every
+other ISO's sidecar goes through ``derive_actual_lmp``'s ``_STD_TZ`` registry;
+this one is staged pre-built and bypassed it).
+
+The MAGNITUDE is a CONSTANT +6 hours, not a seasonal 6/5. Measured against
+SPP's own UTC-stamped GenMix load restricted to the DST months -- the only hours
+where the two hypotheses differ -- fixed CST beats prevailing time in all three
+years (corr 0.9913/0.9391/0.9652 vs 0.9815/0.9309/0.9588; MAPE 2.499/5.316/3.878
+vs 3.314/5.564/4.208 %), which is what ``_STD_TZ`` already documents.
+:func:`gmt_dense_to_model_clock` applies it, and is the SINGLE definition of the
+conversion for both the live fetch and ``--repair-clock``.
 
 The raw SPP exports for 2023-24 are NOT committed — like the ERCOT/NYISO DA
 source zips, only the reduced sidecar parquet is the durable record. Re-run
@@ -141,6 +168,15 @@ _DAYS_IN_MONTH = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
 _MONTH_START_HOUR = tuple(int(sum(_DAYS_IN_MONTH[:m]) * 24) for m in range(12))
 
 HUBS = ("SPPNORTH_HUB", "SPPSOUTH_HUB")  # SPP trading hubs -> simple-mean system hub
+
+# SPP's published market interval is GMT; the model's 8760 calendar is fixed
+# Central Standard Time (UTC-6) all year -- ``derive_actual_lmp._STD_TZ``'s
+# ``Etc/GMT+6``, the same fixed-offset clock ``eia_loader._eia_hourly_frame``
+# produces by sorting rows by UTC from local STANDARD midnight Jan 1. So model
+# hour t is GMT hour t + 6, every hour of every year (no DST term). Identified
+# against SPP's own GMT-stamped GenMix load in the DST months, where a
+# prevailing-time alternative would differ; see the module docstring.
+_GMT_TO_MODEL_CLOCK_HOURS: int = 6
 
 BASE = "https://portal.spp.org/file-browser-api/download/"
 FS_DA = "da-lmp-by-settlement-location"
@@ -380,6 +416,39 @@ def _dense_from_daily(grp: pd.DataFrame, year: int) -> np.ndarray:
     return dense
 
 
+def gmt_dense_to_model_clock(
+    by_year: dict[int, np.ndarray],
+) -> dict[int, np.ndarray]:
+    """Re-index GMT-stamped dense 8760 series onto the model's fixed-CST clock.
+
+    ``model[t] = gmt[t + 6]`` (:data:`_GMT_TO_MODEL_CLOCK_HOURS`). The last six
+    hours of a year's model calendar fall in the NEXT year's GMT file, so they
+    are filled from the following year's head when that year is present in the
+    same batch and left ``NaN` otherwise -- six hours in 8,760 (0.07 %), which
+    the scorer already skips as it skips every other non-finite hour. The first
+    six GMT hours of each year belong to the previous year's local December 31
+    and are correctly dropped.
+
+    This is a pure re-indexing: no value is altered, interpolated or rescaled.
+
+    Args:
+        by_year: ``{year: dense 8760 array}`` on the GMT clock.
+
+    Returns:
+        ``{year: dense 8760 array}`` on the model's fixed-CST clock.
+    """
+    off = _GMT_TO_MODEL_CLOCK_HOURS
+    out: dict[int, np.ndarray] = {}
+    for year, gmt in by_year.items():
+        shifted = np.full(_HOURS_PER_YEAR, np.nan)
+        shifted[: _HOURS_PER_YEAR - off] = gmt[off:]
+        nxt = by_year.get(year + 1)
+        if nxt is not None:
+            shifted[_HOURS_PER_YEAR - off :] = nxt[:off]
+        out[year] = shifted
+    return out
+
+
 def _fetch_year(fs_name: str, prefix: str, year: int) -> np.ndarray:
     """Dense 8760 system-hub series for one year/market."""
     return _parse_monthly(_monthly_bytes(fs_name, prefix, year), year)
@@ -393,10 +462,17 @@ def _fetch_year_by_hub(fs_name: str, prefix: str, year: int) -> dict[str, np.nda
 # ── assembly ─────────────────────────────────────────────────────────────────
 def build(years) -> pd.DataFrame:
     """Return the dense SPP hub-LMP sidecar frame for ``years``."""
+    # Parse every year on SPP's own GMT clock FIRST, then re-index the whole
+    # batch onto the model's fixed-CST calendar in one pass, so each year's
+    # six-hour tail can be filled from the next year's head (SPP-51c).
+    da_gmt = {year: _fetch_year(FS_DA, "DA-LMP", year) for year in years}
+    rt_gmt = {year: _fetch_year(FS_RT, "RTBM-LMP", year) for year in years}
+    da_by_year = gmt_dense_to_model_clock(da_gmt)
+    rt_by_year = gmt_dense_to_model_clock(rt_gmt)
     frames = []
     for year in years:
-        da = _fetch_year(FS_DA, "DA-LMP", year)
-        rt = _fetch_year(FS_RT, "RTBM-LMP", year)
+        da = da_by_year[year]
+        rt = rt_by_year[year]
         frames.append(
             pd.DataFrame(
                 {
@@ -422,10 +498,21 @@ def build_per_hub(years) -> pd.DataFrame:
     same fixed non-leap 8760 local calendar the system-hub sidecar uses. ``zone``
     is the SPP settlement-location name, not a model zone (see module docstring).
     """
+    # Same GMT -> fixed-CST re-index as build(), applied per hub (SPP-51c).
+    da_gmt = {year: _fetch_year_by_hub(FS_DA, "DA-LMP", year) for year in years}
+    rt_gmt = {year: _fetch_year_by_hub(FS_RT, "RTBM-LMP", year) for year in years}
+    da_by_year = {
+        hub: gmt_dense_to_model_clock({y: da_gmt[y][hub] for y in years})
+        for hub in HUBS
+    }
+    rt_by_year = {
+        hub: gmt_dense_to_model_clock({y: rt_gmt[y][hub] for y in years})
+        for hub in HUBS
+    }
     frames = []
     for year in years:
-        da = _fetch_year_by_hub(FS_DA, "DA-LMP", year)
-        rt = _fetch_year_by_hub(FS_RT, "RTBM-LMP", year)
+        da = {hub: da_by_year[hub][year] for hub in HUBS}
+        rt = {hub: rt_by_year[hub][year] for hub in HUBS}
         for hub in HUBS:
             frames.append(
                 pd.DataFrame(
@@ -448,6 +535,59 @@ def build_per_hub(years) -> pd.DataFrame:
     return pd.concat(frames, ignore_index=True)
 
 
+def repair_clock(path: Path) -> pd.DataFrame:
+    """Re-index an ALREADY-EMITTED SPP sidecar from GMT onto the model clock.
+
+    The live fetch is blocked (``portal.spp.org`` returns an empty listing and
+    404s on download for an anonymous caller,
+    ``docs/handoffs/FINDING-spp-12-2026-09-06.md``) and the raw monthly exports
+    are not committed, so the sidecars emitted under the pre-SPP-51c assumption
+    cannot simply be re-fetched. They can, however, be repaired exactly: the
+    defect is a labelling error and the fix is a PURE RE-INDEXING of values that
+    are themselves correct (:func:`gmt_dense_to_model_clock`). No value is
+    altered, interpolated or rescaled, and the same function serves the live
+    fetch, so there is one definition of the clock.
+
+    Handles both sidecar shapes: the system-hub frame (``year``/``hour``/``rt``/
+    ``da``) and the per-hub frame, which additionally carries ``zone``.
+
+    Args:
+        path: Sidecar parquet to read.
+
+    Returns:
+        The repaired frame, ready to write back to ``path``.
+    """
+    df = pd.read_parquet(path)
+    years = sorted(int(y) for y in df["year"].unique())
+    has_zone = "zone" in df.columns
+    groups = sorted(df["zone"].unique()) if has_zone else [None]
+    out = []
+    for zone in groups:
+        sub = df if zone is None else df[df["zone"] == zone]
+        repaired = {}
+        for kind in ("rt", "da"):
+            by_year = {}
+            for year in years:
+                rows = sub[sub["year"] == year].sort_values("hour")
+                dense = np.full(_HOURS_PER_YEAR, np.nan)
+                hours = rows["hour"].to_numpy(int)
+                ok = hours < _HOURS_PER_YEAR
+                dense[hours[ok]] = rows[kind].to_numpy(float)[ok]
+                by_year[year] = dense
+            repaired[kind] = gmt_dense_to_model_clock(by_year)
+        for year in years:
+            frame = {
+                "year": np.int16(year),
+                "hour": np.arange(_HOURS_PER_YEAR, dtype=np.int16),
+                "rt": repaired["rt"][year].astype(np.float32),
+                "da": repaired["da"][year].astype(np.float32),
+            }
+            if zone is not None:
+                frame = {**frame, "zone": zone}
+            out.append(pd.DataFrame(frame)[list(df.columns)])
+    return pd.concat(out, ignore_index=True)
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--years", nargs="+", type=int, default=[2023, 2024, 2025])
@@ -466,7 +606,31 @@ def main() -> None:
         default=None,
         help="output parquet (default depends on --per-hub)",
     )
+    ap.add_argument(
+        "--repair-clock",
+        nargs="+",
+        type=Path,
+        default=None,
+        help=(
+            "do NOT fetch: re-index the named already-emitted sidecar(s) from "
+            "SPP's GMT market interval onto the model's fixed-CST 8760 clock, "
+            "in place (SPP-51c). A pure re-indexing -- no value is altered. Use "
+            "this while the SPP portal is blocked and the raw monthly exports "
+            "are unavailable to re-fetch."
+        ),
+    )
     args = ap.parse_args()
+    if args.repair_clock:
+        for target in args.repair_clock:
+            before = pd.read_parquet(target)
+            frame = repair_clock(target)
+            frame.to_parquet(target, index=False)
+            print(
+                f"repaired {target}: {len(frame)} rows "
+                f"(rt non-null {int(frame['rt'].notna().sum())} "
+                f"was {int(before['rt'].notna().sum())})"
+            )
+        return
     out = args.out
     if out is None:
         name = (
