@@ -1,14 +1,16 @@
 {
-  "timestamp": "2026-09-09T02:49:57",
+  "timestamp": "2026-09-09T04:25:34",
   "git": {
-    "sha": "b668d88d",
-    "basis_sha": "f29b7ab022d399f40904379d86eb2324f08535e6",
-    "branch": "claude/youthful-cray-qnij56",
-    "dirty": false,
-    "changed_files": [],
-    "diffstat": ""
+    "sha": "70493448",
+    "basis_sha": "e48b334662da367b48942ee6e5ac4ddf9d8044e6",
+    "branch": "claude/miso-seam-ladder-spp-rederive-2i2p9t",
+    "dirty": true,
+    "changed_files": [
+      "rc/market_sim/model/interchange/spec.py"
+    ],
+    "diffstat": "src/market_sim/model/interchange/spec.py | 91 ++++++++++++++++++++++++--------\n 1 file changed, 69 insertions(+), 22 deletions(-)"
   },
-  "model_changes_note": "miso-247 FULL SPAN on the P19 posture (owner ruling P19 2026-09-08: f923 gas-price plausibility screen ON by HEAD default + the ungated eGRID simple-cycle heat-rate floor). Rules 1/14: two measured-input construction repairs, zero free parameters. Spent on the OWNER instruction, NOT on the screen's authority -- G-1 FAILED at ST_GAS 3.279x.",
+  "model_changes_note": "BTM-basis re-solve: byte-faithful replay of the committed keeper config from meta.json, adding btm.parquet (behind-the-meter CHP held out of the LP) so the benchmark scores on the grid-delivered basis.",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "MISO",
@@ -226,7 +228,7 @@
     "nyiso_dynamic_reserve_requirements": null,
     "nyiso_hydro_reserve_eligible": null,
     "nyiso_scr_edrp_reserve_eligible": null,
-    "git_sha": "b668d88d"
+    "git_sha": "70493448"
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -787,6 +789,7 @@
     "ct_drag_ramp_end": 21,
     "netload_drag_layup_window_mask": false,
     "netload_drag_merit_allocation": false,
+    "netload_drag_min_run_persistence": false,
     "ercot_ct_offer_surface": false,
     "ercot_offer_surface_conditional": false,
     "ercot_offer_surface_midcurve_conditional": false,
@@ -1228,7 +1231,7 @@
     "rows": 210,
     "moved": {},
     "epochs": [],
-    "git_sha": "b668d88d"
+    "git_sha": "70493448"
   },
   "environment": {
     "python_version": "3.11.15",
