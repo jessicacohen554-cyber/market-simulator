@@ -10282,3 +10282,212 @@ before/after wide-command counts, then §6's answer about the standing gate. Lea
 table and the named commit-and-field that moved the key. ruff check + ruff format clean. Rule 27
 [R-PUSH]: blob-verify anything over 300 lines.
 ```
+
+---
+
+## r#63 NOTE
+
+Two charters, issued 2026-09-09 at main `ad197380`, against ledger §0bh. **D91 IS THE ONE TO RUN
+FIRST** — it discharges owner ruling **Q64** and its object is the program's whole cache addressing.
+
+* **D91** (Q64) — the unregistered field, the other 95 payloads, and why this desk's own standing
+  gate is green through all of it. **RE-EMITTED WHOLE** (never dispatched at r#62) and sharpened with
+  D90's attribution. Opus, `code`.
+* **D90-R** — complete the `neiso-t3` re-score from D90's own pushed pre-registration. **COMPLETE,
+  never REDO.** Opus, `neiso`.
+
+**Collision map: NONE, and that is a ruling, not an oversight** (§0bh.3(b)). D91 owns the
+`_CACHE_KEY_OPTIONAL_FIELDS` declarations and the pin tests; D90-R solves and scores and edits **no**
+`src/`. They may run concurrently in either order. If D91 lands first, D90-R's arm realizes
+`f04fd06348e1623d` instead of `ae317e63263c8eef` — **a better address, not a different score**,
+because the field is PJM-scoped, holds `False` and is behaviourally inert for a NEISO forecast solve.
+**NEXT FREE LABEL: D92.**
+
+---
+
+## D91 — the unregistered field, the other 95, and the gate that did not fire (Opus, code) — RUN THIS FIRST
+
+```
+You are the D91 lane for jessicacohen554-cyber/market-simulator.
+MODEL: Opus. DATA PROFILE: code. Branch: claude/capx-d91-cache-key-pins, fresh off origin/main.
+Authority: OWNER RULING Q64 (2026-09-09, capx ledger §0bh.3(a)) — "Re-emit D91 to diagnose fully,
+then repair."
+THIS CHARTER WAS ISSUED AT r#62 AND NEVER DISPATCHED. It is RE-EMITTED WHOLE — start from the top —
+and it is SHARPER than the original, because another lane has since handed you the attribution.
+ZERO LP. If you conclude a solve is required, STOP and say why before spending one.
+
+WHAT IS ALREADY KNOWN, AND IT IS YOUR STARTING POINT, NOT YOUR CONCLUSION.
+capx D90, auditing its own inputs before spending an LP, measured at HEAD:
+
+  ScenarioConfig().cache_key()          72341e34fd261997
+  _PINNED_DEFAULT_KEY (tests/unit/model) 547053bdfccd4264
+  committed run payloads reproducing their own recorded key:  0 of 173
+
+and attributed it BY EXPERIMENT — registering `pjm_seam_neighbour_hourly_ladder` in
+`_CACHE_KEY_OPTIONAL_FIELDS` at a frozen "False", IN MEMORY ONLY with no file edited:
+
+  committed payloads reproducing:        0/173  ->  78/173
+  bau-d60  (D90's target)   ae317e63263c8eef  ->  f04fd06348e1623d
+  bau-d65br (D88's control) 4a5f9695eeae815a  ->  0fc42cb56c24d544   <- D88's OWN reported key
+
+The field was added by `f2a834de` (PJM hourly neighbour-anchored seam ladder) with NO registration
+entry, so it always enters the hash and moves every key in the program. D90's write-up is
+`docs/handoffs/PRECOMMIT-capx-d90-rescore-2026-09-09.md` §3.1 — READ IT FIRST, and re-derive rather
+than inherit: if your HEAD disagrees with any number above, YOUR HEAD IS RIGHT and you say so.
+
+THREE QUESTIONS, AND THE LANE IS NOT DONE UNTIL ALL THREE ARE ANSWERED.
+
+ (1) THE OTHER 95. Registering that one field restores 78 of 173. **What accounts for the remaining
+     95?** This is the half nobody has looked at and it is where a second key move would come from if
+     the repair were taken on the partial answer — which is exactly why Q64 refused the hotfix-first
+     option. Classify EVERY non-reproducing payload with its cause named. "Mostly the one field" is
+     not an answer; this ledger's standard is ZERO UNCLASSIFIED (capx D85's census — 15 mismatches,
+     all 15 derived to their recorded literal, zero unknown — is the precedent, and D85-R's
+     `scripts/lib/key_provenance.py` is the instrument, already standing tooling).
+
+ (2) WHY IS THE GATE GREEN? `scripts/check_key_provenance.py` is **EXIT 0** at this HEAD, reporting
+     *"ok: every mismatch is a known, cited, recipe-verified exception"*, while 173 of 173 payloads do
+     not reproduce. That gate is THIS DESK'S OWN — D85-R's deliverable — and its stated first duty is
+     **G1_UNKNOWN: a committed record does not reproduce and is not listed**. It did not fire.
+     Candidates worth ruling in or out BY READING, not guessing: the census reads
+     `key_at_declaration` as well as `key_live_surface` and a row reproduces if EITHER matches
+     (D85-R repair 4) — does the at-declaration construction insulate it? Does the census enumerate a
+     different population than D90's 173? Is the exception list absorbing them? **NAME THE REASON.**
+     Then say whether the gate needs repair, and if so what would have made it red — but do NOT
+     weaken it, and do NOT add these to the exception record: an exception record is for records
+     whose non-reproduction is UNDERSTOOD AND CITED, never a place to park a live defect (D85-R's own
+     `what_this_is_not` block says so in the artifact).
+
+ (3) THE REPAIR, and only after (1) and (2). The presumptive route is the (b′-1) construction — owner
+     ruling Q20, capx D24 — registering the field in `_CACHE_KEY_OPTIONAL_FIELDS` at a frozen "False"
+     so a default-off field stops entering the hash. It is PRESUMPTIVE, NOT PRE-COMMITTED: if (1)
+     shows the other 95 need something else, say so.
+     ** BEFORE YOU REGISTER ANYTHING, COUNT THE ORPHANS. ** Registering RESTORES pre-field keys rather
+     than moving them somewhere new — but any bundle solved SINCE `f2a834de` at the default currently
+     sits at the field-present key, and registration makes those interim bundles unaddressable.
+     NOBODY HAS COUNTED THEM. Enumerate them, name them, and state the cost in your PRECOMMIT before
+     the edit. If the count is large enough to change the recommendation, STOP and serve it as an
+     owner card rather than deciding it yourself.
+
+METHOD:
+ 1. Reproduce D90's numbers at your own HEAD and STATE THE EXACT COMMAND (§0be doctrine: A RED
+    INVENTORY IS ONLY AS WIDE AS THE COMMAND THAT PRODUCED IT). Also re-measure the pin tests — D88
+    counted 16 red at origin/main 5e3b6c6a across fourteen files; report what YOU see.
+ 2. Answer (1), (2), (3) in that order, in a PRECOMMIT pushed BEFORE any edit.
+ 3. Repair, then re-run both instruments and report "fixed N, newly broken 0" in D86's form.
+
+BOUNDARIES:
+  - DO NOT touch `config/solve_surface_declared.py` — APPEND-ONLY (rule 26 [R-DELETE]); re-declaring a
+    moved row restores the pre-change key and re-serves the pre-change bundle.
+  - DO NOT rewrite any committed `cache_key`. If a key rewrite is ever the right repair that is an
+    owner card, not a lane's act — D85 and D85-R both refused it and were right.
+  - DO NOT arm, disarm or move any default. `pjm_seam_neighbour_hourly_ladder` stays `False`; you are
+    registering it, not changing it.
+  - DO NOT weaken, skip, xfail or delete a pin to make it green (CLAUDE.md's PR rules forbid it
+    outright). A pin you cannot repair is a finding. Each pin you DO advance carries its cause named
+    in its own comment — a re-pin with no named cause is an answer key.
+  - `check_mechanism_matrix.py` is EXIT 1 on `main` — the shared field
+    `vre_curtailment_oversupply_allocation` is in neither the matrix nor the `absent_shared` ratchet.
+    That is another desk's rule-28(c) miss (the SPP curtailment-allocation lane) and is NOT yours:
+    name it in your FINDING and route it, do not repair it.
+  - The concurrent D90-R lane solves and scores and edits no `src/`. Your repair would give its arm a
+    better address, not a different score — no coordination is needed, and none is owed.
+
+EXIT: docs/handoffs/FINDING-capx-d91-2026-09-09.md whose FIRST content is the classification table for
+all 173 (payload · recorded key · recomputed key · cause · action), then the gate answer to (2), then
+the orphan count from (3), then before/after counts. Lead your close with the named field and commit,
+the 173-row disposition, and one sentence on why the gate was green. ruff check + ruff format clean.
+Rule 27 [R-PUSH]: `scenarios.py` is far over 300 lines — edit locally, push exact on-disk bytes,
+blob-verify after every push.
+```
+
+---
+
+## D90-R — complete the `neiso-t3` re-score (Opus, neiso)
+
+```
+You are the D90-R lane for jessicacohen554-cyber/market-simulator.
+MODEL: Opus. DATA PROFILE: neiso. Branch: claude/capx-d90r-neiso-t3-rescore, fresh off origin/main.
+Authority: OWNER RULING Q63 (2026-09-08, capx ledger §0bg.3(a)). Predecessor: capx D90, which pushed
+its full pre-registration and then stopped without solving.
+
+** YOU COMPLETE D90. YOU DO NOT REDO IT. ** Everything below already exists on `main` and is YOURS to
+inherit, not to re-derive:
+
+  docs/handoffs/PRECOMMIT-capx-d90-rescore-2026-09-09.md   (+ ADDENDUM A and ADDENDUM B)
+
+READ IT END TO END BEFORE ANYTHING ELSE. It spent ZERO LP and lost almost nothing, because it pushed
+everything it established. What you inherit, and must NOT re-litigate:
+
+  - §1  the run identified: ff-verdicts key `neiso-t3` -> run_id `neiso-2026-2050-t3-golden3-d60`,
+        cache_epoch `f04fd06348e1623d`, determination HOLD, `provenance.known_defect` PRESENT.
+        EXACTLY ONE committed record carries that flag (D88's "four sidecars" is about the GENERATED,
+        gitignored registry namespace — a different surface).
+  - §4/A.1  the pre-solve STOP PASSES: the pinned CLI recipe vs the committed config.yaml is ZERO
+        field diffs, and the pinned+resolved key equals the committed recipe key f04fd06348e1623d.
+        **The arm IS the scored recipe.**
+  - A.2  THE SCORER IS VALIDATED. `forecast_verdict.py --tier t3` over the committed artifacts
+        reproduces the committed forecast_verdict.json EXACTLY — every category, row, status and
+        detail string, only `provenance` differing. Your re-score is therefore a CONTROLLED SWAP:
+        the arm's summary and run_config replace d60's, every carried input held byte-identical, so
+        any verdict movement is attributable to the solve alone.
+  - A.2  FC-6 IS CARRIED FROM d46 AND WAS NEVER MEASURED ON d60's OWN SOLVE. Carry it identically, as
+        D90 declared, so it cannot move spuriously — and repeat D90's disclosure in your FINDING:
+        **no FC-6 reading here is evidence about D88.** Re-measuring it is another lane's work.
+  - A.3  P6's bracket was mis-anchored to bau-d46's pair; bau-d60's own co2@2040 is 8.559 Mt. Grade
+        P6 against the CORRECTED anchor, and say that the correction was pre-solve.
+  - B    the FC-7 four-clause handling rule. FOLLOW IT LITERALLY. Clause 1 is the headline; clause 2's
+        secondary reading is admissible ONLY for the two named restoration pins; clause 3 says any
+        OTHER FC-7 movement is REAL and reported as a real FAIL; clause 4 forbids editing the
+        DOF-ledger instrument to make it go away. And P9 is PRE-GRADED a likely MISS — grade it that
+        way if the as-generated ledger carries an UNIDENTIFIED entry, do not rescue it.
+
+WHAT IS YOURS: the solve, the re-score, the graded predictions, and the flag.
+
+THE KEY SITUATION — RE-READ IT AT YOUR OWN HEAD, DO NOT INHERIT §3.1. D90 recorded that at its HEAD
+`pjm_seam_neighbour_hourly_ladder` was unregistered, so 0 of 173 payloads reproduced their key and the
+arm would land in a directory other than the scored one. The concurrent D91 lane is chartered to
+repair exactly that. Re-measure at YOUR head and record what you find:
+  - if the field is still unregistered, proceed exactly as D90 planned — the arm writes to its own
+    `--out-dir` so it can neither cache-hit nor clobber the stale bundle, and the field is PJM-scoped,
+    holds False and is BEHAVIOURALLY INERT for a NEISO forecast solve (D90 §3.1, verified);
+  - if D91 has landed, your arm will realize `f04fd06348e1623d` — the scored key — which is a BETTER
+    ADDRESS, not a different score. Say so and carry on.
+**Either way the score is unaffected**, which is why the capx director ruled these two lanes
+INDEPENDENT (§0bh.3(b)) and why you must not wait on D91.
+
+THE SOLVE: NEISO T3 golden, FULL HORIZON 2026-2050, the committed recipe unchanged but for D88's
+repair being present in the code (verified in-tree at ccs.py:702 and arrays.py:3314). ONE INDIVISIBLE
+INVOCATION — the evolution chain links the years and rule 12 [R-PARALLEL] makes them sequential within
+a run, so the horizon CANNOT be sharded by year. Expect the multi-hour class. Do not shorten it: a T3
+golden scored on a truncated span is not the same instrument.
+
+THE RE-SCORE: through the FF-2D rubric, the same scorer A.2 validated. Report EVERY leg at full
+magnitude, both directions, and state plainly whether the corrected trajectory scores better or worse.
+Rule 1 [R-STRUCT] governs exactly as it governs an arm: **the D88 repair is in because duplicate-free
+fleet identity is structurally correct, and it stays in whatever this re-score says.** You produce the
+honest number; you do not vindicate D88. Grade every one of D90's §5 predictions, hits and misses
+alike — D87's missed bracket is this desk's current best example of a miss being the result.
+
+THE FLAG: `provenance.known_defect` on the `neiso-t3` record was D88's placeholder for exactly this
+moment. Remove it and register the new verdict — OR, if the re-score cannot complete, leave it EXACTLY
+as it is and say why. Never leave the board asserting a defect is pending when it is resolved, and
+never remove the flag without a verdict to put in its place.
+
+RULE 31 [R-RETAIN] BINDS ABSOLUTELY AND THIS LANE IS THE CASE IT WAS WRITTEN FOR. Gitignore the bundle
+family the moment it is written; **DO NOT rm ANY solved bundle**, whatever the re-score says. A 25-year
+NEISO T3 is far more expensive than the ercot-255 incident that produced the rule. Your final report
+MUST ask the promotion question explicitly and state that the bundles are on local disk and will not
+survive the session. **And push your own addenda as you go, the way D90 did — that discipline is why
+you inherited a validated scorer instead of a blank page.**
+
+BOUNDARIES: you edit NO file under `src/market_sim/`. D91 owns the `_CACHE_KEY_OPTIONAL_FIELDS`
+declarations and the pin tests. `check_mechanism_matrix.py` is EXIT 1 on `main` over another desk's
+`vre_curtailment_oversupply_allocation` — not yours; note it and move on.
+
+EXIT: docs/handoffs/FINDING-capx-d90r-2026-09-09.md leading with (1) every D90 prediction graded, hits
+and misses named, then (2) the per-leg re-score at full magnitude with better/worse stated plainly,
+then (3) what happened to the flag. Lead your close with the verdict transition — old verdict, new
+verdict, and the single sentence that says whether the repair helped, hurt, or neither. Rule 27
+[R-PUSH]: blob-verify anything over 300 lines.
+```
