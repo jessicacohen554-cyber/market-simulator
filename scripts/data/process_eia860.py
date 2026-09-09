@@ -71,7 +71,17 @@ _GENERATOR_COLUMN_MAP: dict[str, str] = {
 # window and so belongs in the historical fleet snapshot (the COD ramp times it
 # out by its retirement month). Units retired before it are gone for the whole
 # window and are deliberately omitted. Bump only if the supported window moves.
-RETIREMENT_WINDOW_START: int = 2023
+#
+# 2023 -> 2019 (session xiso-fuelvintage-1, executing
+# docs/handoffs/fleet-vintage-retiree-window-charter-2026-08.md §3). The
+# supported window moved by OWNER AMENDMENT, not by any residual: rule 22
+# ``[R-HOLDOUT]`` as amended 2026-08-06 makes the program's working span
+# 2019-2025 for every ISO, so 2019 is the program floor and therefore the
+# value. Rule 23 ``[R-FROZEN-DERIVE]``: the basis is SOURCE COVERAGE. The
+# cutoff must never be chosen, or later adjusted, to improve any year's fit —
+# a future session proposing a different value must cite a span change, never
+# a score.
+RETIREMENT_WINDOW_START: int = 2019
 
 # Physical window for an eGRID heat rate, Btu/kWh: below it a plant with
 # near-zero net generation reports a negative or absurd ``PLHTRT``, above it
@@ -254,10 +264,93 @@ def _join_egrid_heat_rate(df: pd.DataFrame) -> None:
 _RETIRED_COLUMNS: list[str] = EIA_860_CSV_COLUMNS + ["operating_month"]
 
 
+# Sheet parquets a `vintage_<year>/` directory carries, for the parquet-source
+# arm of :func:`_read_retired_sheets`. The pre-2023 EIA-860 release zips are
+# not committed (data/raw/eia-860 holds their EXTRACTED parquet vintages
+# instead), so a source may be either a release zip or such a directory.
+_RETIRED_SHEET_PARQUET = "eia860_generator_retired_and_canceled.parquet"
+_PLANT_SHEET_PARQUET = "eia860_plant.parquet"
+
+
+def _read_retired_sheets(source: Path) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Return ``(retired_and_canceled, plant)`` sheets for one EIA-860 source.
+
+    ``source`` is either an official annual release **zip** (the sheets are
+    read out of it directly) or an extracted **vintage directory** under
+    ``data/raw/eia-860`` carrying :data:`_RETIRED_SHEET_PARQUET` and
+    :data:`_PLANT_SHEET_PARQUET`. The two arms return the same two frames
+    with the same EIA column names, so every caller downstream is
+    source-agnostic.
+    """
+    if source.is_dir():
+        return (
+            pd.read_parquet(source / _RETIRED_SHEET_PARQUET),
+            pd.read_parquet(source / _PLANT_SHEET_PARQUET),
+        )
+    with zipfile.ZipFile(source) as zf:
+        plant_name = next(n for n in zf.namelist() if "Plant_Y" in n)
+        gen_name = next(n for n in zf.namelist() if "Generator_Y" in n)
+        return (
+            _read_sheet(zf.read(gen_name), "Retired and Canceled"),
+            _read_sheet(zf.read(plant_name), "Plant"),
+        )
+
+
+def _project_retired_sheet(
+    retired: pd.DataFrame,
+    plant: pd.DataFrame,
+    cutoff_year: int,
+    until_year: int | None = None,
+) -> pd.DataFrame:
+    """Project one vintage's retired sheet onto the canonical fleet columns.
+
+    Maps the shared EIA-860 generator columns, carries the sheet's **actual**
+    ``Retirement Year/Month`` into the ``planned_retirement_*`` fields the COD
+    ramp reads, attaches the plant's balancing authority, and keeps only
+    modelled-ISO units that retired in or after ``cutoff_year`` (and, when
+    ``until_year`` is given, strictly before it).
+    """
+    retired = retired[pd.to_numeric(retired["Plant Code"], errors="coerce").notna()]
+    plant = plant[pd.to_numeric(plant["Plant Code"], errors="coerce").notna()]
+    ba_by_plant = plant.drop_duplicates("Plant Code").set_index("Plant Code")[
+        "Balancing Authority Code"
+    ]
+
+    # The retired sheet carries ACTUAL "Retirement Year/Month" rather than
+    # the operable sheet's "Planned Retirement Year" -- map every shared
+    # column, then fill the planned_retirement_* fields from the actuals.
+    shared = {
+        k: v
+        for k, v in _GENERATOR_COLUMN_MAP.items()
+        if k in retired.columns and k != "Planned Retirement Year"
+    }
+    df = retired[list(shared)].rename(columns=shared)
+    # Carry the real retirement into the planned_retirement_* columns the
+    # COD ramp reads.
+    df["operating_month"] = pd.to_numeric(retired["Operating Month"], errors="coerce")
+    df["planned_retirement_year"] = pd.to_numeric(
+        retired["Retirement Year"], errors="coerce"
+    )
+    df["planned_retirement_month"] = pd.to_numeric(
+        retired["Retirement Month"], errors="coerce"
+    )
+    df["balancing_authority_code"] = (
+        df["plant_id"].map(ba_by_plant).astype("string").str.strip()
+    )
+    df = df[df["balancing_authority_code"].isin(BA_CODE_TO_ISO)]
+    # Within-window exits only.
+    df = df[df["planned_retirement_year"] >= cutoff_year]
+    if until_year is not None:
+        df = df[df["planned_retirement_year"] < until_year]
+    return df
+
+
 def build_within_window_retirees(
     zip_paths: list[Path],
     operable_parquet: Path,
     cutoff_year: int = RETIREMENT_WINDOW_START,
+    until_year: int | None = None,
+    preserve: pd.DataFrame | None = None,
 ) -> pd.DataFrame:
     """Return mid-window plant exits missing from the latest operable vintage.
 
@@ -279,6 +372,27 @@ def build_within_window_retirees(
     hold the whole plant online -- so its retired units stay out to avoid an
     un-maskable over-count). Units are de-duplicated across vintages by
     ``(plant_id, generator_id)``, keeping the latest vintage's record.
+
+    ``preserve`` is an ALREADY-BUILT artifact whose rows are carried through
+    unchanged, and which no newly-read row may displace: a key present in
+    ``preserve`` keeps the preserved record verbatim, and only genuinely new
+    keys are appended. It exists because **EIA prunes older retirements from
+    each new release** (``data/raw/eia-860/README.md``, FFR-7A): the release
+    vintages that supplied the shipped 2023/2024 rows are no longer on disk,
+    so a bare rebuild from the currently-available sources would silently
+    DROP 161 real retired units rather than add any. Preserving is therefore
+    the rule-14 ``[R-ACCURATE]`` reading — keep the measured rows that exist —
+    and it is what makes a window extension provably ADDITIVE.
+
+    ``until_year`` bounds the newly-read rows from ABOVE (exclusive), so a
+    widening touches only the years it is widening INTO. Widening 2023 -> 2019
+    passes ``until_year=2023``: without it the currently-committed (newer)
+    release sheet also contributes 107 units / 497.7 MW of 2023-2025
+    retirements the original build's vintages did not carry, which would
+    change every ISO's 2023-2025 TRAINING fleet and re-key every committed
+    keeper bundle. Those rows are a real, separate gap — see
+    ``docs/FINDING-xiso-fuelvintage-retiree-window-2026-09-09.md`` §2 — and
+    belong to a change scoped to the training window, not to this one.
     """
     operable_plant_ids: set[int] = set()
     if operable_parquet.exists():
@@ -290,47 +404,10 @@ def build_within_window_retirees(
             .tolist()
         )
 
-    frames: list[pd.DataFrame] = []
-    for zip_path in zip_paths:
-        with zipfile.ZipFile(zip_path) as zf:
-            plant_name = next(n for n in zf.namelist() if "Plant_Y" in n)
-            gen_name = next(n for n in zf.namelist() if "Generator_Y" in n)
-            plant = _read_sheet(zf.read(plant_name), "Plant")
-            retired = _read_sheet(zf.read(gen_name), "Retired and Canceled")
-
-        retired = retired[pd.to_numeric(retired["Plant Code"], errors="coerce").notna()]
-        plant = plant[pd.to_numeric(plant["Plant Code"], errors="coerce").notna()]
-        ba_by_plant = plant.drop_duplicates("Plant Code").set_index("Plant Code")[
-            "Balancing Authority Code"
-        ]
-
-        # The retired sheet carries ACTUAL "Retirement Year/Month" rather than
-        # the operable sheet's "Planned Retirement Year" -- map every shared
-        # column, then fill the planned_retirement_* fields from the actuals.
-        shared = {
-            k: v
-            for k, v in _GENERATOR_COLUMN_MAP.items()
-            if k in retired.columns and k != "Planned Retirement Year"
-        }
-        df = retired[list(shared)].rename(columns=shared)
-        # Carry the real retirement into the planned_retirement_* columns the
-        # COD ramp reads.
-        df["operating_month"] = pd.to_numeric(
-            retired["Operating Month"], errors="coerce"
-        )
-        df["planned_retirement_year"] = pd.to_numeric(
-            retired["Retirement Year"], errors="coerce"
-        )
-        df["planned_retirement_month"] = pd.to_numeric(
-            retired["Retirement Month"], errors="coerce"
-        )
-        df["balancing_authority_code"] = (
-            df["plant_id"].map(ba_by_plant).astype("string").str.strip()
-        )
-        df = df[df["balancing_authority_code"].isin(BA_CODE_TO_ISO)]
-        # Within-window exits only.
-        df = df[df["planned_retirement_year"] >= cutoff_year]
-        frames.append(df)
+    frames: list[pd.DataFrame] = [
+        _project_retired_sheet(*_read_retired_sheets(src), cutoff_year, until_year)
+        for src in zip_paths
+    ]
 
     if not frames:
         return pd.DataFrame(columns=_RETIRED_COLUMNS)
@@ -355,7 +432,18 @@ def build_within_window_retirees(
     # fleet loader keeps it -- the COD ramp owns the actual exit timing.
     df["status"] = "OP"
     _join_egrid_heat_rate(df)
-    return df[_RETIRED_COLUMNS].reset_index(drop=True)
+    df = df[_RETIRED_COLUMNS].reset_index(drop=True)
+
+    if preserve is None or preserve.empty:
+        return df
+    # Additive by construction: the preserved rows come first and win every
+    # shared key, so the result is `preserve` verbatim plus the keys it does
+    # not already carry (see the ``preserve`` note above).
+    kept = set(map(tuple, preserve[["plant_id", "generator_id"]].to_numpy()))
+    fresh = df[
+        [(pid, gid) not in kept for pid, gid in zip(df["plant_id"], df["generator_id"])]
+    ]
+    return pd.concat([preserve[_RETIRED_COLUMNS], fresh], ignore_index=True)
 
 
 def main() -> None:
@@ -378,17 +466,48 @@ def main() -> None:
         type=Path,
         nargs="+",
         default=None,
-        metavar="ZIP",
-        help="One or more FINAL EIA-860 annual zips whose 'Retired and "
-        "Canceled' sheets supply within-window plant exits (e.g. Mystic) "
-        "the latest operable vintage no longer carries. Writes "
-        f"{RETIRED_WITHIN_WINDOW_PARQUET}.",
+        metavar="SOURCE",
+        help="One or more EIA-860 sources whose 'Retired and Canceled' "
+        "sheets supply within-window plant exits (e.g. Mystic) the latest "
+        "operable vintage no longer carries. A source is either a FINAL "
+        "annual release zip or an extracted vintage_<year>/ directory under "
+        "data/raw/eia-860. Give them OLDEST FIRST: later sources win the "
+        f"per-unit de-duplication. Writes {RETIRED_WITHIN_WINDOW_PARQUET}.",
     )
     parser.add_argument(
         "--retired-only",
         action="store_true",
         help="Only (re)build the within-window retiree parquet from "
         "--retired-window-from; leave the operable parquets untouched.",
+    )
+    parser.add_argument(
+        "--retired-cutoff-year",
+        type=int,
+        default=RETIREMENT_WINDOW_START,
+        help="First retirement year the snapshot supports (default "
+        f"{RETIREMENT_WINDOW_START}). Rule 23 [R-FROZEN-DERIVE]: this tracks "
+        "the program's supported backcast span, NEVER a residual.",
+    )
+    parser.add_argument(
+        "--retired-until-year",
+        type=int,
+        default=None,
+        help="Exclusive UPPER bound on the retirement year of newly-read "
+        "rows. Pass the PREVIOUS cutoff when widening the window, so the "
+        "change touches only the years it widens into and leaves the "
+        "already-covered years (and every committed bundle keyed on them) "
+        "untouched.",
+    )
+    parser.add_argument(
+        "--retired-extend",
+        action="store_true",
+        help="Union the newly-read rows ONTO the committed "
+        f"{RETIRED_WITHIN_WINDOW_PARQUET} instead of replacing it: every "
+        "existing row survives byte-identically and only genuinely new "
+        "(plant_id, generator_id) keys are appended. Required when widening "
+        "the window, because EIA prunes older retirements from each release "
+        "so the vintages that supplied the existing rows are no longer "
+        "available to reproduce them.",
     )
     args = parser.parse_args()
 
@@ -397,7 +516,13 @@ def main() -> None:
     if args.retired_only:
         if not args.retired_window_from:
             raise SystemExit("--retired-only requires --retired-window-from")
-        _build_retired_window(args.retired_window_from, args.out_dir)
+        _build_retired_window(
+            args.retired_window_from,
+            args.out_dir,
+            cutoff_year=args.retired_cutoff_year,
+            until_year=args.retired_until_year,
+            extend=args.retired_extend,
+        )
         return
 
     if not args.zip.exists():
@@ -412,7 +537,13 @@ def main() -> None:
     fleet.to_parquet(fleet_path, index=False)
 
     if args.retired_window_from:
-        _build_retired_window(args.retired_window_from, args.out_dir)
+        _build_retired_window(
+            args.retired_window_from,
+            args.out_dir,
+            cutoff_year=args.retired_cutoff_year,
+            until_year=args.retired_until_year,
+            extend=args.retired_extend,
+        )
 
     by_iso = (
         fleet.assign(iso=fleet["balancing_authority_code"].map(BA_CODE_TO_ISO))
@@ -432,14 +563,34 @@ def main() -> None:
         )
 
 
-def _build_retired_window(zip_paths: list[Path], out_dir: Path) -> None:
-    """Build and write the within-window retiree parquet, logging a summary."""
+def _build_retired_window(
+    zip_paths: list[Path],
+    out_dir: Path,
+    cutoff_year: int = RETIREMENT_WINDOW_START,
+    until_year: int | None = None,
+    extend: bool = False,
+) -> None:
+    """Build and write the within-window retiree parquet, logging a summary.
+
+    With ``extend`` set the committed artifact is loaded first and passed as
+    ``preserve``, so the write is provably additive (see
+    :func:`build_within_window_retirees`).
+    """
     for zp in zip_paths:
         if not zp.exists():
-            raise SystemExit(f"EIA-860 zip not found: {zp}")
+            raise SystemExit(f"EIA-860 source not found: {zp}")
     operable_parquet = out_dir / "eia860_generator_operable.parquet"
-    retired = build_within_window_retirees(zip_paths, operable_parquet)
     out_path = out_dir / RETIRED_WITHIN_WINDOW_PARQUET
+    preserve = None
+    if extend and out_path.exists():
+        preserve = pd.read_parquet(out_path)
+    retired = build_within_window_retirees(
+        zip_paths,
+        operable_parquet,
+        cutoff_year=cutoff_year,
+        until_year=until_year,
+        preserve=preserve,
+    )
     retired.to_parquet(out_path, index=False)
     logger.info(
         "Wrote %d within-window retiree units (%.1f GW, %d plants) to %s",
