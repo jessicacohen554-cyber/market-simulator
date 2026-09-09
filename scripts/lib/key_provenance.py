@@ -62,6 +62,23 @@ reproduces only at declaration is capx D79's DESIGNED re-key — "a re-derived
 registry table re-keys the ISOs whose rows moved" — not a mismatch, and this
 module never repairs it.
 
+**SCOPE — THIS CENSUS IS PAYLOAD-DRIVEN, AND capx D91 MEASURED WHAT THAT MISSES.**
+:func:`head_key` opens with ``out = dict(payload)``: it hashes exactly the
+fields the RECORD stored, which is the right question for "could today's rules
+have produced this literal from this bundle's own config". But
+``ScenarioConfig.cache_key`` hashes ``asdict(self)`` — EVERY live field,
+materialized. A field added AFTER a bundle solved is absent from that bundle's
+payload by construction, so it can never enter this census's hash and can never
+make a row mismatch, however unregistered it is. That is precisely the defect
+``G1_UNKNOWN`` exists to catch, and G1 is structurally blind to it: at
+``fc927c2f`` this census was EXIT 0 ("15 known, ZERO unknown") while 199 of 200
+committed records could not be reconstructed to their own recorded key, all six
+ISOs' keepers among them, because ``pjm_seam_neighbour_hourly_ladder`` landed at
+``f2a834de`` with no registration entry. :func:`unregistered_schema_drift` closes
+that hole as gate ``G6``; the census summary also REPORTS the dataclass
+construction so the "ok:" verdict stops implying coverage it does not have.
+Full diagnosis: ``docs/handoffs/FINDING-capx-d91-2026-09-09.md``.
+
 **The exception record.** ``docs/governance/key-provenance-exceptions.json``
 lists every known non-reproducing record with its class, its executable recipe
 and its citation, so the census reports "N known, ZERO unknown" instead of "N
@@ -552,6 +569,57 @@ def apply_recipe(
     )
 
 
+#: The shrink-only ratchet of ``ScenarioConfig`` field names that are absent
+#: from at least one committed payload, survive the cache-key drop rules, and
+#: are NOT registered in ``_CACHE_KEY_OPTIONAL_FIELDS``. Every member is a field
+#: that enters the digest of any config newer than the record that lacks it —
+#: which is the rule-24 ``[R-REGISTRY]`` defect shape capx D91 found. The
+#: committed baseline is the HISTORICAL set (79 names, all carried by the one
+#: legacy record ``tests/golden/ercot_2026_2040.run_config.json``); it may only
+#: SHRINK. A name not on it is a NEW unregistered field and fails ``G6``.
+G6_BASELINE_PATH = (
+    _REPO / "docs" / "governance" / "key-provenance-unregistered-baseline.json"
+)
+
+
+def unregistered_schema_drift(record: dict, baseline: set[str] | None = None) -> dict:
+    """Return ``{field: [run_config, ...]}`` for unregistered schema growth.
+
+    For every committed record, the fields a run could not have stored because
+    they did not yet exist (``LIVE_FIELDS - payload_keys``) are exactly the ones
+    a reconstruction at HEAD materializes. Those that survive the drop rules
+    enter the digest, so an UNREGISTERED one moves that record's key — the
+    ``f2a834de`` shape. Registered fields are never reported even when their
+    live default has been ARMED away from the frozen declaration: that is owner
+    ruling Q20 / (b'-1) working as designed, not drift.
+
+    Args:
+        record: A :func:`census` record (needs ``rows`` with ``scenario_config``).
+        baseline: Field names to treat as historical. ``None`` reads
+            :data:`G6_BASELINE_PATH`.
+
+    Returns:
+        Mapping of offending field name to the records that expose it, empty
+        when every unregistered absentee is on the baseline.
+    """
+    if baseline is None:
+        baseline = set(json.loads(G6_BASELINE_PATH.read_text())["fields"])
+    live = {f.name for f in fields(ScenarioConfig)}
+    out: dict[str, list[str]] = {}
+    for row in record["rows"]:
+        payload = row.get("scenario_config")
+        if not isinstance(payload, dict):
+            continue
+        # An UNREGISTERED absentee survives unconditionally: nothing in
+        # ``cache_key`` can drop it, so it always enters this record's
+        # reconstruction. No value test is possible or needed.
+        for name in sorted(live - set(payload)):
+            if name in _CACHE_KEY_OPTIONAL_FIELDS or name in baseline:
+                continue
+            out.setdefault(name, []).append(row["run_config"])
+    return out
+
+
 def check_exceptions(
     record: dict, exceptions: dict, *, fetch: bool = True
 ) -> list[dict]:
@@ -578,7 +646,18 @@ def check_exceptions(
         a listed ``recorded_cache_key`` is not the key the file itself records —
         the entry describes some other record.
 
-    G1, G2, G4 and G5 are pure arithmetic over committed bytes and never touch
+    ``G6_UNREGISTERED_SCHEMA_DRIFT``
+        a ``ScenarioConfig`` field is absent from a committed payload (so it
+        postdates that run), is NOT registered in
+        ``_CACHE_KEY_OPTIONAL_FIELDS``, and is not on the historical ratchet
+        baseline. Such a field enters the digest of every config newer than the
+        record that lacks it and so moves that record's key — the rule-24
+        ``[R-REGISTRY]`` defect capx D91 diagnosed. This is the gate the other
+        five are structurally blind to: they are payload-driven and a field
+        added after a bundle solved is never IN that bundle's payload. Remedy:
+        register the field, never append it to the baseline.
+
+    G1, G2, G4, G5 and G6 are pure arithmetic over committed bytes and never touch
     the network. Only a ``vintage_sha`` recipe (G3) needs a blob; when it cannot
     be reached the failure is reported as ``G3_UNVERIFIED`` so an offline runner
     can distinguish "not checked" from "checked and wrong" — the caller decides
@@ -670,6 +749,24 @@ def check_exceptions(
                     ),
                 }
             )
+
+    for name, exposed in sorted(unregistered_schema_drift(record).items()):
+        failures.append(
+            {
+                "gate": "G6_UNREGISTERED_SCHEMA_DRIFT",
+                "run_config": exposed[0],
+                "detail": (
+                    f"{name!r} is a ScenarioConfig field absent from {len(exposed)} "
+                    "committed payload(s) and NOT in "
+                    "scenarios.py::_CACHE_KEY_OPTIONAL_FIELDS, so it enters the "
+                    "cache_key digest of every config newer than those records and "
+                    "moves their keys (rule 24 [R-REGISTRY]). Register it there and "
+                    "in _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS at its frozen default — "
+                    f"do NOT append it to {G6_BASELINE_PATH.name}, which is a "
+                    "shrink-only record of the historical set."
+                ),
+            }
+        )
     return failures
 
 

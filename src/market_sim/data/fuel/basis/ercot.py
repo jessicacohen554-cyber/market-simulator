@@ -18,7 +18,10 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from market_sim.config.constants import GAS_BASIS_DIFFERENTIAL
+from market_sim.config.constants import (
+    ERCOT_GAS_CORROBORATION_TOL_USD_MMBTU,
+    GAS_BASIS_DIFFERENTIAL,
+)
 from market_sim.config.paths import RAW_DATA_DIR
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.fleet import FleetArrays
@@ -60,6 +63,17 @@ ERCOT_ELECTRIC_POWER_GAS_PATH: Path = (
     RAW_DATA_DIR / "ercot_electric_power_gas_price.csv"
 )
 
+# The INDEPENDENT second measurement of the same quantity: the EIA-923
+# Schedule-5 quantity-weighted delivered natural-gas price paid by Texas
+# electric-power plants, $/MMBtu monthly (written by
+# scripts/data/derive_ercot_gas_corroborator.py). Same population, same
+# cost/volume estimator, a different instrument -- plant-level receipts rather
+# than a state survey. Read only by
+# :func:`ercot_electric_power_gas_basis_monthly` under
+# ``ScenarioConfig.ercot_ep_gas_basis_corroborated`` to decide, per month,
+# whether the survey print is a PRICE or merely a monthly cost ratio (ercot-261).
+ERCOT_GAS_CORROBORATOR_PATH: Path = RAW_DATA_DIR / "ercot_gas_corroborator_monthly.csv"
+
 # Per-plant natural-gas contract/spot share from EIA-923 Schedule-5 Purchase Type
 # (written by scripts/data/derive_gas_takeorpay.py). Used by
 # :func:`ercot_gas_spot_share_by_zone` to re-ground the West/Waha delivered-gas
@@ -83,6 +97,7 @@ _MCF_TO_MMBTU: float = 1.036
 
 _ERCOT_ZONAL_HUB_CLEAN_CACHE: dict[str, pd.DataFrame | None] = {}
 _ERCOT_EP_GAS_CLEAN_CACHE: dict[str, pd.DataFrame | None] = {}
+_ERCOT_CORROBORATOR_CACHE: dict[Path, dict[tuple[int, int], float] | None] = {}
 _ERCOT_GAS_SPOT_PLANT_CLEAN_CACHE: dict[str, dict[int, float] | None] = {}
 _ERCOT_GAS_SPOT_ZONE_CLEAN_CACHE: dict[str, dict[str, float] | None] = {}
 
@@ -299,8 +314,39 @@ def ercot_electric_power_gas_basis(
     return ep_mmbtu - float(np.mean(hh_months))
 
 
+def _load_ercot_gas_corroborator(
+    path: Path | None = None,
+) -> dict[tuple[int, int], float] | None:
+    """Return ``{(year, month): $/MMBtu}`` from the corroborator CSV, or None.
+
+    The EIA-923 Schedule-5 quantity-weighted TX delivered gas price -- the
+    independent second measurement :func:`ercot_electric_power_gas_basis_monthly`
+    corroborates the N3045TX3 survey print against. Missing file returns None,
+    which fails the caller closed onto the un-filtered monthly form.
+    """
+    resolved = Path(path) if path else ERCOT_GAS_CORROBORATOR_PATH
+    if resolved in _ERCOT_CORROBORATOR_CACHE:
+        return _ERCOT_CORROBORATOR_CACHE[resolved]
+    table: dict[tuple[int, int], float] | None = None
+    if resolved.exists():
+        frame = pd.read_csv(resolved)
+        if not frame.empty:
+            table = {
+                (int(y), int(m)): float(v)
+                for y, m, v in zip(
+                    frame["year"], frame["month"], frame["price_usd_mmbtu"]
+                )
+            }
+    _ERCOT_CORROBORATOR_CACHE[resolved] = table
+    return table
+
+
 def ercot_electric_power_gas_basis_monthly(
-    year: int, path: Path | None = None, henry_hub_path: Path | None = None
+    year: int,
+    path: Path | None = None,
+    henry_hub_path: Path | None = None,
+    corroborated: bool = False,
+    corroborator_path: Path | None = None,
 ) -> np.ndarray | None:
     """Return the SAME measured TX electric-power gas basis, resolved MONTHLY.
 
@@ -335,17 +381,46 @@ def ercot_electric_power_gas_basis_monthly(
     year degrades to the same mean-zero spread and every non-backcast solve is
     byte-identical (rules 13 ``[R-MEASURED]`` / 14 ``[R-ACCURATE]``).
 
+    **The corroboration leg** (ercot-261, ``corroborated=True``, gated by
+    ``ScenarioConfig.ercot_ep_gas_basis_corroborated``). Relocating the measured
+    level to its own months is right wherever the monthly print IS a price. It
+    is not a price in a month whose within-month distribution is extreme: the
+    series is a monthly cost/volume RATIO, and February 2021 reads $59.73/MMBtu
+    because Texas gas traded near $3 for ~24 days and $100-1,200 for ~4. Applied
+    at monthly resolution the CHEAPEST February day still prices gas at
+    $31.26/MMBtu, so all 672 hours clear $200/MWh on fuel alone — the measured
+    cause of the ercot-254 re-test's C3c regression (234 -> 688 h vs 258).
+
+    When set, each month is tested against an INDEPENDENT second measurement of
+    the same quantity — the EIA-923 Schedule-5 TX quantity-weighted plant
+    receipts (:func:`_load_ercot_gas_corroborator`), same population, same
+    estimator, a different instrument. A month whose two measurements agree
+    within :data:`ERCOT_GAS_CORROBORATION_TOL_USD_MMBTU` keeps its own basis; a
+    month where they disagree takes the mean over that year's CORROBORATED
+    months — never the annual form, which is contaminated by the very month
+    being replaced (2021's +5.278 IS February). Measured 2019-2025 the two
+    series agree within $0.85/MMBtu in 82 of 84 months and disagree only in
+    2021-02 and 2021-12, so the filter fires in no year but 2021.
+
+    The test reads fuel series only — never a price, load, dispatch or any model
+    output — so it is not an input rescaled to a residual (rules 1/13).
+
     Args:
         year: The solve year.
         path: Override for the EP series CSV (tests).
         henry_hub_path: Override for the Henry Hub monthly series (tests).
+        corroborated: Apply the corroboration admissibility filter above.
+        corroborator_path: Override for the corroborator CSV (tests).
 
     Returns:
         A ``(12,)`` array of $/MMBtu basis values indexed Jan..Dec, or ``None``
         when the EP series, any of the twelve EP months, or any of the twelve
         Henry Hub months is missing for ``year`` — the fail-closed condition
         that keeps a partial year on the annual form rather than on a silently
-        gap-filled monthly one.
+        gap-filled monthly one. Under ``corroborated`` the same fail-closed
+        discipline applies to the corroborator: a missing file, a missing month,
+        or a year with no corroborated month at all returns the UN-filtered
+        monthly vector rather than a partially-filtered one.
     """
     frame = _load_ercot_electric_power_gas(path)
     if frame is None:
@@ -361,7 +436,35 @@ def ercot_electric_power_gas_basis_monthly(
         return None
     ep = np.array([by_month[m] for m in range(1, 13)], dtype=float) / _MCF_TO_MMBTU
     hub = np.array([hh[(year, m)] for m in range(1, 13)], dtype=float)
-    return ep - hub
+    basis = ep - hub
+    if not corroborated:
+        return basis
+    # Corroboration filter. Fail closed on the un-filtered monthly form at every
+    # incompleteness, so an armed run never prices off a partially-filtered year.
+    table = _load_ercot_gas_corroborator(corroborator_path)
+    if table is None or any((year, m) not in table for m in range(1, 13)):
+        return basis
+    second = np.array([table[(year, m)] for m in range(1, 13)], dtype=float)
+    admissible = np.abs(ep - second) <= ERCOT_GAS_CORROBORATION_TOL_USD_MMBTU
+    if not admissible.any() or admissible.all():
+        return basis
+    # The fallback is the year's own CORROBORATED central value, never the
+    # annual mean (which the inadmissible month itself produced).
+    out = basis.copy()
+    out[~admissible] = float(basis[admissible].mean())
+    logger.info(
+        "ERCOT EP gas basis (%d): corroboration filter held out month(s) %s "
+        "(|survey - receipts| up to %.2f $/MMBtu vs tol %.2f); basis -> %+.3f "
+        "$/MMBtu, year mean %+.3f -> %+.3f",
+        year,
+        ", ".join(str(m + 1) for m in np.flatnonzero(~admissible)),
+        float(np.abs(ep - second)[~admissible].max()),
+        ERCOT_GAS_CORROBORATION_TOL_USD_MMBTU,
+        float(basis[admissible].mean()),
+        float(basis.mean()),
+        float(out.mean()),
+    )
+    return out
 
 
 _ERCOT_GAS_SPOT_CACHE: dict[tuple[Path, Path], dict[str, float] | None] = {}
@@ -687,7 +790,12 @@ def apply_ercot_zonal_gas_basis(
     # incomplete, so every other ISO and every forecast is byte-identical.
     scalar = GAS_BASIS_DIFFERENTIAL.get("ERCOT", 0.0)
     level_monthly = (
-        ercot_electric_power_gas_basis_monthly(year)
+        ercot_electric_power_gas_basis_monthly(
+            year,
+            corroborated=bool(
+                getattr(config, "ercot_ep_gas_basis_corroborated", False)
+            ),
+        )
         if getattr(config, "ercot_ep_gas_basis_monthly", False)
         else None
     )

@@ -256,6 +256,40 @@ def test_census_reports_both_key_constructions(record):
         )
 
 
+@pytest.mark.slow
+def test_g6_is_green_and_fails_on_a_new_unregistered_field(record):
+    """G6 (capx D91): a new UNREGISTERED ``ScenarioConfig`` field must be RED.
+
+    The gate the payload-driven five are structurally blind to. G1-G5 hash only
+    the fields a record STORED, and a field added after a bundle solved is never
+    in that bundle's payload — which is how ``pjm_seam_neighbour_hourly_ladder``
+    entered every config's digest at ``f2a834de`` while this suite stayed green
+    (``docs/handoffs/FINDING-capx-d91-2026-09-09.md`` §3).
+
+    Both directions are proved, because a gate that has only ever been seen
+    green is indistinguishable from one that cannot fail.
+    """
+    baseline = set(json.loads(K.G6_BASELINE_PATH.read_text())["fields"])
+    assert not K.unregistered_schema_drift(record, baseline=baseline), (
+        "an unregistered ScenarioConfig field is off the G6 ratchet — register it "
+        "in _CACHE_KEY_OPTIONAL_FIELDS + _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS, do "
+        "NOT append it to the baseline"
+    )
+    # A field that IS registered, pretended un-registered, must be caught.
+    victim = "pjm_seam_neighbour_hourly_ladder"
+    assert victim in K._CACHE_KEY_OPTIONAL_FIELDS, (
+        f"{victim} is the capx D91 registration; this test pins that it stays registered"
+    )
+    original = K._CACHE_KEY_OPTIONAL_FIELDS
+    try:
+        K._CACHE_KEY_OPTIONAL_FIELDS = tuple(x for x in original if x != victim)
+        drift = K.unregistered_schema_drift(record, baseline=baseline)
+    finally:
+        K._CACHE_KEY_OPTIONAL_FIELDS = original
+    assert victim in drift, "G6 cannot fail — it does not detect an unregistered field"
+    assert drift[victim], f"G6 named {victim} but no record exposes it"
+
+
 def test_exception_record_json_is_committed_and_parses():
     """The record is a committed artifact, not something a run regenerates."""
     assert K.EXCEPTIONS_PATH.exists(), f"{K.EXCEPTIONS_PATH} is not committed"

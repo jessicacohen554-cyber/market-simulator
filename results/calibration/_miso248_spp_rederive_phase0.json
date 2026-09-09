@@ -1,0 +1,607 @@
+{
+ "probe": "miso-248 phase 0 \u2014 SPP hourly seam ladder re-derive on the repaired clock",
+ "prereg": "results/calibration/PREREG-miso248-the-spp-hourly-ladder-rederive-on-the-repaired-clock-2026-09-09.md",
+ "zero_lp": true,
+ "keeper": "2026-09-09-miso-247-p19-posture",
+ "cited_data_change": "86e45462 (2026-09-09) \u2014 SPP actual-LMP clock repair",
+ "P0_provenance": {
+  "git_head": "10377aeca92edd675b8a00d9672708cdf781fb44",
+  "git_head_short": "10377aec",
+  "tree_clean": true,
+  "keeper_basis_sha": "f29b7ab022d399f40904379d86eb2324f08535e6",
+  "blob_sha256_16": {
+   "data/raw/_validation-source/actual_lmp_hourly_zonal_SPP.parquet": "a524dddc78b603fa",
+   "data/raw/_validation-source/actual_lmp_hourly_MISO.parquet": "30e51e2c3614de8c",
+   "data/raw/eia-930-interchange/MISO interchange hourly.parquet": "59fce400b5e04eec",
+   "src/market_sim/model/interchange/spec.py": "d41efb5e772c86fb",
+   "src/market_sim/config/interchange_config.py": "e3bdc235f269d22e",
+   "scripts/data/derive_miso_seam_ladders.py": "e56200818975c1bc"
+  }
+ },
+ "P1_scope": {
+  "incumbent_MISO_SEAM_LADDER_BY_YEAR": {
+   "n_entries": 192,
+   "n_mismatched": 0,
+   "max_abs": 0.0,
+   "rows": {}
+  },
+  "hourly_SPP_overlay": {
+   "n_entries": 48,
+   "n_mismatched": 48,
+   "max_abs": 114.18,
+   "rows": {
+    "2023/SPP/import": {
+     "registry": [
+      13.44,
+      30.3,
+      50.82,
+      83.92,
+      123.33,
+      152.94,
+      152.94,
+      152.94
+     ],
+     "rederived": [
+      10.62,
+      25.73,
+      43.07,
+      62.47,
+      83.98,
+      90.56,
+      90.56,
+      90.56
+     ],
+     "max_abs": 62.379999999999995,
+     "max_rel": 0.4078723682489865
+    },
+    "2023/SPP/export": {
+     "registry": [
+      -2.39,
+      -21.49,
+      -41.89,
+      -90.15,
+      -178.51,
+      -212.03,
+      -212.03,
+      -212.03
+     ],
+     "rederived": [
+      0.24,
+      -10.16,
+      -25.87,
+      -56.57,
+      -153.04,
+      -166.65,
+      -166.65,
+      -166.65
+     ],
+     "max_abs": 45.379999999999995,
+     "max_rel": 1.1004184100418408
+    },
+    "2024/SPP/import": {
+     "registry": [
+      17.26,
+      37.56,
+      65.15,
+      139.78,
+      230.88,
+      230.88,
+      230.88,
+      230.88
+     ],
+     "rederived": [
+      14.4,
+      33.33,
+      56.44,
+      109.27,
+      203.29,
+      203.29,
+      203.29,
+      203.29
+     ],
+     "max_abs": 30.510000000000005,
+     "max_rel": 0.2182715696093862
+    },
+    "2024/SPP/export": {
+     "registry": [
+      1.44,
+      -12.98,
+      -23.83,
+      -33.09,
+      -43.06,
+      -48.41,
+      -55.24,
+      -66.13
+     ],
+     "rederived": [
+      2.84,
+      -6.48,
+      -14.46,
+      -20.33,
+      -27.41,
+      -32.26,
+      -36.24,
+      -47.02
+     ],
+     "max_abs": 19.109999999999992,
+     "max_rel": 0.9722222222222222
+    },
+    "2025/SPP/import": {
+     "registry": [
+      18.58,
+      41.9,
+      78.87,
+      152.95,
+      197.69,
+      237.84,
+      271.99,
+      338.83
+     ],
+     "rederived": [
+      16.86,
+      37.5,
+      67.75,
+      140.17,
+      182.1,
+      232.18,
+      252.79,
+      290.12
+     ],
+     "max_abs": 48.70999999999998,
+     "max_rel": 0.1437594073724286
+    },
+    "2025/SPP/export": {
+     "registry": [
+      -2.37,
+      -19.0,
+      -31.11,
+      -44.88,
+      -70.49,
+      -122.45,
+      -254.63,
+      -254.63
+     ],
+     "rederived": [
+      0.34,
+      -10.42,
+      -18.49,
+      -28.01,
+      -45.96,
+      -69.66,
+      -140.45,
+      -140.45
+     ],
+     "max_abs": 114.18,
+     "max_rel": 1.1434599156118144
+    }
+   },
+   "row_count_pin": {
+    "2023": {
+     "sample_rows": 8760,
+     "joined_rows": 8760,
+     "pin_holds": true
+    },
+    "2024": {
+     "sample_rows": 8760,
+     "joined_rows": 8760,
+     "pin_holds": true
+    },
+    "2025": {
+     "sample_rows": 8760,
+     "joined_rows": 8760,
+     "pin_holds": true
+    }
+   }
+  },
+  "VERDICT_scope": "HOURLY SPP OVERLAY ONLY"
+ },
+ "P2_half_applied_change": {
+  "available": true,
+  "hub": "SPPNORTH_HUB",
+  "per_year": {
+   "2023": {
+    "hours_moved": 8758,
+    "share_moved": 0.999772,
+    "max_abs_delta": 203.9359,
+    "mean_new": 24.2407,
+    "mean_old": 24.2365,
+    "sorted_value_multiset_identical": false
+   },
+   "2024": {
+    "hours_moved": 8757,
+    "share_moved": 0.999658,
+    "max_abs_delta": 410.5532,
+    "mean_new": 21.3074,
+    "mean_old": 21.3023,
+    "sorted_value_multiset_identical": false
+   },
+   "2025": {
+    "hours_moved": 8758,
+    "share_moved": 0.999772,
+    "max_abs_delta": 277.6894,
+    "mean_new": 28.099,
+    "mean_old": 28.0837,
+    "sorted_value_multiset_identical": false
+   }
+  },
+  "PREMISE_FALSIFIED_series_identical": false
+ },
+ "P3_rederive": {
+  "per_year": {
+   "2023": {
+    "import": [
+     10.62,
+     25.73,
+     43.07,
+     62.47,
+     83.98,
+     90.56,
+     90.56,
+     90.56
+    ],
+    "export": [
+     0.24,
+     -10.16,
+     -25.87,
+     -56.57,
+     -153.04,
+     -166.65,
+     -166.65,
+     -166.65
+    ],
+    "import_rising": true,
+    "export_falling": true,
+    "no_wash": true,
+    "notes": []
+   },
+   "2024": {
+    "import": [
+     14.4,
+     33.33,
+     56.44,
+     109.27,
+     203.29,
+     203.29,
+     203.29,
+     203.29
+    ],
+    "export": [
+     2.84,
+     -6.48,
+     -14.46,
+     -20.33,
+     -27.41,
+     -32.26,
+     -36.24,
+     -47.02
+    ],
+    "import_rising": true,
+    "export_falling": true,
+    "no_wash": true,
+    "notes": []
+   },
+   "2025": {
+    "import": [
+     16.86,
+     37.5,
+     67.75,
+     140.17,
+     182.1,
+     232.18,
+     252.79,
+     290.12
+    ],
+    "export": [
+     0.34,
+     -10.42,
+     -18.49,
+     -28.01,
+     -45.96,
+     -69.66,
+     -140.45,
+     -140.45
+    ],
+    "import_rising": true,
+    "export_falling": true,
+    "no_wash": true,
+    "notes": []
+   }
+  },
+  "stop_conditions": {
+   "row_count_pin": true,
+   "monotone": true,
+   "no_wash": true
+  },
+  "REDERIVE_ADMISSIBLE": true
+ },
+ "P4_P5_footprint": {
+  "band_cap_mw": 500.0,
+  "per_year": {
+   "2023": {
+    "import": {
+     "delta_offsets": [
+      -2.82,
+      -4.57,
+      -7.75,
+      -21.45,
+      -39.35,
+      -62.38,
+      -62.38,
+      -62.38
+     ],
+     "max_abs_delta_offset": 62.38,
+     "hours_clearing_old": [
+      3471,
+      661,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "hours_clearing_new": [
+      4348,
+      1096,
+      80,
+      0,
+      0,
+      0,
+      0,
+      0
+     ],
+     "status_flip_hours": [
+      877,
+      435,
+      80,
+      0,
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    "export": {
+     "delta_offsets": [
+      2.63,
+      11.33,
+      16.02,
+      33.58,
+      25.47,
+      45.38,
+      45.38,
+      45.38
+     ],
+     "max_abs_delta_offset": 45.38,
+     "hours_clearing_old": [
+      1356,
+      288,
+      77,
+      24,
+      5,
+      0,
+      0,
+      0
+     ],
+     "hours_clearing_new": [
+      1712,
+      722,
+      224,
+      42,
+      7,
+      6,
+      6,
+      6
+     ],
+     "status_flip_hours": [
+      356,
+      434,
+      147,
+      18,
+      2,
+      6,
+      6,
+      6
+     ]
+    },
+    "F_MWh": 1183500.0,
+    "F_TWh": 1.1835,
+    "dE_pred_TWh": 0.2085,
+    "max_abs_delta_offset_all_bands": 62.38
+   },
+   "2024": {
+    "import": {
+     "delta_offsets": [
+      -2.86,
+      -4.23,
+      -8.71,
+      -30.51,
+      -27.59,
+      -27.59,
+      -27.59,
+      -27.59
+     ],
+     "max_abs_delta_offset": 30.51,
+     "hours_clearing_old": [
+      2577,
+      327,
+      7,
+      7,
+      7,
+      7,
+      7,
+      7
+     ],
+     "hours_clearing_new": [
+      3260,
+      593,
+      7,
+      7,
+      7,
+      7,
+      7,
+      7
+     ],
+     "status_flip_hours": [
+      683,
+      266,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+     ]
+    },
+    "export": {
+     "delta_offsets": [
+      1.4,
+      6.5,
+      9.37,
+      12.76,
+      15.65,
+      16.15,
+      19.0,
+      19.11
+     ],
+     "max_abs_delta_offset": 19.11,
+     "hours_clearing_old": [
+      1946,
+      525,
+      243,
+      125,
+      65,
+      54,
+      47,
+      33
+     ],
+     "hours_clearing_new": [
+      2220,
+      931,
+      474,
+      301,
+      189,
+      136,
+      97,
+      57
+     ],
+     "status_flip_hours": [
+      274,
+      406,
+      231,
+      176,
+      124,
+      82,
+      50,
+      24
+     ]
+    },
+    "F_MWh": 1158000.0,
+    "F_TWh": 1.158,
+    "dE_pred_TWh": -0.209,
+    "max_abs_delta_offset_all_bands": 30.51
+   },
+   "2025": {
+    "import": {
+     "delta_offsets": [
+      -1.72,
+      -4.4,
+      -11.12,
+      -12.78,
+      -15.59,
+      -5.66,
+      -19.2,
+      -48.71
+     ],
+     "max_abs_delta_offset": 48.71,
+     "hours_clearing_old": [
+      3152,
+      398,
+      14,
+      8,
+      7,
+      4,
+      3,
+      1
+     ],
+     "hours_clearing_new": [
+      3507,
+      633,
+      21,
+      9,
+      7,
+      4,
+      3,
+      3
+     ],
+     "status_flip_hours": [
+      355,
+      235,
+      7,
+      1,
+      0,
+      0,
+      0,
+      2
+     ]
+    },
+    "export": {
+     "delta_offsets": [
+      2.71,
+      8.58,
+      12.62,
+      16.87,
+      24.53,
+      52.79,
+      114.18,
+      114.18
+     ],
+     "max_abs_delta_offset": 114.18,
+     "hours_clearing_old": [
+      1559,
+      336,
+      105,
+      38,
+      9,
+      1,
+      0,
+      0
+     ],
+     "hours_clearing_new": [
+      1935,
+      739,
+      353,
+      137,
+      37,
+      9,
+      1,
+      1
+     ],
+     "status_flip_hours": [
+      376,
+      403,
+      248,
+      99,
+      28,
+      8,
+      1,
+      1
+     ]
+    },
+    "F_MWh": 882000.0,
+    "F_TWh": 0.882,
+    "dE_pred_TWh": -0.282,
+    "max_abs_delta_offset_all_bands": 114.18
+   }
+  },
+  "SCREEN_YEAR": 2023,
+  "selection_rule_applied": "argmax F(year)",
+  "F_ranking_TWh": {
+   "2023": 1.1835,
+   "2024": 1.158,
+   "2025": 0.882
+  },
+  "dE_pred_screen_year_TWh": 0.2085,
+  "G1_form": "A (|dE_pred| >= 0.05 TWh)"
+ }
+}

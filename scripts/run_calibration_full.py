@@ -9199,6 +9199,36 @@ def main() -> None:
         "Requires --ct-mustrun-per-plant.",
     )
     parser.add_argument(
+        "--ercot-ep-gas-basis-monthly",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="ERCOT only (ercot-254). Resolve the measured TX "
+        "electric-power delivered-gas LEVEL anchor at its native MONTHLY "
+        "resolution (EP[m]/1.036 - HH[m]) instead of collapsing it to one "
+        "annual mean. The annual form is a resolution mismatch and fails "
+        "outright when a year's within-year distribution is extreme "
+        "(February 2021 is 30.7 sigma above the other eleven months, so the "
+        "2021 annual mean lifts every ordinary hour by +5.78 $/MMBtu). "
+        "No-op unless the ERCOT zonal gas basis is also on. Off by default.",
+    )
+    parser.add_argument(
+        "--ercot-ep-gas-basis-corroborated",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="ERCOT only (ercot-261). CORROBORATION sub-gate on the monthly "
+        "level above: use a month's own measured basis only where a second, "
+        "independent measurement of the same quantity (EIA-923 Schedule-5 TX "
+        "quantity-weighted plant receipts) confirms the N3045TX3 survey print "
+        "within ERCOT_GAS_CORROBORATION_TOL_USD_MMBTU; otherwise fall back to "
+        "the mean over that year's corroborated months. The EIA print is a "
+        "monthly cost/volume RATIO, not a price, in a month whose within-month "
+        "distribution is extreme -- applied at monthly resolution the cheapest "
+        "February 2021 day still prices gas at $31.26/MMBtu. Measured "
+        "2019-2025 the two series agree within $0.85/MMBtu in 82 of 84 months, "
+        "so this fires in no year but 2021. Requires "
+        "--ercot-ep-gas-basis-monthly. Off by default.",
+    )
+    parser.add_argument(
         "--ct-deployment",
         action=argparse.BooleanOptionalAction,
         default=False,
@@ -13351,6 +13381,16 @@ def main() -> None:
             # Per-plant EIA-860 duct-burner shares supersede the 4-plant
             # hardcoded ERCOT peaking override, so turn it off when on.
             "cc_peaking_per_plant": False if args.cc_duct_peaking else None,
+            # ercot-254 / ercot-261 (ERCOT-only; no-ops elsewhere). The monthly
+            # resolution of the measured delivered-gas LEVEL anchor, and the
+            # corroboration sub-gate that decides per month whether the survey
+            # print is a price or a monthly cost ratio.
+            "ercot_ep_gas_basis_monthly": (
+                True if args.ercot_ep_gas_basis_monthly else None
+            ),
+            "ercot_ep_gas_basis_corroborated": (
+                True if args.ercot_ep_gas_basis_corroborated else None
+            ),
             "ct_deployment_overlay": True if args.ct_deployment else None,
             "ct_deployment_floor_frac": (
                 args.ct_deployment_floor_frac if args.ct_deployment else None

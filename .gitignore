@@ -722,6 +722,13 @@ results/calibration/*/clean_*/
 #    their heavy contents are already ignored by §8.
 # -----------------------------------------------------------------------------
 results/calibration/*probe*/
+# miso-248 SPP-ladder clock re-derive: the rule-29 screen arm + its EARNED
+# control (G-DRIFT found one LIVE hunk, so form 4 is falsified) and, if the
+# screen clears, the full-span bundle. Rule 29(c) DELETE-BEFORE-MERGE is
+# discharged by keeping them out of `main`, which this rule does; rule 31
+# [R-RETAIN] forbids removing them from disk before the owner rules on
+# promotion. A promoted bundle's slim set overrides this rule via `git add -f`.
+results/calibration/miso248_*/
 # ercot-235 2023-discrete offer-sweep grid points (PRECOMMIT-ercot235: local
 # W-2 probe bundles; each point's record is its ercot235_point_score.json +
 # official_2023.json, quoted in the FINDING/log; the selected WINNER is
@@ -1525,3 +1532,29 @@ results/calibration/pjm177_*/
 # before the OWNER has ruled on promotion. Every number cited from them lives
 # in results/calibration/FINDING-pjm177b-touchpoints-2026-09-09.md.
 results/calibration/pjm177b_*/
+
+# capx D90-R (rule 31 [R-RETAIN]): the re-score arm bundle family stays on local
+# disk and never reaches main. Gitignoring is what discharges rule 29 [R-SCREEN](c);
+# `rm` is forbidden by rule 31.
+/results/ff-t3-neiso-golden/d90-rescore/
+
+# SPP-52a offer-curve level arm (rule 31 [R-RETAIN]: gitignored, never rm)
+results/calibration/_spp52a_*
+
+# SPP-52a heavy bundle parts retained off-repo (rule 31 [R-RETAIN]: never rm)
+results/calibration/_spp52a_heavy/
+
+# capx D90 (owner ruling Q63) — the same-container PRE-D88 CONTROL solve earned by
+# rule 29(b)'s LIVE case when T-REPRO failed. Rule 29(c) keeps a control bundle OUT
+# of `main` (the parity gate only ever sees committed dirs); rule 31 [R-RETAIN]
+# keeps it ON LOCAL DISK until the owner has ruled on promotion. Every number this
+# lane cites from it is in docs/handoffs/FINDING-capx-d90-rescore-2026-09-09.md.
+/results/ff-t3-neiso-golden/d90-pre-d88-control/
+# ercot-261 solve bundles (arm + control, per-year shards and the composed span).
+# Rule 31 [R-RETAIN]: these are NEVER deleted from local disk until the owner
+# rules on promotion -- gitignoring is what discharges rule 29(c)'s
+# delete-before-merge duty and keeps check_registry_payload_parity's bundle
+# sweep green, since that sweep only ever sees COMMITTED dirs. Shards force-add
+# (git add -f) their own bundle onto a scratch branch to ship results back;
+# nothing here reaches main unless the owner promotes the run.
+results/calibration/ercot261_*/

@@ -1375,6 +1375,15 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # which is the safe direction. Registered IN THE SAME COMMIT as the field
     # (the nyiso-119 discipline).
     "gas_electric_power_monthly_level",
+    # ercot-261 corroboration sub-gate on the SAME monthly LEVEL anchor,
+    # default off: dropped from the hash at its False default so every
+    # pre-existing ERCOT key (the designated keeper's included) stays
+    # byte-stable -- the off path returns the identical un-filtered monthly
+    # vector, so it is byte-identical by construction. An armed run replaces an
+    # un-corroborated month's basis with the year's corroborated mean (a
+    # different delivered-gas array) and hashes distinctly.
+    # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
+    "ercot_ep_gas_basis_corroborated",
     # ercot-255 EP-reference of the F923-sourced rows of the ERCOT zonal gas
     # SPREAD, default off: dropped from the hash at its False default so every
     # pre-existing ERCOT key (the designated keeper's included) stays
@@ -1640,6 +1649,22 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # end, per HOUSE-3. Registered IN THE SAME COMMIT as the field (the
     # nyiso-119 discipline).
     "pjm_interface_feed_admissibility_gate",
+    # pjm-174: the measured hourly neighbour-anchored PJM seam ladder
+    # (PRECOMMIT-pjm174-seam-neighbour-hourly-ladder-2026-09-08.md; GATED
+    # default False => the seam keeps its flat envelope exactly as before,
+    # byte-identical). REGISTERED RETROACTIVELY by capx D91 (owner ruling Q64,
+    # 2026-09-09): the field landed at `f2a834de` WITHOUT this entry or its
+    # ledger entry below, so it entered the digest at its own default and moved
+    # the key of EVERY config in the program -- 199 of the 200 committed
+    # run_config records stopped reproducing their own recorded cache_key, all
+    # six ISOs' keepers among them, and the pinned default key came off its
+    # literal (547053bdfccd4264 -> 72341e34fd261997). This entry RESTORES those
+    # keys rather than moving them anywhere new: dropping the field at its
+    # frozen False reproduces each record's own recorded literal, verified over
+    # all 200 (docs/handoffs/FINDING-capx-d91-2026-09-09.md section 2). An
+    # ARMED run still carries True into the hash and so still keys distinctly.
+    # PJM cluster -- end of its run, per HOUSE-3.
+    "pjm_seam_neighbour_hourly_ladder",
     # pjm-169 F4: the solve-year vintage identification point of the gas-offer
     # net-revenue margin (PRECOMMIT-pjm169-f4-anchor-vintage-2026-09-06.md §2;
     # GATED default False => the anchor stays the frozen 2023-2025 window mean
@@ -2108,6 +2133,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "ercot_ep_gas_basis_monthly": "False",
     "gas_electric_power_monthly_level": "False",
+    "ercot_ep_gas_basis_corroborated": "False",
     # Added by ercot-255 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "ercot_zonal_spread_ep_referenced": "False",
@@ -2253,6 +2279,11 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "capacity_screen_peak_measured_hindcast": "False",
     "eia860_vintage_tracks_solve_year": "False",
     "pjm_interface_feed_admissibility_gate": "False",
+    # capx D91 (owner ruling Q64): the frozen drop value of the retroactive
+    # pjm-174 registration above. False is the value the field held from
+    # f2a834de onward and holds at HEAD -- this is a REGISTRATION, not a
+    # default flip, so no (b'-1) key advance is designed or observed.
+    "pjm_seam_neighbour_hourly_ladder": "False",
     "gas_offer_margin_anchor_vintage": "False",
     "cc_summer_derate_reconciled_basis": "False",
     # SPP-49: the F923 plausibility screen, registered at the PRE-REPAIR posture
@@ -16269,6 +16300,50 @@ class ScenarioConfig:
     # .basis.ercot.ercot_electric_power_gas_basis_monthly.
     ercot_ep_gas_basis_monthly: bool = False
 
+    # Tier 3 (calibration) -- ercot-261. CORROBORATION sub-gate on the monthly
+    # LEVEL above: a month's measured basis is used at monthly resolution only
+    # where a SECOND, INDEPENDENT measurement of the same quantity confirms it.
+    #
+    # ``ercot_ep_gas_basis_monthly`` relocates the measured TX electric-power
+    # delivered-gas level back to the months it was measured in, which is right
+    # wherever the monthly print is a price. It is NOT a price in a month whose
+    # own within-month distribution is extreme: the EIA series is a monthly
+    # cost/volume RATIO, and February 2021 (Winter Storm Uri) prints
+    # $59.73/MMBtu because Texas gas traded near $3 for ~24 days and $100-1,200
+    # for ~4 (EIA Natural Gas Weekly Update 2021-02-18: Waha $4.54 on Feb 10 ->
+    # $64.22 on Feb 17, peak >$206/MMBtu on Feb 16). Applied at monthly
+    # resolution -- additively, or multiplied through the armed Henry Hub daily
+    # shape, which spans only ~9:1 within that month -- the CHEAPEST February
+    # day still prices gas at $31.26/MMBtu, i.e. every one of the 672 hours
+    # clears $200/MWh on fuel cost alone. That is the measured cause of the
+    # ercot-254 re-test's C3c regression (234 -> 688 h vs 258 actual).
+    #
+    # ON, each month is tested against the EIA-923 Schedule-5 TX plant-receipt
+    # series (``ERCOT_GAS_CORROBORATOR_PATH``, built by
+    # scripts/data/derive_ercot_gas_corroborator.py) -- the same quantity, the
+    # same quantity-weighted estimator, an independent instrument. A month
+    # whose two measurements agree within
+    # :data:`~market_sim.config.constants.ERCOT_GAS_CORROBORATION_TOL_USD_MMBTU`
+    # keeps its own basis; a month where they disagree falls back to the mean
+    # over that year's CORROBORATED months -- never to the annual form, which is
+    # contaminated by the very month being replaced (2021's +5.278 IS February).
+    #
+    # Measured over 2019-01..2025-12 the two series agree within $0.85/MMBtu in
+    # 82 of 84 months and disagree in exactly two -- 2021-02 ($13.77) and
+    # 2021-12 ($3.47) -- so the filter fires in NO year but 2021 and the
+    # mechanism reduces exactly to the un-filtered monthly form elsewhere. The
+    # test reads fuel series only: it never touches a price, a load, a dispatch
+    # or any model output, so it is not an input rescaled to a residual
+    # (rules 1 [R-STRUCT] / 13 [R-MEASURED]).
+    #
+    # Default OFF; no-op unless ``ercot_ep_gas_basis_monthly`` is also on (rule
+    # 19 [R-ONE-MECH]: a sub-gate inside that mechanism, never one beside it),
+    # and inert whenever the corroborator lacks any of the year's twelve months
+    # (fail-closed to the un-filtered monthly form). Every other ISO and every
+    # forecast is byte-identical. See
+    # .basis.ercot.ercot_electric_power_gas_basis_monthly.
+    ercot_ep_gas_basis_corroborated: bool = False
+
     # Tier 3 (calibration) — ercot-255. Reference the EIA-923-MEASURED rows of
     # the ERCOT zonal gas table to the SAME statewide series that carries the
     # level, instead of to Henry Hub.
@@ -20282,6 +20357,7 @@ TIER_TAGS: dict[str, int] = {
     "pjm_congestion": 3,
     "ercot_zonal_gas_basis": 3,
     "ercot_ep_gas_basis_monthly": 3,
+    "ercot_ep_gas_basis_corroborated": 3,
     "ercot_zonal_spread_ep_referenced": 3,
     "ercot_gas_delivered_floor_basis": 3,
     "ercot_gas_contract_haircut": 3,
