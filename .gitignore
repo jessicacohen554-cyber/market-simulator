@@ -1543,3 +1543,11 @@ results/calibration/_spp52a_heavy/
 # keeps it ON LOCAL DISK until the owner has ruled on promotion. Every number this
 # lane cites from it is in docs/handoffs/FINDING-capx-d90-rescore-2026-09-09.md.
 /results/ff-t3-neiso-golden/d90-pre-d88-control/
+# ercot-261 solve bundles (arm + control, per-year shards and the composed span).
+# Rule 31 [R-RETAIN]: these are NEVER deleted from local disk until the owner
+# rules on promotion -- gitignoring is what discharges rule 29(c)'s
+# delete-before-merge duty and keeps check_registry_payload_parity's bundle
+# sweep green, since that sweep only ever sees COMMITTED dirs. Shards force-add
+# (git add -f) their own bundle onto a scratch branch to ship results back;
+# nothing here reaches main unless the owner promotes the run.
+results/calibration/ercot261_*/
