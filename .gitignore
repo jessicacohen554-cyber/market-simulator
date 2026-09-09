@@ -1,5 +1,4 @@
-# =============================================================================
-# .gitignore — organized into pattern rules. Sections:
+# ======================================================================# .gitignore — organized into pattern rules. Sections:
 #   1. Python / build / OS
 #   2. Secrets & local environment
 #   3. Root-level detritus & stray downloads
@@ -13,8 +12,7 @@
 # One-off, session-specific scratch-dir names are intentionally NOT enumerated:
 # any bundle's heavy contents are already covered by the §8 slim-bundle rules,
 # and the recurring scratch families are covered by §9.
-# =============================================================================
-
+# ======================================================================
 # -----------------------------------------------------------------------------
 # 1. Python / build / OS
 # -----------------------------------------------------------------------------
@@ -1583,3 +1581,10 @@ results/caiso_fuelvintage_H1/
 results/caiso_fuelvintage_H2/
 results/caiso_fuelvintage_T1/
 results/caiso_fuelvintage_T2/
+# caiso-fuelvintage-1 zero-LP probe outputs and A/B scratch (rule 31 [R-RETAIN]:
+# kept on local disk, kept OUT of main; every number they carry is in
+# docs/FINDING-caiso-fuelvintage-1-2026-09-09.md per rule 29 [R-SCREEN] (c)).
+results/calibration/_caiso_fuelvintage_*.json
+results/calibration/_caiso_retiree_*.json
+scripts/probes/_caiso_retiree_ab_tmp/
+
