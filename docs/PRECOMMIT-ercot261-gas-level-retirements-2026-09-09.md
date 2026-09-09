@@ -390,3 +390,29 @@ flag is brand-new and default-off, and no ERCOT recipe arms it), so nothing is
 wrong today; but the two are alternatives, not complements, and whichever ERCOT
 ends up on, the other must be off. Flagged to the fleet/fuel lane rather than
 resolved unilaterally here, since `gas_electric_power_monthly_level` is theirs.
+
+## 7. THE ARM AS ACTUALLY LAUNCHED (post-rebase, registered before the solve)
+
+The arm's flag set changed with Addendum 2 and is restated here so the solve is
+never run against a stale declaration.
+
+**ARM** = the keeper recipe (`ercot256_five_year_keeper`, per-year overlays from
+`config_partition_overrides`) plus exactly three overrides:
+
+```
+--set ercot_ep_gas_basis_monthly=true
+--set ercot_ep_gas_basis_corroborated=true
+--set partial_plant_exit_carry=true
+```
+
+**CONTROL** = the same recipe with no overrides at all, same HEAD.
+
+`retiree_window_start_year` is gone: main's whole-plant widening to 2019 is
+**ungated**, so it is carried identically by BOTH legs and is not part of the
+delta. Card B's entire remaining delta is `partial_plant_exit_carry`, whose
++888.4 MW footprint (13 units, both Decker Creek steam units) is declared in
+`ADDENDUM-ercot261-partial-plant-scope` §4.
+
+Everything else in §5's gate and prediction table stands, with the one revision
+already recorded: **P8 is withdrawn** — Card B is no longer immaterial to 2021,
+so 2021 movement is attributed between the two cards rather than to Card A.
