@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-09-miso-248-spp-ladder",
+  "label": "miso 248 spp ladder",
+  "date": "2026-09-09",
+  "shorthand": "miso-248-spp-ladder",
+  "definition": "BTM-basis re-solve: byte-faithful replay of the committed keeper config from meta.json, adding btm.parquet (behind-the-meter CHP held out of the LP) so the benchmark scores on the grid-delivered basis.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-09-09-miso-248-spp-ladder.js",
+  "bundle": "results/calibration/miso248_fullspan_K"
+}

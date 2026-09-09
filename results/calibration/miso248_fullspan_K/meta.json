@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-09T02:49:57",
+  "timestamp": "2026-09-09T04:25:34",
   "iso": "MISO",
   "years": [
     2023,
@@ -418,6 +418,7 @@
   "campd_outage_merit_order_guard": null,
   "netload_drag_layup_window_mask": null,
   "netload_drag_merit_allocation": null,
+  "netload_drag_min_run_persistence": null,
   "vre_curtailment_oversupply_allocation": null,
   "cc_winter_capability_basis": null,
   "ramp_limits": null,
@@ -502,8 +503,8 @@
     "unit_outages_e923": "../_shared/MISO/unit_outages_e923-d0232b7c77b7.parquet",
     "unit_outages_layup": "../_shared/MISO/unit_outages_layup-ec855c2a24ba.parquet"
   },
-  "git_sha": "b668d88d",
-  "basis_sha": "f29b7ab022d399f40904379d86eb2324f08535e6",
+  "git_sha": "70493448",
+  "basis_sha": "e48b334662da367b48942ee6e5ac4ddf9d8044e6",
   "highspy_version": "1.14.0",
   "environment": {
     "python_version": "3.11.15",
