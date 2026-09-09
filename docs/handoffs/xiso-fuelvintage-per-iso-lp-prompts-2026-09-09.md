@@ -534,3 +534,45 @@ over as named, scoped work rather than left implied.
 - Green on this branch: `check_registry_payload_parity` (22 runs, 55 bundle dirs, 0 tolerated),
   `check_mechanism_matrix --base origin/main`, and `audit_keepers` for PJM / MISO / NYISO /
   NEISO.
+
+### A4. LAUNCH FAILURE AND FIX — pin `source_revision` to a COMMIT SHA, never a branch name
+
+**All five shards in A1 failed to initialize.** Every one returned the same
+`last_init_error`:
+
+```
+error_kind   : source_processing
+error_type   : ref_not_found
+message      : The requested branch or commit was not found in the repository
+               "jessicacohen554-cyber/market-simulator". Check the spelling of the branch
+               name, verify it exists on the remote, and ...
+recoverable  : false
+```
+
+**The branch was not missing.** `git ls-remote origin refs/heads/claude/xiso-fuelvintage-retirements-96sbx9`
+resolves, and it resolved at launch time — it had been pushed (and blob-verified against the
+server) before the first `create_session` call. The failures are at 03:48:07, 03:48:40,
+03:49:24, 03:49:58 and 03:50:40, all after the push. What distinguishes them from the ERCOT
+sibling sessions launched at 03:46-03:47, which initialized fine, is that ERCOT's branch had
+existed on the remote for far longer: **the CCR source-processing worker resolves against a
+repo view that lags a freshly-created ref.**
+
+**The fix, verified:** pass `source_revision` as the **full 40-character commit SHA**
+(`33f6c0614ecd63a5019742c5ee588e791c0f12ab`) instead of the branch name. All five relaunched
+sessions initialized clean — `connection_status: connected`, `status_bucket: WORKING`, no
+`last_init_error`:
+
+| session | ISO |
+|---|---|
+| `session_01SkSpzepiCuuJxYVbMctUy4` | PJM (carries the program screen) |
+| `session_01CvLmniL3N8QcAG8SpVCHtt` | MISO |
+| `session_01QpQ55FJ3LUqahzyibsy7jF` | NYISO |
+| `session_01D8ZQWudYxQkivKxkBZZxp7` | NEISO |
+| `session_01RX3WrPVoVWhkRBgVDEgzzy` | CAISO |
+
+**Standing guidance for every lane that shards further** (each carries it in its own prompt):
+push, then `git rev-parse HEAD`, then pass **that SHA** to `create_session`. Give every child a
+STEP-0 checkout verification (`git log --oneline -4`, plus an existence check on a file the
+branch introduces) with an explicit `git fetch` + `git checkout -B <own> FETCH_HEAD` recovery,
+so a child that lands on `main` by accident repairs itself instead of silently rebuilding work
+that already exists.
