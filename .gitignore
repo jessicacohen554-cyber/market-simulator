@@ -1701,6 +1701,13 @@ results/calibration/pjm_fuelvintage_TP/*.parquet
 results/calibration/pjm_fuelvintage_TP/hourly/network_*.parquet
 results/calibration/pjm_fuelvintage_TP/hourly/class_band_hourly_*.parquet
 results/calibration/pjm_fuelvintage_TP/hourly/unit_hourly_*.parquet
+# nyiso-222 (2026-09-09) owner-directed +5% offer-curve move: the full-span
+# replay bundle for the rule-1 [R-STRUCT] authorized price-tuning channel.
+# Ignored so it can never reach `main`, which is the ONLY thing rule 29(c)
+# DELETE-BEFORE-MERGE requires; rule 31 [R-RETAIN] names gitignoring — never
+# `rm` — as what discharges it, so it stays on local disk until the OWNER has
+# ruled on promotion. A promoted bundle's slim set overrides via `git add -f`.
+results/calibration/nyiso222_offer_plus5/
 
 # caiso-268 PER-YEAR SHARD probe bundles (rule 29 [R-SCREEN] clause (c)
 # delete-before-merge, discharged by gitignore and NOT by `rm` — rule 31
