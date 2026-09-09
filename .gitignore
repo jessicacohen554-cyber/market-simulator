@@ -1724,3 +1724,19 @@ results/calibration/nyiso222_offer_plus5/
 results/calibration/caiso268_fossil92_y2023/
 results/calibration/caiso268_fossil92_y2024/
 results/calibration/caiso268_fossil92_y2025/
+
+# pjm-d4-1 (2026-09-09) ST_GAS merit-order card: screen / control / per-year
+# shard bundles. Rule 29 [R-SCREEN] clause (c) DELETE-BEFORE-MERGE means KEEP
+# IT OUT OF `main`, which gitignore discharges in full — it does NOT mean `rm`
+# (rule 31 [R-RETAIN], the ercot-255 incident). These stay on local disk until
+# the OWNER has ruled on promotion. Every number the session cites lives in
+# docs/PRECOMMIT-pjm-d4-1-stgas-merit-order-2026-09-09.md and the RESULT doc.
+# A bundle the owner promotes is force-added (`git add -f`) as a slim set.
+results/screen/pjm_d4_*/
+results/calibration/pjm_d4_*/
+results/pjm_d4_y2020/
+results/pjm_d4_y2021/
+results/pjm_d4_y2022/
+results/pjm_d4_y2023/
+results/pjm_d4_y2024/
+results/pjm_d4_y2025/

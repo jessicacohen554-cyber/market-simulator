@@ -314,3 +314,46 @@ disjoint write sets of §6.3 are restated in full inside each shard's own prompt
 per-year shards are additionally forbidden `frontend/data/backcast/**` — the bench parts are the
 sharp edge, since any CAISO solve rewrites `bench/CAISO/<year>.json.gz` and three shards
 committing them would collide on all three files at once.
+
+### §8b — FIFTH SHARD, added on owner instruction: the 2022 VALIDATION TOUCHPOINT
+
+The original four shards covered the training tier only. On owner instruction (*"are we running holdout
+years bc we should be"*) a fifth was launched, pinned to `9bc8408fbe4c2a38d990ba706c2a0758cbf103b6`
+(this branch merged to `origin/main`, 0 behind):
+
+| shard | branch | year | session id |
+|---|---|---|---|
+| **H2** | `claude/caiso268-h2-2022` | 2022, `--holdout-authorized` | `session_01NDH2GBgCEh8sfdBZW5n981` |
+
+**Why 2022 and nothing else — verified at HEAD, not assumed.**
+
+* **2022 is admissible.** CAISO holds the `complete` marker (declared 2026-09-06, `keeper` re-keyed
+  2026-09-09 to `2026-09-09-caiso-fuelvintage-860-gas`), and `holdout-freeze.json` is `active: true`
+  with `scope.tiers == ["locked_test"]` — the validation tier was lifted from the freeze by the
+  2026-08-26 owner ruling (card 6). Rule 22 makes the tier **iterable by design**: 2022 has already
+  been spent by caiso-262, caiso-265, caiso-267 and the fuelvintage keeper, and re-spending it is its
+  purpose, not a second consumption of a one-shot. Its number is **model-SELECTION evidence** and is
+  never quoted as a certified out-of-sample skill number.
+* **2019 and H1-2026 are REFUSED.** Locked tier; the `final` block contains only `_note`, i.e. no ISO
+  has ever been granted it, and the freeze is ACTIVE over exactly that tier.
+* **2020 and 2021 are unreachable at HEAD on DATA, not on the marker** — the marker would allow them.
+  `data/raw/reference/caiso-supply-consistent-demand/` holds 2022–2025 and
+  `frontend/data/backcast/bench/CAISO/` holds 2022–2025, so there is no demand basis to solve on and
+  no bench part to score against. Per rule 22 as amended 2026-08-06 (*what is held out is the SCORE,
+  never the DATA*), building them needs **no authorization at all** — it is an unrestricted data-intake
+  task, not an LP task, and it is **out of scope for this session**. It is named here so the gap is a
+  queued task rather than a silent omission.
+
+**Registration differs from the per-year probes and that is deliberate.** H2's bundle IS registered
+(`2026-09-09-caiso-268-fossil92-2022`, rule 15 `[R-DASHBOARD]`): a validation rung is a touchpoint in
+its own tier, not a fragment of the 2023–2025 span, so rule 16 `[R-ALLYEARS]` is not engaged — the
+precedent is its registered predecessor `2026-09-09-caiso-267-fossil92-2022`. It is **not** stamped to
+a keeper (rule 30(a)'s fold applies to the *designated keeper's* touchpoint, and this arm is not the
+keeper) and it **does not promote**. Rule 30(c) is restated in its prompt: a held-out year never
+downgrades the ISO, so whatever 2022 reads, CAISO's determination remains its train-tier verdict.
+
+**Non-collision holds with five.** H2's write set is disjoint from all four siblings': it owns its own
+bundle, its own registry sidecar and run payload, `bench/CAISO/2022.json.gz` alone, and its own docs.
+The SPAN shard keeps the matrix shard, the calibration log and the 2023–2025 bench parts; H2 is
+forbidden all of them, plus `keepers/CAISO.json`, `status/CAISO.js`, `calibration-complete.json` and
+`holdout-freeze.json`.
