@@ -88,6 +88,15 @@ _IGNORE = {
     # channels --set uses. ercot-256 applied it by hand (--set); consuming it
     # automatically is the FIX, and it IS attempted here.
     "config_partition_overrides",
+    # Free-text description of the model changes a run carried (written by
+    # run_calibration_full's meta writer; ercot-261 is the first keeper whose
+    # meta.json records one). Provenance only — read by the dashboard/report
+    # builders (build_manifest, render_backcast, knob_jacobian,
+    # gen_touchpoint_attestation), never by the solver — so build_kwargs must
+    # skip it exactly like "environment". Without this the ercot-261 keeper is
+    # unreplayable: the unmapped guard hard-exits before the year gate, the
+    # partition overlay and the solve (ercot-262 shard, 2026-09-09).
+    "model_changes_note",
     "iso",
     "years",
     "hours",
@@ -97,6 +106,14 @@ _IGNORE = {
     # year fresh (which is exactly what "reused years are not fresh
     # evidence" demands of a re-gate).
     "reuse",
+    # Free-text note naming the model changes a bundle's session landed
+    # (ercot-261 writes one). Recorded-only provenance in the same class as
+    # "timestamp"/"git_sha"/"basis_sha" — it selects no mechanism and has no
+    # solve_and_persist kwarg, so a replay carries the REPLAY's own note (the
+    # --note flag) and never the original's. Ignored deliberately per this
+    # guard's own instruction; verified to be the SOLE unmapped key of
+    # ercot261_five_year_keeper, which it was blocking from replay entirely.
+    "model_changes_note",
 }
 # Recorded-only env-gated probe values: resolved inside backcast_config from
 # env vars (ERCOT_ZONAL_GAS / ERCOT_WEST_NETLOAD_GAS /
