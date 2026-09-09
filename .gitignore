@@ -1530,3 +1530,6 @@ results/calibration/pjm177b_*/
 # disk and never reaches main. Gitignoring is what discharges rule 29 [R-SCREEN](c);
 # `rm` is forbidden by rule 31.
 /results/ff-t3-neiso-golden/d90-rescore/
+
+# SPP-52a offer-curve level arm (rule 31 [R-RETAIN]: gitignored, never rm)
+results/calibration/_spp52a_*
