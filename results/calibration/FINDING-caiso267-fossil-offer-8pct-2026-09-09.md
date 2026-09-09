@@ -142,6 +142,34 @@ transmits the cut essentially completely (which is why it overshoots to −0.87 
 lands unevenly. It is reported, **not** used to justify a per-year value — rule 1
 condition (b) forbids one.
 
+## §5b — WHERE C4-2025 breaks: the direction is right, the SHAPE is wrong
+
+Zero-LP, on the committed bench CAMPD gas panel and both runs' committed payloads.
+Mean gas MW error (model − actual) by hour of day, 2025:
+
+| hours | keeper | arm | change |
+|---|--:|--:|---|
+| **belly h8–16** | −668 … −975 | **−415 … −765** | **BETTER** — moves toward zero |
+| **overnight h0–6** | −102 … +668 | **+595 … +1,329** | **WORSE** by +430 … +700 |
+| evening h17–23 | +183 … +1,441 | +477 … +1,641 | worse by +200 … +334 |
+
+Fleet: mean error **+115.6 → +431.4 MW**, RMSE **1,730 → 1,825**, against an
+actual mean of 5,312.6 MW.
+
+**This is the whole C4-2025 miss, and it is diagnostic rather than incidental.**
+The cut does precisely what caiso-266 §6 predicted **in the belly** — it closes
+the gas under-dispatch in the hours that carry the C3a residual. But a band
+multiplier applies in all 8,760 hours, so **overnight** the cheaper fossil offer
+pulls gas in against imports the real fleet was actually running, in the hours
+where the model already had the least headroom. The mechanism spends accuracy
+overnight to buy it in the belly.
+
+**Recorded as an observation, NOT acted on.** A shaped or hour-scoped cut is a
+different mechanism: it needs its own PRECOMMIT, its own footprint-named screen
+year and its own gates, and — critically — a *driver* that is not "the residual
+is overnight" (rule 17 `[R-FLOOR-WINDOW]`: no window without an external driver
+and a forward story). Nothing here licenses one, and this session proposes none.
+
 ## §6 — 2021 and 2020: neither is reachable, measured rather than asserted
 
 The ruling's stated motivation was 2021. **No part of this session is identified
