@@ -1533,3 +1533,6 @@ results/calibration/pjm177b_*/
 
 # SPP-52a offer-curve level arm (rule 31 [R-RETAIN]: gitignored, never rm)
 results/calibration/_spp52a_*
+
+# SPP-52a heavy bundle parts retained off-repo (rule 31 [R-RETAIN]: never rm)
+results/calibration/_spp52a_heavy/
