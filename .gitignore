@@ -1708,3 +1708,7 @@ results/calibration/pjm_fuelvintage_TP/hourly/unit_hourly_*.parquet
 # `rm` — as what discharges it, so it stays on local disk until the OWNER has
 # ruled on promotion. A promoted bundle's slim set overrides via `git add -f`.
 results/calibration/nyiso222_offer_plus5/
+
+# ercot-264 keeper-reproduction bundles (rule 31 [R-RETAIN]: gitignored, never rm-ed;
+# rule 29(c): kept out of main unless the owner promotes and they are registered)
+results/calibration/ercot264_repro_*/
