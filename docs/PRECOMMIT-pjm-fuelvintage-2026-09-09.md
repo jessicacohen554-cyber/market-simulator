@@ -332,6 +332,73 @@ as a confinement failure would be reading the wrong array.
 
 ---
 
+## 6b. THE CENSUS EXTENDED TO 2024 AND 2025 — 2025's reach is now MEASURED, not extrapolated
+
+§6 flagged 2025's reach as the one extrapolated number in its table. It no longer is: the same
+two-build census was run for 2024 and 2025 (six `fleet_only` builds in total, still zero LP).
+
+| PJM year | seam reach, cap-wt gas cap-hours | cw Δ over **all** gas cells $/MMBtu | Δ on the **reached** cells | share negative | `mc_base` gas $/MWh | `mc_base` **coal** $/MWh | non-gas `fuel_prices` Δ | non-thermal `mc_base` Δ |
+|---|---|---|---|---|---|---|---|---|
+| **2023** | 48.206 % | **−0.3721** | −0.7721 | **100.0 %** | −3.2588 | −3.0571 | **0.0** | **0.0** |
+| **2024** | 52.923 % | **−0.2483** | −0.4691 | 91.5 % | −2.1747 | −1.1142 | **0.0** | **0.0** |
+| **2025** | 52.923 % | **−0.0999** | −0.1887 | 91.5 % | −0.8748 | −1.6255 | **0.0** | **0.0** |
+
+Three things worth stating before the solve:
+
+1. **The extrapolation was good but not exact.** §6 projected a 48.2 % reach forward and got
+   −0.091 (2025) / −0.225 (2024) $/MMBtu; measured, they are **−0.0999** and **−0.2483** on a
+   **52.92 %** reach. The measured numbers supersede §6's projections wherever the two disagree.
+2. **2024 and 2025 are NOT uniformly negative.** 2023's reached cells are 100 % negative; 2024's
+   and 2025's are **91.5 %** — so ~8.5 % of reached cells price *higher* under the measured level
+   in those years. FINDING §5b's "gas **DOWN** in every year, every month of 2023 lower" is exact
+   for 2023 and is an **annual-mean statement only** for 2024/2025. Recorded so a positive cell
+   in the screen is not mistaken for a defect.
+3. **The coal/gas ordering flips between years.** Coal's offer cut is smaller than gas's in 2024
+   (−1.11 vs −2.17) and **almost twice as large** in 2025 (−1.63 vs −0.87). §6a's revision holds
+   and is if anything understated: the coal-vs-gas spread moves in **both** directions across the
+   span, so a single directional C1/C2 prediction for the whole run is not available and none is
+   made.
+
+### The C3a projection, pre-registered at full magnitude
+
+Capacity-weighting the offer cut across the whole thermal fleet (100.5 GW gas + 49.4 GW coal) and
+passing it through **in full** to the load-weighted mean — an upper bound, since the marginal
+unit's cut is not the fleet mean and the LP re-dispatches:
+
+| year | thermal cw offer Δ | as % of model mean | keeper C3a | **projected C3a** | band |
+|---|---|---|---|---|---|
+| 2023 | −3.1923 $/MWh | −10.16 % | +6.2 % | **−4.61 %** | comfortably inside ±10 % |
+| 2024 | −1.8253 $/MWh | −5.87 % | −0.8 % | **−6.62 %** | inside |
+| **2025** | **−1.1225 $/MWh** | **−2.65 %** | **−7.7 %** | **−10.09 %** | **AT / JUST OUTSIDE the ±10 % band** |
+
+**So the pre-registered expectation is that 2025 C3a is a coin-flip on the band edge, and 2023 —
+the screen year, and the year with the largest fuel move — is the SAFEST of the three.** That
+inversion is worth naming: the screen year was chosen on the mechanism's **footprint** (rule 29's
+requirement) and the gate risk sits in a **different** year, which is precisely why the screen is
+a STOP gate on structure and not a proxy for the span's determination. If 2025's C3a comes back
+outside the band, that is **a real, reported result — not a reason to revert to the estimate**
+(rule 14 `[R-ACCURATE]`): the successor investigation is the price-formation level PJM's C3a
+already leaned negative on at the keeper (−7.7 % before this arm touches anything), not this
+measured input.
+
+---
+
+## 6c. Gate baselines measured on THIS tree (ADDITION 5), before any edit of mine
+
+| gate | result here | expected |
+|---|---|---|
+| `pytest tests/scoring` | **16 failed, 1,532 passed, 12 skipped** | matches the A3 baseline exactly — **zero new failures** |
+| `check_cache_key_registration --base origin/main` | **RED**, `HYDRO_BUDGET_PERIOD_HOURS_BY_PLANT` only | pre-existing on `main`, not this lane's |
+| `check_mechanism_matrix --base origin/main` | **exit 0** (pre-existing anchor warnings only) | green |
+| `check_registry_payload_parity` | **OK** — 25 runs, 58 bundle dirs, 0 tolerated | green |
+| `audit_keepers --iso PJM` | **PASS**, 0 failures / 0 warnings | green |
+| `build_status --check --iso PJM` | **in sync** (1 keeper) | green |
+
+CAISO's red `build_status` / `audit_keepers` are CAISO's lane's (rule 25 `[R-ISO-SCOPE]`) and are
+not touched here.
+
+---
+
 ## 7. Markers, read authoritatively (ADDITION 4)
 
 `scripts/lib/holdout_policy.registration_refusals(years, 'PJM', marker_doc, freeze_doc)` at HEAD:
