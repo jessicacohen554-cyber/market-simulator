@@ -595,3 +595,84 @@ the summary; only its comparison table is carried. This is what makes P8 a proof
 `data/clean` was rebuilt here with `scripts/regenerate_clean.py` (all datatypes) before the arm was
 re-launched; the first launch refused to solve without it. CHANNEL E (§3.5) remains open and is
 decided by **T-REPRO read off the arm's own 2026–2031** per A.5 — not assumed either way.
+
+---
+
+## ADDENDUM E — ADDENDUM B's trap CONFIRMED BY EXPERIMENT, before any arm exists
+
+ADDENDUM B *foresaw* the FC-7 artifact and fixed its handling rule in advance. It is now **measured**,
+and measured on an input that contains no trace of this lane: **`bau-d60`'s OWN committed
+`run_config.json`**, regenerated through the standard instrument at this HEAD.
+
+```
+build_forecast_dof_ledger.py results/ff-t3-neiso-golden/bau-d60
+  -> 9 entries — 7 identified, 2 UNIDENTIFIED
+```
+
+| | committed `dof_ledger.json` | regenerated at THIS head |
+|---|---|---|
+| `n_entries` | 7 | **9** |
+| `n_identified` | 7 | 7 |
+| `n_unidentified` | 0 | **2** |
+| `n_unattested` | 0 | **2** |
+| the two extra fields | — | `ccs_retrofit_fixed_cost_co2_scaling`, `ccs_retrofit_vom_adder` |
+
+The seven identified entries are **the same seven**, unchanged. The two additions are **exactly the
+two fields ADDENDUM B named**, and nothing else.
+
+### E.1 Why this is a stronger result than B could claim in advance
+
+B justified its clause-2 secondary reading on the ground that the arm's recipe is *field-identical* to
+d60's (A.1's zero-field diff). This experiment is better than that argument: **the movement reproduces
+with d60's own committed run_config as the input.** No solve of mine, no D88, no arm — only the
+instrument and the moved dataclass defaults. The FC-7 movement is therefore **provably not the arm's**,
+by direct measurement rather than by inference.
+
+### E.2 The scoring consequence, measured — and B UNDERSTATED it
+
+Scoring the committed d60 artifacts with only the ledger swapped for its regenerated self:
+
+```
+FC-7 provenance & DOF   PASS  ->  FAIL
+  "DOF ledger present as an UNATTESTED SKELETON: 2 of 9 entries carry
+   identification='unattested' (ccs_retrofit_fixed_cost_co2_scaling,
+   ccs_retrofit_vom_adder)."
+determination            HOLD  ->  HOLD   (basis gains FC-7; FC-1..FC-4 already HOLD it)
+```
+
+**ADDENDUM B predicted "pushes FC-7 PASS → CAVEAT". The realized severity is PASS → FAIL.** B's
+*mechanism* was right and its *severity* was understated — recorded here, before the solve, as a
+correction against myself rather than a re-reading afterwards. The handling rule is unaffected: clause
+1 still makes the as-generated reading the headline, clause 2 still admits exactly the two named
+restoration pins, clause 3 still makes any other FC-7 movement real, and clause 4 still forbids
+editing the instrument.
+
+### E.3 P9 is now settled as a MISS, on the pre-registered terms
+
+§5's P9 predicted **"PASS, 8–9 entries, all IDENTIFIED"**. Against the pre-solve measurement:
+
+| half of P9 | predicted | measured | |
+|---|---|---|---|
+| entry count | 8–9 | **9** | HIT |
+| all IDENTIFIED | yes | **2 UNIDENTIFIED** | **MISS** |
+| FC-7 status | PASS | **FAIL** | **MISS** |
+
+ADDENDUM B pre-graded P9 "a MISS if the as-generated ledger carries an UNIDENTIFIED entry". It does.
+**P9 is graded a MISS**, and it is graded that way on evidence recorded before the arm was solved.
+
+### E.4 What clause 3 still requires of the arm
+
+This experiment fixes the *expected* artifact exactly: **9 entries, the same 7 identified, and the same
+2 unattested fields.** The arm's own ledger is checked against that set field-for-field. **Any
+additional UNIDENTIFIED entry, any change among the 7, or any `run_config`/attestation row movement is
+REAL and is reported as a real FAIL** — the carve-out is these two named fields and nothing else.
+
+### E.5 A container note, closed rather than left hanging
+
+`regenerate_clean.py` reports **`[FAIL] lmp: exit 1`** — a `KeyError: 'MGHG'` inside
+`parse_caiso_file`, i.e. a **CAISO** raw file missing a column, which aborts the datatype before any
+partition (NEISO's included) is written. **It cannot reach this solve:** the only consumer of the
+clean `lmp` partition is `data/neighbor_price.py`, whose read path is gated by
+`_use_clean()` → the `MARKET_SIM_USE_CLEAN` environment variable, which this lane does not set, so the
+raw path is used exactly as it was for `bau-d60`. Reported, not absorbed; it is another desk's data
+defect and is not repaired here (lane boundary).
