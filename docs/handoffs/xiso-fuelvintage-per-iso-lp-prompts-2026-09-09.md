@@ -467,3 +467,70 @@ CAISO's matrix shard.
   keepers' fleets lack (FINDING §2b). Real, and deliberately excluded here because adding
   them changes the training window and re-keys every committed bundle. It needs its own
   session, scoped to the training window, per ISO, with its own control.
+
+---
+
+## ADDENDUM — issued with the shard launches, 2026-09-09
+
+The five prompts above were launched as **five independent Claude Code Remote sessions**, each
+branched off `claude/xiso-fuelvintage-retirements-96sbx9` (this branch, **not** `main` — the
+seam and the artifact are not on `main`):
+
+| session | ISO | id |
+|---|---|---|
+| `pjm-fuelvintage-1` (carries the program screen) | PJM | `session_01BvoDm9zatZFZeUoeXET8Vg` |
+| `miso-fuelvintage-1` | MISO | `session_01VbwJT9rfJnos5AwCRJhRrE` |
+| `nyiso-fuelvintage-1` | NYISO | `session_012sPYKANuAcHZQ6HwuAC8fY` |
+| `neiso-fuelvintage-1` | NEISO | `session_01MxJVKFsVxeFMR8wMwzKTXi` |
+| `caiso-fuelvintage-1` | CAISO | `session_01WUiDChsnCoj1Y3W6SF5DR9` |
+
+### A1. Each lane shards its own solves, 2 years per shard (owner instruction)
+
+Each lane launches its solve groups as **its own** child sessions, so every shard gets its own
+container and rule 12 `[R-PARALLEL]`'s ~2-simultaneous RAM cap does not bind across them; years
+**within** one invocation stay sequential, always.
+
+| shard | years | ISOs |
+|---|---|---|
+| S / F | one year | screen (PJM 2023, MISO 2024) or ordering check (CAISO / NYISO / NEISO 2023) |
+| T1 | 2023 2024 | all five |
+| T2 | 2025 | all five |
+| H1 | 2020 2021 | CAISO PJM NYISO NEISO (`--holdout-authorized`) |
+| H2 | 2022 | CAISO PJM NYISO NEISO (`--holdout-authorized`) |
+
+**Sharding the SOLVE must not become registering FRAGMENTS.** Rule 16 `[R-ALLYEARS]` is
+untouched: each ISO registers **one** bundle covering 2023-2025, composing T1 and T2 the way
+ERCOT's keeper composes several configs into one registered run. A 2-year or 1-year fragment is
+never a keeper.
+
+### A2. A LATE FINDING every lane carries in its prompt — the arm may be INERT
+
+**All five keepers carry `gas_plant_monthly_fuel_pricing = True.**
+`apply_plant_monthly_fuel_prices` runs **after** the new seam and overwrites each gas plant's
+price with that plant's own F923 monthly print. The seam may therefore reach only the cells the
+print path does not write, plus the ISO-level `_gas_series` that keys the coal passthrough
+sigmoid. For MISO the mechanism matrix's own note already records that **100 % of MISO gas
+capacity-hours are print-derived** under the keeper's path.
+
+Every lane is directed to **census the written-cell mask at zero LP cost before any solve**
+(rule 29 `[R-SCREEN]` clause (0): an arm with a computable pre-solve gate does not reach a solve
+until that gate passes), and to report an inert result as the session's result rather than
+spending the span. The parent session attempted this census and did not land it — `run_year`'s
+`fleet_only` return shape defeated two attempts inside the remaining budget — so it is handed
+over as named, scoped work rather than left implied.
+
+### A3. Corrected gate baselines (measured on this branch, 2026-09-09)
+
+- **`pytest tests/scoring`: 16 failures, not 15.** Measured identically on this branch and with
+  every changed source reverted to `origin/main` (16 failed / 1,532 passed both ways), so **all
+  16 are pre-existing and this branch adds none.**
+- **`check_cache_key_registration --base origin/main`: RED on `main`** for
+  `HYDRO_BUDGET_PERIOD_HOURS_BY_PLANT`. Pre-existing. This branch's own new field passes
+  (`ok: 1 new field(s), all registered: gas_electric_power_monthly_level`).
+- **`build_status --check --iso CAISO` / `audit_keepers --iso CAISO`: RED on `main`**, "stale vs
+  the current verdicts". Verified pre-existing by reverting every changed source to
+  `origin/main` and reproducing it. **Not touched here** — rule 25 `[R-ISO-SCOPE]` makes CAISO's
+  status file CAISO's lane's to write, so clearing it is assigned to `caiso-fuelvintage-1`.
+- Green on this branch: `check_registry_payload_parity` (22 runs, 55 bundle dirs, 0 tolerated),
+  `check_mechanism_matrix --base origin/main`, and `audit_keepers` for PJM / MISO / NYISO /
+  NEISO.
