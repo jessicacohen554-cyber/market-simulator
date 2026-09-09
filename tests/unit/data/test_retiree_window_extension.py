@@ -257,6 +257,60 @@ class TestCommittedArtifactInvariants(unittest.TestCase):
         overlap = sorted(set(self.window["plant_id"].astype(int)) & op_ids)
         self.assertEqual(overlap, [], f"plants in both sheets: {overlap[:10]}")
 
+    def test_multi_vintage_plants_age_out_PER_UNIT_not_plant_collapsed(self):
+        """A plant whose units retired in DIFFERENT years ages out per unit.
+
+        Widening the window to 2019 created injected plants whose units retire
+        up to FOUR years apart (AES Redondo Beach 356: gen 7 in 2019-10, gens
+        5/6/8 in 2023-12). ``_load_cod_map`` collapses a plant's heterogeneous
+        retirements to the LATEST one, so a plant-keyed mask would hold gen 7's
+        480 MW online for three extra years -- 31 units / 4,779.2 MW across the
+        artifact if it did.
+
+        It does not: ``cod_ramp.effective_cod`` prefers a generator's OWN
+        retirement over the plant-collapsed date whenever the row carries one
+        (the Homer City seam, plant 3122), and every retiree row carries one by
+        construction. This test pins that, because it is the property a future
+        change to the COD map would silently break, and because session
+        caiso-fuelvintage-1 reported it as a defect on 2026-09-09 -- measured
+        here as a NON-defect.
+        """
+        from market_sim.config.paths import EIA_860_DIR
+        from market_sim.data.cod_ramp import _load_cod_map, effective_cod
+
+        multi = self.window.groupby("plant_id")["planned_retirement_year"].nunique()
+        multi_ids = set(multi[multi > 1].index)
+        self.assertGreater(len(multi_ids), 0, "no multi-vintage plant to test")
+
+        cod_map = _load_cod_map(EIA_860_DIR)
+        for row in self.window[self.window["plant_id"].isin(multi_ids)].itertuples():
+            _, _, ret_year, ret_month = effective_cod(
+                int(row.plant_id),
+                int(row.operating_year or 1970),
+                int(row.operating_month or 1),
+                int(row.planned_retirement_year),
+                int(row.planned_retirement_month),
+                cod_map,
+            )
+            self.assertEqual(
+                (ret_year, ret_month),
+                (int(row.planned_retirement_year), int(row.planned_retirement_month)),
+                f"plant {row.plant_id} gen {row.generator_id} took the "
+                f"plant-collapsed retirement instead of its own",
+            )
+
+    def test_a_units_own_retirement_wins_over_a_later_plant_date(self):
+        """The synthetic form of the above: unit 2019-10, plant map 2023-12."""
+        from market_sim.data.cod_ramp import effective_cod
+
+        cod_map = {356: (1964, 7, 2023, 12)}
+        _, _, ret_year, ret_month = effective_cod(356, 1967, 6, 2019, 10, cod_map)
+        self.assertEqual((ret_year, ret_month), (2019, 10))
+        np.testing.assert_array_equal(
+            monthly_online_mask(1967, 6, ret_year, ret_month, run_year=2020),
+            np.zeros(12, dtype=bool),
+        )
+
     def test_every_row_carries_a_retirement_month(self):
         """The COD ramp needs a month to time a mid-year exit."""
         missing = self.window["planned_retirement_month"].isna().sum()

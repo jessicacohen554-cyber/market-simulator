@@ -576,3 +576,172 @@ STEP-0 checkout verification (`git log --oneline -4`, plus an existence check on
 branch introduces) with an explicit `git fetch` + `git checkout -B <own> FETCH_HEAD` recovery,
 so a child that lands on `main` by accident repairs itself instead of silently rebuilding work
 that already exists.
+
+### A5. THE BRANCH MERGED TO MAIN, MAIN MOVED 51 COMMITS, AND ALL FIVE SHARDS WERE RELAUNCHED AT THE TIP
+
+**This program's branch is on `main`.** PRs **#5734** and **#5735** merged
+`claude/xiso-fuelvintage-retirements-96sbx9`, so the retiree-window widening, the
+`gas_electric_power_monthly_level` seam, the weight table, the tests, the FINDING and these
+prompts are all on `main` — nothing here is branch-only any more.
+
+**Main then moved 51 commits ahead**, and the A4 shards were pinned to `33f6c061`, i.e. 51
+commits stale. `origin/main` was merged into the branch (clean, zero conflicts), verified, and
+pushed: the tip is now **`b9fcb160d92dadbe86dcec5f6c8e2ba1793a5f1c`**, which is `origin/main`
+**plus nothing** (`git rev-list --count origin/main ^HEAD` = 0).
+
+**Verified on the merged tree before relaunching** — the merge changed none of this program's
+work: `data/raw/eia-860/eia860_generator_retired_within_window.parquet` still 1,094 rows /
+min year 2019 / 477 rows at ≥2023; `RETIREMENT_WINDOW_START = 2019`;
+`src/market_sim/data/fuel/electric_power.py` present; `gas_electric_power_monthly_level` in
+`scenarios.py` (4), `run_calibration_full.py` (2), `resolve.py` (1), `trajectories.py` (2);
+`test_retiree_window_extension.py` + `test_gas_electric_power_level.py` +
+`test_partial_plant_exit_carry.py` + `tests/regression/test_fuel_facade.py` **50 passed**;
+`check_mechanism_matrix --base origin/main` green.
+
+**Three things landed on main that every lane must now account for**, and each carries them in
+its own prompt:
+
+1. **ercot-261 built an ERCOT-scoped SIBLING of the seam** — a *corroborated* monthly gas LEVEL
+   (`data/raw/ercot_gas_corroborator_monthly.csv`,
+   `scripts/data/derive_ercot_gas_corroborator.py`, `src/market_sim/data/fuel/basis/ercot.py`,
+   `tests/unit/data/fuel/test_ercot_gas_corroboration.py`). It touches neither
+   `gas_electric_power_monthly_level` nor any non-ERCOT ISO, but it is the closest prior art to
+   every lane's arm — and checking one measured series against a second is the one legitimate
+   line of attack on **MISO's Louisiana coverage hole** and on **NEISO's 3.2× index-vs-delivered
+   gap** (§6a). Lanes are told to **recommend**, not to build a copy unilaterally.
+2. **ercot-261 added a PARTIAL-PLANT exit channel** —
+   `src/market_sim/data/fleet/eia860.py::_partial_plant_exit_rows`, gated
+   `ScenarioConfig.partial_plant_exit_carry`, `_PARTIAL_EXIT_WINDOW_START = 2019`. It is the
+   exact complement of the whole-plant window this program widened: same 2019 floor, units whose
+   *plant survives*. Its docstring asserts zero overlap with the whole-plant parquet by
+   construction; **every lane is told to verify that for its own ISO rather than trust it**,
+   because a double-count would be invisible and, in PJM (13,294.9 MW restored), material.
+3. **Each ISO's own lane moved** — pjm-177, miso-248, caiso-267, NEISO capx-D90, spp-52a. Lanes
+   must run **G-DRIFT against `origin/main`**, not the handoff base, and **re-read their keeper
+   shard** in case the keeper moved. CAISO is told explicitly that caiso-267 may already have
+   spent its 2022 touchpoint, and that its lane's `build_status` red may already be cleared.
+
+**Relaunch.** SendMessage cannot reach a cloud sibling, so the five stale sessions were
+interrupted, archived, and **relaunched pinned to `b9fcb160`** (~5 minutes of work lost, all of
+it setup). All five came up `connected` / `WORKING` with no `last_init_error`:
+
+| session | ISO |
+|---|---|
+| `session_01BudZjmibLgP6M6EtSxCkwp` | PJM (carries the program screen) |
+| `session_011LP4g5bi8YHsaH5yeZVvh2` | MISO |
+| `session_012VikC6mGbPmctE9gVS3QcF` | NYISO |
+| `session_01RWLcg3XCMyDuGy45WAXoyM` | NEISO |
+| `session_012aNt8CFETU5cCW3EiWzmXf` | CAISO |
+
+**Two operational rules this cost us, now in every prompt:** pin `source_revision` to a commit
+SHA (§A4), and **put everything a child needs in its launch prompt** — a cloud sibling cannot be
+messaged after launch, so a stale one must be archived and relaunched rather than corrected.
+Every lane is additionally told to **re-baseline `pytest tests/scoring` on its own tree**: the
+16-failure figure in §A3 was measured on the pre-merge base and 51 commits have landed since.
+
+### A6. THE PJM OOM — diagnosed, fixed, and the fix is standing tooling
+
+**Symptom.** `pjm-fuelvintage-1` reported *"control solve at 13.75 GiB RSS past OOM wall"*.
+
+**Diagnosis, from the repo's own measured registry — not a guess.**
+`scripts/run_isos_concurrent.py` puts **PJM's single-solve peak RSS at 13.0 GB**, the highest
+of any ISO (MISO 11.5, SPP/ERCOT 6.0, CAISO 4.5, NYISO/NEISO 4.0), and it is the only ISO that
+is both `per_plant` **and** `co_opt`. A CCR container is **15.7 GiB with ZERO swap**. The
+wallclock/RSS baseline those numbers were measured on had a **pre-existing `/swapfile`**
+(`docs/handoffs/perf-recheck-2026-08.md` §1.2). That is precisely why PJM "has run in this
+container before" and is dying now: the box is the same, the **swap backstop is gone**, so a
+13 GB peak that used to page now gets SIGKILL'd (child return code −9).
+
+**Three causes, in order of size:**
+
+1. **No swap.** Fixed by new standing tooling, `scripts/prepare_solve_container.py` —
+   provisions a swapfile up to a RAM+swap target (default 24 GiB), bounded by free disk with a
+   6 GiB reserve for solve output. **Verified end to end in this container class**: `fallocate`
+   + `mkswap` + `swapon` all succeed as root, `free` confirms the swap, and the script
+   correctly reports a disk-bound partial provision rather than failing silently.
+2. **Missing env pins.** The canonical single-thread / arena-pinned profile
+   (`MALLOC_ARENA_MAX=2`, `MARKET_SIM_HIGHS_THREADS=1`, `OMP_NUM_THREADS=1`) is already used by
+   five scripts and by `run_isos_concurrent._CHILD_ENV_PINS`, and `model/lp/model.py`'s own
+   comment records the OOM it exists to prevent. **They do not change the LP optimum** — thread
+   count is a factorization-workspace choice. The lanes were never told to set them.
+3. **PJM was running a CONTROL SOLVE, which rule 29(b) forbids.** "NO CONTROL SOLVES — the
+   committed keeper bundle IS the control (G-CTRL form 4)." That is a governance deviation
+   *and* it doubles the LP work on the heaviest ISO in the program. Removing it is the largest
+   single saving available.
+
+Every relaunched lane now runs `prepare_solve_container.py` before its first solve, exports the
+pins, and is reminded that a control solve is refused.
+
+### A7. OWNER RULING 2026-09-09 — PROMOTE ON BOTH COUNTS, REGARDLESS OF INERTNESS
+
+Verbatim: *"these should be promoted as keepers on both 860 and gas shape counts regardless of
+inertness."*
+
+This **overrides the disposition guidance in PROMPT 1-5 and in §A2**, which told each lane to
+report an inert arm as its result and not spend the span. It does **not** override any
+measurement duty. Concretely, for every lane:
+
+- **Both changes are promoted**: the EIA-860 retiree-window widening **and** the measured
+  monthly gas LEVEL. Neither waits on the other, and neither waits on a favourable residual.
+- **Inertness is not a disqualifier.** An arm measured inert in dispatch is still promoted; the
+  lane reports the inertness at full magnitude as a property of the result, not as a reason to
+  withhold. This is the owner's standing formula — *"If structural integrity improves but gates
+  regress that may still be a keeper"* — applied a step further.
+- **Everything else still binds, and none of it is relaxed**: the phase-0 census is still run
+  and still reported (it now tells you *what the promotion is worth*, not *whether to promote*);
+  every criterion is still reported at full magnitude; a screen may still kill an *arm variant*
+  on structural grounds; rule 1 `[R-STRUCT]`'s ban on gating a mechanism on its target residual
+  is untouched; and rule 16 `[R-ALLYEARS]` still requires ONE registered bundle per ISO covering
+  2023-2025.
+- **Rule 31 `[R-RETAIN]` is now doubly binding**: results are promoted, so nothing may be
+  deleted before the owner rules — and the ruling here is *promote*, not *delete*.
+
+### A8. REBASE BEFORE MERGE
+
+Each lane rebases (or merges) its branch onto the latest `origin/main` before its work is
+merged, and resolves conflicts in its own ISO's files. `main` moved 51 commits during the last
+handoff alone, so a lane that solves for an hour will be behind by the time it pushes. Lanes
+edit disjoint files by rule 25 `[R-ISO-SCOPE]` — each ISO's keeper shard, matrix shard, status
+part and calibration log — so conflicts should be confined to shared surfaces (the mechanism
+matrix base row, the handoff docs). Re-run the full gate list after the rebase, never before.
+
+### A9. THE "plant-356 COD DEFECT" IS A FALSE ALARM — MEASURED, CLOSED, DO NOT RE-LITIGATE
+
+Session `caiso-fuelvintage-1` (v3) stopped with *"plant-356 COD defect blocks 5 parallel
+lanes"* and asked which of three repairs to apply. **The answer is none: there is no defect.**
+
+**The concern was real in shape.** Widening the window to 2019 created injected plants whose
+units retire up to **four years apart** — AES Redondo Beach (356): gen 7 retired **2019-10**,
+gens 5/6/8 **2023-12**. `_load_cod_map` collapses a plant's heterogeneous unit retirements to
+the **latest** one, so a plant-keyed mask would hold gen 7's 480 MW online for three extra
+years. Across the whole artifact that exposure is **19 plants / 31 units / 4,779.2 MW**
+(PJM 3,055.2 · NEISO 614.2 · MISO 495.8 · CAISO 481.8 · NYISO 88.5 · SPP 43.7).
+
+**But the code already prefers the per-unit date, and always has.**
+`cod_ramp.effective_cod` returns `(entry_oy, entry_om, retirement_year, retirement_month)` —
+the plant map supplies the **online** date, the generator's **own** retirement overrides the
+collapsed one whenever the row carries it, and every retiree row carries it by construction.
+Its docstring names this exact case (the Homer City seam, plant 3122).
+
+**Measured, not read** — masks built through the real `_load_cod_map` + `effective_cod` +
+`monthly_online_mask` path:
+
+| plant | unit | actual retirement | online months 2019 → 2024 |
+|---|---|---|---|
+| 356 AES Redondo Beach | gen 7, 480 MW | 2019-10 | **10 · 0 · 0 · 0 · 0 · 0** |
+| 356 | gens 5/6/8 | 2023-12 | 12 · 12 · 12 · 12 · 12 · 0 |
+| 3122 Homer City | gen 3 | 2023-07 | 12 · 12 · 12 · 12 · **7** · 0 |
+| 3122 | gen 1 | 2024-04 | 12 · 12 · 12 · 12 · 12 · **4** |
+| 2866 W H Sammis | gens 1-4, 720 MW | 2020-05 | 12 · **5** · 0 · 0 · 0 · 0 |
+| 2840 Conesville | gens 5/6, 750 MW | 2019-05 | **5** · 0 · 0 · 0 · 0 · 0 |
+
+Every unit ages out on its own month. **The 4,779.2 MW is the exposure the existing code
+already prevents, not a loss anyone is taking.**
+
+**Pinned by test** so a future change to the COD map cannot silently reintroduce it:
+`test_multi_vintage_plants_age_out_PER_UNIT_not_plant_collapsed` (every multi-vintage row in
+the committed artifact, through the real path) and
+`test_a_units_own_retirement_wins_over_a_later_plant_date` (the synthetic form). 13 pass.
+
+**No lane should spend time on this.** If a lane sees a fleet number it cannot explain, the
+per-unit ageing is not the cause — look at `partial_plant_exit_carry` (§A5 item 2) instead.
