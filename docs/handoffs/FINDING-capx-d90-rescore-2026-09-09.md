@@ -24,11 +24,11 @@ pre-registered exactly this, before the solve).
 control, capx D88 moves ZERO of the 19 scored rows, and the determination is HOLD on every reading.**
 
 **And the finding that matters more than the one it was chartered for:** the flagged defect was never
-the main thing wrong with this record. **Code that landed on `main` after d60 was solved moves the
-run far more than D88 does** — CO2 in the CCS conversion window falls **>50 %** (2029:
-14.021 → 6.795 Mt) — while the determination and every scored row still reproduce. The standing
-verdict's *scores* were sound; its *underlying numbers* are stale for reasons that have nothing to do
-with D88.
+the main thing wrong with this record. **A different repair — capx D77 — moves the run far more than
+D88 does**: CO2 in the CCS conversion window falls **>50 %** (2029: 14.021 → 6.795 Mt), while the
+determination and every scored row still reproduce. The standing verdict's *scores* were sound; its
+*underlying numbers* are stale, and **not because of the defect it was flagged for**. Attribution is
+exact, not inferred — see §5.1.
 
 ---
 
@@ -222,6 +222,29 @@ T-REPRO **FAILED**, rule 29(b)'s LIVE case fired, and the same-container pre-D88
 in a throwaway git worktree with D88's three files reverted to `8c24cbf6` (none of which changed after
 D88 merged), so **no file under `src/market_sim/` in this working tree was edited**.
 
+### 5.1 THE DRIFT IS capx D77, AND THE ATTRIBUTION IS EXACT
+
+Not "unattributed code drift" — it reproduces **capx D77's own published A/B to four decimals**. D77
+(2026-09-06) repaired the CCS emission-rate seam, where `campd_bins.apply_plant_emission_rates_v2`
+re-booked a converted unit's *uncaptured* host rate over its captured one in every forecast year:
+
+| year | D77's published A/B | this lane's d60 → pre-D88 control |
+|---|---|---|
+| 2028 | 15.8562 → 12.9276 (−18.5 %) | 15.856 → 12.928 |
+| 2029 | 14.0210 → 6.7954 (−51.5 %) | 14.021 → 6.795 |
+| 2030 | 13.3680 → 6.9545 (−48.0 %) | 13.368 → 6.955 |
+
+**Identical.** So the CO2 movement in this re-score is D77's repair landing on a bundle solved hours
+before it, and the 2029/2030 retrofit-set reshuffle is D77's documented self-limiting effect (cheaper
+correctly-rated CCS depresses the price that justifies the next retrofit). D77's own record predicted
+this exact consequence — *"the three NEISO T3 verdicts' co2@2030/2035/2040 FC-5 rows and their FC-6
+paired-P1 cumulative-CO2 row are the only SCORED cells mis-stated"* — and explicitly deferred the
+re-solve to the D65-B batch. **This lane confirms that prediction on the `neiso-t3` record and closes
+the measurement half of it**; the re-solve decision remains open (§7).
+
+**It does not change anything above.** D88's isolation is against the same-container control, which
+carries D77 on both sides, so every number in §2 and §3 stands exactly as reported.
+
 **Generalising, for the audit board:** G-DRIFT form 4 on a recorded-key basis audits **config drift
 only**. It sees neither derived-input drift (D88's §3 lesson) nor **non-config code drift** (this
 lane's). Against a bundle months old, the control solve is not the fallback — **it is the only
@@ -286,8 +309,9 @@ rebuild** in a fresh container — the cost profile the ercot-255 incident was w
    (0/173 reproduce) → **D91** / the cache-key pin owner. §4.1 has the one-field attribution.
 2. **FC-7's attestation row cannot detect a false nested assertion** → forecast desk / rubric owner.
    §4.2, with the demonstration.
-3. **The `neiso-t3` record's underlying numbers are stale by >50 % on CO2** from post-d60 code drift
-   (independent of D88) → forecast desk, as a re-solve question. §0, §5.
+3. **The `neiso-t3` record's underlying numbers are stale by >50 % on CO2 — attributed exactly to
+   capx D77** (§5.1), whose own record deferred the re-solve to the D65-B batch → forecast desk. This
+   lane closes the measurement half; the re-solve decision is open.
 4. **G-DRIFT form 4 audits config, not code** → audit board, extending D88's §3 method note: against
    an aged bundle the control solve is the only isolating instrument.
 5. **d60's — and every T3 golden's — FC-6 is carried, never measured on its own solve** → whichever
