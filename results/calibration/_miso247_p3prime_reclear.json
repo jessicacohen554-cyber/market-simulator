@@ -1,0 +1,41 @@
+{
+ "probe": "_miso247_p3prime_reclear",
+ "declared_in": "ADDENDUM-miso247-B-is-LIVE-form-4-is-falsified-and-my-own-predictor-is-repaired-2026-09-09.md \u00a74",
+ "zero_lp": true,
+ "year": 2024,
+ "provenance": {
+  "head": "2424956614b2d8d2efff27ac96c15661f700b213"
+ },
+ "target_TWh": 527.826,
+ "keeper_cleared_TWh": 527.826,
+ "arm_cleared_TWh": 527.826,
+ "P3prime_pred_TWh": {
+  "COAL": -0.8474,
+  "CC_CHP": 0.7082,
+  "CC_REGULAR": -0.6602,
+  "ST_GAS": 0.5964,
+  "CT_PEAKER": 0.2849,
+  "import": -0.2094,
+  "ST_CHP": 0.1426,
+  "CT_CHP": -0.015,
+  "oil": -0.0002,
+  "nuclear": 0.0,
+  "hydro": 0.0
+ },
+ "G1_in_scope": [
+  "CC_CHP",
+  "CC_REGULAR",
+  "COAL",
+  "ST_GAS"
+ ],
+ "coal_klass_map": [
+  "COAL",
+  "COAL_BIT",
+  "COAL_LIGNITE",
+  "COAL_PRB"
+ ],
+ "excluded_both_sides": [
+  "solar",
+  "wind"
+ ]
+}
