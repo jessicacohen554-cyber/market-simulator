@@ -183,6 +183,119 @@ into the next handoff's shard template.
 
 ---
 
-## 7. SOLVE RESULTS
+## 7. THE SCREEN — 2023, **ALL FIVE GATES PASS**
 
-*(Filled in as each arm completes — see §8 for the state of every bundle on disk.)*
+Bundle `results/screen/pjm_ep_level_2023` (gitignored, rule 31 — kept on disk, never deleted).
+Solve: matrix build 19.0 s, cold solve 321.8 s / 414,796 simplex iterations, warm 183.1 s.
+Peak RSS **12.47 GB against a 15.7 GiB container**, with **2 GB of the provisioned swap in use** —
+i.e. §A6's diagnosis confirmed in practice: without `prepare_solve_container.py` this solve is
+SIGKILL'd, exactly as the predecessor was.
+
+| gate | measured | verdict |
+|---|---|---|
+| **G-1** direction/magnitude | gas array −0.3721 $/MMBtu, DOWN in 12/12 months (§2) | **PASS** |
+| **G-2** confinement | non-gas fuel price max \|Δ\| **0.0**; non-coal-non-gas offer max \|Δ\| **0.0** (§2, §2c) | **PASS** |
+| **G-3** rule 19, replaced not blended | armed ISO series = EP level to **0.0000000000**, 12/12 months | **PASS** |
+| **G-4** no load-bearing PASS → FAIL | scored below | **PASS** |
+| **G-5** LP integrity | **slack max 0.0, dump max 0.0, slack sum 0.0, dump sum 0.0** | **PASS** |
+
+### 7a. G-4 — scored through the real scorer, on the COMMITTED bench
+
+A screen bundle is never registered, so `calibration_verdict.py` cannot resolve it by run id. The
+arm's payload was therefore built in memory through the supported path
+(`render_calibration_html.build_payload`) and scored by `determine_from_artifacts` against the
+**committed** `frontend/data/backcast/bench/PJM/2023.json.gz` — the same actuals the keeper's own
+verdict was scored on. **Nothing was written under `frontend/`.**
+
+| criterion | tier | keeper 2023 | **arm 2023** |
+|---|---|---|---|
+| C1 fuelmix | load-bearing | PASS | **PASS** |
+| C2 sysvol | load-bearing | PASS | **PASS** |
+| C3a price_mean | load-bearing | PASS | **PASS** |
+| C3b price_shape | load-bearing | PASS | **PASS** |
+| C3c price_tail | supporting | PASS | **PASS** |
+| C4 dispatch_corr | supporting | PASS | **PASS** |
+| C8 forced_share | protective | PASS | **PASS** |
+| C6 governance | protective | UNATTESTED | UNATTESTED |
+
+`grade_summary` **{scored 7, target_grade 7, commercial_grade 0, ledgered 0, fails 0}** — identical
+to the keeper's. **Zero criteria fail; nothing flips PASS → FAIL. G-4 PASSES.** C6 reads UNATTESTED
+because neither a screen bundle nor the pruned keeper bundle carries an attestation — the keeper's
+own bundle-local `metrics.json` reads UNATTESTED for the same reason, so this is a property of the
+artifacts, not of the arm.
+
+### 7b. THE DISPATCH — differenced against the keeper's committed hourlies, with the drift bands applied
+
+Read off `pjm_debugb_inputclock_A/hourly/class_hourly_2023.parquet` (rule 15's stated purpose) vs the
+arm's. **"Separable" applies the PRECOMMIT's pre-registered bands: ±0.25 %, ±2.4 % for CT_PEAKER.**
+
+| class | keeper TWh | arm TWh | Δ | Δ % | separable from HEAD drift? |
+|---|---|---|---|---|---|
+| **CC_REGULAR** | 322.289 | 330.612 | **+8.323** | +2.58 % | **YES** |
+| **ST_GAS** | 10.826 | 13.536 | **+2.710** | +25.03 % | **YES** |
+| CT_CHP | 1.292 | 1.867 | +0.574 | +44.45 % | YES (tiny absolute) |
+| CC_CHP | 8.577 | 8.515 | −0.061 | −0.72 % | YES |
+| ST_CHP | 0.987 | 0.994 | +0.007 | +0.73 % | YES |
+| **COAL_BIT** | 103.712 | 103.820 | +0.108 | +0.10 % | **no — inside the drift band** |
+| COAL_PRB | 3.143 | 2.926 | −0.218 | −6.93 % | YES |
+| COAL_WC | 5.751 | 5.219 | −0.532 | −9.26 % | YES |
+| **CT_PEAKER** | 19.363 | 19.377 | +0.014 | +0.07 % | **no — inside the 2.4 % CT band** |
+| import (net) | −27.468 | −31.426 | −3.959 | +14.41 % | YES |
+| VIRTUAL_INC | 19.049 | 14.847 | −4.201 | −22.06 % | YES |
+| VIRTUAL_DEC | −11.651 | −13.883 | −2.233 | +19.16 % | YES |
+| nuclear / wind / solar / hydro / biomass / oil / OTHER | — | — | **+0.000** | 0.00 % | — (exactly unchanged) |
+| **TOTAL** | 787.924 | 788.456 | +0.532 | +0.07 % | — |
+
+### 7c. THE PRE-REGISTERED COAL PREDICTION WAS RIGHT, AND THE HANDOFF'S WAS NOT
+
+**Total coal: 112.606 → 111.965 TWh, −0.641 TWh (−0.57 %).** Coal is **essentially FLAT with a
+slight DOWNWARD bias** — which is **exactly** what §2c derived from the offer arrays before any LP
+(the coal offer falls 3.057 while gas falls 3.259, so the merit-order gap moves +0.202 *against*
+coal), and it **contradicts the handoff's and FINDING §5b's "coal UP"**.
+
+The largest coal component, COAL_BIT, moves **+0.10 %** — *inside* the pre-registered drift band, so
+it is **not separable from HEAD drift** and is not claimed in either direction. The separable coal
+movement is COAL_PRB −6.93 % and COAL_WC −9.26 %, both down. Channel 1 (cheaper gas displacing coal)
+wins over channel 2 (the PRB sigmoid cheapening coal offers), which the 51.794 % census made possible
+and a ~100 % census would have foreclosed.
+
+The other side of the same coin: **CC_REGULAR +8.323 TWh** and **ST_GAS +2.710 TWh** — gas takes the
+share. Net **imports fall 3.959 TWh** (PJM exports more), coherent with a cheaper PJM stack. The DA
+virtual layer responds as pjm-158 measured it would: net cleared virtual position 7.398 → 0.964 TWh
+against a −2.36 $/MWh price move, ~+2.7 GW·h per $/MWh in the direction pjm-158's dNet/dλ predicts.
+
+### 7d. C3a — REPORTED AT FULL MAGNITUDE, and it is a large improvement
+
+| | load-weighted mean LMP $/MWh | error vs actual 29.58 |
+|---|---|---|
+| committed keeper | **31.4124** | **+6.19 %** |
+| **arm** | **29.0536** | **−1.78 %** |
+| Δ | **−2.3587** | absolute error **1.83 → 0.53 $/MWh** |
+
+**Stated plainly and not dressed up:** the move is **larger than I predicted**. The PRECOMMIT
+registered "−0.5 to −2.0 $/MWh"; the measurement is **−2.36**, overshooting my own band by 0.36, and
+it carries PJM from 6.2 % *over* actual to 1.8 % *under* it. The error shrinks by 71 %, but the sign
+flips, and a mechanism that overshoots its pre-registered magnitude is reported as such rather than
+banked as a win. **Rule 1 `[R-STRUCT]`: this is not why the change lands.** It lands because it is the
+measured delivered gas price (rule 14 `[R-ACCURATE]`), and it would land if C3a had got worse.
+
+**C3b did not break.** It scores PASS on the arm, which was the pre-registered risk and the criterion
+that killed ercot-254. PJM was the program's highest-risk ISO for it (§(c) of the PRECOMMIT), and the
+protections held: the largest admitted monthly gap is 1.42 $/MMBtu against ERCOT's 49.53, and
+`gas_daily_shape` is armed so the monthly level is redistributed by the measured daily swing.
+
+---
+
+## 8. SOLVE STATE — every bundle on disk
+
+*(Updated as each arm completes.)*
+
+| arm | years | bundle | status |
+|---|---|---|---|
+| **S** screen | 2023 | `results/screen/pjm_ep_level_2023` | **DONE — all five gates PASS** |
+| **T** training | 2023 2024 2025 | `results/pjm_fuelvintage_A` | solving (one invocation, years sequential) |
+| **H1** validation | 2020 2021 | `results/pjm_fuelvintage_H1` | cloud shard `session_01PKfXTug2YjguSNzphQFyBs` |
+| **H2** validation | 2022 | `results/pjm_fuelvintage_H2` | cloud shard `session_01S7TSEZwEWRPkLFcNiHT9Jd` |
+
+**Rule 31 `[R-RETAIN]`: nothing is deleted.** The bundle families are gitignored, which is what
+discharges rule 29(c), and they stay on local disk. **This container is ephemeral — see §9.**
