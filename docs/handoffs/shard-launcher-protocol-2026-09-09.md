@@ -246,3 +246,21 @@ caiso268` and found **only its own branch**. Three containers' worth of LP were 
 the cross-check the charter asked for could not be performed. **Nobody was lying; nobody had looked.**
 
 §4 is the entire remedy: **a branch on the remote, or it is a 2.**
+
+**MEASURED, same day, on the launch that prompted this document.** Five caiso-268 shards were
+created (Y2023, Y2024, Y2025, SPAN, and an **H2-2022** the PRECOMMIT's shard table never declared).
+**Two landed.** Y2023 ended in the session bucket `FAILED`; Y2024 stalled mid-LP and never pushed;
+and **H2-2022 was ARCHIVED in the bucket `COMPLETED` with no branch on the remote at all** — the
+single most dangerous shape a shard failure takes, because the lifecycle says *done* while the
+deliverable does not exist, and the container (with anything it solved) is then reclaimed. It cost
+~30 minutes of container time and produced nothing recoverable.
+
+Two rules follow directly, and they are why §0 and §4 are written the way they are:
+
+* **`archive_session` is gated on the branch, never on the session's own status.** A session
+  reporting `COMPLETED` has told you what it *believes*. Check the remote before you archive, and
+  never archive a shard whose branch is absent — that is a **2**, and archiving it destroys the
+  evidence needed to diagnose it.
+* **The shard table in the PRECOMMIT must list every shard actually launched.** H2-2022 was
+  undeclared, so nobody was looking for its branch, so nobody noticed it never arrived. An
+  undeclared shard is an unmonitored shard.
