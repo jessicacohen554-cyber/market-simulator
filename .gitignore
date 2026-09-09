@@ -1516,3 +1516,10 @@ results/calibration/miso247_fullspan_*/
 # never reaches main; .gitignore discharges that duty in full, and rule 31
 # [R-RETAIN] forbids deleting them before the owner rules on promotion).
 results/calibration/pjm177_*/
+
+# spp-52 SCREEN bundle (rule 29 [R-SCREEN] (c): a screen bundle never reaches
+# main; .gitignore discharges that duty in full, and rule 31 [R-RETAIN] forbids
+# deleting it before the owner rules on promotion). The FULL-SPAN bundle
+# spp52_fossil93/ is deliberately NOT ignored — rule 15 [R-DASHBOARD] requires it
+# registered and committed, via `git add -f` of its slim set.
+results/calibration/spp52_fossil93_screen2025/

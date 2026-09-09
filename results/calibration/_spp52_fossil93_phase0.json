@@ -1,0 +1,108 @@
+{
+ "factor": 0.93,
+ "years": {
+  "2023": {
+   "fossil_twh": 143.4033,
+   "sidecar_fossil_twh": 143.4034,
+   "coverage": 1.0,
+   "offer_repricing_dollars": 213339211.4,
+   "offer_repricing_musd": 213.34,
+   "mean_dmc_on_fossil_mwh": 1.4877,
+   "tranches_moved": 733,
+   "tranches_fossil": 765,
+   "classes_moved": [
+    "CC_CHP",
+    "CC_REGULAR",
+    "COAL_LIGNITE",
+    "COAL_PRB",
+    "CT_CHP",
+    "CT_PEAKER",
+    "ST_GAS"
+   ],
+   "by_class_musd": {
+    "CC_CHP": 2.113,
+    "CC_REGULAR": 69.479,
+    "COAL_LIGNITE": 7.781,
+    "COAL_PRB": 66.855,
+    "CT_CHP": 1.725,
+    "CT_PEAKER": 44.492,
+    "ST_CHP": 0.0,
+    "ST_GAS": 20.893
+   },
+   "max_abs_dmc_nonfossil": 0.0
+  },
+  "2024": {
+   "fossil_twh": 143.315,
+   "sidecar_fossil_twh": 143.315,
+   "coverage": 1.0,
+   "offer_repricing_dollars": 209590644.4,
+   "offer_repricing_musd": 209.59,
+   "mean_dmc_on_fossil_mwh": 1.4624,
+   "tranches_moved": 731,
+   "tranches_fossil": 763,
+   "classes_moved": [
+    "CC_CHP",
+    "CC_REGULAR",
+    "COAL_LIGNITE",
+    "COAL_PRB",
+    "CT_CHP",
+    "CT_PEAKER",
+    "ST_GAS"
+   ],
+   "by_class_musd": {
+    "CC_CHP": 1.974,
+    "CC_REGULAR": 65.113,
+    "COAL_LIGNITE": 6.102,
+    "COAL_PRB": 57.473,
+    "CT_CHP": 1.55,
+    "CT_PEAKER": 48.453,
+    "ST_CHP": 0.0,
+    "ST_GAS": 28.926
+   },
+   "max_abs_dmc_nonfossil": 0.0
+  },
+  "2025": {
+   "fossil_twh": 151.6205,
+   "sidecar_fossil_twh": 151.6205,
+   "coverage": 1.0,
+   "offer_repricing_dollars": 245338268.5,
+   "offer_repricing_musd": 245.34,
+   "mean_dmc_on_fossil_mwh": 1.6181,
+   "tranches_moved": 731,
+   "tranches_fossil": 763,
+   "classes_moved": [
+    "CC_CHP",
+    "CC_REGULAR",
+    "COAL_LIGNITE",
+    "COAL_PRB",
+    "CT_CHP",
+    "CT_PEAKER",
+    "ST_GAS"
+   ],
+   "by_class_musd": {
+    "CC_CHP": 2.568,
+    "CC_REGULAR": 72.011,
+    "COAL_LIGNITE": 7.388,
+    "COAL_PRB": 84.196,
+    "CT_CHP": 1.884,
+    "CT_PEAKER": 52.167,
+    "ST_CHP": 0.0,
+    "ST_GAS": 25.125
+   },
+   "max_abs_dmc_nonfossil": 0.0
+  }
+ },
+ "cut_classes": [
+  "CC_CHP",
+  "CC_REGULAR",
+  "COAL",
+  "COAL_BIT",
+  "COAL_LIGNITE",
+  "COAL_PRB",
+  "COAL_WC",
+  "CT_CHP",
+  "CT_PEAKER",
+  "ST_GAS"
+ ],
+ "screen_year_argmax_F": 2025
+}
