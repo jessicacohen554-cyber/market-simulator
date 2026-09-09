@@ -186,3 +186,52 @@ until the end. **If S4a or S4b fails, the arm is dead and this session reports t
 - **Not touch a holdout year.** 2021/2022 are validation-tier and are not solved, scored or quoted.
 - **Not re-fit anything.** If the arm's shape is wrong, the answer is that the form is wrong, not a new
   slope, intercept, cap or window.
+
+---
+
+## ADDENDUM A (2026-09-09, after the control leg launched) — the rebase onto `main`, audited
+
+The branch was rebased from base `0ede2799` onto `f30ecd6a` (32 commits of `main`) **while the 2023
+control leg was solving**, so a G-DRIFT audit is owed over the rebase itself: did `main` move anything
+this screen reads, and did the working tree change under a running solve?
+
+`git diff 0ede2799 f30ecd6a -- src/market_sim scripts/run_calibration.py scripts/run_calibration_full.py
+scripts/lib data/raw/_validation-source data/raw/reference` returns **three files and not one line of
+Python**:
+
+| file | verdict |
+|---|---|
+| `data/raw/_validation-source/actual_lmp.json` | **INERT for PJM** — 12 changed leaves, **all SPP** (`SPP/2023,2024,2025 rt_lw / da_lw / *_mon`); `any PJM leaf changed: False` |
+| `_validation-source/actual_lmp_hourly_SPP.parquet` | INERT — another ISO |
+| `_validation-source/actual_lmp_hourly_zonal_SPP.parquet` | INERT — another ISO |
+
+**Every hunk is INERT for this screen**, so (a) the running control leg's dispatch is uncontaminated —
+no module it imports changed — and (b) both legs read byte-identical PJM inputs and byte-identical PJM
+benchmarks. The same-HEAD control posture of §4 is intact and is now stronger than when it was
+written: §4 could only record that the audit was *unavailable* against the keeper's unresolvable
+`457ae04`; this audit was runnable and came back clean.
+
+The `.gitignore` rebase conflict was resolved by **keeping `main`'s block verbatim** — it had
+deliberately narrowed caiso-267's ignore from the `caiso267_*/` glob to two named screen dirs so the
+registered full-span bundle still commits, and added miso-247's three entries — and appending only the
+pjm-177 stanza. Nothing of another lane's was reverted.
+
+## ADDENDUM B (2026-09-09) — holdout authorization actually exercised, and what is refused
+
+The owner authorized spending holdouts. Checked against the artifacts rather than assumed:
+
+- **VALIDATION tier {2020, 2021, 2022} — AUTHORIZED and being spent.** PJM carries the `complete`
+  marker (declared 2026-07-31, keyed to this keeper), `holdout_policy.VALIDATION_YEARS` is
+  `{2020, 2021, 2022}`, and the 2026-08-26 tier-scoping ruling lifted the validation tier out of the
+  freeze. `--holdout-authorized` is passed. Run in a parallel shard as its own bundle; folded to the
+  keeper under rule 30 only if the card is ever promoted.
+- **LOCKED TEST {2019, H1-2026} — REFUSED, and not spent.** PJM is **absent from the `final` block**,
+  and the locked test is additionally frozen for **every** ISO in `holdout-freeze.json`. Rule 22
+  states `final` is "an explicit owner act, per ISO, every time", recorded in
+  `calibration-complete.json` — a chat instruction is not that act, and the freeze outranks the
+  marker in any case. Opening it requires adding PJM to `final` **and** narrowing the freeze scope;
+  neither is done here.
+
+Rule 22's touchpoint discipline holds unchanged: a validation number is **iterable selection
+evidence, never a certified out-of-sample skill number**, and **no parameter is identified against
+2020/2021/2022** — structurally guaranteed here, since the mechanism has zero free parameters.
