@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-09-neiso-107-retiree-window",
+  "label": "neiso 107 retiree window",
+  "date": "2026-09-09",
+  "shorthand": "neiso-107-retiree-window",
+  "definition": "charter task 3: 2023-2025 bit-identity re-solve at HEAD on the retiree-window fleet",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NEISO",
+  "file": "frontend/data/backcast/runs/2026-09-09-neiso-107-retiree-window.js",
+  "bundle": "results/calibration/neiso107_train"
+}
