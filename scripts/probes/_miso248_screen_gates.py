@@ -128,9 +128,21 @@ def gate_g2(year: int) -> dict:
             offending.append(uid)
             continue
         want = float(NEW[year][side][int(k) - 1]) - float(OLD[year][side][int(k) - 1])
-        if not (np.allclose(d, want, atol=1e-9) and float(d.std()) == 0.0):
+        # ADDENDUM 2 (miso-248): the first form demanded ``d.std() == 0.0``
+        # exactly, which no float64 evaluation of ``hub(t) + delta`` can meet --
+        # the rounding of each addition varies with ``hub(t)``, so ``d`` carries
+        # a ~1e-14 spread.  That literal is DELETED, not widened (rule 26
+        # [R-DELETE]: a bar that cannot be met is not a bar) in favour of two
+        # QUANTIFIED bounds, declared before the repaired number was computed.
+        # 1e-9 $/MWh is six orders below any economically meaningful quantity
+        # here and five above the observed float error.
+        spread = float(d.max() - d.min())
+        err = float(np.abs(d - want).max())
+        if spread > 1e-9 or err > 1e-9:
             exact = False
-            offending.append(f"{uid}: want {want}, got {d[0]} std {d.std()}")
+            offending.append(
+                f"{uid}: want {want}, err {err:.3e}, hour-spread {spread:.3e}"
+            )
     return {
         "year": year,
         "n_rows_total": len(fleet.unit_ids),
