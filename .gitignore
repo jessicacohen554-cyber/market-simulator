@@ -1493,3 +1493,7 @@ results/capxd88-screen/
 
 # SPP-51c screen/control bundles (rule 29(c) delete-before-merge via gitignore; rule 31 [R-RETAIN] keeps them on local disk)
 results/calibration/_spp51c_*
+
+# caiso-267 screen/control bundles (rule 29(c) delete-before-merge, rule 31 [R-RETAIN]:
+# gitignored so they never reach main; NEVER rm -rf them)
+results/calibration/caiso267_*/
