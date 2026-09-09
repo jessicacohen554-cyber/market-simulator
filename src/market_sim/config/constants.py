@@ -2624,17 +2624,45 @@ NUCLEAR_MONTHLY_CF_BY_YEAR: dict[str, dict[int, list[float]]] = {
     # 2021 0.003, 2022 0.001: TIGHTER than the committed tuned years (2023
     # 0.001, 2024 0.004, 2025 0.007). Oct-2021 reads 0.43 (923) vs 0.426 (930),
     # so the deep refuelling outage is confirmed by hourly telemetry.
-    #   CAVEAT (fleet vintage, material for 2019 ONLY): the CF is measured
-    #   against the MODEL fleet's pmax, and the model's NEISO nuclear fleet is
-    #   the current 2-plant EIA-860 snapshot. Pilgrim (EIA 1590, 677 MW) ran
-    #   Jan-May 2019 and generated 2.177 TWh before retiring 31 May 2019, but
-    #   is absent from that snapshot, so the 2019 row anchors the 3,355 MW
-    #   Millstone+Seabrook fleet only — it does NOT restore Pilgrim. The
-    #   EIA-930 cross-check shows this directly: Jan-May 2019 telemetry implies
-    #   a fleet CF of 1.18-1.20 (physically impossible for 3,355 MW) and the
-    #   923-930 gap collapses to 0.003-0.005 from June onward, exactly when
-    #   Pilgrim stops. A 2019 solve is short ~2.18 TWh of nuclear regardless of
-    #   this overlay. 2020-2022 are unaffected (Pilgrim absent from both).
+    #   FLEET-VINTAGE CAVEAT — RETIRED 2026-09-09 (charter task 4, session
+    #   neiso-fuelvintage-1; charter: docs/handoffs/fleet-vintage-retiree-
+    #   window-charter-2026-08.md). It read: "A 2019 solve is short ~2.18 TWh
+    #   of nuclear regardless of this overlay", because Pilgrim (EIA 1590,
+    #   673.6 MW net summer) ran Jan-May 2019 and generated 2.177 TWh before
+    #   retiring 31 May 2019 yet was ABSENT from the operable EIA-860 snapshot
+    #   the backcast fleet is built from. The CF overlay is intensive (a
+    #   fraction applied to units already in the fleet) and so could not
+    #   restore missing capacity. **Its premise no longer holds.** Commit
+    #   7934e92c moved RETIREMENT_WINDOW_START 2023 -> 2019, so Pilgrim is
+    #   injected into the 2019 fleet from
+    #   eia860_generator_retired_within_window.parquet and the COD ramp ages it
+    #   out on its own month: monthly_online_mask(1972, 12, 2019, 5, run_year)
+    #   returns exactly 5 online months in 2019 and 0 in every year 2020+
+    #   (measured, this session).
+    #
+    #   The row below is UNCHANGED and needs no re-derivation, which was
+    #   checked rather than assumed. It reproduces EXACTLY as EIA-923 ISNE NUC
+    #   net generation for Millstone+Seabrook over a 3,355.4 MW denominator
+    #   (all twelve values). Applying that same row to the RESTORED 4,029.0 MW
+    #   Jan-May fleet gives, against the 13.002 TWh EIA-923 actually reports
+    #   for the three plants over Jan-May 2019:
+    #       pre-fix  (2-plant fleet x this row):  10.862 TWh  = -2.140 TWh
+    #       post-fix (restored fleet x this row): 13.042 TWh  = +0.040 TWh
+    #   i.e. the fleet repair alone closes 98.1 % of the gap and leaves a
+    #   +0.3 % over-injection, far inside NEISO 2019's C1 fuel-mix band of
+    #   +/-2.366 TWh. The residual is the Jan/Feb clip at 1.00 meeting a
+    #   denominator that grew; re-deriving the row on the three-plant numerator
+    #   over the month-online denominator would give
+    #   [0.98, 1.00, 0.99, 0.73, 0.76, then unchanged] and land on 13.002 TWh
+    #   exactly. That re-derive is NOT applied here: it would be a rule 23
+    #   [R-FROZEN-DERIVE] source-driven change to the derive script and its
+    #   test, it moves only 2019 (a locked-test year, `final` empty, freeze
+    #   ACTIVE), and 0.040 TWh does not justify touching a frozen table. It is
+    #   recorded so the session that eventually spends 2019 does not have to
+    #   rediscover it. NO 2019 SOLVE WAS RUN, SCORED OR REGISTERED to reach any
+    #   of this — every number above is EIA-923 / EIA-860 data inspection plus
+    #   the COD-ramp mask, which rule 22 [R-HOLDOUT] leaves unrestricted.
+    #   2020-2022 are unaffected either way (Pilgrim absent from all three).
     #   2026 is deliberately ABSENT: EIA-923 carries only Jan-Apr 2026, so a
     #   2026 anchor would post a false zero for H1's May-Jun.
     "NEISO": {

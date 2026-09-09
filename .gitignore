@@ -1609,3 +1609,12 @@ scripts/probes/_caiso_retiree_ab_tmp/
 results/nyiso_fuelvintage_*/
 results/calibration/nyiso_fuelvintage_*/
 results/screen/nyiso_ep_level_*/
+
+# neiso-fuelvintage-1 (2026-09-09): screen/shard bundles, kept on local disk under
+# rule 31 [R-RETAIN] until the owner rules on promotion, and kept OUT of `main`
+# by this ignore rather than by deletion (rule 29 [R-SCREEN] clause (c) as amended).
+results/neiso_fuelvintage_*/
+results/screen/neiso_ep_level_*/
+# The hand-composed scratch bundles superseded by the single-invocation full-span
+# solves; kept on disk under rule 31, never registered, never on `main`.
+results/calibration/neiso_fuelvintage_*/
