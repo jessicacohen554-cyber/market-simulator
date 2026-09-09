@@ -12,7 +12,9 @@
   "spp_anchor": "measured SPP NORTH hub DA"
  },
  "bars": {
-  "shard_cells_miso": 312,
+  "shard_cell_count": "G-PARSE' L1/L2: identity, no literal (ADDENDUM 1)",
+  "a4_eq_share": 0.99,
+  "a4_sigma_usd": 0.05,
   "unmapped": 0,
   "basis_corr_max": 0.6,
   "rung_tol_usd": 0.01,
@@ -20,7 +22,7 @@
   "tmpl_min_samples": 8
  },
  "gates": {
-  "G_PARSE_G_ISO": {
+  "G_PARSE_PRIME_G_ISO": {
    "iso_census": {
     "ERCOT": {
      "present": true,
@@ -165,7 +167,68 @@
    },
    "base_rows": 327,
    "base_rows_without_mode": 16,
-   "PASS": false
+   "L1_cross_shard_identity": {
+    "counts": {
+     "ERCOT": 313,
+     "CAISO": 313,
+     "PJM": 313,
+     "MISO": 313,
+     "NYISO": 313,
+     "NEISO": 313,
+     "SPP": 313
+    },
+    "PASS": true
+   },
+   "L2_upper_bound_identity": {
+    "strict_vs_loose": {
+     "ERCOT": [
+      313,
+      313
+     ],
+     "CAISO": [
+      313,
+      313
+     ],
+     "PJM": [
+      313,
+      313
+     ],
+     "MISO": [
+      313,
+      313
+     ],
+     "NYISO": [
+      313,
+      313
+     ],
+     "NEISO": [
+      313,
+      313
+     ],
+     "SPP": [
+      313,
+      313
+     ]
+    },
+    "PASS": true
+   },
+   "L3_provenance": {
+    "head": "c4ba68a16b9d9111a3214cbbb58a3352654ae6d1",
+    "head_short": "c4ba68a1",
+    "dirty": false,
+    "blob_sha": {
+     "base": "e07ace50aa127b3699c54799522f02657d3609d5",
+     "ERCOT": "6cdad757e059126a977d2c3a99aa3d78d438ba4f",
+     "CAISO": "3a67b82280c42f2c9d5a5de176aebd27957a70ee",
+     "PJM": "d554108cbe959db06f62a060e89abe973926bf27",
+     "MISO": "ba1ff46aa7252d1cb63865c30ddf62dd30626922",
+     "NYISO": "2ceef5e14cfe679ee8c08ed1e066c0a4fe2adeda",
+     "NEISO": "86339d219db5727d31b5a9aadd1dbbf5c1e5658c",
+     "SPP": "76848183d520a3fad921ea828a2c8d7054dfb082"
+    }
+   },
+   "note": "the `== 312` literal is DELETED, not widened (ADDENDUM 1 section 3): it was frozen at session-start HEAD de837c38 and evaluated after a rebase onto a main that had gained a 313th cell (hydro_budget_period_by_instrument, U at mode BF in all seven shards)",
+   "PASS": true
   },
   "G_MODE": {
    "mode_counts_all_rows": {
@@ -435,6 +498,61 @@
     "tie_or_insufficient": 0
    },
    "VERDICT": "MERIT (same object as item (a))"
+  },
+  "M_A4_IS_IT_THE_INTERNAL_PRICE": {
+   "years": {
+    "2023": {
+     "reference_zone": "MISO-Indiana",
+     "share_pbus_equals_midwest_within_1c": 0.9993,
+     "sigma_p_bus": 6.0942,
+     "sigma_p_midwest": 7.0969,
+     "abs_sigma_gap_usd": 1.0027,
+     "midwest_copper_plate_max_cross_zone_spread_usd": 0.746786,
+     "L_i_eq_share_PASS": true,
+     "L_ii_sigma_PASS": false,
+     "reported_not_gated_out_of_merit_share_in_zone_exclusive_hours": {
+      "PJM": 0.0043,
+      "SPP": 0.3726,
+      "Manitoba": 0.0739
+     }
+    },
+    "2024": {
+     "reference_zone": "MISO-Indiana",
+     "share_pbus_equals_midwest_within_1c": 0.9999,
+     "sigma_p_bus": 16.5253,
+     "sigma_p_midwest": 16.541,
+     "abs_sigma_gap_usd": 0.0157,
+     "midwest_copper_plate_max_cross_zone_spread_usd": 0.0,
+     "L_i_eq_share_PASS": true,
+     "L_ii_sigma_PASS": true,
+     "reported_not_gated_out_of_merit_share_in_zone_exclusive_hours": {
+      "PJM": 0.039,
+      "SPP": 0.4318,
+      "Manitoba": 0.1467
+     }
+    },
+    "2025": {
+     "reference_zone": "MISO-Indiana",
+     "share_pbus_equals_midwest_within_1c": 1.0,
+     "sigma_p_bus": 15.2118,
+     "sigma_p_midwest": 15.2118,
+     "abs_sigma_gap_usd": 0.0,
+     "midwest_copper_plate_max_cross_zone_spread_usd": 0.0,
+     "L_i_eq_share_PASS": true,
+     "L_ii_sigma_PASS": true,
+     "reported_not_gated_out_of_merit_share_in_zone_exclusive_hours": {
+      "PJM": 0.0885,
+      "SPP": 0.4454,
+      "Manitoba": 0.3767
+     }
+    }
+   },
+   "bars": {
+    "eq_share_min": 0.99,
+    "abs_sigma_gap_max_usd": 0.05
+   },
+   "declared": "ADDENDUM 1 section 4, before its number existed; can only REFUSE",
+   "PASS": false
   }
  },
  "reported": {
@@ -803,8 +921,23 @@
    }
   }
  },
+ "provenance": {
+  "head": "c4ba68a16b9d9111a3214cbbb58a3352654ae6d1",
+  "head_short": "c4ba68a1",
+  "dirty": false,
+  "blob_sha": {
+   "base": "e07ace50aa127b3699c54799522f02657d3609d5",
+   "ERCOT": "6cdad757e059126a977d2c3a99aa3d78d438ba4f",
+   "CAISO": "3a67b82280c42f2c9d5a5de176aebd27957a70ee",
+   "PJM": "d554108cbe959db06f62a060e89abe973926bf27",
+   "MISO": "ba1ff46aa7252d1cb63865c30ddf62dd30626922",
+   "NYISO": "2ceef5e14cfe679ee8c08ed1e066c0a4fe2adeda",
+   "NEISO": "86339d219db5727d31b5a9aadd1dbbf5c1e5658c",
+   "SPP": "76848183d520a3fad921ea828a2c8d7054dfb082"
+  }
+ },
  "FAILED_LEGS": [
-  "G-PARSE: MISO cells 313 != 312"
+  "M-a4: 2023: eq_share 0.9993, |dsigma| 1.0027"
  ],
  "ALL_GATED_LEGS_PASS": false
 }
