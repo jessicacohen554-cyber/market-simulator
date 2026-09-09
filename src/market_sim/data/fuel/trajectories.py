@@ -385,6 +385,31 @@ def prb_follower_passthrough_series(
     )
 
 
+def _electric_power_level_series(
+    series: np.ndarray, config: ScenarioConfig, year: int, hours: int
+) -> np.ndarray:
+    """REPLACE the monthly gas LEVEL with the measured N3045 state blend.
+
+    Gated on ``config.gas_electric_power_monthly_level``. The measured level
+    (:func:`market_sim.data.fuel.electric_power.iso_electric_power_monthly_level`)
+    supersedes whatever set the level before it — the annual trajectory
+    x generic shape, or the EIA-923 ISO-month receipts under
+    ``gas_monthly_actuals`` — rather than stacking on it (rule 19
+    ``[R-ONE-MECH]``), and is itself superseded in covered months by the
+    measured constrained-hub index applied immediately after
+    (:func:`._hub_overlay_series`), which is the marginal unit's own
+    opportunity cost where one is published. An inadmissible year returns
+    ``None`` and the incoming series passes through untouched, so every
+    forecast run and every year the mechanism cannot price is byte-identical.
+    """
+    if not getattr(config, "gas_electric_power_monthly_level", False):
+        return series
+    level = _pkg_ns().iso_electric_power_monthly_level(config.iso, year)
+    if level is None:
+        return series
+    return _expand_monthly_to_hourly(np.asarray(level, dtype=float), hours)
+
+
 def _gas_series(config: ScenarioConfig, year: int, hours: int) -> np.ndarray:
     """Return the ``(hours,)`` delivered gas price ($/MMBtu).
 
@@ -408,6 +433,7 @@ def _gas_series(config: ScenarioConfig, year: int, hours: int) -> np.ndarray:
                 np.asarray(measured, dtype=float), hours
             )
             series = np.where(np.isnan(hourly_measured), series, hourly_measured)
+    series = _electric_power_level_series(series, config, year, hours)
     series = _hub_overlay_series(series, config, year, hours)
     # ERCOT zonal gas basis on: the merit order prices gas at the measured
     # EP-anchored level (Henry Hub + electric-power basis), not the flat -0.50

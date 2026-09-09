@@ -1364,6 +1364,17 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # delivered-gas array (a different merit order) and hashes distinctly.
     # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
     "ercot_ep_gas_basis_monthly",
+    # xiso-fuelvintage-1 measured monthly delivered-gas LEVEL (EIA N3045 state
+    # blend), default off: dropped from the hash at its False default so every
+    # pre-existing key in every ISO (each designated keeper's included) stays
+    # byte-stable — the off path never reads the series and returns the
+    # incoming array unchanged, so it is byte-identical by construction. An
+    # armed run prices a different delivered-gas level (a different merit
+    # order) and hashes distinctly; an armed run in a year the coverage test
+    # refuses is byte-identical to off in DISPATCH but still hashes distinctly,
+    # which is the safe direction. Registered IN THE SAME COMMIT as the field
+    # (the nyiso-119 discipline).
+    "gas_electric_power_monthly_level",
     # ercot-255 EP-reference of the F923-sourced rows of the ERCOT zonal gas
     # SPREAD, default off: dropped from the hash at its False default so every
     # pre-existing ERCOT key (the designated keeper's included) stays
@@ -2112,6 +2123,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by ercot-254 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "ercot_ep_gas_basis_monthly": "False",
+    "gas_electric_power_monthly_level": "False",
     # Added by ercot-255 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "ercot_zonal_spread_ep_referenced": "False",
@@ -15643,6 +15655,57 @@ class ScenarioConfig:
     # years have no F923 rows and keep the trajectory).
     gas_monthly_actuals: bool = False
 
+    # Tier 3 (calibration) — session xiso-fuelvintage-1. Price gas at the
+    # MEASURED MONTHLY delivered LEVEL for the ISO's own footprint: the EIA
+    # N3045 "natural gas sold to electric power consumers" state series,
+    # blended across the ISO's footprint states by its own installed gas
+    # capacity there (data/raw/reference/iso-gas-capacity-state-weights.csv,
+    # a frozen derive off EIA-860 — ZERO free parameters, rules 21 [R-DOF] /
+    # 24 [R-REGISTRY]). The ISO-agnostic generalization of ERCOT's own level
+    # anchor (basis.ercot.ercot_electric_power_gas_basis, series N3045TX3).
+    #
+    # WHAT IT REPAIRS. Every ISO's gas LEVEL today resolves from one annual
+    # scalar (HENRY_HUB_TRAJECTORIES[path][year], or the keeper's
+    # gas_price_override, plus a flat GAS_BASIS_DIFFERENTIAL constant), and
+    # every existing monthly mechanism is MEAN-PRESERVING BY CONSTRUCTION —
+    # gas_hh_monthly_shape normalizes to the annual level exactly and
+    # gas_daily_shape normalizes per month — so a shape cannot repair a
+    # level. A year whose annual mean is contaminated by one extreme month
+    # therefore overprices every OTHER month and underprices the extreme one:
+    # one term, both signs (docs/FINDING-ercot254-2021-offer-level-root-cause-
+    # 2026-09-07.md). Measured, ISO by ISO, in
+    # docs/FINDING-xiso-fuelvintage-monthly-gas-level-2026-09-09.md §3: MISO
+    # and SPP carry the generic climatological shape in EVERY year (model
+    # monthly CV = 0.094 in all of 2019-2025, the fixed-shape fingerprint),
+    # with MISO's Feb-2021 gas 11.245 $/MMBtu below measured (~84 $/MWh at a
+    # 7.5 MMBtu/MWh CC heat rate).
+    #
+    # RULE 19 [R-ONE-MECH]. It REPLACES the level, never stacks: it supersedes
+    # the annual x shape construction and the EIA-923 ISO-month receipts
+    # (gas_monthly_actuals), and is itself superseded in covered months by the
+    # measured constrained-hub index (gas_hub_basis_overlay: NEISO Algonquin,
+    # CAISO SoCal/PG&E, NYISO Transco Z6) applied after it — a hub index is
+    # the marginal unit's own opportunity cost, while N3045 is an average
+    # delivered cost across every purchase in the state. The three levels are
+    # strictly ordered (national annual < state-average monthly < measured hub
+    # index) and each supersedes the one before it.
+    #
+    # ADMISSIBILITY, declared ex ante and NEVER swept (rule 1 [R-STRUCT] (c)):
+    # the states used must print in ALL TWELVE months of the year (so the
+    # basket's composition is constant within the year and no month-to-month
+    # move is a basket artifact) AND carry a strict majority of the ISO's gas
+    # capacity. No national-average backfill for an unprinted state — that
+    # would put a national number back into exactly the state-months where the
+    # local price departs most from national. An inadmissible year is inert
+    # and keeps its existing construction byte-for-byte, which by measurement
+    # is CAISO 2019-2021 and MISO 2019-2021/2025.
+    #
+    # Off by default so every committed keeper and every forecast is
+    # byte-identical. Forward-reproducible (rule 13 [R-MEASURED]): the same
+    # blend over a forward monthly gas curve, responding to conditions.
+    # See market_sim.data.fuel.electric_power.
+    gas_electric_power_monthly_level: bool = False
+
     # Tier 3 (calibration) — replace the generic climatological monthly gas
     # SHAPE (GAS_MONTHLY_SEASONALITY) with the MEASURED Henry Hub monthly
     # shape for the year, hour-weight-normalized so the annual mean stays
@@ -20222,6 +20285,7 @@ TIER_TAGS: dict[str, int] = {
     "pumped_storage_dispatch_adder": 3,
     "battery_dispatch_adder": 3,
     "gas_monthly_actuals": 3,
+    "gas_electric_power_monthly_level": 3,
     "gas_hh_monthly_shape": 3,
     "gas_hub_basis_overlay": 3,
     "nyiso_zonal_gas_basis": 3,

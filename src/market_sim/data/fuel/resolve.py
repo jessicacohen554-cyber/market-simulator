@@ -140,6 +140,22 @@ def resolve_fuel_prices(
                 np.isnan(hourly_measured), gas_price_hourly, hourly_measured
             )
 
+    # Measured monthly delivered LEVEL (EIA N3045 state series, blended by
+    # this ISO's gas-capacity footprint). REPLACES the level set above — the
+    # annual trajectory x generic shape, or the EIA-923 ISO-month receipts —
+    # never stacks on it (rule 19 [R-ONE-MECH]); the measured constrained-hub
+    # index below still supersedes it in the months it covers, since a hub
+    # index is the marginal unit's own opportunity cost while this is an
+    # average delivered cost across the state. Inert (byte-identical) when the
+    # flag is off or the year is inadmissible. See
+    # market_sim.data.fuel.electric_power.
+    if getattr(config, "gas_electric_power_monthly_level", False):
+        ep_level = _pkg_ns().iso_electric_power_monthly_level(config.iso, year)
+        if ep_level is not None:
+            gas_price_hourly = _expand_monthly_to_hourly(
+                np.asarray(ep_level, dtype=float), T
+            )
+
     # Daily Henry Hub within-month shape: the monthly level above is correct
     # (trajectory / measured ISO-month), and this multiplies in the real
     # day-to-day commodity swing the marginal gas unit's bid would track,

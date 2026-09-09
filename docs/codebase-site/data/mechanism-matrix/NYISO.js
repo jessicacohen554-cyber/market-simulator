@@ -170,6 +170,7 @@ window.MECH_MATRIX_SHARDS.NYISO = {
     negative_renewable_offers: { cell: "." },
     wind_ptc_vintage_offers: { cell: "." },
     gas_offer_curve_tranches: { cell: "K" },
+    gas_electric_power_monthly_level: { cell: "O", ev: "BUILT not tested (xiso-fuelvintage-1, 2026-09-09). Admissible in all seven years (NY+NJ, basket 1.00). Largely superseded in practice by the keeper's own gas_hub_basis_overlay (Transco Z6, 12/12 months every year) plus nyiso_zonal_gas_basis, which are the more local measured marginal series. Phase-0: the keeper series runs ABOVE measured state-average delivered in nearly every month (2025 annual -1.189, Jan -5.107 $/MMBtu) \u2014 expected, since downstate NYC gas is dearer than the state mean, which is exactly why the hub index and not this must set NYISO's level. Handed off for the NYISO lane's own A/B." },
     gas_monthly_actuals: { cell: "K" },
     gas_plant_monthly_pricing: { cell: "K" },
     gas_daily_shape: { cell: "K" },

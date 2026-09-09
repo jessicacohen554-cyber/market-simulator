@@ -10727,6 +10727,20 @@ def main() -> None:
         "winter gas events reach the merit order. Off by default.",
     )
     parser.add_argument(
+        "--gas-electric-power-monthly-level",
+        action="store_true",
+        help="Price gas at the MEASURED MONTHLY delivered level for this "
+        "ISO's own footprint — the EIA N3045 'gas sold to electric power "
+        "consumers' state series blended by the ISO's installed gas capacity "
+        "per state — instead of one annual scalar times a mean-preserving "
+        "shape. REPLACES the level (rule 19): supersedes the annual x shape "
+        "construction and --gas-monthly-actuals, and is itself superseded in "
+        "covered months by the measured hub index under "
+        "--gas-hub-basis-overlay. Inert in any year whose footprint states do "
+        "not all print twelve months and carry a majority of the ISO's gas "
+        "capacity. Off by default.",
+    )
+    parser.add_argument(
         "--gas-hub-basis-daily",
         action="store_true",
         help="Diagnostic (off by default): replace the flat monthly hub-basis "
@@ -13310,6 +13324,9 @@ def main() -> None:
             # (None entries are dropped); non-PRB calibration toggles
             # ride along here.
             "gas_hub_basis_daily": True if args.gas_hub_basis_daily else None,
+            "gas_electric_power_monthly_level": (
+                True if args.gas_electric_power_monthly_level else None
+            ),
             # NEISO-only per the ScenarioConfig spec: the re-attribution
             # relabels switched generator-hours gas->oil so the model matches
             # the benchmark feed's fuel attribution, and only ISNE's EIA-930

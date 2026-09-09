@@ -170,6 +170,7 @@ window.MECH_MATRIX_SHARDS.ERCOT = {
     negative_renewable_offers: { cell: "G" },
     wind_ptc_vintage_offers: { cell: "I" },
     gas_offer_curve_tranches: { cell: "." },
+    gas_electric_power_monthly_level: { cell: "U", ev: "MINTED U by the rule-28(c) same-PR duty only (xiso-fuelvintage-1, 2026-09-09) \u2014 NO ERCOT adjudication made or implied and NOTHING else in this shard touched. ERCOT's copy of this work is session ercot-261's. ERCOT already carries the ISO-specific ancestor of this construction (ercot_electric_power_gas_basis, N3045TX3, on the ercot_zonal_gas_basis path) and its monthly form ercot_ep_gas_basis_monthly, which was BUILT and left default-off by ercot-254 (RESULT-ercot254-monthly-ep-basis-2026-09-07.md \u00a75). Rule 19 [R-ONE-MECH]: those and this field price the SAME phenomenon for ERCOT and must never be armed together." },
     gas_monthly_actuals: { cell: "G", ev: "ERCOT-145b (docs/PRECOMMIT-ercot145-gas-daily-shape-2026-07-31.md §1; Run-77 postmortem)" },
     gas_plant_monthly_pricing: { cell: "G", ev: "ERCOT-145b (docs/PRECOMMIT-ercot145-gas-daily-shape-2026-07-31.md §1b)" },
     gas_daily_shape: { cell: "K", ev: "ERCOT-145b (docs/PRECOMMIT-ercot145-gas-daily-shape-2026-07-31.md; keeper 2026-07-31-ercot145-gas-daily-shape)" },

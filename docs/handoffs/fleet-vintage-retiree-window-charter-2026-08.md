@@ -1,6 +1,6 @@
 # CHARTER — the backcast fleet-vintage retiree window (`RETIREMENT_WINDOW_START`)
 
-**Opened:** 2026-08-15, session neiso-94 · **Scope:** ALL SIX ISOs · **Status:** OPEN, unassigned
+**Opened:** 2026-08-15, session neiso-94 · **Scope:** ALL SIX ISOs · **Status:** TASK 2 EXECUTED 2026-09-09 (session xiso-fuelvintage-1, commit `7934e92c`); tasks 1, 3, 4 OPEN, routed per ISO by `docs/handoffs/xiso-fuelvintage-per-iso-lp-prompts-2026-09-09.md`
 **Evidence:** `results/calibration/ASSESSMENT-neiso94-final-readiness-2026-08-15.md` §2 ·
 `results/calibration/_neiso94_pilgrim_vintage_audit.json` ·
 `scripts/probes/neiso94_pilgrim_vintage_audit.py`
@@ -40,6 +40,37 @@ Its own comment states the intent correctly — *"First backcast year the within
 snapshot supports … Bump only if the supported window moves."* **The supported window has moved.**
 Rule 22 as amended 2026-08-06 makes the program's working span **2019–2025 for all ISOs**. The
 constant is stale relative to the policy; nothing else about the design is wrong.
+
+## 2a. TASK 2 EXECUTION RECORD (2026-09-09, session xiso-fuelvintage-1)
+
+`RETIREMENT_WINDOW_START: 2023 -> 2019` and the artifact rebuilt, commit `7934e92c`. **Two
+things §3 did not anticipate**, both measured and both handled:
+
+1. **The source zips are gone.** `build_within_window_retirees` read release zips;
+   `data/raw/eia-860/` commits their *extracted parquet vintages* instead. The reader is now
+   source-agnostic (`_read_retired_sheets`) and the per-vintage projection is factored out.
+2. **A bare rebuild would have DROPPED 161 real units, not added any.** EIA prunes older
+   retirements from each release, so the vintages that supplied the shipped 2023/2024 rows can
+   no longer reproduce them: rebuilding from what is on disk gives **423** rows against the
+   shipped **477** (-111 of 2023, -50 of 2024). The new `preserve` argument carries the shipped
+   rows verbatim; `until_year` bounds newly-read rows from above so the widening touches only
+   the years it widens *into*.
+
+**Verified additive**: the 477 shipped rows are content-identical after the rebuild (sha256
+`b1f1a953…`), pinned as a STOP condition by `tests/unit/data/test_retiree_window_extension.py`.
+Artifact 477 -> 1,094 units / 436 plants / 52.8 GW. Capacity restored per solve year (net
+summer MW): **2019 31,919 · 2020 20,735 · 2021 12,945 · 2022 7,685 · 2023-2025 exactly 0**.
+Per ISO 2019-2022: PJM 13,294.9 · MISO 9,127.8 · NYISO 3,671.9 · NEISO 1,696.5 ·
+CAISO 1,700.6 · SPP 1,277.9 · ERCOT 1,149.7.
+
+**Task 3 (in-sample bit-identity) is NOT discharged by this session** — it needs an LP per ISO
+and is carried in each ISO's handoff prompt. **Task 4** (retiring the two `constants.py`
+caveats) likewise stays in NEISO's and NYISO's own lanes, per rule 25.
+
+**Task 5 is superseded by events, not by this session**: the validation tier (2020-2022) was
+lifted from the holdout freeze by the owner ruling of 2026-08-26 and is governed by the
+`complete` marker + `--holdout-authorized`, which ERCOT, NEISO, PJM, CAISO and NYISO hold and
+**MISO does not**. 2019 remains locked-test tier with `final` empty and the freeze ACTIVE.
 
 ## 3. What the change is
 
