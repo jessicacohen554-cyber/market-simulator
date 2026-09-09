@@ -136,3 +136,22 @@ one year per container, shards pinned to an **immutable commit SHA**, never a br
 Rule 22: 2021/2022 are validation-tier spends under ERCOT's `complete` marker; no parameter
 is identified on, fitted to, or selected against any year — both factors are owner-set and
 registered above the solve.
+
+## 8. G-DRIFT (rule 29(b)) — form 4 is VALID; no control solve is spent
+
+Base: `6bc43501`, the commit the incumbent keeper `2026-09-09-ercot261-corroborated-gas-level`
+was solved on. Diff over `src/market_sim`, `scripts/run_calibration*.py`, `scripts/lib`,
+`data/raw/_validation-source`, `data/raw/reference`:
+
+**One file, one commit.** `e4247c73` (miso-248) re-derives `MISO_SEAM_LADDER_BY_YEAR` in
+`model/interchange/spec.py` — 69 insertions, a MISO seam-ladder constant table.
+
+**Classified INERT for ERCOT**, on two independent checks: the table is MISO-scoped by name
+and by its only consumers (`model/interchange`), and the ERCOT keeper recipe arms **no**
+seam or ladder flag at all (`iso: ERCOT`, zero seam/ladder keys in `calibration_flags` or
+`coal_prb_sigmoid_overrides`).
+
+**All hunks INERT ⇒ G-CTRL form 4 holds and the keeper's COMMITTED legs are the control**
+(rule 29(b)'s default). Five arm solves, no control solves. This is the opposite of
+ercot-261, where the SPP-49 simple-cycle heat-rate floor was ungated and LIVE for ERCOT and
+therefore earned ten.
