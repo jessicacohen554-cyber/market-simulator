@@ -73,10 +73,9 @@ def _h(v) -> str:
     return hashlib.sha256(np.ascontiguousarray(v).tobytes()).hexdigest()[:16]
 
 
-def _state_fingerprint(state) -> dict:
-    """Hash every LP-input array the fleet_only exit exposes."""
-    fa = state["fleet_arrays"]
-    out: dict[str, str] = {}
+def _unit_axis_arrays(fa, n_gen: int) -> dict:
+    """Return the FleetArrays entries whose FIRST axis is the generator axis."""
+    out = {}
     for name in sorted(dir(fa)):
         if name.startswith("_"):
             continue
@@ -84,21 +83,150 @@ def _state_fingerprint(state) -> dict:
             v = getattr(fa, name)
         except Exception:
             continue
-        if isinstance(v, np.ndarray):
-            out[f"fa.{name}"] = f"{_h(v)}|{v.shape}|{v.dtype}"
-        elif isinstance(v, (list, tuple)) and v and isinstance(v[0], str):
-            out[f"fa.{name}"] = (
-                hashlib.sha256("\x00".join(map(str, v)).encode()).hexdigest()[:16]
-                + f"|len={len(v)}"
-            )
-    for key in ("mc_base", "fuel_prices", "demand", "wind_cf", "wind_cap",
-                "solar_cf", "solar_cap", "wind_mc", "solar_mc",
-                "storage_power_cap"):
+        if isinstance(v, np.ndarray) and v.ndim >= 1 and v.shape[0] == n_gen:
+            out[name] = v
+        elif (
+            isinstance(v, (list, tuple))
+            and len(v) == n_gen
+            and v
+            and isinstance(v[0], str)
+        ):
+            out[name] = np.asarray(v, dtype=object)
+    return out
+
+
+def _non_unit_arrays(state, fa, n_gen: int) -> dict:
+    """Return the LP inputs that do NOT carry a generator axis."""
+    out = {}
+    for name in sorted(dir(fa)):
+        if name.startswith("_"):
+            continue
+        try:
+            v = getattr(fa, name)
+        except Exception:
+            continue
+        if isinstance(v, np.ndarray) and (v.ndim == 0 or v.shape[0] != n_gen):
+            out[f"fa.{name}"] = v
+    for key in ("demand", "wind_cf", "wind_cap", "solar_cf", "solar_cap",
+                "wind_mc", "solar_mc", "storage_power_cap"):
         v = state.get(key)
         if isinstance(v, np.ndarray):
-            out[key] = f"{_h(v)}|{v.shape}|{v.dtype}"
-    out["n_gen"] = str(len(state["fleet"]))
+            out[key] = v
     return out
+
+
+def _compare(ctl_state, arm_state) -> dict:
+    """The real GATE T3 test.
+
+    The retiree window ADDS generator rows by construction (the charter says so:
+    the COD ramp zeroes availability but never touches ``pmax``), so demanding an
+    identical ``n_gen`` is the wrong test. What must hold for the LP to be
+    unchanged is:
+
+      1. the window is strictly ADDITIVE -- no control unit disappears;
+      2. every ADDED column is PINNED TO ZERO -- ``availability`` and ``min_gen``
+         are identically zero across all 8760 hours, so its upper bound is 0 and
+         a non-negative-cost column fixed at 0 contributes exactly 0 to any
+         optimal solution;
+      3. every COMMON column is byte-identical, IN MATCHED UNIT ORDER, across
+         every generator-axis array plus ``mc_base`` / ``fuel_prices``;
+      4. every non-generator-axis LP input is byte-identical.
+
+    Together those force an identical optimum, which is strictly stronger than
+    comparing a dispatch that could merely coincide.
+    """
+    cfa, afa = ctl_state["fleet_arrays"], arm_state["fleet_arrays"]
+    cn, an = len(ctl_state["fleet"]), len(arm_state["fleet"])
+    cu = [str(u) for u in cfa.unit_ids]
+    au = [str(u) for u in afa.unit_ids]
+    c_pos = {u: i for i, u in enumerate(cu)}
+    a_pos = {u: i for i, u in enumerate(au)}
+
+    removed = sorted(set(cu) - set(au))
+    added = sorted(set(au) - set(cu))
+    common = [u for u in cu if u in a_pos]
+    ci = np.array([c_pos[u] for u in common], dtype=int)
+    ai = np.array([a_pos[u] for u in common], dtype=int)
+
+    res: dict = {
+        "n_gen_control": cn,
+        "n_gen_arm": an,
+        "n_added": len(added),
+        "n_removed": len(removed),
+        "n_common": len(common),
+        "removed_unit_ids": removed[:20],
+    }
+
+    # (2) every added column pinned to zero
+    bad_added = []
+    if added:
+        aidx = np.array([a_pos[u] for u in added], dtype=int)
+        avail = np.asarray(afa.availability)[aidx]
+        mg = (
+            np.zeros_like(avail)
+            if afa.min_gen is None
+            else np.asarray(afa.min_gen)[aidx]
+        )
+        pmax_added = np.asarray(afa.pmax)[aidx]
+        res["added_pmax_mw"] = round(float(pmax_added.sum()), 3)
+        res["added_max_availability"] = float(avail.max()) if avail.size else 0.0
+        res["added_max_min_gen"] = float(mg.max()) if mg.size else 0.0
+        for k, u in enumerate(added):
+            if float(avail[k].max()) != 0.0 or float(mg[k].max()) != 0.0:
+                bad_added.append(u)
+    res["added_columns_all_pinned_to_zero"] = not bad_added
+    res["added_columns_not_pinned"] = bad_added[:20]
+
+    # (3) common columns byte-identical in matched order
+    cu_arr = _unit_axis_arrays(cfa, cn)
+    au_arr = _unit_axis_arrays(afa, an)
+    diff_common = {}
+    for name in sorted(set(cu_arr) | set(au_arr)):
+        if name not in cu_arr or name not in au_arr:
+            diff_common[f"fa.{name}"] = "present in only one arm"
+            continue
+        a, b = cu_arr[name][ci], au_arr[name][ai]
+        if a.dtype == object or b.dtype == object:
+            if list(a) != list(b):
+                diff_common[f"fa.{name}"] = "object rows differ"
+        elif a.shape != b.shape or _h(a) != _h(b):
+            with np.errstate(invalid="ignore"):
+                try:
+                    md = float(np.nanmax(np.abs(a.astype(float) - b.astype(float))))
+                except Exception:
+                    md = None
+            diff_common[f"fa.{name}"] = {"max_abs_delta": md}
+    for key in ("mc_base", "fuel_prices"):
+        a = np.asarray(ctl_state[key])[ci]
+        b = np.asarray(arm_state[key])[ai]
+        if a.shape != b.shape or _h(a) != _h(b):
+            diff_common[key] = {
+                "max_abs_delta": float(np.nanmax(np.abs(a - b)))
+            }
+    res["common_columns_identical"] = not diff_common
+    res["common_columns_differing"] = diff_common
+
+    # (4) non-generator-axis inputs byte-identical
+    cn_arr = _non_unit_arrays(ctl_state, cfa, cn)
+    an_arr = _non_unit_arrays(arm_state, afa, an)
+    diff_other = {}
+    for name in sorted(set(cn_arr) | set(an_arr)):
+        if name not in cn_arr or name not in an_arr:
+            diff_other[name] = "present in only one arm"
+        elif cn_arr[name].shape != an_arr[name].shape or _h(cn_arr[name]) != _h(
+            an_arr[name]
+        ):
+            diff_other[name] = "differs"
+    res["non_unit_inputs_identical"] = not diff_other
+    res["non_unit_inputs_differing"] = diff_other
+
+    res["PASS"] = bool(
+        not removed
+        and res["added_columns_all_pinned_to_zero"]
+        and res["common_columns_identical"]
+        and res["non_unit_inputs_identical"]
+    )
+    return res
 
 
 def _run(year: int, meta: dict, kwargs: dict, gas_prices: dict, extra: dict | None):
@@ -155,22 +283,30 @@ def main() -> int:
             # ---- CONTROL: the pre-change 477-row window -------------------
             shutil.copy2(filtered, ARTIFACT)
             _reset_caches()
-            ctl = _state_fingerprint(_run(year, meta, kwargs, gas_prices, None))
+            ctl_state = _run(year, meta, kwargs, gas_prices, None)
             # ---- ARM: the shipped 1,094-row window ------------------------
             shutil.copy2(backup, ARTIFACT)
             _reset_caches()
             arm_state = _run(year, meta, kwargs, gas_prices, None)
-            arm = _state_fingerprint(arm_state)
 
-            d = _diff(ctl, arm)
-            report["gate_T3"][str(year)] = {
-                "identical": not d,
-                "n_arrays_compared": len(set(ctl) | set(arm)),
-                "differing": d,
-            }
-            print(f"[T3 {year}] arrays compared={len(set(ctl)|set(arm))} "
-                  f"IDENTICAL={not d}" + ("" if not d else f" DIFFERING={list(d)}"))
-            ok = ok and not d
+            d = _compare(ctl_state, arm_state)
+            report["gate_T3"][str(year)] = d
+            print(
+                f"[T3 {year}] control n_gen={d['n_gen_control']} arm n_gen={d['n_gen_arm']} "
+                f"added={d['n_added']} ({d.get('added_pmax_mw', 0)} MW, "
+                f"max avail={d.get('added_max_availability')}, "
+                f"max min_gen={d.get('added_max_min_gen')}) removed={d['n_removed']} "
+                f"common={d['n_common']} | additive={not d['n_removed']} "
+                f"pinned={d['added_columns_all_pinned_to_zero']} "
+                f"common_identical={d['common_columns_identical']} "
+                f"other_identical={d['non_unit_inputs_identical']} => "
+                f"{'PASS' if d['PASS'] else 'FAIL'}"
+            )
+            if not d["PASS"]:
+                print(f"    common differing: {d['common_columns_differing']}")
+                print(f"    other differing : {d['non_unit_inputs_differing']}")
+                print(f"    not pinned      : {d['added_columns_not_pinned']}")
+            ok = ok and d["PASS"]
 
             # ---- CARD 1: the EP-level seam on the same year ---------------
             if not args.skip_card1:
