@@ -146,6 +146,41 @@ and it closes nothing. It makes the target harder and it makes it **correctly me
 the precondition for any mechanism work on 2021 being meaningful at all. Every arm ercot-262 and
 earlier sessions screened against 2021 C3b was screened against a number that was wrong by 0.32.
 
+## 6b. Characterizing February — the miss is an ONSET miss as much as a depth miss (zero LP)
+
+From the keeper's committed `hourly/system_2021.parquet` (P1) against the committed hourly actual,
+February's load-weighted error decomposes by event phase:
+
+| band | hours | contribution to the Feb mean error | share |
+|---|---:|---:|---:|
+| Feb 1–10 (pre-event) | 240 | +$0.07 | 0.0% |
+| **Feb 11–14 (ONSET)** | 96 | **−$179.00** | **52.6%** |
+| **Feb 15–19 (deep event)** | 120 | **−$156.07** | **45.9%** |
+| Feb 20–28 (post) | 216 | +$5.09 | 1.5% |
+
+*(Total −$329.91 against the scorer's −$344.94; the residual is the zone-resolved LZ actual the
+scorer uses versus the system-hub hourly series used here. It does not move the shares.)*
+
+**The model's storm starts about two days late.** Daily counts of hours above $1,000/MWh:
+
+| Feb | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| model | 0 | 0 | **1** | **6** | 22 | 24 | 24 | 24 | 9 |
+| actual | 4 | 2 | **23** | **19** | 24 | 24 | 24 | 24 | 9 |
+| day err $ | −312 | −173 | **−1,663** | **−1,314** | −1,209 | −1,074 | −855 | −461 | +66 |
+
+Once the event is fully joined the model tracks it well — Feb 15–18 reach $5,556 / $7,896 / $8,147 /
+$8,528 against $6,765 / $8,970 / $9,002 / $8,989, and Feb 19 is **+$66 over**. **The 52.6% that sits
+in Feb 11–14 is a timing failure, not a ceiling failure**: on Feb 13 the market was scarce for 23 of
+24 hours and the model was scarce for one.
+
+Two secondary facts for whoever takes it: the model spends **38 hours at/above $9,000 against the
+actual's 83**, and its dual peaks at **$10,771** — above ERCOT's $9,000 HCAP, which an energy-only
+LP dual is free to exceed. So the tail is *mistimed and under-held*, not under-priced at its peak.
+
+**This is a hypothesis about where to look, not a diagnosis.** It was measured from committed
+artifacts with no solve, and it names no mechanism.
+
 ## 7. Governance
 
 - **Rule 29 `[R-SCREEN]`:** phase 0 first; it killed the handoff's construction at zero LP cost, so

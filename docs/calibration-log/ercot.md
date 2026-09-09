@@ -14000,6 +14000,16 @@ October is **2.9%** (zeroing it: 0.5593 → 0.5511) and all eleven non-February 
 **Do not open it with an offer-band scale** — ercot-262 measured that channel at ~0.5% of price per
 1% of band and ±0.004 on C3b, and no level shift moves one month by −$345 without wrecking eleven.
 
+**CHARACTERIZED, zero LP (from the keeper's committed hourly, for the next lane):** February's
+error is **half an ONSET miss and half a depth miss** — Feb 11–14 contributes **−$179.00 (52.6%)**
+and Feb 15–19 **−$156.07 (45.9%)**; Feb 1–10 and 20–28 are ~0. **The model's storm starts about two
+days late**: on Feb 13 the actual was above $1,000/MWh for **23 of 24 hours and the model for 1**
+(Feb 14: 19 vs 6). Once joined it tracks well — Feb 15–18 reach $5,556/$7,896/$8,147/$8,528 against
+$6,765/$8,970/$9,002/$8,989, and Feb 19 is **+$66 over**. The model holds **38 h at/above $9,000
+against the actual's 83** and its dual peaks at **$10,771**, above the $9,000 HCAP an energy-only LP
+dual may exceed. So the tail is **mistimed and under-held, not under-priced at its peak.** A
+hypothesis about where to look, not a diagnosis, and it names no mechanism.
+
 **What this does NOT claim.** A benchmark correction is not a market mechanism and closes nothing;
 it makes the target harder and **correctly measured**. Every arm screened against 2021 C3b before
 today was screened against a number wrong by 0.32.
