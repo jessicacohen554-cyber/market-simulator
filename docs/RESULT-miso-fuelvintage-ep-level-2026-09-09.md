@@ -144,6 +144,14 @@ deviation from the committed keeper is HEAD drift and 0 % is the arm.** Both P1 
 the same simplex iteration count (**388,398**) and the same objective
 (**4,777,088,612.6964**).
 
+**A fourth, independent confirmation, found while staging the commit.** The **full-span ARM's**
+`class_hourly_2024.parquet` and `system_2024.parquet` are **byte-identical** (git blob sha) to the
+**screen CONTROL's** — a three-year armed invocation and a one-year unarmed invocation, different
+processes, different bundles, one with the flag on and one with it off, producing the same bytes.
+Every one of those six files simultaneously **differs** from the committed keeper's, which is the
+HEAD drift of §4 and not the arm. (Git's `status` reports some of them as renames from the keeper's
+bundle; that is *similarity*-based detection, not identity — the blob shas differ.)
+
 ---
 
 ## 4. THE UNPLANNED FINDING — "zero MW" is not "zero effect", and four sibling lanes pre-registered the wrong STOP
@@ -220,9 +228,65 @@ fleet-composition change of this class **moves no cache key** in any ISO that ar
 
 ## 5. CRITERIA AT FULL MAGNITUDE
 
-*(filled from the scored full-span bundle — §5 table below.)*
+**Registered run:** `2026-09-09-miso-250-ep-gas` (bundle `results/calibration/miso_fuelvintage_A`).
+**DETERMINATION: `CALIBRATED`** — rubric v3.6, grade summary scored 8 / target 7 / ledgered 1 /
+fails 0, DOF ledger 42 entries / 2 residual. **Identical determination and identical criterion
+statuses to the incumbent keeper.**
 
-<!-- CRITERIA_TABLE -->
+| criterion | tier | miso-250 (armed) | miso-248 (incumbent) |
+|---|---|---|---|
+| C1 fuel-mix by class | load-bearing | **PASS** | PASS |
+| C2 system volume | load-bearing | **PASS** | PASS |
+| C3a mean LMP | load-bearing | **PASS** | PASS |
+| C3b price duration/shape | load-bearing | **PASS** | PASS |
+| C3c price tail / scarcity | supporting | **CAVEAT** (ledgered) | CAVEAT (ledgered) |
+| C4 dispatch correlation | supporting | **PASS** | PASS |
+| C6 governance gate | protective | **PASS** | PASS |
+| C8 forced-energy share | protective | **PASS** | PASS |
+
+**Every value, at full magnitude, arm vs incumbent:**
+
+| criterion | year | miso-250 | miso-248 | moved? |
+|---|---|---|---|---|
+| C3a mean LMP | 2023 | **+4.9 %** | +5.2 % | −0.3 pp |
+| | 2024 | **+1.8 %** | +1.8 % | **identical** |
+| | 2025 | **−6.2 %** | −6.2 % | **identical** |
+| C3b NRMSE | 2023 | **0.091** | 0.092 | −0.001 |
+| | 2024 | **0.101** | 0.101 | **identical** |
+| | 2025 | **0.132** | 0.132 | **identical** |
+| C3c hours > $200 (model vs RT actual) | 2023 | **1 h** vs 30 h | 3 h vs 30 h | −2 h |
+| | 2024 | **7 h** vs 37 h | 7 h vs 37 h | **identical** |
+| | 2025 | **11 h** vs 88 h | 11 h vs 88 h | **identical** |
+| C8 forced share, CT_PEAKER | 2023 | **30.8 %** | 29.9 % | +0.9 pp |
+| | 2024 | **19.8 %** | 19.5 % | +0.3 pp |
+| | 2025 | **21.7 %** | 21.2 % | +0.5 pp |
+
+**Reported, not buried:**
+
+- **2024 and 2025 score identically to the incumbent on every criterion.** Only 2023 moves, and
+  only in the third decimal.
+- **None of that movement is the arm.** §3 proves arm ≡ control at HEAD (0 differing cells), and
+  ARM-vs-keeper equals CONTROL-vs-keeper cell for cell, so 100 % of it is the §4 HEAD drift.
+  Two of the three 2023 moves are *toward* the actual (C3a +5.2 → +4.9 %, C3b 0.092 → 0.091) and
+  one is away (C3c 3 h → 1 h against 30 h actual) — **and none of them is a reason this run was
+  promoted**, which is the point of saying so.
+- **C8's CT_PEAKER rows are over the 15 % cap in all three years and PASS anyway**, through rule
+  20 `[R-FORCED-BUDGET]`'s grounded-above-budget escalation: every binding mechanism clears D-4,
+  profile r 0.986 / 0.986 / 0.984 (≥ 0.8) and off-peak CV ratio 1.558 / 1.483 / 1.624 (≥ 0.5).
+  **The incumbent carries the same three failures** (29.9 / 19.5 / 21.2 %) and passes the same
+  way — this is pre-existing, not the arm's.
+- **C3c is the single ledgered caveat** and is non-downgrading under rubric v3.3/v3.6. It is
+  reported at full magnitude above and named on the determination basis.
+- **C5a CO2** (reported-only, not gating): −4.0 % / −4.3 % / −0.2 %.
+- **A rule-21 `[R-DOF]` regression I introduced and then repaired, disclosed rather than hidden:**
+  running `scripts/build_dof_ledger.py` on the new bundle rebuilt the ledger from its fixed
+  derivation and **silently dropped 16 hand-declared MISO entries** (41 → 25), among them
+  `partial_plant_exit_carry`, `summer_wefor_share_override`, `online_rho` and the four
+  `unit_outage_*` boolean arms. Losing a declared free parameter at a promotion is exactly what
+  rule 21 forbids, so the generator now **carries the incumbent's ledger verbatim** and appends
+  only the new field's zero-DOF measured entry: **42 / 2**. `build_dof_ledger.py` is not run on
+  this bundle, and the reason is in the generator's own comment.
+
 
 ---
 
@@ -294,3 +358,38 @@ same second instrument, same estimator, ISO-scoped.
 - **No other ISO's shard, keeper, status file or calibration log touched** (rule 25).
 - **No sibling session interrupted.** The four live lanes are mid-solve and past the point §4
   would redirect; the finding is left in the repository record, which they pick up on rebase.
+
+---
+
+## 8. THE PROMOTION QUESTION, AND THE STATE OF THE BUNDLES (rule 31 `[R-RETAIN]`)
+
+**PROMOTED.** MISO's keeper is now **`2026-09-09-miso-250-ep-gas`**
+(`results/calibration/miso_fuelvintage_A`), determination **`CALIBRATED`**, on the owner's ruling
+of 2026-09-09 — never on a residual. The keeper shard, the Calibration Status page, the mechanism
+matrix cell (`I → K`) and this record are updated in the same session; the superseded
+`2026-09-09-miso-248-spp-ladder` is pruned under rule 15's keeper-only retention (git history is
+the record).
+
+**Bundles on local disk at the end of this session**, none deleted (rule 31):
+
+| bundle | what it is | disposition |
+|---|---|---|
+| `results/calibration/miso_fuelvintage_A` | the promoted keeper, 2023-2025 | **registered and committed** (slim set force-added over the gitignore) |
+| `results/screen/miso_ep_level_2024` | the rule-29 screen arm | gitignored, kept on disk, **never registered** |
+| `results/screen/miso_ep_level_2024_CTRL` | the control the screen's G-0 miss **earned** (rule 29(b)) | gitignored, kept on disk, **never registered** |
+
+The two screen bundles are gitignored — which is what discharges rule 29(c) — and are **not
+deleted**. Every number this session will ever cite from them is in this document and the
+PRECOMMIT, so the record survives even though the container does not. **They will not survive the
+session**, and that is stated rather than tidied away: if any of the screen/control evidence
+should be preserved as artifacts rather than as prose, say so before this session ends.
+
+**No open promotion question remains for the arm itself** — the owner ruled, and it is done.
+Two questions inherited from `miso-249` §9 are still the owner's and are **restated, not acted on**:
+
+1. **Should MISO's lane build the EIA-923 Schedule-5 blended level (§6)?** It is the only measured
+   route to MISO's Feb-2021 defect, needs no new intake, carries zero new parameters — but must be
+   **daily**, and MISO cannot score the year it would fix.
+2. **Should MISO be granted a `complete` marker?** MISO is the only ISO in this program that cannot
+   touch 2020-2022, so its largest known defect is unreachable by construction. **Said, not acted
+   on:** no `--holdout-authorized`, no out-of-training solve, no marker file touched.
