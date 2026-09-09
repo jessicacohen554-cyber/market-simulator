@@ -2545,14 +2545,34 @@ NUCLEAR_MONTHLY_CF_BY_YEAR: dict[str, dict[int, list[float]]] = {
     # exactly. Data-change citation per rule 23 [R-FROZEN-DERIVE]: these are new
     # YEARS of the measured series, not a re-tune of an existing one — every
     # committed 2023-2025 value is byte-unchanged.
-    #   CAVEAT (fleet vintage, material for 2018-2021): the CF is measured
-    #   against the MODEL fleet's pmax, and the model's NYISO nuclear fleet is
-    #   the current 4-reactor EIA-860 snapshot. Indian Point 2 (retired Apr
-    #   2020) and 3 (retired Apr 2021) actually ran in 2018-2021 but are absent
-    #   from that snapshot, so these CFs anchor the model's 3,326 MW upstate
-    #   fleet only — they do NOT restore the ~2,060 MW of retired downstate
-    #   nuclear. A 2018-2021 solve is short that capacity regardless of this
-    #   overlay; see the register's fleet-statics DEGRADED row.
+    #   FLEET-VINTAGE CAVEAT RETIRED 2026-09-09 (session nyiso-fuelvintage-1,
+    #   charter task 4 — docs/handoffs/fleet-vintage-retiree-window-charter-
+    #   2026-08.md). It read: "A 2018-2021 solve is short that capacity
+    #   regardless of this overlay." THAT IS NO LONGER TRUE. The charter's task
+    #   2 moved RETIREMENT_WINDOW_START 2023 -> 2019 (commit 7934e92c), so
+    #   load_retired_within_window now re-admits Indian Point 2 (plant 2497,
+    #   retired 2020-04) and Indian Point 3 (plant 8907, retired 2021-04) —
+    #   2,050.9 MW net summer of downstate nuclear — and the COD monthly online
+    #   mask ages each out at its real retirement month. Measured at the loader:
+    #   the NYISO injection is 45 generators / 4,187.6 MW against 14 / 491.9 MW
+    #   before, i.e. 31 generators / 3,695.7 MW restored across 2019-2022. The
+    #   CF overlays are INTENSIVE (a per-month capacity factor) and could never
+    #   have restored missing capacity; the fleet channel is what did.
+    #
+    #   WHAT REMAINS TRUE, and is the successor caveat: this table is still
+    #   DERIVED on the OPERABLE fleet only. derive_nuclear_monthly_cf.py builds
+    #   its fleet from load_fleet_from_csv, which the retiree injection does not
+    #   feed, so both numerator (EIA-923 net generation) and denominator (fleet
+    #   pmax) remain the current 4-reactor upstate fleet — every committed value
+    #   here is byte-unchanged by the window move, and `--check` still passes.
+    #   But fleet/arrays.py applies the monthly CF UNIFORMLY to every nuclear
+    #   row, so the restored Indian Point units are represented at the upstate
+    #   fleet's measured monthly CF rather than at their own metered output
+    #   (their PRESENCE and RETIREMENT TIMING are measured; their within-year
+    #   SHAPE is the upstate fleet's). Whether to re-derive the CF over the
+    #   injected fleet is a mechanism change to the derive's fleet definition,
+    #   not a rule-23 [R-FROZEN-DERIVE] data refresh — the source data has not
+    #   moved — so it is ROUTED to the charter rather than absorbed here.
     #   2026 is deliberately ABSENT: EIA-923 carries only Jan-Apr 2026 (zeros
     #   May onward), so a 2026 anchor would post a false zero for H1's May-Jun.
     "NYISO": {
