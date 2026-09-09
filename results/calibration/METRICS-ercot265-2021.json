@@ -1,0 +1,139 @@
+{
+  "run": "ercot-265 receipts-fallback screen (rule 29 [R-SCREEN]), 2021 only",
+  "bundle": "results/calibration/ercot265_receipts_2021 (UNREGISTERED, gitignore-class, local disk only)",
+  "git_sha": "0ebfc2da044e6b99e555dd0e407856428e8217cd",
+  "config_delta_vs_keeper": "ercot_ep_gas_basis_receipts_fallback=true",
+  "keeper_run_id": "2026-09-09-ercot261-corroborated-gas-level",
+  "leg_verified": {
+    "ercot_offer_swcap_clip": true,
+    "cc_regular_peak_band": 151.008,
+    "mode": "backcast",
+    "note": "hard stop 3 verified on the EMITTED run_config.json of this bundle"
+  },
+
+  "year": 2021,
+  "c3c_model_hours_gt200": 687,
+  "c3c_actual_hours_gt200": 258,
+  "c3b_price_shape_nrmse": 0.168,
+  "c3a_price_mean_pct": 5.6,
+  "annual_lw_price_usd_mwh": 174.8514,
+  "february_mean_model_price_usd_mwh": 1690.9185,
+  "slack_mwh": 2274.923,
+  "dump_mwh": 0.0,
+
+  "c1": "PASS",
+  "c2": "PASS",
+  "c3a": "PASS",
+  "c3b": "PASS",
+  "c3c": "FAIL",
+  "c4": "PASS",
+  "c6": "UNATTESTED",
+  "c8": "PASS",
+
+  "determination_line": "NOT-YET",
+  "determination_reasons": [
+    "governance gate UNATTESTED: no governance attestation in bundle"
+  ],
+  "determination_caveat": "NOT A RESULT. The sole reason line is the missing attestation, which every screen bundle lacks by construction. Because C6 does not PASS, guard (b) of the C3c standing rule cannot fire, so C3c's FAIL could not reclassify to a ledgered caveat. Do not quote this determination.",
+  "grade_summary": {
+    "scored": 7,
+    "target_grade": 6,
+    "commercial_grade": 0,
+    "ledgered": 0,
+    "fails": 1
+  },
+
+  "kill_gate": {
+    "criterion": "C3c hours > $200/MWh",
+    "verdict": "FAIL",
+    "arm_model_hours": 687,
+    "arm_ratio_to_actual": 2.66,
+    "keeper_model_hours": 223,
+    "keeper_ratio_to_actual": 0.86,
+    "actual_hours_rt": 258,
+    "actual_hours_da_companion": 214,
+    "actual_basis_note": "The scorer scores against the RT actual, 258 h. 214 h is the DA companion row, which the scorer marks SKIPPED / out-of-representation. Both arm and keeper were scored against the same committed bench, so the comparison is like-for-like."
+  },
+
+  "c3c_band_decomposition": {
+    "note": "The entire blow-up is February. 464 new >$200 hours, 464 of them in February, 0 outside it. The deep tail is essentially unmoved.",
+    "arm": { "200_500": 501, "500_1000": 53, "gte_1000": 133, "gt_200_total": 687 },
+    "keeper": { "200_500": 71, "500_1000": 21, "gte_1000": 131, "gt_200_total": 223 },
+    "new_gt200_hours_total": 464,
+    "new_gt200_hours_in_february": 464,
+    "new_gt200_hours_outside_february": 0
+  },
+
+  "delivered_gas_operand": {
+    "units": "$/MMBtu",
+    "henry_hub_feb_2021": 5.354,
+    "feb_basis_arm": 40.6108,
+    "feb_basis_keeper": 0.3904,
+    "feb_basis_delta": 40.2205,
+    "feb_delivered_arm": 45.9645,
+    "feb_delivered_keeper": 5.7441,
+    "dec_delivered_arm": 5.3464,
+    "dec_delivered_keeper": 4.1481,
+    "dec_basis_delta": 1.1983,
+    "solve_log_line": "ERCOT EP gas basis (2021): corroboration filter held out month(s) 2, 12 (|survey - receipts| up to 13.77 $/MMBtu vs tol 1.00); basis -> +0.390 $/MMBtu, year mean +5.278 -> +3.842",
+    "note": "The arm substitutes the EIA-923 receipts value into the two corroboration-held-out months (Feb, Dec) instead of falling through to the admitted-month default. All ten other months are byte-identical to the keeper."
+  },
+
+  "keeper_control": {
+    "c3c_model": 223,
+    "c3c_actual": 214,
+    "c3b": 0.559,
+    "c3a_pct": -1.7,
+    "annual": 154.42,
+    "february": 1422.13,
+    "slack": 960.6,
+    "dump": 0.0
+  },
+  "keeper_control_verified": {
+    "note": "Independently recomputed from the keeper's own committed artifacts at this HEAD, using the identical scorer and the identical hourly convention. Six of eight reproduce the parent's block exactly. Two differ and the corrected values were used for the differencing above.",
+    "c3c_model": 223,
+    "c3c_actual_rt": 258,
+    "c3c_actual_da_companion": 214,
+    "c3b": 0.559,
+    "c3a_pct": -6.7,
+    "annual": 154.4252,
+    "february": 1422.1254,
+    "slack": 960.5571,
+    "dump": 0.0,
+    "corrections": [
+      "c3a_pct: the keeper's committed C3a-2021 is -6.7%, not -1.7%, on the rubric v2.4 load-weighted basis the scorer uses (this matches the keeper's own promotion_note basis correction of 2026-09-09, session ercot-263). The arm was differenced against -6.7%.",
+      "c3c_actual: 214 is the DA companion; the scored RT actual is 258."
+    ]
+  },
+
+  "deltas_arm_minus_keeper": {
+    "c3c_model_hours": 464,
+    "c3b_nrmse": -0.391,
+    "c3a_pct_points": 12.3,
+    "annual_lw_price_usd_mwh": 20.4262,
+    "february_lw_price_usd_mwh": 268.7931,
+    "slack_mwh": 1314.366,
+    "dump_mwh": 0.0
+  },
+
+  "criterion_status_moves": {
+    "c3b_price_shape": "FAIL (0.559) -> PASS (0.168)",
+    "c3c_price_tail": "PASS (223 h, 0.86x) -> FAIL (687 h, 2.66x)",
+    "c3a_price_mean": "PASS (-6.7%) -> PASS (+5.6%)",
+    "c1_fuelmix": "PASS -> PASS",
+    "c2_sysvol": "PASS -> PASS",
+    "c4_dispatch_corr": "PASS -> PASS (gas r 0.990->0.988, NRMSE 0.076->0.081; coal r 0.855->0.816, NRMSE 0.153->0.163)",
+    "c8_forced_share": "PASS -> PASS",
+    "c6_governance": "PASS -> UNATTESTED (screen bundle, expected)"
+  },
+
+  "g4_collateral_gate": {
+    "verdict": "PASS",
+    "flips": 0,
+    "note": "Rule-29 G-4 excludes C3c from gating by construction (ledgered caveat, rubric v3.3), which is why G-4 reads PASS while the kill gate fails. G-4 is STOP-only and never promotes."
+  },
+
+  "reading": "The arm buys a large, real C3b improvement (0.559 -> 0.168, FAIL -> PASS, the keeper's ONLY failing criterion) and pays with a C3c blow-up confined entirely to February: a +$40.22/MMBtu delivered-gas lift puts 464 Uri hours over $200 that the keeper kept under, and more than doubles slack (960.6 -> 2274.9 MWh). C3a stays in band but crosses -6.7% -> +5.6%. One mechanism moving one month; the trade is C3b-for-C3c, not a general level error.",
+
+  "retention": "Rule 31 [R-RETAIN]: the bundle was NOT deleted and sits on the shard container's local disk, uncommitted. It will not survive container reclamation. The promotion decision is the owner's, not this shard's."
+}
