@@ -1744,3 +1744,7 @@ results/pjm_d4_y2025/
 # ercot-264 keeper-reproduction bundles (rule 31 [R-RETAIN]: gitignored, never rm-ed;
 # rule 29(c): kept out of main unless the owner promotes and they are registered)
 results/calibration/ercot264_repro_*/
+
+# nyiso-222 (2026-09-09) 2022 validation touchpoint on the +5% offer-curve arm.
+# Same rule 29(c)/31 [R-RETAIN] posture as the train-span bundle above.
+results/calibration/nyiso222_offer_plus5_tp2022/
