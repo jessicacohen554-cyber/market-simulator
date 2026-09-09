@@ -89,6 +89,21 @@ def _clear_caches() -> None:
 def build(year: int, *, screen: bool, hr_floor: bool) -> dict:
     """Build the keeper's fleet for ``year`` under one declared posture.
 
+    Reconstruction goes through ``replay_keeper.run_year_kwargs`` +
+    ``derived_run_year_inputs`` -- THE ONLY SANCTIONED fleet-only path
+    (caiso-243 §7.3 / caiso-248). An earlier draft of this probe splatted
+    ``build_kwargs`` directly, which is the lookalike-recipe defect that
+    docstring exists to forbid; it failed loudly on an unmapped kwarg rather
+    than silently measuring a different recipe, and the repair is recorded in
+    ADDENDUM 1.
+
+    Posture **A** rides ``prb_overrides``, the generic override bag
+    ``run_year`` applies through ``config.with_overrides`` -- the screen has no
+    named ``run_year`` kwarg. Its consumer (``data.fuel.plant_prices``) runs
+    during fleet/fuel assembly, AFTER that channel applies, so the nyiso-199
+    ordering defect does not reach it; the assertion below proves the flag
+    landed on the RESOLVED config rather than trusting that argument.
+
     Args:
         year: Solve year (2023-2025 only, rule 22).
         screen: Posture **A** -- ``f923_gas_price_plausibility_screen``.
@@ -97,28 +112,37 @@ def build(year: int, *, screen: bool, hr_floor: bool) -> dict:
 
     Returns:
         The ``run_year(fleet_only=True)`` state dict.
+
+    Raises:
+        AssertionError: The requested posture did not reach the resolved config.
     """
     meta = json.loads((KEEPER / "meta.json").read_text())
-    kwargs = rk.build_kwargs(meta)
-    call = dict(kwargs)
+    call = rk.run_year_kwargs(meta)
+    call.update(rk.derived_run_year_inputs(KEEPER, year))
     call["year"] = year
     call["iso"] = meta["iso"]
     call["hours"] = HOURS
     call["fleet_only"] = True
     call["gas_price"] = float(meta["gas_prices"][str(year)])
     call["ttc_overrides"] = {}
-    call.pop("years", None)
-    call["f923_gas_price_plausibility_screen"] = bool(screen)
+    prb = dict(call.get("prb_overrides") or {})
+    prb["f923_gas_price_plausibility_screen"] = bool(screen)
+    call["prb_overrides"] = prb
 
     eia860._apply_simple_cycle_hr_floor = (
         _ORIG_HR_FLOOR if hr_floor else (lambda df: df)
     )
     _clear_caches()
     try:
-        return rc.run_year(**call)
+        state = rc.run_year(**call)
     finally:
         eia860._apply_simple_cycle_hr_floor = _ORIG_HR_FLOOR
         _clear_caches()
+    got = bool(getattr(state["config"], "f923_gas_price_plausibility_screen", False))
+    assert got == bool(screen), (
+        f"posture A did not reach the resolved config: asked {screen}, got {got}"
+    )
+    return state
 
 
 def _mc_hourmean(state: dict) -> np.ndarray:
