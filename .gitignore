@@ -1701,3 +1701,19 @@ results/calibration/pjm_fuelvintage_TP/*.parquet
 results/calibration/pjm_fuelvintage_TP/hourly/network_*.parquet
 results/calibration/pjm_fuelvintage_TP/hourly/class_band_hourly_*.parquet
 results/calibration/pjm_fuelvintage_TP/hourly/unit_hourly_*.parquet
+
+# caiso-268 PER-YEAR SHARD probe bundles (rule 29 [R-SCREEN] clause (c)
+# delete-before-merge, discharged by gitignore and NOT by `rm` — rule 31
+# [R-RETAIN], the ercot-255 incident). These are throwaway diagnostic probes:
+# never registered, never a keeper, never quoted as a keeper number. Every
+# number they produce lives in docs/PRECOMMIT-caiso268-fossil-offer-8pct-2026-09-09.md
+# and the per-shard RESULT docs. NEVER `rm -rf` them — they stay on local disk
+# until the owner has ruled on promotion.
+# The SPAN bundle results/calibration/caiso268_fossil92_span/ is deliberately
+# NOT ignored: rule 15 [R-DASHBOARD] requires it registered and committed
+# whatever it says, and it is the ONLY registerable bundle of this session
+# (rule 16 [R-ALLYEARS] + the one-input-snapshot constraint measured at
+# docs/RESULT-caiso-fuelvintage-2026-09-09.md §6a).
+results/calibration/caiso268_fossil92_y2023/
+results/calibration/caiso268_fossil92_y2024/
+results/calibration/caiso268_fossil92_y2025/
