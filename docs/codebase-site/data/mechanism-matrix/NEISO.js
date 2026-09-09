@@ -205,6 +205,7 @@ window.MECH_MATRIX_SHARDS.NEISO = {
     pjm_interface_feed_admissibility_gate: { cell: ".", ev: "n/a — the mechanism reads PJM's transfer-interface-limits feed and is consumed only by PJM's two interface overlays (pjm_east_interface_cut, pjm_measured_interface_limits). Row added by pjm-167 (2026-09-06) with the field, per rule 28(c)." },
     solar_deliverability: { cell: "." },
     vre_avg_cf_level: { cell: "U", ev: "uncovered — identical Tier-3 0.15 + needs-citation, rule 25" },
+    vre_curtailment_oversupply_allocation: { cell: ".", ev: "n/a: NEISO is not in _UNCURTAILED_FALLBACK_ISOS — ISO-NE reported curtailment is sub-1 % of potential and the delivered ISNE profile is the documented default (delivered_pinned), so there is no gross-up for this mechanism to re-allocate. Row minted SPP-51c (2026-09-09), rule 28(c)." },
     vre_reference_rate_curtailment_grossup: { cell: ".", ev: "n/a: NEISO is not in _UNCURTAILED_FALLBACK_ISOS; delivered ISNE profile (delivered_pinned). Row minted miso-206 (rule 28c)." },
     vre_market_generator_basis: { cell: "." },
     vre_registry_cod_date_basis: { cell: "." },
