@@ -14047,5 +14047,59 @@ forbids this session deleting them**: the owner has not ruled on ercot-262's pro
 and destroying solved bundles ahead of that ruling is the exact ercot-255 incident rule 31 exists to
 prevent. This branch touches no bundle directory and does not worsen the RED. Owner decision needed.
 
-**Next shorthand: ercot-264** (ercot-199 and ercot-257 remain unclaimed).
+## ercot-264 — 2026-09-09 — the keeper reproduces EXACTLY at HEAD (5 shards, zero drift)
+
+**Owner instruction:** *"Do a run"* / *"run all years including holdouts"*. Records:
+`docs/handoffs/PRECOMMIT-ercot264-keeper-repro-2026-09-09.md` (`ff148b37`, predictions sealed
+first), `docs/RESULT-ercot264-keeper-repro-2026-09-09.md`.
+
+**No mechanism arm was available to solve** — ercot-263's phase 0 closed all three routes to the
+February object, and this session re-confirmed no Waha/HSC/ERCOT daily gas file exists anywhere
+under `data/raw`. So the run is a **byte-faithful reproduction of the keeper's own recipe**, zero
+deltas, across 2021–2025.
+
+**RESULT — the keeper reproduces TO THE CENT in all five years**, after 22–26 engine commits under
+`src/market_sim/data|config` landed since its bench parts were committed:
+
+| year | keeper | repro | Δ% | leg |
+|---|---:|---:|---:|---|
+| 2021 | 154.42 | **154.43** | +0.00% | carve-out ✓ |
+| 2022 | 68.40 | **68.40** | −0.00% | carve-out ✓ |
+| 2023 | 60.12 | **60.12** | +0.00% | carve-out ✓ |
+| 2024 | 30.89 | **30.89** | −0.00% | forward ✓ |
+| 2025 | 33.81 | **33.81** | −0.005% | forward ✓ |
+
+**2021 February reproduces at $1,422.13 exactly** (actual, repaired basis, $1,767.07), so the Uri
+shortfall is a property of the RECIPE — not drift, not nondeterminism. Every leg cleared its config
+hard stop; dump 0.0 MWh in all five years; slack 0.0 in 2022/2023/2025 and ~0.0002% of annual load
+in 2021/2024, matching the keeper since prices are identical.
+
+**NOT A KEEPER CANDIDATE, and the owner's standing rule has nothing to attach to.** It is the
+keeper's own recipe returning the keeper's own numbers: no configuration difference, no structural
+change, **no gate movement in either direction**. Registering it would mint a second id for one
+configuration, which rule 30 `[R-TOUCHPOINT-FOLD]` exists to prevent.
+
+**What it bought:** a REPRODUCIBILITY CERTIFICATE AT HEAD. Nobody had re-solved ERCOT since those
+engine commits, and `check_bench_freshness` warns on exactly that for all five ERCOT parts — the
+warning is now answered with a measurement instead of an assumption: the plant→class map, CHP
+shares and EIA-923 reconciliation moved nothing. Plus full bundles (root parquets, `dispatch/`,
+`floors/`) on local disk, which the committed slim bundles cannot carry.
+
+**FIRST APPLICATION OF RULE 32 `[R-SHARD]`** (added this session on owner instruction): five shards,
+one year each, own container / out-dir / branch, pinned to immutable SHA `754a91d9`; **the parent
+solved nothing**. Four landed clean; the 2025 shard went idle mid-solve with a plausible status line
+and no pushed branch, and was **replaced by a retry shard** rather than repaired or absorbed into
+the parent — the retry landed clean. **That is the failure mode the first application surfaced: the
+parent must check for the pushed branch, never the shard's status text.**
+
+**Corrects my own PRECOMMIT §1 item 2:** the committed keeper bundle is slim because `.gitignore`
+excludes root parquets, `dispatch/` and `floors/` from EVERY bundle by design — not because they
+were pruned. Reasons 1 (HEAD drift) and 3 (first fresh solve on the repaired basis) stand.
+
+**Rule 32(d) / 29(c):** the per-year shard dirs are kept OUT of `main` (verified: no
+`ercot264_repro_*` dir on `origin/main`; the family is gitignored). Rule 31 `[R-RETAIN]`: nothing
+deleted — the shard bundles and the two partial bundles from the stopped parent-local solves are all
+on local disk.
+
+**Next shorthand: ercot-265** (ercot-199 and ercot-257 remain unclaimed).
 
