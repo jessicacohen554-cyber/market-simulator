@@ -12551,6 +12551,50 @@ is now the live queue head.**)*
 
 *(Prior header, nyiso-177, verbatim:)* 5.5 NYISO — **KEEPER 2026-09-02 (nyiso-177): `2026-09-02-nyiso-177-vintage-matched` — the nyiso-159 recipe plus the accurate per-unit CAMPD attribution (`campd_per_unit_attribution`) on a vintage-matched, reproducible availability basis (`campd_outage_merit_order_guard`); ZERO free parameters, ZERO new DOF entries (13 / `n_residual` 6 carried verbatim), zero new forcing mechanisms (the SAME six D-4 rows). PROMOTED BY OWNER RULING on rules 14 `[R-ACCURATE]` + 1 `[R-STRUCT]` OVER ONE GATE REGRESSION, reported at full magnitude — determination NOT-YET, target grade 6 → 5, fail set {C3a-2025, C3c} → **{C1-2023 `ST_GAS`, C3a-2025 −11.2 %, C3c}**. The one regression is a single cell (C1 2023 `ST_GAS` +3.86 TWh against the superseded keeper's +3.33, marginally outside a band the old keeper sat marginally inside), and the honest reading is the nyiso-155 precedent exactly: the superseded keeper passed that cell on ~0.5 TWh of margin THE ATTRIBUTION DEFECT WAS SUPPLYING. Four score-independent structural gains: accuracy, no off-registry channel (the hardcoded `outages._FLEET_GROUP_OVERRIDE` per-plant dict disarmed on the repaired path), REPRODUCIBILITY (the superseded keeper's outage extract carries a null `derive_invocation` and cannot be reproduced at HEAD at any flag setting) and INTERNAL CONSISTENCY (tranche and outage artifacts on ONE availability basis, made structural by `campd_attribution_selectors`). Evidence: `docs/FINDING-nyiso177-availability-basis-root-cause-2026-09-02.md` (§10 addendum carries the ruling; §1–§9 preserve the recommendation AGAINST it, unedited), `PREREG-nyiso177-degradation-root-cause.md`. **HEADER RE-STAMPED 2026-09-02 by nyiso-178 — the promoting session's rule 28 duty was missed and CI was warning on it; nothing but this header changed, and no verdict moved. PRIOR (nyiso-159) HEADER PRESERVED BELOW.**
 
+**QUEUE STATUS UPDATE 2026-09-10 (nyiso-226 SPAN — owner ruled SPEND THE SPAN; ONE shard,
+18 m 20 s, three years; the parent ran no LP). THE ARM PASSES EVERY MEASURABLE CRITERION, C3b IS
+UNMEASURED, AND PROMOTION IS STILL OPEN.**
+
+The owner accepted the `S3(a′)` repair (with its stated post-hoc weakness) and authorized the full
+span; the two zero-LP findings below are **record-only** and nothing under `src/` or `scripts/`
+was touched on either count. **`main` is unchanged — `reliability_floor_coeffs_NYISO.csv` still
+reads `0.175`** — and nothing was registered or promoted.
+
+| criterion | control → arm | verdict |
+|---|---|---|
+| C1, both gated years | every class PASS both sides | no flip |
+| C1 ST_GAS 2023 / 2024 | \|miss\| 1.669 → **1.591** / 1.369 → **1.410** | **two-sided** |
+| C1 / C2 2025 | **SKIPPED BY THE RUBRIC** (preliminary EIA-923 vintage) | not gated in any run |
+| C3a ×3 | 33.6503→33.6760, 40.1499→40.1782, 61.5983→61.6235 | PASS, moves < 0.03 $/MWh |
+| C8 ST_GAS forced share | 0.1611→0.159, 0.209→0.205, 0.1813→0.1785 | falls every year |
+| **C3b** | — | **UNMEASURED** |
+
+**THE RESULT IS THE TWO-SIDEDNESS.** The re-basing only ever lowers ST_GAS, which moves 2023
+**toward** its actual (model over by +1.669 TWh) and 2024 **away** (model under by −1.369 TWh). A
+coefficient chosen to close a residual improves both; one uniform value fixed ex ante cannot, and
+the direction is not under the lane's control. That is the positive evidence against fitting
+(rule 1 `[R-STRUCT]`) — and 2024's degradation is a real cost, reported as one.
+
+**C3b IS UNMEASURED — NOT INFERRED, NOT PASSED — and it is the tightest-margin criterion**
+(2024 at 0.179 against a 0.20 ceiling; nyiso-202 already named it the successor's first watch
+item). **Three blockers, each exposed by fixing the last, and the third is the one a successor
+must plan around:** (1) the solve path writes no `metrics.json`; (2) `calibration_verdict.py`
+resolves **REGISTERED** runs only — *"could not resolve a registered run … no registry sidecar and
+no bundle match"* — and registration is what rule 32(c) forbids a shard to do, so **NO shard can
+score an unregistered bundle by any flag combination**; (3) the sidecar retrieval was **refused by
+the shard's permission classifier** and was **not routed around**. **General lesson: an
+unregistered, gitignored bundle on an ephemeral container cannot be price-shape-scored by any
+route this architecture offers.** The clean fix is the registration rule 15 `[R-DASHBOARD]`
+already prescribes, performed where the bundle lives.
+
+**Retention:** `results/calibration/nyiso226_span/` is on the shard's container only, gitignored,
+deliberately **not deleted**, and **will not survive reclamation**; ~18 min of LP to reproduce.
+Records: `docs/RESULT-nyiso226-span-2026-09-10.md`,
+`docs/ADDENDUM-nyiso226-span-authorized-2026-09-10.md`,
+`docs/SHARDREPORT-nyiso226-span.md` (branch `claude/nyiso226-span`, **never merged**).
+
+---
+
 **QUEUE STATUS UPDATE 2026-09-10 (nyiso-226, PHASE 0 ZERO-LP + ONE rule-29 2023 SCREEN,
 5 min of LP; the parent ran none). THE OUTSTANDING OWNER CALL IS NO LONGER OUTSTANDING, AND THE
 ARM SURVIVED ITS SCREEN WITHOUT BEING PROMOTED.**
