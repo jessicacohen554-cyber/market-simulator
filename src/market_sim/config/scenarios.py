@@ -1391,6 +1391,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # hashes distinctly. Registered IN THE SAME COMMIT as the field (the
     # nyiso-119 discipline).
     "ercot_ep_gas_basis_receipts_fallback",
+    # nyiso-223 NYISO hub-daily unpriced-day gap fill, default off: dropped
+    # from the hash at its False default so every pre-existing NYISO key (the
+    # designated keeper's included) stays valid, and ON it produces a different
+    # delivered-gas array (every month carrying an archive gap) and hashes
+    # distinctly. Registered IN THE SAME COMMIT as the field (the nyiso-119
+    # discipline).
+    "nyiso_hub_gap_month_level",
     # ercot-255 EP-reference of the F923-sourced rows of the ERCOT zonal gas
     # SPREAD, default off: dropped from the hash at its False default so every
     # pre-existing ERCOT key (the designated keeper's included) stays
@@ -2144,6 +2151,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by ercot-265 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "ercot_ep_gas_basis_receipts_fallback": "False",
+    # Added by nyiso-223 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "nyiso_hub_gap_month_level": "False",
     # Added by ercot-255 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "ercot_zonal_spread_ep_referenced": "False",
@@ -15781,6 +15791,29 @@ class ScenarioConfig:
     # market_sim.data.fuel.apply_nyiso_zonal_gas_basis.
     nyiso_zonal_gas_basis: bool = False
 
+    # Tier 3 (calibration) — nyiso-223. NYISO hub-daily gap fill: a calendar day
+    # the measured Transco Z6 NY archive NEVER PRICED takes the month's own
+    # observed level (shape factor 1.0) instead of inheriting the nearest
+    # print's deviation. ``_nyiso_hub_daily_gas_prices`` places each print on
+    # its true day and ``np.interp``s between them, which CLAMPS outside the
+    # observed span — so the unpriced tail of a month is asserted to sit at the
+    # last print's distance from the month mean, which the measured series never
+    # says. The gap is systematic, not incidental: the EIA Natural Gas Weekly
+    # Update publishes no page over the late-December holiday weeks, leaving a
+    # 10-13 day TRAILING December gap in six of eight archived years, so the
+    # fabricated days are exactly the year's coldest. Measured 2022: the Dec-21
+    # print ($6.29) is 0.86x the December print-mean ($7.32), and the clamp
+    # applies it to Dec 22-31 — the entire Winter Storm Elliott window. Rule 14
+    # [R-ACCURATE] (a reconciled reading of the real series beats a fabricated
+    # one) and rule 13 [R-MEASURED] (identical construction forward, so it
+    # regenerates for a forecast year). ZERO free parameters; still exactly
+    # mean-preserving within the month, so the monthly hub level, annual gas
+    # burn and fuel mix are untouched — it moves WHICH days are dear, never how
+    # dear the month is. Off by default so every other ISO, every registered
+    # keeper and every forecast is byte-identical. See
+    # market_sim.data.fuel.hubs._nyiso_hub_daily_gas_prices.
+    nyiso_hub_gap_month_level: bool = False
+
     # --- NYISO downstate-peaker structural pricing (2026-07, issue #1344 /
     # --- B-NYI-1 de-leak follow-up). New fields added as one contiguous block.
     #
@@ -20404,6 +20437,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_ep_gas_basis_monthly": 3,
     "ercot_ep_gas_basis_corroborated": 3,
     "ercot_ep_gas_basis_receipts_fallback": 3,
+    "nyiso_hub_gap_month_level": 3,
     "ercot_zonal_spread_ep_referenced": 3,
     "ercot_gas_delivered_floor_basis": 3,
     "ercot_gas_contract_haircut": 3,
