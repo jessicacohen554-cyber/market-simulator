@@ -1773,6 +1773,15 @@ results/calibration/ercot264_repro_*/
 # Same rule 29(c)/31 [R-RETAIN] posture as the train-span bundle above.
 results/calibration/nyiso222_offer_plus5_tp2022/
 
+# SPP-58 (session ercot-266) screen and full-span bundle families. Rule 31
+# [R-RETAIN]: what discharges rule 29 [R-SCREEN] clause (c)'s delete-before-merge
+# duty is GITIGNORING the bundle, never `rm` — the parity gate
+# (check_registry_payload_parity.py) only ever sees COMMITTED dirs, so an ignored
+# bundle sits on local disk indefinitely without turning anything red, and the
+# owner keeps the option to promote it. The composite the parent registers is
+# committed slim by the rules in section 8 above.
+results/calibration/spp58_*/
+
 # caiso-269 per-year shard probe bundles (rule 29 [R-SCREEN] (c) / rule 31
 # [R-RETAIN]): kept OUT of `main` by gitignore, never by `rm` — the working
 # tree copies stay on disk until the owner rules on promotion.
