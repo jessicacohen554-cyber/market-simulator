@@ -1391,6 +1391,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # hashes distinctly. Registered IN THE SAME COMMIT as the field (the
     # nyiso-119 discipline).
     "ercot_ep_gas_basis_receipts_fallback",
+    # nyiso-223 NYISO hub-daily unpriced-day gap fill, default off: dropped
+    # from the hash at its False default so every pre-existing NYISO key (the
+    # designated keeper's included) stays valid, and ON it produces a different
+    # delivered-gas array (every month carrying an archive gap) and hashes
+    # distinctly. Registered IN THE SAME COMMIT as the field (the nyiso-119
+    # discipline).
+    "nyiso_hub_gap_month_level",
     # ercot-255 EP-reference of the F923-sourced rows of the ERCOT zonal gas
     # SPREAD, default off: dropped from the hash at its False default so every
     # pre-existing ERCOT key (the designated keeper's included) stays
@@ -2151,6 +2158,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by ercot-265 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "ercot_ep_gas_basis_receipts_fallback": "False",
+    # Added by nyiso-223 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "nyiso_hub_gap_month_level": "False",
     # Added by ercot-255 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "ercot_zonal_spread_ep_referenced": "False",
@@ -8599,6 +8609,30 @@ class ScenarioConfig:
     # population it caps). No-op unless caiso_dsw_daytime_clean is on. Default
     # off (byte-identical — the caiso-94 keeper recipe is unchanged);
     # CAISO-only.
+    caiso_dsw_lateevening_clean: bool = False  # caiso-269: close the hod 22-23
+    # WINDOW GAP the DSW clean-depth family leaves open. caiso-93 covers hod
+    # 0-5, caiso-94 hod 6-21, and caiso-87's surplus trigger is coverage-
+    # STARVED at 22-23 (measured ON in 0.3/0.8 % of 2024 and 1.6/1.9 % of 2025
+    # hod 22/23 - caiso-253's G-WINDOW leg, which closed the window question
+    # with "22-23 are OVERNIGHT-construction hours"). On the live keeper the
+    # armed clean capability falls 3,420 MW (hod 21) -> 33 MW (hod 22) in 2025
+    # while the measured WECC_DSW corridor net import RISES across the same
+    # boundary, against a measured EIA-930 import deficit of 1.0-1.8 GW at
+    # those hours. Adds ONE tranche whose capability is the measured hod 22-23
+    # p95 corridor depth (CAISO_DSW_LATEEVENING_CLEAN_DEPTH_BY_YEAR; CV 0.037,
+    # LOYO 6.8 %) net of the shaped firm block and ALL THREE sibling clean
+    # tranches (rule 19 [R-ONE-MECH]), armed only in (month x hod) buckets that
+    # clear caiso-253's PRE-REGISTERED raw-hub admissibility band
+    # (CAISO_LATEEVENING_SPREAD_BAND = (-2, +4) $/MWh on the measured DA
+    # CAISO-PaloVerde spread). That band is caiso-253's own refusal criterion
+    # re-used UNCHANGED, so 2023 - which failed it at -3.98/-2.56 - stays dark
+    # by construction rather than by a year list. ZERO new free parameters and
+    # ZERO new thresholds (rules 21 [R-DOF] / 24 [R-REGISTRY]). Priced at the
+    # RAW Palo Verde hub, EF 0, no wheel. Default off (byte-identical off: the
+    # tranche row is only built when this flag is on); CAISO-only (rule 25
+    # [R-ISO-SCOPE]). Carried by
+    # transmission.build_caiso_per_hub_intertie(lateevening_clean=) +
+    # transmission.inject_caiso_dsw_lateevening_clean.
     caiso_endogenous_wecc_node: bool = False  # Make the WECC_import node a REAL
     # co-optimized WECC-West neighbor ZONE instead of a set of static import
     # tranches (caiso-110; Option A of
@@ -15841,6 +15875,29 @@ class ScenarioConfig:
     # market_sim.data.fuel.apply_nyiso_zonal_gas_basis.
     nyiso_zonal_gas_basis: bool = False
 
+    # Tier 3 (calibration) — nyiso-223. NYISO hub-daily gap fill: a calendar day
+    # the measured Transco Z6 NY archive NEVER PRICED takes the month's own
+    # observed level (shape factor 1.0) instead of inheriting the nearest
+    # print's deviation. ``_nyiso_hub_daily_gas_prices`` places each print on
+    # its true day and ``np.interp``s between them, which CLAMPS outside the
+    # observed span — so the unpriced tail of a month is asserted to sit at the
+    # last print's distance from the month mean, which the measured series never
+    # says. The gap is systematic, not incidental: the EIA Natural Gas Weekly
+    # Update publishes no page over the late-December holiday weeks, leaving a
+    # 10-13 day TRAILING December gap in six of eight archived years, so the
+    # fabricated days are exactly the year's coldest. Measured 2022: the Dec-21
+    # print ($6.29) is 0.86x the December print-mean ($7.32), and the clamp
+    # applies it to Dec 22-31 — the entire Winter Storm Elliott window. Rule 14
+    # [R-ACCURATE] (a reconciled reading of the real series beats a fabricated
+    # one) and rule 13 [R-MEASURED] (identical construction forward, so it
+    # regenerates for a forecast year). ZERO free parameters; still exactly
+    # mean-preserving within the month, so the monthly hub level, annual gas
+    # burn and fuel mix are untouched — it moves WHICH days are dear, never how
+    # dear the month is. Off by default so every other ISO, every registered
+    # keeper and every forecast is byte-identical. See
+    # market_sim.data.fuel.hubs._nyiso_hub_daily_gas_prices.
+    nyiso_hub_gap_month_level: bool = False
+
     # --- NYISO downstate-peaker structural pricing (2026-07, issue #1344 /
     # --- B-NYI-1 de-leak follow-up). New fields added as one contiguous block.
     #
@@ -20466,6 +20523,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_ep_gas_basis_monthly": 3,
     "ercot_ep_gas_basis_corroborated": 3,
     "ercot_ep_gas_basis_receipts_fallback": 3,
+    "nyiso_hub_gap_month_level": 3,
     "ercot_zonal_spread_ep_referenced": 3,
     "ercot_gas_delivered_floor_basis": 3,
     "ercot_gas_contract_haircut": 3,
