@@ -13715,4 +13715,31 @@ the in-sample/out-of-sample contrast above exists precisely because they survive
 2. `--declared-degradation` channel — `docs/GOVERNANCE-NOTE-miso251-declared-degradation-channel-2026-09-10.md` §5, still unruled.
 3. `MISO_PRICING_API_KEY` — still the only thing unblocking C3a/C3b/C3c on 2020/2021.
 
+### 5. ADDENDUM — the biomass validation gap, and MISO LPs no longer fit any container
+
+**BIOMASS IS SELF-SCORED.** `_must_run_profiles` injects biomass from EIA-923 and says so:
+*"the injected biomass equals the benchmark it is scored against."* Confirmed against the committed
+bench — `gmModel.biomass` == `classFull.biomass` to 4 dp in every year (8.1281 / 7.2399 / 2.9283),
+Δ 0.0000. **The row cannot fail C1.** `OTHER` is the same (10.3253 = 10.3253). Two classes pass the
+fuel-mix gate for free.
+
+**THE SUBSTANTIVE DEFECT.** MISO 2023 biomass is 8.713 TWh in EIA-923 and **5.844 TWh (67 %) is
+`chp=Y`** — black liquor 3.610 + wood solids 2.748 (73 % together), i.e. paper-mill cogen whose host
+steam never reaches the grid. The injection uses EIA-923 **net generation** with **no BTM/host-steam
+carve-out** (the fossil CHP classes have one; the file says so two lines away). The model holds out
+~0.585 TWh where 5.844 TWh is CHP, so **~5-6 TWh/yr of behind-the-meter cogen is injected as
+price-insensitive must-run grid supply**, displacing marginal gas — MISO 2023 `CC_REGULAR` is
+−6.8 TWh against bench, same order and direction (stated as suggestive, not proven). The injection
+**applies to EVERY ISO**, so this is cross-ISO. It is the strongest remaining arm because, unlike
+the seam work, **it touches 2023-2025 and can move the keeper itself**; rule 14 `[R-ACCURATE]`, a
+partition on a published per-plant boolean, zero free parameters.
+
+**NO MISO LP CAN RUN HERE.** Three shards, three environments, three OOMs: 15 GB, then 13.94 GB
+(ceiling 14 GB), then **13.3 GiB peak RSS against a 13.34 GiB cgroup limit, in LP matrix
+construction**. A single MISO year (8 zones x 8760 h, ~3,025 members) does not fit. `--reuse-solved`
+is not a lever (it byte-copies whole years). Every shard stopped and reported rather than pushing a
+partial bundle. **The 2021 envelope screen and the 2022 ladder arm are both specified, committed and
+unrun** — the next session needs a larger environment before any MISO arm can be evaluated.
+Evidence: `docs/FINDING-miso252-biomass-selfscored-and-the-lp-memory-ceiling-2026-09-10.md`.
+
 * Next number: **miso-253**.
