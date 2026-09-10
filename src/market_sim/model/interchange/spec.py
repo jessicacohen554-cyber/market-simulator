@@ -1264,7 +1264,25 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
             # forecast interchange is the Manitoba firm block alone); (c) an
             # armed-interface solve year >= 2026 resolves NO seam load shape
             # at all (no extract covers those calendar years), so the fallback
-            # this code names never fires there either. The accurate re-point
+            # this code names never fires there either.
+            # CORRECTED by miso-252 (2026-09-10): that enumeration is right on
+            # (a)-(c) and MISSES A FOURTH domain in which the fallback IS
+            # reachable and DOES fire — an armed-interface BACKCAST year before
+            # 2023, i.e. the holdout ladder. All four MISO seam ladder tables
+            # cover exactly 2023-2025, so inject_miso_seam_ladder_prices returns
+            # at its first guard for every pre-2023 year and EVERY seam band
+            # takes this single flat reference price in place of an eight-band
+            # rising curve. Measured consequence: the seam stops modulating and
+            # becomes bang-bang — the 2021 rung sits within 1% of its own
+            # maximum flow in 8,654 of 8,760 hours (98.8%), against 3 / 1 / 2
+            # hours (0.0%) in the ladder-priced keeper years. It cannot reach
+            # the train tier or any forecast, so no determination moves; the
+            # ba_code conclusion below is UNAFFECTED and still stands. Repair is
+            # blocked on data (eia-930-interchange covers 2023-2025 only) and a
+            # frozen-band-shape substitute was REFUSED on measurement (import
+            # curves move CV 0.32-0.49 across the three years). Full trace:
+            # docs/FINDING-miso252-seam-fallback-and-the-923-block-2026-09-10.md
+            # The accurate re-point
             # (ba_code="TVA" + an EIA-930 TVA hourly extract intake) is routed,
             # not shipped — it would change no reachable behaviour today.
             # FINDING-capx-s123-miso-adequacy-2026-08-30.md carries the full
