@@ -137,6 +137,60 @@ ST_GAS_PEAKER_PLANTS: frozenset[int] = frozenset(
         #   62115 — campd.CAMPD_UNIT_PLANT_REMAP)
         335,  # AES Huntington Beach LLC unit 2 (CCGT remapped to 62116)
         350,  # Ormond Beach units 1-2
+        # PJM (session pjm-d4-2, 2026-09-10). Admitted on the SAME criterion
+        # the registry's existing members satisfy, derived from THEIR measured
+        # duty rather than from PJM's residual (rules 1 [R-STRUCT] / 13
+        # [R-MEASURED] / 25 [R-ISO-SCOPE]) and declared in
+        # docs/PRECOMMIT-pjm-d4-2-stgas-membership-2026-09-10.md before any
+        # solve. Qualifying test: CAMPD meter-online share of the plant's
+        # ST_GAS slice (>1% of nameplate), pooled over EVERY bench year whose
+        # own e_ann/c_ann <= 1.1 (the benchmark's own trust test, applied at
+        # slice granularity), < 35%.
+        #
+        # WHY 35%, AND WHY IT CANNOT BE SWEPT: the threshold is read off the
+        # registry's OWN revealed membership in the two ISOs that authored it,
+        # with PJM never consulted -- ERCOT admits up to 34.7% (Mountain Creek)
+        # and excludes from 36.9% (Lake Hubbard) up; CAISO admits up to 31.0%
+        # and excludes from 45.1% up. Both gaps are empty, so any T in
+        # (34.7, 36.9] reproduces the pre-existing registry exactly. PJM's own
+        # duty distribution has an empty interval from 30.8% to 48.6%, which
+        # strictly contains that window: the PJM membership below is IDENTICAL
+        # for every threshold in (30.8, 48.6], so the value carries no leverage
+        # (rule 21 [R-DOF]: not a free parameter). The competing window --
+        # pooling only the two most recent years, which is the evidence the
+        # CAISO comment above happens to cite -- is FALSIFIED by this same
+        # test: it makes ERCOT's admitted set overlap its excluded set
+        # (3504 at 46.3% admitted vs 3491 at 31.2% excluded), so no threshold
+        # on that window reproduces the registry at all.
+        #
+        # FORWARD STORY (rule 13 [R-MEASURED]): peaker-vs-baseload character is
+        # a standing attribute of a steam plant -- its duty follows from its
+        # heat rate and age against the fleet it bids into, not from any one
+        # year's outcome -- so the same census regenerates for a forward year
+        # from that year's CAMPD vintage and re-classifies a plant whose
+        # economics change. It is an input to the offer/commitment treatment,
+        # never a target the dispatch is fitted to.
+        #
+        # A plant with NO trusted bench year is NOT admitted (fail-closed:
+        # character cannot be established from a meter the benchmark distrusts).
+        # Pooled duty %, all trusted bench years 2020-2025:
+        50279,  # Archbald Power Station     0.0%
+        874,  # Joliet 9                     0.7%
+        3809,  # Yorktown                    1.6%
+        599,  # McKee Run                    1.6%
+        3161,  # Eddystone Generating Sta.   1.8%
+        3775,  # Clinch River               13.2%
+        1571,  # Chalk Point LLC            17.1%
+        384,  # Joliet 29                   18.4%
+        593,  # Edge Moor                   20.5%
+        3148,  # TalenEnergy Martins Creek  22.8%
+        3149,  # TalenEnergy Montour        30.8%
+        # NOT admitted, and reported rather than argued around: 3138 Brunner
+        # Island 48.6%, 3131 New Castle 51.0%, 1353 Shawville 59.8%, 3140
+        # Hatfields Ferry 67.6%. 3138 and 3131 carry D-4 per-unit conduct
+        # convictions on the committed keeper at ~50% duty, so this change is
+        # the LARGEST part of that defect and provably not all of it
+        # (docs/RESULT-pjm-d4-1-stgas-merit-order-2026-09-09.md section 9).
     }
 )
 
