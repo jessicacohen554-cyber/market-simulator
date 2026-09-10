@@ -208,3 +208,15 @@ REASONS: ['governance gate UNATTESTED: no governance attestation in bundle']
 Recorded at the end of the session — see the commit on `claude/spp62-span`. The run payload
 `frontend/data/backcast/runs/2026-09-10-spp-62-vintage-census.js` is **768,863 bytes**, above
 `push_files`' ~457 KB cap, so it went over `git push` per Git & Pushing §2.
+
+**VERIFIED, on branch `claude/spp62-span`, commit `54e0c30c`:**
+
+| file | local | remote (`origin/claude/spp62-span`) | match |
+|---|---|---|---|
+| `frontend/data/backcast/runs/2026-09-10-spp-62-vintage-census.js` | 768,863 B · sha256 `4fb4ecac71eaf662…` | 768,863 B · sha256 `4fb4ecac71eaf662…` | ✓ |
+| `docs/handoffs/SHARD-spp62-span.md` | 210 lines · sha256 `b769f04212ad5ce5…` | 210 lines · sha256 `b769f04212ad5ce5…` | ✓ |
+
+`git push` succeeded on the first attempt — no HTTP 408/500, no HTTP/1.1 fallback needed.
+Nothing under `dispatch/`, `floors/`, or any top-level `*.parquet` was staged; nothing under
+`src/` or `scripts/`; no `keepers/`, `status/` or `calibration-complete.json` was touched;
+no PR was opened; no result was deleted.
