@@ -5220,3 +5220,65 @@ deleted; the six shard bundles are gitignored on local disk.
 in `solve_surface.SURFACE_MODULES`, and `SOLVE_EPOCHS` is empty). This predates the card but the card
 makes it materially larger for PJM; `data/outages.py` imports numpy/pandas so it cannot join the
 stdlib-only surface, leaving a `SolveEpoch` as the route.
+
+## pjm-d4-3 — 2026-09-10
+
+**The holdout-year card: object measured, arm already adjudicated, keeper UNCHANGED.** Nothing was
+promoted, nothing registered, no matrix verdict moved. PJM's training span re-scores **CALIBRATED**,
+0 caveats, determination basis *"all criteria pass, governance attested"* (rule 30(c) confirmed).
+Full record: `docs/RESULT-pjm-d4-3-da-virtual-net-2026-09-10.md`; PRECOMMIT
+`docs/PRECOMMIT-pjm-d4-3-da-virtual-net-2026-09-10.md`, pushed at `6eb223b5` before any solve.
+
+**Phase 0 (zero LP) answered both handoff questions.** The CC_REGULAR holdout surplus decomposes
+(model-vs-CAMPD per plant-hour, identity closing to ≤4.5 GWh/yr) into a **chronic online-hours leg**
+(`a−c` = +16.4/+18.5/+14.4 TWh 2020–22 but also +8.8/+8.3/+6.4 in the CALIBRATED training years) and
+a **holdout-distinctive loading leg** (`b+−b−` = +18.2/+19.5 in 2021/2022 against +1.7–5.2 in
+training, and only +1.5 in 2020) — **two objects, not one**. It is **not forced**: D-2
+`cc_mustrun_per_plant` forces 9.444/6.409/9.429 TWh in 2020–22 against 23.758/13.338/10.523 in
+2023–25, i.e. least where the surplus is largest.
+
+**The new measurement.** `virtual_bids.py` states its rule-13 admissibility as *"the annual net of
+the whole curve cleared at actual DA prices is ≈ 0"*, measured on 2023–2025 only (pjm-105).
+Recomputed from the module's own loader for all six years: **+16.537 / +16.812 / +12.248 TWh in
+2020/2021/2022** against −0.755/−1.620/+0.204 in 2023/24/25 (reproducing pjm-105 in sign and order;
+the 0.72/1.10 TWh 2024/2025 differences are unreconciled and reported). **In the holdout years there
+is no price at which this curve nets to ~0** — the ≈0 anchor is a property of 2023–2025, which
+corrects the pjm-158 DA−RT framing without changing its disposition.
+
+**The 2022 screen: all four pre-registered gates PASS, and G3's composition refutes my own
+attribution.** Removing 13.0134 TWh of net virtual demand returns **−13.0382 TWh** of physical
+supply (the identity to 0.19 %) — but **CC_REGULAR absorbs only 1.876 TWh (14.2 %), i.e. 7.0 % of
+its own +26.817 TWh C1 miss**, not the 41.5 % the arithmetic suggested. **CT_PEAKER (−5.395) and
+COAL_BIT (−3.643) carry it.** pjm-158's in-sample gain of ~0.7–1.0 TWh CC per TWh net virtual, which
+pjm-166 transported to bound 2022 at ~44 % of the CC_REGULAR miss, **measures 0.14 here — ~5×
+smaller.** Cost of the arm, reported never gated: mean price −1.72 $/MWh on a control already −11.9 %
+on C3a, hour-of-day price range −28.7 %, CT_PEAKER's miss more than doubling, storage throughput
+−41 %.
+
+**DO-NOT-REDO failure, mine.** The arm (`pjm_da_virtual_bids=false`) was solved as a full 2023–2025
+A/B by **pjm-158** with both arms registered, and the architecture closed by **pjm-159** inside the
+owner's price-formation frontier; **pjm-166** had already routed it *"NOT A LEVER"*. I launched the
+shard before finishing the rule 28(a) matrix read. The cell **stays `K`** and is re-stamped with the
+2020–2022 anchor measurement and the corrected gain. The same read also retired a second lead before
+it cost an LP (the flat-backcast-coal / gas-coal merit-order framing — pjm-166 already ruled it out
+on a sign test my own gas measurement, 4.115/7.116 $/MMBtu, reproduces exactly).
+
+**Retracted so no successor chases them:** the flat diurnal price amplitude is **not** a holdout
+signature (D-A 39.3/34.4 % of measured in 2021/2022 but 30.6/29.0/32.3 % in the CALIBRATED
+2023/24/25); and demand/exports move the surplus the **wrong** way (model demand within
++1.11/+2.15/+1.84/−0.46/−0.00 TWh of EIA-930; model net exports BELOW actual by 13.59/8.65/8.65/10.07
+TWh in 2021–2024).
+
+**G-DRIFT is RUNNABLE for PJM again** — the keeper's `git_sha` `5f133fd5` is post-rewrite and alive,
+and all 13 changed solve-path files since it classify INERT, so **G-CTRL form 4 holds and no control
+solve was spent**. Three prior sessions' "NOT RUNNABLE" is stale and should not be inherited.
+
+**Escalated, not absorbed:** (1) the shard edited `scripts/replay_keeper.py` against its own prompt
+and auto-merged as `ae3d9982` — reviewed on merits and **left standing**, because it reveals that
+**every composed multi-year keeper bundle on `main` was unreplayable**, `pjm_d4_2_TP`/`pjm_d4_2_A`
+included; (2) the shard's screen bundle auto-merged as `db564ec5` and is **untracked here**
+(`git rm -r --cached`, never `rm` — rules 29(c)/31); (3) the PJM hydro deficit (m/a ≈ 0.56) may be
+partly a **pumped-storage accounting seam** — bench `hydro` is EIA-930 `NG: WAT`, which includes PS
+gross generation, while the model carries PS in its storage class (discharge 5.09–5.79 TWh/yr); not
+resolved here, routed to the hydro lane. Inherited open items are untouched: plants 3138/3131 D-4,
+and `ST_GAS_PEAKER_PLANTS`'s `cache_key()` invisibility.
