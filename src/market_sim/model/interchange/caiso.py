@@ -50,11 +50,17 @@ from market_sim.model.interchange.spec import (
     CAISO_DSW_OVERNIGHT_CLEAN_DEPTH_STATIC,
     CAISO_DSW_OVERNIGHT_CLEAN_NAME,
     CAISO_DSW_SURPLUS_CLEAN_DEPTH_BY_YEAR,
+    CAISO_DSW_LATEEVENING_CLEAN_DEPTH_BY_YEAR,
+    CAISO_DSW_LATEEVENING_CLEAN_DEPTH_STATIC,
+    CAISO_DSW_LATEEVENING_CLEAN_NAME,
     CAISO_DSW_SURPLUS_CLEAN_DEPTH_STATIC,
     CAISO_DSW_SURPLUS_CLEAN_NAME,
     CAISO_DSW_SURPLUS_REMOTE_VOM,
     CAISO_IMPORT_DELIVERY_BASIS,
     CAISO_IMPORT_TRANCHE_HUB,
+    CAISO_LATEEVENING_CLEAN_HOD_MAX,
+    CAISO_LATEEVENING_CLEAN_HOD_MIN,
+    CAISO_LATEEVENING_SPREAD_BAND,
     CAISO_OVERNIGHT_CLEAN_HOD_MAX,
     CAISO_PER_HUB_IMPORT_ZONES,
     CAISO_PER_HUB_NEIGHBORS,
@@ -127,6 +133,7 @@ def build_caiso_per_hub_intertie(
     surplus_clean: bool = False,
     overnight_clean: bool = False,
     daytime_clean: bool = False,
+    lateevening_clean: bool = False,
 ) -> list[Generator]:
     """Return CAISO's WECC tie as TWO per-hub signed flows (Malin + Palo Verde).
 
@@ -177,6 +184,17 @@ def build_caiso_per_hub_intertie(
             tranche AND the caiso-93 overnight tranche) and the per-hub injector
             prices it at the RAW measured Palo Verde hub with EF 0 and no wheel.
             Un-injected it stays 0 MW.
+        lateevening_clean: Append the south-corridor LATE-EVENING clean depth
+            tranche (caiso-269, ``ScenarioConfig.caiso_dsw_lateevening_clean``)
+            that closes the hod 22-23 window gap caiso-93 (0-5), caiso-94
+            (6-21) and the coverage-starved caiso-87 trigger leave open. Same
+            zero-capacity pattern: :func:`inject_caiso_dsw_lateevening_clean`
+            arms its hourly capability (measured hod 22-23 depth, net of the
+            shaped firm block AND all three sibling clean tranches, and only in
+            (month x hod) buckets that clear caiso-253's pre-registered raw-hub
+            admissibility band) and the per-hub injector prices it at the RAW
+            measured Palo Verde hub with EF 0 and no wheel. Un-injected it
+            stays 0 MW.
 
     Returns:
         The per-hub import tranches (cheapest first within each hub) followed by
@@ -200,6 +218,11 @@ def build_caiso_per_hub_intertie(
         # without a measured hub series, so the row is 0 MW whenever this
         # price could ever matter.
         base.append((CAISO_DSW_DAYTIME_CLEAN_NAME, 0.0, 180.0))
+    if lateevening_clean:
+        # Same placeholder logic (caiso-269): the injector refuses to arm MW
+        # without a measured hub series AND an admissible spread bucket, so the
+        # row is 0 MW whenever this price could ever matter.
+        base.append((CAISO_DSW_LATEEVENING_CLEAN_NAME, 0.0, 180.0))
     ef_map = IMPORT_TRANCHE_EF.get(iso, {})
     eford = IMPORT_EFORD.get(iso, 0.0)
     gens: list[Generator] = []
@@ -1042,6 +1065,167 @@ def inject_caiso_dsw_daytime_clean(
     fleet_arrays.availability[row, :] *= cap / depth
     fleet_arrays.pmax[row] = depth
     return True
+
+
+def inject_caiso_dsw_lateevening_clean(fleet_arrays, iso: str, year: int) -> bool:
+    """Arm the south-corridor LATE-EVENING clean import depth (caiso-269).
+
+    Closes the hod 22-23 WINDOW GAP the DSW clean-depth family leaves open.
+    caiso-93 covers hod 0-5 unconditionally, caiso-94 covers hod 6-21 on the
+    trigger-OFF complement, and caiso-87's surplus trigger is coverage-STARVED
+    at hod 22-23 (ON in 0.3/0.8 % of 2024 and 1.6/1.9 % of 2025 hod 22/23 --
+    caiso-253's G-WINDOW leg, which closed the window question with
+    "22-23 are OVERNIGHT-construction hours"). The consequence is a ~100x
+    capability discontinuity across one hour boundary on the live keeper
+    (3,420 MW at hod 21 -> 33 MW at hod 22, 2025) in hours whose measured
+    corridor net import RISES, against a measured EIA-930 import deficit of
+    1.0-1.8 GW. This sets the hourly CAPABILITY of the
+    ``DSW_lateevening_clean`` tranche (built at 0 MW by
+    :func:`build_caiso_per_hub_intertie`)::
+
+        cap[t] = admissible[t] x max(0, depth_year - firm_south_capability[t]
+                                        - surplus_clean_capability[t]
+                                        - overnight_clean_capability[t]
+                                        - daytime_clean_capability[t])
+
+    * ``admissible[t]`` -- :data:`CAISO_LATEEVENING_CLEAN_HOD_MIN` <= hod(t) <=
+      :data:`CAISO_LATEEVENING_CLEAN_HOD_MAX`, AND the raw measured Palo Verde
+      hub is finite for the hour, AND **the hour's (month x hod) median
+      measured DA CAISO-PaloVerde spread lies inside
+      :data:`CAISO_LATEEVENING_SPREAD_BAND`**. That band is caiso-253's OWN
+      pre-registered raw-hub discriminator, re-used unchanged: caiso-253
+      REFUSED raw-hub pricing at hod 22-23 because 2023 failed it
+      (-3.98/-2.56) while 2024 (-0.73/+0.11) and 2025 (-0.19/+0.06) passed, so
+      adopting the band as the arming gate honours that refusal literally
+      rather than working around it. No threshold here is selectable by a
+      result (rules 1 ``[R-STRUCT]`` / 24 ``[R-REGISTRY]``): the statistic, the
+      DA basis, the window and the bounds are all the prior session's.
+    * ``depth_year`` -- the measured hod 22-23 depth
+      (:data:`CAISO_DSW_LATEEVENING_CLEAN_DEPTH_BY_YEAR`, p95 corridor net
+      import over the same window the capability arms -- the sibling derives'
+      window-match rule; CV 0.037 / LOYO <= 6.8 %, gates in the
+      interchange_config block, `derive_caiso_lateevening_clean_depth.py`); an
+      unmapped year carries the pooled static entry.
+    * the headroom is net of the shaped DSW firm block AND all three sibling
+      clean tranches, so no hour double-carries clean depth (rule 19
+      ``[R-ONE-MECH]``). In practice the sibling windows are disjoint from this
+      one, but the per-hour netting guarantees it regardless.
+
+    A capability, not a floor (``pmin`` stays 0); the corridor ATC envelope
+    still caps delivered flow; the fossil rungs are unchanged and price the
+    flow beyond the clean depth. Pricing (RAW measured hub + EF 0 x border +
+    eps, NO wheel -- the WEIM transfer basis the measured hod 22-23 spread
+    itself indicates) comes from
+    :func:`inject_caiso_per_hub_intertie_prices` via the shared tranche maps
+    and :data:`CAISO_IMPORT_DELIVERY_BASIS`. Must run LAST of the clean-depth
+    injectors (its headroom nets all four).
+
+    Modifies ``fleet_arrays`` in place (eford availability preserved
+    multiplicatively). Returns ``True`` when the tranche was armed, ``False``
+    (byte-identical: the row stays 0 MW) when the fleet has no late-evening
+    row, no measured hub series exists for ``year``, or no (month x hod)
+    bucket clears the admissibility band.
+    """
+    from market_sim.data.eia_loader import measured_intertie_hub_price_raw
+    from market_sim.data.fleet import _hour_to_month_index
+
+    hours = int(fleet_arrays.availability.shape[1])
+    zone = CAISO_PER_HUB_IMPORT_ZONES.get(
+        CAISO_IMPORT_TRANCHE_HUB[CAISO_DSW_LATEEVENING_CLEAN_NAME]
+    )
+    uid = f"{zone}_{CAISO_DSW_LATEEVENING_CLEAN_NAME}"
+    row = next((r for r, u in enumerate(fleet_arrays.unit_ids) if u == uid), None)
+    if row is None:
+        return False
+    hub_name = CAISO_IMPORT_TRANCHE_HUB[CAISO_DSW_LATEEVENING_CLEAN_NAME]
+    hub = measured_intertie_hub_price_raw(iso, year, hours, hub_name)
+    if hub is None:
+        return False
+    spread = _caiso_measured_da_hub_spread(iso, year, hours, hub_name, hub)
+    if spread is None:
+        return False
+    # t = hour index on the model clock; hod = t mod 24 (local calendar).
+    hod = np.arange(hours) % 24
+    month = _hour_to_month_index(hours) + 1
+    window = (
+        (hod >= CAISO_LATEEVENING_CLEAN_HOD_MIN)
+        & (hod <= CAISO_LATEEVENING_CLEAN_HOD_MAX)
+        & np.isfinite(hub)
+    )
+    lo, hi = CAISO_LATEEVENING_SPREAD_BAND
+    admissible = np.zeros(hours, dtype=bool)
+    for m in range(1, 13):
+        for h in range(
+            CAISO_LATEEVENING_CLEAN_HOD_MIN, CAISO_LATEEVENING_CLEAN_HOD_MAX + 1
+        ):
+            cell = window & (month == m) & (hod == h)
+            vals = spread[cell]
+            vals = vals[np.isfinite(vals)]
+            if vals.size == 0:
+                continue
+            med = float(np.median(vals))
+            if lo <= med <= hi:
+                admissible |= cell
+    if not admissible.any():
+        return False
+    depth = CAISO_DSW_LATEEVENING_CLEAN_DEPTH_BY_YEAR.get(
+        year, CAISO_DSW_LATEEVENING_CLEAN_DEPTH_STATIC
+    )
+    # Net of the shaped south firm block AND all three sibling clean tranches
+    # (all post-injection: this runs last).
+    firm_cap = np.zeros(hours)
+    for r, u in enumerate(fleet_arrays.unit_ids):
+        if not u.startswith(f"{zone}_"):
+            continue
+        name = u[len(zone) + 1 :]
+        if name in CAISO_FIRM_IMPORT_TRANCHES or name in (
+            CAISO_DSW_SURPLUS_CLEAN_NAME,
+            CAISO_DSW_OVERNIGHT_CLEAN_NAME,
+            CAISO_DSW_DAYTIME_CLEAN_NAME,
+        ):
+            firm_cap += fleet_arrays.pmax[r] * fleet_arrays.availability[r, :]
+    cap = np.where(admissible, np.clip(depth - firm_cap, 0.0, None), 0.0)
+    if cap.max() <= 0.0:
+        return False
+    fleet_arrays.availability[row, :] *= cap / depth
+    fleet_arrays.pmax[row] = depth
+    return True
+
+
+def _caiso_measured_da_hub_spread(
+    iso: str, year: int, hours: int, hub_name: str, hub: np.ndarray
+) -> np.ndarray | None:
+    """Measured DA CAISO minus raw neighbour-hub spread, per model hour.
+
+    The instrument caiso-253 used for its raw-hub discriminator: the measured
+    CAISO Day-Ahead zonal-mean LMP
+    (``data/raw/_validation-source/actual_lmp_hourly_CAISO.parquet``, ``da``)
+    less the RAW measured neighbour-hub price already loaded by the caller.
+    DA is the basis caiso-253 gated on, because external transactions schedule
+    in the day-ahead market. Returns ``None`` when the measured DA series is
+    unavailable for ``year`` (the caller then leaves the tranche at 0 MW).
+
+    Reproduces caiso-253's published block medians exactly -- DA hod 22-23
+    -3.21 / -0.36 / -0.03 for 2023 / 2024 / 2025 -- which is what pins this
+    gate to that session's own refusal rather than to a re-derivation.
+    """
+    import pandas as pd
+
+    from market_sim.config.paths import RAW_DIR
+
+    path = RAW_DIR / "_validation-source" / f"actual_lmp_hourly_{iso}.parquet"
+    if not path.exists():
+        return None
+    frame = pd.read_parquet(path)
+    frame = frame[frame["year"] == year]
+    if frame.empty or "da" not in frame.columns:
+        return None
+    series = (
+        pd.to_numeric(frame.set_index("hour")["da"], errors="coerce")
+        .reindex(range(hours))
+        .to_numpy(dtype=float)
+    )
+    return series - np.asarray(hub, dtype=float)
 
 
 def inject_caiso_per_hub_reference_prices(
@@ -2274,4 +2458,19 @@ def apply_caiso_seam_injections(
                 CAISO_DAYTIME_CLEAN_TRIM_HOD_MAX
                 if _day_trim
                 else CAISO_DAYTIME_CLEAN_HOD_MAX,
+            )
+    if per_hub_intertie and getattr(config, "caiso_dsw_lateevening_clean", False):
+        if inject_caiso_dsw_lateevening_clean(fleet_arrays, iso, year):
+            _logger.info(
+                "%s %d: south-corridor LATE-EVENING clean import depth armed "
+                "(caiso-269 window-gap closure: measured hod 22-23 depth %s MW "
+                "net of the shaped firm block + surplus + overnight + daytime "
+                "tranches, admissible (month x hod) buckets only under "
+                "caiso-253's pre-registered raw-hub band %s, EF 0, raw hub)",
+                iso,
+                year,
+                CAISO_DSW_LATEEVENING_CLEAN_DEPTH_BY_YEAR.get(
+                    year, CAISO_DSW_LATEEVENING_CLEAN_DEPTH_STATIC
+                ),
+                CAISO_LATEEVENING_SPREAD_BAND,
             )

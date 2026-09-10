@@ -1748,3 +1748,8 @@ results/calibration/ercot264_repro_*/
 # nyiso-222 (2026-09-09) 2022 validation touchpoint on the +5% offer-curve arm.
 # Same rule 29(c)/31 [R-RETAIN] posture as the train-span bundle above.
 results/calibration/nyiso222_offer_plus5_tp2022/
+
+# caiso-269 per-year shard probe bundles (rule 29 [R-SCREEN] (c) / rule 31
+# [R-RETAIN]): kept OUT of `main` by gitignore, never by `rm` — the working
+# tree copies stay on disk until the owner rules on promotion.
+results/calibration/caiso269_lateevening_*/

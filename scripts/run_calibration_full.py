@@ -3687,6 +3687,7 @@ def solve_and_persist(
     caiso_offer_surface_measured_ungrounded: bool = False,
     caiso_st_gas_committed_measured: bool = False,
     caiso_st_gas_peak_measured: bool = False,
+    caiso_dsw_lateevening_clean: bool = False,
     caiso_ct_peaker_committed_measured: bool = False,
     nyiso_ct_peaker_bands_measured: bool = False,
     caiso_offer_surface_conditional: bool = False,
@@ -4026,6 +4027,7 @@ def solve_and_persist(
             ),
             caiso_st_gas_committed_measured=caiso_st_gas_committed_measured,
             caiso_st_gas_peak_measured=caiso_st_gas_peak_measured,
+            caiso_dsw_lateevening_clean=caiso_dsw_lateevening_clean,
             caiso_ct_peaker_committed_measured=caiso_ct_peaker_committed_measured,
             nyiso_ct_peaker_bands_measured=nyiso_ct_peaker_bands_measured,
             caiso_offer_surface_conditional=caiso_offer_surface_conditional,
@@ -5540,6 +5542,7 @@ def solve_and_persist(
             ),
             caiso_st_gas_committed_measured=caiso_st_gas_committed_measured,
             caiso_st_gas_peak_measured=caiso_st_gas_peak_measured,
+            caiso_dsw_lateevening_clean=caiso_dsw_lateevening_clean,
             caiso_ct_peaker_committed_measured=caiso_ct_peaker_committed_measured,
             nyiso_ct_peaker_bands_measured=nyiso_ct_peaker_bands_measured,
             caiso_offer_surface_conditional=caiso_offer_surface_conditional,
@@ -6489,6 +6492,7 @@ def solve_and_persist(
         ),
         "caiso_st_gas_committed_measured": caiso_st_gas_committed_measured,
         "caiso_st_gas_peak_measured": caiso_st_gas_peak_measured,
+        "caiso_dsw_lateevening_clean": caiso_dsw_lateevening_clean,
         "caiso_ct_peaker_committed_measured": caiso_ct_peaker_committed_measured,
         "nyiso_ct_peaker_bands_measured": nyiso_ct_peaker_bands_measured,
         "caiso_offer_surface_conditional": caiso_offer_surface_conditional,
@@ -8701,6 +8705,7 @@ def run_replay_bundle(
     caiso_offer_surface_measured_ungrounded: bool | None = None,
     caiso_st_gas_committed_measured: bool | None = None,
     caiso_st_gas_peak_measured: bool | None = None,
+    caiso_dsw_lateevening_clean: bool | None = None,
     caiso_ct_peaker_committed_measured: bool | None = None,
     nyiso_ct_peaker_bands_measured: bool | None = None,
     gas_offer_margin: bool | None = None,
@@ -8847,6 +8852,8 @@ def run_replay_bundle(
         kwargs["caiso_st_gas_committed_measured"] = caiso_st_gas_committed_measured
     if caiso_st_gas_peak_measured is not None:
         kwargs["caiso_st_gas_peak_measured"] = caiso_st_gas_peak_measured
+    if caiso_dsw_lateevening_clean is not None:
+        kwargs["caiso_dsw_lateevening_clean"] = caiso_dsw_lateevening_clean
     if caiso_ct_peaker_committed_measured is not None:
         kwargs["caiso_ct_peaker_committed_measured"] = (
             caiso_ct_peaker_committed_measured
@@ -10784,6 +10791,28 @@ def main() -> None:
         "makes C3a WORSE by a bounded +0.0003/+0.0265/+0.0000 $/MWh "
         "(caiso-230 §H form on the caiso-231 keeper) and is NEVER a C3a lever. "
         "An ISO with no registry entry is a hard error.",
+    )
+    parser.add_argument(
+        "--caiso-dsw-lateevening-clean",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="WINDOW-GAP CLOSURE (caiso-269, rules 14/17/19; "
+        "ScenarioConfig.caiso_dsw_lateevening_clean). The three DSW "
+        "clean-depth constructions do not tile the clock: caiso-93 runs hod "
+        "0-5, caiso-94 runs hod 6-21, and caiso-87's surplus trigger is "
+        "coverage-STARVED at hod 22-23 (ON in 0.3/0.8 %% of 2024 and 1.6/1.9 "
+        "%% of 2025 hod 22/23 - caiso-253's G-WINDOW leg). On the live keeper "
+        "the armed clean capability falls 3,420 MW at hod 21 to 33 MW at hod "
+        "22 (2025) while the measured WECC_DSW corridor net import RISES "
+        "across the boundary, against a measured EIA-930 import deficit of "
+        "1.0-1.8 GW there. Arms ONE tranche at the measured hod 22-23 p95 "
+        "corridor depth (CV 0.037 / LOYO 6.8 %%), net of the shaped firm "
+        "block and all three sibling clean tranches (rule 19 [R-ONE-MECH]), "
+        "ONLY in (month x hod) buckets clearing caiso-253's PRE-REGISTERED "
+        "raw-hub band (-2, +4) on the measured DA CAISO-PaloVerde spread - "
+        "that session's own refusal criterion, re-used unchanged, so 2023 "
+        "stays dark by construction. Zero new free parameters. Default OFF "
+        "-> prior keepers byte-identical. Also a --replay-bundle override.",
     )
     parser.add_argument(
         "--caiso-st-gas-peak-measured",
@@ -13066,6 +13095,12 @@ def main() -> None:
                 or "--no-caiso-st-gas-peak-measured" in sys.argv
                 else None
             ),
+            caiso_dsw_lateevening_clean=(
+                args.caiso_dsw_lateevening_clean
+                if "--caiso-dsw-lateevening-clean" in sys.argv
+                or "--no-caiso-dsw-lateevening-clean" in sys.argv
+                else None
+            ),
             nyiso_ct_peaker_bands_measured=args.nyiso_ct_peaker_bands_measured,
             caiso_ct_peaker_committed_measured=(
                 args.caiso_ct_peaker_committed_measured
@@ -13477,6 +13512,7 @@ def main() -> None:
         ),
         caiso_st_gas_committed_measured=args.caiso_st_gas_committed_measured,
         caiso_st_gas_peak_measured=args.caiso_st_gas_peak_measured,
+        caiso_dsw_lateevening_clean=args.caiso_dsw_lateevening_clean,
         caiso_ct_peaker_committed_measured=args.caiso_ct_peaker_committed_measured,
         nyiso_ct_peaker_bands_measured=args.nyiso_ct_peaker_bands_measured,
         caiso_offer_surface_conditional=args.caiso_offer_surface_conditional,
