@@ -540,12 +540,41 @@ _DECLARED_BACKCAST_COERCION_REKEYS: dict[str, str] = {
 #   added (and declared, moving no key) between the last pin advance
 #   (b654af81) and the base, whose own pin advance never landed. Named, not
 #   absorbed silently; the +1 is that lane's, the +2 are this one's.
+#
+# 2026-09-10 ERCOT + NYISO ADVANCED (salvage lane) — A TRANSCRIPTION REPAIR,
+#   NOT A SURFACE MOVE. NOTHING MOVED AND NOTHING IS RE-SERVED.
+#   WHAT MOVED: nothing. `solve_surface_register.py --diff aa7a0440` — the
+#   very commit that WROTE the literals below — reports "304 -> 304 names;
+#   0 value(s) moved, 0 added, 0 removed / NO VALUE MOVED — no ISO's key is
+#   reached by a registry change". Per-ISO row-NAME sets were also compared
+#   set-wise between aa7a0440 and HEAD for all seven ISOs: identical, every
+#   one. And `moved_rows` is `{}` for NYISO and names only the
+#   already-ledgered `NUCLEAR_MONTHLY_CF_BY_YEAR` for ERCOT (the 2026-09-06
+#   block above), so no row sits off its declaration un-ledgered.
+#   WHY THE PINS WERE WRONG: they were stale the moment they were written.
+#   Measured at aa7a0440 itself, ERCOT's live surface already read 229 rows
+#   against the 228 pinned and NYISO's 209 against the 208 pinned; the same
+#   229/209 holds at every earlier commit in this clone that touches a surface
+#   module (back to 2962c842). This is the SAME defect the 2026-09-08 SPP-49
+#   block above caught and named for PJM — "a PJM-keyed table added between
+#   the last pin advance and the base, whose own pin advance never landed" —
+#   except that it was left unfixed for the other two ISOs carrying it,
+#   because that block derived the new counts arithmetically (+2 to every
+#   ISO) instead of measuring each one. Named here rather than absorbed: the
+#   +1 in each of ERCOT and NYISO is inherited, not this lane's.
+#   WHICH ISOs: ERCOT and NYISO only. CAISO, MISO, PJM and NEISO already match
+#   their pins exactly and are untouched.
+#   WHAT IT COSTS: NOTHING. A digest that never described the live surface
+#   cannot have been serving anything; no key moves, no cached bundle stops
+#   being served, no committed number changes, and no run is re-solved. The
+#   pins simply start telling the truth, which is what makes the guard able to
+#   catch the NEXT real move.
 PINNED_SURFACE_ROWS_BY_ISO: dict[str, tuple[str, int]] = {
-    "ERCOT": ("a2607a3b210214ab", 228),
+    "ERCOT": ("5ab10cf3fa2f1447", 229),
     "CAISO": ("cba92d202f32f9fd", 204),
     "MISO": ("9f0845000dc8af6e", 210),
     "PJM": ("905116f13849914f", 214),
-    "NYISO": ("8569b48ab932ed6d", 208),
+    "NYISO": ("1eefed492204fab7", 209),
     "NEISO": ("9d35c270c69e9eee", 197),
 }
 

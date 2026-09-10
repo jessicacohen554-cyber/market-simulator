@@ -1259,6 +1259,19 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # armed run reprices the survey-NA months and hashes distinctly. Registered
     # WITH the field, in the same commit (the nyiso-119 discipline).
     "caiso_citygate_spot_coverage",
+    # caiso-269 late-evening clean import tranche (default off), registered
+    # RETROACTIVELY: the field's own merge missed this tuple entirely, so it
+    # entered the digest at its own default and orphaned EVERY on-disk cache
+    # key in every ISO -- five cache-key pin tests red at HEAD. Registering it
+    # here restores the pre-merge keys and leaves an ARMED run's key untouched.
+    # Byte-identical off by construction: both consumers gate on the flag
+    # (model/interchange/spec.py::_caiso_hub_intertie_specs and
+    # model/interchange/caiso.py, each
+    # `per_hub... and getattr(config, "caiso_dsw_lateevening_clean", False)`),
+    # so off the spec carries the tranche at ZERO capacity and the hourly
+    # injector never runs. An armed run hands the LP a real import tranche on
+    # the DSW hub and so earns a distinct key.
+    "caiso_dsw_lateevening_clean",
     # miso-160 measured seasonal forced-outage shape (default None): dropped
     # from the hash at its default so every pre-existing cache key stays
     # byte-stable — the None path reads the module constant
@@ -2138,6 +2151,13 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by caiso-246 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "caiso_citygate_spot_coverage": "False",
+    # caiso-269's field, registered RETROACTIVELY (its own merge missed the
+    # _CACHE_KEY_OPTIONAL_FIELDS registration entirely, orphaning every
+    # on-disk cache key), so the registration and this ledger entry land
+    # together in the repairing commit -- the miso-172/173 precedent above.
+    # The default recorded here is the field's original merge-time default,
+    # unchanged.
+    "caiso_dsw_lateevening_clean": "False",
     # Added by miso-160 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "summer_wefor_share_override": "None",
@@ -20146,6 +20166,7 @@ TIER_TAGS: dict[str, int] = {
     "caiso_ra_startup_bridge": 1,
     "caiso_ra_bridge_decommit": 1,
     "caiso_ra_mustoffer_quantity_gate": 1,
+    "caiso_dsw_lateevening_clean": 1,  # structural flag, not a numeric parameter
     "caiso_ra_bridge_startup_aware": 1,
     "caiso_ra_bridge_curtailment_release": 1,
     "caiso_ra_startup_trajectory": 1,
