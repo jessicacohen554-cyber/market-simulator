@@ -8,13 +8,19 @@
 `RESULT-nyiso226-nyc-base-rebasis-2026-09-10.md` (the 2023 screen) →
 `ADDENDUM-nyiso226-span-authorized-2026-09-10.md` (owner ruling) → **this document.**
 **Shard record:** `docs/SHARDREPORT-nyiso226-span.md` on branch `claude/nyiso226-span`
-(**never merged to `main`**).
+(**auto-merged to `main` as PR #5958 — see `ADDENDUM-nyiso226-not-promoted-and-main-reverted-2026-09-10.md` §1; the "never merged" intent below was NOT achieved**).
 
 **LP spent: ONE shard, 18 m 20 s, three years, exit 0.** The parent ran no LP. No control solve
 (rule 29(b) form 4 + G-DRIFT). **Nothing registered, nothing promoted, `main` unchanged** —
 `reliability_floor_coeffs_NYISO.csv` still reads `0.175`.
 
 ---
+
+> **SUPERSEDED ON DISPOSITION, 2026-09-10:** the arm was **NOT PROMOTED** and `main` was
+> **REVERTED to `0.175`** — the environment auto-merged the shard branches, arming the
+> coefficient with no promotion decision and leaving the designated keeper unreproducible from
+> `main`. C3b was never measured (five blocked routes). Every measurement below stands.
+> See `ADDENDUM-nyiso226-not-promoted-and-main-reverted-2026-09-10.md`.
 
 ## 0. Headline
 
@@ -129,8 +135,7 @@ none is declared here.
 - **Rule 16 `[R-ALLYEARS]`** — one invocation, one bundle, all three years.
 - **Rule 21 `[R-DOF]`** — the moved coefficient remains a ledgered free parameter.
 - **Rule 23 `[R-FROZEN-DERIVE]`** — no source-data trigger, and none claimed.
-- **Rule 29(b)/(c)** — form-4 control, no control solve; bundle gitignored, never registered,
-  branch never merged.
+- **Rule 29(b)/(c)** — form-4 control, no control solve; bundle gitignored and never registered (so no bundle reached `main`); the BRANCH, however, WAS auto-merged — corrected in the ADDENDUM §1.
 - **Rule 31 `[R-RETAIN]`** — **nothing deleted.** §5.
 - **Rule 32 `[R-SHARD]`** — parent ran no LP; one shard, 18 m 20 s, inside the 20-minute unit;
   the stop condition did not fire, so no continuation shard was owed.

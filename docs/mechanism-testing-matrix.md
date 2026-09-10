@@ -12591,7 +12591,23 @@ already prescribes, performed where the bundle lives.
 deliberately **not deleted**, and **will not survive reclamation**; ~18 min of LP to reproduce.
 Records: `docs/RESULT-nyiso226-span-2026-09-10.md`,
 `docs/ADDENDUM-nyiso226-span-authorized-2026-09-10.md`,
-`docs/SHARDREPORT-nyiso226-span.md` (branch `claude/nyiso226-span`, **never merged**).
+`docs/SHARDREPORT-nyiso226-span.md` (branch `claude/nyiso226-span`, which the environment
+**AUTO-MERGED as PR #5958** — the "never merged" intent was not achieved).
+
+**DISPOSITION 2026-09-10: NOT PROMOTED, and `main` REVERTED to `0.175`.** The auto-merge of both
+shard branches (PRs #5953 / #5958) carried the arm edit onto `main` with **no promotion
+decision**, leaving the designated keeper — which solved at `da2e7076`, where that cell reads
+`0.175` — **unreproducible from `main`**, a silent drift carrying no flag and no cache-key delta.
+The arm is **UNDECIDED, not rejected**: every measured criterion passes, but **C3b was never
+measured** after **five** blocked routes (no `metrics.json`; `calibration_verdict.py` resolves
+REGISTERED runs only, so no shard can score an unregistered bundle; `git add -f` refused; plain
+`git add` under `results/calibration/**` refused; and finally `git add` denied at all paths after
+the shard had computed the numbers into an unreadable transcript). **No block was routed around.**
+Promotion now costs a fresh **~18-minute** full-span re-solve that registers itself where the
+bundle lives; the estimate is stated and the LP is **not spent** (rule 31 `[R-RETAIN]`).
+**LESSON FOR EVERY FUTURE SHARD: return NUMBERS in the final message, never artifacts, and
+register a full-span candidate where it is solved.** Record:
+`docs/ADDENDUM-nyiso226-not-promoted-and-main-reverted-2026-09-10.md`.
 
 ---
 
