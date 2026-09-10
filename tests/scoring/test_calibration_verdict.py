@@ -658,6 +658,112 @@ class PriceAndDispatchTests(unittest.TestCase):
         r = cv.score_price_shape(2024, ypay(37.12), bench)
         self.assertEqual(r["status"], cv.FAIL)
 
+    def test_partial_month_dropped_from_both_sides_of_c3a(self):
+        """A month staged from a fraction of its hours leaves the comparison.
+
+        MISO 2022 is the case: the hub staging stops 2022-11-11 RT, so the
+        committed December "month mean" is $22.82 built from ONE HOUR while
+        the model's December carries the whole of Winter Storm Elliott.
+        Scoring them against each other measures the staging hole. Both sides
+        must fall back to the fully-staged months — and the ACTUAL must move
+        too, or the mask just re-creates the mismatch on the other side.
+        """
+        model_mon = [50.0] * 10 + [90.0, 120.0]
+        ypay = {"lmp": {"Z": {"pMon": model_mon, "dMon": [8.3] * 12}}}
+        bench = {
+            "avgLMP": {
+                "rt_lw": 55.0,  # over the staged hours, partial months included
+                "rt_lw_mon": [50.0] * 10 + [38.4, 22.8],
+                "rt_cov": {"mon": [1.0] * 10 + [0.3653, 0.0013]},
+            }
+        }
+        r = cv.score_price_mean(2022, ypay, bench)
+        # Model masked to Jan-Oct (all 50.0) and the actual re-measured over
+        # the same ten months (also 50.0) -> a clean 0% PASS. Un-masked this
+        # is model 58.3 vs actual 55.0.
+        self.assertEqual(r["status"], cv.PASS)
+        self.assertEqual(r["model"], 50.0)
+        self.assertEqual(r["actual"], 50.0)
+        self.assertIn("fully-staged", r["metric"])
+
+    def test_partial_month_dropped_from_c3b_nrmse(self):
+        """C3b drops the same months — squaring makes a stub month dominate."""
+        ypay = {"lmp": {"Z": {"pMon": [50.0] * 10 + [90.0, 120.0], "dMon": [8.3] * 12}}}
+        cov = {"mon": [1.0] * 10 + [0.3653, 0.0013]}
+        actual_mon = [50.0] * 10 + [38.4, 22.8]
+        masked = cv.score_price_shape(
+            2022, ypay, {"avgLMP": {"rt_lw_mon": actual_mon, "rt_cov": cov}}
+        )
+        unmasked = cv.score_price_shape(
+            2022, ypay, {"avgLMP": {"rt_lw_mon": actual_mon}}
+        )
+        self.assertEqual(masked["status"], cv.PASS)
+        self.assertEqual(masked["model"], 0.0)  # ten identical months
+        self.assertEqual(unmasked["status"], cv.FAIL)  # the two stub months
+        self.assertIn("dropped as partially staged", masked["metric"])
+
+    def test_complete_coverage_vector_is_a_no_op(self):
+        """An ISO-year staged complete scores exactly as it did before.
+
+        The guard that keeps this repair from being a gate change: with every
+        month at or above the threshold the mask must not fire at all, so the
+        record is byte-identical to the no-coverage-vector case.
+        """
+        ypay = {
+            "lmp": {
+                "Z": {"pMon": [30.0] * 12, "dMon": [8.3] * 12, "p": 30.0, "d": 100.0}
+            }
+        }
+        base = {"rt_lw": 30.5, "rt_lw_mon": [30.5] * 12}
+        full = dict(base, rt_cov={"mon": [1.0] * 12})
+        near = dict(base, rt_cov={"mon": [0.9919] + [1.0] * 11})  # SPP's January
+        self.assertEqual(
+            cv.score_price_mean(2024, ypay, {"avgLMP": base}),
+            cv.score_price_mean(2024, ypay, {"avgLMP": full}),
+        )
+        self.assertEqual(
+            cv.score_price_mean(2024, ypay, {"avgLMP": base}),
+            cv.score_price_mean(2024, ypay, {"avgLMP": near}),
+        )
+        self.assertEqual(
+            cv.score_price_shape(2024, ypay, {"avgLMP": base}),
+            cv.score_price_shape(2024, ypay, {"avgLMP": near}),
+        )
+
+    def test_coverage_threshold_sits_in_an_empty_interval(self):
+        """The threshold cannot be a fitted choice: no month lives near it.
+
+        Every monthly coverage value the repo commits is either <= 0.3653 (a
+        staging hole) or >= 0.9911 (essentially complete). If a future intake
+        lands a month inside that gap, this test fails and the value stops
+        being outcome-neutral — which is exactly when it needs re-deciding
+        rather than silently keeping its current partition.
+        """
+        import json
+
+        rec = json.loads(
+            (
+                _REPO / "data" / "raw" / "_validation-source" / "actual_lmp.json"
+            ).read_text()
+        )
+        vals = []
+        for _iso, yrs in rec.items():
+            if not isinstance(yrs, dict):
+                continue
+            for _y, blk in yrs.items():
+                if not isinstance(blk, dict):
+                    continue
+                for mkt in ("da", "rt"):
+                    cov = blk.get(f"{mkt}_cov")
+                    if isinstance(cov, dict) and cov.get("mon"):
+                        vals += [float(c) for c in cov["mon"] if c is not None]
+        self.assertTrue(vals, "no coverage vectors committed at all")
+        inside = [v for v in vals if 0.3654 < v < 0.9910]
+        self.assertEqual(
+            inside, [], f"coverage values now sit near the threshold: {inside}"
+        )
+        self.assertTrue(0.3654 < cv.PRICE_MONTH_COVERAGE_MIN < 0.9910)
+
     def test_tail_skipped_without_ordc(self):
         rows = cv.score_price_tail(2024, {"lmp": {}}, "PJM")
         self.assertEqual(rows[0]["status"], cv.SKIPPED)
