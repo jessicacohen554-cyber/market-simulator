@@ -1777,6 +1777,15 @@ results/pjm_d4_y2025/
 # rule 29(c): kept out of main unless the owner promotes and they are registered)
 results/calibration/ercot264_repro_*/
 
+# ercot-262 per-year SHARD bundles. Same rule 32(d) [R-SHARD] posture as the
+# ercot-264 rule above -- "per-year shard bundle dirs are KEPT OUT of `main`,
+# the composite is what gets registered, and an unregistered per-year dir left
+# committed is the exact Class-E parity RED rule 29(c) already forbids". Both
+# families HAD reached `main` anyway (ercot264_repro_* was force-added past its
+# own rule), which is what made check_registry_payload_parity.py red on main
+# itself; this rule is what stops it coming back.
+results/calibration/ercot262_arm_*/
+
 # nyiso-222 (2026-09-09) 2022 validation touchpoint on the +5% offer-curve arm.
 # Same rule 29(c)/31 [R-RETAIN] posture as the train-span bundle above.
 results/calibration/nyiso222_offer_plus5_tp2022/
