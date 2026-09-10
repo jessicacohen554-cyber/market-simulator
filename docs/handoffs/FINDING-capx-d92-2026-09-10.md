@@ -371,3 +371,45 @@ Opened or carried forward by this lane:
   FC letter moved.
 * Rule 27 `[R-PUSH]`: **33 pushed files ≥ 300 lines, every one blob-verified against local after the push —
   all MATCH.**
+
+---
+
+## 11. ADDENDUM — THE PROMOTION, EXECUTED (owner instruction, 2026-09-10)
+
+**Owner:** *"If structural integrity improves but gates regress that may still be a keeper."* **Measured
+first. No gate regresses, so the licence was not needed.**
+
+**"Keeper" does not apply here and the answer is not a dodge:** `keeper` is rule 15 `[R-DASHBOARD]`'s
+BACKCAST designation, and this is a forecast T3 verdict on the separate FF-2D board, which has
+determinations and not keepers. The forecast-side equivalent — registering the re-score — was already
+done in §6. What promotion remained was §8 question 2, and it is now executed.
+
+**`neiso-t3` now names `neiso-2026-2050-t3-golden3-d92-base` (`dd8203a8bf1546b9`)**, replacing
+`…-d90` / `ae317e63263c8eef`.
+
+| | |
+|---|---|
+| numbers moved | **none.** L0 reproduces the replaced bundle exactly (§5) — an address change, not a result |
+| determination | **HOLD → HOLD** |
+| FC-1…FC-8 statuses, reasons, caveats | **all identical** |
+| only differences | FC-7 `run_config` row **828 → 837** config keys (schema growth); FC-8 wall **31.1 → 31.9** min — **both PASS either way** |
+| FC-7 risk, measured before promoting | L0's DOF ledger, built with the committed instrument, is the **same 9 entries with the same 2 UNIDENTIFIED** — FC-7 **cannot** regress |
+| new artifacts | `d92/base/dof_ledger.json` (generated) and `d92/base/forecast_attestation.json` (authored by the producing session per rubric §5; `dof_ledger_complete` recorded **false**, honestly) |
+
+**Why it is an improvement:** the FC-5 disposition is keyed to L0, so the record now names the bundle
+its own corridor table is computed from; and L0's `run_config` **reproduces its own cache key at HEAD**
+while `d90-rescore`'s does not.
+
+### 11.1 AN OVERCLAIM I CAUGHT BEFORE PUSHING, RECORDED RATHER THAN QUIETLY FIXED
+
+The first draft of the registry note said the re-point *"removes one of the six `G1_UNKNOWN` rows
+STRUCTURALLY."* **It does not.** `check_key_provenance.py` scans **committed `run_config.json` files,
+not registry references**, and `results/ff-t3-neiso-golden/d90-rescore/run_config.json` is still
+committed — capx D90-R's artifact, not this lane's to prune. **The count stays at SIX**, re-measured
+after the promotion, and all six remain owned to the key-provenance desk (§9 item 6). The note and the
+attestation both say so.
+
+**What was NOT promoted, and why.** §8 question 1 (the FC-5 re-base width) stands as executed — the
+owner did not ask for the narrower edit and the prior remains one `git mv` away. §8 question 3 (extending
+the FC-6 re-measurement to every T3 golden) is **not** done: it is the board sweep declined this window,
+and §4 makes it more urgent rather than more optional. It still **HAS NO LIVE OWNER**.
