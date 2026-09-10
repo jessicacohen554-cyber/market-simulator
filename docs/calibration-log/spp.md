@@ -1177,3 +1177,98 @@ absorbs 98.2 % of concentrated curtailment headroom; thermal annual minimum 254.
 ~40 GW fleet) — or the **ST_GAS offer / commitment defect**, which is the only object that reaches
 either failing C1 row. Then R-3 the zonal spread (measured |N−S| 12.13 / 17.23 / 15.18 against a
 model ~1), then SPP-55/56 scarcity / C3c.
+
+## spp-23 — 2026-09-10
+
+**Lane SPP-63. ZERO LP SPENT.** Base `24737d3c`. Object as chartered: **R-az, the ST_GAS offer /
+commitment defect**, named by SPP-62 §7 as the successor that "reaches either failing C1 row."
+**Refused at phase 0 under rule 29 `[R-SCREEN]` clause 0** — the arm has a computable pre-solve gate
+and does not pass it, so no shard was launched. Record:
+`docs/handoffs/FINDING-spp-63-2026-09-10.md`. **Keeper UNCHANGED**
+(`2026-09-10-spp-62-vintage-census`); nothing registered, nothing promoted, **no matrix cell verdict
+minted**.
+
+**THE FINDING.** The two failing `ST_GAS` rows are not an ST_GAS defect. Re-derived from the
+keeper's committed sidecars and the committed EIA-930 benchmark:
+
+| | 2023 | 2024 | 2025 |
+|---|---|---|---|
+| model wind − actual | **+10.708** | **+11.407** | **+11.586** |
+| scored thermal (C1 total) model − actual | **−10.196** | **−11.605** | *(C1 skipped, prelim 923)* |
+| solar + hydro + nuclear, combined \|Δ\| | 0.25 | 0.41 | 0.48 |
+
+The wind excess and the thermal deficit are **the same energy**, agreeing to **4.8 %** and **1.7 %**.
+
+**The wind POTENTIAL is right; the CURTAILMENT is missing.** Re-derived this session from
+`wind_cf × wind_cap` (the arrays the LP bounds on), independent of any prior lane's prose — and
+matching SPP-51c's recorded potentials and SPP-58's recomputed 2024 bound:
+
+| year | potential | model disp | actual | implied real curtailment | **share taken by the LP** |
+|---|---|---|---|---|---|
+| 2023 | 114.0552 | 113.7572 | 103.0490 | 11.0062 | **2.71 %** |
+| 2024 | 120.9925 | 120.7235 | 109.3170 | 11.6755 | **2.30 %** |
+| 2025 | 122.2552 | 122.0430 | 110.4570 | 11.7982 | **1.80 %** |
+
+**THE BOUND THAT REFUSES THE ARM.** Only three scored classes carry any surplus at all —
+`CT_PEAKER` **+2.407 / +2.725**, `COAL_PRB` **+1.598 / +1.765**, `CC_CHP` **+0.116 / +0.019** —
+totalling **4.121** and **4.509** TWh against `ST_GAS` gaps of **8.380** and **9.712**. So **at most
+49.2 % (2023) and 46.4 % (2024)** of the gap exists anywhere in the thermal stack, and even that
+ceiling assumes a mechanism driving all three surplus rows to exactly their actuals. Every other
+class is already *under*. **The remaining 4.26 / 5.20 TWh has no source in the thermal stack** — it
+is the wind.
+
+**WHY EACH CHARTERED CHANNEL IS CLOSED.** (a) `spp_gas_commitment_bridge` and `gas_commitment_bridge`
+are **already `R`** (SPP-44's gate kill; SPP-46's rule-13 refusal of the measured-state form), and
+their stated re-test condition is not met, so rule 28(a) forbids re-testing them. Measured
+independently here and agreeing: every SPP fossil unit carries `pmin_mw = min_run_hours =
+min_down_hours = startup_cost_per_mw = 0`, but `ST_GAS` is **already ON in 7,556 / 8,021 of 8,760
+hours** — the gap needs **959 / 1,107 MW more in *every* hour**, while filling all 1,204 / 739
+fully-off hours to a full 1 GW recovers only **1.2 / 0.7 TWh**. It is a *level* deficit inside
+running hours, the one shape a min-gen floor cannot repair. (b) The authorized `offer_curve_by_group`
+multipliers are a **level** lever (SPP-52a measured −6.00/−5.91/−6.03 %, flat to 0.12 pp), and the
+bound above is the general refusal: re-ordering the stack cannot create energy the stack does not
+contain, and no finite multiplier beats a competitor at MC = 0. (c) `tranche_startup_amortization` is
+already `R` at max $2.14/MWh.
+
+**CORROBORATION THIS LANE DID NOT PRODUCE.** Live lane **SPP-58**'s committed solved 2024 arm
+(`3a699f10`, control = keeper 5) arms `spp_curtailment_ceiling`: wind **120.723 → 109.229** — within
+**0.09 TWh** of the actual — gas family **84.02 vs 83.21 actual**, its gates G-2/G-3/G-4 all PASS.
+**Reported against this lane's own reading:** the ceiling alone does **not** close `ST_GAS` (+0.801 of
+11.5 TWh; most goes to `CC_REGULAR` +4.580 and `COAL_PRB` +4.484), and **keeper 7 is a harder basis**
+than SPP-58's keeper-5 control, because the vintage repair took `ST_GAS` from 11.970 to 10.386 TWh —
+projecting +0.801 onto keeper 7 gives ≈ −8.9 TWh, still outside the ±8.00 band. That projection is
+arithmetic, not a measurement, and is offered as a caution to whoever composes the two objects.
+
+**WHAT IS REAL — successor R-ba, the merit-order inversion.** Level-invariant, so it survives the
+wind correction: SPP gas steam runs at **0.47 / 0.52 ×** its measured capacity factor while peakers
+run at **1.23 / 1.18 ×**, and the model offers `ST_GAS` **above** `CT_PEAKER` at every stack depth to
+6 GW (by $4.99–$6.99 in 2023) despite a **better** capacity-weighted heat rate (**10.543** vs
+**10.974**; only VOM is higher, $4.00 vs $3.50). **Sequencing is binding: R-ba is not measurable
+until the wind ceiling lands** — scored on a wind-oversupplied stack it would close a wind residual
+through a gas offer, which is the fitted mechanism rule 1 `[R-STRUCT]` forbids.
+
+**Rule 19 `[R-ONE-MECH]` enumeration, done and recorded:** nothing else floors or prices SPP `ST_GAS`
+— no commitment floor, no bridge, no must-run, no reliability floor; the only live pricing channel is
+`offer_curve_by_group` at a uniform 0.93 on the ten fossil classes.
+
+**Rule 28 `[R-MECH-MATRIX]`:** no verdict minted — this lane tested no mechanism.
+`spp_gas_commitment_bridge` / `gas_commitment_bridge` / `tranche_startup_amortization` stay **`R`**,
+`spp_curtailment_ceiling` stays **`U`** and **belongs to SPP-58**, `offer_curve_by_group` stays
+**`K`**. The shard's `gates:` stamp and the §5.7 prose header — both of which named the ST_GAS
+successor — were re-stamped with the predecessor text preserved verbatim.
+
+**Rule 23 `[R-FROZEN-DERIVE]`:** re-running `derive_campd_gas_commitment_params.py --iso SPP`
+reproduced the committed `campd_gas_commitment_params_SPP.csv` **byte-identically**. The new `--ct`
+artifact (`campd_ct_commitment_params_SPP*.csv`) is additive and is read by no solve path. SPP's own
+measured conduct, per rule 25 `[R-ISO-SCOPE]` — no number transferred from any other ISO: `ST_GAS`
+min-load **0.265957** / run-hours p50 14 h (cap-wtd 49 h); `CC_REGULAR` **0.440000** / 16 h (20 h);
+`CT_PEAKER` **0.316735** / 9 h (10 h).
+
+**Rule 31 `[R-RETAIN]`:** nothing was solved, so nothing is promotable and **nothing was deleted**.
+
+**Next shorthand: spp-24.** Next lever: **land the wind ceiling first** — that is lane SPP-58's
+object and its verdict to mint — then **R-ba**, the ST_GAS/CT_PEAKER merit-order inversion, measured
+on the corrected stack. Behind those, unchanged: **SPP-51b R-2** (thermal-commitment floor), **R-3**
+(zonal spread, measured |N−S| 12.13 / 17.23 / 15.18 against a model ~1), **SPP-55/56** (scarcity /
+C3c). **SPP remains NOT-YET and is not calibrated**; two criteria still fail, so rule 22 `[R-C3C]`
+cannot fire.
