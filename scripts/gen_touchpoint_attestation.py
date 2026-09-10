@@ -111,18 +111,114 @@ def scenario_defaults() -> dict[str, object] | None:
     return {f.name: getattr(cfg, f.name) for f in dataclasses.fields(cfg)}
 
 
-def compare_recipes(keeper: dict, touchpoint: dict) -> dict:
+def classify_declared(
+    conflicts: dict, declared: tuple[str, ...], defaults: dict | None
+) -> tuple[dict, dict]:
+    """Split ``conflicts`` into DECLARED DEGRADATIONS and real conflicts.
+
+    A **declared degradation** is a recipe delta a purged upstream source
+    FORCES on a held-out year: a rule-13 measured overlay whose record simply
+    does not exist before some vintage, and whose loader hard-errors rather
+    than falling back silently. MISO is the case this was written for — MISO
+    published no ASM reserve record before 2023 (``docs.misoenergy.org``
+    retains ~3.5 years; every 2022 probe 404s) and
+    ``miso_measured_reserve_requirements`` therefore cannot solve ANY MISO year
+    before 2023, nor can its hard dependent ``miso_reserve_online_gated``.
+    Without a channel here, no MISO year before 2023 could ever be attested and
+    the holdout ladder would be closed by construction rather than by evidence
+    — and that is not MISO-specific: any ISO whose measured overlay post-dates
+    its holdout years hits the same wall.
+
+    THE CHANNEL CANNOT BECOME A TUNING KNOB, and that is enforced, not
+    promised. A declared key is admitted ONLY when the touchpoint's value is
+    the field's ``ScenarioConfig`` DEFAULT — i.e. the degradation can only
+    DISARM an overlay, dropping the run onto the construction a FORECAST year
+    uses (rule 13 ``[R-MEASURED]``'s forward test). A declared key sitting at
+    any other value is a conflict exactly as before, so this can never admit an
+    armed mechanism, a re-tuned multiplier or a fitted scalar. When the
+    ``ScenarioConfig`` defaults are unavailable the channel FAILS CLOSED: every
+    declared key stays a conflict, because an unverifiable declaration is worth
+    nothing.
+
+    Args:
+        conflicts: Differing shared keys from the recipe comparison.
+        declared: Key names the operator declared as forced degradations.
+        defaults: ``ScenarioConfig`` field defaults, or None when unavailable.
+
+    Returns:
+        ``(admitted, remaining)`` — the declared degradations that verified,
+        and the conflicts that stand.
+    """
+    admitted: dict = {}
+    remaining: dict = {}
+
+    def _verify(key: str, kv, tv) -> dict | None:
+        """Admit one field, or return None when it must stay a conflict."""
+        if key not in declared or defaults is None or key not in defaults:
+            return None
+        if tv is not None and tv != defaults[key]:
+            return None
+        return {"keeper": kv, "touchpoint": tv, "scenario_default": defaults[key]}
+
+    for key, vals in conflicts.items():
+        kv, tv = vals["keeper"], vals["touchpoint"]
+        # The generic ``prb_overrides`` channel nests config fields inside one
+        # container dict, so replay_keeper's --set writes BOTH the top-level
+        # kwarg and the container. Admit the container only when every field
+        # that moved inside it verifies on its own terms — one un-declared or
+        # non-default nested field and the whole container stays a conflict.
+        if isinstance(kv, dict) and isinstance(tv, dict):
+            nested = sorted(k for k in set(kv) | set(tv) if kv.get(k) != tv.get(k))
+            checked = {k: _verify(k, kv.get(k), tv.get(k)) for k in nested}
+            if nested and all(v is not None for v in checked.values()):
+                admitted[key] = {"nested": checked}
+            else:
+                remaining[key] = dict(
+                    vals,
+                    refused="nested fields that did not verify: "
+                    + ", ".join(k for k, v in checked.items() if v is None),
+                )
+            continue
+        ok = _verify(key, kv, tv)
+        if ok is None:
+            remaining[key] = dict(
+                vals,
+                refused=(
+                    "not declared"
+                    if key not in declared
+                    else "declared, but the touchpoint value is not the "
+                    f"ScenarioConfig default "
+                    f"{(defaults or {}).get(key)!r} — a declared degradation "
+                    "may only DISARM an overlay, never set one"
+                    if defaults is not None
+                    else "declared, but ScenarioConfig defaults are "
+                    "unavailable here, so the disarm cannot be verified "
+                    "(fail-closed)"
+                ),
+            )
+            continue
+        admitted[key] = ok
+    return admitted, remaining
+
+
+def compare_recipes(
+    keeper: dict, touchpoint: dict, declared: tuple[str, ...] = ()
+) -> dict:
     """Compare two bundle ``meta.json`` recipes.
 
     Args:
         keeper: The designated keeper bundle's ``meta.json``.
         touchpoint: The touchpoint bundle's ``meta.json``.
+        declared: Key names the operator declared as source-forced
+            degradations; see :func:`classify_declared` for what admits one.
 
     Returns:
         A dict with ``conflicts`` (shared keys differing outside
-        :data:`PROVENANCE_KEYS`), ``added`` / ``removed`` (solve-surface drift),
-        and ``added_nondefault`` (added keys not sitting at their
-        ``ScenarioConfig`` default; ``None`` when the check was skipped).
+        :data:`PROVENANCE_KEYS`, minus any verified declared degradation),
+        ``declared_degradations`` (the verified ones), ``added`` / ``removed``
+        (solve-surface drift), and ``added_nondefault`` (added keys not sitting
+        at their ``ScenarioConfig`` default; ``None`` when the check was
+        skipped).
     """
     shared = (set(keeper) & set(touchpoint)) - PROVENANCE_KEYS
     conflicts = {
@@ -148,8 +244,10 @@ def compare_recipes(keeper: dict, touchpoint: dict) -> dict:
             and touchpoint[k] is not None
             and touchpoint[k] != defaults[k]
         }
+    admitted, conflicts = classify_declared(conflicts, declared, defaults)
     return {
         "conflicts": conflicts,
+        "declared_degradations": admitted,
         "added": added,
         "removed": removed,
         "added_nondefault": added_nondefault,
@@ -161,6 +259,8 @@ def build(
     keeper_run_id: str,
     touchpoint_bundle: Path,
     supersedes: str | None,
+    declared: tuple[str, ...] = (),
+    degradation_reason: str | None = None,
 ) -> dict:
     """Build the touchpoint attestation payload.
 
@@ -169,20 +269,31 @@ def build(
         keeper_run_id: The keeper's registered dashboard run id.
         touchpoint_bundle: The touchpoint bundle produced by the replay solve.
         supersedes: Optional run id of a stale touchpoint this one replaces.
+        declared: Source-forced degradation keys (:func:`classify_declared`).
+        degradation_reason: Why the source cannot supply them. Required
+            whenever ``declared`` is non-empty — a degradation with no stated
+            cause is exactly the silent recipe drift this generator exists to
+            refuse.
 
     Returns:
         The attestation dict, ready to serialize.
 
     Raises:
-        SystemExit: if the recipe-identity assertion fails, if a newly added
-            solve kwarg is at a non-default value, or if the holdout years span
-            more than one tier.
+        SystemExit: if the recipe-identity assertion fails, if a declared
+            degradation does not verify, if a newly added solve kwarg is at a
+            non-default value, or if the holdout years span more than one tier.
     """
+    if declared and not degradation_reason:
+        raise SystemExit(
+            "--declared-degradation requires --degradation-reason: a recipe "
+            "delta with no stated cause is the silent drift this generator "
+            "exists to refuse."
+        )
     kmeta = json.loads((keeper_bundle / "meta.json").read_text())
     tmeta = json.loads((touchpoint_bundle / "meta.json").read_text())
     katt = json.loads((keeper_bundle / "calibration_attestation.json").read_text())
 
-    cmp_ = compare_recipes(kmeta, tmeta)
+    cmp_ = compare_recipes(kmeta, tmeta, declared)
     if cmp_["conflicts"]:
         raise SystemExit(
             "RECIPE IDENTITY FAILED — the touchpoint is not the keeper's "
@@ -202,9 +313,70 @@ def build(
     tier = tiers[0]
 
     kgov = katt.get("governance", {})
-    missing = [a for a in GOVERNANCE_ASSERTIONS if not kgov.get(a)]
+    # RULE 1 [R-STRUCT] CARVE-OUT (owner ruling 2026-09-05), mirrored from
+    # calibration_verdict.score_governance. A keeper that tunes price through
+    # the authorized `offer_curve_by_group` channel carries
+    # `levers_trace_to_measured_input` and `no_fit_to_price_residuals` as
+    # FALSE, scoped by a `authorized_price_tuning` declaration — and its own C6
+    # PASSES on that basis. This generator predated the amendment and demanded
+    # all four assertions be true, which made every such keeper's touchpoint
+    # unattestable (MISO's keeper is exactly that shape). The carve-out reaches
+    # those two assertions and NOTHING else: `no_pinning_to_actuals` and
+    # `outage_filter_exogenous_net_load` must still be true, and a keeper with
+    # the two false and NO declaration is still refused.
+    scoped = {"levers_trace_to_measured_input", "no_fit_to_price_residuals"}
+    declaration = kgov.get("authorized_price_tuning")
+    has_decl = isinstance(declaration, dict)
+    missing = [
+        a
+        for a in GOVERNANCE_ASSERTIONS
+        if not kgov.get(a) and not (a in scoped and has_decl)
+    ]
     if missing:
-        raise SystemExit(f"keeper attestation does not assert: {missing}")
+        raise SystemExit(
+            f"keeper attestation does not assert: {missing}"
+            + (
+                ""
+                if has_decl
+                else " (and carries no authorized_price_tuning declaration, "
+                "which is the only thing that scopes the two price-tuning "
+                "assertions — rule 1 [R-STRUCT] carve-out)"
+            )
+        )
+
+    degraded = cmp_["declared_degradations"]
+    if degraded:
+
+        def _one(k: str, v: dict) -> str:
+            if "nested" in v:
+                inner = ", ".join(
+                    f"{ik}: {iv['keeper']!r} -> {iv['touchpoint']!r} "
+                    f"(default {iv['scenario_default']!r})"
+                    for ik, iv in sorted(v["nested"].items())
+                )
+                return f"{k} (generic-override container) [{inner}]"
+            return (
+                f"{k}: {v['keeper']!r} -> {v['touchpoint']!r} (ScenarioConfig "
+                f"default {v['scenario_default']!r})"
+            )
+
+        deg_txt = "; ".join(_one(k, v) for k, v in sorted(degraded.items()))
+        degradation_note = (
+            f" {len(degraded)} DECLARED SOURCE-FORCED DEGRADATION(S), applied to the held-out "
+            f"year(s) only and VERIFIED rather than asserted: {deg_txt}. REASON: "
+            f"{degradation_reason} Each key is admitted ONLY because its "
+            "touchpoint value is the field's ScenarioConfig DEFAULT — the "
+            "generator refuses a declared key set to anything else — so the "
+            "degradation can only DISARM a measured overlay and drop the run "
+            "onto the construction a FORECAST year uses (rule 13 [R-MEASURED]'s "
+            "forward test), never arm a mechanism, re-cut a multiplier or "
+            "introduce a scalar. NOTHING ELSE MOVED: recipe identity is computed "
+            "over every other shared key and is exact. The degradation is NOT a "
+            "lever, was NOT selected against any gate, and is the SAME disarm in "
+            "every touchpoint year of this ISO."
+        )
+    else:
+        degradation_note = ""
 
     n_added = len(cmp_["added"])
     attested = (
@@ -217,7 +389,8 @@ def build(
         "and found ZERO differences outside the provenance set (run stamps, the "
         "solve span, and the per-year Henry Hub actual, which is a year-scoped "
         "measured input rather than a recipe knob) — the generator refuses to write "
-        "this file otherwise. ZERO free parameters introduced or moved, so the rule-20 "
+        f"this file otherwise.{degradation_note} "
+        "ZERO free parameters introduced or moved, so the rule-20 "
         "[R-DOF] ledger, the disclosures and the exceptions ledger carry from the "
         "keeper unchanged and this run spends NO new ledger slot. NOTHING WAS TUNED "
         "FOR, AGAINST, OR IN RESPONSE TO the held-out year(s): the recipe was frozen "
@@ -240,9 +413,34 @@ def build(
     for sec in CARRIED_SECTIONS:
         if sec in katt:
             out[sec] = katt[sec]
-    out["governance"] = {a: True for a in GOVERNANCE_ASSERTIONS} | {
+    # Carry the KEEPER's own assertion VALUES, not a blanket True: a touchpoint
+    # re-solves the keeper's recipe, so it inherits the keeper's governance
+    # posture exactly — including a scoped price-tuning declaration. Writing
+    # True over a keeper's declared False would be the generator asserting
+    # something the keeper does not.
+    out["governance"] = {a: bool(kgov.get(a)) for a in GOVERNANCE_ASSERTIONS} | {
         "attested_by": attested
     }
+    if has_decl:
+        # (b) "ONE config across EVERY scored year" is checked against the RUN's
+        # scored years, so the carried declaration is re-pointed at this
+        # touchpoint's span. The value itself is byte-identical to the keeper's
+        # — the same one config, now also held on a year it was never fitted to,
+        # which is the strongest form of (b), not a weakening of it. The keeper's
+        # own span is preserved beside it so nothing is lost.
+        out["governance"]["authorized_price_tuning"] = dict(declaration) | {
+            "years_held": years,
+            "years_held_keeper_span": declaration.get("years_held"),
+            "touchpoint_note": (
+                "Carried UNCHANGED from the keeper "
+                f"{keeper_run_id}: the same multiplier value, never re-cut for "
+                "this year and never swept against any gate here. `years_held` "
+                "is re-pointed to this run's scored year(s) because rule 1 (b) "
+                "is checked against the run's own span; the keeper's span is "
+                "kept in `years_held_keeper_span`, so the config is one config "
+                "across the union of both."
+            ),
+        }
     out["touchpoint"] = {
         "tier": tier,
         "holdout_years": years,
@@ -250,8 +448,17 @@ def build(
         "keeper_bundle": str(keeper_bundle.relative_to(REPO)),
         "keeper_git_sha": kmeta.get("git_sha"),
         "touchpoint_git_sha": tmeta.get("git_sha"),
-        "recipe_identity": "PASS — 0 differing shared meta.json keys outside "
-        "the provenance set",
+        "recipe_identity": (
+            "PASS — 0 differing shared meta.json keys outside the provenance set"
+            if not degraded
+            else f"PASS — 0 differing shared meta.json keys outside the "
+            f"provenance set and the {len(degraded)} VERIFIED declared "
+            "source-forced degradation(s) below, each of which the generator "
+            "admitted only because its touchpoint value is the field's "
+            "ScenarioConfig default (a disarm, never an arm)"
+        ),
+        "declared_degradations": degraded or None,
+        "declared_degradation_reason": degradation_reason if degraded else None,
         "carried_sections": [s for s in CARRIED_SECTIONS if s in katt],
         "solve_surface_added_since_keeper": cmp_["added"],
         "solve_surface_removed_since_keeper": cmp_["removed"],
@@ -275,6 +482,25 @@ def main() -> None:
         default=None,
         help="Run id of a stale touchpoint this one replaces, if any.",
     )
+    ap.add_argument(
+        "--declared-degradation",
+        action="append",
+        default=[],
+        metavar="FIELD",
+        help="A meta.json key whose difference from the keeper is FORCED by a "
+        "purged upstream source (repeatable). Admitted ONLY when the "
+        "touchpoint's value is that field's ScenarioConfig default — i.e. the "
+        "overlay is DISARMED onto the construction a forecast year uses; a "
+        "declared key set to anything else is still a hard error, so this can "
+        "never admit an armed mechanism or a tuned value. Requires "
+        "--degradation-reason.",
+    )
+    ap.add_argument(
+        "--degradation-reason",
+        default=None,
+        help="Why the source cannot supply the declared field(s). Written "
+        "verbatim into the attestation; required with --declared-degradation.",
+    )
     args = ap.parse_args()
 
     att = build(
@@ -282,6 +508,8 @@ def main() -> None:
         args.keeper_run_id,
         args.touchpoint_bundle.resolve(),
         args.supersedes,
+        tuple(args.declared_degradation),
+        args.degradation_reason,
     )
     dest = args.touchpoint_bundle / "calibration_attestation.json"
     dest.write_text(json.dumps(att, indent=2) + "\n")

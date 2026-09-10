@@ -1,0 +1,13 @@
+{
+  "id": "2026-09-10-miso-251-screen2022",
+  "label": "miso 251 screen2022",
+  "date": "2026-09-10",
+  "shorthand": "miso-251-screen2022",
+  "definition": "miso-251 VALIDATION TOUCHPOINT (re-solve): the 2026-09-09-miso-250-ep-gas keeper recipe on held-out 2022, on the REPAIRED MISO zonal demand. SUPERSEDES 2026-09-10-miso-251-tp2022, which solved on flat sample-average zone shares because curate_zonal_shares.py::parse_miso_shares hardcoded the 2023-2025 sub-BA file and could not see the complete miso_subba_demand_2022.csv on disk (rule 14 [R-ACCURATE]). DECLARED INPUT DEGRADATION, unchanged and forced by a purged source: MISO published no ASM record before 2023 (docs.misoenergy.org retains ~3.5y; 2022 probes 404), so miso_measured_reserve_requirements is disarmed and miso_reserve_online_gated is its hard dependent; the run uses MISO's OWN PUBLISHED static RBDC construction, the same one a FORECAST year uses. Nothing else moves; 2023-2025 untouched. Not a lever, not tuned, not swept.",
+  "years": [
+    2022
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-09-10-miso-251-screen2022.js",
+  "bundle": "results/calibration/miso251_screen2022"
+}

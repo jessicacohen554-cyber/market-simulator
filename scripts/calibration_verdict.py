@@ -984,6 +984,128 @@ def _nrmse(model: list[float], actual: list[float]) -> float | None:
     return rmse / mean_a
 
 
+# A calendar month participates in the like-for-like price comparison only when
+# essentially ALL of its hours are present in the committed actual. Below this
+# the committed monthly mean is a DIFFERENT STATISTIC than the model's month —
+# an average over a handful of days, not over the month — so comparing them
+# measures the staging gap, not the model. MISO 2022 is the case that forced
+# it: its hub staging stops 2022-11-11 RT / 2022-12-09 DA, leaving a December
+# RT "month mean" of $22.82 computed from ONE HOUR, against a model December
+# that carries the whole of Winter Storm Elliott. Cited by the intake that
+# added the ``*_cov`` vectors for exactly this purpose
+# (docs/holdout-data-equivalency-register-2026-07.md §MISO: "the record now
+# carries da_cov/rt_cov ... without it the one-hour December read as a
+# $22.82/MWh December RT price").
+#
+# WHY THE VALUE CANNOT BE A FITTED CHOICE (rules 1 [R-STRUCT] / 21 [R-DOF]).
+# The published record is starkly BIMODAL and there is NOTHING IN THE MIDDLE.
+# Every monthly coverage value committed today (120 of them, 2026-09-10) is
+# either <= 0.3653 (MISO 2022 rt Nov 0.3653 / rt Dec 0.0013 / da Dec 0.2903;
+# MISO 2026 H2 all 0.0000) or >= 0.9911 (SPP Jan/Feb 0.9911-0.9919, MISO 2026
+# Jun 0.9986, and 96 months at exactly 1.0000). The open interval
+# (0.3653, 0.9911) contains ZERO months, so EVERY threshold in it selects the
+# IDENTICAL set and the number cannot be tuned to reach an outcome. 0.90 is
+# taken inside that empty interval, on the "essentially complete" side: a month
+# may lose up to ~3 days to a clock boundary or the source's own publication
+# gap and still be the same statistic; a month staged from a third of its hours
+# is not.
+PRICE_MONTH_COVERAGE_MIN = 0.90
+
+# Hours in each calendar month of a non-leap year. The committed monthly means
+# are hour-averages, so re-aggregating them to an annual needs hour weights,
+# not equal weights. A leap February differs by 24 h in 8,784 — 0.3% of one
+# month's weight — which cannot move a 10% band, so one vector serves.
+_MONTH_HOURS = (744, 672, 744, 720, 744, 720, 744, 744, 720, 744, 720, 744)
+
+
+def _covered_months(actual_mon: list | None, cov_mon: list | None) -> list[int]:
+    """Return the month indices the actual series genuinely covers.
+
+    A month counts when its committed mean is present AND — when the intake
+    published a coverage vector for the series — at least
+    :data:`PRICE_MONTH_COVERAGE_MIN` of its hours are in the staging. Absent a
+    coverage vector this is exactly the pre-existing ``is not None`` test, so
+    every ISO-year without one scores byte-identically.
+    """
+    if not actual_mon:
+        return []
+    out = []
+    for i, v in enumerate(actual_mon):
+        if v is None:
+            continue
+        if cov_mon is not None and i < len(cov_mon):
+            c = cov_mon[i]
+            if c is not None and float(c) < PRICE_MONTH_COVERAGE_MIN:
+                continue
+        out.append(i)
+    return out
+
+
+_ACTUAL_LMP_PATH = REPO / "data" / "raw" / "_validation-source" / "actual_lmp.json"
+_ACTUAL_LMP_CACHE: dict | None = None
+
+
+def _actual_lmp_coverage(iso: str | None, year: int, market: str) -> list | None:
+    """Monthly staging coverage of an ISO-year's committed hub-price series.
+
+    Read from the committed ``actual_lmp.json`` reference rather than from the
+    bench part. The part would be the natural home — coverage belongs beside
+    the statistic it qualifies — but its PAYLOAD FINGERPRINT covers the
+    builder's output shape, so adding a key to
+    ``render_calibration_html._actual_avg_lmp`` marks every committed part of
+    every ISO stale at once (measured 2026-09-10: 0 -> 31 of 31). Reading the
+    same committed reference the part is built from changes no part and no
+    fingerprint.
+
+    Returns None when the ISO-year publishes no coverage vector — which is
+    every ISO-year staged complete, and is what makes :func:`_covered_months`
+    a no-op there.
+    """
+    global _ACTUAL_LMP_CACHE
+    if iso is None:
+        return None
+    if _ACTUAL_LMP_CACHE is None:
+        try:
+            _ACTUAL_LMP_CACHE = json.loads(_ACTUAL_LMP_PATH.read_text())
+        except (OSError, ValueError):
+            _ACTUAL_LMP_CACHE = {}
+    rec = (_ACTUAL_LMP_CACHE.get(str(iso)) or {}).get(str(int(year))) or {}
+    cov = rec.get(f"{market}_cov")
+    return cov.get("mon") if isinstance(cov, dict) else None
+
+
+def _coverage_mon(avg: dict, bench_key: str, iso: str | None, year: int) -> list | None:
+    """Return the monthly staging-coverage vector for a bench key, or None.
+
+    ``rt_lw`` and ``rt`` are the same staged hours under two weightings, so
+    both read ``rt_cov``; likewise ``da_lw``/``da`` -> ``da_cov``. A part that
+    already carries the vector inline wins (nothing does today; this keeps the
+    scorer correct if the part ever gains it), else the committed reference.
+    """
+    market = "rt" if str(bench_key).startswith("rt") else "da"
+    cov = avg.get(f"{market}_cov")
+    if isinstance(cov, dict) and cov.get("mon"):
+        return cov.get("mon")
+    return _actual_lmp_coverage(iso, year, market)
+
+
+def _annual_from_months(actual_mon: list, covered: list[int]) -> float | None:
+    """Hour-weighted annual mean of ``actual_mon`` over ``covered`` months.
+
+    Used ONLY on the masked path. The committed annual (``rt``/``rt_lw``)
+    averages every hour the staging holds — including the partial months this
+    mask drops — so quoting it beside a model masked to the covered months
+    would put the two sides back on different calendars, which is the very
+    thing the mask exists to prevent.
+    """
+    pairs = [
+        (float(actual_mon[i]), float(_MONTH_HOURS[i]))
+        for i in covered
+        if i < len(_MONTH_HOURS) and actual_mon[i] is not None
+    ]
+    return _wmean(pairs) if pairs else None
+
+
 # ---------------------------------------------------------------------------
 # Ledger
 # ---------------------------------------------------------------------------
@@ -1765,7 +1887,9 @@ def score_sysvol(
     return out
 
 
-def score_price_mean(year: int, ypay: dict, ybench: dict) -> dict:
+def score_price_mean(
+    year: int, ypay: dict, ybench: dict, iso: str | None = None
+) -> dict:
     """C3a — system load-weighted mean LMP vs actual RT (fallback DA).
 
     The gated benchmark is named in the record's ``metric`` (``vs RT`` /
@@ -1802,7 +1926,7 @@ def score_price_mean(year: int, ypay: dict, ybench: dict) -> dict:
     # gas-crisis January) against a Mar–Dec actual is a coverage artifact,
     # not a price error. Full-coverage years are byte-identical.
     actual_mon = avg.get(f"{bench_key}_mon")
-    covered = [i for i, v in enumerate(actual_mon or []) if v is not None]
+    covered = _covered_months(actual_mon, _coverage_mon(avg, bench_key, iso, year))
     masked = bool(actual_mon) and 0 < len(covered) < 12
     if masked:
         pairs = []
@@ -1810,6 +1934,13 @@ def score_price_mean(year: int, ypay: dict, ybench: dict) -> dict:
             p_mon = z.get("pMon") or [None] * 12
             d_mon = z.get("dMon") or [0.0] * 12
             pairs.extend((p_mon[i], d_mon[i]) for i in covered if p_mon[i] is not None)
+        # Put the ACTUAL on the masked calendar too. The committed annual
+        # averages every hour the staging holds, partial months included, so
+        # leaving it un-masked would re-introduce exactly the calendar
+        # mismatch the mask exists to remove.
+        remeasured = _annual_from_months(actual_mon, covered)
+        if remeasured is not None:
+            actual = remeasured
     else:
         pairs = [
             (z.get("p"), z.get("d", 0.0))
@@ -1830,7 +1961,10 @@ def score_price_mean(year: int, ypay: dict, ybench: dict) -> dict:
         else f"vs DA ({basis}) — no RT actual committed"
     )
     if masked:
-        label += f" (model masked to actual's {len(covered)}-month coverage)"
+        label += (
+            f" (both sides masked to the actual's {len(covered)} fully-staged "
+            f"month(s): {', '.join(str(i + 1) for i in covered)})"
+        )
     return {
         "criterion": "price_mean",
         "key": None,
@@ -1849,7 +1983,9 @@ def score_price_mean(year: int, ypay: dict, ybench: dict) -> dict:
     }
 
 
-def score_price_mean_da_diagnostic(year: int, ypay: dict, ybench: dict) -> dict | None:
+def score_price_mean_da_diagnostic(
+    year: int, ypay: dict, ybench: dict, iso: str | None = None
+) -> dict | None:
     """C3a DA diagnostic — model mean LMP vs the DA actual, never gated.
 
     A perfect-foresight dispatch LP is a real-time analogue: the DA−RT spread
@@ -1877,13 +2013,18 @@ def score_price_mean_da_diagnostic(year: int, ypay: dict, ybench: dict) -> dict 
     # Mirror score_price_mean's partial-coverage masking (same calendar on
     # both sides when the DA actual has empty months).
     da_mon = avg.get(da_mon_key)
-    covered = [i for i, v in enumerate(da_mon or []) if v is not None]
+    covered = _covered_months(
+        da_mon, _coverage_mon(avg, da_mon_key.removesuffix("_mon"), iso, year)
+    )
     if da_mon and 0 < len(covered) < 12:
         pairs = []
         for z in lmp.values():
             p_mon = z.get("pMon") or [None] * 12
             d_mon = z.get("dMon") or [0.0] * 12
             pairs.extend((p_mon[i], d_mon[i]) for i in covered if p_mon[i] is not None)
+        remeasured = _annual_from_months(da_mon, covered)
+        if remeasured is not None:
+            da = remeasured
     else:
         pairs = [
             (z.get("p"), z.get("d", 0.0))
@@ -1911,7 +2052,9 @@ def score_price_mean_da_diagnostic(year: int, ypay: dict, ybench: dict) -> dict 
     }
 
 
-def score_price_shape(year: int, ypay: dict, ybench: dict) -> dict:
+def score_price_shape(
+    year: int, ypay: dict, ybench: dict, iso: str | None = None
+) -> dict:
     """C3b — monthly load-weighted price NRMSE (quantitative shape metric)."""
     lmp = ypay.get("lmp", {})
     # Model monthly = demand-weighted across zones of pMon by dMon.
@@ -1929,10 +2072,24 @@ def score_price_shape(year: int, ypay: dict, ybench: dict) -> dict:
     # actual first, legacy equal-hour monthly as labelled fallback.
     actual_mon = avg.get("rt_lw_mon") or avg.get("da_lw_mon")
     lw_basis = actual_mon is not None
+    bench_key = "rt_lw" if avg.get("rt_lw_mon") else "da_lw"
     if actual_mon is None:
         actual_mon = avg.get("rt_mon") or avg.get("da_mon")
+        bench_key = "rt" if avg.get("rt_mon") else "da"
     if actual_mon is None or all(v is None for v in model_mon):
         return _skip("price_shape", year, "no monthly model or actual LMP")
+    # The same like-for-like calendar C3a applies. A month whose actual is
+    # stitched from a fraction of its hours is not the model's month, and
+    # SQUARING the difference lets one partially-staged month dominate the
+    # NRMSE outright — MISO 2022's December, a $22.82 "month mean" built from
+    # ONE staged hour against a model December carrying Winter Storm Elliott,
+    # is the case that forced this. Dropping it measures the model on the ten
+    # months the staging actually holds instead of on the staging hole.
+    covered = _covered_months(actual_mon, _coverage_mon(avg, bench_key, iso, year))
+    dropped = [i for i in range(len(actual_mon)) if i not in covered]
+    part_masked = bool(dropped) and bool(covered)
+    if part_masked:
+        actual_mon = [(v if i in covered else None) for i, v in enumerate(actual_mon)]
     nrmse = _nrmse(model_mon, actual_mon)
     if nrmse is None:
         return _skip("price_shape", year, "monthly NRMSE undefined")
@@ -1940,6 +2097,11 @@ def score_price_shape(year: int, ypay: dict, ybench: dict) -> dict:
         nrmse, PRICE_SHAPE_NRMSE_MAX, PRICE_SHAPE_NRMSE_COMMERCIAL
     )
     basis = "load-weighted" if lw_basis else "LEGACY equal-hour basis"
+    if part_masked:
+        basis += (
+            f"; {len(covered)} fully-staged month(s), "
+            f"{', '.join(str(i + 1) for i in dropped)} dropped as partially staged"
+        )
     return {
         "criterion": "price_shape",
         "key": None,
@@ -3041,11 +3203,11 @@ def determine_from_artifacts(
         ybench = bench.get(year, {})
         records += score_fuelmix(year, ypay, ybench, iso)
         records += score_sysvol(year, ypay, ybench, iso, bench_all=bench)
-        records.append(score_price_mean(year, ypay, ybench))
-        da_diag = score_price_mean_da_diagnostic(year, ypay, ybench)
+        records.append(score_price_mean(year, ypay, ybench, iso))
+        da_diag = score_price_mean_da_diagnostic(year, ypay, ybench, iso)
         if da_diag is not None:
             records.append(da_diag)
-        records.append(score_price_shape(year, ypay, ybench))
+        records.append(score_price_shape(year, ypay, ybench, iso))
         records += score_price_tail(year, ypay, iso)
         records += score_dispatch_corr(year, ypay, ybench, iso)
         records.append(score_co2(year, ypay, ybench))
