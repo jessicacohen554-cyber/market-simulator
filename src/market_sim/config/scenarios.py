@@ -8587,6 +8587,30 @@ class ScenarioConfig:
     # population it caps). No-op unless caiso_dsw_daytime_clean is on. Default
     # off (byte-identical — the caiso-94 keeper recipe is unchanged);
     # CAISO-only.
+    caiso_dsw_lateevening_clean: bool = False  # caiso-269: close the hod 22-23
+    # WINDOW GAP the DSW clean-depth family leaves open. caiso-93 covers hod
+    # 0-5, caiso-94 hod 6-21, and caiso-87's surplus trigger is coverage-
+    # STARVED at 22-23 (measured ON in 0.3/0.8 % of 2024 and 1.6/1.9 % of 2025
+    # hod 22/23 - caiso-253's G-WINDOW leg, which closed the window question
+    # with "22-23 are OVERNIGHT-construction hours"). On the live keeper the
+    # armed clean capability falls 3,420 MW (hod 21) -> 33 MW (hod 22) in 2025
+    # while the measured WECC_DSW corridor net import RISES across the same
+    # boundary, against a measured EIA-930 import deficit of 1.0-1.8 GW at
+    # those hours. Adds ONE tranche whose capability is the measured hod 22-23
+    # p95 corridor depth (CAISO_DSW_LATEEVENING_CLEAN_DEPTH_BY_YEAR; CV 0.037,
+    # LOYO 6.8 %) net of the shaped firm block and ALL THREE sibling clean
+    # tranches (rule 19 [R-ONE-MECH]), armed only in (month x hod) buckets that
+    # clear caiso-253's PRE-REGISTERED raw-hub admissibility band
+    # (CAISO_LATEEVENING_SPREAD_BAND = (-2, +4) $/MWh on the measured DA
+    # CAISO-PaloVerde spread). That band is caiso-253's own refusal criterion
+    # re-used UNCHANGED, so 2023 - which failed it at -3.98/-2.56 - stays dark
+    # by construction rather than by a year list. ZERO new free parameters and
+    # ZERO new thresholds (rules 21 [R-DOF] / 24 [R-REGISTRY]). Priced at the
+    # RAW Palo Verde hub, EF 0, no wheel. Default off (byte-identical off: the
+    # tranche row is only built when this flag is on); CAISO-only (rule 25
+    # [R-ISO-SCOPE]). Carried by
+    # transmission.build_caiso_per_hub_intertie(lateevening_clean=) +
+    # transmission.inject_caiso_dsw_lateevening_clean.
     caiso_endogenous_wecc_node: bool = False  # Make the WECC_import node a REAL
     # co-optimized WECC-West neighbor ZONE instead of a set of static import
     # tranches (caiso-110; Option A of
