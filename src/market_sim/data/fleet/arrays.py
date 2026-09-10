@@ -1355,6 +1355,12 @@ def _apply_outage_overlays(
                 fleet_status_scope=getattr(
                     config, "unit_outage_fleet_status_scope", False
                 ),
+                # pjm-d4-4: additionally read the DISJOINT gas-side companion
+                # (campd-unit-outages-shortgas-<ISO>.csv). Widens a discard —
+                # the < 5-day gas family the >= 5-day floor throws away — it
+                # does not stack on the coal scope (disjoint plant groups) or on
+                # the >= 5-day overlay (disjoint durations).
+                gas_scope=getattr(config, "unit_outage_short_windows_gas", False),
             )
             if sfac:
                 applied_s = 0
@@ -1940,7 +1946,13 @@ def _apply_outage_overlays(
             if getattr(config, "unit_outage_short_windows", False):
                 _cap_layers.append(
                     unit_outage_short_derate_factors(
-                        int(_yr), hours, _bins_path, iso="ERCOT"
+                        int(_yr),
+                        hours,
+                        _bins_path,
+                        iso="ERCOT",
+                        gas_scope=getattr(
+                            config, "unit_outage_short_windows_gas", False
+                        ),
                     )
                 )
             if getattr(config, "unit_partial_outage_windows", False):

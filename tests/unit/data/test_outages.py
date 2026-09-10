@@ -1379,6 +1379,185 @@ class ShortUnitOutageDerateTest(unittest.TestCase):
         self.assertEqual(factors, {})
 
 
+class ShortGasUnitOutageDerateTest(unittest.TestCase):
+    """The GAS-side scope of the short-window family (pjm-d4-4).
+
+    ``ScenarioConfig.unit_outage_short_windows_gas`` adds
+    ``campd-unit-outages-shortgas-<ISO>.csv`` alongside the coal-scoped extract.
+    The contract under test: (a) OFF is byte-inert even when the gas file
+    exists, (b) ON derates the gas bin on the same arithmetic as coal, (c) the
+    two scopes are disjoint by plant group so neither leaks into the other, and
+    (d) the >= 5-day floor still bounds the gas file too.
+    """
+
+    # Baldwin Energy Complex (MISO coal, in the fleet) + Elgin Energy Center's
+    # CC bin, so both bins resolve through _iso_plant_capacity("MISO").
+    COAL_PLANT = 889
+    COAL_MW = 625.1
+
+    def _paths(self, td: str, coal_rows: list[dict], gas_rows: list[dict]):
+        cols = [
+            "facility_name",
+            "facility_id",
+            "unit_id",
+            "unit_capacity_mw",
+            "plant_capacity_mw",
+            "unit_pct_of_plant",
+            "plant_group",
+            "capacity_source",
+            "outage_start",
+            "outage_end",
+            "duration_days",
+            "peer_units_online",
+            "total_units_at_plant",
+        ]
+        coal = Path(td) / "campd-unit-outages-short-MISO.csv"
+        gas = Path(td) / "campd-unit-outages-shortgas-MISO.csv"
+        pd.DataFrame(coal_rows, columns=cols).to_csv(coal, index=False)
+        pd.DataFrame(gas_rows, columns=cols).to_csv(gas, index=False)
+        return coal, gas
+
+    def _row(self, plant, unit_mw, plant_mw, group, start, end, days) -> dict:
+        return {
+            "facility_name": "T",
+            "facility_id": plant,
+            "unit_id": "1",
+            "unit_capacity_mw": unit_mw,
+            "plant_capacity_mw": plant_mw,
+            "unit_pct_of_plant": round(100.0 * unit_mw / plant_mw, 1),
+            "plant_group": group,
+            "capacity_source": "eia_exact",
+            "outage_start": start,
+            "outage_end": end,
+            "duration_days": days,
+            "peer_units_online": 1,
+            "total_units_at_plant": 2,
+        }
+
+    def _factors(self, coal: Path, gas: Path, *, gas_scope: bool):
+        from unittest.mock import patch
+
+        from market_sim.data import outages
+
+        outages.unit_outage_short_derate_factors.cache_clear()
+        with (
+            patch.object(outages, "unit_outage_short_csv_for_iso", return_value=coal),
+            patch.object(
+                outages, "unit_outage_short_gas_csv_for_iso", return_value=gas
+            ),
+        ):
+            return outages.unit_outage_short_derate_factors(
+                2025, iso="MISO", gas_scope=gas_scope
+            )
+
+    def _gas_bin(self):
+        """A (plant_code, group) the MISO fleet actually carries on a gas bin."""
+        from market_sim.data import outages
+
+        cap = outages._iso_plant_capacity("MISO", False, False)
+        for (code, group), mw in sorted(cap.items()):
+            if group in outages._SHORT_GAS_GROUPS and mw > 100.0:
+                return code, group, mw
+        self.skipTest("no MISO gas bin in the fleet capacity index")
+
+    def test_off_is_inert_even_when_the_gas_file_exists(self):
+        code, group, mw = self._gas_bin()
+        with tempfile.TemporaryDirectory() as td:
+            coal, gas = self._paths(
+                td,
+                [
+                    self._row(
+                        self.COAL_PLANT,
+                        self.COAL_MW,
+                        1259.6,
+                        "COAL",
+                        "2025-07-28",
+                        "2025-07-29",
+                        2.0,
+                    )
+                ],
+                [self._row(code, mw / 2.0, mw, group, "2025-07-28", "2025-07-29", 2.0)],
+            )
+            off = self._factors(coal, gas, gas_scope=False)
+            on = self._factors(coal, gas, gas_scope=True)
+        self.assertEqual(set(off), {(self.COAL_PLANT, "COAL")})
+        self.assertEqual(set(on), {(self.COAL_PLANT, "COAL"), (code, group)})
+        # The coal bin is untouched by arming the gas scope — the two scopes
+        # are disjoint by plant group, so nothing stacks (rule 19).
+        np.testing.assert_array_equal(
+            off[(self.COAL_PLANT, "COAL")], on[(self.COAL_PLANT, "COAL")]
+        )
+
+    def test_gas_window_derates_only_its_span(self):
+        code, group, mw = self._gas_bin()
+        with tempfile.TemporaryDirectory() as td:
+            coal, gas = self._paths(
+                td,
+                [],
+                [self._row(code, mw / 2.0, mw, group, "2025-07-28", "2025-07-29", 2.0)],
+            )
+            factors = self._factors(coal, gas, gas_scope=True)
+        arr = factors[(code, group)]
+        jul28 = _hour_of_year(7, 28, 0)
+        jul30 = _hour_of_year(7, 30, 0)
+        self.assertTrue((arr[jul28:jul30] < 1.0).all())
+        self.assertTrue((arr[:jul28] == 1.0).all())
+        self.assertTrue((arr[jul30:] == 1.0).all())
+
+    def test_floor_and_scope_still_bound_the_gas_file(self):
+        code, group, mw = self._gas_bin()
+        with tempfile.TemporaryDirectory() as td:
+            coal, gas = self._paths(
+                td,
+                [],
+                [
+                    # >= the 5-day floor: belongs to the standard overlay.
+                    self._row(
+                        code, mw / 2.0, mw, group, "2025-03-01", "2025-03-10", 9.5
+                    ),
+                    # COAL rows never enter through the GAS file's scope.
+                    self._row(
+                        self.COAL_PLANT,
+                        self.COAL_MW,
+                        1259.6,
+                        "COAL",
+                        "2025-07-28",
+                        "2025-07-29",
+                        2.0,
+                    ),
+                ],
+            )
+            factors = self._factors(coal, gas, gas_scope=True)
+        # The coal row DOES enter (both files feed one accumulator and COAL is
+        # always in scope) — what must not happen is the >= 5-day gas row.
+        self.assertNotIn((code, group), factors)
+
+    def test_missing_gas_file_leaves_the_coal_scope_unchanged(self):
+        with tempfile.TemporaryDirectory() as td:
+            coal, _ = self._paths(
+                td,
+                [
+                    self._row(
+                        self.COAL_PLANT,
+                        self.COAL_MW,
+                        1259.6,
+                        "COAL",
+                        "2025-07-28",
+                        "2025-07-29",
+                        2.0,
+                    )
+                ],
+                [],
+            )
+            missing = Path(td) / "nonexistent-shortgas.csv"
+            on = self._factors(coal, missing, gas_scope=True)
+            off = self._factors(coal, missing, gas_scope=False)
+        self.assertEqual(set(on), {(self.COAL_PLANT, "COAL")})
+        np.testing.assert_array_equal(
+            on[(self.COAL_PLANT, "COAL")], off[(self.COAL_PLANT, "COAL")]
+        )
+
+
 class UnitPartialOutageDerateTest(unittest.TestCase):
     """The unit-grain partial-derate plateau overlay (LEG B).
 

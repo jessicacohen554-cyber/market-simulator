@@ -5282,3 +5282,91 @@ partly a **pumped-storage accounting seam** — bench `hydro` is EIA-930 `NG: WA
 gross generation, while the model carries PS in its storage class (discharge 5.09–5.79 TWh/yr); not
 resolved here, routed to the hydro lane. Inherited open items are untouched: plants 3138/3131 D-4,
 and `ST_GAS_PEAKER_PLANTS`'s `cache_key()` invisibility.
+
+## 2026-09-10 — pjm-d4-4: the forced-outage composition gap — kill gate PASSED, mechanism built, one screen gate retired on arithmetic
+
+Session `pjm-d4-4`, branch `claude/pjm-forced-outage-gap-o0kzlz`. **Keeper UNCHANGED** at
+`2026-09-10-pjm-d4-2-stgas` (+ `-touchpoint`, folded); rule 30(c) untouched, `audit_keepers --iso
+PJM` and `build_status --check --iso PJM` both pass. **Nothing promoted, nothing armed by default,
+nothing registered on the dashboard.** Full record:
+`docs/RESULT-pjm-d4-4-forced-outage-composition-2026-09-10.md`; pre-registration
+`docs/PRECOMMIT-pjm-d4-4-forced-outage-composition-2026-09-10.md` (the kill bar, committed BEFORE
+the measurement) and `docs/PRECOMMIT-pjm-d4-4-screen-addendum-2026-09-10.md` (the screen gates,
+committed BEFORE the shard).
+
+**THE DEFECT.** `outages.UNIT_OUTAGE_MIN_DAYS = 5` discards every shorter outage window, and the
+sub-floor companion that recovers them (`unit_outage_short_windows`, ARMED in the keeper)
+re-filters to `plant_group == "COAL"` — so the 0–5 d family is captured for coal and **thrown away**
+for CC_REGULAR / CC_CHP / ST_GAS / ST_CHP. Verified on disk: the ≥5-day extract's min duration is
+exactly 5.0 d, and `campd-unit-outages-short-PJM.csv` is 934 rows, **100 % COAL**. (CT_PEAKER is not
+reachable by this family at all — outside `QUALIFYING_PLANT_GROUPS`, CT_CHP dropped at routing — so
+the handoff's naming of it does not survive contact with the machinery.)
+
+**THE KILL GATE, registered first and then measured.** Both bars in `a231d912`, before any gas
+window was detected; neither reads a price residual. G-KILL-1 (mean removed-availability MW over
+2022's 92 actual RT>$200 hours, bar = ¼ of the +9.7 GW model-minus-meter over-dispatch in exactly
+those hours): **4,570 vs 2,425 → PASS 1.88×**. G-KILL-2 (annual mean, bar = 10 % of the +6,999 MW
+forced gap): **1,185 vs 700 → PASS 1.69×**. That is ~**5×** the handoff's own naive scaling
+prediction of 200–380 MW, because window *count* was the wrong scaling variable.
+
+**IDENTIFICATION — tested, not assumed.** ERCOT's lane had struck a near-neighbour arm on the ground
+that a cycling unit's brief stop can be economic dispatch (rule 28(d): that verdict is ERCOT's and
+stands there). The gas scope answers with a different instrument: `SHORT_BASELOAD_CF` is a BASELOAD
+guard a cycling CC cannot pass, so the gas leg carries the **merit-order guard** instead — SRMC
+against revealed clearing cost — and the derive CLI *refuses* to emit it without one. Measured:
+the guard removes **10.8 %** of the annual mean and **5.1 %** of the tail (93 of 494 windows), and
+the committed artifact carries the **smaller, guarded** family — a choice against interest, since
+both clear both bars. Corroboration is a **natural experiment**: over Elliott (Dec 24–27 2022) PJM
+published FORCED 31,078 / 35,844 / 27,058 / 24,052 MW against a recovered family of
+10,998 / 13,611 / 13,297 / 10,158 MW, rising from a 3.0–4.5 GW pre-event baseline — in hours whose
+RT averaged **$844**, where nothing idles economically.
+
+**REPORTED AGAINST INTEREST, not netted out.** corr vs published FORCED is **+0.395** (2022) and
+**+0.314** (2021) but **+0.106 / +0.047 / +0.003 / −0.015** in 2024 / 2023 / 2025 / 2020; **2025 has
+the LARGEST published forced outage (10,531 MW) and the SMALLEST recovered family (587 MW)**; the
+family *falls* through the 2025 named event (0.33× annual) where it rises **8.6×** through Elliott;
+and even in 2022 it is Elliott-weighted (9,639 MW over the 35 December tail hours against 1,854 MW
+over the other 57). It closes **19 %** of the composition gap (6,999 → 5,814 MW; forced-like share
+6.8 % → 10.5 % against a published 26.6 %), not the gap. **The honest reading: this family
+reproduces correlated event-driven gas forced outage — which is what 2022's missing tail is made of
+— and does NOT reproduce PJM's 7.7–10.5 GW baseline forced outage.**
+
+**THE HANDOFF'S OWN FIRST SCREEN GATE IS RETIRED ON ARITHMETIC, BEFORE THE LP.** It asked for "the
+reserve dual becoming non-zero in the target hours". Tail-hour headroom ≈ **19 GW** (ADDENDUM §3)
+minus the arm's 4,570 MW leaves ≈ **14.4 GW**, against a `pjm_primary` requirement whose **maximum**
+is 4,224 MW — 3.4× over. The dual cannot move, and spending a PJM year to rediscover a subtraction
+is what rule 29 clause 0 forbids. **The cost is stated, not absorbed: this mechanism cannot alone
+restore PJM's scarcity price formation**, and the co-opt's inertness is now a *sized* open root
+cause — any mechanism that wants `pjm_primary` to bind in 2022 must find **~15 GW**, not 4.6.
+
+**BUILT (default off, nothing armed).** `ScenarioConfig.unit_outage_short_windows_gas` +
+`outages.unit_outage_short_gas_csv_for_iso` / `_SHORT_GAS_GROUPS`; derive
+`--short-window-groups {coal,gas}` writing a SEPARATE companion so the coal extract is never
+rewritten; `data/raw/campd-unit-outages-shortgas-PJM.csv` (1,859 windows, 2020–2025) + its layup
+companion (439 reclassified); matrix row + a cell in all seven shards (PJM `O`, every other `U`,
+ERCOT's recording that its own objection stands); cache-key registration in the same commit; four
+tests. **Off-path byte-inertness PROVED** over 7 ISOs × 4 years × `extract_basis_share` {False,
+True}, digests identical to `origin/main`; the derive's coal default path `diff`-identical.
+Zero free parameters — the boundary is the categorical 7-day sign flip (8 positive cells, 12
+negative, zero exceptions across 2022–2025) and it was **not re-swept**; rule 23 is satisfied
+because the **scope** was wrong, a construction repair.
+
+**G-DRIFT passes EXACTLY and no control solve was spent** — a stronger form than the file-by-file
+audit the prior entry used: the keeper's own 833-field `cache_key()` is the identical
+`725009b54d387c32` at `git_sha` `5f133fd5` and at HEAD, and since capx D79 that key carries the
+solve-surface fingerprint, so an unmoved key certifies no registry table, no solve-surface row and
+no config default the keeper touches has moved. **The committed keeper bundle IS the control.**
+
+**Escalated, not absorbed.** (1) The co-opt's inert dual, now sized at ~15 GW — `ordc_scarcity_overlay`
+is `G` on the premise that "the in-LP co-opt already owns the phenomenon", which is measurably false
+in 2021–2023; still **not** a licence to arm the adder. (2) The cross-year weakness above is
+unexplained. (3) A 2.5 % boundary-day double count (47 of 1,851 unit-days) — pre-existing, the
+`unit_outage_per_unit_clip` `U` cell's object, unrepaired here. (4) Inherited and untouched: the
+hydro pumped-storage accounting seam, `ST_GAS_PEAKER_PLANTS`'s `cache_key()` invisibility, plants
+3138/3131 D-4, and the `da_virtual_bids` anchor not reproducing in 2020–2022.
+
+**The rule-31 `[R-RETAIN]` promotion question is asked explicitly** in RESULT §10: should the full
+six-year span (2020–2025, six shards, one bundle) be spent? Session recommendation, stated so it can
+be overruled: **spend it** — rule 14 `[R-ACCURATE]` says an accurate input that worsens the fit is a
+discovered bug, and this is a **discard**, not an estimate. Nothing is deleted while the decision is
+open; `.gitignore` line 1757 already keeps the bundle family out of `main`.
