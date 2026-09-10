@@ -1,0 +1,16 @@
+{
+  "id": "2026-09-10-nyiso-223-gapfill-span",
+  "label": "nyiso 223 gapfill span",
+  "date": "2026-09-10",
+  "shorthand": "nyiso-223-gapfill-span",
+  "definition": "nyiso-223: hub-daily UNPRICED-day gap fill \u2014 a calendar day the measured Transco Z6 NY archive never priced takes the month's own observed level instead of the nearest print's clamped deviation. Zero free parameters, exactly mean-preserving. Keeper recipe 2026-09-09-nyiso-221-fuelvintage-span plus this one registered field, spanning every year NYISO can score.",
+  "years": [
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-09-10-nyiso-223-gapfill-span.js",
+  "bundle": "results/calibration/nyiso223_gapfill_span"
+}
