@@ -1,0 +1,13 @@
+{
+  "id": "2026-09-10-miso-251-tp2022",
+  "label": "miso 251 tp2022",
+  "date": "2026-09-10",
+  "shorthand": "miso-251-tp2022",
+  "definition": "miso-251 VALIDATION TOUCHPOINT: the 2026-09-09-miso-250-ep-gas keeper recipe replayed on held-out 2022. DECLARED INPUT DEGRADATION, forced by a purged source and applied to the holdout year only: MISO published no ASM record before 2023 (docs.misoenergy.org retains ~3.5y; 2022 probes 404) so miso_measured_reserve_requirements is disarmed, and miso_reserve_online_gated is its hard dependent and is disarmed with it. The run therefore uses MISO's OWN PUBLISHED static RBDC construction (fleet-MSSC + regulating, published 12-step ORDC ladder, published zonal curve steps) - the same construction a FORECAST year uses, so rule 13's forward test is met. Nothing else in the recipe moves; 2023-2025 are untouched. Not a lever, not tuned, not swept. See docs/PRECOMMIT-miso251-holdout-ladder-2026-09-10.md section 3.",
+  "years": [
+    2022
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-09-10-miso-251-tp2022.js",
+  "bundle": "results/calibration/miso251_tp2022"
+}
