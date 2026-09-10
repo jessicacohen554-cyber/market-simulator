@@ -769,6 +769,14 @@ results/calibration/pjm174_*/
 # pjm-174/175 full-span promotion candidate. Gitignored per rule 29(c) so it can never
 # reach main; rule 31 [R-RETAIN] forbids deleting it before the owner rules on promotion.
 results/calibration/pjm175_*/
+# pjm-d4-3 DA-virtual-net screen bundle (2022 — the year of the mechanism's
+# largest measured ANNUAL-NET footprint, named ex ante in
+# PRECOMMIT-pjm-d4-3-da-virtual-net-2026-09-10.md §4). Rule 29 [R-SCREEN] (c)
+# keeps a screen bundle OUT OF `main`, and rule 31 [R-RETAIN] names gitignoring
+# — never `rm` — as what discharges that duty, so it stays on local disk until
+# the OWNER has ruled on promotion. Every number the session cites from it is
+# written into the PRECOMMIT/RESULT; git history is the record.
+results/calibration/pjm_d4_3_*/
 # nyiso-218 +3.0 % fossil energy-band offer-lift screen / span bundles
 # (PREREG-nyiso218-fossil-energy-band-lift §7). Rule 29 [R-SCREEN] (c) requires
 # a screen bundle to stay OUT OF `main` -- and rule 31 [R-RETAIN] forbids
