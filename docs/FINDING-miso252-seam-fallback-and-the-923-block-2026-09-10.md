@@ -267,6 +267,27 @@ re-derived.
 
 ---
 
+## 6b. Two PRE-EXISTING failures at HEAD, found in passing — neither is this lane's to fix
+
+Both reproduce on the parent commit `5fa3a07f` with none of this session's changes applied, and
+both are reported rather than touched.
+
+1. **`scripts/check_mechanism_matrix.py` FAILS on the SPP shard** — *"missing cell(s) for 2
+   mechanism(s): `nyiso_hub_gap_month_level`, `spp_curtailment_ceiling`"*. This is the rule 33
+   `[R-MECH-MATRIX]` duty (c) obligation (a new base row needs a cell line in **every** shard)
+   left unmet by whichever lane added those rows. Rule 33 also says a lane edits **only its own
+   ISO's shard**, so a MISO session must not repair SPP's. It is a **CI-red at HEAD** and belongs
+   to the SPP lane.
+2. **`tests/unit/config/test_miso175_seam_hour_ending_key.py` carries a stale cache-key pin** —
+   it asserts `547053bdfccd4264` and gets `0a1e2b02da5d709b`. Verified not to be this session's
+   doing by direct comparison: the default `ScenarioConfig().cache_key()` is **`3a296bf0fe938f68`
+   on the parent commit and `3a296bf0fe938f68` on this one — identical**. That is expected, since
+   the capx D79 solve-surface fingerprint is a *value* hash over seven registry modules and
+   `model/interchange/spec.py` is not one of them, so a comment edit there cannot move a key. The
+   pin needs re-baselining by whichever change actually moved it.
+
+---
+
 ## 7. Open for the owner
 
 1. **The seam repair (§3).** It needs an EIA-930 DIBA interchange + hub-LMP intake for 2020–2022.
