@@ -255,6 +255,7 @@ window.MECH_MATRIX_SHARDS.ERCOT = {
     miso_south_gas_delivered_cost_basis: { cell: ".", ev: "MISO-only adjudication (a South-zone-specific delivered gas cost basis for MISO's South gas fleet; miso-212). Rule 25: nothing transfers — the 923 prints, the zonal-basis leg and the RDT-binding hour set the decomposition lives on are MISO's own. The one cross-ISO item it surfaced — whether gas offers should carry the plant's EIA-923 AVERAGE delivered cost (the every-ISO convention) or marginal commodity — is owner-court and recorded on gas_hub_basis_overlay at MISO, not here." },
     miso_zonal_gas_basis_skip_923_priced: { cell: ".", ev: "MISO-only field (rule 25; miso-213). Not reachable here in kind: ERCOT's harness keeps gas_plant_monthly_fuel_pricing OFF (sparse EIA-923 gas reporting), so no ERCOT gas cell is print-derived and its own zonal basis never layers on a print." },
     nyiso_seam_par_attribution: { cell: "." },
+    caiso_dsw_lateevening_clean: { cell: ".", ev: "n/a \u2014 CAISO-only by construction (the CAISO per-hub corridor family; rule 25 [R-ISO-SCOPE]). Row minted caiso-269 (2026-09-10) with its field per rule 28(c); no verdict transfers here." },
     import_hub_pricing: { cell: "." },
     import_shape_lever: { cell: "." },
     nyiso_import_sil_retire: { cell: "." },
