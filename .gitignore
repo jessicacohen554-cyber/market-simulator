@@ -1753,3 +1753,4 @@ results/calibration/nyiso222_offer_plus5_tp2022/
 # [R-RETAIN]): kept OUT of `main` by gitignore, never by `rm` — the working
 # tree copies stay on disk until the owner rules on promotion.
 results/calibration/caiso269_lateevening_*/
+results/calibration/_rev2void_caiso269_*/
