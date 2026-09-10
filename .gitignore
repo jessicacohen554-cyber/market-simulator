@@ -1911,3 +1911,4 @@ results/ff-t3-neiso-golden/d92/
 # names gitignoring — never `rm` — as what discharges it, so these stay on local disk
 # until the owner has ruled on promotion.
 results/calibration/nyiso226_*/
+results/calibration/spp64_*/
