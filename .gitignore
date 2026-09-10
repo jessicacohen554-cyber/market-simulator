@@ -1830,3 +1830,11 @@ results/calibration/spp62_*/
 # miso-252 seam-envelope screen/span bundles (rule 29(c) delete-before-merge is
 # discharged by KEEPING THEM OUT OF main, never by rm — rule 31 [R-RETAIN]).
 results/calibration/miso252_*/
+# SPP-63 working bundles: the rule-29 [R-SCREEN] screen arm (2025, the year of
+# the mechanism's largest measured footprint) and the full-span promotion
+# candidate for spp_curtailment_ceiling. Ignored so they can never reach `main`,
+# which is the ONLY thing rule 29(c) DELETE-BEFORE-MERGE requires; rule 31
+# [R-RETAIN] names gitignoring — never `rm` — as what discharges it, so these
+# stay on local disk until the OWNER has ruled on promotion. A promoted bundle's
+# slim set overrides this rule via `git add -f`.
+results/calibration/spp63_*/
