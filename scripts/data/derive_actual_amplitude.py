@@ -63,7 +63,6 @@ sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO))
 
 from market_sim.config.paths import CALIBRATION_DIR  # noqa: E402
-from scripts.lib import holdout_policy  # noqa: E402
 
 SRC_DIR = CALIBRATION_DIR
 OUT = REPO / "frontend" / "data" / "backcast" / "amplitude" / "actual_amplitude.json"
@@ -71,33 +70,16 @@ OUT = REPO / "frontend" / "data" / "backcast" / "amplitude" / "actual_amplitude.
 ISOS = ("CAISO", "ERCOT", "MISO", "NEISO", "NYISO", "PJM", "SPP")
 DAYS, HOURS_PER_DAY = 365, 24
 
-_MARKER_PATH = (
-    Path(__file__).resolve().parent.parent.parent / holdout_policy.MARKER_FILE
-)
-
-
-def _marker_doc() -> dict:
-    """Parsed ``calibration-complete.json``; ``{}`` when absent/unreadable.
-
-    An empty document authorizes nothing out-of-training — fail closed.
-    """
-    try:
-        return json.loads(_MARKER_PATH.read_text())
-    except (OSError, ValueError):
-        return {}
-
 
 def _year_emittable(iso: str, year: int, marker_doc: dict) -> bool:
-    """Whether ``iso``'s ``year`` may be emitted under the rule-22 tier gate.
+    """Always True — every year is emittable.
 
-    Training years always emit; an out-of-training year emits only when the ISO
-    holds the marker block for THAT year's tier. Fails closed through
-    :func:`holdout_policy.tier_for_year`.
+    ``[R-HOLDOUT]`` was removed 2026-09-09 (owner instruction), so no year is
+    gated on a marker any more. Kept as a named seam, and kept taking its old
+    arguments, so the call sites below read unchanged and a future per-year
+    policy has one place to live.
     """
-    tier = holdout_policy.tier_for_year(year)
-    if tier == holdout_policy.TIER_TRAIN:
-        return True
-    return holdout_policy.authorized(marker_doc, iso.upper(), tier)
+    return True
 
 
 def hour_of_day(series: np.ndarray) -> tuple[list[float] | None, int]:
@@ -121,7 +103,7 @@ def hour_of_day(series: np.ndarray) -> tuple[list[float] | None, int]:
 def derive() -> dict:
     """Compute the per-(ISO, year) measured hour-of-day profiles."""
     isos: dict[str, dict] = {}
-    marker_doc = _marker_doc()
+    marker_doc: dict = {}
     for iso in ISOS:
         path = SRC_DIR / f"actual_lmp_hourly_{iso}.parquet"
         if not path.exists():

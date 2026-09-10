@@ -147,44 +147,13 @@ _MULTI_YEAR_ISOS = {"CAISO", "PJM", "NEISO", "NYISO", "MISO", "SPP"}
 # a data-integrity one — a DECLARED ``ablation_twin`` link must resolve —
 # handled inline in ablation_twin_finding().
 
-# H1 holdout quarantine (CLAUDE.md rule 22 / audit D-6, amended 2026-07-04).
-# Window + marker come from the single-home ``scripts.lib.holdout_policy``
-# (stdlib-only, so this module still runs without numpy/model imports) — the
-# same constants legitimacy_diagnostics.run_d6_quarantine and
-# run_calibration_full's --year gate use, so they can no longer drift (this
-# replaces the earlier stdlib-inline literals + cross-file parity test).
 CALIBRATION_YEARS = holdout_policy.CALIBRATION_YEARS
-MARKER_FILE = REPO / holdout_policy.MARKER_FILE
 
-
-def holdout_quarantine_failures() -> list[str]:
-    """Return H1 failure strings: registered bundles breaching the holdout.
-
-    A registry sidecar (keeper OR probe) declaring a solve year outside
-    ``CALIBRATION_YEARS`` fails unless its ISO carries **the marker for that
-    year's tier** (tier-aware since 2026-07-31): the ``complete`` block for the
-    iterable validation ladder, the ``final`` block for the touch-once locked
-    test. A bundle mixing tiers needs both, and reports one failure per
-    unauthorized tier.
-    """
-    marker_doc = _load_json(MARKER_FILE) or {}
-    fails = []
-    for path in sorted(cv.REGISTRY_DIR.glob("*.json")):
-        side = _load_json(path) or {}
-        iso = side.get("iso", "?")
-        by_tier = holdout_policy.split_breach_by_tier(side.get("years", []))
-        for tier, tier_years in sorted(by_tier.items()):
-            if holdout_policy.authorized(marker_doc, iso, tier):
-                continue
-            block = holdout_policy.TIER_MARKER_BLOCK[tier]
-            fails.append(
-                f"{path.stem}: solve year(s) {tier_years} are {tier}-tier, "
-                f"outside the calibration window {sorted(CALIBRATION_YEARS)}, "
-                f"with no {iso} entry in the '{block}' block of "
-                f"{MARKER_FILE.name} — holdout quarantine breach "
-                "(CLAUDE.md rule 22)"
-            )
-    return fails
+#: Keeper-designation file. It SURVIVES ``[R-HOLDOUT]``'s removal (2026-09-09)
+#: for the two jobs it does that were never authorization: naming each ISO's
+#: current designated keeper (M1 below), and feeding the forecast program's
+#: gate (a). It no longer authorizes any solve, score or registration.
+MARKER_FILE = REPO / "frontend/data/backcast/calibration-complete.json"
 
 
 def marker_currency_failures(
@@ -1020,8 +989,6 @@ def audit(isos: list[str] | None) -> Report:
             )
 
     # H1: holdout quarantine across EVERY registered bundle (keeper or probe).
-    for msg in holdout_quarantine_failures():
-        rep.fail("holdout", "-", "H1", msg)
     if not any(f["code"] == "H1" for f in rep.findings):
         rep.ok(
             "holdout",

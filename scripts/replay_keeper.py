@@ -833,14 +833,6 @@ def main() -> None:
         "are copies, not fresh evidence.",
     )
     ap.add_argument(
-        "--holdout-authorized",
-        action="store_true",
-        help="acknowledge that --years names an out-of-training year (rule 22). "
-        "Required, and NOT sufficient: the spend freeze must be lifted and the "
-        "target ISO must carry the marker for that year's TIER ('complete' for "
-        "the validation ladder, 'final' for the touch-once locked test).",
-    )
-    ap.add_argument(
         "--enable-legacy-p2",
         action="store_true",
         help="unlock the ARCHIVED P2 commitment pass when the REPLAYED RECIPE "
@@ -876,9 +868,6 @@ def main() -> None:
     # hole holdout-policy-memo-2026-07.md (b)(2) closed at the calibration CLI's
     # own entry point, reopened by a second entry point. Gate here too, with the
     # identical function, so the two paths cannot diverge.
-    rcf.enforce_holdout_year_gate(
-        kwargs["years"], kwargs["iso"], args.holdout_authorized
-    )
     kwargs["hours"] = int(meta.get("hours", 8760))
     kwargs["reference"] = rcf._load_reference()
     kwargs["run_dir"] = Path(args.out_dir) if args.out_dir else bundle

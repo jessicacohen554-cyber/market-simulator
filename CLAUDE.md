@@ -126,215 +126,60 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
     magnitude on the determination basis; and its presence does NOT by itself make the residual
     it closes an "open root-cause issue" under this rule, while every OTHER tuned value still
     does and no gate moves. Genealogy: `docs/governance/rule-history.md` §13.*
-1. `[R-HOLDOUT]` **Hold out data across three tiers — train, validation, locked test — and never let a
-    locked-test result re-enter tuning.** *(Amendment genealogy:
-    `docs/handoffs/holdout-policy-memo-2026-07.md` §(e)–(f), indexed in
-    `docs/governance/rule-history.md` §4.)* The tiers:
-    - **Train / calibration = 2023–2025.** The ONLY years tuned against. Every keeper is built and
-      scored here, all three in one bundle (rule 16).
-    - **THE PROGRAM'S WORKING SPAN IS 2019–2025 FOR ALL ISOs.** *(Owner decision 2026-08-06.)*
-      **2018 and earlier are DROPPED** — removed from `VALIDATION_YEARS`, so `tier_for_year`
-      falls through to its fail-closed default and treats them as **locked-test tier**: they
-      need a `final` marker no ISO holds, and are unsolvable in practice. This is a
-      RESTRICTION, not a relaxation. The substantive reason beyond simplicity: NEISO's 2018
-      basis is **unrepairable** — ISO-NE migrated its newswire mid-2018 and the Mar–Jun recaps
-      were never carried over, so those four rows stay on the seasonally-inverted EIA N3050MA3
-      proxy and June-2018 (+6.2124) is one of the inverted summer values
-      (`FINDING-neiso86-gas-basis-intake-2026-08-06.md` §5.1).
-    - **Validation holdout = 2022**, extensible backward as a staged ladder (2022 → 2020–2022,
-      as data lands and is authorized; **the ladder now bottoms out at 2020**). **Iterable.**
-      After an ISO's `complete` marker
-      exists, 2022 may be solved and scored, and a miss MAY send you back to re-tune
-      2023–2025 and re-solve — that is its purpose (model selection). Because it is iterated
-      against, a validation number is selection evidence, **NOT** a certified out-of-sample skill
-      number, and must never be quoted as one. **RE-KEY ON PROMOTION** (owner decision D-5(b),
-      signed 2026-08-02, `docs/handoffs/ffr-owner-sitting-2026-08-02.md` Addendum C.1): the
-      `complete` entry's `keeper` field tracks the ISO's CURRENT designated keeper, so every
-      promotion in a `complete` ISO updates it **and re-verifies the entry's `determination`
-      against the new run** (`scripts/calibration_verdict.py --run-id <id>` — committed
-      artifacts only, never a solve) before the promotion commit lands. A re-verified
-      determination that is *worse* stops the promotion and escalates to the owner; it is never
-      silently written. The declaration-time run is preserved in `keeper_at_declaration`, and a
-      SPENT locked-test one-shot keeps its own frozen config in `locked_test_scored_on` and is
-      never re-keyed. Enforced by `scripts/audit_keepers.py` check M1, which the
-      `calibration-keeper-auditor` agent runs on every keeper-shard edit.
-    - **Locked test = 2019 and H1-2026.** **Touch-once, ever.** Scored EXACTLY ONCE per ISO with
-      the frozen keeper config; the result is recorded whatever it is. **No calibration change may
-      respond to a locked-test result** without designating a new never-touched year as its
-      replacement. This is the honest out-of-sample number. (2019 is the clean-regime test;
-      H1-2026 is the forward-edge test. Pre-2020 years exercise a structurally different fleet —
-      grade against regime drift, not raw MAE.) **Scheduling precondition (owner ruling
-      2026-08-26, card 7 — standing policy, not a schedule and not a grant):** an ISO becomes
-      eligible to be *considered* for `final` only after its 2020–2022 validation touchpoints
-      have been run AND the touchpoint loop has stopped surfacing repairs — the one-shot is
-      spent against the most-prepared config, which is the design intent. Eligibility is never
-      a grant: `final` remains an explicit owner act, per ISO, every time. (No ISO has ever
-      spent a locked-test year; NEISO's 2019 additionally reads NOT YET on the merits —
-      unsolvable at HEAD, non-discriminating on C3c. Genealogy:
-      `docs/governance/rule-history.md` §4, 2026-08-26.)
-    - **The two tiers carry SEPARATE markers** (owner decision 2026-07-31), because one
-      declaration must never spend both: `calibration-complete.json`'s **`complete`** block
-      authorizes the validation ladder and **`final`** authorizes the locked test. An ISO in
-      `complete` but not `final` may spend 2022 and **nothing else**. Absence from `final` is NOT
-      self-explaining — read the ISO's `locked_test` note, which distinguishes "never authorized"
-      from "authorized once, **SPENT**, never re-grantable". **NO ISO IS CURRENTLY IN THE SPENT
-      state: no locked-test year has ever been solved, scored or registered for any ISO.**
-      *(Corrected 2026-08-06, owner decision D-23: this clause previously read "(NEISO is the
-      latter)" — i.e. that NEISO's 2019 + H1-2026 one-shot had been SPENT on 2026-07-07 and was
-      never re-grantable. That was false. The artifact record carries no NEISO 2019 or H1-2026
-      solve of any kind — every NEISO registry sidecar ever committed declares years drawn only
-      from {2022, 2023, 2024, 2025}, `bench/NEISO/` holds 2022–2025, `actual_tail.json` has no
-      2019 row to score against, and the memo cited as the authorization never mentions 2019.
-      NEISO's locked test is **NEVER GRANTED**, not spent. The correction changes only which
-      question is open — "should a never-granted one-shot be granted now" rather than "may a
-      spent one be re-granted" — and **grants nothing**: NEISO stays absent from `final`, the
-      gates still refuse it, and its `final` readiness answer is **NOT YET** on the merits
-      (2019 is unsolvable at HEAD and cannot discriminate on C3c). Citation chain:
-      `results/calibration/ASSESSMENT-neiso87-declaration-2026-08-06.md` §1 →
-      `docs/third-party-peer-review-2026-07.md` §6.3 item 1 → D-23 / sitting Addendum X.6;
-      genealogy in `docs/governance/rule-history.md` §4.)* Tier
-      membership and the block mapping live in `scripts/lib/holdout_policy.py`; the
-      **holdout spend freeze** (`holdout-freeze.json`) outranks both blocks for every tier
-      within its scope and is checked first — TIER-SCOPED since the 2026-08-26 owner ruling
-      (card 6): its `scope.tiers`, read by the fail-closed `holdout_policy.frozen_tiers`
-      (no parseable scope ⇒ every tier frozen), currently names the locked test alone, so
-      validation-tier spends are governed by the `complete` marker + `--holdout-authorized`
-      while 2019/H1-2026 stay frozen for every ISO, `final` marker or not.
-    - **C3c STANDING RULE (owner, 2026-08-06; EXTENDED TO EVERY YEAR 2026-08-09;
-      NON-DOWNGRADING SINCE 2026-08-17): a LONE C3c
-      failure in ANY year — training, validation or locked test — is an AUTO-LEDGERED
-      caveat that does NOT downgrade the determination, in every ISO, going forward.**
-      Since rubric v3.3 (owner, 2026-08-17, verbatim: *"NYISO should be declared
-      calibrated. C3c is an acceptable miss and shouldn't change a declaration from
-      calibrated to calibrated with caveats because it's a known model limitation that's
-      been ledgered"*) an otherwise-clean run carrying a ledgered C3c reads **`CALIBRATED`**,
-      with the caveat reported on its determination basis. When C3c (price tail /
-      scarcity, RT hourly) is the **only** failing criterion and the governance gate passes,
-      `calibration_verdict.py::_apply_c3c_standing_rule` reclassifies it to a CAVEAT
-      (`ACCEPTED MODEL-CLASS LIMITATION`) instead of failing the run to `NOT-YET`. It
-      **cannot become a general escape hatch**, and the guards that stop it are unchanged:
-      (a) **lone failure only** — if any other criterion fails, the rule stays silent and
-      *every* failure stands, C3c's included. This is the real guard: it fires only on a model
-      that is otherwise clean, so it can never mask a second defect; (b) **governance must
-      PASS** — a failing or unattested C6 blocks it; (c) **supporting tier only, fail-closed**
-      — it classifies `model-class`, which the v3.0 guard admits only for a SUPPORTING-tier
-      criterion, so it can never reach load-bearing (C1/C2/C3a/C3b) or protective (C6/C8);
-      (d) it is **never a PASS** — C3c reads CAVEAT, never PASS, so
-      `grade_summary.target_grade` never absorbs it; the miss is reported at full magnitude
-      and named on the determination basis even of a `CALIBRATED` run; it is still listed in
-      `caveats.ledgered`; and it still spends the single ledgerable slot. *(AMENDED 2026-08-17,
-      rubric v3.3: this clause formerly read "the run can never read `CALIBRATED`". That half
-      is WITHDRAWN by the owner — a ledgered caveat no longer DOWNGRADES the determination.
-      Everything else in (d), and guards (a)–(c) entire, are untouched, as are the budgets,
-      which are checked first: >1 ledgered or >0 protective caveats is still `NOT-YET`, and
-      every OTHER caveat route — commercial-band misses, protective caveats, unscored criteria,
-      data-blocked years — still downgrades. A run reads `CALIBRATED` only when a ledgered C3c
-      is its SINGLE blemish.)*
-      **Why extending it to in-sample years is not a loosening.** The former clause (c),
-      *out-of-training ONLY*, was never a statement about C3c's severity — band, tier and
-      reported magnitude are identical in every year. In-sample the SAME reclassification was
-      already reachable through an explicit exceptions-ledger entry, and that is the route
-      every current keeper carrying a C3c caveat actually used; the split governed only who
-      typed the justification, not what a run could claim. Since rubric v3.1 C3c is the ONLY
-      ledgerable criterion at all, so the two routes had already collapsed onto one criterion —
-      2026-08-09 collapses them onto one *rule*.
-      **A defect fixed in the same amendment (rubric v3.2), which was suppressing the rule as
-      originally declared:** "lone" was measured over EVERY scored record, including the
-      REPORTED-ONLY streams the rubric has demoted out of the determination (C5a `co2`, removed
-      at v2.9). A `co2` FAIL silenced the rule even though co2 contributes no status, no caveat
-      budget and no reason line. It is now measured over `CRITERIA` membership. This
-      under-fired **out-of-training years too**, so it is a correction rather than part of the
-      widening. **Effect at amendment, measured over all 66 registered runs against a
-      pre-change snapshot:** 2 determinations change, both NYISO **non-keeper** probes
-      (`2026-08-06-nyiso-130-control`, `-n11-tsl`: `NOT-YET → CALIBRATED-WITH-CAVEATS`), both
-      unlocked by the defect fix rather than by the widening; **every keeper of all six ISOs is
-      unchanged**. `2026-08-06-pjm-158-novirtual-disarmed` is a lone C3c failure and still does
-      not reclassify — its C6 is UNATTESTED, i.e. guard (b) working.
-    - **Crossover window = 2024–H1 2026** is scored in BOTH modes — backcast (measured overlays)
-      and forecast (forward drivers) — against the same actuals, to measure the backcast→forecast
-      input gap. Diagnostic, not a locked test; its forecast side uses no measured actuals so it is
-      unrestricted (see the 2026 clause below).
+1. `[R-C3C]` **A LONE C3c failure is an AUTO-LEDGERED caveat that does NOT downgrade the
+    determination, in every ISO and every year.** *(Owner, 2026-08-06; extended to every year
+    2026-08-09; non-downgrading since 2026-08-17. This rule occupies the ordinal formerly held by
+    `[R-HOLDOUT]`, which was REMOVED 2026-09-09 — see the coda below and
+    `docs/governance/rule-history.md` §18. The ordinal does not move; only the ID changed, and a
+    doc reference to "rule 22" still lands here.)*
+    Since rubric v3.3 (owner, 2026-08-17, verbatim: *"NYISO should be declared calibrated. C3c is
+    an acceptable miss and shouldn't change a declaration from calibrated to calibrated with
+    caveats because it's a known model limitation that's been ledgered"*) an otherwise-clean run
+    carrying a ledgered C3c reads **`CALIBRATED`**, with the caveat reported on its determination
+    basis. When C3c (price tail / scarcity, RT hourly) is the **only** failing criterion and the
+    governance gate passes, `calibration_verdict.py::_apply_c3c_standing_rule` reclassifies it to
+    a CAVEAT (`ACCEPTED MODEL-CLASS LIMITATION`) instead of failing the run to `NOT-YET`. It
+    **cannot become a general escape hatch**, and the guards that stop it are unchanged:
+    (a) **lone failure only** — if any other criterion fails, the rule stays silent and *every*
+    failure stands, C3c's included. This is the real guard: it fires only on a model that is
+    otherwise clean, so it can never mask a second defect; (b) **governance must PASS** — a
+    failing or unattested C6 blocks it; (c) **supporting tier only, fail-closed** — it classifies
+    `model-class`, which the v3.0 guard admits only for a SUPPORTING-tier criterion, so it can
+    never reach load-bearing (C1/C2/C3a/C3b) or protective (C6/C8); (d) it is **never a PASS** —
+    C3c reads CAVEAT, never PASS, so `grade_summary.target_grade` never absorbs it; the miss is
+    reported at full magnitude and named on the determination basis even of a `CALIBRATED` run;
+    it is still listed in `caveats.ledgered`; and it still spends the single ledgerable slot.
+    The budgets are checked FIRST and are untouched: >1 ledgered or >0 protective caveats is
+    still `NOT-YET`, and every OTHER caveat route — commercial-band misses, protective caveats,
+    unscored criteria, data-blocked years — still downgrades. A run reads `CALIBRATED` only when
+    a ledgered C3c is its SINGLE blemish.
+    **The v3.6 out-of-training limb SURVIVES the holdout removal.** On a year outside 2023–2025
+    the lone-failure condition of guard (a) is dropped, so C3c reads CAVEAT there whatever else
+    that year does (owner, 2026-09-05: *"c3c should be an accepted caveat on all holdout years"*).
+    Guards (b)–(d) still bind. This limb reads `scripts/lib/holdout_policy.tier_for_year`, which
+    **survives as a PURE YEAR CLASSIFIER carrying no authorization meaning** — it answers "is this
+    year inside 2023–2025", nothing more. Measured at the removal over all 15 registered runs
+    carrying an out-of-training year: **0 determination flips** either way.
+    **Why "lone" is measured over `CRITERIA` membership** (rubric v3.2): it formerly counted every
+    scored record, including REPORTED-ONLY streams the rubric has demoted out of the determination
+    (C5a `co2`, removed at v2.9), so a `co2` FAIL silenced the rule even though co2 contributes no
+    status, no caveat budget and no reason line.
 
-    **WHAT IS HELD OUT IS THE *SCORE*, NEVER THE *DATA* OR THE *ARCHITECTURE*.** *(Owner
-    clarification 2026-08-06, session neiso-86 — this REPLACES the former per-window intake
-    authorization regime, which had it backwards.)* Measured data inputs are **collected once and
-    applied CONSISTENTLY ACROSS ALL YEARS** against the keeper. There is no such thing as an input
-    that is "held out": an input is either the best measured representation of a physical/market
-    quantity or it is not, and if it is, it belongs in **every** year — 2019 through 2025 alike.
-    The whole point is that when we hit **go** on 2019, it is already configured **precisely** like
-    the frontier / `complete` / `final` keeper, with nothing left to prepare and no input newer
-    than the moment the config froze. Concretely:
-    - **Data intake needs NO per-ISO/per-window authorization and no marker.** Prep it, apply it to
-      every year, keep it consistent. A measured-input fix (e.g. the neiso-86 gas-basis repair)
-      lands across the full span in one pass, not year-by-year under separate grants.
-    - **Architecture, mechanisms and config are likewise never "held out"** — the keeper recipe is
-      one recipe, and the out-of-training years run it unchanged.
-    - What remains restricted is exactly one thing: **looking at the answer.** Solving, scoring or
-      registering an out-of-training year is the spend, because it consumes the year's power to
-      surprise you.
-
-    **THE TOUCHPOINT LOOP — how 2020/2021/2022 are actually used** *(owner, 2026-08-06)*. These
-    are **iterative diagnostic instruments, not one-shots**, and **nothing is ever trained or
-    fitted to them**:
-    1. Run the touchpoint year on the frozen keeper recipe.
-    2. **Diagnose what it surfaces** — the object, not the residual (neiso-85/86 is the model
-       case: 2022 surfaced an inverted fuel input; the fix was a data repair with zero DOF, never
-       a parameter tuned to 2022).
-    3. **Re-train on 2023–2025 around the diagnosed issue** — the training window is the only
-       place fitting ever happens.
-    4. **Re-test the touchpoint** to see whether it resolved. Repeat as needed, and repeat the
-       same loop on 2021 and 2020.
-    A touchpoint number is therefore *diagnostic evidence*, never a skill claim — the discipline
-    that makes it honest is step 3, that no parameter is ever identified against the touchpoint
-    year itself.
-
-    **2019 is THE one-touch year.** It is spent exactly once, at the end, against the fully
-    prepared frontier/`complete`/`final` keeper. It is the only year whose result is a certified
-    out-of-sample number, and the only one that cannot be re-run.
-    Standing clauses:
-    - **No solve, no scoring, no registration** may touch an out-of-training year until the ISO
-      holds **that year's tier marker** in `frontend/data/backcast/calibration-complete.json`
-      (`complete` for the validation touchpoints 2020–2022, `final` for the 2019/H1-2026 locked
-      test). This gates the **spend**, i.e. looking at the answer — it does NOT gate preparing the
-      inputs or the config, which are unrestricted per the clause above. A `complete` ISO may
-      re-run its touchpoints iteratively as the loop requires; the marker is the standing
-      authorization for that, not a one-shot ticket.
-    - **2026 forecast runs are permitted:** forecast-mode runs (`ScenarioConfig.mode="forecast"`)
-      span 2026+ and use no measured H1-2026 actuals (overlays are backcast-only by construction) —
-      NOT restricted. Only a *backcast* of H1-2026 on real data, or scoring output against measured
-      H1-2026 actuals, is quarantined.
-    - Structural mechanism changes are still scored leave-one-year-out within 2023–2025 before
-      promotion. In-sample gain with held-out degradation is overfitting, not skill.
-    Enforcement (**TIER-AWARE since 2026-07-31; SPEND-ONLY since 2026-08-06** — the gates below check solve/score/register, never data prep): CI (`.github/workflows/ci.yml`,
-    `quarantine-gates` job) fails any PR whose registered bundle contains a solve year outside
-    2023–2025 before that ISO holds **the marker for that year's tier**, and
-    `scripts/run_calibration_full.py` hard-fails any `--year` outside {2023, 2024, 2025} unless
-    `--holdout-authorized` is passed AND the target ISO carries that tier's marker — `complete`
-    for a validation year, `final` for a locked-test year. A `--year` spanning both tiers needs
-    both. All three gates (the CLI year gate, `legitimacy_diagnostics.run_d6_quarantine`,
-    `audit_keepers`) read the tier map from `scripts/lib/holdout_policy.py`, which **fails closed**:
-    a year in none of the enumerated sets is treated as locked-test, the strictest tier. *(This
-    supersedes the former "the CI gate is tier-agnostic … a locked-test year re-solved after its
-    one-shot is a governance breach, not a CI failure" clause: spending the touch-once tier now
-    requires its own declaration, so the distinction is enforced, not merely disciplined. Re-solving
-    an ALREADY-SPENT locked test remains a governance breach rather than a CI failure — CI checks
-    the grant, not the spend history, which is what the marker's `locked_test` note records.)*
-    **RE-CHECKED AT REGISTRATION since 2026-09-06** (owner ruling **R-AZ**, audit-program director
-    sitting, card "Marker gate"): the `--year` gate reads the marker once, at LAUNCH, so a
-    multi-hour solve can outlive the authorization it started under — the Z-6 case, where a NYISO
-    2022 validation solve launched under the D56-R `complete` marker and `main` withdrew that
-    marker (nyiso-193) while the LP ran, leaving only the lane's own discipline between a withdrawn
-    marker and a committed sidecar (`docs/handoffs/holdout-2022-completeness-ercot-nyiso-2026-09-05.md`
-    §1a). `scripts/dashboard_add_run.py` — the single seam where a run's solve years become a
-    committed sidecar — now re-asks the SAME question at registration
-    (`enforce_registration_marker_gate` → `holdout_policy.registration_refusals`, so the tier map
-    and freeze precedence stay defined once), refusing any run whose years fall outside 2023–2025
-    unless the ISO holds that tier's marker **at the time of registration** and the tier is not
-    frozen. It runs before the sidecar, payload and bench parts are written, so a refused run
-    leaves nothing behind. **There is no bypass flag: a registration that fails this check is not a
-    registration** — the marker is restored by an explicit owner act and the run re-registered, or
-    the run stays unregistered and git history is the record (rule 15). This is a fourth gate, not
-    a change to the launch gate's semantics, and it changes no already-registered run.
+    **CODA — `[R-HOLDOUT]` IS REMOVED (owner instruction 2026-09-09: "Remove the holdout year
+    rule").** The three-tier train / validation / locked-test regime and **every gate that
+    enforced it** are gone: the `complete` / `final` markers as spend authorizations, the
+    `holdout-freeze.json` spend freeze, the `--holdout-authorized` CLI flag, the
+    `run_calibration_full` year gate, the `dashboard_add_run` registration marker gate (R-AZ), the
+    D-6 quarantine diagnostic, the `audit_keepers` M1 marker re-key check, and the CI
+    `quarantine-gates` job. **Any year may now be solved, scored and registered with no
+    authorization, no marker and no one-shot.** What that costs is stated rather than hidden:
+    there is no longer a certified out-of-sample number anywhere in this program, because no year
+    is protected from being iterated against. Runs on any year are model-SELECTION evidence, and
+    **a skill claim built on a year that has been tuned against is not a skill claim** — say what
+    a number is when quoting it. `calibration-complete.json` SURVIVES for the two jobs it does
+    that are not authorization: designating each ISO's current keeper, and feeding the forecast
+    program's gate (a). Genealogy, and the full text of the removed rule:
+    `docs/governance/rule-history.md` §18.
 1. `[R-FROZEN-DERIVE]` **Derive scripts are frozen against residuals.** Measured-behaviour parameters (min-stable
     loads, drag hinges, sigmoid anchors, committed shares) re-derive only when their *source data*
     updates — never because a residual moved. Re-derivation commits must cite the data change.
@@ -490,7 +335,7 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
 1. `[R-TOUCHPOINT-FOLD]` **A touchpoint is the keeper, on another year — publish it that way, never
     as a separate run to click into.** *(Owner ruling 2026-09-05, verbatim: "the runs should all be
     combined with the keeper in html not separate runs… like it's the same config I don't need to
-    click into multiple things to see the results".)* A rule-22 validation touchpoint IS the
+    click into multiple things to see the results".)* A held-out-year replay IS the
     designated keeper's frozen recipe replayed on a held-out year — same config, different year —
     so splitting it onto its own dashboard card makes a reader open two pages to read one
     configuration. Every touchpoint session owes three things, in the session that produces it:
@@ -518,7 +363,7 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
       narrative from you in my results viewing ANYWHERE I just want the scores and charts and make
       it so every iso with holdout years run has them SHOW up in the report." **THE RUN EXPLORER'S
       REPORT IS SCORES AND CHARTS ONLY.** The morning's amendment had kept ONE designation here —
-      rule 22's tier caveat as a footnote — and that footnote is now **DELETED too**, along with
+      the former rule 22's tier caveat as a footnote — and that footnote is now **DELETED too**, along with
       every other prose panel in the results view: the **run-definition** panel (whose registry text
       had itself become the per-year determination essay the instruction names — "2023 = the
       CARVE-OUT config … DETERMINATION CALIBRATED"), the **zero-forcing ablation twin** panel and
@@ -550,8 +395,11 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
     - **(c) A HELD-OUT YEAR NEVER DOWNGRADES THE ISO.** *(Owner ruling 2026-09-05, verbatim: "An
       iso can stay calibrated even if it degrades on holdout years".)* The ISO's calibration
       determination is the **train-tier (2023–2025) verdict** and nothing else. A validation-tier
-      score is iterable model-SELECTION evidence that rule 22 already forbids quoting as a skill
-      number, so it cannot certify and it cannot decertify. A degraded rung is REPORTED — on the
+      score is iterable model-SELECTION evidence and cannot be quoted as a certified skill
+      number, so it cannot certify and it cannot decertify. (Since `[R-HOLDOUT]` was removed
+      2026-09-09 that is true of EVERY year, not only held-out ones — no year is protected
+      from being iterated against any more, so no year certifies. Rule 22's ordinal now
+      carries `[R-C3C]`.) A degraded rung is REPORTED — on the
       keeper's panel, on the status card, and in the session's assessment doc — and the ISO's
       headline is untouched. Both surfaces state this in place rather than leaving a reader to
       infer that a NOT-YET rung beside a CALIBRATED headline is a contradiction.
@@ -654,7 +502,7 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
       parent, after the shards land. Per-year shard bundle dirs are **kept out of `main`** — the
       composite is what gets registered, and an unregistered per-year dir left committed is the
       exact Class-E parity RED rule 29(c) already forbids.
-    Genealogy: `docs/governance/rule-history.md` §17.
+    Genealogy: `docs/governance/rule-history.md` §18.
 
 Rules 17–26 are the protective rules from `docs/model-legitimacy-audit-2026-07.md` §8, numbered
 **16–25 there** — a doc reference to "audit rule N" maps to rule N+1 here. Mapping table, per-rule
@@ -903,6 +751,6 @@ the two golden systems: `docs/testing.md`.
 - `docs/binning-methodology.md` — CAMPD per-plant binning & tranche offer curves (ERCOT default)
 - `docs/parameter-citations.md` — every numeric input traced to a primary source
 - `docs/multi-iso/` — protocol & status for adding ISOs beyond ERCOT
-- `docs/calibration-log.md` (frozen archive ≤2026-07-19) + `docs/calibration-log/<iso>.md` per-ISO continuations (`governance.md` for cross-ISO), `docs/calibration-session-log.md` — calibration history. Keeper promotions are per-ISO lanes: edit `frontend/data/backcast/keepers/<ISO>.json` + rebuild `status/<ISO>.js` (`build_status.py --iso`) — never another ISO's files (see `frontend/data/backcast/keepers/README.md`); when the promoted ISO holds a `complete` marker, the same session also re-keys its `calibration-complete.json` entry with a determination re-verification (rule 22, D-5(b))
+- `docs/calibration-log.md` (frozen archive ≤2026-07-19) + `docs/calibration-log/<iso>.md` per-ISO continuations (`governance.md` for cross-ISO), `docs/calibration-session-log.md` — calibration history. Keeper promotions are per-ISO lanes: edit `frontend/data/backcast/keepers/<ISO>.json` + rebuild `status/<ISO>.js` (`build_status.py --iso`) — never another ISO's files (see `frontend/data/backcast/keepers/README.md`); the same session also re-keys the ISO's `calibration-complete.json` entry to the new keeper — that file survives `[R-HOLDOUT]`'s removal as the keeper designation and the forecast program's gate-(a) input, and no longer authorizes any year
 - `docs/forecast-development-plan-2026-07.md` — THE forecast program (Forecast Finalization Program): tier ladder, lanes/waves, prompt pack, rubric charter. All prior forecast plans are superseded as coordination docs by it (its §9 migration ledger).
 - **Code is the source of truth.** When docs and code disagree, fix the docs (run `/sync-docs`). When the methodology is genuinely ambiguous, the spec wins.

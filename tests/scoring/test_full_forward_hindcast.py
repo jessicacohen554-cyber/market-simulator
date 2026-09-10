@@ -34,7 +34,6 @@ from market_sim.data.fleet import EIA860_OPERABLE_VINTAGE, operable_vintage_year
 from market_sim.data.fuel import resolve_annual_gas_price
 from market_sim.data.hydro import full_forward_climatology_years
 from scripts import run_capacity_hindcast as H
-from scripts import run_calibration_full as RCF
 from scripts.lib import holdout_policy
 
 
@@ -241,7 +240,6 @@ class TestHarness(unittest.TestCase):
             holdout_policy.HINDCAST_SOLVE_YEARS,
             holdout_policy.CALIBRATION_YEARS | holdout_policy.HINDCAST_SEED_YEARS,
         )
-        self.assertEqual(holdout_policy.FREEZE_FILE, RCF.HOLDOUT_FREEZE_FILE)
         # The emission-rate quarantine trim mirrors the bridge set.
         self.assertEqual(
             QUARANTINED_RATE_BASIS_YEARS | {QUARANTINE_RATE_BASIS_FROM},

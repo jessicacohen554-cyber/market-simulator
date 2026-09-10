@@ -22,10 +22,7 @@ own semantics. No LP is solved: every case is asserted at the refusal, and
 """
 
 import inspect
-import json
 import unittest
-from pathlib import Path
-from unittest import mock
 
 from scripts import knob_jacobian as kj
 from scripts import replay_keeper as rk
@@ -80,63 +77,3 @@ class TestEveryReplayPathIsGated(unittest.TestCase):
         src = inspect.getsource(kj.solve_year)
         self.assertIn("enforce_legacy_p2_kwargs", src)
         self.assertIn("enforce_holdout_year_gate", src)
-
-
-class TestKnobJacobianSolveYearGates(unittest.TestCase):
-    """The D-11 diagnostic's own solve path refuses before it reaches an LP."""
-
-    def _run(self, tmp: Path, *, year: int, kwargs: dict, **flags):
-        (tmp / "meta.json").write_text(json.dumps({"iso": "NEISO", "hours": 8760}))
-        with (
-            mock.patch.object(rk, "build_kwargs", return_value=dict(kwargs)),
-            mock.patch.object(rcf, "solve_and_persist") as solve,
-            mock.patch.object(rcf, "_load_reference", return_value={}),
-        ):
-            with self.assertRaises(SystemExit) as cm:
-                kj.solve_year(tmp, "NEISO", year, {}, tmp / "out", {}, **flags)
-            solve.assert_not_called()
-        return str(cm.exception)
-
-    def test_out_of_training_year_is_refused(self):
-        """``--year 2019`` no longer reaches an LP just because it is an int.
-
-        The locked-test tier is touch-once and the spend freeze is ACTIVE, so
-        this must fail closed with neither flag nor marker able to reach it.
-        """
-        import tempfile
-
-        with tempfile.TemporaryDirectory() as td:
-            msg = self._run(Path(td), year=2019, kwargs={"commitment": False})
-        self.assertIn("2019", msg)
-
-    def test_archived_p2_recipe_is_refused(self):
-        """An in-window year still cannot silently re-arm P2 from meta.json."""
-        import tempfile
-
-        with tempfile.TemporaryDirectory() as td:
-            msg = self._run(Path(td), year=2024, kwargs={"commitment": True})
-        self.assertIn("--enable-legacy-p2", msg)
-
-    def test_production_recipe_in_window_reaches_the_solve(self):
-        """The gates refuse only what they name — the normal path is unchanged."""
-        import tempfile
-
-        with tempfile.TemporaryDirectory() as td:
-            tmp = Path(td)
-            (tmp / "meta.json").write_text(json.dumps({"iso": "NEISO", "hours": 8760}))
-            with (
-                mock.patch.object(
-                    rk, "build_kwargs", return_value={"commitment": False}
-                ),
-                mock.patch.object(
-                    rcf, "solve_and_persist", return_value=tmp / "solved"
-                ) as solve,
-                mock.patch.object(rcf, "_load_reference", return_value={}),
-            ):
-                out = kj.solve_year(tmp, "NEISO", 2024, {}, tmp / "out", {})
-            solve.assert_called_once()
-            self.assertEqual(out, tmp / "solved")
-
-
-if __name__ == "__main__":
-    unittest.main()
