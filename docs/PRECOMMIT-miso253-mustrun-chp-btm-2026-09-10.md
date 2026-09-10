@@ -298,3 +298,64 @@ matches the two largest benchmark family errors. But the **promotion bar is high
 §2 implied.** On this record, a screen that clears G-1..G-5 is evidence the *seam works as
 built* — it is **not** evidence that the level it lands on is right, and this session will
 not present it as such. The competing hypothesis of A.3 stays open and goes to the owner.
+
+---
+
+# ADDENDUM B — a CAMPD test of Addendum A.3, still before any screen number
+
+Zero LP, run while the screen shard was provisioning. It **partly discriminates** A.3's
+competing hypothesis and it moves the balance toward §2's reading — without settling it.
+
+## B.1 Why CAMPD is a discriminator at all
+
+CEMS applicability under 40 CFR 75 keys on **serving a generator that sells electricity to
+the grid**. An industrial unit burning its own process gas purely for on-site power and
+steam is not covered. So: **a chp=Y plant that is entirely absent from CAMPD is very
+unlikely to be a grid seller**, and that is exactly the population A.3's rival reading
+would need to be grid-connected.
+
+## B.2 The measurement — MISO 2023, the 12.514 TWh chp=Y block, 94 plants
+
+| CAMPD status of the plant | plants | TWh | share |
+|---|---:|---:|---:|
+| **absent from CAMPD entirely** | 78 | **8.154** | **65.2 %** |
+| present, but **zero** CAMPD gross load | 9 | 1.460 | 11.7 % |
+| present with **nonzero** CAMPD gross load | 7 | 2.900 | 23.2 % |
+
+**76.9 % (9.614 TWh) of the block is at sites with no metered CEMS generation at all** —
+consistent with behind-the-meter cogen, and hard to reconcile with the rival reading.
+
+## B.3 The confound, made explicit rather than argued around
+
+The 23.2 % "visible" bucket is **facility**-grain, not unit-grain, and at six of its seven
+plants the CEMS load is plainly *other units at the same site*:
+
+| plant | chp=Y class (TWh) | plant total EIA-923 (TWh) | CAMPD gross (TWh) |
+|---:|---:|---:|---:|
+| 55088 | 1.3770 | 5.2598 | 3.6481 |
+| 1391 | 1.0000 | 3.1348 | 3.3336 |
+| 1393 | 0.2164 | 1.7402 | 1.6094 |
+| 50625 | 0.1675 | 4.2539 | 5.8448 |
+| 55419 | 0.0703 | 4.9691 | 9.8456 |
+| 55089 | 0.0687 | 5.9172 | 3.8616 |
+| 6098 | 0.0000 | 1.5666 | 1.6588 |
+
+Only 55088 and 1391 have a chp=Y block large relative to their own site. So **2.900 TWh is
+an UPPER BOUND on what the partition might wrongly remove** — 23 % of the block — and the
+true figure is likely well below it, because facility presence in CAMPD is not evidence
+that *these* units are metered.
+
+## B.4 What this does and does not establish
+
+- **Does:** the great majority of the removed energy is at sites with no CEMS generation,
+  which is the signature of on-site cogen rather than grid sale. A.3's rival reading would
+  require ~12.5 TWh of grid-selling cogen; at most ~2.9 TWh of the block is even at a
+  CEMS-reporting site.
+- **Does not:** unit-grain attribution. CAMPD absence is strong but circumstantial, and it
+  says nothing about how MISO's *telemetry* labels the units that ARE grid-connected —
+  which was A.3's actual mechanism. **The hypothesis stays open and still goes to the
+  owner.**
+- **Does not** change any gate. B.2/B.3 are reported evidence, not a gate, and no STOP
+  gate of §6 moves.
+
+Registered here before the screen result so it cannot be read as post-hoc support.
