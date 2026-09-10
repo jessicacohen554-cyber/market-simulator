@@ -4766,6 +4766,31 @@ committed BEFORE the measurement), `docs/PRECOMMIT-pjm-d4-4-screen-addendum-2026
   statistic. Rule 23 satisfied because the **scope** was wrong, a construction
   repair. Off-path byte-inertness **proved** over 7 ISOs × 4 years ×
   `extract_basis_share` {False, True}.
+* **SCREEN RESULT (same session): S-1/S-2/S-4 PASS, S-3 FAILS by 3.4x, and the TAIL-REPAIR CLAIM IS
+  REFUTED — do not re-test it.** 2022, one shard, 24 min 13 s. Envelope depth +1,049.8 MW annual and
+  +4,323.6 MW over the 92 tail hours, both inside their pre-registered bands; confinement EXACT at
+  the input layer (CT_PEAKER and every coal group move 0.0); no criterion flips either way. But the
+  model−meter thermal gap over those 92 hours falls only **0.592 GW against a 2.0 GW bar**
+  (89.930 → 89.339 vs a meter of 80.100), and fails under all four class-set conventions tested.
+  **Root cause named: the LP BACKFILLS 87 % of the withdrawn gas, mostly with coal** — so PJM's
+  2022 tail defect is **not gated by gas availability**, it is gated by what stands behind the
+  marginal gas unit. Zero model hours above $200 added on any system basis; C3c unmoved at 3h vs 92h.
+  Reported and gated in neither direction (rule 1): C3a −11.9 → −10.7 %, C3b 0.262 → 0.246, C1
+  CC_REGULAR +26.82 → +22.56 TWh, all still FAIL; regressions at full magnitude COAL_BIT +6.60 →
+  +7.52 TWh and C2 coal 159.63 → 160.74 against 152.72 actual.
+* **A PREDICTION OF THIS SESSION'S WAS FALSIFIED, and it is the lane's most consequential output.**
+  The bullet above retired the reserve-dual gate on system-wide headroom arithmetic.
+  **`pjm_primary_mad` BOUND in 2 of 8,760 hours at $11.42 / $12.26 per MW, BOTH inside the 92 target
+  hours, at a requirement of ~2,722 MW** — far under the 4,224.5 MW maximum the prediction used, and
+  in the **locational** family. The control baseline (0 non-zero-dual hours, both families) is
+  CONFIRMED. **A system-wide headroom number cannot decide whether a locational family binds.** The
+  PJM co-opt is closer to binding than the record implies and the binding object is LOCATIONAL —
+  which no measurement in this lane had reached. `ordc_scarcity_overlay` stays `G`.
+* **Successors, re-ordered by this evidence:** (a) the **merit order** behind the marginal gas unit;
+  (b) the **locational reserve family** just measured binding; (c) partial derates
+  (`ercot_partial_outage_shaped_derate`, `·`, unbuilt). (a) and (b) outrank (c), reversing the
+  ordering this lane inherited. **Session recommendation CHANGED after the screen: do NOT spend the
+  six-year span now** (it recommended spending it before).
 * **Open, escalated not absorbed:** the cross-year weakness above is unexplained;
   a 2.5 % boundary-day double count (47 of 1,851 unit-days) belongs to the
   `unit_outage_per_unit_clip` `U` cell; and if the screen's thermal-gap gate fails,

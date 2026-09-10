@@ -5370,3 +5370,65 @@ six-year span (2020–2025, six shards, one bundle) be spent? Session recommenda
 be overruled: **spend it** — rule 14 `[R-ACCURATE]` says an accurate input that worsens the fit is a
 discovered bug, and this is a **discard**, not an estimate. Nothing is deleted while the decision is
 open; `.gitignore` line 1757 already keeps the bundle family out of `main`.
+
+### pjm-d4-4 SCREEN RESULT (same session, appended after the shard returned)
+
+**S-1, S-2 and S-4 PASS; S-3 FAILS by 3.4×. The arm is NOT carried to the full span on this card's
+rationale, and its tail-repair claim is REFUTED.** One shard, 2022, pinned to `57c3557e`; 24 min 13 s,
+peak RSS 13.94 GB — **4 minutes over the rule-32(b) budget**, worth knowing before six of them are
+launched. Every number: `docs/SHARD-REPORT-pjm-d4-4-screen-2022.md`.
+
+| gate | measured | bar | verdict |
+|---|---|---|---|
+| **S-1** envelope depth, annual / tail-hour | **+1,049.8** / **+4,323.6** MW | +1,185 ±15 % / +4,570 ±20 % | **PASS**, inside both |
+| **S-2** confinement | CC_REGULAR +984.0, CC_CHP +44.1, ST_GAS +19.9, ST_CHP +1.8 MW; **CT_PEAKER and every coal group 0.0** | gas groups only | **PASS**, exact at the input layer |
+| **S-3** model−meter thermal gap over the 92 RT>$200 h | **0.592 GW** fall (89.930 → 89.339 vs a meter of 80.100) | ≥ 2.0 GW | **FAIL** |
+| **S-4** non-target load-bearing flip | none, either direction | none | **PASS** |
+
+**THE ROOT CAUSE IS NAMED, NOT LEFT AS A NULL: the LP BACKFILLS 87 % of the withdrawn gas, mostly
+with coal** (CC_REGULAR −4.2555 TWh, CT_PEAKER +1.6850, COAL_BIT +0.9200, ST_GAS +0.4350). **PJM's
+2022 tail defect is therefore not gated by gas availability at all** — it is gated by what stands
+behind the marginal gas unit in the merit order. The arm adds **zero** model hours above $200 on
+every system price basis (3 on the max-zonal basis, unchanged, an oil unit's own $247.50 offer) and
+C3c is untouched at 3 h vs 92 h.
+
+**REPORTED, GATED IN NEITHER DIRECTION, AND NOT USED TO RESCUE THE ARM (rule 1 `[R-STRUCT]`):** C3a
+−11.9 % → −10.7 %, C3b 0.262 → 0.246, C1 CC_REGULAR +26.82 → +22.56 TWh — all improve, all still
+FAIL. C8: every non-exempt forced share falls. C6 **UNSCOREABLE** on the arm (a `replay_keeper` probe
+writes no attestation). **REGRESSIONS AT FULL MAGNITUDE:** COAL_BIT +6.60 → +7.52 TWh, COAL_PRB
++0.42 → +0.57, ST_GAS +2.46 → +2.89, **C2 coal 159.63 → 160.74 against 152.72 actual** — all still
+PASS, all the wrong way.
+
+**A PREDICTION OF THIS SESSION'S WAS FALSIFIED, AND IT IS THE MOST CONSEQUENTIAL OUTPUT.** The entry
+above retired the handoff's reserve-dual gate before the solve, on the arithmetic that ~19 GW of
+tail-hour headroom minus 4.57 GW cannot reach a requirement whose **maximum** is 4,224 MW.
+**`pjm_primary_mad` BOUND in 2 of 8,760 hours at $11.42 and $12.26/MW, and BOTH hours are inside the
+92 target hours** (actual RT $369.54 / $410.24), at a requirement of **~2,722 MW**. The control
+baseline is CONFIRMED (0 non-zero-dual hours in 2022, both families), so the ADDENDUM §2 reading
+stands; what was wrong is that **a system-wide headroom number cannot decide whether a LOCATIONAL
+family binds**. Retiring the gate before the solve was procedurally right and substantively wrong,
+and both statements are left standing in place rather than edited away. **Escalated:** the PJM
+co-optimisation is closer to binding than the committed record implies, and the binding object is
+locational — which no measurement in this lane had reached. `ordc_scarcity_overlay` stays `G`; a
+stack on a mechanism that *does* bind is worse, not better.
+
+**Also corrected:** the **+9.7 GW** control tail gap quoted above and in the PRECOMMIT is an
+arithmetic slip inherited from `docs/ADDENDUM-pjm-d4-3-lmp-gap-next-lp-2026-09-10.md` §3, whose own
+operands (89.9 and 80.1) differ by **9.83**. G-KILL-1's bar moves 2,425 → 2,458 MW and the measured
+4,570 clears both, so **no verdict changes**.
+
+**Matrix cell `unit_outage_short_windows_gas` stays `O`, deliberately not `R`.** What the screen
+refuted is one CLAIM (the tail repair — **do not re-test it**), not the mechanism: it replaces a
+**discard**, not an estimate, with measured merit-guarded windows, and rules 14 `[R-ACCURATE]` / 1
+`[R-STRUCT]` both say such an input is not judged by the residual. Whether to land it as an input
+correction is an open owner decision.
+
+**THE SESSION'S RECOMMENDATION CHANGED AFTER THE SCREEN and is recorded as changed: do NOT spend the
+six-year span now.** Before the screen it recommended spending it. Rule 29 clause 0 exists so the
+remaining five years are not spent confirming a mechanism cannot do the job it was built for. The
+successors the screen points at, in the order the evidence now supports: **(a) the merit order** —
+what sits behind the marginal gas unit; **(b) the locational reserve family** just measured binding;
+**(c) partial derates** (`ercot_partial_outage_shaped_derate`, `·`, unbuilt). (a) and (b) both
+outrank (c), reversing the ordering this lane inherited. **Rule 31:** the 196 MB screen bundle lived
+on the shard's ephemeral disk, gitignored, never committed, never `rm`'d, and does not survive that
+session; every number it produced is committed in the shard report.
