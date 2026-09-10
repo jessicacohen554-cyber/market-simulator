@@ -231,6 +231,12 @@ MOVED_SURFACE: dict[str, tuple[str, ...]] = {
         "SeasonalRBDC",
         "THERMAL_ACCREDITATION_BASIS_BY_ISO",
         "THERMAL_ELCC_CLASS_RATING_BY_ISO",
+        # capx D75-R (2026-09-06): the per-delivery-year published ELCC
+        # class ratings behind pjm_vre_accreditation_vintage. Landed at
+        # this home with the facade re-export already in place
+        # (config/constants.py), so this line only re-freezes the
+        # inventory the name was missing from.
+        "THERMAL_ELCC_VINTAGE_CLASS_RATING_BY_ISO",
         "_MISO_DAILY_NET_CONE_PER_MW_DAY",
         "_MISO_NC_NET_CONE_PER_MW_YR",
         "_MISO_RBDC_CURVE",
