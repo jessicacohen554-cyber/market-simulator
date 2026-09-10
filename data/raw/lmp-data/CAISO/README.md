@@ -221,3 +221,40 @@ fetched**, and a 2021 price basis needs an explicit, declared `CAISO_PARTIAL_YEA
 amendment (NOT made here). Of that ceiling 1,560 h are in hand and 4,416 h (Jul 1 – Dec 31)
 are still served **today**; the ceiling falls 24 h per day of delay. Full record:
 `docs/handoffs/FINDING-caiso-2021-price-boundary-backfill-2026-09-07.md`.
+
+## CORRECTION 2026-09-10 (session caiso-274) — the GroupZip boundary is now **2021-08-12**
+
+The caiso-263 measurement recorded above (earliest served DAM trade date
+**2021-04-27**, binary-searched 2026-09-07) is **stale**. Re-binary-searched
+2026-09-10 through the session proxy, `DAM_LMP_GRP` v12: **2021-08-11 returns
+the ~3 KB "No data returned" envelope and 2021-08-12 returns a 10,362,306-byte
+archive**, so **2021-08-12 is the earliest trade date served today**.
+`RTM_LMP_GRP` v3 tracks it exactly (no data 2021-08-11; 7,603,266 B at
+2021-08-12). Control: 2023-01-01 DAM returned HTTP 200 / 11,938,424 B — the
+byte size pinned in `SHA256SUMS.txt` — so the endpoint is healthy from this
+container and the small responses are the no-data envelope, not a throttle.
+Both boundary probes were repeated and reproduced their verdict.
+
+**That is ~3.5 months of reach lost in 3 calendar days.** The rate is not
+smooth-sliding-window behaviour and this session does not claim to explain it;
+it is reported as measured. Treat the archive as **actively perishing**: the
+instruction this file and `fetch_caiso_oasis_grp.py` already carry — *re-measure
+the boundary, never hardcode it* — is the operative one, and the two dates now
+recorded here are both historical readings, not constants.
+
+**Consequences for the paragraph above ("What 2021 can ever contain").** Its
+arithmetic stands but its obtainable set has shrunk: the DAM ceiling of 5,976 h
+against `derive_actual_lmp.CAISO_MIN_HOURS = 6500` is unchanged (2021 still
+cannot clear the guard without an explicit `CAISO_PARTIAL_YEARS` amendment), and
+the committed 2021 DAM aggregate now holds **5,977 finite hours over 249 trade
+days** — i.e. essentially all of the obtainable span, and **none of the 116
+missing DAM trade days is fetchable any more**. The RTM aggregate holds 4,513 h
+over 188 trade days; of its missing days exactly **50 (2021-08-12 … 2021-09-30)
+were still reachable** on 2026-09-10 and were fetched by this session.
+
+**2020 is unreachable on every known route** — per-node `SingleZip` (~39-month
+window), GroupZip (this boundary), and the hand-downloaded GRP zips whose bytes
+the 2026-08-16 history rewrite stripped. A 2020 CAISO price basis does not
+exist and cannot be produced.
+
+Full record: `docs/FINDING-caiso274-2020-2021-intake-census-2026-09-10.md` §6.

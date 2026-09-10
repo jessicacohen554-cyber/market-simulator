@@ -29,7 +29,20 @@ report, not the version or the market: v1 and v3 age out on the same dates, and
 ``RTM_LMP_GRP`` v3 tracks it (no data at 2020-04-01, 6.94 MB at 2021-04-27).
 Like the per-node boundary this one MOVES with the calendar — **re-measure it,
 never hardcode it** — and a Q2-2020 (or any pre-2021-04-27) LMP intake is
-therefore NOT a fetch task on either endpoint. What still reaches 2020 is the
+therefore NOT a fetch task on either endpoint.
+
+**RE-MEASURED 2026-09-10 (caiso-274): the boundary is now 2021-08-12.** The
+2021-04-27 reading three days earlier is stale — 2021-08-11 returns the ~3 KB
+"No data returned" envelope and 2021-08-12 returns a 10,362,306-byte DAM
+archive; RTM v3 tracks it exactly. Control 2023-01-01 returned the
+sha256-pinned 11,938,424 bytes, so the endpoint is healthy and the small
+responses are not a throttle. ~3.5 months of reach were lost in 3 calendar
+days; the rate is reported as measured, not explained. Both readings above are
+now HISTORICAL — do exactly what this docstring says and re-measure before
+planning a crawl. Record:
+``docs/FINDING-caiso274-2020-2021-intake-census-2026-09-10.md`` section 6.
+
+What still reaches 2020 is the
 non-LMP OASIS reports, which carry no such window: ``AS_REQ``, ``AS_RESULTS``,
 ``PRC_AS`` and ``SLD_FCST`` all returned full data for 2020-04-01..04 on
 2026-09-07 (``scripts/data/fetch_caiso_oasis.py``).
