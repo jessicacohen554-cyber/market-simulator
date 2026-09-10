@@ -13742,4 +13742,62 @@ partial bundle. **The 2021 envelope screen and the 2022 ladder arm are both spec
 unrun** — the next session needs a larger environment before any MISO arm can be evaluated.
 Evidence: `docs/FINDING-miso252-biomass-selfscored-and-the-lp-memory-ceiling-2026-09-10.md`.
 
-* Next number: **miso-253**.
+* Next number: **miso-254**.
+
+## miso-253 — 2026-09-10 — **THE BIOMASS/BTM ARM IS BUILT, GATED AND SCREENED — and phase 0 turned up a bigger object than the one it was sent for: the MISO benchmark's fuel-family attribution is off by 68 TWh in offsetting directions.** Keeper unchanged at entry, `2026-09-09-miso-250-ep-gas`, **CALIBRATED**
+
+**MECHANISM MINTED.** `ScenarioConfig.mustrun_chp_btm_holdout` (default off, byte-identical
+off) — the host-steam / behind-the-meter partition of the two INJECTED must-run residual
+classes, which is the partition every *fossil* cogen class has had for years and these two
+never received. `classify_plant` splits gas cogens into their own `*_CHP` classes and
+`data.chp.chp_btm_pct` then holds a measured host share out of them; coal cogen has
+`coal_chp_overrides`; but `classify_plant` returns `"biomass"` regardless of the CHP flag,
+so biomass and `OTHER` — the two classes where cogeneration DOMINATES — were injected whole.
+MISO 2023 is **71.4 % chp=Y across the pair (12.514 of 18.453 TWh)**: black-liquor 3.610 and
+wood-solids 2.748 recovery boilers at paper mills, blast-furnace 3.054 and coke-oven 2.859
+gas at integrated steel mills, plus petcoke, waste heat and purchased steam. Rule 14
+`[R-ACCURATE]`; **zero free parameters** (a partition on one published per-plant boolean,
+rules 21/24); rule 13 forward test met, since EIA-923 carries the flag per plant per vintage.
+
+**ONE SEAM, deliberately.** The filter lives in `_eia923_frame`, scoped to
+`_INJECTED_MUSTRUN_CLASSES`, and BOTH the injection (`_must_run_profiles`) and the benchmark
+(`_benchmark_eia923_frame`) read it — so bench and model move in lockstep and the partition
+cannot manufacture a miss. That is also why it does **NOT** close `FINDING-miso252` §2's
+self-scoring gap, and the PRECOMMIT says so at the gate rather than claiming otherwise.
+
+**PHASE 0'S LARGER RESULT, and it is not about biomass.** Measuring the committed 2023
+benchmark against MISO's own EIA-930 telemetry — whose fuel split reconciles to the BA's
+reported net generation to **0.0002 %**, so it is exhaustive rather than a residual bucket —
+the `classFull` total matches to **−0.04 %** (616.259 vs 616.516 TWh). **That match is a
+coincidence of 68.1 TWh of offsetting per-family error**: gas **−33.526**, "other"
+**+23.111**, coal **+10.827**. The aggregate is therefore worthless as a check, and the two
+largest errors point in exactly the directions this arm moves ("other" falls +23.111 →
++10.598 armed). Recorded in ADDENDUM A **before any screen number came back**, together with
+the arm's own cost (the bench total falls to 603.746, −2.07 % against the grid) and the
+**competing hypothesis that would invalidate the premise** — that MISO's telemetry may label
+BFG/OG steam cogen as `NG` rather than `OTH`, in which case the cogen IS on the grid and the
+repair belongs on the gas side. **This session could not discriminate the two readings at
+zero LP and does not claim to**; what would is a per-generator EIA-930 fuel attribution or
+MISO's registered-resource roster, neither on disk — intake work, not a solve.
+
+**DISCIPLINE.** Screen year **2023** named in the PRECOMMIT before the screen ran, on measured
+FOOTPRINT (largest chp=Y block AND the only complete vintage of the three — 2025's number is
+the carry, not the mechanism), never on the residual. Five **STOP-only** structural gates,
+explicitly NOT keyed to C1 `CC_REGULAR` or C3a — gating on the target residual is the
+fitted-mechanism selection rule 1 `[R-STRUCT]` forbids, done one year at a time. G-6
+(bench-total consequence) is REPORTED, never a kill. **G-DRIFT** run against base `25675896`
+(the keeper's own `7167b99a` is unreachable in a shallow clone; the miso-250 promotion commit
+is solve-path-neutral, verified) — all 23 changed solve-path files classified INERT for MISO
+2023–2025, including a measured zero-overlap check of the 11 new PJM `ST_GAS` plant codes
+against MISO's 381-plant bin sheet — so rule 29(b) **form 4 holds and NO control solve was
+spent**. Rule 32 `[R-SHARD]`: **the parent ran no LP**; the screen ran in a shard pinned to a
+full 40-char SHA, printing its own cgroup ceiling first.
+
+**THE MEMORY CEILING, corrected.** miso-252 concluded no container fits MISO's 13.29 GiB
+peak. Its measurement was taken in the *Default* environment (13.344 GiB cap); its one
+*Full access* attempt was **shard 1, before the lean settings existed**. This session's own
+container is **cgroup v1 with no limit and 15.70 GiB**, so the combination *(Full access +
+`MARKET_SIM_HIGHS_THREADS=1` + `_LEAN=1`)* — ~2.4 GiB of headroom — had never been tested,
+and the shard tests it with a cheap early stop. The shard reads BOTH cgroup layouts rather
+than assuming v2.
+
