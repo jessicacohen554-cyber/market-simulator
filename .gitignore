@@ -1903,3 +1903,11 @@ results/calibration/spp63_*/
 # `rm`, as what discharges it, so these stay on local disk until the owner has
 # ruled on promotion. Slim artifacts are force-added per the FINDING.
 results/ff-t3-neiso-golden/d92/
+
+# nyiso-226 (2026-09-10) screen bundles: the rule-29 [R-SCREEN] one-year screen arm
+# (2023) for the NYC ST_GAS persistent-base coefficient re-basing, and the full-span
+# per-year shard bundles if the screen clears. Ignored so they can never reach `main`,
+# which is the ONLY thing rule 29(c) DELETE-BEFORE-MERGE requires; rule 31 [R-RETAIN]
+# names gitignoring — never `rm` — as what discharges it, so these stay on local disk
+# until the owner has ruled on promotion.
+results/calibration/nyiso226_*/
