@@ -105,6 +105,20 @@ _IGNORE = {
     # guard's own instruction; verified to be the SOLE unmapped key of
     # ercot261_five_year_keeper, which it was blocking from replay entirely.
     "model_changes_note",
+    # Composition provenance: {source bundle: [years it contributed]}, written
+    # when a rule-32 [R-SHARD] parent composes per-year shard bundles into one
+    # multi-year bundle. Pure provenance in the same class as "reuse" (which
+    # records the same shape for --reuse-solved) — it names where a solved year
+    # came from and selects no mechanism, so a replay re-solves every year fresh
+    # off the recipe kwargs, which are complete on their own. NOT to be confused
+    # with "config_partition_overrides" above: that key carries a per-year key
+    # OVERLAY a replay must apply, and it is consumed, not dropped. A composite
+    # whose years solved under different recipes therefore still carries the
+    # overlay and is still replayed correctly; this key alone means only that
+    # the bundle was assembled from shards. Ignored deliberately per this
+    # guard's own instruction; it was the SOLE unmapped key of pjm_d4_2_TP /
+    # pjm_d4_2_A, which it was blocking from replay entirely (pjm-d4-3).
+    "composed_from",
 }
 # Recorded-only env-gated probe values: resolved inside backcast_config from
 # env vars (ERCOT_ZONAL_GAS / ERCOT_WEST_NETLOAD_GAS /
