@@ -166,6 +166,28 @@ not carry as outage at all. Net of it the model's **window** envelope is 14,653 
 published 33,298 MW. Argue the level question on the window basis, state both numbers, and do not
 let the aggregate comparison kill a composition repair.
 
+## THE SOLVE STAGING — how many shards, and when
+
+**Most outcomes spend ZERO shards. Do not launch anything until the stage before it has cleared.**
+
+| stage | LP | shards | gate to proceed |
+|---|---|---|---|
+| **0. Kill gate** (detect the gas sub-5-day windows, derive only) | **none** | **none** | recovered annual-mean MW is a material fraction of the 5,418-8,575 MW forced gap, against a bar you pre-registered |
+| **1. Build** (derive change, re-derived artifact, new gated field, matrix row, cache-key registration) | none | none | `--set <field>=true` exists and the off-path is byte-inert |
+| **2. SCREEN** | 1 year | **ONE shard: 2022** | the four structural gates you pre-registered (reserve dual non-zero in the target hours; model-minus-meter thermal gap closing from +11.1 GW; confinement; no non-target load-bearing flip) |
+| **3. FULL SPAN** | 6 years | **SIX shards, one per year** | — |
+
+**Stage 3 is 2020, 2021, 2022, 2023, 2024 and 2025 — all six, no exceptions.** Rule 16
+`[R-ALLYEARS]`: every year the ISO can score, composed into ONE bundle, never a single-year or
+training-only keeper. Rule 12 `[R-PARALLEL]` forbids parallel years inside one invocation, so
+sharding per year costs nothing and buys full parallelism; rule 32(b) caps each shard at 20 minutes,
+which one PJM year fits. The screen year is re-solved inside the full span (its throwaway bundle is
+never reused).
+
+Registration is the **A(2023-2025) + TP(2020-2022) pair**, with TP stamped to the keeper under rule
+30(a) — and it happens ONCE, in the parent, after every shard lands (rule 32(d)). Composition,
+`stamp_config_partition.py --check`, scoring and the promotion question are all the parent's.
+
 ## RULES THAT WILL BITE YOU
 - **Rule 28(a) FIRST, before phase 0.** pjm-d4-3 launched a shard before finishing its matrix read
   and burned an LP on an already-adjudicated arm. Read the cell, then measure, then propose.
