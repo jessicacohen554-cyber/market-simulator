@@ -220,3 +220,81 @@ Implemented, tested and gate-clean in the parent, with no LP spent:
 fails identically at HEAD with this branch's changes stashed. It is nyiso-224's constants
 landing; `scenarios.py` is not one of the seven `SURFACE_MODULES`, so nothing in this
 change can move any ISO's fingerprint. It belongs to the NYISO lane.
+
+---
+
+# ADDENDUM A — a weakness in §2, recorded BEFORE the screen result
+
+Written after the screen shard launched and **before any solve number came back**, because
+it qualifies a claim §2 already makes and the record must not be tidied afterwards.
+
+## A.1 The partition breaks a reconciliation that currently holds almost exactly
+
+The committed 2023 benchmark's `classFull` total is **616.259 TWh** against MISO's EIA-930
+reported net generation of **616.516 TWh** — a gap of **−0.04 %**. Armed, the bench total
+falls to **603.746 TWh**, i.e. **−2.07 %** against the same grid total.
+
+That is a real cost of the arm and it is stated as one. §2 did not mention it.
+
+## A.2 But that aggregate match is NOT evidence of a clean benchmark
+
+Decomposed by fuel family, 2023, bench `classFull` vs the EIA-930 buckets:
+
+| family | bench | EIA-930 | bench − 930 |
+|---|---:|---:|---:|
+| coal | 185.787 | 174.961 | **+10.827** |
+| gas | 207.651 | 241.177 | **−33.526** |
+| nuclear | 87.177 | 87.842 | −0.664 |
+| wind | 91.715 | 91.721 | −0.006 |
+| solar | 6.348 | 6.348 | +0.000 |
+| hydro | 9.979 | 9.980 | −0.001 |
+| **other** (oil+biomass+OTHER+OTHER_FOSSIL) | 27.602 | 4.491 | **+23.111** |
+| **TOTAL** | **616.259** | **616.519** | **−0.259** |
+
+The −0.259 TWh headline is the residue of **68.1 TWh of absolute per-family discrepancy**
+that happens to cancel. So "the bench total matches the grid" is a coincidence of
+offsetting errors, not a property worth protecting — and the two largest errors point in
+exactly the directions this arm moves: **+23.1 TWh too much "other" and −33.5 TWh too
+little gas.** Armed, the "other" family error falls **+23.111 → +10.598**.
+
+## A.3 The competing hypothesis, named because it would INVALIDATE the premise
+
+§2 treats EIA-930 `OTH` as a like-for-like comparator for the model's `biomass` + `OTHER`
++ `oil`. There is a coherent rival reading in which it is not:
+
+> MISO's BA telemetry may label a blast-furnace-gas or coke-oven-gas **steam** unit as
+> `NG`, not `OTH`. If ~12.5 TWh of the chp=Y block is telemetered as gas, then 930's `NG`
+> already contains it, `OTH` is not a pure comparator, and the cogen **is** on the grid —
+> in which case the injection is right and this arm's premise is wrong. On that reading
+> the honest pairing is bench (gas+other) 235.25 vs 930 (NG+OTH) 245.67 = **−10.4 TWh**,
+> i.e. the benchmark under-counts *gas*, and the repair is on the gas side, not here.
+
+**This session cannot discriminate the two readings at zero LP, and does not claim to.**
+The argument that favours §2's reading is a structural one rather than a measurement: a
+paper mill's recovery boiler serving its own load is not a MISO market participant and
+would not appear in the BA's telemetry under *any* fuel label. That is a reason, not a
+proof. What would actually discriminate it is a per-generator EIA-930 fuel-attribution
+source, or MISO's own registered-resource roster — neither is on disk, and both are
+**intake work, not a solve**.
+
+Consequence, stated plainly: **§2's corroboration is weaker than §2 states.** It shows the
+"other" family is over-counted by 23.1 TWh on the 930 basis and that the partition removes
+about half of it; it does **not** establish that 930 `OTH` is the exact quantity the
+injected classes should equal.
+
+## A.4 New pre-registered gate — REPORTED, never a kill
+
+| gate | test on the 2023 screen | disposition |
+|---|---|---|
+| **G-6 bench-total consequence** | bench `classFull` total, armed, against EIA-930 net generation 616.516 TWh; and the per-family table above recomputed armed | **REPORTED at full magnitude, in both directions. NOT a kill gate**, because the bench moving is the intended behaviour of a bench-and-model seam, and killing on it would be gating the screen on a residual (rule 1 `[R-STRUCT]`, rule 29). Expected armed: total 603.746 (−2.07 %), "other" family error +23.111 → +10.598 |
+
+The five STOP gates of §6 are unchanged. G-6 joins the reported set, not the kill set.
+
+## A.5 What this does to the arm's standing
+
+The arm remains worth its one screen shard: it is a rule 14 `[R-ACCURATE]` repair with zero
+free parameters, a real forward analogue, and a measured 12.514 TWh footprint whose sign
+matches the two largest benchmark family errors. But the **promotion bar is higher than
+§2 implied.** On this record, a screen that clears G-1..G-5 is evidence the *seam works as
+built* — it is **not** evidence that the level it lands on is right, and this session will
+not present it as such. The competing hypothesis of A.3 stays open and goes to the owner.
