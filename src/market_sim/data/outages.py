@@ -449,6 +449,46 @@ def unit_outage_short_csv_for_iso(iso: str | None) -> Path:
     return UNIT_OUTAGE_CSV.with_name(f"campd-unit-outages-short-{iso.upper()}.csv")
 
 
+def unit_outage_short_gas_csv_for_iso(iso: str | None) -> Path:
+    """Return the SHORT (< 5-day) GAS unit-outage CSV path for an ISO.
+
+    Written by ``scripts/data/derive_campd_unit_outages.py --short-windows
+    --short-window-groups gas --merit-order-guard`` (pjm-d4-4): full stops of
+    1-5 days on the gas-side model groups
+    (:data:`_SHORT_GAS_GROUPS`) that the standard >= 5-day floor excludes and
+    that the coal-scoped short extract has never carried. Consumed by
+    :func:`unit_outage_short_derate_factors` under
+    ``ScenarioConfig.unit_outage_short_windows_gas``.
+
+    A SEPARATE file from :func:`unit_outage_short_csv_for_iso`, deliberately:
+    the coal extract is never rewritten, so the gas family is an independently
+    gated object and the coal-only path stays byte-identical.
+
+    Identification differs from the coal scope's and the difference is the
+    point (rule 18 ``[R-PHYSICS]``: gate on conduct, not on a class name).
+    ``SHORT_BASELOAD_CF`` is a BASELOAD guard — it keeps economic idling out by
+    admitting only units that normally run near their ceiling, which a cycling
+    combined cycle is not — so the gas scope carries the MERIT-ORDER guard
+    instead: the unit's own measured SRMC against the revealed clearing cost of
+    the capacity that WAS running. The detector is the event-based dead-span
+    rule the >= 5-day gas extract already uses, never the coal sustained-gap
+    rule.
+    """
+    if iso is None or iso.upper() == "ERCOT":
+        return UNIT_OUTAGE_CSV.with_name("campd-unit-outages-shortgas.csv")
+    return UNIT_OUTAGE_CSV.with_name(f"campd-unit-outages-shortgas-{iso.upper()}.csv")
+
+
+# Model plant groups the GAS short-window extract covers — the disjoint
+# complement of the coal-scoped extract's ``plant_group == "COAL"``. The two
+# scopes never share a group, so the two overlays place no capacity on the same
+# bin-hour twice (rule 19 ``[R-ONE-MECH]``); combustion turbines are absent
+# because :func:`_unit_outage_target` drops them at routing anyway.
+_SHORT_GAS_GROUPS: frozenset[str] = frozenset(
+    {"CC_REGULAR", "CC_CHP", "ST_GAS", "ST_CHP"}
+)
+
+
 # Columns unit_outage_derate_factors reads (event-grain; the same columns the
 # raw CAMPD unit-outage CSV and the clean unit-outage-events table both carry).
 _UNIT_OUTAGE_EVENT_COLUMNS: tuple[str, ...] = (
@@ -1175,6 +1215,7 @@ def unit_outage_short_derate_factors(
     st_capacity_basis: bool = False,
     per_unit_clip: bool = False,
     extract_basis_share: bool = False,
+    gas_scope: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return short-window (< 5-day) unit-outage availability multipliers.
 
@@ -1188,17 +1229,39 @@ def unit_outage_short_derate_factors(
     ``duration_days < UNIT_OUTAGE_MIN_DAYS`` so the two overlays stay disjoint
     (a window >= the floor belongs to the standard overlay and is dropped
     here). ISOs without the file get an empty dict (no effect).
+
+    ``gas_scope`` (``ScenarioConfig.unit_outage_short_windows_gas``, pjm-d4-4)
+    additionally reads the GAS companion
+    (:func:`unit_outage_short_gas_csv_for_iso`) and concatenates its rows before
+    the shared accumulator runs, so the gas family enters on exactly the same
+    arithmetic and the same capacity denominator as the coal one. The two
+    scopes are disjoint by PLANT GROUP (``COAL`` vs :data:`_SHORT_GAS_GROUPS`)
+    and both are disjoint from the >= 5-day overlay by DURATION, so nothing is
+    counted twice (rule 19 ``[R-ONE-MECH]``). ``gas_scope`` widens a DISCARD; it
+    stacks nothing on the coal scope. An ISO without the gas file gets the coal
+    scope unchanged.
     """
     iso = (iso or "ERCOT").upper()
     csv_path = unit_outage_short_csv_for_iso(iso)
-    if not csv_path.exists():
+    gas_path = unit_outage_short_gas_csv_for_iso(iso) if gas_scope else None
+    have_gas = gas_path is not None and gas_path.exists()
+    if not csv_path.exists() and not have_gas:
         return {}
-    df = pd.read_csv(csv_path)
+    frames: list[pd.DataFrame] = []
+    if csv_path.exists():
+        frames.append(pd.read_csv(csv_path))
+    if have_gas:
+        frames.append(pd.read_csv(gas_path))
+    df = frames[0] if len(frames) == 1 else pd.concat(frames, ignore_index=True)
+    # Built over the UNFILTERED frame, exactly as the coal-only path built it
+    # over the unfiltered coal extract (nyiso-196) — so the off path, whose
+    # frame IS that file, is byte-inert.
     basis = (
         _extract_basis_index(df) if (extract_basis_share and iso != "ERCOT") else None
     )
+    scopes = {"COAL"} | (set(_SHORT_GAS_GROUPS) if gas_scope else set())
     df = df[
-        (df["duration_days"] < UNIT_OUTAGE_MIN_DAYS) & (df["plant_group"] == "COAL")
+        (df["duration_days"] < UNIT_OUTAGE_MIN_DAYS) & (df["plant_group"].isin(scopes))
     ]
     return _unit_outage_factors_from_events(
         df,

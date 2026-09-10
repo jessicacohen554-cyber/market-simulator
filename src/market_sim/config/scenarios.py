@@ -378,6 +378,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # SAME COMMIT as the field (the nyiso-119 / caiso-186 discipline), so the
     # pinned default key never moves.
     "unit_outage_per_unit_clip",
+    # pjm-d4-4 GAS-side short-window outage companion (GATED default-off; the
+    # consumer reads it via
+    # ``getattr(config, "unit_outage_short_windows_gas", False)`` in
+    # data/fleet/arrays.py, so the off path is byte-inert). Registered IN THE
+    # SAME COMMIT as the field (the nyiso-119 / caiso-186 discipline), so the
+    # pinned default key never moves.
+    "unit_outage_short_windows_gas",
     # nyiso-196 unit-outage removed FRACTION on the extract's own capacity
     # basis (GATED default-off; every consumer reads it via
     # ``getattr(config, "unit_outage_extract_basis_share", False)`` in
@@ -1870,6 +1877,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by miso-202 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "unit_outage_per_unit_clip": "False",
+    # Added by pjm-d4-4 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
+    "unit_outage_short_windows_gas": "False",
     # Added by nyiso-196 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "unit_outage_extract_basis_share": "False",
@@ -2888,6 +2898,7 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     "caiso_dam_outages": "CAISO's published DAM outage record for the year",
     "miso_native_outage_source": "MISO's published outage record for the year",
     "unit_outage_short_windows": "measured unit-grain outage windows",
+    "unit_outage_short_windows_gas": "the same record, gas-side sub-5-day scope",
     "unit_outage_fleet_status_scope": "EIA-860 operable generator status",
     # miso-200's unit_outage_mixed_gas_routing is DELIBERATELY ABSENT from this
     # map, and the absence is the claim. This registry marks an overlay whose
@@ -16908,6 +16919,40 @@ class ScenarioConfig:
     # and never double-count. Default off; GATED CHANGE (alters availability).
     unit_outage_short_windows: bool = False
 
+    # Tier 3 (calibration) — the GAS-side companion of the short-window family
+    # (pjm-d4-4). GATED, default off. Reads
+    # ``campd-unit-outages-shortgas-<ISO>.csv`` in ADDITION to the coal-scoped
+    # short extract, so the < 5-day full stops the >= 5-day floor discards for
+    # CC_REGULAR / CC_CHP / ST_GAS / ST_CHP enter the availability envelope on
+    # the same arithmetic and the same capacity denominator as coal's.
+    #
+    # Driver (rule 17 ``[R-FLOOR-WINDOW]`` / rule 1 ``[R-STRUCT]``): PJM's
+    # published outage record is 23.0-29.4 % FORCED while the model's window
+    # envelope is 5.8-7.0 % forced-like, a 5,418-8,575 MW composition gap, and
+    # the forced signal lives in the SHORT strata — per-stratum correlation
+    # against PJM's own published FORCED series is positive at 0-3 d and 3-7 d
+    # and negative at 7-21 d, 21-60 d and > 60 d in ALL FOUR of 2022-2025
+    # (8 positive cells, 12 negative, zero exceptions;
+    # results/calibration/_pjm162_split_derivability.json). The boundary is
+    # data-identified by that sign flip, NOT swept — no value was chosen to
+    # make a criterion pass, and the classification is invariant to any cut
+    # placed inside a stratum.
+    #
+    # Identification (rule 18 ``[R-PHYSICS]``, gate on conduct not class name):
+    # the coal scope keeps economic idling out with ``SHORT_BASELOAD_CF``, a
+    # BASELOAD guard a cycling combined cycle cannot pass. The gas scope
+    # carries the MERIT-ORDER guard instead — the unit's own measured SRMC
+    # against the revealed clearing cost of the capacity that WAS running —
+    # which asks the economic question directly. Detector: the event-based
+    # dead-span rule the >= 5-day gas extract already uses.
+    #
+    # Rule 19 ``[R-ONE-MECH]``: disjoint from the coal scope by plant group and
+    # from the >= 5-day overlay by duration, so it REPLACES a discard rather
+    # than stacking on anything. Backcast-mode overlay; the forward analogue is
+    # the same detector on any vintage (rule 13). Default off; GATED CHANGE
+    # (alters availability).
+    unit_outage_short_windows_gas: bool = False
+
     # Tier 3 (calibration) — unit-grain partial-derate plateaus, the second
     # window shape of the measured unit-availability family (the companion of
     # unit_outage_short_windows). Driver (rule 12): sustained CF-ceiling
@@ -20590,6 +20635,7 @@ TIER_TAGS: dict[str, int] = {
     "dual_fuel_oil_reattribution": 3,
     "outage_source": 3,
     "unit_outage_short_windows": 3,
+    "unit_outage_short_windows_gas": 3,
     "unit_partial_outage_windows": 3,
     "unit_outage_maxgen_events": 3,
     "ercot_dam_availability_coal_event_cap": 3,

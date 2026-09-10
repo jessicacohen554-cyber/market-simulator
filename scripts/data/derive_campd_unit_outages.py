@@ -182,6 +182,30 @@ SHORT_WINDOW_MAX_DAYS: int = 5
 # full stop (given 10+ h starts and take-or-pay fuel) is a forced event.
 SHORT_BASELOAD_CF: float = 0.55
 
+# --short-window-groups: which model plant groups the SHORT (< 5-day) mode
+# emits (pjm-d4-4). "coal" is the frozen baseload-coal scope; "gas" is the
+# disjoint gas-side companion, whose windows go to their own extract so the
+# coal file is never rewritten (the miso-200 / nyiso-175b separate-companion
+# discipline). The two scopes never share a plant group, so the two extracts
+# stack no capacity on each other (rule 19 [R-ONE-MECH]).
+#
+# The gas scope's identification is NOT the coal scope's. `SHORT_BASELOAD_CF`
+# is a BASELOAD guard: it keeps economic idling out by admitting only units
+# that normally run near their ceiling, which is a property coal has and a
+# cycling CC does not. Applying it to gas would admit nothing; omitting it
+# without a replacement would admit economic cycling. The gas scope therefore
+# carries the MERIT-ORDER guard instead — the direct economic test (the unit's
+# own measured SRMC against the revealed clearing cost of the capacity that WAS
+# running, scripts/lib/outage_detect.filter_merit_order_layup) — which asks the
+# economic question rather than proxying it by duty cycle. Declared ex ante and
+# measured against interest: it removes 10.8 % of the recovered PJM 2022 annual
+# mean and 5.1 % of its tail-hour family, i.e. it selects the SMALLER family,
+# and both scopes clear the pre-registered gate either way
+# (docs/RESULT-pjm-d4-4-forced-outage-composition-2026-09-10.md section 4).
+SHORT_WINDOW_GAS_GROUPS: frozenset[str] = frozenset(
+    {"CC_REGULAR", "CC_CHP", "ST_GAS", "ST_CHP"}
+)
+
 # The revealed-availability (high-load) filter and its constants
 # (HIGH_LOAD_PCTL, MIN_INMERIT_HOURS, high_load_mask) are the shared detector
 # primitives — imported above from scripts.lib.outage_detect.
@@ -1149,6 +1173,21 @@ def main() -> None:
         "campd-unit-outages-short[-{ISO}].csv.",
     )
     ap.add_argument(
+        "--short-window-groups",
+        default="coal",
+        choices=("coal", "gas"),
+        help="Which model plant groups --short-windows emits. 'coal' (default) "
+        "is the frozen baseload-coal scope and is byte-identical. 'gas' emits "
+        "the DISJOINT gas-side companion "
+        "(campd-unit-outages-shortgas[-{ISO}].csv, consumed under "
+        "ScenarioConfig.unit_outage_short_windows_gas): the event-based "
+        "dead-span detector (never the coal sustained-gap rule), no "
+        "SHORT_BASELOAD_CF baseload guard (a coal guard a cycling CC cannot "
+        "pass), and the MERIT-ORDER guard as its economic-idling separator "
+        "instead — so --merit-order-guard is REQUIRED with it. Ignored by "
+        "--partial-windows, which stays coal-only.",
+    )
+    ap.add_argument(
         "--partial-windows",
         action="store_true",
         help="Derive the UNIT-GRAIN partial-derate plateau file "
@@ -1324,6 +1363,17 @@ def main() -> None:
     args = ap.parse_args()
     if args.short_windows and args.partial_windows:
         raise SystemExit("--short-windows and --partial-windows are mutually exclusive")
+    short_gas = args.short_windows and args.short_window_groups == "gas"
+    if args.short_window_groups == "gas" and not args.short_windows:
+        raise SystemExit("--short-window-groups gas requires --short-windows")
+    if short_gas and not args.merit_order_guard:
+        # The gas scope has no baseload guard, so the merit-order test IS its
+        # economic-idling separator. Emitting it unguarded would ship a strictly
+        # less-identified extract than its own coal sibling.
+        raise SystemExit(
+            "--short-window-groups gas requires --merit-order-guard "
+            "(the gas scope's economic-idling separator)"
+        )
     if args.no_fullstop_override:
         args.fullstop_override_days = 10**9
     if args.short_windows and args.min_outage_days == 5.0:
@@ -1354,6 +1404,15 @@ def main() -> None:
             # campd-partial-outages.csv (a different datatype, ERCOT-scoped in
             # fleet.py). Matches outages.unit_partial_outage_csv_for_iso.
             fname = f"campd-partial-outages-{iso}.csv"
+        elif short_gas:
+            # A SEPARATE companion path: the coal short extract is never
+            # overwritten, so the coal-only off path stays byte-identical and
+            # the gas family is a single, independently-gated object.
+            fname = (
+                "campd-unit-outages-shortgas.csv"
+                if iso == "ERCOT"
+                else f"campd-unit-outages-shortgas-{iso}.csv"
+            )
         elif args.short_windows:
             fname = (
                 "campd-unit-outages-short.csv"
@@ -1517,9 +1576,7 @@ def main() -> None:
             # it stays aligned under a state's clipped in-progress-year clock
             # (hour i means the same wall-clock hour in both).
             merit_panel = None
-            if args.merit_order_guard and not (
-                args.short_windows or args.partial_windows
-            ):
+            if args.merit_order_guard and not args.partial_windows:
                 if year not in merit_panels:
                     n_full = len(
                         pd.date_range(f"{year}-01-01", f"{year}-12-31 23:00", freq="h")
@@ -1780,7 +1837,14 @@ def main() -> None:
                     # (0.58-0.72). Identification correction cited to that
                     # measurement, not to a price residual (rule 23), applied
                     # uniformly to any ISO's re-derive.
-                    if args.short_windows or args.partial_windows:
+                    if short_gas:
+                        # Gas scope: the disjoint complement of the coal one.
+                        # No SHORT_BASELOAD_CF (see SHORT_WINDOW_GAS_GROUPS) —
+                        # the merit-order guard below is this scope's
+                        # economic-idling separator, and it is mandatory.
+                        if unit_is_coal[uid] or ugroup not in SHORT_WINDOW_GAS_GROUPS:
+                            continue
+                    elif args.short_windows or args.partial_windows:
                         if not unit_is_coal[uid]:
                             continue
                         oper_cf = _when_operable_cf(
