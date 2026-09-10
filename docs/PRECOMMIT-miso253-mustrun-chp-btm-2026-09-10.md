@@ -359,3 +359,47 @@ that *these* units are metered.
   gate of §6 moves.
 
 Registered here before the screen result so it cannot be read as post-hoc support.
+
+---
+
+# ADDENDUM C — pre-solve dispatch context, and an expectation that may go against the arm
+
+Read off the **committed keeper's own hourly sidecars** (rule 29(b) form 4 — no solve).
+Recorded before any screen number.
+
+## C.1 The injection passes through 1:1, confirmed in the keeper's dispatch
+
+Keeper P1 2023 model energy: `biomass` **8.128 TWh**, `OTHER` **10.325 TWh** — exactly the
+injected amounts of §4. The must-run block is not attenuated anywhere in the LP, so the
+partition's dispatch effect is the full 12.5136 TWh, or **1,428.5 MW on hourly average**
+(flat within a month, split by zone demand share).
+
+## C.2 There is headroom — the arm should not produce scarcity
+
+Keeper 2023: **slack 0.0 MWh, dump 0.0 MWh**. The LP is nowhere at VOLL, so withdrawing
+1.4 GW of must-run supply should be absorbed by the merit order rather than priced as
+shortage. `import` is a live class at **43.192 TWh**, so the replacement can come from
+imports as well as thermal — which is why G-2 is written as
+Δ(dispatchable classes) **+ Δ(net imports)** rather than thermal alone.
+
+## C.3 The expectation that may go AGAINST the arm, stated before the result
+
+Keeper `CC_REGULAR` is **138.151 TWh** against a bench `classFull` of **141.817** — i.e.
+the model is **−3.666 TWh** under bench today. At a load-weighted mean price of
+**$34.467/MWh** the marginal class in most MISO hours is CC_REGULAR, so a large share of
+the withdrawn 12.5136 TWh will land there.
+
+**If it takes most of it, CC_REGULAR lands around 148–150 TWh — roughly +7 TWh OVER bench,
+flipping the sign of its C1 error rather than closing it.** That is a real and foreseeable
+way for this arm to be wrong, and it is written down here rather than discovered afterwards.
+
+**It does not change the gate, and deliberately so.** C1 `CC_REGULAR` is the *target*
+residual; killing the screen on it would be the fitted-mechanism selection rule 1
+`[R-STRUCT]` forbids, and passing the screen on it would be the same error with the sign
+reversed. It is **reported at full magnitude in either direction**, and the arm's standing
+is decided by the owner on structure, not by whether this number improved.
+
+If CC_REGULAR does overshoot, the honest reading is **not** "the partition is too large" —
+that would be tuning the partition to a residual, and the partition has no parameter to
+tune. It is that MISO's benchmark carries a **−33.5 TWh gas-family error** (ADDENDUM A.2)
+which this arm was never built to fix, and that the two defects interact.
