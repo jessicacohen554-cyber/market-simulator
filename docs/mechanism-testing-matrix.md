@@ -12622,12 +12622,42 @@ already above measured), and 2024 C3a may cross +10 % — a real cost of a corre
 reported at full magnitude, not absorbed. Record:
 `docs/PRECOMMIT-nyiso224-total-east-cutset-2026-09-10.md`.
 
-**NEW SECOND (O) — the five-zone REPRESENTATION LIMIT itself.** nyiso-169 named it and this
-session's 2022 numbers size it: even a correct aggregate cap cannot reproduce a price surface
-that is **non-monotone** along a four-link radial chain. Splitting `Upstate_West` at the
-Central-East boundary (so the CENT EAST sub-cutset and the parallel Marcy-South-family path are
-separate links) is the identified route and is a **topology change requiring owner sign-off** —
-it is named here rather than attempted.
+**SCREEN RESULT, SAME SESSION — THE OBJECT IS CONFIRMED BY SOLVE AND THE ARM IS REJECTED ON ITS
+OWN GATE (`nyiso_total_east_cutset_ttc` cell `O → R`).** One shard, 2022 only, control = the
+committed `nyiso_fuelvintage_H2`, no control solve spent, 7/7 config signature, parent ran no LP.
+**CONFIRMED, and this is the durable result:** relieving that one link and changing nothing else
+moves the ISO load-weighted price **+8.813 $/MWh of the +10.451** the year was missing — **84 %
+of the whole 2022 residual from one limit** — with `Upstate_West` **33.712 → 73.378** against a
+measured 60.61, and **C3a −13.00 % → −2.04 %**. **REJECTED ANYWAY (rule 1 `[R-STRUCT]`: the
+residual is not the gate):** **G-1 FAIL**, the separation share falls **97.08 % → 2.06 %** against
+a registered [8, 60] band — the link went **inert** — and the level says it is no instrument
+artifact (mean NYC−Upstate spread control **$54.14**, arm **$6.59**, **measured $32.58**: the
+control over-separates 1.7×, the arm under-separates 4.9×). **G-5 FAIL** — `COAL_PRB`
+0.6554 → 1.2675 TWh against a 0.00 benchmark, `CC_CHP` +2.09 TWh the wrong way. **F-1 FAIL** —
+total energy +0.324 TWh against 0.05. **PASSED:** G-2 (the $1.40 pin clears 42.89 % → 0.00 %),
+G-3 (confinement), G-4 (upstate up **and** downstate down). Reported and NOT a promotion reason:
+gas family 64.637 → 63.097 TWh vs 60.22, `CC_REGULAR` 36.870 → 35.674, max price 2000.00 →
+450.40, VOLL slack 360.5 → 0.0 MWh. Recorded but **not claimed as a pass**: the arm's own
+`network_2022.parquet` measures the link binding in **12.47 %** of hours (phase 0 predicted
+9.85 %; the market's own sub-cutset 10.0 %) — the binding **frequency** is now roughly right
+while the price consequence is 5× too small, so what remains is **not the limit's level**.
+**DO NOT chase it by quantile:** the right limit sits between 1,825 MW and the p90 envelope, and
+picking it by where the gates land is a swept free parameter rule 1 condition (c) refuses. Span
+never spent, nothing registered, keeper unchanged, bundle preserved on branch
+`claude/nyiso224-cutset-2022` and not deleted (rule 31 `[R-RETAIN]`); **owner promotion ruling
+OPEN**. Record: `docs/RESULT-nyiso224-total-east-cutset-2026-09-10.md`.
+
+**NEW TOP OF QUEUE (O) — the five-zone REPRESENTATION LIMIT itself, now demonstrated FROM BOTH
+SIDES.** nyiso-169 named it; this session's screen
+**demonstrated** it. **A five-zone radial chain cannot hold a NESTED constraint.** CENT EAST is a
+sub-cutset *inside* TOTAL EAST: cap the one link at the sub-cutset and it binds in 97 % of hours
+($54 spread against a measured $33); cap it at the cutset and it binds in 2 % ($6.59 spread).
+Both are wrong, and no single aggregate limit is right, because one link cannot represent two
+nested boundaries — which is why the successor is **not** a re-quantiled envelope. Splitting
+`Upstate_West` at the Central-East boundary, so the CENT EAST sub-cutset and the parallel
+non-CE cutset paths become separate links each carrying its own posted limit at zero free
+parameters, is the identified route. It is a **topology change requiring owner sign-off** and is
+named here rather than attempted.
 
 **QUEUE STATUS UPDATE 2026-09-06 (nyiso-200, phase 0 zero-LP + TWO one-year rule-29 SCREENS,
 both STOPPED at their own pre-registered gates on 2023 and deleted before merge (29c) — SPAN NEVER
