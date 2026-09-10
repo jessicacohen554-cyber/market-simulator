@@ -13231,6 +13231,8 @@ def main() -> None:
             netload_drag_merit_allocation=args.netload_drag_merit_allocation,
             netload_drag_min_run_persistence=args.netload_drag_min_run_persistence,
             vre_curtailment_oversupply_allocation=args.vre_curtailment_oversupply_allocation,
+            spp_curtailment_ceiling=args.spp_curtailment_ceiling,
+            spp_curtail_depth_wind=args.spp_curtail_depth_wind,
             campd_outage_merit_order_guard=(
                 args.campd_outage_merit_order_guard
                 if "--campd-outage-merit-order-guard" in sys.argv
@@ -13661,6 +13663,8 @@ def main() -> None:
         netload_drag_merit_allocation=args.netload_drag_merit_allocation,
         netload_drag_min_run_persistence=args.netload_drag_min_run_persistence,
         vre_curtailment_oversupply_allocation=args.vre_curtailment_oversupply_allocation,
+        spp_curtailment_ceiling=args.spp_curtailment_ceiling,
+        spp_curtail_depth_wind=args.spp_curtail_depth_wind,
         pjm_interface_feed_admissibility_gate=args.pjm_interface_feed_admissibility_gate,
         gas_offer_margin_anchor_vintage=args.gas_offer_margin_anchor_vintage,
         nyiso_local_selfsupply=args.nyiso_local_selfsupply,
