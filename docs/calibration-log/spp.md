@@ -1722,4 +1722,118 @@ is effectively a **one-zone market**.
 
 **Next shorthand: spp-27.**
 
+## spp-27 — 2026-09-10
+
+**CARD R-be — the keeper's named, unfixed rule-17 `[R-FLOOR-WINDOW]` defect — is ATTACKED AT THE
+GRAIN, and the grain half LANDS. The card does NOT close, and this entry says so before it says
+anything else.** New registered run `2026-09-10-spp-27-commitment-grain`
+(`results/calibration/spp27_span`), **CALIBRATED**, grade 7 of 8, 0 fails, 1 ledgered C3c caveat —
+**identical to keeper 8 on every scored criterion**, both re-scored live at HEAD rubric v3.7.
+Records: `docs/RESULT-spp27-span.md`, `docs/RESULT-spp27-screen-2023.md`,
+`docs/handoffs/PRECOMMIT-spp-27-commitment-grain-2026-09-10.md`,
+`docs/handoffs/ADDENDUM-spp-27-registration-seam-2026-09-10.md`,
+`docs/SHARDREPORT-spp27-screen-2023.md`, `docs/SHARDREPORT-spp27-span.md`.
+**NOT PROMOTED — `frontend/data/backcast/keepers/SPP.json` is UNTOUCHED and SPP's designated keeper
+remains keeper 8 (lane SPP-64). Promotion is the owner's call (rule 31 `[R-RETAIN]`).** SPP still
+holds **no `complete` marker and no `frontier` declaration**, and this lane creates neither.
+
+**THE OBJECT, re-diagnosed rather than inherited.** The keeper note and the handoff both read R-be as
+*"their operating hours are simply not top-system-load correlated"*. Phase 0 (zero LP, from the
+committed bench and three `run_year(fleet_only=True)` rebuilds) **falsifies half of that**: 1230's
+floor window is **3.5×** enriched in its own online hours over the plant's base rate (1271 **4.2×**,
+1235 **3.3×**), so those plants ARE load-correlated. What the census found instead is a **GRAIN**
+defect. The floor asserts a COMMITMENT — a day-ahead, whole-operating-day decision by a
+vertically-integrated utility — but the engine placed it by ranking **individual hours** by system
+load, so it carried the diurnal shape of LOAD, not of COMMITMENT. **The driver measurement is SPP's
+own and is unambiguous**: the peak-to-mean of each plant's ONLINE hour-of-day profile is
+**1.007–1.146 on 21 of the 22 ST_GAS plants** (only Mooreland 3008 at **1.609** genuinely
+two-shifts) and the night/afternoon share of online hours is **0.78–1.09 on 19 of 22** — when these
+units are synchronized they run through the overnight trough. **The physics statement is the
+decisive one (rule 18 `[R-PHYSICS]`): the incumbent window implies 2,843 STARTS in 2023 against the
+meter's 647 — 4.39× — including 202 asserted starts on 989 MW Muskogee in 2024 against 27 measured,
+307 on Plant X against 45, 179 on 883 MW Wilkes against 11. A gas-steam unit cannot start 200 times
+in a year.**
+
+**THE ARM: `mustrun_window_commitment_grain`, a NEW gated `ScenarioConfig` field, default off.** The
+window becomes `round(k/24)` whole operating days ranked by that day's MEAN system load — the
+mechanical lift of the incumbent's own hourly ranking to the commitment period, **same signal, same
+ordering statistic, one grain coarser**. SIZE (`online_frac`), LEVEL (`committed_pct`) and MEMBERSHIP
+untouched. Armed: window peak-to-mean **1.0000 in all three years by construction** and implied
+starts **288 / 342 / 315**, i.e. FEWER than the meter records — a conservative commitment scaffold.
+**Rule 21 `[R-DOF]`: ZERO free parameters** (no threshold, share, multiplier or length; the grain is
+the operating day), ledger inherited at n_entries 3 / n_residual 2. **Rule 13 `[R-MEASURED]`: nothing
+measured enters the PLACEMENT** — the ranking is the model's own load shape — so unlike
+`mustrun_online_frac_per_year` the field is deliberately **NOT** registered backcast-only. **Rule 25
+`[R-ISO-SCOPE]`:** default `False`, registered in `_CACHE_KEY_OPTIONAL_FIELDS` at that declared
+default, so every pre-existing cache key of all seven ISOs is byte-stable and **no other ISO moves**.
+
+**PROTOCOL.** PRECOMMIT pushed at `32dfd75e` **before any LP**. Screen year **2023**, named on the
+mechanism's OWN largest measured footprint (**858,999.2 MWh of floor moved, 22.20 %**, against
+19.61 % and 19.25 %) and demonstrably **not** the residual year (2024 carries the larger C1 miss and
+the smaller footprint). **Six pre-registered STRUCTURAL STOP gates, NONE of which reads the target** —
+the target is the D-4 rider, so no gate reads D-4 or any per-plant conduct statistic — and **six of
+six PASS**. G-DRIFT returned **ZERO** solve-path files changed between the keeper's `basis_sha` and
+this base, so form 4 held and **no control solve was spent**. Span: ONE `--years 2023 2024 2025`
+invocation, **499 s**, **exactly ONE differing `scenario_config` key across the whole config**,
+`offer_curve_by_group` byte-identical, dump 0 and slack byte-identical to the keeper
+(0 / 370.1017 / 0 MWh), system price max byte-identical (59.3126 / 2000.0000 / 73.7731) — **so C3c
+could not and did not move a single hour.** ST_GAS gross **+0.2801 / +0.2004 / +0.2403 TWh**, paid by
+coal and CC_REGULAR and **not** by curtailing wind (−0.011 %). C8 ST_GAS forced share
+0.1962/0.1849/0.1744 → **0.2112 / 0.1969 / 0.1825** against a 0.30 cap, still under in all three
+years. D-1 passes with `cv_ratio` moving further toward 1.0 (2.117/1.844/1.717 → 1.672/1.515/1.338)
+and `profile_r` 0.997/0.999/0.997 → 0.987/0.997/0.992, far above its 0.80 bar.
+
+**THE ADVERSE FINDING, REPORTED NOT ABSORBED — R-be DOES NOT CLOSE.** `D4.passed` is still False and
+the conduct-FAIL count is **4 / 4 / 4** against the keeper's **4 / 5 / 3 — the same total of 12
+rows.** It removes 1230 in 2024 (`measured_zero_share` 0.5906 → 0.4408, PASS) and improves
+1230/1235/1271 in **all nine** of their year-rows without crossing the bar elsewhere
+(2023: 0.7018 → 0.6096, 0.6230 → 0.5606, 0.6976 → 0.5875), and it **ADDS Mooreland 3008 in 2025**
+(0.4735 → 0.5262). Mooreland is the one measured two-shifter in the fleet, so a uniform whole-day
+window is the wrong grain for it — **exactly what the charter predicted, in both directions, before
+the solve.** **Mooreland is NOT special-cased**: a per-plant grain predicate needs a threshold, which
+is a free parameter (rule 21), and choosing it against this statistic is the fitted-mechanism
+selection rule 1 `[R-STRUCT]` (c) forbids; a plant exclusion is refused on miso-170's own warning
+that it *"would bury that error inside a membership list"*. **What remains of R-be**: day SELECTION
+(for 1230/1235/1271 the day-selection lift over chance is only ~2×, and **no forecast-admissible
+signal available to this model reaches it**), plus a SIZE component that is **not a defect** (pooled
+`online_frac` is the rule-13-admissible construction and necessarily mis-sizes an individual year;
+`mustrun_online_frac_per_year` is **refused** here as backcast-only).
+
+**VARIANTS MEASURED AT PHASE 0 AND DELIBERATELY NOT TAKEN**, declared so the choice cannot be read as
+hidden: a day-**PEAK** ranking key and a **NET-load** signal each score marginally better on the
+conduct-overlap statistic (net+peak **0.8368** against day-mean-gross **0.8238** over 65 plant-years).
+Both refused — each bundles a second, independently-unmotivated change into the same arm, and
+net-vs-gross is a **wash at the hour grain** (0.8168 vs 0.8168). **Nothing was swept against any
+gate.**
+
+**THE RECOMMENDATION IS PROMOTE, AND THE CASE AGAINST IS STATED FIRST** (`RESULT-spp27-span.md` §8):
+the arm buys **no score at all**, does not close the card it was chartered against, and costs +3–5 %
+forced energy. The case for is rule 1 `[R-STRUCT]`'s own test — a run is a keeper because it is the
+most structurally faithful, and a structurally-correct mechanism is never rejected because the
+residual didn't move. **The choice is the same numbers with a floor that asserts a possible
+commitment, or the same numbers with a floor that asserts an impossible one.**
+
+**ALSO RECORDED, ROUTED NOT FIXED — an instrument defect.**
+`scripts/lib/bundle_fleet.reconstruct_bundle_fleet` is **order-dependent across years within a
+process** for SPP: the control's 2025 mechanism-16 floored energy read **3.477892**, **3.758881**
+(alone, reproduced exactly twice) and **4.263776** depending on which years were built before it in
+the same process. **2023 is stable at 3.870051 in every history**, which is why the screen gates —
+all set on 2023 — are unaffected, and every qualitative span conclusion holds under every history.
+**Nothing scored is affected**: scored numbers come from the solved bundles, and the solve builds
+years sequentially in one process identically for control and arm. Not this lane's object.
+
+**Process notes kept rather than tidied:** the parent misread the wall clock and launched a duplicate
+screen shard (cost: one ~5-minute LP); the first span shard went idle asking for clarification and
+was re-launched with a plainer prompt. Neither destroyed any result (rule 31). Registration used
+`--no-prune`. The bundle's `unit_hourly_*` / `network_*` parquets (~48 MB) were deliberately not
+carried onto the lane branch — the committed set matches the keeper's (3.1 MB). Post-run checks all
+green: `check_mechanism_matrix.py` exit 0 with the new field registered,
+`check_registry_payload_parity.py` OK (42 runs, 74 bundle dirs, 0 unsynced),
+`audit_keepers.py --iso SPP` PASS (0 failures, 0 warnings).
+
+**`[R-HOLDOUT]` was removed 2026-09-09**, so no year is protected from having been iterated against:
+**`CALIBRATED` is a rubric determination, NOT a certified out-of-sample skill claim.**
+
+**Next shorthand: spp-28.**
+
 
