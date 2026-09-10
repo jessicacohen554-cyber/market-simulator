@@ -1896,3 +1896,10 @@ results/calibration/nyiso224_*/
 # stay on local disk until the OWNER has ruled on promotion. A promoted bundle's
 # slim set overrides this rule via `git add -f`.
 results/calibration/spp63_*/
+# capx D92 (2026-09-10) FC-5/FC-6 re-basing legs for D77's named residue: the
+# base control L0 and the three FC-6 paired arms, NEISO 2026-2050. Ignored so
+# they can never reach `main` — the only thing rule 29 [R-SCREEN](c)
+# DELETE-BEFORE-MERGE requires; rule 31 [R-RETAIN] names gitignoring, never
+# `rm`, as what discharges it, so these stay on local disk until the owner has
+# ruled on promotion. Slim artifacts are force-added per the FINDING.
+results/ff-t3-neiso-golden/d92/
