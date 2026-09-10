@@ -13464,3 +13464,93 @@ Record: `docs/RESULT-nyiso-fuelvintage-1-2026-09-09.md`,
 `docs/FINDING-nyiso-fuelvintage-1-2026-09-09.md`,
 `docs/FINDING-nyiso-2020-touchpoint-data-blocked-2026-09-09.md`,
 `docs/ADDENDUM-nyiso-fuelvintage-1-promotion-2026-09-09.md`.
+
+## nyiso-225 — 2026-09-10 — the topology split is CLOSED AT PHASE 0, the nyiso-224 arm is REJECTED by owner ruling, and the queue it sent this lane to is STALE
+
+**ZERO LP. Zero shards launched. Keeper `2026-09-09-nyiso-221-fuelvintage-span` UNCHANGED.** No
+`ScenarioConfig` field, constant, derive script or model artifact changed; no run produced, so none
+registered (rule 15 registers runs). Control = the committed keeper bundles `nyiso_fuelvintage_A` /
+`nyiso_fuelvintage_H2` plus the preserved nyiso-224 arm bundle on `claude/nyiso224-cutset-2022` —
+rule 29(b) **form 4** throughout, **no control solve spent**. Records:
+`docs/FINDING-nyiso225-topology-split-closed-2026-09-10.md`,
+`scripts/probes/_nyiso225_topology_phase0.py`, `results/calibration/_nyiso225_topology_phase0.json`.
+
+**OWNER RULING 2026-09-10, two questions put with their costs and both answered:** *accept the
+phase-0 kill and go to the queue* (over *charter the seam* / *charter F|G anyway*), and *reject the
+nyiso-224 arm as constructed* (over *promote on the C3a gain* / *hold open*). Both executed here;
+`nyiso_total_east_cutset_ttc` stays `False`, armed by nobody, cell **R**, and rule 31 `[R-RETAIN]`'s
+promotion question is CLOSED.
+
+**THE SUCCESSOR IS DEAD ON THREE INDEPENDENT LEGS, any one sufficient, all zero LP.**
+**(a) There is no nested PAIR of constraints to separate, because only ONE of the pair is ever a
+constraint.** The binding census over every posted internal interface, **both directions, all four
+years** (MIS P-32, ≥95 % of each hour's own posted limit): `CENTRAL EAST - VC` **10.01 / 4.36 / 2.50
+/ 3.62 %** and **nothing else binds** — `TOTAL EAST`, the boundary the successor was built around,
+is **0.01 / 0.00 / 0.00 / 0.00 %**; `MOSES SOUTH` 0.00 % positive **and** negative; `DYSINGER EAST`
+0.02 / 0.00 / 0.00 / 0.00; `UPNY CONED` 0.31 / 0.00 / 0.00 / 0.00; `SPR/DUN-SOUTH` 0.00 / 0.03 /
+0.01 / 0.00; `WEST CENTRAL` carries the ±9,999 MW sentinel in 100 % of hours. The model already
+carries the one boundary that binds. **(b) The split that COULD separate the legs is already closed
+at G0.** The non-CE leg is **1,626 / 1,677 / 1,461 / 1,465 MW**, stable while `MOSES SOUTH` swings
+**+1,352 → −188 MW** (corr 0.238 / 0.107 / 0.183 / 0.182), so it is **not** Moses South; it bypasses
+zone F into zone G, and **both legs leave the same upstate zone**, so no split of A–E separates them
+— the separation is at **F|G**, which nyiso-124 §2.1 closed with cause (no F/G transfer limit in MIS
+P-32, in 36 months of MIS ATC/TTC, or in any of the four Gold Books; `ext_G` unrecoverable).
+**DO-NOT-REDO discharged:** the new 2022 incidence evidence — **F is the dearest zone in New York**
+(97.02 vs G 84.65) and F−G widens to **32.86** in the market's own CE-binding hours against the
+0.36–2.65 nyiso-124 measured in 2023–25 — is a bigger basis, and **a bigger basis does not create a
+published limit**. **(c) The split that IS identifiable is provably inert:** splitting inside A–E
+along `DYSINGER EAST` / `MOSES SOUTH` (both posted, so G0 quantity 2 passes there) creates links
+binding in **0.00–0.02 %** of hours. There **is** real congestion inside A–E (**$13.66/MWh** of the
+$17.28 mean max–min spread is the *published* congestion component, not losses) but **no posted
+limit produces it** — nyiso-124's quantity-2 failure again, upstate.
+
+**THE ARM'S FREQUENCY MATCH WAS A COINCIDENCE OF AGGREGATES.** nyiso-224 recorded the armed link
+binding in 12.47 % of hours against a market sub-cutset at 10.0 % and **carefully declined to claim
+it as a pass**; measured hour by hour it should not have been. Arm binds **1,122 h (12.81 %)**,
+market CENTRAL EAST **877 h (10.01 %)**, **both 71 h** against **112.3 expected if independent** —
+**lift 0.63×**, precision **6.3 %**, recall 8.1 %. **The arm congests in the wrong hours and slightly
+avoids the right ones**, and no re-quantiling repairs hour-level **anti-correlation** — a stronger
+reason than rule 1 `[R-STRUCT]` (c)'s governance refusal, and a measurement rather than a rule.
+**The rent is 14× short:** measured (F,G)−(A–E) in the market's own binding hours **$82.54**, the
+arm's **$6.03**, on a mean |dual| of **$3.36/MWh** at 67.4 % loading.
+
+**RECORDED, NOT CHARTERED.** The 2022 driver reproduces nyiso-124 §6.1's 2023–25 seam diagnosis on
+the arm's own bundle: `NYISO_external>Long_Island` at bound **99.6 %**, `>NYC` **98.6 %**,
+`>Capital_Hudson` **93.7 %** — ~**2,040 MW east of the cutset as a flat, price-insensitive block** —
+against measured east-side schedules of **1,476 MW net**, a net including `SCH - NE - NY` at
+**−400.3 MW** (New York *exporting* to New England, a direction the model's east-side seam never
+takes), while `>Upstate_West` sits at bound only **12.6 %**. The seam cells are already `K` and
+nyiso-125's identification refusal on the `Capital_Hudson` / `Upstate_West` border links is
+load-bearing and unmoved, so this is evidence, not a lever.
+
+**THE QUEUE IS STALE — ALL THREE ITEMS nyiso-224 NAMED AS LIVE ARE SPENT** (finding §7; §5.5
+corrected this session). **(1)** the three-way re-screen is **SPENT and REFUTED** by nyiso-201,
+which *is* that re-screen — both corrected gates cleared, the arm died on **C3a-2025 −6.9 → −11.7 %**,
+and its hand-forward reads *"do not re-screen it"*; promoting would have **decertified** NYISO.
+**(2)** "the run screen alone" is `nyiso_gas_bridge_startup_aware`, **SPENT and PROMOTED** by
+nyiso-202 and in the current keeper. **(3)** Astoria 8906 is **ANSWERED NEGATIVE TWICE** — membership
+(nyiso-201: **0 of 18** cells, the maximum distance from qualifying) and basis (nyiso-203: **clean
+negative, sound as built**) — and the conviction is not even a standing property (2025 runs the
+opposite way; the D-4 rider convicts in neither year). The list survived because nyiso-201/-202/-203
+recorded outcomes in the keeper header and this log rather than as `QUEUE STATUS UPDATE` blocks.
+
+**WHAT IS ACTUALLY OPEN — no live screenable lever.** No in-training rubric failure exists: the
+keeper reads **CALIBRATED**, grade 7 of 8, **fails 0**, C3c the lone ledgered caveat. **2022 C3a is
+validation-tier and can neither certify nor decertify** (rule 30(c); since `[R-HOLDOUT]`'s removal no
+year certifies), its three routes now limit `R` / topology **closed** / seam `K`. **One OWNER CALL is
+outstanding and is not a lane** (nyiso-203, reported and not taken): the NYC persistent-base
+coefficient is a **daily-mean statistic applied hourly**, basis-matched **0.1750 → 0.1663** (−5.0 %,
+−0.133 TWh over three years) — refused because rule 23 has no source-data trigger, because it would
+**move** the coefficient where nyiso-140's correction did not (rule 21 admissibility is an owner
+question), and because it **provably cannot reach** the 8906 object (0.13 % of that plant's hours
+against its 5,400 binding hours). The hydro **Q2 stays blocked on evidence** (nyiso-220).
+
+**Rules:** 1 `[R-STRUCT]` (structure decided this, not the residual — the arm was rejected holding an
+11-point C3a gain and the successor killed on a binding census; `authorized_price_tuning` **NONE**);
+13/14 (every number measured off committed postings; the F|G refusal is identifiability, which a
+larger basis cannot cure); 21 `[R-DOF]` (zero free parameters proposed); **29 `[R-SCREEN]` — phase 0
+did its whole job**, an arm with a computable pre-solve gate never reached a solve and the gate
+killed the route for ~0 LP against a ~17-min span, G-CTRL form 4 throughout, no control solve;
+30 `[R-MECH-MATRIX]` (NYISO shard stamped, no new row, §5.5 corrected); 31 `[R-RETAIN]` (nothing
+deleted, promotion question put and RULED); 32 `[R-SHARD]` (parent ran no LP; nothing earned a
+shard, so none was launched).

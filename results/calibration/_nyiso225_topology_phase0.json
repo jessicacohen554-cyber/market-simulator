@@ -1,0 +1,394 @@
+{
+  "session": "nyiso-225",
+  "iso": "NYISO",
+  "date": "2026-09-10",
+  "solves": 0,
+  "bind_threshold_frac": 0.95,
+  "binding_census": {
+    "CENTRAL EAST - VC": {
+      "2022": {
+        "hours": 8759,
+        "pos_limit_posted_pct": 100.0,
+        "pos_bind_pct": 10.0126,
+        "neg_bind_pct": null,
+        "flow_mean_mw": 1544.5,
+        "pos_limit_mean_mw": 1824.9
+      },
+      "2023": {
+        "hours": 8759,
+        "pos_limit_posted_pct": 100.0,
+        "pos_bind_pct": 4.3612,
+        "neg_bind_pct": null,
+        "flow_mean_mw": 1328.3,
+        "pos_limit_mean_mw": 1733.3
+      },
+      "2024": {
+        "hours": 8783,
+        "pos_limit_posted_pct": 100.0,
+        "pos_bind_pct": 2.5048,
+        "neg_bind_pct": null,
+        "flow_mean_mw": 1758.6,
+        "pos_limit_mean_mw": 2829.9
+      },
+      "2025": {
+        "hours": 8759,
+        "pos_limit_posted_pct": 100.0,
+        "pos_bind_pct": 3.6191,
+        "neg_bind_pct": null,
+        "flow_mean_mw": 1664.1,
+        "pos_limit_mean_mw": 2830.7
+      }
+    },
+    "TOTAL EAST": {
+      "2022": {
+        "hours": 8759,
+        "pos_limit_posted_pct": 100.0,
+        "pos_bind_pct": 0.0114,
+        "neg_bind_pct": null,
+        "flow_mean_mw": 3170.9,
+        "pos_limit_mean_mw": 6408.3
+      },
+      "2023": {
+        "hours": 8759,
+        "pos_limit_posted_pct": 100.0,
+        "pos_bind_pct": 0.0,
+        "neg_bind_pct": null,
+        "flow_mean_mw": 3005.1,
+        "pos_limit_mean_mw": 6193.9
+      },
+      "2024": {
+        "hours": 8783,
+        "pos_limit_posted_pct": 100.0,
+        "pos_bind_pct": 0.0,
+        "neg_bind_pct": null,
+        "flow_mean_mw": 3219.5,
+        "pos_limit_mean_mw": 7545.6
+      },
+      "2025": {
+        "hours": 8759,
+        "pos_limit_posted_pct": 100.0,
+        "pos_bind_pct": 0.0,
+        "neg_bind_pct": null,
+        "flow_mean_mw": 3129.3,
+        "pos_limit_mean_mw": 7536.7
+      }
+    },
+    "MOSES SOUTH": {
+      "2022": {
+        "hours": 8759,
+        "pos_limit_posted_pct": 100.0,
+        "pos_bind_pct": 0.0,
+        "neg_bind_pct": 0.0,
+        "flow_mean_mw": 1352.5,
+        "pos_limit_mean_mw": 2941.9
+      },
+      "2023": {
+        "hours": 8759,
+        "pos_limit_posted_pct": 100.0,
+        "pos_bind_pct": 0.0,
+        "neg_bind_pct": 0.0,
+        "flow_mean_mw": 581.3,
+        "pos_limit_mean_mw": 2880.0
+      },
+      "2024": {
+        "hours": 8783,
+        "pos_limit_posted_pct": 100.0,
+        "pos_bind_pct": 0.0,
+        "neg_bind_pct": 0.0,
+        "flow_mean_mw": 194.5,
+        "pos_limit_mean_mw": 2827.8
+      },
+      "2025": {
+        "hours": 8759,
+        "pos_limit_posted_pct": 100.0,
+        "pos_bind_pct": 0.0,
+        "neg_bind_pct": 0.0,
+        "flow_mean_mw": -188.3,
+        "pos_limit_mean_mw": 2796.3
+      }
+    },
+    "DYSINGER EAST": {
+      "2022": {
+        "hours": 8759,
+        "pos_limit_posted_pct": 100.0,
+        "pos_bind_pct": 0.0228,
+        "neg_bind_pct": null,
+        "flow_mean_mw": 608.0,
+        "pos_limit_mean_mw": 2936.7
+      },
+      "2023": {
+        "hours": 8759,
+        "pos_limit_posted_pct": 100.0,
+        "pos_bind_pct": 0.0,
+        "neg_bind_pct": null,
+        "flow_mean_mw": 589.6,
+        "pos_limit_mean_mw": 3142.8
+      },
+      "2024": {
+        "hours": 8783,
+        "pos_limit_posted_pct": 100.0,
+        "pos_bind_pct": 0.0,
+        "neg_bind_pct": null,
+        "flow_mean_mw": 880.0,
+        "pos_limit_mean_mw": 3128.0
+      },
+      "2025": {
+        "hours": 8759,
+        "pos_limit_posted_pct": 100.0,
+        "pos_bind_pct": 0.0,
+        "neg_bind_pct": null,
+        "flow_mean_mw": 804.2,
+        "pos_limit_mean_mw": 3112.3
+      }
+    },
+    "WEST CENTRAL": {
+      "2022": {
+        "hours": 8759,
+        "pos_limit_posted_pct": 0.0,
+        "pos_bind_pct": null,
+        "neg_bind_pct": null,
+        "flow_mean_mw": 109.5,
+        "pos_limit_mean_mw": null
+      },
+      "2023": {
+        "hours": 8759,
+        "pos_limit_posted_pct": 0.0,
+        "pos_bind_pct": null,
+        "neg_bind_pct": null,
+        "flow_mean_mw": 96.6,
+        "pos_limit_mean_mw": null
+      },
+      "2024": {
+        "hours": 8783,
+        "pos_limit_posted_pct": 0.0,
+        "pos_bind_pct": null,
+        "neg_bind_pct": null,
+        "flow_mean_mw": 381.9,
+        "pos_limit_mean_mw": null
+      },
+      "2025": {
+        "hours": 8759,
+        "pos_limit_posted_pct": 0.0,
+        "pos_bind_pct": null,
+        "neg_bind_pct": null,
+        "flow_mean_mw": 340.3,
+        "pos_limit_mean_mw": null
+      }
+    },
+    "UPNY CONED": {
+      "2022": {
+        "hours": 8759,
+        "pos_limit_posted_pct": 100.0,
+        "pos_bind_pct": 0.3083,
+        "neg_bind_pct": null,
+        "flow_mean_mw": 3347.0,
+        "pos_limit_mean_mw": 5584.4
+      },
+      "2023": {
+        "hours": 8759,
+        "pos_limit_posted_pct": 100.0,
+        "pos_bind_pct": 0.0,
+        "neg_bind_pct": null,
+        "flow_mean_mw": 2814.8,
+        "pos_limit_mean_mw": 5759.1
+      },
+      "2024": {
+        "hours": 8783,
+        "pos_limit_posted_pct": 100.0,
+        "pos_bind_pct": 0.0,
+        "neg_bind_pct": null,
+        "flow_mean_mw": 3015.8,
+        "pos_limit_mean_mw": 6101.7
+      },
+      "2025": {
+        "hours": 8759,
+        "pos_limit_posted_pct": 100.0,
+        "pos_bind_pct": 0.0,
+        "neg_bind_pct": null,
+        "flow_mean_mw": 3003.4,
+        "pos_limit_mean_mw": 6409.2
+      }
+    },
+    "SPR/DUN-SOUTH": {
+      "2022": {
+        "hours": 8759,
+        "pos_limit_posted_pct": 100.0,
+        "pos_bind_pct": 0.0,
+        "neg_bind_pct": null,
+        "flow_mean_mw": 2014.9,
+        "pos_limit_mean_mw": 4600.0
+      },
+      "2023": {
+        "hours": 8759,
+        "pos_limit_posted_pct": 100.0,
+        "pos_bind_pct": 0.0343,
+        "neg_bind_pct": null,
+        "flow_mean_mw": 1603.6,
+        "pos_limit_mean_mw": 4483.5
+      },
+      "2024": {
+        "hours": 8783,
+        "pos_limit_posted_pct": 100.0,
+        "pos_bind_pct": 0.0114,
+        "neg_bind_pct": null,
+        "flow_mean_mw": 1775.6,
+        "pos_limit_mean_mw": 4479.1
+      },
+      "2025": {
+        "hours": 8759,
+        "pos_limit_posted_pct": 100.0,
+        "pos_bind_pct": 0.0,
+        "neg_bind_pct": null,
+        "flow_mean_mw": 1851.1,
+        "pos_limit_mean_mw": 4600.0
+      }
+    }
+  },
+  "parallel_leg": {
+    "2022": {
+      "total_east_mean_mw": 3170.9,
+      "central_east_mean_mw": 1544.5,
+      "moses_south_mean_mw": 1352.5,
+      "non_ce_leg_mean_mw": 1626.4,
+      "corr_non_ce_leg_moses_south": 0.2381
+    },
+    "2023": {
+      "total_east_mean_mw": 3005.1,
+      "central_east_mean_mw": 1328.3,
+      "moses_south_mean_mw": 581.3,
+      "non_ce_leg_mean_mw": 1676.7,
+      "corr_non_ce_leg_moses_south": 0.1071
+    },
+    "2024": {
+      "total_east_mean_mw": 3219.5,
+      "central_east_mean_mw": 1758.6,
+      "moses_south_mean_mw": 194.5,
+      "non_ce_leg_mean_mw": 1460.9,
+      "corr_non_ce_leg_moses_south": 0.1834
+    },
+    "2025": {
+      "total_east_mean_mw": 3129.3,
+      "central_east_mean_mw": 1664.1,
+      "moses_south_mean_mw": -188.3,
+      "non_ce_leg_mean_mw": 1465.1,
+      "corr_non_ce_leg_moses_south": 0.1822
+    }
+  },
+  "basis_decomposition_2022": {
+    "year": 2022,
+    "boundaries": {
+      "CENTRAL EAST E->F": {
+        "d_lbmp": 36.12,
+        "d_congestion_component": -34.38,
+        "congestion_share_pct": 95.2
+      },
+      "C->F": {
+        "d_lbmp": 37.22,
+        "d_congestion_component": -34.13,
+        "congestion_share_pct": 91.7
+      },
+      "MOSES SOUTH D->E": {
+        "d_lbmp": 12.08,
+        "d_congestion_component": -8.89,
+        "congestion_share_pct": 73.6
+      },
+      "WEST CENTRAL A->C": {
+        "d_lbmp": 3.25,
+        "d_congestion_component": -1.85,
+        "congestion_share_pct": 56.9
+      },
+      "DYSINGER EAST A->B": {
+        "d_lbmp": 0.73,
+        "d_congestion_component": -0.19,
+        "congestion_share_pct": 26.4
+      },
+      "F|G (UPNY-SENY)": {
+        "d_lbmp": -12.37,
+        "d_congestion_component": 12.86,
+        "congestion_share_pct": 103.9
+      },
+      "G->J": {
+        "d_lbmp": 2.6,
+        "d_congestion_component": -1.74,
+        "congestion_share_pct": 66.8
+      },
+      "LI import J->K": {
+        "d_lbmp": 10.39,
+        "d_congestion_component": -9.96,
+        "congestion_share_pct": 95.9
+      }
+    },
+    "within_upstate_west": {
+      "total_spread_mean": 17.28,
+      "congestion_spread_mean": 13.66
+    },
+    "zone_mean_lbmp": {
+      "A": 56.56,
+      "B": 57.29,
+      "C": 59.8,
+      "D": 48.82,
+      "E": 60.9,
+      "F": 97.02,
+      "G": 84.65,
+      "H": 86.22,
+      "I": 86.31,
+      "J": 87.25,
+      "K": 97.64
+    }
+  },
+  "arm_overlap_2022": {
+    "year": 2022,
+    "arm_bind_hours": 1122,
+    "arm_bind_pct": 12.81,
+    "market_ce_bind_hours": 877,
+    "market_ce_bind_pct": 10.01,
+    "overlap_hours": 71,
+    "expected_if_independent": 112.3,
+    "lift": 0.632,
+    "precision_pct": 6.3,
+    "recall_pct": 8.1,
+    "arm_mean_abs_dual_when_binding": 3.36,
+    "arm_mean_loading_pct": 67.4,
+    "arm_spread_when_binding": 6.03,
+    "measured_spread_when_ce_binds": 82.54
+  },
+  "seam_incidence_2022": {
+    "year": 2022,
+    "model_links": {
+      "NYISO_external>Capital_Hudson": {
+        "mean_mw": 253.9,
+        "limit_up_mean_mw": 280.1,
+        "at_upper_bound_pct": 93.7
+      },
+      "NYISO_external>Long_Island": {
+        "mean_mw": 906.0,
+        "limit_up_mean_mw": 906.3,
+        "at_upper_bound_pct": 99.6
+      },
+      "NYISO_external>NYC": {
+        "mean_mw": 880.0,
+        "limit_up_mean_mw": 886.1,
+        "at_upper_bound_pct": 98.6
+      },
+      "NYISO_external>Upstate_West": {
+        "mean_mw": 1218.7,
+        "limit_up_mean_mw": 2421.9,
+        "at_upper_bound_pct": 12.6
+      }
+    },
+    "measured_schedules_mean_mw": {
+      "SCH - HQ - NY": 979.9,
+      "SCH - HQ_CEDARS": 102.4,
+      "SCH - HQ_IMPORT_EXPORT": 705.9,
+      "SCH - NE - NY": -400.3,
+      "SCH - NPX_1385": 55.1,
+      "SCH - NPX_CSC": 212.4,
+      "SCH - OH - NY": 521.4,
+      "SCH - PJ - NY": 478.4,
+      "SCH - PJM_HTP": 369.6,
+      "SCH - PJM_NEPTUNE": 480.5,
+      "SCH - PJM_VFT": 280.7
+    },
+    "measured_east_of_cutset_net_mw": 1476.4
+  }
+}
