@@ -32,9 +32,33 @@
     "rt_coverage": 1.0,
     "rt_gt": 8,
     "threshold": 200.0
+   },
+   "2026": {
+    "da_coverage": 0.496,
+    "da_gt": 0,
+    "hours": 8760,
+    "rt_coverage": 0.496,
+    "rt_gt": 5,
+    "threshold": 200.0
    }
   },
   "ERCOT": {
+   "2018": {
+    "da_coverage": 1.0,
+    "da_gt": 50,
+    "hours": 8760,
+    "rt_coverage": 1.0,
+    "rt_gt": 74,
+    "threshold": 200.0
+   },
+   "2019": {
+    "da_coverage": 1.0,
+    "da_gt": 119,
+    "hours": 8760,
+    "rt_coverage": 1.0,
+    "rt_gt": 106,
+    "threshold": 200.0
+   },
    "2020": {
     "da_coverage": 1.0,
     "da_gt": 24,
@@ -82,9 +106,25 @@
     "rt_coverage": 1.0,
     "rt_gt": 31,
     "threshold": 200.0
+   },
+   "2026": {
+    "da_coverage": 0.564,
+    "da_gt": 65,
+    "hours": 8760,
+    "rt_coverage": 0.564,
+    "rt_gt": 44,
+    "threshold": 200.0
    }
   },
   "MISO": {
+   "2022": {
+    "da_coverage": 0.94,
+    "da_gt": 30,
+    "hours": 8760,
+    "rt_coverage": 0.863,
+    "rt_gt": 116,
+    "threshold": 200.0
+   },
    "2023": {
     "da_coverage": 1.0,
     "da_gt": 1,
@@ -108,9 +148,33 @@
     "rt_coverage": 1.0,
     "rt_gt": 88,
     "threshold": 200.0
+   },
+   "2026": {
+    "da_coverage": 0.496,
+    "da_gt": 153,
+    "hours": 8760,
+    "rt_coverage": 0.496,
+    "rt_gt": 150,
+    "threshold": 200.0
    }
   },
   "NEISO": {
+   "2018": {
+    "da_coverage": 1.0,
+    "da_gt": 4,
+    "hours": 8760,
+    "rt_coverage": 1.0,
+    "rt_gt": 32,
+    "threshold": 300.0
+   },
+   "2019": {
+    "da_coverage": 1.0,
+    "da_gt": 0,
+    "hours": 8760,
+    "rt_coverage": 1.0,
+    "rt_gt": 0,
+    "threshold": 300.0
+   },
    "2020": {
     "da_coverage": 1.0,
     "da_gt": 0,
@@ -158,9 +222,33 @@
     "rt_coverage": 1.0,
     "rt_gt": 20,
     "threshold": 300.0
+   },
+   "2026": {
+    "da_coverage": 0.496,
+    "da_gt": 140,
+    "hours": 8760,
+    "rt_coverage": 0.496,
+    "rt_gt": 126,
+    "threshold": 300.0
    }
   },
   "NYISO": {
+   "2018": {
+    "da_coverage": 1.0,
+    "da_gt": 0,
+    "hours": 8760,
+    "rt_coverage": 1.0,
+    "rt_gt": 25,
+    "threshold": 300.0
+   },
+   "2019": {
+    "da_coverage": 1.0,
+    "da_gt": 0,
+    "hours": 8760,
+    "rt_coverage": 1.0,
+    "rt_gt": 1,
+    "threshold": 300.0
+   },
    "2020": {
     "da_coverage": 1.0,
     "da_gt": 0,
@@ -208,9 +296,33 @@
     "rt_coverage": 1.0,
     "rt_gt": 42,
     "threshold": 300.0
+   },
+   "2026": {
+    "da_coverage": 0.496,
+    "da_gt": 151,
+    "hours": 8760,
+    "rt_coverage": 0.496,
+    "rt_gt": 85,
+    "threshold": 300.0
    }
   },
   "PJM": {
+   "2018": {
+    "da_coverage": 1.0,
+    "da_gt": 8,
+    "hours": 8760,
+    "rt_coverage": 1.0,
+    "rt_gt": 31,
+    "threshold": 200.0
+   },
+   "2019": {
+    "da_coverage": 1.0,
+    "da_gt": 0,
+    "hours": 8760,
+    "rt_coverage": 1.0,
+    "rt_gt": 14,
+    "threshold": 200.0
+   },
    "2020": {
     "da_coverage": 1.0,
     "da_gt": 0,
