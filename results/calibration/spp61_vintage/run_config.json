@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-09-09T03:12:42",
+  "timestamp": "2026-09-10T04:28:22",
   "git": {
-    "sha": "c1393878",
-    "basis_sha": "fc927c2f439a4e00207bab7c35abd10dc556142b",
-    "branch": "claude/spp-51c-curtailment-allocation-izd5x2",
+    "sha": "e9ca90c1",
+    "basis_sha": "283afe5d62ab0a0fd8acffccd59963fcbc3d8961",
+    "branch": "HEAD",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "",
+  "model_changes_note": "SPP-61: eia860_vintage_tracks_solve_year armed on the spp52a_fossil93 recipe, full 2023-2025 span (rule 16 R-ALLYEARS)",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "SPP",
@@ -39,7 +39,9 @@
     "ct_mustrun_floor_frac": 1.0,
     "coal_drop_pof": true,
     "coal_prb_passthrough_tiered": true,
-    "coal_prb_sigmoid_overrides": {},
+    "coal_prb_sigmoid_overrides": {
+      "eia860_vintage_tracks_solve_year": true
+    },
     "coal_bit_passthrough_sigmoid": false,
     "coal_bit_sigmoid_overrides": {},
     "coal_plant_monthly_pricing": true,
@@ -116,7 +118,7 @@
     "nyiso_dynamic_reserve_requirements": null,
     "nyiso_hydro_reserve_eligible": null,
     "nyiso_scr_edrp_reserve_eligible": null,
-    "git_sha": "c1393878"
+    "git_sha": "e9ca90c1"
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -292,7 +294,7 @@
     "plant_registry_path": "/home/user/market-simulator/data/raw/reference/master-plant-registry.csv",
     "cod_ramp_enabled": true,
     "eia860_vintage_year": null,
-    "eia860_vintage_tracks_solve_year": false,
+    "eia860_vintage_tracks_solve_year": true,
     "carry_operating_mothballs": false,
     "historic_outage_overlay": false,
     "plant_tranche_config_path": null,
@@ -677,6 +679,7 @@
     "ct_drag_ramp_end": 22,
     "netload_drag_layup_window_mask": false,
     "netload_drag_merit_allocation": false,
+    "netload_drag_min_run_persistence": false,
     "ercot_ct_offer_surface": false,
     "ercot_offer_surface_conditional": false,
     "ercot_offer_surface_midcurve_conditional": false,
@@ -1009,6 +1012,7 @@
     "pumped_storage_dispatch_adder": null,
     "battery_dispatch_adder": 0.0,
     "gas_monthly_actuals": false,
+    "gas_electric_power_monthly_level": false,
     "gas_hh_monthly_shape": false,
     "gas_daily_shape": false,
     "gas_hub_basis_overlay": false,
@@ -1036,6 +1040,8 @@
     "pjm_seam_neighbour_hourly_ladder": false,
     "ercot_zonal_gas_basis": false,
     "ercot_ep_gas_basis_monthly": false,
+    "ercot_ep_gas_basis_corroborated": false,
+    "ercot_ep_gas_basis_receipts_fallback": false,
     "ercot_zonal_spread_ep_referenced": false,
     "ercot_gas_delivered_floor_basis": null,
     "ercot_gas_contract_haircut": false,
@@ -1095,7 +1101,7 @@
     "rows": 182,
     "moved": {},
     "epochs": [],
-    "git_sha": "c1393878"
+    "git_sha": "e9ca90c1"
   },
   "environment": {
     "python_version": "3.11.15",
