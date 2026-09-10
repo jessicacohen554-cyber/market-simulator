@@ -1391,6 +1391,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # hashes distinctly. Registered IN THE SAME COMMIT as the field (the
     # nyiso-119 discipline).
     "ercot_ep_gas_basis_receipts_fallback",
+    # nyiso-223 NYISO hub-daily unpriced-day gap fill, default off: dropped
+    # from the hash at its False default so every pre-existing NYISO key (the
+    # designated keeper's included) stays valid, and ON it produces a different
+    # delivered-gas array (every month carrying an archive gap) and hashes
+    # distinctly. Registered IN THE SAME COMMIT as the field (the nyiso-119
+    # discipline).
+    "nyiso_hub_gap_month_level",
     # ercot-255 EP-reference of the F923-sourced rows of the ERCOT zonal gas
     # SPREAD, default off: dropped from the hash at its False default so every
     # pre-existing ERCOT key (the designated keeper's included) stays
@@ -1704,6 +1711,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # and so earns a distinct key. SHARED field -- very end, per HOUSE-3.
     # Registered IN THE SAME COMMIT as the field.
     "vre_curtailment_oversupply_allocation",
+    # SPP-58: the SPP wind curtailment ceiling and its level coefficient. Both
+    # default-off/inert, so every pre-existing cached run -- every ISO's keepers
+    # included -- keeps its key; an armed run hands the LP a genuinely different
+    # wind upper bound and so earns a distinct key. SHARED-field placement (very
+    # end, per HOUSE-3). Registered IN THE SAME COMMIT as the fields.
+    "spp_curtailment_ceiling",
+    "spp_curtail_depth_wind",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -2144,6 +2158,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by ercot-265 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "ercot_ep_gas_basis_receipts_fallback": "False",
+    # Added by nyiso-223 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "nyiso_hub_gap_month_level": "False",
     # Added by ercot-255 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "ercot_zonal_spread_ep_referenced": "False",
@@ -2304,6 +2321,11 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # SPP-51c: the oversupply water-fill curtailment allocation, registered at
     # its shipped default (the flat per-hour gross-up).
     "vre_curtailment_oversupply_allocation": "False",
+    # SPP-58: the SPP wind curtailment ceiling, registered at its shipped
+    # defaults (ceiling off; depth carried at its derived value so an armed run
+    # that leaves the depth alone still keys on the flag alone).
+    "spp_curtailment_ceiling": "False",
+    "spp_curtail_depth_wind": "0.288137",
 }
 
 
@@ -8587,6 +8609,30 @@ class ScenarioConfig:
     # population it caps). No-op unless caiso_dsw_daytime_clean is on. Default
     # off (byte-identical — the caiso-94 keeper recipe is unchanged);
     # CAISO-only.
+    caiso_dsw_lateevening_clean: bool = False  # caiso-269: close the hod 22-23
+    # WINDOW GAP the DSW clean-depth family leaves open. caiso-93 covers hod
+    # 0-5, caiso-94 hod 6-21, and caiso-87's surplus trigger is coverage-
+    # STARVED at 22-23 (measured ON in 0.3/0.8 % of 2024 and 1.6/1.9 % of 2025
+    # hod 22/23 - caiso-253's G-WINDOW leg, which closed the window question
+    # with "22-23 are OVERNIGHT-construction hours"). On the live keeper the
+    # armed clean capability falls 3,420 MW (hod 21) -> 33 MW (hod 22) in 2025
+    # while the measured WECC_DSW corridor net import RISES across the same
+    # boundary, against a measured EIA-930 import deficit of 1.0-1.8 GW at
+    # those hours. Adds ONE tranche whose capability is the measured hod 22-23
+    # p95 corridor depth (CAISO_DSW_LATEEVENING_CLEAN_DEPTH_BY_YEAR; CV 0.037,
+    # LOYO 6.8 %) net of the shaped firm block and ALL THREE sibling clean
+    # tranches (rule 19 [R-ONE-MECH]), armed only in (month x hod) buckets that
+    # clear caiso-253's PRE-REGISTERED raw-hub admissibility band
+    # (CAISO_LATEEVENING_SPREAD_BAND = (-2, +4) $/MWh on the measured DA
+    # CAISO-PaloVerde spread). That band is caiso-253's own refusal criterion
+    # re-used UNCHANGED, so 2023 - which failed it at -3.98/-2.56 - stays dark
+    # by construction rather than by a year list. ZERO new free parameters and
+    # ZERO new thresholds (rules 21 [R-DOF] / 24 [R-REGISTRY]). Priced at the
+    # RAW Palo Verde hub, EF 0, no wheel. Default off (byte-identical off: the
+    # tranche row is only built when this flag is on); CAISO-only (rule 25
+    # [R-ISO-SCOPE]). Carried by
+    # transmission.build_caiso_per_hub_intertie(lateevening_clean=) +
+    # transmission.inject_caiso_dsw_lateevening_clean.
     caiso_endogenous_wecc_node: bool = False  # Make the WECC_import node a REAL
     # co-optimized WECC-West neighbor ZONE instead of a set of static import
     # tranches (caiso-110; Option A of
@@ -15401,6 +15447,54 @@ class ScenarioConfig:
     ercot_wtx_curtail_depth_wind: float = 0.1004
     ercot_wtx_curtail_depth_solar: float = 0.1637
 
+    # SPP-58 — SPP's own instance of the same reduced-form structure, on SPP's
+    # own measured data (rule 25 [R-ISO-SCOPE]: nothing is transferred from
+    # ERCOT -- not the table, not the depth, not the corridor attribution).
+    #
+    # THE DEFECT IT REPAIRS. SPP's wind bound is `forecast_uncurtailed`: the
+    # delivered EIA-930 profile grossed up by the measured reference curtailment
+    # rate, a construction whose own stated precondition (data/renewables.py) is
+    # "real headroom, ENDOGENOUSLY RE-CURTAILED". It is not re-curtailed.
+    # Measured at zero LP on the keeper 2026-09-09-spp-52a-fossil-offer's own
+    # committed hourly sidecars, model re-curtailment is 0.26 / 0.22 / 0.17 % in
+    # 2023 / 2024 / 2025 against the 9.65 % rate the gross-up applies -- a 40-60x
+    # miss -- because the 2-zone reduction (SPP-North / SPP-South, one 3,400 MW
+    # link) collapses the SPS / Texas-Panhandle and western Kansas / Oklahoma
+    # export pockets that do the real curtailing, leaving the LP no mechanism to
+    # spill wind bid in at its -$26/MWh PTC floor. This repo's own code already
+    # names the failure mode: renewables.py keeps NYISO OUT of the fallback set
+    # because "its curtailment is locally driven and the reduced network can't
+    # re-curtail a gross-up". SPP is IN that set on identical facts.
+    #
+    # THE MECHANISM. ceiling_frac(t) = 1 - depth * congestion_share(t), applied
+    # to the wind CF upper bound on both SPP zones, where congestion_share is
+    # keyed on the MODEL'S OWN net-load decile x hour-of-day x season -- so it
+    # regenerates forward (more wind -> deeper troughs -> the high-incidence
+    # deciles re-compose) and responds to changed conditions, which is rule 13
+    # [R-MEASURED]'s forward test. SHAPE from SPP's published RTBM
+    # binding-constraint archive (data/raw/spp-binding-constraints, landed
+    # 2026-09-08), derived by scripts/data/derive_spp_curtailment_share.py from
+    # measured binding incidence ONLY -- never a curtailment volume, never a
+    # price, never a residual. LEVEL from SPP's published measured curtailment
+    # MW (SPP MMU ASOM via data/raw/spp-hsl/spp_wind_curtailment_annual.csv),
+    # the same identification ERCOT's depth uses: the single energy-weighted
+    # value that centres all three years at once (per-year 0.2565 / 0.3139 /
+    # 0.2917, pooled 0.288137 -- ONE config across every scored year, never
+    # swept against a gate). Solar takes NO ceiling: SPP's solar bound is
+    # delivered-pinned, so it carries no gross-up headroom to remove.
+    #
+    # RULE 19 [R-ONE-MECH]: it REPLACES vre_curtailment_oversupply_allocation,
+    # never stacks on it. Both answer "where does the measured curtailment
+    # land"; the allocation only moves the headroom to low-net-load hours and
+    # the measurement above is what that left behind. Enforced in code --
+    # renewables.py skips the oversupply allocation whenever this flag is armed
+    # -- so the two can never both be live in one solve.
+    #
+    # Default OFF; depth 0.0 is the inert ablation. Inert with no derived share
+    # table (the reader returns None and the static bound stands).
+    spp_curtailment_ceiling: bool = False
+    spp_curtail_depth_wind: float = 0.288137
+
     # ercot-165 — UNPOOL the driver's share by diurnal family, and give the
     # Panhandle export interface exactly ONE owner (rule 19 [R-ONE-MECH]).
     # FINDING-ercot164 measured that the pooled congestion_share is a UNION over
@@ -15780,6 +15874,29 @@ class ScenarioConfig:
     # NYISO. Backcast-only (no hub rows in forward years). See
     # market_sim.data.fuel.apply_nyiso_zonal_gas_basis.
     nyiso_zonal_gas_basis: bool = False
+
+    # Tier 3 (calibration) — nyiso-223. NYISO hub-daily gap fill: a calendar day
+    # the measured Transco Z6 NY archive NEVER PRICED takes the month's own
+    # observed level (shape factor 1.0) instead of inheriting the nearest
+    # print's deviation. ``_nyiso_hub_daily_gas_prices`` places each print on
+    # its true day and ``np.interp``s between them, which CLAMPS outside the
+    # observed span — so the unpriced tail of a month is asserted to sit at the
+    # last print's distance from the month mean, which the measured series never
+    # says. The gap is systematic, not incidental: the EIA Natural Gas Weekly
+    # Update publishes no page over the late-December holiday weeks, leaving a
+    # 10-13 day TRAILING December gap in six of eight archived years, so the
+    # fabricated days are exactly the year's coldest. Measured 2022: the Dec-21
+    # print ($6.29) is 0.86x the December print-mean ($7.32), and the clamp
+    # applies it to Dec 22-31 — the entire Winter Storm Elliott window. Rule 14
+    # [R-ACCURATE] (a reconciled reading of the real series beats a fabricated
+    # one) and rule 13 [R-MEASURED] (identical construction forward, so it
+    # regenerates for a forecast year). ZERO free parameters; still exactly
+    # mean-preserving within the month, so the monthly hub level, annual gas
+    # burn and fuel mix are untouched — it moves WHICH days are dear, never how
+    # dear the month is. Off by default so every other ISO, every registered
+    # keeper and every forecast is byte-identical. See
+    # market_sim.data.fuel.hubs._nyiso_hub_daily_gas_prices.
+    nyiso_hub_gap_month_level: bool = False
 
     # --- NYISO downstate-peaker structural pricing (2026-07, issue #1344 /
     # --- B-NYI-1 de-leak follow-up). New fields added as one contiguous block.
@@ -20369,6 +20486,8 @@ TIER_TAGS: dict[str, int] = {
     "ercot_wind_zone_shape": 3,
     "ercot_wtx_curtail_depth_wind": 3,
     "ercot_wtx_curtail_depth_solar": 3,
+    "spp_curtailment_ceiling": 3,
+    "spp_curtail_depth_wind": 3,
     "ercot_wtx_curtail_unpooled": 3,
     "ercot_wtx_panhandle_owner": 3,
     "coal_supply_repricing": 3,
@@ -20404,6 +20523,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_ep_gas_basis_monthly": 3,
     "ercot_ep_gas_basis_corroborated": 3,
     "ercot_ep_gas_basis_receipts_fallback": 3,
+    "nyiso_hub_gap_month_level": 3,
     "ercot_zonal_spread_ep_referenced": 3,
     "ercot_gas_delivered_floor_basis": 3,
     "ercot_gas_contract_haircut": 3,

@@ -1,5 +1,32 @@
 # Repository attributes.
 #
+# .gitignore MERGE DRIVER — the fix for a conflict class, not a conflict
+# ---------------------------------------------------------------------
+# Every calibration lane appends its own bundle-ignore block at the END of
+# .gitignore, because rule 29(c) [R-SCREEN] / rule 31 [R-RETAIN] require a screen
+# or shard bundle to be kept OUT of `main` by gitignore rather than deleted from
+# disk. With many lanes open at once that guarantees a textual collision at EOF
+# between ANY two of them: on 2026-09-10, 7 of the 8 conflicted open branches
+# conflicted on this file and nothing else, and a branch fixed by hand
+# re-conflicted within minutes (main took 102 commits that hour).
+#
+# `merge=union` is git's built-in line-union driver: on a conflicting hunk it
+# takes the lines from BOTH sides instead of writing conflict markers. That is
+# exactly the right semantics here — .gitignore is an unordered SET of ignore
+# rules, keeping both sides is always correct, and dropping either side is the
+# one genuinely harmful outcome (that lane's bundle then reaches `main` and turns
+# the Class-E bundle-retention sweep in check_registry_payload_parity.py red).
+# Duplicate rules, union's only side effect, are a no-op in .gitignore.
+#
+# DELIBERATELY SCOPED TO THIS ONE FILE. It must NOT be extended to the
+# mechanism-matrix shards (docs/codebase-site/data/mechanism-matrix/*.js) or any
+# other structured file: those collide on the SAME key carrying DIFFERENT
+# verdicts (an `O` row-add vs a tested `R`, or a stale `O` vs a promoted `K`), a
+# union there emits two cell lines for one key and corrupts the file, and rule
+# 28 [R-MECH-MATRIX] requires a human-legible adjudication of which verdict is
+# later. Those conflicts are supposed to be resolved by reading them.
+.gitignore merge=union
+#
 # GENERATED, COMMITTED DASHBOARD DATA (Wave 5C, refactor-consolidation plan §7-G)
 # ------------------------------------------------------------------------------
 # These files are machine output that happens to be committed, not source. The

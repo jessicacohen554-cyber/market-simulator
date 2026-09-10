@@ -3219,6 +3219,35 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 solar_cap,
                 zone_names,
             )
+            # SPP wind curtailment ceiling (SPP-58), forecast leg: the same
+            # per-(zone, hour) ceiling the backcast orchestrator applies
+            # (scripts/run_calibration.py), computed from the FORECAST state so
+            # the decile mapping regenerates as SPP wind builds out — which is
+            # what makes the mechanism forward-native under rule 13
+            # [R-MEASURED] rather than a backcast-only overlay. The matching
+            # flat gross-up of the delivered basis happens in
+            # load_renewable_profiles under the same gate (which also disarms
+            # the oversupply allocation there, rule 19), so no double-count.
+            # UNSET off the flag => byte-identical LP.
+            if iso == "SPP" and getattr(config, "spp_curtailment_ceiling", False):
+                from market_sim.config import paths as _spp_paths
+                from market_sim.data.curtailment_share import spp_curtail_multipliers
+
+                _spp_net_load = (
+                    np.asarray(year_demand, dtype=float).sum(axis=0)
+                    - (np.asarray(wind_cap, dtype=float)[:, None] * wind_cf).sum(axis=0)
+                    - (np.asarray(solar_cap, dtype=float)[:, None] * year_solar_cf).sum(
+                        axis=0
+                    )
+                )
+                _spp_mult = spp_curtail_multipliers(
+                    _spp_net_load,
+                    list(zone_names),
+                    depth_wind=float(getattr(config, "spp_curtail_depth_wind", 0.0)),
+                    reference_dir=_spp_paths.RAW_DIR / "reference",
+                )
+                if _spp_mult is not None:
+                    _wtx_mult = _spp_mult
             _wtx_spec_kwargs = (
                 {
                     "wind_curtail_share": _wtx_mult[0],

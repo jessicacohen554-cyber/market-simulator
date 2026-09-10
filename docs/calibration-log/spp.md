@@ -960,3 +960,92 @@ fills no other ISO's cell. **Routed not touched:** `run_calibration_full` builds
 `group_by_code` before `run_year` sets the year's vintage — measured effect for SPP exactly zero.
 
 Records: `docs/handoffs/PRECOMMIT-spp-61-2026-09-10.md`, `docs/handoffs/RESULT-spp-61-2026-09-10.md`.
+---
+
+## 2026-09-10 — spp-21: SPP-61 the Harrington fuel-vintage repair — the charter's BENCH SIDE IS FALSIFIED at zero LP, and the model-side arm is KILLED at the rule-29 screen gate G3 on a prerequisite it exposed
+
+**ONE year of LP, in one shard** (rule 32 `[R-SHARD]`: this session orchestrated and solved nothing).
+**Determination UNCHANGED — `NOT-YET`, keeper 5 `2026-09-09-spp-52a-fossil-offer`.** Nothing registered
+(a rule-29 screen never is), no keeper moved, `keepers/SPP.json` and `calibration-complete.json` untouched.
+Record: `docs/handoffs/PRECOMMIT-spp-61-2026-09-10.md` (pushed before the solve) and
+`docs/handoffs/FINDING-spp-61-2026-09-10.md`.
+
+**THE CHARTER'S TWO-SIDED PREMISE IS FALSE, AND PHASE 0 PROVED IT BEFORE ANY LP.** The charter had the
+benchmark booking Harrington's coal under `ST_GAS` (`e_ann` 3.44 / 2.23 TWh). It does not. The SPP EIA-923
+bench frame is **completely inert to the EIA-860 vintage — 0 klass rows differing by >1 MWh in 2023, 2024
+or 2025**, even though `_fleet_group_by_code` moves for 26 / 17 / 0 plants; the **BTM frame is inert too**.
+The bench already books Harrington as **`COAL_PRB` 3.1775 / 2.0590 / 0.0000 TWh**, because `_classify_f923`
+buckets every EIA-923 row by *its own* reported fuel and the CAMPD backfill never fires for the plant. What
+the charter saw is the per-plant **display panel** (`plants["6193"].group = "ST_GAS"`), a different object
+from `classFull`. **So C1's ACTUAL cannot move**: the 2024 `ST_GAS` actual of 20.101 TWh carries **0.175 TWh**
+of Harrington, not 2.23 — and the charter's arithmetic for closing C1 rested entirely on that bench move.
+**The warrant is untouched**: rule 14 `[R-ACCURATE]` / rule 13 `[R-MEASURED]` owe the repair because the
+model's fuel vintage IS wrong and the accurate data exists. *"It would close C1" was the PRIZE, never the
+JUSTIFICATION* — so the arm was screened, not dropped.
+
+**THE ONE SEAM, and it needed ZERO code change.** `ScenarioConfig.eia860_vintage_tracks_solve_year`
+(pjm-167, dataclass default `False`) — **the first arm of that mechanism anywhere, in any ISO** — through
+`replay_keeper --set`, the registered generic `prb_overrides` channel. **Not one file under `src/` or
+`scripts/` was edited by this lane.** It lands Harrington exactly on its vintage: **2023 → 1,018.0 MW all
+`COAL`; 2024 → 679.0 `COAL` + 339.0 `ST_GAS`; 2025 → unchanged** (no `vintage_2025/`, and that is the right
+answer — the units' own filed repower dates are 2/2025, 3/2025, 6/2025).
+
+**SCREEN YEAR 2023, named in the PRECOMMIT by MEASURED FOOTPRINT** (1,018.0 MW reclassified vs 679.0;
+3.1775 vs 2.0590 TWh of measured coal) — the opposite of residual-chasing, since the failing C1 row is 2024.
+
+**GATES — 4 of 5 pass; G3 stops the arm.** G1 fleet identity PASS. **G2 footprint confinement PASS EXACTLY:
+94 plants move in 2023 and 63 in 2024, and ZERO are unexplained** by that year's own EIA-860 release
+differing from the canonical snapshot (`results/calibration/_spp61_g2_footprint.json`). G5 bench inertness
+PASS. G4 PASS on what was measured — system volume **+0.0054 TWh**, mean price **24.69 → 24.87 $/MWh
+(+0.72 %)**; **C3b went UNMEASURED** (no channel from this session to a cloud shard) and that is stated, not
+glossed. **G3 FAIL ⇒ STOP**, and the split matters: its **magnitude** limb PASSES — coal-family net
+**+2.825 TWh** against Harrington's measured 3.1775 TWh, right size, right direction, energy conserving —
+while its **identity** limb FAILS: `COAL_PRB` **FELL 0.94 TWh** and **4.3551 TWh appeared in a bare `COAL`
+class the SPP benchmark has no row for**.
+
+**ROOT CAUSE — THE SAME DEFECT, ONE LAYER DOWN** (measured at zero LP): `coal_supply_class(6193)` returns
+**`''`** because `scripts/data/derive_coal_supply.py` builds its coal census from
+`load_fleet_from_csv(iso, iso_config)` with **no vintage** — the very registry this repair exists to fix —
+so Harrington is absent from `coal_supply_SPP.csv` (29 rows) and falls through the entire resolution ladder.
+The bench resolves it only via the EIA-923 receipt code (`_coal_supply_class(6193,"SUB")` → `COAL_PRB`).
+**Successor `R-ay` is a PREREQUISITE, not an alternative — re-run the arm before it lands and it reproduces
+this exactly.** Its admissibility under rule 23 `[R-FROZEN-DERIVE]` rests on the cited change being a change
+in the derive's **own input** (its census reads a registry now shown wrong for the solved year), **not** a
+residual that moved, and the successor's PRECOMMIT must say so explicitly.
+
+**REPORTED AGAINST THE REPAIR, at full magnitude:** as screened it would **BREAK 2023's currently-passing
+C1 `ST_GAS` row** — gm ≈ **8.073 → 6.80** against 15.020 actual, ≈ **−8.22 TWh** outside the ±8.00 band,
+from 1.05 TWh of headroom (an estimate, labelled one: `gmModel` carries an `OTHER_FOSSIL` reclassification
+this session cannot reconstruct outside registration). That is **not** why the arm stopped — C1 is the
+TARGET criterion and was deliberately excluded from the gate, because under rule 1 `[R-STRUCT]` a
+structurally-correct mechanism is never rejected for moving its own residual the wrong way. Also reported:
+the arm is a **whole-registry swap of 2.7–3.2 GW**, wider than the charter anticipated; G2 shows every moved
+row is justified, but a successor must own that width rather than wave it through on Harrington's account.
+
+**ZERO new free parameters** (rule 21 `[R-DOF]`) — selection is by calendar year alone; the keeper's DOF
+ledger is unchanged (`n_residual` 2, entries 3) and its `offer_curve_by_group` authorized-tuning block was
+replayed **verbatim** at 0.93 on the four bands. **RULE 25 `[R-ISO-SCOPE]` CLEAN BY CONSTRUCTION**: a
+per-run flag registered in `_CACHE_KEY_OPTIONAL_FIELDS` at its declared `False`, no shared default flipped —
+**zero other ISOs move** and every pre-existing key of all seven ISOs is byte-stable. **Routed, not touched:**
+`run_calibration_full.py` builds the bench `group_by_code` at line 5286, *before* `run_year` sets the year's
+vintage at line 5396 — measured effect for SPP **exactly zero**, so it is recorded for the ISOs where the
+CAMPD backfill does fire rather than repaired blind here.
+
+**G-DRIFT — no control solve was spent** (rule 29(b) form 4). The SPP **solve-surface fingerprint at HEAD is
+`7ab7e3b0c4741dc3`, 182 rows, 0 moved — byte-identical** to the keeper's recorded value, and all **17**
+changed files since the keeper's `basis_sha` `fc927c2f…` classify **INERT** with reasons. Corroborated: the
+committed keeper re-scored at HEAD reproduces its published determination and **every C1 row exactly**
+(2024 `ST_GAS` model 11.970 / actual 20.101 / −8.13 TWh). **Every number in this entry was re-derived in
+this session; none is quoted from a predecessor lane's prose.**
+
+**Cells (rule 28(b)):** `eia860_vintage_tracks_solve_year` **U → O** — *open*, deliberately **not `R`**. The
+mechanism is not rejected; it is blocked on a named prerequisite, and `R` would trip rule 28(a)'s
+do-not-redo discipline against a repair rule 14 actually owes.
+
+**Retention (rule 31 `[R-RETAIN]`): NOTHING was `rm`'d and nothing is promotable.** The screen bundle lived
+on shard A's own ephemeral container, was never pushed by design (rule 29(c)), and does not survive it.
+Re-spending it costs ~3 min of LP for the one year, ~7 min for the span.
+
+**Next shorthand: spp-22.** Next lever: **R-ay** (the vintage-aware coal supply-class census), then the
+charter §7 queue unchanged — SPP-51b R-2 the thermal-commitment floor, R-3 the zonal spread, SPP-55/56
+scarcity / C3c.
