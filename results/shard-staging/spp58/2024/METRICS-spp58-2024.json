@@ -1,0 +1,120 @@
+{
+  "shard": "SPP-58 screen, year 2024",
+  "session": "ercot-266 shard",
+  "status": "STOPPED — HARD STOP 2 FAILED. NO ARM BUNDLE PRODUCED. NO ARM NUMBERS EXIST.",
+  "git_sha": "f5389aa2cd646c32781761f7b9bde34bc62940ea",
+
+  "stop_reason": {
+    "hard_stop": "HARD STOP 2 (log must show the ceiling firing)",
+    "observed": "NEITHER message. The log shows no 'wind ceiling active on both zones' AND no 'ceiling skipped'. The guarded block emits nothing because its predicate getattr(config, 'spp_curtailment_ceiling', False) evaluated FALSE.",
+    "root_cause": "scripts/run_calibration_full.py PARSES --spp-curtailment-ceiling and --spp-curtail-depth-wind (argparse.BooleanOptionalAction, line ~12046/12068) but NEVER READS args.spp_curtailment_ceiling OR args.spp_curtail_depth_wind into either call site. The strings 'args.spp_curtailment_ceiling' and 'args.spp_curtail_depth_wind' occur ZERO times in the file. Both flags are accepted silently and dropped.",
+    "call_sites_missing_the_hop": [
+      "scripts/run_calibration_full.py:13185 (per-year path used by this invocation) — passes vre_curtailment_oversupply_allocation=args.vre_curtailment_oversupply_allocation, no spp_curtailment_ceiling line",
+      "scripts/run_calibration_full.py:13615 — same omission"
+    ],
+    "downstream_wiring_is_CORRECT_and_untouched": [
+      "run_calibration_full.py:3767 signature param",
+      "run_calibration_full.py:5179 recorded_cfg.with_overrides",
+      "run_calibration_full.py:5643 pass-through to run_calibration",
+      "run_calibration_full.py:6607 run_config record",
+      "run_calibration_full.py:8938 replay path",
+      "run_calibration.py:1676/3056 consumer",
+      "renewables.py:2829 rule-19 supersession",
+      "curtailment_share.py:480 spp_curtail_multipliers"
+    ],
+    "conclusion": "ONLY the args-> hop is missing. This is a one-line-per-call-site plumbing gap, not a mechanism defect. Nothing about the SPP-58 mechanism itself is impeached by this shard.",
+
+    "independent_empirical_proof_not_relying_on_code_reading": {
+      "log_line_46": "INFO: SPP wind 2024 oversupply curtailment allocation: 11675.9 GWh over 3173 hour(s) (36.2% of the year) at net-load level 16483 MW; annual potential 120.992 TWh, unchanged from the flat gross-up",
+      "why_this_is_decisive": "renewables.py:2829 skips _oversupply_uncurtailed_cf whenever iso=='SPP' and config.spp_curtailment_ceiling is True (rule 19 [R-ONE-MECH], enforced in code). The oversupply allocation FIRED. Therefore config.spp_curtailment_ceiling was FALSE inside the solve. This holds independently of any reading of the CLI source.",
+      "ceiling_block_was_reached_not_pending": "run_calibration.py fuel-price resolution (line 4119) had already logged ('F923 fuel costs for 2024'), and the ceiling block is line 3056 — upstream of it. The block was executed and emitted nothing."
+    },
+
+    "what_the_killed_process_was_actually_solving": "The keeper 2026-09-09-spp-52a-fossil-offer recipe + --vre-curtailment-oversupply-allocation + the ten 0.93 offer-curve classes — i.e. THE CONTROL, not the arm. It would also have failed HARD STOP 1 (run_config.json would record spp_curtailment_ceiling absent/false).",
+    "action_taken": "Process killed at ~6 min, before the LP build, to avoid spending ~25 more minutes producing a control solve that PRECOMMIT §6/§7 and rule 29(b) explicitly say must NOT be spent (G-CTRL form 4: the keeper's committed bundle IS the control). results/calibration/spp58_arm_2024/ holds only an empty dispatch/ dir. Nothing was deleted (rule 31 [R-RETAIN]).",
+    "infrastructure_NOT_repaired": "Editing scripts/ is forbidden to this shard. Per the shard contract, a shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE. The one-line fix is the PARENT's to make."
+  },
+
+  "leg_verified": {
+    "git_rev_parse_HEAD": "f5389aa2cd646c32781761f7b9bde34bc62940ea",
+    "matches_pinned_sha": true,
+    "run_config_json": "NOT WRITTEN — solve killed before completion",
+    "spp_curtailment_ceiling": "unavailable (HARD STOP 1 not reachable)",
+    "spp_curtail_depth_wind": "unavailable (HARD STOP 1 not reachable)",
+    "vre_curtailment_oversupply_allocation": "unavailable (HARD STOP 1 not reachable)",
+    "offer_curve_overrides_ten_classes": "unavailable (HARD STOP 1 not reachable)"
+  },
+
+  "arm_results": {
+    "wind_dispatch_TWh_2024": "unavailable",
+    "wind_bound_TWh_2024": "unavailable",
+    "recurtail_pct": "unavailable",
+    "per_class_TWh_2024": "unavailable",
+    "slack_MWh_2024": "unavailable",
+    "dump_MWh_2024": "unavailable",
+    "G3_allocation_by_net_load_decile": "unavailable",
+    "criterion_status_table_2024": "unavailable"
+  },
+
+  "keeper_control": {
+    "source": "values handed to this shard in its prompt",
+    "wind_dispatch_TWh_2024": 120.7227,
+    "wind_bound_TWh_2024": 120.9925,
+    "recurtail_pct": 0.223
+  },
+
+  "keeper_control_verified": {
+    "note": "RECOMPUTED BY THIS SHARD at the pinned SHA from the committed keeper bundle results/calibration/spp52a_fossil93/. Zero LP. ALL THREE HANDED VALUES REPRODUCE — no discrepancy to report.",
+    "wind_dispatch_TWh_2024": 120.722687,
+    "wind_dispatch_source": "hourly/class_hourly_2024.parquet, pass=='P1', klass=='wind', sum(mw)/1e6",
+    "wind_bound_TWh_2024": 120.992461,
+    "wind_bound_source": "load_renewable_profiles('SPP',2024,iso_config,cfg) rebuilt at HEAD from the keeper's own committed run_config.json scenario_config (0 unknown fields dropped); bound = (wind_cap[:,None]*wind_cf).sum()/1e6",
+    "wind_bound_corroboration": "the killed run's own log line 46 independently prints 'annual potential 120.992 TWh' on the identical recipe at HEAD",
+    "wind_removed_TWh_2024": 0.269774,
+    "recurtail_pct": 0.222968,
+    "slack_MWh_2024": 177.5964881966053,
+    "dump_MWh_2024": 0.0,
+    "slack_note": "NON-ZERO in the control. PRECOMMIT §5 G-4 reads 'slack and dump stay exactly 0.0'. The incumbent keeper carries 177.596 MWh of slack in 2024, so G-4 as written is not satisfied by the CONTROL either. Reported, not adjudicated — the parent should re-cut G-4 as a no-INCREASE-versus-control gate before the arm is re-solved.",
+    "renewable_bound_provenance_wind_2024": "forecast_uncurtailed",
+    "renewable_bound_provenance_solar_2024": "delivered_pinned",
+    "solar_bound_TWh_2024": 1.198645,
+    "per_class_TWh_2024_P1": {
+      "wind": 120.722687,
+      "COAL_PRB": 59.462757,
+      "CC_REGULAR": 42.106453,
+      "CT_PEAKER": 19.779673,
+      "nuclear": 15.015699,
+      "ST_GAS": 11.969985,
+      "hydro": 8.966650,
+      "COAL_LIGNITE": 6.503139,
+      "CC_CHP": 1.890120,
+      "CT_CHP": 1.240037,
+      "solar": 1.194268,
+      "biomass": 1.180349,
+      "OTHER": 0.598714,
+      "ST_CHP": 0.362852,
+      "oil": 0.001172,
+      "TOTAL": 290.994540
+    }
+  },
+
+  "config_delta_vs_keeper": "INTENDED: keeper recipe + exactly one new flag --spp-curtailment-ceiling (depth 0.288137 by dataclass default). ACTUAL: ZERO delta — the flag was dropped by the CLI, so the invocation reduced to the keeper recipe itself.",
+  "deltas_arm_minus_keeper": "unavailable — no arm was solved",
+  "criterion_status_moves": "unavailable — no arm was solved",
+
+  "gates_PRECOMMIT_section_5": {
+    "G-1": "not evaluated (zero-LP, already PASS in PRECOMMIT)",
+    "G-2": "NOT EVALUATED — no arm",
+    "G-3": "NOT EVALUATED — no arm",
+    "G-4": "NOT EVALUATED — no arm. See keeper_control_verified.slack_note: the gate text needs re-cutting regardless.",
+    "G-5": "NOT EVALUATED — no arm"
+  },
+
+  "what_the_parent_must_do_before_relaunching": [
+    "1. Add the missing args-> hop for spp_curtailment_ceiling and spp_curtail_depth_wind at BOTH scripts/run_calibration_full.py call sites (~13185 and ~13615), mirroring the adjacent vre_curtailment_oversupply_allocation line.",
+    "2. Consider a guard so a parsed-but-undelivered calibration flag fails loudly rather than solving the control in silence — this failure mode is invisible except by reading the log for a mechanism message that never comes, and it would have been reported as a null-effect arm by any shard that did not check.",
+    "3. Push the fix, pin the NEW 40-char SHA, relaunch this shard verbatim against it.",
+    "4. Re-cut G-4 against the measured control slack of 177.596 MWh (2024).",
+    "5. Rule 28 [R-MECH-MATRIX]: no verdict is minted here. The spp_curtailment_ceiling cell in docs/codebase-site/data/mechanism-matrix/SPP.js stays U — this shard tested the CLI, not the mechanism."
+  ]
+}
