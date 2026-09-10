@@ -12,7 +12,7 @@
 # One-off, session-specific scratch-dir names are intentionally NOT enumerated:
 # any bundle's heavy contents are already covered by the §8 slim-bundle rules,
 # and the recurring scratch families are covered by §9.
-# ======================================================================
+# ===============================================================
 # -----------------------------------------------------------------------------
 # 1. Python / build / OS
 # -----------------------------------------------------------------------------
@@ -1759,3 +1759,12 @@ results/calibration/nyiso222_offer_plus5_tp2022/
 results/pjm_d4_y*/
 results/pjm_d4_*/
 results/screen/pjm_d4_*/
+
+# nyiso-223 (2026-09-10) — the hub-daily unpriced-day gap-fill arm's per-year shard
+# bundles. Rule 31 [R-RETAIN] + rule 29(c) [R-SCREEN]: what discharges "delete before
+# merge" is KEEPING THE BUNDLE OUT OF `main`, never `rm`-ing it from local disk. Ignoring
+# the family the moment it is written means the Class-E bundle-retention sweep
+# (check_registry_payload_parity.py) never sees an unregistered committed dir, while the
+# solved artifacts stay on disk for a promotion the owner has not yet ruled on. Only the
+# COMPOSITE, if promoted, is force-added and registered (rule 32(d)).
+results/calibration/nyiso223_gapfill_*/
