@@ -843,6 +843,18 @@ def _nyiso_hub_daily_gas_prices(
     holiday-week archive gap never biases a month. Returns ``None`` when the
     monthly hub series is unavailable (forward years, no basis rows), so
     :func:`apply_hub_basis_overlay` falls back to the flat monthly overlay.
+
+    Under ``ScenarioConfig.nyiso_hub_gap_month_level`` (default OFF, nyiso-223) a
+    calendar day the archive never priced takes the month's OWN observed level
+    (factor 1.0) instead of the clamped nearest-print deviation ``np.interp``
+    supplies by default. A month whose prints do NOT reach its own edges is the
+    normal case, not the exception — the EIA Natural Gas Weekly Update skips the
+    late-December holiday weeks, so December carries a 10-13 day trailing gap in
+    six of eight archived years — and the clamp therefore fabricates a level for
+    precisely the year's coldest days. The gate is still exactly mean-preserving
+    (the ``fbar`` renormalisation is applied after it), so it moves WHICH days
+    are dear and never how dear the month is; annual gas burn and fuel mix are
+    unchanged by construction.
     """
     monthly = _pkg_ns().iso_hub_monthly_gas_prices(
         config, year, basis_path, henry_hub_path
@@ -851,6 +863,7 @@ def _nyiso_hub_daily_gas_prices(
         return None
     transco_dated = _pkg_ns()._transco_z6_daily_dated(transco_path).get(year, {})
     iroquois_prints = _iroquois_z2_daily(None).get(year, {})
+    gap_month_level = bool(getattr(config, "nyiso_hub_gap_month_level", False))
     T = config.hours
     out = np.full(T, np.nan, dtype=float)
     hour = 0
@@ -871,6 +884,32 @@ def _nyiso_hub_daily_gas_prices(
                     # calendar-day factors average to exactly 1.0 — scaling the
                     # monthly hub level by them stays exactly mean-preserving.
                     day_factor = np.interp(np.arange(n_days), days - 1.0, vals / mean)
+                    if gap_month_level:
+                        # Rule 14 [R-ACCURATE] repair (nyiso-223). ``np.interp``
+                        # CLAMPS outside the observed span, so a calendar day the
+                        # archive never priced inherits the NEAREST PRINT'S
+                        # DEVIATION from the month — an assertion the measured
+                        # series does not make. It is not a rare edge: the EIA
+                        # Natural Gas Weekly Update publishes no page over the
+                        # late-December holiday weeks, leaving a 10-13 day
+                        # TRAILING gap in December in six of the eight archived
+                        # years (2018 12 d, 2019 13 d, 2022 10 d, 2023 11 d,
+                        # 2024 13 d), plus shorter June/July/November gaps — i.e.
+                        # the fabricated days are systematically the coldest and
+                        # most volatile of the year. Measured for 2022: the last
+                        # print is Dec-21 at $6.29 against a December print-mean
+                        # of $7.32, so the whole Winter Storm Elliott window
+                        # (Dec 22-31) is asserted 14 % CHEAPER than its own month.
+                        # An unpriced day instead takes the month's own observed
+                        # level (factor 1.0) — strictly the weaker assertion,
+                        # ZERO parameters, still exactly mean-preserving through
+                        # the ``fbar`` renormalisation below (so monthly hub
+                        # level, annual gas burn and fuel mix are untouched), and
+                        # the identical construction in a forecast year, which is
+                        # rule 13 [R-MEASURED]'s forward test.
+                        grid = np.arange(n_days, dtype=float)
+                        unpriced = (grid < days[0] - 1.0) | (grid > days[-1] - 1.0)
+                        day_factor[unpriced] = 1.0
                     fbar = float(day_factor.mean())
                     if fbar > 0:
                         day_factor = day_factor / fbar
