@@ -1,32 +1,27 @@
 {
-  "run_id": "2026-09-10-pjm-d4-2-touchpoint",
+  "run_id": "2026-09-10-pjm-d4-2-stgas",
   "iso": "PJM",
-  "label": "pjm d4 2 touchpoint",
+  "label": "pjm d4 2 stgas",
   "target_years": [
-    2020,
-    2021,
-    2022
+    2023,
+    2024,
+    2025
   ],
   "scorable_years": [
-    2020,
-    2021,
-    2022
+    2023,
+    2024,
+    2025
   ],
   "data_blocked_years": [],
   "rubric_version": 3.6,
-  "determination": "NOT-YET",
-  "reasons": [
-    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, price_mean, price_shape"
-  ],
-  "notes": [
-    "C8 2021 CT_PEAKER: grounded above budget \u2014 21.6% forced (3.2483 of 15.0379 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.953 (\u22650.8) & off-peak CV ratio 1.002 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
-    "C8 2022 CT_PEAKER: grounded above budget \u2014 21.8% forced (3.3066 of 15.1863 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.945 (\u22650.8) & off-peak CV ratio 1.06 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
-  ],
+  "determination": "CALIBRATED",
+  "reasons": [],
+  "notes": [],
   "criteria": {
     "fuelmix": {
       "label": "C1 fuel-mix by class (grid-delivered)",
       "tier": "load-bearing",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "sysvol": {
       "label": "C2 system volume (gas/coal families)",
@@ -36,18 +31,17 @@
     "price_mean": {
       "label": "C3a mean LMP",
       "tier": "load-bearing",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "price_shape": {
       "label": "C3b price duration/shape",
       "tier": "load-bearing",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "price_tail": {
       "label": "C3c price tail / scarcity (RT hourly)",
       "tier": "supporting",
-      "status": "CAVEAT",
-      "caveat_kind": "ledgered"
+      "status": "PASS"
     },
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
@@ -67,9 +61,7 @@
   },
   "caveats": {
     "protective": [],
-    "ledgered": [
-      "C3c price tail / scarcity (RT hourly)"
-    ],
+    "ledgered": [],
     "commercial_band": [],
     "budget": {
       "protective_max": 0,
@@ -78,26 +70,26 @@
   },
   "grade_summary": {
     "scored": 8,
-    "target_grade": 4,
+    "target_grade": 8,
     "commercial_grade": 0,
-    "ledgered": 1,
-    "fails": 3
+    "ledgered": 0,
+    "fails": 0
   },
   "reported": {
     "co2": {
       "label": "C5a CO2 vs eGRID (REPORTED-ONLY, v2.9 \u2014 see the CRITERIA note)",
       "years": {
-        "2020": "+10.0%",
-        "2021": "+2.5%",
-        "2022": "+5.9%"
+        "2023": "+1.1%",
+        "2024": "-0.8%",
+        "2025": "+4.6%"
       }
     },
     "diurnal_amplitude": {
       "label": "D-A diurnal price amplitude, hour-of-day (REPORTED-ONLY, BAND-FREE, v3.5 \u2014 no external comparable exists to band it; see the note)",
       "years": {
-        "2020": "amplitude 94.4% of measured (hod range $11.68 vs $12.37); peak h15 vs h17, trough h02 vs h02 \u2014 phase OFF; hod r +0.866; 365 complete days",
-        "2021": "amplitude 39.3% of measured (hod range $9.99 vs $25.42); peak h16 vs h17, trough h02 vs h02 \u2014 phase OK; hod r +0.950; 365 complete days",
-        "2022": "amplitude 34.4% of measured (hod range $15.96 vs $46.40); peak h16 vs h17, trough h02 vs h01 \u2014 phase OK; hod r +0.960; 365 complete days"
+        "2023": "amplitude 30.6% of measured (hod range $6.95 vs $22.71); peak h16 vs h17, trough h02 vs h02 \u2014 phase OK; hod r +0.965; 365 complete days",
+        "2024": "amplitude 29.0% of measured (hod range $9.20 vs $31.68); peak h16 vs h17, trough h02 vs h02 \u2014 phase OK; hod r +0.949; 365 complete days",
+        "2025": "amplitude 32.3% of measured (hod range $14.28 vs $44.18); peak h17 vs h18, trough h02 vs h02 \u2014 phase OK; hod r +0.876; 365 complete days"
       }
     }
   },
@@ -117,13 +109,13 @@
       "ST_CHP"
     ],
     "all": {
-      "pass": 21,
-      "total": 25
+      "pass": 16,
+      "total": 16
     },
     "free": {
-      "pass": 15,
-      "total": 19
+      "pass": 12,
+      "total": 12
     },
-    "headline": "C1 all 21/25 \u00b7 free 15/19"
+    "headline": "C1 all 16/16 \u00b7 free 12/12"
   }
 }
