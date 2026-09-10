@@ -14383,4 +14383,45 @@ to say so and stop, not to go shopping.
 slack-2021 960.6 → 2,274.9 MWh; D-4 conduct 310 rows / 91 failures. **Rule 28: no mechanism was tested,
 so no matrix cell moves** — ercot-266 already re-stamped the shard to the current keeper.
 
+**FRONTIER RE-DECLARED, AND THE TOUCHPOINT LIMB IS NEW.** Owner instruction, 2026-09-10, verbatim:
+***"If ERCOT is calibrated just declare it frontier & touchpoint calibrated."*** ERCOT is: the live
+scorer, run this session rather than quoted from a sidecar, returns **CALIBRATED — 8 scored,
+target_grade 7, commercial_grade 0, FAILS 0, ledgered 1**, all five registered years CALIBRATED and
+all three partition spans CALIBRATED. Declared on both surfaces:
+
+1. **`frontier`** (`keepers/ERCOT.json`) re-declared **2026-09-10** on the CURRENT keeper, with a
+   `keeper` field the old block did not have. It **supersedes** the 2026-08-31 declaration rather
+   than re-dating it: that one's basis was the C3c **missed-event** family (2024 22/53, 2025 1/31),
+   and ercot-265 **moved the object** to C3c-2021's **February breadth**. The designation's contract
+   is met on the new object — every named admissible mechanism is on record and what remains is
+   blocked on data that does not exist publicly (four surveys; ERCOT's own MIS catalog searched at
+   ercot-160 — 5,773 products, 6 mention fuel, none a price series; CME/NYMEX delisted both hubs on
+   zero open interest; ICE/NGI/Platts/Argus paid and refused 2026-08-04). Reopen conditions unchanged:
+   a new **free** daily source, or the owner reversing the paid-data ruling.
+2. **`frontier_touchpoint`** — a NEW block, wired to render through the same declarative path as
+   `frontier` and `standing_note` (`build_status.py` attaches it AFTER `determine()`;
+   `calibration-status.js` renders it in the collapsed notes disclosure). It records that the folded
+   held-out rungs **{2021, 2022} score CALIBRATED in their own right** — strictly stronger than rule
+   30(c)'s "a held-out year never downgrades the ISO".
+
+**THE DECLARATION LAUNDERS NOTHING, and this was checked rather than assumed.**
+`calibration-status.js::effectiveDet` upgrades a displayed determination only when it contains
+"CAVEAT"; ERCOT's is already `CALIBRATED`, so **the headline is byte-unchanged** by activating the
+badge. Nothing gates: no verdict, grade, caveat budget or magnitude moves, C3c still reports at full
+magnitude and is still named on the determination basis. `audit_keepers --iso ERCOT` 0/0 after.
+
+**AND THE TOUCHPOINT LIMB IS NOT A SKILL CLAIM — stated in the block itself, not just here.** Since
+`[R-HOLDOUT]` was removed on 2026-09-09, **no year in this program is protected from being iterated
+against**. CLAUDE.md's own words bind: there is no longer a certified out-of-sample number anywhere
+in this program, and *"a skill claim built on a year that has been tuned against is not a skill
+claim."* A CALIBRATED 2021 or 2022 rung is **model-SELECTION evidence** and must be quoted as such.
+The declaration records that the rungs PASS; it cannot and does not certify forecast skill.
+
+**NOT MINE, AND LEFT ALONE (owner directive, no lane works two ISOs).**
+`check_registry_payload_parity` is RED again after the rebase — on
+`results/calibration/caiso270_keeper_{2022..2025}`, four CAISO bundles that landed on `main` from
+the caiso-270 lane. It is the *same defect class* this session just cleared for ERCOT (shard bundles
+force-added instead of kept out of `main`, rule 29(c)), and the fix is the same, but it is **CAISO's
+lane's to make**. Every ERCOT dir is clear.
+
 **Next shorthand: ercot-268** (ercot-199 and ercot-257 remain unclaimed).
