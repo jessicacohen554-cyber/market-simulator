@@ -18,10 +18,37 @@ this session can reach.** Measured, not inferred:
 | shard 3 | `env_01AioCkYntxXbGYXw9qeSCo7` (Default) | OOM at **13.3 GiB** peak RSS vs a **13.34 GiB** cgroup limit, in **LP matrix construction**, ~11.5 min in |
 
 The parent container is the same size (15 GB total). Shard 3 reached matrix construction with the
-seam flow limits armed and the data confirmed, and died building the CSC matrix — so this is a
-**hard infrastructure ceiling, not a model defect and not a code bug**. `replay_keeper.py
+seam flow limits armed and the data confirmed, and died building the CSC matrix. `replay_keeper.py
 --reuse-solved` is not a lever: it byte-copies whole years from another bundle and does nothing for
 a single year's peak.
+
+### 1a. CORRECTION — an in-repo memory lever DOES exist, and the first four shards all missed it
+
+This section first read *"no in-repo memory lever exists."* **That was wrong**, and the correction
+matters because it is the difference between "MISO cannot be solved here" and "MISO can be solved
+here." `src/market_sim/model/lp/model.py:607-614` carries a purpose-built escape hatch whose comment
+describes this exact failure:
+
+> *"Memory-constrained boxes can cap HiGHS's thread count (parallel dual simplex keeps per-thread
+> factorization workspaces; **on a ~12 GB plant-level ISO-year LP the default all-cores run can spike
+> past a small container's RAM and get OOM-killed**). Unset keeps HiGHS's automatic threading; **the
+> LP optimum is identical either way.**"*
+
+* **`MARKET_SIM_HIGHS_THREADS=1`** — caps HiGHS's thread count. **Solution-neutral by the code's own
+  statement**, so it is not a model change and needs no gate. This is the lever.
+* **`MARKET_SIM_HIGHS_LEAN=1`** — additionally sets `simplex_scale_strategy=0`.
+* **`MARKET_SIM_MEM_DEBUG=1`** — the built-in per-stage RSS tracer (`_rss()`, model.py:576), which
+  logs `MEM <stage>: VmRSS/VmHWM` and locates which build stage spikes. Its own comment notes the
+  plant-level ISO-year LPs *"run within ~1 GB of the calibration box's ceiling"* — i.e. this margin
+  is a known, routine condition of the repo, not a new regression.
+
+**`OMP_NUM_THREADS` does NOT reach HiGHS** — HiGHS reads its own option, which is precisely why the
+env var exists. Shards 1-4 set allocator and BLAS variables but not this one, which is why they all
+died at the same place. Two further levers are already spent and should not be re-attempted:
+`presolve` is already `"off"` (model.py:620), and the pairwise `sp.vstack` chain was already
+replaced by `_vstack_csr_free` for this same OOM.
+
+**Any future MISO/PJM plant-level solve should export all three variables before the solve.**
 
 **Consequence for the lane:** no MISO arm — the 2021 envelope screen, the 2022 ladder arm, or any
 future one — can be evaluated until a larger environment exists. Every shard stopped and reported
