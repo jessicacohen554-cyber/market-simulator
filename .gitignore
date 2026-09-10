@@ -1749,3 +1749,13 @@ results/calibration/ercot264_repro_*/
 # Same rule 29(c)/31 [R-RETAIN] posture as the train-span bundle above.
 results/calibration/nyiso222_offer_plus5_tp2022/
 
+# pjm-d4-2 (2026-09-10) per-year SHARD bundles: rule 32 [R-SHARD] solves one
+# year per container into its own out-dir, and the PARENT composes the single
+# registrable 2020-2025 bundle from them (rule 16 [R-ALLYEARS]). The per-year
+# dirs are working state that must never reach `main` — an unregistered bundle
+# dir committed there is the exact Class-E parity RED rule 29(c) forbids.
+# Ignoring them discharges rule 29(c) IN FULL; rule 31 [R-RETAIN] means they are
+# NEVER `rm`'d before the owner has ruled on promotion.
+results/pjm_d4_y*/
+results/pjm_d4_*/
+results/screen/pjm_d4_*/
