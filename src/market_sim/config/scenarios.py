@@ -1411,6 +1411,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # distinctly. Registered IN THE SAME COMMIT as the field (the nyiso-119
     # discipline).
     "nyiso_hub_gap_month_level",
+    # nyiso-224 NYISO TOTAL EAST cutset transfer envelope, default off: dropped
+    # from the hash at its False default so every pre-existing NYISO key (the
+    # designated keeper's included) stays valid, and ON it selects a different
+    # per-hour TTC matrix for the Upstate_West->Capital_Hudson link and hashes
+    # distinctly. Registered IN THE SAME COMMIT as the field (the nyiso-119
+    # discipline).
+    "nyiso_total_east_cutset_ttc",
     # ercot-255 EP-reference of the F923-sourced rows of the ERCOT zonal gas
     # SPREAD, default off: dropped from the hash at its False default so every
     # pre-existing ERCOT key (the designated keeper's included) stays
@@ -2181,6 +2188,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by nyiso-223 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "nyiso_hub_gap_month_level": "False",
+    # Added by nyiso-224 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "nyiso_total_east_cutset_ttc": "False",
     # Added by ercot-255 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "ercot_zonal_spread_ep_referenced": "False",
@@ -15918,6 +15928,25 @@ class ScenarioConfig:
     # market_sim.data.fuel.hubs._nyiso_hub_daily_gas_prices.
     nyiso_hub_gap_month_level: bool = False
 
+    # Tier 3 (calibration) — nyiso-224. The model's ONE
+    # ``Upstate_West -> Capital_Hudson`` link is the A-E -> F+ cutset, whose
+    # NYISO name is TOTAL EAST; ``NYISO_INTERFACE_TTC_BY_MONTH`` caps it at the
+    # posted CENT EAST DAM TTC, which is a NESTED SUB-CUTSET carrying about half
+    # the cutset's flow. Armed, the link takes
+    # ``constants.NYISO_CUTSET_TTC_ENVELOPE_BY_MONTH`` — the p90 of the
+    # directionally-clipped measured TOTAL EAST transfer per calendar month, the
+    # construction already armed for NYISO's border links by
+    # ``nyiso_seam_deliverability_envelope`` — and the CENT EAST table is
+    # REPLACED, never stacked on (rule 19 [R-ONE-MECH]: one seam,
+    # ``pipeline.ttc.apply_iso_monthly_ttc``). Rule 14 [R-ACCURATE]'s
+    # misalignment exception is the basis, verbatim: "a single GTC that is one
+    # of several parallel paths our reduced network collapses into one link".
+    # ZERO free parameters; backcast-only on the identical classification as the
+    # CENT EAST table it replaces. Off by default so every other ISO, every
+    # registered keeper and every forecast is byte-identical. See
+    # market_sim.pipeline.ttc.apply_iso_monthly_ttc.
+    nyiso_total_east_cutset_ttc: bool = False
+
     # --- NYISO downstate-peaker structural pricing (2026-07, issue #1344 /
     # --- B-NYI-1 de-leak follow-up). New fields added as one contiguous block.
     #
@@ -20545,6 +20574,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_ep_gas_basis_corroborated": 3,
     "ercot_ep_gas_basis_receipts_fallback": 3,
     "nyiso_hub_gap_month_level": 3,
+    "nyiso_total_east_cutset_ttc": 3,
     "ercot_zonal_spread_ep_referenced": 3,
     "ercot_gas_delivered_floor_basis": 3,
     "ercot_gas_contract_haircut": 3,

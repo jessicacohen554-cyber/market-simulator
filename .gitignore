@@ -1847,3 +1847,6 @@ results/calibration/spp62_*/
 # miso-252 seam-envelope screen/span bundles (rule 29(c) delete-before-merge is
 # discharged by KEEPING THEM OUT OF main, never by rm — rule 31 [R-RETAIN]).
 results/calibration/miso252_*/
+# nyiso-224 screen/probe bundles (rule 29(c) via .gitignore, rule 31 [R-RETAIN]:
+# kept out of `main`, never deleted from local disk).
+results/calibration/nyiso224_*/

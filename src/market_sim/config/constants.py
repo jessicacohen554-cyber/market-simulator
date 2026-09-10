@@ -4930,6 +4930,177 @@ NYISO_INTERFACE_TTC_BY_MONTH: dict[int, dict[tuple[str, str], list[float]]] = {
     },
 }
 
+
+# MEASURED TOTAL EAST cutset transfer envelope (MW), one 12-element list
+# (Jan..Dec) per backcast year for the model's single Upstate_West ->
+# Capital_Hudson link. Selected in place of NYISO_INTERFACE_TTC_BY_MONTH when
+# ScenarioConfig.nyiso_total_east_cutset_ttc is armed (default OFF); the two
+# never stack (rule 19 [R-ONE-MECH] — one seam, apply_iso_monthly_ttc).
+#
+# WHY (rule 14 [R-ACCURATE], the misalignment exception, VERBATIM): "a single
+# GTC that is one of several parallel paths our reduced network collapses into
+# one link". The five-zone reduction folds NYISO load zones A-E into
+# Upstate_West, so that link IS the A-E -> F+ cutset, whose NYISO name is
+# TOTAL EAST. NYISO_INTERFACE_TTC_BY_MONTH caps it at the posted CENT EAST DAM
+# TTC, a NESTED SUB-CUTSET of Total East that carries about half its flow
+# (2022 means: TOTAL EAST 3,170.7 MW, CENTRAL EAST 1,544.4 MW). Measured on the
+# same postings, the CENT EAST cap sits BELOW the measured Total East flow in
+# 86.3 / 95.8 / 61.3 / 58.2 % of the hours of 2022 / 2023 / 2024 / 2025 — in
+# 2022 it cannot carry 12.261 TWh of the cutset's own measured transfer (mean
+# deficit 1,399.6 MW) — so the link separates in nearly every hour and the
+# upstate price collapses onto its cheapest offer.
+#
+# CONSTRUCTION — INHERITED, NOT CHOSEN (rule 21 [R-DOF]: zero free parameters).
+# Verbatim the construction already armed for NYISO's own border links by
+# nyiso_seam_deliverability_envelope (nyiso-125, matrix cell K): the p90 of the
+# directionally-clipped measured transfer within each bin, here the calendar
+# month — the bin NYISO_INTERFACE_TTC_BY_MONTH already uses — rounded to 25 MW,
+# that table's own rounding. nyiso-125's finer month x hour-of-day bin gives a
+# 2022 binding share of 9.85 % against this bin's 10.06 %, i.e. the coarser bin
+# costs nothing and keeps one seam.
+#
+# WHAT THE nyiso-125 IDENTIFICATION REFUSAL DOES NOT REACH: that refusal is on
+# the EXTERNAL border envelopes of Capital_Hudson and Upstate_West, where
+# SCH - PJ - NY spans the cutset and neither NYISO's P-32 nor PJM's tie file
+# separates the legs. TOTAL EAST is a single unambiguous INTERNAL cutset row
+# with zero attribution freedom, so no identification choice arises here.
+#
+# BACKCAST-ONLY, on the identical classification as NYISO_INTERFACE_TTC_BY_MONTH
+# above (rule 13 [R-MEASURED]; the forward channel for the level is the
+# transmission-expansion registry). Regenerate with
+# scripts/data/derive_nyiso_total_east_envelope.py.
+NYISO_CUTSET_TTC_ENVELOPE_BY_MONTH: dict[int, dict[tuple[str, str], list[float]]] = {
+    2018: {
+        ("Upstate_West", "Capital_Hudson"): [
+            5225.0,
+            4925.0,
+            4650.0,
+            4350.0,
+            3600.0,
+            4200.0,
+            4450.0,
+            4625.0,
+            4225.0,
+            3550.0,
+            4625.0,
+            4525.0,
+        ]
+    },
+    2019: {
+        ("Upstate_West", "Capital_Hudson"): [
+            5375.0,
+            4950.0,
+            5150.0,
+            4250.0,
+            4175.0,
+            4775.0,
+            4875.0,
+            4700.0,
+            4425.0,
+            4150.0,
+            4250.0,
+            4725.0,
+        ]
+    },
+    2020: {
+        ("Upstate_West", "Capital_Hudson"): [
+            4375.0,
+            4075.0,
+            3700.0,
+            4250.0,
+            4075.0,
+            4400.0,
+            4325.0,
+            4600.0,
+            4450.0,
+            4275.0,
+            4150.0,
+            5100.0,
+        ]
+    },
+    2021: {
+        ("Upstate_West", "Capital_Hudson"): [
+            5075.0,
+            5000.0,
+            3875.0,
+            3250.0,
+            4000.0,
+            4525.0,
+            4900.0,
+            4775.0,
+            4600.0,
+            3600.0,
+            3700.0,
+            5250.0,
+        ]
+    },
+    2022: {
+        ("Upstate_West", "Capital_Hudson"): [
+            5425.0,
+            5500.0,
+            4350.0,
+            2650.0,
+            3325.0,
+            3825.0,
+            4275.0,
+            4400.0,
+            3700.0,
+            3150.0,
+            2225.0,
+            4675.0,
+        ]
+    },
+    2023: {
+        ("Upstate_West", "Capital_Hudson"): [
+            4775.0,
+            4500.0,
+            3600.0,
+            2975.0,
+            3175.0,
+            3600.0,
+            3650.0,
+            3725.0,
+            3425.0,
+            3250.0,
+            3700.0,
+            4275.0,
+        ]
+    },
+    2024: {
+        ("Upstate_West", "Capital_Hudson"): [
+            5550.0,
+            4700.0,
+            3325.0,
+            3325.0,
+            3425.0,
+            4475.0,
+            4600.0,
+            3800.0,
+            3300.0,
+            3625.0,
+            4375.0,
+            5425.0,
+        ]
+    },
+    2025: {
+        ("Upstate_West", "Capital_Hudson"): [
+            5575.0,
+            5500.0,
+            4225.0,
+            4025.0,
+            4150.0,
+            3750.0,
+            3675.0,
+            3275.0,
+            3300.0,
+            3100.0,
+            4375.0,
+            4775.0,
+        ]
+    },
+}
+
+
 # Crosswalk from ERCOT's published Generic Transmission Constraints (GTCs, the
 # stability-limited export interfaces reported in NP6-86 "SCED Shadow Prices
 # and Binding Transmission Constraints") onto the reduced 7-zone topology's
