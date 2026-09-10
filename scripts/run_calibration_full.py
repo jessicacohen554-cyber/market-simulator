@@ -1972,11 +1972,26 @@ def _eia923_frame(
     year: int,
     generation: pd.DataFrame,
     iso: str = "ERCOT",
+    mustrun_chp_btm_holdout: bool = False,
 ) -> pd.DataFrame:
     """Return EIA-923 net generation per (plant, class), annual and monthly.
 
     Restricted to plants in ``iso`` so the per-class totals are the ISO's
     actual generation, not the national EIA-923 sum.
+
+    ``mustrun_chp_btm_holdout`` (``ScenarioConfig.mustrun_chp_btm_holdout``,
+    default off, byte-identical off) drops rows whose plant carries the
+    published EIA-923 CHP flag from the INJECTED residual classes
+    (:data:`_INJECTED_MUSTRUN_CLASSES`) only — the host-steam / behind-the-meter
+    partition biomass and OTHER never received, though every fossil cogen class
+    has had one since ``classify_plant`` split them into ``*_CHP``. This is the
+    SINGLE seam both the injection (:func:`_must_run_profiles`) and the
+    benchmark (:func:`_benchmark_eia923_frame`) read, so the two move in
+    lockstep and the partition cannot manufacture a benchmark miss. Every other
+    class is untouched: gas cogen is already partitioned, coal cogen has
+    ``coal_chp_overrides``, and :func:`_plant_class_shares` filters to
+    :data:`_BACKFILL_TARGET_KLASSES` before it ever sees these rows.
+    Zero free parameters — a partition on one published boolean (rules 21 / 24).
     """
     df = generation[generation["year"] == year].copy()
     iso_plants = _iso_plant_ids(iso)
@@ -1988,6 +2003,25 @@ def _eia923_frame(
             df["fuel_type"], df["prime_mover"], df["chp"], df["plant_id"]
         )
     ]
+    if mustrun_chp_btm_holdout:
+        # Row grain, not plant grain: a mill may report a chp=Y recovery boiler
+        # and a chp=N grid unit at the same plant code, and only the former is
+        # behind the host's meter.
+        _host = df["chp"].astype(str).str.upper().str.startswith("Y") & df[
+            "klass"
+        ].isin(_INJECTED_MUSTRUN_CLASSES)
+        if bool(_host.any()):
+            logger.info(
+                "must-run CHP/BTM holdout %d %s: dropping %.3f TWh of chp=Y "
+                "host-steam generation from the injected residual classes "
+                "(%d of %d rows)",
+                year,
+                iso,
+                float(df.loc[_host, "netgen_annual_mwh"].sum()) / _MWH_PER_TWH,
+                int(_host.sum()),
+                int(len(df)),
+            )
+        df = df[~_host].copy()
     cols = monthly_netgen_columns()
     agg = {"netgen_annual_mwh": "sum", **{c: "sum" for c in cols}}
     grouped = df.groupby(["plant_id", "klass"], as_index=False).agg(agg)
@@ -2040,6 +2074,7 @@ def _must_run_profiles(
     demand: np.ndarray,
     skip_classes: frozenset[str] = frozenset(),
     e930: pd.DataFrame | None = None,
+    mustrun_chp_btm_holdout: bool = False,
 ) -> dict[str, np.ndarray]:
     """Per-zone hourly must-run MW for each injected residual class.
 
@@ -2068,7 +2103,9 @@ def _must_run_profiles(
         # so the injected class energy == the benchmark it is scored against, even
         # in a partial current-year EIA-923 vintage where biomass AND OTHER are
         # truncated (both absent from CAMPD/EIA-930).
-        annual, monthly = _reconciled_mustrun_class(klass, year, generation, iso, e930)
+        annual, monthly = _reconciled_mustrun_class(
+            klass, year, generation, iso, e930, mustrun_chp_btm_holdout
+        )
         monthly = np.clip(monthly, 0.0, None)
         if annual <= 0:
             continue
@@ -2319,6 +2356,7 @@ def _reconciled_mustrun_class(
     generation: pd.DataFrame,
     iso: str,
     e930: pd.DataFrame | None,
+    mustrun_chp_btm_holdout: bool = False,
 ) -> tuple[float, np.ndarray]:
     """Measured injected-class energy ``(annual_mwh, monthly[12])`` with the carry.
 
@@ -2339,7 +2377,7 @@ def _reconciled_mustrun_class(
     mcols = [f"m{i:02d}" for i in range(1, 13)]
 
     def _rows(yr: int) -> pd.DataFrame:
-        df = _eia923_frame(yr, generation, iso)
+        df = _eia923_frame(yr, generation, iso, mustrun_chp_btm_holdout)
         df = df[df["klass"] == klass]
         if klass == "OTHER":
             df = df[~df["plant_id"].isin(_pumped_storage_plant_ids())]
@@ -2366,6 +2404,7 @@ def _reconciled_biomass_class(
     generation: pd.DataFrame,
     iso: str,
     e930: pd.DataFrame | None,
+    mustrun_chp_btm_holdout: bool = False,
 ) -> tuple[float, np.ndarray]:
     """Measured biomass class energy ``(annual_mwh, monthly[12])`` with the carry.
 
@@ -2373,7 +2412,9 @@ def _reconciled_biomass_class(
     benchmark's biomass repair and the report's like-for-like total still call it
     by name).
     """
-    return _reconciled_mustrun_class("biomass", year, generation, iso, e930)
+    return _reconciled_mustrun_class(
+        "biomass", year, generation, iso, e930, mustrun_chp_btm_holdout
+    )
 
 
 def _backfill_renewables_eia930(
@@ -2382,6 +2423,7 @@ def _backfill_renewables_eia930(
     iso: str,
     generation: pd.DataFrame,
     e930: pd.DataFrame | None,
+    mustrun_chp_btm_holdout: bool = False,
 ) -> pd.DataFrame:
     """Source under-counted renewables from EIA-930 and biomass from a prior year.
 
@@ -2439,7 +2481,9 @@ def _backfill_renewables_eia930(
             # authority, so this fires nowhere else.
             # Evidence: results/calibration/FINDING-nyiso106-solar-benchmark-
             # vintage-2026-07-31.md.
-            ann, mon = _reconciled_mustrun_class(klass, year, generation, iso, e930)
+            ann, mon = _reconciled_mustrun_class(
+                klass, year, generation, iso, e930, mustrun_chp_btm_holdout
+            )
             cur = float(cls_total.get(klass, 0.0))
             if ann > cur:
                 logger.info(
@@ -2468,7 +2512,7 @@ def _backfill_renewables_eia930(
     completeness = _vintage_completeness(year, generation, iso, e930)
     if completeness < _EIA923_VINTAGE_COMPLETENESS_FRACTION:
         mcols = [f"m{i:02d}" for i in range(1, 13)]
-        prior = _eia923_frame(year - 1, generation, iso)
+        prior = _eia923_frame(year - 1, generation, iso, mustrun_chp_btm_holdout)
         prior_bio = prior[prior["klass"] == "biomass"]
         prior_ann = float(prior_bio["annual_mwh"].sum())
         cur_bio = float(cls_total.get("biomass", 0.0))
@@ -2693,6 +2737,7 @@ def _benchmark_eia923_frame(
     e930: pd.DataFrame | None,
     btm_backfill_year: int | None = None,
     campd_active: set[int] | None = None,
+    mustrun_chp_btm_holdout: bool = False,
 ) -> pd.DataFrame:
     """The bundle's per-class EIA-923 benchmark: CAMPD thermal backfill + the
     EIA-930 renewable / prior-year biomass repair for incomplete vintages.
@@ -2710,7 +2755,7 @@ def _benchmark_eia923_frame(
         None if iso == "ERCOT" else _plant_class_shares(iso, generation, year)
     )
     e923 = _backfill_eia923_with_campd(
-        _eia923_frame(year, generation, iso),
+        _eia923_frame(year, generation, iso, mustrun_chp_btm_holdout),
         campd_year,
         group_by_code,
         year,
@@ -2725,7 +2770,9 @@ def _benchmark_eia923_frame(
             btm_backfill_year,
             campd_active=campd_active,
         )
-    return _backfill_renewables_eia930(e923, year, iso, generation, e930)
+    return _backfill_renewables_eia930(
+        e923, year, iso, generation, e930, mustrun_chp_btm_holdout
+    )
 
 
 def _btm_frame(
@@ -5365,6 +5412,13 @@ def solve_and_persist(
         # LP units (inject_biomass_mustrun) so it is not served twice. Hydro is an
         # LP resource for all ISOs (budget hydro + pumped storage), never injected.
         e930_year = _eia930_frame(year, iso, iso_config)
+        # miso-253: the injected residual classes' host-steam partition. Read
+        # through the prb_overrides-aware helper for the caiso-80 defect class
+        # (a flag arriving on the generic ScenarioConfig channel that this
+        # loop's pristine ``cfg`` does not carry) — checking ``cfg`` alone would
+        # silently inject the un-partitioned array while run_config.json
+        # recorded the armed posture.
+        _mustrun_chp_btm = _caiso_demand_flag("mustrun_chp_btm_holdout")
         must_run = _must_run_profiles(
             year,
             generation,
@@ -5372,6 +5426,7 @@ def solve_and_persist(
             demand,
             skip_classes=frozenset(),
             e930=e930_year,
+            mustrun_chp_btm_holdout=_mustrun_chp_btm,
         )
         must_run_total = np.sum(list(must_run.values()), axis=0) if must_run else None
         inject_biomass = "biomass" in must_run
@@ -5978,6 +6033,9 @@ def solve_and_persist(
                     # (PJM 2025 CT_CHP, pjm-129 §6 / pjm-130).
                     btm_backfill_year=btm_backfill_year,
                     campd_active=campd_active,
+                    # Same seam as the injection above, so bench and model move
+                    # in lockstep (miso-253).
+                    mustrun_chp_btm_holdout=_mustrun_chp_btm,
                 )
             )
             if campd_year is not None:
@@ -7512,6 +7570,11 @@ def run_p2_layer(bundle: Path, screen_coal: bool) -> None:
             state["demand"],
             skip_classes=frozenset(),
             e930=_eia930_frame(year, meta["iso"], iso_config),
+            # P2 is archived (never a calibration option, no keeper uses it),
+            # but it must still inject the SAME residual array its P1 did.
+            mustrun_chp_btm_holdout=bool(
+                getattr(cfg, "mustrun_chp_btm_holdout", False)
+            ),
         )
         _dispatch_frame(
             year,
@@ -8523,6 +8586,19 @@ def rebuild_benchmark(bundle: Path) -> None:
                     _btm_backfill_year = int(_blk["btm_backfill_year"])
                     break
 
+    # miso-253: a rebuild must reproduce the bundle's OWN must-run partition,
+    # or an armed bundle silently regains the un-partitioned benchmark while
+    # its dispatch keeps the partitioned one -- a bench/model basis split, which
+    # is the defect class the single-seam design exists to prevent.
+    _mustrun_chp_btm = False
+    _rc = bundle / "run_config.json"
+    if _rc.exists():
+        _cfg = json.loads(_rc.read_text())
+        for _blk in (_cfg, _cfg.get("calibration_flags") or {}):
+            if isinstance(_blk, dict) and _blk.get("mustrun_chp_btm_holdout"):
+                _mustrun_chp_btm = True
+                break
+
     e923f, e930f, campdf = [], [], []
     for year in years:
         if not is_ercot:
@@ -8543,6 +8619,7 @@ def rebuild_benchmark(bundle: Path) -> None:
                 e930,
                 btm_backfill_year=_btm_backfill_year,
                 campd_active=_campd_active,
+                mustrun_chp_btm_holdout=_mustrun_chp_btm,
             )
         )
         if e930 is not None:
@@ -8715,6 +8792,7 @@ def run_replay_bundle(
     caiso_st_gas_committed_measured: bool | None = None,
     caiso_st_gas_peak_measured: bool | None = None,
     caiso_dsw_lateevening_clean: bool | None = None,
+    mustrun_chp_btm_holdout: bool | None = None,
     caiso_ct_peaker_committed_measured: bool | None = None,
     nyiso_ct_peaker_bands_measured: bool | None = None,
     gas_offer_margin: bool | None = None,
@@ -8968,6 +9046,20 @@ def run_replay_bundle(
         )
         _bag = dict(kwargs.get(_bag_key) or {})
         _bag["caiso_dsw_lateevening_clean"] = bool(caiso_dsw_lateevening_clean)
+        kwargs[_bag_key] = _bag
+    if mustrun_chp_btm_holdout is not None:
+        # miso-253: the injected-must-run host-steam partition is not a direct
+        # solve_and_persist kwarg -- it is read at the LP seam through the
+        # recorded generic override bag (the caiso-80-safe channel), so the
+        # override edits that bag in place (a COPY; the recipe dict is never
+        # mutated) exactly as its neighbours here do. The arm is therefore the
+        # keeper recipe plus this ONE boolean.
+        _bag_key = next(
+            (k for k in ("prb_overrides", "coal_prb_sigmoid_overrides") if k in kwargs),
+            "prb_overrides",
+        )
+        _bag = dict(kwargs.get(_bag_key) or {})
+        _bag["mustrun_chp_btm_holdout"] = bool(mustrun_chp_btm_holdout)
         kwargs[_bag_key] = _bag
     if caiso_dsw_daytime_evening_trim is not None:
         # caiso-252: the evening-trim flag is not a direct solve_and_persist
@@ -10824,6 +10916,33 @@ def main() -> None:
         "makes C3a WORSE by a bounded +0.0003/+0.0265/+0.0000 $/MWh "
         "(caiso-230 §H form on the caiso-231 keeper) and is NEVER a C3a lever. "
         "An ISO with no registry entry is a hard error.",
+    )
+    parser.add_argument(
+        "--mustrun-chp-btm-holdout",
+        dest="mustrun_chp_btm_holdout",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Partition the INJECTED must-run residual classes (biomass, "
+        "OTHER) on the published EIA-923 CHP flag, holding host-steam / "
+        "behind-the-meter cogeneration out of grid supply "
+        "(ScenarioConfig.mustrun_chp_btm_holdout, miso-253). The injection "
+        "takes each class's EIA-923 NET GENERATION as price-insensitive "
+        "must-run grid supply with NO host-steam carve-out -- unlike every "
+        "fossil cogen class, which classify_plant splits into its own *_CHP "
+        "class and then holds a measured host share out of. Biomass and OTHER "
+        "have no CHP counterpart class, and they are the two classes where "
+        "cogeneration DOMINATES: MISO 2023 is 71.4%% chp=Y across the pair "
+        "(12.514 of 18.453 TWh) -- black-liquor and wood-solids recovery "
+        "boilers at paper mills, blast-furnace and coke-oven gas at steel "
+        "mills, waste heat, purchased steam -- electricity that powers the "
+        "host and never reaches the ISO grid. Rule 14 [R-ACCURATE]; zero free "
+        "parameters (a partition on one published boolean, rules 21/24); "
+        "forward-native (rule 13 -- EIA-923 carries the flag per plant per "
+        "vintage). Applied at the single _eia923_frame seam BOTH the injection "
+        "and the benchmark read, so the two move in lockstep and no artificial "
+        "miss is created -- which also means biomass/OTHER stay SELF-SCORED; "
+        "this flag does not close that validation gap. ISO-generic; default "
+        "off, byte-identical off -- every keeper replays unchanged.",
     )
     parser.add_argument(
         "--caiso-dsw-lateevening-clean",
@@ -13172,6 +13291,12 @@ def main() -> None:
                 or "--no-caiso-dsw-lateevening-clean" in sys.argv
                 else None
             ),
+            mustrun_chp_btm_holdout=(
+                args.mustrun_chp_btm_holdout
+                if "--mustrun-chp-btm-holdout" in sys.argv
+                or "--no-mustrun-chp-btm-holdout" in sys.argv
+                else None
+            ),
             nyiso_ct_peaker_bands_measured=args.nyiso_ct_peaker_bands_measured,
             caiso_ct_peaker_committed_measured=(
                 args.caiso_ct_peaker_committed_measured
@@ -13376,6 +13501,12 @@ def main() -> None:
                 True if (args.gas_hub_basis_daily and iso == "NEISO") else None
             ),
             "chp_startup_covered": True if args.chp_startup_covered else None,
+            # miso-253: the injected-must-run host-steam partition rides the
+            # generic channel, so ONE read path serves the fresh solve, the
+            # replay override and a recipe -- and run_config.json records it
+            # (rule 24 [R-REGISTRY]) because prb_overrides is applied to
+            # recorded_cfg. None keeps the config/recipe value untouched.
+            "mustrun_chp_btm_holdout": args.mustrun_chp_btm_holdout,
             "coal_warm_committed": True if args.coal_warm_committed else None,
             "committed_ramp_spread": args.committed_ramp_spread,
             "cc_duct_peaking": True if args.cc_duct_peaking else None,
