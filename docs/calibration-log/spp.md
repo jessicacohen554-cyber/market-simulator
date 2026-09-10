@@ -1657,3 +1657,69 @@ a certified out-of-sample skill claim.**
 
 **Next shorthand: spp-26.**
 
+## spp-26 — 2026-09-10
+
+**PROMOTION — `2026-09-10-spp-64-stgas-selfcommit` is SPP's EIGHTH KEEPER, and SPP's FIRST
+`CALIBRATED` determination.** Promoted **by owner ruling in-session**, verbatim: *"Is this a
+recommended keeper candidate? If so plz promote. If structural integrity improves but gates regress
+that may still be a keeper."* Lane SPP-64 had recommended promotion in spp-25 and had **not** acted;
+`frontend/data/backcast/keepers/SPP.json` stayed untouched until the ruling (rule 31 `[R-RETAIN]`).
+
+**Promotion procedure executed in full, one PR** (`frontend/data/backcast/keepers/README.md`):
+1. `keepers/SPP.json` → `2026-09-10-spp-64-stgas-selfcommit`, with the run's provenance, its gate
+   table, and **the defect it carries** recorded in the note.
+2. `scripts/build_status.py --iso SPP` → `status/SPP.js` + `status/shared.js`, reading
+   **`[SPP:CALIBRATED]`** (rebuilt again after the prune so it names no pruned run).
+3. **R-T gate-(a) re-key in the SAME PR**: `frontend/data/forecast/program-status.json`
+   `isos.SPP.gate.a_keeper_marker` now names the new run. **Status `fail` → `fail`, unchanged** —
+   R-T is a STAMP re-key that reads no determination, and SPP still has **no `complete` entry**, which
+   this promotion deliberately does **not** create (that is a separate owner act and was not
+   requested). `check_gate_a_provenance.py` OK, 7 rows.
+4. Rule 28 `[R-MECH-MATRIX]`: `st_gas_mustrun_p25` cell **O → K** in **SPP's shard only**, plus the
+   `keeper` and `gates` stamps.
+
+**Rule 15 `[R-DASHBOARD]` keeper-only retention executed** — rule 31's trigger (i) is met now that
+the owner has ruled. `prune_iso_runs.py --iso SPP` removed the superseded keeper 7 (registry sidecar,
+run payload and `results/calibration/spp62_span`); **1 pruned, 1 kept**. Git history is the record and
+keeper 7's FINDING docs are retained.
+
+**A retention trap was hit and repaired before pruning, and it is worth recording because keeper 7's
+own note predicted it.** The first prune attempt reported keeper 7 as **PROTECTED — cited by a
+governance file**, because the new keeper note named it **by run id**. That is exactly the failure
+keepers 3–7 each warned about: `prune_iso_runs.py`'s citation guard scans `keepers/<ISO>.json`, so a
+run id written there is shielded from retention and later dangles. The note was rewritten to cite the
+predecessor **by lane** (`keeper 7 (lane SPP-62)`), and the prune then behaved correctly. **Keep
+citing predecessors by lane.** A stale "registered but NOT promoted" sentence left in the matrix
+cell's own evidence was also repaired in the same pass; the remaining references to the pruned id in
+SPP.js are historical evidence in *other* cells, which is normal.
+
+**Post-promotion checks, all green**: `audit_keepers.py --iso SPP` PASS (0 failures, 0 warnings;
+keeper / holdout / marker / status rows all clean) · `check_registry_payload_parity.py` OK (41 runs,
+73 bundle dirs, 0 unsynced) · `check_gate_a_provenance.py` OK · `check_mechanism_matrix.py` exit 0 ·
+the promoted run re-scores **CALIBRATED** by run id.
+
+**WHAT THE KEEPER IS AND WHAT IT CARRIES** is spp-25 above and `docs/RESULT-spp64-span.md`; the
+headline is unchanged by promotion — grade 7 of 8, 0 fails, 1 ledgered C3c caveat; C1 FAIL → PASS on
+both failing ST_GAS rows (volume **and** share); free-class C1 16/16 · 12/12; and **the flip is C1's
+alone** (C3c unchanged at full magnitude, 0/5/0 vs 42/59/68). **The keeper carries a known,
+recorded rule-17 defect** — the D-4 per-unit conduct rider FAILS in all three years (4/5/3 rows;
+keeper 7 carried zero; plants 1230/1235/1271 in every year) and **reached no scored criterion**
+because C8 passed on the share alone (forced share 0.1962 / 0.1849 / 0.1744 vs cap 0.30), so
+`_d4_provenance` was never consulted. That is written into the keeper note, the gate-(a) detail and
+the matrix cell so it cannot be lost.
+
+**OPEN CARDS carried forward, unchanged by this promotion**: **R-be (NEW)** — re-derive the floor's
+placement rule for ST_GAS plants whose measured operation is not top-system-load correlated;
+explicitly **not** a `mustrun_plant_exclusions` reach (miso-170: excluding a conduct-test failure
+"would bury that error inside a membership list"). **R-bd** — the absent upper tail is congestion
+rent, not reserve scarcity. **R-bc** — price-forming curtailment, which must enter as an **LP
+constraint whose dual reaches the zonal price**, replacing `spp_curtailment_ceiling` and never
+stacking. **R-ba** — the merit-order inversion. And `FINDING-spp-64`'s root cause stands: SPP's model
+is effectively a **one-zone market**.
+
+**`[R-HOLDOUT]` was removed 2026-09-09**, so no year is protected from having been iterated against:
+**`CALIBRATED` is a rubric determination, NOT a certified out-of-sample skill claim.**
+
+**Next shorthand: spp-27.**
+
+
