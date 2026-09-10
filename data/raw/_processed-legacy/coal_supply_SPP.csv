@@ -20,11 +20,13 @@ plant_code,supply_class,source,weight,n_ranks,ranks
 6096,prb,generation,58401655.6,1,prb:100%
 6138,prb,generation,20398505.2,1,prb:100%
 6139,prb,generation,34567887.06,1,prb:100%
+6193,prb,generation,26193400.3,1,prb:100%
 6194,prb,generation,20746240.19,1,prb:100%
 6195,prb,generation,17076477.009999998,1,prb:100%
 6469,lignite,generation,46955270.782000005,2,lignite:69%;bituminous:31%
 6772,prb,generation,7851787.66,1,prb:100%
 10671,prb,generation,6285388.302,2,prb:62%;bituminous:38%
+10862,prb,generation,156101.0,1,prb:100%
 54211,prb,generation,142909.46,1,prb:100%
 56564,prb,generation,28654216.46,1,prb:100%
 57046,prb,generation,2250070.0,1,prb:100%

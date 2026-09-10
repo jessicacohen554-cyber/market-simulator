@@ -15,9 +15,19 @@ of its dominant rank. The result is written to
 :func:`market_sim.data.fleet.coal_supply_class` merges on top of the ERCOT
 base map — so adding an ISO is just running this script.
 
+The coal *census* -- which plants get a row -- reads the canonical EIA-860
+snapshot by default. ``--census-vintage`` UNIONs in each solved year's own
+``vintage_<year>/`` release, so a plant that burned coal in a solved year but
+had been re-fuelled by the snapshot's vintage still gets a rank instead of
+falling through to a bare ``COAL`` class the EIA-923 benchmark has no row for
+(lane SPP-62; ``docs/handoffs/FINDING-spp-62-2026-09-10.md``). The census is a
+membership filter only, so widening it can add rows but never re-rank an
+incumbent one.
+
 Usage:
     python scripts/data/derive_coal_supply.py --iso PJM
     python scripts/data/derive_coal_supply.py --iso PJM --year 2024
+    python scripts/data/derive_coal_supply.py --iso SPP --census-vintage 2023 2024 2025
 """
 
 from __future__ import annotations
@@ -35,7 +45,7 @@ sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "src"))
 
 from market_sim.config.iso_configs import get_iso_config  # noqa: E402
-from market_sim.config.paths import RAW_DIR  # noqa: E402
+from market_sim.config.paths import RAW_DIR, EIA_860_DIR  # noqa: E402
 from market_sim.config.plant_taxonomy import COAL_CODE_TO_SUPPLY  # noqa: E402
 from market_sim.data.fleet import PROCESSED_DIR, load_fleet_from_csv  # noqa: E402
 from scripts.data.process_f923_fuel_costs import (  # noqa: E402
@@ -92,7 +102,99 @@ def _processed_generation(years: list[int] | None) -> pd.DataFrame:
     return gen
 
 
-def _coal_supply_table(iso: str, years: list[int] | None) -> pd.DataFrame:
+def _coal_census(
+    iso: str,
+    iso_config,
+    census_vintages: list[int] | None,
+) -> set[int]:
+    """Return the plant codes that are coal in ANY registry the solve reads.
+
+    The census is a *membership filter* — which plants get a coal-rank row —
+    and nothing else: a plant's rank is computed from its own EIA-923 receipts
+    or generation, independent of every other plant, so widening the census can
+    only ADD rows and can never re-rank an incumbent one.
+
+    ``census_vintages=None`` reads the canonical (2025 Early Release) snapshot
+    alone, which is the historical construction and stays the default, so no
+    ISO's committed CSV moves unless it is deliberately re-derived (rule 25
+    ``[R-ISO-SCOPE]``).
+
+    When a solved span is given, the census is the UNION of the canonical
+    snapshot and each of those years' own ``vintage_<year>/`` EIA-860 release.
+    That is the repair lane SPP-62 landed: the single-registry census read the
+    2025 snapshot for every solved year, so a plant that burned coal in the
+    solved year but had been re-fuelled by the snapshot's vintage was absent
+    from the census, got no rank, and reported in a bare ``COAL`` class the
+    EIA-923 benchmark has no row for. Harrington (6193) is the measured case —
+    ``SUB`` in EIA-923 for 2023 and 2024, ``NG`` in the 2025 snapshot.
+    Rule 14 ``[R-ACCURATE]``: a plant that is coal in ANY solved year needs a
+    rank, and the accurate registry for that year exists on disk.
+
+    A year with no committed ``vintage_<year>/`` directory contributes the
+    canonical snapshot, mirroring :func:`paths.set_eia860_vintage`; a vintage
+    the ISO cannot be loaded from at all is logged as a GAP rather than
+    silently skipped.
+
+    Args:
+        iso: ISO identifier, e.g. ``"SPP"``.
+        iso_config: The ISO's topology config, passed straight through.
+        census_vintages: The solved years whose own EIA-860 releases join the
+            census, or ``None`` for the canonical snapshot alone.
+
+    Returns:
+        The set of EIA plant codes carrying at least one coal generator in at
+        least one contributing registry.
+    """
+
+    def _coal_codes(data_dir) -> set[int]:
+        return {
+            int(g.plant_code)
+            for g in load_fleet_from_csv(iso, iso_config, data_dir=data_dir)
+            if g.fuel_type == "coal" and int(g.plant_code) > 0
+        }
+
+    census = _coal_codes(None)
+    logger.info("%s canonical-snapshot coal census: %d plants", iso, len(census))
+    if not census_vintages:
+        return census
+
+    for year in sorted({int(y) for y in census_vintages}):
+        vintage_dir = EIA_860_DIR / f"vintage_{year}"
+        if not vintage_dir.is_dir():
+            logger.info(
+                "%s vintage_%d: no committed release; canonical snapshot stands",
+                iso,
+                year,
+            )
+            continue
+        try:
+            year_codes = _coal_codes(vintage_dir)
+        except FileNotFoundError as exc:
+            logger.warning(
+                "%s vintage_%d: CENSUS GAP — no fleet in this release (%s)",
+                iso,
+                year,
+                exc.__class__.__name__,
+            )
+            continue
+        added = sorted(year_codes - census)
+        logger.info(
+            "%s vintage_%d coal census: %d plants; adds %s",
+            iso,
+            year,
+            len(year_codes),
+            added or "nothing",
+        )
+        census |= year_codes
+    logger.info("%s union coal census: %d plants", iso, len(census))
+    return census
+
+
+def _coal_supply_table(
+    iso: str,
+    years: list[int] | None,
+    census_vintages: list[int] | None = None,
+) -> pd.DataFrame:
     """Return ``[plant_code, supply_class, source, weight, n_ranks, ranks]``.
 
     One row per coal plant in ``iso``'s EIA-860 fleet, classified by its
@@ -110,11 +212,7 @@ def _coal_supply_table(iso: str, years: list[int] | None) -> pd.DataFrame:
     and benchmark still classify identically.
     """
     iso_config = get_iso_config(iso)
-    coal_codes = {
-        int(g.plant_code)
-        for g in load_fleet_from_csv(iso, iso_config)
-        if g.fuel_type == "coal" and int(g.plant_code) > 0
-    }
+    coal_codes = _coal_census(iso, iso_config, census_vintages)
     logger.info("%s EIA-860 fleet has %d coal plants", iso, len(coal_codes))
 
     rframes, gframes = [], []
@@ -206,9 +304,23 @@ def main() -> None:
         help="Restrict to these EIA-923 release years (default: all).",
     )
     parser.add_argument("--out-dir", default="data/raw/_processed-legacy")
+    parser.add_argument(
+        "--census-vintage",
+        type=int,
+        nargs="*",
+        default=None,
+        help=(
+            "Solved years whose own EIA-860 vintage_<year>/ release joins the "
+            "coal census, UNIONed with the canonical snapshot (rule 14 "
+            "[R-ACCURATE]: a plant that is coal in ANY solved year needs a "
+            "rank). Default: canonical snapshot alone -- the historical "
+            "construction, so no ISO's committed CSV moves unless it is "
+            "deliberately re-derived (rule 25 [R-ISO-SCOPE])."
+        ),
+    )
     args = parser.parse_args()
 
-    table = _coal_supply_table(args.iso.upper(), args.year)
+    table = _coal_supply_table(args.iso.upper(), args.year, args.census_vintage)
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     out_path = out_dir / f"coal_supply_{args.iso.upper()}.csv"
