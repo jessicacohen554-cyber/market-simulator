@@ -1474,3 +1474,88 @@ G-5 pass** — it is measured, one config across all years, and re-cutting it ag
 forbidden. Then **R-ba**, the ST_GAS/CT_PEAKER merit-order inversion, which this screen shows is
 needed independently of the wind level. Behind those, unchanged: **SPP-51b R-2**, **R-3** (zonal
 spread), **SPP-55/56** (scarcity / C3c). **SPP remains NOT-YET and is not calibrated.**
+
+---
+
+## spp-24 — 2026-09-10
+
+**Lane SPP-64. ZERO LP SPENT.** Base `2a267cc4`. Object as chartered: **R-bb, SPP price formation
+without the phantom wind** — root-cause the C3b regression and the loss of all 167 negative-price
+hours that killed SPP-63's ceiling screen. **Root-caused at phase 0**; every candidate arm was
+refused on a computable pre-solve gate under rule 29 `[R-SCREEN]` clause 0, so no shard was launched.
+Record: `docs/handoffs/FINDING-spp-64-2026-09-10.md`. **Keeper UNCHANGED**
+(`2026-09-10-spp-62-vintage-census`); nothing registered, nothing promoted, **no matrix cell verdict
+minted**.
+
+**THE FINDING — SPP's model is a one-zone market, and that single absence produces every open gate.**
+The LP carries ONE internal transmission constraint (the N↔S link) and its two zonal prices are
+**IDENTICAL in 87.4 / 86.1 / 76.8 % of hours**; mean |N−S| is **0.595 / 1.227 / 1.573** against a
+measured hub spread of **12.129 / 17.227 / 15.180**, i.e. the model reproduces 5–13 % of SPP's
+congestion rent. SPP's own published RTBM binding-constraint archive says what is missing:
+**735 / 723 distinct internal constraints binding in 96.4 % / 97.9 % of ALL hours**, median binding
+shadow price **$94.50 / $91.47**, maximum **$1,103.97 / $1,500.00**.
+
+**THE KEEPER'S C3b PASS IS A CANCELLATION, MEASURED.** Clipping the measured actual into the model's
+own observed price window and re-scoring the same model months moves NRMSE **0.1669 → 0.2562** (2025)
+and **0.1724 → 0.2249** (2023) — and the 2025 summer deficit VANISHES (Jul/Aug/Sep −4.00 / −3.50 /
+−7.43 → −0.81 / −1.53 / **+0.40**), leaving a near-uniform **+5 to +10 $/MWh body over-pricing**. The
+missing tail is worth **+3.64 / +2.71 $/MWh** annually, so the body must run high to carry the mean;
+the phantom wind pushes it back down in exactly the shoulder months (Mar/Apr hold the negative
+regime AND two of the three largest positive C3b errors). The two errors are so nearly equal that
+keeper-vs-tail-corrected (**0.2562**) ≈ SPP-63's arm-vs-raw (**0.253**). **2024 is the control**: its
+window is contaminated to $421 by two infeasibility hours, so its clip is nearly a no-op
+(0.1724 → 0.1771).
+
+**PRICE DISTRIBUTION COMPRESSED AT BOTH ENDS.** 2025 model p5/p10/p99/max **+13.13 / +20.11 / 51.51 /
+73.77** against actual **−11.35 / −2.21 / 176.91 / 1093.22**; median and p75 nearly right. Negative
+hours **229 / 214 / 167** vs **992 / 1,172 / 1,018**; hours >$100 **0 / 7 / 0** vs **152 / 260 / 213**.
+**In all 24 measured month-years the actual monthly MAXIMUM is 4–20× the model's** — the tail is in
+EVERY month (2025's three largest are Oct, Apr, Mar), which refutes any summer-scarcity account on
+its own.
+
+**WHAT SETS THE NEGATIVE PRICE, AND WHY THE CEILING DESTROYS IT.** The model's minimum is **exactly
+−26.000** in every year and both zones: wind's flat `-ira_ptc_wind` offer, a clamp not a
+distribution (measured floor −37.25 / −36.03 / −35.56). `spp_curtailment_ceiling` is a multiplier on
+the **CF UPPER BOUND**, and a unit held at its bound is never marginal — so bounded-off wind cannot
+set a price at all. In the real market curtailment **IS** the negative-price event; the ceiling
+reproduces its quantity half and discards its price half, which is why 167 → 0. **No value of
+`spp_curtail_depth_wind` changes this** — the defect is the channel, not the coefficient — so
+re-cutting the depth would be ineffective as well as forbidden, and this lane did not do it.
+
+**THE SLACK IS A REAL ADEQUACY SIGNAL.** The KEEPER's own 2024 carries **370.1017 MWh in 2 zone-hours
+at exactly $2,000.00** (`ISOConfig.voll` for SPP) — **1.75× the 211.208 MWh SPP-63 reports for its
+arm**, in a year that PASSES. Slack IS the model's entire scarcity mechanism: between the top of the
+thermal stack (~$74) and VOLL there is **nothing**, which is why C3c reads 0 / 5 / 0 — an absent tail,
+not a mis-calibrated one. Reported as a measurement; SPP-63's gate was pre-registered and spent and
+is NOT re-read here.
+
+**CORROBORATION.** Every thermal class clears within a **~$5 band** (2025 p50: COAL_PRB 33.67,
+CC_REGULAR 33.90, CT_PEAKER 35.22, ST_GAS 32.51) — R-ba's inversion is confirmed (ST_GAS 12.9 % CF
+below CT_PEAKER 19.0 %) but is a re-ranking *inside* a band that should be tens of dollars wide.
+
+**CORRECTION OWED TO SPP-63.** `RESULT-spp-63` §6 states the 2025 arm's slim artifacts "are committed
+under `results/shard-staging/spp63/2025/`". **They were never committed to any ref** — the RESULT
+commit `8fb9f0eb` carries three files (log, matrix shard, doc) and no artifacts. The promised zero-LP
+differencing basis does not exist, so **no SPP-63 arm number is quoted here as re-derived**; the
+diagnosis rests only on the committed keeper and the committed measured actuals. Separately,
+keeper 7's `basis_sha` `67feede7…` does **not** resolve at this base (the 2026-08-16 history rewrite);
+nothing here depends on it.
+
+**ROUTING — card P1 is now servable, with a warning.** `data/raw/spp-binding-constraints/README.md`
+still reads "Status: UNSERVED"; **the data has since landed**. This lane deliberately does NOT compute
+the SPP-54-vs-SPP-57 ranking (choosing flowgate membership while reading the shares is rule-1
+forbidden — it needs its own PRECOMMIT). Membership-free fact it does report: 2024 congestion rent is
+carried by **444 facilities, top-20 = 47.4 %, 23 for half, 115 for 90 %** — **not a 3-zone object**,
+the same shape as MISO RO-3's NO-BUILD verdict.
+
+**SUCCESSORS.** **R-bc — price-forming curtailment**: the ceiling family is rule-14-owed and its
+allocation is right, but it must enter as an **LP constraint whose dual reaches the zonal price**, not
+a CF bound, so curtailment and the negative-price hour are ONE event; success = wind volume down AND
+negative hours UP toward 1,018 AND congestion rent up AND C3b down. It **replaces**
+`spp_curtailment_ceiling`, never stacks (rule 19). **R-bd — the upper tail is CONGESTION RENT, not
+reserve scarcity**: SPP-55 measured the reserve route dead (1/0/0 hours of C3c overlap;
+`energy_reserve_coopt` = `I`) and the every-month tail confirms it independently; not separately
+screenable — R-bc and R-bd are one object. **R-ba unchanged and now bounded.** **SPP remains NOT-YET
+and is not calibrated** — two criteria fail, so rule 22 `[R-C3C]` still cannot fire.
+
+**Next shorthand: spp-25.**
