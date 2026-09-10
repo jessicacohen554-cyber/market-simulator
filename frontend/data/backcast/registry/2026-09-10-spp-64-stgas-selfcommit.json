@@ -3,7 +3,7 @@
   "label": "spp 64 stgas selfcommit",
   "date": "2026-09-10",
   "shorthand": "spp-64-stgas-selfcommit",
-  "definition": "BTM-basis re-solve: byte-faithful replay of the committed keeper config from meta.json, adding btm.parquet (behind-the-meter CHP held out of the LP) so the benchmark scores on the grid-delivered basis.",
+  "definition": "SPP-64 stgas-selfcommit: keeper 7's recipe plus ONE armed field, st_gas_mustrun_per_plant, modeling SPP's 100% EIA-860 Sector-1 (vertically-integrated utility) gas-steam fleet as self-committed at each plant's own CAMPD-derived LSL floor rather than merchant on/off dispatch against LMP. C1 ST_GAS crosses FAIL -> PASS in 2023 (-8.380 -> -6.034 TWh) and 2024 (-9.712 -> -7.423 TWh), leaving C3c the lone failing criterion, auto-ledgered as a caveat under rule 22's owner standing rule. Determination: CALIBRATED (grade 7/8, 0 fails, 1 ledgered C3c caveat) -- SPP's first CALIBRATED determination. See docs/handoffs/PRECOMMIT-spp-64-stgas-selfcommit-2026-09-10.md, FINDING-spp-64-2026-09-10.md.",
   "years": [
     2023,
     2024,
