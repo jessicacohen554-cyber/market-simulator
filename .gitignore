@@ -1754,7 +1754,6 @@ results/calibration/nyiso222_offer_plus5_tp2022/
 results/calibration/caiso269_lateevening_*/
 results/calibration/_rev2void_caiso269_*/
 results/calibration/caiso269_lateevening_span/
-=======
 # pjm-d4-2 (2026-09-10) per-year SHARD bundles: rule 32 [R-SHARD] solves one
 # year per container into its own out-dir, and the PARENT composes the single
 # registrable 2020-2025 bundle from them (rule 16 [R-ALLYEARS]). The per-year
