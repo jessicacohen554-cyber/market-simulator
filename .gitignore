@@ -1826,3 +1826,7 @@ results/calibration/_spp61_heavy/
 # gitignoring — never `rm` — as what discharges it, so these stay on local disk
 # until the owner has ruled on promotion.
 results/calibration/spp62_*/
+
+# nyiso-224 screen/probe bundles (rule 29(c) via .gitignore, rule 31 [R-RETAIN]:
+# kept out of `main`, never deleted from local disk).
+results/calibration/nyiso224_*/

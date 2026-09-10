@@ -179,6 +179,7 @@ window.MECH_MATRIX_SHARDS.PJM = {
     zonal_gas_basis: { cell: "K" },
     gas_hub_basis_overlay: { cell: "." },
     nyiso_hub_gap_month_level: { cell: ".", ev: "NYISO-only seam (data/fuel/hubs.py::_nyiso_hub_daily_gas_prices, reached only by the NYISO daily-hub leg). Rule 25 [R-ISO-SCOPE]: nothing transfers. This ISO's cell opens only if its own hub-daily leg is found to carry the same np.interp clamp over unpriced calendar days. Row added by nyiso-223 (2026-09-10) per rule 28 duty (c)." },
+    nyiso_total_east_cutset_ttc: { cell: ".", ev: "NYISO-only seam (pipeline/ttc.py::apply_iso_monthly_ttc returns the scalar TTC unchanged for every ISO but NYISO), so this ISO has no cell to fill. Rule 25 [R-ISO-SCOPE]: NYISO's own five-zone reduction and its own MIS cutset postings; nothing here transfers." },
     nyiso_iroquois_winter_spread: { cell: "." },
     gas_marginal_commodity_pricing: { cell: "." },
     gas_variable_transport: { cell: "." },

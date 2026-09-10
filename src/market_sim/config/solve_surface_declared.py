@@ -582,4 +582,8 @@ DECLARED: dict[str, str | dict[str, str]] = {
     "F923_GAS_PRICE_PLAUSIBILITY_BAND": "156dfaff0d3b553b",
     "ERCOT_GAS_CORROBORATION_TOL_USD_MMBTU": "e35825684a9c2584",
     "HYDRO_BUDGET_PERIOD_HOURS_BY_PLANT": {"NYISO": "0d6bce3ba875ed62"},
+    # nyiso-224, declared IN THE SAME COMMIT as the table (D79 discipline):
+    # the TOTAL EAST cutset envelope is dropped at its as-committed value so
+    # every pre-existing key stays valid, and a later re-derive re-keys NYISO.
+    "NYISO_CUTSET_TTC_ENVELOPE_BY_MONTH": "5774ef6d32b9d91b",
 }
