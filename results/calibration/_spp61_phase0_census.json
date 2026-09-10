@@ -1,0 +1,144 @@
+{
+  "harrington": 6193,
+  "years": {
+    "2023": {
+      "control": {
+        "": 4015.1,
+        "CC_CHP": 271.2,
+        "CC_REGULAR": 10047.8,
+        "COAL": 20694.7,
+        "CT_CHP": 240.2,
+        "CT_PEAKER": 11799.6,
+        "ST_CHP": 113.4,
+        "ST_GAS": 10463.5,
+        "_TOTAL": 60749.0,
+        "hydro": 3103.5
+      },
+      "arm": {
+        "": 4022.8,
+        "CC_CHP": 271.2,
+        "CC_REGULAR": 10057.1,
+        "COAL": 20036.3,
+        "CT_CHP": 210.7,
+        "CT_PEAKER": 10491.6,
+        "ST_CHP": 121.4,
+        "ST_GAS": 9719.0,
+        "_TOTAL": 58033.6,
+        "hydro": 3103.5
+      },
+      "delta": {
+        "": 7.7,
+        "CC_CHP": 0.0,
+        "CC_REGULAR": 9.3,
+        "COAL": -658.4,
+        "CT_CHP": -29.5,
+        "CT_PEAKER": -1308.0,
+        "ST_CHP": 8.0,
+        "ST_GAS": -744.5,
+        "_TOTAL": -2715.4,
+        "hydro": 0.0
+      },
+      "harrington_control": {
+        "ST_GAS": 1018.0
+      },
+      "harrington_arm": {
+        "COAL": 1018.0
+      },
+      "bench_group_control": "ST_GAS",
+      "bench_group_arm": "COAL"
+    },
+    "2024": {
+      "control": {
+        "": 4015.1,
+        "CC_CHP": 271.2,
+        "CC_REGULAR": 10047.8,
+        "COAL": 20694.7,
+        "CT_CHP": 209.6,
+        "CT_PEAKER": 11846.6,
+        "ST_CHP": 113.4,
+        "ST_GAS": 10463.5,
+        "_TOTAL": 60739.9,
+        "hydro": 3078.0
+      },
+      "arm": {
+        "": 3998.7,
+        "CC_CHP": 271.2,
+        "CC_REGULAR": 9955.3,
+        "COAL": 19849.6,
+        "CT_CHP": 208.4,
+        "CT_PEAKER": 10564.5,
+        "ST_CHP": 123.8,
+        "ST_GAS": 9515.1,
+        "_TOTAL": 57564.6,
+        "hydro": 3078.0
+      },
+      "delta": {
+        "": -16.4,
+        "CC_CHP": 0.0,
+        "CC_REGULAR": -92.5,
+        "COAL": -845.1,
+        "CT_CHP": -1.2,
+        "CT_PEAKER": -1282.1,
+        "ST_CHP": 10.4,
+        "ST_GAS": -948.4,
+        "_TOTAL": -3175.3,
+        "hydro": 0.0
+      },
+      "harrington_control": {
+        "ST_GAS": 1018.0
+      },
+      "harrington_arm": {
+        "COAL": 679.0,
+        "ST_GAS": 339.0
+      },
+      "bench_group_control": "ST_GAS",
+      "bench_group_arm": "COAL"
+    },
+    "2025": {
+      "control": {
+        "": 4015.1,
+        "CC_CHP": 271.2,
+        "CC_REGULAR": 10047.8,
+        "COAL": 20694.7,
+        "CT_CHP": 209.6,
+        "CT_PEAKER": 11846.6,
+        "ST_CHP": 113.4,
+        "ST_GAS": 10463.5,
+        "_TOTAL": 60739.9,
+        "hydro": 3078.0
+      },
+      "arm": {
+        "": 4015.1,
+        "CC_CHP": 271.2,
+        "CC_REGULAR": 10047.8,
+        "COAL": 20694.7,
+        "CT_CHP": 209.6,
+        "CT_PEAKER": 11846.6,
+        "ST_CHP": 113.4,
+        "ST_GAS": 10463.5,
+        "_TOTAL": 60739.9,
+        "hydro": 3078.0
+      },
+      "delta": {
+        "": 0.0,
+        "CC_CHP": 0.0,
+        "CC_REGULAR": 0.0,
+        "COAL": 0.0,
+        "CT_CHP": 0.0,
+        "CT_PEAKER": 0.0,
+        "ST_CHP": 0.0,
+        "ST_GAS": 0.0,
+        "_TOTAL": 0.0,
+        "hydro": 0.0
+      },
+      "harrington_control": {
+        "ST_GAS": 1018.0
+      },
+      "harrington_arm": {
+        "ST_GAS": 1018.0
+      },
+      "bench_group_control": "ST_GAS",
+      "bench_group_arm": "ST_GAS"
+    }
+  }
+}
