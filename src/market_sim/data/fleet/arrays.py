@@ -2433,6 +2433,64 @@ def _apply_outage_overlays(
             )
 
 
+def _commitment_day_order(sys_load: np.ndarray | None, hours: int) -> np.ndarray | None:
+    """Operating days ranked by that day's MEAN system load, highest first.
+
+    The whole-operating-day analogue of the hour ranking the per-plant
+    must-run seams place their window with
+    (``config.mustrun_window_commitment_grain``, spp-27): the same signal and
+    the same ordering statistic, aggregated to the period a unit commitment is
+    actually made for. Returns ``None`` when there is no usable load shape, so
+    the caller falls back to the hour grain.
+
+    Args:
+        sys_load: Hourly system load, or ``None``.
+        hours: The solve year's hour count.
+
+    Returns:
+        ``(n_days,)`` day indices in descending day-mean-load order, or
+        ``None``.
+    """
+    if sys_load is None or hours < 24:
+        return None
+    days = hours // 24
+    if days <= 0:
+        return None
+    key = np.asarray(sys_load, dtype=float)[: days * 24].reshape(days, 24).mean(axis=1)
+    return np.argsort(-key, kind="stable")
+
+
+def _mustrun_window_hours(
+    load_rank: np.ndarray,
+    day_order: np.ndarray | None,
+    k: int,
+    day_grain: bool,
+) -> np.ndarray:
+    """The k-hour committed window a per-plant must-run floor is placed in.
+
+    Hour grain (the default) is the top-``k`` hours by system load. Under
+    ``config.mustrun_window_commitment_grain`` the window is instead
+    ``round(k / 24)`` whole operating days off *day_order*, so the floor
+    carries the diurnal shape of a COMMITMENT (flat across the committed day)
+    rather than the diurnal shape of LOAD. Size, level and membership are
+    unchanged — only which hours are selected (rule 19 [R-ONE-MECH]).
+
+    Args:
+        load_rank: Hour indices in descending system-load order.
+        day_order: Day indices from :func:`_commitment_day_order`, or ``None``.
+        k: The window size in hours (``online_frac`` x hours).
+        day_grain: Whether the commitment-grain gate is armed.
+
+    Returns:
+        The window's hour indices (unsorted).
+    """
+    if not day_grain or day_order is None or len(day_order) == 0:
+        return load_rank[:k]
+    n_days = int(min(len(day_order), max(1, round(k / 24.0))))
+    starts = np.asarray(day_order[:n_days], dtype=int) * 24
+    return (starts[:, None] + np.arange(24)[None, :]).ravel()
+
+
 def _compose_min_gen_floors(
     generators: list[Generator],
     availability: np.ndarray,
@@ -2573,6 +2631,31 @@ def _compose_min_gen_floors(
             _yr,
             len(_per_year_frac),
         )
+    # WHOLE-OPERATING-DAY COMMITMENT GRAIN for both per-plant must-run seams
+    # (config.mustrun_window_commitment_grain, spp-27). The floor asserts a
+    # COMMITMENT — a day-ahead, whole-operating-day decision — but the engine
+    # places it by ranking INDIVIDUAL HOURS by system load, so the floor
+    # inherits the diurnal shape of LOAD instead of the shape of COMMITMENT.
+    # Measured on SPP's ST_GAS fleet (spp-27 phase 0, 22 plants x 3 years,
+    # CAMPD hourly): the peak-to-mean of each plant's ONLINE hour-of-day
+    # profile is 1.007-1.146 on 21 of 22 plants — when these units are
+    # synchronized they run through the overnight trough — while the incumbent
+    # window's own peak-to-mean over the same plant-years is 1.03-2.86
+    # (median ~1.35). Rule 17 [R-FLOOR-WINDOW] in both directions: the floor
+    # binds at the daily peak and is absent overnight on the SAME committed
+    # day. When armed the window becomes ``round(k/24)`` whole operating days
+    # ranked by that day's MEAN system load — the mechanical lift of the
+    # incumbent's own hourly ranking to the commitment period, same signal and
+    # same ordering statistic, one grain coarser. Rule 21: zero free
+    # parameters. Rule 13: the ranking is the model's own load, so it
+    # regenerates forward and is mode-blind. Rule 19: the window is REPLACED,
+    # never stacked; SIZE (``online_frac``, pooled or per-year), level and
+    # membership are untouched, and the coal/CT seams keep the hour grain
+    # (separate mechanism ids, whose conduct evidence this gate does not
+    # carry).
+    _day_grain = bool(
+        config is not None and getattr(config, "mustrun_window_commitment_grain", False)
+    )
     # MEASURED LAY-UP WINDOW MASK for both per-plant must-run seams
     # (config.mustrun_layup_window_mask, miso-173). The merit-order guard's
     # economic-lay-up companion extract records, per unit and dated window, the
@@ -2910,6 +2993,10 @@ def _compose_min_gen_floors(
             load_rank = (
                 np.argsort(-sys_load, kind="stable") if sys_load is not None else None
             )
+            # Whole-operating-day commitment grain
+            # (config.mustrun_window_commitment_grain, spp-27) — see the gate
+            # block above. ``None`` when unarmed, so the hour grain stands.
+            day_order = _commitment_day_order(sys_load, hours) if _day_grain else None
             for g_idx, gen in enumerate(generators):
                 pmin_mw = getattr(gen, "cc_mustrun_pmin_mw", 0.0)
                 if pmin_mw <= 0.0:
@@ -2970,7 +3057,7 @@ def _compose_min_gen_floors(
                     k = int(round(frac * hours))
                     if k <= 0:
                         continue
-                    hrs = load_rank[:k]
+                    hrs = _mustrun_window_hours(load_rank, day_order, k, _day_grain)
                     if _lu is not None:
                         vals = np.minimum(
                             pmin_mw,
@@ -3012,6 +3099,10 @@ def _compose_min_gen_floors(
             load_rank = (
                 np.argsort(-sys_load, kind="stable") if sys_load is not None else None
             )
+            # Same commitment grain as the committed-tranche seam above: the
+            # p25 swap replaces the LEVEL only, so its window construction must
+            # stay single-valued (rule 19 [R-ONE-MECH]).
+            day_order = _commitment_day_order(sys_load, hours) if _day_grain else None
             p25_forced_mwh = 0.0
             for pc, idxs in st_gas_p25_tranches.items():
                 level = st_gas_p25_levels_by_plant.get(pc, 0.0)
@@ -3027,7 +3118,9 @@ def _compose_min_gen_floors(
                     k = int(round(frac * hours))
                     if k <= 0:
                         continue
-                    target[load_rank[:k]] = level
+                    target[
+                        _mustrun_window_hours(load_rank, day_order, k, _day_grain)
+                    ] = level
                 # Distribute cheapest-first across the plant's tranches, each
                 # capped at its available MW that hour; np.maximum composes with
                 # any floor already placed (the CT-deployment precedent below).
