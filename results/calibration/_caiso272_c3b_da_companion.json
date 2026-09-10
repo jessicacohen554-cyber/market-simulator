@@ -1,0 +1,31 @@
+{
+ "session": "caiso-272",
+ "iso": "CAISO",
+ "note": "C3b gates on RT; the DA column is a REPORTING companion only.",
+ "rows": [
+  {
+   "year": 2022,
+   "run_id": "2026-09-10-caiso-269-lateevening-2022",
+   "c3b_nrmse_vs_rt_gated": 0.2402,
+   "c3b_nrmse_vs_da_companion": 0.151
+  },
+  {
+   "year": 2023,
+   "run_id": "2026-09-10-caiso-269-lateevening-clean",
+   "c3b_nrmse_vs_rt_gated": 0.0827,
+   "c3b_nrmse_vs_da_companion": 0.1551
+  },
+  {
+   "year": 2024,
+   "run_id": "2026-09-10-caiso-269-lateevening-clean",
+   "c3b_nrmse_vs_rt_gated": 0.1392,
+   "c3b_nrmse_vs_da_companion": 0.1146
+  },
+  {
+   "year": 2025,
+   "run_id": "2026-09-10-caiso-269-lateevening-clean",
+   "c3b_nrmse_vs_rt_gated": 0.107,
+   "c3b_nrmse_vs_da_companion": 0.0811
+  }
+ ]
+}
