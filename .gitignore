@@ -1740,6 +1740,17 @@ results/pjm_d4_y2023/
 results/pjm_d4_y2024/
 results/pjm_d4_y2025/
 
+# ...and the two COMPOSED, REGISTERED bundles are exempt from pjm-d4-1's broad
+# `results/calibration/pjm_d4_*/` rule above (added by the predecessor session
+# for ITS screen/control bundles, which correctly never reach `main`). These two
+# are different: they are registered dashboard runs, and rule 15 [R-DASHBOARD]
+# requires a registered run's SLIM bundle to be committed. The §8 slim rules
+# still strip every heavy parquet (dispatch/, floors/, system/storage/btm/flows,
+# unit_hourly, network) — only meta/run_config/metrics/diagnostics/attestation
+# and the keeper hourly sidecars land.
+!results/calibration/pjm_d4_2_A/
+!results/calibration/pjm_d4_2_TP/
+
 # ercot-264 keeper-reproduction bundles (rule 31 [R-RETAIN]: gitignored, never rm-ed;
 # rule 29(c): kept out of main unless the owner promotes and they are registered)
 results/calibration/ercot264_repro_*/
