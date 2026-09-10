@@ -1704,6 +1704,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # and so earns a distinct key. SHARED field -- very end, per HOUSE-3.
     # Registered IN THE SAME COMMIT as the field.
     "vre_curtailment_oversupply_allocation",
+    # SPP-58: the SPP wind curtailment ceiling and its level coefficient. Both
+    # default-off/inert, so every pre-existing cached run -- every ISO's keepers
+    # included -- keeps its key; an armed run hands the LP a genuinely different
+    # wind upper bound and so earns a distinct key. SHARED-field placement (very
+    # end, per HOUSE-3). Registered IN THE SAME COMMIT as the fields.
+    "spp_curtailment_ceiling",
+    "spp_curtail_depth_wind",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -2304,6 +2311,11 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # SPP-51c: the oversupply water-fill curtailment allocation, registered at
     # its shipped default (the flat per-hour gross-up).
     "vre_curtailment_oversupply_allocation": "False",
+    # SPP-58: the SPP wind curtailment ceiling, registered at its shipped
+    # defaults (ceiling off; depth carried at its derived value so an armed run
+    # that leaves the depth alone still keys on the flag alone).
+    "spp_curtailment_ceiling": "False",
+    "spp_curtail_depth_wind": "0.288137",
 }
 
 
@@ -15401,6 +15413,54 @@ class ScenarioConfig:
     ercot_wtx_curtail_depth_wind: float = 0.1004
     ercot_wtx_curtail_depth_solar: float = 0.1637
 
+    # SPP-58 — SPP's own instance of the same reduced-form structure, on SPP's
+    # own measured data (rule 25 [R-ISO-SCOPE]: nothing is transferred from
+    # ERCOT -- not the table, not the depth, not the corridor attribution).
+    #
+    # THE DEFECT IT REPAIRS. SPP's wind bound is `forecast_uncurtailed`: the
+    # delivered EIA-930 profile grossed up by the measured reference curtailment
+    # rate, a construction whose own stated precondition (data/renewables.py) is
+    # "real headroom, ENDOGENOUSLY RE-CURTAILED". It is not re-curtailed.
+    # Measured at zero LP on the keeper 2026-09-09-spp-52a-fossil-offer's own
+    # committed hourly sidecars, model re-curtailment is 0.26 / 0.22 / 0.17 % in
+    # 2023 / 2024 / 2025 against the 9.65 % rate the gross-up applies -- a 40-60x
+    # miss -- because the 2-zone reduction (SPP-North / SPP-South, one 3,400 MW
+    # link) collapses the SPS / Texas-Panhandle and western Kansas / Oklahoma
+    # export pockets that do the real curtailing, leaving the LP no mechanism to
+    # spill wind bid in at its -$26/MWh PTC floor. This repo's own code already
+    # names the failure mode: renewables.py keeps NYISO OUT of the fallback set
+    # because "its curtailment is locally driven and the reduced network can't
+    # re-curtail a gross-up". SPP is IN that set on identical facts.
+    #
+    # THE MECHANISM. ceiling_frac(t) = 1 - depth * congestion_share(t), applied
+    # to the wind CF upper bound on both SPP zones, where congestion_share is
+    # keyed on the MODEL'S OWN net-load decile x hour-of-day x season -- so it
+    # regenerates forward (more wind -> deeper troughs -> the high-incidence
+    # deciles re-compose) and responds to changed conditions, which is rule 13
+    # [R-MEASURED]'s forward test. SHAPE from SPP's published RTBM
+    # binding-constraint archive (data/raw/spp-binding-constraints, landed
+    # 2026-09-08), derived by scripts/data/derive_spp_curtailment_share.py from
+    # measured binding incidence ONLY -- never a curtailment volume, never a
+    # price, never a residual. LEVEL from SPP's published measured curtailment
+    # MW (SPP MMU ASOM via data/raw/spp-hsl/spp_wind_curtailment_annual.csv),
+    # the same identification ERCOT's depth uses: the single energy-weighted
+    # value that centres all three years at once (per-year 0.2565 / 0.3139 /
+    # 0.2917, pooled 0.288137 -- ONE config across every scored year, never
+    # swept against a gate). Solar takes NO ceiling: SPP's solar bound is
+    # delivered-pinned, so it carries no gross-up headroom to remove.
+    #
+    # RULE 19 [R-ONE-MECH]: it REPLACES vre_curtailment_oversupply_allocation,
+    # never stacks on it. Both answer "where does the measured curtailment
+    # land"; the allocation only moves the headroom to low-net-load hours and
+    # the measurement above is what that left behind. Enforced in code --
+    # renewables.py skips the oversupply allocation whenever this flag is armed
+    # -- so the two can never both be live in one solve.
+    #
+    # Default OFF; depth 0.0 is the inert ablation. Inert with no derived share
+    # table (the reader returns None and the static bound stands).
+    spp_curtailment_ceiling: bool = False
+    spp_curtail_depth_wind: float = 0.288137
+
     # ercot-165 — UNPOOL the driver's share by diurnal family, and give the
     # Panhandle export interface exactly ONE owner (rule 19 [R-ONE-MECH]).
     # FINDING-ercot164 measured that the pooled congestion_share is a UNION over
@@ -20369,6 +20429,8 @@ TIER_TAGS: dict[str, int] = {
     "ercot_wind_zone_shape": 3,
     "ercot_wtx_curtail_depth_wind": 3,
     "ercot_wtx_curtail_depth_solar": 3,
+    "spp_curtailment_ceiling": 3,
+    "spp_curtail_depth_wind": 3,
     "ercot_wtx_curtail_unpooled": 3,
     "ercot_wtx_panhandle_owner": 3,
     "coal_supply_repricing": 3,
