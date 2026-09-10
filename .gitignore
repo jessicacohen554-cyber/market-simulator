@@ -12,8 +12,7 @@
 # One-off, session-specific scratch-dir names are intentionally NOT enumerated:
 # any bundle's heavy contents are already covered by the §8 slim-bundle rules,
 # and the recurring scratch families are covered by §9.
-# ======================================================================
-# -----------------------------------------------------------------------------
+# ========================================================# -----------------------------------------------------------------------------
 # 1. Python / build / OS
 # -----------------------------------------------------------------------------
 __pycache__/
@@ -770,6 +769,14 @@ results/calibration/pjm174_*/
 # pjm-174/175 full-span promotion candidate. Gitignored per rule 29(c) so it can never
 # reach main; rule 31 [R-RETAIN] forbids deleting it before the owner rules on promotion.
 results/calibration/pjm175_*/
+# pjm-d4-3 DA-virtual-net screen bundle (2022 — the year of the mechanism's
+# largest measured ANNUAL-NET footprint, named ex ante in
+# PRECOMMIT-pjm-d4-3-da-virtual-net-2026-09-10.md §4). Rule 29 [R-SCREEN] (c)
+# keeps a screen bundle OUT OF `main`, and rule 31 [R-RETAIN] names gitignoring
+# — never `rm` — as what discharges that duty, so it stays on local disk until
+# the OWNER has ruled on promotion. Every number the session cites from it is
+# written into the PRECOMMIT/RESULT; git history is the record.
+results/calibration/pjm_d4_3_*/
 # nyiso-218 +3.0 % fossil energy-band offer-lift screen / span bundles
 # (PREREG-nyiso218-fossil-energy-band-lift §7). Rule 29 [R-SCREEN] (c) requires
 # a screen bundle to stay OUT OF `main` -- and rule 31 [R-RETAIN] forbids
@@ -1701,6 +1708,20 @@ results/calibration/pjm_fuelvintage_TP/*.parquet
 results/calibration/pjm_fuelvintage_TP/hourly/network_*.parquet
 results/calibration/pjm_fuelvintage_TP/hourly/class_band_hourly_*.parquet
 results/calibration/pjm_fuelvintage_TP/hourly/unit_hourly_*.parquet
+# nyiso-223 (2026-09-10) — the hub-daily unpriced-day gap-fill arm's per-year shard
+# bundles. Rule 31 [R-RETAIN] + rule 29(c) [R-SCREEN]: what discharges "delete before
+# merge" is KEEPING THE BUNDLE OUT OF `main`, never `rm`-ing it from local disk. Ignoring
+# the family the moment it is written means the Class-E bundle-retention sweep
+# (check_registry_payload_parity.py) never sees an unregistered committed dir, while the
+# solved artifacts stay on disk for a promotion the owner has not yet ruled on. Only the
+# COMPOSITE, if promoted, is force-added and registered (rule 32(d)).
+# ANCHORED HERE, NOT AT EOF, ON PURPOSE: every lane appends its bundle-ignore block to the
+# end of this file, so EOF is where all of them collide — measured 2026-09-10, `.gitignore`
+# was the ONLY conflicting file between this branch and all 19 live claude/* lanes, and it
+# conflicted with every single one of them. Sitting above the stable nyiso-222 anchor keeps
+# this hunk out of that contested region so the three-way merge resolves it automatically.
+results/calibration/nyiso223_gapfill_*/
+
 # nyiso-222 (2026-09-09) owner-directed +5% offer-curve move: the full-span
 # replay bundle for the rule-1 [R-STRUCT] authorized price-tuning channel.
 # Ignored so it can never reach `main`, which is the ONLY thing rule 29(c)
@@ -1741,6 +1762,17 @@ results/pjm_d4_y2023/
 results/pjm_d4_y2024/
 results/pjm_d4_y2025/
 
+# ...and the two COMPOSED, REGISTERED bundles are exempt from pjm-d4-1's broad
+# `results/calibration/pjm_d4_*/` rule above (added by the predecessor session
+# for ITS screen/control bundles, which correctly never reach `main`). These two
+# are different: they are registered dashboard runs, and rule 15 [R-DASHBOARD]
+# requires a registered run's SLIM bundle to be committed. The §8 slim rules
+# still strip every heavy parquet (dispatch/, floors/, system/storage/btm/flows,
+# unit_hourly, network) — only meta/run_config/metrics/diagnostics/attestation
+# and the keeper hourly sidecars land.
+!results/calibration/pjm_d4_2_A/
+!results/calibration/pjm_d4_2_TP/
+
 # ercot-264 keeper-reproduction bundles (rule 31 [R-RETAIN]: gitignored, never rm-ed;
 # rule 29(c): kept out of main unless the owner promotes and they are registered)
 results/calibration/ercot264_repro_*/
@@ -1749,6 +1781,11 @@ results/calibration/ercot264_repro_*/
 # Same rule 29(c)/31 [R-RETAIN] posture as the train-span bundle above.
 results/calibration/nyiso222_offer_plus5_tp2022/
 
+# SPP-61 rule-29 [R-SCREEN] throwaway screen bundle: never reaches main (clause c),
+# kept on local disk under rule 31 [R-RETAIN]. The RESULT doc carries every number.
+results/calibration/spp61_screen_2023/
+results/calibration/spp61_screen_2023.log
+results/calibration/spp61_vintage.log
 
 # SPP-58 (session ercot-266) screen and full-span bundle families. Rule 31
 # [R-RETAIN]: what discharges rule 29 [R-SCREEN] clause (c)'s delete-before-merge
@@ -1758,3 +1795,46 @@ results/calibration/nyiso222_offer_plus5_tp2022/
 # owner keeps the option to promote it. The composite the parent registers is
 # committed slim by the rules in section 8 above.
 results/calibration/spp58_*/
+
+# caiso-269 per-year shard probe bundles (rule 29 [R-SCREEN] (c) / rule 31
+# [R-RETAIN]): kept OUT of `main` by gitignore, never by `rm` — the working
+# tree copies stay on disk until the owner rules on promotion.
+results/calibration/caiso269_lateevening_*/
+results/calibration/_rev2void_caiso269_*/
+results/calibration/caiso269_lateevening_span/
+
+# pjm-d4-2 (2026-09-10) per-year SHARD bundles: rule 32 [R-SHARD] solves one
+# year per container into its own out-dir, and the PARENT composes the single
+# registrable 2020-2025 bundle from them (rule 16 [R-ALLYEARS]). The per-year
+# dirs are working state that must never reach `main` — an unregistered bundle
+# dir committed there is the exact Class-E parity RED rule 29(c) forbids.
+# Ignoring them discharges rule 29(c) IN FULL; rule 31 [R-RETAIN] means they are
+# NEVER `rm`'d before the owner has ruled on promotion.
+results/pjm_d4_y*/
+results/pjm_d4_*/
+results/screen/pjm_d4_*/
+# nyiso-223 (2026-09-10) — the hub-daily unpriced-day gap-fill arm's per-year shard
+# bundles. Rule 31 [R-RETAIN] + rule 29(c) [R-SCREEN]: what discharges "delete before
+# merge" is KEEPING THE BUNDLE OUT OF `main`, never `rm`-ing it from local disk. Ignoring
+# the family the moment it is written means the Class-E bundle-retention sweep
+# (check_registry_payload_parity.py) never sees an unregistered committed dir, while the
+# solved artifacts stay on disk for a promotion the owner has not yet ruled on. Only the
+# COMPOSITE, if promoted, is force-added and registered (rule 32(d)).
+results/calibration/nyiso223_gapfill_*/
+# SPP-61 screen bundle + any heavy bundle parts kept on local disk (rule 29(c)
+# delete-before-merge is discharged by KEEPING IT OUT OF `main`, which this
+# does; rule 31 [R-RETAIN]: NEVER `rm` them — the ercot-255 incident).
+results/calibration/spp61_screen_*
+results/calibration/_spp61_heavy/
+
+# spp-62 (2026-09-10) working bundles: the rule-29 [R-SCREEN] 2023 screen arm for
+# eia860_vintage_tracks_solve_year over the R-ay census repair, and the per-year
+# shard bundles of the full span. Ignored so they can never reach `main`, which is
+# the ONLY thing rule 29(c) DELETE-BEFORE-MERGE requires; rule 31 [R-RETAIN] names
+# gitignoring — never `rm` — as what discharges it, so these stay on local disk
+# until the owner has ruled on promotion.
+results/calibration/spp62_*/
+
+# miso-252 seam-envelope screen/span bundles (rule 29(c) delete-before-merge is
+# discharged by KEEPING THEM OUT OF main, never by rm — rule 31 [R-RETAIN]).
+results/calibration/miso252_*/

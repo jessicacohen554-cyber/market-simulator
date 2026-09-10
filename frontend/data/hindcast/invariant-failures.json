@@ -180,6 +180,10 @@
   "nyiso-2026-2050-scn-campaign-stageb-2026-09-07-all-clean": [
    "I3"
   ],
+  "nyiso-2026-2050-scn-campaign-stageb-2026-09-07-cap-state-tight": [
+   "I3",
+   "I12"
+  ],
   "pjm-2026-2030-d65br-arm": [
    "I7",
    "I12"

@@ -1603,6 +1603,62 @@ class DeterminationTests(unittest.TestCase):
             cv._band_result(0.07, 0.05, 0.10), (cv.CAVEAT, cv.COMMERCIAL_BAND)
         )
 
+    def test_v37_an_unscored_c3c_does_not_downgrade(self):
+        """Owner instruction 2026-09-10: C3c alone never makes a caveats tag.
+
+        v3.3 made a LEDGERED C3c non-downgrading, but that path runs through
+        ``_apply_c3c_standing_rule``, which only ever sees C3c when it is
+        SCORED AND FAILING. A SKIPPED C3c fell into the unscored-criteria route
+        instead — so the SAME accepted model-class limitation downgraded or did
+        not depending on whether the ISO-year happened to have a scarcity
+        bench, which is a property of the data, not of the model.
+        """
+        art = _artifacts(
+            self._clean_year_payload(),
+            attestation=_clean_attestation(),
+            **self._clean_bench_args(),
+        )
+        # C8 needs a legitimacy artifact or it SKIPS as an unscored PROTECTIVE
+        # criterion and downgrades on its own — which is the fail-closed guard
+        # working, not the thing under test here.
+        art["legitimacy"] = _legit_artifact(r=0.9, cv_ratio=0.02, share=0.05)
+        v = cv.determine_from_artifacts("t", art)
+        self.assertEqual(
+            [c for c, b in v["criteria"].items() if b["status"] == cv.SKIPPED],
+            ["price_tail"],
+            "fixture must isolate C3c as the ONLY unscored criterion",
+        )
+        self.assertEqual(v["determination"], cv.CALIBRATED)
+        # Still NAMED — an exemption nobody can see is the escape hatch rule 22
+        # guard (d) exists to prevent.
+        self.assertTrue(
+            any("rubric v3.7" in r for r in v["reasons"]),
+            v["reasons"],
+        )
+
+    def test_v37_exemption_never_reaches_a_load_bearing_skip(self):
+        """The fail-closed guard: C3c-only, supporting-tier only.
+
+        An unscored LOAD-BEARING criterion must still downgrade, and C3c must
+        not be listed among the criteria that did it.
+        """
+        payload = self._clean_year_payload()
+        payload["lmp"] = {}  # removes C3a and C3b as well as C3c
+        art = _artifacts(
+            payload, attestation=_clean_attestation(), **self._clean_bench_args()
+        )
+        art["legitimacy"] = _legit_artifact(r=0.9, cv_ratio=0.02, share=0.05)
+        v = cv.determine_from_artifacts("t", art)
+        self.assertEqual(v["criteria"]["price_mean"]["status"], cv.SKIPPED)
+        self.assertEqual(v["determination"], cv.CALIBRATED_CAVEATS)
+        downgrading = [r for r in v["reasons"] if r.startswith("unscored criteria:")]
+        self.assertTrue(downgrading, v["reasons"])
+        self.assertIn("price_mean", downgrading[0])
+        self.assertNotIn(
+            "price_tail",
+            downgrading[0],
+        )
+
     def test_protective_gate_is_never_ledgerable(self):
         # RUBRIC v3.1 (owner amendment 2026-08-06). Replaces
         # test_protective_caveat_budget_is_one: the protective tier used to
@@ -1636,9 +1692,19 @@ class DeterminationTests(unittest.TestCase):
         self.assertIn("forced_share", v["reasons"][0])
         # Below the materiality floor the class is not gated at all, so the
         # same artifact certifies — the gate, not the ledger, is what moved.
+        # RUBRIC v3.7 (owner instruction 2026-09-10): this reads a clean
+        # CALIBRATED rather than CALIBRATED-WITH-CAVEATS. `price_tail` is this
+        # fixture's ONLY unscored criterion, and an unscored C3c no longer
+        # downgrades — "if c3c is the only caveat the status should be
+        # calibrated not with caveats". The protective-tier assertions above
+        # are what this test is FOR and they are untouched.
         immaterial = _legit_artifact(r=0.9, cv_ratio=0.02, share=0.05)
         v = cv.determine_from_artifacts("t", art_with(immaterial, exceptions))
-        self.assertEqual(v["determination"], cv.CALIBRATED_CAVEATS)
+        self.assertEqual(v["determination"], cv.CALIBRATED)
+        self.assertEqual(
+            [c for c, b in v["criteria"].items() if b["status"] == cv.SKIPPED],
+            ["price_tail"],
+        )
 
     def test_data_blocked_year_recorded(self):
         art = _artifacts(

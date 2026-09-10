@@ -10491,3 +10491,211 @@ then (3) what happened to the flag. Lead your close with the verdict transition 
 verdict, and the single sentence that says whether the repair helped, hurt, or neither. Rule 27
 [R-PUSH]: blob-verify anything over 300 lines.
 ```
+
+---
+
+## r#64 NOTE
+
+Two charters, issued 2026-09-10 at main `5fa3a07f`, against ledger §0bi. **D92 IS THE ONE TO RUN
+FIRST** — it discharges owner ruling **Q65** and repairs a number the board is publishing that a
+landed repair has already halved.
+
+* **D92** (Q65) — capx D77's named CO2 residue, plus this desk's own G1_UNKNOWN. Opus, `neiso`.
+* **GATE-(a) RE-KEY** (Q34) — **four ISOs at once**, the eighteenth firing and the first quadruple.
+  Fable, `code`.
+
+**Collision map.** D92 solves, scores and registers under `frontend/data/forecast/`; the re-key
+touches `frontend/data/forecast/program-status.json` alone. Disjoint. **NEXT FREE LABEL: D93.**
+
+**CARRIED INTO BOTH PROMPTS, from §0bi:**
+1. **A lane that DEFERS work names a LIVE owner or states that none exists.** Three capx documents —
+   D77, D88, and my own r#61 charter — deferred to "the D65-B batch", which closed at r#55. That is
+   why D92 exists at all.
+2. **G-DRIFT form 4 on a recorded-key basis audits CONFIG drift ONLY.** It sees neither
+   derived-input drift (D88's lesson) nor non-config code drift (D90-R's). Against an old bundle the
+   control solve is not the fallback — it is the only instrument that isolates anything, and its cost
+   should be assumed.
+
+---
+
+## D92 — capx D77's named CO2 residue, and capx's own G1_UNKNOWN (Opus, neiso) — RUN THIS FIRST
+
+```
+You are the D92 lane for jessicacohen554-cyber/market-simulator.
+MODEL: Opus. DATA PROFILE: neiso. Branch: claude/capx-d92-d77-co2-residue, fresh off origin/main.
+Authority: OWNER RULING Q65 (2026-09-10, capx ledger §0bi.3(a)) — "Charter D77's named residue only."
+
+WHY YOU EXIST. capx D90-R re-scored `neiso-t3` on D88-repaired code and found the flagged defect was
+SCORING-INERT (HOLD -> HOLD, D88 moves zero of 19 scored rows) — but that a DIFFERENT repair, capx
+D77, moves the same run far more, with an attribution exact to four decimals against D77's own
+published A/B:
+
+    year   D77 published A/B          D90-R's d60 -> pre-D88 control
+    2028   15.8562 -> 12.9276 (-18.5%)  15.856 -> 12.928
+    2029   14.0210 ->  6.7954 (-51.5%)  14.021 ->  6.795
+    2030   13.3680 ->  6.9545 (-48.0%)  13.368 ->  6.955
+
+D77 repaired the CCS emission-rate seam (`campd_bins.apply_plant_emission_rates_v2` re-booked a
+converted unit's UNCAPTURED host rate over its captured one in every forecast year). Its own record
+named the consequence precisely — "the three NEISO T3 verdicts' co2@2030/2035/2040 FC-5 rows and
+their FC-6 paired-P1 cumulative-CO2 row are the only SCORED cells mis-stated" — and DEFERRED the
+re-solve to "the D65-B batch". **That batch closed at capx r#55.** D90-R closed the measurement half
+on `neiso-t3` and re-registered it. **The rest of D77's named residue is still stale and still has no
+owner. You are the owner.**
+
+READ FIRST, in this order: docs/handoffs/FINDING-capx-d90-rescore-2026-09-09.md (esp. §5.1, the
+attribution) · docs/handoffs/FINDING-capx-d90r-2026-09-09.md · D77's own finding · and
+PRECOMMIT-capx-d90-rescore-2026-09-09.md with its Addenda A/B, which carry a VALIDATED SCORER and a
+pre-registered FC-7 handling rule you should reuse rather than reinvent.
+
+PART 1 — SCOPE IT BEFORE YOU SOLVE, AND THE SCOPE IS D77's LIST, NOT YOUR JUDGEMENT.
+ (a) Enumerate, from the committed record at YOUR head, exactly which verdicts carry D77's named
+     mis-stated cells and which of them D90-R already closed. D77 said "the three NEISO T3 verdicts";
+     `neiso-t3` is done. NAME the remainder — run ids, cache epochs, bundles — and say for each
+     whether its bundle predates D77's merge. Quote what you find; do not carry ids from this prompt.
+ (b) ** STOP GATE. If a verdict's bundle POSTDATES D77, it is not stale for this reason and it is NOT
+     in scope. ** Say so and drop it. Scope creep here is how a bounded lane becomes a board sweep,
+     which the owner explicitly declined this window.
+ (c) Pre-declare, per verdict, what you expect the re-solve to do to the named cells — direction and
+     rough magnitude — BEFORE solving. D90-R graded 5 hits / 3 misses / 3 partial and declined one of
+     its own hits as "a hit on a technicality"; that is the standard. A prediction you can only grade
+     charitably is not a prediction.
+
+PART 2 — THE G1_UNKNOWN, AND IT IS THIS DESK'S OWN. `scripts/check_key_provenance.py` is EXIT 1 at
+HEAD with:
+
+    [G1_UNKNOWN] results/ff-t3-neiso-golden/d90-rescore/run_config.json
+        a committed record does not reproduce and is not in key-provenance-exceptions.json.
+        This is a SIXTEENTH: stop and report it as a new finding, do not append it here.
+
+That bundle is D90-R's own registration — capx's residue, not another desk's. Diagnose it BEFORE you
+solve anything, because it may tell you something about how your own arm will register. Two
+directions, and say which: (i) the record genuinely does not reproduce and the cause is nameable — in
+which case repair the CAUSE, and note that D91 has just registered `pjm_seam_neighbour_hourly_ladder`,
+so a bundle solved either side of that lands differently; or (ii) it is a listing gap on a record
+whose non-reproduction IS understood. **Do NOT append it to key-provenance-exceptions.json to make
+the gate green** — that record's own `what_this_is_not` block forbids parking a live defect there,
+and the gate message says so explicitly. If you cannot resolve it, leave it red and report it.
+
+PART 3 — THE SOLVE. Each leg is NEISO T3 golden, FULL HORIZON 2026-2050, one INDIVISIBLE invocation
+(the evolution chain links the years; rule 12 [R-PARALLEL] makes them sequential within a run, so the
+horizon CANNOT be sharded). D90-R measured **31.1 minutes** of wall clock for one leg, so this is
+cheap by this program's standards — but rule 12 also says separate invocations run CONCURRENTLY, so
+if you have more than one leg, launch them in parallel with separate `--out-dir`s.
+
+G-DRIFT — and read this, because it is the third correction in the series and it is why your control
+matters. Form 4 on a recorded-key basis audits **CONFIG drift ONLY**. It sees neither DERIVED-INPUT
+drift (D88's §3: `data/clean` is gitignored and rebuilt per container, so a committed bundle is a
+valid byte-level control only if YOUR container reproduces it) nor **NON-CONFIG CODE drift** (D90-R's
+§5.1: D77 is exactly that, and form 4 was blind to it). Against a bundle weeks old **the control
+solve is not the fallback, it is the only instrument that isolates anything — assume its cost.**
+D90-R's practice is the template: a same-container pre-repair control, and every gate graded against
+THAT, not against the committed bundle.
+
+PART 4 — THE RE-SCORE AND THE BOARD. Score through the FF-2D rubric. Reuse D90-R's Addendum A.2
+validation practice: re-run the scorer over the COMMITTED artifacts first and confirm it reproduces
+the standing verdict exactly, so your re-score is a CONTROLLED SWAP and any movement is attributable
+to the solve alone. Follow Addendum B's FC-7 four-clause handling rule literally if FC-7 moves.
+Report every leg at full magnitude, both directions, and state plainly whether each verdict's scores
+move — remembering D90-R's own lesson: **the scores can be sound while the numbers are stale**, and
+your object here is the NUMBERS.
+
+RULE 31 [R-RETAIN]: gitignore each bundle family the moment it is written; **DO NOT rm ANY solved
+bundle**, whatever you conclude. Ask the promotion question explicitly in your close and state that
+the bundles are on local disk and will not survive the session. **Push your PRECOMMIT and any addenda
+as you go** — D90 stopped mid-lane and lost almost nothing because it had pushed everything; that is
+the discipline, not an accident.
+
+** AND THE RULE THIS LANE EXISTS TO ENFORCE: IF YOU DEFER ANYTHING, NAME A LIVE OWNER OR SAY THERE IS
+NONE. ** Three capx documents — D77, D88 and a director charter — deferred work to "the D65-B batch"
+after it had closed, and this lane is the cost of that. "Routed to a later batch" is not a
+disposition. Name a lane, a desk, or nobody.
+
+BOUNDARIES: you edit NO `src/market_sim/` file — this is a solve, score and register lane. The
+concurrent gate-(a) re-key touches `program-status.json` alone. Other reds on `main` are NOT yours
+and must be named-and-left in your FINDING: four dead ERCOT bundle dirs failing the parity gate
+(`ercot262_arm_2024/2025`, `ercot264_repro_2023/2025`, the ERCOT lane's, rule 29(c)); the SPP matrix
+shard missing two cells; `status/SPP.js` stale; the CAISO marker asserting CALIBRATED on a NOT-YET
+keeper; and `caiso_dsw_lateevening_clean` unregistered (D91's new G6 gate caught it — the CAISO
+lane's).
+
+EXIT: docs/handoffs/FINDING-capx-d92-2026-09-10.md leading with (1) the scope table from Part 1(a)
+with in/out and why, (2) the G1_UNKNOWN disposition, (3) every pre-declared prediction graded, hits
+and misses named, then (4) the per-verdict re-score at full magnitude. Lead your close with the
+verdict transitions and one sentence per verdict on whether its NUMBERS moved and whether its SCORES
+did. Rule 27 [R-PUSH]: blob-verify anything over 300 lines.
+```
+
+---
+
+## GATE-(a) RE-KEY — four ISOs at once (Fable, code, zero LP)
+
+```
+You are the capx gate-(a) re-key lane for jessicacohen554-cyber/market-simulator.
+MODEL: Fable. DATA PROFILE: code. Branch: claude/capx-gate-a-rekey-r64, fresh off origin/main.
+ONE ACT, ZERO LP. No solve, no scoring, no registration, no keeper edit, no marker edit, no
+determination re-computation, no other desk's file.
+
+WHY. `scripts/check_gate_a_provenance.py` is EXIT 1 at main 5fa3a07f on FOUR ISOs at once — the
+eighteenth firing of this standing duty and the FIRST QUADRUPLE. The window that produced it was 573
+commits and **every one of the seven ISOs promoted a keeper**. As read at 5fa3a07f:
+
+  CAISO: row cites 2026-09-06-caiso-260-b1-demand   -> live 2026-09-10-caiso-269-lateevening-clean
+  ERCOT: row cites 2026-09-08-ercot256-drag-layup-mask -> live 2026-09-09-ercot265-receipts-fallback
+  MISO:  row cites 2026-09-09-miso-248-spp-ladder   -> live 2026-09-09-miso-250-ep-gas
+  SPP:   row cites 2026-09-09-spp-52a-fossil-offer  -> live 2026-09-10-spp-61-vintage
+
+** DO NOT TRUST ANY OF THOSE IDS. ** They are this desk's reading at one instant, and in this repo a
+row has gone stale inside the session that wrote it. Read EVERY fact LIVE at your own HEAD from the
+backcast store. If your HEAD disagrees, YOUR HEAD IS RIGHT: re-key to it and say so. Note that MISO's
+row is already stale against a keeper that ITSELF superseded another within this window — state the
+full chain of promotions each row was stale across, not a single arrow. (My r#60 charter described
+ERCOT's case as one transition when it was two; the lane caught it. Do not let me do that to you.)
+
+METHOD — the method is the deliverable, because a bad edit here is worse than a stale row.
+ 1. Read the live facts for EACH of the four ISOs, and cite where each came from:
+      - designated keeper id: frontend/data/backcast/keepers/<ISO>.json
+      - marker state: BOTH blocks of frontend/data/backcast/calibration-complete.json (complete /
+        final), reported True/False. `final` is EMPTY for every ISO, so no locked-test claim may
+        appear in any row.
+      - determination and per-year verdicts: the committed status sidecar
+        frontend/data/backcast/status/<ISO>.js — NOT a re-score. This lane computes no verdict.
+        NOTE: `audit_keepers` reports status/SPP.js is STALE. If SPP's sidecar disagrees with the
+        current verdicts, do NOT rebuild it (that is the SPP desk's) and do NOT copy a number you
+        believe is stale — record what the sidecar says, mark it as reported-stale, and say so.
+      - the promotion instrument, named as a DOCUMENT and not merely a PR number.
+ 2. TARGETED STRING EDIT of each row's three leaves only — the `detail` head, `read_live_at`, and the
+    `gate_a_provenance` block — scoped by string position.
+    ** NEVER a json.dumps round-trip. ** program-status.json is a hand-maintained COMMITTED seed that
+    build_program_status wraps VERBATIM; reserialization silently reformats every other desk's row.
+ 3. PRESERVE THE PRIOR TEXT. Anything not one of those three leaves stays byte-identical; where a row
+    already carries a RE-KEYED provenance sentence, add yours beside it — the row is a chain.
+ 4. Touch ONLY those four rows. Do not fix another ISO's row even if you think it is stale; report it.
+
+** CAISO CARRIES TWO SEPARATE DEFECTS. REPORT BOTH; REPAIR NEITHER. ** `audit_keepers --check` is
+EXIT 1 and two of its three failures are CAISO's:
+  - M1b: calibration-complete.json `complete.CAISO.determination` asserts **CALIBRATED** while the
+    live verdict of the keeper it names is **NOT-YET**. Rule 22's owner decision D-5(b) says a
+    re-verified determination that is WORSE stops the promotion and escalates to the owner and is
+    never silently written. It was written.
+  - E1: that keeper's bundle dir `results/calibration/caiso269_lateevening_span` is MISSING.
+Gate (a) compares IDENTITY ONLY and asserts nothing about determinations, so re-keying CAISO's row to
+the live keeper id is correct AND ORTHOGONAL to both defects — do it. But the row also states marker
+state, so: state the marker EXACTLY as `calibration-complete.json` currently holds it, add one clause
+recording that the marker's asserted determination is under query with the audit board, and DO NOT
+alter the marker, the determination, or anything under `results/calibration/`. Those belong to the
+CAISO lane and the audit board. Say all of this plainly in your record.
+
+STOP GATES:
+  - If the gate is ALREADY EXIT 0 for an ISO at your HEAD, its re-key landed while you were
+    chartered. DO NOT re-key it — asserting a supersession that did not happen is a false record.
+  - If re-keying would require changing a determination, a marker, a leg status or a grade: STOP.
+    That is a different lane and an owner-tier question.
+
+EXIT: check_gate_a_provenance.py EXIT 0 on all seven rows; audit_keepers --check no WORSE than you
+found it (it will still be EXIT 1 on the CAISO and SPP items, which are not yours — say so); the diff
+touches exactly four rows of one file; and a short record carrying, per ISO, the before/after `detail`
+head VERBATIM, the full promotion chain the row was stale across, and the promotion instrument as a
+document. Lead your close with the gate's exit code and the four id transitions. Rule 27 [R-PUSH]:
+push exact on-disk bytes and verify the pushed blob.
+```

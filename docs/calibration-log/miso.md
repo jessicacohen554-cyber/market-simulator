@@ -13630,3 +13630,89 @@ offer curves are byte-identical to the keeper's in all three.
   is a data-intake lane with its own charter.
 
 * Next number: **miso-252**.
+
+---
+
+## miso-252 — 2026-09-10 — **PHASE 0 KILLED EVERY ARM AT ZERO LP. The seam anomaly now has a measured root cause; every queue item is externally blocked.** Keeper unchanged, `2026-09-09-miso-250-ep-gas`, **CALIBRATED**
+
+**Owner instruction** (verbatim): *"continue work on calibration tuning for rubric failures"*.
+
+**No LP was spent — no shard, no solve, no bundle, nothing registered.** Rule 29 `[R-SCREEN]`
+step 0 says a zero-LP gate that kills an arm is the session's result and the remaining spend is
+never made. It killed four. Full trace, with every number:
+`docs/FINDING-miso252-seam-fallback-and-the-923-block-2026-09-10.md`.
+
+### 1. THE SEAM — root cause found, and it is structural
+
+**All four MISO seam ladder tables cover exactly 2023-2025**, so `inject_miso_seam_ladder_prices`
+returns at its first guard for every pre-2023 year and the *entire* measured ladder family — not
+just the SPP sub-gate the charter named — never fires. Every seam band then takes ONE flat
+reference price in place of an eight-band rising curve. Forced onto the years whose measured
+answer exists, that substitution under-prices **SPP by $107/$174/$183** and **South by
+$111/$181/$193** per MWh (PJM is fine at ±15-20 %: it has a real gas-elastic fit and a shallow
+ladder).
+
+**The consequence, measured from committed sidecars — the seam stops being a supply curve and
+becomes a bang-bang switch:**
+
+| year | pricing | net TWh | hours at its own rail |
+|---|---|---:|---:|
+| 2023 / 2024 / 2025 | measured ladder | +43.19 / +27.50 / +20.35 | **3 / 1 / 2 (0.0 %)** |
+| 2021 | flat fallback | **+75.93** | **8,654 (98.8 %)** |
+| 2022 | flat fallback | −22.58 | 398 (4.5 %) |
+
+2021's every quantile from p5 to p100 reads exactly 8,700 MW. **0.0 % vs 98.8 %** is the finding.
+The ~98 TWh swing is a single threshold crossing of the flat price against MISO's own internal
+price ($37.69 in 2021, $60.66 in 2022), with no band curve to graduate it.
+
+**It cannot move MISO's headline, and that is measured, not assumed.** The fallback is reachable
+in exactly ONE place — an armed-interface backcast year before 2023. The train tier displaces it
+(confirmed independently by the in-sample row above); `reference_price_interface` is default-`False`
+with no MISO `ISOConfig` override, so forecasts do not arm it; and a solve year >= 2026 resolves no
+seam shape. Rule 30(c) `[R-TOUCHPOINT-FOLD]`: a held-out year neither certifies nor decertifies.
+**The charter's premise that the seam "touches an IN-SAMPLE gate" is FALSIFIED.**
+
+**Both repairs refused, on evidence, at zero LP.** (a) Deriving the ladder for 2020-2022 with the
+frozen script is blocked: `eia-930-interchange` covers 2023-2025 only — the flow-duration half of
+the Q-Q construction does not exist pre-2023 even for 2022, where MISO's own hub price *is*
+present. The ladder is 2023-2025 **by data availability, not by choice**. (b) Freezing the band
+SHAPE onto a gas-elastic level FAILS on measurement: the import curves — the broken side — move
+**CV 0.32-0.49** across just three years, so a frozen shape would be a fitted object dressed as a
+measured one (rule 1 `[R-STRUCT]`). Recorded so neither is re-derived.
+
+**A codebase correction shipped.** `spec.py`'s capx S-123 note (2026-08-30) enumerates three
+domains where this fallback is unreachable and concludes it "never fires there either." It is
+right on all three and **misses the fourth** — the pre-2023 armed-interface backcast year, which is
+exactly where miso-251 hit it. Corrected in place; the `ba_code` conclusion it supports is
+untouched and still stands.
+
+### 2. THE 2025 EIA-923 BLACKOUT IS BLOCKED ON EIA — proven by comparison, not by a release calendar
+
+EIA's current file (`archive/xls/f923_2025.zip`, 19,708,197 B, Last-Modified 2026-02-20) was
+downloaded and compared against the repo's committed vintage: **7,653 rows and 3,427 plants on both
+sides, plant set identical (0 only-in-EIA, 0 only-in-disk)**. **The repo is already current with
+EIA's latest 2025 publication** — nothing to re-fetch, nothing to re-score. The vintage is complete
+on *months* (all twelve) and incomplete on *plants*, because it is the monthly respondent frame;
+the small-plant tail arrives only with the final annual survey. The audit re-run at HEAD still
+returns 2 gate-eligible (ISO, class) pairs across all seven ISOs.
+
+**Do not relax this gate to make C1 score** — it exists to stop scoring against a half-reported
+actual, and the data really is half-reported. Same row for CAISO/NEISO/NYISO/PJM/SPP, so it stays
+a cross-ISO win for whichever session follows EIA's final 2025 annual.
+
+### 3. What was not done
+
+No offer-curve tuning (miso-251 declined it on evidence; nothing measured here changes that, and
+reaching for it to move 2022 is per-year fitting against a gate — rule 1 carve-out (c)). No
+G-DRIFT (rule 29(b) owes one before the first LP of an arm; no arm survived). Nothing deleted —
+rule 31 `[R-RETAIN]`: the three miso-251 rung bundles are still on local disk and were *read*, and
+the in-sample/out-of-sample contrast above exists precisely because they survived.
+
+### 4. Open for the owner
+
+1. **Charter the seam intake?** EIA-930 DIBA interchange + hub LMPs for 2020-2022 would repair the
+   seam *and* unblock item 3 below. Recommended.
+2. `--declared-degradation` channel — `docs/GOVERNANCE-NOTE-miso251-declared-degradation-channel-2026-09-10.md` §5, still unruled.
+3. `MISO_PRICING_API_KEY` — still the only thing unblocking C3a/C3b/C3c on 2020/2021.
+
+* Next number: **miso-253**.
