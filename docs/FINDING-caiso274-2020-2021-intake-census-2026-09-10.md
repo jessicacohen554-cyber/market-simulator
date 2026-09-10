@@ -46,8 +46,8 @@ clone, so `hydrate_data.py --profile caiso` was a no-op — it says so and exits
 | Delivered gas — EIA CA citygate monthly | `data/raw/gas-prices/eia_citygate_CA_monthly.csv` | **PRESENT** | **PRESENT** | continuous from 2015-01 |
 | NRC reactor status (nuclear) | `data/raw/nrc-reactor-status/{2020,2021}PowerStatus.txt` | **PRESENT** | **PRESENT** | both files on disk |
 | **CAISO LMP (hourly DAM/RTM)** | `data/raw/lmp-data/CAISO/CAISO_{dam,rtm}_hourly_<y>.csv` | **ABSENT** | **PARTIAL** | no 2020 file; 2021 spans **2021-04-27 → year end** only (DAM 5,977 h/node, RTM 4,513 h/node, of 8,760) |
-| **CARB allowance price** | `data/raw/policy/carbon-auction-results/carbon-auction-results.csv`; `STATE_CARBON_PRICE_BY_ISO["CAISO"]` | **ABSENT** | **ABSENT** | CARB rows start **2022 Q1**; the config dict is `{2022, 2023, 2024, 2025}` only |
-| Derived nuclear availability | `data/raw/nuclear-availability-CAISO.csv` | **ABSENT** | **ABSENT** | file starts 2022-01-01 (derivable — inputs present) |
+| **CARB allowance price** | `data/raw/policy/carbon-auction-results/carbon-auction-results.csv`; `STATE_CARBON_PRICE_BY_ISO["CAISO"]` | was ABSENT → **LANDED** (§9.1) | was ABSENT → **LANDED** (§9.1) | CARB rows started **2022 Q1** and the config dict is still `{2022…2025}`; the eight 2020/2021 auction rows were transcribed by this session, the config anchor is not installed (out of scope) |
+| Derived nuclear availability | `data/raw/nuclear-availability-CAISO.csv` | **ABSENT** | **ABSENT** | file spans 2022–2025 only; derivable, but gated on a config anchor — see §9.2 |
 | Derived actual LMP / tail | `data/raw/_validation-source/actual_lmp_hourly_CAISO.parquet`, `actual_lmp.json` | **ABSENT** | **ABSENT** | years 2022–2026 only; blocked by the LMP row above |
 
 Derived-artifact rows are **downstream**, not upstream gaps: nuclear
@@ -257,3 +257,85 @@ to run at all on `main`, since it rewrites every listed year on any invocation.
    §5.1's scaffold discipline, followed by the demand derive and the rung.
 
 Steps 1–4 are all zero-LP and none of them were in this card's stated scope.
+**Step 2 is now DONE and step 3 is half done — see §9.**
+
+## 9 — What this session delivered beyond the census
+
+The card's two targets are blocked (§0). These are the in-scope, zero-LP intake
+items the census exposed, taken as far as this lane's scope allows.
+
+### 9.1 CARB 2020/2021 allowance prices — LANDED
+
+Eight rows added to `data/raw/policy/carbon-auction-results/carbon-auction-results.csv`,
+each **transcribed** from the primary joint publication (the CARB + MELCC
+*Summary Results Report* for that auction, Current Auction settlement price in
+USD, read directly from the report PDF):
+
+| auction | held | $/tonne | | auction | held | $/tonne |
+|---|---|---|---|---|---|---|
+| #22 | 2020-02-19 | 17.87 | | #26 | 2021-02-17 | 17.80 |
+| #23 | 2020-05-20 | 16.68 | | #27 | 2021-05-19 | 18.80 |
+| #24 | 2020-08-18 | 16.68 | | #28 | 2021-08-18 | 23.30 |
+| #25 | 2020-11-17 | 16.93 | | #29 | 2021-11-17 | 28.26 |
+
+`ww2.arb.ca.gov` still blocks automated fetches exactly as the corpus README
+documents. The reports were reached instead through Québec's
+`environnement.gouv.qc.ca` — the joint programme's **co-publisher**, not a
+secondary reporter — and each row's `source_page` is the PDF actually read.
+This is stronger attribution than the committed 2022–2025 rows, which cite a
+CARB press release cross-checked against secondary commentary.
+`allowances_sold` / `allowances_offered` are left blank: the volume tables do
+not extract reliably across these report vintages, and 12 of the 14 committed
+CARB rows already leave them blank. **No number is inferred.**
+
+Applying the committed annual-mean recipe gives the CAISO anchors
+**2020: 17.04** and **2021: 22.04** $/tonne. **Not installed** —
+`STATE_CARBON_PRICE_BY_ISO` lives in `src/market_sim/config/`, outside this
+lane. What makes the two means trustworthy is that the same recipe over the
+existing rows reproduces the committed anchors exactly: 2022 `28.4500` → 28.45,
+2023 `33.0275` → 33.03, 2024 `35.2325` → 35.23.
+
+Validation: the curate script writes 54 schema-valid rows;
+`tests/curation/test_curate_carbon_auction_results.py` 5 passed.
+
+### 9.2 Nuclear — anchors derived, availability still gated
+
+`derive_nuclear_monthly_cf.py --isos CAISO --years 2020 2021` runs cleanly and
+**prints only** (it writes no file). Its output, from EIA-923 already on disk:
+
+```
+"CAISO": {
+    2020: [1.00, 0.95, 1.00, 1.00, 0.96, 1.00, 0.77, 0.96, 0.99, 0.26, 0.49, 0.51],
+    2021: [0.77, 0.53, 0.50, 0.57, 1.00, 1.00, 1.00, 1.00, 1.00, 0.72, 0.90, 1.00],
+},
+```
+
+(The autumn-2020 and spring-2021 troughs are Diablo Canyon refuelling outages.)
+
+`derive_nuclear_availability.py --iso CAISO --years 2020 2021` then refuses the
+years: *"NO NUCLEAR_MONTHLY_CF_BY_YEAR[CAISO] anchor — rows would be RAW-ONLY
+(unreconciled), a recipe asymmetry vs the anchored years; drop the year or land
+the anchor first."* The anchor is a `src/market_sim/config/` table, so landing
+it is not this lane's call. Both artifacts are left untouched.
+
+> **TRAP for whoever finishes this.** `derive_nuclear_availability.py`
+> **REPLACES** `data/raw/nuclear-availability-CAISO.csv` with exactly the years
+> passed to `--years`. Run here with `--years 2020 2021` it dropped both years
+> (no anchor) and still rewrote the file down to **1,462 rows / 2 reactors**,
+> destroying the committed 2022–2025 extract (2,616 rows). This session caught
+> it with a sha256 snapshot and restored the file byte-identically
+> (`e375b448f7ec…`), and the CSV is unmodified in this branch. **Always pass the
+> full year span**, and snapshot before running.
+
+### 9.3 CAISO 2021 RTM prices — the perishing 50 days
+
+The census found **50 RTM trade days (2021-08-12 … 2021-09-30) that were
+missing from the committed aggregate AND still fetchable** — and, per §6, are
+days that will stop being fetchable as the boundary advances. Every missing
+**DAM** day is already unreachable, so RTM is the whole of what could still be
+saved. This session started that crawl
+(`fetch_caiso_oasis_grp.py --market rtm --start 2021-08-12 --end 2021-09-30
+--sleep 7`, ~195 s and 24 GroupZip requests per trade date, extract-and-discard
+so peak disk stays ~200 MB). Its outcome is reported in the session's final
+message; the fetched day windows are worthless unless folded and committed
+before the container is reclaimed.
