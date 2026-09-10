@@ -4700,6 +4700,79 @@ sign argument to every basis and bound.
 
 ### 5.3 PJM — **NO failing criterion: CALIBRATED, zero caveats** (keeper `2026-09-10-pjm-d4-2-stgas`, determination CALIBRATED across 2023-2025 with an empty basis. **PROMOTED at pjm-d4-2 (2026-09-10)** from `2026-09-09-pjm-fuelvintage-ep-level`: EXACTLY ONE criterion moves, C8 forced-energy share FAIL → PASS, every other criterion unchanged at PASS, and rule-17 leave-one-year-out reads CALIBRATED in all three pairs where the incumbent read NOT-YET in both pairs containing 2025. The delta is a MEMBERSHIP repair in an existing registry — eleven PJM plants admitted to `data.outages.ST_GAS_PEAKER_PLANTS` — with ZERO new `ScenarioConfig` fields and ZERO free parameters, on a threshold read off ERCOT's and CAISO's own revealed membership with PJM never consulted and carrying no leverage. Costs on the record: 2024 ST_GAS moves off an exact 1.00 to 0.90, 2025 CT_PEAKER moves 1.19 → 1.23 further over actual, and plants 3138/3131 still fail D-4 — an open root cause, routed not closed. The holdout span is UNCHANGED (2020-2022 NOT-YET both sides, zero criterion flips); this promotion does not resolve the holdout-year rubric failures. PRIOR HEADER, kept as history: **ONE failing criterion, and it is not the keeper's** (keeper `2026-09-09-pjm-fuelvintage-ep-level`, determination NOT-YET on a C8 FAIL that the PREVIOUS keeper also fails when its diagnostics are regenerated at HEAD — 208 rows / 38 failures against this run's 211/35, re-scoring it CALIBRATED → NOT-YET; a `main`-side D-4 per-unit-conduct generator condition escalated as its own charter, not absorbed. Every other criterion PASSES across 2023-2025 with zero caveats. **PROMOTED at pjm-fuelvintage-1 (2026-09-09)** from `2026-08-15-pjm-162-inputclock` under the owner rulings 'promoted as keepers … regardless of inertness' and 'If structural integrity improves but gates regress that may still be a keeper': ONE config delta `gas_electric_power_monthly_level=True` — the measured EIA N3045 monthly delivered gas level replacing the EIA-923 ISO-month receipt level — with ZERO free parameters (DOF ledger carried VERBATIM 19/6), rule 19 verified to 0.0000000000 in 12/12 months, and NOT inert in PJM (the F923 print path owns only 51.794 % of gas capacity-hours). Validation touchpoints 2020/2021/2022 registered and folded. PRIOR HEADER, kept as history: keeper `2026-08-15-pjm-162-inputclock`, CALIBRATED — **PROMOTED at pjm-163 (2026-08-16)** from `2026-08-04-pjm-152-collapse`: the DEBUG-B measured-input repair replay (`docs/FINDING-debug-b-pjm-input-clock-2026-08-15.md`; owner promotion card, audit row O1) — the incumbent recipe re-solved fresh at the corrected PJM EIA-930 fueltype input clock (NG:* was +1 h early in local-2023/2024; value-preserving re-placement, byte-verified cell-for-cell) with the four DataMiner read sites moved onto absolute UTC stamps. **Zero value diffs** on every shared recipe field, ZERO free parameters (DOF ledger carried VERBATIM 19/6, asserted by `gen_pjm163_inputclock_attestation.py`), every criterion **PASS → PASS** vs the incumbent (finding §9, zero fails), determination re-verified not re-asserted (`calibration_verdict.py --run-id` → CALIBRATED, identical criterion-for-criterion, D-5(b)); bench/PJM 2023+2024 recomputed, 2025 byte-identical; ≤2022 extract years stay on the early clock, chartered separately (finding §6 / audit O3, owner-signed same sitting). Rule-28 re-stamps: `diurnal_price_amplitude` + `seam_flow_envelopes` evidence annotated pre-repair-basis, verdicts NOT re-adjudicated. PRIOR PROMOTION, kept as history: **PROMOTED at pjm-153 (2026-08-04)** from `2026-08-03-pjm-151-seam-envelope`: a rule 26 `[R-DELETE]` debt discharge with **BIT-IDENTICAL dispatch** (E1 `max |dMW| = 0.0` over all 166,440 class-hours in each of 2023/2024/2025, zero breaches) and **zero value diffs** on every shared recipe field. The keeper moves because the superseded recipe named a `ScenarioConfig` field HEAD no longer has and so was not replayable as recorded; structural integrity improves and **nothing regresses**. determination re-verified NOT re-asserted, `calibration_verdict.py --run-id` on committed artifacts returns CALIBRATED with zero FAILs and zero CAVEATs, identical criterion-for-criterion to the superseded run. pjm-153 also generated the governance attestation pjm-152 shipped without, which is what made the run scoreable at all); ~~item 7~~ CLOSED at pjm-145 (REFUSED ex ante, cell `G` — no solve spent); **`state_carbon_pricing` SOLVED at pjm-146 → cell `O`, PENDING OWNER**; **`measured_chp_heat_rates` SOLVED and PROMOTED at pjm-147 → cell `K`**; **the CHP host-steam successor lane REFUSED at pjm-148 (no LP spent) — `chp_steam_following` stays `K`**; **rule-28(c) column CLOSED at pjm-151 (15 absent + 1 prose-only + 5 armed-no-cell → 0/0/0, no LP, no solve, keeper unchanged)**; **THE LEVER QUEUE IS CLEARED AT pjm-153 (2026-08-04) — see the block immediately below**
 
+**pjm-d4-4 (2026-09-10): THE SUB-5-DAY OUTAGE FAMILY IS CAPTURED FOR COAL AND
+THROWN AWAY FOR GAS — the kill gate PASSES, the mechanism is BUILT default-off,
+and one of the handoff's own screen gates is RETIRED ON ARITHMETIC.** Keeper
+**UNCHANGED** at `2026-09-10-pjm-d4-2-stgas`; nothing promoted, nothing armed by
+default, nothing registered. New cell `unit_outage_short_windows_gas` = **`O`**
+(built and gated, no LP verdict claimed); row + a cell in all seven shards added
+with the field, same PR (rule 28 c). Records:
+`docs/RESULT-pjm-d4-4-forced-outage-composition-2026-09-10.md`,
+`docs/PRECOMMIT-pjm-d4-4-forced-outage-composition-2026-09-10.md` (the kill bar,
+committed BEFORE the measurement), `docs/PRECOMMIT-pjm-d4-4-screen-addendum-2026-09-10.md`,
+`results/calibration/_pjmd44_gas_shortwindow_census.json`.
+
+* **The defect.** `UNIT_OUTAGE_MIN_DAYS = 5` discards every shorter window and the
+  sub-floor companion that recovers them (`unit_outage_short_windows`, ARMED in the
+  keeper) re-filters to `plant_group == "COAL"`. Verified on disk: the ≥5-day
+  extract's min duration is exactly 5.0 d and the short extract is 934 rows,
+  **100 % COAL**. **CT_PEAKER is NOT reachable by this family at all** (outside
+  `QUALIFYING_PLANT_GROUPS`; CT_CHP dropped at routing) — the handoff named it, the
+  machinery excludes it, and this arm does not change that.
+* **The kill gate, registered first.** G-KILL-1 (mean removed MW over 2022's 92
+  actual RT>$200 h, bar = ¼ of the +9.7 GW model-minus-meter over-dispatch in
+  exactly those hours) **4,570 vs 2,425 → PASS 1.88×**; G-KILL-2 (annual mean, bar
+  = 10 % of the +6,999 MW forced gap) **1,185 vs 700 → PASS 1.69×**. ~**5×** the
+  handoff's own naive prediction of 200-380 MW — window *count* was the wrong
+  scaling variable. Neither bar reads a price residual.
+* **Identification is TESTED, not assumed, and the choice was made against
+  interest.** `SHORT_BASELOAD_CF` is a BASELOAD guard a cycling CC cannot pass, so
+  the gas scope carries the **merit-order guard** instead (SRMC vs revealed clearing
+  cost) and the derive CLI *refuses* to emit it without one. Measured: the guard
+  removes **10.8 %** of the annual mean and **5.1 %** of the tail (93 of 494
+  windows) and the committed artifact carries the **smaller** family. **Elliott is
+  the natural experiment**: published FORCED 31,078 / 35,844 / 27,058 / 24,052 MW
+  on Dec 24-27 2022 against a recovered family of 10,998 / 13,611 / 13,297 /
+  10,158 MW, from a 3.0-4.5 GW pre-event baseline — in hours whose RT averaged
+  **$844**, where nothing idles economically. **This does not overturn ERCOT's `R`
+  on its own near-neighbour arm** (rule 28 d): ERCOT's cell records that its
+  objection stands and that the transfer question is ERCOT's to measure.
+* **REPORTED AGAINST INTEREST.** corr vs published FORCED **+0.395** (2022),
+  **+0.314** (2021), but **+0.106 / +0.047 / +0.003 / −0.015** in 2024 / 2023 /
+  2025 / 2020; **2025 has the LARGEST published forced outage (10,531 MW) and the
+  SMALLEST recovered family (587 MW)**; the family *falls* through the 2025 named
+  event (0.33× annual) where it rises **8.6×** through Elliott; even in 2022 it is
+  Elliott-weighted (9,639 MW over the 35 December tail hours vs 1,854 MW over the
+  other 57). It closes **19 %** of the composition gap, not the gap.
+* **THE HANDOFF'S RESERVE-DUAL SCREEN GATE IS UNREACHABLE AND WAS RETIRED BEFORE
+  THE LP.** Tail-hour headroom ≈ **19 GW** minus the arm's 4,570 MW leaves
+  ≈ **14.4 GW** against a `pjm_primary` requirement whose **maximum** is 4,224 MW.
+  The dual cannot move. **Cost stated, not absorbed: this mechanism cannot alone
+  restore PJM scarcity price formation**, and the co-opt's inertness is now a
+  *sized* open root cause — **~15 GW**, not 4.6. `ordc_scarcity_overlay` stays `G`;
+  this is not a licence to arm the adder.
+* **PJM'S G-DRIFT BASELINE IS RECOVERABLE AND THE STRONGEST FORM YET — the
+  pjm-167 stamp above ("UNRECOVERABLE", "control solve authorized") is STALE
+  TWICE OVER.** pjm-d4-3 recovered it; this session answers the question
+  **exactly** instead of by hunk classification: the keeper's own 833-field
+  `cache_key()` is the identical **`725009b54d387c32`** at `git_sha` `5f133fd5`
+  and at HEAD, and since capx D79 that key carries the solve-surface fingerprint,
+  so an unmoved key certifies no registry table, no solve-surface row and no
+  config default the keeper touches has moved. **Form 4 holds; the committed
+  keeper IS the control; NO control solve is spent or authorized.**
+* **Zero free parameters** (rules 21/24): the duration boundary is the categorical
+  7-day sign flip (8 positive cells, 12 negative, zero exceptions across 2022-2025)
+  and it was **not re-swept** — pjm-162 swept the *cumulative* family, a different
+  statistic. Rule 23 satisfied because the **scope** was wrong, a construction
+  repair. Off-path byte-inertness **proved** over 7 ISOs × 4 years ×
+  `extract_basis_share` {False, True}.
+* **Open, escalated not absorbed:** the cross-year weakness above is unexplained;
+  a 2.5 % boundary-day double count (47 of 1,851 unit-days) belongs to the
+  `unit_outage_per_unit_clip` `U` cell; and if the screen's thermal-gap gate fails,
+  the named successor is **PARTIAL derates** — invisible to a stop-detector at any
+  duration — whose cell `ercot_partial_outage_shaped_derate` reads `·` here:
+  unbuilt, not refused.
+
 **pjm-167 (2026-09-06): THE CHARTERED 2022 TOUCHPOINT RE-RUN WAS ALREADY SPENT.
 ZERO LP. No solve, no score, no registration, no keeper change, no marker change,
 NO CELL VERDICT MOVED, no mechanism tested, no `ScenarioConfig` field added.**
