@@ -13801,3 +13801,36 @@ container is **cgroup v1 with no limit and 15.70 GiB**, so the combination *(Ful
 and the shard tests it with a cheap early stop. The shard reads BOTH cgroup layouts rather
 than assuming v2.
 
+**OUTCOME: THE SCREEN NEVER RAN, AND THE ARM IS UNADJUDICATED — not a keeper, not a
+rejection, no cell verdict minted.** Both shards, pinned to SHA `6b82b833` in two different
+environments (including `env_01MuEURKxFyu3AELJoBEHHPE`, the one miso-252 never tried), sat at
+`SESSION_STATUS_PENDING` with `updated_at` frozen at creation for ~50 and ~45 minutes and
+**never provisioned a container**. Neither reached HARD STOP 0, so this session did not even
+measure a cgroup ceiling — the one thing the memory question needed. **No LP was spent
+anywhere**; the parent solved nothing (rule 32(a), which is categorical and written for
+exactly this temptation). Nothing registered on the dashboard because no run completed;
+nothing deleted because no bundle exists (rule 31).
+
+**ONE GATE IS NEVERTHELESS SETTLED, at zero LP: G-1 footprint confinement PASSES on real
+MISO 2023 data.** Exactly two benchmark classes move — `biomass` 8.1281 → **2.3233**, `OTHER`
+10.3253 → **3.6165**, total **−12.5136 TWh** — and every other class is `+0.0000`,
+reproducing the PRECOMMIT's pre-registered prediction exactly. G-6 reported: bench
+`classFull` total 616.259 → 603.746. **G-2 / G-4 / G-5 need a solve and were not measured**,
+so whether the arm HELPS is unknown and this session does not claim it.
+
+**A CAMPD test partly discriminates the rival hypothesis** (ADDENDUM B): CEMS applicability
+keys on *selling* electricity, and **76.9 % (9.614 of 12.514 TWh) of the chp=Y block sits at
+sites with NO metered CEMS generation** (65.2 % absent from CAMPD entirely, 11.7 % present at
+zero load). The 23.2 % that is visible is facility-grain with the load mostly from other
+units, so **2.900 TWh is an UPPER BOUND on wrongful removal, not an estimate.** It moves the
+balance toward the premise without settling it — CAMPD absence says nothing about how the
+telemetry LABELS grid-connected units, which was the hypothesis's actual mechanism.
+
+**The binding constraint is now the solve environment, twice running**: miso-252 lost six
+shards to OOM, miso-253 lost two to containers that never started. The arm is **one 2023
+shard from an answer**. Evidence:
+`docs/RESULT-miso253-mustrun-chp-btm-2026-09-10.md`,
+`docs/PRECOMMIT-miso253-mustrun-chp-btm-2026-09-10.md` (+ addenda A/B/C, all pushed BEFORE
+any solve was attempted).
+
+* Next number: **miso-254**.
