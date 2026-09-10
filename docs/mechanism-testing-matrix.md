@@ -12551,6 +12551,69 @@ is now the live queue head.**)*
 
 *(Prior header, nyiso-177, verbatim:)* 5.5 NYISO — **KEEPER 2026-09-02 (nyiso-177): `2026-09-02-nyiso-177-vintage-matched` — the nyiso-159 recipe plus the accurate per-unit CAMPD attribution (`campd_per_unit_attribution`) on a vintage-matched, reproducible availability basis (`campd_outage_merit_order_guard`); ZERO free parameters, ZERO new DOF entries (13 / `n_residual` 6 carried verbatim), zero new forcing mechanisms (the SAME six D-4 rows). PROMOTED BY OWNER RULING on rules 14 `[R-ACCURATE]` + 1 `[R-STRUCT]` OVER ONE GATE REGRESSION, reported at full magnitude — determination NOT-YET, target grade 6 → 5, fail set {C3a-2025, C3c} → **{C1-2023 `ST_GAS`, C3a-2025 −11.2 %, C3c}**. The one regression is a single cell (C1 2023 `ST_GAS` +3.86 TWh against the superseded keeper's +3.33, marginally outside a band the old keeper sat marginally inside), and the honest reading is the nyiso-155 precedent exactly: the superseded keeper passed that cell on ~0.5 TWh of margin THE ATTRIBUTION DEFECT WAS SUPPLYING. Four score-independent structural gains: accuracy, no off-registry channel (the hardcoded `outages._FLEET_GROUP_OVERRIDE` per-plant dict disarmed on the repaired path), REPRODUCIBILITY (the superseded keeper's outage extract carries a null `derive_invocation` and cannot be reproduced at HEAD at any flag setting) and INTERNAL CONSISTENCY (tranche and outage artifacts on ONE availability basis, made structural by `campd_attribution_selectors`). Evidence: `docs/FINDING-nyiso177-availability-basis-root-cause-2026-09-02.md` (§10 addendum carries the ruling; §1–§9 preserve the recommendation AGAINST it, unedited), `PREREG-nyiso177-degradation-root-cause.md`. **HEADER RE-STAMPED 2026-09-02 by nyiso-178 — the promoting session's rule 28 duty was missed and CI was warning on it; nothing but this header changed, and no verdict moved. PRIOR (nyiso-159) HEADER PRESERVED BELOW.**
 
+**QUEUE STATUS UPDATE 2026-09-10 (nyiso-225, PHASE 0 ZERO-LP, NO SOLVE, NO SHARD;
+keeper `2026-09-09-nyiso-221-fuelvintage-span` UNCHANGED; no new row; `nyiso_total_east_cutset_ttc`
+cell UNCHANGED at `R`, annotated.)** The nyiso-224 "NEW TOP OF QUEUE (O) — the five-zone
+REPRESENTATION LIMIT itself" item is **CLOSED AT PHASE 0, and the owner accepted the kill**
+(2026-09-10, options put with costs: *accept the kill and go to the queue* / *charter the seam* /
+*charter F|G anyway*; ruled **accept the kill**). The same sitting ruled the nyiso-224 arm
+**REJECTED AS CONSTRUCTED** — `nyiso_total_east_cutset_ttc` stays `False`, armed by nobody, rule 31
+`[R-RETAIN]` promotion question CLOSED.
+
+**WHY THE SUCCESSOR IS DEAD — three independent legs, any one sufficient, all zero LP.**
+**(a) There is no nested PAIR of constraints to separate, because only ONE of the pair is ever a
+constraint.** The binding census over every posted internal interface, **both directions, all four
+years** (MIS P-32, ≥95 % of each hour's own posted limit): `CENTRAL EAST - VC` **10.01 / 4.36 /
+2.50 / 3.62 %** and **nothing else binds** — `TOTAL EAST`, the boundary the whole successor was
+built around, is **0.01 / 0.00 / 0.00 / 0.00 %**; `MOSES SOUTH` 0.00 % positive **and** 0.00 %
+negative; `DYSINGER EAST` 0.02 / 0.00 / 0.00 / 0.00; `UPNY CONED` 0.31 / 0.00 / 0.00 / 0.00;
+`SPR/DUN-SOUTH` 0.00 / 0.03 / 0.01 / 0.00; `WEST CENTRAL` carries the ±9,999 MW sentinel in 100 %
+of hours, so it has no limit to bind against. The model already carries the one boundary that is.
+**(b) The split that COULD separate the legs is already closed at G0.** The non-CE leg of TOTAL
+EAST is **1,626 / 1,677 / 1,461 / 1,465 MW**, stable while `MOSES SOUTH` swings **+1,352 → −188 MW**
+(corr 0.238 / 0.107 / 0.183 / 0.182) — so it is **not** Moses South; it bypasses zone F into zone G,
+and **both legs leave the same upstate zone**, so no split of A–E separates them. The separation is
+on the **receiving** side at **F|G**, which `nyiso-124` §2.1 closed with cause: **no F/G transfer
+limit** in MIS P-32, in **36 months** of MIS ATC/TTC, or in **any** of the four Gold Books, and
+`ext_G` unrecoverable. **DO-NOT-REDO discharged:** the new 2022 incidence evidence — **F is the
+dearest zone in New York** (97.02 vs G 84.65) and F−G widens to **32.86** in the market's own
+CE-binding hours, against the 0.36–2.65 nyiso-124 measured in 2023–25 — is a bigger basis, and **a
+bigger basis does not create a published limit**. **(c) The split that IS identifiable is provably
+inert:** splitting inside A–E along `DYSINGER EAST` / `MOSES SOUTH` (both posted, so G0 quantity 2
+passes there) creates links binding in **0.00–0.02 %** of hours — price-identical zones by
+construction, a zone-count change bought for a measured zero. There **is** real congestion inside
+A–E (**$13.66/MWh** of the $17.28 mean max–min spread is the *published* congestion component, not
+losses) but **no posted limit produces it** — nyiso-124's quantity-2 failure again, upstate.
+
+**THE ARM'S FREQUENCY MATCH WAS A COINCIDENCE OF AGGREGATES.** nyiso-224 recorded the armed link
+binding in 12.47 % of hours against a market sub-cutset at 10.0 % and **carefully declined to claim
+it as a pass**; measured hour by hour it should not have been. Arm binds **1,122 h (12.81 %)**,
+market CENTRAL EAST **877 h (10.01 %)**, **both 71 h** against **112.3 expected if independent** —
+**lift 0.63×**, precision **6.3 %**, recall 8.1 %. **The arm congests in the wrong hours and
+slightly avoids the right ones**, and no re-quantiling of a limit repairs hour-level
+**anti-correlation** — a stronger reason than rule 1 `[R-STRUCT]` (c)'s governance refusal, and a
+measurement rather than a rule. **The rent is 14× short:** measured (F,G)−(A–E) in the market's own
+binding hours **$82.54**, the arm's **$6.03**, on a mean |dual| of **$3.36/MWh** at 67.4 % loading.
+
+**RECORDED, NOT CHARTERED (the owner ruled this lane to the queue).** The 2022 driver reproduces
+nyiso-124 §6.1's 2023–25 seam diagnosis on the arm's own bundle: `NYISO_external>Long_Island` at
+bound **99.6 %**, `>NYC` **98.6 %**, `>Capital_Hudson` **93.7 %** — ~**2,040 MW east of the cutset
+as a flat, price-insensitive block** — against measured east-side schedules of **1,476 MW net**, a
+net including `SCH - NE - NY` at **−400.3 MW** (New York *exporting* to New England, a direction the
+model's east-side seam never takes), while `>Upstate_West` sits at bound only **12.6 %**. The seam
+cells are already `K` and nyiso-125's identification refusal on the `Capital_Hudson` / `Upstate_West`
+border links is load-bearing and unmoved, so this is evidence, not a lever.
+
+**NEW TOP OF QUEUE — back to the ISO's own live items**, which nyiso-224 went off-queue from and
+which this session did not reach: **(1)** the **three-way bridge re-screen on 2025 under corrected
+gates** (nyiso-200's recorded re-open condition); **(2)** the **Astoria 8906 floor-under-the-floor**
+on `reliability_floor_plant_exclusions` — with the bridge floor gone at 8906, the NYC persistent-base
+reliability limb is its sole remaining forcer and nyiso-201 §5.3 already named that limb's **basis**
+(a fleet-aggregate when-available cool-day CF p25 applied per unit across a fleet spanning
+0.667–0.956 online) as the open, source-data-only, zero-LP object. Record:
+`docs/FINDING-nyiso225-topology-split-closed-2026-09-10.md`,
+`scripts/probes/_nyiso225_topology_phase0.py`, `results/calibration/_nyiso225_topology_phase0.json`.
+
 **QUEUE STATUS UPDATE 2026-09-10 (nyiso-224, PHASE 0 ZERO-LP + ONE rule-29 2022 SCREEN;
 keeper `2026-09-09-nyiso-221-fuelvintage-span` UNCHANGED; NEW row
 `nyiso_total_east_cutset_ttc` registered, cell `O`.)** WENT OFF-QUEUE, and phase 0 is the
