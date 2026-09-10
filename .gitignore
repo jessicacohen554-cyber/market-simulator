@@ -1842,6 +1842,14 @@ results/calibration/_rev2void_caiso269_*/
 # local disk under rule 31 [R-RETAIN], never removed by `rm`.
 results/calibration/caiso270_keeper_*/
 
+# caiso-271 per-year SHARD bundles (rule 32 [R-SHARD] (d)): added WITH the
+# PRECOMMIT, before any shard launches, precisely because caiso-270's shard
+# branches were auto-merged and put 373.3 MB across 60 files onto `main`
+# (184.8 MB of it dispatch/), which cost a follow-up un-merge. Gitignoring the
+# family in advance is what discharges rule 29 [R-SCREEN] (c) and rule 32(d)
+# without ever removing a result from disk (rule 31 [R-RETAIN]).
+results/calibration/caiso271_family_*/
+
 # pjm-d4-2 (2026-09-10) per-year SHARD bundles: rule 32 [R-SHARD] solves one
 # year per container into its own out-dir, and the PARENT composes the single
 # registrable 2020-2025 bundle from them (rule 16 [R-ALLYEARS]). The per-year
