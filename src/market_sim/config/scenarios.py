@@ -1418,6 +1418,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # distinctly. Registered IN THE SAME COMMIT as the field (the nyiso-119
     # discipline).
     "nyiso_total_east_cutset_ttc",
+    # miso-253 host-steam/BTM partition of the injected must-run residual
+    # classes, default off: dropped from the hash at its False default so every
+    # pre-existing key in every ISO (each designated keeper's included) stays
+    # valid, and ON it produces a different injected must-run array and hashes
+    # distinctly. Registered IN THE SAME COMMIT as the field (the nyiso-119
+    # discipline).
+    "mustrun_chp_btm_holdout",
     # ercot-255 EP-reference of the F923-sourced rows of the ERCOT zonal gas
     # SPREAD, default off: dropped from the hash at its False default so every
     # pre-existing ERCOT key (the designated keeper's included) stays
@@ -2191,6 +2198,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by nyiso-224 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "nyiso_total_east_cutset_ttc": "False",
+    # Added by miso-253 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "mustrun_chp_btm_holdout": "False",
     # Added by ercot-255 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "ercot_zonal_spread_ep_referenced": "False",
@@ -18048,6 +18058,61 @@ class ScenarioConfig:
     # byte-identical, and no ISO inherits PJM's verdict. Placed at the END of
     # the field list so no existing matrix `:line` anchor shifts.
 
+    # Host-steam / behind-the-meter partition of the INJECTED must-run residual
+    # classes (``biomass`` and ``OTHER``), miso-253. ISO-generic, default OFF,
+    # byte-identical off.
+    #
+    # THE DEFECT (rule 14 [R-ACCURATE]). ``_must_run_profiles`` injects each
+    # residual class's EIA-923 NET GENERATION as price-insensitive must-run
+    # grid supply, with NO host-steam carve-out — unlike every fossil cogen
+    # class, which ``classify_plant`` splits into its own ``*_CHP`` class and
+    # then holds a measured host share out of through ``data.chp.chp_btm_pct``.
+    # Biomass and OTHER have no CHP counterpart class, so the split was never
+    # applied to them, and they are the two classes where cogeneration
+    # DOMINATES: MISO 2023 is 71.4 % chp=Y across the pair (12.514 of 18.453
+    # TWh) — black liquor and wood-solids recovery boilers at paper mills,
+    # blast-furnace and coke-oven gas at integrated steel mills, waste heat and
+    # purchased steam. That electricity powers the host; it never reaches the
+    # ISO grid, and injecting it as must-run supply displaces marginal gas.
+    #
+    # WHAT IT DOES: an EIA-923 row whose plant carries the published CHP flag
+    # is dropped from the injected classes at the single ``_eia923_frame``
+    # seam, which BOTH the injection and the benchmark read — so the bench
+    # moves in lockstep and no artificial miss is created. Nothing else moves:
+    # gas CHP is already partitioned into CC_CHP / CT_CHP / ST_CHP, coal cogen
+    # has ``coal_chp_overrides``, and the row filter is scoped to
+    # ``_INJECTED_MUSTRUN_CLASSES``.
+    #
+    # ZERO FREE PARAMETERS (rules 21 / 24): a partition on one published
+    # per-plant boolean. No share, no threshold, no level.
+    #
+    # RULE 13 [R-MEASURED] FORWARD TEST: EIA-923 carries the CHP flag per plant
+    # per vintage, so the identical construction regenerates for a forward year
+    # and re-partitions a plant whose cogen status changes. It is an input to
+    # what the grid is supplied with, never an outcome the dispatch is fitted
+    # to.
+    #
+    # INDEPENDENT GRID-SIDE CORROBORATION (miso-253 phase 0, and the reason
+    # this is not a self-referential repair): EIA-930's ``OTH`` bucket is MISO's
+    # own BA telemetry of everything outside coal/gas/nuclear/solar/hydro/wind,
+    # and MISO's 930 fuel split reconciles to its reported net generation to
+    # 0.0002 % — so OTH is exhaustive, not a residual. Measured MISO totals,
+    # LP-side "other" (biomass + OTHER + oil) against OTH:
+    #     2023  18.916 TWh injected vs   4.491 TWh telemetered  (4.2x)
+    #     2024  15.920                   2.737                  (5.8x)
+    #     2025   9.114                   3.650                  (2.5x)
+    # With the partition the injected residual lands at 6.402 / 5.418 / 3.852
+    # TWh — the same order as the telemetry, and still slightly above it, which
+    # is the correct side (a cogen may export some of its output; the flag is a
+    # partition, not an export model).
+    #
+    # WHAT IT DOES NOT CLOSE, stated at the gate: biomass and OTHER remain
+    # SELF-SCORED — this seam feeds bench and injection alike, so the classes
+    # still cannot fail C1 however wrong the level is. That validation gap
+    # (FINDING-miso252 §2) needs a bench sourced independently of the model's
+    # own input, for which EIA-930 OTH is the named route; it is NOT this flag.
+    mustrun_chp_btm_holdout: bool = False
+
     def __post_init__(self) -> None:
         # YAML round-trip type repair: YAML has no tuple type, so a config
         # loaded back from a sidecar (``from_yaml`` over a ``to_yaml_full``
@@ -20575,6 +20640,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_ep_gas_basis_receipts_fallback": 3,
     "nyiso_hub_gap_month_level": 3,
     "nyiso_total_east_cutset_ttc": 3,
+    "mustrun_chp_btm_holdout": 3,
     "ercot_zonal_spread_ep_referenced": 3,
     "ercot_gas_delivered_floor_basis": 3,
     "ercot_gas_contract_haircut": 3,
