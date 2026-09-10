@@ -23,6 +23,11 @@ predicts. Both seams were **pre-registered before the first solve** (P-6, P-3), 
 **structural**, both are **ROUTED to SCN-DESK** and **nothing under `src/market_sim/**` was
 edited**.
 
+**One caveat belongs in the first paragraph rather than a footnote:** the campaign's shard pin
+`4e4ad90d` **predates capx D87 (2026-09-08), which repaired the `ccs.py` seam.** So the `CES-T80`
+retrofit numbers here are a measurement of the **pre-D87** screen and are superseded at HEAD (see
+§2 P-3). The **P-6 mass-cap seam is untouched by D87 and is live at HEAD.**
+
 ---
 
 ## 1. Campaign status — the deliverable
@@ -131,6 +136,38 @@ at full magnitude.
 legs are never presented as one instrument at two levels** — that framing is refuted by this
 table, and any synthesis that ranks "$60 premium" against "80 %→100 % target" as levels of one
 policy is reading a coverage seam as an economic result.
+
+#### P-3's numbers are measured on the PRE-D87 screen, and **capx D87 has since repaired that seam at HEAD**
+
+**This has to be stated before anyone acts on the table above, because it changes what the numbers
+are evidence for.** The campaign's shard checkout pin is `4e4ad90d` (2026-09-07 22:05 −0700).
+**capx D87 landed 2026-09-08 and is NOT an ancestor of that pin** (verified by
+`git merge-base --is-ancestor` against every D87 commit — none is). So **all five Stage-B legs ran
+on the code in which the seam was still open**, which is why the seam is so cleanly visible in
+them.
+
+D87 folds `clean_credit_for_zone` into **both** of `ccs.py:475-476`'s continuations through the
+existing `max()`, threaded from `evolve.py:664` as a `None`-default keyword — zero free
+parameters, zero cache-key moves, byte-identical wherever no clean row credits `gas_cc_ccs`. Its
+own A/B on NYISO `CES-T80` 2026–2030 moved cumulative `gas_cc_ccs` **6,255.940 → 7,383.569 MW**.
+
+**Consequences, stated plainly:**
+
+- **P-3 is CONFIRMED as a diagnosis of the pre-D87 screen and is NOT a live statement about
+  HEAD.** The mechanism it names is real, was routed by this lane's own Stage A, and has been
+  repaired.
+- **`CES-T80`'s retrofit trajectory in this document is superseded at HEAD** and falls under the
+  `results/cache.py` **Epoch 2026-09-08 SAME-KEY invalidation** — a stale bundle will be served to
+  a post-fix run unless purged. `REF`, `CAP-STATE-TIGHT`, `CES-P60` and `ALL-CLEAN` are
+  premium-or-no-clean-row legs, which D87 leaves byte-identical.
+- **What this does NOT overturn:** P-3's *conclusion* that a premium case and a target case are
+  not one instrument at two levels **survives, for a better reason than the wiring defect** — a
+  target row's dual is **endogenous and collapses when the standard binds**, while a premium is
+  exogenous and constant. This campaign measured that directly: `CES-T80`'s dual is interior at
+  **7.05–20.31 $/MWh in 2029–2033** and at the **$50 ACP for the other twenty years**.
+- **A post-D87 re-solve of `CES-T80` (and only `CES-T80`) is the open item**, and it is
+  **ROUTED to SCN-DESK** — re-pinning the campaign is a scope call this lane does not make
+  (ADDENDUM 3 §4 item 1, and §3 item 4 below).
 
 ### P-4(a) (`CAP-STATE-TIGHT` quantity crossing) — **CONFIRMED, inside the pre-registered band**
 
@@ -296,10 +333,13 @@ lane.**
    capacity screen under `mass_cap_enabled`. Consequence measured: 0.0 MW of CCS in 25 years, flat
    nuclear, and 31.13 % unserved load at 2050. **Affects every ISO's `mass_cap_*` scenarios, not
    just NYISO.** → SCN-DESK / capx director.
-2. **The CES target dual cannot reach the CCS retrofit screen (P-3).** `ccs.py:475-476` reads only
+2. **The CES target dual cannot reach the CCS retrofit screen (P-3) — ALREADY REPAIRED at HEAD by
+   capx D87, which is NOT in this campaign's pin.** `ccs.py:475-476` read only
    `max(legacy eac, premium × credit)` and never `clean_attribute_price_by_fuel`. Consequence
-   measured: `CES-T80`'s retrofit is REF's in 23/25 years and *below* REF's in the other two.
-   **Ruled D-15/S19 — reported, not edited.** → capx director.
+   measured **on the pre-D87 screen these legs ran**: `CES-T80`'s retrofit is REF's in 23/25 years
+   and *below* REF's in the other two. **Ruled D-15/S19 — reported, not edited**, and D87 has
+   since landed the fix. **The open item is a post-D87 re-solve of `CES-T80` alone** (the other
+   four legs are byte-identical under D87). → SCN-DESK.
 3. **I9 (storage integrity) is a MODEL finding, not a scenario result** (ADDENDUM 4 §2, carried
    here verbatim in substance). `CES-P60` reaches **19.46 % of storage throughput in simultaneous
    charge+discharge from 2032**. Rule 9 `[R-EPSILON]`'s ε = 0.001 $/MWh tiebreaker exists to
