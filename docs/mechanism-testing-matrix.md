@@ -12604,13 +12604,48 @@ model's east-side seam never takes), while `>Upstate_West` sits at bound only **
 cells are already `K` and nyiso-125's identification refusal on the `Capital_Hudson` / `Upstate_West`
 border links is load-bearing and unmoved, so this is evidence, not a lever.
 
-**NEW TOP OF QUEUE — back to the ISO's own live items**, which nyiso-224 went off-queue from and
-which this session did not reach: **(1)** the **three-way bridge re-screen on 2025 under corrected
-gates** (nyiso-200's recorded re-open condition); **(2)** the **Astoria 8906 floor-under-the-floor**
-on `reliability_floor_plant_exclusions` — with the bridge floor gone at 8906, the NYC persistent-base
-reliability limb is its sole remaining forcer and nyiso-201 §5.3 already named that limb's **basis**
-(a fleet-aggregate when-available cool-day CF p25 applied per unit across a fleet spanning
-0.667–0.956 online) as the open, source-data-only, zero-LP object. Record:
+**THE QUEUE IS STALE — ALL THREE ITEMS nyiso-224 NAMED AS LIVE ARE ALREADY SPENT.** The owner sent
+this lane to the queue; going there found nothing to take, and one item carries an explicit
+**do-not-re-screen**. Recorded so no future lane burns a session on a refuted cell (rule 30(a)).
+**(1) "the three-way bridge re-screen on 2025 under corrected gates" — SPENT and REFUTED by
+`nyiso-201` (2026-09-06), which IS that re-screen.** Both corrected constructions CLEARED (the C8/D-4
+companion, rebuilt as forced energy at dark-meter plants rather than a failure-row count, read
+**0.0010 → 0.0000 TWh**; the named-plant gate found 7314 and 50978 both anchored on **kept** runs, no
+conviction), and nyiso-200's A1 stop was **retired** under (a) as corrected. The arm died on the risk
+named in writing before the solve — **C3a-2025 −6.9 % → −11.7 %** — and its hand-forward is verbatim:
+*"the three-way pairing is REFUTED — both pre-registered screen years (2023 nyiso-200, 2025
+nyiso-201) are spent, **do not re-screen it**."* Promoting would have **decertified** NYISO (C3a is
+load-bearing and unledgerable; the owner's formula admits regressing gates but does not reach a
+decertification). **(2) "the run screen alone" — SPENT and PROMOTED:** it is
+`nyiso_gas_bridge_startup_aware`, screened on 2025 and promoted by `nyiso-202`, and it is in the
+CURRENT keeper's recipe. **(3) "the Astoria 8906 floor-under-the-floor" — ANSWERED NEGATIVE TWICE
+from source data:** *membership* (`nyiso-201`) — on nyiso-140's criterion 8906 is **0 of 18** cells,
+the MAXIMUM distance from qualifying (pooled median 166 MW, online 66.7 %), and widening the test to
+admit it would dissolve the lay-up/cycler distinction and be the per-plant list rules 1/14 and the
+nyiso-144 7314 ruling forbid; *basis* (`nyiso-203`) — a **CLEAN NEGATIVE, sound as built**, window,
+membership and operator each measured right and `cheapest_first` refuted on the fleet's own gen/avail
+ratios. The conviction is not even a standing property: in 2025 the composition runs the OPPOSITE way
+(total forcing **rises** 0.2725 → 0.3061 TWh while the bridge row goes to zero) and the D-4 rider
+convicts in **neither** year. **How the stale list survived:** nyiso-201/-202/-203 recorded their
+outcomes in the keeper HEADER and the calibration log rather than as their own `QUEUE STATUS UPDATE`
+blocks, so nyiso-200's list stayed the top-most *list* in this section for four days while every item
+on it was spent beneath it; nyiso-224 read it in good faith. Sessions 209–220 (data, benchmark-debt,
+hydro-instrument lanes) added no calibration lever, so **§5.5 is current as of this entry**.
+
+**WHAT IS ACTUALLY OPEN — and there is NO live screenable lever.** NYISO has **no in-training rubric
+failure to chase**: the keeper reads **CALIBRATED**, grade 7 of 8, **fails 0**, C3c the lone ledgered
+caveat, 2023–2025. **2022 C3a is a validation-tier number that can neither certify nor decertify**
+(rule 30(c); and since `[R-HOLDOUT]`'s removal no year certifies), and its three routes now stand
+limit `R` / topology **closed at phase 0** / seam `K` behind nyiso-125's identification refusal.
+**One OWNER CALL is outstanding and it is not a lane** (`nyiso-203`, reported and not taken): the NYC
+persistent-base coefficient is a **daily-mean statistic applied hourly**, basis-matched
+**0.1750 → 0.1663** (−5.0 %, −0.133 TWh over three years) — refused because rule 23 has no
+source-data trigger, because it would MOVE the coefficient where nyiso-140's correction did not
+(so rule 21 admissibility is an owner question), and because it **provably cannot reach** the 8906
+object (the band between the two coefficients covers **0.13 %** of that plant's hours against its
+5,400 binding hours). The hydro lane's **Q2 stays blocked on evidence** (`nyiso-220`): St. Lawrence
+has a published 168 h conservation period; **Niagara at 51.89 % of fleet MW has none, and none exists
+in its governing instruments**. Record:
 `docs/FINDING-nyiso225-topology-split-closed-2026-09-10.md`,
 `scripts/probes/_nyiso225_topology_phase0.py`, `results/calibration/_nyiso225_topology_phase0.json`.
 
