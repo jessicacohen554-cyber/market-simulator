@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-10-spp-62-vintage-census",
+  "label": "spp 62 vintage census",
+  "date": "2026-09-10",
+  "shorthand": "spp-62-vintage-census",
+  "definition": "SPP-62: eia860_vintage_tracks_solve_year over the R-ay coal supply-class census repair (--census-vintage 2023 2024 2025). Full span, rule 16 [R-ALLYEARS], one input snapshot.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "SPP",
+  "file": "frontend/data/backcast/runs/2026-09-10-spp-62-vintage-census.js",
+  "bundle": "results/calibration/spp62_span"
+}
