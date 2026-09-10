@@ -1912,3 +1912,7 @@ results/ff-t3-neiso-golden/d92/
 # until the owner has ruled on promotion.
 results/calibration/nyiso226_*/
 results/calibration/spp64_*/
+# SPP-27 (rule 29(c) [R-SCREEN] / rule 31 [R-RETAIN]): the screen and span bundle
+# family stays OUT OF `main`; gitignoring is what discharges the delete-before-merge
+# duty, and nothing is ever `rm`'d before the owner rules on promotion.
+results/calibration/spp27_*/

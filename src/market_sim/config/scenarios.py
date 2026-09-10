@@ -1738,6 +1738,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # end, per HOUSE-3). Registered IN THE SAME COMMIT as the fields.
     "spp_curtailment_ceiling",
     "spp_curtail_depth_wind",
+    # SPP-27: the whole-operating-day commitment grain for the per-plant
+    # must-run window (default off). Dropped from the hash at its default so
+    # every pre-existing cached run -- every ISO's keepers included -- keeps its
+    # key; an armed run places the same-sized window on different hours and so
+    # earns a distinct key. SHARED field -- very end, per HOUSE-3. Registered
+    # IN THE SAME COMMIT as the field.
+    "mustrun_window_commitment_grain",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -2356,6 +2363,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # that leaves the depth alone still keys on the flag alone).
     "spp_curtailment_ceiling": "False",
     "spp_curtail_depth_wind": "0.288137",
+    # Added by SPP-27 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "mustrun_window_commitment_grain": "False",
 }
 
 
@@ -13431,6 +13441,58 @@ class ScenarioConfig:
     # Off by default (every existing keeper byte-identical); the artifact is
     # per-ISO by construction, so the mechanism self-scopes (rule 25).
     mustrun_online_frac_per_year: bool = False
+
+    # WINDOW-GRAIN correction for BOTH per-plant must-run floors
+    # (cc_mustrun_per_plant / st_gas_mustrun_per_plant, the p25 level swap
+    # included) — spp-27. A SEPARATE PHENOMENON from
+    # ``mustrun_online_frac_per_year`` above (rule 19 [R-ONE-MECH]): that field
+    # corrects the window's SIZE across years, this one corrects the grain the
+    # SAME-SIZED window is placed at WITHIN a year. Neither reads the other and
+    # they compose without stacking — the size still comes from ``online_frac``
+    # (pooled, or per-year when that gate is armed) and only the hour SELECTION
+    # moves.
+    #
+    # THE DEFECT. The floor asserts a COMMITMENT — a day-ahead, whole-
+    # operating-day decision — but the engine places it by ranking INDIVIDUAL
+    # HOURS by system load, so the floor inherits the diurnal shape of LOAD
+    # instead of the diurnal shape of COMMITMENT. Measured on SPP's ST_GAS
+    # fleet from the plants' own CAMPD hourly record (spp-27 phase 0, three
+    # years, 22 plants): the peak-to-mean of each plant's ONLINE hour-of-day
+    # profile — 1.000 for a unit committed for whole days, >> 1 for a daily
+    # cycler — is **1.007-1.146 on 21 of the 22 plants** (3-year means; only
+    # Mooreland 3008 at 1.609 genuinely two-shifts). When these units are
+    # synchronized they run through the overnight trough. The incumbent
+    # window's own peak-to-mean over the same plant-years is **1.03-2.86,
+    # median ~1.35**: it binds at the daily peaks and is absent overnight on
+    # the very same committed day. Rule 17 [R-FLOOR-WINDOW] — "a floor binding
+    # in hours its own driver evidence says the class is offline is a bug by
+    # definition" — with the converse also true here (absent in hours the
+    # driver says it is online).
+    #
+    # THE REPAIR, when True: the window is a whole number of OPERATING DAYS —
+    # ``round(k/24)`` days ranked by that day's MEAN system load, every hour of
+    # a selected day carrying the floor. This is the mechanical lift of the
+    # incumbent's OWN hourly ranking to the commitment period: same signal
+    # (the model's own system load), same ordering statistic, one grain
+    # coarser. The window's peak-to-mean becomes 1.000 by construction. The
+    # level, the membership, the ``online_frac`` size and the
+    # pmax*availability clip are UNCHANGED.
+    #
+    # Rule 21 [R-DOF]: ZERO free parameters. No threshold, no share, no
+    # multiplier — the grain is the operating day, which is the period a unit
+    # commitment is made for, not a fitted length.
+    # Rule 13 [R-MEASURED]: forward-regenerable and mode-blind. The day
+    # ranking is computed from the model's OWN load shape exactly as the hour
+    # ranking is, so a forecast year regenerates it from forward drivers and it
+    # responds to changed conditions. Nothing measured enters the placement.
+    # Rule 19 [R-ONE-MECH]: the window is REPLACED, never stacked, and both
+    # per-plant seams read the one construction so the mechanism id's window is
+    # single-valued. The COAL synchronization floor (``coal_sync_online_frac``)
+    # and the CT_PEAKER floors keep the hour grain — they are separate
+    # mechanism ids whose own conduct evidence this gate does not carry, and
+    # SPP's own ST_GAS census cannot speak for them (rule 25 [R-ISO-SCOPE]).
+    # Off by default: every existing keeper is byte-identical.
+    mustrun_window_commitment_grain: bool = False
 
     # LEVEL-BASIS correction for the st_gas_mustrun_p25_level floor — miso-172.
     # ``p25_cf`` is a percentile of ``net_MW / (nameplate x avail_mult)``, i.e. a
