@@ -1259,6 +1259,19 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # armed run reprices the survey-NA months and hashes distinctly. Registered
     # WITH the field, in the same commit (the nyiso-119 discipline).
     "caiso_citygate_spot_coverage",
+    # caiso-269 late-evening clean import tranche (default off), registered
+    # RETROACTIVELY: the field's own merge missed this tuple entirely, so it
+    # entered the digest at its own default and orphaned EVERY on-disk cache
+    # key in every ISO -- five cache-key pin tests red at HEAD. Registering it
+    # here restores the pre-merge keys and leaves an ARMED run's key untouched.
+    # Byte-identical off by construction: both consumers gate on the flag
+    # (model/interchange/spec.py::_caiso_hub_intertie_specs and
+    # model/interchange/caiso.py, each
+    # `per_hub... and getattr(config, "caiso_dsw_lateevening_clean", False)`),
+    # so off the spec carries the tranche at ZERO capacity and the hourly
+    # injector never runs. An armed run hands the LP a real import tranche on
+    # the DSW hub and so earns a distinct key.
+    "caiso_dsw_lateevening_clean",
     # miso-160 measured seasonal forced-outage shape (default None): dropped
     # from the hash at its default so every pre-existing cache key stays
     # byte-stable — the None path reads the module constant
@@ -1398,6 +1411,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # distinctly. Registered IN THE SAME COMMIT as the field (the nyiso-119
     # discipline).
     "nyiso_hub_gap_month_level",
+    # nyiso-224 NYISO TOTAL EAST cutset transfer envelope, default off: dropped
+    # from the hash at its False default so every pre-existing NYISO key (the
+    # designated keeper's included) stays valid, and ON it selects a different
+    # per-hour TTC matrix for the Upstate_West->Capital_Hudson link and hashes
+    # distinctly. Registered IN THE SAME COMMIT as the field (the nyiso-119
+    # discipline).
+    "nyiso_total_east_cutset_ttc",
     # ercot-255 EP-reference of the F923-sourced rows of the ERCOT zonal gas
     # SPREAD, default off: dropped from the hash at its False default so every
     # pre-existing ERCOT key (the designated keeper's included) stays
@@ -2138,6 +2158,13 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by caiso-246 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "caiso_citygate_spot_coverage": "False",
+    # caiso-269's field, registered RETROACTIVELY (its own merge missed the
+    # _CACHE_KEY_OPTIONAL_FIELDS registration entirely, orphaning every
+    # on-disk cache key), so the registration and this ledger entry land
+    # together in the repairing commit -- the miso-172/173 precedent above.
+    # The default recorded here is the field's original merge-time default,
+    # unchanged.
+    "caiso_dsw_lateevening_clean": "False",
     # Added by miso-160 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "summer_wefor_share_override": "None",
@@ -2161,6 +2188,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by nyiso-223 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "nyiso_hub_gap_month_level": "False",
+    # Added by nyiso-224 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "nyiso_total_east_cutset_ttc": "False",
     # Added by ercot-255 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "ercot_zonal_spread_ep_referenced": "False",
@@ -15898,6 +15928,25 @@ class ScenarioConfig:
     # market_sim.data.fuel.hubs._nyiso_hub_daily_gas_prices.
     nyiso_hub_gap_month_level: bool = False
 
+    # Tier 3 (calibration) — nyiso-224. The model's ONE
+    # ``Upstate_West -> Capital_Hudson`` link is the A-E -> F+ cutset, whose
+    # NYISO name is TOTAL EAST; ``NYISO_INTERFACE_TTC_BY_MONTH`` caps it at the
+    # posted CENT EAST DAM TTC, which is a NESTED SUB-CUTSET carrying about half
+    # the cutset's flow. Armed, the link takes
+    # ``constants.NYISO_CUTSET_TTC_ENVELOPE_BY_MONTH`` — the p90 of the
+    # directionally-clipped measured TOTAL EAST transfer per calendar month, the
+    # construction already armed for NYISO's border links by
+    # ``nyiso_seam_deliverability_envelope`` — and the CENT EAST table is
+    # REPLACED, never stacked on (rule 19 [R-ONE-MECH]: one seam,
+    # ``pipeline.ttc.apply_iso_monthly_ttc``). Rule 14 [R-ACCURATE]'s
+    # misalignment exception is the basis, verbatim: "a single GTC that is one
+    # of several parallel paths our reduced network collapses into one link".
+    # ZERO free parameters; backcast-only on the identical classification as the
+    # CENT EAST table it replaces. Off by default so every other ISO, every
+    # registered keeper and every forecast is byte-identical. See
+    # market_sim.pipeline.ttc.apply_iso_monthly_ttc.
+    nyiso_total_east_cutset_ttc: bool = False
+
     # --- NYISO downstate-peaker structural pricing (2026-07, issue #1344 /
     # --- B-NYI-1 de-leak follow-up). New fields added as one contiguous block.
     #
@@ -20146,6 +20195,7 @@ TIER_TAGS: dict[str, int] = {
     "caiso_ra_startup_bridge": 1,
     "caiso_ra_bridge_decommit": 1,
     "caiso_ra_mustoffer_quantity_gate": 1,
+    "caiso_dsw_lateevening_clean": 1,  # structural flag, not a numeric parameter
     "caiso_ra_bridge_startup_aware": 1,
     "caiso_ra_bridge_curtailment_release": 1,
     "caiso_ra_startup_trajectory": 1,
@@ -20524,6 +20574,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_ep_gas_basis_corroborated": 3,
     "ercot_ep_gas_basis_receipts_fallback": 3,
     "nyiso_hub_gap_month_level": 3,
+    "nyiso_total_east_cutset_ttc": 3,
     "ercot_zonal_spread_ep_referenced": 3,
     "ercot_gas_delivered_floor_basis": 3,
     "ercot_gas_contract_haircut": 3,

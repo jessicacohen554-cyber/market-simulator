@@ -3407,3 +3407,59 @@ def test_ercot_zonal_spread_ep_referenced_is_inert_for_a_forward_year():
     out = base.copy()
     apply_ercot_zonal_gas_basis(out, fleet, cfg, 2035)
     np.testing.assert_array_equal(out, base)
+
+
+def test_nyiso_total_east_cutset_ttc_replaces_central_east():
+    """nyiso-224: armed, the link takes the TOTAL EAST cutset envelope, not CENT EAST.
+
+    Rule 19 [R-ONE-MECH] in test form — the two tables never stack: the armed
+    column equals NYISO_CUTSET_TTC_ENVELOPE_BY_MONTH exactly, and the unarmed
+    column stays byte-identical to the incumbent CENT EAST path, so every
+    registered keeper is unmoved.
+    """
+    from scripts.run_calibration import _apply_iso_monthly_ttc
+    from market_sim.config.iso_configs import get_iso_config
+    from market_sim.config.constants import (
+        NYISO_CUTSET_TTC_ENVELOPE_BY_MONTH,
+        NYISO_INTERFACE_TTC_BY_MONTH,
+    )
+
+    cfg = get_iso_config("NYISO")
+    ttc = np.array([link.ttc_mw for link in cfg.links], dtype=float)
+    hours = 8760
+    link_key = ("Upstate_West", "Capital_Hudson")
+    ce = next(
+        i
+        for i, link in enumerate(cfg.links)
+        if (link.from_zone, link.to_zone) == link_key
+    )
+
+    class _Armed:
+        nyiso_total_east_cutset_ttc = True
+
+    class _Off:
+        nyiso_total_east_cutset_ttc = False
+
+    base = _apply_iso_monthly_ttc(ttc, cfg, "NYISO", 2022, hours)
+    off = _apply_iso_monthly_ttc(ttc, cfg, "NYISO", 2022, hours, config=_Off())
+    arm = _apply_iso_monthly_ttc(ttc, cfg, "NYISO", 2022, hours, config=_Armed())
+
+    # Unarmed (and the no-config legacy call) is byte-identical to the incumbent.
+    incumbent = NYISO_INTERFACE_TTC_BY_MONTH[2022][link_key]
+    assert np.array_equal(base, off)
+    assert off[0, ce] == incumbent[0]
+    assert off[hours - 1, ce] == incumbent[11]
+
+    # Armed selects the cutset envelope, month by month.
+    envelope = NYISO_CUTSET_TTC_ENVELOPE_BY_MONTH[2022][link_key]
+    assert arm[0, ce] == envelope[0]
+    assert arm[31 * 24, ce] == envelope[1]
+    assert arm[hours - 1, ce] == envelope[11]
+
+    # Every other link is untouched by either path.
+    others = [i for i in range(len(cfg.links)) if i != ce]
+    assert np.array_equal(arm[:, others], off[:, others])
+
+    # The cutset the link represents is strictly wider than its nested
+    # sub-cutset in every month of 2022 — the misalignment this arm repairs.
+    assert all(e > c for e, c in zip(envelope, incumbent))

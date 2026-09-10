@@ -270,6 +270,57 @@ DECLARATIONS: tuple[ParityDeclaration, ...] = (
         evidence=(_BACKCAST_ORCH, "src/market_sim/config/interchange_config.py"),
     ),
     ParityDeclaration(
+        fields=(
+            "miso_seam_neighbour_anchored_ladder",
+            "miso_seam_neighbour_hourly_ladder",
+        ),
+        disposition=BACKCAST_ONLY,
+        why="the NEIGHBOUR-priced forms of the same measured seam ladder "
+        "declared above, and backcast-only for the same reason: both price a "
+        "band off a MEASURED neighbour DA series that exists only for a "
+        "historical year — the PJM western-border DA "
+        "(MISO_SEAM_LADDER_NEIGHBOUR_BY_YEAR, the annual Q-Q form, miso-225) "
+        "and the same series read hourly as per-band offsets, band k at "
+        "pjm_border(t) + delta_k (miso-231). The hourly form DISPLACES the "
+        "annual one on the seams it covers and degrades to it, never to an "
+        "unpriced seam; neither has a forward analogue, and the forecast "
+        "substitute is the one already declared for the family — the "
+        "gas-elastic reference-price formula",
+        evidence=(
+            _BACKCAST_ORCH,
+            "src/market_sim/model/interchange/miso.py",
+            "src/market_sim/config/interchange_config.py",
+        ),
+    ),
+    ParityDeclaration(
+        fields=("pjm_interface_feed_admissibility_gate",),
+        disposition=BACKCAST_ONLY,
+        why="the admissibility JUDGE on a measured, backcast-only feed: it "
+        "tests the year's posted PJM Eastern interface series against that "
+        "year's OWN measured flows (interface_series_admissibility) before the "
+        "joint EMAAC import cut is enforced, and on failure returns an "
+        "all-+inf array so the two links keep their static per-link TTCs. Both "
+        "halves are backcast-side — the hourly feed reaches the solve only "
+        "through the backcast orchestrator "
+        "(data/transfer_interface_limits.py, imported at run_calibration.py) "
+        "and the flag is set by the BACKCAST config builder alone "
+        "(pipeline/backcast_config.py, iso == 'PJM'). The forecast substitute "
+        "needs no wiring because it is the fall-through itself: the function's "
+        "own docstring names the gate's failure branch as 'the same posture a "
+        "forecast year already takes' — static per-link TTCs, no measured cut. "
+        "Rule 14 [R-ACCURATE]'s named misalignment exception (the pre-2023 "
+        "vintage is a near-static seasonal limit-set posting, a DIFFERENT "
+        "QUANTITY from the post-2023 hourly TLC under one series name), and "
+        "the fall-through is selected by the FEED alone — never by a price, a "
+        "residual or any model output — and logged at WARNING with its full "
+        "arithmetic",
+        evidence=(
+            _BACKCAST_ORCH,
+            "src/market_sim/data/transfer_interface_limits.py",
+            "src/market_sim/pipeline/backcast_config.py",
+        ),
+    ),
+    ParityDeclaration(
         fields=("caiso_corridor_flow_limit",),
         disposition=BACKCAST_ONLY,
         why="measured EIA-930 per-corridor p95 net-flow envelope; forecast "
@@ -373,6 +424,25 @@ DECLARATIONS: tuple[ParityDeclaration, ...] = (
         why="envelope composition semantics (merit-order waterfall vs uniform "
         "per-band derate) for the MISO seam import cap",
         evidence=(_BACKCAST_ORCH,),
+    ),
+    ParityDeclaration(
+        fields=("miso_seam_neighbour_hourly_spp",),
+        disposition=PARAMETER_OF,
+        parent="miso_seam_neighbour_hourly_ladder",
+        why="miso-233 extension of the hourly neighbour anchor to the SECOND "
+        "seam, pricing SPP band k at spp_hub(t) + delta_k against the measured "
+        "SPP NORTH hub DA — declared a SUB-GATE and never a mechanism beside "
+        "its parent by rule 19 [R-ONE-MECH] (the predicate REQUIRES "
+        "miso_seam_neighbour_hourly_ladder, so the two seams are never "
+        "anchored apart) and riding the same per-seam hourly_anchor mapping "
+        "the PJM entry already uses. Same treatment as its siblings "
+        "miso_seam_envelope_merit_cap / miso_seam_envelope_hour_ending_key; it "
+        "resolves to the parent's BACKCAST_ONLY disposition",
+        evidence=(
+            _BACKCAST_ORCH,
+            "src/market_sim/model/interchange/miso.py",
+            "src/market_sim/model/interchange/spec.py",
+        ),
     ),
     ParityDeclaration(
         fields=("miso_seam_envelope_hour_ending_key",),

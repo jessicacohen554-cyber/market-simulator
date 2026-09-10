@@ -769,6 +769,14 @@ results/calibration/pjm174_*/
 # pjm-174/175 full-span promotion candidate. Gitignored per rule 29(c) so it can never
 # reach main; rule 31 [R-RETAIN] forbids deleting it before the owner rules on promotion.
 results/calibration/pjm175_*/
+# pjm-d4-3 DA-virtual-net screen bundle (2022 — the year of the mechanism's
+# largest measured ANNUAL-NET footprint, named ex ante in
+# PRECOMMIT-pjm-d4-3-da-virtual-net-2026-09-10.md §4). Rule 29 [R-SCREEN] (c)
+# keeps a screen bundle OUT OF `main`, and rule 31 [R-RETAIN] names gitignoring
+# — never `rm` — as what discharges that duty, so it stays on local disk until
+# the OWNER has ruled on promotion. Every number the session cites from it is
+# written into the PRECOMMIT/RESULT; git history is the record.
+results/calibration/pjm_d4_3_*/
 # nyiso-218 +3.0 % fossil energy-band offer-lift screen / span bundles
 # (PREREG-nyiso218-fossil-energy-band-lift §7). Rule 29 [R-SCREEN] (c) requires
 # a screen bundle to stay OUT OF `main` -- and rule 31 [R-RETAIN] forbids
@@ -1769,6 +1777,25 @@ results/pjm_d4_y2025/
 # rule 29(c): kept out of main unless the owner promotes and they are registered)
 results/calibration/ercot264_repro_*/
 
+# ercot-262 per-year SHARD bundles. Same rule 32(d) [R-SHARD] posture as the
+# ercot-264 rule above -- "per-year shard bundle dirs are KEPT OUT of `main`,
+# the composite is what gets registered, and an unregistered per-year dir left
+# committed is the exact Class-E parity RED rule 29(c) already forbids". Both
+# families HAD reached `main` anyway (ercot264_repro_* was force-added past its
+# own rule), which is what made check_registry_payload_parity.py red on main
+# itself; this rule is what stops it coming back.
+results/calibration/ercot262_arm_*/
+# ercot-262 offer-band-scale arm bundles. Same rule 29(c)/31 [R-RETAIN] posture as
+# the ercot-261 and ercot-264 families above: the shards force-added these onto
+# main instead of keeping them out of it, which held
+# check_registry_payload_parity RED from 2026-09-08 until the owner ruled on
+# disposition (2026-09-10, session ercot-267: delete both families -- the arm was
+# measured arithmetically hopeless at +-0.004 on C3b and every number it produced
+# is carried by its own PRECOMMIT/FINDING docs). Ignored here so a re-solve can
+# never re-commit them.
+results/calibration/ercot262_arm_*/
+results/calibration/ercot262_ctl_*/
+
 # nyiso-222 (2026-09-09) 2022 validation touchpoint on the +5% offer-curve arm.
 # Same rule 29(c)/31 [R-RETAIN] posture as the train-span bundle above.
 results/calibration/nyiso222_offer_plus5_tp2022/
@@ -1793,7 +1820,35 @@ results/calibration/spp58_*/
 # tree copies stay on disk until the owner rules on promotion.
 results/calibration/caiso269_lateevening_*/
 results/calibration/_rev2void_caiso269_*/
-results/calibration/caiso269_lateevening_span/
+
+# ...and the two REGISTERED bundles are exempt from the broad caiso-269 rule
+# above (caiso-270, 2026-09-10). That rule was written while the run was a rule-29
+# [R-SCREEN] screen and was NEVER LIFTED when caiso-269 was PROMOTED to keeper, so
+# the designated keeper's bundle never reached `main`, its shard branches were
+# emptied, its container was reclaimed, and rule 15 [R-DASHBOARD]'s requirement
+# that a KEEPER commit its hourly sidecars went unsatisfied — with both registry
+# sidecars pointing at paths that existed nowhere. caiso-270 re-solved the recipe
+# per-year (rule 32 [R-SHARD]) and restored them; G-REPRO reproduces the published
+# C3a/C3b on all four years. The §8 slim rules still strip every heavy parquet
+# (dispatch/, floors/, system/storage/btm/flows, unit_hourly, network) — only
+# meta/run_config/diagnostics/attestation and the keeper hourly sidecars land.
+!results/calibration/caiso269_lateevening_span/
+!results/calibration/caiso269_lateevening_2022/
+
+# caiso-270 per-year SHARD bundles: rule 32 [R-SHARD] solves one year per
+# container into its own out-dir and the PARENT composes the two registered
+# bundles above from them. The per-year dirs are the shards' own artifacts and
+# stay OUT of `main` (rule 32(d)); they live on their shard branches and on
+# local disk under rule 31 [R-RETAIN], never removed by `rm`.
+results/calibration/caiso270_keeper_*/
+
+# caiso-271 per-year SHARD bundles (rule 32 [R-SHARD] (d)): added WITH the
+# PRECOMMIT, before any shard launches, precisely because caiso-270's shard
+# branches were auto-merged and put 373.3 MB across 60 files onto `main`
+# (184.8 MB of it dispatch/), which cost a follow-up un-merge. Gitignoring the
+# family in advance is what discharges rule 29 [R-SCREEN] (c) and rule 32(d)
+# without ever removing a result from disk (rule 31 [R-RETAIN]).
+results/calibration/caiso271_family_*/
 
 # pjm-d4-2 (2026-09-10) per-year SHARD bundles: rule 32 [R-SHARD] solves one
 # year per container into its own out-dir, and the PARENT composes the single
@@ -1827,6 +1882,20 @@ results/calibration/_spp61_heavy/
 # until the owner has ruled on promotion.
 results/calibration/spp62_*/
 
+# miso-252 seam-envelope screen/span bundles (rule 29(c) delete-before-merge is
+# discharged by KEEPING THEM OUT OF main, never by rm — rule 31 [R-RETAIN]).
+results/calibration/miso252_*/
+# nyiso-224 screen/probe bundles (rule 29(c) via .gitignore, rule 31 [R-RETAIN]:
+# kept out of `main`, never deleted from local disk).
+results/calibration/nyiso224_*/
+# SPP-63 working bundles: the rule-29 [R-SCREEN] screen arm (2025, the year of
+# the mechanism's largest measured footprint) and the full-span promotion
+# candidate for spp_curtailment_ceiling. Ignored so they can never reach `main`,
+# which is the ONLY thing rule 29(c) DELETE-BEFORE-MERGE requires; rule 31
+# [R-RETAIN] names gitignoring — never `rm` — as what discharges it, so these
+# stay on local disk until the OWNER has ruled on promotion. A promoted bundle's
+# slim set overrides this rule via `git add -f`.
+results/calibration/spp63_*/
 # capx D92 (2026-09-10) FC-5/FC-6 re-basing legs for D77's named residue: the
 # base control L0 and the three FC-6 paired arms, NEISO 2026-2050. Ignored so
 # they can never reach `main` — the only thing rule 29 [R-SCREEN](c)
