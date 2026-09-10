@@ -3687,7 +3687,6 @@ def solve_and_persist(
     caiso_offer_surface_measured_ungrounded: bool = False,
     caiso_st_gas_committed_measured: bool = False,
     caiso_st_gas_peak_measured: bool = False,
-    caiso_dsw_lateevening_clean: bool = False,
     caiso_ct_peaker_committed_measured: bool = False,
     nyiso_ct_peaker_bands_measured: bool = False,
     caiso_offer_surface_conditional: bool = False,
@@ -4027,7 +4026,6 @@ def solve_and_persist(
             ),
             caiso_st_gas_committed_measured=caiso_st_gas_committed_measured,
             caiso_st_gas_peak_measured=caiso_st_gas_peak_measured,
-            caiso_dsw_lateevening_clean=caiso_dsw_lateevening_clean,
             caiso_ct_peaker_committed_measured=caiso_ct_peaker_committed_measured,
             nyiso_ct_peaker_bands_measured=nyiso_ct_peaker_bands_measured,
             caiso_offer_surface_conditional=caiso_offer_surface_conditional,
@@ -5542,7 +5540,6 @@ def solve_and_persist(
             ),
             caiso_st_gas_committed_measured=caiso_st_gas_committed_measured,
             caiso_st_gas_peak_measured=caiso_st_gas_peak_measured,
-            caiso_dsw_lateevening_clean=caiso_dsw_lateevening_clean,
             caiso_ct_peaker_committed_measured=caiso_ct_peaker_committed_measured,
             nyiso_ct_peaker_bands_measured=nyiso_ct_peaker_bands_measured,
             caiso_offer_surface_conditional=caiso_offer_surface_conditional,
@@ -6492,7 +6489,6 @@ def solve_and_persist(
         ),
         "caiso_st_gas_committed_measured": caiso_st_gas_committed_measured,
         "caiso_st_gas_peak_measured": caiso_st_gas_peak_measured,
-        "caiso_dsw_lateevening_clean": caiso_dsw_lateevening_clean,
         "caiso_ct_peaker_committed_measured": caiso_ct_peaker_committed_measured,
         "nyiso_ct_peaker_bands_measured": nyiso_ct_peaker_bands_measured,
         "caiso_offer_surface_conditional": caiso_offer_surface_conditional,
@@ -8852,8 +8848,6 @@ def run_replay_bundle(
         kwargs["caiso_st_gas_committed_measured"] = caiso_st_gas_committed_measured
     if caiso_st_gas_peak_measured is not None:
         kwargs["caiso_st_gas_peak_measured"] = caiso_st_gas_peak_measured
-    if caiso_dsw_lateevening_clean is not None:
-        kwargs["caiso_dsw_lateevening_clean"] = caiso_dsw_lateevening_clean
     if caiso_ct_peaker_committed_measured is not None:
         kwargs["caiso_ct_peaker_committed_measured"] = (
             caiso_ct_peaker_committed_measured
@@ -8936,6 +8930,22 @@ def run_replay_bundle(
         # the single-field A/B arm is the keeper's recorded recipe plus exactly
         # this one field.
         kwargs["egrid_steam_collapse_heat_rates"] = egrid_steam_collapse_heat_rates
+    if caiso_dsw_lateevening_clean is not None:
+        # caiso-269: the late-evening clean flag is NOT a direct
+        # solve_and_persist kwarg — backcast_config carries no parameter for
+        # ANY of the CAISO DSW clean-depth flags (the keeper arms
+        # caiso_dsw_surplus_clean / _overnight_clean / _daytime_clean through
+        # the recorded generic override bag), so the override edits that bag in
+        # place (a COPY; the recipe dict is never mutated) exactly as the
+        # caiso-252 evening-trim override below does. The arm is therefore the
+        # keeper recipe plus this one value.
+        _bag_key = next(
+            (k for k in ("prb_overrides", "coal_prb_sigmoid_overrides") if k in kwargs),
+            "prb_overrides",
+        )
+        _bag = dict(kwargs.get(_bag_key) or {})
+        _bag["caiso_dsw_lateevening_clean"] = bool(caiso_dsw_lateevening_clean)
+        kwargs[_bag_key] = _bag
     if caiso_dsw_daytime_evening_trim is not None:
         # caiso-252: the evening-trim flag is not a direct solve_and_persist
         # kwarg — the keeper carries it in the recorded generic override bag —
@@ -10794,9 +10804,11 @@ def main() -> None:
     )
     parser.add_argument(
         "--caiso-dsw-lateevening-clean",
+        dest="caiso_dsw_lateevening_clean",
         action=argparse.BooleanOptionalAction,
-        default=False,
-        help="WINDOW-GAP CLOSURE (caiso-269, rules 14/17/19; "
+        default=None,
+        help="REPLAY-ONLY override (--replay-bundle), the caiso-252 channel: "
+        "WINDOW-GAP CLOSURE (caiso-269, rules 14/17/19; "
         "ScenarioConfig.caiso_dsw_lateevening_clean). The three DSW "
         "clean-depth constructions do not tile the clock: caiso-93 runs hod "
         "0-5, caiso-94 runs hod 6-21, and caiso-87's surplus trigger is "
@@ -10812,7 +10824,8 @@ def main() -> None:
         "raw-hub band (-2, +4) on the measured DA CAISO-PaloVerde spread - "
         "that session's own refusal criterion, re-used unchanged, so 2023 "
         "stays dark by construction. Zero new free parameters. Default OFF "
-        "-> prior keepers byte-identical. Also a --replay-bundle override.",
+        "Absent (default None) keeps the bundle's own value, so the replay path "
+        "is byte-identical.",
     )
     parser.add_argument(
         "--caiso-st-gas-peak-measured",
@@ -13512,7 +13525,6 @@ def main() -> None:
         ),
         caiso_st_gas_committed_measured=args.caiso_st_gas_committed_measured,
         caiso_st_gas_peak_measured=args.caiso_st_gas_peak_measured,
-        caiso_dsw_lateevening_clean=args.caiso_dsw_lateevening_clean,
         caiso_ct_peaker_committed_measured=args.caiso_ct_peaker_committed_measured,
         nyiso_ct_peaker_bands_measured=args.nyiso_ct_peaker_bands_measured,
         caiso_offer_surface_conditional=args.caiso_offer_surface_conditional,
