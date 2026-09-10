@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-09-10-spp-61-vintage",
+  "run_id": "2026-09-10-spp-62-vintage-census",
   "iso": "SPP",
-  "label": "spp 61 vintage",
+  "label": "spp 62 vintage census",
   "target_years": [
     2023,
     2024,
@@ -16,7 +16,7 @@
   "rubric_version": 3.6,
   "determination": "NOT-YET",
   "reasons": [
-    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, price_tail"
+    "governance gate UNATTESTED: no governance attestation in bundle"
   ],
   "notes": [],
   "criteria": {
@@ -53,7 +53,7 @@
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "PASS"
+      "status": "UNATTESTED"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
@@ -71,8 +71,8 @@
     }
   },
   "grade_summary": {
-    "scored": 8,
-    "target_grade": 6,
+    "scored": 7,
+    "target_grade": 5,
     "commercial_grade": 0,
     "ledgered": 0,
     "fails": 2
@@ -81,8 +81,8 @@
     "co2": {
       "label": "C5a CO2 vs eGRID (REPORTED-ONLY, v2.9 \u2014 see the CRITERIA note)",
       "years": {
-        "2023": "-5.6%",
-        "2024": "-3.1%",
+        "2023": "-1.7%",
+        "2024": "-1.2%",
         "2025": "+2.9%"
       }
     },

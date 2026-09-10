@@ -1,6 +1,6 @@
 {
  "schema": "legitimacy-diagnostics/v1",
- "bundle": "/home/user/market-simulator/results/calibration/spp61_vintage_full",
+ "bundle": "/home/user/market-simulator/results/calibration/spp62_span",
  "iso": "SPP",
  "years": [
   2023,
@@ -784,31 +784,31 @@
    "passed": true,
    "rows": [
     {
-     "bundle": "spp61_vintage_full",
+     "bundle": "spp62_span",
      "check": "ct_deployment_overlay",
      "value": false,
      "verdict": "pass"
     },
     {
-     "bundle": "spp61_vintage_full",
+     "bundle": "spp62_span",
      "check": "reliability_deployment_overlay",
      "value": false,
      "verdict": "pass"
     },
     {
-     "bundle": "spp61_vintage_full",
+     "bundle": "spp62_span",
      "check": "ct_mustrun_per_plant",
      "value": false,
      "verdict": "pass"
     },
     {
-     "bundle": "spp61_vintage_full",
+     "bundle": "spp62_span",
      "check": "ordc_reliability_deployment_mw",
      "value": null,
      "verdict": "pass"
     },
     {
-     "bundle": "spp61_vintage_full",
+     "bundle": "spp62_span",
      "check": "caiso_gas_commitment_floor",
      "value": false,
      "verdict": "pass"

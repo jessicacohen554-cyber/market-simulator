@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-10T04:28:22",
+  "timestamp": "2026-09-10T05:34:42",
   "iso": "SPP",
   "years": [
     2023,
@@ -385,8 +385,8 @@
     "unit_outages_e923": "../_shared/SPP/unit_outages_e923-7c8d728413db.parquet",
     "unit_outages_layup": "../_shared/SPP/unit_outages_layup-7de9ff1be257.parquet"
   },
-  "git_sha": "e9ca90c1",
-  "basis_sha": "283afe5d62ab0a0fd8acffccd59963fcbc3d8961",
+  "git_sha": "67feede7",
+  "basis_sha": "67feede7403240374091cc73a536d836ba6d08c4",
   "highspy_version": "1.14.0",
   "environment": {
     "python_version": "3.11.15",

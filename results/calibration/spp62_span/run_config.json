@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-09-10T04:28:22",
+  "timestamp": "2026-09-10T05:34:42",
   "git": {
-    "sha": "e9ca90c1",
-    "basis_sha": "283afe5d62ab0a0fd8acffccd59963fcbc3d8961",
+    "sha": "67feede7",
+    "basis_sha": "67feede7403240374091cc73a536d836ba6d08c4",
     "branch": "HEAD",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "SPP-61: eia860_vintage_tracks_solve_year armed on the spp52a_fossil93 recipe, full 2023-2025 span (rule 16 R-ALLYEARS)",
+  "model_changes_note": "SPP-62: eia860_vintage_tracks_solve_year over the R-ay coal supply-class census repair (--census-vintage 2023 2024 2025). Full span, rule 16 [R-ALLYEARS], one input snapshot.",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "SPP",
@@ -118,7 +118,7 @@
     "nyiso_dynamic_reserve_requirements": null,
     "nyiso_hydro_reserve_eligible": null,
     "nyiso_scr_edrp_reserve_eligible": null,
-    "git_sha": "e9ca90c1"
+    "git_sha": "67feede7"
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -493,6 +493,7 @@
     "caiso_dsw_overnight_clean": false,
     "caiso_dsw_daytime_clean": false,
     "caiso_dsw_daytime_evening_trim": false,
+    "caiso_dsw_lateevening_clean": false,
     "caiso_endogenous_wecc_node": false,
     "caiso_storage_as_reservation": false,
     "caiso_storage_shape_anchor": false,
@@ -1017,6 +1018,7 @@
     "gas_daily_shape": false,
     "gas_hub_basis_overlay": false,
     "nyiso_zonal_gas_basis": false,
+    "nyiso_hub_gap_month_level": false,
     "nyiso_downstate_ct_gas_basis": false,
     "nyiso_downstate_ct_gas_daily": false,
     "pjm_zonal_gas_basis": false,
@@ -1101,7 +1103,7 @@
     "rows": 182,
     "moved": {},
     "epochs": [],
-    "git_sha": "e9ca90c1"
+    "git_sha": "67feede7"
   },
   "environment": {
     "python_version": "3.11.15",
