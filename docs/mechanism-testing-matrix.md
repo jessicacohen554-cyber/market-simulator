@@ -12551,6 +12551,60 @@ is now the live queue head.**)*
 
 *(Prior header, nyiso-177, verbatim:)* 5.5 NYISO — **KEEPER 2026-09-02 (nyiso-177): `2026-09-02-nyiso-177-vintage-matched` — the nyiso-159 recipe plus the accurate per-unit CAMPD attribution (`campd_per_unit_attribution`) on a vintage-matched, reproducible availability basis (`campd_outage_merit_order_guard`); ZERO free parameters, ZERO new DOF entries (13 / `n_residual` 6 carried verbatim), zero new forcing mechanisms (the SAME six D-4 rows). PROMOTED BY OWNER RULING on rules 14 `[R-ACCURATE]` + 1 `[R-STRUCT]` OVER ONE GATE REGRESSION, reported at full magnitude — determination NOT-YET, target grade 6 → 5, fail set {C3a-2025, C3c} → **{C1-2023 `ST_GAS`, C3a-2025 −11.2 %, C3c}**. The one regression is a single cell (C1 2023 `ST_GAS` +3.86 TWh against the superseded keeper's +3.33, marginally outside a band the old keeper sat marginally inside), and the honest reading is the nyiso-155 precedent exactly: the superseded keeper passed that cell on ~0.5 TWh of margin THE ATTRIBUTION DEFECT WAS SUPPLYING. Four score-independent structural gains: accuracy, no off-registry channel (the hardcoded `outages._FLEET_GROUP_OVERRIDE` per-plant dict disarmed on the repaired path), REPRODUCIBILITY (the superseded keeper's outage extract carries a null `derive_invocation` and cannot be reproduced at HEAD at any flag setting) and INTERNAL CONSISTENCY (tranche and outage artifacts on ONE availability basis, made structural by `campd_attribution_selectors`). Evidence: `docs/FINDING-nyiso177-availability-basis-root-cause-2026-09-02.md` (§10 addendum carries the ruling; §1–§9 preserve the recommendation AGAINST it, unedited), `PREREG-nyiso177-degradation-root-cause.md`. **HEADER RE-STAMPED 2026-09-02 by nyiso-178 — the promoting session's rule 28 duty was missed and CI was warning on it; nothing but this header changed, and no verdict moved. PRIOR (nyiso-159) HEADER PRESERVED BELOW.**
 
+**QUEUE STATUS UPDATE 2026-09-10 (nyiso-226, PHASE 0 ZERO-LP + ONE rule-29 2023 SCREEN,
+5 min of LP; the parent ran none). THE OUTSTANDING OWNER CALL IS NO LONGER OUTSTANDING, AND THE
+ARM SURVIVED ITS SCREEN WITHOUT BEING PROMOTED.**
+
+nyiso-225 §8 recorded ONE open item for this lane and it was explicitly *not a lane*: the **NYC
+ST_GAS persistent-base coefficient**, a fleet-aggregate DAILY-MEAN cool-day when-available CF p25
+applied per unit-HOUR, which nyiso-203 measured (0.1750 vs a basis-matched 0.16629202320362052)
+and refused to act on. **It was put to the owner and RULED on 2026-09-10: *screen it on one year
+first*.** This entry records the outcome so no successor re-opens it as untested — and so this
+section does not go stale the way §7 of the nyiso-225 finding described.
+
+| item | state after nyiso-226 |
+|---|---|
+| NYC persistent-base coefficient re-basing | **SCREENED, SURVIVED, NOT ARMED, NOT PROMOTED.** `reliability_floor_coeffs_NYISO.csv` on `main` still reads **0.175**. The full 2023–2025 span was **NOT spent** and both the span and promotion questions are **the owner's**, open as of this entry (RESULT §6). |
+| its matrix cell | `reliability_floor` **UNCHANGED at K** — the limb was already armed; only its coefficient was screened. |
+
+**What the screen established** (`docs/RESULT-nyiso226-nyc-base-rebasis-2026-09-10.md`): phase 0
+confined the edit to **24 of ~870** LP rows, all `ST_GAS`, plants {2490, 2500, 8906}, at ratio
+exactly **0.0497600** on every touched cell, and named **2023** the screen year on the mechanism's
+own footprint (0.151070 / 0.083521 / 0.070144 TWh) rather than on any residual. The arm's own
+forced energy landed **within 7 %** of the prediction registered before the solve (D-2
+`reliability_floor × ST_GAS` 1.9019 → 1.8716 TWh; predicted −0.02827, measured −0.0303).
+**ST_GAS is the only class that falls** (−0.078174 TWh; pickup CC_REGULAR +0.045 / CC_CHP +0.020 /
+CT_CHP +0.008 / ST_CHP +0.004 / CT_PEAKER +0.002), and the D-4 FAIL set **{2480, 8906} is
+identical to the control's**, so no new diagnostic failure was introduced. G-CTRL form 4 +
+G-DRIFT over all 22 files since keeper `git_sha da2e7076`, every hunk INERT — **no control solve
+spent**.
+
+**Reported rather than buried: my own gate `S3(a)` FAILED** (+0.001343 TWh against a 0.001 TWh
+tolerance) because it gated on supply-total conservation, an invariant this model does not have —
+`nyiso_zonal_loss_surface` is armed and 2023 losses are **1.261168 TWh**, so the downstate→upstream
+substitution necessarily raises them (implied marginal loss factor **1.7177 %**). Repaired to
+`S3(a′)` with its one bar read from the **model's own loss table**, and the repair was declared
+**post-hoc**, which is said plainly:
+`docs/ADDENDUM-nyiso226-my-own-gate-S3a-failed-and-the-repair-is-the-strictest-satisfiable-form-2026-09-10.md`.
+`S4`'s **C3a/C3b legs were NOT MEASURED** — the solve path writes no `metrics.json` and the shard
+was unreachable mid-flight — a **defect in the shard prompt**: any future screen shard must be
+told in its ORIGINAL prompt to run `scripts/calibration_verdict.py <bundle> --years <y>` and
+`--json` read-only and paste both.
+
+**Two things a successor should NOT have to rediscover.** (1) **`curate_lmp.py`'s
+`KeyError: 'MGHG'` is a CAISO-file defect and is AVOIDABLE** — point `curate_lmp.main()` at a raw
+dir holding only the `NYISO/` subtree (a symlink suffices) and all four NYISO partitions curate
+cleanly, so a parent (or a shard) CAN score C3a/C3b; the standing "shards cannot score" text in
+several NYISO handoffs is false as stated. (2) **CT_CHP is scored by nothing** — excluded from C1
+by `FUELMIX_EXCLUDED` on the stated ground that it is *"a BTM peaker the grid LP zeroes by
+construction"*, which is **false in NYISO** (bench `btmClass` CT_CHP = **0.1514 TWh of 2.4336**,
+i.e. 94 % grid-delivered, and the LP dispatches **2.843 TWh**), exempt in D-2 and ungated in D-1,
+while its D-1 `profile_r` is **0.337 / 0.251 / 0.231** and `cv_ratio` **6.03 / 7.50 / 3.13**. That
+is a **shared-scorer scope question for the owner**, not a NYISO lever, and it is recorded here
+rather than acted on.
+
+---
+
 **QUEUE STATUS UPDATE 2026-09-10 (nyiso-225, PHASE 0 ZERO-LP, NO SOLVE, NO SHARD;
 keeper `2026-09-09-nyiso-221-fuelvintage-span` UNCHANGED; no new row; `nyiso_total_east_cutset_ttc`
 cell UNCHANGED at `R`, annotated.)** The nyiso-224 "NEW TOP OF QUEUE (O) — the five-zone
