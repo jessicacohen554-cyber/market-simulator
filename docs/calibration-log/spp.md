@@ -913,3 +913,137 @@ the next lane differences against it with **no re-solve** — the cost that lane
 not repeated here.
 
 **Next shorthand: spp-21.** Next lane issued this session: **SPP-61**, the Harrington fuel-vintage repair.
+
+## 2026-09-10 — spp-21 (session ercot-266): SPP-58 wind curtailment CEILING — built, screened, and one plumbing bug of mine caught by the shard
+
+**LANE ORIGIN, and why an ERCOT session is writing in SPP's log.** The prompt for ercot-266 offered
+ERCOT's named open object (C3c-2021 February breadth) *or* a live rubric failure elsewhere, and it named
+SPP as the highest-value alternative with an already-scoped lane. ERCOT's object is **data-blocked** —
+the daily Waha/HSC series has been surveyed three times and no free public source carries a Texas hub, so
+closing it is an owner procurement decision, not a modelling one. SPP is **one row** from CALIBRATED. The
+session took SPP and touched **only SPP's files** (rule 25 `[R-ISO-SCOPE]`), plus the ERCOT-lane cleanup
+ercot-265 left owed.
+
+**THE PRIZE, measured rather than assumed.** SPP-52a's promotion closed `price_mean` and `price_shape`,
+so SPP now fails on exactly **two** criteria, not the four the 2026-09-09 PRECOMMIT recorded:
+
+| criterion | tier | status | detail |
+|---|---|---|---|
+| `fuelmix` (C1) | load-bearing | **FAIL** | **2024 `ST_GAS` −8.13 TWh — the SINGLE failing row in the whole 3-year table** |
+| `price_tail` (C3c) | supporting | FAIL | 0 / 4 / 2 h vs 42 / 59 / 68 h > $200 |
+
+C3c is the only LEDGERABLE criterion. **If C1-2024 closes, a lone C3c reads CAVEAT under rubric v3.3 and
+SPP reads CALIBRATED.** That is the stake — it is stated as the stake and is **not** a gate: no gate in
+this lane reads a target residual (rule 1 `[R-STRUCT]`).
+
+**PHASE 0, zero LP, on the CURRENT keeper's committed artifacts.** `renewable_bound_provenance` = 
+`forecast_uncurtailed` in all three years: the delivered EIA-930 profile grossed up by SPP's frozen
+measured reference rate (9.65 %), a construction whose own stated precondition is *"real headroom,
+**endogenously re-curtailed**"*. Reconstructing the keeper's own wind bound at HEAD and differencing
+against its committed dispatch:
+
+| year | wind bound | wind dispatch | **re-curtailed** | hours at the bound |
+|---|---:|---:|---:|---:|
+| 2023 | 114.055 TWh | 113.757 | **0.261 %** | 65.0 % |
+| 2024 | 120.992 TWh | 120.723 | **0.223 %** | 97.6 % |
+| 2025 | 122.255 TWh | 122.043 | **0.174 %** | 65.8 % |
+
+**A 40–60× miss on the mechanism's own precondition** — and measured on a keeper that ALREADY arms
+SPP-51c's oversupply water-fill, so the water-fill moved the headroom to the low-net-load hours and the
+LP took it anyway. The cause is written in this repo's own code: `renewables.py` keeps NYISO OUT of
+`_UNCURTAILED_FALLBACK_ISOS` because *"its curtailment is locally driven and the reduced network can't
+re-curtail a gross-up"*. **SPP is IN that set on identical facts** — the 2-zone reduction collapses the
+SPS / Texas-Panhandle and western Kansas / Oklahoma export pockets, so nothing can spill wind bid at its
+−$26/MWh PTC floor.
+
+**BUILT: `spp_curtailment_ceiling` + `spp_curtail_depth_wind`** — SPP's own instance of the ERCOT-precedented
+reduced-form ceiling, `1 − depth × congestion_share(net-load decile, hour, season)` on the wind bound,
+both zones, **no solar** (SPP's solar bound is `delivered_pinned`, so there is no gross-up headroom to
+remove). Rule 25: **nothing transfers** — ERCOT's depth, table and corridor attribution stay ERCOT's.
+
+- **SHAPE** from SPP's published RTBM binding-constraint archive (`data/raw/spp-binding-constraints`,
+  landed 2026-09-08 — the predecessor PRECOMMIT recorded it token-blocked and **that blocker is gone**),
+  measured binding incidence only. **The union saturates** — 91.0 % of 2024's 5-minute intervals carry a
+  binding constraint — so a fraction-of-intervals share encodes no shape; the derive uses the **count** of
+  simultaneously binding constraints, which discriminates with the physically right sign. Share by
+  net-load decile (0 = lowest net load = highest wind): **0.488** 0.434 0.384 0.321 0.267 0.219 0.199
+  0.198 0.204 **0.226** — monotone-falling 0→7 at 2.5× range, with a real load-driven uptick at 8–9 left
+  in rather than smoothed out. 866 of 960 cells populated.
+- **CLOCK, a real trap and it was caught.** The archive's `Interval` column is SPP local time WITH DST
+  (GMT offset 6 h in January, 5 h in July) while the model runs FIXED CST. Every timestamp is rebuilt from
+  `GMTIntervalEnd` at a constant −6 h with 29 February dropped. This is the same defect repaired for SPP's
+  LMP sidecar in `86e45462`; deriving off `Interval` would have shifted the whole summer half by an hour.
+- **LEVEL** from SPP's published measured curtailment MW (MMU ASOM, both legs metered), **one pooled value
+  across every scored year**: 0.288137. **Reported at full magnitude: the per-year implied depth spread is
+  19.9 %** (0.2565 / 0.3139 / 0.2917) — looser than ERCOT's "stable structural constant" claim and not
+  dressed up as one. What IS tight is the shape (weighted-mean share 0.331 / 0.336 / 0.339, 2.5 %), so the
+  spread is SPP's published curtailment MW moving 1,097 → 1,483 → 1,382, which is how a depth × shape
+  decomposition should behave. **Zero free parameters**: the table's (0,1] rescale carries no leverage
+  because depth is centred on the published MW after it.
+- **Rule 19 `[R-ONE-MECH]` ENFORCED IN CODE**: `renewables.py` skips `_oversupply_uncurtailed_cf` whenever
+  the ceiling is armed, so the ceiling **replaces** the water-fill and the two can never both be live. The
+  swap is **energy-neutral on the basis** (annual potential identical to the milli-TWh in all three years),
+  so every TWh the arm removes is the ceiling's.
+
+**PRE-SOLVE ARITHMETIC (zero LP).** The 2024 bound falls **120.992 → 109.226 TWh, −11.766 TWh (9.72 %)** —
+against the −12.5 TWh SPP's own measured rate implies, and landing essentially ON the 109.317 TWh EIA-930
+delivered. G-3's concentration premise holds at the table level: decile 0 carries **21.41 %** of the
+removal against a flat 10 %, monotone decreasing to 3.69 % at decile 9.
+
+**G-DRIFT (rule 29(b)) — no control solve spent.** The keeper's own `git_sha` `c1393878` is **unreachable**
+(a solve-time sha on an auto-deleted branch); declared, and the audit base substituted with `d77c184e`, the
+keeper's registration commit. All eighteen changed solve-path files classify **INERT for SPP** with reasons
+cited — the load-bearing ones being that `IMPORT_ZONE` carries no SPP key and all 42 seam flags are False;
+that the 11 plant ids added to `ST_GAS_PEAKER_PLANTS` (consumed **ungated**, so this needed a real check)
+are all EIA-860 `BA = PJM` with **zero overlap** against SPP's 828 `SWPP` plants; and that
+`_PARTIAL_EXIT_WINDOW_START` is read only under `partial_plant_exit_carry`, `False` here. The
+`_validation-source` bench DID move, so the control was **re-scored at HEAD** — **every criterion status is
+identical to its committed `metrics.json`**, so the bench move does not reach SPP and G-CTRL form 4 holds.
+`check_bench_freshness --iso SPP`: 3 parts, **0 STALE**, all three reproduce at HEAD; the SOFT engine-drift
+note is a commit COUNT, not a measured difference, and the fingerprint test that IS the measured check says
+the parts are current.
+
+**THE SCREEN SHARD CAUGHT A PLUMBING BUG OF MINE, AND IT MATTERS MORE THAN THE SCHEDULE SLIP.** The first
+shard stopped at its HARD STOP and produced no bundle: `run_calibration_full.py` **parsed**
+`--spp-curtailment-ceiling` and then never read `args.spp_curtailment_ceiling` into either
+`solve_and_persist` call site, so both new flags were accepted silently and dropped and the invocation
+reduced to **the control**. There is **no error, no warning, and a bundle that would have looked like a
+solved arm** — had the shard not been told to grep the log for a message the mechanism must emit, this
+would have returned a clean, complete **null-effect** result and minted an `I` verdict about a mechanism
+that never ran. Its proof did not rely on reading my code: the solve's own log showed the oversupply
+water-fill firing, which the rule-19 supersession forbids when the ceiling is armed, so the ceiling was
+provably off inside the solve. It then killed the process at ~6 min rather than spend 25 more on a control
+solve rule 29(b) forbids, and refused to patch `scripts/` itself. Right on all three counts.
+
+Fixed at both call sites and **verified two-sided at zero LP** by intercepting `solve_and_persist`: before,
+`<<< NOT DELIVERED >>>`; after, `True` with the depth falling through to its dataclass default. Guarded by
+`tests/unit/data/test_spp_curtailment_ceiling.py::test_cli_flags_reach_the_solve_seam`, **confirmed to fail
+against the un-fixed file and pass against the fixed one** — a guard never shown to fail is not a guard.
+Routed rather than absorbed: a crude static sweep finds **31 of 244** ScenarioConfig-named flags without
+the literal `args` hop, but most are delivered by other routes (`ercot_ep_gas_basis_receipts_fallback`
+among them, which demonstrably worked in the ERCOT keeper), so separating a real silent drop from a
+different delivery pattern needs the runtime probe run across all 244 — **named with its size, not
+attempted here**.
+
+**A SECOND DEFECT OF MINE, also caught before any arm existed.** PRECOMMIT gate G-4 read *"slack and dump
+stay exactly 0.0"*. The shard measured the **control** at **177.596 MWh** of slack in 2024, so G-4 was
+**unsatisfiable by any run including the incumbent** and discriminated nothing — I carried the clause
+forward from the predecessor PRECOMMIT without measuring the incumbent's baseline, which is what phase 0 is
+for. Re-cut to the strictest satisfiable form (dump exactly 0.000; slack ≤ 2× the control) in
+`docs/handoffs/ADDENDUM-spp58-the-flag-was-parsed-and-dropped-and-my-G4-was-unsatisfiable-2026-09-10.md`,
+**written while no arm result existed**, so it is not a gate re-cut in the light of the result it decides.
+
+**NO CELL VERDICT IS MINTED.** `spp_curtailment_ceiling` stays **`U`** in SPP's matrix shard and
+`vre_reference_rate_curtailment_grossup` stays `U`: the shard tested the CLI, not the mechanism (rule
+28(b) — a footprint measured at zero LP is not a verdict, the same discipline SPP-51b applied).
+
+**ERCOT-LANE CLEANUP DISCHARGED IN THIS SESSION** (recorded here for continuity; the ERCOT log carries it
+too): both ERCOT keeper-stamp surfaces re-pointed to `2026-09-09-ercot265-receipts-fallback`, matrix
+anchors repaired, and `results/shard-staging/ercot265/` removed after **proving** all 30 of its sidecars
+hash byte-identical to the registered keeper bundle. **And it corrects the handoff**: `prune_iso_runs.py
+--iso ERCOT`, recorded as blocked and suspected of leaving ERCOT over-retained, prunes **nothing** — all six
+non-keeper ERCOT runs are PROTECTED as governance citations. `check_registry_payload_parity` stays **RED**
+on the seven dead ERCOT bundles and is **deliberately not cleared**: rule 31 `[R-RETAIN]` puts that behind
+an owner ruling on ercot-262 promotion.
+
+**Next shorthand: spp-22.**

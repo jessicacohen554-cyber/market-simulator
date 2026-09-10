@@ -14265,3 +14265,55 @@ requires. No workaround was attempted. The `results/shard-staging/ercot265/` tre
 likewise still on `main` and should come out once its contents are confirmed redundant.
 
 **Next shorthand: ercot-266** (ercot-199 and ercot-257 remain unclaimed).
+
+## ercot-266 — 2026-09-10
+
+**NO ERCOT LP WAS SOLVED, AND NO ERCOT MECHANISM WAS TESTED. The session took the SPP lane** — the full
+record is `docs/calibration-log/spp.md` "## 2026-09-10 — spp-21 (session ercot-266)". Why: the prompt
+offered ERCOT's named open object (C3c-2021 February breadth) *or* a live rubric failure elsewhere, and
+ERCOT's object is **data-blocked** — the daily Waha / HSC series has been surveyed three times
+(ercot-160/163, ercot-224, ercot-265) and no free public source carries a Texas hub, so closing it is an
+owner procurement decision rather than a modelling one. C3c is also a **caveat, not a failure**, so the
+work is optional. SPP, by contrast, reads NOT-YET on a **single** gating row (2024 `ST_GAS` −8.13 TWh) with
+a ledgerable C3c beside it — one row from CALIBRATED. The keeper
+`2026-09-09-ercot265-receipts-fallback` is **UNCHANGED** and no ERCOT file that can affect a solve was
+touched.
+
+**WHAT WAS DISCHARGED FOR THIS LANE — the ercot-265 cleanup list, all zero-solve:**
+
+1. **RULE 28 KEEPER STAMPS, both surfaces.** The matrix shard
+   `docs/codebase-site/data/mechanism-matrix/ERCOT.js` and the `docs/mechanism-testing-matrix.md` §5.1
+   prose header both still named the superseded `2026-09-09-ercot261-corroborated-gas-level`. Both
+   re-stamped to the designated keeper, each carrying what the promotion actually measured — including the
+   costs at full magnitude (C3c-2021 223 → 687 h > $200 against 258 actual, **all 464 new hours in
+   February**, deep tail unmoved 131 → 133; slack-2021 960.6 → 2,274.9 MWh) and the fact that the named
+   successor is data-blocked. `check_mechanism_matrix.py --base origin/main` now reports **ZERO warnings**
+   (it reported an ERCOT keeper-drift warning plus 23 anchor warnings before).
+2. **`results/shard-staging/ercot265/` REMOVED** (~350 MB, 81 files). Not asserted redundant — **proved**:
+   all 30 of its `hourly/` sidecars hash byte-identical to the registered bundle
+   `results/calibration/ercot265_receipts_five_year`. Rule 31 `[R-RETAIN]` trigger (i) — the owner has
+   ruled on promotion, so the superseded staging copy may go and git history is the record.
+3. **MATRIX ANCHORS** repaired via `--fix-anchors` (line digits only; the field NAME is the durable
+   identifier). Some drift was pre-existing, the rest is this branch's own `scenarios.py` insertion.
+
+**AND IT CORRECTS THE HANDOFF, which is worth more than the cleanup itself.** ercot-265 recorded
+`prune_iso_runs.py --iso ERCOT` as **blocked by the permission classifier** and therefore suspected ERCOT
+of carrying more than rule 15's keeper-only retention. Run here as `--dry-run` it prunes **NOTHING**: one
+KEEP (the keeper) and **six PROTECTED** runs — `ercot248-two-config-keeper`, `run252-2022-touchpoint-repair`,
+`ercot253-2021-rung`, `ercot255-five-year-keeper`, `ercot256-drag-layup-mask`,
+`ercot261-corroborated-gas-level` — every one of them cited by `calibration-complete.json` and/or
+`keepers/ERCOT.json`. **ERCOT is not over-retained, and the blocked prune would have been a no-op.** The
+suspicion is retired.
+
+**LEFT RED ON PURPOSE.** `check_registry_payload_parity.py` still fails on
+`results/calibration/ercot262_arm_{2021..2025}` and `ercot264_repro_{2023,2025}` — seven unregistered
+bundle dirs. These are **not** mine to clear: rule 31 `[R-RETAIN]` puts deletion behind an **owner ruling
+on ercot-262 promotion**, and the gate is reported rather than quietly satisfied. It is the one standing
+ERCOT item this session did not close, and it needs a decision, not a session.
+
+**ERCOT's open objects, unchanged and restated so the next lane does not re-derive them:** C3c-2021 is the
+monthly-resolution BREADTH defect (one monthly gas value landing on all 672 February hours against a ~5-day
+real spike) and its only known fix is the blocked daily series; slack-2021 960.6 → 2,274.9 MWh; D-4 conduct
+310 rows / 91 failures.
+
+**Next shorthand: ercot-267** (ercot-199 and ercot-257 remain unclaimed).
