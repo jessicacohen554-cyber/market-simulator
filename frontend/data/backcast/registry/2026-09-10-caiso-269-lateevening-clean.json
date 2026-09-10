@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-10-caiso-269-lateevening-clean",
+  "label": "caiso 269 lateevening clean",
+  "date": "2026-09-10",
+  "shorthand": "caiso-269-lateevening-clean",
+  "definition": "xiso-fuelvintage CAISO: the 2019-2022 EIA-860 retiree window + the measured monthly gas LEVEL (gas_electric_power_monthly_level armed, measured INERT for CAISO). Full training span 2023-2025 in ONE invocation, years sequential (rules 16 / 12). Replay of keeper caiso260_demand_vintage at git 873f7564.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-09-10-caiso-269-lateevening-clean.js",
+  "bundle": "results/calibration/caiso269_lateevening_span"
+}
