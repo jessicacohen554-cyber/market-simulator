@@ -73,6 +73,17 @@ from market_sim.model.interchange.spec import (
 
 _logger = logging.getLogger(__name__)
 
+#: Every DSW clean-depth tranche that the per-hub price injectors must lift off
+#: the static ladder. ONE tuple, so adding a member is a single edit rather than
+#: a hand-maintained ``add`` per name in each injector (the caiso-269 omission,
+#: which cost two LP shards).
+_CAISO_DSW_CLEAN_DEPTH_TRANCHES: tuple[str, ...] = (
+    CAISO_DSW_SURPLUS_CLEAN_NAME,
+    CAISO_DSW_OVERNIGHT_CLEAN_NAME,
+    CAISO_DSW_DAYTIME_CLEAN_NAME,
+    CAISO_DSW_LATEEVENING_CLEAN_NAME,
+)
+
 
 # Intertie throughput tiebreaker (same role/magnitude as the storage ε = 0.001
 # $/MWh in the objective): the cheapest import leg (firm hydro/solar, zero CARB
@@ -481,13 +492,20 @@ def inject_caiso_per_hub_intertie_prices(
     border = wecc_border_carbon_adder(carbon_price)
     ef_map = IMPORT_TRANCHE_EF.get(iso, {})
     import_names = {name for name, _, _ in IMPORT_TRANCHES.get(iso, [])}
-    # The surplus-clean (caiso-87), overnight-clean (caiso-93) and daytime-clean
-    # (caiso-94) depth tranches are not on the static ladder; each prices like
-    # any other spot rung (EF 0 zeroes the carbon term; the overnight and
-    # daytime tranches' delivery basis is (0.0, 0.0) — raw hub, no wheel).
-    import_names.add(CAISO_DSW_SURPLUS_CLEAN_NAME)
-    import_names.add(CAISO_DSW_OVERNIGHT_CLEAN_NAME)
-    import_names.add(CAISO_DSW_DAYTIME_CLEAN_NAME)
+    # The DSW clean-depth tranches — surplus (caiso-87), overnight (caiso-93),
+    # daytime (caiso-94) and late-evening (caiso-269) — are not on the static
+    # ladder; each prices like any other spot rung (EF 0 zeroes the carbon term;
+    # the overnight, daytime and late-evening tranches' delivery basis is
+    # (0.0, 0.0) — raw hub, no wheel).
+    #
+    # THIS SET IS LOAD-BEARING AND ITS OMISSION IS SILENT. A clean tranche
+    # missing here is BUILT, ARMED at its measured depth, and then left on the
+    # $180 scarcity-rung PLACEHOLDER the builder gives it, so it dispatches
+    # 0 MW in every hour and the mechanism reads INERT for a reason that has
+    # nothing to do with the mechanism (caiso-269 spent two LP shards
+    # discovering exactly that). A new clean tranche MUST join the tuple, and
+    # tests/iso/caiso/test_caiso_lateevening_clean.py::TestPricing guards it.
+    import_names.update(_CAISO_DSW_CLEAN_DEPTH_TRANCHES)
     eps = CAISO_INTERTIE_TIEBREAK_EPS
     # Per-corridor export hub = mean of that corridor's import-tranche hub series.
     corridor_export_hub: dict[str, np.ndarray] = {}
@@ -1282,13 +1300,20 @@ def inject_caiso_per_hub_reference_prices(
     border = wecc_border_carbon_adder(carbon_price)
     ef_map = IMPORT_TRANCHE_EF.get(iso, {})
     import_names = {name for name, _, _ in IMPORT_TRANCHES.get(iso, [])}
-    # The surplus-clean (caiso-87), overnight-clean (caiso-93) and daytime-clean
-    # (caiso-94) depth tranches are not on the static ladder; each prices like
-    # any other spot rung (EF 0 zeroes the carbon term; the overnight and
-    # daytime tranches' delivery basis is (0.0, 0.0) — raw hub, no wheel).
-    import_names.add(CAISO_DSW_SURPLUS_CLEAN_NAME)
-    import_names.add(CAISO_DSW_OVERNIGHT_CLEAN_NAME)
-    import_names.add(CAISO_DSW_DAYTIME_CLEAN_NAME)
+    # The DSW clean-depth tranches — surplus (caiso-87), overnight (caiso-93),
+    # daytime (caiso-94) and late-evening (caiso-269) — are not on the static
+    # ladder; each prices like any other spot rung (EF 0 zeroes the carbon term;
+    # the overnight, daytime and late-evening tranches' delivery basis is
+    # (0.0, 0.0) — raw hub, no wheel).
+    #
+    # THIS SET IS LOAD-BEARING AND ITS OMISSION IS SILENT. A clean tranche
+    # missing here is BUILT, ARMED at its measured depth, and then left on the
+    # $180 scarcity-rung PLACEHOLDER the builder gives it, so it dispatches
+    # 0 MW in every hour and the mechanism reads INERT for a reason that has
+    # nothing to do with the mechanism (caiso-269 spent two LP shards
+    # discovering exactly that). A new clean tranche MUST join the tuple, and
+    # tests/iso/caiso/test_caiso_lateevening_clean.py::TestPricing guards it.
+    import_names.update(_CAISO_DSW_CLEAN_DEPTH_TRANCHES)
     eps = CAISO_INTERTIE_TIEBREAK_EPS
     per_hub_zones = set(CAISO_PER_HUB_IMPORT_ZONES.values())
     applied = False

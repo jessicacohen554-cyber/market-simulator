@@ -125,6 +125,54 @@ class TestFootprint(unittest.TestCase):
                 )
 
 
+class TestPricing(unittest.TestCase):
+    """The defect that cost caiso-269 two LP shards, guarded.
+
+    The per-hub price injectors lift the DSW clean-depth tranches off the
+    static ladder via an explicit name set. A tranche missing from that set is
+    BUILT, ARMED at its measured depth, and then left on the $180 scarcity-rung
+    PLACEHOLDER the builder gives it -- so it dispatches 0 MW in every hour and
+    the mechanism reads INERT for a reason that has nothing to do with the
+    mechanism. Capability tests cannot see this; only a price test can.
+    """
+
+    def test_tranche_is_repriced_to_the_raw_hub_not_the_placeholder(self):
+        from market_sim.data.eia_loader import measured_intertie_hub_price_raw
+        from market_sim.model.transmission import (
+            inject_caiso_per_hub_intertie_prices,
+        )
+
+        year = 2024
+        fleet, row, armed = _armed_fleet(year)
+        self.assertTrue(armed)
+        mc = np.full((len(fleet.unit_ids), HOURS), 180.0)
+        self.assertTrue(
+            inject_caiso_per_hub_intertie_prices(
+                fleet, mc, "CAISO", year, 0.0, firm_base=True
+            )
+        )
+        hub = measured_intertie_hub_price_raw("CAISO", year, HOURS, "PALOVRDE")
+        finite = np.isfinite(hub)
+        # EF 0 and a (0.0, 0.0) delivery basis => priced AT the raw hub (less the
+        # intertie tiebreak epsilon), never at the builder's placeholder.
+        self.assertLess(float(np.nanmax(np.abs(mc[row, finite] - hub[finite]))), 0.01)
+        self.assertEqual(float(np.max(mc[row, finite])), float(np.max(mc[row, finite])))
+        self.assertFalse(bool(np.all(mc[row, finite] == 180.0)))
+
+    def test_every_clean_depth_tranche_is_in_the_reprice_set(self):
+        from market_sim.model.interchange.caiso import (
+            _CAISO_DSW_CLEAN_DEPTH_TRANCHES,
+        )
+
+        self.assertIn(CAISO_DSW_LATEEVENING_CLEAN_NAME, _CAISO_DSW_CLEAN_DEPTH_TRANCHES)
+        # Every member must also carry a hub mapping, or measured_import_hub_prices
+        # yields no series for it and the reprice silently skips it.
+        from market_sim.model.interchange.spec import CAISO_IMPORT_TRANCHE_HUB
+
+        for name in _CAISO_DSW_CLEAN_DEPTH_TRANCHES:
+            self.assertIn(name, CAISO_IMPORT_TRANCHE_HUB)
+
+
 class TestAdmissibilityGate(unittest.TestCase):
     def test_2023_is_kept_dark_relative_to_2024_and_2025(self):
         """caiso-253 refused hod 22-23 raw-hub pricing on 2023's discriminator.
