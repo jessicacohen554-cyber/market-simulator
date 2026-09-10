@@ -1400,9 +1400,77 @@ min-load **0.265957** / run-hours p50 14 h (cap-wtd 49 h); `CC_REGULAR` **0.4400
 
 **Rule 31 `[R-RETAIN]`:** nothing was solved, so nothing is promotable and **nothing was deleted**.
 
-**Next shorthand: spp-24.** Next lever: **land the wind ceiling first** — that is lane SPP-58's
-object and its verdict to mint — then **R-ba**, the ST_GAS/CT_PEAKER merit-order inversion, measured
+**Next shorthand: spp-24.** *(Superseded within the same session — see the continuation below.
+Lane SPP-58 was killed by owner instruction and SPP-63 took the wind object itself.)* Next lever:
+**land the wind ceiling first**, then **R-ba**, the ST_GAS/CT_PEAKER merit-order inversion, measured
 on the corrected stack. Behind those, unchanged: **SPP-51b R-2** (thermal-commitment floor), **R-3**
 (zonal spread, measured |N−S| 12.13 / 17.23 / 15.18 against a model ~1), **SPP-55/56** (scarcity /
 C3c). **SPP remains NOT-YET and is not calibrated**; two criteria still fail, so rule 22 `[R-C3C]`
 cannot fire.
+
+
+### spp-23 CONTINUATION — same lane SPP-63, same session: the wind ceiling was screened and KILLED
+
+**Owner instruction, 2026-09-10, verbatim: _"No spp 58 was killed just proceed with your solve"_** —
+issued against this lane's recommendation to defer to SPP-58. SPP-58 is dead, so
+`spp_curtailment_ceiling` was unowned and SPP-63 took it. **PRECOMMIT**
+`docs/handoffs/PRECOMMIT-spp-63-curtailment-ceiling-2026-09-10.md` pushed at `efd60202` **before any
+solve**. **RESULT** `docs/handoffs/RESULT-spp-63-screen-2026-09-10.md`. **LP spent: ONE year
+(~150 s)**, shard pinned `92b59c73`, branch `claude/spp63-screen-2025`. **THE SPAN WAS NOT SPENT.**
+**Keeper UNCHANGED** `2026-09-10-spp-62-vintage-census`; nothing registered, nothing promoted.
+
+**THE ARM DOES EXACTLY WHAT ITS ARITHMETIC SAYS.** 2025 wind **122.0430 → 110.2248 TWh** — a fall of
+**11.818**, inside the pre-registered 9.0–15.0 band, landing **within 0.232 TWh of the EIA-930 actual
+110.457** where the control was **+11.586** out.
+
+**GATE BOARD** (all five pre-registered before the solve; none reads C1):
+
+| gate | measured | verdict |
+|---|---|---|
+| G-1 config identity & liveness | ceiling `true`, depth `0.288137` at its declared default, ten fossil classes 0.93 × 4 | **PASS** |
+| G-2 reach | wind −11.818 TWh (band 9.0–15.0) | **PASS** |
+| G-3 allocation identity | decile-0 carries **26.049 %** of the removal vs a 10.000 % flat reference = **2.6049 ×** (gate > 1.15) | **PASS** |
+| **G-4** no new forcing | dump **0.000** ✓, slack **0.0000 → 211.208 MWh** against a pre-registered ≤ 100.0 | **FAIL** |
+| **G-5** no load-bearing regression | **C3b NRMSE 0.167 → 0.253** (band ≤ 0.20) — load-bearing **PASS → FAIL**; C3a survives at **+9.9 %** vs ±10 % (from +2.2 %); negative-price hours **167 → 0** | **FAIL** |
+
+**Neither gate was re-cut.** The PRECOMMIT named G-5 the gate with real bite and named C3b's headroom
+as **0.033**; the arm missed by **0.053**. Re-reading a gate against the result it would decide is
+the fitted-mechanism selection rule 1 `[R-STRUCT]` condition (c) forbids.
+
+**THE RESULT THAT MATTERS FOR C1 — and it runs AGAINST the wind hypothesis reaching the failing
+rows.** The recovered energy goes to **COAL**, not gas steam: `COAL_PRB` **+7.099**, `CC_REGULAR`
+**+3.680**, `CT_PEAKER` +0.641, while **`ST_GAS` FALLS 0.693 TWh**. The coal family goes from a
+nearly-exact **+0.72** to **+8.69 TWh** against actual; the gas family improves −12.75 → −8.95 but
+`ST_GAS` itself gets worse. This is the **spp-23 merit-order inversion** (gas steam at 0.47 / 0.52 ×
+its measured CF, offered *above* `CT_PEAKER` at every stack depth to 6 GW despite a better
+capacity-weighted heat rate 10.543 vs 10.974) operating on a correctly-sized stack for the first
+time. **The wind repair does not reach the ST_GAS rows — it re-routes the error into coal.**
+
+**Rule 28 `[R-MECH-MATRIX]`:** `spp_curtailment_ceiling` **`U` → `O`**, exactly as the PRECOMMIT
+pre-registered for this outcome — **not `R`**. Three of five gates pass exactly, the mechanism is a
+rule-14 `[R-ACCURATE]`-owed repair, and `R` would trip rule 28(a)'s do-not-redo against something the
+model owes. Prior cell text preserved verbatim inside.
+
+**Instrument built and validated, and it is reusable:** `scripts/lib/spp63_g5.py` rebuilds the run
+payload's per-zone `pMon`/`dMon` from a bundle's committed hourly sidecars and applies the scorer's
+own `score_price_mean` / `score_price_shape`. **Validated on keeper 7 before use** — C3a
+25.65 / 25.79 / 29.23 and C3b 0.172 / 0.172 / 0.167, reproduced exactly. This is what made G-5
+evaluable on an unregistered screen bundle at all: `calibration_verdict.py` can only score a
+REGISTERED run and rule 29(2) forbids registering a screen, which is why lane SPP-58 had to report
+its own G-5 as *unavailable*. (Load-bearing detail documented in place: the payload bins months on a
+FIXED 365-day calendar, so a leap-aware reimplementation is a different statistic — measured to move
+2024's C3b 0.172 → 0.170.)
+
+**Rule 31 `[R-RETAIN]`: nothing was deleted.** `results/calibration/spp63_*/` is gitignored, which is
+what discharges rule 29(c); no `rm` was issued. `scripts/gen_spp63_attestation.py` is committed and
+ready (DOF 3 entries / 2 residual → **4 / 2**, the added `spp_curtail_depth_wind` entry carrying a
+**measured** identification source) if the span is ever spent.
+
+**Next shorthand: spp-24.** Next levers, in order: **R-bb — root-cause SPP price formation without
+the phantom wind.** The keeper reproduces SPP's monthly price shape *while dispatching 11.8 TWh the
+market curtailed*, so the shape is right for the wrong reason; C3b's doubling and the loss of all 167
+negative-price hours are that dependency surfacing. **Do NOT re-cut `spp_curtail_depth_wind` to make
+G-5 pass** — it is measured, one config across all years, and re-cutting it against a gate is
+forbidden. Then **R-ba**, the ST_GAS/CT_PEAKER merit-order inversion, which this screen shows is
+needed independently of the wind level. Behind those, unchanged: **SPP-51b R-2**, **R-3** (zonal
+spread), **SPP-55/56** (scarcity / C3c). **SPP remains NOT-YET and is not calibrated.**
