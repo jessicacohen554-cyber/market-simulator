@@ -1701,6 +1701,20 @@ results/calibration/pjm_fuelvintage_TP/*.parquet
 results/calibration/pjm_fuelvintage_TP/hourly/network_*.parquet
 results/calibration/pjm_fuelvintage_TP/hourly/class_band_hourly_*.parquet
 results/calibration/pjm_fuelvintage_TP/hourly/unit_hourly_*.parquet
+# nyiso-223 (2026-09-10) — the hub-daily unpriced-day gap-fill arm's per-year shard
+# bundles. Rule 31 [R-RETAIN] + rule 29(c) [R-SCREEN]: what discharges "delete before
+# merge" is KEEPING THE BUNDLE OUT OF `main`, never `rm`-ing it from local disk. Ignoring
+# the family the moment it is written means the Class-E bundle-retention sweep
+# (check_registry_payload_parity.py) never sees an unregistered committed dir, while the
+# solved artifacts stay on disk for a promotion the owner has not yet ruled on. Only the
+# COMPOSITE, if promoted, is force-added and registered (rule 32(d)).
+# ANCHORED HERE, NOT AT EOF, ON PURPOSE: every lane appends its bundle-ignore block to the
+# end of this file, so EOF is where all of them collide — measured 2026-09-10, `.gitignore`
+# was the ONLY conflicting file between this branch and all 19 live claude/* lanes, and it
+# conflicted with every single one of them. Sitting above the stable nyiso-222 anchor keeps
+# this hunk out of that contested region so the three-way merge resolves it automatically.
+results/calibration/nyiso223_gapfill_*/
+
 # nyiso-222 (2026-09-09) owner-directed +5% offer-curve move: the full-span
 # replay bundle for the rule-1 [R-STRUCT] authorized price-tuning channel.
 # Ignored so it can never reach `main`, which is the ONLY thing rule 29(c)
@@ -1759,12 +1773,3 @@ results/calibration/nyiso222_offer_plus5_tp2022/
 results/pjm_d4_y*/
 results/pjm_d4_*/
 results/screen/pjm_d4_*/
-
-# nyiso-223 (2026-09-10) — the hub-daily unpriced-day gap-fill arm's per-year shard
-# bundles. Rule 31 [R-RETAIN] + rule 29(c) [R-SCREEN]: what discharges "delete before
-# merge" is KEEPING THE BUNDLE OUT OF `main`, never `rm`-ing it from local disk. Ignoring
-# the family the moment it is written means the Class-E bundle-retention sweep
-# (check_registry_payload_parity.py) never sees an unregistered committed dir, while the
-# solved artifacts stay on disk for a promotion the owner has not yet ruled on. Only the
-# COMPOSITE, if promoted, is force-added and registered (rule 32(d)).
-results/calibration/nyiso223_gapfill_*/
