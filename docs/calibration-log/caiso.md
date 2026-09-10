@@ -14397,3 +14397,60 @@ Matrix (rule 28(b)): `offer_curve_by_group` cell updated in the CAISO shard with
 evidence and a DO-NOT-REDO note (a third flat-multiplier arm on an unmoved baseline buys nothing;
 an hour-scoped cut is a different mechanism needing its own driver). **Cell stays K** — the channel
 is armed and live on the keeper; the ×0.92 arm is a registered rejection. Next: caiso-269.
+
+## 2026-09-10 — caiso-272: the CC offer ladder is NOT the carrier; the +1 HR object is measured and CLOSED; RECOMMENDATION ACCEPT (c). ZERO LP.
+
+**Keeper UNCHANGED** at `2026-09-10-caiso-269-lateevening-clean` (CALIBRATED, single ledgered
+C3c). **No solve, no shard, no arm, no `ScenarioConfig` field, no run registered, no promotion,
+no cell verdict moved.** Branch `claude/caiso-272-marginal-hr-cfsk95` off `main` `49b60041`.
+Full record: `docs/FINDING-caiso272-marginal-band-identification-2026-09-10.md`.
+
+**Card 0(a) G-DRIFT vs the keeper's `git_sha` `8d627e64`:** 8 files, purely additive on `src/`,
+**every hunk INERT** for a CAISO backcast — the NYISO TOTAL EAST cutset TTC sits behind
+`if iso != "NYISO": return ttc`, the MISO 2022 seam ladder and the SPP-63 lib are other ISOs'
+branches, and the one CAISO-named hunk (the retroactive cache-key registration of
+`caiso_dsw_lateevening_clean`) changes key computation only and leaves an ARMED run's key
+untouched. **⇒ G-CTRL form 4 valid, no control solve, and none was spent.**
+
+**Card 0(b), the answer.** The caiso-250 `mc = λ` instrument at **LP-ROW grain** on the keeper's
+own reconstructed offer array (`scripts/probes/_caiso272_marginal_band.py`). In the 6,924
+`econc05` hours (81.79 % of 2022 load):
+
+* **CC econ is the price-setter in 51.2 % of matched weight at implied HR 9.458 against the
+  market's own 9.289** — +0.17 points. All CC families together: **65.3 % at 9.235, i.e. 0.05
+  BELOW the market.**
+* Robust across four instrument settings (own-zone / CA-pooled × tol $0.25/$1.00/$3.00): CC
+  share 58–71 %, CC implied HR 9.235–9.595, non-CC contribution pinned at +0.465 to +0.528.
+* **The +1.105 HR bias decomposes: CC-marginal −0.029, non-CC thermal tail +0.383, and the
+  16.6 % of weight where λ sits in a GAP +0.747.** The gap hours are **97.35 %** of the
+  unmatched weight — **not** scarcity (2.63 %), **not** surplus (0.02 %).
+* The startup markup — the only P0→P1 wedge on this keeper — is **identically $0 on every
+  `econ` and `peak` tranche in every class**, so it cannot touch the identification.
+
+**Card 0(c), the adjudication. (a) REFUTED, (b) NO OBJECT LEFT TO FUND, (c) RECOMMENDED.** The
+authorized `offer_curve_by_group` channel cannot reach either carrier and the CC bands it *can*
+reach are already right — an independent structural vindication of the owner's refusal of
+caiso-267/268. Both carriers are already closed by standing rulings: the gap hours are
+caiso-250 §7 / caiso-168 §8 (mask-independent instrument census), the CT/ST tail is caiso-261's
+declared permanent CT_PEAKER residual. **The charter's "ONE unmeasured object" does not exist.**
+
+**Put to the owner, and deliberately NOT decided here.** **70.2 %** of the C3a-2022 dollar miss
+is the **DA−RT premium**, which the rubric's own OUT-OF-REPRESENTATION row calls something
+*"the test must not demand"* (scorer's `da_diagnostic`: model 95.39, RT 84.49, DA 92.14 →
+**+12.90 % vs RT against +3.53 % vs DA**). C3b-2022 reads **0.2402 vs RT and 0.1510 vs DA** — a
+companion the scorer does not emit, supplied by
+`scripts/probes/_caiso272_c3b_da_companion.py`. Hourly, the model tracks DA better than RT on
+every metric (Spearman .951 vs .901; lw MAE $16.06 vs $25.87), in 3 of 4 years. **No rebase is
+proposed** — that is a cross-ISO rubric matter and would be a fitted selection in another
+register. The 2022 rung stays **NOT-YET** and CAISO stays **CALIBRATED** on 2023–2025 (rule
+30(c)). **Counter-evidence at full magnitude:** the model's DA-basis residual is still
++$4.00/MWh, concentrated hod 22–12 against *both* benchmarks (the caiso-168/250 belly object),
+the evening hod 15–19 is **negative** against DA, and on the 2023/2024 C3c tail DA is **farther**
+than RT (23 h vs RT 47 / DA 80; 0 h vs RT 35 / DA 52).
+
+**Checks.** BIND CHECK vacuous — no flag was added; the duty stays owed by the next lane that
+adds one. PARTITION CHECK run (`curate_capacity_deliverability.py`, 386 CAISO rows into an empty
+`data/clean/`), and the keeper's `resolved_inputs.seam_import_cap` verified to read source
+`mic_partition`, `cap_mw 15780.0` — not the retired fitted scalar.
+
+**Next number: caiso-273.**

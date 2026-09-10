@@ -1,0 +1,730 @@
+{
+ "session": "caiso-272",
+ "year": 2022,
+ "bundle": "results/calibration/caiso269_lateevening_2022",
+ "keeper_git_sha": "8d627e64",
+ "tol_usd_mwh": 0.25,
+ "econc05_hours": 6924,
+ "econc05_load_share": 0.8179,
+ "reproduction": {
+  "econc05_hours": 6924,
+  "econc05_load_share_pct": 81.79,
+  "model_lw_price_2022": 95.389,
+  "rt_lw_price_2022": 83.759,
+  "da_lw_price_2022": 91.392,
+  "gas_lw_2022": 9.9715,
+  "implied_hr_model_2022": 9.566,
+  "implied_hr_rt_2022": 8.4,
+  "implied_hr_da_2022": 9.165,
+  "implied_hr_model_econc05": 10.394,
+  "implied_hr_rt_econc05": 9.289,
+  "implied_hr_da_econc05": 10.001
+ },
+ "hourly_fit": {
+  "vs_RT_gated": {
+   "lw_mean": 83.759,
+   "lw_bias": 11.63,
+   "lw_mae": 25.872,
+   "lw_rmse": 71.331,
+   "pearson": 0.7513,
+   "spearman": 0.9014
+  },
+  "vs_DA_companion": {
+   "lw_mean": 91.392,
+   "lw_bias": 3.997,
+   "lw_mae": 16.06,
+   "lw_rmse": 42.087,
+   "pearson": 0.8948,
+   "spearman": 0.9507
+  }
+ },
+ "dart_lw_2022": 7.633,
+ "hour_of_day": [
+  {
+   "hod": 0,
+   "model": 94.39,
+   "rt": 81.31,
+   "da": 82.58,
+   "m_minus_rt": 13.08,
+   "m_minus_da": 11.81,
+   "dart": 1.27
+  },
+  {
+   "hod": 1,
+   "model": 92.14,
+   "rt": 79.69,
+   "da": 80.18,
+   "m_minus_rt": 12.44,
+   "m_minus_da": 11.96,
+   "dart": 0.48
+  },
+  {
+   "hod": 2,
+   "model": 90.97,
+   "rt": 78.18,
+   "da": 78.9,
+   "m_minus_rt": 12.79,
+   "m_minus_da": 12.06,
+   "dart": 0.72
+  },
+  {
+   "hod": 3,
+   "model": 90.49,
+   "rt": 79.53,
+   "da": 79.83,
+   "m_minus_rt": 10.96,
+   "m_minus_da": 10.66,
+   "dart": 0.3
+  },
+  {
+   "hod": 4,
+   "model": 91.39,
+   "rt": 83.05,
+   "da": 84.32,
+   "m_minus_rt": 8.34,
+   "m_minus_da": 7.07,
+   "dart": 1.27
+  },
+  {
+   "hod": 5,
+   "model": 94.26,
+   "rt": 86.63,
+   "da": 92.95,
+   "m_minus_rt": 7.63,
+   "m_minus_da": 1.31,
+   "dart": 6.32
+  },
+  {
+   "hod": 6,
+   "model": 98.09,
+   "rt": 83.72,
+   "da": 89.12,
+   "m_minus_rt": 14.37,
+   "m_minus_da": 8.97,
+   "dart": 5.4
+  },
+  {
+   "hod": 7,
+   "model": 89.51,
+   "rt": 73.9,
+   "da": 76.84,
+   "m_minus_rt": 15.6,
+   "m_minus_da": 12.66,
+   "dart": 2.94
+  },
+  {
+   "hod": 8,
+   "model": 80.72,
+   "rt": 60.26,
+   "da": 66.41,
+   "m_minus_rt": 20.46,
+   "m_minus_da": 14.31,
+   "dart": 6.15
+  },
+  {
+   "hod": 9,
+   "model": 75.24,
+   "rt": 56.36,
+   "da": 62.34,
+   "m_minus_rt": 18.88,
+   "m_minus_da": 12.9,
+   "dart": 5.98
+  },
+  {
+   "hod": 10,
+   "model": 70.61,
+   "rt": 56.65,
+   "da": 61.9,
+   "m_minus_rt": 13.97,
+   "m_minus_da": 8.72,
+   "dart": 5.25
+  },
+  {
+   "hod": 11,
+   "model": 70.29,
+   "rt": 57.07,
+   "da": 62.95,
+   "m_minus_rt": 13.22,
+   "m_minus_da": 7.35,
+   "dart": 5.88
+  },
+  {
+   "hod": 12,
+   "model": 70.69,
+   "rt": 60.0,
+   "da": 65.56,
+   "m_minus_rt": 10.69,
+   "m_minus_da": 5.13,
+   "dart": 5.56
+  },
+  {
+   "hod": 13,
+   "model": 73.22,
+   "rt": 65.0,
+   "da": 69.03,
+   "m_minus_rt": 8.22,
+   "m_minus_da": 4.19,
+   "dart": 4.03
+  },
+  {
+   "hod": 14,
+   "model": 78.71,
+   "rt": 72.61,
+   "da": 77.2,
+   "m_minus_rt": 6.1,
+   "m_minus_da": 1.51,
+   "dart": 4.59
+  },
+  {
+   "hod": 15,
+   "model": 89.58,
+   "rt": 80.12,
+   "da": 89.74,
+   "m_minus_rt": 9.46,
+   "m_minus_da": -0.16,
+   "dart": 9.62
+  },
+  {
+   "hod": 16,
+   "model": 103.06,
+   "rt": 98.98,
+   "da": 116.82,
+   "m_minus_rt": 4.08,
+   "m_minus_da": -13.76,
+   "dart": 17.83
+  },
+  {
+   "hod": 17,
+   "model": 119.9,
+   "rt": 128.24,
+   "da": 145.92,
+   "m_minus_rt": -8.34,
+   "m_minus_da": -26.02,
+   "dart": 17.68
+  },
+  {
+   "hod": 18,
+   "model": 129.26,
+   "rt": 123.18,
+   "da": 152.09,
+   "m_minus_rt": 6.08,
+   "m_minus_da": -22.83,
+   "dart": 28.91
+  },
+  {
+   "hod": 19,
+   "model": 129.21,
+   "rt": 108.31,
+   "da": 129.96,
+   "m_minus_rt": 20.9,
+   "m_minus_da": -0.75,
+   "dart": 21.65
+  },
+  {
+   "hod": 20,
+   "model": 119.15,
+   "rt": 100.67,
+   "da": 112.68,
+   "m_minus_rt": 18.48,
+   "m_minus_da": 6.47,
+   "dart": 12.01
+  },
+  {
+   "hod": 21,
+   "model": 110.98,
+   "rt": 96.6,
+   "da": 99.7,
+   "m_minus_rt": 14.38,
+   "m_minus_da": 11.28,
+   "dart": 3.1
+  },
+  {
+   "hod": 22,
+   "model": 105.69,
+   "rt": 89.1,
+   "da": 91.39,
+   "m_minus_rt": 16.59,
+   "m_minus_da": 14.29,
+   "dart": 2.3
+  },
+  {
+   "hod": 23,
+   "model": 98.72,
+   "rt": 85.08,
+   "da": 86.01,
+   "m_minus_rt": 13.64,
+   "m_minus_da": 12.72,
+   "dart": 0.92
+  }
+ ],
+ "marginal_census": {
+  "own-zone tol$0.25": {
+   "coverage_pct": 50.8,
+   "families": [
+    {
+     "family": "CC econ",
+     "share_pct": 46.59,
+     "mean_lambda": 97.15,
+     "implied_hr": 9.546,
+     "offer_hr": 9.938
+    },
+    {
+     "family": "CT econ",
+     "share_pct": 25.3,
+     "mean_lambda": 109.98,
+     "implied_hr": 10.807,
+     "offer_hr": 12.675
+    },
+    {
+     "family": "CC committed",
+     "share_pct": 9.59,
+     "mean_lambda": 78.67,
+     "implied_hr": 7.73,
+     "offer_hr": 10.007
+    },
+    {
+     "family": "CT committed",
+     "share_pct": 8.82,
+     "mean_lambda": 100.4,
+     "implied_hr": 9.866,
+     "offer_hr": 11.86
+    },
+    {
+     "family": "CT peak",
+     "share_pct": 5.12,
+     "mean_lambda": 108.91,
+     "implied_hr": 10.701,
+     "offer_hr": 13.21
+    },
+    {
+     "family": "CC peak",
+     "share_pct": 1.75,
+     "mean_lambda": 97.14,
+     "implied_hr": 9.545,
+     "offer_hr": 12.213
+    },
+    {
+     "family": "biomass",
+     "share_pct": 1.69,
+     "mean_lambda": 59.25,
+     "implied_hr": 5.822,
+     "offer_hr": 23.697
+    },
+    {
+     "family": "ST_GAS",
+     "share_pct": 1.09,
+     "mean_lambda": 147.2,
+     "implied_hr": 14.464,
+     "offer_hr": 15.48
+    },
+    {
+     "family": "oil",
+     "share_pct": 0.04,
+     "mean_lambda": 215.22,
+     "implied_hr": 21.148,
+     "offer_hr": 11.955
+    },
+    {
+     "family": "COAL",
+     "share_pct": 0.0,
+     "mean_lambda": 40.15,
+     "implied_hr": 3.945,
+     "offer_hr": 16.659
+    }
+   ],
+   "cc_share_pct": 57.93,
+   "cc_mean_lambda": 94.09,
+   "cc_implied_hr": 9.246,
+   "noncc_share_pct": 42.07,
+   "noncc_mean_lambda": 106.87,
+   "noncc_implied_hr": 10.501,
+   "mix_implied_hr": 9.774,
+   "hr_points_carried_by_noncc": 0.528,
+   "unmatched_pct_of_weight": 49.2,
+   "unmatched_mean_dist": 6.435,
+   "unmatched_lambda_above_all_pct": 1.06,
+   "unmatched_lambda_below_all_pct": 0.01,
+   "unmatched_lambda_in_gap_pct": 98.93
+  },
+  "CA-pooled tol$0.25": {
+   "coverage_pct": 83.44,
+   "families": [
+    {
+     "family": "CC econ",
+     "share_pct": 51.21,
+     "mean_lambda": 96.25,
+     "implied_hr": 9.458,
+     "offer_hr": 9.891
+    },
+    {
+     "family": "CT econ",
+     "share_pct": 16.97,
+     "mean_lambda": 114.28,
+     "implied_hr": 11.229,
+     "offer_hr": 12.642
+    },
+    {
+     "family": "CC committed",
+     "share_pct": 12.15,
+     "mean_lambda": 83.24,
+     "implied_hr": 8.179,
+     "offer_hr": 9.71
+    },
+    {
+     "family": "CT committed",
+     "share_pct": 9.89,
+     "mean_lambda": 102.75,
+     "implied_hr": 10.096,
+     "offer_hr": 11.424
+    },
+    {
+     "family": "CT peak",
+     "share_pct": 4.89,
+     "mean_lambda": 112.91,
+     "implied_hr": 11.094,
+     "offer_hr": 13.083
+    },
+    {
+     "family": "biomass",
+     "share_pct": 2.13,
+     "mean_lambda": 59.05,
+     "implied_hr": 5.803,
+     "offer_hr": 23.62
+    },
+    {
+     "family": "CC peak",
+     "share_pct": 1.93,
+     "mean_lambda": 101.53,
+     "implied_hr": 9.977,
+     "offer_hr": 12.077
+    },
+    {
+     "family": "ST_GAS",
+     "share_pct": 0.79,
+     "mean_lambda": 135.63,
+     "implied_hr": 13.327,
+     "offer_hr": 14.149
+    },
+    {
+     "family": "oil",
+     "share_pct": 0.04,
+     "mean_lambda": 205.3,
+     "implied_hr": 20.173,
+     "offer_hr": 11.407
+    },
+    {
+     "family": "COAL",
+     "share_pct": 0.0,
+     "mean_lambda": 40.15,
+     "implied_hr": 3.945,
+     "offer_hr": 16.659
+    }
+   ],
+   "cc_share_pct": 65.29,
+   "cc_mean_lambda": 93.98,
+   "cc_implied_hr": 9.235,
+   "noncc_share_pct": 34.71,
+   "noncc_mean_lambda": 107.99,
+   "noncc_implied_hr": 10.612,
+   "mix_implied_hr": 9.713,
+   "hr_points_carried_by_noncc": 0.478,
+   "unmatched_pct_of_weight": 16.56,
+   "unmatched_mean_dist": 12.86,
+   "unmatched_lambda_above_all_pct": 2.63,
+   "unmatched_lambda_below_all_pct": 0.02,
+   "unmatched_lambda_in_gap_pct": 97.35,
+   "top_marginal_plants": [
+    {
+     "plant": "260",
+     "name": "Dynegy Moss Landing Power ",
+     "family": "CC econ",
+     "share_pct": 5.38
+    },
+    {
+     "plant": "55393",
+     "name": "Metcalf Energy Center econ",
+     "family": "CC econ",
+     "share_pct": 4.14
+    },
+    {
+     "plant": "55333",
+     "name": "Delta Energy Center econc0",
+     "family": "CC econ",
+     "share_pct": 3.5
+    },
+    {
+     "plant": "55518",
+     "name": "High Desert Power Plant ec",
+     "family": "CC econ",
+     "share_pct": 3.07
+    },
+    {
+     "plant": "55345",
+     "name": "Otay Mesa Generating Proje",
+     "family": "CC econ",
+     "share_pct": 2.98
+    },
+    {
+     "plant": "56532",
+     "name": "Colusa Generating Station ",
+     "family": "CC econ",
+     "share_pct": 2.76
+    },
+    {
+     "plant": "56476",
+     "name": "Gateway Generating Station",
+     "family": "CC econ",
+     "share_pct": 2.58
+    },
+    {
+     "plant": "55217",
+     "name": "Los Medanos Energy Center ",
+     "family": "CC econ",
+     "share_pct": 2.17
+    },
+    {
+     "plant": "56467",
+     "name": "Russell City Energy Center",
+     "family": "CC econ",
+     "share_pct": 2.16
+    },
+    {
+     "plant": "55393",
+     "name": "Metcalf Energy Center comm",
+     "family": "CC committed",
+     "share_pct": 1.69
+    }
+   ]
+  },
+  "CA-pooled tol$1.00": {
+   "coverage_pct": 97.77,
+   "families": [
+    {
+     "family": "CC econ",
+     "share_pct": 55.69,
+     "mean_lambda": 94.48,
+     "implied_hr": 9.283,
+     "offer_hr": 9.927
+    },
+    {
+     "family": "CT econ",
+     "share_pct": 13.63,
+     "mean_lambda": 117.62,
+     "implied_hr": 11.557,
+     "offer_hr": 12.757
+    },
+    {
+     "family": "CC committed",
+     "share_pct": 10.87,
+     "mean_lambda": 100.11,
+     "implied_hr": 9.837,
+     "offer_hr": 9.664
+    },
+    {
+     "family": "CT committed",
+     "share_pct": 9.97,
+     "mean_lambda": 108.42,
+     "implied_hr": 10.653,
+     "offer_hr": 11.159
+    },
+    {
+     "family": "CT peak",
+     "share_pct": 4.8,
+     "mean_lambda": 116.64,
+     "implied_hr": 11.462,
+     "offer_hr": 13.14
+    },
+    {
+     "family": "biomass",
+     "share_pct": 2.16,
+     "mean_lambda": 58.66,
+     "implied_hr": 5.764,
+     "offer_hr": 23.439
+    },
+    {
+     "family": "CC peak",
+     "share_pct": 2.14,
+     "mean_lambda": 107.83,
+     "implied_hr": 10.595,
+     "offer_hr": 12.057
+    },
+    {
+     "family": "ST_GAS",
+     "share_pct": 0.67,
+     "mean_lambda": 138.2,
+     "implied_hr": 13.58,
+     "offer_hr": 13.976
+    },
+    {
+     "family": "oil",
+     "share_pct": 0.07,
+     "mean_lambda": 208.36,
+     "implied_hr": 20.474,
+     "offer_hr": 11.575
+    },
+    {
+     "family": "COAL",
+     "share_pct": 0.0,
+     "mean_lambda": 40.71,
+     "implied_hr": 4.0,
+     "offer_hr": 16.659
+    }
+   ],
+   "cc_share_pct": 68.7,
+   "cc_mean_lambda": 95.78,
+   "cc_implied_hr": 9.412,
+   "noncc_share_pct": 31.3,
+   "noncc_mean_lambda": 111.1,
+   "noncc_implied_hr": 10.917,
+   "mix_implied_hr": 9.883,
+   "hr_points_carried_by_noncc": 0.471,
+   "unmatched_pct_of_weight": 2.23,
+   "unmatched_mean_dist": 91.971,
+   "unmatched_lambda_above_all_pct": 19.49,
+   "unmatched_lambda_below_all_pct": 0.12,
+   "unmatched_lambda_in_gap_pct": 80.39
+  },
+  "CA-pooled tol$3.00": {
+   "coverage_pct": 99.42,
+   "families": [
+    {
+     "family": "CC econ",
+     "share_pct": 59.16,
+     "mean_lambda": 95.69,
+     "implied_hr": 9.403,
+     "offer_hr": 9.886
+    },
+    {
+     "family": "CT econ",
+     "share_pct": 13.99,
+     "mean_lambda": 114.46,
+     "implied_hr": 11.247,
+     "offer_hr": 12.759
+    },
+    {
+     "family": "CC committed",
+     "share_pct": 9.97,
+     "mean_lambda": 106.62,
+     "implied_hr": 10.476,
+     "offer_hr": 9.694
+    },
+    {
+     "family": "CT committed",
+     "share_pct": 6.93,
+     "mean_lambda": 118.71,
+     "implied_hr": 11.664,
+     "offer_hr": 11.422
+    },
+    {
+     "family": "CT peak",
+     "share_pct": 5.09,
+     "mean_lambda": 116.61,
+     "implied_hr": 11.458,
+     "offer_hr": 13.211
+    },
+    {
+     "family": "CC peak",
+     "share_pct": 2.19,
+     "mean_lambda": 109.74,
+     "implied_hr": 10.783,
+     "offer_hr": 12.018
+    },
+    {
+     "family": "biomass",
+     "share_pct": 1.86,
+     "mean_lambda": 57.86,
+     "implied_hr": 5.685,
+     "offer_hr": 22.991
+    },
+    {
+     "family": "ST_GAS",
+     "share_pct": 0.7,
+     "mean_lambda": 177.42,
+     "implied_hr": 17.434,
+     "offer_hr": 13.729
+    },
+    {
+     "family": "oil",
+     "share_pct": 0.1,
+     "mean_lambda": 227.32,
+     "implied_hr": 22.337,
+     "offer_hr": 12.64
+    },
+    {
+     "family": "COAL",
+     "share_pct": 0.0,
+     "mean_lambda": 41.25,
+     "implied_hr": 4.054,
+     "offer_hr": 16.659
+    }
+   ],
+   "cc_share_pct": 71.32,
+   "cc_mean_lambda": 97.65,
+   "cc_implied_hr": 9.595,
+   "noncc_share_pct": 28.68,
+   "noncc_mean_lambda": 114.15,
+   "noncc_implied_hr": 11.216,
+   "mix_implied_hr": 10.06,
+   "hr_points_carried_by_noncc": 0.465,
+   "unmatched_pct_of_weight": 0.58,
+   "unmatched_mean_dist": 349.008,
+   "unmatched_lambda_above_all_pct": 74.59,
+   "unmatched_lambda_below_all_pct": 0.47,
+   "unmatched_lambda_in_gap_pct": 24.94
+  }
+ },
+ "startup_markup_bound_by_family": {
+  "CC committed": {
+   "markup_lo": 0.0,
+   "markup_hi": 50.0
+  },
+  "CC econ": {
+   "markup_lo": 0.0,
+   "markup_hi": 0.0
+  },
+  "CC peak": {
+   "markup_lo": 0.0,
+   "markup_hi": 0.0
+  },
+  "COAL": {
+   "markup_lo": 0.0,
+   "markup_hi": 12.5
+  },
+  "CT committed": {
+   "markup_lo": 0.0,
+   "markup_hi": 20.0
+  },
+  "CT econ": {
+   "markup_lo": 0.0,
+   "markup_hi": 0.0
+  },
+  "CT peak": {
+   "markup_lo": 0.0,
+   "markup_hi": 0.0
+  },
+  "ST_GAS": {
+   "markup_lo": 0.0,
+   "markup_hi": 7.0
+  },
+  "biomass": {
+   "markup_lo": 0.0,
+   "markup_hi": 0.0
+  },
+  "hydro": {
+   "markup_lo": 0.0,
+   "markup_hi": 0.0
+  },
+  "import": {
+   "markup_lo": 0.0,
+   "markup_hi": 0.0
+  },
+  "nuclear": {
+   "markup_lo": 0.0,
+   "markup_hi": 0.0
+  },
+  "oil": {
+   "markup_lo": 0.0,
+   "markup_hi": 0.0
+  }
+ }
+}
