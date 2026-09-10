@@ -8699,7 +8699,6 @@ def run_replay_bundle(
     out_dir: Path | None,
     years: list[int] | None,
     note: str,
-    holdout_authorized: bool,
     zero_forcing_ablation: bool = False,
     reliability_floor_plant_exclusions: bool | None = None,
     caiso_offer_surface_measured_ungrounded: bool | None = None,
@@ -8742,8 +8741,9 @@ def run_replay_bundle(
     Args:
         bundle: Committed bundle dir whose ``meta.json`` carries the recipe.
         out_dir: Destination bundle root (``None`` re-solves in place).
-        years: Optional solve-span override (defaults to the bundle's years);
-            holdout-gated either way (rule 22).
+        years: Optional solve-span override (defaults to the bundle's years).
+            Any year may be solved: ``[R-HOLDOUT]`` was REMOVED 2026-09-09, so
+            no marker, freeze or authorization gate remains here.
         note: Provenance note recorded in ``run_config.json`` (empty keeps
             the replay default).
         zero_forcing_ablation: Solve the recipe's D-3 zero-forcing ablation
@@ -10833,7 +10833,7 @@ def main() -> None:
         "caiso-231, which the bypass keeps from reaching the very plants the "
         "CT bucket contains). Exactly one band moves; zero new measurement and "
         "zero free parameters. DISCLOSED: 1.10 -> 1.166 RAISES the peak band "
-        "(+6.0 %), so it makes C3a WORSE, and it is NEVER a C3a lever. An ISO "
+        "(+6.0 %%), so it makes C3a WORSE, and it is NEVER a C3a lever. An ISO "
         "with no registry entry is a hard error.",
     )
     parser.add_argument(
@@ -10877,7 +10877,7 @@ def main() -> None:
         "charges a second time. Rule 1: the econ limb closes the OPEN ROOT "
         "CAUSE _NYISO_OFFER_CURVE's own comment declares by name. DISCLOSED: "
         "the direction is FAVOURABLE to CT_PEAKER volume and moves C3a DOWN "
-        "(crossing indicator -2.75/-2.40/-2.74 %), which is the hazard, not "
+        "(crossing indicator -2.75/-2.40/-2.74 %%), which is the hazard, not "
         "the argument; this is NEVER a C3a lever. Non-NYISO, or a band missing "
         "any of the three phys_* keys, is a hard error.",
     )
@@ -10891,7 +10891,7 @@ def main() -> None:
         "carries (nearby_fuel_price_min_state_plants), so a zone-month whose "
         "donor pool is ONE reporting plant is not trusted (a pool of one "
         "returned that plant's price verbatim — plant 55077's 96.161 $/MMBtu "
-        "on 2.6 % of its normal volume priced 2,446 MW of CAISO neighbours at "
+        "on 2.6 %% of its normal volume priced 2,446 MW of CAISO neighbours at "
         "~$736/MWh for all of Nov-2025). No new constant. ISO-generic guard; "
         "the ARM is per lane (rule 25). Off by default, byte-identical.",
     )
