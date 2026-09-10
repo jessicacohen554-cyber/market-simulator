@@ -4846,11 +4846,11 @@
     "epochs": [],
     "git_sha": "09ef52a3"
    },
-   "scored_at_sha": "0b845508ba3a",
-   "scored_at_date": "2026-09-10T08:20:00Z",
-   "cache_epoch": "ae317e63263c8eef",
-   "run_id": "neiso-2026-2050-t3-golden3-d90",
-   "session": "capx-D92 (FC-5 / FC-6 re-base onto post-D77 arms; owner ruling Q65)",
+   "scored_at_sha": "6f1dddadda4c",
+   "scored_at_date": "2026-09-10T08:40:00Z",
+   "cache_epoch": "dd8203a8bf1546b9",
+   "run_id": "neiso-2026-2050-t3-golden3-d92-base",
+   "session": "capx-D92 (FC-5 / FC-6 re-base + re-point onto leg L0; owner ruling Q65)",
    "rescored_at_sha": "8cf75e8e93ab"
   },
   "tier": "t3",
@@ -4871,7 +4871,9 @@
    "capx D92 (2026-09-10, owner ruling Q65) \u2014 D77's NAMED RESIDUE IS CLOSED. This record's PRIMARY bundle (neiso-2026-2050-t3-golden3-d90) already postdated capx D77's CCS emission-rate repair, but its two CARRIED inputs did not: FC-5 was scored on a disposition table keyed to `bau` (cache_key 706e7ba8e6582d42, solved 2026-09-01) and FC-6 on `bau-d46/fc6` (67678e58b2d0526c / 56019f3b0850e9f9, solved 2026-09-03) \u2014 the exact cells D77 named as \"the only SCORED cells mis-stated\". Both are re-based here onto four NEISO 2026-2050 legs solved on post-D77 code at one pinned HEAD. The prior record is preserved byte-equal at neiso-t3-pre-d92.",
    "CONTROLLED SWAP: only --corridor and --paired-invariants changed; the summary, run-config, DOF ledger, attestation, hindcast score, crossover score and driver battery are held byte-identical, and the scorer was first shown to reproduce the standing record NON-PROVENANCE IDENTICAL in the same container. DETERMINATION HOLD -> HOLD; every FC-1..FC-8 STATUS, every reason and every caveat unchanged. THE NUMBERS MOVED, THE SCORES DID NOT.",
    "AT FULL MAGNITUDE. FC-6 paired P1: cumulative CO2 base 284.42 -> 154.42 Mt, high 273.92 -> 103.50 Mt; the base-vs-high MARGIN goes 10.50 -> 50.92 Mt (3.69 % -> 32.97 % of base). The seam was SUPPRESSING the model's carbon response: pre-repair the retrofit screen saturated at ~9 GW in BOTH arms (2030: 8942.6 vs 8983.2 MW), so +$25/t had nothing left to convert; post-repair the base wave is smaller (6648.3 MW at 2030) and the carbon arm converts 1173.0 MW more, rising to +5877.6 MW by 2050. P2 33.83->32.60 TWh gas-fired, LW price 79.64->92.05 $/MWh. P3 builds moved 0.0 % -> 1.7 %. FC-5 co2@2030 +60.6 % -> -25.0 % (SIGN REVERSED), co2@2035 -2.0 % -> -57.0 %, co2@2040 -57.4 % -> -60.0 %; capacity:gas_cc@2040 and generation:total@2040 became divergent and were given new explanations, three rows became IN CORRIDOR and had theirs retired, 25 explained divergences and ZERO unexplained.",
-   "REPORTED, NOT SMOOTHED: against the AEO2025 anchor the repaired model is 35.6 points CLOSER at 2030 (the sign flips but the magnitude shrinks), 55.0 points FURTHER at 2035 and 2.6 points further at 2040 \u2014 mixed, not the uniform \"further from the anchor\" this lane predicted. The FC-6 P2 row is ONE SUB-CHECK WEAKER than the row it replaces: the summary grain carries no objective value, so `objective` reads not-scored. See docs/handoffs/FINDING-capx-d92-2026-09-10.md."
+   "REPORTED, NOT SMOOTHED: against the AEO2025 anchor the repaired model is 35.6 points CLOSER at 2030 (the sign flips but the magnitude shrinks), 55.0 points FURTHER at 2035 and 2.6 points further at 2040 \u2014 mixed, not the uniform \"further from the anchor\" this lane predicted. The FC-6 P2 row is ONE SUB-CHECK WEAKER than the row it replaces: the summary grain carries no objective value, so `objective` reads not-scored. See docs/handoffs/FINDING-capx-d92-2026-09-10.md.",
+   "RE-POINTED onto capx D92 leg L0 (neiso-2026-2050-t3-golden3-d92-base, cache_key dd8203a8bf1546b9), replacing neiso-2026-2050-t3-golden3-d90 / ae317e63263c8eef. THIS MOVES NO NUMBER: L0 reproduces that bundle EXACTLY \u2014 zero differing cells across 25 years x every trajectory field, identical invariants \u2014 over the 573-commit window between them, which is the G-DRIFT measurement this lane spent a control solve to establish. It is a change of ADDRESS, not of result.",
+   "WHY: (a) the FC-5 disposition is keyed to L0, so the record now names the bundle its own corridor table is computed from; (b) L0's run_config REPRODUCES its own cache key at HEAD while d90-rescore's does not, so the board now points at a bundle with intact key provenance. STATED PRECISELY, BECAUSE THE FIRST DRAFT OF THIS NOTE OVERCLAIMED IT: this does NOT reduce the check_key_provenance.py G1_UNKNOWN count, which stays at SIX. That gate scans committed run_config.json files, not registry references, and results/ff-t3-neiso-golden/d90-rescore/run_config.json remains committed \u2014 it is capx D90-R's artifact, not this lane's to prune. All six rows are still owned to the key-provenance desk and the exceptions record is untouched. NO GATE REGRESSES: determination HOLD -> HOLD, every FC-1..FC-8 status, reason and caveat identical, and L0's DOF ledger is the same 9 entries with the same 2 UNIDENTIFIED, so FC-7 reads exactly what it read before. The only diffs are cosmetic: FC-7's run_config row 828 -> 837 config keys (schema growth) and FC-8 wall 31.1 -> 31.9 min, both PASS either way."
   ],
   "categories": {
    "FC-1": {
@@ -5008,7 +5010,7 @@
      {
       "row": "run_config",
       "status": "PASS",
-      "detail": "mode=forecast; 828 config keys; gates ['capacity_market_clearing']",
+      "detail": "mode=forecast; 837 config keys; gates ['capacity_market_clearing']",
       "gating": true
      },
      {
@@ -5039,7 +5041,7 @@
      {
       "row": "runtime",
       "status": "PASS",
-      "detail": "wall 31.1 min within budget",
+      "detail": "wall 31.9 min within budget",
       "gating": true
      }
     ]
