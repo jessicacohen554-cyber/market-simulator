@@ -2813,8 +2813,25 @@ def load_renewable_profiles(
                     # REPLACES the flat gross-up, never stacks on it). Any
                     # unavailable leg returns ``None`` and falls back here, so
                     # an armed run can never silently lose the headroom.
+                    #
+                    # SPP-58, rule 19 [R-ONE-MECH] enforced IN CODE: the SPP
+                    # curtailment ceiling (``spp_curtailment_ceiling``) is the
+                    # THIRD answer to "where does the measured curtailment
+                    # land", and it SUPERSEDES the oversupply allocation rather
+                    # than stacking on it. When it is armed the basis reverts to
+                    # the FLAT gross-up and the ceiling alone decides both where
+                    # the curtailment falls and how much of it binds -- so the
+                    # two can never both be live in one solve, whatever a recipe
+                    # asks for. The ceiling itself is applied downstream, on the
+                    # CF upper bound (data.curtailment_share).
                     measured_cf = None
-                    if getattr(config, "vre_curtailment_oversupply_allocation", False):
+                    _spp_ceiling = iso == "SPP" and getattr(
+                        config, "spp_curtailment_ceiling", False
+                    )
+                    if (
+                        getattr(config, "vre_curtailment_oversupply_allocation", False)
+                        and not _spp_ceiling
+                    ):
                         measured_cf = _oversupply_uncurtailed_cf(
                             iso, year, fuel, monthly, iso_config
                         )

@@ -5169,3 +5169,54 @@ Artifacts: `docs/RESULT-pjm-d4-1-stgas-merit-order-2026-09-09.md`,
 `docs/PRECOMMIT-pjm-d4-1-stgas-merit-order-2026-09-09.md`. **No bundle was written** — no LP ran — so
 rule 31 `[R-RETAIN]` has nothing on disk to preserve; the open promotion question is instead whether
 pjm-177's `netload_drag_min_run_persistence` should now be answered **NO** on this evidence.
+
+## pjm-d4-2 — 2026-09-10
+
+**PJM's training span reads CALIBRATED.** C8 forced-energy share — the single criterion PJM was
+NOT-YET on — moves **FAIL → PASS**, every other scored criterion is unchanged at PASS, and the run
+carries **zero caveats** (0 ledgered, 0 protective; determination basis empty).
+
+**The object was MEMBERSHIP**, not the drag's hours or its merit order. pjm-d4-1 falsified the
+allocation family at zero LP and located the seam: `data.outages.ST_GAS_PEAKER_PLANTS` existed to
+keep run-when-called steamers out of the reliability min-gen floor and named 6 ERCOT plants, 3 CAISO
+plants and **no PJM plant**. Eleven PJM plants are now admitted — **zero new `ScenarioConfig` fields,
+zero free parameters** (rules 19 `[R-ONE-MECH]` / 21 `[R-DOF]` / 24 `[R-REGISTRY]`).
+
+**The criterion was declared ex ante and cannot have been fitted.** Admission is CAMPD meter-online
+share of the plant's ST_GAS slice, pooled over every bench year passing the benchmark's own
+`e_ann/c_ann ≤ 1.1` trust test, below **35 %**. The threshold is read off the registry's OWN revealed
+membership in ERCOT and CAISO with PJM never consulted (ERCOT admits to 34.7 %, excludes from 36.9 %;
+CAISO admits to 31.0 %, excludes from 45.1 % — both gaps empty). It carries **no leverage**: PJM's own
+duty distribution has an empty interval 30.8–48.6 % that strictly contains the precedent-admissible
+window, so the admitted set is identical across 17.8 points. The competing most-recent-two-years
+window — the evidence the registry's own CAISO comment cites — was **tested and falsified** (it makes
+ERCOT's admitted set overlap its excluded set).
+
+**Measured, six years, one LP per rule-32 `[R-SHARD]` container pinned to `5f133fd5`:** ST_GAS forced
+share 54.3/64.0/46.5/39.1/36.6/41.3 % → **16.1/25.6/15.7/8.2/7.4/7.7 %**; D-4 per-unit conduct
+convictions 10/8/8/6/4/5 → **3/2/2/1/2/2**, the survivors in every year *exactly* the non-admitted
+plants. Rule 17 leave-one-year-out: the arm reads CALIBRATED in all three 2023–2025 pairs where the
+incumbent reads NOT-YET in both pairs containing 2025.
+
+**Costs, reported and not netted out.** 2024 ST_GAS moves off an exact 1.00 to 0.90 (pjm-d4-1 §4's
+point landing: 2024 reached the right total by mandating a third of it); 2025 CT_PEAKER moves
+1.19 → 1.23, further over actual, exactly as the PRECOMMIT pre-committed to accepting; part of the
+released energy relocates onto CC_REGULAR and COAL_BIT, which were already high. Total fossil surplus
+improves in all six years. **Plants 3138 (48.6 % duty) and 3131 (51.0 %) still fail D-4 in nearly
+every year — an open root cause, routed not closed; they do not decide C8 only because the forced
+share now clears the 30 % budget outright.**
+
+**The holdout span is UNCHANGED — zero criterion flips** (NOT-YET both sides; C1 fuel-mix, C3a mean
+LMP and C3b price shape fail in both). This card does not resolve the holdout-year rubric failures
+and does not claim to; the ST_GAS collapse there is real but ungated (C8 skips ST_GAS as immaterial
+at 0.8–1.1 % of load). Rule 30(c): a held-out year never downgrades PJM.
+
+**Runs** `2026-09-10-pjm-d4-2-stgas` (2023–2025, CALIBRATED) + `2026-09-10-pjm-d4-2-touchpoint`
+(2020–2022, folded under rule 30(a)). **Keeper promotion is the OWNER's call (rule 31 `[R-RETAIN]`)
+and is put explicitly** in `docs/RESULT-pjm-d4-2-stgas-membership-2026-09-10.md` §9. Nothing was
+deleted; the six shard bundles are gitignored on local disk.
+
+**Routed follow-up:** `ST_GAS_PEAKER_PLANTS` is solve-affecting but invisible to `cache_key()` (not
+in `solve_surface.SURFACE_MODULES`, and `SOLVE_EPOCHS` is empty). This predates the card but the card
+makes it materially larger for PJM; `data/outages.py` imports numpy/pandas so it cannot join the
+stdlib-only surface, leaving a `SolveEpoch` as the route.
