@@ -837,8 +837,8 @@ K because PROMOTION IS THE OWNER'S ACT and has not been ruled"* — which is exa
 |---|---|---|
 | C1 fuel-mix (LOAD) | FAIL — 2024 ST_GAS −8.23 TWh | FAIL — same single row, **−8.13 TWh** |
 | C2 system volume (LOAD) | PASS | PASS |
-| **C3a mean LMP (LOAD)** | **FAIL** — 2025 +10.3 % | **PASS** — +1.34 / −0.60 / +3.63 % |
-| **C3b price shape (LOAD)** | **FAIL** — 2025 NRMSE 0.204 | **PASS** — 0.1647 / 0.1769 / 0.1755 |
+| **C3a mean LMP (LOAD)** | **FAIL** — 2025 +10.3 % | **PASS** — +1.36 / −0.61 / +3.61 % |
+| **C3b price shape (LOAD)** | **FAIL** — 2025 NRMSE 0.204 | **PASS** — 0.1647 / 0.1762 / 0.1755 |
 | C3c price tail (SUPP) | FAIL all three years | FAIL all three years (0 / 4 / 2 h vs 42 / 59 / 68) |
 | C4 / C6 / C8 | PASS | PASS |
 | grade summary | grade 4 of 8, **4 fails** | grade **6 of 8, 2 fails**, 0 caveats of any kind |
