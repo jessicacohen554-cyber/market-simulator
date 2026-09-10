@@ -1826,3 +1826,7 @@ results/calibration/_spp61_heavy/
 # gitignoring — never `rm` — as what discharges it, so these stay on local disk
 # until the owner has ruled on promotion.
 results/calibration/spp62_*/
+
+# miso-252 seam-envelope screen/span bundles (rule 29(c) delete-before-merge is
+# discharged by KEEPING THEM OUT OF main, never by rm — rule 31 [R-RETAIN]).
+results/calibration/miso252_*/
