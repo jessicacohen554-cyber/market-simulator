@@ -736,6 +736,8 @@ def run_year(
     netload_drag_merit_allocation: bool | None = None,
     netload_drag_min_run_persistence: bool | None = None,
     vre_curtailment_oversupply_allocation: bool | None = None,
+    spp_curtailment_ceiling: bool | None = None,
+    spp_curtail_depth_wind: float | None = None,
     # caiso-186 published seasonal CC capability basis. run_calibration_full
     # .solve_and_persist has threaded this to run_year since the caiso-186
     # merge, but the parameter was never added here, so EVERY solve through
@@ -1670,6 +1672,19 @@ def run_year(
         # in _BACKCAST_ONLY_OVERLAY_FIELDS.
         config = config.with_overrides(
             vre_curtailment_oversupply_allocation=vre_curtailment_oversupply_allocation
+        )
+    if spp_curtailment_ceiling is not None:
+        # SPP-58: the SPP wind curtailment CEILING. One field, one seam (the
+        # wind CF upper bound), and it SUPERSEDES the oversupply allocation in
+        # data.renewables rather than stacking on it (rule 19 [R-ONE-MECH]) --
+        # so it rides this replay path as a single-field A/B arm against a
+        # keeper recipe that still carries the allocation flag. Forward-native
+        # (rule 13, forecast leg in runner.py), so it is NOT in
+        # _BACKCAST_ONLY_OVERLAY_FIELDS.
+        config = config.with_overrides(spp_curtailment_ceiling=spp_curtailment_ceiling)
+    if spp_curtail_depth_wind is not None:
+        config = config.with_overrides(
+            spp_curtail_depth_wind=float(spp_curtail_depth_wind)
         )
     if netload_drag_merit_allocation is not None:
         # ercot-259: the net-load drag mandate's MERIT ALLOCATION. Same driver,
