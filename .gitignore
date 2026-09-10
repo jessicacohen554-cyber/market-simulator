@@ -1775,7 +1775,6 @@ results/calibration/caiso269_lateevening_span/
 results/pjm_d4_y*/
 results/pjm_d4_*/
 results/screen/pjm_d4_*/
-
 # nyiso-223 (2026-09-10) — the hub-daily unpriced-day gap-fill arm's per-year shard
 # bundles. Rule 31 [R-RETAIN] + rule 29(c) [R-SCREEN]: what discharges "delete before
 # merge" is KEEPING THE BUNDLE OUT OF `main`, never `rm`-ing it from local disk. Ignoring
@@ -1784,7 +1783,6 @@ results/screen/pjm_d4_*/
 # solved artifacts stay on disk for a promotion the owner has not yet ruled on. Only the
 # COMPOSITE, if promoted, is force-added and registered (rule 32(d)).
 results/calibration/nyiso223_gapfill_*/
-
 # SPP-61 screen bundle + any heavy bundle parts kept on local disk (rule 29(c)
 # delete-before-merge is discharged by KEEPING IT OUT OF `main`, which this
 # does; rule 31 [R-RETAIN]: NEVER `rm` them — the ercot-255 incident).
