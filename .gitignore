@@ -1785,6 +1785,16 @@ results/calibration/ercot264_repro_*/
 # own rule), which is what made check_registry_payload_parity.py red on main
 # itself; this rule is what stops it coming back.
 results/calibration/ercot262_arm_*/
+# ercot-262 offer-band-scale arm bundles. Same rule 29(c)/31 [R-RETAIN] posture as
+# the ercot-261 and ercot-264 families above: the shards force-added these onto
+# main instead of keeping them out of it, which held
+# check_registry_payload_parity RED from 2026-09-08 until the owner ruled on
+# disposition (2026-09-10, session ercot-267: delete both families -- the arm was
+# measured arithmetically hopeless at +-0.004 on C3b and every number it produced
+# is carried by its own PRECOMMIT/FINDING docs). Ignored here so a re-solve can
+# never re-commit them.
+results/calibration/ercot262_arm_*/
+results/calibration/ercot262_ctl_*/
 
 # nyiso-222 (2026-09-09) 2022 validation touchpoint on the +5% offer-curve arm.
 # Same rule 29(c)/31 [R-RETAIN] posture as the train-span bundle above.

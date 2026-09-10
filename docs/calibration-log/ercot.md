@@ -14317,3 +14317,70 @@ real spike) and its only known fix is the blocked daily series; slack-2021 960.6
 310 rows / 91 failures.
 
 **Next shorthand: ercot-267** (ercot-199 and ercot-257 remain unclaimed).
+
+
+## ercot-267 — 2026-09-10 — the standing parity RED is CLEARED on an owner ruling (ZERO LP)
+
+Branch `claude/ercot-february-breadth-wvsq30`, base `88c6ed90`. **Zero LP. No shard launched. No
+`ScenarioConfig` field touched, no `src/` or `scripts/` file edited, nothing registered, nothing
+solved.** Keeper `2026-09-09-ercot265-receipts-fallback` **untouched** — verified intact after the
+deletion (attestation present, all 30 `hourly/` sidecars). `audit_keepers --iso ERCOT`: **0 failures,
+0 warnings**; `build_status --check --iso ERCOT`: in sync.
+
+**THE ONE STANDING ERCOT ITEM IS CLOSED, AND ONLY THE OWNER COULD CLOSE IT.** ercot-266 left
+`check_registry_payload_parity` RED on seven unregistered bundle dirs and said so plainly: *"not mine
+to clear … it needs a decision, not a session."* The decision was put to the owner and taken
+**2026-09-10 — delete both families.** Executed: `results/calibration/ercot262_arm_{2021..2025}` and
+`ercot264_repro_{2023,2025}`, **106 tracked files**, `git rm -r`'d. The gate now reads
+**`registry/payload parity OK (41 runs checked, 71 bundle dirs swept)`** — green for the first time
+since 2026-09-08.
+
+**WHY THIS IS RULE 31 `[R-RETAIN]` TRIGGER (i) AND NOT THE ercot-255 INCIDENT REPEATING.** Both lanes
+had already recorded these runs non-promotable **in their own words** — ercot-262's offer-band scale
+measured ~0.5 % of price per 1 % of band and **±0.004 on C3b**, "arithmetically hopeless since no level
+shift moves one month by −$345 while the other eleven are already +12 % to +23 % HIGH"; ercot-264 was a
+reproduction certificate, **"NOT A KEEPER CANDIDATE … registering it would mint a second id for one
+configuration."** Under rule 31 that is a *sentence in the RESULT, never a licence to delete*, which is
+exactly why this session did not act on it and asked instead. Every number either run produced is
+carried by `docs/RESULT-ercot264-keeper-repro-2026-09-09.md` and ercot-262's own PRECOMMIT/FINDING
+docs, and git history holds the bytes — the delete-not-archive discipline rule 15 `[R-DASHBOARD]`
+already states.
+
+**HARDENED SO IT CANNOT RECUR.** `ercot264_repro_*/` was *already* gitignored (line 1778) and the two
+dirs were on `main` anyway, because a tracked file overrides `.gitignore` — the shards force-added them.
+`ercot262_arm_*` had no rule at all. Both families are now covered
+(`results/calibration/ercot262_arm_*/`, `ercot262_ctl_*/`), which is what rule 31 says discharges rule
+29(c)'s delete-before-merge duty: the parity sweep only ever sees COMMITTED dirs, so an ignored bundle
+may sit on local disk indefinitely without turning anything red.
+
+**NO SOLVE WAS SPENT, AND THE REASON IS NOT TIMIDITY.** ERCOT reads **CALIBRATED on all five
+registered years with zero failing criteria** — there is no gate for an ERCOT arm to close. The
+session's named object, **C3c-2021's February breadth**, was re-confirmed data-blocked *without
+re-surveying*: ercot-160 had already searched ERCOT's own MIS catalog (**5,773 products; 6 mention
+fuel; none is a price series**; the settlement Fuel Index Price is not a data product) and the matrix
+records the free EIA/ERCOT paths as **`G`-shaped, DO-NOT-REOPEN**. The one route this lane had not seen
+adjudicated — ERCOT's own published FIP, a different source *class* from the three price-reporting
+agencies — is inside that closure. It is dead.
+
+**A NUMBER THE NEXT LANE MUST NOT RE-QUOTE.** ercot-263 priced the daily Waha/HSC procurement at
+**C3b 0.559 → ~0.116** and concluded *"OWNER DECISION: procure daily Waha/HSC."* **That valuation is
+now stale.** ercot-265's receipts fallback closed C3b-2021 to **0.168 — a PASS — for free**, so the
+procurement no longer buys a determination. What is left for it to buy is the **C3c-2021 February
+breadth alone**, and C3c is a ledgered, **non-downgrading** caveat under rubric v3.3 (and v3.6 outside
+2023–2025). The purchase is therefore worth strictly less than the figure standing in the record, and
+whoever re-opens it should re-derive the value before quoting ercot-263's.
+
+**GOVERNANCE — AN OWNER DIRECTIVE THAT BINDS EVERY FUTURE ERCOT PROMPT.** Owner, 2026-09-10, verbatim:
+***"You're the ERCOT lane and no lane should ever work on two ISOs."*** The ercot-266 handoff's
+"HIGHER-VALUE ALTERNATIVES (check status first)" section — which points an ERCOT session at other ISOs'
+keeper shards and lever queues when ERCOT's own object is blocked — is **SUPERSEDED by that directive
+and must not be carried into the next ERCOT prompt.** This session read those surfaces before the
+directive landed and **wrote nothing**: the working tree was empty of changes at that moment and no
+non-ERCOT file has been touched at any point. The correct behaviour when ERCOT's object is blocked is
+to say so and stop, not to go shopping.
+
+**ERCOT's open objects, unchanged:** C3c-2021 monthly-resolution February breadth (blocked as above);
+slack-2021 960.6 → 2,274.9 MWh; D-4 conduct 310 rows / 91 failures. **Rule 28: no mechanism was tested,
+so no matrix cell moves** — ercot-266 already re-stamped the shard to the current keeper.
+
+**Next shorthand: ercot-268** (ercot-199 and ercot-257 remain unclaimed).
