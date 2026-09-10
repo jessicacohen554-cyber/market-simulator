@@ -2793,7 +2793,9 @@ def run_year(
     # Seasonal interface envelope: expand the scalar TTC to a per-hour matrix
     # where a measured monthly limit exists (NYISO Central-East). No-op (1-D)
     # for ISOs/years without one.
-    ttc = _apply_iso_monthly_ttc(ttc, iso_config, iso, year, demand.shape[1])
+    ttc = _apply_iso_monthly_ttc(
+        ttc, iso_config, iso, year, demand.shape[1], config=config
+    )
     # NYISO Zone-K LCR/TSL mechanism (issue #1345, config.nyiso_li_lcr_tsl):
     # cap the NYC->Long_Island link at the published locality import limit in
     # the HB14-21 design-condition window, replacing the Long_Island 0.45

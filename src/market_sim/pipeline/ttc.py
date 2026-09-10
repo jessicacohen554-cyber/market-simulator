@@ -24,6 +24,7 @@ import logging
 import numpy as np
 
 from market_sim.config.constants import (
+    NYISO_CUTSET_TTC_ENVELOPE_BY_MONTH,
     NYISO_INTERFACE_TTC_BY_MONTH,
     NYISO_INTERFACE_TTC_BY_YEAR,
 )
@@ -205,7 +206,9 @@ def apply_iso_year_ttc(iso_config, iso: str, year: int):
     return iso_config.model_copy(update={"links": links})
 
 
-def apply_iso_monthly_ttc(ttc, iso_config, iso: str, year: int, hours: int):
+def apply_iso_monthly_ttc(
+    ttc, iso_config, iso: str, year: int, hours: int, config=None
+):
     """Expand the scalar TTC array to a per-hour ``(hours, n_links)`` matrix
     when the ISO has a measured monthly interface envelope for ``year``.
 
@@ -229,11 +232,23 @@ def apply_iso_monthly_ttc(ttc, iso_config, iso: str, year: int, hours: int):
     """
     if iso != "NYISO":
         return ttc
-    monthly = NYISO_INTERFACE_TTC_BY_MONTH.get(year)
+    # nyiso-224, rule 19 [R-ONE-MECH]: the cutset envelope REPLACES the
+    # CENT EAST table on this one seam; the two never stack. Rule 14
+    # [R-ACCURATE] misalignment exception — the single Upstate_West ->
+    # Capital_Hudson link is the A-E -> F+ cutset (TOTAL EAST), and CENT EAST
+    # is a nested sub-cutset of it. See the constants header.
+    cutset = bool(getattr(config, "nyiso_total_east_cutset_ttc", False))
+    table_name = (
+        "NYISO_CUTSET_TTC_ENVELOPE_BY_MONTH"
+        if cutset
+        else "NYISO_INTERFACE_TTC_BY_MONTH"
+    )
+    table = (
+        NYISO_CUTSET_TTC_ENVELOPE_BY_MONTH if cutset else NYISO_INTERFACE_TTC_BY_MONTH
+    )
+    monthly = table.get(year)
     if not monthly:
-        _refuse_missing_year(
-            "NYISO_INTERFACE_TTC_BY_MONTH", year, NYISO_INTERFACE_TTC_BY_MONTH
-        )
+        _refuse_missing_year(table_name, year, table)
         return ttc
     leap = year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
     days_per_month = [31, 29 if leap else 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
@@ -248,12 +263,16 @@ def apply_iso_monthly_ttc(ttc, iso_config, iso: str, year: int, hours: int):
         prof = np.asarray(profile, dtype=float)
         ttc_t[:, i] = prof[month_of_hour - 1]
         logger.info(
-            "NYISO %d %s->%s monthly TTC envelope: %.0f-%.0f MW "
-            "(measured Central-East DAM postings)",
+            "NYISO %d %s->%s monthly TTC envelope: %.0f-%.0f MW (%s)",
             year,
             link.from_zone,
             link.to_zone,
             prof.min(),
             prof.max(),
+            (
+                "measured TOTAL EAST cutset p90 transfer"
+                if cutset
+                else "measured Central-East DAM postings"
+            ),
         )
     return ttc_t
