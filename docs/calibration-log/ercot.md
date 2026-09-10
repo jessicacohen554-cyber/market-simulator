@@ -14169,3 +14169,99 @@ real series be big enough?"; it has done that and is finished.
 forbids deleting it before the owner rules on ercot-262's promotion.
 
 **Next shorthand: ercot-266** (ercot-199 and ercot-257 remain unclaimed).
+
+## ercot-265 — 2026-09-10
+
+**PROMOTED: `2026-09-09-ercot265-receipts-fallback`. THE FIRST ERCOT KEEPER WHOSE FULL REGISTERED
+FIVE-YEAR SPAN READS `CALIBRATED`** — the superseded `2026-09-09-ercot261-corroborated-gas-level`
+was NOT-YET on `price_shape` alone. Owner ruling: *"It looks like it should be promoted."*
+C1, C2, C3a, C3b, C4, C6, C8 all PASS; C3c is the single ledgered caveat (ACCEPTED MODEL-CLASS
+LIMITATION, non-downgrading under rubric v3.3). All three partition spans CALIBRATED
+({2021,2022}, {2023}, {2024,2025}). `audit_keepers --iso ERCOT`: 0 failures, 0 warnings.
+
+**THE DEFECT WAS INSIDE THE INCUMBENT'S OWN FILTER.** `ercot_ep_gas_basis_corroborated` admits a
+month's measured basis only where a SECOND independent measurement of the same delivered-gas
+quantity agrees within `ERCOT_GAS_CORROBORATION_TOL_USD_MMBTU = 1.00`. When they DISAGREE it
+substituted the year's corroborated mean — i.e. it **discarded BOTH measurements** and priced an
+extraordinary month at an ordinary one. It fires in exactly one year of 2019–2025: 2021, months 2
+and 12. February 2021 is Winter Storm Uri and carried **94.8 % of that year's C3b SSE**, the
+ISO's only remaining rubric failure.
+
+**THE REPAIR IS RULE 14 `[R-ACCURATE]`, NEVER THE RESIDUAL.** Between the two disagreeing
+measurements, prefer the better-grounded: EIA-923 Schedule-5 receipts are **what the plants
+actually paid**, quantity-weighted over the same population — Feb-2021 **$45.96/MMBtu across 36
+plants on 28.4 million MMBtu, the year's LARGEST burn month** — against an EIA N3045TX3 survey
+print that is a monthly **cost/volume RATIO**, which `data.fuel.basis.ercot`'s own docstring
+already records as unreliable when a month's within-month distribution is extreme. New field
+`ercot_ep_gas_basis_receipts_fallback`, a SUB-GATE inside the corroboration flag (rule 19
+`[R-ONE-MECH]`: same filter, same rows, same held-out months — only the fallback VALUE changes),
+**ZERO free parameters** (rule 21 `[R-DOF]`, ledger carried verbatim at n_entries 12 /
+n_residual 7; the tolerance, admissibility test and fail-closed discipline untouched).
+Motivation stated honestly and separately from identification: the lane reached this filter from
+the C3b-2021 residual, but nothing is fitted to it and there is no value to fit — **+40.611 is
+read entirely off the measured receipt series**, and the choice between the two series rests on
+measurement quality, an argument that stands independently of any price.
+
+**PHASE 0, zero LP:** 2021 m02 basis +0.390 → **+40.611**, m12 +0.390 → **+1.589**;
+2022/2023/2024/2025 byte-identical. **CONFINEMENT VERIFIED BY SHA256, not asserted:** of the 30
+committed hourly sidecars (6 × 5 years) the six 2021 files differ and **all 24 for 2022–2025 are
+BYTE-IDENTICAL** to the incumbent, so the train tier cannot move.
+
+**SCORED, arm vs the incumbent's committed 2021:**
+
+| | actual | incumbent | arm |
+|---|---:|---:|---:|
+| C3b price_shape (gate 0.20) | — | **0.559 FAIL** | **0.168 PASS** |
+| C3a price_mean | — | −6.7 % PASS | +5.6 % PASS |
+| annual LW $/MWh | 165.53 | 154.43 | 174.85 |
+| February $/MWh | 1,767.07 | 1,422.13 (−19.5 %) | **1,690.92 (−4.3 %)** |
+| C3c h > $200 | 258 | 223 (0.86×) | **687 (2.66×)** |
+
+**COSTS AT FULL MAGNITUDE, none minimised.** C3c-2021 blows to 687 h and **the entire delta is
+February** — 464 new > $200 hours, **464 of them in February and ZERO outside it**, with the
+≥ $1,000 deep tail essentially unmoved (131 → 133 h). That is the **monthly-resolution BREADTH
+defect**: one monthly value lands on all 672 February hours while the real Uri spike lasted ~5
+days. Reported, not repaired. Slack 2021 rises 960.6 → 2,274.9 MWh (dump stays 0.0); D-4
+per-unit conduct carries 310 rows / 91 failures against 309 / 89, one extra row and two extra
+convictions, all 2021, inherited from the same pre-existing mechanism family.
+**NAMED SUCCESSOR, unchanged:** a DAILY delivered series (Waha / Houston Ship Channel). The
+ercot-265 survey found it unobtainable from any free public source — EIA's NGWU daily spot table
+carries **no Texas hub** (verified directly: Henry Hub, New York, Chicago, Cal. Comp. Avg. only),
+CME/NYMEX delisted both hubs on zero open interest (ercot-224), and ICE/NGI/Platts/Argus are paid
+and refused by the owner ruling of 2026-08-04. **Closing C3c's February breadth is therefore an
+owner procurement decision, not a modelling one.**
+
+**GOVERNANCE — three errors of mine, all corrected in-session and worth carrying forward.**
+1. **A C3c KILL GATE THAT SHOULD NEVER HAVE EXISTED.** The PRECOMMIT pre-registered "C3c-2021 >
+   400 h kills the arm". The owner corrected it — *"C3c shouldn't kill a run it's an acceptable
+   caveat"* — and the correction is the rubric: v3.3 makes a ledgered C3c non-downgrading and
+   v3.6 drops the lone-failure condition on out-of-training years entirely. **ercot-258 had
+   already adjudicated this on this exact year** (*"THE BLOCKER IS NOT C3c … THE BLOCKER IS
+   C3b"*) and the gate was written anyway. Withdrawn by AMENDMENT 1, **written blind** — verified
+   at the time that no metrics branch existed, so the 2021 result was unread. Had the gate stood,
+   it would have discarded the run that closes ERCOT's only failing criterion.
+2. **THE SHARD BLOCK FORBADE THE PUSH THAT REGISTRATION NEEDS.** Shards were told *"DO NOT copy
+   dispatch/, root `*.parquet`"* and *"DO NOT PUSH ANYTHING AT ALL — report numbers only"*. A
+   cloud shard's final message is **not readable by the parent** (no peer addressing, no
+   `list_events`), and `render_calibration_html.build_payload` reads `system.parquet`,
+   `dispatch/<year>_P1.parquet` and the `_shared` store. The working precedent was on `main` the
+   whole time — `ercot262_arm_2021` carries both. Recovered by waking the shards; the block is
+   corrected in `docs/handoffs/SHARD-ARTIFACT-HANDOFF-BLOCK.md`.
+3. **TWO SILENT-BLINDNESS NEAR-MISSES, both caught before promotion.** Regenerating
+   `legitimacy_diagnostics.json` on the slim composite produced **D1/D2/D4 = 0 rows reading
+   `passed: True`** — a false pass by blindness, the exact failure CLAUDE.md names ("C8 would
+   pass because the diagnostic went BLIND"). Discarded; the honest artifact is a merge of the
+   shards' own per-year diagnostics (D1 39 / D2 43 / D4 310-91 / D5 12 / D9 5 / D10 10). Then a
+   first merge kept only 2021's per-year `summary`, leaving **C8 unscored on four years**; fixed
+   by concatenating summaries. Separately, pointing the composite at the 2021 shard's
+   `shared_inputs` — **single-year, because each shard solved one year** — silently rewrote the
+   SHARED ERCOT bench parts to **0 plants with CAMPD for 2022–2025** (main had 98/99/100/100),
+   which degraded the incumbent's score too. Restored from `main` and re-pointed at the keeper's
+   five-year store; bench verified intact at 94/98/99/100/100 after the final registration.
+
+**NOT DONE, and not silently:** `prune_iso_runs.py --iso ERCOT` was **blocked by the permission
+classifier** and was not run, so ERCOT may carry more than the keeper-only retention rule 15
+requires. No workaround was attempted. The `results/shard-staging/ercot265/` tree (~330 MB) is
+likewise still on `main` and should come out once its contents are confirmed redundant.
+
+**Next shorthand: ercot-266** (ercot-199 and ercot-257 remain unclaimed).
