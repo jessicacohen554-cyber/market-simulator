@@ -1,0 +1,40 @@
+{
+ "schema": "forecast-attestation/v1",
+ "bundle": "results/ff-t3-neiso-golden/d92/base",
+ "run_id": "neiso-2026-2050-t3-golden3-d92-base",
+ "attested_by": "capx D92, 2026-09-10 (owner ruling Q65) \u2014 THE PRODUCING SESSION (rubric \u00a75's default author): this lane solved the bundle it attests, as leg L0, the same-container G-DRIFT control for the FC-5/FC-6 re-base. Assertions are read from committed bytes, not judged at authoring time; an assertion that reads FALSE is recorded FALSE and FC-7 fails on it at full magnitude rather than the attestation being re-scoped to fit (PRECOMMIT-capx-d92-2026-09-10.md \u00a76.3, pushed before this bundle existed).",
+ "predeclaration": "docs/handoffs/PRECOMMIT-capx-d92-2026-09-10.md (\u00a73-\u00a76 + Addenda A/B, all pushed before any LP)",
+ "assertions": {
+  "dof_ledger_complete": {
+   "value": false,
+   "read_from": "dof_ledger.json built by the committed scripts/build_forecast_dof_ledger.py from this bundle's own run_config.json",
+   "evidence": "9 entries, 7 IDENTIFIED, 2 UNIDENTIFIED. The two UNIDENTIFIED entries are the recipe pins this leg carries so it reproduces the run the neiso-t3 verdict names \u2014 ccs_retrofit_fixed_cost_co2_scaling=false and ccs_retrofit_vom_adder=8.0. The ledger is byte-equivalent in shape to results/ff-t3-neiso-golden/d90-rescore/dof_ledger.json: same 9 names, same 2 UNIDENTIFIED, so FC-7 reads exactly what it read before this re-point. Their non-identification is capx D90-R \u00a73.4's program-wide CURATED_IDENTIFICATIONS desynchronization, which is routed and NOT repaired here."
+  },
+  "run_config_reproducible": {
+   "value": true,
+   "read_from": "run_config.json",
+   "evidence": "mode=forecast; sha aac390a6; cache_key dd8203a8bf1546b9 \u2014 and this key REPRODUCES under ScenarioConfig.cache_key() at HEAD. Measured by scripts/check_key_provenance.py after this bundle was committed: 278 committed run configs, 192 reproduce (up from 274/188), mismatches unchanged at 22, G1_UNKNOWN unchanged at 6. This leg adds no G1 — and does not remove one either: the six existing rows are other records, five another lane's and one capx D90-R's."
+  },
+  "honest_unfit_referenced": {
+   "value": true,
+   "read_from": "full_horizon_summary.json invariants + docs/handoffs/FINDING-capx-d92-2026-09-10.md",
+   "evidence": "14 invariants carried into the verdict; every failing FC row reported at full magnitude; 13 pre-registered predictions graded with both misses named (the P1 margin prediction was backwards, and the lane's own one-sentence summary is graded HALF WRONG on the only clause carrying information); and the FC-6 P2 row is disclosed on the row itself as one sub-check weaker than the row it replaces."
+  },
+  "quarantine_attested": {
+   "value": true,
+   "read_from": "run_config.json solved_years",
+   "evidence": "25 solved years, 2026..2050 inclusive \u2014 forecast mode, no measured actuals, no holdout tier touched."
+  },
+  "no_off_registry_knobs": {
+   "value": true,
+   "read_from": "run_config.json scenario_config vs ScenarioConfig fields",
+   "evidence": "Every solve-affecting field is a declared ScenarioConfig field; zero stray keys; no env knob, no per-plant dict, no getattr fallback (rule 24 [R-REGISTRY]). The two set_overrides are registered fields carried through the declared --set / --no-... CLI surface and are the two ledgered entries above."
+  },
+  "registered": {
+   "value": true,
+   "read_from": "frontend/data/forecast/ff-verdicts.json",
+   "evidence": "Registered under verdict key neiso-t3; the pre-D92 record is preserved byte-equal at neiso-t3-pre-d92."
+  }
+ },
+ "what_this_attestation_does_not_claim": "It does NOT claim this leg is a new or better forecast than the run it replaces on the record. L0 REPRODUCES results/ff-t3-neiso-golden/d90-rescore EXACTLY \u2014 zero differing cells across 25 years x every trajectory field, identical invariants \u2014 so the re-point moves NO number and is a change of address, not of result. It does NOT claim FC-3, FC-4 or the FC-6 driver battery were measured here: all three are CARRIED byte-identically and are incapable of moving. It does NOT claim the summary-grain FC-6 P2 row is equal to a cache-grain one: the objective sub-check is absent and reads not_scored. And it does NOT claim the model is closer to the AEO2025 corridor: at 2030 it is 35.6 points closer, at 2035 55.0 points further, at 2040 2.6 points further \u2014 mixed, and reported as such."
+}
