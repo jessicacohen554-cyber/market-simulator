@@ -50,6 +50,38 @@ replaced by `_vstack_csr_free` for this same OOM.
 
 **Any future MISO/PJM plant-level solve should export all three variables before the solve.**
 
+### 1b. SECOND CORRECTION — the HiGHS lever did NOT work, and the real cause is a MISREPORTED CONTAINER SIZE
+
+Both claims in §1a were tested and one of them is wrong. Measured across shards R3-A and R4:
+
+| attempt | change | peak RSS | limit |
+|---|---|---:|---:|
+| R3-A | `MARKET_SIM_HIGHS_THREADS=1` + lean + allocator tuning | **13.305 GiB** | 13.344 GiB |
+| R4 | the above **plus** `miso_seam_export_limit=false` (removes the dense `min_gen`) | **13.287 GiB** | 13.344 GiB |
+
+* **`MARKET_SIM_HIGHS_THREADS=1` is INEFFECTIVE here.** 13.305 GiB with it vs 13.30 GiB without —
+  no change. §1a called it "the decisive lever"; it is not. The peak is inside `h.run()`, HiGHS's
+  own simplex factorization workspace for a 27M-column LP, which no environment variable reaches.
+* **The `min_gen` densification is REAL BUT NOT THE CAUSE.** Arming the seam export limit does
+  allocate a dense `(n_gen, T)` float64 — 202.2 MiB by arithmetic — and this session's EIA-930
+  back-fill did newly trigger it for 2020-2022. But removing it saved only **18 MiB** (13.305 →
+  13.287), not 202. It is not resident at the peak. **The back-fill is therefore NOT the reason
+  MISO stopped fitting**, and any earlier text in this session attributing the OOM to it is wrong.
+* **THE ACTUAL CAUSE: the container misreports its own size.** `free` advertises **15.70 GB**;
+  `/sys/fs/cgroup/memory.max` is **13.344 GiB**. Every earlier attempt sized the problem against
+  `free` and concluded there was ~2 GB of headroom that does not exist.
+
+**MISO's single-year LP needs ~13.29 GiB against a 13.344 GiB cap — a 0.4 % margin.** That is why
+it has solved successfully many times and now intermittently does not: it has always been one small
+perturbation from the OOM killer, and nothing has to change for the outcome to flip.
+
+**Consequences for the next session.** Do not repeat any of: the HiGHS thread cap, allocator/BLAS
+tuning, `presolve` (already off), `_vstack_csr_free` (already landed), or disarming the export limit
+— all measured, none sufficient. **Read `/sys/fs/cgroup/memory.max`, never `free`**, and require a
+cap above ~14 GiB before launching a MISO solve at all. The `min_gen` sparse-override cleanup
+remains worth doing on its own merits (it writes 3,025 rows to set ~32, and the same broadcast-and-
+copy pattern recurs at `import_nodes.py:630` and `:975`), but it buys 18 MiB, not a solve.
+
 **Consequence for the lane:** no MISO arm — the 2021 envelope screen, the 2022 ladder arm, or any
 future one — can be evaluated until a larger environment exists. Every shard stopped and reported
 rather than pushing a partial bundle, which is the correct behaviour (rule 32(c)7).
