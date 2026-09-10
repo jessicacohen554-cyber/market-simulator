@@ -13,7 +13,9 @@
   "calibration_flags": {
     "iso": "PJM",
     "years": [
-      2020
+      2020,
+      2021,
+      2022
     ],
     "hours": 8760,
     "passes": [
@@ -22,7 +24,9 @@
     "commitment": false,
     "commitment_screen_coal": true,
     "gas_prices": {
-      "2020": 2.03
+      "2020": 2.03,
+      "2021": 3.72,
+      "2022": 6.45
     },
     "outage_source": "historic",
     "coal_lignite_mustrun": null,
