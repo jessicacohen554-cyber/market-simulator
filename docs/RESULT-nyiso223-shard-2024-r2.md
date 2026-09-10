@@ -1,8 +1,19 @@
-# RESULT — shard `nyiso223-y2024-r2` (NYISO 2024, hub-daily unpriced-day gap fill)
-
-_Provenance: rescued verbatim from branch `claude/nyiso223-y2024-r2`, renamed from `RESULT-nyiso223-shard-2024.md` because `main` already carries the `y2024` shard's report at that path. Both 2024 shards solved; this is the relaunch's. Content unmodified._
+# RESULT — nyiso-223 shard `nyiso223-y2024-r2` (NYISO 2024, hub-daily unpriced-day gap fill) — INDEPENDENT RELAUNCH
 
 Session **nyiso-223** · shard relaunch · pinned SHA `ce4779ecd62db3c732e0d0cd7b910b80bc23ed99`
+
+> **Provenance / why this file exists.** This is the SECOND, independent 2024 solve of the
+> hub-gap-fill arm (shard relaunch `nyiso223-y2024-r2`). The first 2024 shard's report is
+> `docs/RESULT-nyiso223-shard-2024.md`. Both are kept because the two runs are an independent
+> replication of each other: the class-energy findings agree EXACTLY — total P1 generation
+> −0.0020 TWh on 152.18 TWh, ST_GAS +0.0334, CC_REGULAR −0.0281, CC_CHP −0.0191 TWh, 5,880
+> fuel hours moved. The annual price legs differ by a constant ~1.5 $/MWh because the two
+> reports use different zone/demand bases (this one excludes the `NYISO_external` import node
+> explicitly); the arm−keeper DELTA agrees to ~0.006 $/MWh (+0.0748 here vs +0.0689 there).
+> This file was landed on a fresh branch off `main` rather than by merging
+> `claude/nyiso223-y2024-r2`, which carries a duplicate of the mechanism commit already in
+> `main` and therefore conflicts on `.gitignore`, the matrix shards and `scenarios.py`.
+
 Solve: 2026-09-10 02:40:22 → 02:46:36 UTC (**6 min 14 s**, well inside the 20-min shard budget, rule 32 `[R-SHARD]`).
 
 **Arm:** `results/calibration/nyiso_fuelvintage_A` replayed on 2024 with

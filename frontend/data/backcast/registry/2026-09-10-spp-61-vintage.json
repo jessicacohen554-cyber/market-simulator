@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-10-spp-61-vintage",
+  "label": "spp 61 vintage",
+  "date": "2026-09-10",
+  "shorthand": "spp-61-vintage",
+  "definition": "SPP-61: eia860_vintage_tracks_solve_year armed on the spp52a_fossil93 recipe, full 2023-2025 span (rule 16 R-ALLYEARS)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "SPP",
+  "file": "frontend/data/backcast/runs/2026-09-10-spp-61-vintage.js",
+  "bundle": "results/calibration/spp61_vintage"
+}

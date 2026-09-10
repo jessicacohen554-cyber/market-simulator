@@ -989,10 +989,43 @@ differently:
     *sole* numeric bound on what may be carried without a downgrade;
   - **every other caveat route still downgrades** — commercial-band target
     misses, protective-gate caveats, `SKIPPED` criteria and data-blocked years
-    are untouched;
+    are untouched *(amended at v3.7 below: a `SKIPPED` **C3c** is now exempt
+    from this route too; every other `SKIPPED` criterion still downgrades)*;
   - and the `FAIL` path is untouched: a C3c miss that is not ledgerable, because
     a second criterion also fails or governance does not pass, still stands as a
     `FAIL` and still carries the run to `NOT-YET`.
+
+  **v3.7 (owner instruction 2026-09-10) — an UNSCORED C3c does not downgrade
+  either.** Verbatim: *"If c3c is the only caveat the status should be
+  calibrated not with caveats."* v3.3 above delivers that for a **ledgered**
+  C3c, but only through `_apply_c3c_standing_rule`, which sees C3c **only when
+  it is scored and failing**. Where the ISO-year has no scarcity bench, C3c is
+  `SKIPPED` instead, falls into the unscored-criteria route, and downgrades by a
+  path the standing rule cannot reach. The same accepted model-class limitation
+  therefore downgraded or did not **depending on whether a bench happened to
+  exist** — a property of the data, not of the model. C3c is now exempt from
+  that route as well.
+  - **Fail-closed on v3.1's own restriction:** the exemption reaches
+    `LEDGERABLE_CRITERIA` (`{C3c}`) **and** only at SUPPORTING tier, so it can
+    never reach an unscored load-bearing (C1/C2/C3a/C3b) or protective (C6/C8)
+    criterion. An unscored C8 still downgrades as an *unscored PROTECTIVE*
+    criterion, and governance is tested before this branch, so a failing or
+    unattested C6 still short-circuits to `NOT-YET`.
+  - **Still reported, which is what stops it being an escape hatch:** C3c keeps
+    its `SKIPPED` status, stays in `criteria`, and is **named on the
+    determination basis** by its own explicitly non-downgrading reason line —
+    the same contract the v3.3 ledgered line carries.
+  - **Both caveat budgets are untouched and are still checked first.**
+  - **Effect at amendment, measured over all 36 registered runs and every
+    per-year subset against a pre-change snapshot rather than asserted: ZERO
+    determinations change.** No committed row has C3c as its only downgrading
+    item; the single record that moves is MISO `2026-09-10-miso-251-tp2020`,
+    whose reason line splits from `unscored criteria: price_mean, price_shape,
+    price_tail` into `unscored criteria: price_mean, price_shape` plus the new
+    non-downgrading C3c line — and it stays `CALIBRATED-WITH-CAVEATS`, because
+    two **load-bearing** criteria are still unscored there. This is a
+    forward-looking correction governing the first ISO-year to lose only its
+    tail bench. No solve ran; every keeper re-scores in place.
 
   **Why C3c and nothing else.** C3c is the one criterion with *no published
   commercial comparable at all* (§5 / the C3c band note: no commercial or

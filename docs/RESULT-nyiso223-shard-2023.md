@@ -1,6 +1,16 @@
 # RESULT — nyiso-223 shard `nyiso223-y2023` (NYISO 2023 hub gap-fill arm)
 
-_Provenance: rescued verbatim from branch `claude/nyiso223-y2023`, original path unchanged. That branch also carried a duplicate of the `nyiso_hub_gap_month_level` mechanism commit, which is already on `main`; only this report was unmerged. The SOLVED 2023 result is `RESULT-nyiso223-shard-2023-r2.md`._
+> **SUPERSEDED — read this as the record of a STOP, not as an open action item.**
+> This shard stopped without a solve artifact. The 2023 leg was re-run by the
+> replacement shard whose report is **`docs/RESULT-nyiso223-shard-2023-r2.md`**,
+> which confirms the two curations named in §3 below were **sufficient** — it hit
+> no third missing datatype. The mechanism has since been adjudicated across all
+> four solvable years and its NYISO matrix cell reads **`R` (rejected on effect,
+> not on construction)**: correct, well-behaved, mean-preserving in dispatch
+> (largest class move 0.0431 TWh against the 0.10 TWh bar), but it changes **zero
+> criterion verdicts in any year**. §4 and §5 are therefore **historical** — no
+> relaunch is owed, and nothing here is pending.
+
 
 **Status: STOPPED — no solve artifact. Blocked on an unbuilt `data/clean` tree.**
 **Date:** 2026-09-10 · **Pinned SHA:** `ce4779ecd62db3c732e0d0cd7b910b80bc23ed99`

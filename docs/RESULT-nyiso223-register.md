@@ -223,3 +223,56 @@ shard's:
 2. **No promotion is possible until C6 is attested.** A keeper must carry
    `calibration_attestation.json` with its DOF ledger; this bundle has none, and authoring one
    requires a `scripts/gen_nyiso223_attestation.py` this shard is forbidden to create.
+
+---
+
+## 13. ADDENDUM — what did 2022 score, and did it beat the keeper? **NO.** (owner question, 2026-09-10)
+
+The keeper bundle is 2023–2025 and holds no 2022, so the comparator is the keeper's **own
+recipe replayed on 2022**: registered run **`2026-09-09-nyiso-221-fuelvintage-tp2022`**
+(bundle `nyiso_fuelvintage_H2`). Artifact-only, no solve spent.
+
+### 13.1 2022 head-to-head
+
+| criterion | keeper tp2022 | new 2022 | direction |
+|---|---|---|---|
+| **C1 fuel-mix** | **FAIL** CC_REGULAR +4.99 TWh / +3.8pp | **FAIL** +5.05 TWh / +3.8pp | **worse** (+0.06 TWh) |
+| C2 system volume | PASS (C1 flags CC_REGULAR) | PASS (same) | same |
+| **C3a mean LMP** | **FAIL** −13.8 % (69.92 v 81.12) | **FAIL** −13.9 % (69.82 v 81.12) | **worse** (0.10 $/MWh further below) |
+| **C3b NRMSE** | **FAIL** 0.242 | **FAIL** 0.245 | **worse** (+0.003) |
+| C3c price tail | CAVEAT — model **10 h** v 101 h | FAIL — model **10 h** v 101 h | **identical model output** (see 13.2) |
+| C4 dispatch corr | PASS r 0.901 / NRMSE 0.162 | PASS r **0.910** / **0.156** | **better** |
+| C6 governance | PASS | **UNATTESTED** | worse (artifact gap) |
+| C8 forced share | PASS | PASS | same |
+| **determination** | **NOT-YET** (3 fails, 1 ledgered) | **NOT-YET** (4 fails, 0 ledgered) | — |
+
+Other C1 classes 2022, all PASS both sides and within ±0.04 TWh of each other: CC_CHP
+−0.76→−0.74 · CT_PEAKER +1.23→+1.27 · ST_GAS −1.27→−1.26 · ST_CHP +0.63→+0.63 ·
+COAL_PRB +0.66→+0.65 · COAL_BIT +0.00→+0.00.
+
+### 13.2 The C3c CAVEAT→FAIL difference is NOT a worse tail
+
+Both runs produce **exactly 10 model hours >$300 against 101 actual** — byte-identical
+outcome. The status differs only because rule 22 `[R-C3C]`'s standing rule has guard (b):
+**governance must PASS** for C3c to be reclassified to a ledgered caveat. The keeper
+touchpoint attests, so its C3c reads CAVEAT; this bundle does not, so the rule is blocked and
+C3c stays FAIL. That is the missing attestation showing up a second time, not a model
+regression — and it is also why this run's `fails` reads 4 against the touchpoint's 3.
+
+### 13.3 Verdict
+
+**2022 did not beat the keeper.** It is marginally worse on all three load-bearing criteria
+(C1, C3a, C3b), identical on C3c's actual model output, and marginally better on C4 — with
+both runs landing on the same NOT-YET determination. Every movement is a third-decimal
+wiggle, consistent with §12.3: the gap fill redistributes within months and does not change
+the level.
+
+The owner's conditional — *"if it beat the keeper it's a promotion"* — is **not met**, so this
+shard again did not promote and no keeper file was touched.
+
+**This is not a new finding about 2022.** The keeper's own promotion note already recorded
+2022 degrading on price under the corrected fleet (C3a −12.5 % → −13.8 %, C3b 0.229 → 0.242)
+and ruled it a **discovered root cause** kept under rules 1/14 — *"a fleet missing Dunkirk was
+silently compensating for a NYISO 2022 price level that is too low for another reason."* This
+run reproduces that level (−13.9 % / 0.245) and does not address it. The open object is the
+2022 price level itself, which the gap fill was never aimed at.
