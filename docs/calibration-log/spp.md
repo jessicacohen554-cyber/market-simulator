@@ -814,3 +814,102 @@ price-duration block — the LP completed and wrote every hourly sidecar, and `m
 registration artifact, not a solve one. Cell `vre_curtailment_oversupply_allocation` **R → K**.
 Records: `docs/handoffs/FINDING-spp-51c-2026-09-09.md` (+ ADDENDUM 2),
 `PRECOMMIT-spp-51c-2026-09-09.md` + ADDENDUM.
+
+---
+
+## 2026-09-10 — spp-20: SPP-52a PROMOTED to keeper 5 by owner ruling — the authorized-channel −7 % fossil offer level; C3a and C3b both CLEAN for the first time, and SPP is ONE ROW from CALIBRATED
+
+**Owner instruction, verbatim:** *"Determine if spp 52a should have been promoted. If so, promote and then
+launch a fresh spp calibration backcast session to close the rubric and reach frontier / complete. If it
+shouldn't be promoted, then still launch the next calibration session off 51c"*. **ZERO LP** (rule 32
+`[R-SHARD]` (a): this session is an orchestrator and solved nothing). The adjudication was made on the
+committed artifacts of BOTH runs, re-scored by this session rather than read off the producing lane's report.
+
+**DETERMINATION: PROMOTE.** SPP-52a (`2026-09-09-spp-52a-fossil-offer`, bundle `spp52a_fossil93`) is keeper 5,
+superseding keeper 4 (lane SPP-51c). The producing lane had deliberately left the matrix cell at `O` — *"O not
+K because PROMOTION IS THE OWNER'S ACT and has not been ruled"* — which is exactly the posture rule 31
+`[R-RETAIN]` asks for, and the question it left open is the one this session answered.
+
+**WHY, ON THE SCORER'S OWN OUTPUT — IT STRICTLY DOMINATES ITS PREDECESSOR.** Both bundles re-scored with
+`scripts/calibration_verdict.py` on the same repaired-clock bench, so this is like-for-like:
+
+| criterion | keeper 4 (SPP-51c) | **SPP-52a** |
+|---|---|---|
+| C1 fuel-mix (LOAD) | FAIL — 2024 ST_GAS −8.23 TWh | FAIL — same single row, **−8.13 TWh** |
+| C2 system volume (LOAD) | PASS | PASS |
+| **C3a mean LMP (LOAD)** | **FAIL** — 2025 +10.3 % | **PASS** — +1.34 / −0.60 / +3.63 % |
+| **C3b price shape (LOAD)** | **FAIL** — 2025 NRMSE 0.204 | **PASS** — 0.1647 / 0.1769 / 0.1755 |
+| C3c price tail (SUPP) | FAIL all three years | FAIL all three years (0 / 4 / 2 h vs 42 / 59 / 68) |
+| C4 / C6 / C8 | PASS | PASS |
+| grade summary | grade 4 of 8, **4 fails** | grade **6 of 8, 2 fails**, 0 caveats of any kind |
+| per year | 2023 CALIBRATED · 2024 NOT-YET · **2025 NOT-YET** | 2023 CALIBRATED · 2024 NOT-YET · **2025 CALIBRATED-WITH-CAVEATS** |
+
+Better on two load-bearing criteria, marginally better on the third's failing row, **worse on nothing gated**.
+This is **the first SPP run for which C3a and C3b both PASS**.
+
+**THE CARVE-OUT CONDITIONS WERE VERIFIED, NOT ASSUMED.** Checked against the run's own `run_config.json`:
+all ten registered fossil classes at **0.93** on exactly the four bands (`committed`/`econ_low`/`econ_high`/
+`peak`); **no** `phys_*` field, **no** `econ_low_share`, **no** `pct_peaking` (CT_PEAKER keeps 0.526 / 7.0,
+COAL_PRB 0.55, ST_GAS 0.5 / 15.0); the three `*_INTERMEDIATE` curves untouched at peak 2.25 / 3.0 / 2.2; no
+adder, offset, haircut or proxy anywhere; ONE config across all three scored years; the value is **the owner's
+own number**, declared in `PRECOMMIT-spp-52a-2026-09-09.md` before the solve and **never swept** — exactly one
+multiplier was ever solved. Declared in the attestation's `authorized_price_tuning` block against the scorer's
+six-field schema, so **C6 PASSES**, and carried as a ledgered free parameter (identification *"price residual,
+authorized channel (rules 1/13 amendment 2026-09-05)"*, **DOF `n_residual` 1 → 2**; entries stay at 3 because
+the schema counts `offer_curve_by_group` as one entry carrying a dict).
+
+**WHY RULE 1 `[R-STRUCT]`'s FIRST HALF IS NOT ENGAGED.** Its "a level-tuned run that is missing real structure
+is still not a keeper" clause targets a run that trades structure for level. This run carries **exactly** keeper
+4's structure — same mechanism set, same curtailment allocation, same inputs, one field different — so there is
+no more-structural alternative it beats, and nothing was given up. The measured level response is **−6.00 /
+−5.91 / −6.03 %, flat to 0.12 pp across three years**: the signature of a **level** lever, which **CONFIRMS the
+price-family lane's G-2 steepening refusal rather than overturning it**. Nothing rotates the stack and no shape
+claim is made.
+
+**REPORTED AGAINST THE PROMOTION, at full magnitude:** the determination does **NOT** change (NOT-YET), and a
+passing C3a is not a calibrated ISO. The reported-only **D-A diurnal amplitude FALLS ~2 pp** — 36.9 / 35.2 /
+28.9 % of measured against keeper 4's 38.9 / 36.8 / 30.3 % — because a level cut compresses the absolute
+hour-of-day range. **SPP's price surface is still too FLAT and has NO TAIL**, and every structural object keeper
+4 named is still open and is **not** closed by this promotion: the thermal-commitment floor (SPP-51b R-2, the
+measured binding limb — the LP absorbs 98.2 % of the concentrated curtailment headroom, thermal annual minimum
+254.3 MW across a ~40 GW fleet), the zonal spread (R-3, measured |N−S| 12.13 / 17.23 / 15.18 against a model
+~1), and scarcity (SPP-55). A tuned level does not substitute for any of them.
+
+**THE FINDING THAT SETS THE NEXT LANE'S TARGET — SPP IS ONE ROW FROM CALIBRATED.** Verified against this
+keeper's own scored JSON (`protective: 0`, `ledgered: 0`, `commercial_band: 0`, ledgered budget **1**, free):
+**C3c is now the ONLY supporting-tier failure.** If C1's single 2024 ST_GAS row is repaired, C3c becomes the
+**LONE** failure and the rubric v3.3 C3c standing rule (rule 22 `[R-C3C]`) reclassifies it to a ledgered caveat
+— **every guard is already satisfied** (governance PASSES, C3c is supporting tier, it is never a PASS, and the
+single ledgerable slot is free). **SPP WOULD THEN READ CALIBRATED.** The per-year table makes the same point
+independently: 2023 is already CALIBRATED and 2025 is CALIBRATED-WITH-CAVEATS (blocked only by the preliminary
+EIA-923 vintage, a DATA limit, not a model one); **2024 alone holds the ISO, and `fuelmix` alone holds 2024.**
+That makes **SPP-46 R-4 / desk register R-ax — Harrington 6193's fuel vintage** (carried as `gas_st` at
+$1.48/MMBtu in 2023–24 while CAMPD burns coal on all three boilers, converting in 2025) — the highest-value next
+lever, ahead of the thermal floor and scarcity. It is a **data-vintage repair, not a new mechanism**.
+
+**PROMOTION SURFACES TOUCHED (SPP's own files only, rule 25 `[R-ISO-SCOPE]`):** `keepers/SPP.json` (keeper +
+note); `status/SPP.js` rebuilt via `build_status.py --iso SPP` (`shared.js` byte-unchanged); the mechanism-matrix
+SPP shard (keeper/gates stamps, `offer_curve_by_group` **O → K**, rule 28(b)) and its §5.7 prose header;
+`prune_iso_runs.py --iso SPP` removed the superseded keeper 4's three stores (rule 15 keeper-only retention;
+its FINDING docs are retained and git history is the record). **`calibration-complete.json` NOT touched** — SPP
+is absent from both blocks and reads NOT-YET, so there is nothing to re-key.
+
+**THE R-T DUTY WAS DISCHARGED, AND THE ROW WAS STALE BY TWO PROMOTIONS.** `program-status.json`'s SPP
+`gate.a_keeper_marker` still named the **THIRD** keeper (`2026-09-07-spp-3-screened-input`): the SPP-51c lane
+promoted keeper 4 on 2026-09-09 without re-keying it, which is exactly the multi-PR staleness window R-T exists
+to make zero. Recorded against that lane rather than smoothed over; no ruling is sought. Re-keyed here in the
+promotion commit — `check_gate_a_provenance.py` listed SPP before the edit and does not after. **The gate verdict
+is unaffected** (fail before, fail after): SPP is absent from the `complete` block on both sides and the marker
+did not move, so this changes identity and determination text only.
+
+**GATES AT THIS SESSION'S TIP:** `audit_keepers.py` **PASS** (0 failures, 0 warnings; SPP "all checks passed" on
+the new keeper). `check_gate_a_provenance.py` clean for SPP. `check_mechanism_matrix.py` exit 0 with **no SPP
+warning**. `check_registry_payload_parity.py` is **RED and it is NOT this promotion's**: seven dead ERCOT bundles
+(`ercot262_arm_2021-2025`, `ercot264_repro_2023/2025`) fail identically at HEAD, with **zero** SPP rows on either
+side — ERCOT's desk's Class-E clean-up under rule 29(c), routed, not touched here (rule 25).
+
+**Retention (rule 31 `[R-RETAIN]`):** the keeper's bundle including its `hourly/` sidecars is **committed**, so
+the next lane differences against it with **no re-solve** — the cost that lane SPP-50's dead container imposed is
+not repeated here.
+
+**Next shorthand: spp-21.** Next lane issued this session: **SPP-61**, the Harrington fuel-vintage repair.
