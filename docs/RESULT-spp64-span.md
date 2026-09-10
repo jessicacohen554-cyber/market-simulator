@@ -305,3 +305,16 @@ on promotion had been received at any point in this session.
   it was on the keeper.
 - The C3a/C3b/C4 improvements are **reported, not evidence**: no gate read them, and rule 1 forbids
   treating a residual move as a mechanism's warrant.
+- **Both runs were scored by the SAME scorer at HEAD, rubric v3.7.** The keeper's *committed*
+  `metrics.json` is stale at v3.6 (and records C6 UNATTESTED), so every keeper number quoted above is
+  from a **live re-score at v3.7 in this session**, not from that sidecar — otherwise the comparison
+  would not be apples-to-apples. v3.7's only change is the **holdout-year** C3c limb, which cannot
+  apply here: all three years are in-training, and v3.7 explicitly leaves the in-training
+  lone-failure guard untouched. **The `CALIBRATED` is therefore not an artifact of a recent rubric
+  loosening** — it is the v3.2/v3.3 in-training path, reached because C1 closed.
+- **Noted, not fixed, and not this lane's**: the committed `frontend/data/backcast/rubric-consts.js`
+  still declares `rubricVersion: 3.6` against a scorer at 3.7. `build_manifest.py` regenerates it
+  (42 runs, SPP present), but the refresh is unrelated drift from another lane's scorer change, so it
+  was reverted rather than swept into this shard's commit. The Pages deploy regenerates it anyway.
+  `check_registry_payload_parity.py` is **green** after this registration: 42 runs checked, 74 bundle
+  dirs swept, 0 known-unsynced tolerated.
