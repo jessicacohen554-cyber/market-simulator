@@ -1,0 +1,16 @@
+{
+  "id": "2026-09-10-caiso-271-egrid-family",
+  "label": "caiso 271 egrid family",
+  "date": "2026-09-10",
+  "shorthand": "caiso-271-egrid-family",
+  "definition": "caiso-271 egrid family HR, year 2023, pin 9ee5319b",
+  "years": [
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-09-10-caiso-271-egrid-family.js",
+  "bundle": "results/calibration/caiso271_egrid_family_span"
+}
