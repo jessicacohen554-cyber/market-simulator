@@ -736,6 +736,8 @@ def run_year(
     netload_drag_merit_allocation: bool | None = None,
     netload_drag_min_run_persistence: bool | None = None,
     vre_curtailment_oversupply_allocation: bool | None = None,
+    spp_curtailment_ceiling: bool | None = None,
+    spp_curtail_depth_wind: float | None = None,
     # caiso-186 published seasonal CC capability basis. run_calibration_full
     # .solve_and_persist has threaded this to run_year since the caiso-186
     # merge, but the parameter was never added here, so EVERY solve through
@@ -1670,6 +1672,19 @@ def run_year(
         # in _BACKCAST_ONLY_OVERLAY_FIELDS.
         config = config.with_overrides(
             vre_curtailment_oversupply_allocation=vre_curtailment_oversupply_allocation
+        )
+    if spp_curtailment_ceiling is not None:
+        # SPP-58: the SPP wind curtailment CEILING. One field, one seam (the
+        # wind CF upper bound), and it SUPERSEDES the oversupply allocation in
+        # data.renewables rather than stacking on it (rule 19 [R-ONE-MECH]) --
+        # so it rides this replay path as a single-field A/B arm against a
+        # keeper recipe that still carries the allocation flag. Forward-native
+        # (rule 13, forecast leg in runner.py), so it is NOT in
+        # _BACKCAST_ONLY_OVERLAY_FIELDS.
+        config = config.with_overrides(spp_curtailment_ceiling=spp_curtailment_ceiling)
+    if spp_curtail_depth_wind is not None:
+        config = config.with_overrides(
+            spp_curtail_depth_wind=float(spp_curtail_depth_wind)
         )
     if netload_drag_merit_allocation is not None:
         # ercot-259: the net-load drag mandate's MERIT ALLOCATION. Same driver,
@@ -3028,6 +3043,56 @@ def run_year(
                         if _unpooled
                         else "pooled share"
                     ),
+                )
+    # SPP wind curtailment ceiling (SPP-58, config.spp_curtailment_ceiling,
+    # default off -> byte-identical no-op). SPP's 2-zone reduction collapses the
+    # SPS / Texas-Panhandle and western Kansas / Oklahoma export pockets that do
+    # the real curtailing, so the LP re-curtails 0.17-0.26 % of a bound grossed
+    # up by 9.65 %. The ceiling supersedes the oversupply allocation rather than
+    # stacking on it (rule 19 [R-ONE-MECH], enforced in data.renewables), and is
+    # skipped on a delivered-pinned bound for the same reason ERCOT's is: there
+    # is no gross-up headroom to remove and the ceiling would curtail energy the
+    # market actually delivered.
+    if getattr(config, "spp_curtailment_ceiling", False) and iso == "SPP":
+        if _renewable_bound_is_delivered_pinned(iso, year):
+            logger.warning(
+                "spp_curtailment_ceiling: %d wind bound is delivered-pinned — "
+                "ceiling skipped to avoid double-curtailment",
+                year,
+            )
+        else:
+            from market_sim.config import paths as _spp_paths
+            from market_sim.data.curtailment_share import spp_curtail_multipliers
+
+            # System net load on the potential convention, identical to the
+            # ERCOT leg above: demand minus uncurtailed wind & solar potential.
+            _spp_net_load = (
+                demand.sum(axis=0)
+                - (np.asarray(wind_cap)[:, None] * wind_cf).sum(axis=0)
+                - (np.asarray(solar_cap)[:, None] * solar_cf).sum(axis=0)
+            )
+            _spp_depth = float(getattr(config, "spp_curtail_depth_wind", 0.0))
+            _spp_mult = spp_curtail_multipliers(
+                _spp_net_load,
+                list(zone_names),
+                depth_wind=_spp_depth,
+                reference_dir=_spp_paths.RAW_DIR / "reference",
+            )
+            if _spp_mult is None:
+                logger.warning(
+                    "spp_curtailment_ceiling: no derived share table for %d — "
+                    "ceiling skipped (run "
+                    "scripts/data/derive_spp_curtailment_share.py)",
+                    year,
+                )
+            else:
+                wind_curtail_share, solar_curtail_share = _spp_mult
+                logger.info(
+                    "spp_curtailment_ceiling: %d wind ceiling active on both "
+                    "zones (depth=%.6f, mean ceiling %.4f)",
+                    year,
+                    _spp_depth,
+                    float(np.mean(wind_curtail_share)),
                 )
     # Aggregate interface limits (CAISO's simultaneous WECC import cap): resolve
     # the configured link groups to flow-column indices for the LP. Empty (no

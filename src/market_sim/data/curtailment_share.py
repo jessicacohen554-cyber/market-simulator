@@ -89,6 +89,34 @@ FAMILY_LABELS = ("D", "N", "PNHNDL")
 #            only the network limit, so the two bind in different hours.
 PANHANDLE_OWNERS = ("tie", "share")
 
+# --- SPP (SPP-58) -----------------------------------------------------------
+# SPP's own instance of the same structure, on SPP's own measured data. Rule 25
+# [R-ISO-SCOPE]: NOTHING is transferred from ERCOT -- not the table, not the
+# depth, not the corridor attribution. SPP's 2-zone reduction (SPP-North /
+# SPP-South, one 3,400 MW link) collapses the SPS / Texas-Panhandle and western
+# Kansas / Oklahoma export pockets that actually curtail its wind, so the LP
+# takes essentially the whole grossed-up bound: measured on the keeper
+# 2026-09-09-spp-52a-fossil-offer's committed hourly sidecars, re-curtailment is
+# 0.26 / 0.22 / 0.17 % in 2023 / 2024 / 2025 against the 9.65 % reference rate
+# the gross-up itself applies -- a 40-60x miss on the construction's own stated
+# precondition ("real headroom, endogenously re-curtailed").
+#
+# The share table is derived by scripts/data/derive_spp_curtailment_share.py
+# from SPP's published RTBM binding-constraint archive
+# (data/raw/spp-binding-constraints), binned on the SAME (net-load decile x
+# hour-of-day x season) axis as ERCOT's so both consumers bin identically. It
+# carries the MEAN COUNT of simultaneously binding constraints, rescaled onto
+# (0, 1] -- not a fraction of congested intervals, which saturates in SPP
+# (91.0 % of 2024's 5-minute intervals carry at least one binding constraint)
+# and would encode no shape at all.
+SPP_SHARE_TABLE_NAME = "spp_curtailment_share.csv"
+
+# Both SPP model zones carry the ceiling. Unlike ERCOT -- where the corridor is
+# two named zones out of eight -- SPP's reduction has no corridor zone to
+# attribute to: the derived incidence is footprint-wide, so scoping it to one
+# zone would be an attribution the data does not support.
+SPP_CEILING_ZONES = ("SPP-North", "SPP-South")
+
 
 def net_load_decile(net_load: np.ndarray) -> np.ndarray:
     """Within-year net-load percentile bin (0..NET_LOAD_N_DECILE-1) per hour.
@@ -424,4 +452,89 @@ def wtx_curtail_multipliers(
     for i in corridor:
         wind_mult[i, :] = wind_row
         solar_mult[i, :] = solar_row
+    return wind_mult, solar_mult
+
+
+def load_spp_share_table(reference_dir) -> pd.DataFrame | None:
+    """Load SPP's derived congestion-share table, or ``None`` when absent.
+
+    ``reference_dir`` is ``paths.RAW_DIR / "reference"``. Returns a frame keyed
+    by ``(net_load_decile, hour_of_day, season)`` carrying ``congestion_share``
+    in ``(0, 1]``; ``None`` (with a log line) when
+    ``scripts/data/derive_spp_curtailment_share.py`` has not been run, so a
+    missing input degrades to the static bound rather than failing the solve.
+    """
+    from pathlib import Path
+
+    path = Path(reference_dir) / SPP_SHARE_TABLE_NAME
+    if not path.is_file():
+        logger.info(
+            "spp-curtailment: no share table at %s "
+            "(run scripts/data/derive_spp_curtailment_share.py) — ceiling inert",
+            path,
+        )
+        return None
+    return pd.read_csv(path)
+
+
+def spp_curtail_multipliers(
+    net_load: np.ndarray,
+    zone_names: list[str],
+    *,
+    depth_wind: float,
+    reference_dir,
+) -> tuple[np.ndarray, np.ndarray] | None:
+    """Per-(zone, hour) wind curtailment-ceiling multipliers for SPP (SPP-58).
+
+    ``ceiling_frac(t) = 1 - depth_wind * congestion_share(t)``, with
+    ``congestion_share`` read off SPP's own derived binding-incidence table on
+    the model's OWN net-load decile x hour-of-day x season axis — so the
+    mapping regenerates for a forward year (more wind -> deeper net-load
+    troughs -> the high-incidence deciles re-compose) and responds to changed
+    conditions, which is what rule 13 ``[R-MEASURED]``'s forward test asks.
+
+    SOLAR IS NOT CEILINGED. SPP's solar bound is ``delivered_pinned``
+    (``renewable_bound_provenance``) — it carries no gross-up headroom — so a
+    solar ceiling would curtail energy the market actually delivered rather
+    than headroom the model invented. The published curtailment series the
+    depth is centred on is wind-only for 2023/2024 in any case (the 2025
+    edition's total-VER basis puts solar at 0.73 % of curtailments). The solar
+    multiplier is returned as an explicit ``1.0`` array rather than ``None`` so
+    the caller's two-array contract is unchanged.
+
+    Parameters
+    ----------
+    net_load:
+        The model's own system net load ``(T,)`` (demand - wind potential -
+        solar potential), summed over zones.
+    zone_names:
+        Ordered model zone names. Both SPP zones take the ceiling
+        (:data:`SPP_CEILING_ZONES`); anything else stays 1.0.
+    depth_wind:
+        The level coefficient (``ScenarioConfig.spp_curtail_depth_wind``),
+        centred on SPP's published measured curtailment MW. ``0`` -> inert.
+    reference_dir:
+        ``paths.RAW_DIR / "reference"`` (where the derived table lives).
+
+    Returns
+    -------
+    ``(wind_mult, solar_mult)`` each ``(n_zones, T)`` in ``(0, 1]``, or ``None``
+    when the share table is absent (the caller then keeps the static bound).
+    """
+    table = load_spp_share_table(reference_dir)
+    if table is None:
+        return None
+    nl = np.asarray(net_load, dtype=float)
+    n_hours = len(nl)
+    n_zones = len(zone_names)
+    share = _share_lookup(table, nl)  # (T,)
+
+    wind_mult = np.ones((n_zones, n_hours), dtype=float)
+    solar_mult = np.ones((n_zones, n_hours), dtype=float)
+    ceiling_rows = [i for i, z in enumerate(zone_names) if z in SPP_CEILING_ZONES]
+    if not ceiling_rows:
+        return wind_mult, solar_mult
+    wind_row = np.clip(1.0 - float(depth_wind) * share, 0.0, 1.0)
+    for i in ceiling_rows:
+        wind_mult[i, :] = wind_row
     return wind_mult, solar_mult

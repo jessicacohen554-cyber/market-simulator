@@ -3764,6 +3764,8 @@ def solve_and_persist(
     netload_drag_merit_allocation: bool | None = None,
     netload_drag_min_run_persistence: bool | None = None,
     vre_curtailment_oversupply_allocation: bool | None = None,
+    spp_curtailment_ceiling: bool | None = None,
+    spp_curtail_depth_wind: float | None = None,
     cc_winter_capability_basis: bool | None = None,
     ramp_limits: bool | None = None,
     local_capacity_constraints: bool | None = None,
@@ -5174,6 +5176,14 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 vre_curtailment_oversupply_allocation=vre_curtailment_oversupply_allocation
             )
+        if spp_curtailment_ceiling is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                spp_curtailment_ceiling=spp_curtailment_ceiling
+            )
+        if spp_curtail_depth_wind is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                spp_curtail_depth_wind=float(spp_curtail_depth_wind)
+            )
         if cc_winter_capability_basis is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 cc_winter_capability_basis=cc_winter_capability_basis
@@ -5630,6 +5640,8 @@ def solve_and_persist(
             netload_drag_merit_allocation=netload_drag_merit_allocation,
             netload_drag_min_run_persistence=netload_drag_min_run_persistence,
             vre_curtailment_oversupply_allocation=vre_curtailment_oversupply_allocation,
+            spp_curtailment_ceiling=spp_curtailment_ceiling,
+            spp_curtail_depth_wind=spp_curtail_depth_wind,
             cc_winter_capability_basis=cc_winter_capability_basis,
             ramp_limits=ramp_limits,
             local_capacity_constraints=local_capacity_constraints,
@@ -6592,6 +6604,8 @@ def solve_and_persist(
         "netload_drag_merit_allocation": netload_drag_merit_allocation,
         "netload_drag_min_run_persistence": netload_drag_min_run_persistence,
         "vre_curtailment_oversupply_allocation": vre_curtailment_oversupply_allocation,
+        "spp_curtailment_ceiling": spp_curtailment_ceiling,
+        "spp_curtail_depth_wind": spp_curtail_depth_wind,
         "cc_winter_capability_basis": cc_winter_capability_basis,
         "ramp_limits": ramp_limits,
         "local_capacity_constraints": local_capacity_constraints,
@@ -8716,6 +8730,8 @@ def run_replay_bundle(
     netload_drag_merit_allocation: bool | None = None,
     netload_drag_min_run_persistence: bool | None = None,
     vre_curtailment_oversupply_allocation: bool | None = None,
+    spp_curtailment_ceiling: bool | None = None,
+    spp_curtail_depth_wind: float | None = None,
     egrid_family_heat_rates: bool | None = None,
     egrid_steam_collapse_heat_rates: bool | None = None,
     caiso_dsw_daytime_evening_trim: bool | None = None,
@@ -8920,6 +8936,13 @@ def run_replay_bundle(
         kwargs["vre_curtailment_oversupply_allocation"] = (
             vre_curtailment_oversupply_allocation
         )
+    if spp_curtailment_ceiling is not None:
+        # SPP-58: the SPP wind curtailment CEILING arm is the keeper's recorded
+        # recipe plus exactly this one flag (it disarms the allocation in
+        # data.renewables itself, rule 19 [R-ONE-MECH]).
+        kwargs["spp_curtailment_ceiling"] = spp_curtailment_ceiling
+    if spp_curtail_depth_wind is not None:
+        kwargs["spp_curtail_depth_wind"] = float(spp_curtail_depth_wind)
     if egrid_family_heat_rates is not None:
         # nyiso-184: the eGRID family heat-rate construction rides the same
         # replay path, so the single-field A/B arm is the keeper's recorded
@@ -12060,6 +12083,41 @@ def main() -> None:
         "the measured reference rate (rule 23) is untouched; zero new free "
         "parameters (rule 21); forward-native (rule 13); ISO-agnostic "
         "(rule 25). Default off -- every keeper replays byte-identical.",
+    )
+    parser.add_argument(
+        "--spp-curtailment-ceiling",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Apply the SPP wind curtailment CEILING to the CF upper bound "
+        "(ScenarioConfig.spp_curtailment_ceiling, SPP-58). SPP's wind bound is "
+        "delivered/(1-rate) -- a gross-up whose own stated precondition is "
+        "'real headroom, ENDOGENOUSLY RE-CURTAILED'. It is not: measured on "
+        "keeper 2026-09-09-spp-52a-fossil-offer's committed sidecars the LP "
+        "re-curtails 0.261/0.223/0.174%% in 2023/2024/2025 against the 9.65%% "
+        "the gross-up applies, because the 2-zone reduction collapses the SPS "
+        "/ Texas-Panhandle and western Kansas / Oklahoma export pockets that "
+        "do the real curtailing. This flag multiplies the wind bound by "
+        "1 - depth * congestion_share(net-load decile, hour, season), the "
+        "share read off SPP's own published RTBM binding-constraint archive "
+        "and the depth (--spp-curtail-depth-wind) centred on SPP's own "
+        "published curtailment MW. It SUPERSEDES "
+        "--vre-curtailment-oversupply-allocation in data.renewables rather "
+        "than stacking on it (rule 19 [R-ONE-MECH]), takes no solar (SPP "
+        "solar is delivered-pinned), carries zero free parameters (rule 21) "
+        "and is forward-native (rule 13). SPP only; default off -- every "
+        "keeper replays byte-identical.",
+    )
+    parser.add_argument(
+        "--spp-curtail-depth-wind",
+        type=float,
+        default=None,
+        help="Level coefficient for --spp-curtailment-ceiling "
+        "(ScenarioConfig.spp_curtail_depth_wind, default 0.288137 -- the "
+        "energy-weighted value that centres all three scored years on SPP's "
+        "published curtailment MW at once). 0.0 is the inert ablation. Do NOT "
+        "sweep it against a gate: it is identified on measured published "
+        "curtailment, and selecting it by which value makes a criterion pass "
+        "is the fitted-mechanism selection rule 1 [R-STRUCT] forbids.",
     )
     parser.add_argument(
         "--netload-drag-merit-allocation",
