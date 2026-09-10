@@ -72,6 +72,14 @@ IMPORT_TRANCHE_EF: dict[str, dict[str, float]] = {
         # cover — the measured daytime trigger-OFF CAISO−PaloVerde spread
         # carries no wedge in every daytime cell (FINDING-caiso94 §2).
         "DSW_daytime_clean": 0.0,
+        # LATE-EVENING WEIM clean transfer (caiso-269): the SAME attribution,
+        # measured on the same instrument. caiso-253's G-WEDGE leg tested hod
+        # 22-23 explicitly and PASSED everywhere (delivered median -5.2 to
+        # -14.2 against a +4 gate; wedge-consistent share 0.0-4.7 % against a
+        # 6 % gate), i.e. "there is NO carbon wedge at 22-23 and caiso-93's
+        # question answers YES there too" — so EF 0 here is a MEASURED result
+        # of that session, not a transfer of the neighbouring windows' verdict.
+        "DSW_lateevening_clean": 0.0,
     },
 }
 
@@ -100,6 +108,16 @@ CAISO_IMPORT_DELIVERY_BASIS: dict[str, tuple[float, float]] = {
     # RAW Palo Verde hub (autumn daytime raw-hub spread ≈ 0, FINDING-caiso94
     # §2-3); WEIM transfers pay no OATT point-to-point charge.
     "DSW_daytime_clean": (0.0, 0.0),
+    # Late-evening WEIM clean transfer (caiso-269): NO wheel, the same WEIM
+    # transfer basis as the overnight and daytime legs that bracket it. The
+    # basis is MEASURED for these two hours rather than inherited: caiso-253's
+    # raw-hub discriminator reads the DA CAISO-PaloVerde block median at
+    # -3.21 / -0.36 / -0.03 (2023/2024/2025), i.e. CAISO clears at ~= the RAW
+    # hub at hod 22-23 in 2024-2025 -- which is what a no-wheel basis predicts
+    # and what a hub x 1.03 + $4 delivered basis does not. 2023 sits OUTSIDE
+    # caiso-253's pre-registered [-2, +4] admissibility band and is refused
+    # hour-by-hour by the arming gate below, not waived here.
+    "DSW_lateevening_clean": (0.0, 0.0),
 }
 
 # ---------------------------------------------------------------------------
@@ -339,6 +357,88 @@ CAISO_DSW_DAYTIME_CLEAN_TRIM_DEPTH_BY_YEAR: dict[int, float] = {
     2025: 5770.0,
 }
 CAISO_DSW_DAYTIME_CLEAN_TRIM_DEPTH_STATIC: float = 5442.0  # pooled 2023-2025 mean
+
+# ---------------------------------------------------------------------------
+# CAISO south-corridor LATE-EVENING clean import depth (caiso-269,
+# ``ScenarioConfig.caiso_dsw_lateevening_clean``, default off).
+#
+# THE OBJECT IS A WINDOW GAP, NOT A NEW MECHANISM. The three DSW clean-depth
+# constructions do not tile the clock: caiso-93 runs hod 0-5, caiso-94 runs
+# hod 6-21, and caiso-87's surplus trigger is coverage-STARVED at hod 22-23
+# (measured ON in 0.3/0.8 % of 2024 and 1.6/1.9 % of 2025 hod 22/23 --
+# caiso-253's G-WINDOW leg). Hours 22 and 23 therefore carry NO unconditional
+# clean coverage, and the model's clean import capability falls off a cliff
+# between two adjacent hours: measured on the 2026-09-09-caiso-fuelvintage-
+# 860-gas keeper's own committed sidecars, armed clean capability runs
+# 3,420 MW at hod 21 and 33 MW at hod 22 in 2025 (2,673 -> 123 MW in 2023;
+# 3,117 -> 9 MW in 2024) -- a ~100x discontinuity across one hour boundary
+# that no measured series supports, since the measured WECC_DSW corridor net
+# import RISES across it (p50 4,642 -> 4,911 -> 4,875 MW at hod 21/22/23,
+# 2025). The model's import deficit against EIA-930 at hod 22/23 is
+# -1,063/-1,032 (2023), -1,290/-1,512 (2024) and -1,454/-1,787 MW (2025).
+#
+# WINDOW: hod 22-23, and the window is not this session's choice. caiso-253
+# measured the trigger-coverage question and CLOSED it -- "22-23 are
+# OVERNIGHT-construction hours and no future session need re-measure it" --
+# so the window is the complement caiso-93/94/87 leave, fixed by the tiling
+# and by that prior finding, never by a residual (rule 17
+# ``[R-FLOOR-WINDOW]``: driver = the WEIM/EDAM clean transfer capability the
+# caiso-87/93/94 family already carries; window = the hours the family's own
+# coverage census leaves uncovered; forward story = the depth and the gate
+# below are pooled climatologies that regenerate from any year's measured
+# record exactly as the sibling legs do).
+#
+# ADMISSIBILITY GATE -- THIS IS caiso-253's OWN REFUSAL, ADOPTED AS THE GATE.
+# caiso-253 REFUSED extending raw-hub pricing to hod 22-23 because its
+# pre-registered raw-hub discriminator FAILED in 2023 (DA block median
+# -3.98/-2.56 at hod 22/23 against a [-2, +4] band) while PASSING in 2024
+# (-0.73/+0.11) and 2025 (-0.19/+0.06). That refusal is honoured literally:
+# this tranche arms an hour ONLY where the measured (month x hod) median DA
+# CAISO-PaloVerde spread lies inside caiso-253's band. Nothing about the band
+# is this session's -- the statistic, the basis (DA), the window and the
+# [-2, +4] bounds are all caiso-253's, pre-registered there before any solve
+# and re-used here unchanged, so no threshold is selectable by a result.
+# Measured admissible (month x hod) buckets: 2022 12/24, 2023 4/20 (the
+# 2023 Jan-Feb OASIS hub gap leaves 10 covered months), 2024 18/24,
+# 2025 19/24 -- i.e. the gate keeps 2023 dark, which is the point.
+# The measured reason 2023 fails is itself published and forward-regenerating
+# (caiso-253): the desert-SW hub peaks LATER than CAISO because Arizona keeps
+# no DST, and the effect has closed monotonically (-3.21 -> -0.36 -> -0.03).
+#
+# DEPTH (measured, year-stable): p95 of the measured WECC_DSW corridor net
+# import (EIA-930 CISO DIBAs, model clock) over hod 22-23 -- the same series,
+# the same p95 statistic and the same window-match rule as the caiso-87/93/94
+# depths. Estimation-stage honesty gates (the FROZEN caiso-81/86/87/88
+# thresholds, run 2026-09-10 in
+# scripts/data/derive_caiso_lateevening_clean_depth.py): CV 0.037
+# (<= 0.20 PASS); LOYO (mean-of-other-two) worst 6.8 % (<= 25 % PASS) --
+# tighter than the caiso-93 overnight depth (0.041 / 8.1 %). The static entry
+# is the pooled 2023-2025 mean; backcast years ride their own measured depth
+# (the caiso-80/82 construction class). Zero fitted scalars, zero new
+# thresholds. Pricing: RAW measured Palo Verde hub, EF 0, no wheel (see
+# CAISO_IMPORT_DELIVERY_BASIS above). The injector nets the depth per hour
+# against the shaped firm block + the caiso-87 surplus tranche + the caiso-93
+# overnight tranche + the caiso-94 daytime tranche, so no hour double-carries
+# clean depth (rule 19 ``[R-ONE-MECH]``).
+# ---------------------------------------------------------------------------
+CAISO_DSW_LATEEVENING_CLEAN_NAME: str = "DSW_lateevening_clean"
+CAISO_DSW_LATEEVENING_CLEAN_DEPTH_BY_YEAR: dict[int, float] = {
+    2022: 6726.0,
+    2023: 6120.0,
+    2024: 6429.0,
+    2025: 6697.0,
+}
+CAISO_DSW_LATEEVENING_CLEAN_DEPTH_STATIC: float = 6415.0  # pooled 2023-2025 mean
+# Window hod bounds (inclusive) -- the complement caiso-93 (0-5) and caiso-94
+# (6-21) leave, closed by caiso-253's G-WINDOW finding.
+CAISO_LATEEVENING_CLEAN_HOD_MIN: int = 22
+CAISO_LATEEVENING_CLEAN_HOD_MAX: int = 23
+# caiso-253's pre-registered raw-hub admissibility band, re-used UNCHANGED as
+# this tranche's per-(month x hod) arming gate (lo, hi) in $/MWh on the
+# measured DA CAISO - raw PaloVerde spread. Not a free parameter: it is a
+# prior session's frozen refusal criterion, and widening it would re-open the
+# very cell caiso-253 closed.
+CAISO_LATEEVENING_SPREAD_BAND: tuple[float, float] = (-2.0, 4.0)
 
 # IMPORT_TRANCHES / EXPORT_TRANCHES entries: (name, capacity MW, $/MWh).
 #
@@ -860,6 +960,7 @@ CAISO_IMPORT_TRANCHE_HUB: dict[str, str] = {
     "DSW_surplus_clean": "PALOVRDE",  # caiso-87 surplus-clean depth tranche
     "DSW_overnight_clean": "PALOVRDE",  # caiso-93 overnight clean depth tranche
     "DSW_daytime_clean": "PALOVRDE",  # caiso-94 daytime trigger-OFF clean depth
+    "DSW_lateevening_clean": "PALOVRDE",  # caiso-269 hod 22-23 window-gap tranche
 }
 
 # CISO DIBA → corridor, split geographically at Path-15.
@@ -2655,6 +2756,11 @@ class InterchangeSpec:
     # Resolved from ScenarioConfig.caiso_dsw_daytime_clean; zero capacity at
     # build, armed hourly by transmission.inject_caiso_dsw_daytime_clean.
     caiso_daytime_clean: bool = False
+    # CAISO per-hub only: build the south-corridor LATE-EVENING clean depth
+    # tranche (caiso-269; see the CAISO_DSW_LATEEVENING_CLEAN_* block above).
+    # Resolved from ScenarioConfig.caiso_dsw_lateevening_clean; zero capacity
+    # at build, armed hourly by transmission.inject_caiso_dsw_lateevening_clean.
+    caiso_lateevening_clean: bool = False
 
 
 def get_interchange_spec(config, iso: str, year: int | None = None) -> InterchangeSpec:
@@ -2839,6 +2945,9 @@ def get_interchange_spec(config, iso: str, year: int | None = None) -> Interchan
         caiso_daytime_clean=(
             caiso_per_hub and getattr(config, "caiso_dsw_daytime_clean", False)
         ),
+        caiso_lateevening_clean=(
+            caiso_per_hub and getattr(config, "caiso_dsw_lateevening_clean", False)
+        ),
     )
 
 
@@ -2898,6 +3007,7 @@ def build_interchange_fleet(
                 surplus_clean=spec.caiso_surplus_clean,
                 overnight_clean=spec.caiso_overnight_clean,
                 daytime_clean=spec.caiso_daytime_clean,
+                lateevening_clean=spec.caiso_lateevening_clean,
             )
         )
     else:

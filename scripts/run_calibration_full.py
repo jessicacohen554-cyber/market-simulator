@@ -8695,12 +8695,12 @@ def run_replay_bundle(
     out_dir: Path | None,
     years: list[int] | None,
     note: str,
-    holdout_authorized: bool,
     zero_forcing_ablation: bool = False,
     reliability_floor_plant_exclusions: bool | None = None,
     caiso_offer_surface_measured_ungrounded: bool | None = None,
     caiso_st_gas_committed_measured: bool | None = None,
     caiso_st_gas_peak_measured: bool | None = None,
+    caiso_dsw_lateevening_clean: bool | None = None,
     caiso_ct_peaker_committed_measured: bool | None = None,
     nyiso_ct_peaker_bands_measured: bool | None = None,
     gas_offer_margin: bool | None = None,
@@ -8737,8 +8737,9 @@ def run_replay_bundle(
     Args:
         bundle: Committed bundle dir whose ``meta.json`` carries the recipe.
         out_dir: Destination bundle root (``None`` re-solves in place).
-        years: Optional solve-span override (defaults to the bundle's years);
-            holdout-gated either way (rule 22).
+        years: Optional solve-span override (defaults to the bundle's years).
+            Any year may be solved: ``[R-HOLDOUT]`` was REMOVED 2026-09-09, so
+            no marker, freeze or authorization gate remains here.
         note: Provenance note recorded in ``run_config.json`` (empty keeps
             the replay default).
         zero_forcing_ablation: Solve the recipe's D-3 zero-forcing ablation
@@ -8929,6 +8930,22 @@ def run_replay_bundle(
         # the single-field A/B arm is the keeper's recorded recipe plus exactly
         # this one field.
         kwargs["egrid_steam_collapse_heat_rates"] = egrid_steam_collapse_heat_rates
+    if caiso_dsw_lateevening_clean is not None:
+        # caiso-269: the late-evening clean flag is NOT a direct
+        # solve_and_persist kwarg — backcast_config carries no parameter for
+        # ANY of the CAISO DSW clean-depth flags (the keeper arms
+        # caiso_dsw_surplus_clean / _overnight_clean / _daytime_clean through
+        # the recorded generic override bag), so the override edits that bag in
+        # place (a COPY; the recipe dict is never mutated) exactly as the
+        # caiso-252 evening-trim override below does. The arm is therefore the
+        # keeper recipe plus this one value.
+        _bag_key = next(
+            (k for k in ("prb_overrides", "coal_prb_sigmoid_overrides") if k in kwargs),
+            "prb_overrides",
+        )
+        _bag = dict(kwargs.get(_bag_key) or {})
+        _bag["caiso_dsw_lateevening_clean"] = bool(caiso_dsw_lateevening_clean)
+        kwargs[_bag_key] = _bag
     if caiso_dsw_daytime_evening_trim is not None:
         # caiso-252: the evening-trim flag is not a direct solve_and_persist
         # kwarg — the keeper carries it in the recorded generic override bag —
@@ -10786,6 +10803,31 @@ def main() -> None:
         "An ISO with no registry entry is a hard error.",
     )
     parser.add_argument(
+        "--caiso-dsw-lateevening-clean",
+        dest="caiso_dsw_lateevening_clean",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="REPLAY-ONLY override (--replay-bundle), the caiso-252 channel: "
+        "WINDOW-GAP CLOSURE (caiso-269, rules 14/17/19; "
+        "ScenarioConfig.caiso_dsw_lateevening_clean). The three DSW "
+        "clean-depth constructions do not tile the clock: caiso-93 runs hod "
+        "0-5, caiso-94 runs hod 6-21, and caiso-87's surplus trigger is "
+        "coverage-STARVED at hod 22-23 (ON in 0.3/0.8 %% of 2024 and 1.6/1.9 "
+        "%% of 2025 hod 22/23 - caiso-253's G-WINDOW leg). On the live keeper "
+        "the armed clean capability falls 3,420 MW at hod 21 to 33 MW at hod "
+        "22 (2025) while the measured WECC_DSW corridor net import RISES "
+        "across the boundary, against a measured EIA-930 import deficit of "
+        "1.0-1.8 GW there. Arms ONE tranche at the measured hod 22-23 p95 "
+        "corridor depth (CV 0.037 / LOYO 6.8 %%), net of the shaped firm "
+        "block and all three sibling clean tranches (rule 19 [R-ONE-MECH]), "
+        "ONLY in (month x hod) buckets clearing caiso-253's PRE-REGISTERED "
+        "raw-hub band (-2, +4) on the measured DA CAISO-PaloVerde spread - "
+        "that session's own refusal criterion, re-used unchanged, so 2023 "
+        "stays dark by construction. Zero new free parameters. Default OFF "
+        "Absent (default None) keeps the bundle's own value, so the replay path "
+        "is byte-identical.",
+    )
+    parser.add_argument(
         "--caiso-st-gas-peak-measured",
         action=argparse.BooleanOptionalAction,
         default=False,
@@ -10804,7 +10846,7 @@ def main() -> None:
         "caiso-231, which the bypass keeps from reaching the very plants the "
         "CT bucket contains). Exactly one band moves; zero new measurement and "
         "zero free parameters. DISCLOSED: 1.10 -> 1.166 RAISES the peak band "
-        "(+6.0 %), so it makes C3a WORSE, and it is NEVER a C3a lever. An ISO "
+        "(+6.0 %%), so it makes C3a WORSE, and it is NEVER a C3a lever. An ISO "
         "with no registry entry is a hard error.",
     )
     parser.add_argument(
@@ -10848,7 +10890,7 @@ def main() -> None:
         "charges a second time. Rule 1: the econ limb closes the OPEN ROOT "
         "CAUSE _NYISO_OFFER_CURVE's own comment declares by name. DISCLOSED: "
         "the direction is FAVOURABLE to CT_PEAKER volume and moves C3a DOWN "
-        "(crossing indicator -2.75/-2.40/-2.74 %), which is the hazard, not "
+        "(crossing indicator -2.75/-2.40/-2.74 %%), which is the hazard, not "
         "the argument; this is NEVER a C3a lever. Non-NYISO, or a band missing "
         "any of the three phys_* keys, is a hard error.",
     )
@@ -10862,7 +10904,7 @@ def main() -> None:
         "carries (nearby_fuel_price_min_state_plants), so a zone-month whose "
         "donor pool is ONE reporting plant is not trusted (a pool of one "
         "returned that plant's price verbatim — plant 55077's 96.161 $/MMBtu "
-        "on 2.6 % of its normal volume priced 2,446 MW of CAISO neighbours at "
+        "on 2.6 %% of its normal volume priced 2,446 MW of CAISO neighbours at "
         "~$736/MWh for all of Nov-2025). No new constant. ISO-generic guard; "
         "the ARM is per lane (rule 25). Off by default, byte-identical.",
     )
@@ -13064,6 +13106,12 @@ def main() -> None:
                 args.caiso_st_gas_peak_measured
                 if "--caiso-st-gas-peak-measured" in sys.argv
                 or "--no-caiso-st-gas-peak-measured" in sys.argv
+                else None
+            ),
+            caiso_dsw_lateevening_clean=(
+                args.caiso_dsw_lateevening_clean
+                if "--caiso-dsw-lateevening-clean" in sys.argv
+                or "--no-caiso-dsw-lateevening-clean" in sys.argv
                 else None
             ),
             nyiso_ct_peaker_bands_measured=args.nyiso_ct_peaker_bands_measured,

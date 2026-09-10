@@ -1768,3 +1768,8 @@ results/screen/pjm_d4_*/
 # solved artifacts stay on disk for a promotion the owner has not yet ruled on. Only the
 # COMPOSITE, if promoted, is force-added and registered (rule 32(d)).
 results/calibration/nyiso223_gapfill_*/
+
+# caiso-269 per-year shard probe bundles (rule 29 [R-SCREEN] (c) / rule 31
+# [R-RETAIN]): kept OUT of `main` by gitignore, never by `rm` — the working
+# tree copies stay on disk until the owner rules on promotion.
+results/calibration/caiso269_lateevening_*/
