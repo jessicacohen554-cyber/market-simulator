@@ -353,6 +353,40 @@ COMPLETENESS_DIR = DATA_DIR / "completeness"
 #       CRITERIA, LEDGERABLE_CRITERIA and MAX_LEDGERED_CAVEATS are UNCHANGED,
 #       and no determination moves — verified over every registered run.
 #       NO SOLVE RAN — scorer-side only; every keeper re-scores in place.
+# v3.7 — 2026-09-10 owner instruction, session miso-251, verbatim: "If c3c is
+#       the only caveat the status should be calibrated not with caveats."
+#       AN UNSCORED C3c NO LONGER DOWNGRADES EITHER. Rule 22 [R-C3C] and
+#       v3.3 already made a LEDGERED C3c non-downgrading, but that path runs
+#       through `_apply_c3c_standing_rule`, which only ever sees C3c when it
+#       is SCORED AND FAILING. When the ISO-year has no scarcity bench, C3c
+#       is SKIPPED instead, lands in the `skipped` list and downgrades through
+#       the UNSCORED-CRITERIA route the standing rule cannot reach. The same
+#       accepted model-class limitation therefore downgraded or did not
+#       depending on whether a bench happened to exist — a property of the
+#       DATA, not of the model, and exactly the tag the instruction forbids.
+#       C3c is now exempt from that route too (`skipped_downgrading`).
+#       FAIL-CLOSED ON RULE 22's OWN GUARDS: the exemption reaches
+#       LEDGERABLE_CRITERIA (C3c alone since v3.1) AND only at SUPPORTING
+#       tier, so it can never reach an unscored load-bearing (C1/C2/C3a/C3b)
+#       or protective (C6/C8) criterion; governance is tested before this
+#       branch, so a failing or unattested C6 still short-circuits to NOT-YET;
+#       and the two caveat BUDGETS are untouched and still checked first.
+#       IT IS STILL REPORTED, which is what keeps it from being an escape
+#       hatch (rule 22 guard (d)): C3c keeps its SKIPPED status, stays in
+#       `criteria`, and is NAMED on the determination basis by its own
+#       explicitly non-downgrading reason line — the same contract the v3.3
+#       ledgered line carries. Every OTHER unscored criterion still downgrades.
+#       EFFECT AT AMENDMENT, MEASURED over all 36 registered runs against a
+#       pre-change snapshot rather than asserted: **ZERO determinations
+#       change.** Exactly one record moves — MISO 2026-09-10-miso-251-tp2020,
+#       whose reason line splits from "unscored criteria: price_mean,
+#       price_shape, price_tail" into "unscored criteria: price_mean,
+#       price_shape" plus the new non-downgrading C3c line; it stays
+#       CALIBRATED-WITH-CAVEATS because two LOAD-BEARING criteria are still
+#       unscored there. No row in the repo today has C3c as its only
+#       downgrading item, so this is a FORWARD-LOOKING correction: it governs
+#       the first ISO-year to lose only its tail bench. NO SOLVE RAN —
+#       scorer-side only; every keeper re-scores in place.
 # v3.6 — 2026-09-05 owner amendment, session neiso-pjm-validation-touchpoints,
 #       verbatim: "c3c should be an accepted caveat on all holdout years", set
 #       alongside "an ISO can stay calibrated even if it degrades on holdout
@@ -406,7 +440,7 @@ COMPLETENESS_DIR = DATA_DIR / "completeness"
 #       Finding: results/calibration/
 #       FINDING-neiso106-per-year-ladder-governance-defect-2026-09-06.md.
 #       NO SOLVE RAN — scorer-side only; every run re-scores in place.
-RUBRIC_VERSION = 3.6
+RUBRIC_VERSION = 3.7
 
 # Statuses (per criterion-year and aggregated).
 PASS, CAVEAT, FAIL, SKIPPED = "PASS", "CAVEAT", "FAIL", "SKIPPED"
@@ -3313,6 +3347,45 @@ def determine_from_artifacts(
     skipped_protective = [
         cid for cid in skipped if per_criterion[cid]["tier"] == TIER_PROTECT
     ]
+    # RUBRIC v3.7 (owner instruction 2026-09-10, verbatim: "If c3c is the only
+    # caveat the status should be calibrated not with caveats").
+    #
+    # THE HOLE THIS CLOSES. Rule 22 [R-C3C] makes a ledgered C3c
+    # non-downgrading, and :func:`_apply_c3c_standing_rule` delivers that — but
+    # ONLY on the path where C3c is SCORED AND FAILING. When C3c is SKIPPED for
+    # want of a benchmark it never reaches the standing rule at all: it lands in
+    # ``skipped`` above and downgrades through the unscored-criteria route,
+    # which the standing rule cannot see. So the SAME accepted model-class
+    # limitation downgraded or did not depending on whether the ISO-year happened
+    # to have a scarcity bench — which is a property of the DATA, not of the
+    # model, and is exactly the tag the owner's instruction forbids.
+    #
+    # C3c is therefore exempt from the unscored-criteria downgrade too. It is
+    # still REPORTED (it keeps its SKIPPED status, stays in `criteria`, and is
+    # named on the determination basis by its own reason line below), so nothing
+    # is hidden — what changes is only that it cannot BE the caveat.
+    #
+    # FAIL-CLOSED, and the guards are rule 22's own: the exemption reaches
+    # LEDGERABLE_CRITERIA (C3c alone, v3.1) AND only at SUPPORTING tier, so it
+    # can never reach a load-bearing (C1/C2/C3a/C3b) or protective (C6/C8)
+    # unscored criterion. Governance is checked before this branch is reached,
+    # so a failing or unattested C6 still short-circuits to NOT-YET.
+    #
+    # MEASURED AT AMENDMENT over all 35 registered runs and every per-year
+    # subset, rather than asserted: **ZERO determinations change**, because no
+    # row today has C3c as its only downgrading item (the one run with an
+    # unscored C3c, MISO 2026-09-10-miso-251-tp2020, also has price_mean and
+    # price_shape unscored and stays CALIBRATED-WITH-CAVEATS on those). This is
+    # a forward-looking correction of a route that would otherwise mis-tag the
+    # first ISO-year to lose only its tail bench.
+    skipped_downgrading = [
+        cid
+        for cid in skipped
+        if not (
+            cid in LEDGERABLE_CRITERIA and per_criterion[cid]["tier"] == TIER_SUPPORT
+        )
+    ]
+    skipped_exempt = [cid for cid in skipped if cid not in skipped_downgrading]
 
     # Determination (rubric §2).
     reasons: list[str] = []
@@ -3344,7 +3417,7 @@ def determine_from_artifacts(
         # downgrades: commercial-band target misses, protective-gate caveats,
         # unscored criteria and data-blocked years are untouched.
         downgrading_caveats = len(protective_caveats) + len(band_caveats)
-        if downgrading_caveats == 0 and not skipped and not data_blocked:
+        if downgrading_caveats == 0 and not skipped_downgrading and not data_blocked:
             determination = CALIBRATED
         else:
             determination = CALIBRATED_CAVEATS
@@ -3363,7 +3436,9 @@ def determine_from_artifacts(
                 reasons.append(
                     "unscored PROTECTIVE criteria: " + ", ".join(skipped_protective)
                 )
-            other_skips = [c for c in skipped if c not in skipped_protective]
+            other_skips = [
+                c for c in skipped_downgrading if c not in skipped_protective
+            ]
             if other_skips:
                 reasons.append("unscored criteria: " + ", ".join(other_skips))
             if data_blocked:
@@ -3381,6 +3456,19 @@ def determine_from_artifacts(
                 f"{len(ledgered_caveats)} ledgered caveat(s) (measured-input or "
                 "model-class) — REPORTED, and NOT determination-downgrading "
                 "under rubric v3.3: " + ", ".join(c["label"] for c in ledgered_caveats)
+            )
+        # Same contract for an UNSCORED C3c (rubric v3.7). It is exempt from the
+        # unscored-criteria downgrade, so it must still be NAMED here — an
+        # exemption nobody can see is the escape hatch rule 22's guard (d)
+        # exists to prevent. Emitted on both branches and last, for the same
+        # reason as the ledgered line above.
+        if skipped_exempt:
+            reasons.append(
+                f"{len(skipped_exempt)} unscored criterion(s) — REPORTED, and "
+                "NOT determination-downgrading under rubric v3.7 (an accepted "
+                "model-class limitation cannot become a caveat merely because "
+                "the ISO-year has no bench to score it against): "
+                + ", ".join(per_criterion[c]["label"] for c in skipped_exempt)
             )
 
     # Report notes (not caveats): grounded-above-budget C8 passes — a class
