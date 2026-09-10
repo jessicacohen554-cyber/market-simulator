@@ -220,3 +220,186 @@ Implemented, tested and gate-clean in the parent, with no LP spent:
 fails identically at HEAD with this branch's changes stashed. It is nyiso-224's constants
 landing; `scenarios.py` is not one of the seven `SURFACE_MODULES`, so nothing in this
 change can move any ISO's fingerprint. It belongs to the NYISO lane.
+
+---
+
+# ADDENDUM A — a weakness in §2, recorded BEFORE the screen result
+
+Written after the screen shard launched and **before any solve number came back**, because
+it qualifies a claim §2 already makes and the record must not be tidied afterwards.
+
+## A.1 The partition breaks a reconciliation that currently holds almost exactly
+
+The committed 2023 benchmark's `classFull` total is **616.259 TWh** against MISO's EIA-930
+reported net generation of **616.516 TWh** — a gap of **−0.04 %**. Armed, the bench total
+falls to **603.746 TWh**, i.e. **−2.07 %** against the same grid total.
+
+That is a real cost of the arm and it is stated as one. §2 did not mention it.
+
+## A.2 But that aggregate match is NOT evidence of a clean benchmark
+
+Decomposed by fuel family, 2023, bench `classFull` vs the EIA-930 buckets:
+
+| family | bench | EIA-930 | bench − 930 |
+|---|---:|---:|---:|
+| coal | 185.787 | 174.961 | **+10.827** |
+| gas | 207.651 | 241.177 | **−33.526** |
+| nuclear | 87.177 | 87.842 | −0.664 |
+| wind | 91.715 | 91.721 | −0.006 |
+| solar | 6.348 | 6.348 | +0.000 |
+| hydro | 9.979 | 9.980 | −0.001 |
+| **other** (oil+biomass+OTHER+OTHER_FOSSIL) | 27.602 | 4.491 | **+23.111** |
+| **TOTAL** | **616.259** | **616.519** | **−0.259** |
+
+The −0.259 TWh headline is the residue of **68.1 TWh of absolute per-family discrepancy**
+that happens to cancel. So "the bench total matches the grid" is a coincidence of
+offsetting errors, not a property worth protecting — and the two largest errors point in
+exactly the directions this arm moves: **+23.1 TWh too much "other" and −33.5 TWh too
+little gas.** Armed, the "other" family error falls **+23.111 → +10.598**.
+
+## A.3 The competing hypothesis, named because it would INVALIDATE the premise
+
+§2 treats EIA-930 `OTH` as a like-for-like comparator for the model's `biomass` + `OTHER`
++ `oil`. There is a coherent rival reading in which it is not:
+
+> MISO's BA telemetry may label a blast-furnace-gas or coke-oven-gas **steam** unit as
+> `NG`, not `OTH`. If ~12.5 TWh of the chp=Y block is telemetered as gas, then 930's `NG`
+> already contains it, `OTH` is not a pure comparator, and the cogen **is** on the grid —
+> in which case the injection is right and this arm's premise is wrong. On that reading
+> the honest pairing is bench (gas+other) 235.25 vs 930 (NG+OTH) 245.67 = **−10.4 TWh**,
+> i.e. the benchmark under-counts *gas*, and the repair is on the gas side, not here.
+
+**This session cannot discriminate the two readings at zero LP, and does not claim to.**
+The argument that favours §2's reading is a structural one rather than a measurement: a
+paper mill's recovery boiler serving its own load is not a MISO market participant and
+would not appear in the BA's telemetry under *any* fuel label. That is a reason, not a
+proof. What would actually discriminate it is a per-generator EIA-930 fuel-attribution
+source, or MISO's own registered-resource roster — neither is on disk, and both are
+**intake work, not a solve**.
+
+Consequence, stated plainly: **§2's corroboration is weaker than §2 states.** It shows the
+"other" family is over-counted by 23.1 TWh on the 930 basis and that the partition removes
+about half of it; it does **not** establish that 930 `OTH` is the exact quantity the
+injected classes should equal.
+
+## A.4 New pre-registered gate — REPORTED, never a kill
+
+| gate | test on the 2023 screen | disposition |
+|---|---|---|
+| **G-6 bench-total consequence** | bench `classFull` total, armed, against EIA-930 net generation 616.516 TWh; and the per-family table above recomputed armed | **REPORTED at full magnitude, in both directions. NOT a kill gate**, because the bench moving is the intended behaviour of a bench-and-model seam, and killing on it would be gating the screen on a residual (rule 1 `[R-STRUCT]`, rule 29). Expected armed: total 603.746 (−2.07 %), "other" family error +23.111 → +10.598 |
+
+The five STOP gates of §6 are unchanged. G-6 joins the reported set, not the kill set.
+
+## A.5 What this does to the arm's standing
+
+The arm remains worth its one screen shard: it is a rule 14 `[R-ACCURATE]` repair with zero
+free parameters, a real forward analogue, and a measured 12.514 TWh footprint whose sign
+matches the two largest benchmark family errors. But the **promotion bar is higher than
+§2 implied.** On this record, a screen that clears G-1..G-5 is evidence the *seam works as
+built* — it is **not** evidence that the level it lands on is right, and this session will
+not present it as such. The competing hypothesis of A.3 stays open and goes to the owner.
+
+---
+
+# ADDENDUM B — a CAMPD test of Addendum A.3, still before any screen number
+
+Zero LP, run while the screen shard was provisioning. It **partly discriminates** A.3's
+competing hypothesis and it moves the balance toward §2's reading — without settling it.
+
+## B.1 Why CAMPD is a discriminator at all
+
+CEMS applicability under 40 CFR 75 keys on **serving a generator that sells electricity to
+the grid**. An industrial unit burning its own process gas purely for on-site power and
+steam is not covered. So: **a chp=Y plant that is entirely absent from CAMPD is very
+unlikely to be a grid seller**, and that is exactly the population A.3's rival reading
+would need to be grid-connected.
+
+## B.2 The measurement — MISO 2023, the 12.514 TWh chp=Y block, 94 plants
+
+| CAMPD status of the plant | plants | TWh | share |
+|---|---:|---:|---:|
+| **absent from CAMPD entirely** | 78 | **8.154** | **65.2 %** |
+| present, but **zero** CAMPD gross load | 9 | 1.460 | 11.7 % |
+| present with **nonzero** CAMPD gross load | 7 | 2.900 | 23.2 % |
+
+**76.9 % (9.614 TWh) of the block is at sites with no metered CEMS generation at all** —
+consistent with behind-the-meter cogen, and hard to reconcile with the rival reading.
+
+## B.3 The confound, made explicit rather than argued around
+
+The 23.2 % "visible" bucket is **facility**-grain, not unit-grain, and at six of its seven
+plants the CEMS load is plainly *other units at the same site*:
+
+| plant | chp=Y class (TWh) | plant total EIA-923 (TWh) | CAMPD gross (TWh) |
+|---:|---:|---:|---:|
+| 55088 | 1.3770 | 5.2598 | 3.6481 |
+| 1391 | 1.0000 | 3.1348 | 3.3336 |
+| 1393 | 0.2164 | 1.7402 | 1.6094 |
+| 50625 | 0.1675 | 4.2539 | 5.8448 |
+| 55419 | 0.0703 | 4.9691 | 9.8456 |
+| 55089 | 0.0687 | 5.9172 | 3.8616 |
+| 6098 | 0.0000 | 1.5666 | 1.6588 |
+
+Only 55088 and 1391 have a chp=Y block large relative to their own site. So **2.900 TWh is
+an UPPER BOUND on what the partition might wrongly remove** — 23 % of the block — and the
+true figure is likely well below it, because facility presence in CAMPD is not evidence
+that *these* units are metered.
+
+## B.4 What this does and does not establish
+
+- **Does:** the great majority of the removed energy is at sites with no CEMS generation,
+  which is the signature of on-site cogen rather than grid sale. A.3's rival reading would
+  require ~12.5 TWh of grid-selling cogen; at most ~2.9 TWh of the block is even at a
+  CEMS-reporting site.
+- **Does not:** unit-grain attribution. CAMPD absence is strong but circumstantial, and it
+  says nothing about how MISO's *telemetry* labels the units that ARE grid-connected —
+  which was A.3's actual mechanism. **The hypothesis stays open and still goes to the
+  owner.**
+- **Does not** change any gate. B.2/B.3 are reported evidence, not a gate, and no STOP
+  gate of §6 moves.
+
+Registered here before the screen result so it cannot be read as post-hoc support.
+
+---
+
+# ADDENDUM C — pre-solve dispatch context, and an expectation that may go against the arm
+
+Read off the **committed keeper's own hourly sidecars** (rule 29(b) form 4 — no solve).
+Recorded before any screen number.
+
+## C.1 The injection passes through 1:1, confirmed in the keeper's dispatch
+
+Keeper P1 2023 model energy: `biomass` **8.128 TWh**, `OTHER` **10.325 TWh** — exactly the
+injected amounts of §4. The must-run block is not attenuated anywhere in the LP, so the
+partition's dispatch effect is the full 12.5136 TWh, or **1,428.5 MW on hourly average**
+(flat within a month, split by zone demand share).
+
+## C.2 There is headroom — the arm should not produce scarcity
+
+Keeper 2023: **slack 0.0 MWh, dump 0.0 MWh**. The LP is nowhere at VOLL, so withdrawing
+1.4 GW of must-run supply should be absorbed by the merit order rather than priced as
+shortage. `import` is a live class at **43.192 TWh**, so the replacement can come from
+imports as well as thermal — which is why G-2 is written as
+Δ(dispatchable classes) **+ Δ(net imports)** rather than thermal alone.
+
+## C.3 The expectation that may go AGAINST the arm, stated before the result
+
+Keeper `CC_REGULAR` is **138.151 TWh** against a bench `classFull` of **141.817** — i.e.
+the model is **−3.666 TWh** under bench today. At a load-weighted mean price of
+**$34.467/MWh** the marginal class in most MISO hours is CC_REGULAR, so a large share of
+the withdrawn 12.5136 TWh will land there.
+
+**If it takes most of it, CC_REGULAR lands around 148–150 TWh — roughly +7 TWh OVER bench,
+flipping the sign of its C1 error rather than closing it.** That is a real and foreseeable
+way for this arm to be wrong, and it is written down here rather than discovered afterwards.
+
+**It does not change the gate, and deliberately so.** C1 `CC_REGULAR` is the *target*
+residual; killing the screen on it would be the fitted-mechanism selection rule 1
+`[R-STRUCT]` forbids, and passing the screen on it would be the same error with the sign
+reversed. It is **reported at full magnitude in either direction**, and the arm's standing
+is decided by the owner on structure, not by whether this number improved.
+
+If CC_REGULAR does overshoot, the honest reading is **not** "the partition is too large" —
+that would be tuning the partition to a residual, and the partition has no parameter to
+tune. It is that MISO's benchmark carries a **−33.5 TWh gas-family error** (ADDENDUM A.2)
+which this arm was never built to fix, and that the two defects interact.
