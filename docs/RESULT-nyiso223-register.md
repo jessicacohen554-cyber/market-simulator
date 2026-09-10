@@ -155,3 +155,71 @@ Total **992.6 s ≈ 16.5 min** (04:26:01 → 04:42:52 UTC). Peak RSS 5.94 GB (20
 `build_status.py` · `prune_iso_runs.py` · `stamp_touchpoint_holdout.py` ·
 `frontend/data/backcast/keepers/NYISO.json` · `calibration-complete.json` · any edit under
 `src/` or `scripts/` · any PR · any deletion of a result.
+
+---
+
+## 12. ADDENDUM — did the score improve? **NO.** (owner question, 2026-09-10)
+
+Compared against the incumbent keeper **`2026-09-09-nyiso-221-fuelvintage-span`**
+(bundle `nyiso_fuelvintage_A`), artifact-only, no solve spent.
+
+### 12.1 Headline determinations are NOT comparable as-is
+
+| | incumbent | new |
+|---|---|---|
+| determination | **CALIBRATED** | **NOT-YET** |
+| years | 2023–2025 | 2022–2025 |
+| grade | 8 scored, target 7, **fails 0**, ledgered 1 | 7 scored, target 3, **fails 4**, ledgered 0 |
+| C6 governance | PASS | **UNATTESTED** |
+
+The gap is driven entirely by two things that are **not** the mechanism: (a) the bundle has
+**no attestation file**, so C6 is UNATTESTED — a bundle-artifact gap; and (b) the new run adds
+**2022**, a year the incumbent never scored and which was **already known to fail** — the
+keeper's own record has the nyiso-222 2022 touchpoint on this same recipe at C3a −13.8 % /
+C3b 0.242, against this run's −13.9 % / 0.245. The gap fill did not fix 2022 and did not
+cause its failure.
+
+### 12.2 Like-for-like on the three shared years: a WASH, zero criterion flips
+
+| criterion | 2023 | 2024 | 2025 |
+|---|---|---|---|
+| C3a mean LMP | +4.3 % → +4.4 % (flat) | +5.3 % → +5.5 % (**worse** 0.07 $/MWh) | −7.3 % → −7.1 % (**better** 0.12) |
+| C3b NRMSE | 0.122 → 0.122 (flat) | 0.179 → 0.182 (**worse** 0.003) | 0.160 → 0.158 (**better** 0.002) |
+| C3c tail hours | 2h → 2h | 0h → 0h | 3h → 3h |
+| C1 CC_REGULAR | +0.79 → +0.80 TWh | +2.91 → +2.89 TWh | SKIPPED both |
+| C4 gas r | 0.941 → 0.942 | 0.899 → 0.895 | 0.841 → 0.841 |
+
+**Every criterion holds its verdict in both runs. Nothing flipped in either direction**, and
+the movements are mixed in sign and two orders of magnitude inside the bands.
+
+### 12.3 The mechanism is NOT LP-inert — it redistributes, it does not re-level
+
+Hourly zonal price diff against the incumbent's committed sidecars:
+
+| year | hours changed | mean abs Δ | max abs Δ | annual mean Δ |
+|------|---------------|-----------|-----------|----------------|
+| 2023 | 25,947 / 52,560 (49.4 %) | $0.1785 | $8.056 | **+0.0036** |
+| 2024 | 34,110 / 52,560 (64.9 %) | $0.4413 | $22.293 | **+0.0721** |
+| 2025 | 41,524 / 52,560 (79.0 %) | $0.5525 | $46.301 | **+0.1438** |
+
+Half to four-fifths of all hours move, by up to $46 — but the annual mean barely shifts. That
+is exactly the signature of an **exactly mean-preserving** gap fill: it changes *which* days
+carry which price, not the level. A real hourly footprint with a near-zero scored effect.
+
+### 12.4 Verdict on the owner's conditional
+
+The instruction was *"Did score improve? If so promote."* **The score did not improve, so the
+condition is not met and this shard did not promote.** No keeper file was touched.
+
+Two things the owner may want to weigh, stated because they are the owner's call and not this
+shard's:
+
+1. **A promotion basis other than score exists, and this lineage has used it.** The incumbent
+   keeper was itself promoted on 2026-09-09 under the owner's ruling *"these should be
+   promoted as keepers on both 860 and gas shape counts **regardless of inertness**"* — i.e.
+   rule 14 `[R-ACCURATE]` input correctness, explicitly **not** a scored gain. An unpriced day
+   taking its own month's observed level rather than a neighbouring print's clamped deviation
+   is that same kind of argument. Score is silent on it either way.
+2. **No promotion is possible until C6 is attested.** A keeper must carry
+   `calibration_attestation.json` with its DOF ledger; this bundle has none, and authoring one
+   requires a `scripts/gen_nyiso223_attestation.py` this shard is forbidden to create.
