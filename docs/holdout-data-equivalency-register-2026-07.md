@@ -1061,6 +1061,44 @@ has no measured input for those years — an owner/methodology call on what the
 recipe even is, not a fetch. Governance-side, unchanged and outranking all of
 it: MISO holds **no marker of either tier**, and the **spend freeze is active**.
 
+> #### UPDATE 2026-09-10 (session miso-251) — items (1) and (3) are RESOLVED; (2) is unchanged and re-verified
+>
+> The governance sentence above is **DEAD**: `[R-HOLDOUT]` was removed 2026-09-09, so there is no
+> marker, no tier authorization and no spend freeze. Any year may be solved, scored and registered.
+> MISO's ladder was run that day: **2022, 2021 and 2020 all solved** on the keeper's frozen recipe.
+>
+> * **(1) demand profile for 2018-2020 — RESOLVED, and it was never a fetch.**
+>   `curate_demand_profile.py::curate_pre_window` already covered 2019/2020 for every model ISO and
+>   builds the `demand-profile` clean partition from the SAME per-BA EIA-930 extract `load_demand`
+>   serves. MISO 2020 lands at **622.5 TWh / peak 112,940 MW, 0 hours repaired**, which is the array
+>   the LP dispatches. `calibration_reference.json` now carries a MISO **2020** block (grafted; every
+>   other ISO and MISO year byte-identical). `CALIBRATION_YEARS_BY_ISO["MISO"]` = (2020…2025).
+> * **(3) ASM reserve series — RESOLVED as a METHODOLOGY question, exactly as this row predicted.**
+>   The source wall is real and was re-probed 2026-09-10 (2022 `asm_exante_damcp` /
+>   `asm_rtmcp_final` / `asm_rt_co` all **404**; 2023 all **200**). The answer is not a fetch: the
+>   touchpoint **disarms** `miso_measured_reserve_requirements` and its hard dependent
+>   `miso_reserve_online_gated` to their `ScenarioConfig` defaults, dropping onto MISO's **own
+>   published static RBDC construction** — which is what a FORECAST year uses, so rule 13's forward
+>   test is met. It is machine-verified, not asserted, by
+>   `gen_touchpoint_attestation.py --declared-degradation`, which admits a key ONLY at its default
+>   (a disarm, never an arm). See `docs/GOVERNANCE-NOTE-miso251-declared-degradation-channel-2026-09-10.md`.
+> * **(2) hub-LMP bench 2018-2021 — UNCHANGED, and re-verified today.** Still needs
+>   `MISO_PRICING_API_KEY`, still absent from environment and repo. Re-probed 2026-09-10:
+>   `20200701` / `20210701` / `20220701` `_da_expost_lmp.csv` → **404**; `20230101` / `20230401` →
+>   **200**. Four archive URL shapes and the Pricing API endpoint probed, all 404/403. **Consequence,
+>   stated plainly: C3a, C3b and C3c are UNSCORABLE on MISO 2020 and 2021**, so those rungs cannot
+>   read `CALIBRATED` however the model performs — a fact about MISO's retention, never a model
+>   result. One command closes it once the key exists:
+>   `fetch_miso_hub_lmp.py --years 2020 2021` then `derive_miso_hub_lmp.py` (which also closes
+>   2022's Nov-Dec tail).
+> * **NEW, and it was silently degrading every pre-2023 MISO solve:**
+>   `curate_zonal_shares.py::parse_miso_shares` hardcoded `miso_subba_demand_2023-2025.csv`, so every
+>   year outside 2023-2025 fell through the partial-coverage guard onto **flat sample-average zone
+>   shares** — while the full-year per-year files (2018-2022, 2026) sat on disk. Repaired; 2019-2022
+>   now build full (6, 8760) share matrices and 2023-2025 are byte-identical. Anyone reading this
+>   register for a pre-2023 MISO solve predating 2026-09-10 should treat its zonal allocation as
+>   degraded.
+
 ---
 
 ## ERCOT — 2018-2022 (validation ladder) + H1-2026 (locked-test edge) data readiness (intake 2026-07-31, this session)

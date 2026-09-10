@@ -13538,3 +13538,95 @@ passed, no out-of-training year was solved or scored, and no marker file was tou
 Artifacts: `docs/RESULT-miso-fuelvintage-ep-level-2026-09-09.md`,
 `docs/PRECOMMIT-miso-fuelvintage-ep-level-2026-09-09.md`,
 `scripts/gen_miso250_attestation.py`.
+
+## miso-251 — 2026-09-10 — **THE HOLDOUT LADDER IS COMPLETE (2020/2021/2022) AND THE KEEPER'S RANGE LIMIT IS NOW A MEASURED NUMBER: it fails out of REGIME, not out of sample.** Keeper unchanged, `2026-09-09-miso-250-ep-gas`, **CALIBRATED**
+
+**Owner instruction** (verbatim): *"For c3c miss on backcast calibration rubric, it should not create
+a calibrated with caveats tag … so miso needs a fix. Then on miso, please ensure all data needed is
+populated in the repo to run holdout years 2020-2022, and run the 2022 touchpoint on the current
+keeper config, then add it to the current keeper entry in the html and add results to calibration
+status page… If 2022 stays calibrated, run 2021 … If that stays calibrated run 2020… If any of the
+holdout touchpoint years comeback calibrated, diagnose and launch an lp screen on the holdout year
+miss… Don't be afraid to tune the fossil offer curve if there's a level issue across all years."*
+
+### 1. C3c needed no fix, and the evidence says so
+
+Rubric v3.3 already makes a ledgered C3c non-downgrading and MISO already reads it: the keeper is
+**`CALIBRATED`** with C3c its single ledgered, reported, non-downgrading caveat. The one
+`CALIBRATED-WITH-CAVEATS` string in MISO's status part is the **2025 per-year row**, and its cause
+is `unscored criteria: fuelmix, sysvol` — all 8 of 8 C1 classes SKIPPED on the *preliminary 2025
+EIA-923 vintage*. CAISO, NEISO and NYISO show the identical row for the identical reason. The
+unscored-criteria route is one v3.3 explicitly preserved as downgrading, so **no scorer change was
+made for it**. Full evidence: `docs/FINDING-miso251-c3c-and-the-partial-month-bench-2026-09-10.md`.
+
+### 2. THE LADDER — three rungs, all folded into the keeper (rule 30(a)), ISO determination untouched
+
+| year | HH | determination | what decides it |
+|---|---|---|---|
+| **2020** | 2.03 | **CALIBRATED-WITH-CAVEATS** | **sole reason: unscored price criteria. ZERO fails, target_grade 5/5** |
+| **2021** | 3.72 | NOT-YET | C1 on **CC_REGULAR alone** (−32.06 TWh) + C4 gas (r 0.864) |
+| **2022** | 6.45 | NOT-YET | C1 ×4, C3a −13.8 %, C3b 0.209, C4 coal r 0.744 |
+| 2023–2025 | — | CALIBRATED / CALIBRATED / C-W-C | the train tier, unchanged |
+
+**MISO stays `CALIBRATED`** (rule 30(c)); `audit_keepers --iso MISO` passes 0/0.
+
+### 3. THE PRE-REGISTERED FALSIFICATION TEST — pushed and SHA-pinned before either rung solved
+
+H1: *the 2022 miss is regime-bound, not a general out-of-sample failure.* Falsified if 2020 returned
+a 2022-style coal excess (`> +20 TWh`) at $2.03 gas. **It returned −5.00 TWh — opposite sign, an
+order of magnitude away. H1 SURVIVES.**
+
+| year | HH $ | coal resid | gas-CC resid |
+|---|---:|---:|---:|
+| 2020 | 2.03 | −5.00 | +3.06 |
+| 2024 | 2.19 | −9.18 | +2.97 |
+| 2023 | 2.54 | −5.77 | −6.80 |
+| 2025 | 3.52 | −10.66 | −4.03 |
+| 2021 | 3.72 | −8.62 | −32.05 |
+| **2022** | **6.45** | **+50.46** | −15.74 |
+
+Coal sits between −5 and −11 TWh across a $1.69 span and then jumps **59 TWh in the $2.73 to 2022**.
+**The keeper's range limit is now a measured number rather than a suspicion**, and it is bounded: a
+MISO forecast year approaching $6/MMBtu gas is outside the regime its offer bands were identified on.
+
+### 4. The offer-curve latitude was DECLINED, on the evidence
+
+The owner's permission is conditioned on *a level issue across all years*. There is none: C3a reads
+**+4.9 / +1.8 / −6.2 %** across the keeper's own span, in both directions, all PASS. A band
+multiplier is a common-mode lever and there is no common mode to remove; choosing a factor so 2022
+lands is per-year fitting against a gate (rule 1 carve-out (c)). Nothing was tuned in any rung —
+offer curves are byte-identical to the keeper's in all three.
+
+### 5. Four defects fixed, each found by a rung and each verified a no-op on the keeper
+
+1. **`parse_miso_shares` hardcoded the 2023-2025 sub-BA file**, so every pre-2023 MISO year
+   dispatched on **flat sample-average zone shares** while the full-year per-year files sat on disk.
+   Repaired; 2023-2025 byte-identical by sha256. The 2022 rung was re-solved on it — **and the
+   repair moved the miss by 0.00 TWh of coal**, which eliminates zonal allocation as an explanation.
+2. **C3a/C3b masked only null months**, so MISO 2022's **one-hour December** ($22.82, against a model
+   December carrying Winter Storm Elliott) was being scored. Both sides now mask to fully-staged
+   months: C3b 0.279 → 0.209, and **0 of 33 registered runs change**.
+3. **No pre-2023 MISO year could be attested at all** — the generator refused any recipe delta, and
+   MISO published no ASM record before 2023. New `--declared-degradation` channel admits a key ONLY
+   at its `ScenarioConfig` default (a disarm, never an arm). Flagged for an owner ruling:
+   `docs/GOVERNANCE-NOTE-miso251-declared-degradation-channel-2026-09-10.md`.
+4. **`actual_tail.json` had no MISO 2022 row.** Re-derived: 14 ISO-years added, zero changed.
+
+### 6. Named open items, reported not absorbed
+
+* **The seam.** 2021 runs a **net import of +75.93 TWh, importing in 8,757 of 8,760 hours**, against
+  2022's net **export** of −22.58 TWh — a ~98 TWh swing between adjacent held-out years, with 42
+  model hours > $200 on 2021 (max $243) versus **zero** on 2022 (max $95). Both years' gas-CC misses
+  sit downstream of it. Partly structural: `miso_seam_neighbour_hourly_spp`'s table is explicitly
+  *"a no-op for any year absent here"* and SPP hub prices exist only for 2023-2025, so every pre-2023
+  rung runs the seam on its fallback. **Whether that fallback is well-behaved is unanswered** — no LP
+  was spent on it.
+* **The price bench.** `MISO_PRICING_API_KEY` is the single thing that unblocks C3a/C3b/C3c on 2020
+  and 2021 (and 2022's Nov-Dec tail). Until it exists those rungs cannot read `CALIBRATED` however
+  the model performs.
+* **The structurally-correct lever for 2022** — a fuel-price-responsive coal supply constraint — has
+  **no input in the repo**: `coal-prices` is prices only, `winter-fuel-inventory` is ISO-NE only.
+  EIA-923 Schedule 5 coal stocks would be rule-13 admissible with a real forward analogue, but that
+  is a data-intake lane with its own charter.
+
+* Next number: **miso-252**.

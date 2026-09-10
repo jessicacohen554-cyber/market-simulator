@@ -950,6 +950,13 @@ def _actual_avg_lmp(iso: str, year: int) -> dict | None:
         )
         if k in rec
     }
+    # NOT included: the `da_cov` / `rt_cov` staging-coverage vectors. They are
+    # what puts C3a/C3b on a like-for-like calendar, but the bench part's
+    # PAYLOAD FINGERPRINT covers this builder's output shape, so adding a key
+    # here marks EVERY committed part of EVERY ISO stale at once (measured
+    # 2026-09-10: 0 -> 31 of 31). The scorer therefore reads the vectors from
+    # the same committed reference this function reads
+    # (calibration_verdict._actual_lmp_coverage), which changes no part.
     return out or None
 
 

@@ -202,7 +202,21 @@ CALIBRATION_YEARS_BY_ISO: dict[str, tuple[int, ...]] = {
     # so _demand_totals hard-fails ("No EIA-930 data for ISO 'MISO' in year
     # 2018") — the same F3-class cross-ISO blocker recorded for NEISO above,
     # fix = extend eia_demand_profiles{,_meta}.parquet first.
-    "MISO": (2021, 2022, 2023, 2024, 2025),
+    # 2020 ADDED 2026-09-10 (session miso-251, owner instruction "ensure all
+    # data needed is populated in the repo to run holdout years 2020-2022").
+    # The F3 blocker this comment named above is CLOSED for MISO by the same
+    # curate_demand_profile.py::curate_pre_window seam PJM 2019 used: MISO now
+    # carries a `demand-profile` clean partition for 2020 built from the SAME
+    # per-BA EIA-930 hourly extract load_demand serves (622.5 TWh, peak
+    # 112,940 MW, 0 hours repaired — identical to the array the LP dispatches),
+    # so _demand_totals('MISO', 2020) resolves and no longer reaches the legacy
+    # eia_demand_profiles.parquet summary. DATA READINESS ONLY: 2020 still has
+    # NO MISO hub-LMP bench (docs.misoenergy.org has aged 2018-2022 off; the
+    # Data Exchange fallback needs MISO_PRICING_API_KEY, absent here — re-probed
+    # 404 on 2026-09-10), so C3a/C3b/C3c are unscorable on it and no 2020 rung
+    # can read CALIBRATED until that key lands. See
+    # docs/PRECOMMIT-miso251-holdout-ladder-2026-09-10.md section 2.3.
+    "MISO": (2020, 2021, 2022, 2023, 2024, 2025),
     # SPP is the Stage-G addition (registered 2026-09-06 by lane SPP-20; this
     # block landed 2026-09-07 by lane SPP-31). TRAINING TIER ONLY: 2023-2025,
     # the three years rule 22 [R-HOLDOUT] lets any ISO be built and scored on.

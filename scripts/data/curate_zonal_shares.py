@@ -268,15 +268,34 @@ def parse_caiso_shares(year: int, zone_names: list[str]) -> np.ndarray | None:
 def parse_miso_shares(year: int, zone_names: list[str]) -> np.ndarray | None:
     """Parse MISO EIA-930 sub-BA CSV -> ``(n_zones, HOURS_PER_YEAR)`` shares.
 
-    Reads the combined multi-year file
-    ``data/raw/zone-specific-demand/MISO/miso_subba_demand_2023-2025.csv``,
-    filters to ``year``, maps the six sub-BAs to the three model zones, and
-    normalises each hour.  The UTC ``period`` column is mapped to the model's
-    local hour-of-year via the MISO hourly frame so zonal shapes index the
-    same wall-clock hour as renewable CF.  Returns ``None`` when the file (or
-    the MISO hourly frame) is absent.
+    Reads the sub-BA staging for ``year``, maps the six sub-BAs to the model
+    zones, and normalises each hour.  The UTC ``period`` column is mapped to
+    the model's local hour-of-year via the MISO hourly frame so zonal shapes
+    index the same wall-clock hour as renewable CF.  Returns ``None`` when no
+    staging covers the year (or the MISO hourly frame is absent).
+
+    PER-YEAR FILE FIRST (miso-251, 2026-09-10).  This read used to be
+    HARDCODED to the combined ``miso_subba_demand_2023-2025.csv``, which meant
+    every year outside 2023-2025 fell through to the partial-coverage guard
+    below and silently dispatched on FLAT SAMPLE-AVERAGE zone shares — even
+    though ``data/raw/zone-specific-demand/MISO/`` has carried full-year
+    per-year files (2018-2022, 2026, same schema, ~8,757 periods x 6 sub-BAs)
+    since the 2026-07-31 holdout intake.  Found by the miso-251 2022
+    touchpoint, whose solve logged "covers 2022 only partially (7/8760 hours)"
+    while ``miso_subba_demand_2022.csv`` sat on disk complete: total demand was
+    right (EIA-930 metered) but its allocation across the six zones was a flat
+    average, a DIFFERENT demand basis than the 2023-2025 training years get,
+    which reaches congestion, zonal price formation and therefore C3a/C3b/C4.
+    Rule 14 ``[R-ACCURATE]``: the accurate input wins, and an estimate must not
+    stand in for data the repo already holds.
+
+    2023/2024/2025 have NO per-year file, so they resolve to the combined file
+    exactly as before and every committed keeper is byte-identical.
     """
-    path = ZONE_DEMAND_DIR / "MISO" / "miso_subba_demand_2023-2025.csv"
+    miso_dir = ZONE_DEMAND_DIR / "MISO"
+    per_year = miso_dir / f"miso_subba_demand_{int(year)}.csv"
+    combined = miso_dir / "miso_subba_demand_2023-2025.csv"
+    path = per_year if per_year.exists() else combined
     if not path.exists():
         logger.warning("MISO sub-BA load file not found (%s); skipping", path)
         return None
@@ -312,8 +331,8 @@ def parse_miso_shares(year: int, zone_names: list[str]) -> np.ndarray | None:
     shares = _hourly_shares_from_groups(
         mzone, long["hoy"].to_numpy(), long["mw"], zone_names
     )
-    # The sub-BA export spans only the years it was pulled for (2023-2025). For
-    # any other year the UTC->local mapping still lands a handful of rows —
+    # A staging spans only the years it was pulled for. For any other year the
+    # UTC->local mapping still lands a handful of rows —
     # January 1st's first UTC hours belong to the previous local year — and the
     # `df.empty` guard above does not catch that: a 7-hour year sails through
     # and returns shares that are NaN for the other 8,753 hours, which

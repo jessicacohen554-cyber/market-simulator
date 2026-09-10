@@ -16,7 +16,7 @@
   "rubric_version": 3.6,
   "determination": "NOT-YET",
   "reasons": [
-    "governance gate FAIL: attestation false: levers_trace_to_measured_input, no_fit_to_price_residuals; authorized_price_tuning incomplete: ruling, value, years_held, set_ex_ante, not_swept"
+    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, price_tail"
   ],
   "notes": [],
   "criteria": {
@@ -53,7 +53,7 @@
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
@@ -72,10 +72,10 @@
   },
   "grade_summary": {
     "scored": 8,
-    "target_grade": 5,
+    "target_grade": 6,
     "commercial_grade": 0,
     "ledgered": 0,
-    "fails": 3
+    "fails": 2
   },
   "reported": {
     "co2": {
