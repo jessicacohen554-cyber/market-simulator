@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-09-09-spp-52a-fossil-offer",
+  "run_id": "2026-09-10-spp-61-vintage",
   "iso": "SPP",
-  "label": "spp 52a fossil offer",
+  "label": "spp 61 vintage",
   "target_years": [
     2023,
     2024,
@@ -81,17 +81,17 @@
     "co2": {
       "label": "C5a CO2 vs eGRID (REPORTED-ONLY, v2.9 \u2014 see the CRITERIA note)",
       "years": {
-        "2023": "-2.6%",
-        "2024": "-2.0%",
-        "2025": "+3.0%"
+        "2023": "-5.6%",
+        "2024": "-3.1%",
+        "2025": "+2.9%"
       }
     },
     "diurnal_amplitude": {
       "label": "D-A diurnal price amplitude, hour-of-day (REPORTED-ONLY, BAND-FREE, v3.5 \u2014 no external comparable exists to band it; see the note)",
       "years": {
-        "2023": "amplitude 36.9% of measured (hod range $10.88 vs $29.48); peak h17 vs h17, trough h02 vs h01 \u2014 phase OK; hod r +0.944; 364 complete days",
-        "2024": "amplitude 35.2% of measured (hod range $13.14 vs $37.29); peak h15 vs h16, trough h01 vs h01 \u2014 phase OK; hod r +0.966; 364 complete days",
-        "2025": "amplitude 28.9% of measured (hod range $13.68 vs $47.28); peak h12 vs h17, trough h01 vs h01 \u2014 phase OFF; hod r +0.879; 364 complete days"
+        "2023": "amplitude 38.5% of measured (hod range $11.34 vs $29.48); peak h17 vs h17, trough h02 vs h01 \u2014 phase OK; hod r +0.945; 364 complete days",
+        "2024": "amplitude 38.1% of measured (hod range $14.21 vs $37.29); peak h15 vs h16, trough h02 vs h01 \u2014 phase OK; hod r +0.968; 364 complete days",
+        "2025": "amplitude 24.3% of measured (hod range $11.51 vs $47.28); peak h17 vs h17, trough h01 vs h01 \u2014 phase OK; hod r +0.893; 364 complete days"
       }
     }
   },
@@ -111,13 +111,13 @@
       "ST_CHP"
     ],
     "all": {
-      "pass": 15,
+      "pass": 14,
       "total": 16
     },
     "free": {
-      "pass": 11,
+      "pass": 10,
       "total": 12
     },
-    "headline": "C1 all 15/16 \u00b7 free 11/12"
+    "headline": "C1 all 14/16 \u00b7 free 10/12"
   }
 }

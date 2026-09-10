@@ -914,6 +914,52 @@ not repeated here.
 
 **Next shorthand: spp-21.** Next lane issued this session: **SPP-61**, the Harrington fuel-vintage repair.
 
+## spp-61 — 2026-09-10
+
+**KEEPER 6 PROMOTED: `2026-09-10-spp-61-vintage`** (bundle `results/calibration/spp61_vintage`),
+over keeper 5 `2026-09-09-spp-52a-fossil-offer`, **by owner ruling in-session** — verbatim: *"Is this
+a recommended keeper candidate? If so plz promote... If structural integrity improves but gates
+regress that may still be a keeper."*
+
+**The run:** keeper 5's recipe plus **exactly one** change —
+`ScenarioConfig.eia860_vintage_tracks_solve_year = true`, armed per-run through the registered
+`--set` channel on `replay_keeper.py`. Zero code change, zero shared default flipped, zero new
+tunable. One `--years 2023 2024 2025` invocation, years sequential (rules 12 / 16), 655 s wall.
+**First arm of this field in any committed run, in any ISO.**
+
+**Promoted on structure, not on score — the score gets worse.** Unarmed, every backcast year resolved
+against the canonical EIA-860 2025 Early Release, giving a registry of 60,749.0 / 60,739.9 / 60,739.9
+MW across three years — a fleet that barely evolves, the pjm-167 defect. Armed: −2,715.4 MW (2023) /
+−3,175.3 MW (2024). Harrington 6193 lands on its own vintage (1,018.0 MW `COAL` in 2023; 679.0 `COAL`
++ 339.0 `ST_GAS` in 2024; 1,018.0 `ST_GAS` in 2025, correctly). Warrant: rule 14 `[R-ACCURATE]` and
+rule 1 `[R-STRUCT]`.
+
+**Reported at full magnitude:** C1 goes from ONE failing row to TWO — 2023 `ST_GAS` −8.38 TWh (it had
+been PASSING on 1.05 TWh of headroom) and 2024 `ST_GAS` −9.71 TWh (from −8.13). C5a CO2
+(reported-only) −2.6/−2.0/+3.0 → −5.6/−3.1/+2.9 %. D-10 15/16·11/12 → 14/16·10/12. C2 / C3a / C3b /
+C4 / C6 / C8 PASS on both; C3c FAILs on both. **Determination NOT-YET on both, identical basis
+(`fuelmix, price_tail`)** — the promotion costs no status. Improving besides the fleet: D-A diurnal
+amplitude 36.9/35.2 → 38.5/38.1 %, and **2025 diurnal phase repairs OFF → OK**.
+
+**Keeper 5's own bet is measured and lost:** its note projected that repairing this row would leave
+C3c the lone failure and make SPP read CALIBRATED under rule 22. It does not. Half the premise was
+falsified at zero LP by this lane's phase 0 — the EIA-923 bench frame is completely inert to the
+EIA-860 vintage (0 rows > 1 MWh) and already books Harrington's coal as `COAL_PRB`.
+
+**Screen (rule 29):** year 2023, named by measured footprint, not the residual year. G3 coal family
++2.8178 TWh inside the pre-registered +1.0/+4.5 band with `ST_GAS` falling; G4 no non-target
+load-bearing flip. Screen bundle gitignored, never registered, retained on disk (rule 31).
+
+**Routed, not buried:** model `ST_GAS` was already 6.95 / 8.13 TWh below actual *before* the arm; the
+arm removes capacity that did not exist in those years and so removes a **compensating error**. The
+residual is a gas-steam merit-order / offer defect, not a fleet-vintage defect — **the next lane's
+object**, and the only thing between SPP and the rule-22 lone-C3c path to CALIBRATED.
+
+**Matrix (rule 28(b)):** `eia860_vintage_tracks_solve_year` **U → K** in SPP's shard only; rule 28(d)
+fills no other ISO's cell. **Routed not touched:** `run_calibration_full` builds the bench
+`group_by_code` before `run_year` sets the year's vintage — measured effect for SPP exactly zero.
+
+Records: `docs/handoffs/PRECOMMIT-spp-61-2026-09-10.md`, `docs/handoffs/RESULT-spp-61-2026-09-10.md`.
 ---
 
 ## 2026-09-10 — spp-21: SPP-61 the Harrington fuel-vintage repair — the charter's BENCH SIDE IS FALSIFIED at zero LP, and the model-side arm is KILLED at the rule-29 screen gate G3 on a prerequisite it exposed
