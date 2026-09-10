@@ -1810,7 +1810,27 @@ results/calibration/spp58_*/
 # tree copies stay on disk until the owner rules on promotion.
 results/calibration/caiso269_lateevening_*/
 results/calibration/_rev2void_caiso269_*/
-results/calibration/caiso269_lateevening_span/
+
+# ...and the two REGISTERED bundles are exempt from the broad caiso-269 rule
+# above (caiso-270, 2026-09-10). That rule was written while the run was a rule-29
+# [R-SCREEN] screen and was NEVER LIFTED when caiso-269 was PROMOTED to keeper, so
+# the designated keeper's bundle never reached `main`, its shard branches were
+# emptied, its container was reclaimed, and rule 15 [R-DASHBOARD]'s requirement
+# that a KEEPER commit its hourly sidecars went unsatisfied — with both registry
+# sidecars pointing at paths that existed nowhere. caiso-270 re-solved the recipe
+# per-year (rule 32 [R-SHARD]) and restored them; G-REPRO reproduces the published
+# C3a/C3b on all four years. The §8 slim rules still strip every heavy parquet
+# (dispatch/, floors/, system/storage/btm/flows, unit_hourly, network) — only
+# meta/run_config/diagnostics/attestation and the keeper hourly sidecars land.
+!results/calibration/caiso269_lateevening_span/
+!results/calibration/caiso269_lateevening_2022/
+
+# caiso-270 per-year SHARD bundles: rule 32 [R-SHARD] solves one year per
+# container into its own out-dir and the PARENT composes the two registered
+# bundles above from them. The per-year dirs are the shards' own artifacts and
+# stay OUT of `main` (rule 32(d)); they live on their shard branches and on
+# local disk under rule 31 [R-RETAIN], never removed by `rm`.
+results/calibration/caiso270_keeper_*/
 
 # pjm-d4-2 (2026-09-10) per-year SHARD bundles: rule 32 [R-SHARD] solves one
 # year per container into its own out-dir, and the PARENT composes the single
