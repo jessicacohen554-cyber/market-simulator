@@ -1749,3 +1749,9 @@ results/calibration/ercot264_repro_*/
 # Same rule 29(c)/31 [R-RETAIN] posture as the train-span bundle above.
 results/calibration/nyiso222_offer_plus5_tp2022/
 
+
+# SPP-61 rule-29 [R-SCREEN] throwaway screen bundle: never reaches main (clause c),
+# kept on local disk under rule 31 [R-RETAIN]. The RESULT doc carries every number.
+results/calibration/spp61_screen_2023/
+results/calibration/spp61_screen_2023.log
+results/calibration/spp61_vintage.log
