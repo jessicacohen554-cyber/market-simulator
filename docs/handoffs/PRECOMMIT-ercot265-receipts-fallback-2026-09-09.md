@@ -120,3 +120,65 @@ Rule 22: 2021 is **validation tier** and ERCOT holds the `complete` marker, so t
 is a throwaway diagnostic screen, **never registered**; a keeper would need the full span.
 Rule 31 `[R-RETAIN]`: bundle gitignored, never `rm`'d, promotion question to the owner before
 the session ends. Rule 28: the ERCOT matrix shard is stamped in this session whatever the result.
+
+---
+
+# AMENDMENT 1 — G-3 IS WITHDRAWN AS A KILL GATE. C3c CANNOT KILL A RUN.
+
+**Written 2026-09-09 21:58Z, BEFORE any 2021 or 2022 number was read.** Verified at the time of
+writing: no `claude/ercot265-metrics-*` branch exists on the remote, so the 2021 result — the
+object of this entire card — was **unread**. The amendment is blind; it is not a goalpost move.
+
+**Owner correction, verbatim: *"C3c shouldn't kill a run it's an acceptable caveat."*** Correct,
+and §5's G-3 was wrong as written.
+
+## Why G-3 was wrong
+
+C3c (`price_tail`) is the **only LEDGERABLE criterion** in the rubric, and two owner amendments
+govern it:
+
+- **Rubric v3.3** (2026-08-17): a ledgered C3c is a CAVEAT that does **not downgrade** the
+  determination — an otherwise-clean run carrying it reads `CALIBRATED`.
+- **Rubric v3.6** (2026-09-05, the rule 30 `[R-TOUCHPOINT-FOLD]` companion), verbatim: *"c3c
+  should be an accepted caveat on all holdout years."* On an **out-of-training year the
+  lone-failure condition is DROPPED**, so C3c reads CAVEAT there **whatever else that year does**.
+
+**2021 is validation tier — a holdout year.** So C3c-2021 reads CAVEAT unconditionally, and a
+gate that kills the arm on it contradicts the rubric. It also spends **no second ledger slot**:
+C3c already carries ERCOT's model-class entry on 2024/2025.
+
+**This was already adjudicated on this exact year, and I read it and set the gate wrong anyway.**
+`ercot-258` (2026-09-08, zero LP), on the `ercot_ep_gas_basis_monthly` matrix cell: *"ADJUDICATES
+THE BLOCKER AND IT IS NOT C3c: 2021 is validation tier, so under rubric v3.6 the C3c lone-failure
+condition is dropped and the 234 → 688 h blow-out reads CAVEAT whatever else that year does …
+**THE BLOCKER IS C3b**: PRICE_SHAPE_NRMSE_MAX = 0.20 and price_shape is TIER_LOAD, so it is never
+caveat-able."* The error is mine, not the record's.
+
+## What replaces it
+
+**G-3 is now a REPORTED DIAGNOSTIC, not a gate.** The C3c-2021 hour count is reported at full
+magnitude beside the keeper's 223 and the actual 214 — it measures the mechanism's *breadth*, it
+names the successor, and it **kills nothing**.
+
+**THE LOAD-BEARING QUESTION IS C3b-2021, AND IT IS DIRECTION, NOT LEVEL.** `price_shape` is
+TIER_LOAD and never caveat-able, and it is the criterion on which ercot-254 was actually refused
+— **because it moved the WRONG WAY (0.361 → 0.501)**, not because it failed to reach 0.20. So:
+
+- **C3b-2021 moving the WRONG way (worse than the keeper's 0.559)** is a genuine refusal, on the
+  same ground ercot-254 was refused.
+- **C3b-2021 improving but not reaching 0.20 is NOT a rejection.** Rule 1 `[R-STRUCT]` is explicit
+  that a structurally-correct mechanism is never judged by whether the residual closed a gate, and
+  rule 31 `[R-RETAIN]` puts promotion in the owner's hands, not the session's.
+
+**The gates that survive unchanged:** G-1 (train-tier identity — **already PASSED on three real
+solves**: 2023 Δ 0.0000 $/MWh byte-identical, 2024 inputs identical, 2025 $33.8052 vs $33.81 with
+C3b 0.106 unmoved), G-2 (the arm does what its arithmetic says), G-4 (slack/dump stay 0.0),
+G-5 (no load-bearing flip in C1/C2/C4/C6).
+
+## The sealed predictions are NOT retracted
+
+**P1 stands exactly as written** — I predicted C3c-2021 lands above 400 h and I am not withdrawing
+it because the gate it was attached to is gone. It is now scored as a **breadth diagnostic**: if
+C3c does blow out, that is the monthly-resolution breadth defect showing itself and it names the
+daily-series successor, but it does **not** end the arm. P2 (C3b improves but does not reach 0.20),
+P3 and P4 are unchanged.
