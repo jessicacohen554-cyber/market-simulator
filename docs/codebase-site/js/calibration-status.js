@@ -395,6 +395,13 @@
       if (frontierActive(keeper) && keeper.frontier.note) {
         notes.push(`<p><strong>Frontier ${esc(keeper.frontier.declared || '')}.</strong> ${esc(keeper.frontier.note)}</p>`);
       }
+      if (keeper.frontier_touchpoint && keeper.frontier_touchpoint.note) {
+        const ft = keeper.frontier_touchpoint;
+        const yrs = (ft.years || []).join(', ');
+        notes.push(`<p><strong>Touchpoint ${esc(ft.declared || '')}.</strong>
+          Folded held-out rungs${yrs ? ' ' + esc(yrs) : ''}: <strong>${esc(ft.determination || '')}</strong>
+          &mdash; ${esc(ft.note)}</p>`);
+      }
       if (keeper.standing_note && keeper.standing_note.note) {
         const sn = keeper.standing_note;
         const probeLink = sn.probe_run_id

@@ -635,6 +635,18 @@ def build_part(iso: str) -> dict | None:
     # docs/ASSESSMENT-ercot209-2023-scarcity-calibration-path-2026-08-15.md).
     if rec.get("standing_note"):
         verdict["standing_note"] = rec["standing_note"]
+    # Owner-declared TOUCHPOINT designation (the shard's "frontier_touchpoint"
+    # block): a statement that the ISO's folded held-out rungs (rule 30
+    # [R-TOUCHPOINT-FOLD]) score CALIBRATED in their own right, which is the
+    # strictly stronger claim than rule 30(c)'s "a held-out year never
+    # downgrades the ISO". Same contract as "frontier" and "standing_note"
+    # above: purely declarative, attached AFTER determine(), never gating,
+    # never touching a verdict, grade, caveat budget or magnitude. It is NOT a
+    # skill claim -- since [R-HOLDOUT] was removed (2026-09-09) no year is
+    # protected from being iterated against, so a passing rung is model-
+    # SELECTION evidence and the block's own note says so.
+    if rec.get("frontier_touchpoint"):
+        verdict["frontier_touchpoint"] = rec["frontier_touchpoint"]
     # Owner-declared CONFIG PARTITION (the shard's "config_partition" block —
     # the two-config keeper structure, owner ruling 2026-08-26): the ISO's
     # training window is covered by more than one designated config (e.g.
