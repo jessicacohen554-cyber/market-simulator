@@ -1754,3 +1754,4 @@ results/calibration/nyiso222_offer_plus5_tp2022/
 # tree copies stay on disk until the owner rules on promotion.
 results/calibration/caiso269_lateevening_*/
 results/calibration/_rev2void_caiso269_*/
+results/calibration/caiso269_lateevening_span/
