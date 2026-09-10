@@ -12551,6 +12551,84 @@ is now the live queue head.**)*
 
 *(Prior header, nyiso-177, verbatim:)* 5.5 NYISO — **KEEPER 2026-09-02 (nyiso-177): `2026-09-02-nyiso-177-vintage-matched` — the nyiso-159 recipe plus the accurate per-unit CAMPD attribution (`campd_per_unit_attribution`) on a vintage-matched, reproducible availability basis (`campd_outage_merit_order_guard`); ZERO free parameters, ZERO new DOF entries (13 / `n_residual` 6 carried verbatim), zero new forcing mechanisms (the SAME six D-4 rows). PROMOTED BY OWNER RULING on rules 14 `[R-ACCURATE]` + 1 `[R-STRUCT]` OVER ONE GATE REGRESSION, reported at full magnitude — determination NOT-YET, target grade 6 → 5, fail set {C3a-2025, C3c} → **{C1-2023 `ST_GAS`, C3a-2025 −11.2 %, C3c}**. The one regression is a single cell (C1 2023 `ST_GAS` +3.86 TWh against the superseded keeper's +3.33, marginally outside a band the old keeper sat marginally inside), and the honest reading is the nyiso-155 precedent exactly: the superseded keeper passed that cell on ~0.5 TWh of margin THE ATTRIBUTION DEFECT WAS SUPPLYING. Four score-independent structural gains: accuracy, no off-registry channel (the hardcoded `outages._FLEET_GROUP_OVERRIDE` per-plant dict disarmed on the repaired path), REPRODUCIBILITY (the superseded keeper's outage extract carries a null `derive_invocation` and cannot be reproduced at HEAD at any flag setting) and INTERNAL CONSISTENCY (tranche and outage artifacts on ONE availability basis, made structural by `campd_attribution_selectors`). Evidence: `docs/FINDING-nyiso177-availability-basis-root-cause-2026-09-02.md` (§10 addendum carries the ruling; §1–§9 preserve the recommendation AGAINST it, unedited), `PREREG-nyiso177-degradation-root-cause.md`. **HEADER RE-STAMPED 2026-09-02 by nyiso-178 — the promoting session's rule 28 duty was missed and CI was warning on it; nothing but this header changed, and no verdict moved. PRIOR (nyiso-159) HEADER PRESERVED BELOW.**
 
+**QUEUE STATUS UPDATE 2026-09-10 (nyiso-224, PHASE 0 ZERO-LP + ONE rule-29 2022 SCREEN;
+keeper `2026-09-09-nyiso-221-fuelvintage-span` UNCHANGED; NEW row
+`nyiso_total_east_cutset_ttc` registered, cell `O`.)** WENT OFF-QUEUE, and phase 0 is the
+stated reason. The queue's live items (the three-way bridge re-screen on 2025, the Astoria 8906
+floor-under-the-floor, the run screen alone) are all 2023/downstate/commitment objects; the
+open failure the lane was handed is **2022 C3a**, and phase 0 says 2022 is a different object
+from all three.
+
+**THE RE-ATTRIBUTION (zero LP, off the committed keeper-recipe 2022 control
+`nyiso_fuelvintage_H2`, rule 29(b) form 4; G-DRIFT all hunks INERT, no control solve spent).
+The 2022 C3a failure is an UPSTATE failure — not December, not the tail, not a level.**
+`Upstate_West` carries **+9.32 $/MWh of the +14.67 zonally-reconstructed gap (63.5 %)** at
+model **33.71** against a measured **60.61**, while NYC reads model 89.17 vs 93.19 (−4.3 %).
+On the identical months Feb–Jun + Sep the model reads Upstate **20.59 vs a measured 48.62
+(−57.6 %)** in 2022 and **32.39 vs 27.42 (+18.1 %)** in 2024 — the model **inverts** the two
+years the market ranks the other way. Corroborating cuts: the whole gap is 400 hours (the top
+100 carry 56.8 %); it is present against **DAY-AHEAD** too (−9.7 % vs DA, so it is not RT
+volatility); actual-price deciles 1–7 contribute **negatively**; and Dec 22–31 — the window the
+nyiso-223 arm targeted — is only 36.7 % of it while Jan–Nov is 62.5 %.
+
+**THE MECHANISM, on NYISO's own postings.** The five-zone reduction folds load zones A–E into
+`Upstate_West`, so the single `Upstate_West→Capital_Hudson` link **is** the A–E → F+ cutset,
+whose NYISO name is **TOTAL EAST**; `NYISO_INTERFACE_TTC_BY_MONTH` caps it at the posted
+**CENT EAST** DAM TTC, a **nested sub-cutset** carrying about half the flow (2022 means: TOTAL
+EAST 3,170.7 MW, CENTRAL EAST 1,544.4 MW). The cap therefore sits **below the measured cutset
+flow in 86.3 / 95.8 / 61.3 / 58.2 %** of 2022/23/24/25 hours — in 2022 it cannot carry
+**12.261 TWh** (mean deficit 1,399.6 MW). The model then separates the link in **97.1 %** of
+hours against a market whose binding sub-cutset is ≥95 % loaded in **10.0 %**, and upstate
+prices **pin at exactly $1.40 in 42.9 %** of hours (2023 15.9 %, 2024 0.0 %, 2025 0.0 %). This
+is rule 14 `[R-ACCURATE]`'s misalignment exception **verbatim** ("a single GTC that is one of
+several parallel paths our reduced network collapses into one link").
+**Why 2022 alone fails on a chronic defect: it is GAS-AMPLIFIED.** Upstate is pinned at its
+cheapest offer whenever the link separates, so the price error is (downstate marginal cost −
+$1.40) × the separated share — which scales with gas. The four-year DA table is the same
+statement: the two high-gas years UNDER-shoot (2022 −9.7 %, 2025 −5.7 %) and the two cheap-gas
+years OVER-shoot (2023 +2.6 %, 2024 +3.3 %).
+
+**DO-NOT-REDO discharged explicitly (rule 28(a)).** This is **not**
+`measured_interface_limits` (**G**, nyiso-109/169 — *"the posted limits do not bind"* / *"the
+congestion is invariant to whether they bind"*): the new evidence is the opposite quantity, a
+cap **below the measured flow** in 86–96 % of hours. It is **not** re-estimating the
+Central-East limit, which nyiso-169 warned against on `nyiso_central_east_measured_ttc`
+(**K**, unmoved and still armed) — CENT EAST is right *for CENT EAST*; the claim is that it is
+the wrong **boundary** for this link. nyiso-169's own *"the model OVER-separates the link it
+under-prices (82–99 % of hours vs a market congested 15–55 %)"* is **reproduced here on 2022 at
+97.1 %** and is the object. nyiso-125's identification refusal on `Upstate_West` is about the
+**external border** envelope (`SCH - PJ - NY` spans the cutset, no posting separates the legs);
+TOTAL EAST is a single unambiguous **internal** cutset row with zero attribution freedom.
+
+**THE ARM, and one variant already KILLED IN PHASE 0.** `nyiso_total_east_cutset_ttc` (new,
+default off) swaps the link onto `NYISO_CUTSET_TTC_ENVELOPE_BY_MONTH`, **replacing** the CENT
+EAST table on the one seam `pipeline/ttc.py::apply_iso_monthly_ttc` (rule 19 `[R-ONE-MECH]`).
+Construction **inherited, not chosen** (rule 21 `[R-DOF]`, zero free parameters): verbatim the
+armed `nyiso_seam_deliverability_envelope` recipe — p90 of the directionally-clipped measured
+transfer per calendar month, 25 MW rounding, same MIS producer as the table it replaces
+(`scripts/data/derive_nyiso_total_east_envelope.py`). Default `cache_key` unmoved
+(`ee3430288b1771e7` on main and at HEAD); armed `d68ac8dad9c84c38`. **The pure posted TOTAL
+EAST limit variant (6,408 MW mean) was killed before any LP** — it binds in ~0–1 % of hours,
+overshooting the measured band on the far side.
+
+**SCREEN YEAR 2022, on FOOTPRINT not residual:** the incumbent cap is 2,054.6 MW below the
+reconciled envelope mean, against 1,906.9 / 1,222.5 / 1,201.5 in 2023/24/25. **PRE-REGISTERED
+STRUCTURAL STOP GATE** (never C3a — rule 1 `[R-STRUCT]`): G-1 the `NYC − Upstate > $20` share
+must land in [8 %, 60 %] (fail high = nothing moved, fail low = the link went inert); G-2 the
+`Upstate < $5` share must fall below 15 %; G-3 confinement to the one TTC column; G-4 upstate
+up **and** downstate down in the same solve; G-5 no non-target load-bearing flip. Registered
+**against** the arm: F-2 says the arm must make **2023/2024 WORSE** (their model upstate is
+already above measured), and 2024 C3a may cross +10 % — a real cost of a correct input,
+reported at full magnitude, not absorbed. Record:
+`docs/PRECOMMIT-nyiso224-total-east-cutset-2026-09-10.md`.
+
+**NEW SECOND (O) — the five-zone REPRESENTATION LIMIT itself.** nyiso-169 named it and this
+session's 2022 numbers size it: even a correct aggregate cap cannot reproduce a price surface
+that is **non-monotone** along a four-link radial chain. Splitting `Upstate_West` at the
+Central-East boundary (so the CENT EAST sub-cutset and the parallel Marcy-South-family path are
+separate links) is the identified route and is a **topology change requiring owner sign-off** —
+it is named here rather than attempted.
+
 **QUEUE STATUS UPDATE 2026-09-06 (nyiso-200, phase 0 zero-LP + TWO one-year rule-29 SCREENS,
 both STOPPED at their own pre-registered gates on 2023 and deleted before merge (29c) — SPAN NEVER
 SPENT, nothing registered, nothing promoted; keeper `2026-09-06-nyiso-196-extract-basis` UNCHANGED;
