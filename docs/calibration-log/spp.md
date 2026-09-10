@@ -1559,3 +1559,101 @@ screenable — R-bc and R-bd are one object. **R-ba unchanged and now bounded.**
 and is not calibrated** — two criteria fail, so rule 22 `[R-C3C]` still cannot fire.
 
 **Next shorthand: spp-25.**
+
+## spp-25 — 2026-09-10
+
+**SPP-64 SPAN — `st_gas_mustrun_per_plant` armed on SPP's ST_GAS fleet, 2023–2025. SOLVED,
+REGISTERED, NOT PROMOTED.** Run `2026-09-10-spp-64-stgas-selfcommit`, bundle
+`results/calibration/spp64_span`. Records: `docs/RESULT-spp64-span.md`, charter
+`docs/handoffs/PRECOMMIT-spp-64-stgas-selfcommit-2026-09-10.md`, screen
+`docs/handoffs/RESULT-spp64-screen-2023.md` (six of six §6 STOP gates PASS), arithmetic correction
+`docs/handoffs/ADDENDUM-spp-64-g2-arithmetic-2026-09-10.md`, root cause
+`docs/handoffs/FINDING-spp-64-2026-09-10.md`.
+
+**THE HEADLINE: the scorer returns `CALIBRATED` — SPP's first — grade 7 of 8, 0 fails, 1 ledgered
+caveat.** ONE `--years 2023 2024 2025` invocation, years sequential (rules 12 / 16), 12 min 5 s.
+Control = keeper 7's **committed** bundle, differenced and **never re-solved** (rule 29(b) form 4).
+Config identity: **exactly ONE live field moves** (838 `scenario_config` keys compared; the other
+three diffs are fields added since the keeper solved, materializing at declared defaults with their
+gate OFF). `offer_curve_by_group` **byte-identical**, `st_gas_mustrun_p25_level` **False** in both.
+
+**C1 FAIL → PASS, and BOTH failing rows close on volume AND share.** 2023 ST_GAS −8.380 → **−6.034**
+TWh (share_pp −2.94 → −2.12); 2024 −9.712 → **−7.423** (−3.34 → −2.55), against a ±8.00 TWh / ±3 pp
+band. Free-class C1 **14/16 all · 10/12 free → 16/16 · 12/12**. Two neighbours move *toward* their
+actuals: COAL_PRB +1.598 → +0.526 (2023) and +1.765 → +0.762 (2024); CT_PEAKER +2.407 → +1.881 and
++2.725 → +2.091. C2 gas `C1 flags: ST_GAS` → **all classes in band**. Gross ST_GAS **+2.3314 /
++2.2886 / +2.5736 TWh**, paid by coal and the other two gas classes, **not** by curtailing wind
+(−0.0150 / −0.0106 / −0.0071); energy conserved to ±0.0013 TWh; slack and dump **byte-identical** to
+the keeper (dump 0; slack 0 / 370.102 / 0 MWh). **2025 C1 is SKIPPED for every class** (preliminary
+EIA-923), so the C1 verdict rests on 2023–2024.
+
+**THE DETERMINATION FLIP IS C1'S ALONE.** C3c is **unchanged at full magnitude** — 0 / 5 / 0 model
+hours above $200 against 42 / 59 / 68 actual, system price max byte-identical (59.313 / 2000.000 /
+73.773), so not one tail hour moved. It merely reclassified to a ledgered CAVEAT under rule 22
+`[R-C3C]`'s standing rule once C1 closed and it became the **lone** failure. SPP's absent tail
+(R-bd) is exactly as absent as before. Reported and NOT claimed as evidence (rule 1 forbids judging
+a mechanism by the residual): C3a **+2.1 / +1.3 / +2.2 % → +1.0 / +0.1 / +0.7 %**, C3b 0.172 / 0.172
+/ 0.167 → 0.173 / 0.171 / **0.163**, C4 improves in 5 of 6 rows, C5a within 0.2 pp.
+
+**THE ADVERSE FINDING — D-4 PER-UNIT CONDUCT RIDER FAILS IN ALL THREE YEARS, and this lane will not
+absorb it.** 4 / 5 / 3 FAILing rows where **the keeper carried zero**; `D4.passed` True → False.
+Plants **1230, 1235, 1271 fail in EVERY year** (3008 in 2023–24, 6193 in 2024) with measured median
+**0.000 MW** over the hours the floor binds for them and **59–83 %** of those hours metered at zero.
+That is rule 17 `[R-FLOOR-WINDOW]`'s signature at the per-unit grain — *"a floor binding in hours its
+own driver evidence says the class is offline is a bug by definition"* — and it is a **window-construction**
+defect: the top-system-load placement is verified by the meter for **15/19, 15/20, 17/20** plants and
+**falsified** for the rest. Magnitude 0.0595 / 0.0763 / 0.0216 TWh = **2.56 / 3.26 / 0.85 %** of the
+mechanism's forced energy. The class-level D-4 window leg PASSES (`offwindow_share` 0.0000,
+self-windowing h0-23).
+
+**CRITICALLY, THE RIDER NEVER REACHED THE DETERMINATION.**
+`calibration_verdict._score_forced_share` consults `_d4_provenance` **only** for a class ABOVE its
+cap, and ST_GAS came in under — rule 20 `[R-FORCED-BUDGET]` forced share **0.1962 / 0.1849 /
+0.1744** against `d2_merchant_max_share` 0.30 (ST_GAS is NOT in `d2_exempt_classes`, so this is a
+real test) — so **C8 passed on the share alone and the `CALIBRATED` headline was produced by a code
+path that never examined this defect.** Stated plainly so no one quotes the determination without
+it. The PRECOMMIT's pre-declared ~0.33 forced-share risk **did not materialise**, so the rule's
+conditional-pass limb was never reached and the "is a 100 %-regulated class a *merchant* class"
+question is **left open** rather than answered by a lane that did not need to answer it. Every other
+class stays 0.0 % forced, so rule 19 `[R-ONE-MECH]` holds on the solved artifact and not merely on
+the pre-solve census.
+
+**D-1 passes comfortably and IMPROVES**: `profile_r` **0.997 / 0.999 / 0.997** (bar 0.80) and
+`cv_ratio` **2.117 / 1.844 / 1.717** moving *toward* 1.0 from the keeper's 2.161 / 2.060 / 2.244
+(bar 0.50, one-sided — so the improvement earns the arm nothing, but it is evidence the floor
+reproduces observed conduct rather than flattening it). The PRECOMMIT called D-1 "the genuinely
+uncertain leg"; it was not close.
+
+**RULE 21 `[R-DOF]`: ZERO free parameters added** — ledger inherited at n_entries 3 / n_residual 2
+(`offer_curve_by_group`, `offer_curve_smoothing`, `wefor_multiplier`), verified from the written
+attestation. The level used is `committed_pct` (the P5-of-online LSL), the **smallest** of the three
+the artifact offers (9.090 TWh all-on vs `p25_cf` 14.427 and `median_cf` 23.319), fixed ex ante.
+`st_gas_mustrun_p25_level` is **refused for SPP** on rule 25 `[R-ISO-SCOPE]`: its rationale is
+MISO's own out-of-market VLR record (Entergy South) and SPP has no equivalent driver.
+
+**RECOMMENDATION: PROMOTE, with the window defect opened as the immediate successor card and NOT
+absorbed. NOT ACTED ON — promotion is the OWNER's call (rule 31 `[R-RETAIN]`);
+`frontend/data/backcast/keepers/SPP.json` is UNTOUCHED and SPP's designated keeper remains
+`2026-09-10-spp-62-vintage-census`.** The rule-1 `[R-STRUCT]` case: the incumbent gives a fleet
+measured **100.0 % EIA-860 Sector 1** (9,515 of 9,515 MW) **no commitment structure at all** —
+ST_GAS forced 0.0 % and absent from D-2 entirely — so the choice is *right on ~80 % of the fleet vs
+right on none of it*, and reverting would trade a 2.3 TWh structural repair for a 0.02–0.08 TWh
+defect while restoring a larger error. The case against is stated first in the RESULT: a recurring
+rule-17 defect is a bug by rule 17's own words, and a defensible owner decision is to refuse, repair
+the window and re-solve (**~12 min of LP**, costed). The successor is specific — re-derive the
+placement rule for plants whose measured operation is not top-system-load correlated — and is
+explicitly **NOT** a `mustrun_plant_exclusions` reach, per miso-170's own warning that excluding a
+conduct-test failure "would bury that error inside a membership list".
+
+**RETENTION (rule 31 `[R-RETAIN]`): nothing was deleted.** `results/calibration/spp64_*/` is
+gitignored (`.gitignore:1914`), which is what discharges rule 29(c); the bundle lives on ephemeral
+local disk and does not survive the container. The committed slim files + `hourly/` sidecars are
+what a later lane differences against without re-solving. Registration used `--no-prune` (SPP has 2
+runs against a cap of 15, so the sweep is a no-op, and which run is the keeper is the open question).
+
+**`[R-HOLDOUT]` was removed 2026-09-09**, so no year is protected from having been iterated against:
+every number here is model-**SELECTION** evidence, and **`CALIBRATED` is a rubric determination, NOT
+a certified out-of-sample skill claim.**
+
+**Next shorthand: spp-26.**
+
