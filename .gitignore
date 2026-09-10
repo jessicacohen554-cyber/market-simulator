@@ -1748,3 +1748,7 @@ results/calibration/ercot264_repro_*/
 # nyiso-222 (2026-09-09) 2022 validation touchpoint on the +5% offer-curve arm.
 # Same rule 29(c)/31 [R-RETAIN] posture as the train-span bundle above.
 results/calibration/nyiso222_offer_plus5_tp2022/
+
+# ercot-265 composite (rule 31 [R-RETAIN]: kept on local disk, kept OUT of main —
+# unregistered, so committing it would be the Class-E parity RED rule 29(c) forbids).
+results/calibration/ercot265_receipts_five_year/
