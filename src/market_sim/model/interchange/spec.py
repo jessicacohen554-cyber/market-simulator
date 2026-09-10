@@ -1621,6 +1621,49 @@ MISO_PJM_BORDER_HR_BY_YEAR: dict[int, float] = {
 # below only); displaces miso_pjm_border_anchor / miso_pjm_lmp_import_pricing
 # on the rows it prices (alternatives, never stacked).
 MISO_SEAM_LADDER_BY_YEAR: dict[int, dict[str, dict[str, tuple[float, ...]]]] = {
+    # 2022 added by miso-252 (2026-09-10). RULE 23 [R-FROZEN-DERIVE] BASIS: the
+    # SOURCE DATA UPDATED — `data/raw/eia-930-interchange/MISO interchange
+    # hourly.parquet` was back-filled to 2020-2022 through the fetch script's own
+    # documented keyless bulk route, which is the flow-duration half of the Q-Q
+    # coupling; the MISO hub DA half already covered 2022 (8,232 of 8,760 h).
+    # NOT re-derived because a residual moved, and 2023-2025 below are LEFT
+    # EXACTLY AS COMMITTED: their source data did not change (proven — the derive
+    # reproduces byte-identical output against the committed and the back-filled
+    # extract), so rule 23 forbids touching them.
+    #
+    # WHAT IT REPLACES: with no entry, `inject_miso_seam_ladder_prices` returns
+    # at its first guard and every 2022 seam band took ONE flat gas-elastic /
+    # flat-HR price — PJM $74.21, SPP $35.78, South $77.03 — in place of an
+    # eight-band rising curve. That inverted the merit order across seams: PJM
+    # imports were priced far ABOVE their measured floor ($25.61) while SPP and
+    # South were priced far BELOW theirs ($59.52 / $129.10), so the model
+    # exported to PJM while importing SPP energy that really clears at $59+.
+    # Verbatim from `scripts/data/derive_miso_seam_ladders.py --years 2022`;
+    # anchor MISO hub DA mean $69.89 (the bench's own 2022 DA mean is $69.90).
+    #
+    # NO NEIGHBOUR OVERLAY FOR 2022, by data boundary: the PJM western-border and
+    # SPP hub series both start in 2023, so `derive_pjm_neighbour` yields a NaN
+    # anchor for 2022. The overlay tables below therefore carry no 2022 key and
+    # the code degrades to THIS base ladder — never to an unpriced seam — which
+    # is the documented behaviour of `miso_seam_neighbour_*`, not a new path.
+    2022: {
+        "PJM": {
+            "import": (25.61, 34.38, 42.73, 54.11, 68.33, 91.28, 127.92, 172.37),
+            "export": (18.01, 18.01, 18.01, 18.01, 18.01, 18.01, 18.01, 18.01),
+        },
+        "SPP": {
+            "import": (59.52, 80.62, 106.31, 135.64, 160.01, 213.49, 289.85, 409.62),
+            "export": (45.56, 37.44, 29.58, 24.78, 18.01, 18.01, 18.01, 18.01),
+        },
+        "South": {
+            "import": (129.10, 152.71, 182.08, 327.98, 475.04, 475.04, 475.04, 475.04),
+            "export": (106.10, 89.43, 76.42, 66.74, 59.10, 53.10, 47.77, 43.31),
+        },
+        "Manitoba": {
+            "import": (48.85, 52.24, 56.26, 60.99, 70.02, 90.66, 130.79, 457.70),
+            "export": (45.30, 41.83, 38.03, 26.62, 18.01, 18.01, 18.01, 18.01),
+        },
+    },
     2023: {
         "PJM": {
             "import": (13.40, 16.25, 19.79, 24.09, 27.87, 32.78, 37.99, 46.55),
