@@ -1836,4 +1836,70 @@ green: `check_mechanism_matrix.py` exit 0 with the new field registered,
 
 **Next shorthand: spp-28.**
 
+## spp-28 — 2026-09-11
+
+**PROMOTION — `2026-09-10-spp-27-commitment-grain` is SPP's NINTH KEEPER.** Promoted **by owner
+ruling in-session**, verbatim: *"Is this a recommended keeper candidate? If so plz promote. If
+structural integrity improves but gates regress that may still be a keeper."* Lane SPP-27 had
+recommended promotion in spp-27 and had **not** acted; `frontend/data/backcast/keepers/SPP.json`
+stayed untouched until the ruling (rule 31 `[R-RETAIN]`).
+
+**PROMOTED ON STRUCTURE, NOT ON SCORE — and the record says so plainly.** The run buys **no score at
+all**: every scored criterion, the grade (7 of 8), the 0 fails, the single ledgered C3c caveat and
+the free-class C1 16/16 · 12/12 are **identical to keeper 8**, both re-scored live at HEAD. `dump`,
+`slack` and the system price max are byte-identical, so C3c could not and did not move an hour. What
+it buys is the floor's own shape (mechanism-16 window peak-to-mean **1.2349 / 1.2159 / 1.2159 →
+1.0000**, against a measured commitment peak-to-mean of **1.007–1.146 on 21 of 22 plants**) and the
+starts it asserts (**2,843 → 288** in 2023 against the meter's **647**; the incumbent asserted
+**202 starts on 989 MW Muskogee in 2024 against 27 measured**). Rule 1 `[R-STRUCT]`'s own test.
+
+**Promotion procedure executed in full, one PR** (`frontend/data/backcast/keepers/README.md`):
+1. `keepers/SPP.json` → `2026-09-10-spp-27-commitment-grain`, with the run's provenance, its gate
+   table, and **the defect it still carries** (card R-be) recorded in the note; predecessors cited
+   **by lane**, never by run id, per the citation-guard trap keepers 3–8 each recorded.
+2. `scripts/build_status.py --iso SPP` → `status/SPP.js` + `status/shared.js`, reading
+   **`[SPP:CALIBRATED]`** (rebuilt again after the prune so it names no pruned run).
+3. **R-T gate-(a) re-key in the SAME PR**: `frontend/data/forecast/program-status.json`
+   `isos.SPP.gate.a_keeper_marker` now names the new run. **Status `fail` → `fail`, unchanged** —
+   R-T is a STAMP re-key that reads no determination, and SPP still has **no `complete` entry**,
+   which this promotion deliberately does **not** create. `check_gate_a_provenance.py` OK, 7 rows.
+   **The SPP-64 encoding trap was hit and avoided**: the file is stored `ensure_ascii=True`, and a
+   first re-serialization with `ensure_ascii=False` rewrote 313 lines across every ISO; it was
+   reverted and redone, so the committed diff is **1 line, SPP only**.
+4. Rule 28 `[R-MECH-MATRIX]`: `mustrun_window_commitment_grain` cell **O → K** in **SPP's shard
+   only**, plus the `keeper` and `gates` stamps and the §5.7 prose header.
+
+**Rule 15 `[R-DASHBOARD]` keeper-only retention executed** — rule 31's trigger (i) is met now that
+the owner has ruled. `prune_iso_runs.py --iso SPP` removed the superseded keeper 8 (registry
+sidecar, run payload and `results/calibration/spp64_span`); **1 pruned, 1 kept**. Git history is the
+record and keeper 8's RESULT/PRECOMMIT docs are retained. The remaining reference to the pruned id
+in `SPP.js` is historical evidence in the `st_gas_mustrun_p25` cell, which is normal.
+
+**ALSO IN THIS PR — ~48 MB of out-of-convention bundle payload removed from the tip.** The span
+shard committed `unit_hourly_*` and `network_*` parquets on its own branch, which merged to `main`
+ahead of the lane branch. The keeper convention (rule 15) is `class_band_hourly` / `class_hourly` /
+`storage` / `system`, which is what keeper 8 carried; those six files are untracked here so the
+committed bundle is **3.1 MB**. They remain recoverable from history.
+
+**Post-promotion checks, all green**: `audit_keepers.py --iso SPP` PASS (0 failures, 0 warnings) ·
+`check_registry_payload_parity.py` OK (42 runs, 74 bundle dirs, 0 unsynced) ·
+`check_gate_a_provenance.py` OK · `check_mechanism_matrix.py --base origin/main` exit 0 · the
+promoted run re-scores **CALIBRATED** by run id.
+
+**OPEN CARDS carried forward.** **R-be (STILL OPEN, and now carried on the keeper)** — the D-4
+per-unit conduct rider is **4 / 4 / 4** against keeper 8's 4 / 5 / 3, **the same total of 12 rows**.
+What remains is **day SELECTION** for plants whose commitment is not system-load driven, and this
+lane found **no forecast-admissible signal that reaches it** and says so rather than inventing one;
+Mooreland 3008 is deliberately **not** special-cased. **R-bd** — the absent upper tail is congestion
+rent, not reserve scarcity. **R-bc** — price-forming curtailment, which must enter as an **LP
+constraint whose dual reaches the zonal price**, replacing `spp_curtailment_ceiling` and never
+stacking. **R-ba** — the merit-order inversion. And `FINDING-spp-64`'s root cause stands: SPP's model
+is effectively a **one-zone market**. **NEW, routed not fixed** — `reconstruct_bundle_fleet` is
+order-dependent across years within a process for SPP.
+
+**`[R-HOLDOUT]` was removed 2026-09-09**, so no year is protected from having been iterated against:
+**`CALIBRATED` is a rubric determination, NOT a certified out-of-sample skill claim.**
+
+**Next shorthand: spp-29.**
+
 
