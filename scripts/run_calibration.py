@@ -730,6 +730,7 @@ def run_year(
     unit_outage_mixed_gas_routing: bool | None = None,
     unit_outage_st_capacity_basis: bool | None = None,
     unit_outage_per_unit_clip: bool | None = None,
+    unit_outage_short_windows_gas: bool | None = None,
     campd_per_unit_attribution: bool | None = None,
     campd_outage_merit_order_guard: bool | None = None,
     netload_drag_layup_window_mask: bool | None = None,
@@ -1639,6 +1640,13 @@ def run_year(
         # records it), so an override missing here would solve the control twice.
         config = config.with_overrides(
             unit_outage_per_unit_clip=unit_outage_per_unit_clip
+        )
+    if unit_outage_short_windows_gas is not None:
+        # pjm-d4-4: the GAS-side sub-5-day outage scope. THIS is the SOLVE path
+        # for the flag (run_calibration_full's _recorded_config only records
+        # it), so an override missing here would solve the control twice.
+        config = config.with_overrides(
+            unit_outage_short_windows_gas=unit_outage_short_windows_gas
         )
     if campd_per_unit_attribution is not None:
         # nyiso-176: ONE gate over BOTH CAMPD-derived solve inputs (the
