@@ -5432,3 +5432,77 @@ what sits behind the marginal gas unit; **(b) the locational reserve family** ju
 outrank (c), reversing the ordering this lane inherited. **Rule 31:** the 196 MB screen bundle lived
 on the shard's ephemeral disk, gitignored, never committed, never `rm`'d, and does not survive that
 session; every number it produced is committed in the shard report.
+
+## 2026-09-11 — pjm-d4-4 PROMOTED: `2026-09-11-pjm-d4-4-gasoutage` is PJM's keeper
+
+**KEEPER CHANGED** from `2026-09-10-pjm-d4-2-stgas` to **`2026-09-11-pjm-d4-4-gasoutage`**
+(2023-2025), with **`2026-09-11-pjm-holdout-gasoutage-touchpoint`** (2020-2022) registered and
+FOLDED to it under rule 30(a). Owner ruling in force: *"If structural integrity improves but gates
+regress that may still be a keeper"* — though **the arm did not need that latitude**: no training
+gate regresses out of band.
+
+**DETERMINATION `CALIBRATED` · 8/8 target grade · 0 caveats · 0 fails · EVERY criterion PASS.**
+Verified by re-running `scripts/calibration_verdict.py` against the registered run in the parent
+session, **not** accepted from the solving shard's report. Basis, verbatim: *"all criteria pass,
+governance attested."*
+
+| criterion | verdict |
+|---|---|
+| C1 fuel-mix (grid-delivered) | PASS — 16/16 all, 12/12 free |
+| C2 system volume · C3a mean LMP · C3b shape · C3c tail | PASS |
+| **C4** dispatch correlation | **PASS** — gas r 0.945/0.942/0.945, coal r 0.920/0.935/0.943 |
+| **C6** governance | **PASS**, attested |
+| **C8** forced share (D-2) | **PASS**, inside every cap |
+
+**C4, C6 and C8 were measured on this arm for the FIRST time at registration.** Every earlier
+number in this lane came from a substitution method that could only reach `gmModel` and `lmp`; that
+gap is now closed and all three pass.
+
+**THE DELTA IS ONE GATED FIELD**, `unit_outage_short_windows_gas` (default off), with **zero free
+parameters and zero fitted scalars**; the DOF ledger is unchanged at 19 entries / 6 residual. It
+widens a **DISCARD** — `UNIT_OUTAGE_MIN_DAYS = 5` threw away every shorter window and the sub-floor
+companion re-filtered to COAL — replacing it with measured, merit-guarded CAMPD windows for
+CC_REGULAR / CC_CHP / ST_GAS / ST_CHP. Rules 14 `[R-ACCURATE]` and 1 `[R-STRUCT]`, not the residual,
+are the basis.
+
+**GAINS:** C3a improves in all three training years (−1.3/−5.2/−8.3 % → −0.5/−4.2/−7.8 %); C1's
+worst cell CC_REGULAR improves **6.04 → 2.86 TWh** (2023) and **4.08 → 0.67 TWh** (2024); on the
+holdout, 2020 C1 CC_REGULAR flips **FAIL +10.28 → PASS +7.56 TWh**.
+
+**REGRESSIONS AT FULL MAGNITUDE, none leaving a PASS band:** COAL_BIT 2023 +1.33 → +2.10 TWh,
+CT_PEAKER 2024 +0.54 → +1.82, ST_GAS 2023 +2.04 → +2.44, C3b 2023 0.111 → 0.112, C2 coal 2025
++9.3 → +9.6 %. **On the holdout**, 2020 degrades on C3a (+21.4 → +22.3 %), C3b (0.234 → 0.242) and
+COAL_BIT (+21.97 → +22.83) — all already FAIL, and **PREDICTED**: 2020 is the OPPOSITE defect
+(model over-prices), so a deeper outage envelope must worsen it. Rule 30(c) applies.
+
+**WHAT THIS PROMOTION IS NOT, and it must not be misread.** It is an **input correction**. The
+stage-2 screen's S-3 **FAILED by 3.4×** — 0.592 GW of a 9.830 GW tail gap closed against a 2.0 GW
+bar — because **the LP backfills 87 % of the withdrawn gas, mostly with coal**. The arm adds **zero**
+model hours above $200 on any system price basis and leaves C3c's tail count unmoved. **PJM's 2022
+tail defect is not gated by gas availability at all** — it is gated by what stands behind the
+marginal gas unit in the merit order. **The tail-repair claim stays REFUTED; do not re-test it.**
+
+**THE PRODUCTION PATH REPRODUCED THE PROBE PATH EXACTLY** — 2022 solved through
+`run_calibration_full --replay-bundle` lands on every cell the `replay_keeper --set` screen
+predicted (CC_REGULAR +22.56 TWh, COAL_BIT +7.52, CT_PEAKER −1.45, ST_GAS +2.89, C3a −10.7 %,
+C3b 0.246).
+
+**Rule 32(b) exception, stated on the run rather than papered over:** the six years were solved
+**sequentially in ONE invocation in ONE container** (~60 min), because the payload builder reads
+heavy per-year parquets that cannot be assembled across containers. Six per-year shards had already
+solved the arm; their slim pushes could not be registered, which was a shard-prompt design error.
+
+**Escalated, not absorbed:** `pjm_primary_mad` **BOUND in 2 of 8,760 hours** at $11.42 / $12.26 per
+MW, **both inside the 92 target hours**, at a requirement of ~2,722 MW — the first non-zero PJM
+reserve dual measured in this lane, and it **falsified this session's own pre-solve prediction**
+that a ~19 GW system-wide headroom made binding impossible. The binding object is **locational**,
+which a system-wide number cannot decide. `ordc_scarcity_overlay` stays `G`.
+
+**Known warning, deliberately not silenced:** `audit_keepers --iso PJM` reports E3 — the A bundle's
+`meta.json` years [2023,2024,2025] differ from `calibration_flags` years [2020…2025], because one
+six-year invocation was split into A and TP. The scorer uses `meta.json`. **Rewriting provenance
+metadata to quiet an auditor would be the wrong trade**, so it stands as a documented warning.
+
+**Successors, in the order the evidence now supports:** (a) the **merit order** behind the marginal
+gas unit; (b) the **locational reserve family** just measured binding; (c) partial derates
+(`ercot_partial_outage_shaped_derate`, `·`, unbuilt).
