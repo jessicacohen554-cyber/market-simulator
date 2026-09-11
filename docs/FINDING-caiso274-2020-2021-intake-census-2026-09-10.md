@@ -336,6 +336,39 @@ days that will stop being fetchable as the boundary advances. Every missing
 saved. This session started that crawl
 (`fetch_caiso_oasis_grp.py --market rtm --start 2021-08-12 --end 2021-09-30
 --sleep 7`, ~195 s and 24 GroupZip requests per trade date, extract-and-discard
-so peak disk stays ~200 MB). Its outcome is reported in the session's final
-message; the fetched day windows are worthless unless folded and committed
-before the container is reclaimed.
+so peak disk stays ~200 MB).
+
+**COMPLETED.** 50/50 fetched, **0 missing, 0 partial**, 8.756 GB transferred
+over 9,734 s. Folded with `postprocess_oasis_downloads.py --stage-dir`:
+
+| | before | after |
+|---|---|---|
+| rows | 45,130 | **57,130** (+12,000 = 50 d × 24 h × 10 nodes) |
+| trade days (TH_SP15) | 188 | **238** (none lost) |
+| finite hours / node | 4,513 | **5,713** |
+
+Verified against a pre-fold snapshot: all 45,130 pre-existing rows survive with
+values identical across `LMP`/`MCC`/`MCE`/`MCL`/`MGHG`, the 10-node set is
+unchanged, every row is local-year 2021, and the header matches the 2022–2025
+aggregates exactly. The diff's 75 deletions are re-sorted rows, not dropped
+data. Pushed blob verified against local (`bb54e2f5da4e…`, 57,131 lines).
+
+`fetch_caiso_intertie_lmp.py --from-grp-windows --years 2021` was run first per
+this corpus's documented ordering trap; it reads **DAM** windows, found nothing
+in an RTM-only crawl, and correctly wrote nothing — the intertie parquet is
+untouched.
+
+**This does NOT make 2021 a price basis.** `derive_actual_lmp.CAISO_MIN_HOURS`
+is 6,500 and the DAM ceiling for 2021 is 5,976 obtainable hours, so 2021 still
+cannot clear the guard without an explicit `CAISO_PARTIAL_YEARS` amendment —
+not made here. What the backfill buys is that the RT side of a future 2021 rung
+is 65 % covered instead of 51 %, and those 50 days are now safe from the
+advancing boundary.
+
+> **Side effect, caught and reverted.** `postprocess_oasis_downloads.py` globs
+> *every* window CSV under the raw dirs, not only the ones this session
+> fetched. It also folded and staged out **5 tracked
+> `zone-specific-demand/CAISO/load_ALL_*.csv`** windows left by an earlier
+> session (and rewrote two `CAISO_tac_load_hourly_*.csv` byte-identically).
+> The 5 files were restored byte-identically and the commit touches one file
+> only. A lane running this script should `git status` immediately afterwards.
