@@ -3805,6 +3805,7 @@ def solve_and_persist(
     unit_outage_mixed_gas_routing: bool | None = None,
     unit_outage_st_capacity_basis: bool | None = None,
     unit_outage_per_unit_clip: bool | None = None,
+    unit_outage_short_windows_gas: bool | None = None,
     campd_per_unit_attribution: bool | None = None,
     campd_outage_merit_order_guard: bool | None = None,
     netload_drag_layup_window_mask: bool | None = None,
@@ -5195,6 +5196,10 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 unit_outage_per_unit_clip=unit_outage_per_unit_clip
             )
+        if unit_outage_short_windows_gas is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                unit_outage_short_windows_gas=unit_outage_short_windows_gas
+            )
         if unit_outage_mixed_gas_routing is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 unit_outage_mixed_gas_routing=unit_outage_mixed_gas_routing
@@ -5689,6 +5694,7 @@ def solve_and_persist(
             unit_outage_mixed_gas_routing=unit_outage_mixed_gas_routing,
             unit_outage_st_capacity_basis=unit_outage_st_capacity_basis,
             unit_outage_per_unit_clip=unit_outage_per_unit_clip,
+            unit_outage_short_windows_gas=unit_outage_short_windows_gas,
             campd_per_unit_attribution=campd_per_unit_attribution,
             campd_outage_merit_order_guard=campd_outage_merit_order_guard,
             netload_drag_layup_window_mask=netload_drag_layup_window_mask,
@@ -6656,6 +6662,7 @@ def solve_and_persist(
         "unit_outage_mixed_gas_routing": unit_outage_mixed_gas_routing,
         "unit_outage_st_capacity_basis": unit_outage_st_capacity_basis,
         "unit_outage_per_unit_clip": unit_outage_per_unit_clip,
+        "unit_outage_short_windows_gas": unit_outage_short_windows_gas,
         "campd_per_unit_attribution": campd_per_unit_attribution,
         "campd_outage_merit_order_guard": campd_outage_merit_order_guard,
         "netload_drag_layup_window_mask": netload_drag_layup_window_mask,
@@ -8802,6 +8809,7 @@ def run_replay_bundle(
     unit_outage_mixed_gas_routing: bool | None = None,
     unit_outage_st_capacity_basis: bool | None = None,
     unit_outage_per_unit_clip: bool | None = None,
+    unit_outage_short_windows_gas: bool | None = None,
     campd_per_unit_attribution: bool | None = None,
     campd_outage_merit_order_guard: bool | None = None,
     netload_drag_layup_window_mask: bool | None = None,
@@ -8984,6 +8992,11 @@ def run_replay_bundle(
         # keeper's recipe, so the A/B solves BOTH legs from the same recipe and
         # the delta is provably the single flag.
         kwargs["unit_outage_per_unit_clip"] = unit_outage_per_unit_clip
+    if unit_outage_short_windows_gas is not None:
+        # pjm-d4-4: arm/disarm the GAS-side sub-5-day outage scope over a
+        # committed keeper's recipe, so the A/B solves BOTH legs from the same
+        # recipe and the delta is provably the single flag.
+        kwargs["unit_outage_short_windows_gas"] = unit_outage_short_windows_gas
     if campd_per_unit_attribution is not None:
         # nyiso-176: arm/disarm the CAMPD per-unit attribution gate over a
         # committed keeper's recipe, so the re-baseline A/B is a single delta
@@ -12073,6 +12086,25 @@ def main() -> None:
         "results/calibration/PREREG-miso201-st-basis-alignment-2026-09-02.md.",
     )
     parser.add_argument(
+        "--unit-outage-short-windows-gas",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Extend the sub-5-day short-window unit-outage overlay from its "
+        "coal-only scope to the GAS classes "
+        "(ScenarioConfig.unit_outage_short_windows_gas), reading "
+        "campd-unit-outages-shortgas-<ISO>.csv alongside the coal extract. "
+        "outages.UNIT_OUTAGE_MIN_DAYS discards every window under 5 days and "
+        "the sub-floor companion re-filters to COAL, so the 0-5 d family is "
+        "captured for coal and thrown away for CC_REGULAR / CC_CHP / ST_GAS / "
+        "ST_CHP. Widens a DISCARD; disjoint from the coal scope by plant group "
+        "and from the >= 5-day overlay by duration, so it stacks on neither "
+        "(rule 19 [R-ONE-MECH]). The gas scope's economic-idling separator is "
+        "the MERIT-ORDER guard, not the coal SHORT_BASELOAD_CF baseload guard "
+        "a cycling combined cycle cannot pass (rule 18 [R-PHYSICS]). Zero free "
+        "parameters; byte-inert while off. An ISO with no gas extract on disk "
+        "gets the coal scope unchanged.",
+    )
+    parser.add_argument(
         "--unit-outage-per-unit-clip",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -13388,6 +13420,12 @@ def main() -> None:
                 or "--no-unit-outage-per-unit-clip" in sys.argv
                 else None
             ),
+            unit_outage_short_windows_gas=(
+                args.unit_outage_short_windows_gas
+                if "--unit-outage-short-windows-gas" in sys.argv
+                or "--no-unit-outage-short-windows-gas" in sys.argv
+                else None
+            ),
             enable_legacy_p2=args.enable_legacy_p2,
         )
         return
@@ -13784,6 +13822,7 @@ def main() -> None:
         unit_outage_mixed_gas_routing=args.unit_outage_mixed_gas_routing,
         unit_outage_st_capacity_basis=args.unit_outage_st_capacity_basis,
         unit_outage_per_unit_clip=args.unit_outage_per_unit_clip,
+        unit_outage_short_windows_gas=args.unit_outage_short_windows_gas,
         campd_per_unit_attribution=args.campd_per_unit_attribution,
         campd_outage_merit_order_guard=args.campd_outage_merit_order_guard,
         cc_winter_capability_basis=args.cc_winter_capability_basis,
