@@ -1,4 +1,46 @@
-# RESULT — pjm-d4-4 span: the arm IS a keeper candidate, and registration is blocked on co-location
+# RESULT — pjm-d4-4 span: PROMOTED. PJM's keeper is `2026-09-11-pjm-d4-4-gasoutage`
+
+> **FINAL STATUS (2026-09-11, after registration).** The arm is **PROMOTED**. PJM's keeper is now
+> **`2026-09-11-pjm-d4-4-gasoutage`** (2023-2025), superseding `2026-09-10-pjm-d4-2-stgas`, with
+> **`2026-09-11-pjm-holdout-gasoutage-touchpoint`** (2020-2022) registered and folded to it under
+> rule 30(a). The registration blocker described in §4 was resolved by re-solving all six years in
+> ONE container.
+>
+> **Determination `CALIBRATED` · 8/8 target grade · 0 caveats · 0 fails · EVERY criterion PASS.**
+> Verified by the parent session re-running `scripts/calibration_verdict.py` against the registered
+> run — **not** taken from the solving shard's own report. Determination basis, verbatim: *"all
+> criteria pass, governance attested."*
+>
+> | criterion | 2023-2025 |
+> |---|---|
+> | C1 fuel-mix (grid-delivered) | **PASS** — 16/16 all, 12/12 free |
+> | C2 system volume | **PASS** |
+> | C3a mean LMP | **PASS** |
+> | C3b price duration/shape | **PASS** |
+> | C3c price tail / scarcity | **PASS** |
+> | **C4** fleet hourly dispatch correlation | **PASS** — gas r 0.945 / 0.942 / 0.945, coal r 0.920 / 0.935 / 0.943 |
+> | **C6** governance gate | **PASS**, attested |
+> | **C8** forced-energy share (D-2) | **PASS**, inside every cap |
+>
+> **C4, C6 and C8 were measured on this arm for the FIRST TIME here** — §2 below is explicit that
+> the provisional substitution method could not reach them, and that gap is now closed.
+>
+> **The holdout run reads NOT-YET**, as the incumbent's did: C1, C3a and C3b degrade, C3c reads
+> CAVEAT, and C2/C4/C6/C8 hold (4 degraded, 0 carried). Rule 30(c): a held-out year never
+> downgrades the ISO.
+>
+> **What this promotion is NOT.** It is an **input correction** under rules 14 `[R-ACCURATE]` and 1
+> `[R-STRUCT]` — a discard replaced with measured data. **The tail-repair claim stays REFUTED and
+> must not be re-tested**: the screen's S-3 failed by 3.4x because the LP backfills 87 % of the
+> withdrawn gas with coal, and the arm adds zero model hours above $200 on any system price basis.
+>
+> Everything below is the provisional analysis written BEFORE registration, kept as the record of
+> how the decision was reached. Its five-year substitution-scored numbers are superseded by the
+> registered ones above wherever they differ.
+
+---
+
+## (superseded heading) the arm IS a keeper candidate, and registration is blocked on co-location
 
 **Session:** pjm-d4-4 · **Date:** 2026-09-11 · Owner ruling in force: *"If structural integrity
 improves but gates regress that may still be a keeper."* Continues
