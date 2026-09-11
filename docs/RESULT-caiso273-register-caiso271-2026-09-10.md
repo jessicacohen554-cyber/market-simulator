@@ -288,3 +288,54 @@ differenced against, and re-designating it costs nothing if the owner reverses. 
 per-year shard bundles are likewise retained on local disk, gitignored, never removed by `rm`.
 
 **No LP was spent on this promotion.**
+
+---
+
+## §10 — CAISO'S LADDER IS CLOSED AT 2022, AND THE 2022 FAILURE IS CROSS-ISO (added 2026-09-11)
+
+### §10.1 — Card B returned a measured negative: CAISO cannot score 2020, and 2021 only partly
+
+caiso-274 (`docs/FINDING-caiso274-2020-2021-intake-census-2026-09-10.md`) delivered **neither**
+target, for two independent measured reasons, and the verdict is re-verified here:
+
+* **No CAISO 2020 LMP exists in the repo at all** — `data/raw/lmp-data/CAISO/` starts at
+  `CAISO_{dam,rtm}_hourly_2021.csv`. A 2020 bench part cannot carry a price actual by any route,
+  so **2020 is not scorable and no lever changes that.**
+* **2021 is partial and its head is unrecoverable** — measured after caiso-274's backfill: RTM
+  **190/365 days**, DAM **250/365 days**, both beginning **2021-04-27**, and the OASIS re-fetch
+  boundary has since moved to 2021-08-12. A 2021 rung would miss the entire winter quarter.
+* **Both targets also sit behind a bench-scaffold LP** (a bench part needs a solved bundle; the
+  demand artifact reads the bench part) — the circularity caiso-262 named and broke by spending one.
+
+caiso-274 did preserve real value on the way out: it **backfilled 50 CAISO 2021 RTM trade days
+before the OASIS archive aged them out**. That data would otherwise be gone.
+
+**Consequence, stated plainly: CAISO's scorable range is 2022-2025 and will not deepen.** There is
+no further CAISO ladder work, and (per caiso-270/271/272) no further CAISO tuning work.
+
+### §10.2 — The 2022 failure is not CAISO's. It is four ISOs at once.
+
+Read off the committed status shards at HEAD:
+
+| ISO | 2022 C3a | 2022 C3b | direction |
+|---|--:|--:|---|
+| **CAISO** | **+13.0 %** | 0.240 | model **over** |
+| MISO | **−13.8 %** | 0.209 | model **under** |
+| NYISO | **−13.8 %** | 0.242 | model **under** |
+| PJM | **−11.9 %** | 0.262 | model **under** |
+| ERCOT · NEISO · SPP | — | — | 2022 passes |
+
+PJM additionally fails **2020 at +21.4 %** (C3b 0.234), the opposite sign to its own 2022.
+
+**Three ISOs under by nearly the same magnitude and one over by nearly the same magnitude, in one
+year, with C3b clustered just above the 0.20 gate, is a shared-cause signature — not four
+independent per-ISO residuals.** It is also why per-ISO lever hunts keep terminating: a shared
+cause is invisible to, and unreachable by, any single ISO's registered mechanism. CAISO's own
+adjudication is consistent with this — caiso-272 attributed 70.2 % of the 2022 dollar miss to the
+DA-RT premium the rubric calls out-of-representation, which is a benchmark-side property, not a
+CAISO mechanism.
+
+**This is an observation, not a diagnosis.** No cause is asserted here, no mechanism is proposed,
+and nothing is armed. Naming a candidate cause now would bias the phase 0 that should find it.
+What is established is only that the object is cross-ISO and that CAISO cannot be the lane that
+resolves it (rule 25 `[R-ISO-SCOPE]`).
