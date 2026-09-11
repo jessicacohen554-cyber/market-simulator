@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-11-pjm-d4-4-gasoutage",
+  "label": "pjm d4 4 gasoutage",
+  "date": "2026-09-11",
+  "shorthand": "pjm-d4-4-gasoutage",
+  "definition": "pjm-d4-4 span: gas sub-5-day outage scope ARMED, year 2023",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-09-11-pjm-d4-4-gasoutage.js",
+  "bundle": "results/calibration/pjm_d4_4_A"
+}
