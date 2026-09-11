@@ -12670,6 +12670,50 @@ is now the live queue head.**)*
 
 *(Prior header, nyiso-177, verbatim:)* 5.5 NYISO — **KEEPER 2026-09-02 (nyiso-177): `2026-09-02-nyiso-177-vintage-matched` — the nyiso-159 recipe plus the accurate per-unit CAMPD attribution (`campd_per_unit_attribution`) on a vintage-matched, reproducible availability basis (`campd_outage_merit_order_guard`); ZERO free parameters, ZERO new DOF entries (13 / `n_residual` 6 carried verbatim), zero new forcing mechanisms (the SAME six D-4 rows). PROMOTED BY OWNER RULING on rules 14 `[R-ACCURATE]` + 1 `[R-STRUCT]` OVER ONE GATE REGRESSION, reported at full magnitude — determination NOT-YET, target grade 6 → 5, fail set {C3a-2025, C3c} → **{C1-2023 `ST_GAS`, C3a-2025 −11.2 %, C3c}**. The one regression is a single cell (C1 2023 `ST_GAS` +3.86 TWh against the superseded keeper's +3.33, marginally outside a band the old keeper sat marginally inside), and the honest reading is the nyiso-155 precedent exactly: the superseded keeper passed that cell on ~0.5 TWh of margin THE ATTRIBUTION DEFECT WAS SUPPLYING. Four score-independent structural gains: accuracy, no off-registry channel (the hardcoded `outages._FLEET_GROUP_OVERRIDE` per-plant dict disarmed on the repaired path), REPRODUCIBILITY (the superseded keeper's outage extract carries a null `derive_invocation` and cannot be reproduced at HEAD at any flag setting) and INTERNAL CONSISTENCY (tranche and outage artifacts on ONE availability basis, made structural by `campd_attribution_selectors`). Evidence: `docs/FINDING-nyiso177-availability-basis-root-cause-2026-09-02.md` (§10 addendum carries the ruling; §1–§9 preserve the recommendation AGAINST it, unedited), `PREREG-nyiso177-degradation-root-cause.md`. **HEADER RE-STAMPED 2026-09-02 by nyiso-178 — the promoting session's rule 28 duty was missed and CI was warning on it; nothing but this header changed, and no verdict moved. PRIOR (nyiso-159) HEADER PRESERVED BELOW.**
 
+**QUEUE STATUS UPDATE 2026-09-11 (nyiso-227, PHASE 0 ZERO-LP; NOTHING ARMED, KEEPER
+UNCHANGED). THE SUB-5-DAY GAS OUTAGE FAMILY IS MEASURED NEAR-INERT, AND THE CENSUS THAT SHOWS IT
+CLOSES EVERY AVAILABILITY-SIDE LEVER FOR NYISO ST_GAS.**
+
+`unit_outage_short_windows_gas` (row minted by pjm-d4-4, 2026-09-10) was the one live untested
+cell with a named external driver. Its own protocol was run in full at zero LP and the cell moves
+**U → I**: `docs/FINDING-nyiso227-shortgas-outage-inert-2026-09-11.md`.
+
+The gap is **real and total** — `unit_outage_short_windows` is `False` in the keeper and NYISO's
+coal-scoped short extract is **header-only (0 rows; NYISO has no coal)**, so the sub-5-day layer
+is EMPTY, and the derive produces **438 windows / 38 plants / 77 units**, annual-mean
+**208.2 / 191.5 / 280.7 MW**, live in 51–57 % of hours. It still cannot move the dispatch:
+
+| class | hours the extra removal could bind (of 8,760) | min headroom where it is live |
+|---|---|---|
+| **ST_GAS** | **0 / 0 / 0** | **2,207 / 1,334 / 1,280 MW** |
+| CC_REGULAR | 50 / 32 / 70 (0.6 / 0.4 / 0.8 %) | 23 / 249 / 113 MW |
+| CC_CHP | 0 / 7 / 0 | 638 / 663 / 495 MW |
+
+**THE GENERAL RESULT, and the reason this entry is worth reading (DO-NOT-REDO, rule 30(a)):**
+NYISO ST_GAS runs in **~100 % of hours at ~11 % of its fleet**, with **3.1–3.6 GW of already-
+derated capacity unused in the mean hour**. It is not availability-constrained anywhere in the
+year. **So every availability-side lever aimed at NYISO ST_GAS is inert by the same census** — a
+successor proposing one should run the three-line headroom test first (`avail = fleet − existing
+≥5-day removal`; `head = avail − the keeper's own `class_hourly` P1 MW`; `bind = removal > head`)
+and expect 0 binding hours. The **live** ST_GAS objects are the **offer curve** and the
+**reliability floor**, not availability.
+
+`I`, not `R`: rule 14 `[R-ACCURATE]` — the input is accurate and the coverage gap is real, so the
+family goes live again if a structural change ever opens ST_GAS headroom. That is why the census,
+not a verdict, is the artifact. Two things reported against it: **CC_REGULAR is not exactly zero**
+(50/32/70 h at CC peaks — pre-register those hours if a CC-side reason ever arms it), and the
+cell's third leg, *the per-stratum correlation against this ISO's own published FORCED series*,
+is **NOT PERFORMABLE for NYISO** — there is no `nyiso-outages` corpus and the Gold Book carries
+planning-class EFORd, not an event series. Recorded as a flag for whoever asks whether NYISO's
+availability budget is already spent: the existing ≥5-day layer removes **26.6 / 29.4 / 50.4 /
+24.5 %** of CC_REGULAR / CC_CHP / ST_GAS / ST_CHP fleet MW annual-mean (lay-up excluded, separate
+extract) against NERC GADS 2023 CC **FOR 5.46** / gas-steam **FOR 19.72** — **not like-for-like**
+(the model's extract mixes forced with planned; GADS FOR is forced-only and NERC-wide), so a flag,
+never a finding.
+
+---
+
+
 **QUEUE STATUS UPDATE 2026-09-10 (nyiso-226 SPAN — owner ruled SPEND THE SPAN; ONE shard,
 18 m 20 s, three years; the parent ran no LP). THE ARM PASSES EVERY MEASURABLE CRITERION, C3b IS
 UNMEASURED, AND PROMOTION IS STILL OPEN.**
