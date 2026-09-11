@@ -1900,6 +1900,115 @@ order-dependent across years within a process for SPP.
 **`[R-HOLDOUT]` was removed 2026-09-09**, so no year is protected from having been iterated against:
 **`CALIBRATED` is a rubric determination, NOT a certified out-of-sample skill claim.**
 
-**Next shorthand: spp-29.**
+**Next shorthand: spp-29.** *(spent — see below.)*
 
 
+
+---
+
+## spp-29 — 2026-09-11
+
+**Object: card R-bd, SPP's absent C3c price tail. VERDICT: R-bd's premise is FALSE and the card is
+CLOSED as chartered. ZERO LP SPENT** (rule 29 `[R-SCREEN]` clause 0). **Keeper UNCHANGED**
+(`2026-09-10-spp-27-commitment-grain`, read never written), **determination UNCHANGED**
+(`CALIBRATED`, grade 7 of 8, 0 fails, 1 ledgered C3c caveat). Nothing solved, nothing registered,
+no verdict minted, **no `rm` issued**, and no promotion question to put because nothing promotable
+was produced. Record: `docs/handoffs/FINDING-spp-29-c3c-price-tail-2026-09-11.md`; instrument
+`scripts/probes/_spp29_c3c_phase0.py` (`--report` reproduces every number).
+
+**THE REFUSAL.** `FINDING-spp-64` §9 chartered R-bd as *"the upper tail is CONGESTION RENT, not
+reserve scarcity."* Measured on SPP's own published archives, it is neither:
+
+1. **The scored quantity is a HUB AVERAGE.** `derive_actual_tail.py` reads
+   `actual_lmp_hourly_SPP.rt`, which equals the two-hub mean to **6.1 × 10⁻⁵ $/MWh**. **Both** hubs
+   clear > $200 simultaneously in **32 / 31 / 50** of the 42 / 59 / 68 tail hours, median *lower*
+   hub **$230.80 / $211.28 / $259.38** — a system-wide energy event, which N↔S congestion does not
+   move. (The model side is scored as the **max** zonal dual, an asymmetry generous to the model,
+   which still reads 0 / 5 / 0 — re-derived from the keeper's committed sidecars, matching the
+   registered payload exactly.)
+2. **Congestion does not select the tail.** From `RTBM-BC-YEARLY-2024`: tail hours sit at the
+   **53.2nd** percentile of binding-constraint count and the **54.2nd** of distinct facilities; the
+   top-59 hours by facility count overlap the tail **1 / 59**; and
+   **spearman(hourly congestion rent, RT hub price) = +0.019** (max shadow price +0.079). SPP-64's
+   97.6 % binding-hours census is reproduced — congestion is what happens in *every* hour, not what
+   distinguishes a tail hour.
+3. **DECISIVE — SPP's own day-ahead market, which HAS all ~730 constraints at full nodal
+   resolution, produces no tail either.** DA cleared > $200 in **0 / 42**, 14 / 59 and **0 / 68** of
+   the RT tail hours; **2025's DA annual maximum is $176.62** against 68 RT hours above $200. The
+   median RT − DA wedge in tail hours is **+$227.48 / +$181.67 / +$244.04** against −$4.39 / −$4.07
+   / −$5.60 in an ordinary hour, and **40 / 42, 32 / 59, 66 / 68** tail hours had DA clear below
+   $100. A fully nodal *hourly* optimization of SPP does not produce the tail, so a reduced zonal
+   split of SPP cannot.
+
+**NOR IS IT A QUANTITY ERROR.** Against EIA-930 (alignment measured, r = 0.98369), the keeper's net
+load in the tail hours is right to **−0.52 / −0.25 / −0.44 GW** — ≤ 1.4 % — and **the phantom wind
+is not there** (+0.18 / **−1.20** / +0.31 GW in tail hours against +0.85 / +1.33 / +1.35 annually).
+Reaching $200 needs **10,096 / 5,758 / 11,094 MW** removed — **43.6 % / 15.2 % / 39.6 %** of that
+hour's net load. Nor is it the offer ceiling: the stack carries **1,788 / 2,319 / 1,809 MW above
+$200** with a maximum unit MC of **$725.99 / $649.91 / $538.57**.
+
+**THE POSITIVE IDENTIFICATION — a PERFECT-QUANTITY hourly LP still FAILS C3c in all three years.**
+Price the keeper's own fleet against SPP's **metered** net load with perfect foresight (a
+merit-order screen, **validated** against the keeper LP at spearman **0.981 / 0.984 / 0.951** and an
+**exact** match on the scored tail count 0 / 5 / 0, and deliberately tighter than the LP since it
+omits storage):
+
+| | 2023 | 2024 | 2025 |
+|---|---|---|---|
+| perfect-net-load hours > $200 | 7 | 29 *(6 literal infeasibility)* | **0** |
+| perfect-net-load annual max | $361.73 | $507.50 | **$166.50** |
+| actual RT | 42 | 59 | 68 |
+| C3c band `[0.5×, 2.0×]` | 0.1667× **FAIL** | 0.4915× **FAIL** | 0.0000× **FAIL** |
+| median markup the market charged over the marginal unit's cost | **+$241.04** | +$207.82 | **+$254.20** |
+| as a multiple of that cost | **9.5×** | 7.3× | **9.4×** |
+
+Hand the model the market's own metered quantities and **2025 prices out with a maximum of
+$166.50** — it cannot reach $200 once, in a year the market did 68 times. The residual is an
+**offer markup of 7.3–9.5× marginal cost in real time**, which a marginal-cost LP does not contain
+and which cannot be closed without the fitted adder rules 1 `[R-STRUCT]` / 13 `[R-MEASURED]`
+forbid.
+
+**RULE 22 `[R-C3C]`: the classification is EARNED, and this is SPP's first measurement of it.** The
+lane recommends **no change to C3c's standing and proposes no rubric change**. One hazard is named
+rather than left implicit: on the rubric's own **reported-only DA row** SPP would read
+PASS / FAIL / PASS — **reported as a measurement of the limitation's size, explicitly NOT a
+proposal**, because moving a criterion to the basis on which it passes is gate-shopping and is the
+owner's call alone.
+
+**RULE 28(a) DO-NOT-REDO honoured.** `energy_reserve_coopt` (**`I`**, SPP-55) was **not**
+re-tested; it is corroborated from a new direction by the tail's RT−DA character. No arithmetic
+bound is claimed from the offer caps — SPP's CRDC steps are $275 / $550 / $1,100 per MW (Protocols
+v119 §4.1.5.2), far above $200 — so that kill rests on SPP-55's measured **non-overlap** (1 / 0 / 0
+hours), not on the level. `spp_curtailment_ceiling` (`O`), `negative_renewable_offers` (`I`) and
+`spp_gas_commitment_bridge` (`R`) likewise not re-tested. **No cell moved**;
+`internal_congestion_split` and `ordc_scarcity_overlay` received **annotations without a cell move**
+(the SPP-55 / SPP-64 precedent). `offer_curve_by_group` stays at the keeper's uniform 0.93 and was
+not re-cut, swept or examined against C3c; DOF ledger unchanged (3 / 2).
+
+**OPEN CARDS.**
+- **R-bd — CLOSED as chartered.** Do not re-open it as a congestion object without evidence
+  meeting rule 28(a)'s re-test condition. **A topology change is recommended AGAINST for C3c**:
+  SPP-64 §8's census (115 facilities for 90 % of rent) already said the rent is not a 3-zone
+  object, and §1c says the build would not reach the tail even if it were perfect.
+  `internal_congestion_split` stays **`U`**.
+- **R-bc — SURVIVES, with a SHARPENED boundary.** The model still owes the ~11.8 TWh of
+  curtailment under rule 14, and a price-forming curtailment must **replace**
+  `spp_curtailment_ceiling`. **But it must be chartered against the NEGATIVE tail and the wind
+  volume ONLY** — the over-delivered wind is absent from the upper-tail hours and the upper tail
+  survives perfect quantities, so **a lane that charters R-bc against C3c will fail for reasons
+  unrelated to R-bc's merits.**
+- **R-bf (NEW) — the 2024 hourly remnant, the only reachable tail work left.** 2024 alone misses
+  the perfect-quantity band by **0.0085**, is the only year whose tail is an hourly net-load event
+  (34 of 59 tail hours in the top actual-net-load decile; SPP's own DA reached $563.55), and the
+  model's 5 hours there are **all `ISOConfig.voll` infeasibility cliffs**, not a scarcity curve.
+  The card is a **rule-14 `[R-ACCURATE]` availability question** — in SPP's 35 DA-tail hours the
+  model holds a median **8,233 MW** above its $74.80 marginal unit, and Winter Storm Heather is in
+  the window. Answerable at **zero LP** against CAMPD. Not a price adder, and not a topology change.
+- **R-be** (day SELECTION) and **R-ba** (merit-order inversion) unchanged.
+
+**`[R-HOLDOUT]` was removed 2026-09-09**, so no year is protected from having been iterated
+against: every number here is model-**SELECTION** evidence and **`CALIBRATED` is a rubric
+determination, NOT a certified out-of-sample skill claim.** No `complete` marker and no `frontier`
+declaration is added, requested or implied.
+
+**Next shorthand: spp-30.**
