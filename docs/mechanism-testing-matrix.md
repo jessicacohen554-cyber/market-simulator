@@ -12670,6 +12670,64 @@ is now the live queue head.**)*
 
 *(Prior header, nyiso-177, verbatim:)* 5.5 NYISO — **KEEPER 2026-09-02 (nyiso-177): `2026-09-02-nyiso-177-vintage-matched` — the nyiso-159 recipe plus the accurate per-unit CAMPD attribution (`campd_per_unit_attribution`) on a vintage-matched, reproducible availability basis (`campd_outage_merit_order_guard`); ZERO free parameters, ZERO new DOF entries (13 / `n_residual` 6 carried verbatim), zero new forcing mechanisms (the SAME six D-4 rows). PROMOTED BY OWNER RULING on rules 14 `[R-ACCURATE]` + 1 `[R-STRUCT]` OVER ONE GATE REGRESSION, reported at full magnitude — determination NOT-YET, target grade 6 → 5, fail set {C3a-2025, C3c} → **{C1-2023 `ST_GAS`, C3a-2025 −11.2 %, C3c}**. The one regression is a single cell (C1 2023 `ST_GAS` +3.86 TWh against the superseded keeper's +3.33, marginally outside a band the old keeper sat marginally inside), and the honest reading is the nyiso-155 precedent exactly: the superseded keeper passed that cell on ~0.5 TWh of margin THE ATTRIBUTION DEFECT WAS SUPPLYING. Four score-independent structural gains: accuracy, no off-registry channel (the hardcoded `outages._FLEET_GROUP_OVERRIDE` per-plant dict disarmed on the repaired path), REPRODUCIBILITY (the superseded keeper's outage extract carries a null `derive_invocation` and cannot be reproduced at HEAD at any flag setting) and INTERNAL CONSISTENCY (tranche and outage artifacts on ONE availability basis, made structural by `campd_attribution_selectors`). Evidence: `docs/FINDING-nyiso177-availability-basis-root-cause-2026-09-02.md` (§10 addendum carries the ruling; §1–§9 preserve the recommendation AGAINST it, unedited), `PREREG-nyiso177-degradation-root-cause.md`. **HEADER RE-STAMPED 2026-09-02 by nyiso-178 — the promoting session's rule 28 duty was missed and CI was warning on it; nothing but this header changed, and no verdict moved. PRIOR (nyiso-159) HEADER PRESERVED BELOW.**
 
+**QUEUE STATUS UPDATE 2026-09-11 (nyiso-227 SPAN — ONE shard, 13 m 35 s, three years, exit 0;
+the parent ran no LP). C3b IS MEASURED AT LAST, IT PASSES IN ALL THREE YEARS, AND THE PROMOTION
+QUESTION IS THE OWNER'S AND OPEN.**
+
+nyiso-226 left the NYC ST_GAS persistent-base re-basing **UNDECIDED** on one unmeasured
+load-bearing criterion after five blocked retrieval routes. It is measured:
+
+| year | control | **arm** | Δ | headroom to 0.20 |
+|---|---|---|---|---|
+| 2023 | 0.122103 | **0.122552** | +0.000450 | 0.077448 |
+| 2024 | 0.179016 | **0.179205** | +0.000189 | **0.020795** |
+| 2025 | 0.159598 | **0.159371** | **−0.000226** | 0.040629 |
+
+**The pre-registered rule — promote iff no year's arm C3b exceeds 0.20 — is CLEARED.** 2024, the
+tightest, consumed **0.9 %** of its headroom; max |ΔC3b| **0.00045**, 11× inside the PRECOMMIT's
+registered `≤0.005`; and 2025 moves the *right* way, so C3b is two-sided as well.
+
+**The span REPRODUCES nyiso-226 to the fourth decimal on every row it reported** — C1 ST_GAS
+1.669→1.591 (2023) / 1.369→1.410 (2024), C3a 33.6503→33.6760 / 40.1499→40.1782 / 61.5983→61.6235,
+C8 0.1611→0.1596 / 0.2090→0.2071 / 0.1813→0.1796, D-2 1.9019→1.8716 / 2.2021→2.1733 /
+2.1240→2.0983, D-1 and D-2 `passed=True` both sides, D-4 `passed=False` both sides with
+byte-identical text. The arm's `shared_inputs` are byte-identical content hashes to the keeper's
+— independent proof it is exactly one coefficient.
+
+**Measured with `scripts/score_bundle_price_shape.py`** (added this session): it rebuilds the one
+payload block C3b reads from a bundle's own `hourly/system_<year>.parquet` and then calls
+`calibration_verdict.score_price_shape` **itself**, so the band, the actual ladder, the coverage
+mask and the NRMSE are the scorer's. **It is EXACT** — run against the designated keeper it
+returns the registered 0.122 / 0.179 / 0.160. **A shard or a slim-bundle parent can now
+price-shape-score with nothing registered**, which is the general fix nyiso-226 asked for.
+
+**NOT REGISTERED, so rule 15 is NOT discharged and the promotion is not executable this session
+— stated, not worked around.** `dashboard_add_run.py` needs three artifacts; `_shared/*` was
+rebuilt to byte-identical hashes (`--rebuild-benchmark`, *"no re-solve"*) and `system.parquet` is
+a lossless concatenation of the committed hourlies, but **`dispatch/<year>_P1.parquet`** — the
+per-PLANT hourly layer — is gitignored, is most of the shard's **124 MB** bundle, and died with
+its container. No block was routed around: the shard was not asked to register (rule 32(c)(6)
+forbids it by name) and no scorer path was patched.
+**THE FIX, and put it in every future span-shard prompt:** also commit
+`hourly/unit_hourly_<year>.parquet` — it carries `plant_code / plant_group / zone / hour / mw`,
+everything `build_payload` takes from `dispatch/`, at **920 KB/yr for NYISO** (~2.8 MB a span),
+and `.gitignore`'s own comment blesses the opt-in `git add -f`. This is the **third and final**
+leg of one architectural lesson (no `metrics.json` → the scorer resolves registered runs only →
+registration needs a per-plant layer the shard must be told to keep). Completion cost, stated
+before spending and **not spent**: ONE ~14-minute shard, or a single-shard waiver of 32(c)(6).
+
+**`main`:** reads **0.175** at this writing; the shard branch has not auto-merged. When it does,
+`main` carries the armed value while the keeper is unchanged — the exact drift nyiso-226 had to
+undo. **If the owner does not promote, `main` is reverted to 0.175**; if the owner promotes, the
+armed value is correct and stays. Either way the keeper reproduces from `main`.
+
+**Cell:** `reliability_floor` **UNCHANGED at K** — the limb was already armed and only its
+coefficient moved. Records: `docs/RESULT-nyiso227-c3b-measured-2026-09-11.md`,
+`docs/PRECOMMIT-nyiso227-c3b-measurement-2026-09-11.md`.
+
+---
+
+
 **QUEUE STATUS UPDATE 2026-09-11 (nyiso-227, PHASE 0 ZERO-LP; NOTHING ARMED, KEEPER
 UNCHANGED). THE SUB-5-DAY GAS OUTAGE FAMILY IS MEASURED NEAR-INERT, AND THE CENSUS THAT SHOWS IT
 CLOSES EVERY AVAILABILITY-SIDE LEVER FOR NYISO ST_GAS.**
