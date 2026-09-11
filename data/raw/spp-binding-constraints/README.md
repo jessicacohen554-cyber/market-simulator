@@ -4,6 +4,33 @@ Opened **2026-09-06** by lane **SPP-12** (`docs/multi-iso/spp-addition-plan-2026
 §5 row SPP-12) as part of the SPP addition program. Source of record:
 `SOURCES.md` beside this file.
 
+> ## STATUS CORRECTION — **THE DATA HAS LANDED. THIS DIRECTORY IS SERVED.**
+>
+> *(Repaired 2026-09-11 by lane **SPP-29**. `FINDING-spp-64-2026-09-10.md` §8 flagged the
+> "Status: UNSERVED" lines below as stale; SPP-29 read the archive and repairs them here rather
+> than leaving a third lane to rediscover it. The narrative below is left INTACT as the record of
+> what SPP-12 and SPP-13 actually found — the two stale status lines are annotated in place, not
+> rewritten.)*
+>
+> Landed: `RTBM-BC-YEARLY-2023.csv.zip` and `RTBM-BC-YEARLY-2024.csv.zip` (3.68 M / 4.09 M
+> constraint-intervals), twelve `RTBM-BC-MONTHLY-2025NN.csv.zip`, `Flowgates.csv`,
+> `Temp_Flowgate.csv`, and two derived limit parquets. Delivered schema, verified by SPP-29:
+> `Interval,GMTIntervalEnd,Constraint Name,Constraint Type,NERCID,TLR Level,State,Shadow Price,
+> Monitored Facility,Contingent Facility` — the 10-column yearly form, **without** the three
+> effective-limit columns the v35 sample carries. **`Interval` is stamped interval-ENDING local
+> Central**, so `00:05:00` belongs to hour 0; a consumer that floors it to the hour without
+> accounting for that shifts every row by one interval.
+>
+> **What is now computable, and one warning about it.** Card P1's SPP-54-vs-SPP-57 ranking is
+> computable on its own pre-declared terms — but flowgate group membership **must be fixed in a
+> PRECOMMIT before any share is read** (rule 1 `[R-STRUCT]`; deriving membership while looking at
+> the shares is residual-driven selection). Two measurements already on the record should be read
+> first, because both cut against a zonal split: 2024 congestion rent is spread over **444**
+> monitored facilities — 23 for half, **115 for 90 %** (`FINDING-spp-64` §8) — and congestion
+> **does not select SPP's price tail at all**: tail hours sit at the 53rd percentile of binding
+> count and `spearman(hourly rent, RT hub price) = +0.019`
+> (`FINDING-spp-29-c3c-price-tail-2026-09-11.md` §1b).
+
 ## What this is
 
 Manifest row 8, and **the deciding evidence for owner card P1 (topology)**. The
@@ -69,8 +96,10 @@ the group is "Oklahoma-internal", and the actual membership has to be derived fr
 the delivered flowgate names, which is a judgement the session with the data
 makes and records.
 
-**Status: UNSERVED.** The table cannot be computed — this directory is empty
-because the source is blocked (below). Card P1's ranking of SPP-54 vs SPP-57
+**Status: ~~UNSERVED~~ SERVED as of 2026-09-08 — see the STATUS CORRECTION at the top of this
+file. The paragraph below is SPP-12's 2026-09-06 record and is retained as history; its factual
+claims about this directory being empty are NO LONGER TRUE.** The table cannot be computed — this
+directory is empty because the source is blocked (below). Card P1's ranking of SPP-54 vs SPP-57
 therefore has **no measured input yet**, and no substitute exists in this repo:
 OASIS is blocked, and EIA publishes nothing at flowgate resolution. This is the
 single largest gap SPP-12 leaves behind.
@@ -155,6 +184,12 @@ tunnel never delivers a banner, and the same is true for `ftp.gnu.org` / `ftp.de
 (control). The four-group table below therefore stays **UNSERVED**, for a different reason
 than SPP-12 recorded: not a credential, a network policy. **This directory still carries no
 2023–2025 data.**
+>
+> **SUPERSEDED 2026-09-11 (SPP-29).** The paragraph above is SPP-13's 2026-09-06 transport record
+> and is retained as history. The data has since landed by another route (`SOURCES.md`): the
+> 2023 and 2024 yearly archives and the twelve 2025 monthlies are in this directory. The
+> four-group table is computable, subject to the membership-before-shares discipline named at the
+> top of this file.
 
 **Schema — now VERIFIED from the v35 sample files** (SPP's own publication, dated
 2026-01-28/29; the samples are one interval / one day and are NOT landed here):
