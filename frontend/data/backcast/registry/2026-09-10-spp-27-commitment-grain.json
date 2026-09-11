@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-10-spp-27-commitment-grain",
+  "label": "spp 27 commitment grain",
+  "date": "2026-09-10",
+  "shorthand": "spp-27-commitment-grain",
+  "definition": "SPP-27: keeper 8's recipe plus ONE armed gate, mustrun_window_commitment_grain -- the per-plant must-run window placed at the WHOLE-OPERATING-DAY commitment grain (round(k/24) days ranked by day-mean system load) instead of individually top-ranked hours. Size (online_frac), level (committed_pct) and membership untouched. Charter docs/handoffs/PRECOMMIT-spp-27-commitment-grain-2026-09-10.md; screen docs/RESULT-spp27-screen-2023.md.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "SPP",
+  "file": "frontend/data/backcast/runs/2026-09-10-spp-27-commitment-grain.js",
+  "bundle": "results/calibration/spp27_span"
+}
