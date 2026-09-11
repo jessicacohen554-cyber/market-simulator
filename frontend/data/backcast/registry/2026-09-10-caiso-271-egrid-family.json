@@ -3,7 +3,7 @@
   "label": "caiso 271 egrid family",
   "date": "2026-09-10",
   "shorthand": "caiso-271-egrid-family",
-  "definition": "caiso-271 egrid family HR, year 2023, pin 9ee5319b",
+  "definition": "caiso-271 egrid family HR: arms ScenarioConfig.egrid_family_heat_rates on the caiso-269-lateevening-clean keeper recipe via --replay-bundle (pin 9ee5319b); eGRID heat rate is joined at PLANT grain, so a plant hosting two prime-mover families gets one blended number true for neither; this instead reads eGRID's own per-family heat rates. Fleet effect: 6 units / 1,451.8 MW / 4.54% of the CAISO fleet (Alamitos 3 ST units +2.288 MMBtu/MWh, Huntington Beach ST -0.356, Glenarm gas_cc -1.361); zero new free parameters. C3a degrades slightly in all three years (+0.012 to +0.115 pp) while C1 moves toward measured for CC_REGULAR/CT_PEAKER/CT_CHP and no criterion flips. DETERMINATION CALIBRATED on 2023-2025 (C1/C2/C3a/C3b/C4/C6/C8 PASS), the single ledgered C3c caveat, unchanged in criterion status from the superseded caiso-269-lateevening-clean keeper.",
   "years": [
     2023,
     2024,
