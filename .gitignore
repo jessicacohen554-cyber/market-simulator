@@ -1916,3 +1916,17 @@ results/calibration/spp64_*/
 # family stays OUT OF `main`; gitignoring is what discharges the delete-before-merge
 # duty, and nothing is ever `rm`'d before the owner rules on promotion.
 results/calibration/spp27_*/
+
+# pjm-d4-4 (2026-09-11): the six per-year shard bundles (pjm_d4_4_y2020..y2025)
+# and the composer's own six-year working bundle (pjm_d4_4_span) are ALREADY
+# covered by the `results/calibration/pjm_d4_*/` rule above — no new pattern is
+# needed here. What this note records is that the shards had force-added their
+# per-year dirs, so they were TRACKED: this session untracked them with
+# `git rm -r --cached`, which is what rule 32(d) [R-SHARD] actually asks for
+# (keep per-year shard dirs out of `main`; an unregistered per-year dir left
+# committed is the Class-E parity RED check_registry_payload_parity.py flags)
+# WITHOUT violating rule 31 [R-RETAIN] (never delete a solve's results before the
+# owner has ruled on promotion). The bytes stay on local disk; the repo, the CI
+# checkout and the parity gate never see them. What IS committed, force-added as
+# the slim 20-file set, is the registered composite pair pjm_d4_4_A (keeper,
+# 2023-2025) + pjm_d4_4_TP (touchpoint, 2020-2022).

@@ -1,8 +1,10 @@
 {
-  "timestamp": "2026-09-11T02:51:52",
+  "timestamp": "2026-09-11T05:53:50",
   "iso": "PJM",
   "years": [
-    2021
+    2023,
+    2024,
+    2025
   ],
   "hours": 8760,
   "passes": [
@@ -11,7 +13,12 @@
   "commitment": false,
   "commitment_screen_coal": true,
   "gas_prices": {
-    "2021": 3.72
+    "2020": 2.03,
+    "2021": 3.72,
+    "2022": 6.45,
+    "2023": 2.54,
+    "2024": 2.19,
+    "2025": 3.52
   },
   "coal_lignite_mustrun": null,
   "coal_prb_mustrun": null,
@@ -431,17 +438,17 @@
   "mass_cap_program": null,
   "btm_backfill_year": 2024,
   "shared_inputs": {
-    "eia930": "../_shared/PJM/eia930-40c3ed4c9bc8.parquet",
-    "eia923": "../_shared/PJM/eia923-cd77c4a0da97.parquet",
-    "campd": "../_shared/PJM/campd-7aa3290103f8.parquet",
+    "eia930": "../_shared/PJM/eia930-eabb5979cef0.parquet",
+    "eia923": "../_shared/PJM/eia923-9b08db5fc7d9.parquet",
+    "campd": "../_shared/PJM/campd-ee850c4b7b92.parquet",
     "unit_outages": "../_shared/PJM/unit_outages-efd694c287be.parquet",
     "unit_outages_short": "../_shared/PJM/unit_outages_short-6fd29c386319.parquet",
     "unit_outages_partial": "../_shared/PJM/unit_outages_partial-b37584b96662.parquet",
     "unit_outages_e923": "../_shared/PJM/unit_outages_e923-5db50221ce30.parquet",
     "unit_outages_layup": "../_shared/PJM/unit_outages_layup-b8ac78eb969e.parquet"
   },
-  "git_sha": "796ea735",
-  "basis_sha": "796ea735eb582a416ed12f432e5a2138acc0770f",
+  "git_sha": "f09eddbe",
+  "basis_sha": "f09eddbefe6a3e72ba3ccc2f9d4d97db0b17205d",
   "highspy_version": "1.14.0",
   "environment": {
     "python_version": "3.11.15",
