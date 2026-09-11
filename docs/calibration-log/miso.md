@@ -13801,15 +13801,27 @@ container is **cgroup v1 with no limit and 15.70 GiB**, so the combination *(Ful
 and the shard tests it with a cheap early stop. The shard reads BOTH cgroup layouts rather
 than assuming v2.
 
-**OUTCOME: THE SCREEN NEVER RAN, AND THE ARM IS UNADJUDICATED — not a keeper, not a
-rejection, no cell verdict minted.** Both shards, pinned to SHA `6b82b833` in two different
-environments (including `env_01MuEURKxFyu3AELJoBEHHPE`, the one miso-252 never tried), sat at
-`SESSION_STATUS_PENDING` with `updated_at` frozen at creation for ~50 and ~45 minutes and
-**never provisioned a container**. Neither reached HARD STOP 0, so this session did not even
-measure a cgroup ceiling — the one thing the memory question needed. **No LP was spent
-anywhere**; the parent solved nothing (rule 32(a), which is categorical and written for
-exactly this temptation). Nothing registered on the dashboard because no run completed;
-nothing deleted because no bundle exists (rule 31).
+**OUTCOME: BOTH SHARDS RAN, BOTH WERE OOM-KILLED, AND THE ARM IS UNADJUDICATED — not a
+keeper, not a rejection, no cell verdict minted.** *(This paragraph was CORRECTED 2026-09-11:
+it first reported that the shards never provisioned a container. They did — both ran, both
+reported, both merged. The error was written while they still read PENDING.)* Pinned to SHA
+`6b82b833` in two different environments, both died inside HiGHS `run()` on the P0 pass ~46 s
+in, at a terminal anon-RSS of **13.30 GiB**. Neither wrote a bundle and neither pushed a
+partial one (rule 27). The parent solved nothing (rule 32(a)). Nothing registered because no
+run completed; nothing deleted because no bundle exists (rule 31).
+
+**THE DURABLE FINDING IS THE OOM, AND IT CORRECTS THIS SESSION'S OWN PROMPT AND
+`FINDING-miso252` §1b.** The HARD STOP 0 ceiling probe this session wrote reads the **root**
+memory cgroup (unlimited) and falls back to `MemTotal` (15.70 GiB). **The limit that binds is
+on a NESTED cgroup** — `/process_api/<id>/claude-code-bash` — at **13.344–13.345 GiB**, whose
+`max_usage_in_bytes` hit the wall exactly. The claimed "~2.4 GiB of headroom" was false; real
+headroom over the 13.30 GiB peak is **≈0.055 GiB**, and read correctly HARD STOP 0's own 14 GiB
+rule would have stopped both shards before the solve. Both shards found this independently.
+miso-252's "the container misreports its own size" is therefore **superseded**: `free` and
+`MemTotal` are truthful about the machine, and the probe was looking at the wrong cgroup — which
+is why its "Full access OOM at 15 GB" and "Default 13.344 GiB" readings never reconciled. The
+correct probe is now written down (RESULT §3.1). LP size **1,026,876 × 29,643,840, 86.2 M nnz**;
+build tops out at 6.98 GiB, so **the build is not the problem and never was**.
 
 **ONE GATE IS NEVERTHELESS SETTLED, at zero LP: G-1 footprint confinement PASSES on real
 MISO 2023 data.** Exactly two benchmark classes move — `biomass` 8.1281 → **2.3233**, `OTHER`
