@@ -3,9 +3,8 @@
   "label": "caiso 271 egrid family",
   "date": "2026-09-10",
   "shorthand": "caiso-271-egrid-family",
-  "definition": "caiso-271 ARM: ScenarioConfig.egrid_family_heat_rates, ONE flag on the committed keeper recipe 2026-09-10-caiso-269-lateevening-clean via --replay-bundle, pin 9ee5319b. eGRID is joined at PLANT grain, so a plant hosting two prime-mover families hands both halves one blend that is a measured number for neither; this reads eGRID's own per-family inputs from the same vintage. CAISO artifact 4 plants / 8 (plant, family) rows; fleet effect 6 units / 1,451.8 MW / 4.54% (Alamitos 3 ST units +2.288 MMBtu/MWh, Huntington Beach ST -0.356, Glenarm gas_cc -1.361). Zero free parameters, zero new thresholds; retires the MIXED_FACILITY_STEAM_HR hand number at covered plants. Solved as four per-year rule-32 shards and composed in the parent into ONE 2022-2025 bundle (rule 16); the four shard configs differ only in gas_price_override and weather_year. Recovered from git history and registered by caiso-273 (RESULT-caiso273-register-caiso271-2026-09-10.md). NOT PROMOTED - keeper unchanged; promotion is an open owner question.",
+  "definition": "caiso-271 egrid family HR: arms ScenarioConfig.egrid_family_heat_rates on the caiso-269-lateevening-clean keeper recipe via --replay-bundle (pin 9ee5319b); eGRID heat rate is joined at PLANT grain, so a plant hosting two prime-mover families gets one blended number true for neither; this instead reads eGRID's own per-family heat rates. Fleet effect: 6 units / 1,451.8 MW / 4.54% of the CAISO fleet (Alamitos 3 ST units +2.288 MMBtu/MWh, Huntington Beach ST -0.356, Glenarm gas_cc -1.361); zero new free parameters. C3a degrades slightly in all three years (+0.012 to +0.115 pp) while C1 moves toward measured for CC_REGULAR/CT_PEAKER/CT_CHP and no criterion flips. DETERMINATION CALIBRATED on 2023-2025 (C1/C2/C3a/C3b/C4/C6/C8 PASS), the single ledgered C3c caveat, unchanged in criterion status from the superseded caiso-269-lateevening-clean keeper.",
   "years": [
-    2022,
     2023,
     2024,
     2025

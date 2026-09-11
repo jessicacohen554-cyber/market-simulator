@@ -1,10 +1,8 @@
 {
- "timestamp": "2026-09-10T07:29:16",
+ "timestamp": "2026-09-10T07:26:19",
  "iso": "CAISO",
  "years": [
-  2023,
-  2024,
-  2025
+  2022
  ],
  "hours": 8760,
  "passes": [
@@ -13,7 +11,7 @@
  "commitment": false,
  "commitment_screen_coal": true,
  "gas_prices": {
-  "2023": 2.54
+  "2022": 6.45
  },
  "coal_lignite_mustrun": null,
  "coal_prb_mustrun": null,
@@ -354,15 +352,15 @@
  "mass_cap_program": null,
  "btm_backfill_year": null,
  "shared_inputs": {
-  "capacity_deliverability": "../_shared/CAISO/capacity_deliverability-d7accfaa841f.parquet",
+  "eia930": "../_shared/CAISO/eia930-a517694085eb.parquet",
+  "eia923": "../_shared/CAISO/eia923-9b37e0f95bae.parquet",
+  "campd": "../_shared/CAISO/campd-caa2cedb996a.parquet",
   "unit_outages": "../_shared/CAISO/unit_outages-e28c7b0b81d1.parquet",
+  "unit_outages_short": "../_shared/CAISO/unit_outages_short-8822de3c9c11.parquet",
+  "unit_outages_partial": "../_shared/CAISO/unit_outages_partial-b00540584f5f.parquet",
   "unit_outages_e923": "../_shared/CAISO/unit_outages_e923-f53035a2541a.parquet",
   "unit_outages_layup": "../_shared/CAISO/unit_outages_layup-d75214d7cdc0.parquet",
-  "unit_outages_partial": "../_shared/CAISO/unit_outages_partial-b00540584f5f.parquet",
-  "unit_outages_short": "../_shared/CAISO/unit_outages_short-8822de3c9c11.parquet",
-  "campd": "../_shared/CAISO/campd-48c0f1dd36b6.parquet",
-  "eia923": "../_shared/CAISO/eia923-8ca120c6637d.parquet",
-  "eia930": "../_shared/CAISO/eia930-3697b3115384.parquet"
+  "capacity_deliverability": "../_shared/CAISO/capacity_deliverability-d7accfaa841f.parquet"
  },
  "git_sha": "9ee5319b",
  "basis_sha": "9ee5319bcd48a025aa3cd126283c895fcc72fa65",
@@ -385,10 +383,5 @@
    ]
   ],
   "market_sim_data_root": ""
- },
- "composed_from": {
-  "2023": "results/calibration/caiso271_family_2023",
-  "2024": "results/calibration/caiso271_family_2024",
-  "2025": "results/calibration/caiso271_family_2025"
  }
 }

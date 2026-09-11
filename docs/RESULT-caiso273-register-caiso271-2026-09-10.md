@@ -4,7 +4,7 @@
 Cards: **A** — register the caiso-271 arm or establish it is gone. **B** — the 2020/2021 intake,
 launched as a separate parallel session (rule 12). **C** — no new lever lane opened (charter's
 instruction honoured; see §7).
-**KEEPER UNCHANGED at `2026-09-10-caiso-269-lateevening-clean`. NOT PROMOTED — the owner's call (§6).**
+**PROMOTED 2026-09-11 on the owner's ruling — CAISO's keeper is now `2026-09-10-caiso-271-egrid-family` (§9).**
 
 ---
 
@@ -27,7 +27,11 @@ instruction honoured; see §7).
    it silently destroyed three committed CAISO bench parts on the first attempt and manufactured a
    false C4 failure. Reverted and fixed; worth knowing before the next composite is registered.
 
-## §2 — Determination
+## §2 — Determination (of the 4-year composite, as first registered)
+
+> **Superseded by §9.1.** On the owner's 2026-09-11 promotion ruling this composite was split
+> into the train span 2023-2025 (**CALIBRATED**, now the keeper) plus the folded 2022 touchpoint.
+> The NOT-YET below is the 4-year aggregate, kept here because §2-§5 were written against it.
 
 ```
 RUN_ID=2026-09-10-caiso-271-egrid-family
@@ -225,3 +229,113 @@ only writable paths under `frontend/data/backcast/` are `bench/CAISO/{2020,2021}
 ---
 
 **Next number: caiso-275.**
+
+
+---
+
+## §9 — PROMOTION (added 2026-09-11, owner ruling)
+
+**Owner ruling, verbatim:** *"Is this a recommended keeper candidate? If so plz promote. If
+structural integrity improves but gates regress that may still be a keeper.."* — the same standing
+ruling under which caiso-269 was promoted.
+
+**Answered yes, and promoted.** Structural integrity improves unambiguously: a measured per-family
+heat rate replaces a plant-grain blend that is a measured number for *neither* prime-mover family;
+zero free parameters, zero new thresholds; and it retires the `MIXED_FACILITY_STEAM_HR` hand number
+at covered plants (rules 14 `[R-ACCURATE]` / 24 `[R-REGISTRY]`). Gates regress only on C3a, by
+0.012–0.115 pp, and **no criterion flips**.
+
+### §9.1 — The registration SHAPE had to be corrected before promoting
+
+**Promoting the 4-year composite as registered would have DECERTIFIED CAISO.** That bundle reads
+NOT-YET because 2022 is inside it, and a run-level determination aggregates — exactly the hazard
+rule 30 `[R-TOUCHPOINT-FOLD]` (b) names. Rule 30(c) is explicit that a held-out year never
+downgrades the ISO, so the keeper must be the **train-tier** run.
+
+Split, at zero LP, into the layout caiso-269 already uses and that rule 16 `[R-ALLYEARS]` names as
+CAISO's scorable span:
+
+| run id | bundle | years | determination |
+|---|---|---|---|
+| **`2026-09-10-caiso-271-egrid-family`** | `caiso271_egrid_family_span` | 2023-2025 | **CALIBRATED** (single ledgered C3c) |
+| `2026-09-10-caiso-271-egrid-2022` | `caiso271_egrid_family_2022` | 2022 | NOT-YET (C3a +13.0 %, C3b 0.240) |
+
+The 2022 rung is stamped to the keeper (`stamp_touchpoint_holdout.py`) and folds into its report.
+
+### §9.2 — A second defect caught in the same pass
+
+`render_backcast._slug` caps a label at **four words**, so `"caiso 271 egrid family 2022"` slugged
+to the **same id as the span** and the touchpoint registration silently **overwrote the keeper's
+sidecar and payload** — the collision that function's own docstring warns about for ablation twins.
+Relabelled to `"caiso 271 egrid 2022"`; both re-registered and verified distinct.
+
+### §9.3 — Promotion checks, all green
+
+* `build_status.py --iso CAISO` → **CAISO: CALIBRATED**
+* `audit_keepers.py --iso CAISO` → **0 failures, 0 warnings** (one E3 `calibration_flags.years`
+  inconsistency inherited from the 2023 shard was repaired first)
+* `check_registry_payload_parity.py` on a CI-equivalent tree → **OK**, 44 runs / 76 bundle dirs / 0
+  unsynced
+* `check_mechanism_matrix.py` → **PASS**; CAISO shard re-stamped (keeper + gates) and the
+  `egrid_family_heat_rates` cell moved **O → K**
+* `calibration-complete.json` re-keyed to the new keeper
+
+### §9.4 — Retention
+
+The superseded `2026-09-10-caiso-269-lateevening-clean` and its bundle are **deliberately NOT
+pruned** (rule 31 `[R-RETAIN]`) — it is the G-CTRL form-4 control every caiso-271 number is
+differenced against, and re-designating it costs nothing if the owner reverses. The four caiso-271
+per-year shard bundles are likewise retained on local disk, gitignored, never removed by `rm`.
+
+**No LP was spent on this promotion.**
+
+---
+
+## §10 — CAISO'S LADDER IS CLOSED AT 2022, AND THE 2022 FAILURE IS CROSS-ISO (added 2026-09-11)
+
+### §10.1 — Card B returned a measured negative: CAISO cannot score 2020, and 2021 only partly
+
+caiso-274 (`docs/FINDING-caiso274-2020-2021-intake-census-2026-09-10.md`) delivered **neither**
+target, for two independent measured reasons, and the verdict is re-verified here:
+
+* **No CAISO 2020 LMP exists in the repo at all** — `data/raw/lmp-data/CAISO/` starts at
+  `CAISO_{dam,rtm}_hourly_2021.csv`. A 2020 bench part cannot carry a price actual by any route,
+  so **2020 is not scorable and no lever changes that.**
+* **2021 is partial and its head is unrecoverable** — measured after caiso-274's backfill: RTM
+  **190/365 days**, DAM **250/365 days**, both beginning **2021-04-27**, and the OASIS re-fetch
+  boundary has since moved to 2021-08-12. A 2021 rung would miss the entire winter quarter.
+* **Both targets also sit behind a bench-scaffold LP** (a bench part needs a solved bundle; the
+  demand artifact reads the bench part) — the circularity caiso-262 named and broke by spending one.
+
+caiso-274 did preserve real value on the way out: it **backfilled 50 CAISO 2021 RTM trade days
+before the OASIS archive aged them out**. That data would otherwise be gone.
+
+**Consequence, stated plainly: CAISO's scorable range is 2022-2025 and will not deepen.** There is
+no further CAISO ladder work, and (per caiso-270/271/272) no further CAISO tuning work.
+
+### §10.2 — The 2022 failure is not CAISO's. It is four ISOs at once.
+
+Read off the committed status shards at HEAD:
+
+| ISO | 2022 C3a | 2022 C3b | direction |
+|---|--:|--:|---|
+| **CAISO** | **+13.0 %** | 0.240 | model **over** |
+| MISO | **−13.8 %** | 0.209 | model **under** |
+| NYISO | **−13.8 %** | 0.242 | model **under** |
+| PJM | **−11.9 %** | 0.262 | model **under** |
+| ERCOT · NEISO · SPP | — | — | 2022 passes |
+
+PJM additionally fails **2020 at +21.4 %** (C3b 0.234), the opposite sign to its own 2022.
+
+**Three ISOs under by nearly the same magnitude and one over by nearly the same magnitude, in one
+year, with C3b clustered just above the 0.20 gate, is a shared-cause signature — not four
+independent per-ISO residuals.** It is also why per-ISO lever hunts keep terminating: a shared
+cause is invisible to, and unreachable by, any single ISO's registered mechanism. CAISO's own
+adjudication is consistent with this — caiso-272 attributed 70.2 % of the 2022 dollar miss to the
+DA-RT premium the rubric calls out-of-representation, which is a benchmark-side property, not a
+CAISO mechanism.
+
+**This is an observation, not a diagnosis.** No cause is asserted here, no mechanism is proposed,
+and nothing is armed. Naming a candidate cause now would bias the phase 0 that should find it.
+What is established is only that the object is cross-ISO and that CAISO cannot be the lane that
+resolves it (rule 25 `[R-ISO-SCOPE]`).

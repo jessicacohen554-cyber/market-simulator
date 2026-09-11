@@ -13,7 +13,9 @@
  "calibration_flags": {
   "iso": "CAISO",
   "years": [
-   2023
+   2023,
+   2024,
+   2025
   ],
   "hours": 8760,
   "passes": [
