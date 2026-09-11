@@ -14,8 +14,26 @@ training-span gate regresses out of band, and the determination is unchanged.**
 | **TRAINING 2023-2025** | **CALIBRATED**, 0 caveats | **CALIBRATED**, 0 caveats | **0** |
 | **HOLDOUT 2020-2021** | NOT-YET | NOT-YET | **1, and it is FAVOURABLE** (2020 C1 CC_REGULAR FAIL → PASS) |
 
-*(2022 was still solving when this was written; its shard stalled in setup and was resumed. The
-span verdict above is on the five years in hand.)*
+**2022 has since landed and is included.** The holdout span is now the full 2020-2022 and still
+reads NOT-YET on both sides with the single favourable flip in 2020.
+
+**2022 is also an unplanned CROSS-VALIDATION, and it is exact.** The stage-2 screen solved 2022
+through `replay_keeper.py --set`; this span solved it through the PRODUCTION
+`run_calibration_full.py --replay-bundle --unit-outage-short-windows-gas` path. The two agree to
+the reported precision on every cell: CC_REGULAR **+22.56 TWh**, COAL_BIT **+7.52**, CT_PEAKER
+**-1.45**, ST_GAS **+2.89**, C3a **-10.7 %**, C3b **0.246**. The probe path and the production
+path are measuring the same thing.
+
+| criterion | 2022 control | 2022 ARM | |
+|---|---|---|---|
+| **C1** CC_REGULAR | FAIL +26.82 TWh | FAIL **+22.56 TWh** | better, still FAIL |
+| **C1** CT_PEAKER | PASS -3.13 TWh | **PASS -1.45 TWh** | better |
+| **C1** COAL_BIT | PASS +6.60 TWh | PASS **+7.52 TWh** | *worse* |
+| **C1** ST_GAS | PASS +2.46 TWh | PASS **+2.89 TWh** | *worse* |
+| **C3a** | FAIL -11.9 % | FAIL **-10.7 %** | better, still FAIL |
+| **C3b** | FAIL 0.262 | FAIL **0.246** | better, still FAIL |
+
+Zero status flips in 2022.
 
 ## §2 — HOW IT WAS SCORED, AND WHY THAT METHOD IS ADMISSIBLE
 
@@ -106,4 +124,13 @@ holds CALIBRATED with zero caveats, and flips a holdout FAIL to PASS.
 
 **On the evidence in hand this IS a keeper candidate and I recommend promotion** — subject to the
 two conditions §2 names honestly: C4/C6/C8 are unverified on the arm and must be re-scored from a
-registered bundle, and 2022 must land so the span is complete under rule 16 `[R-ALLYEARS]`.
+registered bundle, and 2022 has now landed, so the span is complete under rule 16 `[R-ALLYEARS]`.
+
+## §6 — A PROCESS FAILURE OF MINE, RECORDED BECAUSE IT COST AN HOUR
+
+The first composer launch died on `ref_not_found`: it was pinned to a SHA that **was never on the
+remote**. I had run `git push -q ... 2>&1 | tail -1`, which swallowed the failure, and then printed
+`git rev-parse HEAD` — a LOCAL sha — and read that as confirmation. The designated branch was still
+at the previous commit the whole time. **A push is not confirmed by the local sha; it is confirmed
+by `git ls-remote`.** The relaunch pins a SHA verified against `ls-remote` before the shard is
+created. Cost: ~55 minutes of wall clock, no LP.
