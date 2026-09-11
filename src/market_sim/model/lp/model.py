@@ -1084,6 +1084,37 @@ class DispatchModel:
         h = self._h
         h.changeColsCost(layout.total_columns, self._all_cols, cost)
 
+        # Drop the two largest Python-side transients before the solve. HiGHS
+        # has already COPIED the cost vector into its own colCost_ by the time
+        # changeColsCost returns, and neither name is read again anywhere after
+        # h.run() (the objective is rebuilt from scratch on the next pass), so
+        # this is a pure lifetime fix: the LP, its optimum and every extracted
+        # dual are bit-identical.
+        #
+        # WHY IT MATTERS, measured (miso-253): the solve+extraction phase is the
+        # owner of the year-solve peak, and on the plant-level MISO LP that peak
+        # is 13.30 GiB against a 13.344 GiB container ceiling -- a 0.4 % margin
+        # that OOM-kills the run intermittently. ``cost`` alone is
+        # ``layout.total_columns`` float64 = 237 MB on that LP (29,643,840
+        # columns), and ``mc`` is a further (n_gen, T) block; together they are
+        # ~450 MB of the peak, roughly 8x the margin that was missing. Holding
+        # them across run() bought nothing.
+        #
+        # ``mc`` IS read once more after the solve — it populates
+        # ``DispatchResult.gen_mc`` as a float32 COPY. Making that copy here
+        # instead of after run() releases the float64 original across the peak
+        # and keeps only the half-width array the result actually stores; the
+        # value is identical either way because nothing mutates ``mc`` in
+        # between, and asarray-with-a-dtype-change still copies, so the
+        # no-aliasing guarantee the extraction comment relies on is preserved.
+        #
+        # ``mc`` may be a caller-owned array (the ``mc=`` argument); deleting the
+        # local name only drops THIS reference and never mutates it, so a caller
+        # reusing its own array across passes is unaffected.
+        gen_mc_f32 = np.asarray(mc, dtype=np.float32)
+        del cost
+        del mc
+
         solve_start = time.perf_counter()
         h.run()
         solve_time = time.perf_counter() - solve_start
@@ -1453,7 +1484,7 @@ class DispatchModel:
             # same reason as ``gen_reduced_cost``, and as a COPY rather than a
             # reference so the result can never alias (and be mutated through)
             # the caller's objective array.
-            gen_mc=np.asarray(mc, dtype=np.float32),
+            gen_mc=gen_mc_f32,
             gen_reduced_cost=gen_reduced_cost,
         )
 

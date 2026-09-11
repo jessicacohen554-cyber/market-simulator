@@ -52,6 +52,20 @@ replaced by `_vstack_csr_free` for this same OOM.
 
 ### 1b. SECOND CORRECTION — the HiGHS lever did NOT work, and the real cause is a MISREPORTED CONTAINER SIZE
 
+> **SUPERSEDED IN PART, 2026-09-11 by miso-253.** The measurements below are right; the
+> *diagnosis* in this section's title is not. The container does **not** misreport its own
+> size — `free` and `MemTotal` are truthful about the machine. **The limit that binds is on a
+> NESTED cgroup**, `/process_api/<id>/claude-code-bash`, which every probe used here looked
+> straight past: the root v1 cgroup reads unlimited, so a fallback to `MemTotal` reports
+> 15.70 GiB while the real ceiling is **13.344–13.345 GiB**. That is why this section's own
+> "Full access OOM at 15 GB" and "Default 13.344 GiB" readings never reconciled — both
+> containers were 13.3 GiB all along. Two miso-253 shards found this independently after
+> being OOM-killed at a terminal anon-RSS of 13.30 GiB. Correct probe:
+> `P=$(grep -E '^[0-9]+:memory:' /proc/self/cgroup | cut -d: -f3)` then
+> `cat /sys/fs/cgroup/memory$P/memory.limit_in_bytes` (v1) or `/sys/fs/cgroup$P/memory.max`
+> (v2). Everything else in this section stands, including the spent-lever list.
+> See `docs/RESULT-miso253-mustrun-chp-btm-2026-09-10.md` §3.1.
+
 Both claims in §1a were tested and one of them is wrong. Measured across shards R3-A and R4:
 
 | attempt | change | peak RSS | limit |
