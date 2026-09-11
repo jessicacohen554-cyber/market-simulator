@@ -76,6 +76,19 @@ What survives is the handoff's SECOND gate, which is reachable and is the mechan
 claim: the model out-generates the CAMPD meter by **+9.7 GW** in those 92 hours (+11.1 GW in
 the 26 above $500), and this arm takes 4,570 MW of gas availability out of exactly those hours.
 
+> **POST-SOLVE ANNOTATION (added after the screen returned; §3 above is left exactly as registered).
+> THE PREDICTION IN §3 IS FALSIFIED.** `pjm_primary_mad` bound in **2 of 8,760** hours of the arm, at
+> **$11.42** and **$12.26**/MW, and **both hours are inside the 92 target hours** (actual RT $369.54
+> and $410.24). The control baseline §3 rested on is CONFIRMED — 0 non-zero-dual hours in 2022 in
+> both families — so the ADDENDUM §2 reading was right; what was wrong is the *arithmetic*. It
+> compared against the requirement's MAXIMUM (4,224.5 MW), while the binding hours sit at ~2,722 MW,
+> and the family that binds is the **locational `_mad`** one, which a system-wide headroom number
+> cannot decide at all. Retiring the gate before the solve was the right procedure and the wrong
+> call. Two hours of $11-12/MW rent is still not a price tail — the arm forms **0** hours above $200
+> on every system basis and C3c is unmoved — so the retirement did not change the card's outcome,
+> which S-3 decided. Full numbers: `docs/SHARD-REPORT-pjm-d4-4-screen-2022.md` item 6;
+> reading: `docs/RESULT-pjm-d4-4-forced-outage-composition-2026-09-10.md` §5a.
+
 ## §4 — THE SCREEN GATES, registered now
 
 Screen year **2022**, by FOOTPRINT (92 tail hours against 6-59 elsewhere; 2022 also carries the
