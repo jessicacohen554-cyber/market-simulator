@@ -793,6 +793,7 @@ def run_year(
     miso_seam_export_limit: bool = False,
     miso_seam_envelope_merit_cap: bool = False,
     miso_seam_envelope_hour_ending_key: bool = False,
+    miso_import_sil_measured_envelope: bool = False,
     nyiso_seam_deliverability_envelope: bool = False,
     nyiso_seam_par_attribution: bool = False,
     miso_pjm_border_anchor: bool = False,
@@ -1912,6 +1913,8 @@ def run_year(
         config = config.with_overrides(miso_seam_envelope_merit_cap=True)
     if miso_seam_envelope_hour_ending_key:
         config = config.with_overrides(miso_seam_envelope_hour_ending_key=True)
+    if miso_import_sil_measured_envelope:
+        config = config.with_overrides(miso_import_sil_measured_envelope=True)
     if nyiso_seam_deliverability_envelope:
         config = config.with_overrides(nyiso_seam_deliverability_envelope=True)
     if nyiso_seam_par_attribution:
