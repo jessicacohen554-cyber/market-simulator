@@ -3146,6 +3146,12 @@ def run_year(
     interface_groups = build_interface_groups(
         iso_config.links, iso_config.interface_limits
     )
+    # The limit list that BUILT ``interface_groups``, kept in lockstep so a
+    # later consumer can locate a named group by index. The MISO block below
+    # rebuilds the groups from a DIFFERENT list, so this must be reassigned
+    # there too — indexing iso_config.interface_limits after that rebuild
+    # would address the wrong row.
+    effective_interface_limits = list(iso_config.interface_limits)
     # MISO per-zone seasonal CIL/CEL deliverability groups: replace the static
     # summer ``MISO_CIL_*`` fallbacks baked into _miso_config with per-season
     # hourly caps from the LOLE Study Report data (scope decision D7 — the
@@ -3170,6 +3176,10 @@ def run_year(
                 build_interface_groups(iso_config.links, static_limits)
                 + seasonal_groups
             )
+            # Groups are now static_limits-ordered; the seasonal groups carry
+            # no InterfaceLimit of their own and are appended after, so the
+            # named-group lookup below stays valid over the static prefix.
+            effective_interface_limits = list(static_limits)
             logger.info(
                 "MISO %d: seasonal CIL/CEL interface caps on %d zone group(s) "
                 "(per-season hourly vectors from the LOLE deliverability data; "
@@ -3182,6 +3192,56 @@ def run_year(
                 "MISO %d: capacity-deliverability clean partition absent — "
                 "falling back to static PY2025-26 summer CIL/CEL caps; run "
                 "scripts/data/curate_capacity_deliverability.py",
+                year,
+            )
+    # miso-255 miso_import_sil_measured_envelope (MISO-only, GATED default off):
+    # REPLACE the 8,700 MW bidirectional MISO_simultaneous_import scalar -- the
+    # published Capacity Import Limit, a PRA/LOLE accreditation construct used
+    # as the hourly energy bound in BOTH directions -- with MISO's own measured
+    # coincident boundary transfer envelope per direction. Rule 14
+    # [R-ACCURATE]; replaces, never stacks (rule 19).
+    #
+    # IT MUST LIVE HERE, NOT ONLY IN runner.py. The backcast/calibration path
+    # builds its OWN interface_groups above and never enters
+    # runner.run_scenario_iso, which is the forecast/scenario front end -- the
+    # exact trap the comment at the caiso_endogenous_wecc_node block records,
+    # and the one this mechanism fell into: a first pair of screen shards
+    # solved with the flag set and the arm silently inert (miso-255). It is
+    # keyed off ``effective_interface_limits`` because the MISO seasonal block
+    # above rebuilds the groups from ``static_limits``.
+    if iso == "MISO" and getattr(config, "miso_import_sil_measured_envelope", False):
+        from market_sim.model.transmission import apply_miso_measured_sil_envelope
+
+        interface_groups, _sil_info = apply_miso_measured_sil_envelope(
+            interface_groups,
+            effective_interface_limits,
+            year,
+            demand.shape[1],
+            percentile=getattr(config, "miso_seam_flow_percentile", None),
+            hour_ending_key=getattr(
+                config, "miso_seam_envelope_hour_ending_key", False
+            ),
+        )
+        if _sil_info is not None:
+            logger.info(
+                "MISO %d: aggregate simultaneous-transfer limit REPLACED by "
+                "the measured coincident boundary envelope -- declared scalar "
+                "%.0f MW -> import mean %.0f / max %.0f MW, export mean %.0f / "
+                "max %.0f MW; import below the scalar in %d h, export in %d h",
+                year,
+                _sil_info["declared_scalar_mw"],
+                _sil_info["import_env_mean_mw"],
+                _sil_info["import_env_max_mw"],
+                _sil_info["export_env_mean_mw"],
+                _sil_info["export_env_max_mw"],
+                _sil_info["hours_import_below_scalar"],
+                _sil_info["hours_export_below_scalar"],
+            )
+        else:
+            logger.warning(
+                "MISO %d: miso_import_sil_measured_envelope armed but NO "
+                "envelope resolved -- the aggregate limit keeps its declared "
+                "scalar and this run is NOT an armed run",
                 year,
             )
     # Measured PJM EAST interface cut (pjm_east_interface_cut, backcast

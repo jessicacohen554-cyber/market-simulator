@@ -14008,4 +14008,67 @@ Matrix duty (b): no mechanism tested, no verdict moves; evidence annotated on MI
 `docs/FINDING-miso255-cc-cf-tracks-the-object-is-the-seam-2026-09-12.md`; instruments
 `scripts/probes/_miso255_{cc_cf_tracking,c4_gas_localisation,cc_heat_rate,import_envelope}.py`.
 
+**2026-09-12, LATER — THE MEASURED-SIL ARM WAS BUILT, SHARDED FIVE WAYS AND SOLVED. IT FIRES, MOVES THE IMPORT BALANCE TOWARD THE METER IN ALL FIVE YEARS, AND FAILS ITS OWN DECISIVE GATE ON 2021.** Keeper still `2026-09-09-miso-250-ep-gas`, **CALIBRATED** — not flipped.
+
+Owner instruction after the zero-LP phase 0: *"Keep working to get to a solve and launch shards"*,
+then *"Launch them all"*. `ScenarioConfig.miso_import_sil_measured_envelope` (MISO-only, default
+off) REPLACES the 8,700 MW bidirectional `MISO_simultaneous_import` scalar — MISO's published
+**Capacity Import Limit**, a PRA/LOLE accreditation construct used as the hourly energy bound in
+both directions — with MISO's own **measured coincident boundary transfer envelope, per direction**.
+Zero free parameters (same estimator, registered percentile and hour key as the per-seam envelopes
+already armed; only the aggregation order differs). Rides the LP's existing per-hour interface-row
+path, so **no LP change**. Rule 14 `[R-ACCURATE]`, replaces and never stacks (rule 19).
+
+**RESULT.** G-1 PASSES in all five years — the arm fires. **G-4 (not-a-pin) FAILS on 2021 at
+94.75 % of hours at ≥99 % of the envelope against an 80 % line fixed before any solve**: the LP
+moves from railing the planning scalar to railing the measured envelope, i.e. it RELOCATES the rail
+rather than removing it. G-4 passes elsewhere (2.65 / 26.32 / 22.72 / 18.87 %). **Import |error|
+falls in ALL FIVE years — 40.42→13.83, 53.55→17.14, 5.28→4.03, 4.42→3.31, 1.40→0.07 TWh** — and the
+pre-registered direction check PASSES (2022 move 36.42 > 2021 26.59, as the envelope arithmetic
+predicted before either solve). The mechanism does ONE thing: the import delta is offset almost
+entirely by fossil (2021 `import −26.59` vs `CC_REGULAR +16.73 / COAL_PRB +3.62 / CC_CHP +2.07 /
+ST_GAS +1.51 / COAL_BIT +1.24`), nothing else material in any year. **COST AT FULL MAGNITUDE:** the
+2022 gas miss deepens −32.51 → −60.68 TWh, because repairing the import axis displaces fossil in a
+year the model was already 32.5 TWh short of gas — an **unmasking** of a shortfall the export rail
+concealed, not a new error, and a real cost either way.
+
+**TWO OF THE THREE 2021 FAILURES ARE THIS SESSION'S OWN SCORER DEFECTS**, not counted against the
+mechanism and not used to excuse G-4: **G-3** tests rail-hours at 8,700 MW when the 2021 envelope
+peaks at 9,064, so hours it legitimately permits read as a rail that no longer exists (8,650 h →
+198 h, a 97.7 % reduction); **G-2** flags a 1,603.8 MW export breach in 3 of 8,760 h, probably the
+scorer comparing the `import` CLASS total (which carries `miso_firm_imports` modelled as
+*generators*) against a bound governing LINK FLOWS — import matches to 0.0004 MW in all 8,760 h —
+but that is an OPEN item, not a cleared one. **G-5 is unscored in every year**: `replay_keeper`
+writes no `metrics.json`/`legitimacy_diagnostics.json` into an arm bundle, so C2/C6/C8 must be
+scored on a composed bundle before any registration.
+
+**RECOMMENDATION: land the code; do NOT claim the arm as the fix for 2021/2022; the keeper flip is
+the owner's call and was NOT taken here.** By this lane's own pre-registration a STOP fired on a
+screen year, and the PRECOMMIT says a screen "may kill an arm; it may never promote one". Against
+that, the **training span 2023-2025 passes all four scorable gates**, with import error down and the
+gas miss shrinking in all three (+0.86/+0.88/+1.02 TWh toward the meter), and rule 30(c) means the
+held-out years never downgrade MISO — so promotion on that span is available to the owner under the
+standing structural-integrity rule. A promotion needs **no new solves**: the three legs exist on one
+pin and compose. **Rule 31 `[R-RETAIN]`: the five `miso255_sil_*` bundles are gitignored on
+ephemeral shard disk and will NOT survive; the promotion question was put to the owner explicitly.**
+
+**FOUR SHARD GENERATIONS WERE SPENT GETTING TO ONE ARMED SOLVE, AND THREE OF THE FOUR FAILURES WERE
+MINE.** (A) `solve_and_persist` passed a kwarg `run_year` never accepted — the nyiso-229 class,
+reproduced independently and caught by an AST check of the pin (ADDENDUM 1). (relaunch) Both shards
+stalled BLOCKED asking whether to rebase, with no channel to answer; fixed by pre-answering every
+git question in the prompt. (B) **The consumer was wired only into `runner.run_scenario_iso`, the
+FORECAST path — the backcast builds its own `interface_groups`, so the arm was silently inert.
+Found by a shard that investigated and reported instead of patching, and independently by its
+sibling stopping at HARD STOP 4** (ADDENDUM 2). (C) All five stopped on a 20 GiB free-disk floor I
+set reactively off one ENOSPC report without doing the arithmetic; `solve_container.py` sizes its
+own swapfile as `min(deficit, free − 6)` and needs ~13 GiB, and miso-254 shard A had already solved
+on ~17 GiB free. (D) All five solved, 639-911 s, peak 16.4-18.9 GiB rss+swap. **The pre-registered
+liveness gate earned its place — no wrong number reached any artifact in any generation.**
+
+Records: `docs/RESULT-miso255-measured-sil-2026-09-12.md`,
+`docs/PRECOMMIT-miso255-measured-sil-2026-09-12.md` + `ADDENDUM-miso255-{pin-moves,wrong-path,full-span}-2026-09-12.md`,
+shard reports on `claude/miso255-sil-{2021,2022,2023,2024,2025}d`. Matrix cell
+`miso_import_sil_measured_envelope` **O → R** (rejected as a resolution of the 2021/2022 object; the
+provenance repair is not refuted).
+
 * Next number: **miso-256**.

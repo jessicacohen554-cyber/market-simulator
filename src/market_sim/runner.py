@@ -1534,7 +1534,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     if getattr(config, "miso_import_sil_measured_envelope", False):
         interface_groups, _sil_info = apply_miso_measured_sil_envelope(
             interface_groups,
-            iso_config,
+            iso_config.interface_limits,
             config.weather_year,
             base_demand.shape[1],
             percentile=getattr(config, "miso_seam_flow_percentile", None),
