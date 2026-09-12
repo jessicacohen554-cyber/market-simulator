@@ -365,11 +365,24 @@ any keeper, determination, gate or registered number.
    name the missing supply, and a session that treated it as a diagnosis would be selecting a
    mechanism on a hunch — the same warning caiso-273 §6.1 attached to its own §5.
 3. **The residual is not year-scoped and is therefore not a 2022 defect.** caiso-270 measured the
-   same bias in 40 of 48 ISO-months and caiso-273 §1 measured a near-constant +2.70 $/MWh adder
-   in 2023–2025 (CV 0.095). **2022 is the year the standing bias crosses the band because its gas
-   price is highest, nothing more.** Closing it therefore means closing a program-level object,
-   not a held-out-year object — which is exactly why no admissible year-invariant lever is
-   available for it.
+   same bias in 40 of 48 **CAISO** months and caiso-273 §1 measured a near-constant +2.70 $/MWh
+   adder in 2023–2025 (CV 0.095). **2022 is the year the standing bias crosses the band because
+   its gas price is highest, nothing more.** Closing it therefore means closing a **standing
+   CAISO** object, not a held-out-year object — which is exactly why no admissible year-invariant
+   lever is available for it.
+
+   > **CORRECTION 2026-09-12 (caiso-277), against this session.** As first written this paragraph
+   > said "40 of 48 **ISO-months**" and called the object **program-level**. **caiso-270 §4 says
+   > "all 48 months of 2022-2025" and it is CAISO ONLY** — 4 years × 12 months of one ISO. Nothing
+   > cross-ISO had ever been measured. caiso-277 measured it over all 288 ISO-months of all 24
+   > registered keeper-years in all 7 ISOs, and **the program-level reading is FALSIFIED**: pooled
+   > dHR is positive in only 59.0 % of ISO-months with a mean of **+0.037** (i.e. zero), and on
+   > the common 2023–2025 window **CAISO is the ONLY significantly positive ISO** (+0.534,
+   > t = +4.03) while **ERCOT (−0.625, t = −2.54) and PJM (−0.717, t = −2.87) are significantly
+   > NEGATIVE** and four ISOs are indistinguishable from zero. The object is **CAISO-specific**.
+   > This paragraph's "not a 2022 defect" claim SURVIVES — CAISO's positivity holds on 2023–2025
+   > without its 2022 rung — but "program-level" does not.
+   > `docs/FINDING-caiso277-the-bias-is-caiso-specific-2026-09-12.md` §0/§4.
 4. **A correction against my own earlier reading, recorded because it nearly became a false
    finding.** An intermediate measurement appeared to show pumped storage pumping 1.6 GW at
    hod 18. That was a **mislabelled print header in my own probe**, not a model defect: the
@@ -429,11 +442,22 @@ any keeper, determination, gate or registered number.
    costs the ISO nothing. The alternative — closing −1.13 $/MWh through a wrong-signed,
    provably-inert, vintage-violating or forbidden mechanism — is what rules 1/13/14 exist to
    prevent, and §0's four findings are each independently sufficient to refuse.
-2. **Re-point the object?** §3 says the residual is a **program-level, gas-proportional marginal
-   offer bias present in 40 of 48 ISO-months**, not a CAISO-2022 defect. If it is to be pursued,
-   the honest venue is a cross-ISO marginal-offer-formation charter, not a CAISO held-out-year
-   lane — and §5c hands it a starting instrument (**λ in a gap in 81–91 % of load weight**;
-   shoulder marginal HR 9.129 vs 7.9 elsewhere).
+2. **Re-point the object?** §3 says the residual is a **standing, gas-proportional marginal offer
+   bias present in 40 of 48 CAISO months**, not a CAISO-2022 defect — and §5c hands a starting
+   instrument (**λ in a gap in 81–91 % of load weight**; shoulder marginal HR 9.129 vs 7.9
+   elsewhere).
+
+   > **CORRECTION 2026-09-12 (caiso-277) — THIS RECOMMENDATION IS WITHDRAWN.** As first written it
+   > read "the honest venue is a **cross-ISO** marginal-offer-formation charter, not a CAISO
+   > held-out-year lane", on the mistaken premise corrected at §9.3. caiso-277 ran that
+   > measurement before any charter was acted on and **falsified its premise**: pooled over 288
+   > ISO-months the bias is mean **+0.037** (zero), and on the common 2023–2025 window CAISO is
+   > the **only** significantly positive ISO (t = +4.03) while ERCOT and PJM are significantly
+   > NEGATIVE. Six ISOs run the same ISO-agnostic LP and none carries this bias. **The venue is
+   > CAISO**, and the successor is a CAISO ablation census over CAISO's own armed distinctives —
+   > not a program-level charter. Everything else in this section, and the whole refusal in §0–§7,
+   > is unaffected: none of the four kills depended on the cross-ISO premise.
+   > `docs/FINDING-caiso277-the-bias-is-caiso-specific-2026-09-12.md` §4b/§4c/§6.
 3. **Two small data-intake items**, both offered and neither armed, both **wrong-signed for C3a**
    so neither can be read as a lever: a **2022 row** for the storage shape envelope (§9.5), and
    a **2022 DMM must-offer quantity** if the quantity gate is ever wanted on that year (§9.6).

@@ -743,7 +743,17 @@ window.MECH_MATRIX_SHARDS.CAISO = {
  * REPORTED AGAINST THE SESSION: C3a-2022 is NOT closed and the rung stays
  * NOT-YET (rule 30(c) — the ISO's determination is the train-tier verdict and
  * is untouched). The residual is NOT a 2022 defect: caiso-270 measured the
- * same bias in 40 of 48 ISO-months and caiso-273 §1 a near-constant +2.70
+ * same bias in 40 of 48 CAISO months (CORRECTED 2026-09-12 by caiso-277:
+ * this read "ISO-months" and called the object program-level; caiso-270 §4 is
+ * CAISO-ONLY, and caiso-277's cross-ISO measurement over all 288 ISO-months of
+ * all 24 registered keeper-years FALSIFIED that reading — pooled mean dHR
+ * +0.037, and on the common 2023-2025 window CAISO is the ONLY significantly
+ * positive ISO (+0.534, t = +4.03) while ERCOT (-2.54) and PJM (-2.87) are
+ * significantly NEGATIVE and four ISOs are indistinguishable from zero. The
+ * object is CAISO-SPECIFIC; the cross-ISO successor venue is WITHDRAWN. The
+ * caiso-276 refusal is unaffected — none of its four kills depended on the
+ * premise. FINDING-caiso277-the-bias-is-caiso-specific-2026-09-12.md) and
+ * caiso-273 §1 a near-constant +2.70
  * $/MWh adder in 2023-2025, so 2022 is simply the year the standing bias
  * crosses the band because its gas price is highest — a program-level object
  * whose honest venue is a cross-ISO marginal-offer-formation charter, not a
