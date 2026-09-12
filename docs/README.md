@@ -152,7 +152,7 @@ L3 is the bulk of `docs/` and is **not** individually indexed here. Reach it by:
 |---|---|---|
 | Handoffs, design specs, decision memos, plans | [`handoffs/`](handoffs/) (**489** top-level docs + 4 in 3 per-lane subdirectories) | [`handoffs/README.md`](handoffs/README.md) — regenerated 2026-09-05 |
 | Frozen session/investigation notes | [`sessions/`](sessions/) (+ `sessions/multi-iso/`) — **41** | [`sessions/README.md`](sessions/README.md) |
-| Hindcast run reports | [`hindcast-reports/`](hindcast-reports/) — **180** | — (filename = ISO-years-mode-date) |
+| Hindcast run reports | [`hindcast-reports/`](hindcast-reports/) — **48** | — (filename = ISO-years-mode-date) |
 | Root-level dated diagnoses | `docs/DIAGNOSIS-*.md` (**45**) | — (filename = ISO-topic-date) |
 | Root-level dated findings | `docs/FINDING-*.md` (**171**) | — (filename = ISO-topic-date) |
 | Per-ISO dated investigation notes | `docs/{ercot,caiso,pjm,miso,nyiso,neiso}-*-2026-*.md` | — |
