@@ -1984,3 +1984,12 @@ results/caiso275_shards_retained/
 #     them. Flagged by the arm-B shard, which correctly declined to add this line
 #     itself (it was permitted exactly one committed file).
 results/calibration/spp32_*/
+
+# 9d. SPP-36 per-year span shard bundles (rule 32 [R-SHARD](d) + rule 31 [R-RETAIN]).
+#     The 2023-2025 span of `unit_outage_short_windows` is solved one year per
+#     shard into results/calibration/spp36_span (each shard force-adds ONLY its own
+#     slim year files onto ITS OWN branch, never main). Rule 32(d): per-year shard
+#     dirs stay out of `main` — the COMPOSITE is what gets registered, and an
+#     unregistered per-year dir left committed is the Class-E parity RED. Discharged
+#     by .gitignore, never by `rm`.
+results/calibration/spp36_*/
