@@ -2218,3 +2218,82 @@ conditions.**
 **No `complete` or `frontier` declaration is added, requested or implied.**
 
 **Next shorthand: spp-33.**
+
+---
+
+## spp-36 — 2026-09-12
+
+**PROMOTION — `2026-09-12-spp-36-shortwindow-span` is SPP's TENTH KEEPER**, promoted **by owner
+ruling in-session**, verbatim: *"Is this a recommended keeper candidate? If so plz promote. If
+structural integrity improves but gates regress that may still be a keeper."* `keepers/SPP.json` was
+untouched until the ruling (rule 31 `[R-RETAIN]`). Records:
+`docs/RESULT-spp-36-shortwindow-span-2026-09-12.md`,
+`docs/handoffs/PRECOMMIT-spp-36-shortwindow-span-2026-09-12.md`,
+`docs/handoffs/SHARDREPORT-spp36-span.md`, `docs/handoffs/FINDING-spp-36-runyear-kwarg-2026-09-12.md`.
+
+**THE ARM.** Keeper 9's recipe plus EXACTLY ONE armed gate, `unit_outage_short_windows` — the
+< 5-day baseload-coal CAMPD overlay SPP's LP had ignored **entirely**. The extract (620 windows /
+24 plants / 39 units, 620 of 620 rows COAL) had been committed and unarmed since it was derived and
+the matrix cell was **`U`**; rule 14 `[R-ACCURATE]` is the basis, never the residual. Not re-derived
+(rule 23). Gas companion stays `False` (cell `R`, SPP-32). ONE `--years 2023 2024 2025` invocation,
+**377 s**. Control = keeper 9's committed bundle differenced, no control solve (form 4; G-DRIFT: all
+twelve changed solve-path files INERT, including SPP-30's out-of-training intake, whose 2023-2025
+rows were read back from the keeper's own `basis_sha` blob and compared row-for-row as IDENTICAL).
+`offer_curve_by_group` byte-identical, SHA-256 `090abd79…62f65` in both legs.
+
+**MEASURED, span vs span.** Tranches 80 / 73 / 94. Coal 72.8124→70.7851, 67.1699→64.7963,
+87.2130→84.0355 TWh (−2.0273 / −2.3736 / −3.1775) onto gas (+2.0283 / +2.3764 / +3.1807), energy
+conserved to ≤ 0.0032 TWh. LW price 25.3716→25.7428, 25.4676→26.0214, 28.7893→29.5377.
+**SLACK AND DUMP UNCHANGED IN EVERY YEAR** — 0.0000 / 370.1017 / 0.0000 MWh in *both* legs; the arm
+adds no unserved energy and 2024's event is the keeper's own. Hours > $200 move only in 2024, 5 → 7
+against 59 actual.
+
+**THE GATES.** DETERMINATION **CALIBRATED**, grade 7 of 8, 0 FAILS, 1 ledgered C3c caveat, 0
+protective, free-class C1 16/16 · 12/12 — the same shape as keeper 9, re-verified by the parent from
+committed artifacts with no solve. C1/C2/C3a/C3b/C4/C6/C8 all PASS. **Reported as the cost:** C3a
++2.44 / +3.54 / +5.15 % (keeper 9 +0.96 / +0.07 / +0.66) and C3b 0.1760 / 0.1658 / 0.1878 (keeper 9
+0.1728 / 0.1682 / 0.1638) — both degrade on two years, 2024's C3b improves, all six in band.
+Diagnostics with ROW COUNTS checked: D-1 PASS (25) · D-2 PASS (15) · **D-4 FAIL (71 rows, 12
+failures)** · D-5 PASS (8) · D-9 PASS (5) · D-10 PASS (6).
+
+**RULE 21 `[R-DOF]` — AND A CORRECTION.** The arm adds ONE entry, `unit_outage_short_windows`,
+**measured-physical**, not residual; ledger reads **5 / 3**. The like-for-like baseline is the
+CONTROL'S OWN CONFIG REBUILT AT HEAD, which gives **4 / 3** — keeper 9's committed **3 / 2** is
+**STALE** (the HEAD builder adds `st_gas_mustrun_per_plant` and reclassifies `offer_curve_smoothing`
+as residual). **`n_residual` is unchanged by this arm.** The PRECOMMIT's "stays 3/2" was wrong about
+the baseline, not about the arm's incremental cost.
+
+**A PARENT ERROR THAT PRODUCED A FALSE FINDING, RECORDED RATHER THAN TIDIED.** The span was first
+fanned into three per-year shards. They solved correctly but their slim outputs **cannot compose
+into a registrable run** (`build_payload` needs bundle-root `system.parquet`; D-1/D-2/D-4 need
+`dispatch/*.parquet`; `--reuse-solved` gates on both — all gitignored). The composite's D-1/D-2/D-4
+returned **zero rows and passed VACUOUSLY**, with **D-4 flipping False → True** against the control's
+71 rows — caught by checking row counts, not verdicts. Worse, differencing single-year arm solves
+against a SPAN-solved control reported the arm **adding 1,295.6995 MWh (2024) and 240.5966 (2025) of
+slack**, which was relayed to the owner and is **wrong**: the span-vs-span A/B shows slack unchanged.
+Now banned — **rule 32 `[R-SHARD]` (b) amended by owner instruction the same day** (*"Ok ban slim
+shards this is dumb I should only have to wait for one solve wtf"*), `rule-history.md` §19.
+
+**OPEN AND ROUTED, NOT CLOSED.** 2023 (first year in both constructions) reproduces to 4 dp; 2024 and
+2025 do not. **Process-order sensitivity in SPP's solve is unresolved** — SPP-27 already recorded
+`reconstruct_bundle_fleet` as order-dependent across years within a process for SPP. The registered
+A/B is unaffected (both legs are 3-year invocations), but a lane should settle it.
+
+**ALSO THIS SESSION — a STOP-THE-LINE repair.** `solve_and_persist` passed
+`unit_outage_window_hour_grain` unconditionally to `run_year()`, which never accepted it, so **every
+ISO's solve path was dead** at HEAD (both runners). Found by an SPP-36 shard that stopped and
+reported rather than patching. Repaired in `scripts/run_calibration.py` (default `None`, byte-inert)
+plus a new AST guard `tests/unit/pipeline/test_run_year_kwarg_binding.py`, proven to fail on the
+unrepaired tree. `docs/handoffs/FINDING-spp-36-runyear-kwarg-2026-09-12.md`.
+
+**Rule 28(b):** `unit_outage_short_windows` **`O` → `K`** in SPP's shard, with the keeper and gates
+stamps re-cut. **Rule 15:** keeper-only retention executed, keeper 9 pruned (1 pruned, 1 kept) —
+after fixing a citation-guard trap of my own making (I had named keeper 9 by run id in the new note,
+which would have protected it from retention and later dangled; predecessors are cited by LANE).
+**R-T:** `program-status.json` gate (a) re-keyed, status `fail` → `fail` unchanged, 1-line SPP-only
+diff (the `ensure_ascii` trap avoided), `check_gate_a_provenance.py` OK, 7 rows.
+
+**SPP has NO `complete` entry and this promotion does NOT create one.** `[R-HOLDOUT]` was removed
+2026-09-09: **CALIBRATED is a rubric determination, NOT a certified out-of-sample skill claim.**
+
+**Next shorthand: spp-37.**

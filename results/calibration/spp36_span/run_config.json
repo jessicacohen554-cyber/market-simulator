@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-09-10T20:36:04",
+  "timestamp": "2026-09-12T17:45:32",
   "git": {
-    "sha": "09d9fc00",
-    "basis_sha": "09d9fc00ea6a9f39eafdf444a6ff8a64d3b515f8",
+    "sha": "706aa547",
+    "basis_sha": "706aa5475a44e2bb87326a556833f326f926160b",
     "branch": "HEAD",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "SPP-27: keeper 8's recipe plus ONE armed gate, mustrun_window_commitment_grain -- the per-plant must-run window placed at the WHOLE-OPERATING-DAY commitment grain (round(k/24) days ranked by day-mean system load) instead of individually top-ranked hours. Size (online_frac), level (committed_pct) and membership untouched. Charter docs/handoffs/PRECOMMIT-spp-27-commitment-grain-2026-09-10.md; screen docs/RESULT-spp27-screen-2023.md.",
+  "model_changes_note": "SPP-36: keeper 9's recipe plus EXACTLY ONE armed gate, unit_outage_short_windows (COAL scope; the gas companion stays False, matrix cell R for SPP). Full 2023-2025 span. Executes the owner's promotion ruling of 2026-09-12.",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "SPP",
@@ -42,7 +42,8 @@
     "coal_prb_sigmoid_overrides": {
       "eia860_vintage_tracks_solve_year": true,
       "st_gas_mustrun_per_plant": true,
-      "mustrun_window_commitment_grain": true
+      "mustrun_window_commitment_grain": true,
+      "unit_outage_short_windows": true
     },
     "coal_bit_passthrough_sigmoid": false,
     "coal_bit_sigmoid_overrides": {},
@@ -120,7 +121,7 @@
     "nyiso_dynamic_reserve_requirements": null,
     "nyiso_hydro_reserve_eligible": null,
     "nyiso_scr_edrp_reserve_eligible": null,
-    "git_sha": "09d9fc00"
+    "git_sha": "706aa547"
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -816,6 +817,7 @@
     "unit_outage_st_capacity_basis": false,
     "unit_outage_per_unit_clip": false,
     "unit_outage_extract_basis_share": false,
+    "unit_outage_window_hour_grain": false,
     "campd_per_unit_attribution": false,
     "campd_outage_merit_order_guard": false,
     "retiree_vintage_status_scope": false,
@@ -1066,7 +1068,8 @@
     "outage_source": "historic",
     "caiso_dam_outages": false,
     "miso_native_outage_source": false,
-    "unit_outage_short_windows": false,
+    "unit_outage_short_windows": true,
+    "unit_outage_short_windows_gas": false,
     "unit_partial_outage_windows": false,
     "unit_outage_maxgen_events": false,
     "maxgen_emergency_tier_pricing": false,
@@ -1100,7 +1103,8 @@
     "capacity_no_default_cap_convention_by_iso": null,
     "capacity_screen_peak_measured_hindcast": false,
     "pjm_vre_accreditation_vintage": false,
-    "pjm_thermal_accreditation_vintage": false
+    "pjm_thermal_accreditation_vintage": false,
+    "mustrun_chp_btm_holdout": false
   },
   "solve_surface": {
     "schema": 1,
@@ -1109,7 +1113,7 @@
     "rows": 182,
     "moved": {},
     "epochs": [],
-    "git_sha": "09d9fc00"
+    "git_sha": "706aa547"
   },
   "environment": {
     "python_version": "3.11.15",

@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-09-10-spp-27-commitment-grain",
+  "run_id": "2026-09-12-spp-36-shortwindow-span",
   "iso": "SPP",
-  "label": "spp 27 commitment grain",
+  "label": "spp 36 shortwindow span",
   "target_years": [
     2023,
     2024,
@@ -84,17 +84,17 @@
     "co2": {
       "label": "C5a CO2 vs eGRID (REPORTED-ONLY, v2.9 \u2014 see the CRITERIA note)",
       "years": {
-        "2023": "-1.9%",
-        "2024": "-1.4%",
-        "2025": "+2.7%"
+        "2023": "-2.7%",
+        "2024": "-2.5%",
+        "2025": "+1.4%"
       }
     },
     "diurnal_amplitude": {
       "label": "D-A diurnal price amplitude, hour-of-day (REPORTED-ONLY, BAND-FREE, v3.5 \u2014 no external comparable exists to band it; see the note)",
       "years": {
-        "2023": "amplitude 38.8% of measured (hod range $11.45 vs $29.48); peak h17 vs h17, trough h02 vs h01 \u2014 phase OK; hod r +0.946; 364 complete days",
-        "2024": "amplitude 38.6% of measured (hod range $14.39 vs $37.29); peak h15 vs h16, trough h02 vs h01 \u2014 phase OK; hod r +0.968; 364 complete days",
-        "2025": "amplitude 24.6% of measured (hod range $11.64 vs $47.28); peak h17 vs h17, trough h01 vs h01 \u2014 phase OK; hod r +0.892; 364 complete days"
+        "2023": "amplitude 39.7% of measured (hod range $11.69 vs $29.48); peak h17 vs h17, trough h02 vs h01 \u2014 phase OK; hod r +0.947; 364 complete days",
+        "2024": "amplitude 40.0% of measured (hod range $14.92 vs $37.29); peak h16 vs h16, trough h01 vs h01 \u2014 phase OK; hod r +0.970; 364 complete days",
+        "2025": "amplitude 25.8% of measured (hod range $12.20 vs $47.28); peak h17 vs h17, trough h01 vs h01 \u2014 phase OK; hod r +0.893; 364 complete days"
       }
     }
   },

@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-10T20:36:04",
+  "timestamp": "2026-09-12T17:45:32",
   "iso": "SPP",
   "years": [
     2023,
@@ -53,7 +53,8 @@
   "coal_prb_sigmoid_overrides": {
     "eia860_vintage_tracks_solve_year": true,
     "st_gas_mustrun_per_plant": true,
-    "mustrun_window_commitment_grain": true
+    "mustrun_window_commitment_grain": true,
+    "unit_outage_short_windows": true
   },
   "coal_bit_passthrough_sigmoid": false,
   "coal_bit_sigmoid_overrides": {},
@@ -299,6 +300,8 @@
   "unit_outage_mixed_gas_routing": null,
   "unit_outage_st_capacity_basis": null,
   "unit_outage_per_unit_clip": null,
+  "unit_outage_short_windows_gas": null,
+  "unit_outage_window_hour_grain": null,
   "campd_per_unit_attribution": null,
   "campd_outage_merit_order_guard": null,
   "netload_drag_layup_window_mask": null,
@@ -389,8 +392,8 @@
     "unit_outages_e923": "../_shared/SPP/unit_outages_e923-7c8d728413db.parquet",
     "unit_outages_layup": "../_shared/SPP/unit_outages_layup-7de9ff1be257.parquet"
   },
-  "git_sha": "09d9fc00",
-  "basis_sha": "09d9fc00ea6a9f39eafdf444a6ff8a64d3b515f8",
+  "git_sha": "706aa547",
+  "basis_sha": "706aa5475a44e2bb87326a556833f326f926160b",
   "highspy_version": "1.14.0",
   "environment": {
     "python_version": "3.11.15",
