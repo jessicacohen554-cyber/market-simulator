@@ -731,6 +731,7 @@ def run_year(
     unit_outage_st_capacity_basis: bool | None = None,
     unit_outage_per_unit_clip: bool | None = None,
     unit_outage_short_windows_gas: bool | None = None,
+    unit_outage_window_hour_grain: bool | None = None,
     campd_per_unit_attribution: bool | None = None,
     campd_outage_merit_order_guard: bool | None = None,
     netload_drag_layup_window_mask: bool | None = None,
@@ -1640,6 +1641,17 @@ def run_year(
         # records it), so an override missing here would solve the control twice.
         config = config.with_overrides(
             unit_outage_per_unit_clip=unit_outage_per_unit_clip
+        )
+    if unit_outage_window_hour_grain is not None:
+        # nyiso-229: the DETECTED-HOUR outage window grain. THIS is the SOLVE
+        # path for the flag (run_calibration_full's _recorded_config only
+        # records it), so an override missing here would solve the ARM as the
+        # CONTROL — and, because run_year does not take **kwargs, omitting the
+        # PARAMETER above raises TypeError before the LP is built rather than
+        # silently no-opping. The nyiso-229 screen's first two shards died on
+        # exactly that, which is the loud half of this failure mode doing its job.
+        config = config.with_overrides(
+            unit_outage_window_hour_grain=unit_outage_window_hour_grain
         )
     if unit_outage_short_windows_gas is not None:
         # pjm-d4-4: the GAS-side sub-5-day outage scope. THIS is the SOLVE path
