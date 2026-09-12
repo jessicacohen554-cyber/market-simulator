@@ -73,3 +73,52 @@ Every file lane SPP-14 landed came from `portal.spp.org/file-browser-api/downloa
 over anonymous HTTPS on 2026-09-06, written byte-for-byte unmodified. sha256 sums
 are in each destination directory's `SOURCES.md` section and in FINDING-spp-14 §7.
 No third-party copy was landed anywhere.
+
+---
+
+## Re-probe by SPP-30 (2026-09-12) — row 4 re-verified and EXTENDED BACK TO 2019
+
+Lane SPP-30 needed SPP's out-of-training price years and took **row 4** (the publisher's
+own portal) without re-running SPP-14's third-party sweep, which is a DO-NOT-REDO. Row 4's
+span claim ("2013 -> current") is **re-verified at the archive-zip level for 2019-2023**,
+still **anonymous**, still **none stated** on licence, `Range` still honoured (`206` on
+every probe). Zenodo record 17676746 was **not** touched: the publisher's own route served
+every byte, which is the rule 13 `[R-MEASURED]` preference.
+
+The committed builder `scripts/data/build_spp_lmp_reference.py` **runs unmodified** on
+these years — its own `_remote_size` / `_central_directory` / `_read_member` were driven
+against the archived `<year>/<year>.zip` and found all 12 `MONTHLY-SL` members in every
+year, for both products:
+
+| `fsName` | Year | Archive bytes | Total zip members | `MONTHLY-SL` months found |
+|---|---|---|---|---|
+| `da-lmp-by-settlement-location` | 2019 | 228,667,478 | 402 | 1-12 |
+| `da-lmp-by-settlement-location` | 2020 | 232,711,485 | 403 | 1-12 |
+| `da-lmp-by-settlement-location` | 2021 | 261,793,877 | 595 | 1-12 |
+| `da-lmp-by-settlement-location` | 2022 | 280,525,231 | 402 | 1-12 |
+| `da-lmp-by-settlement-location` | 2023 | 286,071,592 | 402 | 1-12 |
+| `rtbm-lmp-by-location` | 2019 | 4,027,796,207 | 107,066 | 1-12 |
+| `rtbm-lmp-by-location` | 2020 | 4,167,267,200 | 107,213 | 1-12 |
+| `rtbm-lmp-by-location` | 2021 | 4,616,074,817 | 107,726 | 1-12 |
+| `rtbm-lmp-by-location` | 2022 | 5,024,338,629 | 108,334 | 1-12 |
+| `rtbm-lmp-by-location` | 2023 | 4,986,546,038 | 104,748 | 1-12 |
+
+**The range-read design is what makes this affordable.** The RTBM archives are 4-5 GB
+each; only the 12 monthly members are pulled out of them, which for 2019-2022 is
+**578.1 MB compressed in total** (DA 64.6 / 65.5 / 74.3 / 82.5 MB; RTBM 65.1 / 66.2 /
+75.8 / 84.1 MB) instead of ~18 GB of whole zips. Measured from the central directories
+before any payload was fetched, so the cost was known before it was spent.
+
+Also re-probed on the same route and landed for 2019-2022 (see each directory's own
+`SOURCES.md` for byte counts and sha256): `fsName=hourly-load`
+(`/<year>/<year>.zip`) and `fsName=generation-mix-historical` (`/GenMix_<year>.csv`).
+The **listing** endpoint is `file-browser-api/?fsName=<fs>&path=<p>&type=folder` — NOT
+the `download/` path — and `hourly-load` lists years from **2011**, confirming row 4's
+span claim independently of the LMP products.
+
+**One charter item was declined on evidence, not fetched:** `lmp-data/DAMLZHBSPP_<year>.zip`
+is **ERCOT** data, not SPP — `DAMLZHBSPP` is *DAM Load Zone and Hub Settlement Point
+Prices*, where the trailing "SPP" means *Settlement Point Prices*. The zip member is
+`rpt.00013060.0000000000000000.DAMLZHBSPP_2023.xlsx`, an ERCOT MIS report id, and
+`scripts/hydrate_data.py:186-191` warns that a bare `spp` token "would also claim ERCOT's
+settlement-point zips". It is not on this route and was never part of this corpus.

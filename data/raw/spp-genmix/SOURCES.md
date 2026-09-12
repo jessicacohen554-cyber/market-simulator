@@ -79,6 +79,33 @@ Access` v3.0, tracked in `data/raw/spp-planning/`). Landed byte-for-byte, unmodi
 105,120 = 365 x 288 five-minute intervals (105,408 = 366 x 288), so each year is
 **complete** — the row count is the arithmetic, not a claim.
 
+### Landed by SPP-30 (2026-09-12 — out-of-training intake 2019-2022, COMPLETE)
+
+Same host, same anonymous `file-browser-api` route, same producer
+(`scripts/data/fetch_spp_alt_portal.py --product genmix --years ...`). Probed and
+fetched 2026-09-12; `sha256` AS SERVED in `SHA256SUMS.txt`; licence **none stated**
+(SPP public data), as row 4 of `data/raw/spp-lmp-alt/SOURCES.md`.
+
+| File | Portal path (`fsName=generation-mix-historical`) | Bytes | Rows | Span (UTC) |
+|---|---|---|---|---|
+| `GenMix_2019.csv` | `/GenMix_2019.csv` | 16,336,735 | 105,120 | 2019-01-01T06:00Z -> 2020-01-01T05:55Z |
+| `GenMix_2020.csv` | `/GenMix_2020.csv` | 16,358,321 | 105,408 | 2020-01-01T06:00Z -> 2021-01-01T05:55Z (leap) |
+| `GenMix_2021.csv` | `/GenMix_2021.csv` | 12,185,190 | 105,121 | 2021-01-01T06:00Z -> 2022-01-01T06:00Z |
+| `GenMix_2022.csv` | `/GenMix_2022.csv` | 16,174,763 | 105,120 | 2022-01-01T06:05Z -> 2023-01-01T06:00Z |
+
+Every byte count equals the size the portal listing advertises for that file, so the
+transfers are complete as served. Two observations recorded rather than smoothed over:
+
+* **`GenMix_2021.csv` is 12.19 MB against ~16 MB for its neighbours, and this is NOT a
+  truncation.** It carries 105,121 rows and the same 22 columns; the portal itself serves
+  12,185,190 bytes (listing `modified 02/22/2022`). SPP's own file is narrower — shorter
+  numeric formatting, not missing data.
+* **SPP's boundary convention is not consistent across years.** 2019/2020 span
+  `06:00Z -> 05:55Z` (105,120 / 105,408 = exactly 365 / 366 x 288); 2022 spans
+  `06:05Z -> 06:00Z` (also exactly 105,120); 2021 includes **both** `06:00Z` endpoints and
+  so carries **105,121** rows — one duplicate boundary interval, not a missing or extra day.
+  Any consumer keying on a fixed 288-per-day grid should drop the trailing boundary row.
+
 **These supersede the two v35-sample files SPP-13 landed**, which are the same
 product at a different vintage but are gap-ridden and short:
 `GenMix_2024_SPP.csv` starts 2024-02-15 and is missing 14.4 % of its slots;
