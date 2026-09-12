@@ -109,9 +109,7 @@ def test_per_year_anchors_depart_materially_from_the_frozen_window_mean():
     """If the years agreed with the window mean the gate would be pointless."""
     per = _per_year_anchors("NYISO")
     registered = GAS_OFFER_MARGIN_ANCHOR_BY_ZONE["NYISO"]
-    worst = max(
-        abs(per[y][z] - registered[z]) for y in per for z in registered
-    )
+    worst = max(abs(per[y][z] - registered[z]) for y in per for z in registered)
     # NYISO's 2025 delivered gas sits ~1.66 $/MMBtu above the window mean; the
     # bar is deliberately far below that so the test states "materially
     # non-zero", not a fitted threshold.

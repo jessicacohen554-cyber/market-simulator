@@ -65,9 +65,7 @@ __all__ = ["CAPACITY_WEIGHTED_ZONAL_ISOS", "zonal_gas_anchors_for_year"]
 CAPACITY_WEIGHTED_ZONAL_ISOS: frozenset[str] = frozenset({"PJM", "ERCOT", "MISO"})
 
 
-def zonal_gas_anchors_for_year(
-    config, year: int, hours: int
-) -> dict[str, float]:
+def zonal_gas_anchors_for_year(config, year: int, hours: int) -> dict[str, float]:
     """Return ``{zone: mean delivered gas $/MMBtu}`` for one solve year.
 
     Parameters
