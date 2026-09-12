@@ -497,6 +497,24 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
          same patch); opening a PR; and deleting any result (rule 31 `[R-RETAIN]`).
       7. **"A shard that stops with a clear report is a SUCCESS; a shard that repairs
          infrastructure is a FAILURE."** Put that sentence in the prompt.
+      8. **MEMORY: the ceiling is the NESTED cgroup, never `free`, and a per-plant MISO/PJM year
+         needs SWAP.** *(2026-09-12, the miso-252/253 incident: a CCR bash cgroup is capped at
+         **13.34 GiB** on a box whose `free`/`MemTotal`/root cgroup read 15.7; a MISO year peaks
+         above that inside HiGHS `run()`, and every MISO solve that ever fit here fit because an
+         8 GiB swapfile was provisioned first — `scripts/prepare_solve_container.py`, 2026-09-09.
+         Five shards whose prompts skipped it were OOM-killed at 13.30 GiB and the OOM was
+         misdiagnosed as a model regression.)* The runners now do it themselves:
+         `run_calibration_full.solve_and_persist` (hence `replay_keeper.py`) and
+         `run_calibration.py` call `scripts/lib/solve_container.ensure_solve_container` before
+         the first loader — binding-cgroup ceiling read, swapfile up to 24 GiB, the single-thread
+         solve-profile pins — and log the cgroup's true peak (RSS and RSS+swap) at the end, so a
+         finished run finally reports what it needed. A shard prompt therefore names NO memory
+         recipe of its own beyond: run the runner unmodified, never pass
+         `--no-container-preflight`, and REPORT the `container preflight:` and `memory peak:`
+         log lines. A prompt-side probe, if one is written at all, reads
+         `P=$(grep -E '^[0-9]+:memory:' /proc/self/cgroup | cut -d: -f3);
+         cat /sys/fs/cgroup/memory$P/memory.limit_in_bytes` (v1) or `/sys/fs/cgroup$P/memory.max`
+         (v2) — never `free`, never MemTotal, never the root cgroup.
     - **(d) THE PARENT OWNS THE SEAM.** Composition, `stamp_config_partition.py --check`, scoring,
       the dashboard registration (rule 15) and the promotion question (rule 31) happen ONCE, in the
       parent, after the shards land. Per-year shard bundle dirs are **kept out of `main`** — the

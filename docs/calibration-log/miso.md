@@ -13846,3 +13846,40 @@ shard from an answer**. Evidence:
 any solve was attempted).
 
 * Next number: **miso-254**.
+
+## miso-254 — 2026-09-12 — **THE MISO OOM IS THE MISSING SWAP STEP, NOT A MODEL CHANGE — the runners now provision the container themselves.** Keeper unchanged, `2026-09-09-miso-250-ep-gas`, **CALIBRATED**
+
+**Owner ask:** diagnose and fix the MISO OOM ("a change in the last 48 h made it OOM after
+200+ successful runs") and launch a one-year shard to confirm. **No LP in the parent
+(rule 32(a)).**
+
+**DIAGNOSIS.** No MISO config change did this. The last MISO solves that fit (miso-251,
+2026-09-10 03:xx, 2020/2021/2022 rungs) ran on a container with an **8 GiB swapfile**
+(RESULT-miso251-rung2021 §5: "15.7 GiB + 8.0 GiB-swap"); the keeper's own 2026-09-09 solve
+ran `scripts/prepare_solve_container.py` (the fuelvintage prompt pack). The miso-252/253
+shard prompts written the same day **dropped that step**, and all five shards were OOM-killed
+inside HiGHS `run()` at a terminal RSS of 13.30 GiB — the **nested bash cgroup's 13.34 GiB
+limit**, which `free`/`MemTotal`/the root cgroup overstate as 15.7. The cgroup has **no swap
+limit**, so with a swapfile the kernel pages the cold simplex workspace out at the ceiling;
+without one it kills. "Peak RSS 13.30" on the swapped runs and "13.30" on the killed runs are
+both the ceiling, never the demand. The LP HAS grown since August (492,516 → 1,026,876 rows,
+25.4 M → 29.6 M cols, 50 → 86 M nnz — the keeper's own reserve-member growth, 2,547 → ~3,025),
+but miso-169 already measured 13.9–14.4 GB peaks on 2026-08-19 and made the box fit with
+exactly this swapfile: the growth widened a gap that was already open; it did not open it.
+`FINDING-miso252` §1 ("no MISO LP can run in this infrastructure") is superseded.
+
+**FIX (code, on the solve path, no LP change).** New `scripts/lib/solve_container.py` —
+binding-cgroup ceiling reader (v1 + v2, walked to the root, min with MemTotal), idempotent
+swapfile provisioning to 24 GiB bounded by free disk, the single-thread solve-profile pins as
+defaults, and a `memory peak:` log (cgroup RSS and RSS+swap high-water marks) at the end of
+every invocation. Called automatically at the top of `run_calibration_full.solve_and_persist`
+(hence `replay_keeper.py`) and `run_calibration.main`; opt-out `--no-container-preflight`.
+`prepare_solve_container.py` is now a thin CLI over it. 11 unit tests. CLAUDE.md rule 32(c)
+item 8 records the probe and forbids `free`. Evidence:
+`docs/FINDING-miso254-oom-is-the-missing-swap-not-the-model-2026-09-12.md`.
+
+**SHARD TEST (pre-registered in the FINDING §5 before launch):** shard A = keeper replayed on
+2023 with the runner as shipped; shard B = same SHA, `--no-container-preflight`, the negative
+control. Results are appended below by the parent when the shards report.
+
+* Next number: **miso-255**.

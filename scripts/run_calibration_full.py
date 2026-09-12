@@ -125,6 +125,10 @@ from scripts.lib.bundle_io import (  # noqa: E402
     write_derived_solve_inputs,
     write_shared_input,
 )
+from scripts.lib.solve_container import (  # noqa: E402
+    ensure_solve_container,
+    log_peak_memory,
+)
 from scripts.run_calibration import (  # noqa: E402
     _commitment_pass,
     _henry_hub_actual,
@@ -136,6 +140,17 @@ from scripts.run_calibration import (  # noqa: E402
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger("calibration_full")
+
+#: Container preflight (scripts/lib/solve_container.py): read the BINDING
+#: memory ceiling (the nested bash cgroup, 13.34 GiB on a CCR box that
+#: advertises 15.7), provision swap up to the 24 GiB target, pin the
+#: single-thread solve profile. Runs at the top of solve_and_persist — the
+#: one entry both this CLI and replay_keeper reach — so a MISO/PJM shard no
+#: longer depends on its prompt remembering prepare_solve_container.py
+#: (miso-252/253: five shards OOM-killed at 13.30 GiB for exactly that).
+#: Cleared by --no-container-preflight. Not a solve tunable (rule 24): swap
+#: and thread count are workspace choices, the LP optimum is identical.
+CONTAINER_PREFLIGHT_ENABLED = True
 
 _MWH_PER_TWH: float = 1.0e6
 _HOURS_PER_YEAR: int = 8760
@@ -3930,6 +3945,11 @@ def solve_and_persist(
     _solve_kwargs_snapshot = {
         k: v for k, v in locals().items() if k not in _REUSE_KWARG_EXEMPT
     }
+    # Container preflight BEFORE the first loader allocates anything: binding
+    # cgroup ceiling, swap provisioning, solve-profile pins. Once per process;
+    # never raises; see CONTAINER_PREFLIGHT_ENABLED.
+    if CONTAINER_PREFLIGHT_ENABLED:
+        ensure_solve_container(log=logger)
     # caiso-224: arm/disarm the FSNO sub-zonal partition BEFORE this
     # orchestrator's own get_iso_config / load_demand pre-loads. run_year sets
     # the same context from its resolved config, but the demand threaded into
@@ -6779,6 +6799,10 @@ def solve_and_persist(
     recorded_cfg = _recorded_config(years[0])
     write_run_config(run_dir, recorded_cfg, meta, note, ablation_of=ablation_of)
     logger.info("wrote calibration bundle to %s", run_dir)
+    # The honest peak: a run that FINISHED reports how much it really needed
+    # (cgroup RSS, and RSS+swap where the kernel exposes it). An OOM-killed run
+    # can only ever report the ceiling.
+    log_peak_memory(log=logger)
     return run_dir
 
 
@@ -13258,9 +13282,21 @@ def main() -> None:
         # '{"ST_GAS":{"min_run_hours":48,"min_down_hours":12}}').
         help=argparse.SUPPRESS,
     )
+    parser.add_argument(
+        "--no-container-preflight",
+        action="store_true",
+        help="Skip the container preflight (scripts/lib/solve_container.py): "
+        "the binding-cgroup memory ceiling read, the swapfile provisioning up "
+        "to 24 GiB, and the single-thread solve-profile pins. On by default "
+        "because a per-plant MISO/PJM year exceeds the 13.34 GiB CCR bash "
+        "cgroup and is OOM-killed without swap. Does not change the LP.",
+    )
     args = parser.parse_args()
     apply_statistical_mode(args)
     _enforce_legacy_p2_gate(parser, args)
+    if args.no_container_preflight:
+        global CONTAINER_PREFLIGHT_ENABLED
+        CONTAINER_PREFLIGHT_ENABLED = False
 
     offer_curve_overrides = _parse_offer_curve_json(args.offer_curve_json)
     offer_curve_deltas = _parse_offer_curve_json(
