@@ -1,6 +1,6 @@
 # spp-wind-shape — raw
 
-`spp_<year>_wind_zone_shape.parquet` (2023–2025) — per-zone hourly wind SHAPE
+`spp_<year>_wind_zone_shape.parquet` (**2019–2025**) — per-zone hourly wind SHAPE
 for SPP's two model zones, built from reanalysis wind speed + fleet siting.
 
 Opened **2026-09-07** by lane **SPP-32**
@@ -15,9 +15,15 @@ NASA POWER data is public domain (NASA open-data policy).
 
 **Regeneration:**
 `python scripts/data/build_spp_wind_shape.py --years 2023 2024 2025 --reconcile`.
-2019–2022 are buildable by the same command and were **not** built here: nothing
-in rule 22 `[R-HOLDOUT]` restricts the *data*, but this lane had no need for
-them and an unbuilt year is a smaller claim than an unused one. **2026 is not
+
+**2019–2022 LANDED 2026-09-12 by lane SPP-30**, by exactly that command
+(`--years 2019 2020 2021 2022`), to accompany the SPP out-of-training price-actual
+intake — the years need a wind shape to be dispatchable at all. SPP-32's note that
+they were "not built here … an unbuilt year is a smaller claim than an unused one"
+is retained as its own reasoning; the need has now arisen. (Its parenthetical that
+"nothing in rule 22 `[R-HOLDOUT]` restricts the *data*" is doubly true now: rule
+22's `[R-HOLDOUT]` regime and every gate enforcing it were removed 2026-09-09 by
+owner instruction, commit `b0a807a8`.) **2026 is not
 buildable**: the shape is placed on the model's full-8760 UTC clock via
 `eia_loader._eia_hourly_frame_filled`, which returns `None` for a half year
 (H1-2026 is 4,344 h) — rebuild once the 2026 EIA-930 extract completes. This is
@@ -35,10 +41,29 @@ both averages them together.
 **The measured contrast — and it runs OPPOSITE to the MISO intuition.** The
 builder's own night(00-06)/afternoon(12-18) ratios:
 
-| Zone | 2023 | 2024 | 2025 | Reads as |
-|---|---|---|---|---|
-| SPP-South | 1.04 | 1.06 | 1.03 | overnight-weighted |
-| SPP-North | 0.97 | 0.96 | 0.91 | afternoon-weighted |
+| Zone | 2019 | 2020 | 2021 | 2022 | 2023 | 2024 | 2025 | Reads as |
+|---|---|---|---|---|---|---|---|---|
+| SPP-South | 0.99 | 1.05 | 0.98 | 1.03 | 1.04 | 1.02 | 1.00 | overnight-weighted |
+| SPP-North | 0.99 | 0.99 | 0.98 | 0.98 | 0.99 | 0.96 | 0.94 | afternoon-weighted |
+
+(All seven columns re-measured by SPP-30 from the committed parquets on one
+definition — `mean(hours 0–5) / mean(hours 12–17)` over the full 365×24 reshape.
+The 2023–2025 cells therefore move against SPP-32's originally-published
+1.04/1.06/1.03 and 0.97/0.96/0.91: **largest deviation 0.045** at SPP-South 2024
+(1.06 → 1.015), then 0.033 at South 2025 and 0.031 at North 2025, with the other
+three inside 0.02. The **qualitative reading is unchanged** — South overnight-weighted,
+North afternoon-weighted, in every year — and the cause is the statistic, not the
+data: these are recomputed over the reshape rather than read off the builder's
+per-run log line. Flagged rather than reconciled, because nothing downstream reads
+this ratio; it is a README diagnostic.)
+
+Annual-mean CF, all seven years, as a cross-year coherence check — the new years sit
+inside the committed years' band rather than beside it:
+
+| Zone | 2019 | 2020 | 2021 | 2022 | 2023 | 2024 | 2025 |
+|---|---|---|---|---|---|---|---|
+| SPP-North | 0.3395 | 0.3569 | 0.3435 | 0.3812 | 0.3102 | 0.3389 | 0.3307 |
+| SPP-South | 0.3354 | 0.3384 | 0.3357 | 0.3505 | 0.3062 | 0.3307 | 0.3082 |
 
 The **South** is the nocturnal zone. That is what the meteorology says once you
 look instead of assuming: the Great-Plains nocturnal low-level jet's
