@@ -5581,3 +5581,64 @@ integrity OK; `check_cache_key_registration` OK (no new fields); `check_gate_a_p
 on **CAISO's** row only (pre-existing, another lane's); `pytest tests/scoring` **16 failed** —
 all 16 reproduce on an unmodified `origin/main` tree, **none new** (the handoff's baseline of 15
 is stale by one).
+
+## 2026-09-12 — pjm-h2: phase 0 kills the holdout arm; the real basis defect has not landed yet
+
+**ZERO LP.** Parent never solved, no shard launched (rule 32 `[R-SHARD]` (a)). Nothing armed,
+nothing registered, no shared code changed, no `ScenarioConfig` field added, **no matrix cell
+verdict moved** (no mechanism tested). **Keeper `2026-09-11-pjm-d4-4-gasoutage` UNCHANGED and
+re-scored before AND after: CALIBRATED, 8/8, zero caveats, zero fails.** Touchpoint
+`2026-09-11-pjm-holdout-gasoutage-touchpoint` NOT-YET, 4/8, before and after.
+Record: `docs/FINDING-pjm-h2-holdout-basis-2026-09-12.md`.
+
+**Step 1 — the basis split, quantified.** `FINDING-pjm-holdout-phase0` §4's "live lead" is
+**REFUTED on arithmetic**: `reconcile_vintage_classes` fires in **no** PJM year 2020-2025. §4
+tested against the **undeflated** EIA-930 gas+coal cell; the code deflates it by
+`gas_foldin_deflation` first, and with the deflation the ratios read **0.9713 / 0.9721** — inside
+the 0.97 deadband. All six committed years are on ONE construction. Basis share of the all-fossil
+C1 residual: **2020 4 %, 2021 55 %, 2022 43 %**; per class **COAL_BIT 2020 1.6 %**, **CC_REGULAR
+2021 31 % / 2022 38 %**. **No C1 cell flips** on the correction (+22.47 / +18.06 / +14.04 TWh
+against an 8 TWh band), so what survives is real model error.
+
+**The defect that has not landed.** `gov-hydro-seam-1`'s PS→`OTHER` half (`26f8508b`, merged)
+drops PJM's `OTHER` by 1.78-2.67 TWh/yr → shrinks the fold-in → raises the reconcile target →
+pushes **PJM 2021 and 2022 out of the deadband** (margins were 0.64 / 1.06 TWh). At the next
+registration the reconcile **fires** (×1.03343 / ×1.03281): C1 CC_REGULAR **+26.31 → +16.98** and
+**+22.56 → +12.81 TWh**, COAL_BIT 2021 **+1.33 → −3.71** (sign flip), 2022 +7.52 → +3.05; **2020
+unmoved at +22.83 FAIL**. Swept over all 42 committed parts in all seven ISOs: **exactly two
+ISO-years, both PJM**. All 8 registered PJM runs re-scored on HEAD-basis parts: **zero
+determination flips, zero status flips**. So `gov-hydro-seam-1`'s gate-neutrality headline
+survives, but its magnitudes claim does not — it substituted only the repaired `hydro`, and the
+reconcile's *trigger* reads `OTHER`. **ESCALATED, not executed** (rule 25 `[R-ISO-SCOPE]`, pjm-h1
+precedent): whether PS-net-inclusive `OTHER` is the right operand for `gas_foldin_deflation` is a
+shared ISO-agnostic construction question — EIA-930's "Other Fuel Sources" carries no pumped
+storage. Owner's call; worth 9.3-9.8 TWh of held-out C1 and **zero determinations**.
+
+**Step 2 — no admissible arm.** (a) The merit-split cell is `R` (pjm-166) on a statistic — coal
+share of coal+CC — that is **exactly scale-invariant** under a uniform reconcile, so the basis
+finding is provably **no** evidence about the split; rule 28(a) holds. (b) Restoring **2020**, the
+year pjm-166 omitted, gives a **non-monotone** coal-share error in the gas level (+2.88 / −0.39 /
++0.00 / −2.14 / +1.18 / −0.49 pp at $1.94 → $6.47) — not a merit-position signature, and picking
+2020 because its Δ is largest would be picking on the residual. (c) On the EIA-930 basis only
+**2020** is anomalous: held-out fossil surplus **+29.6 / +8.6 / +16.3** TWh against an in-sample
+**+3.6 / +7.6 / +21.1** — 2021 and 2022 sit *inside* the in-sample range. **Successor unchanged
+and not this lane's to open:** the DA-virtual net cleared position (cell `K`, owner-escalated
+inside the closed price-formation frontier), which swings ~12-14 TWh across the tier boundary;
+plus, 2020 only, a **+8.44 TWh (+1.11 %)** demand over-statement and a −2.85 TWh export shortfall,
+which together close 2020's +10.84 TWh generation excess.
+
+**Corrupt EIA-930 PJM 2021 `net_gen` — verified, not assumed.** The scorer **never reads it**
+(`net_gen` appears zero times in `calibration_verdict.py`; `_gen_totals` sums `classFull`/`gmModel`)
+— **C2 is cleared**. The benchmark builder **does**: `_vintage_completeness(2021, PJM)` reads
+**0.1654** against a true ~0.98, so both consumers enter their `<0.90` branch — and both are
+blocked by the `est > annual` guard (`est` 0.977 / 1.257 TWh vs `annual` 5.957 / 7.543).
+**Inert in effect, latent trap in kind**: the guard holds only because the corruption is ~6×.
+Escalated for repair of the committed extract.
+
+**Gates:** `check_mechanism_matrix --base origin/main` exit 0 · `audit_keepers --iso PJM` PASS 0/1
+· `build_status --iso PJM --check` in sync · `check_gate_a_provenance` OK · `check_cache_key_
+registration` ok · `pytest tests/scoring` **15 failed / 1474 passed — exactly the stated baseline,
+zero new** · `check_registry_payload_parity` **5 pre-existing REDs, all committed on `origin/main`,
+none this lane's**: `nyiso227_rebasis_span`, `caiso275_B_gascoupling_{2023,2024,2025}` and a NEW
+one since this card was written, **`spp36_2025`** (SPP's lane). Not touched — rule 31 `[R-RETAIN]`
+forbids reaching for `rm` on another lane's solved bundles.
