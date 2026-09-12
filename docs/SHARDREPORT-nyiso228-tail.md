@@ -17,13 +17,36 @@ tried. The remaining three years were not spent. This is the session's result.
 **The mechanism's own footprint is the finding, and it is one-line falsifiable:**
 
 > Making the peak band **1.5× more expensive** did not build a price tail — **it made the peak band
-> withdraw.** Peak-band energy across the ten moved classes fell **3.06087 → 1.46652 TWh (−52.1 %)**,
-> and model p99 rose only **+$3.38** against a pre-registered floor of **+$5**.
+> withdraw.** Peak-band energy across the ten moved classes fell **3.05428 → 1.46652 TWh (−52.0 %)**,
+> and model p99 rose only **+$3.058** against a pre-registered floor of **+$5**.
 
 The top tranche does not set a higher clearing price when it is repriced; it **prices itself out of
 the merit order** and is displaced by other classes' cheaper tranches. The band cannot form the
 absent upper tail the PRECOMMIT §1.2 diagnosis is chasing, because raising its offer is
 self-extinguishing. That is a structural property of the channel, measured, not a tuning outcome.
+
+### The control used here is the **arm-C control span**, not the keeper
+
+PRECOMMIT §2 established by G-DRIFT that a **LIVE** hunk exists on the NYISO backcast path — the
+nyiso-226/227 NYC `ST_GAS` persistent-base re-basing in
+`data/raw/reference/reliability_floor_coeffs_NYISO.csv` (0.1750 → 0.1663), which landed at
+`8aa5eadc` as a flagless artifact the committed keeper predates — and that **G-CTRL form 4 is
+therefore FALSIFIED: the committed keeper is not a valid control.**
+
+This report's first revision differenced against the keeper because arm C had not yet landed. Arm C
+has since solved 2022–2025 and pushed, so **every gate below is now differenced against
+`results/calibration/nyiso228_control_span` at `origin/claude/nyiso228-control-span`**, which is the
+control the PRECOMMIT requires. I fetched that branch read-only and extracted its 2025 sidecars to
+scratch — my own branch was never rebased, pulled or merged, and no file of arm C's was modified.
+
+I re-measured the control myself rather than taking the relayed figures on trust, and my measurement
+reproduces them exactly (control 2025: mean 58.381, p95 124.776, p99 177.522, max 313.944, h150 222,
+h200 43, h300 3, ISO total 153.20695 TWh).
+
+**The control swap changes no verdict.** The same two gates trip, and **G-MAG fails by a wider
+margin** against the true control ($3.058 vs the keeper-based $3.380, against a $5 floor). The
+headline footprint number is unchanged to three decimals (−52.0 % vs −52.1 %). Both differencings
+are reported below; the arm-C one is authoritative.
 
 ---
 
@@ -53,16 +76,24 @@ self-extinguishing. That is a structural property of the channel, measured, not 
 
 ## 2. THE GATE TABLE (PRECOMMIT §4) — screen year **2025**
 
-Control throughout = the committed keeper `results/calibration/nyiso_fuelvintage_A`
-(G-CTRL form 4). All prices P1, load-weighted over the five load zones, `NYISO_external` excluded.
+**Control = `results/calibration/nyiso228_control_span` (arm C, keeper recipe at HEAD).** All prices
+P1, load-weighted over the five load zones, `NYISO_external` excluded.
 
 | gate | test | control | arm | delta | band | verdict |
 |---|---|---|---|---|---|---|
 | **G-CONF** | exactly 10 values move, all `peak`, every ratio 1.5 @10 dp, protected bands byte-identical | — | 10 moved, all `peak`, all ratios `1.5000000000`, 0 protected moved | — | exact | **PASS** |
-| **G-DIR** | model LW **p99** must rise | **177.200** | **180.580** | **+3.380** | > 0 | **PASS** |
-| **G-MAG** | that rise within **$5–$120** | — | — | **+3.380** | 5 ≤ Δ ≤ 120 | **STOP** — $1.62 below the floor |
-| **G-ENERGY** | ISO total model energy within **0.05 TWh** | **153.20633** | **153.14395** | **−0.06238** | ≤ 0.050 | **STOP** — 0.01238 TWh over |
-| **G-CLASS** | no non-moved class moves > **1.0 TWh** | — | worst `ST_CHP` | **+0.05753** | ≤ 1.0 | **PASS** |
+| **G-DIR** | model LW **p99** must rise | **177.522** | **180.580** | **+3.058** | > 0 | **PASS** |
+| **G-MAG** | that rise within **$5–$120** | — | — | **+3.058** | 5 ≤ Δ ≤ 120 | **STOP** — $1.942 below the floor |
+| **G-ENERGY** | ISO total model energy within **0.05 TWh** | **153.20695** | **153.14395** | **−0.06300** | ≤ 0.050 | **STOP** — 0.01300 TWh over |
+| **G-CLASS** | no non-moved class moves > **1.0 TWh** | — | worst `ST_CHP` | **+0.05465** | ≤ 1.0 | **PASS** |
+
+**G-CONF against arm C also confirms the control is the keeper recipe**: arm C's
+`offer_curve_by_group` is byte-identical to the keeper's, so the ×1.50 file lands on the same base
+either way.
+
+**Robustness — the same gates against the (invalid) keeper control**, for completeness: G-DIR
+177.200 → 180.580 (+3.380) PASS · G-MAG **STOP** · G-ENERGY 153.20633 → 153.14395 (−0.06238)
+**STOP** · G-CLASS `ST_CHP` +0.05753 PASS. Identical verdicts on all five.
 
 **G-MAG is the decisive kill** and it fails in the direction the PRECOMMIT itself named: *"a move
 below $5 means the band is inert."* Measured, the band is not merely inert — it is **counter-acting**
@@ -70,17 +101,15 @@ below $5 means the band is inert."* Measured, the band is not merely inert — i
 
 **G-ENERGY, stated precisely rather than waved through.** This is *not* an energy-balance violation:
 
-| component | keeper | arm | delta |
+| component | control (arm C) | arm | delta |
 |---|---|---|---|
 | load served | 151.58975 | 151.58975 | **0.00000** (byte-identical) |
 | energy slack | 0.0 | 0.0 | 0.0 |
 | dump | 0.0 | 0.0 | 0.0 |
-| storage charge | 0.98893 | 0.96147 | −0.02746 |
-| storage discharge | 0.80423 | 0.78220 | −0.02203 |
-| **generation total** | **153.20633** | **153.14395** | **−0.06238** |
+| **generation total** | **153.20695** | **153.14395** | **−0.06300** |
 
-Load, slack and dump are exactly conserved; storage net accounts for −0.0054 TWh and the residual
-~0.057 TWh is **transmission loss**, which moves because the merit-order shift changes the internal
+Load, slack and dump are exactly conserved; storage net accounts for ~−0.005 TWh and the residual
+~0.058 TWh is **transmission loss**, which moves because the merit-order shift changes the internal
 flow pattern against the `nyiso_zonal_loss_surface` one-way loss pairs. So the gate trips on a real
 physical consequence of the mechanism, not on a solver artifact. It is reported as it landed and
 **was not reinterpreted to pass** — the gate says "total ISO model energy", generation total is the
@@ -108,41 +137,41 @@ no other datatype was touched at that point, and no script was edited.
 
 **This is the most important number in this report.** P1, 2025, from `class_band_hourly_2025.parquet`.
 
-| klass | keeper peak TWh | arm peak TWh | Δ TWh | keeper share % | arm share % | Δ share pp |
+| klass | control peak TWh | arm peak TWh | Δ TWh | control share % | arm share % | Δ share pp |
 |---|---|---|---|---|---|---|
-| `CC_CHP` | 1.20403 | 0.57109 | **−0.63294** | 5.833 | 2.817 | **−3.016** |
-| `CC_REGULAR` | 1.19182 | 0.30440 | **−0.88742** | 3.310 | 0.859 | **−2.451** |
-| `CT_CHP` | 0.10856 | 0.05161 | −0.05695 | 6.309 | 2.928 | −3.381 |
+| `CC_CHP` | 1.20495 | 0.57109 | **−0.63386** | 5.835 | 2.817 | **−3.018** |
+| `CC_REGULAR` | 1.19452 | 0.30440 | **−0.89012** | 3.316 | 0.859 | **−2.457** |
+| `CT_CHP` | 0.10876 | 0.05161 | −0.05715 | 6.313 | 2.928 | −3.385 |
 | `CT_PEAKER` | 0.00100 | 0.00063 | −0.00037 | 0.068 | 0.038 | −0.030 |
-| `ST_GAS` | 0.55546 | 0.53879 | −0.01667 | 5.861 | 5.370 | −0.491 |
+| `ST_GAS` | 0.54505 | 0.53879 | −0.00626 | 5.769 | 5.370 | −0.399 |
 | `COAL_BIT`, `COAL_PRB` | 0.0 | 0.0 | 0.0 | — | — | never dispatched in NYISO |
 | `COAL`, `COAL_LIGNITE`, `COAL_WC` | — | — | — | — | — | class absent from NYISO dispatch |
-| **TOTAL** | **3.06087** | **1.46652** | **−1.59435 (−52.1 %)** | | | |
+| **TOTAL** | **3.05428** | **1.46652** | **−1.58776 (−52.0 %)** | | | |
 
 **Four of the ten moved classes carry no NYISO dispatch at all** (`COAL`, `COAL_LIGNITE`, `COAL_WC`
 absent; `COAL_BIT`/`COAL_PRB` at exactly 0.0), so the channel's real reach in this ISO is **five gas
 classes**, and 96 % of the measured footprint move is `CC_CHP` + `CC_REGULAR`.
 
 **The sign is the result.** The PRECOMMIT sized ×1.50 expecting the peak band to *price* the tail.
-Instead every moved class's peak band **shrank**, `CC_REGULAR`'s by 74 %. The band's share of its own
+Instead every moved class's peak band **shrank**, `CC_REGULAR`'s by 75 %. The band's share of its own
 class fell in all five live classes.
 
 ### 4.1 — where the displaced energy went (ITEM 6 delta, P1 2025 annual TWh)
 
-| klass | keeper | arm | Δ | |
+| klass | control | arm | Δ | |
 |---|---|---|---|---|
-| `CC_REGULAR` | 35.33547 | 34.76952 | **−0.56595** | moved |
-| `CC_CHP` | 20.39667 | 20.02655 | **−0.37012** | moved |
-| `ST_GAS` | 9.33310 | 9.88494 | **+0.55184** | moved |
-| `CT_PEAKER` | 1.31794 | 1.51281 | **+0.19487** | moved |
-| `CT_CHP` | 1.68395 | 1.72790 | +0.04395 | moved |
-| `ST_CHP` | 1.44692 | 1.50445 | +0.05753 | **not moved** (G-CLASS worst) |
-| `import` | 19.35766 | 19.37606 | +0.01840 | not moved |
-| `oil` | 1.28353 | 1.29065 | +0.00712 | not moved |
+| `CC_REGULAR` | 35.34865 | 34.76952 | **−0.57913** | moved |
+| `CC_CHP` | 20.40560 | 20.02655 | **−0.37905** | moved |
+| `ST_GAS` | 9.30415 | 9.88494 | **+0.58079** | moved |
+| `CT_PEAKER` | 1.31979 | 1.51281 | **+0.19302** | moved |
+| `CT_CHP` | 1.68587 | 1.72790 | +0.04203 | moved |
+| `ST_CHP` | 1.44980 | 1.50445 | +0.05465 | **not moved** (G-CLASS worst) |
+| `import` | 19.35800 | 19.37606 | +0.01806 | not moved |
+| `oil` | 1.28401 | 1.29065 | +0.00664 | not moved |
 | `nuclear` / `hydro` / `wind` / `solar` / `biomass` / `OTHER` | — | — | **0.00000** | not moved, exactly |
-| **ISO total** | **153.20633** | **153.14395** | **−0.06238** | |
+| **ISO total** | **153.20695** | **153.14395** | **−0.06300** | |
 
-A clean intra-fossil substitution: CC gives up 0.936 TWh, ST_GAS + CT_PEAKER take 0.747 TWh, and
+A clean intra-fossil substitution: CC gives up 0.958 TWh, ST_GAS + CT_PEAKER take 0.774 TWh, and
 every zero-marginal-cost and baseload class is untouched to five decimal places. Merit-order movement
 across classes is condition (d)'s **intended** effect — but it moved *volume between fossil classes*
 rather than *price into the tail*.
@@ -151,21 +180,23 @@ rather than *price into the tail*.
 
 ## 5. ITEM 4 — PRICE STATISTICS (P1, 2025, LW over the five load zones)
 
-| stat | keeper | arm | Δ |
-|---|---|---|---|
-| mean | 58.357 | 60.008 | +1.651 |
-| p95 | 124.736 | 126.354 | +1.618 |
-| **p99** | **177.200** | **180.580** | **+3.380** |
-| max | 313.944 | 315.746 | +1.802 |
-| hours > $150 | 220 | 233 | +13 |
-| hours > $200 | 43 | 57 | +14 |
-| **hours > $300** | **3** | **4** | **+1** |
+| stat | control (arm C) | arm | Δ | keeper, for reference |
+|---|---|---|---|---|
+| mean | 58.381 | 60.008 | +1.627 | 58.357 |
+| p95 | 124.776 | 126.354 | +1.578 | 124.736 |
+| **p99** | **177.522** | **180.580** | **+3.058** | 177.200 |
+| max | 313.944 | 315.746 | +1.802 | 313.944 |
+| hours > $150 | 222 | 233 | +11 | 220 |
+| hours > $200 | 43 | 57 | +14 | 43 |
+| **hours > $300** | **3** | **4** | **+1** | 3 |
 
 **Convention note.** `mean` is the charter's convention — the hourly load-weighted series, then a
 simple mean over the 8,760 hours; that reproduces the charter's 58.36 exactly. The
 demand-weighted-over-hours variant reads 61.598 (keeper) → 63.085 (arm). Every other statistic is
-convention-independent. **My pipeline reproduces the charter's committed keeper comparators exactly**
-(p95 125, p99 177, max 314, h150 220, h200 43, h300 3), which is what validates the differencing.
+convention-independent. My pipeline reproduces **both** baselines exactly — the charter's committed keeper comparators
+(p95 125, p99 177, max 314, h150 220, h200 43, h300 3) **and**, independently measured from arm C's
+own pushed sidecars, the control figures the parent relayed (58.381 / 124.776 / 177.522 / 313.944 /
+222 / 43 / 3 / 153.20695 TWh). That two-way reproduction is what validates the differencing.
 
 **Against PRECOMMIT §5 prediction 2** (C3c model h>$300 for 2025: **3 → 8–35**): the arm delivered
 **4**. The prediction is **falsified** — by a wide margin, in the one year chosen precisely because
@@ -206,6 +237,8 @@ that the absent tail is not an offer-curve object.
   — expected on a one-year bundle whose span gates cannot be evaluated, and reported here rather
   than suppressed. D-10 free-class rescore PASSed (2/2 NYISO wind/solar rows ride the L1
   delivered-outcome bound, advisory-only).
+* **Arm C's own `metrics.json`** is on its branch and is the parent's to score; this shard did not
+  read or alter it.
 * **G-NONTARGET (C1/C2) was not evaluated** — it needs the scorer, which is the parent's job, and
   two gates had already tripped.
 
@@ -216,7 +249,7 @@ that the absent tail is not an offer-curve object.
 The authorized `offer_curve_by_group.peak` channel at ×1.50 is, for NYISO:
 
 * **directionally correct but an order of magnitude too weak on p99** (+$3.38 against a $5 floor), and
-* **self-limiting by construction** — the repriced band loses **52 %** of its own energy, so the
+* **self-limiting by construction** — the repriced band loses **52.0 %** of its own energy, so the
   channel's price effect is throttled by its own volume response. A larger factor would shrink the
   band further, not build more tail; the response is **not** monotone in the way the sizing assumed.
 
