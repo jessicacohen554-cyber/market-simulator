@@ -553,6 +553,32 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
       (`list_sessions`, filtering on its own `parent_session_id`) as part of wrapping up, archives
       every one that is idle or complete, and **names in its final report any it deliberately left
       alive and why** — a still-solving leg is a legitimate reason, a forgotten one is not.
+    - **(f) DELETE THE SHARD BRANCH TOO — BUT ONLY ONCE THE BYTES ARE SOMEWHERE THAT IS NOT THAT
+      BRANCH, AND NEVER WHILE A PROMOTION IS UNDECIDED.** *(Owner instruction 2026-09-12: "Should
+      also delete shard branches once data is recovered".)* A finished shard branch is litter and
+      goes. But deletion here is **not** the same act as archiving: archiving releases a container
+      and destroys nothing, while **deleting a branch makes its commits unreachable and eventually
+      garbage-collected** — so a shard branch is frequently the ONLY durable copy of a bundle, the
+      parent's own checkout living on a container that is reclaimed. Deleting it while the owner has
+      not ruled on promotion is the ercot-255 incident one layer over, and rule 31 `[R-RETAIN]`
+      forbids it in exactly those words. The order is therefore fixed, and each step is a
+      precondition for the next:
+      1. **RESCUE ANY UNIQUE RECORD.** A shard's own FINDING / blocker doc exists nowhere else —
+        commit it onto the parent's branch first. (Docs the shard merely inherited from `main` need
+        no rescue; check which is which rather than assuming.)
+      2. **THEN DELETE, IF AND ONLY IF the branch carries no bundle the lane may still need.** A
+        branch holding only docs, or only a failed attempt, goes immediately. A branch holding a
+        **screen** bundle may go once the PRECOMMIT/RESULT doc carries every number the lane will
+        ever cite from it — which rule 29 `[R-SCREEN]` (c) already requires, and which is what makes
+        a screen bundle disposable where a candidate bundle is not.
+      3. **A BRANCH CARRYING A BUNDLE A PROMOTION WOULD REGISTER STAYS UNTIL THE OWNER HAS RULED.**
+        Registration needs the per-plant layer, not just the summary numbers, so deleting these is
+        deleting a result — rule 31, no exceptions, and the promotion question gets asked rather
+        than pre-empted by a cleanup. Once the owner rules, promoted or declined, the branch goes.
+      4. **RE-PIN NOTHING TO A DELETED SHA.** Clause (d)'s recovery line must name a commit that
+        still resolves; when a branch is deleted, the recovery route in the doc changes from "check
+        out this sha" to "re-solve, cost stated", and the doc is updated to say so honestly instead
+        of keeping a command that will fail.
 
 Rules 17–26 are the protective rules from `docs/model-legitimacy-audit-2026-07.md` §8, numbered
 **16–25 there** — a doc reference to "audit rule N" maps to rule N+1 here. Mapping table, per-rule
