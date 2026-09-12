@@ -1974,3 +1974,7 @@ results/calibration/*/hourly/unit_hourly_*.parquet
 # (calib_root.iterdir()), so untracking alone does not clear the gate -- see the
 # caiso-275 entry in docs/calibration-log/caiso.md.
 results/caiso275_shards_retained/
+
+# nyiso-229 CONTROL leg shard bundle (2022). Kept out of main per rule 29 [R-SCREEN](c);
+# retained on local disk per rule 31 [R-RETAIN] until the owner rules on promotion.
+results/calibration/nyiso229_ctrl_y2022/
