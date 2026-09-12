@@ -2022,3 +2022,23 @@ results/calibration/miso255_sil_*/
 results/calibration/nyiso229_arm_y2023/
 results/calibration/nyiso229_arm_y2024/
 results/calibration/nyiso229_arm_y2025/
+
+# miso-255 PROMOTE legs (2020-2025), solved 2026-09-12. Rule 32(d) keeps per-year
+# shard bundle dirs out of main; rule 31 [R-RETAIN] forbids deleting them, so they
+# stay on local disk and on their shard branches until the owner rules on promotion.
+# RECOVERY BY FULL SHA (rule 33 [R-SHARD-ARCHIVE] (d) — never a branch name):
+#   git checkout f08aecdee1d6d093047f1e4c97ad98d76d0d71e2 -- results/calibration/miso255_promote_2020
+#   git checkout 578f96617a8b6ba60f79e126d78c222e7ad52aea -- results/calibration/miso255_promote_2021
+#   git checkout 74171ce23325f3cdb97b484f43423af51bb2202d -- results/calibration/miso255_promote_2022
+#   git checkout 054d566c7080005568b7f71ba8692747b63ff43e -- results/calibration/miso255_promote_2023
+#   git checkout f5bf4c84c9cdb4268343954d97ad478759f430b9 -- results/calibration/miso255_promote_2024
+#   git checkout 034f03549f4314998988053e08b124f41155a343 -- results/calibration/miso255_promote_2025
+# 2020/2021/2024 carry the full layer; 2022/2023/2025 were pushed slim and their
+# dispatch/<y>_P1.parquet is being fetched from the shards separately. Registration
+# needs dispatch present LOCALLY for every year (render_calibration_html.build_payload
+# reads it per year) but never commits it to the composite — every registered bundle in
+# this tree has dispatch_P1_files=0. Composing shard legs into one registered keeper is
+# established practice: see results/calibration/caiso275_B_gascoupling_{2022,2023,2024,
+# 2025} (each with its own committed dispatch parquet, 47-49 MB) beside the composed
+# caiso275_B_gascoupling_span.
+results/calibration/miso255_promote_*/
