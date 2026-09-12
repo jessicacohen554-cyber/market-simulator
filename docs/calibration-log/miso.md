@@ -13918,4 +13918,94 @@ pinned to `0101b4ce`, both replaying the committed keeper on 2023.
   incident reproduced on the same SHA. `docs/SHARD-misooom-B-2023.md`.
 Neither bundle is registered or committed (rule 29 / 31; both stay on the shards' local disks).
 
-* Next number: **miso-255**.
+## miso-255 — 2026-09-12 — **NO: MISO's CC_REGULAR is NOT the defect PJM measured — its capacity factor TRACKS the meter at r = +0.817. The 2021 miss is downstream of a railed seam: the model's net interchange sits on the ±8,700 MW Capacity Import Limit in 8,650 of 8,760 hours, against 0–3 in every training year.** Keeper unchanged, `2026-09-09-miso-250-ep-gas`, **CALIBRATED**
+
+**ZERO LP, and none was earned.** The parent ran no solve (rule 32(a)); everything below reads
+committed run payloads, committed bench parts, committed `hourly/` sidecars, CAMPD unit-level,
+EIA-930 actuals and the model's own fleet loader. Nothing armed, nothing registered, no cell
+verdict moves, nothing deleted (rule 31 is not engaged — there is no bundle).
+
+**THE COMMISSIONED QUESTION IS ANSWERED NO, ON THE DISCRIMINATING MEASUREMENT.** `pjm-h1` found
+CC_REGULAR to be the ONE PJM class whose matched-fleet annual CF does not track the CAMPD meter
+across 2020–2025 (**r = −0.183**, model CF range 0.015 vs the meter's 0.058) while every other
+fossil class tracked at +0.78…+0.97. **MISO's CC_REGULAR is the mirror image**: cross-year
+**r = +0.817**, slope **+1.362**, model CF range **0.2621** — *twice* the meter's 0.1317. It is
+MISO's **third-best-tracking class of seven** (CC_CHP +0.941, COAL_PRB +0.852, CC_REGULAR +0.817,
+COAL_BIT +0.789, CT_PEAKER +0.462, COAL_LIGNITE +0.444, ST_GAS +0.202). PJM's fleet would not
+move; MISO's moves too much. **The object does not generalise**, and the handoff's second branch
+was taken.
+
+**ALL THREE OF `pjm-h1`'s FALSIFICATIONS RE-MEASURED ON MISO DATA (rule 28(d) — a PJM verdict fills
+no MISO cell), ALL THREE HOLD HERE, none assumed.** (a) **Capability** — CC_REGULAR revealed
+capability (p99.5 meter MW / nameplate, plant grain) **0.8887 / 0.8971 / 0.9253 / 0.9114 / 0.9209 /
+0.9327**; 2021 is second-lowest by 0.008 and 2020 — lower still — has zero C1 failures. No derate
+event to find. (b) **CC heat rate** — CAMPD combined-cycle operating hours, pooled 2023–2025,
+**1,776,751 rows / 434.5 TWh gross on all 40 bench plants**, gross→net at a **stated (not fitted)
+2.2 %** own-use; model from `load_fleet_from_csv("MISO")` at the keeper's own flags. Capacity-
+weighted model **7.2849** vs measured-net **7.3361** MMBtu/MWh — the model **0.70 % CHEAP**, median
+per-plant delta **+0.0336**, **26 of 40 plants DEARER**. Reported against the session's own prior;
+a `measured_cc_heat_rates` candidate must not be built on it. (c) **Concentration** — 2021 is
+**fleet-wide** (32 of 37 plants under; top-5 same-sign 44.1 % of net, against 110–177 % in the
+training years), so a membership repair has nothing to bite on.
+
+**C4 LOCALISES IN NEITHER TIME NOR LOAD — which is what redirected the session.** 2021 gas
+(r = 0.864, NRMSE = 0.392) runs **−5.7 to −10.4 GW in every load decile including the lowest**, and
+**every month's own Pearson r is 0.84–0.98**, indistinguishable from 2023–2025's 0.90–0.98. The
+whole-year r falls only because the months' *levels* are mis-ordered. A residual present in every
+hour, at every load, with the timing intact, is a **level substitution**.
+
+**THE COUNTERPARTY, AND IT IS THE SESSION'S RESULT.** Hours the model's net interchange sits on
+`EXTERNAL_SIMULTANEOUS_LIMITS["MISO"]` = **±8,700 MW**: **3,730 / 8,650 / 2,609 / 3 / 0 / 0** in
+2020…2025 (**42.6 / 98.7 / 29.8 / 0.0 / 0.0 / 0.0 %**). In 2021 the model's hourly import takes
+**110 distinct values across 8,760 hours** (2023–25: 4,210–4,822) with p5 = p50 = p95 = 8,700.0 —
+the LP is not clearing imports on merit, it is taking every MW the constraint allows, all year.
+Annual import error: **−7.68 / +40.41 / −53.55 / +5.28 / +4.43 / +1.40 TWh**. **Every C1 failure
+MISO has in any registered year is in 2021** (CC_REGULAR −32.06 TWh) **or 2022** (CC_REGULAR
+−15.74, CT_PEAKER +8.52, COAL_PRB **+37.05**, COAL_BIT **+13.48** — the export rail, coal filling
+the hole), and |import error| separates them perfectly: 1.40 / 4.43 / 5.28 / 7.68 pass, **40.41 /
+53.55** fail. Reported honestly beside it: MISO carries a **chronic −23…−40 TWh gas miss in every
+year, training years included**; 2021 adds a further ~−32 TWh *on top* of that baseline, which is
+the increment the over-import buys and the size of the C1 record the card was written on.
+
+**THE ARMED ENVELOPE IS NOT WHAT BOUNDS THIS, AND NO PRIOR SEAM VERDICT IS DISTURBED.** All four
+bundles carry the identical seam configuration (`miso_seam_flow_limit`, `miso_seam_export_limit`,
+`miso_seam_envelope_merit_cap`, `miso_seam_envelope_hour_ending_key`, `miso_seam_measured_ladder`,
+`miso_pjm_border_anchor` all `True`), so this is not a between-year configuration difference.
+Rebuilt at the keeper's own settings the 2021 p90 envelope is 64.87 TWh and the model imports
+**75.93 TWh = 117 % of it**, flat while the envelope varies. **miso-174 (R), miso-176 (G),
+miso-181 (R), miso-211 (R) and miso-241 (K) were every one measured inside 2023–2025, where this
+constraint binds in 3, 0 and 0 hours** — they were right in a regime where the rail never appears,
+and none is re-opened. The rail is a 2020–2022 object no MISO seam session has been in a position
+to see.
+
+**ESCALATED, NOT PULLED (rule 1 `[R-STRUCT]`, rule 29 clause 0 — NO ARM IS PROPOSED).** 8,700 MW is
+MISO's published **Capacity Import Limit**, a PRA/LOLE resource-adequacy construct by `spec.py`'s
+own citation, used as the **hourly** simultaneous-transfer bound — and the meter contradicts it in
+that role: metered net import **exceeds** 8,700 MW in **583 / 106 / 69 / 118 / 4 / 14** hours of
+2020–2025 (max 12,601), while metered net **export never reaches** 8,700 in any year (deepest
+−5,415 MW, 2024) where the model sits at exactly −8,700 for **2,217 hours** of 2022. That is a
+rule 14 `[R-ACCURATE]` **provenance** question owed a documents adjudication with no LP in it,
+before any screen; if the bound is then found mis-graded, the rule-29 screen year is **2021** on
+**footprint** (98.7 % rail occupancy), never on the residual. The analogous `nyiso-100` SIL defect
+is cited as the question to ask and **never** as MISO's answer (rule 28(d), rule 25
+`[R-ISO-SCOPE]`).
+
+**RECORDED SO NO SUCCESSOR SPENDS AN LP:** `measured_cc_heat_rates` at MISO (falsified at the
+fleet), a capability/derate lever at MISO CC (falsified), a membership repair of the 2021 CC
+shortfall (fleet-wide), and importing `pjm-h1`'s CC dispatch-response object into MISO (the premise
+is absent).
+
+**HOUSEKEEPING, disclosed rather than folded in.** `frontend/data/backcast/status/MISO.js` was
+**stale at `origin/main` on arrival** (`audit_keepers --iso MISO` failed S1) and was regenerated.
+The whole diff is one **REPORTED-ONLY, band-free** 2025 `diurnal_amplitude` record moving
+`SKIPPED` → `REPORTED` (amplitude 34.1 % of measured, hod_r 0.94, phase_ok). **Determination, grade
+and caveat budget are identical before and after — CALIBRATED, grade 7, ledgered `["C3c price
+tail / scarcity (RT hourly)"]`, protective `[]`** — and `audit_keepers --iso MISO` then PASSes
+0/0. MISO's own file, MISO's own lane; no other ISO's keeper, status, matrix or log touched.
+Matrix duty (b): no mechanism tested, no verdict moves; evidence annotated on MISO's shard at
+`measured_ct_heat_rates` (K), `ercot_partial_outage_shaped_derate` (·) and `seam_flow_envelopes`
+(K). Rule 30(c): the held-out years are reported and MISO's headline is untouched. Evidence:
+`docs/FINDING-miso255-cc-cf-tracks-the-object-is-the-seam-2026-09-12.md`; instruments
+`scripts/probes/_miso255_{cc_cf_tracking,c4_gas_localisation,cc_heat_rate,import_envelope}.py`.
+
+* Next number: **miso-256**.
