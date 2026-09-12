@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-09-12T02:14:55",
+  "timestamp": "2026-09-12T02:30:24",
   "git": {
-    "sha": "a40017ec",
-    "basis_sha": "a40017ec9a98f03c77c28103284f315d69eaf114",
+    "sha": "dc2d85c0",
+    "basis_sha": "dc2d85c047b04fc8ab75e034f14087812eb47c08",
     "branch": "claude/nyiso228-seamr-span",
     "dirty": false,
     "changed_files": [],
@@ -13,7 +13,10 @@
   "calibration_flags": {
     "iso": "NYISO",
     "years": [
-      2023
+      2023,
+      2022,
+      2024,
+      2025
     ],
     "hours": 8760,
     "passes": [
@@ -22,7 +25,10 @@
     "commitment": false,
     "commitment_screen_coal": true,
     "gas_prices": {
-      "2023": 2.54
+      "2023": 2.54,
+      "2022": 6.45,
+      "2024": 2.19,
+      "2025": 3.52
     },
     "outage_source": "historic",
     "coal_lignite_mustrun": null,
@@ -111,7 +117,7 @@
     "nyiso_dynamic_reserve_requirements": true,
     "nyiso_hydro_reserve_eligible": true,
     "nyiso_scr_edrp_reserve_eligible": true,
-    "git_sha": "a40017ec"
+    "git_sha": "dc2d85c0"
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -1140,7 +1146,7 @@
     "rows": 210,
     "moved": {},
     "epochs": [],
-    "git_sha": "a40017ec"
+    "git_sha": "dc2d85c0"
   },
   "environment": {
     "python_version": "3.11.15",
@@ -1167,9 +1173,29 @@
     "seam_import_cap": {
       "status": "recorded",
       "by_year": {
-        "2023": {
+        "2022": {
           "iso": "NYISO",
-          "year": 2023,
+          "year": 2022,
+          "flag_armed": false,
+          "cap_mw": null,
+          "source": "flag_off",
+          "delivery_year": null,
+          "season": null,
+          "import_zone": "NYISO_external"
+        },
+        "2024": {
+          "iso": "NYISO",
+          "year": 2024,
+          "flag_armed": false,
+          "cap_mw": null,
+          "source": "flag_off",
+          "delivery_year": null,
+          "season": null,
+          "import_zone": "NYISO_external"
+        },
+        "2025": {
+          "iso": "NYISO",
+          "year": 2025,
           "flag_armed": false,
           "cap_mw": null,
           "source": "flag_off",
@@ -1199,5 +1225,36 @@
       "sha256": "a3bbd6ef408ea8175c1fa73bb3f016bf2e4cd9e0984ceac08e6dfd93534d8376",
       "bytes": 7508
     }
+  },
+  "reuse": {
+    "source_bundle": "/tmp/claude-0/-home-user-market-simulator/fa9d5ef1-80b3-57a7-afaa-8499364de1e5/scratchpad/seamr_2023_reuse",
+    "requested_years": [
+      2023,
+      2022,
+      2024,
+      2025
+    ],
+    "reused_years": {
+      "2023": {
+        "passes": [
+          "P1"
+        ],
+        "cache_key": "4c17c9b77b73b29d",
+        "scenario_config_sha256": "ddd715908531beaa"
+      }
+    },
+    "fresh_years": [
+      2022,
+      2024,
+      2025
+    ],
+    "refusals": {
+      "2022": "year not solved in the prior bundle",
+      "2024": "year not solved in the prior bundle",
+      "2025": "year not solved in the prior bundle"
+    },
+    "warning": "Reused years are byte-copies of a prior bundle's solve, NOT fresh evidence \u2014 keeper promotion still requires a full fresh solve of every year.",
+    "source_timestamp": "2026-09-12T02:14:55",
+    "source_git_sha": "a40017ec"
   }
 }

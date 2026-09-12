@@ -1,8 +1,11 @@
 {
-  "timestamp": "2026-09-12T02:14:55",
+  "timestamp": "2026-09-12T02:30:24",
   "iso": "NYISO",
   "years": [
-    2023
+    2023,
+    2022,
+    2024,
+    2025
   ],
   "hours": 8760,
   "passes": [
@@ -11,7 +14,10 @@
   "commitment": false,
   "commitment_screen_coal": true,
   "gas_prices": {
-    "2023": 2.54
+    "2023": 2.54,
+    "2022": 6.45,
+    "2024": 2.19,
+    "2025": 3.52
   },
   "coal_lignite_mustrun": null,
   "coal_prb_mustrun": null,
@@ -372,9 +378,9 @@
   "mass_cap_program": null,
   "btm_backfill_year": null,
   "shared_inputs": {
-    "eia930": "../_shared/NYISO/eia930-4c9ff87244d8.parquet",
-    "eia923": "../_shared/NYISO/eia923-0258e9df47c2.parquet",
-    "campd": "../_shared/NYISO/campd-ba4c8af873da.parquet",
+    "eia930": "../_shared/NYISO/eia930-6ccfdbab8623.parquet",
+    "eia923": "../_shared/NYISO/eia923-ff29121fc411.parquet",
+    "campd": "../_shared/NYISO/campd-740d82351382.parquet",
     "unit_outages": "../_shared/NYISO/unit_outages-c88468b270d6.parquet",
     "unit_outages_short": "../_shared/NYISO/unit_outages_short-8822de3c9c11.parquet",
     "unit_outages_partial": "../_shared/NYISO/unit_outages_partial-b00540584f5f.parquet",
@@ -382,8 +388,8 @@
     "unit_outages_layup": "../_shared/NYISO/unit_outages_layup-4f007d991881.parquet",
     "capacity_deliverability": "../_shared/NYISO/capacity_deliverability-a315d4a5cd46.parquet"
   },
-  "git_sha": "a40017ec",
-  "basis_sha": "a40017ec9a98f03c77c28103284f315d69eaf114",
+  "git_sha": "dc2d85c0",
+  "basis_sha": "dc2d85c047b04fc8ab75e034f14087812eb47c08",
   "highspy_version": "1.14.0",
   "environment": {
     "python_version": "3.11.15",
@@ -403,5 +409,36 @@
       ]
     ],
     "market_sim_data_root": ""
+  },
+  "reuse": {
+    "source_bundle": "/tmp/claude-0/-home-user-market-simulator/fa9d5ef1-80b3-57a7-afaa-8499364de1e5/scratchpad/seamr_2023_reuse",
+    "requested_years": [
+      2023,
+      2022,
+      2024,
+      2025
+    ],
+    "reused_years": {
+      "2023": {
+        "passes": [
+          "P1"
+        ],
+        "cache_key": "4c17c9b77b73b29d",
+        "scenario_config_sha256": "ddd715908531beaa"
+      }
+    },
+    "fresh_years": [
+      2022,
+      2024,
+      2025
+    ],
+    "refusals": {
+      "2022": "year not solved in the prior bundle",
+      "2024": "year not solved in the prior bundle",
+      "2025": "year not solved in the prior bundle"
+    },
+    "warning": "Reused years are byte-copies of a prior bundle's solve, NOT fresh evidence \u2014 keeper promotion still requires a full fresh solve of every year.",
+    "source_timestamp": "2026-09-12T02:14:55",
+    "source_git_sha": "a40017ec"
   }
 }
