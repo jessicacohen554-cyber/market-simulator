@@ -322,6 +322,20 @@ def stage_year(
             len(days),
             ", ".join(dd.isoformat() for dd in failed_days),
         )
+    # A year in which EVERY day failed is a source/credential problem, not a
+    # staging: writing its chunk files anyway leaves ~53 header-only CSVs whose
+    # names are indistinguishable from a real staging, and the derive step reads
+    # them without complaint. Refuse to write instead. The usual cause is a
+    # pre-2023 year (``docs.misoenergy.org`` serves no daily report before
+    # 2023-01-01 -- re-verified 2026-09-12) with no ``MISO_PRICING_API_KEY`` set
+    # for the documented Data Exchange fallback.
+    if len(failed_days) == len(days):
+        raise RuntimeError(
+            f"{year} {market}: 0/{len(days)} days staged -- nothing written. "
+            "Every day failed: the static daily reports 404 before 2023-01-01, "
+            "and the Data Exchange fallback needs MISO_PRICING_API_KEY "
+            "(see data/raw/lmp-data/MISO/README.md)."
+        )
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     header = ["date", "node", "type", "value"] + [
@@ -332,14 +346,24 @@ def stage_year(
     n_chunks = -(-len(days) // _CHUNK_DAYS)  # ceil
     for i in range(n_chunks):
         window = days[i * _CHUNK_DAYS : (i + 1) * _CHUNK_DAYS]
+        chunk = [
+            rows
+            for dd, rows in zip(days, per_day)
+            if dd in window and rows is not None
+        ]
+        if not chunk:
+            # No day in this window staged: skip the file rather than leave a
+            # header-only CSV standing in for a week nobody has. The 2022
+            # staging already records a short tail as ABSENT chunks (p01..p49,
+            # not 53 with four empty ones) -- this keeps that convention true.
+            continue
         out = OUT_DIR / f"miso_hub_lmp_{year}_{market}_p{i + 1:02d}.csv"
         with open(out, "wt", newline="") as f:
             w = csv.writer(f)
             w.writerow(header)
-            for dd, rows in zip(days, per_day):
-                if dd in window and rows is not None:
-                    w.writerows(rows)
-                    n += len(rows)
+            for rows in chunk:
+                w.writerows(rows)
+                n += len(rows)
         out_paths.append(out)
     log.info(
         "wrote %d chunk files for %s %s (%d rows, %d/%d days)",
