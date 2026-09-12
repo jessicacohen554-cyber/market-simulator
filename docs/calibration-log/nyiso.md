@@ -13634,3 +13634,76 @@ the four load-bearing components stay strict. Scoring path only, no LP path, no 
 **Matrix (rule 28):** `offer_curve_by_group` stays **K** with the peak-band-only lift recorded
 REFUTED and DO-NOT-REDO; `nyiso_import_reconciliation` stays **K**, re-confirmed by direct
 falsification, with nyiso-99's caveat attribution moved OFF the row.
+
+## nyiso-229 — 2026-09-12
+
+**KEEPER PROMOTED: `2026-09-12-nyiso229-hourgrain-span`** (bundle
+`results/calibration/nyiso229_hourgrain_span`), superseding
+`2026-09-09-nyiso-221-fuelvintage-span`. 2022 touchpoint
+`2026-09-12-nyiso229-arm-y2022` folded to it (rule 30 `[R-TOUCHPOINT-FOLD]`).
+
+**ONE registered field: `unit_outage_window_hour_grain` False → True.** The CAMPD
+unit-outage window is read at its **detected hour grain** instead of re-expanded to
+`outage_start` 00:00 → `outage_end` 23:00. The detector has always worked in hours while
+the extract stored **dates**, so the loader asserted up to 23 h at *each edge* it never
+detected — exactly where the event-based contract guarantees the neighbouring hour was
+**running**. That is the caiso-181 seam; caiso-183 built the carriage and CAISO's extract
+already carried it, NYISO's did not. Basis is rules 14 `[R-ACCURATE]` + 1 `[R-STRUCT]`:
+the same measured input at its own resolution. **Zero free parameters**, DOF ledger carried
+verbatim (13 / n_residual 6, zero new entries), `authorized_price_tuning` NONE.
+
+**Measured at zero LP before any solve:** the day-grain reconstruction asserts
+9,872 / 10,167 / 8,529 / 8,144 unit-hours unavailable in 2022–2025 while the meter shows
+`grossLoad > 0`, carrying 1,376.9 / 1,332.5 / 1,075.9 / 952.7 GWh; **~95 %** of those hours
+lie within 23 h of a window boundary and carry **~99.9 %** of the energy — the schema
+rounding windows, not the detector misplacing them. It also takes **293** same-unit 24.0 h
+boundary-day overlaps to **zero** (MISO's `unit_outage_per_unit_clip` fingerprint, which is
+deliberately *not* co-armed — rule 19 `[R-ONE-MECH]`).
+
+**What it buys.** 2022's spurious 31-May VOLL event is **gone**: firm-load slack
+**360.472 → 0.000 MWh**, both VOLL hours cleared from 124.894 and 235.577 MW against
+3,657 MW of restored availability. Reserve shortfall falls in **all four** years
+(−71 / −59 / −55 / −21 %), both Long Island families to zero in 2022. **Served demand is
+identical to 4 dp in every year and dump is zero everywhere** (computed and asserted in the
+attestation, not claimed). **C3b improves in 2024, 0.179 → 0.174 — the tightest-margin year
+of the three.** C3a improves 2023 (+5.00 → +3.18) and 2024 (+5.29 → +3.23).
+
+**THE COST IS A DETERMINATION DOWNGRADE, and it is the headline half of this entry:**
+**CALIBRATED (grade 7/8, fails 0) → NOT-YET (grade 6/8, fails 2).** The deciding criterion
+is **not** C3c — **C1-2024 `CC_REGULAR` goes +3.13 TWh / share +3.0 pp, out of band**, a
+PASS → FAIL flip in the class that absorbs the restored CC availability. Because C1 then
+also fails, C3c loses lone-failure status and the rule-22 standing rule stays silent by its
+own guard (a), so the ledgered caveat that carried the superseded keeper to CALIBRATED is
+unavailable and **both failures stand**. Also degrading: C3a-2025 −7.15 → −8.79,
+C3a-2022 −12.96 → −15.82, C3b-2025 0.160 → 0.169. The 2022 C3c tail goes **8 → 4 h** above
+$300 with **precision still 0.000** — all four on 31 May, the wrong day, against the
+market's 101 hours in Jan/Feb/Aug/Dec — so it removes most of a spurious event and creates
+**none** of the real one. **It does not touch the winter object** (Jan/Feb/Dec, 77 % of the
+2022 miss).
+
+**The D-5(b) worse-determination stop fired and was escalated** (the nyiso-192 precedent).
+**A correction is on the record:** the session first reported *"no criterion flips
+PASS→FAIL anywhere"* — that was measured on C3a/C3b only, C1 was never scored, and C1 does
+flip. The owner's first approval was given on that wrong statement; the record was
+corrected, the promotion re-put, and the owner ruled *"Flip it to keeper"* with the
+downgrade known.
+
+**G-CTRL** rule 29(b) form 4, validated **empirically**: a day-grain control leg reproduced
+the committed 2022 touchpoint **identically** on slack, served demand, annual max and the
+h>$300 count, differing only **+0.0355 $/MWh** on the mean — the one LIVE hunk the G-DRIFT
+audit named (`reliability_floor_coeffs_NYISO.csv`, nyiso-227's re-basing).
+
+**Cost in LP:** nine shard containers for four bundles. One OOM-killed; one died on a
+`TypeError` that was this session's own plumbing bug (the field threaded through
+`run_calibration_full` but not into `scripts/run_calibration.run_year` — the precedent's own
+comment says *"an override missing here would solve the control twice"*, so the crash was
+the good outcome); one interrupted for the same bug; one blocked on `capacity-deliverability`
+being absent from `data/clean` (which nyiso-228 had recorded as **inert** — it is not).
+
+**Records:** `docs/FINDING-nyiso229-phase0-the-outage-window-grain-2026-09-12.md`,
+`docs/RESULT-nyiso229-the-2022-screen-2026-09-12.md`,
+`results/calibration/PRECOMMIT-nyiso229-outage-window-hour-grain.md` + three addenda,
+`results/calibration/_nyiso229_screen_gates_2022.json`,
+`scripts/gen_nyiso229_attestation.py`,
+`docs/handoffs/FINDING-nyiso229-arm-y2024-blocked-2026-09-12.md`.
+**New rule this session:** 33 `[R-SHARD-ARCHIVE]` (owner instruction).
