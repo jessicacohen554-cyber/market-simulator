@@ -374,6 +374,15 @@ blocking anything today.**
 * **`pytest tests/scoring`: 15 failures at the arm and 15 at `origin/main`, and the failure sets
   diff IDENTICALLY. Zero new failures.** The handoff's quoted baseline of 16 is stale; it is 15
   at `fb73c4f6`.
+* **THE FULL SUITE, run because `plant_taxonomy.py` is shared by the whole codebase:
+  `33 failed, 9414 passed, 70 skipped, 1 xfailed, 723 subtests passed` in 15m 40s.** Every one of
+  those 33 ids was then re-run with the two edited files reverted to `origin/main`: **all 33 fail
+  there too — zero arm-only, zero base-only, the sets are identical.** Included in the
+  pre-existing set, and worth naming because they look alarming next to this change:
+  `test_persisted_identity.py::test_solve_surface_fingerprint_is_pinned[NYISO]`,
+  the three `test_key_provenance_exceptions.py` gates, and the six
+  `test_soundness.py::TestEndToEnd` cases. **None is mine**, which is independently corroborated
+  by §3.5: `moved_rows` is byte-identical at `origin/main` and at the arm for all seven ISOs.
 
 ---
 
