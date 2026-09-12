@@ -522,6 +522,38 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
       exact Class-E parity RED rule 29(c) already forbids.
     Genealogy: `docs/governance/rule-history.md` §18.
 
+1. `[R-SHARD-ARCHIVE]` **ARCHIVE EVERY SHARD THE MOMENT ITS RESULT IS IN YOUR HANDS — AND PULL THE
+    BYTES BEFORE YOU DO.** *(Owner instruction 2026-09-12: "Can you archive all your shards when you
+    don't need them anymore plz and make that a new rule". The occasion: nyiso-229 spent NINE shard
+    containers across a screen and a span, and four sat IDLE holding containers after the parent had
+    already fetched and scored their bundles.)* This is hygiene, not bookkeeping: a shard's container
+    is a real resource, an idle one blocks the concurrency the next lane needs, and the environment
+    reclaims containers on its own schedule rather than the parent's.
+    - **(a) THE TRIGGER IS "THE PARENT HAS IT", NOT "THE SHARD FINISHED".** Archive as soon as the
+      parent has (i) fetched the shard's branch, (ii) checked out its bundle, and (iii) verified it —
+      the config signature and, where the lane pins one, the input artifact's `sha256`. Until all
+      three hold, the shard stays alive: it is the only thing that can re-push what it solved. After
+      all three hold, keeping it alive buys nothing.
+    - **(b) NEVER ARCHIVE A SHARD THAT IS STILL RUNNING**, and never archive one whose report you
+      have not read. A shard that STOPPED with a blocker is archived like any other — its FINDING doc
+      on its branch is the record (rule 32(c)(7)), not its container.
+    - **(c) ARCHIVING IS NOT DELETING, and rule 31 `[R-RETAIN]` is untouched.** Archiving makes a
+      session read-only and releases its container; it destroys no branch, no commit and no bundle.
+      Nothing about it licenses removing a result the owner has not ruled on. Conversely, archiving
+      is **not** a substitute for pulling the bytes: an archived shard cannot push, so (a)'s order is
+      the whole of the safety here.
+    - **(d) RECORD RECOVERY BY IMMUTABLE SHA, NEVER BY BRANCH NAME.** Shards rebase and force-push
+      even when the prompt forbids it — measured in nyiso-229, where four of nine did, moving
+      `arm-2023` to `651de9a3` and `arm-2025` to `3d76ad76` after the parent had already fetched
+      them. A branch name is a moving target and branches here are deleted within minutes; the
+      `git checkout <sha> -- <path>` line in the `.gitignore` comment or the RESULT doc is what makes
+      a promotion cost zero re-solves, so it carries a **full SHA**. This is rule 32(c)(1)'s pinning
+      discipline applied to the return trip.
+    - **(e) SWEEP BEFORE THE SESSION ENDS.** A session that launched shards lists them
+      (`list_sessions`, filtering on its own `parent_session_id`) as part of wrapping up, archives
+      every one that is idle or complete, and **names in its final report any it deliberately left
+      alive and why** — a still-solving leg is a legitimate reason, a forgotten one is not.
+
 Rules 17–26 are the protective rules from `docs/model-legitimacy-audit-2026-07.md` §8, numbered
 **16–25 there** — a doc reference to "audit rule N" maps to rule N+1 here. Mapping table, per-rule
 amendment genealogy and the incident record: `docs/governance/rule-history.md`.
