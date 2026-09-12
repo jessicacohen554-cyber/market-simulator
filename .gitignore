@@ -1939,3 +1939,19 @@ results/calibration/spp27_*/
 # duplicates. The owner ruled on promotion on 2026-09-11 (pjm-d4-4 IS the keeper), so
 # rule 31 trigger (i) is satisfied.
 results/calibration/pjm_d4_4_y[0-9][0-9][0-9][0-9]/
+# nyiso-228 (2026-09-12) probe bundles — rule 29 [R-SCREEN] clause (c) as AMENDED by
+# rule 31 [R-RETAIN]: these must not reach `main` as unregistered bundle dirs (the
+# check_registry_payload_parity Class-E sweep is RED on exactly that), and .gitignore —
+# never `rm` — is what discharges that duty. All three stay on local disk until the
+# owner rules on promotion.
+#   nyiso228_tail_span    arm A, a rule-29 SCREEN bundle (2025 only, killed at G-MAG)
+#   nyiso228_control_span arm C, the CONTROL that screen earned under clause (b)'s
+#                         LIVE-hunk case — the case clause (c) names explicitly
+#   nyiso228_seamr_span   arm B, a declared DIAGNOSTIC that failed both of its own
+#                         pre-registered promotion legs
+# Every number this session will ever cite from them is carried by
+# docs/RESULT-nyiso228-2026-09-12.md and docs/PRECOMMIT-nyiso228-amplitude-2026-09-12.md,
+# exactly as clause (c) requires. Git history is the record for the bytes.
+results/calibration/nyiso228_tail_span/
+results/calibration/nyiso228_control_span/
+results/calibration/nyiso228_seamr_span/
