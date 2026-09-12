@@ -2001,8 +2001,13 @@ results/calibration/spp36_*/
 # local disk, and every number this lane will ever cite from them is in
 # docs/RESULT-nyiso229-*.md and results/calibration/_nyiso229_screen_gates_2022.json.
 # Recoverable with no re-solve:
-#   git checkout origin/claude/nyiso229-ctrl-2022r2 -- results/calibration/nyiso229_ctrl_y2022
-#   git checkout origin/claude/nyiso229-arm-2022r2  -- results/calibration/nyiso229_arm_y2022
+#   git checkout b61247cd7b7682f567543c9bc37cdad90475c29f -- results/calibration/nyiso229_ctrl_y2022
+#   git checkout 846ea79095f3c556dc6027d255dc6d4eef5d90ea -- results/calibration/nyiso229_arm_y2022
+#   git checkout 651de9a3d77754d533fb982796b65a8e19dfe3d5 -- results/calibration/nyiso229_arm_y2023
+#   git checkout 3d76ad7638a459d7caf4f7febf2c63fe6f57fe70 -- results/calibration/nyiso229_arm_y2025
+# (FULL SHAs, not branch names: rule 33 [R-SHARD-ARCHIVE] (d) — four of nyiso-229's nine
+#  shards rebased and force-pushed after the parent had fetched them, and branches here are
+#  deleted within minutes. The 2024 leg's sha is appended when its shard lands.)
 results/calibration/nyiso229_ctrl_y2022/
 results/calibration/nyiso229_arm_y2022/
 # miso-255 rule 29(c) / rule 31: screen bundles stay on local disk, never reach main

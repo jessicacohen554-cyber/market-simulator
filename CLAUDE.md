@@ -522,6 +522,74 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
       exact Class-E parity RED rule 29(c) already forbids.
     Genealogy: `docs/governance/rule-history.md` §18.
 
+1. `[R-SHARD-ARCHIVE]` **ARCHIVE EVERY SHARD THE MOMENT ITS RESULT IS IN YOUR HANDS — AND PULL THE
+    BYTES BEFORE YOU DO.** *(Owner instruction 2026-09-12: "Can you archive all your shards when you
+    don't need them anymore plz and make that a new rule". The occasion: nyiso-229 spent NINE shard
+    containers across a screen and a span, and four sat IDLE holding containers after the parent had
+    already fetched and scored their bundles.)* This is hygiene, not bookkeeping: a shard's container
+    is a real resource, an idle one blocks the concurrency the next lane needs, and the environment
+    reclaims containers on its own schedule rather than the parent's.
+    - **(a) THE TRIGGER IS "THE PARENT HAS IT", NOT "THE SHARD FINISHED".** Archive as soon as the
+      parent has (i) fetched the shard's branch, (ii) checked out its bundle, and (iii) verified it —
+      the config signature and, where the lane pins one, the input artifact's `sha256`. Until all
+      three hold, the shard stays alive: it is the only thing that can re-push what it solved. After
+      all three hold, keeping it alive buys nothing.
+    - **(b) NEVER ARCHIVE A SHARD THAT IS STILL RUNNING**, and never archive one whose report you
+      have not read. A shard that STOPPED with a blocker is archived like any other — its FINDING doc
+      on its branch is the record (rule 32(c)(7)), not its container.
+    - **(c) ARCHIVING IS NOT DELETING, and rule 31 `[R-RETAIN]` is untouched.** Archiving makes a
+      session read-only and releases its container; it destroys no branch, no commit and no bundle.
+      Nothing about it licenses removing a result the owner has not ruled on. Conversely, archiving
+      is **not** a substitute for pulling the bytes: an archived shard cannot push, so (a)'s order is
+      the whole of the safety here.
+    - **(d) RECORD RECOVERY BY IMMUTABLE SHA, NEVER BY BRANCH NAME.** Shards rebase and force-push
+      even when the prompt forbids it — measured in nyiso-229, where four of nine did, moving
+      `arm-2023` to `651de9a3` and `arm-2025` to `3d76ad76` after the parent had already fetched
+      them. A branch name is a moving target and branches here are deleted within minutes; the
+      `git checkout <sha> -- <path>` line in the `.gitignore` comment or the RESULT doc is what makes
+      a promotion cost zero re-solves, so it carries a **full SHA**. This is rule 32(c)(1)'s pinning
+      discipline applied to the return trip.
+    - **(e) SWEEP BEFORE THE SESSION ENDS.** A session that launched shards lists them
+      (`list_sessions`, filtering on its own `parent_session_id`) as part of wrapping up, archives
+      every one that is idle or complete, and **names in its final report any it deliberately left
+      alive and why** — a still-solving leg is a legitimate reason, a forgotten one is not.
+    - **(f) DELETE THE SHARD BRANCH TOO — BUT ONLY ONCE THE BYTES ARE SOMEWHERE THAT IS NOT THAT
+      BRANCH, AND NEVER WHILE A PROMOTION IS UNDECIDED.** *(Owner instruction 2026-09-12: "Should
+      also delete shard branches once data is recovered".)* A finished shard branch is litter and
+      goes. But deletion here is **not** the same act as archiving: archiving releases a container
+      and destroys nothing, while **deleting a branch makes its commits unreachable and eventually
+      garbage-collected** — so a shard branch is frequently the ONLY durable copy of a bundle, the
+      parent's own checkout living on a container that is reclaimed. Deleting it while the owner has
+      not ruled on promotion is the ercot-255 incident one layer over, and rule 31 `[R-RETAIN]`
+      forbids it in exactly those words. The order is therefore fixed, and each step is a
+      precondition for the next:
+      1. **RESCUE ANY UNIQUE RECORD.** A shard's own FINDING / blocker doc exists nowhere else —
+        commit it onto the parent's branch first. (Docs the shard merely inherited from `main` need
+        no rescue; check which is which rather than assuming.)
+      2. **THEN DELETE, IF AND ONLY IF the branch carries no bundle the lane may still need.** A
+        branch holding only docs, or only a failed attempt, goes immediately. A branch holding a
+        **screen** bundle may go once the PRECOMMIT/RESULT doc carries every number the lane will
+        ever cite from it — which rule 29 `[R-SCREEN]` (c) already requires, and which is what makes
+        a screen bundle disposable where a candidate bundle is not.
+      3. **A BRANCH CARRYING A BUNDLE A PROMOTION WOULD REGISTER STAYS UNTIL THE OWNER HAS RULED.**
+        Registration needs the per-plant layer, not just the summary numbers, so deleting these is
+        deleting a result — rule 31, no exceptions, and the promotion question gets asked rather
+        than pre-empted by a cleanup. Once the owner rules, promoted or declined, the branch goes.
+      4. **RE-PIN NOTHING TO A DELETED SHA.** Clause (d)'s recovery line must name a commit that
+        still resolves; when a branch is deleted, the recovery route in the doc changes from "check
+        out this sha" to "re-solve, cost stated", and the doc is updated to say so honestly instead
+        of keeping a command that will fail.
+      5. **A SESSION MAY NOT BE ABLE TO DELETE AT ALL, and that is not a transport flake to retry
+        around.** Measured 2026-09-12: `git push origin --delete <branch>` returns **HTTP 403** here
+        — the session's credential can create and update refs but not delete them — and the GitHub
+        MCP server exposes no branch-deletion tool (`create_branch` exists, no counterpart). The
+        symptom is misleading: git reports `send-pack: unexpected disconnect` and then
+        `Everything up-to-date`, which reads like the HTTP/2 flake the Git & Pushing section says to
+        retry on HTTP/1.1 — it is not, and on HTTP/1.1 the underlying 403 becomes visible. So a
+        session does steps 1–3, and if deletion is refused it **says so and leaves the branch**
+        rather than reporting a cleanup it did not perform. The normal disposal route stays what it
+        always was: a merged shard branch is auto-deleted by the environment.
+
 Rules 17–26 are the protective rules from `docs/model-legitimacy-audit-2026-07.md` §8, numbered
 **16–25 there** — a doc reference to "audit rule N" maps to rule N+1 here. Mapping table, per-rule
 amendment genealogy and the incident record: `docs/governance/rule-history.md`.
