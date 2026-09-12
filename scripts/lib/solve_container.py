@@ -359,6 +359,14 @@ def ensure_solve_container(
 
     Runs once per process (later calls return the first record). Never
     raises. ``provision=False`` reports and pins but writes nothing.
+
+    **Call it before the process's first HiGHS solve** — which is where both
+    runners call it. HiGHS refuses a ``threads`` change once its scheduler is
+    initialised, so a process that has already solved with the default thread
+    count and THEN picks up ``MARKET_SIM_HIGHS_THREADS=1`` gets status
+    "Not Set" from every later solve (measured in the pytest process,
+    2026-09-12). An explicit pre-set value is left alone, so a caller that
+    solved first can protect itself by exporting the pin it already used.
     """
     global _PREFLIGHT_RECORD
     if _PREFLIGHT_RECORD is not None:

@@ -11,6 +11,7 @@ and that the dry-run / no-provision paths never write anything.
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 import pytest
@@ -38,6 +39,28 @@ def _fake_proc(tmp_path: Path, cgroup_lines: str, mem_total_gib: float = 15.7) -
     )
     _write(proc / "swaps", "Filename\tType\tSize\tUsed\tPriority\n")
     return proc
+
+
+@pytest.fixture
+def clean_pins():
+    """Snapshot + restore the three solve-profile env pins around a test.
+
+    ``monkeypatch.delenv(raising=False)`` records NOTHING for a variable that
+    is absent, so a pin the code under test sets with ``setdefault`` would leak
+    into the rest of the pytest process — and a leaked
+    ``MARKET_SIM_HIGHS_THREADS=1`` after another test has already initialised
+    HiGHS at its default thread count makes every later in-process solve
+    return status "Not Set" (8 failures in tests/unit/pipeline, 2026-09-12).
+    """
+    saved = {key: os.environ.get(key) for key in sc.SOLVE_ENV_PINS}
+    for key in sc.SOLVE_ENV_PINS:
+        os.environ.pop(key, None)
+    yield
+    for key, value in saved.items():
+        if value is None:
+            os.environ.pop(key, None)
+        else:
+            os.environ[key] = value
 
 
 def _v1_lines() -> str:
@@ -159,9 +182,9 @@ def test_active_swapfile_is_kept_not_recreated(tmp_path: Path) -> None:
     assert len(warnings) == 1 and "already active" in warnings[0]
 
 
-def test_env_pins_default_but_never_override(monkeypatch: pytest.MonkeyPatch) -> None:
-    for key in sc.SOLVE_ENV_PINS:
-        monkeypatch.delenv(key, raising=False)
+def test_env_pins_default_but_never_override(
+    monkeypatch: pytest.MonkeyPatch, clean_pins: None
+) -> None:
     monkeypatch.setenv("MARKET_SIM_HIGHS_THREADS", "4")
 
     applied = sc._apply_env_pins()
@@ -180,7 +203,7 @@ def test_pins_agree_with_prepare_solve_container_and_run_isos_concurrent() -> No
 
 
 def test_ensure_solve_container_no_provision_never_writes(
-    monkeypatch: pytest.MonkeyPatch,
+    monkeypatch: pytest.MonkeyPatch, clean_pins: None
 ) -> None:
     monkeypatch.setattr(sc, "_PREFLIGHT_RECORD", None)
     calls: list[str] = []

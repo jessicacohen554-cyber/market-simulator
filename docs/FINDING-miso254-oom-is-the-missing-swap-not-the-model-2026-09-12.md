@@ -118,6 +118,31 @@ not a run) and neither is committed (rule 29(c) / 31: the bundle family is gitig
 shard commits only its report doc). The promotion question does not arise — nothing here is a
 candidate.
 
+### 5.1 Results (both shards pinned to `0101b4ce`, same environment class, same recipe)
+
+Reports: `docs/SHARD-misooom-A-2023.md` (branch `claude/misooom-A-2023`, commit `3bd2d1be`) and
+`docs/SHARD-misooom-B-2023.md` (branch `claude/misooom-B-2023`, commit `c904f667`).
+
+| | shard A — preflight ON | shard B — preflight OFF |
+|---|---|---|
+| ceiling read (nested v1 memcg) | 14,327,676,928 B = 13.34 GiB; MemTotal 15.70 | identical |
+| swap before / after preflight | 0 → **10 GiB** at `/swapfile-marketsim` (runner-provisioned; 23.3 of the 24 GiB target, warned) | 0 (none; `container preflight:` lines = 0) |
+| LP | 1,026,876 × 29,643,840, 86,198,400 nnz | identical |
+| outcome | **solved**; `wrote calibration bundle` + `memory peak:` | **OOM-killed** ~85 s after launch, memcg `CONSTRAINT_MEMCG`, `failcnt` 20,725, anon-rss 13.28 GiB, `oom_kill 1` |
+| phase timing | data_prep 54.6 s · P0 525.8 s · markup 21.2 s · P1 269.0 s · write 67.0 s · **total 937.6 s** | died after `addRows`, before P0 printed anything |
+| **honest peak** | `cgroup_peak_rss_gib=13.34` (pinned at the ceiling from t≈120 s), **`cgroup_peak_rss_plus_swap_gib=18.91`**, `process_vmhwm_gib=13.32`; swap in use peaked at 5.08 GiB | `max_usage_in_bytes` = the limit byte-exact; the ceiling, not the demand |
+| P1 prices vs the keeper's committed `hourly/system_2023.parquet` | **0 of 490,560 numeric cells differ**; `price` max abs diff 0.0, mean 33.89972503431436 both | no bundle |
+| wall inside the 20-min shard cap | yes, 16.0 min launch → exit | n/a |
+
+**Reading.** The negative control reproduces the miso-252/253 incident on the same SHA, same
+code, same recipe, same box class: without swap the year dies at the memcg wall. With the
+runner-provisioned swap it finishes, reproduces the keeper's prices bit-for-bit, and — for the
+first time in this repo — states the demand: **a MISO 2023 per-plant year needs ~18.9 GiB of
+RSS+swap at its peak, ~5.6 GiB over the 13.34 GiB bash cgroup.** That number is the target any
+genuine solve-phase memory reduction must be measured against; the 461 MB of lifetime hygiene
+(ee40acd2 / eaa9d6f1) was never within reach of it. The 10 GiB the runner added is what free
+disk allowed (17 GiB free − 6 GiB reserve); it was enough with ~4.9 GiB of swap to spare.
+
 ## 6. Stated at the gate
 
 - This does not shrink the LP. A per-plant MISO year still needs more than a 13.34 GiB bash
