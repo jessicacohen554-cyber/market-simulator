@@ -129,3 +129,75 @@ def test_arming_moves_the_cache_key():
     base = ScenarioConfig(iso="MISO", mode="backcast", hindcast=True)
     armed = base.with_overrides(miso_import_sil_measured_envelope=True)
     assert base.cache_key() != armed.cache_key()
+
+
+def test_the_backcast_path_consumes_the_flag_not_only_the_forecast_path():
+    """The consumer must exist on run_calibration's OWN interface-group seam.
+
+    THE DEFECT THIS GUARDS (miso-255): the flag was first wired only into
+    ``runner.run_scenario_iso``, which is the FORECAST/scenario front end. The
+    backcast/calibration path builds its own ``interface_groups`` in
+    ``scripts/run_calibration.py`` and never enters that function, so a screen
+    shard solved with the flag set and the arm silently inert — the same trap
+    ``run_calibration.py``'s own ``caiso_endogenous_wecc_node`` comment records.
+    A gated mechanism that no backcast reads is an unregistered tuning channel
+    in spirit (rule 24 ``[R-REGISTRY]``).
+
+    Asserted structurally rather than by solving: both entry points must
+    reference the injector, and the backcast one must key it off the EFFECTIVE
+    limit list (the MISO seasonal block rebuilds the groups from
+    ``static_limits``, so indexing ``iso_config.interface_limits`` there would
+    replace the wrong row).
+    """
+    import ast
+    from pathlib import Path
+
+    repo = Path(__file__).resolve().parents[3]
+    backcast = (repo / "scripts/run_calibration.py").read_text()
+    forecast = (repo / "src/market_sim/runner.py").read_text()
+
+    assert "apply_miso_measured_sil_envelope" in backcast, (
+        "the BACKCAST path (scripts/run_calibration.py) does not consume "
+        "miso_import_sil_measured_envelope — a replay would solve with the "
+        "arm silently inert"
+    )
+    assert "apply_miso_measured_sil_envelope" in forecast
+
+    # the backcast call must pass the effective limit list, never the config's
+    tree = ast.parse(backcast)
+    calls = [
+        n
+        for n in ast.walk(tree)
+        if isinstance(n, ast.Call)
+        and getattr(n.func, "id", getattr(n.func, "attr", None))
+        == "apply_miso_measured_sil_envelope"
+    ]
+    assert len(calls) == 1, f"expected one backcast call site, found {len(calls)}"
+    second = calls[0].args[1]
+    assert isinstance(second, ast.Name) and second.id == "effective_interface_limits", (
+        "the backcast call must key the named group off the list that BUILT "
+        "the groups (effective_interface_limits), not iso_config.interface_limits"
+    )
+
+
+def test_accepts_a_bare_limit_list_the_backcast_form(miso_groups):
+    """The backcast passes a LIST, the forecast an ISOConfig — both must work.
+
+    The first repair of the wrong-path defect changed the call site to pass
+    ``effective_interface_limits`` (a list) while the injector still did
+    ``iso_config.interface_limits``, which would have raised AttributeError on
+    every armed backcast replay. Both forms are exercised here so neither can
+    regress alone.
+    """
+    cfg, groups = miso_groups
+    out_list, info_list = apply_miso_measured_sil_envelope(
+        groups, list(cfg.interface_limits), 2021, T, None, True
+    )
+    out_cfg, info_cfg = apply_miso_measured_sil_envelope(
+        groups, cfg, 2021, T, None, True
+    )
+    assert info_list is not None and info_cfg is not None
+    assert info_list == info_cfg
+    idx = [lim.name for lim in cfg.interface_limits].index(SIL_NAME)
+    assert np.array_equal(np.asarray(out_list[idx][1]), np.asarray(out_cfg[idx][1]))
+    assert np.array_equal(np.asarray(out_list[idx][3]), np.asarray(out_cfg[idx][3]))

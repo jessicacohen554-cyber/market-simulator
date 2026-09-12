@@ -732,7 +732,7 @@ def build_miso_link_loss(
 
 def apply_miso_measured_sil_envelope(
     interface_groups: list[tuple],
-    iso_config: ISOConfig,
+    limits: "list[InterfaceLimit] | ISOConfig",
     year: int,
     hours: int,
     percentile: float | None = None,
@@ -787,8 +787,12 @@ def apply_miso_measured_sil_envelope(
         interface_groups: Groups from
             :func:`~market_sim.model.interchange.core.build_interface_groups`,
             in ``iso_config.interface_limits`` order.
-        iso_config: The import-node-extended topology (used to locate the
-            aggregate limit by name).
+        limits: The ``InterfaceLimit`` list that BUILT ``interface_groups``,
+            in the same order (an ``ISOConfig`` is accepted and its
+            ``interface_limits`` used). This must be the EFFECTIVE list, not
+            ``iso_config.interface_limits`` by reflex: the MISO backcast seam
+            rebuilds its groups from ``static_limits + seasonal_groups``, so
+            indexing the config's own list there would address the WRONG row.
         year: Calendar backcast/hindcast year the envelope is built from.
         hours: LP horizon (<= 8760 on the fixed non-leap clock).
         percentile: Envelope percentile override; ``None`` keeps the registered
@@ -808,8 +812,9 @@ def apply_miso_measured_sil_envelope(
     name = EXTERNAL_SIMULTANEOUS_LIMITS.get("MISO", (None,))[0]
     if name is None:
         return interface_groups, None
+    lim_list = getattr(limits, "interface_limits", limits)
     idx = next(
-        (i for i, lim in enumerate(iso_config.interface_limits) if lim.name == name),
+        (i for i, lim in enumerate(lim_list) if lim.name == name),
         None,
     )
     if idx is None or idx >= len(interface_groups):
