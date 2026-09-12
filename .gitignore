@@ -1993,3 +1993,15 @@ results/calibration/spp32_*/
 #     unregistered per-year dir left committed is the Class-E parity RED. Discharged
 #     by .gitignore, never by `rm`.
 results/calibration/spp36_*/
+
+# nyiso-229 (2026-09-12) 2022 SCREEN legs — rule 29 [R-SCREEN] clause (c) via
+# rule 31 [R-RETAIN]: a screen bundle and the control that screen earned must not
+# reach `main` (an unregistered bundle dir is a Class-E parity RED), and rule 31
+# says the way to achieve that is .gitignore, NEVER `rm`. Both are solved, on
+# local disk, and every number this lane will ever cite from them is in
+# docs/RESULT-nyiso229-*.md and results/calibration/_nyiso229_screen_gates_2022.json.
+# Recoverable with no re-solve:
+#   git checkout origin/claude/nyiso229-ctrl-2022r2 -- results/calibration/nyiso229_ctrl_y2022
+#   git checkout origin/claude/nyiso229-arm-2022r2  -- results/calibration/nyiso229_arm_y2022
+results/calibration/nyiso229_ctrl_y2022/
+results/calibration/nyiso229_arm_y2022/
