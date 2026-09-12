@@ -2012,3 +2012,106 @@ determination, NOT a certified out-of-sample skill claim.** No `complete` marker
 declaration is added, requested or implied.
 
 **Next shorthand: spp-30.**
+
+---
+
+## spp-31 — 2026-09-12
+
+**Object: the DECISION MEMO for SPP `complete` / `frontier`, and the ordered work plan behind it.
+ZERO LP SPENT** (rule 32 `[R-SHARD]` (a) — an orchestrator with nothing to orchestrate). **Keeper
+UNCHANGED and UNTOUCHED** `2026-09-10-spp-27-commitment-grain`. **No marker file touched, nothing
+registered, no verdict minted, no matrix cell moved, no `rm` issued.** Record:
+`docs/handoffs/PLAN-spp-31-complete-frontier-2026-09-12.md`. Base `9e499b0e`.
+*(Lane SPP-30 — SPP's out-of-training price coverage — runs independently and was neither waited on
+nor duplicated.)*
+
+**RECOMMENDATION: DECLARE `complete`; DO NOT DECLARE `frontier`.** Both are OWNER ACTS and this lane
+performed neither.
+
+**THE PEER BAR, RE-SCORED THIS SESSION** (`calibration_verdict.py --json`, rubric v3.7, committed
+artifacts only, no solve). All seven ISOs read **CALIBRATED** today. SPP: **grade 7 of 8, 0 fails,
+1 ledgered C3c caveat, 0 protective, free-class C1 16/16 · 12/12** — and the two declarations that are
+still re-scorable at HEAD, both from 2026-09-06, are **identical in shape**:
+`2026-09-06-nyiso-202-startup-aware` 7/8 · 0 · 1 C3c · 0 · 14/14 · 10/10, and
+`2026-09-06-caiso-260-b1-demand` 7/8 · 0 · 1 C3c · 0 · 12/12 · 8/8. PJM alone grades 8/8 (C3c PASSes).
+**ERCOT / PJM / NEISO's declaration-time keepers are NOT re-scorable** — bundles and payloads pruned
+under rule 15, and this clone's history begins 2026-09-07 (`git rev-list --count HEAD` = 666); stated
+as a limit of the record, not a finding against them. SPP also carries the program's **leanest DOF
+ledger** (3 entries / 2 residual against 8–42 / 2–7) and is one of only three ISOs whose **D-1 and D-2
+both pass** (SPP, ERCOT, NYISO; D-4 is `False` in all seven).
+
+**REPORTED AGAINST THE RECOMMENDATION, at full magnitude.** (1) **SPP is the ONLY ISO whose keeper
+declares `authorized_price_tuning`** — the rule-1 carve-out channel, uniform 0.93 — and the record is
+explicit that **C3a and C3b PASS only after it** (spp-20: C3a FAIL 2025 +10.3 % → PASS +1.36/−0.61/
++3.61 %; C3b FAIL 0.204 → PASS 0.1647/0.1762/0.1755). Fully rule-legal (conditions (a)–(e) verified at
+promotion, owner's own number, declared ex ante in the PRECOMMIT, never swept, C6 passes) and still a
+difference in kind from how all five declared ISOs got there. (2) **Zero out-of-training coverage** —
+SPP is alone: `tail/actual_tail.json` and `bench/SPP/` carry `{2023,2024,2025}` only. (3) **Keeper 9 is
+one day old and the ninth in five days** (first SPP solve 2026-09-07), and **Q5's uniform rule** (*"a
+`complete` marker cannot stand on a NOT-YET keeper"*) has taken NYISO's marker down three times — on a
+lane whose stated promotion convention is structure-over-gates, the marker should be expected to fall
+at some future structural repair. (4) The **one-zone root cause** stands (`FINDING-spp-64` §5).
+
+**`frontier` IS REFUSED ON A MEASUREMENT.** Mechanism-matrix shard census, `cell:` verdicts, `.`
+excluded: **SPP 16 of 173 applicable cells adjudicated (9 %), 155 UNTESTED**, against NYISO 131/182
+(72 %), MISO 120/182, CAISO 107/176, ERCOT 103/178, PJM 85/165, NEISO 66/152 (43 %). `frontier` means
+the lever queue is exhausted; SPP's is not within a factor of four of the lowest declared ISO.
+
+**THE HANDOFF'S GATE-CODE PREMISE IS FALSE AT HEAD, AND IT CHANGES THE SEQUENCING.** The prompt asserted
+four live holdout gates and an ACTIVE freeze. Checked limb by limb: `enforce_holdout_year_gate` **does
+not exist** (no `def` anywhere; the name survives only in stale docstrings at `run_calibration.py:15`,
+`knob_jacobian.py:10,230`, `derive_actual_tail.py:72`, `fetch_campd_unit_level.py:71`,
+`invariant_ledger.py:20`); **`--holdout-authorized` is a flag in neither runner's `--help`** and is
+registered nowhere; `dashboard_add_run.enforce_registration_marker_gate` is named at
+`dashboard_add_run.py:31` and **does not exist**; `_year_emittable` is `return True` unconditionally
+(`derive_actual_tail.py:103-111`, `derive_actual_amplitude.py:74-82`);
+**`frontend/data/backcast/holdout-freeze.json` does not exist**; `HOLDOUT_CALIBRATION_YEARS` /
+`HOLDOUT_MARKER_FILE` (`run_calibration_full.py:8690-8691`) are referenced nowhere; `audit_keepers`'s
+H1 has no failure emitter (`"H1"` only at lines 992/996, both in the pass branch). **The CODE AGREES
+WITH CLAUDE.md; the DOCSTRINGS are stale.** Consequence: **a `complete` declaration is NOT a
+prerequisite for SPP to spend any year** — SPP-30 is not blocked on it and must not wait for it.
+Nothing was edited, resolved or deleted; routed as card **R-bg**.
+
+**WHAT THE MARKER STILL DOES, verified:** (1) `audit_keepers` M1 currency + determination
+re-verification (`audit_keepers.py:159-199`), which declaring would put SPP under; (2)
+`derive_plant_emissions_v2.py --holdout-intake SPP` — the intake-log ISO vocabulary at line 244 is
+`{ERCOT,CAISO,PJM,MISO,NYISO,NEISO}` and **excludes SPP**, so the marker is SPP's **only** route to
+2022/2026 emission rows; (3) forecast §2.1b **gate (a)**, which reads `fail` for exactly the two ISOs
+with no `complete` entry — **MISO and SPP, both CALIBRATED**. Separately: `GOLDEN_ISOS`
+(`ff_readiness_battery.py:102`) does not include SPP, so admitting it there is a separate capx-director
+act, not an inference from the marker.
+
+**C3c IS CLOSED AS A WORK ITEM and no card is chartered against it** (spp-29, re-verified here: model
+0/5/0 hours >$200 against RT 42/59/68; ρ(congestion rent, RT price) = +0.019; SPP's own nodal DA market
+0/14/0 with a 2025 DA max of $176.62; perfect-quantity re-pricing 7/29/0, FAIL in all three years).
+
+**THE ORDERED PLAN** (each card with its ONE seam, rule-19 enumeration, forward story, DOF effect and a
+STRUCTURAL screen gate that never reads the target residual). SPP's measured span cost is **499 s of LP
+for 2023–2025** (`SHARDREPORT-spp27-span.md:24`), ≈166 s/year, so rule 32(b) gives **one year = one
+shard**, ~20–35 min wall each on a cold container. **1. R-bf** — the 2024 hourly availability remnant, a
+rule-14 question answerable at **ZERO LP** against committed CAMPD; do it first. **2. R-bc** —
+price-forming curtailment as an LP constraint whose dual reaches the zonal price, **chartered against
+the NEGATIVE tail and wind volume ONLY** (a C3c charter fails for reasons unrelated to its merits);
+screen year named in the PRECOMMIT as the year of largest **measured** curtailment, never largest
+residual. **3. R-be remnant** — day selection; expected to CLOSE at phase 0 with no LP, because no
+forecast-admissible signal reaches it. **4. R-ba** — the merit inversion, bounded (every thermal class
+clears within a ~$5 band) and sequenced behind R-bc.
+
+**NO-BUILD, so a later lane does not re-open it:** a sub-zonal topology change (444 facilities, 115 for
+90 % of 2024 rent — not a 3-zone object; and SPP's own fully-nodal DA market produces no tail either),
+`energy_reserve_coopt` (`I`), `negative_renewable_offers` (`I`), `spp_gas_commitment_bridge` (`R`),
+`spp_curtailment_ceiling` as a CF upper bound (channel refused; the object stays `O`), card R-bd
+(closed), any C3c price adder, re-cutting or sweeping `offer_curve_by_group`, and moving C3c to the DA
+basis (gate-shopping; owner's call alone and NOT proposed).
+
+**Rule 28 `[R-MECH-MATRIX]`: NO VERDICT MINTED and NO CELL MOVED.** This lane tested no mechanism; the
+matrix census is a read of the shards, not an edit. **Rule 21 `[R-DOF]`:** ledger unchanged
+(3 / 2). **Rule 31 `[R-RETAIN]`:** nothing created, nothing deleted — **no bundle exists, so there is no
+promotion question to put.** **`[R-HOLDOUT]` was removed 2026-09-09:** no year is protected from being
+iterated against, so **no SPP number here is a certified out-of-sample skill claim** and `CALIBRATED`
+is a rubric determination.
+
+**THE QUESTION PUT TO THE OWNER:** *Declare SPP `complete` on keeper
+`2026-09-10-spp-27-commitment-grain` — yes or no?* (`frontier`: this lane recommends no.)
+
+**Next shorthand: spp-32.**
