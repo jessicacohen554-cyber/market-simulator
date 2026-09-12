@@ -5191,7 +5191,9 @@ def solve_and_persist(
                     GAS_OFFER_MARGIN_ANCHOR_BY_ZONE[iso]
                 ),
             )
-        if gas_offer_margin_zonal_anchor_vintage:
+        if gas_offer_margin_zonal_anchor_vintage or getattr(
+            recorded_cfg, "gas_offer_margin_zonal_anchor_vintage", False
+        ):
             # nyiso-230 — MIRROR of run_year's zone-resolved vintage
             # resolution, and it must stay a mirror: the recorded config has to
             # report the anchors the LP actually solved with, not the frozen
@@ -5206,9 +5208,10 @@ def solve_and_persist(
             )
 
             recorded_cfg = recorded_cfg.with_overrides(
+                gas_offer_margin_zonal_anchor_vintage=True,
                 gas_offer_margin_anchor_by_zone=_f5_zonal(
                     recorded_cfg, cfg_year, int(hours)
-                )
+                ),
             )
         if coal_offer_margin:
             # Coal net-revenue margin form (ERCOT-137): record the gate AND

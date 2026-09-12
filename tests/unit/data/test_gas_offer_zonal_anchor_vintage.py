@@ -206,3 +206,34 @@ def test_the_kwarg_reaches_both_runners(module_path, func_name):
         "would raise TypeError, or worse, silently solve the control twice"
     )
     assert params["gas_offer_margin_zonal_anchor_vintage"].default is False
+
+
+@pytest.mark.parametrize(
+    "module_path,marker",
+    [
+        ("scripts/run_calibration.py", "config"),
+        ("scripts/run_calibration_full.py", "recorded_cfg"),
+    ],
+)
+def test_the_config_field_route_is_honoured_not_only_the_kwarg(module_path, marker):
+    """``replay_keeper.py --set`` writes the CONFIG field, never the solve kwarg.
+
+    Gating the resolution on the kwarg alone would let an A/B probe launched
+    through ``--set`` silently solve the CONTROL while recording an armed
+    config — the nyiso-229 failure mode one layer over, and undetectable from
+    the bundle. The field is also in ``_CACHE_KEY_OPTIONAL_FIELDS``, so a config
+    carrying it True MUST resolve or the cache key claims a resolution the solve
+    never performed (rule 24 ``[R-REGISTRY]``).
+    """
+    src = (ROOT / module_path).read_text()
+    needle = (
+        "if gas_offer_margin_zonal_anchor_vintage or getattr(\n"
+        f'        {marker}, "gas_offer_margin_zonal_anchor_vintage", False\n'
+    )
+    assert needle.strip() in " ".join(src.split()).replace("  ", " ") or (
+        "gas_offer_margin_zonal_anchor_vintage or getattr(" in src
+        and f'{marker}, "gas_offer_margin_zonal_anchor_vintage", False' in src
+    ), (
+        f"{module_path} gates the vintage resolution on the kwarg alone — a "
+        "--set probe would solve the control and record an armed config"
+    )

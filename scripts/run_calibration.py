@@ -2562,7 +2562,16 @@ def run_year(
     # the numbers the LP solved with (rule 24 [R-REGISTRY]) and the cache key
     # moves with them. One identification point, resolved on (zone, year) —
     # never stacked on the ISO-level vintage flag (rule 19 [R-ONE-MECH]).
-    if gas_offer_margin_zonal_anchor_vintage:
+    # Honour EITHER the solve kwarg OR the registered ScenarioConfig field: the
+    # field is in _CACHE_KEY_OPTIONAL_FIELDS, so a config carrying it True MUST
+    # resolve, or a cache key would claim a resolution the solve never did
+    # (rule 24 [R-REGISTRY]). It is also the ONLY route replay_keeper.py --set
+    # has: that channel writes the config field, never the kwarg, so gating on
+    # the kwarg alone would let an A/B probe silently solve the CONTROL --
+    # the nyiso-229 failure mode, one layer over.
+    if gas_offer_margin_zonal_anchor_vintage or getattr(
+        config, "gas_offer_margin_zonal_anchor_vintage", False
+    ):
         if not getattr(config, "gas_offer_net_revenue_margin", False):
             raise SystemExit(
                 "--gas-offer-margin-zonal-anchor-vintage requires "
@@ -2579,7 +2588,9 @@ def run_year(
                 "basis the ISO-level --gas-offer-margin-anchor-vintage is the "
                 "flag you want (rule 19 [R-ONE-MECH])"
             )
-        if gas_offer_margin_anchor_vintage:
+        if gas_offer_margin_anchor_vintage or getattr(
+            config, "gas_offer_margin_anchor_vintage", False
+        ):
             raise SystemExit(
                 "--gas-offer-margin-zonal-anchor-vintage and "
                 "--gas-offer-margin-anchor-vintage both re-resolve the SAME "
@@ -2597,7 +2608,10 @@ def run_year(
             {z: round(a, 4) for z, a in _f5_by_zone.items()},
             config.gas_offer_margin_anchor_by_zone,
         )
-        config = config.with_overrides(gas_offer_margin_anchor_by_zone=_f5_by_zone)
+        config = config.with_overrides(
+            gas_offer_margin_zonal_anchor_vintage=True,
+            gas_offer_margin_anchor_by_zone=_f5_by_zone,
+        )
     # PJM per-zone gas basis (opens the west-cheap / east-dear spread so PJM
     # stops clearing as a single copper-plate). No-op for non-PJM ISOs — the
     # apply gates on iso == "PJM" — so setting it here is safe regardless.
