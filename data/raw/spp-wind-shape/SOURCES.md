@@ -111,7 +111,8 @@ year's vintage (the reason a shape is built per year rather than reused):
 | Year | SPP-North plants / MW operable | SPP-South plants / MW operable |
 |---|---|---|
 | 2019 | 86 / 10,096.2 | 87 / 10,525.4 |
-| 2020 | 97 / 12,309.9 | (see build log) |
+| 2020 | 97 / 12,309.9 | 93 / 12,197.5 |
+| 2021 | 107 / 14,626.3 | 98 / 13,296.7 |
 | 2022 | 111 / 15,427.3 | 101 / 15,625.9 |
 
 Independently corroborated by EIA-930 `SWPP` measured wind, whose annual mean rises
