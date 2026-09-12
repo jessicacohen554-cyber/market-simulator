@@ -2005,3 +2005,8 @@ results/calibration/spp36_*/
 #   git checkout origin/claude/nyiso229-arm-2022r2  -- results/calibration/nyiso229_arm_y2022
 results/calibration/nyiso229_ctrl_y2022/
 results/calibration/nyiso229_arm_y2022/
+
+# nyiso-229 per-year shard bundle (2025 arm leg). Rule 32(d) [R-SHARD]: an
+# unregistered per-year shard dir stays out of `main` as a tracked path; rule 31
+# [R-RETAIN] keeps it on local disk. Force-added by the shard for the parent to fetch.
+results/calibration/nyiso229_arm_y2025/
