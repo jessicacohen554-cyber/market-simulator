@@ -347,9 +347,7 @@ def stage_year(
     for i in range(n_chunks):
         window = days[i * _CHUNK_DAYS : (i + 1) * _CHUNK_DAYS]
         chunk = [
-            rows
-            for dd, rows in zip(days, per_day)
-            if dd in window and rows is not None
+            rows for dd, rows in zip(days, per_day) if dd in window and rows is not None
         ]
         if not chunk:
             # No day in this window staged: skip the file rather than leave a
