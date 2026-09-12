@@ -988,7 +988,15 @@ class DispatchModel:
             r_fuel[col] = np.asarray(fleet.fuel_type_idx, dtype=int)[gidx]
             self.posture_zone_idx = r_zone[self._posture_pools]
             self.posture_fuel_idx = r_fuel[self._posture_pools]
-        self._all_cols = np.arange(layout.total_columns, dtype=np.int32)
+        # Index vector for changeColsCost. highspy exposes only the SET form
+        # (num, int32 indices, float64 costs) -- there is no range variant --
+        # so this array is required on every pass, but NOT during h.run().
+        # It is therefore released across the solve peak and rebuilt lazily
+        # (np.arange is ~0.05 s against 118 MB held on the 29.6M-column MISO
+        # LP). ``None`` here means 'not currently materialised', never 'absent'.
+        self._all_cols: np.ndarray | None = np.arange(
+            layout.total_columns, dtype=np.int32
+        )
         # Row-layout metadata for cross-year basis transfer (export/apply_cross_
         # year_basis). Generator add/retire changes only columns -- capacity is a
         # column bound and generation enters the energy balance via coefficients,
@@ -1082,6 +1090,8 @@ class DispatchModel:
         )
 
         h = self._h
+        if self._all_cols is None:
+            self._all_cols = np.arange(layout.total_columns, dtype=np.int32)
         h.changeColsCost(layout.total_columns, self._all_cols, cost)
 
         # Drop the two largest Python-side transients before the solve. HiGHS
@@ -1114,6 +1124,9 @@ class DispatchModel:
         gen_mc_f32 = np.asarray(mc, dtype=np.float32)
         del cost
         del mc
+        # Same reasoning for the column-index vector: HiGHS has consumed it,
+        # and the next pass rebuilds it for ~0.05 s. 118 MB on the MISO LP.
+        self._all_cols = None
 
         solve_start = time.perf_counter()
         h.run()
