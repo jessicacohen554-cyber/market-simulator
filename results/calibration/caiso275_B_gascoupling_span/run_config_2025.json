@@ -1,19 +1,19 @@
 {
-  "timestamp": "2026-09-12T02:00:00",
+  "timestamp": "2026-09-12T03:52:31",
   "git": {
     "sha": "b8ddf8bc",
     "basis_sha": "b8ddf8bc6ae539fb3a6c55824b4c5ead24521abe",
-    "branch": "claude/caiso275-b-2023",
+    "branch": "claude/caiso275-breg-2025",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "caiso-275 ARM B: caiso_import_gas_coupling=true on the caiso-271 keeper recipe, year 2023",
+  "model_changes_note": "caiso-275 ARM B: caiso_import_gas_coupling=true on the caiso-271 keeper recipe, year 2025",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "CAISO",
     "years": [
-      2023
+      2025
     ],
     "hours": 8760,
     "passes": [
@@ -22,7 +22,7 @@
     "commitment": false,
     "commitment_screen_coal": true,
     "gas_prices": {
-      "2023": 2.54
+      "2025": 3.52
     },
     "outage_source": "historic",
     "coal_lignite_mustrun": null,
@@ -96,7 +96,7 @@
     "git_sha": "b8ddf8bc"
   },
   "scenario_config": {
-    "weather_year": 2023,
+    "weather_year": 2025,
     "iso": "CAISO",
     "mode": "backcast",
     "voll": 5000.0,
@@ -1111,7 +1111,7 @@
     "unit_outage_maxgen_events": false,
     "maxgen_emergency_tier_pricing": false,
     "forecast_xyear_warmstart": true,
-    "gas_price_override": 2.54,
+    "gas_price_override": 3.52,
     "ercot_offer_hrmult_ep_rebasis": false,
     "ercot_offer_hrmult_ep_rebasis_bands": null,
     "ercot_capability_reconciliation": false,
@@ -1180,13 +1180,13 @@
     "seam_import_cap": {
       "status": "recorded",
       "by_year": {
-        "2023": {
+        "2025": {
           "iso": "CAISO",
-          "year": 2023,
+          "year": 2025,
           "flag_armed": true,
-          "cap_mw": 16055.0,
+          "cap_mw": 16148.0,
           "source": "mic_partition",
-          "delivery_year": "2023",
+          "delivery_year": "2025",
           "season": "annual",
           "import_zone": "WECC_import"
         }

@@ -14454,3 +14454,97 @@ adds one. PARTITION CHECK run (`curate_capacity_deliverability.py`, 386 CAISO ro
 `mic_partition`, `cap_mw 15780.0` — not the retired fitted scalar.
 
 **Next number: caiso-273.**
+
+## 2026-09-12 — caiso-275: ARM B PROMOTED (`caiso_import_gas_coupling`); ARM A REJECTED on its own liveness gate
+
+**KEEPER NOW `2026-09-12-caiso-275-gascoupling`** (bundle `caiso275_B_gascoupling_span`),
+**CALIBRATED** on 2023–2025 with the single ledgered C3c caveat. Promotion is the owner's
+instruction of 2026-09-12 (verbatim: *"Promote arm b then"*) under the standing ruling *"If
+structural integrity improves but gates regress that may still be a keeper.."* — and here structure
+**and** the scorecard both improve. Prior keeper `2026-09-10-caiso-271-egrid-family` is
+**deliberately NOT pruned** (rule 31 `[R-RETAIN]`): it is the G-CTRL form-4 control, so reversing
+this promotion costs one line and zero LP. Charter
+`docs/PRECOMMIT-caiso275-belly-and-winter-basis-2026-09-12.md` (pushed, SHA `b8ddf8bc` pinned,
+before the first LP of any shard); record
+`docs/RESULT-caiso275-belly-and-winter-basis-2026-09-12.md`.
+
+**THE DIAGNOSIS (new instrument).** A net-load-decile decomposition of the price gap — no prior
+CAISO session ran one. In the lowest decile the real CAISO is a **net exporter running 7–9 GW of its
+own gas** while the model is a **net importer of ~2 GW running 1.5 GW** (2024 decile 0: model
+$−3.4 vs RT $−9.6, imports 1,998 MW vs actual net −1,037, gas 1,498 vs 7,235 MW). The gap is
+monotone in net load and flips sign at the peak. Cause: `IMPORT_TRANCHES["CAISO"]` prices six blocks
+at six hand numbers — $28/$36/$48/$68/$110/$180, **identical in every year** — which
+`caiso_import_hub_prices`'s own docstring calls "re-fit in bundle mode against the model's OWN solved
+price". Second object: **Dec-2022 is 44.8 % of that year's failure** (+$63.17/MWh), the SoCal
+citygate blowout ($23.10/MMBtu delivered against a $11.42 WECC hub spot).
+
+**ARM A — `caiso_import_solar_shape` — REJECTED on its own pre-registered G-1**: 339 / 307 / 518
+hours moved (2023/24/25) against a ≥1,000 h gate. Perfectly confined (off-window ΔP −0.015 to −0.030
+against −0.46 to −0.63 on-window) and correctly signed, at **~1/20** the magnitude a −$36 to −$46
+collapse over 30 % of hours implies. `dump` stays 0.000 TWh in every arm-hour, so **the marginal
+import block is NOT the belly price-setter — CAISO gas is.** That reproduces caiso-272 §3.1 from a
+fourth direction and **closes the import-offer route to the belly over-price**. Not resized, no
+second value tried (rule 1 forbids sweeping against the gates).
+
+**ARM B — `caiso_import_gas_coupling` — PROMOTED.** Retires the flat `DSW_CCGT $68` / `DSW_CT $110`
+for the measured commodity basis already armed on in-state gas; rules 1 `[R-STRUCT]` / 14
+`[R-ACCURATE]` are the whole case. Zero new free parameters, zero new thresholds, no
+`authorized_price_tuning` block, DOF ledger unchanged. **Sized before the solve from the gas series
+alone**, and it predicted a December-concentrated response: measured, the monthly move tracks the
+monthly |basis| at **Pearson +0.990 / Spearman +0.902** in 2022, Dec-2022 moving **−$14.32** on a
+−$81.4 implied offer shift against −0.02 to −0.91 in every other month.
+
+**HEADLINE: C3b-2022 FLIPS 0.240 FAIL → 0.194 PASS**, so the folded 2022 rung
+`2026-09-12-caiso-275-gascoupling-2022` now reads NOT-YET on `price_mean` **alone**. C3b also
+improves 2023 (0.082→0.077), 2024 (0.139→0.137), 2025 (0.107→0.106); C3a improves every year
+(2022 95.47→94.07 i.e. +13.0→+11.3 %; 2023 56.54→55.89; 2024 37.65→37.55; 2025 37.13→37.07).
+**Nothing regresses in any year.**
+
+**REPORTED AGAINST THE ARM, AND A SESSION CLAIM IS WITHDRAWN.** This session first reported Arm B as
+passing every gate; that predated the 2024 shard and is **withdrawn** (commit `66259c12`). Measured
+over four years: **G-1** 1,276 PASS / 1,478 PASS / **580 FAIL** / **481 FAIL** (≥1,000 h gate);
+**G-2** +0.990 PASS / +0.565 PASS / **−0.214 FAIL** / +0.596 PASS (>0 gate). 2025's shortfall was
+declared in advance (PRECOMMIT §10.2 — hub gas NaN Sep–Nov, delta zeroed, those months move
+0.005–0.012). **2024's was not declared and is a genuine failure**; RESULT §3.1 explains it as low
+test power (2024's basis spans only −0.09 to −1.41 $/MMBtu, range 1.32 against 2022's 11.33) and
+records that as an explanation of the failure, **never** as a conversion into a pass. Honest
+consequence: **the arm rests on ONE discriminating year (2022), which is also its screen year.**
+C3a-2022 still FAILS at +11.3 %; rule 30(c) means the rung never downgrades the ISO. The arm does
+**not** touch the belly gas deficit or the reversed seam direction — the successor object is CAISO
+**commitment**.
+
+**ALSO ESTABLISHED, DO-NOT-ARM:** `caiso_import_hub_prices` is **provably inert** on this keeper —
+`inject_caiso_import_hub_prices` matches rows with a raw `uid.startswith(IMPORT_ZONE[iso])`
+(`WECC_import_` only) while its two siblings were repaired to use the per-hub-aware
+`_caiso_import_tranche_of`, so under the armed `caiso_per_hub_intertie` it reprices zero rows. A real
+code defect, recorded, not repaired here (rule 32(c)6).
+
+**MECHANICS.** Parent ran **ZERO LP** (rule 32 `[R-SHARD]`); eight per-year shards, composed in the
+parent. G-CTRL form 4 with **no control solve**, earned by a G-DRIFT audit in which every changed
+hunk is INERT for a CAISO backcast — and, stronger than a hunk read, rebuilding `ScenarioConfig` at
+HEAD from the keeper's **838 recorded fields moves zero fields**. The caiso-273 §5 trap was avoided:
+per-year `_shared` caches unioned through `bundle_io.write_shared_input` **before** the first
+registration, the unioned hashes reproducing the keeper's own byte-for-byte
+(`campd-48c0f1dd36b6` / `eia923-8ca120c6637d` / `eia930-3697b3115384`), and **all four committed
+bench parts byte-identical** after registration. Gate (a) in
+`frontend/data/forecast/program-status.json` was **stale across two promotions** (still naming
+caiso-269) and is re-keyed here; `check_gate_a_provenance.py --iso CAISO` FAILED before and PASSES
+after.
+
+**TWO COSTS DISCLOSED.** (1) The first six shards were told **not** to commit `system.parquet` and
+`dispatch/`, which the registration path requires, so four Arm B years were **re-solved** after the
+original containers were archived — the session's own prompt error; no conclusion depends on the
+re-solve, since every gate number came from the committed `hourly/` sidecars, and each re-solve
+reproduces its first-pass load-weighted price to within **0.004 $/MWh**. (2) **A docs-vs-code
+discrepancy found and NOT resolved unilaterally:** `check_registry_payload_parity.py` enumerates
+`results/calibration/` from the **filesystem** (`calib_root.iterdir()`), so rule 31's statement that
+"the parity gate only ever sees committed dirs, so an ignored bundle can sit on local disk
+indefinitely without turning anything red" is **not true of the code as it stands**. The per-year
+shard bundles are therefore retained at `results/caiso275_shards_retained/` (see its README), which
+satisfies rule 32(d) and rule 31 with no deletion. The fix — teach the gate to skip untracked dirs,
+or correct rule 31's text — is an owner call.
+
+**Matrix (rule 28(b)):** `import_hub_pricing` CAISO cell carries both verdicts (cell stays **K**);
+shard `keeper`/`updated` re-stamped; the §5.2 prose header re-stamped (it had been stale two
+promotions). **Pre-existing parity RED not mine:** `results/calibration/nyiso227_rebasis_span`
+(NYISO lane, commit `146c5af7`).
