@@ -13554,3 +13554,83 @@ killed the route for ~0 LP against a ~17-min span, G-CTRL form 4 throughout, no 
 30 `[R-MECH-MATRIX]` (NYISO shard stamped, no new row, §5.5 corrected); 31 `[R-RETAIN]` (nothing
 deleted, promotion question put and RULED); 32 `[R-SHARD]` (parent ran no LP; nothing earned a
 shard, so none was launched).
+
+## nyiso-228 — 2026-09-12 — the 2022 LMP miss and the fleet-`r` decay are ONE object, and it is NEITHER the seam NOR the offer surface
+
+**Three shards, three containers, ~5 solve-years of LP. The parent ran ZERO LP (rule 32
+`[R-SHARD]`). Keeper `2026-09-09-nyiso-221-fuelvintage-span` UNCHANGED; nothing promoted.**
+Records: `docs/PRECOMMIT-nyiso228-amplitude-2026-09-12.md` (pushed at `55cd0a6c` before the first
+LP), `docs/ADDENDUM-nyiso228-the-2022-tail-is-MISTIMED-not-absent-2026-09-12.md`,
+`docs/RESULT-nyiso228-2026-09-12.md`. Bundles `nyiso228_control_span`, `nyiso228_tail_span`,
+`nyiso228_seamr_span`.
+
+**THE DIAGNOSIS, measured off committed artifacts at phase 0.** 2022's price miss is a **WINTER**
+miss: Jan −24.0, Feb −23.4, Dec −40.9 $/MWh carry **77 %** of the annual −9.55, and four Winter
+Storm Elliott days carry **34 %**. **The same months fail in the TRAINING years** (2025 Jan −13.3 /
+Feb −17.8; 2024 Dec −15.4), so this is a standing defect that 2023's mild winter hid — not a
+holdout-year anomaly. The "bad fleet `r`" is the same object: interchange `r` 0.794 / 0.660 / 0.679
+/ **0.473** falls in lockstep with D-A amplitude 62.7 / 61.2 / 52.6 / **41.8 %** of measured, the
+chain nyiso-99 identified and refused the shape lever over.
+
+**ADDENDUM 1 — I CORRECTED MY OWN §1.2, AND THE CORRECTED FINDING IS STRONGER.** I had written "the
+model has no upper tail, ceiling ~$200–315"; that was measured on 2023–2025 and wrongly generalised.
+In 2022 the model reaches **$1,429.99**, sheds firm load at VOLL, and drives `east_10min_total` to
+its full published **$775** and `seny_30min_total` to its full **$500**. The real finding: the
+model's **8 hours >$300 ALL fall on ONE DAY, 31 May**, against a market whose 101 fall in Jan 28 /
+Feb 8 / Dec 34 / Aug 15 — **overlap ZERO, precision 0 %, recall 0 %**. The model produces a
+*different, spurious* scarcity and none of the real one. **The 31-May event is an availability
+artifact and the VOLL hour proves it**: on the 18th-busiest day of 365 the model sheds 125/236 MW at
+VOLL while **5,412 MW** — Ravenswood 1,828, Bowline Point 1,242, Roseton 1,242, Empire 654, Selkirk
+446 — dispatches **exactly zero** all day and runs at the true annual peak. In a VOLL hour every
+*available* MW dispatches by construction, so that is proof, not inference. **What survives
+unchanged: the three NYCA-wide reserve families bind in 0 hours of ALL FOUR years.**
+
+**ARM C (CONTROL) — a control solve EARNED by G-DRIFT, and its prediction lands.** G-CTRL form 4 was
+**falsified**: `data/raw/reference/reliability_floor_coeffs_NYISO.csv` (the nyiso-227 NYC ST_GAS
+re-basing) landed on `main` after the keeper solved, so the committed keeper was not a valid
+control. Arm C reproduces the keeper at **+$0.0255 / +$0.0284 / +$0.0237** on 2023/24/25 against
+nyiso-227's independently measured **+0.026 / +0.028 / +0.025** — agreement to the third decimal in
+all three years. It also reproduces ADDENDUM 1 on a fresh solve (2022 max $1,429.99, 8 h >$300, 2
+VOLL hours).
+
+**ARM A (`offer_curve_by_group` peak band ×1.50) — KILLED AT THE SCREEN BY ITS OWN G-MAG GATE, and
+the reason is the finding.** Model p99 rose only **+$3.06** against a pre-registered $5–$120 band,
+so the other three years were never spent (rule 29 `[R-SCREEN]` doing exactly its job). **The peak
+band does not price higher — it LEAVES**: peak-band energy **3.2307 → 1.6531 TWh, −48.8 %**
+(CC_REGULAR −74.5 %, CC_CHP −52.6 %, CT_CHP −52.6 %), with every cheaper band of every class rising
+to replace it and served demand identical (151.5898 TWh both, zero slack, zero dump). A 50 % lift
+makes the top tranche uneconomic and the stack refills from below at nearly the same clearing price:
+`h>$300` 3 → 4, model max 313.94 → 315.75. **NYISO's model price ceiling is NOT set by the offer
+surface, so rule 1's authorized price-tuning channel cannot reach this defect.** The ×1.50 was
+frozen ex ante and was **not re-cut or swept** (condition (c)); the arm is reported as it landed.
+**One gate was MIS-SPECIFIED BY ME and is NOT stacked against the arm**: G-ENERGY reads −0.0629 TWh
+against ±0.05, but served demand is identical and the delta is storage round-trip (−0.0055) plus
+flow-dependent transmission losses (−0.0574) — I wrote the gate on generation, which is not
+conserved under a redispatch. G-MAG is the kill.
+
+**ARM B (`nyiso_import_reconciliation` off) — the seam band is EXONERATED.** Both pre-registered
+§3.2 legs fail: net interchange vs the EIA-930 measured total moves control → arm **−1.63 → −14.65
+%** (2022), −0.49 → +2.21 % (2023), **+1.76 → +24.40 %** (2024), **+1.40 → +19.76 %** (2025) — 3 of
+4 years blow ±5 % — and interchange hourly `r` improves in **0 of 4** years. **What the negative
+buys: the wrong-hours allocation SURVIVES the band's removal**, so the band is not the cause of
+nyiso-99's standing "quota met at the WRONG HOURS" caveat. Rule 14 `[R-ACCURATE]`: the measured band
+is KEPT because removing it degrades a measured level.
+
+**WHERE THIS LEAVES NYISO.** Two live hypotheses entered and **both are closed by measurement**, not
+argument. What remains is **scarcity-price formation**, where phase 0 found every structural route
+already adjudicated shut (`nyiso_spin_reserve_online` **I** — ρ\* 0.3426/0.3635/0.4619 with hydro's
+10-minute headroom a coverage gap; `nyiso_synchronised_reserve` **G**; `nyiso_east_reserve_families`
+**I**; `measured_ramp_capability` **I**; `temp_dependent_derate` **G**), plus the named successor:
+**availability-window PLACEMENT**. That successor is **not** the sub-5-day family nyiso-227 closed,
+has **no registered `ScenarioConfig` flag**, and therefore needs a code change and its own phase 0 —
+it is recorded, not launched blind. **2022's C3c must never be quoted as a bare count**: at 0 %
+precision a move from 8 to 20 hours need not contain one real scarcity hour.
+
+**Also landed:** `curate_lmp.py` died with `KeyError: 'MGHG'` because the CAISO 2021/2022 DAM files
+carry no GHG column, which aborted the **whole** `lmp` datatype for **every ISO** — the reason
+nyiso-223 could not compute C3b at all. One `num_optional()` helper on the optional GHG component;
+the four load-bearing components stay strict. Scoring path only, no LP path, no NYISO row touched.
+
+**Matrix (rule 28):** `offer_curve_by_group` stays **K** with the peak-band-only lift recorded
+REFUTED and DO-NOT-REDO; `nyiso_import_reconciliation` stays **K**, re-confirmed by direct
+falsification, with nyiso-99's caveat attribution moved OFF the row.
