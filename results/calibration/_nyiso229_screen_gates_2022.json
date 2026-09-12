@@ -1,0 +1,155 @@
+{
+  "gates": {
+    "G-DIR": {
+      "test": "2022 firm-load slack must FALL",
+      "control_mwh": 360.4720295774382,
+      "arm_mwh": 0.0,
+      "verdict": "PASS"
+    },
+    "G-MAG": {
+      "test": "slack -> 0.0 MWh and hours 3616/3617 clear (3657 MW restored vs 360.5 MW shed)",
+      "arm_slack_mwh": 0.0,
+      "arm_slack_at_voll": {
+        "3616": 0.0,
+        "3617": 0.0
+      },
+      "control_slack_at_voll": {
+        "3616": 124.89440925081362,
+        "3617": 235.57762032662458
+      },
+      "verdict": "PASS"
+    },
+    "G-DEMAND": {
+      "test": "served demand identical to 4 dp; dump 0 both legs",
+      "control_twh": 152.6817,
+      "arm_twh": 152.6817,
+      "control_dump": 0.0,
+      "arm_dump": 0.0,
+      "verdict": "PASS"
+    },
+    "G-CONF-2": {
+      "test": "no class-hour outside the restored set moves > 1.0 MW",
+      "restored_hours": 5278,
+      "violating_class_hours": 5409,
+      "worst_outside_mw": 1471.7119140625,
+      "classes_only_in_control": [],
+      "classes_only_in_arm": [],
+      "verdict": "STOP"
+    }
+  },
+  "reported": {
+    "reserve_shortfall": {
+      "control": {
+        "total_mwh": 50902.5859375,
+        "hours": 88,
+        "by_family": {
+          "east_10min_total": {
+            "h": 8,
+            "mwh": 5036.1
+          },
+          "li_10min_total": {
+            "h": 3,
+            "mwh": 278.7
+          },
+          "li_30min_total": {
+            "h": 4,
+            "mwh": 1763.3
+          },
+          "nyc_10min_total": {
+            "h": 88,
+            "mwh": 17586.0
+          },
+          "nyc_30min_total": {
+            "h": 52,
+            "mwh": 16630.9
+          },
+          "seny_30min_total": {
+            "h": 10,
+            "mwh": 9607.7
+          }
+        }
+      },
+      "arm": {
+        "total_mwh": 14657.4736328125,
+        "hours": 41,
+        "by_family": {
+          "east_10min_total": {
+            "h": 4,
+            "mwh": 632.0
+          },
+          "nyc_10min_total": {
+            "h": 41,
+            "mwh": 7034.4
+          },
+          "nyc_30min_total": {
+            "h": 16,
+            "mwh": 4959.7
+          },
+          "seny_30min_total": {
+            "h": 4,
+            "mwh": 2031.4
+          }
+        }
+      }
+    },
+    "price": {
+      "control": {
+        "lw_mean": 69.9525062614596,
+        "lw_max": 1429.9877796437686,
+        "h_gt": {
+          "150": 197,
+          "200": 30,
+          "300": 8
+        }
+      },
+      "arm": {
+        "lw_mean": 67.65729326289923,
+        "lw_max": 476.09859481018486,
+        "h_gt": {
+          "150": 148,
+          "200": 9,
+          "300": 4
+        }
+      },
+      "note": "C3a/C3b/C3c are REPORTED, never gated, in either direction (rule 29 [R-SCREEN]; the price direction was declared ex ante in the phase-0 finding \u00a76 and is DOWN)."
+    },
+    "class_twh": {
+      "control": {
+        "CC_CHP": 13.4279,
+        "CC_REGULAR": 36.88,
+        "COAL_BIT": 0.0,
+        "COAL_PRB": 0.6552,
+        "CT_CHP": 2.085,
+        "CT_PEAKER": 4.2661,
+        "OTHER": 2.1861,
+        "ST_CHP": 1.4936,
+        "ST_GAS": 6.4847,
+        "biomass": 1.0615,
+        "hydro": 25.6101,
+        "import": 27.8487,
+        "nuclear": 26.7531,
+        "oil": 0.6255,
+        "solar": 0.1093,
+        "wind": 4.7044
+      },
+      "arm": {
+        "CC_CHP": 13.3468,
+        "CC_REGULAR": 37.138,
+        "COAL_BIT": 0.0,
+        "COAL_PRB": 0.6522,
+        "CT_CHP": 2.0412,
+        "CT_PEAKER": 3.9742,
+        "OTHER": 2.1834,
+        "ST_CHP": 1.5028,
+        "ST_GAS": 6.6311,
+        "biomass": 1.0615,
+        "hydro": 25.6155,
+        "import": 27.8487,
+        "nuclear": 26.7531,
+        "oil": 0.6192,
+        "solar": 0.1093,
+        "wind": 4.7044
+      }
+    }
+  }
+}
