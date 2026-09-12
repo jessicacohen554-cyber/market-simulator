@@ -7087,6 +7087,15 @@ def _build_parser() -> argparse.ArgumentParser:
         "MARKET_SIM_P1_BASIS_SEED env var is honored over the default; this "
         "flag overrides both.",
     )
+    parser.add_argument(
+        "--no-container-preflight",
+        action="store_true",
+        help="Skip the container preflight (scripts/lib/solve_container.py): "
+        "the binding-cgroup memory ceiling read, the swapfile provisioning up "
+        "to 24 GiB, and the single-thread solve-profile pins. On by default "
+        "because a per-plant MISO/PJM year exceeds the 13.34 GiB CCR bash "
+        "cgroup and is OOM-killed without swap. Does not change the LP.",
+    )
     return parser
 
 
@@ -7192,6 +7201,15 @@ def main(argv: list[str] | None = None) -> None:
     # first and fails closed (tier map from scripts/lib/holdout_policy.py).
     if str(REPO) not in sys.path:
         sys.path.insert(0, str(REPO))
+
+    # Container preflight BEFORE the first loader allocates anything: binding
+    # cgroup ceiling, swap provisioning, solve-profile pins (the same call
+    # run_calibration_full.solve_and_persist makes; once per process, never
+    # raises, does not change the LP). --no-container-preflight skips it.
+    if not args.no_container_preflight:
+        from scripts.lib.solve_container import ensure_solve_container
+
+        ensure_solve_container(log=logger)
 
     # The reference-price interface is on when the CLI flag is set OR the ISO is
     # in the per-ISO default-on set (MISO); see resolve_reference_price_interface.
