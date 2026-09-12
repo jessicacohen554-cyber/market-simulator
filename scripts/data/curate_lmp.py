@@ -156,6 +156,30 @@ def parse_caiso_file(path: Path) -> pd.DataFrame:
     def num(col: str) -> np.ndarray:
         return pd.to_numeric(raw[col], errors="coerce").to_numpy()
 
+    def num_optional(col: str) -> np.ndarray:
+        """Same as :func:`num`, but an ABSENT column resolves to all-NaN.
+
+        Only the GHG component is read this way, and only because the CAISO
+        OASIS GRP payload does not carry it in every vintage: the committed
+        ``CAISO_dam_hourly_2021.csv`` / ``CAISO_dam_hourly_2022.csv`` print
+        ``interval_start_gmt, node, LMP, MCC, MCE, MCL`` with **no ``MGHG``
+        column at all**, while 2023+ and every RTM file do. ``MGHG`` is an
+        OPTIONAL schema component — ``_frame`` already defaults every
+        unsupplied numeric column to NaN — so a missing column is a
+        legitimately absent measurement, not a malformed file.
+
+        Before this guard a ``KeyError: 'MGHG'`` on those two files aborted
+        ``curate()`` for the WHOLE ``lmp`` datatype, i.e. every ISO's price
+        actuals, which is why a fresh container could not score C3a/C3b at all
+        (nyiso-223 §1 recorded the symptom and correctly declined to repair it
+        mid-shard). The four LOAD-BEARING components (LMP/MCE/MCC/MCL) stay on
+        the strict :func:`num` path, so a genuinely malformed file still fails
+        loudly. Rows from vintages that DO carry MGHG are byte-unchanged.
+        """
+        if col not in raw.columns:
+            return np.full(len(raw), np.nan)
+        return num(col)
+
     return _frame(
         path,
         len(raw),
@@ -168,7 +192,7 @@ def parse_caiso_file(path: Path) -> pd.DataFrame:
         energy_usd_per_mwh=num("MCE"),
         congestion_usd_per_mwh=num("MCC"),
         loss_usd_per_mwh=num("MCL"),
-        ghg_usd_per_mwh=num("MGHG"),
+        ghg_usd_per_mwh=num_optional("MGHG"),
     )
 
 

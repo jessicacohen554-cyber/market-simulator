@@ -1,0 +1,32 @@
+{
+ "CC_CHP": {
+  "peak": 3.375
+ },
+ "CC_REGULAR": {
+  "peak": 3.375
+ },
+ "COAL": {
+  "peak": 2.175
+ },
+ "COAL_BIT": {
+  "peak": 2.175
+ },
+ "COAL_LIGNITE": {
+  "peak": 2.325
+ },
+ "COAL_PRB": {
+  "peak": 2.22
+ },
+ "COAL_WC": {
+  "peak": 1.8
+ },
+ "CT_CHP": {
+  "peak": 1.5
+ },
+ "CT_PEAKER": {
+  "peak": 6.0
+ },
+ "ST_GAS": {
+  "peak": 6.3
+ }
+}
