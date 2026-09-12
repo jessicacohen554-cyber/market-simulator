@@ -1930,3 +1930,12 @@ results/calibration/spp27_*/
 # checkout and the parity gate never see them. What IS committed, force-added as
 # the slim 20-file set, is the registered composite pair pjm_d4_4_A (keeper,
 # 2023-2025) + pjm_d4_4_TP (touchpoint, 2020-2022).
+
+# pjm-h1 (2026-09-12): per-year shard bundle dirs are kept OUT of `main` (rule 32(d)
+# [R-SHARD]) — the COMPOSITE is what gets registered, and an unregistered per-year dir
+# left committed is the Class-E parity RED rule 29(c) [R-SCREEN] forbids. Discharged by
+# .gitignore, NEVER by `rm` (rule 31 [R-RETAIN]): the bytes stay on local disk, and
+# `results/calibration/pjm_d4_4_A/hourly/` already carries every 2025 sidecar this dir
+# duplicates. The owner ruled on promotion on 2026-09-11 (pjm-d4-4 IS the keeper), so
+# rule 31 trigger (i) is satisfied.
+results/calibration/pjm_d4_4_y[0-9][0-9][0-9][0-9]/

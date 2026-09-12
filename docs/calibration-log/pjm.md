@@ -5506,3 +5506,78 @@ metadata to quiet an auditor would be the wrong trade**, so it stands as a docum
 **Successors, in the order the evidence now supports:** (a) the **merit order** behind the marginal
 gas unit; (b) the **locational reserve family** just measured binding; (c) partial derates
 (`ercot_partial_outage_shaped_derate`, `·`, unbuilt).
+
+## 2026-09-12 — pjm-h1: the hydro miss is **100 %** an accounting seam, and CC_REGULAR is the only PJM class whose CF does not track reality
+
+**KEEPER UNCHANGED** at `2026-09-11-pjm-d4-4-gasoutage` (2023-2025), re-scored in-session:
+**CALIBRATED, 8/8, 0 caveats, 0 fails**, basis verbatim *"all criteria pass, governance
+attested."* Holdout `2026-09-11-pjm-holdout-gasoutage-touchpoint` unchanged at NOT-YET.
+**ZERO LP. Nothing solved, nothing registered, nothing armed, no cell verdict moved, and no
+shared code changed.** Records: `docs/FINDING-pjm-h1-hydro-accounting-seam-2026-09-12.md`,
+`docs/FINDING-pjm-h1-cc-cf-does-not-track-2026-09-12.md`.
+
+**(1) THE HYDRO CARD'S PREMISE IS REFUTED AND THE SEAM IS BIGGER.** The commissioning card said
+`classify_plant`'s `fuel == "WAT"` short-circuit puts ~5-6 TWh/yr of PS *gross* generation into
+the EIA-923 `classFull.hydro` actual. Two measurements kill that: **EIA-923 reports PS as NET
+generation, which is NEGATIVE** (PJM −1.78 to −2.67 TWh/yr), and **the 923 bucket is not the C1
+actual for PJM anyway** (6.19-8.44 TWh vs a bench `classFull.hydro` of 15.47-16.64). The real
+mechanism is `run_calibration_full._backfill_renewables_eia930`, which lists `hydro` in
+`_EIA930_RENEWABLE_CLASSES` and **replaces the class with EIA-930 `NG: WAT`** when the 923 total
+is below 0.90× it — for PJM the ratio is 0.39-0.55, so it fires every year — and
+`constants.EIA930_PS_FOLDED_INTO_WAT` already declares `{MISO, PJM}`: PJM files no `NG: PS`, so
+its `NG: WAT` folds PS **gross discharge**, 5.96-7.11 TWh/yr at an implied round-trip efficiency
+of **0.72-0.77** (the physical cross-check). **Like-for-like the model's conventional hydro is
+within ±0.9 % in every complete-vintage year** — stated as *plumbing, not skill*, since
+`hydro_level_923_hy` pins that level and hydro is a declared D-10 free class (L6).
+**The asymmetry is self-inflicted:** pjm-143 fixed this contamination on the MODEL side
+(`hydro_level_923_hy` `U` → `K`) and its §7 open list names three items, none of them the
+benchmark.
+
+**THE CARD IS CORRECTED ON THE STAKE, AND IT IS SMALLER THAN IT SAID:** **`hydro` is not a C1 row**
+(`score_fuelmix` iterates gas+coal only; `class_is_gated` is the 923 *vintage-completeness*
+predicate). The repair moves the C1 volume band by **0.000 TWh** in all six years (the 8 TWh cap
+binds either way) and flips **zero** C1 cells. Gate-neutral — which is why it cannot be a
+residual fit. Blast radius measured: **PJM all six years (5.96-7.11), MISO 2020+2022-2025
+(0.39-1.70), NEISO 2020-2022+2024 (0.42-0.68)**; ERCOT/CAISO/NYISO/SPP clean. `classify_plant`
+IS defective (it contradicts its own comment, and makes
+`run_calibration_full._pumped_storage_plant_ids()` a dead no-op) but only by −0.05 to −0.72
+TWh/yr, in the opposite direction, where the 930 swap does not fire. **ESCALATED, NOT EXECUTED
+— shared ISO-agnostic code, rule 25.**
+
+**(2) A NEW HOLDOUT OBJECT, AND THREE DEAD CANDIDATES.** Matched-fleet annual CF, model vs CAMPD,
+2020-2025: **CC_REGULAR is the ONLY PJM class that does not track reality** — cross-year
+**r = −0.183**, model CF range 0.015 against the meter's 0.058 — while COAL_BIT **+0.912**,
+CT_PEAKER **+0.896**, ST_GAS **+0.968** and CC_CHP **+0.775** all do. The model runs the 54-62 GW
+merchant CC fleet at 0.606-0.621 every year; the meter moves 0.550 (2021) / 0.563 (2022) /
+0.586-0.609 (2020, 2023-25). **The two flattest years are exactly the two C1 failures.**
+**FALSIFIED at zero LP, so no successor spends an LP on them:** partial derates / capability
+(meter revealed capability p99.5/npl is FLAT at 0.894-0.912, 2022 the *highest* of six; and
+`campd-partial-outages-shaped.csv` carries **zero PJM rows**); a `measured_cc_heat_rates`
+candidate (CAMPD `heatInput/grossLoad` over 4,756,608 unit-hours on all 70 plants: model
+**7.1954** vs measured-net **7.2974** capacity-weighted, i.e. **1.4 % cheap**, median per-plant
+delta **+0.008**, and **39 of 69 plants DEARER in the model** — reported against this session's
+own hypothesis); and any pjm-d4-2-shaped membership repair (the over-run is fleet-wide, 46-47 of
+68-70 plants). **The survivor is price-distribution compression** (D-A amplitude 29.9-32.9 % of
+measured in every year) pinning a large mid-merit class online 78-83 % of hours at 72-76 %
+loading — inside PJM's owner-declared-closed price-formation frontier (pjm-142). **ROUTED to the
+standing pjm-159 escalation, not pulled as a lever**, now carrying a refutable prediction it did
+not have: an amplitude repair that leaves CC_REGULAR's cross-year CF correlation at ≈ 0 has not
+addressed it.
+
+**(3) A PRE-EXISTING PJM PARITY RED DISCHARGED, AND A RULE-TEXT DISCREPANCY FOUND.**
+`results/calibration/pjm_d4_4_y2025` — a leftover per-year shard dir whose 2025 sidecars are all
+duplicated in the registered composite `pjm_d4_4_A/hourly/` — is untracked and gitignored, **never
+`rm`'d** (rule 31, the ercot-255 incident; bytes stay on local disk, history keeps the blobs).
+Reported: rule 31 asserts the parity gate *"only ever sees committed dirs"*, but
+`check_registry_payload_parity.py:437` sweeps `calib_root.iterdir()` — the **working tree**. The
+conclusion holds in CI (fresh checkout, dir absent, gate passes) and fails locally, which is the
+exact state rule 31 tells a lane to leave bundles in. Not fixed here — shared infrastructure and
+a governance choice. `results/calibration/nyiso227_rebasis_span` is the **other** pre-existing
+red and is **NYISO's lane, untouched**.
+
+**GATES:** `audit_keepers --iso PJM` PASS (0 failures, the known-and-deliberate E3 warning
+stands); `build_status --check --iso PJM` in sync; `check_mechanism_matrix --base origin/main`
+integrity OK; `check_cache_key_registration` OK (no new fields); `check_gate_a_provenance` fails
+on **CAISO's** row only (pre-existing, another lane's); `pytest tests/scoring` **16 failed** —
+all 16 reproduce on an unmodified `origin/main` tree, **none new** (the handoff's baseline of 15
+is stale by one).
