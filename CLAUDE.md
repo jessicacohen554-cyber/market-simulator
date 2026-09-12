@@ -616,6 +616,47 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
         rather than reporting a cleanup it did not perform. The normal disposal route stays what it
         always was: a merged shard branch is auto-deleted by the environment.
 
+1. `[R-SHARD-PROMOTABLE]` **A SOLVE THAT COULD EVER BE PROMOTED MUST PUSH ITS BUNDLE. NEVER LAUNCH
+    A SHARD WHOSE RESULT CANNOT BACK A PROMOTION, AND SOLVE EVERY YEAR THE KEEPER CARRIES — ALL OF
+    THEM.** *(Owner instruction 2026-09-12: "change the repo rules to never do shard runs that can't
+    backup a promotion to keeper", and "All years go into keepers". The incident: miso-255 sharded a
+    five-year screen, had every shard `.gitignore` its bundle under rule 29 `[R-SCREEN]` (c), and
+    reported a clean result. The owner then ruled promote — and every bundle was stranded on an
+    ephemeral shard container the parent had no way to reach, so a decided promotion cost a FULL
+    RE-SOLVE OF EVERY YEAR. Rule 31 `[R-RETAIN]` already forbids deleting a result before the owner
+    rules; this rule closes the hole rule 31 does not cover, which is a result that was never
+    RETRIEVABLE in the first place.)*
+    - **(a) THE BUNDLE IS PUSHED, ALWAYS. `.gitignore` IS FOR THE PARENT'S TREE, NEVER THE SHARD'S.**
+      A shard commits its own bundle to **its own branch** (`git add -f <its out-dir>`) and pushes it.
+      Rule 29 `[R-SCREEN]` (c)'s "delete before merge" governs what reaches **`main`** — it has never
+      governed what reaches a shard branch, and a shard branch is not `main`. The parent keeps the
+      per-year dirs out of `main` (rule 32(d)) by fetching them, composing, and committing only the
+      composite; that is the seam where the duty lives, not on the shard. **A shard prompt that tells
+      its shard to gitignore or omit the bundle is a defect in the prompt.**
+    - **(b) A SCREEN IS NOT AN EXCEPTION, BECAUSE YOU CANNOT KNOW IT IS ONE UNTIL THE OWNER RULES.**
+      The whole point of rule 31 is that the owner routinely promotes what a session declined. So
+      "this is only a screen, the doc carries the numbers" is not a reason to strand the bytes: the
+      numbers support a WRITE-UP, and a registration needs the per-plant payload. Push the bundle;
+      the doc is still required and still carries every number the lane will cite.
+    - **(c) SOLVE EVERY YEAR THE ISO'S KEEPER CARRIES, IN THE SAME BATCH — HELD-OUT YEARS INCLUDED.**
+      **All years go into keepers.** A promotion re-keys the ISO's whole registered set, so a batch
+      that solves only the training span leaves the ISO's other years pointing at a superseded recipe
+      — and under rule 30 `[R-TOUCHPOINT-FOLD]` (a) a dangling `holdout.keeper` stamp reads as
+      unstamped, silently dropping those years off the ISO's report. Before launching, enumerate the
+      ISO's registered years from `frontend/data/backcast/registry/*.json` and launch one shard for
+      **each**, against that year's own committed control. For MISO at this writing that is SIX years
+      (2020-2025), not three. A year deliberately left out is named in the PRECOMMIT with its reason.
+    - **(d) THE PARENT VERIFIES RETRIEVABILITY BEFORE IT ARCHIVES ANYTHING.** Rule 33
+      `[R-SHARD-ARCHIVE]` (a) already requires fetch + checkout + verify before archiving; this rule
+      adds the check that makes it possible — `git ls-tree -r <shard sha> -- <bundle path>` must
+      return **more than zero files**. Zero means the bytes exist only on a container, and the
+      correct report is that the run is **not promotable without a re-solve**, stated at the time,
+      with the cost — not discovered later when the owner asks for the promotion.
+    - **(e) STATE THE RETRIEVABILITY IN THE RESULT.** Every RESULT doc for a sharded solve says, in
+      one line, where each bundle is and what a promotion would cost from that state. "On ephemeral
+      shard disk, ~N min to re-solve" is an acceptable sentence only if (a) was impossible for a
+      stated reason; it is never the default outcome.
+
 Rules 17–26 are the protective rules from `docs/model-legitimacy-audit-2026-07.md` §8, numbered
 **16–25 there** — a doc reference to "audit rule N" maps to rule N+1 here. Mapping table, per-rule
 amendment genealogy and the incident record: `docs/governance/rule-history.md`.
