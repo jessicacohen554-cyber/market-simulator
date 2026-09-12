@@ -154,6 +154,22 @@ curves, so it is rule-13 `[R-MEASURED]` admissible as a forecast input, not a ba
    per-hub-aware `_caiso_import_tranche_of`. Under the keeper's armed `caiso_per_hub_intertie = True`
    the rows live in `WECC_PNW` / `WECC_DSW`, so it reprices zero rows and returns `False`. A real
    code defect, recorded, deliberately NOT repaired here (rule 32(c)6 keeps src/ out of shards).
+
+   > **CORRECTION 2026-09-12 (caiso-278) — "A REAL CODE DEFECT" IS REFUTED; THE
+   > CONCLUSION ("do not arm it") STANDS, FOR A DIFFERENT REASON.** The row counts above
+   > reproduce exactly (0 matched by the raw matcher, 12 by `_caiso_import_tranche_of`), but
+   > the call site is `scripts/run_calibration.py:5021` —
+   > `if legacy_intertie and getattr(config, "caiso_import_hub_prices", False):` — whose own
+   > comment reads *"Superseded by the per-hub node; gated to the legacy pooled topology
+   > only."* **The raw matcher is CONSISTENT WITH ITS OWN GATE**: the function only ever runs
+   > on the legacy pooled topology, where the rows genuinely are `WECC_import_*`. Under the
+   > armed `caiso_per_hub_intertie` the whole branch is skipped and the matcher never
+   > executes, so there is nothing to repair — and `caiso_per_hub_intertie` already prices
+   > each corridor at its own measured hub, which is the successor that comment names. The
+   > "own charter, own G-IDENT, own screen" this disclosure called for is therefore
+   > **withdrawn as unnecessary**, not merely undone.
+   > `docs/PRECOMMIT-caiso278-chp-offer-ablation-2026-09-12.md` §1;
+   > `scripts/probes/_caiso278_hubprice_phase0.py` P-1.
 6. **2020/2021 remain blocked**, not skipped — no committed 2020 CAISO LMP at all, 2021 only from
    08-12, and a bench part requires a solved bundle (caiso-274). "All years" here means 2022–2025.
 7. **Phase-0 gate A's window census used realized model solar/wind**, while the in-solve `net_load`
