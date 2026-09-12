@@ -2016,7 +2016,10 @@ results/calibration/spp36_2025/
 #  shards rebased and force-pushed after the parent had fetched them, and branches here are
 #  deleted within minutes. The 2024 leg's sha is appended when its shard lands.)
 results/calibration/nyiso229_ctrl_y2022/
-results/calibration/nyiso229_arm_y2022/
+# nyiso229_arm_y2022 is NO LONGER ignored: it was a rule-29 screen bundle, and on the
+# 2026-09-12 promotion it became the keeper's REGISTERED 2022 touchpoint
+# (2026-09-12-nyiso229-arm-y2022, folded via holdout.keeper), so rule 15 [R-DASHBOARD]
+# requires its bundle committed alongside its sidecar and payload.
 # miso-255 rule 29(c) / rule 31: screen bundles stay on local disk, never reach main
 results/calibration/miso255_sil_*/
 results/calibration/nyiso229_arm_y2023/

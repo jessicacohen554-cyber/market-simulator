@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-09-12T17:17:02",
+  "timestamp": "2026-09-12T16:54:59",
   "git": {
-    "sha": "36ed7981",
-    "basis_sha": "36ed79814eb95bbb3dcd90b04e10d60e5c825f02",
-    "branch": "claude/nyiso229-arm-2023",
+    "sha": "59589db1",
+    "basis_sha": "59589db146e57766e199f2f1d63fb6a1dc3841a6",
+    "branch": "claude/nyiso229-arm-2022r2",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
@@ -13,9 +13,7 @@
   "calibration_flags": {
     "iso": "NYISO",
     "years": [
-      2023,
-      2024,
-      2025
+      2022
     ],
     "hours": 8760,
     "passes": [
@@ -24,7 +22,7 @@
     "commitment": false,
     "commitment_screen_coal": true,
     "gas_prices": {
-      "2023": 2.54
+      "2022": 6.45
     },
     "outage_source": "historic",
     "coal_lignite_mustrun": null,
@@ -112,10 +110,10 @@
     "nyiso_dynamic_reserve_requirements": true,
     "nyiso_hydro_reserve_eligible": true,
     "nyiso_scr_edrp_reserve_eligible": true,
-    "git_sha": "36ed7981"
+    "git_sha": "59589db1"
   },
   "scenario_config": {
-    "weather_year": 2023,
+    "weather_year": 2022,
     "iso": "NYISO",
     "mode": "backcast",
     "voll": 5000.0,
@@ -1103,7 +1101,7 @@
     "unit_outage_maxgen_events": false,
     "maxgen_emergency_tier_pricing": false,
     "forecast_xyear_warmstart": true,
-    "gas_price_override": 2.54,
+    "gas_price_override": 6.45,
     "ercot_offer_hrmult_ep_rebasis": false,
     "ercot_offer_hrmult_ep_rebasis_bands": null,
     "ercot_capability_reconciliation": false,
@@ -1142,7 +1140,7 @@
     "rows": 210,
     "moved": {},
     "epochs": [],
-    "git_sha": "36ed7981"
+    "git_sha": "59589db1"
   },
   "environment": {
     "python_version": "3.11.15",
@@ -1169,9 +1167,9 @@
     "seam_import_cap": {
       "status": "recorded",
       "by_year": {
-        "2023": {
+        "2022": {
           "iso": "NYISO",
-          "year": 2023,
+          "year": 2022,
           "flag_armed": false,
           "cap_mw": null,
           "source": "flag_off",
