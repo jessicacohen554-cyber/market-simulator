@@ -12670,6 +12670,76 @@ is now the live queue head.**)*
 
 *(Prior header, nyiso-177, verbatim:)* 5.5 NYISO — **KEEPER 2026-09-02 (nyiso-177): `2026-09-02-nyiso-177-vintage-matched` — the nyiso-159 recipe plus the accurate per-unit CAMPD attribution (`campd_per_unit_attribution`) on a vintage-matched, reproducible availability basis (`campd_outage_merit_order_guard`); ZERO free parameters, ZERO new DOF entries (13 / `n_residual` 6 carried verbatim), zero new forcing mechanisms (the SAME six D-4 rows). PROMOTED BY OWNER RULING on rules 14 `[R-ACCURATE]` + 1 `[R-STRUCT]` OVER ONE GATE REGRESSION, reported at full magnitude — determination NOT-YET, target grade 6 → 5, fail set {C3a-2025, C3c} → **{C1-2023 `ST_GAS`, C3a-2025 −11.2 %, C3c}**. The one regression is a single cell (C1 2023 `ST_GAS` +3.86 TWh against the superseded keeper's +3.33, marginally outside a band the old keeper sat marginally inside), and the honest reading is the nyiso-155 precedent exactly: the superseded keeper passed that cell on ~0.5 TWh of margin THE ATTRIBUTION DEFECT WAS SUPPLYING. Four score-independent structural gains: accuracy, no off-registry channel (the hardcoded `outages._FLEET_GROUP_OVERRIDE` per-plant dict disarmed on the repaired path), REPRODUCIBILITY (the superseded keeper's outage extract carries a null `derive_invocation` and cannot be reproduced at HEAD at any flag setting) and INTERNAL CONSISTENCY (tranche and outage artifacts on ONE availability basis, made structural by `campd_attribution_selectors`). Evidence: `docs/FINDING-nyiso177-availability-basis-root-cause-2026-09-02.md` (§10 addendum carries the ruling; §1–§9 preserve the recommendation AGAINST it, unedited), `PREREG-nyiso177-degradation-root-cause.md`. **HEADER RE-STAMPED 2026-09-02 by nyiso-178 — the promoting session's rule 28 duty was missed and CI was warning on it; nothing but this header changed, and no verdict moved. PRIOR (nyiso-159) HEADER PRESERVED BELOW.**
 
+**QUEUE STATUS UPDATE 2026-09-12 (nyiso-229, PHASE 0 ZERO LP — the FIELD IS BUILT and the
+EXTRACT DERIVED; NOTHING SOLVED, NOTHING ARMED, KEEPER `2026-09-09-nyiso-221-fuelvintage-span`
+UNCHANGED). THE 31-MAY-2022 WINDOW IS REAL BUT DAY-ROUNDED, AND THE caiso-181 SEAM IS UNFIXED
+IN NYISO.**
+
+nyiso-228's ADDENDUM named availability-window **placement** as the successor and required a phase 0
+before any solve. Run in full at zero LP: `docs/FINDING-nyiso229-phase0-the-outage-window-grain-2026-09-12.md`.
+New row **`unit_outage_window_hour_grain`** minted with the field, same PR (rule 28c); NYISO cell
+**`O`**, the other six `U`.
+
+**The five named plants are NOT a fabricated outage.** Four of the five were genuinely dark on
+2022-05-31 in CAMPD. What is fabricated is the **grain**: the extract stores **dates** while the
+detector finds **hours**, so the loader re-expands every window to `outage_start` 00:00 →
+`outage_end` 23:00. On 2022-05-31 that asserts a **flat 10,053 MW offline for all 24 h** — a line
+that cannot vary within a day by construction — while the detected windows leave **3,657 MW
+available at hours 16-17**, the two hours the model shed 124.9 / 235.6 MW at VOLL: **29.3× and
+15.5× the shortfall.** Contradicted per the meter: Bowline 2625 u1 ran **23 h / 7,249 MWh / 562 MW
+max**, Roseton 8006 u1 **21 h / 1,905 MWh** and u2 **22 h / 3,466 MWh** — 1,863 MW nameplate and
+971 MW simultaneous at hour 17.
+
+**THE DEFECT IS THE SCHEMA, NOT THE DETECTOR, and that is measured rather than argued:**
+
+| year | contradicted **edge ≤23 h** | edge GWh | **interior >23 h** | interior GWh |
+|---|---|---|---|---|
+| 2022 | **9,872 h** | **1,376.9** | 560 h | **1.1** |
+| 2023 | **10,167 h** | **1,332.5** | 524 h | **0.6** |
+| 2024 | **8,529 h** | **1,075.9** | 395 h | **0.7** |
+| 2025 | **8,144 h** | **952.7** | 504 h | **0.8** |
+
+~95 % of contradicted hours are boundary rounding and they carry **~99.9 %** of the energy; the
+interior residue is the event-based detector's documented tolerance of brief returns, at a few MW.
+**It also repairs the overlap at source**: 293 same-unit day-grain window overlaps 2022-2025, **all
+exactly 24.0 h** — MISO's `unit_outage_per_unit_clip` fingerprint over 845 pairs — go to **ZERO**,
+and 2022-05-31 over-subtraction falls from 150-200 % of plant to exactly 100 % at five of six
+offenders. `per_unit_clip` is therefore **NOT** co-armed (rule 19 `[R-ONE-MECH]`: this gate removes
+the artifact the clip caps).
+
+**LIVENESS CORRECTS A GENERALISATION OF nyiso-227 (DO-NOT-REDO, rule 28(a)).** That census measured
+ST_GAS **energy** headroom (3.1-3.6 GW unused in the mean hour) and concluded every availability-side
+lever is inert. **That does not cover the co-optimised reserve pool**: the NYC locational families
+are short in **all four** years (88 / 20 / 15 / 33 h; 50,902.6 / 9,627.4 / 4,888.6 / 18,228.8 MWh),
+so this lever is **not** inert in the keeper's scored years. A successor proposing an
+availability-side NYISO lever must run the headroom test on **reserves as well as energy**.
+
+**SCREEN YEAR 2022**, named before any solve on **footprint and liveness, never on residual**:
+largest restored capacity (3,104.1 GWh-cap vs 2,902.8 / 2,405.8 / 2,473.2), largest restored MW in
+the control's own tight hours (1,825 vs 1,408 / 681 / 482), and the only year with firm-load slack.
+`[R-HOLDOUT]`'s removal means 2022 needs no authorization; rule 30(c) still binds.
+
+**DECLARED AGAINST IT EX ANTE:** it pushes prices **DOWN** — helping C3a-2023/2024 (+5.7 / +6.5 %)
+and **hurting** C3a-2025 (−6.3 %) and C3a-2022 (−13.8 %) — and it **LOWERS** the 2022 C3c count
+8 → ~0, which at **0 % precision and 0 % recall** is not a regression (nyiso-228 §4b). It **does not
+touch the winter object** (Jan/Feb/Dec, 77 % of the 2022 miss) and claims nothing about D-A
+amplitude. Zero free parameters; the deriver's two stop-the-line assertions prove the grain cannot
+MOVE a window, only narrow it, and the new extract's base columns are byte-identical to the
+committed one on 2022-2025 + 2026 (hash `aa5e39b967d057f2`).
+
+**Control** = the recovered nyiso-228 arm-C span at `git_sha d4f97391` (rule 29(b) form 4); a
+G-DRIFT audit to the arm's pinned SHA is owed in the PRECOMMIT. **HANDED FORWARD, zero-LP:** Massena
+54592 stays at **200 %** because an `eia923_netzero` row (`NET0-923`, 104.1 MW at 100 % of plant)
+stacks on the real CAMPD row (`001`, 44.0 MW, also 100 %) — two distinct unit ids each claiming the
+whole plant, which neither this gate nor `per_unit_clip` reaches.
+
+**THE SCREEN IS PRE-REGISTERED BUT NOT LAUNCHED** — a spend decision, and the owner's.
+Records: `docs/FINDING-nyiso229-phase0-the-outage-window-grain-2026-09-12.md`,
+`results/calibration/PRECOMMIT-nyiso229-outage-window-hour-grain.md`.
+
+---
+
+
 **QUEUE STATUS UPDATE 2026-09-11 (nyiso-227 SPAN — ONE shard, 13 m 35 s, three years, exit 0;
 the parent ran no LP). C3b IS MEASURED AT LAST, IT PASSES IN ALL THREE YEARS, AND THE PROMOTION
 QUESTION IS THE OWNER'S AND OPEN.**

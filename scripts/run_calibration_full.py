@@ -3821,6 +3821,7 @@ def solve_and_persist(
     unit_outage_st_capacity_basis: bool | None = None,
     unit_outage_per_unit_clip: bool | None = None,
     unit_outage_short_windows_gas: bool | None = None,
+    unit_outage_window_hour_grain: bool | None = None,
     campd_per_unit_attribution: bool | None = None,
     campd_outage_merit_order_guard: bool | None = None,
     netload_drag_layup_window_mask: bool | None = None,
@@ -5212,6 +5213,10 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 unit_outage_st_capacity_basis=unit_outage_st_capacity_basis
             )
+        if unit_outage_window_hour_grain is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                unit_outage_window_hour_grain=unit_outage_window_hour_grain
+            )
         if unit_outage_per_unit_clip is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 unit_outage_per_unit_clip=unit_outage_per_unit_clip
@@ -5715,6 +5720,7 @@ def solve_and_persist(
             unit_outage_st_capacity_basis=unit_outage_st_capacity_basis,
             unit_outage_per_unit_clip=unit_outage_per_unit_clip,
             unit_outage_short_windows_gas=unit_outage_short_windows_gas,
+            unit_outage_window_hour_grain=unit_outage_window_hour_grain,
             campd_per_unit_attribution=campd_per_unit_attribution,
             campd_outage_merit_order_guard=campd_outage_merit_order_guard,
             netload_drag_layup_window_mask=netload_drag_layup_window_mask,
@@ -6683,6 +6689,7 @@ def solve_and_persist(
         "unit_outage_st_capacity_basis": unit_outage_st_capacity_basis,
         "unit_outage_per_unit_clip": unit_outage_per_unit_clip,
         "unit_outage_short_windows_gas": unit_outage_short_windows_gas,
+        "unit_outage_window_hour_grain": unit_outage_window_hour_grain,
         "campd_per_unit_attribution": campd_per_unit_attribution,
         "campd_outage_merit_order_guard": campd_outage_merit_order_guard,
         "netload_drag_layup_window_mask": netload_drag_layup_window_mask,
@@ -8834,6 +8841,7 @@ def run_replay_bundle(
     unit_outage_st_capacity_basis: bool | None = None,
     unit_outage_per_unit_clip: bool | None = None,
     unit_outage_short_windows_gas: bool | None = None,
+    unit_outage_window_hour_grain: bool | None = None,
     campd_per_unit_attribution: bool | None = None,
     campd_outage_merit_order_guard: bool | None = None,
     netload_drag_layup_window_mask: bool | None = None,
@@ -9011,6 +9019,11 @@ def run_replay_bundle(
         # over a committed keeper's recipe, so the A/B solves BOTH legs from the
         # same recipe and the delta is provably the single flag.
         kwargs["unit_outage_st_capacity_basis"] = unit_outage_st_capacity_basis
+    if unit_outage_window_hour_grain is not None:
+        # nyiso-229: arm/disarm the DETECTED-HOUR outage window grain over a
+        # committed keeper's recipe, so the A/B solves BOTH legs from the same
+        # recipe and the delta is provably the single flag.
+        kwargs["unit_outage_window_hour_grain"] = unit_outage_window_hour_grain
     if unit_outage_per_unit_clip is not None:
         # miso-202: arm/disarm the per-unit removal clip over a committed
         # keeper's recipe, so the A/B solves BOTH legs from the same recipe and
@@ -12083,6 +12096,27 @@ def main() -> None:
         "discriminator. Default (unset) keeps the base config value (off).",
     )
     parser.add_argument(
+        "--unit-outage-window-hour-grain",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Read each CAMPD unit-outage window at its DETECTED HOUR grain "
+        "(ScenarioConfig.unit_outage_window_hour_grain). REQUIRES "
+        "--campd-per-unit-attribution AND --campd-outage-merit-order-guard and "
+        "is inert without either. The detector has always worked in hours while "
+        "the extract stored DATES, so data/outages.py re-expanded every window "
+        "to outage_start 00:00 -> outage_end 23:00 and asserted up to 23 h at "
+        "EACH EDGE that the detector never detected -- exactly where the "
+        "event-based contract guarantees the neighbouring hour was RUNNING. "
+        "Selects the '-perunitmerithour-' extract derived with "
+        "derive_campd_unit_outages --hour-grain, whose two in-process "
+        "stop-the-line assertions prove the grain cannot MOVE a detected "
+        "window, only narrow it. MEASURED on NYISO's own CAMPD (nyiso-229): "
+        "8,144-10,167 unit-hours per year asserted unavailable while the meter "
+        "shows grossLoad > 0, carrying 0.95-1.38 TWh, ~95 %% of them within 23 h "
+        "of a window boundary. ZERO fitted scalars, zero free parameters. "
+        "Default (unset) keeps the base config value (off).",
+    )
+    parser.add_argument(
         "--unit-outage-st-capacity-basis",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -13462,6 +13496,12 @@ def main() -> None:
                 or "--no-unit-outage-short-windows-gas" in sys.argv
                 else None
             ),
+            unit_outage_window_hour_grain=(
+                args.unit_outage_window_hour_grain
+                if "--unit-outage-window-hour-grain" in sys.argv
+                or "--no-unit-outage-window-hour-grain" in sys.argv
+                else None
+            ),
             enable_legacy_p2=args.enable_legacy_p2,
         )
         return
@@ -13859,6 +13899,7 @@ def main() -> None:
         unit_outage_st_capacity_basis=args.unit_outage_st_capacity_basis,
         unit_outage_per_unit_clip=args.unit_outage_per_unit_clip,
         unit_outage_short_windows_gas=args.unit_outage_short_windows_gas,
+        unit_outage_window_hour_grain=args.unit_outage_window_hour_grain,
         campd_per_unit_attribution=args.campd_per_unit_attribution,
         campd_outage_merit_order_guard=args.campd_outage_merit_order_guard,
         cc_winter_capability_basis=args.cc_winter_capability_basis,

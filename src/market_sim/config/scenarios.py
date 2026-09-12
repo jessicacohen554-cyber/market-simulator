@@ -392,6 +392,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # SAME COMMIT as the field (the nyiso-119 / caiso-186 discipline), so the
     # pinned default key never moves.
     "unit_outage_extract_basis_share",
+    # nyiso-229 unit-outage window at its DETECTED HOUR grain (GATED
+    # default-off; selects the ``-perunitmerithour-`` extract, so the off path
+    # is byte-inert -- it reads the same committed file it always did).
+    # Registered IN THE SAME COMMIT as the field (the nyiso-119 / caiso-186
+    # discipline), so the pinned default key never moves.
+    "unit_outage_window_hour_grain",
     # nyiso-198 duct-burner peaking share taken over the EIA-860 rows the
     # filing flags Duct Burners = Y (GATED default-off; every consumer reads it
     # via ``getattr(config, "cc_duct_peaking_row_scoped", False)``, so the off
@@ -1897,6 +1903,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by nyiso-196 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "unit_outage_extract_basis_share": "False",
+    # Added by nyiso-229 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
+    "unit_outage_window_hour_grain": "False",
     # Added by nyiso-198 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "cc_duct_peaking_row_scoped": "False",
@@ -14203,6 +14212,49 @@ class ScenarioConfig:
     # docs/FINDING-nyiso196-cc-outage-share-basis-2026-09-05.md,
     # results/calibration/PREREG-nyiso196-cc-outage-share-basis-screen.md.
     unit_outage_extract_basis_share: bool = False
+
+    # UNIT-OUTAGE WINDOW AT ITS DETECTED HOUR GRAIN (nyiso-229, GATED
+    # default-off). The CAMPD unit-outage detector has always worked in HOURS
+    # (``start = clock[s]``, ``last = clock[e - 1]`` in
+    # scripts/data/derive_campd_unit_outages.py) while the extract stored DATES,
+    # so data/outages.py re-expands every window to ``outage_start`` 00:00 ->
+    # ``outage_end`` 23:00 and asserts up to 23 h at EACH EDGE that the detector
+    # never detected -- exactly where the event-based contract guarantees the
+    # neighbouring hour was RUNNING. caiso-181 confirmed that seam at 100 % of
+    # unit-grain CEMS contradictions; caiso-183 built the carriage
+    # (``--hour-grain`` -> ``outage_start_hour`` / ``outage_end_hour``) and
+    # CAISO's extract already carries it. NYISO's did not.
+    #
+    # MEASURED ON NYISO'S OWN CAMPD (nyiso-229 phase 0, zero LP): the day-grain
+    # reconstruction asserts 8,144-10,167 unit-hours per year unavailable while
+    # the meter shows grossLoad > 0, carrying 0.95-1.38 TWh; ~95 % of those
+    # hours lie within 23 h of a window boundary and carry ~99.9 % of the
+    # energy, so the defect is the SCHEMA's rounding and NOT the detector's
+    # placement. On 2022-05-31 the day grain asserts a FLAT 10,053 MW offline
+    # for all 24 h; the detected windows leave 3,657 MW available at hours 16
+    # and 17 -- the two hours the model shed 124.9 / 235.6 MW of firm load at
+    # VOLL (29.3x / 15.5x the shortfall).
+    #
+    # This gate selects the ``-perunitmerithour-`` pair: the SAME per-unit
+    # merit-guarded detection, derived with ``--hour-grain``, whose two
+    # in-process stop-the-line assertions prove the grain change cannot MOVE a
+    # detected window (each reconstructed window is a strict subset of its
+    # day-granular parent, and the base-column projection is byte-identical to
+    # the flag-absent frame). It REQUIRES campd_per_unit_attribution AND
+    # campd_outage_merit_order_guard and is inert without either, so the two
+    # grains are one selector over one artifact family (rule 19 [R-ONE-MECH]).
+    # ZERO fitted scalars and zero free parameters (rule 21 [R-DOF]): no
+    # parameter, threshold or detector constant is involved. Rule-13
+    # forward-regenerable -- the detected hour-of-day is a property of the same
+    # detection pass, identical in construction for a forecast year's extract.
+    # Rule 25 [R-ISO-SCOPE]: nothing is carried from CAISO; each ISO's extract
+    # is derived from its own CAMPD and no number crosses. A registered field
+    # rather than the data-triggered adoption CAISO used, because the grain
+    # otherwise appears in NO run_config.json and changes NO cache_key(), so
+    # two bundles with identical configs could have solved on different grains
+    # (rule 24 [R-REGISTRY]). Evidence:
+    # docs/FINDING-nyiso229-phase0-the-outage-window-grain-2026-09-12.md.
+    unit_outage_window_hour_grain: bool = False
 
     # CAMPD PER-UNIT ATTRIBUTION (nyiso-175b/176, GATED default-off). The two
     # CAMPD-derived NYISO solve inputs both attribute a MIXED plant's measured

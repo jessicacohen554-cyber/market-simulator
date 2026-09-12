@@ -366,6 +366,7 @@ def unit_outage_csv_for_iso(
     mixed_gas_routing: bool = False,
     per_unit_crosswalk: bool = False,
     merit_order_guard: bool = False,
+    hour_grain: bool = False,
 ) -> Path:
     """Return the CAMPD unit-outage CSV path for an ISO.
 
@@ -410,6 +411,19 @@ def unit_outage_csv_for_iso(
     are one selector over one artifact family. Same discipline again: a
     separate file, never an overwrite, and the incumbent extract when the
     companion is absent.
+
+    ``hour_grain`` (``ScenarioConfig.unit_outage_window_hour_grain``, GATED
+    default False; nyiso-229) selects the ``-perunitmerithour-`` companion: the
+    SAME per-unit merit-guarded detection, derived with the deriver's
+    ``--hour-grain``, so each window carries :data:`_UNIT_OUTAGE_HOUR_COLUMNS`
+    and :func:`unit_outage_event_window` reconstructs the DETECTED window
+    instead of re-expanding it to 00:00-23:00. It has no meaning without BOTH
+    ``per_unit_crosswalk`` and ``merit_order_guard`` and is ignored without
+    either, so all three flags are one selector over one artifact family
+    (rule 19 ``[R-ONE-MECH]``). Zero free parameters -- the deriver's two
+    stop-the-line assertions prove the grain change cannot MOVE a detected
+    window, only narrow it. Same discipline once more: a separate file, never an
+    overwrite, and the ``-perunitmerit-`` extract when the companion is absent.
     """
     base = (
         UNIT_OUTAGE_CSV
@@ -418,6 +432,17 @@ def unit_outage_csv_for_iso(
     )
     if per_unit_crosswalk:
         if merit_order_guard:
+            if hour_grain:
+                # nyiso-229: the detected HOUR grain of the same merit-guarded
+                # per-unit windows. Falls through to the day-grain companion
+                # when it has not been derived for the ISO, so an ISO adopts the
+                # finer grain by deriving its own file and nothing else.
+                alt = base.with_name(
+                    f"campd-unit-outages-perunitmerithour-"
+                    f"{(iso or 'ERCOT').upper()}.csv"
+                )
+                if alt.exists():
+                    return alt
             alt = base.with_name(
                 f"campd-unit-outages-perunitmerit-{(iso or 'ERCOT').upper()}.csv"
             )
@@ -846,6 +871,7 @@ def unit_outage_derate_factors(
     merit_order_guard: bool = False,
     per_unit_clip: bool = False,
     extract_basis_share: bool = False,
+    hour_grain: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return ``{(plant_code, plant_group): (hours,) availability multiplier}``.
 
@@ -872,7 +898,7 @@ def unit_outage_derate_factors(
     """
     iso = (iso or "ERCOT").upper()
     csv_path = unit_outage_csv_for_iso(
-        iso, mixed_gas_routing, per_unit_crosswalk, merit_order_guard
+        iso, mixed_gas_routing, per_unit_crosswalk, merit_order_guard, hour_grain
     )
     df = _load_unit_outage_events(csv_path, iso)
     if df is None:

@@ -348,6 +348,11 @@ def _campd_unit_outages_block(config, iso: str) -> dict[str, Any]:
                 bool(getattr(config, "unit_outage_mixed_gas_routing", False)),
                 bool(getattr(config, "campd_per_unit_attribution", False)),
                 bool(getattr(config, "campd_outage_merit_order_guard", False)),
+                # nyiso-229: the grain gate too, for the same reason the three
+                # gates above are here -- without it this block names the
+                # day-grain extract for a run that consumed the
+                # '-perunitmerithour-' companion.
+                bool(getattr(config, "unit_outage_window_hour_grain", False)),
             )
         )
     except Exception:  # pragma: no cover - a probe never breaks the record
