@@ -13845,6 +13845,33 @@ shard from an answer**. Evidence:
 `docs/PRECOMMIT-miso253-mustrun-chp-btm-2026-09-10.md` (+ addenda A/B/C, all pushed BEFORE
 any solve was attempted).
 
+
+**2026-09-12 — THREE MORE SHARDS, THREE ENVIRONMENTS, ALL OOM. THE BLOCKER IS INFRASTRUCTURE, AND
+IT IS NOW PROVEN RATHER THAN INFERRED.** At SHA `eaa9d6f1` (carrying a ~461 MB Python lifetime fix
+landed this session): arm-ON default settings **13.301 GiB / 110 s**, arm-ON `threads=1` scaling-ON
+**13.301 GiB / 113 s**, arm-OFF keeper recipe **13.297 GiB / 89 s**. Four questions closed:
+**(a) NOT THE ARM** — the arm-OFF control OOMs within **4 MB** of the armed arms, so
+`mustrun_chp_btm_holdout` is exonerated by direct experiment rather than by argument;
+**(b) NOT THE ENVIRONMENT** — all three report the *identical* 13.344 GiB nested ceiling, so no
+larger container exists to relaunch into;
+**(c) THE THREAD CAP IS INERT** (1 MB above default), closing the last untested memory lever from
+the miso-252 list;
+**(d) THE BLOW-UP IS INSIDE HiGHS** — Python hands off at **5.06 GiB** after `addRows`, then the
+process takes **~8.2 GiB in ~33 s** with no Python allocation logged, on a
+1,026,876 × 29,643,840 / 86.2M-nnz model. **No Python-side optimisation can close an 8.2 GiB gap**,
+which retires the whole memory-hygiene line of attack — including this session's own 461 MB fix,
+which lands on its merits but is *not* the remedy.
+**G-1 confirmed a third and fourth time on the solve path** (12.514 TWh, 170 of 2994 rows, exact),
+and shard C found **no HEAD drift** against the committed bench (biomass 8.128 / OTHER 10.325 /
+CC_REGULAR 141.817 / `classFull` 616.259). Only two fixes exist, both owner-level: a container whose
+nested `claude-code-bash` cgroup clears ~14.5–15 GiB (platform config — raising it from inside works
+mechanically but trips the sandbox containment refusal on the follow-on workload), or a **smaller
+LP**, which is a rule-1 modelling decision, not a knob. HiGHS IPM/PDLP/Devex would cut the
+per-column working set but can move the **duals**, and prices *are* duals (rule 4) — owner sign-off
+only, deliberately not taken. The arm stays **UNADJUDICATED**, cell `O`, one successful solve from
+an answer. Evidence: `docs/FINDING-miso253-the-miso-lp-does-not-fit-2026-09-12.md`,
+`docs/SHARD-miso253-arm{A,B,C}.md`.
+
 * Next number: **miso-254**.
 
 ## miso-254 — 2026-09-12 — **THE MISO OOM IS THE MISSING SWAP STEP, NOT A MODEL CHANGE — the runners now provision the container themselves.** Keeper unchanged, `2026-09-09-miso-250-ep-gas`, **CALIBRATED**
