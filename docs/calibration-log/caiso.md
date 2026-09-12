@@ -14623,10 +14623,15 @@ measured non-binding seam. **Carbon** was the one unexamined `mc` term and it is
 **REPORTED AGAINST THE SESSION.** (1) **C3a-2022 is NOT closed**; the rung stays **NOT-YET**, and
 under rule 30(c) `[R-TOUCHPOINT-FOLD]` the ISO's determination is the train-tier verdict and is
 untouched. (2) **The residual is not a 2022 defect and not a CAISO-lane object**: caiso-270 measured
-the same bias in **40 of 48 ISO-months** and caiso-273 §1 a near-constant **+2.70 $/MWh** adder in
-2023–2025 (CV 0.095), so **2022 is simply the year the standing bias crosses the band because its
-gas price is highest.** Its honest venue is a cross-ISO marginal-offer-formation charter, not a
-held-out-year lane. (3) **§3 characterises, it does not diagnose** — it says which `mc` term the
+the same bias in **40 of 48 CAISO months** and caiso-273 §1 a near-constant **+2.70 $/MWh** adder
+in 2023–2025 (CV 0.095), so **2022 is simply the year the standing bias crosses the band because
+its gas price is highest.** *(CORRECTED 2026-09-12 by caiso-277: this entry first read "40 of 48
+**ISO-months**" and called the venue "a cross-ISO marginal-offer-formation charter". caiso-270 §4
+is CAISO-ONLY, and caiso-277's cross-ISO measurement over all 288 ISO-months FALSIFIED the
+program-level reading — pooled mean dHR **+0.037**, and on the common 2023–2025 window CAISO is
+the ONLY significantly positive ISO (+0.534, t = +4.03) while ERCOT (−2.54) and PJM (−2.87) are
+significantly NEGATIVE. The object is CAISO-SPECIFIC and the venue is CAISO. The refusal itself is
+unaffected.)* (3) **§3 characterises, it does not diagnose** — it says which `mc` term the
 residual must live in, not what supply is missing. (4) **A near-miss correction recorded against my
 own work:** an intermediate measurement appeared to show pumped storage pumping 1.6 GW at hod 18;
 that was a **mislabelled print header in my own probe**, not a model defect (the column was li-ion
@@ -14655,3 +14660,96 @@ three sibling verdicts (cell stays **K**); `zonal_gas_basis` gets **corroboratin
 verdict unchanged at R** — the 2022 N–S spread is **+0.085 $/MMBtu**, the **smallest** of the six
 covered years, so under rule 29 `[R-SCREEN]` 2022 could never be its screen year. Shard re-stamp
 appended; `scripts/check_mechanism_matrix.py` integrity **OK**.
+
+## caiso-277 — 2026-09-12
+
+**THE MARGINAL-OFFER BIAS IS CAISO-SPECIFIC, NOT PROGRAM-LEVEL. The caiso-277 charter's own
+premise is FALSIFIED by its own first measurement, and caiso-276's cross-ISO successor
+recommendation is WITHDRAWN. ZERO LP, ZERO fleet rebuilds, no arm, no `ScenarioConfig` field, no
+run registered, NO KEEPER CHANGED IN ANY ISO.** Rule 25 `[R-ISO-SCOPE]`: seven ISOs measured, zero
+verdicts transferred, no other ISO's keeper/log/shard touched. Full record:
+`docs/FINDING-caiso277-the-bias-is-caiso-specific-2026-09-12.md`.
+
+**G-REPRO PASSES:** the instrument returns CAISO-2022 model **94.069** against the committed bench
+`rt_lw` **84.49** — caiso-276's published pair, exactly.
+
+**Measured over 288 ISO-months / 24 registered keeper-years / 7 ISOs**, the implied-marginal-
+heat-rate bias `dHR = (price_model − price_actual) / gas`: positive in only **59.0 %** of
+ISO-months, **pooled mean +0.037 MMBtu/MWh — i.e. zero**, per-ISO means spanning **−0.717 (PJM) to
++0.629 (CAISO)**, and only **3 of 7** ISOs positive. **There is no program-level bias.**
+
+**On the COMMON WINDOW every ISO shares (2023–2025, 36 months each — the load-bearing cut, since
+the full spans are unequal and CAISO's 2022 is the record's most extreme year):**
+
+| ISO | dHR > 0 | mean | sd | t vs 0 | verdict |
+|---|--:|--:|--:|--:|---|
+| **CAISO** | **75.0 %** | **+0.534** | **0.794** | **+4.03** | **POSITIVE** |
+| ERCOT | 36.1 % | −0.625 | 1.478 | −2.54 | **NEGATIVE** |
+| PJM | 38.9 % | −0.717 | 1.499 | −2.87 | **NEGATIVE** |
+| NYISO / MISO / NEISO / SPP | 63.9 / 61.1 / 61.1 / 58.3 % | +0.299 / −0.002 / −0.185 / −0.028 | 2.173 / 1.395 / 1.473 / 1.596 | +0.83 / −0.01 / −0.75 / −0.11 | not distinguishable from 0 |
+
+**CAISO is the ONLY significantly positive ISO and its positivity is NOT a 2022 artifact** — it
+survives the common window at t = +4.03. Two ISOs run significantly the OTHER way. **A second
+signature is the more interesting one: CAISO's sd (0.794) is the LOWEST of all seven** (others
+1.40–2.17) — a small, highly systematic offset in one ISO against mean-zero scatter in six, which
+is the signature of a structural CAISO-specific mechanism rather than a shared model-class defect.
+
+**Also measured:** pooled dHR does **not** grow with the gas level and is not consistently signed
+across gas bins (the largest bin, `(0,3]`, n=114, is **−0.363**) — so caiso-276 §3's
+gas-proportionality is a **CAISO-within-2022** property, not a program property. And **CAISO-2022
+is the single failing keeper-year in the whole program**: all other 23 pass C3a, with four ISOs
+sitting *below* actual in their latest year (ERCOT −6.85 %, PJM −7.77 %, NYISO −7.27 %, MISO
+−6.20 %), the opposite sign to CAISO's miss.
+
+**THE CORRECTION, AGAINST MY OWN PRIOR SESSION.** caiso-276 cited caiso-270 §4 as establishing the
+bias "in 40 of 48 **ISO-months**" and read it as program-level. **caiso-270 §4 says "all 48 months
+of 2022-2025" and is CAISO-ONLY** — 4 years × 12 months of one ISO. Nothing cross-ISO had ever
+been measured. The phrase is corrected in place at all four occurrences (the caiso-276 FINDING
+§9.3 and §10.2, the caiso-276 entry above, and the CAISO matrix shard's 2026-09-12 re-stamp), each
+carrying the falsification inline. **The 40/48 measurement itself is not disputed** — this session
+independently returns 39 of 48 positive CAISO months (81.2 %) on a measured rather than
+model-internal gas series.
+
+**WHAT SURVIVES: caiso-276's REFUSAL, in full.** None of its four kills depended on the cross-ISO
+premise — all are CAISO-internal measurements on CAISO's own committed solution (the belly object
+at 2.6 % of the gap with the core unbiased; 2022 as one object; 647.7 MW idle-in-the-money and the
+seam binding in zero hours; the offer channel spent including CT_CHP on the OASIS file's own
+provenance). **C3a-2022 remains refused and CAISO remains CALIBRATED.** What is withdrawn is only
+the *venue*: it is CAISO, not the program.
+
+**AND THE RE-POINTING IS A SHARPER LEAD.** Six other ISOs run the same ISO-agnostic LP, the same
+P0→P1 bid-cost pass and the same `offer_curve_by_group` machinery, and none carries this bias;
+two carry its opposite. So the carrier is something **CAISO has that the other six do not** —
+a far narrower search space than "marginal-offer formation across the program". Named as the OPEN
+QUESTION and explicitly **not proposed as a lever** (rule 1 `[R-STRUCT]`): the per-hub intertie's
+two signed corridors, the **24.06 TWh of forced firm-import energy** D-2 attributes in 2022 alone
+(against 17.51 TWh of nuclear must-run), the four-tranche DSW clean-depth family, the solar-belly
+scale, and `caiso_offer_surface_measured` / `…_ungrounded`. Which of those carries a
++0.5 MMBtu/MWh systematic offset is **unmeasured**.
+
+**WHY NO SHARDS AND NO LP.** caiso-270 and caiso-276 both took the delivered-gas denominator from
+`reconstruct_bundle_fleet` — minutes per ISO-year, hours across 24. `dHR` only requires ONE gas
+series per ISO-month applied to both sides (caiso-270 §4's own discipline), so this session used
+the MEASURED one: `iso_monthly_gas_prices`, the EIA-923 Schedule-5 volume-weighted delivered cost
+across each ISO's own plants — rule-14 `[R-ACCURATE]` preferable to a model-internal array,
+**12/12 month coverage for every ISO-year**, and seconds to read. No fleet rebuild ⇒ nothing to
+shard ⇒ rule 32 `[R-SHARD]` (a) keeps all of it in the parent.
+
+**REPORTED AGAINST THE SESSION.** (1) The headline is that my own prior session's recommendation
+was wrong, and the lesson is that a premise cited from another session's §-reference is not a
+measurement until it is re-read; the charter should have been the measurement. (2) This is a
+**keeper-posture comparison, not a controlled experiment** — each ISO's keeper carries its own
+armed mechanisms and fleet representation, so "CAISO high, PJM low" is the right statement for
+deciding where to look and the wrong one for attributing cause. (3) The **t-statistics assume
+independence the 36 monthly values do not have** (serial correlation, a common gas series); they
+are a magnitude-and-sign screen, not inference, and no conclusion rests on a threshold near 2.0
+(CAISO +4.03 against four nulls at |t| ≤ 0.83). (4) The CV-ratio additive-vs-multiplicative form
+test is **uninformative where the mean is near zero** (MISO's raw CV is 929.7) and is therefore
+gated on |t| ≥ 2 and reported UNDETERMINED for the four null ISOs. (5) **Unequal spans are real**:
+ERCOT reads +0.052 (t = +0.17) on its full five-year span but −0.625 (t = −2.54) on 2023–2025, its
+2021 Uri year flipping the sign — which is exactly why the common-window leg exists and is the
+load-bearing cut.
+
+**Matrix (rule 28(b)): NO CELL VERDICT MOVES** — this session tested no mechanism, it measured
+seven keepers' solved output. The only shard edit is the §4a prose correction to CAISO's own
+2026-09-12 re-stamp. `check_mechanism_matrix.py` integrity OK.
