@@ -38,14 +38,22 @@ line, not per row) -- the same source-subset pattern as the ERCOT
 
 ## Authoritative source
 
-MISO Market Reports, one file per day, all nodes (no annual archives exist):
+MISO Market Reports, one file per day, all nodes (no annual LMP archive exists — see the sweep below):
 
 - DA ex-post: `https://docs.misoenergy.org/marketreports/YYYYMMDD_da_expost_lmp.csv`
 - RT final:   `https://docs.misoenergy.org/marketreports/YYYYMMDD_rt_lmp_final.csv`
 
-`docs.misoenergy.org` only retains a rolling ~3.5-year window of these daily
-files (verified 2026-07-09: 2022-12-31 → 404, 2023-01-01 → 200, for both
-reports). For a year that has aged off -- 2022 -- `fetch_miso_hub_lmp.py` falls
+`docs.misoenergy.org` serves **no daily report before 2023-01-01**. The boundary
+was first read as a rolling ~3.5-year window (2026-07-09: 2022-12-31 → 404,
+2023-01-01 → 200) but it has not moved since: re-measured 2026-09-10 and again
+**2026-09-12**, it is the same two dates, so it is a **FIXED floor**, not a
+window that keeps eating years. (It is LMP-specific, not a site-wide cutoff: the
+annual `*_HIST` archives of other report families do predate it -- `201912_dfal_
+HIST_xls.zip` and `202012_dfal_HIST_xls.zip` are both live -- but a 144-URL sweep
+of that family's naming space found **no LMP member for any pre-2023 year**. Full
+route audit, including why the archive index and its Wayback mirror are both
+unreachable from a session: `docs/FINDING-miso254-lmp-2020-2021-route-audit-2026-09-12.md`.)
+For a year below the floor -- 2022, and 2018-2021 -- `fetch_miso_hub_lmp.py` falls
 back to the MISO Data Exchange Pricing API
 (`https://apim.misoenergy.org/pricing/v1`, subscription-key auth via
 `MISO_PRICING_API_KEY`), verified byte-identical against the static CSV on an
@@ -68,7 +76,23 @@ to the MISO block of `actual_lmp.json`, and
 `scripts/report_miso_zonal_gates.py` scores gate 2 (zonal spread sign and
 magnitude) against these actuals.
 
-Staged years: 2022 (validation holdout, ~7-day plain-text chunks), 2023, 2024, 2025 (RT + DA, gzip).
+Staged years: 2022 (validation holdout, ~7-day plain-text chunks, INCOMPLETE -- see
+below), 2023, 2024, 2025 (RT + DA, gzip), 2026 H1 (chunks).
+
+**2020 and 2021 are NOT staged and cannot be staged without the key.** Both years sit
+below the 2023-01-01 floor, so every route open to a session is closed; the two folded
+validation rungs `2026-09-10-miso-251-tp2020` / `-tp2021` therefore score
+C3a/C3b/C3c as **SKIPPED**. `MISO_PRICING_API_KEY` is the single unblocker and the
+whole chain from key to re-scored rungs (no re-solve) is written out in
+`docs/FINDING-miso254-lmp-2020-2021-route-audit-2026-09-12.md` §4. **Probe one day
+before spending a year**: the Data Exchange portal documents no earliest date, so
+whether the API itself retains 2020/2021 is unverified.
+
+**Running the fetch for a below-floor year without the key now fails loudly** rather
+than writing ~53 header-only chunk files per market that read as a staged year
+(guard + tests added 2026-09-12: `tests/curation/test_fetch_miso_hub_lmp_staging.py`).
+A chunk window with no staged day is skipped entirely, which is why 2022's short tail
+shows as *absent* chunks (`p01..p49`) rather than empty ones.
 
 ## 2022 staging is INCOMPLETE (recorded 2026-07-31)
 
@@ -82,13 +106,14 @@ is complete and real; November is DA-complete and RT-partial (36.5 %);
 December is 29.0 % DA and effectively absent for RT (0.1 %, the single
 year-boundary hour).
 
-**It cannot be completed from `docs.misoenergy.org`** — the rolling retention
-window has aged 2022 off entirely (re-verified 2026-07-31: `20221215_da_expost_
-lmp.csv` -> **404**, `20231215_...` -> 200). Finishing it needs the documented
+**It cannot be completed from `docs.misoenergy.org`** — 2022 sits entirely below
+the 2023-01-01 floor (re-verified 2026-07-31: `20221215_da_expost_lmp.csv` ->
+**404**, `20231215_...` -> 200; and again 2026-09-12). Finishing it needs the documented
 fallback, the MISO Data Exchange Pricing API, which requires
 `MISO_PRICING_API_KEY` (`fetch_miso_hub_lmp.py --years 2022 --markets rt da`).
-The same retention clock is now running on 2023, whose daily files will age off
-in due course.
+The floor has not moved through 2026-09-12, so 2023 is not presently ageing off —
+but it is a publisher's choice, not a guarantee, and MISO has said the market
+reports will eventually be withdrawn in favour of the Data Exchange.
 
 Because the downstream means are NaN-ignoring, the MISO block of
 `actual_lmp.json` carries `da_cov` / `rt_cov` = `{annual, mon[12]}` so a
