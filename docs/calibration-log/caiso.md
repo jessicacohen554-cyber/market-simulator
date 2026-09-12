@@ -14870,3 +14870,84 @@ unchanged at **K**. `check_mechanism_matrix.py` exit 0, 0 errors (the residual w
 pre-existing line-anchor drift in the shared base file and another lane's SPP prose header).
 
 **Next number: caiso-279.**
+
+## caiso-278 (second sitting) — 2026-09-12
+
+**THE 8 % FOSSIL OFFER CUT WAS ALREADY SOLVED TWICE. It closes C3a exactly as the owner expects and
+FAILS C4-2025.** Plus a NEW zero-LP measurement: the "running over in every year" bias is
+**RT-basis-specific**, and after the basis reading **2025 is the whole object**. ZERO LP, ZERO
+SHARDS, no arm, no keeper change, no cell verdict moved. Rule 25: CAISO only. Record:
+`docs/ADDENDUM-caiso278-the-8pct-cut-and-the-basis-reading-2026-09-12.md`.
+
+**The premise is CORRECT.** Fossil bands × 0.92 via the rule-1 authorized channel ran at caiso-267
+and caiso-268 (live keeper, registered as a rejection `2026-09-09-caiso-268-fossil92-span`), the two
+replicating to ~1 MW hourly and three decimals. **C3a +4.4/+8.9/+8.3 % → −0.9/+4.3/+3.2 %** (mean
+|gap| 7.20 → 2.80 %, every year inside ±10 %); C1/C2/C3b/C6/C8 no flip; C5a improves. **C4 gas NRMSE
+0.287/0.260/0.298 → 0.275/0.254/0.308 — FAIL 2025 against ≤ 0.300. NOT-YET on C4-2025 alone; owner
+ruled DO NOT PROMOTE 2026-09-09.** All four STOP gates passed and G-DIR Δλ landed −2.850/−1.580/
+−1.720, within $0.005 of prediction.
+
+**WHY IT BREAKS, STRUCTURALLY.** A flat multiplier is uniformly more gas in all 8,760 h, so it helps
+the two years the keeper under-dispatches gas (2023 −969, 2024 −489 MW) and breaks the one year it
+was already near-unbiased — 2025, fleet mean error **−107.2 → +209.0 MW**, overnight h0–6
+**+202.4 → +764.4**, evening +766.1 → +1,030.9, belly improving −1,031.8 → −862.0. Displaced
+non-fossil is essentially all imports (−2.32/−1.97/−2.78 TWh vs CC_REGULAR +2.12/+1.81/+2.59). The
+arm buys price by making dispatch worse where dispatch was right — the same fact as the C4 failure.
+**caiso-272 vindicated the refusal at LP-row grain:** all CC families marginal at implied HR
+**9.235 vs the market's 9.289 — 0.05 BELOW**; the bias decomposes CC-marginal −0.029, non-CC tail
++0.383, λ-in-a-gap +0.747. The bands the channel can reach are already right, and the hour-scoped
+door the matrix DO-NOT-REDO left open is closed by that same measurement.
+
+**THE SIZING QUESTION, NAMED.** "Then use 5 %" is the one move rule 1 condition (c) forbids by name
+(never swept against the gates); caiso-267 refused 6 %/10 % before its solve. A sized cut exists
+only as an **owner override of (c)**. The trade, stated: +0.010 of C4-2025 per 8 %, so holding
+C4-2025 implies **≤ 2–3 %**, worth **~1 pp of C3a** against a 7.7 pp 2025 residual.
+
+**NEW: C3a ON THE DA BASIS, ALL FOUR YEARS** (committed `bench/CAISO/<y>.json.gz` `da_lw`/`rt_lw`;
+caiso-272 had read 2022 only and left it undecided):
+
+| year | model | gap vs RT | gap vs DA | DA−RT spread | position in DA−RT band |
+|---|--:|--:|--:|--:|--:|
+| 2022 | 94.07 | +11.34 % | **+2.09 %** | +9.05 % | 1.25× |
+| 2023 | 55.89 | +3.18 % | **−9.39 %** | +13.86 % | 0.23× |
+| 2024 | 37.55 | +8.37 % | **−1.11 %** | +9.58 % | 0.87× |
+| 2025 | 37.07 | +7.70 % | **+4.72 %** | **+2.85 %** | **2.70×** |
+| | | mean 7.65 % | **mean 4.33 %** | | |
+
+(1) The one-signed over-run is a property of the **RT basis**, not the model — on DA it is
+two-sided and mean |gap| falls 7.65 → 4.33 %. (2) **DA is not a rescue**: 2023 over-corrects to
+−9.39 %, near-failing the other side. (3) **2025 is not explained by basis at all and is now the
+whole object** — DA−RT spread only 2.85 % against a 7.70 % over-run (2.70× outside the band, the
+only year that is), and it is simultaneously the year whose **gas dispatch is already unbiased**
+(−107.2 MW) and the year the 8 % cut broke. In 2025 gas volume is right and price is still 7.7 %
+high, so λ there is set by something that is not gas cost or gas scarcity.
+
+**THREE FRESH CANDIDATES KILLED PRE-SOLVE (rule 29 step 0), none by opinion.** (a) the CHP/ST_GAS
+offer ablation — already solved at caiso-231, ~1 % of the object (first sitting). (b) **the
+firm-import floor reshape** — `firm_import` is 17.94 TWh forced on an `h0-23` window, 50.4 % of its
+class, and its shape basis IS acknowledged "the wrong object in kind"; but `caiso_firm_selfsched_floor`
+is **K** and reconciled (caiso-150/151: 18.856 − 0.919 clip = 17.938 exactly), caiso-150 §H
+adjudicated the direction-splitting source **unreachable from the public feed**, and caiso-202 §F.3
+measured the reconciliation **C3a-ADVERSE** (+0.045/+0.626/+0.494 pp) — my hypothesis was
+**wrong-signed**. (c) **wider RA must-offer / commitment reach** — caiso-276 §5a: only **647.7 MW of
+22,354 MW (2.9 %)** is idle-while-in-the-money, so a wider reach "has almost nothing to act on", and
+the 13.5 GW of headroom is **priced above λ**, routing straight back to the offer cut.
+
+**THE LOOP CLOSES**: cut offers → C4-2025 breaks; get belly gas without cutting offers → 2.9 % to
+act on; displace forced imports → wrong-signed + data wall; cut reachable bands → already at the
+market's level. **No admissible in-model lever exists and this session does not manufacture one.**
+
+**PUT TO THE OWNER — two free rulings, either of which unlocks a spend:** (A) **rule on the scoring
+basis** (§4) — bigger headline effect than any offer cut, zero LP, and the rubric's own
+OUT-OF-REPRESENTATION row calls the DA−RT premium something "the test must not demand" (caiso-272
+measured 70.2 % of the 2022 dollar miss as exactly that); (B) **override rule 1 condition (c)** and
+authorize a sized factor, accepting a swept fitted parameter. **AND ONE ZERO-LP MEASUREMENT IS
+RECOMMENDED FIRST**, because §4 moved the target: re-point caiso-272's `mc = λ` LP-row instrument
+(`scripts/probes/_caiso272_marginal_band.py`) **from 2022 to 2025** — it has never been run on the
+year that is now the entire object. If it names a reachable carrier, that earns the solve; spending
+LP before it spends it on the wrong year.
+
+**Matrix (rule 28(b)): NO VERDICT MOVES** — nothing armed or tested; the × 0.92 arm's rejection is
+already on the CAISO `offer_curve_by_group` cell from caiso-268.
+
+**Next number: caiso-279.**
