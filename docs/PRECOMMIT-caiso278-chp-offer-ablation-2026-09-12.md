@@ -9,6 +9,23 @@
 > in advance that the arm **cannot be promoted in either direction**, so the decision is
 > whether ~20 min of LP is worth pure diagnostic information. Do not read this document as a
 > record of a run.
+>
+> ## VOIDED 2026-09-12 (session caiso-278, the decision sitting). **NO-GO. NO LP WAS EVER SPENT.**
+> The go/no-go this banner was waiting for has been made, and it is **NO**. Rule 29 `[R-SCREEN]`
+> step 0 was not discharged before the gates were written, and discharging it killed the arm:
+> **this exact A/B — `caiso_offer_surface_measured_ungrounded` armed versus off — was already
+> solved at caiso-231 (2026-09-01), on three years, at full LP.** Its measured price footprint is
+> **+0.062 / +0.037 / +0.031 $/MWh** on 2023–2025, i.e. **1.2–3.6 % of the C3a gap and ~1 % of
+> caiso-277's +0.534 MMBtu/MWh object, measured on the very years the object lives on.** The
+> mechanism cannot be the carrier; §4's G-LIVE could not have fired (caiso-231 measured
+> max |Δ| 1,225 / 3,368 / 1,911 MW class-hour); and **caiso-231 §8 items 1–2 plus caiso-230
+> DO-NOT-REDO item 3 forbid proposing this mechanism as a C3a lever by name**, which rule 28(a)
+> makes binding absent new evidence on its magnitude.
+>
+> **WHAT IS VOIDED: §2 (the arm), §4 (the gates), §7 (the shard report) — the plan, and only the
+> plan. WHAT STANDS: §1's five pre-solve kills and §3's footprint table**, which the closure uses
+> and which rule 28(a) now protects as six kills rather than five. Do not re-stage this arm.
+> Full record: `docs/FINDING-caiso278-the-ablation-was-already-solved-2026-09-12.md`.
 
 **Session caiso-278, 2026-09-12. CAISO only (rule 25 `[R-ISO-SCOPE]`). Written BEFORE any
 solve; the shard prompt would pin this doc's own commit SHA (rule 32 `[R-SHARD]` (c) 1).**
