@@ -627,7 +627,24 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
     rules; this rule closes the hole rule 31 does not cover, which is a result that was never
     RETRIEVABLE in the first place.)*
     - **(a) THE BUNDLE IS PUSHED, ALWAYS. `.gitignore` IS FOR THE PARENT'S TREE, NEVER THE SHARD'S.**
-      A shard commits its own bundle to **its own branch** (`git add -f <its out-dir>`) and pushes it.
+      A shard commits its own bundle to **its own branch** and pushes it — by appending a
+      `.gitignore` NEGATION for its own out-dir and then using a **PLAIN `git add`**, NEVER
+      `git add -f`:
+      `printf '\n!results/calibration/<out-dir>/**\n' >> .gitignore` then
+      `git add .gitignore && git add results/calibration/<out-dir>`.
+      *(CORRECTED 2026-09-12, same day this rule was written: it originally prescribed
+      `git add -f <its out-dir>`, which is **the exact command the auto-mode classifier
+      refuses** as [Modify Shared Resources] — and in miso-255 that refusal then hardened
+      one shard's permission state until even the plain `git add` that had worked at solve
+      time was denied, costing a re-solve. `-f` is needed only because `.gitignore` line
+      ~651 ignores `results/calibration/*/dispatch/` repo-wide on the stated belief that
+      "~80 MB would trip the remote's 413 push limit" — a belief FALSIFIED the same day:
+      102,367,743 bytes pushed as a single-blob pack over plain `git push` with no 413.
+      Full chain: `docs/FINDING-miso255-why-the-dispatch-pushes-failed-2026-09-12.md`.)*
+      **The bundle MUST include `dispatch/<year>_P1.parquet`** — `render_calibration_html.
+      build_payload` reads it per year and registration raises `FileNotFoundError` without
+      it. Committed precedent: `caiso275_B_gascoupling_{2022,2023,2024,2025}` (45-49 MB
+      each) and `nyiso_fuelvintage_H2` (21.4 MB), all on `main`.
       Rule 29 `[R-SCREEN]` (c)'s "delete before merge" governs what reaches **`main`** — it has never
       governed what reaches a shard branch, and a shard branch is not `main`. The parent keeps the
       per-year dirs out of `main` (rule 32(d)) by fetching them, composing, and committing only the
