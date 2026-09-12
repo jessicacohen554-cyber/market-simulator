@@ -1,0 +1,211 @@
+{
+  "session": "caiso-276",
+  "year": 2022,
+  "phase": "0e",
+  "keeper_git_sha": "b8ddf8bc",
+  "M1_marginal_census": {
+    "shoulder_hod_6_9_19_22_exDec": {
+      "hours": 2672,
+      "matched_load_share": 0.186,
+      "lambda_in_gap_share": 0.814,
+      "marginal_hr_lw": 9.129,
+      "top_marginal": [
+        [
+          "CT_CHP:econc00",
+          0.1787
+        ],
+        [
+          "CC_REGULAR:committed",
+          0.1639
+        ],
+        [
+          "CT_CHP:econc01",
+          0.1095
+        ],
+        [
+          "import:midC",
+          0.109
+        ],
+        [
+          "CT_PEAKER:econc03",
+          0.0448
+        ],
+        [
+          "import:clean",
+          0.0429
+        ],
+        [
+          "CC_REGULAR:econc01",
+          0.036
+        ],
+        [
+          "CT_PEAKER:econc00",
+          0.0358
+        ]
+      ]
+    },
+    "belly_core_hod_10_16_exDec": {
+      "hours": 2338,
+      "matched_load_share": 0.1637,
+      "lambda_in_gap_share": 0.8363,
+      "marginal_hr_lw": 7.922,
+      "top_marginal": [
+        [
+          "CC_REGULAR:committed",
+          0.1985
+        ],
+        [
+          "import:clean",
+          0.1625
+        ],
+        [
+          "import:midC",
+          0.1375
+        ],
+        [
+          "CC_REGULAR:econc04",
+          0.0818
+        ],
+        [
+          "CC_REGULAR:econc01",
+          0.0735
+        ],
+        [
+          "CC_REGULAR:econc05",
+          0.0584
+        ],
+        [
+          "CC_REGULAR:econc03",
+          0.0568
+        ],
+        [
+          "CC_REGULAR:econc02",
+          0.0554
+        ]
+      ]
+    },
+    "december_all": {
+      "hours": 744,
+      "matched_load_share": 0.0934,
+      "lambda_in_gap_share": 0.9066,
+      "marginal_hr_lw": 7.892,
+      "top_marginal": [
+        [
+          "CC_REGULAR:econc01",
+          0.2163
+        ],
+        [
+          "CC_REGULAR:econc05",
+          0.1421
+        ],
+        [
+          "CC_REGULAR:committed",
+          0.1411
+        ],
+        [
+          "CC_REGULAR:econc00",
+          0.1302
+        ],
+        [
+          "CC_REGULAR:econc02",
+          0.1293
+        ],
+        [
+          "CC_REGULAR:econc04",
+          0.115
+        ],
+        [
+          "CC_REGULAR:econc03",
+          0.0815
+        ],
+        [
+          "import:midC",
+          0.0277
+        ]
+      ]
+    },
+    "all_8760": {
+      "hours": 8760,
+      "matched_load_share": 0.1861,
+      "lambda_in_gap_share": 0.8139,
+      "marginal_hr_lw": 8.529,
+      "top_marginal": [
+        [
+          "CC_REGULAR:committed",
+          0.1706
+        ],
+        [
+          "import:midC",
+          0.1376
+        ],
+        [
+          "CT_CHP:econc00",
+          0.1078
+        ],
+        [
+          "CC_REGULAR:econc01",
+          0.0744
+        ],
+        [
+          "CC_REGULAR:econc00",
+          0.0606
+        ],
+        [
+          "CC_REGULAR:econc03",
+          0.0589
+        ],
+        [
+          "CT_CHP:econc01",
+          0.0578
+        ],
+        [
+          "import:clean",
+          0.0574
+        ]
+      ]
+    }
+  },
+  "import_rows": 12,
+  "M2_seam_binding": {
+    "shoulder_hod_6_9_19_22_exDec": {
+      "hours": 2672,
+      "import_cap_mw": 16371.0,
+      "import_disp_mw": 5559.0,
+      "import_headroom_mw": 10812.0,
+      "util_lw": 0.3401,
+      "hours_util_ge_99pct": 0,
+      "hours_util_ge_95pct": 0,
+      "frac_hours_util_ge_99pct": 0.0
+    },
+    "belly_core_hod_10_16_exDec": {
+      "hours": 2338,
+      "import_cap_mw": 15440.0,
+      "import_disp_mw": 4607.0,
+      "import_headroom_mw": 10833.0,
+      "util_lw": 0.3041,
+      "hours_util_ge_99pct": 0,
+      "hours_util_ge_95pct": 0,
+      "frac_hours_util_ge_99pct": 0.0
+    },
+    "december_all": {
+      "hours": 744,
+      "import_cap_mw": 15899.0,
+      "import_disp_mw": 6769.0,
+      "import_headroom_mw": 9130.0,
+      "util_lw": 0.4263,
+      "hours_util_ge_99pct": 0,
+      "hours_util_ge_95pct": 0,
+      "frac_hours_util_ge_99pct": 0.0
+    },
+    "all_8760": {
+      "hours": 8760,
+      "import_cap_mw": 16189.0,
+      "import_disp_mw": 6107.0,
+      "import_headroom_mw": 10082.0,
+      "util_lw": 0.3726,
+      "hours_util_ge_99pct": 0,
+      "hours_util_ge_95pct": 0,
+      "frac_hours_util_ge_99pct": 0.0
+    }
+  }
+}

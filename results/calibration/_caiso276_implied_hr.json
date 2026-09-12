@@ -1,0 +1,172 @@
+{
+  "session": "caiso-276",
+  "year": 2022,
+  "phase": "0d",
+  "git_sha_keeper": "b8ddf8bc",
+  "gas_series_available": true,
+  "H1_monthly_implied_hr": [
+    {
+      "month": 1,
+      "gas_usd_mmbtu": 5.428,
+      "model_price": 55.23,
+      "actual_price": 43.52,
+      "hr_model": 10.174,
+      "hr_actual": 8.017,
+      "hr_bias": 2.157,
+      "gap_usd": 11.71
+    },
+    {
+      "month": 2,
+      "gas_usd_mmbtu": 5.239,
+      "model_price": 50.65,
+      "actual_price": 38.96,
+      "hr_model": 9.667,
+      "hr_actual": 7.436,
+      "hr_bias": 2.231,
+      "gap_usd": 11.69
+    },
+    {
+      "month": 3,
+      "gas_usd_mmbtu": 5.195,
+      "model_price": 47.67,
+      "actual_price": 43.56,
+      "hr_model": 9.176,
+      "hr_actual": 8.385,
+      "hr_bias": 0.792,
+      "gap_usd": 4.11
+    },
+    {
+      "month": 4,
+      "gas_usd_mmbtu": 7.108,
+      "model_price": 59.18,
+      "actual_price": 49.76,
+      "hr_model": 8.326,
+      "hr_actual": 7.001,
+      "hr_bias": 1.325,
+      "gap_usd": 9.42
+    },
+    {
+      "month": 5,
+      "gas_usd_mmbtu": 8.907,
+      "model_price": 66.39,
+      "actual_price": 58.76,
+      "hr_model": 7.454,
+      "hr_actual": 6.597,
+      "hr_bias": 0.857,
+      "gap_usd": 7.63
+    },
+    {
+      "month": 6,
+      "gas_usd_mmbtu": 8.362,
+      "model_price": 75.13,
+      "actual_price": 70.77,
+      "hr_model": 8.984,
+      "hr_actual": 8.463,
+      "hr_bias": 0.521,
+      "gap_usd": 4.36
+    },
+    {
+      "month": 7,
+      "gas_usd_mmbtu": 7.843,
+      "model_price": 79.55,
+      "actual_price": 71.8,
+      "hr_model": 10.142,
+      "hr_actual": 9.154,
+      "hr_bias": 0.988,
+      "gap_usd": 7.75
+    },
+    {
+      "month": 8,
+      "gas_usd_mmbtu": 9.748,
+      "model_price": 103.2,
+      "actual_price": 96.77,
+      "hr_model": 10.587,
+      "hr_actual": 9.927,
+      "hr_bias": 0.66,
+      "gap_usd": 6.43
+    },
+    {
+      "month": 9,
+      "gas_usd_mmbtu": 8.911,
+      "model_price": 125.17,
+      "actual_price": 123.41,
+      "hr_model": 14.047,
+      "hr_actual": 13.849,
+      "hr_bias": 0.198,
+      "gap_usd": 1.76
+    },
+    {
+      "month": 10,
+      "gas_usd_mmbtu": 6.538,
+      "model_price": 69.85,
+      "actual_price": 64.33,
+      "hr_model": 10.683,
+      "hr_actual": 9.839,
+      "hr_bias": 0.844,
+      "gap_usd": 5.52
+    },
+    {
+      "month": 11,
+      "gas_usd_mmbtu": 8.696,
+      "model_price": 86.22,
+      "actual_price": 82.92,
+      "hr_model": 9.914,
+      "hr_actual": 9.535,
+      "hr_bias": 0.379,
+      "gap_usd": 3.3
+    },
+    {
+      "month": 12,
+      "gas_usd_mmbtu": 37.016,
+      "model_price": 291.71,
+      "actual_price": 242.2,
+      "hr_model": 7.881,
+      "hr_actual": 6.543,
+      "hr_bias": 1.337,
+      "gap_usd": 49.51
+    }
+  ],
+  "H1_stats": {
+    "mean": 1.024,
+    "sd": 0.642,
+    "cv": 0.627,
+    "december": 1.337,
+    "december_rank_of_12": 3,
+    "ex_dec_mean": 0.996,
+    "ex_dec_sd": 0.665
+  },
+  "H1_december_z_vs_exdec": 0.51,
+  "dispatch_rows_matched": 1,
+  "H2_bound_census": {
+    "shoulder_hod_6_9_19_22": {
+      "hours": 2672,
+      "mean_price": 81.85,
+      "gas_cap_mw": 22354.0,
+      "gas_disp_mw": 8846.0,
+      "gas_idle_inmoney_mw": 647.7,
+      "gas_atbound_mw": 8599.0,
+      "gas_headroom_above_disp_mw": 13508.0,
+      "frac_cap_atbound": 0.3847
+    },
+    "belly_core_hod_10_16": {
+      "hours": 2338,
+      "mean_price": 63.53,
+      "gas_cap_mw": 22353.0,
+      "gas_disp_mw": 5666.0,
+      "gas_idle_inmoney_mw": 500.9,
+      "gas_atbound_mw": 5050.0,
+      "gas_headroom_above_disp_mw": 16686.0,
+      "frac_cap_atbound": 0.2259
+    },
+    "december_all": {
+      "hours": 744,
+      "mean_price": 291.71,
+      "gas_cap_mw": 25335.0,
+      "gas_disp_mw": 7666.0,
+      "gas_idle_inmoney_mw": 631.6,
+      "gas_atbound_mw": 7363.0,
+      "gas_headroom_above_disp_mw": 17668.0,
+      "frac_cap_atbound": 0.2906
+    }
+  }
+}
