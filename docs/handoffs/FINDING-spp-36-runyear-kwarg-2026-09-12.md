@@ -88,3 +88,35 @@ default-off and gated on two flags SPP has `False`. What the audit did not and c
 that the change had broken the **call binding** for everyone. **A G-DRIFT hunk can be numerically
 inert and still be fatal**; that is worth carrying forward into the next lane's audit, and it is the
 one lesson here that generalises.
+
+---
+
+## 7. ADDENDUM 2026-09-12 — shard-branch rescue under the new rule 33 `[R-SHARD-ARCHIVE]` (f)(1)
+
+Rule 33 landed on `main` while this lane was mid-flight. Its clause (f)(1) requires a shard's unique
+records to be committed onto the parent's branch **before** any branch disposal, and clause (d)
+requires recovery to be recorded by **full immutable SHA, never by branch name**. Discharged here:
+
+| record | unique to | rescued as | recovery SHA |
+|---|---|---|---|
+| SPP-36 shard 1 — the blocker report (NO SOLVE, the defect above) | already on `main` | *(no action)* | `7ed7d11b2b6c274aec3e85350f8c5a5c5a7036a9` |
+| SPP-36 shard 1b — year **2023** solved | `claude/spp36-2023b` | `docs/handoffs/SHARDREPORT-spp36-2023-relaunch.md` | `026efc9194a93da7752101574e38b23730e52b15` |
+| SPP-36 shard 2 — year **2024** solved | `claude/spp36-2024` | `docs/handoffs/SHARDREPORT-spp36-2024.md` | `c37f678a87bb741c4e4026f887a31f45cf4b657a` |
+| SPP-36 shard 3 — year **2025** solved | already on `main` | *(no action)* | `18ef91756ac84482a78ea719c2fc8d57ec7d5cf5` |
+
+**A filename collision was caught rather than allowed to overwrite**: shard 1 and shard 1b both wrote
+`SHARDREPORT-spp36-2023.md`, and the version that reached `main` is the **blocker** one. Committing
+the relaunch report under the same name would have destroyed the record of the defect that produced
+this FINDING. The relaunch therefore lands under `-relaunch`, and both survive.
+
+**The per-year bundles STAY (clause (f)(3)).** `claude/spp36-2023b` (`026efc91`) and
+`claude/spp36-2024` (`c37f678a`) carry solved bundles that a promotion could need, and the owner has
+not ruled, so rule 31 `[R-RETAIN]` forbids deleting them — and clause (f)(5) records that a session's
+credential cannot delete a remote branch here anyway (HTTP 403). `claude/spp36-2025` and
+`claude/spp36-2023` are already gone from the remote, auto-deleted on merge.
+
+**Recovery, by SHA rather than branch name (clause (d))** — each per-year slim bundle is restorable
+with `git checkout <sha> -- results/calibration/spp36_<year>/` at the SHAs tabled above. If those
+commits are ever garbage-collected the recovery route becomes a re-solve, at ~166 s of LP per year
+plus a container cycle, and this table should be edited to say so rather than left naming a command
+that will fail.
