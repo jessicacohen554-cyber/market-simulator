@@ -103,6 +103,7 @@ from market_sim.data.eia_loader import (  # noqa: E402
     load_ercot_other_gen,
     load_ercot_renewable_gen,
 )
+from market_sim.data.hydro import eia930_wat_level_folded  # noqa: E402
 from market_sim.data.zone_assignment import build_zone_lookup  # noqa: E402
 from market_sim.model.transmission import extend_with_import_node  # noqa: E402
 from market_sim.data.coal import coal_supply_class  # noqa: E402
@@ -2070,6 +2071,20 @@ def _pumped_storage_plant_ids() -> frozenset[int]:
     ``classify_plant`` buckets PS into OTHER, but PS is dispatched as an LP
     storage resource (``load_eia860_pumped_storage``), so leaving its EIA-923
     net generation in the injection would double-count it.
+
+    **THIS GUARD WAS A DEAD NO-OP UNTIL 2026-09-12 and is live only from then**
+    (gov-hydro-seam-1; the defect is
+    ``docs/FINDING-pjm-h1-hydro-accounting-seam-2026-09-12.md`` §5). The
+    docstring above described the intended taxonomy, but ``classify_plant``
+    carried a ``fuel == "WAT"`` short-circuit ahead of its prime-mover test and
+    every ``WAT``/``PS`` row therefore reached ``hydro``, never ``OTHER`` — so
+    the filter protected nothing while reading as though the PS question were
+    handled. With the classifier repaired the statement is finally true of the
+    code. Measured at the repair: the filter is PLANT-GRAIN, not row-grain, so
+    it could in principle drop a non-PS ``OTHER`` unit co-located with a PS
+    generator — there are **zero** such rows in the EIA-923 record 2019-2026,
+    and the injected ``OTHER`` class energy moves by **0.000000 MWh** in all 42
+    scored (ISO, year) cells, which is why the repair is not solve-affecting.
     """
     from market_sim.config.paths import EIA_860_DIR
     from market_sim.data.fleet import EIA_860_PARQUET_NAME
@@ -2317,6 +2332,87 @@ def _e930_series_annual_monthly(
     return float(sum(monthly)), monthly
 
 
+@lru_cache(maxsize=None)
+def _hydro_benchmark_is_923_only(iso: str, year: int) -> bool:
+    """Return True when ``(iso, year)``'s hydro ACTUAL must stay on EIA-923 ``HY``.
+
+    The benchmark's default for the variable renewables is to replace an
+    under-reported EIA-923 class total with the EIA-930 grid series. For
+    ``hydro`` that swap is only legitimate when ``NG: WAT`` measures the SAME
+    POPULATION as the model's hydro units, and at some BAs it does not.
+
+    **The mismatch.** A BA in
+    :data:`~market_sim.config.constants.EIA930_PS_FOLDED_INTO_WAT` files no
+    ``NG: PS`` column at all, and a BA before its
+    :data:`~market_sim.config.constants.EIA930_PS_SPLIT_COMPLETE_FROM` year
+    files one only part-way through the series; either way that ISO-year's
+    ``NG: WAT`` is conventional hydro **plus pumped-storage gross discharge**
+    (``data.hydro.eia930_wat_level_folded``). The LP's hydro units are
+    conventional inflow hydro ALONE — ``data.hydro._load_hydro_generation``
+    filters EIA-923 prime mover ``HY`` **directly**, never through
+    ``classify_plant`` — so the swap scores one population's dispatch against
+    another population's meter. Measured on PJM it inflates the hydro actual by
+    5.96-7.11 TWh/yr in every year and is the whole of that ISO's apparent
+    ~44 % hydro "miss"
+    (``docs/FINDING-pjm-h1-hydro-accounting-seam-2026-09-12.md``). This is the
+    BENCHMARK end of the repair ``pjm-143`` already landed on the MODEL end:
+    ``hydro_level_923_hy`` moved PJM's hydro budget LEVEL off ``NG: WAT`` and
+    onto EIA-923 ``HY`` for exactly this reason, leaving the two sides of one
+    comparison on different populations until now. Rule 14 ``[R-ACCURATE]``;
+    rule 19 ``[R-ONE-MECH]`` — the SAME already-adjudicated predicate at both
+    ends (miso-109 standing fold, miso-110 forward climatology, neiso-72 time
+    split), never a second mechanism. The direction is fixed by which population
+    ``_load_hydro_generation`` builds and no result can select it.
+
+    **THE SECOND CONDITION IS LOAD-BEARING AND IS WHY THIS IS TWO PREDICATES.**
+    Refusing the swap is only a repair when there is a right-population
+    measurement to refuse it in favour of. In an EIA-923 early monthly release
+    there is not: PJM 2025 files **10 of 72** hydro plants (2.29 TWh against a
+    modal ~8.9) and MISO **14 of 160**, so refusing the swap there would replace
+    a +74 % error with a -74 % one. The ISO-wide
+    :func:`_vintage_completeness` cannot catch this — it reads **0.923** for
+    both ISOs in 2025 because the early release covers the large fossil and
+    nuclear plants that carry nearly all the MWh — so the class's OWN census
+    gate is used instead: ``data.hydro.complete_923_hydro_years``, the
+    already-adjudicated data-quality filter behind
+    ``climatological_monthly_hydro_923`` (miso-109's "2025 trap", miso-110),
+    which admits a year only when its ``HY`` plant census reaches
+    :data:`~market_sim.config.constants.EIA923_COMPLETE_FILING_CENSUS_FRACTION`
+    of the ISO's modal census AND the vintage is no newer than
+    ``EIA923_LATEST_FINAL_VINTAGE``. It can only ever REMOVE a year, so it is a
+    filter and never a tune. Measured: complete in 2020-2024 for all seven ISOs,
+    incomplete in 2025 for all seven.
+
+    **SELF-HEALING, which is what makes the residue acceptable.** PJM 2025 and
+    MISO 2025 are the only cells where the seam is diagnosed and left
+    unrepaired; when the final 2025 EIA-923 vintage lands, the census fills, the
+    predicate flips and the repair reaches them with **no code change**. The
+    rationale, the three candidate scalars that were measured unusable, and the
+    cost are ``docs/ADDENDUM-gov-hydro-seam-1-vintage-fallthrough-2026-09-12.md``.
+
+    **Zero new parameters, zero new registry, zero new constants** (rules 21 /
+    24): two existing predicates, ANDed.
+
+    Args:
+        iso: ISO identifier, e.g. ``"PJM"``.
+        year: Calendar year.
+
+    Returns:
+        True when the EIA-930 ``NG: WAT`` swap must be refused for this
+        ISO-year, leaving the measured EIA-923 ``HY`` class total in place.
+    """
+    from market_sim.config.constants import HYDRO_CLIMATOLOGY_YEARS
+    from market_sim.data.hydro import complete_923_hydro_years
+
+    if not eia930_wat_level_folded(iso, year):
+        return False
+    # The census gate needs a reference window to take its modal census over;
+    # the shared climatology constant plus the year under test is fixed by
+    # construction, so no result can select it (rule 23 [R-FROZEN-DERIVE]).
+    window = sorted({*(int(y) for y in HYDRO_CLIMATOLOGY_YEARS), int(year)})
+    return int(year) in complete_923_hydro_years(iso, window)
+
+
 def _replace_class_total(
     e923: pd.DataFrame,
     klass: str,
@@ -2453,10 +2549,18 @@ def _backfill_renewables_eia930(
       grid-side authority the model's dispatch is scored against. Complete
       vintages, where the two agree, are unchanged; CAISO wind, under-reported in
       EIA-923 every year, is corrected in every year (matching the reference).
-      When a class has NO EIA-930 series at all (the BA reports it as identically
-      zero — NYIS ``NG: SUN``, the only such cell across 6 ISOs x {wind, solar,
-      hydro} x 2023-2025), that swap is unavailable and the class falls through
-      to the ``biomass`` carry-forward below instead of being left truncated.
+      When a class has NO ADMISSIBLE EIA-930 authority that swap is unavailable
+      and the class falls through to the ``biomass`` carry-forward below instead
+      of being left truncated -- the BA reports the series as identically zero
+      (NYIS ``NG: SUN``, the only such cell across 6 ISOs x {wind, solar, hydro}
+      x 2023-2025 -- nyiso-106).
+    * ``hydro`` is additionally REFUSED the swap outright, keeping its measured
+      EIA-923 ``HY`` total, when this ISO-year's ``NG: WAT`` folds pumped-storage
+      discharge into conventional hydro AND the year's own ``HY`` census is
+      complete (:func:`_hydro_benchmark_is_923_only`). The folded series is a
+      different POPULATION from the LP's conventional-hydro units, so the swap
+      compares one population's dispatch against another's meter -- PJM in every
+      year, MISO and pre-2025 NEISO in most (gov-hydro-seam-1).
     * ``biomass``: absent from both CAMPD and EIA-930. When the whole vintage is
       a partial release (:func:`_vintage_completeness`), the prior complete
       year's biomass class total is carried forward, scaled by the vintage
@@ -2466,6 +2570,23 @@ def _backfill_renewables_eia930(
         return e923
     cls_total = e923.groupby("klass")["annual_mwh"].sum()
     for klass in _EIA930_RENEWABLE_CLASSES:
+        if klass == "hydro" and _hydro_benchmark_is_923_only(iso, year):
+            # This ISO-year's `NG: WAT` folds pumped-storage discharge into
+            # conventional hydro, so it is a different POPULATION from the LP's
+            # hydro units, and the year's own EIA-923 `HY` census is complete —
+            # i.e. a right-population measurement exists. Keep it and skip the
+            # swap. No carry and no estimate: the class total stays exactly the
+            # measured EIA-923 `HY` energy (see _hydro_benchmark_is_923_only).
+            logger.info(
+                "EIA-923 %d %s %.2f TWh kept on EIA-923 HY: %s NG: WAT folds "
+                "pumped storage (different population; EIA930_PS_FOLDED_INTO_WAT "
+                "/ EIA930_PS_SPLIT_COMPLETE_FROM)",
+                year,
+                klass,
+                float(cls_total.get(klass, 0.0)) / _MWH_PER_TWH,
+                iso,
+            )
+            continue
         ann930, mon930 = _e930_series_annual_monthly(e930, klass, year)
         if ann930 <= 0.0:
             # No EIA-930 authority for this class, so the grid-total swap above
@@ -2502,8 +2623,9 @@ def _backfill_renewables_eia930(
             cur = float(cls_total.get(klass, 0.0))
             if ann > cur:
                 logger.info(
-                    "EIA-923 %d %s %.2f TWh incomplete with no EIA-930 series; "
-                    "carrying %d forward x vintage completeness -> %.2f TWh",
+                    "EIA-923 %d %s %.2f TWh incomplete with no admissible "
+                    "EIA-930 authority; carrying %d forward x vintage "
+                    "completeness -> %.2f TWh",
                     year,
                     klass,
                     cur / _MWH_PER_TWH,

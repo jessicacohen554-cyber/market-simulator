@@ -258,7 +258,9 @@ def classify_plant(
       gas classes (CC / CT / ST, merchant vs CHP).
     * Wind, solar, nuclear, oil, biomass and hydro are their own classes;
       everything else (other/process gas, purchased steam, waste heat, petcoke,
-      batteries, …) falls through to the residual ``OTHER`` bucket.
+      batteries, **pumped storage**, …) falls through to the residual ``OTHER``
+      bucket. Pumped storage (prime mover ``PS``) is tested BEFORE hydro
+      because every PS row also carries fuel code ``WAT``.
 
     Args:
         fuel: EIA energy-source code (``NG``, ``BIT``, ``WND`` …).
@@ -316,6 +318,31 @@ def classify_plant(
         return "oil"
     if fuel in BIOMASS_ENERGY_SOURCES:
         return "biomass"
+    if pm == "PS":
+        # Pumped storage is a STORAGE resource, not a generator — exactly what
+        # the comment on :data:`HYDRO_PRIME_MOVERS` above asserts, and what the
+        # code below did NOT do: every PS row also carries fuel code ``WAT``,
+        # so the ``fuel == "WAT"`` short-circuit routed all of them to
+        # ``hydro``. The model dispatches PS as an LP storage unit
+        # (``model.storage`` / ``load_eia860_pumped_storage``) and its EIA-923
+        # row is a NET, round-trip-loss quantity — negative in almost every
+        # ISO-year — so folding it into ``hydro`` mixed a storage net into the
+        # conventional-inflow class the LP's hydro units are scored against
+        # (``data.hydro._load_hydro_generation`` filters prime mover ``HY``
+        # alone, never through this classifier). Placed HERE rather than at the
+        # top of the function so it intercepts only what would otherwise become
+        # ``hydro``: measured over 2019-2026, all 366 moving EIA-923 rows are
+        # ``WAT``/``PS`` and no row of any other kind moves, so the narrow
+        # placement is inert on the real population and keeps the change
+        # minimal. Zero dominant-class flips reach a gas class, so the ERCOT bin
+        # override (``_override_bin_class_from_eia923``) and
+        # ``mixed_fossil_plants`` are byte-identical, and the injected ``OTHER``
+        # must-run is unchanged to 0.000000 MWh in all 42 scored ISO-years
+        # because ``_pumped_storage_plant_ids`` holds these rows back out again
+        # — the guard this repair makes live for the first time.
+        # Rule 26 ``[R-DELETE]`` (fix it, do not flag it both ways);
+        # gov-hydro-seam-1, docs/FINDING-pjm-h1-hydro-accounting-seam-2026-09-12.md §5.
+        return "OTHER"
     if fuel == "WAT" or pm in HYDRO_PRIME_MOVERS:
         return "hydro"
     return "OTHER"
