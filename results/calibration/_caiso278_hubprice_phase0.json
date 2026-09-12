@@ -1,0 +1,3362 @@
+{
+  "session": "caiso-278",
+  "phase": 0,
+  "object": "caiso_import_hub_prices matcher repair + arming",
+  "static_ladder": {
+    "PNW_hydro_base": 28.0,
+    "PNW_midC": 36.0,
+    "DSW_solar_PV": 48.0,
+    "DSW_CCGT": 68.0,
+    "DSW_CT": 110.0,
+    "WECC_scarcity": 180.0
+  },
+  "P1_matcher": {
+    "keeper_git_sha": "b8ddf8bc",
+    "import_zone_default": "WECC_import",
+    "rows_matched_RAW_startswith": 0,
+    "rows_matched_PERHUB_aware": 12,
+    "tranches_reachable": [
+      "DSW_CCGT",
+      "DSW_CT",
+      "DSW_daytime_clean",
+      "DSW_lateevening_clean",
+      "DSW_overnight_clean",
+      "DSW_solar_PV",
+      "DSW_surplus_clean",
+      "PNW_hydro_base",
+      "PNW_midC",
+      "WECC_scarcity",
+      "export_MALIN",
+      "export_PALOVRDE"
+    ],
+    "call_site": "scripts/run_calibration.py:5021, gated on `legacy_intertie`",
+    "verdict": "ROW COUNTS AS EXPECTED FOR A GATED CALL SITE \u2014 0 raw / N per-hub. This is NOT a live defect: the call site is gated on `legacy_intertie` ('Superseded by the per-hub node; gated to the legacy pooled topology only'), so the raw matcher is consistent with its own gate and never runs under the armed per-hub topology. caiso-275 \u00a74.5's 'real code defect' reading is refuted; the arm is KILLED and nothing is to be repaired."
+  },
+  "border_carbon_adder": 0.0,
+  "P4_coverage": [
+    {
+      "year": 2022,
+      "tranche": "DSW_CCGT",
+      "hours_finite": 8760,
+      "coverage_pct": 100.0,
+      "wheel": 4.0,
+      "ef_ratio": 0.864
+    },
+    {
+      "year": 2022,
+      "tranche": "DSW_CT",
+      "hours_finite": 8760,
+      "coverage_pct": 100.0,
+      "wheel": 4.0,
+      "ef_ratio": 1.285
+    },
+    {
+      "year": 2022,
+      "tranche": "DSW_solar_PV",
+      "hours_finite": 8760,
+      "coverage_pct": 100.0,
+      "wheel": 4.0,
+      "ef_ratio": 0.0
+    },
+    {
+      "year": 2022,
+      "tranche": "PNW_hydro_base",
+      "hours_finite": 8760,
+      "coverage_pct": 100.0,
+      "wheel": 2.0,
+      "ef_ratio": 0.0
+    },
+    {
+      "year": 2022,
+      "tranche": "PNW_midC",
+      "hours_finite": 8760,
+      "coverage_pct": 100.0,
+      "wheel": 5.0,
+      "ef_ratio": 0.0
+    },
+    {
+      "year": 2022,
+      "tranche": "WECC_scarcity",
+      "hours_finite": 8760,
+      "coverage_pct": 100.0,
+      "wheel": 6.0,
+      "ef_ratio": 1.0
+    },
+    {
+      "year": 2023,
+      "tranche": "DSW_CCGT",
+      "hours_finite": 8760,
+      "coverage_pct": 100.0,
+      "wheel": 4.0,
+      "ef_ratio": 0.864
+    },
+    {
+      "year": 2023,
+      "tranche": "DSW_CT",
+      "hours_finite": 8760,
+      "coverage_pct": 100.0,
+      "wheel": 4.0,
+      "ef_ratio": 1.285
+    },
+    {
+      "year": 2023,
+      "tranche": "DSW_solar_PV",
+      "hours_finite": 8760,
+      "coverage_pct": 100.0,
+      "wheel": 4.0,
+      "ef_ratio": 0.0
+    },
+    {
+      "year": 2023,
+      "tranche": "PNW_hydro_base",
+      "hours_finite": 8760,
+      "coverage_pct": 100.0,
+      "wheel": 2.0,
+      "ef_ratio": 0.0
+    },
+    {
+      "year": 2023,
+      "tranche": "PNW_midC",
+      "hours_finite": 8760,
+      "coverage_pct": 100.0,
+      "wheel": 5.0,
+      "ef_ratio": 0.0
+    },
+    {
+      "year": 2023,
+      "tranche": "WECC_scarcity",
+      "hours_finite": 8760,
+      "coverage_pct": 100.0,
+      "wheel": 6.0,
+      "ef_ratio": 1.0
+    },
+    {
+      "year": 2024,
+      "tranche": "DSW_CCGT",
+      "hours_finite": 8760,
+      "coverage_pct": 100.0,
+      "wheel": 4.0,
+      "ef_ratio": 0.864
+    },
+    {
+      "year": 2024,
+      "tranche": "DSW_CT",
+      "hours_finite": 8760,
+      "coverage_pct": 100.0,
+      "wheel": 4.0,
+      "ef_ratio": 1.285
+    },
+    {
+      "year": 2024,
+      "tranche": "DSW_solar_PV",
+      "hours_finite": 8760,
+      "coverage_pct": 100.0,
+      "wheel": 4.0,
+      "ef_ratio": 0.0
+    },
+    {
+      "year": 2024,
+      "tranche": "PNW_hydro_base",
+      "hours_finite": 8760,
+      "coverage_pct": 100.0,
+      "wheel": 2.0,
+      "ef_ratio": 0.0
+    },
+    {
+      "year": 2024,
+      "tranche": "PNW_midC",
+      "hours_finite": 8760,
+      "coverage_pct": 100.0,
+      "wheel": 5.0,
+      "ef_ratio": 0.0
+    },
+    {
+      "year": 2024,
+      "tranche": "WECC_scarcity",
+      "hours_finite": 8760,
+      "coverage_pct": 100.0,
+      "wheel": 6.0,
+      "ef_ratio": 1.0
+    },
+    {
+      "year": 2025,
+      "tranche": "DSW_CCGT",
+      "hours_finite": 8760,
+      "coverage_pct": 100.0,
+      "wheel": 4.0,
+      "ef_ratio": 0.864
+    },
+    {
+      "year": 2025,
+      "tranche": "DSW_CT",
+      "hours_finite": 8760,
+      "coverage_pct": 100.0,
+      "wheel": 4.0,
+      "ef_ratio": 1.285
+    },
+    {
+      "year": 2025,
+      "tranche": "DSW_solar_PV",
+      "hours_finite": 8760,
+      "coverage_pct": 100.0,
+      "wheel": 4.0,
+      "ef_ratio": 0.0
+    },
+    {
+      "year": 2025,
+      "tranche": "PNW_hydro_base",
+      "hours_finite": 8760,
+      "coverage_pct": 100.0,
+      "wheel": 2.0,
+      "ef_ratio": 0.0
+    },
+    {
+      "year": 2025,
+      "tranche": "PNW_midC",
+      "hours_finite": 8760,
+      "coverage_pct": 100.0,
+      "wheel": 5.0,
+      "ef_ratio": 0.0
+    },
+    {
+      "year": 2025,
+      "tranche": "WECC_scarcity",
+      "hours_finite": 8760,
+      "coverage_pct": 100.0,
+      "wheel": 6.0,
+      "ef_ratio": 1.0
+    }
+  ],
+  "P2_monthly_delta": [
+    {
+      "year": 2022,
+      "tranche": "DSW_CCGT",
+      "month": 1,
+      "measured_delivered": 53.38,
+      "static": 68.0,
+      "delta": -14.62,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "DSW_CCGT",
+      "month": 2,
+      "measured_delivered": 46.5,
+      "static": 68.0,
+      "delta": -21.5,
+      "hours": 672,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "DSW_CCGT",
+      "month": 3,
+      "measured_delivered": 43.26,
+      "static": 68.0,
+      "delta": -24.74,
+      "hours": 744,
+      "hours_negative_measured": 7
+    },
+    {
+      "year": 2022,
+      "tranche": "DSW_CCGT",
+      "month": 4,
+      "measured_delivered": 56.2,
+      "static": 68.0,
+      "delta": -11.8,
+      "hours": 720,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "DSW_CCGT",
+      "month": 5,
+      "measured_delivered": 60.06,
+      "static": 68.0,
+      "delta": -7.94,
+      "hours": 744,
+      "hours_negative_measured": 3
+    },
+    {
+      "year": 2022,
+      "tranche": "DSW_CCGT",
+      "month": 6,
+      "measured_delivered": 71.59,
+      "static": 68.0,
+      "delta": 3.59,
+      "hours": 720,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "DSW_CCGT",
+      "month": 7,
+      "measured_delivered": 78.07,
+      "static": 68.0,
+      "delta": 10.07,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "DSW_CCGT",
+      "month": 8,
+      "measured_delivered": 105.5,
+      "static": 68.0,
+      "delta": 37.5,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "DSW_CCGT",
+      "month": 9,
+      "measured_delivered": 120.35,
+      "static": 68.0,
+      "delta": 52.35,
+      "hours": 720,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "DSW_CCGT",
+      "month": 10,
+      "measured_delivered": 64.83,
+      "static": 68.0,
+      "delta": -3.17,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "DSW_CCGT",
+      "month": 11,
+      "measured_delivered": 85.38,
+      "static": 68.0,
+      "delta": 17.38,
+      "hours": 720,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "DSW_CCGT",
+      "month": 12,
+      "measured_delivered": 253.87,
+      "static": 68.0,
+      "delta": 185.87,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "DSW_CT",
+      "month": 1,
+      "measured_delivered": 53.38,
+      "static": 110.0,
+      "delta": -56.62,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "DSW_CT",
+      "month": 2,
+      "measured_delivered": 46.5,
+      "static": 110.0,
+      "delta": -63.5,
+      "hours": 672,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "DSW_CT",
+      "month": 3,
+      "measured_delivered": 43.26,
+      "static": 110.0,
+      "delta": -66.74,
+      "hours": 744,
+      "hours_negative_measured": 7
+    },
+    {
+      "year": 2022,
+      "tranche": "DSW_CT",
+      "month": 4,
+      "measured_delivered": 56.2,
+      "static": 110.0,
+      "delta": -53.8,
+      "hours": 720,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "DSW_CT",
+      "month": 5,
+      "measured_delivered": 60.06,
+      "static": 110.0,
+      "delta": -49.94,
+      "hours": 744,
+      "hours_negative_measured": 3
+    },
+    {
+      "year": 2022,
+      "tranche": "DSW_CT",
+      "month": 6,
+      "measured_delivered": 71.59,
+      "static": 110.0,
+      "delta": -38.41,
+      "hours": 720,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "DSW_CT",
+      "month": 7,
+      "measured_delivered": 78.07,
+      "static": 110.0,
+      "delta": -31.93,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "DSW_CT",
+      "month": 8,
+      "measured_delivered": 105.5,
+      "static": 110.0,
+      "delta": -4.5,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "DSW_CT",
+      "month": 9,
+      "measured_delivered": 120.35,
+      "static": 110.0,
+      "delta": 10.35,
+      "hours": 720,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "DSW_CT",
+      "month": 10,
+      "measured_delivered": 64.83,
+      "static": 110.0,
+      "delta": -45.17,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "DSW_CT",
+      "month": 11,
+      "measured_delivered": 85.38,
+      "static": 110.0,
+      "delta": -24.62,
+      "hours": 720,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "DSW_CT",
+      "month": 12,
+      "measured_delivered": 253.87,
+      "static": 110.0,
+      "delta": 143.87,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "DSW_solar_PV",
+      "month": 1,
+      "measured_delivered": 53.38,
+      "static": 48.0,
+      "delta": 5.38,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "DSW_solar_PV",
+      "month": 2,
+      "measured_delivered": 46.5,
+      "static": 48.0,
+      "delta": -1.5,
+      "hours": 672,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "DSW_solar_PV",
+      "month": 3,
+      "measured_delivered": 43.26,
+      "static": 48.0,
+      "delta": -4.74,
+      "hours": 744,
+      "hours_negative_measured": 7
+    },
+    {
+      "year": 2022,
+      "tranche": "DSW_solar_PV",
+      "month": 4,
+      "measured_delivered": 56.2,
+      "static": 48.0,
+      "delta": 8.2,
+      "hours": 720,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "DSW_solar_PV",
+      "month": 5,
+      "measured_delivered": 60.06,
+      "static": 48.0,
+      "delta": 12.06,
+      "hours": 744,
+      "hours_negative_measured": 3
+    },
+    {
+      "year": 2022,
+      "tranche": "DSW_solar_PV",
+      "month": 6,
+      "measured_delivered": 71.59,
+      "static": 48.0,
+      "delta": 23.59,
+      "hours": 720,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "DSW_solar_PV",
+      "month": 7,
+      "measured_delivered": 78.07,
+      "static": 48.0,
+      "delta": 30.07,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "DSW_solar_PV",
+      "month": 8,
+      "measured_delivered": 105.5,
+      "static": 48.0,
+      "delta": 57.5,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "DSW_solar_PV",
+      "month": 9,
+      "measured_delivered": 120.35,
+      "static": 48.0,
+      "delta": 72.35,
+      "hours": 720,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "DSW_solar_PV",
+      "month": 10,
+      "measured_delivered": 64.83,
+      "static": 48.0,
+      "delta": 16.83,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "DSW_solar_PV",
+      "month": 11,
+      "measured_delivered": 85.38,
+      "static": 48.0,
+      "delta": 37.38,
+      "hours": 720,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "DSW_solar_PV",
+      "month": 12,
+      "measured_delivered": 253.87,
+      "static": 48.0,
+      "delta": 205.87,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "PNW_hydro_base",
+      "month": 1,
+      "measured_delivered": 53.39,
+      "static": 28.0,
+      "delta": 25.39,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "PNW_hydro_base",
+      "month": 2,
+      "measured_delivered": 48.02,
+      "static": 28.0,
+      "delta": 20.02,
+      "hours": 672,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "PNW_hydro_base",
+      "month": 3,
+      "measured_delivered": 46.23,
+      "static": 28.0,
+      "delta": 18.23,
+      "hours": 744,
+      "hours_negative_measured": 6
+    },
+    {
+      "year": 2022,
+      "tranche": "PNW_hydro_base",
+      "month": 4,
+      "measured_delivered": 66.03,
+      "static": 28.0,
+      "delta": 38.03,
+      "hours": 720,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "PNW_hydro_base",
+      "month": 5,
+      "measured_delivered": 66.76,
+      "static": 28.0,
+      "delta": 38.76,
+      "hours": 744,
+      "hours_negative_measured": 5
+    },
+    {
+      "year": 2022,
+      "tranche": "PNW_hydro_base",
+      "month": 6,
+      "measured_delivered": 67.27,
+      "static": 28.0,
+      "delta": 39.27,
+      "hours": 720,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "PNW_hydro_base",
+      "month": 7,
+      "measured_delivered": 73.11,
+      "static": 28.0,
+      "delta": 45.11,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "PNW_hydro_base",
+      "month": 8,
+      "measured_delivered": 95.66,
+      "static": 28.0,
+      "delta": 67.66,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "PNW_hydro_base",
+      "month": 9,
+      "measured_delivered": 114.3,
+      "static": 28.0,
+      "delta": 86.3,
+      "hours": 720,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "PNW_hydro_base",
+      "month": 10,
+      "measured_delivered": 70.23,
+      "static": 28.0,
+      "delta": 42.23,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "PNW_hydro_base",
+      "month": 11,
+      "measured_delivered": 91.4,
+      "static": 28.0,
+      "delta": 63.4,
+      "hours": 720,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "PNW_hydro_base",
+      "month": 12,
+      "measured_delivered": 263.79,
+      "static": 28.0,
+      "delta": 235.79,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "PNW_midC",
+      "month": 1,
+      "measured_delivered": 56.39,
+      "static": 36.0,
+      "delta": 20.39,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "PNW_midC",
+      "month": 2,
+      "measured_delivered": 51.02,
+      "static": 36.0,
+      "delta": 15.02,
+      "hours": 672,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "PNW_midC",
+      "month": 3,
+      "measured_delivered": 49.23,
+      "static": 36.0,
+      "delta": 13.23,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "PNW_midC",
+      "month": 4,
+      "measured_delivered": 69.03,
+      "static": 36.0,
+      "delta": 33.03,
+      "hours": 720,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "PNW_midC",
+      "month": 5,
+      "measured_delivered": 69.76,
+      "static": 36.0,
+      "delta": 33.76,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "PNW_midC",
+      "month": 6,
+      "measured_delivered": 70.27,
+      "static": 36.0,
+      "delta": 34.27,
+      "hours": 720,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "PNW_midC",
+      "month": 7,
+      "measured_delivered": 76.11,
+      "static": 36.0,
+      "delta": 40.11,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "PNW_midC",
+      "month": 8,
+      "measured_delivered": 98.66,
+      "static": 36.0,
+      "delta": 62.66,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "PNW_midC",
+      "month": 9,
+      "measured_delivered": 117.3,
+      "static": 36.0,
+      "delta": 81.3,
+      "hours": 720,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "PNW_midC",
+      "month": 10,
+      "measured_delivered": 73.23,
+      "static": 36.0,
+      "delta": 37.23,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "PNW_midC",
+      "month": 11,
+      "measured_delivered": 94.4,
+      "static": 36.0,
+      "delta": 58.4,
+      "hours": 720,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "PNW_midC",
+      "month": 12,
+      "measured_delivered": 266.79,
+      "static": 36.0,
+      "delta": 230.79,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "WECC_scarcity",
+      "month": 1,
+      "measured_delivered": 55.38,
+      "static": 180.0,
+      "delta": -124.62,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "WECC_scarcity",
+      "month": 2,
+      "measured_delivered": 48.5,
+      "static": 180.0,
+      "delta": -131.5,
+      "hours": 672,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "WECC_scarcity",
+      "month": 3,
+      "measured_delivered": 45.26,
+      "static": 180.0,
+      "delta": -134.74,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "WECC_scarcity",
+      "month": 4,
+      "measured_delivered": 58.2,
+      "static": 180.0,
+      "delta": -121.8,
+      "hours": 720,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "WECC_scarcity",
+      "month": 5,
+      "measured_delivered": 62.06,
+      "static": 180.0,
+      "delta": -117.94,
+      "hours": 744,
+      "hours_negative_measured": 1
+    },
+    {
+      "year": 2022,
+      "tranche": "WECC_scarcity",
+      "month": 6,
+      "measured_delivered": 73.59,
+      "static": 180.0,
+      "delta": -106.41,
+      "hours": 720,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "WECC_scarcity",
+      "month": 7,
+      "measured_delivered": 80.07,
+      "static": 180.0,
+      "delta": -99.93,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "WECC_scarcity",
+      "month": 8,
+      "measured_delivered": 107.5,
+      "static": 180.0,
+      "delta": -72.5,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "WECC_scarcity",
+      "month": 9,
+      "measured_delivered": 122.35,
+      "static": 180.0,
+      "delta": -57.65,
+      "hours": 720,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "WECC_scarcity",
+      "month": 10,
+      "measured_delivered": 66.83,
+      "static": 180.0,
+      "delta": -113.17,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "WECC_scarcity",
+      "month": 11,
+      "measured_delivered": 87.38,
+      "static": 180.0,
+      "delta": -92.62,
+      "hours": 720,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2022,
+      "tranche": "WECC_scarcity",
+      "month": 12,
+      "measured_delivered": 255.87,
+      "static": 180.0,
+      "delta": 75.87,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2023,
+      "tranche": "DSW_CCGT",
+      "month": 1,
+      "measured_delivered": 43.33,
+      "static": 68.0,
+      "delta": -24.67,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2023,
+      "tranche": "DSW_CCGT",
+      "month": 2,
+      "measured_delivered": 40.5,
+      "static": 68.0,
+      "delta": -27.5,
+      "hours": 672,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2023,
+      "tranche": "DSW_CCGT",
+      "month": 3,
+      "measured_delivered": 43.16,
+      "static": 68.0,
+      "delta": -24.84,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2023,
+      "tranche": "DSW_CCGT",
+      "month": 4,
+      "measured_delivered": 54.82,
+      "static": 68.0,
+      "delta": -13.18,
+      "hours": 720,
+      "hours_negative_measured": 31
+    },
+    {
+      "year": 2023,
+      "tranche": "DSW_CCGT",
+      "month": 5,
+      "measured_delivered": 21.92,
+      "static": 68.0,
+      "delta": -46.08,
+      "hours": 744,
+      "hours_negative_measured": 91
+    },
+    {
+      "year": 2023,
+      "tranche": "DSW_CCGT",
+      "month": 6,
+      "measured_delivered": 30.86,
+      "static": 68.0,
+      "delta": -37.14,
+      "hours": 720,
+      "hours_negative_measured": 38
+    },
+    {
+      "year": 2023,
+      "tranche": "DSW_CCGT",
+      "month": 7,
+      "measured_delivered": 72.94,
+      "static": 68.0,
+      "delta": 4.94,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2023,
+      "tranche": "DSW_CCGT",
+      "month": 8,
+      "measured_delivered": 78.44,
+      "static": 68.0,
+      "delta": 10.44,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2023,
+      "tranche": "DSW_CCGT",
+      "month": 9,
+      "measured_delivered": 42.6,
+      "static": 68.0,
+      "delta": -25.4,
+      "hours": 720,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2023,
+      "tranche": "DSW_CCGT",
+      "month": 10,
+      "measured_delivered": 58.54,
+      "static": 68.0,
+      "delta": -9.46,
+      "hours": 744,
+      "hours_negative_measured": 5
+    },
+    {
+      "year": 2023,
+      "tranche": "DSW_CCGT",
+      "month": 11,
+      "measured_delivered": 55.8,
+      "static": 68.0,
+      "delta": -12.2,
+      "hours": 720,
+      "hours_negative_measured": 14
+    },
+    {
+      "year": 2023,
+      "tranche": "DSW_CCGT",
+      "month": 12,
+      "measured_delivered": 48.6,
+      "static": 68.0,
+      "delta": -19.4,
+      "hours": 744,
+      "hours_negative_measured": 6
+    },
+    {
+      "year": 2023,
+      "tranche": "DSW_CT",
+      "month": 1,
+      "measured_delivered": 43.33,
+      "static": 110.0,
+      "delta": -66.67,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2023,
+      "tranche": "DSW_CT",
+      "month": 2,
+      "measured_delivered": 40.5,
+      "static": 110.0,
+      "delta": -69.5,
+      "hours": 672,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2023,
+      "tranche": "DSW_CT",
+      "month": 3,
+      "measured_delivered": 43.16,
+      "static": 110.0,
+      "delta": -66.84,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2023,
+      "tranche": "DSW_CT",
+      "month": 4,
+      "measured_delivered": 54.82,
+      "static": 110.0,
+      "delta": -55.18,
+      "hours": 720,
+      "hours_negative_measured": 31
+    },
+    {
+      "year": 2023,
+      "tranche": "DSW_CT",
+      "month": 5,
+      "measured_delivered": 21.92,
+      "static": 110.0,
+      "delta": -88.08,
+      "hours": 744,
+      "hours_negative_measured": 91
+    },
+    {
+      "year": 2023,
+      "tranche": "DSW_CT",
+      "month": 6,
+      "measured_delivered": 30.86,
+      "static": 110.0,
+      "delta": -79.14,
+      "hours": 720,
+      "hours_negative_measured": 38
+    },
+    {
+      "year": 2023,
+      "tranche": "DSW_CT",
+      "month": 7,
+      "measured_delivered": 72.94,
+      "static": 110.0,
+      "delta": -37.06,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2023,
+      "tranche": "DSW_CT",
+      "month": 8,
+      "measured_delivered": 78.44,
+      "static": 110.0,
+      "delta": -31.56,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2023,
+      "tranche": "DSW_CT",
+      "month": 9,
+      "measured_delivered": 42.6,
+      "static": 110.0,
+      "delta": -67.4,
+      "hours": 720,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2023,
+      "tranche": "DSW_CT",
+      "month": 10,
+      "measured_delivered": 58.54,
+      "static": 110.0,
+      "delta": -51.46,
+      "hours": 744,
+      "hours_negative_measured": 5
+    },
+    {
+      "year": 2023,
+      "tranche": "DSW_CT",
+      "month": 11,
+      "measured_delivered": 55.8,
+      "static": 110.0,
+      "delta": -54.2,
+      "hours": 720,
+      "hours_negative_measured": 14
+    },
+    {
+      "year": 2023,
+      "tranche": "DSW_CT",
+      "month": 12,
+      "measured_delivered": 48.6,
+      "static": 110.0,
+      "delta": -61.4,
+      "hours": 744,
+      "hours_negative_measured": 6
+    },
+    {
+      "year": 2023,
+      "tranche": "DSW_solar_PV",
+      "month": 1,
+      "measured_delivered": 43.33,
+      "static": 48.0,
+      "delta": -4.67,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2023,
+      "tranche": "DSW_solar_PV",
+      "month": 2,
+      "measured_delivered": 40.5,
+      "static": 48.0,
+      "delta": -7.5,
+      "hours": 672,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2023,
+      "tranche": "DSW_solar_PV",
+      "month": 3,
+      "measured_delivered": 43.16,
+      "static": 48.0,
+      "delta": -4.84,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2023,
+      "tranche": "DSW_solar_PV",
+      "month": 4,
+      "measured_delivered": 54.82,
+      "static": 48.0,
+      "delta": 6.82,
+      "hours": 720,
+      "hours_negative_measured": 31
+    },
+    {
+      "year": 2023,
+      "tranche": "DSW_solar_PV",
+      "month": 5,
+      "measured_delivered": 21.92,
+      "static": 48.0,
+      "delta": -26.08,
+      "hours": 744,
+      "hours_negative_measured": 91
+    },
+    {
+      "year": 2023,
+      "tranche": "DSW_solar_PV",
+      "month": 6,
+      "measured_delivered": 30.86,
+      "static": 48.0,
+      "delta": -17.14,
+      "hours": 720,
+      "hours_negative_measured": 38
+    },
+    {
+      "year": 2023,
+      "tranche": "DSW_solar_PV",
+      "month": 7,
+      "measured_delivered": 72.94,
+      "static": 48.0,
+      "delta": 24.94,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2023,
+      "tranche": "DSW_solar_PV",
+      "month": 8,
+      "measured_delivered": 78.44,
+      "static": 48.0,
+      "delta": 30.44,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2023,
+      "tranche": "DSW_solar_PV",
+      "month": 9,
+      "measured_delivered": 42.6,
+      "static": 48.0,
+      "delta": -5.4,
+      "hours": 720,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2023,
+      "tranche": "DSW_solar_PV",
+      "month": 10,
+      "measured_delivered": 58.54,
+      "static": 48.0,
+      "delta": 10.54,
+      "hours": 744,
+      "hours_negative_measured": 5
+    },
+    {
+      "year": 2023,
+      "tranche": "DSW_solar_PV",
+      "month": 11,
+      "measured_delivered": 55.8,
+      "static": 48.0,
+      "delta": 7.8,
+      "hours": 720,
+      "hours_negative_measured": 14
+    },
+    {
+      "year": 2023,
+      "tranche": "DSW_solar_PV",
+      "month": 12,
+      "measured_delivered": 48.6,
+      "static": 48.0,
+      "delta": 0.6,
+      "hours": 744,
+      "hours_negative_measured": 6
+    },
+    {
+      "year": 2023,
+      "tranche": "PNW_hydro_base",
+      "month": 1,
+      "measured_delivered": 36.54,
+      "static": 28.0,
+      "delta": 8.54,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2023,
+      "tranche": "PNW_hydro_base",
+      "month": 2,
+      "measured_delivered": 35.48,
+      "static": 28.0,
+      "delta": 7.48,
+      "hours": 672,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2023,
+      "tranche": "PNW_hydro_base",
+      "month": 3,
+      "measured_delivered": 41.04,
+      "static": 28.0,
+      "delta": 13.04,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2023,
+      "tranche": "PNW_hydro_base",
+      "month": 4,
+      "measured_delivered": 59.24,
+      "static": 28.0,
+      "delta": 31.24,
+      "hours": 720,
+      "hours_negative_measured": 6
+    },
+    {
+      "year": 2023,
+      "tranche": "PNW_hydro_base",
+      "month": 5,
+      "measured_delivered": 20.04,
+      "static": 28.0,
+      "delta": -7.96,
+      "hours": 744,
+      "hours_negative_measured": 87
+    },
+    {
+      "year": 2023,
+      "tranche": "PNW_hydro_base",
+      "month": 6,
+      "measured_delivered": 29.44,
+      "static": 28.0,
+      "delta": 1.44,
+      "hours": 720,
+      "hours_negative_measured": 11
+    },
+    {
+      "year": 2023,
+      "tranche": "PNW_hydro_base",
+      "month": 7,
+      "measured_delivered": 57.72,
+      "static": 28.0,
+      "delta": 29.72,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2023,
+      "tranche": "PNW_hydro_base",
+      "month": 8,
+      "measured_delivered": 69.08,
+      "static": 28.0,
+      "delta": 41.08,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2023,
+      "tranche": "PNW_hydro_base",
+      "month": 9,
+      "measured_delivered": 43.07,
+      "static": 28.0,
+      "delta": 15.07,
+      "hours": 720,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2023,
+      "tranche": "PNW_hydro_base",
+      "month": 10,
+      "measured_delivered": 64.33,
+      "static": 28.0,
+      "delta": 36.33,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2023,
+      "tranche": "PNW_hydro_base",
+      "month": 11,
+      "measured_delivered": 64.13,
+      "static": 28.0,
+      "delta": 36.13,
+      "hours": 720,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2023,
+      "tranche": "PNW_hydro_base",
+      "month": 12,
+      "measured_delivered": 55.0,
+      "static": 28.0,
+      "delta": 27.0,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2023,
+      "tranche": "PNW_midC",
+      "month": 1,
+      "measured_delivered": 39.54,
+      "static": 36.0,
+      "delta": 3.54,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2023,
+      "tranche": "PNW_midC",
+      "month": 2,
+      "measured_delivered": 38.48,
+      "static": 36.0,
+      "delta": 2.48,
+      "hours": 672,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2023,
+      "tranche": "PNW_midC",
+      "month": 3,
+      "measured_delivered": 44.04,
+      "static": 36.0,
+      "delta": 8.04,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2023,
+      "tranche": "PNW_midC",
+      "month": 4,
+      "measured_delivered": 62.24,
+      "static": 36.0,
+      "delta": 26.24,
+      "hours": 720,
+      "hours_negative_measured": 2
+    },
+    {
+      "year": 2023,
+      "tranche": "PNW_midC",
+      "month": 5,
+      "measured_delivered": 23.04,
+      "static": 36.0,
+      "delta": -12.96,
+      "hours": 744,
+      "hours_negative_measured": 67
+    },
+    {
+      "year": 2023,
+      "tranche": "PNW_midC",
+      "month": 6,
+      "measured_delivered": 32.44,
+      "static": 36.0,
+      "delta": -3.56,
+      "hours": 720,
+      "hours_negative_measured": 8
+    },
+    {
+      "year": 2023,
+      "tranche": "PNW_midC",
+      "month": 7,
+      "measured_delivered": 60.72,
+      "static": 36.0,
+      "delta": 24.72,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2023,
+      "tranche": "PNW_midC",
+      "month": 8,
+      "measured_delivered": 72.08,
+      "static": 36.0,
+      "delta": 36.08,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2023,
+      "tranche": "PNW_midC",
+      "month": 9,
+      "measured_delivered": 46.07,
+      "static": 36.0,
+      "delta": 10.07,
+      "hours": 720,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2023,
+      "tranche": "PNW_midC",
+      "month": 10,
+      "measured_delivered": 67.33,
+      "static": 36.0,
+      "delta": 31.33,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2023,
+      "tranche": "PNW_midC",
+      "month": 11,
+      "measured_delivered": 67.13,
+      "static": 36.0,
+      "delta": 31.13,
+      "hours": 720,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2023,
+      "tranche": "PNW_midC",
+      "month": 12,
+      "measured_delivered": 58.0,
+      "static": 36.0,
+      "delta": 22.0,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2023,
+      "tranche": "WECC_scarcity",
+      "month": 1,
+      "measured_delivered": 45.33,
+      "static": 180.0,
+      "delta": -134.67,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2023,
+      "tranche": "WECC_scarcity",
+      "month": 2,
+      "measured_delivered": 42.5,
+      "static": 180.0,
+      "delta": -137.5,
+      "hours": 672,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2023,
+      "tranche": "WECC_scarcity",
+      "month": 3,
+      "measured_delivered": 45.16,
+      "static": 180.0,
+      "delta": -134.84,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2023,
+      "tranche": "WECC_scarcity",
+      "month": 4,
+      "measured_delivered": 56.82,
+      "static": 180.0,
+      "delta": -123.18,
+      "hours": 720,
+      "hours_negative_measured": 15
+    },
+    {
+      "year": 2023,
+      "tranche": "WECC_scarcity",
+      "month": 5,
+      "measured_delivered": 23.92,
+      "static": 180.0,
+      "delta": -156.08,
+      "hours": 744,
+      "hours_negative_measured": 80
+    },
+    {
+      "year": 2023,
+      "tranche": "WECC_scarcity",
+      "month": 6,
+      "measured_delivered": 32.86,
+      "static": 180.0,
+      "delta": -147.14,
+      "hours": 720,
+      "hours_negative_measured": 18
+    },
+    {
+      "year": 2023,
+      "tranche": "WECC_scarcity",
+      "month": 7,
+      "measured_delivered": 74.94,
+      "static": 180.0,
+      "delta": -105.06,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2023,
+      "tranche": "WECC_scarcity",
+      "month": 8,
+      "measured_delivered": 80.44,
+      "static": 180.0,
+      "delta": -99.56,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2023,
+      "tranche": "WECC_scarcity",
+      "month": 9,
+      "measured_delivered": 44.6,
+      "static": 180.0,
+      "delta": -135.4,
+      "hours": 720,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2023,
+      "tranche": "WECC_scarcity",
+      "month": 10,
+      "measured_delivered": 60.54,
+      "static": 180.0,
+      "delta": -119.46,
+      "hours": 744,
+      "hours_negative_measured": 1
+    },
+    {
+      "year": 2023,
+      "tranche": "WECC_scarcity",
+      "month": 11,
+      "measured_delivered": 57.8,
+      "static": 180.0,
+      "delta": -122.2,
+      "hours": 720,
+      "hours_negative_measured": 8
+    },
+    {
+      "year": 2023,
+      "tranche": "WECC_scarcity",
+      "month": 12,
+      "measured_delivered": 50.6,
+      "static": 180.0,
+      "delta": -129.4,
+      "hours": 744,
+      "hours_negative_measured": 6
+    },
+    {
+      "year": 2024,
+      "tranche": "DSW_CCGT",
+      "month": 1,
+      "measured_delivered": 68.36,
+      "static": 68.0,
+      "delta": 0.36,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2024,
+      "tranche": "DSW_CCGT",
+      "month": 2,
+      "measured_delivered": 37.39,
+      "static": 68.0,
+      "delta": -30.61,
+      "hours": 672,
+      "hours_negative_measured": 55
+    },
+    {
+      "year": 2024,
+      "tranche": "DSW_CCGT",
+      "month": 3,
+      "measured_delivered": 20.9,
+      "static": 68.0,
+      "delta": -47.1,
+      "hours": 744,
+      "hours_negative_measured": 207
+    },
+    {
+      "year": 2024,
+      "tranche": "DSW_CCGT",
+      "month": 4,
+      "measured_delivered": 15.78,
+      "static": 68.0,
+      "delta": -52.22,
+      "hours": 720,
+      "hours_negative_measured": 253
+    },
+    {
+      "year": 2024,
+      "tranche": "DSW_CCGT",
+      "month": 5,
+      "measured_delivered": 15.81,
+      "static": 68.0,
+      "delta": -52.19,
+      "hours": 744,
+      "hours_negative_measured": 208
+    },
+    {
+      "year": 2024,
+      "tranche": "DSW_CCGT",
+      "month": 6,
+      "measured_delivered": 28.82,
+      "static": 68.0,
+      "delta": -39.18,
+      "hours": 720,
+      "hours_negative_measured": 55
+    },
+    {
+      "year": 2024,
+      "tranche": "DSW_CCGT",
+      "month": 7,
+      "measured_delivered": 53.53,
+      "static": 68.0,
+      "delta": -14.47,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2024,
+      "tranche": "DSW_CCGT",
+      "month": 8,
+      "measured_delivered": 43.19,
+      "static": 68.0,
+      "delta": -24.81,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2024,
+      "tranche": "DSW_CCGT",
+      "month": 9,
+      "measured_delivered": 41.0,
+      "static": 68.0,
+      "delta": -27.0,
+      "hours": 720,
+      "hours_negative_measured": 9
+    },
+    {
+      "year": 2024,
+      "tranche": "DSW_CCGT",
+      "month": 10,
+      "measured_delivered": 42.27,
+      "static": 68.0,
+      "delta": -25.73,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2024,
+      "tranche": "DSW_CCGT",
+      "month": 11,
+      "measured_delivered": 37.26,
+      "static": 68.0,
+      "delta": -30.74,
+      "hours": 720,
+      "hours_negative_measured": 14
+    },
+    {
+      "year": 2024,
+      "tranche": "DSW_CCGT",
+      "month": 12,
+      "measured_delivered": 42.96,
+      "static": 68.0,
+      "delta": -25.04,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2024,
+      "tranche": "DSW_CT",
+      "month": 1,
+      "measured_delivered": 68.36,
+      "static": 110.0,
+      "delta": -41.64,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2024,
+      "tranche": "DSW_CT",
+      "month": 2,
+      "measured_delivered": 37.39,
+      "static": 110.0,
+      "delta": -72.61,
+      "hours": 672,
+      "hours_negative_measured": 55
+    },
+    {
+      "year": 2024,
+      "tranche": "DSW_CT",
+      "month": 3,
+      "measured_delivered": 20.9,
+      "static": 110.0,
+      "delta": -89.1,
+      "hours": 744,
+      "hours_negative_measured": 207
+    },
+    {
+      "year": 2024,
+      "tranche": "DSW_CT",
+      "month": 4,
+      "measured_delivered": 15.78,
+      "static": 110.0,
+      "delta": -94.22,
+      "hours": 720,
+      "hours_negative_measured": 253
+    },
+    {
+      "year": 2024,
+      "tranche": "DSW_CT",
+      "month": 5,
+      "measured_delivered": 15.81,
+      "static": 110.0,
+      "delta": -94.19,
+      "hours": 744,
+      "hours_negative_measured": 208
+    },
+    {
+      "year": 2024,
+      "tranche": "DSW_CT",
+      "month": 6,
+      "measured_delivered": 28.82,
+      "static": 110.0,
+      "delta": -81.18,
+      "hours": 720,
+      "hours_negative_measured": 55
+    },
+    {
+      "year": 2024,
+      "tranche": "DSW_CT",
+      "month": 7,
+      "measured_delivered": 53.53,
+      "static": 110.0,
+      "delta": -56.47,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2024,
+      "tranche": "DSW_CT",
+      "month": 8,
+      "measured_delivered": 43.19,
+      "static": 110.0,
+      "delta": -66.81,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2024,
+      "tranche": "DSW_CT",
+      "month": 9,
+      "measured_delivered": 41.0,
+      "static": 110.0,
+      "delta": -69.0,
+      "hours": 720,
+      "hours_negative_measured": 9
+    },
+    {
+      "year": 2024,
+      "tranche": "DSW_CT",
+      "month": 10,
+      "measured_delivered": 42.27,
+      "static": 110.0,
+      "delta": -67.73,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2024,
+      "tranche": "DSW_CT",
+      "month": 11,
+      "measured_delivered": 37.26,
+      "static": 110.0,
+      "delta": -72.74,
+      "hours": 720,
+      "hours_negative_measured": 14
+    },
+    {
+      "year": 2024,
+      "tranche": "DSW_CT",
+      "month": 12,
+      "measured_delivered": 42.96,
+      "static": 110.0,
+      "delta": -67.04,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2024,
+      "tranche": "DSW_solar_PV",
+      "month": 1,
+      "measured_delivered": 68.36,
+      "static": 48.0,
+      "delta": 20.36,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2024,
+      "tranche": "DSW_solar_PV",
+      "month": 2,
+      "measured_delivered": 37.39,
+      "static": 48.0,
+      "delta": -10.61,
+      "hours": 672,
+      "hours_negative_measured": 55
+    },
+    {
+      "year": 2024,
+      "tranche": "DSW_solar_PV",
+      "month": 3,
+      "measured_delivered": 20.9,
+      "static": 48.0,
+      "delta": -27.1,
+      "hours": 744,
+      "hours_negative_measured": 207
+    },
+    {
+      "year": 2024,
+      "tranche": "DSW_solar_PV",
+      "month": 4,
+      "measured_delivered": 15.78,
+      "static": 48.0,
+      "delta": -32.22,
+      "hours": 720,
+      "hours_negative_measured": 253
+    },
+    {
+      "year": 2024,
+      "tranche": "DSW_solar_PV",
+      "month": 5,
+      "measured_delivered": 15.81,
+      "static": 48.0,
+      "delta": -32.19,
+      "hours": 744,
+      "hours_negative_measured": 208
+    },
+    {
+      "year": 2024,
+      "tranche": "DSW_solar_PV",
+      "month": 6,
+      "measured_delivered": 28.82,
+      "static": 48.0,
+      "delta": -19.18,
+      "hours": 720,
+      "hours_negative_measured": 55
+    },
+    {
+      "year": 2024,
+      "tranche": "DSW_solar_PV",
+      "month": 7,
+      "measured_delivered": 53.53,
+      "static": 48.0,
+      "delta": 5.53,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2024,
+      "tranche": "DSW_solar_PV",
+      "month": 8,
+      "measured_delivered": 43.19,
+      "static": 48.0,
+      "delta": -4.81,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2024,
+      "tranche": "DSW_solar_PV",
+      "month": 9,
+      "measured_delivered": 41.0,
+      "static": 48.0,
+      "delta": -7.0,
+      "hours": 720,
+      "hours_negative_measured": 9
+    },
+    {
+      "year": 2024,
+      "tranche": "DSW_solar_PV",
+      "month": 10,
+      "measured_delivered": 42.27,
+      "static": 48.0,
+      "delta": -5.73,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2024,
+      "tranche": "DSW_solar_PV",
+      "month": 11,
+      "measured_delivered": 37.26,
+      "static": 48.0,
+      "delta": -10.74,
+      "hours": 720,
+      "hours_negative_measured": 14
+    },
+    {
+      "year": 2024,
+      "tranche": "DSW_solar_PV",
+      "month": 12,
+      "measured_delivered": 42.96,
+      "static": 48.0,
+      "delta": -5.04,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2024,
+      "tranche": "PNW_hydro_base",
+      "month": 1,
+      "measured_delivered": 80.46,
+      "static": 28.0,
+      "delta": 52.46,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2024,
+      "tranche": "PNW_hydro_base",
+      "month": 2,
+      "measured_delivered": 43.81,
+      "static": 28.0,
+      "delta": 15.81,
+      "hours": 672,
+      "hours_negative_measured": 5
+    },
+    {
+      "year": 2024,
+      "tranche": "PNW_hydro_base",
+      "month": 3,
+      "measured_delivered": 33.86,
+      "static": 28.0,
+      "delta": 5.86,
+      "hours": 744,
+      "hours_negative_measured": 15
+    },
+    {
+      "year": 2024,
+      "tranche": "PNW_hydro_base",
+      "month": 4,
+      "measured_delivered": 28.17,
+      "static": 28.0,
+      "delta": 0.17,
+      "hours": 720,
+      "hours_negative_measured": 56
+    },
+    {
+      "year": 2024,
+      "tranche": "PNW_hydro_base",
+      "month": 5,
+      "measured_delivered": 20.09,
+      "static": 28.0,
+      "delta": -7.91,
+      "hours": 744,
+      "hours_negative_measured": 113
+    },
+    {
+      "year": 2024,
+      "tranche": "PNW_hydro_base",
+      "month": 6,
+      "measured_delivered": 26.51,
+      "static": 28.0,
+      "delta": -1.49,
+      "hours": 720,
+      "hours_negative_measured": 51
+    },
+    {
+      "year": 2024,
+      "tranche": "PNW_hydro_base",
+      "month": 7,
+      "measured_delivered": 49.48,
+      "static": 28.0,
+      "delta": 21.48,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2024,
+      "tranche": "PNW_hydro_base",
+      "month": 8,
+      "measured_delivered": 40.47,
+      "static": 28.0,
+      "delta": 12.47,
+      "hours": 744,
+      "hours_negative_measured": 5
+    },
+    {
+      "year": 2024,
+      "tranche": "PNW_hydro_base",
+      "month": 9,
+      "measured_delivered": 39.29,
+      "static": 28.0,
+      "delta": 11.29,
+      "hours": 720,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2024,
+      "tranche": "PNW_hydro_base",
+      "month": 10,
+      "measured_delivered": 49.82,
+      "static": 28.0,
+      "delta": 21.82,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2024,
+      "tranche": "PNW_hydro_base",
+      "month": 11,
+      "measured_delivered": 44.93,
+      "static": 28.0,
+      "delta": 16.93,
+      "hours": 720,
+      "hours_negative_measured": 3
+    },
+    {
+      "year": 2024,
+      "tranche": "PNW_hydro_base",
+      "month": 12,
+      "measured_delivered": 47.23,
+      "static": 28.0,
+      "delta": 19.23,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2024,
+      "tranche": "PNW_midC",
+      "month": 1,
+      "measured_delivered": 83.46,
+      "static": 36.0,
+      "delta": 47.46,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2024,
+      "tranche": "PNW_midC",
+      "month": 2,
+      "measured_delivered": 46.81,
+      "static": 36.0,
+      "delta": 10.81,
+      "hours": 672,
+      "hours_negative_measured": 1
+    },
+    {
+      "year": 2024,
+      "tranche": "PNW_midC",
+      "month": 3,
+      "measured_delivered": 36.86,
+      "static": 36.0,
+      "delta": 0.86,
+      "hours": 744,
+      "hours_negative_measured": 12
+    },
+    {
+      "year": 2024,
+      "tranche": "PNW_midC",
+      "month": 4,
+      "measured_delivered": 31.17,
+      "static": 36.0,
+      "delta": -4.83,
+      "hours": 720,
+      "hours_negative_measured": 40
+    },
+    {
+      "year": 2024,
+      "tranche": "PNW_midC",
+      "month": 5,
+      "measured_delivered": 23.09,
+      "static": 36.0,
+      "delta": -12.91,
+      "hours": 744,
+      "hours_negative_measured": 95
+    },
+    {
+      "year": 2024,
+      "tranche": "PNW_midC",
+      "month": 6,
+      "measured_delivered": 29.51,
+      "static": 36.0,
+      "delta": -6.49,
+      "hours": 720,
+      "hours_negative_measured": 43
+    },
+    {
+      "year": 2024,
+      "tranche": "PNW_midC",
+      "month": 7,
+      "measured_delivered": 52.48,
+      "static": 36.0,
+      "delta": 16.48,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2024,
+      "tranche": "PNW_midC",
+      "month": 8,
+      "measured_delivered": 43.47,
+      "static": 36.0,
+      "delta": 7.47,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2024,
+      "tranche": "PNW_midC",
+      "month": 9,
+      "measured_delivered": 42.29,
+      "static": 36.0,
+      "delta": 6.29,
+      "hours": 720,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2024,
+      "tranche": "PNW_midC",
+      "month": 10,
+      "measured_delivered": 52.82,
+      "static": 36.0,
+      "delta": 16.82,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2024,
+      "tranche": "PNW_midC",
+      "month": 11,
+      "measured_delivered": 47.93,
+      "static": 36.0,
+      "delta": 11.93,
+      "hours": 720,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2024,
+      "tranche": "PNW_midC",
+      "month": 12,
+      "measured_delivered": 50.23,
+      "static": 36.0,
+      "delta": 14.23,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2024,
+      "tranche": "WECC_scarcity",
+      "month": 1,
+      "measured_delivered": 70.36,
+      "static": 180.0,
+      "delta": -109.64,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2024,
+      "tranche": "WECC_scarcity",
+      "month": 2,
+      "measured_delivered": 39.39,
+      "static": 180.0,
+      "delta": -140.61,
+      "hours": 672,
+      "hours_negative_measured": 42
+    },
+    {
+      "year": 2024,
+      "tranche": "WECC_scarcity",
+      "month": 3,
+      "measured_delivered": 22.9,
+      "static": 180.0,
+      "delta": -157.1,
+      "hours": 744,
+      "hours_negative_measured": 201
+    },
+    {
+      "year": 2024,
+      "tranche": "WECC_scarcity",
+      "month": 4,
+      "measured_delivered": 17.78,
+      "static": 180.0,
+      "delta": -162.22,
+      "hours": 720,
+      "hours_negative_measured": 246
+    },
+    {
+      "year": 2024,
+      "tranche": "WECC_scarcity",
+      "month": 5,
+      "measured_delivered": 17.81,
+      "static": 180.0,
+      "delta": -162.19,
+      "hours": 744,
+      "hours_negative_measured": 199
+    },
+    {
+      "year": 2024,
+      "tranche": "WECC_scarcity",
+      "month": 6,
+      "measured_delivered": 30.82,
+      "static": 180.0,
+      "delta": -149.18,
+      "hours": 720,
+      "hours_negative_measured": 46
+    },
+    {
+      "year": 2024,
+      "tranche": "WECC_scarcity",
+      "month": 7,
+      "measured_delivered": 55.53,
+      "static": 180.0,
+      "delta": -124.47,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2024,
+      "tranche": "WECC_scarcity",
+      "month": 8,
+      "measured_delivered": 45.19,
+      "static": 180.0,
+      "delta": -134.81,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2024,
+      "tranche": "WECC_scarcity",
+      "month": 9,
+      "measured_delivered": 43.0,
+      "static": 180.0,
+      "delta": -137.0,
+      "hours": 720,
+      "hours_negative_measured": 4
+    },
+    {
+      "year": 2024,
+      "tranche": "WECC_scarcity",
+      "month": 10,
+      "measured_delivered": 44.27,
+      "static": 180.0,
+      "delta": -135.73,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2024,
+      "tranche": "WECC_scarcity",
+      "month": 11,
+      "measured_delivered": 39.26,
+      "static": 180.0,
+      "delta": -140.74,
+      "hours": 720,
+      "hours_negative_measured": 8
+    },
+    {
+      "year": 2024,
+      "tranche": "WECC_scarcity",
+      "month": 12,
+      "measured_delivered": 44.96,
+      "static": 180.0,
+      "delta": -135.04,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2025,
+      "tranche": "DSW_CCGT",
+      "month": 1,
+      "measured_delivered": 42.93,
+      "static": 68.0,
+      "delta": -25.07,
+      "hours": 744,
+      "hours_negative_measured": 9
+    },
+    {
+      "year": 2025,
+      "tranche": "DSW_CCGT",
+      "month": 2,
+      "measured_delivered": 31.44,
+      "static": 68.0,
+      "delta": -36.56,
+      "hours": 672,
+      "hours_negative_measured": 163
+    },
+    {
+      "year": 2025,
+      "tranche": "DSW_CCGT",
+      "month": 3,
+      "measured_delivered": 26.94,
+      "static": 68.0,
+      "delta": -41.06,
+      "hours": 744,
+      "hours_negative_measured": 198
+    },
+    {
+      "year": 2025,
+      "tranche": "DSW_CCGT",
+      "month": 4,
+      "measured_delivered": 22.83,
+      "static": 68.0,
+      "delta": -45.17,
+      "hours": 720,
+      "hours_negative_measured": 165
+    },
+    {
+      "year": 2025,
+      "tranche": "DSW_CCGT",
+      "month": 5,
+      "measured_delivered": 27.4,
+      "static": 68.0,
+      "delta": -40.6,
+      "hours": 744,
+      "hours_negative_measured": 98
+    },
+    {
+      "year": 2025,
+      "tranche": "DSW_CCGT",
+      "month": 6,
+      "measured_delivered": 33.62,
+      "static": 68.0,
+      "delta": -34.38,
+      "hours": 720,
+      "hours_negative_measured": 17
+    },
+    {
+      "year": 2025,
+      "tranche": "DSW_CCGT",
+      "month": 7,
+      "measured_delivered": 40.24,
+      "static": 68.0,
+      "delta": -27.76,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2025,
+      "tranche": "DSW_CCGT",
+      "month": 8,
+      "measured_delivered": 43.84,
+      "static": 68.0,
+      "delta": -24.16,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2025,
+      "tranche": "DSW_CCGT",
+      "month": 9,
+      "measured_delivered": 45.24,
+      "static": 68.0,
+      "delta": -22.76,
+      "hours": 720,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2025,
+      "tranche": "DSW_CCGT",
+      "month": 10,
+      "measured_delivered": 36.78,
+      "static": 68.0,
+      "delta": -31.22,
+      "hours": 744,
+      "hours_negative_measured": 13
+    },
+    {
+      "year": 2025,
+      "tranche": "DSW_CCGT",
+      "month": 11,
+      "measured_delivered": 45.2,
+      "static": 68.0,
+      "delta": -22.8,
+      "hours": 720,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2025,
+      "tranche": "DSW_CCGT",
+      "month": 12,
+      "measured_delivered": 40.74,
+      "static": 68.0,
+      "delta": -27.26,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2025,
+      "tranche": "DSW_CT",
+      "month": 1,
+      "measured_delivered": 42.93,
+      "static": 110.0,
+      "delta": -67.07,
+      "hours": 744,
+      "hours_negative_measured": 9
+    },
+    {
+      "year": 2025,
+      "tranche": "DSW_CT",
+      "month": 2,
+      "measured_delivered": 31.44,
+      "static": 110.0,
+      "delta": -78.56,
+      "hours": 672,
+      "hours_negative_measured": 163
+    },
+    {
+      "year": 2025,
+      "tranche": "DSW_CT",
+      "month": 3,
+      "measured_delivered": 26.94,
+      "static": 110.0,
+      "delta": -83.06,
+      "hours": 744,
+      "hours_negative_measured": 198
+    },
+    {
+      "year": 2025,
+      "tranche": "DSW_CT",
+      "month": 4,
+      "measured_delivered": 22.83,
+      "static": 110.0,
+      "delta": -87.17,
+      "hours": 720,
+      "hours_negative_measured": 165
+    },
+    {
+      "year": 2025,
+      "tranche": "DSW_CT",
+      "month": 5,
+      "measured_delivered": 27.4,
+      "static": 110.0,
+      "delta": -82.6,
+      "hours": 744,
+      "hours_negative_measured": 98
+    },
+    {
+      "year": 2025,
+      "tranche": "DSW_CT",
+      "month": 6,
+      "measured_delivered": 33.62,
+      "static": 110.0,
+      "delta": -76.38,
+      "hours": 720,
+      "hours_negative_measured": 17
+    },
+    {
+      "year": 2025,
+      "tranche": "DSW_CT",
+      "month": 7,
+      "measured_delivered": 40.24,
+      "static": 110.0,
+      "delta": -69.76,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2025,
+      "tranche": "DSW_CT",
+      "month": 8,
+      "measured_delivered": 43.84,
+      "static": 110.0,
+      "delta": -66.16,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2025,
+      "tranche": "DSW_CT",
+      "month": 9,
+      "measured_delivered": 45.24,
+      "static": 110.0,
+      "delta": -64.76,
+      "hours": 720,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2025,
+      "tranche": "DSW_CT",
+      "month": 10,
+      "measured_delivered": 36.78,
+      "static": 110.0,
+      "delta": -73.22,
+      "hours": 744,
+      "hours_negative_measured": 13
+    },
+    {
+      "year": 2025,
+      "tranche": "DSW_CT",
+      "month": 11,
+      "measured_delivered": 45.2,
+      "static": 110.0,
+      "delta": -64.8,
+      "hours": 720,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2025,
+      "tranche": "DSW_CT",
+      "month": 12,
+      "measured_delivered": 40.74,
+      "static": 110.0,
+      "delta": -69.26,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2025,
+      "tranche": "DSW_solar_PV",
+      "month": 1,
+      "measured_delivered": 42.93,
+      "static": 48.0,
+      "delta": -5.07,
+      "hours": 744,
+      "hours_negative_measured": 9
+    },
+    {
+      "year": 2025,
+      "tranche": "DSW_solar_PV",
+      "month": 2,
+      "measured_delivered": 31.44,
+      "static": 48.0,
+      "delta": -16.56,
+      "hours": 672,
+      "hours_negative_measured": 163
+    },
+    {
+      "year": 2025,
+      "tranche": "DSW_solar_PV",
+      "month": 3,
+      "measured_delivered": 26.94,
+      "static": 48.0,
+      "delta": -21.06,
+      "hours": 744,
+      "hours_negative_measured": 198
+    },
+    {
+      "year": 2025,
+      "tranche": "DSW_solar_PV",
+      "month": 4,
+      "measured_delivered": 22.83,
+      "static": 48.0,
+      "delta": -25.17,
+      "hours": 720,
+      "hours_negative_measured": 165
+    },
+    {
+      "year": 2025,
+      "tranche": "DSW_solar_PV",
+      "month": 5,
+      "measured_delivered": 27.4,
+      "static": 48.0,
+      "delta": -20.6,
+      "hours": 744,
+      "hours_negative_measured": 98
+    },
+    {
+      "year": 2025,
+      "tranche": "DSW_solar_PV",
+      "month": 6,
+      "measured_delivered": 33.62,
+      "static": 48.0,
+      "delta": -14.38,
+      "hours": 720,
+      "hours_negative_measured": 17
+    },
+    {
+      "year": 2025,
+      "tranche": "DSW_solar_PV",
+      "month": 7,
+      "measured_delivered": 40.24,
+      "static": 48.0,
+      "delta": -7.76,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2025,
+      "tranche": "DSW_solar_PV",
+      "month": 8,
+      "measured_delivered": 43.84,
+      "static": 48.0,
+      "delta": -4.16,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2025,
+      "tranche": "DSW_solar_PV",
+      "month": 9,
+      "measured_delivered": 45.24,
+      "static": 48.0,
+      "delta": -2.76,
+      "hours": 720,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2025,
+      "tranche": "DSW_solar_PV",
+      "month": 10,
+      "measured_delivered": 36.78,
+      "static": 48.0,
+      "delta": -11.22,
+      "hours": 744,
+      "hours_negative_measured": 13
+    },
+    {
+      "year": 2025,
+      "tranche": "DSW_solar_PV",
+      "month": 11,
+      "measured_delivered": 45.2,
+      "static": 48.0,
+      "delta": -2.8,
+      "hours": 720,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2025,
+      "tranche": "DSW_solar_PV",
+      "month": 12,
+      "measured_delivered": 40.74,
+      "static": 48.0,
+      "delta": -7.26,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2025,
+      "tranche": "PNW_hydro_base",
+      "month": 1,
+      "measured_delivered": 49.5,
+      "static": 28.0,
+      "delta": 21.5,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2025,
+      "tranche": "PNW_hydro_base",
+      "month": 2,
+      "measured_delivered": 44.57,
+      "static": 28.0,
+      "delta": 16.57,
+      "hours": 672,
+      "hours_negative_measured": 7
+    },
+    {
+      "year": 2025,
+      "tranche": "PNW_hydro_base",
+      "month": 3,
+      "measured_delivered": 32.95,
+      "static": 28.0,
+      "delta": 4.95,
+      "hours": 744,
+      "hours_negative_measured": 79
+    },
+    {
+      "year": 2025,
+      "tranche": "PNW_hydro_base",
+      "month": 4,
+      "measured_delivered": 24.81,
+      "static": 28.0,
+      "delta": -3.19,
+      "hours": 720,
+      "hours_negative_measured": 94
+    },
+    {
+      "year": 2025,
+      "tranche": "PNW_hydro_base",
+      "month": 5,
+      "measured_delivered": 29.44,
+      "static": 28.0,
+      "delta": 1.44,
+      "hours": 744,
+      "hours_negative_measured": 38
+    },
+    {
+      "year": 2025,
+      "tranche": "PNW_hydro_base",
+      "month": 6,
+      "measured_delivered": 34.28,
+      "static": 28.0,
+      "delta": 6.28,
+      "hours": 720,
+      "hours_negative_measured": 8
+    },
+    {
+      "year": 2025,
+      "tranche": "PNW_hydro_base",
+      "month": 7,
+      "measured_delivered": 39.76,
+      "static": 28.0,
+      "delta": 11.76,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2025,
+      "tranche": "PNW_hydro_base",
+      "month": 8,
+      "measured_delivered": 43.66,
+      "static": 28.0,
+      "delta": 15.66,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2025,
+      "tranche": "PNW_hydro_base",
+      "month": 9,
+      "measured_delivered": 48.41,
+      "static": 28.0,
+      "delta": 20.41,
+      "hours": 720,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2025,
+      "tranche": "PNW_hydro_base",
+      "month": 10,
+      "measured_delivered": 42.66,
+      "static": 28.0,
+      "delta": 14.66,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2025,
+      "tranche": "PNW_hydro_base",
+      "month": 11,
+      "measured_delivered": 49.14,
+      "static": 28.0,
+      "delta": 21.14,
+      "hours": 720,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2025,
+      "tranche": "PNW_hydro_base",
+      "month": 12,
+      "measured_delivered": 41.14,
+      "static": 28.0,
+      "delta": 13.14,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2025,
+      "tranche": "PNW_midC",
+      "month": 1,
+      "measured_delivered": 52.5,
+      "static": 36.0,
+      "delta": 16.5,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2025,
+      "tranche": "PNW_midC",
+      "month": 2,
+      "measured_delivered": 47.57,
+      "static": 36.0,
+      "delta": 11.57,
+      "hours": 672,
+      "hours_negative_measured": 4
+    },
+    {
+      "year": 2025,
+      "tranche": "PNW_midC",
+      "month": 3,
+      "measured_delivered": 35.95,
+      "static": 36.0,
+      "delta": -0.05,
+      "hours": 744,
+      "hours_negative_measured": 66
+    },
+    {
+      "year": 2025,
+      "tranche": "PNW_midC",
+      "month": 4,
+      "measured_delivered": 27.81,
+      "static": 36.0,
+      "delta": -8.19,
+      "hours": 720,
+      "hours_negative_measured": 76
+    },
+    {
+      "year": 2025,
+      "tranche": "PNW_midC",
+      "month": 5,
+      "measured_delivered": 32.44,
+      "static": 36.0,
+      "delta": -3.56,
+      "hours": 744,
+      "hours_negative_measured": 20
+    },
+    {
+      "year": 2025,
+      "tranche": "PNW_midC",
+      "month": 6,
+      "measured_delivered": 37.28,
+      "static": 36.0,
+      "delta": 1.28,
+      "hours": 720,
+      "hours_negative_measured": 6
+    },
+    {
+      "year": 2025,
+      "tranche": "PNW_midC",
+      "month": 7,
+      "measured_delivered": 42.76,
+      "static": 36.0,
+      "delta": 6.76,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2025,
+      "tranche": "PNW_midC",
+      "month": 8,
+      "measured_delivered": 46.66,
+      "static": 36.0,
+      "delta": 10.66,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2025,
+      "tranche": "PNW_midC",
+      "month": 9,
+      "measured_delivered": 51.41,
+      "static": 36.0,
+      "delta": 15.41,
+      "hours": 720,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2025,
+      "tranche": "PNW_midC",
+      "month": 10,
+      "measured_delivered": 45.66,
+      "static": 36.0,
+      "delta": 9.66,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2025,
+      "tranche": "PNW_midC",
+      "month": 11,
+      "measured_delivered": 52.14,
+      "static": 36.0,
+      "delta": 16.14,
+      "hours": 720,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2025,
+      "tranche": "PNW_midC",
+      "month": 12,
+      "measured_delivered": 44.14,
+      "static": 36.0,
+      "delta": 8.14,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2025,
+      "tranche": "WECC_scarcity",
+      "month": 1,
+      "measured_delivered": 44.93,
+      "static": 180.0,
+      "delta": -135.07,
+      "hours": 744,
+      "hours_negative_measured": 6
+    },
+    {
+      "year": 2025,
+      "tranche": "WECC_scarcity",
+      "month": 2,
+      "measured_delivered": 33.44,
+      "static": 180.0,
+      "delta": -146.56,
+      "hours": 672,
+      "hours_negative_measured": 148
+    },
+    {
+      "year": 2025,
+      "tranche": "WECC_scarcity",
+      "month": 3,
+      "measured_delivered": 28.94,
+      "static": 180.0,
+      "delta": -151.06,
+      "hours": 744,
+      "hours_negative_measured": 188
+    },
+    {
+      "year": 2025,
+      "tranche": "WECC_scarcity",
+      "month": 4,
+      "measured_delivered": 24.83,
+      "static": 180.0,
+      "delta": -155.17,
+      "hours": 720,
+      "hours_negative_measured": 117
+    },
+    {
+      "year": 2025,
+      "tranche": "WECC_scarcity",
+      "month": 5,
+      "measured_delivered": 29.4,
+      "static": 180.0,
+      "delta": -150.6,
+      "hours": 744,
+      "hours_negative_measured": 71
+    },
+    {
+      "year": 2025,
+      "tranche": "WECC_scarcity",
+      "month": 6,
+      "measured_delivered": 35.62,
+      "static": 180.0,
+      "delta": -144.38,
+      "hours": 720,
+      "hours_negative_measured": 15
+    },
+    {
+      "year": 2025,
+      "tranche": "WECC_scarcity",
+      "month": 7,
+      "measured_delivered": 42.24,
+      "static": 180.0,
+      "delta": -137.76,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2025,
+      "tranche": "WECC_scarcity",
+      "month": 8,
+      "measured_delivered": 45.84,
+      "static": 180.0,
+      "delta": -134.16,
+      "hours": 744,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2025,
+      "tranche": "WECC_scarcity",
+      "month": 9,
+      "measured_delivered": 47.24,
+      "static": 180.0,
+      "delta": -132.76,
+      "hours": 720,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2025,
+      "tranche": "WECC_scarcity",
+      "month": 10,
+      "measured_delivered": 38.78,
+      "static": 180.0,
+      "delta": -141.22,
+      "hours": 744,
+      "hours_negative_measured": 2
+    },
+    {
+      "year": 2025,
+      "tranche": "WECC_scarcity",
+      "month": 11,
+      "measured_delivered": 47.2,
+      "static": 180.0,
+      "delta": -132.8,
+      "hours": 720,
+      "hours_negative_measured": 0
+    },
+    {
+      "year": 2025,
+      "tranche": "WECC_scarcity",
+      "month": 12,
+      "measured_delivered": 42.74,
+      "static": 180.0,
+      "delta": -137.26,
+      "hours": 744,
+      "hours_negative_measured": 0
+    }
+  ],
+  "P2_annual": [
+    {
+      "year": 2022,
+      "tranche": "DSW_CCGT",
+      "measured": 86.95,
+      "static": 68.0,
+      "delta": 18.95,
+      "hours": 8760,
+      "neg_hours": 10,
+      "abs_delta_hours": 165976.0
+    },
+    {
+      "year": 2022,
+      "tranche": "DSW_CT",
+      "measured": 86.95,
+      "static": 110.0,
+      "delta": -23.05,
+      "hours": 8760,
+      "neg_hours": 10,
+      "abs_delta_hours": 201944.0
+    },
+    {
+      "year": 2022,
+      "tranche": "DSW_solar_PV",
+      "measured": 86.95,
+      "static": 48.0,
+      "delta": 38.95,
+      "hours": 8760,
+      "neg_hours": 10,
+      "abs_delta_hours": 341176.0
+    },
+    {
+      "year": 2022,
+      "tranche": "PNW_hydro_base",
+      "measured": 88.38,
+      "static": 28.0,
+      "delta": 60.38,
+      "hours": 8760,
+      "neg_hours": 11,
+      "abs_delta_hours": 528932.0
+    },
+    {
+      "year": 2022,
+      "tranche": "PNW_midC",
+      "measured": 91.38,
+      "static": 36.0,
+      "delta": 55.38,
+      "hours": 8760,
+      "neg_hours": 0,
+      "abs_delta_hours": 485132.0
+    },
+    {
+      "year": 2022,
+      "tranche": "WECC_scarcity",
+      "measured": 88.95,
+      "static": 180.0,
+      "delta": -91.05,
+      "hours": 8760,
+      "neg_hours": 1,
+      "abs_delta_hours": 797624.0
+    },
+    {
+      "year": 2023,
+      "tranche": "DSW_CCGT",
+      "measured": 49.4,
+      "static": 68.0,
+      "delta": -18.6,
+      "hours": 8760,
+      "neg_hours": 185,
+      "abs_delta_hours": 162930.0
+    },
+    {
+      "year": 2023,
+      "tranche": "DSW_CT",
+      "measured": 49.4,
+      "static": 110.0,
+      "delta": -60.6,
+      "hours": 8760,
+      "neg_hours": 185,
+      "abs_delta_hours": 530850.0
+    },
+    {
+      "year": 2023,
+      "tranche": "DSW_solar_PV",
+      "measured": 49.4,
+      "static": 48.0,
+      "delta": 1.4,
+      "hours": 8760,
+      "neg_hours": 185,
+      "abs_delta_hours": 12270.0
+    },
+    {
+      "year": 2023,
+      "tranche": "PNW_hydro_base",
+      "measured": 48.02,
+      "static": 28.0,
+      "delta": 20.02,
+      "hours": 8760,
+      "neg_hours": 104,
+      "abs_delta_hours": 175346.0
+    },
+    {
+      "year": 2023,
+      "tranche": "PNW_midC",
+      "measured": 51.02,
+      "static": 36.0,
+      "delta": 15.02,
+      "hours": 8760,
+      "neg_hours": 77,
+      "abs_delta_hours": 131546.0
+    },
+    {
+      "year": 2023,
+      "tranche": "WECC_scarcity",
+      "measured": 51.4,
+      "static": 180.0,
+      "delta": -128.6,
+      "hours": 8760,
+      "neg_hours": 128,
+      "abs_delta_hours": 1126530.0
+    },
+    {
+      "year": 2024,
+      "tranche": "DSW_CCGT",
+      "measured": 37.34,
+      "static": 68.0,
+      "delta": -30.66,
+      "hours": 8760,
+      "neg_hours": 801,
+      "abs_delta_hours": 268552.0
+    },
+    {
+      "year": 2024,
+      "tranche": "DSW_CT",
+      "measured": 37.34,
+      "static": 110.0,
+      "delta": -72.66,
+      "hours": 8760,
+      "neg_hours": 801,
+      "abs_delta_hours": 636472.0
+    },
+    {
+      "year": 2024,
+      "tranche": "DSW_solar_PV",
+      "measured": 37.34,
+      "static": 48.0,
+      "delta": -10.66,
+      "hours": 8760,
+      "neg_hours": 801,
+      "abs_delta_hours": 93352.0
+    },
+    {
+      "year": 2024,
+      "tranche": "PNW_hydro_base",
+      "measured": 42.08,
+      "static": 28.0,
+      "delta": 14.08,
+      "hours": 8760,
+      "neg_hours": 248,
+      "abs_delta_hours": 123297.0
+    },
+    {
+      "year": 2024,
+      "tranche": "PNW_midC",
+      "measured": 45.08,
+      "static": 36.0,
+      "delta": 9.08,
+      "hours": 8760,
+      "neg_hours": 191,
+      "abs_delta_hours": 79497.0
+    },
+    {
+      "year": 2024,
+      "tranche": "WECC_scarcity",
+      "measured": 39.34,
+      "static": 180.0,
+      "delta": -140.66,
+      "hours": 8760,
+      "neg_hours": 746,
+      "abs_delta_hours": 1232152.0
+    },
+    {
+      "year": 2025,
+      "tranche": "DSW_CCGT",
+      "measured": 36.47,
+      "static": 68.0,
+      "delta": -31.53,
+      "hours": 8760,
+      "neg_hours": 663,
+      "abs_delta_hours": 276192.0
+    },
+    {
+      "year": 2025,
+      "tranche": "DSW_CT",
+      "measured": 36.47,
+      "static": 110.0,
+      "delta": -73.53,
+      "hours": 8760,
+      "neg_hours": 663,
+      "abs_delta_hours": 644112.0
+    },
+    {
+      "year": 2025,
+      "tranche": "DSW_solar_PV",
+      "measured": 36.47,
+      "static": 48.0,
+      "delta": -11.53,
+      "hours": 8760,
+      "neg_hours": 663,
+      "abs_delta_hours": 100992.0
+    },
+    {
+      "year": 2025,
+      "tranche": "PNW_hydro_base",
+      "measured": 40.0,
+      "static": 28.0,
+      "delta": 12.0,
+      "hours": 8760,
+      "neg_hours": 226,
+      "abs_delta_hours": 105110.0
+    },
+    {
+      "year": 2025,
+      "tranche": "PNW_midC",
+      "measured": 43.0,
+      "static": 36.0,
+      "delta": 7.0,
+      "hours": 8760,
+      "neg_hours": 172,
+      "abs_delta_hours": 61310.0
+    },
+    {
+      "year": 2025,
+      "tranche": "WECC_scarcity",
+      "measured": 38.47,
+      "static": 180.0,
+      "delta": -141.53,
+      "hours": 8760,
+      "neg_hours": 547,
+      "abs_delta_hours": 1239792.0
+    }
+  ],
+  "P3_footprint": {
+    "2022": 86338.7,
+    "2023": 18808.7,
+    "2024": 16304.9,
+    "2025": 14235.2
+  },
+  "P3_screen_year": 2022,
+  "P3_basis": "largest measured |delta| x covered-hours x marginal-weight footprint; chosen before any solve and with no reference to the price residual (rules 1 / 29)"
+}
