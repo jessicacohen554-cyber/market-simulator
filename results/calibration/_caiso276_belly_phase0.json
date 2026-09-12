@@ -1,0 +1,469 @@
+{
+  "session": "caiso-276",
+  "year": 2022,
+  "phase": 0,
+  "bundle": "results/calibration/caiso275_B_gascoupling_2022",
+  "G_REPRO": {
+    "model_lw_price": 94.069,
+    "published_model_lw": 94.07,
+    "gate_actual_bench_rt_lw": 84.49,
+    "gap_usd_mwh": 9.579,
+    "gap_pct": 11.337,
+    "band_pct": 10.0,
+    "usd_needed_to_pass": 1.13,
+    "probe_hourly_rt_lw": 83.759,
+    "basis_delta_probe_minus_bench": -0.731,
+    "total_slack_mwh": 0.0,
+    "total_dump_mwh": 0.0
+  },
+  "decile_decomposition": [
+    {
+      "decile": 0,
+      "hours": 876,
+      "netload_mean_mw": 5890.5,
+      "model_price": 19.51,
+      "rt_price": 14.93,
+      "gap": 4.58,
+      "contrib_usd_mwh": 0.37,
+      "model_gas_mw": 2089.0,
+      "model_import_mw": 2864.0
+    },
+    {
+      "decile": 1,
+      "hours": 876,
+      "netload_mean_mw": 10805.3,
+      "model_price": 59.39,
+      "rt_price": 41.78,
+      "gap": 17.61,
+      "contrib_usd_mwh": 1.627,
+      "model_gas_mw": 3247.0,
+      "model_import_mw": 5088.0
+    },
+    {
+      "decile": 2,
+      "hours": 876,
+      "netload_mean_mw": 14670.1,
+      "model_price": 81.08,
+      "rt_price": 62.94,
+      "gap": 18.14,
+      "contrib_usd_mwh": 1.793,
+      "model_gas_mw": 4459.0,
+      "model_import_mw": 6204.0
+    },
+    {
+      "decile": 3,
+      "hours": 876,
+      "netload_mean_mw": 17357.1,
+      "model_price": 89.9,
+      "rt_price": 73.02,
+      "gap": 16.87,
+      "contrib_usd_mwh": 1.586,
+      "model_gas_mw": 5229.0,
+      "model_import_mw": 7233.0
+    },
+    {
+      "decile": 4,
+      "hours": 876,
+      "netload_mean_mw": 18957.2,
+      "model_price": 95.32,
+      "rt_price": 79.37,
+      "gap": 15.95,
+      "contrib_usd_mwh": 1.474,
+      "model_gas_mw": 6487.0,
+      "model_import_mw": 7338.0
+    },
+    {
+      "decile": 5,
+      "hours": 876,
+      "netload_mean_mw": 20246.6,
+      "model_price": 93.19,
+      "rt_price": 80.99,
+      "gap": 12.2,
+      "contrib_usd_mwh": 1.144,
+      "model_gas_mw": 7651.0,
+      "model_import_mw": 7300.0
+    },
+    {
+      "decile": 6,
+      "hours": 876,
+      "netload_mean_mw": 21559.3,
+      "model_price": 101.24,
+      "rt_price": 91.26,
+      "gap": 9.97,
+      "contrib_usd_mwh": 0.989,
+      "model_gas_mw": 8777.0,
+      "model_import_mw": 7013.0
+    },
+    {
+      "decile": 7,
+      "hours": 876,
+      "netload_mean_mw": 23000.6,
+      "model_price": 103.9,
+      "rt_price": 94.17,
+      "gap": 9.73,
+      "contrib_usd_mwh": 1.012,
+      "model_gas_mw": 10058.0,
+      "model_import_mw": 6698.0
+    },
+    {
+      "decile": 8,
+      "hours": 876,
+      "netload_mean_mw": 24920.1,
+      "model_price": 115.04,
+      "rt_price": 108.45,
+      "gap": 6.59,
+      "contrib_usd_mwh": 0.728,
+      "model_gas_mw": 11708.0,
+      "model_import_mw": 6279.0
+    },
+    {
+      "decile": 9,
+      "hours": 876,
+      "netload_mean_mw": 29828.1,
+      "model_price": 145.02,
+      "rt_price": 148.11,
+      "gap": -3.09,
+      "contrib_usd_mwh": -0.414,
+      "model_gas_mw": 16370.0,
+      "model_import_mw": 5052.0
+    }
+  ],
+  "hod_decomposition": [
+    {
+      "hod": 0,
+      "gap": 12.49,
+      "contrib_usd_mwh": 0.474,
+      "model_gas_mw": 7343.0,
+      "model_import_mw": 8065.0,
+      "model_price": 93.8,
+      "rt_price": 81.31
+    },
+    {
+      "hod": 1,
+      "gap": 11.98,
+      "contrib_usd_mwh": 0.438,
+      "model_gas_mw": 6474.0,
+      "model_import_mw": 8372.0,
+      "model_price": 91.67,
+      "rt_price": 79.69
+    },
+    {
+      "hod": 2,
+      "gap": 12.34,
+      "contrib_usd_mwh": 0.442,
+      "model_gas_mw": 6094.0,
+      "model_import_mw": 8478.0,
+      "model_price": 90.52,
+      "rt_price": 78.18
+    },
+    {
+      "hod": 3,
+      "gap": 10.54,
+      "contrib_usd_mwh": 0.378,
+      "model_gas_mw": 6087.0,
+      "model_import_mw": 8488.0,
+      "model_price": 90.07,
+      "rt_price": 79.53
+    },
+    {
+      "hod": 4,
+      "gap": 7.75,
+      "contrib_usd_mwh": 0.287,
+      "model_gas_mw": 6650.0,
+      "model_import_mw": 8288.0,
+      "model_price": 90.8,
+      "rt_price": 83.05
+    },
+    {
+      "hod": 5,
+      "gap": 6.53,
+      "contrib_usd_mwh": 0.258,
+      "model_gas_mw": 7756.0,
+      "model_import_mw": 7341.0,
+      "model_price": 93.16,
+      "rt_price": 86.63
+    },
+    {
+      "hod": 6,
+      "gap": 12.75,
+      "contrib_usd_mwh": 0.535,
+      "model_gas_mw": 8726.0,
+      "model_import_mw": 5265.0,
+      "model_price": 96.47,
+      "rt_price": 83.72
+    },
+    {
+      "hod": 7,
+      "gap": 13.7,
+      "contrib_usd_mwh": 0.586,
+      "model_gas_mw": 6474.0,
+      "model_import_mw": 5774.0,
+      "model_price": 87.6,
+      "rt_price": 73.9
+    },
+    {
+      "hod": 8,
+      "gap": 19.76,
+      "contrib_usd_mwh": 0.82,
+      "model_gas_mw": 4430.0,
+      "model_import_mw": 5984.0,
+      "model_price": 80.01,
+      "rt_price": 60.26
+    },
+    {
+      "hod": 9,
+      "gap": 18.08,
+      "contrib_usd_mwh": 0.725,
+      "model_gas_mw": 4062.0,
+      "model_import_mw": 5233.0,
+      "model_price": 74.45,
+      "rt_price": 56.36
+    },
+    {
+      "hod": 10,
+      "gap": 12.86,
+      "contrib_usd_mwh": 0.508,
+      "model_gas_mw": 4083.0,
+      "model_import_mw": 4709.0,
+      "model_price": 69.51,
+      "rt_price": 56.65
+    },
+    {
+      "hod": 11,
+      "gap": 11.95,
+      "contrib_usd_mwh": 0.474,
+      "model_gas_mw": 4293.0,
+      "model_import_mw": 4456.0,
+      "model_price": 69.02,
+      "rt_price": 57.07
+    },
+    {
+      "hod": 12,
+      "gap": 8.64,
+      "contrib_usd_mwh": 0.35,
+      "model_gas_mw": 4599.0,
+      "model_import_mw": 4359.0,
+      "model_price": 68.63,
+      "rt_price": 60.0
+    },
+    {
+      "hod": 13,
+      "gap": 6.6,
+      "contrib_usd_mwh": 0.276,
+      "model_gas_mw": 5054.0,
+      "model_import_mw": 4266.0,
+      "model_price": 71.6,
+      "rt_price": 65.0
+    },
+    {
+      "hod": 14,
+      "gap": 5.14,
+      "contrib_usd_mwh": 0.223,
+      "model_gas_mw": 5708.0,
+      "model_import_mw": 4522.0,
+      "model_price": 77.75,
+      "rt_price": 72.61
+    },
+    {
+      "hod": 15,
+      "gap": 8.96,
+      "contrib_usd_mwh": 0.398,
+      "model_gas_mw": 6890.0,
+      "model_import_mw": 5005.0,
+      "model_price": 89.08,
+      "rt_price": 80.12
+    },
+    {
+      "hod": 16,
+      "gap": 2.42,
+      "contrib_usd_mwh": 0.112,
+      "model_gas_mw": 8935.0,
+      "model_import_mw": 5899.0,
+      "model_price": 101.41,
+      "rt_price": 98.98
+    },
+    {
+      "hod": 17,
+      "gap": -9.8,
+      "contrib_usd_mwh": -0.468,
+      "model_gas_mw": 10934.0,
+      "model_import_mw": 6013.0,
+      "model_price": 118.44,
+      "rt_price": 128.24
+    },
+    {
+      "hod": 18,
+      "gap": 4.67,
+      "contrib_usd_mwh": 0.226,
+      "model_gas_mw": 12462.0,
+      "model_import_mw": 5288.0,
+      "model_price": 127.85,
+      "rt_price": 123.18
+    },
+    {
+      "hod": 19,
+      "gap": 19.42,
+      "contrib_usd_mwh": 0.927,
+      "model_gas_mw": 12953.0,
+      "model_import_mw": 4958.0,
+      "model_price": 127.73,
+      "rt_price": 108.31
+    },
+    {
+      "hod": 20,
+      "gap": 16.86,
+      "contrib_usd_mwh": 0.781,
+      "model_gas_mw": 12423.0,
+      "model_import_mw": 5378.0,
+      "model_price": 117.53,
+      "rt_price": 100.67
+    },
+    {
+      "hod": 21,
+      "gap": 12.67,
+      "contrib_usd_mwh": 0.558,
+      "model_gas_mw": 11604.0,
+      "model_import_mw": 5903.0,
+      "model_price": 109.27,
+      "rt_price": 96.6
+    },
+    {
+      "hod": 22,
+      "gap": 12.98,
+      "contrib_usd_mwh": 0.54,
+      "model_gas_mw": 10084.0,
+      "model_import_mw": 6845.0,
+      "model_price": 102.07,
+      "rt_price": 89.1
+    },
+    {
+      "hod": 23,
+      "gap": 11.66,
+      "contrib_usd_mwh": 0.46,
+      "model_gas_mw": 8465.0,
+      "model_import_mw": 7677.0,
+      "model_price": 96.74,
+      "rt_price": 85.08
+    }
+  ],
+  "storage_cols": [
+    "year",
+    "pass",
+    "tech",
+    "hour",
+    "charge_mw",
+    "discharge_mw"
+  ],
+  "sink_census": [
+    {
+      "decile": 0,
+      "import_mw": 2864.0,
+      "hydro_mw": 685.0,
+      "gas_mw": 2089.0,
+      "dump_mw": 0.0,
+      "slack_mw": 0.0,
+      "solar_mw": 11764.0,
+      "wind_mw": 2615.0,
+      "price": 19.51
+    },
+    {
+      "decile": 1,
+      "import_mw": 5088.0,
+      "hydro_mw": 775.0,
+      "gas_mw": 3247.0,
+      "dump_mw": 0.0,
+      "slack_mw": 0.0,
+      "solar_mw": 10633.0,
+      "wind_mw": 1727.0,
+      "price": 59.39
+    },
+    {
+      "decile": 2,
+      "import_mw": 6204.0,
+      "hydro_mw": 1179.0,
+      "gas_mw": 4459.0,
+      "dump_mw": 0.0,
+      "slack_mw": 0.0,
+      "solar_mw": 8286.0,
+      "wind_mw": 1814.0,
+      "price": 81.08
+    },
+    {
+      "decile": 3,
+      "import_mw": 7233.0,
+      "hydro_mw": 1526.0,
+      "gas_mw": 5229.0,
+      "dump_mw": 0.0,
+      "slack_mw": 0.0,
+      "solar_mw": 3720.0,
+      "wind_mw": 2479.0,
+      "price": 89.9
+    },
+    {
+      "decile": 4,
+      "import_mw": 7338.0,
+      "hydro_mw": 1543.0,
+      "gas_mw": 6487.0,
+      "dump_mw": 0.0,
+      "slack_mw": 0.0,
+      "solar_mw": 2145.0,
+      "wind_mw": 2063.0,
+      "price": 95.32
+    },
+    {
+      "decile": 5,
+      "import_mw": 7300.0,
+      "hydro_mw": 1609.0,
+      "gas_mw": 7651.0,
+      "dump_mw": 0.0,
+      "slack_mw": 0.0,
+      "solar_mw": 1431.0,
+      "wind_mw": 1833.0,
+      "price": 93.19
+    },
+    {
+      "decile": 6,
+      "import_mw": 7013.0,
+      "hydro_mw": 1841.0,
+      "gas_mw": 8777.0,
+      "dump_mw": 0.0,
+      "slack_mw": 0.0,
+      "solar_mw": 1361.0,
+      "wind_mw": 1931.0,
+      "price": 101.24
+    },
+    {
+      "decile": 7,
+      "import_mw": 6698.0,
+      "hydro_mw": 2043.0,
+      "gas_mw": 10058.0,
+      "dump_mw": 0.0,
+      "slack_mw": 0.0,
+      "solar_mw": 1289.0,
+      "wind_mw": 1771.0,
+      "price": 103.9
+    },
+    {
+      "decile": 8,
+      "import_mw": 6279.0,
+      "hydro_mw": 2351.0,
+      "gas_mw": 11708.0,
+      "dump_mw": 0.0,
+      "slack_mw": 0.0,
+      "solar_mw": 1131.0,
+      "wind_mw": 1622.0,
+      "price": 115.04
+    },
+    {
+      "decile": 9,
+      "import_mw": 5052.0,
+      "hydro_mw": 3380.0,
+      "gas_mw": 16370.0,
+      "dump_mw": 0.0,
+      "slack_mw": 0.0,
+      "solar_mw": 1628.0,
+      "wind_mw": 2138.0,
+      "price": 145.02
+    }
+  ]
+}

@@ -116,6 +116,27 @@ measured band set of their own. Their marginal weight is small (caiso-272 §3: S
 matched weight) so this is unlikely to carry a 2.70 $/MWh level offset, but it is an open,
 untested transfer and it should be stated whenever the CT/ST tail is discussed.
 
+> **ANNOTATION 2026-09-12 (caiso-276) — THE CONCLUSION STANDS; THIS PARAGRAPH'S *REASON* IS
+> SUPERSEDED, AND ITS "open, untested transfer" IS CLOSED FOR `CT_CHP`.**
+> The dismissal above is on **weight**, and it cites the wrong class: caiso-276 §5c measures
+> **`CT_CHP` at 28.8 %** of the marginal load-weight in the window that carries 2022's residual
+> (16.6 % over all 8,760 h), not ST_GAS's 0.79 %. Examined on the merits, the answer is
+> **stronger** than the dismissal. `caiso_offer_curve_measured.json`'s
+> `_provenance.classifier.contamination_note` states the CT bucket "may include the 2.9 GW OTC/RMR
+> ST_GAS steamers and **priced CT_CHP**" and that "**masked ids preclude per-plant mapping**". So
+> **`CT_CHP` is already inside the measured CT bucket**: applying the CT ladder to it is applying a
+> measured surface to a class it was measured over — the **correct** treatment, not an ungrounded
+> extrapolation — and a separate CT_CHP ladder is **structurally un-derivable** from this source,
+> not merely un-derived. `caiso_offer_surface_measured_ungrounded`, which performs the merge, is
+> armed on the keeper and is the correct posture.
+> **ST_GAS is a different matter and also not a lever:** its own measured ladder **is** derived
+> (`classifier.classes` includes it) but **not consumed**, and consuming it would make ST_GAS
+> offers **more expensive** (econ_low 1.849 / 1.294 / 1.523 against the armed 1.103 / 1.102 /
+> 1.140) — it **raises** price. Its `committed` band is **NaN in 2024 and 2025**, so it cannot be
+> the "ONE config across EVERY scored year" rule 1 condition (b) requires. A rules-14/23 fidelity
+> item for a future session, to be chartered **on the data** and never on a price residual.
+> `docs/FINDING-caiso276-c3a-2022-no-admissible-lever-2026-09-12.md` §6/§8.
+
 ### (c) It is NOT the D-4 floor family
 
 The keeper's D-4 off-window-binding diagnostic reads **21 FAIL of 39 rows**, which looks alarming
@@ -158,6 +179,19 @@ next session's charter.
    carried at full magnitude wherever the DA-RT premium is quoted.
 3. **2022 is two objects, not one.** The constant adder (§1) plus a Dec-2022 excess (§2). A lever
    that closes one will not close the other, and the 2022 band will not clear on the adder alone.
+
+   > **ANNOTATION 2026-09-12 (caiso-276) — THIS DISCLOSURE IS FALSIFIED BY MEASUREMENT. 2022 IS
+   > *ONE* OBJECT.** Measured on 2022's own 12 months, the implied marginal heat-rate bias
+   > (load-weighted price ÷ the model's own delivered gas price, model minus the committed monthly
+   > actual) is **mean +1.024 MMBtu/MWh, sd 0.642** — reproducing caiso-270 §4's cross-ISO **+1.01**
+   > from a new direction — and **December's +1.337 RANKS 3 OF 12, only +0.51 sd above the
+   > ex-December mean of +0.996**. The **+$49.51** December gap is that **ordinary** bias ×
+   > **$37.02** gas, to the dollar. Normalising by gas halves the dispersion (raw monthly gap CV
+   > **1.26** → gas-normalised CV **0.627**), so the residual scales **with** gas and cannot be a
+   > non-fuel adder. §2's own reading ("Dec-2022 is not a missing-daily-gas defect", and a
+   > December-only lever would be year-scoped) was right; what is withdrawn is the **two-objects**
+   > framing, and with it the premise that a separate December mechanism exists to be found.
+   > `docs/FINDING-caiso276-c3a-2022-no-admissible-lever-2026-09-12.md` §3/§8.
 4. **The monthly gap uses a 730-hour month approximation** (`hour // 730`) against the bench's
    calendar-month actuals. That is accurate enough for a several-dollar monthly signal and the
    ranking is unambiguous, but it is not an exact calendar alignment and should not be quoted to

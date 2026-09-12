@@ -14548,3 +14548,110 @@ or correct rule 31's text — is an owner call.
 shard `keeper`/`updated` re-stamped; the §5.2 prose header re-stamped (it had been stale two
 promotions). **Pre-existing parity RED not mine:** `results/calibration/nyiso227_rebasis_span`
 (NYISO lane, commit `146c5af7`).
+
+## caiso-276 — 2026-09-12
+
+**C3a-2022 CHARTER: THE ANSWER IS THAT NO ADMISSIBLE LEVER EXISTS. ZERO LP, NO SHARD, NO ARM, NO
+`ScenarioConfig` FIELD, NO RUN REGISTERED. KEEPER UNCHANGED at
+`2026-09-12-caiso-275-gascoupling`** (CALIBRATED on 2023–2025, the single ledgered C3c caveat), so
+no keeper shard, no `calibration-complete.json` re-key and no forecast gate-(a) re-key were owed.
+Full record: `docs/FINDING-caiso276-c3a-2022-no-admissible-lever-2026-09-12.md`.
+
+**The gate is reproduced exactly** — model **94.069** against the committed bench `rt_lw` **84.49**
+= **+11.337 %** against the ±10 % band, i.e. **−1.130 $/MWh** needed; `slack` and `dump` are
+**0.000** in all 8,760 hours of 2022, so the LP is never short and never long and no
+scarcity/oversupply mechanism has purchase on the year. A **basis reconciliation was stated before
+any decomposition**: the probe's own hourly reconstruction returns 83.759, a **−0.731 $/MWh**
+weighting artifact, so every shape number is used for shape only and no gate magnitude is quoted
+from it.
+
+**Four findings, each independently sufficient to refuse an arm:**
+
+1. **THE caiso-275 HANDED-FORWARD OBJECT IS KILLED BEFORE A SOLVE.** Its belly-commitment deficit
+   was measured on **2024**; re-pointed at **2022** the lowest net-load decile carries **+0.250 of
+   the +9.579 gap (2.6 %)** and the belly **core is essentially unbiased on the clock** (hod 14
+   **−0.003**, hod 16 −0.049, hod 13 +0.113). **69 % of the ex-December gap sits in the RAMP
+   SHOULDERS** (hod 6–9 +2.319, hod 19–22 +2.462), and **hod 17 carries −0.699** — the model
+   **under**-prices the market's own peak hour by **$14.64**, because the actual price peaks hod 17
+   (the solar-drop ramp) while model *and* measured demand peak hod 18. That is the standing C3c
+   model-class limitation restated, and it is **wrong-signed** for C3a.
+2. **2022 IS ONE OBJECT, NOT TWO — caiso-273 §6.3's standing disclosure is FALSIFIED and the
+   December lever does not exist.** The implied marginal heat-rate bias is **+1.024 MMBtu/MWh**
+   across the 12 months (reproducing caiso-270 §4's **+1.01** from a new direction) and
+   **December's +1.337 RANKS 3 OF 12, only +0.51 sd above the ex-December mean of +0.996**: the
+   **+$49.51** December gap is that ordinary bias × **$37.02** gas, to the dollar. Normalising by
+   gas halves the dispersion (CV 1.26 → 0.627), so the residual scales **with** gas and cannot be a
+   non-fuel adder. A December-scoped lever would be month- and year-scoped — rule 1 condition (b)
+   refuses it.
+3. **NO COMMITMENT REACH AND NO SEAM BINDING.** Only **647.7 MW of 22,354 MW** of gas capacity is
+   idle-while-in-the-money in the residual window (500.9 MW belly core, 631.6 MW December), while
+   13.5 GW of headroom sits priced **above** λ — so the model is neither failing to commit
+   in-the-money capacity nor out of efficient capacity. Import utilisation is **30–43 %** with the
+   corridor envelope binding in **ZERO hours** of 2022, corroborating caiso-275 Arm A from a fifth
+   direction. λ sits **in a gap in 81–91 %** of load weight (caiso-272 §3.1, sixth direction).
+   The armed bridge itself is healthy: D-2 attributes **4.1209 TWh** forced CC_REGULAR (7.75 % of
+   the class, PASS against the 30 % rule-20 budget).
+4. **THE OFFER CHANNEL IS SPENT INCLUDING `CT_CHP`, closed on the source file's OWN provenance.**
+   caiso-273 §4(b) left the CT_PEAKER-ladder transfer to CT_CHP/ST_GAS open and dismissed it citing
+   **ST_GAS's 0.79 %** of marginal weight; this session measures **CT_CHP at 28.8 %** of the
+   residual window's marginal weight, so the weight argument was aimed at the wrong class. The
+   merits are **stronger** than the dismissal: `caiso_offer_curve_measured.json`'s
+   `_provenance.classifier.contamination_note` states the CT bucket "may include … priced CT_CHP"
+   and that "masked ids preclude per-plant mapping" — **CT_CHP is already inside the measured CT
+   bucket**, so the armed `caiso_offer_surface_measured_ungrounded` merge is the **correct** posture
+   and a separate CT_CHP ladder is **structurally un-derivable** from this source, not merely
+   un-derived.
+
+**The three named candidates, adjudicated at the CODE level, none needing a solve, none able to
+lower the 2022 price:** `caiso_lcr_commitment_credit` **INERT — structurally unreachable** (its only
+consumer sits inside `run_commitment_pass`, the archived P2 pass behind `--enable-legacy-p2` that no
+keeper uses and a P1-scored run never enters; independently it needs `local_capacity_constraints`,
+False on the keeper); `caiso_ra_bridge_curtailment_release` **WRONG-SIGNED** (it *removes* the floor
+in curtailment hours, reducing belly gas); `caiso_ra_mustoffer_quantity_gate` **WRONG-SIGNED AND
+INADMISSIBLE IN 2022** (it only ever caps, was already a measured no-op, and
+`CAISO_RA_MUSTOFFER_GAS_MW` has **no 2022 row** so the code falls through to the **2025** vintage).
+
+**The sweep is exhaustive, not anecdotal:** all **27** CAISO-scoped booleans that are `False` on the
+keeper are screened, and every one is already-adjudicated (rule 28(a) DO-NOT-REDO), rule-13
+forbidden (`caiso_gas_commitment_floor`), wrong-signed toward a *higher* price (the reserve/AS
+co-opt family, the storage-constraint family, the corridor/depth caps, `caiso_dam_outages`,
+`caiso_solar_cap_at_delivered`), inert in a backcast (the NQC accreditation pair), or closed by the
+measured non-binding seam. **Carbon** was the one unexamined `mc` term and it is **exact**
+(`STATE_CARBON_PRICE_BY_ISO` CAISO 2022 = **28.45 $/t** against the 2022 CARB auction mean of
+**$28.45**).
+
+**REPORTED AGAINST THE SESSION.** (1) **C3a-2022 is NOT closed**; the rung stays **NOT-YET**, and
+under rule 30(c) `[R-TOUCHPOINT-FOLD]` the ISO's determination is the train-tier verdict and is
+untouched. (2) **The residual is not a 2022 defect and not a CAISO-lane object**: caiso-270 measured
+the same bias in **40 of 48 ISO-months** and caiso-273 §1 a near-constant **+2.70 $/MWh** adder in
+2023–2025 (CV 0.095), so **2022 is simply the year the standing bias crosses the band because its
+gas price is highest.** Its honest venue is a cross-ISO marginal-offer-formation charter, not a
+held-out-year lane. (3) **§3 characterises, it does not diagnose** — it says which `mc` term the
+residual must live in, not what supply is missing. (4) **A near-miss correction recorded against my
+own work:** an intermediate measurement appeared to show pumped storage pumping 1.6 GW at hod 18;
+that was a **mislabelled print header in my own probe**, not a model defect (the column was li-ion
+*discharge*), verified against `_storage_frame`'s direct read of the LP variables and against all
+four years — the **net** storage shape is correct everywhere. (5) **A real but wrong-signed vintage
+gap, surfaced so it is not mistaken for a lever:**
+`data/raw/reference/caiso-storage-shape-envelope.csv` covers **2023–2025 only**, so 2022 silently
+borrows the **2023** shape through the **undocumented below-span** `default=env_years[0]` branch at
+`model/storage.py:1083` (the docstring documents only the above-span case). The correct 2022
+envelope would make the batteries *less* capable and **raise** the evening price — **against**
+closing C3a. (6) The **2,040-hour 2023 WECC intertie LMP** coverage gap and the charter's §4 "free
+strengthening" (re-testing the keeper's G-2 on a wide-basis year) were **not** addressed: no data
+was intaked, so **2022 remains the keeper's only discriminating year** and the caiso-275 limitation
+stands unchanged.
+
+**Rule 31 `[R-RETAIN]`:** nothing deleted, and **no bundle was produced** to lose — the only new
+artifacts are five probe scripts and five small JSONs, reproducible from committed data in minutes.
+The caiso-275 per-year shard bundles, the `_span` composite and the retained predecessor
+`caiso271_egrid_family_{2022,span}` are untouched. The promotion question is put explicitly in the
+FINDING §10: there is nothing to promote, and the owner's calls are whether to accept the refusal,
+whether to re-point the object as a cross-ISO charter, and whether to fund the three small
+data-intake items (all three wrong-signed for C3a, so none is a lever).
+
+**Matrix (rule 28(b)):** `gas_commitment_bridge` CAISO cell carries the reach adjudication and all
+three sibling verdicts (cell stays **K**); `zonal_gas_basis` gets **corroborating evidence only,
+verdict unchanged at R** — the 2022 N–S spread is **+0.085 $/MMBtu**, the **smallest** of the six
+covered years, so under rule 29 `[R-SCREEN]` 2022 could never be its screen year. Shard re-stamp
+appended; `scripts/check_mechanism_matrix.py` integrity **OK**.
