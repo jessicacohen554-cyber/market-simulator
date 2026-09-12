@@ -1660,6 +1660,27 @@ def run_year(
         config = config.with_overrides(
             unit_outage_short_windows_gas=unit_outage_short_windows_gas
         )
+    if unit_outage_window_hour_grain is not None:
+        # nyiso-229: the DETECTED-hour grain of the merit-guarded per-unit
+        # outage windows. THIS is the SOLVE path for the flag (as for every
+        # sibling above, run_calibration_full's _recorded_config only records
+        # it), so an override missing here would solve the control twice.
+        #
+        # RESTORED 2026-09-12 (lane SPP-36, stop-the-line). The introducing
+        # commit 3497a1d8 added this kwarg to `solve_and_persist`'s
+        # UNCONDITIONAL run_year(...) call in run_calibration_full.py and to
+        # ScenarioConfig, but never to `run_year` here — so EVERY
+        # solve_and_persist invocation, for every ISO and every year, raised
+        # `TypeError: run_year() got an unexpected keyword argument
+        # 'unit_outage_window_hour_grain'` before any LP work. Both production
+        # entry points were dead (run_calibration_full.main and
+        # replay_keeper.main). Found by SPP-36 shard 1, which stopped and
+        # reported instead of patching; see
+        # docs/handoffs/SHARDREPORT-spp36-2023.md and
+        # docs/handoffs/FINDING-spp-36-runyear-kwarg-2026-09-12.md.
+        config = config.with_overrides(
+            unit_outage_window_hour_grain=unit_outage_window_hour_grain
+        )
     if campd_per_unit_attribution is not None:
         # nyiso-176: ONE gate over BOTH CAMPD-derived solve inputs (the
         # thermal-tranche artifact and the unit-outage extract), which must
