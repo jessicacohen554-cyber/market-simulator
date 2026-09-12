@@ -1214,6 +1214,16 @@ def _apply_outage_overlays(
             per_unit_crosswalk=getattr(config, "campd_per_unit_attribution", False),
             merit_order_guard=bool(getattr(config, "campd_per_unit_attribution", False))
             and bool(getattr(config, "campd_outage_merit_order_guard", False)),
+            # nyiso-229 (rule 14 [R-ACCURATE], rule 19 [R-ONE-MECH]): the SAME
+            # merit-guarded per-unit windows at their DETECTED HOUR grain, so
+            # the loader stops re-expanding each window to 00:00-23:00 and
+            # asserting up to 23 h per edge the detector never detected.
+            # Predicated on BOTH flags above, so all three are one selector over
+            # one artifact family; selects the '-perunitmerithour-' extract and
+            # is byte-inert while off (it reads the same file it always did).
+            hour_grain=bool(getattr(config, "campd_per_unit_attribution", False))
+            and bool(getattr(config, "campd_outage_merit_order_guard", False))
+            and bool(getattr(config, "unit_outage_window_hour_grain", False)),
         )
         # DAM-first outage precedence (backcast overlay, gated per ISO). Where an
         # ISO publishes its own availability instrument, use it IN PLACE OF the
