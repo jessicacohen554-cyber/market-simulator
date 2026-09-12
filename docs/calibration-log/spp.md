@@ -2115,3 +2115,106 @@ is a rubric determination.
 `2026-09-10-spp-27-commitment-grain` — yes or no?* (`frontier`: this lane recommends no.)
 
 **Next shorthand: spp-32.**
+
+---
+
+## spp-32 — 2026-09-12
+
+**Object: the measured sub-5-day unit-availability family, screened on 2025 in two nested arms.
+VERDICT: ARM B (COAL+GAS) IS KILLED on two pre-registered gates; ARM A (COAL) clears four of five and
+is STOPPED by the fifth — a gate this lane wrote badly and says so rather than rewriting.** Parent LP
+**ZERO** (rule 32 `[R-SHARD]` (a)); shard LP **340 s** across two containers. **Keeper UNCHANGED**
+`2026-09-10-spp-27-commitment-grain`. Nothing registered, no marker touched, **no `rm` issued**.
+Records: `docs/RESULT-spp-32-shortwindow-screen-2026-09-12.md`,
+`docs/handoffs/PRECOMMIT-spp-32-shortwindow-availability-2026-09-12.md`,
+`docs/handoffs/SHARDREPORT-spp32-A-2025.md`, `docs/handoffs/SHARDREPORT-spp32-B-2025.md`.
+
+**WHY THIS LANE EXISTED.** SPP's LP ignored **every** sub-5-day unit outage in its own CAMPD record.
+The coal extract (620 windows, 24 plants, 39 units, 620/620 `plant_group` COAL) had sat committed and
+**unarmed** since it was derived; the gas companion did not exist. Both matrix cells were **`U`**, so
+this is a first test, not a re-test (rule 28(a)). The basis is rule 14 `[R-ACCURATE]`, never the
+residual — and PRECOMMIT §4 recorded **before either solve** that the family removes a mean 557.6 MW
+per hour across 2024's 35 DA-tail hours against a model holding a median 8,233 MW of headroom
+(**6.8 %**), so it **cannot** close C3c and no gate reads it. Card R-bf's availability route is
+answered NEGATIVE at zero LP.
+
+**THE GAS EXTRACT, derived here from SPP's own CAMPD record** —
+`data/raw/campd-unit-outages-shortgas-SPP.csv`, **2,838 windows, 39 plants, 75 units** (CC_REGULAR
+2,204 / ST_GAS 608 / CC_CHP 26). The recorded invocation is **byte-identical to PJM's committed
+sidecar on every knob** (only `iso` and `years` differ), so **zero parameters were chosen by this
+lane** (rules 21 / 24) and nothing crosses from PJM (rules 25 / 28(d)). Rule 23 `[R-FROZEN-DERIVE]` is
+not engaged: a new artifact, not a re-derivation, and the coal extract is byte-unchanged.
+
+**SCREEN YEAR 2025, named in the PRECOMMIT before either solve** on the mechanism's own largest
+measured footprint — coal 7,050.714 GWh / 246 windows, gas 11,354.227 / 1,063, total 18,404.941 /
+1,309, largest on **every** basis — never the largest residual (rule 29(1)). **Control = keeper 9's
+COMMITTED bundle differenced, NO control solve** (rule 29(b) form 4): the G-DRIFT audit classified all
+six changed solve-path files between `basis_sha` `09d9fc00` and the pinned base as INERT, with the one
+code-reading case (the `model/lp/model.py` memory-hygiene hunk) named as such rather than buried.
+
+**THE GATE TABLE.** The C3a/C3b instrument is validated first — replaying the parent's arithmetic on
+the **control's** committed sidecar reproduces the scorer to 4 dp (LW mean **28.7893** vs 28.79;
+monthly NRMSE **0.1638** vs 0.164).
+
+| gate | arm A (coal, 94 tranches) | arm B (coal+gas, 218 tranches) |
+|---|---|---|
+| G1 direction | coal −2.5714 TWh · **PASS** | coal −1.4608, gas-scope −2.3567 TWh · **PASS** |
+| G2 confinement | 23 COAL plant-groups · **PASS** | 55 = COAL 23 + CC_REGULAR 18 + ST_GAS 13 + CC_CHP 1 · **PASS** |
+| G3 magnitude | 2.5714 < 3.857 TWh · **PASS** | 3.8175 < 9.43 TWh · **PASS** |
+| G4 identity | **slack 240.5966 MWh · FAIL** | **slack 10,911.0219 MWh · FAIL** |
+| G5 no non-target flip | C3a +5.15 %, C3b 0.1878 · **PASS** | C3a **+15.97 %**, C3b **0.2619** · **FAIL (both)** |
+
+Every 2025 C1 row and all of C2 are SKIPPED by the scorer on the preliminary EIA-923 vintage, so on
+the screen year G5 reduces to C3a/C3b — recorded so nobody reads it as broader clearance than it is.
+
+**ARM B IS KILLED, AND THE FAILURE MODE WAS PRE-REGISTERED.** PRECOMMIT §7 named it in advance:
+*"2,838 gas windows over three years is too many for a merit-order guard to have filtered — SPP's CC
+fleet runs at ~49 % CF, and a 1–5 day dead span at that CF can be economics rather than an outage."*
+G3 held; **G4 blew out** — 10,911.0219 MWh of unserved energy in 12 hours, all SPP-South, three
+clusters (2025-09-15, 2025-10-06, 2025-12-21), every hour at VOLL $2,000 — and **G5 flipped BOTH
+load-bearing price criteria**. The entire price move is scarcity, not merit order: all 18 hours above
+$200 are exactly $2,000, the slack penalty. **The arm does not price SPP better; it makes SPP
+infeasible.** Rule 28(d) demonstrated rather than asserted: PJM's and MISO's `K` on the coal parent do
+not carry, and the reason is fleet conduct. **The extract stays committed — what is rejected is arming
+it in SPP's LP, not the data.** The arm-B shard verified the gas scope genuinely entered with its own
+zero-LP probe (23 plant-groups at `gas_scope=False` vs **55** at `True`, coal unchanged either way),
+which the static `(< 5-day baseload-coal windows)` log string alone would not have proved.
+
+**ARM A IS STOPPED ON A GATE THIS LANE WROTE BADLY, AND THE GATE STANDS ANYWAY.** G4 demanded
+`slack` = 0.0000; arm A produced 240.5966 MWh in 2 hours in SPP-South at VOLL. But **keeper 9's own
+committed span carries a LARGER slack event — 370.1017 MWh, 2 hours, SPP-South, VOLL, in 2024**
+(2023 and 2025 are 0.0000). "Slack stays 0.0000" is therefore a standard **the designated keeper does
+not meet**, and this lane generalised a one-year accident into a gate after looking only at 2025.
+**The gate is not being rewritten**: re-reading a pre-registered gate after seeing its number is the
+fitted-mechanism selection rule 1 `[R-STRUCT]` (c) forbids. The arm is stopped and the defect is
+reported to the owner as a fact about this lane's instrument. Reported at full magnitude and **not** a
+reason to reject it (rule 1: a structurally-correct mechanism is never judged by the residual): C3a
+degrades +0.66 % → +5.15 % and C3b 0.1638 → 0.1878, both still passing.
+
+**Rule 28 `[R-MECH-MATRIX]` (b), SPP's shard only:** `unit_outage_short_windows` **`U` → `O`**
+(screened, live, not adjudicated — promotion is the owner's act, the posture SPP-52a's producing lane
+set); `unit_outage_short_windows_gas` **`U` → `R`**. No other cell moves.
+
+**Rule 29(c) + rule 31 `[R-RETAIN]`:** `.gitignore` now carries `results/calibration/spp32_*/` — the
+seam the arm-B shard correctly flagged and correctly declined to fix itself (it was permitted exactly
+one committed file). The duty is discharged by `.gitignore`, **never by `rm`**. Both screen bundles
+were written on ephemeral shard containers and are gone; **this RESULT and the two SHARDREPORTs carry
+every number this lane will ever cite.**
+
+**A PROCESS FAILURE OF MINE, recorded rather than tidied away.** The first pair of shard prompts said
+"commit and push nothing" — correct under rule 29(c), but it stranded the numbers in cloud sessions
+this parent cannot read (no `list_events`; they do not appear in `ListAgents`). Caught while both were
+still `PENDING`, before any LP: interrupted, archived, relaunched with one change — each shard pushes a
+single markdown report and nothing under `results/`. **Wasted LP: none.**
+
+**THE PROMOTION QUESTION, put explicitly (rule 31):** *arm A is a rule-14 measured input on an
+untested cell that cleared four of five gates and was stopped by a fifth shown to be mis-set against
+the control's own span — should it go to the full 2023–2025 span?* Cost if yes: **3 shards, ~166 s of
+LP each**, including a re-solve of 2025 because the screen bundle did not survive. No code changes;
+the extract is committed and the flag exists. **This lane does not recommend arming arm B under any
+conditions.**
+
+**`[R-HOLDOUT]` was removed 2026-09-09** — no number here is a certified out-of-sample skill claim.
+**No `complete` or `frontier` declaration is added, requested or implied.**
+
+**Next shorthand: spp-33.**
