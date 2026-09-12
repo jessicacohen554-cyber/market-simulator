@@ -13635,6 +13635,107 @@ the four load-bearing components stay strict. Scoring path only, no LP path, no 
 REFUTED and DO-NOT-REDO; `nyiso_import_reconciliation` stays **K**, re-confirmed by direct
 falsification, with nyiso-99's caveat attribution moved OFF the row.
 
+## nyiso-230 — 2026-09-12
+
+**KEEPER UNCHANGED: `2026-09-12-nyiso229-hourgrain-span`.** Nothing promoted, nothing
+registered. **Phase 0 at ZERO LP, then ONE registered field BUILT and ONE screen shard
+launched** (rule 32 `[R-SHARD]`: the parent ran no LP).
+
+**THE HEADLINE IS A CORRECTION TO THE PREMISE THIS SESSION WAS GIVEN. NYISO HAS NO
+PRICE-*LEVEL* DEFECT.** The owner asked for an upward offer-curve shift ("we have 6 % space
+to keep everything within 10 % on c3a"). Measured instead: the in-sample geometric-mean
+price bias is **−1.19 %** against an in-sample MAE of 4.90 % and a **12.2 pp spread**. The
+level is already right and the **dispersion is 4× larger than the level**, so a uniform lift
+cannot fix what is wrong — it slides all years by the same dollars.
+
+**THE RESIDUAL IS A GAS-SLOPE DEFECT, r² = 0.9955 OVER FOUR YEARS.**
+`gas_offer_net_revenue_margin` is armed and prices every band's markup at a **frozen
+2023–2025** anchor (3.9046 $/MMBtu), so the offer moves by `markup_hr × (anchor − fuel)` —
+linear, unsaturated. Against the keeper's own `_gas_series` (which reproduces the registered
+anchor to 2×10⁻⁵):
+
+| year | delivered gas | anchor − fuel | C3a | bias $/MWh |
+|---|---:|---:|---:|---:|
+| 2024 | 2.7969 | +1.1077 | +3.3 % | +1.240 |
+| 2023 | 3.3566 | +0.5480 | +2.5 % | +0.820 |
+| 2025 | 5.5602 | −1.6556 | −8.9 % | −5.920 |
+| 2022 | 8.4431 | −4.5385 | −16.6 % | −13.460 |
+
+**slope 2.6911 $/MWh per $/MMBtu · intercept −1.2766 · Pearson r = 0.99777.** The slope is
+**independently corroborated, not fitted**: the mechanism predicts it equals the
+marginal-weighted `markup_hr = base_HR × max(0, mult − phys)`, and 2.691 lands between
+`CC_REGULAR`'s econ ladder (0.58–1.29) and `ST_GAS`'s (2.65–3.21) with `CT_PEAKER` above.
+The intercept says that **at** the anchor the model is unbiased. *Honest limit recorded in
+the finding: gas and price level are collinear, so correlation alone cannot separate this
+from generic variance compression; the A/B is the decisive test.*
+
+**C1-2024 MISSES BY 0.0458 pp.** `CC_REGULAR` share_pp **3.0458** against a ±3.0 band, while
+the VOLUME leg **PASSES** (+3.132 TWh against ±4.05, 0.92 TWh of room). The flip needs
+**60.3 GWh** displaced in-fleet — **0.162 %** of the class. Deficit classes: `CT_PEAKER`
+−1.62, `ST_GAS` −1.38, `CT_CHP` −1.20 TWh, the merit disposition nyiso-187 attributed.
+
+**THE OFFER BANDS *WERE* SHIFTED DOWN — AND A LIFT IS NOT A REVERSAL.** They live in
+`pipeline/backcast_config.py::_NYISO_OFFER_CURVE`, not in any recipe, which is why the
+keeper's `authorized_price_tuning` reads NULL and the provenance had gone untraced.
+`CC_REGULAR.econ_high` **1.21 → 1.00**, `CT_PEAKER.econ` 1.27/1.98 → 1.00, `CT_PEAKER.peak`
+13.15 → 4.0, `CT_CHP` all four → 1.0 — every one a **rule-25 `[R-ISO-SCOPE]` de-leaking of
+ERCOT-borrowed values**, and NYISO's own `marg_econ_high_p50` (0.925) does not support the
+old number. The code carries a **standing prohibition**: *"Do NOT re-arm this markup to
+close C3a (rule #26, rule #1)."* **Open zero-LP object:** `ST_GAS`'s stated basis still cites
+*"CC econ_high 1.21 / native CC marginal 0.925 = 1.31×"* — a **stale cross-reference** to a
+value the same file records as removed; on the current reach the construction gives 0.897,
+not 1.08, and `ST_GAS` under-runs 1.378 TWh.
+
+**THE +5 % LIFT WAS ALREADY SOLVED IN SEPTEMBER.** `2026-09-09-nyiso-222-offer-plus5` is a
+uniform ×1.05 on all four bands of all five gas classes against `2026-09-09-nyiso-221-
+fuelvintage-span`. Read at zero LP it yields **NYISO's own full-span pass-through 0.66685**
+(geometric; 0.7667 / 0.6824 / 0.5519 per year, declining with gas — the neiso-104/105/106
+signature). Its dollar move is gas-invariant (+1.29 / +1.37 / +1.70), and it moves C1-2024
+share_pp **−0.10 pp**. So a future level scalar needs **no screen**: both halves of the
+neiso-106 division now exist.
+
+**OWNER RULED ROUTE B** (2026-09-12, put with both options and their costs): the solve-year
+anchor, not an offer-curve lift. **BUILT THIS SESSION:
+`gas_offer_margin_zonal_anchor_vintage`** — the composition of `gas_offer_margin_zonal_anchor`
+(zone) and `gas_offer_margin_anchor_vintage` (year), which hard-exit against each other under
+rule 19, leaving a zonal ISO with **no route to the year index at all**. **Zero free
+parameters**: `derive_zonal_anchors` already computes `{zone: {year: mean}}` and averages the
+year index away; only the index moves. **The identity is pinned by test** — averaging the
+runtime resolution over 2023–2025 reproduces `GAS_OFFER_MARGIN_ANCHOR_BY_ZONE` to the 4 dp it
+is stored at (worst 4.7×10⁻⁵). 15 tests; cache keys hold (15 more); capacity-weighted ISOs
+(PJM/ERCOT/MISO) are **refused** rather than mis-measured. Threaded into **both** runners and
+guarded by a plumbing test, and **honouring the config field as well as the kwarg** — because
+`replay_keeper.py --set` writes the field, so a kwarg-only gate would let an A/B silently
+solve the control.
+
+**Rule 28(a) DO-NOT-REDO is clear:** NYISO's cell was `U` and the row reserves it for this
+lane. PJM's `R` came from its **S4 coal-displacement** gate (`COAL_BIT` +3.28 %); **NYISO's
+coal is 0.000 TWh in every scored year**, so that kill reason cannot fire — a per-ISO
+argument, not a transfer.
+
+**SCREEN LAUNCHED, one shard, 2022** — named on **footprint** (|Δanchor| 4.5385 vs 1.6556 /
+1.1077 / 0.5480), never on residual. Four structural stop-only gates, none reading C1/C3a/
+C3b/C3c; the per-tranche prediction is fixed in the PRECOMMIT before the solve. **G-DRIFT
+audited and all five solve-path hunks INERT** — including the one shared hunk
+(`plant_taxonomy` PS/WAT), verified on NYISO's own registry rather than cited: it is
+ERCOT-only with zero `PS` rows. Recorded honestly: **the keeper's `git_sha` `36ed7981` does
+not resolve** — its shard branch is gone, rule 33(d)'s hazard realized — so the audit is
+anchored on the keeper's solve timestamp and the last commit it provably contains.
+
+**HOUSEKEEPING.** `nyiso227_rebasis_span` **PRUNED** on the owner's ruling (declined
+promotion), clearing NYISO's leg of the Class-E parity gate; recoverable at
+`06ab1e74d184d4dcd8c291fab88c553a9756c86a`. **Nothing structural was lost**: nyiso-227's
+re-basing carries **no config field** (the bundle's config differed from the keeper's by
+exactly 1 of 842 fields, and that one is nyiso-229's), the re-based row is live at HEAD, and
+`scripts/score_bundle_price_shape.py` is untouched on `main`. Also discharged nyiso-229's
+missed rule-28 promoting-session duty: the NYISO matrix shard and §5.5 header re-stamped to
+the current keeper (nyiso-178 precedent, no verdict moved).
+
+**Records:** `docs/FINDING-nyiso230-phase0-the-anchor-slope-2026-09-12.md`,
+`results/calibration/PRECOMMIT-nyiso230-zonal-anchor-vintage.md`,
+`src/market_sim/data/fuel/zonal_anchor.py`,
+`tests/unit/data/test_gas_offer_zonal_anchor_vintage.py`.
+
 ## nyiso-229 — 2026-09-12
 
 **KEEPER PROMOTED: `2026-09-12-nyiso229-hourgrain-span`** (bundle
