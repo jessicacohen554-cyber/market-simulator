@@ -1974,3 +1974,22 @@ results/calibration/*/hourly/unit_hourly_*.parquet
 # (calib_root.iterdir()), so untracking alone does not clear the gate -- see the
 # caiso-275 entry in docs/calibration-log/caiso.md.
 results/caiso275_shards_retained/
+# 9c. SPP-32 screen bundles (rule 29 [R-SCREEN] clause (c) + rule 31 [R-RETAIN]).
+#     `results/calibration/spp32_*` is the throwaway single-year screen family of
+#     lane SPP-32 (arms A / B on the sub-5-day unit-availability overlay). Rule 29(c)
+#     requires such a bundle to stay OUT OF `main` — an unregistered bundle dir is a
+#     Class-E parity RED, and registering it is also refused (a screen is never
+#     registered). Rule 31 says the way to discharge that duty is `.gitignore`, NEVER
+#     `rm`: the bytes may sit on local disk indefinitely, the repo just never sees
+#     them. Flagged by the arm-B shard, which correctly declined to add this line
+#     itself (it was permitted exactly one committed file).
+results/calibration/spp32_*/
+
+# 9d. SPP-36 per-year span shard bundles (rule 32 [R-SHARD](d) + rule 31 [R-RETAIN]).
+#     The 2023-2025 span of `unit_outage_short_windows` is solved one year per
+#     shard into results/calibration/spp36_span (each shard force-adds ONLY its own
+#     slim year files onto ITS OWN branch, never main). Rule 32(d): per-year shard
+#     dirs stay out of `main` — the COMPOSITE is what gets registered, and an
+#     unregistered per-year dir left committed is the Class-E parity RED. Discharged
+#     by .gitignore, never by `rm`.
+results/calibration/spp36_*/
