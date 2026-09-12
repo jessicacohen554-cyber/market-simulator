@@ -93,6 +93,17 @@ parsed as a fallback) it verifies:
       ``frontier_withdrawn_*``, ``source_run_id``) and narrative prose are OUT
       OF SCOPE on purpose: they cite pruned runs by design and are explicitly
       not retracted.
+  E13 keeper-only retention of the ISO's REGISTERED SET (rule 35 ``[R-PROMOTE]``
+      (f)): every run registered for an ISO is either its designated keeper or a
+      run STAMPED to it (``holdout.keeper``, rule 30 (a)) — anything else is a
+      superseded run a promotion failed to prune. A dangling stamp counts as
+      unstamped, matching how rule 30 (a) renders one. This is the gap rule 35
+      names: rule 15 ``[R-DASHBOARD]`` deferred the sweep to "the next
+      registration", nobody owned that, and on 2026-09-12 this audit passed
+      clean on 47 registered runs against 7 keepers because E1 sees only the
+      keeper's own stores and E12 only the shard's live pointers. The OK line
+      reports the year set the keeper carries, which is what rule 35 (b)/(c)
+      require a promotion to preserve.
   S1  the ``status/`` parts are in sync with the current verdicts
       (``build_status.py --check``, scoped to the audited ISOs).
   H1  holdout quarantine (CLAUDE.md rule 22 / audit D-6, amended 2026-07-04):
@@ -771,6 +782,78 @@ class Report:
         return sum(1 for f in self.findings if f["level"] == "WARN")
 
 
+def orphan_run_findings(
+    iso: str, keeper_id: str, registry_dir: Path
+) -> tuple[list[str], list[int]]:
+    """Return E13 findings: runs registered for ``iso`` that the keeper does not own.
+
+    Rule 35 ``[R-PROMOTE]`` (f). After a promotion every run registered for an
+    ISO is either its designated keeper or a run STAMPED to it
+    (``holdout.keeper``, rule 30 ``[R-TOUCHPOINT-FOLD]`` (a)); anything else is
+    a superseded run the promoting session failed to prune, and rule 15
+    ``[R-DASHBOARD]``'s keeper-only retention says it should not be on the site.
+
+    This is the gap the rule was written for: rule 15 deferred the sweep to
+    "the next registration", nobody owned that, and on 2026-09-12 the dashboard
+    carried 47 registered runs against 7 keepers while this audit passed clean
+    — because no check looked at the ISO's registered SET, only at the keeper's
+    own three stores (E1) and the shard's live pointers (E12).
+
+    A **dangling** stamp counts as unstamped, deliberately: rule 30 (a) already
+    treats one that way for rendering, so a run whose ``holdout.keeper`` names a
+    since-pruned keeper is an orphan here too rather than a silent pass.
+
+    Pure over its inputs so it is unit-testable without the live registry.
+
+    Args:
+        iso: The ISO whose registered set is being checked.
+        keeper_id: That ISO's designated keeper run id.
+        registry_dir: The registry sidecar directory to enumerate.
+
+    Returns:
+        ``(findings, years)`` — one human-readable finding per orphan run
+        (empty when clean), and the sorted union of solve years over the
+        keeper-owned runs, which is the year set rule 35 (b)/(c) require a
+        promotion to preserve.
+    """
+    owned: list[tuple[str, dict]] = []
+    orphans: list[tuple[str, str | None]] = []
+    for path in sorted(registry_dir.glob("*.json")):
+        rec = _load_json(path) or {}
+        if (rec.get("iso") or "").upper() != iso.upper():
+            continue
+        run_id = rec.get("id", path.stem)
+        if run_id == keeper_id:
+            owned.append((run_id, rec))
+            continue
+        stamped = ((rec.get("holdout") or {}).get("keeper")) or None
+        if stamped == keeper_id:
+            owned.append((run_id, rec))
+        else:
+            orphans.append((run_id, stamped))
+
+    findings = []
+    for run_id, stamped in orphans:
+        why = (
+            f"stamped to {stamped}, which is not this ISO's keeper"
+            if stamped
+            else "not the keeper and stamped to no keeper"
+        )
+        findings.append(
+            f"{run_id} is registered for {iso} but {why} — a superseded run "
+            f"left behind a promotion. Prune it in the promoting session "
+            f"(scripts/prune_iso_runs.py --iso {iso}), per rule 35 "
+            f"[R-PROMOTE] (a); keep it only if it is a rung the keeper needs, "
+            f"in which case stamp it to {keeper_id} (rule 30 (a))."
+        )
+    years: set[int] = set()
+    for _, rec in owned:
+        for y in rec.get("years") or []:
+            if isinstance(y, int):
+                years.add(y)
+    return findings, sorted(years)
+
+
 def audit_keeper(run_id: str, rep: Report) -> None:
     """Run every per-keeper check (E1–E10) for one run id, recording findings."""
     side_path = cv.REGISTRY_DIR / f"{run_id}.json"
@@ -986,6 +1069,20 @@ def audit(isos: list[str] | None) -> Report:
                 shard_iso,
                 "E12",
                 "every live shard run-id pointer resolves to a registry sidecar",
+            )
+        # E13: keeper-only retention of the ISO's REGISTERED SET (rule 35
+        # [R-PROMOTE] (f)) — every run registered for this ISO is the keeper or
+        # stamped to it. E1/E12 look at the keeper's own stores and the shard's
+        # live pointers; neither sees a superseded run a promotion left behind.
+        orphans, years = orphan_run_findings(shard_iso, run_id, cv.REGISTRY_DIR)
+        for msg in orphans:
+            rep.fail(run_id, shard_iso, "E13", msg)
+        if not orphans:
+            rep.ok(
+                run_id,
+                shard_iso,
+                "E13",
+                f"registered set is keeper-only; years carried: {years}",
             )
 
     # H1: holdout quarantine across EVERY registered bundle (keeper or probe).

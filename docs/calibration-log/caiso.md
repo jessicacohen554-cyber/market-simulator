@@ -14753,3 +14753,201 @@ load-bearing cut.
 **Matrix (rule 28(b)): NO CELL VERDICT MOVES** — this session tested no mechanism, it measured
 seven keepers' solved output. The only shard edit is the §4a prose correction to CAISO's own
 2026-09-12 re-stamp. `check_mechanism_matrix.py` integrity OK.
+
+## caiso-278 — 2026-09-12
+
+**NO-GO ON THE STAGED ABLATION, AND IT IS NOT A JUDGEMENT CALL: THE ARM WAS ALREADY SOLVED, AT
+FULL LP, EIGHTEEN SESSIONS AGO. ZERO LP SPENT, ZERO SHARDS LAUNCHED, no arm, no bundle, no
+`ScenarioConfig` field, no run registered, NO KEEPER CHANGED IN ANY ISO, no cell verdict moved.**
+Rule 25 `[R-ISO-SCOPE]`: CAISO only. Full record:
+`docs/FINDING-caiso278-the-ablation-was-already-solved-2026-09-12.md`; the inherited charter
+`docs/PRECOMMIT-caiso278-chp-offer-ablation-2026-09-12.md` is **VOIDED in its own banner, not
+rewritten**.
+
+**WHAT THE DECISION TURNED ON.** The charter staged an ablation of
+`caiso_offer_surface_measured_ungrounded` on 2022 and conceded in advance (§5) that it could not
+be promoted in either direction — so the question it put was whether ~20 min of LP was worth pure
+diagnostic information. That question never needed answering on taste, because **rule 29
+`[R-SCREEN]` step 0 had not been discharged**: *"an arm that has a computable pre-solve gate does
+not reach a solve until that gate passes."* Discharging it took minutes. **The exact A/B — this
+flag armed versus off — was solved at caiso-231 (2026-09-01), on 2023/2024/2025, at full LP, with
+the prediction pre-registered and pushed before either arm started.**
+
+**THE MEASURED FOOTPRINT, AND WHY IT KILLS THE ARM.** caiso-231 §3: arming the flag moved the
+annual load-weighted price **+0.062 / +0.037 / +0.031 $/MWh** (C3a +4.0 → +4.1 %, +12.45 →
++12.55 %, +15.50 → +15.59 %), 4–13× smaller than caiso-230 §H's first-order bound because the LP
+re-dispatches around the repriced rungs rather than carrying them into λ (measured: CT_CHP
+−0.30 TWh/yr displaced by CC_REGULAR +0.12…+0.19 and CC_CHP). Against the object:
+
+| year | flag's measured $ effect | C3a gap | share of gap | dHR contribution | share of +0.534 |
+|---|--:|--:|--:|--:|--:|
+| 2023 | 0.062 | +1.72 | **3.6 %** | +0.0069 | **1.3 %** |
+| 2024 | 0.037 | +2.90 | **1.3 %** | +0.0086 | **1.6 %** |
+| 2025 | 0.031 | +2.65 | **1.2 %** | +0.0066 | **1.2 %** |
+
+**The largest marginal carrier's offer channel is ~1 % of the bias it was staged to explain,
+measured on the very years the object lives on.** That is the charter's own "the bias does NOT
+move" branch, reached at zero LP, on three years instead of one, with a number instead of a
+verdict. **All five pre-registered gates were already answered**, G-LIVE included — caiso-231
+measured max |Δ| **1,225 / 3,368 / 1,911 MW class-hour**, so the `I` verdict that gate exists to
+catch was foreclosed and the arm would have returned a known number.
+
+**AND IT IS FORBIDDEN BY NAME, TWICE (rule 28(a)).** The cell is **`K`**, not `U`. caiso-231 §8
+item 2: *"**Never propose this mechanism as a C3a lever** … It COSTS C3a +0.06 / +0.04 / +0.03; it
+is a rule-14/25 structural repair and nothing else"*; item 1 forbids re-testing the three classes'
+band level; caiso-230 DO-NOT-REDO item 3 says the same; and the `_CAISO_OFFER_CURVE` consumer
+comment carries the warning at the call site. caiso-277's finding re-points the *search* but is
+**not new evidence on this mechanism's magnitude**, which is the only thing that could reopen the
+cell.
+
+**THE 2022 GAP, SIZED AND DISCLOSED AGAINST THE KILL.** caiso-231 solved 2023–2025, so the
+charter's screen year is genuinely un-measured. Footprint-scaled (2022 $105.05 M vs 2023
+$88.27 M) the effect is **≈0.074 $/MWh = 0.8 % of the +9.58 gap**; even a **10× non-linearity
+margin** gives 7.7 %, and the only measured behaviour of this estimator class was *over*-
+prediction by 4–13×. One channel could break the proportionality — the ablation raises the
+`ST_GAS` **peak** wall 1.166 → 4.200 (+260 %) and `CC_CHP` peak 1.386 → 2.250 (+62 %), and 2022 is
+the high-gas year where scarcity walls bind hardest. **It strengthens the kill in both
+directions**: raising those walls moves 2022's price **UP**, away from the failing gate, and the
+walls being restored are the ERCOT-lineage values rule 25 condemned and caiso-231 retired. A more
+live 2022 response makes the arm *more* emphatically un-promotable, not less.
+
+**WHAT STANDS FROM THE VOIDED CHARTER:** §1's five pre-solve kills (the `caiso_import_hub_prices`
+"defect" REFUTED at its own `legacy_intertie` gate; the static import ladder as the wrong
+baseline; border carbon CORRECT; `caiso_asymmetric_path_ratings` already armed; CHP **heat rates**
+wrong-signed at `model_over_measured` p50 0.697, >1 in 0 of 37) and §3's footprint table, used
+here. **Rule 28(a) now protects six kills rather than five** — the CHP/ST_GAS **offer** channel
+joins them, killed on its own solved A/B.
+
+**WHERE THE SEARCH RE-POINTS (open question, NOT a lever — rule 1 `[R-STRUCT]`).** caiso-277's
+*second* signature is the one that survives: CAISO's dHR sd **0.794**, lowest of seven ISOs against
+1.40–2.17. An offer multiplier is a **conditional** channel — it can only move λ in the hours its
+class is marginal — so it produces scatter, not a low-variance offset; a **small, always-on
+structural posture** is what produces the measured signature. The keeper's own stamp already names
+such an object and it is **commitment/seam, not offers**: the belly gas deficit (model 1.5 GW vs
+actual 7.2 GW in the 2024 lowest net-load decile) and the reversed seam direction (model +2 GW
+import vs actual −1 GW export), both always-on, both CAISO-exclusive, and Arm A's rejection proves
+neither is reachable from the import offer. Sizing them is unmeasured and is a parent-only,
+zero-LP session; only a confirming A/B would need LP. caiso-277 §6.4's caution carries forward:
+four ISOs sit *below* actual in their latest year (ERCOT −6.85 %, PJM −7.77 %, NYISO −7.27 %,
+MISO −6.20 %), so anything lowering marginal offers program-wide pushes all four further out.
+
+**A LIVE GATE FAILURE FOUND WHILE CLOSING OUT, REPORTED AND NOT SILENTLY FIXED.**
+`check_registry_payload_parity.py` is **RED on `main` now**, on five bundles; three are CAISO's
+caiso-275 promotion residue — `caiso275_B_gascoupling_{2023,2024,2025}` (48/91/87 MB, 11/13/14
+files **tracked**, force-added past `.gitignore`'s parquet rules, so gitignoring cannot clear it).
+The other two (`nyiso227_rebasis_span`, `spp36_2025`) are other lanes' and untouched. **The
+load-bearing fact: the registered `_span` composite carries NO `dispatch/` layer and no
+bundle-root `system.parquet`**, so these legs hold the only per-plant record of the current
+keeper's 2023–2025 solves. All three of the gate's exits fail differently — **prune** greens it but
+deletes a result (rule 31 says the owner rules; rule 15 does sanction it, routing unit-level
+questions to a replay); **register** is refused by rules 16/29(2)/32(d); **`KEEP_REQUIRED_
+UNMAPPED_BUNDLES`** is unavailable by the gate's own rule (*"A dir with solve output … NEVER
+enters"*) and has been deliberately empty since the 2026-09-05 keeper-only prune. **Nothing was
+deleted and nothing allowlisted**; greening from this lane is impossible anyway with two non-CAISO
+failures outstanding. Recommendation if a decision is wanted: **prune the three legs** — the owner
+has ruled on promotion, they are superseded by the registered composite, and rule 15 routes
+unit-level questions to a replay.
+
+**PROMOTION QUESTION (rule 31 `[R-RETAIN]`): nothing to promote — no arm solved, no bundle
+produced.** Local `caiso275_B_gascoupling_{2022,2023,2024,2025,span}` and
+`caiso271_egrid_family_{2022,span}` will not survive container reclamation; **correcting the
+handoff's own description, these are partly TRACKED rather than gitignored** (that is the parity
+finding), so their committed slim files survive while the gitignored heavy layers do not. Nothing
+deleted.
+
+**THE CARD, with the launch option now removed by measurement:** (1) ~~launch~~ **KILLED**;
+(2) **close the lane** — CAISO is CALIBRATED on 2023–2025 with its single ledgered C3c, **23 of 24
+keeper-years in the program pass C3a**, and the sole exception is the folded CAISO-2022 rung that
+rule 30(c) says never downgrades the ISO; (3) **re-point at the commitment/seam object** above;
+(4) the parity decision, independent of 1–3 and the only item with a live CI consequence. **This
+session recommends 3 with 2 as its fallback.** The in-model lever queue has now measured empty from
+caiso-200 through caiso-278.
+
+**Matrix (rule 28(b)): NO VERDICT MOVES** — nothing was armed or tested; the only edit is an
+**evidence append** to the CAISO `caiso_ungrounded_class_regrounding` cell recording that the
+**ablation** direction is now killed too and that DO-NOT-REDO items 1–2 stand reinforced, verdict
+unchanged at **K**. `check_mechanism_matrix.py` exit 0, 0 errors (the residual warnings are
+pre-existing line-anchor drift in the shared base file and another lane's SPP prose header).
+
+**Next number: caiso-279.**
+
+## caiso-278 (second sitting) — 2026-09-12
+
+**THE 8 % FOSSIL OFFER CUT WAS ALREADY SOLVED TWICE. It closes C3a exactly as the owner expects and
+FAILS C4-2025.** Plus a NEW zero-LP measurement: the "running over in every year" bias is
+**RT-basis-specific**, and after the basis reading **2025 is the whole object**. ZERO LP, ZERO
+SHARDS, no arm, no keeper change, no cell verdict moved. Rule 25: CAISO only. Record:
+`docs/ADDENDUM-caiso278-the-8pct-cut-and-the-basis-reading-2026-09-12.md`.
+
+**The premise is CORRECT.** Fossil bands × 0.92 via the rule-1 authorized channel ran at caiso-267
+and caiso-268 (live keeper, registered as a rejection `2026-09-09-caiso-268-fossil92-span`), the two
+replicating to ~1 MW hourly and three decimals. **C3a +4.4/+8.9/+8.3 % → −0.9/+4.3/+3.2 %** (mean
+|gap| 7.20 → 2.80 %, every year inside ±10 %); C1/C2/C3b/C6/C8 no flip; C5a improves. **C4 gas NRMSE
+0.287/0.260/0.298 → 0.275/0.254/0.308 — FAIL 2025 against ≤ 0.300. NOT-YET on C4-2025 alone; owner
+ruled DO NOT PROMOTE 2026-09-09.** All four STOP gates passed and G-DIR Δλ landed −2.850/−1.580/
+−1.720, within $0.005 of prediction.
+
+**WHY IT BREAKS, STRUCTURALLY.** A flat multiplier is uniformly more gas in all 8,760 h, so it helps
+the two years the keeper under-dispatches gas (2023 −969, 2024 −489 MW) and breaks the one year it
+was already near-unbiased — 2025, fleet mean error **−107.2 → +209.0 MW**, overnight h0–6
+**+202.4 → +764.4**, evening +766.1 → +1,030.9, belly improving −1,031.8 → −862.0. Displaced
+non-fossil is essentially all imports (−2.32/−1.97/−2.78 TWh vs CC_REGULAR +2.12/+1.81/+2.59). The
+arm buys price by making dispatch worse where dispatch was right — the same fact as the C4 failure.
+**caiso-272 vindicated the refusal at LP-row grain:** all CC families marginal at implied HR
+**9.235 vs the market's 9.289 — 0.05 BELOW**; the bias decomposes CC-marginal −0.029, non-CC tail
++0.383, λ-in-a-gap +0.747. The bands the channel can reach are already right, and the hour-scoped
+door the matrix DO-NOT-REDO left open is closed by that same measurement.
+
+**THE SIZING QUESTION, NAMED.** "Then use 5 %" is the one move rule 1 condition (c) forbids by name
+(never swept against the gates); caiso-267 refused 6 %/10 % before its solve. A sized cut exists
+only as an **owner override of (c)**. The trade, stated: +0.010 of C4-2025 per 8 %, so holding
+C4-2025 implies **≤ 2–3 %**, worth **~1 pp of C3a** against a 7.7 pp 2025 residual.
+
+**NEW: C3a ON THE DA BASIS, ALL FOUR YEARS** (committed `bench/CAISO/<y>.json.gz` `da_lw`/`rt_lw`;
+caiso-272 had read 2022 only and left it undecided):
+
+| year | model | gap vs RT | gap vs DA | DA−RT spread | position in DA−RT band |
+|---|--:|--:|--:|--:|--:|
+| 2022 | 94.07 | +11.34 % | **+2.09 %** | +9.05 % | 1.25× |
+| 2023 | 55.89 | +3.18 % | **−9.39 %** | +13.86 % | 0.23× |
+| 2024 | 37.55 | +8.37 % | **−1.11 %** | +9.58 % | 0.87× |
+| 2025 | 37.07 | +7.70 % | **+4.72 %** | **+2.85 %** | **2.70×** |
+| | | mean 7.65 % | **mean 4.33 %** | | |
+
+(1) The one-signed over-run is a property of the **RT basis**, not the model — on DA it is
+two-sided and mean |gap| falls 7.65 → 4.33 %. (2) **DA is not a rescue**: 2023 over-corrects to
+−9.39 %, near-failing the other side. (3) **2025 is not explained by basis at all and is now the
+whole object** — DA−RT spread only 2.85 % against a 7.70 % over-run (2.70× outside the band, the
+only year that is), and it is simultaneously the year whose **gas dispatch is already unbiased**
+(−107.2 MW) and the year the 8 % cut broke. In 2025 gas volume is right and price is still 7.7 %
+high, so λ there is set by something that is not gas cost or gas scarcity.
+
+**THREE FRESH CANDIDATES KILLED PRE-SOLVE (rule 29 step 0), none by opinion.** (a) the CHP/ST_GAS
+offer ablation — already solved at caiso-231, ~1 % of the object (first sitting). (b) **the
+firm-import floor reshape** — `firm_import` is 17.94 TWh forced on an `h0-23` window, 50.4 % of its
+class, and its shape basis IS acknowledged "the wrong object in kind"; but `caiso_firm_selfsched_floor`
+is **K** and reconciled (caiso-150/151: 18.856 − 0.919 clip = 17.938 exactly), caiso-150 §H
+adjudicated the direction-splitting source **unreachable from the public feed**, and caiso-202 §F.3
+measured the reconciliation **C3a-ADVERSE** (+0.045/+0.626/+0.494 pp) — my hypothesis was
+**wrong-signed**. (c) **wider RA must-offer / commitment reach** — caiso-276 §5a: only **647.7 MW of
+22,354 MW (2.9 %)** is idle-while-in-the-money, so a wider reach "has almost nothing to act on", and
+the 13.5 GW of headroom is **priced above λ**, routing straight back to the offer cut.
+
+**THE LOOP CLOSES**: cut offers → C4-2025 breaks; get belly gas without cutting offers → 2.9 % to
+act on; displace forced imports → wrong-signed + data wall; cut reachable bands → already at the
+market's level. **No admissible in-model lever exists and this session does not manufacture one.**
+
+**PUT TO THE OWNER — two free rulings, either of which unlocks a spend:** (A) **rule on the scoring
+basis** (§4) — bigger headline effect than any offer cut, zero LP, and the rubric's own
+OUT-OF-REPRESENTATION row calls the DA−RT premium something "the test must not demand" (caiso-272
+measured 70.2 % of the 2022 dollar miss as exactly that); (B) **override rule 1 condition (c)** and
+authorize a sized factor, accepting a swept fitted parameter. **AND ONE ZERO-LP MEASUREMENT IS
+RECOMMENDED FIRST**, because §4 moved the target: re-point caiso-272's `mc = λ` LP-row instrument
+(`scripts/probes/_caiso272_marginal_band.py`) **from 2022 to 2025** — it has never been run on the
+year that is now the entire object. If it names a reachable carrier, that earns the solve; spending
+LP before it spends it on the wrong year.
+
+**Matrix (rule 28(b)): NO VERDICT MOVES** — nothing armed or tested; the × 0.92 arm's rejection is
+already on the CAISO `offer_curve_by_group` cell from caiso-268.
+
+**Next number: caiso-279.**

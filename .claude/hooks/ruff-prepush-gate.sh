@@ -8,7 +8,9 @@
 # WHY THIS EXISTS. Two ruff-format drifts reached main on 2026-09-06 from two
 # different desks within nine hours: scripts/data/derive_caiso_offer_surface.py
 # (caiso-255; cleared for that desk by another lane in 824f9567) and
-# scripts/gen_caiso257_attestation.py (caiso-257, added at 48bcd0ec / PR #5162).
+# the caiso-257 attestation generator (added at 48bcd0ec / PR #5162; since
+# DELETED under the scripts/README.md keeper-rotation rule, so the path is
+# named here only as the incident record).
 # Both desks wrote a STANDING checklist into their own lane doc — and the MISO
 # checklist (767e96fa) landed THIRTEEN SECONDS before the CAISO drift commit,
 # so it could not have caught it. A checklist only binds a session that reads

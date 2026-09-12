@@ -6,44 +6,39 @@
   "ERCOT": {
    "keeper_fails": 2,
    "statmode_fails": 6,
-   "probe_run_id": "2026-07-03-statmode-d-7-probe",
    "measured_against": "2026-07-01-ercot26-gtc-limits",
    "note": "3× the fails with overlays off; mean-LMP PASS flips to −49/−17/−12% — the C3a headline is overlay-carried (historic-outage overlay dominant). CT_PEAKER miss grows >6× yet stays inside the C1 band (the C7/C8 motivation). Gap measured against the ercot26 keeper; the current ercot32 keeper post-dates it — re-measure."
   },
   "CAISO": {
    "keeper_fails": 7,
    "statmode_fails": 7,
-   "probe_run_id": "2026-07-03-caiso-statmode-d-7",
    "measured_against": "2026-07-03-caiso-51-firm-base",
    "note": "Count flat (already failing 7/9 in-sample) but double-edged: fuel-mix/CO2/dispatch-shape worsen, while mean price IMPROVES with overlays off — the one ISO where the overlays are not propping up the price level."
   },
   "PJM": {
    "keeper_fails": 5,
    "statmode_fails": 7,
-   "probe_run_id": "2026-07-03-pjm-statmode-d-7",
    "measured_against": "2026-07-03-pjm-76-outage-fix",
    "note": "Coal balloons +99 TWh and CO2 jumps ~25pp on statistical outages — the coal/gas split is substantially historic-outage-overlay carried."
   },
   "NYISO": {
    "keeper_fails": 0,
    "statmode_fails": 4,
-   "probe_run_id": "2026-07-03-nyiso-statmode-d-7",
    "measured_against": "2026-07-03-nyiso-41-hub-prices",
    "note": "All four soft caveats convert to clean FAILs with overlays off — the caveats were overlay-narrowed near-misses. CO2 is the exception and improves."
   },
   "NEISO": {
    "keeper_fails": 1,
    "statmode_fails": 6,
-   "probe_run_id": "2026-07-03-neiso-statmode-d-7",
    "measured_against": "2026-07-01-neiso-43-closeout",
    "note": "Fuel-mix and dispatch correlation hold structurally; price level/tail and storage move caveat→FAIL — overlays prop up price and storage fit specifically."
   },
   "MISO": {
    "keeper_fails": 7,
    "statmode_fails": 9,
-   "probe_run_id": "2026-07-03-miso-statmode-d-7",
    "measured_against": "2026-07-03-miso-39-reserve-pergen",
    "note": "Fails every scored criterion with overlays off — none of MISO's in-sample fit currently generalizes as a forecast-machinery prior."
   }
- }
+ },
+ "probe_run_id_removed_2026_09_12": "The per-ISO `probe_run_id` fields were DROPPED here (repo cleanup, 2026-09-12). Each named a 2026-07-03 statmode probe pruned long ago under rule 15 [R-DASHBOARD]'s keeper-only retention, so calibration-status.js rendered six run-id-links that 404'd in the Run Explorer. The D-7 numbers and the per-ISO note are UNCHANGED and still reported; the record is `source` (docs/statistical-mode-results-2026-07.md) and git history. Deleted, not blanked (rule 26 [R-DELETE]) so the dead link cannot be re-armed by a stale value. Every entry still carries `measured_against`, a superseded keeper, so the page's existing `stale` caveat is unaffected and every ISO still reads 're-measure'. Dropped: ERCOT:2026-07-03-statmode-d-7-probe, CAISO:2026-07-03-caiso-statmode-d-7, PJM:2026-07-03-pjm-statmode-d-7, NYISO:2026-07-03-nyiso-statmode-d-7, NEISO:2026-07-03-neiso-statmode-d-7, MISO:2026-07-03-miso-statmode-d-7"
 }
