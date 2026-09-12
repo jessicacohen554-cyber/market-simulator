@@ -2007,3 +2007,8 @@ results/calibration/nyiso229_ctrl_y2022/
 results/calibration/nyiso229_arm_y2022/
 # miso-255 rule 29(c) / rule 31: screen bundles stay on local disk, never reach main
 results/calibration/miso255_sil_*/
+
+# nyiso-229 span ARM leg, 2023 shard bundle. Rule 32(d) [R-SHARD]: an unregistered
+# per-year shard dir stays out of `main` by default; rule 31 [R-RETAIN] keeps it on
+# local disk. This shard force-adds its own bundle per its launch prompt.
+results/calibration/nyiso229_arm_y2023/
