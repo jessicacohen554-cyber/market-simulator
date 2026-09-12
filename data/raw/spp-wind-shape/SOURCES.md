@@ -53,7 +53,7 @@ through `market_sim.data.fleet.ISO_TO_BA_CODE`.
 
 ## 4. SPP Integrated Marketplace generation mix — the reconciliation target ONLY
 
-`data/raw/spp-genmix/GenMix_{2023,2024,2025}.csv` (landed by lane SPP-12; see
+`data/raw/spp-genmix/GenMix_{2019..2025}.csv` (2023-2025 by lane SPP-12, 2019-2022 by lane SPP-30; see
 that directory's own `README.md` / `SOURCES.md` for the portal URLs and SPP's
 Terms & Conditions). Delivered wind is `Wind Market` + `Wind Self` — SPP splits
 every fuel into market-dispatched and self-scheduled halves and neither half
@@ -95,3 +95,28 @@ Same inputs, same builder, on the SPP-54 three-zone map (design commit `8d427adc
 (unchanged), SPP-South (residual, Oklahoma + SWEPCO) 13,145.6 MW, SPP-SPS (Texas Panhandle + South Plains +
 eastern NM) 4,653.5 MW; 3 zones × 6 sample points × 3 years = 54 point-years, HTTP 200 throughout. See the
 README note for why the committed parquets stay two-zone.
+
+## Extension to 2019–2022 (lane SPP-30, 2026-09-12)
+
+Built by the **unmodified** committed builder —
+`python scripts/data/build_spp_wind_shape.py --years 2019 2020 2021 2022` — so every
+source, licence and method above applies unchanged: NASA POWER hourly `WS50M` (keyless,
+public domain) for the wind speed, the EIA-860 operable wind schedule for the siting,
+and the EIA-930 `SWPP` hourly extract to place the shape on the model clock. No new
+source, no new parameter, no code change.
+
+Fleet growth across the added years, from the builder's own EIA-860 read at each
+year's vintage (the reason a shape is built per year rather than reused):
+
+| Year | SPP-North plants / MW operable | SPP-South plants / MW operable |
+|---|---|---|
+| 2019 | 86 / 10,096.2 | 87 / 10,525.4 |
+| 2020 | 97 / 12,309.9 | 93 / 12,197.5 |
+| 2021 | 107 / 14,626.3 | 98 / 13,296.7 |
+| 2022 | 111 / 15,427.3 | 101 / 15,625.9 |
+
+Independently corroborated by EIA-930 `SWPP` measured wind, whose annual mean rises
+8,793.7 → 9,377.5 → 10,599.8 → 12,265.0 MW across 2019→2022 — i.e. the fleet the
+builder reads and the generation the BA meters grow together. Every landed year is
+8,760 rows with the same two columns (`SPP-North`, `SPP-South`) as 2023–2025, and the
+annual-mean CFs fall inside the committed years' band (see `README.md`).

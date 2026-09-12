@@ -1,7 +1,12 @@
 # SPP generation mix, root-level yearly files — fetched 2026-09-06 by lane SPP-14 from portal.spp.org (file-browser API, anonymous). sha256 AS SERVED.
 # REGENERATED 2026-09-07 over the MERGED directory (PR #5342 salvage): covers every
 # file here from BOTH parallel SPP-14 landings, not just one session's.
+# EXTENDED 2026-09-12 by lane SPP-30: GenMix_2019..2022 added (out-of-training intake).
 4c2415fbb67de213af21c25b067b46a1c997c0c0d7f0b585642975848edb37ba  GenMixYTD_SPP.csv
+d35cc777cfe8c0cb3cdb374142a3ebed898a578c05a7c082bf683c3c778ce567  GenMix_2019.csv
+4edaa384936402ef4303ad9d0fb5ee5344a1fc845e36202f2eb2c336116ff97d  GenMix_2020.csv
+2e621cb4b8861b5949b72f3adc6241d5c0501dc485e70525fad5ae74ad8d7a78  GenMix_2021.csv
+10d401cdc28324ef006deb58857cc3e0b3004f15eda1ed1d96de26f9eb931027  GenMix_2022.csv
 5dbc21a073141726ec876c63164ca79a7fce3de6dc9433d1f7acdcd929d6434f  GenMix_2023.csv
 39e52ba5d3b974f99790af2505769207b64e31fe713291d26f2c470945c0a4b0  GenMix_2024.csv
 956f6709058e96f80f6a2457b274e8f25633194a8e876b2f7ef317e86ba59cd0  GenMix_2024_SPP.csv
