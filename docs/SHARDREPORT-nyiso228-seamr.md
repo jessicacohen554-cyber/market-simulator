@@ -427,3 +427,55 @@ because a session's "not a keeper in my judgement" is not a licence to act. So, 
 All four years solved into ONE bundle on ONE recipe with ONE flag moved. Screen gates cleared;
 full-span promotion bar failed on both legs; the caveat that motivated the arm is falsified against
 it. Every number this shard will ever cite is in this document.
+
+---
+
+## 9. PARENT RULING (nyiso-228 launcher, 2026-09-12 02:43 UTC) — the record, corrected to the sharper reading
+
+The parent received this result, reproduced leg (ii) independently from the pushed bundle, and ruled.
+**DO NOT PROMOTE** (the §3.2 bar failed both legs — the correct call); **do NOT spend the ~16 min of
+extra LP** on the unit-level `r` falloff (not authorised, and unnecessary — the chartered question is
+answered); and **the promotion decision is the OWNER's** (rule 31 `[R-RETAIN]`), which the parent
+will put to them. This shard's job is to leave the evidence intact, which it has.
+
+### 9.1 The parent's framing supersedes §6.2's, and it is more precise
+
+§6.2 above said the caveat is *"falsified in the direction of the band being GOOD."* That is
+compatible with the evidence but it is not the sharpest statement of it, and the parent's is:
+
+> Removing the band did **not** improve interchange hourly `r` in any year **and** badly degraded the
+> measured annual level, so **the reconciliation band is NOT the cause** of nyiso-99's "reconciled
+> monthly quota is met at the WRONG HOURS" defect. **The wrong-hours allocation SURVIVES the band's
+> removal.** That **removes the band from suspicion** and leaves the **internal price amplitude**
+> (arm A's object) as the remaining explanation — which is what nyiso-99 concluded and what
+> PRECOMMIT §1.4 argued. **A clean negative that closes a route is a SUCCESS.**
+
+The distinction is worth keeping straight, because it is what the next session needs: the measurement
+does not merely say "the band helps." It says the **defect is not the band's** — `r` stays low
+(0.77 / 0.51 / 0.53 / 0.39) with the band gone, so whatever misallocates the import hours is still
+there when the band is not. The band was never the suspect it was written up as; **the route is
+closed**, and the remaining live explanation is the one PRECOMMIT §1.2/§1.4 named — the absent upper
+price tail and the too-flat internal price amplitude, which is **arm A's** variable, not this arm's.
+
+### 9.2 One reconciliation note on leg (ii), since the parent's numbers differ in the last digit
+
+The parent reproduced leg (ii) as control −1.63 / −0.49 / +1.76 / +1.40 % against arm
+−14.65 / +2.21 / +24.40 / +19.76 %. This report's §6.1 gives control −1.63 / −0.50 / +1.54 / +1.43 %
+against arm −14.65 / +2.19 / +24.15 / +19.79 %. The difference is **only the EIA-930 hour alignment**
+— the parent's basis is the UTC stamp, §6.1's is the local-time stamp, and the two measured annual
+totals differ by at most 0.007 TWh (2024: 20.3980 UTC vs 20.3913 local). **Every deviation differs by
+< 0.3 pp and no verdict moves on either basis**: three of four years blow ±5 % either way, and 2023 is
+the only pass either way. Recorded so the two numbers in the record are not read as a disagreement.
+
+### 9.3 Close-out checklist
+
+| duty | state |
+|---|---|
+| bundle + report committed and pushed to `claude/nyiso228-seamr-span` | **done** (`00dadffa`, all four years; this §9 in the follow-up commit) |
+| **DELETE NOTHING** (rule 31 `[R-RETAIN]`) | **honoured** — no `rm`, no cleanup, no tidying; the full bundle incl. uncommitted `dispatch/`, `floors/`, `unit_hourly`, `network` stays on local disk |
+| no dashboard registration, no `frontend/data/backcast/**` | **honoured** |
+| no PR | **honoured** |
+| no edit under `src/` or `scripts/` | **honoured** — the `PYTHONPATH` / `src`-layout issue of §2 was fixed with `pip install -e .` in-shell only |
+| no matrix, no calibration log, no PRECOMMIT, no `.gitignore`, no `CLAUDE.md` | **honoured** |
+
+**Final status: 1.**
