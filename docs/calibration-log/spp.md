@@ -2297,3 +2297,82 @@ diff (the `ensure_ascii` trap avoided), `check_gate_a_provenance.py` OK, 7 rows.
 2026-09-09: **CALIBRATED is a rubric determination, NOT a certified out-of-sample skill claim.**
 
 **Next shorthand: spp-37.**
+
+## spp-37 — 2026-09-12
+
+**THE SPAN/SINGLE-YEAR DIVERGENCE IS AN EIA-860 VINTAGE CACHE LEAK. YEARS 2+ OF EVERY
+SPP SPAN SOLVE ON A STALE FLEET SNAPSHOT.** Card A closed at **phase 0 — zero LP, zero
+shards.** Base `9ae27cd7fca1e401c3a977eb0f86383242ad2090`.
+`docs/handoffs/FINDING-spp-37-order-sensitivity-2026-09-12.md`; probe
+`scripts/probes/_spp37_vintage_cache_census.py`.
+
+**The mechanism.** SPP keeper 10 carries `eia860_vintage_tracks_solve_year = True`, so
+`run_year` re-points the process-global `_ACTIVE_EIA_860_DIR` on every year
+(`vintage_2023` → `vintage_2024` → canonical; no `vintage_2025/` is committed). The LP's
+own fleet follows correctly — `load_fleet_from_csv` is not cached — but eleven
+`lru_cache`d loaders read that global **without it in their key**, so year 1 pins its
+vintage for every later year. Numerator and denominator then sit on different vintages,
+the exact defect `_iso_plant_capacity`'s own docstring forbids. **Year 1 is always
+correct; years 2+ are not** — which is why 2023 reproduced to 4 dp and 2024/2025 did not.
+
+**Two leaks reach keeper 10's own path**: `outages._iso_plant_capacity` (the denominator
+of BOTH outage overlays) and `campd_bins.cc_duct_peaking_pct` (the CC peak offer band,
+`cc_duct_peaking=True`; 3 SPP CC plants wrong per year). Nine more are the same class,
+latent behind gates SPP has off.
+
+**Measured.** Denominator wrong in **63 bins / +413.55 MW (2024)** and **92 bins /
+−2,740.44 MW (2025)**. Worse, events whose bin is absent from the stale map are silently
+skipped — **26 bins / 3,692.3 MW of 2025 fleet whose outages never reach the LP**, led by
+plant 6193, which the 2023 vintage carries as `COAL` and the 2025 fleet as `ST_GAS`: **a
+coal-to-gas conversion the span cannot see.** LP availability input for 2025:
+**−5,817,173 MWh** removed on the ≥5-day overlay, **+142,296 MWh** on the <5-day.
+
+**Direction verified on committed artifacts, no solve.** Differencing
+`spp36_2025` (single-year arm) against `spp36_span` year 2025 (same config, same
+`git_sha` 706aa547) reproduces SPP-36's table exactly and every sign follows: span
+ST_GAS **+1.2737 TWh**, COAL_PRB −0.5654, CT_PEAKER −0.4815, slack **240.5966 → 0**,
+hours>200 **2 → 0**, LW price **30.0737 → 29.5377**. Four observations, one mechanism.
+
+**Which leg is right: the SINGLE-YEAR one.** So **keeper 10, keeper 9 and every prior SPP
+span carry wrong outage derates and duct-peaking bands for 2024 and 2025** (2023 is sound
+throughout). The SPP-36 **A/B survives** — both legs were 3-year invocations sharing the
+identical stale state — but the **level** either leg reports for 2024/2025, which is what
+C3a/C3b/C1 score, does not. Basis is rule 14 `[R-ACCURATE]`; no gate or residual was
+consulted.
+
+**The charter's proposed shard would have PASSED and misled.** The span path is
+deterministic — it reproduces itself byte-for-byte — and is *also* wrong. The defect is
+order-dependence, which byte-identity against a same-order bundle cannot detect. The
+zero-LP enumeration found it; **no LP was spent and none was needed.**
+
+**REPAIR PROPOSED, NOT LANDED (owner's call).** Key the cache on the active directory —
+the `cod_ramp._load_cod_map(eia860_dir)` pattern already used four times here. Zero free
+parameters, zero new fields, **no matrix row** (a cache-key defect is not a tuning
+channel). Blast radius measured: with `tracks_solve_year` off the directory is constant,
+so the repair is a **strict no-op**; of 93 committed bundles **only SPP's two arm it**, so
+every other ISO, every SPP single-year run and SPP 2023 are byte-identical. Cost if
+accepted: **one shard, one `--years 2023 2024 2025` invocation, ~500 s** (rule 32(b)). Not
+landed unilaterally: it would leave keeper 10 non-reproducible at HEAD with no
+replacement, and card A "cannot move a keeper and must not try".
+
+**Queue HELD, deliberately.** R-be and R-ba both reason off per-plant ST_GAS and thermal
+behaviour in 2024/2025 — the years the leak moves, in the class it moves most. Proceeding
+would have built on contaminated evidence.
+
+**Flagged, not acted on.** (a) `results/calibration/spp36_2025` is committed, unregistered
+and turns the parity gate RED (Class-E point 4) — and is also the only committed artifact
+showing the CORRECT 2025 construction and the evidence above, so rule 31 `[R-RETAIN]`
+keeps it; recovery pin `git checkout 18ef91756ac84482a78ea719c2fc8d57ec7d5cf5 --
+results/calibration/spp36_2025`. The gate is already red from four other lanes'
+bundles, so removing SPP's would not turn it green. (b) SPP-27's `reconstruct_bundle_fleet`
+order-dependence is the same defect class one layer over; its "nothing scored is affected"
+is right for an A/B difference and wrong to infer the numbers are correct — that inference
+is what let this sit.
+
+**Rules.** 32(a) parent ran no LP, launched no shard · 33 nothing to archive · 29(b) no arm,
+so no G-DRIFT owed, but `tests/unit/pipeline/test_run_year_kwarg_binding.py` **4 passed** at
+HEAD · 1/13 `offer_curve_by_group` not read, re-cut or swept · 31 nothing deleted, no `rm` ·
+28 no cell moves · 15 no run produced. `[R-HOLDOUT]` removed 2026-09-09: no SPP number is a
+certified out-of-sample skill claim.
+
+**Next shorthand: spp-38.**
