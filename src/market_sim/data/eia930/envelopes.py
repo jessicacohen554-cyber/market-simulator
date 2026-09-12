@@ -1203,6 +1203,117 @@ def measured_seam_import_envelope(
     return out or None
 
 
+def measured_boundary_transfer_envelope(
+    iso: str,
+    year: int,
+    hours: int,
+    percentile: float | None = None,
+    hour_ending_key: bool = False,
+) -> tuple[np.ndarray, np.ndarray] | None:
+    """Return the ISO's measured COINCIDENT boundary transfer envelope, MW.
+
+    The aggregate counterpart of :func:`measured_seam_import_envelope`, for the
+    quantity an aggregate simultaneous-transfer limit actually governs: the
+    ISO's WHOLE-BOUNDARY net flow. Same estimator, same percentile default
+    (:data:`~market_sim.config.constants.MISO_SEAM_FLOW_PERCENTILE`), same
+    hour-ending key repair, same (month x hour-of-day) bucketing and the same
+    clip-at-zero semantics as the per-seam envelope that is already armed --
+    the ONLY difference is the aggregation ORDER.
+
+    The per-seam function takes a percentile per seam and leaves the caller to
+    sum them; that sum is **not** a boundary capability, because the seams do
+    not reach their own p90 in the same hour (measured on MISO 2021: the summed
+    per-seam p90 is 64.87 TWh against a coincident p90 of 49.62 TWh). Here the
+    seams' DIBAs are summed at each TIMESTAMP FIRST and the percentile is taken
+    of that coincident boundary total, which is the quantity a Simultaneous
+    Import Limit is a statement about.
+
+    It is a deliverability CEILING the LP clears below, never a flow: measured
+    net import exceeds this envelope in 11.8-15.4 % of the hours of every MISO
+    year 2020-2025, with a 1.5-2.1 GW mean headroom over the measured mean
+    (rule 13 ``[R-MEASURED]`` admissibility -- a transfer-capability proxy that
+    regenerates for a forward year from the then-current directed-flow record
+    and responds to changed conditions, not an outcome pinned to actuals).
+
+    Args:
+        iso: ISO identifier; only ISOs with a seam-DIBA map resolve.
+        year: Calendar year to build the envelope from.
+        hours: LP horizon (<= 8760 on the fixed non-leap clock).
+        percentile: Override the registered percentile default; ``None`` keeps
+            :data:`~market_sim.config.constants.MISO_SEAM_FLOW_PERCENTILE`.
+        hour_ending_key: Read the file's ``local_time`` as hour-ENDING and
+            shift it to hour-beginning before bucketing (miso-175's rule 14
+            hour-key repair), exactly as the per-seam envelope does.
+
+    Returns:
+        ``(import_envelope, export_envelope)``, each ``(hours,)`` MW and
+        clipped at zero, or ``None`` when the ISO has no seam-DIBA map, the
+        parquet is absent, or the year is uncovered -- in which case the caller
+        leaves the aggregate limit at its declared scalar (byte-identical).
+    """
+    from market_sim.config.constants import MISO_SEAM_FLOW_PERCENTILE
+    from market_sim.config.interchange_config import MISO_SEAM_DIBA
+    from market_sim.data.fleet import _hour_to_month_index
+
+    seam_diba = {"MISO": MISO_SEAM_DIBA}.get(iso.upper())
+    if not seam_diba:
+        return None
+    pct = MISO_SEAM_FLOW_PERCENTILE if percentile is None else float(percentile)
+    ba = _ISO_TO_HOURLY_BA.get(iso.upper())
+    if ba is None:
+        return None
+    path = RAW_DIR / "eia-930-interchange" / f"{ba} interchange hourly.parquet"
+    if not path.exists():
+        return None
+    frame = pd.read_parquet(path)
+    local = pd.DatetimeIndex(frame["local_time"])
+    if hour_ending_key:
+        local = local - pd.Timedelta(hours=1)
+    keep = local.year == year
+    frame, local = frame[keep], local[keep]
+    if frame.empty:
+        return None
+    diba_to_seam = {d: s for s, dibas in seam_diba.items() for d in dibas}
+    seam = frame["diba"].astype(str).map(diba_to_seam)
+    work = pd.DataFrame(
+        {
+            "seam": seam.to_numpy(),
+            "month": local.month.to_numpy(),
+            "hod": local.hour.to_numpy(),
+            "ts": local.to_numpy(),
+            "mw": pd.to_numeric(frame["mw"], errors="coerce").to_numpy(),
+        }
+    ).dropna(subset=["seam", "mw"])
+    if work.empty:
+        return None
+    # COINCIDENT boundary net import per timestamp = -sum(interchange) over
+    # every seam's DIBAs in that hour (EIA sign: + = ISO exports to the DIBA).
+    per_ts = work.groupby(["ts", "month", "hod"], observed=True)["mw"].sum()
+    per_ts = (-per_ts).reset_index(name="net_import")
+
+    rm = _hour_to_month_index(hours) + 1
+    rh = np.arange(hours) % 24
+    out: list[np.ndarray] = []
+    for direction in ("import", "export"):
+        tab = np.full((12, 24), np.nan)
+        for (m, h), g in per_ts.groupby(["month", "hod"], observed=True):
+            vals = g["net_import"].to_numpy()
+            if direction == "export":
+                vals = -vals
+            tab[m - 1, h] = np.percentile(vals, pct)
+        for m in range(12):
+            row = tab[m]
+            if not np.all(np.isnan(row)):
+                tab[m] = np.where(np.isnan(row), np.nanmax(row), row)
+        if np.any(np.isnan(tab)):
+            tab = np.where(np.isnan(tab), np.nanmax(tab), tab)
+        # Clip at zero with the per-seam function's own semantics: a bucket
+        # whose percentile runs the other way caps THIS direction at zero and
+        # never forces the reverse flow.
+        out.append(np.clip(tab[rm - 1, rh], 0.0, None))
+    return out[0], out[1]
+
+
 def pjm_net_interchange(year: int) -> np.ndarray | None:
     """Return PJM's hourly net export (MW, export-positive), or ``None``.
 

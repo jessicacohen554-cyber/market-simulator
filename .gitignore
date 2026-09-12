@@ -2005,3 +2005,5 @@ results/calibration/spp36_*/
 #   git checkout origin/claude/nyiso229-arm-2022r2  -- results/calibration/nyiso229_arm_y2022
 results/calibration/nyiso229_ctrl_y2022/
 results/calibration/nyiso229_arm_y2022/
+# miso-255 rule 29(c) / rule 31: screen bundles stay on local disk, never reach main
+results/calibration/miso255_sil_*/

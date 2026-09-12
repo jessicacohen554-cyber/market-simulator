@@ -141,6 +141,7 @@ from market_sim.model.transmission import (
     apply_caiso_local_import_limits,
     apply_interchange_injections,
     build_incidence_matrix,
+    apply_miso_measured_sil_envelope,
     build_interface_groups,
     build_caiso_link_loss,
     build_miso_link_loss,
@@ -1522,6 +1523,47 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     interface_groups = build_interface_groups(
         iso_config.links, iso_config.interface_limits
     )
+    # miso-255 miso_import_sil_measured_envelope (MISO-only, GATED default off):
+    # REPLACE the 8,700 MW bidirectional MISO_simultaneous_import scalar -- the
+    # published Capacity Import Limit, a PRA/LOLE accreditation construct being
+    # used as the hourly energy bound in both directions -- with MISO's own
+    # measured coincident boundary transfer envelope per direction. Rule 14
+    # [R-ACCURATE]; replaces, never stacks (rule 19). No-op off the flag, for a
+    # non-MISO ISO, or when the envelope does not resolve (a forecast year), so
+    # every other run is byte-identical.
+    if getattr(config, "miso_import_sil_measured_envelope", False):
+        interface_groups, _sil_info = apply_miso_measured_sil_envelope(
+            interface_groups,
+            iso_config,
+            config.weather_year,
+            base_demand.shape[1],
+            percentile=getattr(config, "miso_seam_flow_percentile", None),
+            hour_ending_key=getattr(
+                config, "miso_seam_envelope_hour_ending_key", False
+            ),
+        )
+        if _sil_info is not None:
+            logger.info(
+                "%s: aggregate simultaneous-transfer limit REPLACED by the "
+                "measured coincident boundary envelope -- declared scalar "
+                "%.0f MW -> import mean %.0f / max %.0f MW, export mean %.0f / "
+                "max %.0f MW; import below the scalar in %d h, export in %d h",
+                iso,
+                _sil_info["declared_scalar_mw"],
+                _sil_info["import_env_mean_mw"],
+                _sil_info["import_env_max_mw"],
+                _sil_info["export_env_mean_mw"],
+                _sil_info["export_env_max_mw"],
+                _sil_info["hours_import_below_scalar"],
+                _sil_info["hours_export_below_scalar"],
+            )
+        else:
+            logger.info(
+                "%s: miso_import_sil_measured_envelope armed but no envelope "
+                "resolved for %d -- aggregate limit keeps its declared scalar",
+                iso,
+                config.weather_year,
+            )
     # FORWARD ATC corridor deliverability cap (CAISO per-hub corridors,
     # ``caiso_corridor_atc_forward``, default off): corridor TTC × posted-ATC
     # base fraction × forward solar derate -- a capability limit that
