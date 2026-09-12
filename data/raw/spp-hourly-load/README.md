@@ -31,8 +31,25 @@ Expected shape (from SPP's product description above — **not** yet verified
 against a delivered file): one row per hour per area, columns for the interval
 stamp, Balancing Area Name, Control Area, and MW. Span on the portal is a rolling
 window with archived years as `/<year>/<year>.zip`; the backcast needs
-**2023-2025**, and 2019-2022 only as a rule-22 intake batch after a `complete`
-marker.
+**2023-2025**.
+
+**2019-2022 LANDED 2026-09-12 by lane SPP-30** as `hourly-load-<year>.zip`, kept
+AS SERVED (SPP zips years older than two). The former wording here — "2019-2022
+only as a rule-22 intake batch after a `complete` marker" — was **stale**: rule 22's
+`[R-HOLDOUT]` regime and every gate that enforced it were removed 2026-09-09 by
+owner instruction (commit `b0a807a8`), so intake needs no marker and SPP holds
+none. Measured completeness of the landed zips:
+
+| Year | CSV members | Monthly | Daily | Daily span |
+|---|---|---|---|---|
+| 2019 | 117 | 12/12 | **105** | **2019-09-18 → 12-31 — PARTIAL AT SOURCE** |
+| 2020 | 377 | 12/12 | 365 of 366 | 01-01 → 12-31, **missing 2020-01-30** (Feb 29 present) |
+| 2021 | 377 | 12/12 | 365 | 01-01 → 12-31 |
+| 2022 | 377 | 12/12 | 365 | 01-01 → 12-31 |
+
+The **monthly** series (`HOURLY_LOAD-YYYYMM.csv`) — the one the load products read —
+is complete in all four years. Only 2019's daily granularity is short, because SPP's
+own archive does not carry Jan–mid-Sep 2019 dailies.
 
 ## Timezone
 

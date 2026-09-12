@@ -76,6 +76,29 @@ Access` v3.0, tracked in `data/raw/spp-planning/`). Landed byte-for-byte, unmodi
 | `hourly-load-2023.zip` | `/2023/2023.zip` | 1,443,643 |
 | `hourly-load-2024.zip` | `/2024/2024.zip` | 1,448,045 |
 
+### Landed by SPP-30 (2026-09-12 — out-of-training intake 2019-2022)
+
+Same host, same anonymous `file-browser-api` route, same producer
+(`scripts/data/fetch_spp_alt_portal.py --product hourly-load --years ...`). Fetched
+2026-09-12; `sha256` AS SERVED in `SHA256SUMS.txt`; licence **none stated** (SPP public
+data). Kept as the served zips, matching the 2023/2024 rows above.
+
+| File | Portal path (`fsName=hourly-load`) | Bytes | CSV members | Monthly | Daily |
+|---|---|---|---|---|---|
+| `hourly-load-2019.zip` | `/2019/2019.zip` | 865,095 | 117 | 12/12 | **105 — PARTIAL** |
+| `hourly-load-2020.zip` | `/2020/2020.zip` | 1,438,466 | 377 | 12/12 | 365 of 366 |
+| `hourly-load-2021.zip` | `/2021/2021.zip` | 1,437,843 | 377 | 12/12 | 365 |
+| `hourly-load-2022.zip` | `/2022/2022.zip` | 1,442,754 | 377 | 12/12 | 365 |
+
+Two source-side gaps, measured from the landed members and stated rather than smoothed:
+
+* **2019 dailies begin only 2019-09-18** (105 of 365). SPP's archive does not carry
+  Jan–mid-Sep 2019 `DAILY_HOURLY_LOAD-*.csv`. All 12 **monthly** roll-ups are present, and
+  the monthly series is what the load products read, so 2019 is usable at monthly grain and
+  short at daily grain.
+* **2020 is missing exactly one daily file, `DAILY_HOURLY_LOAD-20200130.csv`** (365 of 366).
+  **Feb 29 2020 IS present** — this is an ordinary archive gap, not a leap-year artifact.
+
 SPP rolls a year into `<year>/<year>.zip` about two years on (guide p. 8: *"Public
 Data files will be zipped (.zip) after 2 years"*), so **2025 is still served as 365
 daily `DAILY_HOURLY_LOAD-YYYYMMDD.csv` files** at `/2025/` (~4.1 KB each) and is not
