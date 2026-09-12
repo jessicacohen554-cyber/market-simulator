@@ -461,13 +461,39 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
       Its container is ephemeral and single; a shard's is neither. **Zero-LP work — phase 0 census,
       offer-array deltas, replaying committed sidecars, scoring, composition — stays in the parent**,
       because none of it is a solve.
-    - **(b) ONE SHARD = ONE COMMIT = ≤ 20 MINUTES.** The unit of work is what a shard can solve and
-      push inside 20 minutes. A multi-year span shards **per year** (rule 12 already forbids
-      parallel years inside one invocation, so this costs nothing and buys full parallelism). **If
-      one unit still cannot finish in 20 minutes, SHARDS LAUNCH SHARDS** — the shard subdivides
-      further (per zone family, per pass, per stage) and launches its own children exactly as this
-      rule directs, rather than running long. A shard approaching 20 minutes with no artifact
-      **stops and reports**; it never pushes a half-written bundle (rule 27 `[R-PUSH]`).
+    - **(b) ONE REGISTRABLE RUN = ONE SHARD = ONE SOLVE. SLIM PER-YEAR FAN-OUT IS BANNED.**
+      *(AMENDED 2026-09-12, owner instruction, verbatim: "Ok ban slim shards this is dumb I should
+      only have to wait for one solve wtf". This clause previously read "ONE SHARD = ONE COMMIT =
+      ≤ 20 MINUTES — a multi-year span shards **per year**", and that instruction is what
+      produced the incident: lane SPP-36 fanned a 2023–2025 span into three per-year shards,
+      each pushing the slim committed file set, then found the legs could not be composed and had to
+      solve the whole span again in one container. The owner waited for four solves to get one run.
+      Genealogy: `docs/governance/rule-history.md` §19.)*
+      **A run that will be REGISTERED is solved by ONE shard, in ONE `--years <all>` invocation,
+      into ONE bundle** (which is what rule 16 `[R-ALLYEARS]` already demanded of the bundle);
+      years stay sequential inside it (rule 12). That shard also attests, registers and pushes,
+      the way the SPP-27 span shard did — the (c)(6) ban on `dashboard_add_run.py` targets
+      CONCURRENT shards colliding on the shared generated files, and a single span shard registering
+      once is the established pattern, not a violation.
+      **WHY THE FAN-OUT CANNOT WORK, measured rather than asserted.** A shard can only push what
+      `.gitignore` lets it commit — the slim set. Registration needs more than the slim set:
+      `render_calibration_html.build_payload` reads the bundle-root `system.parquet`, and the
+      per-plant D-1/D-2/D-4 diagnostics fall back to the registered run payload when
+      `dispatch/<year>_<pass>.parquet` is absent, so on an unregistered composite they return
+      **zero rows and PASS VACUOUSLY**. `--reuse-solved` gates on those same two artifacts
+      (`plan_reuse_solved`), so a chain cannot carry years across containers either. **Both
+      composition routes therefore end in a re-solve, always** — the fan-out buys nothing and
+      costs a full extra span.
+      **The 20-minute ceiling still governs, and it is now a STOP rule rather than a split rule.**
+      A shard approaching 20 minutes with no artifact **stops and reports**; it never pushes a
+      half-written bundle (rule 27 `[R-PUSH]`). Where a whole span genuinely cannot fit — a
+      per-plant multi-zone ISO, not a 2-zone one like SPP, whose full span is ~500 s — the
+      answer is a longer single shard with the budget stated in its prompt, **not** a fan-out whose
+      legs cannot be reassembled. Subdividing (per zone family, per pass, per stage) remains
+      available for DIAGNOSTIC work that will never be registered, and only there.
+      **A single-year shard is still correct for a rule-29 `[R-SCREEN]` SCREEN**, which is a
+      throwaway probe that is never registered and whose numbers live in the PRECOMMIT/RESULT doc.
+      The ban is on fanning out a run that has to come back together.
     - **(c) HOW TO LAUNCH ONE SO IT ACTUALLY WORKS.** `mcp__Claude_Code_Remote__create_session`, and
       every one of these or the shard is wasted:
       1. **`source_revision` is a FULL 40-CHARACTER IMMUTABLE SHA — never a branch name.** Branches

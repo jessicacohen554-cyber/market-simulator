@@ -1992,7 +1992,14 @@ results/calibration/spp32_*/
 #     dirs stay out of `main` — the COMPOSITE is what gets registered, and an
 #     unregistered per-year dir left committed is the Class-E parity RED. Discharged
 #     by .gitignore, never by `rm`.
-results/calibration/spp36_*/
+results/calibration/spp36_2023/
+results/calibration/spp36_2024/
+results/calibration/spp36_2025/
+#     NARROWED 2026-09-12: `spp36_span` is now the REGISTERED run
+#     2026-09-12-spp-36-shortwindow-span and is COMMITTED as a slim bundle (rule 15
+#     [R-DASHBOARD]), so it must stay TRACKED. Only the three throwaway per-year
+#     fan-out dirs remain ignored — they were superseded by the span solve and their
+#     numbers live in docs/handoffs/SHARDREPORT-spp36-{2023-relaunch,2024,2025}.md.
 
 # nyiso-229 (2026-09-12) 2022 SCREEN legs — rule 29 [R-SCREEN] clause (c) via
 # rule 31 [R-RETAIN]: a screen bundle and the control that screen earned must not

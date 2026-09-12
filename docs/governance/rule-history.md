@@ -1230,10 +1230,60 @@ The **ordinal does not move**: `[R-C3C]` occupies rule 22's slot, so the 31-rule
 numbering is unchanged and a doc reference to "rule 22" still lands on the right entry.
 Only the ID changed. The audit N↔N+1 mapping in §1 is unaffected.
 
-## 19. Changes to this file
+## 19. Rule 32 `[R-SHARD]` (b) — the per-year slim fan-out is BANNED (owner, 2026-09-12)
+
+**Owner instruction, verbatim:** *"Ok ban slim shards this is dumb I should only have to wait for
+one solve wtf"*.
+
+**What the clause said before.** *"ONE SHARD = ONE COMMIT = ≤ 20 MINUTES. The unit of work is what a
+shard can solve and push inside 20 minutes. A multi-year span shards **per year** (rule 12 already
+forbids parallel years inside one invocation, so this costs nothing and buys full parallelism)."*
+
+**The incident.** Lane SPP-36 was executing an owner promotion ruling on `unit_outage_short_windows`
+across 2023–2025. Following the clause literally, the parent fanned the span into three per-year
+shards. Each solved correctly and pushed the slim committed file set. The parent then discovered
+that the legs **cannot be reassembled into a registrable run**, and had to solve the entire span
+again in a single container. **The owner waited for four solves to get one run**, plus a fifth
+container that stopped on an unrelated defect.
+
+**Why the fan-out cannot work — the measurement, not the theory.** A shard can push only what
+`.gitignore` permits, which is the slim set. Registration needs strictly more:
+
+* `render_calibration_html.build_payload` reads the **bundle-root `system.parquet`** (gitignored) and
+  fails with a bare `TypeError` on `None` when it is absent.
+* The per-plant **D-1 / D-2 / D-4** diagnostics read `dispatch/<year>_<pass>.parquet` (gitignored) and
+  fall back to the **registered run payload** when it is missing. On an unregistered composite both
+  are absent, so all three returned **zero rows and PASSED VACUOUSLY** — D-4 in particular flipped
+  `False → True` against the control's 71 rows / 12 failures, which reads as a structural improvement
+  and is nothing of the kind. That near-miss is the sharpest reason for the ban: the fan-out does not
+  merely fail, it can fail *flatteringly*.
+* `--reuse-solved` gates on those same two artifacts (`plan_reuse_solved`), so chaining years across
+  containers is refused for the identical reason.
+
+Both composition routes therefore terminate in a re-solve, unconditionally.
+
+**A second defect the incident exposed, fixed in the same lane.** Comparing a single-year arm solve
+against a span-solved control is a **construction mismatch**, and it produced materially wrong
+numbers: the per-year legs reported the arm adding 1,295.6995 MWh (2024) and 240.5966 MWh (2025) of
+slack, while the span-vs-span A/B — arm and control both 3-year invocations — shows slack
+**unchanged in every year**. The fan-out did not just cost time; it briefly produced a false finding
+that was reported to the owner before the span corrected it.
+
+**What the clause says now.** A run that will be registered is solved by ONE shard in ONE
+`--years <all>` invocation into ONE bundle, and that shard attests, registers and pushes. The
+20-minute ceiling survives as a **stop** rule (a shard approaching it with no artifact stops and
+reports) rather than a **split** rule; where a whole span genuinely cannot fit, the answer is a
+longer single shard with its budget stated, never a fan-out. Subdivision remains available for
+diagnostic work that will never be registered, and a single-year shard remains correct for a rule-29
+`[R-SCREEN]` screen, which is a throwaway probe by construction.
+
+---
+
+## 20. Changes to this file
 
 | date | change |
 |---|---|
+| 2026-09-12 | Added §19: rule 32 `[R-SHARD]` (b) amended by owner instruction (verbatim in §19) — **the slim per-year fan-out is BANNED**; a run that will be REGISTERED is solved by ONE shard in ONE `--years <all>` invocation into ONE bundle, and that shard attests, registers and pushes. The old clause actively directed per-year sharding and that is what caused the incident: SPP-36 spent three per-year shards, could not reassemble them, and re-solved the whole span — four solves for one run. Measured cause: registration needs the bundle-root `system.parquet` and the per-plant `dispatch/*.parquet`, both gitignored, and without them D-1/D-2/D-4 return **zero rows and pass VACUOUSLY** (D-4 flipped False→True against 71 rows / 12 failures); `--reuse-solved` gates on the same two files. A second defect it exposed: differencing a single-year arm against a span-solved control is a construction mismatch that produced a false slack finding (1,295.7 / 240.6 MWh added), corrected to **slack unchanged in every year** by the span-vs-span A/B. The 20-minute ceiling survives as a STOP rule, not a split rule; subdivision stays available for diagnostics, and a single-year shard stays correct for a rule-29 `[R-SCREEN]` screen. "Changes to this file" renumbered §19 → §20 (no external reference cited §19). |
 | 2026-09-09 | Added §18: **`[R-HOLDOUT]` REMOVED** (owner instruction, verbatim above; scope selected by the owner as “Year machinery only, keep C3c”). The three-tier regime and all four spend gates are gone — markers as authorizations, the freeze file, `--holdout-authorized`, the launch gate, the registration gate (§4's R-AZ), D-6, H1, and the whole `holdout_policy` authorization surface; the CI job survives, retitled. KEPT: the C3c standing rule entire (now `[R-C3C]`, on rule 22's unchanged ordinal), `tier_for_year` demoted to a pure classifier its v3.6 limb still needs, `calibration-complete.json` as keeper designation + forecast gate (a), and rule 30. Measured over all 15 registered out-of-training runs: **0 determination flips**. “Changes to this file” renumbered §17 → §18 (no external reference cited §17). |
 | 2026-09-09 | Added §17: rule 32 `[R-SHARD]` (owner instruction, verbatim above) — every solve runs in a shard and the orchestrating session never runs an LP itself; one shard commit is bounded at 20 minutes, and a unit that cannot fit subdivides (shards launch shards) rather than running long. Clause (c) is the launch protocol, each item traced to a prior loss (ercot-261's raced branch and `git add -A`; ercot-262's shard patching `scripts/`). Rule 12 `[R-PARALLEL]` is unchanged and composes with it: rule 12 bounds concurrency and forbids parallel years within an invocation, rule 32 bounds where the work runs and how long one commit may take. Nothing scored moves. "Changes to this file" renumbered §17 → §18 (no external reference cited §17). |
 | 2026-09-07 | Added §16: rule 31 `[R-RETAIN]` (owner instruction, verbatim above) — a solve's results are never deleted until the OWNER has ruled on promotion; a session's own “not a keeper” reading is never a licence to delete. Names `.gitignore`, not `rm`, as what discharges rule 29 `[R-SCREEN]` (c) and rule 15's retention, since the parity gate only sweeps committed dirs. Adds the ephemeral-container duty (surface the promotion question before the session ends) and the cost-estimate-before-re-solving duty. Rule 29 (c) amended in place to say what it always meant — keep it out of `main`, not erase it from disk; every other clause of rule 29 unchanged. “Changes to this file” renumbered §16 → §17 (no external reference cited §16). |
