@@ -126,15 +126,22 @@ def score(control: Path, arm: Path, restored: np.ndarray | None) -> dict:
     if restored is not None:
         cc = _p1(control / "hourly" / f"class_hourly_{YEAR}.parquet")
         ac = _p1(arm / "hourly" / f"class_hourly_{YEAR}.parquet")
-        m = cc.merge(ac, on=["klass", "hour"], suffixes=("_c", "_a"))
+        # OUTER merge: an inner join would silently DROP a class present in only
+        # one leg, which is exactly the kind of move this gate exists to catch.
+        m = cc.merge(ac, on=["klass", "hour"], suffixes=("_c", "_a"), how="outer")
+        m[["mw_c", "mw_a"]] = m[["mw_c", "mw_a"]].fillna(0.0)
         m["d"] = (m.mw_a - m.mw_c).abs()
+        only_c = sorted(set(cc.klass) - set(ac.klass))
+        only_a = sorted(set(ac.klass) - set(cc.klass))
         outside = m[(~restored[m.hour.to_numpy()]) & (m.d > 1.0)]
         out["gates"]["G-CONF-2"] = {
             "test": "no class-hour outside the restored set moves > 1.0 MW",
             "restored_hours": int(restored.sum()),
             "violating_class_hours": int(len(outside)),
             "worst_outside_mw": float(outside.d.max()) if len(outside) else 0.0,
-            "verdict": "PASS" if len(outside) == 0 else "STOP",
+            "classes_only_in_control": only_c,
+            "classes_only_in_arm": only_a,
+            "verdict": "PASS" if (len(outside) == 0 and not only_c and not only_a) else "STOP",
         }
     # --- reserve families (reported + context for G-DIR) ---------------------
     rf = {}
