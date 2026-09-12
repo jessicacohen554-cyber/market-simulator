@@ -1,4 +1,4 @@
-# RESULT — caiso-275: ARM A IS FALSIFIED BY ITS OWN LIVENESS GATE; ARM B IS A RECOMMENDED KEEPER AND FLIPS C3b-2022 FAIL → PASS
+# RESULT — caiso-275: ARM A IS FALSIFIED BY ITS OWN LIVENESS GATE; ARM B FLIPS C3b-2022 FAIL → PASS BUT FAILS G-1 AND G-2 IN 2024
 
 **Session caiso-275, 2026-09-12. CAISO only (rule 25 `[R-ISO-SCOPE]`).** Parent spent ZERO LP
 (rule 32 `[R-SHARD]` (a)); eight per-year shards were launched off the pinned PRECOMMIT SHA
@@ -21,8 +21,8 @@ so the parent-side reconstruction is faithful, not approximate.
 | **2022** | C3b shape NRMSE | — | 0.240 **FAIL** | *(n/a)* | **0.194 → PASS** | ≤0.20 |
 | 2023 | C3a | 54.17 | 56.54 PASS | 56.37 PASS | **55.89 PASS** | ±10 % |
 | 2023 | C3b | — | 0.082 PASS | 0.078 PASS | **0.077 PASS** | ≤0.20 |
-| 2024 | C3a | 34.65 | 37.65 PASS | 37.51 PASS | *(pending)* | ±10 % |
-| 2024 | C3b | — | 0.139 PASS | 0.135 PASS | *(pending)* | ≤0.20 |
+| 2024 | C3a | 34.65 | 37.65 PASS | 37.51 PASS | **37.55 PASS** | ±10 % |
+| 2024 | C3b | — | 0.139 PASS | 0.135 PASS | **0.137 PASS** | ≤0.20 |
 | 2025 | C3a | 34.42 | 37.13 PASS | 36.95 PASS | 37.07 PASS | ±10 % |
 | 2025 | C3b | — | 0.107 PASS | 0.100 PASS | 0.106 PASS | ≤0.20 |
 
@@ -57,13 +57,22 @@ sweeping the percentiles against the gates is exactly the fitted-mechanism selec
 
 ## §3 — ARM B (`caiso_import_gas_coupling`) — PASSES EVERY GATE, and G-2 is the decisive one
 
-| gate | requirement | 2022 | 2023 | 2025 | verdict |
-|---|---|--:|--:|--:|---|
-| **G-1 LIVENESS** | ≥ 1,000 h moved | **1,276** | **1,478** | 481¹ | **PASS** |
-| **G-2 CONFINEMENT** | month-ranked corr(\|basis\|, \|ΔP\|) > 0 | **Pearson +0.990, Spearman +0.902** | +0.565 / +0.399 | +0.596 / +0.690 | **PASS** |
-| G-3 DIRECTION | ΔP signed and bounded by the offer move | −$14.32 Dec on a −$81 offer shift | −$1.81 Jan on −$77 | small, spread | PASS |
-| G-4 COLLATERAL | no load-bearing PASS→FAIL | none | none | none | PASS |
-| G-5 OVERSHOOT | C3b must not degrade | **0.240→0.194** | 0.082→0.077 | 0.107→0.106 | PASS |
+| gate | requirement | 2022 | 2023 | **2024** | 2025 | verdict |
+|---|---|--:|--:|--:|--:|---|
+| **G-1 LIVENESS** | ≥ 1,000 h moved | **1,276** | **1,478** | **580** | 481¹ | **FAIL in 2024** |
+| **G-2 CONFINEMENT** | month-ranked corr(\|basis\|, \|ΔP\|) > 0 | **Pearson +0.990, Spearman +0.902** | +0.565 / +0.399 | **−0.214 / −0.175** | +0.596 / +0.690 | **FAIL in 2024** |
+| G-3 DIRECTION | ΔP signed and bounded by the offer move | −$14.32 Dec on a −$81 offer shift | −$1.81 Jan on −$77 | imports +0.499 TWh, gas −0.491, price −0.10 | small, spread | PASS |
+| G-4 COLLATERAL | no load-bearing PASS→FAIL | none | none | none | none | PASS |
+| G-5 OVERSHOOT | C3b must not degrade | **0.240→0.194** | 0.082→0.077 | 0.139→0.137 | 0.107→0.106 | PASS |
+
+> **CORRECTION, AGAINST THE ARM.** An earlier revision of this document, and the session's earlier
+> report to the owner, said Arm B "PASSES EVERY GATE". **That was written before the 2024 shard
+> existed and it is WRONG.** With 2024 measured, Arm B **FAILS its own pre-registered G-1 and G-2 in
+> 2024**, and G-1 is below threshold in 2025 as well. The claim is withdrawn; the table above is the
+> record. What is NOT withdrawn: the C3b-2022 flip, the 2022 G-2 Pearson +0.990, and the structural
+> (rule 14 `[R-ACCURATE]`) basis for the arm — none of which depends on G-2 holding in a year whose
+> basis is nearly flat. See §3.1 for why 2024's test has almost no power, stated as an explanation
+> and **not** as a conversion of a FAIL into a PASS.
 
 ¹ 2025 is the PRECOMMIT §10.2-declared partial-coverage year (hub gas NaN in Sep/Oct/Nov, delta
 zeroed there). Those three months move $0.005–0.012 — correctly inert, reported as unchanged rather
@@ -84,6 +93,29 @@ The basis was computed from `iso_hub_monthly_gas_prices − iso_monthly_gas_pric
 and with no reference to the price residual** (PRECOMMIT §4). That the response lands in December, in
 the proportion the basis implies, is a *prediction confirmed* — not a fit. December 2022 carries
 44.8 % of that year's failure and the arm removes 23 % of the December gap (+63.17 → ≈+48.8 $/MWh).
+
+### §3.1 — Why 2024 fails, measured rather than asserted
+
+The G-2 test regresses the monthly price move on the monthly |basis|. **In 2024 the basis is nearly
+constant** — every month lands between −0.09 and −1.41 $/MMBtu, a range of 1.32 against 2022's
+11.33 — so the independent variable carries almost no signal and the month-ranked correlation is
+dominated by whatever else moves month to month (namely which tranche happens to be marginal).
+Measured: 2024's largest basis month (May, −1.41) moves −$0.047 while its price move concentrates in
+Oct/Nov/Dec (−0.116 / −0.232 / **−0.692**) where the basis is among the smallest (−0.98 / −0.74 /
+−0.73). That is the ordering the negative correlation reports.
+
+**This is an explanation of low test power, NOT a reason to score the gate as passing.** The gate was
+pre-registered without a power condition, it fails as written, and it is recorded as a failure. What
+it does mean is narrow and worth stating precisely: **the 2024 result is weak evidence, not
+counter-evidence.** A mechanism that moves prices where its own measured driver is large (2022,
+Pearson +0.990) and barely at all where the driver is small and flat (2024, total annual move
+−$0.10 on a 37.55 $/MWh level) is behaving as its arithmetic says; what 2024 cannot do is
+*discriminate*, in either direction.
+
+**What would settle it, and is NOT claimed here:** a year with a wide within-year basis spread and
+full hub coverage. 2022 is the only such year in the file, and it is the year the arm was screened
+on — so the arm rests on ONE discriminating year. That is a real limitation of the evidence and it
+is stated at the gate rather than buried.
 
 **Why it is a keeper on structure (rules 1 `[R-STRUCT]` / 14 `[R-ACCURATE]` / 24 `[R-REGISTRY]`).**
 `IMPORT_TRANCHES["CAISO"]` prices `DSW_CCGT` at a flat **$68** and `DSW_CT` at a flat **$110** in
