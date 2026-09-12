@@ -13878,8 +13878,17 @@ every invocation. Called automatically at the top of `run_calibration_full.solve
 item 8 records the probe and forbids `free`. Evidence:
 `docs/FINDING-miso254-oom-is-the-missing-swap-not-the-model-2026-09-12.md`.
 
-**SHARD TEST (pre-registered in the FINDING §5 before launch):** shard A = keeper replayed on
-2023 with the runner as shipped; shard B = same SHA, `--no-container-preflight`, the negative
-control. Results are appended below by the parent when the shards report.
+**SHARD TEST (pre-registered in the FINDING §5 before launch; results §5.1):** both shards
+pinned to `0101b4ce`, both replaying the committed keeper on 2023.
+- **Shard A (preflight ON) SOLVED**: the runner read the 13.34 GiB nested ceiling, provisioned
+  10 GiB of swap itself, and finished in **937.6 s** (P0 525.8 s, P1 269.0 s) inside the 20-min
+  cap. **P1 prices reproduce the keeper's committed 2023 sidecar exactly — 0 of 490,560 cells
+  differ.** The honest peak, measured for the first time: `cgroup_peak_rss_plus_swap_gib=18.91`
+  (RSS pinned at 13.34, up to 5.08 GiB in swap) — **a MISO year needs ~18.9 GiB, ~5.6 GiB over
+  the bash cgroup.** `docs/SHARD-misooom-A-2023.md`.
+- **Shard B (preflight OFF, negative control) OOM-KILLED** ~85 s in, `CONSTRAINT_MEMCG`,
+  `failcnt` 20,725, anon-rss 13.28 GiB, no `container preflight:` line — the miso-252/253
+  incident reproduced on the same SHA. `docs/SHARD-misooom-B-2023.md`.
+Neither bundle is registered or committed (rule 29 / 31; both stay on the shards' local disks).
 
 * Next number: **miso-255**.
