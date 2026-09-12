@@ -252,6 +252,7 @@ window.MECH_MATRIX_SHARDS.NEISO = {
     zonal_loss_surface: { cell: "." },
     rdt_tcdc: { cell: "." },
     seam_flow_envelopes: { cell: "." },
+    miso_import_sil_measured_envelope: { cell: ".", ev: "MISO-only by construction: the estimator gates on MISO_SEAM_DIBA and returns None for every other ISO, and the injector then returns its input groups unchanged, so this ISO is byte-identical armed or not (test_non_miso_iso_is_a_noop). Minted with the field by miso-255 (rule 28(c)); a verdict here would transfer nothing (rule 28(d), rule 25 [R-ISO-SCOPE])." },
     miso_seam_envelope_hour_ending_key: { cell: ".", ev: "MISO-only field (the seam-DIBA gate returns None for every other ISO — byte-identical; verified miso-175 V-3). Whether this ISO's own seam-envelope analogue carries the same hour-key convention is this lane's call, handed forward by FINDING-miso174 §4/§7 — not inspected or stamped by miso-175 (rule 25)." },
     m2m_seam_entitlement_cap: { cell: ".", ev: "No M2M/CMP construct on this ISO's seams — the row's record is the MISO-PJM / MISO-SPP JOA settlement product; any other market's seam-coordination analogue (e.g. the PJM-NYISO PAR-based M2M) is a different source and would be its own row." },
     miso_seam_coincident_envelope: { cell: ".", ev: "MISO-seam construction and refutation (the MISO-PJM EIA-930 DIBA seam conditioned on PJM's own load; miso-181). Rule 25: nothing transfers; a seam-response candidate in this ISO would be its own driver identification on its own seams." },

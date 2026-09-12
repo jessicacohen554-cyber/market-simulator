@@ -4002,6 +4002,7 @@ def solve_and_persist(
     miso_seam_export_limit: bool = False,
     miso_seam_envelope_merit_cap: bool = False,
     miso_seam_envelope_hour_ending_key: bool = False,
+    miso_import_sil_measured_envelope: bool = False,
     nyiso_seam_deliverability_envelope: bool = False,
     nyiso_seam_par_attribution: bool = False,
     miso_pjm_border_anchor: bool = False,
@@ -5084,6 +5085,10 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 miso_seam_envelope_hour_ending_key=True
             )
+        if miso_import_sil_measured_envelope:
+            recorded_cfg = recorded_cfg.with_overrides(
+                miso_import_sil_measured_envelope=True
+            )
         if nyiso_seam_deliverability_envelope:
             recorded_cfg = recorded_cfg.with_overrides(
                 nyiso_seam_deliverability_envelope=True
@@ -5903,6 +5908,7 @@ def solve_and_persist(
             miso_seam_export_limit=miso_seam_export_limit,
             miso_seam_envelope_merit_cap=miso_seam_envelope_merit_cap,
             miso_seam_envelope_hour_ending_key=miso_seam_envelope_hour_ending_key,
+            miso_import_sil_measured_envelope=miso_import_sil_measured_envelope,
             nyiso_seam_deliverability_envelope=nyiso_seam_deliverability_envelope,
             nyiso_seam_par_attribution=nyiso_seam_par_attribution,
             miso_pjm_border_anchor=miso_pjm_border_anchor,
@@ -6872,6 +6878,7 @@ def solve_and_persist(
         "miso_seam_export_limit": miso_seam_export_limit,
         "miso_seam_envelope_merit_cap": miso_seam_envelope_merit_cap,
         "miso_seam_envelope_hour_ending_key": miso_seam_envelope_hour_ending_key,
+        "miso_import_sil_measured_envelope": miso_import_sil_measured_envelope,
         "nyiso_seam_deliverability_envelope": nyiso_seam_deliverability_envelope,
         "nyiso_seam_par_attribution": nyiso_seam_par_attribution,
         "miso_pjm_border_anchor": miso_pjm_border_anchor,
@@ -12883,6 +12890,25 @@ def main() -> None:
         "docs/handoffs/miso-g23-seam-envelope-composition-design-2026-07.md.",
     )
     parser.add_argument(
+        "--miso-import-sil-measured-envelope",
+        action="store_true",
+        help="MISO aggregate simultaneous-transfer limit (miso-255, rule 14 "
+        "[R-ACCURATE]): REPLACE the 8,700 MW bidirectional "
+        "MISO_simultaneous_import scalar with MISO's own MEASURED coincident "
+        "boundary transfer envelope, per direction. The scalar is MISO's "
+        "published CAPACITY IMPORT LIMIT, a PRA/LOLE resource-adequacy "
+        "accreditation construct, applied as the HOURLY energy bound in BOTH "
+        "directions; the meter falsifies it both ways (net import exceeds it "
+        "in 583/106/69/118/4/14 h of 2020-2025; net export has never reached "
+        "it, deepest -5,415 MW). With the priced seam wanting import in nearly "
+        "every hour the scalar becomes the schedule: the model rails it for "
+        "3,730/8,650/2,609/3/0/0 h of 2020-2025. Zero new parameters -- same "
+        "estimator, percentile and hour key as the per-seam envelopes, "
+        "aggregated coincidently. REPLACES the scalar, never stacks (rule 19). "
+        "MISO-only and inert where no envelope resolves, so every other ISO "
+        "and every forecast year is byte-identical. Default off.",
+    )
+    parser.add_argument(
         "--miso-seam-envelope-hour-ending-key",
         action="store_true",
         help="MISO seam envelope HOUR-KEY repair (miso-175, rule 14): read the "
@@ -14085,6 +14111,7 @@ def main() -> None:
         miso_seam_export_limit=args.miso_seam_export_limit,
         miso_seam_envelope_merit_cap=args.miso_seam_envelope_merit_cap,
         miso_seam_envelope_hour_ending_key=args.miso_seam_envelope_hour_ending_key,
+        miso_import_sil_measured_envelope=args.miso_import_sil_measured_envelope,
         nyiso_seam_deliverability_envelope=args.nyiso_seam_deliverability_envelope,
         nyiso_seam_par_attribution=args.nyiso_seam_par_attribution,
         miso_pjm_border_anchor=args.miso_pjm_border_anchor,

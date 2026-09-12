@@ -1322,6 +1322,14 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # distinctly, keeping the control/arm A/B off one cache entry. Registered
     # IN THE SAME COMMIT as the field (the nyiso-119 discipline).
     "miso_seam_envelope_hour_ending_key",
+    # miso-255 aggregate-SIL measured envelope (GATED default off): dropped from
+    # the hash at its default so every pre-existing MISO cache key stays
+    # byte-stable — off, the aggregate limit keeps its declared scalar and the
+    # envelope is never read. Armed it is a different per-hour interface row and
+    # so a different dispatch, and hashes distinctly, keeping a control/arm A/B
+    # off one cache entry. Registered IN THE SAME COMMIT as the field (the
+    # nyiso-119 discipline).
+    "miso_import_sil_measured_envelope",
     # miso-170 per-plant must-run floor MEMBERSHIP correction (GATED default
     # off): dropped from the hash at its default so every pre-existing cache
     # key of all six ISOs stays byte-stable — the off path never reads the
@@ -2207,6 +2215,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by miso-175 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "miso_seam_envelope_hour_ending_key": "False",
+    # Added by miso-255 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "miso_import_sil_measured_envelope": "False",
     # Added by miso-213 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "miso_zonal_gas_basis_skip_923_priced": "False",
@@ -8071,6 +8082,40 @@ class ScenarioConfig:
     # miso_seam_export_limit) and every seam in MISO_SEAM_DIBA; only bites
     # with those flags; MISO-only (the seam-DIBA gate returns None elsewhere —
     # byte-identical). Default off (replay fidelity for pre-miso-175 bundles).
+    miso_import_sil_measured_envelope: bool = False  # MISO aggregate
+    # simultaneous-transfer limit: REPLACE the 8,700 MW bidirectional scalar of
+    # EXTERNAL_SIMULTANEOUS_LIMITS["MISO"] with the ISO's OWN measured coincident
+    # boundary transfer envelope, per direction (data.eia930.envelopes.
+    # measured_boundary_transfer_envelope; model.interchange.miso.
+    # apply_miso_measured_sil_envelope). The scalar is MISO's published CAPACITY
+    # IMPORT LIMIT — a PRA/LOLE resource-adequacy accreditation limit for a
+    # delivery year, by the constant's own cited provenance — applied as the
+    # HOURLY energy transfer bound in BOTH directions, and the meter falsifies it
+    # in that role both ways (miso-255): metered net import EXCEEDS 8,700 MW in
+    # 583/106/69/118/4/14 hours of 2020-2025 (max 12,601), while metered net
+    # EXPORT has never reached it in any of those years (deepest -5,415 MW, 2024)
+    # — MISO publishes a separate Capacity EXPORT Limit and the code applies the
+    # import number symmetrically. With the priced reference-price seam wanting
+    # import in nearly every hour the scalar stops being a bound and becomes the
+    # schedule: the model's net interchange sits ON it for 3,730/8,650/2,609/3/0/0
+    # hours of 2020-2025, and 2021's hourly import takes 110 distinct values in
+    # 8,760 hours. The replacement carries ZERO free parameters (rules 21/24) —
+    # same estimator, same registered percentile (miso_seam_flow_percentile /
+    # MISO_SEAM_FLOW_PERCENTILE) and same hour-ending key as the per-seam
+    # envelopes already armed, aggregated COINCIDENTLY because that is the
+    # quantity a simultaneous limit is a statement about (the summed per-seam p90
+    # is 64.87 TWh in 2021 against a coincident 49.62). It REPLACES the scalar and
+    # never stacks (rule 19 [R-ONE-MECH]); per-link TTCs and the per-seam
+    # envelopes are untouched and still bind below it. A deliverability CEILING
+    # the LP clears below, not a pin: measured flow exceeds this envelope in
+    # 11.8-15.4 % of the hours of every year with 1.5-2.1 GW of mean headroom
+    # (rule 13 [R-MEASURED] — it regenerates for a forward year from the
+    # then-current directed-flow record). NOT miso_seam_coincident_envelope (R,
+    # miso-181), which conditioned the PER-SEAM envelope on neighbour load state
+    # and died because the conditional percentile was flat in its own driver;
+    # this adds no conditioning variable and no driver. MISO-only (the seam-DIBA
+    # gate returns None elsewhere) and inert when the envelope does not resolve,
+    # so every other ISO and every forecast year is byte-identical. Default off.
     miso_firm_import_floor: bool = False  # Firm (must-flow) import floor on the
     # reference-price seam — the import-direction mirror of the PJM firm-export
     # floor and the Manitoba/HQ firm-import blocks. MISO net-imports from the PJM
@@ -20492,6 +20537,7 @@ TIER_TAGS: dict[str, int] = {
     "miso_seam_export_limit": 1,
     "miso_seam_envelope_merit_cap": 1,
     "miso_seam_envelope_hour_ending_key": 1,
+    "miso_import_sil_measured_envelope": 1,
     "miso_manitoba_seam": 1,
     "pjm_seam_flow_limit": 1,
     "pjm_seam_flow_percentile": 3,

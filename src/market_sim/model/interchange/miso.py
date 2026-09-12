@@ -42,6 +42,7 @@ from market_sim.model.interchange.import_nodes import (
     _REF_IMPORT_MARK,
 )
 from market_sim.model.interchange.spec import (
+    EXTERNAL_SIMULTANEOUS_LIMITS,
     IMPORT_ZONE,
     MISO_MANITOBA_FIRM_IMPORT_FLOOR_FRAC,
     MISO_MANITOBA_FIRM_IMPORT_NAME,
@@ -727,6 +728,117 @@ def build_miso_link_loss(
         eps_m = np.maximum(0.0, (dev_to - dev_from) / (1.0 + dev_to))
         loss[i, :] = eps_m[month_of_hour]
     return loss if np.any(loss > 0.0) else None
+
+
+def apply_miso_measured_sil_envelope(
+    interface_groups: list[tuple],
+    iso_config: ISOConfig,
+    year: int,
+    hours: int,
+    percentile: float | None = None,
+    hour_ending_key: bool = False,
+) -> tuple[list[tuple], dict | None]:
+    """REPLACE MISO's aggregate simultaneous-transfer scalar with the measured envelope.
+
+    ``ScenarioConfig.miso_import_sil_measured_envelope`` (MISO-only, default
+    off). The ``MISO_simultaneous_import`` limit
+    (:data:`~market_sim.config.interchange_config.EXTERNAL_SIMULTANEOUS_LIMITS`)
+    caps the total simultaneous flow across every ``MISO_external`` border link
+    at **8,700 MW in BOTH directions**. That scalar is MISO's published
+    **Capacity Import Limit** — a PRA / LOLE resource-adequacy accreditation
+    limit for a delivery year, by the constant's own cited provenance — and the
+    measured record falsifies it in the hourly-energy role it is being used for,
+    in both directions at once (miso-255):
+
+    * as an import ceiling it is too tight AND too loose in the wrong places —
+      MISO's metered net import EXCEEDS 8,700 MW in 583 / 106 / 69 / 118 / 4 /
+      14 hours of 2020-2025 (max 12,601 MW), while for most of the year the
+      deliverable boundary transfer is far below it;
+    * as an export ceiling it has no source at all — MISO publishes a separate
+      Capacity **Export** Limit, the code applies the **import** number
+      symmetrically (``bidirectional=True``), and metered net export has never
+      reached 8,700 MW in any of those six years (deepest −5,415 MW, 2024).
+
+    The consequence is a rail, not a bound: with the priced reference-price seam
+    wanting import in nearly every hour, the LP takes every MW the scalar allows
+    and the scalar becomes the schedule. Measured on the committed bundles, the
+    model's net interchange sits on this limit in **3,730 / 8,650 / 2,609 / 3 /
+    0 / 0** hours of 2020-2025, and in 2021 its hourly import takes 110 distinct
+    values in 8,760 hours.
+
+    The repair is rule 14 ``[R-ACCURATE]`` and carries **zero free parameters**:
+    the scalar is replaced by the ISO's own measured coincident boundary
+    transfer envelope in each direction
+    (:func:`~market_sim.data.eia930.envelopes.measured_boundary_transfer_envelope`)
+    — the SAME estimator, percentile and hour-key already armed for the
+    per-seam bands, aggregated coincidently because that is the quantity a
+    simultaneous limit is a statement about. It **REPLACES** the scalar and
+    never stacks on it (rule 19 ``[R-ONE-MECH]``); the per-link TTCs and the
+    per-seam envelopes are untouched and still bind below it.
+
+    NOT ``miso_seam_coincident_envelope`` (**R**, miso-181): that conditioned
+    the PER-SEAM envelope on the neighbour's own load state and was killed
+    because the conditional percentile was flat in its declared driver. This
+    adds no conditioning variable and no driver — it swaps one unsourced scalar
+    for the unconditional estimator the **K** cell already uses, at the boundary
+    the scalar itself governs.
+
+    Args:
+        interface_groups: Groups from
+            :func:`~market_sim.model.interchange.core.build_interface_groups`,
+            in ``iso_config.interface_limits`` order.
+        iso_config: The import-node-extended topology (used to locate the
+            aggregate limit by name).
+        year: Calendar backcast/hindcast year the envelope is built from.
+        hours: LP horizon (<= 8760 on the fixed non-leap clock).
+        percentile: Envelope percentile override; ``None`` keeps the registered
+            :data:`~market_sim.config.constants.MISO_SEAM_FLOW_PERCENTILE`.
+        hour_ending_key: Pass miso-175's hour-ending key repair through to the
+            estimator (the keeper runs it ``True``).
+
+    Returns:
+        ``(groups, info)`` — the groups with the aggregate limit's entry
+        replaced by an hourly asymmetric one, and an ``info`` dict for the log
+        and the run record. Returns the groups UNCHANGED with ``info=None``
+        when the named limit is absent or the envelope does not resolve (a
+        forecast year, a missing parquet), so the run is byte-identical.
+    """
+    from market_sim.data.eia930.envelopes import measured_boundary_transfer_envelope
+
+    name = EXTERNAL_SIMULTANEOUS_LIMITS.get("MISO", (None,))[0]
+    if name is None:
+        return interface_groups, None
+    idx = next(
+        (i for i, lim in enumerate(iso_config.interface_limits) if lim.name == name),
+        None,
+    )
+    if idx is None or idx >= len(interface_groups):
+        return interface_groups, None
+    env = measured_boundary_transfer_envelope(
+        "MISO", year, hours, percentile=percentile, hour_ending_key=hour_ending_key
+    )
+    if env is None:
+        return interface_groups, None
+    import_env, export_env = env
+    grp = interface_groups[idx]
+    scalar = float(grp[1])
+    # 5-tuple: (link_idx, cap_mw, bidirectional, lower_cap_mw, signs). The
+    # hourly upper bound is the import envelope and the explicit reverse bound
+    # the export envelope, which overrides ``bidirectional`` -- the same
+    # asymmetric per-hour form the CAISO per-hub corridor groups already use.
+    signs = grp[4] if len(grp) > 4 else np.ones(np.asarray(grp[0]).size, dtype=float)
+    replaced = (np.asarray(grp[0], dtype=int), import_env, False, export_env, signs)
+    info = {
+        "limit": name,
+        "declared_scalar_mw": scalar,
+        "import_env_mean_mw": float(import_env.mean()),
+        "import_env_max_mw": float(import_env.max()),
+        "export_env_mean_mw": float(export_env.mean()),
+        "export_env_max_mw": float(export_env.max()),
+        "hours_import_below_scalar": int((import_env < scalar).sum()),
+        "hours_export_below_scalar": int((export_env < scalar).sum()),
+    }
+    return [*interface_groups[:idx], replaced, *interface_groups[idx + 1 :]], info
 
 
 def inject_miso_seam_flow_limit(
