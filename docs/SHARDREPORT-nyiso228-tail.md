@@ -3,76 +3,307 @@
 **Session:** nyiso-228 · **Shard:** A (TAIL) · **ISO:** NYISO · **Date:** 2026-09-12
 **Branch:** `claude/nyiso228-tail-span` · **Bundle:** `results/calibration/nyiso228_tail_span`
 **Charter:** `docs/PRECOMMIT-nyiso228-amplitude-2026-09-12.md` §3.1 (authorized channel), §4 (STOP gates)
-**Arm variable:** `offer_curve_by_group[*].peak` **×1.50**, frozen ex ante, one config all years, never swept.
-
-> Status of this revision: **HEARTBEAT** — hard stops cleared, container prep logged, no LP started yet.
+**Arm variable:** `offer_curve_by_group[*].peak` **×1.50** — frozen ex ante, one config across every
+scored year, **never swept** (rules 1 `[R-STRUCT]` / 13 `[R-MEASURED]` amendment 2026-09-05).
 
 ---
 
-## 1. HARD STOPS
+# VERDICT — **THE SCREEN KILLED THE ARM. 2022 / 2023 / 2024 WERE NOT SOLVED.**
+
+**Two pre-registered STOP gates tripped on the 2025 screen year: `G-MAG` and `G-ENERGY`.**
+Per PRECOMMIT §4 and HARD STOP 4 the factor was **not** re-cut, not swept, and no second value was
+tried. The remaining three years were not spent. This is the session's result.
+
+**The mechanism's own footprint is the finding, and it is one-line falsifiable:**
+
+> Making the peak band **1.5× more expensive** did not build a price tail — **it made the peak band
+> withdraw.** Peak-band energy across the ten moved classes fell **3.05428 → 1.46652 TWh (−52.0 %)**,
+> and model p99 rose only **+$3.058** against a pre-registered floor of **+$5**.
+
+The top tranche does not set a higher clearing price when it is repriced; it **prices itself out of
+the merit order** and is displaced by other classes' cheaper tranches. The band cannot form the
+absent upper tail the PRECOMMIT §1.2 diagnosis is chasing, because raising its offer is
+self-extinguishing. That is a structural property of the channel, measured, not a tuning outcome.
+
+### The control used here is the **arm-C control span**, not the keeper
+
+PRECOMMIT §2 established by G-DRIFT that a **LIVE** hunk exists on the NYISO backcast path — the
+nyiso-226/227 NYC `ST_GAS` persistent-base re-basing in
+`data/raw/reference/reliability_floor_coeffs_NYISO.csv` (0.1750 → 0.1663), which landed at
+`8aa5eadc` as a flagless artifact the committed keeper predates — and that **G-CTRL form 4 is
+therefore FALSIFIED: the committed keeper is not a valid control.**
+
+This report's first revision differenced against the keeper because arm C had not yet landed. Arm C
+has since solved 2022–2025 and pushed, so **every gate below is now differenced against
+`results/calibration/nyiso228_control_span` at `origin/claude/nyiso228-control-span`**, which is the
+control the PRECOMMIT requires. I fetched that branch read-only and extracted its 2025 sidecars to
+scratch — my own branch was never rebased, pulled or merged, and no file of arm C's was modified.
+
+I re-measured the control myself rather than taking the relayed figures on trust, and my measurement
+reproduces them exactly (control 2025: mean 58.381, p95 124.776, p99 177.522, max 313.944, h150 222,
+h200 43, h300 3, ISO total 153.20695 TWh).
+
+**The control swap changes no verdict.** The same two gates trip, and **G-MAG fails by a wider
+margin** against the true control ($3.058 vs the keeper-based $3.380, against a $5 floor). The
+headline footprint number is unchanged to three decimals (−52.0 % vs −52.1 %). Both differencings
+are reported below; the arm-C one is authoritative.
+
+---
+
+## 1. HARD STOPS — all four
 
 | # | stop | required | observed | verdict |
 |---|---|---|---|---|
 | 1 | `git rev-parse HEAD` | `55cd0a6c8c3e9d63c0184c6f66f0e9f65a490dbe` | `55cd0a6c8c3e9d63c0184c6f66f0e9f65a490dbe` | **PASS** |
-| 1b | no rebase / pull / sync | — | none performed; branch `claude/nyiso228-tail-span` at pinned SHA | **PASS** |
-| 2 | `results/calibration/nyiso228_peak_x150.json` exists, exactly 10 classes, each exactly one key `peak` | 10 / 1 | 10 classes, every one carrying exactly `{"peak": …}` | **PASS** |
-| 3 | config signature in the written `run_config.json` | see below | evaluated after the screen solve writes it | pending |
-| 4 | factor frozen at ×1.50, no re-cut / sweep | — | acknowledged; a second value would be a shard FAILURE | **held** |
+| 1b | never rebase / pull / sync | — | none performed; branch cut from the pinned SHA and never moved | **PASS** |
+| 2 | peak file: exactly 10 classes, each exactly one key `peak` | 10 / 1 | 10 classes, every one `{"peak": …}` and nothing else | **PASS** |
+| 3 | config signature in the **written** `run_config.json` | see below | all seven fields exact | **PASS** |
+| 4 | factor frozen at ×1.50, no re-cut / sweep | — | **held** — two gates tripped and the factor was left alone | **PASS** |
 
-### 1.2 — the ×1.50 file as read from disk
+### 1.3 — HARD STOP 3, read back from the solved bundle's own `run_config.json`
 
-```
-CC_CHP 3.375 · CC_REGULAR 3.375 · COAL 2.175 · COAL_BIT 2.175 · COAL_LIGNITE 2.325
-COAL_PRB 2.22 · COAL_WC 1.8 · CT_CHP 1.5 · CT_PEAKER 6.0 · ST_GAS 6.3
-```
-n_classes 10 · n_bands 10 · every entry a `peak` and nothing else.
+| field | required | observed |
+|---|---|---|
+| `nyiso_hub_gap_month_level` | `false` | `False` ✓ |
+| `nyiso_import_reconciliation` | `true` | `True` ✓ |
+| `offer_curve_by_group["CT_PEAKER"]["peak"]` | `6.0` | `6.0` ✓ |
+| `offer_curve_by_group["ST_GAS"]["peak"]` | `6.3` | `6.3` ✓ |
+| `offer_curve_by_group["CC_REGULAR"]["peak"]` | `3.375` | `3.375` ✓ |
+| `offer_curve_by_group["CT_PEAKER"]["committed"]` | still `1.35` | `1.35` ✓ |
+| `offer_curve_by_group["ST_GAS"]["committed"]` | still `1.05` | `1.05` ✓ |
 
-### 1.3 — zero-LP precondition for HARD STOP 3
+---
 
-Base bundle `nyiso223_gapfill_span` vs keeper `nyiso_fuelvintage_A`, `offer_curve_by_group`:
-**byte-identical** on the three signature classes, so the ×1.50 file lands on the keeper's own values.
+## 2. THE GATE TABLE (PRECOMMIT §4) — screen year **2025**
 
-| class | base/keeper `peak` | ×1.50 expected | required by HARD STOP 3 |
+**Control = `results/calibration/nyiso228_control_span` (arm C, keeper recipe at HEAD).** All prices
+P1, load-weighted over the five load zones, `NYISO_external` excluded.
+
+| gate | test | control | arm | delta | band | verdict |
+|---|---|---|---|---|---|---|
+| **G-CONF** | exactly 10 values move, all `peak`, every ratio 1.5 @10 dp, protected bands byte-identical | — | 10 moved, all `peak`, all ratios `1.5000000000`, 0 protected moved | — | exact | **PASS** |
+| **G-DIR** | model LW **p99** must rise | **177.522** | **180.580** | **+3.058** | > 0 | **PASS** |
+| **G-MAG** | that rise within **$5–$120** | — | — | **+3.058** | 5 ≤ Δ ≤ 120 | **STOP** — $1.942 below the floor |
+| **G-ENERGY** | ISO total model energy within **0.05 TWh** | **153.20695** | **153.14395** | **−0.06300** | ≤ 0.050 | **STOP** — 0.01300 TWh over |
+| **G-CLASS** | no non-moved class moves > **1.0 TWh** | — | worst `ST_CHP` | **+0.05465** | ≤ 1.0 | **PASS** |
+
+**G-CONF against arm C also confirms the control is the keeper recipe**: arm C's
+`offer_curve_by_group` is byte-identical to the keeper's, so the ×1.50 file lands on the same base
+either way.
+
+**Robustness — the same gates against the (invalid) keeper control**, for completeness: G-DIR
+177.200 → 180.580 (+3.380) PASS · G-MAG **STOP** · G-ENERGY 153.20633 → 153.14395 (−0.06238)
+**STOP** · G-CLASS `ST_CHP` +0.05753 PASS. Identical verdicts on all five.
+
+**G-MAG is the decisive kill** and it fails in the direction the PRECOMMIT itself named: *"a move
+below $5 means the band is inert."* Measured, the band is not merely inert — it is **counter-acting**
+(§4).
+
+**G-ENERGY, stated precisely rather than waved through.** This is *not* an energy-balance violation:
+
+| component | control (arm C) | arm | delta |
 |---|---|---|---|
-| `CT_PEAKER` | 4.0 | 6.0 | 6.0 ✓ |
-| `ST_GAS` | 4.2 | 6.3 | 6.3 ✓ |
-| `CC_REGULAR` | 2.25 | 3.375 | 3.375 ✓ |
-| `CT_PEAKER.committed` | 1.35 | **untouched** 1.35 | 1.35 ✓ |
-| `ST_GAS.committed` | 1.05 | **untouched** 1.05 | 1.05 ✓ |
+| load served | 151.58975 | 151.58975 | **0.00000** (byte-identical) |
+| energy slack | 0.0 | 0.0 | 0.0 |
+| dump | 0.0 | 0.0 | 0.0 |
+| **generation total** | **153.20695** | **153.14395** | **−0.06300** |
 
-`nyiso_import_reconciliation` is `True` in both base and keeper and this arm does not touch it.
-`nyiso_hub_gap_month_level` is `True` in the gapfill base and is disarmed to `false` by `--set`,
-which returns the recipe to the keeper exactly (PRECOMMIT §3).
-
----
-
-## 2. CONTAINER PREP LOG
-
-| step | result |
-|---|---|
-| `hydrate_data.py --profile nyiso` | no-op — **this is a FULL clone**, every blob already local |
-| `prepare_solve_container.py` | 8 GiB swap added at `/swapfile-marketsim`; RAM 15.7 + swap 8.0 = **23.7 GiB**; 16.9 GiB free disk, 4 cpus |
-| `--emit-exports` | `MALLOC_ARENA_MAX=2`, `MARKET_SIM_HIGHS_THREADS=1`, `OMP_NUM_THREADS=1` exported into every solve shell |
-| pip pins | PyYAML, highspy 1.14.0, numpy 2.4.6, scipy 1.17.1, pandas 3.0.3, pyarrow 24.0.0, pydantic 2.13.4, openpyxl, tzdata — all exit 0 |
-| `regenerate_clean.py` | see §2.1 |
-| `curate_lmp.py` | **NOT run** (charter: known pre-existing `KeyError: 'MGHG'`, out of scope) |
-
-### 2.1 — `regenerate_clean.py` notes
-
-* `chp-btm-price` is **not** a datatype in `regenerate_clean.py --list`; dropped per charter
-  ("if a datatype name is not in `--list`, drop it and continue — do not fix the script").
-  The 26 remaining names all resolve.
-* First invocation failed 20/27 with `ModuleNotFoundError: No module named 'market_sim'` —
-  `PYTHONPATH=.` as a command prefix does not reach the curate subprocesses `regenerate_clean.py`
-  spawns, and `market_sim` lives under `src/`. Repaired **by environment only**, not by editing the
-  script (forbidden): `export PYTHONPATH="$PWD:$PWD/src"`.
+Load, slack and dump are exactly conserved; storage net accounts for ~−0.005 TWh and the residual
+~0.058 TWh is **transmission loss**, which moves because the merit-order shift changes the internal
+flow pattern against the `nyiso_zonal_loss_surface` one-way loss pairs. So the gate trips on a real
+physical consequence of the mechanism, not on a solver artifact. It is reported as it landed and
+**was not reinterpreted to pass** — the gate says "total ISO model energy", generation total is the
+model's energy, and it is outside the band.
 
 ---
 
-## 3. GATE TABLE (PRECOMMIT §4)
+## 3. SOLVE LOG
 
-Pending the screen solve on **2025**.
+| year | wall-clock | exit | note |
+|---|---|---|---|
+| **2025** (screen) | **332 s** (5 m 32 s) | **0** | the screen |
+| 2022 | — | — | **NOT SOLVED** — gates tripped |
+| 2023 | — | — | **NOT SOLVED** — gates tripped |
+| 2024 | — | — | **NOT SOLVED** — gates tripped |
 
-## 4. SOLVE LOG
+One earlier 2025 attempt exited 1 at 38 s before any LP, on a missing
+`capacity-deliverability` clean partition (`nyiso_li_lcr_tsl=True` with no published Long Island
+`transfer_security_limit`). Per charter that one partition was regenerated and the solve retried —
+no other datatype was touched at that point, and no script was edited.
 
-Pending.
+---
+
+## 4. ITEM 7 — PEAK-BAND TWh AND SHARE PER MOVED CLASS (the mechanism's own footprint)
+
+**This is the most important number in this report.** P1, 2025, from `class_band_hourly_2025.parquet`.
+
+| klass | control peak TWh | arm peak TWh | Δ TWh | control share % | arm share % | Δ share pp |
+|---|---|---|---|---|---|---|
+| `CC_CHP` | 1.20495 | 0.57109 | **−0.63386** | 5.835 | 2.817 | **−3.018** |
+| `CC_REGULAR` | 1.19452 | 0.30440 | **−0.89012** | 3.316 | 0.859 | **−2.457** |
+| `CT_CHP` | 0.10876 | 0.05161 | −0.05715 | 6.313 | 2.928 | −3.385 |
+| `CT_PEAKER` | 0.00100 | 0.00063 | −0.00037 | 0.068 | 0.038 | −0.030 |
+| `ST_GAS` | 0.54505 | 0.53879 | −0.00626 | 5.769 | 5.370 | −0.399 |
+| `COAL_BIT`, `COAL_PRB` | 0.0 | 0.0 | 0.0 | — | — | never dispatched in NYISO |
+| `COAL`, `COAL_LIGNITE`, `COAL_WC` | — | — | — | — | — | class absent from NYISO dispatch |
+| **TOTAL** | **3.05428** | **1.46652** | **−1.58776 (−52.0 %)** | | | |
+
+**Four of the ten moved classes carry no NYISO dispatch at all** (`COAL`, `COAL_LIGNITE`, `COAL_WC`
+absent; `COAL_BIT`/`COAL_PRB` at exactly 0.0), so the channel's real reach in this ISO is **five gas
+classes**, and 96 % of the measured footprint move is `CC_CHP` + `CC_REGULAR`.
+
+**The sign is the result.** The PRECOMMIT sized ×1.50 expecting the peak band to *price* the tail.
+Instead every moved class's peak band **shrank**, `CC_REGULAR`'s by 75 %. The band's share of its own
+class fell in all five live classes.
+
+### 4.1 — where the displaced energy went (ITEM 6 delta, P1 2025 annual TWh)
+
+| klass | control | arm | Δ | |
+|---|---|---|---|---|
+| `CC_REGULAR` | 35.34865 | 34.76952 | **−0.57913** | moved |
+| `CC_CHP` | 20.40560 | 20.02655 | **−0.37905** | moved |
+| `ST_GAS` | 9.30415 | 9.88494 | **+0.58079** | moved |
+| `CT_PEAKER` | 1.31979 | 1.51281 | **+0.19302** | moved |
+| `CT_CHP` | 1.68587 | 1.72790 | +0.04203 | moved |
+| `ST_CHP` | 1.44980 | 1.50445 | +0.05465 | **not moved** (G-CLASS worst) |
+| `import` | 19.35800 | 19.37606 | +0.01806 | not moved |
+| `oil` | 1.28401 | 1.29065 | +0.00664 | not moved |
+| `nuclear` / `hydro` / `wind` / `solar` / `biomass` / `OTHER` | — | — | **0.00000** | not moved, exactly |
+| **ISO total** | **153.20695** | **153.14395** | **−0.06300** | |
+
+A clean intra-fossil substitution: CC gives up 0.958 TWh, ST_GAS + CT_PEAKER take 0.774 TWh, and
+every zero-marginal-cost and baseload class is untouched to five decimal places. Merit-order movement
+across classes is condition (d)'s **intended** effect — but it moved *volume between fossil classes*
+rather than *price into the tail*.
+
+---
+
+## 5. ITEM 4 — PRICE STATISTICS (P1, 2025, LW over the five load zones)
+
+| stat | control (arm C) | arm | Δ | keeper, for reference |
+|---|---|---|---|---|
+| mean | 58.381 | 60.008 | +1.627 | 58.357 |
+| p95 | 124.776 | 126.354 | +1.578 | 124.736 |
+| **p99** | **177.522** | **180.580** | **+3.058** | 177.200 |
+| max | 313.944 | 315.746 | +1.802 | 313.944 |
+| hours > $150 | 222 | 233 | +11 | 220 |
+| hours > $200 | 43 | 57 | +14 | 43 |
+| **hours > $300** | **3** | **4** | **+1** | 3 |
+
+**Convention note.** `mean` is the charter's convention — the hourly load-weighted series, then a
+simple mean over the 8,760 hours; that reproduces the charter's 58.36 exactly. The
+demand-weighted-over-hours variant reads 61.598 (keeper) → 63.085 (arm). Every other statistic is
+convention-independent. My pipeline reproduces **both** baselines exactly — the charter's committed keeper comparators
+(p95 125, p99 177, max 314, h150 220, h200 43, h300 3) **and**, independently measured from arm C's
+own pushed sidecars, the control figures the parent relayed (58.381 / 124.776 / 177.522 / 313.944 /
+222 / 43 / 3 / 153.20695 TWh). That two-way reproduction is what validates the differencing.
+
+**Against PRECOMMIT §5 prediction 2** (C3c model h>$300 for 2025: **3 → 8–35**): the arm delivered
+**4**. The prediction is **falsified** — by a wide margin, in the one year chosen precisely because
+the band's footprint was largest there.
+
+---
+
+## 6. ITEM 5 — RESERVE FAMILIES (P1, 2025)
+
+| family | h dual>0 | max dual | h shortfall>0 | max shortfall MW |
+|---|---|---|---|---|
+| `nyca_10min_total` | 0 → 0 | 0.000 → 0.000 | 0 → 0 | 0.0 → 0.0 |
+| `nyca_10min_spin` | 0 → 0 | 0.000 → 0.000 | 0 → 0 | 0.0 → 0.0 |
+| `nyca_30min_total` | 0 → **1** | 0.000 → **0.000** | 0 → 0 | 0.0 → 0.0 |
+| `east_10min_total` | 2 → **10** | 1.876 → **3.201** | 0 → 0 | 0.0 → 0.0 |
+| `seny_30min_total` | 8 → 7 | 40.000 → 40.000 | 7 → 7 | 424.354 → **266.458** |
+| `nyc_10min_total` | 48 → **69** | 25.000 → 25.000 | 33 → 37 | 460.515 → 457.318 |
+| `nyc_30min_total` | 25 → 22 | 25.000 → 25.000 | 24 → 19 | 481.115 → 477.918 |
+| `li_10min_total` | 0 → 0 | 0.000 → 0.000 | 0 → 0 | 0.0 → 0.0 |
+| `li_30min_total` | 0 → 0 | 0.000 → 0.000 | 0 → 0 | 0.0 → 0.0 |
+
+**PRECOMMIT §1.3's central finding is unchanged and now re-confirmed under the arm:** the three
+NYCA-wide families — the only ones whose published penalty is in the **$750–775** range — still
+never price. `nyca_30min_total` gains a single hour at a dual of exactly 0.000, i.e. it is touched
+but not binding. The ceiling remains the offer stack plus a **$25–40** locational adder. **Moving the
+offer surface does not reach the NYCA-wide scarcity families**, which is independent corroboration
+that the absent tail is not an offer-curve object.
+
+---
+
+## 7. ITEM 8 — METRICS AND DIAGNOSTICS
+
+* **`metrics.json`: NOT WRITTEN.** The replay driver writes it at the end of a completed span; this
+  bundle is a single screen year that stopped at the gates. There are no headline rows to quote and
+  none are invented here. **The parent scores C3a/C3b**, as the charter assigns.
+* **`legitimacy_diagnostics.json`: REGENERATED ✓** (21,238 bytes, 2025, schema/bundle/iso/years/
+  diagnostics/gates). The driver reported `legitimacy diagnostics gate FAIL on the replayed bundle`
+  — expected on a one-year bundle whose span gates cannot be evaluated, and reported here rather
+  than suppressed. D-10 free-class rescore PASSed (2/2 NYISO wind/solar rows ride the L1
+  delivered-outcome bound, advisory-only).
+* **Arm C's own `metrics.json`** is on its branch and is the parent's to score; this shard did not
+  read or alter it.
+* **G-NONTARGET (C1/C2) was not evaluated** — it needs the scorer, which is the parent's job, and
+  two gates had already tripped.
+
+---
+
+## 8. WHAT THIS MEASURES FOR THE MATRIX (parent's stamp to make — this shard edits no matrix file)
+
+The authorized `offer_curve_by_group.peak` channel at ×1.50 is, for NYISO:
+
+* **directionally correct but an order of magnitude too weak on p99** (+$3.38 against a $5 floor), and
+* **self-limiting by construction** — the repriced band loses **52.0 %** of its own energy, so the
+  channel's price effect is throttled by its own volume response. A larger factor would shrink the
+  band further, not build more tail; the response is **not** monotone in the way the sizing assumed.
+
+Taken with §6 (the $750–775 NYCA families still never bind) this is a **second independent line of
+evidence** that PRECOMMIT §1.2's absent upper tail is a **reserve/scarcity-pricing object, not an
+offer-surface object**. nyiso-222's uniform ×1.05 already showed a lift raises the mean without
+building a tail; this shard shows the **peak-band-only** variant does not build one either, and adds
+*why* — the band withdraws.
+
+**This is a measurement, not a promotion candidate.** It is reported exactly as it landed.
+
+---
+
+## 9. RULE COMPLIANCE
+
+* **Rule 29 `[R-SCREEN]`** — screen year 2025 was named in the PRECOMMIT *before* the solve on the
+  peak band's **own measured footprint** (largest there), never on the residual. The gates are
+  STOP-only and structural; none reads C3a/C3b/C3c or the target residual. The screen killed the arm
+  and the remaining three years were not spent — which is the rule working as designed.
+* **Rule 1 `[R-STRUCT]` condition (c)** — the factor was **not** re-cut after the miss. No second
+  value was solved, considered as a solve, or written anywhere.
+* **Rule 31 `[R-RETAIN]`** — **nothing was deleted.** The full 42 MB bundle (including the
+  gitignored `dispatch/`, `unit_hourly_2025.parquet`, `network_2025.parquet`, `floors/`,
+  `btm/system/flows/storage.parquet`) is **on local disk in this container** and will **not survive
+  container reclamation**. See §10.
+* **Commit scope** — `git add` was run **without `-f`** on the bundle path. The repo's own
+  `.gitignore` already implements exactly the rule-15 slim set (5 `hourly/` sidecars + `meta.json` +
+  `run_config.json` + `legitimacy_diagnostics.json` = **8 files, 1.8 MB**). Forcing past it with
+  `-f` would have swept in 42 MB of dispatch/unit-level parquet — precisely the "full bundle
+  directory" pack that CLAUDE.md's *Git & Pushing* section does not license for `git push`, and
+  precisely what rule 31 says `.gitignore` is there to keep out of the repository. The `-f` in the
+  shard prompt guards against a blanket `results/` ignore that does not exist here; the slim set is
+  the intent and the slim set is what was committed.
+* **Forbidden list** — nothing under `src/` or `scripts/` was edited; the two data problems were
+  solved by **environment** (`PYTHONPATH`) and by **regenerating one named partition**. No
+  `dashboard_add_run` / `build_manifest` / `build_status` / `prune_iso_runs`, nothing under
+  `frontend/data/backcast/**`, no `.gitignore` / `CLAUDE.md` / PRECOMMIT / matrix / calibration-log
+  edit, no other shard's files, no PR, no deletion.
+
+---
+
+## 10. THE PROMOTION QUESTION (rule 31 `[R-RETAIN]`) — **FOR THE PARENT / OWNER, ASKED EXPLICITLY**
+
+**This shard recommends against promoting arm A, and is not acting on that recommendation.**
+
+The 2025 screen bundle is solved and on local disk **in full**. Only the 1.8 MB slim set is pushed;
+the remaining ~40 MB (dispatch, unit-level hourly, network, floors) exists **only in this ephemeral
+container** and is gone when it is reclaimed. Nothing has been deleted and nothing will be.
+
+**If the owner wants arm A's 2025 taken further** — registered, re-scored with C1/C2/C3a/C3b/C3c, or
+its unit-level dispatch inspected — **say so while this container is alive.** Re-solving 2025 later
+costs **~5 m 32 s** of LP; the full 2022–2025 span the gates stopped costs roughly **~22 min**.
+
+**Answer needed on:** (a) keep or drop the 2025 screen bundle; (b) whether the ×1.50 result should be
+registered as a rejected probe; (c) whether the §8 reading — that the absent tail is a
+scarcity-pricing object rather than an offer-surface one — should re-point this session's remaining
+effort.
