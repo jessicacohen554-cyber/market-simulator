@@ -579,6 +579,16 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
         still resolves; when a branch is deleted, the recovery route in the doc changes from "check
         out this sha" to "re-solve, cost stated", and the doc is updated to say so honestly instead
         of keeping a command that will fail.
+      5. **A SESSION MAY NOT BE ABLE TO DELETE AT ALL, and that is not a transport flake to retry
+        around.** Measured 2026-09-12: `git push origin --delete <branch>` returns **HTTP 403** here
+        — the session's credential can create and update refs but not delete them — and the GitHub
+        MCP server exposes no branch-deletion tool (`create_branch` exists, no counterpart). The
+        symptom is misleading: git reports `send-pack: unexpected disconnect` and then
+        `Everything up-to-date`, which reads like the HTTP/2 flake the Git & Pushing section says to
+        retry on HTTP/1.1 — it is not, and on HTTP/1.1 the underlying 403 becomes visible. So a
+        session does steps 1–3, and if deletion is refused it **says so and leaves the branch**
+        rather than reporting a cleanup it did not perform. The normal disposal route stays what it
+        always was: a merged shard branch is auto-deleted by the environment.
 
 Rules 17–26 are the protective rules from `docs/model-legitimacy-audit-2026-07.md` §8, numbered
 **16–25 there** — a doc reference to "audit rule N" maps to rule N+1 here. Mapping table, per-rule
