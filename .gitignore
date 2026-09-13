@@ -2086,3 +2086,6 @@ results/calibration/spp38_span/
 
 !results/calibration/spp38_span/
 !results/calibration/spp38_span/**
+
+!results/calibration/_shared/
+!results/calibration/_shared/**
