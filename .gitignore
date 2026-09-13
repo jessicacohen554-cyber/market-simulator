@@ -2022,6 +2022,19 @@ results/calibration/nyiso229_ctrl_y2022/
 # requires its bundle committed alongside its sidecar and payload.
 # miso-255 rule 29(c) / rule 31: screen bundles stay on local disk, never reach main
 results/calibration/miso255_sil_*/
+# EXCEPT the promoted keeper bundle (rule 15 [R-DASHBOARD]: a keeper commits its slim
+# layer + hourly/ sidecars). dispatch/, floors/ and the bundle-root parquets stay
+# excluded by the section-8 slim-bundle rules above.
+!results/calibration/miso255_sil_keeper/
+!results/calibration/miso255_sil_keeper/hourly/
+!results/calibration/miso255_sil_keeper/*.json
+# EXACTLY the five sidecar families the incumbent keeper commits. NOT unit_hourly
+# (~100 MB/yr, per-unit, excluded by default) and NOT network.
+!results/calibration/miso255_sil_keeper/hourly/class_band_hourly_*.parquet
+!results/calibration/miso255_sil_keeper/hourly/class_hourly_*.parquet
+!results/calibration/miso255_sil_keeper/hourly/reserve_family_*.parquet
+!results/calibration/miso255_sil_keeper/hourly/storage_*.parquet
+!results/calibration/miso255_sil_keeper/hourly/system_*.parquet
 results/calibration/nyiso229_arm_y2023/
 results/calibration/nyiso229_arm_y2024/
 results/calibration/nyiso229_arm_y2025/
