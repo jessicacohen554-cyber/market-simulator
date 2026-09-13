@@ -2092,3 +2092,12 @@ results/calibration/nyiso231_ctl_y2022/
 # single-blob pack); this layer is 81 MB and is pushed in its own commit.
 !results/calibration/nyiso231_anchor_span/dispatch/
 !results/calibration/nyiso231_anchor_span/dispatch/**
+
+# nyiso-231: screen/probe bundles that must not reach main (rule 29 [R-SCREEN]
+# (c)) but stay on local disk (rule 31 [R-RETAIN]). Every number each produced
+# is carried by its RESULT/FINDING doc.
+#   nyiso230_arm_y2022 — nyiso-230 screen arm; recovery 90475b1c2b56283018396504e39ad638ac367c97
+#   nyiso231_arm_y2022 — shard A solve.log (the G-ANCHOR-LOG evidence, quoted verbatim in the
+#                        RESULT); recovery 490ed8277eaa82a91548ff769a1d22390147f5b9
+results/calibration/nyiso230_arm_y2022/
+results/calibration/nyiso231_arm_y2022/
