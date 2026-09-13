@@ -114,16 +114,24 @@ def test_report_keys_are_stable():
 # cache enumeration / clearing
 # --------------------------------------------------------------------------
 def test_enumerates_and_clears_a_real_package_cache():
-    """Round-trip against a genuine package cache rather than a stub."""
+    """Round-trip against a genuine package cache rather than a stub.
+
+    The example is ``_iso_plant_capacity_cached`` rather than the public
+    ``_iso_plant_capacity``: since SPP-38 the vintage-sensitive loaders are
+    UNCACHED shims over a directory-keyed core, so the cache lives on the core
+    (rule 14 ``[R-ACCURATE]``; ``FINDING-spp-37-order-sensitivity-2026-09-12``).
+    What this test is about — that the walker finds, reports and clears a real
+    package cache — is unchanged.
+    """
     from market_sim.data import outages
 
-    outages._iso_plant_capacity.cache_clear()
+    outages._iso_plant_capacity_cached.cache_clear()
     names = {e.qualname for e in cache_control.iter_cached_functions()}
-    assert "market_sim.data.outages._iso_plant_capacity" in names
+    assert "market_sim.data.outages._iso_plant_capacity_cached" in names
 
     outages._iso_plant_capacity("MISO")
     populated = {e.qualname: e for e in cache_control.cache_report()}
-    entry = populated.get("market_sim.data.outages._iso_plant_capacity")
+    entry = populated.get("market_sim.data.outages._iso_plant_capacity_cached")
     assert entry is not None and entry.currsize >= 1
 
     n_caches, n_entries = cache_control.clear_all_caches()

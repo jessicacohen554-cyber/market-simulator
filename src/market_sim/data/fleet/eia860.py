@@ -3560,10 +3560,25 @@ CC_REGULAR_COMMITTED_PCT_BY_PLANT: dict[int, float] = {
 }
 
 
-@lru_cache(maxsize=1)
 def _eia860_plant_sector() -> dict[int, int]:
-    """Return ``{plant_code: EIA-860 Sector number}`` from the plant table."""
-    path = active_eia860_dir() / "eia860_plant.parquet"
+    """Return ``{plant_code: EIA-860 Sector number}`` from the plant table.
+
+    Vintage-keyed shim over :func:`_eia860_plant_sector_cached` (SPP-38): the
+    active EIA-860 directory enters the cache key so a span run that moves the
+    vintage between years cannot serve year 1's table to years 2+ (rule 14
+    ``[R-ACCURATE]``).
+    """
+    return _eia860_plant_sector_cached(str(active_eia860_dir()))
+
+
+@lru_cache(maxsize=4)
+def _eia860_plant_sector_cached(eia860_dir: str) -> dict[int, int]:
+    """Directory-keyed cache behind :func:`_eia860_plant_sector`.
+
+    ``eia860_dir`` is BOTH the cache key and the directory read, so a stale
+    global can never desync from the key.
+    """
+    path = Path(eia860_dir) / "eia860_plant.parquet"
     if not path.exists():
         return {}
     df = pd.read_parquet(path, columns=["Plant Code", "Sector"])
@@ -3571,9 +3586,24 @@ def _eia860_plant_sector() -> dict[int, int]:
     return {int(c): int(s) for c, s in zip(df["Plant Code"], df["Sector"])}
 
 
-@lru_cache(maxsize=1)
 def eia860_plant_states() -> dict[int, str]:
+    """Vintage-keyed shim over :func:`_eia860_plant_states_cached` (SPP-38).
+
+    See that function for the contract. The active EIA-860 directory enters the
+    cache key here so the docstring's own promise — "a vintage switch is
+    honoured" — holds across a span run as well as a single-year one (rule 14
+    ``[R-ACCURATE]``).
+    """
+    return _eia860_plant_states_cached(str(active_eia860_dir()))
+
+
+@lru_cache(maxsize=4)
+def _eia860_plant_states_cached(eia860_dir: str) -> dict[int, str]:
     """Return ``{plant_code: USPS state}`` from the EIA-860 plant table.
+
+    ``eia860_dir`` is BOTH the cache key and the directory read, so a stale
+    global can never desync from the key. Call through the :func:`eia860_plant_states` shim,
+    which supplies the active vintage.
 
     The measured plant-location source for ``Generator.state`` on the
     CAMPD-bin / plant-level fleet path (``ScenarioConfig.fleet_state_from_eia860``,
@@ -3584,7 +3614,7 @@ def eia860_plant_states() -> dict[int, str]:
     Resolves through :func:`paths.active_eia860_dir` like the sibling
     plant-table readers, so a vintage switch is honoured.
     """
-    path = active_eia860_dir() / "eia860_plant.parquet"
+    path = Path(eia860_dir) / "eia860_plant.parquet"
     if not path.exists():
         return {}
     df = pd.read_parquet(path, columns=["Plant Code", "State"])
@@ -3631,9 +3661,23 @@ def _eia860_plant_sectors(eia860_dir: Path) -> dict[int, int]:
     return {int(c): int(s) for c, s in zip(df["Plant Code"], df["Sector"])}
 
 
-@lru_cache(maxsize=1)
 def eia860_regulated_plants() -> frozenset[int]:
+    """Vintage-keyed shim over :func:`_eia860_regulated_plants_cached` (SPP-38).
+
+    See that function for the contract; the active EIA-860 directory enters the
+    cache key so a span run that moves the vintage between years cannot serve
+    year 1's table to years 2+ (rule 14 ``[R-ACCURATE]``).
+    """
+    return _eia860_regulated_plants_cached(str(active_eia860_dir()))
+
+
+@lru_cache(maxsize=4)
+def _eia860_regulated_plants_cached(eia860_dir: str) -> frozenset[int]:
     """Return the plant codes whose EIA-860 ``Regulatory Status`` is ``RE``.
+
+    ``eia860_dir`` is BOTH the cache key and the directory read, so a stale
+    global can never desync from the key. Call through the :func:`eia860_regulated_plants` shim,
+    which supplies the active vintage.
 
     The EIA-860 plant table carries a two-value ``Regulatory Status`` flag —
     ``RE`` (the operator's rates are regulated / cost-of-service recovered)
@@ -3643,7 +3687,7 @@ def eia860_regulated_plants() -> frozenset[int]:
     plants absent from the table (or with a null flag) are conservatively
     treated as non-regulated (no committed-band discount).
     """
-    path = active_eia860_dir() / "eia860_plant.parquet"
+    path = Path(eia860_dir) / "eia860_plant.parquet"
     if not path.exists():
         return frozenset()
     df = pd.read_parquet(path, columns=["Plant Code", "Regulatory Status"])
@@ -3665,9 +3709,24 @@ _COST_OF_SERVICE_ENTITY_TYPES: frozenset[str] = frozenset(
 )
 
 
-@lru_cache(maxsize=1)
 def eia860_costofservice_majority_plants() -> frozenset[int]:
+    """Vintage-keyed shim over :func:`_eia860_costofservice_majority_plants_cached`.
+
+    SPP-38. See that function for the contract; the active EIA-860 directory
+    enters the cache key so a span run that moves the vintage between years
+    cannot serve year 1's Schedule-4 ownership to years 2+ (rule 14
+    ``[R-ACCURATE]``).
+    """
+    return _eia860_costofservice_majority_plants_cached(str(active_eia860_dir()))
+
+
+@lru_cache(maxsize=4)
+def _eia860_costofservice_majority_plants_cached(eia860_dir: str) -> frozenset[int]:
     """Plant codes majority-owned by cost-of-service entities (Schedule 4).
+
+    ``eia860_dir`` is BOTH the cache key and the directory read, so a stale
+    global can never desync from the key. Call through the
+    :func:`eia860_costofservice_majority_plants` shim.
 
     The ``Regulatory Status`` flag classifies the OPERATOR, so a plant whose
     output is take-or-pay committed to municipal/cooperative/IOU owners reads
@@ -3681,7 +3740,7 @@ def eia860_costofservice_majority_plants() -> frozenset[int]:
     Schedule 4 are 100% operator-owned and use the operator's entity type.
     Returns plants whose cost-of-service share exceeds 0.5.
     """
-    d = active_eia860_dir()
+    d = Path(eia860_dir)
     own_path = d / "eia860_owner.parquet"
     util_path = d / "eia860_utility.parquet"
     plant_path = d / "eia860_plant.parquet"
@@ -3723,9 +3782,25 @@ def eia860_costofservice_majority_plants() -> frozenset[int]:
     return frozenset(majority)
 
 
-@lru_cache(maxsize=1)
 def eia860_selfcommit_scope_plants() -> frozenset[int]:
+    """Vintage-keyed shim over :func:`_eia860_selfcommit_scope_plants_cached`.
+
+    SPP-38. Both legs of the union are themselves vintage-dependent, so this
+    composition has to carry the directory in its key as well — otherwise it
+    would pin year 1's union even with repaired inputs. (The SPP-37 census read
+    this row "stable" across SPP's three vintages; that is a property of the
+    data, not of the construction, and the repair does not rest on it.)
+    """
+    return _eia860_selfcommit_scope_plants_cached(str(active_eia860_dir()))
+
+
+@lru_cache(maxsize=4)
+def _eia860_selfcommit_scope_plants_cached(eia860_dir: str) -> frozenset[int]:
     """The ``coal_committed_takeorpay_regulated`` scope set.
+
+    ``eia860_dir`` is a **cache key only** — both legs below resolve the active
+    vintage themselves. Call through the :func:`eia860_selfcommit_scope_plants`
+    shim.
 
     Union of the two measured cost-of-service legs: EIA-860 ``Regulatory
     Status`` RE operators (:func:`eia860_regulated_plants`) and plants
@@ -3735,6 +3810,7 @@ def eia860_selfcommit_scope_plants() -> frozenset[int]:
     V1b refinement, engaged when the RE-only probe broke the 2023 COAL_BIT
     band on the Prairie State reversion).
     """
+    del eia860_dir  # cache-key only; both legs resolve the vintage themselves
     return eia860_regulated_plants() | eia860_costofservice_majority_plants()
 
 
