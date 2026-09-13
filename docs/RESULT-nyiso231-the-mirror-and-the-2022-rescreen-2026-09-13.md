@@ -257,3 +257,77 @@ result.** The gates are not re-cut to accommodate it.
 **Against my own call:** a reader who holds rule 29 literally should note that no single bundle has
 yet carried a valid LP beside a correct record, and that §7 is where that is tested for the first
 time. That reading is legitimate and the cost of my being wrong is one span.
+
+## 7. THE SPAN — and the promotion
+
+`results/calibration/nyiso231_anchor_span`, run id `2026-09-13-nyiso231-anchor-span`. Four years,
+ONE `--years 2022 2023 2024 2025` invocation, ONE bundle, ON-PIN (highspy 1.14.0), 48 files pushed
+including all four `dispatch/<year>_P1.parquet`. Solve wall-clock ~25 min, ~6 min/year.
+
+### 7.1 The gates, scored on the span's 2022 leg
+
+| gate | verdict | measured |
+|---|---|---|
+| **G-ANCHOR-LOG** | **PASS** | all four per-year resolutions reproduce PRECOMMIT §5(a) / Addendum A **to 4 dp in every zone**: 2022 `8.4431` · 2023 `3.3566` · 2024 `2.7969` · 2025 `5.5602` at Capital_Hudson |
+| **G-SCOPE** | **PASS** | 0 band multipliers, `phys_*`, `peak`, `econ_low_share`, `pct_peaking` moved |
+| **G-DEMAND** | **PASS** | served 152.68167 TWh both legs, dump 0.000, slack 0.000 both |
+| **G-REPRO** | **PASS** | load-weighted LMP **73.1275 vs 73.1275, Δ = 0.0000** against nyiso-230's arm, while the recorded anchor moves 7.0563 → 8.4431 |
+| **G-CONF** | **FAILS AS WRITTEN** | fields moved: exactly the two expected, `unexplained: []`. The anchors miss by a **constant 2.712e-05 in all five zones** against a 1e-6 tolerance |
+
+**G-CONF's failure is in my own scorer's constant, and I am not flipping it to PASS.** PRECOMMIT
+§5(a) states the prediction to **4 dp** and the scorer hard-codes it at 4 dp with a **1e-6**
+tolerance — a 4-dp constant cannot be compared to a full-precision float at 1e-6, so the test is
+unpassable by construction. Every recorded value rounds to the predicted value exactly
+(`round(8.443127…, 4) == 8.4431`, all five zones), and the substantive question G-CONF asks — *does
+the record now report what the LP resolved?* — is answered independently and exactly by
+**G-ANCHOR-LOG**, which compares the same recorded values against the solve path's own log. Rule 29
+fixes gates before the solve so they cannot be re-read afterwards; that binds me here, so the gate
+is reported as failing, with the cause isolated. **A gate failing on the precision of my own table is
+not evidence against the mechanism, and a screen has never had the power to promote anything — only
+to kill.**
+
+**G-REPRO is the session's cleanest single result.** An unmoved LP beside a moved record is exactly
+what a write-only defect predicts, and it closes §1 by measurement rather than by inference.
+
+### 7.2 The determination
+
+| | incumbent | span | |
+|---|---|---|---|
+| **ISO tier, 2023–2025** (rule 30(c)) | **NOT-YET**, grade 6/8, 2 fails | **CALIBRATED**, C3c lone ledgered caveat | ▲ |
+| C1 | 13/14, free 9/10 | **14/14, free 10/10** | ▲ |
+| four-year bundle | *(the incumbent had none — 2022 was a separate folded run reading NOT-YET on 3 fails)* | NOT-YET, 2 fails (2022 C1, 2022 C3b) | — |
+
+Per-criterion movement is in §7.3 of `docs/calibration-log/nyiso.md` and in the keeper's promotion
+note; the summary is that **every criterion in every year improves or holds, with exactly one
+exception** (C3b-2024 0.174 → 0.176, 0.024 of room).
+
+### 7.3 What the span did NOT deliver, stated first
+
+**The prediction overshot.** Addendum A predicted the C3a spread would collapse to **~2 pp**. It
+lands at **11.0 pp** across four years (from 19.9). **The anchor explains roughly half the measured
+slope.** Phase 0 disclosed the collinearity caveat — "gas and price level are collinear, so
+correlation alone cannot separate this from generic variance compression" — and the span is the
+decisive test the finding said it would be: it separates them, and the answer is *both*, in roughly
+equal parts. The remaining half is not this mechanism and is handed forward.
+
+**2022 still fails two criteria** — C1 `CC_REGULAR` +5.20 TWh / +3.9 pp and C3b 0.209 — and the
+four-year bundle therefore reads NOT-YET. Both are better than the incumbent's own 2022 numbers
+(+5.25 / +4.0 pp and 0.249) and both remain out of band.
+
+**C3c is barely touched.** 2022 4 → 7 h and 2025 2 → 4 h against 101 and 42 actual. That is the
+first movement this lane has produced *on* the tail rather than around it, and it is not close to
+closing. The real object is unchanged and is named in `backcast_config.py`: NYISO scarcity/reserve
+(RCPF/AS) price formation, issue #1344.
+
+### 7.4 The promotion, executed under rule 35 `[R-PROMOTE]`
+
+Order fixed by clause (e) — **promote, verify, then delete**: the incoming keeper was registered,
+scored and committed first; `audit_keepers --iso NYISO` verified its three stores resolve and that
+the recipe-delta declaration covers all four moved `run_config` keys (E11); **only then** were the
+outgoing stores removed. Year set enumerated **before** the delete (clause (b), because the delete
+destroys the evidence): the union over both outgoing sidecars is `{2022, 2023, 2024, 2025}` and the
+incoming keeper covers it in one bundle, so clause (c) is met without a stamped companion. Post-prune
+`audit_keepers`: **PASS, 0 failures**, E13 cleared, and the invariant in clause (f) holds — every
+registered NYISO run is now the keeper, and the year set is unchanged at four. `--force-uncite` was
+the intended route (clause (d)): the blocking citations are this promotion's own history of what it
+superseded, which clause (d) says must stay.

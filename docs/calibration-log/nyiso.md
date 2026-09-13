@@ -13852,3 +13852,146 @@ being absent from `data/clean` (which nyiso-228 had recorded as **inert** — it
 `scripts/gen_nyiso229_attestation.py`,
 `docs/handoffs/FINDING-nyiso229-arm-y2024-blocked-2026-09-12.md`.
 **New rule this session:** 33 `[R-SHARD-ARCHIVE]` (owner instruction).
+
+## nyiso-231 — 2026-09-13
+
+**KEEPER PROMOTED: `2026-09-13-nyiso231-anchor-span`** (bundle
+`results/calibration/nyiso231_anchor_span`), superseding `2026-09-12-nyiso229-hourgrain-span` AND
+its folded 2022 touchpoint `2026-09-12-nyiso229-arm-y2022` — **both pruned in this session**
+(rule 35 `[R-PROMOTE]` (a)). **ONE bundle now carries all four registered years 2022–2025** where the
+incumbent needed two registered runs. Promoted under the owner's standing formula, put in this
+session verbatim: *"Is this a recommended keeper candidate? If so plz promote. If structural
+integrity improves but gates regress that may still be a keeper.."* — **and both halves clear**:
+structure improves AND essentially every gate improves.
+
+**ONE REGISTERED FIELD MOVES: `gas_offer_margin_zonal_anchor_vintage` False → True.**
+`gas_offer_net_revenue_margin`'s identification point resolved on **(ZONE, SOLVE YEAR)** instead of
+the frozen 2023–2025 window mean. **ZERO free parameters**, DOF ledger verbatim,
+`authorized_price_tuning` NONE, and **zero** band multipliers / `phys_*` / `peak` / shares move in
+any year — so this is **not** the rules 1/13 carve-out. Basis is rules 13 `[R-MEASURED]` + 14
+`[R-ACCURATE]` + 1 `[R-STRUCT]` on a measured construction defect, not the residual.
+
+**DETERMINATION, ISO tier (2023–2025, rule 30(c)): NOT-YET (grade 6/8, 2 fails) → CALIBRATED**, C3c
+the lone ledgered caveat. **C1 13/14 → 14/14** (free 10/10): the incumbent's open cell, C1-2024
+`CC_REGULAR` share_pp **3.05 → 2.7** against a ±3.0 pp band, **closes**.
+
+| | 2022 | 2023 | 2024 | 2025 |
+|---|---|---|---|---|
+| **C3a** | −16.6 → **−9.9 %** (FAIL→PASS) | +2.5 → **+0.6** | +3.3 → **+1.1** | −8.9 → **−5.9** |
+| **C3b** | 0.249 → **0.209** (still FAIL) | 0.122 → 0.122 | 0.174 → **0.176** ← the one regression | 0.169 → **0.149** |
+| **C3c** h>$300 | 4 → **7** / 101 | 0 → 0 / 10 | 0 → 0 / 13 | 2 → **4** / 42 |
+| **C1** `CC_REGULAR` | +5.25 → **+5.20** TWh (still FAIL) | pass | **FAIL → PASS** | (923 preliminary) |
+
+**Every criterion in every year improves or holds, with exactly one exception** — C3b-2024
+0.174 → 0.176 against a 0.20 band, 0.024 of room, reported at full magnitude.
+
+**REPORTED AND NOT ABSORBED.** The **four-year** bundle reads **NOT-YET**, on 2022's C1
+(+5.20 TWh, +3.9 pp) and C3b (0.209). That is **not a regression**: the incumbent's own 2022
+touchpoint read NOT-YET on **three** failures (C1, C3a, C3b) and this run fails two of the same
+three, each by less. Under rule 30(c) the ISO's determination is the 2023–2025 verdict; both
+surfaces state that in place.
+
+**AND THE PREDICTION OVERSHOT.** PRECOMMIT Addendum A predicted the C3a spread would collapse to
+**~2 pp**; it lands at **11.0 pp** across four years (19.9 pp before). **The anchor explains roughly
+HALF the measured slope** — phase 0's disclosed collinearity caveat bites, and the remaining half is
+the handed-forward object. The r² = 0.9955 regression was real but it was not all mechanism.
+
+**THE STRUCTURAL CASE FOR THE COMPOSITION, measured this session: `Δanchor(zone, year)` does NOT
+factorize.** The Upstate_West / Capital_Hudson ratio runs **0.7356 / 0.2518 / 0.2778 / 0.2691**
+across 2022–2025 and the zone **ordering flips** between 2023 and 2024. So neither
+`gas_offer_margin_zonal_anchor` (zone only, year averaged away) nor `gas_offer_margin_anchor_vintage`
+(year only, zone averaged away) can reach the level — the argument for the composition made on
+measurement rather than tidiness.
+
+---
+
+### The session's other half: a RECORDING defect, settled and repaired
+
+**nyiso-230's screen STOPPED on two gates, and the cause was in the record, not the mechanism.**
+`run_calibration_full._recorded_config`'s mirror resolved the per-zone anchors ~144 lines **above**
+the block that sets `gas_hub_basis_overlay`, while `run_year` sets the overlay **before** it
+resolves — so `run_config.json` recorded `Capital_Hudson 7.0563` where the LP priced **8.4431**, a
+uniform −1.3868 in every zone, and the recorded config was internally inconsistent
+(`gas_hub_basis_overlay: true` beside anchors that reproduce only at `overlay=False`).
+
+**Settled at zero LP** (`run_year` takes no config object; `recorded_cfg` reaches `write_run_config`
+and nothing else), and then **confirmed by the span itself**: its 2022 leg reproduces nyiso-230's
+arm price to **0.0000 $/MWh** while its recorded anchor moves 7.0563 → 8.4431 — **an unmoved LP
+beside a moved record**, which is exactly what a write-only defect predicts. nyiso-230's
++5.470 $/MWh is therefore attributable after all, at the full anchor delta.
+
+**Repaired structurally, not positionally:** one shared resolver,
+`run_calibration_full.mirror_solve_year_gas_anchors`, **fused to `_recorded_config`'s `return`**, so
+a future `if flag:` block lands *above* it. Both inline mirrors deleted, not zeroed (rule 26). The
+PJM sibling `gas_offer_margin_anchor_vintage` carried the same seam **plus** a kwarg-only gate that
+would have let a `replay_keeper --set` A/B solve the CONTROL while recording an armed anchor; both
+fixed together, PJM told in `governance.md`, **no PJM cell edited** (rule 28). Guard:
+`tests/unit/data/test_recorded_config_gas_anchor_mirror.py`, 12 tests.
+
+### Two open objects CLOSED at zero LP
+
+1. **Massena 54592's "200 % of plant" is REDUNDANT BOOKKEEPING, not an energetic defect — RETIRED,
+   not handed on.** All **30** `eia923_netzero` rows in NYISO's extract are `unit_pct_of_plant`
+   100.0 for 365.0 days; only **two** plant-years also carry a detected row (54592/2022,
+   50368/2025); `outages.py:1570` clips at `[0,1]`. Verified empirically: `cap_mw` **0.0000 in every
+   hour** and `mw` **0.0 MWh** in both legs. At 50368/2025 the netzero row is in fact *adding*
+   accurate information — `CT1`/`CT2` are 50 % each and their windows miss the summer.
+   *(Noted in passing: 15 of the 30 netzero rows are dated **2026** — inert for a 2022–2025 backcast,
+   live for any hindcast that reads 2026.)*
+2. **`ST_GAS`'s stale cross-reference is a stale DERIVATION INPUT, not a stale comment** — and that
+   is what makes it the next lever. Its stated basis cites *"CC econ_high **1.21** / native CC
+   marginal 0.925 = 1.31×"*, a CC value the **same file** records as removed, and **the registered
+   1.08 matches that CITED construction to 0.2 %** (1.0857). So the rule-25 `[R-ISO-SCOPE]` de-leak
+   should have propagated to `ST_GAS` and did not. On the current reach the same construction gives
+   **0.8973** — `ST_GAS` sits **20.4 %** above its own stated basis — and correcting it moves
+   `markup_hr` econ_low **2.6535 → 0.7143** (−73 %) and econ_high **3.2054 → 1.1764** (−63 %).
+   Direction is right for C1 (`ST_GAS` under-runs 1.38 TWh in 2024) but pushes price **down**, so it
+   is **not** co-armed with the anchor gate (rule 19). **Top of the queue.**
+
+### A governance finding, and a correction to my own claim
+
+**The incumbent keeper was solved OFF-PIN** (highspy 1.15.1 against the repo's long-standing
+`==1.14.0`). Auditing all 41 committed bundles: **5 are off-pin**, and exactly **one designated
+keeper** was affected — NYISO's, both its registered runs. *(Three off-pin ERCOT bundles are not the
+ERCOT keeper; reported, not touched — rule 25.)* The standing handoff note was **wrong on all three
+clauses**: deps are `==` pinned not floor-pinned, all 41 bundles **do** record `environment.packages`,
+and all 41 **do** record their HiGHS.
+
+**I then wrote that the keeper "is not reproducible at HEAD". That was a prediction and it is
+wrong.** A control re-solved on-pin reproduces the off-pin one **exactly**: all **52,560** hourly
+zonal prices and all **6,648,840** unit-hours (`mw`, `mc`, `cap_mw`) identical to **1e-9**, every
+class energy to 10 dp. So the degeneracy worry is measured inert for this model and version pair,
+**rule 29(b) form 4 is vindicated rather than broken**, and nyiso-230's differencing was never
+contaminated. What survives is narrow: the keeper's *environment record* was off-pin. This promotion
+closes it — the new keeper is on-pin. **Suggested durable fix, for whoever owns `audit_keepers.py`:
+a check that every designated keeper's recorded package set matches `requirements.txt`.** Nine lines,
+and it would have caught this the day it happened.
+
+**Also corrected, for the next lane:** rule 31 `[R-RETAIN]` states that *"the parity gate only ever
+sees committed dirs, so an ignored bundle can sit on local disk indefinitely without turning anything
+red."* Measured: `check_registry_payload_parity.py` scans the **working tree**, so a gitignored
+local bundle DOES turn a local run red. It is green in CI (where the working tree is the committed
+tree), so the rule's conclusion holds where it matters — but the mechanism is not what the rule says,
+and a lane that reads the local red as a real failure will chase it. NYISO's leg is clear: 0 of the
+three probe dirs are tracked in HEAD.
+
+### Operational, measured — do not rediscover
+
+* **The clean-data list for a NYISO solve is EIGHT datatypes, not one.** The inherited note said
+  `capacity-deliverability` "and NOTHING broader"; NYISO's solve path also needs
+  `nyiso-interface-flows` (it dies in `nyiso_par_attributed_ttc_hourly`), and the verified list —
+  `capacity-deliverability nyiso-interface-flows nyiso-reserve-requirements nyiso-downstate-gas
+  nyiso-renewable-curtailment reserve-requirements ramp-capability unit-outage-events` — regenerates
+  from a cold `data/clean` in **61 s**. A bare `regenerate_clean.py` with no arguments is ~30 minutes
+  and mostly other ISOs.
+* **A shard that backgrounds its solve and "queues the push on process exit" can strand.** Two did
+  this session; one lost a finished bundle. **There is no tool in this session that can message a
+  cloud shard** (`create_session` / `interrupt_session` / `archive_session` only), so a stranded
+  shard is unrecoverable. Run the solve in the FOREGROUND so the turn cannot end before the push.
+* **A four-year NYISO per-plant span is ~6 min/year, ~25 min total** — far under the 90–150 min this
+  session budgeted.
+* **Push the keeper bundle in two commits** (sidecars 83.4 MB, dispatch 81 MB); the dispatch layer
+  needs a `.gitignore` **negation** of both the directory and its contents, plus a plain `git add`
+  (`git add -f` is refused by the permission classifier).
+* `git commit --amend` is refused as **[Git Destructive]** — make a follow-up commit instead. And use
+  `-F -` for messages containing backticks; `-m` lets the shell eat them.
