@@ -1,5 +1,41 @@
 # Changelog
 
+## 2026-09-13 — NWPP addition program chartered: the first region that is a POOL of balancing authorities
+
+A chartering session for adding the **Northwest Power Pool / Western Power Pool footprint** as a registered
+region, using the SPP addition workstream as the process reference and the SOCO charter (2026-09-12) as the
+non-market precedent. Committed: `docs/multi-iso/nwpp-addition-plan-2026-09.md`,
+`docs/handoffs/nwpp-desk-handoff-2026-09-13.md`, `docs/handoffs/nwpp-desk-ledger-2026-09.md`, plus one row in
+`docs/multi-iso/README.md`. No code, no data, no registry touched — every existing keeper's cache key is
+untouched by construction.
+
+- **The anchor, measured off `data/raw/eia-860/`:** Hermiston Generating Plant is EIA plant **54761**,
+  Umatilla County OR, 621.2 MW across four CC generators, balancing authority **`PACW`** (PacifiCorp - West),
+  NERC region WECC. The adjacent **Hermiston Power Partnership** (plant **55328**, 689.4 MW) is balancing
+  authority **`GRID`**. Two Hermiston plants, two BAs.
+- **What makes it unlike every prior addition:** NWPP is **not a BA and not an ISO — it is a pool of ~17
+  balancing authorities**, a first for this repo. Fleet over the candidate footprint: **940 plants /
+  1,932 operable generators / 98,738.1 MW**, **36.3 % conventional hydro** (35,799.5 MW over 288 plants, of
+  which **eight ≥ 1 GW plants hold 17,821.8 MW on one hydraulic chain**), one nuclear unit (1,200 MW), and
+  **69.7 % of nameplate owned by regulated electric utilities**.
+- **Four charter measurements that corrected the session's own starting premises**, recorded in the ledger's
+  §0 rather than absorbed silently: (1) the per-BA load spine is **already committed** in
+  `data/raw/eia-930/EIA930_BALANCE_*.parquet` for all 17 BAs, 2019–2026, so it is a *derive*, not a fetch,
+  and needs no `EIA_API_KEY`; (2) **AVRN and GRID serve zero load** in all 26,295 hours — generation-only
+  BAs, so not zone candidates; (3) EIA-930 assigns **one timezone per BA** (14 Pacific / 3 Mountain), which
+  reduces the "two-timezone footprint" problem to a convention choice; (4) **30 defective demand hours** of
+  394,424 which, unscreened, put the 2025 coincident peak at 835,464 MW against a true **50,953 MW**.
+- **The load-bearing decision (card N2):** the Pool publishes no LMP and had no day-ahead market in
+  2023–2025, yet three of the rubric's four load-bearing criteria are price criteria. Unlike SOCO, two
+  *measured* prices exist and were pulled live in-session: **CAISO WEIM 15-minute LMPs** (212 `EIMT` apnodes
+  across this footprint's BAs; `PRC_RTPD_LMP` returned $63.9213/MWh) and the **Mid-C** traded index (244
+  trade dates, 4,748,000 MWh in 2023). Neither is straightforwardly the benchmark — WEIM clears *imbalance
+  only* and Mid-C is *daily and peak-only* — so the plan charters a STOP-gated construction lane and refuses
+  a neighbouring-hub substitution in advance (gate G17).
+- **Routed, not fixed:** CAISO is already registered with a `WECC_import` zone whose firm tranche is named
+  **`PNW_hydro_base`** — this footprint, by name. Registering NWPP puts the same energy on both sides of a
+  seam. Rule 25 `[R-ISO-SCOPE]` keeps that question with the CAISO lane (ledger R-a).
+
 ## 2026-09-12 — SOCO addition program chartered: Hillabee is in a balancing authority, not an ISO
 
 Owner request: a plan and prompt pack to add "whatever ISO Hillabee gas plant in Alabama is in", using the
