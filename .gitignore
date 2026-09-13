@@ -2083,3 +2083,12 @@ results/calibration/caiso279_ablate_dswcouple_span/
 # recoverable at git checkout 687f299f044ec8ff9df958c5e4121bd35853ade2 --
 # results/calibration/nyiso231_ctl_y2022
 results/calibration/nyiso231_ctl_y2022/
+
+# nyiso-231 KEEPER bundle: registration (render_calibration_html.build_payload)
+# and the per-plant D-1/D-2/D-4 diagnostics read dispatch/<year>_P1.parquet, so
+# the designated keeper carries its dispatch layer (rule 34 [R-SHARD-PROMOTABLE]
+# (a)). The repo-wide results/calibration/*/dispatch/ ignore above rests on a
+# 413 pack-size belief FALSIFIED 2026-09-12 (102,367,743 bytes pushed as a
+# single-blob pack); this layer is 81 MB and is pushed in its own commit.
+!results/calibration/nyiso231_anchor_span/dispatch/
+!results/calibration/nyiso231_anchor_span/dispatch/**
