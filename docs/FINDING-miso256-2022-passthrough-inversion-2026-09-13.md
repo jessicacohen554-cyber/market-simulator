@@ -1,17 +1,96 @@
-# FINDING — miso-256: the 2022 miss is a COAL AVAILABILITY inversion, and the mechanism is data-blocked
+# FINDING — miso-256: MISO's gas passthrough is 55 % of the real market's, and the two "unpriceable" years are the proof
 
 ```
 SESSION : miso-256          ISO: MISO          KEEPER: 2026-09-12-miso-255-sil-measured
 ASK     : (1) can 2020/2021 be priced at all?  (2) diagnose the 2022 passthrough inversion.
-RESULT  : (1) NO — data-blocked, now SAID SO on the status card (scorer + page change, 0 determination moves).
-          (2) Mechanism NAMED and evidenced: the model's coal fleet has NO FUEL-SUPPLY
-              CONSTRAINT, so in a high-gas year it responds with an elasticity the real fleet
-              did not have. Its admissible driver (coal stocks) is NOT on disk and the EIA API
-              is blocked here, so the arm is DATA-BLOCKED.
-LP SPENT: ZERO. Phase 0 did not clear its own gate, so no solve was launched (rule 29 [R-SCREEN]).
+RESULT  : (1) YES — the block was never real. Three route audits swept two report families;
+              MISO's pre-2023 record lives in a THIRD, uncredentialed and live back to 2015.
+              2020 and 2021 are now STAGED, DERIVED and SCORED (§0).
+          (2) The defect is a PASSTHROUGH SLOPE and it is now MEASURED, not inferred:
+              4.63 $/MWh per $/MMBtu against the real market's 8.41 — 55 % — propped up by a
+              fixed intercept, with corr(gas, error) = -0.841. 2022 is the far end of that
+              slope, not a special year. The coal findings in §3-§4 are the same defect at
+              its extreme and stand.
+LP SPENT: ZERO. No solve was launched (rule 29 [R-SCREEN]); this is a data intake and a re-score.
 ```
 
+> **READ §0 FIRST.** It was written after the rest of this document and supersedes §1's
+> conclusion and §2's framing. The superseded text is kept in place, marked, because how an
+> exhaustive-looking audit reached the wrong answer is the more useful record.
+
+## 0. ADDENDUM (same session, after the owner asked "why do we still not have it")
+
+**We have it. The block was never real** — three route audits searched two report
+families and MISO's pre-2023 record was in a third.
+
+| family | 2020 | 2021 | 2022 | 2023+ |
+|---|---|---|---|---|
+| `YYYYMMDD_da_expost_lmp.csv` (audited ×3) | 404 | 404 | 404 | **200** |
+| `{YYYYMM}_da_pr_xls.zip` / `_rt_pr_xls.zip` | **200** | **200** | **200** | 404 |
+
+A **format changeover, not a retention cutoff**: the two families are exact mirror
+images, live back to at least 2015, and need no credential. Found via the source-URL
+table of Zenodo deposit `10.5281/zenodo.17676746` (CC-BY-4.0), whose MISO series was
+pulled from this family in November 2020.
+
+**Verified, not assumed.** Over 2022-06 — the one month both families cover on disk —
+the monthly route reproduces the committed API-sourced staging **exactly on DA
+(5,760/5,760 hub-hours, max diff $0.0000)** and **5,721/5,760 (99.32%) on RT**, the 39
+exceptions being five slots the report publishes as 0.0 at all eight hubs at once
+(missing data, staged blank). Two conventions are handled in `fetch_miso_hub_lmp.py`
+and covered by tests: the RT member is named for its **publish** date (so it carries
+the prior day's market, and month-end ships in the next month's zip), and the family
+is **LMP-only** (complete for every consumer — `derive_miso_hub_lmp` selects
+`value == "LMP"`).
+
+Staged: 2020 DA 366/366, 2020 RT 366/366, 2021 RT 365/365, 2021 DA **364/365**
+(MISO's own October-2021 archive omits the 28th — a publisher gap).
+
+### What the two new years show — this SUPERSEDES §2's framing
+
+C3a by year, model vs measured, against measured MISO delivered gas:
+
+| | 2020 | 2021 | 2022 | 2023 | 2024 | 2025 |
+|---|---|---|---|---|---|---|
+| gas $/MMBtu | 2.27 | 5.26 | 6.45 | 2.54 | 2.55 | 3.57 |
+| model $/MWh | 28.24 | 39.57 | 53.61 | 34.63 | 32.99 | 42.87 |
+| actual $/MWh | 22.99 | 40.63 | 69.87 | 32.85 | 32.30 | 45.46 |
+| **C3a** | **+22.9 % FAIL** | **−2.6 % PASS** | −23.4 % FAIL | +5.4 % | +2.1 % | −5.7 % |
+
+**The defect is a PASSTHROUGH SLOPE, and it is now measurable rather than inferred:**
+
+```
+implied slope   MODEL  4.63 $/MWh per $/MMBtu   (intercept 21.17)
+implied slope   ACTUAL 8.41 $/MWh per $/MMBtu   (intercept  8.95)
+                MODEL IS 55 % OF ACTUAL
+corr( gas price , model error % ) = -0.841
+```
+
+The model's price is barely half as responsive to gas as the real market, and it
+carries a large fixed intercept to compensate — so it **over**-prices cheap-gas years
+(+22.9 % in 2020, the cheapest) and **under**-prices dear ones (−23.4 % in 2022, the
+dearest). 2022 is not a special year; it is the far end of a slope error that runs
+through all six.
+
+This **unifies** with §3's coal finding rather than replacing it: a flat, gas-insensitive
+coal cost sitting on the margin too often is exactly what flattens the slope and lifts
+the intercept. §3's +4.3 GW coal block is the same defect at its 2022 extreme.
+
+Two consequences for the record:
+* The 2023–2025 window could not have revealed this — its gas range is 2.54–3.57, too
+  narrow to identify a slope. **The two "unscoreable" years carried most of the signal.**
+* One registered determination moved: `2026-09-10-miso-251-tp2020`
+  **CALIBRATED-WITH-CAVEATS → NOT-YET**, which is exactly the artifact §1 predicted —
+  2020 read clean *because* its price could not be checked. No non-MISO run moved.
+
+---
+
 ## 1. Item 1 — 2020/2021 cannot be priced, and the dashboard now says so
+
+> **SUPERSEDED BY §0 THE SAME DAY.** The conclusion below was correct about the two
+> report families it examined and wrong about the world: the data was recoverable.
+> Kept as written, because the reasoning that produced the wrong answer — trusting an
+> exhaustive-looking audit of an incomplete search space — is the lesson.
 
 `data/raw/lmp-data/MISO/` census: **2022, 2023, 2024, 2025, 2026 only.** No 2020/2021 partition
 exists, and miso-254's exhaustive route audit
