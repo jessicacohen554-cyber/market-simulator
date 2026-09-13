@@ -394,3 +394,65 @@ SERC-SE capacity-by-fuel table 2026–2030 and the ProbA results: EUE 0.0 MWh in
 - `../gas-prices/SOURCES_soco_gas.md` — the AL/GA/MS delivered-gas series, the
   SNG / Transco Zone 4 basis finding, and the measured "no free daily index"
   result.
+
+---
+
+# SOCO-14 addendum, 2026-09-13 — BA-membership source documents
+
+Added by lane **SOCO-14** (`docs/handoffs/FINDING-soco-14-2026-09-13.md`, gate **G22**) to answer
+one question: *is there a public, citable basis that the load of FERC-714 respondents Oglethorpe
+(107), MEAG (210) and Southern Power (186) sits inside the `SOCO` balancing authority?*
+**Answer: yes for 107 and 210, no for 186 — so G22 fails.** The verdicts, the chains and the
+blocked-URL table live in the FINDING and in the appended section of
+`../zone-specific-demand/SOCO/SOURCES.md`; this section records only the artifacts.
+
+## What is and is not tracked (SOCO-14 additions)
+
+| Artifact | Size | Tracked? | Why it is here |
+|---|---:|---|---|
+| `NERC_SERC_Public_Audit_GSOC_NCR01248_2014.pdf` | 139 KB | **yes** | **The Oglethorpe citation.** Executive Summary p. 3: *"The Reliability Coordinator (RC), Balancing Authority (BA), and Transmission Operator for GSOC is Southern Company Services, Inc. – Transmission."* GSOC is registered only as LSE + TOP |
+| `NERC_SERC_Public_Audit_Southern_NCR01166-01247-01273-01320_2021.pdf` | 707 KB | **yes** | p. 3: SCS-Trans is registered for the **BA** function and *"performs the RC, BA, TOP and TP functions for APC, GPC and MPC"* |
+| `FERC_Form_714_sample_form.pdf` | 326 KB | **yes** | p. 1 Part I Sch. 1 — the form has **no field** in which a planning-area respondent names its BA; and Part III Sch. 1 is *"Electric Utilities That Compose the Planning Area"*, the roster that would settle respondent 186 |
+| MEAG Power Annual Information Statement FY2024 (`MEAG-2024-Annual-Information-Statement.pdf`) | **5.4 MB** | no — `transcriptions/MEAG_2024_Annual_Information_Statement_PSSA_pp24-27.txt` | **The MEAG citation**, printed pp. 25–26 |
+| FERC Form 714 instructions (`form-714-instructions.doc`) | 111 KB | no — `transcriptions/FERC_Form_714_instructions.txt` | §I.B *Who Must Submit*, §III *Definitions*, §IV.A |
+| MEAG AIS FY2022 / FY2025 | 4.5 / 29.3 MB | no — probed only | FY2022 carries the same PSSA language (printed pp. 30–32), which is why the FY2024 wording is not a one-year artifact. FY2025's text layer does not extract the section with `pypdf` |
+| EIA-861 2024 final (`f8612024.zip`) | 4.6 MB | no — public re-fetch | `Balancing_Authority_2024.xlsx`, `Sales_Ult_Cust_2024.xlsx`, `Short_Form_2024.xlsx`, `Service_Territory_2024.xlsx`, `Operational_Data_2024.xlsx` |
+
+Same **corpus conversion** convention as the rest of this directory: bulk payloads stay out of the
+tree, `README` + `SHA256SUMS.txt` + a page-marked transcription stay in it, and **re-fetch is the
+recovery route**. Every URL below was verified working on **2026-09-13**.
+
+## Re-fetch
+
+```
+curl -L -o NERC_SERC_Public_Audit_GSOC_NCR01248_2014.pdf \
+  "https://www.nerc.com/pa/comp/Audit%20Repots%20DL/2014_Public_SERC_GSOC-OP.pdf"
+curl -L -o NERC_SERC_Public_Audit_Southern_NCR01166-01247-01273-01320_2021.pdf \
+  "https://www.nerc.com/globalassets/our-work/reports/regional-audit-reports-of-registered-entities/serc/2022/ncr01166_01247_01273_01320_southern_serc_pub_2021_op-rev1-11-2022.pdf"
+curl -L -o FERC_Form_714_sample_form.pdf \
+  "https://www.ferc.gov/sites/default/files/2020-06/sample-form.pdf"
+curl -L -o form-714-instructions.doc \
+  "https://www.ferc.gov/sites/default/files/2020-06/form-714-instructions.doc"
+curl -L -o MEAG-2024-Annual-Information-Statement.pdf \
+  "https://www.meagpower.org/wp-content/uploads/2025/05/MEAG-2024-Annual-Information-Statement.pdf"
+curl -L -o f8612024.zip "https://www.eia.gov/electricity/data/eia861/zip/f8612024.zip"
+```
+
+SEC EDGAR (Oglethorpe FY2024/FY2025 10-K, Southern Company FY2024 10-K) needs a contact
+User-Agent per SEC policy — `curl -H "User-Agent: <name> <email>"`; the CGI
+`browse-edgar` endpoint returned **429** from this egress while `data.sec.gov` and
+`/Archives/` returned 200.
+
+## Hosts probed and refused (2026-09-13)
+
+| URL | status |
+|---|---|
+| `https://www.ferc.gov/sites/default/files/2020-06/Form-714-csv-files.zip` | **403** — holds Part III Sch. 1, the roster that would settle respondent 186. Same refusal SOCO-11 recorded |
+| `https://www.ferc.gov/industries-data/…/form-no-714-annual-electric/data`, `https://www.ferc.gov/` | **403** |
+| `https://zenodo.org/api/records?q=ferc714` | **403** (egress proxy) — PUDL's raw-714 archive, DOI `10.5281/zenodo.4127100`, is the second route to that roster |
+| `http://web.archive.org/web/…` | **403** |
+| `https://www.oglethorpepower.com/` | connection failed (`000`); `opc.com` is the live host, and the filings came from EDGAR |
+
+**The FERC block is not uniform**: `sample-form.pdf`, `form-714-instructions.doc` and
+`FordGeorgiaSystemOperations.pdf` all returned **200** from the same egress on the same day, while
+the bulk-data zip and the data landing page returned 403.
