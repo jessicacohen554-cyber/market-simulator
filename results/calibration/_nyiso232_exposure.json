@@ -1,0 +1,20 @@
+{
+ "2022": {
+  "econ_offer_delta_mean": 8.613990771730542,
+  "hours_exposed": 7077,
+  "hours_exposed_pct": 80.78767123287672,
+  "newly_in_merit_TWh_potential": 1.5776233101931032,
+  "ST_GAS_econ_inmerit_TWh_ctl": 2.661840806205194,
+  "ST_GAS_econ_inmerit_TWh_arm": 4.236315526973655,
+  "delta_inmerit_TWh": 1.5744747207684615
+ },
+ "2025": {
+  "econ_offer_delta_mean": 5.401912230743491,
+  "hours_exposed": 4652,
+  "hours_exposed_pct": 53.10502283105023,
+  "newly_in_merit_TWh_potential": 1.7257936926024682,
+  "ST_GAS_econ_inmerit_TWh_ctl": 3.905180948604741,
+  "ST_GAS_econ_inmerit_TWh_arm": 5.71841508183079,
+  "delta_inmerit_TWh": 1.813234133226049
+ }
+}

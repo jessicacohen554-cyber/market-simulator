@@ -602,6 +602,7 @@ def run_year(
     caiso_st_gas_peak_measured: bool = False,
     caiso_ct_peaker_committed_measured: bool = False,
     nyiso_ct_peaker_bands_measured: bool = False,
+    nyiso_st_gas_econ_bands_deleaked: bool = False,
     caiso_offer_surface_conditional: bool = False,
     nearby_fuel_price_zone_donor_guard: bool = False,
     fleet_state_from_eia860: bool = False,
@@ -941,6 +942,7 @@ def run_year(
         caiso_st_gas_peak_measured=caiso_st_gas_peak_measured,
         caiso_ct_peaker_committed_measured=caiso_ct_peaker_committed_measured,
         nyiso_ct_peaker_bands_measured=nyiso_ct_peaker_bands_measured,
+        nyiso_st_gas_econ_bands_deleaked=nyiso_st_gas_econ_bands_deleaked,
         caiso_offer_surface_conditional=caiso_offer_surface_conditional,
         nearby_fuel_price_zone_donor_guard=nearby_fuel_price_zone_donor_guard,
         fleet_state_from_eia860=fleet_state_from_eia860,
@@ -2017,6 +2019,30 @@ def run_year(
                 "channel alone). Pass it as the named run_year kwarg, via "
                 "--nyiso-ct-peaker-bands-measured, or via replay_keeper --set "
                 "(which routes both channels). A silent no-op here would "
+                "advertise a mechanism the LP never solved (rule 24)."
+            )
+    # nyiso-232: the identical guard for the ST_GAS econ de-leak, for the
+    # identical reason. ``prb_overrides`` is applied ABOVE, i.e. AFTER
+    # ``backcast_config`` has already resolved the offer curve, so a run that
+    # arms this field through that channel ALONE would record
+    # ``nyiso_st_gas_econ_bands_deleaked = True`` beside the LEAKED bands the LP
+    # actually solved. Fail loudly rather than ship a bundle that lies (rule 24
+    # [R-REGISTRY]).
+    if getattr(config, "nyiso_st_gas_econ_bands_deleaked", False):
+        _ny_st = (config.offer_curve_by_group or {}).get("ST_GAS") or {}
+        _unapplied = [
+            b
+            for b in ("econ_low", "econ_high")
+            if abs(float(_ny_st.get(b, 1.0)) - 1.0) > 1e-9
+        ]
+        if _unapplied:
+            raise ValueError(
+                "nyiso_st_gas_econ_bands_deleaked is True on the resolved "
+                f"config but band(s) {', '.join(_unapplied)} still carry the "
+                "leaked multiplier — the flag reached ScenarioConfig AFTER its "
+                "backcast_config consumer ran (the generic prb_overrides "
+                "channel alone). Pass it as the named run_year kwarg or via "
+                "--nyiso-st-gas-econ-bands-deleaked. A silent no-op here would "
                 "advertise a mechanism the LP never solved (rule 24)."
             )
     # Gas-keyed coal passthrough sigmoids per supply chain. The bit family

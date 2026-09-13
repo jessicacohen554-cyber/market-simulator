@@ -1236,6 +1236,7 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # hashes distinctly. Registered WITH the field, in the same commit, per the
     # nyiso-119 discipline.
     "nyiso_ct_peaker_bands_measured",
+    "nyiso_st_gas_econ_bands_deleaked",
     # miso-224: the off path never touches a fuel price (byte-identical by
     # construction); an armed run reprices every MISO gas row at the daily hub
     # spot and hashes distinctly. Registered WITH the field, in the same commit,
@@ -2186,6 +2187,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by nyiso-199 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "nyiso_ct_peaker_bands_measured": "False",
+    "nyiso_st_gas_econ_bands_deleaked": "False",
     # Added by miso-224 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "miso_gas_marginal_commodity_pricing": "False",
@@ -13252,6 +13254,95 @@ class ScenarioConfig:
     # A NYISO CT_PEAKER band missing any of the three `phys_*` keys, or arming
     # on any other ISO, is a HARD ERROR — never a silent no-op (rule 25).
     nyiso_ct_peaker_bands_measured: bool = False
+    # nyiso-232: the THIRD limb of the same rule-25 [R-ISO-SCOPE] de-leak, on
+    # `_NYISO_OFFER_CURVE`'s ST_GAS `econ_low`/`econ_high`. THE DEFECT: that
+    # block states its own basis as "the CC class's own defensible reach ratio
+    # (CC econ_high 1.21 / native CC marginal 0.925 = 1.31x)" applied to the
+    # measured steam marginal (~0.830), and the registered `econ_low` 1.08
+    # reproduces that CITED construction to between 0.08 % and 0.53 %,
+    # depending on which of this file's OWN two recorded native-steam triples
+    # is read (the band dict's 0.830/0.828, or the run-28 note's
+    # 0.818/0.825/0.830): 0.830 x 1.3081 = 1.0857, 0.828 -> 1.0831,
+    # 0.825 -> 1.0792. EVERY reading lands within 1 % of 1.08, and the block's
+    # own stated form ("~0.82-0.83 x 1.31 ~= 1.08") is exact at the precision
+    # it states -- which is what identifies the construction. (The nyiso-232
+    # handoff said "0.2 %"; that is not any of the three readings, and the
+    # range is recorded here instead of a false-precision single number.)
+    # But `CC_REGULAR.econ_high` 1.21 is an ERCOT keeper value the SAME FILE
+    # records as REMOVED under rule 25 (audit C-13, B-NYI-1, "the SAME fit
+    # ERCOT's keeper uses"). So ST_GAS's econ bands carry ERCOT's 1.21
+    # MULTIPLICATIVELY: the de-leak removed the value from the cell where it was
+    # written and left it standing in the cell where it had been multiplied in.
+    # A deleted knob surviving inside a derived constant is rule 26
+    # [R-DELETE]'s re-armable answer key one step removed.
+    #
+    # NOT A RULE 23 [R-FROZEN-DERIVE] RE-DERIVATION. The ST_GAS source data --
+    # `nyiso_campd_marginal_hr_summary.csv` p50s 0.818/0.830/0.828, n = 25 --
+    # is UNCHANGED and untouched here; the `phys_*` keys keep it. What moves is
+    # a borrowed multiplier applied on top of it, and rule 23's prohibition
+    # ("never because a residual moved") is not engaged: no residual moved, and
+    # the change pushes price the WRONG way for C3a in 2022 and 2025.
+    #
+    # THE BLOCK'S SECOND, OUTCOME-BASED IDENTIFICATION IS NOT LOAD-BEARING AND
+    # CANNOT BE PROMOTED TO RESCUE THE FIRST. It also claims the level
+    # "reproduces measured steam volume" (2023 ST_GAS -1.26 -> -0.01 TWh), but
+    # it calls that "validating the level a priori, NOT residual-fitted" -- i.e.
+    # corroboration of a construction fixed beforehand. Re-reading it as the
+    # identification after the construction fails inverts the epistemics and is
+    # exactly rule 13 [R-MEASURED]'s forbidden move (an OUTCOME fed back to
+    # select an input); it also fails rule 13's forward test, since a forecast
+    # year has no measured volume to match.
+    #
+    # THE REPAIR: `econ_low`/`econ_high` := the rule-24/25 NEUTRAL 1.0 band --
+    # the identical remedy this file applied to `CC_REGULAR.econ_high` (1.21 ->
+    # 1.00) and to `CT_PEAKER.econ_low`/`econ_high` in the SAME audit, and the
+    # exact registered state CT_PEAKER carries today. ZERO new literals, ZERO
+    # free parameters (rules 21/24: "generic fallbacks carry neutral (1.0)
+    # bands"). It does NOT fill the hole -- there is no NYISO-identified
+    # competitive markup to put here, because the de-leak declared CC's own
+    # markup un-identified -- so the markup identification stays an OPEN ROOT
+    # CAUSE against NYISO scarcity/reserve (RCPF/AS) price formation, GitHub
+    # issue #1344, exactly as the CC de-leak ledgered it.
+    #
+    # `committed` AND `peak` ARE EXCLUDED, as nyiso-199 excluded them:
+    #  * `peak` 4.20 is the $1,000-offer-cap scarcity WALL the file states it
+    #    as, not the reach construction (rule 19 -- grounding it deletes a
+    #    mechanism rather than repairing a basis);
+    #  * `committed` 1.05 sits BELOW its own `phys_committed` 1.104, so its
+    #    markup clips to 0 in BOTH legs and the leaked reach never reaches a
+    #    margin there. What the multiplier still does at markup 0 is scale
+    #    FUEL, so moving it to 1.0 would price the steam min-load block 9.4 %
+    #    below its own MEASURED burn on no ground at all -- measured pre-solve
+    #    at -$4.09/MWh (2022). Excluding it is what keeps this a de-leak and
+    #    not a new fitted value.
+    #
+    # MEASURED PRE-SOLVE, ZERO LP (nyiso-232 phase 0,
+    # `scripts/probes/_nyiso232_st_gas_phase0.py`, all four registered years):
+    # non-ST_GAS offer max|d| EXACTLY $0.0000000000/MWh over 665-671 matched
+    # rows, non-ST_GAS `pmax` max|d| exactly 0.0, ST_GAS `pmax` total unchanged
+    # at 8902.4000 MW, and the `committed`/`peak` bands byte-identical. The
+    # econ-band offer moves -$8.61 / -$3.17 / -$2.80 / -$5.41 per MWh in
+    # 2022/23/24/25 -- year-varying because `gas_offer_net_revenue_margin`
+    # prices the removed markup at the solve year's own zonal anchor.
+    #
+    # A KNOWN, INTENDED STRUCTURAL CONSEQUENCE, declared rather than
+    # discovered: `econ_low == econ_high` is a FLAT econ ramp, so the 6-slice
+    # `econc00..05` smoothing ladder collapses to `econlo`/`econhi` (ST_GAS 88
+    # -> 44 LP rows, identical in all four years). That is the state CT_PEAKER
+    # already carries, and it is FAITHFUL to the measurement: the block itself
+    # calls the measured steam ramp "essentially FLAT (legacy steam part-load
+    # HR is no better than full-load)" and describes the 1.05 -> 1.13 spread as
+    # imposed "to keep a valid rising offer", not measured.
+    #
+    # DIRECTION IS DISCLOSED AND IT IS MIXED -- WHICH IS THE HAZARD, NOT THE
+    # ARGUMENT (rule 1 [R-STRUCT]). Cheaper ST_GAS runs more, and ST_GAS
+    # under-runs in 2022 (-1.148 TWh) and 2024 (-1.064) but OVER-runs in 2023
+    # (+1.989). It pushes price DOWN, against a C3a already at -9.9 % (2022)
+    # and -5.9 % (2025) inside a +/-10 % band. MUST NEVER be proposed as a C1
+    # or C3a lever.
+    # NYISO-scoped (rule 25): an ST_GAS band missing its `phys_*` keys, or
+    # arming on any other ISO, is a HARD ERROR -- never a silent no-op.
+    nyiso_st_gas_econ_bands_deleaked: bool = False
     # CONDITIONAL half: the PJM/NEISO condition-binned peak-rung ladder
     # ported to CAISO — 5 equal-capacity peak rungs repriced P1-only to the
     # measured per-net-load-bin top-of-curve quantiles (fuel-component

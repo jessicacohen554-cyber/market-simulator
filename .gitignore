@@ -2122,3 +2122,9 @@ results/calibration/nyiso231_arm_y2022/
 results/calibration/pjmh3_syncarm_2022/
 
 !results/calibration/soco15_spp_arm/**
+# nyiso-232 SCREEN bundle — rule 29 [R-SCREEN] (c): a screen bundle never reaches
+# `main`. Ignored rather than deleted (rule 31 [R-RETAIN]: nothing is removed until
+# the owner has ruled on promotion). The bytes are PUSHED and retrievable — rule 34
+# [R-SHARD-PROMOTABLE] — on the shard branch `claude/nyiso232-arm-y2022`; recover with
+#   git checkout 451fa7f32ffacacbc85083aa30873842d06a19de -- results/calibration/nyiso232_arm_y2022
+results/calibration/nyiso232_arm_y2022/

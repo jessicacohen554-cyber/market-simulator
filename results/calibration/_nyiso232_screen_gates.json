@@ -1,0 +1,112 @@
+{
+ "G-CONFINE": {
+  "verdict": "PASS",
+  "worst_nonST_GAS_class": "CT_PEAKER",
+  "worst_move_TWh": -0.41622650000000005,
+  "budget_TWh": 0.76340835,
+  "all_moves_TWh": {
+   "CC_CHP": -0.0828,
+   "CC_REGULAR": -0.1585,
+   "COAL_BIT": 0.0,
+   "COAL_PRB": -0.0001,
+   "CT_CHP": -0.0356,
+   "CT_PEAKER": -0.4162,
+   "OTHER": 0.0,
+   "ST_CHP": -0.0066,
+   "biomass": 0.0,
+   "hydro": 0.0001,
+   "import": 0.0,
+   "nuclear": 0.0,
+   "oil": 0.0021,
+   "solar": 0.0,
+   "wind": 0.0
+  }
+ },
+ "G-DEMAND": {
+  "verdict": "PASS",
+  "served_ctl_TWh": 152.68167,
+  "served_arm_TWh": 152.68167,
+  "delta_TWh": 0.0,
+  "dump_MWh": 0.0,
+  "slack_MWh": 0.0
+ },
+ "G-MAGNITUDE": {
+  "verdict": "PASS",
+  "ST_GAS_ctl_TWh": 6.6383875,
+  "ST_GAS_arm_TWh": 7.3089905,
+  "delta_TWh": 0.6706029999999998,
+  "presolve_ceiling_TWh": 1.574
+ },
+ "G-ROWS": {
+  "verdict": "PASS",
+  "st_gas_rows_arm": 44,
+  "predicted": 44,
+  "bands_arm": [
+   "committed",
+   "econhi",
+   "econlo",
+   "peak"
+  ]
+ },
+ "G-NONTARGET": {
+  "verdict": "SCORED-SEPARATELY",
+  "note": "run calibration_verdict.py --json on the arm and compare the 2022 records against the control's"
+ },
+ "_system": {
+  "ctl": {
+   "lw_price": 73.12747176367775,
+   "mean_price": 69.69537311990781,
+   "served_twh": 152.68167,
+   "dump_mwh": 0.0,
+   "slack_mwh": 0.0,
+   "hours_gt_300": 5
+  },
+  "arm": {
+   "lw_price": 71.70793639040826,
+   "mean_price": 68.41038859030822,
+   "served_twh": 152.68167,
+   "dump_mwh": 0.0,
+   "slack_mwh": 0.0,
+   "hours_gt_300": 5
+  }
+ },
+ "_class_TWh": {
+  "ctl": {
+   "CC_CHP": 13.95827,
+   "CC_REGULAR": 37.238048,
+   "COAL_BIT": 0.0,
+   "COAL_PRB": 0.661859125,
+   "CT_CHP": 2.28242025,
+   "CT_PEAKER": 2.98824725,
+   "OTHER": 2.1834615,
+   "ST_CHP": 1.598967625,
+   "ST_GAS": 6.6383875,
+   "biomass": 1.06148875,
+   "hydro": 25.610864,
+   "import": 27.848666,
+   "nuclear": 26.753098,
+   "oil": 0.629858375,
+   "solar": 0.1093015078125,
+   "wind": 4.7044235
+  },
+  "arm": {
+   "CC_CHP": 13.875489,
+   "CC_REGULAR": 37.07958,
+   "COAL_BIT": 0.0,
+   "COAL_PRB": 0.661748,
+   "CT_CHP": 2.2468165,
+   "CT_PEAKER": 2.57202075,
+   "OTHER": 2.1834615,
+   "ST_CHP": 1.592412875,
+   "ST_GAS": 7.3089905,
+   "biomass": 1.06148875,
+   "hydro": 25.610948,
+   "import": 27.848666,
+   "nuclear": 26.753098,
+   "oil": 0.6319974375,
+   "solar": 0.1093015078125,
+   "wind": 4.7044235
+  }
+ },
+ "_SCREEN": "CLEARS (pending G-NONTARGET)"
+}

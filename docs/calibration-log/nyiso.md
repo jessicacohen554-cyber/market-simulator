@@ -13995,3 +13995,107 @@ three probe dirs are tracked in HEAD.
   (`git add -f` is refused by the permission classifier).
 * `git commit --amend` is refused as **[Git Destructive]** — make a follow-up commit instead. And use
   `-F -` for messages containing backticks; `-m` lets the shell eat them.
+
+## nyiso-232 — 2026-09-13
+
+**KEEPER UNCHANGED: `2026-09-13-nyiso231-anchor-span`.** The session's arm was **SCREENED AND
+STOPPED** on a pre-registered gate. A screen may kill an arm; it may never promote one, and the gate
+was not re-cut after the fact.
+
+**THE DEFECT IS CONFIRMED AND IS NOT IN DISPUTE.** `_NYISO_OFFER_CURVE`'s `ST_GAS` `econ_low`/
+`econ_high` are DERIVED as the measured native steam marginal HR × the block's own cited *"CC class
+reach ratio (CC econ_high **1.21** / native CC marginal 0.925 = 1.31×)"* — and **1.21 is the ERCOT
+keeper value the same file records as REMOVED under rule 25** (audit C-13, B-NYI-1). So ST_GAS
+carries ERCOT's 1.21 **multiplicatively**: the de-leak removed it from the cell where it was
+*written* and left it standing in the cell where it had been *multiplied in* (rule 26 `[R-DELETE]`,
+one derivation step removed). The registered 1.08 reproduces the CITED construction to
+**0.531 / 0.288 / 0.075 %** on the file's own two recorded native-steam triples — every reading
+within 1 % — while the **current** reach gives **0.8973, 16.9 % away**, so the band is not
+reproducible from the file's own inputs today. *(The handoff's "0.2 %" is not any of the three
+readings; corrected.)*
+
+**BOTH GATING QUESTIONS SETTLED AT ZERO LP, BEFORE ANY ARITHMETIC WAS APPLIED.**
+*(i)* **NOT a rule 23 `[R-FROZEN-DERIVE]` re-derivation** — the ST_GAS source data is untouched and
+the `phys_*` keys keep it; what moves is a borrowed multiplier on top, and rule 23's trigger ("never
+because a residual moved") is not engaged since no residual moved and the change pushes price the
+**wrong** way. It is an **incomplete rule 25 enforcement**. *(ii)* Of the block's **two**
+identifications the **CONSTRUCTION is load-bearing** and the outcome-based one ("reproduces measured
+steam volume") **cannot be promoted to rescue it** — the block itself calls that *"validating the
+level a priori, **not** residual-fitted"*, and re-reading a corroboration as **the** identification
+is rule 13 `[R-MEASURED]`'s forbidden move and fails its forward test.
+
+**THE CONSTRUCTION BUILT — narrower than the handoff proposed, and MEASUREMENT is why.**
+`econ_low`/`econ_high := 1.0`, the rule-24/25 **neutral** — the identical remedy this file applied to
+`CC_REGULAR.econ_high` and to `CT_PEAKER`'s econ bands in the SAME audit. **Zero new literals, zero
+free parameters, no DOF entry.** The handoff's propagate-the-reach arithmetic was **refused**: the
+current reach's numerator is a declared **neutrality placeholder**, not a measurement. `committed`
+and `peak` **excluded** as nyiso-199 excluded them — and `committed` was caught by the probe rather
+than assumed: its markup clips to 0 in both legs, so at markup 0 the multiplier only scales **fuel**,
+and moving it to 1.0 would price steam min-load **9.4 % below its own measured burn** (−$4.09/MWh).
+
+**PHASE 0 (zero LP, all four years).** Non-ST_GAS offer max|Δ| **$0.0000000000/MWh** over 665–671
+matched rows; non-ST_GAS `pmax` max|Δ| 0.0; ST_GAS `pmax` total unchanged 8902.4000 MW; `committed`
+and `peak` byte-identical. Econ offer **−$8.61 / −$3.17 / −$2.80 / −$5.41** per MWh. **Declared
+before the solve:** the flat ramp collapses the 6-slice `econc00..05` ladder to `econlo`/`econhi`,
+ST_GAS **88 → 44 rows**; the solved arm reads **exactly 44**. Screen year **2022** named on
+**FOOTPRINT** (38.1 vs 31.2 / 20.1 / 16.0), never the residual. **G-DRIFT recorded BEFORE the arm** —
+all six changed paths INERT for NYISO — so form 4 held and **no control solve was spent**.
+
+| gate | verdict | measured |
+|---|---|---|
+| G-CONFINE | PASS | worst non-ST_GAS move CT_PEAKER −0.416 TWh vs a 0.763 budget |
+| G-DEMAND | PASS | served 152.68167 both legs, dump 0, slack 0 |
+| G-MAGNITUDE | PASS | ST_GAS 6.6384 → 7.3090 TWh (+0.6706), inside the 1.574 ceiling |
+| G-ROWS | PASS | 44 |
+| **G-NONTARGET** | **STOP** | **C3a-2022 −9.86 % → −11.61 %, PASS → FAIL** |
+
+**ON THE MERITS, reported in full because it is the case FOR the arm.** Price cost only
+**$1.42/MWh (−1.94 %)**, materially smaller than the PRECOMMIT's own worry. **ST_GAS −1.148 →
+−0.477 TWh (58 % of the gap closed)**; **CC_REGULAR, the failing C1 cell, +5.196 → +5.038 TWh** and
+share 3.93 → 3.83 pp; gas family total conserved (−0.029 TWh), C2 PASS → PASS. Against it:
+CT_PEAKER +0.077 → −0.339 and CC_CHP −0.225 → −0.308, both worse, both well in band.
+
+**AN UNRESOLVED FLAG, NOT resolved in the arm's favour.** D-2/**C8** reads FAIL on the arm (2022
+ST_GAS forced share 33.6 % > 30 %) — **protective** tier, and **not** among the pre-registered gates,
+which is a **gap in the gate set** and is stated as such rather than used as an exemption. The flip
+is driven **entirely by the denominator** (forced energy 1.9803 → 1.9187 TWh, −3 %; D-2 class total
+8.571 → 5.705 TWh, −33 %), and that denominator reconciles with **no** dispatch-side measurement in
+either leg — `class_hourly`, `class_band_hourly`, the dispatch parquet's `klass`, and a `unit_id`
+join to the rebuilt fleet's `plant_group` **all** show ST_GAS **rising**. D-2's basis is internally
+consistent on the control across all four years (ST_GAS ×1.29/1.20/1.24/1.27 of the dispatch-side
+total) and **inverts to ×0.78** on the arm. On every basis that reconciles, the forced share **falls**
+(26.3 % vs the control's 29.8 %). **Not diagnosed, not claimed to be a bug**; the bounded claim is
+that the C8 flip is uncorroborated and that D-2's denominator behaves anomalously under a change to a
+class's **tranche structure** — which generalises to any mechanism that collapses or expands a
+smoothing ladder.
+
+**COMPANION FINDING — NYISO's C3a residual is TWO separable objects, and a zero-LP test separates
+them.** Progressively removing each year's highest-**actual**-price hours leaves the year-to-year
+spread **invariant** (10.23 → 10.09 pp while 5 % of hours are removed, r vs gas −0.92 to −0.99),
+while the **level** lifts ~+13 pp in every year and **flips sign**: with the tail gone the model is
+**over-priced by +4.1 to +14.2 % in all four years**. So (A) a level error carried by the extreme
+tail — the model compensates for the tail it cannot form by pricing ordinary hours too high, and the
+two errors partly cancel in the annual mean, which is why C3a passes in 2023/2024 while both
+components are large; this is C3c / issue #1344 — and (B) a gas-monotone tilt of ~10.1–10.8 pp that
+**survives removing the tail** and is a real, separate, still-open object. *(A correction kept
+visible: on the monthly regression alone I first concluded the leftover slope "is not a gas object"
+and recommended spending nothing on it; the tail-removal test falsified that and the recommendation
+is reversed. A year-constant regressor cannot explain more than the between-year share of a monthly
+series, so a low monthly r² was never evidence about the year-level tilt.)*
+
+**RE-TEST CONDITION (matrix cell → `R`): pair the de-leak with a mechanism that restores the scarcity
+tail (#1344) and re-screen.** A real pairing, not a formality — the headline C3a is a difference of
+two large errors of opposite sign, and this arm moves the **ordinary-hour level the right way**,
+charged only because the tail is absent.
+
+**PROMOTION QUESTION PUT TO THE OWNER (rule 31 `[R-RETAIN]`, pre-committed in PRECOMMIT §8).** The
+bundle is **pushed and retrievable** — `git checkout 451fa7f32ffacacbc85083aa30873842d06a19de --
+results/calibration/nyiso232_arm_y2022` — so a "yes" costs **zero** re-solves for 2022 and ~25 min
+for the remaining three years.
+
+Records: `docs/RESULT-nyiso232-st-gas-deleak-screen-2026-09-13.md`,
+`docs/FINDING-nyiso232-c3a-is-two-objects-2026-09-13.md`,
+`results/calibration/PRECOMMIT-nyiso232-st-gas-deleak.md`,
+`scripts/probes/_nyiso232_{st_gas_phase0,screen_gates,c3a_two_objects}.py`.
+One shard (5m23s solve), archived after fetch + checkout + signature verification; its branch is
+**kept** because it carries a bundle a promotion would register (rule 33(f)(3)).
