@@ -63,11 +63,15 @@ import time
 from datetime import datetime
 from functools import lru_cache
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
 import pyarrow as pa
 import pyarrow.parquet as pq
+
+if TYPE_CHECKING:  # annotations only — the runtime import stays local
+    from market_sim.config.scenarios import ScenarioConfig
 
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "src"))
@@ -3725,6 +3729,94 @@ def _copy_reused_year(
             shutil.copy2(p2, run_dir / "p2_state" / p2.name)
 
 
+def mirror_solve_year_gas_anchors(
+    cfg: "ScenarioConfig",
+    cfg_year: int,
+    hours: int,
+    *,
+    iso_vintage: bool = False,
+    zonal_vintage: bool = False,
+) -> "ScenarioConfig":
+    """Re-resolve the gas-offer-margin identification point onto ``cfg_year``.
+
+    The MIRROR of ``run_calibration.run_year``'s own two resolution blocks, and
+    the ONLY place ``run_config.json``'s copy of them is computed. It exists so
+    the recorded config reports the anchor the LP actually solved with rather
+    than the frozen-window value it started from (rule 24 ``[R-REGISTRY]``; the
+    FFR-2E defect class).
+
+    **CALL IT FUSED TO ``_recorded_config``'s ``return``, never earlier, and do
+    not add config-mutating blocks below that return.** ``_gas_series`` — and
+    therefore every anchor derived from it — is the series the offer path prices
+    against ONLY once the run's whole gas posture is on the config. ``run_year``
+    gets that ordering by construction (it sets ``gas_hub_basis_overlay`` at
+    ``run_calibration.py:~1960`` and resolves at ``~2572``, and the fleet is not
+    built until ``~3791``); the recorded mirror got it wrong, which is the defect
+    this function was extracted to close:
+
+        nyiso-230's 2022 arm recorded ``Capital_Hudson 7.0563 $/MMBtu`` while the
+        LP priced against ``8.4431`` — a uniform ``-1.3868`` in every zone —
+        because the mirror was inlined ~144 lines ABOVE the block that puts
+        ``gas_hub_basis_overlay`` on the recorded config. The recorded config was
+        internally inconsistent: ``gas_hub_basis_overlay: true`` beside anchors
+        that only reproduce at ``overlay=False``. Both of nyiso-230's G-CONF and
+        G-PRED screen gates failed on that one line and neither measured the
+        mechanism (``docs/RESULT-nyiso231-the-mirror-and-the-2022-rescreen-2026-09-13.md``).
+
+    Fusing the resolution to the ``return`` makes the ordering structural
+    instead of positional: a future ``if flag: recorded_cfg = ...`` block lands
+    above the return, so it can no longer silently get in front of the mirror.
+    The self-consistency invariant is pinned by
+    ``tests/unit/scripts/test_recorded_config_gas_anchor_mirror.py``.
+
+    Gating mirrors ``run_year`` exactly — the solve kwarg OR the registered
+    ``ScenarioConfig`` field, because ``replay_keeper.py --set`` writes the field
+    and never the kwarg (rule 24: a recorded value must not claim a resolution
+    the solve did not perform, and a field-armed solve DOES resolve). The two
+    flags are alternatives, never stacked (rule 19 ``[R-ONE-MECH]``); ``run_year``
+    raises on the combination, so reaching it here is a plumbing bug and raises
+    too rather than silently recording one of them.
+
+    Zero free parameters (rule 21 ``[R-DOF]``): only the index the frozen
+    derive's own formula is evaluated on moves.
+    """
+    want_iso = bool(iso_vintage) or bool(
+        getattr(cfg, "gas_offer_margin_anchor_vintage", False)
+    )
+    want_zonal = bool(zonal_vintage) or bool(
+        getattr(cfg, "gas_offer_margin_zonal_anchor_vintage", False)
+    )
+    if want_iso and want_zonal:
+        raise SystemExit(
+            "gas_offer_margin_anchor_vintage and "
+            "gas_offer_margin_zonal_anchor_vintage both re-resolve the SAME "
+            "identification point; they are alternatives, never stacked "
+            "(rule 19 [R-ONE-MECH]). run_year refuses this combination, so a "
+            "recorded config reaching it is a plumbing bug."
+        )
+    if want_zonal:
+        from market_sim.data.fuel.zonal_anchor import zonal_gas_anchors_for_year
+
+        return cfg.with_overrides(
+            gas_offer_margin_zonal_anchor_vintage=True,
+            gas_offer_margin_anchor_by_zone=zonal_gas_anchors_for_year(
+                cfg, int(cfg_year), int(hours)
+            ),
+        )
+    if want_iso:
+        from market_sim.data.fuel.trajectories import _gas_series
+
+        return cfg.with_overrides(
+            gas_offer_margin_anchor_vintage=True,
+            gas_offer_margin_anchor=float(
+                np.asarray(
+                    _gas_series(cfg, int(cfg_year), int(hours)), dtype=float
+                ).mean()
+            ),
+        )
+    return cfg
+
+
 def solve_and_persist(
     years: list[int],
     iso: str,
@@ -5154,22 +5246,6 @@ def solve_and_persist(
                 gas_offer_net_revenue_margin=True,
                 gas_offer_margin_anchor=GAS_OFFER_MARGIN_ANCHOR_BY_ISO[iso],
             )
-        if gas_offer_margin_anchor_vintage:
-            # pjm-169 F4 — MIRROR of run_year's resolution, and it must stay a
-            # mirror: the recorded config has to report the anchor the LP
-            # actually solved with, not the frozen window value it started
-            # from (rule 24 [R-REGISTRY]; the FFR-2E defect class). Computed
-            # from the SAME `_gas_series` on the SAME recorded config, which by
-            # this point carries the hub-overlay and monthly-actuals postures.
-            from market_sim.data.fuel.trajectories import _gas_series as _f4_gs
-
-            recorded_cfg = recorded_cfg.with_overrides(
-                gas_offer_margin_anchor=float(
-                    np.asarray(
-                        _f4_gs(recorded_cfg, cfg_year, int(hours)), dtype=float
-                    ).mean()
-                )
-            )
         if gas_offer_margin_zonal_anchor:
             # Zone-resolved identification point for the SAME mechanism
             # (nyiso-109): record the gate AND the resolved per-zone anchors
@@ -5189,28 +5265,6 @@ def solve_and_persist(
                 gas_offer_margin_zonal_anchor=True,
                 gas_offer_margin_anchor_by_zone=dict(
                     GAS_OFFER_MARGIN_ANCHOR_BY_ZONE[iso]
-                ),
-            )
-        if gas_offer_margin_zonal_anchor_vintage or getattr(
-            recorded_cfg, "gas_offer_margin_zonal_anchor_vintage", False
-        ):
-            # nyiso-230 — MIRROR of run_year's zone-resolved vintage
-            # resolution, and it must stay a mirror: the recorded config has to
-            # report the anchors the LP actually solved with, not the frozen
-            # window table above (rule 24 [R-REGISTRY]; the FFR-2E defect
-            # class). Deliberately AFTER the zonal block: that block writes the
-            # window table and this overwrites it with the solve year's own,
-            # which is the same order run_year applies. Computed on the SAME
-            # recorded config, which by this point carries the hub-overlay and
-            # monthly-actuals postures.
-            from market_sim.data.fuel.zonal_anchor import (
-                zonal_gas_anchors_for_year as _f5_zonal,
-            )
-
-            recorded_cfg = recorded_cfg.with_overrides(
-                gas_offer_margin_zonal_anchor_vintage=True,
-                gas_offer_margin_anchor_by_zone=_f5_zonal(
-                    recorded_cfg, cfg_year, int(hours)
                 ),
             )
         if coal_offer_margin:
@@ -5446,7 +5500,22 @@ def solve_and_persist(
             from market_sim.config.scenarios import ScenarioConfig
 
             recorded_cfg = ScenarioConfig.as_zero_forcing_ablation(recorded_cfg)
-        return recorded_cfg
+        # nyiso-231 — the gas-offer-margin vintage anchors are resolved HERE,
+        # FUSED TO THE RETURN, and nowhere else. `_gas_series` is only the series
+        # the offer path prices against once the run's WHOLE gas posture is on
+        # the config (`gas_hub_basis_overlay` is applied ~144 lines above), so a
+        # mirror placed mid-function measures a series no unit ever pays — which
+        # is exactly what nyiso-230's 2022 arm recorded (Capital_Hudson 7.0563
+        # against the 8.4431 the LP priced). Fusing it to the return makes the
+        # ordering structural: any new `if flag:` block lands ABOVE this line.
+        # DO NOT add config-mutating statements below it (rule 24 [R-REGISTRY]).
+        return mirror_solve_year_gas_anchors(
+            recorded_cfg,
+            cfg_year,
+            int(hours),
+            iso_vintage=bool(gas_offer_margin_anchor_vintage),
+            zonal_vintage=bool(gas_offer_margin_zonal_anchor_vintage),
+        )
 
     # OPT-IN --reuse-solved: decide up front which requested years may be
     # copied from the prior bundle instead of re-solved. Absent the flag this

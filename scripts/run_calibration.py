@@ -2524,7 +2524,18 @@ def run_year(
     # lookup indirection (rule 24 [R-REGISTRY]) and the cache key moves with it.
     # A zone-resolved anchor takes precedence and is never stacked on
     # (rule 19 [R-ONE-MECH]).
-    if gas_offer_margin_anchor_vintage:
+    # nyiso-231: honour EITHER the solve kwarg OR the registered ScenarioConfig
+    # field, the same way the zone-resolved block below already does. The field
+    # is the ONLY route `replay_keeper.py --set` has (that channel writes the
+    # field, never the kwarg), so a kwarg-only gate would let a --set A/B
+    # silently solve the CONTROL -- the nyiso-229 failure mode. It is also what
+    # keeps the recorded mirror honest: `_recorded_config`'s
+    # `mirror_solve_year_gas_anchors` gates on kwarg-or-field, so a field-armed
+    # solve that did NOT resolve here would record an anchor the LP never
+    # priced against (rule 24 [R-REGISTRY]).
+    if gas_offer_margin_anchor_vintage or getattr(
+        config, "gas_offer_margin_anchor_vintage", False
+    ):
         if not getattr(config, "gas_offer_net_revenue_margin", False):
             raise SystemExit(
                 "--gas-offer-margin-anchor-vintage requires --gas-offer-margin: "
@@ -2551,7 +2562,10 @@ def run_year(
             _f4_anchor,
             config.gas_offer_margin_anchor,
         )
-        config = config.with_overrides(gas_offer_margin_anchor=_f4_anchor)
+        config = config.with_overrides(
+            gas_offer_margin_anchor_vintage=True,
+            gas_offer_margin_anchor=_f4_anchor,
+        )
     # nyiso-230 — the ZONE-RESOLVED half of the same move. Placed here for the
     # same reason as the block above: `_gas_series` is only the series the offer
     # path prices against once `gas_hub_basis_overlay` and `gas_monthly_actuals`

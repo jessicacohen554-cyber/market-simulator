@@ -212,7 +212,15 @@ def test_the_kwarg_reaches_both_runners(module_path, func_name):
     "module_path,marker",
     [
         ("scripts/run_calibration.py", "config"),
-        ("scripts/run_calibration_full.py", "recorded_cfg"),
+        # nyiso-231: the recorded half moved out of an inline `recorded_cfg`
+        # block and into the shared `mirror_solve_year_gas_anchors` helper,
+        # fused to `_recorded_config`'s return, because the inline block
+        # resolved BEFORE `gas_hub_basis_overlay` was on the config and so
+        # recorded an anchor the LP never priced. The field-route duty this
+        # test pins is unchanged; only the parameter it reads is now `cfg`.
+        # Ordering itself is pinned by
+        # tests/unit/data/test_recorded_config_gas_anchor_mirror.py.
+        ("scripts/run_calibration_full.py", "cfg"),
     ],
 )
 def test_the_config_field_route_is_honoured_not_only_the_kwarg(module_path, marker):
@@ -231,8 +239,8 @@ def test_the_config_field_route_is_honoured_not_only_the_kwarg(module_path, mark
         f'        {marker}, "gas_offer_margin_zonal_anchor_vintage", False\n'
     )
     assert needle.strip() in " ".join(src.split()).replace("  ", " ") or (
-        "gas_offer_margin_zonal_anchor_vintage or getattr(" in src
-        and f'{marker}, "gas_offer_margin_zonal_anchor_vintage", False' in src
+        f'getattr(\n        {marker}, "gas_offer_margin_zonal_anchor_vintage"' in src
+        or f'{marker}, "gas_offer_margin_zonal_anchor_vintage", False' in src
     ), (
         f"{module_path} gates the vintage resolution on the kwarg alone — a "
         "--set probe would solve the control and record an armed config"
