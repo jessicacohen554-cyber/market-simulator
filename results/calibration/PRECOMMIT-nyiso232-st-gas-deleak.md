@@ -272,3 +272,103 @@ structurally-correct de-leak that removes a rule-25-prohibited value and costs a
 criterion on one out-of-training year — does the owner want it armed?** Rule 1 says a real market
 behaviour stays in even when it makes the fit worse; the owner's standing formula says a gate
 regression may still be a keeper. Both point one way, and neither is mine to decide.
+
+---
+
+# ADDENDUM A — OWNER RULING: **ARM IT.** The span is authorized and pre-registered here.
+
+**Date** 2026-09-13 · appended **before** the span solve is launched, per rule 29 `[R-SCREEN]` and
+rule 1 `[R-STRUCT]` (a value is declared ex ante, never selected against a gate).
+
+## A.1 The ruling, and what it settles
+
+The screen STOPPED on G-NONTARGET (C3a-2022 −9.86 % → −11.61 %) and §8 put the promotion question
+to the owner verbatim. **The owner ruled: "Arm it."**
+
+That is the disposition §8 named, and it is the one rule 1 `[R-STRUCT]` contemplates: *a real market
+behaviour stays in even if it makes the fit worse — then fix the actual root cause.* **The gate is
+NOT re-cut and the screen's STOP is NOT rescinded.** What changes is only who decided: a screen can
+kill an arm and never promote one, and it did not promote this one — the **owner** did, on the
+evidence the screen produced, which is exactly the division of authority rules 29 and 31 set up.
+
+**The C3a-2022 miss is therefore a KNOWN, ACCEPTED and REPORTED cost, not a discovered one.** It was
+pre-registered in §5 as the expected outcome before the solve; it is reported at full magnitude on
+the determination basis; and it is **not** absorbed, re-banded, or argued away.
+
+## A.2 The arming route — recipe-level, the minimal and reversible one
+
+`nyiso_st_gas_econ_bands_deleaked` is armed **on NYISO's keeper recipe** (the CLI flag, recorded in
+`meta.json` / `run_config.json`), and the `ScenarioConfig` dataclass default **stays `False`**.
+
+Route chosen to match the sibling exactly: nyiso-231 armed `gas_offer_margin_zonal_anchor_vintage`
+the same way ("ONE REGISTERED FIELD MOVES: False → True"), and NYISO's
+`iso_configs._nyiso_config` `default_scenario_overrides` carries **only** two capacity-requirement
+fields — no offer or anchor mechanism. So:
+
+* **zero cache keys move** for any other ISO or any other run — every committed bundle stays
+  byte-identical;
+* the flip is **reversible** by dropping one flag, and `--no-nyiso-st-gas-econ-bands-deleaked`
+  reaches the pre-arm posture and keeps its key;
+* **no declared default flip** is spent, so the `(b′-1)` cache-key machinery is untouched.
+
+## A.3 The span, pre-registered
+
+* **ONE shard, ONE `--years 2022 2023 2024 2025` invocation, ONE bundle** (rules 16 `[R-ALLYEARS]`,
+  32(b) `[R-SHARD]`), years sequential inside it (rule 12).
+* **Year set enumerated BEFORE anything is pruned** (rule 35(b) `[R-PROMOTE]`, because the prune
+  destroys the evidence): the union over **every** registered NYISO sidecar is
+  **{2022, 2023, 2024, 2025}** — one registered run, `2026-09-13-nyiso231-anchor-span`, with no
+  folded touchpoints. The span covers that union exactly, so rule 35(c) is met by the bundle itself
+  and no stamped companion is needed.
+* **ONE registered field moves**: `nyiso_st_gas_econ_bands_deleaked` `False → True`. Everything else
+  is the incumbent keeper's recipe, replayed.
+* The shard **pushes its bundle**, `dispatch/<year>_P1.parquet` included (rule 34
+  `[R-SHARD-PROMOTABLE]`).
+
+## A.4 WHAT IS PRE-REGISTERED AS EXPECTED — so the span cannot be read as a surprise
+
+Stated before the numbers exist, from the screen's measured 2022 leg and phase 0's four-year offer
+deltas (−$8.61 / −$3.17 / −$2.80 / −$5.41 per MWh):
+
+1. **C3a-2022 FAILS at ≈ −11.6 %.** Measured on the screen. This is the accepted cost.
+2. **C3a-2025 is the year at risk and is NOT yet measured.** It sits at −5.9 % with an econ-offer
+   delta of −$5.41/MWh — 63 % of 2022's. A proportional move would land it near **−7 to −8 %**,
+   inside ±10 %, but that is an extrapolation, not a measurement, and **2025 could also fail**.
+3. **C3a-2023 / 2024 have the smallest deltas** (−$3.17 / −$2.80) against residuals of +0.6 % and
+   +1.1 %, so both are expected to move *toward* zero and stay PASS.
+4. **C1 should improve**: ST_GAS under-runs in 2022/2024/2025 and the arm adds ST_GAS energy.
+   2023 is the exception — ST_GAS **over**-runs there (+1.989 TWh) and the arm makes that worse.
+5. **C8/D-2 is the open flag** (§A.5).
+
+**None of these is a gate.** The span is being spent on an owner ruling, not on a criterion, and
+every one of these numbers is reported at full magnitude whichever way it lands.
+
+## A.5 THE D-2 / C8 FLAG IS INVESTIGATED IN PARALLEL, AND IT IS NOT ASSUMED AWAY
+
+The screen's arm read **C8 FAIL** (2022 ST_GAS forced share 33.6 % > 30 %), driven **entirely** by a
+denominator that reconciles with no dispatch-side measurement in either leg (RESULT §7). **C8 is
+PROTECTIVE tier, and the caveat budget for protective caveats is ZERO** — so if the span reproduces
+it, the promoted keeper reads **NOT-YET** on that basis, independently of C3a.
+
+That is too important to leave at "uncorroborated". The parent therefore **investigates D-2's
+denominator at zero LP while the span solves**, on the two bundles already on disk. The three
+possible outcomes are named here, before the investigation, so the conclusion cannot be fitted:
+
+* **(i) a scorer defect in D-2's class attribution** under a tranche-structure change → the repair is
+  the scorer's, it is reported and handed to whoever owns `legitimacy_diagnostics.py`, and C8 is
+  re-scored on the corrected basis;
+* **(ii) a real forced-share increase** → C8 genuinely fails, the keeper reads NOT-YET on a
+  protective criterion, and that is reported as the cost of the arming rather than worked around;
+* **(iii) unresolved** → it is reported as unresolved and the keeper carries the C8 failure at full
+  magnitude.
+
+**No outcome is allowed to be selected by what it does to the determination**, and the arming
+proceeds either way because the owner ruled on the mechanism, not on the score.
+
+## A.6 WHAT THE PROMOTION WILL AND WILL NOT CLAIM
+
+The keeper will be promoted with its determination **reported as measured**, whatever that is. If
+the span reads NOT-YET — on C3a-2022, on C8, or both — **it is promoted as a NOT-YET keeper and
+said so plainly**, because the owner armed a structural repair and rule 1 `[R-STRUCT]` says a run is
+a keeper for being the most structurally faithful, not for having the lowest residual. **No caveat
+is ledgered that the rubric does not itself grant, and no gate is re-read.**
