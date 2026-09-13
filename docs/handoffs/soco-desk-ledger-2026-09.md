@@ -11,6 +11,60 @@ recreated fresh from `origin/main`.
 
 ## 0. Live state — newest entry FIRST
 
+### r#4 — 2026-09-13 — NOTHING LANDED, AND THAT IS THE FINDING: FIVE LANES ISSUED, ZERO DISPATCHED (main `33a7c961`)
+
+**Graded: nothing, because nothing exists to grade.** `git log cd09607a..origin/main --grep=SOCO -i`
+returns only this desk's own r#3 merge and NWPP commits. No branch matches any SOCO stem
+(`git ls-remote --heads origin | grep -i soco` → empty). No PR since **#6103** carries a SOCO lane.
+Five lanes stand issued and undispatched: **SOCO-13** and **SOCO-21** since r#2 (~8 h), **SOCO-14**,
+**SOCO-15** and **SOCO-22** since r#3 (~2 h).
+
+**THE CONTRAST IS THE EVIDENCE, and it is why this is not a harness problem.** In the same window
+the **NWPP** program dispatched and landed **three** lanes — NWPP-10 (#6104), NWPP-11 (#6105),
+NWPP-13 (#6106), all merged 15:50–15:51 — and NYISO-231, MISO-256, PJM-H3b, CAISO-281 and SPP-38
+all shipped besides. **Dispatch works everywhere except here.** Issuance is this desk's act;
+dispatch is not, and the desk has now measured the gap rather than assuming a lane was slow.
+Under gate **G15** none is graded LOST.
+
+**Card served and RULED (owner, r#4): "Re-emit all five as one paste-ready block."** All five
+re-pinned to `33a7c961` and emitted in dependency order in the sitting report. The desk's own
+reading, recorded because it shaped the option set: the five are **file-disjoint** and NWPP just
+demonstrated three-way concurrency without collision, so serialising them buys nothing.
+
+**A REGISTRATION PIN THIS PLAN WAS MISSING, FOUND BY ANOTHER PROGRAM.** NWPP-10 flagged
+`ISO_TO_BA_CODE` as "the W2 novel change" its plan had missed. **SOCO's §2.3 had missed it too**,
+and the desk verified the consequence in the live code rather than taking the report on trust:
+`data/zone_assignment.py:69` is a **7-key dict pinned to `SUPPORTED_ISOS`**, and `:1092` indexes it
+bare — `df[ba == _ISO_TO_BA_CODE[iso]]` — so a registered SOCO without a key raises **`KeyError`**,
+not a fallback. Added to §2.3 as a SOCO-20 checklist row. SOCO's case is trivial (`"SOCO": "SOCO"`,
+the BA code and the registry key being the same string); NWPP's is not, and its 17→1 map fails
+**silently** at 13 call sites. **The lesson is the transfer, not the fix**: two addition programs
+chartered four days apart both missed the same pin, so a §2.3-style atomicity list is only as good
+as the last program that stress-tested it.
+
+**Also carried to SOCO-13 in its re-emission: NWPP-13 is its sister lane and it has already run.**
+Its WEIM STOP gate read **NO** (on-peak 22.6–37.5 % below Mid-C against a ±10 % bar; daily corr
+0.74/0.95/0.67 against ≥0.80), the gate was fixed **ex ante** in a pushed PRECOMMIT before any value
+was read, **no bar was moved afterwards**, and the lane landed nothing to `_validation-source`. That
+is exactly the discipline SOCO-13's charter demands, now with a worked precedent in the same repo.
+SOCO-13's re-emission also carries the anchor candidate **SOCO-12** found after its charter was
+written — the SEEM Independent Market Auditor's public monthly price series, 2022-11 → 2026-07.
+
+**Gates at `33a7c961`** — unchanged from r#3; the base-branch debt persists:
+
+| Gate | Exit |
+|---|---|
+| `audit_keepers.py --check` | **1 — RED** (MISO E13 ×4) |
+| `check_registry_payload_parity.py` | **1 — RED** |
+| `check_gate_a_provenance.py` | **1 — RED** (MISO + NYISO) |
+| `check_mechanism_matrix.py` · `check_bench_freshness.py` · `check_golden_manifest.py` | 0 |
+| `ci_refactor_guards.py` | **UNREAD** — `numpy` absent in a `DATA PROFILE: code` container |
+
+**Next act:** sitting #5 — grade whichever of the five land, BY CONTENT. **SOCO-20 is issuable the
+moment SOCO-15 lands and G22 is discharged**; nothing else blocks it.
+
+---
+
 ### r#3 — 2026-09-13 — ALL THREE W1 LANES LAND AND GRADE PASS · SEVEN CARDS RULED · THE EVIDENCE INVERTED TWO OF THE DESK'S OWN RECOMMENDATIONS (main `c93b0d27`)
 
 **Graded BY CONTENT, not by claim** — each FINDING opened and checked against what its dispatch
@@ -280,12 +334,12 @@ option (a)).
 | SOCO-10 audit | OPUS | W1 | **LANDED r#3 — GRADED PASS** | PR #6091 (`a23a4212`, `b4d0dd92`) | `FINDING-soco-10-2026-09-13.md` + `soco-data-audit.md` |
 | SOCO-11 CEMS + FERC-714 + interchange | OPUS | W1 | **LANDED r#3 — GRADED PASS**, gate failure included | PR #6083 | `FINDING-soco-11-2026-09-13.md` |
 | SOCO-12 documents + gas | OPUS | W1 | **LANDED r#3 — GRADED PASS**; gate G12 MET | PR #6092 (`738fc0ab`, `98c1fd92`) | `FINDING-soco-12-2026-09-13.md` |
-| SOCO-13 EQR price index | FABLE | W1 | **ISSUED r#2, NOT LANDED at r#3** — dispatch status asked, not inferred (G15). SOCO-12 handed it a new STOP-gate anchor candidate | — | — |
-| SOCO-14 BA membership | OPUS | W1 | **ISSUED r#3** — created by card S3's ruling; gate G22 | — | — |
-| SOCO-15 COD seam (cross-ISO) | FABLE | W1.5 | **ISSUED r#3** — card S12; **must land before SOCO-20** | — | — |
-| SOCO-22 rubric class | FABLE | W1.5 | **ISSUED r#3** — card S11; **W4 cannot score without it** | — | — |
+| SOCO-13 EQR price index | FABLE | W1 | **ISSUED r#2, RE-EMITTED r#4** — undispatched ~8 h; carries SOCO-12's anchor candidate and NWPP-13's worked precedent | — | — |
+| SOCO-14 BA membership | OPUS | W1 | **ISSUED r#3, RE-EMITTED r#4** — undispatched; gate G22 blocks SOCO-32 | — | — |
+| SOCO-15 COD seam (cross-ISO) | FABLE | W1.5 | **ISSUED r#3, RE-EMITTED r#4** — undispatched; **blocks SOCO-20** | — | — |
+| SOCO-22 rubric class | FABLE | W1.5 | **ISSUED r#3, RE-EMITTED r#4** — undispatched; **W4 cannot score without it** | — | — |
 | SOCO-20 registration | FABLE | W2 | **UNBLOCKED ON CARDS AND ON G12** (S3–S8 all ruled r#3; G12 MET by SOCO-12). Now blocked only on **SOCO-15 landing** (card S12) and **G22** (SOCO-14's citation). Issuable at sitting #4 | — | — |
-| SOCO-21 matrix shard | OPUS | W2 | **ISSUED r#2, NOT LANDED at r#3** — dispatch status asked, not inferred (G15) | — | — |
+| SOCO-21 matrix shard | OPUS | W2 | **ISSUED r#2, RE-EMITTED r#4** — undispatched ~8 h | — | — |
 | SOCO-30/31/32/33/34 | OPUS | W3 | BLOCKED on SOCO-20 | — | — |
 | SOCO-40 first solve | FABLE | W4 | BLOCKED on SOCO-30/31/32 **and on card S11** — the scorer cannot express S2's determination class yet | — | — |
 | SOCO-22 rubric class | FABLE | W2/W3 | **NOT ISSUED** — card S11 (sitting #3) decides whether this desk charters it or routes it | — | — |
@@ -342,6 +396,7 @@ option (a)).
 | r#0 | 2026-09-12 | none (charter commit) | none |
 | r#1 | 2026-09-13 | **SOCO-10, SOCO-11, SOCO-12** (plan §8 W1, verbatim, pinned `2c2fc065`). SOCO-13 HELD on card S2 | **S1, S2** |
 | r#2 | 2026-09-13 | **SOCO-13** (plan §8 W1, verbatim, pinned `7404ef12` — S2 ruled) · **SOCO-21** (plan §8 W2, verbatim, pinned `7404ef12` — S1 ruled, C-2 lifted) | **S1 RULED, S2 RULED**; **S11 raised**, due sitting #3 |
+| r#4 | 2026-09-13 | **RE-EMITTED all five undispatched lanes** — SOCO-13, SOCO-14, SOCO-15, SOCO-21, SOCO-22 — as one paste-ready block pinned `33a7c961`, in dependency order (owner ruling r#4). No new lane created | dispatch card SERVED and RULED |
 | r#3 | 2026-09-13 | **SOCO-14** `[OPUS]` · **SOCO-15** `[FABLE]` · **SOCO-22** `[FABLE]` — all three created by this sitting's rulings, pinned `c93b0d27`. None existed in the charter's prompt pack, so all three are written charters rather than verbatim copies (plan §5 rows added) | **S3, S4, S5, S6, S7, S11 RULED; S12 raised AND ruled**; S8 answered/superseded; S9 still deferred |
 
 ## 6. Errors against interest
