@@ -52,8 +52,31 @@ Writes one long-format Parquet per year to
 `scripts.lib.clean_io.write_clean` seam (schema:
 `data/dictionary/schema/dam-public-bids.schema.yaml`).
 
-DATA NEEDED: RTM public bids (`PUB_RTM_GRP`) are not fetched — the derive
-charter (measured DAM offer surface, C1 lane 2026-07-16) needs DAM only.
+RTM public bids (`PUB_RTM_GRP`) — **OWNER-FUNDED 2026-09-13 (caiso-281), no
+longer a standing DATA NEEDED gap.** The original charter (measured DAM offer
+surface, C1 lane 2026-07-16) needed DAM only. What reopened it: the DAM-derived
+ladder is scored against a REAL-TIME benchmark — `calibration_verdict` gates C3a
+on `rt_lw` because a perfect-foresight dispatch LP is a real-time analogue and
+the DART premium is a forward risk premium the LP has no mechanism to price —
+so the model's marginal-cost input and its benchmark sit on different bases.
+caiso-281 measured that mismatch (CAISO implied marginal-HR bias +0.533,
+t = +4.03 vs RT; −0.158, t = −0.80 vs DA) and the owner funded the intake that
+can say which side is wrong.
+
+Layout, kept deliberately separate so no glob can pool the two market runs:
+
+    data/raw/caiso-public-bids/zips-rtm/<YYYYMMDD>_PUB_BID_RTM_v3_csv.zip
+
+Fetched by the same downloader with `--market rtm`
+(`scripts/data/fetch_caiso_public_bids.py`; `--market dam` is the default and
+its URL, filename and `zips/` directory are byte-unchanged). Charter and the
+pre-registered comparison rule:
+`docs/PRECOMMIT-caiso281-rtm-offer-surface-intake-2026-09-13.md`.
+
+DATA NEEDED: RTM coverage is being fetched quarter by quarter and the OASIS
+retention boundary for the bid archive is UNCONFIRMED (register item N-CA-1
+records the LMP boundary at 2023-04-19 as the strong prior). Per-quarter
+coverage is recorded by each shard's FINDING doc as it lands.
 
 ## Intake status (caiso-178, 2026-08-06)
 
