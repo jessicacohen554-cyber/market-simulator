@@ -21,6 +21,23 @@ the BA reports. Consumed by `src/market_sim/data/eia_loader.py`
 | MISO | MISO | 2018-01-01 .. 2026-06-30 (2019-2021 backfilled 2026-07-06; 2018 + H1-2026 landed 2026-07-08; **2022 filled 2026-07-31**) |
 | SOCO | — (Southern Co, not a modeled ISO) | 2022-12-31 .. 2025-12-31 |
 | FLA | — (Florida, not a modeled ISO) | 2022-12-31 .. 2025-01-31 |
+| BPAT | — (NWPP, not a modeled ISO) | 2023-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11) |
+| PACE | — (NWPP, not a modeled ISO) | 2023-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11) |
+| PACW | — (NWPP, not a modeled ISO) | 2023-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11) |
+| PGE | — (NWPP, not a modeled ISO) | 2023-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11) |
+| PSEI | — (NWPP, not a modeled ISO) | 2023-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11) |
+| AVA | — (NWPP, not a modeled ISO) | 2023-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11) |
+| IPCO | — (NWPP, not a modeled ISO) | 2023-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11) |
+| NWMT | — (NWPP, not a modeled ISO) | 2023-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11) |
+| CHPD | — (NWPP, not a modeled ISO) | 2023-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11) |
+| DOPD | — (NWPP, not a modeled ISO) | 2023-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11) |
+| GCPD | — (NWPP, not a modeled ISO) | 2023-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11) |
+| SCL | — (NWPP, not a modeled ISO) | 2023-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11) |
+| TPWR | — (NWPP, not a modeled ISO) | 2023-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11) |
+| AVRN | — (NWPP, not a modeled ISO) | 2023-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11) |
+| GRID | — (NWPP, not a modeled ISO) | 2023-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11) |
+| WAUW | — (NWPP, not a modeled ISO) | 2023-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11) |
+| NEVP | — (NWPP, not a modeled ISO) | 2023-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11) |
 
 2018 H1 (Jan-Jun) carries demand/net-generation/total-interchange only — EIA-930
 per-fuel reporting hadn't started yet for any of these three BAs (`NG: *` columns
@@ -225,3 +242,71 @@ Option-2 intake (owner-authorized 2026-07-31), no-LP validation only.
 The fill also flushed out a latent `parse_miso_shares` bug the empty 2022 had
 been masking — see `scripts/data/curate_zonal_shares.py` and
 `docs/iso-2022-holdout-data-availability-audit-2026-07.md` §7.1.
+
+## The 17 NWPP balancing authorities (2026-09-13, NWPP-11)
+
+`BPAT PACE PACW PGE PSEI AVA IPCO NWMT CHPD DOPD GCPD SCL TPWR AVRN GRID WAUW
+NEVP`, 2023-2025, **DERIVED from the committed BALANCE archive — no fetch, no
+`EIA_API_KEY`, no network call** (`docs/multi-iso/nwpp-addition-plan-2026-09.md`
+§2.5, §6 row 2; `docs/handoffs/FINDING-nwpp-11-2026-09-13.md`). Every one of the
+17 is already present in `data/raw/eia-930/EIA930_BALANCE_<yr>_<half>.parquet`,
+which covers 2019-01 .. 2026-06 for all 62 EIA-930 BAs, so the per-BA load spine
+for this footprint is a derive from bytes the repo already holds:
+
+    python scripts/data/build_nwpp_ba_hourly_from_balance.py --all-nwpp
+
+That script is the **create** counterpart of `extend_eia930_hourly_from_balance
+.py`'s **extend**: the latter reads an existing extract to learn the target
+column layout and so cannot open a BA that has none. Every value mapping is
+imported from it and reused verbatim (rule 23 `[R-FROZEN-DERIVE]`).
+
+**Two properties of these files differ from the older siblings — both
+deliberate, both documented rather than chosen:**
+
+1. **Three APPENDED columns**: `Demand (Adjusted)`, `Net generation (Adjusted)`,
+   `Total interchange (Adjusted)`, carrying EIA's own screened/imputed region
+   series alongside the raw one. The plan's §2.5 defect screen found 30 bad
+   hours in 394,424 (worst: AVA 810,948 MW at 2025-10-12 10:00 UTC against a
+   ~2.5 GW true peak; NWMT 100,285; NEVP ~68-70 GW in six hours; PACE 65,826;
+   SCL -54,511), and the `(Adjusted)` family screens every one of them — the
+   per-BA raw/adjusted peaks are in the FINDING's table. **NWPP-10 owns the
+   ruling on which family every downstream NWPP series reads**; until it lands,
+   both are carried, complete and unchosen. All three region series are carried
+   rather than demand alone so the `D = NG - TI` triple stays internally
+   consistent whichever family is selected. Note the `(Adjusted)` series is
+   *imputed as well as screened*, so it can be LARGER than the raw one (SCL
+   2025: 9.476 vs 9.420 TWh).
+   The first 17 columns are byte-identical in name, order and arrow type to
+   `SWPP hourly.parquet`, asserted at write time by the script's
+   `verify_schema`.
+2. **No `NG: GEO` column.** The siblings' 17-column layout has none, the
+   pre-mid-2024 taxonomy does not break geothermal out at all, and adding the
+   column would make the same energy jump from `NG: OTH` to `NG: GEO` at the
+   2024 H2 boundary. Folding it into `NG: OTH` in both eras is
+   `extend_eia930_hourly_from_balance`'s own `_NEW_OPTIONAL_MAP` convention.
+   Measured magnitude: **IPCO only, 240,452 MWh over 2024H2-2025**; every other
+   NWPP BA reports zero.
+
+**The taxonomy split is load-bearing and is the one real trap here.**
+`build_new_rows` detects EIA's mid-2024 revamp with `any("Excluding Pumped
+Storage" in c)` over the *concatenated* frame, so a single call spanning the
+switch reads as new-taxonomy for **all** rows and returns NaN for every legacy
+row's hydro, coal, solar and wind (measured: BPAT 2023-01-01 01:00 local, real
+`NG: WAT` 5,324 MW arriving as NaN). The create script therefore calls it once
+per `(year, half)` and concatenates. Era boundary at this pin, detected from
+each file's own schema, never assumed: **legacy = 2023 Jan_Jun, 2023 Jul_Dec,
+2024 Jan_Jun (44 cols); new = 2024 Jul_Dec onward (65 cols)**.
+
+**Reconciliation gate — all 17 BAs x 3 years pass at exactly zero.** The derive
+selects, renames and narrows to the sibling schema's float32; it never
+transforms a value, so the gate is element-wise exact identity against the
+BALANCE source (`mismatched_hours` and `unmatched_hours` both 0) plus a
+zero-to-the-MWh annual residual on both the raw and adjusted demand series.
+Hour grids are complete: 8,760 / 8,784 / 8,760 rows per BA per year.
+Footprint demand 284.26 / 291.58 / 294.87 TWh (2023/2024/2025).
+
+**AVRN and GRID are generation-only balancing authorities** — `Demand` is null
+in all 26,304 hours of each, in the source and therefore in these files. That is
+structure, not a gap: they hold generation (AVRN 2,848.7 MW wind/solar, GRID
+689.4 MW) and no load, and they are not zone candidates on the load side.
+Nothing is padded or interpolated to hide it.
