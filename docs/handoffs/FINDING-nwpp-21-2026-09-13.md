@@ -297,7 +297,46 @@ no `docs/calibration-log/nwpp.md`, no `CHANGELOG.md`. `docs/mechanism-testing-ma
 §5 is the single shared record the charter explicitly grants, and this lane
 edited **only** its own new §5.8 plus the one renumbered heading below it.
 
-## 5. Log entry (for the desk to append verbatim)
+## 5. CI at the PR, and the rebase
+
+PR **#6115**. **No merge conflict.** Seven checks red on run `34769224905`, and
+**none is this PR's** — six were re-run locally at `origin/main` `33a7c961`
+(this PR's own base, with this lane's commit checked out of the tree entirely)
+and failed **identically** there: Ruff (`gen_nyiso229_attestation.py` F401 +
+F841), refactor guards (`run_calibration_full.py` → missing
+`test_recorded_config_gas_anchor_mirror.py`), pinned cache key
+(`test_solve_surface_fingerprint_is_pinned[NYISO]`, 210 vs 209 rows),
+keeper-integrity (MISO E13 ×4 + E3, status staleness), FR-21 (superseded
+gate-(a) markers for MISO/NYISO/SPP), FR-22 (NYISO
+`gas_offer_margin_zonal_anchor_vintage`). The seventh, Fast test tier, names
+ERCOT keeper partition ids, `ercot_ep_gas_basis_receipts_fallback`, NEISO
+Mystic CC, `get_rps_target("SPP")` and a missing
+`shard-artifacts/nyiso223/2022/run_config.json`; its representative case
+(`test_unregistered_iso_is_none`, which asserts on **SPP**) reproduces locally.
+
+This diff touches zero files under `src/`, zero `frontend/data/**`, no
+`ScenarioConfig` field and no registry value, so it cannot reach any of them;
+`ruff check` and `ruff format --check` are clean on all three Python files it
+does touch. **No fix exists to port and each red is owned elsewhere** — sibling
+PRs #6111, #6113 and #6114 route the same set at the same base, and `ci.yml`'s
+own header has carried three as known-red-on-main since 2026-08-14. Fixing them
+here would mean editing four other lanes' files, which §8.0 rules 1 and 5
+forbid. **ROUTED TO NWPP-DESK, not absorbed.** Note there is no `push: main`
+trigger on `ci.yml`, so no main-branch run exists to cite — hence the
+base-commit reproduction, which is the stronger evidence. Standing-down
+comment: PR #6115 comment `5654692260`.
+
+**Rebased onto `0c39824c`** (main advanced: SOCO-22 rubric v3.8, caiso-281) per
+§8.0 rule 3 — clean, no conflict — and **re-counted at the new base** rather
+than trusting §0's numbers: base `isos` still 7 → 8 with this PR, 327 rows, 327
+NWPP cells, coverage exact. **SOCO-21's shard (#6117) has not landed**, so NWPP
+remains the eighth column and `W` is still free; whichever of the two merges
+second re-counts, exactly as gate G2 anticipates. At the new base:
+`check_mechanism_matrix.py` exit 0, and exit 0 again with `--base origin/main`
+so the rule-28(c) diff gate is exercised; 33 matrix tests pass; zero non-NWPP
+drift; rule-27 fetch-back re-verified.
+
+## 6. Log entry (for the desk to append verbatim)
 
 > **NWPP-21 — 2026-09-13 — matrix shard (Opus, zero LP).** The eighth
 > mechanism-matrix shard `docs/codebase-site/data/mechanism-matrix/NWPP.js` is
