@@ -2055,3 +2055,10 @@ results/calibration/miso255_promote_*/
 # (17 files incl. dispatch/2022_P1.parquet, 94,946,961 bytes. The original slim-only
 #  2022 leg stays at 74171ce23325f3cdb97b484f43423af51bb2202d and is superseded.)
 results/calibration/miso255_promote2022b/
+
+# caiso-279 ablation arm bundles (rule 29 [R-SCREEN] (c) / rule 31 [R-RETAIN]):
+# kept OUT of `main` by ignoring, never deleted from disk. Every number the lane
+# cites lives in RESULT-caiso279-*.md. Recovery by IMMUTABLE SHA (rule 33(d)):
+#   git checkout b17ac9d0f8b505d542f279356d5300888c69a70f -- results/calibration/caiso279_ablate_dswcouple_2022
+results/calibration/caiso279_ablate_dswcouple_2022/
+results/calibration/caiso279_ablate_dswcouple_span/
