@@ -1,0 +1,16 @@
+{
+ "id": "2026-09-13-nyiso231-anchor-span",
+ "label": "nyiso-231 zonal anchor vintage span",
+ "date": "2026-09-13",
+ "shorthand": "nyiso231-anchor-span",
+ "definition": "nyiso-231: the 2026-09-12-nyiso229-hourgrain-span keeper recipe with ONE registered field moved, gas_offer_margin_zonal_anchor_vintage False -> True \u2014 the gas_offer_net_revenue_margin mechanism's identification point resolved on (ZONE, SOLVE YEAR) instead of on the frozen 2023-2025 window mean. ZERO free parameters (rule 21 [R-DOF]): the formula is derive_gas_offer_margin_anchor.derive_zonal_anchors' own, which already computes {zone: {year: mean}} and then averages the year index away to build the registered table \u2014 only the index it is evaluated on moves. NOT the rule 1 [R-STRUCT] offer-curve carve-out: no band multiplier moves in any year (G-SCOPE measured 0 moved). Solved 2022-2025 in ONE invocation into ONE bundle (rules 16 [R-ALLYEARS], 32(b) [R-SHARD], 34(c) [R-SHARD-PROMOTABLE]) ON-PIN at highspy 1.14.0. Per-year resolved anchors reproduce PRECOMMIT Addendum A to 4 dp in all five zones and all four years. Records: results/calibration/PRECOMMIT-nyiso231-mirror-repair-rescreen.md, docs/RESULT-nyiso231-the-mirror-and-the-2022-rescreen-2026-09-13.md.",
+ "years": [
+  2022,
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "NYISO",
+ "file": "frontend/data/backcast/runs/2026-09-13-nyiso231-anchor-span.js",
+ "bundle": "results/calibration/nyiso231_anchor_span"
+}

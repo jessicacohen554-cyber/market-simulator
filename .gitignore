@@ -2075,3 +2075,11 @@ results/calibration/miso255_promote2022b/
 #   git checkout b17ac9d0f8b505d542f279356d5300888c69a70f -- results/calibration/caiso279_ablate_dswcouple_2022
 results/calibration/caiso279_ablate_dswcouple_2022/
 results/calibration/caiso279_ablate_dswcouple_span/
+
+# nyiso-231: the on-pin solver-version CONTROL probe. Never registered (rule 29
+# [R-SCREEN] (c) — a control bundle must not reach main), kept on local disk
+# (rule 31 [R-RETAIN]). Every number it produced is in
+# docs/FINDING-nyiso231-the-keeper-is-off-pin-2026-09-13.md; the bytes are
+# recoverable at git checkout 687f299f044ec8ff9df958c5e4121bd35853ade2 --
+# results/calibration/nyiso231_ctl_y2022
+results/calibration/nyiso231_ctl_y2022/
