@@ -2120,3 +2120,5 @@ results/calibration/nyiso231_arm_y2022/
 # re-solve (rule 34 [R-SHARD-PROMOTABLE]): 17 files incl. dispatch/2022_P1.parquet, at
 #   git checkout 786affd47cf95334aa1fc7579135c230492f1296 -- results/calibration/pjmh3_syncarm_2022
 results/calibration/pjmh3_syncarm_2022/
+
+!results/calibration/soco15_spp_arm/**
