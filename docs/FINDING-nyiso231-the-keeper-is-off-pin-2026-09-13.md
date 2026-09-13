@@ -21,6 +21,9 @@ The nyiso-231 handoff carried forward, as a program-level open item:
 | "meta.json **records no package set**" | **FALSE** | Every one of the **41** committed bundles carries `environment.packages` AND a top-level `highspy_version`. Zero bundles lack it. |
 | "**no bundle records which HiGHS** it solved on" | **FALSE** | All 41 do. Distribution: **36 × 1.14.0, 5 × 1.15.1**. |
 
+**Headline, after §2b measured it:** the record is wrong in 5 bundles; **the results are not**. The
+actionable residue is one mechanical check, not a re-solve.
+
 The note is retired and replaced by §2, which is a smaller, sharper and *actionable* problem.
 
 ## 2. The real finding: 5 of 41 bundles were solved OFF-PIN, and one of them is a designated keeper
@@ -46,9 +49,52 @@ NYISO's:**
   ISO's shard).
 * CAISO, MISO, NEISO, PJM and SPP keepers are all on-pin.
 
-**What it means, stated plainly: the NYISO keeper is not reproducible at HEAD.** A replay at HEAD's
-pins solves on highspy 1.14.0 against a keeper solved on 1.15.1, so it is not a replay — it is a
-different solve. That is a reproducibility defect in the keeper, not a cosmetic bookkeeping issue.
+**What it means — and §2b MEASURES it, which overturns the sentence this paragraph originally
+carried.** I first wrote here that "the NYISO keeper is not reproducible at HEAD … a replay at
+HEAD's pins is not a replay, it is a different solve." **That was a prediction, and it is wrong.**
+§2b measured it: the numbers are reproducible on-pin, exactly. What survives is narrower and true —
+the keeper's *environment record* does not match the repo's pins, which is a bookkeeping defect
+worth a mechanical check, not a reproducibility defect in its results.
+
+## 2b. THE MEASUREMENT: the solver-version effect on NYISO 2022 is EXACTLY ZERO
+
+`results/calibration/nyiso231_ctl_y2022` — the 2022 control recipe re-solved ON-PIN (highspy
+1.14.0, pandas 3.0.3, pyarrow 24.0.0, pydantic 2.13.4) at code SHA `0acedb7e`, against the committed
+OFF-PIN control `nyiso229_arm_y2022` (1.15.1 / 3.0.5 / 25.0.1 / 2.13.5). Same recipe, same year,
+same code.
+
+| | on-pin 1.14.0 | off-pin 1.15.1 | delta |
+|---|---:|---:|---:|
+| load-weighted LMP $/MWh | 67.657293 | 67.657293 | **+0.000000** |
+| simple mean price $/MWh | 64.545842 | 64.545842 | **+0.000000** |
+| served TWh | 152.681670 | 152.681670 | **+0.000000** |
+| mean reserve price $/MWh | 0.346557 | 0.346557 | **+0.000000** |
+| hours > $300 | 4 | 4 | **0** |
+
+* **All 52,560 hourly ZONAL prices identical to 1e-9** — 100.0000 %, max &#124;Δ&#124; 0.0000.
+  Prices are the LP's duals (rule 4 `[R-DUALS]`), so this is the strictest test available and it is
+  the one the degeneracy concern was about.
+* **All 6,648,840 unit-hours identical to 1e-9 in `mw`, `mc` AND `cap_mw`** — max &#124;Δ&#124;
+  0.0000000000 on each.
+* **Every one of the 16 class energies identical to 10 decimal places**, max &#124;Δ&#124;
+  0.0000000000 TWh.
+
+**Three things this settles.**
+
+1. **The degeneracy worry does not bite here.** The concern was sound in principle — a degenerate
+   LP's optimal basis, and hence its duals, need not be version-stable — and it is measured inert
+   for this model on this year. HiGHS 1.14.0 and 1.15.1 return the same basis.
+2. **Rule 29(b) form 4 is VINDICATED, not broken.** The committed keeper bundle is a valid control
+   for this lane despite the package mismatch. The G-DRIFT gap named in §3 is real as a matter of
+   specification — it audits code, not environment — but it is **empty in practice here**, and
+   nobody should spend a control solve on this question again for NYISO without new evidence.
+3. **nyiso-230's +5.470 $/MWh was NOT contaminated.** Its arm(1.14.0) − control(1.15.1) is two
+   deltas only in form; the second is exactly zero, so the difference is the mechanism's, as that
+   session reported it.
+
+**What it does NOT establish.** One ISO, one year, one version pair. It is not a general claim that
+HiGHS versions never move this model's duals, and a future version bump earns the same measurement
+rather than a citation of this one.
 
 ## 3. Why it matters to rule 29(b) specifically, and what it does NOT say
 
@@ -98,12 +144,13 @@ The lane does **not** act on this beyond §4. Two routes, and they are not equiv
   and the three off-pin ERCOT bundles too. Risk: it moves the solver for **all seven** ISOs, so
   every other keeper — all on-pin at 1.14.0 today — becomes the off-pin one, inverting the problem
   onto six ISOs instead of fixing it for one. **Not recommended.**
-* **(ii) Keep the 1.14.0 pins and re-solve NYISO on them.** Cost: the four NYISO years. Makes NYISO
-  match the other six ISOs and the repo's own pin. **Recommended — and it is nearly free here**,
-  because if this lane's span is promoted it will be solved on-pin anyway, so the promotion
-  *repairs the pin defect as a side effect*. That is a reproducibility gain in the rule-14
-  `[R-ACCURATE]` family and it is independent of the mechanism's own merits, so it is reported as a
-  benefit of the span and **not** counted as evidence for the mechanism.
+* **(ii) Keep the 1.14.0 pins and let NYISO's next keeper land on them.** Cost: **zero**, now that
+  §2b has measured the numbers to be identical either way. If this lane's span is promoted it will
+  be solved on-pin and the record corrects itself; if it is not, the incumbent keeper's numbers are
+  demonstrably the same numbers the pins produce, so nothing is owed. **Recommended.**
+  *(This clause originally argued the promotion would "repair a reproducibility defect" and counted
+  that as a benefit of the span. §2b removes that argument: there is no defect in the results to
+  repair, only in the record. The span must stand on the mechanism alone.)*
 
 **A third item, cheap and worth doing whichever route wins:** nothing in the repo compares a
 bundle's recorded `environment.packages` against `requirements.txt`. The audit in §2 is nine lines of
