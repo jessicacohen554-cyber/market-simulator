@@ -79,6 +79,7 @@ EIA-930 normalized per-fuel generation distribution + the demand series).
 | ISO-NE | `ISNE` | `ISNE hourly.parquet` | **present** |
 | MISO | `MISO` | `MISO hourly.parquet` | **present** |
 | SPP | `SWPP` | `SWPP hourly.parquet` | **present** (2015-07 → 2026-05; 8,760/8,784/8,760 rows for 2023/24/25. ⚠ **three defective hours** in the training window and `NG: BAT` 100 % null before 2026 — `spp-data-audit.md` §3.3–§3.4) |
+| SOCO *(chartered, not registered)* | `SOCO` | `SOCO hourly.parquet` | **present** — 26,304 rows, a **complete UTC block** 2023-01-01 00:00 → 2025-12-31 23:00 (zero gaps, zero duplicate UTC hours); local-date counts 8,760 / 8,784 / **8,753** for 2023/24/25. **Local columns are `America/Chicago`, DST-aware, hour-ending** — 0 mismatches in 26,304 h (`soco-data-audit.md` §3.4). ⚠ **2025's 7-hour shortfall is a UTC-bounded fetch, not missing data** (§3.2 — extend by 7 h, never pad). ⚠ **Four `NG: NG` ≈ 70 GW artifact hours, 595 h of broken `Demand + TI = NetGen` identity in 2025, one 1-h partial demand dropout — no existing screen catches any of them** (§3.5). ⚠ `NG: BAT`/`PS`/`SNB`/`OES` null before **2024-07-15** (EIA taxonomy cut-over) and again 2024-07-16 → 2025-01-06, so **pumped storage is unobservable for 2023 and most of 2024** (§3.3). No wind in the footprint: `NG: WND` ≡ 0 |
 
 Each file must span all target backcast years and carry, at minimum, hourly
 demand and the per-fuel generation series (coal, gas, nuclear, hydro, wind,
@@ -116,6 +117,7 @@ NC, ND, NH, NJ, NY, OH, PA, RI, SD, TN, TX, VA, VT, WI, WV` (34 states).
 | PJM | DE, IL(ComEd), IN, KY, MD, MI, NC, NJ, OH, PA, TN, VA, WV, DC | all 14 | — |
 | MISO | AR, IA, IL, IN, KY, LA, MI, MN, MO, MS, ND, SD, TX, WI | **all 14** | — (LA_2023 was the last gap, filled 2026-06-22) |
 | SPP | AR, **CO**, IA, KS, LA, MN, MO, MT, ND, NE, NM, OK, SD, TX (**not WY**) | AR, IA, KS, LA, MN, MO, MT, ND, **NE, NM, OK**, SD, TX | **— (closed 2026-09-06, lane SPP-11)**; CO needs none — no CEMS-eligible unit |
+| SOCO *(chartered, not registered)* | **AL, GA, MS, FL** (panhandle; **not MA** — the one `MA` row is a BA-code source defect, `soco-data-audit.md` §2.6a) | **MS only** (2019–2026) | **`AL_2023`, `AL_2024`, `AL_2025`, `GA_2023`, `GA_2024`, `GA_2025`** — plus `AL_2026`/`GA_2026` on the SPP-11 precedent and `FL_2023..2025` (§2.3 priority 3). **THE PROGRAM'S CRITICAL PATH** |
 
 Notes:
 - **MISO is complete:** all 14 footprint states now have 2023–2025 unit-level
@@ -139,6 +141,17 @@ Notes:
   **44.9 % of SPP's CEMS-eligible fossil MW**, including **61.2 % of gas-CC**,
   **60.1 % of gas-ST**, **37.1 % of coal** and **31.8 % of gas-CT** — which is why it
   was the SPP program's critical path (`spp-addition-plan-2026-09.md` §4).
+- **SOCO's CEMS gap is OPEN and is twice as severe as SPP's ever was.** There is
+  **no `AL_*`, no `GA_*` and no `FL_*` parquet for any year**; only `MS` is present.
+  Measured from EIA-860 `Balancing Authority Code == "SOCO"`
+  (`soco-data-audit.md` §2.4), the gap is worth **91.6 % of SOCO's CEMS-eligible
+  fossil MW** — 45,797.3 MW of 50,005.0 — including **91.0 % of coal** and
+  **90.5 % of gas-CC**. (SPP's equivalent at its own Phase-0 audit was 44.9 %.)
+  `campd.ISO_STATES["SOCO"]` should read `("AL", "GA", "MS", "FL")`: FL holds only
+  102.0 MW of CEMS-eligible fossil at one industrial-CHP site, but listing it costs
+  nothing — `load_campd_hourly` filters every loaded state to the ISO's own fleet —
+  and it is what makes the FL footprint adjudication checkable against metered data.
+  Fetch route and exact URLs: `soco-data-audit.md` §9 manifest row 1. Lane **SOCO-11**.
 - The **exact** state set per ISO should still be derived programmatically after
   Stage C: assemble the fleet for the BA, list distinct plant states, diff
   against files present in `campd-unit-level/`.
@@ -160,6 +173,7 @@ Northeast, which can spike far above HH in winter.
 | ISO-NE | Algonquin Citygate (AGT) | **large winter +** | source monthly basis (critical) |
 | MISO | Chicago Citygate, MichCon, Henry | small +/– | source monthly basis |
 | SPP | **Panhandle Eastern** (SPP's own MMU reference hub; Southern Star tracks it) | **HH − Panhandle = $0.38 / $0.26 / $0.55 per MMBtu for 2023 / 2024 / 2025** (SPP MMU State of the Market 2025 §4, report p.119) | **cited**; the backcast source is per-plant EIA-923 monthly delivered gas (present: 765/753/662 rows over 66/65/57 SWPP plants). See `spp-data-audit.md` §5 rows 8–8c |
+| SOCO *(chartered, not registered)* | **Transco Zone 4** and **Southern Natural Gas (SONAT)** are the charter's candidates — but **which pipeline serves which plant is already on disk, per plant**: `eia860_plant.parquet` carries `Natural Gas Pipeline Name 1/2/3` for every SOCO plant. Read it rather than assuming | **pending SOCO-12** — no basis value is published by Southern; SOCO publishes no market data of any kind | Backcast source is per-plant **EIA-923 monthly delivered fuel cost, already present** (471 / 441 / 471 rows over 30 / 31 / 31 SOCO plants for 2023/24/25). State monthly series to fetch: **`N3045AL3m`, `N3045GA3m`, `N3045MS3m`** → `eia_delivered_gas_<ST>_monthly_2023-2025.csv`. See `soco-data-audit.md` §5 rows 6–7 |
 
 **Action:** extend `calibration_reference.json` and the gas-price path system
 (`ScenarioConfig.gas_price_path`, `data/fuel.py`) to support a per-ISO regional
@@ -182,6 +196,7 @@ directly. Multi-zone ISOs need demand split to zones via `load_share`
 | SPP | EIA-930 **sub-BA** hourly demand — 17 SWPP sub-BAs (CSWS EDE GRDA INDN KACY KCPL LES MPS NPPD OKGE OPPD SECI SPRM SPS WAUE WFEC WR) | **done 2026-09-06** (lane SPP-11): `data/raw/zone-specific-demand/SPP/spp_subba_demand_2023-2025.csv`, 447,049 rows, no interior gaps. Grouping candidate and the `EDE` straddle: `spp-data-audit.md` §5 rows 4b–6 |
 | NYISO | NYISO zonal load (11 zones A–K) | source if/when NYISO goes multi-zone |
 | ISO-NE | ISO-NE load-zone metered load (8 zones) | source if/when NEISO goes multi-zone |
+| SOCO *(chartered, not registered)* | **There are NO EIA-930 sub-BAs for SOCO** — the spine is **FERC Form 714 Part 3 Schedule 2** hourly planning-area demand, via the PUDL ETL | **pending SOCO-11**, and the charter's scope needs correcting first: the footprint has **EIGHT** FERC-714 respondents, not three — Alabama Power (2), Georgia Power (183), Mississippi Power (184), Gulf Power (185), **Oglethorpe (107)**, **MEAG (210)**, **PowerSouth (1)** and **"Southern company" (142, `eia_code` 18195 — check this one FIRST, it may be the whole-BA filer)**. The three OpCos **structurally cannot** sum to the BA: Oglethorpe (6,472.2 MW) and MEAG (594.1 MW) serve Georgia load inside the same BA that Georgia Power's planning area excludes, and Georgia Power's own winter peak is 16,284 MW against a BA winter peak of 47,368 MW. Reconcile against the right denominator and report the residual with its attribution. `soco-data-audit.md` §6.2–§6.3 |
 
 `scripts/data/derive_load_shares.py` is the ERCOT template; generalize it to take
 an ISO + zonal-load file and emit the `load_share` set + a topology check.
@@ -266,3 +281,27 @@ for PJM/MISO/SPP. Everything else reuses national files or is derivable.
 > of which is a hard precondition for registration. Full inventory, the
 > registry-values table and the manual manifest:
 > `docs/multi-iso/spp-data-audit.md`.
+
+> **SOCO status, 2026-09-13 (lane SOCO-10 — chartered, NOT registered).** Two of the
+> four blockers are open and one of them is the worst in this table's history.
+> **(2) CEMS state coverage: `AL`, `GA` and `FL` are absent for every year** — only
+> `MS` is present — which is **91.6 % of SOCO's CEMS-eligible fossil MW** (SPP's
+> gap was 44.9 %). **(4) Zonal load: there are NO EIA-930 sub-BAs for SOCO**, so
+> the spine is FERC Form 714 and the footprint has **eight** respondents, not
+> three. (1) is closed — `SOCO hourly.parquet` is present and cross-validates
+> against EIA-923 nuclear to 0.1–0.6 %; (3) is a Gulf-proximate footprint with
+> per-plant EIA-923 delivered gas already on disk.
+>
+> **SOCO's own distinct blocker is one no prior ISO has had: there is no price.**
+> Southern Company publishes no LMP, no day-ahead clearing price and no hourly
+> index, and SEEM deliberately publishes none — so three of the rubric's four
+> load-bearing price criteria have **no benchmark to score against**. That is owner
+> card **S2** and it is unresolved; **no neighbouring hub may be substituted**
+> (`soco-addition-plan-2026-09.md` §2.6, gate G17). Two further findings that
+> belong to no other ISO: the footprint is **two timezones** (closed — the series
+> convention is `America/Chicago`, DST-aware, hour-ending, measured 0/26,304
+> mismatches), and **2,228 MW of Vogtle 3/4 plus 774 MW of Barry A3 are held
+> online up to 15 months early** by `cod_ramp.effective_cod`'s plant-collapsed
+> COD, worth **+24.8 % on measured 2023 nuclear**. Full inventory, the
+> registry-values table, the zone recommendation and the manual manifest:
+> `docs/multi-iso/soco-data-audit.md`.
