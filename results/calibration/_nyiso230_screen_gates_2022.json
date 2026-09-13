@@ -1,0 +1,58 @@
+{
+  "year": 2022,
+  "gates": {
+    "G-CONF": {
+      "pass": false,
+      "fields_moved": [
+        "gas_offer_margin_anchor_by_zone",
+        "gas_offer_margin_zonal_anchor_vintage",
+        "miso_import_sil_measured_envelope"
+      ],
+      "recorded_anchors": {
+        "Upstate_West": 3.9863000745755537,
+        "Capital_Hudson": 7.056300074575554,
+        "Lower_Hudson": 7.056300074575554,
+        "NYC": 5.276300074575553,
+        "Long_Island": 7.056300074575554
+      },
+      "predicted_anchors": {
+        "Upstate_West": 5.3731,
+        "Capital_Hudson": 8.4431,
+        "Lower_Hudson": 8.4431,
+        "NYC": 6.6631,
+        "Long_Island": 8.4431
+      },
+      "anchors_match_1e-6": false
+    },
+    "G-SCOPE": {
+      "pass": true,
+      "moved": []
+    },
+    "G-PRED": {
+      "pass": false,
+      "ratios": {
+        "Upstate_West": 0.584604,
+        "Capital_Hudson": 0.694437,
+        "Lower_Hudson": 0.694437,
+        "NYC": 0.644583,
+        "Long_Island": 0.694437
+      }
+    },
+    "G-DEMAND": {
+      "pass": true,
+      "served_TWh_arm": 152.68167,
+      "served_TWh_control": 152.68167,
+      "dump_MWh_arm": 0.0,
+      "slack_MWh_arm": 0.0,
+      "slack_MWh_control": 0.0
+    }
+  },
+  "reported_not_gated": {
+    "load_weighted_LMP_arm": 73.1275,
+    "load_weighted_LMP_control": 67.6573,
+    "hours_gt_300_arm": 5,
+    "hours_gt_300_control": 4,
+    "note": "Reported for the record. The screen is NOT gated on these \u2014 a screen that reads the target residual is the fitted-mechanism selection rule 1 [R-STRUCT] forbids, done one year at a time."
+  },
+  "screen_verdict": "STOP"
+}
