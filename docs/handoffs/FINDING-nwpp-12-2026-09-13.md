@@ -3,9 +3,12 @@
 **Lane:** NWPP-12 (`docs/multi-iso/nwpp-addition-plan-2026-09.md` §5 row NWPP-12,
 §3 cards N5/N7, §6 manifest rows 7–11). **Date:** 2026-09-13.
 **Model:** Opus `claude-opus-5`. **DATA PROFILE:** `shared`.
-**Branch:** `claude/nwpp-12-docs-plan-ftlv5u`. **Base:** `origin/main` at `4d9c3251`
-(re-measured at this lane's own base sha, not the desk's `c93b0d27` pin — §8.0
-collision rule 6).
+**Branch:** `claude/nwpp-12-docs-plan-ftlv5u`. **Base:** work was done at
+`origin/main` `4d9c3251` and **rebased onto `33a7c961`** before pushing (§8.0
+collision rule 3), which is after siblings NWPP-10, NWPP-11 and NWPP-13 landed.
+Both are this lane's own base shas, re-measured rather than taken from the
+desk's `c93b0d27` pin (§8.0 collision rule 6). No file this lane wrote exists on
+`origin/main` at either sha — checked, no collision.
 
 ---
 
@@ -67,7 +70,7 @@ Charges under the FS Program, or to mandatory Holdback Requirements… mandatory
 Energy Deployments, or Delivery Failure Charges"*. So **no WRAP obligation
 binds in any scored year**, and the backcast reliability floor must rest on the
 participants' own IRP reserve margins — which is what card N7 anticipated, and
-which §4.2 of this finding supplies.
+which §2.2 of this finding supplies.
 
 ### 0.3 Which card N5 boundaries have a published path rating — card **N5**
 
