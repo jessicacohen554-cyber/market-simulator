@@ -503,3 +503,212 @@ the true requirement is unknown — all we know is that it exceeds 17.33 GiB. If
 screen is environment-blocked on a triply-measured, fully reproducible constraint, and the ask
 becomes the owner's: a solve container with a memory ceiling above ~13.34 GiB, or a disk allowance
 that lets the existing preflight reach its own 24 GiB target.
+
+---
+
+# 11. THE VERDICT — THE SCREEN RAN, AND IT KILLS THE ARM AT S2
+
+**Attempt 4 completed.** Shard `session_012kj4shTS4xNWaedcWiSUqa`, branch
+`claude/pjm-h3-syncarm3-2022`, recovery SHA **`786affd47cf95334aa1fc7579135c230492f1296`**
+(rule 33(d)). **Rule 34(d): `git ls-tree` returns 17 files including
+`dispatch/2022_P1.parquet`** — the bundle is pushed and a promotion would cost zero re-solves
+(rule 34 `[R-SHARD-PROMOTABLE]` (a)). The disk fix worked exactly as predicted: the shard freed
+4 GiB, the preflight reached ~23 GiB of ceiling+swap, and the solve completed.
+
+## 11.1 THE GATES, AS PRECOMMIT §5 FIXES THEM — NOT RE-READ, NOT SOFTENED
+
+| # | gate | bar | **measured** | verdict |
+|---|---|---|---|:--|
+| **S1** | arm identity | delta = `pjm_reserve_pergen_sync` + declared prereqs ONLY | exactly one config delta: `pjm_reserve_pergen_sync` false→true (both prereqs already True; all four rule-19 exclusions False; `gas_prices.2022` identical at 6.45) | **PASS** |
+| **S2** | the mechanism is LIVE | SYNC dual ≠ 0 in **≥ 20 %** of 8,760 h | **1.2215 % — 107 hours** (`pjm_sync` 0, `pjm_sync_mad` 107). PJM published 2022: **61.3 %** | **KILL** |
+| **S3** | shape, not level | mean h16-18 **≥ 2×** mean h01-04 | **$0.13327 vs $0.00000 → +∞** | **PASS** |
+| **S4** | confinement | r ≥ **+0.30** AND zero-hour mean abs delta < **25 %** of positive-hour | **r = +0.7380**; **0.17 %** | **PASS** |
+| **S5** | no collateral damage | no PROTECTED criterion (C2/C4/C6/C8) PASS→FAIL | C2 PASS · C4 PASS · C8 PASS · C6 `UNATTESTED` (probe artifact, §2(f)) | **PASS** |
+
+> ## **S2 IS A STOP GATE AND IT FIRED. THE ARM IS KILLED. THE 2020 AND 2021 YEARS ARE NOT SPENT**
+> (rule 29 `[R-SCREEN]` clause 2 / PRECOMMIT §7).
+
+## 11.2 THE CHARACTER OF THE KILL — STRUCTURALLY CORRECT, QUANTITATIVELY INERT
+
+This is not a mechanism that misbehaves. It is a mechanism that behaves **perfectly** and **does
+almost nothing**, and both halves are measured.
+
+**What it gets right.** S3 and S4 are as clean as this lane has ever measured. The credit is
+**strictly peak-confined — exactly zero in every overnight hour** — which is precisely what
+pjm-138 §7 lead 1 said a successor must be. The energy-price response is confined to the hours the
+reserve prices: `r = +0.738`, and movement in SYNC-zero hours is **0.17 %** of movement in
+SYNC-positive hours. It also **moves the reserve rent to the correct product**: the control priced
+2 hours in `pjm_primary_mad` — a *synchronized* requirement being met by *offline* capacity, the
+pjm-87 misrepresentation this arm exists to fix — and the arm prices **0 there and 107 in
+`pjm_sync_mad`**, at mean **$6.23**, median **$1.85**, max **$65.27**, with **zero shortfall
+hours** (binding-at-requirement rent, never an ORDC shortfall).
+
+**What it fails to do.** It is inert on every quantity the model is scored on:
+
+| | control | arm | delta |
+|---|---:|---:|---:|
+| C1 CC_REGULAR | +22.56 TWh | **+22.55 TWh** | −0.01 |
+| C3a mean LMP | −10.7 % | **−10.7 %** | 0.0 pp |
+| C3b NRMSE | 0.246 | **0.246** | 0.000 |
+| C3c model tail hours > $200 | 3 h | **3 h** | 0 |
+| annual load-weighted price | 64.074 | **64.092** $/MWh | +0.017 |
+| largest class movement (CC_REGULAR) | 319.6918 | **319.6819** TWh | **−0.0100** |
+
+Every one of these is a **target** and gates nothing in either direction (rule 1 `[R-STRUCT]`), and
+they are reported at full magnitude exactly as the PRECOMMIT requires.
+
+**Two honest notes rather than quiet omissions.** (i) The arm's C3c reads `FAIL` in my re-score
+where the control's reads `CAVEAT`. That is **not a mechanism effect**: the C3c standing rule's
+guard (b) requires governance to PASS, and a `replay_keeper` probe writes no attestation, so C6
+reads `UNATTESTED` and the reclassification is correctly blocked. The magnitude is **unchanged at
+3 h vs 92 h**. (ii) The 107 binding hours cluster at **hod 11-16** (Jun 43 / Jul 21 / Aug 28 /
+Sep 15), i.e. *midday-to-afternoon*, a little earlier than PJM's own h16-18 peak. S3 passes because
+the nights are exactly zero, but the intraday placement is not a perfect match and is said so here.
+
+## 11.3 WHY IT IS INERT — THE PHASE-0 CENSUS PREDICTED THIS, AND THE SOLVE CONFIRMED IT
+
+§7's zero-LP census put the PJM fleet 10-minute ramp at **38.24 GW** availability-weighted against
+a measured SYNC requirement of **1.71 GW** — a **22.3×** margin, *wider* than the ~19×
+`FINDING-pjm-eas-screen-2026-09-07` measured on the Primary requirement, because the SYNC
+requirement is the smaller of the two. **The solve's own log independently reports
+`deliverable ramp mean 38.2 GW`.** Online-only scoping does what it claims — CT_PEAKER's 14.75 GW
+of ramp is mostly offline and moves to the NON-SYNC column — but that leaves **CC_REGULAR's
+15.76 GW** as the SYNC source, still ~9× the requirement. The published ORDC knee therefore fires
+only in 107 summer midday hours.
+
+**The consequence reaches past this cell.** The **tightest defensible reserve-product definition
+the design space offers** — online-only, 10-minute deliverable ramp, sharing the pool's joint P+R
+headroom row, on the measured requirement and the published curve — **still cannot make PJM
+reserve scarcity bind at this fleet size.** That extends `FINDING-pjm-eas-screen-2026-09-07`'s
+retirement of the PJM-levers-routed-through-reserve-scarcity family **from the forecast lane to the
+backcast lane**. The binding object is the **supply margin**, not the product definition.
+
+## 11.4 THE PJM KEEPER IS UNCHANGED
+
+| | determination | grade | caveats | basis |
+|---|---|---|---|---|
+| **BEFORE** | **CALIBRATED** | 8/8 | 0 | all criteria pass, governance attested |
+| **AFTER** | **CALIBRATED** | 8/8 | 0 | all criteria pass, governance attested |
+
+Re-scored on `origin/main` before this session and again after it, across a 47-commit refresh of
+`main` in between. Nothing armed: `pjm_reserve_pergen_sync` stays default-off. Rule 30(c) holds —
+no held-out year touches PJM's determination.
+
+## 11.5 THE PROMOTION QUESTION — PUT EXPLICITLY (rule 31 `[R-RETAIN]`)
+
+**MY RECOMMENDATION: DO NOT PROMOTE.** Stated with the case against my own recommendation, because
+the owner routinely promotes what a session declines and that is what a promotion decision *is*.
+
+**The case FOR promoting it, stated fairly and not strawmanned.** It is a real PJM market structure
+(Manual 11 §4.2/§4.3.3) the model does not otherwise have. It carries **zero parameters fitted to
+the price residual** — a measured requirement, the published ORDC curve, and physics ramp and
+commitment gates. It **corrects a named misrepresentation**: the control lets a *synchronized*
+requirement be satisfied by *offline* capacity (pjm-87), and the arm stops that, moving the rent
+into the product that actually bears it. **Nothing regresses** — S5's protected set is clean and
+every target is unchanged to the reported precision. Rule 1 `[R-STRUCT]`'s "a real market behaviour
+stays in even if it makes the fit worse" applies *a fortiori* when it does not make the fit worse
+at all.
+
+**The case AGAINST, which is why I do not recommend it.**
+
+1. **My own pre-registered gate killed it.** S2 was fixed in the PRECOMMIT before the solve
+   precisely so it could not be re-read once a number was on the table. 1.22 % against a 20 % bar
+   is not a near miss — it is a factor of **16**, and against PJM's own 61.3 % a factor of **50**.
+   A gate I might think mis-specified is reported as such and **the verdict still stands**.
+2. **It is inert, so there is nothing to buy.** The owner's standard — *"if structural integrity
+   improves but gates regress that may still be a keeper"* — describes accepting a **fit cost** to
+   gain **real structure**. Here there is no fit cost *and* no fit gain: the largest class moves
+   **0.010 TWh out of 319.69** and the annual price moves **$0.017/MWh**. The trade the standard
+   contemplates is not on offer.
+3. **It carries a real, measured operational cost.** It doubles the R-column count and
+   **OOM-killed P0 on three successive standard containers**; it completed only after 4.1 GiB of
+   disk was freed so the preflight could reach ~23 GiB of ceiling+swap. Promoting it puts that cost
+   on **every future PJM solve**, for a mechanism that is provably active in 1.2 % of hours.
+4. **Promotion is not free to obtain.** Rule 16 `[R-ALLYEARS]` requires the full **2020-2022** span
+   in one bundle; the screen year would be re-solved inside it. That is **~3 PJM years at ~25-40 min
+   each on a disk-freed container (~90-120 min)**, plus registration — and rule 29 `[R-SCREEN]`
+   clause 2 spends the span only if the screen **clears** its gate, which it did not.
+
+**What I would need to change my recommendation:** an owner ruling that the structural correction
+(reserve rent booked to the synchronized product rather than to a requirement offline capacity
+should never have satisfied) is worth carrying at its memory cost *despite* being inert. That is a
+legitimate call and it is the owner's, not mine.
+
+**WHERE THE BUNDLE IS, AND WHAT A PROMOTION WOULD COST FROM HERE** (rule 34 `[R-SHARD-PROMOTABLE]`
+(e)). The 2022 screen bundle is **retrievable with zero re-solves** — 17 files including
+`dispatch/2022_P1.parquet`, pushed to the shard branch and recoverable by immutable sha:
+
+```
+git checkout 786affd47cf95334aa1fc7579135c230492f1296 -- results/calibration/pjmh3_syncarm_2022
+```
+
+It is also on this container's local disk (196 MB), gitignored so it cannot reach `main`
+(rule 29(c) discharged by `.gitignore`, **not** by `rm` — rule 31, the ercot-255 incident).
+**This container is ephemeral and the local copy does not survive the session; the shard-branch
+copy does.** A promotion from here costs the 2020 and 2021 legs only — the 2022 leg exists.
+
+## 12. SHARDS LAUNCHED, AND THEIR DISPOSAL (rule 33 `[R-SHARD-ARCHIVE]`)
+
+| attempt | session | branch | recovery SHA | outcome | archived |
+|---|---|---|---|---|:--:|
+| 1 (inherited) | `session_01SKY3Qo2snPS9N6UbrdWbaN` | `claude/pjm-h3-syncarm-2022` | — (never pushed) | FAILED, zero bytes | already self-archived |
+| 2 | `session_01EzNPfc9AUhb1Lv1ptTDF2J` | `claude/pjm-h3-syncarm-2022` | `ad589bd32c0af82b9b91d7456024a326d64c3262` | STOP: P0 OOM | **yes** |
+| 3 | `session_01HBTXoSZmnAD9KZoNWAhi6B` | `claude/pjm-h3-syncarm2-2022` | `96da85894876c67ee0a44dc1fc14521afaef381f` | STOP: P0 OOM, disk-bound | **yes** |
+| 4 | `session_012kj4shTS4xNWaedcWiSUqa` | `claude/pjm-h3-syncarm3-2022` | **`786affd47cf95334aa1fc7579135c230492f1296`** | **SOLVED, bundle pushed** | **yes** |
+
+Each was archived only **after** the parent had fetched its branch, checked out its content and
+verified it (rule 33(a)), and each unique FINDING doc was rescued onto this branch first
+(rule 33(f)(1)). **No shard was left running.**
+
+**Branch deletion (rule 33(f)) is REFUSED in this environment and I did not report otherwise.**
+`git push origin --delete` returns **HTTP 403** — visible only on HTTP/1.1; on HTTP/2 it presents
+as `send-pack: unexpected disconnect` followed by a misleading `Everything up-to-date`. This is
+exactly what rule 33(f)(5) documents: the session credential can create and update refs but not
+delete them. The branches therefore **stay**, which is the better outcome anyway — every recovery
+sha above still resolves (rule 33(f)(4)).
+
+## 13. RULES APPLIED
+
+Rule 1 `[R-STRUCT]` (no lever selected on a residual; the targets gate nothing) · rule 14
+`[R-ACCURATE]` (measured requirement + published curve) · rule 16 `[R-ALLYEARS]` (the span is NOT
+spent — the screen killed the arm) · rule 19 `[R-ONE-MECH]` (all four exclusive fields verified
+False) · rule 28 `[R-MECH-MATRIX]` (b) (the `reserve_pergen` cell stamped **in this session**, a
+rejection with full citation quality) · rule 29 `[R-SCREEN]` (zero-LP phase 0 first; one screen
+year named on footprint in the PRECOMMIT; G-CTRL form 4, **no control solve spent**; clause (c)
+discharged by `.gitignore`) · rule 30(c) (no held-out year touches PJM's determination) · rule 31
+`[R-RETAIN]` (**nothing deleted**; the promotion question put explicitly above) · rule 32
+`[R-SHARD]` (a) (**the parent ran no LP** — every solve was a shard; phase 0, scoring and
+composition stayed here) · rule 33 `[R-SHARD-ARCHIVE]` (all four shards swept; recovery by
+immutable sha) · rule 34 `[R-SHARD-PROMOTABLE]` (a)/(d)/(e) (the bundle is pushed and verified
+retrievable, and its retrievability is stated).
+
+## 14. CORRECTION — §10.2's "the requirement strictly exceeds 17.3 GiB" IS FALSIFIED BY ATTEMPT 4
+
+I wrote, from attempt 3's kill, that because `memsw.max_usage` equalled ceiling + swap **exactly**
+(17.33 GiB), the solve's requirement must **strictly exceed 17.3 GiB**. Attempt 4 measures
+otherwise and the correction matters for every future PJM shard prompt:
+
+| | attempt 3 | **attempt 4** |
+|---|---|---|
+| swap available | 4 GiB | **8 GiB** |
+| swap actually used at peak | **4.0 GiB (all of it)** | **2.4 GiB** |
+| effective peak | 17.33 GiB, then **OOM** | **≈ 15.7 GiB**, **completed** |
+| wall clock | killed at 10 min 09 s | **17.6 min — faster than the control's 24 min baseline** |
+
+So the true working set is **≈ 15.7 GiB**, not > 17.3 GiB. Attempt 3's 17.33 GiB was a
+**thrashing artifact**: with too little swap the cgroup sat in continuous reclaim
+(`failcnt` 1,144,459) and RSS inflated until the kernel killed it. Given adequate headroom the
+solve settled well below the figure its own failure had implied, and ran *faster* than the
+unswapped control.
+
+**The operational lesson, corrected:** what a PJM per-plant year needs here is not a bigger memory
+ceiling — it is **enough free disk for the preflight to build a swapfile with headroom**, because
+`ensure_solve_container` sizes it `int(min(deficit, free − 2 GiB))`. Freeing 4.1 GiB with
+`hydrate_data.py --profile pjm --force` was the whole fix. A shard prompt for a per-plant ISO should
+do that **before** the solve rather than discover it through an OOM, and the three environment
+blockers (§10.3) should be pre-cleared in the same step.
+
+*(Also reported, not absorbed: the shard's `legitimacy_diagnostics.py` post-step exited non-zero on
+a **D-10 wind/solar advisory**. It is not C8 — the scorer read the arm's own committed
+`legitimacy_diagnostics.json` and **C8 PASSES** — and the D-10 advisory is present on this ISO
+independent of the arm.)*

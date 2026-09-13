@@ -5691,3 +5691,75 @@ computed and fixed in a PRECOMMIT** (rule 29 clause 0); screen year would be nam
 
 **ROUTED, NOT OPENED:** the surviving explanation is price-distribution compression inside the
 owner-declared-closed pjm-142 frontier. Re-opening it is an owner act.
+
+## pjm-h3 — 2026-09-13 — the SYNCHRONIZED reserve sub-product split is REFUTED at the liveness gate
+
+**Arm** `pjm_reserve_pergen_sync` (Manual 11 §4.2/§4.3.3), armed on the owner-RE-OPENED pjm-142
+price-formation frontier (`docs/calibration-log/governance.md`, "2026-09-13 — OWNER RULING").
+Pre-registration `docs/PRECOMMIT-pjm-h3-reserve-sync-2026-09-13.md`, pushed at
+`ed6bb099…` **before any solve**; gates fixed there and not re-read.
+Result: `docs/RESULT-pjm-h3-reserve-sync-screen-2026-09-13.md`.
+**Keeper `2026-09-11-pjm-d4-4-gasoutage` re-scored BEFORE and AFTER: CALIBRATED, 8/8, zero
+caveats — UNCHANGED. Nothing armed; the field stays default-off.**
+
+**KILLED AT S2.** SYNC dual non-zero in **107 of 8,760 hours = 1.22 %** against a **≥20 %** bar and
+against PJM's published **61.3 %** in 2022. The 2020/2021 years were never spent (rule 29 clause 2).
+
+**STRUCTURALLY CORRECT, QUANTITATIVELY INERT — both halves measured.** S3 shape **PASSES**
+($0.1333 at h16-18 vs **exactly $0.0000** at h01-04); S4 confinement **PASSES** (r = **+0.738**;
+off-hour movement **0.17 %** of on-hour); S5 protected set **PASSES**. It books the rent to the
+right product — the control priced 2 h in `pjm_primary_mad` (a *synchronized* requirement met by
+*offline* capacity, the pjm-87 misrepresentation), the arm prices **0** there and **107** in
+`pjm_sync_mad` (mean $6.23, max $65.27, **zero** shortfall hours). **But it moves nothing:**
+CC_REGULAR **−0.0100 TWh** on 319.69; C1 +22.56 → +22.55; C3a −10.7 % → −10.7 %; C3b 0.246 →
+0.246; C3c 3 h → 3 h; annual price 64.074 → 64.092 $/MWh.
+
+**CAUSE — the supply margin, not the product definition.** Zero-LP census: PJM fleet 10-min ramp
+**38.24 GW** availability-weighted (the solve independently logs 38.2 GW) against a measured SYNC
+requirement of **1.71 GW** — **22.3×**, *wider* than the ~19× `FINDING-pjm-eas-screen-2026-09-07`
+measured on the Primary requirement. Online-only scoping moves CT_PEAKER's 14.75 GW (mostly
+offline) to NON-SYNC but leaves CC_REGULAR's 15.76 GW as the SYNC source, still ~9×.
+
+**DO-NOT-REDO:** do not propose a further reserve-PRODUCT refinement for PJM price formation. The
+tightest defensible definition the design space offers — online-only, 10-min deliverable ramp,
+sharing the pool joint P+R headroom row — still cannot make reserve scarcity bind at this fleet
+size. This **extends** pjm-eas's retirement of the reserve-scarcity lever family from the forecast
+lane to the **backcast** lane.
+
+**OPERATIONAL, reported because it is real:** the arm doubles the R-column count and OOM-killed P0
+on **three** successive standard containers (anon-RSS 13.28 GiB vs a 13.34 GiB cgroup ceiling;
+`memsw.max_usage` 17.33 GiB = ceiling + 4 GiB swap **exactly**). It completed only after
+`hydrate_data.py --profile pjm --force` freed 4.1 GiB so the preflight could reach ~23 GiB. The
+binding constraint on a PJM per-plant solve here is **free disk**, because the swapfile is sized
+`int(min(deficit, free − 2 GiB))`.
+
+**Screen bundle retrievable with ZERO re-solves** (17 files incl. `dispatch/2022_P1.parquet`):
+`git checkout 786affd47cf95334aa1fc7579135c230492f1296 -- results/calibration/pjmh3_syncarm_2022`.
+Promotion recommendation: **do not promote** — inert, and it costs memory on every future PJM
+solve. The question is put explicitly to the owner in RESULT §11.5.
+
+## pjm-h3b — 2026-09-13 — the PJM 2022 miss is the Elliott scarcity tail, not a stack defect
+
+**ZERO LP.** Finding: `docs/FINDING-pjm-h3b-2022-miss-is-the-elliott-tail-2026-09-13.md`.
+Keeper `2026-09-11-pjm-d4-4-gasoutage` UNCHANGED (CALIBRATED, 8/8, zero caveats).
+
+**C3a-2022, C3b-2022 and the ledgered C3c-2022 caveat are ONE defect.** Of the $4.717/MWh annual
+price gap (model 64.074 vs actual RT 68.792), **18 hours of 8,760 carry 84 %** (actual mean
+**$2,071**, model **$144**) and **15 of those 18 are Winter Storm Elliott, 23–24 Dec 2022** (the
+other 3 are 13 Jun 2022). The 92 hours above $200 contribute **120 %** of the gap; **the remaining
+8,668 hours are OVER-priced at +1.5 %**, contributing **−20 %**. C3b is the same object: dropping
+the top 18 actual hours cuts the price-duration error **73 %**, the top 92 cuts it **85 %**.
+
+**DO-NOT-REDO — no 2022 PRICE lever.** (a) The adder route (`ordc_scarcity_overlay`) is `G` and the
+2026-09-13 owner re-opening explicitly does not license it. (b) The reserve-scarcity route was
+refuted by this lane's own screen the same day (pjm-h3, S2 1.22 % vs a 22.3× supply margin).
+(c) Every body-directed lever is **counter-indicated**: the body is already +1.5 % over, so lifting
+ordinary hours to chase the annual mean worsens 8,668 hours to chase 18 — and the authorized band
+multiplier is year-invariant, so the same move pushes 2023–2025 (−3.6 / −5.1 / −9.3 %) further out
+in the same direction.
+
+**THE LIVE PJM OBJECT IS C1 VOLUME, NOT PRICE.** CC_REGULAR-2022 **+22.56 TWh** is a real separate
+miss, and it is already scheduled to move to **+12.81 TWh** at the next registration when the merged
+`gov-hydro-seam-1` PS→`OTHER` repair makes `reconcile_vintage_classes` fire in PJM 2021/2022
+(pjm-h2 §3; zero determination flips). Re-measure the residual **after** that lands before
+proposing anything.

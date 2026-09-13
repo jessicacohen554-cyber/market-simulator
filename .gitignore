@@ -2087,3 +2087,11 @@ results/calibration/caiso279_ablate_dswcouple_span/
 #   git checkout ea3458ff92280a41fb532bc5f23ea481c3b3e689 -- results/calibration/_shared/SPP
 # Registration is NOT promotion: keeper 10 stays designated in keepers/SPP.json
 # until the owner rules (rules 31 [R-RETAIN] / 35 [R-PROMOTE] (e)).
+
+# pjm-h3 SCREEN bundle (2026-09-13). Rule 29 [R-SCREEN] clause (c) DELETE-BEFORE-MERGE means
+# KEEP IT OUT OF `main`, which gitignore discharges in full — it does NOT mean `rm`
+# (rule 31 [R-RETAIN], the ercot-255 incident). Every number the lane cites from it is in
+# docs/RESULT-pjm-h3-reserve-sync-screen-2026-09-13.md. The bundle is RETRIEVABLE without a
+# re-solve (rule 34 [R-SHARD-PROMOTABLE]): 17 files incl. dispatch/2022_P1.parquet, at
+#   git checkout 786affd47cf95334aa1fc7579135c230492f1296 -- results/calibration/pjmh3_syncarm_2022
+results/calibration/pjmh3_syncarm_2022/
