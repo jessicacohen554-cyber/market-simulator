@@ -1,0 +1,647 @@
+{
+  "market": "rtm",
+  "groupid": "PUB_RTM_GRP",
+  "span": [
+    "2023-01-01",
+    "2023-03-31"
+  ],
+  "expected_trade_dates": 90,
+  "days": {
+    "2023-01-01": {
+      "zip_bytes": 1449308,
+      "uncompressed_bytes": 41753282,
+      "members": [
+        "20230101_20230101_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-01-02": {
+      "zip_bytes": 1456281,
+      "uncompressed_bytes": 41960719,
+      "members": [
+        "20230102_20230102_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-01-03": {
+      "zip_bytes": 1493629,
+      "uncompressed_bytes": 42615296,
+      "members": [
+        "20230103_20230103_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-01-04": {
+      "zip_bytes": 1504491,
+      "uncompressed_bytes": 43006916,
+      "members": [
+        "20230104_20230104_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-01-05": {
+      "zip_bytes": 1488915,
+      "uncompressed_bytes": 42603239,
+      "members": [
+        "20230105_20230105_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-01-06": {
+      "zip_bytes": 1470900,
+      "uncompressed_bytes": 41928432,
+      "members": [
+        "20230106_20230106_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-01-07": {
+      "zip_bytes": 1488239,
+      "uncompressed_bytes": 42504515,
+      "members": [
+        "20230107_20230107_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-01-08": {
+      "zip_bytes": 1481263,
+      "uncompressed_bytes": 42319877,
+      "members": [
+        "20230108_20230108_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-01-09": {
+      "zip_bytes": 1485234,
+      "uncompressed_bytes": 42369733,
+      "members": [
+        "20230109_20230109_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-01-10": {
+      "zip_bytes": 1465524,
+      "uncompressed_bytes": 41761477,
+      "members": [
+        "20230110_20230110_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-01-11": {
+      "zip_bytes": 1461912,
+      "uncompressed_bytes": 41558145,
+      "members": [
+        "20230111_20230111_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-01-12": {
+      "zip_bytes": 1466384,
+      "uncompressed_bytes": 41626751,
+      "members": [
+        "20230112_20230112_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-01-13": {
+      "zip_bytes": 1463388,
+      "uncompressed_bytes": 41791070,
+      "members": [
+        "20230113_20230113_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-01-14": {
+      "zip_bytes": 1421328,
+      "uncompressed_bytes": 40555202,
+      "members": [
+        "20230114_20230114_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-01-15": {
+      "zip_bytes": 1402065,
+      "uncompressed_bytes": 40039624,
+      "members": [
+        "20230115_20230115_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-01-16": {
+      "zip_bytes": 1454376,
+      "uncompressed_bytes": 41402120,
+      "members": [
+        "20230116_20230116_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-01-17": {
+      "zip_bytes": 1457557,
+      "uncompressed_bytes": 41498167,
+      "members": [
+        "20230117_20230117_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-01-18": {
+      "zip_bytes": 1455809,
+      "uncompressed_bytes": 41090938,
+      "members": [
+        "20230118_20230118_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-01-19": {
+      "zip_bytes": 1445016,
+      "uncompressed_bytes": 40759057,
+      "members": [
+        "20230119_20230119_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-01-20": {
+      "zip_bytes": 1448570,
+      "uncompressed_bytes": 41004970,
+      "members": [
+        "20230120_20230120_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-01-21": {
+      "zip_bytes": 1449784,
+      "uncompressed_bytes": 41240914,
+      "members": [
+        "20230121_20230121_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-01-22": {
+      "zip_bytes": 1433562,
+      "uncompressed_bytes": 40797276,
+      "members": [
+        "20230122_20230122_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-01-23": {
+      "zip_bytes": 1436994,
+      "uncompressed_bytes": 40979621,
+      "members": [
+        "20230123_20230123_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-01-24": {
+      "zip_bytes": 1446613,
+      "uncompressed_bytes": 41264070,
+      "members": [
+        "20230124_20230124_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-01-25": {
+      "zip_bytes": 1463294,
+      "uncompressed_bytes": 41386352,
+      "members": [
+        "20230125_20230125_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-01-26": {
+      "zip_bytes": 1434710,
+      "uncompressed_bytes": 40848097,
+      "members": [
+        "20230126_20230126_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-01-27": {
+      "zip_bytes": 1439250,
+      "uncompressed_bytes": 40882800,
+      "members": [
+        "20230127_20230127_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-01-28": {
+      "zip_bytes": 1454748,
+      "uncompressed_bytes": 41427816,
+      "members": [
+        "20230128_20230128_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-01-29": {
+      "zip_bytes": 1456803,
+      "uncompressed_bytes": 41399746,
+      "members": [
+        "20230129_20230129_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-01-30": {
+      "zip_bytes": 1440443,
+      "uncompressed_bytes": 40955610,
+      "members": [
+        "20230130_20230130_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-01-31": {
+      "zip_bytes": 1443668,
+      "uncompressed_bytes": 41184507,
+      "members": [
+        "20230131_20230131_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-02-01": {
+      "zip_bytes": 1442487,
+      "uncompressed_bytes": 41564175,
+      "members": [
+        "20230201_20230201_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-02-02": {
+      "zip_bytes": 1443872,
+      "uncompressed_bytes": 41818603,
+      "members": [
+        "20230202_20230202_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-02-03": {
+      "zip_bytes": 1451091,
+      "uncompressed_bytes": 41683000,
+      "members": [
+        "20230203_20230203_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-02-04": {
+      "zip_bytes": 1420073,
+      "uncompressed_bytes": 40865148,
+      "members": [
+        "20230204_20230204_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-02-05": {
+      "zip_bytes": 1424159,
+      "uncompressed_bytes": 41031379,
+      "members": [
+        "20230205_20230205_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-02-06": {
+      "zip_bytes": 1439907,
+      "uncompressed_bytes": 41556670,
+      "members": [
+        "20230206_20230206_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-02-07": {
+      "zip_bytes": 1415767,
+      "uncompressed_bytes": 40952311,
+      "members": [
+        "20230207_20230207_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-02-08": {
+      "zip_bytes": 1430178,
+      "uncompressed_bytes": 41157952,
+      "members": [
+        "20230208_20230208_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-02-09": {
+      "zip_bytes": 1419577,
+      "uncompressed_bytes": 40847006,
+      "members": [
+        "20230209_20230209_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-02-10": {
+      "zip_bytes": 1415900,
+      "uncompressed_bytes": 40812897,
+      "members": [
+        "20230210_20230210_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-02-11": {
+      "zip_bytes": 1444342,
+      "uncompressed_bytes": 41517518,
+      "members": [
+        "20230211_20230211_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-02-12": {
+      "zip_bytes": 1433749,
+      "uncompressed_bytes": 41211542,
+      "members": [
+        "20230212_20230212_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-02-13": {
+      "zip_bytes": 1435384,
+      "uncompressed_bytes": 41347290,
+      "members": [
+        "20230213_20230213_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-02-14": {
+      "zip_bytes": 1458062,
+      "uncompressed_bytes": 41921163,
+      "members": [
+        "20230214_20230214_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-02-15": {
+      "zip_bytes": 1447289,
+      "uncompressed_bytes": 41495083,
+      "members": [
+        "20230215_20230215_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-02-16": {
+      "zip_bytes": 1438299,
+      "uncompressed_bytes": 41256036,
+      "members": [
+        "20230216_20230216_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-02-17": {
+      "zip_bytes": 1443372,
+      "uncompressed_bytes": 41350892,
+      "members": [
+        "20230217_20230217_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-02-18": {
+      "zip_bytes": 1438254,
+      "uncompressed_bytes": 41254187,
+      "members": [
+        "20230218_20230218_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-02-19": {
+      "zip_bytes": 1434802,
+      "uncompressed_bytes": 41090855,
+      "members": [
+        "20230219_20230219_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-02-20": {
+      "zip_bytes": 1445448,
+      "uncompressed_bytes": 41301597,
+      "members": [
+        "20230220_20230220_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-02-21": {
+      "zip_bytes": 1457066,
+      "uncompressed_bytes": 41827584,
+      "members": [
+        "20230221_20230221_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-02-22": {
+      "zip_bytes": 1462590,
+      "uncompressed_bytes": 41737133,
+      "members": [
+        "20230222_20230222_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-02-23": {
+      "zip_bytes": 1466283,
+      "uncompressed_bytes": 42021303,
+      "members": [
+        "20230223_20230223_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-02-24": {
+      "zip_bytes": 1448112,
+      "uncompressed_bytes": 41381127,
+      "members": [
+        "20230224_20230224_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-02-25": {
+      "zip_bytes": 1427868,
+      "uncompressed_bytes": 40999564,
+      "members": [
+        "20230225_20230225_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-02-26": {
+      "zip_bytes": 1400000,
+      "uncompressed_bytes": 39986737,
+      "members": [
+        "20230226_20230226_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-02-27": {
+      "zip_bytes": 1421007,
+      "uncompressed_bytes": 40618511,
+      "members": [
+        "20230227_20230227_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-02-28": {
+      "zip_bytes": 1428381,
+      "uncompressed_bytes": 40610439,
+      "members": [
+        "20230228_20230228_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-03-01": {
+      "zip_bytes": 1393584,
+      "uncompressed_bytes": 40209424,
+      "members": [
+        "20230301_20230301_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-03-02": {
+      "zip_bytes": 1391694,
+      "uncompressed_bytes": 40129793,
+      "members": [
+        "20230302_20230302_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-03-03": {
+      "zip_bytes": 1422440,
+      "uncompressed_bytes": 40736226,
+      "members": [
+        "20230303_20230303_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-03-04": {
+      "zip_bytes": 1418664,
+      "uncompressed_bytes": 40379392,
+      "members": [
+        "20230304_20230304_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-03-05": {
+      "zip_bytes": 1420556,
+      "uncompressed_bytes": 40800444,
+      "members": [
+        "20230305_20230305_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-03-06": {
+      "zip_bytes": 1443698,
+      "uncompressed_bytes": 41115578,
+      "members": [
+        "20230306_20230306_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-03-07": {
+      "zip_bytes": 1442367,
+      "uncompressed_bytes": 41340308,
+      "members": [
+        "20230307_20230307_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-03-08": {
+      "zip_bytes": 1464167,
+      "uncompressed_bytes": 41738575,
+      "members": [
+        "20230308_20230308_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-03-09": {
+      "zip_bytes": 1457009,
+      "uncompressed_bytes": 41526110,
+      "members": [
+        "20230309_20230309_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-03-10": {
+      "zip_bytes": 1450078,
+      "uncompressed_bytes": 41381481,
+      "members": [
+        "20230310_20230310_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-03-11": {
+      "zip_bytes": 1415379,
+      "uncompressed_bytes": 40779030,
+      "members": [
+        "20230311_20230311_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-03-12": {
+      "zip_bytes": 1339638,
+      "uncompressed_bytes": 38510201,
+      "members": [
+        "20230312_20230312_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-03-13": {
+      "zip_bytes": 1424912,
+      "uncompressed_bytes": 41063298,
+      "members": [
+        "20230313_20230313_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-03-14": {
+      "zip_bytes": 1406880,
+      "uncompressed_bytes": 40516805,
+      "members": [
+        "20230314_20230314_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-03-15": {
+      "zip_bytes": 1420017,
+      "uncompressed_bytes": 40611129,
+      "members": [
+        "20230315_20230315_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-03-16": {
+      "zip_bytes": 1424239,
+      "uncompressed_bytes": 40713182,
+      "members": [
+        "20230316_20230316_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-03-17": {
+      "zip_bytes": 1411581,
+      "uncompressed_bytes": 40547481,
+      "members": [
+        "20230317_20230317_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-03-18": {
+      "zip_bytes": 1414301,
+      "uncompressed_bytes": 40506198,
+      "members": [
+        "20230318_20230318_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-03-19": {
+      "zip_bytes": 1416272,
+      "uncompressed_bytes": 40405220,
+      "members": [
+        "20230319_20230319_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-03-20": {
+      "zip_bytes": 1407886,
+      "uncompressed_bytes": 40461903,
+      "members": [
+        "20230320_20230320_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-03-21": {
+      "zip_bytes": 1429524,
+      "uncompressed_bytes": 40691832,
+      "members": [
+        "20230321_20230321_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-03-22": {
+      "zip_bytes": 1430218,
+      "uncompressed_bytes": 41076121,
+      "members": [
+        "20230322_20230322_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-03-23": {
+      "zip_bytes": 1436168,
+      "uncompressed_bytes": 41153261,
+      "members": [
+        "20230323_20230323_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-03-24": {
+      "zip_bytes": 1408687,
+      "uncompressed_bytes": 40400821,
+      "members": [
+        "20230324_20230324_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-03-25": {
+      "zip_bytes": 1430339,
+      "uncompressed_bytes": 40946497,
+      "members": [
+        "20230325_20230325_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-03-26": {
+      "zip_bytes": 1384843,
+      "uncompressed_bytes": 39585772,
+      "members": [
+        "20230326_20230326_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-03-27": {
+      "zip_bytes": 1408020,
+      "uncompressed_bytes": 40230845,
+      "members": [
+        "20230327_20230327_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-03-28": {
+      "zip_bytes": 1432507,
+      "uncompressed_bytes": 40889528,
+      "members": [
+        "20230328_20230328_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-03-29": {
+      "zip_bytes": 1433556,
+      "uncompressed_bytes": 41109840,
+      "members": [
+        "20230329_20230329_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-03-30": {
+      "zip_bytes": 1426816,
+      "uncompressed_bytes": 40940352,
+      "members": [
+        "20230330_20230330_PUB_BID_RTM_v3.csv"
+      ]
+    },
+    "2023-03-31": {
+      "zip_bytes": 1450983,
+      "uncompressed_bytes": 41273131,
+      "members": [
+        "20230331_20230331_PUB_BID_RTM_v3.csv"
+      ]
+    }
+  },
+  "total_zip_bytes": 129450400,
+  "distinct_member_name_patterns": [
+    "PUB_BID_RTM_v3.csv"
+  ],
+  "missing_dates": [],
+  "corrupt_zips": []
+}
