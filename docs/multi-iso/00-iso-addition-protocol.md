@@ -57,6 +57,7 @@ Companion documents in this directory:
 | NYISO | 5 zones (A–K agg), cited TTCs, 154-plant hydro budget | NYIS | FIPS/largest (Tier-3 Gold-Book shares) | 2023, 2025 (2024 blocked) | `NYIS hourly` (2023–2025) | **2023 + 2025** (price-scored 2026-06-12; 2024 data-blocked) |
 | NEISO | 4 load zones (North/Central/Boston/CT) + HQ_import node | ISNE | FIPS state→zone map (_NEISO_STATE_ZONES); Central fallback | 2023–2025 | `ISNE hourly` | **Yes (P12, 2023–2025; P14 signed off 2026-06-12; price scored 2026-06-12)** |
 | SOCO | **NOT REGISTERED** — chartered 2026-09-12, see `soco-addition-plan-2026-09.md`. A *balancing authority*, not an ISO: Southern Company Services, vertically integrated, no day-ahead market, no LMP, no capacity market. Topology (1 zone vs 3) is owner card **S3**, served from `soco-data-audit.md` §6 | SOCO (BA code, not yet in `_ISO_TO_BA_CODE`) | none yet — `_SOCO_STATE_ZONES` candidate in `soco-data-audit.md` §6.4 | none | `SOCO hourly` **present** (26,304 h, 2023–2025, `America/Chicago`) | No — and **there is no price benchmark to score one against** (plan §2.6, card S2) |
+| NWPP | **NOT REGISTERED** — chartered 2026-09-13, see `nwpp-addition-plan-2026-09.md`. A **POOL of 17 balancing authorities**, not a BA and not an ISO — the first such region here. Vertically integrated, no pool-wide day-ahead market, no LMP, no capacity market. Topology (5 whole-BA zones vs 3 vs 1) is owner card **N5**, served from `nwpp-data-audit.md` §9; the price benchmark is card **N2** | 17 BA codes (BPAT PACE PACW PGE PSEI AVA IPCO NWMT CHPD DOPD GCPD SCL TPWR AVRN GRID WAUW NEVP) — a **17→1** map, not 1→1, and the first such entry | none yet — a **`Balancing Authority Code`**-keyed splitter, never state (a state holds several BAs and a BA holds several states); candidate in `nwpp-data-audit.md` §9.2 | none | **not as per-BA files** — but all 17 BAs are already committed in `eia-930/EIA930_BALANCE_*.parquet` (447,168 rows / 26,304 UTC h per BA for 2023–2025, zero gaps), so the load spine is a **derive, not a fetch** | No — first solve is lane NWPP-40, and **NWPP publishes no LMP** (plan §2.6, card N2) |
 
 **Seven** ISOs are registered in `_ISO_BUILDERS` and `_ISO_TO_BA_CODE` — ERCOT,
 CAISO, PJM, MISO, NYISO, NEISO and, since 2026-09-06, **SPP** (`_spp_config()`,
@@ -68,14 +69,30 @@ placeholder pending lever **SPP-53** (owner ruling P13). SPP's Phase-0 data
 census is `docs/multi-iso/spp-data-audit.md`; its first solve and first keeper
 are lane SPP-40.
 
-**An eighth region is chartered but NOT registered: `SOCO`** (Southern Company
-Services), chartered 2026-09-12 by `docs/multi-iso/soco-addition-plan-2026-09.md`.
-It is absent from `_ISO_BUILDERS`, `_ISO_TO_BA_CODE`, `SURFACE_ISOS` and every other
-ISO-keyed registry; the pin flip is that plan's wave W2 (lane SOCO-20). SOCO is a
-**balancing authority, not an ISO** — it has no day-ahead market, no LMP and no
-capacity market — so three of the rubric's four load-bearing price criteria have no
-benchmark to score against; that is owner card **S2** and it is unresolved. Its
-Phase-0 data census is `docs/multi-iso/soco-data-audit.md` (lane SOCO-10, 2026-09-13).
+**TWO further regions are chartered but NOT registered — `SOCO` and `NWPP`.** Both are
+absent from `_ISO_BUILDERS`, `_ISO_TO_BA_CODE`, `SURFACE_ISOS` and every other ISO-keyed
+registry, so **the registered count is still SEVEN** (re-measured at `_ISO_BUILDERS`
+2026-09-13, lane NWPP-10); "eighth" and "ninth" below are claims about *charter order*,
+not about the tree.
+
+- **`SOCO`** (Southern Company Services), chartered **2026-09-12** by
+  `docs/multi-iso/soco-addition-plan-2026-09.md`; the pin flip is that plan's wave W2
+  (lane SOCO-20). SOCO is a **balancing authority, not an ISO** — no day-ahead market,
+  no LMP, no capacity market — so three of the rubric's four load-bearing price criteria
+  have no benchmark to score against; that is owner card **S2** and it is unresolved. Its
+  Phase-0 data census is `docs/multi-iso/soco-data-audit.md` (lane SOCO-10, 2026-09-13).
+- **`NWPP`** (the Northwest Power Pool / Western Power Pool footprint), chartered
+  **2026-09-13** by `docs/multi-iso/nwpp-addition-plan-2026-09.md`; the pin flip is that
+  plan's wave W2 (lane NWPP-20). NWPP is **neither a balancing authority nor an ISO — it
+  is a POOL of 17 balancing authorities**, the first such region here, which is why its
+  `BA_CODE_TO_ISO` entry is a **17→1** mapping and its plant-to-zone splitter must key on
+  `Balancing Authority Code` rather than state. It publishes no LMP (owner card **N2**),
+  has no capacity market, and is **36 % conventional hydro** whose eight largest plants sit
+  on one hydraulic chain (owner card **N3**). Its Phase-0 data census is
+  `docs/multi-iso/nwpp-data-audit.md` (lane NWPP-10, 2026-09-13) — which confirms the
+  fleet at 940 plants / 1,932 generators / 98,738.1 MW, rejects one 500 MW ERCOT-side row
+  as a BA-code source defect, and establishes `Demand (MW) (Adjusted)` and UTC as the
+  footprint's demand and time conventions.
 
 > **NEISO price row — now scored (2026-06-12, P10/U2 landed).** The NEISO P12
 > sign-off was price-*level-only*; with the `actual_lmp.json` NEISO block now
@@ -234,13 +251,18 @@ STAGE H — Docs
 > `config/iso_configs.py` — CAISO 3+import, NYISO 5, NEISO 4+import, PJM 8,
 > MISO (six zones since the zonal refinement; this note's older "3" is stale —
 > not this lane's to restate, see `docs/multi-iso/miso-zonal-refinement-scope.md`),
-> SPP 2. **Seven is still the registered count**: an eighth region, **`SOCO`**
-> (Southern Company Services — a *balancing authority*, not an ISO), was
-> **chartered 2026-09-12 and is NOT registered** — it is absent from
-> `_ISO_BUILDERS` and every other ISO-keyed registry, and its topology (1 zone
-> vs 3) is owner card **S3**, still open. See
-> `docs/multi-iso/soco-addition-plan-2026-09.md` and the Phase-0 census
-> `docs/multi-iso/soco-data-audit.md`.
+> SPP 2. **Seven is still the registered count**, re-measured at `_ISO_BUILDERS`
+> on 2026-09-13 (lane NWPP-10) — **two** further regions are chartered and NOT
+> registered, both absent from `_ISO_BUILDERS` and every other ISO-keyed
+> registry: **`SOCO`** (Southern Company Services — a *balancing authority*, not
+> an ISO), chartered 2026-09-12, topology owner card **S3**, still open; and
+> **`NWPP`** (the Northwest Power Pool footprint — a **pool of 17 balancing
+> authorities**, neither a BA nor an ISO), chartered 2026-09-13, topology owner
+> card **N5**, still open. "Eighth" and "ninth" are charter order, not the tree.
+> See `docs/multi-iso/soco-addition-plan-2026-09.md` +
+> `docs/multi-iso/soco-data-audit.md`, and
+> `docs/multi-iso/nwpp-addition-plan-2026-09.md` +
+> `docs/multi-iso/nwpp-data-audit.md`.
 > **Item 6, SPP, IS built and registered** as of 2026-09-06 (lane SPP-20,
 > `docs/handoffs/FINDING-spp-20-2026-09-06.md`): `_spp_config()`, the
 > `_ISO_BUILDERS` and `_ISO_TO_BA_CODE` entries and the
