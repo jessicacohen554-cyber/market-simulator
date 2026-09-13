@@ -272,7 +272,44 @@ The handoff's standing facts were partly stale and are corrected on the record:
 
 ---
 
-## 9. THE PROMOTION QUESTION — OPEN, AND IT IS THE OWNER'S
+## 9. THE PROMOTION QUESTION — ASKED, AND ANSWERED: **PROMOTED**
+
+**OWNER RULING, in session, 2026-09-13: PROMOTE.** `2026-09-13-spp-38-vintage-cache` is **SPP
+keeper 11**. Executed in the same session, in rule 35 `[R-PROMOTE]` order:
+
+| step | rule | done |
+|---|---|---|
+| year set enumerated **before** any delete | 35(b) | {2023, 2024, 2025}; incoming keeper covers it, so 35(c) holds — no year set shrinks |
+| `keepers/SPP.json` re-keyed | 35(a) | keeper 10's note preserved verbatim as `prior_keeper_note_spp36`; keeper 9's dropped; predecessors cited **by lane**, never by run id |
+| `calibration-complete.json` | — | **deliberately untouched**: SPP has no entry, and creating one would create a `complete` marker, a separate owner act this lane is forbidden to take |
+| `audit_keepers --iso SPP` **between** promote and prune | 35(e) | incoming three stores resolve; E13 correctly re-pointed at keeper 10 |
+| `prune_iso_runs.py --iso SPP` | 35(a), (d) | keeper 10's three stores removed together; **`--force-uncite` NOT needed and NOT used** — no governance file blocks it, the only citation is the matrix shard, which is reported but non-blocking |
+| matrix keeper + gates stamp | 28 | **stamps only** — cell verdict counts byte-identical before and after (K 9, R 6, I 3, G 0, O 2, U 155) |
+| `mechanism-testing-matrix.md` §5.7 prose header | 28 | re-stamped; it was **two generations stale** because keeper 10's promotion never discharged that duty — stated in the new header, not papered over |
+| `build_status.py --iso SPP` | 15 | re-cut |
+| **verified after** | 35(f) | **`audit_keepers --iso SPP` PASSES, 0 failures / 0 warnings.** Parity gate: 3 offenders, all CAISO's and NYISO's; **SPP zero** |
+
+Keeper 10's bundle is recoverable at `f6e3ed374682059291605b0d425b81c399baaa96` (17 files); git
+history is the record, exactly as rules 15 and 35(d) say.
+
+**THE SHARD BRANCH `claude/spp-38-span` COULD NOT BE DELETED AND IS STILL THERE.** Rule 33(f)
+steps 1–3 were done — no unique record on it (every doc is inherited from `main`), the bundle's
+registered layer is on `main` — but `git push origin --delete` returns **HTTP 403**: this session's
+credential can create and update refs but not delete them, and the GitHub MCP server exposes no
+branch-deletion tool. This is exactly what rule 33(f)(5) documents, including the misleading
+`send-pack: unexpected disconnect` → `Everything up-to-date` that masks the 403 until you force
+HTTP/1.1. **Reported rather than claimed as done.** One upside: the recovery pins in §5 stay live.
+
+## 9b. WHAT THE PROMOTION DOES NOT DO
+
+**Next shorthand: spp-39.** The queue (R-be day selection → R-ba merit inversion → R-bc
+price-forming curtailment) was **not** entered: card A consumed the lane, which is what the handoff
+ordered, and every queue card reasons off per-plant 2024/2025 thermal behaviour that only now has a
+correct basis. **Rule 29(b) form 4 for SPP now differences against keeper 11**; against keeper 10 it
+is void for 2024/2025, and keeper 10 is no longer registered.
+
+<!-- superseded question, kept so the decision's basis is legible -->
+## 9c. THE RECOMMENDATION AS IT WAS PUT (superseded by the ruling above)
 
 **Recommendation: promote `2026-09-13-spp-38-vintage-cache` to SPP keeper 11.** Keeper 10's 2024 and
 2025 numbers are computed on an LP input proven wrong; this run is its own recipe on a correct one,

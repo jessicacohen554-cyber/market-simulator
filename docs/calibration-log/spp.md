@@ -2487,3 +2487,47 @@ parent must `git reset HEAD -- <path>` immediately.
 **Next shorthand: spp-39.** The queue (R-be → R-ba → R-bc) was NOT entered: card A consumed the
 lane, as the handoff ordered. Until a promotion, rule 29(b) form 4 for SPP 2024/2025 should
 difference against **this run**, not keeper 10.
+
+### spp-38 — PROMOTION EXECUTED (same session)
+
+**OWNER RULING in-session, 2026-09-13, on the question "Keeper 10's committed 2024/2025 numbers
+are computed on an LP input we have proven wrong. Promote?" — answered PROMOTE.**
+`2026-09-13-spp-38-vintage-cache` is **SPP KEEPER 11**. The lane recommended and did not act until
+the ruling (rule 31 `[R-RETAIN]`).
+
+Rule 35 `[R-PROMOTE]` executed in order: **(b)** year set enumerated BEFORE any delete — union
+{2023, 2024, 2025}, covered by the incoming keeper, so **(c)** no year set shrinks; **(a)**
+`keepers/SPP.json` re-keyed, keeper 10's note preserved verbatim as `prior_keeper_note_spp36`
+(it records a conclusion this run overturns, so it is kept rather than edited), predecessors cited
+BY LANE not run id per the standing retention convention; **(e)** `audit_keepers --iso SPP` run
+**between** the re-key and the prune, showing the incoming three stores resolving; only then
+`prune_iso_runs.py --iso SPP` removed keeper 10's three stores together. **`--force-uncite` was NOT
+needed and NOT used** — no governance file blocks it; the only citation is the matrix shard, which
+is reported but non-blocking. Keeper 10's bundle recoverable at
+`f6e3ed374682059291605b0d425b81c399baaa96`.
+
+`calibration-complete.json` **deliberately untouched**: SPP has no entry, and creating one would
+create a `complete` marker — a separate owner act this lane is forbidden to take. **SPP still holds
+no `complete` and no `frontier`.**
+
+Matrix: SPP.js keeper + gates re-stamped, and `mechanism-testing-matrix.md` §5.7 prose header
+re-stamped — it was **two generations stale** because keeper 10's promotion never discharged that
+rule-28 duty; the gap is stated in the new header rather than papered over, so the preserved
+predecessor is keeper 9's. **STAMPS ONLY:** cell verdict counts byte-identical before and after
+(K 9, R 6, I 3, G 0, O 2, U 155).
+
+**VERIFIED AFTER (rule 35(f)): `audit_keepers --iso SPP` PASSES, 0 failures / 0 warnings** (keeper,
+holdout, marker, status all clean). Parity gate carries 3 offenders, all CAISO's and NYISO's; **SPP
+has zero.**
+
+**THE SHARD BRANCH `claude/spp-38-span` COULD NOT BE DELETED AND REMAINS.** Rule 33(f) steps 1–3
+were done (no unique record on it — every doc inherited from `main`; the registered layer is on
+`main`), but `git push origin --delete` returns **HTTP 403**: this session's credential can create
+and update refs but not delete them, and the GitHub MCP server exposes no branch-deletion tool —
+exactly what rule 33(f)(5) documents, including the misleading `send-pack: unexpected disconnect` →
+`Everything up-to-date` that hides the 403 until HTTP/1.1 is forced. **Reported, not claimed as
+done.** The §5 recovery pins stay live as a result.
+
+**Rule 29(b) form 4 for SPP now differences against KEEPER 11.** Against keeper 10 it is void for
+2024/2025, and keeper 10 is no longer registered. **Next shorthand: spp-39**, queue unchanged
+(R-be day selection → R-ba merit inversion → R-bc price-forming curtailment), none entered.
