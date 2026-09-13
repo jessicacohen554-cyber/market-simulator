@@ -15200,3 +15200,40 @@ it largely dissolves the multiplier's motivation. (3) The **parity gate is RED o
 FOUR** tracked bundle dirs, one more than the handoff recorded — `caiso279_ablate_dswcouple_span`
 (CAISO) plus `nyiso230_arm_y2022`, `nyiso231_arm_y2022` and **`nyiso231_ctl_y2022`** (NYISO).
 **Nothing removed** (rule 31 `[R-RETAIN]`); the NYISO three are their own lane's (rule 25).
+
+### caiso-281 addendum — 2026-09-13: THE SESSION'S OWN RECOMMENDATION IS WITHDRAWN; THE REPAIR IS AN INTAKE, NOT A RUBRIC CHANGE
+
+Owner question, same sitting: *"Why are we using da only rt"*. Read at the code level, the two
+sides are **independent decisions**, and the answer **reverses this session's first
+recommendation**. Full record: RESULT §5.1.
+
+* **The offer input is DA because that is the only bid data FETCHED.**
+  `data/raw/caiso-public-bids/README.md`: *"DATA NEEDED: RTM public bids (`PUB_RTM_GRP`) are not
+  fetched — the derive charter (measured DAM offer surface, C1 lane 2026-07-16) needs DAM only."*
+  CAISO **publishes** the RTM product. An **intake gap**, not a source limitation.
+* **The benchmark is RT for a stated, principled reason**
+  (`calibration_verdict.score_price_mean_da_diagnostic`): *"A perfect-foresight dispatch LP is a
+  real-time analogue: the DA−RT spread (the DART risk premium …) is a forward risk premium the LP
+  has no mechanism to price, and modeling it with offers/adders is forbidden (a fit to the price
+  residual). C3a therefore gates on RT."* The DA gap is already carried as a **SKIPPED,
+  never-gated diagnostic row**.
+
+**WITHDRAWN: "rule on the basis first."** That leaned toward re-pointing C3a at DA, which is the
+**wrong direction**. The LP clears with perfect foresight over the full 8,760 h, so it *is* an RT
+analogue; scoring it on DA would credit it with a risk premium it structurally cannot generate.
+**Gate E's numbers are unchanged and stand** — what changes is which side of the mismatch the
+repair belongs on. Handoff §5's rubric item is **answered, not escalated**: the rubric is already
+right.
+
+**SUCCESSOR, REDIRECTED TO THE INPUT SIDE:** re-derive the measured offer surface on **RTM public
+bids (`PUB_RTM_GRP`)** and compare its ladder to the DAM-derived one. A **data-intake object, not
+a tuning channel** — rule 14 `[R-ACCURATE]` plus a rule 23 `[R-FROZEN-DERIVE]` re-derivation
+justified by a **new source**, never by a residual; **its sign is unknown in advance, which is
+what makes it admissible.** Either branch closes the lane: RTM materially below DAM ⇒ the residual
+was an input-vintage defect repairable without any multiplier; RTM ≈ DAM ⇒ the gap is in the
+**clearing**, the scorer's "no mechanism to price it" stands, and CAISO's residual becomes a
+**declared model-class limitation**. **Stated against it before anyone spends the intake:** a
+price-side DART premium is largely a clearing artifact, so the second branch is a real
+possibility; and the DAM corpus cost 422 MB / 1,095 trade dates at 6 s spacing with
+`curate_dam_public_bids.py` carrying a known ~14.3 GB full-year peak-RSS limit (stream day-by-day).
+**Nothing fetched, derived, solved or proposed as a solve.**
