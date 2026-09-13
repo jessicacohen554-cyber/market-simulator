@@ -13736,6 +13736,50 @@ the current keeper (nyiso-178 precedent, no verdict moved).
 `src/market_sim/data/fuel/zonal_anchor.py`,
 `tests/unit/data/test_gas_offer_zonal_anchor_vintage.py`.
 
+**ADDENDUM (2026-09-13) — THE 2022 SCREEN STOPS, AND THE DEFECT IS IN THIS SESSION'S OWN
+MIRROR, NOT IN THE MECHANISM.** Record: `docs/RESULT-nyiso230-the-2022-screen-2026-09-13.md`;
+gates `results/calibration/_nyiso230_screen_gates_2022.json`. Two shard containers, one arm.
+
+| gate | measured | verdict |
+|---|---|---|
+| G-CONF | three fields moved; recorded anchors off by a uniform **−1.3868 $/MMBtu** | **STOP** |
+| G-SCOPE | **0** band multipliers / `phys_*` / `peak` / shares moved | PASS |
+| G-PRED | ratios 0.585 / 0.694 / 0.694 / 0.645 / 0.694 vs [0.95, 1.05] | **STOP** |
+| G-DEMAND | served demand **152.68167 TWh** both legs, dump **0.000**, slack **0.000** both | PASS |
+
+**The gates were NOT re-cut and the remaining years were NOT spent** (rule 29 `[R-SCREEN]`).
+The five recorded anchors miss the PRECOMMIT prediction by a **constant** −1.3868 in every zone,
+which localises the cause upstream of the zone split; a zero-LP bisect over every gas flag lands
+on exactly one — **`gas_hub_basis_overlay=False` reproduces the solved 7.0563 to 0.0000**. The
+`run_calibration_full._recorded_config` mirror is called where `recorded_cfg` does not yet carry
+the Transco Z6 hub overlay, while `run_calibration.run_year`'s own resolution is correctly placed
+(overlay line 1960, resolution line 2565) — **so the two halves disagree.** The sibling
+`gas_offer_margin_anchor_vintage` (pjm-169 F4) computes its mirror at the same point and carries
+the same latent seam; nothing is armed on it anywhere.
+
+**OPEN AND NOT GUESSED AT: which anchor the LP actually priced against.** If `run_year` recomputed
+and overwrote, the LP solved on the correct 8.4431 while `run_config.json` records 7.0563 — the
+FFR-2E class, and the **cache key then claims a resolution the solve never performed** (rule 24
+`[R-REGISTRY]`). **The arm's +5.470 $/MWh (67.6573 → 73.1275, direction as declared ex ante) is
+therefore NOT attributable and must not be quoted as the mechanism's effect.** Nothing promoted,
+nothing registered, keeper unchanged.
+
+**Retrievable, zero re-solves for 2022** (rule 34 `[R-SHARD-PROMOTABLE]` (e)): 17 files at
+`90475b1c2b56283018396504e39ad638ac367c97`; the first shard's blocker record at
+`9f11d68e16707b47732e43474af46811867fb640`. Both shards archived (rule 33).
+
+**INFRASTRUCTURE FIX LANDED THIS SESSION, and it is worth more than the screen.**
+`scripts/regenerate_clean.py` put only `<repo>` on its subprocesses' `PYTHONPATH`, but
+`scripts/lib/clean_io.py` then imports `market_sim`, which needs `<repo>/src` — half the chain.
+On any container without an editable install every curation script died with
+`ModuleNotFoundError: No module named 'market_sim'`, raised from INSIDE `clean_io`, in a traceback
+naming neither `PYTHONPATH` nor the caller. **That opaque failure has now cost three NYISO shards,
+each mis-diagnosing it differently** — nyiso-228 concluded `capacity-deliverability` was INERT and
+recorded it as such (**it is not**; that matrix note is wrong), a nyiso-229 shard blocked on the
+datatype being absent, and this lane's first shard reported it as an OOM at 29 s plus a missing
+`data/clean` write permission. Neither. With `src/` on the path the datatype regenerates in
+**0.7 s**, verified in the shards' exact condition.
+
 ## nyiso-229 — 2026-09-12
 
 **KEEPER PROMOTED: `2026-09-12-nyiso229-hourgrain-span`** (bundle
