@@ -121,16 +121,30 @@ def regenerate(datatypes: list[str]) -> int:
             failed += 1
             continue
         print(f"[run ] {datatype}: {script.name}")
-        # Run with the repo root on PYTHONPATH so the curation scripts'
-        # `import scripts.lib.clean_io` resolves. Invoking a script by path puts
-        # its own dir (scripts/) on sys.path, not the repo root, so without this
-        # the scripts that import the shared writer fail with ModuleNotFoundError.
+        # Run with the repo root AND src/ on PYTHONPATH. Invoking a script by
+        # path puts its own dir (scripts/) on sys.path, not the repo root, so
+        # both hops of the import chain need help:
+        #   repo_root  -> the curation scripts' `import scripts.lib.clean_io`
+        #   repo_root/src -> clean_io's own `from market_sim.config import paths`
+        # The src/ hop was missing, so on a container without an editable
+        # install every curation script died with
+        # `ModuleNotFoundError: No module named 'market_sim'` raised from INSIDE
+        # clean_io — a traceback that names neither PYTHONPATH nor the caller.
+        # Three separate NYISO solve shards mis-diagnosed that as an OOM or a
+        # missing write permission and burned their budgets (nyiso-228 went on
+        # to record capacity-deliverability as INERT on the strength of it).
+        # Adding a path can only widen resolution, never change which module an
+        # already-working environment picks: an editable install still wins
+        # because site-packages precedes PYTHONPATH entries only when the entry
+        # is absent, and here both point at the same tree. (nyiso-230)
         repo_root = SCRIPTS_DIR.parent
         env = dict(os.environ)
         env["PYTHONPATH"] = os.pathsep.join(
-            [str(repo_root), env["PYTHONPATH"]]
-            if env.get("PYTHONPATH")
-            else [str(repo_root)]
+            [
+                str(repo_root),
+                str(repo_root / "src"),
+                *([env["PYTHONPATH"]] if env.get("PYTHONPATH") else []),
+            ]
         )
         result = subprocess.run([sys.executable, str(script)], cwd=repo_root, env=env)
         if result.returncode != 0:
