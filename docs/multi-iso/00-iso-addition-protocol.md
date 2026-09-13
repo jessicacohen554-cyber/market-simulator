@@ -56,6 +56,7 @@ Companion documents in this directory:
 | SPP   | **REGISTERED 2026-09-06** (lane SPP-20): 2 zones (SPP-North/SPP-South), measured sub-BA load shares 0.5125/0.4875, VOLL $2,000. Its ONE N↔S link's 48,700 MW TTC is a **Tier-3 placeholder that cannot bind** — no public document states an SPP North↔South capability (FINDING-spp-13 §0) — so seam TTC is **pending lever SPP-53**; see `spp-addition-plan-2026-09.md` | SWPP | FIPS state→zone (`_SPP_STATE_ZONES`) | none yet (SPP-31) | `SWPP hourly` **present** | No — first solve is lane SPP-40 |
 | NYISO | 5 zones (A–K agg), cited TTCs, 154-plant hydro budget | NYIS | FIPS/largest (Tier-3 Gold-Book shares) | 2023, 2025 (2024 blocked) | `NYIS hourly` (2023–2025) | **2023 + 2025** (price-scored 2026-06-12; 2024 data-blocked) |
 | NEISO | 4 load zones (North/Central/Boston/CT) + HQ_import node | ISNE | FIPS state→zone map (_NEISO_STATE_ZONES); Central fallback | 2023–2025 | `ISNE hourly` | **Yes (P12, 2023–2025; P14 signed off 2026-06-12; price scored 2026-06-12)** |
+| SOCO | **NOT REGISTERED** — chartered 2026-09-12, see `soco-addition-plan-2026-09.md`. A *balancing authority*, not an ISO: Southern Company Services, vertically integrated, no day-ahead market, no LMP, no capacity market. Topology (1 zone vs 3) is owner card **S3**, served from `soco-data-audit.md` §6 | SOCO (BA code, not yet in `_ISO_TO_BA_CODE`) | none yet — `_SOCO_STATE_ZONES` candidate in `soco-data-audit.md` §6.4 | none | `SOCO hourly` **present** (26,304 h, 2023–2025, `America/Chicago`) | No — and **there is no price benchmark to score one against** (plan §2.6, card S2) |
 
 **Seven** ISOs are registered in `_ISO_BUILDERS` and `_ISO_TO_BA_CODE` — ERCOT,
 CAISO, PJM, MISO, NYISO, NEISO and, since 2026-09-06, **SPP** (`_spp_config()`,
@@ -66,6 +67,15 @@ SPP carries one topology item still open: the **N↔S seam TTC**, a Tier-3
 placeholder pending lever **SPP-53** (owner ruling P13). SPP's Phase-0 data
 census is `docs/multi-iso/spp-data-audit.md`; its first solve and first keeper
 are lane SPP-40.
+
+**An eighth region is chartered but NOT registered: `SOCO`** (Southern Company
+Services), chartered 2026-09-12 by `docs/multi-iso/soco-addition-plan-2026-09.md`.
+It is absent from `_ISO_BUILDERS`, `_ISO_TO_BA_CODE`, `SURFACE_ISOS` and every other
+ISO-keyed registry; the pin flip is that plan's wave W2 (lane SOCO-20). SOCO is a
+**balancing authority, not an ISO** — it has no day-ahead market, no LMP and no
+capacity market — so three of the rubric's four load-bearing price criteria have no
+benchmark to score against; that is owner card **S2** and it is unresolved. Its
+Phase-0 data census is `docs/multi-iso/soco-data-audit.md` (lane SOCO-10, 2026-09-13).
 
 > **NEISO price row — now scored (2026-06-12, P10/U2 landed).** The NEISO P12
 > sign-off was price-*level-only*; with the `actual_lmp.json` NEISO block now
@@ -224,7 +234,13 @@ STAGE H — Docs
 > `config/iso_configs.py` — CAISO 3+import, NYISO 5, NEISO 4+import, PJM 8,
 > MISO (six zones since the zonal refinement; this note's older "3" is stale —
 > not this lane's to restate, see `docs/multi-iso/miso-zonal-refinement-scope.md`),
-> SPP 2.
+> SPP 2. **Seven is still the registered count**: an eighth region, **`SOCO`**
+> (Southern Company Services — a *balancing authority*, not an ISO), was
+> **chartered 2026-09-12 and is NOT registered** — it is absent from
+> `_ISO_BUILDERS` and every other ISO-keyed registry, and its topology (1 zone
+> vs 3) is owner card **S3**, still open. See
+> `docs/multi-iso/soco-addition-plan-2026-09.md` and the Phase-0 census
+> `docs/multi-iso/soco-data-audit.md`.
 > **Item 6, SPP, IS built and registered** as of 2026-09-06 (lane SPP-20,
 > `docs/handoffs/FINDING-spp-20-2026-09-06.md`): `_spp_config()`, the
 > `_ISO_BUILDERS` and `_ISO_TO_BA_CODE` entries and the
