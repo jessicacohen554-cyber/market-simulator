@@ -22,10 +22,13 @@ number existed.**
 > **(b) Is the +1.024 marginal-HR bias a measured-input defect? NO. The model's physical heat
 > rates are right, confirmed by two independent measured sources.**
 >
-> **(c) Then what is it? It is very largely a DAY-AHEAD-vs-REAL-TIME BASIS artifact of the test.
-> The offer ladder carrying the bias is measured from CAISO's DAY-AHEAD bids; C3a scores it
-> against REAL-TIME prices. Re-measured on the ladder's own basis, CAISO's bias goes from
-> +0.533 (t = +4.03, p = 0.0003) to −0.158 (t = −0.80, p = 0.43).**
+> **(c) Then what is it? A DAY-AHEAD-vs-REAL-TIME BASIS mismatch between the model's OFFER INPUT
+> and the benchmark. The ladder carrying the bias is measured from CAISO's DAY-AHEAD bids; C3a
+> scores it against REAL-TIME prices. Re-measured on the ladder's own basis, CAISO's bias goes
+> from +0.533 (t = +4.03, p = 0.0003) to −0.158 (t = −0.80, p = 0.43).**
+>
+> **(d) THE REPAIR IS ON THE INPUT SIDE, NOT THE BENCHMARK — see §5.1, which CORRECTS this
+> session's own first recommendation.**
 
 **The handoff §4 direction is dead, and the live question is now the owner's standing §5 rubric
 item — which this session has given a MECHANISM rather than an observation.**
@@ -150,6 +153,51 @@ isolated is **not present on the day-ahead basis** — 75 % of months positive b
    **N-CA-2**'s vintage-asymmetry reading of 2022. Recorded because the addendum required it
    whichever way the number landed.
 
+### §5.1 — CORRECTION TO THIS SESSION'S OWN RECOMMENDATION (owner question, 2026-09-13)
+
+**Asked "why are we using DA only RT", this session went and read why each side is what it is.
+The answer changes the recommendation, and the earlier one is withdrawn.**
+
+**The two sides are independent decisions, not one oversight.**
+
+* **The offer input is DA because that is the only bid data fetched.**
+  `data/raw/caiso-public-bids/README.md`: *"DATA NEEDED: RTM public bids (`PUB_RTM_GRP`) are not
+  fetched — the derive charter (measured DAM offer surface, C1 lane 2026-07-16) needs DAM only."*
+  CAISO **does** publish the RTM product. This is an **intake gap**, not a source limitation.
+* **The benchmark is RT for a stated, principled reason** —
+  `scripts/calibration_verdict.py::score_price_mean_da_diagnostic`: *"A perfect-foresight dispatch
+  LP is a real-time analogue: the DA−RT spread (the DART risk premium …) is a forward risk premium
+  the LP has no mechanism to price, and modeling it with offers/adders is forbidden (a fit to the
+  price residual). C3a therefore gates on RT."* The DA gap is already carried as a **SKIPPED,
+  never-gated diagnostic row** — the rubric surfaces it deliberately rather than hiding it.
+
+**WITHDRAWN: §6 owner item 1's "rule on the basis first" leaned toward re-pointing C3a at DA.
+That is the WRONG DIRECTION and it is retracted.** The LP clears with perfect foresight over the
+full 8,760 hours — no forecast error, no uncertainty, cyclic storage boundary — so it *is* an RT
+analogue, and scoring it on DA would credit it with a risk premium it structurally cannot
+generate. Gate E's number is unchanged and stands; what changes is which side of the mismatch the
+repair belongs on.
+
+**THE SUCCESSOR OBJECT, REDIRECTED TO THE INPUT SIDE:** re-derive the measured offer surface on
+**RTM public bids (`PUB_RTM_GRP`)** and compare its ladder to the DAM-derived one. This is a
+**data-intake object, not a tuning channel** — rule 14 `[R-ACCURATE]` (prefer the measured data
+that matches our representation) and a rule 23 `[R-FROZEN-DERIVE]` re-derivation justified by a
+**new source**, never by a residual. **Its sign is unknown in advance, which is what makes it
+admissible**, and either outcome closes the lane honestly:
+
+* **RTM ladders sit materially below DAM ladders** → the residual was an input-vintage defect;
+  repairing it is structural and needs no multiplier.
+* **RTM ladders look like DAM ladders** → the gap is in the **clearing**, not the offers; the
+  scorer's "the LP has no mechanism to price it" stands, and the CAISO residual becomes a
+  **declared model-class limitation** rather than an open defect.
+
+**Stated against it, before anyone spends the intake:** a DART premium in *prices* is largely a
+scarcity-and-uncertainty artifact of the **clearing**, so RTM bids may well resemble DAM bids —
+the second branch is a real possibility, not a straw man. Cost is also real: the DAM corpus is
+422 MB for 1,095 trade dates at 6 s spacing, and `curate_dam_public_bids.py` has a known scaling
+limit (~14.3 GB peak RSS for a full year; consumers must stream day-by-day). **Nothing was
+fetched, derived or proposed as a solve here.**
+
 ## §6 — WHAT THIS MEANS, AND THE THREE THINGS THAT NEED THE OWNER
 
 **The lane's honest state is now sharper than "no admissible lever".** The 2022 C3a miss is:
@@ -160,12 +208,14 @@ isolated is **not present on the day-ahead basis** — 75 % of months positive b
 * it is **the offer ladder above base measured against a different price basis than the one it was
   measured on** (§5).
 
-### Owner item 1 — the rubric ruling (handoff §5), now with a mechanism
+### Owner item 1 — SUPERSEDED BY §5.1: the answer is an INTAKE, not a rubric change
 
-The standing question was *"C3a on the DA basis looks better — is that legitimate?"*. The new fact
-is that **the model's marginal-cost input is itself a day-ahead-bid surface**, so DA is arguably
-its native basis rather than a flattering one. Against that: DA is noisier and over-corrects 2023.
-**Not acted on. No benchmark changed, no scorer touched.** Rubric owner's call.
+The standing handoff §5 question was *"C3a on the DA basis looks better — is that legitimate?"*
+**§5.1 answers it: no, and the rubric is already right.** The benchmark stays RT because the LP is
+a perfect-foresight RT analogue; the DA gap is already a never-gated diagnostic row. **What needs a
+decision is not the rubric but whether to fund the `PUB_RTM_GRP` intake** that would let the offer
+surface be measured on the same basis it is scored against. **Not acted on. No benchmark changed,
+no scorer touched, nothing fetched.**
 
 ### Owner item 2 — the ×0.92 multiplier, with the C4 cost now stated mechanically
 
@@ -180,7 +230,9 @@ handoff §4 asked for a written case, not a solve, if the lane landed here. It d
   multiplier cannot help it and will generally hurt it.
 * **The honest reading is that ×0.92 is a hand-sized correction for a BASIS mismatch.** If the
   basis question (item 1) is ruled on, the multiplier's motivation largely disappears.
-**No multiplier was re-run at any value** (rule 1 (c)). **Recommendation: rule on item 1 first.**
+**No multiplier was re-run at any value** (rule 1 (c)). **Recommendation: the `PUB_RTM_GRP`
+intake of §5.1 first** — it is the only route that can tell whether this residual is an input
+defect or a model-class limitation, and it settles the multiplier question either way.
 
 ### Owner item 3 — the parity gate is RED on `main` (handoff §6), and it is now FOUR dirs
 
