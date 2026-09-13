@@ -249,12 +249,29 @@ provenance), not condition (b).*
 Rule 1 `[R-STRUCT]` forbids selecting a mechanism on whether it moves the residual, so this is a
 report line and nothing else, **written before the screen exists**:
 
-Dearer coal at min load pushes COAL_BIT energy **down**. It therefore helps **2020 (+22.83 TWh)**
-and **risks 2023 (+2.10) and 2024 (−0.12)** — two training years whose COAL_BIT sits comfortably
-inside the 8 TWh band on an 8/8 zero-caveat keeper. **A regression there is NOT a reason to
-revert**: rule 14 is explicit — *"keep the accurate input, find and fix the real root cause."*
-Equally, an improvement in 2020 is **not** what would license the arm; only the structural gate
-in §7 can do that.
+Dearer coal at min load pushes COAL_BIT energy **down**. Against the keeper's own scored C1
+(band ±8.00 TWh), that helps in four years and hurts in two — it is **not** uniformly a training-
+year risk, and the card's shorthand ("risks 2023/2024") is only half right:
+
+| yr | tier | COAL_BIT residual | dearer coal → | headroom before FAIL |
+|---|---|---:|:--|---:|
+| 2020 | held out | **+22.83** | **helps** | already FAIL |
+| 2021 | held out | −3.71 | **hurts** | 4.29 TWh |
+| 2022 | held out | +3.05 | helps | — |
+| **2023** | **training, gated** | **+2.10** (105.125 vs 103.026) | **helps** | — |
+| **2024** | **training, gated** | **−1.13** (103.972 vs 105.097) | **hurts** | **6.87 TWh** |
+| 2025 | training, **SKIPPED** | +8.40 (133.833 vs 125.429) | helps | ungated (preliminary 923 vintage) |
+
+**The real exposure is 2024, and it is a MAGNITUDE problem rather than a direction one.** Under
+REPLACE the two largest perturbations of all six years land on the two gated training years —
+**2023 (+17.66 $/MWh) and 2024 (+16.84)** — and those are precisely the years with the *smallest*
+residuals. 2024 has only **6.87 TWh** of headroom and the arm pushes it the wrong way; 2023
+improves but can overshoot through zero if the response is large.
+
+**A regression there is NOT by itself a reason to revert** — rule 14 is explicit: *"keep the
+accurate input, find and fix the real root cause."* Equally, the improvement in 2020 is **not**
+what would license the arm; only the structural gate in §7 can do that. This table exists so the
+decision is made with the exposure visible, not to gate anything.
 
 ## 6. (d) THE SCREEN YEAR — NAMED ON FOOTPRINT, NOT ON THE RESIDUAL
 
@@ -400,13 +417,14 @@ reach. What it lacks is an admissible *justification*, and there are exactly two
 to ALL classes.** The reason is not the residual — it is what is at stake under the governance
 rules, stated plainly:
 
-> **The arm trades a residual that CANNOT downgrade PJM for a risk to the years that CAN.**
+> **The arm trades a residual that CANNOT downgrade PJM for exposure on the years that CAN.**
 > Rule 30(c) is explicit that a held-out year never downgrades an ISO — PJM's determination *is*
 > the 2023–2025 verdict, which currently reads **CALIBRATED, 8/8, zero caveats, empty basis**.
 > The entire object of this lane (2020 COAL_BIT +22.83; CC_REGULAR 2021 +16.98 / 2022 +12.81) is
-> held-out-year residual that cannot move that determination. Meanwhile the arm's own measured
-> direction (§5) makes coal dearer in **every** year, including 2023 (+2.10) and 2024 (−0.12) —
-> the two training years that DO set PJM's status.
+> held-out-year residual that cannot move that determination. Meanwhile REPLACE puts its **two
+> largest perturbations of all six years on the two gated training years** — 2023 (+17.66 $/MWh)
+> and 2024 (+16.84) — which carry the **smallest** residuals (+2.10 and −1.13 against ±8.00), and
+> it pushes 2024 the wrong way with 6.87 TWh of headroom (§5).
 
 That is not a reason to revert an accurate input — rule 14 forbids exactly that reasoning, and
 if the owner rules the substitution correct then a worse 2023/2024 is a root-cause to chase, not
