@@ -11,7 +11,10 @@ summary is scored as C8 and whose D-1 diurnal rows C8's grounded-above-budget
 escalation reads; the C7 criterion that also scored D-1 was retired at v3.1) —
 and emits a ``PASS`` / ``CAVEAT`` / ``FAIL`` per
 criterion plus one overall determination in
-``{CALIBRATED, CALIBRATED-WITH-CAVEATS, NOT-YET}``. Criteria are tiered
+``{CALIBRATED, CALIBRATED-WITH-CAVEATS, NOT-YET}`` — or, for a region with NO
+committed price benchmark at all (rubric v3.8), in
+``{PHYSICALLY-CALIBRATED (PRICE UNSCORED), PHYSICALLY-CALIBRATED-WITH-CAVEATS
+(PRICE UNSCORED), NOT-YET}``, never ``CALIBRATED``. Criteria are tiered
 (load-bearing / supporting / protective) against the §0 statement of intended
 use; graded load-bearing criteria are two-band scored (target band ->
 commercial-grade band, each anchored to a published external benchmark —
@@ -440,7 +443,67 @@ COMPLETENESS_DIR = DATA_DIR / "completeness"
 #       Finding: results/calibration/
 #       FINDING-neiso106-per-year-ladder-governance-defect-2026-09-06.md.
 #       NO SOLVE RAN — scorer-side only; every run re-scores in place.
-RUBRIC_VERSION = 3.7
+# v3.8 — 2026-09-13 owner ruling, SOCO card S2 (desk r#2), verbatim: "... rule
+#       now that if it fails, a SOCO run reads a determination that names its
+#       own basis (e.g. PHYSICALLY CALIBRATED - price unscored, no public price
+#       exists) scored on C1/C2/C4/C6/C8, never CALIBRATED, with the price gap
+#       on the determination basis at full magnitude." Implemented under card
+#       S11 (desk r#3: "an added branch keyed on the ABSENCE of an
+#       actual_lmp.json block — no existing ISO can reach it, and it therefore
+#       serves NWPP's card N2 with the same amendment"), lane SOCO-22.
+#       THE NO-PRICE DETERMINATION CLASS. Three of the rubric's criteria score
+#       LP duals against a committed price benchmark; a region that has NONE
+#       (Southern Company publishes no LMP and never will — plan §2.6; NWPP's
+#       WEIM series was built and REFUSED by its own pre-registered STOP gate,
+#       FINDING-nwpp-13-2026-09-13.md) could until now read only
+#       CALIBRATED-WITH-CAVEATS ("unscored criteria: price_mean, price_shape"),
+#       a label that says price was calibrated with a caveat when no price was
+#       scored at all. It now reads a determination that says what it is:
+#         PHYSICALLY-CALIBRATED (PRICE UNSCORED)                — clean rung
+#         PHYSICALLY-CALIBRATED-WITH-CAVEATS (PRICE UNSCORED)   — caveat rung
+#       THE PREDICATE IS ABSENCE, NEVER A NAME (:func:`_price_reference_absent`):
+#       the branch is reachable iff (i) the committed actual_lmp.json carries NO
+#       block for the run's ISO AND (ii) C3a, C3b and C3c are all SKIPPED at the
+#       per-criterion level. No ISO name appears anywhere in it. (i) fails
+#       CLOSED — an unreadable reference establishes nothing, so the run reads
+#       as before; (ii) fails closed too — a scored price criterion can never be
+#       overridden. A PARTIAL series (a block with some years missing — MISO
+#       2020/2021) has a block, so it takes the ordinary path unchanged; a
+#       REJECTED series never lands (gate --land refuses on NO), so absence IS
+#       the rejection signal and no flag is invented.
+#       WHAT THE BRANCH DOES: it sits AFTER the governance, FAIL and caveat-
+#       budget checks, all untouched, so every NOT-YET route is byte-identical.
+#       On the clean route the three price criteria are removed from the
+#       unscored-criteria downgrade (C3a/C3b) and from the v3.7 exempt line
+#       (C3c) and named TOGETHER on a determination-basis line that states the
+#       ISO, the file, the three criteria, the years, that the determination is
+#       scored on C1/C2/C4/C6/C8 ONLY, that it certifies no price, and the
+#       model's own annual mean LMP labelled MODEL-ONLY and UNVERIFIED — the
+#       price gap at full magnitude. That line is appended LAST on EVERY route,
+#       NOT-YET included, so a failing no-price run can never be read as having
+#       failed on price, and it never displaces a downgrading reason from the
+#       headline. A `price_unscored` block is added to the verdict ONLY on the
+#       branch (the `span_restricted` pattern).
+#       WHY "(PRICE UNSCORED)" AND NOT THE RULING'S "no public price exists":
+#       the scorer observes only that no committed benchmark exists; the reason
+#       differs by region (SOCO: none exists; NWPP: two exist and both were
+#       refused as benchmarks), and the example clause would be FALSE on the
+#       second region this amendment serves. The label states the observable
+#       fact; the basis line names the ISO and the file; the plans and the
+#       FINDINGs carry the why. Two rungs mirror the existing ladder so a band
+#       caveat is not hidden — on the criteria it DOES score, this class is
+#       exactly as strict as the ordinary one.
+#       WHAT IS UNTOUCHED: every criterion's tier, band, threshold; both caveat
+#       budgets; LEDGERABLE_CRITERIA; _apply_ledger; the rule 22 [R-C3C]
+#       standing rule; _no_price_reason; price_reference_blocked_years.
+#       EFFECT AT AMENDMENT, MEASURED over all 14 registered runs (7 keepers)
+#       and every per-year subset against a pre-change snapshot at 33a7c961:
+#       ZERO records, statuses, classifications, magnitudes or reason strings
+#       change; the only diff in any verdict is this version field. The branch
+#       is unreachable by every ISO that has a block, which is every registered
+#       ISO. NO SOLVE RAN — scorer-side only. PRECOMMIT/FINDING:
+#       docs/handoffs/{PRECOMMIT,FINDING}-soco-22-2026-09-13.md.
+RUBRIC_VERSION = 3.8
 
 # Statuses (per criterion-year and aggregated).
 PASS, CAVEAT, FAIL, SKIPPED = "PASS", "CAVEAT", "FAIL", "SKIPPED"
@@ -469,6 +532,17 @@ COMMERCIAL_BAND = "WITHIN COMMERCIAL BAND (TARGET MISS)"
 CALIBRATED = "CALIBRATED"
 CALIBRATED_CAVEATS = "CALIBRATED-WITH-CAVEATS"
 NOT_YET = "NOT-YET"
+# Rubric v3.8 (owner ruling, SOCO card S2 / S11, 2026-09-13): the no-price
+# determination class — the two rungs a region with NO committed price
+# benchmark may read instead of CALIBRATED / CALIBRATED-WITH-CAVEATS. Reachable
+# only through :func:`_price_reference_absent`; never equal to CALIBRATED. The
+# label states the observable fact ("price unscored"), not the region's reason
+# for it, because the reason differs by region and the scorer cannot know it.
+PHYSICALLY_CALIBRATED = "PHYSICALLY-CALIBRATED (PRICE UNSCORED)"
+PHYSICALLY_CALIBRATED_CAVEATS = "PHYSICALLY-CALIBRATED-WITH-CAVEATS (PRICE UNSCORED)"
+# The criteria the no-price class cannot score (C3a, C3b, C3c). Named as a
+# group so the branch can only ever fire when ALL of them are unscored.
+PRICE_CRITERIA = ("price_mean", "price_shape", "price_tail")
 
 # Criterion tiers (rubric §0 statement of intended use → §1 triage):
 #  - load-bearing: certifies the intended uses directly (annual/monthly price
@@ -1077,6 +1151,50 @@ def _covered_months(actual_mon: list | None, cov_mon: list | None) -> list[int]:
 
 _ACTUAL_LMP_PATH = REPO / "data" / "raw" / "_validation-source" / "actual_lmp.json"
 _ACTUAL_LMP_CACHE: dict | None = None
+_ACTUAL_LMP_READABLE: bool | None = None
+
+
+def _actual_lmp_reference() -> dict | None:
+    """Return the committed ``actual_lmp.json`` table, or ``None`` if unreadable.
+
+    One read per process, shared by :func:`_actual_lmp_coverage` (which treats
+    an unreadable reference as empty, exactly as before) and
+    :func:`_price_reference_absent` (which must NOT — absence of a block can
+    only be established from a reference that was actually read).
+    """
+    global _ACTUAL_LMP_CACHE, _ACTUAL_LMP_READABLE
+    if _ACTUAL_LMP_CACHE is None:
+        try:
+            table = json.loads(_ACTUAL_LMP_PATH.read_text())
+        except (OSError, ValueError):
+            table = None
+        _ACTUAL_LMP_READABLE = isinstance(table, dict)
+        _ACTUAL_LMP_CACHE = table if _ACTUAL_LMP_READABLE else {}
+    return _ACTUAL_LMP_CACHE if _ACTUAL_LMP_READABLE else None
+
+
+def _price_reference_absent(iso: str | None) -> bool:
+    """Rubric v3.8 — does the committed price reference carry NO block for ``iso``?
+
+    The predicate of the no-price determination class, keyed on the ABSENCE
+    of an ``actual_lmp.json`` top-level block and on nothing else (owner
+    ruling, SOCO card S11, 2026-09-13): no ISO name appears here, so the class
+    serves every region that has no committed price benchmark — SOCO, whose
+    footprint publishes no price, and NWPP, whose candidate series was refused
+    by its own STOP gate and therefore never landed — and is unreachable by
+    every region that has one, whether that block covers all of the run's
+    years or only some (a PARTIAL series is a block, and takes the ordinary
+    path).
+
+    FAIL-CLOSED: an unreadable reference returns ``False`` — absence cannot be
+    established from a file that was not read, so the run scores exactly as it
+    did before this class existed. A block that is present but empty is still
+    a block: whoever wrote it asserted that a reference exists.
+    """
+    ref = _actual_lmp_reference()
+    if ref is None or iso is None:
+        return False
+    return str(iso) not in ref
 
 
 def _actual_lmp_coverage(iso: str | None, year: int, market: str) -> list | None:
@@ -1095,15 +1213,11 @@ def _actual_lmp_coverage(iso: str | None, year: int, market: str) -> list | None
     every ISO-year staged complete, and is what makes :func:`_covered_months`
     a no-op there.
     """
-    global _ACTUAL_LMP_CACHE
     if iso is None:
         return None
-    if _ACTUAL_LMP_CACHE is None:
-        try:
-            _ACTUAL_LMP_CACHE = json.loads(_ACTUAL_LMP_PATH.read_text())
-        except (OSError, ValueError):
-            _ACTUAL_LMP_CACHE = {}
-    rec = (_ACTUAL_LMP_CACHE.get(str(iso)) or {}).get(str(int(year))) or {}
+    rec = ((_actual_lmp_reference() or {}).get(str(iso)) or {}).get(
+        str(int(year))
+    ) or {}
     cov = rec.get(f"{market}_cov")
     return cov.get("mon") if isinstance(cov, dict) else None
 
@@ -2982,6 +3096,22 @@ def _no_price_reason(
     return f"no {grain}model price for {iso} {year}"
 
 
+def _model_mean_lmp(ypay: dict) -> float | None:
+    """The run's own system load-weighted mean LMP for one year, $/MWh.
+
+    The un-masked model side of :func:`score_price_mean`, re-used by the
+    rubric v3.8 no-price class so the price the model produced is reported at
+    full magnitude on the determination basis even though nothing exists to
+    score it against. Display only — it feeds no status.
+    """
+    pairs = [
+        (z.get("p"), z.get("d", 0.0))
+        for z in (ypay.get("lmp") or {}).values()
+        if z.get("p") is not None
+    ]
+    return _wmean(pairs) if pairs else None
+
+
 def _skip(criterion: str, year: int, reason: str, key: str | None = None) -> dict:
     """Build a SKIPPED record (recorded as not-scored, never a silent pass)."""
     return {
@@ -3446,6 +3576,29 @@ def determine_from_artifacts(
     ]
     skipped_exempt = [cid for cid in skipped if cid not in skipped_downgrading]
 
+    # RUBRIC v3.8 (owner ruling, SOCO card S2 / S11, 2026-09-13): THE NO-PRICE
+    # DETERMINATION CLASS. Reachable iff (i) the committed actual_lmp.json has
+    # NO block for this ISO — absence, never a name — AND (ii) every price
+    # criterion is unscored. Both legs fail closed (see the module header and
+    # :func:`_price_reference_absent`). When it holds, the three price criteria
+    # leave the unscored-criteria downgrade (C3a/C3b) and the v3.7 exempt line
+    # (C3c) — on a region with no price at all C3c is unscored for the same
+    # reason as C3a/C3b, not for the model-class reason v3.7 names — and are
+    # named TOGETHER on their own determination-basis line below, at full
+    # magnitude, on every route. The clean rungs read the PHYSICALLY-CALIBRATED
+    # labels, never CALIBRATED. The NOT-YET routes above are untouched.
+    price_unscored = _price_reference_absent(iso) and all(
+        per_criterion[c]["status"] == SKIPPED for c in PRICE_CRITERIA
+    )
+    if price_unscored:
+        skipped_downgrading = [
+            c for c in skipped_downgrading if c not in PRICE_CRITERIA
+        ]
+        skipped_exempt = [c for c in skipped_exempt if c not in PRICE_CRITERIA]
+        clean_label, caveat_label = PHYSICALLY_CALIBRATED, PHYSICALLY_CALIBRATED_CAVEATS
+    else:
+        clean_label, caveat_label = CALIBRATED, CALIBRATED_CAVEATS
+
     # Determination (rubric §2).
     reasons: list[str] = []
     if gov["status"] != PASS:
@@ -3477,9 +3630,9 @@ def determine_from_artifacts(
         # unscored criteria and data-blocked years are untouched.
         downgrading_caveats = len(protective_caveats) + len(band_caveats)
         if downgrading_caveats == 0 and not skipped_downgrading and not data_blocked:
-            determination = CALIBRATED
+            determination = clean_label
         else:
-            determination = CALIBRATED_CAVEATS
+            determination = caveat_label
             if band_caveats:
                 reasons.append(
                     f"{len(band_caveats)} criterion(s) within the commercial-grade "
@@ -3529,6 +3682,46 @@ def determine_from_artifacts(
                 "the ISO-year has no bench to score it against): "
                 + ", ".join(per_criterion[c]["label"] for c in skipped_exempt)
             )
+
+    # RUBRIC v3.8: the price gap on the determination basis, AT FULL MAGNITUDE,
+    # on EVERY route — NOT-YET included, so a failing no-price run can never be
+    # read as having failed on price. Appended LAST so it never displaces a
+    # downgrading reason from :func:`headline`'s reasons[0]; on the clean rung
+    # it is the only reason and so becomes the headline. The model's own
+    # annual mean price is printed, labelled MODEL-ONLY and UNVERIFIED, so the
+    # unscored quantity is visible at full size and cannot pass for a scored one.
+    price_unscored_block: dict | None = None
+    if price_unscored:
+        model_by_year = {
+            str(y): _model_mean_lmp(payload["years"][str(y)]) for y in scorable_years
+        }
+        model_txt = (
+            ", ".join(
+                f"{y}: ${m:.2f}/MWh" if m is not None else f"{y}: no model price"
+                for y, m in model_by_year.items()
+            )
+            or "none"
+        )
+        reasons.append(
+            f"PRICE UNSCORED — no actual_lmp.json block exists for {iso}, so "
+            f"{CRITERIA['price_mean'][0]}, {CRITERIA['price_shape'][0]} and "
+            f"{CRITERIA['price_tail'][0]} are NOT SCORED in any year "
+            f"({', '.join(map(str, scorable_years)) or 'none'}); this determination "
+            "is scored on C1/C2/C4/C6/C8 ONLY and certifies NO price level, shape "
+            "or tail (owner ruling card S2, 2026-09-13; rubric v3.8). It is not a "
+            "CALIBRATED reading. Model system load-weighted mean LMP, MODEL-ONLY "
+            "and UNVERIFIED — no measured reference exists to compare against: "
+            f"{model_txt}."
+        )
+        price_unscored_block = {
+            "basis": f"no actual_lmp.json block for {iso}",
+            "criteria_unscored": list(PRICE_CRITERIA),
+            "scored_on": [c for c in CRITERIA if c not in PRICE_CRITERIA],
+            "model_mean_lmp_by_year": {
+                y: (round(m, 2) if m is not None else None)
+                for y, m in model_by_year.items()
+            },
+        }
 
     # Report notes (not caveats): grounded-above-budget C8 passes — a class
     # forced past its cap that cleared the D-4 provenance + D-1 shape escalation
@@ -3604,6 +3797,11 @@ def determine_from_artifacts(
     # be mistaken for the run's registered full-span determination.
     if years is not None:
         out["span_restricted"] = sorted(int(y) for y in years)
+    # Present ONLY on the rubric v3.8 no-price class, for the same reason: no
+    # key is added to any other run's verdict, so every region that has a
+    # price benchmark re-scores byte-identically.
+    if price_unscored_block is not None:
+        out["price_unscored"] = price_unscored_block
     return out
 
 
@@ -3630,6 +3828,15 @@ def render_text(v: dict) -> str:
     if v["data_blocked_years"]:
         lines.append(
             "  data-blocked years: " + ", ".join(map(str, v["data_blocked_years"]))
+        )
+    if v.get("price_unscored"):
+        pu = v["price_unscored"]
+        lines.append(
+            "  PRICE UNSCORED (rubric v3.8): "
+            + pu["basis"]
+            + " — scored on "
+            + ", ".join(pu["scored_on"])
+            + " only; NOT a CALIBRATED reading"
         )
     lines.append("=" * 72)
     _TIER_TAG = {
@@ -3736,6 +3943,10 @@ def condensed_metrics(v: dict) -> dict:
             for cid, rep in (v.get("reported") or {}).items()
         },
         "free_class_score": v["free_class_score"],
+        # Rubric v3.8: the no-price block travels with the run when — and only
+        # when — the verdict carries it, so the sidecar of a region with a
+        # price benchmark is unchanged.
+        **({"price_unscored": v["price_unscored"]} if v.get("price_unscored") else {}),
     }
 
 
