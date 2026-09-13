@@ -425,13 +425,13 @@ lane is not chartered to make. Flagged for the desk (README §2.3).
 
 ---
 
-## 6. ROUTED TO NWPP-DESK — six CI gates are red on `main`, none of them this lane's
+## 6. ROUTED TO NWPP-DESK — seven CI gates are red on `main`, none of them this lane's
 
 Recorded here because the charter's closing line says to route rather than reach
 outside this lane's regions, and because a desk reading PR #6111's red CI should
 not have to re-derive this.
 
-All six checks that failed on this lane's head `984887cb`
+All **seven** checks that failed on this lane's head `984887cb`
 ([run 34768364840](https://github.com/jessicacohen554-cyber/market-simulator/actions/runs/34768364840))
 are **pre-existing on the base branch**. This PR's diff is 32 files — `data/raw/**`
 additions, two `data/raw/*/README.md` table rows, one `docs/handoffs/` file — with
@@ -446,8 +446,45 @@ additions, two `data/raw/*/README.md` table rows, one `docs/handoffs/` file — 
 | FR-22 backcast→forecast parity | NYISO `gas_offer_margin_zonal_anchor_vintage` armed with no orchestrator consumer and no registry declaration | NYISO lane |
 | FR-21 forecast-board staleness | gate-(a) provenance: MISO, NYISO, SPP `gate.a_keeper_marker` cite superseded keepers | MISO / NYISO / SPP desks |
 | Keeper-integrity gates | MISO E3 + four E13 superseded registered runs (rule 35 `[R-PROMOTE]` prune); S1 status stale for ERCOT / CAISO / NEISO / MISO | MISO promoting session + desks |
+| **Fast test tier** | **20 failed, 2 errors, 9,416 passed** — see below | ERCOT / NEISO / SPP / NYISO |
 
-**Two were reproduced directly, on bytes identical to `origin/main`** — stronger
+**The seventh check was the one that could plausibly have been this lane's, so it
+was checked properly rather than assumed.** This PR adds
+`load-forecast/nwpp/nwpp.csv` and `nuclear-license-status/nwpp.csv` for an ISO
+with **no spec module yet** (`scripts/lib/*/nwpp.py` are NWPP-20's), and a
+curation suite that globbed the raw tree instead of the spec registry would fail
+on exactly that. It does not:
+
+- `grep -rl "NWPP\|nwpp" tests/` returns **nothing** — no test references NWPP.
+- The three suites that DO read these directories **pass with the new files
+  present**: `uv run pytest tests/curation/test_curate_load_forecast.py
+  tests/curation/test_curate_nuclear_license_status.py
+  tests/unit/config/test_data_profiles_tokens.py` → **49 passed in 1.39 s**. Both
+  curation suites iterate the **spec registry**, never the raw directory, so an
+  ISO with no spec module is not visited.
+- None of the failing suites reads any path this PR touches (checked per file).
+
+Ten of the named failures reproduce locally at this branch's head
+(`uv run pytest …` → 10 failed, 90 passed): seven ERCOT golden-manifest
+provenance rows, the ERCOT `ercot_ep_gas_basis_receipts_fallback` replay-keeper
+kwarg, the NEISO `test_neiso_includes_mystic_cc` (`'oil' != 'gas_cc'`), and one
+worth naming on its own —
+
+> **`tests/unit/model/test_capacity.py::TestGetRPSTarget::test_unregistered_iso_is_none`
+> is a STALE TEST that NWPP-20 will meet again.** It asserts
+> `get_rps_target("SPP", 2030) is None` under the comment *"SPP is not modeled"*.
+> SPP was registered on 2026-09-06 (SPP-20) and now carries an RPS floor, so it
+> returns `0.0`. The test needs a genuinely unregistered stand-in — **and
+> whatever it is changed to must not be `"NWPP"`, which stops being unregistered
+> at W2.** Flagged for whoever fixes it, and for NWPP-20's §2.3 pin list.
+
+The two `test_cache_config_agreement.py` **errors** (missing
+`shard-artifacts/nyiso223/2022/run_config.json`) do **not** reproduce locally —
+that suite's 90 tests pass here — so they are a CI checkout/artifact condition,
+not a code failure.
+
+**Two of the other six were reproduced directly, on bytes identical to
+`origin/main`** — stronger
 evidence than a re-run and it cost seconds:
 
 - `scripts/gen_nyiso229_attestation.py` is byte-identical between `origin/main`
