@@ -2045,3 +2045,13 @@ results/calibration/nyiso229_arm_y2025/
 # 2025} (each with its own committed dispatch parquet, 47-49 MB) beside the composed
 # caiso275_B_gascoupling_span.
 results/calibration/miso255_promote_*/
+# The 2022 leg was RE-SOLVED as miso255_promote2022b (745 s) because its original
+# shard could not push dispatch/2022_P1.parquet: .gitignore ignores
+# results/calibration/*/dispatch/ repo-wide, so the push needed `git add -f`, the
+# auto-mode classifier refused it, and that refusal then hardened into a
+# Bash(git add:*) denial in that session. Diagnosis:
+# docs/FINDING-miso255-why-the-dispatch-pushes-failed-2026-09-12.md
+#   git checkout 0974481d5da763d86c852e79a6c60458382e52aa -- results/calibration/miso255_promote2022b
+# (17 files incl. dispatch/2022_P1.parquet, 94,946,961 bytes. The original slim-only
+#  2022 leg stays at 74171ce23325f3cdb97b484f43423af51bb2202d and is superseded.)
+results/calibration/miso255_promote2022b/
