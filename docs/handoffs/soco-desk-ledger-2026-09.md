@@ -99,6 +99,35 @@ card is served at sitting #3.
 **The two REDs are the desk's own gates G13 and G21 observed live in other programs**, one day after
 the rules that name them landed. That is why the refresh edit was not deferred.
 
+**ADDENDUM (same sitting, after the push). CI on this desk's own three-markdown-file PR came back
+with FIVE red checks, and every one is a base-branch condition in another program's files** — which
+is the desk's seven-gate read at `7404ef12` reproduced by CI on `c4d4a108` and then some. Verified
+by re-running the same checkers in-session against this tree, never by reading the red ticks:
+
+| Failing CI check | What it says | Whose |
+|---|---|---|
+| Keeper-integrity gates | `audit_keepers` FAIL — **4× E13 on MISO**: `2026-09-09-miso-250-ep-gas` registered but neither keeper nor stamped, and `miso-251-{screen2022,tp2020,tp2021}` each stamped to that superseded id; + E11 (NYISO lineage baseline) and 3× E3 | MISO lane |
+| FR-21 forecast-board staleness | gate-(a): MISO **and** NYISO markers both cite superseded keepers | capx gate (a) / promoting lanes |
+| Ruff lint + format | 2 errors, e.g. unused `drift` at `scripts/gen_nyiso229_attestation.py:63` | NYISO lane |
+| Pinned default cache key | default key `1eefed492204fab7` → `bd2b4657f9b5df7e` — a `ScenarioConfig` field landed without its pin re-mint | capx |
+| Structural refactor guards | the same key mismatch, 1 failed / 99 passed | capx |
+
+**Stood down with one PR comment and no ported fix, because every repair lives in `src/`, `scripts/`
+or `frontend/data/backcast/`** — surfaces this desk is forbidden to write, and no fix PR exists that
+the desk has read. **No re-run spent**: a hash-literal mismatch, a registry identity mismatch and a
+static lint error are deterministic, and the confirmation a re-run would give was taken by running
+the checkers directly instead.
+
+**The finding that matters more than the standing-down.** The four MISO `E13` rows ARE rule 35
+`[R-PROMOTE]` (f)'s invariant firing on a real unswept promotion — the same failure mode this desk
+wrote into the plan as gate **G21** hours earlier, before this CI run existed, and while the desk's
+own local read at `7404ef12` showed `audit_keepers` at **EXIT 0**. Between that read and CI, MISO
+promoted and did not sweep; the count went 0 → 4. **A gate this desk added on principle went red on
+`main` the same afternoon, four times over.** Recorded here because the desk's r#2 entry above says
+the two REDs were "why the refresh edit was not deferred" — this strengthens that claim rather than
+merely repeating it, and it is the second unswept promotion (NYISO) plus a third ISO's, inside one
+week of the rule landing.
+
 **Next act:** sitting #3 — grade SOCO-10/11/12 BY CONTENT, grade SOCO-13/21, serve **S3–S9** with
 W1's evidence and **S11**, then issue W2 (SOCO-20 — still additionally blocked on manifest row 7,
 the LTLF edition + vintage, gate G12).
@@ -215,7 +244,8 @@ option (a)).
 | R-a | The rubric cannot express a determination for a region with no price benchmark | **RULED r#2 — the class is authorized. What remains is the SCORER**, which no one is assigned to write | Half-closed, not closed. Card **S11** assigns it; until then W4 has a keeper it cannot score |
 | R-b | The NWPP program shares card S2's problem in a milder form. **It is no longer hypothetical: NWPP was chartered 2026-09-13** (`docs/multi-iso/nwpp-addition-plan-2026-09.md`, landed on `main` between this desk's push and its rebase), it cites the SOCO charter as its non-market precedent, and its §2.6 raises card **N2** — the same question | the owner; the NWPP desk | **S2's ruling is the "once", on the CLASS.** The two programs are not identical: NWPP's §2.6 records that WEIM 15-minute LMPs for its BAs are anonymously fetchable (CAISO OASIS `PRC_RTPD_LMP` probed 200), so NWPP may need the no-price class only partially or not at all. What must not happen is **two scorer amendments**: card **S11** should be scoped to a determination class **keyed on the absence of an `actual_lmp.json` block**, which serves any region without a price benchmark, rather than a SOCO-specific branch. This desk surfaces that and does not charter across the boundary |
 | R-c | `check_registry_payload_parity` **RED** at `7404ef12`: `results/calibration/caiso279_ablate_dswcouple_span` is a dead solve output mapping to no retained sidecar (Class-E point 4) | the CAISO calibration lane / caiso-279 | Not this desk's file and not this desk's to fix. It is **gate G13 observed live** — the exact failure mode this desk just wrote into its own W4 charter |
-| R-d | `check_gate_a_provenance` **RED** at `7404ef12`: NYISO's `gate.a_keeper_marker` cites superseded `2026-09-09-nyiso-221-fuelvintage-span` against live `2026-09-12-nyiso229-hourgrain-span` | the NYISO lane / the capx director's gate (a) | Not this desk's file. It is **gate G21 / rule 35 `[R-PROMOTE]` observed live** — a promotion that did not sweep, one day after the rule that forbids it landed |
+| R-d | `check_gate_a_provenance` **RED**, and it grew inside this sitting: NYISO's marker cites superseded `2026-09-09-nyiso-221-fuelvintage-span` (live `2026-09-12-nyiso229-hourgrain-span`) **and, as of `c4d4a108`, MISO's cites superseded `2026-09-09-miso-250-ep-gas`** (live `2026-09-12-miso-255-sil-measured`) | the NYISO and MISO lanes / the capx director's gate (a) | Not this desk's files. **Gate G21 / rule 35 `[R-PROMOTE]` observed live, twice, within days of the rule landing** |
+| R-e | `audit_keepers` **E13 RED ×4 on MISO** at `c4d4a108` — `2026-09-09-miso-250-ep-gas` registered but neither keeper nor stamped, and three `miso-251` runs stamped to it; plus E11 on NYISO's missing lineage baseline. Separately: **Ruff** 2 errors (`scripts/gen_nyiso229_attestation.py:63`) and the **default cache-key pin** off its literal (`1eefed49…` → `bd2b4657…`), which reds both the pin check and the structural guards | MISO lane · NYISO lane · capx (cache fingerprint) | All in `src/`/`scripts/`/`frontend/`, none this desk's to write. Stood down on PR #6090 with one comment and no ported fix; no re-run spent (deterministic, reproduced locally). **They will red every SOCO PR until repaired**, so a future sitting must not read them as its own regression |
 
 ## 4. Collision register
 
