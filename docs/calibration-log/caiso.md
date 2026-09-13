@@ -15035,3 +15035,87 @@ unchanged at K** — the mechanism stays armed, only the ablation is refuted.
 `check_mechanism_matrix.py` exit 0, 0 errors.
 
 **Next number: caiso-280.**
+
+## caiso-280 — 2026-09-13
+
+**ZERO LP. Keeper unchanged (`2026-09-12-caiso-275-gascoupling`). Nothing promoted, no cell
+verdict moved.** One measurement, decided by a rule fixed and **pushed before any number existed**
+(`PRECOMMIT-caiso280-…`, §3).
+
+**THE ANSWER: the import envelope caiso-279 identified is NOT a defect — it binds ABOVE the
+actuals, and the sign is the opposite of the hypothesis.** Over 2022-12-23..31 the model imports
+**7,337.9 MW** against CAISO's actual **5,564.6 MW** net / **6,098.4 MW** gross (EIA-930 CISO
+BA-to-BA interchange): **+1,773.3 MW (+31.9 %) over actual net, +1,239.5 MW over actual gross**, in
+84.3 % of window hours, **267.7 GWh** over the nine days. On the 201/216 binding hours: model
+7,528.7 vs actual 5,814.5 (**+1,714.1**). Over-import **402.29 GWh** against shortfall **19.26 GWh**
+— **21:1**. The model clears 358–432 $/MWh against a 99–119 benchmark **while importing a third
+more energy than the market did**.
+
+**Gates as pre-registered (conjunctive):** T1 exceedance **31.02 %** vs a 20 % threshold and a
+0.76 % control (**41×**) → PASS; T2 mean unserved import capability **115.8 MW** vs 500 MW → FAIL.
+**⇒ NOT MATERIALLY UNDERSTATED ⇒ the lane closes on 2022 with no LP.** T1's pass is real and is
+reported at full magnitude: Dec 23–31 genuinely is December's high-import stretch (all 48 PNW and
+43/47 DSW cap exceedances fall there), so a pooled-December p95 does clip the cold-snap tail about
+one hour in five — **but T2 sizes that clipping at 1.5 % of the block while the same window runs
++1,773.3 MW over actual.** The shape is imperfect in a direction swamped twenty-fold by a level
+that is generous.
+
+**Per-day, the inversion is plainest: Dec 30 — one of the two days carrying 1.59 $/MWh of the
+annual gap — is the MOST over-imported day (+3,104.5 MW) with ZERO exceedance hours.** Dec 27 is
+the only genuinely import-short day of the nine (−707.5 MW), and it is the one day whose cap binds
+all 24 hours. One day in nine is not a mechanism.
+
+**Object fully identified, not inferred.** `measured_corridor_flow_envelope` = p95 of that year's
+own measured net corridor import by (month × hour-of-day); 12 × 24 = 288 buckets, hence caiso-279's
+286 distinct limits. An independent re-derivation from the raw extract reproduces the LP's
+`limit_up` to **max |Δ| = 0.000 MW** over all 8,760 hours on both corridors — which also validates
+the −1 h standard-time clock mapping hour-for-hour. Reconciles with caiso-279 to the hundredth
+(Dec 29/30/31: PNW 1,157.58, DSW 6,325.21, total 7,482.79).
+
+**The §4 trap held and did not need to.** `caiso_firm_selfsched_floor`'s caiso-150 §H standing
+annotation — a NET envelope understating GROSS capability, replacement adjudicated unreachable —
+is now **quantified and materially inert here**: the measured gross−net wedge is 533.7 MW against a
+model already +1,239.5 MW above actual **gross**. Crediting CAISO with every megawatt of
+counter-flow the record can support still leaves the model importing more than the market. **No cap
+multiplier was considered and none is admissible** — widening would move the model *further* from
+measured reality on quantity to chase a price residual (rules 1/13), now measured rather than
+argued.
+
+**Consequence, not a new lever.** The LP sits at its cap in 93.1 % of window hours while already
+carrying a third more import than the market: at the prices the internal fleet offers it would
+import even more. That is a statement about **internal marginal-cost formation**, corroborating
+from an independent direction the owner-blocked flat ×0.92 (caiso-267/268, DO NOT PROMOTE
+2026-09-09 on C4-2025 0.298 → 0.308), which rule 1 (c) forbids sweeping. **Honest summary: CAISO
+2022's C3a miss is identified and not currently repairable by any admissible lever available to
+this lane.** Under rule 30 `[R-TOUCHPOINT-FOLD]` (c) the 2022 rung never downgrades the ISO —
+CAISO reads **CALIBRATED**.
+
+**REPAIRED ON `main` — the CAISO matrix shard was BROKEN and CAISO's column did not load.**
+caiso-279's cell update landed as a 2,158-char fragment **prepended to the top of**
+`docs/codebase-site/data/mechanism-matrix/CAISO.js`, running straight into the opening comment with
+no newline: `node --check` gave `SyntaxError: Unexpected token '||'`. The evidence was **lost from
+its cell entirely** (`import_hub_pricing.ev` still cited only caiso-275). Repaired by excising the
+prefix and restoring that exact text — requoted for JS-string context — to `import_hub_pricing`,
+then appending caiso-280's. Verified: parses, loads under node, both blocks round-trip with
+em-dashes intact, `check_mechanism_matrix.py` exit 0.
+
+**caiso-276 §5b annotated in place** (not deleted): its table measures PHYSICAL LINK utilisation
+(0.595 / 0.241) and not the per-corridor group envelope at 1.000, so "binds in ZERO hours" is false
+for the object that binds. Its headline — "the model is emphatically not import-constrained" —
+survives **in its consequence** while being wrong **in its mechanism**: the seam does bind, it
+simply binds generously.
+
+**CHARTER CORRECTION — arm B was never lost.** The charter states its 272 MB push did not land and
+that `36ce217` does not resolve; **both are false**.
+`results/calibration/caiso279_ablate_dswcouple_span/` is tracked on `main` with all 34 files
+including the per-plant `dispatch/` layer (`14081e9c` … `36ce2170`). **Nothing needs re-solving and
+its container need not be woken** — the ~35–55 min re-solve the charter budgets is not owed. Arm A
+retrievable at `b17ac9d0f8b505d542f279356d5300888c69a70f`; only `hourly/network_2022.parquet` was
+checked out (partial-clone discipline). Nothing deleted (rule 31 `[R-RETAIN]`).
+
+**OPEN FOR THE OWNER, not acted on:** C3a on the DA basis (2022 +2.09 % vs +11.34 % RT; but 2023
+over-corrects to −9.39 % and 2025 is not explained by basis at all; mean |gap| 7.65 % → 4.33 %).
+caiso-272 measured 70.2 % of the 2022 dollar miss as the DA–RT premium the rubric's
+OUT-OF-REPRESENTATION row says "the test must not demand". **A rubric ruling, not a solve.**
+
+Record: `docs/RESULT-caiso280-the-envelope-binds-above-the-actuals-2026-09-13.md`.
