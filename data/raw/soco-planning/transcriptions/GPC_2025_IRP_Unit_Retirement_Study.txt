@@ -1,0 +1,847 @@
+left11112600
+Unit Retirement Study
+2025 Integrated Resource Plan
+left889000
+Introduction
+In the Unit Retirement Study (“URS”) for the 2025 Integrated Resource Plan (“IRP”), Georgia Power Company (“Georgia Power” or the “Company”) has performed economic analyses on its coal-fired units, as well as certain natural gas-fired steam units. These economic evaluations compare the costs and benefits of continued operation of these units versus replacement options. As highlighted in the 2023 IRP Update, substantial load growth has fundamentally transformed the economic landscape. Given significant forecasted capacity needs and the costs associated with replacement generation, the analysis demonstrates that continued operation of the Company’s existing coal and natural gas-fired steam units is more cost-effective and poses lower risk than retirement.
+These evaluations, detailed further in this technical appendix, weigh the costs and benefits of continuing to operate these units under different environmental compliance pathways compared to retirement dates defined in these environmental regulations. These pathways include both the Supplemental Effluent Limitation Guidelines (“ELG”) Rule and the 111 Greenhouse Gas Rules (“111 GHG Rules”).
+2022 IRP and 2023 IRP Update
+The 2022 IRP recommended the decertification and retirement of Plant Scherer Unit 3 and Plant Gaston Units 1-4 & A by December 31, 2028. The decision on the retirement of Plant Bowen Units 1-2 was deferred to the 2025 IRP, with a potential retirement date as early as December 31, 2027. These recommendations were based primarily on the substantial benefits provided by the low-cost, valuable replacement generation identified in the 2022-2028 Capacity RFP, which was intended to meet the capacity needs largely driven by the planned retirement of coal units.
+In the 2023 IRP Update, a retirement date at the end of 2035 was assumed for Plant Bowen Units 1-2 for planning purposes based on the continuing increases to the Company’s projected load forecast and corresponding capacity needs in 2028 and beyond. A sensitivity of the Company’s capacity needs was also provided in the 2023 IRP Update with the potential extension of Plant Scherer Unit 3 and Plant Gaston Units 1-4 & A to demonstrate the continued need for capacity in this timeframe. The Company indicated that unit retirement studies related to each of these units would be submitted in the 2025 IRP, and a formal recommendation would be made at such time regarding the retirement or continued operation of the units.
+Therefore, the Company provides this URS in support of the 2025 IRP and makes a formal request to extend the operation of Plant Bowen Units 1-2 and Plant Scherer Unit 3 through at least the end of 2035, and Plant Gaston Units 1-4 & A through at least the end of 2034, based on environmental compliance pathways.
+Environmental Regulations
+In recent years, environmental regulations have undergone significant changes, impacting the economic viability of continued operation for power plants like Plant Bowen, Plant Gaston, and Plant Scherer. These evolving rules continue to create considerable uncertainty around the economics of both continuing to operate coal-fired generation and the economics of replacement alternatives. Notably, in the spring of 2024, the Environmental Protection Agency (“EPA”) finalized several new environmental requirements. These new requirements include revisions to the ELG and new 111 GHG Rules. Changes to these rules impact the overall economics of continued operation for the Company’s existing steam resources while also placing considerable emphasis on retirement timing. Additionally, as described in the 2025 IRP Main Document and the Environmental Compliance Strategy included within Technical Appendix Volume 1, these rules are subject to legal uncertainty. The Company nevertheless included evaluations of potential implementation pathways to meet compliance deadlines.
+Supplemental ELG Rule
+The ELG rules set stringent standards for wastewater discharges from steam electric power plants. Compliance with the 2020 ELG Rule, as evaluated in the 2022 IRP, is still in progress and necessary. The Supplemental ELG Rule provides options associated with the installation of new controls or retirement to meet incremental standards. Installation of new additional controls to meet requirements by no later than December 31, 2029 preserves the ability to continue coal operation beyond 2034. This option necessitates incremental capital investment in wastewater treatment technologies.
+Alternatively, facilities can opt for the Permanent Cessation of Coal Combustion (“PCCC”) pathway, which involves committing to the discontinuation of coal operation by December 31, 2034. This option allows facilities to avoid the incremental costs associated with installing new additional ELG controls. Instead, facilities must submit a Notice of Planned Participation (“NOPP”) to the Georgia Environmental Protection Division (“EPD”) by December 31, 2025, and comply with the 2020 Rule’s generally applicable limits. For facilities considering a full conversion to natural gas, the PCCC pathway offers a viable compliance strategy to avoid additional ELG controls.
+111 GHG Rules
+On April 25, 2024, the EPA finalized new requirements for both the Company’s existing coal-fired resources and potential replacement resources like new natural gas combined-cycles (“NGCC”). Plant Bowen and Plant Scherer are expected to be subject to the standards in a state plan to be determined by Georgia EPD based on compliance pathways outlined by EPA for coal units. Georgia EPD’s state plan may deviate from these presumptively approvable standards, including by setting different standards using different timelines, or by considering remaining useful life and other factors for each coal unit. EPA also provides regulatory mechanisms for a one-year compliance extension if certain conditions are met. However, in order to analyze the economics of the compliance pathways as provided by EPA in the final 111 GHG Rules, the Company did not assume any variation from the presumptively approvable standards. Aspects of these options, such as timelines, may not be practicable or feasible.
+Based on EPA guidelines the Company evaluated four compliance pathways in its URS analysis:
+Retirement by January 1, 2032.
+Full conversion to natural gas by January 1, 2030, which provides compliance without a retirement date commitment.
+40% co-fire of natural gas by January 1, 2030, and retirement by January 1, 2039.
+Installation and operation of carbon capture and storage (“CCS”) by January 1, 2032.
+Replacement NGCC resources are required to install and operate CCS by January 1, 2032, or operate at less than 40% annual capacity factor. These stringent requirements apply to any proposed new NGCC that commences construction after May 2023.
+The evolving environmental regulations, particularly the ELG and 111 GHG Rules, are critical factors in the economic analysis of continued operations for Plant Bowen Units 1-4, Plant Scherer Units 1-3, and Plant Gaston Units 1-4 & A. These new rules have different compliance timelines and pathways that are factored into the economic analysis.
+Methodology
+The Company’s analysis methodology evaluates the total costs of compliance pathways for existing units compared to the alternative of immediate replacement. Immediate replacement was assumed to occur in 2029, given that several of the resources under consideration were previously assumed to retire by December 31, 2028. The immediate replacement (or 2029 replacement) serves as a common benchmark across the analysis. The study period extends to 2073 to align with the replacement NGCC’s useful life.
+The analysis approach is predominantly divided into two phases, addressing the impact of ELG, as well as the combined impact of ELG and the 111 GHG Rules. Given the uncertainty of environmental regulations, each phase of the URS analysis provides insights into the economics of available options across alternative views of the environmental landscape.
+Phase 1: ELG Compliance Pathways
+In Phase 1, the Company focused on the economics of extending the units by comparing the costs and benefits of ELG-compliant pathways. The PCCC pathway allows coal units to continue operation without new ELG controls but requires retirement by the end of 2034. This pathway assumes that new replacement resources will be installed by January 1, 2035. Conversely, coal units could install incremental ELG controls to preserve longer-term coal operation. In this situation, the need to install replacement generation can be deferred to the coal unit’s final retirement date, which is assumed to be 2043 for planning-related analysis purposes. Therefore, the coal units are effectively evaluated under useful life assumptions of December 31, 2028, December 31, 2034, and December 31, 2043, which defers the need to install replacement capacity until after the associated retirements.
+Figure SEQ Figure \* ARABIC 1: ELG Pathways
+Phase 2: Combined ELG and 111 GHG Rules Compliance Pathways
+Phase 2 of the analysis incorporates the implications of the ELG rule while also capturing the 111 GHG Rules. This phase continues to consider immediate replacement and evaluates the four standard compliance pathways under the 111 GHG Rules:
+Retirement by January 1, 2032: The coal unit retires on December 31, 2031, with replacement generation commencing operation by January 1, 2032. This early retirement date aligns with the ELG PCCC pathway, avoiding the need for incremental ELG controls.
+Full conversion to natural gas by January 1, 2030: The coal unit fully converts to natural gas by December 31, 2029, which provides compliance without a retirement date requirement. This pathway also enables the ELG PCCC pathway, avoiding the need for incremental ELG controls. Retirement is assumed by December 31, 2043, consistent with the CCS option below, and replacement generation is needed by January 1, 2044.
+40% co-fire of natural gas by January 1, 2030, and retirement by January 1, 2039: The coal unit co-fires 40% natural gas by January 1, 2030, and retires on December 31, 2038. This pathway preserves coal operation but requires incremental ELG controls to be installed. Replacement generation is needed by January 1, 2039.
+Installation and operation of CCS by January 1, 2032: The coal unit installs and operates CCS by January 1, 2032. This pathway assumes CCS installation and benefits from the Inflation Reduction Act (“IRA”) tax credits under Section 45Q, which last for 12 years. Therefore, the coal unit retires by December 31, 2043, and replacement generation is required by January 1, 2044. Incremental ELG controls are also required to preserve coal operation.
+Figure SEQ Figure \* ARABIC 2: ELG & 111 GHG Rules Pathways
+The Company’s methodology evaluates the total costs of each pathway across numerous retirement dates. The lowest total cost pathway is considered the most economic option under the various scenarios. While certain costs are estimated and modeled, practical time constraints for major infrastructure projects, such as large carbon or gas pipeline needs, can impact the feasibility of each pathway. The feasibility of the recommended pathways, including timelines, will be evaluated as part of the state plan process with Georgia EPD when considering the remaining useful life and other factors for each coal unit.
+Key Analysis Assumptions
+The following sections outline key assumptions used in the economic analysis. The study includes incremental costs, or costs that are directly impacted by the decision to extend the operation of existing units. Incremental costs, which are further described below, include maintenance capital, operating and maintenance (“O&M”) costs, environmental capital and O&M costs, and firm transport (“FT”) fuel costs for natural gas options. Retirement costs include replacement capacity costs, including associated transmission costs. Benefits include production cost savings as an energy benefit, as well as any 45Q tax credits under the IRA. The results of the economic analyses reflect the total costs of each pathway allowing for comparisons of each pathway under the ELG requirements and the combination of both the ELG and 111 GHG Rules requirements.
+Maintenance Capital
+Maintenance capital costs are the anticipated capital expenditures essential for preserving reliable and efficient operations. This includes investment for routine maintenance, repairs, planned outages, and the replacement of major components. These expenditures are crucial for ensuring the unit’s reliability, safety, and environmental compliance.
+Maintenance capital budgets are adjusted based on the specific pathways under consideration. For the 111 GHG Rules full natural gas conversion pathway, the Company assumes a reduction in maintenance capital since coal-specific equipment will no longer need upkeep. The co-fire pathway assumes a budget consistent with continued coal operation as the coal equipment remains until retirement. Conversely, an increase in maintenance capital is assumed to preserve new environmental controls, such as CCS equipment.
+The various environmental pathways provide alternative retirement dates. Therefore, the Company also assumes a decline in maintenance capital activities that align with the retirement dates for each pathway. Maintenance capital is a fixed cost and is directly reflected in the valuation model, which is a spreadsheet model. Please see the “Cost Inputs” tab in the applicable asset valuation workpapers for the assumed expenditures by year.
+O&M
+O&M includes all labor, materials, engineering and support services, overhead costs, and other necessary activities to operate a power plant. O&M costs are divided into fixed and variable categories for each study. Fixed O&M (“FOM”) is directly reflected in the valuation model. Variable O&M (“VOM”), fuel costs, and emissions costs are netted out of each unit’s energy benefits and derived by the production cost model, AURORA. Therefore, VOM costs are captured in the production cost modeling or AURORA model and reflected in the energy benefit of each unit.
+For the scenarios that assume continued coal operation, the FOM base budgets remain consistent across each pathway. However, for a full conversion to natural gas, the Company assumes a reduction in FOM as the coal-specific equipment is not necessary. Additionally, certain environmental systems require additional FOM. These incremental expenses are added annually once environmental equipment required for specific compliance pathways are assumed in-service. Please see the “Cost Inputs” tab in the applicable asset valuation workpapers for the assumed FOM by year.
+New Environmental Controls
+The Company evaluated the incremental costs of new environmental controls required for compliance with recent regulations. As detailed in Section REF _Ref182214316 \n \h \* MERGEFORMAT 3 herein, as well as the 2025 IRP Main Document, the Company evaluated the impact of both the ELG and 111 GHG Rules. Asset Retirement Obligations (“AROs”), such as pond closure costs, were not included in the study because these expenditures are required regardless of whether the plant continues operation or is retired.
+ELG Assumptions
+ELG necessitates the installation of additional controls or opting for the PCCC pathway, which requires retirement by 12/31/2034. The table below summarizes the incremental capital investment required for each plant under the ELG rule:
+Table SEQ Table \* ARABIC 1: ELG Environmental Controls by Plant
+| Incremental Capital
+Investment (M$)
+| 12/31/2034 Retirement
+PCCC
+| Operate beyond 12/31/2034
+New ELG Controls
+| Bowen 1-4
+| $0
+| REDACTED
+| Scherer 1-3
+(GPC Ownership)
+| $0
+| REDACTED
+| Gaston 1-4 & A
+| $0
+| N/A
+111 GHG Rules Assumptions
+The 111 GHG Rules introduce new requirements for coal-fired resources and potential replacement resources. As a detailed in Section 3 of this document, the compliance pathways under 111 GHG Rules include (1) retirement by January 1, 2032, (2) full conversion to natural gas by January 1, 2030, (3) 40% co-fire of natural gas by January 1, 2030, with retirement by January 1, 2039, and (4) installation and operation of CCS by January 1, 2032. Assumptions on gas conversion are outlined in the subsection REF _Ref182216306 \h \* MERGEFORMAT Gas Conversion Costs. The full natural gas conversion and 2032 retirement pathways avoid ELG controls, while the co-fire and CCS pathways require ELG controls.
+The CCS pathway requires both carbon capture equipment and a carbon pipeline to transport the captured carbon dioxide (“CO2”) to locations with appropriate geology for sequestration. There is significant uncertainty around the cost and feasibility of CCS. The Company applied the simplifying assumptions as detailed in REF _Ref182216209 \h \* MERGEFORMAT Table 2. The Company assumes Section 45Q benefits from the IRA will aid in offsetting a large portion of these CCS costs.
+Table SEQ Table \* ARABIC 2: Carbon Capture Controls Estimates by Plant
+| CCS Capital Costs (M$)
+| Compliance Pathway
+| Carbon Capture (M$)
+| Carbon Pipeline (M$)
+| Total Costs
+(M$)
+| Station Service Impact (%)
+| Bowen 1-4
+| CCS
+| REDACTED
+| REDACTED
+| REDACTED
+| 25%
+| Scherer 1-3
+(GPC Ownership)
+| CCS
+| REDACTED
+| REDACTED
+| REDACTED
+| 25%
+Landfills
+Georgia’s state regulations for solid waste require permitted landfills for storage and/or disposal of coal combustion residual (“CCR”) waste from the operation of coal-fired generators. With the continued operation of Plant Bowen units, there is an anticipated need for additional storage and/or storage space in 2031.
+Table 3: CCR Landfill Costs by Plant
+| Incremental Capital
+Investment (M$)
+| CCR Landfill
+| Bowen 1-4
+| REDACTED
+Transmission
+The Company is not assuming explicit projects or costs to accommodate the retirement of resources. Consequently, there is no assumption of a benefit from avoided transmission costs for keeping steam units operating in the economic analysis. However, since there is no specific location for actionable replacement generation, the Company is accounting for the costs of transmission delivery impacts by assigning a cost to the generic replacement alternative. Ultimately, the economic analysis assumes that steam units will not defer or avoid new transmission system investments but instead accounts for the uncertainty of replacement generation locations, which are likely to require transmission investments to accommodate the replacement of retired units.
+Gas Conversion Costs
+Capital costs for converting a coal-fired plant to a natural gas-fired steam plant include boiler retrofits, a new natural gas lateral to connect to major cross-state pipeline infrastructure, and other applicable conversion costs. To ensure a reliable and firm fuel supply, FT costs are also essential. FT costs secure pipeline capacity, allowing the plant to access natural gas up the amount of pipeline capacity procured at any given time.
+Table 4: Gas Conversion Costs
+| Plant
+| 111 GHG Rules Pathway
+| Conversion Capital (M$)
+|
+| FT Volume
+(MMBtu/day)
+| Annual FT (M$/year)
+| Bowen 1-4
+| Co-fire
+| REDACTED
+|
+| 290,000
+| REDACTED
+| Bowen 1-4
+| 100% Gas
+| REDACTED
+|
+| 725,000
+| REDACTED
+| Scherer 1-3 (GPC Ownership)
+| Co-fire
+| REDACTED
+|
+| 68,000
+| REDACTED
+| Scherer 1-3 (GPC Ownership)
+| 100% Gas
+| REDACTED
+|
+| 170,000
+| REDACTED
+Generic Replacement Generation
+The analysis compares the continued operation of the existing unit to a replacement alternative. Given substantial load growth and the need for new generation to support economic development, the Company does not have actionable replacement generation available to replace its existing resources. However, the analysis includes an assumption that immediate replacement (as of January 1, 2029) is available as a benchmark.
+Each of the environmental pathways has alternative retirement dates associated with compliance selections. The Company assumes that the replacement unit would be available upon the retirement date that aligns with the applicable pathway. For example, under the ELG pathway, the PCCC option allows for retirement by December 31, 2034. Consequently, a replacement resource could be added on January 1, 2035, making this the assumed replacement date. Similarly, if ELG controls are installed, the replacement can be deferred. Therefore, replacement costs are reflected later in the study period to align with the delayed retirement scenario when ELG controls are in place. This approach is consistent for the 111 GHG Rules scenarios, with replacement generation considered upon the applicable retirement date for each pathway. Immediate replacement serves as the benchmark assumption for extended operation.
+For the alternative retire-and-replace dates, which are consistent with the pathways, replacement costs are reflected in the term equalization category of the economic analysis. This term equalization applies to both ELG and 111 GHG Rules pathways.
+A new NGCC unit is considered the most economic replacement alternative across the various pathways. Therefore, the analysis presented in this technical appendix reflects a new NGCC replacement option. Notably, the Company does not have a specific location for replacement generation. Therefore, the cost assumptions are generic for an NGCC with an assumed Georgia-specific FT rate to align with expectations associated with FT costs in Georgia.
+Energy Benefits or Production Costs Savings
+The Company quantifies energy benefits or production cost savings using the AURORA model with Budget 2025 (“B2025”) assumptions. This analysis is essential for capturing the impact on variable costs, primarily fuel and emissions, which can vary across different retirement dates and associated environmental compliance pathways. The production costs simulations utilize several of the scenarios described in Chapter 3 of the 2025 IRP Main Document.
+Initially, the Company establishes a base case for the applicable scenario and pathway. For ELG-specific pathways, the base case involves retiring evaluation units (either Plant Bowen 1-4, Plant Scherer 1-3, or Plant Gaston Units 1-4 & A) on January 1, 2029, and replacing them with peaking units. AURORA is then used to determine the total system production costs for this base case. Next, the Company establishes a change case by reintroducing the coal unit. The change cases extend the operation of these units to the retirement dates assumed in the analysis, either December 31, 2034, or December 31, 2043. Additional simulations are conducted to determine the total system production costs for the change case with extended operation. This process is repeated for the NGCC alternative or immediate replacement scenario, where an NGCC unit is added on January 1, 2029, and operates through the end of the study period.
+The difference in total system production costs between the base case and the change case represents the production cost implications of each pathway and scenario simulated. LINK Excel.Sheet.12 "https://soco365-my.sharepoint.com/personal/mtpuhnat_southernco_com/Documents/Desktop/IRP Drafting/Pro Cost Table Template.xlsx" ELG!R3C2:R9C10 \a \f 4 \h
+The 111 GHG Rules pathways follow a consistent approach applicable to the pathways defined by the rule. The base case involves retiring evaluation units (either Plant Bowen 1-4, Plant Scherer 1-3, or Plant Gaston Units 1-4 & A) on January 1, 2029, and replacing them with peaking units. The change cases reflect each pathway available under the rule as described in Section 3:
+The difference between the base case and change case represents the energy benefits of each pathway. This process is repeated for the NGCC alternative or immediate replacement scenario, where an NGCC unit is added on January 1, 2029, and operates through the end of the study period. The capacity factor for the NCGG is limited to 40% beginning January 1, 2032 to comply with 111 GHG Rules.
+Tax Credits
+The CCS pathway is eligible to receive a Section 45Q tax credit for CCS. The basis for the credit amount is $85 per metric ton of CO2 captured and sequestered during the first 12 years of operation. The amount is adjusted for inflation. For the purposes of economic analysis, the Company applied a 25% risk adjustment to the value of these credits, reflecting market conditions and the potential need to transfer the credits. A 25% discount is assumed on the 45Q tax credit. The tax credit is modeled in Aurora as a negative VOM rate.
+Scenarios
+Production cost savings were determined for seven planning scenarios: MG0, MG20, MG50, LG0, HG0, 111-MG0, and 111-MG50. These scenarios are further described in Chapter 3 of the 2025 IRP Main Document and reflect a range of natural gas prices and greenhouse gas pressure. The 111 GHG Rules scenarios were utilized for the phase two components of the evaluations consistent with the compliance pathways available in those assessments.
+Summary of Results
+The following tables represent the net present value (“NPV”) of customer benefits associated with each unit. The results are calculated by comparing the existing unit’s costs and benefits to the corresponding costs and benefits of the replacement unit. The replacement unit for all pathways under all scenarios is assumed to be a generic NGCC. When a positive value is shown for a scenario, it indicates that the NPV of the existing unit is greater than the NPV of its replacement generation, signifying customer benefit from the continued operation of the existing unit rather than immediate replacement. Each pathway contains differing retirement dates. If the net benefit is higher for alternative retirement dates, then that pathway is considered the most economic relative to the alternatives.
+Plant Bowen Units 1-4 | Phase 1 | ELG
+| 2025 NPV (M$)
+2026 - 2073
+| PCCC
+Retire by 12/31/2034
+| No Cessation
+Operate beyond 12/31/2034
+| MG0
+| REDACTED
+| REDACTED
+| MG20
+| REDACTED
+| REDACTED
+| MG50
+| REDACTED
+| REDACTED
+| LG0
+| REDACTED
+| REDACTED
+| HG0
+| REDACTED
+| REDACTED
+*Results reflect rounding
+Plant Scherer Units 1-3 | Phase 1 | ELG
+| 2025 NPV (M$)
+2026 - 2073
+| PCCC
+Retire by 12/31/2034
+| No Cessation
+Operate beyond 12/31/2034
+| MG0
+| REDACTED
+| REDACTED
+| MG20
+| REDACTED
+| REDACTED
+| MG50
+| REDACTED
+| REDACTED
+| LG0
+| REDACTED
+| REDACTED
+| HG0
+| REDACTED
+| REDACTED
+*Results reflect rounding
+Plant Bowen Units 1-4 | Phase 2 | ELG + 111 GHG Rules
+| 2025 NPV (M$)
+2026 - 2073
+| Retirement
+Retire by 12/31/2032
+| Co-fire
+40% by 1/1/2030
+Retire by 1/1/2039
+| CCS
+CCS by 1/1/2030
+Retire by 12/31/2043
+| Gas Conversion
+100% by 1/1/2030
+Retire by 12/31/2043
+| EPA111-MG0
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| EPA111-MG50
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+*Results reflect rounding
+Plant Scherer Units 1-3 | Phase 2 | ELG + 111 GHG Rules
+| 2025 NPV (M$)
+2026 - 2073
+| Retirement
+Retire by 12/31/2032
+| Co-fire
+40% by 1/1/2030
+Retire by 1/1/2039
+| CCS
+CCS by 1/1/2030
+Retire by 12/31/2043
+| Gas Conversion
+100% by 1/1/2030
+Retire by 12/31/2043
+| EPA111-MG0
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| EPA111-MG50
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+*Results reflect rounding
+Plant Gaston Units 1-4 & A | Phase 1&2 | ELG + 111 GHG Rules
+| 2025 NPV (M$)
+2026 - 2073
+| Retire by 12/31/2034
+| MG0
+| REDACTED
+| MG20
+| REDACTED
+| MG50
+| REDACTED
+| LG0
+| REDACTED
+| HG0
+| REDACTED
+| EPA111-MG0
+| REDACTED
+| EPA111-MG50
+| REDACTED
+*Results reflect rounding
+Appendix A: ELG, MG0
+The summary tables are further explained in this appendix, which provide a detailed view of the total costs of each pathway. The lowest cost pathway considered the most economic relative to the other pathways. This appendix provides additional detail for the MG0 scenario for the phase one analysis, which assumes ELG compliance without the phase two impacts of the 111 GHG Rules requirements. For the detailed view of the 111-MG0 scenario, please see appendix B. The detailed view of each path for the remaining scenarios is provided in the workpapers including with the filing.
+Plant Bowen Units 1-4 | Phase 1 | ELG | MG0
+| MG0
+2025 NPV (M$)
+2026 - 2073
+| PCCC
+Retire by 12/31/2034
+| No Cessation
+Operate beyond 12/31/2034
+| Generic NGCC
+1/1/2029
+| Winter Capacity Equivalent
+| 3360 MW
+| 3360 MW
+| 3360 MW
+| In-Service Capital
+| REDACTED
+| REDACTED
+| REDACTED
+| Maintenance Capital
+| REDACTED
+| REDACTED
+| REDACTED
+| Fixed O&M
+| REDACTED
+| REDACTED
+| REDACTED
+| Environmental Capital
+| REDACTED
+| REDACTED
+| REDACTED
+| Environmental O&M
+| REDACTED
+| REDACTED
+| REDACTED
+| FT
+| REDACTED
+| REDACTED
+| REDACTED
+| Revenue Requirement
+| REDACTED
+| REDACTED
+| REDACTED
+|
+| #N/A
+| #N/A
+|
+| Transmission
+| REDACTED
+| REDACTED
+| REDACTED
+| Term Equalization
+| REDACTED
+| REDACTED
+| REDACTED
+| System Costs
+| REDACTED
+| REDACTED
+| REDACTED
+|
+| #REF!
+| #REF!
+|
+| Energy Benefit
+| REDACTED
+| REDACTED
+| REDACTED
+| Benefits
+| REDACTED
+| REDACTED
+| REDACTED
+| 0
+| #N/A
+| #N/A
+|
+| Net Costs (M$)
+| REDACTED
+| REDACTED
+| REDACTED
+| Net Costs ($/kW)
+| REDACTED
+| REDACTED
+| REDACTED
+Plant Scherer Units 1-3 | Phase 1 | ELG | MG0
+| MG0
+2025 NPV (M$)
+2026 - 2073
+| PCCC
+Retire by 12/31/2034
+| No Cessation
+Operate beyond 12/31/2034
+| Generic NGCC
+1/1/2029
+| Winter Capacity Equivalent
+| 684.8 MW
+| 684.8 MW
+| 684.8 MW
+| In-Service Capital
+| REDACTED
+| REDACTED
+| REDACTED
+| Maintenance Capital
+| REDACTED
+| REDACTED
+| REDACTED
+| Fixed O&M
+| REDACTED
+| REDACTED
+| REDACTED
+| Environmental Capital
+| REDACTED
+| REDACTED
+| REDACTED
+| Environmental O&M
+| REDACTED
+| REDACTED
+| REDACTED
+| FT
+| REDACTED
+| REDACTED
+| REDACTED
+| Revenue Requirement
+| REDACTED
+| REDACTED
+| REDACTED
+|
+|
+|
+|
+| Transmission
+| REDACTED
+| REDACTED
+| REDACTED
+| Term Equalization
+| REDACTED
+| REDACTED
+| REDACTED
+| System Costs
+| REDACTED
+| REDACTED
+| REDACTED
+|
+|
+|
+|
+| Energy Benefit
+| REDACTED
+| REDACTED
+| REDACTED
+| Benefits
+| REDACTED
+| REDACTED
+| REDACTED
+|
+|
+|
+|
+| Net Costs (M$)
+| REDACTED
+| REDACTED
+| REDACTED
+| Net Costs ($/kW)
+| REDACTED
+| REDACTED
+| REDACTED
+Plant Gaston Units 1-4 & A | Phase 1 | MG0
+| MG0
+2025 NPV (M$)
+2026 - 2073
+| Retire
+By 12/31/2034
+| Generic NGCC
+1/1/2029
+| Winter Capacity Equivalent
+| 469 MW
+| 469 MW
+| In-Service Capital
+| REDACTED
+| REDACTED
+| Maintenance Capital
+| REDACTED
+| REDACTED
+| Fixed O&M
+| REDACTED
+| REDACTED
+| Environmental Capital
+| REDACTED
+| REDACTED
+| Environmental O&M
+| REDACTED
+| REDACTED
+| FT
+| REDACTED
+| REDACTED
+| Revenue Requirement
+| REDACTED
+| REDACTED
+|
+|
+|
+| Transmission
+| REDACTED
+| REDACTED
+| Term Equalization
+| REDACTED
+| REDACTED
+| System Costs
+| REDACTED
+| REDACTED
+|
+|
+|
+| Energy Benefit
+| REDACTED
+| REDACTED
+| Benefits
+| REDACTED
+| REDACTED
+| 0
+|
+|
+| Net Costs (M$)
+| REDACTED
+| REDACTED
+| Net Costs ($/kW)
+| REDACTED
+| REDACTED
+Appendix B: ELG + 111 GHG Rule, EPA111-MG0
+The summary tables are further explained in this appendix, which provide a detailed view of the total costs of each pathway. The lowest cost pathway is considered the most economic relative to the other pathways. This appendix provides additional detail for the MG0 scenario for the phase two analysis, which assumes both ELG and 111 GHG Rules compliance requirements.
+Plant Bowen Units 1-4 | Phase 2 | ELG + 111 GHG Rules | EPA111-MG0
+| 111-MG0
+2025 NPV (M$)
+2026 - 2073
+| Retirement
+Retire by 12/31/2032
+| Co-fire
+40% 1/1/2030
+Retire 1/1/2039
+| CCS
+CCS 1/1/2030
+Retire 12/31/2043
+| Gas Conversion
+100% 1/1/2030
+Retire 12/31/2043
+| Generic NGCC
+1/1/2029
+| Winter Capacity Equivalent
+| 3460 MW
+| 3460 MW
+| 3460 MW
+| 3460 MW
+| 3460 MW
+| In-Service Capital
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| Maintenance Capital
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| Fixed O&M
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| Environmental Capital
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| Environmental O&M
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| Conversion Capital
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| Lateral Capital
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| FT
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| Revenue Requirement
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+|
+|
+|
+|
+|
+|
+| Transmission
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| Term Equalization
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| System Costs
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+|
+|
+|
+|
+|
+|
+| Energy Benefit
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| 45Q
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| Benefits
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+|
+|
+|
+|
+|
+|
+| Net Costs (M$)
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| Net Costs ($/kW)
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+Plant Scherer Units 1-3 | Phase 2 | ELG + 111 GHG Rules | EPA111-MG0
+| 111-MG0
+2025 NPV (M$)
+2026 - 2073
+| Retirement
+Retire by 12/31/2032
+| Co-fire
+40% 1/1/2030
+Retire 1/1/2039
+| CCS
+CCS 1/1/2030
+Retire 12/31/2043
+| Gas Conversion
+100% 1/1/2030
+Retire 12/31/2043
+| Generic NGCC
+1/1/2029
+| Winter Capacity Equivalent
+| 708 MW
+| 708 MW
+| 708 MW
+| 708 MW
+| 708 MW
+| In-Service Capital
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| Maintenance Capital
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| Fixed O&M
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| Environmental Capital
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| Environmental O&M
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| Conversion Capital
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| Lateral Capital
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| FT
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| Revenue Requirement
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| 0
+|
+|
+|
+|
+|
+| Transmission
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| Term Equalization
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| System Costs
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| #REF!
+|
+|
+|
+|
+|
+| Energy Benefit
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| 45Q
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| Benefits
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| 0
+|
+|
+|
+|
+|
+| Net Costs (M$)
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| Net Costs ($/kW)
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+Plant Gaston Units 1-4 & A | Phase 2 | ELG + 111 GHG Rules | EPA111-MG0
+| 111-MG0
+2025 NPV (M$)
+2026 - 2073
+| Retire
+By 12/31/2034
+| Generic NGCC
+1/1/2029
+| Winter Capacity Equivalent
+| 469 MW
+| 469 MW
+| In-Service Capital
+| REDACTED
+| REDACTED
+| Maintenance Capital
+| REDACTED
+| REDACTED
+| Fixed O&M
+| REDACTED
+| REDACTED
+| Environmental Capital
+| REDACTED
+| REDACTED
+| Environmental O&M
+| REDACTED
+| REDACTED
+| FT
+| REDACTED
+| REDACTED
+| Revenue Requirement
+| REDACTED
+| REDACTED
+|
+|
+|
+| Transmission
+| REDACTED
+| REDACTED
+| Term Equalization
+| REDACTED
+| REDACTED
+| System Costs
+| REDACTED
+| REDACTED
+|
+|
+|
+| Energy Benefit
+| REDACTED
+| REDACTED
+| Benefits
+| REDACTED
+| REDACTED
+| 0
+|
+|
+| Net Costs (M$)
+| REDACTED
+| REDACTED
+| Net Costs ($/kW)
+| REDACTED
+| REDACTED

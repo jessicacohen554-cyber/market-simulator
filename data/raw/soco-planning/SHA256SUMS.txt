@@ -1,0 +1,50 @@
+# SHA256 of every artifact lane SOCO-12 fetched on 2026-09-13, tracked or not.
+# Untracked payloads are recoverable by re-fetch (SOURCES.md); this file is their identity record.
+#
+# --- UNTRACKED source payloads (re-fetch route) ---
+d72ddb87723475599f575acbef01438b08f5aacdf712e5f8fcb653d3ff9cbe6a  2025_irp_public_disclosure.zip  (GA PSC doc 221233; 103717722 B)
+9f868317352091425b7db31e54981bbfdde10b92cbea6db95a122c8005bbb57c  ga_2025irp_order_223496.pdf  (GA PSC doc 223496 attachment 104726, "223496(f).pdf")
+2acac3f50e917117459b8f3fd71a56a9be1b7c0d4a4e8197b8e04774138f18de  ga_2025irp_order_223496.docx  (GA PSC doc 223496 attachment 104728, "56002  56003 2025 IRP Order (F).docx")
+549afd2fa80b97731ad576e5757ef26af73e4350f9c787cc8dce51681a386846  so-20221231.htm
+4972661de64dc72443f7761cedbe2761e8e0386d06aa7d8dac948c4434f513f8  so-20231231.htm
+fb9ac960ab2d7d1dc0a26cad2f0f3e3ecf68aed06f6a6b16b298cd6f670a3985  so-20241231.htm
+46aea07b6bd44b32b75014da650ae2610949a487927dd53b16f239110a734c7e  so-20251231.htm
+6484a2553c51cb4fb1584ac63e595c162978c63a6293044447ef94598ea28d6b  2024-2026_SERC_Regional_Risk_Report_final.pdf
+a3217a96b26f6d3e0dffa08c1151abedadc31a9a3d9a8be325afc0fc518369ca  NERC_LTRA_2025.pdf
+88ff4b0d091fc784a1b4e61194233c7235103a960da52646105841f9857a7e7e  SEEM-Audit-Report-Annual-Rpt-2023FINAL.pdf
+a01e216a1551144ad3c10e82358e05bb33be6671e6e4e27f4c4305ff89a2ea9c  SEEM-Audit-Report-Annual-2024-F.pdf
+f7be54aadb6bc0a5c549bbbf9a3b8773b8efd872ef7917711ec749d39803628d  SEEM-Audit-Report-2026_7.pdf
+#
+# --- TRACKED in this directory ---
+  b03cf668d513405fe5ec67aa10e4cb63f5f1d2da54198796921832bc0a2884b5  README.md
+  df200d87cec8caa545e2d4c172504d5dd55342da864bcb791523162efbf4c21e  SOURCES.md
+  e4047d27da13780054cc4c3382127a9f8133c1fc9971ec1518cd41ec1a76903b  SEEM_FERC_Settlement_Press_Release_2026-01-12.pdf
+  ec2d5a09e14679ae96954e5fde07d5b8cdfd0a60ec2c6aa648db17cd2d45b3ba  SEEM_Auditor_Annual_Report_2025.pdf
+#
+# --- TRACKED transcriptions ---
+  403187bc1641503470a14e275b5576e117b3d68ee412303934bdf509b1d7615c  transcriptions/2024_Reserve_Margin_Study_Southern_Company_System.txt
+  f0d8ca319d604d21c23a05da30d57a39450a720516ff60b17b8705f7d5aaf971  transcriptions/B2025_Load_and_Energy_Forecast.txt
+  76d61ba3191329650c194c18b08d3632230522eab6a4af455463764de2b6205d  transcriptions/GA_PSC_2025_IRP_Order_56002_56003.txt
+  9af8593b551f5c62bcb1cfb5cfc0208c1ca622041a014f7f90006fddfa556c1e  transcriptions/GPC_2025_IRP_Main_Document.txt
+  7fc4806cf6ac0697449e521c1774989837c776e902a9653acd291b7f1182fa3d  transcriptions/GPC_2025_IRP_Unit_Retirement_Study.txt
+  2034843d859be4d8e1095a65642af2b86f8cd74e9ce8ed26668fe3bc49c5ef5f  transcriptions/NERC_2025_LTRA_SERC-Southeast_pp120-125.txt
+  9f38c5979781608074538d3117262db268403dbf6a6d8cbbcf48a90d0a655fbc  transcriptions/SEEM_Auditor_Annual_Report_2023.txt
+  9c50fd9f4e9691bb5b37c6faf141bd64795136b571fb9d930b4e20da61d78310  transcriptions/SEEM_Auditor_Annual_Report_2024.txt
+  cf236dad3cbeb79fc8b7633c17a0ce3af42aceb6dac47fa3c5348c4df09e22f7  transcriptions/SEEM_Auditor_Annual_Report_2025.txt
+  4186b77ab009eec31c70beed7478461e83eaa523a8e06e2901ecd10b430f1646  transcriptions/SEEM_Auditor_Monthly_Report_2026-07.txt
+  a5065a887282c4517a9ccb4f83be1aef12d023e583c63ae6c1da2f490cff53a6  transcriptions/SEEM_FAQ_2026-09-13.txt
+  844319d05682719290d4abed038cb7022528d7267b7036883246a5f7b8fd884c  transcriptions/SEEM_FERC_Settlement_Press_Release_2026-01-12.txt
+  534c1d89dd03f04e81a01210e557bf46cbd2993cf10b0d9613c78e5418e7706c  transcriptions/SERC_2024-2026_Regional_Risk_Report.txt
+  3c082f8b8683e5a6ca673a5226d4696374d294fb2482a8fe12750da6e431c47c  transcriptions/Southern_Company_10-K_extracts_FY2022-FY2025.txt
+#
+# --- TRACKED elsewhere by this lane (cross-reference) ---
+  da77b78a3209f14f18353347fb97d6fef2781910f93fd5cb5403784cb58b97ca  data/raw/nuclear-license-status/soco.csv
+  be2470efc2feae02f6460459b55fb26ed31236e3180ba60350daa85faaf78e28  data/raw/load-forecast/soco/soco.csv
+  cf04dbd05c33ec0fa439542a1f6eb9d1605f693d8200e22c86265a85f7d758b2  data/raw/load-forecast/soco/SOURCES.md
+  602fa9aef2a6b452922389539b0eb06509434587d92269110d29d9880d6e95a7  data/raw/gas-prices/SOURCES_soco_gas.md
+  a227c837aa3530b81e5b72478b6486c8526eb7ac31c8d21b26caf302285f0dc9  data/raw/gas-prices/eia_delivered_gas_AL_monthly_2023-2025.csv
+  e16b7400ba86ab9f64e7ae51f1e238ce690e57b5d5748bb7c8609a523a53ad46  data/raw/gas-prices/eia_delivered_gas_GA_monthly_2023-2025.csv
+  93561c06f8cf6c8dcaada6476422b2df8918cd486852594b3b11edd6540b92d4  data/raw/gas-prices/eia_delivered_gas_MS_monthly_2023-2025.csv
+  abf18723d8324f6dee6fb95d31e6613ede8bfd5a29bd988a8ce3f79fbc347b40  data/raw/gas-prices/eia_N3045AL3m_2026-09-13.xls
+  bee52d81cee5b27201ac686f7f2aefce36f34a1b0354b2a4dae1fb6f390422a2  data/raw/gas-prices/eia_N3045GA3m_2026-09-13.xls
+  f395904f2fc3c68a94ae68ed142066497b7a143e7c8602087e60cf1d4c4d0c39  data/raw/gas-prices/eia_N3045MS3m_2026-09-13.xls
