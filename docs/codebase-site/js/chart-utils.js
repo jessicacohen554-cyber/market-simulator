@@ -135,6 +135,8 @@ export function isoColorScale() {
     MISO:   cssColor('--iso-miso')   || '#F97316',
     spp:    cssColor('--iso-spp')    || '#14B8A6',
     SPP:    cssColor('--iso-spp')    || '#14B8A6',
+    soco:   cssColor('--iso-soco')   || '#6366F1',
+    SOCO:   cssColor('--iso-soco')   || '#6366F1',
   };
 
   return d3.scaleOrdinal()

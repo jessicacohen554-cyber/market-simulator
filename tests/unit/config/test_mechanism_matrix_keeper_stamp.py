@@ -33,12 +33,16 @@ from check_mechanism_matrix import (  # noqa: E402
 MATRIX_PATH = REPO / "docs/codebase-site/data/mechanism-matrix.js"
 # SPP joined at SPP-21 (2026-09-06) as the seventh shard, BEFORE it has a keeper
 # — the SPP addition programme seeds the column at W2 and its first keeper only
-# lands at W4/SPP-40 (docs/multi-iso/spp-addition-plan-2026-09.md §4). So the
-# keeper-stamp assertions below are scoped to the ISOs that HAVE a keeper shard,
-# which is the same fail-open scoping `check_mechanism_matrix.shard_keeper`
+# lands at W4/SPP-40 (docs/multi-iso/spp-addition-plan-2026-09.md §4). SOCO
+# joined the same way at SOCO-21 (2026-09-13) as the eighth, seeded at W2 with
+# its first keeper at W4/SOCO-40 (docs/multi-iso/soco-addition-plan-2026-09.md
+# §4) — and, like SPP before it, seeded BEFORE the ISO is registered at all, so
+# an 8-ISO matrix over a 7-ISO registry is a supported intermediate state. So
+# the keeper-stamp assertions below are scoped to the ISOs that HAVE a keeper
+# shard, which is the same fail-open scoping `check_mechanism_matrix.shard_keeper`
 # already applies (it returns None, and `keeper_drift` skips, when the shard is
 # absent). A registered ISO that HAS a keeper and drops its stamp still fails.
-ISOS = ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP")
+ISOS = ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP", "SOCO")
 KEEPER_ISOS = tuple(iso for iso in ISOS if shard_keeper(iso))
 
 

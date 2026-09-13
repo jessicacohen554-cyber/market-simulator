@@ -119,7 +119,8 @@
        ================================================================ */
     const ISO_COLORS = {
       ERCOT: '#22C55E', CAISO: '#F59E0B', PJM: '#0EA5E9',
-      NYISO: '#E91E63', NEISO: '#9C27B0', MISO: '#F97316', SPP: '#14B8A6'
+      NYISO: '#E91E63', NEISO: '#9C27B0', MISO: '#F97316', SPP: '#14B8A6',
+      SOCO: '#6366F1'
     };
     function isoColor(iso) { return ISO_COLORS[iso] || '#4A90D9'; }
 
