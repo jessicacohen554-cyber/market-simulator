@@ -29,9 +29,8 @@ from market_sim.config.paths import CAMPD_BINS_CSV
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.cod_ramp import (
     class_cod_coverage,
-    effective_cod,
+    generator_online_mask,
     log_class_cod_coverage,
-    monthly_online_mask,
 )
 from market_sim.data.floor_mechanisms import (
     MECH_CC_MUSTRUN_PER_PLANT,
@@ -3711,15 +3710,19 @@ def generators_to_fleet_arrays(
     # part-way through the solved year is available only in the months it
     # actually operated, instead of the all-year-or-nothing annual screen: the
     # thermal/nuclear/oil analogue of the renewable/storage vintage ramps. The
-    # month-precise COD comes from the EIA-860 plant-code map (data.cod_ramp
-    # .load_cod_map) — which is what gives the ERCOT CAMPD bins (carrying no
-    # build date of their own) their COD — with each generator's own
-    # online_year/month as the fall-back. Applied last (after every outage/
-    # derate/withholding) so nothing re-raises an offline month; min_gen (the
-    # hard must-run floor) is zeroed in offline months too, else the LP lower
-    # bound would force a not-yet-built/retired unit to run. Default-on for
-    # backcasts (config.cod_ramp_enabled); forecast runs pass an explicit
-    # calendar ``year`` to engage it.
+    # month-precise COD is resolved at the grain the LP unit actually has
+    # (data.cod_ramp.generator_online_mask; SOCO-15, owner card S12): a raw
+    # EIA-860 unit keeps its OWN measured Operating Year / Month (rule 14
+    # [R-ACCURATE]); a plant-level CAMPD bin — which carries no unit date of
+    # its own — takes the measured online-capacity FRACTION of its (plant,
+    # group) constituents from the same EIA-860 sheet (load_unit_cod_map), so
+    # a brownfield addition ramps in on its real month; the plant-collapsed
+    # date (load_cod_map) is the fall-back only where neither exists. Applied
+    # last (after every outage/derate/withholding) so nothing re-raises an
+    # offline month; min_gen (the hard must-run floor) is scaled by the same
+    # mask, else the LP lower bound would force a not-yet-built/retired unit
+    # to run. Default-on for backcasts (config.cod_ramp_enabled); forecast
+    # runs pass an explicit calendar ``year`` to engage it.
     _cod_year = year if year is not None else getattr(config, "weather_year", None)
     if (
         config is not None
@@ -3728,19 +3731,23 @@ def generators_to_fleet_arrays(
         and _cod_year is not None
     ):
         cod_map = _pkg_ns().load_cod_map()
+        unit_cod_map = _pkg_ns().load_unit_cod_map()
         online_mask = np.ones((n_gen, 12), dtype=float)
         cod_class_labels: list[str] = []
         cod_online_years: list[int | None] = []
         for g_idx, gen in enumerate(generators):
-            oy, om, ry, rm = effective_cod(
+            online_mask[g_idx], oy = generator_online_mask(
                 int(gen.plant_code),
+                gen.plant_group,
                 gen.online_year,
                 gen.online_month,
                 gen.retirement_year,
                 gen.retirement_month,
+                bool(gen.is_campd_bin),
                 cod_map,
+                unit_cod_map,
+                _cod_year,
             )
-            online_mask[g_idx] = monthly_online_mask(oy, om, ry, rm, _cod_year)
             # Per-class COD coverage guardrail: a class whose units all resolve
             # to a known EIA-860 COD is month-precision ramped; a class with no
             # COD dates silently bypasses the vintage ramp (data.cod_ramp

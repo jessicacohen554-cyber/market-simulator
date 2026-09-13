@@ -24,13 +24,32 @@ force a not-yet-built / retired unit to run.
 The COD date is sourced from EIA-860, the authoritative commissioning record —
 ``eia860_generator_operable.parquet`` carries a month-precise ``Operating
 Month`` / ``Operating Year`` (and ``Planned Retirement Month`` / ``Year``) for
-~every operable generator. :func:`load_cod_map` reduces it to a per-plant
-``{plant_code: (online_year, online_month, retirement_year, retirement_month)}``
-map (the plant's earliest unit defines its online date; a retirement applies
-only when the *whole* plant retires). The ERCOT CAMPD bins carry no build date
-of their own, so this plant-code map is what gives them month precision; raw
-EIA-860 :class:`Generator` objects fall back to their own ``online_year`` /
-``online_month`` when their plant is absent from the map.
+~every operable generator. Two reductions of that one sheet serve the two
+grains an LP unit can have (SOCO-15, owner card S12, 2026-09-13):
+
+* :func:`load_cod_map` — the per-plant
+  ``{plant_code: (online_year, online_month, retirement_year, retirement_month)}``
+  map: the capacity-weighted mean of the plant's units' CODs, and a retirement
+  only when the *whole* plant retires. This is the **fallback** record — the
+  best single date for a plant-level object that carries no unit record of its
+  own (the ERCOT curated CAMPD bins, a synthesized ``(plant, group)`` bin whose
+  constituents cannot be resolved, a registry-only plant).
+* :func:`load_unit_cod_map` — the per-``(plant_code, fuel_type)`` list of the
+  plant's own operable units ``(nameplate_mw, online_year, online_month)``,
+  from which :func:`bin_online_fraction` builds a ``(plant, group)`` bin's
+  **measured monthly online-capacity fraction**: the share of the bin's
+  nameplate that had actually reached commercial operation in each month.
+
+:func:`generator_online_mask` is the single resolver every fleet path goes
+through. A raw EIA-860 :class:`Generator` (one LP unit per unit) prefers its
+**own** ``Operating Year`` / ``Operating Month`` over the plant-collapsed date
+— rule 14 ``[R-ACCURATE]``: the unit's own date is the measured input, the
+plant mean is the estimate — exactly as :func:`effective_cod` already
+preferred a unit's own retirement (the Homer City seam). A plant-level bin takes
+the online fraction of its own constituents, so a brownfield addition at a
+multi-vintage plant (Vogtle 3/4, Barry A3) ramps in on its real month instead
+of being online from the plant mean. The plant-collapsed date is kept ONLY
+where a unit has no own date (owner ruling, card S12).
 """
 
 from __future__ import annotations
@@ -404,6 +423,156 @@ def _load_cod_map(eia860_dir) -> dict[int, CodEntry]:
     return cod
 
 
+# One constituent unit of a (plant, fuel) bin: (nameplate MW, online year,
+# online month). Retirement is deliberately NOT carried — the bin's retirement
+# stays whatever :func:`effective_cod` resolves (plant-collapsed, or the exit
+# cohort's own under ``partial_plant_exit_carry``), so this repair moves the
+# ONLINE half of the seam only (rule 19 [R-ONE-MECH]: the partial-exit cohort
+# is the one mechanism for unit-grain retirement under binning).
+CodUnit = tuple[float, int, int]
+
+# EIA-860 generator status admitted to the bin-constituent list — the same
+# filter the fleet loader applies (``eia860._rows_to_generators`` keeps status
+# ``OP`` only), so a bin and its constituents are the same population.
+_OPERABLE_STATUS = "OP"
+
+
+def load_unit_cod_map() -> dict[tuple[int, str], tuple[CodUnit, ...]]:
+    """Public entry point: per-``(plant_code, fuel_type)`` constituent CODs.
+
+    Resolves the directory through :func:`paths.active_eia860_dir` exactly as
+    :func:`load_cod_map` does, so the two reductions of the operable sheet are
+    always read from the same vintage. Under the clean seam
+    (``MARKET_SIM_USE_CLEAN``) the frozen clean ``fleet`` schema carries no
+    ``operating_month``, so no unit record can be built there and the map is
+    empty — every bin then falls back to the plant-collapsed date exactly as
+    before this seam existed (a schema contract change is the route to month
+    precision on that path, not an edit here).
+    """
+    from market_sim.config.paths import active_eia860_dir
+
+    from market_sim.data.fleet import _use_clean
+
+    if _use_clean():
+        return {}
+    return _load_unit_cod_map(active_eia860_dir())
+
+
+@lru_cache(maxsize=4)
+def _load_unit_cod_map(eia860_dir) -> dict[tuple[int, str], tuple[CodUnit, ...]]:
+    """Build ``{(plant_code, fuel_type): ((nameplate_mw, online_year, online_month), ...)}``.
+
+    The unit-grain companion of :func:`_load_cod_map`, read from the SAME two
+    parquets (the operable schedule plus the within-window retiree parquet) so
+    a bin's constituents and its plant-collapsed fallback never disagree about
+    which units exist. Each operable (status ``OP``) generator is classified
+    with the fleet loader's own ``_map_fuel_type`` (technology / energy source /
+    prime mover -> ``gas_cc`` / ``gas_ct`` / ``gas_st`` / ``coal`` / ``oil`` /
+    ``biomass`` / ``nuclear``), which is the fuel a ``(plant, group)`` bin maps
+    to through ``BIN_GROUP_TO_FUEL`` — so ``(3, "gas_cc")`` is exactly Barry's
+    combined-cycle units, and Barry's coal bin never sees Barry A3's 2023-11
+    COD. Units the loader cannot classify (solar, wind, hydro, storage — which
+    ramp on their own vintage paths) are not recorded.
+
+    The weight is EIA-860 nameplate, the same basis :func:`_load_cod_map`
+    weights the plant mean with; a unit with a missing or non-positive
+    nameplate carries weight 0 and :func:`bin_online_fraction` falls back to
+    equal weights when a whole bin reports none. A missing ``Operating Month``
+    takes :data:`COD_FALLBACK_MONTH`.
+    """
+    # Lazy import to dodge the fleet <-> cod_ramp module-load cycle (fleet
+    # imports cod_ramp at module top); the loader's classifier is the ONE
+    # source of the fuel bucket so the bin and its constituents agree.
+    from market_sim.data.fleet.eia860 import _map_fuel_type
+
+    columns = [
+        ("pc", "Plant Code", "plant_id"),
+        ("oy", "Operating Year", "operating_year"),
+        ("om", "Operating Month", "operating_month"),
+        ("cap", "Nameplate Capacity (MW)", "nameplate_capacity_mw"),
+        ("status", "Status", "status"),
+        ("tech", "Technology", "technology"),
+        ("src", "Energy Source 1", "energy_source"),
+        ("pm", "Prime Mover", "prime_mover"),
+    ]
+    frames = []
+    for name, col_idx in (
+        ("eia860_generator_operable.parquet", 0),
+        (_RETIRED_WINDOW_NAME, 1),
+    ):
+        path = eia860_dir / name
+        if not path.exists():
+            continue
+        df = pd.read_parquet(path)
+        df.columns = [str(c).strip() for c in df.columns]
+        frames.append(
+            pd.DataFrame({short: df.get(spec[col_idx]) for short, *spec in columns})
+        )
+    if not frames:
+        return {}
+    work = pd.concat(frames, ignore_index=True)
+    work["pc"] = pd.to_numeric(work["pc"], errors="coerce")
+    work["oy"] = pd.to_numeric(work["oy"], errors="coerce")
+    work = work.dropna(subset=["pc", "oy"])
+    work = work[work["status"].astype(str).str.strip().str.upper() == _OPERABLE_STATUS]
+    work["om"] = (
+        pd.to_numeric(work["om"], errors="coerce")
+        .fillna(COD_FALLBACK_MONTH)
+        .clip(1, 12)
+    )
+    work["cap"] = (
+        pd.to_numeric(work["cap"], errors="coerce").fillna(0.0).clip(lower=0.0)
+    )
+    work["fuel"] = [
+        _map_fuel_type(t, s, p)
+        for t, s, p in zip(work["tech"], work["src"], work["pm"])
+    ]
+    work = work.dropna(subset=["fuel"])
+
+    out: dict[tuple[int, str], list[CodUnit]] = {}
+    for pc, fuel, cap, oy, om in zip(
+        work["pc"].astype(np.int64).tolist(),
+        work["fuel"].tolist(),
+        work["cap"].astype(float).tolist(),
+        work["oy"].astype(np.int64).tolist(),
+        work["om"].astype(np.int64).tolist(),
+    ):
+        out.setdefault((pc, str(fuel)), []).append((cap, oy, om))
+    return {key: tuple(units) for key, units in out.items()}
+
+
+def bin_online_fraction(
+    units: "tuple[CodUnit, ...] | list[CodUnit]", run_year: int
+) -> np.ndarray:
+    """Return the ``(12,)`` measured online-capacity fraction of a bin in ``run_year``.
+
+    Element ``m`` is the share of the bin's nameplate that had reached
+    commercial operation by calendar month ``m + 1``: the nameplate-weighted
+    mean of each constituent unit's own :func:`monthly_online_mask` (online
+    half only — retirement is ``None`` here by design, see :data:`CodUnit`).
+    A bin whose every unit predates ``run_year`` is all ones (no change from
+    the plant-collapsed path); a greenfield bin whose units all came online in
+    September is ``0`` through August and ``1`` from September, exactly the
+    step the plant-collapsed date produced; a brownfield bin — old units plus a
+    new one — takes the intermediate fraction the mean date could only round to
+    one side of. Equal weights when the bin reports no nameplate; an empty
+    ``units`` returns all ones (the caller keeps the plant-collapsed record).
+    """
+    if not units:
+        return np.ones(12, dtype=float)
+    weights = np.array([float(u[0]) for u in units], dtype=float)
+    if weights.sum() <= 0.0:
+        weights = np.ones(len(units), dtype=float)
+    masks = np.array(
+        [
+            monthly_online_mask(int(u[1]), int(u[2]), None, None, run_year)
+            for u in units
+        ],
+        dtype=float,
+    )
+    return (weights[:, None] * masks).sum(axis=0) / weights.sum()
+
+
 def monthly_online_mask(
     online_year: int | None,
     online_month: int,
@@ -510,33 +679,107 @@ def effective_cod(
     retirement_year: int | None,
     retirement_month: int | None,
     cod_map: dict[int, CodEntry],
+    is_plant_level: bool = False,
 ) -> CodEntry:
-    """Resolve a generator's COD, preferring the EIA-860 plant-code map.
+    """Resolve a generator's COD: its own measured record first, the plant map second.
 
-    A generator pinned to a physical plant (``plant_code > 0``) present in
-    ``cod_map`` takes the month-precise EIA-860 record — this is what gives the
-    ERCOT CAMPD bins (which carry no build date) their COD. Otherwise the
-    generator's own ``online_year`` / ``online_month`` apply, with the model's
-    ``2000`` sentinel treated as "vintage unknown" so a real pre-existing unit
-    is never dropped.
+    **Online date.** A generator that is a real EIA-860 unit
+    (``is_plant_level=False``) carrying its own known commissioning year
+    (``online_year`` above the ``2000`` "vintage unknown" sentinel) keeps its
+    **own** ``online_year`` / ``online_month`` — the measured record — whether
+    or not its plant is in ``cod_map``. The plant-collapsed date applies ONLY
+    where the generator has no own date: a plant-level synthesized object
+    (``is_plant_level=True`` — a CAMPD bin, whose ``online_year`` is a registry
+    / COD-year estimate stamped by ``bins_to_fleet``, never a unit's own
+    record), or a unit whose own year is unknown. *(SOCO-15, owner card S12,
+    2026-09-13, rule 14 [R-ACCURATE]. Before this ruling the map ALWAYS won the
+    online date, so a brownfield unit at a multi-vintage plant — Vogtle 3,
+    plant 649, own COD 2023-07 against a plant mean of 2005-05 — was online
+    all twelve months of 2023, 12.98 TWh of phantom nuclear, while a
+    greenfield plant, whose mean IS its units' date, ramped correctly.)*
+    Without a map entry the generator's own attributes apply as before, the
+    sentinel reading as "unknown" so a real pre-existing unit is never dropped.
 
-    The plant map supplies the **online** date, but its retirement is a
-    plant-level reduction: ``_load_cod_map`` collapses a plant's heterogeneous
-    unit retirements to the **latest** one, which keeps a winding-down plant
-    fully online past the months its earlier units actually left (e.g. Homer
-    City, plant 3122 — its three coal units retired 2023-07 / 2023-08 / 2024-04,
-    yet the collapse held all 2012 MW online through 2024-04, ~2 GW of phantom
-    H2-2023 capacity the cost-based LP then dispatched as baseload). So when the
-    generator carries its **own** per-unit retirement, prefer it over the
-    plant-collapsed date — each within-window retiree unit ages out on its true
-    EIA-860 retirement month. The ERCOT CAMPD bins carry no retirement, so they
-    keep the plant-map record unchanged.
+    **Retirement.** The map's retirement is a plant-level reduction:
+    ``_load_cod_map`` collapses a plant's heterogeneous unit retirements to the
+    **latest** one, which keeps a winding-down plant fully online past the
+    months its earlier units actually left (e.g. Homer City, plant 3122 — its
+    three coal units retired 2023-07 / 2023-08 / 2024-04, yet the collapse held
+    all 2012 MW online through 2024-04, ~2 GW of phantom H2-2023 capacity the
+    cost-based LP then dispatched as baseload). So when the generator carries
+    its **own** per-unit retirement, it is preferred over the plant-collapsed
+    date — each within-window retiree unit ages out on its true EIA-860
+    retirement month. The online-date rule above is the same preference
+    applied symmetrically to the other end of the unit's life. The ERCOT CAMPD
+    bins carry neither, so they keep the plant-map record unchanged.
     """
     entry = cod_map.get(int(plant_code)) if plant_code else None
+    own_online_known = online_year > _ONLINE_YEAR_SENTINEL
     if entry is not None:
+        entry_oy, entry_om, entry_ry, entry_rm = entry
+        if not is_plant_level and own_online_known:
+            # Rule 14 [R-ACCURATE] (card S12): the unit's own measured date.
+            oy, om = online_year, online_month
+        else:
+            oy, om = entry_oy, entry_om
         if retirement_year is not None:
-            entry_oy, entry_om, _, _ = entry
-            return (entry_oy, entry_om, retirement_year, retirement_month)
-        return entry
-    oy = online_year if online_year > _ONLINE_YEAR_SENTINEL else None
+            return (oy, om, retirement_year, retirement_month)
+        return (oy, om, entry_ry, entry_rm)
+    oy = online_year if own_online_known else None
     return (oy, online_month, retirement_year, retirement_month)
+
+
+def generator_online_mask(
+    plant_code: int,
+    plant_group: str | None,
+    online_year: int,
+    online_month: int,
+    retirement_year: int | None,
+    retirement_month: int | None,
+    is_plant_level: bool,
+    cod_map: dict[int, CodEntry],
+    unit_cod_map: dict[tuple[int, str], tuple[CodUnit, ...]],
+    run_year: int,
+) -> tuple[np.ndarray, int | None]:
+    """Resolve one LP unit's ``(12,)`` online-capacity mask for ``run_year``.
+
+    The single resolver behind the COD ramp, at the grain the LP unit actually
+    has (SOCO-15, card S12 — one shared seam, the same construction on every
+    fleet path, rule 25 [R-ISO-SCOPE]):
+
+    * a **raw EIA-860 unit** (``is_plant_level=False``) — its own measured
+      ``Operating Year`` / ``Operating Month`` through :func:`effective_cod`, a
+      0/1 mask;
+    * a **plant-level bin** (``is_plant_level=True``) whose ``(plant_code,
+      BIN_GROUP_TO_FUEL[plant_group])`` constituents are in ``unit_cod_map`` —
+      the constituents' nameplate-weighted online fraction
+      (:func:`bin_online_fraction`), a mask in ``[0, 1]``, times the
+      retirement half :func:`effective_cod` resolves for the bin (the
+      plant-collapsed retirement, or an exit cohort's own);
+    * anything else — the plant-collapsed record exactly as before.
+
+    Returns ``(mask, online_year)``; ``online_year`` is the value the COD
+    coverage audit (:func:`class_cod_coverage`) counts, ``None`` meaning the
+    unit's vintage is unknown and it is held fully online.
+    """
+    oy, om, ry, rm = effective_cod(
+        plant_code,
+        online_year,
+        online_month,
+        retirement_year,
+        retirement_month,
+        cod_map,
+        is_plant_level=is_plant_level,
+    )
+    if is_plant_level and plant_code and unit_cod_map:
+        # Lazy import: the group -> fuel table lives beside the classifier the
+        # unit map was built with, in the fleet package that imports this one.
+        from market_sim.data.fleet.eia860 import BIN_GROUP_TO_FUEL
+
+        fuel = BIN_GROUP_TO_FUEL.get(str(plant_group or ""))
+        units = unit_cod_map.get((int(plant_code), fuel)) if fuel else None
+        if units:
+            online = bin_online_fraction(units, run_year)
+            retire = monthly_online_mask(None, 1, ry, rm, run_year).astype(float)
+            return online * retire, oy
+    return monthly_online_mask(oy, om, ry, rm, run_year).astype(float), oy
