@@ -35,7 +35,7 @@
   var B = window.MECH_MATRIX_BASE || window.MECH_MATRIX;
   var S = window.MECH_MATRIX_SHARDS || {};
   if (!B) { console.error('mechanism-matrix: base file failed to load'); return; }
-  var EV_KEY = { ERCOT: 'E', CAISO: 'C', PJM: 'P', MISO: 'M', NYISO: 'N', NEISO: 'Q', SPP: 'S' };
+  var EV_KEY = { ERCOT: 'E', CAISO: 'C', PJM: 'P', MISO: 'M', NYISO: 'N', NEISO: 'Q', SPP: 'S', SOCO: 'O' };
   var missing = B.isos.filter(function (iso) { return !S[iso]; });
   if (missing.length) {
     console.error('mechanism-matrix: missing shard(s): ' + missing.join(', ') +

@@ -264,7 +264,8 @@ closure path, mechanism by mechanism.
    half is **CLOSED as of xiso-2 (2026-08-02)**: 5/6 committed extracts
    re-derive byte-identically at HEAD, MISO's mismatch is 2022-only and
    source-data-attributed, and **no ISO's keeper consumes a stale
-   outage-derived artifact** (§5.8).
+   outage-derived artifact** (§5.9 — renumbered from §5.8 at SOCO-21,
+   2026-09-13, when SOCO's lever queue took §5.8 as the eighth ISO section).
 5. **Topology splits are dead at both tested ends** (ERCOT-117, MISO-79):
    missing congestion is sub-zonal; the path forward is data intake (nodal/
    station crosswalks), not invented interfaces.
@@ -17892,7 +17893,98 @@ desk or this section. And no holdout-year (2019–2022) SPP solve exists in the
 queue at any rung: rule 22's `complete` marker is an explicit owner act and SPP
 holds none.
 
-### 5.8 Cross-cutting audits (not ISO levers)
+### 5.8 SOCO — **no keeper yet; column SEEDED 2026-09-13 at lane SOCO-21**, the eighth matrix shard
+
+SOCO is a **balancing authority, not an ISO** — the Southern Company footprint
+(Alabama Power / Georgia Power / Mississippi Power), keyed `SOCO` after the
+EIA-930/EIA-860 BA code (owner card **S1**, ruled 2026-09-13). It is vertically
+integrated and cost-based: **no LMP, no capacity auction, no ancillary-service
+market, no offer cap**. The shard
+(`docs/codebase-site/data/mechanism-matrix/SOCO.js`) is a **mechanical seed with
+NO VERDICT MINTED** — SOCO has no keeper, no registered run and no solve of any
+kind at HEAD, so its `keeper`/`gates` stamps are deliberately empty and every one
+of the 327 cells is `U` (untested, plausibly applicable, **168**) or `·`
+(structurally n/a, **159** — of which 47 are forecast-only rows carrying
+`fc: "U"`). The shard header states the classification rule cell by cell, so a
+later lane can audit any one of them without re-deriving the column; `·` is the
+stronger claim and everything this session could not place with a stated
+structural reason fell through to `U`. Two of the charter's four `·` reasons
+deliberately produce **no** `·` cell and are recorded on the affected rows' `ev`
+instead, because neither meets the charter's own test of "structurally n/a": **no
+import node** (gate G7) is a registration fact for the first keeper whose seams
+are served measured EIA-930 interchange, while the same card **S4** registers
+priced `NeighborInterface`s default-off as lever **SOCO-56** — so `·` would
+foreclose a chartered lever; and **no offer-curve tuning channel** (gate G5)
+closes the rule-1 `[R-STRUCT]` authorized channel, not `offer_curve_by_group`'s
+own object, since SOCO's first keeper will carry per-class band curves at neutral
+1.0.
+
+The queue below is the plan's **pre-declared W5 list**
+(`docs/multi-iso/soco-addition-plan-2026-09.md` §4), seeded here by rule 28
+`[R-MECH-MATRIX]` alongside the shard. **Nothing in it has been tested**, so no
+entry names a gate it has moved — each names the object it must derive **from
+SOCO's own data** before any solve (rules 23/25). It is issued against a keeper
+that does not exist yet (**SOCO-40**, W4), so a later lane re-ranks it against
+that keeper's actual failing gates rather than treating this order as a mandate.
+
+1. **SOCO-54 — inter-OpCo TTC derive (card S3).** `[FABLE]`, because a TTC is a
+   design object. Card S3 ruled **three zones** (`SOCO_AL` / `SOCO_GA` /
+   `SOCO_MS`, named geographically, never for an operating company) on the
+   six-respondent FERC-714 sum, with **Tier-3, documented, non-binding** TTCs —
+   there is no published internal transfer limit, so until one is derived the
+   3-zone and 1-zone footprints produce the same dispatch. That derivation is
+   this lever, and card S3's condition (iii) binds it: the split is **never sold
+   as improving accuracy**, because SOCO has no zonal price, spread or congestion
+   archive to validate against, ever. Rows it would enter:
+   `measured_interface_limits`, `internal_congestion_split`, `zonal_loss_surface`.
+2. **SOCO-55 — VOLL / adequacy (cards S5, S6).** `[OPUS]`. Card S5 ruled VOLL
+   from the **DOE/LBNL ICE calculator** on the SERC/Southeast class mix rather
+   than the FERC-831 $2,000 ceiling (831 caps *offers*; SOCO takes none), and
+   card S6 ruled the planning reserve margin at Southern's own published
+   **winter 26.0 %** target with the seasonal structure **stated on the field**
+   (the footprint is winter-peaking in 2 of 3 backcast years). Both land as cited
+   registry values at SOCO-20; this lever is the follow-on that tests what they
+   do to the LP's slack penalty and the reliability floor. Rows:
+   `reliability_floor`, `capacity_deliverability`.
+3. **SOCO-56 — priced seams (card S4).** `[FABLE]`. The first keeper serves
+   **measured EIA-930 `Total interchange`** — SOCO-11 measured the cleanest
+   interchange book in the corpus (zero NaN hours on any of nine DIBAs in any
+   year; net export +10.155 / +10.832 / +13.038 TWh). This lever is the priced
+   alternative: `NeighborInterface`s for TVA, MISO-South, Duke/CPLE, the Florida
+   BAs and Santee Cooper, registered **default-off**, on SOCO-12's published
+   transfer capability (MISO-South 1,791 S / 2,374 W MW; TVA 480/478 MW; 11 more
+   rows). **Rule 25 `[R-ISO-SCOPE]` is absolute here: this desk never touches how
+   MISO or PJM price their side of any seam**, and SPP-51's `R` on the
+   spread-clearing form is SPP's verdict, not SOCO's — the cell enters as `U`
+   (rule 28(d)). Rows: `priced_interchange`, `reference_price_interface`,
+   `import_hub_pricing`, `seam_flow_envelopes`.
+4. **SOCO-57 — CAES / pumped-storage representation (card S7).** `[OPUS]`. Two
+   objects, both small and both misrepresented by default. **McIntosh (AL), EIA
+   7063 unit 1** is the only compressed-air storage unit in the US fleet; card S7
+   ruled it **mapped to a gas CT at its 25 MW summer/winter rating** (not the
+   110 MW nameplate — a 77 % derate, so **0.035 %** of the footprint), with the
+   misalignment documented on the mapping and a CAES technology class **refused**
+   for one unit. The **pumped-storage** half is the live question: the fleet
+   carries **1,306.6 MW** of PS while EIA-930's `NG: PS` column is NaN in 17,647
+   of 26,304 hours, so the benchmark itself is defective before any model
+   question is asked. Rows: `pumped_storage_cycling_depth`,
+   `storage_measured_base_fleet`, `hydro_level_923_hy`.
+
+**Not in this queue, deliberately.** W6 (forecast-program entry —
+`program-status.json` row, `ff-verdicts.json`, `GOLDEN_ISOS`, goldens) is
+**routed to the capx director** by card **S10** and is never written by this desk
+or this section; SOCO has no forecast-lane entry at HEAD, which is why every
+forecast-only row in the shard reads `cell: "."` with `fc: "U"`. Two cross-ISO
+items that SOCO surfaced are likewise **not** SOCO levers and are chartered
+elsewhere: the **COD-seam defect** (card S12 — `cod_ramp.effective_cod` prefers a
+plant's capacity-weighted mean COD over a generator's own `Operating Month` for
+the *online* date, so Vogtle 3 and 4 are online all of 2023; blast radius across
+all eight footprints, SOCO 3,040.3 MW at 2.7× the next-worst) is lane
+**SOCO-15**, and the **no-price determination class** (card S2 — a SOCO run
+scored on C1/C2/C4/C6/C8 that names its own basis and may never read
+`CALIBRATED`) is lane **SOCO-22**, a scorer amendment, not a mechanism.
+
+### 5.9 Cross-cutting audits (not ISO levers)
 
 - **Diurnal price-amplitude audit, all six ISOs — DONE 2026-08-01 (xiso-1), and
   the answer is SYSTEMIC.** One construction, zero LP (keeper
