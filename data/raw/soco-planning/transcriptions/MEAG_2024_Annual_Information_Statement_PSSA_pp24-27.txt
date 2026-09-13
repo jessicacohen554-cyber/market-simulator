@@ -1,0 +1,187 @@
+=====PDFPAGE 29=====
+ 
+ 24 
+Nuclear Fuel Matters 
+Southern Nuclear, as operating agent, acquires and manages nuclear fuel and fuel cycle services 
+for all units at Plant Vogtle and Plant Hatch.  Nuclear fuel contracts vary in length from short-term contracts 
+(typically less than three years) to long-term contracts (typically longer than five years).  Additional nuclear 
+fuel contracts will be required for the long-term supply of nuclear fuel to Plant Vogtle and Plant Hatch. 
+Pursuant to the Nuclear Waste Policy Act of 1982, nuclear utilities have been required to make 
+payments into the federal Nuclear Waste Fund established by Section 302(c) of the Nuclear Waste Policy 
+Act of 1982.  Under the Nuclear Waste Policy Act of 1982, DOE was to provide for a disposal facility or 
+repository and accept high-level nuclear waste from nuclear utilities no later than January 31, 1998.  Under 
+the contracts GPC has with DOE, permanent disposal of spent nuclear fuel from Plant Vogtle Unit Nos. 1 
+and 2 and Plant Hatch Unit Nos. 1 and 2 was to begin in 1998.  This did not occur, and GPC pursued legal 
+remedies against the U.S. Government for its partial breach of contract.   
+On June 7, 2024, and August 15, 2024, the U.S. Court of Federal Claims entered final judgments 
+on damages in the third and fourth round of lawsuits, respectively, against the U.S. Government.  MEAG 
+Power’s share of the awards was $54.4 million, of which $37.2 million was refunded to the Participants 
+and $17.2 million was deposited into construction bank accounts held by the applicable bond resolution 
+trustee.  MEAG Power previously received its share of awards by such court for spent nuclear fuel damages 
+for the years 1998 through 2010.  For a discussion of such lawsuits, see Note 2(G) to MEAG Power’s 2024 
+Financial Statements attached hereto as APPENDIX A.  MEAG Power anticipates that Southern Nuclear 
+will pursue legal remedies against the U.S. Government for its partial breach of contract for years 2020 and 
+thereafter with respect to the permanent disposal of spent nuclear fuel from Plant Vogtle Unit Nos. 1 and 2 
+and Plant Hatch Unit Nos. 1 and 2.  
+Southern Nuclear reports that Plant Vogtle Unit Nos. 1 and 2 and Plant Hatch Unit Nos. 1 and 2 
+have completed on-site capability for dry storage of spent fuel.  Construction of an on-site dry storage 
+facility at Plant Vogtle and Plant Hatch was completed in 2013 and 2000, respectively.  According to 
+Southern Nuclear, the Plant Hatch and Plant Vogtle on-site dry storage facilities can be expanded to 
+accommodate spent fuel through the expected life of the plants.  With the commercial operation of Vogtle 
+Units 3 and 4, long-term storage of spent fuel will need to be addressed for these units. Construction of 
+additional on-site storage facilities is anticipated to address this need. 
+Coal Purchases 
+MEAG Power purchases coal for its interests in Plant Scherer Unit Nos. 1 and 2 through a 
+combination of short-term contracts (typically less than three years) and spot market purchases.  As 
+provided for in the Project Agreements, MEAG Power manages its own coal stockpile inventory including 
+selection of fuel sources, contract arrangements, and coal inventory levels.  GPC, as the agent for MEAG 
+Power as well as the other co-owners, has contracted Southern Company Fuel Services (“SCFS”) to act as 
+coal procurement agent and SCFS is responsible for issuance of requests for proposals for coal supply, 
+contract negotiations, and scheduling coal delivery.  Coal demand has varied greatly over the past few years 
+due to volatility in natural gas and power prices, amid a railroad crisis mainly caused by crew shortages.  
+Coal conservation in 2022 turned into a minimum burn requirement in 2023; however, in 2025 there are no 
+expected limitations on the dispatch of coal-fired facilities, and there were no limitations in 2024.  Coal 
+inventory management may put pressure on the cost of energy supply. 
+Plant Scherer Unit Nos. 1 and 2 currently burn coal from sub-bituminous mines in the PRB region.  
+As of March 31, 2025, MEAG Power’s share of the coal stockpile at Plant Scherer contained a 34-day 
+supply for Plant Scherer Unit Nos. 1 and 2 based on nominal full-load capacity.  
+=====PDFPAGE 30=====
+ 
+ 25 
+All coal for Plant Scherer is delivered in private rail cars, and each of the co-owners has provided 
+cars that comprise a pool of cars used for these private rail car deliveries.  To date, MEAG Power has 
+contributed a total of 643 cars to the combined pool of cars for Plant Scherer Unit Nos. 1 and 2.  GPC has 
+leased additional train sets under short-term (i.e., three to five years) leases.  MEAG Power participates in 
+these short-term leases as needed to balance rail transportation capacity and forecasted delivered coal tons. 
+Nuclear Fuel Purchases 
+MEAG Power has an established nuclear fuel funding program that provides for the financing of 
+nuclear fuel purchases.  For further information relating to the procurement of nuclear fuel, see Note 7 to 
+MEAG Power’s 2024 Financial Statements attached hereto as APPENDIX A.  MEAG Power understands 
+that Southern Nuclear has sufficient inventory on hand and access to fuel procurement to operate the nuclear 
+units for the foreseeable future. 
+Pseudo Scheduling and Services Agreement 
+The Pseudo Scheduling and Services Agreement (the “PSSA”) between MEAG Power and GPC 
+became effective August 1, 1997.  The PSSA is a power supply arrangement between MEAG Power and 
+GPC under which the following occurs: 
+(a) MEAG Power “pseudo” schedules how and when generation from its ownership interests 
+in Plant Scherer Unit Nos. 1 and 2 is committed and dispatched.  That is, GPC will deliver 
+energy based upon such schedules as if it were generated at such units, although the 
+commitment of these units may actually be different from the “pseudo” schedule. 
+(b) MEAG Power “pseudo” schedules generation from the Participants’ entitlements to output 
+from the SEPA facilities. 
+(c) MEAG Power utilizes the actual output from its ownership interests in Plants Hatch and 
+Vogtle and the Wansley CC Unit (hereinafter defined). 
+(d) MEAG Power schedules its own off-system transactions. 
+(e) MEAG Power controls the other non-nuclear resources in the Balancing Authority Area of 
+The Southern Company (“Southern Company”), the parent company of GPC, to which 
+MEAG Power has ownership rights, all to meet MEAG Power’s requirements. 
+With respect to item (a), to the extent MEAG Power pseudo schedules output in excess of MEAG 
+Power’s share of the actual output of a unit, MEAG Power purchases such excess energy from GPC at the 
+energy cost of such unit.  To the extent MEAG Power pseudo schedules output that is less than MEAG 
+Power’s share of the actual output of the unit, MEAG Power sells such energy to GPC at the energy cost of 
+such unit. 
+Under the PSSA, GPC provides the required ancillary services for the scheduling and dispatch of 
+MEAG Power’s resources, provides back-up power supply to MEAG Power through an energy imbalance 
+service, and to the extent not provided by MEAG Power, provides all ancillary services required for MEAG 
+Power to operate its resources and to effectuate off-system sales and purchases.  GPC has no further 
+responsibility to provide partial requirements service to MEAG Power.  MEAG Power is responsible for, 
+among other matters, procuring its future requirements for all bulk power supply, obtaining replacement 
+power when its generating resources are unavailable, planning, operating and maintaining its system in 
+accordance with prudent utility practice, and paying the costs of all ancillary services needed to ensure the 
+delivery of MEAG Power’s generation. 
+=====PDFPAGE 31=====
+ 
+ 26 
+The PSSA requires MEAG Power to purchase or provide certain ancillary services that are referred 
+to as “Control Area Services.”  The term “MEAG Territorial Control Area Services” means those Control 
+Area Services that are needed (a) to effectuate the delivery of power to MEAG Power’s Territorial Load, 
+as defined in the PSSA; and (b) to maintain the integrity of the ITS and the Southern Company Balancing 
+Authority Area during such transactions.  The MEAG Territorial Control Area Services to be provided or 
+offered under the PSSA include: (a) scheduling, system control and dispatch service; (b) reactive supply 
+and voltage control from generation sources service; (c) regulation and frequency response service; (d) 
+operating reserve - spinning reserve service; and (e) operating reserve - supplemental reserve service. 
+Supplemental Reserves may be purchased directly from GPC or self-supplied through a 
+combination of generating resources and qualifying interruptible loads.   
+MEAG Power’s territorial load served by SEPA resources is excluded from the cost calculation for 
+these services (while SEPA is part of the Southern Company dispatch) because SEPA purchases these 
+Control Area Services from Southern Company under a separate contractual arrangement. 
+The term of the PSSA is from year to year, with either party having the right to terminate the PSSA 
+upon six months’ notice to the other party.  GPC has agreed to cooperate with MEAG Power to develop 
+agreements to permit MEAG Power, upon the termination of the PSSA, to form or become part of another 
+balancing authority area for dispatching and scheduling its generating units to match its loads should MEAG 
+Power elect to do so. 
+The PSSA provides MEAG Power with flexibility to manage its generation resources in the current 
+market.  It allows for utilization of MEAG Power’s generating resources to match closely its system 
+requirements.  The PSSA also facilitates MEAG Power’s ability to make firm off-system sales and 
+purchases.  During 2024, energy sales to GPC under the provisions of the PSSA totaled 842.7 gigawatt-
+hours (“GWh”) with revenues of $34.9 million, while energy purchases from GPC amounted to 354.4 GWh 
+with a cost of $12.8 million. 
+Under the PSSA, MEAG Power contracts directly for the sale and purchase of capacity and energy 
+with utilities both inside and outside of the Georgia territory.  Prior to June 2024, all short-term trading 
+activities in the wholesale market have been coordinated through TEA.  Since then, MEAG Power has 
+transitioned to utilizing ACES for all short-term trading activities.  In 2024, total energy sales related to 
+Project One, the Existing General Resolution Projects and the CC Project to parties other than native load 
+and GPC totaled 175.2 GWh with gross revenues of $5.7 million.  During 2024, energy purchases arranged 
+by or from ACES and TEA, respectively, in the aggregate totaled 1,440.3 GWh with a cost of $43.6 million. 
+For the 2024 Power Supply Year, MEAG Power’s interchanges with others, excluding sellback to 
+GPC, included (a) purchases from TEA, ACES, GPC under the PSSA, and others totaling 1,857.5 GWh 
+and $59.2 million and (b) sales to TEA, GPC under the PSSA, and others totaling 1,109.5 GWh and $44.4 
+million.  For information relating to ACES and TEA, including MEAG Power’s withdrawal as a member 
+therein, see “Power Marketing Arrangements” below. 
+The Combined Cycle Project 
+General.  In July 2003, 32 Participants (hereinafter referred to as the “Initial CC Participants ”) 
+agreed to execute a take-or-pay, “hell or high water” Amended and Restated Combined Cycle Power Sales 
+Contract (each, an “Initial CC Contract”) for the purpose of amending and restating their respective power 
+sales contracts relating to a simple cycle combustion turbine project (the “CT Project”) in connection with 
+the development and construction of a combined cycle generating facility with a nominal summer rating 
+capacity of 503 MW (the “Wansley CC Unit”).  Three additional Participants (i.e., Lawrenceville, Grantville 
+and Palmetto) became CC Participants in 2007 and early 2008, one additional Participant ( i.e., Albany) 
+=====PDFPAGE 32=====
+ 
+ 27 
+became a CC Participant effective as of January 1, 2011 and one additional Participant ( i.e., Brinson) 
+became a CC Participant effective as of January 1, 2012 (such additional Participants are collectively 
+referred to herein as the “Additional CC Participants”), increasing the total number of participants in the 
+CC Project to 37.  The Additional CC Participants became participants in the CC Project through the 
+execution of additional take-or-pay, “hell or high water” CC Contracts (the “Additional CC Contracts ”) 
+and assignment agreements with certain of the Initial CC Participants with respect to portions of such Initial 
+CC Participants’ interests in the output of the CC Project (see “Bulk Power Supply Operations – General” 
+above).  The Initial CC Participants, together with the Additional CC Participants, are collectively referred 
+to herein as the “CC Participants,” and the Initial CC Contracts, together with the Additional CC Contracts, 
+are collectively referred to herein as the “CC Contracts.”  The payment obligations of each CC Participant 
+under its respective CC Contract are general obligations to the payment of which its full faith and credit are 
+pledged.  MEAG Power’s remedies under each such CC Contract include specific performance to compel 
+the CC Participant to assess and collect an annual ad valorem tax sufficient to meet its obligations 
+thereunder.  The Additional CC Contracts were entered into after the entry of the August 20, 2003, 
+validation order referred to above and have not been so validated.  See “CAPITAL IMPROVEMENTS 
+AND FINANCING PROGRAMS – Security for MEAG Power’s CC Bonds – The CC Contracts” herein.  
+For descriptions of the CC Contracts and the CC Bond Resolution, see “SUMMARY OF COMBINED 
+CYCLE POWER SALES CONTRACTS” in APPENDIX H hereto and “SUMMARY OF COMBINED 
+CYCLE PROJECT BOND RESOLUTION” in APPENDIX I hereto. 
+See “CAPITAL IMPROVEMENTS AND FINANCING PROGRAMS – Financing Programs – 
+Outstanding Indebtedness of MEAG Power – CC Project” for a description of outstanding indebtedness 
+relating to the CC Project, and “CC PROJECT PARTICIPANTS ANNUAL GROSS DEBT SERVICE 
+RESPONSIBILITIES” in APPENDIX P hereto for the current debt service responsibilities of the CC 
+Participants with respect to the 2020A CC Bonds. 
+Description of the CC Project .  The CC Project consists of the ownership of a General Electric 
+natural gas-fired and steam driven combined cycle power plant (S207 FA) that has a nominal summer 
+capacity of 503 MW.   
+The CC Project is located at the existing Plant Wansley site, which is located in a rural area in 
+Heard County, Georgia, approximately 40 miles southwest of Atlanta.  While the Plant Wansley site is co-
+owned by MEAG Power, GPC, OPC and Dalton, the real property on which the CC Project is located is 
+owned solely by MEAG Power. 
+The CC Project takes advantage of a number of jointly owned facilities including the 
+interconnection facilities at the Yellowdirt substation.  In 2007, MEAG Power and GTC completed a joint 
+ownership and operating agreement under which MEAG Power and GTC each have an initial 50 percent 
+interest in this substation.  Such interests are subject to adjustment if the substation is expanded in the future 
+and both parties choose not to participate equally in such expansion. 
+Through participation in the Momentum Expansion Phase II, previously known as the “Cornerstone 
+Expansion,” of the Transco natural gas pipeline system (“Transco”), MEAG Power has secured firm natural 
+gas transportation capacity sufficient to deliver 65% of the natural gas required to operate the CC Project 
+at projected peak period capacity factors.  The initial base term of the Transco agreement began in 2004 
+and ended on January 31, 2019.  The contract continues on an evergreen basis and MEAG Power has certain 
+retention rights, which ensure continued service.  For the remainder of the facility’s natural gas 
+transportation requirements, MEAG Power uses a combination of daily and short-term capacity purchases. 
+MEAG Power has entered into six long-term natural gas purchase agreements with the Municipal 
+Gas Authority of Georgia (“MGAG”) for gas sourced through six prepaid gas supply agreements.  These 
+purchases are structured to match the usage in the peak  operating months and are expected to equal an 

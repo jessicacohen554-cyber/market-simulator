@@ -48,3 +48,22 @@ f7be54aadb6bc0a5c549bbbf9a3b8773b8efd872ef7917711ec749d39803628d  SEEM-Audit-Rep
   abf18723d8324f6dee6fb95d31e6613ede8bfd5a29bd988a8ce3f79fbc347b40  data/raw/gas-prices/eia_N3045AL3m_2026-09-13.xls
   bee52d81cee5b27201ac686f7f2aefce36f34a1b0354b2a4dae1fb6f390422a2  data/raw/gas-prices/eia_N3045GA3m_2026-09-13.xls
   f395904f2fc3c68a94ae68ed142066497b7a143e7c8602087e60cf1d4c4d0c39  data/raw/gas-prices/eia_N3045MS3m_2026-09-13.xls
+#
+# ============================================================================
+# SOCO-14, 2026-09-13 — BA-membership source documents
+# (docs/handoffs/FINDING-soco-14-2026-09-13.md; gate G22)
+# ============================================================================
+#
+# --- UNTRACKED source payloads (re-fetch route, README "Re-fetch") ---
+11037256b4002424a534c3e4aa7b2e2a22136d6a8cb0859a8be7657b14070632  MEAG-2024-Annual-Information-Statement.pdf  (5442616 B; dated 2025-05-22)
+e81ab83a16109d111c4f4486608b19cbf9f12b96594feb6a8bac3ca23c04e389  MEAG-2022-Annual-Information-Statement.pdf  (4485783 B; dated 2023-06-09)
+5c8847f6e0af6d102a2c8cb7354a81f3c54e2b93ac8b0fdef0be38669d7e01f1  MEAG-2025-Annual-Information-Statement.pdf  (29314348 B)
+748e13b437d1454ab87be8d459111ce386520cad60ca4080327fb2b2964dc77e  form-714-instructions.doc  (110592 B)
+77ce49c60ac5a6bad50c442fc401aad5404a21da875dc5cbaba353af5ede54de  f8612024.zip  (EIA-861 2024 final; 4568208 B)
+#
+# --- TRACKED in this directory ---
+  cb82851cb8bafc679593761f3a4e7bb66361ec84b0fdb4d97f7b48d25a95727c  NERC_SERC_Public_Audit_GSOC_NCR01248_2014.pdf
+  297891c63684e18994c74e4b0ede64cd12ea425dbeab377ab707036c6d58ef6e  NERC_SERC_Public_Audit_Southern_NCR01166-01247-01273-01320_2021.pdf
+  8441646a3f0cc39e19c664acd0cffe76a3c273227d61d84b198385ac1792462c  FERC_Form_714_sample_form.pdf
+  36f71e79689b228d59fbe389738ed02b391b18d2346ea0b174b43db72ad2abbd  transcriptions/MEAG_2024_Annual_Information_Statement_PSSA_pp24-27.txt
+  ef58f232e73be06dd561350b89cabea33b1a8697e4d49abaf5ac2582f9e7705d  transcriptions/FERC_Form_714_instructions.txt
