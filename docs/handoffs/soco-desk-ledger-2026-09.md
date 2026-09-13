@@ -11,6 +11,69 @@ recreated fresh from `origin/main`.
 
 ## 0. Live state — newest entry FIRST
 
+### r#3 — 2026-09-13 — ALL THREE W1 LANES LAND AND GRADE PASS · SEVEN CARDS RULED · THE EVIDENCE INVERTED TWO OF THE DESK'S OWN RECOMMENDATIONS (main `c93b0d27`)
+
+**Graded BY CONTENT, not by claim** — each FINDING opened and checked against what its dispatch
+said. All three W1 lanes **PASS**, and two of them found things the charter did not anticipate.
+
+| Lane | Verdict | What it actually delivered |
+|---|---|---|
+| **SOCO-10** audit (PR #6091) | **PASS** | Census **336 plants / 788 gens / 70,667.2 MW** — and it caught that the charter's 335/786/70,665.7 is that figure *minus* the MA row while the charter's own per-state list *includes* it: both right about different sets, one labelled. MA **rejected** (plant 67241, Berkshire MA, NERC **NPCC** — a BA-field mis-entry) under a stated two-key rule; FL **kept** (6 plants, SERC, panhandle). Reconciled to Southern's 10-K on an explicit whole-unit-vs-ownership bridge, the wedge proved exactly on nuclear (10-K 4,786.7 vs EIA-860 8,282.4 MW = Oglethorpe 30 / MEAG 22.7 / Dalton 2.2 %). **Gate G19 CLOSED**: `America/Chicago`, DST-aware, hour-ending, measured over all 26,304 rows. CEMS gap **91.6 %** of fossil MW (SPP's was 44.9 %) |
+| **SOCO-11** CEMS + 714 + interchange (PR #6083) | **PASS — including the way it failed** | 8/8 CAMPD files landed, every one re-checked against the charter's named sibling `MS_2024` after the fetcher had used a different one. **The FERC-714 gate FAILED and the lane stopped, rescaling nothing** (rule 13) and deriving no share (rule 23). Interchange confirms the charter to **0.001 TWh** and is the cleanest book in the corpus (zero NaN hours, nine DIBAs, three years) |
+| **SOCO-12** documents + gas (PR #6092) | **PASS** | **Gate G12 MET** with a real edition and vintage. **SEEM corrected on three counts** — live **Nov 2022** not Nov 2023; SEEM publishes no price *but its Independent Market Auditor does, monthly, publicly, back to 2022-11*; and a **FERC-accepted settlement (2026-01-05)** will oblige hourly posting. Then it **refused its own find as a benchmark** on four disqualifying grounds and re-cast it as a boundedness anchor — exactly what gate G17 demands |
+
+**THE TWO INVERSIONS, because they are the sitting's real content.**
+
+1. **Card S3's recommendation was conditional and the condition failed.** SOCO-10 predicted the
+   three OpCos *structurally* cannot sum to the BA (Georgia Power's winter peak 16,284 MW against
+   the BA's 47,368 MW); SOCO-11 measured it — **73.2 %**, short **61.4 / 66.2 / 64.2 TWh** in every
+   hour of every year, shape right (r ≈ 0.99) and level short, which is the signature of whole
+   planning areas absent rather than a scaling error. **The desk recommended 1 zone. The owner ruled
+   3 zones on the six-respondent sum, and that is now the plan of record.** The desk's stated risk —
+   an attribution nobody has cited — does not vanish with the ruling, so it is *controlled* rather
+   than re-litigated: new gate **G22** makes a cited BA-membership basis a hard precondition on
+   SOCO-32, and new lane **SOCO-14** exists to produce it. If SOCO-14 returns a documented NO the
+   ruling's premise is gone and S3 goes back to the owner — it is not worked around.
+
+2. **Card S8 was answered and the answer is worse than the card assumed — now card S12.** SOCO-10
+   found by *calling the live code* that `cod_ramp.effective_cod` always prefers a plant's
+   capacity-weighted mean COD for the ONLINE date; the per-unit preference exists only for
+   retirement. `load_cod_map()[649] -> (2005, 5)`, so **Vogtle 3 and 4 are online all 12 months of
+   2023**. Phantom **+12.979 TWh** (+24.8 %); a 2023 SOCO backcast would read ≈65.41 TWh of nuclear,
+   **above measured 2025's 64.17**, inverting the commissioning step and displacing ~13 TWh of gas.
+   Blast radius **SOCO 3,040.3 MW vs next-worst SPP 1,127.4** — 2.7×. Ruled: charter the cross-ISO
+   repair **before** SOCO-20, as lane **SOCO-15**, never inside the registration PR.
+
+**Seven cards ruled** (verbatim in §2, appended to plan §3): **S3** 3 zones / six-respondent sum ·
+**S4** served interchange · **S5** DOE/LBNL ICE VOLL · **S6** winter 26.0 % scalar · **S7** CAES → gas
+CT at the **25 MW rating** (SOCO-10 corrected the charter's 110 MW nameplate — a 77 % derate) ·
+**S11** this desk charters SOCO-22 · **S12** (new) charter SOCO-15 before SOCO-20. **S9** stays
+deferred behind SOCO-13 as the plan says; **S10** waits for a keeper.
+
+**Issued this sitting: SOCO-14 `[OPUS]`, SOCO-15 `[FABLE]`, SOCO-22 `[FABLE]`** — all three created
+by rulings at this sitting, all pinned `c93b0d27`, charters in the sitting report.
+
+**SOCO-13 and SOCO-21 (issued r#2) have NOT landed** — no branch, no PR, no FINDING on origin.
+**Not graded LOST** (gate G15): the desk asks dispatch status rather than inferring from absence,
+and that question is in this sitting's report.
+
+**Gates at `c93b0d27`** — the base-branch debt recorded at r#2 has **grown**, not cleared:
+
+| Gate | Exit | Note |
+|---|---|---|
+| `audit_keepers.py --check` | **1 — RED** | was EXIT 0 at `7404ef12` twelve hours ago; the MISO E13 rows landed in between |
+| `check_registry_payload_parity.py` | **1 — RED** | R-c, CAISO's |
+| `check_gate_a_provenance.py` | **1 — RED** | R-d, MISO **and** NYISO |
+| `check_mechanism_matrix.py` | 0 | warnings, other programs' |
+| `check_bench_freshness.py` | 0 | |
+| `check_golden_manifest.py` | 0 | |
+| `ci_refactor_guards.py` | **UNREAD** | `numpy` absent in a `DATA PROFILE: code` container; not carried forward green |
+
+**Next act:** sitting #4 — grade SOCO-13/14/15/21/22 by content, then issue **SOCO-20** (its G12
+blocker is now MET; it still needs S3's G22 discharged and SOCO-15 landed first).
+
+---
+
 ### r#2 — 2026-09-13 — CARDS S1 AND S2 RULED · SOCO-13 AND SOCO-21 ISSUED · rules 33/34/35 folded into the plan (main `7404ef12`)
 
 **What happened.** Both pending cards were re-served as clickable decision cards and **both were
@@ -214,12 +277,15 @@ option (a)).
 
 | Lane | Model | Wave | Status | Branch | FINDING |
 |---|---|---|---|---|---|
-| SOCO-10 audit | OPUS | W1 | **LIVE** — dispatched, running (owner-confirmed r#2); not landed, NOT graded lost | not yet on origin | — |
-| SOCO-11 CEMS + FERC-714 + interchange | OPUS | W1 | **LIVE** — dispatched, running (owner-confirmed r#2) | not yet on origin | — |
-| SOCO-12 documents + gas | OPUS | W1 | **LIVE** — dispatched, running (owner-confirmed r#2) | not yet on origin | — |
-| SOCO-13 EQR price index | FABLE | W1 | **ISSUED r#2** — card S2 ruled, hold lifted | pending dispatch | — |
-| SOCO-20 registration | FABLE | W2 | BLOCKED on S3–S8 + manifest row 7 (LTLF edition/vintage, G12). **S1 no longer blocks it** | — | — |
-| SOCO-21 matrix shard | OPUS | W2 | **ISSUED r#2** — card S1 ruled; C-2 hold lifted on the SPP precedent; gate-independence from SOCO-20 measured | pending dispatch | — |
+| SOCO-10 audit | OPUS | W1 | **LANDED r#3 — GRADED PASS** | PR #6091 (`a23a4212`, `b4d0dd92`) | `FINDING-soco-10-2026-09-13.md` + `soco-data-audit.md` |
+| SOCO-11 CEMS + FERC-714 + interchange | OPUS | W1 | **LANDED r#3 — GRADED PASS**, gate failure included | PR #6083 | `FINDING-soco-11-2026-09-13.md` |
+| SOCO-12 documents + gas | OPUS | W1 | **LANDED r#3 — GRADED PASS**; gate G12 MET | PR #6092 (`738fc0ab`, `98c1fd92`) | `FINDING-soco-12-2026-09-13.md` |
+| SOCO-13 EQR price index | FABLE | W1 | **ISSUED r#2, NOT LANDED at r#3** — dispatch status asked, not inferred (G15). SOCO-12 handed it a new STOP-gate anchor candidate | — | — |
+| SOCO-14 BA membership | OPUS | W1 | **ISSUED r#3** — created by card S3's ruling; gate G22 | — | — |
+| SOCO-15 COD seam (cross-ISO) | FABLE | W1.5 | **ISSUED r#3** — card S12; **must land before SOCO-20** | — | — |
+| SOCO-22 rubric class | FABLE | W1.5 | **ISSUED r#3** — card S11; **W4 cannot score without it** | — | — |
+| SOCO-20 registration | FABLE | W2 | **UNBLOCKED ON CARDS AND ON G12** (S3–S8 all ruled r#3; G12 MET by SOCO-12). Now blocked only on **SOCO-15 landing** (card S12) and **G22** (SOCO-14's citation). Issuable at sitting #4 | — | — |
+| SOCO-21 matrix shard | OPUS | W2 | **ISSUED r#2, NOT LANDED at r#3** — dispatch status asked, not inferred (G15) | — | — |
 | SOCO-30/31/32/33/34 | OPUS | W3 | BLOCKED on SOCO-20 | — | — |
 | SOCO-40 first solve | FABLE | W4 | BLOCKED on SOCO-30/31/32 **and on card S11** — the scorer cannot express S2's determination class yet | — | — |
 | SOCO-22 rubric class | FABLE | W2/W3 | **NOT ISSUED** — card S11 (sitting #3) decides whether this desk charters it or routes it | — | — |
@@ -233,18 +299,29 @@ option (a)).
 | O-1 | charter | *"Use the add spp workstream as a reference and develop a plan and prompt pack to do whatever iso Hillabee gas plant in Alabama is in."* | 2026-09-12 |
 | S1 | the registry key | **RULED r#2**, verbatim: *"SOCO (Recommended) — The EIA-930/EIA-860 balancing-authority code. Already the on-disk filename convention (`SOCO hourly.parquet`, `SOCO_fueltype.parquet`), so no crosswalk is invented. Lets every doc say 'balancing authority' rather than 'ISO'."* | 2026-09-13 |
 | S2 | price benchmark / rubric class | **RULED r#2**, verbatim: *"Both: build the EQR index AND rule the fallback class now (Recommended) — Issue SOCO-13 to build a footprint-hourly volume-weighted price index from FERC EQR transaction data, with a STOP gate registered before any data is read; AND rule now that if it fails, a SOCO run reads a determination that names its own basis (e.g. PHYSICALLY CALIBRATED — price unscored, no public price exists) scored on C1/C2/C4/C6/C8, never CALIBRATED, with the price gap on the determination basis at full magnitude."* Five binding consequences: plan §3 card S2 | 2026-09-13 |
-| S3–S9 | topology, seams, VOLL, adequacy, CAES, Vogtle vintage, tail threshold | **PENDING** — due sitting #2 | — |
+| S3 | topology | **RULED r#3**, verbatim: *"3 zones now on the six-respondent sum"* — **over the desk's own 1-zone recommendation**, with full knowledge of the desk's stated risk. Conditions the desk attached rather than re-litigating: gate **G22** + lane **SOCO-14**, geographic zone names, and the split is never sold as improving accuracy | 2026-09-13 |
+| S4 | seams | **RULED r#3**, verbatim: *"Served measured EIA-930 interchange for the first keeper (Recommended)"* — priced neighbours register default-off as lever SOCO-56 | 2026-09-13 |
+| S5 | VOLL | **RULED r#3**, verbatim: *"DOE/LBNL ICE calculator, SERC/Southeast mix (Recommended)"* — $2,000 only as a documented fallback; Brattle cited as method, never value | 2026-09-13 |
+| S6 | adequacy | **RULED r#3**, verbatim: *"Register winter 26.0% as the scalar, misalignment documented (Recommended)"* — SOCO is winter-peaking in 2 of 3 backcast years; a seasonal registry for all ISOs was offered and declined as an ISO-addition act | 2026-09-13 |
+| S7 | the CAES unit | **RULED r#3**, verbatim: *"Map to a gas CT at the 25 MW rating (Recommended)"* — SOCO-10 corrected the charter's 110 MW nameplate to the source's own 25 MW rating, a 77 % derate | 2026-09-13 |
+| S8 | mid-window nuclear commissioning | **ANSWERED AND SUPERSEDED BY S12** — the machinery resolves neither the month nor the year for a brownfield addition | 2026-09-13 |
+| S9 | `TAIL_THRESHOLD` | **STILL DEFERRED behind SOCO-13**, as the plan says | — |
 | S10 | W6 routing | **PENDING** — due when a keeper exists | — |
-| S11 | who implements S2's determination class in `scripts/calibration_verdict.py` | **RAISED r#2, PENDING — due sitting #3.** Desk recommends chartering it itself as SOCO-22 `[FABLE]`, narrowly scoped; the alternative is routing to the rubric owner. **W4 cannot score until it lands** | — |
+| S11 | who implements S2's determination class | **RULED r#3**, verbatim: *"This desk charters it as SOCO-22 [FABLE] (Recommended)"* — one added branch keyed on the ABSENCE of an `actual_lmp.json` block, byte-identity proof over all seven keepers as its exit, serving NWPP's card N2 with the same amendment. Issued r#3 | 2026-09-13 |
+| S12 | the COD-seam defect (SOCO-10's R-4) | **RAISED AND RULED r#3**, verbatim: *"Charter a cross-ISO repair lane BEFORE SOCO-20 (Recommended)"* — issued as SOCO-15 `[FABLE]`. Floor stands regardless of outcome: the bias is stated on SOCO's first keeper's determination basis | 2026-09-13 |
 
 ## 3. Routed — open, not this desk's to fix
 
 | # | Item | Owner | Why it stays visible |
 |---|---|---|---|
-| R-a | The rubric cannot express a determination for a region with no price benchmark | **RULED r#2 — the class is authorized. What remains is the SCORER**, which no one is assigned to write | Half-closed, not closed. Card **S11** assigns it; until then W4 has a keeper it cannot score |
+| R-a | The rubric cannot express a determination for a region with no price benchmark | **CLOSED r#3** — S2 authorized the class, S11 assigned the scorer, and lane **SOCO-22** is issued | Closed as a routed item; it is now a lane to grade, not an open question. W4 still cannot score until SOCO-22 lands |
 | R-b | The NWPP program shares card S2's problem in a milder form. **It is no longer hypothetical: NWPP was chartered 2026-09-13** (`docs/multi-iso/nwpp-addition-plan-2026-09.md`, landed on `main` between this desk's push and its rebase), it cites the SOCO charter as its non-market precedent, and its §2.6 raises card **N2** — the same question | the owner; the NWPP desk | **S2's ruling is the "once", on the CLASS.** The two programs are not identical: NWPP's §2.6 records that WEIM 15-minute LMPs for its BAs are anonymously fetchable (CAISO OASIS `PRC_RTPD_LMP` probed 200), so NWPP may need the no-price class only partially or not at all. What must not happen is **two scorer amendments**: card **S11** should be scoped to a determination class **keyed on the absence of an `actual_lmp.json` block**, which serves any region without a price benchmark, rather than a SOCO-specific branch. This desk surfaces that and does not charter across the boundary |
 | R-c | `check_registry_payload_parity` **RED** at `7404ef12`: `results/calibration/caiso279_ablate_dswcouple_span` is a dead solve output mapping to no retained sidecar (Class-E point 4) | the CAISO calibration lane / caiso-279 | Not this desk's file and not this desk's to fix. It is **gate G13 observed live** — the exact failure mode this desk just wrote into its own W4 charter |
 | R-d | `check_gate_a_provenance` **RED**, and it grew inside this sitting: NYISO's marker cites superseded `2026-09-09-nyiso-221-fuelvintage-span` (live `2026-09-12-nyiso229-hourgrain-span`) **and, as of `c4d4a108`, MISO's cites superseded `2026-09-09-miso-250-ep-gas`** (live `2026-09-12-miso-255-sil-measured`) | the NYISO and MISO lanes / the capx director's gate (a) | Not this desk's files. **Gate G21 / rule 35 `[R-PROMOTE]` observed live, twice, within days of the rule landing** |
+| R-f | **`cod_ramp.effective_cod` prefers a plant's mean COD for the ONLINE date** — a general defect in shared `src/`, worst in SOCO (3,040.3 MW, 2.7× the next footprint) but live in all eight | **NO LONGER ROUTED — the owner ruled it (card S12) and the desk chartered SOCO-15** | Kept visible because the repair moves **results** for all seven registered keepers; each ISO's lane will see its own numbers move and must not read it as its own regression |
+| R-g | **SHA256SUMS.txt scope** — SOCO-11 deliberately did not add rows for the tracked 2019-2026 CEMS files, since that file's own header scopes it to the 35 gitignored `<ST>_2018` extracts and git's blob hashes are the tracked files' integrity record | the desk | The desk **agrees with the lane** and records it as correct, not outstanding: adding rows would misrepresent the file's stated scope. No action; noted so a later lane does not "fix" it |
+| R-h | **EIA-930 defect screens catch none of the three real SOCO defects** SOCO-10 found (four `NG: NG` hours at ~70 GW against a 36,336 MW gas fleet; the netgen identity breaking in 2025 only, 595 h; a 1-h partial demand dropout) — `_screen_demand_spikes` is high-side only, `_screen_demand_dropouts` is exact-0.0 only, and **no repo screen touches a fuel column at all** | the data/curation owner | SOCO-10 correctly proposed **no new constant** (rule 23 — setting a threshold after seeing the outliers is a fitted threshold). Cross-ISO, not SOCO's to fix |
+| R-i | **SOCO's 1,306.6 MW of pumped storage is UNOBSERVABLE in EIA-930 for 2023 and most of 2024** — `NG: PS`/`BAT`/`SNB`/`OES` are a taxonomy cut-over at 2024-07-15, and `NG: WAT` never goes negative before it (min +32 MW), so PS charging was not folded into hydro, it was not reported | SOCO-31 (benchmarks) | A hard constraint on the **C1 `fuelmix`** benchmark, not a bug to fix. Must be stated on SOCO's first keeper's determination basis |
 | R-e | `audit_keepers` **E13 RED ×4 on MISO** at `c4d4a108` — `2026-09-09-miso-250-ep-gas` registered but neither keeper nor stamped, and three `miso-251` runs stamped to it; plus E11 on NYISO's missing lineage baseline. Separately: **Ruff** 2 errors (`scripts/gen_nyiso229_attestation.py:63`) and the **default cache-key pin** off its literal (`1eefed49…` → `bd2b4657…`), which reds both the pin check and the structural guards | MISO lane · NYISO lane · capx (cache fingerprint) | All in `src/`/`scripts/`/`frontend/`, none this desk's to write. Stood down on PR #6090 with one comment and no ported fix; no re-run spent (deterministic, reproduced locally). **They will red every SOCO PR until repaired**, so a future sitting must not read them as its own regression |
 
 ## 4. Collision register
@@ -253,6 +330,8 @@ option (a)).
 |---|---|---|---|
 | C-1 | `config/capacity_market.py`, `config/constants.py`, `model/interchange/spec.py` | capx D-lanes, the SCN desk, the per-ISO calibration lanes | SOCO-20 rebases last and appends; the desk re-checks their ledgers' top entries at issuance |
 | C-2 | `docs/codebase-site/data/mechanism-matrix.js` (base file) | every ISO's lanes, whenever a field is added | **HOLD LIFTED r#2, and the test itself was wrong.** "Verify nobody is mid-edit" is unsatisfiable: writers on the matrix files are continuous (last base write `26737620` nyiso-230; last shard write `e24c0d90` caiso-279 — both within the pin window). The SPP desk retired the same precondition at its own r#2; the protocol is **rebase immediately before commit, one commit, re-run `check_mechanism_matrix`**, which is what SOCO-21's charter already says. See §6 |
+| C-5 | `scripts/calibration_verdict.py` (SOCO-22) and the `cod_ramp` online-date seam (SOCO-15) — both are **shared `src/`/`scripts/` surfaces every ISO reads** | the capx D-lanes, the audit Y-lanes, every per-ISO calibration lane | **Both charters carry a byte-identity exit** (seven keepers' verdicts for SOCO-22; seven keepers' cache **keys** for SOCO-15, whose **results** deliberately move). Each rebases last and re-runs the gates. **SOCO-15 must land before SOCO-20**, so they are sequenced, not parallel |
+| C-6 | `data/raw/zone-specific-demand/SOCO/SOURCES.md` | SOCO-11 (landed), SOCO-14 (issued) | **Append-only** for SOCO-14 — it adds BA-membership citations beneath SOCO-11's committed eight-respondent table and edits none of it |
 | C-4 | `scripts/lib/mech_matrix.py` `ISO_ORDER`/`ISO_EV_KEY`, `tests/unit/config/test_mechanism_matrix_shard_migration.py` | SOCO-21 (this program), any ISO addition | **Measured gate-independent from SOCO-20 at r#2**: neither `mech_matrix.py` nor `check_mechanism_matrix.py` references `SUPPORTED_ISOS` or `_ISO_BUILDERS`, and the shard test's own comment records SPP's column being seeded before SPP's first keeper. An 8-ISO matrix over a 7-ISO registry is a supported intermediate state |
 | C-3 | W1 lane surfaces (`campd-unit-level/`, `zone-specific-demand/`, the two fetch scripts, doc 00) | — | **CHECKED CLEAR at r#1**, pin `2c2fc065`: last touch `db5f11ea` (PR #6000), not a live lane. No hold |
 
@@ -263,11 +342,40 @@ option (a)).
 | r#0 | 2026-09-12 | none (charter commit) | none |
 | r#1 | 2026-09-13 | **SOCO-10, SOCO-11, SOCO-12** (plan §8 W1, verbatim, pinned `2c2fc065`). SOCO-13 HELD on card S2 | **S1, S2** |
 | r#2 | 2026-09-13 | **SOCO-13** (plan §8 W1, verbatim, pinned `7404ef12` — S2 ruled) · **SOCO-21** (plan §8 W2, verbatim, pinned `7404ef12` — S1 ruled, C-2 lifted) | **S1 RULED, S2 RULED**; **S11 raised**, due sitting #3 |
+| r#3 | 2026-09-13 | **SOCO-14** `[OPUS]` · **SOCO-15** `[FABLE]` · **SOCO-22** `[FABLE]` — all three created by this sitting's rulings, pinned `c93b0d27`. None existed in the charter's prompt pack, so all three are written charters rather than verbatim copies (plan §5 rows added) | **S3, S4, S5, S6, S7, S11 RULED; S12 raised AND ruled**; S8 answered/superseded; S9 still deferred |
 
 ## 6. Errors against interest
 
 *(The desk records its own mistakes here, in its own words, so the next refresh does not repeat
 them.)*
+
+**E-4 (r#3, against the charter — the biggest of the four so far). The desk built a plan around a
+load spine it never checked, and a two-number test would have falsified it in the chartering
+session.** Plan §2.5 declares FERC Form 714 "the zonal-load spine", names **three** respondents, and
+card S3 recommends three zones on it. SOCO-10 found PUDL carries **eight** Southern-area respondents,
+and disproved the three-respondent premise with arithmetic the charter had every input for:
+**Georgia Power's own winter peak is 16,284 MW against a BA winter peak of 47,368 MW**. SOCO-11 then
+spent a lane measuring what that implies — 73.2 %, short a quarter in every hour of every year. The
+charter did measure a great deal (§2 is dense with real numbers) but it measured the *fleet* side
+thoroughly and asserted the *load* side, and the load side was the half card S3 turned on. **A plan
+that names a data source as a spine owes that source the same census it gives the fleet** — how many
+respondents, covering what, summing to what. Adopted forward: before any future card recommends a
+topology, the desk states the load decomposition's **coverage fraction** as a measured number or
+says it is unmeasured.
+
+**E-5 (r#3, against the charter). Four numbers the desk asserted that lanes had to correct — three
+of them in §2.6, the section the desk called the program's defining problem.** The CAES unit was
+carried at its **110 MW nameplate** when the source itself states a **25 MW** rating (a 77 % derate,
+so card S7 was written about a unit 4.4× its real size); SEEM was dated **November 2023** when it
+launched **November 2022**; SEEM was said to publish **no price** when its Independent Market Auditor
+publishes a monthly price series publicly, back to 2022-11, no login; and the census headline
+335/786/70,665.7 was the MA-excluded figure sitting beside a per-state list that includes it, with
+neither labelled. None changed a ruling — S7 got smaller, S2 got *corroborated* by SEEM's own FAQ
+routing price to FERC reporting — but all four were checkable at charter, and the SEEM ones sat in
+the paragraph the whole program is organised around. **The desk's own §2 discipline ("no number here
+is recalled or inferred") was applied unevenly**: it held for the fleet and the 930 extract and
+lapsed for the documents. Adopted forward: a charter's narrative sections carry the same
+cite-or-say-pending rule as its tables.
 
 **E-1 (r#2, against r#1 and against the charter). The desk carried a blocking precondition that
 cannot be satisfied, and the reference workstream had already retired it.** C-2 said SOCO-21 would

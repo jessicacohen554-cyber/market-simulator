@@ -1,5 +1,57 @@
 # Changelog
 
+## 2026-09-13 — SOCO W1 lands: the zonal-load spine fails its own gate, and a COD defect would have inverted the nuclear year
+
+Desk refresh r#3 (`docs/handoffs/soco-desk-ledger-2026-09.md`). All three W1 lanes landed and graded
+PASS by content. Docs only in this commit — the lanes' own data and findings are already on `main`
+(PRs #6083, #6091, #6092). Seven owner cards ruled.
+
+- **The FERC-714 zonal spine fails its reconciliation gate.** SOCO-11 measured the three chartered
+  respondents at **73.2 %** of the BA's metered demand — short **61.4 / 66.2 / 64.2 TWh** in 2023/24/25,
+  in *every hour of every year*, shape right (r ≈ 0.99) and level short, which is whole planning areas
+  absent rather than a scaling error. **Nothing was rescaled and no share was derived** (rules 13/23):
+  raw landed, failure documented, lane stopped. Adding Oglethorpe + MEAG + Southern Power closes it to
+  **1.63 / 1.50 / −0.03 %**, and the PowerSouth + Tallahassee falsifier **overshoots** — so the
+  enumeration discriminates on BA membership, not on whichever combination minimises the residual.
+- **Card S3 ruled 3 zones on that six-respondent sum**, over the desk's own 1-zone recommendation. The
+  desk's stated risk is controlled rather than dropped: new gate **G22** makes a cited BA-membership
+  basis a hard precondition on SOCO-32, and new lane **SOCO-14** produces it — PUDL carries no county
+  attribution for any of the three added respondents. Zones are named geographically, and the split is
+  never sold as improving accuracy: with non-binding Tier-3 TTCs, 3-zone and 1-zone SOCO produce the
+  same dispatch until a TTC binds, and SOCO has no zonal price or congestion archive to validate one.
+- **A COD defect big enough to invert SOCO's headline year — new card S12, new lane SOCO-15.**
+  `cod_ramp.effective_cod` always prefers a plant's capacity-weighted mean COD for the **online** date;
+  the per-unit preference exists only for retirement. Measured by calling the live code,
+  `load_cod_map()[649] -> (2005, 5)`, so **Vogtle 3 and 4 read as online all 12 months of 2023**.
+  Phantom **+12.979 TWh** (+24.8 %): a 2023 SOCO backcast would show ≈65.41 TWh of nuclear, *above* the
+  measured 2025 value of 64.17, inverting the observed 52.4 → 63.0 → 64.2 commissioning step and
+  displacing ~13 TWh of gas. The defect is general — blast radius **SOCO 3,040.3 MW** vs SPP 1,127.4,
+  ERCOT 1,091.4, CAISO 1,037.2, MISO 927.4, PJM 177.2, NYISO 72.9, NEISO 50.0 — so the repair is
+  chartered as its own cross-ISO lane **before** SOCO-20, never inside a registration PR.
+- **Gate G12 is MET**: LTLF edition `Budget 2025 (B2025) / 2025 IRP`, vintage 2025, 60 rows committed.
+  The material qualification is stated rather than papered over — the forecast is **Georgia Power**, the
+  `System` column is REDACTED throughout the public disclosure, and **Alabama Power files no public IRP
+  because Alabama has no IRP statute**, so a SOCO-wide forward peak is a construction SOCO-20/32 must
+  declare. Nothing is grossed up.
+- **SEEM corrected on three counts, and the correction strengthens card S2 rather than reopening it.**
+  Live **November 2022** (not 2023); SEEM itself publishes no price **but its Independent Market Auditor
+  publishes a monthly series publicly back to 2022-11**; and a FERC-accepted settlement (2026-01-05) will
+  oblige hourly posting prospectively. SOCO-12 then **refused its own find as a benchmark** on four
+  disqualifying grounds — SEEM-wide not SOCO, monthly not hourly, 1.3 TWh against 239 TWh of demand, and
+  the hourly posting not retroactive — and re-cast it as the *boundedness anchor* SOCO-13's STOP gate
+  needs. SEEM's own FAQ routes price to "existing FERC reporting", corroborating the EQR route.
+- **Also ruled:** S4 served EIA-930 interchange (the cleanest book in the corpus — zero NaN hours on nine
+  DIBAs, legs agreeing with the BA book to 0.001 TWh); S5 a DOE/LBNL ICE VOLL, since Order 831's $2,000
+  caps *offers* and SOCO takes none; S6 winter **26.0 %** as the PRM scalar, SOCO being winter-peaking in
+  2 of 3 backcast years; S7 the CAES unit to a gas CT at its **25 MW rating**, not the 110 MW nameplate
+  the charter carried; S11 the no-price determination class chartered as SOCO-22, keyed on the absence of
+  an `actual_lmp.json` block so it serves the NWPP program too.
+- **Other measured findings now on the record:** gate **G19 closed** (`America/Chicago`, DST-aware,
+  hour-ending); the census corrected to **336 / 788 / 70,667.2 MW** with the Massachusetts row rejected as
+  an EIA-860 BA-field mis-entry and the six Florida panhandle plants kept; the CEMS gap at **91.6 %** of
+  fossil MW before SOCO-11's eight files landed; SOCO's **1,306.6 MW of pumped storage unobservable in
+  EIA-930** for 2023 and most of 2024, a hard constraint on the C1 benchmark; and no wind anywhere in the
+  fleet.
 ## 2026-09-13 — NWPP r#2: W1 issued, and two gates this program was chartered without
 
 Desk refresh r#2 (`docs/handoffs/nwpp-desk-ledger-2026-09.md`). Docs only — no code, no data, no
