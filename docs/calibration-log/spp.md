@@ -2531,3 +2531,67 @@ done.** The §5 recovery pins stay live as a result.
 **Rule 29(b) form 4 for SPP now differences against KEEPER 11.** Against keeper 10 it is void for
 2024/2025, and keeper 10 is no longer registered. **Next shorthand: spp-39**, queue unchanged
 (R-be day selection → R-ba merit inversion → R-bc price-forming curtailment), none entered.
+
+## spp-39 — 2026-09-13
+
+**CARD R-be (DAY SELECTION) DOES NOT CLOSE, contrary to the prompt pack's expectation.** ZERO LP;
+no shard. Evidence read off **keeper 11** (`2026-09-13-spp-38-vintage-cache`), as the SPP-38
+handoff required, never keeper 10's superseded bundle.
+Record: `docs/handoffs/FINDING-spp-39-day-selection-2026-09-13.md`.
+
+**A CORRECTION TO SPP-38'S OWN RECORD.** The SPP-38 RESULT, its log entry and keeper 11's promotion
+note all say D-4 is "identical to keeper 10, 71 rows". The **71 is the TOTAL** and is right; the
+phrasing implied the FAILING set was unchanged, and it is not — **12 → 10 failing rows**. Recovered
+keeper 10's diagnostics from its pin `f6e3ed374682059291605b0d425b81c399baaa96` and differenced:
+**RESOLVED `(2024, 6193)` and `(2025, 1230)`; new-failure set EMPTY.** Plant **6193 is Harrington**,
+the coal→gas conversion that was the single largest term in the stale vintage map — its D-4 failure
+was an artifact of the leak, and the repair removed it. All four 2023 rows moved +0.0000 (the 2023
+self-check on a third instrument); the seven survivors moved −0.0007 to +0.0023. **The card's object
+is now 10 rows on 4 plants (1230 in 2023 only; 1235/1271/3008 all three years) — smaller than the
+pack describes, and plant 6193 is out of it entirely.**
+
+**THE SIZE HYPOTHESIS IS REFUTED — this is a genuine SELECTION defect.** ORACLE bound (rank each
+plant's days by its OWN measured online hours — the best any selection rule could ever do):
+**10 of 10 rows clear the 0.50 bar, margins 0.00–0.35** (oracle 0.0000–0.3526 against actual
+0.5257–0.7487). Seven of ten rows have `D_online − W_days` positive by 23–121 days. So the window is
+**not** size-bound and day selection is the right object. The bound is robust to the exact window
+definition — the margins are 0.15–0.50 wide.
+
+**THE ADMISSIBLE SET IS NOT EMPTY — the pack's premise is falsified.** Enumerated against rule 13's
+forward test: day-mean gross load (incumbent), day-PEAK gross, **day-mean NET load**, day-peak net
+are ALL admissible (each is the model's own array, regenerated forward by construction, responding
+to changed conditions). Temperature/weather and any SPP commitment/outage instrument are
+**unreachable** — no committed weather driver, LTLF blocked (audit item 17), audit items 15/16/19
+blocked/partial. `mustrun_online_frac_per_year` and a per-plant grain threshold stay refused
+(rule 28(a) DO-NOT-REDO). **PAIRED measurement (same instrument both arms, bias cancels):
+`day-mean NET load` beats the incumbent on 7 of 10 rows, mean −0.0335**; day-PEAK gross is WORSE
+(0.5873 vs 0.5652).
+
+**THE INSTRUMENT DOES NOT REPRODUCE THE SCORER, AND THAT BOUNDS THE CLAIM.** Two reconstructions
+tried, both REJECTED rather than reported as the scorer: (1) `W = round(bind_h/24)` over all days
+runs 0.03–0.09 optimistic on every row; (2) mechanism-16 binding cells collapsed per plant off
+`floors/<year>_P1.npz` reproduce **0 of 10** rows (`bind_h` systematically larger — 1440 vs 1287,
+2448 vs 2047) because the scorer evaluates **per class-slice** (`sel[global_i]`), not per plant.
+**What survives: the PAIRED sign. What does NOT: any absolute 0.50-crossing claim** — an earlier
+pass's "5 of 10 clear 0.50 under net load" is **WITHDRAWN as unsupported**, an artifact of the
+optimistic bias.
+
+**NOT PROMOTABLE YET, and the gap is not more phase-0 arithmetic.** SPP-27 refused NET load once
+(measured a WASH at the HOUR grain, 0.8168 vs 0.8168) for bundling a second unmotivated change.
+This result is at the **DAY** grain, which SPP-27 never measured — genuinely new evidence under
+rule 28(a) — **but a statistic is not a driver**, and adopting net load because it scores better on
+the rider it is scored against is the fitted-mechanism selection rule 1 `[R-STRUCT]` (c) forbids.
+The driver argument (a vertically-integrated utility commits gas steam against the load its own
+wind cannot serve) is plausible on SPP's ~120 TWh wind against ~300 TWh demand but **needs SPP's own
+commitment record, not the D-4 rider**, and no such instrument is committed.
+
+**RULES.** 32(a) zero LP, no shard · **28 NO cell verdict minted** (nothing was tested, only
+measured; `st_gas_mustrun_per_plant` and `mustrun_window_commitment_grain` keep their `K`) ·
+1/13 `offer_curve_by_group` not read, re-cut or swept · 21 the candidate adds zero free parameters
+(necessary, not sufficient) · 31 nothing deleted · C3c untouched.
+
+**CONSEQUENCE FOR `complete` / `frontier`: the queue got LONGER, not shorter.** R-be was the
+cheapest card and the one expected to close for free; it stays OPEN. R-ba (merit inversion) and
+R-bc (price-forming curtailment) are untouched. **Next shorthand: spp-40**, and its first step is
+ZERO LP — make the D-4 rider reproducible per class-slice, then re-run the signal comparison on a
+faithful instrument. Only if net load still wins AND a driver lands does this become a PRECOMMIT.
