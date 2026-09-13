@@ -1,7 +1,7 @@
-# FINDING — NWPP-21: the eighth mechanism-matrix shard (rule 28 `[R-MECH-MATRIX]`)
+# FINDING — NWPP-21: the NINTH mechanism-matrix shard (rule 28 `[R-MECH-MATRIX]`)
 
 **Lane** NWPP-21 · **Model** Opus `claude-opus-5` · **Date** 2026-09-13 ·
-**Base sha** `33a7c961` (= the r#3 issuance pin) · **Branch**
+**Base sha** `b485b6af` (first emitted at the r#3 issuance pin `33a7c961`; see §0) · **Branch**
 `claude/nwpp-21-matrix-shard-6qezh7` · **DATA PROFILE** `code` ·
 **Zero LP spent** (rule 32 `[R-SHARD]` (a) — this lane runs no solve; rule 31
 `[R-RETAIN]`'s promotion question does not fire).
@@ -24,6 +24,14 @@ The charter required re-measurement because a sibling program (SOCO, chartered
 | Shard files on disk | **7** (`CAISO ERCOT MISO NEISO NYISO PJM SPP`) | 7 |
 | `SOCO` occurrences in `scripts/lib/mech_matrix.py` | **0** | 0 |
 | Base mechanism rows | **327** | — |
+
+**RE-COUNTED AT THE REBASE, AND THE CHARTER'S COUNT WAS OVERTAKEN.** Between
+this lane's first emission and its rebase onto `b485b6af`, **SOCO-21 landed as
+the eighth shard** with ev letter **`O`**. Re-measured there: base `isos` = **8**
+(`… SPP, SOCO`), `ISO_ORDER` = 8, **8** shards on disk, **328** rows (main gained
+`nyiso_st_gas_econ_bands_deleaked` from nyiso-232). **NWPP is therefore the
+NINTH**, and `W` is still free. This is precisely what gate G2 and §8.0 rule 3
+exist for; no count in the shard or this document is carried from the charter.
 | ev letters taken | `E C P M N Q S` — **`W` free** | same |
 
 **So NWPP is the EIGHTH shard and takes `W`.** No count in this document is
@@ -35,15 +43,15 @@ at the new sha, re-run the checker — the emission is mechanical and reproduces
 
 ## 1. Cell census — the exit check
 
-**327 ids · 174 `U` · 153 `.`** (of the 153, **47** are forecast-lane-only and
+**328 ids · 175 `U` · 153 `.`** (of the 153, **47** are forecast-lane-only and
 carry `fc: "U"`; the remaining **106** are foreclosed in both lanes).
-Sum check: 174 + 153 = 327 = the base row count. Verified against the committed
+Sum check: 175 + 153 = 328 = the base row count. Verified against the committed
 file through the committed assembler (`mech_matrix.load_merged`), not against
 the emitter's in-memory state.
 
 | Class | Cells | Rule |
 |---|---:|---|
-| `U` — untested, plausibly applicable | **174** | fall-through |
+| `U` — untested, plausibly applicable | **175** | fall-through |
 | `.` — ISO-exclusive elsewhere | **100** | (a) |
 | `.` — no centralized forward capacity auction (both lanes, no `fc`) | **6** | (b) |
 | `.` + `fc: "U"` — forecast-only row | **47** | (c) |
@@ -79,7 +87,7 @@ the column:
 - **otherwise → `U`.**
 
 This rule reproduces SPP's committed column **exactly** where the two footprints
-agree: run against SPP it predicts all 327 of SPP's cells, and the arithmetic
+agree: run against SPP it predicts all of SPP's cells, and the arithmetic
 reconciles end to end — SPP's 152 `.` **+ 2** (`spp_gas_commitment_bridge`,
 `spp_curtailment_ceiling` are SPP's own rows and therefore foreign to NWPP)
 **− 1** (`state_carbon_pricing`, §1.3) **= NWPP's 153**. That is the check that
@@ -214,14 +222,14 @@ Also verified on the committed store: shard cell-id set **≡** base row-id set
 
 | File | Change |
 |---|---|
-| `docs/codebase-site/data/mechanism-matrix/NWPP.js` | **NEW**, 434 lines — 327 cell lines + the classification-rule header |
+| `docs/codebase-site/data/mechanism-matrix/NWPP.js` | **NEW** — 328 cell lines + the classification-rule header |
 | `docs/codebase-site/data/mechanism-matrix.js` | base `isos` += `"NWPP"` (one line) |
 | `scripts/lib/mech_matrix.py` | `ISO_ORDER` += `"NWPP"`; `ISO_EV_KEY["NWPP"] = "W"` |
 | `docs/codebase-site/mechanism-matrix.html` | `<script src="data/mechanism-matrix/NWPP.js">` tag |
 | `tests/unit/config/test_mechanism_matrix_shard_migration.py` | comments only — the frozen-fixture ISO list at line 113 is **deliberately untouched** (it pins the 2026-08-11 pre-shard monolith; comparing it to the live tuple is exactly what that test forbids) |
-| `docs/codebase-site/css/shared.css` | `--iso-nwpp: #6366F1` (indigo — distinct from every existing token) |
-| `docs/codebase-site/js/backcast-runs.js` | `ISO_COLORS.NWPP = '#6366F1'` |
-| `docs/mechanism-testing-matrix.md` | **§5.8 NWPP lever queue** (new) + `### 5.8 Cross-cutting audits` renumbered `### 5.9` |
+| `docs/codebase-site/css/shared.css` | `--iso-nwpp: #65A30D` (lime-600) **+ the matching `.badge--iso-nwpp` / `.iso-btn.active--nwpp` rules**, mirroring the SPP/SOCO precedent in the same file. **The colour CHANGED at the rebase**: this lane first minted indigo `#6366F1`, and SOCO-21 landed that exact value first — so NWPP moved to the one unoccupied hue band (~80°; amber 38°, green 142°, teal 173°, sky 199°, indigo 239°, purple 291°, pink 340°, orange 25°). Another ISO's value is never edited (rule 25). |
+| `docs/codebase-site/js/backcast-runs.js` | `ISO_COLORS.NWPP = '#65A30D'` |
+| `docs/mechanism-testing-matrix.md` | **§5.9 NWPP lever queue** (new; §5.8 at the first emission, moved down when SOCO took 5.8) + cross-cutting audits renumbered `### 5.10` |
 
 ### 3.2 Three files beyond the charter's enumeration — routed to NWPP-DESK
 
@@ -268,7 +276,7 @@ site work is untouched here: `js/viz-iso-topology.js` and
 **not** edit them, nor `scripts/build_status.py` / `render_data_dictionary.py`,
 which hold unrelated `ISO_ORDER` tuples belonging to NWPP-20/NWPP-35.
 
-### 3.4 §5.8 seeding — what was and was not seeded
+### 3.4 §5.9 seeding — what was and was not seeded
 
 Seeded from plan §4's W5 list, in issue order: **NWPP-55** WECC path TTC derive
 · **NWPP-56** priced seams · **NWPP-57** WRAP adequacy · **NWPP-58** zone
@@ -276,11 +284,11 @@ refinement · **NWPP-59** retirement sector gate.
 
 **NWPP-54 (Columbia hydraulic coupling) was NOT seeded** — owner ruling **N3**
 (sitting #1, 2026-09-13) retired it from the queue and promoted its content into
-W3b / **NWPP-36**, ahead of the first keeper. §5.8 records it under *"RETIRED
+W3b / **NWPP-36**, ahead of the first keeper. §5.9 records it under *"RETIRED
 FROM THIS QUEUE BEFORE IT WAS EVER ISSUED"* with the gate-G8 cache-key condition
 it must satisfy, so a later reader cannot mistake its absence for an omission.
 
-§5.8 also carries the standing rules that bind the queue (25 / 29 / 16 / 28(b))
+§5.9 also carries the standing rules that bind the queue (25 / 29 / 16 / 28(b))
 and the **N2 price-benchmark caveat** — no lever may assume a benchmark exists,
 and gate **G17** (substituting SP15/NP15, Palo Verde, or Mid-C as a benchmark)
 stays refused.
@@ -295,7 +303,7 @@ keeper shard or calibration log, no `src/`, no `frontend/data/**` (backcast or
 forecast), no `ScenarioConfig` default, no CI workflow, no plan file, no ledger,
 no `docs/calibration-log/nwpp.md`, no `CHANGELOG.md`. `docs/mechanism-testing-matrix.md`
 §5 is the single shared record the charter explicitly grants, and this lane
-edited **only** its own new §5.8 plus the one renumbered heading below it.
+edited **only** its own new §5.9 plus the one renumbered heading below it.
 
 ## 5. CI at the PR, and the rebase
 
@@ -326,37 +334,59 @@ trigger on `ci.yml`, so no main-branch run exists to cite — hence the
 base-commit reproduction, which is the stronger evidence. Standing-down
 comment: PR #6115 comment `5654692260`.
 
-**Rebased onto `0c39824c`** (main advanced: SOCO-22 rubric v3.8, caiso-281) per
-§8.0 rule 3 — clean, no conflict — and **re-counted at the new base** rather
-than trusting §0's numbers: base `isos` still 7 → 8 with this PR, 327 rows, 327
-NWPP cells, coverage exact. **SOCO-21's shard (#6117) has not landed**, so NWPP
-remains the eighth column and `W` is still free; whichever of the two merges
-second re-counts, exactly as gate G2 anticipates. At the new base:
-`check_mechanism_matrix.py` exit 0, and exit 0 again with `--base origin/main`
-so the rule-28(c) diff gate is exercised; 33 matrix tests pass; zero non-NWPP
-drift; rule-27 fetch-back re-verified.
+**REBASED TWICE.** First onto `0c39824c` (SOCO-22 rubric v3.8, caiso-281) —
+clean, no conflict. Then onto **`b485b6af`**, which is where the collision the
+r#3 issuance notice predicted actually landed: **SOCO-21 merged**, taking the
+eighth column, ev letter `O`, and — as it happens — the exact indigo `#6366F1`
+this lane had minted. **Nine conflicts, all resolved by keeping SOCO's entry and
+appending NWPP's**: the base `isos` list, `ISO_ORDER`, `ISO_EV_KEY`, the
+assembler's `EV_KEY`, the html tag, the css token, `ISO_COLORS`, both matrix
+tests' ISO tuples, and `mechanism-testing-matrix.md` §5. **No SOCO value was
+edited** (rule 25) — NWPP moved to lime `#65A30D` and its section moved to §5.9,
+with cross-cutting audits to §5.10.
+
+**Re-counted at the new base rather than trusting §0** (§8.0 rule 3): base
+`isos` **8 → 9**, **328** rows — main gained `nyiso_st_gas_econ_bands_deleaked`
+(nyiso-232), so the shard was **re-emitted** to cover it. That cell is `U` by
+rule (a), not `.`: the row is NYISO-stemmed but **every** non-owner ISO has
+entered it as `U`, which makes it a live cross-ISO question. Census moves
+**327/174/153 → 328/175/153**.
+
+At `b485b6af`: `check_mechanism_matrix.py` exit 0 (**9 ISO shards**, all three
+ratchets OK) and exit 0 again with `--base origin/main`; 33 matrix tests pass;
+ruff clean on all three Python files; and the canonical per-mechanism × ISO
+comparison shows **zero drift across all EIGHT pre-existing columns, SOCO's
+included**, with keeper/gates stamps unchanged.
 
 ## 6. Log entry (for the desk to append verbatim)
 
-> **NWPP-21 — 2026-09-13 — matrix shard (Opus, zero LP).** The eighth
+> **NWPP-21 — 2026-09-13 — matrix shard (Opus, zero LP).** The **ninth**
 > mechanism-matrix shard `docs/codebase-site/data/mechanism-matrix/NWPP.js` is
-> live: **327 ids · 174 `U` · 153 `.`** (47 of the `.` are forecast-lane-only
-> with `fc: "U"`). `ISO_EV_KEY["NWPP"] = "W"`, `ISO_ORDER` and the base `isos`
-> re-measured at the lane's own sha `33a7c961` as **7 → 8**. `keeper`/`gates`
-> empty by design — NWPP is not yet in `_ISO_BUILDERS`. `check_mechanism_matrix.py`
-> exit 0, its output byte-identical to the pre-change run **except** `7 ISO
-> shards → 8`; 33 matrix tests and the full `tests/unit/config` (846 passed)
-> green; canonical per-mechanism × ISO comparison against `origin/main` shows
-> **zero drift** in every existing ISO's verdict, fc, ev, note, keeper and gates.
-> One cell diverges from the SPP template by design: `state_carbon_pricing` is
-> `U`, not `.`, because Washington's Climate Commitment Act cap-and-invest is in
-> effect across the 2023–2025 window. Two charter-offered `.` reasons foreclosed
-> **zero** cells and are recorded as unused rather than stretched. §5.8 NWPP
-> lever queue seeded (NWPP-55/56/57/58/59; **NWPP-54 not seeded**, retired by
-> ruling N3 into NWPP-36); `--iso-nwpp: #6366F1` minted. **Three items for the
-> desk:** (a) the colour is chartered to both NWPP-21 and NWPP-35 — de-scope
-> NWPP-35; (b) the plan's §2.3 matrix pin row should name
-> `tests/unit/config/test_mechanism_matrix_keeper_stamp.py`, which holds the real
-> expected ISO set, not the migration test's frozen fixture; (c)
-> `ISO_FIELD_STEMS["NWPP"]` was added as a measured no-op and is trivially
-> reversible if the desk wants it to ride NWPP-20's pin flip instead.
+> live: **328 ids · 175 `U` · 153 `.`** (47 of the `.` are forecast-lane-only
+> with `fc: "U"`). `ISO_EV_KEY["NWPP"] = "W"`. **The charter's count was
+> overtaken and the lane re-counted rather than asserting**: at first emission
+> (`33a7c961`) the base carried seven ISOs and NWPP was the eighth; SOCO-21 then
+> merged as the eighth with ev `O`, so on rebase to `b485b6af` NWPP re-counted
+> to **ninth** — nine conflicts resolved by keeping every SOCO value and
+> appending NWPP's, and the shard re-emitted to cover main's new
+> `nyiso_st_gas_econ_bands_deleaked` row (`U` by rule (a): NYISO-stemmed but
+> entered by every non-owner). NWPP's colour also moved, indigo `#6366F1` →
+> lime `#65A30D`, because SOCO landed that indigo first; §5.8 → **§5.9**,
+> cross-cutting → §5.10. `keeper`/`gates` empty by design — NWPP is not yet in
+> `_ISO_BUILDERS`. `check_mechanism_matrix.py` exit 0 (9 shards) plain and with
+> `--base`; 33 matrix tests and ruff green; canonical per-mechanism × ISO
+> comparison shows **zero drift across all eight pre-existing columns, SOCO's
+> included**. One cell diverges from the SPP template by design:
+> `state_carbon_pricing` is `U`, not `.`, because Washington's Climate
+> Commitment Act cap-and-invest is in effect across the 2023–2025 window. Two
+> charter-offered `.` reasons foreclosed **zero** cells and are recorded as
+> unused rather than stretched. §5.9 NWPP lever queue seeded (NWPP-55/56/57/58/59;
+> **NWPP-54 not seeded**, retired by ruling N3 into NWPP-36). **CI: seven reds,
+> none this PR's** — six reproduced at the base commit with the lane's commit
+> absent; routed, not absorbed (PR #6115 comment 5654692260). **Three items for
+> the desk:** (a) the colour is chartered to both NWPP-21 and NWPP-35 — de-scope
+> NWPP-35, and note the value is now `#65A30D`; (b) the plan's §2.3 matrix pin
+> row should name `tests/unit/config/test_mechanism_matrix_keeper_stamp.py`,
+> which holds the real expected ISO set, not the migration test's frozen
+> fixture; (c) `ISO_FIELD_STEMS["NWPP"]` was added as a measured no-op and is
+> trivially reversible if the desk wants it to ride NWPP-20's pin flip.
