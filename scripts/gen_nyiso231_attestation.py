@@ -29,8 +29,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 CAL = Path("results/calibration")
 ARM = CAL / "nyiso231_anchor_span"
-KEEPER = CAL / "nyiso229_hourgrain_span"          # the 2023-2025 keeper
-TOUCHPOINT = CAL / "nyiso229_arm_y2022"           # its folded 2022 run
+KEEPER = CAL / "nyiso229_hourgrain_span"  # the 2023-2025 keeper
+TOUCHPOINT = CAL / "nyiso229_arm_y2022"  # its folded 2022 run
 YEARS = (2022, 2023, 2024, 2025)
 WINDOW = (2023, 2024, 2025)
 
@@ -40,7 +40,14 @@ PER_YEAR_RESOLVED = {"gas_price_override", "weather_year"}
 #: this table from the gate itself, so it moves BECAUSE the gate moved. Verified
 #: below against the resolver rather than waived.
 RESOLVED_BY_THE_GATE = {"gas_offer_margin_anchor_by_zone"}
-BAND_KEYS = ("committed", "econ_low", "econ_high", "peak", "econ_low_share", "pct_peaking")
+BAND_KEYS = (
+    "committed",
+    "econ_low",
+    "econ_high",
+    "peak",
+    "econ_low_share",
+    "pct_peaking",
+)
 
 
 def _p1(path: Path) -> pd.DataFrame:
@@ -72,7 +79,9 @@ def main() -> None:
         for k in differing
         if k not in k_sc and a_sc.get(k) == getattr(live, k, object())
     ]
-    moved = [k for k in differing if k not in schema_drift and k not in RESOLVED_BY_THE_GATE]
+    moved = [
+        k for k in differing if k not in schema_drift and k not in RESOLVED_BY_THE_GATE
+    ]
     assert moved == ["gas_offer_margin_zonal_anchor_vintage"], f"G-DELTA: {moved}"
     assert a_sc["gas_offer_margin_zonal_anchor_vintage"] is True
     checks["single_field_delta"] = {
@@ -92,7 +101,10 @@ def main() -> None:
     }
 
     # (2) ZERO offer-curve movement — this is NOT the rule 1 [R-STRUCT] carve-out.
-    a_oc, k_oc = a_sc.get("offer_curve_by_group") or {}, k_sc.get("offer_curve_by_group") or {}
+    a_oc, k_oc = (
+        a_sc.get("offer_curve_by_group") or {},
+        k_sc.get("offer_curve_by_group") or {},
+    )
     band_moves = [
         f"{g}.{k}"
         for g in sorted(set(a_oc) | set(k_oc))
@@ -119,7 +131,7 @@ def main() -> None:
         cfg = base.with_overrides(gas_price_override=float(hh[y]), weather_year=int(y))
         per_year[y] = zonal_gas_anchors_for_year(cfg, y, 8760)
     recorded = a_sc["gas_offer_margin_anchor_by_zone"]
-    for z, v in per_year[YEARS[0]].items():          # run_config is written for years[0]
+    for z, v in per_year[YEARS[0]].items():  # run_config is written for years[0]
         assert abs(float(recorded[z]) - v) < 1e-9, f"{z}: {recorded[z]} vs {v}"
     checks["recorded_anchors_are_the_resolver_output"] = {
         "run_config_year": YEARS[0],
@@ -141,7 +153,11 @@ def main() -> None:
         mean = sum(per_year[y][z] for y in WINDOW) / len(WINDOW)
         d = abs(mean - reg[z])
         worst = max(worst, d)
-        ident[z] = {"window_mean": round(mean, 6), "registered": reg[z], "abs_diff": round(d, 8)}
+        ident[z] = {
+            "window_mean": round(mean, 6),
+            "registered": reg[z],
+            "abs_diff": round(d, 8),
+        }
     assert worst < 1e-3, f"identity drift {worst}"
     checks["training_window_identity"] = {
         "per_zone": ident,
