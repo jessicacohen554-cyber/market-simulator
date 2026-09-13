@@ -323,3 +323,35 @@ later backcast look worse that is a bug elsewhere, never a reason to touch the i
 `[R-FROZEN-DERIVE]` the builder re-runs only when its sources change; 25 `[R-ISO-SCOPE]` / G17
 nothing priced in a neighbouring market enters; 27 `[R-PUSH]` fetch-back verify every pushed file
 ≥ 300 lines; §8.0 no shared record is edited — the FINDING carries a `## Log entry` for the desk.
+
+---
+
+## Addendum A (2026-09-13, pushed BEFORE `build` was first run — no index value existed) — the D3 anchor's SOURCE, corrected
+
+§5 D3 defined the anchor as the monthly average clearing price *stated in the text* of each SEEM
+monthly auditor report, and set D3.3 at ≥ 30 of 36 months. That definition rested on the structure
+of the July-2026 report (§0). Opening the 36 in-window monthly reports after the PRECOMMIT was
+pushed shows the sentence exists **only from January 2025** (12 months; in three of them —
+Jan / Feb / Mar 2025 — the printed value carries a `/kWh` unit and in Feb / Mar equals the same
+report's bid-offer spread, so those three are transcribed as printed and flagged). The 2023 and
+2024 monthly reports carry the daily average price as a chart only. **D3.3 as written therefore
+fails on availability, not on the index** — and nothing about the index has been seen.
+
+The correction is to the anchor's **source**, not to any bar: the same auditor publishes the same
+statistic — the monthly weighted-average settlement price, peak and off-peak, with monthly
+max/min whiskers — as the *Monthly Clearing Prices and Natural Gas Costs* figure of each annual
+report (2023: Figure 4, Jan 2023 → Apr 2024; 2024: Figure 9, Avg + Jan → Dec 2024; 2025: Figure 5,
+Avg + Dec 2024 → Dec 2025). The bars are rasters over a labelled axis ($10 gridlines) and are
+**digitised** by `fetch-seem` (bar height in pixels ÷ gridline spacing; resolution $0.09–0.14/MWh
+per pixel; every row records its method, page and basis; the 2024/2025 vector axes are read from
+the PDF, the 2023 axis from the figure's alpha-mask labels, verified by eye). Cross-checks that
+belong to the digitisation and are reported in the FINDING: the 2025 text-borne months against
+the 2025 bars; the months two figures both carry (Jan–Apr 2024, Dec 2024); and the Avg. bars
+against the annual text values ($30 / $23 / $32).
+
+**What changes:** D3.2's correlation is scored **like against like** — the index's on-peak
+(HE07–22 Central prevailing) monthly MWh-weighted mean against the Peak bars and its off-peak
+mean against the Off-Peak bars, pooled (72 points) — and D3.3's support counts months carrying a
+digitised value. **What does not change:** D3.1's 15 % annual level bar against the annual text
+values, D3.2's 0.80, D3.3's 30 months, and the verdict rule. The FINDING also reports D3 on the
+letter of the original definition (text-borne 2025 only) so the record shows both.
