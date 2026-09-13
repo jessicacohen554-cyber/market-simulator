@@ -11,6 +11,58 @@ recreated fresh from `origin/main`.
 
 ## 0. Live state — newest entry FIRST
 
+### r#1 — 2026-09-13 — SITTING #1: cards N1, N2, N3 RULED (main `2c2fc065`)
+
+**What happened.** The three sitting-#1 cards were served as clickable decision cards. **N1 and N2 were
+ruled as the desk recommended. N3 was ruled AGAINST the desk's recommendation**, and that one ruling
+restructures the program.
+
+| Card | Ruling | vs. desk |
+|---|---|---|
+| **N1** | **All 17 BAs**, key `NWPP`; NEVP in, Canada out, AVRN/GRID supply-side only | as recommended |
+| **N2** | **Both (a) and (b)** — charter NWPP-13's STOP-gated WEIM build **and** rule now that a failed gate yields a determination naming its own basis, never a bare `CALIBRATED` | as recommended |
+| **N3** | **BUILD CASCADE COUPLING FIRST** — hydraulic coupling of the Columbia mainstem is built **before** any first keeper | **AGAINST**: the desk recommended proceeding on the monthly-budget machinery with the gap declared |
+
+**What N3 changes, implemented in the plan rather than noted.** The desk's recommendation would have
+pre-declared cascade coupling as W5 lever NWPP-54 and solved a first keeper without it. The owner ruled
+that the first NWPP number must mean more than a test of monthly hydro budgets. So:
+
+- A new wave **W3b** is inserted between derivation and the first solve, and **W4 does not start without
+  it** (plan §4).
+- A new lane **NWPP-36** `[FABLE]` is added to the lane table (plan §5) and its W3 delta written (§8).
+- **Lever NWPP-54 is RETIRED from the W5 queue**, its content promoted into NWPP-36. The queue is now
+  NWPP-55/56/57/58/59.
+- **Gate G8 is AMENDED** (plan §7). This is the part that mattered and the desk checked it rather than
+  assuming: G8 forbade *any* new `ScenarioConfig` field through W4, and a mechanism is a field — so the
+  ruling and the gate were in direct tension. **The tension resolves by construction, not by exception.**
+  The repo carries `_CACHE_KEY_OPTIONAL_FIELDS` + `_CACHE_KEY_OPTIONAL_FIELD_DEFAULTS`, and a field
+  registered default-OFF in both, in the same commit, is dropped from the hash at its default so every
+  pre-existing cached run — every ISO's keepers included — keeps its key. **There is a worked hydro
+  precedent to copy rather than invent:** `hydro_budget_period_by_instrument` (lane nyiso-220) is the
+  **first entry** in that tuple and was added on exactly this basis. NWPP-20 remains forbidden any field
+  at all; the exception is NWPP-36's single field and nothing else.
+
+**What did NOT change.** N3 is a sequencing and scope ruling, not a licence: rule 1 `[R-STRUCT]` still
+forbids judging the coupling by whether it improves a residual — and since no NWPP run exists, there is
+no residual to judge it against, which is the cleanest possible position for a structural build. Rule 2
+`[R-VECTOR]` binds its LP rows. Rule 28 `[R-MECH-MATRIX]` (c) requires its matrix base row plus one `·`
+cell per foreign shard in the same PR.
+
+**The joint-sitting option on N2 was offered and NOT taken.** The desk presented "rule N2 and SOCO's S2
+together" as an explicit option; the owner ruled N2 on its own. **R-c therefore stays OPEN and must be
+surfaced at every sitting that touches scoring** — the SOCO desk's ledger still routes that the rubric
+question be ruled once for both, and it now has one half-answer. That is a live divergence risk, not a
+closed item.
+
+**Gates run:** none — this refresh touches only the three program documents plus the two index rows, so
+every gate's input is unchanged. Recorded UNREAD rather than carried forward green.
+
+**Next act:** issue W1 — NWPP-10, NWPP-11, NWPP-12 (all `[OPUS]`, `DATA PROFILE: shared`, parallel,
+file-disjoint) **and NWPP-13** `[FABLE]`, which N2's ruling unblocks. Then sitting #2 for N4–N8 and N10
+once W1's evidence lands. NWPP-36 is chartered at the sitting that follows NWPP-32.
+
+---
+
 ### r#0 — 2026-09-13 — CHARTER (main `2c2fc065`)
 
 **What happened.** The owner directed a chartering session for adding the Northwest Power Pool /
@@ -85,13 +137,14 @@ issue W1 (NWPP-10/11/12; NWPP-13 only if N2 rules for option (a)).
 | NWPP-10 audit | OPUS | W1 | **ISSUABLE** | — | — |
 | NWPP-11 CEMS + 930 derive + interchange + hydro | OPUS | W1 | **ISSUABLE** | — | — |
 | NWPP-12 WECC paths / WRAP / IRPs / fuel | OPUS | W1 | **ISSUABLE** | — | — |
-| NWPP-13 WEIM price index | FABLE | W1 | BLOCKED on card N2 | — | — |
-| NWPP-20 registration | FABLE | W2 | BLOCKED on N1/N3–N8 + LTLF | — | — |
+| NWPP-13 WEIM price index | FABLE | W1 | **ISSUABLE** (card N2 ruled r#1) | — | — |
+| NWPP-20 registration | FABLE | W2 | BLOCKED on N4–N8 + LTLF (N1/N3 ruled r#1) | — | — |
 | NWPP-21 matrix shard | OPUS | W2 | BLOCKED on collision check | — | — |
 | NWPP-30/31/33/34/35 | OPUS | W3 | BLOCKED on NWPP-20 | — | — |
 | NWPP-32 hydro budget | FABLE | W3 | BLOCKED on NWPP-20 + NWPP-11 | — | — |
-| NWPP-40 first solve | FABLE | W4 | BLOCKED on NWPP-30/31/32/33 | — | — |
-| NWPP-54…59 levers | — | W5 | pre-declared, not issuable | — | — |
+| NWPP-36 cascade coupling | FABLE | **W3b** | BLOCKED on NWPP-20 + NWPP-32 — **inserted by ruling N3** | — | — |
+| NWPP-40 first solve | FABLE | W4 | BLOCKED on NWPP-30/31/32/33 **and NWPP-36** | — | — |
+| NWPP-55…59 levers | — | W5 | pre-declared, not issuable (**NWPP-54 RETIRED into NWPP-36**, ruling N3) | — | — |
 | W6 forecast entry | — | W6 | ROUTED to the capx director (card N9) | — | — |
 
 ## 2. Owner rulings — verbatim, numbered
@@ -99,9 +152,9 @@ issue W1 (NWPP-10/11/12; NWPP-13 only if N2 rules for option (a)).
 | # | Card | Ruling | Date |
 |---|---|---|---|
 | O-1 | charter | Charter the NWPP addition using the SPP workstream as reference and the SOCO charter as the non-market precedent | 2026-09-13 |
-| N1 | the region, key and footprint | **PENDING** — due sitting #1 | — |
-| N2 | price benchmark / rubric class | **PENDING** — due sitting #1; the program's load-bearing decision | — |
-| N3 | hydro representation | **PENDING** — due sitting #1 | — |
+| N1 | the region, key and footprint | **ALL 17 BAs** — key `NWPP`; NEVP in; Canada out; AVRN/GRID supply-side members, not zone candidates. *As the desk recommended.* | 2026-09-13 |
+| N2 | price benchmark / rubric class | **BOTH (a) AND (b)** — charter NWPP-13's STOP-gated WEIM build, AND rule now that a failed gate yields a determination naming its own basis, never a bare `CALIBRATED`, with the gap at full magnitude. Neighbouring-hub substitution stays refused (G17). *As the desk recommended. The joint-sitting-with-SOCO option was offered and not taken — R-c stays open.* | 2026-09-13 |
+| N3 | hydro representation | **BUILD CASCADE COUPLING FIRST** — hydraulic coupling of the Columbia mainstem is built before any first keeper. ***AGAINST the desk's recommendation***, which was to proceed on monthly budgets with the gap declared. Effects: new wave W3b, new lane NWPP-36, lever NWPP-54 retired, gate G8 amended. | 2026-09-13 |
 | N4–N8, N10 | CAISO seam, topology, timezones, adequacy, CEMS scope, first-solve screen | **PENDING** — due sitting #2 | — |
 | N9 | W6 routing | **PENDING** — due when a keeper exists | — |
 
@@ -111,7 +164,7 @@ issue W1 (NWPP-10/11/12; NWPP-13 only if N2 rules for option (a)).
 |---|---|---|---|
 | R-a | **The CAISO double-count.** CAISO's `WECC_import` zone is fed by firm tranche `PNW_hydro_base` (`interchange/caiso.py:443`) — this footprint, by name, as a Tier-3 contract-cost proxy. Registering NWPP puts the same energy on both sides of a seam, represented two ways | the CAISO lane (rule 25 `[R-ISO-SCOPE]`) | Card N4 governs NWPP's side only; the exposure does not disappear by being unmentioned |
 | R-b | The rubric cannot express a determination for a region whose only price is an imbalance price covering an unmeasured share of volume | the owner (card N2) | A keeper solved before it is ruled cannot be scored |
-| R-c | **The SOCO program shares R-b in a harder form** (no price at all), and its ledger §3 R-b already routes *"the owner should rule the rubric question ONCE, for both"* | the owner | Two desks asking the same question twice invites two different answers. Surface at every sitting that serves N2; **do not answer card S2 and do not present a joint ruling** |
+| R-c | **The SOCO program shares R-b in a harder form** (no price at all), and its ledger §3 R-b already routes *"the owner should rule the rubric question ONCE, for both"* | the owner | Two desks asking the same question twice invites two different answers. **STATUS AFTER r#1: the joint sitting was offered as an explicit option and NOT taken — N2 is ruled for NWPP alone.** So the two programs now hold one half-answer between them and the divergence risk is live, not hypothetical. Surface at every sitting that touches scoring; **do not answer card S2 and do not present a joint ruling** |
 | R-d | 500.0 MW filed under BA `DOPD` with state `TX` / NERC `TRE` | NWPP-10 adjudicates; any upstream EIA correction is outside this program | A silent mis-key would put 500 MW of the wrong interconnection in the fleet |
 | R-e | `data/fleet/models.py:221` inverts `BA_CODE_TO_ISO` with a comprehension that **silently keeps only the last BA per ISO**. Every existing entry is 1:1; NWPP's is **17:1** | NWPP-20 audits it | The single most likely silent bug in the registration |
 
@@ -129,6 +182,7 @@ issue W1 (NWPP-10/11/12; NWPP-13 only if N2 rules for option (a)).
 | Sitting | Date | Lanes issued | Cards served |
 |---|---|---|---|
 | r#0 | 2026-09-13 | none (charter commit) | N1, N2, N3 served to the owner at the close of the charter session |
+| r#1 | 2026-09-13 | none yet — W1 (NWPP-10/11/12/13) is the next act | N1, N2, N3 **RULED**; N3 against the desk's recommendation |
 
 ## 6. Errors against interest
 
