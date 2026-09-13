@@ -1,5 +1,34 @@
 # Changelog
 
+## 2026-09-13 — NWPP r#3: the price gate read NO, so the scorer branch became the program
+
+Desk refresh r#3 (`docs/handoffs/nwpp-desk-ledger-2026-09.md`). Docs only — no code, no data, no
+registry; every existing keeper's cache key untouched by construction.
+
+- **W1 graded by content: NWPP-10 and NWPP-11 LANDED, NWPP-13 LANDED with verdict NO, NWPP-12
+  outstanding** (not graded lost — absence is not evidence, gate G15).
+- **NWPP-13 read NO, and the interesting part is which leg failed.** WEIM was *not* too thin — it
+  cleared the volume bar in every year (5.5–6.2 % net of footprint energy, 10.6 % pairwise-gross).
+  What failed is the price level: WEIM's on-peak price sits **22.6 / 23.6 / 37.5 % below** the
+  footprint's own traded Mid-C Peak index against a pre-registered ±10 % bar, correlation 0.67–0.95
+  against a 0.80 bar. No bar was moved after the series was seen; nothing was landed to
+  `_validation-source`. An imbalance market clearing the residual of a mostly-bilateral, cost-based,
+  hydro-rich footprint need not price like its forward bilateral hub — which is rule 14's
+  misalignment test failing on its own terms, not an anomaly.
+- **So card N2 limb (b) is now live, not hypothetical.** NWPP has no admissible hourly price series,
+  C3a/C3b/C3c cannot be scored for it by any admissible route (G17 keeps a neighbouring hub refused),
+  and a determination naming its own basis is the only route to any NWPP determination at all.
+- **Card N11 RULED — "send it now".** The determination class the ruling authorized does not exist in
+  `scripts/calibration_verdict.py`, so a solved NWPP keeper would be unscoreable. Lane **NWPP-22
+  `[FABLE]` issued**: ONE added branch, a **data-driven predicate** (the absence of an admissible
+  series — never an `if iso ==` ladder, which is what lets one predicate cover both failure modes),
+  never a PASS and never an upgrade, with **byte-identical verdicts over every pre-existing keeper**
+  as the pass/fail exit. Plan §1's rubric prohibition — written when N2 was unruled — is carved for
+  this one lane only. New wave **W1c**, new gate **G25**, new definition-of-done row 7.
+- **NWPP-21 un-held and issued.** Its only blocker was deference to a sibling desk's in-flight matrix
+  edit; gate G2 and the charter's own "re-count at your own base sha" instruction were written for
+  exactly that, and §8.0 rule 3 rebases.
+
 ## 2026-09-13 — SOCO W1 lands: the zonal-load spine fails its own gate, and a COD defect would have inverted the nuclear year
 
 Desk refresh r#3 (`docs/handoffs/soco-desk-ledger-2026-09.md`). All three W1 lanes landed and graded
