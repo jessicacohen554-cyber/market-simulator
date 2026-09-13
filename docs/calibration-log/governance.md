@@ -2761,3 +2761,74 @@ deficit (pjm-141 §5.1 point 3, pjm-138 §7 lead 2, both re-confirmed): PJM's ov
 is small and the model's is zero. The overnight **+$6.82 / +$5.78 / +$3.40** over-pricing remains an
 open structural limitation, and pjm-142's measured slope (2.88 / 3.37 / 2.57 GW per $1/MWh) says
 closing it needs **9-20 GW** of stack movement that no queued lever supplies.
+
+## 2026-09-13 — Cross-ISO: the recorded gas-anchor MIRROR could disagree with the solve. Repaired for BOTH vintage flags. **PJM's `gas_offer_margin_anchor_vintage` (pjm-169 F4) carried the same latent seam and is fixed here — nothing was armed on it, so this is a warning discharged, not an incident.**
+
+**Cross-ISO because the defect lives in `scripts/run_calibration_full.py`, which every ISO's runs
+pass through.** Filed from the NYISO lane (nyiso-231) because NYISO is the only ISO that has ever
+armed either flag. No keeper in any ISO moves, no cache key in any ISO moves, and no solve in any
+ISO changes.
+
+**THE DEFECT.** For the two gas-offer-margin **vintage** gates, `run_config.json`'s copy of the
+identification anchor is not a lookup — it is *resolved* from the run's own delivered-gas series, so
+it is computed twice: once in `run_calibration.run_year` (whose value the LP prices against) and
+once in `run_calibration_full._recorded_config` (whose value is written to the bundle).
+`_gas_series` is only the series the offer path prices against once the run's whole gas posture is on
+the config, and the two call sites had **opposite orderings**: `run_year` sets
+`gas_hub_basis_overlay` at ~line 1960 and resolves at ~2572 (fleet built at ~3791), while
+`_recorded_config` resolved at ~5194 and set the overlay at ~5338.
+
+**Measured, on the only bundle that ever armed either flag** (NYISO `nyiso230_arm_y2022`, a screen
+probe, never registered): the recorded per-zone anchors were a **uniform −1.3868 $/MMBtu** low in
+every zone — `Capital_Hudson 7.0563` where the LP priced **8.4431** — and the recorded config was
+internally inconsistent, carrying `gas_hub_basis_overlay: true` beside anchors that reproduce only
+at `overlay=False`. Two of that screen's four pre-registered gates failed on that one line and
+**neither measured the mechanism**. Settled at zero LP: `run_year` takes no config object and
+`recorded_cfg` reaches `write_run_config` and nothing else, so the LP was right and only the record
+was wrong — the **FFR-2E** class (rule 24 `[R-REGISTRY]`). Second-order consequence, named rather
+than left implicit: `plan_reuse_solved` keys on `_recorded_config(...).cache_key()`, so a
+`--reuse-solved` chain off such a bundle would have matched on an anchor no solve used.
+
+**THE REPAIR, and why it is structural rather than positional.** One shared resolver,
+`run_calibration_full.mirror_solve_year_gas_anchors`, **fused to `_recorded_config`'s `return`**.
+Moving the block down would have fixed today's bug and left the trap armed: the natural place to
+append a new `if flag: recorded_cfg = …` is the end of the function, which is exactly how the
+overlay got in front of the mirror. Fused to the return, an appended block necessarily lands
+*above* the resolution. Both inline mirrors are **deleted, not zeroed** (rule 26 `[R-DELETE]`).
+Guard: `tests/unit/data/test_recorded_config_gas_anchor_mirror.py`, 12 tests — `_recorded_config`
+has exactly ONE `return`, it is the LAST statement of the body, and it is this call; neither deleted
+alias (`_f4_gs`, `_f5_zonal`) survives; the repaired mirror reproduces the anchors the LP priced
+against; re-resolving on the output is a no-op; the two gates refuse to stack; the off path returns
+the config object unchanged.
+
+**TO THE PJM LANE, specifically.** `gas_offer_margin_anchor_vintage` (your F4, pjm-169) carried the
+identical mis-ordered mirror **and** a second asymmetry: `run_year` gated it on the **solve kwarg
+alone** while the shared mirror gates on kwarg-**or**-field. Left that way it would have been a NEW
+drift vector — `replay_keeper.py --set` writes the FIELD and never the kwarg, so a `--set` A/B would
+have solved the CONTROL while recording an armed anchor, undetectable from the bundle. `run_year`
+now gates on kwarg-or-field and stamps the field it resolves, matching the zonal block. **Your cell
+verdict is untouched:** PJM's `R` stands on its own S4 coal-displacement evidence
+(`COAL_BIT` +3.28 %), which this repair does not bear on, and **no PJM cell was edited** (rule 28:
+a lane edits only its own ISO's shard). What changed for you is that if PJM ever re-opens that
+cell, the record will now report what the LP actually solved.
+
+**BLAST RADIUS, audited rather than asserted.** Every committed `run_config.json` in the repository
+was checked: **exactly ONE** carries either vintage flag armed (NYISO's screen arm). Both fields sit
+in `_CACHE_KEY_OPTIONAL_FIELDS` at their frozen `"False"` default, so **zero cache keys move** and
+every keeper in every ISO is byte-identical. `tests/unit` fails the **same 7** tests before and after
+(verified by stashing): `test_caiso_st_gas_peak_measured` ×1, `test_fleet::test_neiso_includes_mystic_cc`,
+`test_capacity::test_unregistered_iso_is_none`, `test_export::TestExportScenarioJson` ×4 — all
+pre-existing at HEAD, none NYISO's, reported and not touched.
+
+**ALSO OBSERVED AND NOT FIXED (another lane's, and the ruff gate says so).**
+`tests/scoring/test_audit_keepers_orphan_runs.py` is **ruff-format red on `main`** (introduced by
+`cf5bba12`, the rule-35 `[R-PROMOTE]` commit). `Ruff lint + format check` is one of R-AE's six
+required checks, so this is currently costing every lane a red required check, not just its author's.
+`.claude/hooks/ruff-prepush-gate.sh` blocked this session's first push over it and its own header
+forbids the workaround (*"do not work around it by reformatting files you do not own"*), so it is
+reported here for the owning lane: one `uv run ruff format --force-exclude --
+tests/scoring/test_audit_keepers_orphan_runs.py` clears it.
+
+Record: `results/calibration/PRECOMMIT-nyiso231-mirror-repair-rescreen.md`,
+`docs/RESULT-nyiso231-the-mirror-and-the-2022-rescreen-2026-09-13.md`,
+`docs/calibration-log/nyiso.md` "## nyiso-231 — 2026-09-13".
