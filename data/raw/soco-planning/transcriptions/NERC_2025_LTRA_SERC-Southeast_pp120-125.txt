@@ -1,0 +1,335 @@
+NERC 2025 Long-Term Reliability Assessment - SERC-Southeast assessment area panel
+Source: https://www.nerc.com/pa/RAPA/ra/Reliability%20Assessments%20DL/NERC_LTRA_2025.pdf
+Extract: PDF pages 120-125 of 182 only (pypdf extract_text, unedited). Fetched 2026-09-13.
+=====PDFPAGE 120=====
+ 
+2025 Long-Term Reliability Assessment 120 
+  
+ 
+SERC-Southeast 
+SERC-Southeast is a summer -peaking assessment area within the SERC Regional Entity. SERC -Southeast includes all or portions of Georgia, Alabama, and Mississippi. SERC is one of the six 
+companies across North America that are responsible for the work under F ERC-approved delegation agreements with NERC. SERC is specifically responsible for the reliability and security of 
+the electric grid across the southeastern and central areas of the United States. This area covers approximately 630,000 square miles and serves a population of more than 91 million. The SERC 
+Regional Entity includes 36 BAs, 28 Planning Authorities, and 6 Reliability Coordinators. 
+Demand, Resources, and Reserve Margins 
+Quantity 2026 2027 2028 2029 2030 2031 2032 2033 2034 2035 
+Total Internal Demand 48,386 50,648 52,900 55,127 56,624 57,544 57,978 58,552 59,004 59,166 
+Demand Response 1,358 1,391 1,623 1,634 1,640 1,650 1,656 1,664 1,671 1,677 
+Net Internal Demand 47,028 49,257 51,277 53,493 54,984 55,894 56,322 56,888 57,333 57,489 
+Additions: Tier 1 684 2,262 3,704 4,395 4,474 4,474 4,474 4,474 4,474 4,474 
+Additions: Tier 2 0 516 3,687 4,889 4,989 4,989 4,989 4,989 4,989 4,989 
+Additions: Tier 3 0 150 250 500 500 500 500 500 500 500 
+Net Firm Capacity Transfers 814 -53 414 619 619 619 619 619 619 619 
+Existing-Certain and Net Firm Transfers 65,201 64,393 64,860 65,065 65,065 65,065 65,065 65,065 65,065 65,065 
+Anticipated Reserve Margin (%) 40.1% 35.3% 33.7% 29.8% 26.5% 24.4% 23.5% 22.2% 21.3% 21.0% 
+Prospective Reserve Margin (%) 41.3% 37.5% 42.0% 40.0% 36.5% 34.3% 33.3% 32.0% 30.9% 30.6% 
+Reference Margin Level (%) 15.0% 15.0% 15.0% 15.0% 15.0% 15.0% 15.0% 15.0% 15.0% 15.0% 
+ 
+Planning Reserve Margins 
+ 
+Existing and Tier 1 Resources 
+
+=====PDFPAGE 121=====
+ 
+2025 Long-Term Reliability Assessment 121 
+ 
+SERC-Southeast Highlights 
+• SERC-Southeast’s ARM does not fall below the RML during the 2025–2035 time frame. 
+• SERC-Southeast’s ProbA results for the study years 2027 and 2029 indicate a normal level of risk.  
+ 
+SERC-Southeast Projected Generating Capacity by Energy Source in Megawatts (MW) 
+ 2026 2027 2028 2029 2030 
+Coal 12,403 12,403 12,403 12,403 12,403 
+  Coal* 12,403 12,403 11,145 11,145 11,145 
+Petroleum 866 866 866 866 866 
+Natural Gas 29,765 30,646 31,057 31,057 31,057 
+   Natural Gas* 29,751 30,632 31,043 31,043 31,043 
+Biomass 428 428 428 428 428 
+Solar 8,358 8,836 9,667 10,358 10,358 
+Conventional Hydro 3,292 3,292 3,292 3,292 3,292 
+Pumped Storage 1,632 1,632 1,632 1,632 1,632 
+Nuclear 8,018 8,018 8,018 8,018 8,018 
+Battery 279 557 757 757 836 
+Total MW 65,042 66,678 68,120 68,811 68,890 
+  Total MW* 65,042 66,678 66,862 67,553 67,632 
+*Capacity with additional generator retirements. Generators that have announced plans to retire but have yet to be included in system plans are removed from the resource projection where marked. 
+=====PDFPAGE 122=====
+ 
+2025 Long-Term Reliability Assessment 122 
+SERC-Southeast Assessment
+ 
+Planning Reserve Margins 
+PRMs in the Southeast assessment area highlight a proactive and stable approach to ensuring grid 
+reliability, with ARMs projected to remain above reference or target levels throughout the long-term 
+assessment period. Utilities in the region typically plan for a 15% reserve margin, a target that has 
+remained unchanged from prior years. Capacity plans are specifically designed to maintain 15% 
+reserve margins in summer and 25% in winter, consistent with previous long -term assessments. The 
+annual IRP process is crucial, as it addresses resource adequacy well in advance, ensuring that reserve 
+margins consistently stay above these required levels, considering both primary and secondary 
+generation resources. 
+ 
+The methodologies for determining these RML s are robust and comprehensive. A LOLP analysis is 
+conducted to ascertain if adjustments are necessary to maintain a 1 -in-10-year LOLE. This analysis 
+relies on assumptions concerning system loads, potential outages, transfer capabilities, and resource 
+plans, drawing from historical and forecasted data. To account for uncertainties, these assumptions 
+are stress-tested through Monte Carlo simulations across a range of best- and worst-case scenarios, 
+calculating EUE a t current RMLs. One utility, which operates independently of state regulatory 
+oversight, conducts its own triennial reserve margin study (RMS) to pinpoint an economically optimal 
+reserve level. This RMS balances capacity costs, production costs, and the costs associated with 
+unserved energy, utilizing a wide array of data including weather variability, unit reliability, fuel 
+availability, and market conditions to model hourly system operations and assess the risk and cost of 
+potential capacity shortfalls. Furthermore, resource adequacy assessments are evolving to include 
+advanced capacity accreditation methods like perfect capacity (PCA P) and ELCC, which more 
+accurately reflect the reliability contributions of VERs. For instance, one ELCC study increased solar 
+peak credit from 50% to 89% for certain solar capacity. No significant changes have been made to 
+reserve margin modeling or resource procurement processes since the previous LTRA, and none are 
+planned for the next decade regarding resource adequacy planning, though input assumptions are 
+regularly updated. 
+ 
+Despite maintaining adequate reserve margins, energy risk assessments highlight an important 
+nuance: reserve margins alone do not guarantee reliability; energy deliverability and fuel sufficiency 
+are also crucial. Results from these assessments may prompt policy updates or recalibrated targets 
+for PRM policies to better align with actual risk levels identified across the year, including non -peak 
+hours. To address identified capacity needs or potential shortfalls, the IRP process leads to 
+procurement actions approved by regulatory commissions. New resource technologies are selected 
+based on their technical, economic, and capacity attributes. For example, one utility intends to 
+maintain its 15% reserve margin by incorporating potential capacity purchases of up to 370 MW to 
+serve anticipated data mining loads over the next four years, alongside plans to add solar and battery 
+resources in 2029. Overall, planning entities consistently update their capacity expansion plans 
+annually to meet load requirements and adhere to these PRMs. 
+ 
+Non-Peak Hour Risk, Energy Assurance, Probabilistic-Based Assessments 
+Energy risk assessments in the Southeast assessment area utilize a combination of deterministic and 
+probabilistic methods to identify and address potential energy shortfalls across various planning 
+horizons. These assessments incorporate crucial assumption s about fuel availability, generation 
+outages, extreme weather events, and transmission capabilities. Winter peak hours have been 
+identified as the highest -risk period for energy shortfalls, driven primarily by volatile peak demand 
+during extreme cold weat her events that exceeds forecasts, and sustained overnight load where 
+demand remains high throughout the evening and early morning, eliminating traditional off -peak 
+troughs. Recent winter events, like Winter Storm Elliott, have led to updates in load shapes used in 
+modeling, reflecting higher and more sustained loads even outside traditional peak hours. 
+ 
+A significant finding from these assessments is that fuel availability, particularly for natural gas, 
+presents a risk, especially in systems with limited renewable penetration. Entities are mitigating this 
+by securing firm pipeline transportation contracts for baseload plants and ensuring onsite fuel storage 
+(natural gas or fuel oil) for peaking units. Probabilistic modeling, including Monte Carlo simulations, 
+evaluates the impact of these drivers, calculating metrics such as LOLE and EUE; these studies sho w 
+increased risk in winter and significant EUE increases under fuel- constrained scenarios. Crucially, the 
+results underscore that reserve margins alone do not guarantee reliability; energy deliverability and 
+fuel sufficiency are also vital. 
+ 
+Furthermore, scenarios modeling low hydro output and low solar generation during high -demand 
+periods (especially in winter or prolonged cloudy conditions) indicate increased energy risks when 
+variable energy resources (VERs) underperform. While annual production cost simulations performed 
+in an “island” mode (excluding market purchases) have not identified energy deficiencies under base 
+conditions, the RMS provides a comprehensive probabilistic analysis of hourly energy adequacy by 
+simulating thousands of s cenarios and considering historical weather, load, solar availability, fuel 
+constraints, and generator outages. The RMS also assesses regional interdependency risks, finding 
+that transmission constraints can hinder economic and emergency imports, exacerbating local energy 
+shortages during widespread events. Energy risk assessments reflect a maturing focus on year-round, 
+all-hour reliability, emphasizing risks from fuel supply chains, weather variability, and the increasing 
+integration of variable renewable energy sources. These findings may lead to policy updates or 
+recalibrated targets for PRM  policies (e.g., 15% summer/25% winter) to better align with actual 
+identified risk levels. 
+=====PDFPAGE 123=====
+ 
+2025 Long-Term Reliability Assessment 123 
+ProbA Results 
+SERC-Southeast does not show any loss of load risk for the year 2027, the EUE is 0.00 MWh and LOLH 
+is also 0.00 hours. For the year 2029, there is a small ANNUAL risk of 0.39 MWh and 0.001 hours.   
+ 
+Base-Case Summary of Results 
+ 2026* 2027 2029 
+EUE (MWh) 0 0.0 0.4 
+NEUE (ppm) 0.00 0.00 0.001 
+LOLH (hours per Year) 0.00 0.00 0.001 
+* Provides the 2024 ProbA Results for Comparison 
+ 
+The figure below shows the EUE as a Heat Map for the year 2027. 
+ 
+2027 EUE Heat Map 
+ 
+For the year 2029, there is a small annual risk of 0.39 MWh and 0.001 hours. There are some iterations 
+of cases in the 2029 case, for load forecast error +2% and +4%, there is an EUE of up to 1,006 MWh. 
+As shown in the figure below, higher load forecasts, particularly during extreme cold weather events 
+such as weather  years 1982, 1985, and 2022, contribute to risk in winter mornings ( 7:00-8:00 a.m.) 
+and nights (10:00 p.m.-12:00 a.m.). December shows the most risk, followed by January. 
+ 
+2029 EUE Heat Map 
+ 
+In the SERC SERVM model, there are 5,375 unique cases. There was not a case for the 1 in 1000 event 
+or higher probability, so the event day with the highest EUE in an hour was  selected. Figures below 
+show the expected ( typical) vs. risk profiles and the contribution to reliability by component for the  
+study year 2029.  
+ 
+ 
+The top figure compares the event day to a typical day in December, with weather  year 1985, which 
+was an extreme cold event. The lower figure shows the loss of load between 7:00-8:00 a.m. when the 
+load is higher than projected, solar generation is unavailable, energy storage and imports are available 
+during the risk hour. 
+ 
+Between 2027 and 2029, SERC -Southeast is expected to add battery and solar generation Tier 1 
+resources. The addition of solar generation, however, would not help alleviate risk that occurs in 
+winter morning or winter night hours when solar irradiation is unavailable. Georgia Power Company 
+has publicly filed their intent to build company owned combined cycle, battery energy storage 
+systems, hybrid solar and battery energy storage systems, coming online between 2029  and 2031. 
+However, the commission has yet to vote on approval, expected to do so in December and are not 
+included in the model. SERC-Southeast is not expected to retire additional generation during this time. 
+
+=====PDFPAGE 124=====
+ 
+2025 Long-Term Reliability Assessment 124 
+SERC-Southeast is seeing high load growth. Between summer 2027 and 2029, there is expected to be 
+an addition of 4,468 MW of summer load and 2,134 MW of winter load.  
+ 
+With the growing dependence on natural gas as the predominant energy source in the SERC Southeast 
+subregion, fuel diversity could become an area of future concern. 
+ 
+Demand 
+The entities in the Southeast assessment area employ a robust approach to developing their load 
+forecast for the LTRA. This methodology combines econometric modeling, statistically adjusted end -
+use (SAE) analysis, and hourly bottom -up aggregation across members. Forecasts are annually 
+updated based on historical data and the latest S&P Global economic outlook, using regression models 
+that account for weather, economic indicators, population, appliance efficiency, and load shapes. 
+Both coincident and non-coincident peak demand forecasts are included and refined using specialized 
+tools. LFU is addressed by testing load levels ranging from 80% to 104% of projected peak demand, 
+with weather identified as the primary driver of variability. While DERs like rooftop solar currently 
+have minimal impact, their potential effects are considered in sensitivity scenarios. No major changes 
+have been made to the core forecasting methodology since the prior LTRA, though input assumptions 
+are regularly updated. 
+ 
+Several factors contribute to the 10 -year forecasted demand and energy growth rates. Data centers 
+are a significant and highly uncertain consideration, capable of substantially increasing demand when 
+included as a sensitivity in reliability studies, with n early 400 MW of data mining load expected by 
+2025. These loads often exhibit unpredictable behavior, with some shifting to 24/7 operation, 
+flattening the overnight load curve and extending peak periods, which complicates traditional peak -
+centric planning. Large commercial and industrial loads are expected to contribute to energy growth 
+in specific economic development areas. Electrification trends are emerging slowly, with limited 
+current impact on forecasts, though home heating electrification is notably contributing to increased 
+winter peak sensitivity. Beyond the 10 -year horizon, transportation electrification is anticipated to 
+become a more significant driver of load growth. The influence of climate change and extreme 
+weather on load forecasting is modest in most cases, with some utilities refining models to reflect 
+more frequent cold weather patterns. Recent winter events, like Winter Storm Elliott, have led to 
+updates in load shapes used in modeling, reflecting higher and more sustained loads even outsi de 
+traditional peak hours. E E improvements are occurring but are not yet deemed a significant overall 
+impact, and flexible or price-sensitive loads are typically modeled on the supply side, thus excluded 
+from direct demand forecasts. 
+ 
+ 
+ 
+Demand-Side Management 
+Depending on the entity, DSM could be a voluntary  DSM water heater program, which allows for 
+limited control of appliance usage during peak demand periods, with the number of installed control 
+switches tracked monthly to forecast future participation. Load research data is used to estimate the 
+diversified load contribution from these devices. While the entity is monitoring how new EE  
+regulations may impact program effectiveness and developing a DSM m easurement and verification 
+(M&V) framework, its analysis currently relies on historical load research data. DR resources under 
+contract are monitored and dispatched, and annual ELCC simulations determine the capacity value of 
+each active DR program. BTM DERs are accounted for within annual load forecasts, while front -of-
+the-meter (FTM) DERs are treated as generation assets. The entity is also exploring new DR and 
+flexibility programs, including pilot efforts in commercial and industrial automated DR and solar-plus-
+storage, and implementing a DERMS to enable broader coordination. No modifications to DR 
+methodologies or assumptions have been made since the 2024 LTRA , but new pilot programs and 
+system capabilities are actively being developed. For EE and conservation, no significant changes have 
+occurred in measurement or accounting since the prior LTRA. EE impacts are generally incorporated 
+through adjustments to load forecasts based on federal and state efficiency standards, appliance 
+saturation trends, and building code updates, reflected in econometric models or end-use forecasts 
+that estimate reduced energy consumption over time. 
+ 
+Distributed Energy Resources 
+The estimated penetration of DERs in the Southeast assessment area remains modest, with forecasts 
+projecting 1–1.5% of peak load over the next five years and staying below 2% over a 10-year horizon. 
+Specifically, BTM solar PV is expected to grow from 57 MW  by 2030 to 120 MW by 2035. Currently, 
+DERs and rooftop solar are considered to have minimal impact on overall reliability, with no emerging 
+transmission or resource adequacy issues directly attributed to them anticipated for Summer 2025. 
+ 
+In terms of planning, BTM DERs are accounted for within annual load forecasts and are not explicitly 
+modeled as discrete capacity resources. Instead, they are represented using hourly generation 
+profiles to account for operational factors like ramping, and estimated generation is placed back onto 
+load buses when installations reach or exceed 2 MW. Conversely, FTM DERs are treated as generation 
+assets. While BTM solar is contributing to energy availability and reducing fossil fuel consumption, 
+their limited capacity value and variability are creating challenges, particularly during the sunrise and 
+sunset hours, requiring greater flexibility from non -solar resources. Solar -related ramping concerns 
+and energy adequacy under evolving weather conditions are considered emerging reliability 
+challenges, which are actively being studied through triennial renewable integration studies. Load 
+forecast uncertainty related to DERs is addressed by considering their potential effects in sensitivity 
+scenarios, such as assuming zero DER contribution under stress conditions. 
+ 
+=====PDFPAGE 125=====
+ 
+2025 Long-Term Reliability Assessment 125 
+Generation 
+The Southeast assessment area actively manages its generation portfolio to ensure reliability amid a 
+changing resource mix, with particular focus on the increasing integration of utility -scale solar and 
+other VERs. While current renewable penetration is mo dest, leading to no significant stability or 
+inertia issues observed to date, future challenges like intra -hour volatility and ramping needs are 
+being proactively evaluated. The Renewable Cost and Benefit (RCB) Framework is utilized to assess 
+integration costs and identify mitigation strategies such as flexible backup resources. 
+ 
+Regarding net demand ramping, the assessment area does not currently identify any emerging issues 
+due to the limited penetration of VERs and a robust, flexible generation portfolio primarily composed 
+of natural gas units. Annual analysis of five-minute ramping data is conducted to inform regulating 
+reserve requirements, and existing natural -gas-fired units, supported by firm fuel supply and fuel -
+switching capabilities, are deemed sufficient to meet current and projected ramping needs. 
+ 
+Capacity contribution values for VERs like solar and wind are determined using a combination of 
+historical performance data and ELCC analyses via the SERVM reliability and production cost model. 
+For solar, contributions are initially set at 50% of nameplat e capacity during May –September, with 
+annual re-evaluation based on actual performance, though no contribution is assigned in winter due 
+to the assessment area’s winter peak planning season. An ELCC study in 2024 notably increased solar 
+peak credit for up to 340 MW of solar capacity. While energy storage resources are evaluated through 
+ELCC, with a preferred minimum duration of two hours, no operational storage r esources are 
+currently on the system. Hydro resources are credited at 100% due to firm delivery contracts. 
+ 
+Efforts to address IBR performance issues include enhanced interconnection studies that assess 
+various factors like thermal loading, voltage stability, and short circuit performance. EMT models are 
+now required from Generator O wners to better simulate and understand IBR behavior during 
+disturbances, and mitigations include adjusting ramp rates and enforcing ride-through requirements. 
+Additional phasor measurement units (PMU) are being deployed to enhance real -time situational 
+awareness, particularly at IBR interconnection points. While current IBR penetration is low, network 
+impacts and protection coordination are identified as the primary reliability concerns being 
+addressed. 
+ 
+Generator retirements have seen no changes to confirmed or unconfirmed projections since the 2024 
+LTRA, with no unit retirements currently projected over the 10 -year planning horizon. All native 
+generation, including coal, natural gas, and nuclear resources, is expected to remain available to meet 
+peak demands. Planning entities have established processes involving detailed studies over a 10 - to 
+20-year horizon to assess potential reliability impacts of retirements, considering mitigations such as 
+transmission infrastructure capital improvements or dynamic VAR support. The IRP process 
+coordinates retirement schedules with the addition of replacement capacity to prevent reliability 
+gaps. 
+ 
+Natural gas fuel supply risk is actively managed, with approximately 78% of winter on -peak natural 
+gas generation capacity having either firm fuel supply arrangements or backup fuel options like oil or 
+dual-fuel capability. Annual gas pipeline failure stud ies are conducted ahead of each summer and 
+winter season to assess impacts under various curtailment scenarios. Communication protocols 
+between electric system operators and natural gas operators are maintained for coordinated 
+responses. Long-term planning  processes incorporate fuel risk through load capability analysis and 
+production cost modeling over a 20-year horizon, ensuring capacity plans meet PRMs. 
+ 
+Energy Storage 
+While there are currently no operational energy storage resources on the system in the Southeast 
+assessment area, future plans do include the addition of solar and battery resources by 2029. BESS 
+are recognized as IBRs that, like solar, require different m odeling and analysis techniques compared 
+to traditional synchronous generation. The uncertainty surrounding the future locations and 
+generation outputs of new BESS is noted as a factor that complicates proactive planning. 
+ 
+For planning purposes, energy storage resources are primarily evaluated for their capacity 
+contribution through ELCC analyses. A preferred minimum duration of two hours is considered for 
+operational reliability when evaluating energy storage resources, although there is no formal duration 
+requirement currently enforced. Pilot programs are also being explored, specifically solar-plus-storage 
+initiatives, as new DR and flexibility programs. These programs aim to provide flexible capacity and 
+fast-start capabilities to the system. 
+ 
+No major methodology modifications have been made to the methods or assumptions for 
+incorporating energy storage since the 2024 LTRA. 
+ 
+Capacity Transfers 
+Capacity transfers are important for reliability in the Southeast assessment area and the SERC Region. 
+System adequacy is maintained through planning studies and coordination with neighbors to manage 
+evolving energy needs and maintain regional reliability. 
+ 
+Currently, surplus capacity for transfer and delivery is anticipated to remain available to meet 
+reliability margins and support marketing opportunities. Transmission flow patterns are becoming 
+more dynamic due to shifts in internal and external resource p ortfolios, retirements, additions, and 
+system topology adjustments, but no significant impacts to firm transmission contracts have been 

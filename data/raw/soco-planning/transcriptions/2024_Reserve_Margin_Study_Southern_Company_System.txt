@@ -1,0 +1,1638 @@
+An Economic and Reliability Study
+of the
+Target Reserve Margin
+for the
+Southern Company System
+January 2025
+EXECUTIVE SUMMARY
+Electric utility customers expect and depend on high levels of service reliability. As such, a prudent utility must have an economically balanced level of generating capacity that both exceeds the peak load and meets a minimum reliability threshold. To have this reserve capacity available when it is needed, a utility must plan beyond the upcoming season because the processes to procure capacity, such as building a new unit or procuring a power purchase agreement (“PPA”), can take several years to complete. The purpose of this Economic and Reliability Study of the Target Reserve Margin (“Reserve Margin Study”) for the Southern Company System (“System”) is to determine the amount of reserve capacity – or the Target Reserve Margin (“TRM”) – that should be maintained on the System. The Reserve Margin Study includes the companies that participate in the Intercompany Interchange Contract (“IIC”). Specifically, the Reserve Margin Study includes Alabama Power Company, Georgia Power Company, Mississippi Power Company, and the portion of Southern Power Company included in the IIC (collectively, the “Operating Companies”). Although the TRM will be used to establish the long-term expansion plan, the 2024 Reserve Margin Study should not be understood to determine one constant reliability index in perpetuity, but rather should be re-evaluated on a periodic basis as the System evolves over time. The results of long-term, constant reliability constraints can be impacted by projected changes in load shapes, unit costs, unit availability, and other factors. The objective is to determine how these constraints affect near term capacity decisions, with subsequent re-evaluations modifying downstream decisions, as appropriate.
+This report recommends Winter and Summer TRMs stated in terms of seasonal peak demands and seasonal capacity ratings according to the following formula:
+TRMS=TCS-PLSPLSx 100%
+Where:
+TRMS = Seasonal Target Reserve Margin;
+TCS = Total Seasonal Capacity; and
+PLS = Seasonal Peak Load.
+Beginning with the 2018 Reserve Margin Study, winter reliability elements were evaluated that had not been fully captured in previous studies. These factors persist in the 2024 Reserve Margin Study. Because winter peak loads are different than summer peak loads (lower for a summer peaking utility in normal weather conditions but more volatile) and because winter generating capacity can have different operational characteristics than summer generating capacity, the Winter TRM can be higher than the Summer TRM. Additionally, most resources on the System are capable of dispatching throughout the year and are not restricted to only winter months. Taking this into consideration, the Company’s evaluation considers the Loss of Load Expectation (“LOLE”) in each season. The Reserve Margin Study recommendation ensures that the combined seasonal LOLEs equate to an annual LOLE at or above a one event in ten years threshold (“1:10 LOLE”).
+Reserve Margins are necessary because of uncertainties in operational conditions. The four primary uncertainties influencing the TRM are:
+Weather: The System’s “weather-normal” load forecasts used for long-term capacity expansion analyses are based on average weather conditions over the past 30+ years. If the weather is hotter than normal during warm seasons or colder than normal during cold seasons, the load will be higher. The System’s peak demand can be as much as 11.1% higher in a hot summer year and 24.5% higher in a cold winter year than in an average year. Drought conditions and temperature-related impacts on unit outputs can also significantly affect the System’s load and capacity balance.
+Load Forecast: There is inherent error in load forecasting models. The load forecast error (“LFE”) is the combined model error representing actual load to model-fitted load and economic input uncertainty representing energy forecast differences between high and low economic scenarios. Based on current error assumptions, peak demand may be up to 5.2% more than forecasted or as low as 6.1% less than forecasted.
+Unit Performance: While the Operating Companies have a tremendous track record in keeping forced outage rates low and availability high for the System, there have been occasions in the last fifteen years when more than 10% of the capacity of the System has been in a forced outage state concurrently.
+Market Availability Risk: The ability to obtain resources from the market when needed to address a short-term System resource adequacy issue can vary. In general, having access to market resources in neighboring regions enhances a region’s reliability due to load and resource diversity. However, the amount, cost, and deliverability of those resources are subject to the external region’s resource adequacy situation or transmission constraints at any given time. While a region can expect some level of support from its neighbors, each region must carry adequate reserves and manage its own reliability risks. Therefore, there is uncertainty regarding the availability of such external support when it is most needed.
+While each of these four factors creates a need for capacity reserves on its own, confluence of all these risk factors poses considerable risk. Very high capacity reserves would be required to meet customers’ load demands plus operating reserve requirements if the objective was to eliminate all risk, including uncertainty conditions that result in the most extreme reliability events. However, maintaining such high levels of capacity reserves comes at significant expense and may only eliminate very low probability events. A more appropriate approach to setting the TRM is to minimize the combined expected costs of maintaining reserve capacity, System costs, and customer costs associated with service interruptions, plus a value at risk adjustment that might reduce the risk of less likely to occur but much more costly outcomes. A proper evaluation of these costs will identify the Economic Optimum Reserve Margin (“EORM”), properly adjusted for risk. However, that risk-adjusted EORM must also meet a minimum reliability criteria threshold. Common practice in the industry regarding this minimum reliability criteria threshold is to plan for an annual LOLE of no greater than 0.1 days per year - or 1:10 LOLE.
+The Company used the Strategic Energy and Risk Valuation Model (“SERVM”) to understand and quantify the overlap of the four contributing factors to the need for reserve margins. SERVM evaluates the ability of the System’s capacity resources to meet load obligations every hour in a year for thousands of combinations of weather, LFE, and unit performance scenarios. The model quantifies, in dollar cost, two components of reliability-related costs. These components are:
+Production Costs, including the cost of generation as well as the cost of purchases; and
+Reliability Costs, including the cost of customer outages (i.e., expected unserved energy (“EUE”) cost), emergency purchases, the cost of not meeting operating reserve requirements, and non-firm outage costs (i.e., the cost of calling demand response resources).
+The Production Costs and Reliability Costs, determined by the SERVM model, are then compared to the Incremental Capacity Cost of new generation reserves. The analysis is performed on a range of winter planning reserve margins from 20% - 30%. With lower reserve margin levels, the import costs and Reliability Costs are high and vary widely, but the Incremental Capacity Cost and its associated generation cost are low. At higher reserve margin levels, the import costs and Reliability Costs are low, but the Incremental Capacity Cost and its associated generation cost are high. The objective of this study is to find the reserve margin where the sum of these costs is minimized (i.e., the minimum cost point), which is referred to as the EORM. The “U-curve” in REF _Ref513785176 \h Figure 1 shows the sum of Production Costs, Reliability Costs, and Incremental Capacity Costs across the range of reserve margin levels studied and demonstrates that the EORM occurs at a winter reserve margin of 22.75%. The figure represents the weighted average costs over all the load, weather, and outage draws simulated and is stated in terms of the winter-oriented reserve margin.
+Figure SEQ Figure \* ARABIC \s 1 1. Winter EORM U-Curve
+Since winter is the dominant season for annual reliability, represented by the Winter TRM, a separate analysis was performed to determine what a Summer TRM would be assuming the removal of the winter months January, February, and December from the economic analysis. The results of this analysis show that the EORM for the Summer TRM is 18.25%.
+Figure SEQ Figure \* ARABIC \s 1 2. Summer EORM U-Curve
+These two U-Curves and their associated analyses serve as the basis for determining a recommendation for the Winter and the Summer TRMs. Since winter is the constraining season for reliability on the System due to additional winter-only reliability concerns, the Winter TRM was considered first.
+While the minimum cost of the winter U-Curve falls at 22.75%, the components that were evaluated to develop the U-Curve all have substantially different risk characteristics. The fixed costs of procuring capacity under a long-term PPA or building a new unit are relatively independent of the uncertainties that affect reliability. On the other hand, Production Costs and Reliability Costs can both vary significantly depending on weather, LFE, and unit performance.
+The trade-off between static Incremental Capacity Costs and highly volatile Production Costs and Reliability Costs is difficult to measure. The expected value of Production Costs and Reliability Costs is the weighted average of all modeled simulations. For many mild weather or slow load growth scenarios, these Production and Reliability Costs will be lower than the expected outcome. However, for more extreme cases, these Production and Reliability Costs will be higher than the expected outcome, but lower in probability of occurrence. The significantly higher costs from these cases represent risk that should be considered when recommending a TRM because some of that risk may be mitigated at a low incremental cost. The approach taken to mitigate the risk of potential high-cost outcomes involves the use of a risk metric called Value at Risk (“VaR”). VaR is defined as the difference in cost at the expected value and at some specified confidence interval (e.g., the 85th percentile of risk). The VaR analysis looks at the incremental increase in expected cost to move from one reserve margin to the next reserve margin and compares that with the incremental decrease in VaR. The point at which the incremental increase in total system cost equals the incremental decrease in VaR represents the EORM at that confidence interval (as opposed to the EORM at the weighted average). This analysis was performed at various confidence intervals ranging from the 75th confidence interval up to the 95th confidence interval, using 0.25% reserve margin increments.
+The adjusted EORM at each confidence interval can be demonstrated graphically by developing their respective U-Curves which represent the sum of the expected cost and value at risk for each reserve margin level. REF _Ref83891383 \h Figure 3 below shows that if the U-Curve is drawn at each confidence interval from the 75th to the 95th, this adjusted EORM is higher than the expected case EORM, 22.75%. Therefore, a reserve margin a few percentage points higher than the expected case EORM benefits customers by eliminating many of the more expensive scenarios (thereby reducing the customers’ exposure to cost risk) without significantly increasing expected costs. This outcome represents the risk-adjusted EORM at that confidence interval.
+Similar U-Curves for summer at each confidence interval from the 75th to the 95th are shown in REF _Ref165016485 \h Figure 4. As with the winter curves, the adjusted EORM is higher than the expected case EORM, 18.25%.
+Figure SEQ Figure \* ARABIC \s 1 3. Confidence Interval U-Curve (Winter)
+Figure SEQ Figure \* ARABIC \s 1 4. Confidence Interval U-Curve (Summer)
+Additionally, the Reserve Margin Study considers the LOLE reliability metric. Common practice in the industry is to ensure that the TRM for planning purposes remains above the annual 1:10 LOLE threshold. LOLE has always been considered as part of the reserve margin studies. The 1:10 LOLE threshold was below the risk-adjusted EORM at the 85th confidence interval in the 2018 and 2021 Reserve Margin Studies although it was above the expected case EORM in the 2018 study. However, in this 2024 Study, the 1:10 LOLE threshold is now above the 25.00% risk-adjusted EORM at the 85th confidence interval.
+REF _Ref513785297 \h Figure 5 below shows the relationship between LOLE and reserve margin for the winter-focused study. The figure shows that the curve crosses the 1:10 LOLE threshold (i.e., an LOLE of 0.1 days per year) slightly above the 25.50% reserve margin. It is important that the TRM be above this 1:10 LOLE threshold to ensure an adequate level of reliability on the System. Otherwise, Southern Company System customers may be exposed to potential outages due to generation shortfalls more frequently than customers in other regions of the country. Therefore, because the 1:10 LOLE threshold is greater than the risk adjusted EORM at the 85th confidence interval in the 2024 Reserve Margin Study, the 1:10 LOLE threshold will be the primary driver in determination of the TRM.
+Figure SEQ Figure \* ARABIC \s 1 5. LOLE as a Function of Winter Reserve Margin
+The 2024 Reserve Margin Study recommends a long-term Winter TRM of 26.00% based on the following:
+The TRM should be equal to or greater than the 25.75% 1:10 LOLE threshold to ensure an adequate level of reliability on the System;
+A reserve margin of 26% represents the risk-adjusted EORM that falls within the confidence intervals considered;
+Compared to the 22.75% expected case Winter EORM, a 26.00% risk-adjusted Winter EORM reduces VaR at the 85th confidence interval by $79.2M/year, while only increasing expected cost by $49.8M/year; and
+A 26.00% Winter TRM is consistent with results from the 2018 and 2021 Reserve Margin Studies. Maintaining this TRM provides stability to the integrated resource planning process.
+For the long-term Summer TRM, in addition to consideration of the VaR results, consideration must also be given to the combined summer and winter LOLE. While the Summer-oriented U-Curve indicated an EORM of 18.25%, the VaR85 calculation resulted in a reserve margin of 21.25%. Therefore, a Summer TRM of up to 21.25% could be justified. LOLE must also be considered. If all resources added to the System to meet the winter reserve margin are also available in the summer season, the annual LOLE will be as shown in REF _Ref513785297 \h Figure 5. However, if some of the System’s winter requirements are met with resources that are not available in summer, then a disconnect between the summer LOLE and the winter LOLE occurs. Therefore, when the combined LOLE for both summer and winter are considered, there is a floor for the Summer TRM that must be maintained to ensure that the total combined summer and winter LOLE does not fall below the 1:10 LOLE threshold (“Summer TRM Floor”). REF _Ref513785344 \h Figure 6 below shows the 1:10 LOLE threshold Summer TRM Floor for a range of Winter TRM values.
+Figure SEQ Figure \* ARABIC \s 1 6. Summer Target Reserve Margin Floor
+Note that, below a Winter TRM of 25.75%, the winter months alone are below 1:10 LOLE, so there is not a summer minimum TRM in that range that would avoid violating the annual 1:10 or better LOLE threshold. Based on REF _Ref513785344 \h Figure 6, the Summer TRM Floor for the recommended Winter TRM of 26.00% must be at or above 19.55% to ensure the combined LOLE does not fall below the 1:10 LOLE.
+Therefore, the 2024 Reserve Margin Study recommends a long-term Summer TRM of 20.00% based on the following:
+At the recommended Winter TRM of 26.00%, the Summer TRM should be equal to or greater than the 19.55% 1:10 LOLE threshold to ensure an adequate level of annual reliability on the System;
+A summer reserve margin of 20.00% is economically justified, falling within the EORM and VaR85 confidence interval. Compared to the current 16.25% summer TRM, increasing the Summer TRM to 20.00% will provide an economic benefit to customers by reducing expected System costs by $5.3M/year while supporting an annual 1:10 LOLE level of reliability; and
+The equivalent summer reserve margin that corresponds to the 26% Winter TRM is 24.76%. Therefore, raising the Summer TRM to 20.00% is not expected to drive additional System costs because resources procured to meet the more dominant Winter TRM are generally expected to be available during summer months as well.
+For short-term planning (inside three years), a sensitivity has been performed which recognizes that there is typically less economic uncertainty in the nearer term (1-3 years out) than in the longer term (4 years out or greater). This sensitivity shows a difference in long-term reserve margin and short-term reserve margin of 0.5% as being appropriate.
+These recommendations are designed to provide guidance for resource planning decisions but should not be considered absolute targets. As explained throughout this report, various factors may justify decisions that result in reserve margins above or below the specified targets due to the large size of capacity additions, the availability and price of market capacity, or economic changes.
+RECOMMENDATIONS:
+Maintain the current 26.00% as the Winter TRM
+Increase the Summer TRM to 20.00%
+Apply a short-term reserve margin that is 0.5% lower than the long-term reserve margins
+TABLE OF CONTENTS
+TOC \o "1-3" \h \z \u EXECUTIVE SUMMARY PAGEREF _Toc187234582 \h i
+TABLE OF CONTENTS PAGEREF _Toc187234583 \h xiv
+LIST OF TABLES PAGEREF _Toc187234584 \h xvi
+LIST OF FIGURES PAGEREF _Toc187234585 \h xvii
+I. ASSUMPTIONS PAGEREF _Toc187234586 \h 1
+A. Reliability Simulation Model PAGEREF _Toc187234587 \h 1
+B. Study Year PAGEREF _Toc187234588 \h 1
+C. Weather Years PAGEREF _Toc187234589 \h 1
+D. Market Modeling PAGEREF _Toc187234590 \h 5
+E. Peak Load Forecast PAGEREF _Toc187234591 \h 12
+F. Load Forecast Uncertainty PAGEREF _Toc187234592 \h 13
+G. Generating Unit Capacity Ratings PAGEREF _Toc187234593 \h 15
+H. Generating Unit Outage Rates PAGEREF _Toc187234594 \h 17
+I. Incremental Cold Weather Outages PAGEREF _Toc187234595 \h 20
+J. Planned and Maintenance Outage Patterns PAGEREF _Toc187234596 \h 23
+K. Commitment and Operating Reserves PAGEREF _Toc187234597 \h 24
+L. Dispatch Order PAGEREF _Toc187234598 \h 25
+M. Dispatchers’ Peak Load Estimate Error PAGEREF _Toc187234599 \h 26
+N. System-Owned Conventional Hydro Generation PAGEREF _Toc187234600 \h 27
+O. SEPA Conventional Hydro PAGEREF _Toc187234601 \h 30
+P. Pumped Storage Hydro PAGEREF _Toc187234602 \h 31
+Q. Battery Energy Storage PAGEREF _Toc187234603 \h 31
+R. Demand Response Resources PAGEREF _Toc187234604 \h 31
+S. Renewable Resources PAGEREF _Toc187234605 \h 32
+T. Natural Gas Availability PAGEREF _Toc187234606 \h 33
+U. Oil Availability PAGEREF _Toc187234607 \h 34
+V. Capacity Cost PAGEREF _Toc187234608 \h 35
+W. Cost of Expected Unserved Energy PAGEREF _Toc187234609 \h 35
+II. SIMULATION PROCEDURE PAGEREF _Toc187234610 \h 37
+A. Case Specification PAGEREF _Toc187234611 \h 37
+B. Probabilities of Occurrence for Input Variables PAGEREF _Toc187234612 \h 38
+C. Reliability Model Simulations PAGEREF _Toc187234613 \h 39
+III. BASE CASE RESULTS PAGEREF _Toc187234614 \h 44
+A. Winter Study Results PAGEREF _Toc187234615 \h 44
+B. Summer-Only Reserve Margin Results PAGEREF _Toc187234616 \h 46
+C. Risk Analysis PAGEREF _Toc187234617 \h 48
+D. Loss of Load Expectation PAGEREF _Toc187234618 \h 53
+E. Total System Cost Components PAGEREF _Toc187234619 \h 57
+F. Components of the Winter Target Reserve Margin PAGEREF _Toc187234620 \h 61
+IV. SENSITIVITY ANALYSES PAGEREF _Toc187234621 \h 63
+A. Capacity Price PAGEREF _Toc187234622 \h 63
+B. Cost of EUE PAGEREF _Toc187234623 \h 64
+C. Cold Weather Outages PAGEREF _Toc187234624 \h 65
+D. 50% Reduced Transmission PAGEREF _Toc187234625 \h 66
+E. Unlimited Transmission PAGEREF _Toc187234626 \h 66
+F. 50% Higher Base EFOR PAGEREF _Toc187234627 \h 66
+G. Unlimited Natural Gas PAGEREF _Toc187234628 \h 66
+H. Islanded System PAGEREF _Toc187234629 \h 66
+I. Maximum Weather Years PAGEREF _Toc187234630 \h 67
+Summary of Sensitivity Analysis PAGEREF _Toc187234631 \h 67
+Short-Term Load forecast error PAGEREF _Toc187234632 \h 70
+V. CONCLUSION PAGEREF _Toc187234633 \h 71
+Winter Target Reserve Margin PAGEREF _Toc187234634 \h 71
+Summer Target Reserve Margin PAGEREF _Toc187234635 \h 72
+LIST OF TABLES
+Report Tables
+TOC \h \z \c "Table" Table I1. Simulation Regions Summary for Summer PAGEREF _Toc187234636 \h 7
+Table I2. Simulation Regions Summary for Winter PAGEREF _Toc187234637 \h 8
+Table I3. Model and Economic Input Bins PAGEREF _Toc187234638 \h 14
+Table I4. Load Forecast Error PAGEREF _Toc187234639 \h 15
+Table I5. 2028 Modeled System Capacity by Technology PAGEREF _Toc187234640 \h 17
+Table I6. Steam Unit Sample Time to Fail and Time to Repair Data PAGEREF _Toc187234641 \h 18
+Table I7. Approximate EFOR by Unit Class PAGEREF _Toc187234642 \h 19
+Table I8. Historical Dispatchers’ Peak Load forecast error PAGEREF _Toc187234643 \h 27
+Table I9. EUE Cost PAGEREF _Toc187234644 \h 36
+Table II1. SERVM Case Variables PAGEREF _Toc187234645 \h 37
+Table II2. Capacity Removed to Establish the Initial Reserve Margin Level PAGEREF _Toc187234646 \h 38
+Table II3. Simulation Case Probability PAGEREF _Toc187234647 \h 39
+Table II4. Sample Calculation Top 10 Worst Reliability Costs at 26% Winter Reserves PAGEREF _Toc187234648 \h 41
+Table II5. Worst Reliability Costs Weighted Probability PAGEREF _Toc187234649 \h 42
+Table II6. Production Cost Components for Sample Data Set PAGEREF _Toc187234650 \h 42
+Table II7. Production Cost Weighted Probability PAGEREF _Toc187234651 \h 43
+Table III1. Value at Risk PAGEREF _Toc187234652 \h 51
+Table IV1: Summary of Winter Sensitivity Results PAGEREF _Toc187234653 \h 69
+Table IV2: Short-Term Load forecast error PAGEREF _Toc187234654 \h 70
+LIST OF FIGURES
+Report Figures
+TOC \h \z \c "Figure" Figure 1. Winter EORM U-Curve PAGEREF _Toc187234655 \h v
+Figure 2. Summer EORM U-Curve PAGEREF _Toc187234656 \h vi
+Figure 3. Confidence Interval U-Curve (Winter) PAGEREF _Toc187234657 \h viii
+Figure 4. Confidence Interval U-Curve (Summer) PAGEREF _Toc187234658 \h ix
+Figure 5. LOLE as a Function of Winter Reserve Margin PAGEREF _Toc187234659 \h x
+Figure 6. Summer Target Reserve Margin Floor PAGEREF _Toc187234660 \h xii
+Figure I.1. Historical Low Winter Temperatures PAGEREF _Toc187234661 \h 3
+Figure I.2 Historical High Summer Temperatures PAGEREF _Toc187234662 \h 4
+Figure I.3 Distribution of Modeled Summer and Winter Peak Loads PAGEREF _Toc187234663 \h 5
+Figure I.4. Simulation Topology PAGEREF _Toc187234664 \h 9
+Figure I.5. Scarcity Pricing Curve PAGEREF _Toc187234665 \h 11
+Figure I.6. Historical Forecasted Weather Normal Peak Loads PAGEREF _Toc187234666 \h 13
+Figure I.7. Ambient Temperature Output Curves PAGEREF _Toc187234667 \h 16
+Figure I.8. Modeled vs Actual Unplanned Outage Probability PAGEREF _Toc187234668 \h 20
+Figure I.9. Cold Weather Outage Assumptions PAGEREF _Toc187234669 \h 21
+Figure I.10 Cold Weather Outage Assumptions PAGEREF _Toc187234670 \h 22
+Figure I.11. Maintenance Outage Probability by Month PAGEREF _Toc187234671 \h 24
+Figure I.12. System Dispatch Stack PAGEREF _Toc187234672 \h 26
+Figure I.13. Average Hydro Energy Availability PAGEREF _Toc187234673 \h 29
+Figure I.14. Annual Scheduled Hydro Energies PAGEREF _Toc187234674 \h 30
+Figure I.15 Solar Resource Penetration PAGEREF _Toc187234675 \h 33
+Figure I.16. Interruptible Gas Transportation Availability Model PAGEREF _Toc187234676 \h 34
+Figure II.1 Variable Calculation Formula PAGEREF _Toc187234677 \h 40
+Figure III.1. Winter EORM U-Curve PAGEREF _Toc187234678 \h 44
+Figure III.2. Seasonal EUE by Reserve Margin PAGEREF _Toc187234679 \h 46
+Figure III.3. Summer-only EORM U-Curve (Without Winter Months) PAGEREF _Toc187234680 \h 47
+Figure III.4. Average Monthly Energy Purchases by Reserve Margin PAGEREF _Toc187234681 \h 48
+Figure III.5. Production and Reliability Cost Distributions for Winter Reserve Margins PAGEREF _Toc187234682 \h 49
+Figure III.6. Top 10% Distribution for Winter Reserve Margins PAGEREF _Toc187234683 \h 50
+Figure III.7 2021 vs 2024 Extreme Weather Load Shape Example PAGEREF _Toc187234684 \h 54
+Figure III.8 LOLE for Winter Reserve Margins PAGEREF _Toc187234685 \h 55
+Figure III.9 LOLE for Summer Reserve Margins PAGEREF _Toc187234686 \h 57
+Figure III.10. Incremental Capacity Cost (Winter Focus) PAGEREF _Toc187234687 \h 59
+Figure III.11. Reliability Cost PAGEREF _Toc187234688 \h 60
+Figure III.12. Production Cost PAGEREF _Toc187234689 \h 61
+Figure III.13 Components of Winter TRM PAGEREF _Toc187234690 \h 62
+Figure IV.1. EORM as a Function of Capacity Price PAGEREF _Toc187234691 \h 64
+Figure IV.2. Winter Sensitivity Results Relative to the Base Case PAGEREF _Toc187234692 \h 68
+Figure V.1. Minimum Acceptable Summer Target Reserve Margins PAGEREF _Toc187234693 \h 72
+ASSUMPTIONS
+The following sections of this report provide detailed discussions related to the input assumptions associated with the 2024 Reserve Margin Study.
+Reliability Simulation Model
+SERVM was used to calculate Production Costs and Reliability Costs for determining the EORM. These calculations were performed across a broad range of uncertainties for key risk factors, including LFE, weather, unit availability, and performance of non-dispatchable, renewable resources.
+Operating events are selected from actual operating history to determine generating unit availability. For each hour in every simulation, each unit will either be operating, on reserve shutdown, in a partial forced outage, full forced outage, or on scheduled maintenance. The total capacity online and available to serve load is calculated and compared to the hourly load to determine the associated EUE. Performing the random unit status draws for 100 iterations for every hour in the dataset results in average or expected case EUE.
+Throughout the simulation, SERVM perfectly matches load and generation. During actual EUE events, load would be curtailed in large blocks and might be off longer than modeled in SERVM. Modeling load curtailment in this way would increase the expected EUE and the EORM. As such, the results of the 2024 Reserve Margin Study do not represent the most extreme outcome possible.
+Study Year
+To perform the analyses necessary for the 2024 Reserve Margin Study, a study year was selected that corresponds with the current year plus four. Since reserve margin studies are performed every three years, this ensures that the reserve margin study year is always forward looking compared to the current Integrated Resource Plan (“IRP”) budget year. The representative year selected for this study was 2028.
+Weather Years
+The impact of weather on load was reflected by simulating the System using 50 historical annual weather patterns from 1973 through 2022. These 50 patterns were then used to develop annual load shapes that would approximate what the load shape would be in the study year (2028) if the weather pattern matched that of one of the historical years. Two annual load shapes were developed for each of the 50 weather patterns. One assumed the first day of the year occurred on a Tuesday; the other assumed the first day of the year occurred on a Saturday. This was done to vary what day of the week extreme weather conditions were assumed to occur, since extreme weather can occur either on the weekend or on a weekday. These 100 datasets or “weather years” were given equal probability of occurrence.
+The choice of weather years has changed since the 2021 Reserve Margin Study. Previous Reserve Margin Studies added three to four new weather years relative to the prior study. The 2018 study used 54 years, the 2021 study used 58 years, and 61 years of data were available for this study. In this 2024 Study, a rolling 50-year limit was used to give more weight to near-term weather patterns resulting from a smaller weather year data set. Additionally, this is more consistent with the Company’s load forecasting methodology, which generally only consider data back to 1980. To understand the impact of this change, a Winter sensitivity was performed using all 61 weather years, which is discussed in Section REF _Ref165023065 \r \h IV.
+The weather year load shapes were developed by using a forecasting model to establish the relationship between the weather and load. The model was calibrated using weather and load data for the years 2017 through 2022 to reflect recent customer usage patterns. The calibrated model was then used to construct the 100 weather year load shapes using the 50 historical weather patterns and two start days. The resulting loads are integrated hourly load shapes for each of the 100 weather years.
+The temperature data used to develop these load shapes reflect the system weighted average temperature of several locations around the System’s footprint. REF _Ref513785386 \h Figure I.1 and REF _Ref513785456 \h Figure I.2 show the historical low winter and high summer temperatures experienced for the 50 weather years modeled.
+Figure STYLEREF 1 \s I. SEQ Figure \* ARABIC \s 1 1. Historical Low Winter Temperatures
+Figure STYLEREF 1 \s I. SEQ Figure \* ARABIC \s 1 2 Historical High Summer Temperatures
+The final load shapes can also be used to show a probability distribution around the forecasted weather-normal peak loads. This distribution is determined by the expectation of non-weather-normal conditions, represented by the 100 modeled load shapes. REF _Ref83891869 \h Figure I.3 below shows the distribution or peak volatility for each season.
+Figure STYLEREF 1 \s I. SEQ Figure \* ARABIC \s 1 3 Distribution of Modeled Summer and Winter Peak Loads
+It should be noted that the 2024 Study winter peak demands at the highest percentiles are as much as 4.9% higher than those in the 2021 Study.
+Market Modeling
+The SERVM model allows the System to account for expected support from neighboring regions based on historical load diversity and unit performance diversity. Each weather year modeled uses the actual historical temperature and related load diversity for each region. The System is expected to be able to buy power from neighboring regions that do not typically peak in the same hour as the System if those neighboring regions have capacity available to purchase.
+Resource adequacy planning requires modelers to build assumptions about the level of support available from neighboring regions. The actual operation of each unit for every neighboring region is modeled in the same way that resources are modeled within the System. Hydro, CTs, base load thermal resources, renewables, energy storage, and demand response resources (“DRRs”) are discretely modeled so that an accurate hourly market price forecast is produced. The CTs that have been modeled as marginal units to the System for purposes of developing the U-Curves are used to avoid purchasing from neighbors at high costs when they are either dispatching high-cost resources or in system scarcity situations.
+The neighboring regions used in the simulation are summarized in REF _Ref513785495 \h Table I1 (for Summer) and REF _Ref513785504 \h Table I2 (for Winter) below. To ensure those regions have a reasonable level of reliability (approximately equivalent to the 1:10 LOLE threshold), additional generic resources were added to some regions which resulted in the reserve margins modeled in those regions being greater than their published targets. This is necessary since the regional model used in this analysis does not model a neighboring region’s other interconnected regions (i.e., the 2nd tier from the System) to account for the reliability benefit a neighboring region may obtain via purchases from its own neighboring regions. Without the adjustment, the reliability of these regions would be understated and would inappropriately underestimate the System’s access to external markets.
+Table STYLEREF 1 \s I SEQ Table \* ARABIC \s 1 1. Simulation Regions Summary for Summer
+| Region Name
+| Summer Reserve Margin Modeled (%)
+| Peak Load (MW)
+| Average Transfer Capability into Southern Company System (MW)
+| CBM into Southern Company System (MW)
+| Duke
+| 24%
+| 18,837
+| 34
+| 100
+| FPL
+| 31%
+| 27,088
+| 96
+| 250
+| FPLNW
+| 28%
+| 2,389
+| 546
+| -
+| JEA
+| 37%
+| 2,767
+| 88
+| -
+| MEAG
+| 32%
+| 2,447
+| Unlimited
+| -
+| MISO-South
+| 39%
+| 33,858
+| 1,791
+| 300
+| OPC
+| 21%
+| 11,115
+| Unlimited
+| -
+| Progress Carolinas
+| 37%
+| 13,549
+| -
+| -
+| Progress FL
+| 29%
+| 10,971
+| 31
+| -
+| Santee Cooper
+| 18%
+| 5,082
+| 280
+| -
+| SCEG
+| 49%
+| 4,966
+| 59
+| -
+| TAL
+| 41%
+| 631
+| 12
+| -
+| TVA
+| 17%
+| 32,332
+| 480
+| 250
+Table STYLEREF 1 \s I SEQ Table \* ARABIC \s 1 2. Simulation Regions Summary for Winter
+| Region Name
+| Winter Reserve Margin Modeled (%)
+| Peak Load (MW)
+| Average Transfer Capability into Southern Company System (MW)
+| CBM into Southern Company System (MW)
+| Duke
+| 22%
+| 18,129
+| 407
+| 100
+| FPL
+| 45%
+| 22,299
+| 153
+| 250
+| FPLNW
+| 24%
+| 2,246
+| 1,164
+| -
+| JEA
+| 22%
+| 2,913
+| 141
+| -
+| MEAG
+| 39%
+| 2,306
+| Unlimited
+| -
+| MISO-South
+| 34%
+| 29,967
+| 2,374
+| 300
+| OPC
+| 36%
+| 10,240
+| Unlimited
+| -
+| Progress Carolinas
+| 23%
+| 14,735
+| -
+| -
+| Progress FL
+| 25%
+| 11,233
+| 50
+| -
+| Santee Cooper
+| 6%
+| 5,506
+| 533
+| -
+| SCEG
+| 33%
+| 4,932
+| 126
+| -
+| TAL
+| 64%
+| 583
+| 20
+| -
+| TVA
+| 15%
+| 31,964
+| 478
+| 250
+The topology used for the simulations is in REF _Ref513785524 \h Figure I.4.
+Figure STYLEREF 1 \s I. SEQ Figure \* ARABIC \s 1 4. Simulation Topology
+Sales and purchase transactions are simulated between regions when the market price in one region is higher than an adjoining region and there is sufficient transfer capability. To ensure that the System is not over-reliant on neighboring regions and there is no upward economic TRM pressure due to energy arbitrage opportunities that may exist in the Southeastern region, a market calibration was performed. This calibration benchmarked modeled energy with actual, eight-year average, non-PPA market transactions into and out of the Southern Company region.
+During extreme scenarios when loads are high and several units are in a forced outage state within all regions, prices can rise substantially higher than the cost of a CT. Scarcity pricing is the price markets experience when they are short on available capacity. While the scarcity pricing assumptions used in the Reserve Margin Study have been calibrated to historical scarcity market prices, those relationships may not always hold. During scarcity situations, the System will be subject to the market and, because of the importance of service reliability, is expected to make purchases even at prices well above REDACTED if they are reliably available.
+A scarcity pricing curve, developed in conjunction with external consultant Astrapé, used eight years (2015-2022) of historical market purchases to estimate the market purchase cost in scarcity scenarios and is shown in REF _Ref513785556 \h \* MERGEFORMAT Figure I.5 below. Scarcity prices could rise as high as REDACTED if a region experiences a system emergency and shedding firm load is imminent. Scarcity prices are incremental (in addition) to energy market price.
+REDACTED
+REDACTED
+Figure STYLEREF 1 \s I. SEQ Figure \* ARABIC \s 1 5. Scarcity Pricing Curve
+During emergency conditions, the System procures as much energy from the marketplace as possible and utilizes other peaking resources such as interruptible customers, voltage control, and emergency hydro. If the System is still short the necessary capacity to meet load plus operating reserves, Capacity Benefit Margin (“CBM”) is utilized to obtain any additional energy that may be available from neighboring systems. The System has CBM reservations on ties with Duke Energy Carolinas, Florida Power and Light, MISO-South, and Tennessee Valley Authority totaling 900 MW. This CBM capability was modeled and utilized as needed in the analysis.
+Despite the load diversity associated with the regional modeling discussed above, the actual availability of purchases from other entities is not always as available as the SERVM model might indicate. Southern Company’s Commercial Operations organization has advised that under extremely high summer load conditions, the availability of purchases in the marketplace is unlikely to exceed 2,000 MW. Likewise, under extremely high winter load conditions, the availability of purchases in the marketplace is unlikely to exceed 1,500 MW. These limitations exist for two reasons. First, during such extreme conditions, other market participants may also be experiencing conditions that approach the limits of their own systems. Therefore, even though the model may show some available diversity between the regions, those entities may be unwilling to sell that capacity due to the risks and uncertainty within their own systems. Second, during such extreme conditions, there is often a high likelihood of transmission curtailments, in which case some capacity that may be available may not be deliverable to the System – even if there is transmission interface capability available. These limitations cannot be precisely modeled within SERVM, but a combination of both limits on sales price and hurdle rates between regions has been implemented as a means of addressing these issues.
+Merchant capacity has been present in the southeastern United States for over 20 years, but the sporadic nature of its availability requires planners to be conservative in assumptions about its presence in the future. Merchant capacity may be purchased by other load serving entities in the region, may not have firm transmission, or may not have firm fuel supply. For these reasons, merchant capacity was assumed to be unavailable in the base case simulations.
+Peak Load Forecast
+The 2024 Reserve Margin Study was performed with seasonal peak load defined, and the model adjusted weather year load shapes based on those seasonal peak load values. The following 2028 System Peak Load values were used for all primary and sensitivity studies: 32,986 MW (Spring), 39,138 MW (Summer), 38,309 MW (Winter), and 30,286 MW (Autumn). Utilizing these peak loads and related energy forecasts, the model applied a scaling algorithm to adjust the individual weather year load shapes.
+On a weather-normal basis, the System remains a summer peaking utility. However, the gap between the weather-normal summer peak load and the weather-normal winter peak load remains narrow. REF _Ref83895318 \h Figure I.6 below shows the one-year ahead forecasted peak loads since 2006 as well as the budget 2024 forward-looking longer-term forecast. The graph shows how the gap between the summer and winter weather-normal forecasted peak loads has narrowed since 2006 from greater than 6,600 MW to less than 900 MW.
+Figure STYLEREF 1 \s I. SEQ Figure \* ARABIC \s 1 6. Historical Forecasted Weather Normal Peak Loads
+Load Forecast Uncertainty
+In addition to variation from normal weather, there are other sources of forecast uncertainty in the peak load projections when looking several years into the future. Unexpected strength or weakness in the overall economy is a primary source of this uncertainty, or LFE, and the regression and simulation models used to estimate loads have unavoidable inherent error as well. While attempts are made to capture the largest sources of uncertainty, not all uncertainty is captured in the estimation. This combined economic input and load forecast modeling error is expressed as the model margin of error.
+The LFE methodology used in the 2024 Reserve Margin Study was updated in the spring of 2024. LFE four years into the future was estimated using a combination of model error and economic input uncertainty. The model error is based on in-sample percent error between actual, historical System load and model fitted load. Errors were sorted and organized into three bins, with each bin represented by the average and a probability according to the data points contained within. Economic input uncertainty was derived from the EIA’s 2023 Annual Energy Outlook by calculating the percent difference between the high and low economic scenarios with respect to the reference case. Residential, commercial, and industrial differences were combined using System class weights. The economic input uncertainty does not represent System project development or customer choice uncertainty. REF _Ref165293744 \h Table I3 lists the percent errors and associated probabilities for each uncertainty group.
+Table STYLEREF 1 \s I SEQ Table \* ARABIC \s 1 3. Model and Economic Input Bins
+| Model Error
+| Error %
+| -3.74%
+| 0.00%
+| 3.74%
+| Probability
+| 33.3%
+| 33.6%
+| 33.0%
+| Economic Input Uncertainty
+| Error %
+| -2.38%
+| 0.00%
+| 1.42%
+| Probability
+| 33.33%
+| 33.33%
+| 33.33%
+To determine the final LFE values, the model errors and economic input uncertainties were matched together in nine different combinations and sorted from smallest to largest based on the sum of the percent errors in each combination. The probability of each LFE combination is the product of the probabilities at each bin location. This resulted in a maximum under-forecast error of 5.16% (load being 5.16% higher than expected) and a maximum over-forecast error of -6.12% (load being 6.12% lower than expected). By averaging the sorted combinations together in a 1-2-3-2-1 bell curve distribution, the nine LFE points were converted to five LFE points as shown in REF _Ref513785089 \h Table I4. The probability for each LFE value is the sum of the combination values considered in that LFE distribution bucket. For example, points 4 (LFE = -2.32%), 5 (LFE = 0.00), and 6 (LFE = 1.36%) were averaged together to yield -0.32% and the associated probabilities were summed to achieve a combined probability of 33.33%. This was done to minimize the total number of simulations that would be required while still considering a distribution of LFE possibilities.
+Table STYLEREF 1 \s I SEQ Table \* ARABIC \s 1 4. Load Forecast Error
+| Combination Rank
+| 9 LFE
+| 5 LFE
+| SERVM Load Multiplier
+|
+| Econ
+| Model
+| Total Error
+| Probability
+| LFE
+| Probability
+|
+| 1
+| -2.38%
+| -3.74%
+| -6.12%
+| 11.11%
+| -6.12%
+| 11.11%
+| 0.9388
+| 2
+| -2.38%
+| 0.00%
+| -3.74%
+| 11.11%
+| -3.06%
+| 22.32%
+| 0.9694
+| 3
+| -2.38%
+| 3.74%
+| -2.38%
+| 11.21%
+|
+|
+|
+| 4
+| 0.00%
+| -3.74%
+| -2.32%
+| 11.11%
+| -0.32%
+| 33.33%
+| 0.9968
+| 5
+| 0.00%
+| 0.00%
+| 0.00%
+| 11.21%
+|
+|
+|
+| 6
+| 0.00%
+| 3.74%
+| 1.36%
+| 11.01%
+|
+|
+|
+| 7
+| 1.42%
+| -3.74%
+| 1.42%
+| 11.21%
+| 2.58%
+| 22.22%
+| 1.0258
+| 8
+| 1.42%
+| 0.00%
+| 3.74%
+| 11.01%
+|
+|
+|
+| 9
+| 1.42%
+| 3.74%
+| 5.16%
+| 11.01%
+| 5.16%
+| 11.01%
+| 1.0516
+Using this distribution, the minimum and maximum LFE values used in this study are 5.16% (under-forecast) and -6.12% (over-forecast) of the expected value, respectively.
+Generating Unit Capacity Ratings
+Unit ratings are traditionally established for both the summer and winter seasons. Summer ratings are generally established to correspond to maximum output at 95ºF ambient temperatures. Winter ratings for nuclear and steam units are generally unchanged from the summer ratings except for some coal and gas steam units that have limited-duration peaking capacity. Winter ratings for CT and CC resources can vary significantly depending upon the ambient temperature and contracted firm fuel transportation, but generally correspond to maximum output at 40ºF ambient temperatures. Nevertheless, SERVM has features that use ambient temperature curves to determine maximum output at the simulated system temperatures. REF _Ref513785662 \h Figure I.7 below shows the ambient temperature curves (on a per unit output basis) that were applied within SERVM.
+Figure STYLEREF 1 \s I. SEQ Figure \* ARABIC \s 1 7. Ambient Temperature Output Curves
+Total modeled System capacity by technology and season for 2028 is detailed in REF _Ref165555834 \h Table I5 below. Solar, wind, and demand response resource totals represent recognized capacity after applying a single, aggregate System Effective Load Carrying Capacity (“ELCC”) value. This aggregate ELCC value was derived during model setup and calibration to capture any synergies that may exist between multiple renewable technologies and demand side resources. In general, ELCC factors represent the capacity value of resources relative to the value of incremental load that can be added to the system. Hydro capacity represents the average historical maximum capacity across the 50 modeled weather years.
+Table STYLEREF 1 \s I SEQ Table \* ARABIC \s 1 5. 2028 Modeled System Capacity by Technology
+| Technology
+| Summer
+| Winter
+| Biomass
+| 354
+| 354
+| Coal
+| 7,386
+| 7,800
+| Combined Cycle
+| 13,638
+| 14,912
+| Combustion Turbine
+| 7,797
+| 8,116
+| Demand Response
+| 1,294
+| 636
+| Gas Steam
+| 4,351
+| 4,401
+| Hydro
+| 2,174
+| 2,476
+| Nuclear
+| 5,281
+| 5,281
+| Purchased Power
+| 200
+| 200
+| Pumped Storage
+| 493
+| 493
+| Solar
+| 4,028
+| 1,955
+| Storage
+| 920
+| 920
+| Wind
+| 208
+| 103
+| TOTAL
+| 48,124
+| 47,647
+Generating Unit Outage Rates
+Generating units occasionally experience outages, necessitating a period of downtime for repairs. For instance, a unit might operate for 500 to 1,500 hours before encountering a malfunction that takes it offline. The repair process can span from 3 to 500 hours, after which the unit might resume operation for another 500 to 1,500 hours.
+Forced outage and maintenance outage data for the 2024 Reserve Margin Study consist of a series of observations of historical outage events from 2013-2022. These data are assembled into time-to-fail (“TTF”) and time-to-repair (“TTR”) distributions.
+Typical data for a unit might have up to five dozen entries in the TTF input data record, ranging from just a single hour to as many as 30,000 hours for a nuclear unit. Likewise, the typical data will contain a corresponding number of entries in the TTR distribution, ranging from one to 700 hours. As the model processes chronologically, it will randomly choose a TTF duration from the data record and then randomly choose a TTR duration. Individual unit operation, therefore, is a direct reflection of what has happened over approximately ten years. Since units are independent of each other, it is possible that many units can be down at once. An example of this type of input data for a steam unit is shown in REF _Ref513785690 \h Table I6.
+Table STYLEREF 1 \s I SEQ Table \* ARABIC \s 1 6. Steam Unit Sample Time to Fail and Time to Repair Data
+| Unit Name
+| Time-to-
+Fail
+(hours)
+| Time-to-
+Repair (hours)
+| Sample
+Plant
+| 2165
+| 29
+|
+| 3069
+| 3
+|
+| 696
+| 7
+|
+| 2342
+| 1
+|
+| 334
+| 11
+|
+| 1262
+| 5
+|
+| 5706
+| 2
+|
+| 1463
+| 4
+|
+| 1915
+| 53
+|
+| 4010
+| 9
+|
+| 9
+| 90
+Most steam units have their own specific outage history. However, the outage history of similar units has been combined to get a robust set of data from which to take random outage draws. Units with similar history and units for which no outage history was available were modeled using a similar reference unit.
+Partial outages, which result in a derate of a unit, are modeled using the same rigorous approach that is used for full outages. A distribution is built for TTF events, TTR events, and the percentage derate. During the simulation, full outages and partial outages are tracked and randomly drawn.
+The availability data for the System’s CC units are modeled similarly to steam, with appropriate outage and derate TTF and TTR data. Additionally, in real-time operations, the supplemental modes (i.e., full pressure (“FP”) and power augmentation (“PA”) of a CC) are dispatched separately from the base operating mode. The supplemental modes have a higher heat rate value and, therefore, tend to be dispatched during the same demand periods as CTs.
+Due to this random outage draw process, individual unit operation is a direct reflection of what has happened over the selected sample years of data. The resulting forced outage rates, ratios of failed hours to operating hours, or ratios of failed hours to total hours are thus outputs of the model rather than inputs. Because forced outage rates are an output of the model, there can be minor differences in the resulting Equivalent Forced Outage Rate (“EFOR”) from case to case, but with sufficient outage draw iterations in the simulation, the resulting EFOR should converge to an expected value. REF _Ref84497058 \h Table I7 below shows the resulting EFOR from one of the simulated runs, excluding any impacts from cold weather-related outages, which is addressed in the following section.
+Table STYLEREF 1 \s I SEQ Table \* ARABIC \s 1 7. Approximate EFOR by Unit Class
+| Unit Class
+| EFOR (%)
+| Nuclear
+| 1.7
+| Coal
+| 3.6
+| Gas Steam
+| 2.6
+| Combined Cycle
+| 1.4
+| CTs
+| 3.0
+| Battery
+| 5.0
+| Total System
+| 2.5
+The SERVM simulation randomly selects failure events and operating events for each unit. For every hour, certain units will be operating, and other units will be in a failure state. To ensure the model predicts these events accurately, benchmarking was performed between simulated and actual outage probability. This comparison, shown in REF _Ref513785129 \h Figure I.8 below, confirms that the modeled outage rate is consistent with the historical outage rate and indicates that the impact of outage events is adequately modeled.
+Figure STYLEREF 1 \s I. SEQ Figure \* ARABIC \s 1 8. Modeled vs Actual Unplanned Outage Probability
+Incremental Cold Weather Outages
+The discussion of outage data in the previous sections describes the “base” level of outages expected across the year. However, history has demonstrated that under extremely cold conditions, outage rates can increase as coal piles and pipes begin to freeze, as oil thickens to the point that it will not flow sufficiently to operate a facility, or as instrumentation, controls, or other plant equipment begins to freeze. Although uncommon, when extreme weather conditions do occur, the related outage impacts can be significant and increase with decreasing temperature. Historically, these incremental outages have materialized at system weighted temperatures of roughly 17°F and below. However, the Company has undertaken efforts to mitigate cold weather outages. Based on these efforts, it is expected that these incremental outages will not begin to materialize until the local temperatures reach approximately 10°F for retail, owned or operated resources and approximately 18°F for contracted resources. However, because the model utilizes a single system weighted temperature to determine total incremental cold weather outages, a by-unit geographic adjustment is applied. This adjustment accounts for locations that do not typically experience the exact same temperatures as the system weighted average. For example, during cold weather events, resources in northern portions of the service territory may experience an average temperature that is 3°F cooler while resources near the Gulf Coast experience an average temperature that is 5°F warmer. Resources at both locations may be winterized down to a local temperature of 10°F but those resources in the north might begin experiencing cold weather impacts when the system weighted temperature reaches 13°F (10°F local). Conversely, resources near the Gulf Coast might not begin to experience cold weather impacts until the system weighted temperature reaches 5°F (also 10°F local). REF _Ref513785739 \h Figure I.9 shows (a) a trend of historical unit outages directly attributed to cold weather conditions, and (b) a trend representing the assumptions used in this study that includes expected performance improvements, geographic adjustments, and the impacts of time-to-repair constraints.
+Figure STYLEREF 1 \s I. SEQ Figure \* ARABIC \s 1 9. Cold Weather Outage Assumptions
+Beginning with the 2024 Reserve Margin Study, cold weather outage curves were also applied to neighboring regions located outside of Florida. In coordination with our external consultant, Astrapé, unique curves were created for each region based on publicly available cold weather outage data. Astrapé recommended the use of linear curves for these regions. To understand the impacts of using an exponential curve within the Southern System as was used in previous studies, a sensitivity was performed and discussed in Section REF _Ref175143890 \r \h IV.F. REF _Ref165453238 \h \* MERGEFORMAT Figure I.10 shows the incremental cold weather outage EFOR curves applied to each neighboring system as well as the final calibrated, linear-based curve used within the Southern System.
+Figure STYLEREF 1 \s I. SEQ Figure \* ARABIC \s 1 10 Cold Weather Outage Assumptions
+Planned and Maintenance Outage Patterns
+Planned and Maintenance outages occur most often in the shoulder months because the need for units to run during the peak demand months does not allow for a lot of down time.
+Traditionally, planned outage events are not scheduled during either the summer months (June-September) or the winter months (January and February) unless it cannot otherwise be avoided, or for oil units in maintenance areas under the ozone National Ambient Air Quality Standards (“NAAQS”). While the model is capable of scheduling planned outages during low load periods, it is more appropriate to model planned outages that mirror the actual outage schedules generated by the System Fleet Reliability team. This ensures that the System Planned Outage MW targets are maintained during the simulations.
+Regarding maintenance outages, the model schedules these outages during low demand periods in such a way that the maintenance outage rate closely matches the desired seasonal rates, which are based on historical maintenance outage data. In general, this results in modeled maintenance outages that are reasonably consistent with the actual seasonal rates.
+REF _Ref84497341 \h Figure I.11 below shows the likelihood that a resource will be assigned a maintenance outage in any given month.
+Figure STYLEREF 1 \s I. SEQ Figure \* ARABIC \s 1 11. Maintenance Outage Probability by Month
+Commitment and Operating Reserves
+Resources are committed to match current operating practices. Each week during a simulation, the loads for each hour of the week are examined and the optimum dispatch is set to meet the system peak load while maintaining the required operating reserves for every hour. The optimum dispatch takes into consideration which units are available, the minimum uptimes and downtimes for each unit, the startup costs and startup durations for each unit, and the necessary required operating reserves. Operating reserves are required by the Southern Balancing Authority, which is the entity responsible for balancing load and generation in the region to meet North American Electric Reliability Corporation (“NERC”) Reliability Standards. The Southern Balancing Authority provides guidance regarding the amount of operating reserves that should be modeled based on their operational requirements. That guidance included a total operating reserve requirement of 2,347 MW, broken down according to the following components:
+Regulating Reserves: 500 MW + 8% of nominal solar capacity, totaling 1,097 MW
+Contingency Reserve-Spinning: 625 MW
+Contingency Reserve-Supplemental (Non-Spinning): 625 MW
+In addition, the Southern Balancing Authority’s guidance established a firm load curtailment threshold of 1,250 MW of total operating reserves, meaning that firm load should be curtailed to maintain a minimum total operating reserve requirement of 1,250 MW. However, SERVM cannot model a fixed MW operating reserve value for the purposes of firm load curtailment. Rather, SERVM can be configured to curtail firm load to maintain Regulating Reserves plus Contingency Reserve-Spinning. Therefore, only 153 MW of Contingency Reserve-Spinning was modeled so that the sum of Regulating Reserve and Contingency Reserve-Spinning did not exceed 1,250 MW. The remaining 1,097 MW of the 2,347 MW of operating reserves was modeled as Contingency Reserve-Supplemental, such that the final modeled operating reserves were as follows:
+Regulating Reserves: 1,097 MW
+Contingency Reserve-Spinning: 153 MW
+Contingency Reserve-Supplemental (Non-Spinning): 1,097 MW.
+Dispatch Order
+Generation resources are generally dispatched economically based upon dispatch prices. The exceptions include energy-limited resources and non-dispatchable resources. Energy-limited resources, such as hydro and pumped storage hydro, are typically scheduled based on availability of water and expected system costs. The output of non-dispatchable resources, such as solar and wind, vary with the weather. Therefore, the dispatchable resources are typically optimized around the output of these other non-dispatchable or pre-scheduled resources. Demand response resources either self-curtail based upon price (e.g., Real Time Pricing programs) or are called whenever the system reaches certain reliability conditions (such as a system alert). REF _Ref513785774 \h \* MERGEFORMAT Figure I.12 below shows the dispatch stack order for the dispatchable resources modeled in the 2024 Reserve Margin Study. The chart excludes the energy-limited, non-dispatchable, and demand response resources.
+REDACTED
+REDACTED
+Figure STYLEREF 1 \s I. SEQ Figure \* ARABIC \s 1 12. System Dispatch Stack
+Dispatchers’ Peak Load Estimate Error
+The dispatchers’ peak load estimate error consists of three separate time periods, including day ahead, four-hour ahead, and hour ahead. The amount of dispatchers’ peak load estimate error modeled for each of these time periods was based on historical forecast error data for the years 2018 through 2022. The table below shows the resulting mean and standard deviation that served as the basis for the modeled dispatchers’ peak load estimate error.
+Table STYLEREF 1 \s I SEQ Table \* ARABIC \s 1 8. Historical Dispatchers’ Peak Load forecast error
+|
+| Day Ahead Mean
+| Day Ahead Std Dev
+| 4-Hour Mean
+| 4-Hour Std Dev
+| Hour Ahead Mean
+| Hour Ahead Std Dev
+| January
+| 1.3%
+| 4.5%
+| 0.4%
+| 1.7%
+| 0.5%
+| 2.8%
+| February
+| 0.8%
+| 3.6%
+| 0.3%
+| 1.4%
+| 0.5%
+| 2.4%
+| March
+| 0.8%
+| 2.7%
+| 0.3%
+| 1.3%
+| 0.5%
+| 2.1%
+| April
+| 0.4%
+| 2.7%
+| 0.2%
+| 1.3%
+| 0.4%
+| 2.1%
+| May
+| 0.5%
+| 3.3%
+| 0.1%
+| 2.0%
+| 0.3%
+| 2.5%
+| June
+| 1.0%
+| 4.0%
+| 0.2%
+| 2.2%
+| 0.5%
+| 3.1%
+| July
+| 0.8%
+| 3.2%
+| 0.2%
+| 1.3%
+| 0.5%
+| 2.3%
+| August
+| 0.8%
+| 3.0%
+| 0.2%
+| 1.2%
+| 0.4%
+| 2.2%
+| September
+| 0.6%
+| 3.1%
+| 0.1%
+| 1.2%
+| 0.2%
+| 2.0%
+| October
+| 0.3%
+| 3.0%
+| 0.1%
+| 1.3%
+| 0.1%
+| 2.1%
+| November
+| 0.1%
+| 3.2%
+| 0.1%
+| 1.4%
+| 0.1%
+| 2.4%
+| December
+| 1.1%
+| 4.9%
+| 0.2%
+| 2.7%
+| 0.4%
+| 3.5%
+System-Owned Conventional Hydro Generation
+System-owned hydro capacity of 3,250 MW (projected for the year 2028) was divided into two components:
+Scheduled Hydro
+Emergency Hydro
+This study includes 50 different hydro scenarios that are matched with the 50 weather scenarios. The 50 scenarios chosen are based on the past 50 years (1973-2022) of weather and hydro data. For each of the scenarios, scheduled hydro capacity is modeled based on actual history.
+The optimal dispatch of hydro resources is not solely an economic decision. Planners must consider river flow requirements and impacts on other reservoirs in the same river system. During drought conditions, it is rare that the full capacity of all hydro resources would be dispatched at the same time. The total hydro capacity that is not used as part of the daily schedule would be available as emergency hydro. Only in cases of extreme need is the emergency hydro capacity called upon to operate. Also, the emergency hydro block is only available for a small number of events per year. To model this within SERVM, the emergency hydro block is tied to a flex energy account to reflect the limited availability of this emergency hydro energy. If the emergency hydro capacity is needed to meet load during emergencies, the model will pull energy from this account. If the energy account becomes depleted, the capacity will not be available during subsequent emergencies.
+REF _Ref513785806 \h Figure I.13 below depicts the average monthly energy produced by the two components of System-owned hydro generation. The figure illustrates the typical distribution of available hydro energy across the months of the year.
+Figure STYLEREF 1 \s I. SEQ Figure \* ARABIC \s 1 13. Average Hydro Energy Availability
+The availability of hydro energy can vary year to year for reasons largely attributed to weather. REF _Ref513785839 \h Figure I.14 below illustrates the total available scheduled hydro energies from the past 50 weather years (1973-2022).
+Figure STYLEREF 1 \s I. SEQ Figure \* ARABIC \s 1 14. Annual Scheduled Hydro Energies
+SEPA Conventional Hydro
+The Southeastern Power Administration (“SEPA”) conventional hydro is less flexible in its operation than the System-owned hydro. The System has a contractual right to an allocation of the SEPA hydro capacity. Within SERVM, SEPA conventional hydro is modeled as several hydro units with minimum daily dispatches. As currently modeled, the System is entitled to 579 MW with an average minimum daily schedule of 1,400 MWh per day and an average yearly energy allocation of 85 GWh.
+Pumped Storage Hydro
+Pumped storage hydro is a resource that is designed to pump water to an elevated reservoir using energy at off-peak periods when prices are low, and to generate electricity by releasing that water at times when prices are high. The dispatch of pumped storage is not simply a reliability decision, although the reservoir should always be kept at a level where energy will be available for emergency conditions. The System has a total of 493 MW of pumped storage resources spread across two different locations (Wallace Dam and Rocky Mountain Pumped Storage Facility). The Rocky Mountain Pumped Storage Facility is co-owned with Oglethorpe Power Corporation (“OPC”).
+Battery Energy Storage
+Total battery energy storage capacity modeled on the System is 809 MW. Of this, 631 MW is stand-alone and 178 MW is paired with solar; 265 MW has a 2-hour duration, and 544 MW has a 4-hour duration. All batteries except one representing less than 1% of total System battery capacity were configured to provide operating reserves support during discharge and recharge operation. Daily scheduling was also allowed up to total duration minus one hour to ensure that the batteries could provide operating reserves support in all hours. On days during which peak loads were expected to be greater than 70% of the annual forecasted peak, scheduling is ignored in favor of preserving energy for system reliability.
+Demand Response Resources
+Approximately 2,794 MW of DRR capacity (contract value) is included in the analysis for the summer, and approximately 2,621 MW is included for the winter. These DRR include such programs as Interruptible Service (“IS”), Real-Time Pricing (“RTP”), Direct Load Control (“DLC”), Conservation Voltage Reduction (“CVR”), and Stand-By Generation (“SBG”). The model reflects both the seasonal availability as well as the contract constraints (e.g., hours per year, days per week, and hours per day) for these energy-limited resources, so there is no need to adjust the contract capacities in the model.
+These resources occupy specific positions in the dispatch order as established by an assumed dispatch price. The position in dispatch affects their ability to reduce EUE and alters the frequency with which they are called. Some of these resources, such as RTP, are called based on economics and have an assumed dispatch price that is consistent with the expectation of the market prices that would result in self-curtailment by the customer. Others are called only to avoid EUE, and their assumed dispatch price is principally used to establish the priority in which these programs are called. That priority is established based on how operations would anticipate them to be called in a generation shortfall event with CVR being called first, followed by DLC, then IS, and finally SBG. Within the IS category, the programs are split into three blocks so that all contracts are not called simultaneously.
+Renewable Resources
+The amount of renewable resources modeled for the System includes:
+Biomass: 315 MW
+Landfill Gas: 39 MW
+Solar: 9,206 MW
+Wind: 476 MW
+Biomass and landfill gas resources were modeled like other resources with a fixed output level based on their nominal capacity. However, the output of wind and solar resources are dependent upon weather conditions and location. Except for a few of the wind resources on the System that have been contracted based on a fixed hour-by-hour schedule, the output of the wind and solar resources varies moment-by-moment, hour-by-hour, and year-by-year. These wind and solar resources have been modeled with annual, 8,760-hour profiles that are consistent with each of the 50 weather years as well as consistent with their location. Because the profiles included in the model for these resources reflect the hour-over-hour and year-over-year variances in output, there is no need to adjust the resources by multiplying by ELCC factors.
+As solar penetration continues to grow on a yearly basis, it is important to note that the solar impact to summer reliability remains much higher than winter. REF _Ref165470392 \h Figure I.15 below shows the expected penetration of solar resources on the System through 2028 along with their corresponding ELCC summer and winter capacity values. The capacity contribution from solar resources to both seasons remains well below nominal capacity indicating that solar alone cannot meet all System capacity needs. Moreover, this capacity value continues to decrease per MW of new solar added to the System. For example, between 2026 and 2027, 2,975 MW of nominal solar capacity, including estimated expansion, is projected to be added to the System, while the expected increase in summer solar capacity contributing to reliability is only 911 MW, or 31% of nominal capacity. The following year an additional 400 MW of nominal capacity is expected but the reliability-contributing capacity is only 100 MW, or 25% of nominal capacity.
+Figure STYLEREF 1 \s I. SEQ Figure \* ARABIC \s 1 15 Solar Resource Penetration
+Natural Gas Availability
+Natural gas operates in accordance with the Gas Day (i.e., 9AM-9AM), whereas electricity operates according to the Electric Day (i.e., Midnight to Midnight). Firm gas transportation is procured for most of the fleet’s gas-fired units that do not have oil backup. The amounts to be procured are generally driven by the System’s Fuel Policy. Although case-specific situations may allow for deviations from the Fuel Policy, for purposes of the 2024 Reserve Margin Study, all facilities under control of the Operating Companies were modeled in compliance with the Fuel Policy unless they had no contractual rights to dictate the amount of gas transportation to be purchased for the facility.
+SERVM models both firm and non-firm gas transportation and its associated availability. During periods of high demand for natural gas, the availability of gas-fired resources is limited to those with firm transportation contracts since interruptible transportation is not guaranteed to be available. This constraint has been incorporated into the modeling process. The model begins phasing out interruptible transportation (i.e., it starts becoming unavailable) when the daily minimum system weighted temperature falls below REDACTED or when the daily maximum temperature rises above REDACTED. When the daily minimum temperature falls below REDACTED or the daily maximum temperature rises above REDACTED, no interruptible transportation is available for that Gas Day. REF _Ref84497615 \h \* MERGEFORMAT Figure I.16 below illustrates the availability of interruptible transportation as modeled within SERVM.
+0228600REDACTED
+00REDACTED
+Figure STYLEREF 1 \s I. SEQ Figure \* ARABIC \s 1 16. Interruptible Gas Transportation Availability Model
+The model assumes that gas molecules are available to fill all pipeline capacity in all hours but does not account for underground gas storage controlled by Southern Company. This storage is available to portions of the retail operating company fleet depending on location and pipeline capacity availability should gas supplies get interrupted.
+Oil Availability
+For dual-fuel (gas/oil) and oil-fired units, oil availability is dependent upon onsite storage. Storage capacity is limited, so when gas is not available, onsite oil supply will deplete quickly. This may limit a unit’s availability if onsite storage refilling efforts cannot keep up with usage.
+Capacity Cost
+For the type of analysis performed in this study, where the objective is to balance the cost of the incremental capacity with the reliability benefits achieved by that capacity addition, it is necessary that the capacity considered represents a true reliability addition, as opposed to an addition for both reliability and energy economics. As such, simple-cycle CT technologies are the appropriate resources to be utilized for the evaluation. Therefore, the cost associated with advancing a CT one year is the cost of capacity used in the analysis. This cost is also known as the “economic carrying cost” or one-year deferral cost associated with that resource. Since both summer and winter evaluations were performed in the 2024 Reserve Margin Study, economic carrying costs based on both summer and winter performance characteristics were needed. The CT cost model is a REDACTED REDACTED REDACTED REDACTED REDACTED. Each CT is modeled with a 383 MW winter and summer rating and economic carrying costs in 2028 dollars of REDACTED REDACTED for the winter study and REDACTED REDACTED for the summer study. The REDACTED winter carrying cost is due to the expansion CT being capable of higher output at its winter 40°F rating as compared to its lower summer 95°F rating.
+Cost of Expected Unserved Energy
+To estimate the cost of EUE, Freeman, Sullivan & Company conducted an outage cost survey of Georgia Power Company and Mississippi Power Company customers in 2011. The analysis of the survey results was updated in September 2020 by The Brattle Group. This survey was conducted among the following four customer classes:
+Residential
+Commercial (below 1 MW average demand)
+Industrial (below 1 MW average demand)
+Large business (commercial and industrial customers above 1 MW average demand)
+The cost of EUE (in 2028$) for these four customer classes is shown in REF _Ref513785933 \h Table I9 below for both the summer and winter periods. The cost of EUE was then adjusted by the customer weighting factor representing recent relative weighting of customers in that class. The results of that weighting are also shown.
+Table STYLEREF 1 \s I SEQ Table \* ARABIC \s 1 9. EUE Cost
+| EUE COST IN 2028 $
+| Outage Scenario
+| Residential ($/kWh)
+| Commercial ($/kWh)
+| Industrial ($/kWh)
+| Large Business ($/kWh)
+| Weighted Average ($/kWh)
+| Weighting Factor (%)
+| 45.44%
+| 22.03%
+| 2.58%
+| 29.95%
+|
+| 1 hour, no warning, Summer
+| $2.92
+| $197.33
+| $144.59
+| $40.42
+| $60.63
+| Contribution to Weighted Average
+| $1.32
+| $43.46
+| $3.73
+| $12.11
+|
+| 1 hour, no warning,
+Winter
+| $2.65
+| $125.24
+| $97.67
+| $29.95
+| $40.28
+| Contribution to Weighted Average
+| $1.20
+| $27.58
+| $2.52
+| $8.97
+|
+The result was a Value of Loss Load (“VOLL”) of $60.63/kWh for summer and $40.28/kWh for winter.
+SIMULATION PROCEDURE
+Case Specification
+The simulations performed for the 2024 Reserve Margin Study were designed to estimate System generation reliability across a wide range of weather conditions, LFEs, and reserve margins. Eleven discrete reserve margin levels were simulated to calculate the expected costs over a broad range of scenarios in the winter. Thirteen discrete values were modeled for the summer. Load shapes corresponding to the 100 weather datasets (50 weather years, each with Tuesday and Saturday start days), were run in combination with varying LFEs. Weather years were paired such that loads, hydro scenarios and renewable profiles were consistent. The simulation variables were as depicted in REF _Ref513785953 \h Table II1 below. Because peak load forecasts are different between winter and summer and the same 383 MW capacity expansion resource (sized at 1% of winter peak) is utilized for both seasons, the incremental reserve margins are different between seasons.
+Table STYLEREF 1 \s II SEQ Table \* ARABIC \s 1 1. SERVM Case Variables
+| Weather and Hydro Years
+| Winter Reserve Margins
+| Summer Reserve Margins
+| LFEs
+| 1973-2022
+| 20%
+| 12.00%
+| -6.12%
+|
+| 21%
+| 12.98%
+| -3.06%
+|
+| 22%
+| 13.96%
+| -0.32%
+|
+| 23%
+| 14.94%
+| 2.58%
+|
+| 24%
+| 15.92%
+| 5.16%
+|
+| 25%
+| 16.90%
+|
+|
+| 26%
+| 17.88%
+|
+|
+| 27%
+| 18.86%
+|
+|
+| 28%
+| 19.83%
+|
+|
+| 29%
+| 20.81%
+|
+|
+| 30%
+| 21.79%
+|
+|
+|
+| 22.77%
+|
+|
+|
+| 23.75%
+|
+Positive LFE represents an under forecasted load, meaning actual load was greater than the forecasted load.
+Existing System resources also needed to be removed from the model to establish the initial 20.00% winter and 12.00% summer reserve margins prior to the incremental addition of the expansion resources. The choice of these resources was generally based on depreciation date although some smaller CT resources were chosen based on capacity to precisely target the exact seasonal capacity required to within 2 MWs of total System capacity.
+Table STYLEREF 1 \s II SEQ Table \* ARABIC \s 1 2. Capacity Removed to Establish the Initial Reserve Margin Level
+| Technology
+| Winter Capacity Removed for 20% RM
+| Summer Capacity Removed for 12% RM
+| Coal
+| 690
+| 2,088
+| Gas Steam
+| 721
+| 1,350
+| Combustion Turbine
+| 95
+| 720
+| Total Capacity Removed
+| 1,506
+| 4,158
+Without accounting for load forecast uncertainty, the total number of combinations for the analysis would be 50 × 2 × 11, or 1,100 cases. Considering the five load forecast points yields 5,500 cases (50 × 2 × 11 × 5 cases). Each of these cases were then evaluated 100 different times, each with a different set of random forced outage draws on the generating resources, yielding 550,000 production cost simulations (50 x 2 x 11 x 5 x 100 cases). Estimating EUE, LOLE, and costs for each of the 550,000 simulations provides sufficient data for regression analysis of other combinations not specifically simulated. The Summer focus analysis required 650,000 production cost simulations (50 x 2 x 13 x 5 x 100 cases) due to the two additional reserve margin levels.
+Probabilities of Occurrence for Input Variables
+As discussed in the previous sections, the chronological variable inputs into the model are used to represent appropriate ranges of data. For example, the weather years selected to exemplify load variations due to temperature changes represent 50 years of historical data. This is also true for the hydro patterns and solar profiles developed. Each, however, were modeled twice – once with a Saturday start and once with a Tuesday start – resulting in 100 different weather/hydro datasets. The implementation of load forecast uncertainty into the evaluation is representative of the potential (supported by historical information) LFEs when considering the future. Each of the five forecast errors has its own probability of occurrence. For each reserve margin studied, the combined set of input variables results in 500 individual cases having their own designated probability of occurrence to be used in the probabilistic evaluation. REF _Ref513785971 \h Table II3 below depicts the probabilities assigned to each of these variables and the resulting probability for each case. This total case probability is determined by multiplying the probabilities of the determinant variables. The weather years and start days all have equal probability of occurrence.
+Table STYLEREF 1 \s II SEQ Table \* ARABIC \s 1 3. Simulation Case Probability
+| LFE
+| LFE Probability
+| Weather/Hydro Probability
+| Start Days Probability
+| Total Case Probability
+| -6.12%
+| 0.1111
+| 0.02
+| 0.5
+| 0.001111
+| -3.06%
+| 0.2232
+| 0.02
+| 0.5
+| 0.002232
+| -0.32%
+| 0.3333
+| 0.02
+| 0.5
+| 0.003333
+| 2.58%
+| 0.2222
+| 0.02
+| 0.5
+| 0.002222
+| 5.16%
+| 0.1101
+| 0.02
+| 0.5
+| 0.001101
+Reliability Model Simulations
+SERVM incorporates Monte Carlo techniques to conduct generation reliability simulations. Monte Carlo analysis uses a random number generator to determine generating unit availability for the system. For each iteration, the model simulations will randomly select the state of a generating unit as fully operational, partially failed, or completely failed and determine if the system experiences loss of load and associated EUE.
+For each of the 500 cases, each hour of the year was modeled with 100 draws from the distribution of generating unit outage and duration data to determine if there exists a deficiency of generating capacity to meet load demand. The 100 iterations were averaged together to establish a case-specific result. A deficiency of generating capacity in any hour is recorded as a loss of load hour. The magnitude of the outage during that hour is measured by EUE. The EUE is then aggregated by month and multiplied by the respective value of lost load for that month to determine the EUE cost. The monthly EUE costs are then summed together for the year to determine EUE cost for that case. The case EUE cost is then multiplied by the probability of occurrence for that case and the results for all cases are summed to determine the expected value of EUE cost for that reserve margin simulation. This process is repeated to determine the expected value of generation costs, import costs, emergency purchase costs, the cost of non-firm outages (i.e., demand response costs), and costs associated with non-spinning reserve shortfalls.
+For each reserve margin simulation, the expected value of generation costs and import costs are then summed together to establish “Production Cost”. Likewise, the expected value of emergency purchases (or sales), demand response costs, costs associated with non-spinning reserve shortfalls, and EUE costs are summed to establish “Reliability Cost.” Figure II.1 below shows the formula used for calculating EUE. Other components are calculated similarly.
+Expected Y= i=1n(Yi* Probabilityi)
+where
+Y=EUE and,
+n=number of cases
+Figure STYLEREF 1 \s II. SEQ Figure \* ARABIC \s 1 1 Variable Calculation Formula
+REF _Ref513786005 \h Table II4 thru REF _Ref513786037 \h Table II7 below provide an example of implementing the formula for a sample data set containing the 10 worst Reliability Cost cases. REF _Ref513786005 \h Table II4 shows the Reliability Cost components with their per case weighted costs. REF _Ref513786050 \h Table II5 shows the probability weighting of the Total Reliability Cost. For illustrative purposes, all calculations are for a 26% winter reserve margin simulation.
+Table STYLEREF 1 \s II SEQ Table \* ARABIC \s 1 4. Sample Calculation Top 10 Worst Reliability Costs at 26% Winter Reserves
+| Data Set
+| Emergency Purchases (MWh)
+| Emergency Purchases Cost ($/MWH)
+| EUE (MWh)
+| EUE Cost ($/MWH)
+| Demand Response Calls (MWh)
+| Weighted DR Cost ($/MWH)
+| Loss of Non- Spin (MWh)
+| Loss of Non- Spin Cost ($/MWH)
+| 1
+| REDACTED
+| REDACTED
+| 41,388
+| $40,280
+| 27,804
+| REDACTED
+| 28,888
+| REDACTED
+| 2
+| REDACTED
+| REDACTED
+| 33,959
+| $40,280
+| 27,685
+| REDACTED
+| 30,370
+| REDACTED
+| 3
+| REDACTED
+| REDACTED
+| 62,206
+| $40,280
+| 30,923
+| REDACTED
+| 41,758
+| REDACTED
+| 4
+| REDACTED
+| REDACTED
+| 20,037
+| $40,280
+| 26,263
+| REDACTED
+| 17,369
+| REDACTED
+| 5
+| REDACTED
+| REDACTED
+| 54,290
+| $40,280
+| 31,229
+| REDACTED
+| 45,646
+| REDACTED
+| 6
+| REDACTED
+| REDACTED
+| 15,731
+| $40,280
+| 25,171
+| REDACTED
+| 19,459
+| REDACTED
+| 7
+| REDACTED
+| REDACTED
+| 21,947
+| $40,280
+| 34,676
+| REDACTED
+| 74,170
+| REDACTED
+| 8
+| REDACTED
+| REDACTED
+| 8,512
+| $40,280
+| 20,724
+| REDACTED
+| 12,133
+| REDACTED
+| 9
+| REDACTED
+| REDACTED
+| 7,077
+| $40,280
+| 22,566
+| REDACTED
+| 46,828
+| REDACTED
+| 10
+| REDACTED
+| REDACTED
+| 7,076
+| $40,280
+| 17,683
+| REDACTED
+| 12,915
+| REDACTED
+Table STYLEREF 1 \s II SEQ Table \* ARABIC \s 1 5. Worst Reliability Costs Weighted Probability
+| Data Set
+| Probability
+| Emergency Purchases (M$)
+| EUE (M$)
+| Demand Response Calls (M$)
+| Loss of Non-Spin (M$)
+| Total Reliability Cost (M$)
+| Weighted Reliability Cost
+| 1
+| 0.002222
+| REDACTED
+| 1,667.10
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| 2
+| 0.001101
+| REDACTED
+| 1,367.86
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| 3
+| 0.003333
+| REDACTED
+| 2,505.66
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| 4
+| 0.002222
+| REDACTED
+| 807.10
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| 5
+| 0.002232
+| REDACTED
+| 2,186.82
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| 6
+| 0.001101
+| REDACTED
+| 633.64
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| 7
+| 0.003333
+| REDACTED
+| 884.02
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| 8
+| 0.002222
+| REDACTED
+| 342.88
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| 9
+| 0.002232
+| REDACTED
+| 285.06
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+| 10
+| 0.001101
+| REDACTED
+| 285.00
+| REDACTED
+| REDACTED
+| REDACTED
+| REDACTED
+A similar calculation for the same 10 cases is performed for the components of Production Cost as demonstrated in REF _Ref513786096 \h \* MERGEFORMAT Table II6 and REF _Ref513786037 \h \* MERGEFORMAT Table II7.
+Table STYLEREF 1 \s II SEQ Table \* ARABIC \s 1 6. Production Cost Components for Sample Data Set
+| Data Set
+| Generation Costs ($M)
+| Purchases (MWh)
+| Purchase Cost ($/MWH)
+| 1
+| REDACTED
+| REDACTED
+| REDACTED
+| 2
+| REDACTED
+| REDACTED
+| REDACTED
+| 3
+| REDACTED
+| REDACTED
+| REDACTED
+| 4
+| REDACTED
+| REDACTED
+| REDACTED
+| 5
+| REDACTED
+| REDACTED
+| REDACTED
+| 6
+| REDACTED
+| REDACTED
+| REDACTED
+| 7
+| REDACTED
+| REDACTED
+| REDACTED
+| 8
+| REDACTED
+| REDACTED
+| REDACTED
+| 9
+| REDACTED
+| REDACTED
+| REDACTED
+| 10
+| REDACTED
+| REDACTED
+| REDACTED
+Table STYLEREF 1 \s II SEQ Table \* ARABIC \s 1 7. Production Cost Weighted Probability
+| Data Set
+| Probability
+| Generation Costs ($M)
+| Purchase Cost ($M)
+| Total Production Cost ($M)
+| Weighted Total Production Cost ($M)
+| 1
+| 0.002222
+| REDACTED
+| REDACTED
+| 5,663.96
+| 12.59
+| 2
+| 0.001101
+| REDACTED
+| REDACTED
+| 5,647.90
+| 6.22
+| 3
+| 0.003333
+| REDACTED
+| REDACTED
+| 6,057.14
+| 20.19
+| 4
+| 0.002222
+| REDACTED
+| REDACTED
+| 5,288.51
+| 11.75
+| 5
+| 0.002232
+| REDACTED
+| REDACTED
+| 6,036.43
+| 13.47
+| 6
+| 0.001101
+| REDACTED
+| REDACTED
+| 5,290.16
+| 5.82
+| 7
+| 0.003333
+| REDACTED
+| REDACTED
+| 5,792.06
+| 19.30
+| 8
+| 0.002222
+| REDACTED
+| REDACTED
+| 4,986.81
+| 11.08
+| 9
+| 0.002232
+| REDACTED
+| REDACTED
+| 5,440.93
+| 12.14
+| 10
+| 0.001101
+| REDACTED
+| REDACTED
+| 4,988.87
+| 5.49
+By applying regression analysis to the expected values of Production Cost and Reliability Cost, a curve summarizing the Production Cost, Reliability Cost, and Incremental Capacity Cost as a function of reserve margin was developed. These results are discussed in detail in the next section.
+BASE CASE RESULTS
+Winter Study Results
+In theory, the economic optimum reserve margin, or the “EORM”, should be the reserve margin that results in the minimum total system costs. The three components of total system costs (Production Cost, Reliability Cost, and Incremental Capacity Cost), which vary across reserve margin levels were added together to create an aggregate total system cost curve (the “U-Curve”). The minimum point on the resultant U-Curve, which is at 22.75%, represents the EORM. This graph is presented below.
+Figure STYLEREF 1 \s III. SEQ Figure \* ARABIC \s 1 1. Winter EORM U-Curve
+Currently, the six key determinants affecting winter reliability risk include:
+the narrowing of summer and winter weather-normal peak loads
+the distribution and duration of peak loads relative to the norm
+cold-weather-related unit outages
+the penetration of solar resources
+increased reliance on natural gas
+the availability of market purchases
+Because all these drivers disproportionately impact winter reliability, the System’s primary reliability risk continues to be in the winter. To further demonstrate that winter reliability risk exceeds that of the summer, an additional study was performed that had several winter drivers removed, including cold weather outages. The reserve margin range analyzed was also reduced from the 20-30% performed in the winter study to 12-24% due to the low summer EUE in the winter reserve margin range. The seasonal EUE data from this study is shown in REF _Ref513786287 \h Figure III.2 below. Through all reserve margin levels analyzed, EUE is still greater in the winter than in the summer, even with the removal of several winter drivers.
+Figure STYLEREF 1 \s III. SEQ Figure \* ARABIC \s 1 2. Seasonal EUE by Reserve Margin
+Summer-Only Reserve Margin Results
+Given that the System’s primary reliability risk is in the winter, it is still useful to determine a summer-only reserve margin without consideration of any winter economics or reliability risks. The following graph shows that the Summer-Only EORM, without consideration of winter months and related winter drivers, would be 18.25%.
+Figure STYLEREF 1 \s III. SEQ Figure \* ARABIC \s 1 3. Summer-only EORM U-Curve (Without Winter Months)
+There are several factors that contribute to the summer-only EORM being lower than winter. The absence of cold-weather-driven outages and the availability of more interruptible or non-firm natural gas capacity contribute to higher summer reliability. However, other drivers differentiating the seasons remain. Those include higher winter peak load volatility and more market resources being available in the summer, leading to more economic market purchases. This is caused by many of Southern Company’s northern neighbors being modeled as carrying more summer reserves once they were calibrated to an annual reliability level of 1-in-10, as shown in REF _Ref513785495 \h \* MERGEFORMAT Table I1 and REF _Ref513785504 \h \* MERGEFORMAT Table I2. REF _Ref84497854 \h \* MERGEFORMAT Figure III.4 below shows the average monthly purchases by season.
+right187325REDACTED
+00REDACTED
+Figure STYLEREF 1 \s III. SEQ Figure \* ARABIC \s 1 4. Average Monthly Energy Purchases by Reserve Margin
+Risk Analysis
+The winter-focused combination of Production Cost, Reliability Cost, and Incremental Capacity Cost results in a EORM of 22.75%. However, since Production Cost and Reliability Cost are highly dependent on the selected scenario, consideration of only the EORM does not give a complete picture. REF _Ref513786332 \h \* MERGEFORMAT Figure III.5 below illustrates the volatility in Production Cost and Reliability Cost exposure. In scenarios in which load grows faster than expected, temperatures are higher (or lower) than expected, or unit performance is poorer than expected, the cost exposure can be much higher than the expected case.
+Figure STYLEREF 1 \s III. SEQ Figure \* ARABIC \s 1 5. Production and Reliability Cost Distributions for Winter Reserve Margins
+Focusing on the most extreme cases shown in REF _Ref513786332 \h Figure III.5 for each reserve margin further highlights the risk in carrying low reserves. REF _Ref513786345 \h Figure III.6 below shows the exposure for the top 10% of all cases, as ranked by Production Costs and EUE cost exposure. The most extreme case simulated at a 20% winter reserve margin shows over $11 billion per year in total exposure, while the most extreme case at a 26% reserve margin is approximately $8.6 billion.
+Figure STYLEREF 1 \s III. SEQ Figure \* ARABIC \s 1 6. Top 10% Distribution for Winter Reserve Margins
+To protect against the potential for an extremely high-cost outcome, additional risk analyses should be performed to compare highly volatile Production Costs and Reliability Costs and fixed Incremental Capacity Cost. In the casualty insurance business, customers have the option of paying an insurance premium to cover the impact of a catastrophic loss. In this example, the annual insurance premium is higher than the cost of the loss times its probability. Customers are comfortable with paying an amount greater than the average loss because it makes the payments fixed. In the same way, utilities can procure capacity at fixed rates slightly above the EORM to prevent the possibility of certain high-cost outcomes. To evaluate the risk of these potential high-cost outcomes and thus determine how much of an “insurance premium” to pay, a risk metric called Value at Risk (“VaR”) is used.
+VaR is defined as the difference in cost at the expected value and the cost at some specified confidence interval (e.g., the 85th percentile of risk). The VaR accounts for the customers’ exposure to higher costs above normal conditions. The VaR analysis looks at the incremental increase in expected cost to move from one reserve margin to the next reserve margin and compares that increase with the incremental decrease in VaR. So long as the incremental increase in expected cost is less than the incremental decrease in VaR, the premium (i.e., the increased expected cost) is reasonable to protect against the potential high-cost outcomes. The point at which the incremental increase in cost equals the incremental decrease in VaR represents the EORM at that confidence interval (as opposed to the EORM at the weighted average).
+The table below illustrates the VaR at the 80th (VaR80), 85th (VaR85), 90th (VaR90), and 95th (VaR95) percentiles of confidence for a range of winter reserve margin targets.
+Table STYLEREF 1 \s III SEQ Table \* ARABIC \s 1 1. Value at Risk
+| Reserve Margin
+| Expected Cost (M$)
+| VaR80 (M$)
+| VaR85 (M$)
+| VaR90 (M$)
+| VaR95 (M$)
+| 20.00%
+| 5,293.8
+| 344.9
+| 454.1
+| 682.2
+| 1004.0
+| 20.25%
+| 5,285.3
+| 342.2
+| 445.8
+| 662.8
+| 977.9
+| 20.50%
+| 5,277.7
+| 339.2
+| 437.7
+| 644.6
+| 952.8
+| 20.75%
+| 5,271.2
+| 336.1
+| 429.8
+| 627.5
+| 928.5
+| 21.00%
+| 5,265.5
+| 332.9
+| 422.3
+| 611.6
+| 905.1
+| 21.25%
+| 5,260.8
+| 329.5
+| 415.0
+| 596.6
+| 882.6
+| 21.50%
+| 5,256.9
+| 326.0
+| 408.0
+| 582.7
+| 861.1
+| 21.75%
+| 5,253.9
+| 322.5
+| 401.4
+| 569.7
+| 840.4
+| 22.00%
+| 5,251.6
+| 318.9
+| 395.1
+| 557.6
+| 820.6
+| 22.25%
+| 5,250.1
+| 315.2
+| 389.1
+| 546.3
+| 801.7
+| 22.50%
+| 5,249.3
+| 311.6
+| 383.5
+| 535.8
+| 783.7
+| 22.75%
+| 5,249.3
+| 307.9
+| 378.3
+| 526.0
+| 766.5
+| 23.00%
+| 5,249.9
+| 304.2
+| 373.5
+| 516.9
+| 750.2
+| 23.25%
+| 5,251.1
+| 300.5
+| 369.0
+| 508.5
+| 734.7
+| 23.50%
+| 5,253.0
+| 296.9
+| 364.9
+| 500.6
+| 720.1
+| 23.75%
+| 5,255.4
+| 293.3
+| 361.1
+| 493.3
+| 706.3
+| 24.00%
+| 5,258.4
+| 289.8
+| 357.8
+| 486.5
+| 693.2
+| 24.25%
+| 5,261.9
+| 286.3
+| 354.7
+| 480.2
+| 680.9
+| 24.50%
+| 5,265.9
+| 282.9
+| 352.0
+| 474.4
+| 669.4
+| 24.75%
+| 5,270.4
+| 279.6
+| 349.6
+| 469.0
+| 658.5
+| 25.00%
+| 5,275.4
+| 276.3
+| 347.6
+| 463.9
+| 648.3
+| 25.25%
+| 5,280.8
+| 273.2
+| 345.8
+| 459.2
+| 638.8
+| 25.50%
+| 5,286.5
+| 270.2
+| 344.3
+| 454.8
+| 629.8
+| 25.75%
+| 5,292.7
+| 267.3
+| 343.0
+| 450.6
+| 621.4
+| 26.00%
+| 5,299.2
+| 264.5
+| 342.0
+| 446.8
+| 613.6
+| 26.25%
+| 5,306.0
+| 261.8
+| 341.1
+| 443.2
+| 606.2
+| 26.50%
+| 5,313.2
+| 259.2
+| 340.4
+| 439.8
+| 599.2
+| 26.75%
+| 5,320.7
+| 256.8
+| 339.9
+| 436.5
+| 592.7
+| 27.00%
+| 5,328.4
+| 254.4
+| 339.4
+| 433.5
+| 586.5
+| 27.25%
+| 5,336.4
+| 252.2
+| 338.9
+| 430.6
+| 580.5
+| 27.50%
+| 5,344.7
+| 250.1
+| 338.5
+| 427.9
+| 574.8
+| 27.75%
+| 5,353.1
+| 248.2
+| 338.1
+| 425.3
+| 569.3
+| 28.00%
+| 5,361.8
+| 246.3
+| 337.5
+| 422.7
+| 563.9
+| 28.25%
+| 5,370.7
+| 244.6
+| 336.9
+| 420.3
+| 558.5
+| 28.50%
+| 5,379.7
+| 242.9
+| 336.0
+| 418.0
+| 553.2
+| 28.75%
+| 5,388.9
+| 241.4
+| 334.9
+| 415.8
+| 547.8
+| 29.00%
+| 5,398.3
+| 239.9
+| 333.6
+| 413.6
+| 542.2
+| 29.25%
+| 5,407.8
+| 238.6
+| 331.8
+| 411.5
+| 536.4
+| 29.50%
+| 5,417.4
+| 237.3
+| 329.7
+| 409.4
+| 530.3
+| 29.75%
+| 5,427.2
+| 236.1
+| 327.1
+| 407.5
+| 523.9
+| 30.00%
+| 5,437.0
+| 234.9
+| 324.0
+| 405.6
+| 517.0
+For the 85th percentile of risk (VaR85), the incremental increase in expected cost roughly equals the incremental decrease in VaR85 when moving from 24.75% reserve margin to 25.00% reserve margin. At this point, the incremental increase in cost is $5,275.4M - $5,270.4M = $5.0M; and the decrease in VaR85, or decrease in customers’ exposure to higher cost outcomes, is $463.9M - $469.0M = -$5.1M. Moving from 25.00% to 25.25% results in an increase in expected costs ($5,280.8M – $5,275.4M = $5.4M) that is greater than the decrease in VaR85 ($459.2M – $463.9M = $-4.7M). Thus, 25.00% represents the EORM at the 85th percentile of risk. Compared to the expected case TRM of 22.75%, a 25.00% reserve margin reduces the VaR85 exposure by $62.1M/year, while increasing the expected case cost by $26.1M/year. Lower and higher confidence intervals were also examined. At the 80th percentile of risk, it would be justifiable to establish a reserve margin of 24.00%. At the 90th percentile of risk, it would be justifiable to establish a reserve margin of 26.25%. Likewise, at the 95th percentile of risk, it would be justifiable to establish a reserve margin of 28.25%. While a Winter Target Reserve Margin greater than 25.75%, the 1:10 LOLE minimum threshold, is justifiable from a cost/risk reduction perspective at the 90th or 95th confidence intervals, the small absolute increase in expected costs suggests that the current Target Reserve Margin of 26% remains appropriate.
+Loss of Load Expectation
+LOLE is the probabilistic count of the number of days in the study year in which the system experiences firm load shed of any duration. This metric does not measure the magnitude of the event and is sensitive to several input assumptions. When utilizing this metric, the industry standard target value is a LOLE value of 0.1 days per year, which is sometimes referred to as a one day in ten years (1:10 LOLE) reliability criterion. A LOLE of 0.1 days per year presumes there is a 10% probability of a loss of load due to generation shortfall in any one year in a 10 year span, or an expectation that there would only be one loss of load event every 10 years.
+Except for the 2018 Reserve Margin Study, the annual 1:10 LOLE threshold within the Southern Company System has historically occurred at reserve margins at or below the EORM. Thus, EORM and the risk-adjusted EORM have historically been the primary focus when determining the TRM. However, as the Company continues to update reliability risks in its modeling, the 2024 analysis has indicated that the LOLE for the System, particularly in the Winter season, is higher than in years past. Thus, the reserve margin necessary to maintain the 1:10 LOLE threshold is also higher. Similar to the 2018 Reserve Margin Study, the 1:10 LOLE threshold in the 2024 Reserve Margin Study also exceeds the EORM.
+There are two primary drivers for the increased winter LOLE. The first driver is increased peak volatility. As illustrated in REF _Ref83891869 \h Figure I.3, modeled peak demand could reach 24.5% above the weather normal forecasted peak, compared to the 19.6% modeled in the 2021 Reserve Margin Study. The second, and more impactful winter risk driver is sustained load during overnight hours. In previous studies, winter reliability risk dropped during evening and overnight hours, rising again early in the morning just before sunrise. Driven by customer load patterns observed during recent cold weather events, reliability risk now remains high in the evening and throughout the night. The off-peak load troughs are now much shallower, requiring more energy throughout the day. As an illustrative example, REF _Ref513786623 \h Figure III.7 below depicts the modeled hourly load across a 24-hour period during a cold weather event. When comparing load shapes scaled to the same peak load and hour, it is evident that the energy required to meet demand in the 2024 Study is higher than the energy needed in the 2021 Study (approximately 963 GWh in 2024 vs. 851 GWh in 2021, indicating a 13% increase across this sample time period). This additional energy necessary to serve load is impactful because the SERVM model performs an hourly energy commitment and dispatch rather than just a peak load analysis. Consequently, resources energy constrained by contracts, fuel availability, or storage capacity will be exhausted more quickly during winter events.
+Figure STYLEREF 1 \s III. SEQ Figure \* ARABIC \s 1 7 2021 vs 2024 Extreme Weather Load Shape Example
+Furthermore, REF _Ref513787047 \h Figure III.8 below demonstrates how LOLE appears for the System across the span of reserve margins examined in the 2024 Reserve Margin Study, compared to those in the 2018 and 2021 studies.
+Figure STYLEREF 1 \s III. SEQ Figure \* ARABIC \s 1 8 LOLE for Winter Reserve Margins
+At the winter EORM of 22.75%, the LOLE is 0.144 days per year or an expectation of one event every 6.9 years. To achieve a 1:10 LOLE threshold requires a winter reserve margin of at least 25.75%, which is above the EORM and VaR85 reserve margins. Accordingly, the 1:10 LOLE threshold represents the absolute minimum level of the desired reserve margin range for the winter season.
+Since resources procured for the winter season are also typically available in the summer season, the summer equivalent reserve margin of a 25.75% winter reserve margin is 24.52%. The primary reason for the difference is increased resource output at lower winter temperatures and a difference between seasonal peak loads. Due to the absence of the winter reliability drivers detailed in Section III. REF _Ref174695637 \r \h A. , summer reliability is much greater than winter at similar, relative reserve margins. Therefore, summer-only LOLE at a 24.52% summer-stated reserve margin is 0.00 LOLE or 0 days per year.
+However, because not all incremental resources added to the system to meet winter capacity needs are available year-round at identical seasonal capacity values, it is important to establish a minimum summer reserve margin target. This minimum target should ensure that an annual (summer plus winter) LOLE of 0.10 days per year or one day in ten years is maintained.
+Because winter is currently the season driving capacity needs, the majority of the annual reliability concern also rests within that season. At a 26.00% winter reserve margin, the LOLE is 0.092 or one day in 10.9 years as shown in REF _Ref513787047 \h Figure III.8. In order to maintain an annual LOLE of 0.10, summer LOLE must then be 0.008 days per year or one day in 125 years or better. In order to achieve that level of reliability in the summer season, the summer reserve margin should be 19.55% or higher. REF _Ref174702291 \h Figure III.9 below shows the expected summer-only years between events and event days per year by reserve margin level. At a summer target reserve margin of 20%, the LOLE is 0.007, which when combined with the winter LOLE at 26%, equals an annual LOLE of 0.099 days per year or an expectation of one event every 10.1 years.
+Figure STYLEREF 1 \s III. SEQ Figure \* ARABIC \s 1 9 LOLE for Summer Reserve Margins
+Total System Cost Components
+The total system cost is the sum of three components:
+The annual carrying cost of CTs added for reserve margin (Incremental Capacity Cost)
+Reliability Costs
+Production Cost
+Following is a discussion of each component.
+Annual Carrying Costs of CTs
+The incremental annual capacity carrying cost of the added capacity at any given reserve margin is determined by multiplying the incremental CT capacity by its economic carrying cost. For the summer focus studies, this cost was determined using summer performance values, resulting in a carrying cost of REDACTED REDACTED. To achieve an increase of one percent reserve margin in the summer studies requires the addition of 391.4 MW or REDACTED in carrying cost. For the winter focus study, the cost was determined using winter performance values, resulting in a carrying cost of REDACTED. To achieve an increase of one percent reserve margin in the winter focus study requires the addition of 383.1 MW or REDACTED in carrying cost. As more CTs are added to achieve a higher reserve margin, these carrying costs accumulate with the megawatts added. This is represented in REF _Ref513787069 \h \* MERGEFORMAT Figure III.10 below (for the winter focus study), which shows a linear increase in costs when graphed as a function of reserve margin.
+REDACTED
+REDACTED
+Figure STYLEREF 1 \s III. SEQ Figure \* ARABIC \s 1 10. Incremental Capacity Cost (Winter Focus)
+Reliability Costs
+Reliability Costs are the sum of the cost of EUE, the cost of any shortfalls in meeting required operating reserves, the cost of emergency purchases, and cost of demand response calls. The cost of EUE is determined by multiplying the amounts of EUE in MWh at each reserve level created in the analysis by the assumed cost of EUE in $/MWh as shown in REF _Ref513785933 \h Table I9 (with EUE in the winter being multiplied by the winter cost of outage, $40,280/MWh and EUE in all other months multiplied by the summer cost of outage, $60,630/MWh). The cost of meeting shortfalls in spinning and regulating reserves are included in the cost of EUE as the model curtails load to maintain these requirements. The cost of meeting supplemental (i.e., non-spin) reserve requirements is determined by the market price at the time of the shortfall. The cost of demand response calls is determined by the presumed dispatch price for each demand response program as established by the Operating Companies. REF _Ref513787086 \h Figure III.11 below illustrates Reliability Cost as a function of winter reserve margin.
+Figure STYLEREF 1 \s III. SEQ Figure \* ARABIC \s 1 11. Reliability Cost
+Production Cost
+Production Costs include the variable operating costs of units, plus the cost of any purchases with neighboring regions, less the cost of any sales with neighboring regions. Production costs at each reserve margin level can be seen in REF _Ref513787096 \h Figure III.12 below.
+Figure STYLEREF 1 \s III. SEQ Figure \* ARABIC \s 1 12. Production Cost
+As expected, Reliability Costs and Production Costs decrease as reserve margin increases. Conversely, their costs increase as the reserve margin is reduced.
+Components of the Winter Target Reserve Margin
+To fully understand the relative contribution of the components of the overall target reserve margin, several individual sensitivities were run for each of the following components of uncertainty: weather, market risk, unit performance, load forecast error, and fuel supply. REF _Ref87425783 \h Figure III.13 below shows the contribution of all components toward the overall required Winter TRM of 26%.
+Figure STYLEREF 1 \s III. SEQ Figure \* ARABIC \s 1 13 Components of Winter TRM
+SENSITIVITY ANALYSES
+The data for unit performance, weather, load forecast error, hydro availability, market prices, and other inputs is based on historical information. Other data such as market availability is based on forecasted information. While the broad range of scenarios analyzed captures extreme events and market prices, there remains risk that conditions could occur in the future that extend beyond the range of what is contemplated in the base case model. Each of the following sensitivities were modeled to examine their impact on both the EORM and the minimum 1:10 LOLE threshold.
+Capacity Price
+Capacity price has an inverse impact on the EORM. The EORM calculation assumes the addition of a reliability resource (i.e., a CT) that has little or no energy value. This ensures a fair comparison of capital cost against Production Cost and Reliability Cost. At lower capacity prices, it is economically justifiable to have a higher TRM. Conversely, if capacity prices are higher, the EORM will be lower. The capacity price used in the 2024 Reserve Margin Study represents the economic carrying cost of a CT. The capacity price sensitivity examined a range of capacity costs from values significantly above and below the economic carrying cost of a dual fuel CT. REF _Ref513787125 \h \* MERGEFORMAT Figure IV.1 below shows how capacity costs across these ranges affect the Winter EORM. For example, at REDACTED REDACTED, the Winter EORM moved from 22.75% to almost 25%. Capacity price does not impact the 1:10 LOLE threshold.
+REDACTED
+REDACTED
+Figure STYLEREF 1 \s IV. SEQ Figure \* ARABIC \s 1 1. EORM as a Function of Capacity Price
+Cost of EUE
+Two cost-of-EUE sensitives were evaluated. The first cost of EUE sensitivity (B) was a minimum value assuming only impacts from residential class customers. This resulted in a cost of EUE of approximately $2,651/MWh of outage (in 2028$). The Winter EORM for this sensitivity moved from 22.75% to 21.75%. There was no change in the 1:10 LOLE threshold.
+The second cost of EUE sensitivity (B’) was developed based on publicly available cost of EUE data. Using the Interruption Cost Estimate Calculator (developed by Nexant, funded by the Lawrence Berkeley National Laboratory and the Department of Energy, and publicly available at http://icecalculator.com), a cost of EUE for the System was estimated to be approximately $41,937/MWh (2028$). The Winter EORM for this sensitivity did not change from 22.75%. There was also no change in the 1:10 LOLE threshold.
+Cold Weather Outages
+Historical events have shown that cold weather outages have a notable impact on system reliability. To gain a better understanding of how impactful these incremental outages are to the EORM and 1:10 LOLE threshold, three sensitivities were performed.
+No Cold Weather Outages (C)
+As indicated in Section I, the cold weather outage assumptions incorporated additional, temperature-related unit outages below 10°F for retail, owned or operated resources and approximately 18°F for contracted resources. This sensitivity assumes that there are no incremental outages due to low temperatures. The Winter EORM for this sensitivity moved from 22.75% to 22.25%. The 1:10 LOLE threshold moved from 25.75% to 22.50%.
+Historical Cold Weather Outages (C’)
+Over the past decade, winterization improvements have been made to the retail generation fleet. These investments are expected to support reliable unit operation during extreme cold weather. It is, therefore, important to understand the impact to the EORM and 1:10 LOLE threshold if these improvements were not made. If the historical incremental cold weather outage curve was applied instead of the improved incremental curve, as was used in the winter base case, EORM would rise from 22.75% to 23.50% and the 1:10 LOLE threshold would rise from 25.75% to 30.25%.
+Exponential Cold Weather Outage Curve (C’’)
+In the past several Reserve Margin Studies, an exponential cold weather outage curve was applied. To be consistent with the new linear cold weather outage curves applied to neighboring regions, the Southern System cold weather outage curve was transitioned to a linear-based curve as well for the winter base case of this study. This sensitivity considers the impact of that change. The use of an exponential-based incremental, improved cold weather outage curve resulted in the EORM dropping from 22.75% to 22.50% and the 1:10 LOLE threshold dropping from 25.75% to 25.25%.
+50% Reduced Transmission
+For this sensitivity, transmission capabilities with neighboring regions were reduced by 50%. The Winter EORM and the 1:10 LOLE threshold did not change from the base case.
+Unlimited Transmission
+For this sensitivity, transmission capability with neighboring regions was set at 10,000 MW. For reference, the maximum transmission capability into the Southern Company region from outside of the Southern Balancing Area in the base case was 2,714 MW and 5,000 MW within. This increased transmission scenario resulted in a decrease in the Winter EORM from 22.75% to 22.50%. It also resulted in a decrease in the 1:10 LOLE threshold from 25.75% to 24.50%.
+50% Higher Base EFOR
+For this sensitivity, base level unit outages were increased by 50%. Incremental cold-weather outages were not impacted by the sensitivity. The 50% higher unit outage scenario resulted in an increase in the Winter EORM from 22.75% to 23.75%. Similarly, the 1:10 LOLE threshold increased from 25.75% to 27.25%.
+Unlimited Natural Gas
+As discussed in Section REF _Ref175041866 \r \h I., most facilities under control of the Operating Companies were modeled in compliance with the System Fuel Policy. This meant that some units had limited firm pipeline transportation available, and others only received fuel when there was unused pipeline capacity, typically only during mild weather conditions. This sensitivity removed all pipeline and fuel availability restrictions to understand the impact. With unlimited natural gas and oil, the EORM dropped from 22.75% to 21.25% and the 1:10 LOLE threshold dropped from 25.75% to 20.25%
+Islanded System
+Historically, some level of capacity support from neighboring regions was likely during reliability events. However, unit retirements across the Southeast coupled with increasing load forecasts has reduced any capacity excess that might have existed in the past. Although the base case study contains some level of energy assistance during high load periods, it may be important to understand the impact of that assistance on the reserve margin. Removing all transmission connections with neighboring regions, essentially islanding the Southern System, results in the EORM dropping from 22.75% to 21.00% and the 1:10 LOLE threshold increasing from 25.75% to 27.50%
+Maximum Weather Years
+As explained in Section I. REF _Ref175131526 \r \h C. , the 2024 Reserve Margin Study was performed with 50 weather years from 1973 – 2022. This sensitivity considers the inclusion of all 61 available weather years from 1962 – 2022. With the additional eleven weather years included in the analysis, the EORM remained the same at 22.75% and the 1:10 LOLE threshold increased from 25.75% to 27.50%
+Summary of Sensitivity Analysis
+REF _Ref92806904 \h \* MERGEFORMAT Figure IV.2 below graphs the results of all the sensitivity analyses (i.e., Sensitivities A through I). The chart shows both Winter EORM and the 1:10 LOLE threshold. Together, they demonstrate that the sensitivity analyses validate the base case results of the 2024 Reserve Margin Study and indicate that its results are robust against those sensitivities. Table IV.1 below presents the same sensitivity data.
+Figure STYLEREF 1 \s IV. SEQ Figure \* ARABIC \s 1 2. Winter Sensitivity Results Relative to the Base Case
+Table STYLEREF 1 \s IV SEQ Table \* ARABIC \s 1 1: Summary of Winter Sensitivity Results
+| Sensitivity
+| EORM
+| 1:10
+| Base
+| 22.75%
+| 25.75%
+| A
+| 25.75%
+| 25.75%
+| A'
+| 20.75%
+| 25.75%
+| B
+| 21.75%
+| 25.75%
+| B’
+| 22.75%
+| 25.75%
+| C
+| 22.25%
+| 22.50%
+| C’
+| 23.50%
+| 30.25%
+| C’’
+| 22.50%
+| 25.25%
+| D
+| 22.75%
+| 25.75%
+| E
+| 22.50%
+| 24.50%
+| F
+| 23.75%
+| 27.25%
+| G
+| 21.25%
+| 20.25%
+| H
+| 21.00%
+| 27.50%
+| I
+| 22.75%
+| 27.50%
+Short-Term Load forecast error
+In addition to the sensitivities related to the uncertainties above, a sensitivity was modeled to determine how the optimum reserve margin would change if the load forecast uncertainty was reduced to determine a short-term reserve margin target.
+For this sensitivity, short-term load forecast errors were used. This sensitivity resulted in the Winter EORM decreasing from 22.75% to 22.25%, reflecting a difference in long-term and short-term reserve margins of 0.5%. The short-term load forecast errors used are in the following table.
+Table STYLEREF 1 \s IV SEQ Table \* ARABIC \s 1 2: Short-Term Load forecast error
+| SHORT-TERM LOAD FORECAST ERROR
+| LFE
+| Probability
+| -5.42%
+| 0.111
+| -3.69%
+| 0.222
+| -0.53%
+| 0.336
+| 2.90%
+| 0.220
+| 3.83%
+| 0.111
+CONCLUSION
+Winter reliability continues to drive the 2024 Reserve Margin Study results. However, it remains necessary to maintain both a Winter TRM and a Summer TRM for several reasons. While new capacity procurement can be driven by either season, it is also important to ensure that both seasons have sufficient available capacity. It is possible that capacity needs can be driven by either season and should be considered when adding new capacity. In addition, there is the potential that, over time, various changes could alter the dynamics of the system such that the primary risk shifts between seasons. Accordingly, it is recommended that the Winter TRM be established based on the results of the winter focused study and the Summer TRM be established based on the summer focused study, with minimum 1:10 LOLE threshold considerations applicable to both.
+Winter Target Reserve Margin
+The 2024 Reserve Margin Study recommends a long-term Winter TRM of 26% based on the following:
+The TRM should be equal to or greater than the 25.75% 1:10 LOLE threshold to ensure an adequate level of reliability on the System,
+A reserve margin of 26% represents the risk-adjusted EORM that falls within the confidence intervals considered,
+Compared to the 22.75% expected case Winter EORM, a 26.00% risk-adjusted Winter EORM reduces VaR at the 85th confidence interval by $79.2M/year, while only increasing expected cost by $49.8M/year and,
+A 26.00% Winter TRM is consistent with results from the 2021 Reserve Margin Study. Maintaining this TRM provides stability to the integrated resource planning process.
+Summer Target Reserve Margin
+The Summer EORM from the summer focus study is 18.25%, with the VaR85 reserve margin being 21.25%. Nevertheless, in a system where winter drives reliability results, the Summer TRM cannot be determined without consideration of the Winter TRM. If the System is meeting its 26% Winter TRM requirement with resources that provide year-round capacity, the summer reserve margin will generally be at or above 24%. However, if resources available solely in the winter season become widespread, the equivalent summer reserve margin will fall below 24%. This decline is acceptable as long as the combined annual reliability remains above the 1:10 LOLE threshold. The following graph demonstrates the minimum acceptable Summer TRM as a function of Winter TRM. For a Winter TRM of 26.00%, the minimum acceptable Summer TRM is 19.55%.
+Figure STYLEREF 1 \s V. SEQ Figure \* ARABIC \s 1 1. Minimum Acceptable Summer Target Reserve Margins
+Therefore, the 2024 Reserve Margin Study recommends a long-term Summer TRM of 20.00% based on the following:
+At the recommended Winter TRM of 26.00%, the Summer TRM should be equal to or greater than the 19.55% 1:10 LOLE threshold to ensure an adequate level of annual reliability on the System,
+A summer reserve margin of 20.00% is economically justified, falling within the EORM and VaR85 confidence interval. Compared to the current 16.25% summer TRM, increasing the Summer TRM to 20.00% will provide an economic benefit to customers by reducing expected System costs by $5.3M/year while supporting an annual 1:10 LOLE level of reliability.
+The equivalent summer reserve margin that corresponds to the 26% Winter TRM is 24.76%. Therefore, raising the Summer TRM to 20.00% is not expected to drive additional System costs because resources procured to meet the more dominant Winter TRM are generally expected to be available during summer months as well.
+In summary, the recommendation is to maintain the current Winter TRM of 26% for the System. This 26% Winter Target reflects the results of comprehensive economic study and a variety of other available information and is extremely important in planning for resources that will meet customer needs in a reliable and cost-effective manner. It is further recommended that the Summer TRM be increased to 20% in order to maintain an annual 1:10 LOLE level of reliability.
+These recommendations apply for studies looking out four or more years. For studies looking inside a three-year window, the recommended Winter and Summer short-term TRMs are 25.50% and 19.50%, respectively, reflecting a 0.5% reduction from each long-term TRM attributable to the difference between the long-term and the short-term forecast error.
+These recommendations are designed to provide guidance for resource planning decisions but should not be considered absolute requirements. The large size of capacity additions, the availability and price of market capacity (as indicated by the Capacity Cost sensitivity), or economic changes may justify decisions that result in reserve margins above these targets.

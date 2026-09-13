@@ -1,0 +1,29 @@
+SEEM public website - Frequently Asked Questions page, https://southeastenergymarket.com/faq/
+Fetched 2026-09-13 by lane SOCO-12 (curl; WebFetch returns HTTP 403 from this egress).
+HTML tags stripped, text otherwise unedited. This is the page that carries SEEM's own
+answer to 'Will market bilateral transaction prices be made available to the public and
+how?' and its own market-launch date.
+==============================================================================
+An Integrated, Automated Intra-hour Energy Exchange
+ Frequently Asked Questions
+ Who can participate in SEEM? 
+ Similar to other US markets, market rules must be established to ensure orderly and structured operations to protect continued reliability. Registration ensures that minimum qualifications for being a source or sink are met. Entities with generation or load that can participate in wholesale bilateral markets today will be able to participate in the market. A market participant must be registered as a source or sink in NAESB EIR registry, the source or sink must be interconnected to a participating transmission provider, and the participant must be able to bid/offer for a 4 MW or greater 15-minute schedule. Entities that meet the minimum qualifications, including Independent Power Producers, may participate.
+ When did the market launch? 
+ The market launched in November 2022.
+ How is the energy market administered? What kind of oversight is involved? 
+ Two third-party independent entities implement, manage, and oversee operation of the SEEM market: a platform administrator and an auditor. The platform administrator develops and administers the SEEM platform per market rules. The auditor monitors the functioning of the platform to ensure it operates correctly per market rules and has authority to submit reports without prior review or approval of SEEM members. FERC provides oversight for all wholesale bilateral transactions, including SEEM activity, and all FERC public reporting (e.g., EQR) must continue. In addition, SEEM regularly posts (daily, monthly, and quarterly) reports of data aggregated by the SEEM platform on its public web site.
+ Can this market evolve over time? 
+ Yes, SEEM members can evaluate opportunities to improve or implement additional functions that make sense for our customers. For example, there may be opportunities in the future to leverage technology to implement five-minute time intervals.
+ How did you incorporate stakeholder feedback into your plans? 
+ Feedback helped strengthen the platform agreement by adding more transparency measures. Outside of very specific technical or market-function questions, stakeholder feedback fell into the following major themes: market participation, governance and transparency, and stakeholder processes.
+ Market participation: An Independent Power Producer (IPP) that complies with the following criteria may participate in SEEM: own or control a valid source or sink within a SEEM territory, execute a SEEM participation agreement, execute required transmission service agreements with participating SEEM transmission service providers, and have an agreement to purchase or sell energy with at least three SEEM participants.
+ Governance and transparency: The platform administrator and auditor provide specific functions to ensure proper governance and transparency, as described above.
+ Stakeholder processes: Stakeholder outreach and engagement will continue as SEEM moves forward. SEEM members will hold annual public meetings open to all interested parties as an open forum for stakeholders. The intention is to continue the robust dialogue with stakeholders that took place during the initial SEEM development period. Stakeholders will also have the opportunity to comment on SEEM-related FERC proceedings with rate amendments filed with FERC.
+ How will this affect customer rates? 
+ We expect customer savings to be realized through lower fuel costs as we’re able to select lower-cost and more efficient generation resources to serve customer demand. As sellers identify a use for their excess energy, those profits also benefit customers.
+ Will market bilateral transaction prices be made available to the public and how? 
+ As currently available today, the bilaterally-agreed transaction prices will be made available to the public via existing FERC reporting. Also as occurs today, specific transaction information will be shared only between buyers and sellers. Participants not party to a particular match will not see any data related to the match until such information is released publicly. In addition, SEEM regularly posts (daily, monthly, and quarterly) reports of data aggregated by the SEEM platform on a public web site. This methodology is consistent with the existing bilateral market.
+ How will this potential energy market affect these companies’ efforts to reduce carbon emissions? 
+ While this energy market is not a requirement to reaching carbon goals, it advances these companies’ efforts toward these goals. SEEM-influenced carbon reductions are achieved through more efficient generation displacing less efficient generation and by avoiding renewable curtailments. The SEEM reduces carbon emissions and supports renewable energy integration; however, utility resource plans and state policy continue to have the biggest effect on carbon emissions levels.
+ [/]
+ 

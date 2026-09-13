@@ -1,0 +1,115 @@
+Southern Company (CIK 0000092122) Form 10-K - TARGETED EXTRACTS, FY2022-FY2025
+Fetched 2026-09-13 by lane SOCO-12 from SEC EDGAR. Extracted verbatim from the
+filing HTML (tags stripped); ellipsis is never inserted - each block is a contiguous
+run of the filing's own text. Accession numbers and the primary document per year:
+
+  FY2022: 0000092122-23-000012  ->  https://www.sec.gov/Archives/edgar/data/92122/000009212223000012/so-20221231.htm
+  FY2023: 0000092122-24-000009  ->  https://www.sec.gov/Archives/edgar/data/92122/000009212224000009/so-20231231.htm
+  FY2024: 0000092122-25-000018  ->  https://www.sec.gov/Archives/edgar/data/92122/000009212225000018/so-20241231.htm
+  FY2025: 0000092122-26-000006  ->  https://www.sec.gov/Archives/edgar/data/92122/000009212226000006/so-20251231.htm
+
+==============================================================================
+FY2022 10-K  (accession 0000092122-23-000012)
+==============================================================================
+
+--- MAXIMUM DEMAND AND RESERVE MARGIN (Item 2 PROPERTIES - Electric) ---
+In 2022, the maximum demand on the traditional electric operating companies, Southern Power Company, and SEGCO was 37,035,000 KWs and occurred on June 15, 2022, which was also the maximum all-time demand. This amount excludes demand served by capacity retained by MEAG Power, OPC, and SEPA. The reserve margin for the traditional electric operating companies, Southern Power Company, and SEGCO in 2022 was 20%. Jointly-Owned Facilities Alabama Power, Georgia Power, and Mississippi Power at December 31, 2022 had undivided interests in certain generating plants and other related facilities with non-affiliated parties.
+
+--- GENERATING CAPACITY TOTALS (Item 2 PROPERTIES - Electric) ---
+Total Alabama Power Generating Capacity  12,306,377 KWs  (= 12,306.377 MW nameplate)
+Total Georgia Power Generating Capacity  13,592,964 KWs  (= 13,592.964 MW nameplate)
+Total Mississippi Power Generating Capacity  3,516,374 KWs  (= 3,516.374 MW nameplate)
+Total Southern Power Generating Capacity  12,501,380 KWs  (= 12,501.380 MW nameplate)
+Total SEGCO Generating Capacity  1,019,680 KWs  (= 1,019.680 MW nameplate)
+Total Southern Company System Generating Capacity  42,936,775 KWs  (= 42,936.775 MW nameplate)
+
+--- GENERATING MIX AND FLEET TRANSITION (Item 1 BUSINESS - Environmental) ---
+The Southern Company system has transitioned from an electric generating mix of 70% coal and 15% natural gas in 2007 to a mix of 22% coal and 51% natural gas in 2022. This transition has been supported in part by the Southern Company system retiring over 6,700 MWs of coal-fired generating capacity since 2010 and converting 3,700 MWs of generating capacity from coal to natural gas since 2015. In addition, the Southern Company system's capacity mix consists of over 11,500 MWs of renewable and storage facilities through ownership and long-term PPAs.
+
+--- SOUTHERN NATURAL GAS / TRANSCO (Item 1 BUSINESS; Item 2 PROPERTIES note) ---
+Southern Natural Gas Company, L.L.C., a pipeline system in which Southern Company Gas has a 50% ownership interest
+Jointly owned with The Williams Companies, Inc., the Dalton Pipeline is a 115 -mile natural gas pipeline that serves as an extension of the Transcontinental Gas Pipe Line Company, LLC pipeline system into northwest Georgia. Southern Company Gas leases its 50 % undivided ownership for approximately $ 26 million annually through 2042. The lessee is responsible for maintaining the pipeline during the lease term and for providing service to transportation customers under its FERC-regulated tariff.
+
+==============================================================================
+FY2023 10-K  (accession 0000092122-24-000009)
+==============================================================================
+
+--- MAXIMUM DEMAND AND RESERVE MARGIN (Item 2 PROPERTIES - Electric) ---
+In 2023, the maximum demand on the traditional electric operating companies, Southern Power Company, and SEGCO was 36,919,000 KWs and occurred on August 14, 2023. The all-time maximum demand of 37,035,000 KWs occurred on June 15, 2022. These amounts exclude demand served by capacity retained by MEAG Power, OPC, and SEPA. The reserve margin for the traditional electric operating companies, Southern Power Company, and SEGCO in 2023 was 19%.
+
+--- GENERATING CAPACITY TOTALS (Item 2 PROPERTIES - Electric) ---
+Total Alabama Power Generating Capacity  12,942,377 KWs  (= 12,942.377 MW nameplate)
+Total Georgia Power Generating Capacity  14,146,391 KWs  (= 14,146.391 MW nameplate)
+Total Mississippi Power Generating Capacity  3,517,874 KWs  (= 3,517.874 MW nameplate)
+Total Southern Power Generating Capacity  12,497,880 KWs  (= 12,497.880 MW nameplate)
+Total SEGCO Generating Capacity  1,019,680 KWs  (= 1,019.680 MW nameplate)
+Total Southern Company System Generating Capacity  44,124,202 KWs  (= 44,124.202 MW nameplate)
+
+--- GENERATING MIX AND FLEET TRANSITION (Item 1 BUSINESS - Environmental) ---
+The Southern Company system has transitioned from an electric generating mix of 70% coal and 15% natural gas in 2007 to a mix of 17% coal and 54% natural gas in 2023. This transition has been supported in part by the Southern Company system retiring over 6,700 MWs of coal-fired generating capacity since 2010 and converting 3,700 MWs of generating capacity from coal to natural gas since 2015. In addition, the Southern Company system's capacity mix consists of over 11,600 MWs of renewable and storage facilities through ownership and long-term PPAs.
+
+--- SOUTHERN NATURAL GAS / TRANSCO (Item 1 BUSINESS; Item 2 PROPERTIES note) ---
+Southern Natural Gas Company, L.L.C., a pipeline system in which Southern Company Gas has a 50% ownership interest
+Jointly owned with The Williams Companies, Inc., the Dalton Pipeline is a 115 -mile natural gas pipeline that serves as an extension of the Transcontinental Gas Pipe Line Company, LLC pipeline system into northwest Georgia. Southern Company Gas leases its 50 % undivided ownership for approximately $ 26 million annually through 2042. The lessee is responsible for maintaining the pipeline during the lease term and for providing service to transportation customers under its FERC-regulated tariff.
+
+==============================================================================
+FY2024 10-K  (accession 0000092122-25-000018)
+==============================================================================
+
+--- MAXIMUM DEMAND AND RESERVE MARGIN (Item 2 PROPERTIES - Electric) ---
+In 2024, the maximum demand on the traditional electric operating companies, Southern Power Company, and SEGCO was 38,194,000 KWs and occurred on January 17, 2024, which also represents the all-time maximum demand. These amounts exclude demand served by capacity retained by MEAG Power, OPC, and SEPA. The reserve margin for the traditional electric operating companies, Southern Power Company, and SEGCO in 2024 was 16%. Jointly-Owned Facilities Alabama Power, Georgia Power, and Mississippi Power at December 31, 2024 had undivided interests in certain generating plants and other related facilities with non-affiliated parties.
+
+--- GENERATING CAPACITY TOTALS (Item 2 PROPERTIES - Electric) ---
+Total Alabama Power Generating Capacity  12,942,377 KWs  (= 12,942.377 MW nameplate)
+Total Georgia Power Generating Capacity  14,789,068 KWs  (= 14,789.068 MW nameplate)
+Total Mississippi Power Generating Capacity  3,517,874 KWs  (= 3,517.874 MW nameplate)
+Total Southern Power Generating Capacity  12,647,880 KWs  (= 12,647.880 MW nameplate)
+Total SEGCO Generating Capacity  1,019,680 KWs  (= 1,019.680 MW nameplate)
+Total Southern Company System Generating Capacity  44,916,879 KWs  (= 44,916.879 MW nameplate)
+
+--- GENERATING MIX AND FLEET TRANSITION (Item 1 BUSINESS - Environmental) ---
+The Southern Company system has transitioned from an electric generating mix of 70% coal, 15% natural gas, and 14% nuclear in 2007 to a mix of 18% coal, 52% natural gas, and 20% nuclear in 2024. This transition has been supported in part by the Southern Company system retiring over 6,700 MWs of coal-fired generating capacity since 2010 and converting 3,700 MWs of generating capacity from coal to natural gas since 2015, as well as the addition of over 1,100 MWs of nuclear generating capacity (based on Georgia Power's ownership interest in Plant Vogtle Units 3 and 4) since 2023. In addition, the Southern Company system's capacity mix consists of over 12,500 MWs of renewable and storage facilities through ownership (including 100% of the nameplate capacity of Southern Power's facilities owned with partners) and long-term PPAs.
+
+--- GREENE COUNTY (Notes to the financial statements) ---
+Mississippi Power's 2024 IRP includes a schedule to retire Mississippi Power's 40 % ownership interest in Plant Greene County Units 1 and 2 by the end of 2028. Alabama Power currently expects to retire Plant Greene County Units 1 and 2 ( 300 MWs based on 60 % ownership) by the end of 2028. Alabama Power and Mississippi Power have continued to evaluate operating conditions and business needs relevant to the anticipated retirement of Plant Greene County Units 1 and 2. The ultimate outcome of this matter cannot be determined at this time. See "Mississippi Power – Integrated Resource Plans" herein for additional information.
+
+--- MISSISSIPPI POWER RETIREMENT-DATE EXTENSION (Item 1 BUSINESS) ---
+On January 9, 2025, Mississippi Power notified the Mississippi PSC of its intent to extend the retirement date of Plant Daniel Unit 2 and potentially extend the retirement dates of other fossil steam units beyond their current 2028 retirement dates in order to serve recently signed economic development loads of approximately 600 MWs. Mississippi Power must also file an annual report on energy delivery improvements, the latest of which was filed in November 2024. See Note 2 to the financial statements under "Mississippi Power – Integrated Resource Plans" and " – Plant Daniel" in Item 8 herein for additional information.
+On January 9, 2025, Mississippi Power notified the Mississippi PSC of its intent to extend the retirement date of Plant Daniel Unit 2 and potentially extend the retirement dates of other fossil steam units beyond their current 2028 retirement dates in order to serve recently signed economic development loads of approximately 600 MWs.
+
+--- SOUTHERN NATURAL GAS / TRANSCO (Item 1 BUSINESS; Item 2 PROPERTIES note) ---
+Southern Natural Gas Company, L.L.C., a pipeline system in which Southern Company Gas has a 50% ownership interest
+Jointly owned with The Williams Companies, Inc., the Dalton Pipeline is a 115 -mile natural gas pipeline that serves as an extension of the Transcontinental Gas Pipe Line Company, LLC pipeline system into northwest Georgia. Southern Company Gas leases its 50 % undivided ownership for approximately $ 26 million annually through 2042. The lessee is responsible for maintaining the pipeline during the lease term and for providing service to transportation customers under its FERC-regulated tariff.
+
+==============================================================================
+FY2025 10-K  (accession 0000092122-26-000006)
+==============================================================================
+
+--- MAXIMUM DEMAND AND RESERVE MARGIN (Item 2 PROPERTIES - Electric) ---
+In 2025, the maximum demand on the traditional electric operating companies, Southern Power Company, and SEGCO was 37,006,000 KWs and occurred on January 22, 2025. The all-time maximum demand of 38,194,000 KWs occurred on January 17, 2024. These amounts exclude demand served by capacity retained by MEAG Power, OPC, and SEPA. The reserve margin for the traditional electric operating companies, Southern Power Company, and SEGCO in 2025 was 20%.
+
+--- GENERATING CAPACITY TOTALS (Item 2 PROPERTIES - Electric) ---
+Total Alabama Power Generating Capacity  13,822,077 KWs  (= 13,822.077 MW nameplate)
+Total Georgia Power Generating Capacity  14,789,068 KWs  (= 14,789.068 MW nameplate)
+Total Mississippi Power Generating Capacity  4,017,874 KWs  (= 4,017.874 MW nameplate)
+Total Southern Power Generating Capacity  12,647,880 KWs  (= 12,647.880 MW nameplate)
+Total SEGCO Generating Capacity  1,019,680 KWs  (= 1,019.680 MW nameplate)
+Total Southern Company System Generating Capacity  46,296,579 KWs  (= 46,296.579 MW nameplate)
+
+--- GENERATING MIX AND FLEET TRANSITION (Item 1 BUSINESS - Environmental) ---
+The Southern Company system has transitioned from an electric generating mix of 70% coal, 15% natural gas, and 14% nuclear in 2007 to a mix of 20% coal, 51% natural gas, and 19% nuclear in 2025. This transition has been supported in part by the Southern Company system retiring over 6,700 MWs of coal-fired generating capacity since 2010 and converting 3,700 MWs of generating capacity from coal to natural gas since 2015, as well as the addition of over 1,100 MWs of nuclear generating capacity (based on Georgia Power's ownership interest in Plant Vogtle Units 3 and 4) since 2023. In addition, the Southern Company system's capacity mix consists of over 12,700 MWs of renewable and storage facilities through ownership (including 100% of the nameplate capacity of Southern Power's facilities owned with partners) and long-term PPAs.
+
+--- COAL RETIREMENT / CONVERSION PLANS (Item 1 BUSINESS - Water Quality) ---
+In 2021, Alabama Power submitted Notices of Planned Participation (NOPPs) to the Alabama Department of Environmental Management (ADEM) indicating plans to retire Plant Barry Unit 5 (700 MWs) and to cease using coal and begin operating solely on natural gas at Plant Gaston Unit 5 (880 MWs). However, subsequent to December 31, 2025, as a result of projected future generation needs, a decision was made to convert Plant Barry Unit 5 from coal to natural gas and to continue operating Plant Barry Unit 5 beyond December 31, 2028. As agent for SEGCO, Alabama Power indicated plans to retire Plant Gaston Units 1 through 4 (1,000 MWs) by December 31, 2028. However, upon further analysis, Alabama Power, in conjunction with Georgia Power, now expects to operate Plant Gaston Units 1 through 4 through December 31, 2034. As of December 31, 2025, Alabama Power is in compliance with the 2020 ELG rule generally applicable limits for bottom ash transport water for Plant Gaston Units 1 through 4. On December 30, 2025, pursuant to the 2024 ELG Rule, Alabama Power submitted additional NOPPs to the ADEM for Plant Barry Units 4 and 5, Plant Gaston Unit 5, and Plant Gorgas, opting in to the PCCC compliance subcategory for combustion residual leachate discharges by December 31, 2034. See Notes 2 and 7 to the financial statements under "Georgia Power – Integrated Resource Plans – 2025 IRP" and "SEGCO," respectively, for additional information.
+In 2021, Georgia Power submitted NOPPs to the Georgia Environmental Protection Division (EPD) indicating plans to retire Plant Bowen Units 1 and 2 (1,400 MWs) and Plant Scherer Unit 3 (614 MWs based on 75% ownership) on or before the compliance date of December 31, 2028. Georgia Power also submitted a NOPP indicating plans to pursue compliance with the 2020 ELG rule for Plant Scherer Units 1 and 2 (137 MWs based on 8.4% ownership) through the VIP by no later than December 31, 2028. As of December 31, 2025, Georgia Power is in compliance with the ELG rules for Plant Bowen Units 3 and 4 through the generally applicable requirements; therefore, no NOPP submission was required for these units. Through its 2025 IRP, Georgia Power received approval from the Georgia PSC to extend the operation of Plant Scherer Unit 3 through at least December 31, 2035, as well as Plant Gaston Units 1 through 4 (500 MWs based on 50% ownership through SEGCO) through December 31, 2034. In addition, the 2025 IRP assumes operation of Plant Bowen Units 1 and 2 through at least December 31, 2035 and does not impact the ELG compliance strategy for Plant Bowen as the flue gas desulfurization wastewater system is a common environmental control for all four generating units. On December 31, 2025, Georgia Power submitted a transfer NOPP indicating plans to pursue compliance with the 2020 ELG rule for Plant Scherer Unit 3 through the VIP by December 31, 2028. The NOPP submittals and generally applicable requirements are subject to the review of the Georgia EPD and decisions related to retirement or continued operation of units are subject to Georgia PSC approval. See Notes 2 and 7 to the financial statements under "Georgia Power – Integrated Resource Plans – 2025 IRP" and "SEGCO," respectively, for additional information.
+
+--- GREENE COUNTY (Notes to the financial statements) ---
+Mississippi Power's 2024 IRP includes a schedule to retire Mississippi Power's 40 % ownership interest in Plant Greene County Units 1 and 2 by the end of 2028. Alabama Power currently expects to retire Plant Greene County Units 1 and 2 ( 300 MWs based on 60 % ownership) by the end of 2028. Alabama Power and Mississippi Power have continued to evaluate operating conditions and business needs relevant to the anticipated retirement of Plant Greene County Units 1 and 2. The ultimate outcome of this matter cannot be determined at this time. See "Mississippi Power – Integrated Resource Plans" herein for additional information.
+
+--- MISSISSIPPI POWER RETIREMENT-DATE EXTENSION (Item 1 BUSINESS) ---
+On January 9, 2025, Mississippi Power notified the Mississippi PSC of its intent to extend the retirement date of Plant Daniel Unit 2 and potentially extend the retirement dates of other fossil steam units beyond their current 2028 retirement dates in order to serve recently signed economic development loads of approximately 600 MWs. Mississippi Power has since acquired FP&L's 50% ownership interest in Plant Daniel Units 1 and 2. In 2026, Mississippi Power is expected to file an update to its 2024 IRP with the Mississippi PSC. Mississippi Power must also file an annual report on energy delivery improvements, the latest of which was filed in November 2025. See Note 2 to the financial statements under "Mississippi Power – Integrated Resource Plans" and " – Plant Daniel" in Item 8 herein for additional information.
+On January 9, 2025, Mississippi Power notified the Mississippi PSC of its intent to extend the retirement date of Plant Daniel Unit 2 and potentially extend the retirement dates of other fossil steam units beyond their current 2028 retirement dates in order to serve recently signed economic development loads of approximately 600 MWs. Mississippi Power has since acquired FP&L's 50 % ownership interest in Plant Daniel Units 1 and 2 as described under "Plant Daniel" herein. In 2026, in compliance with its IRP requirements, Mississippi Power is expected to file a mid-point update to its 2024 IRP with the Mississippi PSC.
+
+--- SOUTHERN NATURAL GAS / TRANSCO (Item 1 BUSINESS; Item 2 PROPERTIES note) ---
+Southern Natural Gas Company, L.L.C., a pipeline system in which Southern Company Gas has a 50% ownership interest
+Jointly owned with The Williams Companies, Inc., the Dalton Pipeline is a 115 -mile natural gas pipeline that serves as an extension of the Transcontinental Gas Pipe Line Company, LLC pipeline system into northwest Georgia. Southern Company Gas leases its 50 % undivided ownership for approximately $ 26 million annually through 2042. The lessee is responsible for maintaining the pipeline during the lease term and for providing service to transportation customers under its FERC-regulated tariff.

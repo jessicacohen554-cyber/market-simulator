@@ -1,0 +1,1032 @@
+GEORGIA POWER COMPANY
+BUDGET 2025
+LOAD AND ENERGY FORECAST
+2025 TO 2044
+Prepared by:
+Georgia Power Company
+Georgia Power Company
+Budget 2025 Load and Energy Forecast
+Table of Contents
+Table of Contents
+TOC \o "1-3" \h \z \u 1.0 EXECUTIVE SUMMARY OVERVIEW PAGEREF _Toc189162562 \h 1
+1.1 SUMMER AND WINTER PEAK DEMAND PAGEREF _Toc189162563 \h 2
+1.2 ENERGY SALES PAGEREF _Toc189162564 \h 6
+1.2.1 Territorial PAGEREF _Toc189162565 \h 6
+1.2.2 Residential PAGEREF _Toc189162566 \h 7
+1.2.3 Commercial PAGEREF _Toc189162567 \h 8
+1.2.4 Industrial PAGEREF _Toc189162568 \h 9
+1.2.5 Other Retail: Governmental Lighting, MARTA PAGEREF _Toc189162569 \h 10
+1.3 ECONOMICS PAGEREF _Toc189162570 \h 12
+1.4 FORECAST ASSUMPTIONS AND METHODS PAGEREF _Toc189162571 \h 13
+1.5 DEMAND SIDE PROGRAMS PAGEREF _Toc189162572 \h 15
+1.6 SENSITIVITIES AND SCENARIOS PAGEREF _Toc189162573 \h 15
+2.0 ANNUAL SUMMARY PAGEREF _Toc189162574 \h 16
+2.1 MONTHLY ENERGY REQUIREMENTS PAGEREF _Toc189162575 \h 17
+2.2 CUSTOMERS PAGEREF _Toc189162576 \h 20
+3.0 GENERAL FORECASTING OVERVIEW PAGEREF _Toc189162577 \h 21
+3.1 ECONOMETRIC REGRESSION PAGEREF _Toc189162578 \h 21
+3.2 END-USE MODELS PAGEREF _Toc189162579 \h 21
+3.3 MONTE CARLO SIMULATION PAGEREF _Toc189162580 \h 22
+3.4 INFORMED JUDGMENT PAGEREF _Toc189162581 \h 22
+3.5 TOOLS PAGEREF _Toc189162582 \h 23
+4.0 SHORT-TERM MODEL DESIGN OVERVIEW PAGEREF _Toc189162583 \h 24
+4.1 RETAIL SALES SECTORS PAGEREF _Toc189162584 \h 24
+4.1.1 Residential Sales PAGEREF _Toc189162585 \h 24
+4.1.2 Commercial Sales PAGEREF _Toc189162586 \h 27
+4.1.3 Industrial Sales PAGEREF _Toc189162587 \h 30
+4.1.4 MARTA Sales PAGEREF _Toc189162588 \h 32
+4.1.5 Governmental Lighting Sales PAGEREF _Toc189162589 \h 34
+4.2 CUSTOMER FORECASTS PAGEREF _Toc189162590 \h 34
+4.2.1 Residential Customers PAGEREF _Toc189162591 \h 35
+4.2.2 Commercial Customers PAGEREF _Toc189162592 \h 35
+4.2.3 Industrial Customers PAGEREF _Toc189162593 \h 36
+4.2.4 Governmental Lighting Customers PAGEREF _Toc189162594 \h 37
+4.3 CALENDAR MONTH FORECAST PAGEREF _Toc189162595 \h 38
+5.0 LONG-TERM MODEL DESIGN PAGEREF _Toc189162596 \h 39
+5.1 LONG-TERM ENERGY SALES PAGEREF _Toc189162597 \h 40
+5.1.1 Residential Long-Term Energy Sales PAGEREF _Toc189162598 \h 40
+5.1.2 Commercial Long-Term Energy Sales PAGEREF _Toc189162599 \h 69
+5.1.3 Industrial Long-Term Energy Sales PAGEREF _Toc189162600 \h 78
+5.2 ANNUAL TO MONTHLY BASED ENERGY FORECASTS AND SHORT-TERM INTEGRATION PAGEREF _Toc189162601 \h 85
+6.0 PEAK DEMAND FORECAST PAGEREF _Toc189162602 \h 86
+7.0 FORECAST ADJUSTMENTS FOR LARGE CUSTOMERS PAGEREF _Toc189162603 \h 102
+7.1 MODEL OVERVIEW PAGEREF _Toc189162604 \h 103
+7.1.1 Known Project Inputs PAGEREF _Toc189162605 \h 103
+7.1.2 Modeling Project Uncertainty PAGEREF _Toc189162606 \h 103
+7.1.3 Project Success PAGEREF _Toc189162607 \h 104
+7.1.4 State Selection PAGEREF _Toc189162608 \h 104
+7.1.5 Electric Service Provider PAGEREF _Toc189162609 \h 105
+7.1.6 Project Reaching Commercial Operation PAGEREF _Toc189162610 \h 105
+7.1.7 Announced Load vs. Metered Load PAGEREF _Toc189162611 \h 105
+7.1.8 Commercial Operation Date Delays PAGEREF _Toc189162612 \h 106
+7.2 MODELING THE PORTFOLIO PAGEREF _Toc189162613 \h 106
+7.2.1 Model Implementation PAGEREF _Toc189162614 \h 107
+7.2.2 Simulation Results PAGEREF _Toc189162615 \h 107
+7.3 TRIANGULAR DISTRIBUTION PAGEREF _Toc189162616 \h 108
+8.0 SENSITIVITY AND SCENARIO DEVELOPMENT OVERVIEW PAGEREF _Toc189162617 \h 111
+8.1 SENSITIVITIES PAGEREF _Toc189162618 \h 111
+8.2 SCENARIOS PAGEREF _Toc189162619 \h 116
+8.2.1 Future Load Growth PAGEREF _Toc189162620 \h 117
+9.0 FORECAST ASSUMPTIONS OVERVIEW PAGEREF _Toc189162621 \h 119
+9.1 SHORT-TERM ENERGY MODEL ECONOMIC ASSUMPTIONS PAGEREF _Toc189162622 \h 120
+9.2 LONG-TERM ENERGY MODEL ECONOMIC ASSUMPTIONS PAGEREF _Toc189162623 \h 120
+9.3 FUEL PRICE ASSUMPTIONS PAGEREF _Toc189162624 \h 122
+9.4 FORECAST ADJUSTMENTS PAGEREF _Toc189162625 \h 124
+9.4.1 Demand Side Strategies and Customer Actions PAGEREF _Toc189162626 \h 124
+9.4.2 Cogeneration PAGEREF _Toc189162627 \h 125
+9.4.3 Electric Vehicles PAGEREF _Toc189162628 \h 125
+9.4.4 Behind-The-Meter Solar PAGEREF _Toc189162629 \h 125
+9.5 IMPACTS OF APPLIANCE EFFICIENCY STANDARDS PAGEREF _Toc189162630 \h 128
+9.6 RESOURCE SIDE DEMAND SIDE OPTIONS PAGEREF _Toc189162631 \h 129
+10.0 FINAL IRP REQUIREMENT OVERVIEW PAGEREF _Toc189162632 \h 130
+10.1 DESCRIPTION OF WEATHER NORMALIZATION PAGEREF _Toc189162633 \h 130
+10.2 REVIEW OF ECONOMIC INPUT AND LOAD PROFILES PAGEREF _Toc189162634 \h 131
+10.3 ACTUAL & EXPECTED INTERRUPTIBLE DEMAND PAGEREF _Toc189162635 \h 134
+10.4 EVALUATION OF PREVIOUS FORECASTS PAGEREF _Toc189162636 \h 135
+10.4.1 General Enhancements PAGEREF _Toc189162637 \h 143
+10.4.2 Specific Enhancements PAGEREF _Toc189162638 \h 143
+10.5 ENERGY RESEARCH PLAN PAGEREF _Toc189162639 \h 147
+10.5.1 Introduction PAGEREF _Toc189162640 \h 147
+10.5.2 Survey Research PAGEREF _Toc189162641 \h 148
+10.5.3 Load Research PAGEREF _Toc189162642 \h 149
+10.5.4 Analysis PAGEREF _Toc189162643 \h 149
+11.0 ACRONYM & ABBREVIATION GLOSSARY PAGEREF _Toc189162644 \h 151
+1.0 EXECUTIVE SUMMARY OVERVIEW
+In support of the 2025 Integrated Resource Plan (“IRP”), this document presents the Budget 2025 Load and Energy Forecast (“Budget 2025” or “B2025”).
+A twenty-year forecast of energy sales and peak demand was developed to meet the planning needs of Georgia Power Company (“Georgia Power” or the “Company”). Budget 2025 includes the following retail classes: residential, commercial, industrial, Metropolitan Atlanta Rapid Transit Authority (“MARTA”), and governmental lighting. The baseline forecast was started in the spring of 2024 and completed in the fall of 2024.
+Georgia has seen unprecedented growth in economic development activity since Georgia Power’s 2022 Integrated Resource Plan was filed. Numerous new businesses and industries have come to Georgia, including significant new load related to data centers, manufacturing, and clean energy technology. This growth was incorporated into the 2023 IRP Update Load Forecast (“2023 IRP Update”), filed in October 2023.
+Since the 2023 IRP Update was filed, the growth in large loads has continued to increase. The latest data supports Georgia Power’s expectation for continued and robust economic growth in the state. Figure 1.0-1 shows how things have changed since the 2023 IRP Update was filed.
+Since October 2023, the total pipeline of economic development projects through the mid-2030s has increased by 7,300 MW, from 17,000 MW to 24,300 MW. Of this increase, 6,800 MW represents large load economic development projects. In addition, the size of the portfolio of large load customers that have committed to receive service from Georgia Power has more than doubled from 3,600 MW to 7,300 MW, representing 24 committed large load projects. Of these 24 projects, 14 have broken ground and 10 are pending construction. This evidence indicates that these large load customers are materializing and making progress without material delays.
+Figure 1.0-1: Announced Loads Considering Georgia and Georgia Power Through the Mid-2030s
+Budget 2025 projects continued extraordinary customer load growth stemming from the rapid economic development taking place in Georgia. The projected demand in Budget 2025 exceeds the demand projected in both the 2023 IRP Update and the 2022 IRP. A more detailed discussion of customer class energy sales and peak demand forecast results is presented below.
+1.1 SUMMER AND WINTER PEAK DEMAND
+Each year, Georgia Power produces a 20-year forecast of both summer and winter peak demands. The Company’s all-time peak demand of 17,985 MW occurred on August 9, 2007. Since then, Georgia Power’s total peak demand has not surpassed this level. Georgia Power’s highest winter peak demand of 16,458 MW occurred on January 17, 2024.
+The summer and winter peak demand forecasts are based on normal weather. Both forecasts include the impacts of electric vehicles and behind-the-meter solar. In addition, external adjustments have been made to reflect the impacts of new large load customers, cogeneration, and the impacts of Company-sponsored Demand Side Management (“DSM”) programs.
+With the introduction of new large loads due to the extraordinary economic development taking place in Georgia, the Company developed a new forecasting methodology, first used in the 2023 IRP Update, to reflect the unique characteristics of the new loads and incorporate those characteristics, as appropriate, in the form of an additional external adjustment to its organic load forecast. It is important to note that the organic portion of the forecast, which is brought by traditional lines of business, continues to be developed using econometric and end-use models, as the Company has traditionally done. Georgia Power currently anticipates a rapid increase in its summer and winter peak demands due to the new loads expected in the Commercial and Industrial classes.
+The high-level impacts on peak demands resulting from new large customer loads are presented in Figures 1.1-1 and 1.1-2. These charts contain a comparison of the Budget 2022 Load Forecast (“Budget 2022”) peak demands, which were used in the 2022 IRP, with the peak demands used in the 2023 IRP Update and Budget 2025.
+As seen in Figure 1.1-1, for the period from 2025 through 2031, Budget 2025 reflects summer load growth of more than 8,700 MW. This is 40 times greater than the Budget 2022 summer load growth of approximately 200 MW for the same period. It is 1.3 times greater than the 2023 IRP Update summer load growth of 6,500 MW for 2025-2031.
+To account for the potential large loads resulting from economic development, the Company developed a probabilistic model that evaluates a hundred thousand potential combinations of existing and potential economic development loads. These combinations can then be sorted and ranked to create a probability distribution. This distribution helps the Company assess the likelihood of the loads it will need to serve. The output of this probabilistic model is the basis for the external adjustment applied to the Company’s organic load forecast.
+Figure 1.1-1: Summer Peak Demand Forecast
+Figure 1.1-2: Winter Peak Demand Forecast
+The comparisons in Figure 1-1.2 show a pattern similar to summer peak demand, with Budget 2025 winter peaks growing strongly compared to Budget 2022 and the Budget 2023 IRP Update, driven by growth in large customer loads. For the period from 2025 through 2031, Budget 2025 reflects winter load growth of approximately 8,200 MW. This is approximately 25 times greater than the Budget 2022 winter load growth of approximately 300 MW for the same period. It is nearly 1.4 times greater than the Budget 2023 IRP Update winter load growth of approximately 5,900 MW for 2025-2031.
+In 2026 and 2027, Budget 2025 winter peaks are slightly lower than in the 2023 IRP Update due to a change in the expected ramp-in schedule in some of the large load projects.
+Comparing the summer and winter peaks in Figures 1.1-1 and 1.1-2, it is evident that Georgia Power is expected to remain a summer-peaking utility over the forecast horizon. The difference between summer and winter peaks in Budget 2025 ranges from approximately 1,500 MW to over 2,400 MW.
+1.2 ENERGY SALES
+1.2.1 Territorial
+Figure 1.2.1-1 shows the expected growth in territorial energy sales over the forecast horizon. In absolute terms, the amount of gigawatt hour (“GWh”) growth is indicated by the average annual growth rate (“AAGR”). The compound annual growth rate (“CAGR”) shows the percentage growth in energy sales over different time periods. During the historical period from 2013 to 2023, which includes the Covid-19 pandemic, average growth increased by just 318 GWh per year. Budget 2025 anticipates an average growth of 7,900 GWh each year from 2024-2034, while Budget 2022 and the 2023 IRP Update predicted growth of 500 GWh and 6,200 GWh per year over this same period.
+Territorial energy sales are a combination of the following classes: residential, commercial, industrial, governmental lighting, and MARTA. Understanding what is happening in the forecasts for each class provides insight into the total territorial forecast. The forecasts for each of these classes are discussed in the sections below.
+Figure 1.2.1-1: Territorial Energy Forecast
+1.2.2 Residential
+Over the 2013-2023 historical period, residential sales grew by an average rate of 254 GWh per year. The Budget 2022 forecast, which was completed during the pandemic, had lower growth due to uncertainty about how quickly the economy and electricity sales would recover. Since that time, residential sales have gotten a boost from customer growth, adding nearly 40,000 customers per year since 2021. In Budget 2025, residential sales are expected to grow by 400 GWh per year over the next 10 years, driven by robust growth in customers and expected growth in electric vehicle adoption.
+Since the new large load activity only impacts the commercial and industrial classes, there is no additional external adjustment needed or applied to the baseline residential, governmental lighting, and MARTA classes.
+Figure 1.2.2-1 Residential Energy Forecast
+1.2.3 Commercial
+From 2013-2023, average annual growth in commercial sales rose slightly, increasing by an average of 54 GWh per year due in part to energy efficiency partially offsetting the impacts of customer growth. Budget 2022 projected modest annual increases through 2034 of 47 GWh per year, before growth picked up slightly in the outer years of the forecast as continued improvements in energy efficiency were offset by expected growth in commercial square footage and electric vehicles.
+Budget 2025 and the 2023 IRP Update show large amounts of growth over the forecast horizon as new large loads, in particular data centers, come online. In Budget 2025, from 2024-2034, average growth is expected to be more than 6,800 GWh per year, compared to over 4,600 GWh per year in the 2023 IRP Update. By 2030, commercial sales are more than double those expected in Budget 2022. In the later years of the forecast, light-duty electric vehicles and the inclusion of medium- and heavy-duty electric vehicles provide a further boost to sales.
+Figure 1.2.3-1: Commercial Energy Forecast
+1.2.4 Industrial
+Except for a drop in 2020 due to the pandemic, historical industrial sales from 2013-2023 were relatively flat, increasing by an average of just 31 GWh per year.
+Industrial sales in Budget 2022 were expected to grow slowly after the pandemic, and then pick up in the outer years of the forecast, driven primarily by growth in industrial production. Budget 2025 and the 2023 IRP Update both begin to grow quickly in 2025 and beyond as new large customer load projects come online. Over the 2024-2034 period, Budget 2025 industrial sales are expected to grow by an average of almost 700 GWh per year, while the 2023 IRP Update expected to add more than 1,200 GWh per year. Industrial sales growth in Budget 2025 is below the projected growth in the 2023 IRP Update for a number of reasons, including: changes in project status (e.g. project cancelation); reductions in announced load; or changes in the ramp-in schedule (e.g. project delay).
+Figure 1.2.4-1: Industrial Energy Forecast
+1.2.5 Other Retail: Governmental Lighting, MARTA
+Regulated governmental lighting and MARTA are Georgia Power’s two smallest customer classes. Combined, they account for less than 1% of total sales. The regulated governmental lighting forecast is comprised of roadway lighting and traffic control. Governmental lighting sales have declined significantly since 2014 as Georgia Power worked with local municipalities to convert traditional streetlights to LED lights, which use much less energy. Budget 2022 recognized that over time traditional streetlights will be replaced with LEDs as they reach the end of their useful lives. Actual energy sales since 2021 have been declining faster than expected in both Budget 2022 and the 2023 IRP Update forecasts. As a result, the Budget 2025 governmental lighting forecast anticipates changeouts to LED fixtures to occur at a faster pace. Budget 2025 is thus lower than Budget 2022 over the forecast horizon, as shown in Figure 1.2.5-1.
+Figure 1.2.5-1: Governmental Lighting Energy Forecast
+Energy sales to MARTA dropped significantly in 2020 as ridership fell due to the Covid-19 pandemic. As seen in Figure 1.2.5-2, actual energy sales, as well as the 2023 IRP Update and Budget 2025 forecasts for MARTA sales, are down compared to what was expected in the Budget 2022 forecast. The desire of employees for more flexible work and a shift to hybrid work schedules is likely to have a negative impact on MARTA’s energy use for the foreseeable future.
+Figure 1.2.5-2: MARTA Energy Forecast
+1.3 ECONOMICS
+Georgia’s economy remains on solid footing and is on par or outperforming the United States (“U.S.”) in terms of employment growth, the unemployment rate, and Gross State Product (“GSP”) growth. In the 12 months ending in July 2024, Georgia added more than 77,000 jobs, an increase of 1.6% since July 2023, the same percentage increase as the nation as a whole. Georgia’s unemployment rate, at 3.4% in July 2024, is well below the U.S. rate of 4.3%.
+With respect to real (i.e., inflation adjusted) output, Georgia continues to outpace the overall U.S. economy. In the latest information available from the Bureau of Economic Analysis, Georgia’s Q2-2024 real GSP grew at an annualized rate of 3.5%, compared to 3.0% for the U.S. Gross Domestic Product (“GDP”).
+Georgia’s economy is benefitting from strong population growth and is currently the eighth most populous state in the nation. Since the 2020 Census, the state has added more than 315,000 residents, which is the fourth highest increase in the U.S. In terms of percentage growth, Georgia’s population has grown 2.9% from 2020-2023 compared to 1.0% growth for the U.S. Net domestic migration accounted for nearly 59% of the population increase since 2020, as Georgia welcomed over 185,000 residents from other states. This is the seventh highest increase in residents among the 50 states. International migration added over 52,000 residents, while natural growth, calculated as births minus deaths, increased by nearly 60,000 from 2020-2023, the fifth highest increase in the nation. Robust population growth over the past few years has supported a steady increase in Georgia’s labor force, which is essential to continued economic growth.
+Georgia remains an attractive place to do business. Area Development has ranked Georgia the top state for doing business for the past eleven years. The state ranks in the top five in 10 of the 14 categories used for evaluation. Most recently, Georgia was named the number one state for Best Business Climate by a survey of site selection experts in Site Selection magazine’s January 2025 edition. Georgia’s strong reputation as a state favorable for business, combined with its excellent economic development efforts have made it very successful in attracting new businesses to the state, as well as expansions of existing businesses. Corporate relocations and expansions will help fuel growth in employment, population, and incomes. Examples of businesses the state has attracted include electric vehicle battery and automobile manufacturers, solar panel manufacturers, and data centers.
+Georgia is expected to experience robust economic growth over the forecast period of 2024-2044. The state has a number of positive attributes that will continue to attract businesses. Businesses are drawn to the state by its low cost of doing business and low cost of living, the deep pool of knowledge and technical workers coming from its university system, its globally connected airport and transportation infrastructure (e.g. ports, highways), and its business-friendly government policies. Positive demographic trends will also drive economic growth in the state. As businesses relocate and expand in Georgia, the state will experience solid employment growth, which will attract new residents. As a result, population growth will remain above the U.S. average, 0.7% for Georgia vs. 0.3% for the U.S., over the forecast period.
+1.4 FORECAST ASSUMPTIONS AND METHODS
+The assumptions underlying Budget 2025 were developed by Southern Company Services (“SCS”). The forecast was developed through careful consideration and methodical examination of key demographic and economic variables that historically have been significant indicators of energy consumption. Major assumptions include the economic outlook for the U.S. and Georgia, energy prices, and market profiles for class end uses.
+The economic forecast provides a description of the economy for the next 20 years and includes many elements of the economy such as gross product, population, employment, commercial building square footage, and industrial production. The economic and demographic forecasts for Budget 2025 were obtained from S&P Global (formerly IHS Markit), a national provider of economic data and forecasts.
+The models used to produce both the short- and long-term energy forecasts include a variety of economic and demographic variables as drivers of energy use. Weather, income, employment, historical load data, and industry standards for electrical equipment are among the variables used in the forecasting models. “Normal” weather is defined as the average of Cooling Degree Hours (“CDH”) and Heating Degree Hours (“HDH”) from 1980-2023.
+Short-term energy projections for the residential, commercial, industrial, governmental lighting and MARTA are based on linear regression models. Except for MARTA, which is a single customer, projections of customers by class also utilize linear regression methods. The details of these regression models can be found in Section 4.
+Except for governmental lighting and MARTA, the long-term forecast models are end-use models. The Budget 2025 forecast uses the Load Management Analysis and Planning (“LoadMAP”) model to produce the long-term residential, commercial, and industrial forecasts. The governmental lighting and MARTA long-term forecasts use the same models developed for the short-term forecast. The LoadMAP tool is discussed in greater detail in Section 5.
+The results of the short-term and long-term models are integrated into a unified forecast. In Budget 2025, the short-term forecast results were used for the years 2025 through 2029 and the long-term results were used for 2030 to 2044. Additional information on methodology can be found in Section 3.
+Budget 2025 uses hourly Metrix Peak Demand models (“MPD”) for each class to predict Georgia Power’s weather-normal peak demands over the 2025 – 2044 forecast period. The methodology and assumptions used in the peak demand models are discussed in greater detail in Section 6.
+Budget 2025 utilizes the Load Realization Model (“LRM”) to estimate how new large loads will materialize over the forecast horizon. The LRM is a probabilistic model that utilizes Monte Carlo simulation to estimate expected loads for new large load customers. These estimates are used as external adjustments to the baseline commercial and industrial forecasts. A description of the model and assumptions can be found in Section 7.
+1.5 DEMAND SIDE PROGRAMS
+Georgia Power offers energy efficiency programs to promote energy savings to customers. These programs have existed for many years, and the benefits from these programs are embedded in Georgia Power’s historical loads and energy sales. The forecasts produced using historical energy data, therefore, have an embedded effect propagated throughout the forecast. Other conservation measures undertaken by customers, whether explicitly induced by a marketing program or proactively undertaken by a customer for other reasons, will also become embedded in the historical energy data and will be implicitly propagated throughout the forecast. New or ongoing Georgia Power programs that are not fully reflected in historical data are incorporated into the forecast as external adjustments.
+An additional type of demand-side impact considered in Budget 2025 is the adopted efficiency standards in the end-use models used for the long-term forecast. These efficiency standards represent the continuing trend of increasing end-use efficiency driven in part by programs such as ENERGY STAR®.
+1.6 SENSITIVITIES AND SCENARIOS
+Budget 2025 is a base case forecast, using as its foundation the most probable economic scenario and current regulatory environment. However, many factors affecting resource planning involve future uncertainties. Nine scenarios were developed to evaluate different uncertainties, including: (1) future pressure on CO2 and other greenhouse gas (“GHG”) emissions, (2) cost and performance of future generating technologies, (3) future load growth, and (4) future fuel prices.
+It is also important to understand the possible impacts of variations in the description of the factors (variables) that are used in the forecast and their impact on the forecast results. Consequently, seven forecast sensitivities have also been run: (1) high economic growth; (2) low economic growth; (3) no load growth; (4) high growth in large load customers; (5) load growth with no DSM growth; (6) load growth with aggressive DSM growth; and (7) load growth using a 20-year normal definition of weather, as stipulated in the 2019 IRP. The economic sensitivities were driven by variations in the economic drivers of the forecast provided by S&P Global. Section 8 provides the results and details of the various scenarios and sensitivities.
+2.0 ANNUAL SUMMARY
+Attachment 2.0-1: Budget 2025 Forecast Annual Summary
+2.1 MONTHLY ENERGY REQUIREMENTS
+Attachment 2.1-1: Budget 2025 Monthly Energy Requirements by Class of Service – Forecast
+Attachment 2.1-1: Budget 2025 Monthly Energy Requirements by Class of Service – Forecast
+Attachment 2.1-2: Monthly Energy Requirements by Class of Service – Historical
+2.2 CUSTOMERS
+Attachment 2.2-1: Budget 2025 Historical and Forecast Customers (Year End)
+3.0 GENERAL FORECASTING OVERVIEW
+This section provides an overview of the modeling methods used to produce Budget 2025 for Georgia Power. The forecast uses a variety of statistical techniques and other methods. The availability of data, characteristics of the market, and uses of the forecast all help determine which method will be used for each part of the forecast.
+Budget 2025 uses four primary methods:
+1) Econometric regression;
+2) End-use models;
+3) Monte Carlo simulation; and
+4) Informed judgment.
+3.1 ECONOMETRIC REGRESSION
+Econometric regression is a statistical technique with which model parameters are estimated from time series, cross sectional, or a combination of time series and cross sectional (pooled) data. Basic classical regression assumptions apply to the models. These models are well suited for modeling the relationships between energy consumption and explanatory variables such as economics, weather, and changes in behavior such as increases in the use of electronic devices in the home. Georgia Power’s customer and short-term energy forecasts (2025-2029) utilize econometric models.
+3.2 END-USE MODELS
+End-use forecasting models are used to represent the elements of energy use in fine detail. For example, end-use models estimate residential energy use by looking at appliance saturation and penetration surveys and then determining aggregate class usage by adding up all the elements of energy consumption across households. Each major energy-consuming activity – refrigeration, space heating, lighting and the like – is identified, and the corresponding energy consumption is specified. This approach has a strong intuitive appeal because energy consumption is clearly associated with appliance use. The models can also produce energy sales forecasts of end-use equipment with a wide range of efficiency and usage sensitivities with respect to fuel prices, income levels, and other factors.
+The detailed nature of end-use models is their major advantage relative to econometric models, but the detailed input requirements are also the major source of their limitations. These models require extensive information about projected appliance market penetration and usage rates. It is a challenge to produce such projections that are sensitive to changes in energy prices, household incomes, and lifestyles.
+The end-use models used by Georgia Power for its long-term energy forecasts for the residential, commercial, and industrial classes combine the benefits of end-use detail and class segmentation to estimate future energy consumption. These models utilize econometric techniques to model consumer choices of end uses based on economic principles.
+3.3 MONTE CARLO SIMULATION
+Monte Carlo simulation is a mathematical technique that is used to develop and quantify possible outcomes of a portfolio with uncertain events. Unlike a traditional forecasting model, Monte Carlo simulation provides a range of outcomes based on estimated values rather than fixed input values. The simulation assigns random values to input variables with uncertainty, based on a chosen probability distribution, such as normal or a triangular distribution, and calculates an outcome. This process is repeated numerous times (often hundreds of thousands), each time using a different set of random inputs, to produce a large number of possible outcomes.
+The portfolio of large load projects being assessed by the Company consists of projects in various phases of development, ranging from early stages, such as the state selection or site selection, to those under construction and projected to be served by the Company. This creates multiple dimensions of uncertainty for each project, making Monte Carlo simulation an appropriate technique to develop a load distribution for the load to serve.
+The Load Realization Model, which uses this probabilistic approach, was first used in Georgia Power’s 2023 IRP Update to evaluate the range and likelihood of future potential outcomes of load growth from new large customers. The results of this approach support the external adjustment applied to the commercial and industrial load and energy forecasts.
+3.4 INFORMED JUDGMENT
+Even the most advanced modeling techniques require the use of insights gained through experience serving customers, maintaining relationships, and engaging with marketing personnel. Company personnel can provide valuable insights on industry trends and specific customer information, such as the addition of on-site generation equipment at existing sites, the closure of industrial plants, or the consideration of new facilities by large new customers. In these situations, econometric and end-use models alone may not be able to adequately capture the load we will be required to serve.
+To address these gaps, informed judgment is used to refine the forecast. This approach leverages the knowledge and experience of Company personnel to supplement and enhance the accuracy of modeling tools.
+3.5 TOOLS
+The tools used to prepare the energy and peak forecasts include EViews (regression software), LoadMAP, MetrixND, MetrixLT, @Risk, and Microsoft Excel.
+4.0 SHORT-TERM MODEL DESIGN OVERVIEW
+This section describes the quantitative methods used to develop Georgia Power’s customer and short-term energy sales forecasts. The forecasts from the short-term energy models cover the period from May 2024 through December 2029. These short-term energy forecasts are then integrated with the long-term results discussed in Section 5. The residential and commercial short-term energy models generate results on a billing month basis, which are then converted to a calendar month basis. Industrial sales are modeled on a calendar month basis. The MARTA and governmental lighting energy forecasts are produced on a billing month basis.
+The estimates of the number of customers by class are derived from econometric models that have a twenty-year forecast horizon. The short-term energy forecasts are also developed on a customer class basis employing a linear regression methodology. Although the drivers vary by customer class, the models include explanatory variables that relate changes in monthly sales or customers to economic drivers, energy efficiency, monthly binaries, and monthly weather interaction binary variables. Autoregressive variables are included in the models where it is determined that serial correlation is an issue.
+The short-term model parameters are estimated with the EViews software package. EViews is a well-established software package used in econometric analysis, forecasting, and simulation. S&P Global provides the historical and forecasted economic data used in the short-term models. When estimating the model parameters, actual HDH and CDH are used. For the forecast period, “normal” weather is assumed. “Normal” weather for Budget 2025 is defined as the average of CDH and HDH from 1980-2023.
+4.1 RETAIL SALES SECTORS
+The retail sector includes the residential, commercial, industrial, MARTA, and regulated governmental lighting classes.
+4.1.1 Residential Sales
+The model of energy sales for the residential class depends on the following factors:
+Number of days in the billing cycle
+Number of customers
+Weather
+Energy efficiency
+Price of electricity
+A regression model relating residential energy use per customer per billing day to an intercept, twelve monthly weather interaction variables that are divided by the number of billing days, an energy efficiency variable developed for the short-term residential energy forecast, and a real electric price variable was created. Table 4.1.1-1 contains a summary of the parameter estimates and statistics for the short-term residential model.
+Table 4.1.1-1 Residential Use per Customer per Billing Day
+Residential Short-Term Model
+Budget 2025
+Where:
+To eliminate the impact on sales resulting from the variation in the length of billing periods, the use-per-customer (dependent) variable and the monthly weather terms are divided by the number of billing days. Historical average billing days per month are obtained from the Company’s annual meter reading schedules. For Budget 2025, average billing days were based on the actual meter schedules for each respective year available from 2024-2027. Subsequent years use a historical average of billing days per period, adjusted as needed to ensure an accurate number of days in the calendar and annual periods.
+Weather has a significant effect on residential energy sales. HDH and CDH are used to measure the impact of weather on monthly residential energy sales. The degree hours are computed as an average of the billing cycles. Residential HDH are calculated using a 60°F threshold, and CDH uses a 68°F threshold. Degree hours are averaged over ten National Weather Service stations, and the temperatures at the weather stations are weighted by the residential energy use in the Georgia Power regions that are mapped to the ten weather stations.
+For the monthly weather interaction variables, CDH per billing day and HDH per billing day are interacted with monthly binary variables to better distinguish their impact on the residential class at various times of the year.
+As appliances, heating and cooling equipment, lighting, and other residential end-uses have become more efficient over time, Georgia Power has observed a decline in residential electric use per customer. To capture this impact, the residential short-term energy model includes an efficiency variable derived from the long-term energy forecast model. It is calculated using the weighted average of equipment stock efficiency from the previous year’s LoadMAP model. The weights are based on the equipment’s relative contribution to total residential usage.
+The residential price of electricity is calculated by dividing nominal monthly residential revenue from customer bills by monthly residential energy sales. Economic theory indicates that people respond to real prices rather than nominal prices, since real prices provide a more accurate representation of purchasing power over time. To calculate real prices, the nominal price is divided by the U.S. GDP deflator.
+To calculate total forecasted residential billed energy sales, the forecast of residential use per customer per billing day is multiplied by the forecasted number of customers and billing days. The residential customer forecast model is presented in Section 4.2.1.
+4.1.2 Commercial Sales
+The model of energy sales for the commercial class depends on the following factors:
+Number of customers
+Number of days in the billing cycle
+Weather
+Real GSP from Commercial activity
+Commercial energy sales are projected using a linear regression model that relates monthly energy use per customer per billing day to independent variables that capture the impacts of varying weather conditions and commercial economic activity.
+Similar to the residential model, the impact on sales resulting from the variation in the length of the billing period is addressed by dividing the commercial energy use per customer (dependent) variable and the monthly weather terms by the number of billing days. Historical average billing days per month are obtained from the annual meter reading schedules. For Budget 2025, average billing days were based on the actual meter schedules for each respective year available from 2024-2027. Subsequent years use a historical average, adjusted as needed to ensure an accurate number of days in the calendar and annual periods.
+HDH and CDH are used to measure the impact of weather on monthly commercial energy sales. As with the residential class, HDH and CDH are computed as an average of the billing cycles. For the commercial class, HDH are computed using a 51°F threshold and CDH are computed with a 61°F threshold. Degree hours are averaged over ten National Weather Service stations, and the temperatures at the weather stations are weighted by the commercial energy use in the Georgia Power regions that are mapped to the ten weather stations.
+The commercial short-term regression model relates monthly commercial energy sales per billing day to an intercept, twelve monthly weather interaction terms that are divided by the number of billing days and an economic activity variable. The monthly weather interaction variables are calculated by multiplying the CDH per billing day and HDH per billing day variables with monthly binary variables. This helps distinguish the impact of HDH and CDH on the commercial class at various times of the year. The variable used as a proxy for economic activity is real GSP for the commercial sector of Georgia’s economy. This includes segments such as retail, education, office, and business services, to name a few.
+The forecast of commercial energy sales per customer per billing day is multiplied by the forecasted number of customers and billing days to get total forecasted commercial billed energy sales. A summary of parameter estimates and statistics for the short-term commercial energy model is found in Table 4.1.2-1. The commercial customer forecast is presented in Section 4.2.2.
+Table 4.1.2-1: Commercial Use per Customer per Billing Day
+Commercial Short-Term Model
+Budget 2025
+Where:
+4.1.3 Industrial Sales
+The model of energy sales for the industrial class depends on the following factors:
+Weather
+Number of calendar days in the month
+Georgia Industrial Production
+Industrial energy use per calendar day (MWh) is projected using an econometric regression model with independent variables that capture the impacts of varying weather conditions and the economy.
+The industrial class is not as weather sensitive as the commercial or residential classes. Only CDH are used to measure the impact of weather on monthly industrial energy sales. HDH do not significantly impact industrial sales and are thus not used in the short-term forecast model. Industrial CDH are computed using a 69°F threshold. The CDH are averaged over ten National Weather Service stations, and the temperatures at the weather stations are weighted by the industrial energy use in the Georgia Power regions that are mapped to the ten weather stations.
+The regression model relates the total monthly industrial energy sales per calendar day to four monthly binary variables, six monthly weather interaction terms divided by the number of calendar days and the Georgia Industrial Production Index.
+The forecast of industrial energy sales per calendar day is multiplied by the number of calendar days to get total forecasted industrial calendar energy sales. A summary of the parameter estimates and statistics for the short-term industrial energy model is presented in Table 4.1.3-1.
+Table 4.1.3-1: Industrial Energy Sales per Calendar Day
+Industrial Short-Term Model
+Budget 2025
+Where:
+4.1.4 MARTA Sales
+MARTA energy sales, both short-term and long-term, are forecasted using a linear regression model that relates sales to eleven monthly weather interaction terms and a Covid-19 recovery trend variable. Table 4.1.4-1 presents the specific parameter estimates and statistics of the MARTA energy model.
+Energy sales to MARTA were hard-hit by the Covid-19 pandemic, dropping by 23% from March to April 2020. The Covid variable is based on the forecast of Georgia’s GSP. This variable has a value of one in April and May 2020, and then declines to zero once the level of GSP surpasses the pre-pandemic level from February 2020.
+Table 4.1.4-1: MARTA Energy Sales
+MARTA Short-Term Model
+Budget 2025
+Where:
+4.1.5 Governmental Lighting Sales
+Between 2014 and 2023, regulated governmental lighting energy sales declined by 40% as municipalities changed out older lights and replaced them with new energy efficient lighting fixtures. The use of an econometric model is not feasible since there is no reasonable economic driver that can be used to model this sort of decline. For Budget 2025, the Company instead uses a simple growth rate, based on a 5-year compound annual growth rate, to capture the short-term trend. Cubic spline interpolation is used to moderate the rate of decline over the long-term forecast horizon.
+4.2 CUSTOMER FORECASTS
+Budget 2025 customer forecasts for the residential, commercial, industrial, and governmental lighting classes were developed using linear regression models. These models are discussed in detail below.
+4.2.1 Residential Customers
+The Georgia Power residential customer forecast was developed using a regression model that relates the annual change in customers to the number of total private Georgia housing starts, a Covid binary variable to account for the impact of Covid-19 in the year 2020, a recession binary variable based on the National Bureau of Economic Research’s Business Cycle Dating Committee classification of U.S. recessions, Georgia’s annual unemployment rate and an intercept term. The annual forecasts are then spread across the months using an estimate of the monthly historical pattern. Table 4.2.1-1 presents the specific parameter estimates and statistics for the residential customer model.
+Table 4.2.1-1: Residential Customers
+Residential Customer Model
+Budget 2025
+Where:
+4.2.2 Commercial Customers
+The Georgia Power commercial customer forecast uses the annual change in customers, excluding Unmetered Devices, as the dependent variable. Unmetered Device accounts are excluded from total commercial customers because they consume much less energy than a typical commercial customer. By excluding Unmetered Devices, the true growth of typical commercial customers is captured. As a result, when commercial use per customer results are multiplied by the number of customers, the forecast of commercial energy is not overstated.
+The commercial customer regression model includes two independent variables: the number of total private housing starts in Georgia and a recession binary variable for years that include a recession. Both of these variables are the same as the ones used in the residential customer model. The annual forecasts are then spread across the months using an estimate of the monthly historical pattern. Table 4.2.2-1 presents the specific parameter estimates and statistics for the commercial customer model.
+Table 4.2.2-1: Commercial Customers
+Commercial Customer Model
+Budget 2025
+Where:
+4.2.3 Industrial Customers
+The Georgia Power industrial monthly customer forecast was developed using a regression model, with a one-month lag of customers as the explanatory variable. Table 4.2.3-1 presents the specific parameter estimates and statistics for the industrial customer model.
+Table 4.2.3-1: Industrial Customers
+Industrial Customer Model
+Budget 2025
+Where:
+4.2.4 Governmental Lighting Customers
+The Georgia Power governmental lighting monthly customer forecast was developed using a regression model that includes a one-month lag of customers. The specific parameter estimates and statistics for the governmental lighting customer model are presented in Table 4.2.4-1.
+Table 4.2.4-1: Governmental Lighting Customers
+Governmental Lighting Customer Model
+Budget 2025
+Where:
+4.3 CALENDAR MONTH FORECAST
+Georgia Power budgeting and accounting records are based on calendar month sales. However, meters are not read according to calendar months. Instead, they are read according to the billing schedule for each class. Separate calendar month sales forecasts, derived from billing month forecasts, are prepared for Georgia Power’s residential and commercial classes. Calendar month sales forecasts for the other retail customers are assumed to be equal to their billing month forecasts because their billing periods nearly coincide with actual calendar months.
+For the short-term forecast (2025-2029), billing month energy sales are converted into calendar month energy sales by forecasting unbilled energy sales and applying the following equation:
+Calendar Month Sales = Billed Sales (current month) + Net Unbilled Sales
+where:
+Net Unbilled Sales = Unbilled Sales (Current Month) – Unbilled Sales (Previous Month)
+The unbilled sales forecast is estimated using the same forecast models for residential and commercial as presented in Sections 4.1.1 and 4.1.2. All of the inputs are the same, with the exception of the monthly weather interaction terms in the forecast period. In the unbilled model, these monthly weather interaction terms are based on the number of unbilled days, rather than the number of billed days, to account for the impact of variations in the length of the unbilled period. As with the number of billing days, the number of unbilled days is based on the Company’s annual meter reading schedule.
+The forecast of residential use per customer per unbilled day and commercial energy use per customer per unbilled day are multiplied by the forecasted number of customers and unbilled days to get the respective forecasted unbilled energy sales for each class to be used in the equation above to calculate calendar month sales.
+5.0 LONG-TERM MODEL DESIGN
+The long-term forecasts for the residential, commercial, and industrial customer classes were produced with end-use models. The end-use approach allows for an examination of the end uses that contribute to the energy usage of a customer class. For example, specific assumptions about appliance ownership, appliance efficiency improvements, and consumer choice characteristics are factored into the forecast of each customer class.
+For Budget 2025, the long-term energy forecasts utilized the Load Management and Planning model (LoadMAP), developed by Applied Energy Group (“AEG”), for the residential, commercial, and industrial classes. LoadMAP has been in use since the Budget 2015 forecast. Beginning with Budget 2021, the base year in the LoadMAP models was updated to 2016 (from 2007).
+Market profiles are used to quantify electricity use in the base year of the study by sector, segment, end use, and the current set of technologies. As part of the re-baselining process, the market profiles for the residential, commercial, and industrial sectors were rebuilt, moving the base year from 2007 to 2016. Base-year data such as customer counts, historic energy sales, equipment presence (saturations), market floor space (in commercial), Industrial Production and per-unit equipment electricity consumption (UEC/EUI) were updated using the best available sources as described below.
+The long-term twenty-year forecast for MARTA was produced using an econometric regression model. The governmental lighting forecast was produced based on recent actual growth. Detailed model specifications can be found in the short-term model documentation, Section 4, while forecasted values can be found in Section 2 above.
+Table 5.0-1 Model Type List
+| Class
+| Short-Term
+| Long-Term
+| Residential
+| Econometric
+| LoadMAP
+| Commercial
+| Econometric
+| LoadMAP
+| Industrial
+| Econometric
+| LoadMAP
+| MARTA
+| Econometric
+| Econometric
+| Governmental Lighting
+| Growth Rate
+| Growth Rate
+|
+|
+|
+5.1 LONG-TERM ENERGY SALES
+5.1.1 Residential Long-Term Energy Sales
+LoadMAP forecasts end-use or appliance-specific residential energy consumption using a variety of demographic, housing, economic, energy, and weather information. It models energy consumption for three main components: housing stock served (customers), share of the housing stock served by appliance end-use by fuel type, and unit energy consumption of the appliance/equipment by fuel type. End-use by fuel type refers to a class of technologies (appliances) that consume a particular fuel (electricity or natural gas), such as electric clothes dryers or gas stovetops. Technologies refer to specific types of energy using appliances. As an example, clothes dryers are in the end use of appliances with two technologies: standard and EnergyStar.
+LoadMAP simulates household energy decisions with respect to three basic types of choices — appliance ownership by fuel type, appliance efficiency, and appliance utilization (energy usage). For a given end use and fuel type, consumption is the product of the number of households, the percentage of the segment (households) with the end use, and the average unit energy consumption. The equation that uses these three main components to determine consumption, or sales, is called the central energy equation.
+Where:
+Energy = annual energy use in a particular segment (e.g., residential single-family homes)
+t = technology (appliance/equipment)
+e = end use (group of like technologies)
+N = market size (e.g., number of single-family homes)
+Sharet = share of market with the end use (e.g., single-family homes with the end use). This is
+also referred to as the end-use saturation.
+UECt = unit energy consumption in unit of market size (e.g., single-family homes) with the
+technology
+Ue = utilization index (equals 1.0 in base year)
+The elements of the central energy equation in the base year are contained in an energy market profile.
+The appliance ownership shares used in the LoadMAP model are calibrated to Georgia Power’s service territory and initialized to a base year of 2016.
+The residential energy model predicts energy consumption for nine major household end-uses:
+| 1. Cooling
+| 6. Exterior Lighting
+| 2. Space Heating
+| 7. Electronics
+| 3. Water Heating
+| 8. Miscellaneous
+| 4. Appliances
+| 9. Miscellaneous NEC (Not Elsewhere Classified)
+| 5. Interior Lighting
+|
+|
+|
+The model is segmented by housing type (single-family, multi-family, and manufactured housing), and its logic distinguishes between new and existing housing characteristics. Each customer group is described by the combinations of these attributes. As an example, new single-family housing demonstrates characteristic choice behaviors in the selection of the technologies (appliances) and fuel types available to the market. This choice behavior or demonstrated preference for a particular fuel choice technology in a given end-use category is measured by the 2022 Georgia Power Residential Saturation Survey and the South Atlantic regional results from the U.S. Energy Information Administration’s (“EIA”) Residential Energy Consumption Survey (“RECS”) and the most recent Annual Energy Outlook (“AEO”).
+For each of the end uses, LoadMAP forecasts equipment purchases, efficiency, and utilization choices. Within the simulation, the probability of installing a given technology in a dwelling is dependent upon the operating and performance characteristics of the competing alternatives, as well as household and dwelling features. Certain end uses are highly interdependent, such as heating and water heating, which typically use the same fuel type.
+Average annual end-use consumption levels, referred to as unit energy consumption (“UEC”), are from various internally developed and national and regional sources including the AEO (2023) from the EIA and the U.S. Department of Energy’s (“DOE”) OpenStudio/Energy Plus building simulation program, which is used to simulate weather responsive energy consumption. Internally developed building models based on either existing or new construction were used in the OpenStudio/Energy Plus program for use in Forecasting and DSM program study. UECs are calibrated to Georgia Power base year energy consumption. Average appliance size and efficiency by appliance vintage are derived from the 2022 Georgia Power Residential Appliance Saturation Survey and from the latest EIA RECS and AEO. The newest building simulations were used to update the starting annual energy consumption values for weather sensitive technologies values. Other technologies also had annual consumption values updated using data from the EIA, AEO, and from AEG and its data sources. The same sources are used to estimate and represent the gas market. Efficiency data are from several sources including AEG, RECS data, and other national and regional data. Additionally, LoadMAP data leverages AEG’s expertise providing the latest intelligence on efficiencies and technologies.
+Appliance operating efficiency and utilization rates are simulated as interdependent decisions. Efficiency choice is dependent on operating cost at the planned utilization rate, while actual utilization depends on operating cost given the appliance efficiency. The sensitivity of efficiency and utilization decisions to costs, climate, household and dwelling size, and income have been estimated and calibrated from historical survey data and short-term model results.
+Other exogenous variables include fuel prices (electricity and natural gas), average household income, household size, weather (measured in degree hours), natural gas availability, technology availability, and efficiency standards by technology.
+Historical natural gas prices are from the EIA State Energy Data System. Forecasts of residential natural gas prices are developed by SCS Forecasting using the commodity price forecasts from SCS Fuel Services and SCS Resource Planning. Historical electricity prices are from Georgia Power’s records while projected electricity prices are based on the retail price from the Company’s 10-year financial model and extrapolated based on historical trends for the remaining years.
+LoadMAP uses a normal weather condition of CDH and HDH in deriving the forecast. This weather condition is a forty-four-year average of CDH and HDH from 1980 through 2023. Economic data are purchased from S&P Global on an annual basis.
+Customers are separately forecasted at an aggregate level using the model presented in Section 4.2.1. This forecast is then disaggregated to single family, multi-family, and manufactured home using housing type trends from the S&P Global housing stock forecast and calibrated to historic Georgia Power billing data splits.
+The residential long-term forecast is modeled and presented on a calendar basis. The long-term forecast is integrated with the short-term forecast (both on a calendar basis) and later both are converted to a billing basis. Attachment 5.1.1-1 shows the unadjusted long-term calendar forecast, as well as the adjusted calendar and billed forecasts, which are adjusted for reductions in sales resulting from the additional DSM, additional behind-the-meter distributed solar, and for the additions to sales resulting from growth in electric vehicles. See Section 9.4 for more information on the adjustments made to the peak demand and energy forecasts.
+Several attachments follow which comprise the Budget 2025 Residential Long-term Forecast.
+Attachment 5.1.1-1: Total Residential Energy Sales (GWh)
+Residential Long-Term Forecast
+Budget 2025
+*In the following tables, values are based on the long-term calendar end-use model. No external adjustments were made.
+Attachment 5.1.1-2: GWh/BBtu Sales by End Use – Total Residential
+Residential Long-Term Forecast (LoadMAP-R) Unadjusted
+Budget 2025
+Attachment 5.1.1-2: GWh/BBtu Sales by End Use – Total Residential (cont’d)
+Residential Long-Term Forecast (LoadMAP-R) Unadjusted
+Budget 2025
+Attachment 5.1.1-2: GWh/BBtu Sales by End Use – Total Residential (cont’d)
+Residential Long-Term Forecast (LoadMAP-R) Unadjusted
+Budget 2025
+Attachment 5.1.1-2: GWh/BBtu Sales by End Use – Total Residential (cont’d)
+Residential Long-Term Forecast (LoadMAP-R) Unadjusted
+Budget 2025
+Attachment 5.1.1-3: GWh/BBtu Sales by End Use – Residential Single Family
+Residential Long-Term Forecast (LoadMAP-R) Unadjusted
+Budget 2025
+Attachment 5.1.1-3: GWh/BBtu Sales by End Use – Residential Single Family (cont’d)
+Residential Long-Term Forecast (LoadMAP-R) Unadjusted
+Budget 2025
+Attachment 5.1.1-3: GWh/BBtu Sales by End Use – Residential Single Family (cont’d)
+Residential Long-Term Forecast (LoadMAP-R) Unadjusted
+Budget 2025
+Attachment 5.1.1-3: GWh/BBtu Sales by End Use – Residential Single Family (cont’d)
+Residential Long-Term Forecast (LoadMAP-R) Unadjusted
+Budget 2025
+Attachment 5.1.1-4: GWh/BBtu Sales by End Use – Residential Multi-Family
+Residential Long-Term Forecast (LoadMAP-R) Unadjusted
+Budget 2025
+Attachment 5.1.1-4: GWh/BBtu Sales by End Use – Residential Multi-Family (cont’d)
+Residential Long-Term Forecast (LoadMAP-R) Unadjusted
+Budget 2025
+Attachment 5.1.1-4: GWh/BBtu Sales by End Use – Residential Multi-Family (cont’d)
+Residential Long-Term Forecast (LoadMAP-R) Unadjusted
+Budget 2025
+Attachment 5.1.1-4: GWh/BBtu Sales by End Use – Residential Multi-Family (cont’d)
+Residential Long-Term Forecast (LoadMAP-R) Unadjusted
+Budget 2025
+Attachment 5.1.1-5: GWh/BBtu Sales by End Use – Residential Manufactured Home
+Residential Long-Term Forecast (LoadMAP-R) Unadjusted
+Budget 2025
+Attachment 5.1.1-5: GWh/BBtu Sales by End Use – Residential Manufactured Home (cont’d)
+Residential Long-Term Forecast (LoadMAP-R) Unadjusted
+Budget 2025
+Attachment 5.1.1-5: GWh/BBtu Sales by End Use – Residential Manufactured Home (cont’d)
+Residential Long-Term Forecast (LoadMAP-R) Unadjusted
+Budget 2025
+Attachment 5.1.1-5: GWh/BBtu Sales by End Use – Residential Manufactured Home (cont’d)
+Residential Long-Term Forecast (LoadMAP-R) Unadjusted
+Budget 2025
+Attachment 5.1.1-6: GWh/BBtu Sales by Fuel
+Residential Long-Term Forecast (LoadMAP-R) Unadjusted
+Budget 2025
+Attachment 5.1.1-7: Average UEC (kWh/BBtu)
+Residential Long-Term Forecast (LoadMAP-R) Unadjusted
+Budget 2025
+Attachment 5.1.1-7: Average UEC (cont’d)
+Residential Long-Term Forecast (LoadMAP-R) Unadjusted
+Budget 2025
+Attachment 5.1.1-7: Average UEC (cont’d)
+Residential Long-Term Forecast (LoadMAP-R) Unadjusted
+Budget 2025
+Attachment 5.1.1-7: Average UEC (cont’d)
+Residential Long-Term Forecast (LoadMAP-R) Unadjusted
+Budget 2025
+Attachment 5.1.1-8: Average Share of Market
+Residential Long-Term Forecast (LoadMAP-R) Unadjusted
+Budget 2025
+Attachment 5.1.1-8: Average Share of Market (cont’d)
+Residential Long-Term Forecast (LoadMAP-R) Unadjusted
+Budget 2025
+Attachment 5.1.1-8: Average Share of Market (cont’d)
+Residential Long-Term Forecast (LoadMAP-R) Unadjusted
+Budget 2025
+Attachment 5.1.1-8: Average Share of Market (cont’d)
+Residential Long-Term Forecast (LoadMAP-R) Unadjusted
+Budget 2025
+5.1.2 Commercial Long-Term Energy Sales
+The long-term forecast of electric energy sales for Georgia Power’s commercial class was produced using LoadMAP. The commercial LoadMAP model uses floor space by building type, assumed normal weather and fuel price forecasts to produce a commercial energy sales forecast by different technologies for each end use and building type.
+The commercial sector is segmented into 13 building types, 10 end uses, and two fuel types. The 13 building types are:
+| 1. Office
+| 8. Healthcare
+| 2. Restaurant
+| 9. Lodging
+| 3. Retail
+| 10. Miscellaneous Buildings
+| 4. Grocery
+| 11. Public
+| 5. Warehouse
+| 12. Religion
+| 6. Education
+| 13. Data Center
+| 7. Amusement
+|
+The ten end uses modeled for each of the building types listed above are:
+| 1. Primary Heat (Space Heating)
+| 6. Exterior Lighting
+|
+|
+| 2. Cooling (Air Conditioning)
+| 7. Interior Lighting
+|
+|
+| 3. Water Heating
+| 8. Office Equipment
+|
+|
+| 4. Food Preparation
+| 9. Ventilation
+|
+|
+| 5. Refrigeration
+| 10. Miscellaneous
+|
+|
+The two fuel types used for the commercial market are electricity and natural gas.
+The commercial LoadMAP model forecasts the energy consumption for each technology (appliance/equipment), in each end use in each market segment in the commercial class. Energy consumption is determined by building type, end use, and fuel type. Energy usage varies considerably between building types; therefore, building type is the primary differentiation of the commercial market. This segmentation is done to group together market segments with relatively common characteristics while separately identifying segments with distinctly different characteristics.
+The differences in building type reflect differences in operating characteristics as well as differences in the composition and choice of energy consuming activities and energy consuming equipment. These energy-consuming activities that deliver service to the occupants by various devices and equipment are called end uses. An end use is a group of energy-using equipment, referred to as technologies, such as lighting, cooking, or air conditioning. The composition and intensity of energy usage and the energy consuming activities within each building type vary according to the consumer activity and behavior resulting from the business purpose associated with the building. For example, a grocery store contains relatively more refrigeration and lighting while a restaurant has more energy consuming devices related to cooking. Therefore, the relative concentration of the different end uses varies by building type. Also, the energy consumption characteristics of each end use will vary by building type because the selection of equipment to deliver that end-use service is made as appropriate to the function of the activities inside the building.
+Consumers have the opportunity to select alternative energy consuming equipment (devices and appliances) that deliver the same service (for example, water heating or cooking) but vary by fuel. Since capital and operating costs vary for similar devices of different fuel types, and consumer preference varies by fuel, fuel costs also have an impact in the selection of end-use equipment.
+The commercial LoadMAP model uses information about the operating characteristics, ownership decisions, and behavioral characteristics to determine energy consumption patterns of commercial customers. Factors influencing the energy consumption within a building include the operating characteristics of the building, preferences in the construction of the building, consumer behavior of the occupants of the building, and operational design and influences in the building such as energy management systems and controls.
+It also models energy consumption using four main components: building floor space, share of the floor space served by appliance end use and fuel type, energy consumption per square foot of floor space, and an index reflecting changes in energy usage of a fuel type. Appliance end use by fuel type refers to an end use class of appliances that consume a particular fuel (electricity or natural gas) such as electric cooking or gas room heating. The equation that uses these four main components to determine energy consumption, or sales, is called the central energy equation for the commercial class:
+Where:
+Energy = annual energy use in a particular segment (e.g., commercial restaurant)
+t = technology
+e = end use
+N = market size (e.g., amount of restaurant square footage)
+Sharet = share of market with the end use (e.g., restaurant floor space with the end use). This is also referred to as the end-use saturation.
+UECt = unit energy consumption in unit of market size (e.g., restaurant square footage) with the end use
+Ue = utilization index (equals 1.0 in base year)
+The elements of the central energy equation in the base year are contained in an energy market profile.
+The commercial LoadMAP model uses economic, fuel price, market data, operating characteristics, and weather information to produce the energy forecast for the commercial class. The economic variable used is floor space by building type. The square footage forecast is done in-house by SCS and utilizes historical and short-term forecast square footage data from Dodge Data & Analytics. It is the primary driver of energy consumption in the commercial class. Floor space is measured in square footage of building space.
+There are two types of share definitions. The whole building concept measures the share of floor space in buildings with an end use, regardless of the portion of each building that is served by the end use. For example, refrigeration in an office building. A building has or does not have refrigeration. The second share concept refers to conditioned floor space and accounts for the fraction of each building that is conditioned by the end use (for example, air conditioning). The Energy Usage Index (“EUI”) is the average annual energy per square foot of floor space that is served by a particular end use and fuel type. The usage index (“UI”) is an index measured relative to the base year that indicates the relative amount of energy service (e.g., lighting) delivered for a specified end use and fuel type within a particular building type. The UI is determined by consumer (occupant) behavior, equipment controls, weather, and other operating characteristics.
+The information for each technology’s saturation, energy use intensity, intensity per square foot, and sales for each end use comprise the market profile of energy use for a particular building type/fuel type combination. Market profiles of energy use for a building type are developed for each fuel type. End-use energy consumption by technology, or sales, is the product of intensity per square foot and floor space. The product of the saturation and EUI is called the building intensity or intensity per square foot. Market profiles show this decomposition of energy use. The information for the market profiles in the current Georgia Power commercial model is derived from the DOE’s OpenStudio/Energy Plus building simulation model, EIA’s Commercial Buildings Energy Consumption Survey (“CBECS”), and the AEO’s national and regional data, and additional substitutes as developed by AEG.
+Since fuel share and EUIs reflect the choices among building and energy technology of investment decisions made by building owners, architects, and contractors at the time of new building construction or replacement of equipment the model distinguishes between existing and new/replacement technology and buildings. The choice of whether to include end-use equipment, along with which fuel powers the equipment or technology, affects fuel shares, end-use penetration, and energy consumption. Selection of building design options, energy-using equipment choice, building characteristics, and usage patterns determine the EUI for each fuel. Owner preferences, consumer behavior of the occupants of a building, and decisions made about the frequency and intensity of energy equipment use affect usage levels.
+LoadMAP uses a probabilistic logit method to model the decision process regarding which equipment system will be installed in a building. This selection is reduced to decisions related to the fuel and equipment efficiency decisions based on operating and capital costs.
+As in the residential model, fuel prices and weather data are specific to the Georgia Power territory. Where Georgia Power-specific data were not available, national and regional data were substituted. Electricity and natural gas prices are forecasted for the commercial sector and used in the commercial LoadMAP model.
+The historical energies for the commercial class are derived from Georgia Power-specific data, distinguishing each segment using North American Industry Classification System (“NAICS”) codes.
+The model calibrates to the historical energy and segment information of the commercial class for the updated base year of 2016.
+The commercial long-term forecast is modeled and presented on a calendar basis. The long-term calendar forecast is integrated with the short-term calendar forecast and then both are converted to a billing basis. Attachment 5.1.2-1 shows the unadjusted long-term calendar forecast, as well as the adjusted calendar and billing forecasts. Adjustments are made for reductions in sales resulting from additional DSM programs, cogeneration, the projected adoption of behind-the-meter solar and for the additional sales resulting from growth in electric vehicles. The amount of commercial cogeneration expected in Budget 2025 is presented in Attachment 5.1.2-5. Currently, there are REDACTED commercial cogeneration projects expected in 2025 and beyond. See Section 9.4 for more information on the adjustments made to the peak demand and energy forecasts.
+Several attachments follow, which comprise the Budget 2025 Commercial Long-Term Forecast.
+Attachment 5.1.2-1: Total Commercial Energy Sales (GWh)
+Commercial Long-Term Forecast
+Budget 2025
+*In the following tables, values are based on the long-term calendar end-use model. No external adjustments were made.
+Attachment 5.1.2-2: Sales by Building Type and Percentage of Class (GWh and Percentages)
+Commercial Long-Term Forecast (LoadMAP-C) Unadjusted
+Budget 2025
+Attachment 5.1.2-3: Total Sales by End Use and Percentage (GWh and Percentages)
+Commercial Long-Term Forecast (LoadMAP-C) Unadjusted
+Budget 2025
+Attachment 5.1.2-4: Average Share of Market
+Commercial Long-Term Forecast (LoadMAP-C) Unadjusted
+Budget 2025
+Attachment 5.1.2-5: Commercial Cogeneration – Energy / Meter (GWh)
+Commercial Long-Term Forecast
+Budget 2025
+5.1.3 Industrial Long-Term Energy Sales
+The long-term forecast of electric energy sales for Georgia Power’s industrial class was produced using LoadMAP. The industrial LoadMAP model is used because of its capability to forecast at the end-use level and the increased effectiveness of resource utilization from using the LoadMAP family of long-term forecasting models. The industrial LoadMAP model maintains consistency with the conceptual framework of the residential and commercial long-term models, while providing information appropriate to the industrial class.
+The industrial sector is segmented into 11 categories, based on the NAICS and nine end uses. The 11 categories are:
+| NAICS 321 & 322 Forestry (Paper & Lumber)
+| NAICS 326 Rubber & Plastics
+| NAICS 325 Chemicals
+| NAICS 336 Transportation
+| NAICS 313 & 314 Textiles
+| NAICS 331 & 332 Metals
+| NAICS 327 Stone, Clay, and Glass
+| Other Industrial
+| NAICS 311 Food Production
+| Unspecified
+| NAICS 486 Pipeline
+|
+Segment 10, “Other Industrial,” is comprised of multiple segments: Miscellaneous Manufacturing (NAICS 339); Electrical Equipment, Appliances, and Components (NAICS 335); Machinery (NAICS 333); Furniture (NAICS 337); Tobacco (NAICS 312); Printing (NAICS 323); Petroleum and Coal Products (NAICS 324); Computer and Electronic Products (NAICS 334); Apparel (NAICS 315); and Leather and Allied Products (NAICS 316). Segment 11, the “Unspecified” category, comprises all remaining industrial activity.
+The nine end uses modeled for each of the NAICS categories listed above are:
+| 1. Cooling
+| 6. Process
+| 2. Heating
+| 7. Ventilation
+| 3. Indoor Lighting
+| 8. Miscellaneous
+| 4. Exterior Lighting
+| 9. Unspecified
+| 5. Motors
+|
+In the industrial sector, energy requirements are largely related to the energy-to-output relationship, augmented by the share of alternative equipment choices and fuel options. In the industrial sector, economic output is measured by the amount of industrial production. Energy is required to manufacture the product. For example, a plant requires a certain amount of motive power (i.e., work from motors) or process heat to produce its product. A textile mill requires a certain amount of motive force (work) to weave a yard of fabric or make a carpet. A plant that melts steel requires a certain amount of energy to melt a ton of steel, which is determined by the process efficiency of converting fuel sources into useful work. These energy requirements are supplied by energy consuming equipment. The amount of energy consumed by the equipment to meet this need is the amount of end-use sales. By installing more efficient equipment, a plant operator can lower the amount of energy needed to meet the requirements of the process. The end-use machinery that supplies the energy requirements of the plant needs a fuel source itself. This could be one of several fuels: electricity; natural gas; oil; or some other fuel. The plant is typically designed and operated to use a combination of equipment that uses different fuel sources and maximizes efficient use of resources while providing end-use service economically and reliably.
+The long-term industrial model uses the elements of economic activity, industrial production operations, fuel choices, and equipment (or process) characteristics to model energy requirements arising from the supporting end uses of an industrial activity. The description of the economic activity and production operations of an industry come from industrial production, capacity utilization rates, and output capacity. Output capacity measures the level of output of plants when they are operating at full capacity. From this, a description of the energy required to support a given level of production can be made. Fuel prices are used to model the choice of end-use equipment employed to provide end-use service. These choices, although influenced by the preferences of the decision maker, are largely economic and are captured through analyzing life-cycle costs. The capital costs of equipment also affect the selection of equipment. In addition, the model uses information about the mix of equipment options, sizes, and ratings to determine end-use consumption characteristics.
+Efficiencies, equipment size, and usage characteristics determine consumption. Equipment purchase decisions result in the stock and efficiency mix of new equipment. The first type of equipment replacement decision is made at the time of physical decay of a device and is modeled using assumptions about equipment lifetimes. The second type of equipment purchase decision results from plant construction or expansion and is modeled using changes in capacity. Share equations are used to compute market shares for the various efficiency options and are based on a logic function describing equipment purchases based on life cycle costs. Data from available surveys as well as national and regional information are used to describe these parameters for each industry.
+The central energy equation for the Industrial LoadMAP model is:
+Where:
+Energy = annual energy use in a particular segment (e.g., Chemicals)
+t = technology
+e = end use
+N = market size (e.g., Industrial Production Index level for Chemicals)
+Sharet = share of market with the end use (e.g., chemical IP index level with the end use). This is also referred to as the end-use saturation.
+UECt = unit energy consumption in unit of market size (e.g., Chemical IP Index) with the end use
+Ue = utilization index (equals 1.0 in base year)
+The elements of the central energy equation in the base year are contained in an energy market profile.
+The economic driver used to forecast long-term sales for each NAICS category in the industrial class is industrial production, as measured and tracked by the Federal Reserve and forecasted by S&P Global. The use of industrial production allows for the explicit modeling of the input-output structure of the economy. Consequently, by using industrial production in the energy models, energy consumption is directly linked to a measure of industrial economic output. Section 9.2.4 addresses industrial activity.
+The historical energies for the industrial class are derived from Georgia Power specific data, distinguishing each segment using NAICS codes. Electricity and natural gas prices are forecasted for the industrial class. Other data, such as fuel shares, efficiencies, technologies, etc. were implemented from several sources by AEG, including the Manufacturers Energy Consumption Survey (“MECS”), and other national and regional data.
+The industrial LoadMAP model uses a base year of 2016 to establish initial calibration. The model also calibrates to historical energy through 2023. Additionally, it is calibrated to the energy of each economic category, according to NAICS, over the period of the short-term forecast, 2025 through 2029.
+Cogeneration is a significant activity for certain industries. In the course of providing general manufacturing production processes, electricity is made available as a by-product. Georgia Power has assembled information to project the energy and demand changes from cogeneration for the near future. This cogeneration forecast is produced independently of the electricity sales forecast of the industrial class. See Section 9.4.2 for additional discussion on cogeneration. The amount of industrial cogeneration expected in the Budget 2025 is presented in Attachment 5.1.3-4.
+The industrial long-term forecast is modeled and presented on a calendar basis. The long-term calendar forecast is integrated with the short-term calendar forecast and then both are converted to a billing basis. Attachment 5.1.3-1 shows the unadjusted long-term calendar forecast, as well as the adjusted calendar and billing forecasts. Adjustments are made for reductions in sales resulting from cogeneration and behind-the-meter solar. See Section 9.4 for more information on the adjustments made to the peak demand and energy forecasts.
+Several attachments follow, which comprise the Budget 2025 Industrial Long-Term Forecast.
+Attachment 5.1.3-1: Total Industrial Energy Sales (GWh)
+Industrial Long-Term Forecast
+Budget 2025
+*In the following tables, values are based on the long-term calendar end-use model. No external adjustments were made.
+Attachment 5.1.3-2: Industrial Sales by NAICS Category (GWh and Percentages)
+Industrial Long-Term Forecast (LoadMAP-I) Unadjusted
+Budget 2025
+GWh Sales
+Attachment 5.1.3-2: Industrial Sales by NAICS Category (GWh and Percentages) (cont’d)
+Industrial Long-Term Forecast (LoadMAP-I) Unadjusted
+Budget 2025
+Percentage of Total Sales
+Attachment 5.1.3-3: Industrial Sales by End Use (GWh and Percentages)
+Industrial Long-Term Forecast (LoadMAP-I) Unadjusted
+Budget 2025
+Attachment 5.1.3-4: Industrial Cogeneration – Energy / Meter (GWh)
+Industrial Long-Term Forecast
+Budget 2025
+5.2 ANNUAL TO MONTHLY BASED ENERGY FORECASTS AND SHORT-TERM INTEGRATION
+The Company utilizes hourly segment level end-use load shapes to project energy use by segment and by end use to ultimately project energy use on a monthly basis for each class. The monthly energy by segment and end use is calibrated to history and the short-term energy forecast. The calibration helps allocate long-term energy projections across segment and at the end-use level by class. By allocating on a monthly basis and utilizing the long-term LoadMAP forecast results, the forecast captures the changing monthly trends through time.
+6.0 PEAK DEMAND FORECAST
+Georgia Power used MetrixND and MetrixLT in Budget 2025 to develop peak demand forecasts. These are Itron products used to create regression models and calibrate the hourly models to monthly energy forecasts. These models were originally developed for Budget 2021 forecasts and are re-evaluated each year to track with recent data.
+MetrixND uses historical hourly load research data for each customer class to derive regression models that utilize the day’s weather, day of week, holiday flags, month of year, and other pertinent independent variables. To predict class demands, the following components are used: the relationships of load and weather developed in MetrixND from the historical load research data, the description of “typical” weather and the class monthly energy forecast. Both the coincident and non-coincident demands by class are produced with the model.
+The Georgia Power hourly load forecasting models use load shapes, primarily based on class, to define its territory. Currently, there are the five primary classes: residential, commercial, industrial, governmental lighting and MARTA; plus two additional categories: electric vehicles and behind-the-meter solar. Most of the class input historical load shapes use load research historical data from 2020, 2021, 2022, and 2023. The electric vehicle and behind-the-meter solar categories require several specific load shapes to properly capture their expected behavior. In Budget 2025, five load shapes were used for electric vehicles, including medium- and heavy-duty vehicles, and three were used for behind-the-meter solar.
+The methodology determining “typical” weather uses 44 years of average daily temperatures (1980-2023), which were rank ordered and then averaged to form a “temperature duration curve.” The most representative pattern of actual temperatures was chosen using a least sum of squares criteria. The temperature duration curve was then re-sorted to the chronological order of the representative pattern.
+The final component in the development of the demand forecast is the input of the monthly calendar-based energies. The forecasted energies are based on a 44-year average weather assumption. Using the forecasted energies directly in the peak demand model maintains consistency between projected energy sales and the forecast demands.
+The hourly load forecasting models also expand the monthly sales data to supply level (sales plus losses) for generation required for the projected energy and demands. The models use expansion factors, found in Attachment 6.0-7, to go from sales to the customer to supply level energy and demands. The expansion factors used in Budget 2025 were derived using the results from the Georgia Power 2021 Loss Study with updated 2019 peak and energy load data.
+The results from the peak model are unadjusted for additional cogeneration projects and additional DSM programs that were previously approved by the Commission. Estimates for cogeneration and DSM are made for the reduction in demand and incorporated externally into the peak demand forecast.
+See Section 9.4 for more information on adjustments made to the peak demand and energy forecasts.
+Attachment 6.0-1: Summer Coincident Demand with Adjustments (MW)
+Calendar Based
+Budget 2025
+* Georgia Power is expected to be a summer peaking utility over the entire forecast horizon.
+Attachment 6.0-2: Winter Coincident Demand with Adjustments (MW)
+Calendar Based
+Budget 2025
+Attachment 6.0-3: Summer Unadjusted Non-Coincident Demand (MW)
+Calendar Based
+Budget 2025
+Attachment 6.0-4: Winter Unadjusted Non-Coincident Demand (MW)
+Calendar Based
+Budget 2025
+Attachment 6.0-5: Monthly Coincident Demand with Adjustments (MW)
+Calendar Based
+Budget 2025
+Attachment 6.0-5: Monthly Coincident Demand with Adjustments (MW) (cont’d)
+Calendar Based
+Budget 2025
+Attachment 6.0-6: Monthly Unadjusted Non-Coincident Demand (MW)
+Calendar Based
+Budget 2025
+Attachment 6.0-6: Monthly Unadjusted Non-Coincident Demand (MW) (cont’d)
+Calendar Based
+Budget 2025
+Attachment 6.0-7: Expansion Factors
+Budget 2025
+Attachment 6.0-8: Annual Supply with Adjustments (GWh)
+Calendar Based
+Budget 2025
+Attachment 6.0-9 Monthly Supply by Class (GWh)
+Calendar Based
+Budget 2025
+Attachment 6.0-9 Monthly Supply by Class (GWh) (cont’d)
+Calendar Based
+Budget 2025
+Attachment 6.0-10: Coincident & Non-Coincident Historical Peak Demand by Class (MW)
+Attachment 6.0-10: Coincident & Non-Coincident Historical Peak Demand by Class (MW) (cont’d)
+7.0 FORECAST ADJUSTMENTS FOR LARGE CUSTOMERS
+Budget 2025 continues to utilize the Load Realization Model developed for the 2023 IRP Update. This model uses a probabilistic approach to evaluate the range and likelihood of future potential outcomes of the load growth from new large-load customers. The results of this approach support the external adjustment applied to the commercial and industrial load and energy forecasts. This Section describes the methodology and assumptions behind the probabilistic approach that is used.
+As in the 2023 IRP Update, Budget 2025 includes an external adjustment to its baseline, organic forecast to account for the increased large load additions described herein. An external adjustment is needed for these loads since Georgia’s unprecedented economic development growth would not otherwise be captured in the historical trends underlying the baseline forecast. Georgia Power has made external adjustments for large new customers in the past. For example, the Company adjusted its forecast in the 2016 and 2019 IRPs to account for the addition of the Elba Island Liquified Natural Gas facility, which represented a completely new industry to the state.
+Notwithstanding prior large load external adjustments to the forecast, prior to 2023 IRP Update, the Company had never seen such a significant number of new large customer projects materialize in such a short period of time. As a result, Georgia Power developed a way to estimate the impacts of these projects on its system while also addressing the inherent uncertainties around whether such projects will ultimately locate in Georgia, select Georgia Power as the electric service provider, and come online with the anticipated load. The probabilistic model Georgia Power developed to address these considerations, the Load Realization Model, is discussed in the section below.
+7.1 MODEL OVERVIEW
+7.1.1 Known Project Inputs
+For each large load project the Company has evaluated and included in Budget 2025, the following information is provided:
+• Commercial Operation Date (“COD”): When the initial load is expected to start.
+• Ramp-Up: A year-by-year load trajectory.
+• Announced Load: The design capacity for the project load. This corresponds to the maximum load of the ramp-up schedule provided by each customer. The Company’s Power Delivery organization uses this information to properly size the facilities and purchase equipment to serve the new load.
+• Class: Industrial or commercial.
+• Segment: This criterion corresponds to the particular segment of a business within a customer class, such as cryptocurrency, datacenter, warehouse, battery manufacturing, chemicals, and solar.
+7.1.2 Modeling Project Uncertainty
+Each large load project contains multiple dimensions of uncertainty that must be considered and analyzed. The first element of uncertainty to consider is whether the potential customers will choose to locate in Georgia. A customer may ultimately end up choosing a different state as the location of a project despite initial indications of interest in Georgia. If a large load customer elects to locate in Georgia, there is still uncertainty due to the competitive nature of the bidding process for large load customers among electric service providers in the state, and a customer may choose an electric service provider other than Georgia Power. There is even some uncertainty once a customer selects Georgia Power as its electric service provider, as the project could fail to materialize due to unforeseen circumstances such as financial or other economic conditions. In addition, based on Georgia Power’s experience, the load announced by a customer is only an estimate of its metered load, which can materialize at a lower level than that at the time of the customer’s initial announcement. Finally, the commercial operation date of a project can be delayed, thus causing load to materialize later than initially expected. Figure 7.1.2-1 below illustrates the Company’s process and sequencing for the evaluation of uncertainties related to large load projects.
+Figure 7.1.2-1: Sequencing of Large Load and Sources of Uncertainty
+7.1.3 Project Success
+The Company uses a probabilistic approach to account for the uncertainties described in the previous section to determine the likelihood of success or failure of an individual project. The success of a project requires each of the following three events:
+Georgia is chosen as the location of the project.
+Georgia Power is chosen as the electric service provider for the project.
+The project reaches commercial operation after a contract has been signed with Georgia Power.
+7.1.4 State Selection
+Customers often evaluate sites in multiple states before finalizing the location of a project. Mathematically, state selection can be treated as a binary event, with one (1) assigned for customers that select Georgia and zero (0) for customers that select a different state. For those customers contemplating Georgia as a place for doing business, a probability (referred to as P1) can be assigned for the likelihood of state selection. Likelihood can be estimated based on a historical selection rate that is calculated based on the number of projects that chose Georgia versus the number of projects that did not.
+7.1.5 Electric Service Provider
+Whether a customer chooses Georgia Power as its electric service provider can also be treated as a binary event. The probability of Georgia Power being chosen as the provider (referred to as P2) is determined by the Company based on factors such as competition from other electric service providers, an existing relationship with a customer, and the progress of discussions with a customer.
+7.1.6 Project Reaching Commercial Operation
+The probability of projects reaching commercial operation (referred to as P3) is determined by reviewing the number of projects that reached commercial operation versus the total number of projects Georgia Power was selected to serve.
+For a new large load project to be considered successful, all three of the above events (i.e., state selection, Georgia Power being chosen as electric service provider, and the project reaching commercial operation) must occur. In other words, project success or failure is a binary event that is reflected by the probability formula P = P1*P2*P3.
+7.1.7 Announced Load vs. Metered Load
+To account for the potential difference between the metered load being served, as measured at the customer’s meter, versus the load announced by the customer, the ratio (in %) between metered load and announced load is treated as a range. In the absence of actual historical data, the Company identifies minimum and maximum values for this range, as well as a most likely outcome. For example, in the case of data centers, the range is between REDACTED% and REDACTED% of the customer’s announced load, with a most likely outcome of REDACTED%. Mathematically, this is modeled with a triangular distribution (see
+Section 7.3 for more technical details).
+Table 7.1.7-1 below demonstrates the parameter inputs for modeling the metered load compared to the announced load, based on the customer class and segment.
+Table 7.1.7-1: Specifications of Triangular Distributions for Metered vs. Announced
+| Class
+| Segment
+| Low
+| Mid
+| High
+| Commercial
+| Cryptocurrency
+| REDACTED
+| REDACTED
+| REDACTED
+|
+| Datacenter
+| REDACTED
+| REDACTED
+| REDACTED
+|
+| Miscellaneous
+| REDACTED
+| REDACTED
+| REDACTED
+|
+| Warehouse
+| REDACTED
+| REDACTED
+| REDACTED
+|
+| Distribution
+| REDACTED
+| REDACTED
+| REDACTED
+| Industrial
+| All Segments
+| REDACTED
+| REDACTED
+| REDACTED
+7.1.8 Commercial Operation Date Delays
+Projects often experience delays in their commercial operation date. The expected delays are shown in Table 7.1.8-1 and can range between REDACTED to REDACTED months, with a most likely delay of REDACTED months. The parameter inputs for modeling the probability of delays in commercial operation are based on the Company’s estimates.
+Table 7.1.8-1: Specifications of Triangular Distributions for Delay
+| Class
+| Segment
+| Low
+| Mid
+| High
+| Commercial
+| All segments
+| REDACTED
+| REDACTED
+| REDACTED
+| Industrial
+| All Segments
+| REDACTED
+| REDACTED
+| REDACTED
+|
+|
+|
+|
+|
+7.2 MODELING THE PORTFOLIO
+The portfolio of large load projects being assessed by the Company consists of projects in numerous phases of development, ranging from early stages, such as the state selection or site selection phases, to those under construction and projected to be served by the Company. This creates multiple dimensions of uncertainty for each project that requires a Monte Carlo simulation model to quantify a range of expected load to serve.
+Monte Carlo simulation is a mathematical technique that is used to estimate the possible outcomes of a portfolio with uncertain events. Unlike a normal forecasting model, Monte Carlo simulation predicts a set of outcomes based on an estimated range of values versus a set of fixed input values. The simulation assigns random values to input variables with uncertainty based on probability distributions such as the triangular distributions mentioned in Section 7.1.7 and calculates an outcome. It then repeats the process over and over (at least thousands of times typically), each time using a different set of random inputs, to produce a large number of outcomes.
+7.2.1 Model Implementation
+The model described herein is implemented in Excel with a third-party add-in called @Risk. @Risk allows the incorporation of probability distributions into an Excel spreadsheet so that Monte Carlo simulation and analysis can be done to track the range of potential outcomes and calculate a wide array of statistics (average, standard deviation, percentiles, etc.).
+For each project in the model, there are three random numbers being drawn for success/failure, metered/announced ratio, and delay in COD from the distributions described in Section 7.1. For a particular draw, if the success/failure random number is 0, or failure, the load of the project is 0 and the project is excluded from the portfolio. If the success/failure random number is 1, or success, the announced load ramp-up gets scaled by the metered/announced ratio random number and then shifted according to the timing of the ramp-up by the number of months determined by the delay in COD random number. Finally, this adjusted and shifted ramp-up is aggregated year by year into the portfolio level.
+7.2.2 Simulation Results
+The procedure described in Section 7.2.1 is repeated 100,000 times. Then, these 100,000 load iterations get ranked for each year in order to calculate load percentiles, which helps the Company to understand the load range and compare the likelihood of load outcomes for the portfolio. The table below shows the external adjustments included in Budget 2025, which are consistent with the 50th percentile of simulated load.
+Table 7.2.1 Budget 2025 External Peak Adjustments for Large Loads
+7.3 TRIANGULAR DISTRIBUTION
+The triangular distribution is a continuous probability distribution with the following parameters:
+a: a ∈ (-∞, ∞)
+b: a < b
+c: a ≤ c ≤ b
+In the case of metered versus announced uncertainty, a represents the minimum metered/announced ratio, b represents maximum metered/announced ratio and c represents the most likely metered/announced ratio.
+Figure 7.3-1: Probability Density Function for a Triangular Distribution
+REDACTED
+REDACTED
+Figure 7.3-2: Probability Density Function of Triangular Distribution with
+a= REDACTED%, c=REDACTED% and b=REDACTED%
+REDACTED
+REDACTED
+Triangular distributions are chosen for this model for the following reasons:
+A triangular distribution has a finite range while other commonly used probability distributions such as normal and lognormal distributions have an infinite range and can even be negative, which is inappropriate to depict the actual/announced ratio.
+The min/max/most likely parametric setup of triangular distributions is intuitive and straightforward to interpret. In contrast, the parameters of some other commonly used distributions are somewhat opaque. For example, normal distributions are defined in terms of mean and standard deviation. Additional calculations are needed to translate those into the range of outcomes that are more appropriate for the context of actual vs. announced load.
+Other than the standard min/max/most likely parametric setup, triangular distributions can also be defined by a combination of percentiles, min, max and most likely, which offers more flexibility to fine tune the model.
+8.0 SENSITIVITY AND SCENARIO DEVELOPMENT OVERVIEW
+Budget 2025 is a base case forecast using the economic forecast from S&P Global, a 44-year average normal weather definition (1980-2023), and an electricity price forecast based on results of financial planning models and information from the Department of Energy. The economic forecast for the base case represents a description of the economic environment that is most likely to take place absent climate legislation or new environmental rulemaking. However, there are many possible events or actions that could occur to change the characteristics of the economy or business environment of Georgia Power and, consequently, forecasted energy sales. Similarly, there is a possibility of deviation from current regulatory environment. In order to evaluate the impact of changes to some of these key assumptions and variables, the Company developed sensitivities around the key forecast variables and scenarios around potential carbon and fuel price outcomes.
+8.1 SENSITIVITIES
+In the current application, a sensitivity is defined as a specified collection of univariate changes occurring coincidentally. Seven sensitivities were developed for Budget 2025 relative to the “Base Case” forecast. The sensitivities presented below include: (1) high economic growth; (2) low economic growth; (3) no load growth; (4) high growth in large load customers; (5) load growth with no DSM growth; (6) load growth with aggressive DSM growth; and (7) load growth using a 20-year normal definition of weather, as stipulated in the 2019 IRP.
+The high and low economic growth sensitivities are based on the Optimistic and Pessimistic scenarios developed by S&P Global. These sensitivities were performed to identify impacts to the energy and peak demand forecasts pursuant to the specified changes in economic variables utilized in the energy forecast. The no load growth sensitivity holds sales and peaks constant at 2025 levels.
+The high growth in large load customers sensitivity uses the P95 load value, as was done in the 2023 IRP Update. P95 indicates a load level where 95% of all potential combinations from the Monte Carlo simulations fall at or below this level, and 5% of the load combinations fall above it. Budget 2025 utilizes the P50 value, which corresponds to the median load level within the range of potential outcomes.
+One of the DSM sensitivities assumes that there is no DSM included over the forecast horizon, while the other includes additional DSM above what is included in the base case.
+The 20-year weather sensitivity is the result of the stipulation from the 2019 IRP. It includes a weather normal definition based on the most recent 20 years of weather data rather than the 44-year definition used in Budget 2025.
+The variables and results of the sensitivities on energy and demand are identified in attachments 8.1-1, 8.1-2 and 8.1-3.
+Attachment 8.1-1: Annual Energy Sensitivity Summary (GWh)
+Attachment 8.1-2: Annual/Summer Peak Demand Sensitivity Summary (MW)
+Attachment 8.1-3: Winter Peak Demand Sensitivity Summary (MW)
+8.2 SCENARIOS
+Many factors affecting resource planning involve future uncertainties. Thus, the Company creates scenarios to help understand these future uncertainties, which allows it to make appropriate planning decisions. Key uncertainties affecting planning include (1) future pressure on CO2 and other greenhouse gas (“GHG”) emissions, (2) cost and performance of future generating technologies, (3) future load growth, and (4) future fuel prices. To construct its planning scenarios, the Company identifies different reasonably plausible views of the future that are meaningfully different from one another in each of these four areas. These views are then combined to create several scenarios. For each scenario, the Company uses its modeling system, Aurora, to identify a least-cost expansion plan that reliably meets load and satisfies many other conditions. The views and scenarios are refreshed annually. For Budget 2025 the Company created nine scenarios, which are summarized in Table 8.2-1. For example, Scenario 1 (111-MG0) is defined by pressure on CO2 emissions consistent with the 111 GHG Rules, includes the Tech Portfolio view of future cost and performance of technologies, the Standard load forecast view, and the Moderate view of future fuel prices.
+This section focuses on the load forecast used in the scenarios. For more detailed information on the GHG pressure view, the Tech view, and the Fuel view used in the scenarios, please see Chapter 3 in the 2025 IRP Main Document.
+Table 8.2-SEQ Table \* ARABIC1: B2025 Scenario Design
+As shown in Table 8.2-1, the Company divided its scenarios into two sets. The first set adopts the view that the recently finalized rules associated with GHG emissions under sections 111(b) and 111(d) of the Clean Air Act remain in effect. There are three scenarios in this set. The other set of scenarios adopts the view that the 111 GHG Rules do not remain in effect. There are six scenarios in this set. All nine scenarios differ from one another by adopting different combinations of views in four key areas: the future degree of GHG pressure; the future cost and performance of generating and storage technologies; future load growth; and future price of fuels.
+8.2.1 Future Load Growth
+To assess future electricity consumption, the Company considers two different views of future load growth in its planning scenarios. One is a Standard view, which is Budget 2025, and the other is a view consistent with lower loads due to higher future natural gas prices (Standard w/ HG0 Delta). Information on additional load view sensitivities is found in Section 1.6 of this document and in the Financial Review in Technical Appendix Volume 2.
+Standard. The Company updates annually its forecast of electricity consumption through the planning horizon. The load forecast is prepared separately for each of the three types of customers (i.e., residential, commercial, and industrial) for each of the three retail operating companies and is aggregated into a System total for expansion planning modeling. This view of future load growth is used in most scenarios. This view includes significant growth of electricity consumption associated with commercial and industrial customers expected to initiate or expand operations as Company customers. At present, the Company sees this significant growth occurring through the mid-2030s.
+Standard w/ HG0 Delta. The Standard w/ HG0 Delta view recognizes the relationship between the future consumption of electricity and the future price of natural gas. This relationship is not straightforward because natural gas is both an input to electricity production and a substitute for electricity in some end uses. Thus, the Company has developed a load growth adjustment used in the scenario with higher future prices of natural gas. This load growth adjustment is derived from analyses done by the U.S. EIA for its AEO. The AEO identifies a different electricity consumption path associated with higher future natural gas prices, reflecting the important feedback in the relationship between future natural gas prices and future load growth.
+For the B2025 planning process, the Company compared southeast U.S. electricity load growth in the AEO 2023 case with a higher future price of natural gas to southeast U.S. electricity load growth in the AEO 2023 Reference case. This difference was smoothed and then used as an adjustment to the Company’s Standard load growth view.
+These two different views of future load growth are presented in Attachment 8.2-1. These numbers reflect Georgia Power’s portion of the weather normal annual total system energy, annual system summer peak load, and annual system winter peak load.
+Attachment 8.2-1: Annual Energy, Summer Peak and Winter Peak Scenario Summary
+9.0 FORECAST ASSUMPTIONS OVERVIEW
+Budget 2025 assumptions were jointly developed by SCS Forecasting and System Planning departments, along with Georgia Power’s Resource Planning and Financial Planning and Analysis departments. Major assumptions include the economic outlook for the U.S. and Georgia, as well as the long-term outlook for fuel prices from the most recent AEO from the EIA and market profiles for class end uses.
+S&P Global provides comprehensive and timely research on all the components that drive the economy. S&P Global’s research examines the factors that drive economic growth at the national, regional, state, and metropolitan area levels. Their research covers specialized topics such as housing markets, labor markets, demographics, consumer behavior, fiscal and monetary policy and other trends that are highly relevant to business planning. Clients from a broad range of industries depend on S&P Global’s research and forecasts to better manage the risks and opportunities stemming from a rapidly changing economy, as well as for strategic planning, demand assessment, consumer lending and general investment research. S&P Global produces monthly updates to its U.S. macroeconomic and state level forecasts. Georgia Power used the April 2024 vintage of the S&P Global forecast for Budget 2025.
+S&P Global’s national model is a large-scale structural econometric model that is grounded in mainstream economic theory and estimated using modern econometric techniques. The model uses an income-expenditure structure in which short-term fluctuations in GDP are caused primarily by changes in aggregate demand. A distinguishing characteristic is that the steady-state properties of key equations are derived from neoclassical theory, imparting to the model a well-defined growth path in the long run. This emphasis on theory leads to an internally consistent structure that renders the model well-suited for short-run forecasting, long-term policy analysis, and the development of internally consistent macroeconomic scenarios. With respect to regional modeling, each area (e.g., state or metro area) is modeled individually and then linked to a national system. Instead of forecasting regional growth as simple proportions of U.S. totals, the models focus on each area’s internal growth dynamics and differential business cycle response.
+As a part of the forecasting process, prices for electricity and natural gas are reviewed and analyzed. Electricity price forecasts were based on results of internal financial planning models and expected inflation rates. Projections of natural gas prices were developed by SCS Forecasting using the commodity forecasts from the SCS Fuel Services and SCS Resource Planning groups. Georgia Power’s long-term forecasting models incorporate these retail fuel prices when modeling the fuel choices and efficiency decisions of consumers and decision-makers.
+Other factors, such as the impacts of appliance efficiency standards, were also considered in the long-term forecast. The end-use models for the long-term energy forecast incorporate minimum standards for new appliances as well as replacement options.
+The short-term and long-term energy models use a 44-year average (1980-2023) of CDH and HDH to define “normal” weather.
+9.1 SHORT-TERM ENERGY MODEL ECONOMIC ASSUMPTIONS
+The Budget 2025 short-term models use economic and demographic inputs from the Georgia forecast produced by S&P Global. The short-term energy forecasts rely on the monthly interpolations derived from quarterly projections of demographic and economic variables, including the number of Georgia private housing starts, Georgia’s unemployment rate, Georgia’s gross state product and industrial production.
+9.2 LONG-TERM ENERGY MODEL ECONOMIC ASSUMPTIONS
+9.2.1 Overview
+The Budget 2025 long-term energy models used economic and demographic inputs developed from the Georgia forecast produced by S&P Global. The key variables used in the long-term energy models are discussed below.
+9.2.2 Income per Household
+The long-term residential energy forecast is produced using real income per household by housing type as the key economic driver. It represents single-family income per household. For multifamily and manufactured homes, income per household is calculated as a percentage of single-family income based on 2005 RECS data. It is assumed that this economic metric adequately represents the household income for the residential customers of Georgia Power.
+9.2.3 Floor Space (Commercial Activity)
+The commercial LoadMAP model uses a floor space (square footage) forecast by building type to produce the long-term forecast of commercial energy sales. The square footage forecast is produced by SCS and utilizes historical and short-term forecast square footage data from Dodge Data and Analytics.
+9.2.4 Industrial Production (Industrial Activity)
+The industrial LoadMAP model used in Budget 2025 uses annual industrial production by selected NAICS categories as a driver to forecast long-term energy sales. This driver describes the output of each NAICS category in the industrial class. Since the energy requirements of each group are closely related to the quantity of output produced, this measure is a good choice for a driver of the industrial forecast. The base year consumption (GWh) provides a scale for each segment, which is then modified by the Industrial Production Index over time.
+9.2.5 Demographics
+Demographic trends in Georgia are an integral part of the state’s economy and play an important role in energy consumption trends. Consequently, one key demographic variable used in the various energy and customer models used in Budget 2025 is the number of households in the state.
+9.2.6 Persons per Household
+The residential LoadMAP model uses annual projections of the number of persons per household. It represents single-family persons per household. Persons per household for multi-family and manufactured homes are calculated as a percentage of single-family persons per household based on 2005 RECS data. This economic metric represents the characteristics of household size for the residential customers of Georgia Power.
+9.2.7 Housing Type Distribution
+The long-term residential energy model is configured to forecast energy sales by housing type: single-family, multi-family, and manufactured homes. The forecast is disaggregated into these groups using trends in housing types based on the S&P Global housing stock forecast and calibrated to historic Georgia Power billing data splits.
+9.2.8 Commercial Employment Rate (Commercial Activity)
+The long-term commercial energy model uses the employment rate as a driver of the long-term energy forecast. The employment rate is derived by subtracting the Unemployment Rate from the total percentage (i.e., Employment Rate = 1 – Unemployment Rate). Unlike Floor Space, it is not calculated by building economic categories (building types). However, the long-term commercial model does account for the fact that the employment rate positively impacts activity in the commercial segment.
+9.3 FUEL PRICE ASSUMPTIONS
+9.3.1 Forecasts by Fuel Type: Electricity and Natural Gas
+Forecasts of retail fuel prices are required for the energy models of three customer classes: residential, commercial, and industrial.
+The long-term residential, commercial, and industrial energy models require forecasted fuel prices as an exogenous input. The electricity price forecasts are based on results of financial planning models produced by Georgia Power’s Financial Planning and Analysis group. These models produce electricity price forecasts assuming a specific company construction plan, the financial needs of Georgia Power, and economic conditions including inflation. The electricity price forecasts were developed in the spring of 2024. The natural gas price forecasts are developed by the SCS Fuel Services and SCS Resource Planning groups based on commodity price projections from EIA’s latest (2023) AEO and NYMEX prices. The long-term forecasting models incorporate these retail fuel prices when modeling the fuel choices and efficiency decisions of consumers and decision-makers. Electricity and natural gas retail price projections for the residential, commercial, and industrial classes are presented in Attachment 9.3-1.
+Attachment 9.3-1: Budget 2025 Retail Energy Prices by Class
+9.3.2 Substitution of Electricity with Competing Fuels
+Fuel choice is an important factor to consider in the development of the forecast. Each customer responds, in various ways, to the price of electricity relative to the price of alternative fuels. The responsiveness of the customer, or decision-maker, depends on the customer’s preference and ability to change. These factors are recognized and are incorporated into the Georgia Power forecast.
+The residential, commercial, and industrial long-term energy models all use the same modeling and conceptual framework. Using a logit model, the choice of new technology is determined by evaluating the life cycle of each technology for a given end-use. The life-cycle cost is a function of capital cost plus operating costs and any additional O&M costs discounted for the time value of money.
+As the prices vary among the alternative fuels (e.g., electricity and gas), the operating cost will also vary and will affect the choices of end-use fuel types made by the consumer. Likewise, as the capital cost of the technologies of alternative fuel choices vary, the choices of technology will also vary. In this manner, the long-term energy models capture the effects of competing fuels in end uses.
+9.4 FORECAST ADJUSTMENTS
+Demand side strategies and customer actions, and the effects of Time of Use (“TOU”) rates and Real Time Pricing (“RTP”) are captured directly in the forecast since they are in the historical data. The impacts of Company-sponsored DSM programs, electric vehicles, behind-the-meter solar and cogeneration are captured in the energy forecast through adjustments outside of the forecast models. External adjustments to the peak model include Company-sponsored DSM programs and cogeneration. Electric Vehicles and behind-the-meter solar are embedded in the peak forecast using load shapes, so an external adjustment is not needed. The annual external adjustments to the energy and peak forecasts are included in Attachments 9.4-1 through 9.4-3. In these tables, adjustments for electric vehicles are positive since they add to energy and peak demand. Since DSM, behind-the-meter solar and cogeneration reduce energy and peaks, these adjustments are presented as negative numbers,
+9.4.1 Demand Side Strategies and Customer Actions
+Budget 2025 incorporates adjustments for load responses by customers to changes in price, as well as for demand side programs being offered to customers that are anticipated to result in reductions in energy use and in peak demand. There are two types of impacts incorporated directly in the forecast: (1) the historical set of customer actions embedded in the historical data that are implicitly propagated throughout the forecast, and (2) adopted efficiency standards in the end-use models.
+Georgia Power offers DSM programs to its residential and commercial customers to promote energy savings. These programs have existed for more than a decade and the benefits from the programs are embedded in Georgia Power’s historical load and energy sales. Therefore, the forecasts produced by using historical energy data and the embedded energy effects have an implicit effect propagated throughout the forecast. Other conservation measures undertaken by customers, whether explicitly induced by a marketing program or proactively undertaken by a customer for some other reason, will become embedded in the historical energy data and will be implicitly propagated throughout the forecast.
+Additional DSM adjustments are made to reflect new or ongoing Georgia Power programs that are not fully reflected in the historical data. Since Company-sponsored DSM programs reduce residential and commercial energy sales and peak demand, the impacts are subtracted from the energy and peak forecasts as an external adjustment. In Budget 2025, DSM programs are assumed to continue through the forecast horizon.
+An additional type of demand side impact considered in Budget 2025 is the adopted efficiency standards in the residential and commercial end-use models. The efficiency standards represent the continuing trend of increasing end-use efficiency driven in part by programs such as ENERGY STAR®.
+9.4.2 Cogeneration
+The effects of cogeneration are incorporated into Budget 2025. Available near-term information for known and expected cogeneration projects is obtained by Georgia Power Sales and Marketing personnel from interviews with customers with an announced project. A probability that each reported new cogeneration project will materialize is estimated. The probability-weighted MW announcements are then used to project the amount of additional cogeneration to incorporate into the peak forecast. The estimated MW cogeneration load is converted into a MWh energy impact using a common load factor to project the amount of cogeneration to include in the energy forecast. Since cogeneration reduces energy sales and peak demand, the impacts of new cogeneration projects are subtracted from the commercial and industrial energy and peak forecasts as an external adjustment.
+9.4.3 Electric Vehicles
+The impacts of expected growth in electric vehicles in Georgia, including passenger vehicles and light-duty trucks, medium-duty and heavy-duty trucks and buses, have been incorporated into the Budget 2025 forecast. The impact of existing electric vehicles is already embedded in the historical data that is implicitly propagated throughout the forecast. Growth in electric vehicle sales represents a positive adjustment to the Budget 2025 forecast, since more electric vehicles in Georgia lead to higher electric sales. The forecast of electric vehicles in Georgia is based on a scenario by the Electric Power Research Institute (“EPRI”), which produces electric vehicle growth scenarios for states across the nation. Georgia Power selected the ”medium” EPRI scenario for use in Budget 2025.
+Electric vehicles are incorporated into the Budget 2025 peak demand forecast using load shapes for the residential and commercial classes. Energy sales from Medium-duty and heavy-duty trucks and buses are included in the commercial class.
+9.4.4 Behind-The-Meter Solar
+Behind-the-meter solar is a solar energy system that produces power intended for on-site use in a home, office building, or other commercial or industrial facility. Thus, a behind-the-meter system allows an owner to use the energy produced from their system first, before using energy from the grid. Such systems directly reduce the energy consumed and the demand from the residential, commercial, and industrial classes. An external adjustment is made to the energy forecast to account for the impact of behind-the-meter solar. Behind-the-meter solar directly reduces the amount of energy that would be purchased from the grid.
+Behind-the-meter solar is incorporated into the Budget 2025 peak demand forecast using load shapes for the residential, commercial, and industrial classes.
+Attachment 9.4-1: Budget 2025 Forecast Adjustments – Energy / Meter (GWh)
+Attachment 9.4-2: Budget 2025 Forecast Adjustments – Energy / Generator (GWh)
+Attachment 9.4-3: Budget 2025 Forecast Adjustments – Peak Demand / Generator (MW)
+9.5 IMPACTS OF APPLIANCE EFFICIENCY STANDARDS
+The efficiency of technologies and devices selected by decision-makers and consumers has a substantial impact on the energy requirements of the forecast. Market forces and conditions, economic valuation, and convenience have considerable impact on the choice of technologies. Various state and federal regulatory bodies and legislation, however, have also made provisions to ensure increases in technology efficiency. New standard reviews and rule-making proceedings are routinely conducted at the state and federal levels. These new standards ensure that the new and more efficient technologies and devices get adopted over time, as the older technologies and equipment get replaced. This results in a reduction in energy usage over time.
+These standards are often focused on the end uses that use the most energy, such as Heating Ventilation & Air Conditioning (“HVAC”) and lighting technologies. In 2015, the minimum air conditioning efficiency standard for the southern U.S. was changed from a Seasonal Energy Efficiency Ratio (“SEER”) to SEER 14. More recently, in 2023, the minimum SEER standard for air conditioning and heat pumps improved from SEER 14 to SEER 15 for the southern U.S. In 2016, the DOE finalized new standards for commercial rooftop air conditioning units, which was a two-step process that went into effect in 2018 and 2023 raising the integrated energy efficiency ratio to higher levels based upon the size of the unit.
+Energy efficiency standards have also been directed at other technologies and types of equipment. From 2013 to 2015, the Association of Home Appliance Manufacturers implemented new efficiency standards for various home appliances. For example, in 2014, the electric water heater efficiency standard improved from 90% to 95%. In 2017, the DOE approved new standards for Walk-In Coolers and Freezers that took effect in 2020. Sometimes, standards are introduced more broadly than a single appliance or technology. In Georgia, new residential building codes were implemented on January 1, 2020, requiring new buildings to be much more energy efficient than under previous codes.
+9.6 RESOURCE SIDE DEMAND SIDE OPTIONS
+Demand Side Options (“DSO”) that are used as capacity resources do not affect the Peak Demand forecast directly. DSOs that fall into this category include the Demand Plus Energy Credit (“DPEC”) interruptible tariff, Conservation Voltage Reduction (“CVR”), Extreme RTP Response, and the Residential Thermostat Demand Response program.
+10.0 FINAL IRP REQUIREMENT OVERVIEW
+This section is a supplement to the Budget 2025 documentation book (the standard documentation) for the Georgia Power Budget 2025 Load and Energy Forecast. It supplements the standard documentation to ensure the IRP rules are completely satisfied.
+10.1 DESCRIPTION OF WEATHER NORMALIZATION
+The purpose of weather normalizing energy and peak demand is to isolate the portion of variance between forecasted and actual values that arise from factors other than weather. Methods for accounting for variances from weather for energy are similar to those used for peak demand. Both are appropriate and justifiable.
+Traditionally, energy forecasts are built using econometric models. That is, energy sales may be dependent on some economic and demographic variables and weather. A regression model will yield parameters that explain that relationship. To build an econometric forecast of energy sales requires a forecast for the economic and demographic variables and weather. For weather, the assumption is that future weather will be defined as the average of the prior 44 years, which is termed “normal weather.” Then, using normal weather with the regression models yields a prediction of energy sales under average weather conditions. To weather normalize after a period is over requires only the actual weather to be used with the model. The difference between the normal weather-predicted energy sales and the actual weather-predicted energy sales is the amount of variance due to weather.
+Beginning with Budget 2021, MetrixND and Metrix LT were used to develop the hourly peak demand forecast and for weather normalization. The peak forecast uses a normal weather assumption for forecasted energies and future weather outcomes. To weather normalize actual peak demand, the forecast model is evaluated under actual and normal weather conditions. The difference between the normal weather-predicted peak demand and the actual weather-predicted peak demand is the amount of variance due to weather. This process is used to weather normalize both the summer and winter peaks.
+10.2 REVIEW OF ECONOMIC INPUT AND LOAD PROFILES
+Georgia Power’s forecasting organization carefully reviews all forecast inputs from internal and external sources for reasonableness and accuracy and requires data providers to document assumptions and justify results that represent significant deviations from previous trends or expectations. If the supporting documentation or explanation is inadequate, Georgia Power works with the information provider to reach a mutually agreed upon solution.
+For Budget 2025, the Georgia Power forecasting group reviewed the economic forecast inputs provided by S&P Global and was satisfied that the economic forecast inputs were reasonable and consistent with those of other macroeconomic forecasters at the time the energy and load forecasts were developed.
+There are three areas of particular concern in previous IRPs that continue to be monitored: (1) the number of persons per household; (2) growth in average household income; and (3) the level of miscellaneous household energy consumption. Comparisons of the Budget 2022 and Budget 2025 assumptions for these three variables are shown in the graphs below. Other economic data used to prepare Budget 2025 are discussed in the various sections pertaining to each of the customer classes.
+According to S&P Global, the number of people per household in the state of Georgia used in Budget 2025 is slightly lower than in the last IRP. As discussed in Section 1.3, the growth in Georgia’s population puts it among the top states in the U.S. However, as U.S. population growth slows over the forecast horizon, so will the growth in Georgia’s population and the number of households.
+Georgia’s economy is expected to experience solid economic growth over the forecast horizon of 2024-2044. As a result, growth in income per household in Budget 2025 is expected to be on par or exceed the growth in the Budget 2022 forecast. Stronger growth between Budget 2025 and Budget 2022 is partly due to the uncertainty around how quickly the economy and electricity sales would recover from the impact of the pandemic in Budget 2022.
+In Budget 2025, Other Energy is a slightly smaller share of total residential energy compared to Budget 2022. Shares remain low since the rebaselining of the LoadMAP models done in Budget 2021. When rebaselining was done, there was a redistribution of Miscellaneous NEC to other known technologies.
+To view the historical hourly load profiles for 2021-2023, please see Load and Energy Forecast “Hourly Load Profile Data.xlsx,” as filed electronically.
+10.3 ACTUAL & EXPECTED INTERRUPTIBLE DEMAND
+Attachment 10.3-1: Budget 2025 Actual & Expected Interruptible Demand
+10.4 EVALUATION OF PREVIOUS FORECASTS
+This section provides an evaluation of the last four forecasts developed over the past five years. This includes Budget 2020, Budget 2021, Budget 2022, and Budget 2023. This section includes quantitative comparisons of actual and weather normalized energy and demand to the various budgets. This section also provides a qualitative assessment of the general changes that were made in the development of each forecast, as well as the specific major changes that have been made in the development of recent forecasts.
+Georgia Power monitors the performance of the current forecast on a monthly basis. This is done through a forecast variance report. The monthly forecast variance report compares the forecast of class sales for the current month to the actual class sales of the current month. This report also identifies how much of the energy variance is a result of the deviation between the actual weather conditions for the month and those used in the forecast. Actual and weather normalized actual sales (by class) are compared to the energy forecast. Reports of this type help detect deviations from the forecast and help identify discrepancies that may be systematic.
+Certain changes are made from year to year in response to the evaluation of previous forecasts, in order to incorporate additional information, and to meet new or enhanced informational needs. These changes are generally described in two categories: (1) general activities and procedures used to produce new forecasts and (2) specific enhancements made to improve the forecasts.
+Attachment 10.4-1 shows comparisons of actual and weather adjusted energy versus budget by class of service for Georgia Power. The table contains comparisons for territorial, retail, residential, commercial, industrial, governmental lighting, and MARTA energy sales.
+Attachments 10.4-2 and 10.4-3 include summer and winter peaks, respectively, for Budgets 2020 through 2024, and include actual peaks that have occurred from 2020 - 2024. Comparisons of actual and budget forecast summer and winter peaks are found in Attachments 10.4-4 and 10.4-6, while comparisons of weather adjusted actuals and forecasted summer and winter peaks are presented in Attachments 10.4-5 and 10.4-7, respectively.
+Attachment 10.4-1: Energy Comparisons Versus Budget by Class (Calendar data)
+Territorial:
+Retail:
+Residential:
+Commercial:
+Industrial:
+Governmental Lighting:
+MARTA:
+Attachment 10.4-2: Actual and Budget Summer Peak Demand
+Attachment 10.4-3: Actual and Budget Winter Peak Demand
+Attachment 10.4-4: Comparison of Budget Forecast and Actual Summer Demand
+Attachment 10.4-5: Comparison of Budget Forecast and Weather Adjusted Summer Demand
+Attachment 10.4-6: Comparison of Budget Forecast and Actual Winter Demand
+Attachment 10.4-7: Comparison of Budget Forecast and Weather Adjusted Winter Demand
+10.4.1 General Enhancements
+Whenever possible, each new forecast incorporates changes in a variety of areas that will improve the quality of the forecast. New and revised data relating to the economy, demographic conditions, and fuel prices, for example, are always included. In addition, existing models are enhanced or are replaced with new models that take advantage of better data or improved estimation techniques. Model specification, parameters, and equations are reviewed, assessed, and changed as appropriate each year.
+Data: Each energy and demand forecast uses a recent, comprehensive set of consistent economic and demographic variables such as income, households, commercial floor space, housing stock, housing starts and employment. The latest available forecasts of the prices of alternative fuels (generally gas and electricity) and the latest available appliance saturation data are also incorporated where appropriate. End-use device standards are reassessed and updated as available information permits. Market profile data from survey and end-use research are assembled and used as newer or better data become available. Weather files are updated annually.
+Models: Model specifications are reviewed and adjusted as necessary to account for new products, data availability, and significant events that may affect model accuracy. New explanatory variables may be added to the short-term econometric models to capture recent changes, while variables that no longer explain the variable being forecasted are removed.
+Model Coefficients: Whenever new data are available or model specifications change, the forecasting equations are re-estimated, and new model coefficients are generated.
+Judgment: Based on new research, information, and experience, the collective expertise available to the Company is used to refine model results to produce the best possible forecast.
+10.4.2 Specific Enhancements
+Research, new information, and reviews of previous forecasts often reveal findings that enable the Company to make improvements to the forecast. The changes identified below chronicle the evolution of the budget forecasts from Budget 2019 through the current Budget 2025 forecast. Budgets are typically completed in August of the previous year (e.g., Budget 2025 was completed in August 2024). The major changes are identified below.
+Budget 2019
+Changed economic service providers from Moody’s Analytics to IHS Markit following the issuance of a Request For Proposals in 2017. IHS Markit became Georgia Power’s provider of economic data and forecasts in January 2018 and these economic forecasts were used to produce Budget 2019.
+The short-term econometric forecast models were tested for structural breaks and it was determined that the estimation periods needed to be shortened to better capture the changing relationships impacting energy use. The time period used to estimate the residential model begins in January 2011; the commercial model begins in January 2009; and the industrial model begins in January 2010. In addition, electricity prices were excluded as a driver in the short-term energy models, although a price variable remains in the long-term models. Lastly, the short-term commercial model no longer includes households as a driver of energy use, and the short-term industrial model no longer includes the Georgia Industrial Production Index as a driver.
+The commercial LoadMAP model was updated to better capture the impacts of energy efficiency and customer behavior. Specifically, the model used updated technology specifications, such as EERs and unit energy consumption, throughout the end-use categories.
+The RTP response model was updated by Christensen Associates Energy Consulting, LLC.
+Budget 2020
+The residential and commercial customer models were changed from those in Budget 2019. Residential changed from an annual change model to a monthly model and included the year-over-year change in Georgia households and the Georgia unemployment rate as explanatory variables. The commercial customer model remained an annual model and the driver of the model was the number of Georgia households. The estimation periods for these models were also shortened.
+Residential electric vehicle load shapes developed by EPRI were first used in the Peak Demand Model. The EPRI shapes replaced the internally developed shapes previously used. Both sets of shapes represent charging upon returning home from work and overnight charging. The EPRI shapes also considers diversity among customers.
+Budget 2021
+The Covid-19 pandemic was just beginning as Budget 2021 was being developed. There was a great deal of uncertainty about the impact on economic growth and on electricity sales and customers. Covid variables, based on the Georgia GSP forecast from IHS Markit, were included in the commercial and industrial short-term forecast models. In addition, the estimation period for the short-term energy forecast models was shortened to pick up more recent trends in usage. The industrial model included a binary variable to capture the impact of a large customer shutting down part of its plant. The residential customer model was an annual model, with the change in Georgia housing stock as the explanatory variable. The commercial customer model included the change in the number of Georgia households and a recession binary variable as explanatory variables.
+The LoadMAP models were re-baselined. Market profiles are used to quantify electricity use in the base year of the study by sector, segment, end use, and the current set of technologies. The re-baselining process rebuilt the market profiles for the residential, commercial, and industrial sectors, and updated the base year from 2007 to 2016. Base-year data such as customer counts, historic energy sales, equipment presence (saturations), market floor space (in commercial), Industrial Production and per-unit equipment electricity consumption (UEC/EUI) were updated.
+Budget 2022
+As the impacts of Covid-19 continued, the estimation period for the short-term commercial and industrial models was shortened. Covid variables were once again included in the commercial and industrial models. The commercial model included a Covid variable based on the forecast of the Georgia unemployment rate, while the industrial included a binary variable for April, May, and June 2020.
+In addition to the Covid binary variable, changes to the drivers of the Budget 2022 industrial model included the U.S. Industrial Production Index for manufacturing and a second binary variable to capture the impact of a large customer shutting down its manufacturing plant.
+Drivers of the residential customer model included Georgia housing starts, the Georgia unemployment rate and a 2020 binary variable. The commercial customer included Georgia housing starts and a recession binary variable as explanatory variables.
+For Budget 2022, the forecast adjustments for Company-sponsored DSM programs are assumed to continue through the forecast horizon, rather than tapering off after 12 years, as was done in past forecasts.
+In a stipulation from the 2019 IRP, Georgia Power agreed to investigate methodologies for allocating long-term annual energy sales for each class to monthly amounts to account for anticipated trends in seasonal energy sales. A new methodology was developed and implemented in Budget 2022. The Company utilized hourly segment level end-use load shapes to project energy use by segment and by end use to ultimately project energy use on a monthly basis for each class. The monthly energy by segment and end use is calibrated to history and the short-term energy forecast. The calibration helps allocate long-term energy projections across segment and at the end-use level by class. By allocating on a monthly basis and utilizing the long-term LoadMAP forecast results, the forecast now captures the changing monthly trends through time.
+Budget 2023
+Budget 2023, completed in the Fall of 2022, captured the very beginning of the unprecedented economic growth led by large data centers and large new industrial loads. There was not a formal methodology evaluating the uncertainties around the new loads, including the probability of choosing Georgia, the probability of choosing Georgia Power to serve the load, and if the load would actually materialize. In Budget 2023, there were just 5 data center announcements. The forecast relied on informed judgement of company personnel to derive an estimate of expected load to include in the forecast. This estimate of expected load was included in Budget 2023 as an external adjustment.
+Budget 2024
+As 2023 went on, Georgia saw more and more large load customers, including data centers and industrial projects, expressing interest in building projects in the state. The Company experienced extraordinary growth as a significant number of new large customer projects requested service in such a short period of time. As a result, Georgia Power had to develop a way to estimate the impacts of these projects on its system, while also addressing the inherent uncertainties around whether such projects would ultimately locate in Georgia, select Georgia Power as the electric service provider, and come online with the anticipated load. The probabilistic model Georgia Power developed is known as the Load Realization Model. This model was first used in the 2023 IRP Update filed in October 2023. For more information on this model, please see Section 7.
+Budget 2024 was the first time that medium- and heavy-duty EV trucks were included in the forecast. As technology improves, these vehicles are expected to have a significant positive impact on electric sales over the forecast horizon. Georgia Power utilized a forecast from EPRI and developed load shapes to include these vehicles over the forecast horizon.
+One outcome of the 2022 IRP was that Georgia Power was instructed to conduct an updated residential appliance saturation survey. This survey was conducted towards the end of 2022 and the beginning of 2023. Although the saturation survey had been completed in 2023, it was not available in time to incorporate it in the B23 forecast, it was included in the Budget 2024 residential LoadMAP model.
+Budget 2024 included updates to the weather variables used in the short- and long-term energy forecast models. The weighting of each weather station and the breakpoints used to calculate HDH and CDH were updated with the most recent historical data to better capture changing customer trends.
+Budget 2025
+There were some changes to the short-term forecast models in Budget 2025. First, a price term was statistically significant and included in the residential use-per-customer model for the first time in several years. Price remains insignificant in the short-term commercial and industrial models. The commercial use-per-customer model also changed in Budget 2025, the efficiency variable used in previous years is no longer significant. The new driver of the model is the real (i.e. inflation adjusted) value of Georgia’s GSP attributable to the Commercial sector.
+10.5 ENERGY RESEARCH PLAN
+The following sections contain a description of Georgia Power’s Energy Research Plan for 2025-2028. This plan will allow Georgia Power to meet the Commission’s requirements, including required filing of information, development of forecasts, and evaluation of demand and supply side resources.
+10.5.1 Introduction
+In compliance with the Commission’s rules, Georgia Power submits its four-year Research Plan, 2025-2028. This plan contains three major sections:
+1. Survey Research
+2. Load Research
+3. Analysis
+The research program addresses specific requirements of the Commission rules. It includes only that research which is designed to meet specific filing requirements or is associated with meeting data requirements to support the filing of an integrated resource plan. Research programs associated with evaluation plans for demand side program certification are contained in the respective program filing. Table 10.5.1-1 summarizes the specific sections of the rules, and the proposed research program.
+Table 10.5.1-1: Research Requirements for Complying with Commission Rules 515-3-4
+| Section
+| Requirement
+| Research Program
+| 515-3-4.03 (1) - (2) (b)
+Energy and demand forecasting requirements
+| Historical peak demands, load factors, energy consumption by class.
+| Perform a continuous class load research study.
+| 515-3-4-.03 (3) (a)
+Forecast methodology
+| Most current data on end-use penetration and saturation; penetration and saturation of the market of competing fuel end uses; behavioral factors affecting energy use.
+| Identify and incorporate secondary sources of data and behavioral factors affecting energy use.
+| 515-3-4-.03 (3) (c)
+Data requirements
+| Develop a data base of electricity consumption patterns by customer class and end use.
+| Maintain and leverage existing end-use load shape information with Energy Simulation tools.
+| 515-3-4-.03 (3) (e)
+| Identify and describe ongoing and planned load research
+| Continuous load research studies of all customer classes. The quality of each sample is checked periodically, and the sample is replaced if needed.
+| 515-3-4-.04 (4).
+Potential new demand side resources
+| Data to support analysis of new demand side resources, including identification of customer needs, and assessment of market potential.
+| Evaluate energy efficiency measures that are suitable for Georgia Power customers, climate, residences, buildings, and facilities. Conduct an energy efficiency technical, economic, and achievable potential study.
+10.5.2 Survey Research
+10.5.2.1 Regulatory Requirements
+Commission rules require the filing of information on the saturation and penetration of end-use equipment, including both electrical and alternative fueled end uses. In addition, the rules require that the forecast be based on a disaggregated end-use method or some other comparable forecasting methodology, which requires information on the saturation and penetration of end-use equipment. Further, the rules require the development of an end-use technology catalog based on service area specific information, including information on equipment efficiencies, useful life, and energy and capacity impact information. To the extent that the disaggregated end-use methodology is used to develop the forecast, this research program will provide the data necessary to support this analysis and development of the forecast.
+10.5.2.2 Data Collection and Utilization Plan
+Use readily available information such as the U.S. Energy Information Administration’s RECS, CBECS, and MECS, and the AEO for the South Atlantic Region to develop end-use penetration and saturation trends and measure customer building characteristics.
+10.5.3 Load Research
+10.5.3.1 Regulatory Requirements
+Commission rules require the filing of information on the demand and energy characteristics of each of the utility’s classes, including load profiles, on-peak, off-peak, and shoulder kWh, and summer, winter and annual peak demands, for the most recent three years of history and the first three years of the forecast period.
+The rules require the development and filing of load and consumption information for each customer class. In addition, the rules require that the forecast used in the IRP filing be based on disaggregated end-use methods or some other comparable forecasting methodology.
+The load research component of this research plan will provide the data to meet these requirements.
+10.5.3.2 Class Load Research Project
+Georgia Power uses continuous load studies of the residential, commercial, and industrial classes that include a series of studies designed to the rate/class level. Over 2,000 customers are selected for these studies. The studies have a combination of census groups for small populations and statistical samples for larger customer groups served at secondary distribution. These studies have installed load metering equipment on a sample of customers from each rate/class combination.
+10.5.4 Analysis
+10.5.4.1 Regulatory Requirements
+Commission Rule 515-3-4 has the following requirements that will continue to be met through analysis of data collected in the preceding described research projects and/or review of existing currently available data from other sources:
+Development of a data base of electricity consumption patterns by customer class and end use. (Commission Rule 515-3-4-.03 (3) (c))
+10.5.4.2 Analysis Projects
+10.5.4.2-1 End-Use Load Shape Catalog
+Georgia Power, in support of the development of the technical potential study, develops a catalog of end-use load profiles. These profiles are based on engineering studies that are supplemented with the best available internal and external end-use load research. Additionally, Georgia Power conducts an annual rate and class load research study that is used in the Company’s cost of service studies and forecasts.
+Going forward Georgia Power plans to continue to update the end use load catalog as needed to support future Technical Potential Studies and continue its annual load research program at the rate and class level.
+10.5.4.2-2 End-Use Load Shape Modeling
+An energy simulation tool is being used to develop end-use and total premise load shapes based on both previously collected empirical data and engineering simulation. It is an engineering-based simulation tool that enables the user to develop energy use profiles and load shapes for various building types and energy system combinations.
+11.0 ACRONYM & ABBREVIATION GLOSSARY
+| Acronym
+| Definition
+| 2023 IRP Update
+| 2023 IRP Update Load Forecast
+| AAGR
+| Average Annual Growth Rate
+| AEG
+| Applied Energy Group
+| AEO
+| Annual Energy Outlook
+| B2025
+| Budget 2025 Load and Energy Forecast
+| BTM
+| Behind-The-Meter
+| BTU
+| British Thermal Unit
+| Budget 2025 or B25
+| Budget 2025 Load and Energy Forecast
+| CAGR
+| Compound Annual Growth Rate
+| CBECS
+| Commercial Building Energy Consumption Survey
+| CDH
+| Cooling Degree Hours
+| Commission
+| Georgia Public Service Commission
+| CP
+| Coincident Peak
+| CRA
+| Charles River Associates
+| CVR
+| Conservation Voltage Reduction
+| DEP
+| Distribution Efficiency Program
+| DOE
+| U.S. Department of Energy
+| DPEC
+| Demand Plus Energy Credit
+| DSM
+| Demand Side Management
+| DSO
+| Demand Side Options
+| EIA
+| Energy Information Administration
+| EPRI
+| Electric Power Research Institute
+| EUI
+| Energy Usage Index
+| GDP
+| U.S. Gross Domestic Product
+| GHG
+| Greenhouse Gas
+| GSP
+| Gross State Product
+| HDH
+| Heating Degree Hours
+| HVAC
+| Heating Ventilation & Air Conditioning
+| LoadMAP
+| Load Management Analysis and Planning
+| LRM
+| Load Realization Model
+| LT
+| Long Term
+| MARTA
+| Metropolitan Atlanta Rapid Transit Authority
+| MECS
+| Manufacturing Energy Consumption Survey
+| MPD
+| Metrix Peak Demand model
+| NAICS
+| North American Industry Classification System
+| NCP
+| Non-Coincident Peak
+| RECS
+| Residential Energy Consumption Survey
+| RTP
+| Real Time Pricing
+| SCS
+| Southern Company Services
+| SEER
+| Seasonal Energy Efficiency Ratio
+| ST
+| Short Term
+| TOU
+| Time of Use
+| UEC
+| Unit Energy Consumption
+| UI
+| Usage Index

@@ -1,0 +1,553 @@
+
+=====PDFPAGE 1=====
+ 
+  
+ 
+ 
+ 
+ 
+ 
+ 2025 ANNUAL AUDIT REPORT ON THE  
+SOUTHEAST ENERGY EXCHANGE MARKET  
+ 
+ 
+ 
+Prepared by: 
+ 
+ 
+ 
+  
+ 
+ 
+ 
+Independent Market Auditor 
+ 
+ 
+ 
+June 24, 2026 
+ 
+ 
+
+=====PDFPAGE 2=====
+2025 SEEM Auditor Annual Report 
+1 
+Contents 
+I. Overview .............................................................................................................................. 2 
+II. Market Activity ................................................................................................................... 4 
+A. Financial Results .......................................................................................................... 4 
+B. Trading and Liquidity .................................................................................................. 5 
+C. SEEM Prices ................................................................................................................ 8 
+D. Network Usage ............................................................................................................ 9 
+III. Conclusions and Recommendations ....................................................................... 10 
+ 
+   
+  
+=====PDFPAGE 3=====
+2025 SEEM Auditor Annual Report 
+2 
+ 
+I.  OVERVIEW 
+This is the 2025 Annual Audit Report on the Southeast Energy Exchange Market (SEEM). This 
+report covers activity in 2025, includes some historical data from prior years, and incorporates 
+observations from 2026. SEEM is a regional energy market that centralizes the collection of bids 
+and offers among multiple parties to create matches for bilateral trades every 15 minutes. SEEM 
+began operating in November 2022 and currently has 24 members.1  
+Trading Highlights: 
+• Trading volumes increased in 2025 to 1,303,000 MWh from 1,055,000 MWh in 2024 and 
+from 704,000 in 2023.  
+• The monthly average volume of cleared trades was 109,000 MWh (compared to 88,000 
+MWh in 2024).  
+• The highest monthly trade volume in 2025 was 132,878 MWh in May, which was an all-
+time high. 
+• SEEM volumes indicate a distinct upward trend over time. 
+• Total production cost savings since market opening exceed $30 million.  
+According to the Auditing Process under the SEEM Market Rules (Section VI.D of the rules) our 
+auditing duties fall into two general areas: 
+(1)  analyzing and affirming SEEM inputs, constraints, and matching results; and  
+(2)  responding to certain inquiries and reporting on the SEEM operation and outcomes.  
+Our Annual Report focuses on the results of our auditing activity in 2025. We focus on market 
+outcomes using the 2025 data as well as historical data prior to 2025 and data for part of 2026. 
+While our report focuses on SEEM outcomes, we monitor SEEM continuously using data screens 
+to verify the underlying modeling operated by Hartigen in accordance with specific market rules.  
+Hence, we evaluate bids and offers, evaluate matches, and verify SEEM constraints based on 
+specific requirements in the Auditing Process in the SEEM Market Rules. We report these results 
+each month and have found the SEEM market operated in compliance with the SEEM rules.  
+ 
+1  The initial 18 members are: Alabama Power Company; Georgia Power Company; Mississippi Power Company; 
+Associated Electric Cooperative, Inc.; Dalton Utilities; Dominion Energy South Carolina, Inc.; Duke Energy 
+Carolinas, LLC; Duke Energy Progress, LLC; Louisville Gas & Electric Compa ny and Kentucky Utilities 
+Company;  North Carolina Municipal Power Agency Number 1; PowerSouth Energy Cooperative; North 
+Carolina Electric Membership Corporation; Tennessee Valley Authority; Georgia System Operations 
+Corporation; Georgia Transmission Corporation; Municipal Electric Authority of Georgia; Oglethorpe Power 
+Corporation; and South Carolina Public Service Authority.  The Florida member joining in June 2023 are: 
+Seminole Electric Cooperative; Tampa Electric Company; Duke Energy Florida; Florida Power Corporation; 
+TEA Gainesville Regional Utilities; and TEA JEA. 
+=====PDFPAGE 4=====
+2025 SEEM Auditor Annual Report 
+3 
+ 
+In evaluating the market outcomes, we review the SEEM performance from an overall market 
+perspective, evaluating both trends in trading and use of transmission service. Market outcomes 
+are consistent with increasing trading volumes and liquidity. 
+In Section IV, we present our conclusions and our recommendation to consider potential long-
+term expansion of the SEEM market.  
+=====PDFPAGE 5=====
+2025 SEEM Auditor Annual Report 
+4 
+ 
+II.   MARKET ACTIVITY 
+In this section, we review SEEM operations and outcomes in 2025 to discuss potential operating 
+or market issues. This includes an overall review of the market trading, including volumes, prices, 
+and characteristics of participation, and an evaluation of network usage, focusing on the key 
+transmission paths and constraints. 
+A. Financial Results 
+Trades clearing in SEEM allow participants to reduce output from higher-cost resources and 
+replace it with lower-cost ones, resulting in production cost savings. Cumulative production cost 
+savings since market inception are at least $30 million, and likely significantly more.2 Figure 1 
+shows the (lower bound of) estimated production cost savings for each month since SEEM 
+inception, including months in 2026. The red line shows the cumulative savings  
+Figure 1: Monthly Production Cost Savings 
+ 
+ 
+2 There is likely significantly more production cost saving than the data shown because the bids (offers) are likely to 
+by slightly lower than the true cost of buyers (higher than the true cost to sellers) due to the split -the-savings nature 
+of SEEM. In a split-the-savings auction like SEEM, participants will improve their payoff by slightly lowering bids 
+below actual avoided costs and slightly raising offers above production costs in an attempt to get a split closer to 
+their counterparty’s bid or offer. 
+$0M
+$3M
+$6M
+$9M
+$12M
+$15M
+$18M
+$21M
+$24M
+$27M
+$30M
+$33M
+$0
+$200,000
+$400,000
+$600,000
+$800,000
+$1,000,000
+$1,200,000
+$1,400,000
+$1,600,000
+$1,800,000
+$2,000,000
+Nov
+Jan
+Mar
+May
+Jul
+Sep
+Nov
+Jan
+Mar
+May
+Jul
+Sep
+Nov
+Jan
+Mar
+May
+Jul
+Sep
+Nov
+Jan
+Mar
+May
+22 2023 2024 2025 26
+Cumulative Savings
+Cost Savings
+Monthly Gain
+ Cumulative
+=====PDFPAGE 6=====
+2025 SEEM Auditor Annual Report 
+5 
+ 
+B. Trading and Liquidity 
+Trading has increased since the market opening in November 2022 as shown in Figure 2. This 
+indicates increased interest and sustained confidence in the market.  
+Figure 2: Volume of Cleared Trades 
+Using total bids and offers as a measure of liquidity, Figure 3 compares liquidity to cleared trades 
+to assess market development. The figure shows liquidity (bids and offers) is relatively steady, 
+while cleared trades show a definite uptrend. This suggests offers and bids are converging to 
+levels more likely to clear, which is positive for market performance. 
+0
+20,000
+40,000
+60,000
+80,000
+100,000
+120,000
+140,000
+Nov
+Jan
+Mar
+May
+Jul
+Sep
+Nov
+Jan
+Mar
+May
+Jul
+Sep
+Nov
+Jan
+Mar
+May
+Jul
+Sep
+Nov
+Jan
+Mar
+May
+22 2023 2024 2025 2026
+Cleared MWh
+Trend Line 
+=====PDFPAGE 7=====
+2025 SEEM Auditor Annual Report 
+6 
+ 
+Figure 3: Liquidity and Trades 
+ 
+ 
+We track the time series volumes of trades, offers, bids, and regional demand data (measured by 
+Degree Days (DD))3 to gain insight into the performance of SEEM. We calculate statistics for the 
+key data to identify key correlations.4  We found excess bids (bids less offers) are positively 
+correlated with Degree Days, meaning higher regional load (using DD as the proxy) typically 
+results in buyers turning to SEEM in higher volumes than sellers, likely due to sellers shoring up 
+their own integrated operations under constrained conditions.  This is what we have observed 
+anecdotally as well.   
+Interestingly, cleared volume does not statistically correlate with DD, even as buyers tend to push 
+into the market at these times. They appear to be chasing vanishing supply at these times. Indeed, 
+this is consistent with the SEEM clearing price being statistically higher when DD increases 
+(buyers are willing to pay more).    
+ 
+3  Degree days are the difference between the daily temperature mean and 65°F. If the temperature mean is 
+above 65°F, we subtract 65 from the mean and the result is Cooling Degree Days. If the temperature mean is 
+below 65°F, we subtract the mean from 65 and the result is Heating Degree Days.  We use the absolute value 
+of DD to reflect the  
+4  We use a correlation coefficient, which is a statistic that measures the relationship between two variables (in 
+our case the cleared volumes and Degree Days). A positive correlation coefficient indicates the variables tend 
+to move in the same direction while a negative correlation coefficient indicates the variables tend to move in 
+opposite directions. A correlation coefficient at or close to zero means there is no linear relationship. 
+ -
+ 14,000
+ 28,000
+ 42,000
+ 56,000
+ 70,000
+ 84,000
+ 98,000
+ 112,000
+ 126,000
+ 140,000
+0
+200,000
+400,000
+600,000
+800,000
+1,000,000
+1,200,000
+1,400,000
+1,600,000
+1,800,000
+2,000,000
+Jan-23
+Mar-23
+May-23
+Jul-23
+Sep-23
+Nov-23
+Jan-24
+Mar-24
+May-24
+Jul-24
+Sep-24
+Nov-24
+Jan-25
+Mar-25
+May-25
+Jul-25
+Sep-25
+Nov-25
+Jan-26
+Mar-26
+May-26
+Cleared Trades (MWh)
+Liquidity - Bids plus Offers (MWhs)
+Bids and Offers
+ Cleared Trades
+=====PDFPAGE 8=====
+2025 SEEM Auditor Annual Report 
+7 
+ 
+ 
+Next, we present data to provide insight into the extent to which losses and constraints have 
+prevented economic transactions from clearing. Figure 4 shows the disposition of all economic 
+bids and offers (i.e., those for which an economic counterparty was available). The blue bars show 
+the economic bids and offers that were matched and cleared, while the transparent bars show 
+those that did not clear because of the costs of losses, transmission constraints, or other 
+constraints. The figure shows bid-offer pairs in tranches by the price spread. This is important 
+because it allows us to infer why transactions likely did not clear. 
+To understand why economic bids and offers may not have cleared, we examine the bid-offer 
+spread. Average loss charges are roughly $2 per MWh, although some potential economic 
+matches would incur higher loss costs and some less. Therefore, in the inset table, we divide totals 
+between bid-offer spreads above and below $3 per MWh. Those below $3 are very likely not to 
+have cleared because of the costs of losses, while most of those that did not clear at spreads above 
+$3 likely did not clear because of transmission constraints or participant constraints.   
+Figure 4:  Cleared and Uncleared Economic Bids and Offers 
+2026 
+ 
+Figure 4 shows that over the entire period roughly 71 percent of the economic transactions 
+cleared. It also shows that the costs of transmission losses were likely the most significant factor 
+that prevented transactions from clearing, because most of the uncleared economic transactions 
+were those with spreads less than $3 per MWh.  
+0
+100,000
+200,000
+300,000
+400,000
+500,000
+600,000
+$0-1 $1-2 $2-3 $3-4 $4-5 $5-10 $10-50 $50+
+MWh
+Bid-Offer Spread ($/MWh)
+
+=====PDFPAGE 9=====
+2025 SEEM Auditor Annual Report 
+8 
+ 
+C. SEEM Prices 
+In this subsection, we report on pricing in the SEEM market. Figure 5 shows 2025 monthly 
+SEEM clearing prices, natural gas costs, and average daily minimum and maximum prices in peak 
+and off-peak hours during the month.  
+The figure shows that prices are correlated with natural gas costs, which is the marginal fuel in 
+most hours. This supports the conclusion that the SEEM market has generally performed 
+competitively since generators in a competitive market will face incentives to offer power at their 
+marginal costs of producing it. 
+The superimposed “whisker lines” over the bars show the range of daily average prices in each 
+month. The top of the lines is the highest daily average price during the month. The variation in 
+prices throughout SEEM, which influences the variation in daily prices, is strongly influenced by 
+the locational value of available resources. 
+Figure 5: Monthly Clearing Prices and Natural Gas Costs 
+ 
+Indeed, we calculated the weighted average price on all segments used in SEEM and we found a 
+wide variance in the prices for transactions clearing over different segments. Ignoring segments 
+that had no trades, the average price was about $32/MWh for all segments. However, the average 
+$0
+$2
+$4
+$6
+$8
+$10
+$12
+$14
+$16
+$0
+$10
+$20
+$30
+$40
+$50
+$60
+$70
+$80
+$90
+$100
+Avg.
+Dec
+Jan
+Feb
+Mar
+Apr
+May
+Jun
+Jul
+Aug
+Sep
+Oct
+Nov
+Dec
+Avg.
+Dec
+Jan
+Feb
+Mar
+Apr
+May
+Jun
+Jul
+Aug
+Sep
+Oct
+Nov
+Dec
+Peak Off-Peak
+Gas Price ($/MMBtu)
+Clearing Price ($/MWh)
+Weighted Average
+Settlement Price
+Natural Gas Price
+Monthly 
+Max/Min
+Daily 
+Average
+Price
+=====PDFPAGE 10=====
+2025 SEEM Auditor Annual Report 
+9 
+ 
+prices by segment ranged from $19/MWh to $91/MWh. This shows that the value of transactions 
+can vary significantly by path, mainly because transmission constraints can contribute to higher 
+prices at different locations. If a constraint prevents higher total flows (economic trades) between 
+two areas, the average price will be higher than if sufficient transmission capability were available 
+to allow all economic trades to clear between the areas.  
+D. Network Usage 
+The SEEM model uses transmission segments made up of paths between directly adjacent 
+systems. These segments are used by themselves or combined with connecting segments to form 
+larger paths for trading. There are 359 segments. Most segments have an Available Transmission 
+Capability (“ATC”) value that determines how much power can be transferred over the segment; 
+others have no ATC value and are thus available without limit. Each month we evaluate the ATC 
+and trading statistics for all SEEM segments available to the model.5 
+Our evaluation of segment usage has found that there are instances when the ATC is posted as 
+zero or it is completely used by SEEM transactions.  In these cases, SEEM is constrained and 
+cannot clear additional trades using that segment. However, this happens in typically less than 10 
+percent of the time. Figure 6 shows the average monthly percentage of unavailable SEEM 
+segments. Unavailability peaks in the shoulder seasons (spring and fall) when transmission 
+maintenance is undertaken, which can result in reduced ATC values. While availability is high 
+overall, we will monitor a recent trend showing increasing unavailability. 
+ 
+5 A segment is a fifteen-minute interval.  We evaluate the ATC for all segments and all intervals (over one million 
+per month). 
+=====PDFPAGE 11=====
+2025 SEEM Auditor Annual Report 
+10 
+ 
+Figure 6: Trend in Unavailable SEEM Segments 
+ 
+ 
+III.  CONCLUSIONS AND RECOMMENDATIONS 
+Our evaluation of SEEM operations for 2025 has shown that implementation and operation of the 
+SEEM platform continues to be successful.  
+Given the solid performance of the SEEM platform system, it holds promise to expand the system 
+to include longer timeframes. The current SEEM market facilitates very short, near-term 
+exchanges of economic energy. Additional benefits and efficiency could be achieved by 
+transacting further ahead and for longer periods.  
+The main difference between these timeframes and the current market is that holders of 
+transmission reservations would have to release the transmission. The current SEEM market uses 
+unscheduled available transmission capability after the hourly schedules are processed. Hence, the 
+transmission is released and made available at no cost. This would not be possible for longer lead-
+time transactions because the transmission reservations could potentially still have significant 
+value in these timeframes. Therefore, implementing hourly real-time or day-ahead transactions 
+would require: 
+• Offers by the holders of transmission reservations to make them available at a submitted 
+cost (does not exist in the current market); and 
+• Bids by buyers and offers by sellers that are comparable to the current market. 
+0%
+5%
+10%
+15%
+20%
+25%
+30%
+Jan-24
+Feb-24
+Mar-24
+Apr-24
+May-24
+Jun-24
+Jul-24
+Aug-24
+Sep-24
+Oct-24
+Nov-24
+Dec-24
+Jan-25
+Feb-25
+Mar-25
+Apr-25
+May-25
+Jun-25
+Jul-25
+Aug-25
+Sep-25
+Oct-25
+Nov-25
+Dec-25
+Jan-26
+Feb-26
+Mar-26
+Apr-26
+May-26
+Share of Segment Intervasl not Available
+=====PDFPAGE 12=====
+2025 SEEM Auditor Annual Report 
+11 
+ 
+Both of these recommended expansions would facilitate fuller utilization of the transmission 
+system. However, an hourly day-ahead market would likely be the most beneficial because it 
+could lead to changes in resource commitments that would lower the cost of serving load in the 
+region.  
+As an illustration of potential benefits, we compare activity in SEEM and the bilateral hourly 
+market to assess relative volumes. We make this comparison on a path basis by comparing 
+volume on a SEEM path with the corresponding volume of hourly bilateral trades. We have all 
+SEEM trade volumes needed for this comparison. For bilateral hourly trade volumes, we use 
+transmission reservation (TSR) data from the Open Access Same-Time Information System 
+(OASIS). Specifically, we use hourly point-to-point transmission service request data as a proxy 
+for bilateral trades. Point-to-point TSRs are defined only on paths between adjacent transmission 
+systems, so TSR data for hourly bilateral trades is available only on one-segment paths. These 
+paths connect adjacent systems, and we use them as a proxy for bilateral trades between the two 
+systems. Participants in the hourly bilateral market can string together multiple transmission 
+reservations to create longer paths across multiple systems. However, because transmission costs 
+exceed $10/MWh, we conclude that this is a rare use of point-to-point reservations. Accordingly, 
+we confine our comparison of SEEM volume and hourly bilateral volume to one-segment paths.  
+We collected data for April 2025 to April 2026. The data show slightly lower volume in SEEM 
+than in the hourly bilateral market, indicating that most short-horizon economy energy for the 
+period was traded in the hourly market. However, the monthly data do not always show this 
+pattern. Table 1 compares volume over this time period. It shows higher total and average volume 
+for OASIS, although the difference from SEEM volume is not significant and does not occur in 
+every month.  
+=====PDFPAGE 13=====
+2025 SEEM Auditor Annual Report 
+12 
+ 
+Table 1: Path Volume Monthly Comparison 
+ 
+The data suggests that, at least for the one-segment paths that facilitate trade between adjacent 
+systems, SEEM markets have slightly lower volumes than the hourly bilateral markets. Expanding 
+SEEM to the hourly market could bring these one-segment transactions into a multilateral 
+mechanism and improve market access for buyers and sellers. More importantly, however, is the 
+potential to extend hourly trades to multi-segment paths. SEEM clears trades very frequently on 
+multi-segment paths; typically about 40 percent of trades used them. These trades take advantage 
+of low-cost transmission across the footprint and pay only transmission losses. This is a 
+substantial advantage over the hourly market, where transmission charges are pancaked and 
+participants face accumulating transmission charges that are much higher -- over $10/MWh per 
+system compared to about $2/MWh for SEEM. A multilateral mechanism that allows multi-
+segment paths to trade hourly with discounted transmission, as in SEEM, would further expand 
+competitive offerings and increase production cost benefits for hourly activity. 
+Month SEEM 
+Volume
+OASIS Hourly 
+Reservations
+Apr-25 33,329          109,217             
+May-25 68,120          125,779             
+Jun-25 59,215          64,920               
+Jul-25 58,423          16,286               
+Aug-25 65,488          36,988               
+Sep-25 70,331          48,353               
+Oct-25 41,637          12,247               
+Nov-25 29,686          10,406               
+Dec-25 39,906          34,110               
+Jan-26 50,935          101,875             
+Feb-26 35,024          73,578               
+Mar-26 39,248          16,521               
+Apr-26 33,721          10,943               
+Total 625,062        661,223             
+Average 48,082          50,863               
+Top 20 SEEM Paths (MWh)
