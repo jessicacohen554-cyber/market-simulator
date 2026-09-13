@@ -219,7 +219,16 @@ Arms are the keeper's frozen recipe replayed at the arm SHA (`scripts/replay_kee
 
 Five shards, each ONE registrable run in ONE `--years <all>` invocation chain into ONE bundle, its own `--out-dir`, its own branch `claude/soco-15-<iso>-<arm|control>`, `source_revision` = the full arm SHA (control: `33a7c9615f0dbc9aa19e58a976de29df462059d6`), `DATA PROFILE: <iso>`, hard stops (pinned SHA; `tests/unit/data/test_cod_ramp.py` green; the seam present — `grep -c generator_online_mask src/market_sim/data/fleet/arrays.py` ≥ 1 on an arm, = 0 on the control; the keeper's config signature in `meta.json`; free disk ≥ 20 GiB before a per-plant MISO/PJM solve), the runner unmodified with no `--no-container-preflight`, budgets stated (MISO 150 min, PJM 90, ERCOT 75 each, SPP 25 — the 20-minute rule is a STOP rule: a shard approaching its budget with no artifact stops and reports), the bundle pushed with a `.gitignore` negation and a plain `git add`, and the report in numbers: `container preflight:` / `memory peak:` lines, the `COD ramp (<ISO> <year>): N unit-months masked` line per year, per-year class TWh from `hourly/class_hourly_<y>.parquet` (`mw` summed per `klass` for pass `P1` / 1e6), `metrics.json` determination and per-criterion status, the pushed commit SHA and `git ls-tree -r <sha> -- <bundle> | wc -l`. Forbidden by name: `git add -A` / `git add .`, `dashboard_add_run.py`, `build_manifest.py`, `build_status.py`, `prune_iso_runs.py`, anything under `frontend/data/backcast/**`, any edit under `src/` or `scripts/`, opening a PR, deleting any result. Each shard is archived the moment its bundle is fetched, checked out and verified (rule 33); shard branches carrying a promotable bundle stay until the owner rules (rule 33(f)(3)).
 
-**Addendum (after push): the arm SHA.** _to be appended_
+**Addendum (after push): the arm SHA is `4f33476c520dbbec61f05abcfdbeb1a4b18540a4`** (commit 2 of this branch: code `9398000d` + this PRECOMMIT). Shards launched 2026-09-13 17:41–17:43 UTC, `source_revision` pinned to that SHA (the ERCOT control to `33a7c9615f0dbc9aa19e58a976de29df462059d6`):
+
+| shard | session | branch it pushes | budget |
+|---|---|---|---|
+| MISO arm (6 yr, two recipe groups chained) | `session_01HmkDSXoXaGfmhGce4iqxTa` | `claude/soco-15-miso-arm` | 150 min |
+| PJM arm (3 yr) | `session_01BM46YfHbT9zU28Lj45qvHm` | `claude/soco-15-pjm-arm` | 90 min |
+| ERCOT arm (5 yr, three recipe groups chained) | `session_01UqvwgkpPi4HWXXdT9oXTNc` | `claude/soco-15-ercot-arm` | 75 min |
+| ERCOT control (5 yr, same chain, unrepaired seam) | `session_01YbL3rhiy3njjfmcDpmShMZ` | `claude/soco-15-ercot-control` | 75 min |
+| SPP arm (3 yr) | `session_01Qcn9tXLjgMAEVagdDamuyf` | `claude/soco-15-spp-arm` | 25 min |
+
 
 ## 8. Two things this session did that a later reader should know
 
