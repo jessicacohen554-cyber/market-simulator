@@ -230,6 +230,46 @@ NWPP-20/NWPP-32/NWPP-36 jointly** — NWPP-32 and NWPP-36 both read `data/hydro.
   2023 / 2024. NWPP-30/31/32 must verify coverage before relying on it (the SPP audit's own
   item-9 caveat, reproduced here).
 
+## 3.2 ROUTED — six CI checks are red on `main`, and NONE is in a region this lane may touch
+
+PR #6104 came back with six failing checks at head `53bea3e0`. **Every one is pre-existing on
+`origin/main` `4d9c3251`**, and the proof is mechanical: `git diff --name-only
+origin/main...HEAD` returns four `.md` files and **zero non-markdown files**, so for every path
+these gates read, this branch's tree *is* `main`'s tree. Two were additionally **reproduced
+locally**, byte-identically to the CI message.
+
+| Check | Failure | Owning lane (routed) |
+|---|---|---|
+| **Ruff lint + format** | `scripts/gen_nyiso229_attestation.py` — `F401` unused `numpy` (L19), `F841` unused `drift` (L63). **Reproduced locally** | the nyiso-229 attestation lane |
+| **Structural refactor guards** | `scripts/run_calibration_full.py` references a missing `scripts/test_recorded_config_gas_anchor_mirror.py`. **Reproduced locally** | the calibration-runner lane |
+| **Pinned default cache key** | `test_persisted_identity.py::test_solve_surface_fingerprint_is_pinned[NYISO]` — `bd2b4657f9b5df7e` (210 rows) != pinned `1eefed492204fab7` (209). The assertion text says advancing the pin owes a **dated cause block** naming which rows, which ISOs, what it costs | the NYISO lane |
+| **Keeper-integrity gates** | MISO **E13 × 4** (superseded runs left registered after a promotion), CAISO/MISO **E3** metadata year mismatch, **S1** stale `frontend/data/backcast/status/*.js` for six ISOs | the MISO promoting lane (rule 35 `[R-PROMOTE]` (a)); `scripts/build_status.py` for S1 |
+| **Fast test tier** | 16 failed / 9,420 passed — `test_replay_keeper_strict` (ERCOT keeper meta), `test_fleet.py::test_neiso_includes_mystic_cc`, **`test_capacity.py::TestGetRPSTarget::test_unregistered_iso_is_none`**, + 2 errors from a missing `shard-artifacts/nyiso223/2022/run_config.json` | ERCOT / NEISO / NYISO lanes respectively |
+| **FR-21 forecast-board staleness** | **WARN only** by its own name — NYISO and SPP gate rows cite superseded keepers | the forecast board's lane |
+
+**Why nothing was ported.** All six live under `scripts/`, `tests/`, `config/` or `frontend/` —
+this lane's charter forbids every one of those paths, and §8.0 collision rule 5 requires a lane
+needing a file outside its region to **stop and route**. Rule 35 `[R-PROMOTE]` (a) additionally
+scopes the MISO prune to the promoting lane's **own ISO**; a docs lane pruning MISO would be the
+violation, not the fix. No fix PR exists for any of them to port. No re-run was spent: the
+failures are deterministic, two are already reproduced locally, and CLAUDE.md's "never offload
+work to CI" section notes runner minutes are billed on this private repo. One PR comment was
+posted saying exactly this (#6104, the CI-red standing-down comment).
+
+**Two of these are already known to the NWPP program, which is worth the desk's attention:**
+
+1. **The MISO E13 × 4 are the ones plan §7 gate G24 already records** — *"Measured at this
+   desk's r#2 pin: E13 is already failing for MISO (×4) and SPP (×1) — this gate exists so NWPP
+   never joins that list."* They pre-date this branch by a day and are unowned, which is the
+   standing hazard G24 names.
+2. **`test_capacity.py::TestGetRPSTarget::test_unregistered_iso_is_none` is ALREADY RED**
+   (`AssertionError: 0.0 is not None`) — and **NWPP-20 walks straight into that sweep**. Plan §7
+   gate **G7** makes `test_iso_coverage`'s unregistered-ISO / queue-cap / carbon-`None` branch an
+   NWPP-20 exit condition, so NWPP-20 will inherit a test that is failing before it starts.
+   Flagged now so that lane does not read it as its own regression. See also §7.4 of the audit:
+   the footprint spans three states with a binding CES/RPS, two with a modest one and **two with
+   none**, so NWPP's own RPS-target entry is a real question, not a formality.
+
 ---
 
 ## 4. Files changed
