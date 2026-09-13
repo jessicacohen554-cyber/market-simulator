@@ -67,6 +67,38 @@ BA_TIMEZONE: dict[str, str] = {
     # reporting clock, which is what this product is stamped on. Every SOCO
     # series downstream must adopt Central for that reason.
     "SOCO": "America/Chicago",
+    # The 17 NWPP balancing authorities (nwpp-11, 2026-09-13). MEASURED off the
+    # committed ``data/raw/eia-930/EIA930_BALANCE_*.parquet`` bytes themselves —
+    # the UTC-minus-local offset each BA is stamped on — never inferred from the
+    # BA's geography or its utility's operating clock, the same identification
+    # SOCO's key above is built on:
+    #   * 14 BAs carry offsets 7 h / 8 h (8,712 / 4,465 rows over the three
+    #     new-taxonomy halves) = PDT/PST -> America/Los_Angeles;
+    #   * PACE, NWMT and WAUW carry 6 h / 7 h = MDT/MST -> America/Denver.
+    #     PACE is PacifiCorp EAST (Utah/Wyoming/Idaho), NWMT is NorthWestern
+    #     Montana, WAUW is WAPA Upper Great Plains West — all Mountain.
+    # Both groups switch on the US DST dates (2025 spring-forward measured at
+    # local 2025-03-09 03:00 in every one), so neither is a no-DST zone:
+    # America/Denver, never America/Phoenix.
+    # NEVP is Pacific despite being a Mountain-state utility by name — Las Vegas
+    # is Pacific, and the measured offsets say so.
+    "BPAT": "America/Los_Angeles",
+    "PACW": "America/Los_Angeles",
+    "PGE": "America/Los_Angeles",
+    "PSEI": "America/Los_Angeles",
+    "AVA": "America/Los_Angeles",
+    "IPCO": "America/Los_Angeles",
+    "CHPD": "America/Los_Angeles",
+    "DOPD": "America/Los_Angeles",
+    "GCPD": "America/Los_Angeles",
+    "SCL": "America/Los_Angeles",
+    "TPWR": "America/Los_Angeles",
+    "AVRN": "America/Los_Angeles",
+    "GRID": "America/Los_Angeles",
+    "NEVP": "America/Los_Angeles",
+    "PACE": "America/Denver",
+    "NWMT": "America/Denver",
+    "WAUW": "America/Denver",
 }
 
 # region-data ``type`` code -> output column name.

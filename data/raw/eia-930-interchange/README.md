@@ -213,3 +213,15 @@ existing file without `--force`.
 - `scripts/derive_pjm_seam_ladders.py` — prints PJM's file as the boundary
   CROSS-CHECK only (the ladder derivation's flow source is PJM's tie-line
   file; see the boundary caveat above).
+
+## The 17 NWPP balancing authorities (2026-09-13, NWPP-11)
+
+`BPAT PACE PACW PGE PSEI AVA IPCO NWMT CHPD DOPD GCPD SCL TPWR AVRN GRID WAUW
+NEVP`, 2023-2025, fetched through the unmodified
+`scripts/data/fetch_eia930_interchange.py --source bulk` (the **key-free** Grid
+Monitor route — `EIA_API_KEY` was unset in that container). Provenance, the
+sign convention and the route's equivalence record: **`SOURCES-NWPP.md`** in
+this directory. Analysis: `docs/handoffs/FINDING-nwpp-11-2026-09-13.md` §4.
+
+2,278,882 rows over 30 distinct counterparties, 13 of them outside the
+footprint: `CISO BCHA WACM SRP LDWP PNM BANC AZPS WALC WWA GWA SWPP AESO`.
