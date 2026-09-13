@@ -5691,3 +5691,49 @@ computed and fixed in a PRECOMMIT** (rule 29 clause 0); screen year would be nam
 
 **ROUTED, NOT OPENED:** the surviving explanation is price-distribution compression inside the
 owner-declared-closed pjm-142 frontier. Re-opening it is an owner act.
+
+## pjm-h3 — 2026-09-13 — the SYNCHRONIZED reserve sub-product split is REFUTED at the liveness gate
+
+**Arm** `pjm_reserve_pergen_sync` (Manual 11 §4.2/§4.3.3), armed on the owner-RE-OPENED pjm-142
+price-formation frontier (`docs/calibration-log/governance.md`, "2026-09-13 — OWNER RULING").
+Pre-registration `docs/PRECOMMIT-pjm-h3-reserve-sync-2026-09-13.md`, pushed at
+`ed6bb099…` **before any solve**; gates fixed there and not re-read.
+Result: `docs/RESULT-pjm-h3-reserve-sync-screen-2026-09-13.md`.
+**Keeper `2026-09-11-pjm-d4-4-gasoutage` re-scored BEFORE and AFTER: CALIBRATED, 8/8, zero
+caveats — UNCHANGED. Nothing armed; the field stays default-off.**
+
+**KILLED AT S2.** SYNC dual non-zero in **107 of 8,760 hours = 1.22 %** against a **≥20 %** bar and
+against PJM's published **61.3 %** in 2022. The 2020/2021 years were never spent (rule 29 clause 2).
+
+**STRUCTURALLY CORRECT, QUANTITATIVELY INERT — both halves measured.** S3 shape **PASSES**
+($0.1333 at h16-18 vs **exactly $0.0000** at h01-04); S4 confinement **PASSES** (r = **+0.738**;
+off-hour movement **0.17 %** of on-hour); S5 protected set **PASSES**. It books the rent to the
+right product — the control priced 2 h in `pjm_primary_mad` (a *synchronized* requirement met by
+*offline* capacity, the pjm-87 misrepresentation), the arm prices **0** there and **107** in
+`pjm_sync_mad` (mean $6.23, max $65.27, **zero** shortfall hours). **But it moves nothing:**
+CC_REGULAR **−0.0100 TWh** on 319.69; C1 +22.56 → +22.55; C3a −10.7 % → −10.7 %; C3b 0.246 →
+0.246; C3c 3 h → 3 h; annual price 64.074 → 64.092 $/MWh.
+
+**CAUSE — the supply margin, not the product definition.** Zero-LP census: PJM fleet 10-min ramp
+**38.24 GW** availability-weighted (the solve independently logs 38.2 GW) against a measured SYNC
+requirement of **1.71 GW** — **22.3×**, *wider* than the ~19× `FINDING-pjm-eas-screen-2026-09-07`
+measured on the Primary requirement. Online-only scoping moves CT_PEAKER's 14.75 GW (mostly
+offline) to NON-SYNC but leaves CC_REGULAR's 15.76 GW as the SYNC source, still ~9×.
+
+**DO-NOT-REDO:** do not propose a further reserve-PRODUCT refinement for PJM price formation. The
+tightest defensible definition the design space offers — online-only, 10-min deliverable ramp,
+sharing the pool joint P+R headroom row — still cannot make reserve scarcity bind at this fleet
+size. This **extends** pjm-eas's retirement of the reserve-scarcity lever family from the forecast
+lane to the **backcast** lane.
+
+**OPERATIONAL, reported because it is real:** the arm doubles the R-column count and OOM-killed P0
+on **three** successive standard containers (anon-RSS 13.28 GiB vs a 13.34 GiB cgroup ceiling;
+`memsw.max_usage` 17.33 GiB = ceiling + 4 GiB swap **exactly**). It completed only after
+`hydrate_data.py --profile pjm --force` freed 4.1 GiB so the preflight could reach ~23 GiB. The
+binding constraint on a PJM per-plant solve here is **free disk**, because the swapfile is sized
+`int(min(deficit, free − 2 GiB))`.
+
+**Screen bundle retrievable with ZERO re-solves** (17 files incl. `dispatch/2022_P1.parquet`):
+`git checkout 786affd47cf95334aa1fc7579135c230492f1296 -- results/calibration/pjmh3_syncarm_2022`.
+Promotion recommendation: **do not promote** — inert, and it costs memory on every future PJM
+solve. The question is put explicitly to the owner in RESULT §11.5.
