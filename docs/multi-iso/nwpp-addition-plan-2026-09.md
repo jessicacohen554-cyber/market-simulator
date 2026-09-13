@@ -60,10 +60,20 @@ plan's pin (`_ISO_BUILDERS` carries seven; measured §2.3). So "eighth" and "nin
 | 4 | `docs/calibration-log/nwpp.md` open; docs/site prose says nine regions (or eight — §0); `docs/multi-iso/00` §0/§3 extended | docs |
 | 5 | **Every existing keeper's cache key never moves** at any wave (no new `ScenarioConfig` field, no default flip, no `results/cache.py` edit) | `tests/regression/test_persisted_identity.py`, keeper `run_config.json` |
 | 6 | Forecast-program entry (T1-F hindcast, `program-status.json` row, `GOLDEN_ISOS`) — **ROUTED to the capx director, never this desk** (card N9) | `frontend/data/forecast/` |
+| 7 | **The determination class card N2 limb (b) ruled actually EXISTS in `scripts/calibration_verdict.py`**, with byte-identical verdicts across every pre-existing keeper — without it an NWPP keeper cannot be scored at all (lane NWPP-22, owner ruling **N11**) | `scripts/calibration_verdict.py`, `tests/scoring/` |
 
 What this plan does **not** charter: any change to how **CAISO** prices its side of the WECC seam
-(card N4 routes it); any change to the rubric (card N2 *asks*; only the owner rules); any
-forecast-namespace write (card N9); anything belonging to the SOCO program (§0).
+(card N4 routes it); any forecast-namespace write (card N9).
+
+**The rubric prohibition is CARVED, once, by owner ruling N11 (2026-09-13).** This plan originally
+refused *any* change to the rubric — written when card N2 was unruled, so that the desk could not
+answer its own question. N2 is now ruled, and limb (b) **authorized a determination class that does
+not exist in the code**: `scripts/calibration_verdict.py` carries no branch able to express it, so a
+solved NWPP keeper would be unscoreable. The owner ruled *send it now*. **Lane NWPP-22 is the sole
+exception and its licence is narrow**: ONE added determination branch, a data-driven predicate (never
+an `if iso ==` ladder), no existing criterion's thresholds/bands/tiers/budgets touched, and
+**byte-identical verdicts over every pre-existing keeper as the pass/fail exit**. No other lane in
+this program may touch the scorer.
 
 ---
 
@@ -388,6 +398,7 @@ W1's evidence lands (the SPP precedent: *"let the Phase-0 audit decide the topol
 | **N1** THE REGION | NWPP is a **pool of 17 BAs**, not a BA. What is the registry key, and which BAs are in the footprint? | **Key `NWPP`.** Footprint: **all 17 candidate BAs** = 940 plants / 98,738.1 MW / 294.86 TWh (2025). Rationale, measured: Hermiston forces `PACW`; `PACE` and `PACW` are one company (PacifiCorp) split across two BAs and a boundary between them is a corporate artifact, not a transmission one; `AVRN` and `GRID` serve zero load but hold 3,538.1 MW that physically serves the footprint, so they are **in on the supply side and are not zones** (§2.5). **The one genuinely arguable cut is `NEVP`** — 15,656.9 MW and 14.11 % of load, desert-Southwest thermal rather than Northwest hydro, and a WEIM participant since 2015. Dropping it is defensible; the desk recommends **keeping it**, because excising it creates a 14 %-of-load internal seam this model would then have to price with no price for it, and because WPP membership is the stated definition of the region. **Canada (BC Hydro, AESO) is OUT**: it is in the real pool and entirely outside EIA-930, so it can only ever be an exogenous seam — stated now so no lane re-opens it | §2.1, §2.5 | **RULED 2026-09-13 (sitting #1): ALL 17 BAs** — the desk's recommendation, accepted as presented. Footprint = BPAT PACE PACW PGE PSEI AVA IPCO NWMT CHPD DOPD GCPD SCL TPWR AVRN GRID WAUW NEVP; key `NWPP`; NEVP **in**; Canada **out**; AVRN and GRID supply-side members, not zone candidates |
 | **N2** THE PRICE BENCHMARK | There is no NWPP LMP. What do C3a/C3b/C3c score against, and what may an NWPP run be *called*? | **BOTH, as one card: (a) charter NWPP-13 to build a WEIM-derived footprint hourly series with a PRE-REGISTERED STOP GATE, AND (b) rule now on what a run reads if (a) fails.** (a) is buildable — §2.6 pulled real 15-min LMPs anonymously — and its gate must fix, **before any data is read**: the node set, the BAA-weighting, hour aggregation from 15-min, the **minimum WEIM share of footprint volume** below which the series is declared misaligned, and the **reconciliation against the independent Mid-C traded index** with a stated numeric tolerance. **Mid-C is the ANCHOR, never the benchmark** — it is daily and peak-only (§2.6), so it can cross-check a level and can score nothing. For (b), the desk's proposal is a determination that names its own basis (e.g. `PHYSICALLY CALIBRATED — price scored on imbalance prices only`), never a bare `CALIBRATED`, with the misalignment on the determination basis at full magnitude. **Refuse a neighbouring-hub proxy outright** (§2.6 gate G17). ⚠ **COORDINATE, do not merge:** the SOCO program's card **S2** is the same rubric question in a harder form (SOCO has *no* price at all), and that desk's ledger §3 R-b already routes *"the owner should rule the rubric question ONCE, for both"*. This desk **surfaces that** and rules only for NWPP | §2.6; NWPP-13's gate table; the WEIM volume share (`pending NWPP-13`) | **RULED 2026-09-13 (sitting #1): BOTH (a) AND (b)** — the desk's recommendation, accepted as presented. (a) NWPP-13 is chartered to build the WEIM-derived hourly series under a STOP gate pre-registered before any data is read; (b) if the gate fails, a run reads a determination naming its own basis, **never a bare `CALIBRATED`**, with the price gap on the determination basis at full magnitude. The neighbouring-hub substitution stays refused (gate G17). The joint-sitting-with-SOCO option was offered and **not** taken, so R-c stays open and surfaced |
 | **N3** HYDRO | 35,799.5 MW (36.3 %) of conventional hydro, eight ≥1 GW plants in one hydraulic chain, on machinery that models independent monthly budgets (§2.7) | **Proceed to a first keeper on the existing monthly-budget machinery, with the four unexpressible constraints (§2.7) DECLARED on the keeper's determination basis and the largest of them pre-declared as lever NWPP-54 (hydraulic coupling of the Columbia mainstem).** Rationale under rule 1 `[R-STRUCT]`: the monthly budget is a *real* structure, not a fitted one, and a structurally-incomplete model that says so is admissible; what would **not** be admissible is closing the resulting residual with a tuned hydro adder. The desk states plainly what the owner is buying: **a first NWPP keeper's C1 is substantially a test of the hydro budgets and its C4 substantially a test of within-month hydro shaping.** The alternative the owner may prefer — build cascade coupling *before* the first keeper — is a materially larger program and is offered as the second option, not hidden | §2.7; NWPP-11's EIA-923 monthly hydro by plant | **RULED 2026-09-13 (sitting #1): BUILD CASCADE COUPLING FIRST — AGAINST the desk's recommendation.** The owner selected the second option: hydraulic coupling of the Columbia mainstem is built **before** any first keeper, not pre-declared as lever NWPP-54. The desk had recommended proceeding on the monthly-budget machinery with the gap declared; the owner ruled that the first NWPP number must mean more than a test of monthly hydro budgets. **Consequences are structural and are implemented in §4/§5/§7 rather than noted**: a new W3b wave, a new `[FABLE]` lane **NWPP-36**, and an amendment to gate G8 (see there — the new field rides `_CACHE_KEY_OPTIONAL_FIELDS`, so no existing keeper's key moves). Lever NWPP-54 is **retired from the W5 queue**, its content promoted into NWPP-36 |
+| **N11** THE SCORER BRANCH *(raised r#3, 2026-09-13)* | Card N2 limb (b) authorized a determination naming its own basis. `scripts/calibration_verdict.py` carries **no branch able to express it**, and NWPP-13 has since read **NO**, so NWPP has no admissible price series and a solved keeper would be **unscoreable**. Plan §1 forbade this desk from chartering rubric changes — written when N2 was unruled. Who builds it? | **Charter NWPP-22 `[FABLE]` from this desk**, narrowly: ONE added branch, a data-driven predicate, no existing criterion touched, **byte-identical verdicts over every pre-existing keeper** as the exit. It is the sole thing standing between a solved NWPP keeper and a scored one, and this desk controls the schedule | `FINDING-nwpp-13` §0 (the NO); the seven keepers' verdicts | **RULED 2026-09-13 (r#3): SEND IT NOW.** The owner directed the desk to charter and issue it immediately rather than defer or route it. Plan §1's rubric prohibition is **carved for this one lane only**; gate **G25** holds it to the byte-identity exit |
 | **N4** THE CAISO SEAM AND THE DOUBLE-COUNT | CAISO is already registered **with a `WECC_import` node whose counterparty is physically this footprint** | **Served measured EIA-930 `Total interchange` on NWPP's side** for the first keeper (`_SCALAR_INTERCHANGE_ISOS` += NWPP — the PJM/NYISO/NEISO/SPP precedent, playbook §8.2, rule-13 admissible), priced `NeighborInterface`s registered **default-off**. **The exposure, measured and stated rather than implied:** `iso_configs.py:533,570,573` give CAISO a `WECC_import` zone fed by `TransferLink(WECC_import→NP15, 4,800 MW)` and `(WECC_import→SP15_rest, 10,623 MW)` under a 7,500 MW simultaneous cap, and `model/interchange/caiso.py:443` names its firm tranches **`{"PNW_hydro_base", "DSW_solar_PV"}`** — *"PNW hydro"* is this footprint, by name, priced as a Tier-3 contract-cost proxy under CLAUDE.md rule 14's misalignment exception. Registering NWPP therefore puts the same physical energy on both sides of a seam, represented two different ways. **Rule 25 `[R-ISO-SCOPE]` forbids this desk from touching how CAISO prices its side, and it will not.** The CAISO-side question is **ROUTED to the CAISO lane** (ledger §3) and stays visible | §2.1; NWPP-11 DIBA duration curves | — |
 | **N5** TOPOLOGY | Zones are whole-BA groups (§2.5: no sub-BAs, so **a zone may not split a BA** — BPAT alone is 20.26 % of load) | **Five zones**, grouped on transmission geography, with the 2024 load shares measured in §2.5: **`NWPP-NW`** (BPAT · PSEI · SCL · TPWR · CHPD · DOPD · GCPD, + AVRN generation) **37.37 %** · **`NWPP-OR`** (PGE · PACW, + GRID generation) **15.09 %** · **`NWPP-INLAND`** (IPCO · AVA · NWMT · WAUW) **15.33 %** · **`NWPP-EAST`** (PACE) **18.10 %** · **`NWPP-SNV`** (NEVP) **14.11 %**. TTCs from the **WECC published path ratings** where a boundary maps to a rated path (Path 14 Idaho–Northwest, Path 20 "Path C", Path 35 TOT 2C, Path 27 IPP DC) — **a genuinely better TTC story than SPP got**, which registered a 48,700 MW placeholder. Where no rating maps (notably `NWPP-NW ↔ NWPP-OR`, which is a dense multi-point interconnection rather than a rated path), register **Tier-3, documented, non-binding** exactly as SPP-20 and SOCO card S3 do, and pre-declare the derive as lever NWPP-55. **Note plainly:** a WEIM-derived price (card N2) *is* locational, so unlike SOCO these zones do have a potential zonal benchmark — whether it is usable is `pending NWPP-13` | NWPP-12 WECC path ratings; §2.5 shares | — |
 | **N6** TIMEZONES | The footprint spans Pacific and Mountain. The SOCO program carries this as unsolved gate G19 | **Largely CLOSED BY MEASUREMENT, and the residual is a convention choice, not a data question.** Measured this session off `EIA930_BALANCE_2024_Jan_Jun.parquet` by differencing `Local Time at End of Hour` against `UTC Time at End of Hour`: **EIA-930 assigns each BA exactly one timezone**, and the split is clean — **Mountain (UTC−7/−6 DST): `NWMT`, `PACE`, `WAUW`. Pacific (UTC−8/−7 DST): the other 14**, including `IPCO` (Idaho Power files Pacific although southern Idaho is legally Mountain — a reconciliation NWPP-10 records). So the load spine carries its own correct local time per BA and nothing needs inferring. **The decision left for the owner:** the model's canonical hour. The desk recommends **UTC as the canonical solve hour with `America/Los_Angeles` as the declared reporting zone** (the majority of load, 81.6 %), every derived series stating its zone in its SOURCES, and the three Mountain BAs' local-time columns used only for provenance. `fetch_eia930_hourly.BA_TIMEZONE` carries **no entry for any of the 17** and gains them in W1 | measured, §2.5/§2.6 | — |
@@ -424,6 +435,17 @@ W1  Phase 0/1 — zero-LP, ADDITIVE files only (parallel; disjoint: docs / data+
                 │        └──────────────────┬───────────────────┘         │
                 └───────────────────┬───────┴─────────────────────────────┘
                                     ▼   DESK SITTING #2 — cards N4…N8, N10 served with W1 evidence
+W1c THE SCORER BRANCH — owner ruling N11, issuable NOW, file-disjoint from every other lane
+    ┌──────────────────────────────────────────────────────────────────────────┐
+    │ NWPP-22 the determination class card N2 limb (b) ruled  [FABLE]          │
+    │   ONE added branch in scripts/calibration_verdict.py; predicate = the    │
+    │   ABSENCE of an admissible hourly price series; never a PASS, never an   │
+    │   upgrade; gap reported at full magnitude                                │
+    │   GATE: byte-identical verdicts over ALL pre-existing keepers (G25)      │
+    │   WHY NOW: NWPP-13 read NO (2026-09-13), so limb (b) is LIVE and this    │
+    │   branch is the ONLY route to any NWPP determination                     │
+    └──────────────────────────────────────────────────────────────────────────┘
+                       ▼   (independent of W2/W3; NWPP-40 cannot score without it)
 W2  Registration — THE PIN FLIP (one PR)          ∥  matrix shard
     ┌─────────────────────────────────────────┐   ┌────────────────────────────┐
     │ NWPP-20 register + BA-keyed zone map +  │   │ NWPP-21 matrix shard       │
@@ -474,6 +496,7 @@ pre-declared solves). **Sonnet never** (rule 27 `[R-PUSH]`). **Profile** = the `
 | **NWPP-30/31/33/34** derivation | OPUS · frozen derives | nwpp | outages+tranches · benchmarks · zonal shares/VRE shape/gas hub · seam derive | non-NWPP diff = ∅ (gate G9) | per-lane FINDING |
 | **NWPP-32** hydro budget | **FABLE** · card N3 applied; the structural core of the program | nwpp | the hydro budget + envelope artifacts for 288 plants; `HYDRO_BUDGET_PERIOD_HOURS_BY_PLANT["NWPP"]` entries **only where a published instrument justifies one** (the NYISO precedent, §2.7) | budget reconciles to EIA-923 annual by plant | the four §2.7 unexpressible constraints restated with their measured magnitude |
 | **NWPP-36** cascade coupling | **FABLE** · **owner ruling N3** — the structural build that now precedes the first keeper | nwpp | the hydraulic-coupling LP row family; ONE new default-OFF `ScenarioConfig` field registered on `_CACHE_KEY_OPTIONAL_FIELDS` + `_CACHE_KEY_OPTIONAL_FIELD_DEFAULTS` in the same commit; its `mechanism-matrix.js` base row + one `·` cell line per foreign shard (rule 28(c)); its PRECOMMIT and FINDING | **every existing keeper's `cache_key()` byte-identical** (gate G8 as amended) + `scripts/solve_surface_register.py --diff` | the coupling arms and is byte-identical OFF; the reach table (which plants, which chain) measured, not asserted |
+| **NWPP-22** the scorer branch | **FABLE** · owner ruling **N11**; the ONLY lane licensed to touch the shared scorer, and the licence is narrow | code | `scripts/calibration_verdict.py` (ONE added determination branch + its guards); a NEW `tests/scoring/` file; its PRECOMMIT + FINDING | **byte-identical verdicts over every pre-existing keeper** (gate G25) | the branch cannot fire for an ISO carrying a price series, DOES fire for one carrying none, and is never a PASS |
 | **NWPP-35** site + docs | OPUS | code | site JS/CSS prose, `--iso-nwpp` colour, `docs/calibration-log/nwpp.md` header | `check_registry_payload_parity` | — |
 | **NWPP-40** first solve | **FABLE** · first-keeper determination | nwpp | ONE shard, ONE `--year 2023 2024 2025` invocation, ONE bundle, registration | preconditions: NWPP-30/31/32/33 **and NWPP-36** landed | keeper registered with whatever determination it earns |
 
@@ -530,6 +553,7 @@ charter's owner ruling O-3 carries over).
 | G22 | A `DATA PROFILE: code` session sees `integration` tests red for an unbuilt `data/clean`, or a cold first pass of `tests/curation` reporting a spurious failure | every lane | build `data/clean` (`scripts/regenerate_clean.py`) before the gates; read a first-pass curation failure as cold-start until re-run |
 | G23 | **Shard containers left holding, or a shard branch deleted while its bundle is the only copy** (rule 33 `[R-SHARD-ARCHIVE]`) | W3b, W4 | **NEW r#2, 2026-09-13** — this program was chartered 2026-09-13 and never folded rule 33 into a gate. Archive on *"the parent HAS it"* (fetched + checked out + verified), never on *"the shard finished"*; verify retrievability with `git ls-tree -r <shard sha> -- <bundle path>` returning **> 0 files** BEFORE archiving (rule 34(d)); pin every recovery line to a **full 40-char SHA**, never a branch name (shards rebase and force-push even when forbidden); **never delete a branch carrying a bundle whose promotion is undecided** (rule 31); and note the measured **HTTP 403** on branch deletion here, whose misleading `Everything up-to-date` symptom reads like the HTTP/2 flake and is not one — a session that cannot delete **says so and leaves the branch** |
 | G24 | **A promotion leaves the outgoing keeper registered, or shrinks the ISO's year set** (rule 35 `[R-PROMOTE]`) | W4+ | **NEW r#2, 2026-09-13** — same omission as G23. The promoting session prunes the outgoing keeper's **three stores** via `scripts/prune_iso_runs.py --iso NWPP` **in the session that promotes**; it **enumerates the year union from every NWPP sidecar BEFORE pruning**, because the prune destroys that evidence; the incoming keeper must **cover** that union (in its own bundle or via a run stamped to it — a dangling `holdout.keeper` reads as unstamped and drops the year off the report silently); the order is **promote → verify (`audit_keepers.py` E1) → delete**, never delete-first; scope is **NWPP only**, never another ISO's shard. The invariant is `audit_keepers.py` **E13**. Measured at this desk's r#2 pin: E13 is **already failing for MISO (×4) and SPP (×1)** — this gate exists so NWPP never joins that list |
+| G25 | **The determination class card N2 limb (b) ruled does not exist in code, so a solved NWPP keeper cannot be scored at all** — and the fix, being a shared-scorer edit, silently moves another ISO's verdict | W1c, W4 | **NEW r#3, 2026-09-13, owner ruling N11.** Lane **NWPP-22** builds ONE added branch in `scripts/calibration_verdict.py`. Its exit is a **byte-identity proof over every pre-existing designated keeper** — re-score each before and after, diff the FULL verdict payload, **zero bytes moved**, keeper ids read from `frontend/data/backcast/keepers/*.json` at the lane's OWN base sha because a promotion moves them. The predicate is **data-driven — the ABSENCE of an admissible hourly price series — never an `if iso ==` ladder**, which is what makes the same branch cover both failure modes (none was ever built; one was built and its STOP gate refused it, as NWPP-13's did). Fail-closed: unreachable for an ISO that HAS a series; **never a PASS and never an upgrade** (rule 22 `[R-C3C]` guard (d) is the template); the unscored price criteria are named on the determination basis at full magnitude; caveat budgets checked FIRST. **No `ScenarioConfig` field, so no matrix row and no cache-key movement** — adding either would be wrong |
 
 ---
 
@@ -877,6 +901,98 @@ elsewhere, not a reason to adjust the index; 1 [R-STRUCT]; 23 [R-FROZEN-DERIVE];
 EXIT: FINDING with the PRECOMMIT's gate table filled in with measured values, the Mid-C
 reconciliation table, the measured WEIM volume share, and a one-line verdict: SERIES LANDED or NO,
 with the reason. Report the verdict and the volume share FIRST.
+```
+
+### W1c — the scorer branch (owner ruling N11; issuable NOW, file-disjoint from every other lane)
+
+#### NWPP-22 `[FABLE]` — the determination class card N2 limb (b) ruled
+
+```
+You are lane NWPP-22. MODEL: Fable — you are editing the SHARED SCORER that produces every registered
+ISO's determination. This is the ONLY lane in this program licensed to touch
+scripts/calibration_verdict.py, the licence is narrow, and its exit is a byte-identity proof over
+every pre-existing keeper.
+DATA PROFILE: code.  Branch stem: claude/nwpp-22-verdict-basis-<4 chars>.
+Read CLAUDE.md freshly and in full — rule 22 [R-C3C] is your ARCHITECTURAL TEMPLATE and rule 1
+[R-STRUCT] is your constraint; scripts/calibration_verdict.py's MODULE HEADER IN FULL (it is the
+rubric's genealogy — v3.7 at this pin — and it records how every previous standing rule was
+introduced, guarded and measured); _apply_c3c_standing_rule (~line 1210) as the worked pattern;
+CRITERIA (~832); _actual_lmp_coverage (~1082); docs/multi-iso/nwpp-addition-plan-2026-09.md §2.6,
+§3 cards N2 and N11, §5 row NWPP-22, §7 gate G25; and
+docs/handoffs/FINDING-nwpp-13-2026-09-13.md §0 and §3 — WHY this lane exists.
+
+WHY THIS LANE EXISTS, MEASURED RATHER THAN ASSUMED. Owner card N2 was ruled 2026-09-13, both limbs,
+limb (b) verbatim: "a failed gate yields a determination naming its own basis, never a bare
+CALIBRATED, with the price gap on the determination basis at full magnitude." Lane NWPP-13 then ran
+its pre-registered STOP gate and READ NO: WEIM clears 5.5-6.2 % of footprint energy on the declared
+net basis (10.6 % pairwise-gross) and PASSED the volume bar, but its on-peak price sits 22.6 / 23.6 /
+37.5 % BELOW the independent Mid-C Peak traded index in 2024 / 2025 / 2023 against a pre-registered
++/-10 % bar, with daily correlation 0.67-0.95 against a 0.80 bar. No bar was moved after the series
+was seen, and NOTHING was landed to _validation-source. So at this pin NWPP has NO admissible hourly
+price series, there is no actual_lmp_hourly_NWPP.parquet, and C3a/C3b/C3c cannot be scored for it by
+any admissible route (a neighbouring hub stays refused — gate G17).
+THE RULING AUTHORIZED A DETERMINATION CLASS; NOBODY BUILT IT. Until you do, an NWPP keeper cannot be
+scored at all. That is the whole of your remit, and it is why the owner ruled "send it now".
+
+WHAT YOU BUILD: ONE added determination branch, and its guards. Five things are NOT negotiable.
+
+(1) THE PREDICATE IS DATA-DRIVEN — NEVER `if iso == "NWPP"`. The branch fires on the ABSENCE of an
+    ADMISSIBLE hourly price series for the ISO being scored. That one predicate covers BOTH failure
+    modes, which is the point: "no series was ever built" and "a series was built and its STOP gate
+    refused it" present identically to the scorer, because a refused series is never landed. It is
+    also why NWPP-13's verdict does not change your code — only whether the branch fires.
+(2) IT IS NEVER A PASS AND NEVER AN UPGRADE. Copy rule 22 [R-C3C] guard (d) exactly: the price
+    criteria read UNSCORED, never PASS; grade_summary.target_grade never absorbs them; each is NAMED
+    on the determination basis AT FULL MAGNITUDE with its reason. A determination naming its own
+    basis is a STATEMENT OF WHAT WAS NOT TESTED — it is strictly weaker than CALIBRATED, never a
+    softer route to it. If your branch could ever make a run read BETTER than the same run scored
+    with a price series, you have built the escape hatch rule 22 exists to prevent. Say in the
+    PRECOMMIT, in your own words, how you know it cannot.
+(3) FAIL-CLOSED AND NARROW. Unreachable for any ISO that HAS a series. A series that exists but is
+    PARTIAL is the existing coverage machinery's job (_actual_lmp_coverage) — do NOT widen into it.
+    Both caveat budgets are checked FIRST, exactly as rule 22 orders them.
+(4) NO ScenarioConfig FIELD, SO NO MATRIX ROW AND NO CACHE-KEY MOVEMENT. This is a scorer branch, not
+    a solve mechanism: it changes no LP, no cache key, no bundle, and existing keepers re-score in
+    place. Rule 28(c) does NOT fire — adding a matrix row would be WRONG. Run
+    scripts/check_mechanism_matrix.py and paste its OUTPUT, not its exit code (gate G15).
+(5) YOU TOUCH NO EXISTING CRITERION. No threshold, band, tier, budget, TAIL_THRESHOLD entry or
+    standing rule moves. RUBRIC_VERSION: you are adding a determination class, so read the header's
+    OWN convention for when it moves and when it deliberately does not, follow it, and state your
+    reading in the FINDING rather than guessing.
+
+THE EXIT — BYTE-IDENTITY OVER EVERY PRE-EXISTING KEEPER. Re-score each designated keeper at HEAD
+BEFORE your change and AFTER it, and diff the FULL verdict payload. ZERO BYTES MAY MOVE. Measured at
+33a7c961 (READ THEM AT YOUR OWN BASE SHA from frontend/data/backcast/keepers/*.json — a promotion
+moves them, and grading from this list instead of the tree is exactly the error gate G15 names):
+    CAISO 2026-09-12-caiso-275-gascoupling · ERCOT 2026-09-09-ercot265-receipts-fallback ·
+    MISO  2026-09-12-miso-255-sil-measured · NEISO 2026-09-09-neiso-108-fuelvintage ·
+    NYISO 2026-09-13-nyiso231-anchor-span · PJM   2026-09-11-pjm-d4-4-gasoutage ·
+    SPP   2026-09-13-spp-38-vintage-cache
+A SINGLE MOVED BYTE IS A STOP: report it, do not explain it away.
+PLUS two tests in a NEW tests/scoring/ file: the branch CANNOT fire for an ISO carrying a price
+series, and DOES fire for one carrying none. SYNTHESISE the fixture — you are file-disjoint from
+NWPP-20 and must NOT wait for NWPP to be registered.
+
+WRITE THE PRECOMMIT FIRST AND PUSH IT BEFORE YOU EDIT THE SCORER. It fixes, ex ante: the predicate;
+the exact determination string an unscoreable-price ISO will read; every guard; the RUBRIC_VERSION
+decision; and the byte-identity protocol. A guard designed after the diff is seen is not a guard.
+
+FILES YOU OWN: scripts/calibration_verdict.py (the added branch and its guards ONLY); a NEW file
+under tests/scoring/; docs/handoffs/PRECOMMIT-nwpp-22-<date>.md and FINDING-nwpp-22-<date>.md.
+FILES YOU MUST NOT TOUCH: src/; any registry or ISO config; any keeper shard; any bundle;
+frontend/data/**; data/raw/; TAIL_THRESHOLD (gate G6 — it belongs to NWPP-20/31 and only if a series
+ever exists); the mechanism matrix; this plan; the ledger; docs/calibration-log/nwpp.md.
+
+RULES THAT BITE: 27 [R-PUSH] — calibration_verdict.py is 3,813 lines at this pin, so it is squarely
+the file this rule was written for: edit LOCALLY with the Edit tool, push the EXACT on-disk bytes,
+NEVER regenerate the file from response content, and fetch-back verify the blob (line count + hash)
+IMMEDIATELY after the push, before doing anything else. A mismatch is a stop-the-line event. 22
+[R-C3C] (the template and its guards). 1 [R-STRUCT] — you may not tune, widen or soften any existing
+criterion, and you may NEVER evaluate your branch by whether it improves anyone's determination. 26
+[R-DELETE]. 5 [R-NO-MAGIC].
+EXIT: the branch, the two tests, the keeper byte-identity table, FINDING-nwpp-22-<date>.md. Report
+FIRST: the byte-identity result over every keeper, and the exact determination string an
+unscoreable-price ISO now reads.
 ```
 
 ### W2 — registration (issued at sitting #2 after N1, N3–N8 are ruled; NWPP-21 may go first, it is disjoint)
