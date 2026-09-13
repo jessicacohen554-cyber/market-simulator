@@ -1,0 +1,93 @@
+{
+ "start": {
+  "rows": 981070,
+  "mwh": 488811573.7149
+ },
+ "standardized_fields_numeric_positive": {
+  "rows_excluded": 152416,
+  "mwh_excluded": 181554.66999999998,
+  "rows_kept": 828654
+ },
+ "product_ENERGY": {
+  "rows_excluded": 48360,
+  "mwh_excluded": 124266164.6857,
+  "rows_kept": 780294
+ },
+ "class_F_NF": {
+  "rows_excluded": 60863,
+  "mwh_excluded": 56200606.7961,
+  "rows_kept": 719431
+ },
+ "term_ST": {
+  "rows_excluded": 113797,
+  "mwh_excluded": 207183377.2188,
+  "rows_kept": 605634
+ },
+ "increment_5_15_H_D": {
+  "rows_excluded": 357740,
+  "mwh_excluded": 76390624.25029999,
+  "rows_kept": 247894
+ },
+ "rate_type_not_index_not_rto": {
+  "rows_excluded": 36,
+  "mwh_excluded": 11649.0,
+  "rows_kept": 247858
+ },
+ "rate_units_energy": {
+  "rows_excluded": 0,
+  "mwh_excluded": 0.0,
+  "rows_kept": 247858
+ },
+ "intra_southern_family": {
+  "rows_excluded": 0,
+  "mwh_excluded": 0.0,
+  "rows_kept": 247858
+ },
+ "time_zone_code_known": {
+  "rows_excluded": 0,
+  "mwh_excluded": 0.0,
+  "rows_kept": 247858
+ },
+ "exact_duplicates_collapsed": {
+  "rows": 0
+ },
+ "datetimes_parse": {
+  "rows_excluded": 0,
+  "mwh_excluded": 0.0,
+  "rows_kept": 247858
+ },
+ "span_le_25h": {
+  "rows_excluded": 3385,
+  "mwh_excluded": 3428753.0,
+  "rows_kept": 244473
+ },
+ "end": {
+  "rows": 244473,
+  "mwh": 21148844.094000004
+ },
+ "seller_concentration": {
+  "top5_share": 0.5754494404473244,
+  "hhi": 925.6040581576877,
+  "top10": {
+   "Constellation Energy Generation, LLC": 0.1602,
+   "Southern Company Services, Inc. (as Agent)": 0.1502,
+   "Mercuria Energy America, LLC": 0.0976,
+   "EDF Trading North America, LLC": 0.0866,
+   "Morgan Stanley Capital Group Inc.": 0.0809,
+   "Oglethorpe Power Corporation (An Electric Membership Corporation)": 0.0728,
+   "Cobb Electric Membership Corporation": 0.0664,
+   "The Energy Authority, Inc.": 0.0602,
+   "Macquarie Energy LLC": 0.0508,
+   "Florida Power & Light Company": 0.0504
+  }
+ },
+ "by_rate_type_mwh_share": {
+  "FIXED": 0.9208,
+  "FORMULA": 0.0792
+ },
+ "by_increment_mwh_share": {
+  "15": 0.0408,
+  "D": 0.4123,
+  "H": 0.547
+ }
+}
