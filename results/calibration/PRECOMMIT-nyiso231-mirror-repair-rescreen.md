@@ -239,3 +239,84 @@ question is asked before this session ends. 32 `[R-SHARD]` — the parent runs n
 33 `[R-SHARD-ARCHIVE]` — shards archived once their bytes are fetched and verified, recovery
 pinned by full SHA. 34 `[R-SHARD-PROMOTABLE]` — every shard pushes its bundle with its
 `dispatch/` layer.
+
+---
+
+# ADDENDUM A — the SPAN's prediction, pre-registered before the span is launched
+
+Written while the 2022 screen shard is still solving, so nothing here can be shaped by a span
+result. All numbers recomputed independently this session from the keeper's own recorded config;
+they reproduce nyiso-230's phase-0 table exactly, which is the point of recomputing them.
+
+## A.1 Per-year solve-year zonal anchors ($/MMBtu), and Δ against the frozen 2023–2025 table
+
+| year | HH | Upstate_West | Capital_Hudson | Lower_Hudson | NYC | Long_Island |
+|---|---:|---:|---:|---:|---:|---:|
+| 2022 | 6.45 | 5.3731 | 8.4431 | 8.4431 | 6.6631 | 8.4431 |
+| 2023 | 2.54 | 1.8966 | 3.3566 | 3.3566 | 2.0166 | 3.3566 |
+| 2024 | 2.19 | 1.7269 | 2.7969 | 2.7969 | 2.0869 | 2.7969 |
+| 2025 | 3.52 | 2.4802 | 5.5602 | 5.5602 | 4.1802 | 5.5602 |
+| **frozen** | — | 2.0346 | 3.9046 | 3.9046 | 2.7612 | 3.9046 |
+
+**Δanchor**, the whole lever: 2022 **+3.3385 / +4.5385 / +4.5385 / +3.9019 / +4.5385** ·
+2023 −0.1380 / −0.5480 / −0.5480 / −0.7446 / −0.5480 ·
+2024 −0.3077 / −1.1077 / −1.1077 / −0.6743 / −1.1077 ·
+2025 +0.4456 / +1.6556 / +1.6556 / +1.4190 / +1.6556.
+
+**The two indices DO NOT FACTORIZE, and that is the structural case for the composition.** If
+`Δanchor(zone, year)` were separable as `f(zone)·g(year)`, the cross-zone ratio would be
+year-invariant. Measured `Upstate_West / Capital_Hudson`: **0.7356 (2022) · 0.2518 (2023) ·
+0.2778 (2024) · 0.2691 (2025)**. It is not year-invariant, and 2022 is not merely a scaled version
+of the window years. So neither `gas_offer_margin_zonal_anchor` (zone only, year averaged away) nor
+`gas_offer_margin_anchor_vintage` (year only, zone averaged away) can reach the right level — which
+is the argument for the composition made on the measurement rather than on tidiness. Note also the
+sign flip in the ORDERING: in 2023 NYC's Δ (−0.7446) is LARGER in magnitude than
+Capital_Hudson's (−0.5480), while in 2024 it is SMALLER (−0.6743 vs −1.1077).
+
+## A.2 Predicted per-tranche offer shift, Capital_Hudson ($/MWh)
+
+`markup_hr` (the per-class lever arm, $/MWh per $/MMBtu, from the registered curve —
+`base_HR × max(0, mult − phys)`): `CC_REGULAR` econ_low 1.2887 / econ_high 0.5822 ·
+`CC_CHP` econ_high 0.9575 · `ST_GAS` econ_low 2.6535 / econ_high 3.2054 / peak 33.9648 ·
+`CT_PEAKER` committed 6.0566 / econ_low 4.0497 / econ_high 4.0855 / peak 35.8380.
+
+| year | Δanchor | `CC_REG` econ_lo | `CC_CHP` econ_hi | `ST_GAS` econ_lo | `CT_PEAK` committed | `CT_PEAK` peak |
+|---|---:|---:|---:|---:|---:|---:|
+| 2022 | +4.539 | +5.85 | +4.35 | +12.04 | +27.49 | **+162.65** |
+| 2023 | −0.548 | −0.71 | −0.52 | −1.45 | −3.32 | −19.64 |
+| 2024 | −1.108 | −1.43 | −1.06 | −2.94 | −6.71 | −39.70 |
+| 2025 | +1.656 | +2.13 | +1.59 | +4.39 | +10.03 | **+59.33** |
+
+## A.3 What this predicts for the two open gates — a PREDICTION, not a gate
+
+**C1-2024 is a MERIT ROTATION, not a level move, and the direction is right.** In 2024 every gas
+offer FALLS (Δanchor < 0), so the question is only *who falls most*. `ST_GAS` econ_low falls 2.94
+and `CT_PEAKER` committed 6.71, against `CC_REGULAR` econ_low falling just 1.43 — so `ST_GAS` and
+`CT_PEAKER` become **relatively cheaper than `CC_REGULAR` by 1.51 and 5.28 $/MWh**. The keeper's
+official 2024 disposition is `CC_REGULAR` **+3.13 TWh / share_pp 3.05** against a ±3.0 pp band
+(the VOLUME leg passes, ±4.05 TWh) with `CT_PEAKER` **−1.62** and `ST_GAS` **−1.38 TWh** — so the
+rotation is pointed at exactly the classes that are short, and the flip needs only **60.3 GWh**,
+**0.162 %** of `CC_REGULAR`. Scored: `scripts/calibration_verdict.py`, re-run this session on the
+keeper to confirm every number quoted here (NOT-YET, grade 6/8, fails 2; C3a +2.5 / +3.3 / −8.9 %;
+C3b 0.122 / 0.174 / 0.169; C3c 0 / 0 / 2 h vs 10 / 13 / 42).
+
+**C3c gets its first push rather than a workaround.** 2025's `CT_PEAKER` peak tranche rises
+**+59.33 $/MWh** and `ST_GAS` peak **+56.23**. That is the first thing this lane has found that
+acts on the price tail rather than around it — and it is still a prediction.
+
+**Against the prediction, stated plainly.** Phase 0's collinearity caveat stands: delivered gas and
+the price level move together, so the r² = 0.9955 regression cannot by itself distinguish this
+mechanism from generic variance compression. The span is the test. **C1 will be scored alongside
+C3a / C3b / C3c before any flip is reported**, and a regression in any of them will be reported at
+full magnitude.
+
+## A.4 One limitation of the RECORD, disclosed rather than discovered later
+
+`run_config.json` is built for `years[0]`, so a four-year bundle records **2022's** anchors and only
+those — exactly as it records only 2022's `gas_price_override` (6.45). The 2023 / 2024 / 2025
+resolutions exist only in the runner's log. That is not introduced by this session's repair; it is
+the standing shape of a one-config-per-bundle record meeting a year-varying resolved quantity. The
+mitigation is already in the shard prompt: **`solve.log` is committed with the bundle**, and it
+carries all four per-year `gas offer margin ZONAL anchors VINTAGE <year>:` lines. A reader who wants
+the year they care about reads the log, and rule 24 `[R-REGISTRY]` is satisfied by the bundle as a
+whole rather than by `run_config.json` alone.
