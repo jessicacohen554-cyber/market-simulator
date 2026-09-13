@@ -36,13 +36,15 @@ MATRIX_PATH = REPO / "docs/codebase-site/data/mechanism-matrix.js"
 # lands at W4/SPP-40 (docs/multi-iso/spp-addition-plan-2026-09.md §4). SOCO
 # joined the same way at SOCO-21 (2026-09-13) as the eighth, seeded at W2 with
 # its first keeper at W4/SOCO-40 (docs/multi-iso/soco-addition-plan-2026-09.md
-# §4) — and, like SPP before it, seeded BEFORE the ISO is registered at all, so
-# an 8-ISO matrix over a 7-ISO registry is a supported intermediate state. So
-# the keeper-stamp assertions below are scoped to the ISOs that HAVE a keeper
+# §4), and NWPP at NWPP-21 (2026-09-13) as the NINTH, first keeper at
+# W4/NWPP-40 (docs/multi-iso/nwpp-addition-plan-2026-09.md §4) — and, like SPP
+# before them, both seeded BEFORE their ISO is registered at all, so a 9-ISO
+# matrix over a 7-ISO registry is a supported intermediate state. So the
+# keeper-stamp assertions below are scoped to the ISOs that HAVE a keeper
 # shard, which is the same fail-open scoping `check_mechanism_matrix.shard_keeper`
 # already applies (it returns None, and `keeper_drift` skips, when the shard is
 # absent). A registered ISO that HAS a keeper and drops its stamp still fails.
-ISOS = ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP", "SOCO")
+ISOS = ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP", "SOCO", "NWPP")
 KEEPER_ISOS = tuple(iso for iso in ISOS if shard_keeper(iso))
 
 

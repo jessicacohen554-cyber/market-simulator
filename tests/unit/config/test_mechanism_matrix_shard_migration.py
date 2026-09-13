@@ -108,9 +108,9 @@ def test_fixture_matches_known_migration_facts() -> None:
     # The fixture is the FROZEN pre-shard monolith, so its ISO list is pinned to
     # the six that existed on 2026-08-11 — literally, not against mm.ISO_ORDER,
     # which legitimately grows as ISOs are registered (SPP joined at SPP-21,
-    # 2026-09-06; SOCO at SOCO-21, 2026-09-13). Comparing to the live tuple would
-    # make a new ISO look like a swapped fixture, which is the opposite of what
-    # this test is pinning.
+    # 2026-09-06; SOCO at SOCO-21 and NWPP at NWPP-21, both 2026-09-13).
+    # Comparing to the live tuple would make a new ISO look like a swapped
+    # fixture, which is the opposite of what this test is pinning.
     assert orig["isos"] == ["ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO"]
     by_id = {r["id"]: r for r in orig["rows"]}
     assert by_id["use_campd_bins"]["cells"] == "KKKKKK"
@@ -127,10 +127,12 @@ def test_live_store_parses_and_covers_every_mechanism() -> None:
         assert set(row["cells"]) <= mm.CELL_CHARS, row["id"]
     # A keeper stamp is required of every ISO that HAS a keeper. An ISO whose
     # column is seeded before its first keeper exists (SPP, seeded at SPP-21
-    # 2026-09-06; first keeper at SPP-40 — and SOCO, seeded at SOCO-21
-    # 2026-09-13, first keeper at SOCO-40) carries an empty stamp by design — the
-    # same fail-open scoping check_mechanism_matrix.keeper_drift already applies
-    # when frontend/data/backcast/keepers/<ISO>.json is absent.
+    # 2026-09-06, first keeper at SPP-40; SOCO, seeded at SOCO-21 2026-09-13,
+    # first keeper at SOCO-40; NWPP, seeded at NWPP-21 2026-09-13 BEFORE its ISO
+    # is even registered in `_ISO_BUILDERS`, first keeper at NWPP-40) carries an
+    # empty stamp by design — the same fail-open scoping
+    # check_mechanism_matrix.keeper_drift already applies when
+    # frontend/data/backcast/keepers/<ISO>.json is absent.
     for iso in isos:
         if not (REPO / f"frontend/data/backcast/keepers/{iso}.json").exists():
             continue

@@ -58,12 +58,13 @@ ASSEMBLE_PATH = "docs/codebase-site/data/mechanism-matrix-assemble.js"
 
 # Cell order of the legacy `cells:`/`fc:` strings — must match the base file's
 # `isos:` list (asserted by the CI guard, not assumed).
-ISO_ORDER = ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP", "SOCO")
+ISO_ORDER = ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP", "SOCO", "NWPP")
 
 # Per-ISO `ev` keys, as declared in the matrix header since day one (SPP added
 # at SPP-21, 2026-09-06, with the seventh shard; SOCO at SOCO-21, 2026-09-13,
 # with the eighth — its key is "O", ruled with the registry key at owner card
-# S1, because "S" is SPP's).
+# S1, because "S" is SPP's; NWPP at NWPP-21, 2026-09-13, with the NINTH —
+# "W" for Western, E C P M N Q S O being taken).
 ISO_EV_KEY = {
     "ERCOT": "E",
     "CAISO": "C",
@@ -73,6 +74,7 @@ ISO_EV_KEY = {
     "NEISO": "Q",
     "SPP": "S",
     "SOCO": "O",
+    "NWPP": "W",
 }
 EV_KEY_ISO = {v: k for k, v in ISO_EV_KEY.items()}
 # Legacy spellings found in the pre-shard file; normalized to the canonical
@@ -436,6 +438,13 @@ ISO_FIELD_STEMS: dict[str, tuple[str, ...]] = {
     "NYISO": ("nyiso", "nysdec"),
     "NEISO": ("neiso",),
     "SPP": ("spp",),
+    # NWPP-21 (2026-09-13), with the eighth shard. A NO-OP at that commit and
+    # measured as one: `scenarios.py` carries ZERO `nwpp_*` fields, so every
+    # ratchet line is byte-identical before and after. Registered anyway so the
+    # FIRST `nwpp_*` field (NWPP-36's coupling gate, if it takes an ISO stem)
+    # is classed ISO-scoped rather than silently falling into the SHARED
+    # complement — the exact hole `absent_shared_fields` was written to close.
+    "NWPP": ("nwpp",),
 }
 
 

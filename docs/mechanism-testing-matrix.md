@@ -17983,8 +17983,134 @@ all eight footprints, SOCO 3,040.3 MW at 2.7× the next-worst) is lane
 **SOCO-15**, and the **no-price determination class** (card S2 — a SOCO run
 scored on C1/C2/C4/C6/C8 that names its own basis and may never read
 `CALIBRATED`) is lane **SOCO-22**, a scorer amendment, not a mechanism.
+### 5.9 NWPP — **no keeper, no bundle, no solve, and NOT YET REGISTERED** (the NWPP ADDITION PROGRAM is at wave W1/W2; `_ISO_BUILDERS` carries seven keys at the sha this section was written, `b485b6af` — NWPP is the **ninth** matrix column, SOCO-21 having landed as the eighth between this lane's first emission and its rebase)
 
-### 5.9 Cross-cutting audits (not ISO levers)
+**Status.** NWPP is being added by the NWPP ADDITION PROGRAM
+(`docs/multi-iso/nwpp-addition-plan-2026-09.md`, director lane `NWPP-DESK`,
+ledger `docs/handoffs/nwpp-desk-ledger-2026-09.md`). It is the **first pooled
+region in this repo** — the Northwest/Western Power Pool is not a balancing
+authority and not an ISO but a pool of **17 BAs** (owner ruling **N1**, sitting
+#1 2026-09-13: all 17, key `NWPP`, `NEVP` in, Canada out), 940 plants /
+98,738.1 MW, **36.3 % conventional hydro**. At the time this section was
+written NWPP has **no registered run, no bundle, no solve of any kind, no
+`frontend/data/backcast/keepers/NWPP.json`, and is not in `_ISO_BUILDERS`** —
+so the matrix shard `docs/codebase-site/data/mechanism-matrix/NWPP.js` carries
+an empty `keeper:` and an empty `gates:` by design, and its **328 cells** are
+**175 `U`** (untested, plausibly applicable), **47 forecast-lane-only `U`**
+(`cell: "."` + `fc: "U"` on forecast-only rows) and **106 `.`** (structurally
+n/a: 100 ISO-exclusive-elsewhere + 6 no-capacity-auction). The shard's own
+header states the classification rule cell by cell, including the **two reasons
+the charter offered that the seed did NOT use** (no reserve co-optimisation, no
+offer-curve tuning channel — each foreclosed zero cells, because `.` is the
+stronger claim and neither survives contact with the row set); the census and
+its reasons are `docs/handoffs/FINDING-nwpp-21-2026-09-13.md`.
+
+**Nothing below is a lever until NWPP-40 lands** — and NWPP-40 is itself gated
+on **NWPP-36**, the Columbia-mainstem hydraulic coupling, which owner ruling
+**N3** (sitting #1, 2026-09-13) moved **ahead of the first keeper** against the
+desk's own recommendation: *"the first NWPP number must mean more than a test of
+monthly hydro budgets."* The first-ever NWPP solve (W4 / NWPP-40) produces the
+first 2023–2025 bundle, and *that* bundle becomes every later NWPP lane's
+rule-29(b) control (card **N10**: *"Control = none. The first full 2023–2025
+bundle IS the baseline"*). The W5 charters below are **reserved, not
+dispatchable**; the desk writes each in full at issuance. Standing rules that
+already bind the queue:
+
+- **Rule 25 `[R-ISO-SCOPE]` first.** No other ISO's verdict fills an NWPP cell,
+  and no other ISO's fitted value transfers. Every parameter below is derived
+  from NWPP's own market data before any solve (rules 23 / 25).
+- **Rule 29 `[R-SCREEN]`**: zero-LP phase 0, then a ONE-YEAR screen on a
+  PRECOMMIT-named year, then the full `--year 2023 2024 2025` span. Card N10
+  fixes the screen year as *the year whose hydro energy deviates most from the
+  2023–2025 mean* — a zero-LP, residual-blind statistic, chosen because hydro is
+  the mechanism under test, **never** the year with the biggest residual. The
+  screen gate is STRUCTURAL and STOP-only.
+- **Rule 16 `[R-ALLYEARS]`**: NWPP enters `_MULTI_YEAR_ISOS` at W2 — a
+  single-year NWPP keeper is refused from day one.
+- **Rule 28(b)**: the lane that tests a mechanism moves that cell in `NWPP.js`
+  in the same PR, rejections included. One lever = one lane = one PR.
+- **The price benchmark is not settled and no lever may assume it is.** Owner
+  ruling **N2** (sitting #1) chartered NWPP-13 to build a WEIM-derived hourly
+  series under a STOP gate pre-registered before any data is read, AND ruled
+  that if the gate fails a run reads a determination **naming its own basis,
+  never a bare `CALIBRATED`**. Substituting a neighbouring hub (SP15/NP15, Palo
+  Verde, Mid-C as a benchmark rather than an anchor) is **refused outright**
+  (gate **G17**). Mid-C is the ANCHOR and can score nothing.
+
+**The queue (plan §4 W5, in issue order).** All five are `pending` — none has
+been issued, and each is listed with the gate it targets and the identification
+that must come from NWPP's own data first.
+
+1. **NWPP-55 — WECC path TTC derive.** `[FABLE]`, because a TTC is a design
+   object. Card **N5**'s five whole-BA zones (`NWPP-NW` 37.37 % · `NWPP-EAST`
+   18.10 % · `NWPP-INLAND` 15.33 % · `NWPP-OR` 15.09 % · `NWPP-SNV` 14.11 % of
+   2024 load) take TTCs from the **WECC published path ratings** where a
+   boundary maps to a rated path (Path 14 Idaho–Northwest, Path 20 "Path C",
+   Path 35 TOT 2C, Path 27 IPP DC). Where no rating maps — notably
+   `NWPP-NW ↔ NWPP-OR`, a dense multi-point interconnection rather than a rated
+   path — W2 registers a **Tier-3, documented, non-binding** limit, and this
+   lever is what replaces it with a derived one. Targets congestion/C3b.
+   Precondition: NWPP-12's transcribed ratings (URL + page/table per value).
+2. **NWPP-56 — priced seams.** `[FABLE]`. W2 serves **measured EIA-930 `Total
+   interchange` on NWPP's side** (`_SCALAR_INTERCHANGE_ISOS`, the
+   PJM/NYISO/NEISO/SPP precedent, rule-13 admissible) with priced
+   `NeighborInterface`s registered **default-off**; this lever adjudicates the
+   priced form. Cells it would enter: `priced_interchange`,
+   `reference_price_interface`, `import_hub_pricing`,
+   `seam_neighbour_anchored_ladder`, `seam_neighbour_hourly_ladder` — all `U`
+   in the seed, none foreclosed. **Read SPP-51 before proposing it**: the
+   identical spread-clearing form was killed at rule-29 phase 0 on SPP's
+   measured record with no LP spent, and that is a method to copy, not a
+   verdict to inherit (rule 28(d)). **The CAISO side is NOT in scope**: card
+   **N4** measures that CAISO's `WECC_import` node is physically this footprint
+   (`model/interchange/caiso.py`:443 names its firm tranches `PNW_hydro_base` /
+   `DSW_solar_PV`), so registering NWPP represents the same energy twice — and
+   rule 25 routes that question to the CAISO lane, which must rule before this
+   lever may touch it.
+3. **NWPP-57 — WRAP adequacy.** `[FABLE]`. Card **N7**: the footprint has no
+   capacity market (the six capacity-auction rows are `.` in both lanes in the
+   seed), and the live forward construct is the Western Resource Adequacy
+   Program. The question that decides whether WRAP is in-window at all —
+   *when does WRAP's first BINDING season fall relative to 2023–2025?* — is
+   answered **with a citation, not from memory**, by NWPP-12. If binding
+   post-dates the window, WRAP is a **forecast-side** object and the backcast
+   reliability floor rests on participants' own IRP reserve margins; this lever
+   is then a W6-adjacent forecast item and says so rather than arming a
+   backcast mechanism on a programme that was not yet binding.
+4. **NWPP-58 — zone refinement.** `[FABLE]`. Gate **G18** is absolute: EIA-930
+   publishes no sub-BA load, so **a zone may not split a BA** — `BPAT` alone is
+   20.26 % of load. Any refinement is therefore a *regrouping* of whole BAs, and
+   this lever must state what load-side series makes the new grouping
+   measurable before it proposes one. Targets internal congestion / C3b.
+5. **NWPP-59 — retirement sector gate.** `[OPUS]`. Plan §2.1 fact 4: the
+   footprint is overwhelmingly vertically integrated, so the step-3 **economic**
+   exit screen models a merchant choice most of these owners never face. The
+   PJM/MISO `retirement_sector_gate` construction (partition sector-1 plants out
+   of the economic decision, leave them offering) is the obvious candidate —
+   **as a candidate, entering NWPP as `U`**, with its own parameters derived
+   from NWPP's own EIA-860 `Sector` column (rule 25). Forecast-lane, so it is
+   gated behind W6 routing (card N9) as well as behind a keeper.
+
+**RETIRED FROM THIS QUEUE BEFORE IT WAS EVER ISSUED.** **NWPP-54 — Columbia
+mainstem hydraulic coupling.** Owner ruling **N3** (sitting #1, 2026-09-13)
+promoted its content into **W3b / NWPP-36**, ahead of the first keeper, so it is
+a BUILD, not a lever, and it is not seeded here. What it must express is §2.7's
+four constraints the existing independent-monthly-budget machinery cannot: a
+plant's release is the next plant's inflow down an eight-plant, 17,821.8 MW
+chain (49.8 % of all footprint hydro). Its field is registered **default-OFF on
+`_CACHE_KEY_OPTIONAL_FIELDS` with its frozen drop value in
+`_CACHE_KEY_OPTIONAL_FIELD_DEFAULTS` in the same commit** (the
+`hydro_budget_period_by_instrument` / nyiso-220 precedent), so **every existing
+keeper's `cache_key()` stays byte-identical** — gate **G8** as amended by N3.
+
+**Not in this queue, deliberately.** W6 / forecast-program entry
+(`program-status.json` row, `ff-verdicts.json`, `GOLDEN_ISOS`, goldens) is
+**routed to the capx director** by card **N9** and is never written by this desk
+or this section (gate **G16**). No holdout-year (2019–2022) NWPP solve is in the
+queue at any rung — the BALANCE spine is committed back to 2019 (plan §6 row
+13), but nothing is solved before the first keeper exists.
+
+### 5.10 Cross-cutting audits (not ISO levers)
 
 - **Diurnal price-amplitude audit, all six ISOs — DONE 2026-08-01 (xiso-1), and
   the answer is SYSTEMIC.** One construction, zero LP (keeper
