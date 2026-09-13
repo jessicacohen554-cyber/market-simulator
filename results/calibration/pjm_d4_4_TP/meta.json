@@ -438,9 +438,9 @@
   "mass_cap_program": null,
   "btm_backfill_year": 2024,
   "shared_inputs": {
-    "eia930": "../_shared/PJM/eia930-eabb5979cef0.parquet",
-    "eia923": "../_shared/PJM/eia923-9b08db5fc7d9.parquet",
-    "campd": "../_shared/PJM/campd-ee850c4b7b92.parquet",
+    "eia930": "../_shared/PJM/eia930-a8a3dada12ab.parquet",
+    "eia923": "../_shared/PJM/eia923-532379e9df1d.parquet",
+    "campd": "../_shared/PJM/campd-765e2798d2e6.parquet",
     "unit_outages": "../_shared/PJM/unit_outages-efd694c287be.parquet",
     "unit_outages_short": "../_shared/PJM/unit_outages_short-6fd29c386319.parquet",
     "unit_outages_partial": "../_shared/PJM/unit_outages_partial-b37584b96662.parquet",

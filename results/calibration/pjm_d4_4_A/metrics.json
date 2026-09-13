@@ -13,11 +13,10 @@
     2025
   ],
   "data_blocked_years": [],
+  "price_reference_blocked_years": [],
   "rubric_version": 3.7,
-  "determination": "NOT-YET",
-  "reasons": [
-    "governance gate UNATTESTED: no governance attestation in bundle"
-  ],
+  "determination": "CALIBRATED",
+  "reasons": [],
   "notes": [],
   "criteria": {
     "fuelmix": {
@@ -53,12 +52,12 @@
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "UNATTESTED"
+      "status": "PASS"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
       "tier": "protective",
-      "status": "SKIPPED"
+      "status": "PASS"
     }
   },
   "caveats": {
@@ -71,8 +70,8 @@
     }
   },
   "grade_summary": {
-    "scored": 6,
-    "target_grade": 6,
+    "scored": 8,
+    "target_grade": 8,
     "commercial_grade": 0,
     "ledgered": 0,
     "fails": 0

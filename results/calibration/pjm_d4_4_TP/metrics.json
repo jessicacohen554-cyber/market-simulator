@@ -13,10 +13,11 @@
     2022
   ],
   "data_blocked_years": [],
+  "price_reference_blocked_years": [],
   "rubric_version": 3.7,
   "determination": "NOT-YET",
   "reasons": [
-    "governance gate UNATTESTED: no governance attestation in bundle"
+    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, price_mean, price_shape"
   ],
   "notes": [
     "C8 2021 CT_PEAKER: grounded above budget \u2014 19.8% forced (3.15 of 15.8929 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.958 (\u22650.8) & off-peak CV ratio 0.975 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
@@ -46,7 +47,8 @@
     "price_tail": {
       "label": "C3c price tail / scarcity (RT hourly)",
       "tier": "supporting",
-      "status": "FAIL"
+      "status": "CAVEAT",
+      "caveat_kind": "ledgered"
     },
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
@@ -56,7 +58,7 @@
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "UNATTESTED"
+      "status": "PASS"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
@@ -66,7 +68,9 @@
   },
   "caveats": {
     "protective": [],
-    "ledgered": [],
+    "ledgered": [
+      "C3c price tail / scarcity (RT hourly)"
+    ],
     "commercial_band": [],
     "budget": {
       "protective_max": 0,
@@ -74,11 +78,11 @@
     }
   },
   "grade_summary": {
-    "scored": 7,
-    "target_grade": 3,
+    "scored": 8,
+    "target_grade": 4,
     "commercial_grade": 0,
-    "ledgered": 0,
-    "fails": 4
+    "ledgered": 1,
+    "fails": 3
   },
   "reported": {
     "co2": {
