@@ -53,6 +53,20 @@ BA_TIMEZONE: dict[str, str] = {
     "SWPP": "America/Chicago",
     "ERCO": "America/Chicago",
     "CISO": "America/Los_Angeles",
+    # SOCO spans two civil zones — Alabama and Mississippi Power are Central,
+    # Georgia Power is Eastern — but EIA stamps the BA on ONE clock, and that
+    # clock is Central. MEASURED (soco-11, 2026-09-13), not assumed, on two
+    # independent sources that agree:
+    #   * the committed ``data/raw/eia-930-hourly/SOCO hourly.parquet`` carries
+    #     exactly two UTC-minus-local offsets, 6 h (9,171 rows) and 5 h (17,133
+    #     rows), switching on the US DST dates — i.e. CST/CDT, never EST/EDT;
+    #   * all four Southern FERC Form 714 respondents (Alabama Power 2, Georgia
+    #     Power 183, Mississippi Power 184, Southern company 142) report
+    #     ``timezone = America/Chicago`` in PUDL's ETL of the form.
+    # Georgia Power's own operating clock is Eastern; this key is the BA's
+    # reporting clock, which is what this product is stamped on. Every SOCO
+    # series downstream must adopt Central for that reason.
+    "SOCO": "America/Chicago",
 }
 
 # region-data ``type`` code -> output column name.

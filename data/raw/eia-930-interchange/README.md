@@ -109,6 +109,65 @@ System net, excluding the two impossible prints: **+1.98 / +0.97 / +2.62 /
 +6.16 TWh** for 2019 / 2020 / 2021 / 2022 — SWPP is a net exporter in every
 back year, as it is in 2023-2025.
 
+**`SOCO interchange hourly.parquet`** (added 2026-09-13, lane SOCO-11 —
+`docs/handoffs/FINDING-soco-11-2026-09-13.md`; plan
+`docs/multi-iso/soco-addition-plan-2026-09.md` §6 row 3). 236,736 rows,
+2023-01-01 01:00 .. 2026-01-01 00:00 on **`America/Chicago`**, fetched with
+the committed producer on its **keyless** `--source bulk` route (this
+environment carries no `EIA_API_KEY`, as the charter container did not):
+
+    python scripts/data/fetch_eia930_interchange.py --ba SOCO --source bulk \
+        --years 2023 2024 2025
+
+Nine DIBAs: `DUK`, `FPC`, `FPL`, `MISO`, `SC`, `SCEG`, `SEPA`, `TAL`, `TVA`.
+**`AEC` (PowerSouth) is not among them** although its territory is embedded in
+Southern's — EIA does not book it as a SOCO seam in this product.
+
+**This is the cleanest interchange book in the corpus.** Every DIBA carries
+the full grain in every year — 8,759 / 8,784 / 8,760 hours, the three absent
+hours being the DST spring-forward 02:00 local, correctly so — and there are
+**zero NaN hours**, against SWPP's 97 / 361 / 936 all-DIBA-NaN hours over the
+same window. No impossible print was found: the extreme values are
+`TVA` −3,150 MW and `FPL` +2,843 MW, both inside the plausible range for
+those ties.
+
+**Sum-of-legs against the BA-level `Total interchange` column of
+`../eia-930-hourly/SOCO hourly.parquet`: 10.155 / 10.832 / 13.038 TWh vs
+10.156 / 10.831 / 13.021** for 2023 / 2024 / 2025 — agreement to 0.001 /
+0.001 / 0.017 TWh, far tighter than the usual gap between per-seam legs and
+EIA's imbalance-adjusted BA total (SWPP's is 0.4-0.7 TWh). Hour by hour on the
+local clock, 24,100 of 26,294 joined hours are **exactly** equal (r = 0.9986);
+every ±1 h shift collapses that to ~50, which is what fixes the two files on
+the same clock.
+
+**Clock, measured not assumed.** The `local_time` stamps imply UTC-minus-local
+offsets of 5 h on 17,133 rows and 6 h on 9,161 — CDT/CST, i.e.
+`America/Chicago` — reproducing the committed `SOCO hourly.parquet` split
+(17,133 / 9,171) to the DST-dedupe rows. Georgia Power's operating clock is
+Eastern; the BA reports on Central. Hence the `"SOCO": "America/Chicago"` key
+added to `fetch_eia930_hourly.BA_TIMEZONE` in the same commit.
+
+**SOCO is a net EXPORTER in all three years — +10.155 / +10.832 / +13.038 TWh**
+(EIA sign convention: positive = SOCO exports to the DIBA), confirming the
+charter's measured 10.2 / 10.8 / 13.0. Per-counterparty net, TWh:
+
+| DIBA | 2023 | 2024 | 2025 | direction |
+|---|---:|---:|---:|---|
+| `SCEG` | +7.119 | +8.845 | +9.779 | export, ~100 % of hours |
+| `SC` | +4.055 | +4.588 | +4.834 | export, 96-100 % of hours |
+| `MISO` | +4.388 | +4.494 | +4.725 | export, 91-95 % of hours |
+| `FPL` | +2.903 | +2.770 | +2.911 | export, 77-85 % of hours |
+| `TAL` | +0.706 | +0.672 | +0.556 | export, 89-95 % of hours |
+| `FPC` | +0.082 | −0.024 | −0.419 | balanced, drifting to import |
+| `SEPA` | −1.949 | −2.580 | −2.311 | import, 97-100 % of hours (federal hydro) |
+| `TVA` | −3.456 | −4.075 | −2.878 | import on net, but two-way: ±2,500-3,150 MW |
+| `DUK` | −3.692 | −3.859 | −4.159 | import, 88-94 % of hours |
+
+`SEPA` and `DUK` are near-unidirectional and `SCEG`/`SC` almost perfectly so;
+`TVA` is the only genuinely two-way seam (27 / 18 / 28 % of hours exporting).
+Full per-DIBA per-year duration curves (min, p1, p5, p25, p50, p75, p95, p99,
+max) are in the FINDING.
+
 ISNE's DIBAs are its three external seams: `HQT` (Hydro-Québec TransÉnergie —
 the Phase II + Highgate ties), `NBSO` (New Brunswick) and `NYIS` (New York).
 
