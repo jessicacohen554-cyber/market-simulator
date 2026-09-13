@@ -2076,6 +2076,31 @@ results/calibration/miso255_promote2022b/
 results/calibration/caiso279_ablate_dswcouple_2022/
 results/calibration/caiso279_ablate_dswcouple_span/
 
+# nyiso-231: the on-pin solver-version CONTROL probe. Never registered (rule 29
+# [R-SCREEN] (c) — a control bundle must not reach main), kept on local disk
+# (rule 31 [R-RETAIN]). Every number it produced is in
+# docs/FINDING-nyiso231-the-keeper-is-off-pin-2026-09-13.md; the bytes are
+# recoverable at git checkout 687f299f044ec8ff9df958c5e4121bd35853ade2 --
+# results/calibration/nyiso231_ctl_y2022
+results/calibration/nyiso231_ctl_y2022/
+
+# nyiso-231 KEEPER bundle: registration (render_calibration_html.build_payload)
+# and the per-plant D-1/D-2/D-4 diagnostics read dispatch/<year>_P1.parquet, so
+# the designated keeper carries its dispatch layer (rule 34 [R-SHARD-PROMOTABLE]
+# (a)). The repo-wide results/calibration/*/dispatch/ ignore above rests on a
+# 413 pack-size belief FALSIFIED 2026-09-12 (102,367,743 bytes pushed as a
+# single-blob pack); this layer is 81 MB and is pushed in its own commit.
+!results/calibration/nyiso231_anchor_span/dispatch/
+!results/calibration/nyiso231_anchor_span/dispatch/**
+
+# nyiso-231: screen/probe bundles that must not reach main (rule 29 [R-SCREEN]
+# (c)) but stay on local disk (rule 31 [R-RETAIN]). Every number each produced
+# is carried by its RESULT/FINDING doc.
+#   nyiso230_arm_y2022 — nyiso-230 screen arm; recovery 90475b1c2b56283018396504e39ad638ac367c97
+#   nyiso231_arm_y2022 — shard A solve.log (the G-ANCHOR-LOG evidence, quoted verbatim in the
+#                        RESULT); recovery 490ed8277eaa82a91548ff769a1d22390147f5b9
+results/calibration/nyiso230_arm_y2022/
+results/calibration/nyiso231_arm_y2022/
 # SPP-38 (lane spp-38) — the vintage-cache-repair re-solve of SPP's keeper.
 # The bundle IS REGISTERED on the dashboard (2026-09-13-spp-38-vintage-cache), so
 # rule 15 [R-DASHBOARD] requires its slim set + hourly/ sidecars in `main`; the

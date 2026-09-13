@@ -1,0 +1,109 @@
+{
+  "year": 2022,
+  "gates": {
+    "G-CONF": {
+      "pass": false,
+      "fields_moved": [
+        "gas_offer_margin_anchor_by_zone",
+        "gas_offer_margin_zonal_anchor_vintage"
+      ],
+      "waived": [],
+      "unexplained": [],
+      "recorded_anchors": {
+        "Upstate_West": 5.37312712328767,
+        "Capital_Hudson": 8.443127123287672,
+        "Lower_Hudson": 8.443127123287672,
+        "NYC": 6.663127123287671,
+        "Long_Island": 8.443127123287672
+      },
+      "predicted_anchors": {
+        "Upstate_West": 5.3731,
+        "Capital_Hudson": 8.4431,
+        "Lower_Hudson": 8.4431,
+        "NYC": 6.6631,
+        "Long_Island": 8.4431
+      },
+      "anchors_match_1e-6": false
+    },
+    "G-SCOPE": {
+      "pass": true,
+      "moved": []
+    },
+    "G-ANCHOR-LOG": {
+      "pass": true,
+      "solve_log_present": true,
+      "log_line": "INFO: gas offer margin ZONAL anchors VINTAGE 2022: {'Upstate_West': 5.3731, 'Capital_Hudson': 8.4431, 'Lower_Hudson': 8.4431, 'NYC': 6.6631, 'Long_Island': 8.4431} $/MMBtu (window anchors {'Upstate_West': 2.0346, 'Capital_Hudson': 3.9046, 'Lower_Hudson': 3.9046, 'NYC': 2.7612, 'Long_Island': 3.9046}) \u2014 the solve year's own mean delivered-gas series, per zone",
+      "anchors_logged_by_run_year": {
+        "Upstate_West": 5.3731,
+        "Capital_Hudson": 8.4431,
+        "Lower_Hudson": 8.4431,
+        "NYC": 6.6631,
+        "Long_Island": 8.4431
+      },
+      "predicted_anchors": {
+        "Upstate_West": 5.3731,
+        "Capital_Hudson": 8.4431,
+        "Lower_Hudson": 8.4431,
+        "NYC": 6.6631,
+        "Long_Island": 8.4431
+      },
+      "note": "The run_config.json copy of these numbers is computed by a DIFFERENT call site than the LP's; nyiso-230 recorded them 1.3868 $/MMBtu low in every zone. This gate reads the solve path's own resolution, so the two halves are checked independently."
+    },
+    "G-DEMAND": {
+      "pass": true,
+      "served_TWh_arm": 152.68167,
+      "served_TWh_control": 152.68167,
+      "dump_MWh_arm": 0.0,
+      "slack_MWh_arm": 0.0,
+      "slack_MWh_control": 0.0
+    },
+    "G-REPRO": {
+      "pass": true,
+      "load_weighted_LMP_this_arm": 73.1275,
+      "load_weighted_LMP_nyiso230_arm": 73.1275,
+      "delta": 0.0,
+      "tolerance": 0.01,
+      "nyiso230_recorded_capital_hudson_anchor": 7.056300074575554,
+      "this_arm_recorded_capital_hudson_anchor": 8.443127123287672,
+      "settles": "an unmoved LP beside a moved RECORD proves nyiso-230's LP priced against the overlay-inclusive anchors while its run_config.json recorded the pre-overlay ones"
+    }
+  },
+  "reported_not_gated": {
+    "load_weighted_LMP_arm": 73.1275,
+    "gas_unit_hours": 4309920,
+    "share_negative_gas_mc_delta": 0.064361,
+    "share_gas_units_hour_constant_delta": 0.0772,
+    "median_implied_markup_hr_by_class": {
+      "CC_CHP": 0.506,
+      "CC_REGULAR": 0.9336,
+      "CT_CHP": 0.0967,
+      "CT_PEAKER": 3.933,
+      "ST_GAS": 3.1262
+    },
+    "registered_markup_hr_envelope_by_class": {
+      "CC_REGULAR": [
+        0.5822,
+        1.2887
+      ],
+      "CC_CHP": [
+        0.9575,
+        0.9575
+      ],
+      "ST_GAS": [
+        2.6535,
+        33.9648
+      ],
+      "CT_PEAKER": [
+        4.0497,
+        35.838
+      ]
+    },
+    "nongas_unit_hours_with_moved_mc": 1416,
+    "nongas_unit_hours_total": 2338920,
+    "load_weighted_LMP_control": 67.6573,
+    "hours_gt_300_arm": 5,
+    "hours_gt_300_control": 4,
+    "note": "Reported for the record, NOT gated. Prices: a screen that reads the target residual is the fitted-mechanism selection rule 1 [R-STRUCT] forbids, done one year at a time. Non-gas mc: P1's mc is the BID cost (base + amortized startup markup keyed on P0's run pattern), so a changed gas offer legitimately re-prices a coal committed tranche through a changed P0 pattern -- the intertemporal coupling that made nyiso-229 withdraw its out-of-footprint confinement gate."
+  },
+  "screen_verdict": "STOP"
+}
