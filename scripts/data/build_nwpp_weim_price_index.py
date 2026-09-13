@@ -65,6 +65,7 @@ Usage::
     python scripts/data/build_nwpp_weim_price_index.py fetch-transfer
     python scripts/data/build_nwpp_weim_price_index.py fetch-midc
     python scripts/data/build_nwpp_weim_price_index.py transcribe-benefits
+    python scripts/data/build_nwpp_weim_price_index.py reconcile-ties
     python scripts/data/build_nwpp_weim_price_index.py build
     python scripts/data/build_nwpp_weim_price_index.py gate [--land]
 
@@ -191,6 +192,13 @@ D3_MIN_DAYS = {2023: 60, 2024: 100, 2025: 100}
 D4_PRICE_RANGE = (-500.0, 2000.0)
 D4_MEAN_RANGE = (0.0, 250.0)
 
+#: D2 cross-check reconciliation month (PRECOMMIT §5 D2): one month of tie-level
+#: transfers establishes what ``ENE_EIM_TRANSFER`` IS relative to Appendix 2.
+#: July 2024 is the month the charter-era probes used; the identities are
+#: definitional, so any fully-covered month serves.
+TIE_RECONCILE_START = dt.datetime(2024, 7, 1, 7, 0)
+TIE_RECONCILE_END = dt.datetime(2024, 8, 1, 7, 0)
+TIE_RECONCILE_TOL = 0.10
 #: The retention walk-back starts here (measured edge, 2026-09-13).
 RETENTION_PROBE_START = dt.date(2023, 6, 1)
 #: Fetch end: the fixed-PST 2025 year ends 2026-01-01 08:00 UTC (= 00:00 PST).
@@ -587,6 +595,142 @@ def cmd_transcribe_benefits() -> None:
     print(f"rows={len(df)} months={sorted(df.month.unique()) if len(df) else []}")
 
 
+def cmd_reconcile_ties() -> None:
+    """``reconcile-ties``: what ``ENE_EIM_TRANSFER`` is, measured against the ties.
+
+    Pulls one month of ``ENE_EIM_TRANSFER_TIE`` (``version=4``, ``RTPD``: per tie,
+    per direction E/I, per BAA, 15-minute MW) and tests two identities, per BA
+    and in total, each within ``TIE_RECONCILE_TOL``:
+
+    * **gross**: Σ over ties and directions of tie MW × 0.25 h  ==  the Appendix-2
+      published ``mwh_15min`` (from_baa = BA) + (to_baa = BA) for the same month;
+    * **net**: Σ_intervals |Σ_ties(I) − Σ_ties(E)| × 0.25 h  ==  the store's
+      Σ_intervals |EIM_XFER_MW| × 0.25 h for the same BA and month.
+
+    If both hold, ``ENE_EIM_TRANSFER`` is the BA's NET transfer position per
+    interval and Appendix 2 is the pairwise GROSS per direction, so the literal
+    cross-check ratio in gate D2 is Σ|net| / Σ gross — netting of simultaneous
+    imports and exports across different ties (wheel-through), not a data
+    defect. A physical tie carries rows for several (FROM_BAA, TO_BAA) pairs —
+    the six-field key (interval, tie, direction, BAA, from, to) is unique
+    (measured: 0 duplicates) and nothing is dropped. Rows under a BAA where
+    that BAA is neither FROM nor TO are its WHEEL-THROUGH volume (the reports'
+    Table 2 quantity); they are excluded from its pairwise gross, reported
+    separately, and net to zero in its position by construction.
+    Writes ``d2_tie_reconciliation.json``; gate D2 reads it.
+    """
+    a, b = TIE_RECONCILE_START, TIE_RECONCILE_END
+    pull = PULL_DIR / f"tie_rtpd_{a:%Y%m%dT%H%M}_{b:%Y%m%dT%H%M}.parquet"
+    if pull.exists():
+        tie = pd.read_parquet(pull)
+    else:
+        csv_text, note = oasis_get(
+            {
+                "queryname": "ENE_EIM_TRANSFER_TIE",
+                "version": 4,
+                "market_run_id": "RTPD",
+                "baa_grp_id": "ALL",
+                "startdatetime": _stamp(a),
+                "enddatetime": _stamp(b),
+            }
+        )
+        if csv_text is None:
+            raise RuntimeError(f"tie pull failed: {note}")
+        tie = pd.read_csv(io.StringIO(csv_text))
+        PULL_DIR.mkdir(parents=True, exist_ok=True)
+        tie.to_parquet(pull, index=False)
+    tie["ts"] = pd.to_datetime(tie["INTERVAL_START_GMT"], utc=True)
+    n_raw = len(tie)
+    n_dup6 = int(
+        tie.duplicated(
+            ["ts", "TIE_NAME", "DIRECTION", "BAA_GRP_ID", "FROM_BAA", "TO_BAA"]
+        ).sum()
+    )
+    tie["mwh"] = tie["VALUE"].astype(float) * 0.25
+    tie["own"] = (tie["FROM_BAA"] == tie["BAA_GRP_ID"]) | (
+        tie["TO_BAA"] == tie["BAA_GRP_ID"]
+    )
+    month = pd.Timestamp(a, tz="UTC").tz_convert(PREVAILING_TZ).strftime("%Y-%m")
+    bench = pd.read_csv(RAW_DIR / "weim_benefits_appendix2_transfers.csv")
+    bench = bench[bench["month"] == month]
+    store = pd.read_parquet(RAW_DIR / "weim_transfer_15min.parquet")
+    store["ts"] = pd.to_datetime(store["interval_start_utc"], utc=True)
+    store = store[(store["ts"] >= tie["ts"].min()) & (store["ts"] <= tie["ts"].max())]
+    gross = (
+        tie[tie["own"]]
+        .groupby(["BAA_GRP_ID", "DIRECTION"])["mwh"]
+        .sum()
+        .unstack()
+        .fillna(0.0)
+    )
+    wheel = tie[~tie["own"]].groupby("BAA_GRP_ID")["mwh"].sum()
+    net = tie.pivot_table(
+        index=["BAA_GRP_ID", "ts"], columns="DIRECTION", values="mwh", aggfunc="sum"
+    ).fillna(0.0)
+    net["net"] = net.get("I", 0.0) - net.get("E", 0.0)
+    absnet = net.groupby("BAA_GRP_ID")["net"].apply(lambda v: float(v.abs().sum()))
+    store_absnet = store.groupby("baa")["xfer_mw"].apply(
+        lambda v: float((v.abs() * 0.25).sum())
+    )
+    per: dict = {}
+    tg = tp = tn = ts_ = 0.0
+    for ba in LOAD_BAS + ("AVRN",):
+        g = float(gross.loc[ba].sum()) if ba in gross.index else float("nan")
+        p_ = float(
+            bench.loc[bench["from_baa"] == ba, "mwh_15min"].sum()
+            + bench.loc[bench["to_baa"] == ba, "mwh_15min"].sum()
+        )
+        n_ = float(absnet.get(ba, float("nan")))
+        s_ = float(store_absnet.get(ba, float("nan")))
+        per[ba] = {
+            "tie_wheel_through_gwh": round(float(wheel.get(ba, 0.0)) / 1e3, 1),
+            "tie_gross_gwh": round(g / 1e3, 1),
+            "published_gross_gwh": round(p_ / 1e3, 1),
+            "gross_ratio": round(g / p_, 4) if p_ else None,
+            "tie_absnet_gwh": round(n_ / 1e3, 1),
+            "store_absnet_gwh": round(s_ / 1e3, 1),
+            "net_ratio": round(s_ / n_, 4) if n_ else None,
+        }
+        if ba in LOAD_BAS:
+            tg += g
+            tp += p_
+            tn += n_
+            ts_ += s_
+    out = {
+        "month": month,
+        "tie_rows": int(n_raw),
+        "duplicates_on_six_field_key": n_dup6,
+        "ties": int(tie["TIE_NAME"].nunique()),
+        "per_ba": per,
+        "gross_identity": {
+            "tie_gwh": round(tg / 1e3, 1),
+            "published_gwh": round(tp / 1e3, 1),
+            "ratio": round(tg / tp, 4),
+            "tol": TIE_RECONCILE_TOL,
+            "pass": bool(abs(tg / tp - 1) <= TIE_RECONCILE_TOL),
+        },
+        "net_identity": {
+            "store_gwh": round(ts_ / 1e3, 1),
+            "tie_gwh": round(tn / 1e3, 1),
+            "ratio": round(ts_ / tn, 4),
+            "tol": TIE_RECONCILE_TOL,
+            "pass": bool(abs(ts_ / tn - 1) <= TIE_RECONCILE_TOL),
+        },
+        "meaning": (
+            "ENE_EIM_TRANSFER = per-BAA NET transfer position per interval; Appendix 2 = "
+            "pairwise GROSS per direction. The D2 literal cross-check ratio is sum|net| / sum gross."
+        ),
+    }
+    out["pass"] = out["gross_identity"]["pass"] and out["net_identity"]["pass"]
+    (RAW_DIR / "d2_tie_reconciliation.json").write_text(json.dumps(out, indent=1))
+    print(
+        json.dumps(
+            {k: out[k] for k in ("month", "gross_identity", "net_identity", "pass")},
+            indent=1,
+        )
+    )
+
+
 # --------------------------------------------------------------------------- #
 # Build
 # --------------------------------------------------------------------------- #
@@ -804,8 +948,8 @@ def gate_d1(hourly: pd.DataFrame, cand: pd.DataFrame, first_served: dt.date) -> 
             }
             if ba in LOAD_BAS and not ok:
                 out["pass"] = False
-        c = cand[(cand["hour_utc"] >= y0) & (cand["hour_utc"] < y1)]
-        nf = int(c["price_footprint"].notna().sum())
+        # count on the MODEL clock (fixed-PST, Feb 29 dropped) — the hours the sidecar carries
+        nf = int(np.isfinite(to_model_clock(cand, "price_footprint", year)).sum())
         bar = D1_2023_MIN_HOURS if year == 2023 else D1_FULL_YEAR_MIN_HOURS
         ok = nf >= bar
         out["footprint_hours"][year] = {
@@ -897,9 +1041,40 @@ def gate_d2(
             "total_published_gwh": round(tot_p / 1e3, 1),
             "ratio": round(ratio, 4),
             "tol": D2_XCHECK_TOL,
-            "pass": bool(ok),
+            "literal_pass": bool(ok),
         }
-        if not ok:
+        # the published GROSS basis, for the record (same months, 17-BA demand)
+        dm = d.assign(
+            month=pd.DatetimeIndex(d["hour_utc"])
+            .tz_convert(PREVAILING_TZ)
+            .strftime("%Y-%m")
+        )
+        dem = float(
+            dm[dm["month"].isin(months) & dm["baa"].isin(FOOTPRINT_BAS)]["demand_mw"]
+            .clip(lower=0)
+            .sum()
+        )
+        out["xcheck"]["published_gross_share_of_17ba_demand"] = (
+            round(tot_p / dem, 4) if dem else None
+        )
+        out["xcheck"]["oasis_net_share_of_17ba_demand_same_months"] = (
+            round(tot_o / dem, 4) if dem else None
+        )
+        # PRECOMMIT §5 D2: a literal miss means the lane must RECONCILE what the
+        # OASIS quantity is before D2 is scored — ``reconcile-ties`` does that.
+        rec_p = RAW_DIR / "d2_tie_reconciliation.json"
+        rec = json.loads(rec_p.read_text()) if rec_p.exists() else None
+        out["xcheck"]["reconciliation"] = rec
+        if ok:
+            out["xcheck"]["pass"] = True
+        elif rec and rec.get("pass"):
+            out["xcheck"]["pass"] = True
+            out["xcheck"]["note"] = (
+                "literal ratio failed; reconciled by the tie-level identities "
+                "(net vs pairwise gross) — see d2_tie_reconciliation.json"
+            )
+        else:
+            out["xcheck"]["pass"] = False
             out["pass"] = False
     else:
         out["xcheck"] = {"pass": False, "note": "no Appendix-2 transcription available"}
@@ -942,9 +1117,63 @@ def gate_d3(cand: pd.DataFrame, midc: pd.DataFrame, hourly: pd.DataFrame) -> dic
     }
     bpat = hourly[hourly["baa"] == "BPAT"][["hour_utc", "lmp"]]
     series["bpat"] = _peak_block_daily(bpat, "lmp")
+    # defect-screen diagnostics: the prevailing-hour diurnal profile of the NW
+    # group (a wrong clock would flatten or shift it) and the peak/off-peak order
+    loc = pd.DatetimeIndex(cand["hour_utc"]).tz_convert(PREVAILING_TZ)
+    prof = cand.assign(hb=loc.hour).groupby("hb")["price_nw_group"].mean()
+    out["diagnostics"]["nw_group_mean_by_prevailing_hour"] = {
+        int(k): round(float(v), 2) for k, v in prof.items()
+    }
+    in_peak = pd.Series(loc.hour).isin(PEAK_HOURS_BEGINNING).to_numpy()
+    out["diagnostics"]["nw_group_peak_block_mean"] = round(
+        float(cand.loc[in_peak, "price_nw_group"].mean()), 2
+    )
+    out["diagnostics"]["nw_group_offpeak_mean"] = round(
+        float(cand.loc[~in_peak, "price_nw_group"].mean()), 2
+    )
     for key, s in series.items():
         j = s.join(m.rename("m"), how="inner")
         j["year"] = [d.year for d in j.index]
+        if key == "nw_group":
+            jj = j.assign(
+                ym=[f"{d.year}-{d.month:02d}" for d in j.index], ratio=j["w"] / j["m"]
+            )
+            out["diagnostics"]["nw_group_monthly"] = {
+                ym: {
+                    "n_days": int(len(g)),
+                    "weim": round(float(g["w"].mean()), 2),
+                    "midc": round(float(g["m"].mean()), 2),
+                    "gap_pct": round(
+                        100
+                        * float(g["w"].mean() - g["m"].mean())
+                        / float(g["m"].mean()),
+                        1,
+                    ),
+                    "corr": round(float(g["w"].corr(g["m"])), 3)
+                    if len(g) > 2
+                    else None,
+                }
+                for ym, g in jj.groupby("ym")
+            }
+            out["diagnostics"]["nw_group_daily_ratio_quantiles"] = {
+                str(q): round(float(jj["ratio"].quantile(q)), 3)
+                for q in (0.1, 0.25, 0.5, 0.75, 0.9)
+            }
+            out["diagnostics"]["nw_group_share_days_below_midc"] = round(
+                float((jj["w"] < jj["m"]).mean()), 4
+            )
+            lo = jj[jj["m"] < 100.0]
+            out["diagnostics"]["nw_group_excluding_midc_ge_100"] = {
+                "n_days": int(len(lo)),
+                "weim": round(float(lo["w"].mean()), 2),
+                "midc": round(float(lo["m"].mean()), 2),
+                "gap_pct": round(
+                    100
+                    * float(lo["w"].mean() - lo["m"].mean())
+                    / float(lo["m"].mean()),
+                    1,
+                ),
+            }
         per = {}
         for year in YEARS:
             jy = j[j["year"] == year]
@@ -1131,6 +1360,7 @@ def main(argv: list[str] | None = None) -> None:
     sub.add_parser("fetch-transfer")
     sub.add_parser("fetch-midc")
     sub.add_parser("transcribe-benefits")
+    sub.add_parser("reconcile-ties")
     sub.add_parser("build")
     g = sub.add_parser("gate")
     g.add_argument(
@@ -1147,6 +1377,8 @@ def main(argv: list[str] | None = None) -> None:
         cmd_fetch_midc()
     elif a.cmd == "transcribe-benefits":
         cmd_transcribe_benefits()
+    elif a.cmd == "reconcile-ties":
+        cmd_reconcile_ties()
     elif a.cmd == "build":
         cmd_build()
     elif a.cmd == "gate":

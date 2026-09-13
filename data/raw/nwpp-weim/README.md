@@ -20,13 +20,14 @@ gap is a misalignment is what the gate measures — see the FINDING.
 
 | Artifact | Rows | Tracked? | What |
 |---|---:|:--:|---|
-| `weim_rtpd_lmp_15min.parquet` | see FINDING | **yes** | `interval_start_utc · baa · lmp · mce · mcc · mcl` — `PRC_RTPD_LMP` at the 12 nodes below, all four components, float32 |
-| `weim_transfer_15min.parquet` | see FINDING | **yes** | `interval_start_utc · baa · xfer_mw` — `ENE_EIM_TRANSFER` (v2, RTPD) for all 23 WEIM BAAs |
-| `weim_hourly_by_ba.parquet` | 3 × 8,760 × 12 | **yes** | `year · hour · baa · lmp` — the per-BA hourly LMP on the model's fixed-PST non-leap clock (PRECOMMIT §4). **The per-BA product**: card N5's zones are a re-group of this file |
+| `weim_rtpd_lmp_15min.parquet` | 1,088,688 | **yes** | `interval_start_utc · baa · lmp · mce · mcc · mcl` — `PRC_RTPD_LMP` at the 12 nodes below, all four components, float32 |
+| `weim_transfer_15min.parquet` | 2,083,676 | **yes** | `interval_start_utc · baa · xfer_mw` — `ENE_EIM_TRANSFER` (v2, RTPD) for all 23 WEIM BAAs |
+| `weim_hourly_by_ba.parquet` | 315,360 | **yes** | `year · hour · baa · lmp` — the per-BA hourly LMP on the model's fixed-PST non-leap clock (PRECOMMIT §4). **The per-BA product**: card N5's zones are a re-group of this file |
 | `midc_peak_daily.parquet` | 698 | **yes** | the `Mid C Peak` rows of EIA's ICE workbooks 2023–2025 (`single_day` flags delivery start = end) — the anchor, never the benchmark |
 | `weim_benefits_appendix2_transfers.csv` | 4,922 | **yes** | Appendix 2 of the WEIM quarterly benefits reports, 2023-07 → 2025-12, per month × ordered BAA pair, 15-min and 5-min MWh, with `report` + `page` per row |
-| `gate.json` | — | **yes** | every measured cell of the PRECOMMIT §5 gate |
-| `_pulls/` | — | **no** | the raw OASIS CSV pulls, the ICE workbooks, the 12 benefits PDFs, the fetch logs/manifests and the UTC-hourly intermediates. Re-fetchable (`SOURCES.md`); hashes in `SHA256SUMS.txt` |
+| `gate.json` | — | **yes** | every measured cell of the PRECOMMIT §5 gate — **verdict `NO`** (D3: the WEIM on-peak price sits 22.6–37.5 % below the Mid-C Peak index against a 10 % bar; D1, D2, D4 pass) |
+| `d2_tie_reconciliation.json` | — | **yes** | one month (2024-07) of tie-level transfers establishing that `ENE_EIM_TRANSFER` is the BAA's NET position and Appendix 2 the pairwise GROSS (gross identity 1.046, net identity 0.985) |
+| `_pulls/` | 916 MB | **no** | the raw OASIS CSV pulls (31 + 31 monthly windows), the ICE workbooks, the 12 benefits PDFs, the tie-level month, the fetch logs/manifests and the UTC-hourly intermediates. Re-fetchable (`SOURCES.md`) inside retention; hashes in `SHA256SUMS.txt` |
 
 The untracked payload follows the repo's convention for raw exports (the ERCOT /
 NYISO / SPP LMP source zips are likewise not committed): **the reduced parquet is
@@ -51,8 +52,9 @@ deliberately not used (PRECOMMIT §2; plan §2.6 gate G17).
 ## 3. Retention — why the parquet is the record
 
 OASIS serves ~39 months and the edge slides one day per calendar day. Measured at
-fetch time (see `_pulls/fetch_*_manifest.json` and the FINDING): **no data at or
-before 2023-05-31; data from 2023-06-01** for both products. So **2023 is a partial
+fetch time 2026-09-13 (`_pulls/fetch_*_manifest.json`): **no data at or
+before 2023-05-31; data from 2023-06-01** for both products — every one of the
+31 monthly LMP windows returned exactly its expected row count. So **2023 is a partial
 year by retention (Jun 1 – Dec 31 at most)**, declared in the PRECOMMIT before the
 fetch, and an anonymous re-fetch a year from now will not reproduce it at all. A
 forward year regenerates from the same query (CLAUDE.md rule 13's forward test);
@@ -71,4 +73,11 @@ refresh" the committed years — that would silently shorten them.
 - **Footprint price = demand-weighted mean** over the 11 load-carrying priced BAs,
   weights EIA-930 `Demand (MW) (Adjusted)`; an hour whose priced BAs carry < 90 % of
   the 11-BA demand is NaN.
-- `da` in the landed sidecar is **all NaN** — there was no day-ahead market.
+- `da` in a landed sidecar would be **all NaN** — there was no day-ahead market.
+  **No sidecar was landed** (the gate read `NO`); `gate --land` refuses unless every
+  cell passes, and a desk ruling to use the series as a labelled imbalance-price
+  benchmark would be a new owner decision, not a re-run of this gate.
+- The published LMP does not equal `MCE + MCC + MCL` in 56.5 % of intervals
+  (p99 of the gap $27/MWh, max $175) — the index uses the published `LMP_PRC`
+  (the settlement price) as the PRECOMMIT declares; the components are stored
+  and the identity is reported, not assumed.
