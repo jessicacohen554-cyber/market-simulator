@@ -86,6 +86,71 @@ the 35 gitignored `<ST>_2018.parquet` extracts only (see its own header); the
 2019–2026 files are tracked, so git's own blob hashes are their integrity
 record.
 
+**45 states since 2026-09-13 (NWPP-11): + ID OR UT WA**, the four NWPP-footprint
+CEMS states absent from the corpus, landed for **2023–2026**
+(`docs/handoffs/FINDING-nwpp-11-2026-09-13.md`;
+`docs/multi-iso/nwpp-addition-plan-2026-09.md` §6 row 1, card N8). NWPP is not a
+registered ISO yet, so these four states are absent from `campd.ISO_STATES`
+until NWPP-20 registers it. **MT, NV, CA and WY were already present** from the
+MISO/CAISO/SPP footprints and are not re-fetched — `data/raw` is immutable.
+Their 2026 vintage is Q1, matching every other `<ST>_2026.parquet` in the corpus.
+
+    python scripts/data/fetch_campd_unit_level.py --year <2023|2024|2025> \
+        --states ID OR UT WA
+    python scripts/data/fetch_campd_unit_level.py --year 2026 --quarters 1 \
+        --states ID OR UT WA --holdout-intake NWPP
+
+All sixteen were verified schema-equal to a sibling by the fetcher's own
+assertion (`_verify_against_sibling`, which compares against the same state's
+newest file — `WY_2026.parquet` for the first ID file, then each state's own
+prior year) and confined to their own year. Coverage is stable across the
+window except for one real commissioning event (below):
+
+| file | rows | facilities | units | span |
+|---|---:|---:|---:|---|
+| `ID_2023.parquet` | 70,080 | 5 | 8 | 2023-01-01 .. 2023-12-31 |
+| `ID_2024.parquet` | 70,272 | 5 | 8 | 2024-01-01 .. 2024-12-31 |
+| `ID_2025.parquet` | 70,080 | 5 | 8 | 2025-01-01 .. 2025-12-31 |
+| `ID_2026.parquet` | 17,280 | 5 | 8 | 2026-01-01 .. 2026-03-31 |
+| `OR_2023.parquet` | 122,640 | 7 | 14 | 2023-01-01 .. 2023-12-31 |
+| `OR_2024.parquet` | 122,976 | 7 | 14 | 2024-01-01 .. 2024-12-31 |
+| `OR_2025.parquet` | 122,640 | 7 | 14 | 2025-01-01 .. 2025-12-31 |
+| `OR_2026.parquet` | 30,240 | 7 | 14 | 2026-01-01 .. 2026-03-31 |
+| `UT_2023.parquet` | 254,040 | 11 | 29 | 2023-01-01 .. 2023-12-31 |
+| `UT_2024.parquet` | 254,736 | 11 | 29 | 2024-01-01 .. 2024-12-31 |
+| `UT_2025.parquet` | 260,664 | 11 | 31 | 2025-01-01 .. 2025-12-31 |
+| `UT_2026.parquet` | 66,960 | 11 | 31 | 2026-01-01 .. 2026-03-31 |
+| `WA_2023.parquet` | 148,920 | 11 | 17 | 2023-01-01 .. 2023-12-31 |
+| `WA_2024.parquet` | 149,328 | 11 | 17 | 2024-01-01 .. 2024-12-31 |
+| `WA_2025.parquet` | 148,920 | 11 | 17 | 2025-01-01 .. 2025-12-31 |
+| `WA_2026.parquet` | 36,720 | 11 | 17 | 2026-01-01 .. 2026-03-31 |
+
+**`UT_2025` is the one file that is not a clean units × hours rectangle**, and
+the shortfall is a real commissioning event carried unmodified: Intermountain
+(EIA 6481) units `3SGA` (4,416 h, H2 only) and `4SGA` (2,208 h, Q4 only) enter
+the extract mid-year — the IPP Renewed repowering — for 260,664 rows against
+the 31 × 8,760 rectangle. The unit count therefore steps 29 → 31 between 2024
+and 2025 and holds at 31 into 2026. Every other fifteen file is exact.
+
+**CO is deliberately NOT fetched.** Colorado is inside PacifiCorp's *balancing*
+reach only through a single 7.5 MW solar row in PACE (plan §6 row 1, card N8);
+there is no CO combustion unit in the NWPP footprint for CEMS to observe, so a
+CO extract would land ~1 MB of rows this program can never use. The skip is a
+scoping decision, not a block — no CO URL was requested and none returned an
+error.
+
+**Scope note, stated at the gate (plan card N8):** CEMS observes *combustion*
+units only. The NWPP fleet is 36.3 % hydro + 24.9 % wind/solar + 1.2 % nuclear
+by nameplate, so **CAMPD reaches at most ~32 % of it** — materially less than in
+ERCOT or SPP. The per-plant binning path (`use_campd_bins`) and the outage /
+tranche artifacts it feeds therefore cover correspondingly less of this ISO.
+That is a scoping fact for NWPP-30, not a reason to skip the fetch.
+
+**No `SHA256SUMS.txt` rows are added for these sixteen**, on the SOCO-11
+precedent directly above: that file's scope is the 35 gitignored
+`<ST>_2018.parquet` extracts only (see its own header), and the 2019–2026 files
+are tracked, so git's own blob hashes are their integrity record.
+
 **Back years 2019–2022 landed 2026-09-06 (SPP-15) for OK, NE and NM only** —
 twelve files (`docs/handoffs/FINDING-spp-15-2026-09-06.md`; charter
 `docs/multi-iso/spp-addition-plan-2026-09.md` §8 SPP-15, r#4 am.1; §6 row 15):
@@ -112,9 +177,9 @@ no tier marker (none is claimed). 2019–2021 need no such record.
 
 | Years | Status |
 |---|---|
-| 2023–2025 | complete (35 states each; **39 incl. NE NM OK WY since 2026-09-06**) — the calibration window |
+| 2023–2025 | complete (35 states each; **39 incl. NE NM OK WY since 2026-09-06**, **41 incl. AL GA since 2026-09-13**, **45 incl. ID OR UT WA since 2026-09-13**) — the calibration window |
 | 2018–2021 | **complete** (34 states 2026-07-05 + NV 2026-08-16; **+ NE NM OK for 2019–2021 since 2026-09-06**, SPP-15 — 2018 not landed for those three) — the forward CO2-rate history (`docs/handoffs/emissions-co2-rate-plan-2026-07.md` §4); all files committed in per-batch pushes |
-| 2022, H1-2026 | **INTAKE-ANYTIME under explicit owner authorization** (rule 22 as amended 2026-07-06, Option 2 — the fetcher records it via `--holdout-intake <ISO>`); the SPEND (solve/score/register) stays gated by the tier markers. NV 2022/H1-2026 intaken 2026-08-16 under `--holdout-intake CAISO` (caiso-197 owner brief), matching the 34-state corpus's existing 2022/2026 coverage. NE/NM/OK/WY H1-2026 (Q1) intaken 2026-09-06 under `--holdout-intake SPP` (SPP-11 charter). **NE/NM/OK 2022 intaken 2026-09-06 under the same flag (SPP-15 charter, plan §8 SPP-15 / r#4 am.1); WY 2022 is deliberately not landed — WY is outside the SPP footprint.** |
+| 2022, H1-2026 | **INTAKE-ANYTIME under explicit owner authorization** (rule 22 as amended 2026-07-06, Option 2 — the fetcher records it via `--holdout-intake <ISO>`); the SPEND (solve/score/register) stays gated by the tier markers. NV 2022/H1-2026 intaken 2026-08-16 under `--holdout-intake CAISO` (caiso-197 owner brief), matching the 34-state corpus's existing 2022/2026 coverage. NE/NM/OK/WY H1-2026 (Q1) intaken 2026-09-06 under `--holdout-intake SPP` (SPP-11 charter). **NE/NM/OK 2022 intaken 2026-09-06 under the same flag (SPP-15 charter, plan §8 SPP-15 / r#4 am.1); WY 2022 is deliberately not landed — WY is outside the SPP footprint.** ID/OR/UT/WA H1-2026 (Q1) intaken 2026-09-13 under `--holdout-intake NWPP` (NWPP-11 charter); their 2022 is not landed and is not planned by that charter. |
 
 **RESOLVED 2026-07-08 — EIA-923 2018–2021 (parasitic net conversion) source gap
 closed, re-derive still open.** The v2 rate artifact converts CAMPD gross → net
