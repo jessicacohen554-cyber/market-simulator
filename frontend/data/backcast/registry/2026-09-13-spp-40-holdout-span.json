@@ -1,0 +1,99 @@
+{
+ "id": "2026-09-13-spp-40-holdout-span",
+ "label": "spp 40 holdout span",
+ "date": "2026-09-13",
+ "shorthand": "spp-40-holdout-span",
+ "definition": "SPP-40: keeper 11 recipe on held-out years 2019-2022 (first SPP out-of-training coverage)",
+ "years": [
+  2019,
+  2020,
+  2021,
+  2022
+ ],
+ "iso": "SPP",
+ "file": "frontend/data/backcast/runs/2026-09-13-spp-40-holdout-span.js",
+ "bundle": "results/calibration/spp40_holdout",
+ "holdout": {
+  "tier": "validation",
+  "year": 2022,
+  "keeper": "2026-09-13-spp-38-vintage-cache",
+  "keeperDetermination": "CALIBRATED",
+  "keeperYears": [
+   2023,
+   2024,
+   2025
+  ],
+  "holdoutDetermination": "NOT-YET",
+  "criteria": [
+   {
+    "key": "dispatch_corr",
+    "label": "C4 fleet hourly dispatch correlation",
+    "tier": "supporting",
+    "inSample": "PASS",
+    "holdout": "FAIL",
+    "verdict": "degraded"
+   },
+   {
+    "key": "forced_share",
+    "label": "C8 forced-energy share (D-2)",
+    "tier": "protective",
+    "inSample": "PASS",
+    "holdout": "FAIL",
+    "verdict": "degraded"
+   },
+   {
+    "key": "fuelmix",
+    "label": "C1 fuel-mix by class (grid-delivered)",
+    "tier": "load-bearing",
+    "inSample": "PASS",
+    "holdout": "FAIL",
+    "verdict": "degraded"
+   },
+   {
+    "key": "price_mean",
+    "label": "C3a mean LMP",
+    "tier": "load-bearing",
+    "inSample": "PASS",
+    "holdout": "FAIL",
+    "verdict": "degraded"
+   },
+   {
+    "key": "price_shape",
+    "label": "C3b price duration/shape",
+    "tier": "load-bearing",
+    "inSample": "PASS",
+    "holdout": "FAIL",
+    "verdict": "degraded"
+   },
+   {
+    "key": "price_tail",
+    "label": "C3c price tail / scarcity (RT hourly)",
+    "tier": "supporting",
+    "inSample": "CAVEAT",
+    "holdout": "CAVEAT",
+    "verdict": "carried"
+   },
+   {
+    "key": "governance",
+    "label": "C6 governance gate",
+    "tier": "protective",
+    "inSample": "PASS",
+    "holdout": "PASS",
+    "verdict": "held"
+   },
+   {
+    "key": "sysvol",
+    "label": "C2 system volume (gas/coal families)",
+    "tier": "load-bearing",
+    "inSample": "PASS",
+    "holdout": "PASS",
+    "verdict": "held"
+   }
+  ],
+  "nDegraded": 5,
+  "nCarried": 1,
+  "tierCaveat": "REPORTED, NEVER GATING (rule 30 [R-TOUCHPOINT-FOLD] (c)). SPP's calibration determination is keeper 11's 2023-2025 verdict and nothing else; these four years can neither certify nor decertify it. They are also NOT a certified out-of-sample skill number: [R-HOLDOUT] and its three-tier train/validation/locked-test regime were REMOVED 2026-09-09, so no year in this program is protected from being iterated against and there is no certified out-of-sample number anywhere in it (rule 22 coda). What these years ARE is model-SELECTION evidence this lane did not tune on: keeper 11's recipe was fixed on 2023-2025 and applied here UNREVISED, with no --set and no re-cut parameter.",
+  "envelopeCaveat": "SPP-SPECIFIC SCOPE. The in-sample-to-holdout DELTA is measured on a like-for-like recipe -- offer_curve_by_group is byte-identical to keeper 11's (SHA-256 090abd79..62f65) and the rule-23-frozen thermal_tranches_SPP.csv / campd-unit-outages-short-SPP.csv are neither regenerated nor touched -- so a degraded row is a property of the YEAR, not of a changed configuration. THE YEAR PROPERTY THAT MOVES IS THE DELIVERED GAS PRICE: 2019 $2.57, 2020 $2.03, 2021 $3.72, 2022 $6.45 against the $2.19-$3.52 window the bands were set in. Four of the five degraded rows (fuelmix, price_mean, price_shape, dispatch_corr) share ONE measured signature -- a coal-for-gas substitution that saturates above ~$3.5/MMBtu: model CC_REGULAR share of (CC+PRB) is 0.387/0.438 in 2019/2020 against 0.363/0.402 actual, then 0.138/0.135 in 2021/2022 against 0.301/0.315 actual, while gas rises 74%. NOT ESTABLISHED HERE: the crossover's location is only BRACKETED between $2.57 (passes) and $3.72 (fails) -- 2025 at $3.52 would decide it but its fuelmix is unscored -- and no counterfactual gas price was solved, so this run identifies the signature, not the mechanism. 2021 additionally contains Winter Storm Uri, which drives its price TAIL (121% of the full-year price gap) but NOT its fuelmix miss, since 2022 shows the same substitution without a Uri.",
+  "caveats_authored_by": "SPP-40 (2026-09-13). scripts/stamp_touchpoint_holdout.py's hardcoded defaults (lines ~53-60) are NEISO-specific and [R-HOLDOUT]-era: they assert a CAMPD availability-envelope parity story that is not SPP's, and state that 'the touch-once locked test (2019 / H1-2026) is NOT spent here' when 2019 IS one of this bundle's four years and the touch-once regime no longer exists. Both fields have ZERO consumers -- the Run Explorer panels that rendered them were DELETED by the rule 30 [R-TOUCHPOINT-FOLD] (a) amendment of 2026-09-06 -- so this corrects inert-but-false committed prose, not a render path. The stamper defect is REPORTED, not patched: it is shared infrastructure other ISOs' stamped runs carry, and repairing it is not this lane's object (rule 25 [R-ISO-SCOPE]). A RE-STAMP RESETS THESE FIELDS -- re-apply after any re-registration."
+ }
+}

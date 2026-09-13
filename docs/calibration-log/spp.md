@@ -2595,3 +2595,57 @@ cheapest card and the one expected to close for free; it stays OPEN. R-ba (merit
 R-bc (price-forming curtailment) are untouched. **Next shorthand: spp-40**, and its first step is
 ZERO LP — make the D-4 rider reproducible per class-slice, then re-run the signal comparison on a
 faithful instrument. Only if net load still wins AND a driver lands does this become a PRECOMMIT.
+
+## spp-40 — 2026-09-13 — HELD-OUT YEARS 2019–2022 (SPP's first out-of-training price coverage)
+
+**Run** `2026-09-13-spp-40-holdout-span` · bundle `results/calibration/spp40_holdout` ·
+stamped to keeper 11 `2026-09-13-spp-38-vintage-cache` (rule 30 `[R-TOUCHPOINT-FOLD]` (a)).
+Full write-up: `docs/handoffs/RESULT-spp-40-holdout-span-2026-09-13.md`.
+
+Keeper 11's recipe, **no `--set` at all**, one `--years 2019 2020 2021 2022` invocation, one
+shard, one bundle. **SPP's headline determination is UNCHANGED at `CALIBRATED`** — rule 30 (c),
+a held-out year reports and cannot decertify. Per-year: 2019/2020/2021/2022 all NOT-YET
+(forced_share; +price_shape from 2020; +fuelmix, price_mean, dispatch_corr from 2021).
+C6 governance **PASSES** on all four; C2 sysvol passes on all four; C3c carries as the ledgered
+caveat exactly as in-sample.
+
+**THE FINDING — one defect, four symptoms, keyed to DELIVERED GAS PRICE, and visible in the
+training window too.** Sorted by gas price rather than year, the model's CC share of (CC+PRB)
+is monotone and **saturates**: 2020 $2.03 +3.6 pp · 2024 $2.19 −1.4 · 2023 $2.54 −1.2 ·
+2019 $2.57 +2.4 · **2025 $3.52 −4.6** · 2021 $3.72 −16.3 · 2022 $6.45 −18.0. Above ~$3.5 the
+model puts essentially the whole CC fleet behind PRB coal (CC_REGULAR 15.8 TWh in BOTH 2021 and
+2022 vs 34.6/35.8 actual; COAL_PRB 98.8/101.3 vs 80.2/78.0). Gas rises 74 % between those two
+years and the model's split barely moves — the plateau is the signature of a crossover that is
+far too sharp. C1, C3a, C3b/C4 and C8 are all that one defect: C8's ST_GAS breach (50.4 %/55.6 %
+vs a 30 % cap) is a collapsing denominator (14.7/15.9 → 10.8/9.9 TWh) on top of a genuinely
+larger floor (4.8–5.5 TWh vs 2.2–2.5 in 2023–2025, more gas steam pre-retirement), and rule 19's
+conditional-pass escalation does not rescue it because D-1 `cv_ratio` reads 0.429/0.391 — the
+class runs flat because all that is left of it is the floor. In 2019/2020 D-1 **passes**
+(0.765/0.809) and the breach is marginal, i.e. the larger floor alone.
+
+**NOT ESTABLISHED, stated at the gate.** The crossover is **bracketed** ($2.57 passes, $3.72
+fails), not located — 2025 at $3.52 would decide it but its fuelmix/sysvol are unscored. No
+counterfactual gas price was solved, so the association is measured and the causation is a
+hypothesis. The mechanism is unidentified (candidate levers: a coal supply/stockpile/take-or-pay
+**maximum** — the model has the minimum only; PRB ramp/sustained-output limits; the
+`coal_prb_passthrough_sigmoid` extrapolated far outside the $2.19–$3.52 range its anchors were
+identified in). 2021 contains Uri (121 % of its full-year price gap) which drives its TAIL but
+**not** its fuelmix miss — 2022 shows the same substitution with no Uri.
+
+**RULES.** 32 `[R-SHARD]` one shard, parent solved nothing · 34 `[R-SHARD-PROMOTABLE]` full
+bundle pushed, recoverable at `2fa060dafd0c2d23265949599816974d65f062d3` · 16 `[R-ALLYEARS]` one
+bundle · 1/13 `offer_curve_by_group` byte-identical (SHA-256 `090abd79…62f65`), not read, re-cut
+or swept · 21 `[R-DOF]` ledger inherited, **zero** additions · 23 frozen derives untouched ·
+28 `[R-MECH-MATRIX]` **NO cell verdict minted** — nothing was tested, a frozen recipe was
+measured · 31 `[R-RETAIN]` nothing deleted.
+
+**Two shared-infrastructure defects REPORTED, not patched** (rule 25): `stamp_touchpoint_holdout.py`
+hardcodes NEISO-specific `[R-HOLDOUT]`-era caveat text onto every ISO's touchpoint (now
+zero-consumer prose after the rule 30 (a) amendment deleted its render path; SPP's sidecar carries
+corrected text, and **a re-stamp resets it**); `gen_touchpoint_attestation.py` refuses a
+multi-tier year span on a stale `tier_for_year` guard, so this lane used the established per-lane
+generator (`scripts/gen_spp40_attestation.py`).
+
+**Next shorthand: spp-41**, first step ZERO LP — score 2025 fuelmix/sysvol when the source data
+lands, which narrows the bracket for free; then a rule-29 phase-0 offer-array delta for a 2022
+gas-price counterfactual before any solve is spent.
