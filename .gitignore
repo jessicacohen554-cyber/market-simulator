@@ -2075,3 +2075,11 @@ results/calibration/miso255_promote2022b/
 #   git checkout b17ac9d0f8b505d542f279356d5300888c69a70f -- results/calibration/caiso279_ablate_dswcouple_2022
 results/calibration/caiso279_ablate_dswcouple_2022/
 results/calibration/caiso279_ablate_dswcouple_span/
+
+# SPP-38 (lane spp-38) — the vintage-cache-repair re-solve of SPP's keeper.
+# Rule 29 [R-SCREEN] (c) as amended 2026-09-07: what discharges "delete before
+# merge" is .gitignore, NEVER `rm` (rule 31 [R-RETAIN]). The bundle stays on
+# local disk and on its shard branch; it simply does not reach `main` until the
+# owner rules on promotion, at which point THIS LINE IS REMOVED by the promotion
+# commit and the slim set is committed normally (no `git add -f`).
+results/calibration/spp38_span/

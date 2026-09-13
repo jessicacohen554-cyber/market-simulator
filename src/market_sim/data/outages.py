@@ -627,11 +627,32 @@ _CC_NAMEPLATE_BASIS_GROUPS: tuple[str, ...] = ("CC_REGULAR", "CC_CHP")
 _ST_CAPACITY_BASIS_GROUPS: tuple[str, ...] = ("ST_GAS", "ST_CHP")
 
 
-@lru_cache(maxsize=None)
 def _iso_plant_unit_capacity(
     iso: str, cc_steam_part_reclass: bool = False
 ) -> dict[tuple[int, str], dict[str, float]]:
+    """Vintage-keyed shim over :func:`_iso_plant_unit_capacity_cached`.
+
+    See that function for the contract. The active EIA-860 directory enters the
+    cache key here because the fleet this map is built from is vintage-dependent
+    (rule 14 ``[R-ACCURATE]``; SPP-38 / ``FINDING-spp-37-order-sensitivity``).
+    """
+    from market_sim.config.paths import active_eia860_dir
+
+    return _iso_plant_unit_capacity_cached(
+        str(active_eia860_dir()), iso, cc_steam_part_reclass
+    )
+
+
+@lru_cache(maxsize=None)
+def _iso_plant_unit_capacity_cached(
+    eia860_dir: str, iso: str, cc_steam_part_reclass: bool = False
+) -> dict[tuple[int, str], dict[str, float]]:
     """Return ``{(plant_code, plant_group): {normalised_gen_id: pmax_mw}}``.
+
+    ``eia860_dir`` is a **cache key only** — the fleet loaders below resolve the
+    active vintage themselves. It is in the signature so a span run that moves
+    :data:`~market_sim.config.paths._ACTIVE_EIA_860_DIR` between years cannot
+    serve year 1's roster to year 2.
 
     The PER-UNIT companion of :func:`_iso_plant_capacity`, built from the SAME
     fleet load so the roster and the bin denominator can never disagree about
@@ -721,7 +742,7 @@ def _st_basis_pairmap(
     UNIT-SET mismatch and by the whole-plant ``eia923_netzero`` synthetic rows,
     both separate open defects this flag deliberately does not touch.
     """
-    roster = _iso_plant_unit_capacity(iso, cc_steam_part_reclass)
+    roster = _iso_plant_unit_capacity(iso, cc_steam_part_reclass)  # vintage-keyed
     # Every extract unit id that ever appears in each steam bin.
     bin_units: dict[tuple[int, str], set[str]] = {}
     for r in df.itertuples(index=False):
@@ -771,13 +792,43 @@ def _st_basis_pairmap(
     return pairmap
 
 
-@lru_cache(maxsize=None)
 def _iso_plant_capacity(
     iso: str,
     cc_steam_part_reclass: bool = False,
     cc_nameplate_basis: bool = False,
 ) -> dict[tuple[int, str], float]:
+    """Vintage-keyed shim over :func:`_iso_plant_capacity_cached`.
+
+    See that function for the contract. The active EIA-860 directory enters the
+    cache key here because this map is the outage derate DENOMINATOR and the
+    fleet it is summed from is vintage-dependent: under
+    ``eia860_vintage_tracks_solve_year`` a span run re-points
+    :data:`~market_sim.config.paths._ACTIVE_EIA_860_DIR` every year, and a
+    vintage-blind key served year 1's denominator against years 2+'s LP fleet —
+    the exact numerator/denominator basis split the cached function's own
+    docstring says must never happen (rule 14 ``[R-ACCURATE]``; measured in
+    ``docs/handoffs/FINDING-spp-37-order-sensitivity-2026-09-12.md``, repaired
+    by SPP-38).
+    """
+    from market_sim.config.paths import active_eia860_dir
+
+    return _iso_plant_capacity_cached(
+        str(active_eia860_dir()), iso, cc_steam_part_reclass, cc_nameplate_basis
+    )
+
+
+@lru_cache(maxsize=None)
+def _iso_plant_capacity_cached(
+    eia860_dir: str,
+    iso: str,
+    cc_steam_part_reclass: bool = False,
+    cc_nameplate_basis: bool = False,
+) -> dict[tuple[int, str], float]:
     """Return ``{(plant_code, plant_group): nameplate_mw}`` for a non-ERCOT ISO.
+
+    ``eia860_dir`` is a **cache key only** — the fleet loaders below resolve the
+    active vintage themselves. Call through the :func:`_iso_plant_capacity`
+    shim, never directly.
 
     Non-ERCOT ISOs run a per-plant EIA-860 fleet (no CAMPD bin sheet), so the
     derate denominator — the plant's capacity in its model group — comes from
@@ -926,10 +977,29 @@ def unit_outage_derate_factors(
     )
 
 
-@lru_cache(maxsize=None)
 def _fleet_status_index(iso: str) -> dict[int, dict[str, str]] | None:
+    """Vintage-keyed shim over :func:`_fleet_status_index_cached`.
+
+    See that function for the contract. The active EIA-860 directory enters the
+    cache key here so the docstring's own promise — "a vintage switch is
+    honoured" — is true across a span run as well as a single-year one
+    (rule 14 ``[R-ACCURATE]``; SPP-38).
+    """
+    from market_sim.config.paths import active_eia860_dir
+
+    return _fleet_status_index_cached(str(active_eia860_dir()), iso)
+
+
+@lru_cache(maxsize=None)
+def _fleet_status_index_cached(
+    eia860_dir: str, iso: str
+) -> dict[int, dict[str, str]] | None:
     """Return ``{plant_code: {GENERATOR_ID: STATUS}}`` from the active EIA-860
     operable snapshot, or ``None`` when the parquet is unavailable.
+
+    ``eia860_dir`` is BOTH the cache key and the directory read, so a stale
+    global can never desync from the key. Call through the
+    :func:`_fleet_status_index` shim, which supplies the active vintage.
 
     Support for the ``fleet_status_scope`` event filter (miso-186,
     ``unit_outage_fleet_status_scope``): the dispatch fleet keeps only
@@ -942,9 +1012,8 @@ def _fleet_status_index(iso: str) -> dict[int, dict[str, str]] | None:
     (the snapshot is ISO-agnostic).
     """
     del iso  # cache-key only; the snapshot is shared across ISOs
-    from market_sim.config.paths import active_eia860_dir
 
-    path = Path(active_eia860_dir()) / "eia860_generator_operable.parquet"
+    path = Path(eia860_dir) / "eia860_generator_operable.parquet"
     if not path.exists():
         return None
     try:

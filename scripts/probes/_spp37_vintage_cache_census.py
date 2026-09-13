@@ -102,15 +102,30 @@ def _digest(obj) -> str:
     return hashlib.sha256(pprint.pformat(obj, sort_dicts=True).encode()).hexdigest()[:16]
 
 
+def _cache_clearers(fn, module):
+    """Return the ``cache_clear`` callables behind ``fn``.
+
+    Since SPP-38 the vintage-sensitive loaders are UNCACHED public shims over a
+    directory-keyed ``_<name>_cached`` core, so clearing "the function" means
+    clearing that core. Pre-repair (still-cached) functions clear directly, so
+    this probe runs against either tree.
+    """
+    if hasattr(fn, "cache_clear"):
+        return [fn.cache_clear]
+    core = getattr(module, f"_{fn.__name__.lstrip('_')}_cached", None)
+    return [core.cache_clear] if core is not None else []
+
+
 def _clear() -> None:
     """Drop every cache this script measures, so each read is cold."""
-    for fn in (
-        outages._iso_plant_capacity,
-        outages._iso_plant_unit_capacity,
-        outages.unit_outage_derate_factors,
-        outages.unit_outage_short_derate_factors,
+    for fn, mod in (
+        (outages._iso_plant_capacity, outages),
+        (outages._iso_plant_unit_capacity, outages),
+        (outages.unit_outage_derate_factors, outages),
+        (outages.unit_outage_short_derate_factors, outages),
     ):
-        fn.cache_clear()
+        for clear in _cache_clearers(fn, mod):
+            clear()
 
 
 def report_active_dirs() -> None:
@@ -121,34 +136,41 @@ def report_active_dirs() -> None:
         print(f"    solve year {v} -> {active_eia860_dir().name}")
 
 
+# The vintage-sensitive loaders under measurement. Shared by the section-2
+# census (does the DATA move?) and the section-2b re-key check (does a WARM
+# cache honour a vintage switch? -- the SPP-38 invariant).
+_CASES = [
+    ("outages._iso_plant_capacity(SPP,F,F)", outages._iso_plant_capacity,
+     ("SPP", False, False)),  # module resolved from fn.__module__ below
+    ("outages._iso_plant_unit_capacity(SPP,F)", outages._iso_plant_unit_capacity,
+     ("SPP", False)),
+    ("outages._fleet_status_index(SPP)", outages._fleet_status_index, ("SPP",)),
+    ("campd_bins.cc_duct_peaking_pct(False)", campd_bins.cc_duct_peaking_pct,
+     (False,)),
+    ("campd_bins.cc_summer_capacity()", campd_bins.cc_summer_capacity, ()),
+    ("campd_bins.cc_winter_capacity()", campd_bins.cc_winter_capacity, ()),
+    ("campd_bins.coal_summer_capacity()", campd_bins.coal_summer_capacity, ()),
+    ("eia860._eia860_plant_sector()", eia860._eia860_plant_sector, ()),
+    ("eia860.eia860_plant_states()", eia860.eia860_plant_states, ()),
+    ("eia860.eia860_regulated_plants()", eia860.eia860_regulated_plants, ()),
+    ("eia860.eia860_costofservice_majority_plants()",
+     eia860.eia860_costofservice_majority_plants, ()),
+    ("eia860.eia860_selfcommit_scope_plants()",
+     eia860.eia860_selfcommit_scope_plants, ()),
+]
+
+
 def census() -> list[str]:
     """Mark every vintage-blind cached loader whose value moves across vintages."""
-    cases = [
-        ("outages._iso_plant_capacity(SPP,F,F)", outages._iso_plant_capacity,
-         ("SPP", False, False)),
-        ("outages._iso_plant_unit_capacity(SPP,F)", outages._iso_plant_unit_capacity,
-         ("SPP", False)),
-        ("outages._fleet_status_index(SPP)", outages._fleet_status_index, ("SPP",)),
-        ("campd_bins.cc_duct_peaking_pct(False)", campd_bins.cc_duct_peaking_pct,
-         (False,)),
-        ("campd_bins.cc_summer_capacity()", campd_bins.cc_summer_capacity, ()),
-        ("campd_bins.cc_winter_capacity()", campd_bins.cc_winter_capacity, ()),
-        ("campd_bins.coal_summer_capacity()", campd_bins.coal_summer_capacity, ()),
-        ("eia860._eia860_plant_sector()", eia860._eia860_plant_sector, ()),
-        ("eia860.eia860_plant_states()", eia860.eia860_plant_states, ()),
-        ("eia860.eia860_regulated_plants()", eia860.eia860_regulated_plants, ()),
-        ("eia860.eia860_costofservice_majority_plants()",
-         eia860.eia860_costofservice_majority_plants, ()),
-        ("eia860.eia860_selfcommit_scope_plants()",
-         eia860.eia860_selfcommit_scope_plants, ()),
-    ]
+    cases = _CASES
     print("\n=== 2. census: which vintage-blind caches actually MOVE ===")
     leaks: list[str] = []
     for label, fn, args in cases:
         seen = {}
         for v in VINTAGES:
             _clear()
-            fn.cache_clear()
+            for clear in _cache_clearers(fn, sys.modules[fn.__module__]):
+                clear()
             set_eia860_vintage(v)
             try:
                 seen[v] = _digest(fn(*args))
@@ -251,15 +273,62 @@ def blast_radius() -> None:
         print(f"    tracks_solve_year={tracks!s:<5} {names}  {verdict}")
 
 
+def rekey_check() -> list[str]:
+    """SPP-38's invariant: a WARM cache must still honour a vintage switch.
+
+    Section 2 clears before every read, so it measures whether the DATA moves.
+    This measures the defect itself: read vintage A, then read vintage B
+    **without clearing**, and compare against B's own cold value. Pre-repair the
+    vintage-blind loaders returned A's value here; post-repair every one must
+    return B's.
+    """
+    print("\n=== 2b. SPP-38 invariant: warm cache honours a vintage switch ===")
+    bad: list[str] = []
+    for label, fn, args in _CASES:
+        mod = sys.modules[fn.__module__]
+        for clear in _cache_clearers(fn, mod):
+            clear()
+        cold = {}
+        for v in VINTAGES:  # cold reference value per vintage
+            for clear in _cache_clearers(fn, mod):
+                clear()
+            set_eia860_vintage(v)
+            try:
+                cold[v] = _digest(fn(*args))
+            except Exception as exc:  # noqa: BLE001
+                cold[v] = f"ERR:{type(exc).__name__}"
+        for clear in _cache_clearers(fn, mod):
+            clear()
+        warm = {}
+        for v in VINTAGES:  # one process, cache NEVER cleared -- the span path
+            set_eia860_vintage(v)
+            try:
+                warm[v] = _digest(fn(*args))
+            except Exception as exc:  # noqa: BLE001
+                warm[v] = f"ERR:{type(exc).__name__}"
+        stale = [v for v in VINTAGES if warm[v] != cold[v]]
+        if stale:
+            bad.append(f"{label} (stale in {stale})")
+        print(f"    {'STALE ' if stale else 'rekeys'}  {label}")
+    return bad
+
+
 def main() -> None:
     report_active_dirs()
     leaks = census()
+    stale = rekey_check()
     denominator_delta()
     availability_delta()
     blast_radius()
     print("\n=== vintage-blind caches whose value moves across SPP's span ===")
     for label in leaks:
         print(f"    - {label}")
+    print("\n=== loaders still serving a STALE vintage on a warm cache ===")
+    if stale:
+        for label in stale:
+            print(f"    - {label}")
+    else:
+        print("    (none -- every loader re-keys on the active directory)")
 
 
 if __name__ == "__main__":

@@ -1813,9 +1813,30 @@ def thermal_tranche_chp_steam_level(
     return out
 
 
-@lru_cache(maxsize=2)
 def cc_duct_peaking_pct(row_scoped: bool = False) -> dict[int, float]:
+    """Vintage-keyed shim over :func:`_cc_duct_peaking_pct_cached`.
+
+    See that function for the contract. The active EIA-860 directory enters the
+    cache key here because this map sets the CC_REGULAR / CC_CHP **peak offer
+    band** and is read off a vintage-dependent sheet: under
+    ``eia860_vintage_tracks_solve_year`` a span run re-points
+    :data:`~market_sim.config.paths._ACTIVE_EIA_860_DIR` every year, and a
+    vintage-blind key served year 1's bands to years 2+ (rule 14
+    ``[R-ACCURATE]``; ``docs/handoffs/FINDING-spp-37-order-sensitivity-2026-09-12.md``,
+    repaired by SPP-38).
+    """
+    return _cc_duct_peaking_pct_cached(str(active_eia860_dir()), row_scoped)
+
+
+@lru_cache(maxsize=2)
+def _cc_duct_peaking_pct_cached(
+    eia860_dir: str, row_scoped: bool = False
+) -> dict[int, float]:
     """Return ``{plant_code: peaking_pct}`` for every EIA-860 CC plant.
+
+    ``eia860_dir`` is BOTH the cache key and the directory read, so a stale
+    global can never desync from the key. Call through the :func:`cc_duct_peaking_pct` shim,
+    which supplies the active vintage.
 
     Built from the raw EIA-860 Generator_Y Operable sheet parquet
     (``eia860_generator_operable.parquet``): a plant is duct-fired when any
@@ -1852,7 +1873,7 @@ def cc_duct_peaking_pct(row_scoped: bool = False) -> dict[int, float]:
     Returns:
         ``{plant_code: peaking_pct}`` for every EIA-860 combined-cycle plant.
     """
-    path = active_eia860_dir() / "eia860_generator_operable.parquet"
+    path = Path(eia860_dir) / "eia860_generator_operable.parquet"
     if not path.exists():
         return {}
     df = pd.read_parquet(
@@ -1889,9 +1910,23 @@ def cc_duct_peaking_pct(row_scoped: bool = False) -> dict[int, float]:
     return out
 
 
-@lru_cache(maxsize=1)
 def cc_summer_capacity() -> dict[int, tuple[float, float]]:
+    """Vintage-keyed shim over :func:`_cc_summer_capacity_cached` (SPP-38).
+
+    See that function for the contract; the active EIA-860 directory enters the
+    cache key so a span run that moves the vintage between years cannot serve
+    year 1's capabilities to years 2+ (rule 14 ``[R-ACCURATE]``).
+    """
+    return _cc_summer_capacity_cached(str(active_eia860_dir()))
+
+
+@lru_cache(maxsize=4)
+def _cc_summer_capacity_cached(eia860_dir: str) -> dict[int, tuple[float, float]]:
     """Return ``{plant_code: (nameplate_mw, net_summer_mw)}`` for every CC plant.
+
+    ``eia860_dir`` is BOTH the cache key and the directory read, so a stale
+    global can never desync from the key. Call through the :func:`cc_summer_capacity` shim,
+    which supplies the active vintage.
 
     Summed over each plant's combined-cycle generators from the EIA-860
     Generator_Y Operable sheet. Consumed under
@@ -1902,7 +1937,7 @@ def cc_summer_capacity() -> dict[int, tuple[float, float]]:
     ambient-derated to net-summer in summer). Plants absent from the sheet are
     absent from the map (callers keep net-summer / the flat class derate).
     """
-    path = active_eia860_dir() / "eia860_generator_operable.parquet"
+    path = Path(eia860_dir) / "eia860_generator_operable.parquet"
     if not path.exists():
         return {}
     df = pd.read_parquet(
@@ -2020,9 +2055,23 @@ def cc_summer_derate_ratio(plant_code: int) -> float | None:
     return min(1.0, net_summer / nameplate)
 
 
-@lru_cache(maxsize=1)
 def cc_winter_capacity() -> dict[int, float]:
+    """Vintage-keyed shim over :func:`_cc_winter_capacity_cached` (SPP-38).
+
+    See that function for the contract; the active EIA-860 directory enters the
+    cache key so a span run that moves the vintage between years cannot serve
+    year 1's capabilities to years 2+ (rule 14 ``[R-ACCURATE]``).
+    """
+    return _cc_winter_capacity_cached(str(active_eia860_dir()))
+
+
+@lru_cache(maxsize=4)
+def _cc_winter_capacity_cached(eia860_dir: str) -> dict[int, float]:
     """Return ``{plant_code: winter_mw}`` for every CC plant.
+
+    ``eia860_dir`` is BOTH the cache key and the directory read, so a stale
+    global can never desync from the key. Call through the :func:`cc_winter_capacity` shim,
+    which supplies the active vintage.
 
     EIA-860 Generator_Y Operable ``Winter Capacity (MW)``, summed over each
     plant's combined-cycle generators — the exact companion of the nameplate /
@@ -2040,7 +2089,7 @@ def cc_winter_capacity() -> dict[int, float]:
     off-summer peak is 1111.0 MW). Clamping here would silently delete the
     upward half of the seasonal basis (caiso-186).
     """
-    path = active_eia860_dir() / "eia860_generator_operable.parquet"
+    path = Path(eia860_dir) / "eia860_generator_operable.parquet"
     if not path.exists():
         return {}
     df = pd.read_parquet(
@@ -2113,9 +2162,23 @@ _COAL_SUMMER_TECH: frozenset[str] = frozenset(
 )
 
 
-@lru_cache(maxsize=1)
 def coal_summer_capacity() -> dict[int, tuple[float, float]]:
+    """Vintage-keyed shim over :func:`_coal_summer_capacity_cached` (SPP-38).
+
+    See that function for the contract; the active EIA-860 directory enters the
+    cache key so a span run that moves the vintage between years cannot serve
+    year 1's capabilities to years 2+ (rule 14 ``[R-ACCURATE]``).
+    """
+    return _coal_summer_capacity_cached(str(active_eia860_dir()))
+
+
+@lru_cache(maxsize=4)
+def _coal_summer_capacity_cached(eia860_dir: str) -> dict[int, tuple[float, float]]:
     """Return ``{plant_code: (nameplate_mw, net_summer_mw)}`` for every coal plant.
+
+    ``eia860_dir`` is BOTH the cache key and the directory read, so a stale
+    global can never desync from the key. Call through the :func:`coal_summer_capacity` shim,
+    which supplies the active vintage.
 
     Summed over each plant's coal-steam generators from the EIA-860 Generator_Y
     Operable sheet (:data:`_COAL_SUMMER_TECH`). The coal analogue of
@@ -2127,7 +2190,7 @@ def coal_summer_capacity() -> dict[int, tuple[float, float]]:
     no capacity is raised. Plants absent from the sheet are absent from the map
     (callers keep full nameplate, as today).
     """
-    path = active_eia860_dir() / "eia860_generator_operable.parquet"
+    path = Path(eia860_dir) / "eia860_generator_operable.parquet"
     if not path.exists():
         return {}
     df = pd.read_parquet(
