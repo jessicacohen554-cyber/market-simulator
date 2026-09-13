@@ -219,6 +219,105 @@ def build_generator_table(zip_path: Path) -> pd.DataFrame:
     return df[EIA_860_CSV_COLUMNS].reset_index(drop=True)
 
 
+def rescope_generator_table_from_parquet(
+    vintage_dir: Path,
+) -> tuple[int, int, list[str]]:
+    """Re-derive ``eia860_generators.parquet`` from a vintage's OWN committed sheets.
+
+    **Why this exists (rule 23 ``[R-FROZEN-DERIVE]``).** :func:`build_generator_table`
+    filters generators to ``BA_CODE_TO_ISO`` — the set of balancing authorities the
+    program models — and writes the result. That filter is applied AT DERIVATION TIME,
+    so a vintage derived before an ISO joined the program permanently lacks that ISO's
+    generators. Measured 2026-09-13: ``SWPP`` (SPP, registered by lane SPP-20 on
+    2026-09-06) is absent from ``vintage_2018/2019/2021/2022`` — 0 rows each, 6 distinct
+    BAs — while ``vintage_2020/2023/2024`` and the canonical snapshot carry 1,527 /
+    1,576 / 1,626 / 1,646 SWPP rows at 7 BAs. This blocked SPP's entire held-out ladder:
+    a 2019 solve dies in the fleet load with a ``FileNotFoundError`` whose message names
+    a file that exists.
+
+    **This re-derivation cites a SCOPE change, never a residual** — the admissible
+    trigger rule 23 requires. The underlying EIA release is untouched; what changed is
+    which BAs the program models.
+
+    **No re-fetch is needed and none is performed.** The raw annual zips are not
+    committed per vintage, but both inputs :func:`build_generator_table` uses are:
+    ``eia860_generator_operable.parquet`` (its ``Generator_Y`` "Operable" sheet) and
+    ``eia860_plant.parquet`` (its ``Plant_Y`` sheet, which carries the BA code joined
+    onto each generator). This reproduces that construction from them.
+
+    **STRICTLY ADDITIVE, AND ENFORCED RATHER THAN ASSERTED.** Every ``(plant_id,
+    generator_id)`` key already committed must survive: the rebuild is refused with
+    ``RuntimeError`` if any existing key would be dropped, so a vintage that six other
+    ISOs' committed bundles read cannot lose a row. Verified on ``vintage_2019`` before
+    this function was written: the six-BA rebuild reproduces the committed 14,043 keys
+    exactly — 0 committed-only, 0 rebuilt-only — and adds 1,512 SWPP rows.
+
+    Args:
+        vintage_dir: An ``eia-860`` vintage directory (or the canonical snapshot).
+
+    Returns:
+        ``(rows_before, rows_after, added_bas)``.
+
+    Raises:
+        FileNotFoundError: A required committed sheet is absent.
+        RuntimeError: The rebuild would drop an already-committed generator key.
+    """
+    out = vintage_dir / "eia860_generators.parquet"
+    gen_path = vintage_dir / "eia860_generator_operable.parquet"
+    plant_path = vintage_dir / "eia860_plant.parquet"
+    for path in (out, gen_path, plant_path):
+        if not path.exists():
+            raise FileNotFoundError(f"{vintage_dir.name}: missing {path.name}")
+
+    committed = pd.read_parquet(out)
+    plant = pd.read_parquet(plant_path)
+    generator = pd.read_parquet(gen_path)
+    plant = plant[pd.to_numeric(plant["Plant Code"], errors="coerce").notna()]
+    generator = generator[
+        pd.to_numeric(generator["Plant Code"], errors="coerce").notna()
+    ]
+
+    ba_by_plant = plant.drop_duplicates("Plant Code").set_index("Plant Code")[
+        "Balancing Authority Code"
+    ]
+    df = generator[list(_GENERATOR_COLUMN_MAP)].rename(columns=_GENERATOR_COLUMN_MAP)
+    df["balancing_authority_code"] = (
+        df["plant_id"].map(ba_by_plant).astype("string").str.strip()
+    )
+    df = df[df["balancing_authority_code"].isin(BA_CODE_TO_ISO)]
+
+    df["plant_id"] = df["plant_id"].astype("int64")
+    df["generator_id"] = df["generator_id"].map(_stringify)
+    for col in (
+        "operating_year",
+        "planned_retirement_year",
+        "planned_retirement_month",
+    ):
+        df[col] = pd.to_numeric(df[col], errors="coerce").astype("Int64")
+    for col in ("nameplate_capacity_mw", "net_summer_capacity_mw"):
+        df[col] = pd.to_numeric(df[col], errors="coerce")
+    df["status"] = df["status"].astype("string").str.strip()
+
+    def _keys(frame: pd.DataFrame) -> set[tuple[int, str]]:
+        return set(
+            zip(frame["plant_id"].astype("int64"), frame["generator_id"].astype(str))
+        )
+
+    lost = _keys(committed) - _keys(df)
+    if lost:
+        raise RuntimeError(
+            f"{vintage_dir.name}: rebuild would DROP {len(lost)} committed generator "
+            f"key(s) (e.g. {sorted(lost)[:5]}). Refusing — this re-derivation is "
+            "strictly additive by contract."
+        )
+
+    before = set(committed["balancing_authority_code"].dropna().astype(str))
+    added = sorted(set(df["balancing_authority_code"].dropna().astype(str)) - before)
+    df = df[committed.columns] if list(committed.columns) == list(df.columns) else df
+    df.to_parquet(out, index=False)
+    return len(committed), len(df), added
+
+
 def _join_egrid_heat_rate(df: pd.DataFrame) -> None:
     """Add a plant-level ``heat_rate`` column (MMBtu/MWh) from eGRID PLNT23.
 
@@ -462,6 +561,20 @@ def main() -> None:
         help="Directory for the parquet outputs.",
     )
     parser.add_argument(
+        "--rescope-from-parquet",
+        type=Path,
+        nargs="+",
+        default=None,
+        metavar="VINTAGE_DIR",
+        help="Re-derive eia860_generators.parquet in each named vintage directory "
+        "from that vintage's OWN committed Generator_Y/Plant_Y parquets, so a "
+        "balancing authority registered in BA_CODE_TO_ISO after the vintage was "
+        "first derived is no longer missing from it. Rule 23 [R-FROZEN-DERIVE]: the "
+        "trigger is a SCOPE change (a new ISO joined the program), never a residual. "
+        "No re-fetch. STRICTLY ADDITIVE -- refuses to drop any committed generator "
+        "key. Runs this mode alone and exits.",
+    )
+    parser.add_argument(
         "--retired-window-from",
         type=Path,
         nargs="+",
@@ -510,6 +623,13 @@ def main() -> None:
         "available to reproduce them.",
     )
     args = parser.parse_args()
+
+    if args.rescope_from_parquet:
+        for vintage_dir in args.rescope_from_parquet:
+            before, after, added = rescope_generator_table_from_parquet(vintage_dir)
+            note = f" (+{', '.join(added)})" if added else " (no BA added)"
+            print(f"{vintage_dir.name}: {before} -> {after} generator rows{note}")
+        return
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
 
