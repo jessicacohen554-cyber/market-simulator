@@ -2713,3 +2713,51 @@ causes nor repairs.
 year was touched; no run was registered or pruned; no ScenarioConfig field was added. NEISO's C3c
 frontier stays closed pending its own owner charter, and the rule 29 `[R-SCREEN]` screen-year
 amendment filed in PREREG-neiso106 §7 remains the owner's call, unamended here.
+
+## 2026-09-13 — OWNER RULING: the PJM price-formation frontier (pjm-142) is RE-OPENED
+
+**Owner, in session, verbatim: *"I don't care if it touched frontier do 2"*** — where option 2, put
+to the owner alongside a coal-`phys_*` build and chosen over it, was *"re-open the pjm-142
+price-formation frontier"*. Recorded here because re-opening an owner-declared-closed frontier is a
+governance act and the closure is cited across several lanes.
+
+**WHAT IS SUPERSEDED, and only for the PJM lane.** `FINDING-pjm138` §6's DO-NOT-REDO ("Do not
+propose a reserve/scarcity mechanism for PJM") and `FINDING-pjm141` §5.3's terminal state ("a
+DIAGNOSED, UNCLOSED structural limitation with no admissible in-model lever"). Nothing else in
+either document moves; every other DO-NOT-REDO bullet in both stands, and no other ISO is touched
+(rule 25 `[R-ISO-SCOPE]`).
+
+**WHAT THE RULING DOES *NOT* LICENSE, stated at the gate.** (a) **No MIP** — the Stack mandate is
+untouched and the arm taken is pure LP. (b) **No adder** — `ordc_scarcity_overlay` stays `G`; a
+post-solve administrative scarcity overlay is refused by rules 1 `[R-STRUCT]` / 13 `[R-MEASURED]`
+and the owner did not waive them. The frontier being open changes which *structural* mechanisms may
+be proposed, not which *fitted* ones may be armed.
+
+**WHAT WAS DONE UNDER IT.** Lane `pjm-h3` armed **one** field, `pjm_reserve_pergen_sync` (the
+Manual 11 §4.2/§4.3.3 SYNCHRONIZED reserve sub-product split: measured RTO `sr_req_mw` + nested MAD
+`mad_sr_req_mw` balance families on the published two-step ORDC rows, a per-pool SYNC/NON-SYNC
+column split, and P0-derived online scoping of the SYNC caps). **Zero parameters fitted to the price
+residual.** Prerequisites `energy_reserve_coopt` + `pjm_reserve_pergen` were already in the keeper.
+Pre-registration: `docs/PRECOMMIT-pjm-h3-reserve-sync-2026-09-13.md`, pushed at
+`ed6bb0996d2685884d1f05eb105c3bef4dea138c` before any solve.
+
+**THE RULE-28(a) NEW EVIDENCE, since the standing verdict on that field is an owner closure on
+MERIT rather than a structural refutation** (*"SYNC product split owner-closed on merit for PJM
+($0-10 vs $75-200 need)"*): the $75-200 comparator was pjm-84/85's afternoon scarcity band. The
+target measured since is an order of magnitude smaller — pjm-141 §5.1 puts the peak under-pricing at
+**−$7.62 / −$11.37 / −$22.19** — and PJM's own published MAD synchronized-reserve price at h16-18 is
+**$3.89 / $8.19 / $9.49**, i.e. **43 % / 72 % / 43 %** of it. A mechanism worth $0-10 is a rounding
+term against $75-200 and a major fraction against $7.62-$22.19; the closure's own arithmetic inverts
+on the corrected target.
+
+**THE MEASUREMENT THAT MOTIVATES IT** (zero LP, committed sidecars + `data/raw/PJM-AS/`): the
+model's reserve dual is non-zero in **0.02 / 0.07 / 0.02 %** of hours in 2020/2021/2022 against
+PJM's published **45.7 / 60.3 / 61.3 %**, at an annual mean of **$0.194 / $0.005 / $0.003** against
+**$1.71 / $3.89 / $9.19**. PJM's price is peaked **3.0×-22.0×** (h16-18 ÷ h01-04) in all six years —
+shape-only and tight-hours-only, which is exactly what pjm-138 §7 lead 1 said a successor must be.
+
+**WHAT IS NOT CLAIMED.** The reserve credit does not touch the **overnight** half of the amplitude
+deficit (pjm-141 §5.1 point 3, pjm-138 §7 lead 2, both re-confirmed): PJM's overnight reserve price
+is small and the model's is zero. The overnight **+$6.82 / +$5.78 / +$3.40** over-pricing remains an
+open structural limitation, and pjm-142's measured slope (2.88 / 3.37 / 2.57 GW per $1/MWh) says
+closing it needs **9-20 GW** of stack movement that no queued lever supplies.
