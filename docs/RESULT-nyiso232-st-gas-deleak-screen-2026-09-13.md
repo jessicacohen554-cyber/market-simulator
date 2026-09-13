@@ -208,3 +208,92 @@ is asked. 32 `[R-SHARD]` — the parent ran zero LP. 33 `[R-SHARD-ARCHIVE]` — 
 only after fetch + checkout + signature verification; its branch is **kept**, because it carries a
 bundle a promotion would register (33(f)(3)). 34 `[R-SHARD-PROMOTABLE]` — the screen shard pushed
 its bundle, `dispatch/` included, and retrievability was verified by `git ls-tree` before archiving.
+
+---
+
+# §11 — THE OWNER RULED "ARM IT". PROMOTED, AND THE DETERMINATION MOVED IN A WAY THE RULING DID NOT COVER
+
+Appended after the span solved and the promotion completed. §8 put the question; the owner answered
+**"Arm it"**; Addendum A recorded the ruling and pre-registered the span **before** it ran.
+
+## 11.1 The span, against what Addendum A predicted before the numbers existed
+
+| | pre-registered in Addendum A §A.4 | measured |
+|---|---|---|
+| C3a-2022 | "FAILS at ≈ −11.6 %… the accepted cost" | **−11.61 % FAIL** |
+| C3a-2025 (named at risk, **unmeasured**) | "a proportional move would land it near **−7 to −8 %**… but 2025 could also fail" | **−7.99 % PASS** |
+| C3a-2023 / 2024 | "expected to move *toward* zero and stay PASS" | **−1.26 % / −0.75 %**, both PASS; 2024 improves |
+| C1 | "should improve… **2023 is the exception** — ST_GAS over-runs there and the arm makes that worse" | ST_GAS better in 2022/2024/2025, **worse in 2023 (+1.989 → +3.326 TWh)**, in band |
+| C8/D-2 | "the open flag" | **FAILS 2022/2023/2024** — §11.3 |
+
+Served demand is **identical to 5 dp in all four years**, dump and slack **0.000** throughout.
+Solved on-pin, one invocation, one bundle, 2022–2025.
+
+## 11.2 The determination, stated first and not softened
+
+**Registered full span: NOT-YET. ISO tier (2023–2025, rule 30(c)): NOT-YET — a DOWNGRADE from the
+superseded keeper's CALIBRATED.**
+
+**Every load-bearing criterion passes on the ISO tier: C1, C2, C3a, C3b, C4, C6.** The downgrade is
+**C8 alone**, and there is a second-order effect worth stating explicitly because it doubles the
+damage: **C8 failing is also what strips C3c of its lone-failure status** under rule 22 `[R-C3C]`
+guard (a), reverting it from a ledgered CAVEAT to a FAIL. Remove C8 and **both** resolve, and the
+ISO tier reads CALIBRATED with C3c as the single ledgered caveat — the same headline as the
+incumbent, reached with C1/C3a/C3b all passing.
+
+## 11.3 C8's failure is the D-2 artifact, measured in all four years
+
+| ST_GAS forced share | 2022 | 2023 | 2024 | 2025 |
+|---|---:|---:|---:|---:|
+| superseded keeper | 23.1 % pass | 16.5 % pass | 21.4 % pass | 19.0 % pass |
+| **this run, scorer (row-count vote)** | **33.6 % FAIL** | **34.3 % FAIL** | **36.6 % FAIL** | 28.5 % pass |
+| this run, capacity-weighted (stable) | **20.8 % pass** | **14.8 % pass** | **20.6 % pass** | **18.1 % pass** |
+
+The **numerator** — actual forced energy — moves within **±2 %** in every year. The **denominator**
+collapses **33–52 %**. Every dispatch-side measure of ST_GAS energy **rises**. On a
+band-structure-stable vote the forced share is **lower than the superseded keeper's in every single
+year**, which is what physics demands: the same floors are a smaller share of a class that now runs
+more. The D-4 provenance failures C8 escalates to are **pre-existing and unchanged** — 9
+unit-conduct rows on **both** legs, same plants.
+
+Mechanism and proof: `docs/FINDING-d2-plant-class-is-a-tranche-count-vote-2026-09-13.md`. Ravenswood
+(plant 2500) was labelled `ST_GAS` on an **8–7 tranche-count vote**; this mechanism's declared,
+pre-registered ladder collapse takes ST_GAS to 4 rows and the label flips to `CC_REGULAR`, moving a
+~2.5 GW site's whole dispatch between denominators.
+
+**The scorer's number is the official one and is carried as a FAIL everywhere.** Nothing is
+re-scored on this lane's corrected basis, and the one-line shared-scorer fix is **not** landed here:
+the census shows SPP/SOCO is the most exposed ISO (23–25 flippable plants), and a NYISO lane can
+neither measure nor authorise another ISO's verdict change (rule 25).
+
+## 11.4 What was actually bought, and what it cost
+
+**Bought:** a rule-25-prohibited ERCOT value is gone from NYISO's ST_GAS offer, verified
+arithmetically in the attestation rather than asserted; zero free parameters; zero new literals; C1
+improves in 3 of 4 years and CC_REGULAR in all 4; C3a-2024 crosses from +1.05 % to −0.75 %.
+
+**Cost, at full magnitude:** C3a-2022 fails at −11.6 % (pre-registered, accepted). C3b-2022 worsens
+0.209 → 0.218 (already failing). 2023 ST_GAS moves away from its actual. **CT_PEAKER worsens in all
+four years** — a consistent adverse move, well inside band, and not buried here. And the ISO tier
+reads NOT-YET, on the artifact above.
+
+## 11.5 THE QUESTION THIS RAISES, which the owner's ruling did not answer
+
+> The ruling "Arm it" answered a question framed on **C3a-2022 at −11.61 %**. It did not cover
+> **NYISO's headline going CALIBRATED → NOT-YET on a scorer defect**. Two routes:
+> **(a)** leave it — the record is honest and fully documented, but the status page under-reports
+> NYISO until someone fixes D-2; or **(b)** authorise the D-2 capacity-weighted vote as a
+> cross-ISO change, measured across SPP/SOCO/CAISO first. (b) is a one-line fix plus a blast-radius
+> measurement; it is not this lane's to authorise.
+
+## 11.6 Promotion mechanics (rule 35 `[R-PROMOTE]`)
+
+Year union enumerated from the registry **before** the prune (35(b)) — `{2022, 2023, 2024, 2025}` —
+and covered exactly by the one bundle, so 35(c) needs no stamped companion. Promote → verify →
+delete order (35(e)): `audit_keepers --iso NYISO` run between, E11 cleared by declaring **both**
+moved recipe keys in the shard prose (`coal_prb_sigmoid_overrides` and `offer_curve_by_group`, both
+this one field's expression), then the superseded keeper pruned via `--force-uncite`, which 35(d)
+names as the **intended** route. Post-prune `audit_keepers`: **PASS, 0 failures**. Rule 31
+`[R-RETAIN]` trigger (i) is met — the owner ruled — and git history is the record for the bytes.
+Shard archived after fetch + checkout + signature verification; bundle retrievable at
+`git checkout fc545728636b40d402f5fcba4cae4f6edc42c19e -- results/calibration/nyiso232_deleak_span`.

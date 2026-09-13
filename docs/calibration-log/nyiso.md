@@ -14099,3 +14099,62 @@ Records: `docs/RESULT-nyiso232-st-gas-deleak-screen-2026-09-13.md`,
 `scripts/probes/_nyiso232_{st_gas_phase0,screen_gates,c3a_two_objects}.py`.
 One shard (5m23s solve), archived after fetch + checkout + signature verification; its branch is
 **kept** because it carries a bundle a promotion would register (rule 33(f)(3)).
+
+---
+
+### nyiso-232 CODA — OWNER RULED "ARM IT"; KEEPER PROMOTED TO `2026-09-13-nyiso-232-st-gas`
+
+**KEEPER: `2026-09-13-nyiso-232-st-gas`** (bundle `results/calibration/nyiso232_deleak_span`),
+superseding `2026-09-13-nyiso231-anchor-span`, **pruned in this session** (rule 35 `[R-PROMOTE]` (a),
+`--force-uncite` per 35(d)). All four registered years 2022–2025 in ONE `--years` invocation and ONE
+bundle. Year union enumerated **before** the prune (35(b)) = `{2022,2023,2024,2025}`, covered
+exactly. `audit_keepers --iso NYISO` post-prune: **PASS, 0 failures**. C6 **PASSES**.
+
+**The gate was NOT re-cut.** The rule-29 screen STOPPED this arm on C3a-2022 and the PRECOMMIT put
+the promotion question to the owner, who ruled **"Arm it"**. A screen can kill an arm and never
+promote one; it did not promote this one — the **owner** did, on the evidence the screen produced.
+
+**ONE REGISTERED FIELD MOVES:** `nyiso_st_gas_econ_bands_deleaked` False → True. Zero free
+parameters, zero new literals, `authorized_price_tuning` NONE. Two band multipliers **do** move and
+the attestation states that in full rather than denying it — it is not the rules 1/13 carve-out,
+which governs a band **identified by the price residual**, and this one moves price **down** in all
+four years.
+
+| | 2022 | 2023 | 2024 | 2025 |
+|---|---|---|---|---|
+| **C3a** | −9.86 → **−11.61 %** (PASS→**FAIL**) | +0.59 → −1.26 | +1.05 → **−0.75** | −5.95 → **−7.99** (PASS) |
+| **C1 ST_GAS** vs actual | −1.148 → **−0.477** TWh | +1.989 → **+3.326** ← the pre-registered exception | −1.064 → **−0.462** | −4.677 → **−4.006** |
+| **C8** ST_GAS forced | 23.1 → **33.6 % FAIL** | 16.5 → **34.3 % FAIL** | 21.4 → **36.6 % FAIL** | 19.0 → 28.5 % pass |
+| C8 on a **stable** vote | **20.8 %** | **14.8 %** | **20.6 %** | **18.1 %** — all pass, all **below** the incumbent |
+
+**DETERMINATION: registered full span NOT-YET; ISO tier (2023–2025, rule 30(c)) NOT-YET — a
+DOWNGRADE from CALIBRATED.** **Every load-bearing criterion PASSES** (C1/C2/C3a/C3b/C4/C6). The
+downgrade is **C8 alone**, and C8 failing is *also* what strips C3c of lone-failure status under
+rule 22 guard (a), reverting it from a ledgered caveat to a FAIL. Remove C8 and **both** resolve.
+
+**C8's failure is a SHARED-SCORER ARTIFACT, proved not asserted**
+(`docs/FINDING-d2-plant-class-is-a-tranche-count-vote-2026-09-13.md`): D-2 labels a plant by its most
+common unit group counted in **LP ROWS**, so this mechanism's declared smoothing-ladder collapse
+(ST_GAS 88 → 44 rows) flips **Ravenswood (2500) on an 8–7 margin** and 2511 on a 4–4 tie. The
+numerator moves within ±2 %; the denominator collapses 33–52 %; every dispatch-side measure of
+ST_GAS **rises**. D-4 provenance failures are pre-existing (9 rows on both legs). **Reported at full
+magnitude and NOT re-scored**, and the one-line fix is **not** landed here — the census shows
+SPP/SOCO is the most exposed ISO (23–25 flippable plants) and rule 25 forbids a NYISO lane deciding
+that.
+
+**PRE-REGISTRATION HELD.** Addendum A, written before the span solved, predicted C3a-2022 ≈ −11.6 %
+(landed −11.61), the at-risk 2025 "near −7 to −8 %" (landed **−7.99**, PASS), 2023/2024 toward zero
+(both did), and named **2023 ST_GAS as the C1 exception that would get worse** (it did).
+
+**AGAINST THE ARM, not buried:** C3b-2022 worsens 0.209 → 0.218; CT_PEAKER worsens in **all four
+years** (well inside band); C1-2022 CC_REGULAR still fails (+5.20 → +5.07 TWh).
+
+**OPEN QUESTION FOR THE OWNER** (RESULT §11.5): the ruling answered a question framed on C3a-2022,
+not on NYISO's headline moving to NOT-YET on a scorer defect. Either leave it documented, or
+authorise the D-2 capacity-weighted vote as a **cross-ISO** change measured on SPP/SOCO/CAISO first.
+
+Records: `docs/RESULT-nyiso232-st-gas-deleak-screen-2026-09-13.md` §11,
+`results/calibration/PRECOMMIT-nyiso232-st-gas-deleak.md` Addendum A,
+`scripts/gen_nyiso232_attestation.py` (six computed checks, aborts on a false premise).
+Span shard archived after fetch + checkout + signature verification; bundle retrievable at
+`git checkout fc545728636b40d402f5fcba4cae4f6edc42c19e -- results/calibration/nyiso232_deleak_span`.
