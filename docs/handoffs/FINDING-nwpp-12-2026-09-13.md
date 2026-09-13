@@ -425,6 +425,56 @@ lane is not chartered to make. Flagged for the desk (README §2.3).
 
 ---
 
+## 6. ROUTED TO NWPP-DESK — six CI gates are red on `main`, none of them this lane's
+
+Recorded here because the charter's closing line says to route rather than reach
+outside this lane's regions, and because a desk reading PR #6111's red CI should
+not have to re-derive this.
+
+All six checks that failed on this lane's head `984887cb`
+([run 34768364840](https://github.com/jessicacohen554-cyber/market-simulator/actions/runs/34768364840))
+are **pre-existing on the base branch**. This PR's diff is 32 files — `data/raw/**`
+additions, two `data/raw/*/README.md` table rows, one `docs/handoffs/` file — with
+**zero** Python and nothing under `src/`, `scripts/`, `config/`, `tests/` or
+`frontend/`.
+
+| Check | Reports | Owner |
+|---|---|---|
+| Ruff lint + format | `scripts/gen_nyiso229_attestation.py` F401 unused `numpy`, F841 unused `drift` | NYISO lane |
+| Structural refactor guards | `scripts/run_calibration_full.py` references missing `scripts/test_recorded_config_gas_anchor_mirror.py` | script owner |
+| Pinned default cache key | NYISO solve surface moved `1eefed492204fab7` (209 rows) → `bd2b4657f9b5df7e` (210) | NYISO lane |
+| FR-22 backcast→forecast parity | NYISO `gas_offer_margin_zonal_anchor_vintage` armed with no orchestrator consumer and no registry declaration | NYISO lane |
+| FR-21 forecast-board staleness | gate-(a) provenance: MISO, NYISO, SPP `gate.a_keeper_marker` cite superseded keepers | MISO / NYISO / SPP desks |
+| Keeper-integrity gates | MISO E3 + four E13 superseded registered runs (rule 35 `[R-PROMOTE]` prune); S1 status stale for ERCOT / CAISO / NEISO / MISO | MISO promoting session + desks |
+
+**Two were reproduced directly, on bytes identical to `origin/main`** — stronger
+evidence than a re-run and it cost seconds:
+
+- `scripts/gen_nyiso229_attestation.py` is byte-identical between `origin/main`
+  and this branch (`git diff --quiet origin/main HEAD -- <file>` passes), and
+  `ruff check` on it reports the same two errors locally.
+- `scripts/test_recorded_config_gas_anchor_mirror.py` does not exist on
+  `origin/main` either, and `scripts/run_calibration_full.py` is identical here.
+
+**No fix is ported, and the reason is the charter rather than judgement.** Every
+fix lives in a path this lane is told not to touch (`src/`, `scripts/`,
+`scripts/lib/*/`, `tests/`, another ISO's data) or in another ISO's keeper shard,
+which §8.0 collision rule 1 puts off-limits and which rule 35 `[R-PROMOTE]` (a)
+scopes to the **promoting** lane's own ISO. The one permitted CI re-run was
+deliberately **not spent**: these are deterministic assertion failures on
+unchanged bytes, so a re-run returns the identical result while billing runner
+minutes on a private repo (CLAUDE.md, *GitHub Actions — never offload work to
+CI*).
+
+**Two of these are gate G24's own failure mode, arriving early.** The MISO E13
+rows are exactly what plan §7 gate G24 was written to stop — *"Measured at this
+desk's r#2 pin: E13 is already failing for MISO (×4) and SPP (×1)"* — and the
+gate-(a) provenance failures are the same supersession one layer up. SPP's E13 has
+since cleared; MISO's four have not. Nothing for NWPP to do until it has a keeper,
+but the desk should know the board is red before NWPP-40 tries to register onto it.
+
+---
+
 ## Log entry
 
 *(For NWPP-DESK to append verbatim to `docs/calibration-log/nwpp.md` — this lane
