@@ -53,11 +53,48 @@ HIST_xls.zip` and `202012_dfal_HIST_xls.zip` are both live -- but a 144-URL swee
 of that family's naming space found **no LMP member for any pre-2023 year**. Full
 route audit, including why the archive index and its Wayback mirror are both
 unreachable from a session: `docs/FINDING-miso254-lmp-2020-2021-route-audit-2026-09-12.md`.)
-For a year below the floor -- 2022, and 2018-2021 -- `fetch_miso_hub_lmp.py` falls
-back to the MISO Data Exchange Pricing API
-(`https://apim.misoenergy.org/pricing/v1`, subscription-key auth via
-`MISO_PRICING_API_KEY`), verified byte-identical against the static CSV on an
-overlapping day (2023-01-03 DA, ARKANSAS.HUB, all three LMP/MCC/MLC rows).
+**The floor is a FORMAT CHANGEOVER, not a retention cutoff — MISO's pre-2023
+record is fully public in a DIFFERENT REPORT FAMILY** (found 2026-09-13, miso-256):
+
+- DA: `https://docs.misoenergy.org/marketreports/{YYYYMM}_da_pr_xls.zip`
+- RT: `https://docs.misoenergy.org/marketreports/{YYYYMM}_rt_pr_xls.zip`
+
+Monthly zips of per-day `.xls` pricing reports, each holding an `HE 01`-`HE 24`
+block for MISO System plus the eight named hubs. They are the EXACT MIRROR of the
+daily family above: **200 for 2015-2022, 404 from 2023-01** where the daily files
+are 404 below 2023-01-01 and 200 above it. Between the two the public record is
+unbroken, and no credential is needed for either.
+
+Two conventions matter, both handled in `fetch_miso_hub_lmp.py`:
+
+1. **The RT member is named for its PUBLISH date**, so it carries the PRIOR day's
+   market (`20220615_rt_pr.xls` -> `Market Date: 06/14/2022`) and the last market
+   day of each month ships in the NEXT month's zip. The fetcher keys on each
+   sheet's own `Market Date:` header and probes the following month, so neither
+   is a special case. Keying on the filename instead mis-dates every RT row by a
+   day and drops 12 days a year.
+2. **This family publishes LMP only** — no MCC/MLC decomposition. That is complete
+   for every consumer here: `derive_miso_hub_lmp` selects `value == "LMP"`.
+   An hour published as exactly `0.0` at all eight hubs at once is the report's
+   missing-data marker and is staged BLANK, never as a zero price.
+
+**Verified against the credentialed route, not assumed.** Over 2022-06, the one
+month both families cover on disk, the monthly route reproduces the committed
+API-sourced staging **exactly on DA (5,760/5,760 hub-hours, max diff $0.0000)**
+and **5,721/5,760 (99.32%) on RT**, the 39 exceptions being the five all-hub-zero
+slots described above.
+
+Found via the source-URL table of Zenodo deposit `10.5281/zenodo.17676746`
+(CC-BY-4.0), whose MISO series was pulled from this family in November 2020.
+Three prior route audits (miso-252, miso-254, miso-256) swept the DAILY and
+annual `*_HIST` naming spaces only and concluded the pre-2023 record was
+unrecoverable. It was not — they searched two families and the data was in a third.
+
+The MISO Data Exchange Pricing API (`https://apim.misoenergy.org/pricing/v1`,
+subscription-key auth via `MISO_PRICING_API_KEY`) remains wired as the LAST
+resort — verified byte-identical against the static CSV on an overlapping day
+(2023-01-03 DA, ARKANSAS.HUB, all three LMP/MCC/MLC rows) — but **is no longer
+needed for any year in 2015-2022**.
 
 All hours are **hour-ending 1–24, Eastern Standard Time year-round** (each
 file's header states "All Hours-Ending are Eastern Standard Time (EST)" -- no
@@ -79,14 +116,18 @@ magnitude) against these actuals.
 Staged years: 2022 (validation holdout, ~7-day plain-text chunks, INCOMPLETE -- see
 below), 2023, 2024, 2025 (RT + DA, gzip), 2026 H1 (chunks).
 
-**2020 and 2021 are NOT staged and cannot be staged without the key.** Both years sit
-below the 2023-01-01 floor, so every route open to a session is closed; the two folded
-validation rungs `2026-09-10-miso-251-tp2020` / `-tp2021` therefore score
-C3a/C3b/C3c as **SKIPPED**. `MISO_PRICING_API_KEY` is the single unblocker and the
-whole chain from key to re-scored rungs (no re-solve) is written out in
-`docs/FINDING-miso254-lmp-2020-2021-route-audit-2026-09-12.md` §4. **Probe one day
-before spending a year**: the Data Exchange portal documents no earliest date, so
-whether the API itself retains 2020/2021 is unverified.
+**2020 and 2021 ARE NOW STAGED** (2026-09-13, miso-256) from the monthly
+`*_pr_xls.zip` family documented above, with **no credential**. Day coverage:
+2020 DA 366/366, 2020 RT 366/366, 2021 RT 365/365, 2021 DA **364/365** — MISO's
+own October-2021 DA archive holds 30 members covering Oct 1-31 *minus the 28th*,
+a gap in the publisher's archive rather than in the fetch.
+
+This supersedes the previous statement here that the two years "cannot be staged
+without the key", and the claim in
+`docs/FINDING-miso254-lmp-2020-2021-route-audit-2026-09-12.md` that
+`MISO_PRICING_API_KEY` is "the single unblocker" — that finding's route audit is
+sound for the two families it swept and its unblock chain (§4) is still the right
+recipe; it simply did not reach this third family.
 
 **Running the fetch for a below-floor year without the key now fails loudly** rather
 than writing ~53 header-only chunk files per market that read as a staged year

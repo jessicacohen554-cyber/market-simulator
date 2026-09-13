@@ -64,11 +64,13 @@ import csv
 import io
 import json
 import logging
+import re
 import sys
 import threading
 import time
 import urllib.error
 import urllib.request
+import zipfile
 from concurrent.futures import ThreadPoolExecutor
 from datetime import date, timedelta
 from pathlib import Path
@@ -89,6 +91,61 @@ _REPORT = {"da": "da_expost_lmp", "rt": "rt_lmp_final"}
 _API_BASE = "https://apim.misoenergy.org/pricing/v1"
 _API_MARKET_PATH = {"da": "day-ahead", "rt": "real-time"}
 _API_CALLS_PER_MINUTE = 90  # MISO Data Exchange quota is 100/min; leave margin
+
+# --- pre-2023 route: the MONTHLY Daily/Real-Time Pricing Report zips ---------
+# MISO changed report FAMILIES in 2023; it did not delete its history. The
+# daily all-node reports above (``_URL``) start 2023-01-01 and 404 below it;
+# these monthly zips of per-day ``.xls`` pricing reports run from at least 2015
+# and 404 from 2023-01 -- the two families are exact mirror images, so between
+# them the public record is unbroken. Measured 2026-09-13: ``{ym}_da_pr_xls``
+# returns 200 for 201501/201801/201901/202001/202006/202012/202101/202106/
+# 202112/202201/202206/202212 and 404 for 202306/202406.
+#
+# Provenance, and why this is the SAME measurement and not a substitute: over
+# the one month both families cover on disk (2022-06), the monthly route
+# reproduces the committed API-sourced staging EXACTLY on day-ahead -- 5,760 of
+# 5,760 hub-hours, max abs diff $0.0000 -- and on real-time reproduces 5,721 of
+# 5,760 (99.32%), the 39 exceptions being five (date, hour) slots the monthly
+# report publishes as 0.0 across ALL EIGHT hubs at once (missing data, handled
+# below), not restated prices.
+#
+# Found via the source-URL table of Zenodo deposit 10.5281/zenodo.17676746
+# ("Electricity Price Data by System Operator", CC-BY-4.0), whose MISO series
+# was downloaded from this family in November 2020. Three prior route audits
+# (miso-252, miso-254, miso-256) swept the DAILY and annual ``*_HIST`` naming
+# spaces only and concluded the pre-2023 record was unrecoverable; it was not.
+_MONTHLY_URL = "https://docs.misoenergy.org/marketreports/{ym}_{report}.zip"
+_MONTHLY_REPORT = {"da": "da_pr_xls", "rt": "rt_pr_xls"}
+
+# The report labels its hub columns with display names, not the node ids the
+# daily all-node file uses. MISO System is the 9th column and is deliberately
+# NOT staged: it is a system average, not one of the eight named hubs (D6).
+_MONTHLY_HUB_COLUMNS = {
+    "Arkansas Hub": "ARKANSAS.HUB",
+    "Illinois Hub": "ILLINOIS.HUB",
+    "Indiana Hub": "INDIANA.HUB",
+    "Louisiana Hub": "LOUISIANA.HUB",
+    "Michigan Hub": "MICHIGAN.HUB",
+    "Minnesota Hub": "MINN.HUB",
+    "MS.HUB": "MS.HUB",
+    "Texas Hub": "TEXAS.HUB",
+}
+
+# Each sheet states its own market date. This is load-bearing rather than
+# cosmetic: the DA member is named for its market date (20210615_da_pr.xls ->
+# 06/15/2021) but the RT member is named for its PUBLISH date and carries the
+# PRIOR day's market (20220615_rt_pr.xls -> 06/14/2022). Keying on the filename
+# mis-dates every real-time row by one day; keying on this header is correct for
+# both families and needs no per-market special case.
+_MONTHLY_MARKET_DATE_RE = re.compile(r"Market Date:\s*(\d{2})/(\d{2})/(\d{4})")
+
+# The hourly block is found by its own header row (the one whose second cell
+# reads "MISO System") rather than a fixed offset -- DA puts it at row 14 and
+# RT at row 11, and the preamble has varied across years.
+_MONTHLY_HEADER_CELL = "MISO System"
+
+_monthly_cache: dict[tuple[int, int, str], dict[date, list[list[str]]]] = {}
+_monthly_lock = threading.Lock()
 
 
 def _pricing_api_key() -> str | None:
@@ -223,6 +280,141 @@ def _hub_rows_api(day: date, market: str, api_key: str) -> list[list[str]]:
     return rows
 
 
+def _parse_monthly_zip(body: bytes, market: str) -> dict[date, list[list[str]]]:
+    """Parse one monthly pricing-report zip into staged rows keyed by MARKET date.
+
+    Each zip member is a legacy BIFF ``.xls`` holding one market day: a short
+    preamble, then an ``HE 01``-``HE 24`` block whose columns are MISO System
+    plus the eight named hubs. Returns ``{market_date: [[date, node, "Hub",
+    "LMP", he01..he24], ...]}`` -- the same record shape the daily and API
+    routes produce, so every downstream reader is untouched.
+
+    **LMP only.** This family publishes the settled hub price without the
+    MCC/MLC decomposition the daily all-node file carries, so the MCC and MLC
+    rows the other two routes stage are simply absent here. That is complete
+    for every consumer in this repo: ``derive_miso_hub_lmp`` selects
+    ``value == "LMP"`` and nothing reads the other two.
+
+    An hour the report publishes as exactly ``0.0`` at ALL EIGHT hubs at once is
+    staged BLANK (missing), not as a zero price. Eight hubs settling at exactly
+    $0.00 in the same hour does not occur in a real market -- congestion and
+    losses separate them -- so it is the report's missing-data marker, and
+    writing it through as a price would put a false zero into the validation
+    reference. Blank is the staged convention for an absent hour, and the
+    coverage machinery downstream already records partial months.
+    """
+    import xlrd  # local: tooling-only dependency, never imported by the model
+
+    out: dict[date, list[list[str]]] = {}
+    with zipfile.ZipFile(io.BytesIO(body)) as zf:
+        for name in sorted(zf.namelist()):
+            if not name.lower().endswith(".xls"):
+                continue
+            sheet = xlrd.open_workbook(file_contents=zf.read(name)).sheet_by_index(0)
+            market_date = None
+            for r in range(min(8, sheet.nrows)):
+                m = _MONTHLY_MARKET_DATE_RE.search(str(sheet.cell_value(r, 0)))
+                if m:
+                    market_date = date(int(m[3]), int(m[1]), int(m[2]))
+                    break
+            header = next(
+                (
+                    r
+                    for r in range(sheet.nrows)
+                    if str(sheet.cell_value(r, 1)).strip() == _MONTHLY_HEADER_CELL
+                ),
+                None,
+            )
+            if market_date is None or header is None:
+                log.warning("%s %s: no market date / hour block, skipped", name, market)
+                continue
+            col = {
+                _MONTHLY_HUB_COLUMNS[label]: c
+                for c in range(sheet.ncols)
+                if (label := str(sheet.cell_value(header, c)).strip())
+                in _MONTHLY_HUB_COLUMNS
+            }
+            missing_hubs = sorted(set(_MONTHLY_HUB_COLUMNS.values()) - set(col))
+            if missing_hubs:
+                log.warning("%s %s: hub columns absent: %s", name, market, missing_hubs)
+            # hour -> {hub: text}; blanked below where the whole hour is 0.0.
+            by_hour: dict[int, dict[str, str]] = {}
+            for r in range(header + 1, min(header + 1 + _N_HOURS, sheet.nrows)):
+                label = str(sheet.cell_value(r, 0)).strip()
+                if not label.startswith("Hour"):
+                    continue
+                values = {}
+                for hub, c in col.items():
+                    raw = sheet.cell_value(r, c)
+                    values[hub] = "" if raw in ("", None) else f"{float(raw):.2f}"
+                if col and all(v == "0.00" for v in values.values()):
+                    values = dict.fromkeys(values, "")
+                by_hour[int(label.split()[-1])] = values
+            if len(by_hour) != _N_HOURS:
+                log.warning(
+                    "%s %s: expected %d hours, got %d",
+                    name,
+                    market,
+                    _N_HOURS,
+                    len(by_hour),
+                )
+            iso = market_date.isoformat()
+            out[market_date] = [
+                [
+                    iso,
+                    hub,
+                    "Hub",
+                    "LMP",
+                    *[by_hour.get(h, {}).get(hub, "") for h in range(1, _N_HOURS + 1)],
+                ]
+                for hub in sorted(col)
+            ]
+    return out
+
+
+def _monthly_month(year: int, month: int, market: str) -> dict[date, list[list[str]]]:
+    """Return one month's staged rows, fetching and parsing the zip at most once.
+
+    ``stage_year`` fans out over DAYS, so without this cache each of a month's
+    ~30 days would re-download and re-parse the same ~120 KB archive.
+    """
+    key = (year, month, market)
+    with _monthly_lock:
+        if key in _monthly_cache:
+            return _monthly_cache[key]
+    url = _MONTHLY_URL.format(ym=f"{year}{month:02d}", report=_MONTHLY_REPORT[market])
+    try:
+        parsed = _parse_monthly_zip(_fetch(url), market)
+    except _NotFound:
+        parsed = {}
+    with _monthly_lock:
+        _monthly_cache.setdefault(key, parsed)
+        return _monthly_cache[key]
+
+
+def _hub_rows_monthly(day: date, market: str) -> list[list[str]] | None:
+    """Return ``day``'s hub rows from the monthly pricing-report zip, else ``None``.
+
+    Searches the day's own month and then the FOLLOWING month. The second look
+    is what the real-time family needs and is not an edge case: its members are
+    named for the PUBLISH date, so the last market day of any month is published
+    on the 1st of the next and ships in the NEXT month's archive. Without it
+    every month-end real-time day is missing -- measured as exactly 12 of 365
+    days in 2021, one per month. Expressed as "day's month, then the next"
+    rather than as a per-market rule so a day-ahead member that ever shifts the
+    same way is picked up too; a month already parsed is served from cache, so
+    the second look is free.
+
+    ``None`` means this route genuinely has nothing for the day -- both months
+    404 (2023 onward) -- and the caller falls through to the credentialed API.
+    """
+    for probe in (day, day + timedelta(days=1)):
+        rows = _monthly_month(probe.year, probe.month, market).get(day)
+        if rows:
+            return rows
+    return None
+
+
 def _hub_rows(day: date, market: str, api_key: str | None) -> list[list[str]]:
     """Fetch one daily report and return the hub rows as staged-CSV records.
 
@@ -234,10 +426,18 @@ def _hub_rows(day: date, market: str, api_key: str | None) -> list[list[str]]:
     try:
         body = _fetch(_URL.format(ymd=ymd, report=_REPORT[market]))
     except _NotFound:
+        # Below 2023-01-01 the daily family 404s. Try the monthly pricing-report
+        # zips FIRST: they cover exactly those years, need no credential, and
+        # reproduce the API byte-for-byte on day-ahead where both are available
+        # (_MONTHLY_URL's note). The API stays as the last resort.
+        monthly = _hub_rows_monthly(day, market)
+        if monthly:
+            return monthly
         if api_key is None:
             raise RuntimeError(
                 f"{day} {market}: static report not found (retention rolled "
-                "off) and no MISO_PRICING_API_KEY set for the API fallback"
+                "off), the monthly pricing-report zip has no row for this day, "
+                "and no MISO_PRICING_API_KEY is set for the API fallback"
             ) from None
         return _hub_rows_api(day, market, api_key)
     rows: list[list[str]] = []
@@ -333,6 +533,7 @@ def stage_year(
         raise RuntimeError(
             f"{year} {market}: 0/{len(days)} days staged -- nothing written. "
             "Every day failed: the static daily reports 404 before 2023-01-01, "
+            "the monthly pricing-report zips returned nothing for this year, "
             "and the Data Exchange fallback needs MISO_PRICING_API_KEY "
             "(see data/raw/lmp-data/MISO/README.md)."
         )

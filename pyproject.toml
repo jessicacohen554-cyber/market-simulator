@@ -157,4 +157,10 @@ dev = [
     # BIFF; xlrd 2.x reads .xls exclusively. Tooling-only — the model runtime
     # never touches it.
     "xlrd>=2.0",
+    # TEST-ONLY writer half of the same BIFF story: MISO's pre-2023 monthly
+    # pricing reports ship as legacy .xls, and
+    # tests/curation/test_fetch_miso_hub_lmp_monthly.py builds the fixture
+    # workbooks in-process so the route's date and missing-hour conventions are
+    # covered with no network. openpyxl writes only .xlsx, so it cannot stand in.
+    "xlwt>=1.3",
 ]
