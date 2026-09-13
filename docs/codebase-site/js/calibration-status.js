@@ -311,6 +311,13 @@
       if (years.length) {
         const TIER_TXT = { training: 'training', validation: 'validation holdout', locked_test: 'locked test' };
         const anyRole = years.some(r => r.role);
+        // Years the model priced but that carry NO measured LMP reference on
+        // disk, so C3a/C3b/C3c are unscoreable there for ABSENCE OF A REFERENCE
+        // rather than for passing (miso-256). Reported only — it gates nothing.
+        // Without it an unverifiable year reads as cleaner than one that could
+        // be checked and missed: MISO 2020 shows CALIBRATED-WITH-CAVEATS partly
+        // BECAUSE its price criteria could not be scored at all.
+        const noRef = new Set((keeper.price_reference_blocked_years || []).map(Number));
         const rows = years.map(r => {
           const runLink = `backcast-runs.html#iso=${encodeURIComponent(keeper.iso)}&run=${encodeURIComponent(r.run_id)}`;
           const det = String(r.determination || '—');
@@ -319,6 +326,7 @@
             <td class="num">${esc(String(r.year))}</td>
             <td>${esc(TIER_TXT[r.tier] || r.tier || '—')}</td>
             ${anyRole ? `<td>${esc(r.role || '—')}</td>` : ''}
+            ${noRef.size ? `<td>${noRef.has(Number(r.year)) ? '<span class="bc-mute" title="No measured LMP reference on disk for this ISO-year — C3a/C3b/C3c unscoreable, not passing">none</span>' : 'yes'}</td>` : ''}
             <td class="${cls}" style="font-weight:600">${esc(det)}</td>
             <td style="font-size:0.72rem"><a class="run-id-link" href="${runLink}">${esc(r.src || r.run_id)}</a></td>
           </tr>`;
@@ -326,11 +334,11 @@
         html += `
         <div class="bc-table-wrap" style="margin-top:10px">
           <table style="font-size:0.82rem;width:100%">
-            <thead><tr><th>Year</th><th>Tier</th>${anyRole ? '<th>Config</th>' : ''}<th>Determination</th><th>Run</th></tr></thead>
+            <thead><tr><th>Year</th><th>Tier</th>${anyRole ? '<th>Config</th>' : ''}${noRef.size ? '<th>Price ref</th>' : ''}<th>Determination</th><th>Run</th></tr></thead>
             <tbody>${rows}</tbody>
           </table>
         </div>
-        <p class="bc-mute" style="font-size:0.75rem;margin:6px 0 0">Held-out years are reported, not gating &mdash; the ISO determination is the 2023&ndash;2025 verdict (rule&nbsp;22).</p>`;
+        <p class="bc-mute" style="font-size:0.75rem;margin:6px 0 0">Held-out years are reported, not gating &mdash; the ISO determination is the 2023&ndash;2025 verdict (rule&nbsp;22).${noRef.size ? ` Price ref <em>none</em> (${[...noRef].sort().join(', ')}): no measured LMP series exists on disk for those years, so C3a/C3b/C3c are <strong>unscoreable there, not passing</strong>.` : ''}</p>`;
       }
 
       // Reasons — only when something FAILED. On a clean or caveated run they

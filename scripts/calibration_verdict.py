@@ -1983,7 +1983,9 @@ def score_price_mean(
         ]
     model = _wmean(pairs) if pairs else None
     if model is None or actual is None:
-        return _skip("price_mean", year, "no model or actual mean LMP")
+        return _skip(
+            "price_mean", year, _no_price_reason("C3a", model, actual, iso, year)
+        )
     err = _pct(model, actual)
     status, classification = _band_result(
         abs(err), PRICE_MEAN_TOL, PRICE_MEAN_COMMERCIAL
@@ -2111,7 +2113,18 @@ def score_price_shape(
         actual_mon = avg.get("rt_mon") or avg.get("da_mon")
         bench_key = "rt" if avg.get("rt_mon") else "da"
     if actual_mon is None or all(v is None for v in model_mon):
-        return _skip("price_shape", year, "no monthly model or actual LMP")
+        return _skip(
+            "price_shape",
+            year,
+            _no_price_reason(
+                "C3b",
+                None if all(v is None for v in model_mon) else 1.0,
+                actual_mon,
+                iso,
+                year,
+                monthly=True,
+            ),
+        )
     # The same like-for-like calendar C3a applies. A month whose actual is
     # stitched from a fraction of its hours is not the model's month, and
     # SQUARING the difference lets one partially-staged month dominate the
@@ -2933,6 +2946,42 @@ def score_forced_share(
     return out
 
 
+def _no_price_reason(
+    criterion: str,
+    model: object,
+    actual: object,
+    iso: str,
+    year: int,
+    monthly: bool = False,
+) -> str:
+    """Return a skip reason that names WHICH SIDE of the price comparison is absent.
+
+    The former wording ("no model or actual mean LMP") blamed the two sides
+    jointly, so a year the model priced perfectly well but that carries NO
+    MEASURED LMP REFERENCE ON DISK read as an ordinary skip — indistinguishable
+    from a run that failed to emit a price. MISO 2020/2021 are that case: the
+    solve produced a full 8,760-hour price, and
+    ``data/raw/_validation-source/actual_lmp.json`` simply has no MISO record
+    below 2022, because MISO publishes no LMP report before 2023-01-01 and the
+    one substitute route is credential-gated (miso-254's exhaustive route audit,
+    ``docs/FINDING-miso254-lmp-2020-2021-route-audit-2026-09-12.md``).
+
+    An absent reference is NOT a passing criterion, and the distinction is
+    load-bearing on the status card: an unscoreable year can otherwise read as
+    cleaner than a year that could be checked and missed. Display only — this
+    changes no status, no classification and no determination.
+    """
+    grain = "monthly " if monthly else ""
+    if model is None and actual is None:
+        return f"no {grain}model price AND no measured LMP reference for {iso} {year}"
+    if actual is None:
+        return (
+            f"no measured {grain}LMP reference on disk for {iso} {year} — "
+            f"{criterion} UNSCOREABLE (reference absent, not passing)"
+        )
+    return f"no {grain}model price for {iso} {year}"
+
+
 def _skip(criterion: str, year: int, reason: str, key: str | None = None) -> dict:
     """Build a SKIPPED record (recorded as not-scored, never a silent pass)."""
     return {
@@ -3229,6 +3278,16 @@ def determine_from_artifacts(
         target_years = [y for y in target_years if y in span]
         scorable_years = [y for y in scorable_years if y in span]
     data_blocked = sorted(set(target_years) - set(scorable_years))
+    # REPORTED-ONLY (miso-256): scored years whose bench carries NO measured LMP
+    # reference at all, so C3a/C3b/C3c are unscoreable there for ABSENCE OF A
+    # REFERENCE rather than for passing. Distinct from ``data_blocked`` above,
+    # which means the RUN has no payload for the year; these years solved fine
+    # and are fully scored on every non-price criterion. Feeds NO gate, NO
+    # caveat budget and NO determination — it exists so the status card cannot
+    # present an unverifiable year as a clean one.
+    price_reference_blocked = sorted(
+        y for y in scorable_years if not (bench.get(y, {}) or {}).get("avgLMP")
+    )
 
     # Score every criterion-year.
     records: list[dict] = []
@@ -3521,6 +3580,7 @@ def determine_from_artifacts(
         "target_years": target_years,
         "scorable_years": scorable_years,
         "data_blocked_years": data_blocked,
+        "price_reference_blocked_years": price_reference_blocked,
         "determination": determination,
         "reasons": reasons,
         "notes": notes,
@@ -3645,6 +3705,7 @@ def condensed_metrics(v: dict) -> dict:
         "target_years": v["target_years"],
         "scorable_years": v["scorable_years"],
         "data_blocked_years": v["data_blocked_years"],
+        "price_reference_blocked_years": v.get("price_reference_blocked_years", []),
         "rubric_version": v.get("rubric_version", 1),
         "determination": v["determination"],
         "reasons": v["reasons"],
