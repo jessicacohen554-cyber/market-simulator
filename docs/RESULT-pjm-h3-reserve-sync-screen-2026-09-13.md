@@ -412,3 +412,94 @@ provision its full swap target, with the three blockers pre-cleared in the promp
 and a stated 60-minute budget (rule 32(b)). It is instructed to report `swapon --show` *before* the
 solve, and that **a second OOM is a reportable result to stop on, never a thing to engineer
 around**.
+
+## 10. ATTEMPT 3 — SAME OOM, AND IT REFUTES MY OWN ATTEMPT-2 DIAGNOSIS
+
+**Shard** `session_01HBTXoSZmnAD9KZoNWAhi6B`, branch `claude/pjm-h3-syncarm2-2022`, recovery SHA
+**`96da85894876c67ee0a44dc1fc14521afaef381f`**, parent = the pin. Again exactly one file changed
+(its own FINDING, rescued here as
+`docs/handoffs/FINDING-pjm-h3-syncarm2-2022-blocked-2026-09-13.md`), no `src/`, no `scripts/`.
+**Rule 34(d): `git ls-tree` returns ZERO files** — no bundle, nothing pushed but the doc, which is
+correct.
+
+**The arm armed again, byte-for-byte the same signature** (4 balance families, 78 R columns, req
+means `[2663, 2662, 1902, 1901]` MW, `SYNC product split ON`). The mechanism reaches the LP
+reliably; it is not what is blocked.
+
+### 10.1 MY ATTEMPT-2 DIAGNOSIS WAS WRONG, and the correction is the useful part
+
+I concluded that a **stale 4 GiB swapfile** blocked the preflight, and that a fresh container would
+therefore let it reach its 24 GiB target. **Attempt 3 falsifies that directly.** Its container
+started with **zero swap** (`swapon --show` empty), so the preflight took its *create* path — and
+still produced **exactly 4 GiB**, landing on the identical 17.3 GiB and emitting the identical
+warning.
+
+**The 4 GiB is DISK-BOUND, not stale.** `ensure_solve_container` sizes the swapfile as
+
+```
+add_gib = int(min(deficit_gib, max(0.0, free_gib − DISK_RESERVE_GIB)))
+```
+
+with a 24 GiB target, so on a 13.34 GiB ceiling the deficit is ~10.7 GiB — against a
+PJM-hydrated container's **6.4 GiB free**, less a ~2 GiB output reserve. It writes what fits (4 GiB),
+warns, and proceeds. **A fresh container does not fix this; the disk allowance does.**
+
+### 10.2 The load-bearing number, and why it raises the bar
+
+| quantity | attempt 2 | attempt 3 |
+|---|---:|---:|
+| anon-RSS at kill | 13.28 GiB | **13.28 GiB** (identical) |
+| `memory.limit_in_bytes` | 13.34 GiB | 13.34 GiB |
+| `memory.max_usage_in_bytes` | at the ceiling | **at the ceiling** |
+| **`memory.memsw.max_usage_in_bytes`** | not reported | **17.33 GiB = 13.34 + 4.00 exactly** |
+| `memory.failcnt` | 1,562,256 | 1,144,459 |
+| swap in use | 3.4 MB | **fully consumed** |
+| phase | P0 | P0 |
+
+**`memsw.max_usage` = ceiling + swap, exactly.** The solve consumed **100 % of RAM and 100 % of
+swap** and was still killed — so the requirement is **strictly greater than 17.3 GiB**, and this is
+not a marginal miss a slightly bigger swapfile clears. Attempt 3's own reading is right and I adopt
+it: the 24 GiB target is the real requirement, not a safety margin.
+
+This also **retires attempt 2's** conclusion that "adding swap under a v1 limit does not
+substitute" — attempt 3 shows swap *was* fully used once it existed. Both shards' individual
+inferences were wrong in opposite directions; the composite measurement is what stands.
+
+### 10.3 Attempt 4 — the one lever left, and it is the parent's to pull
+
+Attempt 3 correctly refused to choose between its three options and routed the decision up. Of them:
+
+* **A larger container is not available** — `list_environments` offers exactly two, both
+  `anthropic_cloud`, and this parent measures the same 13.34 GiB ceiling.
+* **Subdividing** is permitted for never-registered diagnostic work (rule 32(b)), but P0 is a single
+  system LP and there is no subdivision of it that preserves what the screen measures.
+* **Freeing disk is real, measured, and mine to do** — and it is not a rule 31 `[R-RETAIN]` question
+  at all, because nothing unique is destroyed.
+
+Measured in this parent container:
+
+| action | `data/raw` | free disk |
+|---|---:|---:|
+| before | 6.4 GiB | 17 GiB |
+| **`hydrate_data.py --profile pjm --force`** | **2.3 GiB** | **21 GiB** |
+
+**+4.1 GiB**, using the repo's own documented tooling (`docs/fast-clone.md`,
+`configs/data-profiles.yaml`) — it drops working-tree copies of blobs that stay in `.git`, and is
+reversible with `--profile all --force`. Removing the other ISOs' *committed* bundle checkouts adds
+**~0.6 GiB** more, guarded by a `git ls-tree` test so only paths committed at the pin are removed
+and `pjm_d4_4_TP` is explicitly excluded.
+
+On the shard's 6.4 GiB that is ~**11 GiB free** → `add_gib = int(min(10.66, 11 − 2)) = 9` →
+**ceiling + swap ≈ 22.3 GiB**, against a requirement measured to exceed 17.33 GiB.
+
+**Attempt 4 launched** — `session_012kj4shTS4xNWaedcWiSUqa`, branch
+`claude/pjm-h3-syncarm3-2022`, same pin, same solve, **nothing about the mechanism, config, runner
+or solve settings changed**. It carries an **early gate**: if the preflight still provisions under
+6 GiB of swap, it kills the job and stops rather than spend ten minutes proving a known-doomed
+configuration a third time. **It is told there will be no fifth attempt.**
+
+**Stated honestly: this may still fail.** 22.3 GiB is ~29 % above the floor we have measured, but
+the true requirement is unknown — all we know is that it exceeds 17.33 GiB. If attempt 4 OOMs, the
+screen is environment-blocked on a triply-measured, fully reproducible constraint, and the ask
+becomes the owner's: a solve container with a memory ceiling above ~13.34 GiB, or a disk allowance
+that lets the existing preflight reach its own 24 GiB target.
