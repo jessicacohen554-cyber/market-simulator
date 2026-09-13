@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-13-spp-38-vintage-cache",
+  "label": "spp 38 vintage cache",
+  "date": "2026-09-13",
+  "shorthand": "spp-38-vintage-cache",
+  "definition": "SPP-38: keeper 10 recipe re-solved on the repaired EIA-860 vintage cache (FINDING-spp-37)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "SPP",
+  "file": "frontend/data/backcast/runs/2026-09-13-spp-38-vintage-cache.js",
+  "bundle": "results/calibration/spp38_span"
+}

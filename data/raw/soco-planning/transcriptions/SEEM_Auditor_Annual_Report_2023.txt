@@ -1,0 +1,522 @@
+
+=====PDFPAGE 1=====
+ 
+  
+ 
+ 
+ 
+ 
+ 
+2023 ANNUAL AUDIT REPORT ON THE  
+SOUTHEAST ENERGY EXCHANGE MARKET  
+ 
+ 
+ 
+Prepared by: 
+ 
+ 
+ 
+  
+ 
+ 
+ 
+Independent Market Auditor 
+ 
+ 
+ 
+May 28, 2024 
+ 
+ 
+
+=====PDFPAGE 2=====
+ 
+1 
+Contents 
+I. Overview .............................................................................................................................. 2 
+II. Market Operation Screens ................................................................................................. 4 
+III.    Market Activity .................................................................................................................... 6 
+A. Trading and Liquidity .................................................................................................. 6 
+B. SEEM Prices ................................................................................................................ 8 
+C. Network Usage ............................................................................................................ 9 
+D. Market Concentration ................................................................................................ 12 
+IV. Conclusions and Recommendations ................................................................................ 14 
+ 
+   
+  
+=====PDFPAGE 3=====
+ 2023 Annual Audit Report on the  
+ Southeast Energy Exchange Market
+  
+2 
+ 
+I.    OVERVIEW 
+This is the Annual Auditor report for 2023 on the Southeast Energy Exchange Market (SEEM). 
+This report covers activity in 2023 and also includes observations on the first quarter of 2024. 
+SEEM is a regional energy market that centrally clears bilateral trades every 15 minutes using a 
+transmission service designed for SEEM called Non-Firm Energy Exchange Transmission Service 
+(NFEETS). It began operating in November 2022 and currently has 24 members.1  
+Trading volumes increased throughout 2023, in part due to the Florida participants joining in July.  
+• The monthly average cleared trades for 2023 was 58,000 MWh.  
+• The July-December average was 74,000 MWh cleared, illustrating the impact of new 
+participants.  
+• It is noteworthy that the first three months of 2024 had a monthly average of 98,000 
+MWh, although this high volume cooled in April.  
+About 15,000 MWh – 20,000 MWh of potential economic exchanges are left uncleared each 
+month. These are likely due mainly to costs of transmission losses and, to a lesser extent, 
+participant-specific constraints or transmission constraints.  Our evaluation of transmission 
+availability supports the conclusion that transmission constraints have not significantly affected 
+SEEM trading. Considering all intervals and segments, less than seven percent of the interval-
+segments showed zero availability. Market share concentration among individual sellers and 
+buyers declined with the addition of the Florida participants and increases in liquidity. 
+According to the Auditing Process under the SEEM Market Rules (Section VI.D) our auditing 
+duties fall into two general areas: 
+(1)  analyzing SEEM inputs, constraints, and matching results; and  
+(2)  responding to certain inquiries and reporting on the SEEM operation and outcomes.  
+Our annual Report reviews the results of our auditing activity from 2023, including some results 
+from the first quarter of 2024. In section II, we review our findings with regard to auditing inputs, 
+constraints and transactions.  Our screening involves daily data transfer and storage architecture 
+that receives SEEM data to support a range of screens. During 2023, we applied the screens daily 
+ 
+1  The initial 18 members are: Alabama Power Company; Georgia Power Company; Mississippi Power Company; 
+Associated Electric Cooperative, Inc.; Dalton Utilities; Dominion Energy South Carolina, Inc.; Duke Energy 
+Carolinas, LLC; Duke Energy Progress, LLC; Louisville Gas & Electric Company and Kentucky Utilities 
+Company;  North Carolina Municipal Power Agency Number 1; PowerSouth Energy Cooperative; North 
+Carolina Electric Membership Corporation; Tennessee Valley Authority; Georgia System Operations 
+Corporation; Georgia Transmission Corporation; Municipal Electric Authority of  Georgia; Oglethorpe Power 
+Corporation; and South Carolina Public Service Authority.  The Florida member joining in June 2023 are: 
+Seminole Electric Cooperative; Tampa Electric Company; Duke Energy Florida; Florida Power Corporation; 
+TEA Gainesville Regional Utilities; and TEA JEA. 
+=====PDFPAGE 4=====
+ 2023 Annual Audit Report on the  
+ Southeast Energy Exchange Market
+  
+3 
+ 
+and found that in all intervals the screens have indicated that the SEEM requirements have been 
+satisfied.  
+In section III, we review the SEEM outcomes from an overall market perspective, evaluating both 
+trends in trading and use of transmission service. SEEM activity has increased as measured by the 
+volume of cleared trades. Aside from adding members from Florida in July, the volume has 
+increased in recent months. Increased participation has also decreased the concentration of 
+trading. 
+In Section IV, we present our conclusions and recommendations. We discuss improvements that 
+we recommend SEEM consider for both the near-term improvement of the current market, as well 
+as potential long-term expansions of the SEEM market. 
+=====PDFPAGE 5=====
+ 2023 Annual Audit Report on the  
+ Southeast Energy Exchange Market
+  
+4 
+ 
+II.   MARKET OPERATION SCREENS 
+We audit SEEM by calculating screens, metrics, and other analyses on a daily basis using market 
+data and other data to verify bids and offers, evaluate matches, and verify SEEM constraints.  
+These screens are based on specific requirements in the Auditing Process in the SEEM Market 
+Rules. These are in three categories and are as follows: 
+Daily Screens 
+The following screens audit the information provided in participant bids and offers. 
+• Offers (bids) from a participant must have Participant-Specific Constraints identifying at 
+least three other non-affiliated Participants that can be matched as counterparties; 
+• All offers and bids properly must include a source or sink; 
+• Each offer and bid must have a delivery interval;  
+• Bids and offers must be 4 MW increments; 
+• “All or Nothing Selection” must be indicated; and 
+• The Network Map must be accurate (monthly). 
+Matching 
+The following screens are used to audit the SEEM matches: 
+• Match price must not exceed the bid price and must be greater than the offer price;  
+• Buyer and seller must be distinct participants; 
+• Matches must not violate any participant-specific constraints; 
+• SEEM benefit calculation must be verified;  
+• Any maximum offer price declared must bind the transaction; and 
+• Each match must have a NERC Tag. 
+Constraints  
+The following screens audit the SEEM constraints. 
+• Transaction volume must not exceed offer or bid volume;  
+• The SEEM algorithm must only make energy exchanges that yield positive benefits to 
+both buyer and seller; and 
+• Transaction volume over each segment must not exceed the segment ATC. 
+=====PDFPAGE 6=====
+ 2023 Annual Audit Report on the  
+ Southeast Energy Exchange Market
+  
+5 
+ 
+Most of these screens are evaluated daily on an automated basis. In 2023, these screens 
+successfully evaluated the various data elements and calculations and revealed no issues with the 
+operation of SEEM.  
+The network map audit screen is evaluated monthly. We used this monthly screen to detect any 
+changes during the month. Except for the addition of Florida participants in July, the map did not 
+change over the course of 2023. This map was created through a lengthy technical process used 
+by SEEM and the SEEM members at the outset of the SEEM deployment and when the Florida 
+participants were added. This has not changed from the original technical processes, and so we 
+conclude the network map is accurate for the current sources and sinks participating in SEEM. 
+We also evaluate changes to participant-specific constraints. We check for any changes in 
+excluded sellers or buyers, any max price constraints, and identify any constraints that changed 
+during the month. From month to month in 2023, there were minor changes to these participant-
+specific constraints to manage trading partners.  
+Overall, our screens and other monitoring of the SEEM market indicate that the SEEM market 
+operated as expected, in compliance with the SEEM rules and tariff provisions.  
+  
+=====PDFPAGE 7=====
+ 2023 Annual Audit Report on the  
+ Southeast Energy Exchange Market
+  
+6 
+ 
+III.    MARKET ACTIVITY 
+In this section, we review SEEM operations and outcomes in 2023 to discuss potential operating 
+or market issues. This includes an overall review of the market trading, including volumes, prices, 
+and characteristics of participation and an evaluation of network usage, focusing on the key 
+transmission paths and constraints. 
+A. Trading and Liquidity 
+SEEM cleared 704,000 MWh of energy in 2023. Figure 1 shows the monthly volumes of cleared 
+trades from January 2023 to April 2024. The figure shows a general increase in cleared volumes. 
+The obvious increase came in July during the Florida participants’ first full month of trading. We 
+include the first four months of 2024 to show that volumes continue to increase. This is a 
+favorable development that indicates increased interest and confidence in the market. 
+Figure 1: Volume of Cleared Trades 
+January 2023 -April 2024 
+ 
+In Figure 2, we show the monthly total activity in the SEEM market, including both cleared and 
+uncleared bids and offers. The purpose is to summarize the trends in market liquidity. The dark 
+green bars are the cleared bids and offers. The rest of the bar segments are various categories of 
+uncleared bids and offers: 
+• The red segment shows uncleared economic bids and offers. These transactions appear to 
+be profitable, but do not clear because of the cost of losses or a constraint. 
+• The light green bars show bids and offers that were not cleared but were within the 
+indicated cleared bid-offer spread – i.e., from the lowest cleared offer to the highest 
+New Participants 
+=====PDFPAGE 8=====
+ 2023 Annual Audit Report on the  
+ Southeast Energy Exchange Market
+  
+7 
+ 
+cleared bid. Bids and offers in this group do not clear because there are not sufficient 
+counterparties to clear all of them – i.e., the counterparty bids/offers that could be 
+economic have already been matched to another bid/offer with greater savings.  
+• The light blue bars show bids/offers within $10 of the overlap range ($10 or less outside 
+the cleared bid-offer range).  
+• The dark blue bars show bids/offers greater than $10 of the overlap range – i.e., offers to 
+sell that are >$10 higher than this highest bid or offers to buy energy <$10 less than the 
+lowest supply offer. Participants likely do not expect these to clear.  
+Because the uncleared bids and offers in the blue bars are unlikely to clear, a movement of these 
+quantities closer to the expected clearing range signals an improvement in market liquidity.  
+Figure 2:  Bid and Offer Evaluation 
+ 
+Figure 2 shows that liquidity increased gradually from the beginning of the year as the market 
+matured from its launch in November 2022. Not surprisingly, bid and offer volume increased 
+substantially when Florida participants joined fully in July. Since the end of 2023, liquidity 
+declined slightly, even though cleared matches increased. Overall, these trends are positive. 
+Finally, to provide additional insight on the extent to which losses and constraints have prevented 
+economic transactions from clearing, Figure 3 shows the disposition of all economic bids and 
+offers (i.e., those for which an economic counterparty was available).  The blue bars show the 
+economic bids and offers that were matched and cleared, while the transparent bars show those 
+that did not clear because of the costs of losses, transmission constraints or other constraints. The 
+figure shows bid-offer pairs in tranches by the price spread, which is important because it allows 
+us to infer why transactions likely did not clear since the output of the clearing software provides 
+no information on the reasons why transactions did not clear.   
+
+=====PDFPAGE 9=====
+ 2023 Annual Audit Report on the  
+ Southeast Energy Exchange Market
+  
+8 
+ 
+Figure 3:  Cleared and Uncleared Economic Bids and Offers 
+January 2023 – April 2024 
+ 
+To understand why economic bids and offers may not have cleared, it is useful to examine the 
+bid-offer spread. Average loss charges are roughly $2 per MWh, although some potential 
+economic matches would incur higher loss costs.  Therefore, in the inset table, we divide totals 
+between bid-offer spreads above and below $3 per MWh. Those below $3 are very likely to have 
+not cleared because of the costs of losses, well most of those that did not clear at spreads above $3 
+likely did not clear because of transmission constraints or participant constraints. 
+Figure 3 shows that over the entire period, roughly 70 percent of the economic transactions 
+cleared.  It also shows that the costs of transmission losses were likely the most significant factor 
+that prevented transactions from clearing, because in each of the periods most of the uncleared 
+economic transactions were those with spreads less than $3 per MWh.  However, this share fell 
+from 26 percent in the first period to 16 percent in the last period while uncleared economic 
+transactions with larger price spreads rose from 5 percent of all economic transactions to 11 
+percent. This trend indicates that transmission constraints have likely begun to play a slightly 
+larger role in preventing economic transactions from clearing as market activity increases.  This is 
+consistent with expectations since higher activity will generate more network flows and 
+associated transmission congestion. It raises no significant concerns as transmission capability has 
+generally been available to SEEM participants, as we discuss in Subsection C below. 
+B. SEEM Prices 
+In this subsection, we report on pricing in the SEEM market. Figure 4 shows monthly SEEM 
+clearing prices, natural gas costs, and average daily minimum and maximum prices in peak and 
+off-peak hours during the month.  
+
+=====PDFPAGE 10=====
+ 2023 Annual Audit Report on the  
+ Southeast Energy Exchange Market
+  
+9 
+ 
+Figure 4: Monthly Clearing Prices and Natural Gas Costs 
+ 
+The figure shows that prices are correlated with natural gas costs, which is the marginal fuel in 
+most hours. This supports the conclusion that the SEEM market has generally performed 
+competitively since generators in a competitive market will face incentives to offer power at their 
+marginal costs of producing it. 
+The superimposed “whisker lines” over the bars show the range of daily average prices in each 
+month. The top of the lines is the highest daily average price during the month. The variation in 
+prices throughout SEEM, which influences the variation in daily prices, is strongly influenced by 
+the locational value of available resources.  
+Indeed, we calculated the weighted average price on all segments used in SEEM and we found a 
+wide variance in the prices for transactions clearing over different segments. Ignoring segments 
+that had no trades, the average price was about $30/MWh for all segments. However, the average 
+prices by segment ranged from $10/MWh and $80/MWh. This shows that the value of 
+transactions can vary significantly by path, mainly because transmission constraints can 
+contribute to higher prices at different locations. If a constraint prevents higher total flows 
+(economic trades) between two areas, the average price will be higher than if sufficient 
+transmission capability was available to allow all economic trades to clear between the areas.  
+C. Network Usage 
+In this subsection, we report on the usage of the SEEM transmission network. We evaluate SEEM 
+transactions by segment to illuminate the system usage and availability. Segments are used by 
+themselves or combined with connecting segments to form larger paths for trading. Most 
+
+=====PDFPAGE 11=====
+ 2023 Annual Audit Report on the  
+ Southeast Energy Exchange Market
+  
+10 
+ 
+segments have an Available Transmission Capability (“ATC”) value that determines how much 
+power can be transferred over the segment. We gathered ATC and trading statistics for all SEEM 
+segments available to the model. There are 240 unique segments used in SEEM that have ATC 
+values. There are 69 segments used in 2023 that did not have ATC values, meaning they were 
+available on an unlimited basis.2 There were 41 segments that were not used at all.     
+Table 1 shows the top 25 segments scheduled during the period January 2023-April 2024, 
+including the median, maximum, and minimum ATC values over all intervals, as well as the total 
+MWh that cleared over each segment.  Segments without ATC include only cleared MWh. For 
+segments with ATC, we calculate a “loading factor” based on the scheduled transactions and ATC 
+on the segment during each 15-minute interval. It is the portion of the path used in that interval 
+relative to the maximum amount that could have been used based on the ATC. We also calculate 
+how each segment was utilized by interval during the period, to wit, the interval was either:3  
+(1) Partially used (MWs cleared were less than ATC or there was no ATC);  
+(2) Fully Used, ATC was used up for the interval; 
+(3) Unavailable, no ATC; and 
+(4) Uncleared (no schedules on the segment). 
+Table 1:  Statistics for Most Utilized SEEM Segments  
+January 2023 to April 2024 
+ 
+ 
+2  It is not unusual for transmission paths to have no ATC value posted, and not just for the SEEM transmission 
+service (NFEETS).     
+3  We use a threshold of < 4 MW to identify segments fully used or unavailable for the values below. 
+Min Median Max MWhs Intervals % Intervals % Intervals % Intervals %
+1 F/TEC/TEC-FPC// 0 1,815 3,437 185,509 1.42% 15,872 34% 4 0% 108 0% 13724 29%
+2 F/FPC/FPC-SOCO// 0 128 370 155,657 15.81% 6,764 14% 713 2% 11,713 25% 10523 23%
+3 SS/SOCO/TVA-SOCO// 0 1,177 1,571 125,803 0.93% 4,013 9% 0 0% 4 0% 42626 91%
+4 S/CPL/CPLE-DUK// 0 5,208 20,655 115,574 0.20% 4,787 10% 5 0% 140 0% 41711 89%
+5 S/TVA/TVA-SOCO// 0 2,905 3,000 112,458 0.36% 3,415 7% 6 0% 2,014 4% 41208 88%
+6 F/FPC/TEC-SOCO// 0 128 370 107,528 10.92% 9,236 20% 471 1% 11,693 25% 8313 18%
+7 SS/SOCO/FL-SOCO// -81 556 1,369 100,390 2.02% 7,773 17% 4 0% 493 1% 23258 50%
+8 S/SC/SOCO-SC// 0 1,333 2,460 87,041 0.62% 7,038 15% 71 0% 3,873 8% 35661 76%
+9 S/DUK/CPLE-SOCO// 0 2,063 2,335 85,636 0.40% 4,012 9% 3 0% 2,352 5% 40276 86%
+10 F/FPC/TEC-FPC// 0 1,866 3,486 77,981 0.58% 10,290 22% 0 0% 84 0% 19339 41%
+11 F/JEA/SOCO-JEA// 0 542 869 74,642 1.92% 9,983 21% 31 0% 1,271 3% 18318 39%
+12 S/TVA/TVA-DUK// 0 355 430 69,914 1.79% 2,155 5% 23 0% 3,635 8% 40830 88%
+13 SS/SOCO/DUK-SOCO// -62 833 1,141 65,613 0.70% 2,341 5% 81 0% 118 0% 44103 95%
+14 S/CPL/DUK-CPLE// 0 3,367 8,120 57,018 0.14% 3,683 8% 1 0% 286 1% 42673 91%
+15 S/DUK/TVA-DUK// 0 692 692 53,757 0.78% 1,632 3% 128 0% 1,493 3% 43390 93%
+16 S/CPL/CPLE-SC// 0 2,580 4,428 52,571 0.17% 3,512 8% 10 0% 855 2% 42266 91%
+17 P/LGEE/TVA-LGEE// 0 1,421 4,624 49,764 0.28% 1,854 4% 1 0% 1,368 3% 43420 93%
+18 S/TVA/SOCO-TVA// 0 2,376 3,000 46,426 0.17% 1,829 4% 6 0% 964 2% 43844 94%
+19 S/SC/CPLE-SC// 0 1,641 3,423 46,415 0.26% 3,239 7% 15 0% 3,418 7% 39971 86%
+20 S/DUK/SOCO-DUK// 0 1,720 2,264 42,839 0.24% 2,597 6% 10 0% 2,817 6% 41219 88%
+21 SS/SOCO/FL-TVA/MULTIPATHALIAS/ -81 556 1,369 40,608 0.82% 1,893 4% 0 0% 493 1% 29142 62%
+22 SS/SOCO/SOCO-SOCO// 39,640 43,556 44,230 38,563 0.01% 2,222 5% 0 0% 0 0% 44421 95%
+23 SS/SOCO/FL-SC/MULTIPATHALIAS/ -200 193 768 37,778 2.33% 3,223 7% 386 1% 1,818 4% 26101 56%
+24 SS/SOCO/SOCO-SC// -617 222 876 35,738 1.24% 2,730 6% 282 1% 1,990 4% 41641 89%
+25 P/LGEE/LGEE-TVA// 0 1,623 4,036 34,040 0.19% 1,860 4% 9 0% 1,009 2% 43765 94%
+Rank
+UnclearedLoading 
+Factor
+Segment
+ATC Partially Used Fully Used Unavailable
+=====PDFPAGE 12=====
+ 2023 Annual Audit Report on the  
+ Southeast Energy Exchange Market
+  
+11 
+ 
+It is notable that the top two segments facilitate trades from Florida to the legacy SEEM members, 
+even though Florida members were full participants in only 9 of the 16 months in the table.  These 
+statistics also indicate that among these most utilized segments, ATC remains available for SEEM 
+trades. For example, many of the top paths have over 90 percent of their intervals uncleared. 
+Nonetheless, there are many instances when segments are constrained. A constrained segment is 
+one where either (1) the segment is completely used by SEEM (“Fully Used” column in the table) 
+or (2) ATC is insufficient (less than 4 MW) prior to SEEM matching (the “Unavailable” column 
+in the table). 
+It is difficult to draw overall conclusions regarding transmission availability from segment-level 
+information. Therefore, we summarize the usage for all segments in Table 2. During the period, 
+total segment intervals is the product of all 309 segments and the number of intervals, which 
+yields over 10 million segment intervals.   
+Table 2: Summary of All Segments 
+January 2023– April 2024 
+ 
+The results in Table 2 show: 
+• The two circumstances when a segment is constrained (Cases (2) and (3)) occurred in 
+roughly 700,000 segment-intervals, or almost 7 percent of all segment intervals. 
+• The constraint segments were almost always because the ATC was insufficient to 
+schedule (i.e., ATC < 4 MW) rather than because it was fully used by SEEM matches.  
+• The most common outcome (more than 91 percent of all segment intervals) was that they 
+were “Uncleared” (Case 4), where ATC was available, but the segment was not used 
+because no economic transactions were cleared by the SEEM model over that segment. 
+• The third most common outcome were segments that were “Partially Used” (Case 1), 
+where the segment was partially used by the SEEM market.  
+Overall, these results indicate that transmission was generally available to facilitate economic 
+transactions in the SEEM region.  As we discussed above, transmission loss costs were a larger 
+factor in preventing economic trades from being consummated than transmission constraints. 
+Further insight on constrained segments can be gained from Table 3. It shows the 25 segments 
+most often unavailable to SEEM. Even though these are the most unavailable segments, they are 
+still available most of the time. Overall, the evaluation of individual segments indicates the 
+system is largely unconstrainted for SEEM activity. 
+Intervals %
+1 Partially Used 206,882 2.0%
+2 Fully Used 5,711 0.1%
+3 Unavailable 698,030 6.7%
+4 Uncleared 9,482,307 91.2%
+Cases
+=====PDFPAGE 13=====
+ 2023 Annual Audit Report on the  
+ Southeast Energy Exchange Market
+  
+12 
+ 
+Table 3: Most Constrained SEEM Segments 
+January 2023 – April 2024 
+ 
+D. Market Concentration 
+Economists measure market shares to get a general view of the competitiveness of a market. It is 
+not determinative of the existence of market power, but it is useful for an overall view. Figure 5 
+shows the monthly share of matched transaction of the largest two sellers along with the 
+Herfindahl Hirschmann Index (HHI), defined below. The bars in this figure stack the two top 
+sellers during the month.  
+Figure 5: Seller Market Share Statistics  
+November 2022 – April 2024 
+ 
+Min Median Max MWhs Intervals % Intervals % Intervals % Intervals %
+1 F/JEA/SEC-JEA/SSN-JEA/ 0 0 589 0 0.00% 0 0% 0 0% 25,027 54% 4576 10%
+2 S/TVA/AECI-CPLW// 0 2 308 275 0.03% 32 0% 7 0% 23,549 50% 23055 49%
+3 S/AECI/TVA-AECI// 0 61 1,112 10,068 0.28% 562 1% 81 0% 21,969 47% 24031 52%
+4 S/TVA/CPLW-LGEE// 0 276 308 2,763 0.14% 132 0% 1 0% 19,114 41% 27396 59%
+5 S/TVA/TVA-CPLW// 0 276 308 10,385 0.49% 417 1% 2 0% 17,053 37% 29171 63%
+6 S/CPL/CPLW-TVA// 0 261 308 0 0.00% 0 0% 0 0% 16,530 35% 30113 65%
+7 S/TVA/SOCO-CPLW// 0 276 308 43 0.00% 11 0% 0 0% 16,273 35% 30359 65%
+8 S/TVA/LGEE-CPLW// 0 276 308 2,577 0.12% 197 0% 2 0% 15,969 34% 30475 65%
+9 S/TVA/CPLW-AECI// 0 276 308 1,052 0.05% 72 0% 0 0% 15,917 34% 30654 66%
+10 S/CPL/TVA-DUK// 0 276 7,928 13,280 0.60% 573 1% 60 0% 15,566 33% 30444 65%
+11 S/TVA/DUK-CPLW// 0 276 308 0 0.00% 0 0% 0 0% 15,504 33% 31139 67%
+12 S/CPL/DUK-TVA// 0 276 3,482 6,562 0.29% 339 1% 15 0% 15,501 33% 30788 66%
+13 S/CPL/TVA-CPLW// 0 276 789 0 0.00% 0 0% 0 0% 15,489 33% 31154 67%
+14 S/TVA/CPLW-DUK// 0 276 308 0 0.00% 0 0% 0 0% 15,028 32% 31615 68%
+15 S/TVA/CPLW-SOCO// 0 276 308 395 0.02% 40 0% 0 0% 14,847 32% 31756 68%
+16 S/TVA/CPLW-TVA// 0 276 308 2,352 0.10% 121 0% 0 0% 14,843 32% 31679 68%
+17 S/TVA/AECI-LGEE// 0 77 473 217 0.01% 10 0% 11 0% 14,048 30% 32574 70%
+18 S/SCEG/SOCO-SCEG// 0 737 99,999 14,699 0.15% 1,585 3% 26 0% 12,389 27% 32643 70%
+19 F/FPC/SEC-SOCO/SSO-SOCO/ 0 104 370 0 0.00% 0 0% 0 0% 12,153 26% 17560 38%
+20 F/FPC/FPC-SOCO// 0 128 370 155,657 15.81% 6,764 14% 713 2% 11,713 25% 10523 23%
+21 F/FPC/TEC-SOCO// 0 128 370 107,528 10.92% 9,236 20% 471 1% 11,693 25% 8313 18%
+22 F/FPC/SEC-SOCO/SSN-SOCO/ 0 116 370 0 0.00% 0 0% 0 0% 11,597 25% 18116 39%
+23 F/FPC/GVL-SOCO// 0 131 370 0 0.00% 0 0% 0 0% 11,581 25% 18132 39%
+24 S/TVA/AECI-DUK// 0 103 430 2,484 0.15% 221 0% 138 0% 10,887 23% 35397 76%
+25 S/TVA/AECI-SOCO// 0 116 473 12,828 0.72% 750 2% 351 1% 10,330 22% 35212 75%
+Unavailable Uncleared
+Rank Segment
+ATC Loading 
+Factor
+Partially Used Fully Used
+
+=====PDFPAGE 14=====
+ 2023 Annual Audit Report on the  
+ Southeast Energy Exchange Market
+  
+13 
+ 
+Not surprisingly, the share of the top seller, as well as the share of the top two, declined once the 
+Florida participants full joined in July 2023. The chart also shows the HHI has declined. The HHI 
+is a measure of market concentration and is used to determine market competitiveness, often on a 
+relative basis over time or as a result of structural changes like a merger or divestiture.  It is 
+calculated by squaring the market share of each firm competing in a market and then summing the 
+resulting numbers. It can range from close to 0 to 10,000, with lower values indicating a less 
+concentrated market. A single-seller monopoly market would have an HHI of 10,000 = 100 x 100. 
+A perfectly competitive market where no firm has an appreciable market share, the HHI is close 
+to 0. The US antitrust agencies (FTC and DOJ) consider markets with: 
+• HHI greater than 1800 to be highly concentrated;  
+• one with an HHI between 1000 and 1800 to be moderately concentrated; and  
+• one with an HHI less than 1000 to be unconcentrated.   
+The HHI indicates that the SEEM market has highly-concentrated in most months. However, the 
+HHI has come down since July and has remained close to 1800. Although this is close to the 
+highly-concentrated range, it has been falling and the correlation of prices with fuel prices 
+indicates that the market has performed competitively. Figure 6 shows the buyer concentration. 
+Figure 6: Buyer Market Share Statistics  
+November 2022 – April 2024 
+ 
+The statistics show a trend similar to the seller market shares.  The entry of Florida participants 
+coincided with a decline in buyer concentration, although there was a two-month lag in the 
+decline in the share of the largest buyers. These declines, together with the uptrend in matched 
+trades are indicative of a market evolving to greater liquidity and competitiveness.  
+
+=====PDFPAGE 15=====
+ 2023 Annual Audit Report on the  
+ Southeast Energy Exchange Market
+  
+14 
+ 
+IV.   CONCLUSIONS AND RECOMMENDATIONS 
+Our evaluation of SEEM operations since November 2022 has shown implementation and 
+operation of the SEEM platform has been successful. In 2023, the Florida participants were 
+successfully integrated, and liquidity has continued to improve as a result. This has also 
+contributed to the competitive performance of the market.  
+In the course of our auditing, we have had occasion to be contacted by or we contacted traders to 
+address various issues that arise.  We have also solicited impressions of the SEEM market from 
+four traders for this report. Each gave us a positive review of their experiences with SEEM. They 
+reported the system is creating value for their operations and they expressed optimism that the 
+system will continue to expand opportunities.  
+Near-Term Improvement 
+In evaluating the performance of the SEEM market over the past year, we consider the 
+effectiveness of the price discovery provided by the market. SEEM publishes the daily average 
+price for transactions after the day. This limits real-time price discovery. In order to improve real-
+time price discovery, we recommend that SEEM:   
+Publish interval average prices in real time 
+Publishing hourly prices in real time would allow participants to be aware of the prevailing 
+clearing prices in the intervals over the most recent hour or two. This could produce significant 
+benefits because it would inform:  
+• More competitive and efficient bids and offers; and 
+• Other real-time decisions by participants (e.g., starting a fast start unit). 
+Long-Term Improvements 
+Given the solid performance of the SEEM platform system, it holds promise to expand the system 
+to include longer timeframes. The current SEEM market facilitates very short, near-term 
+exchanges of economic energy.  Additional benefits and efficiency could be achieved by 
+transacting further ahead and for longer periods, potentially including: 
+• Hourly or multi-hour real-time transactions facilitated during the operating day.  
+• A day-ahead clearing of bids and offers to facilitate hourly trades for the following day.  
+In either case, the main difference between these timeframes and the current market is that holders 
+of transmission reservations would have to release the transmission.  The current SEEM market 
+uses unscheduled available transmission capability after the hourly schedules are processed. 
+Hence, the transmission is released and made available at no cost. This would not be possible for 
+=====PDFPAGE 16=====
+ 2023 Annual Audit Report on the  
+ Southeast Energy Exchange Market
+  
+15 
+ 
+longer lead-time transactions because the transmission reservations could potentially still have 
+significant value in these timeframes. Therefore, implementing hourly real-time or day-ahead 
+transactions would require: 
+• Offers by the holders of transmission reservations to make them available at a submitted 
+cost (does not exist in the current market); and 
+• Bids by buyers and offers by sellers that are comparable to the current market. 
+We recommend that SEEM consider:  
+Expanding its market to include intra-day real-time trades and day-ahead hourly trades.  
+Both expansions would facilitate fuller utilization of the transmission system. However, an hourly 
+day-ahead market would likely be the most beneficial because it could lead to changes in resource 
+commitments that would lower the costs of service load in the region.   
+ 
+ 
+ 

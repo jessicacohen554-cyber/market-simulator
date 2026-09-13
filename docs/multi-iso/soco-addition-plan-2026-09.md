@@ -38,11 +38,12 @@ silent on a mechanical step of registration, **the SPP plan's §2.3 / §7 is the
 | # | Done means | Surface |
 |---|---|---|
 | 1 | `"SOCO"` in `config/iso_configs._ISO_BUILDERS`; `get_iso_config("SOCO").validate_topology()` passes; every ISO-keyed registry has a SOCO entry or a documented exclusion | `src/market_sim/` |
-| 2 | A **2023–2025** backcast keeper (rule 16 `[R-ALLYEARS]`) scored under whatever rubric card **S2** produces, and registered on the backcast dashboard **with whatever determination it earns, reported at full magnitude** | `frontend/data/backcast/keepers/SOCO.json`, `backcast-runs.html#iso=SOCO`, `calibration-status.html#iso=SOCO` |
+| 2 | A **2023–2025** backcast keeper (rule 16 `[R-ALLYEARS]`) scored under card **S2**'s ruling — on the no-price branch it may **never** read `CALIBRATED`, is scored on C1/C2/C4/C6/C8, and names the price gap on its determination basis at full magnitude — and registered on the backcast dashboard **with whatever determination it earns** | `frontend/data/backcast/keepers/SOCO.json`, `backcast-runs.html#iso=SOCO`, `calibration-status.html#iso=SOCO` |
 | 3 | `docs/codebase-site/data/mechanism-matrix/SOCO.js` shard live with a cell for every mechanism id; `docs/mechanism-testing-matrix.md` §5.8 SOCO lever queue | matrix (rule 28 `[R-MECH-MATRIX]`) |
 | 4 | `docs/calibration-log/soco.md` open; docs/site prose says eight regions; `docs/multi-iso/00` §0/§3 extended | docs |
 | 5 | **The seven existing keepers' cache keys never move** at any wave (no new `ScenarioConfig` field, no default flip, no `results/cache.py` edit) | `tests/regression/test_persisted_identity.py`, keeper `run_config.json` |
 | 6 | Forecast-program entry (T1-F hindcast, `program-status.json` row, `GOLDEN_ISOS`) — **ROUTED to the capx director, never this desk** (card S10) | `frontend/data/forecast/` |
+| 7 | **Every promotion after the first leaves the invariant true**: every registered SOCO run is the designated keeper or stamped to it, and SOCO's registered year set never shrinks — `audit_keepers.py` **E13** green (rule 35 `[R-PROMOTE]`, gate G21) | `frontend/data/backcast/registry/`, `keepers/SOCO.json` |
 
 What this plan does **not** charter: any change to another ISO's seam pricing; any change to the
 rubric (card S2 *asks*; only the owner rules); any forecast-namespace write (card S10).
@@ -176,9 +177,19 @@ The two live options, and the reason both go to the owner as one card:
 The recommendation is **(a) attempted, (b) requested in parallel**, so the program is never blocked
 on the ETL and never quietly ships a price claim it cannot support.
 
+**RULED 2026-09-13 (desk r#2): both.** The owner took the recommendation as served — SOCO-13 is
+chartered with its STOP gate, **and** the fallback class is ruled in advance: a SOCO run with no
+price benchmark reads a determination naming its own basis (e.g. `PHYSICALLY CALIBRATED — price
+unscored, no public price exists`), scored on C1/C2/C4/C6/C8, **never `CALIBRATED`**, with the
+price gap on the determination basis at full magnitude. Full ruling text and its five binding
+consequences: §3 card S2. What the ruling does **not** do is write the scorer — that is card
+**S11**, and until it lands `scripts/calibration_verdict.py` carries no branch that can express
+this determination, so W4 cannot score. Gate **G17** is untouched: a neighbouring market's hub is
+still refused.
+
 ---
 
-## 3. The owner cards S1–S10
+## 3. The owner cards S1–S11
 
 Recommendation first and labelled; rulings appended to each row **verbatim** and numbered in the
 ledger §2. **S1 and S2 are served at sitting #1** (S2 gates the whole scoring design and its answer
@@ -187,8 +198,8 @@ the SPP precedent ("let the Phase-0 audit decide the topology") applies.
 
 | Card | Question | Recommendation to present | Evidence it needs | Ruling |
 |---|---|---|---|---|
-| **S1** the key | Register the region as `SOCO`, `SOUTHERN`, or `SERC-SE`? | **`SOCO`** — it is the EIA-930/EIA-860 balancing-authority code, it is already the filename convention on disk (`SOCO hourly.parquet`, `SOCO_fueltype.parquet`), and it is *honest*: the docs then say "balancing authority", never "ISO". `SERC-SE` is refused: SERC-SE is a NERC assessment area containing TVA, Duke and others that this program does not model | §2.1 | — |
-| **S2** THE RUBRIC / PRICE CARD | SOCO has no LMP and never will (§2.6). What is the price benchmark, and what may a SOCO run be *called*? | **BOTH: (a) charter SOCO-13 to build the FERC-EQR footprint hourly index with a STOP gate, AND (b) rule now on what a run reads if (a) fails** — the desk's proposal for (b) is a determination that names its own basis (e.g. `PHYSICALLY CALIBRATED — price unscored, no public price exists`), scored on C1/C2/C4/C6/C8, never `CALIBRATED`, with the price gap on the determination basis at full magnitude. Refuse a neighbouring-hub proxy outright | §2.6; SOCO-13's reconciliation | — |
+| **S1** the key | Register the region as `SOCO`, `SOUTHERN`, or `SERC-SE`? | **`SOCO`** — it is the EIA-930/EIA-860 balancing-authority code, it is already the filename convention on disk (`SOCO hourly.parquet`, `SOCO_fueltype.parquet`), and it is *honest*: the docs then say "balancing authority", never "ISO". `SERC-SE` is refused: SERC-SE is a NERC assessment area containing TVA, Duke and others that this program does not model | §2.1 | **RULED 2026-09-13 (desk r#2), owner, verbatim: "SOCO (Recommended) — The EIA-930/EIA-860 balancing-authority code. Already the on-disk filename convention (`SOCO hourly.parquet`, `SOCO_fueltype.parquet`), so no crosswalk is invented. Lets every doc say 'balancing authority' rather than 'ISO'."** The key is `SOCO`; `ISO_EV_KEY["SOCO"] = "O"` and the shard filename `SOCO.js` follow from it |
+| **S2** THE RUBRIC / PRICE CARD | SOCO has no LMP and never will (§2.6). What is the price benchmark, and what may a SOCO run be *called*? | **BOTH: (a) charter SOCO-13 to build the FERC-EQR footprint hourly index with a STOP gate, AND (b) rule now on what a run reads if (a) fails** — the desk's proposal for (b) is a determination that names its own basis (e.g. `PHYSICALLY CALIBRATED — price unscored, no public price exists`), scored on C1/C2/C4/C6/C8, never `CALIBRATED`, with the price gap on the determination basis at full magnitude. Refuse a neighbouring-hub proxy outright | §2.6; SOCO-13's reconciliation | **RULED 2026-09-13 (desk r#2), owner, verbatim: "Both: build the EQR index AND rule the fallback class now (Recommended) — Issue SOCO-13 to build a footprint-hourly volume-weighted price index from FERC EQR transaction data, with a STOP gate registered before any data is read; AND rule now that if it fails, a SOCO run reads a determination that names its own basis (e.g. PHYSICALLY CALIBRATED — price unscored, no public price exists) scored on C1/C2/C4/C6/C8, never CALIBRATED, with the price gap on the determination basis at full magnitude."** Consequences, binding on every later lane: **(i)** SOCO-13 is UNBLOCKED and was issued at r#2; **(ii)** a SOCO run may **never** read `CALIBRATED` on the no-price branch, and the price gap is reported at full magnitude on the determination basis — never suppressed, never caveated away; **(iii)** the fallback class is scored on **C1/C2/C4/C6/C8 only**; **(iv)** gate G17 stands unchanged — a neighbouring hub is still refused, ruling or no ruling; **(v)** the exact label wording and the `scripts/calibration_verdict.py` amendment that implements the class are **card S11** — the ruling authorizes the class, it does not write the scorer |
 | **S3** topology | 1 zone (copperplate) vs **3** (Alabama Power / Georgia Power / Mississippi Power) | **3 zones with Tier-3, documented, non-binding TTCs** — the exact SPP-20 precedent. The OpCo split is real structure (rule 1 `[R-STRUCT]`: a real structure enters regardless of fit), the load side is measurable per OpCo (§2.5) and the fleet splits cleanly on state FIPS; what does *not* exist is a published internal transfer limit, so the TTCs register Tier-3 and **cannot bind**, and their derivation becomes the first pre-declared structural lever (SOCO-54). Note plainly: with no zonal price (card S2) there is **no zonal price benchmark**, so the zones are validated on load and dispatch, not on spread | SOCO-10 fleet-by-state; SOCO-11 FERC-714 reconciliation | — |
 | **S4** seams | SOCO is a net exporter of 10.2–13.0 TWh/yr (§2.1). Served schedule or priced neighbours? | **Served measured EIA-930 `Total interchange`** for the first keeper (the PJM/NYISO/NEISO/SPP precedent, playbook §8.2, rule-13 admissible). Priced `NeighborInterface`s (TVA, MISO-South, Duke/CPLE, the Florida BAs, Santee Cooper) registered **default-off** and validated later. **Rule 25 `[R-ISO-SCOPE]`: this desk never touches how MISO or PJM price their side of any seam** | SOCO-11 DIBA duration curves | — |
 | **S5** scarcity / VOLL | SOCO has no offer cap and no scarcity pricing — there is no market to cap | **No ORDC, no scarcity seed.** VOLL is the LP's slack penalty and must still be a cited number: propose an economic VOLL from a published Southeast value-of-service study or the DOE/LBNL ICE calculator, **not** the $2,000 FERC-831 ceiling every market ISO in this repo carries (831 caps *offers*; SOCO takes no offers). If no citable value survives Phase 0, fall back to $2,000 **with the misalignment stated on the field** | SOCO-10 registry-values table | — |
@@ -197,6 +208,7 @@ the SPP precedent ("let the Phase-0 audit decide the topology") applies.
 | **S8** mid-window nuclear commissioning | **Vogtle 3 (1,114 MW) operating 2023-07 and Vogtle 4 (1,114 MW) operating 2024-04** — both *inside* the backcast window; measured nuclear generation steps 52.4 → 63.0 → 64.2 TWh across the three years | The fleet must be **per-year vintage-gated** so 2023 carries Vogtle 3 from July and 2024 Vogtle 4 from April. Phase 0 must establish that the existing vintage machinery (`data/raw/eia-860/vintage_<yr>/`) resolves a **within-year** COD, and if it resolves only to a year, the misalignment is documented and its energy error quantified before any solve | SOCO-10 | — |
 | **S9** `TAIL_THRESHOLD` | $200 / $300 / n-a | **Deferred to after card S2.** With no price series there is no tail to threshold; with an EQR index the threshold is set from the *measured* distribution, never chosen to make C3c pass (rule 1 `[R-STRUCT]`) | SOCO-13 | — |
 | **S10** W6 routing | who charters forecast-program entry | **ROUTE to the capx director** with a card once a keeper exists; this desk never writes `program-status.json` / `ff-verdicts.json` / `GOLDEN_ISOS` | — | — |
+| **S11** who implements S2's determination class | Card S2 is ruled, but the class does not exist in `scripts/calibration_verdict.py` yet. Who charters the scorer amendment — this desk, or whoever owns the rubric? | **This desk charters it as SOCO-22 `[FABLE]`, scoped to ADDING a determination branch that no existing ISO can reach** (predicate: the ISO has no `actual_lmp.json` block, so C3a/C3b/C3c are unscored), with a byte-identity proof over all seven registered keepers' verdicts as its exit. Reason: it is a SOCO blocker (W4 cannot score without it), it is one file, and the alternative — routing it to a desk that has no reason to prioritise it — is how R-a sat open. **Refuse any version that touches an existing criterion's tiering, budget or threshold.** If you would rather the rubric owner do it, say so and the desk routes it instead | card S2 (ruled) | **PENDING — due sitting #3** |
 
 Defaults recorded here so no lane re-litigates them (no card): `_MULTI_YEAR_ISOS` gains SOCO in W2
 (rule 16 — a single-year SOCO keeper is refused from day one); `ISO_EV_KEY["SOCO"] = "O"` (`S` is
@@ -298,13 +310,15 @@ charter's owner ruling O-3 carries over).
 | G10 | Neighbour-name collision in `data/neighbor_price._HR_GAS_ELASTIC` (keys are GLOBAL) | W2 | SOCO's neighbours are `TVA` / `MISO` / `DUKE` / `FLORIDA`; assert uniqueness |
 | G11 | `run_isos_concurrent.py` KeyError; `calibration-solve.yml` dropdown lacks SOCO | W2 | in SOCO-20 |
 | G12 | `load_forecast/soco.py` cannot register without a real edition/vintage | W1→W2 | manifest row 7 is a **W2 PRECONDITION** |
-| G13 | Screen bundle left in `results/calibration/` → parity gate RED (rule 29(c)) | W4 | `.gitignore` the bundle family — **never `rm`** (rule 31 `[R-RETAIN]`, the ercot-255 incident) |
+| G13 | Bundle bytes stranded, or a dead bundle dir left in `results/calibration/` → parity gate RED (rule 29(c)) | W4 | **The `.gitignore` is the PARENT's tree, never the shard's** (rule 34 `[R-SHARD-PROMOTABLE]` (a), corrected 2026-09-12). The SHARD **pushes its bundle to its own branch** — append a `.gitignore` NEGATION for its own out-dir, then a **PLAIN `git add`, never `git add -f`** (the `-f` form is what the auto-mode classifier refuses, and the refusal hardened a shard's permission state in miso-255) — and the bundle **must include `dispatch/<year>_P1.parquet`** or registration raises `FileNotFoundError`. The PARENT keeps per-year dirs out of `main` (rule 32(d)) by fetching, composing and committing only the composite. **Never `rm`** (rule 31 `[R-RETAIN]`, the ercot-255 incident). This gate is live evidence, not theory: `check_registry_payload_parity` is RED at the r#2 pin on another ISO's `caiso279_ablate_dswcouple_span` |
 | G14 | Live writers on the same dicts (capx D-lanes on `capacity_market.py`; SCN on `constants.py`; the SPP/MISO lanes on `interchange/spec.py`) | W2 | append-last + rebase-last; desk collision check at issuance (ledger §4) |
 | G15 | Desk grades a lane LOST on absence; reads green CI as proof | desk | handoff §0.3 |
 | G16 | SOCO appears on the forecast board before W6, or anyone but the capx director writes it | W2+ | MUST-NOT-TOUCH line in every charter |
 | G17 | **The price gap gets papered over** — a lane substitutes a neighbouring hub, an "adjusted" MISO-South series, or a cost-stack "price" and calls it the actual | every wave | §2.6 is quoted in every charter that touches scoring; card S2 is the only route |
 | G18 | A `DATA PROFILE: code` session sees `integration` tests red for an unbuilt `data/clean`, or a cold first pass of `tests/curation` reporting a spurious failure | every lane | build `data/clean` (`scripts/regenerate_clean.py`) before the gates; read a first-pass curation failure as cold-start until re-run |
 | G19 | **Two-timezone footprint** (AL/MS Central, GA Eastern) silently mis-bins an hour, and a DST transition doubles or drops one | W1→W3 | SOCO-10 establishes the committed parquet's convention **before** anything reads it; every derived series states its timezone; the 2025 7-hour shortfall (§2.1) is explained, not padded |
+| G20 | **A shard's container is reclaimed with the only copy of a result on it, or an idle shard blocks the next lane's concurrency** | W4, W5 | Rule 33 `[R-SHARD-ARCHIVE]`, added 2026-09-12 and not in the charter text. The trigger to archive is **"the parent has it"**, not "the shard finished": fetch the branch, check out the bundle, verify the config signature — **and verify retrievability first**, `git ls-tree -r <shard sha> -- <bundle path>` must return **more than zero files** (rule 34(d)); zero means the bytes are on a container only and the correct report is *not promotable without a re-solve, cost stated*. Record recovery by **full 40-char SHA, never a branch name** (33(d)). A branch carrying a bundle a promotion would register **stays until the owner rules** (33(f)(3) + rule 31). Branch deletion may simply be **refused — HTTP 403 measured 2026-09-12**, and the misleading symptom is `send-pack: unexpected disconnect` then `Everything up-to-date`; a session that cannot delete **says so and leaves the branch** rather than reporting a cleanup it did not perform |
+| G21 | **A promotion leaves the superseded keeper registered, or shrinks the ISO's year set** | W5 onward | Rule 35 `[R-PROMOTE]`, added 2026-09-12 and not in the charter text. The **promoting session** prunes the outgoing keeper's **three stores** (`registry/<id>.json`, `runs/<id>.js`, its bundle dir) via `scripts/prune_iso_runs.py --iso SOCO` — this SUPERSEDES rule 15's "pruned at the next registration" timing. Order is fixed and each step gates the next: **enumerate the year union over every SOCO sidecar and write it into the PRECOMMIT BEFORE pruning** (35(b) — the delete destroys the only mechanical record); the incoming keeper must **cover that union**, in its own bundle or in a run stamped to it under rule 30 `[R-TOUCHPOINT-FOLD]` (a) — a dangling `holdout.keeper` reads as unstamped and the year drops off the report silently (35(c)); **promote, verify with `audit_keepers.py` E1, THEN delete** (35(e)); `--force-uncite` is the **intended** route past the governance-mention guard, not an override (35(d)). Invariant, checked by `audit_keepers.py` **E13**: after a promotion every registered SOCO run is the designated keeper or stamped to it, and the year set is no smaller (35(f)). **This gate is live evidence, not theory:** `check_gate_a_provenance` is RED at the r#2 pin because NYISO's 2026-09-12 promotion did not sweep — the exact failure this rule was written out of, observable in another program the day after the rule landed |
 
 ---
 
@@ -342,8 +356,28 @@ on the same shared tables:
    while the bundle is alive** (rule 31 `[R-RETAIN]`; the container is ephemeral).
 7. **Every solve runs in a shard; the lane session never runs an LP** (rule 32 `[R-SHARD]`), and a
    registrable run is **ONE shard, ONE `--year 2023 2024 2025` invocation, ONE bundle**
-   (rule 32(b) — slim per-year fan-out is banned). The shard **pushes its bundle to its own branch**
-   (rule 34 `[R-SHARD-PROMOTABLE]`).
+   (rule 32(b) — slim per-year fan-out is banned). The shard **pushes its bundle to its own
+   branch** (rule 34 `[R-SHARD-PROMOTABLE]` (a)) — `printf '\n!results/calibration/<out-dir>/**\n'
+   >> .gitignore`, then `git add .gitignore && git add results/calibration/<out-dir>`: a **PLAIN
+   `git add`, NEVER `git add -f`** (the `-f` form is refused by the auto-mode classifier as
+   [Modify Shared Resources], and in miso-255 the refusal hardened the shard's permission state
+   until even the plain add was denied — costing a re-solve). The bundle **MUST include
+   `dispatch/<year>_P1.parquet`** or registration raises `FileNotFoundError`. **`.gitignore` is the
+   PARENT's tree, never the shard's** — a charter that tells a shard to gitignore or omit its
+   bundle is a defect in the charter, and the desk owns that defect. **A shard prompt never
+   passes `--no-container-preflight`** and reports its `container preflight:` and `memory peak:`
+   lines (rule 32(c)(8)).
+8. **Archive a shard the moment the parent has its bytes, not when the shard finishes** (rule 33
+   `[R-SHARD-ARCHIVE]`): fetch → check out → verify, and only then archive. Verify retrievability
+   before archiving anything — `git ls-tree -r <shard sha> -- <bundle path>` must return more than
+   zero files (rule 34(d)). Record recovery by **full 40-char SHA, never a branch name** (33(d)).
+   Never archive a running shard; never delete a branch carrying a bundle whose promotion the
+   owner has not ruled on (33(f)(3) + rule 31 `[R-RETAIN]`). Branch deletion may be refused —
+   **HTTP 403 measured 2026-09-12** — and a session that cannot delete says so.
+9. **A promotion is not done until the outgoing keeper's three stores are gone and the incoming
+   keeper carries every year SOCO has run** (rule 35 `[R-PROMOTE]`, gate G21). Enumerate the year
+   union into the PRECOMMIT **before** pruning; promote, verify (`audit_keepers.py` E1), then
+   `prune_iso_runs.py --iso SOCO`. **SOCO only** — never another ISO's shard.
 
 ### W1 — Phase 0/1 (issuable now; SOCO-10/11/12 are parallel, SOCO-13 needs only card S2's ruling)
 
@@ -677,8 +711,18 @@ The desk issues these against the SPP program's own W3/W4 charters, which are co
 - **SOCO-33** (seam derive) — served EIA-930 `Total interchange` (card S4).
 - **SOCO-34** (site + docs) — eight-region prose, `docs/calibration-log/soco.md` header.
 - **SOCO-40** (first solve) — **ONE shard, ONE `--year 2023 2024 2025`, ONE bundle** (rule 32(b));
-  the shard pushes its bundle to its own branch (rule 34); PRECOMMIT states the price posture from
-  card S2 **before** the solve; the promotion question is asked in-session (rule 31).
+  the shard pushes its bundle to its own branch by the §8.0 rule 7 mechanics — `.gitignore`
+  negation then a **plain `git add`, never `git add -f`**, bundle including
+  `dispatch/<year>_P1.parquet` (rule 34(a) as corrected 2026-09-12). PRECOMMIT states the price
+  posture from card S2's ruling **before** the solve — on the no-price branch the run may never
+  read `CALIBRATED` and the price gap is reported at full magnitude. The parent verifies
+  retrievability (`git ls-tree`, rule 34(d)) before archiving the shard (rule 33), asks the
+  promotion question **in-session while the bundle is alive** (rule 31 `[R-RETAIN]`), and states
+  in the RESULT where each bundle is and what a promotion would cost from that state (34(e)).
+  **Year set:** SOCO's first keeper is 2023–2025 and that IS the union, so rule 35(c) is
+  satisfied trivially — but manifest row 9 (holdout years 2019–2022) changes that the moment it
+  lands: from then on **every** SOCO solve batch covers the union, one shard per year (rule
+  34(c)), and any year not stamped to the keeper drops off the ISO's report silently.
 
 ---
 

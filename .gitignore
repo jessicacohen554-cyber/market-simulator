@@ -2101,3 +2101,14 @@ results/calibration/nyiso231_ctl_y2022/
 #                        RESULT); recovery 490ed8277eaa82a91548ff769a1d22390147f5b9
 results/calibration/nyiso230_arm_y2022/
 results/calibration/nyiso231_arm_y2022/
+# SPP-38 (lane spp-38) — the vintage-cache-repair re-solve of SPP's keeper.
+# The bundle IS REGISTERED on the dashboard (2026-09-13-spp-38-vintage-cache), so
+# rule 15 [R-DASHBOARD] requires its slim set + hourly/ sidecars in `main`; the
+# blanket hold this lane carried while the run was unregistered is therefore
+# lifted. The heavy layers (dispatch/, floors/, root *.parquet, unit_hourly_*,
+# network_*) stay excluded by section 8's standing slim-bundle rules above, and
+# the full bundle remains recoverable from the shard branch — rule 33(d) pin:
+#   git checkout 0b58650a323d4b2da2529511ba45dfb137cccb12 -- results/calibration/spp38_span
+#   git checkout ea3458ff92280a41fb532bc5f23ea481c3b3e689 -- results/calibration/_shared/SPP
+# Registration is NOT promotion: keeper 10 stays designated in keepers/SPP.json
+# until the owner rules (rules 31 [R-RETAIN] / 35 [R-PROMOTE] (e)).

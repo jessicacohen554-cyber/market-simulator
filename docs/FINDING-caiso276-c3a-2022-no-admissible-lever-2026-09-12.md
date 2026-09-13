@@ -240,6 +240,30 @@ simply priced above λ.
 model is emphatically not import-constrained, which kills the "clears deeper because the seam is
 exhausted" reading and independently corroborates caiso-275 Arm A from a fifth direction.
 
+> **[CORRECTED IN PLACE 2026-09-13 — caiso-279 + caiso-280. The numbers above are each
+> individually right; the bolded conclusion is FALSE for the object that actually binds.]**
+>
+> This table measures **PHYSICAL LINK** utilisation (`WECC_DSW>SP15_rest` 0.595,
+> `WECC_PNW>NP15` 0.241 on Dec 29–31, against static TTCs of 10,623 / 4,800 MW). It does
+> **not** measure the per-corridor **interface-group envelope**, which is a different LP row and
+> is at utilisation **1.000**. caiso-279 measured the group rows from the arm A
+> `hourly/network_2022.parquet`: `grp:+WECC_PNW>NP15` and `grp:+WECC_DSW>SP15_rest` sit at
+> `limit_up` for **72/72 hours** of Dec 29–31 with duals **−285.41** and **−261.94** $/MWh,
+> and bind **40.1 %** / **43.4 %** of all 8,760 hours and **95.4 %** / **92.1 %** of Dec 23–31.
+> So "binds in ZERO hours" should read **"the physical links bind in zero hours; the measured
+> import envelope binds in 93.1 % of Dec 23–31"**, and on those hours λ is set by an envelope
+> shadow price rather than by any generator's offer.
+>
+> **caiso-280 then measured whether that envelope is WRONG, and it is not — the sign is the
+> other way.** Against EIA-930 CISO BA-to-BA interchange, over Dec 23–31 the model imports
+> **7,337.9 MW** against CAISO's actual **5,564.6 MW** net / **6,098.4 MW** gross — the model is
+> **+1,773.3 MW (+31.9 %) over actual net and +1,239.5 MW over actual gross**, in 84.3 % of
+> window hours, **267.7 GWh** over the 9 days. The envelope binds *above* what the market
+> delivered. So §5b's headline claim — "the model is emphatically not import-constrained" —
+> survives **in its consequence** (import quantity is not the route to the 2022 residual) while
+> being wrong **in its mechanism** (the seam does bind; it simply binds generously). Full
+> measurement: `docs/RESULT-caiso280-the-envelope-binds-above-the-actuals-2026-09-13.md`.
+
 ### 5c — what IS marginal, and the λ-in-a-gap share
 
 | window | matched load share | **λ in a gap** | marginal HR (lw) | top marginal carriers |

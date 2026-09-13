@@ -39,6 +39,53 @@ until SPP-20 registers it; the parquets are the critical-path input for
 SPP-30's outage windows and thermal tranches. Their 2026 vintage is Q1,
 matching every other `<ST>_2026.parquet` in the corpus.
 
+**41 states since 2026-09-13 (SOCO-11): + AL GA**, the Southern Company
+(`SOCO`) footprint's two large CEMS states, landed for **2023–2026**
+(`docs/handoffs/FINDING-soco-11-2026-09-13.md`;
+`docs/multi-iso/soco-addition-plan-2026-09.md` §6 row 1). AL and GA carry
+65.8 GW of SOCO's 70.7 GW, so these eight files are the SOCO program's
+critical-path input (outage windows and thermal tranches, SOCO-30). **MS was
+already present** 2019–2026 from the MISO footprint and is not re-fetched —
+`data/raw` is immutable. SOCO is not a registered ISO yet, so AL/GA are absent
+from `campd.ISO_STATES` until SOCO-20 registers it. Their 2026 vintage is Q1,
+matching every other `<ST>_2026.parquet` in the corpus.
+
+    python scripts/data/fetch_campd_unit_level.py --year <2023|2024|2025> \
+        --states AL GA
+    python scripts/data/fetch_campd_unit_level.py --year 2026 --quarters 1 \
+        --states AL GA --holdout-intake SOCO
+
+All eight were verified **schema-equal to `MS_2024.parquet`** (re-checked
+against that exact sibling after the fact; the fetcher's own assertion
+compares against the same state's newest file, which for the first AL and GA
+files was `WY_2026.parquet`) and confined to their own year. Coverage is
+stable across the window — `AL` 23 facilities / 88 units, `GA` 32 / 131 in
+every year:
+
+| file | rows | facilities | units | span |
+|---|---:|---:|---:|---|
+| `AL_2023.parquet` | 740,328 | 23 | 88 | 2023-01-01 .. 2023-12-31 |
+| `AL_2024.parquet` | 772,992 | 23 | 88 | 2024-01-01 .. 2024-12-31 |
+| `AL_2025.parquet` | 770,880 | 23 | 88 | 2025-01-01 .. 2025-12-31 |
+| `AL_2026.parquet` | 190,080 | 23 | 88 | 2026-01-01 .. 2026-03-31 |
+| `GA_2023.parquet` | 1,147,560 | 32 | 131 | 2023-01-01 .. 2023-12-31 |
+| `GA_2024.parquet` | 1,150,704 | 32 | 131 | 2024-01-01 .. 2024-12-31 |
+| `GA_2025.parquet` | 1,147,560 | 32 | 131 | 2025-01-01 .. 2025-12-31 |
+| `GA_2026.parquet` | 282,960 | 32 | 131 | 2026-01-01 .. 2026-03-31 |
+
+**`AL_2023` is the one file that is not a clean units × hours rectangle** and
+the shortfall is EPA's, carried unmodified: five units stop reporting
+mid-year — Barry unit 8, Colbert `CCT9`/`CCT10`/`CCT11` (2,208 h each, Q1
+only) and Charles R Lowman `CC1` (4,416 h, H1) — for 30,552 rows against the
+88 × 8,760 rectangle. Every other seven file is exact. Note that Colbert is
+TVA's and Lowman is PowerSouth's: a *state* extract is not a *BA* extract, and
+the SOCO fleet crosswalk still has to filter these files to the SOCO BA.
+
+**No `SHA256SUMS.txt` rows are added for these eight.** That file's scope is
+the 35 gitignored `<ST>_2018.parquet` extracts only (see its own header); the
+2019–2026 files are tracked, so git's own blob hashes are their integrity
+record.
+
 **Back years 2019–2022 landed 2026-09-06 (SPP-15) for OK, NE and NM only** —
 twelve files (`docs/handoffs/FINDING-spp-15-2026-09-06.md`; charter
 `docs/multi-iso/spp-addition-plan-2026-09.md` §8 SPP-15, r#4 am.1; §6 row 15):

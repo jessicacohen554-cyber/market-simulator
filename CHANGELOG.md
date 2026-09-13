@@ -1,5 +1,77 @@
 # Changelog
 
+## 2026-09-13 — NWPP r#2: W1 issued, and two gates this program was chartered without
+
+Desk refresh r#2 (`docs/handoffs/nwpp-desk-ledger-2026-09.md`). Docs only — no code, no data, no
+registry; every existing keeper's cache key untouched by construction.
+
+- **W1 ISSUED — all four lanes**, verbatim from the plan's prompt pack with §8.0 pasted in and
+  `origin/main` pinned: **NWPP-10** (data audit + registry-values table + the TRE defect),
+  **NWPP-11** (CAMPD ID/OR/UT/WA + the per-BA EIA-930 *derive* + interchange + monthly hydro),
+  **NWPP-12** (WECC path ratings + WRAP + IRPs + NRC + fuel) — all `[OPUS]` — and **NWPP-13**
+  `[FABLE]`, the STOP-gated WEIM price index, which ruling N2 unblocked.
+- **NWPP-21 HELD, for a measured reason.** SOCO-21 was issued at the sibling desk's r#2 and has not
+  landed: the matrix base file still carries seven `isos`, there is no `SOCO.js` shard, and
+  `scripts/lib/mech_matrix.py` contains zero `SOCO` occurrences. Two lanes on one base file is the
+  collision this register exists for.
+- **A routed question answered instead of bounced.** NWPP-13's charter asked the desk whether
+  `data/raw/caiso-weim/` would be swept into the CAISO profile. Measured against
+  `configs/data-profiles.yaml`'s own substring rule: it would (`caiso-weim` contains `caiso`), while
+  `nwpp-weim` resolves to `shared` today and moves into the `nwpp` profile automatically once
+  NWPP-20 registers that token. The plan is corrected at all four places and the fixed text issued.
+- **Gate G13 REWRITTEN.** As chartered it read *".gitignore the bundle family — never `rm`"*, which
+  pre-orders the miso-255 incident: rule 34 `[R-SHARD-PROMOTABLE]` (a), corrected 2026-09-12 *after*
+  this program was chartered, requires the **shard** to push its bundle. G13 now states the seam —
+  `.gitignore` is the parent's tree; the shard appends a negation and uses a plain `git add`, never
+  `git add -f`; the bundle must carry `dispatch/<year>_P1.parquet`; nothing is `rm`'d before the
+  owner rules on promotion.
+- **Gates G23 and G24 ADDED**, for rules 33 `[R-SHARD-ARCHIVE]` and 35 `[R-PROMOTE]`, neither of
+  which had a gate in this plan. G24 is not housekeeping: `audit_keepers.py` E13 already fails at
+  this pin for MISO (×4) and SPP (×1).
+- **R-c re-measured and rewritten.** The feared divergence did not occur — SOCO's card S2 was ruled
+  in substantially the same terms as NWPP's N2. The live risk moved to the implementation:
+  `scripts/calibration_verdict.py` carries no branch that can express the ruled determination class,
+  so neither program's first keeper can score until one exists. Routed to the SOCO desk's card S11,
+  deliberately **not** carded here — one branch serves both programs.
+
+## 2026-09-13 — SOCO r#2: the price card is ruled, and the plan is reconciled with rules 33/34/35
+
+Desk refresh r#2 (`docs/handoffs/soco-desk-ledger-2026-09.md`). Docs only — no code, no data, no
+registry; every existing keeper's cache key untouched by construction.
+
+- **Card S1 RULED — the key is `SOCO`**, the EIA balancing-authority code already used as the on-disk
+  filename convention. `ISO_EV_KEY["SOCO"] = "O"` and the shard `SOCO.js` follow from it.
+- **Card S2 RULED — both limbs.** Southern publishes no LMP and SEEM publishes no price, while three
+  rubric criteria score against an hourly price series. The owner ruled: build the FERC-EQR footprint
+  index (lane SOCO-13) behind a STOP gate registered *before* any data is read, **and** rule the
+  fallback now — with no price benchmark a SOCO run reads a determination naming its own basis
+  (e.g. `PHYSICALLY CALIBRATED — price unscored, no public price exists`), scored on C1/C2/C4/C6/C8,
+  **never `CALIBRATED`**, with the price gap on the determination basis at full magnitude. Gate G17
+  is untouched: a neighbouring market's hub remains refused.
+- **Card S11 raised.** The ruling authorizes the determination class; it does not write it, and
+  `scripts/calibration_verdict.py` carries no branch that can express it — so W4 cannot score until
+  someone is assigned. Served at sitting #3.
+- **Lanes SOCO-13 `[FABLE]` and SOCO-21 `[OPUS]` issued**, verbatim from the plan's prompt pack.
+  SOCO-21's gate-independence from registration was measured, not assumed: neither
+  `scripts/lib/mech_matrix.py` nor `scripts/check_mechanism_matrix.py` validates the matrix ISO list
+  against `SUPPORTED_ISOS`, and the shard-migration test's own comment records SPP's column being
+  seeded before SPP's first keeper — an 8-ISO matrix over a 7-ISO registry is a supported
+  intermediate state.
+- **The plan is reconciled with three CLAUDE.md rules that landed after it was chartered.** Gate G13
+  as written told W4 to `.gitignore` the bundle family, which is exactly what rule 34(a) — corrected
+  2026-09-12 — calls *"a defect in the prompt"*: the **shard** pushes its bundle to its own branch via
+  a `.gitignore` negation and a **plain `git add`, never `git add -f`**, including
+  `dispatch/<year>_P1.parquet`; the `.gitignore` belongs to the parent's tree. G13 rewritten; **G20**
+  added for rule 33 `[R-SHARD-ARCHIVE]` (archive on "the parent has it", verify retrievability with
+  `git ls-tree` first, pin recovery to a full 40-char SHA, and the measured HTTP 403 on branch
+  deletion); **G21** added for rule 35 `[R-PROMOTE]` (prune the outgoing keeper's three stores in the
+  promoting session, enumerate the year union *before* pruning, promote → verify → delete,
+  `audit_keepers.py` E13 as the invariant). Collision rules §8.0 gained rules 8 and 9; the SOCO-40
+  charter and the definition of done were updated to match.
+- **Both new gates were observed live in other programs the same day**, which is why the edit was not
+  deferred: `check_registry_payload_parity` is RED on a dead CAISO bundle dir (G13's failure mode) and
+  `check_gate_a_provenance` is RED because NYISO's promotion did not sweep its superseded keeper
+  (G21's). Both routed, neither this desk's to fix.
 ## 2026-09-13 — NWPP addition program chartered: the first region that is a POOL of balancing authorities
 
 A chartering session for adding the **Northwest Power Pool / Western Power Pool footprint** as a registered
