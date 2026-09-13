@@ -1,5 +1,34 @@
 # Changelog
 
+## 2026-09-12 — SOCO addition program chartered: Hillabee is in a balancing authority, not an ISO
+
+Owner request: a plan and prompt pack to add "whatever ISO Hillabee gas plant in Alabama is in", using the
+SPP addition workstream as the reference. The chartering session measured the answer instead of assuming
+it. Committed: `docs/multi-iso/soco-addition-plan-2026-09.md`, `docs/handoffs/soco-desk-handoff-2026-09-12.md`,
+`docs/handoffs/soco-desk-ledger-2026-09.md`. No code, no data, no registry touched — every existing keeper's
+cache key is untouched by construction.
+
+- **The answer, measured off `data/raw/eia-860/`:** Hillabee Energy Center is EIA plant **55411**, Tallapoosa
+  County AL, 822.8 MW across three CC generators, balancing authority **`SOCO`** (Southern Company Services,
+  Inc. - Trans), NERC region SERC. It is in **no RTO/ISO**. North-Alabama's 8,396.4 MW is **TVA**, a different
+  BA, and is out of scope.
+- **Phase-0 census done at charter, so no lane re-derives it:** 335 plants / 786 generators / **70,665.7 MW**
+  (GA 41,284.4 · AL 24,494.0 · MS 4,577.7 · FL 309.6); demand **229.47 / 239.33 / 239.36 TWh** 2023/24/25;
+  a **net exporter** of 10.2 / 10.8 / 13.0 TWh; nuclear **52.4 → 63.0 → 64.2 TWh** across the Vogtle 3
+  (2023-07) and Vogtle 4 (2024-04) commissionings, both inside the backcast window.
+- **The program's defining problem, stated at charter rather than discovered in W4:** Southern publishes
+  **no LMP** and SEEM publishes **no price**, while three of the rubric's load-bearing criteria (C3a/C3b/C3c)
+  score against a committed hourly price series. Owner card **S2** is the only route: build a FERC-EQR
+  footprint index under a pre-registered STOP gate (lane SOCO-13, `[FABLE]`), and/or rule a determination
+  class for a region with no price benchmark. A neighbouring market's hub is refused in advance (gate G17).
+- **Two measured findings that redirect the standard recipe.** SOCO has **no EIA-930 sub-BAs** (the product
+  covers CISO/ERCO/ISNE/MISO/NYIS/PJM/PNM/SWPP only), so zonal load comes from **FERC Form 714** hourly
+  planning-area demand — reachable via PUDL (probed 206) where `ferc.gov` itself 403s. And CAMPD CEMS for
+  **AL and GA is absent** while MS is present, so the two states carrying 65.8 of the 70.7 GW are the
+  critical path (EPA bulk probed 200 anonymous, ~187 MB per state-year).
+- **Two firsts for this model, both gated:** a **two-timezone footprint** (AL/MS Central, GA Eastern —
+  gate G19) and the fleet's only **CAES** unit (McIntosh AL, 110 MW — card S7).
+
 ## 2026-09-08 — SPP re-baselined on the repaired inputs: the fuel mix is fixed, the price level is not (lane SPP-50)
 
 The batched re-baseline owner ruling P19b called for — SPP-48's wind LEVEL repair and both SPP-49 input
