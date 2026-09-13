@@ -2376,3 +2376,114 @@ HEAD · 1/13 `offer_curve_by_group` not read, re-cut or swept · 31 nothing dele
 certified out-of-sample skill claim.
 
 **Next shorthand: spp-38.**
+
+## spp-38 — 2026-09-13
+
+**THE REPAIR LANDED AND THE KEEPER WAS RE-SOLVED ON A CORRECT LP INPUT.** Run
+`2026-09-13-spp-38-vintage-cache` (bundle `results/calibration/spp38_span`) is **`CALIBRATED`**
+(rubric v3.7), grade **7 of 8**, **0 FAILS**, **1 ledgered C3c caveat**, 0 protective, free-class
+C1 **16/16 all · 12/12 free** — the SAME SHAPE as keeper 10 on every scored criterion. Repair
+commit `760012f7a12b5d6fae01c5a6a4c96c9dc8588ed9`, **merged to `main`**. Parent LP: **zero**;
+one shard, **9m35s wall, 6.12 GiB peak**, archived.
+
+**WHAT WAS FIXED.** SPP-37's defect, at **twelve** loaders rather than eleven: each public name is
+now an UNCACHED shim over a cached core keyed on the active EIA-860 directory. The twelfth,
+`eia860_selfcommit_scope_plants`, is vintage-blind by the same construction — a `maxsize=1` cache
+over a union of two loaders that both move — and its census "stable" reading was an artifact of
+the probe clearing the union but **not its two legs**, not a property of the data. Zero free
+parameters, zero `ScenarioConfig` fields, zero gates, **no matrix row and no cell verdict moves**
+(rule 28 does not reach a cache key). Basis rule 14 `[R-ACCURATE]`, never the residual.
+
+**PROVEN, NOT ASSERTED.** Census §2b: all twelve now `rekeys` on a warm cache. Census §5: the
+span-vs-single-year delta in the LP's own 2025 availability input goes **−5,817,173 MWh (18 bins)
+and +142,296 MWh (5 bins) → +0 MWh / 0 bins on BOTH overlays**. New guard
+`tests/unit/data/test_eia860_vintage_cache_keying.py`, 33 hermetic tests, pinning re-keying, the
+strict no-op at a constant vintage, and the `eia860_dir` first-parameter shape. Fast lane **9,410
+passed** vs the base's 9,377 with the **identical 16 pre-existing failures**, verified by
+re-running the lane on a stashed clean tree.
+
+**SPP-27's `reconstruct_bundle_fleet` ORDER-DEPENDENCE IS THE SAME DEFECT AND IS CLOSED BY THIS
+REPAIR** — no separate treatment needed. SPP 2025's `fleet_arrays.availability` digest, built
+alone vs after 2023→2024, **each leg in its own process**: pre-repair 7,580,565.41768 vs
+7,625,968.40751 (order-dependent), post-repair identical. The span held MORE availability, the
+same sign FINDING §4b measured from a different instrument. *Method note: the first attempt ran
+both legs in ONE process and passed for the WRONG reason — the alone-build populates the
+vintage-blind cache the chain then reads. Each leg must be isolated.*
+
+**THE 2023 SELF-CHECK PASSES EXACTLY** — year 1 in both constructions, so the cache cannot reach
+it: LW price **25.7428**, slack 0.0000, dump 0.0000, 0 hours > $200, max 61.4221, and **all
+fifteen class TWh at +0.0000**.
+
+**2024/2025 LAND ON THE CORRECT SINGLE-YEAR CONSTRUCTION, TO 4 dp** — every 2025 figure reproduces
+FINDING-spp-37 §4c's single-year column: LW **29.5377 → 30.0737**, slack **0 → 240.5966 MWh**,
+hours>200 **0 → 2**, COAL_PRB **77.4872 → 78.0526**, COAL_LIGNITE 6.5483 → 6.5890, CC_REGULAR
+36.1986 → 36.3783, CT_PEAKER 15.5101 → 15.9916, **ST_GAS 12.6132 → 11.3395** TWh. 2024: LW
+26.0214 → 26.3509, slack 370.1017 → **1295.6995** MWh, hours>200 7 → 8. Energy conserved to
+≤ 0.0026 TWh; dump 0.0000 everywhere.
+
+**THIS OVERTURNS A CONCLUSION IN KEEPER 10'S OWN PROMOTION NOTE.** That note dismissed three
+single-year fan-out shards' slack readings — 1295.6995 MWh in 2024, 240.5966 in 2025 — as "a
+CONSTRUCTION MISMATCH IN THE PARENT'S OWN DESIGN" and declared the span-vs-span A/B "the valid
+one". **The repaired span reproduces those exact numbers.** The single-year legs were right; the
+span carried the defect. The SPP-36 A/B itself survives (both legs shared the identical stale
+state, so the DIFFERENCE is real) but the LEVEL either leg reported for 2024/2025 was not. The
+note stands as the historical record; `docs/handoffs/RESULT-spp-38-vintage-repair-2026-09-13.md`
+is the correction.
+
+**GATES REPORTED AT FULL MAGNITUDE, GATED ON NOTHING.** C3a err % **+2.43/+2.24/+3.29 →
++2.43/+3.54/+5.17**; C3b NRMSE **0.176/0.175/0.175 → 0.176/0.169/0.188** (2024 improves, 2025
+degrades); all six inside their bands, no C1 status flip, every 2025 C1 row SKIPPED on the
+preliminary EIA-923 vintage. **Two of three C3a years get worse and the repair stays** — rule 14's
+own instruction — and C3b 2024 improving is not evidence for it either. **No screen gate and no
+residual gate existed for this arm, deliberately:** a known-wrong LP input is not a candidate
+mechanism competing against a correct one (rule 29 `[R-SCREEN]` governs mechanisms). Diagnostics
+carry **identical non-zero row counts** (D1 25, D2 15, D4 71, D5 8, D9 5, D10 6) — checked because
+a composite passes vacuously at zero rows. **D-4 still FAILS: card R-be is untouched.** Rule 21:
+**zero** free parameters; `build_dof_ledger.py` rebuilt at HEAD from the bundle's own config gives
+the same **5 / 3**.
+
+**G-DRIFT, AND ONE CORRECTION TO IT.** Recorded in the PRECOMMIT before the arm; form 4 valid, no
+control solve. `_hydro_benchmark_is_923_only("SPP", y)` reads **False** all three years, and keeper
+10's committed bundle **re-scored at this base to its exact committed determination**. *Corrected
+after the fact:* `plant_taxonomy.py` was NOT fully covered by that argument — the re-score reads a
+committed payload, not a rebuilt input store. The `eia923` shared-input hash moved
+(`58267fd3f822 → 7da41467dba7`) while all seven others are byte-identical, because
+`gov-hydro-seam-1` repaired `classify_plant` so prime mover `PS` returns `OTHER` not `hydro`.
+`data/raw` is unchanged between the bases, so it is a code effect. **Measured and separated, not
+folded in:** it moves the scored ACTUALS, not the LP — ≤ **+0.023 TWh** on any class, **hydro
+unmoved**, **zero status flips**.
+
+**REGISTRATION IS NOT PROMOTION.** `keepers/SPP.json`, `calibration-complete.json`,
+`prune_iso_runs.py` and the matrix keeper stamp are **untouched** (rules 31 `[R-RETAIN]` / 35
+`[R-PROMOTE]` (e): promote → verify → then delete). `audit_keepers` **E13 therefore reports the new
+run as registered-but-unstamped** — the expected state of an undecided promotion. Rule 35(b) year
+set enumerated first: SPP's registered union is exactly **{2023, 2024, 2025}**, which the new run
+covers, so a promotion would shrink nothing. The bundle is **committed and pushed** (the identical
+slim + `hourly/` set keeper 10 carries), so nothing is lost to this container; the full 125 MB
+bundle and 23 MB input store are pinned at `0b58650a323d4b2da2529511ba45dfb137cccb12` and
+`ea3458ff92280a41fb532bc5f23ea481c3b3e689`. Branch `claude/spp-38-span` is deliberately retained
+(rule 33(f)(3)) because it holds the only copy of the per-plant `dispatch/` layer a promotion
+registers. **SPP still has NO `complete` and NO `frontier`; this lane creates neither.**
+
+**INHERITED, CORRECTED.** (a) `offer_curve_by_group` is **not** "uniform 0.93" — 18 distinct values
+(0.5–15.0); the SHA-256 matched and is the binding check. (b) `results/calibration/spp36_2025` is
+**no longer** a parity offender — pruned upstream by `654c561a`; **SPP now has ZERO offenders**, the
+three remaining are CAISO's and NYISO's, raised not acted on; the §4c evidence stays recoverable at
+`18ef91756ac84482a78ea719c2fc8d57ec7d5cf5` (verified). (c) Keeper 10's note records C3b
+0.1760/**0.1658**/**0.1878**; the scorer reads 0.176/0.175/0.175 and an independent reconstruction
+off the committed sidecars gives 0.1760/0.1722/0.1753 — C3a reproduces to 4 dp on all three
+instruments, so it is the note's 2024/2025 C3b figures that are unreproducible. Nothing turns on it.
+
+**TWO LAUNCH-DISCIPLINE FAILURES IN THIS LANE'S OWN SHARD PROMPT**, neither covered by rule 32(c):
+(1) the shard **backgrounded its solve and ended its turn**, stranding the work — recovered by
+waking it with a poke-only Routine bound to its session (there is no `send_message` for cloud
+sessions and they do not appear in `ListAgents`); **≈30 min lost**. A shard prompt must say *run the
+solve in the FOREGROUND; never `nohup`, never `&`, never end your turn while it is in flight.*
+(2) `results/calibration/_shared/<ISO>/` — the content-addressed input store `meta.json` references —
+is **separately gitignored and registration fails without it**; rule 34(a)'s negation recipe covers
+only the out-dir. Also: `git checkout <sha> -- <path>` **stages** files even when gitignored, so a
+parent must `git reset HEAD -- <path>` immediately.
+
+**Next shorthand: spp-39.** The queue (R-be → R-ba → R-bc) was NOT entered: card A consumed the
+lane, as the handoff ordered. Until a promotion, rule 29(b) form 4 for SPP 2024/2025 should
+difference against **this run**, not keeper 10.

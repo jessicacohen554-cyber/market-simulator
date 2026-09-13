@@ -2077,9 +2077,13 @@ results/calibration/caiso279_ablate_dswcouple_2022/
 results/calibration/caiso279_ablate_dswcouple_span/
 
 # SPP-38 (lane spp-38) — the vintage-cache-repair re-solve of SPP's keeper.
-# Rule 29 [R-SCREEN] (c) as amended 2026-09-07: what discharges "delete before
-# merge" is .gitignore, NEVER `rm` (rule 31 [R-RETAIN]). The bundle stays on
-# local disk and on its shard branch; it simply does not reach `main` until the
-# owner rules on promotion, at which point THIS LINE IS REMOVED by the promotion
-# commit and the slim set is committed normally (no `git add -f`).
-results/calibration/spp38_span/
+# The bundle IS REGISTERED on the dashboard (2026-09-13-spp-38-vintage-cache), so
+# rule 15 [R-DASHBOARD] requires its slim set + hourly/ sidecars in `main`; the
+# blanket hold this lane carried while the run was unregistered is therefore
+# lifted. The heavy layers (dispatch/, floors/, root *.parquet, unit_hourly_*,
+# network_*) stay excluded by section 8's standing slim-bundle rules above, and
+# the full bundle remains recoverable from the shard branch — rule 33(d) pin:
+#   git checkout 0b58650a323d4b2da2529511ba45dfb137cccb12 -- results/calibration/spp38_span
+#   git checkout ea3458ff92280a41fb532bc5f23ea481c3b3e689 -- results/calibration/_shared/SPP
+# Registration is NOT promotion: keeper 10 stays designated in keepers/SPP.json
+# until the owner rules (rules 31 [R-RETAIN] / 35 [R-PROMOTE] (e)).
