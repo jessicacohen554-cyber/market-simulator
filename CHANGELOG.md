@@ -1,5 +1,39 @@
 # Changelog
 
+## 2026-09-13 — NWPP r#2: W1 issued, and two gates this program was chartered without
+
+Desk refresh r#2 (`docs/handoffs/nwpp-desk-ledger-2026-09.md`). Docs only — no code, no data, no
+registry; every existing keeper's cache key untouched by construction.
+
+- **W1 ISSUED — all four lanes**, verbatim from the plan's prompt pack with §8.0 pasted in and
+  `origin/main` pinned: **NWPP-10** (data audit + registry-values table + the TRE defect),
+  **NWPP-11** (CAMPD ID/OR/UT/WA + the per-BA EIA-930 *derive* + interchange + monthly hydro),
+  **NWPP-12** (WECC path ratings + WRAP + IRPs + NRC + fuel) — all `[OPUS]` — and **NWPP-13**
+  `[FABLE]`, the STOP-gated WEIM price index, which ruling N2 unblocked.
+- **NWPP-21 HELD, for a measured reason.** SOCO-21 was issued at the sibling desk's r#2 and has not
+  landed: the matrix base file still carries seven `isos`, there is no `SOCO.js` shard, and
+  `scripts/lib/mech_matrix.py` contains zero `SOCO` occurrences. Two lanes on one base file is the
+  collision this register exists for.
+- **A routed question answered instead of bounced.** NWPP-13's charter asked the desk whether
+  `data/raw/caiso-weim/` would be swept into the CAISO profile. Measured against
+  `configs/data-profiles.yaml`'s own substring rule: it would (`caiso-weim` contains `caiso`), while
+  `nwpp-weim` resolves to `shared` today and moves into the `nwpp` profile automatically once
+  NWPP-20 registers that token. The plan is corrected at all four places and the fixed text issued.
+- **Gate G13 REWRITTEN.** As chartered it read *".gitignore the bundle family — never `rm`"*, which
+  pre-orders the miso-255 incident: rule 34 `[R-SHARD-PROMOTABLE]` (a), corrected 2026-09-12 *after*
+  this program was chartered, requires the **shard** to push its bundle. G13 now states the seam —
+  `.gitignore` is the parent's tree; the shard appends a negation and uses a plain `git add`, never
+  `git add -f`; the bundle must carry `dispatch/<year>_P1.parquet`; nothing is `rm`'d before the
+  owner rules on promotion.
+- **Gates G23 and G24 ADDED**, for rules 33 `[R-SHARD-ARCHIVE]` and 35 `[R-PROMOTE]`, neither of
+  which had a gate in this plan. G24 is not housekeeping: `audit_keepers.py` E13 already fails at
+  this pin for MISO (×4) and SPP (×1).
+- **R-c re-measured and rewritten.** The feared divergence did not occur — SOCO's card S2 was ruled
+  in substantially the same terms as NWPP's N2. The live risk moved to the implementation:
+  `scripts/calibration_verdict.py` carries no branch that can express the ruled determination class,
+  so neither program's first keeper can score until one exists. Routed to the SOCO desk's card S11,
+  deliberately **not** carded here — one branch serves both programs.
+
 ## 2026-09-13 — SOCO r#2: the price card is ruled, and the plan is reconciled with rules 33/34/35
 
 Desk refresh r#2 (`docs/handoffs/soco-desk-ledger-2026-09.md`). Docs only — no code, no data, no
