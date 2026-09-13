@@ -11,6 +11,38 @@ recreated fresh from `origin/main`.
 
 ## 0. Live state — newest entry FIRST
 
+### r#1 — 2026-09-13 — W1 ISSUED (main `2c2fc065`)
+
+**What happened.** The owner directed the desk to issue the first wave. Charters **SOCO-10**,
+**SOCO-11** and **SOCO-12** were issued verbatim from plan §8 W1, each with §8.0's collision rules
+pasted in and `origin/main` pinned at **`2c2fc065`**. The charter commit `6f2dbe23` is **on main**,
+so every lane reads the plan, the handoff and this ledger from `origin/main` — no lane needs a
+branch reference.
+
+**SOCO-13 (the FERC-EQR price index) was NOT issued** and is held exactly where plan §5 puts it:
+behind owner card **S2**. Issuing it unruled would have a `[FABLE]` lane construct the benchmark
+every later price criterion is scored against, before the owner has said whether that benchmark is
+wanted or what a SOCO run may be called without one. The desk declines to pre-empt the card.
+
+**Cards S1 and S2 were served to the owner at this sitting** (plan §3; sitting #1 is where they are
+due). Status: **PENDING** until ruled — recorded in §2, not assumed here.
+
+**Collision check before issuance** (handoff §0.4). The surfaces the three W1 lanes own were checked
+at the pin: `data/raw/campd-unit-level/`, `data/raw/zone-specific-demand/`,
+`scripts/data/fetch_campd_unit_level.py`, `scripts/data/fetch_eia930_interchange.py`,
+`docs/multi-iso/00-iso-addition-protocol.md` — the most recent commit touching any of them is
+`db5f11ea` (PR #6000, PJM-H1), which is well behind the pin and is not a live lane. **No hold.**
+The three lanes are file-disjoint from each other by construction (plan §5 FILES YOU OWN), so they
+run in parallel.
+
+**Gates:** not re-run — this refresh commits one ledger entry and touches no code, data or registry,
+so every gate's input is unchanged since r#0. Recorded UNREAD rather than carried forward green.
+
+**Next act:** sitting #2 — grade SOCO-10/11/12 BY CONTENT (open each FINDING; never grade on
+absence or on a green CI check), then serve cards S3–S9 with W1's evidence, then issue W2.
+
+---
+
 ### r#0 — 2026-09-12 — CHARTER (main `ab1267e9`)
 
 **What happened.** The owner asked for a plan and prompt pack to add "whatever ISO Hillabee gas
@@ -59,10 +91,10 @@ option (a)).
 
 | Lane | Model | Wave | Status | Branch | FINDING |
 |---|---|---|---|---|---|
-| SOCO-10 audit | OPUS | W1 | **ISSUABLE** | — | — |
-| SOCO-11 CEMS + FERC-714 + interchange | OPUS | W1 | **ISSUABLE** | — | — |
-| SOCO-12 documents + gas | OPUS | W1 | **ISSUABLE** | — | — |
-| SOCO-13 EQR price index | FABLE | W1 | BLOCKED on card S2 | — | — |
+| SOCO-10 audit | OPUS | W1 | **ISSUED r#1** | pending dispatch | — |
+| SOCO-11 CEMS + FERC-714 + interchange | OPUS | W1 | **ISSUED r#1** | pending dispatch | — |
+| SOCO-12 documents + gas | OPUS | W1 | **ISSUED r#1** | pending dispatch | — |
+| SOCO-13 EQR price index | FABLE | W1 | **HELD r#1 — blocked on card S2, deliberately not issued** | — | — |
 | SOCO-20 registration | FABLE | W2 | BLOCKED on S1/S3–S8 + LTLF | — | — |
 | SOCO-21 matrix shard | OPUS | W2 | BLOCKED on collision check | — | — |
 | SOCO-30/31/32/33/34 | OPUS | W3 | BLOCKED on SOCO-20 | — | — |
@@ -75,8 +107,8 @@ option (a)).
 | # | Card | Ruling | Date |
 |---|---|---|---|
 | O-1 | charter | *"Use the add spp workstream as a reference and develop a plan and prompt pack to do whatever iso Hillabee gas plant in Alabama is in."* | 2026-09-12 |
-| S1 | the registry key | **PENDING** — due sitting #1 | — |
-| S2 | price benchmark / rubric class | **PENDING** — due sitting #1; the program's load-bearing decision | — |
+| S1 | the registry key | **SERVED r#1, PENDING** | 2026-09-13 |
+| S2 | price benchmark / rubric class | **SERVED r#1, PENDING** — the program's load-bearing decision; SOCO-13 is held until it is ruled | 2026-09-13 |
 | S3–S9 | topology, seams, VOLL, adequacy, CAES, Vogtle vintage, tail threshold | **PENDING** — due sitting #2 | — |
 | S10 | W6 routing | **PENDING** — due when a keeper exists | — |
 
@@ -93,12 +125,14 @@ option (a)).
 |---|---|---|---|
 | C-1 | `config/capacity_market.py`, `config/constants.py`, `model/interchange/spec.py` | capx D-lanes, the SCN desk, the per-ISO calibration lanes | SOCO-20 rebases last and appends; the desk re-checks their ledgers' top entries at issuance |
 | C-2 | `docs/codebase-site/data/mechanism-matrix.js` (base file) | every ISO's lanes, whenever a field is added | SOCO-21 is issued only after the desk verifies nobody is mid-edit |
+| C-3 | W1 lane surfaces (`campd-unit-level/`, `zone-specific-demand/`, the two fetch scripts, doc 00) | — | **CHECKED CLEAR at r#1**, pin `2c2fc065`: last touch `db5f11ea` (PR #6000), not a live lane. No hold |
 
 ## 5. Issuance record
 
 | Sitting | Date | Lanes issued | Cards served |
 |---|---|---|---|
 | r#0 | 2026-09-12 | none (charter commit) | none |
+| r#1 | 2026-09-13 | **SOCO-10, SOCO-11, SOCO-12** (plan §8 W1, verbatim, pinned `2c2fc065`). SOCO-13 HELD on card S2 | **S1, S2** |
 
 ## 6. Errors against interest
 
