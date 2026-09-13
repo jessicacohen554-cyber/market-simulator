@@ -4021,6 +4021,7 @@ def solve_and_persist(
     ct_netload_drag: bool | None = None,
     pjm_interface_feed_admissibility_gate: bool | None = None,
     gas_offer_margin_anchor_vintage: bool = False,
+    gas_offer_margin_zonal_anchor_vintage: bool = False,
     ct_drag_overrides: dict | None = None,
     chp_export_floor_measured: bool = False,
     ercot_gtc_limits_measured: bool = False,
@@ -5190,6 +5191,28 @@ def solve_and_persist(
                     GAS_OFFER_MARGIN_ANCHOR_BY_ZONE[iso]
                 ),
             )
+        if gas_offer_margin_zonal_anchor_vintage or getattr(
+            recorded_cfg, "gas_offer_margin_zonal_anchor_vintage", False
+        ):
+            # nyiso-230 — MIRROR of run_year's zone-resolved vintage
+            # resolution, and it must stay a mirror: the recorded config has to
+            # report the anchors the LP actually solved with, not the frozen
+            # window table above (rule 24 [R-REGISTRY]; the FFR-2E defect
+            # class). Deliberately AFTER the zonal block: that block writes the
+            # window table and this overwrites it with the solve year's own,
+            # which is the same order run_year applies. Computed on the SAME
+            # recorded config, which by this point carries the hub-overlay and
+            # monthly-actuals postures.
+            from market_sim.data.fuel.zonal_anchor import (
+                zonal_gas_anchors_for_year as _f5_zonal,
+            )
+
+            recorded_cfg = recorded_cfg.with_overrides(
+                gas_offer_margin_zonal_anchor_vintage=True,
+                gas_offer_margin_anchor_by_zone=_f5_zonal(
+                    recorded_cfg, cfg_year, int(hours)
+                ),
+            )
         if coal_offer_margin:
             # Coal net-revenue margin form (ERCOT-137): record the gate AND
             # both resolved identification constants (rule 25 — run_config
@@ -5927,6 +5950,7 @@ def solve_and_persist(
             ct_netload_drag=ct_netload_drag,
             pjm_interface_feed_admissibility_gate=pjm_interface_feed_admissibility_gate,
             gas_offer_margin_anchor_vintage=gas_offer_margin_anchor_vintage,
+            gas_offer_margin_zonal_anchor_vintage=gas_offer_margin_zonal_anchor_vintage,
             ct_drag_overrides=ct_drag_overrides,
             chp_export_floor_measured=chp_export_floor_measured,
             ercot_gtc_limits_measured=ercot_gtc_limits_measured,
@@ -6784,6 +6808,7 @@ def solve_and_persist(
         "ct_netload_drag": ct_netload_drag,
         "pjm_interface_feed_admissibility_gate": pjm_interface_feed_admissibility_gate,
         "gas_offer_margin_anchor_vintage": gas_offer_margin_anchor_vintage,
+        "gas_offer_margin_zonal_anchor_vintage": gas_offer_margin_zonal_anchor_vintage,
         "gas_st_netload_drag": gas_st_netload_drag,
         "ct_drag_overrides": ct_drag_overrides or {},
         "gas_st_drag_overrides": gas_st_drag_overrides or {},
@@ -12386,6 +12411,25 @@ def main() -> None:
         "byte-identical off.",
     )
     parser.add_argument(
+        "--gas-offer-margin-zonal-anchor-vintage",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Resolve the gas-offer net-revenue margin's PER-ZONE "
+        "identification anchors (ScenarioConfig.gas_offer_margin_anchor_by_zone) "
+        "on the SOLVE YEAR's own mean delivered-gas series instead of the "
+        "frozen 2023-2025 training-window means — the same measurement, "
+        "evaluated on (zone, year) rather than on (zone) (nyiso-230). Closes "
+        "the gap left by --gas-offer-margin-anchor-vintage, which resolves the "
+        "ISO-level anchor and refuses to stack with the zonal gate, leaving an "
+        "ISO that carries a zonal basis with no route to the year index at "
+        "all. Zero free parameters; the identity is pinned by test (averaging "
+        "the runtime resolution over 2023-2025 reproduces the registered "
+        "GAS_OFFER_MARGIN_ANCHOR_BY_ZONE table). Requires --gas-offer-margin "
+        "AND --gas-offer-margin-zonal-anchor; refuses to stack with "
+        "--gas-offer-margin-anchor-vintage (rule 19). Default off, "
+        "byte-identical off.",
+    )
+    parser.add_argument(
         "--pjm-interface-feed-admissibility-gate",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -14062,6 +14106,7 @@ def main() -> None:
         spp_curtail_depth_wind=args.spp_curtail_depth_wind,
         pjm_interface_feed_admissibility_gate=args.pjm_interface_feed_admissibility_gate,
         gas_offer_margin_anchor_vintage=args.gas_offer_margin_anchor_vintage,
+        gas_offer_margin_zonal_anchor_vintage=args.gas_offer_margin_zonal_anchor_vintage,
         nyiso_local_selfsupply=args.nyiso_local_selfsupply,
         nyiso_scr_edrp=args.nyiso_scr_edrp,
         nyiso_scr_edrp_strike=args.nyiso_scr_edrp_strike,

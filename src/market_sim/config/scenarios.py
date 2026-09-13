@@ -1736,6 +1736,15 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # distinctly through that field too. SHARED field -- very end, per HOUSE-3.
     # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
     "gas_offer_margin_anchor_vintage",
+    # nyiso-230: the zone-resolved solve-year identification point. GATED
+    # default False => the per-zone anchors stay the frozen 2023-2025 window
+    # means exactly as before, byte-identical. Dropped from the hash at its
+    # declared False so every pre-existing key of all six ISOs is byte-stable;
+    # an armed run resolves different anchors into
+    # gas_offer_margin_anchor_by_zone and so keys distinctly through that
+    # field too. SHARED field -- very end, per HOUSE-3. Registered IN THE SAME
+    # COMMIT as the field (the nyiso-119 discipline).
+    "gas_offer_margin_zonal_anchor_vintage",
     # nyiso-212: the CC summer derate on the reconciled capacity basis (GATED
     # default False => the incumbent nameplate ratio, byte-identical). Dropped
     # from the hash at its declared False so every pre-existing key of all six
@@ -2389,6 +2398,11 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # default flip, so no (b'-1) key advance is designed or observed.
     "pjm_seam_neighbour_hourly_ladder": "False",
     "gas_offer_margin_anchor_vintage": "False",
+    # nyiso-230: the zone-resolved solve-year identification point, registered
+    # at its shipping False default (the frozen window means). An armed run
+    # keys distinctly, and also through the resolved
+    # gas_offer_margin_anchor_by_zone values it writes.
+    "gas_offer_margin_zonal_anchor_vintage": "False",
     "cc_summer_derate_reconciled_basis": "False",
     # SPP-49: the F923 plausibility screen, registered at the PRE-REPAIR posture
     # (False = the raw own-reported series consumed at face value) even though
@@ -14886,6 +14900,60 @@ class ScenarioConfig:
     # (ERCOT-118/119 ``margin_anchor_*``) still takes precedence, so the
     # identification points never stack (rule 19 [R-ONE-MECH]).
     gas_offer_margin_anchor_vintage: bool = False
+    # SOLVE-YEAR VINTAGE identification point FOR A ZONE-RESOLVED ISO
+    # (nyiso-230; default OFF, byte-identical off). The SAME measurement as
+    # ``gas_offer_margin_anchor_by_zone`` above, evaluated on the year the LP
+    # is solving instead of on the frozen 2023-2025 training window.
+    #
+    # THE GAP THIS CLOSES. ``gas_offer_margin_anchor_vintage`` (pjm-169 F4)
+    # moves the identification point onto the solve year, and the zonal anchor
+    # (nyiso-109) moves it onto the zone; both re-resolve the SAME point, so
+    # they hard-exit against each other under rule 19 [R-ONE-MECH]. An ISO
+    # carrying a zonal basis therefore had NO route to the year index at all --
+    # its anchors stayed frozen at the window mean in every year. This gate is
+    # the COMPOSITION, not a third mechanism: one identification point resolved
+    # on ``(zone, year)`` rather than on ``(zone)`` or ``(year)``, through the
+    # one seam ``gas_offer_margin_anchor_by_zone`` that
+    # ``data.fleet.assembly`` already reads. Requires
+    # ``gas_offer_net_revenue_margin`` AND ``gas_offer_margin_zonal_anchor``;
+    # mutually exclusive with ``gas_offer_margin_anchor_vintage``, so the
+    # identification points still never stack.
+    #
+    # WHY IT MATTERS, measured on NYISO before any solve
+    # (docs/FINDING-nyiso230-phase0-the-anchor-slope-2026-09-12.md): the
+    # markup term ``markup_hr x (anchor - fuel)`` is a linear extrapolation
+    # with no saturation, and NYISO's delivered gas runs 2.7969 (2024) to
+    # 8.4431 (2022) $/MMBtu against a frozen 3.9046 anchor. The C3a price bias
+    # is a linear function of ``(anchor - fuel)`` at r-squared 0.9955 over
+    # 2022-2025, slope 2.691 $/MWh per $/MMBtu -- which is the
+    # marginal-weighted ``markup_hr`` the registered curve itself carries --
+    # with an intercept of -1.28 $/MWh, i.e. AT the anchor the model is
+    # essentially unbiased. The defect is the index, not the level.
+    #
+    # RULE 21 [R-DOF]: ZERO free parameters. Nothing is fitted, chosen or
+    # swept; the formula is ``derive_gas_offer_margin_anchor`` 's own and only
+    # the index it is evaluated on moves. The identity is pinned by test --
+    # averaging the runtime resolution over 2023-2025 reproduces the
+    # registered GAS_OFFER_MARGIN_ANCHOR_BY_ZONE table to the 4 dp it is
+    # stored at -- so the runtime and the frozen derive cannot drift.
+    # RULE 13 [R-MEASURED] admissible on its own test: a forecast year's
+    # anchors are the means of that year's own forecast gas trajectory, per
+    # zone, and they respond when the trajectory moves; no price, residual or
+    # actual dispatch is read. NOT the rule 1 [R-STRUCT] offer-curve carve-out
+    # and it does not touch it -- every band multiplier is untouched in every
+    # year, and this restores the condition under which they mean what they
+    # were calibrated to mean. NOT rule 1(b) per-year fitting either: the
+    # config is one boolean and one formula identical in every year, while the
+    # quantity that varies is a measured fuel level, the same class of object
+    # as ``gas_prices`` itself.
+    #
+    # Resolved by the backcast harness AFTER the hub-overlay and
+    # monthly-actuals flags are applied (they are set later in
+    # ``run_calibration.run_year`` than the anchor lookup, so resolving at the
+    # lookup would measure a series the offer path never prices), and written
+    # into the recorded config so run_config.json carries the values the solve
+    # used, never a lookup indirection (rule 24 [R-REGISTRY]).
+    gas_offer_margin_zonal_anchor_vintage: bool = False
 
     # MISO POSITION-conditioned MEASURED offer surface (miso-151) — default OFF.
     # SUBSUMES ``gas_offer_net_revenue_margin`` on MISO gas tranches above the
