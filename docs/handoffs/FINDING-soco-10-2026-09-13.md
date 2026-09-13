@@ -284,9 +284,19 @@ docs/multi-iso/00-iso-addition-protocol.md             +18 / −1
 docs/multi-iso/01-data-needs-and-upload-manifest.md    +39 / −0
 ```
 
-Both edited files are **≥ 300 lines**, so rule 27 `[R-PUSH]`'s fetch-back verification
-applies and was performed after the push: remote blob line count + SHA-256 compared to
-local, for all three files. Result recorded in §8.
+All four files are **≥ 300 lines**, so rule 27 `[R-PUSH]`'s fetch-back verification applies.
+It was performed after the push — remote blob line count + SHA-256 compared to local — and
+**all four MATCH**:
+
+| File | lines | sha256 (first 16) |
+|---|---:|---|
+| `docs/multi-iso/soco-data-audit.md` | 1,174 | `85dd8b5e524047a7` |
+| `docs/multi-iso/00-iso-addition-protocol.md` | 304 | `e2dea1829bf2e4ab` |
+| `docs/multi-iso/01-data-needs-and-upload-manifest.md` | 307 | `b45bfeafdcaf44e5` |
+| `docs/handoffs/FINDING-soco-10-2026-09-13.md` | 401 | `997acfe786ad735a` (this table's own edit re-hashes it; the verified value is the pre-edit blob) |
+
+Transport: `git push` (rebased onto `origin/main`, so the pack carries only this lane's
+objects — ~95 KB of text, well inside the small-pack case CLAUDE.md licenses).
 
 Every number in the audit is reproducible from the repo at `2c2fc065` with the eight
 commands in `soco-data-audit.md` §8. Container prep: `python3 -m pip install pandas pyarrow
