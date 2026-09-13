@@ -15119,3 +15119,84 @@ caiso-272 measured 70.2 % of the 2022 dollar miss as the DA–RT premium the rub
 OUT-OF-REPRESENTATION row says "the test must not demand". **A rubric ruling, not a solve.**
 
 Record: `docs/RESULT-caiso280-the-envelope-binds-above-the-actuals-2026-09-13.md`.
+
+## caiso-281 — 2026-09-13
+
+**ZERO LP. Keeper unchanged (`2026-09-12-caiso-275-gascoupling`). Nothing promoted, nothing
+registered, no mechanism cell moved, no `ScenarioConfig` field touched.** Records:
+`docs/PRECOMMIT-caiso281-is-the-marginal-hr-bias-a-measured-input-defect-2026-09-13.md`,
+`docs/ADDENDUM-caiso281-the-diurnal-coincidence-leg-2026-09-13.md` (Gate D),
+`docs/ADDENDUM-caiso281-gate-E-the-DA-basis-leg-2026-09-13.md` (Gate E),
+`docs/RESULT-caiso281-two-objects-not-one-and-the-bias-is-a-basis-artifact-2026-09-13.md`.
+Instrument `scripts/probes/_caiso281_two_objects.py`. **Every gate was fixed in a pushed doc
+before its own number existed**, the caiso-280 discipline.
+
+**THE HANDOFF §4 DIRECTION IS DEAD, AND THE TWO ERRORS ARE SEPARATELY CHARACTERISED.** The
+question was whether C4-2025's gas-burn miss and C3a-2022's price miss share a root in CC
+dispatch-order formation, which would be an admissible structural repair where the owner-blocked
+flat ×0.92 multiplier is not. **They do not share one. They are different objects and where they
+overlap they run opposite.**
+
+* **C4-2025's gas error is 99.98 % SHAPE, 0.02 % LEVEL** (`mean(E)²/mean(E²)` = 0.0002; fleet
+  level +21.9 MW on 5,312.6 MW actual = +0.41 %, `sd(E)` 1,693 MW). The shape is a duck-curve
+  redistribution, same sign pattern both years: under-burn midday (h8–h16, −730 to −970 MW),
+  over-burn the ramps (h6, h18–h23, +800 to +960 MW).
+* **2022's price error is LEVEL** — positive in **23 of 24 hours** (+5.2 to +20.0 $/MWh; only h17
+  is −4.9), hour-of-day `r` with the gas error **+0.056**.
+* **Gate D KILL.** 288-bucket `r` = **−0.322** (2022) / **−0.157** (2025); the addendum's
+  **predicted sign was `r > 0` and it was WRONG**, recorded as failed rather than rewritten. At
+  hour-of-day grain 2025 is **−0.577**: the model overprices exactly where it under-burns.
+* **This explains ×0.92 mechanically rather than empirically.** A flat multiplier moves the level
+  — 0.02 % of what C4 measures — and adds gas into the evening headroom where the model is already
+  over. C3a improving while C4 goes 0.298 → 0.308 is the predicted signature.
+* **Gate C PASSED** (`r` = +0.553, ρ = +0.464, n = 82): a persistent plant-level object exists —
+  but **only 38.3 % of per-plant absolute error survives aggregation** (`rho_agg`), and
+  `_cems_gas_hourly_fit` sums over plants *before* the Pearson/NRMSE, so **62 % of it is
+  reallocation no scored criterion can see.** Recorded, not chased.
+
+**THE HEAT RATES ARE RIGHT — THE ONE ADMISSIBLE ROUTE THE CHARTER WAS WRITTEN TO FIND IS CLOSED.**
+Gate A1 **INDETERMINATE** (CC_REGULAR Spearman 0.513 / 0.568; lowest band 0.635 / 0.684 — between
+the pre-registered 0.40/0.70 bands, and *"an indeterminate does not open the route"*). Gate A2:
+the model's lowest CC band sits **+0.131 (2022) / +0.240 (2025)** above the same plants'
+CAMPD-measured high-load heat rate, on a basis declared biased *high* before measuring. **Three
+sources agree within 0.17** — CAMPD 7.368/7.273, the OASIS surface's own `base_hr` 7.442, the
+model's lowest band 7.500/7.513. The +1.024 is the **ladder above base**: model marginal HR 8.529
+against an actual implied 7.505 ≈ **1.008 × base**, i.e. the market prices at the efficient CC's
+own heat rate and the model clears about one band up.
+
+**GATE E — THE BIAS DOES NOT SURVIVE THE DAY-AHEAD BASIS.** The ladder is measured from
+`PUB_DAM_GRP` **day-ahead** bids; C3a gates on `rt_lw`. Re-measured on the ladder's own basis
+(caiso-277's construction unchanged, only `rt_lw_mon` → `da_lw_mon`; **G-REPRO exact**, RT leg
++0.5334 against caiso-277's +0.534): CAISO 2023–25 **+0.533 (t +4.03, p 0.0003, 75 % of months
+positive) → −0.158 (t −0.80, p 0.43, exactly 50/50)**. 2022 alone: **+0.917 (t +5.56, 12/12
+months) → +0.149 (t +0.94, p 0.37)**. **Gate reads INDETERMINATE** — the `t` limb passed
+decisively, the magnitude limb missed 0.15 by **0.0083**, and the threshold was **not moved**.
+**Against it, at full magnitude:** DA is not a rescue (2023 over-corrects to −0.890, sd 50 %
+larger), it is association not identification, and the bias is present **in-sample across the
+surface's own 2023–25 trade years**, which *weakens* register item **N-CA-2**'s vintage reading
+of 2022.
+
+**DO-NOT-REDO added (rule 28(a)):** (i) **tranche granularity** as the explanation for caiso-276
+§5c's "λ in a gap 81–91 %" — killed: the CC ladder carries a median **8 distinct HR tranches per
+plant with a median adjacent step of 0.008 MMBtu/MWh**; it is fine-grained and a finer one buys
+nothing. (ii) **CC physical heat rates as a rule-14 repair route** — killed, three sources agree.
+(iii) **A common root between C4's gas error and C3a's price error** — killed at Gate D.
+
+**REPORTED, NOT A LEVER, AND EXPLICITLY OUT OF THE A1 GATE BY THE CHARTER'S §6(4):** `CT_CHP`
+offers at **14.068** HR against a CAMPD-measured **9.719** (Δ **+4.35**), n = 5 / 143 MW matched
+(class total ~990 MW / 47–49 plants); CHP `heatInput` covers steam so the true gap is *wider*.
+This is the **base rate** the ladder multiplies, not the ladder, so it does **not** re-open
+caiso-276 §6, which closed the CT_CHP *ladder* question on the OASIS file's provenance. Named as
+the one unexamined item; **not tested, not proposed.**
+
+**THREE ITEMS PUT TO THE OWNER, NONE ACTED ON.** (1) The **rubric ruling** (handoff §5) now has a
+*mechanism*: the model's marginal-cost input is itself a day-ahead-bid surface, so DA is arguably
+its native basis — against which DA is noisier and over-corrects 2023. (2) The **×0.92 case**,
+written per handoff §4's instruction and **not** as "it improves C3a": the CAISO bands are a
+measured surface with passing derivation gates, so scaling them moves *away* from CAISO's own bid
+data — **rule 14 `[R-ACCURATE]` refuses it independently of rule 1 (c)'s sweeping prohibition** —
+and its C4 cost is structural, not incidental. Recommendation: **rule on the basis first**, since
+it largely dissolves the multiplier's motivation. (3) The **parity gate is RED on `main` with
+FOUR** tracked bundle dirs, one more than the handoff recorded — `caiso279_ablate_dswcouple_span`
+(CAISO) plus `nyiso230_arm_y2022`, `nyiso231_arm_y2022` and **`nyiso231_ctl_y2022`** (NYISO).
+**Nothing removed** (rule 31 `[R-RETAIN]`); the NYISO three are their own lane's (rule 25).
