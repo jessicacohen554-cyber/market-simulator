@@ -109,7 +109,9 @@ from market_sim.data.floor_mechanisms import (
 from market_sim.data.cod_ramp import (
     class_cod_coverage,
     effective_cod,
+    generator_online_mask,
     load_cod_map,
+    load_unit_cod_map,
     log_class_cod_coverage,
     monthly_online_mask,
 )

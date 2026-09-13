@@ -1628,6 +1628,37 @@ def _dual_fuel_plant_groups(
     return frozenset(pairs)
 
 
+@lru_cache(maxsize=8)
+def _operating_month_by_unit(eia860_dir) -> dict[tuple[int, str], int]:
+    """Return ``{(plant_code, generator_id): Operating Month}`` from the operable sheet.
+
+    Read from ``<eia860_dir>/eia860_generator_operable.parquet`` — the same
+    raw sheet :func:`_chp_by_plant` bridges the CHP flag from and
+    ``cod_ramp._load_cod_map`` reduces the plant COD from — so a fleet built
+    from a year-matched ``vintage_<year>/`` directory takes that vintage's own
+    months. Keys mirror the processed parquet's ``(plant_id, generator_id)``
+    (the id stripped, as ``_rows_to_generators`` strips it). Rows with no
+    month are omitted so the caller's January default applies. Empty when the
+    sheet is absent.
+    """
+    path = Path(eia860_dir) / "eia860_generator_operable.parquet"
+    if not path.exists():
+        return {}
+    raw = pd.read_parquet(
+        path, columns=["Plant Code", "Generator ID", "Operating Month"]
+    )
+    raw.columns = [str(c).strip() for c in raw.columns]
+    pc = pd.to_numeric(raw["Plant Code"], errors="coerce")
+    om = pd.to_numeric(raw["Operating Month"], errors="coerce")
+    gid = raw["Generator ID"].astype(str).str.strip()
+    out: dict[tuple[int, str], int] = {}
+    for code, month, gen_id in zip(pc, om, gid):
+        if pd.isna(code) or pd.isna(month) or not (1 <= int(month) <= 12):
+            continue
+        out[(int(code), gen_id)] = int(month)
+    return out
+
+
 def _load_fleet_from_parquet(
     parquet_path: Path,
     iso: str,
@@ -1662,6 +1693,24 @@ def _load_fleet_from_parquet(
     # is available (else the latest committed snapshot).
     df = df.copy()
     df["chp"] = df["plant_id"].map(_chp_by_plant(parquet_path.parent, year)).fillna("N")
+    # Join each unit's own month-precise ``Operating Month`` from the SAME
+    # directory's raw operable sheet (the processed generators parquet carries
+    # ``operating_year`` only). This is what makes ``Generator.online_month`` a
+    # unit's own measured EIA-860 record, which ``cod_ramp.effective_cod`` now
+    # prefers over the plant-collapsed COD for the online date (SOCO-15, owner
+    # card S12, rule 14 [R-ACCURATE]); a unit the sheet does not carry keeps
+    # the January default exactly as before. Never overrides a month the
+    # parquet already carries (the retiree-channel schema has one).
+    if "operating_month" not in df.columns or df["operating_month"].isna().all():
+        months = _operating_month_by_unit(parquet_path.parent)
+        if months:
+            keys = list(
+                zip(
+                    pd.to_numeric(df["plant_id"], errors="coerce"),
+                    df["generator_id"].astype(str).str.strip(),
+                )
+            )
+            df["operating_month"] = [months.get(k) for k in keys]
 
     generators = _rows_to_generators(
         df,

@@ -22,10 +22,14 @@ from market_sim.data.cod_ramp import (
     _cod_work_frame,
     _load_cod_map,
     _reduce_cod_groups,
+    _load_unit_cod_map,
     _registry_year_built,
+    bin_online_fraction,
     class_cod_coverage,
     effective_cod,
+    generator_online_mask,
     load_cod_map,
+    load_unit_cod_map,
     log_class_cod_coverage,
     monthly_online_mask,
 )
@@ -71,13 +75,66 @@ class TestMonthlyOnlineMask(unittest.TestCase):
 
 
 class TestEffectiveCod(unittest.TestCase):
-    """Resolving a generator's COD: plant-code map wins, own attrs fall back."""
+    """Resolving a generator's COD: its own measured date first, the plant map second.
 
-    def test_plant_in_map_overrides_own_attrs(self):
+    SOCO-15 (owner card S12, 2026-09-13): a raw EIA-860 unit's own
+    ``Operating Year`` / ``Operating Month`` is the measured input and the
+    plant-collapsed mean is the estimate, so the unit's own online date wins
+    (rule 14 [R-ACCURATE]). The plant map still owns the online date of a
+    PLANT-LEVEL object (``is_plant_level=True`` — a CAMPD bin, whose
+    ``online_year`` is a registry / COD-year estimate, not a unit record).
+    """
+
+    def test_plant_map_wins_only_for_plant_level_objects(self):
         cod_map = {7: (2024, 9, None, None)}
-        # The gen claims 2010, but the curated map says built Sept 2024.
+        # A CAMPD bin claims the registry vintage 2010; it has no own date,
+        # so the plant map's Sept-2024 record is its COD.
+        self.assertEqual(
+            effective_cod(7, 2010, 1, None, None, cod_map, is_plant_level=True),
+            (2024, 9, None, None),
+        )
+        # A raw EIA-860 unit with the SAME attributes keeps its own 2010-01
+        # record: the map is a plant mean, the unit's own date is measured.
         self.assertEqual(
             effective_cod(7, 2010, 1, None, None, cod_map),
+            (2010, 1, None, None),
+        )
+
+    def test_brownfield_unit_prefers_own_online_date_over_plant_mean(self):
+        """The card-S12 regression: Vogtle 3 (plant 649, own COD 2023-07).
+
+        The plant-collapsed map reads (2005, 5) — the capacity-weighted mean
+        of units 1/2 (1987/1989) and 3/4 (2023/2024). Before SOCO-15 the map
+        ALWAYS won the online date, so this unit was online all of 2023
+        (12.98 TWh of phantom nuclear); it must ramp on its own month.
+        """
+        cod_map = {649: (2005, 5, None, None)}
+        self.assertEqual(
+            effective_cod(649, 2023, 7, None, None, cod_map),
+            (2023, 7, None, None),
+        )
+        self.assertEqual(
+            monthly_online_mask(*effective_cod(649, 2023, 7, None, None, cod_map), 2023)
+            .astype(int)
+            .tolist(),
+            [0] * 6 + [1] * 6,
+        )
+
+    def test_raw_unit_keeps_plant_map_retirement_when_it_carries_none(self):
+        # Own online date, but no own retirement: the whole-plant retirement
+        # from the map still applies (only the ONLINE half of the seam moved).
+        cod_map = {9: (1990, 1, 2024, 6)}
+        self.assertEqual(
+            effective_cod(9, 2023, 7, None, None, cod_map),
+            (2023, 7, 2024, 6),
+        )
+
+    def test_sentinel_raw_unit_falls_back_to_plant_map(self):
+        # online_year == 2000 is "vintage unknown" -> the plant map is the
+        # only record, exactly as before the seam.
+        cod_map = {7: (2024, 9, None, None)}
+        self.assertEqual(
+            effective_cod(7, 2000, 1, None, None, cod_map),
             (2024, 9, None, None),
         )
 
@@ -114,9 +171,230 @@ class TestEffectiveCod(unittest.TestCase):
         # verbatim (the online-date contract for build-date-less bins).
         cod_map = {3122: (1972, 5, 2024, 4)}
         self.assertEqual(
-            effective_cod(3122, 2010, 1, None, None, cod_map),
+            effective_cod(3122, 2010, 1, None, None, cod_map, is_plant_level=True),
             (1972, 5, 2024, 4),
         )
+
+
+class TestBinOnlineFraction(unittest.TestCase):
+    """A (plant, group) bin's measured monthly online-capacity fraction."""
+
+    def test_greenfield_bin_steps_exactly_like_the_plant_mean(self):
+        # Lowman (plant 56): every CC unit came online 2023-09 -> the fraction
+        # is the same 000000001111 step the plant-collapsed date produced.
+        units = ((459.0, 2023, 9), (273.7, 2023, 9))
+        self.assertEqual(
+            bin_online_fraction(units, 2023).tolist(), [0.0] * 8 + [1.0] * 4
+        )
+
+    def test_brownfield_bin_takes_the_intermediate_fraction(self):
+        # Barry (plant 3) CC: 1,071 MW of 2000-05 units plus A3 (774 MW,
+        # 2023-11) -> 1071/1845 through October, 1.0 from November.
+        units = (
+            (170.1, 2000, 5),
+            (195.2, 2000, 5),
+            (705.7, 2000, 5),
+            (774.0, 2023, 11),
+        )
+        frac = bin_online_fraction(units, 2023)
+        self.assertAlmostEqual(frac[0], 1071.0 / 1845.0, places=12)
+        self.assertAlmostEqual(frac[9], 1071.0 / 1845.0, places=12)
+        self.assertEqual(frac[10], 1.0)
+        self.assertEqual(frac[11], 1.0)
+
+    def test_all_units_predating_the_year_is_exactly_ones(self):
+        # Exact endpoints: no 1 - 1e-16 residue may reach the LP.
+        units = ((7.4, 2005, 3), (6.7, 2001, 1), (1.064, 2010, 5))
+        frac = bin_online_fraction(units, 2023)
+        self.assertTrue(np.array_equal(frac, np.ones(12)))
+        self.assertEqual(frac.tolist(), [1.0] * 12)
+
+    def test_not_yet_built_bin_is_exactly_zeros(self):
+        self.assertEqual(
+            bin_online_fraction(((100.0, 2026, 1),), 2024).tolist(), [0.0] * 12
+        )
+
+    def test_zero_nameplate_falls_back_to_equal_weights(self):
+        units = ((0.0, 2000, 1), (0.0, 2023, 7))
+        self.assertEqual(
+            bin_online_fraction(units, 2023).tolist(), [0.5] * 6 + [1.0] * 6
+        )
+
+    def test_empty_units_is_all_online(self):
+        self.assertEqual(bin_online_fraction((), 2023).tolist(), [1.0] * 12)
+
+
+class TestGeneratorOnlineMask(unittest.TestCase):
+    """The single resolver: unit grain for raw units, constituent fraction for bins."""
+
+    _map = {
+        649: (2005, 5, None, None),
+        3: (1991, 3, None, None),
+        56: (2023, 9, None, None),
+    }
+    _units = {
+        (3, "gas_cc"): ((1071.0, 2000, 5), (774.0, 2023, 11)),
+        (3, "coal"): ((1500.0, 1970, 1),),
+        (56, "gas_cc"): ((459.0, 2023, 9), (273.7, 2023, 9)),
+    }
+
+    def test_raw_brownfield_unit_ramps_on_its_own_month(self):
+        mask, oy = generator_online_mask(
+            649, None, 2023, 7, None, None, False, self._map, self._units, 2023
+        )
+        self.assertEqual(mask.tolist(), [0.0] * 6 + [1.0] * 6)
+        self.assertEqual(oy, 2023)
+
+    def test_brownfield_bin_takes_constituent_fraction(self):
+        mask, _ = generator_online_mask(
+            3, "CC_REGULAR", 1991, 1, None, None, True, self._map, self._units, 2023
+        )
+        self.assertAlmostEqual(mask[0], 1071.0 / 1845.0, places=12)
+        self.assertEqual(mask[11], 1.0)
+
+    def test_sibling_bin_of_another_group_is_untouched(self):
+        # Barry's COAL bin never sees Barry A3's 2023-11 COD.
+        mask, _ = generator_online_mask(
+            3, "COAL", 1991, 1, None, None, True, self._map, self._units, 2023
+        )
+        self.assertEqual(mask.tolist(), [1.0] * 12)
+
+    def test_greenfield_bin_ramps_identically_with_and_without_constituents(self):
+        # Exit condition (b): the greenfield case still ramps 000000001111 —
+        # through the constituent fraction AND through the plant-map fallback.
+        with_units, _ = generator_online_mask(
+            56, "CC_REGULAR", 2010, 1, None, None, True, self._map, self._units, 2023
+        )
+        without_units, _ = generator_online_mask(
+            56, "CC_REGULAR", 2010, 1, None, None, True, self._map, {}, 2023
+        )
+        self.assertEqual(with_units.tolist(), [0.0] * 8 + [1.0] * 4)
+        self.assertEqual(without_units.tolist(), [0.0] * 8 + [1.0] * 4)
+
+    def test_bin_without_constituents_keeps_plant_collapsed_date(self):
+        # An ERCOT curated-sheet bin at a plant the unit map has no matching
+        # fuel for -> the plant mean, exactly as before.
+        mask, _ = generator_online_mask(
+            3, "ST_GAS", 1991, 1, None, None, True, self._map, self._units, 2023
+        )
+        self.assertEqual(mask.tolist(), [1.0] * 12)
+
+    def test_bin_fraction_is_scaled_by_the_plant_retirement(self):
+        cod_map = {3: (1991, 3, 2023, 6)}
+        mask, _ = generator_online_mask(
+            3, "CC_REGULAR", 1991, 1, None, None, True, cod_map, self._units, 2023
+        )
+        self.assertAlmostEqual(mask[0], 1071.0 / 1845.0, places=12)
+        self.assertEqual(mask[6:].tolist(), [0.0] * 6)
+
+    def test_bin_own_cohort_retirement_still_wins(self):
+        # partial_plant_exit_carry cohort: the bin's own retirement is kept.
+        mask, _ = generator_online_mask(
+            3, "CC_REGULAR", 1991, 1, 2023, 3, True, self._map, self._units, 2023
+        )
+        self.assertEqual(mask[3:].tolist(), [0.0] * 9)
+        self.assertAlmostEqual(mask[0], 1071.0 / 1845.0, places=12)
+
+
+class TestLiveCardS12Cases(unittest.TestCase):
+    """The three measured cases of SOCO-10 §2, on the committed root vintage.
+
+    Integration: reads ``data/raw/eia-860`` exactly as :class:`TestLoadCodMap`
+    does. The plant-collapsed map is UNCHANGED (its numbers are the ones
+    SOCO-10 measured); what changed is which grain the resolver serves.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        cls.cod_map = load_cod_map()
+        cls.unit_map = load_unit_cod_map()
+
+    def test_plant_collapsed_map_is_unchanged(self):
+        self.assertEqual(self.cod_map[649][:2], (2005, 5))
+        self.assertEqual(self.cod_map[3][:2], (1991, 3))
+        self.assertEqual(self.cod_map[56][:2], (2023, 9))
+
+    def test_vogtle_3_and_4_ramp_on_their_own_months(self):
+        v3, _ = generator_online_mask(
+            649, None, 2023, 7, None, None, False, self.cod_map, self.unit_map, 2023
+        )
+        v4_2023, _ = generator_online_mask(
+            649, None, 2024, 4, None, None, False, self.cod_map, self.unit_map, 2023
+        )
+        v4_2024, _ = generator_online_mask(
+            649, None, 2024, 4, None, None, False, self.cod_map, self.unit_map, 2024
+        )
+        self.assertEqual(v3.tolist(), [0.0] * 6 + [1.0] * 6)
+        self.assertEqual(v4_2023.tolist(), [0.0] * 12)
+        self.assertEqual(v4_2024.tolist(), [0.0] * 3 + [1.0] * 9)
+
+    def test_barry_cc_bin_carries_a3_from_november(self):
+        units = self.unit_map[(3, "gas_cc")]
+        self.assertIn((464.0, 2023, 11), units)
+        self.assertIn((310.0, 2023, 11), units)
+        mask, _ = generator_online_mask(
+            3,
+            "CC_REGULAR",
+            1991,
+            1,
+            None,
+            None,
+            True,
+            self.cod_map,
+            self.unit_map,
+            2023,
+        )
+        total = sum(u[0] for u in units)
+        self.assertAlmostEqual(mask[0], (total - 774.0) / total, places=9)
+        self.assertEqual(mask[10:].tolist(), [1.0, 1.0])
+        coal, _ = generator_online_mask(
+            3, "COAL", 1991, 1, None, None, True, self.cod_map, self.unit_map, 2023
+        )
+        self.assertEqual(coal.tolist(), [1.0] * 12)
+
+    def test_greenfield_lowman_still_ramps(self):
+        mask, _ = generator_online_mask(
+            56,
+            "CC_REGULAR",
+            2010,
+            1,
+            None,
+            None,
+            True,
+            self.cod_map,
+            self.unit_map,
+            2023,
+        )
+        self.assertEqual(mask.tolist(), [0.0] * 8 + [1.0] * 4)
+
+    def test_unit_map_is_operable_thermal_only(self):
+        self.assertGreater(len(self.unit_map), 1000)
+        fuels = {fuel for _, fuel in self.unit_map}
+        self.assertTrue(
+            fuels <= {"gas_cc", "gas_ct", "gas_st", "coal", "oil", "biomass", "nuclear"}
+        )
+        for units in list(self.unit_map.values())[:200]:
+            for cap, oy, om in units:
+                self.assertGreaterEqual(cap, 0.0)
+                self.assertGreaterEqual(oy, 1880)
+                self.assertTrue(1 <= om <= 12)
+
+    def test_unit_map_rekeys_on_vintage_directory(self):
+        vintage = paths.EIA_860_DIR / "vintage_2023"
+        if not vintage.is_dir():
+            self.skipTest("vintage_2023 not committed")
+        _load_unit_cod_map.cache_clear()
+        v23 = _load_unit_cod_map(vintage)
+        # Vogtle 4 (2024-04) cannot be in the end-2023 operable snapshot.
+        self.assertNotIn((1114.0, 2024, 4), v23.get((649, "nuclear"), ()))
+
+    def test_loader_bridges_each_units_own_operating_month(self):
+        from market_sim.data.fleet.eia860 import _operating_month_by_unit
+
+        months = _operating_month_by_unit(paths.EIA_860_DIR)
+        self.assertEqual(months[(649, "3")], 7)
+        self.assertEqual(months[(649, "4")], 4)
+        self.assertEqual(months[(3, "A3C1")], 11)
 
 
 class TestLoadCodMap(unittest.TestCase):
@@ -182,17 +460,24 @@ class TestCodRampInFleetArrays(unittest.TestCase):
         base.update(kw)
         return Generator(**base)
 
-    def _fa(self, enabled: bool, cod_map=None, mode="backcast", **gen_kw):
+    def _fa(
+        self, enabled: bool, cod_map=None, mode="backcast", unit_map=None, **gen_kw
+    ):
         cfg = ScenarioConfig(
             mode=mode,
             weather_year=2024,
             cod_ramp_enabled=enabled,
         )
-        # Patch the EIA-860 map so the unit tests are hermetic and fast; the
+        # Patch the EIA-860 maps so the unit tests are hermetic and fast; the
         # individual coal gens carry plant_code 0, so they fall back to their
-        # own online_year/month regardless of the (default empty) map.
-        with mock.patch(
-            "market_sim.data.fleet.load_cod_map", return_value=cod_map or {}
+        # own online_year/month regardless of the (default empty) maps.
+        with (
+            mock.patch(
+                "market_sim.data.fleet.load_cod_map", return_value=cod_map or {}
+            ),
+            mock.patch(
+                "market_sim.data.fleet.load_unit_cod_map", return_value=unit_map or {}
+            ),
         ):
             return generators_to_fleet_arrays(
                 [self._coal_gen(**gen_kw)],
@@ -263,6 +548,72 @@ class TestCodRampInFleetArrays(unittest.TestCase):
         jun = self._starts[5]
         self.assertEqual(on.availability[0, :jun].max(), 0.0)
         self.assertGreater(on.availability[0, jun:].max(), 0.0)
+
+    def test_brownfield_raw_unit_ramps_on_own_month_not_plant_mean(self):
+        """Card S12 in the fleet arrays: a Vogtle-3-like unit at a 2005-mean plant.
+
+        FAILS on the pre-SOCO-15 seam (the plant map won, so the unit was
+        available all year) and PASSES on the repaired one.
+        """
+        on = self._fa(
+            True,
+            cod_map={649: (2005, 5, None, None)},
+            fuel_type="nuclear",
+            plant_code=649,
+            online_year=2024,
+            online_month=7,
+        )
+        jul = self._starts[6]
+        self.assertEqual(on.availability[0, :jul].max(), 0.0)
+        self.assertGreater(on.availability[0, jul:].max(), 0.0)
+
+    def test_brownfield_bin_availability_is_the_constituent_fraction(self):
+        """A Barry-like CC bin runs at its measured online share until A3's month."""
+        units = {(3, "gas_cc"): ((1071.0, 2000, 5), (774.0, 2024, 11))}
+        on = self._fa(
+            True,
+            cod_map={3: (1991, 3, None, None)},
+            unit_map=units,
+            is_campd_bin=True,
+            plant_code=3,
+            plant_group="CC_REGULAR",
+            fuel_type="gas_cc",
+            online_year=1991,
+            online_month=1,
+        )
+        flat = self._fa(
+            False,
+            is_campd_bin=True,
+            plant_code=3,
+            plant_group="CC_REGULAR",
+            fuel_type="gas_cc",
+            online_year=1991,
+            online_month=1,
+        )
+        nov = self._starts[10]
+        ratio = on.availability[0, :nov] / flat.availability[0, :nov]
+        self.assertTrue(np.allclose(ratio, 1071.0 / 1845.0))
+        self.assertTrue(
+            np.array_equal(on.availability[0, nov:], flat.availability[0, nov:])
+        )
+
+    def test_greenfield_bin_still_ramps_through_constituents(self):
+        """Exit condition (b): the greenfield step is unchanged by the seam."""
+        units = {(56, "gas_cc"): ((459.0, 2024, 9), (273.7, 2024, 9))}
+        for unit_map in (units, {}):
+            on = self._fa(
+                True,
+                cod_map={56: (2024, 9, None, None)},
+                unit_map=unit_map,
+                is_campd_bin=True,
+                plant_code=56,
+                plant_group="CC_REGULAR",
+                online_year=2010,
+                online_month=1,
+            )
+            sep = self._starts[8]
+            self.assertEqual(on.availability[0, :sep].max(), 0.0)
+            self.assertGreater(on.availability[0, sep:].max(), 0.0)
 
     def test_min_gen_zeroed_in_offline_months(self):
         """The hard must-run floor cannot force a not-yet-built unit to run."""

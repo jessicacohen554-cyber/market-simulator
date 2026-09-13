@@ -48,12 +48,18 @@ generator) to a per-plant map:
 ```
 
 * **Online date** is the **capacity-weighted** mean of the plant's units'
-  operating dates. A scalar per-plant COD necessarily approximates a genuinely
-  mixed-vintage plant (one old base + a small recent addition); the capacity
-  weighting is the closest single date to the true per-unit online-capacity
-  fraction. Measured on the ERCOT 2023 bins it removes ~870 MW of cap-month-
-  equivalent phantom capacity, vs ~930 MW for the exact per-unit fraction and
-  ~670 MW for an "earliest-unit" rule that under-drops recent-bulk plants.
+  operating dates — and since SOCO-15 (owner card S12, 2026-09-13) this scalar
+  is the **fallback only**, used where an LP unit has no record of its own. A
+  scalar per-plant COD necessarily approximates a genuinely mixed-vintage plant
+  (one old base + a recent addition): measured by calling the code, Vogtle
+  (plant 649) reads `(2005, 5)`, so both 2023/2024 AP1000s were online all
+  twelve months of 2023 (12.98 TWh of phantom nuclear), while greenfield Lowman
+  (`(2023, 9)`) ramped correctly. The mean was the estimate; the units' own
+  dates are the measured input, so the resolver now serves the **grain the LP
+  unit actually has** (see "How each fleet path gets its COD" below). The
+  historical ERCOT-2023 measurement that motivated the weighting (~870 MW of
+  cap-month-equivalent phantom removed, vs ~930 for the exact per-unit fraction)
+  is the fraction the bin path now computes exactly.
 * **Retirement** is recorded only when *every* unit of the plant carries a
   planned retirement (the whole plant goes away), using the latest such date, so
   capacity is kept until the last unit retires; a partial retirement leaves the
@@ -109,15 +115,44 @@ cover Mystic's missing ~1.3 TWh.
 
 ### How each fleet path gets its COD
 
-`cod_ramp.effective_cod` resolves each generator's date, **plant-code map first**:
+`cod_ramp.generator_online_mask` is the single resolver
+`generators_to_fleet_arrays` calls; it serves the unit's **own** EIA-860 date at
+the grain the LP unit has (SOCO-15, owner card S12; rule 14 `[R-ACCURATE]` —
+the unit's date is the measured input, the plant mean is the estimate; rule 25
+`[R-ISO-SCOPE]` — one seam, the same construction on every fleet path):
 
-* **ERCOT CAMPD bins** carry no build date of their own (the bins CSV has no
-  build year), so the plant-code map is what gives them month precision — this
-  was the path the duplicate implementation had to special-case.
-* **Raw EIA-860 `Generator`s** (nuclear, oil, every non-ERCOT ISO) fall back to
-  their own `online_year` / `online_month` when their plant is absent from the
-  map; the model's `2000` default is treated as "vintage unknown" so a real
-  pre-existing unit is never dropped.
+* **Raw EIA-860 `Generator`s** (nuclear, oil, biomass, any unbinned thermal
+  plant) keep their **own** `online_year` / `online_month` for the online date
+  through `effective_cod(..., is_plant_level=False)` — the same preference the
+  Homer City seam already gave a unit's own retirement, applied to the other end
+  of its life. The loader bridges each unit's `Operating Month` from the same
+  vintage directory's raw operable sheet (`eia860._operating_month_by_unit`),
+  because the processed generators parquet carries the year only. The model's
+  `2000` default is still "vintage unknown", so such a unit takes the plant map
+  and a real pre-existing unit is never dropped.
+* **CAMPD bins** — every registered keeper's thermal fleet, ERCOT's curated
+  sheet and the six synthesized `fleet_to_bins` ISOs alike — have no unit date
+  of their own (a tranche's `online_year` is the registry / COD-year estimate
+  `bins_to_fleet` stamps). They take the **measured monthly online-capacity
+  fraction** of their own constituents: `cod_ramp.load_unit_cod_map()` lists
+  each `(plant_code, fuel_type)`'s operable units `(nameplate, online_year,
+  online_month)` from the same sheet, classified with the loader's own
+  `_map_fuel_type` so `(3, "gas_cc")` is exactly Barry's CC units and Barry's
+  coal bin never sees Barry A3's 2023-11 COD; `bin_online_fraction` is the
+  nameplate-weighted mean of the units' own masks (endpoints exact). A
+  greenfield bin still steps `000000001111`; a brownfield bin takes the
+  intermediate fraction (Barry CC 2023: `0.58` through October, `1.0` from
+  November). The fraction scales the bin's `availability` and its `min_gen`.
+  **Online half only**: the bin's retirement stays whatever `effective_cod`
+  resolves (plant-collapsed, or an exit cohort's own under
+  `partial_plant_exit_carry`) — rule 19 `[R-ONE-MECH]`.
+* **The plant-collapsed map** remains the fallback wherever neither exists: a
+  bin whose `(plant, fuel)` has no operable units in the sheet, a registry-only
+  plant, a unit whose own year is unknown, and the clean-data seam
+  (`MARKET_SIM_USE_CLEAN`), whose frozen fleet schema carries no month.
+
+Repair evidence, blast radius at LP grain for all seven keepers, and the A/B:
+`docs/handoffs/PRECOMMIT-soco-15-2026-09-13.md` / `FINDING-soco-15-2026-09-13.md`.
 
 ## Year-matched vintage option (`eia860_vintage_year`)
 
