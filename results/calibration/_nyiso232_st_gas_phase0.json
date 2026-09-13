@@ -1,0 +1,154 @@
+{
+ "2022": {
+  "n_rows_ctl": 759,
+  "n_rows_arm": 715,
+  "n_st_ctl": 88,
+  "n_st_arm": 44,
+  "n_other_ctl": 671,
+  "n_other_arm": 671,
+  "other_matched": 671,
+  "other_mc_maxabs": 0.0,
+  "other_pmax_maxabs": 0.0,
+  "st_pmax_ctl": 8902.400000000001,
+  "st_pmax_arm": 8902.400000000001,
+  "st_bands_ctl": {
+   "committed": 11,
+   "econc": 66,
+   "peak": 11
+  },
+  "st_bands_arm": {
+   "committed": 11,
+   "econlo": 11,
+   "econhi": 11,
+   "peak": 11
+  },
+  "st_cwmean_ctl": 145.81247978964564,
+  "st_cwmean_arm": 139.99246354574277,
+  "st_band_mean_ctl": {
+   "committed": 97.64483169110822,
+   "econc": 102.18685112499963,
+   "peak": 356.0713261167016
+  },
+  "st_band_mean_arm": {
+   "committed": 97.64483169110822,
+   "econlo": 93.57272492779553,
+   "econhi": 93.57299577874264,
+   "peak": 356.0713261167016
+  },
+  "econ_fuel_invariant_note": "['committed', 'peak'] rows: max within-row spread 0.0000000000 $/MWh over 22 rows"
+ },
+ "2023": {
+  "n_rows_ctl": 756,
+  "n_rows_arm": 712,
+  "n_st_ctl": 88,
+  "n_st_arm": 44,
+  "n_other_ctl": 668,
+  "n_other_arm": 668,
+  "other_matched": 668,
+  "other_mc_maxabs": 0.0,
+  "other_pmax_maxabs": 0.0,
+  "st_pmax_ctl": 8902.400000000001,
+  "st_pmax_arm": 8902.400000000001,
+  "st_bands_ctl": {
+   "committed": 11,
+   "econc": 66,
+   "peak": 11
+  },
+  "st_bands_arm": {
+   "committed": 11,
+   "econlo": 11,
+   "econhi": 11,
+   "peak": 11
+  },
+  "st_cwmean_ctl": 59.43860481744125,
+  "st_cwmean_arm": 57.3297658240954,
+  "st_band_mean_ctl": {
+   "committed": 42.56645550444153,
+   "econc": 44.36257757837897,
+   "peak": 137.54335858168915
+  },
+  "st_band_mean_arm": {
+   "committed": 42.56645550444153,
+   "econlo": 41.19709812945625,
+   "econhi": 41.19835009041285,
+   "peak": 137.54335858168915
+  },
+  "econ_fuel_invariant_note": "['committed', 'peak'] rows: max within-row spread 0.0000000000 $/MWh over 22 rows"
+ },
+ "2024": {
+  "n_rows_ctl": 753,
+  "n_rows_arm": 709,
+  "n_st_ctl": 88,
+  "n_st_arm": 44,
+  "n_other_ctl": 665,
+  "n_other_arm": 665,
+  "other_matched": 665,
+  "other_mc_maxabs": 0.0,
+  "other_pmax_maxabs": 0.0,
+  "st_pmax_ctl": 8902.400000000001,
+  "st_pmax_arm": 8902.400000000001,
+  "st_bands_ctl": {
+   "committed": 11,
+   "econc": 66,
+   "peak": 11
+  },
+  "st_bands_arm": {
+   "committed": 11,
+   "econlo": 11,
+   "econhi": 11,
+   "peak": 11
+  },
+  "st_cwmean_ctl": 58.62561178385024,
+  "st_cwmean_arm": 56.73665955291437,
+  "st_band_mean_ctl": {
+   "committed": 43.36318926937757,
+   "econc": 44.87133834636676,
+   "peak": 127.45400827255276
+  },
+  "st_band_mean_arm": {
+   "committed": 43.36318926937757,
+   "econlo": 42.068431875553614,
+   "econhi": 42.06879436343173,
+   "peak": 127.45400827255276
+  },
+  "econ_fuel_invariant_note": "['committed', 'peak'] rows: max within-row spread 0.0000000000 $/MWh over 22 rows"
+ },
+ "2025": {
+  "n_rows_ctl": 753,
+  "n_rows_arm": 709,
+  "n_st_ctl": 88,
+  "n_st_arm": 44,
+  "n_other_ctl": 665,
+  "n_other_arm": 665,
+  "other_matched": 665,
+  "other_mc_maxabs": 0.0,
+  "other_pmax_maxabs": 0.0,
+  "st_pmax_ctl": 8902.400000000001,
+  "st_pmax_arm": 8902.400000000001,
+  "st_bands_ctl": {
+   "committed": 11,
+   "econc": 66,
+   "peak": 11
+  },
+  "st_bands_arm": {
+   "committed": 11,
+   "econlo": 11,
+   "econhi": 11,
+   "peak": 11
+  },
+  "st_cwmean_ctl": 98.60341911977643,
+  "st_cwmean_arm": 94.84316008827638,
+  "st_band_mean_ctl": {
+   "committed": 66.2836135815707,
+   "econc": 69.9604533667511,
+   "peak": 228.53266980521764
+  },
+  "st_band_mean_arm": {
+   "committed": 66.2836135815707,
+   "econlo": 64.55470734998079,
+   "econhi": 64.56237492203446,
+   "peak": 228.53266980521764
+  },
+  "econ_fuel_invariant_note": "['committed', 'peak'] rows: max within-row spread 0.0000000000 $/MWh over 22 rows"
+ }
+}

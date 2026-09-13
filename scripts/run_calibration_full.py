@@ -3965,6 +3965,7 @@ def solve_and_persist(
     caiso_st_gas_peak_measured: bool = False,
     caiso_ct_peaker_committed_measured: bool = False,
     nyiso_ct_peaker_bands_measured: bool = False,
+    nyiso_st_gas_econ_bands_deleaked: bool = False,
     caiso_offer_surface_conditional: bool = False,
     nearby_fuel_price_zone_donor_guard: bool = False,
     fleet_state_from_eia860: bool = False,
@@ -4315,6 +4316,7 @@ def solve_and_persist(
             caiso_st_gas_peak_measured=caiso_st_gas_peak_measured,
             caiso_ct_peaker_committed_measured=caiso_ct_peaker_committed_measured,
             nyiso_ct_peaker_bands_measured=nyiso_ct_peaker_bands_measured,
+            nyiso_st_gas_econ_bands_deleaked=nyiso_st_gas_econ_bands_deleaked,
             caiso_offer_surface_conditional=caiso_offer_surface_conditional,
             nearby_fuel_price_zone_donor_guard=nearby_fuel_price_zone_donor_guard,
             fleet_state_from_eia860=fleet_state_from_eia860,
@@ -5856,6 +5858,7 @@ def solve_and_persist(
             caiso_st_gas_peak_measured=caiso_st_gas_peak_measured,
             caiso_ct_peaker_committed_measured=caiso_ct_peaker_committed_measured,
             nyiso_ct_peaker_bands_measured=nyiso_ct_peaker_bands_measured,
+            nyiso_st_gas_econ_bands_deleaked=nyiso_st_gas_econ_bands_deleaked,
             caiso_offer_surface_conditional=caiso_offer_surface_conditional,
             nearby_fuel_price_zone_donor_guard=nearby_fuel_price_zone_donor_guard,
             fleet_state_from_eia860=fleet_state_from_eia860,
@@ -6814,6 +6817,7 @@ def solve_and_persist(
         "caiso_st_gas_peak_measured": caiso_st_gas_peak_measured,
         "caiso_ct_peaker_committed_measured": caiso_ct_peaker_committed_measured,
         "nyiso_ct_peaker_bands_measured": nyiso_ct_peaker_bands_measured,
+        "nyiso_st_gas_econ_bands_deleaked": nyiso_st_gas_econ_bands_deleaked,
         "caiso_offer_surface_conditional": caiso_offer_surface_conditional,
         "nearby_fuel_price_zone_donor_guard": nearby_fuel_price_zone_donor_guard,
         "fleet_state_from_eia860": fleet_state_from_eia860,
@@ -9056,6 +9060,7 @@ def run_replay_bundle(
     mustrun_chp_btm_holdout: bool | None = None,
     caiso_ct_peaker_committed_measured: bool | None = None,
     nyiso_ct_peaker_bands_measured: bool | None = None,
+    nyiso_st_gas_econ_bands_deleaked: bool | None = None,
     gas_offer_margin: bool | None = None,
     nearby_fuel_price_zone_donor_guard: bool | None = None,
     fleet_state_from_eia860: bool | None = None,
@@ -9211,6 +9216,8 @@ def run_replay_bundle(
         )
     if nyiso_ct_peaker_bands_measured is not None:
         kwargs["nyiso_ct_peaker_bands_measured"] = nyiso_ct_peaker_bands_measured
+    if nyiso_st_gas_econ_bands_deleaked is not None:
+        kwargs["nyiso_st_gas_econ_bands_deleaked"] = nyiso_st_gas_econ_bands_deleaked
     if gas_offer_margin is not None:
         kwargs["gas_offer_margin"] = gas_offer_margin
     # ercot-252: the two reserve from_year gates are data-availability gates
@@ -11286,6 +11293,34 @@ def main() -> None:
         "FAVOURABLE to C3a, which is the session's hazard, not its argument; "
         "this is NEVER a C3a lever. Non-CAISO, or a band with no "
         "phys_committed, is a hard error.",
+    )
+    parser.add_argument(
+        "--nyiso-st-gas-econ-bands-deleaked",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="RULE-25 [R-ISO-SCOPE] DE-LEAK (nyiso-232): NYISO ST_GAS's "
+        "`econ_low` (1.08) / `econ_high` (1.13) were DERIVED as the measured "
+        "steam marginal (~0.830) x `_NYISO_OFFER_CURVE`'s own cited 'CC class "
+        "reach ratio (CC econ_high 1.21 / native CC marginal 0.925 = 1.31x)' -- "
+        "and 1.08 reproduces that construction to 0.08-0.53% on the file's own "
+        "recorded native-steam triples (every reading within 1%). But "
+        "CC_REGULAR.econ_high "
+        "1.21 is the ERCOT keeper value the same file records as REMOVED under "
+        "rule 25, so ST_GAS carries it MULTIPLICATIVELY: the de-leak removed the "
+        "value where it was written and left it where it had been multiplied in "
+        "(rule 26). This sets both econ bands to the rule-24/25 NEUTRAL 1.0 -- "
+        "the identical remedy applied to CC_REGULAR.econ_high and CT_PEAKER's "
+        "econ bands in the SAME audit. Zero new literals, zero free parameters, "
+        "no DOF entry. `committed` and `peak` are EXCLUDED (peak 4.20 is the "
+        "$-cap scarcity wall; committed 1.05 already sits below phys_committed "
+        "1.104 so its markup clips to 0 in both legs, and moving it would price "
+        "steam min-load 9.4% below its own measured burn). It does NOT identify "
+        "the markup -- that stays an OPEN ROOT CAUSE against NYISO "
+        "scarcity/reserve (RCPF/AS) price formation, issue #1344. Measured "
+        "pre-solve: econ offer -$8.61/-$3.17/-$2.80/-$5.41 per MWh in "
+        "2022/23/24/25, non-ST_GAS offer max|d| EXACTLY $0.00. NYISO-only; "
+        "arming it elsewhere is a hard error. MUST NEVER be proposed as a C1 "
+        "or C3a lever.",
     )
     parser.add_argument(
         "--nyiso-ct-peaker-bands-measured",
@@ -13661,6 +13696,7 @@ def main() -> None:
                 else None
             ),
             nyiso_ct_peaker_bands_measured=args.nyiso_ct_peaker_bands_measured,
+            nyiso_st_gas_econ_bands_deleaked=args.nyiso_st_gas_econ_bands_deleaked,
             caiso_ct_peaker_committed_measured=(
                 args.caiso_ct_peaker_committed_measured
                 if "--caiso-ct-peaker-committed-measured" in sys.argv
@@ -14093,6 +14129,7 @@ def main() -> None:
         caiso_st_gas_peak_measured=args.caiso_st_gas_peak_measured,
         caiso_ct_peaker_committed_measured=args.caiso_ct_peaker_committed_measured,
         nyiso_ct_peaker_bands_measured=args.nyiso_ct_peaker_bands_measured,
+        nyiso_st_gas_econ_bands_deleaked=args.nyiso_st_gas_econ_bands_deleaked,
         caiso_offer_surface_conditional=args.caiso_offer_surface_conditional,
         nearby_fuel_price_zone_donor_guard=args.nearby_fuel_price_zone_donor_guard,
         fleet_state_from_eia860=args.fleet_state_from_eia860,

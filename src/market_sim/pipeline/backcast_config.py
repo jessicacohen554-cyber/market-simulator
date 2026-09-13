@@ -1267,6 +1267,7 @@ def backcast_config(
     caiso_st_gas_peak_measured: bool = False,
     caiso_ct_peaker_committed_measured: bool = False,
     nyiso_ct_peaker_bands_measured: bool = False,
+    nyiso_st_gas_econ_bands_deleaked: bool = False,
     caiso_offer_surface_conditional: bool = False,
     nearby_fuel_price_zone_donor_guard: bool = False,
     fleet_state_from_eia860: bool = False,
@@ -2487,6 +2488,66 @@ def backcast_config(
                         "econ_high": float(_nyct["phys_econ_high"]),
                     }
                 },
+            ),
+        )
+    # nyiso-232: the THIRD limb of the SAME rule-25 [R-ISO-SCOPE] de-leak, on
+    # ST_GAS's `econ_low`/`econ_high`. `_NYISO_OFFER_CURVE`'s ST_GAS block
+    # derives them as the measured steam marginal (~0.830) x "the CC class's own
+    # defensible reach ratio (CC econ_high 1.21 / native CC marginal 0.925 =
+    # 1.31x)" -- and the registered `econ_low` 1.08 reproduces that CITED
+    # construction to 0.08-0.53 % on the file's own recorded native-steam
+    # triples (0.830 -> 1.0857, 0.828 -> 1.0831, 0.825 -> 1.0792; every
+    # reading within 1 %). `CC_REGULAR.econ_high` 1.21 is the ERCOT
+    # keeper value the same file records as REMOVED under rule 25, so ST_GAS's
+    # econ bands carry it MULTIPLICATIVELY: the de-leak removed the value where
+    # it was written and left it where it had been multiplied in (rule 26
+    # [R-DELETE]). The bands go to the rule-24/25 NEUTRAL 1.0 -- the identical
+    # remedy applied to CC_REGULAR.econ_high and to CT_PEAKER's econ bands in
+    # the SAME audit, and CT_PEAKER's registered state today. ZERO new
+    # literals, ZERO free parameters. `committed` and `peak` are EXCLUDED for
+    # the reasons the field's own comment states (peak is the $-cap scarcity
+    # wall; committed already sits below its measured `phys_committed` 1.104, so
+    # its markup clips to 0 in both legs and moving it would price steam
+    # min-load 9.4 % BELOW its own measured burn). This does NOT identify the
+    # markup -- the de-leak declared CC's own markup un-identified, so nothing
+    # can be transferred from it; the identification stays an OPEN ROOT CAUSE
+    # against NYISO scarcity/reserve (RCPF/AS) price formation, issue #1344.
+    # Pre-registration: results/calibration/PRECOMMIT-nyiso232-st-gas-deleak.md.
+    # Gate on kwarg-OR-FIELD. `replay_keeper.py --set` writes the ScenarioConfig
+    # FIELD and never the solve kwarg, so a kwarg-only gate would let a --set
+    # A/B solve the CONTROL while recording an armed config — the exact seam
+    # nyiso-231 repaired on `gas_offer_margin_anchor_vintage`.
+    if nyiso_st_gas_econ_bands_deleaked or getattr(
+        config, "nyiso_st_gas_econ_bands_deleaked", False
+    ):
+        if iso.upper() != "NYISO":
+            raise ValueError(
+                "nyiso_st_gas_econ_bands_deleaked is NYISO-scoped "
+                f"(rule 25 [R-ISO-SCOPE]) and was armed for {iso.upper()}; the "
+                "leaked reach it removes is NYISO's own ST_GAS derivation, and "
+                "no value crosses an ISO boundary -- another ISO carrying the "
+                "same defect de-leaks its OWN bands in its OWN lane"
+            )
+        _nyst = dict(config.offer_curve_by_group.get("ST_GAS") or {})
+        _missing = [k for k in ("phys_econ_low", "phys_econ_high") if k not in _nyst]
+        if _missing:
+            raise ValueError(
+                "nyiso_st_gas_econ_bands_deleaked is armed but the resolved "
+                f"NYISO ST_GAS band carries no {', '.join(_missing)} "
+                "measurement, so the de-leaked bands would have no measured "
+                "physical basis underneath them to price against "
+                "(rule 25 [R-ISO-SCOPE])"
+            )
+        config = config.with_overrides(
+            nyiso_st_gas_econ_bands_deleaked=True,
+            offer_curve_by_group=_deep_merge_offer_curve(
+                config.offer_curve_by_group,
+                # The rule-24/25 neutral band. NOT `phys_*`: at markup 0 the
+                # multiplier still scales FUEL, and grounding the bid ON the
+                # measured incremental burn is a different claim (nyiso-199's,
+                # for a class whose committed band double-counted startup
+                # amortization) than removing a borrowed markup, which is this.
+                {"ST_GAS": {"econ_low": 1.0, "econ_high": 1.0}},
             ),
         )
     # MISO gas + coal offer curves (CAMPD-/structure-/SOM-grounded; see
