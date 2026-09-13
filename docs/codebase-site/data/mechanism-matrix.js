@@ -1457,7 +1457,7 @@
 window.MECH_MATRIX = {
   version: 1,
   updated: "2026-08-10",
-  isos: ["ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP", "SOCO"],
+  isos: ["ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP", "SOCO", "NWPP"],
   categories: [
     { id: "structure", name: "Market structure & fleet representation" },
     { id: "price", name: "Price formation & scarcity" },

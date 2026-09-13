@@ -83,6 +83,7 @@
   --iso-miso:   #F97316;
   --iso-spp:    #14B8A6;
   --iso-soco:   #6366F1;
+  --iso-nwpp:   #65A30D;
 
   /* Semantic */
   --positive: #16A34A;
@@ -1051,6 +1052,7 @@ ul, ol {
 .badge--iso-miso  { background: rgba(249,115,22,0.12);  color: #C2410C; }
 .badge--iso-spp   { background: rgba(20,184,166,0.12);  color: #0F766E; }
 .badge--iso-soco  { background: rgba(99,102,241,0.12);  color: #4338CA; }
+.badge--iso-nwpp  { background: rgba(101,163,13,0.12);  color: #3F6212; }
 
 .badge--tier-core    { background: rgba(14,165,233,0.10); color: var(--hydro-text); }
 .badge--tier-tuning  { background: rgba(245,158,11,0.10); color: var(--amber-text); }
@@ -1140,6 +1142,7 @@ ul, ol {
 .iso-btn.active--miso  { background: rgba(249,115,22,0.12); border-color: var(--iso-miso);   color: #C2410C; }
 .iso-btn.active--spp   { background: rgba(20,184,166,0.12); border-color: var(--iso-spp);    color: #0F766E; }
 .iso-btn.active--soco  { background: rgba(99,102,241,0.12); border-color: var(--iso-soco);   color: #4338CA; }
+.iso-btn.active--nwpp  { background: rgba(101,163,13,0.12); border-color: var(--iso-nwpp);   color: #3F6212; }
 
 /* ---------------------------------------------------------------------------
    20. Chart Legend
