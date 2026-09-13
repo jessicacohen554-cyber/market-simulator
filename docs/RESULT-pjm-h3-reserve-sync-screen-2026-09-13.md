@@ -294,3 +294,121 @@ reproduce the headline **exactly — 4,939.01 TWh** — and then localize it, wh
 So the repair is **three cells in one committed extract**, with a diagnosable cause — not a
 re-fetch of the year. Still a **shared committed-extract repair, not this lane's** to make, but it
 is now specified rather than merely flagged.
+
+---
+
+## 9. ATTEMPT 2 — THE ARM INSTALLED, AND THEN P0 WAS OOM-KILLED
+
+**Shard** `session_01EzNPfc9AUhb1Lv1ptTDF2J`, branch `claude/pjm-h3-syncarm-2022`, recovery SHA
+**`ad589bd32c0af82b9b91d7456024a326d64c3262`** (rule 33(d): the full 40-char sha, never a branch
+name). Its parent commit is `ed6bb0996d2685884d1f05eb105c3bef4dea138c` — **the exact pin; it never
+pulled, rebased or synced**. It changed **exactly one file**, its own FINDING doc: no `src/`, no
+`scripts/`, no `frontend/`. Its unique record was rescued onto this branch as
+`docs/handoffs/FINDING-pjm-h3-syncarm-2022-blocked-2026-09-13.md` (rule 33(f)(1)) **before** the
+shard was archived (rule 33(a)).
+
+**Rule 34(d) retrievability: `git ls-tree -r ad589bd3 -- results/calibration/pjmh3_syncarm_2022`
+returns ZERO files.** There is no bundle. The bundle dir on its container held only an empty
+`dispatch/` directory. **Nothing was pushed, and that is correct** — rule 27 `[R-PUSH]` forbids
+pushing a half-written bundle, so rule 34's push duty had no object.
+
+### 9.1 The four hard stops all PASSED, and THE ARM ARMED
+
+Quoted verbatim from the shard's solve log:
+
+```
+INFO: PJM PER-GEN reserve co-opt ON: 78 R columns / 2682 member units (eligible, ramp10>0;
+deliverable ramp mean 38.2 GW), 4 balance families (pjm_primary, pjm_primary_mad, pjm_sync,
+pjm_sync_mad), req means [2663, 2662, 1902, 1901] MW — SYNC product split ON
+(pjm_reserve_pergen_sync: online-scoped sync caps recomputed at the P0->P1 seam)
+```
+
+**Four balance families against the control's two; `pjm_sync` and `pjm_sync_mad` both present; 78 R
+columns. The mechanism installed exactly as designed.** Two independent cross-checks of my own
+phase-0 work land on it:
+
+* the solve's **`deliverable ramp mean 38.2 GW`** reproduces §7's parent-side zero-LP census
+  (**38.24 GW**) — two different code paths, same number;
+* the SYNC family requirement means **1,902 / 1,901 MW** are §2(b)'s measured `sr_req`
+  (1,712.2 / 1,711.6 MW) **plus the published ORDC offset** (`sr_req + sr_offset`, ≈ 190 MW),
+  which is the construction `reserves/spec.py:2689` specifies.
+
+### 9.2 Where it died, and why
+
+| | |
+|---|---|
+| phase | **P0** — no P0 completion marker, no P1 marker, no `memory peak:` line ever printed |
+| exit | **137** (SIGKILL), `oom-kill:constraint=CONSTRAINT_MEMCG` |
+| anon-RSS at kill | **13,927,636 kB = 13.28 GiB** |
+| cgroup ceiling | **13.34 GiB** — pinned exactly at it |
+| `memory.failcnt` | **1,562,256** |
+| swap in use at kill | **3.4 MB** of a 4.0 GiB swapfile — i.e. essentially none |
+| armed-run wall clock | 411 s (6 min 51 s) before the kill |
+
+**The container was DEGRADED, and that is the diagnosis — not that the arm is infeasible.** The
+preflight said so itself, in advance:
+
+```
+WARNING: container preflight: swap: /swapfile-marketsim is already active (4.0 GiB) but
+  ceiling+swap is still 6.7 GiB short of the 24 GiB target; leaving it as it is
+WARNING: container preflight: ceiling+swap 17.3 GiB is below the 24 GiB target; a per-plant
+  ISO-year LP (MISO, PJM) may be OOM-killed here
+```
+
+`scripts/lib/solve_container.py` targets **24 GiB** of ceiling + swap (`DEFAULT_TARGET_GIB = 24`)
+but **keeps an already-active `/swapfile-marketsim` and never re-creates it** (`_swapfile_active`).
+That shard inherited a stale 4 GiB swapfile from an earlier tenant, so the preflight could not
+provision the ~10.7 GiB it wanted, warned, and was proved right.
+
+**Measured in THIS parent container, which is the same environment**, and which is why one retry is
+warranted rather than a conclusion:
+
+| | |
+|---|---|
+| cgroup | **v1** (`/sys/fs/cgroup/memory` present) |
+| `memory.limit_in_bytes` | 14,327,676,928 B = **13.34 GiB** |
+| `memory.memsw.limit_in_bytes` | **unlimited** |
+| `vm.swappiness` | **60** |
+| active swap | **NONE** |
+
+With `memsw` unlimited and swappiness 60, **swap genuinely can extend the effective ceiling here** —
+the shard's own conclusion that "adding swap under a v1 limit does not substitute" is too strong as
+a general statement, and is corrected: what actually happened is that *almost no swap was
+provisioned*, because a stale swapfile blocked the preflight. A container that starts with no swap
+lets the preflight reach its own target.
+
+**One further correction to the shard's report, because it changes the reading.** It infers "the
+control itself would very likely not fit either" from the control peaking at 13.94 GB against a
+13.34 GiB ceiling. Those are different units: **13.94 GB = 12.98 GiB**, which is *below* the
+13.34 GiB ceiling. The control fits with ≈ 0.36 GiB of headroom; the SYNC split's extra structure
+(2 → 4 balance families, 78 R columns) consumes it. The arm needs *modestly* more than the ceiling,
+not a fundamentally different class of machine.
+
+### 9.3 What attempt 2 also established, and what it corrects in my own record
+
+Three environment blockers must be cleared before a PJM LP is reached in a fresh container, each
+fatal because the mechanism refuses to silently no-op: `transfer-interface-limits` (no clean
+partition), `ramp-capability` (no clean partition for PJM), and `pjm_da_virtual_bids`
+(`data/raw/pjm-da-virtuals/` is a README-only, licence-restricted corpus; **`--years 2022` must be
+requested explicitly — the fetcher defaults to 2023-2025**). I hit the identical three in the parent.
+
+**This corrects my own hypothesis about attempt 1.** I attributed that failure to a foreground
+solve exceeding the 10-minute Bash ceiling. Attempt 2's evidence says the first shard was almost
+certainly killed by blocker 1 or 2 — it died ~10 min in, which is where blocker 1 lands, and it
+never reached an LP at all. The background-job requirement was still the right instruction, but it
+was not the fix for attempt 1.
+
+### 9.4 STATUS AFTER ATTEMPT 2 — THE SCREEN HAS NOT RUN
+
+**S1 is satisfied on identity** (hard stop 3 verified the control signature; the arm installed as
+the declared single-field delta with exactly the declared structure). **S2, S3, S4 and S5 are
+UNMEASURED — not KILL, not PASS.** No `reserve_family_2022.parquet` and no `system_2022.parquet`
+were ever written, so there is no evidence about the mechanism's behaviour, and **no verdict about
+the mechanism may be drawn from an OOM.**
+
+**Attempt 3 launched** — `session_01HBTXoSZmnAD9KZoNWAhi6B`, branch
+`claude/pjm-h3-syncarm2-2022`, same pin `ed6bb099…`, on a **fresh container** so the preflight can
+provision its full swap target, with the three blockers pre-cleared in the prompt (~17 min saved)
+and a stated 60-minute budget (rule 32(b)). It is instructed to report `swapon --show` *before* the
+solve, and that **a second OOM is a reportable result to stop on, never a thing to engineer
+around**.
