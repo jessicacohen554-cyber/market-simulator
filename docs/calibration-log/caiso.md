@@ -14951,3 +14951,87 @@ LP before it spends it on the wrong year.
 already on the CAISO `offer_curve_by_group` cell from caiso-268.
 
 **Next number: caiso-279.**
+
+## caiso-279 — 2026-09-12
+
+**THE ARM IS REFUTED — AND IN REFUTING IT THE SHARDS FOUND THE REAL OBJECT: a MEASURED IMPORT
+ENVELOPE that binds 92–95 % of the hours carrying the 2022 miss at a shadow price of −$169 to
+−$285/MWh, while the physical interties sit at 24–60 % utilisation. THE CAISO OVERSHOOT IS
+QUANTITY-CONSTRAINED, NOT PRICE-CONSTRAINED.** Two shards, one LP each; parent spent zero LP.
+**KEEPER UNCHANGED, NOTHING PROMOTED, no cell verdict moved.** Rule 25: CAISO only. Full record:
+`docs/RESULT-caiso279-the-binding-object-is-the-import-envelope-2026-09-12.md`; charter
+`docs/PRECOMMIT-caiso279-dsw-import-gas-regional-basis-2026-09-12.md` (pushed `0901c503` before
+either solve).
+
+**THE ARM FAILED ITS OWN PRE-REGISTERED GATE, IN THE WRONG DIRECTION.** Ablating
+`caiso_import_gas_coupling` on 2022: lw price **94.069 → 95.478 (+1.409 $/MWh)**, C3a **+11.34 →
++13.00 %** against a 92.939 ceiling; December 291.708 → 305.818; import **−1.522 TWh** replaced by
+CC_REGULAR **+1.292 TWh**; slack/dump 0 both sides. **G-DIR (December Δλ must be NEGATIVE) FAILED**
+and the arm stopped there — no second value tried (rule 1 (c)). G-IDENT: 3 fields differ, **one
+behavioural**; the other two are new default-off fields absent from the older control, one
+MISO-scoped. G-LIVE 3,660/61,320 zone-hours > $5, max $539.11. D4 fails in arm **and** control
+alike (pre-existing `chp_steam` rows) — no flip.
+
+**THE SESSION'S OWN ERROR, OWNED:** the PRECOMMIT sized the operand delta on **December only**,
+where the coupling's shift is strongly positive (+74.3 / +110.5 $/MWh on DSW_CCGT / DSW_CT). Across
+the **year** the sign is mostly the other way, so ablation made imports dearer on net. The annual
+sign was never measured before the solve.
+
+**THE FINDING THAT MATTERS IS WHERE THE ARM WAS INERT.** Dec 23/26/27/29/30/31 are
+**byte-identical** — import pinned at exactly **7,482.8 MW in both arms**. From the arm's own
+`network_2022.parquet`, Dec 29–31 (72 h):
+
+| constraint | flow | limit | util | dual | h at bound |
+|---|--:|--:|--:|--:|--:|
+| `grp:+WECC_PNW>NP15` | 1,157.58 | 1,157.58 | **1.000** | **−285.41** | **72/72** |
+| `grp:+WECC_DSW>SP15_rest` | 6,325.21 | 6,325.21 | **1.000** | **−261.94** | **72/72** |
+| `WECC_DSW>SP15_rest` (physical) | 6,325.21 | 10,623 | 0.595 | 0.000 | 0 |
+| `WECC_PNW>NP15` (physical) | 1,157.58 | 4,800 | 0.241 | 0.000 | 0 |
+
+The group limits are **time-varying, 286 distinct values** (2,380–7,741 and 301–3,961 MW) against
+**static** physical TTCs — the measured import envelope, not transmission. It binds **43.4 %** and
+**40.1 % of ALL 8,760 hours**, 47.7 / 81.2 % of December, and **92.1 / 95.4 % of Dec 23–31** at mean
+duals **−169.39 / −193.63**. It reconciles independently with the measured price wedge: import
+nodes clear $137–151 while internal CAISO clears $409–423 on those days, a $258–270 gap = the
+congestion rent.
+
+**THIS CORRECTS caiso-276 §5b** (*"the seam is not binding, in any window — hours ≥ 99 %: 0"*),
+carried forward into caiso-278's charter. §5b measured **physical link** utilisation (0.595 / 0.241,
+combined group 0.474), **not** the per-corridor group envelope that is at **1.000**. Every number
+there is individually correct; the conclusion is false for the object that actually binds. It is a
+measurement-target error.
+
+**AND IT EXPLAINS EIGHTEEN SESSIONS.** On the hours carrying the miss, λ is set by an envelope's
+shadow price, not by any generator's offer — so a price-side lever cannot move the solution, which
+is exactly what was measured each time: the CHP/ST_GAS offer surface ~1 % (caiso-231's solved A/B);
+the flat ×0.92 fossil cut closing C3a but breaking C4-2025 (caiso-267/268); the CC bands already
+0.05 **below** the market's own implied HR (caiso-272, LP-row grain); RA must-offer reach with only
+2.9 % idle-in-the-money (caiso-276 §5a); and now this coupling, **inert on six of the nine days
+that matter**.
+
+**NOT ESTABLISHED, and not to be assumed: that the envelope is WRONG.** A cap that binds is not a
+defect — CAISO's interties are scheduled, not free, and **a cap must never be widened because the
+residual wants it** (rule 1). What makes it live is `caiso_firm_selfsched_floor`'s own standing
+annotation since caiso-150: the basis is *"EIA-930 **realised net** corridor interchange — the wrong
+object in kind"*. A **net** envelope understates **gross** import capability in any hour with
+simultaneous exports, and it is an *outcome* series used as a *capability* cap. **The next
+measurement is zero-LP**: whether measured actual CAISO imports on Dec 29–31 2022 exceeded
+7,482.8 MW, from the already-committed EIA-930 CISO record.
+
+**RETENTION, AND ONE HONEST LOSS.** Arm A is retrievable with **zero re-solve** — 16 files incl.
+the per-plant `dispatch/` layer at immutable SHA `b17ac9d0f8b505d542f279356d5300888c69a70f`
+(gitignored locally, never deleted; rules 29(c)/31/33(d)). **Arm B's 2023–2025 bundle is LOST
+unless its container is used**: the 272 MB push did not land (`claude/caiso279-arm-span` is not on
+the remote, `36ce217` does not resolve) — the remote rejects large **packs**, exactly as Git &
+Pushing states, and the shard reported success without verifying the ref. Its container is
+deliberately left **ALIVE** (rule 33(a)), but this session has **no messaging path to a cloud
+shard**, so it could not be instructed; re-solve cost ~35–55 min. The arm is refuted, so no verdict
+depends on it. **Shard-prompt defect to carry forward:** require
+`git ls-remote --heads origin | grep <branch>` *after* the push, and instruct the slim set
+(exclude `dispatch/`, `floors/`, `*.npz`, `unit_hourly_*`) for any multi-year bundle.
+
+**Matrix (rule 28(b)):** `caiso_import_gas_coupling` CAISO cell takes this evidence; **verdict
+unchanged at K** — the mechanism stays armed, only the ablation is refuted.
+`check_mechanism_matrix.py` exit 0, 0 errors.
+
+**Next number: caiso-280.**
