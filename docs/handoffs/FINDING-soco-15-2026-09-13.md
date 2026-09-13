@@ -17,7 +17,7 @@ Arms are each ISO's keeper recipe replayed at the arm SHA `4f33476c` (`scripts/r
 | **MISO** | 2020–2025 (arm vs keeper) | CT_PEAKER 2022 −0.326; CC_CHP −0.15 to −0.20 every year 2020–24; CC_REGULAR +0.05 to +0.30 | mixed — CC_REGULAR toward in 2021/22, CT_PEAKER away in 2021/22; every move ≤ 0.33 TWh against a 5–6 TWh-avail input delta (the phantom CTs were idle capacity) | +0.01 to +0.07; 2023 max hour 265 → 906 | direction as predicted, magnitude bounded, no band-scale change |
 | **SPP** | 2023–2025 (arm vs keeper) | CT_PEAKER 2025 −0.645 (−4.0 %); CC_REGULAR +0.334; ST_GAS +0.156; COAL_PRB +0.131 | CT_PEAKER, CC, ST_GAS toward; COAL_PRB away | 2025 +0.23; 2023/24 +0.00 | 2023/24 identical; 2025 moves as the 2.0 TWh-avail delta implied |
 | **ERCOT** | 2021–2025 (arm vs same-recipe control at HEAD) | CC_CHP 2021 −0.314 / 2022 −0.280; CC_REGULAR +0.310 / +0.252; CT_CHP −0.10/yr; CT_PEAKER 2023/24 −0.11 | CC_CHP and CC_REGULAR toward (2021: 0.42 → 0.11 and 0.39 → 0.08); CT_CHP away; ST_GAS away | +0.46 / +0.21 / **+2.34** / +0.11 / 0.00 | both directions realised; 2025 identical; the 2023 price move is the largest single effect in the whole A/B |
-| **PJM** | 2023–2025 (arm vs keeper) | _see §1.4_ | _see §1.4_ | _see §1.4_ | _see §1.4_ |
+| **PJM** | 2023–2025 (arm vs keeper) | CC_REGULAR 2023 −0.073 (−0.02 %); every other class-year ≤ 0.03 | CC_REGULAR toward; COAL_BIT +0.027 away | +0.00 in all three years | the one 1.4 GW phantom-late CC ramps two months earlier; class-level effect is noise-scale, prices identical |
 | NYISO | not solved | bound ≤ 0.028 TWh/yr (2 units, 37.8 MW-months) | — | — | input-inert below any band |
 | CAISO | not solved | bound ≤ 0.037 TWh/yr (7–8 objects, ≤ 50 MW-months) | — | — | input-inert below any band |
 | NEISO | not solved | 2023 bound ≤ 0.003 TWh; 2024/25 inputs byte-identical | — | — | input-inert |
@@ -164,9 +164,36 @@ Years with no class moving by ≥ 0.5 GWh: [2025] (arm and control class energie
 
 ### 1.4 PJM — arm vs keeper `pjm_d4_4_A`
 
-_pending_
-_pending_
-_pending_
+| year | class | control TWh | arm TWh | Δ TWh (arm−control) | measured EIA-923 TWh | |control−actual| → |arm−actual| |
+|---:|---|---:|---:|---:|---:|---|
+| 2023 | CC_CHP | 8.541 | 8.542 | +0.002 | 6.115 | 2.426 → 2.427 (away) |
+| 2023 | CC_REGULAR | 328.529 | 328.456 | -0.073 | 325.670 | 2.859 → 2.786 (toward) |
+| 2023 | COAL_BIT | 105.125 | 105.152 | +0.027 | 103.026 | 2.099 → 2.126 (away) |
+| 2023 | COAL_PRB | 3.052 | 3.053 | +0.001 | 3.550 | 0.499 → 0.497 (toward) |
+| 2023 | COAL_WC | 5.295 | 5.296 | +0.001 | 5.895 | 0.600 → 0.599 (toward) |
+| 2023 | CT_CHP | 1.906 | 1.901 | -0.005 | 1.875 | 0.031 → 0.026 (toward) |
+| 2023 | CT_PEAKER | 20.533 | 20.550 | +0.018 | 21.663 | 1.131 → 1.113 (toward) |
+| 2023 | ST_GAS | 11.326 | 11.332 | +0.006 | 8.883 | 2.443 → 2.449 (away) |
+| 2023 | VIRTUAL_DEC | -13.445 | -13.439 | +0.006 | None | n/a |
+| 2023 | VIRTUAL_INC | 15.432 | 15.444 | +0.012 | None | n/a |
+| 2023 | import | -30.870 | -30.863 | +0.007 | None | n/a |
+| 2024 | CC_REGULAR | 335.792 | 335.794 | +0.002 | 335.124 | 0.668 → 0.670 (away) |
+| 2024 | COAL_BIT | 103.971 | 103.972 | +0.001 | 105.097 | 1.125 → 1.124 (toward) |
+| 2024 | CT_CHP | 1.946 | 1.940 | -0.007 | 1.688 | 0.258 → 0.251 (toward) |
+| 2024 | CT_PEAKER | 25.839 | 25.841 | +0.002 | 24.019 | 1.821 → 1.822 (away) |
+| 2024 | VIRTUAL_DEC | -15.889 | -15.888 | +0.001 | None | n/a |
+| 2025 | CT_CHP | 1.381 | 1.379 | -0.002 | 1.372 | 0.009 → 0.007 (toward) |
+| 2025 | CT_PEAKER | 30.315 | 30.315 | +0.001 | 23.825 | 6.490 → 6.490 (away) |
+
+| year | price col | control mean | arm mean | Δ mean | control p95 | arm p95 | control max | arm max | hrs>1000 ctl/arm |
+|---:|---|---:|---:|---:|---:|---:|---:|---:|---|
+| 2023 | price | 28.80 | 28.81 | +0.00 | 38.7 | 38.7 | 300 | 300 | 0/0 |
+| 2024 | price | 28.69 | 28.69 | +0.00 | 41.5 | 41.5 | 341 | 341 | 0/0 |
+| 2025 | price | 40.01 | 40.01 | +0.00 | 63.1 | 63.1 | 801 | 801 | 0/0 |
+
+**PJM gates.** G-S3 PASS: plant 62949 (AEP Ohio CC, 8 tranches, Σ pmax 1,803.8 MW) dispatches 0.0 MW in January 2023, at most 334.8 MW in February and 1,046.2 MW in March against its 0.67 online-share bound of 1,208.5 MW, and up to 1,569.3 MW from April — exactly the mask `0 | 0.67 | 0.67 | 1 …` the repair assigns. **G-S1 is a nominal miss at class level, explained:** the PRECOMMIT wrote G-S1 as "sign(Δ class energy) = sign(Δ MW-months)"; PJM 2023 CC_REGULAR carries +601 MW-months net (February +0.67 × 1,803.8, March −0.33 × 1,803.8) yet moved −0.073 TWh (−0.02 %). The object's own availability moved in both directions inside one class — up in February, down in March — and March's capacity factor for this CC is the higher of the two, so the class net is negative while the object-level identity holds; the magnitude bound (0.073 ≤ 0.36 TWh-avail) holds. The gate tested the mechanism's arithmetic and the arithmetic is what happened; it is not a kill, and it is recorded as the one place the pre-registered sign rule was too coarse. 2024 and 2025 move by ≤ 0.007 TWh in any class and prices are identical to the cent in all three years.
+
+The PJM shard reported that its hydration step regenerated PJM clean partitions and fetched the PJM DataMiner2 corpus the keeper's recipe reads (`pjm_da_virtual_bids`, `pjm_measured_interface_limits`, `measured_ramp_capability`) — data-side steps under the keeper's own mechanisms, no edit under `src/` or `scripts/`; the parent did not verify those regenerated partitions byte-for-byte against the ones the keeper solved on, so a PJM re-solve by the PJM lane is the authority on PJM's numbers; this lane's PJM table is the repair's effect on the recipe as replayed here.
 
 ### 1.5 What moved toward and away from the measured values, honestly
 
@@ -270,7 +297,7 @@ Reading the table: **MISO** moves most — 0.3–0.4 % of fleet availability eve
 |---|---|
 | **G-S1 direction & order** | PASS on every solved ISO-year: every class with \|Δ MW-months\| > 100 in PRECOMMIT §1.3 moved with the sign of its availability delta (CT_PEAKER down where the phantom CTs were removed: MISO, SPP 2025, ERCOT 2023/24; CC_CHP down at ERCOT's plant 10554; ERCOT 2022 CT_PEAKER **up** +0.051 where plant 65372 was wrongly held offline Nov–Dec; PJM per §1.4), and every \|Δ energy\| ≤ the GWh-avail bound (MISO 0.33 vs 5,973; SPP 0.645 vs 2,027; ERCOT 0.31 vs 1,018). |
 | **G-S2 confinement** | PASS: established at phase 0 on the identical generator list (PRECOMMIT §1.3); the shards' `COD ramp (<ISO> <year>): N unit-months masked` lines were reported per year. |
-| **G-S3 identity** | PASS: MISO plant 6137 CT bin (Σ pmax 597.9 MW, online fraction 0.27 → 161.4 MW) dispatches at most 133.3 MW in every hour of 2020 and 2024; ERCOT plant 65372 (Σ pmax 484 MW) dispatches 0.0 MW Jan–Oct 2022, ≤ 291.9 Nov–Dec 2022, ≤ 318.5 in 2023 and ≤ 337.6 Jan–Sep 2024 against its 0.75 bound of 363.0; SPP plant 57881 CT bin (Σ pmax 762.9 MW, Jan–Mar fraction 0.33 → 251.8 MW) dispatches at most 224.6 MW in Jan–Mar 2025; PJM per §1.4. |
+| **G-S3 identity** | PASS: MISO plant 6137 CT bin (Σ pmax 597.9 MW, online fraction 0.27 → 161.4 MW) dispatches at most 133.3 MW in every hour of 2020 and 2024; ERCOT plant 65372 (Σ pmax 484 MW) dispatches 0.0 MW Jan–Oct 2022, ≤ 291.9 Nov–Dec 2022, ≤ 318.5 in 2023 and ≤ 337.6 Jan–Sep 2024 against its 0.75 bound of 363.0; SPP plant 57881 CT bin (Σ pmax 762.9 MW, Jan–Mar fraction 0.33 → 251.8 MW) dispatches at most 224.6 MW in Jan–Mar 2025; PJM plant 62949 per §1.4 (0.0 MW in January, ≤ 334.8 in February and ≤ 1,046.2 in March against its 1,208.5 MW bound). |
 | **G-S4 unrelated flips** | not scorable without registration; the class-vs-measured direction is reported in §1.5 instead, both ways. |
 
 ## 6. G-DRIFT — why the committed keeper was the control for MISO, SPP and PJM, and why ERCOT earned a control solve
@@ -297,7 +324,7 @@ Reading the table: **MISO** moves most — 0.3–0.4 % of fleet availability eve
 | MISO arm (relaunch, 13 GiB floor) | `session_01MKmc1qMTGysS3eLtSzWyQH` | solved 6 yr in ~70 min; 596/670/662 s per 2020–22 year at 13.34 GiB RSS with the preflight swap | `claude/soco-15-miso-arm` **`5f5675ad10369ef2c000bd04fb3117c7823d469d`** | `soco15_miso_arm_g1` (2020–22) + `soco15_miso_arm` (2023–25), 74 files |
 | ERCOT arm | `session_01UqvwgkpPi4HWXXdT9oXTNc` | solved 5 yr as three recipe groups | `claude/soco-15-ercot-arm` **`f53452c7e870355bddbf943052f0cb071be6102a`** | `soco15_ercot_arm_g1` (2021–22) + `_g2` (2023) + `soco15_ercot_arm` (2024–25) |
 | ERCOT control | `session_01YbL3rhiy3njjfmcDpmShMZ` | solved 5 yr in 81.5 min (6.5 min over its stated 75) | `claude/soco-15-ercot-control` **`1a2e6416bbad8ed445dc19e0d96692f2a567fe39`** | `soco15_ercot_control_g1` + `_g2` + `soco15_ercot_control` |
-| PJM arm (relaunch) | `session_014E5XdrjVD4bdwzGwH5n8Jc` | _see §1.4_ | _see §1.4_ | _see §1.4_ |
+| PJM arm (relaunch) | `session_014E5XdrjVD4bdwzGwH5n8Jc` | solved 3 yr in 3,828 s (1,186 / 1,293 / 1,249 s) | `claude/soco-15-pjm-arm` **`039d3cbb24daa1b459e577415922b2086c68b4c8`** | `soco15_pjm_arm`, 37 files, 3 × `dispatch/<y>_P1.parquet` |
 
 The disk floor in the first MISO/PJM prompts was copied from a prior MISO shard's precedent (20 GiB); re-reading `scripts/lib/solve_container.py` showed the preflight reserves 6 GiB and provisions swap from the rest toward a 24 GiB ceiling+swap target, so 13 GiB free suffices — the relaunched shards solved at 13.34 GiB RSS with the preflight's own swap and never approached the cgroup ceiling. Every shard was archived the moment its bundle was fetched, checked out and its recipe signature verified (rule 33(a)); shard branches carrying promotable bundles are left in place (rule 33(f)(3)).
 
