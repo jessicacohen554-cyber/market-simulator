@@ -1,5 +1,31 @@
 # Changelog
 
+## 2026-09-13 — SOCO r#4: five lanes issued, zero dispatched — and a registration pin two programs both missed
+
+Desk refresh r#4 (`docs/handoffs/soco-desk-ledger-2026-09.md`). Docs only.
+
+- **Nothing landed, and that is the finding.** SOCO-13 and SOCO-21 have stood issued since r#2 (~8 h),
+  SOCO-14/15/22 since r#3 — no branch, no PR, no FINDING for any. In the same window the **NWPP**
+  program dispatched and landed three lanes (#6104, #6105, #6106) and five other lanes shipped
+  besides, so dispatch is working everywhere else. Issuance is the desk's act and dispatch is not;
+  under gate G15 none is graded lost. Owner ruled: re-emit all five, pinned to `33a7c961`.
+- **`_ISO_TO_BA_CODE` was missing from the SOCO plan's §2.3 atomicity list**, and it is a hard
+  registration pin: `data/zone_assignment.py:69` is a seven-key dict pinned to `SUPPORTED_ISOS`, and
+  `:1092` indexes it bare (`df[ba == _ISO_TO_BA_CODE[iso]]`), so a registered SOCO without a key
+  raises `KeyError` rather than falling back. Found by **NWPP-10**, which flagged it as "the W2 novel
+  change" its own plan had missed; verified here against the live code before being added. SOCO's
+  entry is trivial (`"SOCO": "SOCO"` — the BA code and the registry key are the same string) where
+  NWPP's 17→1 map collapses to one arbitrary BA and fails **silently** at 13 call sites. Two addition
+  programs chartered four days apart both missed the same pin, which says a §2.3-style atomicity list
+  is only as good as the last program that stress-tested it.
+- **NWPP-13 is SOCO-13's sister lane and has already run**, so its result now rides SOCO-13's
+  re-emission as a worked precedent: the WEIM STOP gate read **NO** (on-peak 22.6–37.5 % below Mid-C
+  against a ±10 % bar), the gate was fixed ex ante in a pushed PRECOMMIT before any value was read, no
+  bar was moved afterwards, and the lane landed nothing to `_validation-source`. SOCO-13 also carries
+  the anchor candidate SOCO-12 found after that charter was written — the SEEM Independent Market
+  Auditor's public monthly price series, 2022-11 → 2026-07.
+- Base-branch CI debt unchanged: `audit_keepers`, `check_registry_payload_parity` and
+  `check_gate_a_provenance` all RED at `33a7c961`, none of it this program's.
 ## 2026-09-13 — NWPP r#3: the price gate read NO, so the scorer branch became the program
 
 Desk refresh r#3 (`docs/handoffs/nwpp-desk-ledger-2026-09.md`). Docs only — no code, no data, no
