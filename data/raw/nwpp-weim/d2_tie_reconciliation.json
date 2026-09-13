@@ -1,0 +1,132 @@
+{
+ "month": "2024-07",
+ "tie_rows": 2900672,
+ "duplicates_on_six_field_key": 0,
+ "ties": 199,
+ "per_ba": {
+  "BPAT": {
+   "tie_wheel_through_gwh": 0.0,
+   "tie_gross_gwh": 268.3,
+   "published_gross_gwh": 203.3,
+   "gross_ratio": 1.3197,
+   "tie_absnet_gwh": 134.2,
+   "store_absnet_gwh": 121.9,
+   "net_ratio": 0.9086
+  },
+  "PSEI": {
+   "tie_wheel_through_gwh": 0.0,
+   "tie_gross_gwh": 381.1,
+   "published_gross_gwh": 371.9,
+   "gross_ratio": 1.0245,
+   "tie_absnet_gwh": 104.3,
+   "store_absnet_gwh": 101.0,
+   "net_ratio": 0.9693
+  },
+  "SCL": {
+   "tie_wheel_through_gwh": 0.0,
+   "tie_gross_gwh": 112.6,
+   "published_gross_gwh": 112.4,
+   "gross_ratio": 1.0017,
+   "tie_absnet_gwh": 108.0,
+   "store_absnet_gwh": 107.7,
+   "net_ratio": 0.9967
+  },
+  "TPWR": {
+   "tie_wheel_through_gwh": 0.0,
+   "tie_gross_gwh": 55.4,
+   "published_gross_gwh": 55.3,
+   "gross_ratio": 1.0013,
+   "tie_absnet_gwh": 35.6,
+   "store_absnet_gwh": 35.6,
+   "net_ratio": 0.9978
+  },
+  "PGE": {
+   "tie_wheel_through_gwh": 0.0,
+   "tie_gross_gwh": 194.4,
+   "published_gross_gwh": 183.8,
+   "gross_ratio": 1.0574,
+   "tie_absnet_gwh": 141.0,
+   "store_absnet_gwh": 142.2,
+   "net_ratio": 1.0091
+  },
+  "PACW": {
+   "tie_wheel_through_gwh": 0.0,
+   "tie_gross_gwh": 394.6,
+   "published_gross_gwh": 380.7,
+   "gross_ratio": 1.0364,
+   "tie_absnet_gwh": 127.9,
+   "store_absnet_gwh": 127.3,
+   "net_ratio": 0.9957
+  },
+  "IPCO": {
+   "tie_wheel_through_gwh": 0.0,
+   "tie_gross_gwh": 313.3,
+   "published_gross_gwh": 305.7,
+   "gross_ratio": 1.0247,
+   "tie_absnet_gwh": 111.4,
+   "store_absnet_gwh": 111.2,
+   "net_ratio": 0.9987
+  },
+  "AVA": {
+   "tie_wheel_through_gwh": 0.0,
+   "tie_gross_gwh": 116.3,
+   "published_gross_gwh": 113.9,
+   "gross_ratio": 1.0217,
+   "tie_absnet_gwh": 71.6,
+   "store_absnet_gwh": 69.8,
+   "net_ratio": 0.9758
+  },
+  "NWMT": {
+   "tie_wheel_through_gwh": 0.0,
+   "tie_gross_gwh": 99.0,
+   "published_gross_gwh": 98.6,
+   "gross_ratio": 1.0042,
+   "tie_absnet_gwh": 45.1,
+   "store_absnet_gwh": 44.2,
+   "net_ratio": 0.9783
+  },
+  "PACE": {
+   "tie_wheel_through_gwh": 0.0,
+   "tie_gross_gwh": 495.4,
+   "published_gross_gwh": 487.4,
+   "gross_ratio": 1.0163,
+   "tie_absnet_gwh": 312.8,
+   "store_absnet_gwh": 309.8,
+   "net_ratio": 0.9903
+  },
+  "NEVP": {
+   "tie_wheel_through_gwh": 0.0,
+   "tie_gross_gwh": 486.7,
+   "published_gross_gwh": 476.1,
+   "gross_ratio": 1.0222,
+   "tie_absnet_gwh": 302.1,
+   "store_absnet_gwh": 300.5,
+   "net_ratio": 0.9949
+  },
+  "AVRN": {
+   "tie_wheel_through_gwh": 0.0,
+   "tie_gross_gwh": 132.5,
+   "published_gross_gwh": 136.5,
+   "gross_ratio": 0.9705,
+   "tie_absnet_gwh": 94.6,
+   "store_absnet_gwh": 99.0,
+   "net_ratio": 1.0465
+  }
+ },
+ "gross_identity": {
+  "tie_gwh": 2917.0,
+  "published_gwh": 2789.2,
+  "ratio": 1.0458,
+  "tol": 0.1,
+  "pass": true
+ },
+ "net_identity": {
+  "store_gwh": 1471.4,
+  "tie_gwh": 1494.0,
+  "ratio": 0.9849,
+  "tol": 0.1,
+  "pass": true
+ },
+ "meaning": "ENE_EIM_TRANSFER = per-BAA NET transfer position per interval; Appendix 2 = pairwise GROSS per direction. The D2 literal cross-check ratio is sum|net| / sum gross.",
+ "pass": true
+}
