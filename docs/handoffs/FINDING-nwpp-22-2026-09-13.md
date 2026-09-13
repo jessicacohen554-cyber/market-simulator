@@ -5,7 +5,65 @@
 `docs/handoffs/PRECOMMIT-nwpp-22-2026-09-13.md` (pushed at `49349b8f` before the scorer was edited) ·
 **Scorer commit** `8094669a` · **Data profile** `code` · **Ruling** card N2 limb (b); issued under N11.
 
-## 0. Result, first
+## 0-bis. REBASE RESOLUTION (2026-09-13, after `origin/main` moved to `a0bcb04f`) — READ THIS FIRST
+
+**The scorer branch this lane built is WITHDRAWN in favour of the identical class that landed on `main`
+from lane SOCO-22 (`1b6ce1fd`, rubric v3.8).** The desk's own ruling S11 (SOCO desk r#3) chartered
+SOCO-22 to build "an added branch keyed on the ABSENCE of an `actual_lmp.json` block — no existing ISO can
+reach it, and it therefore serves NWPP's card N2 with the same amendment", and it merged first. Two
+implementations of one determination class in the shared scorer would be exactly the doubled mechanism
+rule 19 `[R-ONE-MECH]` forbids, so on rebase every conflicting hunk was resolved by taking `main`'s side
+whole: **this branch's `scripts/calibration_verdict.py` is byte-identical to `origin/main`** (verified,
+`git diff origin/main -- scripts/calibration_verdict.py` empty). Sections 1–2 below describe the branch as
+it was built at `33a7c961` and are kept as the record of what this lane fixed ex ante; they are not what
+ships. What ships from this lane is the PRECOMMIT, this FINDING and a trimmed NWPP test file.
+
+**What NWPP now reads, on `main`'s class** (SOCO-22's strings, which differ from this lane's
+PRECOMMIT §2 in punctuation only — the substance is the same):
+
+```
+PHYSICALLY-CALIBRATED (PRICE UNSCORED)
+PHYSICALLY-CALIBRATED-WITH-CAVEATS (PRICE UNSCORED)
+```
+
+with the basis line appended LAST on every route (this lane had put it first; on the clean rung it is the
+only reason and so is the headline either way), the model's own annual mean LMP printed MODEL-ONLY and
+UNVERIFIED at full magnitude (an improvement on this lane's per-year SKIPPED reasons), C3c lifted from the
+v3.7 exempt line as well as C3a/C3b from the unscored downgrade, and a `price_unscored` block carrying
+`basis` / `criteria_unscored` / `scored_on` / `model_mean_lmp_by_year`.
+
+**Predicate comparison, stated so the desk can see nothing was lost.** `main`'s predicate has two legs
+(no block for the ISO in a READABLE reference; C3a/C3b/C3c all SKIPPED) against this lane's four. The two
+extra legs here — "every scored year lacks a bench LMP actual" and "the store names ≥ 1 ISO" — are
+subsumed: a bench price with no block scores the criterion and so fails `main`'s leg two
+(`test_leg_two_a_scored_price_overrides_absence`), and an unreadable reference is refused by
+`_ACTUAL_LMP_READABLE` (`test_unreadable_reference_fails_closed`). An EMPTY-but-readable store (`{}`) fires
+`main`'s class where this lane's would have stayed silent; that state does not exist in the repo and SOCO-22
+declares the choice ("a block that is present but empty is still a block"). The MISO-2020-alone shape stays
+on the ordinary route in both (`test_block_present_price_absent_reads_as_before`).
+
+**RUBRIC_VERSION.** `main` bumped it to 3.8, which moved exactly the `rubric_version` field on every
+keeper (SOCO-22 FINDING §0: two JSON diff lines per verdict, zero text-render diffs). This lane's §2
+reading (stay 3.7) is therefore moot; the bump is the owner's merged decision and this lane changes nothing.
+
+**Tests.** `main`'s `tests/scoring/test_calibration_verdict_price_unscored.py` (SOCO-22) already pins both
+charter cases — cannot fire with a series, fires without one — and NWPP by name. This lane's file is trimmed
+to what it lacked: the exact reading of an NWPP-shaped **2023–2025 span** against the REAL committed store
+with no injection (label, all three years on the basis line, price criteria SKIPPED in every year and
+excluded from `target_grade`); the `-WITH-CAVEATS` rung on a physical caveat; and a **full-payload**
+byte-identity proof for series-carrying ISOs (PJM priced, PJM un-priced, MISO un-priced) with the class
+live versus the reference forced unreadable. `uv run python -m pytest -q` over this file + SOCO-22's file +
+`test_calibration_verdict.py` + `test_rubric_consts.py`: **211 passed, 1 failed** — the same pre-existing
+`test_coverage_threshold_sits_in_an_empty_interval` (§3). `check_mechanism_matrix.py --base a0bcb04f`:
+integrity OK over 8 ISO shards, all ratchets OK, exit 0.
+
+**Consumer routing (§5) still stands** against `main`'s strings: `detClass`/`detLabel` read them as
+`det-not` / "NOT CALIBRATED" (no "CAVEAT" substring on the clean rung; the caveat rung reads "WITH
+CAVEATS"); `build_status._det_rank` ranks the clean rung with CALIBRATED; `audit_keepers._DET_TOKENS`
+reads the "CALIBRATED" substring and E5 goes RED. SOCO-22's FINDING may route the same items; the desk
+de-duplicates.
+
+## 0. Result, first (as built at `33a7c961`, before the rebase — superseded by 0-bis)
 
 **Byte-identity over every designated keeper: 7 of 7 IDENTICAL, zero bytes moved.** Full verdict
 payloads (`calibration_verdict.py --run-id <id> --json`), scored at `33a7c961` before the edit and
@@ -191,7 +249,13 @@ the ledger, or `docs/calibration-log/nwpp.md`. No LP ran; no shard was launched.
 
 ### nwpp-22 — 2026-09-13
 
-**PRICE-UNSCORED determination class (card N2 limb b): BUILT, 7/7 keepers byte-identical.** PRECOMMIT
+**PRICE-UNSCORED determination class (card N2 limb b): built at `33a7c961`, 7/7 keepers byte-identical;
+on rebase WITHDRAWN in favour of the identical class SOCO-22 landed on `main` as rubric v3.8 (`1b6ce1fd`,
+ruling S11: one absence-keyed branch serves both regions; rule 19 — never two).** This lane ships its
+PRECOMMIT, this FINDING and a trimmed NWPP test file (2023–2025 span reading against the real store;
+full-payload byte-identity for series ISOs); its scorer file is byte-identical to `main`. NWPP now reads
+**`PHYSICALLY-CALIBRATED (PRICE UNSCORED)`** / `…-WITH-CAVEATS (PRICE UNSCORED)`, never CALIBRATED. Record
+of what was built before the rebase follows. PRECOMMIT
 pushed before the scorer was edited. One added branch in `scripts/calibration_verdict.py`: a run whose
 ISO has NO admissible hourly price series — no record in `data/raw/_validation-source/actual_lmp.json`,
 no LMP actual in any scored year, C3a/C3b/C3c all SKIPPED — reads **`PHYSICALLY CALIBRATED — PRICE
