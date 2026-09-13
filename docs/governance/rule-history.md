@@ -1279,10 +1279,85 @@ diagnostic work that will never be registered, and a single-year shard remains c
 
 ---
 
-## 20. Changes to this file
+## 20. Rule 35 `[R-PROMOTE]` — a promotion deletes the prior keeper's files, and a keeper carries every year already run (owner, 2026-09-12)
+
+**Owner instruction, verbatim:** *"make it a rule that keeper promotion deletes the Pripr keeper filed
+and all solves/keepers include any holdout years that have already been run"* — read as "the **prior**
+keeper's **files**".
+
+**This is not a new duty; it is an owner for an old one.** Rule 15 `[R-DASHBOARD]` has required
+KEEPER-ONLY retention since the owner instruction of 2026-09-05 (§9). What it lacked was a deadline:
+its own text deferred the sweep to *"the next registration"*, which named no session and bound no
+lane. Seven days of promotions passed and no lane swept.
+
+**The measured state on 2026-09-12, before the clean-out.**
+
+| surface | was | keeper-only requires |
+|---|--:|--:|
+| registered runs (`frontend/data/backcast/registry/`) | **47** | 14 (7 keepers + 7 folded rungs) |
+| designated keepers | 7 | 7 |
+| superseded runs still on the dashboard | **33** | 0 |
+| `results/calibration/` bundle dirs | 92 | 58 |
+| `results/calibration/` size | 579 MB | 198 MB |
+| `check_registry_payload_parity.py` | **RED** on 5 unmapped bundles | green |
+
+The same day's NYISO promotion to `2026-09-12-nyiso229-hourgrain-span` left **both** superseded
+`nyiso-221` runs registered behind it — so the drift was still live at the moment the rule was
+written, not merely historical.
+
+**Why the two halves of the instruction are one rule.** Deleting the prior keeper is safe only if the
+incoming keeper already carries the years the outgoing one did. The registry is the ONLY mechanical
+record of which years an ISO has run — once a sidecar is gone, "has this ISO ever run 2020?" is
+answerable only from git history and prose. So a promotion that deletes first and checks later can
+silently retire a held-out year, and rule 30 `[R-TOUCHPOINT-FOLD]` (a) makes that loss *quiet*: a
+`holdout.keeper` stamp naming a pruned keeper reads as unstamped, and the year simply stops appearing
+on the ISO's report. Hence the fixed order in clause (b) — **enumerate, then prune** — and clause (c)'s
+refusal to prune at all when a year is missing.
+
+**Relationship to the neighbouring rules, stated so none is read as loosened:**
+
+* **Rule 15 `[R-DASHBOARD]`** — the keep-set is unchanged; only the *timing* moves, from "next
+  registration" to "the promoting session". Rule 15's text was edited in the same commit so a reader
+  of rule 15 alone gets the current timing rather than the superseded one.
+* **Rule 31 `[R-RETAIN]`** — untouched and superior. The outgoing keeper is deletable precisely
+  because **the owner has ruled on promotion**, which is rule 31's trigger (i). Nothing here licenses
+  deleting a bundle whose promotion is still open, and clause (e) fixes the order as
+  promote → verify → delete so a failed promotion cannot leave an ISO with no keeper.
+* **Rule 34 `[R-SHARD-PROMOTABLE]` (c)** — the same year set, at the other end of the pipeline. Rule
+  34 (c) is a *launch-time* duty ("enumerate the ISO's registered years and launch one shard for
+  each"); rule 35 (c) is the *promotion-time* check that the duty was discharged. Neither subsumes
+  the other: a lane can launch correctly and still promote a short set, or inherit a set it did not
+  launch.
+* **Rule 29 `[R-SCREEN]` (c)** and the parity gate are untouched — the two keep-required bundle
+  classes (a `results/regression-goldens/*/manifest.json` capture record; the
+  `KEEP_REQUIRED_UNMAPPED_BUNDLES` allowlist) still stay on disk as their run leaves the site, and
+  `prune_iso_runs.py` prints both.
+
+**On `--force-uncite`.** `prune_iso_runs.py` refuses to prune a run cited by `calibration-complete.json`
+or a keeper shard, because a governance file asserting a determination against a nonexistent run is a
+real defect. Under this rule that guard fires on **every** promotion, since a superseded keeper is
+always named in the promotion narrative that replaced it. Clause (d) therefore makes `--force-uncite`
+the *intended* route rather than an override: the citations being dangled are historical prose — the
+audit trail of how the current keeper came to be — and rule 15 already states that git history is the
+record for the bytes. What the flag must never do is rewrite that narrative.
+
+**Enforcement — `audit_keepers` E13, and why it did not already exist.** The invariant is clause (f):
+after a promotion every run registered for an ISO is its keeper or stamped to it, and the ISO's year
+set has not shrunk. `audit_keepers` PASSED on all 47 runs the day 33 of them were superseded, and the
+reason is structural rather than a bug: **E1** checks the keeper's own three stores, **E12** checks the
+shard's live run-id pointers, and a superseded run sitting *beside* the keeper is outside both. E13
+enumerates the ISO's registered set instead. It treats a dangling stamp as unstamped, matching rule
+30 (a)'s rendering, and its OK line reports the year set so clause (b)'s number is visible in the
+audit output rather than only in a PRECOMMIT. Guard:
+`tests/scoring/test_audit_keepers_orphan_runs.py` (6 cases, including the dangling-stamp and
+per-ISO-scope halves). Measured at introduction: all 7 ISOs green, year sets ERCOT 2021-2025,
+PJM/NEISO/MISO 2020-2025, CAISO/NYISO 2022-2025, SPP 2023-2025.
+
+## 21. Changes to this file
 
 | date | change |
 |---|---|
+| 2026-09-12 | Added §20: **rule 35 `[R-PROMOTE]` is NEW** (owner instruction, verbatim in §20) — a keeper promotion DELETES the prior keeper's three stores in the promoting session, and the incoming keeper must carry every year the ISO has already run, held-out years included. This gives an owner and a deadline to a duty rule 15 `[R-DASHBOARD]` has required since 2026-09-05 but deferred to "the next registration": measured 2026-09-12, 47 registered runs against 7 keepers (33 superseded), 92 bundle dirs / 579 MB, and the parity gate RED on 5 of them. The two halves are one rule because the registry is the only mechanical record of which years an ISO has run, so deleting before enumerating can silently retire a held-out rung — quietly, since rule 30(a) renders a dangling stamp as unstamped. Rule 15's timing text edited in the same commit; rules 29/31/34 untouched (rule 31 outranks: the owner's promotion ruling IS its trigger (i)). Enforced by `audit_keepers` **E13** + `tests/scoring/test_audit_keepers_orphan_runs.py`, closing a structural blind spot — E1 sees the keeper's own stores, E12 the shard's live pointers, neither the ISO's registered SET. "Changes to this file" renumbered §20 → §21 (no external reference cited §20). |
 | 2026-09-12 | Added §19: rule 32 `[R-SHARD]` (b) amended by owner instruction (verbatim in §19) — **the slim per-year fan-out is BANNED**; a run that will be REGISTERED is solved by ONE shard in ONE `--years <all>` invocation into ONE bundle, and that shard attests, registers and pushes. The old clause actively directed per-year sharding and that is what caused the incident: SPP-36 spent three per-year shards, could not reassemble them, and re-solved the whole span — four solves for one run. Measured cause: registration needs the bundle-root `system.parquet` and the per-plant `dispatch/*.parquet`, both gitignored, and without them D-1/D-2/D-4 return **zero rows and pass VACUOUSLY** (D-4 flipped False→True against 71 rows / 12 failures); `--reuse-solved` gates on the same two files. A second defect it exposed: differencing a single-year arm against a span-solved control is a construction mismatch that produced a false slack finding (1,295.7 / 240.6 MWh added), corrected to **slack unchanged in every year** by the span-vs-span A/B. The 20-minute ceiling survives as a STOP rule, not a split rule; subdivision stays available for diagnostics, and a single-year shard stays correct for a rule-29 `[R-SCREEN]` screen. "Changes to this file" renumbered §19 → §20 (no external reference cited §19). |
 | 2026-09-09 | Added §18: **`[R-HOLDOUT]` REMOVED** (owner instruction, verbatim above; scope selected by the owner as “Year machinery only, keep C3c”). The three-tier regime and all four spend gates are gone — markers as authorizations, the freeze file, `--holdout-authorized`, the launch gate, the registration gate (§4's R-AZ), D-6, H1, and the whole `holdout_policy` authorization surface; the CI job survives, retitled. KEPT: the C3c standing rule entire (now `[R-C3C]`, on rule 22's unchanged ordinal), `tier_for_year` demoted to a pure classifier its v3.6 limb still needs, `calibration-complete.json` as keeper designation + forecast gate (a), and rule 30. Measured over all 15 registered out-of-training runs: **0 determination flips**. “Changes to this file” renumbered §17 → §18 (no external reference cited §17). |
 | 2026-09-09 | Added §17: rule 32 `[R-SHARD]` (owner instruction, verbatim above) — every solve runs in a shard and the orchestrating session never runs an LP itself; one shard commit is bounded at 20 minutes, and a unit that cannot fit subdivides (shards launch shards) rather than running long. Clause (c) is the launch protocol, each item traced to a prior loss (ercot-261's raced branch and `git add -A`; ercot-262's shard patching `scripts/`). Rule 12 `[R-PARALLEL]` is unchanged and composes with it: rule 12 bounds concurrency and forbids parallel years within an invocation, rule 32 bounds where the work runs and how long one commit may take. Nothing scored moves. "Changes to this file" renumbered §17 → §18 (no external reference cited §17). |

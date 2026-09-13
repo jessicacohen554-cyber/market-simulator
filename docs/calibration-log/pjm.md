@@ -5642,3 +5642,52 @@ zero new** · `check_registry_payload_parity` **5 pre-existing REDs, all committ
 none this lane's**: `nyiso227_rebasis_span`, `caiso275_B_gascoupling_{2023,2024,2025}` and a NEW
 one since this card was written, **`spp36_2025`** (SPP's lane). Not touched — rule 31 `[R-RETAIN]`
 forbids reaching for `rm` on another lane's solved bundles.
+
+## 2026-09-12 — pjm-h2 part 2: it is NOT the coal sigmoid and NOT the CC bands; seven candidates killed at zero LP
+
+**ZERO LP.** Parent never solved, no shard launched. Nothing armed, nothing registered, no
+verdict moved. **Keeper `2026-09-11-pjm-d4-4-gasoutage` UNCHANGED, CALIBRATED 8/8, re-scored after
+the matrix edit.** Record: `docs/FINDING-pjm-h2b-coal-cc-object-2026-09-12.md`.
+
+**Coal sigmoid — NO, measured three ways.** PJM BIT passthrough by year on the keeper's own gas
+series: **0.674 / 1.011 / 1.315 / 0.757 / 0.753 / 0.965** (2020-2025). (a) **2022 sits at maximum
+suppression — ×1.315, 74.8 % of hours pinned on the ceiling asymptote — and coal is still +8.0 TWh
+over on the 923 basis**, so lowering the ceiling makes it worse (reproducing pjm-170). (b) **2020
+sits on the same limb as the two passing years (0.674 vs 0.753/0.757) and is +23.1 TWh over** —
+same curve position, twelve times the error. (c) **2021's 1.011 is the most cost-faithful value the
+curve takes and 2021's coal is the best-matched year (−0.5 TWh)**; its C1 failure is CC_REGULAR
+alone. The **full re-derivation is also killed**: the committed provenance row
+(`coal_sigmoid_params.csv`, delivered 2026-07, never transcribed) `{0.50, 1.00, 7.08, 1.0}` gives
+0.649/0.725/0.951/0.665/0.663/0.738 — **cheaper coal in every year**, so it moves 2020 the wrong
+way and risks the keeper's 2023/2024.
+
+**CC bands — NO.** The object is **on-hours, not price position**: model CC online **+7.7/+8.8/+5.8
+pp** in 2020-2022 vs +4.6/+4.8/+3.7 in 2023-2025, CF flat at 0.606-0.621 in all six years against a
+meter moving 5.8 points (pjm-h1, corroborated here). A band multiplier moves price position; it
+does not make a flat fleet responsive.
+
+**Market dynamics — YES, a fleet-size × price-variance product.** PJM 2020-2022 carried **5-9 GW
+more coal** (model coal peak 37.3/40.6/36.7 vs 31.3/32.8/31.4 GW) and those years had a far wider
+realised price distribution. The model's **D-A amplitude is 29.9-32.9 % of measured in EVERY year**;
+flat dispatch against a big coal fleet is a large volume error and against a small one is not.
+
+**Killed at zero LP, recorded so no successor spends a solve:** coal-sigmoid ceiling; coal-sigmoid
+re-derivation; `gas_offer_margin_anchor_vintage` (already `R`, pjm-169); `retiree_vintage_status_
+scope` (**7.5 MW** of PJM coal in every year); **partial derates / capability for COAL** (per-plant
+CEMS p99.5 flat across all six years — pjm-h1's CC verdict extended to coal); forcing (D-2 coal
+forced share **0.6-1.4 %** in the bad years vs **4.0-4.1 %** in the good ones); outage coverage
+(20.4/18.4/18.5 GW-equiv 2020-22 vs 20.9/16.8/15.5 2023-25 — the bad years carry *more*).
+
+**THE ONE SURVIVING ARM — a measured asymmetry in PJM's own offer registry.** PJM's registered
+gas `phys_*` keys reproduce `data/raw/reference/pjm_campd_marginal_hr_summary.csv` **byte for byte**
+(CC_REGULAR 1.015 / 0.87 / 1.052), while **COAL_BIT carries no `phys_*` key at all** — so PJM coal
+keeps the fully fuel-scaled multiplicative markup that `gas_offer_net_revenue_margin` (cell `K`,
+armed in the keeper) exists to retire, and because coal's offer is gas-keyed through the sigmoid its
+above-physical markup swings ×0.674 → ×1.315 across 2020-2022. The artifact's COAL row is committed
+and unused (0.916 / 0.803 / 0.809). **It is a BUILD, not an arm** — `coal_offer_net_revenue_margin`
+as implemented is `_mustrun`-scoped and needs the ERCOT SCED TPO instrument, so pjm-146's block
+stands and the cell stays `U`. **It does not reach a solve until the pre-solve offer-array delta is
+computed and fixed in a PRECOMMIT** (rule 29 clause 0); screen year would be named on footprint.
+
+**ROUTED, NOT OPENED:** the surviving explanation is price-distribution compression inside the
+owner-declared-closed pjm-142 frontier. Re-opening it is an owner act.
