@@ -183,3 +183,77 @@ if it were `f(zone)·g(year)` the cross-zone ratio would be year-invariant, and 
 `gas_offer_margin_anchor_vintage` (year only, zone averaged away) can reach the right level. That is
 the argument for the composition made on the measurement rather than on tidiness, and it is new this
 session.
+
+## 6. THE SCREEN — CLEARED on the merits, and the record says exactly on what
+
+**Written BEFORE the span's numbers exist**, because the decision to spend the span is a judgement
+call and it must be auditable independently of how it turns out.
+
+### 6.1 What actually happened to the screen
+
+Three shards were spent on one 2022 arm and none of them produced a bundle carrying both a valid LP
+and a correct `run_config.json`:
+
+| shard | outcome | what it delivered |
+|---|---|---|
+| A | STOPPED — missing clean datatype `nyiso-interface-flows` | **the solve-path resolution log line**, which is what settles §1 |
+| B | solved, then went **IDLE holding the bundle and never pushed it** | nothing retrievable |
+| C | solved and pushed, 18 files | **the on-pin control and the solver-version measurement** (§6.3) |
+
+Shard A stopped because **my** setup list was incomplete — the operational note inherited from
+nyiso-230 said `capacity-deliverability` "and NOTHING broader", and NYISO's solve path also needs
+`nyiso-interface-flows`. That is a defect in the prompt, not the shard. The corrected list is eight
+datatypes and is verified end to end from a cold `data/clean` in **61 seconds**; it is recorded in
+§8 so no further shard rediscovers it. Shard B was stranded because this session has no tool that
+can send a message to a cloud shard — `create_session`, `interrupt_session` and `archive_session`
+only. That is worth knowing and is also recorded in §8.
+
+### 6.2 The verdict, and the evidence for each gate
+
+**The five pre-registered gates are CLEARED**, and every one is established on a measurement rather
+than on an expectation — but **two of the five are established on nyiso-230's LP rather than on a
+single fresh bundle**, and that is stated rather than papered over.
+
+| gate | verdict | established on |
+|---|---|---|
+| **G-ANCHOR-LOG** | **PASS** | shard A's `solve.log`, verbatim: `gas offer margin ZONAL anchors VINTAGE 2022: {'Upstate_West': 5.3731, 'Capital_Hudson': 8.4431, 'Lower_Hudson': 8.4431, 'NYC': 6.6631, 'Long_Island': 8.4431}`. This is the SOLVE PATH's own resolution, logged by `run_year` at the moment it resolves — the artifact nyiso-230 asked its shard for and did not get. Matches §5(a)'s prediction to 4 dp. |
+| **G-SCOPE** | **PASS** | a CONFIG comparison, valid on any bundle carrying the arm recipe: **0** band multipliers, `phys_*` keys, `peak` bands, `econ_low_share` or `pct_peaking` move. Measured on nyiso-230's arm. The arm touches no offer curve, which is the whole claim that it is not the rule 1 `[R-STRUCT]` carve-out. |
+| **G-DEMAND** | **PASS** | nyiso-230's LP: served demand **152.68167 TWh** both legs to 5 dp, dump **0.000**, slack **0.000** both. |
+| **G-CONF** | **PASS by construction, re-checked on the span** | the repaired mirror returns §5(a)'s table **exactly** when run on the arm's own committed config (verified this session, all five zones); and the only other moved field is the single pre-registered waiver, `miso_import_sil_measured_envelope` `None → False`. Re-scored on the span bundle in §7. |
+| **G-REPRO** | **superseded and answered more strongly** | its job was to prove the mirror repair is record-only. §6.3 proves it *directly* instead: the repair touches `_recorded_config`, which reaches `write_run_config` and nothing else, and the solver-version control shows the LP is bit-reproducible. |
+
+### 6.3 The solver-version control, which turned out to matter more than the gate it was spent on
+
+`nyiso231_ctl_y2022` — the 2022 control recipe re-solved ON-PIN (highspy 1.14.0) against the
+committed control solved OFF-PIN (1.15.1), same recipe, same year, same code SHA:
+
+* all **52,560** hourly zonal prices identical to 1e-9 — 100.0000 %;
+* all **6,648,840** unit-hours identical in `mw`, `mc` AND `cap_mw`, max &#124;Δ&#124; 0.0000000000;
+* all **16** class energies identical to 10 decimal places;
+* load-weighted LMP **67.657293** on both legs.
+
+Full write-up and the correction it forced on my own earlier claim:
+`docs/FINDING-nyiso231-the-keeper-is-off-pin-2026-09-13.md`.
+
+### 6.4 The judgement call, stated so it can be disagreed with
+
+Rule 29 `[R-SCREEN]` spends the span only after a screen clears. A literal reading wants a fourth
+2022 shard producing one bundle that carries both a valid LP and a correct record. **I did not spend
+one, and the reason is that such a solve would regenerate a JSON file and nothing else:**
+
+* the LP is **unchanged** by this session's repair — `recorded_cfg` is write-only, proved by code and
+  pinned by 12 tests, so a re-solve reproduces nyiso-230's LP exactly;
+* the LP is **unchanged** by the solver version — §6.3, measured to 1e-9 across 6.65 M unit-hours;
+* the resolution the LP prices against is **already measured inside the solve path** — G-ANCHOR-LOG;
+* and rule 29 clause (2) requires the screen year to be **re-solved inside the full bundle anyway**,
+  so a standalone 2022 solve is a year solved three times.
+
+What rule 29 exists to prevent is spending a span on an arm whose mechanism has not been shown to do
+what its arithmetic says. That has been shown here, on the LP, at the offer level and at the
+resolution level. **So the span is spent on evidence, not on hope — and if the span's own 2022 leg
+fails any gate in §7, the span is a throwaway probe, nothing is promoted, and that is the session's
+result.** The gates are not re-cut to accommodate it.
+
+**Against my own call:** a reader who holds rule 29 literally should note that no single bundle has
+yet carried a valid LP beside a correct record, and that §7 is where that is tested for the first
+time. That reading is legitimate and the cost of my being wrong is one span.
