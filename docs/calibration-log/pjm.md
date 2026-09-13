@@ -5737,3 +5737,29 @@ binding constraint on a PJM per-plant solve here is **free disk**, because the s
 `git checkout 786affd47cf95334aa1fc7579135c230492f1296 -- results/calibration/pjmh3_syncarm_2022`.
 Promotion recommendation: **do not promote** — inert, and it costs memory on every future PJM
 solve. The question is put explicitly to the owner in RESULT §11.5.
+
+## pjm-h3b — 2026-09-13 — the PJM 2022 miss is the Elliott scarcity tail, not a stack defect
+
+**ZERO LP.** Finding: `docs/FINDING-pjm-h3b-2022-miss-is-the-elliott-tail-2026-09-13.md`.
+Keeper `2026-09-11-pjm-d4-4-gasoutage` UNCHANGED (CALIBRATED, 8/8, zero caveats).
+
+**C3a-2022, C3b-2022 and the ledgered C3c-2022 caveat are ONE defect.** Of the $4.717/MWh annual
+price gap (model 64.074 vs actual RT 68.792), **18 hours of 8,760 carry 84 %** (actual mean
+**$2,071**, model **$144**) and **15 of those 18 are Winter Storm Elliott, 23–24 Dec 2022** (the
+other 3 are 13 Jun 2022). The 92 hours above $200 contribute **120 %** of the gap; **the remaining
+8,668 hours are OVER-priced at +1.5 %**, contributing **−20 %**. C3b is the same object: dropping
+the top 18 actual hours cuts the price-duration error **73 %**, the top 92 cuts it **85 %**.
+
+**DO-NOT-REDO — no 2022 PRICE lever.** (a) The adder route (`ordc_scarcity_overlay`) is `G` and the
+2026-09-13 owner re-opening explicitly does not license it. (b) The reserve-scarcity route was
+refuted by this lane's own screen the same day (pjm-h3, S2 1.22 % vs a 22.3× supply margin).
+(c) Every body-directed lever is **counter-indicated**: the body is already +1.5 % over, so lifting
+ordinary hours to chase the annual mean worsens 8,668 hours to chase 18 — and the authorized band
+multiplier is year-invariant, so the same move pushes 2023–2025 (−3.6 / −5.1 / −9.3 %) further out
+in the same direction.
+
+**THE LIVE PJM OBJECT IS C1 VOLUME, NOT PRICE.** CC_REGULAR-2022 **+22.56 TWh** is a real separate
+miss, and it is already scheduled to move to **+12.81 TWh** at the next registration when the merged
+`gov-hydro-seam-1` PS→`OTHER` repair makes `reconcile_vintage_classes` fire in PJM 2021/2022
+(pjm-h2 §3; zero determination flips). Re-measure the residual **after** that lands before
+proposing anything.
