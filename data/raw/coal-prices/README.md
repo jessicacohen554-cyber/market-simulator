@@ -11,6 +11,7 @@ coal-vs-gas passthrough sigmoid re-derivation (issue #1347, gap G-26). See
 | `eia_coal_price_by_rank.csv` | EIA Annual Coal Report, `coal/price-by-rank` route (region x coal rank: bituminous/subbituminous/lignite/anthracite/all), EIA API v2 | `scripts/fetch_eia_coal_prices.py` |
 | `bls_coal_ppi.csv` | BLS Producer Price Index, series `WPU051` (commodity: Coal) + `PCU2121--2121--` (industry: Coal Mining, NAICS 2121), BLS Public Data API v2 | `scripts/fetch_bls_coal_ppi.py` |
 | `SOURCES.md` | per-series provenance detail + licensing statement | — |
+| `SOURCES_nwpp_coal.md` | **NWPP** (lane NWPP-12, 2026-09-13): no new series — the footprint's per-plant delivered coal price, its PRB / Green River / Uinta basin split measured off the committed EIA-923 receipts, the **measured absence** of any price for Colstrip and Centralia (26.7 % of footprint coal capacity), and the coal-exit instrument-vs-intention table | — (a provenance note; nothing regenerates) |
 
 **On-disk layout note:** the two EIA CSVs are committed as numbered,
 header-repeating parts (`eia_coal_market_sales_price.part0.csv`,

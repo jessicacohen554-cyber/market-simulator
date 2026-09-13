@@ -1,0 +1,33 @@
+# NWPP nuclear-license-status registry.
+# ONE unit: Columbia Generating Station (EIA 371, WA, balancing authority BPAT) — the
+# only commercial power reactor in the 17-BA NWPP footprint (plan §2.1 fact 3, measured
+# 1,200.0 MW of nuclear). Added 2026-09-13 by lane NWPP-12
+# (docs/multi-iso/nwpp-addition-plan-2026-09.md manifest row 10; FINDING
+# docs/handoffs/FINDING-nwpp-12-2026-09-13.md), AHEAD of NWPP's registration in
+# config/iso_configs._ISO_BUILDERS — which is NWPP-20's flip, not this file's, exactly
+# as spp.csv was landed ahead of SPP-20. Until that lands, no ISO-keyed consumer reads
+# this file, and nothing in the solve path consumes this registry for any ISO.
+#
+# TWO IDENTITY NOTES, recorded rather than silently reconciled:
+#   * `unit` is **2**, not 1. EIA-860 files this plant's single generator as ID "2"
+#     (the plant's construction-era name was WNP-2, Washington Nuclear Project No. 2);
+#     the NRC treats it as a one-reactor site on docket 50-397. `unit` follows the
+#     EIA-860 generator ID because the curation script's spine check keys on
+#     (eia_plant_id, unit).
+#   * The NRC info-finder slug is **`wash2`**, not a `colu`-style abbreviation — a
+#     `/info-finder/reactors/colu` fetch returns 404. Slugs come from
+#     https://www.nrc.gov/reactors/operating/list-power-reactor-units.html.
+#
+# SLR: `none`. Columbia Generating Station does NOT appear on the NRC's Status of
+# Subsequent License Renewal Applications page (fetched 2026-09-13, 98,941 B) under
+# applications under review, future submittals, or completed applications — the strings
+# "Columbia", "Energy Northwest" and "397" are all absent from the rendered page text.
+# This is a measured absence from the NRC instrument record on that date. Licensee
+# statements of intent are NOT an NRC instrument and are deliberately not recorded here.
+#
+# WHY IT MATTERS FOR THE FORECAST: the current license expires 2043-12-20, INSIDE the
+# 2026-2050 horizon, with no SLR filed or expected. A forecast that assumes 1,200 MW of
+# firm nuclear in this footprint through 2050 assumes an outcome the instrument record
+# does not support — the same caveat the SPP registry records for Cooper and Wolf Creek.
+iso,plant_name,unit,eia_plant_id,capacity_mw,nrc_docket,license_issued_date,current_license_expiry,license_stage,license_instrument,slr_status,slr_docket,slr_instrument,slr_instrument_date,announced_uprate_mw,uprate_status,uprate_instrument,restart_status,restart_target_year,restart_instrument,retirement_announcement,confirmed_retirement_ref,source_url,source_doc,accessed,notes
+NWPP,Columbia Generating Station,2,371,1200.0,50-397,1984-04-13,2043-12-20,renewed_60,"NRC operating license issued 1984-04-13, Renewed Operating License dated 2012-05-22, docket 50-397 (NRC long form 05000397) — see info-finder page",none,,"NRC 'Status of Subsequent License Renewal Applications' (https://www.nrc.gov/reactors/operating/licensing/renewal/subsequent-license-renewal.html, fetched 2026-09-13): Columbia Generating Station appears in NO category — not under applications currently under review, not under future submittals of applications, not under completed applications. Measured absence, not an assumption",,,,,,,,,,https://www.nrc.gov/info-finder/reactors/wash2,NRC info-finder reactor page (Reactor Type / Licensed MWt / Location / Operating License / Renewed License / License Expires / Docket),2026-09-13,"BWR, licensed 3,544 MWt, Richland WA (20 miles NNE of Pasco), licensee Energy Northwest, balancing authority BPAT (card N5 zone NWPP-NW). EIA-860 generator ID is '2' (WNP-2 heritage); NRC docket 50-397 is a one-reactor site. License expiry 2043-12-20 falls inside the 2026-2050 forecast horizon with slr_status=none."

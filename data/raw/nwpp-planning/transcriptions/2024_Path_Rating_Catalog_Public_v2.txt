@@ -1,0 +1,1081 @@
+=====PDFPAGE 1=====
+<Public>
+2024 Path Rating Catalog—Public Version
+Studies Subcommittee
+=====PDFPAGE 2=====
+WECC 2024 Path Rating Catalog—Public Version
+2
+<Public>
+Table of Contents
+Introduction.............................................................................................................................................................6
+Explanation of Rating Categories as Used in this Catalog .............................................................................6
+Explanation of Terms.............................................................................................................................................6
+Existing Paths ..........................................................................................................................................................7
+1. Alberta–British Columbia [Revised February 2015]...........................................................................8
+2. Alberta–Saskatchewan [Revised February 2015] ................................................................................9
+3. Northwest–British Columbia [Revised January 2013]......................................................................10
+4. West of Cascades–North [Revised January 2020] .............................................................................11
+5. West of Cascades–South [Revised January 2020]..............................................................................12
+6. West of Hatwai [Revised November 2007]........................................................................................13
+7. [Deleted February 1998]........................................................................................................................14
+8. Montana-to-Northwest [Revised January 2013]................................................................................15
+9. [Deleted February 2016]........................................................................................................................16
+10. [Deleted February 2016]........................................................................................................................16
+11. [Deleted February 2016]........................................................................................................................16
+12. [Deleted February 2002]........................................................................................................................16
+13. [Deleted February 1997]........................................................................................................................16
+14. Idaho-to-Northwest [Revised March 2022]........................................................................................17
+15. Midway–Los Banos [Revised February 2017] ...................................................................................18
+16. Idaho–Sierra [Revised February 2017]................................................................................................19
+17. Borah West [Revised January 2013] ....................................................................................................20
+18. Montana–Idaho [Revised January 2015] ............................................................................................21
+19. Bridger West (Pre-Gateway) [Revised February 2015] ....................................................................22
+20. Path C (Pre-Gateway) [Revised January 2014]..................................................................................23
+21. [Deleted December 2009]......................................................................................................................24
+22. [Deleted January 2020]..........................................................................................................................24
+23. [Deleted January 2020]..........................................................................................................................24
+24. PG&E–Sierra [Revised January 2018] .................................................................................................25
+=====PDFPAGE 3=====
+WECC 2024 Path Rating Catalog—Public Version
+3
+<Public>
+25. PacifiCorp/PG&E 115 kV Interconnection [Revised January 2015]................................................26
+26. Northern–Southern California [Revised January 2019] ...................................................................27
+27. Intermountain Power Project DC Line [Revised January 2015]......................................................28
+28. Intermountain–Mona 345 kV [Revised January 2015]......................................................................29
+29. Intermountain–Gonder 230 kV [Revised January 2019] ..................................................................30
+30. TOT 1A [Revised January 2018] ..........................................................................................................31
+31. TOT 2A [Revised January 2019] ..........................................................................................................32
+32. Pavant–Gonder 230 kV; Intermountain–Gonder 230 kV [Revised January 2019]........................33
+33. Bonanza West [Revised December 2010] ...........................................................................................34
+34. (See Paths 78 and 79).............................................................................................................................35
+35. TOT 2C [Revised January 2018]...........................................................................................................36
+36. TOT 3 [Revised March 2023]................................................................................................................37
+37. (See Path 85) [Revised March 2021] ....................................................................................................38
+38. TOT 4B [Revised January 2015]...........................................................................................................39
+39. TOT 5 [Revised January 2018]..............................................................................................................40
+40. TOT 7 [Revised January 2006]..............................................................................................................41
+41. Sylmar to SCE [Revised February 2017].............................................................................................42
+42. IID–SCE [Revised January 2022]. ........................................................................................................42
+43. [Deleted February 2015]........................................................................................................................44
+44. [Deleted February 2015]........................................................................................................................44
+45. SDG&E–CFE [Revised March 2021]....................................................................................................45
+46. West of Colorado River (WOR) [Revised January 2018]..................................................................46
+47. Southern New Mexico (NM1) [Revised January 2022] ....................................................................47
+48. Northern New Mexico (NM2) [Revised February 2017]..................................................................48
+49. East of the Colorado River (EOR) [Revised January 2018] ..............................................................49
+50. [Deleted January 2020]..........................................................................................................................50
+51. [Deleted January 2020]..........................................................................................................................50
+52. Silver Peak–Control 55 kV [Revised January 2018] ..........................................................................51
+53. [Deleted March 2007] ............................................................................................................................52
+=====PDFPAGE 4=====
+WECC 2024 Path Rating Catalog—Public Version
+4
+<Public>
+54. Coronado–Silver King 500 kV [Revised February 2017]..................................................................53
+55. Brownlee East [Revised January 2018] ...............................................................................................54
+56. [Deleted February 1999]........................................................................................................................55
+57. [Deleted February 1998]........................................................................................................................55
+58. Eldorado–Mead 230 kV lines [Revised February 1998] ...................................................................56
+59. WALC/SCE Blythe 161 kV Substation [Revised February 2017] ....................................................57
+60. Inyo–Control 115 kV Tie [Revised February 2015] ...........................................................................58
+61. Lugo–Victorville 500 kV line [Revised February 2017]....................................................................59
+62. Eldorado–McCullough 500 kV line [Revised February 2015].........................................................60
+63. [Deleted January 2011]..........................................................................................................................61
+64. [Deleted March 2007] ............................................................................................................................61
+65. Pacific DC Intertie (PDCI) [Revised February 2018] ........................................................................62
+66. California–Oregon Intertie (COI) ........................................................................................................63
+67. [Deleted February 1999]........................................................................................................................64
+68. [Deleted February 1999]........................................................................................................................64
+69. [Deleted February 1999]........................................................................................................................64
+70. [Deleted February 1999]........................................................................................................................64
+71. South of Allston [Revised March 2024] ..............................................................................................65
+72. [Deleted February 1999]........................................................................................................................67
+73. [Deleted January 2022]..........................................................................................................................67
+74. [Deleted February 1999]........................................................................................................................67
+75. Hemingway–Summer Lake [Revised January 2018]........................................................................68
+76. Alturas Project [Revised January 2018] ..............................................................................................69
+77. Crystal–Harry Allen [Revised January 2018].....................................................................................70
+78. TOT 2B1 [Revised February 2017].......................................................................................................71
+79. TOT 2B2 [Revised February 2017].......................................................................................................72
+80. Montana Southeast [Revised February 2017] ....................................................................................73
+81. Southern Nevada Transmission Interface (SNTI) [Revised February 2017] .................................74
+82. TotBeast [Revised January 2018] .........................................................................................................75
+=====PDFPAGE 5=====
+WECC 2024 Path Rating Catalog—Public Version
+5
+<Public>
+83. Montana Alberta Tie Line [Revised January 2018]...........................................................................76
+84. Harry Allen–Eldorado 500 kV [Added February 2021] ...................................................................77
+85. Aeolus West Path (Post Gateway) [Added March 2021] .................................................................78
+86. West of John Day [Added March 2021]..............................................................................................79
+87. West of McNary [Added March 2021]................................................................................................80
+88. West of Slatt [Added March 2021] ......................................................................................................81
+89. Southern Nevada Transmission Interface Plus (SNTI+) [Added March 2021].............................82
+=====PDFPAGE 6=====
+WECC 2024 Path Rating Catalog—Public Version
+6
+<Public>
+Introduction
+This catalog was extracted from the CEII version of the Path Rating Catalog and is a summary of that 
+information to make a public version of the Path Rating Catalog. 
+A path rating can be related to a single transmission line or a group of parallel transmission lines. The 
+transfer path may be composed of transmission lines between Balancing Authorities, internal to a 
+Balancing Authority, or a combination of both.
+All information in this catalog was provided, and should continue to be provided, voluntarily. From 
+this information, transfer limitations can be identified for regional planning analyses. Identification of 
+path ratings, with supporting information, will ensure that any relation between existing ratings and 
+proposed new projects can be seen during a project review process according to the WECC Project 
+Coordination and Path Rating Processes (Procedures).
+Explanation of Rating Categories as Used in this Catalog
+• Accepted Rating A project rating that has been reviewed and accepted by WECC members. 
+This rating is granted by WECC after reviewed planning studies and will 
+be the rating of the project when it is put into service if it is built to 
+specifications. This is a comprehensive rating including both the 
+simultaneous and non-simultaneous transfer capabilities. (Protected 
+Rating)
+• Existing Rating Transmission path ratings that were known and used in operation as of 
+January 1, 1994. (Protected Rating)
+• Other A transmission path rating, either proposed or planned, that is not an 
+accepted or existing rating. (Rating is not Protected by the Path Rating 
+Process)
+Explanation of Terms
+Path Name
+Term Definition
+Definition A description of the path in terms of the transmission lines composing the 
+path, location of applicable metering points, the area(s) interconnected by the 
+path, and any project or operations name given to the path.
+Transfer Limit The rating of the path. This can be a single maximum rating or a range of 
+operations, dependent on system conditions. If the path is rated 
+“bidirectional,” then information for each direction is given.
+=====PDFPAGE 7=====
+WECC 2024 Path Rating Catalog—Public Version
+7
+<Public>
+Existing Paths
+=====PDFPAGE 8=====
+WECC 2024 Path Rating Catalog—Public Version
+8
+<Public>
+1. Alberta–British Columbia [Revised February 2015]
+Accepted Rating
+Definition Transfer Limits
+Bennett–Cranbrook 500 kV 
+Pocaterra–Fording Coal Tap 138 kV
+Russell–Natal 138 kV
+East To West West to East
+1,000 MW 1,200 MW
+=====PDFPAGE 9=====
+WECC 2024 Path Rating Catalog—Public Version
+9
+<Public>
+2. Alberta–Saskatchewan [Revised February 2015]
+Accepted Rating
+Definition Transfer Limits
+McNeill AC-DC–AC Tie East To West West to East
+150 MW 150 MW
+=====PDFPAGE 10=====
+WECC 2024 Path Rating Catalog—Public Version
+10
+<Public>
+3. Northwest–British Columbia [Revised January 2013]
+Accepted Rating
+Definition Transfer Limits
+Custer (BPA)–Ingledow (BCH) 500 kV line 1 &2
+Boundary (BPA)–Waneta 230 kV (Normally Open)
+Boundary (BPA)–Nelway (BCH) 230 kV (Normally Closed)
+North to South South to North
+3,150 MW 3,000 MW
+=====PDFPAGE 11=====
+WECC 2024 Path Rating Catalog—Public Version
+11
+<Public>
+4. West of Cascades–North [Revised January 2020]
+Other Rating
+Definition Transfer Limits
+Chief Joseph–Monroe 500 kV
+Schultz–Raver 1, 3, 4 500 kV
+Chief Joe–Snohomish 345 kV lines 3&4
+Rocky Reach–Maple Valley 345 kV
+Grand Coulee–Olympia 287 kV
+Rocky Reach–Cascade 230 kV
+Bettas Road–Covington No. 1 230 kV
+Schultz–Echo Lake 500 kV
+East to West West to East
+10,700 MW 10,700 MW
+=====PDFPAGE 12=====
+WECC 2024 Path Rating Catalog—Public Version
+12
+<Public>
+5. West of Cascades–South [Revised January 2020]
+Other Rating
+Definition Transfer Limits
+Big Eddy–Ostrander 500 kV 
+Ashe–Marion 500 kV 
+Buckley–Marion 500 kV
+Knight–Ostrander 500 kV
+John Day–Marion 500 kV
+McNary–Ross 345 kV
+Big Eddy–McLoughlin 230 kV
+Big Eddy–Chemawa 230 kV
+Midway–N. Bonneville 230 kV
+Jones Canyon–Santiam 230 kV
+Big Eddy–Troutdale 230 kV
+Round Butte–Bethel 230 kV
+East to West West to East
+7,200 MW 7,200 MW
+=====PDFPAGE 13=====
+WECC 2024 Path Rating Catalog—Public Version
+13
+<Public>
+6. West of Hatwai [Revised November 2007]
+Accepted Rating
+Definition Transfer Limits
+Hatwai (BPA)–Lower Granite (BPA) 500 kV
+Bell (BPA)–Coulee (USBR) 230 kV lines 3&5
+Westside (AVA)–Grand Coulee (BPA) 230 kV
+Dry Creek (AVA) 230 kV–Talbot (PAC)
+Bell (BPA)–Creston (BPA) 115 kV
+N. Lewiston (AVA)–Tucannon River (BPA) 115 kV
+Harrington (AVA)–Odessa (AVA) 115 kV
+Lind (AVA)–Roxboro (AVA) 115 kV
+Dry Gulch (AVA)–115/69 kV (PAC) transformer 115 kV
+Bell (BPA)–Grand Coulee (USBR) 500 kV
+East to West West to East
+4,277 MW Not defined
+=====PDFPAGE 14=====
+WECC 2024 Path Rating Catalog—Public Version
+14
+<Public>
+7. [Deleted February 1998]
+=====PDFPAGE 15=====
+WECC 2024 Path Rating Catalog—Public Version
+15
+<Public>
+8. Montana-to-Northwest [Revised January 2013]
+Accepted Rating
+Definition Transfer Limits
+Broadview–Garrison #1 & #2 500 kV lines
+Mill Creek–Garrison 230 kV line
+Mill Creek–Anaconda (BPA) 230 kV line
+Ovando–Garrison 230 kV line
+Placid Lake–Hot Springs 230 kV line
+Rattlesnake–Dixon 230 kV line
+Rattlesnake–Garrison 230 kV line
+Kerr–Kalispell 115 kV line
+Thompson Falls–Burke 115 kV line
+Crow Creek–Burke 115 kV line
+East to West West to East
+2,200 MW 1,350 MW
+=====PDFPAGE 16=====
+WECC 2024 Path Rating Catalog—Public Version
+16
+<Public>
+9. [Deleted February 2016]
+10. [Deleted February 2016]
+11. [Deleted February 2016]
+12. [Deleted February 2002]
+13. [Deleted February 1997]
+=====PDFPAGE 17=====
+WECC 2024 Path Rating Catalog—Public Version
+17
+<Public>
+14. Idaho-to-Northwest [Revised March 2022]
+Accepted Rating
+Definition Transfer Limits
+Hemingway–Summer Lake 500 kV
+Imnaha–Lolo 230 kV
+Hells Canyon–Hurricane 230 kV
+North Powder–LaGrande 230 kV
+Hines–Harney 115 kV
+East to West West to East
+2,400 MW 1,200–13,40 MW
+Seasonal Transfer Limits
+2,400 MW
+Winter
+2,300 MW 
+Spring/Summer/Fall
+1,200–1,340 MW
+=====PDFPAGE 18=====
+WECC 2024 Path Rating Catalog—Public Version
+18
+<Public>
+15. Midway–Los Banos [Revised February 2017]
+Accepted Rating
+Definition Transfer Limits
+Los Banos–Midway 500 kV line
+Los Banos–Gates # 1 and #3 500 kV lines
+Gates–Panoche #1 & #2 230 kV lines
+Gates–Mustang #1 and #2 230 kV lines
+North to South South to North
+2,000–3,265 MW 4,800–5,400 MW
+=====PDFPAGE 19=====
+WECC 2024 Path Rating Catalog—Public Version
+19
+<Public>
+16. Idaho–Sierra [Revised February 2017]
+Existing Rating
+Definition Transfer Limits
+Midpoint–Humboldt 345 kV line North to South South to North
+500 MW 360 MW
+=====PDFPAGE 20=====
+WECC 2024 Path Rating Catalog—Public Version
+20
+<Public>
+17. Borah West [Revised January 2013]
+Accepted Rating 
+Other Rating
+Definition Transfer Limits
+Kinport–Midpoint 345 kV
+Borah–Adelaide–Midpoint #1 345 kV
+Borah–Adelaide #2 345 kV
+Borah–Hunt 230 kV
+AmFalls–Plst Vly–Minidoka 138 kV
+East to West West to East
+2,557 MW 1,600 MW (Other 
+Rating)
+=====PDFPAGE 21=====
+WECC 2024 Path Rating Catalog—Public Version
+21
+<Public>
+18. Montana–Idaho [Revised January 2015]
+Accepted Rating
+Existing Rating
+Definitions Transfer Limits
+Dillon Salmon–Big Grassy 161 kV
+Peterson Flats–AMPS 230 kV
+North to South South to North
+383 MW 256 MW 
+=====PDFPAGE 22=====
+WECC 2024 Path Rating Catalog—Public Version
+22
+<Public>
+19. Bridger West (Pre-Gateway) [Revised February 2015]
+Accepted Rating
+Other Rating
+Definitions Transfer Limits
+Jim Bridger–Threemile Knoll 345 kV
+Jim Bridger–Populus 345 kV #1
+Jim Bridger–Populus 345 kV #2
+East to West West to East
+2,400 MW 1,250 MW (Other 
+Rating)
+=====PDFPAGE 23=====
+WECC 2024 Path Rating Catalog—Public Version
+23
+<Public>
+20. Path C (Pre-Gateway) [Revised January 2014]
+Accepted Rating
+Definitions Transfer Limits
+Malad–American Falls* 138kV
+Ben Lomond–Populus* #1 345 kV
+Ben Lomond–Populus* #2 345 kV
+Terminal–Populus* 345 kV
+Treasureton–Sunbeam–Brady* 230 kV
+Fish Creek–Goshen*161 kV
+Threemile Knoll 138*/345 kV transformer
+Threemile Knoll 138*/115 kV transformer
+North to South South to North
+1,600 MW 1,250 MW
+=====PDFPAGE 24=====
+WECC 2024 Path Rating Catalog—Public Version
+24
+<Public>
+21. [Deleted December 2009]
+22. [Deleted January 2020]
+23. [Deleted January 2020]
+=====PDFPAGE 25=====
+WECC 2024 Path Rating Catalog—Public Version
+25
+<Public>
+24. PG&E–Sierra [Revised January 2018]
+Existing Rating
+Definitions Transfer Limits
+Drum–Summit 1 115 kV
+Drum–Summit 2 115 kV
+Spaulding–Summit 60 kV
+West to East East to West
+160 MW 150 MW
+=====PDFPAGE 26=====
+WECC 2024 Path Rating Catalog—Public Version
+26
+<Public>
+25. PacifiCorp/PG&E 115 kV Interconnection [Revised January 2015]
+Other Rating
+Definitions Transfer Limits
+Cascade–Weed Junction 115 kV Line North to South
+Winter
+South to North
+Winter
+100 MW 150 MW
+North to South
+Summer
+South to North
+Summer
+80 MW 45 MW
+=====PDFPAGE 27=====
+WECC 2024 Path Rating Catalog—Public Version
+27
+<Public>
+26. Northern–Southern California [Revised January 2019]
+Accepted Rating
+Definitions Transfer Limits
+Midway–Vincent No. 1 500 kV lines
+Midway–Vincent No. 2 500 kV lines
+Midway–Whirlwind 500 kV line
+North to South South to North
+4,000 MW 3,000 MW
+=====PDFPAGE 28=====
+WECC 2024 Path Rating Catalog—Public Version
+28
+<Public>
+27. Intermountain Power Project DC Line [Revised January 2015]
+Accepted Rating
+Definitions Transfer Limits
+Intermountain–Adelanto 500 kV DC Line Northeast to 
+Southwest
+Southwest to 
+Northeast
+2,400 MW 1,400 MW
+=====PDFPAGE 29=====
+WECC 2024 Path Rating Catalog—Public Version
+29
+<Public>
+28. Intermountain–Mona 345 kV [Revised January 2015]
+Existing Rating
+Definitions Transfer Limits
+Intermountain–Mona 1 345 kV Line
+Intermountain–Mona 2 345 kV Line
+East to West West to East
+1,200 MW 1,400 MW
+=====PDFPAGE 30=====
+WECC 2024 Path Rating Catalog—Public Version
+30
+<Public>
+29. Intermountain–Gonder 230 kV [Revised January 2019]
+Existing Rating
+Definitions Transfer Limits
+Intermountain–Gonder 230 kV line East to West West to East
+200 MW
+(non-Simultaneous)
+241 MW
+(Simultaneous 
+w/ Path 27)
+=====PDFPAGE 31=====
+WECC 2024 Path Rating Catalog—Public Version
+31
+<Public>
+30. TOT 1A [Revised January 2018]
+Accepted Rating
+Definitions Transfer Limits
+Craig–Bonanza 345 kV 
+Hayden–Artesia 138 kV
+Meeker–Rangely 138 kV
+East to West West to East
+650 MW (maximum) Not Defined
+=====PDFPAGE 32=====
+WECC 2024 Path Rating Catalog—Public Version
+32
+<Public>
+31. TOT 2A [Revised January 2019]
+Existing Rating
+Definitions Transfer Limits
+Waterflow–San Juan 345 kV 
+Hesperus–Glade Tap 115 kV
+Lost Canyon–Shiprock 230 kV
+North to South South to North
+690 MW Not Defined
+=====PDFPAGE 33=====
+WECC 2024 Path Rating Catalog—Public Version
+33
+<Public>
+32. Pavant–Gonder 230 kV; Intermountain–Gonder 230 kV [Revised January 
+2019]
+Accepted Rating
+Definitions Transfer Limits
+Osceola–Black Rock 230 kV
+Gonder–Intermountain 230 kV
+East to West West to East
+500 MW 235 MW
+=====PDFPAGE 34=====
+WECC 2024 Path Rating Catalog—Public Version
+34
+<Public>
+33. Bonanza West [Revised December 2010]
+Existing Rating
+Definitions Transfer Limits
+Bonanza–Mona 345 kV 
+Upalco–Carbon 138 kV
+East to West West to East
+785 MW Not defined
+=====PDFPAGE 35=====
+WECC 2024 Path Rating Catalog—Public Version
+35
+<Public>
+34. (See Paths 78 and 79)
+=====PDFPAGE 36=====
+WECC 2024 Path Rating Catalog—Public Version
+36
+<Public>
+35. TOT 2C [Revised January 2018]
+Accepted Rating
+Definitions Transfer Limits
+Red Butte–Harry Allen 345 kV line North to South South to North
+600 MW 580 MW
+=====PDFPAGE 37=====
+WECC 2024 Path Rating Catalog—Public Version
+37
+<Public>
+36. TOT 3 [Revised March 2023]
+Accepted Rating
+Definitions Transfer Limits
+Archer–Ault 230 kV
+Laramie River–Ault 345 kV
+Wayne Child–Keota 345 kV
+Cheyenne–Owl Creek 115 kV
+Sidney–Sterling 115 kV
+Sidney–Spring Canyon 230 kV
+Terry Ranch Road–Ault 230 kV
+North to South South to North
+1,843 MW Not defined
+=====PDFPAGE 38=====
+WECC 2024 Path Rating Catalog—Public Version
+38
+<Public>
+37. (See Path 85) [Revised March 2021]
+=====PDFPAGE 39=====
+WECC 2024 Path Rating Catalog—Public Version
+39
+<Public>
+38. TOT 4B [Revised January 2015]
+Accepted Rating
+Definitions Transfer Limits
+Carr Draw–Buffalo 230 kV
+Tongue River–Sheridan 230 kV
+Spence–Thermopolis 230 kV
+Alcova–Raderville 115 kV
+Casper–Midwest 230 kV
+Riverton–Thermopolis 230 kV
+Riverton–230/115 kV transformers
+Subtract PreCorp load at Sheridan
+Southeast to 
+Northwest
+Northwest to 
+Southeast
+880 MW Not defined
+=====PDFPAGE 40=====
+WECC 2024 Path Rating Catalog—Public Version
+40
+<Public>
+39. TOT 5 [Revised January 2018]
+Existing Rating
+Definitions Transfer Limits
+North Park–Terry Ranch Road 230 kV
+Craig–Ault 345 kV
+Hayden–Gore Pass 230 kV
+Hayden–Gore Pass 138 kV
+N. Gunnison–Salida (Poncha Jct.) 115 kV
+Curecanti–Poncha 230 kV
+Basalt–Malta 230 kV
+Hopkins–Malta 230 kV
+West to East East to West
+1,680 MW Not Defined
+=====PDFPAGE 41=====
+WECC 2024 Path Rating Catalog—Public Version
+41
+<Public>
+40. TOT 7 [Revised January 2006]
+Existing Rating
+Definitions Transfer Limits
+Ault–Fort St. Vrain 230 kV
+Weld–Fort St. Vrain 230 kV
+Longs Peak–Fort St. Vrain 230 kV
+North to South South to North
+890 MW Not defined
+=====PDFPAGE 42=====
+WECC 2024 Path Rating Catalog—Public Version
+42
+<Public>
+41. Sylmar to SCE [Revised February 2017]
+Accepted Rating
+Definitions Transfer Limits
+Sylmar 230/220 kV Transformer Bank E 
+Sylmar 230/220 kV Transformer Bank F
+Sylmar 230/220 kV Transformer Bank G
+North to South South to North
+1,600 MW 1,600 MW
+42. IID–SCE [Revised January 2022].
+Accepted Rating
+Definitions Transfer Limits
+Ramon–Mirage 230 kV line
+Coachella Valley–Mirage 230 kV line
+East to West West to East
+750 MW Not Rated
+=====PDFPAGE 43=====
+WECC 2024 Path Rating Catalog—Public Version
+43
+<Public>
+=====PDFPAGE 44=====
+WECC 2024 Path Rating Catalog—Public Version
+44
+<Public>
+43. [Deleted February 2015]
+44. [Deleted February 2015]
+=====PDFPAGE 45=====
+WECC 2024 Path Rating Catalog—Public Version
+45
+<Public>
+45. SDG&E–CFE [Revised March 2021]
+Accepted Rating
+Definitions Transfer Limits
+Tijuana I–Otay Mesa 
+La Rosita–Imperial Valley
+North to South South to North
+408 MW 
+(Nov–May 31)
+600 MW
+(June 1–Nov 1)
+800 MW
+=====PDFPAGE 46=====
+WECC 2024 Path Rating Catalog—Public Version
+46
+<Public>
+46. West of Colorado River (WOR) [Revised January 2018]
+Accepted Rating
+Definitions Transfer Limits
+Eldorado–Lugo 500 kV
+Eldorado–Cima–Pisgah 230 kV No. 1 and No. 2
+Mohave–Lugo 500 kV
+Julian Hinds–Mirage 230 kV
+McCullough–Victorville 500 kV No. 1 and No. 2
+Mead–Victorville 287 kV
+Marketplace–Adelanto 500 kV
+North Gila–Imperial Valley 500 kV
+Palo Verde–Colorado River 500 kV
+El Centro–Imperial Valley 230 kV
+Ramon–Mirage 230 kV
+Coachella–Mirage 230 kV
+East to West West to East
+11,200 MW 11,200 MW
+=====PDFPAGE 47=====
+WECC 2024 Path Rating Catalog—Public Version
+47
+<Public>
+47. Southern New Mexico (NM1) [Revised January 2022]
+Accepted Rating
+Definitions Transfer Limits
+West Mesa–Arroyo 345 kV
+Springerville–Macho Springs 345 kV
+Greenlee–Hidalgo 345 kV
+Belen–Bernardo 115 kV
+North to South South to North
+1,048 MW 1,048 MW
+=====PDFPAGE 48=====
+WECC 2024 Path Rating Catalog—Public Version
+48
+<Public>
+48. Northern New Mexico (NM2) [Revised February 2017]
+Accepted Rating 
+Definitions Transfer Limits
+Four Corners–Rio Puerco 345 kV line
+San Juan–Rio Puerco 345 kV line
+San Juan–Jicarilla 345 kV line
+McKinley/Yah-Ta-Hey 345/115 kV trans
+Bisti–Ambrosia 230 kV line
+Walsenburg–Gladstone 230 kV line
+Less the following flows:
+Belen–Bernardo 115 kV line
+West Mesa–Arroyo 345 kV line
+North to South South to North
+2,150 MW 2,150 MW
+=====PDFPAGE 49=====
+WECC 2024 Path Rating Catalog—Public Version
+49
+<Public>
+49. East of the Colorado River (EOR) [Revised January 2018]
+Accepted Rating
+Definitions Transfer Limits
+Navajo–Crystal 500 kV line
+Moenkopi–Eldorado 500 kV line
+Liberty–Peacock 345 kV line
+Palo Verde–Colorado River 500 kV line
+Hassayampa–Hoodoo Wash 500 kV line
+Perkins–Mead 500 kV line
+Hassayampa–N. Gila 500 kV line
+East to West West to East
+10,100 MW Not Rated
+=====PDFPAGE 50=====
+WECC 2024 Path Rating Catalog—Public Version
+50
+<Public>
+50. [Deleted January 2020]
+51. [Deleted January 2020]
+=====PDFPAGE 51=====
+WECC 2024 Path Rating Catalog—Public Version
+51
+<Public>
+52. Silver Peak–Control 55 kV [Revised January 2018]
+Existing Rating
+Definitions Transfer Limits
+Silver Peak– Control No. 1 and No. 2 55 kV lines East to West West to East
+17 MW 17 MW
+=====PDFPAGE 52=====
+WECC 2024 Path Rating Catalog—Public Version
+52
+<Public>
+53. [Deleted March 2007]
+=====PDFPAGE 53=====
+WECC 2024 Path Rating Catalog—Public Version
+53
+<Public>
+54. Coronado–Silver King 500 kV [Revised February 2017]
+Accepted Rating
+Definitions Transfer Limits
+Coronado–Silver King 500 kV North to South South to North 
+1,494 MW Not Rated
+=====PDFPAGE 54=====
+WECC 2024 Path Rating Catalog—Public Version
+54
+<Public>
+55. Brownlee East [Revised January 2018]
+Accepted Rating
+Definitions Transfer Limits
+Brownlee–Boise Bench #1 230 kV
+Brownlee–Boise Bench #2 230 kV
+Brownlee–Boise Bench #3 230 kV
+Brownlee–Horse Flat #4 230 kV
+Brownlee–Ontario 230 kV
+Oxbow–Starkey 138 kV
+Quartz–Ontario 138 kV
+West to East East to West
+1,915 MW Not Rated
+=====PDFPAGE 55=====
+WECC 2024 Path Rating Catalog—Public Version
+55
+<Public>
+56. [Deleted February 1999]
+57. [Deleted February 1998]
+=====PDFPAGE 56=====
+WECC 2024 Path Rating Catalog—Public Version
+56
+<Public>
+58. Eldorado–Mead 230 kV lines [Revised February 1998]
+Existing Rating
+Definitions Transfer Limits
+Eldorado–Mead No. 1 and No. 2 230 kV lines East to West West to East
+1,140 MW 1,140 MW
+=====PDFPAGE 57=====
+WECC 2024 Path Rating Catalog—Public Version
+57
+<Public>
+59. WALC/SCE Blythe 161 kV Substation [Revised February 2017]
+Accepted Rating
+Definitions Transfer Limits
+WALC Blythe 161 kV bus–SCE Blythe 161 kV bus East to West West to East
+218 MW Not Rated
+=====PDFPAGE 58=====
+WECC 2024 Path Rating Catalog—Public Version
+58
+<Public>
+60. Inyo–Control 115 kV Tie [Revised February 2015]
+Existing Rating
+Definitions Transfer Limits
+Inyo 115 kV phase Shifter East to West West to East
+56 MW 56 MW
+=====PDFPAGE 59=====
+WECC 2024 Path Rating Catalog—Public Version
+59
+<Public>
+61. Lugo–Victorville 500 kV line [Revised February 2017]
+Accepted Rating
+Definitions Transfer Limits
+Lugo–Victorville 500 kV Line North to South South to North
+2,400 MW 900 MW
+=====PDFPAGE 60=====
+WECC 2024 Path Rating Catalog—Public Version
+60
+<Public>
+62. Eldorado–McCullough 500 kV line [Revised February 2015]
+Existing Rating
+Definitions Transfer Limits
+Eldorado–McCullough 500 kV Line North to South South to North
+2,598 MW 2,598 MW
+=====PDFPAGE 61=====
+WECC 2024 Path Rating Catalog—Public Version
+61
+<Public>
+63. [Deleted January 2011]
+64. [Deleted March 2007]
+=====PDFPAGE 62=====
+WECC 2024 Path Rating Catalog—Public Version
+62
+<Public>
+65. Pacific DC Intertie (PDCI) [Revised February 2018]
+Existing Rating
+Definitions Transfer Limits
+Celilo to Sylmar 500 kV DC line North to South South to North
+3,220 MW 3,100 MW
+=====PDFPAGE 63=====
+WECC 2024 Path Rating Catalog—Public Version
+63
+<Public>
+66. California–Oregon Intertie (COI)
+Existing Rating
+Definitions Transfer Limits
+Malin to Round Mt. 500 kV
+(2 lines) (Pacific AC Intertie)
+Captain Jack–Olinda 500 kV line (COTP)
+North to South South to North
+4,800 MW 3,675 MW
+=====PDFPAGE 64=====
+WECC 2024 Path Rating Catalog—Public Version
+64
+<Public>
+67. [Deleted February 1999]
+68. [Deleted February 1999]
+69. [Deleted February 1999]
+70. [Deleted February 1999]
+=====PDFPAGE 65=====
+WECC 2024 Path Rating Catalog—Public Version
+65
+<Public>
+71. South of Allston [Revised March 2024]
+Other Rating
+Definitions Transfer Limits
+Lewis & Clark–Astoria Tap 115 kV
+Allston-Keeler 500 kV
+Allston-St. Helens 115 kV
+Astoria-Seaside 115 kV
+Merwin-St. Johns 115 kV
+Trojan-Harborton #1 230 kV 
+Trojan-St. Marys-Horizon 230kV (OOS1
+ May 24)
+Trojan-St. Marys-Evergreen 230kV (ISD2
+ May 24)
+Lexington-Ross 230 kV
+North to South South to North
+2,725 to 3,100 MW
+1 Out of Service Date
+2 In Service Date
+=====PDFPAGE 66=====
+WECC 2024 Path Rating Catalog—Public Version
+66
+<Public>
+=====PDFPAGE 67=====
+WECC 2024 Path Rating Catalog—Public Version
+67
+<Public>
+72. [Deleted February 1999]
+73. [Deleted January 2022]
+74. [Deleted February 1999]
+=====PDFPAGE 68=====
+WECC 2024 Path Rating Catalog—Public Version
+68
+<Public>
+75. Hemingway–Summer Lake [Revised January 2018]
+Accepted Rating
+Definitions Transfer Limits
+Hemingway–Summer Lake 500 kV East to West West to East
+1,500 MW 550 MW
+=====PDFPAGE 69=====
+WECC 2024 Path Rating Catalog—Public Version
+69
+<Public>
+76. Alturas Project [Revised January 2018]
+Accepted Rating
+Definitions Transfer Limits
+Hilltop 230/345 kV transformer
+Hilltop–Fort Sage 345 kV
+North to South South to North
+300 MW 300 MW
+=====PDFPAGE 70=====
+WECC 2024 Path Rating Catalog—Public Version
+70
+<Public>
+77. Crystal–Harry Allen [Revised January 2018]
+Accepted Rating
+Definitions Transfer Limits
+Sum of the flows on the two 500/230 kV Transformer 
+banks at Crystal
+East to West West to East
+950 MW 300 MW
+=====PDFPAGE 71=====
+WECC 2024 Path Rating Catalog—Public Version
+71
+<Public>
+78. TOT 2B1 [Revised February 2017]
+Accepted Rating
+Definitions Transfer Limits
+Pinto–Four Corners 345 kV line North to South South to North
+647 MW 700 MW
+=====PDFPAGE 72=====
+WECC 2024 Path Rating Catalog—Public Version
+72
+<Public>
+79. TOT 2B2 [Revised February 2017]
+Accepted Rating
+Definitions Transfer Limits
+Sigurd–Glen Canyon 230 kV line North to South South to North
+265 MW 300 MW
+=====PDFPAGE 73=====
+WECC 2024 Path Rating Catalog—Public Version
+73
+<Public>
+80. Montana Southeast [Revised February 2017]
+Other Rating
+Definitions Transfer Limits
+Billings–Yellowtail 230 kV line
+Rimrock–Yellowtail 161 kV line
+Hardin–Crossover 230 kV line
+Huntley–Crossover 230 kV line
+North to South South to North
+600 MW 600 MW
+=====PDFPAGE 74=====
+WECC 2024 Path Rating Catalog—Public Version
+74
+<Public>
+81. Southern Nevada Transmission Interface (SNTI) [Revised February 2017]
+Accepted Rating
+Definitions Transfer Limits
+Harry Allen-Mead 500 kV 
+Arden-Mead 230 kV
+Equestrian-Mead 230 kV #1 & #2
+Greenway-Mead 230 kV
+Henderson-BC Tap-Mead 230 kV
+Henderson-Mead 230 kV
+Equestrian-Mead 69 kV #1 & #2
+Lakes Las Vegas-Mead 69 kV
+Mead-Searchlight 69 kV
+Faulkner-McCullough 230 kV
+McCullough-Nevada Solar One 230 kV
+McCullough-Tolson 230 kV
+Laughlin-Mohave 500 kV #1 & #2
+Eldorado-Magnolia 230 kV
+Eldorado-Nevada Solar One 230 kV
+Northwest-Desert View 230 kV
+Indian Springs-Mercury 138 kV
+Amargosa-Sandy 138 kV
+North to South South to North
+4,533 MW 3,790 MW
+=====PDFPAGE 75=====
+WECC 2024 Path Rating Catalog—Public Version
+75
+<Public>
+82. TotBeast [Revised January 2018]
+Other Rating
+Definitions Transfer Limits
+Summer Lake–Hemingway 500 kV
+Brownlee–Boise Bench #1 230 kV
+Brownlee–Boise Bench #2 230 kV
+Brownlee–Boise Bench #3 230 kV
+Brownlee–Horse Flat #4 230 kV
+Brownlee–Ontario 230 kV
+Oxbow–Starkey 138 kV
+Quartz–Ontario 138 kV
+West to East East to West
+2,465 MW Not Rated
+=====PDFPAGE 76=====
+WECC 2024 Path Rating Catalog—Public Version
+76
+<Public>
+83. Montana Alberta Tie Line [Revised January 2018]
+Accepted Rating
+Definitions Transfer Limits
+Montana–Alberta Tie 230 kV Line (MATL) North to South South to North
+325 MW 300 MW
+=====PDFPAGE 77=====
+WECC 2024 Path Rating Catalog—Public Version
+77
+<Public>
+84. Harry Allen–Eldorado 500 kV [Added February 2021]
+Accepted Rating
+Definitions Transfer Limits
+Harry Allen–Eldorado 500 kV line North to South South to North
+3,496 MW 1,390 MW
+=====PDFPAGE 78=====
+WECC 2024 Path Rating Catalog—Public Version
+78
+<Public>
+85. Aeolus West Path (Post Gateway) [Added March 2021]
+Accepted Rating
+Definitions Transfer Limits
+Aeolus–Anticline 500 kV
+Platte–Latham 230 kV
+Mustang–Bridger 230 kV
+Riverton–Wyopo 230 kV
+East to West West to East
+2,670 MW 1,816 MW
+=====PDFPAGE 79=====
+WECC 2024 Path Rating Catalog—Public Version
+79
+<Public>
+86. West of John Day [Added March 2021]
+Accepted Rating
+Definitions Transfer Limits
+John Day–Big Eddy No. 1 500 kV 
+John Day–Big Eddy No. 2 500 kV
+John Day–Marion No. 1 500 kV
+East to West West to East
+4,760 MW Not Rated
+=====PDFPAGE 80=====
+WECC 2024 Path Rating Catalog—Public Version
+80
+<Public>
+87. West of McNary [Added March 2021]
+Accepted Rating
+Definitions Transfer Limits
+Coyote Springs–Slatt 500 kV line
+McNary–John Day 500 kV line
+McNary–Ross 345 kV line
+Jones Canyon–Santiam 230 kV line
+Harvalum–Big Eddy 230 kV line
+East to West West to East
+4,925 MW Not Rated
+=====PDFPAGE 81=====
+WECC 2024 Path Rating Catalog—Public Version
+81
+<Public>
+88. West of Slatt [Added March 2021]
+Accepted Rating
+Definitions Transfer Limits
+Slatt–Buckley 500 kV
+Slatt–John Day 500 kV
+East to West West to East
+4,760 MW Not Rated
+=====PDFPAGE 82=====
+WECC 2024 Path Rating Catalog—Public Version
+82
+<Public>
+89. Southern Nevada Transmission Interface Plus (SNTI+) [Added March 2021]
+Accepted Rating
+Definitions Transfer Limits
+Harry Allen–Eldorado 500 kV
+Harry Allen–Mead 500 kV 
+Arden–Mead 230 kV
+Equestrian–Mead 230 kV #1 & #2
+Greenway–Mead 230 kV
+Henderson–BC Tap–Mead 230 kV
+Henderson–Mead 230 kV
+Equestrian–Mead 69 kV #1 & #2
+Lakes Las Vegas–Mead 69 kV
+Mead–Searchlight 69 kV
+Faulkner–McCullough 230 kV
+McCullough–Nevada Solar One 230 kV
+McCullough–Tolson 230 kV
+Laughlin–Mohave 500 kV #1 & #2
+Eldorado–Magnolia 230 kV
+Eldorado–Nevada Solar One 230 kV
+Northwest–Desert View 230 kV
+Indian Springs–Mercury 138 kV
+Amargosa–Sandy 138 kV
+North to South South to North
+6,257 MW 4,681 MW
+=====PDFPAGE 83=====
+WECC 2024 Path Rating Catalog—Public Version
+83
+<Public>
+WECC receives data used in its analyses from a wide variety of sources. WECC strives to source its data from reliable 
+entities and undertakes reasonable efforts to validate the accuracy of the data used. WECC believes the data contained herein
+and used in its analyses is accurate and reliable. However, WECC disclaims any and all representations, guarantees, 
+warranties, and liability for the information contained herein and any use thereof. Persons who use and rely on the 
+information contained herein do so at their own risk.
