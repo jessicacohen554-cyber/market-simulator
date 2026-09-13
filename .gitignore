@@ -2083,3 +2083,6 @@ results/calibration/caiso279_ablate_dswcouple_span/
 # owner rules on promotion, at which point THIS LINE IS REMOVED by the promotion
 # commit and the slim set is committed normally (no `git add -f`).
 results/calibration/spp38_span/
+
+!results/calibration/spp38_span/
+!results/calibration/spp38_span/**
