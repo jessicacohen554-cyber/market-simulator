@@ -250,6 +250,16 @@ datatype main's `3857d801` ("Intake `coal-stocks`") added to `data/dictionary/` 
 datatype-list / dictionary section — this branch touches neither `data/dictionary/` nor any clean-io
 script (0 diff lines). The unit suite on the rebased tree is reported in the log entry.
 
+CI Fast test tier on the rebased head `1100c052`: 22 failed + 2 errors / 9,682 passed — the 19 + 2
+already classified, plus the two `coal-stocks` curation failures above and TWO more that likewise
+arrived with main: `tests/unit/data/test_gas_offer_zonal_anchor_vintage.py` ×2 (Upstate_West runtime
+window mean 2.0039 ≠ registered 2.0346; reference zone 3.8739 ≠ 3.9046). Main's `c0a9d5ba`
+("recompute the NYISO monthly gas anchor and basis from the completed dailies", nyiso-234) rewrote
+`data/raw/gas-prices/transco_z6_*.csv` and `data/raw/gas_basis_by_iso_month.csv` without moving the
+registered NYISO zone table those pins read; this branch touches none of those files (its only NYISO-
+adjacent diff is the seven→nine tuple in `test_nyiso_st_gas_econ_deleak.py`). Both are the NYISO
+lane's. The three `test_scenario_campaign_configs` failures this branch DID cause are gone.
+
 Note on the branch: `origin/main` `d77a0cc9` is the auto-merge of PR #6151 — the PRECOMMIT commit
 `7e6978ee` pushed to this same branch name before the registration commit existed. PR #6152 carries
 the registration itself.
@@ -310,11 +320,15 @@ drops the one national CAES row. Curated EIA-860 parquets rescoped (+SOCO rows o
 THE RESCOPE WAS NOT ADDITIVE AND THE SUITE CAUGHT IT: --rescope-from-parquet dropped the
 eGRID heat_rate join on the canonical + 2020/2023/2024 tables and admitted one PJM row.
 Repaired before push as main's frame byte-for-byte + SOCO rows (heat_rate joined from
-the PLNT23 cache); script defect ROUTED with the recipe. Suites on the pushed state:
-unit 5,475 passed / 7 failed; curation+regression 1,382 / 11. All 18 remaining failures
-fail identically with origin/main's code checked out into the same tree (CAISO artifact
-drift PR #6037, Mystic oil rows, ERCOT fleet golden, SPP RPS None, NYISO surface 210 vs
-209, 10 NEISO forecast key-provenance records, and data/clean FileNotFound x11).
+the PLNT23 cache); script defect ROUTED with the recipe. REBASED onto c6c70190 after
+NWPP-20 registered the eighth region the same day (55 conflicts, union NWPP-then-SOCO;
+SOCO is the NINTH region; parquets = main's NWPP-inclusive frames + SOCO rows). Suites
+on the rebased tree: unit 5,539 passed / 8 failed; curation+regression+scoring 2,916 /
+31. Every failure fails identically with origin/main's code in the same tree or arrived
+with main's own commits (CAISO artifact drift PR #6037, Mystic oil rows, ERCOT fleet
+golden, NYISO surface 210 vs 209, NYISO gas-anchor pins after c0a9d5ba, coal-stocks
+dictionary after 3857d801, 10 NEISO forecast key-provenance records, 19 scoring pins,
+and data/clean FileNotFound x11). G8 re-proved: NWPP 0 moved too.
 
 TAIL_THRESHOLD SKIPPED x3 (SOCO-13 read NO price). Routed: D79 undeclared rows, the 7-h
 2025 tail fetch, the four ~70 GW NG:NG hours, curate_demand_profile.MODEL_ISOS (SOCO-31),
