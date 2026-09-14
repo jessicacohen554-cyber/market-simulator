@@ -153,6 +153,7 @@ class TestMisoIsArmedAndOthersAreNot(unittest.TestCase):
                 "NEISO",
                 "SPP",
                 "NWPP",
+                "SOCO",
             )
             if get_iso_config(iso).default_scenario_overrides.get(
                 "entry_vre_zone_selection"

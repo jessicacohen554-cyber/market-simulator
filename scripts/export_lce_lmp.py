@@ -105,6 +105,13 @@ _DUMMY_BASE_LMP: dict[str, float] = {
     # below the CAISO hubs outside the winter/summer scarcity months
     # (docs/multi-iso/nwpp-data-audit.md). PLACEHOLDER, like every row here.
     "NWPP": 36.0,
+    # SOCO added 2026-09-14 (lane SOCO-20) on its registration as the ninth
+    # region (NWPP, the eighth, merged the same day). SOCO is a vertically-integrated BALANCING AUTHORITY with NO
+    # published LMP at all (card S2 / SOCO-13 read NO price series; rubric
+    # v3.8 scores it PRICE UNSCORED), so this row exists only so the --dummy
+    # wiring stub is distinguishable from PJM's, exactly as the guard test
+    # requires. PLACEHOLDER, like every row here — never a SOCO price claim.
+    "SOCO": 36.0,
 }
 _DUMMY_DEFAULT_BASE: float = 40.0  # any ISO not in the table above
 

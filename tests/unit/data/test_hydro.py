@@ -1013,7 +1013,7 @@ class TestPumpedStorageFoldedForecastLevel(unittest.TestCase):
     no-LP: the level is a 12-vector.
     """
 
-    ISOS = ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP", "NWPP")
+    ISOS = ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP", "NWPP", "SOCO")
 
     def _zones(self, iso):
         from market_sim.config.iso_configs import get_iso_config
@@ -1141,7 +1141,12 @@ class TestPumpedStorageFoldedForecastLevel(unittest.TestCase):
         # storage is UNOBSERVABLE in EIA-930 for the footprint in every year
         # (nwpp-data-audit §4.5; EIA-860 carries 314.0 MW, one BPAT plant), so
         # no fold has been measured and it takes the default path.
-        self.assertEqual(len(unlisted), 5)
+        # SOCO (registered 2026-09-14, SOCO-20) is unlisted for the OPPOSITE
+        # measured reason: its NG: WAT never goes negative before the 2024-07-15
+        # taxonomy cut-over (min +32 MW over 13,470 h), so pumped-storage
+        # charging was never folded into hydro — it was not reported at all
+        # (soco-data-audit §3.3). No fold exists to correct.
+        self.assertEqual(len(unlisted), 6)
         for iso in unlisted:
             base = climatological_monthly_hydro(iso)
             self.assertIsNotNone(base, f"{iso} has no EIA-930 climatology")

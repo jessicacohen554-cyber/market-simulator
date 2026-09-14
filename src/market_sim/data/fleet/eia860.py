@@ -311,6 +311,17 @@ def _map_fuel_type(
     Returns one of ``gas_cc``, ``gas_ct``, ``gas_st``, ``coal``, ``nuclear``,
     ``oil`` or ``biomass``, or ``None`` for wind, solar, hydro and other
     non-thermal resources, which are handled elsewhere.
+
+    Compressed-air energy storage (EIA-860 technology ``Natural Gas with
+    Compressed Air Storage``, prime mover ``CE``) deliberately falls through
+    the ``NG`` branch to ``gas_ct``: it burns gas on discharge and the model
+    has no CAES class. The one such unit in the registered footprints is
+    McIntosh unit 1 (SOCO, EIA plant 7063; 110.0 MW nameplate but a **25 MW
+    summer/winter rating**, a 77 % derate the source itself states), and the
+    loader's ``pmax = net summer capacity`` rule therefore carries it at
+    25 MW — owner card S7 (SOCO desk r#3, 2026-09-13: "map to a gas CT at the
+    25 MW rating"). Its energy-storage-schedule twin is skipped by
+    ``model.storage.load_eia860_storage`` so the unit is represented once.
     """
     tech = str(technology or "").strip().lower()
     source = str(energy_source or "").strip().upper()

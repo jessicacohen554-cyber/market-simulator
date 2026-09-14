@@ -25,6 +25,7 @@ from market_sim.config.constants import (
     GAS_BASIS_DIFFERENTIAL,
 )
 from market_sim.config.scenarios import ScenarioConfig
+from market_sim.pipeline.offer_curve_base.generic import GENERIC_BASE_OFFER_CURVE
 
 logger = logging.getLogger(__name__)
 
@@ -183,6 +184,39 @@ _SPP_OFFER_CURVE: dict[str, dict[str, float]] = {
         cls: {**_SPP_COAL_IDENTITY_BANDS, "econ_low_share": 0.55}
         for cls in ("COAL_PRB", "COAL_LIGNITE", "COAL_BIT", "COAL_WC")
     },
+}
+
+
+# SOCO thermal offer curve — the IDENTITY on EVERY class (plan §7 gate G5;
+# rule 25 [R-ISO-SCOPE]). The Southern Company balancing authority takes NO
+# market offers: dispatch is cost-based against an IRP, with no day-ahead
+# market, no LMP and no offer cap (owner cards S2 / S5, 2026-09-13). The
+# rule-1 [R-STRUCT] carve-out that lets an RTO's band multipliers be tuned on
+# price exists to tune MARKET OFFERS, which SOCO does not make — so every
+# heat-rate MULTIPLIER band (``committed`` / ``econ_low`` / ``econ_high`` /
+# ``peak``) of every class in the generic curve is 1.0 here, and a SOCO
+# tranche offers at its OWN measured heat rate x delivered fuel + VOM. This
+# goes further than SPP's coal-only block deliberately: the generic gas
+# neutralization above already reaches the five core gas classes, but the
+# ``*_INTERMEDIATE`` / ``ST_CHP`` / coal-supply entries keep their ERCOT-
+# lineage shapes, and for a footprint with no offers there is no basis on
+# which any class should inherit one. The STRUCTURAL tranche shares
+# (``econ_low_share``, ``pct_peaking``) are kept — they partition capacity,
+# they do not price it (SOCO-30's tranche artifact owns them). Deep-merged
+# for iso == "SOCO" only, so every other ISO is byte-identical. NOT a tuned
+# value: declared 2026-09-14 (lane SOCO-20) before any SOCO solve existed, no
+# SOCO residual has ever been read (rules 1/13), zero degrees of freedom
+# (rule 21), and every SOCO attestation declares authorized_price_tuning =
+# NONE.
+_SOCO_IDENTITY_BANDS: dict[str, float] = {
+    "committed": 1.0,
+    "econ_low": 1.0,
+    "econ_high": 1.0,
+    "peak": 1.0,
+}
+_SOCO_OFFER_CURVE: dict[str, dict[str, float]] = {
+    cls: {band: 1.0 for band in _SOCO_IDENTITY_BANDS if band in bands}
+    for cls, bands in GENERIC_BASE_OFFER_CURVE.items()
 }
 
 
@@ -2274,6 +2308,15 @@ def backcast_config(
         config = config.with_overrides(
             offer_curve_by_group=_deep_merge_offer_curve(
                 config.offer_curve_by_group, _SPP_OFFER_CURVE
+            )
+        )
+    # SOCO: the identity on EVERY class (see _SOCO_OFFER_CURVE) — a balancing
+    # authority that takes no market offers has no band to tune (gate G5,
+    # rule 25). Deep-merged so the structural shares are kept.
+    if iso.upper() == "SOCO":
+        config = config.with_overrides(
+            offer_curve_by_group=_deep_merge_offer_curve(
+                config.offer_curve_by_group, _SOCO_OFFER_CURVE
             )
         )
     # CAISO gas offer curves (DMM-grounded near-SRMC shape + the $1,000-2,000

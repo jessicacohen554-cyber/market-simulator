@@ -567,6 +567,26 @@ STORAGE_BASE_FLEET_MW: dict[str, dict[str, float]] = {
         "mid": 2_320.0,
         "high": 4_470.0,
     },
+    # SOCO (registered 2026-09-14, lane SOCO-20): the SAME documented EIA-860
+    # construction, on the same EIA-860 2025 Early Release, BA code SOCO —
+    # EXCLUDING the McIntosh compressed-air unit (plant 7063, 110 MW on the
+    # energy-storage schedule), which owner card S7 carries as a 25 MW gas CT
+    # on the generator schedule instead (model.storage.load_eia860_storage
+    # skips compressed-air rows for the same reason; rule 19, one unit once),
+    # and excluding the rejected 1.0 MW Massachusetts battery (audit §2.6(a)):
+    #   mid  = operable Status="OP" batteries              =   147.7 ->   150
+    #   high = mid + proposed Status in {U, V} (+775.0)     =   922.7 ->   920
+    #          (no TS row; U 765.0 = Hammond, Robins AFB, Moody AFB, McGrau
+    #          Ford; V 10.0 = Allatoona)
+    #   low  = mid x 0.75                                   =   110.8 ->   110
+    # Context, not a ceiling: the L (regulatory-approved) rows add 600 MW for
+    # 2029 (Dega, Pepper Hammock) and P 76 MW for 2027. Zero DOF;
+    # rule 13-admissible.
+    "SOCO": {
+        "low": 110.0,
+        "mid": 150.0,
+        "high": 920.0,
+    },
 }
 
 # ISOs whose BACKCAST resolves its storage base fleet AS OF THE SOLVE YEAR from
@@ -617,6 +637,11 @@ STORAGE_DEPLOYMENT_CEILING_MW: dict[str, float] = {
     # audit.md §4.2), the same half-of-peak convention as every row above.
     # Registered 2026-09-14 by lane NWPP-20.
     "NWPP": 26_000.0,
+    # SOCO: ~50 % of the 47,368 MW measured all-time BA peak (2024-01-17 07:00
+    # Central, EIA-930 ``Demand``; docs/multi-iso/soco-data-audit.md §3.1 —
+    # a WINTER peak, card S6), the same half-of-peak convention as every row
+    # above. Registered 2026-09-14 by lane SOCO-20.
+    "SOCO": 23_700.0,
 }
 
 # Max new storage power per year (MW). Source: ERCOT CDR, CAISO TPP queue data,
@@ -640,6 +665,15 @@ STORAGE_ANNUAL_BUILD_CAP_MW: dict[str, float] = {
     # on the footprint, 0.919 GW (2025; 0.898 in 2024 — EIA-860 2025 ER
     # Operating Year, audit §7 row 7 basis). Registered 2026-09-14 (NWPP-20).
     "NWPP": 1_000.0,
+    # SOCO: MEASURED-ANCHORED by the same rule. Demonstrated peak annual
+    # battery COD 2021-2025 in the EIA-860 2025 ER, BA SOCO, `Operating Year`
+    # = 0.065 GW (2024, Mossy Branch; 2021 0.040 / 2022 0.040 / 2023 0.002;
+    # docs/multi-iso/soco-data-audit.md §5 row 9), so 500 MW is the smallest
+    # 0.5 GW step at or above it — the QUEUE_CAP_GW convention. Context, not a
+    # ceiling: 775 MW is under construction (U/V) for 2026 and 600 MW more is
+    # PSC-approved (L) for 2029 (STORAGE_BASE_FLEET_MW["SOCO"] derivation).
+    # Registered 2026-09-14 by lane SOCO-20.
+    "SOCO": 500.0,
 }
 
 # Cap on the share of one year's storage build budget that any single
@@ -1861,6 +1895,20 @@ MARKET_DESIGN: dict[str, MarketDesign] = {
     # entry in _CURVE_ISOS / _CAPACITY_ISOS follows; every capacity-market-
     # only registry in this module is likewise absent for NWPP by the same
     # reasoning (FINDING-nwpp-20 §4 carries the exclusion list).
+    # SOCO is DELIBERATELY ABSENT too (registered 2026-09-14, lane SOCO-20;
+    # owner card S6, ruled 2026-09-13: "absent from MARKET_DESIGN, _CURVE_ISOS,
+    # _CAPACITY_ISOS"). The Southern Company balancing authority is
+    # VERTICALLY INTEGRATED: no capacity auction of any kind exists, and
+    # resource adequacy is each operating company's IRP obligation against
+    # the Southern Company System Target Reserve Margin (26 % winter / 20 %
+    # summer, 2024 Reserve Margin Study — PLANNING_RESERVE_MARGIN_BY_ISO
+    # ["SOCO"]), enforced by state commissions (Georgia PSC certification /
+    # decertification under the IRP Act; Alabama has no IRP statute), never
+    # by a clearing price. DEFAULT_MARKET_DESIGN (capacity_market=False) is
+    # therefore SOCO's actual reality, not a placeholder: no storage / VRE
+    # entry earns a capacity payment, exactly as in ERCOT and SPP. Every
+    # capacity-market-only registry in this module is likewise absent for
+    # SOCO; the exclusion list is FINDING-soco-20 §4.
 }
 
 DEFAULT_MARKET_DESIGN: MarketDesign = MarketDesign(capacity_market=False)
@@ -2529,6 +2577,36 @@ PLANNING_RESERVE_MARGIN_BY_ISO: dict[str, float] = {
     # subregion by construction) and WRAP binds only from Winter 2027-28,
     # past the window. Per-zone seasonal PRM is pre-declared lever NWPP-57.
     "NWPP": 0.144,
+    # SOCO (registered 2026-09-14, lane SOCO-20; owner card S6, ruled
+    # 2026-09-13: "Register winter 26.0 % as the scalar, misalignment
+    # documented"): Southern Company's own published long-term WINTER Target
+    # Reserve Margin, 26.00 %. Source: "2024 Reserve Margin Study of the
+    # Target Reserve Margin for the Southern Company System" (Jan 2025;
+    # Executive Summary, RECOMMENDATIONS; transcription data/raw/soco-planning/
+    # transcriptions/2024_Reserve_Margin_Study_Southern_Company_System.txt,
+    # values table README §1) — the study's scope is exactly the IIC companies,
+    # so it covers Alabama Power (which files no public IRP) as well as
+    # Georgia and Mississippi Power. THE SEASONAL STRUCTURE, STATED ON THE
+    # FIELD because this registry holds ONE scalar per ISO: the study sets
+    # winter 26.00 % / summer 20.00 % long-term (25.5 / 19.5 inside three
+    # years, winter EORM 22.75 / summer 18.25, winter 1:10 LOLE threshold
+    # 25.75 %), and WINTER IS THE BINDING SEASON — SOCO is winter-peaking in
+    # two of the three backcast years (EIA-930 BA peak 47,368 MW on 2024-01-17
+    # 07:00 and 46,490 MW on 2025-01-22 08:00 Central, against 45,558 MW on
+    # 2023-08-25 16:00; in 2025 the summer peak sits 0.25 % below winter),
+    # the all-time system maximum in the 10-K is the 2024-01-17 winter event,
+    # and NERC's SERC-Southeast probabilistic risk lands in winter mornings
+    # (SOCO-12 §1.3). Georgia Power ALONE stays summer-peaking, and NERC
+    # classifies SERC-SE as summer-peaking — adequacy binds in winter while
+    # energy peaks in summer, which is why the two TRMs differ by six points.
+    # Consumed only by the forecast-lane adequacy floor / build backstop
+    # against the model's ANNUAL peak, so pairing the winter margin with a
+    # summer-peaking model year overstates the requirement by the 26/20
+    # spread in that year — a seasonal registry for every ISO was offered and
+    # DECLINED as an ISO-addition act (card S6); it stays a chartered lane.
+    # Counting basis: the study's own LOLE construction (capacity net of
+    # market assistance modelled — see ADEQUACY_EXTERNAL_TIE_FIRM_MW["SOCO"]).
+    "SOCO": 0.26,
 }
 
 # Data-horizon gate for honoring an ANNOUNCED (non-fossil) EIA-860 retirement
@@ -3806,6 +3884,21 @@ ADEQUACY_EXTERNAL_TIE_FIRM_MW: dict[str, float] = {
     # ratings on the CAISO / Canada / Southwest seams are transfer limits,
     # not supply. The .get fallback made explicit, exactly as SPP's.
     "NWPP": 0.0,
+    # SOCO (registered 2026-09-14, lane SOCO-20): 0.0, EXPLICIT AND CITED, for
+    # a reason the SPP row does not have. Southern's 2024 Reserve Margin Study
+    # DOES publish external transfer capabilities into the System (Tables
+    # I.1 / I.2 "Avg TC", e.g. MISO-South 1,791 / 2,374 MW, TVA 480 / 478,
+    # Duke 34 / 407; and a Capacity Benefit Margin of 300 + 250 + 250 + 100 =
+    # 900 MW across MISO-South / TVA / FPL / Duke) — but the 26 % Target
+    # Reserve Margin it recommends is derived WITH that market assistance
+    # already modelled ("calibration benchmarked modeled energy with actual,
+    # eight-year average, non-PPA market transactions into and out of the
+    # Southern Company region", SOCO-12 README §4c). The TRM is therefore net
+    # of the ties, and counting them here as firm supply against it would
+    # count them twice (rule 19). They are the seam input for INTERFACE_
+    # NEIGHBORS["SOCO"] (card S4), not RA supply. A cited RA-counted firm-tie
+    # figure replaces this zero on intake.
+    "SOCO": 0.0,
 }
 
 # Conventional-hydro accreditation for the same adequacy ledger, per ISO — the
@@ -4678,6 +4771,11 @@ AS_SATURATION_REF_GW_BY_ISO: dict[str, float] = {
 # the largest per-plant LP the repo would hold (gate G21). Per-plant binning
 # is a pre-declared W5 lever; the ID/OR/UT/WA CEMS NWPP-11 landed still feed
 # outages, emission rates and commitment evidence.
+# SOCO is DELIBERATELY ABSENT at registration for the identical reason
+# (2026-09-14, lane SOCO-20): ``thermal_tranches_SOCO.csv`` /
+# ``bin_assignments_SOCO.csv`` are SOCO-30's frozen derives from the AL/GA
+# CEMS SOCO-11 landed, and do not exist yet. SOCO-30 adds "SOCO" with the
+# artifact (SOCO plan §4, gate G4: no solve before SOCO-30/31/32 land).
 CAMPD_BINNING_ISOS: frozenset[str] = frozenset(
     {"ERCOT", "CAISO", "NEISO", "NYISO", "PJM", "MISO"}
 )
@@ -5156,6 +5254,17 @@ STATE_RPS_FLOORS: dict[str, dict[int, float]] = {
     # derivation for the capx director with the W6 card (N9), never a value
     # W2 invents. No STATE_RPS_ACP row follows, exactly as ERCOT and SPP.
     "NWPP": {2026: 0.0, 2030: 0.0, 2040: 0.0, 2045: 0.0},
+    # SOCO (registered 2026-09-14, lane SOCO-20): NO binding state RPS floor
+    # in any footprint state — and this is an ANSWERED zero, not a blank.
+    # DSIRE: "Alabama does not have a renewable energy portfolio standard or
+    # a voluntary renewable energy target" (programs.dsireusa.org/system/
+    # program/al); Georgia has no RPS and no voluntary target (.../ga);
+    # Mississippi has no RPS and therefore no SREC market (docs/multi-iso/
+    # soco-data-audit.md §5 row 10). Georgia's solar build (5.0 GW) is
+    # IRP-certificated procurement, not a portfolio standard. No STATE_RPS_ACP
+    # row follows, exactly as ERCOT and SPP have none. Backcasts set
+    # rps_enabled=False regardless.
+    "SOCO": {2026: 0.0, 2030: 0.0, 2040: 0.0, 2045: 0.0},
 }
 
 # RPS Alternative Compliance Payment (ACP) ceiling, $/MWh, by ISO.
@@ -5531,6 +5640,17 @@ QUEUE_CAP_GW: dict[str, float] = {
     # PRECOMMIT-nwpp-20 §3.7). CITED to the committed sheets, not a queue
     # report: the pool publishes no interconnection-queue total.
     "NWPP": 4.5,
+    # SOCO (registered 2026-09-14, lane SOCO-20): MEASURED. Demonstrated peak
+    # annual all-technology COD in the EIA-860 2025 ER, BA SOCO, by `Operating
+    # Year`: 3.348 GW in 2023 (Barry A3 774.0 + Lowman Energy Center 732.7 MW
+    # of gas CC, Vogtle 3 1,114 MW, 690 MW of solar, small rows) over both the
+    # 2015-2025 series (0.192 / 0.760 / 0.466 / 0.049 / 0.701 / 0.734 /
+    # 0.912 / 0.603 / 3.348 / 1.974 / 0.344 GW) and the 2021-2025 window.
+    # 3.5 GW/yr is the smallest 0.5 GW step at or above it — this table's own
+    # convention. 2024 (1.974: Vogtle 4 + 795 MW solar) is the second-largest
+    # year, so the cap is not a single-plant artifact. CITED (docs/multi-iso/
+    # soco-data-audit.md §5 row 9 for the basis; the step is this table's).
+    "SOCO": 3.5,
 }
 
 # Per-technology annual interconnection queue caps (GW/yr) by ISO.
@@ -5675,6 +5795,33 @@ QUEUE_CAP_PER_TECH_GW: dict[str, dict[str, float]] = {
         "offshore_wind": 0.0,  # no BOEM lease area serves the footprint; OR's
         #   floating-wind lease areas (Coos Bay / Brookings) are CAISO-adjacent
         #   and unbuilt — no demonstrated COD
+    },
+    # SOCO (registered 2026-09-14, lane SOCO-20): each cap is the smallest
+    # 0.5 GW step at or above the demonstrated peak annual COD of that
+    # technology in the EIA-860 2025 ER, BA SOCO (`Operating Year`), the same
+    # convention as SPP, on the 2021-2025 window with the 2015-2025 window as
+    # the fallback where the five-year record is empty or near-empty
+    # (docs/multi-iso/soco-data-audit.md §5 row 9: solar 2023 1.11 / 2024
+    # 0.72 / 2025 0.34 GW by the audit's technology grouping; gas CC 2023
+    # 1.51 GW; batteries 2024 0.065 GW; wind 0.000 in every year).
+    "SOCO": {
+        # WIND: zero demonstrated COD in ANY year of 2015-2025 and ZERO wind
+        # generators in the fleet (audit §2.2 / R-12) — a physical fact about
+        # the Southeast's wind resource, not a data gap — so 0.0 is the
+        # honest cap; a nonzero step would assert a throughput no record
+        # supports. Re-opened only on a cited SOCO wind COD.
+        "wind": 0.0,
+        "solar": 1.0,  # 2021-2025 peak 0.870 GW (2021)
+        "gas_cc": 1.5,  # 2021-2025 peak 1.507 GW (2023: Barry A3 + Lowman)
+        # gas_ct: 0.005 GW in 2021-2025 -> 2015-2025 window, peak 0.050 GW
+        # (2019, Kimberly-Clark Mobile CHP). 0.5 is the smallest step.
+        "gas_ct": 0.5,
+        # NUCLEAR: the ONLY ISO in this table with a demonstrated nuclear
+        # COD — Vogtle 3 (1,114 MW, 2023) and Vogtle 4 (1,114 MW, 2024) —
+        # so 1.5 is MEASURED here where every peer row is a labelled estimate.
+        "nuclear": 1.5,
+        "geothermal": 0.0,  # no demonstrated COD and no cited resource
+        "offshore_wind": 0.0,  # no BOEM lease area off the Gulf panhandle
     },
 }
 # Hydrogen turbines (hydrogen_ct, hydrogen_ccgt) and CCUS (gas_cc_ccs) do not

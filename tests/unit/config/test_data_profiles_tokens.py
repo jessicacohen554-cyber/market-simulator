@@ -85,6 +85,45 @@ def test_no_other_iso_claims_an_spp_name(isos):
         assert hydrate_data.iso_for_name(name, isos) == "SPP"
 
 
+# --- SOCO (registered 2026-09-14, lane SOCO-20; SOCO plan §7 gate G3) --------
+
+
+def test_soco_profile_and_token_exist(isos):
+    manifest = hydrate_data.load_manifest()
+    assert "SOCO" in isos and isos["SOCO"]["tokens"] == ["soco"]
+    assert manifest["profiles"]["soco"]["iso"] == "SOCO"
+
+
+@pytest.mark.parametrize(
+    "name",
+    ["SOCO_fueltype.parquet", "SOCO_region.parquet", "soco-planning"],
+)
+def test_soco_owned_names_attribute_to_soco(isos, name):
+    assert hydrate_data.iso_for_name(name, isos) == "SOCO"
+
+
+def test_soco_token_collides_with_no_other_raw_name(isos):
+    """G3, measured on the real tree: `soco` is a substring of NO non-SOCO
+    `data/raw` name, so every name it claims is SOCO's own (unlike SPP's
+    `spp` in ERCOT's `DAMLZHBSPP_*`). Reads trees only (partial-clone safe)."""
+    paths = [p for _, p in hydrate_data.raw_entries()]
+    if not paths:
+        pytest.skip("no data/raw at HEAD")
+    soco_named = {
+        seg for p in paths for seg in p.split("/")[2:] if "soco" in seg.lower()
+    }
+    allowed_stems = ("soco",)
+    for seg in soco_named:
+        assert seg.lower().startswith(allowed_stems) or "_soco_" in seg.lower(), seg
+
+
+def test_no_earlier_iso_claims_a_soco_name(isos):
+    """Symmetric safety: no other ISO's tokens match SOCO's names."""
+    pre_soco = {k: v for k, v in isos.items() if k != "SOCO"}
+    for name in ("SOCO_fueltype.parquet", "SOCO_region.parquet", "soco-planning"):
+        assert hydrate_data.iso_for_name(name, pre_soco) is None
+
+
 class TestSplitChildWholeNameMatch:
     """The whole-name limb for split-directory children (lane SPP-34, R-4).
 
@@ -132,6 +171,14 @@ class TestSplitChildWholeNameMatch:
         assert hydrate_data.owner_of(paths[3], isos, splits) == "MISO"
         # ...and the ERCOT zip is still not SPP's.
         assert hydrate_data.owner_of(paths[4], isos, splits) != "SPP"
+
+    @pytest.mark.parametrize("name", ["SOCO", "soco"])
+    def test_soco_split_children_resolve_by_whole_name_and_by_token(self, isos, name):
+        """SOCO (registered 2026-09-14, SOCO-20) needs no delimiter bounding:
+        the bare `soco` token matches its split children AND the whole-name
+        limb agrees, so no attribution moves between the two."""
+        assert hydrate_data.iso_for_split_child(name, isos) == "SOCO"
+        assert hydrate_data.iso_for_name(name, isos) == "SOCO"
 
     def test_no_six_iso_attribution_moves_on_the_real_tree(self, isos):
         """Nothing but SPP changes owner: the limb is additive over HEAD.

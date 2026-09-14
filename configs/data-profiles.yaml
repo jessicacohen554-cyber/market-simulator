@@ -123,6 +123,23 @@ isos:
       - "pge interchange"
       - "scl hourly"
       - "scl interchange"
+  # SOCO (registered 2026-09-14, lane SOCO-20) — the Southern Company
+  # BALANCING AUTHORITY, keyed after its EIA-930 / EIA-860 BA code (owner card
+  # S1). Gate G3 re-measured at the registration base: `soco` is a substring of
+  # NO non-SOCO `data/raw` name — the only matches are SOCO's own
+  # (`SOCO_fueltype.parquet`, `SOCO_region.parquet`, `soco-planning/`,
+  # `zone-specific-demand/SOCO`, `load-forecast/soco`, `nuclear-license-status/
+  # soco.csv`, `gas-prices/SOURCES_soco_gas.md`, `SOCO hourly.parquet`,
+  # `SOCO interchange hourly.parquet`) — so unlike SPP the bare token is safe
+  # and no delimiter bounding is needed; tests/unit/config/
+  # test_data_profiles_tokens.py pins that. KNOWN LIMIT, inherited from every
+  # ISO (SOCO-10 R-10): a SOCO file inside a NON-split shared directory
+  # (`eia-930-hourly/SOCO hourly.parquet`, `eia-930-interchange/`,
+  # `nuclear-license-status/soco.csv`, `gas-prices/`, `ferc-eqr/`) classifies
+  # with its parent as `shared` — over-hydrated for every profile, never
+  # missing for `soco`.
+  SOCO:
+    tokens: [soco]
 
 # `approx_gb` is the profile's PACKED size, measured 2026-08-13 at HEAD. It is
 # indicative only — `scripts/hydrate_data.py --list` prefers real sizes when the
@@ -162,6 +179,7 @@ profiles:
   spp:   {description: "Shared sources + all SPP subtrees. SPP calibration/forecast lanes.",     data: iso, iso: SPP,   approx_gb: 1.2}
   # approx_gb measured 2026-09-14 at registration (`hydrate_data.py --list`).
   nwpp:  {description: "Shared sources + all NWPP subtrees (17 BA extracts, WEIM, hydro, planning). NWPP calibration/forecast lanes.", data: iso, iso: NWPP, approx_gb: 1.4}
+  soco:  {description: "Shared sources + all SOCO subtrees. SOCO calibration/forecast lanes.",   data: iso, iso: SOCO,  approx_gb: 1.3}
 
   # ------------------------------------------------------------------ all ---
   all:

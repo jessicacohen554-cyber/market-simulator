@@ -71,9 +71,11 @@ class TestPinFlipAtomicity(unittest.TestCase):
     """Plan §2.3 / gate G1: builders, demand loaders and the surface tuple move together."""
 
     def test_nwpp_is_the_eighth_registered_region(self):
-        self.assertEqual(SUPPORTED_ISOS[-1], "NWPP")
-        self.assertEqual(len(SUPPORTED_ISOS), 8)
-        self.assertNotIn("SOCO", SUPPORTED_ISOS)  # chartered, not registered
+        # SOCO (lane SOCO-20) registered the same day as the NINTH region and
+        # landed after NWPP, so NWPP is eighth by position, no longer last.
+        self.assertEqual(SUPPORTED_ISOS[7], "NWPP")
+        self.assertEqual(SUPPORTED_ISOS[-1], "SOCO")
+        self.assertEqual(len(SUPPORTED_ISOS), 9)
 
     def test_surface_isos_and_demand_loaders_carry_nwpp(self):
         self.assertIn("NWPP", SURFACE_ISOS)
@@ -110,6 +112,9 @@ class TestIsoToBaCodes(unittest.TestCase):
             "NYISO": "NYIS",
             "NEISO": "ISNE",
             "SPP": "SWPP",
+            # SOCO (lane SOCO-20, 2026-09-14) is a single balancing authority
+            # whose code IS its region key — the eighth 1:1 region.
+            "SOCO": "SOCO",
         }
         self.assertEqual(ISO_TO_BA_CODE, expected)
         for iso, code in expected.items():

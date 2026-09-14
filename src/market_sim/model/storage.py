@@ -383,6 +383,17 @@ def load_eia860_storage(
 
     df = pd.read_parquet(path)
     df = df[df["Status"].astype(str).str.strip().str.upper() == "OP"]
+    # Compressed-air energy storage is NOT a battery and is not modelled as
+    # storage: the same unit sits on the generator schedule (prime mover
+    # ``CE``), where ``fleet.eia860._map_fuel_type`` carries it as a gas CT at
+    # its net summer rating — owner card S7 (SOCO, McIntosh unit 1, EIA 7063:
+    # 110 MW nameplate / 25 MW rating). Keeping it here too would represent
+    # one physical unit twice (rule 19). It is the ONLY compressed-air row on
+    # the national schedule, so every other ISO is byte-identical.
+    if "Technology" in df.columns:
+        df = df[
+            ~df["Technology"].astype(str).str.contains("Compressed Air", case=False)
+        ]
     power = pd.to_numeric(df["Nameplate Capacity (MW)"], errors="coerce")
     energy = pd.to_numeric(df["Nameplate Energy Capacity (MWh)"], errors="coerce")
     op_year = pd.to_numeric(df["Operating Year"], errors="coerce")

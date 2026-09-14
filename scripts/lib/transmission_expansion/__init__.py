@@ -162,6 +162,7 @@ _ISO_MODULES: tuple[str, ...] = (
     "caiso",
     "spp",  # registered 2026-09-06 (lane SPP-20)
     "nwpp",  # registered 2026-09-14 (lane NWPP-20)
+    "soco",  # registered 2026-09-14 (lane SOCO-20) — a balancing authority
 )
 _loaded = False
 

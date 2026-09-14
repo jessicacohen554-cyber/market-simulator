@@ -67,6 +67,10 @@ from market_sim.config.paths import CALIBRATION_DIR  # noqa: E402
 SRC_DIR = CALIBRATION_DIR
 OUT = REPO / "frontend" / "data" / "backcast" / "amplitude" / "actual_amplitude.json"
 
+# SOCO is deliberately ABSENT (SOCO-20, 2026-09-14): the amplitude reference is
+# a PRICE artifact and SOCO has no price series (SOCO-13 STOP gate NO; the
+# rubric v3.8 no-price class scores C1/C2/C4/C6/C8 only) — the third of the
+# three TAIL_THRESHOLD-family skips gate G6 names, documented, not forgotten.
 ISOS = ("CAISO", "ERCOT", "MISO", "NEISO", "NYISO", "PJM", "SPP")
 DAYS, HOURS_PER_DAY = 365, 24
 

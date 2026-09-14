@@ -460,6 +460,7 @@ class TestISOConfig(unittest.TestCase):
             "NEISO",
             "SPP",
             "NWPP",
+            "SOCO",
         ):
             config = get_iso_config(iso_name)
             valid = set(config.zone_names)
@@ -600,6 +601,72 @@ class TestISOConfig(unittest.TestCase):
         """Gate G5 / card N8: no offer-band delta, no scarcity seed, no
         commitment bridge — legacy bins and generic 1.0 bands."""
         overrides = get_iso_config("NWPP").default_scenario_overrides
+        self.assertEqual(overrides, {})
+
+    # --- SOCO (registered 2026-09-14, lane SOCO-20; owner cards S1, S3-S7) ---
+
+    def test_soco_has_three_geographic_zones(self):
+        """SOCO defines the three S3-ruled zones, named for geography, and no
+        import node (SOCO plan §7 G7): the served EIA-930 schedule and eight
+        default-off neighbour blocks represent the seams."""
+        soco = get_iso_config("SOCO")
+        self.assertEqual(soco.n_zones, 3)
+        self.assertEqual(set(soco.zone_names), {"SOCO_AL", "SOCO_GA", "SOCO_MS"})
+        # Never an operating-company name (card S3 condition (ii)).
+        for z in soco.zone_names:
+            self.assertNotIn("Power", z)
+
+    def test_soco_validates(self):
+        """SOCO topology passes the consistency check (Stage A)."""
+        get_iso_config("SOCO").validate_topology()
+
+    def test_soco_static_shares_are_the_fleet_mw_fallback(self):
+        """Static shares = the audit §5 row 4 EIA-860 fleet-MW share (GA 41,284.4 /
+        AL+FL 24,803.6 / MS 4,577.7 of 70,665.7 MW), a fallback of last resort
+        that SOCO-32's FERC-714 derive replaces; sum 1.0."""
+        soco = get_iso_config("SOCO")
+        shares = {z.name: z.load_share for z in soco.zones}
+        self.assertEqual(
+            shares, {"SOCO_AL": 0.3510, "SOCO_GA": 0.5842, "SOCO_MS": 0.0648}
+        )
+        self.assertAlmostEqual(sum(shares.values()), 1.0)
+
+    def test_soco_links_are_tier3_bounds_that_cannot_bind(self):
+        """Two symmetric links out of Alabama (AL<->GA, AL<->MS; no GA<->MS), each
+        the smaller side's EIA-860 2025 ER winter capability rounded to 100 MW
+        — an upper bound on flow in either direction, never a rating (card S3,
+        SOCO-12 README §4b: no inter-OpCo limit is published, structurally).
+        Lever SOCO-54 owns the real value."""
+        soco = get_iso_config("SOCO")
+        self.assertEqual(soco.n_links, 2)
+        pairs = {(l.from_zone, l.to_zone): l.ttc_mw for l in soco.links}
+        self.assertEqual(
+            pairs, {("SOCO_AL", "SOCO_GA"): 24400.0, ("SOCO_AL", "SOCO_MS"): 4300.0}
+        )
+        self.assertTrue(all(l.is_bidirectional for l in soco.links))
+        self.assertEqual(soco.interface_limits, [])
+        # The bound property: each TTC is at or above the smaller side's whole
+        # winter capability (24,446.3 -> 24,400 is the nearest-100 rounding of
+        # AL+FL; MS 4,324.6 -> 4,300), i.e. the link is never the binding limit
+        # on what that side can physically inject.
+        self.assertGreaterEqual(pairs[("SOCO_AL", "SOCO_GA")], 24_400.0)
+        self.assertGreaterEqual(pairs[("SOCO_AL", "SOCO_MS")], 4_300.0)
+
+    def test_soco_voll_is_the_ice_class_weighted_economic_value(self):
+        """Card S5: DOE/LBNL ICE Calculator 2 cost per unserved kWh at the 2-hour
+        duration (residential $5.03 / non-residential $100, 2025$), weighted by
+        the EIA-861 2024 BA-SOCO class mix (0.4009 / 0.5991) = $61,927 -> 61,900
+        $/MWh. NOT the $2,000 Order 831 offer cap — SOCO takes no offers."""
+        voll = get_iso_config("SOCO").voll
+        self.assertEqual(voll, 61_900.0)
+        self.assertNotEqual(voll, 2000.0)
+        self.assertAlmostEqual(0.4009 * 5030.0 + 0.5991 * 100_000.0, 61_927.0, places=0)
+
+    def test_soco_carries_no_default_overrides(self):
+        """Card S5: no reserve co-optimisation and no scarcity seed — SOCO clears
+        no ancillary-service market. The scarcity-seed checkpoint above is
+        deliberately untouched."""
+        overrides = get_iso_config("SOCO").default_scenario_overrides
         self.assertEqual(overrides, {})
 
     def test_caiso_voll_is_2000(self):

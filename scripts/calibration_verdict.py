@@ -633,6 +633,10 @@ PINNED_CLASSES_BY_ISO: dict[str, frozenset[str]] = {
     # SPP (registered 2026-09-06, lane SPP-20): no import node (plan §7 G7), so
     # no "imports" class — the served EIA-930 schedule rides in demand.
     "SPP": _PINNED_CLASSES_COMMON,
+    # SOCO (registered 2026-09-14, lane SOCO-20): the Southern Company
+    # balancing authority — no import node (SOCO plan §7 G7; the served
+    # EIA-930 schedule rides in demand), so no "imports" class either.
+    "SOCO": _PINNED_CLASSES_COMMON,
 }
 
 SYSVOL_TOL = 0.025  # +/-2.5% gas/coal family grid-delivered (target band)
@@ -745,6 +749,19 @@ TAIL_THRESHOLD = {
     # 42 / 59 / 68 for 2023/24/25 vs 15 / 16 / 32 above $300
     # (docs/multi-iso/spp-data-audit.md §4). MUST mirror derive_actual_tail.py.
     "SPP": 200.0,
+    # SOCO is DELIBERATELY ABSENT (registered 2026-09-14, lane SOCO-20; SOCO
+    # plan §7 gate G6 and owner card S9). The Southern Company balancing
+    # authority publishes no LMP, no day-ahead price and no hourly index, and
+    # lane SOCO-13's pre-registered STOP gate on the one measured candidate —
+    # a FERC-EQR bilateral index — read NO (FINDING-soco-13-2026-09-13.md §0:
+    # 2.6-3.7 % of demand against a 5 % bar), so no
+    # actual_lmp_hourly_SOCO.parquet and no actual_lmp.json block exist.
+    # With no price series there is no tail to threshold: a SOCO run takes the
+    # rubric v3.8 no-price class (PHYSICALLY-CALIBRATED (PRICE UNSCORED), lane
+    # SOCO-22), C3c is never scored, and this key — and its two mirrors in
+    # derive_actual_tail.py / derive_actual_amplitude.py — are SKIPPED by
+    # design, not forgotten. A key is added only if the owner ever rules a
+    # labelled price benchmark in (an S2 amendment, never a re-cut gate).
 }
 
 # Governance: outage sources that are exogenous availability events (rubric C6.4).

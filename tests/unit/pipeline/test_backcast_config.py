@@ -173,3 +173,47 @@ class TestSppNeutralCoalBands(unittest.TestCase):
             )
         miso = backcast_config(2024, "MISO", 24, 3.0).offer_curve_by_group["COAL"]
         self.assertEqual([miso[b] for b in self._BANDS], [1.00, 1.00, 1.10, 1.45])
+
+
+class TestSocoIdentityBands(unittest.TestCase):
+    """SOCO plan §7 gate G5 / rule 25 [R-ISO-SCOPE] (lane SOCO-20, 2026-09-14):
+    SOCO is a no-price balancing authority, so EVERY class's four offer-curve
+    bands read 1.0 — no ERCOT-fitted generic entry leaks in, and no SOCO
+    entry is ever fitted (rubric v3.8 scores no SOCO price). Structural
+    shares are not bands and keep their generic values."""
+
+    _BANDS = ("committed", "econ_low", "econ_high", "peak")
+
+    def test_every_soco_class_carries_identity_bands(self):
+        from market_sim.pipeline.offer_curve_base.generic import (
+            GENERIC_BASE_OFFER_CURVE,
+        )
+
+        curve = backcast_config(2024, "SOCO", 24, 3.0).offer_curve_by_group
+        self.assertTrue(set(GENERIC_BASE_OFFER_CURVE) <= set(curve))
+        non_identity = {
+            (cls, band): curve[cls][band]
+            for cls in curve
+            for band in self._BANDS
+            if band in curve[cls] and curve[cls][band] != 1.0
+        }
+        self.assertEqual(non_identity, {})
+
+    def test_soco_structural_shares_stay_generic(self):
+        from market_sim.pipeline.offer_curve_base.generic import (
+            GENERIC_BASE_OFFER_CURVE,
+        )
+
+        curve = backcast_config(2024, "SOCO", 24, 3.0).offer_curve_by_group
+        for cls, generic in GENERIC_BASE_OFFER_CURVE.items():
+            for key, value in generic.items():
+                if key in self._BANDS:
+                    continue
+                self.assertEqual(curve[cls][key], value, (cls, key))
+
+    def test_other_isos_are_untouched_by_the_soco_branch(self):
+        # ERCOT keeps its fitted generic coal entry; SPP its own identity.
+        ercot = backcast_config(2024, "ERCOT", 24, 3.0).offer_curve_by_group["COAL"]
+        self.assertEqual([ercot[b] for b in self._BANDS], [0.90, 0.95, 1.10, 1.45])
+        spp = backcast_config(2024, "SPP", 24, 3.0).offer_curve_by_group["COAL"]
+        self.assertEqual([spp[b] for b in self._BANDS], [1.0, 1.0, 1.0, 1.0])

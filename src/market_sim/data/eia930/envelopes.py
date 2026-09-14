@@ -1875,6 +1875,39 @@ def nwpp_net_interchange(year: int) -> np.ndarray | None:
     return position - grid_sw
 
 
+def soco_net_interchange(year: int) -> np.ndarray | None:
+    """Return SOCO's hourly net export (MW, export-positive), or ``None``.
+
+    Sources the measured net interchange from the EIA-930 ``SOCO hourly``
+    extract's ``Total interchange`` column (see :func:`_eia930_net_interchange`
+    for the sign convention — EIA's positive = net EXPORT, verified on the SOCO
+    file itself: ``Demand + Total interchange = Net generation`` closes to
+    0.0000 TWh in 2023 and 2024, docs/multi-iso/soco-data-audit.md §3.1). The
+    Southern Company balancing authority is a substantial net EXPORTER in
+    every training year — +10.156 / +10.807 / +13.032 TWh on the model's
+    non-leap clock (the BA-to-BA book agrees to 0.001 / 0.001 / 0.017 TWh,
+    FINDING-soco-11 §4.1) — so serving the schedule RAISES what the internal
+    fleet must generate in 25,269 of 26,304 hours. Counterparties, largest
+    first (SOCO-11 §4.3): SCEG and Santee Cooper near-unidirectional exports
+    (+7.1-9.8 / +4.1-4.8 TWh), MISO-South +4.4-4.7, FPL +2.8-2.9; DUK and
+    SEPA (federal hydro) near-unidirectional imports (-3.7-4.2 / -1.9-2.6);
+    TVA the one genuinely two-way seam (-2.9-4.1 net, ±3,150 MW range).
+    Served as the first keeper's seam representation by owner card S4
+    (SOCO desk r#3, 2026-09-13: "served measured EIA-930 interchange for the
+    first keeper"); the priced ``NeighborInterface`` blocks are the
+    default-off forward mechanism lever SOCO-56 validates.
+
+    No EIA-930 artifact rides in with this series — SOCO-11 measured zero NaN
+    hours and no impossible print on any of the nine DIBAs in any year (the
+    cleanest interchange book in the corpus); the one in-window defect is in
+    ``Net generation`` (2025, 595 h, audit §3.5b), which this column does not
+    read. The seven UTC-bounded trailing hours of 2025 are bridged exactly as
+    the demand loader bridges them (``_load_soco_hourly_demand``). Mirrors
+    :func:`spp_net_interchange`'s shape; ``None`` when the year is unavailable.
+    """
+    return _eia930_net_interchange("SOCO", year)
+
+
 # ISOs whose measured net interchange is served as a system-wide scalar
 # schedule (spread across zones by load share), as opposed to PJM's per-border-
 # zone tie attribution or ERCOT's demand-aligned DC-tie series. CAISO is
@@ -1893,4 +1926,8 @@ _SCALAR_INTERCHANGE_ISOS: dict[str, Callable[[int], np.ndarray | None]] = {
     # construction (see nwpp_net_interchange), so the served series lowers
     # what the footprint fleet must generate in most hours.
     "NWPP": nwpp_net_interchange,
+    # SOCO joined 2026-09-14 (lane SOCO-20, owner card S4) on the SPP
+    # precedent — a net EXPORTER of 10-13 TWh/yr, so like SPP the served
+    # series raises what its internal fleet must generate.
+    "SOCO": soco_net_interchange,
 }

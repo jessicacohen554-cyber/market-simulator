@@ -71,14 +71,34 @@ def _fc(**kw) -> ScenarioConfig:
 
 class TestOffPathByteIdentityAndCacheNeutrality:
     def test_default_is_none_for_every_iso(self):
-        for iso in ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP", "NWPP"):
+        for iso in (
+            "ERCOT",
+            "CAISO",
+            "PJM",
+            "MISO",
+            "NYISO",
+            "NEISO",
+            "SPP",
+            "NWPP",
+            "SOCO",
+        ):
             cfg = _fc(iso=iso)
             assert getattr(cfg, FIELD) is None
             assert resolve_capacity_going_forward_bar_published(cfg, iso) is False
 
     def test_off_path_is_the_atb_expression_exactly(self):
         """Gate off, the resolver IS ``fixed_om x multiplier`` — bit for bit."""
-        for iso in ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP", "NWPP"):
+        for iso in (
+            "ERCOT",
+            "CAISO",
+            "PJM",
+            "MISO",
+            "NYISO",
+            "NEISO",
+            "SPP",
+            "NWPP",
+            "SOCO",
+        ):
             cfg = _fc(iso=iso)
             for fuel, fom_field in _THERMAL_FOM.items():
                 mult = getattr(cfg, _FOM_MULTIPLIER.get(fuel, ""), 1.0)

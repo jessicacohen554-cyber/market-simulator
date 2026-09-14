@@ -37,7 +37,7 @@ from market_sim.config.scenarios import (
 )
 from scripts.lib.forecast_posture import shipped_forecast_xyear_warmstart
 
-ISOS = ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP", "NWPP")
+ISOS = ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP", "NWPP", "SOCO")
 
 
 class TestPosture:

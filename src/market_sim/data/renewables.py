@@ -222,7 +222,14 @@ _UNCURTAILED_FALLBACK_ISOS: frozenset[str] = frozenset(
     # curtailment is a BPAT-internal accounting, not a footprint HSL), so
     # NWPP wind and solar keep the delivered EIA-930 profile exactly as SPP
     # solar and MISO solar do.
-    {"ERCOT", "CAISO", "MISO", "SPP", "NWPP"}
+    # SOCO (registered 2026-09-14, lane SOCO-20): the Southern Company
+    # balancing authority publishes no HSL series and no curtailment report
+    # of any kind (docs/multi-iso/soco-data-audit.md §3), and it has no wind
+    # at all, so SOCO solar keeps the delivered EIA-930 ``NG: SUN`` profile —
+    # membership here is documentary parity with NWPP: with no HSL year and no
+    # _ANNUAL_REFERENCE_RATE_PROVIDERS entry the resolver returns None and the
+    # bound is RENEWABLE_BOUND_DELIVERED_PINNED either way.
+    {"ERCOT", "CAISO", "MISO", "SPP", "NWPP", "SOCO"}
 )
 
 # Years probed (newest first) for an HSL-covered reference year when grossing a
@@ -296,6 +303,17 @@ RENEWABLE_ZONE_ALLOCATION: dict[str, dict[str, str]] = {
     # 3,047.9 / INLAND 1,061.1 / NW 772.9 / OR 694.4 of 9,751.3, so solar
     # defaults to NWPP-SNV. No ``offshore_wind`` key: none in the footprint.
     "NWPP": {"wind": "NWPP-NW", "solar": "NWPP-SNV"},
+    # SOCO (registered 2026-09-14, lane SOCO-20): Tier 3, the zone holding
+    # the bulk of the EIA-860 2025 ER operable solar fleet — Georgia 5,000.7
+    # of 5,824.4 MW (AL 387.2 / MS 316.5 / FL 120.0; the 0.5 MW MA row is the
+    # rejected BA mis-entry). **There is NO wind in the SOCO fleet** — zero
+    # EIA-860 wind generators, and EIA-930 ``NG: WND`` is identically 0.000 TWh
+    # in every year (docs/multi-iso/soco-data-audit.md §2.2 / R-12) — so the
+    # ``wind`` key names the zone an (empty) future wind build would enter and
+    # nothing else. Fallback only — the primary path distributes by plant
+    # coordinates (_eia860_zone_shares). No ``offshore_wind`` key: no BOEM
+    # lease area exists off the Gulf panhandle.
+    "SOCO": {"wind": "SOCO_GA", "solar": "SOCO_GA"},
 }
 
 # EIA-860 operable wind/solar generator parquets, used to distribute
@@ -2905,6 +2923,22 @@ def load_renewable_profiles(
             )
             allocated[fuel] = _distribute_by_eia860(
                 cf_profile, installed_mw, monthly, vintage_ramp, zone_shapes
+            )
+        elif RENEWABLE_INSTALLED_MW[iso][fuel] == 0.0:
+            # A footprint with NO fleet of this technology — no EIA-860
+            # operable rows in any year (``monthly`` is None) AND a registered
+            # installed base of exactly 0.0. The first such case is SOCO wind
+            # (registered 2026-09-14, lane SOCO-20): zero wind generators and an
+            # identically-zero EIA-930 ``NG: WND`` series in every year
+            # (docs/multi-iso/soco-data-audit.md §2.2 / R-12). The generic
+            # fallback below would read a per-ISO generation distribution that
+            # cannot exist for an empty class, so the class is carried as an
+            # all-zero CF row and zero capacity in every zone — an honest empty
+            # set, never an invented profile. Inert for every ISO that has the
+            # technology (their ``monthly`` resolves, or their base is > 0).
+            allocated[fuel] = (
+                np.zeros((len(zone_names), HOURS_PER_YEAR), dtype=float),
+                np.zeros(len(zone_names), dtype=float),
             )
         else:
             allocated[fuel] = _allocate_to_zones(

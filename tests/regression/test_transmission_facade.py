@@ -360,6 +360,10 @@ class TestInjectionRegistry:
             # NWPP (registered 2026-09-14, lane NWPP-20): the same self-gating
             # step alone — default-off, no IMPORT_ZONE, byte-identical no-op.
             "NWPP": (import_nodes.apply_reference_price_seam_injections,),
+            # SOCO (registered 2026-09-14, lane SOCO-20; owner card S4): the
+            # same self-gating generic step — default-off, a byte-identical
+            # no-op until lever SOCO-56 arms the priced seams.
+            "SOCO": (import_nodes.apply_reference_price_seam_injections,),
         }
         assert registry.INTERCHANGE_INJECTIONS == expected
 
@@ -378,5 +382,6 @@ class TestInjectionRegistry:
             "PJM",
             "SPP",
             "NWPP",
+            "SOCO",
         }
         assert INTERCHANGE_INJECTIONS.get("DEFAULT") is None

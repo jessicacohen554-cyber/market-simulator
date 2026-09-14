@@ -140,6 +140,15 @@ _ISO_MEMORY_CLASSES: dict[str, IsoMemoryClass] = {
     # a 288-plant monthly hydro-budget row family (~3,456 rows), so it should
     # sit modestly above it. Gate G21 stands whatever this reads.
     "NWPP": IsoMemoryClass("NWPP", peak_gb=5.5, per_plant=False, co_opt=False),
+    # SOCO (registered 2026-09-14, lane SOCO-20): per-plant class by design
+    # (the CAMPD binning path unlocks when SOCO-30 lands its tranche artifact
+    # from the AL/GA CEMS SOCO-11 fetched), NO reserve co-optimisation — the
+    # Southern Company balancing authority clears no ancillary-service market
+    # (owner card S5). peak_gb is an ESTIMATE, MEASURED IN SOCO-40: ERCOT's
+    # measured 6.0 GB is the nearest per-plant / no-co-opt analogue (SOCO:
+    # 335 plants / 786 generators at 3 zones vs ERCOT's 7 zones), so SOCO
+    # should sit at or below it.
+    "SOCO": IsoMemoryClass("SOCO", peak_gb=6.0, per_plant=True, co_opt=False),
 }
 
 # Env pins every child inherits — the single-thread / arena-pinned profile the

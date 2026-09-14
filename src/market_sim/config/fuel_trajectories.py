@@ -394,6 +394,22 @@ GAS_BASIS_DIFFERENTIAL: dict[str, float] = {
     # NWPP-33's. Stanfield, Opal and Kern River have no free public series
     # reachable from the session (SOURCES_nwpp_gas.md §3).
     "NWPP": -0.19,
+    # SOCO (registered 2026-09-14, lane SOCO-20): the EIA-923 delivered-gas
+    # basis, the PJM/NYISO construction — quantity-weighted Schedule-5
+    # delivered gas cost to the SOCO balancing authority's gas plants
+    # (data/raw/_processed-legacy/eia923_monthly_fuel_costs.parquet, plants by
+    # EIA-860 BA code SOCO; 26 / 27 / 27 reporting plants) minus the Henry Hub
+    # annual mean (data/raw/gas-prices/henry_hub_monthly.csv): +$0.49 (2023:
+    # 3.029 vs 2.536), +$0.64 (2024: 2.832 vs 2.192), +$0.65 (2025: 4.183 vs
+    # 3.529). 0.64 is the 2024 value, the same "2024 avg" basis the peer rows
+    # carry. The footprint's pipeline basis is Southern Natural Gas (SONAT;
+    # Southern Company Gas holds 50 %) plus Transco into northwest Georgia via
+    # the Dalton Pipeline (SOCO-12 §4), and NO free public daily index exists
+    # at either — the state monthly delivered series (AL / GA / MS, SOCO-12)
+    # is the reachable measured input. Forward-year / fallback value only —
+    # the SOCO backcast prices gas per plant off EIA-923 monthly delivered
+    # cost like PJM/NYISO; the zonal hub wiring is SOCO-32's.
+    "SOCO": 0.64,
 }
 
 # CAISO citygate -> burner-tip transport adder ($/MMBtu). The CAISO gas-hub
@@ -489,6 +505,19 @@ COAL_PRICE_BASE: dict[str, float] = {
     #   mouth PRB 8,800 Btu/lb was $0.78 (2024) -> $0.81 (2025) per the SPP
     #   MMU (SOM 2025 §4, PDF p. 131). Refined per-plant by the EIA-923
     #   monthly fuel-cost overlay where reported. Registered 2026-09-06 (SPP-20).
+    "SOCO": 3.2,  # SOCO's coal fleet (6 plants / 12,234.7 MW, docs/multi-iso/
+    #   soco-data-audit.md §2.2) is a BIT + SUB split: Barry, Gaston (AL) and
+    #   Bowen (GA) burn bituminous (Energy Source 1 = BIT, 5,643.1 MW); Miller
+    #   (AL), Daniel (MS) and Scherer (GA) burn rail-delivered Powder River
+    #   Basin sub-bituminous (SUB, 6,591.6 MW). MEASURED, not AEO — the EIA-923
+    #   SOCO plant-weighted delivered mean is $3.548 (2023) / $3.168 (2024) /
+    #   $2.928 (2025) per MMBtu over 6 / 6 / 5 reporting plants (data/raw/
+    #   _processed-legacy/eia923_monthly_fuel_costs.parquet, plants by EIA-860
+    #   BA code SOCO), and 3.2 is the 2024 value, the year the peer rows'
+    #   "AEO 2024" anchors. The Southeast's delivered coal is dear relative to
+    #   the Plains (SPP 1.8) because the bituminous half is CAPP/ILB rail
+    #   into Alabama and Georgia. Refined per-plant by the EIA-923 monthly
+    #   fuel-cost overlay where reported. Registered 2026-09-14 (SOCO-20).
 }
 
 # Annual real escalation rate for coal prices — retained as the DEFAULT
@@ -721,6 +750,15 @@ COAL_SIGMOID_BACKCAST_GAS_MIN_MMBTU: dict[str, float] = {
     # the coal plant's own delivered cost on a hub basis, so the hub value is
     # the like-for-like anchor (PRECOMMIT-nwpp-20 §3.7).
     "NWPP": 2.00,
+    # SOCO: the cheapest delivered-gas year of 2023-2025 at the SOCO fleet's
+    # own burner tip — the EIA-923 Schedule-5 quantity-weighted delivered cost
+    # to SOCO's gas plants, 2024: $2.832/MMBtu (2023 $3.029, 2025 $4.183;
+    # GAS_BASIS_DIFFERENTIAL["SOCO"] derivation) — the table's own
+    # construction HH 2024 + basis = 2.19 + 0.64 = 2.83. SOCO has no traded
+    # hub of its own (SONAT / Transco Zone 4 dailies are paywalled, SOCO-12
+    # §4), so the plant-delivered receipts ARE the measured series here, as
+    # for PJM / NYISO / NEISO above. Registered 2026-09-14 (SOCO-20).
+    "SOCO": 2.83,
 }
 
 # Baseline logistic slope (per $/MMBtu) for a coal supply group whose plants

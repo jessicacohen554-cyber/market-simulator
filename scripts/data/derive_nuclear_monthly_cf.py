@@ -40,13 +40,28 @@ from market_sim.data.fleet import load_fleet_from_csv  # noqa: E402
 _MONTH_COLS = [f"netgen_{calendar.month_name[m].lower()}_mwh" for m in range(1, 13)]
 
 
-def _nuclear_fleet(iso: str, year: int) -> tuple[list[int], float]:
-    """Return ``(plant_codes, total_pmax_mw)`` of an ISO's nuclear fleet.
+def _nuclear_fleet(iso: str, year: int) -> tuple[list[int], list[float]]:
+    """Return ``(plant_codes, online_pmax_by_month)`` of an ISO's nuclear fleet.
 
     Plants dormant in ``year`` (NUCLEAR_DORMANT_UNTIL — listed OP in EIA-860
     but physically offline, e.g. the Crane/TMI-1 restart) are excluded, the
     same exclusion the backcast availability applies, so the derived CF is
     not diluted by capacity that cannot run.
+
+    The denominator is the fleet pmax ONLINE in each month — a unit counts
+    from its own EIA-860 commercial-operation month (``online_year`` /
+    ``online_month``, inclusive), the identical grain the LP's COD ramp
+    serves since SOCO-15 (``data.cod_ramp.generator_online_mask``, owner
+    card S12, 2026-09-13). ``_nuclear_monthly`` sets a nuclear unit's
+    availability to this CF and the COD mask then multiplies it, so a CF
+    divided by the WHOLE fleet's pmax in a month when a unit is not yet
+    online would hand the online units a CF scaled down by the offline
+    share: SOCO 2023 H1 (Vogtle 3 online 2023-07, Vogtle 4 2024-04) would
+    read 6,054 / 8,282 of its measured output, a ~-27 % bias the LP could
+    never recover — the mirror image of the phantom SOCO-15 removed. For
+    every fleet with no in-window nuclear COD the monthly denominator equals
+    the flat fleet pmax and the derived table is byte-identical
+    (``--check`` proves it; SOCO-20, 2026-09-14).
     """
     cfg = get_iso_config(iso)
     units = [
@@ -58,19 +73,30 @@ def _nuclear_fleet(iso: str, year: int) -> tuple[list[int], float]:
     ]
     if not units:
         raise SystemExit(f"{iso}: no nuclear units in the model fleet")
-    return sorted({int(g.plant_code) for g in units}), sum(g.pmax_mw for g in units)
+    online_pmax = []
+    for m in range(1, 13):
+        online = 0.0
+        for g in units:
+            oy = int(getattr(g, "online_year", 0) or 0)
+            om = int(getattr(g, "online_month", 1) or 1)
+            if (oy, om) <= (year, m):
+                online += g.pmax_mw
+        online_pmax.append(online)
+    return sorted({int(g.plant_code) for g in units}), online_pmax
 
 
 def derive_monthly_cf(iso: str, year: int) -> list[float] | None:
     """Return the 12 monthly CFs for one ISO-year, or ``None`` when EIA-923
     has no rows for the fleet's nuclear plants that year.
 
-    CF is measured against the *model fleet's* pmax — not EIA capability —
-    so the resulting availability bound reproduces the measured energy when
-    the LP dispatches nuclear at its cap. Values are clipped to 1.0 and
-    rounded to 2 decimals, matching the committed constants table.
+    CF is measured against the *model fleet's* pmax ONLINE in the month —
+    not EIA capability — so the resulting availability bound reproduces the
+    measured energy when the LP dispatches nuclear at its cap (see
+    :func:`_nuclear_fleet` for the COD-aware denominator). Values are clipped
+    to 1.0 and rounded to 2 decimals, matching the committed constants table.
+    A month with no unit online reads 0.0.
     """
-    plant_codes, pmax_mw = _nuclear_fleet(iso, year)
+    plant_codes, online_pmax = _nuclear_fleet(iso, year)
     gen = load_monthly_generation()
     rows = gen[(gen["year"] == year) & (gen["plant_id"].isin(plant_codes))]
     if rows.empty:
@@ -79,6 +105,10 @@ def derive_monthly_cf(iso: str, year: int) -> list[float] | None:
     cfs = []
     for m in range(1, 13):
         hours = calendar.monthrange(year, m)[1] * 24
+        pmax_mw = online_pmax[m - 1]
+        if pmax_mw <= 0.0:
+            cfs.append(0.0)
+            continue
         cf = float(monthly_mwh.iloc[m - 1]) / (pmax_mw * hours)
         cfs.append(round(min(cf, 1.0), 2))
     return cfs

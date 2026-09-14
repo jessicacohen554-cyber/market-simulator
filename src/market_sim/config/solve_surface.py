@@ -71,7 +71,11 @@ SURFACE_MODULES: tuple[str, ...] = (
 #: pins the two tuples equal, so an ISO cannot land in only one place. SPP was
 #: appended 2026-09-06 (lane SPP-20) in the same commit as its ``_ISO_BUILDERS``
 #: entry; appended LAST, and no surface name carries an ``SPP`` token, so the
-#: six earlier ISOs' projections are unchanged by construction.
+#: six earlier ISOs' projections are unchanged by construction. SOCO — the
+#: Southern Company balancing authority, the eighth registered region and the
+#: first that is not an ISO — was appended 2026-09-14 (lane SOCO-20) the same
+#: way: last, in the ``_ISO_BUILDERS`` commit, with no surface name carrying a
+#: ``SOCO`` token, so the seven earlier projections are again unchanged.
 SURFACE_ISOS: tuple[str, ...] = (
     "ERCOT",
     "CAISO",
@@ -86,6 +90,7 @@ SURFACE_ISOS: tuple[str, ...] = (
     # both refuse a half-flipped pin). Appended LAST so the seven earlier
     # regions' rows and keys are untouched (gate G8).
     "NWPP",
+    "SOCO",
 )
 
 #: A module-level *surface name*: SCREAMING_CASE, no leading underscore. Private

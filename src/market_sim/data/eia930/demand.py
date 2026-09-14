@@ -638,6 +638,67 @@ def _load_nwpp_hourly_demand(year: int) -> np.ndarray | None:
     return demand
 
 
+def _load_soco_hourly_demand(year: int) -> np.ndarray | None:
+    """Return SOCO hourly metered demand (MW) for a year, or ``None``.
+
+    Reads the EIA-930 ``SOCO hourly`` extract's ``Demand`` column off the same
+    :func:`_eia_hourly_frame_filled` frame the SOCO solar CF series is drawn
+    from — the MISO/SPP construction, so demand and renewables share one local
+    clock. That clock is ``America/Chicago``, DST-aware, hour-ending, for the
+    WHOLE balancing authority even though Georgia is civil-Eastern: measured
+    by SOCO-10 (gate G19) as 0 mismatches against a Central wall clock over
+    all 26,304 committed rows, 26,301 against Eastern (audit §3.4). Isolated
+    missing meter hours are interpolated, then the two EIA-930 artifact
+    screens run — both are NO-OPS on every SOCO year (max/median 1.835 /
+    1.829 / 1.789 against the 2.5x spike bar; zero literal-0.0 hours), so
+    SOCO needs no demand repair (audit §3.5).
+
+    THE 2025 TAIL, named rather than hidden (audit §3.2; plan gate G19
+    "explained, not padded"): the committed extract is bounded on UTC
+    (2023-01-01 00:00 -> 2025-12-31 23:00 UTC), so the last SEVEN Central
+    hours of 2025 — hours ending 18-24 on 2025-12-31, UTC 2026-01-01 00:00 to
+    06:00 — were never fetched. :func:`_eia_hourly_frame_filled` returns them
+    as NaN rows and the shared fill below forward-fills them from hour
+    ending 17, exactly as it bridges PJM's first local hour. That is a
+    LOADER-SIDE bridge of 7 of 8,760 hours (0.08 %), logged at WARNING when
+    it fires; the data fix is a 7-UTC-hour extension of the fetch (SOCO-11
+    manifest item [4]), routed, never a padded parquet.
+
+    What the screens do NOT reach, recorded here so no lane discovers it
+    mid-solve (audit §3.5, routed to SOCO-31): one partial demand dropout at
+    2025-10-23 16:00 (12,638 MW between neighbours of 23,065 and 23,653 —
+    below the exact-0.0 dropout screen, above nothing the spike screen
+    tests), and two defects in OTHER columns (four ``NG: NG`` hours at ~70 GW
+    against a 36,336 MW gas fleet; the ``Net generation`` identity breaking
+    in 2025 only, 595 h, +0.696 TWh). No new screen constant was derived
+    (rule 23).
+
+    Returns ``None`` when no usable full-year frame is available, signaling
+    the caller to fall back to the per-ISO demand-profiles parquet.
+    """
+    frame = _eia_hourly_frame_filled("SOCO", year)
+    if frame is None:
+        return None
+    raw = frame["Demand"]
+    missing = int(raw.isna().sum())
+    if missing:
+        logger.warning(
+            "SOCO %d: %d missing meter hour(s) in the EIA-930 extract bridged "
+            "by interpolation/fill (2025: the seven UTC-bounded trailing hours, "
+            "audit §3.2) — extend the fetch, do not read these as measured",
+            year,
+            missing,
+        )
+    demand = raw.interpolate().bfill().ffill().to_numpy(dtype=float)
+    if np.isnan(demand).any():
+        return None
+    return _screen_demand_spikes(
+        _screen_demand_dropouts(demand, ba_code="SOCO", year=year),
+        ba_code="SOCO",
+        year=year,
+    )
+
+
 def _load_pjm_hourly_demand(year: int) -> np.ndarray | None:
     """Return PJM hourly metered demand (MW) for a year, or ``None``.
 
@@ -884,6 +945,22 @@ def _nwpp_demand_source(
     return _pkg_ns()._load_nwpp_hourly_demand(year), None
 
 
+def _soco_demand_source(
+    year: int, ctx: dict
+) -> tuple[np.ndarray | None, np.ndarray | None]:
+    """SOCO: BA demand off the ``SOCO hourly`` EIA-930 extract.
+
+    Sourced off the same hourly frame as SOCO's solar so ``demand[t]`` and
+    ``renewable_cf[t]`` refer to the same Central wall-clock hour (see
+    :func:`_load_soco_hourly_demand`). Interchange is served separately as the
+    measured scalar schedule (``_SCALAR_INTERCHANGE_ISOS``, owner card S4 —
+    SOCO is a net EXPORTER, so the served series raises what the internal
+    fleet must generate in most hours), so the loader-side interchange slot is
+    ``None``.
+    """
+    return _pkg_ns()._load_soco_hourly_demand(year), None
+
+
 # Per-ISO system-demand source registry, replacing load_demand's historical
 # if/elif ladder (pure code motion of each branch into its adapter above).
 # Each adapter maps ``(year, ctx)`` to ``(raw_mw | None, interchange | None)``;
@@ -909,6 +986,12 @@ DEMAND_LOADERS: dict[
     # pinned-tuple test are why the three must land together; plan §2.3 /
     # gate G1).
     "NWPP": _nwpp_demand_source,
+    # SOCO (registered 2026-09-14, lane SOCO-20) — the same commit that added
+    # ``_soco_config`` to ``iso_configs._ISO_BUILDERS`` and ``"SOCO"`` to
+    # ``solve_surface.SURFACE_ISOS`` (the import-time assert below and the
+    # pinned-tuple test are why the three must land together; plan §2.3 /
+    # gate G1). A balancing authority, not an ISO — see ``_soco_config``.
+    "SOCO": _soco_demand_source,
 }
 
 # Registry keys are model ISO names: every key must be a registered topology

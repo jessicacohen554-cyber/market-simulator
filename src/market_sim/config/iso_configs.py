@@ -2189,6 +2189,166 @@ def _nwpp_config() -> ISOConfig:
     )
 
 
+def _soco_config() -> ISOConfig:
+    """Build the Southern Company (SOCO) balancing-authority topology.
+
+    **SOCO is a BALANCING AUTHORITY, not an ISO**: the Southern Company
+    Services, Inc. – Trans control area (EIA-930 / EIA-860 balancing-
+    authority code ``SOCO``, NERC region SERC) that dispatches Alabama Power,
+    Georgia Power and Mississippi Power as one pooled, cost-based system under
+    the Intercompany Interchange Contract — no day-ahead market, no LMP, no
+    capacity auction, no ancillary-service market, no offer cap. The program
+    that registered it was chartered on the question "which ISO is the
+    Hillabee gas plant in?": Hillabee Energy Center is EIA plant **55411**
+    (Tallapoosa County AL, 822.8 MW of gas CC), and its EIA-860 balancing
+    authority is ``SOCO``, not any RTO; the north-Alabama fleet (8,396.4 MW /
+    16 plants) is **TVA**, a different balancing authority, and is OUT of this
+    footprint (``docs/multi-iso/soco-addition-plan-2026-09.md`` §0; owner
+    card S1, ruled 2026-09-13: the key is the BA code, and every doc says
+    "balancing authority"). Registered 2026-09-14 by lane SOCO-20.
+
+    **Three zones, named for their GEOGRAPHY and never for an operating
+    company** (owner card S3, ruled 2026-09-13 desk r#3, re-ruled r#5 on the
+    five-respondent load basis): ``SOCO_AL`` (Alabama plus the six SERC
+    Florida-panhandle plants, 309.6 MW, which interconnect west), ``SOCO_GA``
+    (Georgia) and ``SOCO_MS`` (Mississippi). The plant-side partition is the
+    FIPS state map ``zone_assignment._SOCO_STATE_ZONES`` — the cleanest of any
+    registered footprint: every plant carries an unambiguous state and no
+    plant straddles a state (``docs/multi-iso/soco-data-audit.md`` §6.2). A
+    zone is a geographic object and an OpCo a commercial one — Georgia Power
+    owns 241.6 MW in Alabama, and Oglethorpe + MEAG own 7.1 GW in Georgia that
+    is not Georgia Power's — which is why the load side (below) does NOT map
+    OpCos 1:1 onto zones.
+
+    Load partition. The load side rests on FIVE FERC Form 714 planning-area
+    respondents — Alabama Power (2), Georgia Power (183), Mississippi Power
+    (184), Oglethorpe (107) and MEAG (210) — whose hourly sum closes the
+    metered EIA-930 BA demand to a **3.03 / 2.92 / 1.26 %** residual in
+    2023 / 2024 / 2025 (FINDING-soco-11 §3; FINDING-soco-14 cites 107 and
+    210 into the BA: NERC/SERC audit NCR01248 p. 3 and MEAG's 2024 Annual
+    Information Statement pp. 25-26). **Southern Power (186) is EXCLUDED** —
+    SOCO-14 returned a documented NO on whether its planning-area LOAD sits
+    in the BA, gate G22 is discharged for the five-set and no other, and
+    186's 1.3-1.4 % is named on the first keeper's determination basis. The
+    per-zone hourly load shapes and the respondent→zone construction are
+    lane SOCO-32's declared derive (never rebuilt here, rule 23).
+
+    The static ``load_share`` values below are therefore the audit's §5
+    row 4 **fleet-MW share, a fallback of last resort and NOT a load share**:
+    EIA-860 2025 ER operable nameplate GA 41,284.4 / AL+FL 24,803.6 /
+    MS 4,577.7 of 70,665.7 MW → 0.5842 / 0.3510 / 0.0648 (the MA row is
+    rejected, audit §2.6(a)). It is registered as the fallback only because
+    (a) the load derive is SOCO-32's by ruling and (b) with the non-binding
+    links below the fallback cannot move the dispatch — a three-zone and a
+    one-zone SOCO produce the same dispatch until a link binds. SOCO-32
+    replaces it with the FERC-714 hourly shapes.
+
+    Congestion structure — TIER-3 PLACEHOLDERS THAT CANNOT BIND. **No public
+    inter-OpCo transfer limit exists, structurally**: the Operating Companies
+    "function as a single, integrated public-utility system" and are
+    "committed and dispatched as a common System without regard to the
+    ownership of each generating facility" (FY2025 10-K, quoted in
+    ``data/raw/soco-planning/README.md`` §4b), so they publish no internal
+    interface rating. The two links (AL↔GA and AL↔MS; Mississippi Power
+    connects to the system through Alabama, not Georgia) therefore carry the
+    SPP-20 precedent — an upper bound on any physically possible flow, which
+    is the smaller side's EIA-860 winter capability — with the misalignment
+    stated on the link. The real value is pre-declared lever **SOCO-54**, and
+    it has NO public source and NO price signal to validate against: with no
+    zonal price, spread or congestion archive (owner card S2), the zones are
+    validated on load and dispatch only and the split is chosen for structure
+    (rule 1 [R-STRUCT]) and **never sold as improving accuracy** (card S3
+    condition (iii)).
+
+    Two timezones, one clock (gate G19, closed by SOCO-10 §3.4): the
+    footprint spans America/Chicago (AL, MS) and America/New_York (GA), but
+    the BA is dispatched from one control centre and EIA stamps it on ONE
+    clock — ``America/Chicago``, DST-aware, hour-ending — measured over all
+    26,304 rows of the committed ``SOCO hourly.parquet`` (0 mismatches vs a
+    Central wall clock, 26,301 vs Eastern; two offsets only, -6/-5 h). Every
+    SOCO series is Central and joins on ``UTC time``; all three zones are
+    Central, because the timezone is a property of the BA, not of a zone.
+
+    No import node (gate G7): the seams are the served measured EIA-930
+    ``Total interchange`` schedule (``_SCALAR_INTERCHANGE_ISOS``; owner card
+    S4; SOCO is a net EXPORTER of +10.2 / +10.8 / +13.0 TWh) plus eight
+    DEFAULT-OFF ``NeighborInterface`` blocks in
+    ``model/interchange/spec.INTERFACE_NEIGHBORS["SOCO"]`` for lever SOCO-56.
+
+    Market design: vertically integrated, cost-based dispatch against an IRP
+    with a bilateral resource-adequacy obligation — deliberately ABSENT from
+    ``capacity_market.MARKET_DESIGN`` (→ ``DEFAULT_MARKET_DESIGN``, owner card
+    S6), from every offer-curve tuning channel (gate G5: SOCO takes no offers,
+    so every band multiplier is the identity), and from any reserve
+    co-optimisation or scarcity seed (card S5), so there are no
+    ``default_scenario_overrides``.
+    """
+    zones = [
+        # Static fallback = the EIA-860 2025 ER fleet-MW share (audit §5
+        # row 4) — NOT a load share; see the docstring. Sum = 1.0000.
+        Zone(name="SOCO_AL", iso="SOCO", load_share=0.3510),
+        Zone(name="SOCO_GA", iso="SOCO", load_share=0.5842),
+        Zone(name="SOCO_MS", iso="SOCO", load_share=0.0648),
+    ]
+    # TIER-3 PLACEHOLDERS THAT CANNOT BIND (the SPP-20 48,700 MW precedent,
+    # FINDING-spp-20 §3 / §5 R-6). Each TTC is the smaller side's EIA-860
+    # 2025 ER WINTER capability (audit §2.3, MA row excluded), rounded to the
+    # nearest 100 MW: AL + FL panhandle 24,129.5 + 316.8 = 24,446.3 -> 24,400;
+    # MS 4,324.6 -> 4,300. Why that is an upper bound in BOTH directions: the
+    # smaller side cannot inject more than its own capability, and it cannot
+    # absorb more than its own load, which is smaller still (MS peak load is
+    # ~0.065 x 47,368 = ~3.1 GW under the fleet-share fallback; Mississippi
+    # Power's own 714 planning-area peak is lower). Winter, not summer,
+    # because SOCO is winter-peaking in two of the three backcast years
+    # (card S6). Rule 14 [R-ACCURATE] MISALIGNMENT, stated: no published or
+    # measured inter-OpCo limit exists (SOCO-12 README §4b — the OpCos are
+    # one pooled dispatch under the IIC and publish no internal rating), so
+    # these are bounds, not capabilities, and they are deliberately NOT a
+    # borrowed seam rating (the 2024 Reserve Margin Study's EXTERNAL
+    # transfer capabilities into the System are the SOCO-56 seam input, not
+    # an internal corridor). Lever SOCO-54 owns the real value and has no
+    # price signal to validate it against, ever (card S2). Never tuned.
+    _al_ga_bound_mw = 24_400.0
+    _al_ms_bound_mw = 4_300.0
+    links = [
+        TransferLink(from_zone="SOCO_AL", to_zone="SOCO_GA", ttc_mw=_al_ga_bound_mw),
+        TransferLink(from_zone="SOCO_AL", to_zone="SOCO_MS", ttc_mw=_al_ms_bound_mw),
+    ]
+    # voll = $61,900/MWh (owner card S5, ruled 2026-09-13 desk r#3: "DOE/LBNL
+    # ICE calculator, SERC/Southeast mix"). SOCO takes NO offers, so FERC
+    # Order 831's $2,000 OFFER cap — every market ISO's voll here — has no
+    # referent in this footprint and is deliberately NOT carried; in the LP
+    # this number is the slack (load-shed) penalty, an ECONOMIC value of lost
+    # load. Construction, fixed in PRECOMMIT-soco-20-2026-09-14.md §3 before
+    # the number was written:
+    #   source  = LBNL/DOE "ICE Calculator 2: Final Report for Phase 1 and 2"
+    #             (Larsen, Carney, Eto et al., 2026-02-27, OSTI 3021993),
+    #             ES Table 3 / Tables 3.5 + 4.6, cost per UNSERVED kWh, 2025$,
+    #             2-HOUR interruption: residential $5.03, non-residential $100;
+    #   mix     = EIA-861 2024 retail sales, every utility row with BA Code
+    #             SOCO (85 rows, AL/GA/MS/FL): residential 89.686 TWh of
+    #             223.70 = 0.4009, non-residential 0.5991;
+    #   voll    = 0.4009 x 5,030 + 0.5991 x 100,000 = 61,927 -> 61,900 $/MWh.
+    # The 2-hour column is the declared duration rule: an LP slack increment
+    # is a one-hour firm curtailment, whose nearest published analogue is the
+    # shortest SUSTAINED interruption ICE tabulates; the momentary column
+    # prices a sub-minute event's fixed cost (not an energy price) and the
+    # 8 h / 24 h columns amortise over multi-hour events the LP never treats
+    # as one. The honest width, reported and never selected on: 8 h ->
+    # $32,384/MWh, 24 h -> $19,447/MWh. MISALIGNMENT, stated on the field:
+    # ICE 2's cost functions are NATIONAL pooled models (sponsors include Duke
+    # Energy Carolinas/Florida, none of Southern's OpCos) and the report
+    # defers regional variation to its Phase 3, so the "Southeast" leg is the
+    # customer-class MIX, not a regional cost function. Brattle's ERCOT VOLL
+    # study is method precedent only, never a value (rule 25).
+    return ISOConfig(
+        name="SOCO",
+        zones=zones,
+        links=links,
+        voll=61_900.0,
+    )
+
+
 _ISO_BUILDERS = {
     "ERCOT": _ercot_config,
     "CAISO": _caiso_config,
@@ -2202,17 +2362,25 @@ _ISO_BUILDERS = {
     # iterates SUPPORTED_ISOS in order — is unchanged.
     "SPP": _spp_config,
     # NWPP registered 2026-09-14 by lane NWPP-20 (owner rulings N1, N3-N8,
-    # docs/multi-iso/nwpp-addition-plan-2026-09.md §3) as the EIGHTH builder
-    # (SOCO is chartered, not registered — re-measured at the lane's base
-    # sha, plan §0). Appended LAST for the same reason.
+    # docs/multi-iso/nwpp-addition-plan-2026-09.md §3) as the EIGHTH builder.
+    # Appended after SPP for the same reason.
     "NWPP": _nwpp_config,
+    # SOCO — the Southern Company BALANCING AUTHORITY, the NINTH region and
+    # the first single-BA region that is not an ISO — registered 2026-09-14 by
+    # lane SOCO-20 (owner cards S1, S3-S7, S9, S11, S12; docs/handoffs/
+    # soco-desk-ledger-2026-09.md §2). The two 2026-09-14 registrations landed
+    # in parallel; NWPP merged first, so it precedes SOCO here. Appended LAST
+    # for the same reason as every earlier region.
+    "SOCO": _soco_config,
 }
 
-# Canonical tuple of every registered ISO, in builder-registration order
-# (ERCOT, CAISO, MISO, PJM, NYISO, NEISO, SPP, NWPP). Single source of truth
-# for the registered set — scripts should import this instead of hardcoding
-# the tuple so a new ISO registered in ``_ISO_BUILDERS`` propagates everywhere
-# automatically.
+# Canonical tuple of every registered region, in builder-registration order
+# (ERCOT, CAISO, MISO, PJM, NYISO, NEISO, SPP, NWPP, SOCO). Single source of
+# truth for the nine-region set — scripts should import this instead of
+# hardcoding the tuple so a new region registered in ``_ISO_BUILDERS``
+# propagates everywhere automatically. (Every downstream name still says
+# "ISO"; NWPP is a pool of balancing authorities and SOCO is a single
+# balancing authority — see ``_nwpp_config`` / ``_soco_config``.)
 SUPPORTED_ISOS: tuple[str, ...] = tuple(_ISO_BUILDERS)
 
 

@@ -129,7 +129,19 @@ def _frozen_inline_curve(iso: str) -> dict[str, dict[str, float]]:
 # a differently-cased ISO got — and must keep getting — the generic curve.
 @pytest.mark.parametrize(
     "iso",
-    ["ERCOT", "PJM", "CAISO", "MISO", "NYISO", "NEISO", "SPP", "ercot", "Pjm", ""],
+    [
+        "ERCOT",
+        "PJM",
+        "CAISO",
+        "MISO",
+        "NYISO",
+        "NEISO",
+        "SPP",
+        "SOCO",
+        "ercot",
+        "Pjm",
+        "",
+    ],
 )
 def test_base_curve_matches_frozen_inline(iso: str) -> None:
     assert base_offer_curve_by_group(iso) == _frozen_inline_curve(iso)
