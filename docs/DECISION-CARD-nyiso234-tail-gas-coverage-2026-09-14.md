@@ -8,6 +8,33 @@ Two questions. **Q1 is a ruling to confirm or overturn. Q2 is a spend.**
 
 ---
 
+## ⚖️ OWNER RULING — 2026-09-14, verbatim: *"Yes to 1 and 2"*
+
+**Q1 RULED: CONFIRM.** `temp_dependent_derate` **stays `G`** for NYISO. The nyiso-111
+identification refusal stands undefeated, and this session's reach bar is recorded beside it. The
+NYISO matrix shard is stamped accordingly; the cell was not re-opened and nothing was armed.
+
+**Q2 RULED: FUND THE INTAKE.** Executed the same session — and what it found is **larger and
+cheaper than this card assumed**. The missing prints were never missing from the source: EIA
+publishes no Weekly Update during the Christmas/New Year weeks and carries the skipped weeks as
+**additional live tables in the catch-up page**, which `fetch_transco_daily_spot.py` discarded by
+taking `re.search` — the FIRST table only. **Transco Z6 NY was published all along at $32.12
+(Dec 22 2022) and $35.61 (Dec 23 2022)**, against the $8.05 the model burned. No new data source,
+no purchase, no licence: the fix is a scraper repair against the same EIA pages the committed file
+already comes from.
+
+**The intake also uncovered a SECOND and more serious defect this card did not anticipate: the
+committed series is not merely incomplete, it is WRONG in some weeks.** The header date pattern
+required a hyphen (`"Thu, 04-Jan"`) and silently dropped the spaced form (`"Thu, 5 Jan"`), leaving
+four dates against five values — so every price in such a week landed on the **following trading
+day**. Measured: committed Jan 6 2023 = 3.17 where EIA published 3.50, and the same one-day shift
+through Jan 9/10/11, with Jan 5 absent. That is a misalignment in the delivered gas price the
+entire NYISO gas fleet is priced from, and it is **not confined to the tail**.
+
+Record: `docs/FINDING-nyiso234b-the-gas-series-was-published-2026-09-14.md`.
+
+---
+
 ## Q1 — `temp_dependent_derate` sits at `G`. Does nyiso-233's headroom measurement re-open it?
 
 **The session's ruling: NO. The cell stays `G`.** Put to you because rule 28(a) makes re-opening a

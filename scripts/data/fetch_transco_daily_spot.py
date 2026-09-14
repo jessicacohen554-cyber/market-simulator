@@ -111,12 +111,41 @@ def _resolve_year(month: int, page_year: int, page_month: int) -> int:
 
 
 def parse_spot_table(html: str, page_year: int, page_month: int) -> list[dict]:
-    """Return ``[{date, transco, henry_hub}]`` for one weekly page, or ``[]``.
+    """Return ``[{date, transco, henry_hub}]`` for EVERY live weekly table on a page.
 
-    Locates the active (non-commented) "Spot Prices ($/MMBtu)" table inside the
-    ``tabs-prices-2`` block, reads the five daily column dates from the header,
-    and the Henry Hub + New York rows. Robust to the page's whitespace/``<br />``
-    noise inside each cell.
+    Reads the "Spot Prices ($/MMBtu)" tables inside the ``tabs-prices-2`` block,
+    taking the five daily column dates from each header and the Henry Hub + New
+    York rows. Robust to the page's whitespace/``<br />`` noise inside each cell.
+
+    **A page can carry MORE THAN ONE live table, and the extra ones are the only
+    published record of the weeks EIA skips.** EIA publishes no Natural Gas
+    Weekly Update during the Christmas/New Year weeks (and around other federal
+    holidays); when it resumes it carries the missed weeks as ADDITIONAL live
+    tables in the catch-up page. Measured on the 2023-01-12 page: three live
+    tables — Jan 5-11 (the current week), Dec 29-Jan 4, and **Dec 22-28, which
+    is the only published source for Winter Storm Elliott** (New York $32.12 on
+    Dec 22 and $35.61 on Dec 23). The same three-table shape repeats in the
+    2024-01-11 and 2025-01-10 catch-up pages.
+
+    This function previously took ``re.search`` — the FIRST table only — so every
+    catch-up week was silently dropped, leaving a 14-15 day hole across every
+    year-end in ``transco_z6_ny_daily.csv`` and a flat interpolated fill across
+    the largest gas event in Northeast history
+    (``docs/FINDING-nyiso234-tail-gas-is-unobserved-2026-09-14.md``). Rule 23
+    ``[R-FROZEN-DERIVE]``: this re-derivation is cited to that source-coverage
+    defect, never to a residual.
+
+    **Alignment is GUARDED, not assumed.** A header may separate day and month
+    with either a hyphen or a space (both ``"Thu, 04-Jan"`` and ``"Thu, 5 Jan"``
+    occur, sometimes in the same table), and the old hyphen-only pattern silently
+    dropped the spaced date — leaving four dates against five values, so every
+    value in that week landed on the FOLLOWING trading day. Measured on the
+    2023-01-12 page: the committed series carried Jan 6 = 3.17 where EIA
+    published 3.50, and so on for Jan 9/10/11, with Jan 5 missing entirely. Both
+    separators are now accepted and a table whose dates and values do not line up
+    exactly is SKIPPED with a warning rather than emitted misaligned — a silent
+    one-day shift in the delivered gas price is worse than a gap, because a gap
+    is visible.
     """
     idx = html.find('id="tabs-prices-2"')
     if idx < 0:
@@ -125,14 +154,24 @@ def parse_spot_table(html: str, page_year: int, page_month: int) -> list[dict]:
     # template (with old dates) ahead of the active table, pushing it down-page.
     seg = html[idx : idx + 24000]
     seg = re.sub(r"<!--.*?-->", "", seg, flags=re.S)  # drop the commented template(s)
-    m = re.search(r"<table.*?</table>", seg, flags=re.S)
-    if not m:
-        return []
-    table = m.group(0)
+    rows: list[dict] = []
+    for m in re.finditer(r"<table.*?</table>", seg, flags=re.S):
+        rows.extend(_parse_one_table(m.group(0), page_year, page_month))
+    return rows
 
-    # Column dates from the header: "Thu, 19-Jan", ... (day-Mon, 5 of them).
+
+def _parse_one_table(table: str, page_year: int, page_month: int) -> list[dict]:
+    """Return ``[{date, transco, henry_hub}]`` for ONE weekly spot table.
+
+    Split out of :func:`parse_spot_table` so a page's several live tables (see
+    that docstring) each parse independently and one malformed table cannot
+    discard the others. Returns ``[]`` for a table that is not a spot table, or
+    whose header dates and value cells do not align.
+    """
+    # Column dates from the header: "Thu, 19-Jan" or "Thu, 5 Jan" — BOTH occur,
+    # so the separator is [- ] and not the hyphen the original pattern assumed.
     head = table[: table.find("</thead>") + 8] if "</thead>" in table else table
-    date_tokens = re.findall(r"(\d{1,2})-([A-Z][a-z]{2})", head)
+    date_tokens = re.findall(r"(\d{1,2})[-\s]([A-Z][a-z]{2})\b", head)
     dates: list[str] = []
     for day_s, mon_s in date_tokens:
         mon = _MONTHS.get(mon_s)
@@ -169,12 +208,28 @@ def parse_spot_table(html: str, page_year: int, page_month: int) -> list[dict]:
 
     ny = _row_values("New York")
     hh = _row_values("Henry Hub")
+    if not any(v is not None for v in ny):
+        return []  # not a spot table (or no New York row) — not an error
+
+    # ALIGNMENT GUARD. Column i of the value row must be column i of the header,
+    # so a table is emitted only when the two line up exactly. A mismatch means
+    # the header lost a date (the spaced-separator class above) or a value row
+    # bled into its neighbour; either way the dates and prices would be off by
+    # one and a silently shifted delivered gas price is worse than a gap.
+    if len(ny) != len(dates) or (hh and len(hh) != len(dates)):
+        print(
+            f"  WARN: spot table skipped — {len(dates)} header date(s) vs "
+            f"{len(ny)} New York value(s) (dates {dates[:1]}..{dates[-1:]})",
+            file=sys.stderr,
+        )
+        return []
+
     rows = []
     for i, date in enumerate(dates):
-        t = ny[i] if i < len(ny) else None
+        t = ny[i]
         h = hh[i] if i < len(hh) else None
         if t is None:
-            continue
+            continue  # "Holiday"/"Closed" — no trade that day, so no row
         rows.append({"date": date, "transco": t, "henry_hub": h})
     return rows
 
