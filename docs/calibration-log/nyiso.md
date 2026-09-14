@@ -14329,3 +14329,19 @@ Cells moved: none. `temp_dependent_derate` **re-stamped at `G`** with the new re
 (rule 28(b)). Class-E parity remains RED for `caiso279_ablate_dswcouple_span` and
 `soco15_spp_arm` — both pre-existing, both tracked on main, **neither NYISO's** (rule 25);
 reported, not touched. NYISO's leg is clean.
+
+**Addendum (same session) — the repair is bounded, and the bound is MEASURED.** Through the repo's
+own `dual_fuel_oil_price_series`, the model's delivered **oil parity on Dec 23–24 2022 is
+$24.85/MMBtu** against the **$8.05** gas fill — **3.1×**. The model burns $8.05 there only because
+`min(8.05, 24.85) = 8.05`; at any observed gas above $24.85 the downstate dual-fuel fleet flips to
+oil at parity, a hard ceiling already armed that needs no new parameter. Stated as a bound, not a
+prediction (the non-dual-fuel fleet has no such cap; no $/MWh figure is derived from it). And the
+gap is a **source property, not an unavoidable fact about holidays**: the model's other fuel series
+`ny_harbor_ulsd_daily.csv` **does** print Dec 22 ($3.132/gal) and **Dec 23 ($3.246/gal)** — ULSD is
+NYMEX-traded and quotes through the holiday week; the physical gas index does not.
+
+**Suite:** `tests/scoring` 18 failed / 1,524 passed (`-p no:randomly`). The failure SET is a strict
+**subset** of the handoff's 19-failure baseline — `test_backcast_artifacts` now **passes 15/15**
+(verified in isolation, not a collection error); no new failures, none NYISO's, none from this
+session's changes. `check_mechanism_matrix.py --base origin/main` passes every gate (integrity,
+anchors, keeper stamps, §5.x headers, all three ratchets).

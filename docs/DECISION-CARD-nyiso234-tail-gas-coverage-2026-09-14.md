@@ -104,9 +104,16 @@ the **same hole** (last print $6.51 on Dec 21). **Nothing in this repository obs
   ordinary-hour over-pricing was hypothesised and is **false**; the code contradicts it and it was
   dropped.)
 - **Both seasons**, which the object requires and a temperature mechanism cannot give.
-- **Bounded by machinery already armed.** `dual_fuel_switching` caps downstate units at oil parity
-  *after* the overlay, so a repaired gas price cannot run away — those units re-price to oil, which
-  is what they actually did.
+- **Bounded by machinery already armed — and the bound is MEASURED.** Through the repo's own
+  `dual_fuel_oil_price_series`, the model's delivered **oil parity on Dec 23–24 2022 is
+  $24.85/MMBtu** against the **$8.05** gas fill — **3.1×**. The model burns $8.05 only because
+  `min(8.05, 24.85) = 8.05`; at any observed gas above $24.85 the downstate dual-fuel fleet flips
+  to oil at parity. **A repaired gas price cannot run away**, and the switch Elliott actually
+  triggered is already in the model. *(A bound, not a prediction — the non-dual-fuel fleet has no
+  such cap and no $/MWh figure is derived from it.)*
+- **The gap is a source property, not an unavoidable fact about holidays.** The model's *other*
+  fuel series, `ny_harbor_ulsd_daily.csv`, **does** print Dec 22 and **Dec 23 2022** — ULSD is
+  NYMEX-traded and quotes through the holiday week. Same model, same days, different coverage.
 - **Clean forward story** (rule 13) — a complete daily series regenerates for any year.
 - **It may be cross-ISO.** NEISO's Algonquin series has the identical defect. Under rule 25 that is
   NEISO's lane to measure, not this one's — but the intake would likely serve both.

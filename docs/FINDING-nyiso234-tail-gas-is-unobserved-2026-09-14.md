@@ -286,11 +286,32 @@ inventing a number for Elliott's gas price would be exactly the magic number rul
 `[R-NO-MAGIC]` forbids, and sizing it against the residual would be the fitted-mechanism selection
 rule 1 `[R-STRUCT]` forbids. **The intake must land before the effect can be measured.**
 
-**The response is bounded by machinery that is already built and already armed.**
-`dual_fuel_switching = True` and `dual_fuel_oil_daily_parity = True` on the keeper, and
+**The response is bounded by machinery that is already built and already armed, and the bound is
+MEASURED.** `dual_fuel_switching = True` and `dual_fuel_oil_daily_parity = True` on the keeper, and
 `dual_fuel.py::apply_dual_fuel_pricing` caps a dual-fuel unit at `min(gas_mc, oil_mc)` — applied
-*after* the hub overlay by construction. A repaired gas price cannot run away: the downstate
-dual-fuel fleet re-prices to **oil parity**, which is what those units actually did in Elliott.
+*after* the hub overlay by construction. Computed through the repo's own
+`dual_fuel_oil_price_series` for NYISO 2022:
+
+| Dec 23–24 2022 | $/MMBtu |
+|---|---:|
+| model gas (the fill) | **8.05** |
+| model delivered **oil parity** | **24.85** |
+| ratio | **3.1×** |
+
+The model burns gas at $8.05 on Elliott only because `min(8.05, 24.85) = 8.05`. **A repaired gas
+price cannot run away: at any observed gas above $24.85 the downstate dual-fuel fleet simply flips
+to oil at parity** — a hard ceiling, already armed, needing no new parameter. So the repair's
+effect on those units is **bounded at ~3.1× the current fill**, and the model already contains the
+switch that Elliott actually triggered.
+
+*(Stated as a bound, not a prediction: the true gas price is unobserved, the non-dual-fuel fleet
+has no such cap, and no $/MWh figure is derived from this — see the paragraph above.)*
+
+**A corroborating contrast, since it shows the gap is a source property and not an unavoidable fact
+about holidays:** the model's *other* fuel series, `ny_harbor_ulsd_daily.csv`, **does** carry
+Dec 22 ($3.132/gal) and **Dec 23 ($3.246/gal)** — ULSD is NYMEX-traded and prints through the
+holiday week. The physical gas index does not. Two fuel series in the same model, the same days,
+different coverage.
 
 **One observation, explicitly NOT a result:** 2022 has the highest annual gas ($6.45), the worst
 C3a (−11.6 %) and the highest unobserved share (69.8 %), which is *consistent with* Object B's
