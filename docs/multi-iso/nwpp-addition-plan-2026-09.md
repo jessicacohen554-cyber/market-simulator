@@ -1195,6 +1195,260 @@ another ISO's verdict); src/; frontend/data/**; any soco* file.
 EXIT: FINDING-nwpp-21 with the checker output and the shard's cell census (n ids, n `U`, n `·`).
 ```
 
+### W3 — derivation (ISSUED r#5, 2026-09-14, after NWPP-20 merged; all six are parallel and file-disjoint)
+
+Composed at r#5 against the SPP program's worked W3 charters (`spp-addition-plan-2026-09.md` §8 W3)
+plus this plan's own NWPP deltas, as §8's W3–W6 note directed. §8.0 is standing and is pasted at the
+head of every one of these sessions.
+
+#### NWPP-30 `[OPUS]` — unit outage windows + thermal tranches (frozen derives)
+
+```
+You are lane NWPP-30. MODEL: Opus claude-opus-5 — frozen derives on a committed recipe (rule 23).
+DATA PROFILE: nwpp.  Branch stem: claude/nwpp-30-outages-tranches-<4 chars>.
+Read CLAUDE.md freshly and in full; docs/multi-iso/nwpp-addition-plan-2026-09.md §5 row NWPP-30, §3
+card N8 (RULED), §7 G4; docs/multi-iso/05-backcast-playbook.md §0 items 2 and 4, §3; the docstrings
+of scripts/data/derive_campd_unit_outages.py, derive_thermal_tranches.py, scripts/tag_mixed_plants.py,
+build_offer_curve_overrides.py; docs/binning-methodology.md; data/raw/campd-unit-outages-MISO.csv
+header (your output template); FINDING-nwpp-11 (which CEMS state-years landed).
+
+PRECONDITIONS (STOP if unmet): NWPP-20 LANDED — get_iso_config("NWPP") works, 8 registered regions.
+NWPP-11 landed ID/OR/UT/WA CEMS 2023-2025(+2026 partial); MT/NV/WY were already on disk.
+
+*** READ THIS BEFORE YOU PLAN THE WORK — CARD N8 CHANGES WHAT YOUR OUTPUT IS FOR. ***
+The owner RULED (sitting #4) `use_campd_bins=False` for the first keeper: NWPP runs LEGACY
+equal-width heat-rate bins, and NWPP is absent from CAMPD_BINNING_ISOS. So your two outputs have
+DIFFERENT destinations and you must not conflate them:
+  - OUTAGE WINDOWS are read by the first keeper REGARDLESS of binning. They are the load-bearing half
+    of this lane. Get them right.
+  - THERMAL TRANCHES / bin assignments are the input to the pre-declared W5 CAMPD-per-plant LEVER,
+    not to the first keeper. Derive them, land them, and say plainly in your FINDING that nothing in
+    W4 reads them. Do NOT argue for arming per-plant binning — that is a ruled decision.
+STATE THE COVERAGE ARITHMETIC AT THE TOP of your FINDING, measured, not estimated. NWPP-10 §2 item (8)
+measured: CAMPD reaches 30.98 % of footprint NAMEPLATE after NWPP-11 (32.63 % upper bound) and
+41.8-43.6 % of EIA-923 ENERGY, proxy validated at 100 % precision / 94.9 % MW recall. The reason the
+share is low is structural and not a data gap: the footprint is 36.3 % hydro + ~24.9 % VRE + 1.2 %
+nuclear, none of which CEMS ever covers. CO is deliberately skipped (its one footprint plant is
+7.5 MW of HYDRO). CA is on disk and is INERT for NWPP (zero footprint facilities in CA_2024).
+
+FILES YOU OWN: data/raw/campd-unit-outages-NWPP.csv (+ -short/-layup/-e923 siblings exactly as the
+derive emits them), data/raw/campd-partial-outages-NWPP.csv, the NWPP rows of the thermal-tranche and
+bin-assignment outputs (data/raw/reference/custom-bin-assignments.csv rows — APPEND, never reorder).
+FILES YOU MUST NOT TOUCH: any other region's rows; src/; the derive scripts themselves (if one needs
+an NWPP branch that is a src-adjacent change — STOP and route); ScenarioConfig.
+
+RUN, in this order, each its own commit: derive_campd_unit_outages.py --iso NWPP --years 2023 2024
+2025 -> derive_thermal_tranches.py --iso NWPP -> scripts/tag_mixed_plants.py ->
+build_offer_curve_overrides.py (NWPP bands stay 1.0 — gate G5, ruled).
+GATES: window count > 0 in every CEMS state INCLUDING the four NWPP-11 landed; ZERO full-year
+fallbacks (a unit falling to the fallback is reported by unit with its reason); class distributions
+summarised against MISO's as a sanity band — REPORT, never tune (rule 1 [R-STRUCT]: there is no NWPP
+residual yet and none may be consulted). Every output header cites source + method + CEMS vintage.
+RULES THAT BITE: 13, 14, 23 [R-FROZEN-DERIVE], 27 (CSV outputs by git push; SHA + row counts in the
+FINDING), 28 (you test no mechanism; no matrix cell moves).
+EXIT: docs/handoffs/FINDING-nwpp-30-<date>.md — windows per state-year, units and MW covered, the
+fallback list, the class summaries, and the coverage arithmetic. Report coverage % FIRST.
+```
+
+#### NWPP-31 `[OPUS]` — the scoring benchmarks
+
+```
+You are lane NWPP-31. MODEL: Opus claude-opus-5 — frozen derives against a committed recipe.
+DATA PROFILE: nwpp.  Branch stem: claude/nwpp-31-benchmarks-<4 chars>.
+Read CLAUDE.md freshly and in full; docs/multi-iso/nwpp-addition-plan-2026-09.md §5 row NWPP-31, §2.6
+IN FULL, §3 card N2 (RULED, both limbs), §7 gates G6, G9, G17; docs/handoffs/FINDING-nwpp-13-2026-09-13.md
+§0 and §3; scripts/data/build_reference.py and derive_actual_tail.py / derive_actual_amplitude.py
+docstrings; docs/multi-iso/05-backcast-playbook.md §2.
+
+PRECONDITIONS (STOP if unmet): NWPP-20 LANDED. NWPP-10 and NWPP-11 merged.
+
+*** THE PRICE SIDE IS ALREADY DECIDED. DO NOT RE-OPEN IT. ***
+NWPP-13 ran a STOP gate pre-registered before any value was read and READ NO: WEIM cleared the volume
+bar (5.5-6.2 % net of footprint energy, 10.6 % pairwise-gross) but its on-peak price sits 22.6 / 23.6 /
+37.5 % BELOW the Mid-C Peak traded index against a +/-10 % bar, correlation 0.67-0.95 against 0.80.
+NOTHING was landed to _validation-source. Therefore:
+  - actual_lmp.json gets NO NWPP BLOCK. Do not build one, do not import weim_hourly_by_ba.parquet
+    into it, and do NOT substitute a neighbouring hub — SP15, NP15 and Palo Verde sit one column away
+    in the same ICE workbook and taking one is the load proxy rule 13 forbids (gate G17).
+  - TAIL_THRESHOLD and the amplitude derive: SKIP ALL THREE COPIES (gate G6) and document the skip
+    where a reader will hit it. Do not invent a threshold from the model's own output.
+  - The determination-side consequence is already built: NWPP-22 landed the PRICE-UNSCORED class
+    (rubric v3.8) and NWPP will read `PHYSICALLY-CALIBRATED (PRICE UNSCORED)`. You add NOTHING to
+    scripts/calibration_verdict.py. Verify only that NWPP's absence from actual_lmp.json is what makes
+    the class fire, and say so in one line.
+WHAT YOU DO BUILD: the calibration_reference.json NWPP block and the NWPP_<yr>_renewable_capacity.csv
+rows, from committed sources, with per-value provenance.
+GATE G9 IS YOUR EXIT CONDITION: build_reference MERGES per --isos, so run `--isos NWPP` and prove the
+NON-NWPP rows diff to EXACTLY ZERO — byte-level, reported as a diff, not asserted. A single moved row
+for another region is a STOP.
+DEMAND CONVENTION (NWPP-10 §1.3, not optional): read `Demand (MW) (Adjusted)`; do NOT apply
+_screen_demand_spikes (it deletes 54 hours of a real January 2024 cold snap containing a zone's annual
+peak); _screen_demand_dropouts IS needed (17 exactly-zero NEVP hours in 2025). Nothing is padded.
+FILES YOU OWN: the NWPP rows/blocks of data/raw/_validation-source/calibration_reference.json and the
+NWPP renewable-capacity CSVs. MUST NOT TOUCH: actual_lmp.json; any other region's rows; src/;
+scripts/calibration_verdict.py; ScenarioConfig.
+RULES THAT BITE: 1 [R-STRUCT], 13, 14, 23, 27, 28.
+EXIT: FINDING-nwpp-31-<date>.md with the zero-diff proof for every non-NWPP region, the provenance
+table, and the documented G6 skip. Report the zero-diff result FIRST.
+```
+
+#### NWPP-32 `[FABLE]` — the hydro energy budget (288 plants) — and NWPP-36's specification
+
+```
+You are lane NWPP-32. MODEL: Fable — this is the structural core of the program. 36.3 % of this
+footprint is conventional hydro and the first keeper's C1 and C4 substantially test what you build.
+DATA PROFILE: nwpp.  Branch stem: claude/nwpp-32-hydro-budget-<4 chars>.
+Read CLAUDE.md freshly and in full — rules 1 [R-STRUCT], 13 [R-MEASURED], 14 [R-ACCURATE], 23
+[R-FROZEN-DERIVE]; docs/multi-iso/nwpp-addition-plan-2026-09.md §2.7 IN FULL, §5 row NWPP-32, §3 card
+N3 (RULED: BUILD CASCADE COUPLING FIRST); src/market_sim/data/hydro.py IN FULL — note it now reads
+ba_codes(iso), NOT the old scalar inverse, which NWPP-20 closed; the nyiso-220 lane's
+hydro_budget_period_by_instrument work as the ONLY in-repo precedent for a per-plant period override;
+data/raw/nwpp-hydro/ (NWPP-11's EIA-923 monthly extract) + its README.
+
+PRECONDITIONS (STOP if unmet): NWPP-20 LANDED; NWPP-11's data/raw/nwpp-hydro/ present.
+
+WHAT YOU BUILD: the monthly energy budget and power envelope for all 288 conventional-hydro plants,
+2023-2025, from NWPP-11's EIA-923 extract. EXCLUDE the 314.0 MW of pumped storage BY DESIGN (it is
+storage, not inflow; one plant, in BPAT) and say so.
+THE BUDGET RECONCILES TO EIA-923 ANNUAL BY PLANT — that is the gate, reported per plant, with any
+plant whose series is missing or implausible FLAGGED AND NOT FILLED (rule 13).
+
+HYDRO_BUDGET_PERIOD_HOURS_BY_PLANT["NWPP"]: add an entry ONLY where a PUBLISHED INSTRUMENT justifies
+one. The NYISO precedent is two plants with a treaty and an IJC directive behind them. "The Columbia
+is complicated" is NOT an instrument, and neither is a better fit — there is no NWPP residual yet and
+none may be consulted (rule 1). An empty entry set is a perfectly good outcome; a fitted one is not.
+
+*** THE HALF OF THIS LANE THAT MATTERS MOST: YOU ARE WRITING NWPP-36's SPECIFICATION. ***
+Owner ruling N3 (AGAINST the desk's recommendation) put Columbia mainstem hydraulic coupling BEFORE
+the first keeper, as lane NWPP-36 in a new wave W3b. NWPP-36 is built against YOUR measurement. So
+MEASURE and RESTATE the four §2.7 constraints the monthly-budget machinery cannot express, each with
+its MAGNITUDE on this footprint, not as prose:
+  (a) hydraulic coupling down the mainstem — which plants are in the chain, on published hydrological
+      evidence (the desk measured eight plants >= 1 GW holding 17,821.8 MW = 49.8 % of all hydro:
+      Grand Coulee 6,495.0, Chief Joseph 2,456.2, John Day 2,160.0, The Dalles 1,819.7, Rocky Reach
+      1,349.2, Wanapum 1,220.0, Bonneville 1,162.0, Boundary 1,159.7). THE CHAIN IS A HYDROLOGICAL
+      FACT TO BE CITED, NOT A LIST TO BE CHOSEN;
+  (b) the within-month shaping the monthly budget cannot see;
+  (c) the non-power constraints (fish/flow/spill) and what published instrument sets each;
+  (d) the storage-vs-run-of-river split and how much of the 35,799.5 MW is genuinely dispatchable.
+For each: what it is, how big it is here, and what a mechanism would need to express it. NWPP-36
+inherits this and may not re-derive it.
+
+FILES YOU OWN: the NWPP hydro budget + envelope artifacts; HYDRO_BUDGET_PERIOD_HOURS_BY_PLANT["NWPP"]
+entries IF AND ONLY IF an instrument justifies them; your PRECOMMIT and FINDING.
+MUST NOT TOUCH: any other region's hydro rows or budget entries; src/market_sim/data/hydro.py's logic
+(you supply DATA; if the loader needs an NWPP branch, STOP and route); ScenarioConfig — you add NO
+field (that is NWPP-36's single exception under gate G8 as amended, and it is NOT yours).
+RULES THAT BITE: 1, 13, 14, 23, 27, 28. EXIT: FINDING-nwpp-32-<date>.md with the per-plant
+reconciliation, the instrument table (or its emptiness, stated), and the four §2.7 constraints
+measured. Report the reconciliation result and the §2.7 (a) chain FIRST.
+```
+
+#### NWPP-33 `[OPUS]` — zonal shares, per-zone VRE shape, per-zone gas basis
+
+```
+You are lane NWPP-33. MODEL: Opus claude-opus-5 — frozen derives against the data-intake contract.
+DATA PROFILE: nwpp.  Branch stem: claude/nwpp-33-zonal-shares-<4 chars>.
+Read CLAUDE.md freshly and in full; docs/multi-iso/nwpp-addition-plan-2026-09.md §2.5 IN FULL, §5 row
+NWPP-33, §3 cards N5 and N6 (N5 RULED, N6 resolved by measurement), §7 gates G18, G19, G20; the
+data-intake skill's schema/clean_io contract; docs/handoffs/FINDING-nwpp-10-2026-09-13.md §1.3 and §1.4
+and FINDING-nwpp-12-2026-09-13.md §0.3 and its fuel section.
+
+PRECONDITIONS (STOP if unmet): NWPP-20 LANDED (the five zones are registered and _NWPP_BA_ZONES is
+keyed on Balancing Authority Code).
+
+THE FIVE ZONES ARE RULED — you derive INTO them, you do not revisit them: NWPP-NW (BPAT PSEI SCL TPWR
+CHPD DOPD GCPD + AVRN generation) · NWPP-OR (PGE PACW + GRID generation) · NWPP-INLAND (IPCO AVA NWMT
+WAUW) · NWPP-EAST (PACE) · NWPP-SNV (NEVP).
+ZONAL SHARES come from the COMMITTED per-BA EIA-930 series (NWPP-11's 17 extracts) — NOT sub-BA (no
+such product exists for any of the 17, gate G18) and NOT state-keyed. A zone may not split a BA.
+DEMAND CONVENTION, and it is not optional (NWPP-10 §1.3): read `Demand (MW) (Adjusted)`; do NOT apply
+_screen_demand_spikes — it flags 84 hours of which 54 are REAL LOAD (all CHPD, 12-16 January 2024, a
+documented cold snap containing CHPD's annual peak and NWPP-NW's own 2024 annual peak of 21,560 MW),
+and its 2.5 factor rests on a "max/median <= 2.1" claim this footprint falsifies in all three years;
+_screen_demand_dropouts IS needed (17 exactly-zero NEVP hours in 2025). Nothing is padded,
+interpolated or rescaled (rule 13). Gate G20 is yours to hold.
+TIME: UTC is the canonical hour and the only admissible join key; local time is provenance only. 14
+Pacific / 3 Mountain (NWMT, PACE, WAUW); IPCO files PACIFIC, not Mountain. Every derived series STATES
+its zone convention (gate G19).
+GAS BASIS IS NOT ONE HUB — that is the point. NWPP-12 sourced the candidates (Sumas, Stanfield, Opal,
+Kern River) and NWPP-10 measured a per-zone attribution off `Natural Gas Pipeline Name 1`. Assign each
+of the five zones its basis WITH the citation, and where a zone is genuinely mixed, say so rather than
+picking the larger half silently.
+FILES YOU OWN: the NWPP zonal-share, per-zone wind/solar shape and per-zone gas-hub artifacts.
+MUST NOT TOUCH: any other region's rows; src/; ScenarioConfig; the zone map itself (NWPP-20's).
+RULES THAT BITE: 13, 14, 23, 27, 28. EXIT: FINDING-nwpp-33-<date>.md with the five zonal shares
+summing to 1.0, the VRE shape summary, the gas-basis assignment table with citations, and an explicit
+statement that the 54 CHPD hours survived. Report the shares and the CHPD statement FIRST.
+```
+
+#### NWPP-34 `[OPUS]` — the seam derive (served interchange; no arming)
+
+```
+You are lane NWPP-34. MODEL: Opus claude-opus-5 — a derive, not a design.
+DATA PROFILE: nwpp.  Branch stem: claude/nwpp-34-seam-<4 chars>.
+Read CLAUDE.md freshly and in full — rule 25 [R-ISO-SCOPE] is the whole of your boundary;
+docs/multi-iso/nwpp-addition-plan-2026-09.md §5 row NWPP-34, §3 card N4 (RULED); the ledger's routed
+item R-a; docs/handoffs/FINDING-nwpp-11-2026-09-13.md (the DIBA duration curves) and
+FINDING-nwpp-10-2026-09-13.md §3.1 (the BPAT identity finding — read it before you write any code).
+
+PRECONDITIONS (STOP if unmet): NWPP-20 LANDED (INTERFACE_NEIGHBORS["NWPP"] = CAISO / WECC_SW /
+WECC_CAN exists, every block enabled=False); NWPP-11's interchange data landed.
+
+CARD N4 IS RULED: SERVED MEASURED INTERCHANGE, PRICED LINKS DEFAULT-OFF. You derive the served
+schedule from EIA-930 `Total Interchange`; you ARM NOTHING.
+*** THE TRAP, MEASURED BY NWPP-10 §3.1 — DO NOT WRITE THE NAIVE DERIVE. ***
+`Demand = NetGen - TotalInterchange` holds to 0.000 MW for PACW/PSEI/TPWR and near-exactly for ten
+more BAs, but for BPAT the mean residual is -3,206 MW and 81.5 % OF HOURS miss by more than 1 MW,
+because BPA wheels energy it neither generates nor serves. BPAT is 20.26 % of footprint load. A derive
+that assumes the identity will be wrong for a fifth of the footprint in four hours out of five. Handle
+it explicitly and report the residual distribution; a divergence is a FINDING, never something to
+correct away (rule 14).
+THE CAISO DOUBLE-COUNT — DISCLOSE, DO NOT FIX. CAISO is registered with a WECC_import zone whose firm
+tranche is named `PNW_hydro_base` (model/interchange/caiso.py) — this footprint, by name, priced as a
+Tier-3 contract proxy. Registering NWPP puts the same physical energy on both sides of a seam,
+represented two ways. YOU DERIVE NWPP'S SIDE ONLY. Rule 25 forbids you touching how CAISO prices its
+side; the CAISO-side question is ROUTED (ledger R-a) and stays routed. Quantify the CAISO-facing
+magnitude from NWPP-11's DIBA curves and put it in your FINDING so the routed item carries a number.
+FILES YOU OWN: the NWPP seam/served-schedule artifacts. MUST NOT TOUCH: src/market_sim/model/
+interchange/caiso.py or any CAISO artifact; any other region's seam rows; ScenarioConfig; the
+enabled=False defaults (arming is a W5 lever, NWPP-56).
+RULES THAT BITE: 13, 14, 23, 25 [R-ISO-SCOPE], 27, 28. EXIT: FINDING-nwpp-34-<date>.md with the
+served-schedule summary, the BPAT residual distribution, and the quantified CAISO-facing magnitude.
+Report the BPAT residual and the CAISO magnitude FIRST.
+```
+
+#### NWPP-35 `[OPUS]` — site prose, region count, calibration-log header
+
+```
+You are lane NWPP-35. MODEL: Opus claude-opus-5 — prose and wiring against a measured count.
+DATA PROFILE: code.  Branch stem: claude/nwpp-35-site-docs-<4 chars>.
+Read CLAUDE.md freshly and in full; docs/multi-iso/nwpp-addition-plan-2026-09.md §0 and §5 row
+NWPP-35; docs/calibration-log/spp.md (your header template).
+
+PRECONDITIONS: NWPP-20 LANDED.
+*** RE-COUNT AT YOUR OWN BASE SHA BEFORE YOU EDIT ANY PROSE (plan §0, gate G15). *** At the desk's
+r#5 pin `_ISO_BUILDERS` carries EIGHT (ERCOT CAISO MISO PJM NYISO NEISO SPP NWPP) while the mechanism
+matrix carries NINE columns — SOCO is a chartered, matrix-seeded, NOT-REGISTERED region, and that is a
+supported intermediate state, not an error to "fix". Prose that says "seven" is now stale; prose that
+says "nine registered" would be wrong. Report the counts you measured.
+ALREADY DONE BY NWPP-21 — DO NOT DUPLICATE: the `--iso-nwpp` colour token (#65A30D) and its badge and
+button rules are in docs/codebase-site/css/shared.css; the NWPP matrix shard and the §5.9 lever queue
+in docs/mechanism-testing-matrix.md exist. What IS stale there and worth one line: §5.9's header says
+NWPP is "NOT YET REGISTERED", which NWPP-20 has superseded.
+YOU OWN: the region-count prose across docs/codebase-site/ and the docs it renders; a NEW
+docs/calibration-log/nwpp.md with only its header (the desk appends every lane's `## Log entry`
+section from here on — you write NO log entries yourself, §8.0 rule 1); any NWPP badge/label wiring
+NWPP-21 did not already land.
+MUST NOT TOUCH: any other region's shard, log or keeper files; src/; frontend/data/**; the matrix
+CELL VALUES; this plan; the ledger.
+RULES THAT BITE: 27, 28, and §8.0 rule 1 above all — you write the header, never the entries.
+EXIT: FINDING-nwpp-35-<date>.md listing every file whose count changed, with the before/after count
+you measured. Report the measured counts FIRST.
+```
+
+### W3b / W4 / W5 / W6 — charters issued at the sittings that unblock them
+
 ### W3–W6 — charters issued at the sittings that unblock them
 
 The desk issues these against the SPP program's own W3/W4 charters, which are committed and worked
