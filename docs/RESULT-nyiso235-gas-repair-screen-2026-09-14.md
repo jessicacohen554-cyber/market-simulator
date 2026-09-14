@@ -146,12 +146,67 @@ compensating tune of exactly the kind the pre-registration exists to forbid.
 coupling" is superseded by this measurement and is wrong: storage throughput moves +1.4 % and hydro
 +0.004 %, far too little to carry a +0.218 $/MWh mean shift.)*
 
+## 6b. THE FULL SPAN, 2022–2025 — SOLVED, AND THE PRICE RESULT IS MIXED
+
+One shard, one `--years 2022 2023 2024 2025` invocation, one bundle (rules 16 / 32(b) / 34(c)),
+covering **every year the ISO's keeper carries** — the registry year union is exactly
+{2022, 2023, 2024, 2025} and this bundle covers it, so rule 35 `[R-PROMOTE]` (c) needs no stamped
+companion. Same two accounted-for config diffs as §1; same surface fingerprint `bd2b4657f9b5df7e`.
+
+**No structural break anywhere: slack = 0.000000 and dump = 0.000000 in all four years, in both
+arms.**
+
+| year | actual $ | control | arm | control C3a | arm C3a | band ±10 % | control C3b | arm C3b |
+|---|---:|---:|---:|---:|---:|---|---:|---:|
+| 2022 | 81.12 | 71.71 | 72.59 | **−11.60 %** | **−10.51 %** | FAIL → FAIL | 0.2175 | **0.1990** |
+| 2023 | 32.25 | 31.84 | 31.68 | −1.26 % | −1.76 % | PASS → PASS | 0.1221 | 0.1233 |
+| 2024 | 38.12 | 37.84 | 38.07 | −0.74 % | **−0.13 %** | PASS → PASS | 0.1788 | **0.1619** |
+| 2025 | 66.43 | 61.13 | 60.32 | −7.98 % | **−9.19 %** | PASS → PASS | 0.1619 | 0.1670 |
+
+**NO C3a OR C3b BAND VERDICT FLIPS, IN EITHER DIRECTION.** 2022 remains the failing year; the other
+three remain passing. 2025 moves 1.21 pp closer to the −10 % edge while staying inside it.
+
+### The mixed direction is fully explained, and it is NOT the tail repair
+
+C3a improves in 2022/2024 and degrades in 2023/2025. That is **not** noise, and it is not the
+Elliott repricing: it tracks the **sign of the annual-mean gas change** — i.e. the §6 anchor
+channel — in **all four years without exception**:
+
+| year | signed Δ annual-mean delivered gas | anchor | C3a |
+|---|---:|---|---|
+| 2022 | **+0.213359** | UP | better (−11.60 → −10.51) |
+| 2023 | **−0.019536** | DOWN | worse (−1.26 → −1.76) |
+| 2024 | **+0.025082** | UP | better (−0.74 → −0.13) |
+| 2025 | **−0.097493** | DOWN | worse (−7.98 → −9.19) |
+
+The model is under-priced in every year, so a higher anchor moves prices toward actual and a lower
+one moves them away. **4 of 4 sign match.** The consequence worth stating plainly: the annual C3a
+number is dominated by a **level** effect transmitted through the annual-mean anchor, not by the
+tail hours the repair was actually about. The tail repair shows up in Dec 22–23 prices and in the
+oil switching — both 2022 — while C3a mostly measures where the year's mean gas landed.
+
+### Physical fidelity moves consistently toward measured
+
+Unlike price, the burn quantities improve or hold in every year:
+
+| TWh vs actual | 2022 | 2023 | 2024 | 2025 |
+|---|---|---|---|---|
+| **oil** control | −1.212 | −0.272 | +0.128 | +0.224 |
+| **oil** arm | **−0.727** | −0.272 | +0.124 | **+0.143** |
+| **gas family** control | +5.155 | +1.117 | +1.863 | −0.708 |
+| **gas family** arm | **+4.673** | +1.118 | +1.865 | **−0.616** |
+| **CC_REGULAR** control | +5.494 | +0.216 | +2.983 | +1.865 |
+| **CC_REGULAR** arm | **+5.178** | **+0.177** | +2.974 | +1.959 |
+
+Oil improves materially in 2022 (Elliott) and 2025, is unchanged in 2023/2024 — exactly the
+footprint pattern, and never worse. **None of this is a gate either.**
+
 ## 7. RETRIEVABILITY (rule 34 `[R-SHARD-PROMOTABLE]` (e))
 
 | bundle | where | promotion cost from this state |
 |---|---|---|
 | screen, 2022 | commit **`750e4a72421e4548a5d82b71ccf13e6254cc3b87`**, branch `claude/nyiso-235-screen-2022` — **17 files incl. `dispatch/2022_P1.parquet` and root `system.parquet`** | zero re-solve; `git checkout 750e4a72421e4548a5d82b71ccf13e6254cc3b87 -- results/calibration/nyiso235_gasrepair_2022` |
-| full span, 2022–2025 | *(filled in when the span shard lands)* | |
+| full span, 2022–2025 | commit **`99f7015445fc0e271b4cd197227bdf34fd5dd38e`**, branch `claude/nyiso-235-span` — **47 files incl. `dispatch/{2022,2023,2024,2025}_P1.parquet` and root `system.parquet`** | zero re-solve; `git archive 99f7015445fc0e271b4cd197227bdf34fd5dd38e results/calibration/nyiso235_gasrepair_span \| tar -x` |
 
 ## 8. FLAG FOR THE OWNER — NEISO, AND IT IS WORSE THAN THE HANDOFF SAID
 
