@@ -29,6 +29,50 @@ registry; every existing keeper's cache key untouched by construction.
   registration could not be import-verified here. The gate-G8 cache-key proof and the fleet census are
   recorded as the lane's measurement plus CI, **UNREAD by the desk** — not as a desk verification.
 
+## 2026-09-14 — SOCO r#5: all five lanes land and pass, a gate this desk built fails and changes the answer, SOCO-20 is cleared
+
+Desk refresh r#5 (`docs/handoffs/soco-desk-ledger-2026-09.md`). Docs only — the lanes' own code, data
+and findings are already on `main` (PRs #6126, #6127, #6129, #6135 and the SOCO-14/21/22 merges).
+
+- **Five lanes graded by content, five PASS** — and two of them pass by returning a NO, which is what
+  a well-built gate is supposed to produce.
+- **SOCO-13: the FERC-EQR price index reads NO.** Three of five pre-registered gates fail — indexed
+  short-term energy is **3.66 / 2.69 / 2.64 %** of SOCO demand against a ≥ 5 % bar, and the level sits
+  **+54.2 / +72.1 %** above the SEEM auditor's annual clearing price in 2024/25 against ±15 %. **No bar
+  was moved after the series was seen**: the one post-PRECOMMIT change corrected the D3 anchor's
+  *source* before `build` first ran, moved no number, and the FINDING reports D3 on the original letter
+  too, where it also fails. Nothing landed to `_validation-source`; gate G17 intact.
+- **SOCO-14: gate G22 FAILS, and the gate is the point.** Oglethorpe (107) and MEAG (210) are cited
+  inside the SOCO BA from primary sources — a NERC/SERC compliance audit and MEAG's own Annual
+  Information Statement — each cross-checked against an EIA-861 peak that equals the FERC-714 series'
+  own 2024 maximum. **Southern Power (186) is a documented NO**: nothing establishes where its
+  planning-area *load* sits, and the lane refused to stretch the IIC contract or EIA-860's 11-of-53
+  plants into a load claim they do not support. Card S3 returned to the owner as designed and was
+  **re-ruled to the five fully-cited respondents** (residual 3.03 / 2.92 / 1.26 %) over the
+  six-respondent 1.63 / 1.50 / **−0.03 %** — a cited basis beating a smaller residual, and the negative
+  2025 value being the overshoot SOCO-11's falsifier was built to detect. 186's 1.3–1.4 % is excluded
+  and named on the first keeper's determination basis.
+- **SOCO-15: the COD-seam repair is on `main`** (`9398000d`), with all three exit conditions met by
+  evidence — seven keeper `cache_key()` values byte-identical, the greenfield case still ramping while
+  three brownfield tests fail on the old seam and pass on the new, and one shared resolver with no
+  per-ISO branch. The eight-footprint A/B reports **both directions at full magnitude**: ERCOT 2021
+  CC_CHP −0.314 and CC_REGULAR +0.310 TWh (both toward measured) and a +2.34 $/MWh 2023 price move,
+  SPP 2025 CT_PEAKER −0.645 TWh toward but COAL_PRB +0.131 away. **Other ISOs' lanes should expect
+  their results to move while their cache keys do not** — that is this repair, not a regression.
+- **SOCO-22: rubric v3.8**, the no-price determination class. Across **54 verdict files** the union of
+  differing lines is exactly `rubric_version` 3.7 → 3.8 and nothing else, with all 14 `render_text`
+  blocks byte-identical; the one permitted diff was declared in the PRECOMMIT before the scorer was
+  edited. SOCO and NWPP read `PHYSICALLY-CALIBRATED (PRICE UNSCORED)`, never `CALIBRATED`.
+- **SOCO-21**: the eighth matrix shard, 327 ids = 168 `U` + 159 `·`, keeper/gates empty by design and
+  **no verdict minted** — correct, since SOCO has no keeper or solve at HEAD.
+- **Two cards closed on the evidence with no owner time**: **S9** resolves n/a (no series → no tail →
+  gate G6's pre-specified skip fires), and **S12** closes with the repair on `main`.
+- **SOCO-20 is cleared and issued.** Cards S1–S8/S11/S12 ruled, G12 met, G22 discharged on the
+  five-set, SOCO-15 landed.
+- Recorded against the desk's own interest: **SOCO-15 and SOCO-21 shipped no `## Log entry`**, and both
+  were charters the desk drafted rather than copied from the committed prompt pack — a 100 %
+  correlation on a population of five. `docs/calibration-log/soco.md` carries the three that exist
+  verbatim plus two clearly-labelled desk-authored stubs; the desk did not fabricate lane words.
 ## 2026-09-14 — NWPP r#4: every issued lane has landed, four cards ruled, W2 issued
 
 Desk refresh r#4 (`docs/handoffs/nwpp-desk-ledger-2026-09.md`). Docs only — no code, no data, no

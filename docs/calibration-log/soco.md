@@ -205,3 +205,124 @@ footprint's basis is **Southern Natural Gas** (50 % Southern Company Gas) plus
 index exists at either**, measured against both EIA daily/weekly tables.
 
 FINDING: `docs/handoffs/FINDING-soco-12-2026-09-13.md`. Zero solves.
+
+---
+
+## soco-13 — 2026-09-13
+
+**FERC-EQR price index (card S2 option a): NO.** PRECOMMIT pushed before any value was read; STOP
+gate D1 / D5 pass, **D2.2 fails every year** (indexed short-term energy 3.66 / 2.69 / 2.64 % of SOCO
+demand vs ≥ 5 %), **D3.1 fails 2024 / 2025** (index $33.5 / $35.5 / $55.1 vs the SEEM auditor's
+$30 / $23 / $32, +11.7 / +54.2 / +72.1 % vs ±15 %; shape passes, `r` 0.86–0.88 Peak / Off-Peak
+against the digitised annual-report figures), **D4.2 fails 2025** (2.008× the F-class CC fuel cost vs
+a 2.0 ceiling; gas tracking `r` 0.78 passes). The level gap is scarcity in the bilateral slice
+(Jan 20–25 2025 daily $153–378; 2025 mean/median 1.41), present in every seller and increment; the
+SOCO-delivered SEEM matches price at 2–3× the SEEM-wide average, so the anchor is confirmed
+SEEM-wide, not SOCO. Raw store `data/raw/ferc-eqr/` committed (981,070 SOCO-POD rows from 1.83 bn
+EQR rows / 41 GB streamed; 26,286-hour UTC index, 99 % priced; digitised SEEM anchor; fuel-cost
+anchor; ledger; gate). **Nothing landed to `_validation-source`**; S2 limb (b) / rubric v3.8 applies;
+G6 and S9 skipped by design. Routed: (i) price unscored vs (ii) a labelled bilateral benchmark = a new
+owner ruling, never a re-cut gate. `FINDING-soco-13-2026-09-13.md`.
+
+---
+
+## soco-14 — 2026-09-13 — BA membership of FERC-714 respondents 107 / 210 / 186
+
+GATE G22 = FAIL, 2 of 3 cited.
+
+Oglethorpe (107) YES: NERC/SERC public compliance audit NCR01248 p.3 -- "The
+Reliability Coordinator (RC), Balancing Authority (BA), and Transmission
+Operator for GSOC is Southern Company Services, Inc. - Transmission." GSOC
+schedules and dispatches Oglethorpe's resources and is the registered LSE for
+the 38 member EMCs (OPC FY2024/FY2025 10-K, Control Area Compact with Georgia
+Power). SCS-Trans is EIA BA code SOCO / BA ID 18195 (EIA-861 2024). 37 of 38
+members coded BA=SOCO in EIA-861 2024; 154/154 member counties inside the SOCO
+BA's 252-county footprint. Cross-check: EIA-861 Operational_Data winter peak
+10,489 MW == the 714 series' 2024 maximum.
+
+MEAG (210) YES, in MEAG's own words: Annual Information Statement FY2024
+(dated 2025-05-22, printed pp.25-26) places MEAG's Territorial Load inside "the
+Southern Company Balancing Authority Area", and the PSSA's exit clause speaks of
+MEAG later joining "another balancing authority area". 48 of 49 Participants
+coded BA=SOCO; 51/51 counties inside. Cross-check: EIA-861 summer peak 2,399 MW
+== the 714 series' 2024 maximum.
+
+Southern Power (186) NO -- documented. FERC Form 714 has no field in which a
+planning-area respondent names its BA (sample form p.1 + instructions IV.A);
+PUDL/EIA give 186 no BA code, no counties, no EIA-861 presence at all; EIA-860
+shows 42 of its 53 plants OUTSIDE SOCO, in 15 BAs across 13 states, so "its
+generation is in the footprint" is false as stated and is the wrong claim
+regardless; and its 714 series is a flat ~390 MW block (LF 0.795, diurnal
+0.95-1.04x) that is not a territorial load. The document that would settle it,
+Part III Schedule 1 "Electric Utilities That Compose the Planning Area", is in
+FERC's bulk CSVs -- 403 from this egress, as at the SOCO-11 charter -- and
+Zenodo (PUDL's raw archive) is 403 too. Routed as one fetch.
+
+Also routed: the falsifier's STATED reason does not hold for 2023-2025 --
+EIA-861's BA registry dropped AEC (PowerSouth) after 2019 and now codes
+PowerSouth's own rows to SOCO, while PUDL still classifies it AEC through 2025.
+The measured overshoot is unaffected; the explanation is. And county containment
+is corroboration only: AEC's 50-county footprint sits entirely inside SOCO's 252,
+so a nested BA passes that test.
+
+No share derived, no parquet written, no solve, no matrix cell moved.
+
+---
+
+## soco-22 — 2026-09-13 — rubric v3.8, the no-price determination class (zero-LP)
+
+`scripts/calibration_verdict.py` gains one determination branch keyed on the absence of an
+`actual_lmp.json` block: `PHYSICALLY-CALIBRATED (PRICE UNSCORED)` / `-WITH-CAVEATS`, never
+`CALIBRATED`, scored on C1/C2/C4/C6/C8, price gap on the basis at full magnitude on every route.
+All 14 registered runs (7 keepers) re-score byte-identically on the full span and per year (only
+`rubric_version` 3.7 → 3.8 moves). 34 new tests. Serves NWPP card N2 limb (b) with the same amendment.
+Routed: rubric doc entry, `audit_keepers._DET_TOKENS`, `calibration-status.js` label map.
+
+---
+
+## soco-15 — 2026-09-13 — the COD-seam cross-ISO repair (card S12)
+
+**DESK-AUTHORED STUB.** Lane SOCO-15's FINDING carries no `## Log entry` section, so there is
+nothing to append verbatim (plan §8.0 rule 1). Rather than fabricate the lane's own words, the desk
+records only what another ISO's lane must know, and points at the source:
+`docs/handoffs/FINDING-soco-15-2026-09-13.md`.
+
+WHAT LANDED: the `cod_ramp` online-date repair, commit `9398000d` (PR #6127). A raw EIA-860 unit
+with a known own year keeps its OWN `(online_year, online_month)`; a plant-level object keeps the
+plant map's; retirement resolution unchanged. One shared seam
+(`cod_ramp.generator_online_mask`), no per-ISO branch, no `ScenarioConfig` field, so no matrix row.
+
+WHY EVERY OTHER ISO'S LANE SHOULD READ THIS: the repair deliberately MOVES RESULTS for registered
+keepers while leaving CACHE KEYS untouched. If your ISO's numbers move and its key does not, this is
+why — do not read it as your own regression. Measured, arm − control: MISO CC_CHP −0.15 to −0.20
+TWh/yr 2020–24, CT_PEAKER 2022 −0.326; SPP 2025 CT_PEAKER −0.645 (−4.0 %), CC_REGULAR +0.334,
+ST_GAS +0.156, COAL_PRB +0.131, price +0.23 $/MWh (2023/24 identical); ERCOT 2021 CC_CHP −0.314 and
+CC_REGULAR +0.310 (both TOWARD measured), 2023 price +2.34 $/MWh — the largest single effect in the
+A/B; PJM ≤ 0.073 TWh and prices identical. NYISO ≤ 0.028, CAISO ≤ 0.037, NEISO ≤ 0.003 TWh/yr —
+bounded by input census, not solved. Both directions are reported: COAL_PRB and CT_CHP moved AWAY
+from measured and the lane says so.
+
+EXIT CONDITIONS, all three MET: (a) all seven keeper `cache_key()` values byte-identical across the
+repair — `caiso bab5e9b08681e54c · ercot 0f89d4c5f45043f7 · miso b35a8f20b73a5fbf ·
+neiso 28266b333667e16f · nyiso 7e0dc0344f297fc2 · pjm b05e09c319c2c5f5 · spp 6d6205e381e982c2`;
+(b) greenfield still ramps and three brownfield tests fail on the old seam and pass on the new, both
+directions demonstrated; (c) rule 25 intact.
+
+SOCO-20 IS CLEARED TO PROCEED on this lane's account.
+
+
+## soco-21 — 2026-09-13 — the eighth mechanism-matrix shard
+
+**DESK-AUTHORED STUB**, for the same reason as soco-15 above; source
+`docs/handoffs/FINDING-soco-21-2026-09-13.md`.
+
+`docs/codebase-site/data/mechanism-matrix/SOCO.js` is live as the eighth shard, one commit
+(gate G2). Census: **327** mechanism ids, **168 `U`** (untested), **159 `·`** (structurally n/a),
+327 = 168 + 159 with exactly one cell line per base id. `keeper` and `gates` are deliberately EMPTY
+— the same fail-open state SPP's column held between SPP-21 and SPP-40, and correct here because
+**SOCO has no keeper, no registered run and no solve of any kind at HEAD; NO VERDICT WAS MINTED.**
+The `·` classification rule is stated in the shard's own header so a later lane can audit any single
+cell without re-deriving the column; the largest class is 100 cells that name another ISO's own
+market object, and a foreign-stemmed row that some other ISO HAS entered reads `U`, not `·`.
+Card rulings S5 and S6 supply six more (`·` for no capacity market, four for no cleared AS market,
+one for no scarcity pricing, one for carbon-`None`).
