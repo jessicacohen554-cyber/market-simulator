@@ -242,8 +242,21 @@ def main() -> None:
 
     dest = REPO / "results/calibration/_pjm_h7_joint_phase0.json"
     dest.parent.mkdir(parents=True, exist_ok=True)
+    # MERGE, never clobber. Reported by the pjm-h7 screen shard: a single-year
+    # invocation used to overwrite a full six-year artifact at this fixed path,
+    # silently destroying evidence a rule-31 [R-RETAIN] lane still needed. Years
+    # this run re-measured win; every other year already on disk survives.
+    if dest.exists():
+        try:
+            prior = json.loads(dest.read_text())
+        except (OSError, json.JSONDecodeError):
+            prior = {}
+        merged = dict(prior.get("years") or {})
+        merged.update({str(k): v for k, v in out["years"].items()})
+        out["years"] = merged
+    out["years"] = {str(k): out["years"][k] for k in sorted(out["years"], key=int)}
     dest.write_text(json.dumps(out, indent=1, sort_keys=True))
-    print(f"\nwrote {dest.relative_to(REPO)}")
+    print(f"\nwrote {dest.relative_to(REPO)} (years {sorted(out['years'], key=int)})")
 
 
 if __name__ == "__main__":
