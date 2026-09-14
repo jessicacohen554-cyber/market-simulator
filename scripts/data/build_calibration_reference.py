@@ -62,9 +62,26 @@ from market_sim.config.paths import CALIBRATION_DIR, FLEET_DIR  # noqa: E402
 from market_sim.data.eia923 import (  # noqa: E402
     EIA923_MONTHLY_GENERATION_PATH,
 )
+from market_sim.data.eia930 import (  # noqa: E402
+    _EIA930_BENCHMARK_COLUMNS,
+    _ISO_TO_HOURLY_BA,
+    _eia_hourly_frame,
+    _eia_hourly_frame_filled,
+)
+from market_sim.data.eia930.actuals import (  # noqa: E402
+    _STORAGE_BENCHMARK_SERIES,
+    _STORAGE_MIN_COVERAGE_FRAC,
+    _ZERO_CODED_GAP_SERIES,
+    _screen_fuel_spike_columns,
+)
 from market_sim.data.eia_loader import (  # noqa: E402
     load_demand_meta,
     load_eia_hourly_benchmark,
+)
+from market_sim.data.fleet.models import (  # noqa: E402
+    ISO_NERC_REGION_ADMISSION,
+    ba_codes,
+    footprint_plant_mask,
 )
 from market_sim.data.renewables import (  # noqa: E402
     _RENEWABLE_FUELS,
@@ -103,6 +120,15 @@ CALIBRATION_ISOS: tuple[str, ...] = (
     "NEISO",
     "MISO",
     "SPP",
+    # NWPP is the eighth registered region and the FIRST POOL one: seventeen
+    # EIA-930 balancing authorities under one key, not a single BA (registered
+    # 2026-09-14 by lane NWPP-20; owner ruling N1). Every ISO-keyed lookup in
+    # this builder that used to resolve a SCALAR BA code now resolves
+    # ``fleet.models.ba_codes(iso)`` -- a tuple -- and filters by membership,
+    # which is byte-identical for the seven 1:1 regions and is the only
+    # construction that can see a whole pool (NWPP-10 §3: a scalar inverse of
+    # the many-to-one BA map silently returns 1/17 of the footprint).
+    "NWPP",
 )
 
 # Per-ISO calibration-year overrides. CAISO's backcast targets 2023-2025
@@ -231,6 +257,28 @@ CALIBRATION_YEARS_BY_ISO: dict[str, tuple[int, ...]] = {
     # is the SCORE, never the DATA") — the inputs are prepared and consistent
     # across every year already, and only the reference block waits on a grant.
     "SPP": (2023, 2024, 2025),
+    # NWPP (registered 2026-09-14 lane NWPP-20; this block landed 2026-09-14 by
+    # lane NWPP-31). 2023-2025 is the whole span the DATA supports, not a tier
+    # choice: the pool frame needs all seventeen members' ``<BA> hourly``
+    # extracts and those were derived by NWPP-11 from the committed EIA-930
+    # BALANCE archive for 2023-2025 only, so
+    # ``_eia_hourly_frame_filled("NWPP", y)`` is None for 2021, 2022 and 2026
+    # (measured this lane) and both ``_demand_totals`` and the EIA-930
+    # comparator below would hard-fail. Extending the span is an NWPP-11-class
+    # derive of more BALANCE years, not a reference-block edit.
+    #
+    # THE PRICE SIDE IS ABSENT BY RULING, NOT BY OVERSIGHT: card N2 chartered
+    # NWPP-13 to build a WEIM-derived hourly price series behind a STOP gate
+    # pre-registered before any value was read, and that gate READ NO (the WEIM
+    # on-peak price sits 22.6 / 23.6 / 37.5 % below the independent Mid-C Peak
+    # traded index against a ±10 % bar). So NWPP has NO ``actual_lmp.json``
+    # block, no ``actual_lmp_hourly_NWPP.parquet``, no ``TAIL_THRESHOLD``
+    # entry and no amplitude row (plan gate G6), and the scorer reads
+    # PRICE-UNSCORED off exactly that absence (rubric v3.8, lane NWPP-22).
+    # Substituting a neighbouring hub -- SP15, NP15 or Palo Verde, each one
+    # column away in the same ICE workbook -- is the load proxy rule 13
+    # ``[R-MEASURED]`` forbids and stays refused (plan gate G17).
+    "NWPP": (2023, 2024, 2025),
 }
 
 # Measured Henry Hub natural-gas spot price, annual average ($/MMBtu).
@@ -332,9 +380,66 @@ def _eia860_renewables(iso: str, year: int) -> dict:
     return out
 
 
+def _is_pool_region(iso: str) -> bool:
+    """True when ``iso`` is a POOL of several EIA-930 balancing authorities.
+
+    Data-driven on :data:`~market_sim.data.fleet.models.ISO_TO_BA_CODES` --
+    never an ``iso == "NWPP"`` ladder -- so a second pool region registers here
+    with no edit. The seven 1:1 regions and SOCO return ``False``, which is why
+    every branch this predicate guards is unreachable for them (rule 25
+    ``[R-ISO-SCOPE]``) and their committed rows cannot move.
+    """
+    return len(ba_codes(iso)) > 1
+
+
+def _pool_demand_meta(iso: str, year: int) -> dict:
+    """Return ``load_demand_meta``-shaped totals for a POOL region's footprint.
+
+    A pool has no row in the legacy per-ISO ``eia_demand_profiles``/
+    ``eia_demand_meta`` summary and no ``demand-profile`` clean partition (both
+    are keyed on the seven 1:1 ISOs the legacy extract carries), so
+    :func:`load_demand_meta` raises for it. The footprint series it would have
+    summarised is the POOL FRAME's ``Demand`` column -- **the identical array
+    the LP dispatches**, since ``eia930.demand._load_nwpp_hourly_demand`` reads
+    that same column off that same frame -- so this reads it directly rather
+    than reconstructing a second one (rule 19 ``[R-ONE-MECH]``; rule 14
+    ``[R-ACCURATE]``: the measured array beats any summary of it).
+
+    The demand CONVENTION is fixed on the pool frame itself and is not
+    re-decided here (NWPP-10 §1.3, ``frames._pool_hourly_frame``): members'
+    **``Demand (MW) (Adjusted)``** series, each through the exact-zero DROPOUT
+    screen before the sum (17 literal-0.0 NEVP hours of 2025), with the SPIKE
+    screen deliberately NOT applied because its 2.5x-median bar flags 54 REAL
+    CHPD hours of 12-16 January 2024 that hold a zone's annual peak. Nothing is
+    padded, interpolated or rescaled beyond those repairs (rule 13
+    ``[R-MEASURED]``). Reproduces the coincident peaks 49,290 / 52,564 /
+    50,953 MW for 2023 / 2024 / 2025.
+
+    Raises:
+        ValueError: when the pool frame cannot be assembled for the year (a
+            missing member extract), so a partial pool is never summarised.
+    """
+    frame = _eia_hourly_frame_filled(_ISO_TO_HOURLY_BA[iso], year)
+    if frame is None:
+        raise ValueError(f"No EIA-930 pool frame for region {iso!r} in year {year}")
+    mw = frame["Demand"].to_numpy(dtype=float)
+    if np.isnan(mw).any():
+        raise ValueError(f"{iso} {year}: pool demand carries NaN hours")
+    return {
+        "total_annual_mwh": float(mw.sum()),
+        "peak_mw": float(mw.max()),
+        "min_mw": float(mw.min()),
+        "avg_mw": float(mw.mean()),
+    }
+
+
 def _demand_totals(iso: str, year: int) -> dict:
     """Return the EIA-930 annual demand totals for one ISO-year."""
-    meta = load_demand_meta(iso, year)
+    meta = (
+        _pool_demand_meta(iso, year)
+        if _is_pool_region(iso)
+        else load_demand_meta(iso, year)
+    )
     return {
         "total_twh": round(float(meta["total_annual_mwh"]) / _MWH_PER_TWH, 4),
         "total_mwh": float(meta["total_annual_mwh"]),
@@ -370,23 +475,22 @@ def _egrid_benchmark(iso: str) -> dict:
     Returns:
         A benchmark dict with ``generation_twh`` and ``co2_mt`` mappings.
     """
-    # eGRID balancing-authority code for the ISO footprint. eGRID's BACODE
-    # uses the same EIA-930 codes as :data:`_ISO_BA_CODE` (ERCO, PJM, ...).
-    ba_code = {
-        "ERCOT": "ERCO",
-        "PJM": "PJM",
-        "CAISO": "CISO",
-        "NYISO": "NYIS",
-        "NEISO": "ISNE",
-        # eGRID 2023 PLNT23 BACODE for MISO is the bare "MISO" (verified
-        # against the workbook), unlike the EIA-930 abbreviations elsewhere.
-        "MISO": "MISO",
-        # SPP's eGRID BACODE is the EIA-930 abbreviation "SWPP" (verified
-        # against the workbook: 661 PLNT23 rows, no "SPP" code exists).
-        "SPP": "SWPP",
-    }[iso]
+    # eGRID's BACODE uses the same EIA-930 codes the fleet registry does
+    # (ERCO, PJM, ..., SWPP for SPP, the bare "MISO" for MISO -- all verified
+    # against the workbook), so the footprint is
+    # :func:`~market_sim.data.fleet.models.footprint_plant_mask`: membership in
+    # ``ba_codes(iso)`` AND, where the region declares one, the NERC-region
+    # admission key. For the seven 1:1 regions that is exactly the former
+    # ``BACODE == code`` selection -- one code, no NERC entry -- so their rows
+    # are byte-identical (verified: plan gate G9). For the NWPP POOL it is the
+    # only correct selection: seventeen codes, and the NERC key excludes the
+    # one PLNT23 row that files under an NWPP BA from the EASTERN
+    # interconnection (57914 Sidney MT Plant, NERC MRO, 135 MWh / 60.954 short
+    # tons -- 880 of 881 rows admitted). The predicate is the REGISTRY one
+    # (rule 24 ``[R-REGISTRY]``), never a per-plant exclusion list.
     df = pd.read_excel(EGRID_PATH, sheet_name=EGRID_SHEET, skiprows=EGRID_SKIPROWS)
-    plants = df[df["BACODE"] == ba_code].copy()
+    codes = ba_codes(iso)
+    plants = df[footprint_plant_mask(iso, df["BACODE"], df.get("NERC"))].copy()
 
     fuel_cat = plants["PLFUELCT"].astype(str).str.strip().str.upper()
     gen_mwh = pd.to_numeric(plants["PLNGENAN"], errors="coerce").fillna(0.0)
@@ -409,7 +513,17 @@ def _egrid_benchmark(iso: str) -> dict:
     return {
         "iso": iso,
         "benchmark_year": EGRID_YEAR,
-        "source": "EPA eGRID 2023 (PLNT23), filtered BACODE=%s" % ba_code,
+        # Byte-identical to the former "filtered BACODE=%s" % ba_code for every
+        # 1:1 region (one code joins to itself, and none declares a NERC key).
+        "source": "EPA eGRID 2023 (PLNT23), filtered BACODE=%s%s"
+        % (
+            ",".join(codes),
+            (
+                " & NERC=%s" % ISO_NERC_REGION_ADMISSION[iso]
+                if iso in ISO_NERC_REGION_ADMISSION
+                else ""
+            ),
+        ),
         "co2_unit": "metric Mt (eGRID short tons converted)",
         "generation_twh": {k: round(v, 4) for k, v in sorted(generation_twh.items())},
         "co2_mt": {k: round(v, 4) for k, v in sorted(co2_mt.items())},
@@ -458,16 +572,14 @@ _EIA923_COAL_FUELS: frozenset[str] = frozenset({"BIT", "SUB", "LIG", "WC", "RC"}
 # kerosene, jet, waste oil, petroleum coke) — the dual-fuel winter switch fuel
 # in NYISO/NEISO. Any prime mover counts; the fuel code alone classifies oil.
 _EIA923_OIL_FUELS: frozenset[str] = frozenset({"DFO", "RFO", "JF", "KER", "WO", "PC"})
-# ISO identifier -> EIA balancing-authority code.
-_ISO_BA_CODE: dict[str, str] = {
-    "ERCOT": "ERCO",
-    "CAISO": "CISO",
-    "PJM": "PJM",
-    "NYISO": "NYIS",
-    "NEISO": "ISNE",
-    "MISO": "MISO",
-    "SPP": "SWPP",
-}
+# The ISO -> EIA balancing-authority mapping is the fleet registry's
+# :func:`~market_sim.data.fleet.models.ba_codes`, not a local scalar dict. The
+# local ``_ISO_BA_CODE`` table this replaced carried exactly the seven pairs
+# ``ba_codes`` returns for those regions (ERCO / CISO / PJM / NYIS / ISNE /
+# MISO / SWPP), so every committed block is byte-identical; what it could not
+# express is a POOL region, whose EIA-923 rows are spread over seventeen codes
+# (NWPP-10 §3 -- a scalar inverse of the many-to-one map keeps whichever code
+# was inserted last and silently reads 1/17 of the footprint).
 
 # Extra EIA-923 by-fuel benchmarks emitted only for the ISOs where they are
 # first-order. NYISO and NEISO additionally benchmark conventional hydro
@@ -489,11 +601,27 @@ _ISO_BA_CODE: dict[str, str] = {
 # EIA-930 agrees (0.2159 / 0.1007 / 0.0219 TWh). It is a fleet of 2.4 GW of
 # petroleum-liquids nameplate that essentially never runs, not a winter
 # dual-fuel switch, so it is not a first-order energy class here.
+# NWPP's conventional hydro is the LARGEST benchmarked hydro in the repo and
+# the single biggest energy class in its own footprint: EIA-923 WAT/HY reads
+# 106.9281 / 107.9002 TWh for 2023 / 2024 (EIA-930 ``NG: WAT``: 104.233 /
+# 105.040 / 110.272), i.e. ~36 % of a ~298 TWh system, an order of magnitude
+# above the MISO/SPP/NEISO hydro already benchmarked. OIL IS DELIBERATELY
+# OMITTED, on the SPP precedent and its own measurement: EIA-923 oil is
+# 0.5579 / 0.4846 / 0.5248 TWh over 2023-2025 and EIA-930 agrees (0.4907 /
+# 0.3808 / 0.4588) -- 0.16-0.19 % of footprint energy, below the 2 %
+# materiality floor this repo gates classes on, and a fleet of remote diesel
+# peakers rather than the winter dual-fuel switch that makes oil first-order
+# in NYISO/NEISO. Reported here so the omission is a measured decision.
+# GEOTHERMAL (4.4919 TWh eGRID 2023, 1.5 % of energy) likewise stays inside
+# the "other" aggregate both eGRID (PLFUELCT GEOTHERMAL -> the map's default)
+# and EIA-930 (``NG: OTH``) already put it in; breaking it out would need a new
+# mask class in :func:`_eia923_generation_raw` and is not this lane's to add.
 _EIA923_EXTRA_FUELS_BY_ISO: dict[str, tuple[str, ...]] = {
     "NYISO": ("hydro", "oil"),
     "NEISO": ("hydro", "oil"),
     "MISO": ("hydro", "oil"),
     "SPP": ("hydro",),
+    "NWPP": ("hydro",),
 }
 
 
@@ -535,12 +663,30 @@ def _eia923_ba_frame(iso: str, year: int) -> pd.DataFrame | None:
     balancing-authority mapping. Cached so the by-fuel split and the
     completeness check share a single read.
     """
-    ba = _ISO_BA_CODE.get(iso)
-    if ba is None:
+    codes = ba_codes(iso)
+    if not codes:
         return None
     table = _eia923_generation_table()
+    # Membership, not equality: identical to ``== ba`` for a one-code region
+    # and the only form that sees a whole pool. EIA-923 carries no NERC column,
+    # so the eGRID admission key above has no analogue here; the residual
+    # contamination is MEASURED rather than filtered -- plant 68906 (Pine
+    # Forest Solar I, Hopkins County TX, NERC TRE) files under DOPD and
+    # contributes 0.0295 TWh of solar to NWPP 2025 -- 0.150 % of that year's
+    # solar class and 0.013 % of its footprint EIA-923 energy. It DOES reach
+    # the committed 2025 block: the per-fuel incompleteness guard swaps wind
+    # (923/930 = 0.5746) and hydro (0.6796) out to EIA-930 that year but not
+    # solar (0.9796, above the 0.80 bar), so the number is stated here rather
+    # than assumed away. Measured 2023/2024 contamination: zero (68906 files
+    # no EIA-923 row before 2025). The
+    # alternative -- intersecting with the curated EIA-860 operable-generator
+    # plant set -- was measured and REJECTED: it would drop 0.927 TWh of real
+    # 2023 generation from plants that have since retired off the snapshot to
+    # remove 0.0295 TWh of misfiled solar, i.e. a worse benchmark (rule 14
+    # ``[R-ACCURATE]``), and a per-plant exclusion is forbidden outright
+    # (rule 24 ``[R-REGISTRY]``).
     df = table[
-        (table["year"] == year) & (table["ba_code"].astype(str).str.strip() == ba)
+        (table["year"] == year) & (table["ba_code"].astype(str).str.strip().isin(codes))
     ]
     if df.empty:
         return None
@@ -595,6 +741,86 @@ def _eia923_generation_raw(iso: str, year: int) -> dict[str, float]:
     }
 
 
+def _pool_hourly_benchmark(iso: str, year: int) -> dict[str, np.ndarray]:
+    """Return a POOL region's EIA-930 hourly benchmark series, by fuel.
+
+    :func:`load_eia_hourly_benchmark` resolves its frame through
+    ``actuals._eia_hourly_path(ba_code)`` -- a single ``<BA> hourly.parquet``
+    -- so it returns ``None`` for a pool code that names no file. This assembles
+    the same dict for a pool WITHOUT re-deciding anything: the per-fuel series
+    are the loader's OWN per-BA construction (spike screen -> zero-coded-gap
+    mask -> interpolate/bfill/ffill -> pad, with the storage-coverage drop)
+    applied to each of the seventeen members and then summed, and ``net_gen`` /
+    ``interchange`` are read off the registered pool frame.
+
+    **Why the fuels are summed per member rather than read off the pool frame's
+    own ``NG:`` columns, measured rather than asserted.** ``frames.
+    _pool_hourly_frame`` sums the members' ``NG:`` columns unscreened, and this
+    footprint's members carry real EIA-930 unit slips in them: AVA 2025
+    ``NG: WAT`` posts 810,113 MW in one hour against a 138 MW-class p99.9,
+    NWMT 2025 ``NG: WAT`` 99,225 MW in four, NEVP 2025 ``NG: NG`` 66,310 MW in
+    five, NWMT 2025 ``NG: COL`` 28,111 MW in one (twelve flagged member-hours
+    across 2023-2025 in all). Read off the pool frame, 2025 hydro comes back
+    111.4407 TWh; screened per member as every 1:1 region already is, it is
+    110.2719 -- a 1.17 TWh artifact. The screen is defined on ONE BA's series
+    (two order statistics of its own 8,760 hours), so applying it per member is
+    the loader's own mechanism at the level it is defined, not a new screen
+    (rules 19 ``[R-ONE-MECH]`` / 23 ``[R-FROZEN-DERIVE]``). NOTE FOR THE DESK:
+    the same unscreened pool columns are what
+    ``renewables._eia_hourly_cf_profile`` would read for a pool's delivered
+    wind/solar bound -- measured harmless for 2023-2025 (no NWPP member has a
+    flagged ``NG: WND`` or ``NG: SUN`` hour in the window) but a live seam;
+    fixing it belongs in ``src/`` and is routed, not patched here.
+
+    ``net_gen`` and ``interchange`` come from the pool frame's own columns
+    because those two quantities are DEFINED at the pool, not summed from
+    members: NWPP-20 fixed ``Net generation`` as the sum of the members'
+    **Adjusted** series and ``Total interchange`` as ``NG_adj - D_adj`` (the
+    footprint's external position by energy balance), precisely because BPAT's
+    own ``Total interchange`` carried a ~4,000 MW over-report on internal legs
+    until 2025-06 and Sigma-TI reads +32.7 TWh where the balance position is
+    -3.1 TWh. Re-summing them here would reintroduce the defect the pool frame
+    exists to avoid.
+
+    Returns ``{}`` when the pool frame cannot be assembled for the year.
+    """
+    pool = _eia_hourly_frame(_ISO_TO_HOURLY_BA[iso], year)
+    if pool is None:
+        return {}
+    totals: dict[str, np.ndarray] = {}
+    for member in ba_codes(iso):
+        frame = _eia_hourly_frame(member, year)
+        if frame is None:
+            logger.warning("%s %d: pool member %s has no frame", iso, year, member)
+            return {}
+        frame = _screen_fuel_spike_columns(frame, ba_code=member, year=year)
+        for name, column in _EIA930_BENCHMARK_COLUMNS:
+            if column not in frame.columns:
+                continue
+            raw = frame[column]
+            if name in _STORAGE_BENCHMARK_SERIES:
+                if 1.0 - float(raw.isna().mean()) < _STORAGE_MIN_COVERAGE_FRAC:
+                    continue
+            if column in _ZERO_CODED_GAP_SERIES.get(member, frozenset()):
+                raw = raw.mask(raw == 0.0)
+            series = raw.interpolate().bfill().ffill()
+            if series.isna().any():
+                continue
+            arr = series.to_numpy(dtype=float)
+            totals[name] = totals.get(name, 0.0) + arr
+    for name, column in (
+        ("net_gen", "Net generation"),
+        ("interchange", "Total interchange"),
+    ):
+        if column not in pool.columns:
+            continue
+        series = pool[column].interpolate().bfill().ffill()
+        if series.isna().any():
+            continue
+        totals[name] = series.to_numpy(dtype=float)
+    return totals
+
+
 def _eia930_annual_by_fuel(iso: str, year: int) -> dict[str, float]:
     """Return EIA-930 grid-side net generation by fuel (TWh) for an ISO-year.
 
@@ -607,7 +833,11 @@ def _eia930_annual_by_fuel(iso: str, year: int) -> dict[str, float]:
     extract for the year. Grid-side telemetry, so the variable-renewable totals
     are not subject to the EIA-923 survey's under-count / BA mis-assignment.
     """
-    bench = load_eia_hourly_benchmark(iso, year)
+    bench = (
+        _pool_hourly_benchmark(iso, year)
+        if _is_pool_region(iso)
+        else load_eia_hourly_benchmark(iso, year)
+    )
     if not bench:
         return {}
     return {

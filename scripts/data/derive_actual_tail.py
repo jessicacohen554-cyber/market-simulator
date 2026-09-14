@@ -64,6 +64,22 @@ TAIL_THRESHOLD = {
     "SPP": 200.0,  # owner ruling P6 (2026-09-06); mirrors calibration_verdict
     # SOCO deliberately ABSENT (SOCO-20, 2026-09-14): no price series exists
     # (SOCO-13 STOP gate NO), so no tail; mirrors calibration_verdict.
+    # NWPP deliberately ABSENT (NWPP-31, 2026-09-14) -- plan gate G6, the
+    # SECOND of the three TAIL_THRESHOLD-family skips. Card N2 chartered
+    # NWPP-13 to build a WEIM-derived hourly price series behind a STOP gate
+    # pre-registered before any value was read; the gate READ NO (WEIM's
+    # on-peak price sits 22.6 / 23.6 / 37.5 % below the independent Mid-C Peak
+    # traded index against a +/-10 % bar, correlation 0.67-0.95 against 0.80),
+    # so nothing landed to _validation-source and there is no
+    # actual_lmp_hourly_NWPP.parquet for the loop below to read. With no price
+    # there is no tail, and a threshold invented from the model's OWN output
+    # would be the fitted mechanism rule 1 [R-STRUCT] forbids. Substituting a
+    # neighbouring hub -- SP15, NP15 or Palo Verde, each one column away in the
+    # same ICE workbook -- is the load proxy rule 13 [R-MEASURED] forbids and
+    # stays refused (plan gate G17). The scorer reads PRICE-UNSCORED off
+    # exactly this absence (rubric v3.8, lane NWPP-22). Mirrors
+    # calibration_verdict, which has no NWPP key either.
+    # Evidence: docs/handoffs/FINDING-nwpp-13-2026-09-13.md sections 0 and 3.
 }
 
 # Rule-22 holdout quarantine, TIER-AWARE (owner decision 2026-07-31). An
