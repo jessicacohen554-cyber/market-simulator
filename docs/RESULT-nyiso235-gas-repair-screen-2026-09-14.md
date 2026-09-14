@@ -170,7 +170,15 @@ is, both defects propagate the same way this session's did.
 ## 9. WHAT WAS NOT DONE
 
 * **Object B (the gas-monotone tilt) has not been re-measured** since the repair. It should be, and
-  the span bundle is what it should be measured on.
+  the span bundle is what it should be measured on. **What that needs, recorded so the next session
+  does not repeat this session's dead end:** Object B's framing ("strip the tail and the model is
+  OVER-priced +4.1 to +14.2 %") removes the tail from **both sides**, and the committed
+  `frontend/data/backcast/tail/actual_tail.json` carries only tail **hour counts** (`rt_gt`), not the
+  actual hourly price series — so it cannot reconstruct the actual's non-tail mean. Stripping only
+  the *model's* top 1 % against the full-year actual is NOT the same measurement and gives the
+  opposite sign (it reads −14.09 / −3.64 / −4.15 / −11.08 % on the control, i.e. more under-priced,
+  not over-priced). The re-measurement needs the actual hourly NYISO RT LMP series from
+  `data/raw/lmp-data/NYISO`, tail-stripped on the same threshold on both sides.
 * No mechanism cell moves in `docs/codebase-site/data/mechanism-matrix/NYISO.js`: **no
   `ScenarioConfig` field was added or changed**, so there is no mechanism cell to update under rule
   28 `[R-MECH-MATRIX]` (b). The keeper/gates stamp is refreshed instead.
