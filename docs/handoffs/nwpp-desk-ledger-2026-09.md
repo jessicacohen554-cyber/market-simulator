@@ -11,6 +11,102 @@ recreated fresh from `origin/main`.
 
 ## 0. Live state — newest entry FIRST
 
+### r#5 — 2026-09-14 — **NWPP IS REGISTERED** (NWPP-20 landed) · W3 chartered and ISSUED, all six lanes (main `c6c70190`)
+
+**THE PIN FLIPPED. NWPP is the EIGHTH registered region.** Re-counted at this desk's own pin, not
+taken from the lane's claim (handoff §0.3):
+
+| Surface | At `c6c70190` |
+|---|---|
+| `_ISO_BUILDERS` / `SUPPORTED_ISOS` | **8** — ERCOT CAISO MISO PJM NYISO NEISO SPP **NWPP** |
+| `solve_surface.SURFACE_ISOS` | **8**, NWPP appended LAST with the gate-G1 comment in place |
+| `mech_matrix.ISO_ORDER` / matrix `isos` | **9** — SOCO is matrix-seeded but **NOT registered** |
+
+A nine-column matrix over an eight-region registry is the supported intermediate state the SOCO desk
+measured and NWPP-21 relied on; it is not a half-landed matrix.
+
+**NWPP-20 GRADED BY CONTENT.** What the lane claims, and what this desk verified independently:
+
+| Claim | Desk's verification |
+|---|---|
+| Gate G1 atomicity | `SURFACE_ISOS` carries NWPP with an in-place comment citing the same commit as `_ISO_BUILDERS` and `DEMAND_LOADERS` — **confirmed structurally** |
+| Gate G8: zero moved rows, **all 19 stored keeper configs across the seven incumbent regions re-derive byte-identical `cache_key()`** | **UNREAD by this desk** — the container has no `pydantic`/`numpy`, so no import-level check was possible. Recorded as the lane's measurement plus CI, **not** as a desk verification. Said plainly rather than implied |
+| Card N5 — five zones, BA-keyed | `zone_assignment._NWPP_BA_ZONES` exists and is keyed on Balancing Authority Code; `_iso_ba_codes` membership path in use — **confirmed** |
+| Card N8 — legacy bins | NWPP **absent** from `CAMPD_BINNING_ISOS`, `use_campd_bins=False` documented at `iso_configs.py:2058` — **confirmed** |
+| Card N7 — one PRM scalar, declared | `PLANNING_RESERVE_MARGIN_BY_ISO["NWPP"] = 0.144` with the two-regime mismatch declared — **confirmed present** |
+| Card N4 — served interchange, links off | `INTERFACE_NEIGHBORS["NWPP"]` = CAISO / WECC_SW / WECC_CAN, every block `enabled=False`; `_SCALAR_INTERCHANGE_ISOS` carries NWPP — **confirmed** |
+| Census 939 / 1,930 / 98,238.1 MW | reproduced by the lane's curated-fleet extension — **UNREAD by the desk** (same import limitation) |
+
+**R-e IS CLOSED, AND THE FIX IS BETTER THAN WHAT WAS RECOMMENDED — the desk records this in the
+lane's favour.** NWPP-10 proposed a codes-tuple plus membership. The lane did that (`ISO_TO_BA_CODES:
+dict[str, tuple[str, ...]]` + a `ba_codes(iso)` accessor, and all 13 call sites migrated — verified at
+`hydro.py` 610/642/687, `eia860.py` 1693/2633/2807, `campd_bins.py` 168 and `zone_assignment.py`
+1214/1242/1450). But it went one step further, and the step matters: **the scalar `ISO_TO_BA_CODE` is
+now built only from regions with exactly ONE code** (`{iso: codes[0] ... if len(codes) == 1}`), so
+**NWPP deliberately has no entry at all** and `ISO_TO_BA_CODE.get("NWPP")` returns `None`. That
+converts the failure mode from **silent** (an arbitrary 1-of-17 BA, an empty result indistinguishable
+from "none") to **loud** — any consumer not yet migrated breaks visibly instead of quietly modelling a
+seventeenth of the fleet. That is the right shape for the single most dangerous silent bug this
+program identified, and it is a stronger answer than the desk's charter asked for.
+
+**W3 IS CHARTERED AND ISSUED — all six lanes.** §8's W3–W6 section carried only *deltas* and directed
+the desk to compose the charters against the SPP program's worked W3. That composition is this
+sitting's work and is now committed at plan §8 W3: **NWPP-30** (outages + tranches) · **NWPP-31**
+(benchmarks) · **NWPP-32 `[FABLE]`** (the hydro budget) · **NWPP-33** (zonal shares, VRE shape, gas
+basis) · **NWPP-34** (seam derive) · **NWPP-35** (site prose + log header). All parallel, all
+file-disjoint, `DATA PROFILE: nwpp` except NWPP-35 (`code`).
+
+**Three things the desk fixed in composing them, which a naive copy of SPP's W3 would have got
+wrong:**
+
+1. **NWPP-30's output has two destinations and card N8 split them.** Outage windows are read by the
+   first keeper regardless of binning; the thermal tranches feed the pre-declared W5 CAMPD-per-plant
+   lever and **nothing in W4 reads them**. A charter that did not say so would have had the lane
+   arguing to arm per-plant binning against a ruled decision.
+2. **NWPP-31's price side is entirely negative work.** No `actual_lmp.json` block, no
+   TAIL_THRESHOLD, no amplitude derive, no hub substitution — and the determination-side consequence
+   is already built by NWPP-22. Its real deliverable is the gate-G9 zero-diff proof.
+3. **NWPP-34 must not write the naive identity derive.** BPAT is 20.26 % of footprint load and its
+   balance identity misses by more than 1 MW in **81.5 % of hours** (mean −3,206 MW) because BPA
+   wheels energy it neither generates nor serves. Every charter that touches interchange now carries
+   that measurement.
+
+**NWPP-32 also carries the half that is easy to miss: it is writing NWPP-36's specification.** Owner
+ruling N3 put cascade coupling before the first keeper, and NWPP-36 is built against NWPP-32's
+measurement of the four §2.7 constraints — so that measurement is a deliverable, not a discussion, and
+the mainstem chain is stated as *a hydrological fact to be cited, never a list to be chosen*.
+
+**What NWPP-21 already landed, so no W3 lane duplicates it:** the `--iso-nwpp` colour token
+(`#65A30D`) with its badge and button rules, the NWPP matrix shard, and the §5.9 lever queue. Stale
+there and flagged to NWPP-35: §5.9's header still reads "NOT YET REGISTERED".
+
+**Gates at `c6c70190` — 6 run, exits recorded, none carried forward. Every failure was checked for
+NWPP content and NONE contains any** (`grep -ci nwpp` = 0 on all three failing outputs), so all three
+remain other regions' promotion debris, disclosed and routed (handoff §0.5), never fixed here
+(rule 25):
+
+| Gate | Exit | NWPP mentions |
+|---|---|---|
+| `audit_keepers --check` | **FAIL** | **0** |
+| `check_registry_payload_parity` | **FAIL** | **0** |
+| `check_gate_a_provenance` | **FAIL** | **0** |
+| `check_mechanism_matrix` | **PASS** | 0 |
+| `check_bench_freshness` | **PASS** | 0 |
+| `check_golden_manifest` | **PASS** | 0 |
+
+**A limitation this desk states rather than papers over:** this container carries neither `pydantic`
+nor `numpy`, so **no import-level verification of the registration was possible here** —
+`get_iso_config("NWPP").validate_topology()` is UNREAD by the desk. Everything above marked confirmed
+was verified by reading the committed source; everything marked UNREAD rests on the lane's own
+measurement and on CI. A desk that reported the cache-key proof as its own finding would be claiming a
+check it did not run.
+
+**Next act:** grade the six W3 lanes by content as they land, then charter **W3b / NWPP-36** at the
+sitting that follows NWPP-32 — its input is NWPP-32's §2.7 measurement and it may not start before it.
+Card **N10** is served at the sitting that opens W4; card **N9** still waits on a keeper.
+
+---
+
 ### r#4 — 2026-09-14 — ALL OF W1 + W1c LANDED · cards N4/N5/N7/N8 RULED, N6 resolved by measurement · **W2 UNBLOCKED, NWPP-20 ISSUED** (main `39a1c9a1`)
 
 **Every lane this desk has ever issued has now landed.** Graded by opening artifacts on `main`, never
@@ -437,12 +533,16 @@ issue W1 (NWPP-10/11/12; NWPP-13 only if N2 rules for option (a)).
 | NWPP-11 CEMS + 930 derive + interchange + hydro | OPUS | W1 | **LANDED r#3, 5/5** | merged `73478c98`…`feebfd2a` | `FINDING-nwpp-11-2026-09-13.md` |
 | NWPP-12 WECC paths / WRAP / IRPs / fuel | OPUS | W1 | **LANDED r#4** — **G12 PASSES**; WRAP out of window; NW↔OR has no path rating | merged `5b0a19fb`…`111c68ac` | `FINDING-nwpp-12-2026-09-13.md` |
 | NWPP-13 WEIM price index | FABLE | W1 | **LANDED r#3 — verdict NO** (D3 Mid-C reconciliation −22.6…−37.5 % vs a ±10 % bar; D2 volume share 5.5–6.2 % PASSED). Nothing landed to `_validation-source` | merged `715fff9d`, `97121c22`, `976e7724` | `FINDING-nwpp-13-2026-09-13.md` |
-| NWPP-20 registration | FABLE | W2 | **ISSUED r#4 — UNBLOCKED**: N4/N5/N7/N8 ruled, N6 resolved by measurement, G12 passes. Charter corrected for the R-e scope finding | pending (`claude/nwpp-20-register-*`) | — |
+| NWPP-20 registration | FABLE | W2 | **LANDED r#5 — NWPP IS THE EIGHTH REGISTERED REGION.** G8 proof: zero moved rows, 19 keeper configs byte-identical (lane-measured; UNREAD by the desk, no pydantic here). **R-e closed better than recommended** — the scalar `ISO_TO_BA_CODE` now holds only 1:1 regions, so NWPP's absence fails LOUD | merged `f2191f5d` | `FINDING-nwpp-20-2026-09-14.md` |
 | NWPP-21 matrix shard | OPUS | W2 | **LANDED r#4** — the **ninth** shard, `ev = "W"`; re-counted after another shard landed mid-flight, as G2 designed | merged `8e88c3dd`…`622f69cf` | `FINDING-nwpp-21-2026-09-13.md` |
 | **NWPP-22 the scorer branch** | **FABLE** | **W1c** | **LANDED r#4 — class live (v3.8), own edit WITHDRAWN as a duplicate** (rule 19). 7/7 keepers byte-identical; NWPP reaches the class, verified by the desk. Done-row 7 **MET** | merged `86b5dc92`…`088094be` | `FINDING-nwpp-22-2026-09-13.md` |
-| NWPP-30/31/33/34/35 | OPUS | W3 | BLOCKED on NWPP-20 | — | — |
-| NWPP-32 hydro budget | FABLE | W3 | BLOCKED on NWPP-20 + NWPP-11 | — | — |
-| NWPP-36 cascade coupling | FABLE | **W3b** | BLOCKED on NWPP-20 + NWPP-32 — **inserted by ruling N3** | — | — |
+| NWPP-30 outages + tranches | OPUS | W3 | **ISSUED r#5** — charter composed and committed this sitting | pending | — |
+| NWPP-31 benchmarks | OPUS | W3 | **ISSUED r#5** — price side is negative work; G9 zero-diff is the exit | pending | — |
+| NWPP-33 zonal shares / VRE / gas basis | OPUS | W3 | **ISSUED r#5** | pending | — |
+| NWPP-34 seam derive | OPUS | W3 | **ISSUED r#5** — carries the BPAT identity trap and the R-a disclosure | pending | — |
+| NWPP-35 site + docs | OPUS | W3 | **ISSUED r#5** — re-counts at its own sha; NWPP-21's colour already landed | pending | — |
+| **NWPP-32 hydro budget** | **FABLE** | W3 | **ISSUED r#5** — the structural core, and it writes **NWPP-36's specification** (ruling N3) | pending | — |
+| NWPP-36 cascade coupling | FABLE | **W3b** | BLOCKED on **NWPP-32 only** now (NWPP-20 landed) — chartered at the sitting after NWPP-32, against its §2.7 measurement | — | — |
 | NWPP-40 first solve | FABLE | W4 | BLOCKED on NWPP-30/31/32/33 and **NWPP-36**. **No longer blocked on the scorer** — NWPP-22 landed, and NWPP will read `PHYSICALLY-CALIBRATED (PRICE UNSCORED)` | — | — |
 | NWPP-55…59 levers | — | W5 | pre-declared, not issuable (**NWPP-54 RETIRED into NWPP-36**, ruling N3) | — | — |
 | W6 forecast entry | — | W6 | ROUTED to the capx director (card N9) | — | — |
@@ -493,6 +593,7 @@ issue W1 (NWPP-10/11/12; NWPP-13 only if N2 rules for option (a)).
 | r#2 | 2026-09-13 | **W1 ISSUED — NWPP-10, NWPP-11, NWPP-12 `[OPUS]` and NWPP-13 `[FABLE]`**, verbatim from plan §8 W1, §8.0 pasted in, `origin/main` pinned. NWPP-21 **HELD** (C-2 live) | none — N4–N8/N10 await W1 evidence. **R-c re-measured**: SOCO's S2 converged with N2; the live risk moved to the scorer branch (SOCO card S11), routed not carded |
 | r#3 | 2026-09-13 | **NWPP-22 `[FABLE]` ISSUED** (charter written into plan §8 at this refresh, then issued) and **NWPP-21 `[OPUS]` ISSUED** (un-held) | **N11 RULED — "send it now"**. W1 graded by content: NWPP-10/11 LANDED, NWPP-13 LANDED with verdict **NO**, NWPP-12 outstanding |
 | r#4 | 2026-09-14 | **NWPP-20 `[FABLE]` ISSUED** — the pin flip, charter corrected at this refresh for the R-e scope finding and all six card outcomes | **N4, N5, N7, N8 RULED** (all as recommended); **N6 resolved by measurement**; N10 deferred to the W4 sitting |
+| r#5 | 2026-09-14 | **W3 ISSUED — all six lanes** (NWPP-30/31/32/33/34/35). Their charters did not exist: §8 carried only deltas, so the desk composed them against SPP's worked W3 and committed them at plan §8 W3 before issuing | none due — N10 at the W4 sitting, N9 on a keeper |
 
 ## 6. Errors against interest
 

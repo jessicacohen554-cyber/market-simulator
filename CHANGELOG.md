@@ -1,5 +1,34 @@
 # Changelog
 
+## 2026-09-14 — NWPP r#5: the pin flipped — NWPP is the eighth registered region, and W3 is issued
+
+Desk refresh r#5 (`docs/handoffs/nwpp-desk-ledger-2026-09.md`). Docs only — no code, no data, no
+registry; every existing keeper's cache key untouched by construction.
+
+- **NWPP-20 LANDED: NWPP is registered.** Re-counted at the desk's own pin — `_ISO_BUILDERS` and
+  `SURFACE_ISOS` both carry **8**, while the mechanism matrix carries **9** because SOCO is
+  matrix-seeded but not registered. That is the supported intermediate state, not a half-landed
+  matrix.
+- **R-e is closed, and better than the desk asked for.** The recommendation was a codes-tuple plus
+  membership; the lane did that and went further — the scalar `ISO_TO_BA_CODE` is now built only from
+  regions with exactly one BA, so **NWPP deliberately has no entry** and any unmigrated consumer gets
+  `None` and breaks loudly, instead of silently modelling one seventeenth of the fleet. That converts
+  the program's most dangerous silent bug into a visible one.
+- **W3 chartered and issued — all six lanes.** Their charters did not exist: plan §8 carried only the
+  NWPP deltas and directed the desk to compose them against the SPP program's worked W3. That
+  composition is now committed at plan §8 W3 and issued: NWPP-30 (outages + tranches), NWPP-31
+  (benchmarks), **NWPP-32 `[FABLE]`** (the hydro budget, which also writes NWPP-36's specification
+  under ruling N3), NWPP-33 (zonal shares, VRE shape, gas basis), NWPP-34 (seam derive), NWPP-35
+  (site prose + log header).
+- **Three corrections a naive copy of SPP's W3 would have carried:** card N8 split NWPP-30's output
+  into a keeper-facing half (outage windows) and a lever-facing half (tranches, which nothing in W4
+  reads); NWPP-31's price side is entirely negative work, its real deliverable being the gate-G9
+  zero-diff proof; and NWPP-34 must not write the naive balance-identity derive, because BPAT is
+  20.26 % of footprint load and its identity misses by more than 1 MW in 81.5 % of hours.
+- **Stated rather than implied:** this container has neither `pydantic` nor `numpy`, so the
+  registration could not be import-verified here. The gate-G8 cache-key proof and the fleet census are
+  recorded as the lane's measurement plus CI, **UNREAD by the desk** — not as a desk verification.
+
 ## 2026-09-14 — NWPP r#4: every issued lane has landed, four cards ruled, W2 issued
 
 Desk refresh r#4 (`docs/handoffs/nwpp-desk-ledger-2026-09.md`). Docs only — no code, no data, no
