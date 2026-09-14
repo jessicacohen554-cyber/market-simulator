@@ -14263,3 +14263,69 @@ Records: `docs/FINDING-nyiso233-d2-capacity-weighted-vote-2026-09-13.md`,
 `results/calibration/PRECOMMIT-nyiso233-d2-capacity-weighted-vote.md`,
 `scripts/probes/_nyiso233_{d2_capacity_vote_measure,tail_mechanism_census}.py`.
 **ZERO LP this session** (rule 32 `[R-SHARD]` (a)): no shard was launched and none was needed.
+
+## 2026-09-14 — nyiso-234: the availability family is closed by ARITHMETIC; the tail sits on gas the model never observed
+
+**ZERO LP. Nothing armed, no cell promoted, keeper UNCHANGED at
+`2026-09-13-nyiso-232-st-gas`. No shard launched — there is nothing to solve until an
+intake lands.** Records: `docs/FINDING-nyiso234-tail-gas-is-unobserved-2026-09-14.md`,
+`docs/DECISION-CARD-nyiso234-tail-gas-coverage-2026-09-14.md`. Probes
+`scripts/probes/_nyiso234_tail_season_reach.py` and `_nyiso234_gas_coverage_tail.py`
+(argument = tail depth %).
+
+**1 — the `temp_dependent_derate` G cell was re-read on the handoff's instruction and HELD AT
+`G`, on two independent legs.** (a) *Identification, nyiso-111's own basis, undefeated*: it
+refused because NYISO's CAMPD conduct cannot MEASURE an ambient slope (2 of 15 plants identify;
+sign inverts at −0.00745/°C; the near-pinned plant shows no response, r = 0.006; phase
+validation fails at lag −5 h). nyiso-233 measured a **residual**, which is motive, not an
+instrument — and nyiso-111's own re-open condition (a DMNC record or a plant pinned at
+capability) is **unmet**. (b) *A new reach bar no slope can rescue*: the committed curve is
+**identically 1.0 in cold hours** (hinge form flat at/below `temp_derate_ref_c = 15.0 °C`;
+mean-anchored form clipped by `np.clip`), so it cannot touch **79.8 / 49.4 / 38.4 / 15.8 %** of
+the 2022–2025 tail gap at any slope — stable across depth, and **worst (77–86 %) in 2022, the
+only year failing C3a**. The object is both-seasons (DJF 76.2 / 46.0 / 36.1 / 15.3 % of the
+gap); a hot-weather-only instrument cannot cover it.
+
+**2 — and the `.` neighbours are not a route around it: the whole availability family is closed
+on ARITHMETIC.** Putting nyiso-227 beside nyiso-233 for the first time — NYISO's **entire**
+measured sub-5-day gas outage family peaks at **1,653–2,351 MW** against **3,390–6,247 MW** of
+idle thermal in the tail hours (2–3× too small, and it must eat that headroom *before* removing
+one MW the model uses; nyiso-227 measured ST_GAS binding hours at 0/0/0 of 8,760 and put the
+shortfall at ~20×). The ≥5-day extract cannot fill it either: `min(duration_days) = 5.000`,
+**zero of 3,717 windows shorter**, and every event nyiso-233 named (Elliott Dec 23–24 2022,
+Feb 3–4 2023, Dec 21–23 2024, Jun 23–25 2025) is **shorter than that minimum detectable
+window**. nyiso-233's §5 pointer at availability is right about the *kind* of object and does
+**not** survive as a lever recommendation.
+
+**3 — that forces the fork nyiso-233 §6 flagged and declined to test, and it measures as an
+INPUT defect.** **69.8 / 29.0 / 66.8 / 15.8 %** of each year's tail gap falls on calendar dates
+for which `data/raw/gas-prices/transco_z6_ny_daily.csv` **has no row at all** (stable across
+tail depth). The model burns **$8.05/MMBtu — its own annual median — flat for eleven days,
+Dec 21–31 2022**, straight through Elliott, whose **Dec 24 (33.8 %) + Dec 23 (13.9 %)** carry
+47.7 % of that year's tail gap between them. The holes are systematic (a **14–15 day
+Christmas–New Year hole every year**, 7-day Thanksgiving holes, multi-day summer holes) and they
+track which events the calendar hid — 2024's Dec 21–23 sit inside the December hole (66.8 %),
+2025's covered Jun 23–25 give the lowest year (15.8 %). **No committed source can cross-check
+it**: `transco_z6_iroquois_monthly.csv` is *not* independent (its Dec-2022 value **7.3200** is
+exactly the mean of the 15 surviving dailies) and `algonquin_citygate_daily.csv` has the **same
+hole** (last print $6.51 on Dec 21). The repair is a **data intake**, carded to the owner, not a
+mechanism this lane may arm; **magnitude deliberately NOT estimated** (rule 5 `[R-NO-MAGIC]`) —
+the intake must land before the effect can be measured.
+
+The candidate has the property nyiso-232 proved a tail lever must have: because the hub overlay
+**supersedes** the monthly level in covered months, a repair raises the **tail** and leaves
+ordinary hours alone — structurally, not by tuning. (A tidier story in which the monthly anchor
+also explained the ordinary-hour over-pricing was hypothesised and is **false**; the code
+contradicts it and it was dropped rather than told.) It is bounded by machinery already armed:
+`dual_fuel_switching` caps downstate units at oil parity *after* the overlay.
+
+**4 — the handoff's 2022 budget question, answered: no, and on rule 14 rather than cost.**
+69.8 % of 2022's tail gap sits on dates the gas input does not observe, so spending a solve on an
+offer-curve or availability lever for 2022 now would tune a mechanism to compensate for a
+known-missing input — *"do not bury the error back inside an inaccurate input"* (rule 14
+`[R-ACCURATE]`). The correct order is: land the input, then re-screen under rule 29.
+
+Cells moved: none. `temp_dependent_derate` **re-stamped at `G`** with the new reach bar
+(rule 28(b)). Class-E parity remains RED for `caiso279_ablate_dswcouple_span` and
+`soco15_spp_arm` — both pre-existing, both tracked on main, **neither NYISO's** (rule 25);
+reported, not touched. NYISO's leg is clean.
