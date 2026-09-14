@@ -2128,3 +2128,6 @@ results/calibration/pjmh3_syncarm_2022/
 # [R-SHARD-PROMOTABLE] — on the shard branch `claude/nyiso232-arm-y2022`; recover with
 #   git checkout 451fa7f32ffacacbc85083aa30873842d06a19de -- results/calibration/nyiso232_arm_y2022
 results/calibration/nyiso232_arm_y2022/
+
+!results/calibration/pjm_h6_screen2023_ctl/**
+!results/calibration/pjm_h6_screen2023_arm/**
