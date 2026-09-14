@@ -242,6 +242,14 @@ different repo root changes `_normalize_cache_key_paths`' sentinel folding and e
 | FR-21 forecast-board staleness | gate-(a) markers cite superseded NYISO / SPP keepers (`nyiso-221`, `spp-36`) | no | keeper promotions of 2026-09-12/13; `frontend/data/forecast/**` is a forbidden region for this lane |
 | FR-22 backcast→forecast parity | NYISO keeper arms `gas_offer_margin_zonal_anchor_vintage`, `nyiso_st_gas_econ_bands_deleaked` with no registry declaration | no | nyiso-232 promotion; `scripts/lib/forecast_parity_registry.py` is the NYISO lane's |
 
+**After the rebase (§0, head on `c6c70190`):** `tests/curation` + `tests/regression` + `tests/scoring`
+read 2,916 passed / 31 failed / 33 skipped. The 31 are the 11 + 19 already classified above plus TWO
+new ones that arrived with main itself, not with this branch: `test_clean_io::test_datatype_list_matches_schemas`
+and `test_data_dictionary_sync::test_every_schema_has_a_section` both trip on the `coal-stocks`
+datatype main's `3857d801` ("Intake `coal-stocks`") added to `data/dictionary/` without the matching
+datatype-list / dictionary section — this branch touches neither `data/dictionary/` nor any clean-io
+script (0 diff lines). The unit suite on the rebased tree is reported in the log entry.
+
 Note on the branch: `origin/main` `d77a0cc9` is the auto-merge of PR #6151 — the PRECOMMIT commit
 `7e6978ee` pushed to this same branch name before the registration commit existed. PR #6152 carries
 the registration itself.
