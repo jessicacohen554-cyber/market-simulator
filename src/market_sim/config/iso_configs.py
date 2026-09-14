@@ -1933,6 +1933,262 @@ def _spp_config() -> ISOConfig:
     )
 
 
+def _nwpp_config() -> ISOConfig:
+    """Build the Northwest Power Pool (NWPP) topology configuration.
+
+    **NWPP is a POOL OF SEVENTEEN BALANCING AUTHORITIES, not an ISO and not a
+    BA** — the first many-to-one region in the registry (owner ruling N1, NWPP
+    desk sitting #1, 2026-09-13; ``docs/multi-iso/nwpp-addition-plan-2026-09.md``
+    §3): the Hermiston provenance is the illustration, plant 54761 (Hermiston
+    Generating) filing under balancing authority ``PACW`` and plant 55328
+    (Hermiston Power Partnership) under ``GRID`` one fence apart, so the
+    footprint is the union BPAT PACE PACW PGE PSEI AVA IPCO NWMT CHPD DOPD GCPD
+    SCL TPWR AVRN GRID WAUW NEVP; Canada (BC Hydro, AESO) is inside the real
+    pool and OUT of the footprint because it is entirely outside EIA-930, so it
+    can only ever be an exogenous seam. The fleet is admitted by the two-key
+    predicate ``BA ∈ NWPP_BAS AND NERC Region == "WECC"``
+    (``fleet.models.ISO_NERC_REGION_ADMISSION``) — 939 plants / 1,930 operable
+    generators / 98,238.1 MW at the EIA-860 2025 Early Release
+    (``docs/multi-iso/nwpp-data-audit.md`` §2.1, §2.8(a)).
+
+    **Five zones, each a WHOLE-BA GROUP** (owner ruling N5, sitting #4,
+    2026-09-14). There is no EIA-930 sub-BA product for any of the seventeen,
+    so a zone may not split a BA (plan §7 gate G18); the map is keyed on the
+    balancing-authority code (``zone_assignment._NWPP_BA_ZONES``), never on
+    state — a state here holds several BAs and a BA several states:
+
+    - **NWPP-NW** — BPAT · PSEI · SCL · TPWR · CHPD · DOPD · GCPD, plus AVRN's
+      Columbia-Gorge generation (no load). 43,619.1 MW; winter-peaking in
+      every year (S/W 0.86 / 0.80 / 0.82).
+    - **NWPP-OR** — PGE · PACW, plus GRID's Hermiston generation (no load).
+      7,650.5 MW; summer / summer / winter (1.09 / 1.06 / 0.98).
+    - **NWPP-INLAND** — IPCO · AVA · NWMT · WAUW. 12,574.2 MW; the weakest cut
+      (within-group load correlation 0.682 vs 0.631 against the rest) and a
+      MIXED regime: winter-peaking AVA/NWMT beside summer-peaking IPCO/WAUW.
+    - **NWPP-EAST** — PACE (PacifiCorp East: UT, WY, SE Idaho). 18,737.4 MW;
+      summer (1.24 / 1.34 / 1.30).
+    - **NWPP-SNV** — NEVP, which is ALL of NV Energy, northern Nevada
+      included (``SPPC`` is not a separate EIA-930 BA; the name invites a
+      mis-file, NWPP-12 §3.2). 15,656.9 MW; summer at 1.95 / 2.06 / 1.87 × its
+      own winter load, and load correlation 0.048 with NWPP-NW.
+
+    Declared open, not hidden (N5): GCPD's placement is disputed by load
+    correlation (0.90 with IPCO, 0.08-0.16 with its own zone) and stays,
+    because load correlation is not a transmission constraint; and the
+    largest published constraints in the footprint (WECC Paths 4/86/87/88 at
+    4.8-10.7 GW) are BPA-INTERNAL east-west cuts a whole-BA zoning cannot
+    represent at all — a property of the zoning to state on the first keeper.
+
+    Load shares are the static fallback used only when the per-zone hourly
+    shapes are absent (the per-BA regroup is lane NWPP-32's zero-derive
+    item): the pooled 2023-2025 energy shares of the members'
+    ``Demand (MW) (Adjusted)`` series, UTC-joined onto the Pacific local year
+    (NW 0.3769 · OR 0.1509 · INLAND 0.1533 · EAST 0.1808 · SNV 0.1381; per
+    year NW 0.3778 / 0.3740 / 0.3788, SNV 0.1355 / 0.1411 / 0.1376). Cross-
+    check on the audit's independent 2024 measurement (audit §9.2): 37.41 /
+    15.09 / 15.29 / 18.11 / 14.10 — identical to the fourth decimal.
+    Coincident peaks reproduce 49,290 / 52,564 / 50,953 MW to the MW. AVRN
+    and GRID carry exactly 0.0 of the load (null demand in all 26,304 hours).
+
+    **Transfer limits — every link states its tier** (N5; WECC 2024 Path
+    Rating Catalog Public Version, transcribed with printed pages in
+    ``data/raw/nwpp-planning/README.md`` §1; convention of
+    ``docs/multi-iso/04-transmission-zones-and-congestion.md``). Published
+    ratings are asymmetric, so each rated boundary is a PAIR of one-way links
+    (the ERCOT Northeast↔North precedent), never a symmetric average:
+
+    - **EAST↔SNV — Tier 1 candidate.** Path 35 TOT 2C, one line (Red
+      Butte–Harry Allen), printed p. 36: N→S 600 / S→N 580 MW.
+    - **INLAND↔SNV — Tier 1 candidate.** Path 16 Idaho–Sierra, one line
+      (Midpoint–Humboldt), p. 19: N→S 500 / S→N 360 MW.
+    - **INLAND↔EAST — Tier 2.** Path 20 "Path C" (Pre-Gateway), p. 23: N→S
+      (Idaho→Utah = INLAND→EAST) 1,600 / S→N 1,250 MW. Misalignment stated:
+      PacifiCorp's SE-Idaho territory is inside PACE, so part of Path C is
+      PACE-internal.
+    - **NW↔INLAND — Tier 2, an AGGREGATION of three rated paths**, none of
+      which is the whole boundary: Path 8 Montana-to-Northwest (NWMT↔BPA,
+      p. 15) E→W 2,200 / W→E 1,350; Path 6 West of Hatwai (AVA↔BPA, p. 13)
+      E→W 4,277 / W→E "Not defined"; Path 14 Idaho-to-Northwest (IPCO↔BPA,
+      p. 17) E→W 2,400 / W→E 1,200–1,340 (winter 2,400). INLAND→NW = 2,200 +
+      4,277 + 2,400 = 8,877 MW; NW→INLAND = 1,350 + 1,200 = 2,550 MW, taking
+      the LOWER end of Path 14's range and 0 for Path 6's undefined W→E rating
+      — a stated gap, not a guess. NorthWestern's own caveat rides with every
+      rating here: "ATC is much less than TTC" (2026 MT IRP printed p. 122), so
+      a path rating is a ceiling the real market does not reach.
+    - **NW↔OR — Tier 3, a DOCUMENTED ABSENCE.** No WECC path rates a
+      BPAT/PSEI/SCL/TPWR/CHPD/DOPD/GCPD ↔ PGE/PACW interface and none will:
+      BPA and the PGE/PacifiCorp-West systems interconnect at many points
+      around Portland and the Willamette Valley, exactly the case WECC's path
+      process produces no number for (README §1.4; the full 89-slot table of
+      contents was read). Paths 4/5/71/86/87/88 are east-west cuts across the
+      Cascades and the Columbia, NOT BA interfaces — Path 5 mixes BPA-internal,
+      BPA→PGE and PGE-internal limbs in one 7,200 MW rating — and must not be
+      borrowed. The link therefore carries a NON-BINDING PLACEHOLDER by the
+      SPP-20 construction (FINDING-spp-20 §3): the sending zone's own
+      nameplate, 43,619.1 → 43,600 MW, an upper bound that cannot bind (OR is
+      a leaf whose 2024 peak is ~9.9 GW). Pre-declared as lever NWPP-55; never
+      tuned to a residual (rules 1 / 13 / 14).
+
+    No import node (G7): the seams are the served measured schedule
+    (``eia930.envelopes.nwpp_net_interchange``, ``_SCALAR_INTERCHANGE_ISOS``,
+    owner ruling N4 — the PJM/NYISO/NEISO/SPP precedent) plus three
+    DEFAULT-OFF ``NeighborInterface`` blocks (CAISO / WECC_SW / WECC_CAN) in
+    ``model/interchange/spec.INTERFACE_NEIGHBORS["NWPP"]``. The served
+    construction and the BPAT/GRID source conflict it works around are stated
+    on that function, not repeated here.
+
+    Market design (owner ruling N7): no capacity market anywhere in the
+    footprint, so NWPP is deliberately ABSENT from ``capacity_market.
+    MARKET_DESIGN`` / ``_CURVE_ISOS`` / ``_CAPACITY_ISOS`` and takes
+    ``DEFAULT_MARKET_DESIGN`` (``capacity_market=False``, the ERCOT/SPP
+    branch). The reliability floor reads ONE scalar
+    ``PLANNING_RESERVE_MARGIN_BY_ISO["NWPP"]`` against the footprint
+    COINCIDENT peak — summer in all three years — and the two-regime mismatch
+    is DECLARED here at full magnitude rather than softened: 8 winter-peaking
+    BAs, 6 summer, 1 flipping (PACW); NWPP-NW peaks in WINTER every year
+    (0.86 / 0.80 / 0.82) while NWPP-SNV peaks in SUMMER at 1.95 / 2.06 / 1.87×
+    its own winter load, and NWPP-INLAND mixes both regimes inside one zone,
+    so even a per-zone seasonal PRM would average two regimes there. A
+    per-zone seasonal requirement is pre-declared lever NWPP-57, not a change
+    to a dict every registered region reads. WRAP is a FORECAST-SIDE object
+    only: its first binding season is Winter 2027-28, from 1 November 2027
+    (WPP BPM 109 printed p. 4), two years past the backcast window.
+
+    Fleet representation (owner ruling N8): legacy heat-rate bins
+    (``use_campd_bins=False`` — NWPP is absent from ``CAMPD_BINNING_ISOS``,
+    so the runner's per-plant path is never entered). CAMPD reaches 30.98 % of
+    nameplate / 41.8-43.6 % of energy, and 36.3 % of the footprint is hydro
+    that CEMS can never cover; per-plant binning is a W5 lever.
+
+    Offer-curve bands stay 1.0 (gate G5): NWPP takes the generic base curve
+    with no per-ISO delta. ``pipeline/backcast_config.py`` neutralizes the
+    generic gas bands for every non-ERCOT region and deep-merges the SPP
+    coal identity bands (``_SPP_OFFER_CURVE``, all four bands 1.0) for NWPP
+    too, since NWPP is the second fallback region whose fleet carries coal
+    (rule 25 ``[R-ISO-SCOPE]``). The rule-1 carve-out authorizes tuning
+    MARKET offers, and most of this footprint is cost-based
+    vertically-integrated dispatch (Electric Utility sector 69.7 % of
+    nameplate). No ``default_scenario_overrides``.
+
+    No reserve design (``model/reserves/spec.py``): ``energy_reserve_coopt``
+    keeps its default ``False``, so the co-optimized design dispatch is never
+    entered. The pool's contingency reserve is the NWPP Reserve Sharing Group
+    (a bilateral obligation, no organized ancillary-service market and no
+    published demand curve; the WEIM clears energy only), so there is no
+    measured ORDC or AS price to ground a design on. A design is a later
+    card's work, never inferred here.
+
+    No price benchmark (card N2 / NWPP-13 read NO): the WEIM on-peak price
+    sits 22.6 / 23.6 / 37.5 % below the Mid-C Peak traded index against a
+    pre-registered ±10 % bar, so no ``actual_lmp.json`` block exists and the
+    scorer reads ``PHYSICALLY-CALIBRATED (PRICE UNSCORED)`` (rubric v3.8).
+    ``TAIL_THRESHOLD["NWPP"]`` is deliberately absent from all three copies
+    (gate G6); a neighbouring hub stays refused (gate G17).
+    """
+    zones = [
+        # Static fallback = pooled 2023-2025 member Demand (MW) (Adjusted)
+        # energy shares, UTC-joined (sum = 1.0000). See the docstring.
+        Zone(name="NWPP-NW", iso="NWPP", load_share=0.3769),
+        Zone(name="NWPP-OR", iso="NWPP", load_share=0.1509),
+        Zone(name="NWPP-INLAND", iso="NWPP", load_share=0.1533),
+        Zone(name="NWPP-EAST", iso="NWPP", load_share=0.1808),
+        Zone(name="NWPP-SNV", iso="NWPP", load_share=0.1381),
+    ]
+    # NW<->OR Tier-3 placeholder = NWPP-NW zone nameplate 43,619.1 MW (EIA-860
+    # 2025 ER, post-adjudication footprint; audit §2.2 per-BA table), rounded
+    # to the nearest 100 as SPP-20's 48,700 was. Cannot bind: see docstring.
+    _nw_or_placeholder_ttc = 43_600.0
+    links = [
+        # EAST<->SNV: Path 35 TOT 2C, printed p. 36 (Tier 1 candidate).
+        TransferLink(
+            from_zone="NWPP-EAST",
+            to_zone="NWPP-SNV",
+            ttc_mw=600.0,
+            is_bidirectional=False,
+        ),
+        TransferLink(
+            from_zone="NWPP-SNV",
+            to_zone="NWPP-EAST",
+            ttc_mw=580.0,
+            is_bidirectional=False,
+        ),
+        # INLAND<->SNV: Path 16 Idaho-Sierra, printed p. 19 (Tier 1 candidate).
+        TransferLink(
+            from_zone="NWPP-INLAND",
+            to_zone="NWPP-SNV",
+            ttc_mw=500.0,
+            is_bidirectional=False,
+        ),
+        TransferLink(
+            from_zone="NWPP-SNV",
+            to_zone="NWPP-INLAND",
+            ttc_mw=360.0,
+            is_bidirectional=False,
+        ),
+        # INLAND<->EAST: Path 20 "Path C", printed p. 23 (Tier 2).
+        TransferLink(
+            from_zone="NWPP-INLAND",
+            to_zone="NWPP-EAST",
+            ttc_mw=1600.0,
+            is_bidirectional=False,
+        ),
+        TransferLink(
+            from_zone="NWPP-EAST",
+            to_zone="NWPP-INLAND",
+            ttc_mw=1250.0,
+            is_bidirectional=False,
+        ),
+        # NW<->INLAND: Paths 8 + 6 + 14 aggregated, printed pp. 13/15/17
+        # (Tier 2; the aggregation is the documented reconciliation).
+        TransferLink(
+            from_zone="NWPP-INLAND",
+            to_zone="NWPP-NW",
+            ttc_mw=8877.0,
+            is_bidirectional=False,
+        ),
+        TransferLink(
+            from_zone="NWPP-NW",
+            to_zone="NWPP-INLAND",
+            ttc_mw=2550.0,
+            is_bidirectional=False,
+        ),
+        # NW<->OR: Tier 3, documented absence (README §1.4) — symmetric
+        # non-binding placeholder.
+        TransferLink(
+            from_zone="NWPP-NW", to_zone="NWPP-OR", ttc_mw=_nw_or_placeholder_ttc
+        ),
+    ]
+    # voll = $2,000/MWh — DECLARED INTERIM, and a ledgered free parameter
+    # (rule 21 [R-DOF]). NWPP-10 §7.1 established that FERC Order 831's
+    # $2,000 applies by its own terms to RTOs and ISOs and that NWPP is
+    # neither, and proposed a sourcing rule in order of preference: (1) a
+    # loss-of-load cost stated in a participant IRP — NONE states a $/MWh
+    # (the seven IRP transcriptions were searched at registration: PacifiCorp
+    # Vol. 1 prices "unserved energy costs" only as a "$0" PVRR stream);
+    # (2) the LBNL Interruption Cost Estimate calculator on the footprint's
+    # own customer mix — a derivation lane, not a registration; (3) a WECC /
+    # WRAP planning VOLL — none published. What IS a real, cited cap for THIS
+    # footprint in the window is the WEIM hard offer cap: eleven of the
+    # seventeen balancing areas bid their resources into the CAISO-operated
+    # Western Energy Imbalance Market under CAISO Tariff §39.6.1 (the Order
+    # 831 $2,000/MWh hard cap; $1,000 soft cap with cost verification), and
+    # NWPP-13 measured WEIM clearing 5.5-6.2 % of footprint energy net (10.6 %
+    # pairwise-gross). The audit's objection is carried in full rather than
+    # buried: the cap of an imbalance market that clears ~6 % of energy is
+    # NOT a customer damage function, so this value is interim by
+    # construction, must be declared as such in every attestation that
+    # reads it, and route (2) is the pre-declared successor (routed,
+    # FINDING-nwpp-20 §5). A VOLL below the most expensive real unit's
+    # marginal cost would make shedding load cheaper than dispatching it;
+    # $2,000 clears every unit in the footprint. Never swept against a gate.
+    return ISOConfig(
+        name="NWPP",
+        zones=zones,
+        links=links,
+        voll=2000.0,
+    )
+
+
 _ISO_BUILDERS = {
     "ERCOT": _ercot_config,
     "CAISO": _caiso_config,
@@ -1945,12 +2201,18 @@ _ISO_BUILDERS = {
     # registration order of the six earlier ISOs — and every artifact that
     # iterates SUPPORTED_ISOS in order — is unchanged.
     "SPP": _spp_config,
+    # NWPP registered 2026-09-14 by lane NWPP-20 (owner rulings N1, N3-N8,
+    # docs/multi-iso/nwpp-addition-plan-2026-09.md §3) as the EIGHTH builder
+    # (SOCO is chartered, not registered — re-measured at the lane's base
+    # sha, plan §0). Appended LAST for the same reason.
+    "NWPP": _nwpp_config,
 }
 
 # Canonical tuple of every registered ISO, in builder-registration order
-# (ERCOT, CAISO, MISO, PJM, NYISO, NEISO, SPP). Single source of truth for the
-# seven-ISO set — scripts should import this instead of hardcoding the tuple so
-# a new ISO registered in ``_ISO_BUILDERS`` propagates everywhere automatically.
+# (ERCOT, CAISO, MISO, PJM, NYISO, NEISO, SPP, NWPP). Single source of truth
+# for the registered set — scripts should import this instead of hardcoding
+# the tuple so a new ISO registered in ``_ISO_BUILDERS`` propagates everywhere
+# automatically.
 SUPPORTED_ISOS: tuple[str, ...] = tuple(_ISO_BUILDERS)
 
 

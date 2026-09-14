@@ -314,7 +314,7 @@ class TestNonHindcastCoercion(unittest.TestCase):
     ARMED value and would make the coercion a no-op.
     """
 
-    ISOS = ("CAISO", "ERCOT", "MISO", "NEISO", "NYISO", "PJM", "SPP")
+    ISOS = ("CAISO", "ERCOT", "MISO", "NEISO", "NYISO", "PJM", "SPP", "NWPP")
 
     def test_the_dataclass_default_is_armed(self):
         """The flip itself, read off the field rather than a resolved instance."""

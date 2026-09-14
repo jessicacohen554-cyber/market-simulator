@@ -130,6 +130,16 @@ _ISO_MEMORY_CLASSES: dict[str, IsoMemoryClass] = {
     # per-plant / no-co-opt analogue (SPP: 715 plants / 1,646 generators at 2
     # zones vs ERCOT's 7 zones), so SPP should sit at or below it.
     "SPP": IsoMemoryClass("SPP", peak_gb=6.0, per_plant=True, co_opt=False),
+    # NWPP (registered 2026-09-14, lane NWPP-20): ZONAL class by owner ruling
+    # N8 — legacy heat-rate bins for the first keeper (use_campd_bins=False;
+    # NWPP is absent from CAMPD_BINNING_ISOS), which SUPERSEDES the plan §3
+    # recorded default per_plant=True; no reserve co-optimisation (no
+    # market-cleared AS exists in the pool). peak_gb is an ESTIMATE, MEASURED
+    # IN NWPP-40: CAISO's measured 4.5 GB is the nearest zonal / no-co-opt
+    # analogue (4 zones incl. the import node) and NWPP has one zone more plus
+    # a 288-plant monthly hydro-budget row family (~3,456 rows), so it should
+    # sit modestly above it. Gate G21 stands whatever this reads.
+    "NWPP": IsoMemoryClass("NWPP", peak_gb=5.5, per_plant=False, co_opt=False),
 }
 
 # Env pins every child inherits — the single-thread / arena-pinned profile the

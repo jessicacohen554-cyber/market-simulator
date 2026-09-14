@@ -19,7 +19,12 @@ from market_sim.config.constants import HOURS_PER_YEAR
 from market_sim.config.interchange_config import CAISO_IMPORT_TRANCHE_HUB
 from market_sim.config.paths import ISO_TRANSMISSION_DIR, RAW_DIR
 
-from .frames import _ISO_TO_HOURLY_BA, _MONTH_START_HOUR, _eia_hourly_frame_filled
+from .frames import (
+    _ISO_TO_HOURLY_BA,
+    _MONTH_START_HOUR,
+    _eia_hourly_frame_filled,
+    logger,
+)
 
 
 def _calibration_dir() -> Path:
@@ -1767,6 +1772,109 @@ def spp_net_interchange(year: int) -> np.ndarray | None:
     return _eia930_net_interchange("SWPP", year)
 
 
+# The NWPP member whose EIA-930 balancing area spans two physically separate
+# resource sets (NWPP-10 §3.1, measured at registration): Gridforce Energy
+# Management schedules Northwest merchant plants that deliver only into BPAT
+# (Hermiston Power Partnership, plant 55328, is in the fleet) AND Desert-
+# Southwest resources that deliver only to PNM / SRP / WALC — resources EIA-860
+# files under other balancing authorities (Harquahala is BA ``HGMA``), so the
+# footprint fleet cannot generate them. Its legs to counterparties outside the
+# footprint are that Southwest set, and they are removed from the served
+# schedule below.
+_NWPP_SPLIT_BA: str = "GRID"
+
+
+def _nwpp_grid_external_legs(
+    year: int, utc_hour_ending: pd.DatetimeIndex
+) -> np.ndarray:
+    """Return GRID's hourly net export (MW) to counterparties OUTSIDE the footprint.
+
+    Reads ``data/raw/eia-930-interchange/GRID interchange hourly.parquet``
+    (NWPP-11; columns ``diba``, ``mw`` [EIA sign: + = GRID exports], ``local_time``
+    hour-ENDING on GRID's Pacific clock), keeps the DIBAs that are not NWPP
+    members, localizes each leg's stamps to UTC — the repeated fall-back hour
+    is disambiguated from the file's chronological order (``ambiguous="infer"``)
+    — and joins on the pool frame's hour-ending ``UTC time``. Hours the file
+    does not cover read 0.0. Returns zeros when the file is absent (the served
+    schedule then carries GRID's Southwest legs uncorrected, and says so).
+    """
+    from market_sim.data.fleet.models import NWPP_BAS
+
+    path = (
+        RAW_DIR / "eia-930-interchange" / f"{_NWPP_SPLIT_BA} interchange hourly.parquet"
+    )
+    total = np.zeros(len(utc_hour_ending), dtype=float)
+    if not path.exists():
+        logger.warning(
+            "NWPP served interchange: %s missing; GRID Southwest legs NOT removed",
+            path.name,
+        )
+        return total
+    frame = pd.read_parquet(path)
+    external = frame[~frame["diba"].astype(str).isin(NWPP_BAS)]
+    for diba, leg in external.groupby("diba", observed=True, sort=False):
+        stamps = pd.DatetimeIndex(leg["local_time"])
+        try:
+            utc = stamps.tz_localize(
+                "America/Los_Angeles", ambiguous="infer", nonexistent="shift_forward"
+            )
+        except Exception:  # a leg whose repeated hour is not in file order
+            utc = stamps.tz_localize(
+                "America/Los_Angeles", ambiguous=False, nonexistent="shift_forward"
+            )
+        series = pd.Series(
+            leg["mw"].to_numpy(dtype=float),
+            index=utc.tz_convert("UTC").tz_localize(None),
+        )
+        series = series[~series.index.duplicated()]
+        total += series.reindex(utc_hour_ending).fillna(0.0).to_numpy(dtype=float)
+    return total
+
+
+def nwpp_net_interchange(year: int) -> np.ndarray | None:
+    """Return the NWPP footprint's hourly net export (MW, export-positive), or ``None``.
+
+    The served measured-interchange schedule of owner ruling N4 (NWPP desk
+    sitting #4, 2026-09-14: "served measured interchange, priced links
+    default-off"). Its construction was fixed in
+    ``docs/handoffs/PRECOMMIT-nwpp-20-2026-09-14.md`` §3.4 before any code was
+    written, from three measured facts:
+
+    1. **Σ ``Total interchange`` over the seventeen members is defective.**
+       BPAT's identity ``NG − D − TI`` reads −36.0 TWh in 2024 and closes to
+       0.0 from 2025-06, the month BPAT's TI dropped ~4,000 MW while its net
+       generation, demand and hydro stayed continuous — so TI is the
+       over-reported series (on internal legs: +40.1 TWh reported against
+       partners' −24.4 TWh mirrors), and the identity holds to 0.00 TWh for
+       the other sixteen. The charter's instruction *"never assume Demand =
+       NetGen − TotalInterchange"* is honoured by never reading TI at all.
+    2. **The footprint's external position by energy balance** is
+       ``Σ (NG_adj − D_adj)`` — the pool frame's ``Total interchange`` column
+       (:func:`~market_sim.data.eia930.frames._pool_hourly_frame`): −6.63 /
+       −3.12 / +5.43 TWh for 2023 / 2024 / 2025 (net IMPORT in 2023-2024).
+    3. **GRID is two resource sets** (``_NWPP_SPLIT_BA``): +8.8 TWh/yr to
+       BPAT (Northwest plants, in the fleet) and +7.1 / +9.8 / +10.1 TWh to
+       PNM / SRP / WALC (Desert-Southwest resources the fleet does not own).
+       The Southwest legs are subtracted so the LP fleet is never asked to
+       generate energy that EIA-860 places outside the footprint.
+
+    ``served = Σ₁₇ (NG_adj − D_adj) − GRID→{PNM, SRP, WALC}``. Sign follows
+    :func:`_eia930_net_interchange`: positive raises what the internal fleet
+    must serve. Reported, not used: the external-DIBA sum (+12.5 / +17.0 /
+    +21.2 TWh) inherits BPAT's per-leg over-report. The residual adjudication
+    of the BPAT/GRID source conflict is routed (FINDING-nwpp-20 §5; NWPP-34).
+    ``None`` when the pool frame for ``year`` is unavailable.
+    """
+    frame = _eia_hourly_frame_filled("NWPP", year)
+    if frame is None or "Total interchange" not in frame.columns:
+        return None
+    position = frame["Total interchange"].to_numpy(dtype=float)
+    if np.isnan(position).any() or position.shape[0] != HOURS_PER_YEAR:
+        return None
+    grid_sw = _nwpp_grid_external_legs(year, pd.DatetimeIndex(frame["UTC time"]))
+    return position - grid_sw
+
+
 # ISOs whose measured net interchange is served as a system-wide scalar
 # schedule (spread across zones by load share), as opposed to PJM's per-border-
 # zone tie attribution or ERCOT's demand-aligned DC-tie series. CAISO is
@@ -1780,4 +1888,9 @@ _SCALAR_INTERCHANGE_ISOS: dict[str, Callable[[int], np.ndarray | None]] = {
     "NYISO": nyiso_net_interchange,
     "NEISO": neiso_net_interchange,
     "SPP": spp_net_interchange,
+    # NWPP joined 2026-09-14 (lane NWPP-20, owner ruling N4) on the same
+    # precedent; a net IMPORTER in 2023-2024 under the energy-balance
+    # construction (see nwpp_net_interchange), so the served series lowers
+    # what the footprint fleet must generate in most hours.
+    "NWPP": nwpp_net_interchange,
 }

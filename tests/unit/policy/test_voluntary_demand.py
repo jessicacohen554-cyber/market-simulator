@@ -63,7 +63,7 @@ _NEW_FIELDS = (
     "voluntary_wtp_ceiling_usd_per_mwh",
     "voluntary_eligible_fuels",
 )
-_ISOS = ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP")
+_ISOS = ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP", "NWPP")
 
 
 def _vol_config(path="mid", **overrides) -> ScenarioConfig:

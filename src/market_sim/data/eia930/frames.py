@@ -64,7 +64,58 @@ _ISO_TO_HOURLY_BA: dict[str, str] = {
     # 2015-07 -> 2026-05, America/Chicago; docs/multi-iso/spp-data-audit.md
     # §3.1). Registered 2026-09-06 by lane SPP-20.
     "SPP": "SWPP",
+    # NWPP = a POOL of seventeen balancing authorities, not one extract. The
+    # code ``"NWPP"`` names no file: :func:`_eia_hourly_frame` recognises it
+    # as a pool (``_POOL_HOURLY_MEMBERS``) and returns the UTC-joined sum of
+    # the members' ``<BA> hourly.parquet`` extracts (all seventeen landed by
+    # lane NWPP-11 as a zero-residual derive from the committed BALANCE
+    # archive). Every consumer of this map — demand, renewables, actuals,
+    # envelopes — therefore reads a footprint frame through the same seam it
+    # reads a single-BA frame. Registered 2026-09-14 by lane NWPP-20.
+    "NWPP": "NWPP",
 }
+
+# Pool regions: model region -> the EIA-930 balancing authorities whose
+# extracts are summed into its hourly frame. The member set is
+# ``market_sim.data.fleet.models.NWPP_BAS`` (owner ruling N1, all 17; pinned
+# equal by test). Order is BA_CODE_TO_ISO insertion order.
+_POOL_HOURLY_MEMBERS: dict[str, tuple[str, ...]] = {
+    "NWPP": (
+        "BPAT",
+        "PACE",
+        "PACW",
+        "PGE",
+        "PSEI",
+        "AVA",
+        "IPCO",
+        "NWMT",
+        "CHPD",
+        "DOPD",
+        "GCPD",
+        "SCL",
+        "TPWR",
+        "AVRN",
+        "GRID",
+        "WAUW",
+        "NEVP",
+    ),
+}
+
+# The member whose local clock IS the pool's model clock. NWPP spans two
+# timezones — EIA-930 files 14 members on America/Los_Angeles and three (NWMT,
+# PACE, WAUW) on America/Denver, IPCO included among the Pacific fourteen
+# (measured, card N6) — so members are joined on UTC, the only admissible key,
+# onto the PACIFIC local year of BPAT (the largest BA; Pacific members carry
+# 81.6 % of load). The Mountain members' local-time columns are provenance
+# only and never read. Row k of the pool frame is Pacific local hour k, the
+# same positional clock as every single-BA frame.
+_POOL_CLOCK_BA: dict[str, str] = {"NWPP": "BPAT"}
+
+# Pool members whose ``Demand`` is null in every hour — generation-only
+# balancing authorities (NWPP-10 §2 item 4: AVRN and GRID, all 26,304 hours,
+# in every demand variant). They enter the pool demand as exactly 0.0 and the
+# per-member dropout screen skips them (an all-NaN series is not a dropout).
+_POOL_GENERATION_ONLY_BAS: frozenset[str] = frozenset({"AVRN", "GRID"})
 
 # ERCOT extract path, kept as a named constant for the ERCOT-specific helpers.
 _ERCO_HOURLY_FILE: Path = EIA_HOURLY_DIR / "ERCO hourly.parquet"
@@ -199,8 +250,11 @@ def _eia_hourly_frame(ba_code: str, year: int) -> pd.DataFrame | None:
     renewable generation drawn from this frame all share one clock.
 
     Returns ``None`` when the file is missing or the year is not covered by a
-    full 8760-hour series.
+    full 8760-hour series. A pool code (``_POOL_HOURLY_MEMBERS``) returns the
+    members' UTC-joined sum via :func:`_pool_hourly_frame`.
     """
+    if ba_code in _POOL_HOURLY_MEMBERS:
+        return _pool_hourly_frame(ba_code, year)
     path = _eia_hourly_path(ba_code)
     if not path.exists():
         return None
@@ -212,6 +266,125 @@ def _eia_hourly_frame(ba_code: str, year: int) -> pd.DataFrame | None:
     if len(df) != HOURS_PER_YEAR:
         return None
     return df.reset_index(drop=True)
+
+
+# Pool-frame columns carried from the clock member as provenance (the pool's
+# own clock), never summed.
+_POOL_CLOCK_COLUMNS: tuple[str, ...] = ("UTC time", "Local date", "Hour", "Local time")
+
+
+def _pool_member_frames(pool: str, year: int) -> dict[str, pd.DataFrame] | None:
+    """Return every member's extract for ``year`` re-indexed onto the pool clock.
+
+    The clock is the ``_POOL_CLOCK_BA`` member's strict local-year frame (8760
+    rows, Feb 29 dropped, UTC-sorted); each member's whole extract is
+    de-duplicated on ``UTC time`` and re-indexed onto that frame's ``UTC time``
+    column — a pure UTC join, so a Mountain member's rows land on the Pacific
+    hour that is the same physical hour. Hours a member does not carry come
+    back NaN (none in 2023-2025: NWPP-11 §3 measured zero gaps for all 17).
+    Returns ``None`` when the clock member's year is unavailable or ANY member
+    file is missing — a pool is never silently served from a subset.
+    """
+    clock_ba = _POOL_CLOCK_BA[pool]
+    clock = _eia_hourly_frame_filled(clock_ba, year)
+    if clock is None:
+        return None
+    utc = pd.DatetimeIndex(clock["UTC time"])
+    out: dict[str, pd.DataFrame] = {}
+    for member in _POOL_HOURLY_MEMBERS[pool]:
+        path = _eia_hourly_path(member)
+        if not path.exists():
+            logger.warning("%s pool: member extract missing: %s", pool, path.name)
+            return None
+        df = pd.read_parquet(path).drop_duplicates(subset="UTC time")
+        df = df.set_index(pd.DatetimeIndex(df["UTC time"])).reindex(utc)
+        out[member] = df.reset_index(drop=True)
+    return out
+
+
+@lru_cache(maxsize=8)
+def _pool_hourly_frame(pool: str, year: int) -> pd.DataFrame | None:
+    """Return a pool region's hourly frame: the UTC-joined sum of its members.
+
+    Shape and columns match a single-BA strict frame (row k = local hour k of
+    the pool clock, the 20 ``<BA> hourly`` columns), so every consumer reads it
+    unchanged. Three conventions are fixed here, once, for the whole pool
+    (NWPP-10 §1.3 / audit §4.4 — the demand convention is NOT optional):
+
+    * ``Demand`` is the sum of the members' **``Demand (Adjusted)``** series,
+      not the raw ``Demand``: EIA's Adjusted column repairs all 30 artifact
+      hours of 2023-2025 (AVA 10, NWMT 11, NEVP 6, PACE 1, SCL 2 — e.g. AVA
+      810,948 MW at 2025-10-12 10:00 UTC) and reproduces the cleaned coincident
+      peaks 49,290 / 52,564 / 50,953 MW to the MW. ``Net generation`` and
+      ``Total interchange`` likewise read the Adjusted family.
+    * Each member's demand passes the exact-zero **dropout** screen
+      (:func:`~market_sim.data.eia930.demand._screen_demand_dropouts`) BEFORE
+      the sum — 17 NEVP hours of 2025 survive into Adjusted as literal 0.0,
+      and a footprint sum can never read zero, so the screen has to run per
+      member. The **spike** screen is deliberately NOT applied: its 2.5 × median
+      bar flags 54 REAL CHPD hours of 12-16 January 2024 (a documented cold
+      snap holding CHPD's and the whole NWPP-NW zone's 2024 annual peak;
+      CHPD's peak/median is 2.29/2.83/2.50, falsifying the screen's own ≤ 2.1
+      premise) — applying it would delete a real regional peak, a rule-14
+      violation by construction. Generation-only members (AVRN, GRID) enter as
+      0.0. Nothing is padded, interpolated or rescaled beyond the two repairs
+      named here (rule 13).
+    * ``Total interchange`` is **NOT** the sum of the members' interchange
+      columns. That sum is broken for this pool: BPAT's ``Total interchange``
+      carried a ~4,000 MW over-report on its internal legs until 2025-06 (the
+      identity NG − D − TI = −36.0 TWh in 2024, closing to 0.0 from the month
+      the series dropped by that amount while NG and D stayed continuous), so
+      Σ TI reads +32.7 TWh where the footprint's energy-balance position is
+      −3.1 TWh. The pool column is therefore Σ (NG_adj − D_adj) — the
+      footprint's external net position by energy balance, which holds
+      exactly (to 0.00 TWh) for the other sixteen members and is immune to
+      the defective series. The served schedule applies one further
+      correction on top of it (:func:`~market_sim.data.eia930.envelopes.
+      nwpp_net_interchange`, the GRID Desert-Southwest legs) where the
+      per-counterparty file is read.
+
+    Fuel columns (``NG: *``) are plain sums with ``min_count=1`` (an hour every
+    member lacks stays NaN for the caller's own gap handling). Returns ``None``
+    when the members cannot be assembled.
+    """
+    members = _pool_member_frames(pool, year)
+    if members is None:
+        return None
+    from market_sim.data.eia930.demand import _screen_demand_dropouts
+
+    clock = members[_POOL_CLOCK_BA[pool]]
+    out = pd.DataFrame({c: clock[c].to_numpy() for c in _POOL_CLOCK_COLUMNS})
+
+    demand = np.zeros(HOURS_PER_YEAR, dtype=float)
+    net_gen = np.zeros(HOURS_PER_YEAR, dtype=float)
+    for member, df in members.items():
+        d = df["Demand (Adjusted)"].to_numpy(dtype=float)
+        if member in _POOL_GENERATION_ONLY_BAS or np.isnan(d).all():
+            d = np.zeros(HOURS_PER_YEAR, dtype=float)
+        else:
+            d = pd.Series(d).interpolate().bfill().ffill().to_numpy(dtype=float)
+            d = _screen_demand_dropouts(d, ba_code=member, year=year)
+        demand += d
+        ng = pd.Series(df["Net generation (Adjusted)"].to_numpy(dtype=float))
+        net_gen += ng.interpolate().bfill().ffill().fillna(0.0).to_numpy(dtype=float)
+    out["Demand forecast"] = sum(
+        df["Demand forecast"].to_numpy(dtype=float) for df in members.values()
+    )
+    out["Demand"] = demand
+    out["Net generation"] = net_gen
+    out["Total interchange"] = net_gen - demand
+    fuel_cols = sorted(
+        {c for df in members.values() for c in df.columns if c.startswith("NG: ")}
+    )
+    for col in fuel_cols:
+        stack = pd.concat(
+            [df[col] for df in members.values() if col in df.columns], axis=1
+        )
+        out[col] = stack.sum(axis=1, min_count=1).to_numpy(dtype=float)
+    out["Demand (Adjusted)"] = demand
+    out["Net generation (Adjusted)"] = net_gen
+    out["Total interchange (Adjusted)"] = net_gen - demand
+    return out
 
 
 # Largest hole (hours) the gap-filling hourly frame will bridge. The PJM

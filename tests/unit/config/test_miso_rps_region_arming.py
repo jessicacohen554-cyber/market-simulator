@@ -61,7 +61,7 @@ from market_sim.config.scenarios import _CACHE_KEY_OPTIONAL_FIELDS, ScenarioConf
 from market_sim.pipeline.backcast_config import backcast_config
 from market_sim.runner import _rps_region_grain_active
 
-ALL_ISOS = ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP")
+ALL_ISOS = ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP", "NWPP")
 
 
 def _backcast(iso: str) -> ScenarioConfig:

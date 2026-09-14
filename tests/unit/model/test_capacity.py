@@ -3433,7 +3433,7 @@ class TestScreenReserveValue(unittest.TestCase):
 class TestQueueCapCoverage(unittest.TestCase):
     """Every registered ISO must carry queue-cap data (peer review B2)."""
 
-    ISOS = ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP")
+    ISOS = ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP", "NWPP")
 
     def test_every_registered_iso_has_queue_caps(self):
         for iso in self.ISOS:
@@ -3828,7 +3828,7 @@ class TestGetRPSTarget(unittest.TestCase):
     def test_unregistered_iso_is_none(self):
         # An ISO with no STATE_RPS_FLOORS entry (SPP is not modeled) -> None.
         # All six registered ISOs now carry a floor entry (MISO added after PJM).
-        self.assertIsNone(get_rps_target("SPP", 2030))
+        self.assertIsNone(get_rps_target("TVA", 2030))
 
     def test_ercot_floor_is_zero(self):
         self.assertAlmostEqual(get_rps_target("ERCOT", 2030), 0.0)
@@ -3875,7 +3875,7 @@ class TestGetRPSACP(unittest.TestCase):
         # ERCOT has a modeled-zero floor but no ACP entry; SPP is unregistered.
         # Either way no escape column is built and the LP is unchanged there.
         self.assertIsNone(get_rps_acp("ERCOT"))
-        self.assertIsNone(get_rps_acp("SPP"))
+        self.assertIsNone(get_rps_acp("TVA"))
 
 
 def _entry_by_tech(

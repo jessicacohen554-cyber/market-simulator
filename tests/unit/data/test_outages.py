@@ -1993,7 +1993,7 @@ class UnitOutageLpCapacityBasisTest(unittest.TestCase):
     ``fleet_to_bins``' own arithmetic exactly.
     """
 
-    ISOS = ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP")
+    ISOS = ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP", "NWPP")
 
     def test_default_is_byte_identical_for_every_iso(self):
         # BE-1: the gate absent must be the incumbent map, exactly, everywhere.

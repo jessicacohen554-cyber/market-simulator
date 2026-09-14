@@ -203,8 +203,13 @@ EIA_860_CSV_COLUMNS: list[str] = [
     "heat_rate",
 ]
 
-# EIA-930 balancing-authority code → ISO name, for the seven wholesale
-# markets that have EIA-930 demand data.
+# EIA-930 balancing-authority code → model region name. Seven regions are one
+# balancing authority each (the wholesale markets with EIA-930 demand data);
+# NWPP is a POOL of seventeen balancing authorities under one key — the first
+# many-to-one entry in this map (registered 2026-09-14, lane NWPP-20; owner
+# ruling N1, docs/multi-iso/nwpp-addition-plan-2026-09.md §3). The map stays
+# many-to-one safe everywhere it is read (``.map`` / ``.isin`` / membership);
+# the ISO -> BA direction is ``ISO_TO_BA_CODES`` below, NOT a scalar inverse.
 BA_CODE_TO_ISO: dict[str, str] = {
     "ERCO": "ERCOT",
     "CISO": "CAISO",
@@ -215,10 +220,102 @@ BA_CODE_TO_ISO: dict[str, str] = {
     # SPP = balancing authority SWPP (registered 2026-09-06, lane SPP-20;
     # docs/multi-iso/00-iso-addition-protocol.md Stage B).
     "SWPP": "SPP",
+    # NWPP = the seventeen EIA-860 / EIA-930 balancing authorities of the
+    # Northwest Power Pool footprint (owner ruling N1, 2026-09-13): the
+    # Hermiston provenance is the illustration — plant 54761 (Hermiston
+    # Generating) files under PACW and plant 55328 (Hermiston Power
+    # Partnership) under GRID, two BAs one fence apart. AVRN and GRID are
+    # generation-only members (no demand in any hour); Canada (BCHA, AESO)
+    # is OUT — inside the real pool, outside EIA-930. Census at registration:
+    # 939 plants / 1,930 operable generators / 98,238.1 MW after the NERC
+    # admission predicate (ISO_NERC_REGION_ADMISSION) — docs/multi-iso/
+    # nwpp-data-audit.md §2.1, §2.8(a).
+    "BPAT": "NWPP",
+    "PACE": "NWPP",
+    "PACW": "NWPP",
+    "PGE": "NWPP",
+    "PSEI": "NWPP",
+    "AVA": "NWPP",
+    "IPCO": "NWPP",
+    "NWMT": "NWPP",
+    "CHPD": "NWPP",
+    "DOPD": "NWPP",
+    "GCPD": "NWPP",
+    "SCL": "NWPP",
+    "TPWR": "NWPP",
+    "AVRN": "NWPP",
+    "GRID": "NWPP",
+    "WAUW": "NWPP",
+    "NEVP": "NWPP",
 }
 
-# Inverse of BA_CODE_TO_ISO: EIA balancing-authority code keyed by ISO name.
-ISO_TO_BA_CODE: dict[str, str] = {iso: ba for ba, iso in BA_CODE_TO_ISO.items()}
+# Model region -> tuple of EVERY balancing-authority code it comprises, in
+# BA_CODE_TO_ISO insertion order. THIS is the ISO -> BA direction every
+# consumer filters on (``.isin(ba_codes(iso))``), because a scalar inverse of
+# a many-to-one map keeps whichever code was inserted last and silently
+# returns 1/17 of a pool (NWPP-10 §3: thirteen ``==`` call sites failed
+# silently that way before this table existed).
+ISO_TO_BA_CODES: dict[str, tuple[str, ...]] = {}
+for _ba, _iso in BA_CODE_TO_ISO.items():
+    ISO_TO_BA_CODES[_iso] = ISO_TO_BA_CODES.get(_iso, ()) + (_ba,)
+del _ba, _iso
+
+# Scalar inverse of BA_CODE_TO_ISO for the 1:1 regions ONLY. A pool region
+# (NWPP) deliberately has NO entry here, so ``ISO_TO_BA_CODE.get("NWPP")``
+# is ``None`` rather than an arbitrary member — a consumer that still keys on
+# this table reads "no single BA" instead of one seventeenth of the fleet.
+# Solve-path consumers read ``ba_codes`` / ``ISO_TO_BA_CODES``; this table
+# survives for the historical probes and the 1:1 fast paths.
+ISO_TO_BA_CODE: dict[str, str] = {
+    iso: codes[0] for iso, codes in ISO_TO_BA_CODES.items() if len(codes) == 1
+}
+
+# The NWPP footprint as a tuple, for callers that need the pool's member set
+# by name (the EIA-930 pool frame, the zone map, the tests).
+NWPP_BAS: tuple[str, ...] = ISO_TO_BA_CODES["NWPP"]
+
+# Footprint ADMISSION PREDICATE by NERC region, per region. A plant whose
+# EIA-860 ``Balancing Authority Code`` maps to the region is admitted only when
+# its ``NERC Region`` equals the listed value; regions absent here admit on the
+# BA code alone (the seven 1:1 regions, byte-identical to before). NWPP needs
+# it because the BA-code field is respondent-entered: plant 68906 (Pine Forest
+# Solar I, Hopkins County TX, NERC TRE, 500.0 MW) files under DOPD, a
+# Washington PUD that cannot balance a resource in ERCOT — the Western
+# Interconnection and ERCOT are asynchronously separated, so the key is
+# dispositive on physics (NWPP-10 §1.2 / audit §2.8(a)). It is a REGISTRY
+# predicate, never a per-plant exclusion (rule 24 [R-REGISTRY]). It also does
+# real work for WAUW, which straddles the Eastern/Western seam through eastern
+# Montana (Sand Creek Wind, 60595, NERC MRO — canceled, inert today).
+ISO_NERC_REGION_ADMISSION: dict[str, str] = {"NWPP": "WECC"}
+
+
+def ba_codes(iso: str) -> tuple[str, ...]:
+    """Return every EIA balancing-authority code the region ``iso`` comprises.
+
+    ``()`` for a region with no EIA-930 balancing authority registered, so a
+    caller filtering with ``.isin(ba_codes(iso))`` selects nothing rather than
+    everything. Case-insensitive on ``iso``.
+    """
+    return ISO_TO_BA_CODES.get(iso.upper(), ())
+
+
+def footprint_plant_mask(iso: str, ba_code, nerc_region=None):
+    """Return the boolean mask of plants admitted to ``iso``'s footprint.
+
+    ``ba_code`` is a pandas Series of EIA balancing-authority codes and
+    ``nerc_region`` the matching Series of EIA-860 ``NERC Region`` values (or
+    ``None`` when the frame carries none). A plant is admitted when its BA code
+    is one of :func:`ba_codes` AND, where :data:`ISO_NERC_REGION_ADMISSION`
+    names a region for ``iso`` and the NERC column is available, its NERC
+    region equals it. For the 1:1 regions the second key never applies, so the
+    mask is exactly the pre-existing ``== code`` selection.
+    """
+    mask = ba_code.astype(str).str.strip().isin(ba_codes(iso))
+    required = ISO_NERC_REGION_ADMISSION.get(iso.upper())
+    if required is not None and nerc_region is not None:
+        mask &= nerc_region.astype(str).str.strip() == required
+    return mask
+
 
 # Integer codes for fuel types, used to index into fuel-keyed arrays.
 # Code 11 (previously reserved as a gap) is now oil; biomass takes the next

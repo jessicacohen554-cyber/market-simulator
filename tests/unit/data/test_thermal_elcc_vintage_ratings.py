@@ -261,7 +261,7 @@ class ThermalElccVintageGateTest(unittest.TestCase):
 
     def test_inert_on_every_other_iso(self):
         """Rule 25: no ISO inherits PJM's verdict, armed flag or not."""
-        for iso in ("ERCOT", "CAISO", "MISO", "NYISO", "NEISO", "SPP"):
+        for iso in ("ERCOT", "CAISO", "MISO", "NYISO", "NEISO", "SPP", "NWPP"):
             armed = _config(thermal=True, iso=iso)
             self.assertFalse(thermal_accreditation_vintage_armed(armed, iso), iso)
             self.assertIsNone(

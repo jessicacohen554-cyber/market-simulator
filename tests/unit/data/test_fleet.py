@@ -1284,7 +1284,7 @@ class TestAssembleMC(unittest.TestCase):
 class TestFleetLoader(unittest.TestCase):
     """Tests for ``load_fleet_from_csv``."""
 
-    ALL_ISOS = ["ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP"]
+    ALL_ISOS = ["ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP", "NWPP"]
 
     def _gw(self, generators: list[Generator]) -> float:
         """Return the total fleet capacity in GW."""
@@ -1995,7 +1995,7 @@ class TestCcCapacityReconcilePathIsoScope(unittest.TestCase):
     property nothing defends).
     """
 
-    _ISOS = ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP")
+    _ISOS = ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP", "NWPP")
 
     def test_each_iso_resolves_to_its_own_table(self):
         from market_sim.config.paths import cc_capacity_reconcile_path
@@ -3118,7 +3118,7 @@ class TestCcWinterCapabilityBasis(unittest.TestCase):
         """No ISO gets the basis by default (rule 25 ``[R-ISO-SCOPE]``)."""
         from market_sim.config.scenarios import ScenarioConfig
 
-        for iso in ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP"):
+        for iso in ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP", "NWPP"):
             with self.subTest(iso=iso):
                 self.assertFalse(ScenarioConfig(iso=iso).cc_winter_capability_basis)
 

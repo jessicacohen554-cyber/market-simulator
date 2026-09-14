@@ -2405,6 +2405,14 @@ NUCLEAR_MONTHLY_CF: dict[str, list[float]] = {
     # units' staggered ~18-month refueling cadence (Wolf Creek spring 2024 /
     # fall 2025, Cooper fall 2024). Registered 2026-09-06 (SPP-20).
     "SPP": [1.00, 1.00, 0.98, 0.79, 0.93, 1.00, 1.00, 0.96, 0.98, 0.66, 0.89, 1.00],
+    # NWPP: the month-wise mean of the three NUCLEAR_MONTHLY_CF_BY_YEAR["NWPP"]
+    # vectors below (Columbia Generating Station, plant 371, the footprint's
+    # ONE reactor, 1,151 MW summer). The April-June trough is Columbia's
+    # BIENNIAL refuelling (deep outages May-Jun 2023 and Apr-Jun 2025, none
+    # in 2024 — audit §7 row 10), which a three-year mean halves rather than
+    # reproduces; the by-year table below is what a backcast reads. Registered
+    # 2026-09-14 (NWPP-20).
+    "NWPP": [0.99, 1.00, 0.95, 0.70, 0.37, 0.47, 0.97, 0.98, 0.98, 0.99, 0.99, 0.97],
 }
 
 # Dormant nuclear plants the EIA-860 operable schedule lists as OP that have
@@ -2735,6 +2743,21 @@ NUCLEAR_MONTHLY_CF_BY_YEAR: dict[str, dict[int, list[float]]] = {
         2024: [1.00, 1.00, 0.95, 0.41, 0.80, 1.00, 1.00, 0.88, 0.95, 0.61, 0.98, 1.00],
         2025: [1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 1.00, 0.42, 0.70, 1.00],
     },
+    # NWPP (registered 2026-09-14, lane NWPP-20): Columbia Generating Station
+    # (plant 371, BPAT), the footprint's one reactor, against the model
+    # fleet's pmax (1,151 MW summer capability). The biennial refuelling is
+    # the whole of the variance: 2023 May-Jun (0.11 / 0.32), 2025 Apr-Jun
+    # (0.28 / 0.00 / 0.12 — May 2025 net generation is exactly zero, so the
+    # derive's -0.00 is written 0.00), none in 2024. 2025 EIA-923 is the
+    # preliminary vintage (audit §8: 260 reporting plants vs 848-879);
+    # re-derive when the final file lands.
+    # Source: EIA-923 Page 1 monthly net generation, 2023-2025.
+    # Derivation/verify: scripts/data/derive_nuclear_monthly_cf.py --isos NWPP.
+    "NWPP": {
+        2023: [0.97, 1.00, 0.98, 0.83, 0.11, 0.32, 0.97, 0.98, 0.99, 0.96, 0.98, 0.95],
+        2024: [1.00, 1.00, 0.98, 1.00, 0.99, 0.97, 0.97, 0.98, 0.96, 1.00, 0.99, 0.98],
+        2025: [0.99, 0.99, 0.89, 0.28, 0.00, 0.12, 0.98, 0.98, 0.99, 1.00, 1.00, 0.98],
+    },
 }
 
 # Equivalent forced outage rate (demand) by technology class.
@@ -3053,6 +3076,41 @@ DEMAND_GROWTH_RATES: dict[str, dict[str, dict[str, float]]] = {
         "low": {"near": 0.019095, "long": 0.009206},
         "mid": {"near": 0.019095, "long": 0.009206},
         "high": {"near": 0.019095, "long": 0.009206},
+    },
+    # NWPP -- a participant-IRP ASSEMBLY, because the pool publishes no
+    # footprint LTLF (data/raw/load-forecast/nwpp/nwpp.csv, 83 rows, landed
+    # by NWPP-12; edition "Participant IRP assembly (2025 cycle)", vintage
+    # 2025). Registered 2026-09-14 by lane NWPP-20. FOUR DEPARTURES FROM THE
+    # TABLE'S CONVENTION, each a property of what is published and each
+    # disclosed rather than smoothed (rule 14 [R-ACCURATE]):
+    #   1. PEAK BASIS, not energy: the three covering publishers print peak
+    #      series (PacifiCorp summer coincident peak before EE, Vol. 1 Table
+    #      6.1; Idaho Power annual peak, 50th percentile, Table 8.2; PSE base
+    #      peak before DSR, Ch. 6) — three peak definitions, no energy row.
+    #   2. COVERAGE IS 40.36 % OF FOOTPRINT DEMAND, NOT THE FOOTPRINT:
+    #      PacifiCorp (PACE+PACW 25.40 %), Idaho Power (IPCO 6.43 %), PSE
+    #      (PSEI 8.53 %). BPAT — 20.26 %, the largest BA — files no IRP;
+    #      NorthWestern / NV Energy / PGE / Avista publish theirs only as
+    #      images. This row is the growth rate OF THE COVERED 40 %, applied
+    #      to the whole footprint by the table's construction; nothing was
+    #      scaled up (SOURCES.md 'Coverage').
+    #   3. PIECEWISE-LINEAR INTERPOLATION per publisher, flat-hold outside
+    #      each span, then SUMMED — the rule scripts/lib/load_forecast/
+    #      nwpp.py DECLARES (covered_peak_mw). Worked: covered peak 2026 =
+    #      20,144.0 MW, 2031 = 22,460.7, 2044 = 27,625.5 (the edition
+    #      horizon, < 2050); near = (22,460.7/20,144.0)^(1/5) - 1 = 0.022010;
+    #      long = (27,625.5/22,460.7)^(1/13) - 1 = 0.016048.
+    #   4. low = high = mid. One published case per publisher (Idaho Power's
+    #      10th/95th percentiles are its own weather band, not a load-growth
+    #      scenario, and are not mixed in), so no band is invented.
+    # NV Energy's 5,900 MW of data-centre requests by 2033 (2024 Joint IRP
+    # Vol. 6 p. 3) is a published LARGE-LOAD component with no decomposition
+    # into its retail forecast — routed to the capx director with the W6
+    # card, never added here (see DATACENTER_ADDITIONS_MW["NWPP"]).
+    "NWPP": {
+        "low": {"near": 0.022010, "long": 0.016048},
+        "mid": {"near": 0.022010, "long": 0.016048},
+        "high": {"near": 0.022010, "long": 0.016048},
     },
 }
 
@@ -3444,6 +3502,17 @@ DATACENTER_ADDITIONS_MW: dict[str, dict[str, dict[int, float]]] = {
     # is isolated and nothing is invented. Lands on intake of an SPP
     # large-load forecast component (routed to the capx director with card P8).
     "SPP": {},
+    # NWPP (registered 2026-09-14, lane NWPP-20): {} => 0 MW, the NEISO/SPP
+    # precedent and the memo §2.2 rule verbatim — the ONE published large-
+    # load component in the footprint, NV Energy's "twelve ... bundled-
+    # service high load factor data centers requesting 5,900 MW of capacity
+    # by 2033" (2024 Joint IRP Vol. 6 printed p. 3, of 7,600 MW of large-load
+    # requests; "scaled down in the retail load forecast" by an UNSTATED
+    # factor into 13,288 GWh over ten years), is a request count, not a
+    # DECOMPOSITION of any peak series, so nothing is isolated and nothing is
+    # invented. Lands on intake of a published NWPP large-load component
+    # (routed to the capx director with card N9).
+    "NWPP": {},
 }
 
 # Per-ISO override of the data-center block's zonal allocation, {iso: {zone:
@@ -3806,6 +3875,13 @@ ELECTRIFICATION_LAYERS: dict[str, dict[str, dict[str, dict[int, float]]]] = {
     # flat-scalar status quo persists for SPP until a source lands (the PJM /
     # CAISO / MISO posture above).
     "SPP": {"heat_pump": {}, "ev": {}},
+    # NWPP (registered 2026-09-14, lane NWPP-20): no publisher in the pool
+    # prints a heat-pump or EV adoption series for the footprint (WA's CETA
+    # and OR's HB 2021 electrification narratives carry no tabulated 8760 or
+    # adoption anchor in the NWPP-12 corpus), so the flat-scalar status quo
+    # persists for NWPP until a source lands — the SPP / PJM / CAISO / MISO
+    # posture above.
+    "NWPP": {"heat_pump": {}, "ev": {}},
 }
 
 # Balance-point (base) temperature for the heat_pump layer's heating-degree
@@ -4369,6 +4445,15 @@ RENEWABLE_AVG_CF: dict[str, dict[str, float]] = {
     # sense: verify against EIA-923 SWPP totals before quoting a forecast
     # (SPP-31 builds calibration_reference.json).
     "SPP": {"wind": 0.36, "solar": 0.19},
+    # NWPP (registered 2026-09-14, lane NWPP-20): EIA-930 2024 delivered
+    # energy over the seventeen-BA pool frame (wind 34.82 TWh, solar 17.18
+    # TWh, Pacific local year) ÷ the mean of the year-end 2023 / 2024 EIA-860
+    # nameplate on the WECC-admitted footprint (wind 12,489.8 / 13,422.3 MW;
+    # solar PV 6,312.6 / 8,265.8 MW) x 8,760 h -> 0.307 / 0.269 (the SPP
+    # construction; PRECOMMIT-nwpp-20 §3.7). Solar's 0.27 is Nevada's: SNV
+    # holds 4,175 of the 9,751 MW. Forecast-mode normalization target only;
+    # NWPP-31 builds calibration_reference.json.
+    "NWPP": {"wind": 0.31, "solar": 0.27},
 }
 
 # Installed renewable nameplate capacity (MW) by ISO and technology.
@@ -4431,6 +4516,15 @@ RENEWABLE_INSTALLED_MW: dict[str, dict[str, float]] = {
     # vintage sits between the two year-ends, as it should
     # (docs/multi-iso/spp-data-audit.md §2.3).
     "SPP": {"wind": 35460.0, "solar": 1440.0},
+    # NWPP (registered 2026-09-14, lane NWPP-20): EIA-860 2025 Early Release
+    # operable schedules on the WECC-admitted seventeen-BA footprint —
+    # onshore wind 14,460.3 MW, solar photovoltaic 9,751.3 MW (the audit's
+    # 10,051.3 was pre-adjudication and included Pine Forest Solar I's 300.0
+    # MW, rejected under ISO_NERC_REGION_ADMISSION; solar thermal 202.2 MW is
+    # not in the PV row). By zone: wind NW 6,381 / EAST 4,575 / INLAND 2,148
+    # / OR 1,206 / SNV 150; solar SNV 4,175 / EAST 3,048 / INLAND 1,061 / NW
+    # 773 / OR 694 (PRECOMMIT-nwpp-20 §3.7).
+    "NWPP": {"wind": 14460.0, "solar": 9751.0},
 }
 
 # CAISO TAC-area actual hourly load (data.eia_loader) -> model zone weights.
@@ -5457,6 +5551,16 @@ WEATHER_YEAR_POOL_BY_ISO: dict[str, tuple[int, ...]] = {
     # protocol (docs/weather-pool-coverage-2026-07.md) and are not listed;
     # 2022 and H1-2026 are quarantined for every ISO (rule 22).
     "SPP": (2023, 2024, 2025),
+    # NWPP (registered 2026-09-14, lane NWPP-20): the seventeen-member pool
+    # frame (data/eia930/frames._pool_hourly_frame) covers 2023-01 -> 2025-12
+    # on every member extract landed by NWPP-11 (26,304 UTC hours each, zero
+    # gaps). The three training years were verified END-TO-END at
+    # registration: load_demand("NWPP", y) resolves a clean zonal (5, 8760)
+    # (coincident peaks 49,290 / 52,564 / 50,953 MW reproduced), the served
+    # schedule nwpp_net_interchange resolves, and load_renewable_profiles
+    # resolves wind + solar for all three with no fallback. 2019-2022 member
+    # extracts are not landed (plan §6 row 13 puts the back years after W4).
+    "NWPP": (2023, 2024, 2025),
 }
 
 
@@ -5741,6 +5845,7 @@ VOLUNTARY_BASELINE_ISO_WEIGHT: dict[str, float | None] = {
     "NYISO": None,  # needs-intake
     "NEISO": None,  # needs-intake
     "SPP": None,  # needs-intake — same EIA-861 gap (registered 2026-09-06, SPP-20)
+    "NWPP": None,  # needs-intake — same EIA-861 gap (registered 2026-09-14, NWPP-20)
 }
 
 # f_commit(path, y): the share of the DC block's energy under a PUBLISHED

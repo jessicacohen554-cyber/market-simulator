@@ -57,6 +57,13 @@ INTERCHANGE_INJECTIONS: dict[str, tuple] = {
     # so the first keeper serves the measured EIA-930 schedule instead and
     # this entry is a byte-identical no-op until SPP-51 arms the priced seams.
     "SPP": (apply_reference_price_seam_injections,),
+    # NWPP (registered 2026-09-14, lane NWPP-20, owner ruling N4): the same
+    # self-gating generic seam step alone. ``reference_price_interface`` is
+    # DEFAULT-OFF for NWPP (REFERENCE_PRICE_DEFAULT_ISOS is untouched) and
+    # NWPP has no IMPORT_ZONE, so the first keeper serves the measured
+    # schedule (eia930.envelopes.nwpp_net_interchange) and this entry is a
+    # byte-identical no-op until a later lane (NWPP-56) arms the priced seams.
+    "NWPP": (apply_reference_price_seam_injections,),
 }
 
 

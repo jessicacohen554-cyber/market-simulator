@@ -54,7 +54,7 @@ import pytest
 from market_sim.config.iso_configs import apply_iso_scenario_defaults, get_iso_config
 from market_sim.config.scenarios import ScenarioConfig, explicitly_set_fields
 
-ALL_ISOS = ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP")
+ALL_ISOS = ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP", "NWPP")
 
 # The D-30 stage-B five and their armed values (PREREG §1.6), plus the pinned
 # poles the epoch declaration rests on.

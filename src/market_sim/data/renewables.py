@@ -217,7 +217,12 @@ _RENEWABLE_FUELS: tuple[str, str] = ("wind", "solar")
 # has no separable published series, so SPP solar keeps the delivered profile
 # exactly as MISO solar does.
 _UNCURTAILED_FALLBACK_ISOS: frozenset[str] = frozenset(
-    {"ERCOT", "CAISO", "MISO", "SPP"}
+    # NWPP (registered 2026-09-14, lane NWPP-20): no pool publishes a
+    # separable curtailment series for this footprint (BPA's oversupply
+    # curtailment is a BPAT-internal accounting, not a footprint HSL), so
+    # NWPP wind and solar keep the delivered EIA-930 profile exactly as SPP
+    # solar and MISO solar do.
+    {"ERCOT", "CAISO", "MISO", "SPP", "NWPP"}
 )
 
 # Years probed (newest first) for an HSL-covered reference year when grossing a
@@ -282,6 +287,15 @@ RENEWABLE_ZONE_ALLOCATION: dict[str, dict[str, str]] = {
     # distributes by plant coordinates (_eia860_zone_shares). No
     # ``offshore_wind`` key: the footprint is landlocked.
     "SPP": {"wind": "SPP-South", "solar": "SPP-South"},
+    # NWPP (registered 2026-09-14, lane NWPP-20): fallback only — the primary
+    # path distributes by each plant's balancing authority through the
+    # BA-keyed zone lookup (zone_assignment._NWPP_BA_ZONES). Measured on the
+    # EIA-860 2025 ER WECC-admitted footprint (PRECOMMIT-nwpp-20 §3.7): wind
+    # NW 6,381.4 / EAST 4,574.8 / INLAND 2,147.7 / OR 1,206.4 / SNV 150.0 MW
+    # of 14,460.3, so wind defaults to NWPP-NW; solar PV SNV 4,175.0 / EAST
+    # 3,047.9 / INLAND 1,061.1 / NW 772.9 / OR 694.4 of 9,751.3, so solar
+    # defaults to NWPP-SNV. No ``offshore_wind`` key: none in the footprint.
+    "NWPP": {"wind": "NWPP-NW", "solar": "NWPP-SNV"},
 }
 
 # EIA-860 operable wind/solar generator parquets, used to distribute

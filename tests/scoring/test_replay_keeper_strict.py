@@ -89,7 +89,7 @@ class TestCurrentKeepersReplayCleanly(unittest.TestCase):
 
         keepers = keeper_store.keeper_ids(REPO)
         checked = 0
-        for iso in ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP"):
+        for iso in ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP", "NWPP"):
             rid = keepers.get(iso)
             if not rid:
                 continue

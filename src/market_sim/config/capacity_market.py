@@ -554,6 +554,19 @@ STORAGE_BASE_FLEET_MW: dict[str, dict[str, float]] = {
         "mid": 450.0,
         "high": 520.0,
     },
+    # NWPP (registered 2026-09-14, lane NWPP-20): the same EIA-860 2025 Early
+    # Release construction, on the WECC-admitted seventeen-BA footprint
+    # (fleet.models.footprint_plant_mask):
+    #   mid  = operable Status="OP" battery nameplate = 2,321.0 -> 2_320
+    #   high = mid + proposed Status in {U,V,TS} = 2,321.0 + 2,147.0 -> 4_470
+    #   low  = rounded mid x 0.75 = 1,740
+    # (docs/handoffs/PRECOMMIT-nwpp-20-2026-09-14.md §3.7). Zero DOF; rule
+    # 13-admissible. NEVP holds 1,135 MW of the operable 2,321 (audit §2.4).
+    "NWPP": {
+        "low": 1_740.0,
+        "mid": 2_320.0,
+        "high": 4_470.0,
+    },
 }
 
 # ISOs whose BACKCAST resolves its storage base fleet AS OF THE SOLVE YEAR from
@@ -599,6 +612,11 @@ STORAGE_DEPLOYMENT_CEILING_MW: dict[str, float] = {
     # the same half-of-peak convention as every row above. Registered
     # 2026-09-06 by lane SPP-20.
     "SPP": 28_000.0,
+    # NWPP: ~50 % of the 52,564 MW 2024 coincident footprint peak (EIA-930
+    # Demand (Adjusted) over the seventeen BAs, docs/multi-iso/nwpp-data-
+    # audit.md §4.2), the same half-of-peak convention as every row above.
+    # Registered 2026-09-14 by lane NWPP-20.
+    "NWPP": 26_000.0,
 }
 
 # Max new storage power per year (MW). Source: ERCOT CDR, CAISO TPP queue data,
@@ -618,6 +636,10 @@ STORAGE_ANNUAL_BUILD_CAP_MW: dict[str, float] = {
     # ceiling: the battery-storage queue grew +6 GW to 31 GW in 2025 (SOM 2025
     # §2.5, PDF pp. 54-55, row 12b). Registered 2026-09-06 by lane SPP-20.
     "SPP": 500.0,
+    # NWPP: smallest 0.5 GW step >= the demonstrated peak annual battery COD
+    # on the footprint, 0.919 GW (2025; 0.898 in 2024 — EIA-860 2025 ER
+    # Operating Year, audit §7 row 7 basis). Registered 2026-09-14 (NWPP-20).
+    "NWPP": 1_000.0,
 }
 
 # Cap on the share of one year's storage build budget that any single
@@ -1827,6 +1849,18 @@ MARKET_DESIGN: dict[str, MarketDesign] = {
     # Every capacity-market-only registry in this module (demand curves,
     # vintages, ICAP/UCAP translations, locality areas) is likewise absent for
     # SPP by the same reasoning; the exclusion list is FINDING-spp-20 §4.
+    #
+    # NWPP is DELIBERATELY ABSENT too (registered 2026-09-14, lane NWPP-20;
+    # owner ruling N7): no centralized capacity market exists anywhere in the
+    # seventeen-BA footprint — resource adequacy is each vertically-integrated
+    # participant's own IRP obligation, and the one pool-wide construct, the
+    # Western Resource Adequacy Program (WRAP), is a forward-showing program
+    # whose first BINDING season is Winter 2027-28 (WPP BPM 109 printed
+    # p. 4), i.e. FORECAST-SIDE ONLY and out of every scored year. NWPP takes
+    # DEFAULT_MARKET_DESIGN (capacity_market=False, the ERCOT/SPP branch); no
+    # entry in _CURVE_ISOS / _CAPACITY_ISOS follows; every capacity-market-
+    # only registry in this module is likewise absent for NWPP by the same
+    # reasoning (FINDING-nwpp-20 §4 carries the exclusion list).
 }
 
 DEFAULT_MARKET_DESIGN: MarketDesign = MarketDesign(capacity_market=False)
@@ -2478,6 +2512,23 @@ PLANNING_RESERVE_MARGIN_BY_ISO: dict[str, float] = {
     # plus demonstrated net capability of conventional resources (the
     # criteria's own LOLE construction).
     "SPP": 0.16,
+    # NWPP (registered 2026-09-14, lane NWPP-20; owner ruling N7, "ONE SCALAR
+    # NOW, DECLARED"): 14.4 % = PacifiCorp 2025 IRP Vol. 1 printed p. 131,
+    # "the 14.4 percent PRM for July ... adopted from WRAP for the 2025 IRP"
+    # (data/raw/nwpp-planning/README.md §4.1) — the one published,
+    # per-season, WRAP-derived number in the footprint, and July is the
+    # season of the footprint's COINCIDENT peak in all three years, which is
+    # the peak this scalar is tested against. The mismatch it cannot express
+    # is declared at full magnitude on _nwpp_config: 8 winter-peaking BAs /
+    # 6 summer / 1 flipping; NWPP-NW peaks in winter (0.86/0.80/0.82) while
+    # NWPP-SNV peaks in summer at 1.95/2.06/1.87x its winter load; NWPP-INLAND
+    # mixes both regimes. PacifiCorp's own winter figure is 16.8 % (December,
+    # same page); Avista 16 % summer / 24 % winter; NorthWestern takes WRAP's
+    # monthly (Jun 26.2 / Jul 14.5 / Aug 16.1 / Sep 14.2 %, 2026 MT IRP Table
+    # 39). No single WRAP-wide PRM exists (FSPRMs are monthly and per
+    # subregion by construction) and WRAP binds only from Winter 2027-28,
+    # past the window. Per-zone seasonal PRM is pre-declared lever NWPP-57.
+    "NWPP": 0.144,
 }
 
 # Data-horizon gate for honoring an ANNOUNCED (non-fossil) EIA-860 retirement
@@ -3749,6 +3800,12 @@ ADEQUACY_EXTERNAL_TIE_FIRM_MW: dict[str, float] = {
     # (ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO) and is routed to the
     # forecast lane. A cited value replaces this zero on intake.
     "SPP": 0.0,
+    # NWPP (registered 2026-09-14, lane NWPP-20): no published RA-counted firm
+    # tie — WRAP's Forward Showing is non-binding in every scored year (first
+    # binding season Winter 2027-28, WPP BPM 109 p. 4) and the WECC path
+    # ratings on the CAISO / Canada / Southwest seams are transfer limits,
+    # not supply. The .get fallback made explicit, exactly as SPP's.
+    "NWPP": 0.0,
 }
 
 # Conventional-hydro accreditation for the same adequacy ledger, per ISO — the
@@ -4612,6 +4669,15 @@ AS_SATURATION_REF_GW_BY_ISO: dict[str, float] = {
 # per-ISO unlock every other member took); until then SPP takes the legacy
 # equal-width path, which its first solve does not use anyway (plan §4: no
 # solve before SPP-30/31/32 land — gate G4).
+#
+# NWPP is ABSENT BY OWNER RULING, not by omission (N8, NWPP desk sitting #4,
+# 2026-09-14: "LEGACY HEAT-RATE BINS FOR THE FIRST KEEPER; CAMPD PER-PLANT AS
+# A LEVER" — use_campd_bins=False). CEMS reaches 30.98 % of footprint
+# nameplate / 41.8-43.6 % of energy (NWPP-10 §2 item 8) because 36.3 % of the
+# footprint is hydro that CEMS can never cover, and 939 plants x 5 zones is
+# the largest per-plant LP the repo would hold (gate G21). Per-plant binning
+# is a pre-declared W5 lever; the ID/OR/UT/WA CEMS NWPP-11 landed still feed
+# outages, emission rates and commitment evidence.
 CAMPD_BINNING_ISOS: frozenset[str] = frozenset(
     {"ERCOT", "CAISO", "NEISO", "NYISO", "PJM", "MISO"}
 )
@@ -5071,6 +5137,25 @@ STATE_RPS_FLOORS: dict[str, dict[int, float]] = {
     # P8 (SPP-60), never a value W2 invents. No STATE_RPS_ACP row follows,
     # exactly as ERCOT has none.
     "SPP": {2026: 0.0, 2030: 0.0, 2040: 0.0, 2045: 0.0},
+    # NWPP (registered 2026-09-14, lane NWPP-20): an all-zero block on the
+    # SPP precedent, so no backcast builds an RPS row and the first keeper is
+    # unaffected — and it is MORE arguable for the forecast than SPP's, stated
+    # rather than buried. The footprint spans seven regimes that cannot be
+    # expressed as one ISO-level fraction without averaging across a legal
+    # boundary (docs/multi-iso/nwpp-data-audit.md §7.4): WA's Clean Energy
+    # Transformation Act (RCW 19.405 — coal-free, then GHG-neutral, then
+    # 100 % clean; a CES, not an RPS; 31.7 GW of the footprint), OR HB 2021
+    # (ORS 469A.400-.475, an emissions-reduction schedule to 100 %), NV's
+    # NRS 704.7801-.7828 percentage RPS, UT's non-binding cost-conditioned
+    # goal (UCA 54-17-601), MT's modest MCA 69-3-2001 RPS, and NO mandate at
+    # all in WY and ID (15 % of nameplate). The obligations attach to RETAIL
+    # providers, not balancing authorities — PacifiCorp serves six states
+    # under six regimes from one system. The numeric schedules were NOT
+    # transcribed by NWPP-12 (a mis-transcribed percentage is exactly the
+    # magic number rule 5 forbids); a load-weighted blend is a cited
+    # derivation for the capx director with the W6 card (N9), never a value
+    # W2 invents. No STATE_RPS_ACP row follows, exactly as ERCOT and SPP.
+    "NWPP": {2026: 0.0, 2030: 0.0, 2040: 0.0, 2045: 0.0},
 }
 
 # RPS Alternative Compliance Payment (ACP) ceiling, $/MWh, by ISO.
@@ -5439,6 +5524,13 @@ QUEUE_CAP_GW: dict[str, float] = {
     # it executed and on schedule (docs/multi-iso/spp-data-audit.md §5 rows
     # 12/12b). CITED.
     "SPP": 4.5,
+    # NWPP (registered 2026-09-14, lane NWPP-20): smallest 0.5 GW step >= the
+    # demonstrated all-technology peak annual COD on the WECC-admitted
+    # footprint, 4.491 GW (2024; 2025: 3.471; 2015-2025 window; EIA-860 2025
+    # ER Operating Year — the same identification ERCOT's own entry uses,
+    # PRECOMMIT-nwpp-20 §3.7). CITED to the committed sheets, not a queue
+    # report: the pool publishes no interconnection-queue total.
+    "NWPP": 4.5,
 }
 
 # Per-technology annual interconnection queue caps (GW/yr) by ISO.
@@ -5557,6 +5649,32 @@ QUEUE_CAP_PER_TECH_GW: dict[str, dict[str, float]] = {
         "nuclear": 0.5,
         "geothermal": 0.0,  # no demonstrated COD and no cited EGS resource
         "offshore_wind": 0.0,  # landlocked footprint
+    },
+    # NWPP (registered 2026-09-14, lane NWPP-20): MEASURED — demonstrated
+    # peak annual COD on the WECC-admitted footprint, EIA-860 2025 ER
+    # ``Operating Year`` (the same identification ERCOT's own entry uses;
+    # docs/multi-iso/nwpp-data-audit.md §7 row 7, re-measured post-
+    # adjudication in PRECOMMIT-nwpp-20 §3.7), each cap the smallest step
+    # above its record; the 2019-2025 window first, 2015-2025 where the
+    # shorter window records ZERO COD (a 0.0 cap would assert the technology
+    # can NEVER be built, which the longer record contradicts).
+    "NWPP": {
+        "wind": 1.5,  # 2019-2025 peak 1.484 GW (2020)
+        "solar": 2.0,  # 2019-2025 peak 1.953 GW (2024)
+        "gas_cc": 0.5,  # 2019-2025 = 0.000 -> 2015-2025 window, peak 0.500 GW (2016)
+        "gas_ct": 0.5,  # 2019-2025 peak 0.456 GW (2024)
+        # Nuclear: no demonstrated COD in either window (Columbia is 1984);
+        # 0.5 is the table's smallest non-zero step for a technology with no
+        # throughput record — a forward-ceiling ESTIMATE, LABELLED as such.
+        "nuclear": 0.5,
+        # Geothermal: a REAL record here (NV/OR/ID/UT geothermal — 0.127 GW in
+        # 2018, 0.048 in 2023, 0.029 in 2024); 0.2 is the smallest 0.1 GW
+        # step above the 2015-2025 peak, on a finer step than the 0.5 GW the
+        # table uses for GW-scale technologies because the record is sub-GW.
+        "geothermal": 0.2,
+        "offshore_wind": 0.0,  # no BOEM lease area serves the footprint; OR's
+        #   floating-wind lease areas (Coos Bay / Brookings) are CAISO-adjacent
+        #   and unbuilt — no demonstrated COD
     },
 }
 # Hydrogen turbines (hydrogen_ct, hydrogen_ccgt) and CCUS (gas_cc_ccs) do not

@@ -57,7 +57,7 @@ from market_sim.config.plant_taxonomy import (  # noqa: E402
     classify_plant,
     fuel930_of,
 )
-from market_sim.data.zone_assignment import _ISO_TO_BA_CODE  # noqa: E402
+from market_sim.data.fleet.models import BA_CODE_TO_ISO  # noqa: E402
 from scripts.lib import clean_io  # noqa: E402
 
 logger = logging.getLogger("curate_fleet")
@@ -101,9 +101,11 @@ _EIA860_RENAME = {
     "Operating Year": "operating_year",
 }
 
-# BA code -> ISO, inverted from the canonical ISO->BA crosswalk so curation and
-# the model never drift on which balancing authority is which ISO.
-_BA_TO_ISO = {ba: iso for iso, ba in _ISO_TO_BA_CODE.items()}
+# BA code -> ISO: the canonical many-to-one crosswalk itself, so curation and
+# the model never drift on which balancing authority is which region (NWPP
+# maps seventeen codes to one key, so the former scalar inversion of the
+# ISO->BA map would have kept only one of them — NWPP-10 §3).
+_BA_TO_ISO = dict(BA_CODE_TO_ISO)
 
 # Storage energy-source / prime-mover codes that bucket a unit as "storage"
 # rather than letting MWH fall through classify_plant's residual OTHER bucket.

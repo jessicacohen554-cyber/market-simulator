@@ -125,7 +125,7 @@ from market_sim.config.iso_configs import apply_iso_scenario_defaults, get_iso_c
 from market_sim.config.scenarios import _CACHE_KEY_OPTIONAL_FIELDS, ScenarioConfig
 from market_sim.pipeline.backcast_config import backcast_config
 
-ALL_ISOS = ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP")
+ALL_ISOS = ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP", "NWPP")
 
 # The five promoted fields and their D-30 values (PREREG §1.6).
 STAGE_B = {

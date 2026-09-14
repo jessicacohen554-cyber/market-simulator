@@ -375,6 +375,25 @@ GAS_BASIS_DIFFERENTIAL: dict[str, float] = {
     # wiring (Panhandle vs NGPL-MidCon; EIA delivered-to-EP OK/KS/TX/NM state
     # series landed by SPP-11) is SPP-32's.
     "SPP": -0.26,
+    # NWPP (registered 2026-09-14, lane NWPP-20): Sumas — EIA's "main pricing
+    # point for natural gas in the Pacific Northwest", the Northwest Pipeline
+    # receipt point at the BC border that prices NWPP-NW (2,036.8 MW of the
+    # zone's gas names Northwest Pipeline, audit §7.2) — trades at a DISCOUNT
+    # to Henry Hub in 2024: Sumas 2024 mean $2.002 (data/raw/gas-prices/
+    # sumas_weekly.csv, 50 weekly prints, scraped from the EIA Natural Gas
+    # Weekly Update narrative by scripts/data/fetch_sumas_weekly.py) minus
+    # Henry Hub 2024 mean $2.192 (henry_hub_monthly.csv) = -0.19, the same
+    # "2024 avg" basis the ERCOT/CAISO/SPP rows carry. FORWARD-YEAR /
+    # FALLBACK VALUE ONLY, and a KNOWN misalignment stated rather than
+    # buried (rule 14): the footprint has a 2.51x internal delivered-gas
+    # spread (NWMT 1.815 -> PACE 4.564 $/MMBtu, quantity-weighted EIA-923
+    # 2023-25; FINDING-nwpp-12 §2.5) across five zones on four hubs (Sumas /
+    # Stanfield / Opal / Kern River), so ONE basis misprices most of it; the
+    # backcast reads per-plant EIA-923 delivered gas (30-32 plants/yr,
+    # committed) and never this scalar, and the zonal hub wiring is lane
+    # NWPP-33's. Stanfield, Opal and Kern River have no free public series
+    # reachable from the session (SOURCES_nwpp_gas.md §3).
+    "NWPP": -0.19,
 }
 
 # CAISO citygate -> burner-tip transport adder ($/MMBtu). The CAISO gas-hub
@@ -443,6 +462,23 @@ COAL_PRICE_BASE: dict[str, float] = {
     #   low-cost; ILB is local to the footprint). EIA AEO 2024 delivered coal
     #   price, PRB+ILB blend; refined per-plant by the EIA-923 monthly
     #   fuel-cost overlay where reported (MISO has full CEMS/EIA-923 coverage).
+    "NWPP": 2.9,  # NWPP (registered 2026-09-14, lane NWPP-20): MEASURED, not
+    #   AEO — the EIA-923 quantity-weighted delivered mean over the eight
+    #   footprint coal plants with Schedule-2 receipts is $2.612 (2023) /
+    #   $2.855 (2024) / $2.816 (2025) per MMBtu (data/raw/_processed-legacy/
+    #   eia923_monthly_fuel_costs.parquet on the WECC-admitted footprint;
+    #   PRECOMMIT-nwpp-20 §3.7), and 2.9 is the 2024 value, the same year
+    #   the peer rows' "AEO 2024" anchors. The basin split is BIMODAL and
+    #   legible in the price (FINDING-nwpp-12 §2.5): PRB rail-delivered Dave
+    #   Johnston 1.19 / Wyodak 1.38; Green River-Kemmerer Naughton 2.59 /
+    #   Jim Bridger 3.25; Uinta Bonanza 3.02 / Hunter 3.32 / Huntington 3.44;
+    #   rail-delivered North Valmy 4.95 — a per-state coal price is wrong
+    #   here and coal must be priced per plant. THE GAP, stated: Colstrip
+    #   (1,647.4 MW, ~9-11 TWh/yr), Centralia, TS Power and Hardin — 2,911.7
+    #   MW, 32.7 % of footprint coal and the ENTIRE coal fleet of zones
+    #   INLAND and NW — carry ZERO receipts (mine-mouth / captive-mine), so
+    #   this scalar is their only price until NWPP-12's routed follow-up
+    #   (NorthWestern 2026 MT IRP Figure 61, an image) is transcribed.
     "SPP": 1.8,  # SPP's coal fleet (20.3 GW nameplate, 29 plants — KS/NE/OK/
     #   MO/TX/ND) burns rail-delivered Powder River Basin sub-bituminous:
     #   MEASURED, not AEO — the EIA-923 SWPP plant-weighted delivered mean is
@@ -674,6 +710,17 @@ COAL_SIGMOID_BACKCAST_GAS_MIN_MMBTU: dict[str, float] = {
     # construction HH 2024 + basis (2.19 - 0.26 = 1.93) within the two
     # publications' HH rounding. Registered 2026-09-06 (SPP-20).
     "SPP": 1.98,
+    # NWPP (registered 2026-09-14, lane NWPP-20): the Sumas 2024 annual mean,
+    # $2.00/MMBtu — the cheapest full year of 2023-2025 at the footprint's
+    # own reference hub (2023 $4.80 across the January Pacific-Northwest
+    # price spike; 2025 partial-year mean $1.98 over 31 prints, not a full
+    # year; data/raw/gas-prices/sumas_weekly.csv). Equivalent to the table's
+    # construction HH 2024 + basis (2.19 - 0.19 = 2.00) exactly. The EIA-923
+    # quantity-weighted delivered gas to the footprint's plants reads $2.82
+    # in 2024 — the burner-tip figure, which the sigmoid compares against
+    # the coal plant's own delivered cost on a hub basis, so the hub value is
+    # the like-for-like anchor (PRECOMMIT-nwpp-20 §3.7).
+    "NWPP": 2.00,
 }
 
 # Baseline logistic slope (per $/MMBtu) for a coal supply group whose plants

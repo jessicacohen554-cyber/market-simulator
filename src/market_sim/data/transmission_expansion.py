@@ -86,6 +86,12 @@ TRANSMISSION_BASE_STATIC_VINTAGE: dict[str, int] = {
     "NYISO": 2025,
     "NEISO": 2023,
     "SPP": 2026,
+    # NWPP (registered 2026-09-14, lane NWPP-20): the WECC 2024 Path Rating
+    # Catalog (Public Version) every rated base link in _nwpp_config is
+    # transcribed from (data/raw/nwpp-planning/README.md §1, landed by
+    # NWPP-12) — Paths 35 / 16 / 20 / 8 / 6 / 14; the NW<->OR placeholder is
+    # the EIA-860 2025 ER zone nameplate but carries no rating vintage.
+    "NWPP": 2024,
 }
 
 # The target kinds the forward channel can express at this topology's grain.

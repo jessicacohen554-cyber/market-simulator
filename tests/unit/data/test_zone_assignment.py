@@ -685,3 +685,67 @@ def test_spp_every_plant_resolves():
     valid = {"SPP-North", "SPP-South"}
     assert set(lookup.values()) <= valid
     assert valid <= set(lookup.values())
+
+
+# --- NWPP (registered 2026-09-14, lane NWPP-20; owner rulings N1 + N5) --------
+
+
+def test_nwpp_zones_are_whole_ba_groups():
+    """Card N5 / gate G18: the map is keyed on the balancing-authority code and
+    every BA sits in exactly one zone — no state map, no coordinate rule."""
+    from market_sim.data.zone_assignment import _NWPP_BA_ZONES
+
+    groups = defaultdict(set)
+    for ba, zone in _NWPP_BA_ZONES.items():
+        groups[zone].add(ba)
+    assert groups == {
+        "NWPP-NW": {"BPAT", "PSEI", "SCL", "TPWR", "CHPD", "DOPD", "GCPD", "AVRN"},
+        "NWPP-OR": {"PGE", "PACW", "GRID"},
+        "NWPP-INLAND": {"IPCO", "AVA", "NWMT", "WAUW"},
+        "NWPP-EAST": {"PACE"},
+        "NWPP-SNV": {"NEVP"},
+    }
+
+
+def test_nwpp_has_no_geographic_zone_rule():
+    """A coordinate read cannot place an NWPP plant (a state holds several BAs)."""
+    import pytest
+
+    with pytest.raises(ValueError, match="whole-BA"):
+        assign_zone_by_coords(47.6, -122.3, "NWPP")  # Seattle
+    with pytest.raises(ValueError, match="whole-BA"):
+        assign_zone_by_fips("53", None, "NWPP")  # Washington
+
+
+def test_nwpp_known_plants_resolve_by_balancing_authority():
+    """Named footprint plants land in their BA's zone (EIA-860 plant codes)."""
+    cases = {
+        6163: "NWPP-NW",  # Grand Coulee (BPAT)
+        3921: "NWPP-NW",  # Chief Joseph (BPAT)
+        371: "NWPP-NW",  # Columbia Generating Station (BPAT)
+        3886: "NWPP-NW",  # Wells (DOPD)
+        3888: "NWPP-NW",  # Wanapum (GCPD)
+        55103: "NWPP-NW",  # Klamath Cogeneration (AVRN — generation-only member)
+        55328: "NWPP-OR",  # Hermiston Power Partnership (GRID — generation-only)
+        6106: "NWPP-OR",  # Boardman (PGE)
+        6076: "NWPP-INLAND",  # Colstrip (NWMT)
+        6165: "NWPP-EAST",  # Hunter (PACE)
+        8066: "NWPP-EAST",  # Jim Bridger (PACE)
+        8224: "NWPP-SNV",  # North Valmy (NEVP)
+    }
+    for oris, expected in cases.items():
+        assert assign_zone(oris, "NWPP") == expected, f"ORIS {oris}"
+
+
+def test_nwpp_lookup_admits_wecc_only_and_every_fleet_plant_resolves():
+    """Audit §2.8(a): Pine Forest (68906, TX/TRE) is out; every plant the fleet
+    loader builds resolves to one of the five zones (Stage B)."""
+    lookup = build_zone_lookup("NWPP")
+    valid = {"NWPP-NW", "NWPP-OR", "NWPP-INLAND", "NWPP-EAST", "NWPP-SNV"}
+    assert set(lookup.values()) <= valid
+    assert valid <= set(lookup.values())
+    assert 68906 not in lookup
+    assert len(lookup) >= 939  # eGRID 2023 + the EIA-860 2025 ER supplement
+    fleet = load_fleet_from_csv("NWPP", get_iso_config("NWPP"))
+    assert fleet
+    assert {g.zone for g in fleet} <= valid

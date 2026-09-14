@@ -184,6 +184,18 @@ ISO_STATES: dict[str, tuple[str, ...]] = {
         "SD",
         "TX",
     ),
+    # NWPP (registered 2026-09-14, lane NWPP-20): the seven states carrying a
+    # CEMS-eligible footprint unit (docs/multi-iso/nwpp-data-audit.md §8 —
+    # "ISO_STATES["NWPP"] = (ID, MT, NV, OR, UT, WA, WY)"). Unit-level CAMPD
+    # extracts exist for every one: MT/NV/WY/CA on disk before the program,
+    # ID/OR/UT/WA x 2023-2026 landed by NWPP-11 (16 files). CO excluded — its
+    # one footprint plant is 7.5 MW of HYDRO (James W. Broderick, PACE), zero
+    # CEMS-eligible units; CA excluded — 50.8 MW of which 15.0 is combustion
+    # and NONE appears in the committed CA_2024 extract (the CA files are
+    # inert for NWPP, exactly as WY's were for SPP); TX excluded by the
+    # §2.8(a) rejection of plant 68906. CEMS reaches 30.98 % of footprint
+    # nameplate / 41.8-43.6 % of energy (owner ruling N8 — legacy bins first).
+    "NWPP": ("ID", "MT", "NV", "OR", "UT", "WA", "WY"),
 }
 
 # States feeding an ISO's MERIT-ORDER PANEL — the identification scope of the
