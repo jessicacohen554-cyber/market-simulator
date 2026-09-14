@@ -11,6 +11,55 @@ recreated fresh from `origin/main`.
 
 ## 0. Live state — newest entry FIRST
 
+### r#6 — 2026-09-14 — **SOCO IS REGISTERED** · SOCO-20 GRADES PASS · W3 ISSUED · the desk's own G23 was wrong about the one step that mattered (main `d54cd9c5`)
+
+**SOCO is the NINTH registered region.** `_ISO_BUILDERS` on main is nine keys ending `"SOCO"`; PR #6152
+merged as *"Register SOCO as the **ninth** region (SOCO-20)"* after the lane rebased onto the
+NWPP-inclusive main. W2 is CLOSED. W3 is unblocked and issued below.
+
+**SOCO-20 — graded PASS, by content.** Verified on main rather than taken from the FINDING:
+`_ISO_BUILDERS` / `DEMAND_LOADERS` / `SURFACE_ISOS` all carry SOCO; `BA_CODE_TO_ISO["SOCO"]="SOCO"` and
+`_ISO_TO_BA_CODE["SOCO"]` both present (the §2.3 pin the desk added at r#3–r#4, and the one NWPP's
+precedent did NOT discharge); three zones on the **five**-respondent shares card S3 re-ruled, Southern
+Power 186 excluded. **G8 holds** — 0 moved rows for all eight incumbents, seven keepers' `cache_key()`
+byte-identical. What earns the grade is not the pin flip but the conduct around it:
+
+- **Every** remaining test failure carries a **same-tree control** — "FAILS on main's code, same tree" —
+  rather than an assertion that it is pre-existing. That is the standard this desk should hold every
+  lane to, and it is the first lane to volunteer it unprompted.
+- The lane found `--rescope-from-parquet` **corrupting** the tables it was told to regenerate, repaired
+  them by hand to an identity standard, and **ROUTED the script defect instead of patching outside its
+  regions** — the STOP-and-route discipline working in the direction that costs the lane time.
+- It shipped its `## Log entry` (appended verbatim to `docs/calibration-log/soco.md` this sitting).
+  E-6's correlation holds at 4/4 for pack-copied charters and 0/2 for desk-drafted ones.
+
+**The desk was wrong, and it was wrong about the step it had just written a gate for.** G23 told the
+rebasing lane the parquet conflicts were mechanical — *"no judgment call"* — and offered a **census** as
+the check. The rescope dropped the eGRID `heat_rate` join on four of eight tables, added a column,
+reordered another and admitted a foreign PJM row; **every count still matched**, so the census this desk
+prescribed would have passed all of it. Recorded as **E-8**, G23 corrected to the lane's proven recipe
+(main's frame byte-for-byte + the new rows, `heat_rate` from the PLNT23 cache, and `.equals()` on the
+untouched slice — an identity, never a count). Two sittings, two errors of the same shape: right about
+the data, wrong about the code.
+
+**Routed this sitting:** **R-l** the `process_eia860` non-additivity (the committed tables are repaired,
+the script is not — and SPP-20 and NWPP-20 ran the same routine, so their tables deserve the same
+`.equals()` audit); **R-m** 20 undeclared D79 SOCO rows, the same state SPP-20 left, now a
+two-region-wide protocol gap rather than either lane's miss; **R-n** `solve_surface.py:75` still calls
+SOCO "the eighth registered region".
+
+**W3 ISSUED — SOCO-30/31/32/33/34**, per §8's standing instruction (against SPP's committed W3 charters
+plus the SOCO deltas). **SOCO-32 carries card S3's exclusion of Southern Power (186) as a hard
+precondition**, so the zonal share is never quietly rebuilt on six respondents — the specific failure
+this desk flagged at r#5 before the lane existed.
+
+**Open, and the owner's:** PR **#6144** (r#5 + r#6 records) is still unmerged, and it is now costing
+something measurable — SOCO-20 had to route *"ledger r#5 five-respondent ruling not on main"* as an item
+because the lane could not cite it. Its seven red checks are all base-branch, covered by one
+standing-down comment, and its diff is markdown only.
+
+---
+
 ### r#5 — 2026-09-14 — ALL FIVE LANES LAND AND ALL FIVE PASS · GATE G22 FAILS AND THE GATE IS THE POINT · **SOCO-20 IS CLEARED** (main `39a1c9a1`)
 
 **Graded BY CONTENT — five FINDINGs opened, five PASS.** The r#4 re-emission worked: every lane
@@ -463,6 +512,9 @@ option (a)).
 | R-j | **The base-branch debt is now GROWING with each promotion, not static.** At r#5: gate-(a) red on **three** ISOs (MISO, NYISO, **SPP**) plus an SPP marker/`calibration-complete.json` inconsistency; FR-22 on **two** undeclared NYISO mechanisms (`gas_offer_margin_zonal_anchor_vintage`, `nyiso_st_gas_econ_bands_deleaked`); `audit_keepers` at 5 failures including a new **S1** status-stale on ERCOT | the promoting lanes; the capx director's gate (a) | Every increment arrived with a promotion that did not finish its duties — the exact failure mode rule 35 `[R-PROMOTE]` names. Not this desk's files. **Reported once here; the desk will not re-report it each sitting.** **PARTLY FALSIFIED at the r#5 check-in (main `c6c70190`) — corrected rather than left standing.** "Growing with each promotion" was true at r#5 and is not a law: measured just now, `audit_keepers --check` is **1 failure / 4 warnings**, down from 5 failures. **MISO's E13 ×4 CLEARED** — the MISO promotion swept and `2026-09-12-miso-255-sil-measured` is designated with no orphan runs, which is rule 35 `[R-PROMOTE]`'s invariant actually holding. What remains: the lone FAILURE is **S1 status-stale, and it grew from ERCOT alone to ERCOT + CAISO + NEISO** (fix: `python scripts/build_status.py`, three ISOs' `status/*.js`, so rule 35(a) puts it on those lanes); plus two new WARNs — **NYISO E11** (see G21) and **MISO E3** (`meta.json` years `[2020…2025]` vs `calibration_flags` years `[2023]`). The honest shape is **churn, not monotone growth**: promotions clear their own debt and open new debt elsewhere |
 | R-e | `audit_keepers` **E13 RED ×4 on MISO** at `c4d4a108` — `2026-09-09-miso-250-ep-gas` registered but neither keeper nor stamped, and three `miso-251` runs stamped to it; plus E11 on NYISO's missing lineage baseline. Separately: **Ruff** 2 errors (`scripts/gen_nyiso229_attestation.py:63`) and the **default cache-key pin** off its literal (`1eefed49…` → `bd2b4657…`), which reds both the pin check and the structural guards | MISO lane · NYISO lane · capx (cache fingerprint) | All in `src/`/`scripts/`/`frontend/`, none this desk's to write. Stood down on PR #6090 with one comment and no ported fix; no re-run spent (deterministic, reproduced locally). **They will red every SOCO PR until repaired**, so a future sitting must not read them as its own regression |
 | R-k | **The BLOCKING `Structural refactor guards` gate is red on a FALSE POSITIVE stacked on a real stale docstring — and both obvious repairs are wrong.** Root-caused at the r#5 check-in from the #6144 failure. (i) `scripts/ci_refactor_guards.py:52` is `_SCRIPT_REF_RE = re.compile(r"scripts/[\w/.\-]+\.py")` — **no left word boundary**, so any path *containing* `.../scripts/foo.py` is read as repo-root `scripts/foo.py`. Proved empirically: on `scripts/run_calibration_full.py:3780` it yields `scripts/test_recorded_config_gas_anchor_mirror.py`; adding `(?<![\w/])` yields **zero** matches. (ii) that same docstring is **independently wrong** — it cites `tests/unit/`**`scripts`**`/test_recorded_config_gas_anchor_mirror.py` but the file is tracked at `tests/unit/`**`data`**`/…` (created by nyiso-231, `0acedb7e`). So the gate is red for a genuine doc error, surfaced through a buggy lint | the CI owner (the regex) · the NYISO lane (the docstring) | **Both need fixing, and the two tempting one-liners are each a paper-over**: creating a stub at `scripts/` would satisfy a regex bug with a fake file, and adding the string to `KNOWN_DANGLING` would allowlist a real stale path AND leave the regex mis-reporting every future nested `scripts/` reference. A false positive in a blocking gate is worse than a true failure — it trains lanes to read a red as noise. Not this desk's files (`scripts/`). Diagnosis recorded here so the next lane does not repeat the four-call root-cause |
+| R-l | **`process_eia860.rescope_generator_table_from_parquet` is NOT additive when columns differ** — its last line writes the RAW rebuild, so a rescope DROPS the eGRID `heat_rate` join (8,101 populated rows on the canonical table), ADDS `planned_retirement_month`, reorders `balancing_authority_code`, and admits foreign rows (one PJM plant, 60781). Found by SOCO-20 when its own rescope tripped `test_fleet` heat-rate pins, `test_egrid_boundary_heat_rate`, `test_cc_steam_part_reclass` and `test_derive_coal_sigmoid` | the data-curation owner (routed BY SOCO-20 through this desk) | **The committed tables are REPAIRED; the script is not.** The proven recipe is in gate G23 and in SOCO-20's FINDING §4: main's frame byte-for-byte + the new region's rows only, `heat_rate` joined from the PLNT23 cache, and **the non-new slice `.equals()` main's frame** asserted per file. **Every future region addition hits this** — SPP-20 (`3117f06a`) and NWPP-20 both ran the same routine, so their tables are worth the same `.equals()` audit |
+| R-m | **D79 solve-surface: 20 undeclared SOCO rows** (`solve_surface_register.py --diff` shows SOCO 20 = its own new rows). There is no `--declare-iso` route, so a new region cannot declare its own rows without touching the shared declaration file | SOCO-DESK (the R-1 successor) | **Same state SPP-20 left**, so the gap is now two regions wide and is a registration-protocol defect rather than either lane's miss. Gate G8 is unaffected — 0 moved rows for all eight incumbents — so nothing is mis-keyed; what is missing is the declaration, not the correctness |
+| R-n | **`config/solve_surface.py:75` calls SOCO "the eighth registered region"** — it is the NINTH; NWPP took eighth the same day. The PR title was corrected to "ninth" and the `_ISO_BUILDERS` comment is right, so this is the one place the same-day collision left stale | whoever next edits `solve_surface.py` | Cosmetic, and named only so a later reader does not trust it over `SUPPORTED_ISOS`. `src/`, outside this desk's write scope. (Swept the rest: `export_lce_lmp.py:109` and `test_mechanism_matrix_keeper_stamp.py:37` both read correctly in context) |
 
 ## 4. Collision register
 
@@ -563,3 +615,5 @@ CLAUDE.md rule that lands after a plan is chartered is a refresh edit due at the
 whenever a lane trips over it.**
 
 **E-7 (r#5 check-in, against this desk's own §2.3). The row that found the `_ISO_TO_BA_CODE` pin drew the wrong conclusion from the same evidence.** §2.3's `_ISO_TO_BA_CODE` row closed with *"NWPP's harder case does not apply here — its 17→1 BA map collapses to one arbitrary BA and fails **silently** at 13 `==` call sites, while SOCO is one BA and one code."* That is correct about **SOCO's data** and wrong about **the codebase**: NWPP's case applied to SOCO not as a data problem but as a **merge hazard**, because NWPP-20's repair *deleted the scalar inverse SOCO-20 was concurrently writing*. The desk had the 13-call-site silent-failure sentence in front of it at r#3, quoted it, and still read it as "not our problem" rather than "this construction is being removed from under us." It cost nothing only because the check-in caught it before the merge. **Adopted forward: when another program's lane reports a defect in a surface this program also writes, record what it CHANGED, not only whether the defect reproduces here — a repair that deletes a construction is a collision even when the bug is not.**
+
+**E-8 (r#6, against this desk's own gate G23). The desk called the parquet step mechanical, and it was the one step that needed judgment.** G23, written at the r#5 check-in, told the rebasing lane the 8 `eia860_generators.parquet` conflicts were *"derived artifacts, not data … re-running the curation step on top of merged main regenerates both regions' rows — no re-fetch, **no judgment call**"*, and offered a **census** (plants/generators counts) as the verification. SOCO-20 did exactly that and the routine silently dropped the eGRID `heat_rate` join on four of eight tables, added a column, reordered another and admitted a foreign PJM row. **A census would not have caught any of it** — every count still matched. The suite caught it, and the lane repaired it by hand and routed the script (R-l). The desk reasoned from the script's *inputs* ("it filters on `BA_CODE_TO_ISO`, therefore it regenerates correctly") without reading its *output path*, which is the same shape of error as E-7 one sitting earlier: correct about the data, wrong about the code. **Adopted forward: a gate that prescribes running a script states the assertion that proves the script did what it claims — for a derived table that is an IDENTITY check on the untouched slice (`.equals()`), never a count.** Corrected in G23 with the lane's proven recipe. *(Also corrected here: the desk's r#5 suggestion that the NEISO Mystic `oil != gas_cc` failure might be rescope residue. It is not — SOCO-20 §6.1 measures plant 1588 as genuinely carrying an oil steam unit AND GT1, so the test over-asserts that every unit under the plant is `gas_cc`. A test-expectation defect, not a data corruption; the desk's hypothesis was offered as a lead and the lane's evidence retired it.)*

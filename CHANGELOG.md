@@ -28,6 +28,22 @@ registry; every existing keeper's cache key untouched by construction.
 - **Stated rather than implied:** this container has neither `pydantic` nor `numpy`, so the
   registration could not be import-verified here. The gate-G8 cache-key proof and the fleet census are
   recorded as the lane's measurement plus CI, **UNREAD by the desk** — not as a desk verification.
+## 2026-09-14 — SOCO registered as the ninth region; desk sitting r#6
+
+- **SOCO-20 landed and graded PASS** (PR #6152). `_ISO_BUILDERS` is nine keys; gate G8 holds with
+  zero moved solve-surface rows for all eight incumbents and seven keepers' cache keys byte-identical.
+  Log entry appended verbatim to `docs/calibration-log/soco.md`; plan §5 and §9 updated.
+- **Gate G23 corrected (desk error E-8).** It had called the EIA-860 parquet rebase mechanical and
+  offered a census as the check. `process_eia860.py --rescope-from-parquet` is not additive when
+  columns differ: it dropped the eGRID heat_rate join on four of eight tables, added a column,
+  reordered another and admitted a foreign PJM row — with every count still matching. The gate now
+  prescribes the proven recipe: main's frame byte-for-byte plus the new region's rows, heat_rate from
+  the committed PLNT23 cache, and `.equals()` asserted on the untouched slice.
+- **Routed:** R-l the `process_eia860` non-additivity (committed tables repaired, script not; SPP-20
+  and NWPP-20 ran the same routine and deserve the same audit), R-m 20 undeclared D79 SOCO rows,
+  R-n a stale "eighth registered region" comment in `config/solve_surface.py`.
+- **W3 issued** — SOCO-30/31/32/33/34, with card S3's exclusion of Southern Power (186) carried as a
+  hard precondition on SOCO-32.
 
 ## 2026-09-14 — SOCO r#5: all five lanes land and pass, a gate this desk built fails and changes the answer, SOCO-20 is cleared
 

@@ -326,3 +326,52 @@ cell without re-deriving the column; the largest class is 100 cells that name an
 market object, and a foreign-stemmed row that some other ISO HAS entered reads `U`, not `·`.
 Card rulings S5 and S6 supply six more (`·` for no capacity market, four for no cleared AS market,
 one for no scarcity pricing, one for carbon-`None`).
+
+---
+
+## soco-20 — 2026-09-14 — SOCO registered as the ninth region (zero-LP)
+
+Lane SOCO-20, Fable claude-fable-5-1, branch claude/soco-20-register-fvj01g, base d083b0b1.
+Deliverable: ONE PR — _ISO_BUILDERS["SOCO"] appended last, DEMAND_LOADERS["SOCO"] and
+SURFACE_ISOS += SOCO in the SAME commit (eb9d015a), _ISO_TO_BA_CODE["SOCO"]="SOCO"; 22 src
+modules, 9 scripts, four new scripts/lib/<pkg>/soco.py specs, the soco data profile, the
+calibration-solve dropdown. No solve, no matrix cell, no keeper, no ScenarioConfig field.
+
+REGISTERED AS A BALANCING AUTHORITY. Three geographic zones SOCO_AL/GA/MS on shares
+0.3510/0.5842/0.0648 (five FERC-714 respondents, Southern Power 186 EXCLUDED, residual
+3.03/2.92/1.26 %); Tier-3 links 24,400 / 4,300 MW that CANNOT bind; no capacity market,
+no import node, no AS design (reserves.spec refuses SOCO by name); every offer band 1.0;
+VOLL 61,900 $/MWh from ICE 2 on the EIA-861 BA=SOCO class mix; PRM 0.26 winter; McIntosh
+CAES a 25 MW gas CT and skipped by the storage loader. Zone lookup 413 plants (GA 299 /
+AL 97 / MS 17); plant 67241 (MA) REJECTED. Fleet 393 thermal units / 55.09 GW, 8 nuclear
+incl. Vogtle 3 (2023-07) and 4 (2024-04) on their own CODs. Demand 239.6 / 249.5 / 252.6
+TWh; net export +10.16 / +10.81 / +13.03 TWh.
+
+G8 HOLDS. solve_surface_register --diff origin/main HEAD: ERCOT 0, CAISO 0, MISO 0, PJM 0,
+NYISO 0, NEISO 0, SPP 0 moved (SOCO 20 = its own new rows, undeclared, R-1 state). All
+seven keepers' cache_key() re-derived from run_config.json BYTE-IDENTICAL to the PRECOMMIT
+§6 baseline (nyiso on 2026-09-13-nyiso-232-st-gas, 93be4aeb93d78283).
+
+TWO SEAM REPAIRS, both no-ops for the seven: derive_nuclear_monthly_cf divides by the
+MONTH-ONLINE nuclear pmax (--check: seven committed tables match); load_eia860_storage
+drops the one national CAES row. Curated EIA-860 parquets rescoped (+SOCO rows only).
+
+THE RESCOPE WAS NOT ADDITIVE AND THE SUITE CAUGHT IT: --rescope-from-parquet dropped the
+eGRID heat_rate join on the canonical + 2020/2023/2024 tables and admitted one PJM row.
+Repaired before push as main's frame byte-for-byte + SOCO rows (heat_rate joined from
+the PLNT23 cache); script defect ROUTED with the recipe. REBASED onto c6c70190 after
+NWPP-20 registered the eighth region the same day (55 conflicts, union NWPP-then-SOCO;
+SOCO is the NINTH region; parquets = main's NWPP-inclusive frames + SOCO rows). Suites
+on the rebased tree: unit 5,539 passed / 8 failed; curation+regression+scoring 2,916 /
+31. Every failure fails identically with origin/main's code in the same tree or arrived
+with main's own commits (CAISO artifact drift PR #6037, Mystic oil rows, ERCOT fleet
+golden, NYISO surface 210 vs 209, NYISO gas-anchor pins after c0a9d5ba, coal-stocks
+dictionary after 3857d801, 10 NEISO forecast key-provenance records, 19 scoring pins,
+and data/clean FileNotFound x11). G8 re-proved: NWPP 0 moved too.
+
+TAIL_THRESHOLD SKIPPED x3 (SOCO-13 read NO price). Routed: D79 undeclared rows, the 7-h
+2025 tail fetch, the four ~70 GW NG:NG hours, curate_demand_profile.MODEL_ISOS (SOCO-31),
+dashboard ISO_ORDER / keepers index (SOCO-34/40), VOLL in forecast screens (SOCO-55),
+the process_eia860 rescope defect. Pre-existing on main, not this lane's:
+ci_refactor_guards script-refs (run_calibration_full -> missing mirror script) and the
+seven test failures above.
