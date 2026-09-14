@@ -251,8 +251,10 @@ BA_CODE_TO_ISO: dict[str, str] = {
     "WAUW": "NWPP",
     "NEVP": "NWPP",
     # SOCO = the Southern Company balancing authority itself (Southern
-    # Company Services, Inc. - Trans; NERC SERC) — the one region here that is
-    # NOT an ISO, so the BA code and the registry key are the same string.
+    # Company Services, Inc. - Trans; NERC SERC) — a single-BA region that is
+    # NOT an ISO (NWPP above is the other non-ISO region, a 17-BA pool), so
+    # the BA code and the registry key are the same string and SOCO sits in
+    # the derived 1:1 map ISO_TO_BA_CODE below exactly as the seven ISOs do.
     # 335 plants / 786 operable generators / 70,665.7 MW after the audit's
     # §2.6(a) MA rejection (docs/multi-iso/soco-data-audit.md §2.2).
     # Registered 2026-09-14 by lane SOCO-20.

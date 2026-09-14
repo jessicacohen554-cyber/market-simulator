@@ -222,7 +222,14 @@ _UNCURTAILED_FALLBACK_ISOS: frozenset[str] = frozenset(
     # curtailment is a BPAT-internal accounting, not a footprint HSL), so
     # NWPP wind and solar keep the delivered EIA-930 profile exactly as SPP
     # solar and MISO solar do.
-    {"ERCOT", "CAISO", "MISO", "SPP", "NWPP"}
+    # SOCO (registered 2026-09-14, lane SOCO-20): the Southern Company
+    # balancing authority publishes no HSL series and no curtailment report
+    # of any kind (docs/multi-iso/soco-data-audit.md §3), and it has no wind
+    # at all, so SOCO solar keeps the delivered EIA-930 ``NG: SUN`` profile —
+    # membership here is documentary parity with NWPP: with no HSL year and no
+    # _ANNUAL_REFERENCE_RATE_PROVIDERS entry the resolver returns None and the
+    # bound is RENEWABLE_BOUND_DELIVERED_PINNED either way.
+    {"ERCOT", "CAISO", "MISO", "SPP", "NWPP", "SOCO"}
 )
 
 # Years probed (newest first) for an HSL-covered reference year when grossing a

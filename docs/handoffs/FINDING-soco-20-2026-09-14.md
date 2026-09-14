@@ -41,9 +41,19 @@ eight EIA-860 generator parquets both lanes had rescoped. Resolution, mechanical
   byte-identical to the PRECOMMIT §6 baseline; `check_cache_key_registration` ok;
   `check_mechanism_matrix --base origin/main` exit 0 with nine shards.
 
-`_ISO_TO_BA_CODE["SOCO"]` survives NWPP-20's 17→1 inversion unchanged: SOCO is a single balancing
-authority, so it sits in the scalar map `ISO_TO_BA_CODE` (derived from `ISO_TO_BA_CODES` for 1:1
-regions) exactly as the seven ISOs do.
+**Gate G23 (SOCO desk, PR comment 2026-09-14 16:44), item by item.** (1) `fleet/models.py` carries
+main's structure — the many-to-one `BA_CODE_TO_ISO`, the derived `ISO_TO_BA_CODES`, and the derived 1:1
+`ISO_TO_BA_CODE` — plus exactly one added row, `"SOCO": "SOCO"`; the deleted scalar-inverse
+comprehension does NOT return (a single definition at line 279, main's). (2) `zone_assignment._ISO_TO_BA_CODE["SOCO"]`
+is kept — SOCO is one BA and `:1194` indexes the dict bare. (3) The eight parquets were rebuilt as main's
+frame + SOCO rows and then **re-verified by re-running main's now-additive
+`process_eia860.py --rescope-from-parquet` over all eight directories on the rebased tree: it reports
+"no BA added" for every table and reproduces the committed tables content-identically (22,443 / 17,502 /
+17,970 / 18,585 / 19,727 / 20,400 / 20,909 / 21,635 rows).** Census on the canonical table: NWPP 939
+plants / 1,930 generators; SOCO 336 plants / 788 rows (335 / 786 after `zone_assignment` rejects plant
+67241 at load). `_UNCURTAILED_FALLBACK_ISOS` gains SOCO on NWPP's footing (no HSL, no curtailment
+publication, no wind — a documentary no-op: the resolver returns `None` and the bound stays
+`RENEWABLE_BOUND_DELIVERED_PINNED`).
 
 ---
 
