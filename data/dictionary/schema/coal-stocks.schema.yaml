@@ -1,0 +1,118 @@
+# Canonical schema: plant-level monthly ending coal stocks
+#
+# The fuel-INVENTORY state the model has never carried for coal. Coal units
+# carry take-or-pay and must-run FLOORS and no CEILING, and the only
+# fuel-inventory mechanism in the codebase is NEISO winter oil
+# (src/market_sim/data/winter_fuel_inventory.py) — so the model cannot
+# represent "the fleet drew its stockpile down in one year and could only
+# burn what it received in the next". docs/FINDING-miso256-2022-passthrough-
+# inversion-2026-09-13.md §4 identified that as the mechanism behind MISO's
+# flat +4.3 GW 2022 coal block; this datatype is the measured input it needs.
+#
+# SOURCE, and why it needed no credential. EIA-923 "Page 2 Coal Stocks Data",
+# from the free annual bulk ZIP (public domain, US Government work). That
+# FINDING §5 recorded these stocks as "not on disk" with an EIA_API_KEY named
+# as the unblocker; the API v2 route is indeed key-gated (HTTP 403 without
+# one), but the same quantity ships in the bulk workbook, which needs no
+# credential at all. Fetched by scripts/data/fetch_eia923_coal_stocks.py.
+#
+# GRAIN is national plant-level, deliberately. ISO scoping is a READ-TIME
+# join against the plant registry (src/market_sim/data/coal_stocks.py), never
+# a partition of this datatype — so one curation serves MISO, PJM, NEISO and
+# any later coal ISO with no per-ISO branch (rule 25 [R-ISO-SCOPE]).
+#
+# RULE 13 [R-MEASURED] — READ THIS BEFORE BUILDING A BUDGET ON IT.
+# `ending_stock_tons` is a measured STATE, and the 12-month path of it embeds
+# the burn being simulated: ending[m] = ending[m-1] + receipts[m] - burn[m].
+# An admissible energy budget for year Y therefore reads the OPENING stock
+# (December of Y-1) plus a delivery rate derived from years <= Y-1, and NEVER
+# year Y's own stock path or receipts. The NEISO oil precedent is explicit
+# that F923 *receipts* are "a measured deliveries-to-tank OUTCOME inadmissible
+# under CLAUDE.md #13", so the target year's receipts are not a delivery rate
+# either. Using year Y's own stock path to size year Y's budget is pinning the
+# backcast to the actual and is forbidden absolutely.
+#
+# Curated by scripts/data/curate_coal_stocks.py from data/raw/coal-stocks/.
+datatype: coal-stocks
+schema_version: 1
+title: Plant-level monthly ending coal stocks
+description: >-
+  Month-ending coal stockpile held at each reporting electric power plant, by
+  reported coal rank, in short tons (EIA-923 Schedule 2, "Page 2 Coal Stocks
+  Data"). Tidied long: one row per plant x coal rank x month. National
+  coverage; the burning ISO is resolved at read time from the plant registry.
+
+key_columns: [plant_id, energy_source, year, month]
+allow_additional_columns: false
+
+columns:
+  - name: plant_id
+    dtype: int64
+    unit: none
+    nullable: false
+    description: >-
+      EIA plant code. Mirrors the fleet / emissions / outages schemas so the
+      four join, and is the key the bench parts and plant registry use.
+  - name: energy_source
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      EIA reported fuel type code for the coal rank held (BIT bituminous, SUB
+      subbituminous, LIG lignite, WC waste coal, RC refined coal, SGC coal-
+      derived synthesis gas). A plant holding two ranks reports two rows.
+  - name: year
+    dtype: int64
+    unit: year
+    nullable: false
+    description: Calendar year of the reported month-ending stock.
+  - name: month
+    dtype: int64
+    unit: month
+    nullable: false
+    description: Calendar month, 1-12, whose ENDING stock this row reports.
+  - name: ending_stock_tons
+    dtype: float64
+    unit: short_tons
+    nullable: false
+    description: >-
+      Stock of this coal rank physically held at the plant at month end, in
+      short tons. Zero is a real reported value (a plant that holds no coal of
+      that rank), not a gap.
+  - name: plant_name
+    dtype: string
+    unit: none
+    nullable: true
+    description: EIA plant name, carried for traceability only.
+  - name: plant_state
+    dtype: string
+    unit: none
+    nullable: true
+    description: Two-letter state postal code of the plant.
+  - name: balancing_authority_code
+    dtype: string
+    unit: none
+    nullable: true
+    description: >-
+      EIA-reported balancing authority (e.g. MISO, PJM). Provenance only — ISO
+      membership is resolved from the plant registry, not from this column,
+      because BA code and modelled ISO zone disagree at several seams.
+  - name: nerc_region
+    dtype: string
+    unit: none
+    nullable: true
+    description: NERC region as reported by EIA.
+  - name: eia_sector_number
+    dtype: int64
+    unit: none
+    nullable: true
+    description: >-
+      EIA sector (1 electric utility, 2 IPP non-CHP, 3 IPP CHP, 4/5 commercial,
+      6/7 industrial). Same field the PJM retirement-screen sector gate keys on.
+  - name: physical_unit_label
+    dtype: string
+    unit: none
+    nullable: true
+    description: >-
+      EIA's own unit label for the reported quantity, retained so a future
+      non-short-ton vintage cannot be silently mis-scaled.
