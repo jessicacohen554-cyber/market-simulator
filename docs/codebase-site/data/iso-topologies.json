@@ -1,8 +1,8 @@
 {
   "_meta": {
     "source": "Extracted from src/market_sim/config/iso_configs.py. One-pass serialization of zone names, load shares, links, and TTCs.",
-    "description": "All 7 ISOs with their zonal topology, transmission links, and technical parameters. Serialized from the live config in src/market_sim/config/iso_configs.py; re-serialize if iso_configs.py changes.",
-    "date": "2026-09-07"
+    "description": "The regions with a serialized zonal topology, transmission links and technical parameters. Serialized from the live config in src/market_sim/config/iso_configs.py; re-serialize if iso_configs.py changes. _ISO_BUILDERS carries NINE registered regions at 2026-09-14 (ERCOT CAISO MISO PJM NYISO NEISO SPP NWPP SOCO); eight are serialized here. SOCO registered the same day as NWPP and its block is owed by the SOCO desk's own site lane, not by this one.",
+    "date": "2026-09-14"
   },
   "ERCOT": {
     "name": "ERCOT",
@@ -641,6 +641,91 @@
       }
     ],
     "n_links": 1,
+    "interface_limits": []
+  },
+  "NWPP": {
+    "name": "NWPP",
+    "voll": 2000.0,
+    "zones": [
+      {
+        "name": "NWPP-NW",
+        "load_share": 0.3769
+      },
+      {
+        "name": "NWPP-OR",
+        "load_share": 0.1509
+      },
+      {
+        "name": "NWPP-INLAND",
+        "load_share": 0.1533
+      },
+      {
+        "name": "NWPP-EAST",
+        "load_share": 0.1808
+      },
+      {
+        "name": "NWPP-SNV",
+        "load_share": 0.1381
+      }
+    ],
+    "n_zones": 5,
+    "links": [
+      {
+        "from": "NWPP-EAST",
+        "to": "NWPP-SNV",
+        "ttc_mw": 600.0,
+        "bidirectional": false
+      },
+      {
+        "from": "NWPP-SNV",
+        "to": "NWPP-EAST",
+        "ttc_mw": 580.0,
+        "bidirectional": false
+      },
+      {
+        "from": "NWPP-INLAND",
+        "to": "NWPP-SNV",
+        "ttc_mw": 500.0,
+        "bidirectional": false
+      },
+      {
+        "from": "NWPP-SNV",
+        "to": "NWPP-INLAND",
+        "ttc_mw": 360.0,
+        "bidirectional": false
+      },
+      {
+        "from": "NWPP-INLAND",
+        "to": "NWPP-EAST",
+        "ttc_mw": 1600.0,
+        "bidirectional": false
+      },
+      {
+        "from": "NWPP-EAST",
+        "to": "NWPP-INLAND",
+        "ttc_mw": 1250.0,
+        "bidirectional": false
+      },
+      {
+        "from": "NWPP-INLAND",
+        "to": "NWPP-NW",
+        "ttc_mw": 8877.0,
+        "bidirectional": false
+      },
+      {
+        "from": "NWPP-NW",
+        "to": "NWPP-INLAND",
+        "ttc_mw": 2550.0,
+        "bidirectional": false
+      },
+      {
+        "from": "NWPP-NW",
+        "to": "NWPP-OR",
+        "ttc_mw": 43600.0,
+        "bidirectional": true
+      }
+    ],
+    "n_links": 9,
     "interface_limits": []
   }
 }

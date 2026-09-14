@@ -92,7 +92,7 @@ produced is L3.)
 | [`data-licensing.md`](data-licensing.md) | ACTIVE | Data — source licensing | — |
 | [`adding-new-data-types.md`](adding-new-data-types.md) | ACTIVE | Data — how to intake a new datatype | — |
 | [`us-gen-ownership.md`](us-gen-ownership.md) | ACTIVE | Data/ownership — US generation ownership (moved from repo root, PR #2551) | — |
-| [`multi-iso/README.md`](multi-iso/README.md) | ACTIVE | Multi-ISO — protocol & reference index (seven ISOs) | — |
+| [`multi-iso/README.md`](multi-iso/README.md) | ACTIVE | Multi-ISO — protocol & reference index (nine registered regions) | — |
 | [`multi-iso/spp-addition-plan-2026-09.md`](multi-iso/spp-addition-plan-2026-09.md) | ACTIVE | Multi-ISO — the SPP addition program: cards, waves, lane table, manifest, gates, prompt pack; desk handoff [`handoffs/spp-desk-handoff-2026-09-06.md`](handoffs/spp-desk-handoff-2026-09-06.md), ledger [`handoffs/spp-desk-ledger-2026-09.md`](handoffs/spp-desk-ledger-2026-09.md) | — |
 | [`forecast-development-plan-2026-07.md`](forecast-development-plan-2026-07.md) | ACTIVE | Forecast — THE forecast program (tiers, lanes, waves, §9 doc ledger) | — |
 | [`handoffs/forecast-scenario-readiness-plan-2026-09.md`](handoffs/forecast-scenario-readiness-plan-2026-09.md) | ACTIVE | Forecast — scenario-readiness lane plan (carbon price, national CES, voluntary clean demand, load growth, system-wide emissions); subordinate to the FF plan | — |
@@ -173,7 +173,7 @@ this index.
 1. [`../README.md`](../README.md) — repo README / quickstart.
 2. [`../model-methodology-spec.md`](../model-methodology-spec.md) — the spec.
 3. [`codebase/README.md`](codebase/README.md) — how the code is actually built.
-4. [`multi-iso/README.md`](multi-iso/README.md) — the seven-ISO topology & protocol.
+4. [`multi-iso/README.md`](multi-iso/README.md) — the region topology & protocol.
 5. [`calibration-determination-rubric.md`](calibration-determination-rubric.md) /
    [`forecast-determination-rubric.md`](forecast-determination-rubric.md) — how a run
    is judged.

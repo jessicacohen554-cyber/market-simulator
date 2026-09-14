@@ -1,5 +1,5 @@
 /**
- * viz-iso-topology.js — V14: Interactive 7-ISO topology network graph
+ * viz-iso-topology.js — V14: Interactive region topology network graph
  *
  * Renders a D3 force-directed graph for each ISO showing zones (circles)
  * and transmission links (lines). Tab bar switches between ISOs.
@@ -13,7 +13,12 @@ import { addTooltip, cssColor } from './chart-utils.js';
 const DATA_URL = 'data/iso-topologies.json';
 const MOUNT_ID = 'viz-iso-topology';
 
-const ISO_ORDER = ['ERCOT', 'CAISO', 'PJM', 'MISO', 'NYISO', 'NEISO', 'SPP'];
+/* Registration order of config/iso_configs._ISO_BUILDERS, which carries NINE
+   regions at this writing (2026-09-14). SOCO registered the same day as NWPP
+   but has no block in iso-topologies.json yet — buildTabBar skips any key the
+   data file does not carry, so listing it here early would be harmless; it is
+   left to the SOCO desk's own lane rather than pre-empted. */
+const ISO_ORDER = ['ERCOT', 'CAISO', 'PJM', 'MISO', 'NYISO', 'NEISO', 'SPP', 'NWPP'];
 
 /* ISO accent colors (matches CSS --iso-* vars) */
 const ISO_COLORS = {
@@ -24,6 +29,7 @@ const ISO_COLORS = {
   NYISO: '#E91E63',
   NEISO: '#9C27B0',
   SPP:   '#14B8A6',
+  NWPP:  '#65A30D',
 };
 
 /* Import-node zone names (styled differently) */
@@ -90,6 +96,19 @@ const GEO_HINTS = {
     Central:      [0.46, 0.44],
     North:        [0.28, 0.12],
     HQ_import:    [0.08, 0.08],
+  },
+  /* Five zones over ~17 balancing authorities — NWPP is a POOL, not an ISO, so
+     each zone is a BA group rather than a control area. Placed on the real
+     geography named in iso_configs._nwpp_config: NW = BPAT/PSEI/SCL/TPWR plus
+     the mid-Columbia PUDs, OR = PGE/PACW down the Willamette, INLAND =
+     IPCO/AVA/NWMT/WAUW, EAST = PACE (UT/WY/SE Idaho), SNV = NEVP (all of
+     Nevada, but load-weighted to the south). */
+  NWPP: {
+    'NWPP-NW':     [0.16, 0.14],
+    'NWPP-OR':     [0.12, 0.46],
+    'NWPP-INLAND': [0.46, 0.34],
+    'NWPP-EAST':   [0.82, 0.44],
+    'NWPP-SNV':    [0.54, 0.90],
   },
 };
 

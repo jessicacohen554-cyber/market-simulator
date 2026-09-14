@@ -357,12 +357,17 @@
     // normalise cov chars to lowercase (uppercase P in data = same as p, just eye-catching in source)
     const covOf = r => r.cov.toLowerCase();
     const rowComplete = r => covOf(r).split('').every(c => c==='y' || c==='b' || c==='x');
-    const ISOS = ['all','ERCOT','CAISO','PJM','MISO','NYISO','NEISO','SPP'];
-    // SPP registered 2026-09-06 (lane SPP-20), AFTER this page's 2026-07-10 census,
-    // so it has no audited rows yet. The cross-ISO wildcard labels below ("all 6
-    // ISOs", "all ISOs", "all states") were written about the six ISOs registered at
-    // census time and were never checked for SPP -- so they deliberately do NOT match
-    // the SPP filter. Showing them under SPP would over-claim coverage nobody verified.
+    const ISOS = ['all','ERCOT','CAISO','PJM','MISO','NYISO','NEISO','SPP','NWPP'];
+    // THREE regions registered AFTER this page's 2026-07-10 census -- SPP on
+    // 2026-09-06 (lane SPP-20), NWPP and SOCO both on 2026-09-14 (NWPP-20,
+    // SOCO-20) -- so none of them has an audited row yet. config/iso_configs.
+    // _ISO_BUILDERS carries NINE regions; SOCO's filter entry is owed by that
+    // program's own site lane and is deliberately not added here.
+    // The cross-ISO wildcard labels below ("all 6 ISOs", "all ISOs", "all
+    // states") were written about the six ISOs registered at census time and
+    // were never checked for the post-census three -- so they deliberately do
+    // NOT match those filters. Showing them there would over-claim coverage
+    // nobody verified.
     const CENSUSED_ISOS = new Set(['ERCOT','CAISO','PJM','MISO','NYISO','NEISO']);
     const rowMatchesIso = r => {
       if(isoFilter==='all') return true;

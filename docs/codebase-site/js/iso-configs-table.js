@@ -20,6 +20,7 @@
     NYISO: '#E91E63',
     NEISO: '#9C27B0',
     SPP: '#14B8A6',
+    NWPP: '#65A30D',
   };
 
   const ISO_DESCRIPTIONS = {
@@ -30,6 +31,7 @@
     NYISO: 'Five zones with downstate import constraints (Progressive eastern islanding).',
     NEISO: 'Four load zones plus the HQ import node for the Quebec interconnection.',
     SPP: 'Two zones along the North–South seam; the N↔S TTC is 3,400 MW — the rule-14 reconciled corridor limit derived from SPP’s own published flowgate limits (FINDING-spp-53).',
+    NWPP: 'Five zones over ~17 balancing authorities — a POOL, not an ISO. NW (BPAT + Puget-Sound/mid-Columbia), OR (PGE + PacifiCorp West), INLAND (IPCO/AVA/NWMT/WAUW), EAST (PacifiCorp East) and SNV (NV Energy). Six WECC path limits are Tier-1/Tier-2 cited; the NW↔OR link is a Tier-3 documented-absence placeholder that cannot bind.',
   };
 
   /**
@@ -229,7 +231,10 @@
     }
 
     let html = '';
-    const isoOrder = ['ERCOT', 'CAISO', 'PJM', 'MISO', 'NYISO', 'NEISO', 'SPP'];
+    // Registration order of config/iso_configs._ISO_BUILDERS, which carries NINE
+    // regions at 2026-09-14. Only the keys iso-topologies.json actually serializes
+    // render; SOCO's block is owed by that program's own site lane.
+    const isoOrder = ['ERCOT', 'CAISO', 'PJM', 'MISO', 'NYISO', 'NEISO', 'SPP', 'NWPP'];
     isoOrder.forEach((iso) => {
       if (data[iso]) {
         html += renderIsoSection(iso, data[iso]);

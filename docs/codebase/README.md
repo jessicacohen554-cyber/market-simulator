@@ -19,8 +19,11 @@ ISOs, run forward 2026→2050 with a historical-backcast mode (2021–2025 for
 ERCOT; 2023–2025 for the other multi-year ISOs) for
 calibration. The solver is HiGHS via `highspy`; **prices are recovered as the LP
 duals on the energy-balance constraints** — there is no separate pricing model.
-Seven ISOs share one ISO-agnostic LP: ERCOT (the calibrated reference), CAISO,
-PJM, MISO, NYISO, NEISO, SPP.
+Nine registered regions share one ISO-agnostic LP: ERCOT (the calibrated
+reference), CAISO, PJM, MISO, NYISO, NEISO, SPP, NWPP and SOCO. Every name in
+the code says "ISO"; the last two are not — **NWPP** is a pool of ~17 balancing
+authorities and **SOCO** is a single balancing authority. Both registered
+2026-09-14 and neither has a keeper yet.
 
 ## Reading order
 

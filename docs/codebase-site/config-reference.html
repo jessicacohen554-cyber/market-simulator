@@ -212,12 +212,14 @@
       border-radius: var(--radius-sm);
       /* The tinted-background pattern of shared.css's .badge--iso-* : the ISO
          accent at 12 % over white, with dark text. White-on-accent failed WCAG
-         AA on five of the seven accents (ERCOT 2.28:1, CAISO 2.15:1, SPP
-         2.49:1, PJM 2.77:1, MISO 2.80:1; only NYISO 4.35:1 and NEISO 6.30:1
-         passed) — FINDING-spp-34-2026-09-07.md section 7 S-2.
+         AA on five of the seven accents then registered (ERCOT 2.28:1, CAISO
+         2.15:1, SPP 2.49:1, PJM 2.77:1, MISO 2.80:1; only NYISO 4.35:1 and
+         NEISO 6.30:1 passed) — FINDING-spp-34-2026-09-07.md section 7 S-2.
+         NWPP (#65A30D) and SOCO (#6366F1) were added to shared.css afterwards
+         and are covered by the same overlay, which is accent-agnostic.
          The accent arrives as an INLINE background-color from
-         js/iso-configs-table.js (ISO_COLORS, the same seven hues as shared.css
-         --iso-*), which this rule cannot read; overlaying an opaque 88 % white
+         js/iso-configs-table.js (ISO_COLORS, mirroring shared.css --iso-*),
+         which this rule cannot read; overlaying an opaque 88 % white
          layer reproduces rgba(accent, 0.12) whatever the accent is, and no new
          hue is introduced. !important is what beats the inline shorthand's
          implicit background-image:none — that JS file is not this lane's. */
@@ -399,7 +401,7 @@
       <div class="section-header">
         <div>
           <h2>ISO Configurations</h2>
-          <p>Seven-ISO topology: zones, transfer limits, VOLL, and interface constraints.</p>
+          <p>Per-region topology: zones, transfer limits, VOLL, and interface constraints. <code>_ISO_BUILDERS</code> carries nine registered regions; the eight serialized into <code>iso-topologies.json</code> render below.</p>
         </div>
       </div>
 
