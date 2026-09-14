@@ -93,6 +93,18 @@ def main() -> None:
     hi = max(v[1] for v in DMC_BAND.values())
     print(f"   pre-registered dmc band (ADDENDUM §4): {lo:.2f} .. {hi:.2f} $/MWh")
     print(f"   realized Dec 22-23 load-weighted rise:  {lw_a - lw_c:+.2f} $/MWh")
+    # REPORTED, not part of the gate: the load-weighted mean over 48 h x 6 zones could
+    # in principle hide a single amplifying hour. Added BEFORE the arm landed; the gate
+    # below is unchanged from the PRECOMMIT.
+    _j = arm.merge(ctl, on=["zone", "hour"], suffixes=("_a", "_c"))
+    _je = _j[_j["hour"].isin(ell_h)]
+    _d = _je["price_a"] - _je["price_c"]
+    print(
+        f"   reported (not the gate): max single zone-hour price rise on Dec 22-23 = {_d.max():+.2f} $/MWh"
+    )
+    print(
+        f"   reported (not the gate): min single zone-hour price move  on Dec 22-23 = {_d.min():+.2f} $/MWh"
+    )
     g3 = (lw_a - lw_c) <= hi
     print(
         f"   G-3: {'PASS — a repricing, inside what dmc x heat rate admits' if g3 else 'STOP — exceeds the CT_PEAKER ceiling; the LP is amplifying'}"
