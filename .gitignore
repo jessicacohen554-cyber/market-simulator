@@ -2150,3 +2150,11 @@ results/calibration/pjm_h6_screen2023_arm/
 #   git checkout 9be0e032e8f3832779b70472ae93813d63e2229a -- \
 #     results/calibration/pjm_h7_screen2023_arm
 results/calibration/pjm_h7_screen2023_arm/
+# nyiso-235 screen + span bundles (rule 29 [R-SCREEN] (c): a screen bundle never
+# reaches main, and an unregistered bundle dir is a Class-E parity RED). Kept on
+# LOCAL DISK under rule 31 [R-RETAIN] until the owner rules on promotion —
+# .gitignore, never rm, is what discharges the delete-before-merge duty.
+# Recovery by IMMUTABLE SHA (rule 33(d)), not branch name:
+#   git checkout 750e4a72421e4548a5d82b71ccf13e6254cc3b87 -- results/calibration/nyiso235_gasrepair_2022
+results/calibration/nyiso235_gasrepair_2022/
+results/calibration/nyiso235_gasrepair_span/
