@@ -1076,6 +1076,95 @@ class TestMechanismThreading:
         _, _, _, groups, _ = aggregate_floors_by_plant(arrays)
         assert groups.tolist() == ["ST_GAS"]
 
+    def test_plant_class_vote_is_capacity_weighted_not_row_count(self):
+        """nyiso-233: the class carrying the most CAPACITY names the plant.
+
+        The measured NYISO keeper case, at its real magnitudes: Ravenswood
+        (plant 2500) carries 1724.8 MW of ``ST_GAS`` in 4 LP rows against
+        268.5 MW of ``CC_REGULAR`` in 7 — 6.4:1 on capacity, 4-7 against on
+        rows. The superseded ROW-COUNT vote labelled an 87 %-steam site
+        ``CC_REGULAR``, moving its whole dispatch into the wrong class
+        denominator and flipping C8
+        (``docs/FINDING-d2-plant-class-is-a-tranche-count-vote-2026-09-13.md``).
+        """
+        h = HOURS
+        pmax = [431.2] * 4 + [38.36] * 7
+        groups_in = ["ST_GAS"] * 4 + ["CC_REGULAR"] * 7
+        arrays = {
+            "min_gen": np.zeros((11, h)),
+            "mechanism": np.zeros((11, h), dtype=np.int8),
+            "unit_ids": np.array([f"u{i}" for i in range(11)]),
+            "plant_code": np.full(11, 2500),
+            "plant_group": np.array(groups_in),
+            "pmax": np.array(pmax),
+        }
+        assert sum(pmax[:4]) > sum(pmax[4:])  # capacity says ST_GAS
+        assert len(pmax[:4]) < len(pmax[4:])  # rows say CC_REGULAR
+        _, _, _, groups, _ = aggregate_floors_by_plant(arrays)
+        assert groups.tolist() == ["ST_GAS"]
+
+    def test_plant_class_vote_is_invariant_to_tranche_count(self):
+        """The defining property of the repair: splitting a class into more
+        bands cannot move the label, because bands partition that class's
+        capacity however many of them there are. This is the exact failure the
+        row-count vote had — NYISO's ``ST_GAS`` econ ladder collapsing 8 bands
+        to 4 moved ~2.5 GW between denominators with no physical change.
+        """
+        h = HOURS
+
+        def label(n_st: int, n_cc: int) -> str:
+            arrays = {
+                "min_gen": np.zeros((n_st + n_cc, h)),
+                "mechanism": np.zeros((n_st + n_cc, h), dtype=np.int8),
+                "unit_ids": np.array([f"u{i}" for i in range(n_st + n_cc)]),
+                "plant_code": np.full(n_st + n_cc, 2500),
+                "plant_group": np.array(["ST_GAS"] * n_st + ["CC_REGULAR"] * n_cc),
+                # Same TOTAL capacity per class, re-sliced into more/fewer bands.
+                "pmax": np.array([1724.8 / n_st] * n_st + [268.5 / n_cc] * n_cc),
+            }
+            _, _, _, groups, _ = aggregate_floors_by_plant(arrays)
+            return groups[0]
+
+        assert label(8, 7) == "ST_GAS"
+        assert label(4, 7) == "ST_GAS"  # the ladder collapse — row count flipped here
+        assert label(1, 20) == "ST_GAS"  # and it survives any re-slicing
+
+    def test_plant_class_vote_falls_back_to_row_count_without_pmax(self):
+        """Arrays with no ``pmax`` (a pre-nyiso-233 ``floors/*.npz`` whose
+        backfill was unavailable) score on the superseded row-count basis. The
+        caller records ``plant_class_vote_basis="row_count_fallback"`` so the
+        degradation is never silent; the fallback itself must still work.
+        """
+        h = HOURS
+        arrays = {
+            "min_gen": np.zeros((11, h)),
+            "mechanism": np.zeros((11, h), dtype=np.int8),
+            "unit_ids": np.array([f"u{i}" for i in range(11)]),
+            "plant_code": np.full(11, 2500),
+            "plant_group": np.array(["ST_GAS"] * 4 + ["CC_REGULAR"] * 7),
+        }
+        _, _, _, groups, _ = aggregate_floors_by_plant(arrays)
+        assert groups.tolist() == ["CC_REGULAR"]
+
+    def test_plant_class_vote_zero_capacity_falls_back_to_row_count(self):
+        """A fully-derated site whose classified rows all carry zero ``pmax``
+        cannot be voted on by capacity, so that ONE plant reverts to the row
+        count — never to the alphabetically-first label a zero-weight
+        ``argmax`` would otherwise pick (``CC_REGULAR`` sorts before
+        ``ST_GAS``).
+        """
+        h = HOURS
+        arrays = {
+            "min_gen": np.zeros((5, h)),
+            "mechanism": np.zeros((5, h), dtype=np.int8),
+            "unit_ids": np.array([f"u{i}" for i in range(5)]),
+            "plant_code": np.full(5, 999),
+            "plant_group": np.array(["ST_GAS"] * 3 + ["CC_REGULAR"] * 2),
+            "pmax": np.zeros(5),
+        }
+        _, _, _, groups, _ = aggregate_floors_by_plant(arrays)
+        assert groups.tolist() == ["ST_GAS"]
+
     def test_all_unbinned_plant_stays_unclassified(self):
         """A plant whose units ALL carry no CAMPD group (nuclear / hydro /
         renewables) stays ``''`` — those non-thermal must-run rows are excluded

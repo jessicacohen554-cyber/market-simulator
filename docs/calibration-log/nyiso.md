@@ -14158,3 +14158,108 @@ Records: `docs/RESULT-nyiso232-st-gas-deleak-screen-2026-09-13.md` §11,
 `scripts/gen_nyiso232_attestation.py` (six computed checks, aborts on a false premise).
 Span shard archived after fetch + checkout + signature verification; bundle retrievable at
 `git checkout fc545728636b40d402f5fcba4cae4f6edc42c19e -- results/calibration/nyiso232_deleak_span`.
+
+---
+
+## nyiso-233 — 2026-09-13
+
+**KEEPER UNCHANGED: `2026-09-13-nyiso-232-st-gas`. NO SOLVE, NO RE-KEY, NO CONFIG FIELD, NO OFFER
+CURVE — and NYISO's ISO tier goes NOT-YET → CALIBRATED**, because the SCORER changed. Session
+nyiso-232 proved a shared-scorer defect and was not authorized to fix it; this session measured it
+across every ISO and LANDED the repair on the **owner's explicit ruling** (a shared scorer reaches
+every ISO column, which rule 25 `[R-ISO-SCOPE]` forbids a NYISO lane deciding alone), with the
+owner's disposition that a verdict change elsewhere is a **CORRECTION, not a regression**.
+
+**THE REPAIR.** `legitimacy_diagnostics.aggregate_floors_by_plant` labelled each plant by its most
+common non-empty unit group counted in **LP ROWS**. Row count is a property of the **offer curve's
+band structure**, not of the plant. The vote is now weighted by **capacity (`pmax`)**: bands
+partition a class's capacity however many of them there are, so the vote is band-invariant *by
+construction*, and `pmax` depends on no dispatch outcome, so a plant's class denominator is a
+property of the plant rather than of the solve. **Energy weighting was considered and REJECTED** —
+also band-invariant and it would have needed no fleet rebuild, but arm and control would legitimately
+label a plant differently whenever dispatch moved. **Zero free parameters, zero new literals.**
+
+**THE CASE THAT NAMES IT.** Ravenswood (plant 2500), identical in all four years: **1724.8 MW
+`ST_GAS` vs 268.5 MW `CC_REGULAR` — 6.4:1** — yet its rows read 4 vs 7, so an 87 %-steam site was
+labelled `CC_REGULAR`. Plant 2517 is the same at 4.7:1 on a 4–4 row tie broken alphabetically. The
+cleanest statement is SPP plant 165, where the classes are within 2 MW and the vote is decided
+**entirely by `COAL` carrying a `mustrun` band that `CC_REGULAR` does not**.
+
+**MEASURED — a controlled A/B, identical inputs, only the weight differs. 10 bundle-years, 3 ISOs,
+11,328 floor rows.** Harness validated first: the refactored accumulator reproduces the superseded
+row-count labels **bit-for-bit on all 10 bundle-years** with no `pmax` (0 label diffs), and the
+control arm reproduces the **committed** `legitimacy_diagnostics.json` on **all D-2 numerics, 0 diffs
+across 17 rows**.
+
+| ISO | mixed | flips | D-2 gate | verdict changes |
+|---|---:|---:|---|---|
+| **NYISO** (the keeper) | 7 | **6**, every year | **FAIL → PASS** | **3** — `ST_GAS` 2022/2023/2024 |
+| **CAISO** | 1 | 0 | PASS → PASS | **0** — byte-identical on every row |
+| **SPP** | 23–25 | 5–6 | PASS → PASS | **0** |
+
+**EVERY NUMERATOR IS BIT-IDENTICAL to 4 dp in all 20 rows, in every ISO.** Only the denominator moves:
+NYISO `ST_GAS` 5.7046 → 9.2318, 5.8134 → 13.4962, 6.4861 → 11.5421, 7.7309 → 12.1256 TWh, so the
+forced share reads **20.78 / 14.79 / 20.59 / 18.15 %** against the 30 % cap instead of
+33.63 / 34.33 / 36.64 / 28.46 %. That independently reproduces nyiso-232's predicted
+20.8 / 14.8 / 20.6 / 18.1 to the second decimal, and all four sit **below** the superseded
+nyiso-231 keeper's 23.1 / 16.5 / 21.4 / 19.0 — which is what physics demands, since the same floors
+are a smaller share of a class that now runs more. **The pass is NOT vacuous**: `ST_GAS` is material
+on both arms (load share 11.2–13.1 % before, 15.9–18.8 % after, floor 2 %).
+
+**SPP is NOT INERT, just not verdict-changing** — its denominators move (`COAL` 68.83 → 72.44 TWh in
+2023) and the distinction is not blurred. **A CORRECTION TO nyiso-232's OWN FRAMING, recorded rather
+than dropped:** its census called 23–25 SPP plants "flippable", meaning a hypothetical halving of the
+winner's row count would lose it the vote. Under the actual capacity repair only **5–6** flip.
+"Flippable" measured fragility to an arbitrary band change and was never a prediction of this repair.
+
+**All four pre-registered stop conditions cleared**: S1 0 zero-capacity plants, S2 0 labels lost to
+`''`, S3 11,328/11,328 rows backfilled, S4 blast radius confined to D-2/D-4 (one non-test call site,
+no price / dispatch / determination path but C8).
+
+**DETERMINATION. ISO tier (2023–2025, rule 30(c)): CALIBRATED** — C1/C2/C3a/C3b/C4/C6/C8 PASS, C3c the
+lone failing criterion and therefore a ledgered caveat under rule 22 `[R-C3C]`, non-downgrading since
+rubric v3.3. C8 failing was *also* what stripped C3c of lone-failure status, so both resolved
+together exactly as nyiso-232 predicted. Per-year: 2022 NOT-YET, 2023 CALIBRATED, 2024 CALIBRATED,
+2025 CALIBRATED-WITH-CAVEATS. **The four-year bundle still reads NOT-YET** on 2022's C3a −11.6 %
+(pre-registered as the accepted cost of the nyiso-232 arming), C1 CC_REGULAR +5.07 TWh / +3.8 pp and
+C3b 0.218 — reported, not absorbed. D-4's provenance failures are **pre-existing and unchanged by the
+repair: 9 unit-conduct rows, IDENTICAL failure set on both vote bases.**
+
+**ERCOT / PJM / MISO / NEISO carry no committed `floors/*.npz`** (checked on `main` and all four live
+`claude/soco-15-*` branches) and are **UNMEASURED, not shown to be clean**. Each re-scores on the
+capacity basis the next time its lane regenerates diagnostics, through the same backfill; the new
+per-year `plant_class_vote_basis` field of `legitimacy_diagnostics.json` records which basis a run
+actually got, so a row-count fallback can never again be silent.
+
+**OBJECT A — NYISO's price tail is an AVAILABILITY object, not a price-formation one.** In the top
+1 % of hours by **ACTUAL** RT price the model carries **3,390–6,247 MW of idle thermal capacity
+(16.3–29.6 %), slack EXACTLY 0.00, and near-zero reserve shortfall** while the real market cleared at
+$573 (2022) and $446 (2025). Robust across depth (0.5 / 1 / 2 / 5 %, slack 0.00 in all 16 cells;
+tightest case 2025's top 0.5 % still 2,414 MW idle). **And the stack is not the limit** — max thermal
+`mc` is $1,229 (2022) / $1,890 (2025), and **83–96 % of the idle capacity is offered at or below the
+price the real market actually paid**. So the model is **not mispricing scarcity, it is not
+experiencing scarcity**, and a steeper ORDC/RCPF curve would price nothing because nothing binds. The
+events are both winter (2022 Dec 23–24 Elliott; 2023 Feb 3–4; 2024 Dec 21–23) and summer (2025
+Jun 23–25 heat dome; 2023 Sep 5–6), so no single-season story covers them.
+**Rule 28(a) honoured: nothing re-opened.** `temp_dependent_derate` sits at **G** (nyiso-111, ex-ante
+refusal, no solve); `gas_coldsnap_derate` / `winter_fuelsec_posture` / `correlated_forced_outage` /
+`ordc_scarcity_overlay` all sit at `.`; `nyiso_iroquois_winter_spread` was tested and rejected
+(nyiso-150); `dual_fuel_switching` closed (nyiso-179). The disciplined claim is that §2–§3 is **new
+evidence that did not exist when the G cell was refused ex-ante**, and that refusal should be
+**re-read against it** — the owner's call, and a separate session's work.
+
+**ALSO DISCHARGED: a rule-28 duty nyiso-232 left undone** — the NYISO matrix shard still named
+`2026-09-13-nyiso231-anchor-span` as keeper. Re-stamped to `2026-09-13-nyiso-232-st-gas` with the
+current open gates. **No mechanism cell moves** on account of the scorer repair: no `ScenarioConfig`
+field was added or changed, no solve path touched, and it cannot move a price.
+
+**HANDED FORWARD, NOT ACTED ON:** Object B, the ~10.1–10.8 pp gas-monotone C3a tilt that survives tail
+removal (r vs gas −0.92 to −0.99); 2022's C1/C3a/C3b; and CT_PEAKER's consistent drift away from
+actual in all four years, whose matrix partner `nyiso_gas_bridge_startup_aware` is now armed on the
+keeper, so `ct_peaker_bands_measured`'s re-test condition is closer than its `R` cell reads.
+
+Records: `docs/FINDING-nyiso233-d2-capacity-weighted-vote-2026-09-13.md`,
+`docs/FINDING-nyiso233-tail-is-an-availability-object-2026-09-13.md`,
+`results/calibration/PRECOMMIT-nyiso233-d2-capacity-weighted-vote.md`,
+`scripts/probes/_nyiso233_{d2_capacity_vote_measure,tail_mechanism_census}.py`.
+**ZERO LP this session** (rule 32 `[R-SHARD]` (a)): no shard was launched and none was needed.

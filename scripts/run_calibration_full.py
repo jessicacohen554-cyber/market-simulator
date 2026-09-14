@@ -363,6 +363,16 @@ def _save_floor_arrays(run_dir: Path, year: int, p2_state: dict, has_p2: bool) -
             unit_ids=np.array(list(fa_p1.unit_ids), dtype=str),
             plant_code=np.asarray(fa_p1.plant_code, dtype=np.int64),
             plant_group=np.array([str(g) for g in groups], dtype=str),
+            # D-2's plant-class vote weight (nyiso-233): the class carrying the
+            # most CAPACITY names the plant, because bands partition a class's
+            # capacity however many of them there are — a row count does not,
+            # so it let a ladder collapse move a site between class denominators
+            # and flip C8. Bundles written before this key are backfilled from a
+            # fleet_only rebuild by legitimacy_diagnostics._backfill_pmax.
+            pmax=np.asarray(
+                fa_p1.pmax if fa_p1.pmax is not None else np.zeros(len(fa_p1.unit_ids)),
+                dtype=float,
+            ),
         )
 
 
