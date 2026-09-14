@@ -2138,3 +2138,15 @@ results/calibration/nyiso232_arm_y2022/
 #     results/calibration/pjm_h6_screen2023_ctl results/calibration/pjm_h6_screen2023_arm
 results/calibration/pjm_h6_screen2023_ctl/
 results/calibration/pjm_h6_screen2023_arm/
+
+# pjm-h7 (2026-09-14) rule-29 [R-SCREEN] SCREEN bundle — must never reach `main`
+# (clause (c), "delete before merge"), and NOT deleted from disk (rule 31
+# [R-RETAIN]: the owner has not ruled on promotion). Ignoring it discharges
+# clause (c) in full — check_registry_payload_parity only ever sees COMMITTED
+# dirs, so an ignored bundle sits here without turning the gate red.
+# Every number the lane cites is in docs/RESULT-pjm-h7-gasmid-joint-screen-2026-09-14.md.
+# RECOVERY BY IMMUTABLE SHA (rule 33 [R-SHARD-ARCHIVE] (d)) — 17 files incl. the
+# per-plant dispatch/2023_P1.parquet a registration needs:
+#   git checkout 9be0e032e8f3832779b70472ae93813d63e2229a -- \
+#     results/calibration/pjm_h7_screen2023_arm
+results/calibration/pjm_h7_screen2023_arm/
