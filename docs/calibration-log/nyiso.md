@@ -14345,3 +14345,29 @@ NYMEX-traded and quotes through the holiday week; the physical gas index does no
 (verified in isolation, not a collection error); no new failures, none NYISO's, none from this
 session's changes. `check_mechanism_matrix.py --base origin/main` passes every gate (integrity,
 anchors, keeper stamps, §5.x headers, all three ratchets).
+
+**Addendum 2 (same session) — the standing undone item is CLOSED: `audit_keepers` E14,
+solve-environment pin currency.** The handoff carried it as *"STILL UNDONE and it would have caught
+the off-pin keeper: a check in audit_keepers.py that each designated keeper's recorded
+`environment.packages` matches requirements.txt. Nine lines."* Landed as **E14** with two pure,
+unit-testable helpers (`_requirements_pins`, `solve_pin_findings`) and 8 tests
+(`tests/scoring/test_audit_keepers_solve_pin.py`). Nothing else in the audit read the
+`environment` block at all — E1 checks the keeper's three stores exist, E11 diffs the *recipe*;
+neither can see the environment the recipe was solved in, which is how `nyiso-231` reached the
+dashboard off-pin.
+
+**Severity is WARN, never FAIL, and deliberately so** (rule 25 `[R-ISO-SCOPE]`): an off-pin keeper
+is a provenance fact to surface, not grounds to retroactively invalidate a committed result whose
+numbers are already on the site — and a pin bump is a repo-wide event that would otherwise red six
+lanes that did nothing wrong. Promotable to FAIL on an owner ruling if a re-solve-on-drift policy is
+ever adopted. A package the repo does not pin, and a bundle predating the `environment` block, come
+back **unverifiable** rather than silently passing.
+
+**Measured green on all SEVEN designated keepers** (CAISO / ERCOT / MISO / NEISO / NYISO / PJM /
+SPP all ON-PIN), so it lands as a no-op guard. Verified it changes nothing else: `audit_keepers`
+reports **"FAIL: 1 failure(s), 4 warning(s)" both with and without the change** — the MISO E3
+metadata warning, the three stale `status/` parts (ERCOT/CAISO/NEISO, S1) and NYISO's own
+pre-existing E11 baseline gap are all untouched and **none are this session's** (rule 25; reported,
+not touched). `audit_keepers --iso NYISO` passes **0 failures**. The audit test family is 59 passed
+/ 1 failed, that one being `test_e11_set_mirrors_replay_ignore` — a named member of the handoff's
+19-failure baseline and unrelated to E14.
