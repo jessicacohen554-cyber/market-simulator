@@ -443,6 +443,35 @@ session, so there is nothing to retain, promote or lose.* No shard was launched,
 exists, no LP ran in the parent. The question this session hands back is not "promote or not" —
 it is **"which route, if any, should pjm-h6 build?"**
 
+## 10a. ADDENDUM — OWNER RULING 2026-09-14, AND THE RECOMMENDATION IT FLIPS
+
+**Owner, on reading §10, verbatim: *"If structural integrity improves but gates regress that may
+still be a keeper."***
+
+This is a ruling on the promotion standard, and it resolves the exact hesitation §10 rested on.
+My "do not spend the LP yet" was **not** a structural objection to Route A — §§1–4 establish that
+REPLACE is the structurally correct form and that the incumbent construction is not. It was a
+**risk** argument about §5's exposure: REPLACE puts its two largest perturbations on the two gated
+training years, and 2024 has only 6.87 TWh of headroom pointing the wrong way. The owner has now
+ruled that a gate regression does not by itself disqualify a keeper when structural integrity
+improves — which is rule 1 `[R-STRUCT]`'s own first half restated as a promotion standard
+(*"a real market behaviour stays in even if it makes the fit worse"*).
+
+**RECOMMENDATION, REVISED:** **build and solve Route A (REPLACE, applied to ALL classes).**
+Everything else in this document is unchanged and none of it was contingent on the risk argument:
+the arm is still refused **as a coal-only rule-14 substitution** (§2, §4 — it delivers the measured
+0.916 in zero of six years, and coal-only is a selection); the ex-ante rule-19 decision is still
+REPLACE-never-stack; the screen year is still **2023** on footprint; DOF is still zero.
+
+**What does NOT change, and must not be read into the ruling:** it lowers the bar for *gate
+regression*, not for *structural argument*. A C1 regression on 2023/2024 is now reportable rather
+than disqualifying — but only for an arm whose structural case is made first, which is what §§1–4
+are for. The ruling is not a licence to promote the card's original coal-only form; that form is
+refused on structure, not on gates.
+
+**STILL NOTHING TO PROMOTE FROM THIS SESSION.** No LP ran, no bundle exists, no run is registered.
+The ruling directs pjm-h6's build; it cannot retroactively make a charter document a keeper.
+
 ## 11. RULES
 
 Rule 1 `[R-STRUCT]` (§2(i) selection; §5 direction reported, gating nothing; §7 structural gate)
