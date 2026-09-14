@@ -198,6 +198,15 @@ D2_EXEMPT_CLASSES: tuple[str, ...] = ("CC_CHP", "CT_CHP", "ST_CHP", "nuclear")
 # band; a floor below FLOOR_MIN_MW is noise, not forcing.
 D2_FLOOR_MIN_MW: float = 1.0
 D2_REL_TOL: float = 0.02
+# Which weight decided each year's D-2 plant-class vote (nyiso-233), recorded
+# into the committed artifact so a fallback to the superseded ROW COUNT basis
+# can never be silent. "capacity" is the basis; "row_count_fallback" means the
+# year's floor rows carry no pmax AND the fleet_only backfill could not supply
+# it, so that year's class denominators are exposed to the tranche-count defect
+# of docs/FINDING-d2-plant-class-is-a-tranche-count-vote-2026-09-13.md.
+PLANT_CLASS_VOTE_CAPACITY: str = "capacity"
+PLANT_CLASS_VOTE_ROW_COUNT: str = "row_count_fallback"
+_plant_class_vote_basis: dict[int, str] = {}
 # G-06: tolerance for the --keepers D-2 recompute-vs-committed staleness check,
 # on the per-class GATED forced SHARE (rule-20 units). The keeper recompute is a
 # LOWER-BOUND reconstruction, NOT a bit-faithful replay: it decodes dispatch from
@@ -2474,6 +2483,108 @@ REBUILD_META_RENAMES: dict[str, str] = {
 }
 
 
+def _rebuild_fleet_arrays(bundle: Path, iso: str, year: int):
+    """Rebuild a bundle-year's ``FleetArrays`` via ``run_year(fleet_only=True)``.
+
+    Builds no LP (rule 32 ``[R-SHARD]``): it constructs the fleet from the
+    bundle's OWN ``meta.json`` flags and stops. Shared by the floor rebuild and
+    by :func:`_backfill_pmax`, so both read the identical recipe — a backfilled
+    ``pmax`` and a rebuilt floor can never come from different fleets.
+    """
+    import inspect
+
+    from scripts.run_calibration import run_year
+
+    meta = json.loads((bundle / "meta.json").read_text())
+    params = inspect.signature(run_year).parameters
+    skip = {
+        "year",
+        "iso",
+        "hours",
+        "gas_price",
+        "ttc_overrides",
+        "fleet_only",
+        "xyear_cache",
+        "must_run_mw",
+    }
+    kwargs = {}
+    dropped = []
+    for k, v in meta.items():
+        k2 = REBUILD_META_RENAMES.get(k, k)
+        if k2 in params and k2 not in skip:
+            kwargs[k2] = v
+        else:
+            dropped.append(k)
+    logger.info("fleet rebuild: %d flags passed, dropped %s", len(kwargs), dropped)
+    gas_prices = meta.get("gas_prices", {})
+    gas_price = float(gas_prices.get(str(year), gas_prices.get(year, 0.0)))
+    state = run_year(
+        year,
+        iso,
+        int(meta.get("hours", 8760)),
+        gas_price,
+        {},
+        fleet_only=True,
+        **kwargs,
+    )
+    return state["fleet_arrays"]
+
+
+def _backfill_pmax(arrays: dict, bundle: Path, iso: str, year: int) -> dict:
+    """Add ``pmax`` to floor arrays persisted before nyiso-233 wrote the key.
+
+    The D-2 plant-class vote is capacity-weighted, but ``floors/*.npz`` written
+    before 2026-09-13 carry no ``pmax``. It is recovered by joining the npz's
+    ``unit_ids`` to a ``fleet_only`` rebuild (zero LP) — an EXACT recovery, not
+    a reconstruction, because ``pmax`` is a fleet property that no P0/P1 pass
+    changes. **The floors themselves are untouched**: only the vote weight is
+    added, so the committed numerator stays the numerator the LP saw.
+
+    The join is BY ``unit_id`` and never positional — measured on the NYISO
+    keeper, the npz and the rebuilt fleet share every unit but not their order
+    (715 npz rows resolving into an 829-row fleet), so a positional alignment
+    would be silently wrong.
+
+    Returns ``arrays`` unchanged if the rebuild is unavailable or does not cover
+    every row; the caller then scores on the row-count fallback and records
+    ``plant_class_vote_basis`` accordingly, so the degradation is never silent.
+    """
+    uids = np.asarray(arrays["unit_ids"]).astype(str)
+    try:
+        fa = _rebuild_fleet_arrays(bundle, iso, year)
+    except Exception as exc:  # pragma: no cover - environment-dependent
+        logger.warning(
+            "%s %s: pmax backfill unavailable (%s); D-2 plant-class vote falls "
+            "back to the pre-nyiso-233 ROW COUNT basis",
+            iso,
+            year,
+            exc,
+        )
+        return arrays
+    if fa.pmax is None:
+        logger.warning(
+            "%s %s: rebuilt fleet carries no pmax; row-count fallback", iso, year
+        )
+        return arrays
+    by_uid = dict(zip([str(u) for u in fa.unit_ids], np.asarray(fa.pmax, dtype=float)))
+    missing = [u for u in uids if u not in by_uid]
+    if missing:
+        logger.warning(
+            "%s %s: %d of %d floor rows have no rebuilt pmax (e.g. %s); "
+            "D-2 plant-class vote falls back to the ROW COUNT basis",
+            iso,
+            year,
+            len(missing),
+            len(uids),
+            missing[:3],
+        )
+        return arrays
+    out = dict(arrays)
+    out["pmax"] = np.array([by_uid[u] for u in uids], dtype=float)
+    logger.info("%s %s: backfilled pmax for %d floor rows", iso, year, len(uids))
+    return out
+
+
 def load_or_rebuild_floors(
     bundle: Path, iso: str, year: int, force_rebuild: bool = False
 ) -> tuple[dict, bool]:
@@ -2496,47 +2607,13 @@ def load_or_rebuild_floors(
             path = floors_dir / name
             if path.exists():
                 with np.load(path, allow_pickle=False) as z:
-                    return {k: z[k] for k in z.files}, ra_missing
+                    arrays = {k: z[k] for k in z.files}
+                if "pmax" not in arrays:
+                    arrays = _backfill_pmax(arrays, bundle, iso, year)
+                return arrays, ra_missing
 
     logger.info("%s %s: rebuilding floors via run_year(fleet_only=True)", iso, year)
-    import inspect
-
-    from scripts.run_calibration import run_year
-
-    meta = json.loads((bundle / "meta.json").read_text())
-    params = inspect.signature(run_year).parameters
-    skip = {
-        "year",
-        "iso",
-        "hours",
-        "gas_price",
-        "ttc_overrides",
-        "fleet_only",
-        "xyear_cache",
-        "must_run_mw",
-    }
-    rename = REBUILD_META_RENAMES
-    kwargs = {}
-    dropped = []
-    for k, v in meta.items():
-        k2 = rename.get(k, k)
-        if k2 in params and k2 not in skip:
-            kwargs[k2] = v
-        else:
-            dropped.append(k)
-    logger.info("floors rebuild: %d flags passed, dropped %s", len(kwargs), dropped)
-    gas_prices = meta.get("gas_prices", {})
-    gas_price = float(gas_prices.get(str(year), gas_prices.get(year, 0.0)))
-    state = run_year(
-        year,
-        iso,
-        int(meta.get("hours", 8760)),
-        gas_price,
-        {},
-        fleet_only=True,
-        **kwargs,
-    )
-    fa = state["fleet_arrays"]
+    fa = _rebuild_fleet_arrays(bundle, iso, year)
     if fa.min_gen is None:
         n, t = len(fa.unit_ids), int(fa.availability.shape[1])
         min_gen = np.zeros((n, t), dtype=np.float32)
@@ -2556,6 +2633,11 @@ def load_or_rebuild_floors(
     arrays = {
         "min_gen": min_gen,
         "mechanism": np.asarray(mech, dtype=np.int8),
+        # The D-2 plant-class vote weight (nyiso-233). Persisted so a cached
+        # rebuild never needs a second fleet build to recover it.
+        "pmax": np.asarray(
+            fa.pmax if fa.pmax is not None else np.zeros(len(fa.unit_ids)), dtype=float
+        ),
         "unit_ids": np.array(list(fa.unit_ids), dtype=str),
         "plant_code": np.asarray(fa.plant_code, dtype=np.int64),
         "plant_group": np.array([str(g) for g in groups], dtype=str),
@@ -2774,13 +2856,46 @@ def aggregate_floors_by_plant(
     :class:`FloorClassMatrix`). The plant LABEL below (fourth return) is
     unchanged and still names the row and its class denominator.
 
-    The plant class is the **most common non-empty** unit group in the plant —
-    NOT the first unit's group. A single plant frequently mixes classified
-    units with an unbinned/unclassified component (e.g. NEISO plant 546 carries
-    8 ``ST_GAS`` units + 1 empty-group unit); taking the first unit's group let
-    that lone empty label capture the whole plant into the ``''`` bucket, so its
-    dispatch (and any binding floor) was mis-attributed away from its real
-    merchant class and the class denominator was under-counted (#1488, rule 20).
+    The plant class is the non-empty unit group carrying the **most CAPACITY**
+    in the plant — NOT the first unit's group, and (since nyiso-233) NOT the
+    most common one. A single plant frequently mixes classified units with an
+    unbinned/unclassified component (e.g. NEISO plant 546 carries 8 ``ST_GAS``
+    units + 1 empty-group unit); taking the first unit's group let that lone
+    empty label capture the whole plant into the ``''`` bucket, so its dispatch
+    (and any binding floor) was mis-attributed away from its real merchant class
+    and the class denominator was under-counted (#1488, rule 20).
+
+    **VOTE WEIGHT — why capacity and not row count (nyiso-233).** The vote was
+    a plain ROW COUNT until 2026-09-13, and the number of LP rows a class
+    contributes to a plant is a property of the **offer curve's band structure**,
+    not of the plant: a mechanism that collapses or expands a class's econ
+    smoothing ladder could move a whole site's dispatch between class
+    denominators with no physical change at all, and flip C8 (protective tier,
+    zero caveat budget) on it. Measured on the NYISO keeper: Ravenswood
+    (plant 2500) carries **1724.8 MW of ``ST_GAS`` against 268.5 MW of
+    ``CC_REGULAR``** — 6.4:1 — yet its rows read 4 vs 7, so the row-count vote
+    labelled a 87 %-steam site ``CC_REGULAR``. Capacity is the right weight
+    because the bands of a plant-class **partition that class's capacity however
+    many bands there are**, so the vote is band-invariant by construction; and
+    because ``pmax`` depends on no dispatch outcome, so a plant's class
+    denominator is a property of the plant rather than of the solve. (Energy
+    weighting is also band-invariant and needs no fleet rebuild, but it was
+    REJECTED for that second reason — arm and control would legitimately label a
+    plant differently whenever dispatch moved.) Defect, fragility census and the
+    blast-radius analysis:
+    ``docs/FINDING-d2-plant-class-is-a-tranche-count-vote-2026-09-13.md``;
+    repair and its pre-registered stop conditions:
+    ``results/calibration/PRECOMMIT-nyiso233-d2-capacity-weighted-vote.md``.
+    Landed on an explicit owner ruling, since a shared scorer reaches every ISO
+    (rule 25 ``[R-ISO-SCOPE]``).
+
+    The weight is ``arrays["pmax"]`` when present. ``load_or_rebuild_floors``
+    backfills it into any pre-nyiso-233 ``floors/*.npz`` (which predate the key)
+    from a ``fleet_only`` rebuild, so the fallback below is not reached in
+    normal operation; when it IS reached the vote reverts to row count and the
+    caller records ``plant_class_vote_basis="row_count_fallback"`` in the
+    diagnostics artifact, so no run is ever scored on the defective basis
+    without saying so.
     A plant whose units are *all* unclassified (nuclear / hydro / renewables,
     which carry no CAMPD plant_group) stays ``''`` — those non-thermal must-run
     rows are excluded from the merchant forced-share summary in ``run_d2``.
@@ -2805,6 +2920,15 @@ def aggregate_floors_by_plant(
     pc = plant_code[keep]
     order = np.argsort(pc, kind="stable")
     pos, mech, groups, pc = pos[order], mech[order], groups[order], pc[order]
+    # Vote weight: CAPACITY when the arrays carry it, else one-per-row (the
+    # pre-nyiso-233 basis, kept only as a declared fallback — see the
+    # "vote weight" paragraph of the docstring and ``plant_class_vote_basis``).
+    if arrays.get("pmax") is not None:
+        weight = np.clip(
+            np.asarray(arrays["pmax"], dtype=float)[keep][order], 0.0, None
+        )
+    else:
+        weight = np.ones(pc.size, dtype=float)
     starts = np.flatnonzero(np.r_[True, pc[1:] != pc[:-1]])
     bounds = np.r_[starts, pc.size]
     t = pos.shape[1]
@@ -2820,10 +2944,20 @@ def aggregate_floors_by_plant(
         block = slice(bounds[i], bounds[i + 1])
         rel = np.argmax(pos[block], axis=0)
         mech_plant[i] = mech[block][rel, hours_idx]
-        nonempty = groups[block][groups[block] != ""]
+        sel = groups[block] != ""
+        nonempty = groups[block][sel]
         if nonempty.size:
-            vals, counts = np.unique(nonempty, return_counts=True)
-            group_plant[i] = str(vals[counts.argmax()])
+            vals, inv = np.unique(nonempty, return_inverse=True)
+            claim = np.bincount(inv, weights=weight[block][sel], minlength=vals.size)
+            if not claim.any():
+                # Every classified row carries zero capacity (a fully derated
+                # or retired site): capacity cannot discriminate, so this ONE
+                # plant falls back to the row-count vote rather than to the
+                # alphabetically-first label ``argmax`` would otherwise pick.
+                claim = np.bincount(inv, minlength=vals.size).astype(float)
+            # ``vals`` is sorted and ``argmax`` takes the FIRST maximum, so the
+            # tie-break is the same deterministic rule the row-count vote used.
+            group_plant[i] = str(vals[claim.argmax()])
         else:
             group_plant[i] = ""
         label_code[i] = vocab.setdefault(group_plant[i], len(vocab))
@@ -2927,6 +3061,14 @@ def build_json_report(
         "bundle": bundle,
         "iso": iso,
         "years": [int(y) for y in years],
+        # nyiso-233: the weight that decided each year's D-2 plant-class vote.
+        # Absent years ran no D-2. A "row_count_fallback" entry marks a year
+        # whose class denominators carry the superseded tranche-count basis.
+        "plant_class_vote_basis": {
+            str(y): _plant_class_vote_basis[int(y)]
+            for y in years
+            if int(y) in _plant_class_vote_basis
+        },
         "diagnostics": diagnostics,
         "gates": {
             "d1_min_profile_r": D1_MIN_PROFILE_R,
@@ -3128,6 +3270,11 @@ def diagnose_bundle(
         if {"D2", "D4"} & only and model_plants_plant:
             arrays, ra_missing = load_or_rebuild_floors(
                 bundle, iso, year, force_rebuild=rebuild_floors
+            )
+            _plant_class_vote_basis[int(year)] = (
+                PLANT_CLASS_VOTE_CAPACITY
+                if arrays.get("pmax") is not None
+                else PLANT_CLASS_VOTE_ROW_COUNT
             )
             pids, floor_sum, mech_plant, groups, floor_klass = (
                 aggregate_floors_by_plant(arrays)
