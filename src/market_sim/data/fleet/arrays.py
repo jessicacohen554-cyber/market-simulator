@@ -3371,6 +3371,90 @@ def _compose_min_gen_floors(
                 min_gen_mech[g_idx, raised] = MECH_HYDRO_ROR_FLAT
         # Never demand more than the (outage/derate-adjusted) availability.
         np.minimum(min_gen, pmax[:, np.newaxis] * availability, out=min_gen)
+        # COMMITMENT-FEASIBILITY CLIP
+        # (config.mustrun_commitment_feasibility_clip, spp-42 card R-be).
+        # The line above derates the per-plant must-run floor LINEARLY, and
+        # because the committed tranche's ``cc_mustrun_pmin_mw`` IS its own
+        # ``pmax`` the floor it leaves is exactly "tranche pmax x
+        # availability". But that floor asserts a COMMITMENT — the plant is
+        # synchronized at its own measured minimum online level — and a
+        # commitment is not linear. Where a dated outage leaves the plant less
+        # available capacity than that level, NO configuration the plant has
+        # ever operated is feasible, and the ``np.minimum`` above silently
+        # substitutes a smaller, equally infeasible commitment instead of
+        # none: SPP keeper 11 floors single-unit Cimarron River (1230, 50 MW)
+        # at a median 1.33 MW — 6.2 % of its own 21.6 MW minimum online level
+        # — across 845 hours its own CAMPD meter reads zero (spp-42 phase 0).
+        # Zero the floor in exactly those hours; every other hour keeps the
+        # incumbent clip untouched.
+        # Scoped to the two per-plant commitment mechanisms by their own
+        # mechanism stamp, so no other floor is reachable (rule 19
+        # [R-ONE-MECH]: the ONE floor's clip is replaced in the infeasible
+        # hours, nothing is stacked; a cell where a different floor won the
+        # composition carries that floor's stamp and is not touched).
+        # Rule 21 [R-DOF]: ZERO free parameters and zero new inputs — the test
+        # is the plant's own committed level against its own available
+        # capacity, on the SAME basis the clip above already uses.
+        # Rule 13 [R-MEASURED]: nothing measured enters; both operands are
+        # arrays the LP already holds, so the rule regenerates in a FORECAST
+        # year identically and responds to that year's own availability.
+        if config is not None and getattr(
+            config, "mustrun_commitment_feasibility_clip", False
+        ):
+            # The asserted level is summed over the FLOORED rows (the committed
+            # tranches carrying ``cc_mustrun_pmin_mw``); the available capacity
+            # is summed over ALL of that plant-group's rows, because the whole
+            # plant-group is what physically carries the commitment — a
+            # committed block can be served by any of the plant's capacity, and
+            # testing the committed tranche against its own derated self would
+            # reduce to "availability < 1" and fire on the EFOR baseline.
+            _feas_cap: dict[tuple[int, str], np.ndarray] = {}
+            _feas_lvl: dict[tuple[int, str], float] = {}
+            _feas_rows: dict[tuple[int, str], list[int]] = {}
+            _keyed: list[tuple[int, str] | None] = []
+            for g_idx, gen in enumerate(generators):
+                key = (
+                    int(getattr(gen, "plant_code", 0) or 0),
+                    str(getattr(gen, "plant_group", "") or ""),
+                )
+                _keyed.append(key)
+                lvl = float(getattr(gen, "cc_mustrun_pmin_mw", 0.0) or 0.0)
+                if lvl <= 0.0:
+                    continue
+                _feas_lvl[key] = _feas_lvl.get(key, 0.0) + lvl
+            for g_idx, key in enumerate(_keyed):
+                if key is None or key not in _feas_lvl:
+                    continue
+                cur = _feas_cap.get(key)
+                add = pmax[g_idx] * availability[g_idx, :]
+                _feas_cap[key] = add if cur is None else cur + add
+                _feas_rows.setdefault(key, []).append(g_idx)
+            _n_infeasible = 0
+            _mwh_dropped = 0.0
+            for key, lvl in _feas_lvl.items():
+                bad = _feas_cap[key] < lvl - 1e-9
+                if not bad.any():
+                    continue
+                _n_infeasible += int(bad.sum())
+                rows = np.asarray(_feas_rows[key], dtype=int)
+                own = np.isin(
+                    min_gen_mech[np.ix_(rows, np.flatnonzero(bad))],
+                    (MECH_CC_MUSTRUN_PER_PLANT, MECH_ST_GAS_MUSTRUN_PER_PLANT),
+                )
+                blk = min_gen[np.ix_(rows, np.flatnonzero(bad))]
+                _mwh_dropped += float(blk[own].sum())
+                # Fancy indexing returns a copy (see the coal block above).
+                min_gen[np.ix_(rows, np.flatnonzero(bad))] = np.where(own, 0.0, blk)
+            logger.info(
+                "mustrun_commitment_feasibility_clip ARMED (%s %s): %d floored "
+                "plant-groups tested, %d infeasible plant-hours, %.1f MWh of "
+                "commitment floor released",
+                _iso or "ERCOT",
+                _yr,
+                len(_feas_lvl),
+                _n_infeasible,
+                _mwh_dropped,
+            )
         # An outage hour that collapsed the floor is no longer forced.
         clear_where_unfloored(min_gen_mech, min_gen)
     return min_gen, min_gen_mech

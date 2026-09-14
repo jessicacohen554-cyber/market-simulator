@@ -1369,6 +1369,14 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # off one cache entry. Registered IN THE SAME COMMIT as the field (the
     # nyiso-119 discipline).
     "mustrun_layup_window_mask",
+    # spp-42 commitment-feasibility clip for the per-plant must-run floors
+    # (GATED default off): dropped from the hash at its default — the off path
+    # never evaluates the feasibility test, so it is byte-identical by
+    # construction. An armed run zeroes the floor in the infeasible hours (a
+    # different min_gen, so a different dispatch) and hashes distinctly,
+    # keeping the control/arm A/B off one cache entry. Registered IN THE SAME
+    # COMMIT as the field (the nyiso-119 discipline).
+    "mustrun_commitment_feasibility_clip",
     # ercot-256 measured lay-up window mask for the NET-LOAD DRAG floors
     # (GATED default off): dropped from the hash at its default — the off path
     # never reads the lay-up extract at all, so it is byte-identical by
@@ -2275,6 +2283,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by miso-173 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "mustrun_layup_window_mask": "False",
+    # Added by spp-42 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "mustrun_commitment_feasibility_clip": "False",
     # Added by ercot-256 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "netload_drag_layup_window_mask": "False",
@@ -3020,6 +3031,9 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     "st_gas_mustrun_p25_measured_level": "measured p25 level in MW (no CF basis)",
     "st_gas_mustrun_oom_level": "measured level over out-of-merit hours only",
     "mustrun_layup_window_mask": "measured lay-up windows mask the must-run floor",
+    "mustrun_commitment_feasibility_clip": (
+        "must-run floor zeroed where the plant cannot carry its committed level"
+    ),
     "netload_drag_layup_window_mask": "measured lay-up windows mask the net-load drag floor",
     "coal_lignite_mustrun_override": "measured lignite must-run level",
     "coal_prb_mustrun_override": "measured PRB must-run level",
@@ -13902,6 +13916,59 @@ class ScenarioConfig:
     # Off by default (every existing keeper byte-identical); the extract is
     # per-ISO by construction, so the mechanism self-scopes (rule 25).
     mustrun_layup_window_mask: bool = False
+
+    # COMMITMENT-FEASIBILITY CLIP for the per-plant must-run floors
+    # (cc_mustrun_per_plant / st_gas_mustrun_per_plant) — spp-42, card R-be.
+    # The floor asserts a COMMITMENT: the plant is synchronized at its own
+    # measured minimum online level (``committed_pct`` x nameplate, the
+    # P5-of-online loading the tranche artifact reports — by construction the
+    # SMALLEST configuration the plant demonstrated in the CEMS record). The
+    # incumbent clip is ``min(cc_mustrun_pmin_mw, pmax x availability)``, and
+    # because the committed tranche's ``cc_mustrun_pmin_mw`` IS its own
+    # ``pmax``, that reduces EXACTLY to ``tranche pmax x availability`` — the
+    # floor inherits the availability derate LINEARLY. A commitment is not
+    # linear. Where a dated outage leaves less available capacity than the
+    # plant's own minimum online level, NO configuration the plant has ever
+    # operated is feasible, and the engine's ``min()`` silently substitutes a
+    # smaller, equally infeasible commitment instead of none.
+    # MEASURED on SPP keeper 11 at zero LP (spp-42 phase 0): Cimarron River
+    # (1230, single unit, 50 MW) is floored at a median 1.33 MW — 6.2 % of its
+    # own 21.6 MW minimum online level — across 845 hours its own CAMPD meter
+    # reads zero, and 1235 / 1271 / 3008 carry the same signature. That is the
+    # rule 17 [R-FLOOR-WINDOW] defect at the per-unit grain, and it is the D-4
+    # conduct rider's 10 failing rows.
+    #
+    # When True the placed floor is ZEROED in any hour where the plant's own
+    # available capacity (sum of pmax x availability over its floored rows,
+    # the SAME basis the incumbent clip uses) falls below the committed level
+    # the floor asserts (sum of cc_mustrun_pmin_mw over those rows); in every
+    # other hour the incumbent clip is untouched, so an armed run differs
+    # ONLY in the infeasible hours. The test is the level against itself — it
+    # introduces NO threshold, share, multiplier or length.
+    # Rule 21 [R-DOF]: ZERO free parameters, and ZERO new artifacts, loaders
+    # or CLI inputs; it reads ``pmax``, ``availability`` and
+    # ``cc_mustrun_pmin_mw``, all already in the floor composer.
+    # Rule 18 [R-PHYSICS]: the eligibility gate is unit physics (can this
+    # plant carry the configuration the floor asserts), never a class tuple,
+    # plant list or conduct statistic. Rule 13 [R-MEASURED]: nothing measured
+    # enters — the operand is the availability array the LP already holds, so
+    # the rule regenerates in a FORECAST year identically and responds to
+    # changed conditions through that year's own EFOR/maintenance envelope.
+    # Rule 19 [R-ONE-MECH]: the ONE floor's clip is REPLACED in the
+    # infeasible hours, never stacked; distinct from mustrun_plant_exclusions
+    # (membership), mustrun_online_frac_per_year (window size),
+    # mustrun_window_commitment_grain (placement) and
+    # mustrun_layup_window_mask (a separate measured subtraction, which on an
+    # ISO whose outage extract still CARRIES its lay-up windows would
+    # double-subtract the identical window — spp-42 measured 1089 of 1089 SPP
+    # lay-up rows already present in the extract SPP reads).
+    # SCOPE: the committed-tranche block only. The st_gas_mustrun_p25_level
+    # swap keeps its incumbent clip, because its level is the p25-of-online
+    # rather than the P5 minimum and its cheapest-first tranche distribution
+    # is a different feasibility statement — a deliberate boundary, not an
+    # oversight.
+    # Off by default (every existing keeper byte-identical).
+    mustrun_commitment_feasibility_clip: bool = False
 
     # MEMBERSHIP correction for the per-plant must-run floors
     # (cc_mustrun_per_plant / st_gas_mustrun_per_plant, the p25 level swap
