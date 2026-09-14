@@ -534,6 +534,7 @@ def run_year(
     bit_overrides: dict | None = None,
     coal_econ_srmc_bound: bool = False,
     coal_econ_marginal_hr_bound: bool | None = None,
+    committed_band_measured_basis: bool | None = None,
     ercot_offer_hrmult_ep_rebasis: bool | None = None,
     ercot_offer_hrmult_ep_rebasis_bands: "list[str] | None" = None,
     coal_takeorpay_from_data: bool = False,
@@ -2290,6 +2291,81 @@ def run_year(
                 if year in COAL_PERPLANT_OFFER_CURVE_YEARLY_BY_ISO[iso]
                 else "NOT in (static fall-through)"
             ),
+        )
+    # ROUTE A "REPLACE" — the COMMITTED band's MEASURED basis
+    # (run_calibration_full --committed-band-measured-basis;
+    # ScenarioConfig.committed_band_measured_basis, pjm-h6). Runs LAST among
+    # the offer-curve transformations — after backcast_config's overrides and
+    # deltas, after the prb_overrides application, after the coal econ
+    # marginal-HR floor, after the ERCOT-118 EP rebasis and after the ERCOT-144
+    # per-plant coal replacement — because it REPLACES the resolved `committed`
+    # multiplier outright rather than bounding it, so it must see the curve the
+    # calibration path actually produced (rule 25: run_config records what was
+    # solved).
+    #
+    # Half (a) only lives here; half (b) — the coal supply passthrough dropped
+    # from the same band — rides the ScenarioConfig field into
+    # fleet.campd_tranche_fuel_frac. They are ONE mechanism (rule 19
+    # [R-ONE-MECH]) and the flag arms both together; arming the multiplier
+    # alone would leave the sigmoid scaling the same block, which delivers the
+    # measured basis in NO year (charter §4).
+    #
+    # Tri-state, the ercot-115 seam pattern: None keeps the config-resolved
+    # value (default False for every ISO and every lane), True/False force it
+    # on/off so an A/B control arm can scrub it and replay_keeper can pin a
+    # pre-promotion bundle to the behaviour it actually solved with.
+    _committed_basis_on = (
+        bool(config.committed_band_measured_basis)
+        if committed_band_measured_basis is None
+        else bool(committed_band_measured_basis)
+    )
+    if _committed_basis_on and coal_perplant_offer_level:
+        # Two mechanisms would own the coal committed rows: ERCOT-144 strips
+        # the COAL_* groups out of offer_curve_by_group entirely and prices
+        # those rows from its own per-plant registry, so half (a) would reach
+        # no coal class while half (b) still dropped the sigmoid — a torn
+        # mechanism, not a composition (rule 19 [R-ONE-MECH]).
+        raise SystemExit(
+            "--committed-band-measured-basis is incompatible with "
+            "--coal-perplant-offer-level: both own the coal committed band's "
+            "price, and the per-plant mechanism strips COAL_* from "
+            "offer_curve_by_group so the measured substitution could not "
+            "reach it (rule 19 [R-ONE-MECH])"
+        )
+    if _committed_basis_on:
+        from market_sim.data.offer_curves import apply_committed_band_measured_basis
+
+        _cb_curve, _cb_sub = apply_committed_band_measured_basis(
+            config.offer_curve_by_group, iso
+        )
+        config = config.with_overrides(
+            committed_band_measured_basis=True, offer_curve_by_group=_cb_curve
+        )
+        if _cb_sub:
+            logger.info(
+                "%s committed-band measured basis (%d): %s",
+                iso,
+                len(_cb_sub),
+                "; ".join(
+                    f"{c} {before:.4f} -> {after:.4f}" for c, before, after in _cb_sub
+                ),
+            )
+        else:
+            logger.info(
+                "%s committed-band measured basis: no covered class moved — "
+                "offer curve unchanged (no artifact, or every band already at "
+                "its measured value)",
+                iso,
+            )
+    elif config.committed_band_measured_basis:
+        # Explicit scrub: the LP must solve WITHOUT the mechanism, so the
+        # recorded config must say so too — and half (b) reads this same field,
+        # so scrubbing it here disarms BOTH halves together.
+        config = config.with_overrides(committed_band_measured_basis=False)
+        logger.info(
+            "%s committed-band measured basis: SCRUBBED by explicit False — "
+            "offer curve and coal committed passthrough unchanged",
+            iso,
         )
     # Per-plant tranche-config override sheet (run_calibration_full
     # --plant-tranche-config): each listed plant's tranche shares + band HR

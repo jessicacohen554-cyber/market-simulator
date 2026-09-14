@@ -358,6 +358,7 @@ def campd_tranche_fuel_frac(
     regulated_plants: "frozenset[int] | None" = None,
     committed_takeorpay_sunk_fixed: bool = False,
     committed_dispatchable_supplies: "frozenset[str] | None" = None,
+    committed_measured_basis: bool = False,
 ) -> "float | np.ndarray":
     """Return the fuel-cost passthrough for one CAMPD tranche generator.
 
@@ -443,6 +444,25 @@ def campd_tranche_fuel_frac(
     sized in :func:`bins_to_fleet` from the same measured contract share (so
     ``takeorpay_by_plant`` is *not* re-applied to ``_mustrun`` in sync mode —
     the runner passes ``None`` there and the default 0.0 fuel-free bid stands).
+
+    ``committed_measured_basis``
+    (``ScenarioConfig.committed_band_measured_basis``) is HALF (b) of the Route A
+    REPLACE mechanism: a coal ``_committed`` tranche passes ``1.0`` — full
+    delivered fuel, no supply passthrough of any kind — so the band's effective
+    basis IS the measured ``avg_committed_p50`` multiplier half (a) installs
+    (:func:`market_sim.data.offer_curves.apply_committed_band_measured_basis`),
+    in every hour of every year. The two halves are ONE mechanism and are never
+    armed apart: with the sigmoid left on, the effective basis becomes
+    ``measured × passthrough`` and lands on the measurement in NO year (PJM
+    2020-2025: 0.618 .. 1.205 against a measured 0.916), which is the stacking
+    rule 19 ``[R-ONE-MECH]`` forbids. The ``econ*``/``peak`` bands KEEP the
+    sigmoid — its merit-order-crossover rationale is about INCREMENTAL coal
+    competing with gas, while the min-load block is the cost of being on, not a
+    bid for the marginal MWh. ``_mustrun`` and ``_sync`` return above this and
+    are untouched; every committed-band fuel modifier below it (the three
+    take-or-pay discounts, the SRMC bound) is bypassed by construction, because
+    a band carrying any of them would no longer hold the identity that is this
+    mechanism's whole claim.
     """
     if gen.unit_id.endswith("_sync"):
         return 1.0
@@ -452,6 +472,16 @@ def campd_tranche_fuel_frac(
             if share is not None:
                 return float(1.0 - share)
         return 0.0
+    # ScenarioConfig.committed_band_measured_basis (Route A REPLACE, half (b)).
+    # Placed HERE — after the fuel-free `_mustrun`/`_sync` bands, before every
+    # committed-band fuel modifier — so the coal min-load block pays full
+    # delivered fuel and nothing scales it. That is what makes the band's
+    # effective basis equal to the measured multiplier half (a) installs, which
+    # is the mechanism's defining claim (see the docstring).
+    if committed_measured_basis and (
+        gen.fuel_type == "coal" and gen.unit_id.rsplit("_", 1)[-1] == "committed"
+    ):
+        return 1.0
     # ScenarioConfig.coal_bit_committed_takeorpay: the `_committed` baseload
     # band's fuel is covered by the same take-or-pay contract as `_mustrun`
     # (MISO coal is ~100% contracted), so for a BITUMINOUS plant in the

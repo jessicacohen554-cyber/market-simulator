@@ -3852,6 +3852,7 @@ def solve_and_persist(
     bit_overrides: dict | None = None,
     coal_econ_srmc_bound: bool = False,
     coal_econ_marginal_hr_bound: bool | None = None,
+    committed_band_measured_basis: bool | None = None,
     ercot_offer_hrmult_ep_rebasis: bool | None = None,
     ercot_offer_hrmult_ep_rebasis_bands: "list[str] | None" = None,
     coal_takeorpay_from_data: bool = False,
@@ -4420,6 +4421,34 @@ def solve_and_persist(
         elif recorded_cfg.coal_econ_marginal_hr_bound:
             recorded_cfg = recorded_cfg.with_overrides(
                 coal_econ_marginal_hr_bound=False
+            )
+        # Mirror run_year's Route A REPLACE committed-band measured basis
+        # EXACTLY — bool AND curve — for the same reason the floor above does:
+        # recording only the bool would leave run_config.json showing the
+        # REGISTERED committed multipliers while the LP solved on the measured
+        # ones, so an armed and a control bundle would record identical curves
+        # (rule 25 — the registry records what was solved). Half (b) needs no
+        # mirror: it reads the same recorded boolean.
+        _rec_committed_basis_on = (
+            bool(recorded_cfg.committed_band_measured_basis)
+            if committed_band_measured_basis is None
+            else bool(committed_band_measured_basis)
+        )
+        if _rec_committed_basis_on:
+            from market_sim.data.offer_curves import (
+                apply_committed_band_measured_basis,
+            )
+
+            _rec_cb_curve, _ = apply_committed_band_measured_basis(
+                recorded_cfg.offer_curve_by_group, iso
+            )
+            recorded_cfg = recorded_cfg.with_overrides(
+                committed_band_measured_basis=True,
+                offer_curve_by_group=_rec_cb_curve,
+            )
+        elif recorded_cfg.committed_band_measured_basis:
+            recorded_cfg = recorded_cfg.with_overrides(
+                committed_band_measured_basis=False
             )
         # Mirror run_year's ERCOT-118 EP rebasis EXACTLY — bool AND curve AND
         # band scope (ERCOT-119), per year (the rebased tables are per
@@ -5743,6 +5772,7 @@ def solve_and_persist(
             bit_overrides=bit_overrides,
             coal_econ_srmc_bound=coal_econ_srmc_bound,
             coal_econ_marginal_hr_bound=coal_econ_marginal_hr_bound,
+            committed_band_measured_basis=committed_band_measured_basis,
             ercot_offer_hrmult_ep_rebasis=ercot_offer_hrmult_ep_rebasis,
             ercot_offer_hrmult_ep_rebasis_bands=ercot_offer_hrmult_ep_rebasis_bands,
             coal_takeorpay_from_data=coal_takeorpay_from_data,
@@ -7002,6 +7032,7 @@ def solve_and_persist(
         "chp_export_floor_measured": chp_export_floor_measured,
         "ercot_gtc_limits_measured": ercot_gtc_limits_measured,
         "pjm_measured_interface_limits": pjm_measured_interface_limits,
+        "committed_band_measured_basis": committed_band_measured_basis,
         "ercot_wtx_curtailment_driver": ercot_wtx_curtailment_driver,
         "ercot_wtx_curtail_depth_wind": ercot_wtx_curtail_depth_wind,
         "ercot_wtx_curtail_depth_solar": ercot_wtx_curtail_depth_solar,
@@ -10126,6 +10157,24 @@ def main() -> None:
     # offer_curve_deltas on the rebased base. TRI-STATE (default None, the
     # ercot-115 seam lesson): None = keep the ScenarioConfig/prb-resolved
     # value; the --no- form forces it off for ablation arms.
+    # ROUTE A "REPLACE" — the COMMITTED band's MEASURED basis (pjm-h6,
+    # chartered by docs/PRECOMMIT-pjm-h5-coal-committed-charter-2026-09-13.md
+    # §4/§10a). ONE mechanism, TWO coupled halves, never armed apart (rule 19
+    # [R-ONE-MECH]). TRI-STATE (default None, the ercot-115 seam pattern):
+    # None = keep the config-resolved value (False for every ISO and every
+    # lane); --no- forces it off so a control arm can scrub it.
+    parser.add_argument(
+        "--committed-band-measured-basis",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="REPLACE every offer-curve class's `committed` band multiplier "
+        "with that class's own MEASURED avg_committed_p50 "
+        "(data/raw/reference/<iso>_campd_marginal_hr_summary.csv) AND drop the "
+        "gas-keyed coal supply passthrough sigmoid from the coal `committed` "
+        "band only, so the min-load block's effective basis IS the measured "
+        "value in every hour. Non-selective (every covered class, never one); "
+        "econ*/peak bands and mustrun keep the sigmoid. Zero free parameters.",
+    )
     parser.add_argument(
         "--ercot-offer-hrmult-ep-rebasis",
         action=argparse.BooleanOptionalAction,
@@ -11312,8 +11361,8 @@ def main() -> None:
         "`econ_low` (1.08) / `econ_high` (1.13) were DERIVED as the measured "
         "steam marginal (~0.830) x `_NYISO_OFFER_CURVE`'s own cited 'CC class "
         "reach ratio (CC econ_high 1.21 / native CC marginal 0.925 = 1.31x)' -- "
-        "and 1.08 reproduces that construction to 0.08-0.53% on the file's own "
-        "recorded native-steam triples (every reading within 1%). But "
+        "and 1.08 reproduces that construction to 0.08-0.53%% on the file's own "
+        "recorded native-steam triples (every reading within 1%%). But "
         "CC_REGULAR.econ_high "
         "1.21 is the ERCOT keeper value the same file records as REMOVED under "
         "rule 25, so ST_GAS carries it MULTIPLICATIVELY: the de-leak removed the "
@@ -11324,7 +11373,7 @@ def main() -> None:
         "no DOF entry. `committed` and `peak` are EXCLUDED (peak 4.20 is the "
         "$-cap scarcity wall; committed 1.05 already sits below phys_committed "
         "1.104 so its markup clips to 0 in both legs, and moving it would price "
-        "steam min-load 9.4% below its own measured burn). It does NOT identify "
+        "steam min-load 9.4%% below its own measured burn). It does NOT identify "
         "the markup -- that stays an OPEN ROOT CAUSE against NYISO "
         "scarcity/reserve (RCPF/AS) price formation, issue #1344. Measured "
         "pre-solve: econ offer -$8.61/-$3.17/-$2.80/-$5.41 per MWh in "
@@ -14029,6 +14078,7 @@ def main() -> None:
         cc_intermediate_cf_threshold=args.cc_intermediate_cf_threshold,
         st_gas_intermediate=args.st_gas_intermediate,
         st_gas_intermediate_cf_threshold=args.st_gas_intermediate_cf_threshold,
+        committed_band_measured_basis=args.committed_band_measured_basis,
         ercot_offer_hrmult_ep_rebasis=args.ercot_offer_hrmult_ep_rebasis,
         ercot_offer_hrmult_ep_rebasis_bands=(args.ercot_offer_hrmult_ep_rebasis_bands),
         bit_overrides={

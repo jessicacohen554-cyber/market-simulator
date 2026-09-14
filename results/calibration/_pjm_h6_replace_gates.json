@@ -1,0 +1,80 @@
+[
+  {
+    "year": 2020,
+    "g1": true,
+    "g2": true,
+    "coal_committed_d": 12.6296381478425,
+    "prereg": 12.6296,
+    "all_coal_d": 3.2104535644331884,
+    "fleet_d": 0.8325653382501287,
+    "rows_moved": 276,
+    "identity_maxdev": 3.0375701953744283e-13,
+    "control_passthrough_min": 0.6580820659014338,
+    "control_passthrough_max": 1.1459542106427023
+  },
+  {
+    "year": 2021,
+    "g1": true,
+    "g2": true,
+    "coal_committed_d": 7.84498062359807,
+    "prereg": 7.845,
+    "all_coal_d": 1.9941937932910767,
+    "fleet_d": 0.6068746077145504,
+    "rows_moved": 277,
+    "identity_maxdev": 4.2654768606098514e-13,
+    "control_passthrough_min": 0.7040604722758064,
+    "control_passthrough_max": 2.0850177994712653
+  },
+  {
+    "year": 2022,
+    "g1": true,
+    "g2": true,
+    "coal_committed_d": 5.184831596703834,
+    "prereg": 5.1848,
+    "all_coal_d": 1.317984006015817,
+    "fleet_d": 0.5532974230305986,
+    "rows_moved": 277,
+    "identity_maxdev": 7.625011733125575e-13,
+    "control_passthrough_min": 0.9999999999999997,
+    "control_passthrough_max": 2.099999155383766
+  },
+  {
+    "year": 2023,
+    "g1": true,
+    "g2": true,
+    "coal_committed_d": 17.656100537236036,
+    "prereg": 17.6561,
+    "all_coal_d": 4.488180123627962,
+    "fleet_d": 1.161598016544598,
+    "rows_moved": 276,
+    "identity_maxdev": 6.292744103575387e-13,
+    "control_passthrough_min": 0.6670497761235531,
+    "control_passthrough_max": 1.7189593069442126
+  },
+  {
+    "year": 2024,
+    "g1": true,
+    "g2": true,
+    "coal_committed_d": 16.842229002234724,
+    "prereg": 16.8422,
+    "all_coal_d": 4.281294008606366,
+    "fleet_d": 1.1068228829783349,
+    "rows_moved": 276,
+    "identity_maxdev": 1.0693668173189508e-12,
+    "control_passthrough_min": 0.6613709205132977,
+    "control_passthrough_max": 2.084030512029252
+  },
+  {
+    "year": 2025,
+    "g1": true,
+    "g2": true,
+    "coal_committed_d": 12.027133150445469,
+    "prereg": 12.0271,
+    "all_coal_d": 3.050743839563449,
+    "fleet_d": 0.8638244234518218,
+    "rows_moved": 277,
+    "identity_maxdev": 3.8613556796462944e-13,
+    "control_passthrough_min": 0.6933373068804224,
+    "control_passthrough_max": 2.099999460916663
+  }
+]

@@ -627,6 +627,14 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # key stays byte-stable. An armed run supplies phys_econ_* to three more
     # classes and so enters the key as a distinct scenario.
     "miso_intermediate_gas_offer_margin",
+    # Route A REPLACE committed-band measured basis (pjm-h6). Default-off and
+    # byte-identical for every config that does not arm it -- both halves are
+    # gated on the flag and the resolved curve is returned unchanged when it is
+    # off -- so it is registered here at its default and every pre-existing
+    # cache key stays byte-stable. An armed run re-prices every covered class's
+    # committed band and drops the coal sigmoid from that band, so it enters the
+    # key as a distinct scenario.
+    "committed_band_measured_basis",
     # MISO POSITION-conditioned measured offer surface (miso-151): the gate,
     # its artifact path and its two frozen bin geometries. All default-off
     # (False / None) or at the registered cross-ISO geometry, and byte-identical
@@ -2039,6 +2047,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "gas_offer_margin_zonal_anchor": "False",
     "gas_offer_margin_anchor_by_zone": "None",
     "miso_intermediate_gas_offer_margin": "False",
+    "committed_band_measured_basis": "False",
     "miso_offer_surface_measured": "False",
     "miso_offer_surface_path": "None",
     "miso_offer_surface_netload_pcts": "(0.80, 0.90, 0.97)",
@@ -10934,6 +10943,69 @@ class ScenarioConfig:
     # (results/calibration/FINDING-ercot111-coal-dispatch-economics-2026-07-24.md).
     # Default off (every existing keeper unchanged).
     coal_econ_marginal_hr_bound: bool = False
+
+    # ROUTE A "REPLACE" -- the COMMITTED band's MEASURED basis (pjm-h6, chartered
+    # by docs/PRECOMMIT-pjm-h5-coal-committed-charter-2026-09-13.md §4/§10a and
+    # the owner ruling 2026-09-14). ONE mechanism with TWO COUPLED HALVES that
+    # are never separable (rule 19 [R-ONE-MECH]); arming one without the other
+    # is the stacking this field exists to refuse:
+    #
+    #   (a) every class's ``committed`` band multiplier is REPLACED by that
+    #       class's own measured ``avg_committed_p50`` from the ISO's committed
+    #       CAMPD marginal-HR artifact
+    #       ``data/raw/reference/<iso>_campd_marginal_hr_summary.csv``, applied
+    #       to the RESOLVED curve (after the registry, ``--offer-curve-json``
+    #       absolute overrides, ``--offer-curve-delta-json`` nudges and the
+    #       ERCOT-111 econ floor) by
+    #       ``offer_curves.apply_committed_band_measured_basis``;
+    #   (b) the gas-keyed coal SUPPLY PASSTHROUGH SIGMOID is removed from the
+    #       ``_committed`` band only -- ``campd_tranche_fuel_frac`` returns 1.0
+    #       there -- so the band's effective basis IS the measured multiplier in
+    #       every hour of every year. The ``econ*``/``peak`` bands KEEP the
+    #       sigmoid, whose stated rationale (the gas price at which a gas-CC's
+    #       fuel cost equals the coal plant's) is about INCREMENTAL coal
+    #       competing with gas; the min-load block is not competing for the
+    #       marginal MWh, it is the cost of being on.
+    #
+    # WHY (b) IS NOT OPTIONAL, measured rather than asserted (charter §4): with
+    # the sigmoid left on, substituting the multiplier delivers an effective
+    # basis of ``0.916 x passthrough`` -- 0.618 in 2020, 1.205 in 2022 against a
+    # measured 0.916, i.e. it lands on the measurement in ZERO of PJM's six
+    # years, undershooting by 0.298 in the cheapest-gas year and overshooting by
+    # 0.289 in the dearest. A substitution that never lands on its own measured
+    # value is not a substitution, and two mechanisms pricing one block is
+    # exactly what rule 19 forbids.
+    #
+    # RULE 21 [R-DOF]: ZERO free parameters. Nothing is chosen and nothing is
+    # swept. The operand is fixed by the convention this repo already committed
+    # for this band (``pipeline/backcast_config``: "committed ->
+    # avg_committed_p50", the same column PJM's registered ``phys_committed``
+    # keys reproduce byte for byte), and each ISO's artifact carries exactly one
+    # row per class -- for COAL a single ``COAL`` row (PJM n=65), so there is no
+    # per-supply value to select between. A value chosen BETWEEN the registered
+    # multiplier and the measured one would be the fitted adder rules 1/13
+    # forbid.
+    #
+    # NON-SELECTIVE BY CONSTRUCTION (rule 1 [R-STRUCT]): the substitution is
+    # applied to EVERY class the artifact covers, never to the one class whose
+    # move helps a residual. 10 of PJM's 11 registered classes sit BELOW their
+    # measured ``avg_committed_p50`` (COAL_WC -0.404, COAL_BIT -0.368, CC_CHP
+    # -0.359, CT_CHP -0.299 ...), so a coal-only arm would be a SELECTION among
+    # them; coal is 84 % of the non-selective move anyway, so restricting to it
+    # buys ~nothing and forfeits the rule (charter §2(i)/§3).
+    #
+    # A class the ISO's artifact does not cover is NEUTRAL -- its registered
+    # multiplier is untouched -- the same rule-24 generic fallback
+    # ``gas_offer_margin_markup_mult`` uses for an absent ``phys_*`` key, not a
+    # tunable literal. An ISO with no artifact at all is a no-op.
+    #
+    # Default OFF for every ISO and every lane, so every registered keeper is
+    # byte-identical and no ISO's cache key moves (rule 25 [R-ISO-SCOPE]): the
+    # arm is requested per run, on the CLI. Arming it in
+    # ``iso_configs._pjm_config.default_scenario_overrides`` would record the
+    # flag and change nothing -- the calibration lane never applies those (only
+    # ``runner.run_scenario_iso`` does) -- which is the caiso-162 defect class.
+    committed_band_measured_basis: bool = False
 
     # Bituminous committed-band take-or-pay bid discount. The `_committed`
     # CAMPD coal tranche is the plant's baseload stay-online band; its fuel is
@@ -20896,6 +20968,11 @@ TIER_TAGS: dict[str, int] = {
     "coal_bit_passthrough_gas_slope": 3,
     "coal_econ_srmc_bound": 3,
     "coal_econ_marginal_hr_bound": 3,
+    # Structural gate (1), not a parameter -- the miso_coal_night_floor
+    # criterion exactly: every multiplier it installs is read from a frozen
+    # measured artifact (<iso>_campd_marginal_hr_summary.csv avg_committed_p50),
+    # so the flag carries no free number of its own (rule 21 [R-DOF]).
+    "committed_band_measured_basis": 1,
     "coal_bit_committed_takeorpay": 3,
     "coal_committed_takeorpay_all": 3,
     "coal_committed_takeorpay_regulated": 3,
