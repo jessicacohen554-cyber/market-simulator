@@ -67,6 +67,31 @@ program's promotion:
 issued against the FIVE-respondent set**, and its charter must carry S3's exclusion of 186 so the
 share is never quietly rebuilt on six.
 
+**ADDENDUM — r#5 check-in, 2026-09-14 ~16:40 UTC (main `c6c70190`). SOCO-20 is DONE, and it is
+BLOCKED — by NWPP, not by itself.** The scheduled check-in on PR #6144 fired against a moved main
+and the picture inverted in both directions:
+
+- **SOCO-20 never stalled.** Its tip sat at `e85bd85e` for ~8 h because it **finished** — 5 commits,
+  77 files, `FINDING-soco-20-2026-09-14.md` shipped, PR **#6152 open**. The r#4/r#5 reading of an
+  unmoved tip as an in-flight lane was wrong in the safe direction (gate G15: never grade on
+  absence) but it was still wrong, and one `git ls-tree` on the branch would have shown it.
+- **NWPP-20 (PR #6153) merged first and took the eighth slot.** `_ISO_BUILDERS` on main is nine
+  keys with `"NWPP"` last; `mech_matrix.ISO_ORDER` already carries both (SOCO `O`, NWPP `W`). **SOCO
+  is the NINTH region** and every "eighth" in this plan, in SOCO-20's commit subject and in its own
+  `fleet/models.py` comment is stale.
+- **PR #6152 now carries 55 conflict markers across 25+ files**, and one of them is not mechanical:
+  NWPP-20 made `BA_CODE_TO_ISO` **many-to-one** and **deleted the scalar inverse** as a silent
+  1/17-of-a-pool bug; SOCO-20's branch **writes that exact scalar inverse**. Taking SOCO's side at
+  the merge breaks NWPP. Recorded as collision **C-7**, resolution as gate **G23**, and the desk's
+  own misreading of the same evidence at r#3 as error **E-7**.
+- **PR #6144 (this desk) is clean against the new main** — `merge-tree` reports zero conflicts, so
+  no rebase was needed. This addendum and C-7/E-7/G23 ride it.
+
+**The rebase is the LANE's, not this desk's** — the 8 `eia860_generators.parquet` conflicts and
+every `src/`/`scripts/` hunk are outside this desk's write scope. One comment posted on #6152
+naming the hazard and the resolution; **what the owner owes is a re-dispatch of SOCO-20 to rebase
+per G23**, since a desk cannot rebase a lane's branch for it.
+
 ---
 
 ### r#4 — 2026-09-13 — NOTHING LANDED, AND THAT IS THE FINDING: FIVE LANES ISSUED, ZERO DISPATCHED (main `33a7c961`)
@@ -448,6 +473,7 @@ option (a)).
 | C-6 | `data/raw/zone-specific-demand/SOCO/SOURCES.md` | SOCO-11 (landed), SOCO-14 (issued) | **Append-only** for SOCO-14 — it adds BA-membership citations beneath SOCO-11's committed eight-respondent table and edits none of it |
 | C-4 | `scripts/lib/mech_matrix.py` `ISO_ORDER`/`ISO_EV_KEY`, `tests/unit/config/test_mechanism_matrix_shard_migration.py` | SOCO-21 (this program), any ISO addition | **Measured gate-independent from SOCO-20 at r#2**: neither `mech_matrix.py` nor `check_mechanism_matrix.py` references `SUPPORTED_ISOS` or `_ISO_BUILDERS`, and the shard test's own comment records SPP's column being seeded before SPP's first keeper. An 8-ISO matrix over a 7-ISO registry is a supported intermediate state |
 | C-3 | W1 lane surfaces (`campd-unit-level/`, `zone-specific-demand/`, the two fetch scripts, doc 00) | — | **CHECKED CLEAR at r#1**, pin `2c2fc065`: last touch `db5f11ea` (PR #6000), not a live lane. No hold |
+| C-7 | `src/market_sim/data/fleet/models.py` `BA_CODE_TO_ISO` + the ISO→BA direction; the 8 `data/raw/eia-860/**/eia860_generators.parquet` tables; and ~23 further registration modules | **NWPP-20 (PR #6153), which MERGED FIRST** — 78 files, registered NWPP as the **eighth** builder at 2026-09-14 | **LIVE AND BLOCKING, measured at the r#5 check-in (main `c6c70190`).** SOCO-20's PR #6152 is complete (5 commits, 77 files, FINDING shipped) and now carries **55 conflict markers across 25+ files**. Two halves, and only one is mechanical: (i) the 8 parquets are **derived** — `process_eia860.py` filters on `BA_CODE_TO_ISO`, so re-running curation on merged main regenerates both regions' rows; (ii) `fleet/models.py` is **semantic** — SOCO-20's scalar inverse is the construction NWPP-20 deleted as a silent 1/17-of-a-pool bug, so taking SOCO's side breaks NWPP. Resolution recorded as gate **G23**; the rebase is the LANE's (parquet + `src/` are outside this desk's write scope). **SOCO is now the NINTH region, not the eighth** — every "eighth" in the plan, in SOCO-20's commit message and in its `fleet/models.py` comment is stale |
 
 ## 5. Issuance record
 
@@ -534,3 +560,5 @@ in the prompt."* The charter is this desk's document; the defect was this desk's
 r#2, before any SOCO solve exists, which is the only reason it cost nothing. **Adopted forward: a
 CLAUDE.md rule that lands after a plan is chartered is a refresh edit due at the NEXT sitting, not
 whenever a lane trips over it.**
+
+**E-7 (r#5 check-in, against this desk's own §2.3). The row that found the `_ISO_TO_BA_CODE` pin drew the wrong conclusion from the same evidence.** §2.3's `_ISO_TO_BA_CODE` row closed with *"NWPP's harder case does not apply here — its 17→1 BA map collapses to one arbitrary BA and fails **silently** at 13 `==` call sites, while SOCO is one BA and one code."* That is correct about **SOCO's data** and wrong about **the codebase**: NWPP's case applied to SOCO not as a data problem but as a **merge hazard**, because NWPP-20's repair *deleted the scalar inverse SOCO-20 was concurrently writing*. The desk had the 13-call-site silent-failure sentence in front of it at r#3, quoted it, and still read it as "not our problem" rather than "this construction is being removed from under us." It cost nothing only because the check-in caught it before the merge. **Adopted forward: when another program's lane reports a defect in a surface this program also writes, record what it CHANGED, not only whether the defect reproduces here — a repair that deletes a construction is a collision even when the bug is not.**
