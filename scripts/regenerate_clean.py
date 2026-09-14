@@ -59,6 +59,9 @@ DATATYPES: tuple[str, ...] = (
     "nyiso-renewable-curtailment",
     "coal-basin-price",
     "coal-mining-ppi",
+    # miso-258 (2026-09-14): plant-level monthly ending coal stocks, the
+    # measured fuel-inventory state coal has never carried.
+    "coal-stocks",
     "nyiso-reserve-requirements",
     "nyiso-interface-flows",
     "nyiso-som-hub-fuel-annual",
