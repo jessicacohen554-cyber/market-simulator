@@ -1963,6 +1963,15 @@ def build_dispatch_fleet(
                     config, "coal_committed_takeorpay_sunk_fixed", False
                 ),
                 committed_dispatchable_supplies=_prb_dispatchable,
+                # ScenarioConfig.committed_band_measured_basis — Route A
+                # REPLACE half (b): the coal `_committed` band drops its
+                # supply passthrough entirely, so its effective basis is the
+                # measured `avg_committed_p50` multiplier half (a) installs
+                # (offer_curves.apply_committed_band_measured_basis). The two
+                # halves are one mechanism (rule 19 [R-ONE-MECH]).
+                committed_measured_basis=getattr(
+                    config, "committed_band_measured_basis", False
+                ),
             )
             for g in dispatch_fleet
         ]

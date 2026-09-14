@@ -208,6 +208,139 @@ def _with_intermediate_phys(
     return {**inter, **add}
 
 
+#: Model offer-curve class -> the row it reads in the ISO's committed CAMPD
+#: marginal-HR artifact (``<iso>_campd_marginal_hr_summary.csv``), for the
+#: Route A REPLACE committed-band measured basis
+#: (``ScenarioConfig.committed_band_measured_basis``). The artifact's class
+#: vocabulary is the model's BASE classes, so:
+#:
+#: * every coal supply class reads the single ``COAL`` row -- the artifact
+#:   carries exactly one (PJM n=65), which is why there is no per-supply value
+#:   to select between (rule 21 [R-DOF]);
+#: * a duty-split cohort reads its PARENT class's row, the same borrowing
+#:   ``_INTERMEDIATE_PHYS_PARENT`` already registers for ``phys_*``.
+#:
+#: A class ABSENT from this map is NEUTRAL -- its registered ``committed``
+#: multiplier is left untouched -- the rule-24 generic fallback, not a literal.
+_COMMITTED_MEASURED_ROW: dict[str, str] = {
+    "CC_REGULAR": "CC_REGULAR",
+    "CC_INTERMEDIATE": "CC_REGULAR",
+    "CC_CHP": "CC_CHP",
+    "CT_CHP": "CT_CHP",
+    "CT_PEAKER": "CT_PEAKER",
+    "CT_INTERMEDIATE": "CT_PEAKER",
+    "ST_GAS": "ST_GAS",
+    "ST_GAS_INTERMEDIATE": "ST_GAS",
+    "COAL": "COAL",
+    "COAL_BIT": "COAL",
+    "COAL_PRB": "COAL",
+    "COAL_LIGNITE": "COAL",
+    "COAL_WC": "COAL",
+}
+
+#: The artifact column the ``committed`` band reads. Fixed by the convention
+#: this repo already committed for this band (``pipeline/backcast_config``:
+#: "committed -> avg_committed_p50"; every registered ``phys_committed`` key
+#: reproduces this column byte for byte), so the operand is precedent, never a
+#: choice made here.
+_COMMITTED_MEASURED_COLUMN = "avg_committed_p50"
+
+
+def committed_measured_basis(iso: str) -> dict[str, float]:
+    """Return ``{model class: measured avg_committed_p50}`` for *iso*.
+
+    Reads the committed CAMPD marginal-heat-rate summary
+    (``data/raw/reference/<iso>_campd_marginal_hr_summary.csv``, written by
+    ``scripts/data/derive_campd_marginal_hr.py``) and maps each row through
+    :data:`_COMMITTED_MEASURED_ROW`.
+
+    ``avg_committed_p50`` is the capacity-weighted median AVERAGE heat rate
+    the class's units actually burn over their committed (min-load block)
+    hours, as a multiple of the same class ``base_HR`` the offer curve
+    multiplies against -- i.e. the measured physical basis of being on.
+
+    Returns an empty dict when the ISO has no artifact, so the caller leaves
+    every registered multiplier untouched.
+    """
+    import pandas as pd
+
+    from market_sim.config.paths import REFERENCE_DIR
+
+    path = REFERENCE_DIR / f"{iso.lower()}_campd_marginal_hr_summary.csv"
+    if not path.exists():
+        return {}
+    df = pd.read_csv(path)
+    if _COMMITTED_MEASURED_COLUMN not in df.columns:
+        return {}
+    by_row = {
+        str(r["class"]).upper(): float(r[_COMMITTED_MEASURED_COLUMN])
+        for _, r in df.iterrows()
+        if not pd.isna(r[_COMMITTED_MEASURED_COLUMN])
+    }
+    return {
+        cls: by_row[row]
+        for cls, row in _COMMITTED_MEASURED_ROW.items()
+        if row in by_row
+    }
+
+
+def apply_committed_band_measured_basis(
+    offer_curve_by_group: dict[str, dict], iso: str
+) -> tuple[dict[str, dict], list[tuple[str, float, float]]]:
+    """Replace every covered class's ``committed`` multiplier with its measured basis.
+
+    Half (a) of the Route A REPLACE mechanism
+    (``ScenarioConfig.committed_band_measured_basis``; chartered by
+    ``docs/PRECOMMIT-pjm-h5-coal-committed-charter-2026-09-13.md`` §4/§10a).
+    Half (b) -- dropping the coal supply passthrough sigmoid from the same band
+    (:func:`market_sim.data.fleet.campd_tranche_fuel_frac`) -- is not separable
+    from this one: without it the effective basis becomes ``measured x
+    passthrough`` and lands on the measurement in no year at all (charter §4),
+    which is the stacking rule 19 ``[R-ONE-MECH]`` forbids.
+
+    Applied to the RESOLVED curve -- after the base registry, any
+    ``--offer-curve-json`` absolute override, any ``--offer-curve-delta-json``
+    relative nudge and the ERCOT-111 econ floor -- so it replaces whatever the
+    calibration path produced rather than a registry default, and the recorded
+    ``run_config.json`` carries the value the LP actually solved on.
+
+    NON-SELECTIVE by construction (rule 1 ``[R-STRUCT]``): every class the
+    ISO's artifact covers is substituted, never the subset whose move helps a
+    residual. A class outside :data:`_COMMITTED_MEASURED_ROW`, absent from the
+    artifact, or whose ``committed`` band is missing or non-numeric is left
+    untouched (the rule-24 neutral fallback); ``mustrun`` / ``econ*`` / ``peak``
+    are never in scope.
+
+    Args:
+        offer_curve_by_group: The resolved ``{class: {band: multiplier}}`` curve.
+        iso: ISO whose measured artifact supplies the basis.
+
+    Returns:
+        ``(curve, substituted)`` -- a new curve dict, and the list of
+        ``(class, before, after)`` tuples actually replaced, for the caller to
+        log. Returns the input object itself when the ISO has no artifact, so
+        the no-artifact path is byte-identical.
+    """
+    measured = committed_measured_basis(iso)
+    if not measured:
+        return offer_curve_by_group, []
+    out: dict[str, dict] = {}
+    substituted: list[tuple[str, float, float]] = []
+    for cls, bands in (offer_curve_by_group or {}).items():
+        target = measured.get(str(cls).upper())
+        if target is None or not isinstance(bands, dict) or "committed" not in bands:
+            out[cls] = bands
+            continue
+        before = bands["committed"]
+        if not isinstance(before, (int, float)) or isinstance(before, bool):
+            out[cls] = bands
+            continue
+        out[cls] = {**bands, "committed": float(target)}
+        if float(before) != float(target):
+            substituted.append((str(cls), float(before), float(target)))
+    return out, substituted
+
+
 def _offer_curve_for_group(
     group: str, plant_code: int, config: ScenarioConfig
 ) -> dict[str, float] | None:
