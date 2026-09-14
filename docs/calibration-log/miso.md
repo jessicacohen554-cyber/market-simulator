@@ -14072,3 +14072,62 @@ shard reports on `claude/miso255-sil-{2021,2022,2023,2024,2025}d`. Matrix cell
 provenance repair is not refuted).
 
 * Next number: **miso-256**.
+
+## miso-257 — 2026-09-13 — **MISO's LAST TRAIN-TIER RUBRIC FAILURE WAS A BROKEN BENCH PART. The training window 2023–2025 flips NOT-YET → CALIBRATED at ZERO LP.** Keeper unchanged, `2026-09-12-miso-255-sil-measured`
+
+**LP SPENT: ZERO.** The parent solved nothing and no shard was launched (rule 32
+`[R-SHARD]` (a)). No mechanism tested, no cell verdict moved, no `ScenarioConfig`
+field created, changed or flipped.
+
+**THE FINDING.** The committed MISO **2023** and **2025** bench parts do not subtract
+the behind-the-meter CHP host supply from `classFull`. C1 scores a GRID-ONLY model
+against `EIA-923 class total − btm.parquet`, so the 2023 CC_CHP actual was carrying
+~21 TWh of generation the LP never dispatches. The identity holds to `−0.0000` in
+2020 / 2021 / 2022 / 2024 and in the pre-registration parts (`4a44e53d`), and fails
+only in those two years — which `git` dates precisely to the **miso-255
+registration** (`3cd1021b`): 2023 CC_CHP `21.3113 → 39.0080`, 2025 `17.7504 →
+37.1245`, 2024 unmoved. The rebuild reproduces the pre-registration 2023 value
+**exactly** and 2025 to +0.029 TWh.
+
+**THE REPAIR.** All six parts regenerated at zero LP on the pjm-h4 recipe
+(`docs/RESULT-pjm-h4-bench-move-landed-2026-09-13.md` §2) — the SLIM bundle's
+`dispatch/`, `system.parquet` and `btm.parquet` reconstructed from committed sources
+(`scripts/probes/_miso257_bench_rebuild.py`), then gated on the plant key set plus
+every dispatch-scoped field coming back byte-identical in all six years
+(`_miso257_bench_gate.py`). **2020 / 2021 / 2022 / 2024 come back with zero movement
+in `classFull`, `e930` or `avgLMP`.**
+
+**WHAT MOVED.** C1-2023 **CC_CHP −19.71 → −2.01 TWh** and **COAL_PRB +8.02 → −1.38
+TWh** against an 8.0 TWh band — one repair, both cells (rule 19 `[R-ONE-MECH]`; the
+inflated CHP actuals were taken out of the non-CHP actuals, which is why COAL_PRB read
++8.02). Keeper training window **NOT-YET → CALIBRATED** (grade 3 / 4 fails → 7 / 0
+fails); superseded `2026-09-09-miso-250-ep-gas` **NOT-YET → CALIBRATED**. C2-2025
+reported gas −8.4 % → −7.1 %, coal +0.6 % → −1.0 %. **The registered full span stays
+NOT-YET** on the out-of-training years, whose parts did not move and whose failures
+stand unchanged — rule 30(c), reported and never gating. `tests/scoring::
+test_committed_bench_parts_rewrite_byte_identical` (MISO/2020 + MISO/2021) now passes:
+miso-256 had written those two parts through a compact `json.dumps` instead of
+`backcast_artifacts.write_bench_part`.
+
+**HOUSEKEEPING.** Rule 35 `[R-PROMOTE]` discharged: year union enumerated first
+(2020–2025, covered by the keeper's own bundle), then the four E13 runs the miso-255
+promotion left behind — `2026-09-09-miso-250-ep-gas` and the three
+`2026-09-10-miso-251-{tp2020,tp2021,screen2022}` — PRUNED, not re-stamped (all three
+touchpoints replay the SUPERSEDED miso-250 recipe on years the keeper already carries).
+`audit_keepers --iso MISO` 0 failures. Gate-(a) provenance re-keyed off
+`2026-09-09-miso-250-ep-gas`; verdict unmoved at `fail` (MISO still absent from the
+`complete` block).
+
+**OPEN FOR THE OWNER.** MISO's *status-page headline* still reads NOT-YET because its
+out-of-training years sit IN the keeper bundle (rules 16 / 34(c) require that) rather
+than in a folded companion the way PJM's, CAISO's and NEISO's do. Rule 30(c) says the
+ISO determination is the train-tier verdict; the mechanism that implements it is a
+`config_partition` block on the keeper shard with a non-`train` tier, exactly as
+ERCOT's `carveout-validation-2021-2022` config does. That is a governance declaration
+carrying an owner-ruling citation, so this session did **not** make it unilaterally.
+
+Records: `docs/RESULT-miso257-c1-2023-was-a-broken-bench-part-2026-09-13.md`,
+probes `scripts/probes/_miso257_bench_rebuild.py`, `_miso257_bench_gate.py`,
+`_miso257_btm_identity.py`.
+
+* Next number: **miso-258**.
