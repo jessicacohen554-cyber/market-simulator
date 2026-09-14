@@ -2413,6 +2413,16 @@ NUCLEAR_MONTHLY_CF: dict[str, list[float]] = {
     # reproduces; the by-year table below is what a backcast reads. Registered
     # 2026-09-14 (NWPP-20).
     "NWPP": [0.99, 1.00, 0.95, 0.70, 0.37, 0.47, 0.97, 0.98, 0.98, 0.99, 0.99, 0.97],
+    # SOCO = the three-plant / eight-unit Southern Nuclear fleet — Farley 1-2
+    # (EIA 6001, AL), Hatch 1-2 (6051, GA), Vogtle 1-4 (649, GA) — 8,282.4 MW
+    # nameplate (8,080 MW net summer, the model pmax), with Vogtle 3 (2023-07)
+    # and Vogtle 4 (2024-04) commissioning INSIDE the backcast window.
+    # Forecast-fallback seasonal pattern = the 3-year mean of the EIA-923-
+    # derived per-year CF below (the MISO/SPP construction). The Feb-Mar and
+    # Sep-Oct dips are the staggered refuelling cadence (Hatch each Feb-Mar,
+    # Farley Apr-Jun 2025; docs/multi-iso/soco-data-audit.md §5 row 8).
+    # Registered 2026-09-14 (SOCO-20).
+    "SOCO": [0.99, 0.89, 0.83, 0.89, 0.91, 0.94, 0.93, 0.98, 0.84, 0.89, 0.92, 0.98],
 }
 
 # Dormant nuclear plants the EIA-860 operable schedule lists as OP that have
@@ -2757,6 +2767,33 @@ NUCLEAR_MONTHLY_CF_BY_YEAR: dict[str, dict[int, list[float]]] = {
         2023: [0.97, 1.00, 0.98, 0.83, 0.11, 0.32, 0.97, 0.98, 0.99, 0.96, 0.98, 0.95],
         2024: [1.00, 1.00, 0.98, 1.00, 0.99, 0.97, 0.97, 0.98, 0.96, 1.00, 0.99, 0.98],
         2025: [0.99, 0.99, 0.89, 0.28, 0.00, 0.12, 0.98, 0.98, 0.99, 1.00, 1.00, 0.98],
+    },
+    # SOCO = Farley 1-2 (EIA 6001) + Hatch 1-2 (6051) + Vogtle 1-4 (649), the
+    # eight Southern Nuclear reactors (docs/multi-iso/soco-data-audit.md §5
+    # row 8; NRC licence rows in data/raw/nuclear-license-status/soco.csv).
+    # Monthly EIA-923 net generation / (fleet pmax ONLINE in the month x hours
+    # in month), clipped at 1.0. Derived at REGISTRATION (2026-09-14, lane
+    # SOCO-20) by the frozen script — the initial derivation from its source,
+    # never a re-derivation on a residual (rule 23). THE DENOMINATOR IS THE
+    # MONTH'S ONLINE PMAX, the same grain the LP's COD ramp serves since
+    # SOCO-15: Vogtle 3 (1,114 MW) enters 2023-07 and Vogtle 4 (1,114 MW)
+    # 2024-04, so H1-2023 divides by 6,054 MW and H2-2023 by 7,168, not by the
+    # whole 8,282 (which would have read 0.72 / 0.61 / 0.60 for Jan-Mar 2023
+    # against the 0.99 / 0.85 / 0.82 below — a -27 % bias on the units that
+    # WERE online, the mirror image of the phantom SOCO-15 removed). Every
+    # other ISO's table is byte-identical under the same rule (--check, no
+    # in-window nuclear COD elsewhere). The dips are the staggered refuelling
+    # cadence — Hatch Feb-Mar every year, Farley Apr-Jun 2025 (Mar 0.70), the
+    # Sep-Oct fall outages — and 2023's independent EIA-930 cross-check
+    # agrees with EIA-923 to +0.58 % (audit §3.6). The 2025 EIA-923 vintage is
+    # PARTIAL for the footprint (108 SOCO plants vs 311 / 330; nuclear is
+    # complete, audit §1 item 9) and is re-derived when the final file lands.
+    # Source: EIA-923 Page 1 monthly net generation, 2023-2025.
+    # Derivation/verify: scripts/data/derive_nuclear_monthly_cf.py --isos SOCO.
+    "SOCO": {
+        2023: [0.99, 0.85, 0.82, 1.00, 0.99, 0.94, 0.87, 0.96, 0.88, 0.91, 0.90, 0.98],
+        2024: [0.97, 0.88, 0.97, 0.84, 0.96, 0.96, 0.94, 0.99, 0.80, 0.89, 0.87, 0.97],
+        2025: [1.00, 0.93, 0.70, 0.82, 0.78, 0.92, 0.98, 1.00, 0.85, 0.87, 1.00, 1.00],
     },
 }
 
@@ -3111,6 +3148,40 @@ DEMAND_GROWTH_RATES: dict[str, dict[str, dict[str, float]]] = {
         "low": {"near": 0.022010, "long": 0.016048},
         "mid": {"near": 0.022010, "long": 0.016048},
         "high": {"near": 0.022010, "long": 0.016048},
+    },
+    # SOCO -- Georgia Power "Budget 2025 (B2025) Load and Energy Forecast",
+    # Technical Appendix Vol. 1 §1 of the 2025 IRP (Georgia PSC Docket 56002,
+    # doc 221233, filed 2025-01-31, approved 2025-07-15), curated as
+    # data/raw/load-forecast/soco/soco.csv by SOCO-12 (edition "Budget 2025
+    # (B2025) / 2025 IRP", vintage 2025, gate G12). Registered 2026-09-14 by
+    # lane SOCO-20. ENERGY basis, the table's convention (``energy_gwh``,
+    # published-cell / 1000 with the unit correction SOCO-12 §4 declares):
+    # 2026 102,557.4 -> 2031 165,701.5 -> 2044 194,890.0 GWh, so
+    #   near = CAGR 2026 -> 2031 = (165,701.5 / 102,557.4)^(1/5) - 1 = 0.100707
+    #   long = CAGR 2031 -> 2044 (the edition horizon) = (194,890.0 /
+    #          165,701.5)^(1/13) - 1 = 0.012559
+    # (the SPP era rule). TWO DEPARTURES, each a property of what Southern
+    # publishes and each disclosed (rule 14 [R-ACCURATE]):
+    #   1. THE SERIES IS GEORGIA POWER ONLY, NOT THE BALANCING AUTHORITY. The
+    #      IRP workbook's "System" (IIC / SOCO-wide) column is REDACTED in every
+    #      public sheet, and Alabama Power files no public IRP because Alabama
+    #      has no IRP statute (SOCO-12 §0.1 / §5) — so roughly half the
+    #      footprint by peak has no public forward load forecast at all.
+    #      Nothing is grossed up to the footprint; a SOCO-wide forward peak is
+    #      a CONSTRUCTION lane SOCO-32 must declare. Rule 14's misalignment
+    #      exception (a different boundary) applies and is stated here rather
+    #      than reconciled. The ~10 %/yr near-era rate is Georgia Power's own
+    #      published large-load (data-centre) build-up, B2025 §1.2.1.
+    #   2. low = high = mid. Georgia Power publishes ONE case (MG0) and no
+    #      prior curated vintage exists to re-centre a ratio band on, so no
+    #      band is invented (rule 25 — no ISO's band is borrowed).
+    # Peak-basis comparison (DISCLOSED, NOT USED): the workbook's winter peak
+    # gives near 12.8 % / long 2.0 %, summer 11.5 % / 2.1 % — higher than the
+    # energy CAGRs because the large loads arrive as flat blocks.
+    "SOCO": {
+        "low": {"near": 0.100707, "long": 0.012559},
+        "mid": {"near": 0.100707, "long": 0.012559},
+        "high": {"near": 0.100707, "long": 0.012559},
     },
 }
 
@@ -3513,6 +3584,15 @@ DATACENTER_ADDITIONS_MW: dict[str, dict[str, dict[int, float]]] = {
     # invented. Lands on intake of a published NWPP large-load component
     # (routed to the capx director with card N9).
     "NWPP": {},
+    # SOCO (registered 2026-09-14, lane SOCO-20): {} => 0 MW, the memo §2.2
+    # rule. Georgia Power's B2025 forecast DOES isolate a large-load external
+    # adjustment (a 24,300 MW pipeline through the mid-2030s, 7,300 MW of it
+    # committed), but publishes it CHART-BORNE and SOCO-12 transcribed no
+    # ``component="large_load"`` rows (FINDING-soco-12 §7 item 4) — so
+    # nothing is isolated and nothing is invented; the block rides inside
+    # DEMAND_GROWTH_RATES["SOCO"]'s ~10 %/yr near era until a chart read
+    # lands. Alabama Power publishes no forecast at all (SOCO-12 §5).
+    "SOCO": {},
 }
 
 # Per-ISO override of the data-center block's zonal allocation, {iso: {zone:
@@ -3882,6 +3962,14 @@ ELECTRIFICATION_LAYERS: dict[str, dict[str, dict[str, dict[int, float]]]] = {
     # persists for NWPP until a source lands — the SPP / PJM / CAISO / MISO
     # posture above.
     "NWPP": {"heat_pump": {}, "ev": {}},
+    # SOCO (registered 2026-09-14, lane SOCO-20): both layers {} — the honest
+    # no-op. Georgia Power's B2025 forecast publishes no heating-
+    # electrification or EV component (SOCO-12 transcribed peak + energy
+    # totals only, data/raw/load-forecast/soco/SOURCES.md), and Alabama Power
+    # publishes nothing, so there is no adoption anchor to curate and no
+    # citable 8760 to arm; the flat-scalar status quo persists for SOCO until
+    # a source lands (the SPP posture above).
+    "SOCO": {"heat_pump": {}, "ev": {}},
 }
 
 # Balance-point (base) temperature for the heat_pump layer's heating-degree
@@ -4454,6 +4542,19 @@ RENEWABLE_AVG_CF: dict[str, dict[str, float]] = {
     # holds 4,175 of the 9,751 MW. Forecast-mode normalization target only;
     # NWPP-31 builds calibration_reference.json.
     "NWPP": {"wind": 0.31, "solar": 0.27},
+    # SOCO (registered 2026-09-14, lane SOCO-20): Tier 3, DERIVED from two
+    # published measurements by the SPP construction — EIA-930 SOCO ``NG: SUN``
+    # net generation for 2024, 10.141 TWh (docs/multi-iso/soco-data-audit.md
+    # §3.1), over the mean of the EIA-860 2025 ER operable solar nameplate
+    # online by YE-2023 (4,689.9 MW) and YE-2024 (5,484.9 MW) = 5,087.4 MW x
+    # 8,784 h:
+    #   solar = 10,141,000 / (5,087.4 x 8,784) = 0.2269 -> 0.23
+    # THERE IS NO WIND IN THE SOCO FLEET — zero EIA-860 wind generators and
+    # ``NG: WND`` identically 0.000 TWh in every year (audit §2.2 / R-12) — so
+    # the wind entry is 0.0 and describes an empty class; a forecast wind
+    # build for SOCO is blocked at QUEUE_CAP_PER_TECH_GW["SOCO"]["wind"] = 0.0
+    # anyway. Backcasts use the measured profile and never read this.
+    "SOCO": {"wind": 0.0, "solar": 0.23},
 }
 
 # Installed renewable nameplate capacity (MW) by ISO and technology.
@@ -4525,6 +4626,15 @@ RENEWABLE_INSTALLED_MW: dict[str, dict[str, float]] = {
     # / OR 1,206 / SNV 150; solar SNV 4,175 / EAST 3,048 / INLAND 1,061 / NW
     # 773 / OR 694 (PRECOMMIT-nwpp-20 §3.7).
     "NWPP": {"wind": 14460.0, "solar": 9751.0},
+    # SOCO (registered 2026-09-14, lane SOCO-20): MEASURED by the FFR-4D CAISO
+    # construction — EIA-860 2025 Early Release per-technology schedules,
+    # Status OP, BA code SOCO, the SAME object data.renewables.
+    # _eia860_monthly_capacity resolves for a backcast year-end, with the
+    # rejected Massachusetts row (0.5 MW, audit §2.6(a)) excluded:
+    #   solar = 5,824.4 MW -> 5820 (nearest 10)   [GA 5,000.7 / AL 387.2 /
+    #                                               MS 316.5 / FL 120.0]
+    #   wind  = 0.0 — the footprint has no wind (audit §2.2 / R-12)
+    "SOCO": {"wind": 0.0, "solar": 5820.0},
 }
 
 # CAISO TAC-area actual hourly load (data.eia_loader) -> model zone weights.
@@ -5561,6 +5671,19 @@ WEATHER_YEAR_POOL_BY_ISO: dict[str, tuple[int, ...]] = {
     # resolves wind + solar for all three with no fallback. 2019-2022 member
     # extracts are not landed (plan §6 row 13 puts the back years after W4).
     "NWPP": (2023, 2024, 2025),
+    # SOCO (BA "SOCO"): hourly extract spans 2023-01-01 .. 2025-12-31 UTC,
+    # 8,760 / 8,784 / 8,753 local-date rows (docs/multi-iso/soco-data-audit.md
+    # §3.1; America/Chicago hour-ending). The three training years were
+    # verified END-TO-END at registration (2026-09-14, lane SOCO-20):
+    # load_demand("SOCO", y) resolves a zonal 8760 with both demand screens
+    # NO-OPS (audit §3.5), the served interchange schedule resolves, and
+    # load_renewable_profiles resolves solar (the footprint has no wind).
+    # 2025's 8,753 local rows are the UTC-bounded fetch, not missing data
+    # (audit §3.2): the loader bridges the seven trailing hours ending 18-24
+    # on 2025-12-31 and logs it; the fetch extension is routed (SOCO-11
+    # manifest item [4]), so 2025 is listed with that bridge named. 2019-2022
+    # are not in the extract.
+    "SOCO": (2023, 2024, 2025),
 }
 
 
@@ -5846,6 +5969,7 @@ VOLUNTARY_BASELINE_ISO_WEIGHT: dict[str, float | None] = {
     "NEISO": None,  # needs-intake
     "SPP": None,  # needs-intake — same EIA-861 gap (registered 2026-09-06, SPP-20)
     "NWPP": None,  # needs-intake — same EIA-861 gap (registered 2026-09-14, NWPP-20)
+    "SOCO": None,  # needs-intake — same EIA-861 gap (registered 2026-09-14, SOCO-20)
 }
 
 # f_commit(path, y): the share of the DC block's energy under a PUBLISHED

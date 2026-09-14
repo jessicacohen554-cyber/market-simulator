@@ -64,6 +64,14 @@ INTERCHANGE_INJECTIONS: dict[str, tuple] = {
     # schedule (eia930.envelopes.nwpp_net_interchange) and this entry is a
     # byte-identical no-op until a later lane (NWPP-56) arms the priced seams.
     "NWPP": (apply_reference_price_seam_injections,),
+    # SOCO (registered 2026-09-14, lane SOCO-20; owner card S4): the generic
+    # seam step alone, the SPP posture. It self-gates on
+    # ``reference_price_interface``, which is DEFAULT-OFF for SOCO
+    # (REFERENCE_PRICE_DEFAULT_ISOS is untouched), so the first keeper serves
+    # the measured EIA-930 schedule (``_SCALAR_INTERCHANGE_ISOS``) and this
+    # entry is a byte-identical no-op until lever SOCO-56 arms the priced
+    # seams in ``INTERFACE_NEIGHBORS["SOCO"]``.
+    "SOCO": (apply_reference_price_seam_injections,),
 }
 
 

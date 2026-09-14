@@ -1617,6 +1617,177 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
             hr_by_year={2023: 37.11, 2024: 30.73, 2025: 13.90},
         ),
     ],
+    # SOCO — the Southern Company BALANCING AUTHORITY, registered 2026-09-14
+    # by lane SOCO-20 (owner card S4, desk r#3: "served measured EIA-930
+    # interchange for the first keeper"; the priced blocks below register
+    # DEFAULT-OFF for lever SOCO-56 "with SOCO-12's published transfer
+    # capability as their input"). ALL EIGHT BLOCKS ARE INERT until
+    # ``reference_price_interface`` is armed for SOCO, which no keeper does.
+    #
+    # One block per counterparty in SOCO's own EIA-930 BA-to-BA book
+    # (FINDING-soco-11 §4.3: nine DIBAs, zero NaN hours, no impossible
+    # print), except SEPA — the Southeastern Power Administration is a
+    # federal hydro MARKETER whose ~2 TWh/yr into SOCO is a contract
+    # allocation, not a priced seam, and is left in the served schedule.
+    # Names are ``SOCO_<DIBA>`` so none can ever share a ``_HR_GAS_ELASTIC``
+    # key with PJM's ``TVA`` / ``Carolinas`` or SPP's ``MISO_South`` blocks
+    # (rule 25; SOCO plan §7 gate G10).
+    #
+    # ``interface_limit_mw`` = the 2024 Reserve Margin Study's WINTER "Avg TC"
+    # (Average Transfer Capability into the Southern Company System, Table
+    # I.2; summer Table I.1 in each comment), transcribed by SOCO-12
+    # (data/raw/soco-planning/README.md §4c) — the ruling's named input.
+    # RULE 14 [R-ACCURATE] MISALIGNMENT, stated once for all eight: these are
+    # adequacy-study AVERAGE import capabilities, not tie ratings, and the
+    # measured 2023-2025 hourly envelope on each DIBA (SOCO-11 §4.3, recorded
+    # per block) exceeds them by 3-25x — TVA 480 vs a measured -3,150 .. +3,007
+    # MW range. An armed seam at these limits would refuse flows the meter
+    # recorded in most hours; SOCO-56 reconciles the two before arming
+    # (the SPP-51 ERCOT-tie precedent), and until then the blocks are off.
+    #
+    # ``marginal_heat_rate`` anchors are TIER-3, labelled, default-off:
+    #   * SOCO_MISO — MISO-South zonal RT mean over HH + MISO's own basis, the
+    #     construction SPP-51 used for the same MISO zone: 27.0420 / 25.1159 /
+    #     35.4525 $/MWh (actual_lmp_hourly_zonal_MISO, zone MISO-South) over
+    #     HH 2.536 / 2.192 / 3.529 + 0.30 = 2.836 / 2.492 / 3.829 -> 9.54 /
+    #     10.08 / 9.26; flat = their mean 9.63. gas_basis = MISO's registry.
+    #   * every other neighbour publishes NO LMP (TVA, Duke, Dominion SC,
+    #     Santee Cooper, the Florida BAs). The 11.6 flat is the value PJM's
+    #     registry already carries for the SAME TVA / Carolinas systems
+    #     (INTERFACE_NEIGHBORS["PJM"], "SERC coal/nuclear-set, no organized
+    #     LMP") — one physical neighbour, one anchor (rule 19) — extended to
+    #     the Florida BAs as a labelled placeholder; PJM's affine fit
+    #     (5.6, 14.2) is PJM's and is NOT keyed here (rule 25). The SOCO-33 /
+    #     SOCO-56 derive replaces these (candidate anchor: the SOCO-13 EQR
+    #     store carries per-seller transaction prices for every one of these
+    #     counterparties into SOCO POD).
+    # ``hurdle`` = 2.0 $/MWh, the Tier-3 dead-band SPP's seams carry (never
+    # fitted); the SOCO<->MISO seam is ONE physical object and MISO's own
+    # ``South`` block registers it at 2.0 (rule 19). ``load_shape_exponent``
+    # = 1.0, the parameter-free default. Load shape: MISO off its own
+    # extract; the Florida BAs off the ``FLA`` (Florida region) extract via
+    # ``proxy_ba``; TVA / DUK / SCEG / SC — no EIA-930 extract in the tree —
+    # off ``SOCO`` itself, the proxy PJM's registry already uses for TVA and
+    # the Carolinas. ``border_zones`` follow geography: TVA borders north
+    # AL / GA / MS; Entergy (MISO-South) borders Mississippi; the Carolinas
+    # (DUK / SCEG / SC) border Georgia at the Savannah River; FPL borders
+    # Georgia on the peninsula and Alabama through FPL-Northwest (the former
+    # Gulf Power area); Progress Florida (FPC) and Tallahassee border
+    # south Georgia.
+    "SOCO": [
+        NeighborInterface(
+            # Winter Avg TC 478 (summer 480); measured 2023-25 envelope
+            # -3,150 .. +3,007 MW, the one genuinely two-way SOCO seam
+            # (27 / 18 / 28 % of hours exporting; SOCO-11 §4.3).
+            name="SOCO_TVA",
+            ba_code="TVA",
+            proxy_ba="SOCO",
+            gas_basis=0.0,
+            marginal_heat_rate=11.6,
+            hurdle=2.0,
+            interface_limit_mw=478.0,
+            border_zones=("SOCO_AL", "SOCO_GA", "SOCO_MS"),
+            load_shape_exponent=1.0,
+        ),
+        NeighborInterface(
+            # Winter Avg TC 2,374 (summer 1,791); measured envelope
+            # -683 .. +1,780 MW, 91-95 % of hours exporting, +4.4-4.7 TWh/yr.
+            name="SOCO_MISO",
+            ba_code="MISO",
+            gas_basis=GAS_BASIS_DIFFERENTIAL["MISO"],
+            marginal_heat_rate=9.63,
+            hurdle=2.0,
+            interface_limit_mw=2374.0,
+            border_zones=("SOCO_MS",),
+            load_shape_exponent=1.0,
+            hr_by_year={2023: 9.54, 2024: 10.08, 2025: 9.26},
+        ),
+        NeighborInterface(
+            # Duke Energy Carolinas. Winter Avg TC 407 (summer 34); measured
+            # envelope -1,954 .. +863 MW, a near-unidirectional IMPORT
+            # (-3.7 .. -4.2 TWh/yr; 6-12 % of hours exporting).
+            name="SOCO_DUK",
+            ba_code="DUK",
+            proxy_ba="SOCO",
+            gas_basis=0.0,
+            marginal_heat_rate=11.6,
+            hurdle=2.0,
+            interface_limit_mw=407.0,
+            border_zones=("SOCO_GA",),
+            load_shape_exponent=1.0,
+        ),
+        NeighborInterface(
+            # Dominion Energy South Carolina (SCEG). Winter Avg TC 126
+            # (summer 59); measured envelope -75 .. +2,123 MW — SOCO's
+            # LARGEST export seam, +7.1 / +8.8 / +9.8 TWh, ~100 % of hours.
+            name="SOCO_SCEG",
+            ba_code="SCEG",
+            proxy_ba="SOCO",
+            gas_basis=0.0,
+            marginal_heat_rate=11.6,
+            hurdle=2.0,
+            interface_limit_mw=126.0,
+            border_zones=("SOCO_GA",),
+            load_shape_exponent=1.0,
+        ),
+        NeighborInterface(
+            # Santee Cooper (South Carolina Public Service Authority, EIA-930
+            # ``SC``). Winter Avg TC 533 (summer 280); measured envelope
+            # -189 .. +1,242 MW, 96-100 % of hours exporting, +4.1-4.8 TWh.
+            name="SOCO_SC",
+            ba_code="SC",
+            proxy_ba="SOCO",
+            gas_basis=0.0,
+            marginal_heat_rate=11.6,
+            hurdle=2.0,
+            interface_limit_mw=533.0,
+            border_zones=("SOCO_GA",),
+            load_shape_exponent=1.0,
+        ),
+        NeighborInterface(
+            # Florida Power & Light incl. FPL-Northwest (the former Gulf
+            # Power area, merged into the FPL BA 2021). Winter Avg TC 153 +
+            # 1,164 = 1,317 (summer 96 + 546); measured envelope -1,280 ..
+            # +2,843 MW, 77-85 % of hours exporting, +2.8-2.9 TWh/yr.
+            name="SOCO_FPL",
+            ba_code="FPL",
+            proxy_ba="FLA",
+            gas_basis=0.0,
+            marginal_heat_rate=11.6,
+            hurdle=2.0,
+            interface_limit_mw=1317.0,
+            border_zones=("SOCO_GA", "SOCO_AL"),
+            load_shape_exponent=1.0,
+        ),
+        NeighborInterface(
+            # Duke Energy Florida (Progress FL, EIA-930 ``FPC``). Winter Avg
+            # TC 50 (summer 31); measured envelope -354 .. +313 MW, small and
+            # drifting from balanced to import (+0.08 / -0.02 / -0.42 TWh).
+            name="SOCO_FPC",
+            ba_code="FPC",
+            proxy_ba="FLA",
+            gas_basis=0.0,
+            marginal_heat_rate=11.6,
+            hurdle=2.0,
+            interface_limit_mw=50.0,
+            border_zones=("SOCO_GA",),
+            load_shape_exponent=1.0,
+        ),
+        NeighborInterface(
+            # City of Tallahassee. Winter Avg TC 20 (summer 12); measured
+            # envelope -91 .. +294 MW, 89-95 % of hours exporting, +0.6-0.7
+            # TWh/yr.
+            name="SOCO_TAL",
+            ba_code="TAL",
+            proxy_ba="FLA",
+            gas_basis=0.0,
+            marginal_heat_rate=11.6,
+            hurdle=2.0,
+            interface_limit_mw=20.0,
+            border_zones=("SOCO_GA",),
+            load_shape_exponent=1.0,
+        ),
+    ],
 }
 
 # MISO per-seam measured BA-to-BA deliverability envelope.

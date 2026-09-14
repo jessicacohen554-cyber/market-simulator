@@ -749,3 +749,73 @@ def test_nwpp_lookup_admits_wecc_only_and_every_fleet_plant_resolves():
     fleet = load_fleet_from_csv("NWPP", get_iso_config("NWPP"))
     assert fleet
     assert {g.zone for g in fleet} <= valid
+
+
+# --- SOCO (registered 2026-09-14, lane SOCO-20; owner card S3) ---------------
+
+
+def test_soco_state_mapping():
+    """SOCO zones are exact unions of whole states, named for geography.
+
+    AL -> SOCO_AL, GA -> SOCO_GA, MS -> SOCO_MS, and the SERC Florida
+    panhandle (FIPS 12) -> SOCO_AL (docs/multi-iso/soco-data-audit.md §6.4).
+    """
+    assert assign_zone_by_fips("1", None, "SOCO") == "SOCO_AL"
+    assert assign_zone_by_fips("13", None, "SOCO") == "SOCO_GA"
+    assert assign_zone_by_fips("28", None, "SOCO") == "SOCO_MS"
+    assert assign_zone_by_fips("12", None, "SOCO") == "SOCO_AL"
+
+
+def test_soco_massachusetts_is_refused_not_zoned():
+    """Audit §2.6(a): plant 67241 '401 South' (Berkshire MA, NERC NPCC) self-
+    reports BA code SOCO. There is NO FIPS-25 key, and the splitter FAILS LOUD
+    on it instead of falling back to the largest zone."""
+    import pytest
+
+    from market_sim.data.zone_assignment import _SOCO_STATE_ZONES
+
+    assert 25 not in _SOCO_STATE_ZONES
+    with pytest.raises(ValueError, match="outside the SOCO footprint"):
+        assign_zone_by_fips("25", None, "SOCO")
+    # ...and the lookup builders apply the same rule first, so the plant is
+    # never zoned by either path.
+    assert 67241 not in build_zone_lookup("SOCO")
+
+
+def test_soco_takes_no_coordinate_fallback():
+    """SOCO's zones are whole states with no lat/lon seam (audit §6.4): a
+    coords-only caller is refused, never handed a guess."""
+    import pytest
+
+    with pytest.raises(ValueError, match="FIPS state is required"):
+        assign_zone_by_coords(33.5, -86.8, "SOCO")  # Birmingham, AL
+
+
+def test_soco_known_plants_resolve_to_expected_zones():
+    """Named SOCO plants land in their state's zone (EIA-860 plant codes)."""
+    cases = {
+        55411: "SOCO_AL",  # Hillabee Energy Center — the plant that named the program
+        3: "SOCO_AL",  # Barry (AL)
+        6002: "SOCO_AL",  # James H Miller Jr (AL)
+        7063: "SOCO_AL",  # McIntosh (AL) — the CAES site
+        10416: "SOCO_AL",  # Pensacola Florida Plant — the SERC panhandle -> AL
+        703: "SOCO_GA",  # Bowen (GA)
+        6257: "SOCO_GA",  # Scherer (GA)
+        649: "SOCO_GA",  # Vogtle (GA)
+        6073: "SOCO_MS",  # Victor J Daniel Jr (MS)
+    }
+    lookup = build_zone_lookup("SOCO")
+    for oris, expected in cases.items():
+        assert lookup[oris] == expected, f"ORIS {oris}"
+        assert assign_zone(oris, "SOCO") == expected, f"ORIS {oris}"
+
+
+def test_soco_every_admitted_plant_resolves():
+    """Every admitted SOCO plant resolves to one of the three zones (Stage B).
+    336 EIA-860 SOCO plants with operable generators (audit §2.2) plus eGRID
+    2023 rows, minus the one rejected MA row."""
+    lookup = build_zone_lookup("SOCO")
+    assert len(lookup) > 330
+    valid = {"SOCO_AL", "SOCO_GA", "SOCO_MS"}
+    assert set(lookup.values()) <= valid
+    assert valid <= set(lookup.values())

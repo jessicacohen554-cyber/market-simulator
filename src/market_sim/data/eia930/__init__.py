@@ -134,6 +134,7 @@ from .envelopes import (
     pjm_net_interchange_envelope,
     pjm_zonal_interchange,
     pjm_zonal_interchange_envelope,
+    soco_net_interchange,
     spp_net_interchange,
     nwpp_net_interchange,
 )
@@ -170,6 +171,7 @@ from .demand import (
     _load_neiso_hourly_demand as _load_neiso_hourly_demand,
     _load_nyiso_hourly_demand as _load_nyiso_hourly_demand,
     _load_pjm_hourly_demand as _load_pjm_hourly_demand,
+    _load_soco_hourly_demand as _load_soco_hourly_demand,
     _load_spp_hourly_demand as _load_spp_hourly_demand,
     _load_nwpp_hourly_demand as _load_nwpp_hourly_demand,
     load_demand,
@@ -228,6 +230,7 @@ __all__ = [
     "neiso_net_interchange",
     "spp_net_interchange",
     "nwpp_net_interchange",
+    "soco_net_interchange",
     # actuals
     "load_ercot_renewable_gen",
     "load_eia_hourly_benchmark",

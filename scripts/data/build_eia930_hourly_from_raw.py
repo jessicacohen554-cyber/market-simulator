@@ -50,6 +50,14 @@ BA_TIMEZONE: dict[str, str] = {
     "SWPP": "America/Chicago",
     "ERCO": "America/Chicago",
     "CISO": "America/Los_Angeles",
+    # SOCO spans two civil zones (AL/MS Central, GA Eastern) but EIA stamps
+    # the balancing authority on ONE clock, Central — measured by SOCO-10
+    # over all 26,304 rows of the committed ``SOCO hourly.parquet`` (gate G19,
+    # docs/multi-iso/soco-data-audit.md §3.4) and by SOCO-11 on the FERC-714
+    # respondents' own reported timezone. Without this key the ``get``
+    # default below rebuilt SOCO on Eastern and one-hour-shifted it against
+    # the committed file (audit routed item R-1). Lane SOCO-20, 2026-09-14.
+    "SOCO": "America/Chicago",
 }
 
 REGION_TYPES: dict[str, str] = {

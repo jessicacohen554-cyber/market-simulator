@@ -1,0 +1,24 @@
+# SOCO scenario-campaign REFERENCE base, 2026-2050 (SCN-WS0 deliverable 4;
+# docs/handoffs/forecast-scenario-readiness-plan-2026-09.md §3.0, §3.5).
+#
+# Added 2026-09-14 by lane SOCO-20 on SOCO's registration as the ninth region
+# (tests/scoring/test_scenario_campaign_configs enumerates SUPPORTED_ISOS). SOCO is
+# a vertically-integrated balancing authority with no price market; its REF is
+# still the shipped default posture like every other region's.
+#
+# This is the campaign's REF: the ISO's SHIPPED forecast posture at the
+# campaign's frozen HEAD. It therefore sets NOTHING but mode, ISO and horizon —
+# every policy and driver axis is left at its ScenarioConfig default, which is
+# what makes it the reference every case's delta is measured against (plan
+# §3.0). A case is one field override on top of this file, expressed in
+# configs/scenario_campaign_matrix.yaml or on the command line via --set;
+# nothing is ever varied by editing this file, or the deltas stop being
+# comparable across ISOs.
+#
+# The _2026_2030 companion is the T1 window (5 solve-years, so it needs no
+# §2.1b full-solve authorization); the _2026_2050 file is the Stage-B horizon
+# and DOES (run_full_horizon --full-solve-authorized, per-ISO owner grant).
+mode: forecast
+iso: SOCO
+start_year: 2026
+end_year: 2050

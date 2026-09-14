@@ -210,6 +210,9 @@ EIA_860_CSV_COLUMNS: list[str] = [
 # ruling N1, docs/multi-iso/nwpp-addition-plan-2026-09.md §3). The map stays
 # many-to-one safe everywhere it is read (``.map`` / ``.isin`` / membership);
 # the ISO -> BA direction is ``ISO_TO_BA_CODES`` below, NOT a scalar inverse.
+# EIA-930 balancing-authority code → registry name, for the eight registered
+# regions that have EIA-930 demand data (seven wholesale markets plus the
+# SOCO balancing authority).
 BA_CODE_TO_ISO: dict[str, str] = {
     "ERCO": "ERCOT",
     "CISO": "CAISO",
@@ -247,6 +250,13 @@ BA_CODE_TO_ISO: dict[str, str] = {
     "GRID": "NWPP",
     "WAUW": "NWPP",
     "NEVP": "NWPP",
+    # SOCO = the Southern Company balancing authority itself (Southern
+    # Company Services, Inc. - Trans; NERC SERC) — the one region here that is
+    # NOT an ISO, so the BA code and the registry key are the same string.
+    # 335 plants / 786 operable generators / 70,665.7 MW after the audit's
+    # §2.6(a) MA rejection (docs/multi-iso/soco-data-audit.md §2.2).
+    # Registered 2026-09-14 by lane SOCO-20.
+    "SOCO": "SOCO",
 }
 
 # Model region -> tuple of EVERY balancing-authority code it comprises, in

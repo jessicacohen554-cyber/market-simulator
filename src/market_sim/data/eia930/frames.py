@@ -73,6 +73,12 @@ _ISO_TO_HOURLY_BA: dict[str, str] = {
     # envelopes — therefore reads a footprint frame through the same seam it
     # reads a single-BA frame. Registered 2026-09-14 by lane NWPP-20.
     "NWPP": "NWPP",
+    # SOCO = the Southern Company balancing authority, EIA-930 code ``SOCO``
+    # (``SOCO hourly.parquet``, 2023-01 -> 2025-12, ``America/Chicago``
+    # DST-aware hour-ending for the WHOLE BA although Georgia is civil-Eastern
+    # — measured 0 / 26,304 mismatches vs a Central wall clock, docs/multi-iso/
+    # soco-data-audit.md §3.4). Registered 2026-09-14 by lane SOCO-20.
+    "SOCO": "SOCO",
 }
 
 # Pool regions: model region -> the EIA-930 balancing authorities whose

@@ -196,6 +196,18 @@ ISO_STATES: dict[str, tuple[str, ...]] = {
     # §2.8(a) rejection of plant 68906. CEMS reaches 30.98 % of footprint
     # nameplate / 41.8-43.6 % of energy (owner ruling N8 — legacy bins first).
     "NWPP": ("ID", "MT", "NV", "OR", "UT", "WA", "WY"),
+    # Full SOCO (Southern Company balancing authority) footprint — the four
+    # states carrying an EIA-860 plant with balancing authority ``SOCO`` after
+    # the audit's two-key admission rule (NERC SERC + AL/GA/MS/FL-panhandle;
+    # the 1.5 MW Massachusetts row is a BA-field mis-entry and is REJECTED,
+    # docs/multi-iso/soco-data-audit.md §2.3 / §2.6). FL is the six SERC
+    # panhandle plants (309.6 MW, 102.0 MW of it CEMS-eligible industrial CHP
+    # at Pensacola); MS overlaps MISO's list and the per-ISO fleet filter
+    # keeps each region's windows to its own plants. Unit-level CAMPD extracts
+    # exist for AL and GA 2023-2026 (landed by SOCO-11) and MS 2019-2026; FL
+    # is listed for coverage (the loaders warn and skip an absent state file).
+    # Registered 2026-09-14 by lane SOCO-20.
+    "SOCO": ("AL", "GA", "MS", "FL"),
 }
 
 # States feeding an ISO's MERIT-ORDER PANEL — the identification scope of the

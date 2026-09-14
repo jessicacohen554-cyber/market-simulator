@@ -117,6 +117,11 @@ _FORWARD_SKILL_MODES: frozenset[str] = frozenset({"elastic", "flat"})
 # both name a ``MISO`` seam, so a ``"MISO"`` key would price two different
 # physical seams off one fit (rule 25 [R-ISO-SCOPE]); the uniqueness check below
 # (SPP plan §7 gate G10) fails the import the moment such a key is added.
+# SOCO's eight neighbours (registered 2026-09-14, lane SOCO-20) are named
+# ``SOCO_<DIBA>`` — ``SOCO_TVA``, ``SOCO_MISO``, ``SOCO_DUK``, ... — precisely
+# so they can never collide with PJM's ``TVA`` / ``Carolinas`` keys here or
+# with any other ISO's block; they carry NO key (Tier-3 anchors, default-off;
+# SOCO plan §7 gate G10), and a fit for them is lever SOCO-56's.
 _HR_GAS_ELASTIC: dict[str, tuple[float, float]] = {
     "PJM": (11.06, 3.21),  # MISO's PJM seam: gas-set (large slope, small adder)
     "SPP": (3.04, 16.27),  # MISO's SPP seam: wind-set (small slope, large adder)

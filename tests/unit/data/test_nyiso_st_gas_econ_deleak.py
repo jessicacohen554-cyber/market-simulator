@@ -103,7 +103,9 @@ def test_deleak_lands_on_ct_peakers_registered_posture():
     assert arm["ST_GAS"]["committed"] != 1.0 and arm["ST_GAS"]["peak"] != 1.0
 
 
-@pytest.mark.parametrize("iso", ["ERCOT", "CAISO", "PJM", "MISO", "NEISO", "SPP"])
+@pytest.mark.parametrize(
+    "iso", ["ERCOT", "CAISO", "PJM", "MISO", "NEISO", "SPP", "SOCO"]
+)
 def test_deleak_is_nyiso_scoped_and_hard_errors_off_iso(iso):
     with pytest.raises(ValueError, match="NYISO-scoped"):
         _resolve(iso=iso, nyiso_st_gas_econ_bands_deleaked=True)

@@ -78,6 +78,12 @@ DATATYPE = "transmission-expansion"
 #     placeholder). The committed-project source
 #     scripts/lib/transmission_expansion/spp.py names is still the 2025 ITP
 #     Assessment Report; that is the project pipeline, not the limit vintage.
+#   SOCO  2025 — the two inter-zone links (AL<->GA, AL<->MS) are Tier-3
+#     placeholders that cannot bind, built from the EIA-860 2025 Early Release
+#     winter capability of the smaller side (iso_configs._soco_config); no
+#     published inter-OpCo limit exists (SOCO-12 README §4b), so the vintage
+#     follows the only source the placeholder has. It moves with the source
+#     when lever SOCO-54 lands a real limit, exactly as SPP's did (2025 -> 2026).
 TRANSMISSION_BASE_STATIC_VINTAGE: dict[str, int] = {
     "ERCOT": 2024,
     "CAISO": 2023,
@@ -92,6 +98,7 @@ TRANSMISSION_BASE_STATIC_VINTAGE: dict[str, int] = {
     # NWPP-12) — Paths 35 / 16 / 20 / 8 / 6 / 14; the NW<->OR placeholder is
     # the EIA-860 2025 ER zone nameplate but carries no rating vintage.
     "NWPP": 2024,
+    "SOCO": 2025,
 }
 
 # The target kinds the forward channel can express at this topology's grain.

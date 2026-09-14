@@ -988,6 +988,18 @@ def get_reserve_design(
         )
     if iso == "SPP":
         return _spp_design(config, fleet_arrays, hours, zone_names, sim_year=sim_year)
+    if iso == "SOCO":
+        # The Southern Company balancing authority clears NO ancillary-service
+        # market: no reserve demand curve, no reserve clearing price, no offer
+        # cap (owner card S5, 2026-09-13; the matrix shard's class (c)). There
+        # is nothing published to build a co-optimised design from, so
+        # arming ``energy_reserve_coopt`` for SOCO is refused by name rather
+        # than falling through to a generic "no design" — lever SOCO-55 owns
+        # any adequacy/reserve construction (registered 2026-09-14, SOCO-20).
+        raise ValueError(
+            "SOCO clears no ancillary-service market (owner card S5); "
+            "energy_reserve_coopt has no design to build for it — lever SOCO-55"
+        )
     raise ValueError(f"No reserve design for ISO {iso!r}")
 
 

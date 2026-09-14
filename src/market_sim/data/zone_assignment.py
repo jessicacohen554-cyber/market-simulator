@@ -78,6 +78,15 @@ _ISO_TO_BA_CODE: dict[str, str] = {
     # MW at the EIA-860 2025 Early Release (docs/multi-iso/spp-data-audit.md
     # §2.2). Registered 2026-09-06 by lane SPP-20.
     "SPP": "SWPP",
+    # SOCO = the Southern Company balancing authority itself (EIA-860
+    # ``Balancing Authority Code`` and eGRID BACODE alike), so the BA code and
+    # the registry key are the same string; 336 plants / 788 operable
+    # generators / 70,667.2 MW at the EIA-860 2025 Early Release, of which the
+    # 1.5 MW Massachusetts row (plant 67241) is a BA-field mis-entry the
+    # admission rule below REJECTS (docs/multi-iso/soco-data-audit.md §2.2 /
+    # §2.6(a)). Registered 2026-09-14 by lane SOCO-20. The key must EXIST:
+    # ``_eia860_ba_zones`` indexes this dict bare (plan §2.3, found by NWPP-10).
+    "SOCO": "SOCO",
 }
 
 # NWPP (registered 2026-09-14, lane NWPP-20; owner rulings N1 + N5). NWPP is
@@ -196,6 +205,13 @@ _LARGEST_ZONE: dict[str, str] = {
     # EIA-860 plant file — i.e. a plant with no balancing-authority record at
     # all; every real footprint plant resolves through _NWPP_BA_ZONES.
     "NWPP": "NWPP-NW",
+    # SOCO_GA holds 58.4 % of the SOCO fleet's nameplate (41,284.4 of
+    # 70,665.7 MW, docs/multi-iso/soco-data-audit.md §2.3) and is the static
+    # fallback's largest share (0.5842), so a plant with NO eGRID / EIA-860
+    # location at all lands there. This is the eGRID-miss fallback only: a
+    # LOCATED SOCO plant outside AL/GA/MS/FL never reaches it — ``_soco_zone``
+    # fails loud instead (audit §2.6(a)). SOCO-20, 2026-09-14.
+    "SOCO": "SOCO_GA",
 }
 
 # FIPS state code for Texas; Houston-metro counties are matched within it.
@@ -452,6 +468,34 @@ _SPP_STATE_ZONES: dict[int, str] = {
 # south of 37.0 N is in the South tier. FIPS state is strongly preferred; this
 # only triggers when a caller supplies coordinates without a state code.
 _SPP_SEAM_LAT: float = 37.0
+
+# SOCO (Southern Company balancing authority) model zone by FIPS state code
+# (owner card S3, SOCO desk r#3 2026-09-13, re-ruled r#5 on the five-respondent
+# load basis; docs/multi-iso/soco-data-audit.md §6.4). The three zones are
+# exact unions of whole states and are NAMED FOR THEIR GEOGRAPHY, never for an
+# operating company — Georgia Power owns 241.6 MW in Alabama, and Oglethorpe +
+# MEAG own 7.1 GW in Georgia that is not Georgia Power's (audit §2.5 / §6.2).
+# The six SERC Florida-panhandle plants (309.6 MW, Escambia/Santa Rosa/Okaloosa/
+# Jackson counties — the historic Gulf Power area, contiguous with Alabama
+# Power's territory and interconnected west) go to SOCO_AL (audit §2.6(b)).
+# There is deliberately NO key for FIPS 25 (Massachusetts): plant 67241 "401
+# South" (Berkshire County, NERC NPCC, 1.0 MW battery + 0.5 MW PV) self-reports
+# BA code SOCO and fails the audit's two-key admission rule (SERC + AL/GA/MS/
+# FL-panhandle); ``_soco_zone`` FAILS LOUD on any FIPS outside this map rather
+# than silently zoning a Massachusetts battery in Georgia (audit §2.6(a)).
+_SOCO_STATE_ZONES: dict[int, str] = {
+    1: "SOCO_AL",  # AL
+    12: "SOCO_AL",  # FL — the SERC panhandle, 6 plants / 309.6 MW
+    13: "SOCO_GA",  # GA
+    28: "SOCO_MS",  # MS
+}
+
+# EIA-860 ``State`` postal code -> FIPS for the SOCO admission rule. The EIA-860
+# supplement path (:func:`_eia860_ba_zones`) carries no eGRID FIPS, and SOCO's
+# zones are whole states with no clean lat/lon seam between them (the AL/GA
+# line follows the Chattahoochee), so the plant file's own ``State`` column is
+# the measured fact the zone reads — never a coordinate estimate.
+_STATE_POSTAL_TO_FIPS: dict[str, int] = {"AL": 1, "FL": 12, "GA": 13, "MS": 28}
 
 # FIPS state code for New York. NYISO's eleven load zones (A–K) follow
 # county lines closely enough that county FIPS carries the assignment, with
@@ -1049,6 +1093,49 @@ def _spp_zone(lat: float | None, fips_state: int | None) -> str:
     return _LARGEST_ZONE["SPP"]
 
 
+def _soco_zone(fips_state: int | None) -> str:
+    """Return the SOCO model zone for a plant's FIPS state — and nothing else.
+
+    FIPS state carries the whole assignment: the three model zones are exact
+    unions of whole states (see :data:`_SOCO_STATE_ZONES`) and every admitted
+    SOCO plant carries one (eGRID ``FIPSST`` on the eGRID path; the EIA-860
+    plant file's own ``State`` on the supplement path, via
+    :data:`_STATE_POSTAL_TO_FIPS`). There is NO coordinate fallback: SOCO's
+    zone boundaries are state lines with no clean lat/lon seam, so a
+    coordinate estimate would be a hand guess where a measured state exists.
+
+    FAILS LOUD by design (docs/multi-iso/soco-data-audit.md §2.6(a), routed
+    item R-7): a SOCO-coded plant whose state is outside AL/GA/MS/FL is an
+    EIA-860 balancing-authority mis-entry (the 1.5 MW Massachusetts "401
+    South", plant 67241), and a caller that reaches this function with such a
+    state — or with no state at all — gets a ``ValueError`` naming the case
+    instead of the ``_LARGEST_ZONE`` fallback every other ISO's splitter
+    takes. The lookup builders apply the admission rule FIRST and log the
+    rejected plant, so the raise is the guard behind them, not the normal
+    path.
+
+    Raises:
+        ValueError: if ``fips_state`` is ``None`` or not a footprint state.
+    """
+    if fips_state in _SOCO_STATE_ZONES:
+        return _SOCO_STATE_ZONES[fips_state]
+    if fips_state is None:
+        raise ValueError(
+            "SOCO zones are whole states and take no coordinate fallback: a "
+            "FIPS state is required (docs/multi-iso/soco-data-audit.md §6.4)"
+        )
+    raise ValueError(
+        f"FIPS state {fips_state} is outside the SOCO footprint (AL/GA/MS/FL "
+        "panhandle) — an EIA-860 balancing-authority mis-entry, refused rather "
+        "than zoned (soco-data-audit §2.6(a))"
+    )
+
+
+def _soco_admits(fips_state: int | None) -> bool:
+    """Return whether a SOCO-coded plant's state passes the admission rule."""
+    return fips_state in _SOCO_STATE_ZONES
+
+
 def _zone_from_location(
     iso: str,
     lat: float | None,
@@ -1083,6 +1170,8 @@ def _zone_from_location(
             "NWPP zones are whole-BA groups keyed on the balancing-authority "
             "code; no geographic zone rule exists (use build_zone_lookup)"
         )
+    if iso == "SOCO":
+        return _soco_zone(fips_state)
     raise ValueError(f"No geographic zone rules for ISO '{iso}'")
 
 
@@ -1105,7 +1194,7 @@ def assign_zone_by_fips(
 def assign_zone(oris_code: int, iso: str) -> str:
     """Return the model zone for a plant's ORIS code.
 
-    Every current ISO (ERCOT, CAISO, MISO, NYISO, NEISO, PJM, SPP) has a
+    Every current ISO (ERCOT, CAISO, MISO, NYISO, NEISO, PJM, SPP, SOCO) has a
     multi-zone topology, so the plant is located via the eGRID ORIS→location table; an
     ORIS code missing from eGRID falls back to the ISO's largest-load-share
     zone with a warning. For CAISO the measured hub-membership crosswalk is
@@ -1169,14 +1258,19 @@ def assign_zone(oris_code: int, iso: str) -> str:
 # from the EIA-860 2025 Early Release, whose 2024-2025 wind/solar/storage
 # additions post-date eGRID 2023; with a whole-state zone map the lat/lon
 # supplement resolves them exactly, so no SWPP plant is dropped to the
-# fallback — the Stage-B "every plant resolves" check).
+# fallback — the Stage-B "every plant resolves" check),
+# SOCO seventh at registration (2026-09-14, lane SOCO-20: the same EIA-860
+# 2025 ER basis as SPP, with 2023-2025 solar/storage additions that post-date
+# eGRID 2023 — and, uniquely, the supplement zones on the plant file's own
+# ``State`` column rather than on coordinates, because SOCO's zones are whole
+# states with no lat/lon seam; see ``_eia860_ba_zones``).
 _EIA860_SUPPLEMENT_ISOS: frozenset[str] = frozenset(
     # NWPP seventh at registration (2026-09-14, lane NWPP-20): the footprint
     # fleet is read from the EIA-860 2025 Early Release, whose 2024-2025
     # additions post-date eGRID 2023, and the plant file's BA code is the ONLY
     # placement key a whole-BA zoning can use — so the supplement is not a
     # refinement here, it is the primary source for every post-eGRID plant.
-    {"ERCOT", "CAISO", "NYISO", "NEISO", "MISO", "SPP", "NWPP"}
+    {"ERCOT", "CAISO", "NYISO", "NEISO", "MISO", "SPP", "NWPP", "SOCO"}
 )
 
 
@@ -1190,6 +1284,14 @@ def _eia860_ba_zones(iso: str) -> dict[int, str]:
     county-FIPS refinements (ERCOT's Houston rule, CAISO's central-coast
     NP15 lift) cannot apply without eGRID's FIPS codes — an accepted
     compromise for the small post-eGRID cohort.
+
+    SOCO is the one exception to "coordinates alone" (SOCO-20, 2026-09-14):
+    its zones are whole states with no lat/lon seam, so each plant is zoned
+    on the plant file's own ``State`` column (a measured fact, via
+    :data:`_STATE_POSTAL_TO_FIPS`), and a SOCO-coded plant whose state fails
+    the admission rule (AL/GA/MS/FL) is REJECTED with a warning naming it —
+    the audit's §2.6(a) two-key rule, applied here so the 1.5 MW Massachusetts
+    mis-entry is never zoned.
 
     Returns an empty dict when the EIA-860 plant file is unavailable.
     """
@@ -1216,11 +1318,27 @@ def _eia860_ba_zones(iso: str) -> dict[int, str]:
     codes = df["Plant Code"].to_numpy()
     lats = pd.to_numeric(df["Latitude"], errors="coerce").to_numpy()
     lons = pd.to_numeric(df["Longitude"], errors="coerce").to_numpy()
+    states = df["State"].astype(str).str.strip().str.upper().to_numpy()
 
     out: dict[int, str] = {}
-    for code, lat, lon in zip(codes, lats, lons):
+    for code, lat, lon, state in zip(codes, lats, lons, states):
         oris = _to_int(code)
-        if oris is None or lat != lat or lon != lon:  # None / NaN coords
+        if oris is None:
+            continue
+        if iso == "SOCO":
+            fips = _STATE_POSTAL_TO_FIPS.get(state)
+            if not _soco_admits(fips):
+                logger.warning(
+                    "SOCO plant %s (EIA-860 State %s) fails the footprint "
+                    "admission rule (AL/GA/MS/FL) — a balancing-authority "
+                    "mis-entry, REJECTED, not zoned (soco-data-audit §2.6(a))",
+                    oris,
+                    state,
+                )
+                continue
+            out[oris] = _soco_zone(fips)
+            continue
+        if lat != lat or lon != lon:  # NaN coords
             continue
         out[oris] = _zone_from_location(iso, float(lat), float(lon), None, None)
     return out
@@ -1480,6 +1598,17 @@ def _build_zone_lookup_cached(
     for row in subset.itertuples(index=False):
         oris = _to_int(row.ORISPL)
         if oris is None:
+            continue
+        if iso == "SOCO" and not _soco_admits(_to_int(row.FIPSST)):
+            # The audit's §2.6(a) admission rule on the eGRID path too: a
+            # SOCO-coded plant outside AL/GA/MS/FL is a BA-field mis-entry,
+            # logged and left unzoned rather than dropped to a fallback.
+            logger.warning(
+                "SOCO plant %s (eGRID FIPS state %s) fails the footprint "
+                "admission rule — REJECTED, not zoned (soco-data-audit §2.6(a))",
+                oris,
+                _to_int(row.FIPSST),
+            )
             continue
         lookup[oris] = _zone_from_location(
             iso,

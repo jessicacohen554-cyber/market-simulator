@@ -166,7 +166,9 @@ class TestRollup(CampaignTree):
         # fixture tree now misses six).
         system = self._csv("campaign_emissions_system")
         missing = set(system.iloc[0]["isos_missing"].split("+"))
-        self.assertEqual(missing, {"ERCOT", "CAISO", "MISO", "NYISO", "SPP", "NWPP"})
+        self.assertEqual(
+            missing, {"ERCOT", "CAISO", "MISO", "NYISO", "SPP", "NWPP", "SOCO"}
+        )
 
     def test_the_total_is_never_labelled_national(self):
         # Every summed row carries the six-ISO label, and the only place the

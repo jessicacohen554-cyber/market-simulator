@@ -3433,7 +3433,7 @@ class TestScreenReserveValue(unittest.TestCase):
 class TestQueueCapCoverage(unittest.TestCase):
     """Every registered ISO must carry queue-cap data (peer review B2)."""
 
-    ISOS = ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP", "NWPP")
+    ISOS = ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP", "NWPP", "SOCO")
 
     def test_every_registered_iso_has_queue_caps(self):
         for iso in self.ISOS:

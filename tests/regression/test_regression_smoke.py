@@ -25,7 +25,7 @@ from market_sim.data.fleet import Generator, generators_to_fleet_arrays
 from market_sim.model.dispatch import solve_dispatch
 from market_sim.model.transmission import build_incidence_matrix, get_ttc_array
 
-ISOS = ["ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP", "NWPP"]
+ISOS = ["ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP", "NWPP", "SOCO"]
 T = 24
 
 

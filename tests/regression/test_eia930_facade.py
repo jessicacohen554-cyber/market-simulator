@@ -194,12 +194,23 @@ class TestDemandLoaderRegistry(unittest.TestCase):
         from market_sim.data.eia_loader import DEMAND_LOADERS
 
         self.assertTrue(set(DEMAND_LOADERS) <= set(SUPPORTED_ISOS))
-        # The eight regions with a dedicated per-BA demand source today (SPP
+        # The nine regions with a dedicated per-BA demand source today (SPP
         # registered 2026-09-06, lane SPP-20; NWPP — a seventeen-BA pool
-        # frame — registered 2026-09-14, lane NWPP-20).
+        # frame — and the SOCO balancing authority both registered 2026-09-14,
+        # lanes NWPP-20 and SOCO-20).
         self.assertEqual(
             set(DEMAND_LOADERS),
-            {"ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP", "NWPP"},
+            {
+                "ERCOT",
+                "CAISO",
+                "PJM",
+                "MISO",
+                "NYISO",
+                "NEISO",
+                "SPP",
+                "NWPP",
+                "SOCO",
+            },
         )
 
     def test_entries_are_callable(self):
