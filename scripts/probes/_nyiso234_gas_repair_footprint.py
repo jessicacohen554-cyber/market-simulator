@@ -28,23 +28,47 @@ import pandas as pd
 YEARS = (2022, 2023, 2024, 2025)
 
 
-def _with_csv(csv_path: Path) -> dict[int, np.ndarray]:
-    """Build every year's delivered gas series reading ``csv_path`` as the source.
+def _with_csv(csv_path: Path, basis_path: Path | None = None) -> dict[int, np.ndarray]:
+    """Build every year's delivered gas series from ``csv_path`` (+ ``basis_path``).
 
-    Repoints the module constant ``hubs.TRANSCO_Z6_NY_DAILY_PATH`` and clears the
-    loader's path-keyed caches, so **``data/raw`` is never written to** — the
+    Repoints the module constants ``hubs.TRANSCO_Z6_NY_DAILY_PATH`` and
+    ``basis.nyiso.TRANSCO_IROQUOIS_MONTHLY_PATH`` and clears the loader's
+    path-keyed caches, so **``data/raw`` is never written to** — the
     immutable-source-root rule holds even for a diagnostic, and the old and new
     series can be built in one process without a copy-restore dance that a crash
     could leave half-done.
+
+    BOTH inputs matter and measuring only the daily one understates the change.
+    The construction is mean-preserving against the MONTHLY hub level, so the
+    repair moves the delivered series through two doors: the daily shape and the
+    monthly anchor recomputed from it
+    (``docs/FINDING-nyiso234b-the-gas-series-was-published-2026-09-14.md`` §5).
+
+    **The monthly level enters through ``basis_path``, NOT through
+    ``basis.nyiso.TRANSCO_IROQUOIS_MONTHLY_PATH``.** Repointing that constant was
+    measured to be a NO-OP here (0 of 8,760 hours moved): the level the daily
+    shape renormalizes to is resolved from ``gas_basis_by_iso_month.csv``, which
+    is the function's own third argument. Swapping the constant instead of the
+    argument silently compares a HYBRID baseline — old dailies against the NEW
+    monthly level — and overstates nothing but measures the wrong thing.
     """
     from market_sim.config.scenarios import ScenarioConfig
     from market_sim.data.fuel import hubs
+    from market_sim.data.fuel.basis import nyiso as ny_basis
 
-    prev = hubs.TRANSCO_Z6_NY_DAILY_PATH
-    try:
-        hubs.TRANSCO_Z6_NY_DAILY_PATH = csv_path
+    prev_daily = hubs.TRANSCO_Z6_NY_DAILY_PATH
+
+    def _clear() -> None:
         hubs._TRANSCO_DAILY_CACHE.clear()
         hubs._TRANSCO_DAILY_DATED_CACHE.clear()
+        for name in dir(ny_basis):
+            obj = getattr(ny_basis, name, None)
+            if name.endswith("_CACHE") and isinstance(obj, dict):
+                obj.clear()
+
+    try:
+        hubs.TRANSCO_Z6_NY_DAILY_PATH = csv_path
+        _clear()
         out = {}
         for year in YEARS:
             cfg = ScenarioConfig(
@@ -55,22 +79,24 @@ def _with_csv(csv_path: Path) -> dict[int, np.ndarray]:
                 end_year=year,
             )
             out[year] = np.asarray(
-                hubs._nyiso_hub_daily_gas_prices(cfg, year, None, None), dtype=float
+                hubs._nyiso_hub_daily_gas_prices(cfg, year, basis_path, None),
+                dtype=float,
             )
         return out
     finally:
-        hubs.TRANSCO_Z6_NY_DAILY_PATH = prev
-        hubs._TRANSCO_DAILY_CACHE.clear()
-        hubs._TRANSCO_DAILY_DATED_CACHE.clear()
+        hubs.TRANSCO_Z6_NY_DAILY_PATH = prev_daily
+        _clear()
 
 
 def main() -> None:
     if len(sys.argv) < 3:
         raise SystemExit(__doc__.strip().splitlines()[-1])
     old_csv, new_csv = Path(sys.argv[1]), Path(sys.argv[2])
+    old_basis = Path(sys.argv[3]) if len(sys.argv) > 3 else None
+    new_basis = Path(sys.argv[4]) if len(sys.argv) > 4 else None
 
-    old = _with_csv(old_csv)
-    new = _with_csv(new_csv)
+    old = _with_csv(old_csv, old_basis)
+    new = _with_csv(new_csv, new_basis)
 
     print("DELIVERED GAS SERIES — repaired vs committed, as the LP sees it\n")
     print(
