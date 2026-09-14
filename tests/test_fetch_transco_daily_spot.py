@@ -157,6 +157,69 @@ class DateAlignmentTest(unittest.TestCase):
         self.assertNotIn("2023-01-06", got)
 
 
+class MalformedMarkupTest(unittest.TestCase):
+    """Two live markup defects the alignment guard surfaced on the real archive.
+
+    Both were found by the guard rather than by inspection — it turned what had
+    been silent corruption into four named, diagnosable weeks — and both are
+    repaired so the week is RECOVERED rather than merely skipped.
+    """
+
+    def test_a_tag_split_month_abbreviation_still_parses(self) -> None:
+        """The 2023-02-23 page renders ``"Fri, 17-Fe<br />b"``.
+
+        Stripping tags to a SPACE leaves ``"17-Fe b"``, which no month pattern
+        matches, so the header lost a date and the week was skipped. Stripping to
+        the empty string inside each cell repairs it.
+        """
+        page = _page(
+            _table(
+                [
+                    "Thu, 16-Feb",
+                    "Fri, 17-Fe<br />b",
+                    "Mon, 20-Feb",
+                    "Tue, 21-Feb",
+                    "Wed, 22-Feb",
+                ],
+                ["2.40", "2.28", "Holiday", "2.16", "2.20"],
+                ["2.27", "2.04", "Holiday", "1.86", "1.98"],
+            )
+        )
+        got = {r["date"]: r["transco"] for r in f.parse_spot_table(page, 2023, 2)}
+        self.assertAlmostEqual(got["2023-02-17"], 2.04)
+        self.assertNotIn("2023-02-20", got)  # Presidents' Day — no trade
+
+    def test_a_row_closed_with_a_stray_td_does_not_absorb_the_next_row(self) -> None:
+        """The 2025-01-10 page closes the New York row with ``</td>``, not ``</tr>``.
+
+        The non-greedy ``.*?</tr>`` then spans into Chicago, yielding 11 values
+        against 5 dates. A ``<strong>`` cell is a row LABEL and never a price, so
+        it marks where this row's data ends.
+        """
+        page = _page(
+            "<table><thead><tr><td>Spot Prices ($/MMBtu)</td>"
+            "<td>Thu, 2-Jan</td><td>Fri, 3-Jan</td><td>Mon, 6-Jan</td>"
+            "<td>Tue, 7-Jan</td><td>Wed, 8-Jan</td></tr></thead><tbody>"
+            "<tr><td><strong>Henry Hub</strong></td>"
+            '<td align="right">3.20</td><td align="right">3.30</td>'
+            '<td align="right">4.10</td><td align="right">4.40</td>'
+            '<td align="right">4.00</td></tr>'
+            "<tr><td><strong>New York</strong></td>"
+            '<td align="right">3.75</td><td align="right">5.86</td>'
+            '<td align="right">12.75</td><td align="right">15.00</td>'
+            '<td align="right">11.50</td>'
+            "</td>"  # <-- the stray close: no </tr> before the next row
+            "<tr><td><strong>Chicago</strong></td>"
+            '<td align="right">3.33</td><td align="right">3.37</td>'
+            '<td align="right">3.96</td><td align="right">3.75</td>'
+            '<td align="right">3.55</td></tr></tbody></table>'
+        )
+        got = {r["date"]: r["transco"] for r in f.parse_spot_table(page, 2025, 1)}
+        self.assertEqual(len(got), 5)
+        self.assertAlmostEqual(got["2025-01-07"], 15.00)  # not Chicago's 3.75
+        self.assertAlmostEqual(got["2025-01-08"], 11.50)
+
+
 class NonSpotContentTest(unittest.TestCase):
     """A page without a usable New York row yields nothing, never an exception."""
 

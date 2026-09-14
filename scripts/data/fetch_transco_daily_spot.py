@@ -168,17 +168,30 @@ def _parse_one_table(table: str, page_year: int, page_month: int) -> list[dict]:
     discard the others. Returns ``[]`` for a table that is not a spot table, or
     whose header dates and value cells do not align.
     """
-    # Column dates from the header: "Thu, 19-Jan" or "Thu, 5 Jan" — BOTH occur,
-    # so the separator is [- ] and not the hyphen the original pattern assumed.
+    # Column dates, read ONE HEADER CELL AT A TIME — the same cell-wise discipline
+    # the value rows below use, so header column i and value column i are the same
+    # column by construction rather than by a count that happens to agree.
+    #
+    # Two markup quirks make a whole-header regex unsafe, and both are live:
+    #   * the separator is a hyphen OR a space ("Thu, 19-Jan" beside "Thu, 5 Jan",
+    #     sometimes in one table);
+    #   * a stray tag can split the month abbreviation itself — the 2023-02-23
+    #     page renders "Fri, 17-Fe<...>b", which no pattern over the tag-stripped
+    #     text can match if stripping inserts a space.
+    # Stripping tags to the EMPTY string repairs the second; doing it per cell
+    # keeps the first from running two cells together ("16-FebFri, 17-Feb").
     head = table[: table.find("</thead>") + 8] if "</thead>" in table else table
-    date_tokens = re.findall(r"(\d{1,2})[-\s]([A-Z][a-z]{2})\b", head)
     dates: list[str] = []
-    for day_s, mon_s in date_tokens:
-        mon = _MONTHS.get(mon_s)
+    for cell in re.findall(r"<t[dh][^>]*>(.*?)</t[dh]>", head, flags=re.S):
+        txt = re.sub(r"<[^>]+>", "", cell)  # empty, not a space — see above
+        m = re.search(r"(\d{1,2})[-\s]?([A-Z][a-z]{2})", txt)
+        if not m:
+            continue
+        mon = _MONTHS.get(m.group(2))
         if mon is None:
             continue
         yr = _resolve_year(mon, page_year, page_month)
-        dates.append(f"{yr:04d}-{mon:02d}-{int(day_s):02d}")
+        dates.append(f"{yr:04d}-{mon:02d}-{int(m.group(1)):02d}")
     if not dates:
         return []
 
@@ -196,6 +209,15 @@ def _parse_one_table(table: str, page_year: int, page_month: int) -> list[dict]:
         # Value cells appear in two layouts across weeks: <td><div align=...>V</div>
         # and <td width=.. align="right">V</td>; tolerate attributes and inner tags.
         cells = re.findall(r"<td[^>]*>(.*?)</td>", rm.group(0), flags=re.S)[1:]
+        # STOP AT THE NEXT ROW'S LABEL. A row can be closed with a stray </td>
+        # instead of </tr> (measured on the 2025-01-10 page, where the New York
+        # row runs straight into Chicago), and the non-greedy .*?</tr> above then
+        # spans both. A <strong> cell is a row LABEL, never a price, so it is
+        # where this row's data ends.
+        for i, c in enumerate(cells):
+            if "<strong>" in c:
+                cells = cells[:i]
+                break
         vals: list[float | None] = []
         for c in cells:
             txt = re.sub(r"<[^>]+>", " ", c)
