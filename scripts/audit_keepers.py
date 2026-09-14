@@ -104,6 +104,24 @@ parsed as a fallback) it verifies:
       keeper's own stores and E12 only the shard's live pointers. The OK line
       reports the year set the keeper carries, which is what rule 35 (b)/(c)
       require a promotion to preserve.
+  E14 SOLVE-ENVIRONMENT PIN CURRENCY: the bundle's recorded
+      ``environment.packages`` match the versions ``requirements.txt`` pins.
+      A keeper is the ISO's reference result, so which solver and numeric
+      stack produced it is part of its provenance — ``highspy`` above all,
+      since a different HiGHS is a different LP solver. Nothing else in this
+      audit looks at the environment at all, which is how the nyiso-231
+      off-pin keeper reached the dashboard unremarked
+      (``docs/FINDING-nyiso231-the-keeper-is-off-pin-2026-09-13.md``).
+      Severity is **WARN, not FAIL**, deliberately: an off-pin keeper is a
+      provenance fact to surface, not grounds to retroactively invalidate a
+      committed result whose numbers are on the site — and a drifting pin is
+      a repo-wide event that would otherwise red six lanes that did nothing
+      wrong (rule 25 ``[R-ISO-SCOPE]``). Promote it to FAIL on an owner
+      ruling if a re-solve-on-drift policy is ever adopted. Bundles predating
+      the ``environment`` block, and packages a bundle records but
+      ``requirements.txt`` does not pin, are reported as unverifiable rather
+      than assumed good. Measured green on all seven keepers at the time it
+      was added (nyiso-234, 2026-09-14).
   S1  the ``status/`` parts are in sync with the current verdicts
       (``build_status.py --check``, scoped to the audited ISOs).
   H1  holdout quarantine (CLAUDE.md rule 22 / audit D-6, amended 2026-07-04):
@@ -782,6 +800,60 @@ class Report:
         return sum(1 for f in self.findings if f["level"] == "WARN")
 
 
+def _requirements_pins(req_path: Path) -> dict[str, str]:
+    """Return ``{lowercased package: pinned version}`` from a requirements file.
+
+    Only exact ``==`` pins are read; a range, a marker-only line, a comment or
+    an unpinned name yields no entry, so a package this repo does not pin can
+    never be reported as a mismatch. Pure over its input for testability.
+    """
+    pins: dict[str, str] = {}
+    if not req_path.exists():
+        return pins
+    for raw in req_path.read_text().splitlines():
+        m = re.match(r"^([A-Za-z0-9_.-]+)\s*==\s*([0-9][^\s;#]*)", raw.strip())
+        if m:
+            pins[m.group(1).lower()] = m.group(2)
+    return pins
+
+
+def solve_pin_findings(
+    recorded: dict[str, str] | None, pins: dict[str, str]
+) -> tuple[list[str], list[str]]:
+    """Return E14 ``(mismatches, unverifiable)`` for one bundle's solve environment.
+
+    ``recorded`` is the bundle's ``environment.packages`` — what the solve
+    actually ran on — and ``pins`` is what ``requirements.txt`` currently pins.
+    A keeper is the ISO's reference result, so the solver and numeric stack that
+    produced it are part of its provenance; ``highspy`` most of all, since a
+    different HiGHS is a different LP solver.
+
+    This is the check whose absence let the nyiso-231 off-pin keeper reach the
+    dashboard unremarked (``docs/FINDING-nyiso231-the-keeper-is-off-pin-2026-09-13.md``)
+    — nothing else in this audit reads the environment block at all.
+
+    Severity is WARN at the call site, never FAIL: an off-pin keeper is a
+    provenance fact to surface, not grounds to retroactively invalidate a
+    committed result, and a drifting pin would otherwise red every lane at once
+    (rule 25 ``[R-ISO-SCOPE]``). Anything that cannot be compared — a bundle
+    predating the ``environment`` block, or a package this repo does not pin —
+    is returned as *unverifiable* rather than silently passed.
+
+    Pure over its inputs so it is unit-testable without a bundle on disk.
+    """
+    if not recorded:
+        return [], ["bundle records no environment.packages block"]
+    mismatches: list[str] = []
+    unverifiable: list[str] = []
+    for pkg, got in sorted(recorded.items()):
+        want = pins.get(str(pkg).lower())
+        if want is None:
+            unverifiable.append(f"{pkg} {got} (not pinned in requirements.txt)")
+        elif str(got) != want:
+            mismatches.append(f"{pkg} solved {got}, requirements.txt pins {want}")
+    return mismatches, unverifiable
+
+
 def orphan_run_findings(
     iso: str, keeper_id: str, registry_dir: Path
 ) -> tuple[list[str], list[int]]:
@@ -875,6 +947,29 @@ def audit_keeper(run_id: str, rep: Report) -> None:
         rep.ok(run_id, iso, "E1", "sidecar, payload and bundle present")
         flags = _bundle_flags(bundle)
         meta = _load_json(bundle / "meta.json")
+
+    # E14: solve-environment pin currency. WARN, never FAIL — see the module
+    # header: an off-pin keeper is provenance to surface, not grounds to
+    # retroactively invalidate a committed result, and a drifting pin would
+    # otherwise red every lane at once (rule 25 [R-ISO-SCOPE]). Nothing else in
+    # this audit reads the environment block, which is how the nyiso-231
+    # off-pin keeper reached the dashboard unremarked.
+    if flags is not None:
+        env = (_load_json(bundle / "run_config.json") or {}).get("environment") or {}
+        mismatches, unverifiable = solve_pin_findings(
+            env.get("packages"), _requirements_pins(REPO / "requirements.txt")
+        )
+        for msg in mismatches:
+            rep.warn(run_id, iso, "E14", msg)
+        if not mismatches:
+            n_pkgs = len(env.get("packages") or {})
+            note = f"; unverifiable: {', '.join(unverifiable)}" if unverifiable else ""
+            rep.ok(
+                run_id,
+                iso,
+                "E14",
+                f"solve environment on-pin ({n_pkgs} recorded package(s)){note}",
+            )
 
     # E2 / E3: iso + years agree with the bundle the run was solved from.
     if flags is not None:
