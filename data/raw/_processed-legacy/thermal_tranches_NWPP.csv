@@ -1,0 +1,69 @@
+plant_code,plant_group,name,status,online_hours,nameplate_mw,committed_pct,mustrun_pct,mustrun_online_pct,online_frac,p25_cf,median_cf,peaking_pct,chp_pmin_cf,chp_sector,steam_level_cf
+7350,CC_CHP,Coyote Springs,ok,24501,244.2,70.0,0.0,0.0,,100.0,150.0,1.9,106.1,merchant,149.8
+54271,CC_CHP,Saguaro Power,ok,8065,101.0,70.0,0.0,0.0,,91.1,91.1,0.0,0.0,merchant,36.6
+54349,CC_CHP,Nevada Cogen Associates 2 Black Mountain,eia923_cf,0,93.1,,,,,,,,0.0,merchant,50.2
+54350,CC_CHP,Nevada Cogen Assoc#1 GarnetVly,ok,8483,85.5,66.7,0.0,0.0,,100.0,102.9,1.1,0.0,merchant,82.3
+54476,CC_CHP,Sumas Power Plant,ok,15955,125.5,40.6,0.0,0.0,,66.1,68.5,5.2,0.0,merchant,57.3
+54537,CC_CHP,Ferndale Generating Station,ok,19160,270.0,47.0,0.0,0.0,,59.6,60.7,2.6,0.0,merchant,58.1
+54761,CC_CHP,Hermiston Generating Plant,ok,25838,464.0,61.5,0.0,0.0,,84.5,89.9,3.4,32.8,merchant,88.4
+55103,CC_CHP,Klamath Cogeneration Plant,ok,20572,490.0,70.0,0.0,0.0,,96.1,102.0,2.2,52.9,merchant,101.2
+2336,CC_REGULAR,Tracy,ok,26278,713.0,41.2,0.0,0.0,1.0,56.0,69.7,17.8,,,
+7082,CC_REGULAR,Harry Allen,ok,20143,510.0,28.8,0.0,0.0,0.821,65.7,85.3,14.7,,,
+7605,CC_REGULAR,River Road Gen Plant,ok,20096,230.0,70.0,0.0,0.0,0.769,100.0,106.5,1.9,,,
+7870,CC_REGULAR,Encogen,ok,14393,159.4,41.4,0.0,0.0,0.565,58.3,65.6,4.2,,,
+7999,CC_REGULAR,Grays Harbor Energy Facility,ok,19632,595.0,43.5,0.0,0.0,0.755,86.2,94.3,2.3,,,
+10761,CC_REGULAR,Las Vegas Generating Station,ok,11318,282.0,13.5,0.0,0.0,0.45,34.0,44.0,12.4,,,
+55179,CC_REGULAR,Rathdrum Power LLC,ok,20941,210.0,70.0,0.0,0.0,0.805,100.0,113.8,5.4,,,
+55322,CC_REGULAR,Chuck Lenzie Generating Station,ok,24369,1242.0,17.0,0.0,0.0,0.94,47.1,77.1,4.5,,,
+55328,CC_REGULAR,Hermiston Power Partnership,ok,20504,629.0,70.0,0.0,0.0,0.788,90.1,92.8,0.8,,,
+55482,CC_REGULAR,Goldendale Generating Station,ok,20819,263.7,70.0,0.0,0.0,0.802,100.0,110.4,0.3,,,
+55514,CC_REGULAR,Apex Generating Station,ok,17872,524.4,26.5,0.0,0.0,0.694,38.3,64.8,8.9,,,
+55662,CC_REGULAR,Chehalis Generating Facility,ok,23534,477.0,34.6,0.0,0.0,0.904,68.6,80.9,7.3,,,
+55687,CC_REGULAR,Higgins Generating Station,ok,19782,620.0,21.5,0.0,0.0,0.759,45.2,63.7,5.7,,,
+55700,CC_REGULAR,Mint Farm Generating Station,ok,22613,270.0,70.0,0.0,0.0,0.865,100.0,113.0,0.3,,,
+55818,CC_REGULAR,Frederickson Power LP,ok,20606,246.0,68.7,0.0,0.0,0.787,100.0,104.5,0.4,,,
+55841,CC_REGULAR,Silverhawk,ok,21020,620.0,28.5,0.0,0.0,0.812,66.6,115.0,25.0,,,
+56102,CC_REGULAR,Currant Creek,ok,25415,524.0,30.2,0.0,0.0,0.969,59.5,71.0,10.2,,,
+56177,CC_REGULAR,Nebo Power Station,ok,22161,130.0,53.1,0.0,0.0,0.852,65.4,86.2,2.7,,,
+56227,CC_REGULAR,Port Westward,ok,23465,392.2,70.0,0.0,0.0,0.896,99.2,102.2,2.5,,,
+56237,CC_REGULAR,Lake Side Power Plant,ok,26202,1176.0,33.3,0.0,0.0,0.997,63.4,72.7,7.2,,,
+57028,CC_REGULAR,Langley Gulch Power Plant,ok,19093,303.3,67.6,0.0,0.0,0.733,89.7,92.6,4.1,,,
+58503,CC_REGULAR,Carty Generating Station,ok,22944,416.3,57.4,0.0,0.0,0.881,100.0,105.7,2.3,,,
+3845,COAL,Transalta Centralia Generation,ok,18129,670.0,49.9,0.1,49.9,0.699,80.4,99.6,,,,
+4158,COAL,Dave Johnston,ok,26206,745.0,48.3,47.9,35.0,0.997,56.9,77.1,,,,
+4162,COAL,Naughton,ok,26130,357.0,31.6,31.4,29.4,0.996,63.9,103.4,,,,
+6076,COAL,Colstrip,ok,25266,1480.0,52.4,50.1,37.6,0.964,98.1,106.8,,,,
+6101,COAL,Wyodak,ok,23389,332.0,48.5,0.0,48.5,0.899,76.5,86.1,,,,
+6165,COAL,Hunter,ok,26115,1363.0,22.3,22.3,16.2,0.995,38.4,47.9,,,,
+7790,COAL,Bonanza,ok,22932,458.0,48.3,48.3,48.3,0.876,86.0,105.5,,,,
+8069,COAL,Huntington,ok,26272,909.0,19.5,19.5,19.3,1.0,24.1,39.6,,,,
+8224,COAL,North Valmy,ok,20413,268.0,40.7,40.7,40.7,0.992,50.4,57.5,,,,
+50951,COAL,Sunnyside Cogen Associates,ok,18333,51.0,70.0,0.0,60.0,0.708,100.0,109.8,,,,
+55749,COAL,Hardin Generator Project,ok,14882,107.0,56.1,0.0,56.1,0.579,70.1,84.1,,,,
+56224,COAL,TS Power Plant,ok,22993,218.4,42.1,42.1,42.1,0.882,61.4,73.7,,,,
+7028,CT_CHP,Whitehead,eia923_cf,0,24.4,,,,,,,,1.4,merchant,4.8
+10215,CT_CHP,Snowbird Power Plant,eia923_cf,0,5.5,,,,,,,,8.7,commercial,30.1
+54268,CT_CHP,HF Sinclair Puget Sound Refining,eia923_cf,0,120.0,,,,,,,,19.9,industrial,68.6
+54374,CT_CHP,Sinclair Oil Refinery,eia923_cf,0,2.2,,,,,,,,0.0,industrial,20.7
+56163,CT_CHP,Kennecott Power Plant,eia923_cf,0,5.9,,,,,,,,0.0,industrial,56.9
+56312,CT_CHP,Shute Creek Facility,eia923_cf,0,100.5,,,,,,,,7.5,industrial,58.5
+56509,CT_CHP,Tesoro SLC Cogeneration Plant,eia923_cf,0,23.0,,,,,,,,16.6,industrial,85.4
+57348,CT_CHP,CityCenter Central Plant Cogen Units,eia923_cf,0,8.0,,,,,,,,25.9,commercial,89.3
+58191,CT_CHP,US Magnesium,eia923_cf,0,22.0,,,,,,,,0.0,industrial,0.0
+58382,CT_CHP,Threemile Digester,eia923_cf,0,4.8,,,,,,,,8.7,merchant,87.9
+58597,CT_CHP,HTW Plant 303 COGEN,eia923_cf,0,5.6,,,,,,,,12.4,commercial,94.2
+59496,CT_CHP,BYUI Central Energy Facility,eia923_cf,0,4.6,,,,,,,,21.5,commercial,96.8
+63423,CT_CHP,BYU Central Heating Plant,eia923_cf,0,14.0,,,,,,,,26.8,merchant,92.1
+2322,CT_PEAKER,Clark (NVE),ok,3624,679.0,5.6,0.0,0.0,0.161,7.4,13.3,,,,
+7456,CT_PEAKER,Rathdrum,ok,19794,132.0,47.0,0.0,0.0,0.754,89.4,102.3,,,,
+7953,CT_PEAKER,Evander Andrews Power Complex,ok,15296,227.3,42.2,0.0,0.0,0.584,69.1,76.5,,,,
+55544,CT_PEAKER,Klamath Expansion Project,ok,5947,100.0,20.0,0.0,0.0,0.227,34.0,53.0,,,,
+55622,CT_PEAKER,West Valley Generation Project,ok,18280,185.0,10.8,0.0,0.0,0.718,32.4,62.7,,,,
+55733,CT_PEAKER,Bennett Mountain,ok,15920,185.1,62.1,0.0,0.0,0.608,88.6,93.5,,,,
+56253,CT_PEAKER,Millcreek Power Generation,ok,8663,73.6,39.4,0.0,0.0,0.33,50.3,55.7,,,,
+56908,CT_PEAKER,Dave Gates Generating Station,ok,26255,132.3,13.6,0.0,0.0,0.999,26.5,33.3,,,,
+10504,ST_CHP,Amalgamated Sugar Twin Falls,eia923_cf,0,9.3,,,,,,,,0.3,industrial,39.9
+54690,ST_CHP,Amalgamated Sugar LLC Nampa,eia923_cf,0,8.2,,,,,,,,1.1,industrial,70.4
+2330,ST_GAS,Fort Churchill,ok,24773,226.0,12.8,0.0,0.0,0.949,19.5,30.5,,,,
+3648,ST_GAS,Gadsby,ok,11278,237.5,9.7,0.0,0.0,0.463,23.6,41.3,,,,
+8066,ST_GAS,Jim Bridger,ok,23016,1070.0,21.9,0.0,0.0,1.0,58.8,106.6,,,,

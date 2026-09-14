@@ -1,0 +1,332 @@
+{
+  "artifact": "thermal_tranches_NWPP.csv",
+  "artifact_rows": 68,
+  "artifact_sha256": "486ef1dec8dfe11467252500c06cc266e9eb4883af2b259852b421b626d20205",
+  "columns": [
+    "plant_code",
+    "plant_group",
+    "name",
+    "status",
+    "online_hours",
+    "nameplate_mw",
+    "committed_pct",
+    "mustrun_pct",
+    "mustrun_online_pct",
+    "online_frac",
+    "p25_cf",
+    "median_cf",
+    "peaking_pct",
+    "chp_pmin_cf",
+    "chp_sector",
+    "steam_level_cf"
+  ],
+  "coverage_ok_rows": {
+    "chp_pmin_cf": {
+      "CC_CHP": [
+        7,
+        7
+      ],
+      "CC_REGULAR": [
+        0,
+        22
+      ],
+      "COAL": [
+        0,
+        12
+      ],
+      "CT_PEAKER": [
+        0,
+        8
+      ],
+      "ST_GAS": [
+        0,
+        3
+      ]
+    },
+    "chp_sector": {
+      "CC_CHP": [
+        7,
+        7
+      ],
+      "CC_REGULAR": [
+        0,
+        22
+      ],
+      "COAL": [
+        0,
+        12
+      ],
+      "CT_PEAKER": [
+        0,
+        8
+      ],
+      "ST_GAS": [
+        0,
+        3
+      ]
+    },
+    "committed_pct": {
+      "CC_CHP": [
+        7,
+        7
+      ],
+      "CC_REGULAR": [
+        22,
+        22
+      ],
+      "COAL": [
+        12,
+        12
+      ],
+      "CT_PEAKER": [
+        8,
+        8
+      ],
+      "ST_GAS": [
+        3,
+        3
+      ]
+    },
+    "median_cf": {
+      "CC_CHP": [
+        7,
+        7
+      ],
+      "CC_REGULAR": [
+        22,
+        22
+      ],
+      "COAL": [
+        12,
+        12
+      ],
+      "CT_PEAKER": [
+        8,
+        8
+      ],
+      "ST_GAS": [
+        3,
+        3
+      ]
+    },
+    "mustrun_online_pct": {
+      "CC_CHP": [
+        7,
+        7
+      ],
+      "CC_REGULAR": [
+        22,
+        22
+      ],
+      "COAL": [
+        12,
+        12
+      ],
+      "CT_PEAKER": [
+        8,
+        8
+      ],
+      "ST_GAS": [
+        3,
+        3
+      ]
+    },
+    "mustrun_pct": {
+      "CC_CHP": [
+        7,
+        7
+      ],
+      "CC_REGULAR": [
+        22,
+        22
+      ],
+      "COAL": [
+        12,
+        12
+      ],
+      "CT_PEAKER": [
+        8,
+        8
+      ],
+      "ST_GAS": [
+        3,
+        3
+      ]
+    },
+    "nameplate_mw": {
+      "CC_CHP": [
+        7,
+        7
+      ],
+      "CC_REGULAR": [
+        22,
+        22
+      ],
+      "COAL": [
+        12,
+        12
+      ],
+      "CT_PEAKER": [
+        8,
+        8
+      ],
+      "ST_GAS": [
+        3,
+        3
+      ]
+    },
+    "online_frac": {
+      "CC_CHP": [
+        0,
+        7
+      ],
+      "CC_REGULAR": [
+        22,
+        22
+      ],
+      "COAL": [
+        12,
+        12
+      ],
+      "CT_PEAKER": [
+        8,
+        8
+      ],
+      "ST_GAS": [
+        3,
+        3
+      ]
+    },
+    "online_hours": {
+      "CC_CHP": [
+        7,
+        7
+      ],
+      "CC_REGULAR": [
+        22,
+        22
+      ],
+      "COAL": [
+        12,
+        12
+      ],
+      "CT_PEAKER": [
+        8,
+        8
+      ],
+      "ST_GAS": [
+        3,
+        3
+      ]
+    },
+    "p25_cf": {
+      "CC_CHP": [
+        7,
+        7
+      ],
+      "CC_REGULAR": [
+        22,
+        22
+      ],
+      "COAL": [
+        12,
+        12
+      ],
+      "CT_PEAKER": [
+        8,
+        8
+      ],
+      "ST_GAS": [
+        3,
+        3
+      ]
+    },
+    "peaking_pct": {
+      "CC_CHP": [
+        7,
+        7
+      ],
+      "CC_REGULAR": [
+        22,
+        22
+      ],
+      "COAL": [
+        0,
+        12
+      ],
+      "CT_PEAKER": [
+        0,
+        8
+      ],
+      "ST_GAS": [
+        0,
+        3
+      ]
+    },
+    "steam_level_cf": {
+      "CC_CHP": [
+        7,
+        7
+      ],
+      "CC_REGULAR": [
+        0,
+        22
+      ],
+      "COAL": [
+        0,
+        12
+      ],
+      "CT_PEAKER": [
+        0,
+        8
+      ],
+      "ST_GAS": [
+        0,
+        3
+      ]
+    }
+  },
+  "derive_invocation": {
+    "chp_floors_from": null,
+    "iso": "NWPP",
+    "years": [
+      2023,
+      2024,
+      2025
+    ]
+  },
+  "deriver": "scripts/data/derive_thermal_tranches.py",
+  "provenance": "derived",
+  "row_counts_by_status": {
+    "eia923_cf": 16,
+    "ok": 52
+  },
+  "sidecar_schema_version": 1,
+  "vintage": {
+    "chp_groups": [
+      "CC_CHP",
+      "CT_CHP",
+      "ST_CHP"
+    ],
+    "note": "group sets in force in scripts/data/derive_thermal_tranches.py at emit time; blank cells in groups OUTSIDE online_frac_groups / peaking_groups / chp_groups are BY DESIGN (e.g. CHP online_frac stays blank \u2014 the CHP floor is the steam host, rule 19 [R-ONE-MECH])",
+    "online_frac_groups": [
+      "CC_REGULAR",
+      "COAL",
+      "CT_PEAKER",
+      "ST_GAS"
+    ],
+    "peaking_groups": [
+      "CC_CHP",
+      "CC_REGULAR"
+    ],
+    "thermal_groups": [
+      "CC_CHP",
+      "CC_REGULAR",
+      "COAL",
+      "CT_CHP",
+      "CT_PEAKER",
+      "ST_CHP",
+      "ST_GAS"
+    ]
+  }
+}
