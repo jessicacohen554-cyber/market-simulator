@@ -11,6 +11,90 @@ recreated fresh from `origin/main`.
 
 ## 0. Live state — newest entry FIRST
 
+### r#4 — 2026-09-14 — ALL OF W1 + W1c LANDED · cards N4/N5/N7/N8 RULED, N6 resolved by measurement · **W2 UNBLOCKED, NWPP-20 ISSUED** (main `39a1c9a1`)
+
+**Every lane this desk has ever issued has now landed.** Graded by opening artifacts on `main`, never
+a branch name or a green check (gate G15):
+
+| Lane | Verdict | What the artifact actually says |
+|---|---|---|
+| **NWPP-10** | **LANDED** | census CONFIRMED to the MW on the headline; **3 technology rows CORRECTED** (gas ST 2,393.0 · gas ICE 737.5 · solar PV 10,051.3; MT 6,939.6), total unchanged. TRE row **REJECTED** on a two-key test, **plus two more rows the charter never found**. Demand convention established — and it found a screen that *would have destroyed a real annual peak* |
+| **NWPP-11** | **LANDED 5/5** | CEMS ID/OR/UT/WA · the 17-BA derive · DIBA · EIA-923 monthly hydro · a BPAT divergence reported, not corrected away |
+| **NWPP-12** | **LANDED** | **G12 PASSES** · WRAP binding = Winter 2027–28, out of window · **NW↔OR has no path rating and never will** |
+| **NWPP-13** | **LANDED — NO** | D3 fails: WEIM on-peak 22.6/23.6/37.5 % below Mid-C against a ±10 % bar. **D2 PASSED** (5.5–6.2 % net, 10.6 % gross) |
+| **NWPP-21** | **LANDED** | the **ninth** shard, `ev = "W"`. It re-counted after SOCO-21 landed mid-flight — exactly the rebase the r#3 un-hold accepted, handled as G2 designed |
+| **NWPP-22** | **LANDED — and WITHDRAWN IN FAVOUR OF `main`** | see below; definition-of-done row 7 is **MET** |
+
+**NWPP-22's resolution is the honest item of this sitting, and the desk records it against itself.**
+The lane built the class, measured **7/7 keepers byte-identical**, then found on rebase that an
+identical class had already landed from another program's lane. Rather than ship a second
+implementation — which would be the doubled mechanism rule 19 `[R-ONE-MECH]` forbids — it **withdrew
+its own scorer edit whole** (`git diff origin/main -- scripts/calibration_verdict.py` empty) and
+adopted `main`'s, keeping its PRECOMMIT, its FINDING and a trimmed NWPP test file. It then did the
+thing that makes the withdrawal safe: **a leg-by-leg predicate comparison proving nothing was lost**,
+with named tests for each subsumed leg.
+
+**Verified by this desk rather than taken on the lane's word:** `RUBRIC_VERSION = 3.8`; the strings
+`PHYSICALLY-CALIBRATED (PRICE UNSCORED)` / `...-WITH-CAVEATS (PRICE UNSCORED)` exist at lines 541–542;
+the predicate at line 3590 is `_price_reference_absent(iso) and all(...)` — **data-driven, no
+`if iso ==` ladder**; `actual_lmp.json` carries **exactly the seven pre-existing ISOs**, so **NWPP
+reaches the class and it is structurally unreachable for every ISO that has a block**; both test files
+are on `main`. **Definition-of-done row 7 is MET and NWPP-40 is no longer blocked on the scorer.**
+
+**ERROR AGAINST INTEREST — E-3, recorded in §6.** At r#2 this desk wrote that one branch serves both
+programs and that two desks chartering it would produce two. The owner then directed the desk to stop
+coordinating and send it now; both lanes were chartered; the other landed first; **this program built a
+scorer implementation that was then discarded.** The desk is not second-guessing the directive — NWPP
+got the class, it landed sooner, and a *delayed* NWPP-22 would have left the program blocked on another
+desk's schedule, which is exactly what the directive was preventing. But the cost was real and is
+stated: one lane's implementation was written and withdrawn. **Partly offset**: the withdrawal produced
+an independent leg-by-leg cross-check of the surviving predicate that a single-lane build would not
+have produced, and the desk verified NWPP's reachability from that comparison rather than assuming it.
+
+**CARDS RULED AT SITTING #4 — all four as the desk recommended.** Full text in plan §3; N6 needed no
+card:
+
+| Card | Ruling | The measured fact behind it |
+|---|---|---|
+| **N5** topology | **FIVE ZONES, as scoped** | 4 of 5 boundaries carry a published WECC rating; **two are clean Tier-1 candidates** (Path 35, Path 16). NW↔OR is a **documented absence**, which is a positive result |
+| **N7** adequacy | **ONE SCALAR NOW, DECLARED**; per-zone seasonal → lever NWPP-57 | 8 winter / 6 summer / 1 flipping BA; SNV peaks summer at **1.95–2.06×** its own winter load. WRAP binds Winter 2027–28 — **out of window** |
+| **N4** CAISO seam | **SERVED MEASURED INTERCHANGE, priced links default-OFF** | a priced seam is unvalidatable when NWPP-13 read NO. **BPAT's balance identity fails structurally**: −3,206 MW mean, 81.5 % of hours |
+| **N8** fleet | **LEGACY HEAT-RATE BINS**; CAMPD per-plant → W5 lever | CAMPD reaches 30.98 % nameplate / 41.8–43.6 % energy, and **36.3 % of the footprint is hydro CEMS can never cover** |
+| **N6** timezone | **RESOLVED BY MEASUREMENT — no card** | 14 Pacific / 3 Mountain; **IPCO files Pacific**; all 6 DST transitions correctly signed. **UTC is canonical**; gate G19 closed |
+
+**R-e IS CONFIRMED AND IT IS BIGGER THAN THE PLAN SAID — scope correction adopted.** Plan §2.3 called
+`data/zone_assignment.py` "the one genuinely novel code change in W2". NWPP-10 §3 measured otherwise:
+the object is **`ISO_TO_BA_CODE`** (`models.py:221`), its `{iso: ba for ba, iso in ...}` inversion
+**silently keeps only the last BA**, and there are **13+ live call sites across five modules** — every
+one failing silently with an empty or 1/17 result, never an exception. The one that matters most:
+**`data/hydro.py` 607/639/684 would cover 1/17 of the fleet — card N3's OWN machinery**, which NWPP-32
+and NWPP-36 both read. The correction, and NWPP-10's recommended codes-tuple shape, are written into
+NWPP-20's charter with the byte-identity proof extended to cover it explicitly.
+
+**NWPP-20 ISSUED**, verbatim from plan §8 as **corrected at this refresh** — preconditions rewritten
+to record that all four are met, the R-e scope correction, the five ruled zones with their TTC tiers,
+the demand convention (including *do not* run `_screen_demand_spikes`), the footprint admission
+predicate, the curated-fleet seam, the census corrections, the TAIL_THRESHOLD skip, the timezone keys
+and the adequacy declaration.
+
+**Gates at `39a1c9a1` — 6 run, exits recorded, none carried forward.** No NWPP object appears in any
+failure; every one is another region's, disclosed and routed (handoff §0.5), never fixed here (rule 25):
+
+| Gate | Exit | |
+|---|---|---|
+| `audit_keepers --check` | **FAIL** | 5 failures / 4 warnings — E13 promotion debris (MISO, SPP) + stale status files. Routed |
+| `check_registry_payload_parity` | **FAIL** | `caiso279_ablate_dswcouple_span`, `soco15_spp_arm` unregistered. Routed |
+| `check_gate_a_provenance` | **FAIL** | SPP cites a superseded keeper **and** a marker mismatch (`complete=True` vs claimed False) — the verdict-flipping half of F-5. Routed |
+| `check_mechanism_matrix` | **PASS** | warning: NYISO shard stamp drift vs its new keeper. **NWPP.js present, 9 `isos`, `ev = "W"`** — NWPP-21 verified |
+| `check_bench_freshness` | **PASS** | 34 parts, 0 stale |
+| `check_golden_manifest` | **PASS** | OK |
+
+**Next act:** grade NWPP-20 by content when it lands, then W3 (NWPP-30/31/32/33/34/35) and W3b
+(NWPP-36). Card **N10** (the first-solve screen) is deferred to the sitting that opens W4 — it governs
+a solve that cannot start until W3b lands. **Card N9** (forecast entry) still waits on a keeper.
+
+---
+
 ### r#3 — 2026-09-13 — W1 GRADED (3 of 4 landed, NWPP-13 read NO) · card N11 RULED "SEND IT NOW" · NWPP-22 + NWPP-21 ISSUED (main `33a7c961`)
 
 **Owner directive that opens this sitting: *"Ignore SOCO desk you focus on nwpp."*** The desk drops
@@ -351,15 +435,15 @@ issue W1 (NWPP-10/11/12; NWPP-13 only if N2 rules for option (a)).
 |---|---|---|---|---|---|
 | NWPP-10 audit | OPUS | W1 | **LANDED r#3** (graded by content) | merged `53bea3e0`, `3b7fb463` | `FINDING-nwpp-10-2026-09-13.md` |
 | NWPP-11 CEMS + 930 derive + interchange + hydro | OPUS | W1 | **LANDED r#3, 5/5** | merged `73478c98`…`feebfd2a` | `FINDING-nwpp-11-2026-09-13.md` |
-| NWPP-12 WECC paths / WRAP / IRPs / fuel | OPUS | W1 | **ISSUED r#2, NOT LANDED** — not graded LOST (G15). Carries gate **G12**, so W2 waits on it | pending | — |
+| NWPP-12 WECC paths / WRAP / IRPs / fuel | OPUS | W1 | **LANDED r#4** — **G12 PASSES**; WRAP out of window; NW↔OR has no path rating | merged `5b0a19fb`…`111c68ac` | `FINDING-nwpp-12-2026-09-13.md` |
 | NWPP-13 WEIM price index | FABLE | W1 | **LANDED r#3 — verdict NO** (D3 Mid-C reconciliation −22.6…−37.5 % vs a ±10 % bar; D2 volume share 5.5–6.2 % PASSED). Nothing landed to `_validation-source` | merged `715fff9d`, `97121c22`, `976e7724` | `FINDING-nwpp-13-2026-09-13.md` |
-| NWPP-20 registration | FABLE | W2 | BLOCKED on N4–N8 + LTLF (N1/N3 ruled r#1) | — | — |
-| NWPP-21 matrix shard | OPUS | W2 | **ISSUED r#3 — UN-HELD** (owner: ignore the SOCO desk; G2 + §8.0 rule 3 already handle the base-file merge) | pending (`claude/nwpp-21-matrix-*`) | — |
-| **NWPP-22 the scorer branch** | **FABLE** | **W1c** | **ISSUED r#3** — owner ruling **N11** *"send it now"*; gate G25 (byte-identity over every pre-existing keeper) | pending (`claude/nwpp-22-verdict-basis-*`) | — |
+| NWPP-20 registration | FABLE | W2 | **ISSUED r#4 — UNBLOCKED**: N4/N5/N7/N8 ruled, N6 resolved by measurement, G12 passes. Charter corrected for the R-e scope finding | pending (`claude/nwpp-20-register-*`) | — |
+| NWPP-21 matrix shard | OPUS | W2 | **LANDED r#4** — the **ninth** shard, `ev = "W"`; re-counted after another shard landed mid-flight, as G2 designed | merged `8e88c3dd`…`622f69cf` | `FINDING-nwpp-21-2026-09-13.md` |
+| **NWPP-22 the scorer branch** | **FABLE** | **W1c** | **LANDED r#4 — class live (v3.8), own edit WITHDRAWN as a duplicate** (rule 19). 7/7 keepers byte-identical; NWPP reaches the class, verified by the desk. Done-row 7 **MET** | merged `86b5dc92`…`088094be` | `FINDING-nwpp-22-2026-09-13.md` |
 | NWPP-30/31/33/34/35 | OPUS | W3 | BLOCKED on NWPP-20 | — | — |
 | NWPP-32 hydro budget | FABLE | W3 | BLOCKED on NWPP-20 + NWPP-11 | — | — |
 | NWPP-36 cascade coupling | FABLE | **W3b** | BLOCKED on NWPP-20 + NWPP-32 — **inserted by ruling N3** | — | — |
-| NWPP-40 first solve | FABLE | W4 | BLOCKED on NWPP-30/31/32/33, **NWPP-36**, and **NWPP-22** — with NWPP-13's NO, the scorer branch is the only route to any determination | — | — |
+| NWPP-40 first solve | FABLE | W4 | BLOCKED on NWPP-30/31/32/33 and **NWPP-36**. **No longer blocked on the scorer** — NWPP-22 landed, and NWPP will read `PHYSICALLY-CALIBRATED (PRICE UNSCORED)` | — | — |
 | NWPP-55…59 levers | — | W5 | pre-declared, not issuable (**NWPP-54 RETIRED into NWPP-36**, ruling N3) | — | — |
 | W6 forecast entry | — | W6 | ROUTED to the capx director (card N9) | — | — |
 
@@ -372,7 +456,12 @@ issue W1 (NWPP-10/11/12; NWPP-13 only if N2 rules for option (a)).
 | N2 | price benchmark / rubric class | **BOTH (a) AND (b)** — charter NWPP-13's STOP-gated WEIM build, AND rule now that a failed gate yields a determination naming its own basis, never a bare `CALIBRATED`, with the gap at full magnitude. Neighbouring-hub substitution stays refused (G17). *As the desk recommended. The joint-sitting-with-SOCO option was offered and not taken — R-c stays open.* | 2026-09-13 |
 | N3 | hydro representation | **BUILD CASCADE COUPLING FIRST** — hydraulic coupling of the Columbia mainstem is built before any first keeper. ***AGAINST the desk's recommendation***, which was to proceed on monthly budgets with the gap declared. Effects: new wave W3b, new lane NWPP-36, lever NWPP-54 retired, gate G8 amended. | 2026-09-13 |
 | N11 | the scorer branch | **SEND IT NOW** — charter and issue NWPP-22 immediately rather than defer or route it. Plan §1's rubric prohibition is carved for this one lane only; gate G25 holds it to a byte-identity exit over every pre-existing keeper. *(Served after the owner directed: "Ignore SOCO desk you focus on nwpp.")* | 2026-09-13 |
-| N4–N8, N10 | CAISO seam, topology, timezones, adequacy, CEMS scope, first-solve screen | **PENDING** — due sitting #4, now servable: NWPP-10's audit and NWPP-11's evidence are on disk | — |
+| N5 | topology | **FIVE ZONES, as scoped** — NW/EAST/INLAND/OR/SNV. TTC tiers ruled with them: Path 35 and Path 16 Tier-1; Paths 8/6/14 and Path 20 Tier-2; **NW↔OR Tier-3 documented absence**. Paths 4/5/71/86/87/88 are east–west cuts, never BA interfaces | 2026-09-14 |
+| N7 | adequacy | **ONE SCALAR NOW, DECLARED** — tested against the footprint coincident peak, with the 8-winter/6-summer/1-flipping mismatch on the determination basis at full magnitude. Per-zone seasonal PRM → lever **NWPP-57**. WRAP binds Winter 2027–28, **out of window** | 2026-09-14 |
+| N4 | CAISO seam | **SERVED MEASURED INTERCHANGE, priced links default-OFF** — `_SCALAR_INTERCHANGE_ISOS += NWPP`. **BPAT's balance identity fails structurally** (−3,206 MW mean, 81.5 % of hours): the derive must handle it. R-a stays routed | 2026-09-14 |
+| N8 | fleet representation | **LEGACY HEAT-RATE BINS** (`use_campd_bins=False`) for the first keeper; CAMPD per-plant → W5 lever. Supersedes the §3 recorded `per_plant=True` default | 2026-09-14 |
+| N6 | timezones | **RESOLVED BY MEASUREMENT, not ruled** — 14 Pacific / 3 Mountain, IPCO files Pacific, UTC canonical. Gate G19 closed | 2026-09-14 |
+| N10 | first-solve screen | **DEFERRED** to the sitting that opens W4 — it governs a solve that cannot start until W3b lands | — |
 | N9 | W6 routing | **PENDING** — due when a keeper exists | — |
 
 ## 3. Routed — open, not this desk's to fix
@@ -403,6 +492,7 @@ issue W1 (NWPP-10/11/12; NWPP-13 only if N2 rules for option (a)).
 | r#1 | 2026-09-13 | none yet — W1 (NWPP-10/11/12/13) is the next act | N1, N2, N3 **RULED**; N3 against the desk's recommendation |
 | r#2 | 2026-09-13 | **W1 ISSUED — NWPP-10, NWPP-11, NWPP-12 `[OPUS]` and NWPP-13 `[FABLE]`**, verbatim from plan §8 W1, §8.0 pasted in, `origin/main` pinned. NWPP-21 **HELD** (C-2 live) | none — N4–N8/N10 await W1 evidence. **R-c re-measured**: SOCO's S2 converged with N2; the live risk moved to the scorer branch (SOCO card S11), routed not carded |
 | r#3 | 2026-09-13 | **NWPP-22 `[FABLE]` ISSUED** (charter written into plan §8 at this refresh, then issued) and **NWPP-21 `[OPUS]` ISSUED** (un-held) | **N11 RULED — "send it now"**. W1 graded by content: NWPP-10/11 LANDED, NWPP-13 LANDED with verdict **NO**, NWPP-12 outstanding |
+| r#4 | 2026-09-14 | **NWPP-20 `[FABLE]` ISSUED** — the pin flip, charter corrected at this refresh for the R-e scope finding and all six card outcomes | **N4, N5, N7, N8 RULED** (all as recommended); **N6 resolved by measurement**; N10 deferred to the W4 sitting |
 
 ## 6. Errors against interest
 
@@ -420,3 +510,18 @@ them.)*
   current. Two differed in form (EPA and BPA answered 206 to a range request rather than 200), which
   changes nothing — but had a host gone dark overnight, a carried-forward green would have sent a
   lane at a dead route. No lane should cite a probe it did not run.
+- **E-3 (r#4, against the desk's own r#2 position).** At r#2 the desk wrote that one scorer branch
+  serves both this program and a sibling, and that two desks chartering it would produce two. The owner
+  then directed it to stop coordinating and send it now; both were chartered; the other landed first;
+  **NWPP-22 built an implementation that was then withdrawn.** The desk is not re-arguing the
+  directive — NWPP got the class, sooner, and a deferred NWPP-22 would have left this program waiting
+  on another desk's schedule, which is what the directive was preventing. The cost is stated anyway
+  because a desk that only records vindicated calls is not keeping a ledger: **one lane's scorer
+  implementation was written and discarded.** Partly offset — the withdrawal produced a leg-by-leg
+  cross-check of the surviving predicate, which is what let this desk verify NWPP's reachability
+  rather than assume it.
+- **E-4 (r#4, method note).** The desk carried `26,295 hours` for AVRN/GRID's null-demand window from
+  charter through three refreshes. NWPP-10 measured **26,304** — the charter's 2023 hour count was a
+  UTC-boundary artifact, not missing data. Nothing downstream turned on it, but it was restated three
+  times without being re-derived, which is the failure mode gate G15 names applied to the desk's own
+  numbers rather than a lane's.

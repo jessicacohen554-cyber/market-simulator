@@ -1,5 +1,33 @@
 # Changelog
 
+## 2026-09-14 — NWPP r#4: every issued lane has landed, four cards ruled, W2 issued
+
+Desk refresh r#4 (`docs/handoffs/nwpp-desk-ledger-2026-09.md`). Docs only — no code, no data, no
+registry; every existing keeper's cache key untouched by construction.
+
+- **All of W1 + W1c + NWPP-21 LANDED**, graded by opening artifacts rather than branch names.
+  NWPP-12 clears gate **G12** (the LTLF exists only as an assembly from participant IRPs, edition
+  "Participant IRP assembly (2025 cycle)", vintage 2025) and confirms **WRAP's first binding season
+  is Winter 2027–28 — out of the backcast window**.
+- **NWPP-22's class is live and its own edit was withdrawn.** An identical determination class landed
+  first from another lane, so rather than ship a second implementation (rule 19 `[R-ONE-MECH]`) the
+  lane withdrew its scorer edit whole and proved leg-by-leg that nothing was lost. Verified by the
+  desk: `RUBRIC_VERSION = 3.8`, a data-driven predicate at line 3590, `actual_lmp.json` carrying
+  exactly the seven pre-existing ISOs — so **NWPP reaches the class and it is structurally unreachable
+  for any ISO that has a price block**. Definition-of-done row 7 is met.
+- **Cards N4, N5, N7 and N8 RULED, all as recommended; N6 resolved by measurement.** Five zones with
+  their TTC tiers (two clean Tier-1 candidates; NW↔OR a documented absence); one PRM scalar with the
+  8-winter/6-summer/1-flipping mismatch declared at full magnitude; served measured interchange with
+  priced links default-off; legacy heat-rate bins for the first keeper.
+- **R-e confirmed and larger than the plan said — scope correction adopted.** The object is
+  `ISO_TO_BA_CODE`, not the zone map: its dict-comprehension inverse silently keeps only the last BA,
+  and there are 13+ live call sites across five modules, each failing silently. The one that matters
+  most is `data/hydro.py`, which is the hydro machinery lanes NWPP-32 and NWPP-36 both read.
+- **NWPP-20 issued** with the charter corrected for all of the above, including the demand convention
+  NWPP-10 established — notably *not* to run `_screen_demand_spikes` on NWPP, whose 2.5 factor rests
+  on a claim this footprint falsifies and which would delete a documented January 2024 cold snap
+  containing a zone's annual peak.
+
 ## 2026-09-13 — SOCO r#4: five lanes issued, zero dispatched — and a registration pin two programs both missed
 
 Desk refresh r#4 (`docs/handoffs/soco-desk-ledger-2026-09.md`). Docs only.
