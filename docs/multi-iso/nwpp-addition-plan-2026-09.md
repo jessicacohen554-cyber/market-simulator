@@ -1502,6 +1502,7 @@ The desk issues these against the SPP program's own W3/W4 charters, which are co
 | Lane | FINDING | Landed |
 |---|---|---|
 | charter | this plan + `docs/handoffs/nwpp-desk-handoff-2026-09-13.md` + `nwpp-desk-ledger-2026-09.md` | 2026-09-13 |
+| NWPP-33 | `docs/handoffs/FINDING-nwpp-33-2026-09-14.md` — zonal shares (exact regroup, sum 1.0), MEASURED per-zone VRE shape, per-zone gas basis | 2026-09-14 |
 
 ## 10. Ledger
 

@@ -13,7 +13,7 @@ Output schema: ``data/dictionary/schema/zonal-shares.schema.yaml``
 
 Output path (via clean_path): ``data/clean/zonal-shares/<ISO>/zonal-shares_<year>.parquet``
 
-Supported ISOs: ERCOT, CAISO, PJM, MISO, NYISO, NEISO, SPP
+Supported ISOs: ERCOT, CAISO, PJM, MISO, NYISO, NEISO, SPP, NWPP
 
 Usage
 -----
@@ -21,6 +21,7 @@ Usage
   python scripts/data/curate_zonal_shares.py --iso PJM --year 2023 2024 2025
   python scripts/data/curate_zonal_shares.py --iso MISO --year 2023
   python scripts/data/curate_zonal_shares.py --iso SPP --year 2023 2024 2025
+  python scripts/data/curate_zonal_shares.py --iso NWPP --year 2023 2024 2025
 """
 
 from __future__ import annotations
@@ -661,6 +662,106 @@ def parse_spp_shares(year: int, zone_names: list[str]) -> np.ndarray | None:
 
 
 # ---------------------------------------------------------------------------
+# NWPP — a POOL of seventeen balancing authorities, so the zonal shares are a
+# REGROUP of the same per-BA series the pool's own system demand is summed
+# from, not a separate sub-BA product (there is none: EIA-930 publishes no
+# sub-BA series for any of the 17, plan §2.5 / gate G18, which is exactly why
+# a zone may not split a BA).  Landed 2026-09-14 by lane NWPP-33.
+# ---------------------------------------------------------------------------
+
+
+def parse_nwpp_shares(year: int, zone_names: list[str]) -> np.ndarray | None:
+    """Regroup the NWPP pool's member demand into ``(n_zones, 8760)`` shares.
+
+    NWPP is the repo's only POOL region: its system demand is already the
+    UTC-joined sum of seventeen per-BA EIA-930 extracts
+    (``eia930.frames._pool_hourly_frame``).  Every model zone is a whole-BA
+    group (owner ruling N5; ``zone_assignment._NWPP_BA_ZONES``), so the zonal
+    shares are that same sum taken in five parts instead of one — a REGROUP of
+    the identical arithmetic, not a second data source.  Three consequences,
+    all measured by this lane (``docs/handoffs/FINDING-nwpp-33-2026-09-14.md``):
+
+    * **The shares are exact, not approximate.**  Because the numerator parts
+      and the denominator come from one pass over one set of arrays, the
+      per-zone sum reproduces the pool frame's own ``Demand`` column to
+      **0.0 MW** in every hour of 2023, 2024 and 2025 — verified in
+      :mod:`tests.curation.test_curate_zonal_shares_nwpp`.  No other ISO's
+      parser can say that: each of them ratios one published series against a
+      differently-sourced system total.
+    * **The demand convention is NOT optional and is inherited, not restated**
+      (NWPP-10 §1.3 / audit §4.4).  Each member is read on
+      ``Demand (Adjusted)`` — which repairs all 30 artifact hours of 2023-2025
+      — and passed through the exact-zero dropout screen (17 NEVP hours of
+      2025).  ``_screen_demand_spikes`` is deliberately NOT applied: its
+      2.5 x median bar flags 54 REAL CHPD hours of 12-16 January 2024, a
+      documented cold snap holding CHPD's annual peak (583 MW, peak/median
+      2.83) and the whole NWPP-NW zone's 2024 annual peak (21,560 MW at
+      2024-01-13 19:00 UTC), on which EIA's own ``Adjusted`` column is
+      byte-identical to raw.  Deleting them would be a rule-14 ``[R-ACCURATE]``
+      violation by construction.  This function re-uses
+      :func:`~market_sim.data.eia930.frames._pool_member_frames` and the pool
+      builder's own screening rather than re-implementing it, so the convention
+      cannot drift between the system total and its parts (rule 19
+      ``[R-ONE-MECH]``).
+    * **The clock is the pool clock.**  ``_pool_member_frames`` re-indexes every
+      member onto the ``_POOL_CLOCK_BA`` (BPAT) Pacific local year by a pure UTC
+      join, so the three Mountain members (NWMT, PACE, WAUW) land on the Pacific
+      hour that is the same physical hour, and row ``k`` here is the same
+      positional hour ``k`` the system demand and the renewable CF use
+      (card N6 / gate G19: UTC is the canonical key, local time is provenance).
+
+    The two generation-only members (AVRN, GRID) carry null demand in all
+    26,304 hours and enter their zones as exactly 0.0, so they move no share;
+    their GENERATION still lands in NWPP-NW / NWPP-OR through the same zone map
+    (that is the supply side, and it is not this function's business).
+
+    Nothing is padded, interpolated or rescaled beyond the two repairs the pool
+    builder already performs (rule 13 ``[R-MEASURED]``).
+
+    Args:
+        year: Calendar year.
+        zone_names: Model zone names in the caller's expected order.
+
+    Returns:
+        A ``(n_zones, HOURS_PER_YEAR)`` share array whose columns sum to 1.0,
+        or ``None`` when any member extract for ``year`` is unavailable (a pool
+        is never served from a subset).
+    """
+    from market_sim.data.eia930.demand import _screen_demand_dropouts
+    from market_sim.data.eia930.frames import (
+        _POOL_GENERATION_ONLY_BAS,
+        _pool_member_frames,
+    )
+    from market_sim.data.zone_assignment import _NWPP_BA_ZONES
+
+    members = _pool_member_frames("NWPP", year)
+    if members is None:
+        logger.warning("NWPP pool member frames unavailable for %d; skipping", year)
+        return None
+
+    index = {zone: i for i, zone in enumerate(zone_names)}
+    demand = np.zeros((len(zone_names), HOURS_PER_YEAR), dtype=float)
+    for ba, frame in members.items():
+        zone = _NWPP_BA_ZONES.get(ba)
+        if zone is None or zone not in index:
+            # A member whose ruled zone is not in the caller's list cannot be
+            # dropped silently: its load would vanish from the denominator.
+            logger.warning("NWPP member %s maps outside %s; skipping", ba, zone_names)
+            return None
+        series = frame["Demand (Adjusted)"].to_numpy(dtype=float)
+        if ba in _POOL_GENERATION_ONLY_BAS or np.isnan(series).all():
+            continue  # generation-only BA: exactly 0.0 load, every hour
+        series = pd.Series(series).interpolate().bfill().ffill().to_numpy(dtype=float)
+        demand[index[zone]] += _screen_demand_dropouts(series, ba_code=ba, year=year)
+
+    total = demand.sum(axis=0)
+    if not np.isfinite(total).all() or (total <= 0.0).any():
+        logger.warning("NWPP %d: non-positive footprint demand hour(s); skipping", year)
+        return None
+    return demand / total
+
+
+# ---------------------------------------------------------------------------
 # Dispatch table: iso -> parse function
 # ---------------------------------------------------------------------------
 _PARSE_FUNCS = {
@@ -671,6 +772,7 @@ _PARSE_FUNCS = {
     "NYISO": parse_nyiso_shares,
     "NEISO": parse_neiso_shares,
     "SPP": parse_spp_shares,
+    "NWPP": parse_nwpp_shares,
 }
 
 
