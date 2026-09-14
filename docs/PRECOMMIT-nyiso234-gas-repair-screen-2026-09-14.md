@@ -36,15 +36,38 @@ change in the delivered gas series the LP actually sees — and **never on the r
 
 | year | footprint (Σ&#124;Δ&#124; $/MMBtu·h) | hours moved | max Δ |
 |---|---:|---:|---:|
-| **2022** | **3,961** | 1,464 (16.7 %) | **+24.52** |
-| 2025 | 2,100 | 2,976 (34.0 %) | +4.87 |
-| 2024 | 988 | 3,672 (41.9 %) | +7.14 |
-| 2023 | 669 | 3,600 (41.1 %) | +0.79 |
+| **2022** | **3,983** | 1,464 (16.7 %) | **+31.57** |
+| 2025 | 1,354 | 2,928 (33.4 %) | +0.97 |
+| 2024 | 1,069 | 3,672 (41.9 %) | +7.91 |
+| 2023 | 597 | 3,600 (41.1 %) | +0.71 |
 
-2022 leads by **1.9×** over the next year. *(These are the daily-repair-only figures; the monthly
-recomputation of §1 shifts magnitudes but cannot plausibly overturn a 1.9× lead built on Elliott,
-the largest single gas event in the record. The final numbers are restated in the RESULT; if the
-ordering had changed, this document would have been amended before the screen ran, not after.)*
+**2022 leads by 2.9×.** These are the FINAL figures over the complete repair — both the daily
+series and the monthly anchor recomputed from it — measured before the screen and unchanged in
+ordering from the daily-only reading that first selected 2022 (3,961 / 2,100 / 988 / 669, a 1.9×
+lead). **No amendment to the screen year was needed.**
+
+*Measurement note, recorded because it changed a number this document relies on:* the monthly level
+enters `_nyiso_hub_daily_gas_prices` through its **`basis_path` argument**
+(`gas_basis_by_iso_month.csv`), **not** through `basis.nyiso.TRANSCO_IROQUOIS_MONTHLY_PATH`.
+Repointing that constant was measured to be a **no-op** (0 of 8,760 hours), which would have
+compared a HYBRID baseline — old dailies against the new monthly level. The probe was corrected to
+swap the argument, verified effective (1,464 hours move on a basis-only swap), and the table above
+is from the corrected run. The hybrid reading had given 2022 = 4,798; the ordering was the same,
+but the number was measuring the wrong thing and is not quoted.
+
+The 2022 days that move most, and what the model burned on them:
+
+| date | before | after |
+|---|---:|---:|
+| **2022-12-23** | 8.05 | **39.62** |
+| 2022-12-22 | 8.05 | 35.73 |
+| 2022-12-24 | 8.05 | 31.46 |
+| 2022-12-25 | 8.05 | 23.31 |
+| 2022-12-29/30/31 | 8.05 | 3.66 / 3.08 / 3.08 |
+
+The late-December days moving **down** is the monthly recomputation working as intended: their own
+published prints are 3.29 / 2.77, and the daily-only repair had pushed them to **2.53** by funding
+the spike out of the rest of the month. That over-correction is what §1's second step removes.
 
 **2022 is ALSO the worst C3a year (−11.6 %), and that is a coincidence this document names rather
 than relies on.** The choice is made on footprint alone; had the largest footprint fallen in a
