@@ -459,6 +459,7 @@ class TestISOConfig(unittest.TestCase):
             "NYISO",
             "NEISO",
             "SPP",
+            "NWPP",
         ):
             config = get_iso_config(iso_name)
             valid = set(config.zone_names)
@@ -531,6 +532,75 @@ class TestISOConfig(unittest.TestCase):
         overrides = get_iso_config("SPP").default_scenario_overrides
         self.assertEqual(overrides, {})
         self.assertNotIn("scarcity_price_overlay", overrides)
+
+    # --- NWPP (registered 2026-09-14, lane NWPP-20; owner rulings N1, N3-N8) --
+
+    def test_nwpp_defines_the_five_ruled_whole_ba_zones(self):
+        """Card N5: five zones, whole-BA groups, in registration order."""
+        nwpp = get_iso_config("NWPP")
+        self.assertEqual(nwpp.name, "NWPP")
+        self.assertEqual(
+            nwpp.zone_names,
+            ["NWPP-NW", "NWPP-OR", "NWPP-INLAND", "NWPP-EAST", "NWPP-SNV"],
+        )
+
+    def test_nwpp_topology_validates(self):
+        get_iso_config("NWPP").validate_topology()
+
+    def test_nwpp_load_shares_are_the_pooled_adjusted_energy_shares(self):
+        """Pooled 2023-2025 member Demand (Adjusted) energy shares, sum 1.0."""
+        shares = {z.name: z.load_share for z in get_iso_config("NWPP").zones}
+        self.assertEqual(
+            shares,
+            {
+                "NWPP-NW": 0.3769,
+                "NWPP-OR": 0.1509,
+                "NWPP-INLAND": 0.1533,
+                "NWPP-EAST": 0.1808,
+                "NWPP-SNV": 0.1381,
+            },
+        )
+        self.assertAlmostEqual(sum(shares.values()), 1.0, places=6)
+
+    def test_nwpp_links_carry_the_ruled_path_ratings_as_one_way_pairs(self):
+        """Card N5 tiers: Paths 35 / 16 / 20 as paired one-way links, the
+        NW<->INLAND aggregation of Paths 8 + 6 + 14, and the NW<->OR Tier-3
+        placeholder (a documented absence)."""
+        nwpp = get_iso_config("NWPP")
+        one_way = {
+            (link.from_zone, link.to_zone): link.ttc_mw
+            for link in nwpp.links
+            if not link.is_bidirectional
+        }
+        self.assertEqual(one_way[("NWPP-EAST", "NWPP-SNV")], 600.0)  # Path 35 N->S
+        self.assertEqual(one_way[("NWPP-SNV", "NWPP-EAST")], 580.0)  # Path 35 S->N
+        self.assertEqual(one_way[("NWPP-INLAND", "NWPP-SNV")], 500.0)  # Path 16
+        self.assertEqual(one_way[("NWPP-SNV", "NWPP-INLAND")], 360.0)
+        self.assertEqual(one_way[("NWPP-INLAND", "NWPP-EAST")], 1600.0)  # Path 20
+        self.assertEqual(one_way[("NWPP-EAST", "NWPP-INLAND")], 1250.0)
+        self.assertEqual(one_way[("NWPP-INLAND", "NWPP-NW")], 8877.0)  # 8+6+14 E->W
+        self.assertEqual(one_way[("NWPP-NW", "NWPP-INLAND")], 2550.0)  # 8+14 W->E
+        symmetric = [link for link in nwpp.links if link.is_bidirectional]
+        self.assertEqual(len(symmetric), 1)
+        self.assertEqual(
+            (symmetric[0].from_zone, symmetric[0].to_zone), ("NWPP-NW", "NWPP-OR")
+        )
+        self.assertEqual(symmetric[0].ttc_mw, 43_600.0)
+        # NW<->OR, NW<->EAST, NW<->SNV, OR<->EAST, OR<->SNV, OR<->INLAND:
+        # only NW<->OR is a link; the rest are not adjacent in the catalogue.
+        pairs = {frozenset((l.from_zone, l.to_zone)) for l in nwpp.links}
+        self.assertEqual(len(pairs), 5)
+        self.assertNotIn(frozenset(("NWPP-OR", "NWPP-INLAND")), pairs)
+
+    def test_nwpp_voll_is_the_interim_weim_cap(self):
+        """PRECOMMIT-nwpp-20 §3.5: $2,000/MWh, declared interim (WEIM hard cap)."""
+        self.assertEqual(get_iso_config("NWPP").voll, 2000.0)
+
+    def test_nwpp_carries_no_default_overrides(self):
+        """Gate G5 / card N8: no offer-band delta, no scarcity seed, no
+        commitment bridge — legacy bins and generic 1.0 bands."""
+        overrides = get_iso_config("NWPP").default_scenario_overrides
+        self.assertEqual(overrides, {})
 
     def test_caiso_voll_is_2000(self):
         """CAISO uses a VOLL of $2,000/MWh."""

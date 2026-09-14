@@ -144,7 +144,16 @@ class TestMisoIsArmedAndOthersAreNot(unittest.TestCase):
     def test_only_miso_overrides_it(self):
         armed = {
             iso
-            for iso in ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP")
+            for iso in (
+                "ERCOT",
+                "CAISO",
+                "PJM",
+                "MISO",
+                "NYISO",
+                "NEISO",
+                "SPP",
+                "NWPP",
+            )
             if get_iso_config(iso).default_scenario_overrides.get(
                 "entry_vre_zone_selection"
             )

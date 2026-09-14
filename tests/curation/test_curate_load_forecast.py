@@ -160,7 +160,7 @@ class TestRegistryContract(unittest.TestCase):
     def test_every_model_iso_is_registered(self) -> None:
         self.assertEqual(
             set(lf.load_registry()),
-            {"ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP"},
+            {"ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP", "NWPP"},
         )
 
     def test_specs_declare_an_edition_and_a_vintage(self) -> None:

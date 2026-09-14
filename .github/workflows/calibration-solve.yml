@@ -55,7 +55,7 @@ on:
         description: "ISO — selects the data profile to hydrate"
         default: "MISO"
         type: choice
-        options: [MISO, PJM, NYISO, NEISO, CAISO, ERCOT, SPP]
+        options: [MISO, PJM, NYISO, NEISO, CAISO, ERCOT, SPP, NWPP]
       source_bundle:
         description: "Bundle to replay, e.g. results/calibration/miso220_nonsteamlift_B"
         required: true

@@ -167,7 +167,9 @@ _DET_TOKENS = ("CALIBRATED-WITH-CAVEATS", "NOT-YET", "CALIBRATED")
 # ISOs that must always carry the full backcast year span (claude.md #16).
 # SPP joined at registration (2026-09-06, lane SPP-20): a single-year SPP keeper
 # is refused from day one (rule 16 [R-ALLYEARS]; plan §3).
-_MULTI_YEAR_ISOS = {"CAISO", "PJM", "NEISO", "NYISO", "MISO", "SPP"}
+# NWPP added at registration (2026-09-14, lane NWPP-20; rule 16 [R-ALLYEARS]):
+# a single-year NWPP keeper is refused from day one.
+_MULTI_YEAR_ISOS = {"CAISO", "PJM", "NEISO", "NYISO", "MISO", "SPP", "NWPP"}
 
 # E9 no longer enforces a zero-forcing ablation twin (CLAUDE.md rule 20, owner
 # amendment 2026-07-14: keepers no longer build or register one; forcing-

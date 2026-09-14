@@ -33,8 +33,8 @@ from market_sim.config.constants import VOM
 from market_sim.data.fleet import (
     EIA_860_DIR,
     EIA_860_PARQUET_NAME,
-    ISO_TO_BA_CODE,
     Generator,
+    ba_codes,
 )
 
 logger = logging.getLogger(__name__)
@@ -604,12 +604,15 @@ def _load_hydro_generation(
             caller (the EIA-923 climatology) reads the ~10 MB parquet once
             instead of once per year. ``None`` (default) loads it.
     """
-    ba_code = ISO_TO_BA_CODE.get(iso.upper())
+    # Membership over every BA the region comprises (NWPP is 17; the 1:1
+    # regions are a one-element tuple, so ``isin`` selects the rows ``==``
+    # did) — the NWPP-10 §3 repair of the scalar-inverse silent failure.
+    codes = ba_codes(iso)
     if gen is None:
         gen = load_monthly_generation()
     subset = gen[(gen["prime_mover"] == HYDRO_PRIME_MOVER) & (gen["year"] == year)]
-    if ba_code is not None and "ba_code" in subset.columns:
-        subset = subset[subset["ba_code"] == ba_code]
+    if codes and "ba_code" in subset.columns:
+        subset = subset[subset["ba_code"].isin(codes)]
     if subset.empty:
         return subset
 
@@ -636,8 +639,8 @@ def load_reference_hydro_nameplate(iso: str) -> dict[int, float]:
     is excluded, mirroring :func:`_load_hydro_nameplate`. Returns an empty dict
     when the source is absent or the ISO has no balancing-authority code.
     """
-    ba_code = ISO_TO_BA_CODE.get(iso.upper())
-    if ba_code is None:
+    codes = ba_codes(iso)
+    if not codes:
         return {}
 
     cols = ["plant_id", "ba_code", "prime_mover", "nameplate_capacity_mw"]
@@ -655,7 +658,7 @@ def load_reference_hydro_nameplate(iso: str) -> dict[int, float]:
             usecols=["plantid", "ba_code", "prime_mover", "nameplate_capacity_mw"],
         ).rename(columns={"plantid": "plant_id"})
 
-    sub = df[(df["prime_mover"] == HYDRO_PRIME_MOVER) & (df["ba_code"] == ba_code)]
+    sub = df[(df["prime_mover"] == HYDRO_PRIME_MOVER) & (df["ba_code"].isin(codes))]
     out: dict[int, float] = {}
     for pid, mw in zip(sub["plant_id"], sub["nameplate_capacity_mw"]):
         if pid != pid or mw != mw:  # NaN plant_id / nameplate
@@ -681,10 +684,10 @@ def _load_hydro_nameplate(iso: str) -> dict[int, float]:
     out: dict[int, float] = {}
     if parquet_path.exists():
         df = pd.read_parquet(parquet_path)
-        ba_code = ISO_TO_BA_CODE.get(iso.upper())
+        codes = ba_codes(iso)
         mask = df["prime_mover"] == HYDRO_PRIME_MOVER
-        if ba_code is not None and "balancing_authority_code" in df.columns:
-            mask &= df["balancing_authority_code"] == ba_code
+        if codes and "balancing_authority_code" in df.columns:
+            mask &= df["balancing_authority_code"].isin(codes)
         hydro = df[mask]
         if not hydro.empty:
             totals = hydro.groupby("plant_id")["nameplate_capacity_mw"].sum()

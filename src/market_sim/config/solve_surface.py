@@ -80,6 +80,12 @@ SURFACE_ISOS: tuple[str, ...] = (
     "NYISO",
     "NEISO",
     "SPP",
+    # NWPP registered 2026-09-14 by lane NWPP-20, in the SAME commit as
+    # ``iso_configs._ISO_BUILDERS["NWPP"]`` and ``DEMAND_LOADERS["NWPP"]``
+    # (plan §2.3 / gate G1: the pinned-tuple test and the import-time assert
+    # both refuse a half-flipped pin). Appended LAST so the seven earlier
+    # regions' rows and keys are untouched (gate G8).
+    "NWPP",
 )
 
 #: A module-level *surface name*: SCREAMING_CASE, no leading underscore. Private

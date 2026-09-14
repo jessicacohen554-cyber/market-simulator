@@ -22,6 +22,16 @@ from market_sim.data.fleet.eia860 import (
 # UNT23 rows (CT-01 + CT-02 = 24,376,259 MMBtu over PLNGENAN 3,543,044 MWh).
 RIVERSIDE = 55641
 RIVERSIDE_RECONCILED = 6.880
+# Coyote Springs (PGE, OR, 296 MW CC, 1995): the SECOND provable instance,
+# reachable only since NWPP-20 (2026-09-14) put the NWPP footprint into the
+# EIA-860 generator table the detector scans. eGRID PLHTRT 13,795.8 Btu/kWh:
+# PLHTIAN 26,414,170 MMBtu covers CEMS facility 7350, which also stacks the
+# co-located Coyote Springs II (ORISPL 7931, BPAT, 287 MW, 6 m away, its own
+# PLHTIAN 15,602,260 > 0 and PLHTRT 6,894), while PLNGENAN 1,914,656 MWh is the
+# PGE plant alone. All four conditions hold and the reconciled 6.918 sits
+# beside the sibling's own 6.894 — the same double-count pattern as Riverside.
+COYOTE_SPRINGS = 7350
+COYOTE_SPRINGS_RECONCILED = 6.918
 
 
 class TestEgridBoundaryRepairSet(unittest.TestCase):
@@ -51,8 +61,14 @@ class TestEgridBoundaryRepairSet(unittest.TestCase):
         self.assertNotIn(10294, repairs)
 
     def test_repair_set_is_minimal(self) -> None:
-        """Scope is one plant across all six ISOs — a second is stop-the-line."""
-        self.assertEqual(set(_egrid_boundary_hr_repairs()), {RIVERSIDE})
+        """Scope is exactly the two provable double-counts — a third is
+        stop-the-line. (One plant across the six ISOs until NWPP-20; Coyote
+        Springs entered with the NWPP footprint, evidence at its constant.)"""
+        repairs = _egrid_boundary_hr_repairs()
+        self.assertEqual(set(repairs), {RIVERSIDE, COYOTE_SPRINGS})
+        self.assertAlmostEqual(
+            repairs[COYOTE_SPRINGS], COYOTE_SPRINGS_RECONCILED, places=3
+        )
 
 
 class TestEgridBoundaryRepairApplier(unittest.TestCase):

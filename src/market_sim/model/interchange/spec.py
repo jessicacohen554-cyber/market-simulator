@@ -1507,6 +1507,116 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
             hr_by_year={2023: 23.70, 2024: 15.87, 2025: 10.76},
         ),
     ],
+    # ------------------------------------------------------------------
+    # NWPP — registered 2026-09-14 by lane NWPP-20 under owner ruling N4
+    # (NWPP desk sitting #4: "SERVED MEASURED INTERCHANGE, PRICED LINKS
+    # DEFAULT-OFF"). ALL THREE ARE DEFAULT-OFF: ``reference_price_interface``
+    # is off for NWPP (REFERENCE_PRICE_DEFAULT_ISOS is untouched) and NWPP has
+    # NO IMPORT_ZONE / IMPORT_NODE_LINKS entry (plan §7 G7), so
+    # get_interchange_spec returns an EMPTY spec and these blocks build no
+    # rows even under --priced-interchange; the first keeper serves the
+    # measured energy-balance schedule (eia930.envelopes.nwpp_net_interchange)
+    # instead. A priced seam is UNVALIDATABLE in the first keeper because
+    # NWPP-13 read NO — the footprint has no admissible hourly price series
+    # — so these are the registered forward objects for lever NWPP-56 and
+    # nothing more. The counterparty sets are MEASURED off the seventeen
+    # per-counterparty DIBA files (NWPP-11), 2023-2025: CISO reports through
+    # BPAT / NEVP / PACW; BCHA through BPAT and AESO through NWMT; every other
+    # external counterparty (LDWP, BANC, AZPS, WACM, WALC, PNM, SRP, GWA, WWA,
+    # and the WAUW<->SWPP tie into the Eastern Interconnection) is the
+    # residual set named WECC_SW by the charter (gate G10) — a name that also
+    # holds BANC (Sacramento) and two Montana BAs, stated here so it is never
+    # read as "Desert Southwest only".
+    #
+    # Rule 25 [R-ISO-SCOPE]: no number here is another ISO's fitted value.
+    # HR anchors divide a MEASURED committed price by (HENRY_HUB 2.54 / 2.19 /
+    # 3.53 + basis) per year, the SPP-51 construction (hr_by_year measured,
+    # marginal_heat_rate = their mean, the forward fallback); there is no
+    # _HR_GAS_ELASTIC key for any NWPP seam (the G10 uniqueness assert holds:
+    # no key names CAISO / WECC_SW / WECC_CAN). load_shape_exponent 1.0, the
+    # parameter-free default. ``hurdle``: the NWPP<->CAISO seam is ONE
+    # physical object and CAISO's side (WECC_PNW above) registers 3.0, so this
+    # side takes 3.0 (rule 19); the two seams with no registered counterpart
+    # take SPP's never-fitted Tier-3 dead-band 2.0.
+    "NWPP": [
+        NeighborInterface(
+            # CAISO — the COI / Path 66 seam plus NEVP's southern-Nevada ties.
+            # Anchor: the seam's OWN price on CAISO's side, the MALIN intertie
+            # scheduling-point LMP (data/raw/_validation-source/wecc_intertie_
+            # lmp_hourly_CAISO.parquet, hub MALIN): annual mean 49.728 /
+            # 40.076 / 37.999 $/MWh over HH + CAISO basis 1.20 = 3.736 / 3.392
+            # / 4.729 -> 13.31 / 11.81 / 8.04; flat = their mean 11.05.
+            # Limit = Path 66 COI N->S rating 4,800 MW (WECC 2024 catalogue
+            # printed p. 63 — the same number CAISO's WECC_import->NP15 link
+            # carries, card N4's double-count exposure, routed) + NEVP->CISO
+            # measured hourly maximum 1,933 MW = 6,733 MW; the measured
+            # three-leg envelope reads max export 3,884-4,316 / max import
+            # 1,424-1,737 MW. Border zones = the reporting BAs' zones.
+            name="CAISO",
+            ba_code="CISO",
+            gas_basis=GAS_BASIS_DIFFERENTIAL["CAISO"],
+            marginal_heat_rate=11.05,
+            hurdle=3.0,
+            interface_limit_mw=6733.0,
+            border_zones=("NWPP-NW", "NWPP-OR", "NWPP-SNV"),
+            load_shape_exponent=1.0,
+            hr_by_year={2023: 13.31, 2024: 11.81, 2025: 8.04},
+        ),
+        NeighborInterface(
+            # WECC_SW — LDWP (PDCI, Path 65: NW->S 3,220 MW, printed p. 62;
+            # plus NEVP / PACE ties), BANC, AZPS, WACM, WALC, PNM, SRP, GWA,
+            # WWA and the WAUW<->SWPP DC tie. ba_code LDWP is the largest leg
+            # (BPAT +5.6 / NEVP -9.3 / PACE -0.1 TWh in 2024); it has no
+            # hourly extract in the tree, so the load shape is proxied on
+            # NEVP (the Desert-adjacent member). Anchor: CAISO's PALOVRDE
+            # intertie scheduling-point LMP — the Desert-Southwest hub price,
+            # measured, declared as the seam's PROXY anchor (no DSW ISO is
+            # registered): 47.909 / 33.343 / 32.467 over HH + 0.0 (no DSW
+            # registry basis exists) = 2.536 / 2.192 / 3.529 -> 18.89 / 15.21
+            # / 9.20; flat = their mean 14.43. Limit = the measured 2024-2025
+            # aggregate envelope maximum, 6,049 MW (2025 export; import max
+            # 4,361 in 2024; p99 3,197-4,602) — the 2023 series carries one
+            # 60,037 MW artifact hour and is not used for the limit. GRID's
+            # PNM / SRP / WALC legs are in this counterparty set but are
+            # Desert-Southwest resources, not footprint exports — see
+            # nwpp_net_interchange.
+            name="WECC_SW",
+            ba_code="LDWP",
+            proxy_ba="NEVP",
+            gas_basis=0.0,
+            marginal_heat_rate=14.43,
+            hurdle=2.0,
+            interface_limit_mw=6049.0,
+            border_zones=("NWPP-NW", "NWPP-OR", "NWPP-INLAND", "NWPP-EAST", "NWPP-SNV"),
+            load_shape_exponent=1.0,
+            hr_by_year={2023: 18.89, 2024: 15.21, 2025: 9.20},
+        ),
+        NeighborInterface(
+            # WECC_CAN — BC Hydro (Path 3 Northwest-British Columbia, printed
+            # p. 10: N->S 3,150 / S->N 3,000 MW, through BPAT) and AESO (Path
+            # 83 MATL, 325 southbound / 300 northbound, through NWMT). Canada
+            # is OUT of the footprint (ruling N1) and this is its exogenous
+            # seam. No Canadian market price is committed; the anchor is the
+            # footprint's OWN traded hub, the Mid-C Peak ICE index Powerex
+            # clears against (data/raw/nwpp-weim/midc_peak_daily.parquet,
+            # NWPP-13): daily weighted-average 87.07 / 61.52 / 46.41 $/MWh —
+            # PEAK-ONLY and DAILY, so an upward-biased PROXY, declared — over
+            # HH + NWPP basis -0.19 = 2.346 / 2.002 / 3.339 -> 37.11 / 30.73
+            # / 13.90; flat = their mean 27.25. Limit = Path 3 N->S 3,150 +
+            # Path 83 325 = 3,475 MW published; measured envelope max export
+            # 2,690-2,743 / max import 2,312-2,362 MW sits inside it.
+            name="WECC_CAN",
+            ba_code="BCHA",
+            proxy_ba="BPAT",
+            gas_basis=GAS_BASIS_DIFFERENTIAL["NWPP"],
+            marginal_heat_rate=27.25,
+            hurdle=2.0,
+            interface_limit_mw=3475.0,
+            border_zones=("NWPP-NW", "NWPP-INLAND"),
+            load_shape_exponent=1.0,
+            hr_by_year={2023: 37.11, 2024: 30.73, 2025: 13.90},
+        ),
+    ],
 }
 
 # MISO per-seam measured BA-to-BA deliverability envelope.

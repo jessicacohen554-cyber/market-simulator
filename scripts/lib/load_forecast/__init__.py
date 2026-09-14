@@ -145,7 +145,7 @@ _R = make_registry(
         ("parse", "Callable[[Path, 'IsoSpec'], pd.DataFrame] | None", None),
     ],
     package=__name__,
-    iso_modules=("ercot", "caiso", "pjm", "miso", "nyiso", "neiso", "spp"),
+    iso_modules=("ercot", "caiso", "pjm", "miso", "nyiso", "neiso", "spp", "nwpp"),
     raw_subpath=(DATATYPE,),
     string_cols=_STRING_COLS,
     float_cols=_FLOAT_COLS,
@@ -258,7 +258,18 @@ def parse_unified_csv(raw_dir: Path, spec: IsoSpec) -> pd.DataFrame:
     csv = raw_dir / f"{spec.iso.lower()}.csv"
     if not csv.is_file():
         return empty_frame()
-    raw = pd.read_csv(csv, dtype=str)
+    # An ASSEMBLED transcription (NWPP-12's nwpp.csv, built from participant
+    # IRPs) opens with a ``#`` provenance preamble ahead of the header row.
+    # Skip exactly the leading comment lines — never ``comment="#"``, which
+    # would also truncate any value carrying a ``#`` (a source_doc URL
+    # fragment). Every other ISO's CSV has zero such lines and reads as before.
+    preamble = 0
+    with csv.open(encoding="utf-8") as fh:
+        for line in fh:
+            if not line.startswith("#"):
+                break
+            preamble += 1
+    raw = pd.read_csv(csv, dtype=str, skiprows=preamble)
     raw.columns = [c.strip().lower() for c in raw.columns]
     raw["iso"] = spec.iso
     for col, val in (("edition", spec.edition), ("vintage", spec.vintage)):

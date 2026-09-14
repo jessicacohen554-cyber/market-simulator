@@ -1013,7 +1013,7 @@ class TestPumpedStorageFoldedForecastLevel(unittest.TestCase):
     no-LP: the level is a 12-vector.
     """
 
-    ISOS = ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP")
+    ISOS = ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP", "NWPP")
 
     def _zones(self, iso):
         from market_sim.config.iso_configs import get_iso_config
@@ -1137,7 +1137,11 @@ class TestPumpedStorageFoldedForecastLevel(unittest.TestCase):
         # (registered 2026-09-06, SPP-20) is unlisted: its EIA-930 extract's
         # NG: BAT column is 100 % null through 2025 (spp-data-audit §3.3), so
         # no PS fold has been measured for it and it takes the default path.
-        self.assertEqual(len(unlisted), 4)
+        # NWPP (registered 2026-09-14, NWPP-20) is unlisted too: pumped
+        # storage is UNOBSERVABLE in EIA-930 for the footprint in every year
+        # (nwpp-data-audit §4.5; EIA-860 carries 314.0 MW, one BPAT plant), so
+        # no fold has been measured and it takes the default path.
+        self.assertEqual(len(unlisted), 5)
         for iso in unlisted:
             base = climatological_monthly_hydro(iso)
             self.assertIsNotNone(base, f"{iso} has no EIA-930 climatology")

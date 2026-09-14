@@ -357,6 +357,9 @@ class TestInjectionRegistry:
             # SPP (registered 2026-09-06, lane SPP-20): the self-gating generic
             # seam step alone — default-off for SPP, so a byte-identical no-op.
             "SPP": (import_nodes.apply_reference_price_seam_injections,),
+            # NWPP (registered 2026-09-14, lane NWPP-20): the same self-gating
+            # step alone — default-off, no IMPORT_ZONE, byte-identical no-op.
+            "NWPP": (import_nodes.apply_reference_price_seam_injections,),
         }
         assert registry.INTERCHANGE_INJECTIONS == expected
 
@@ -374,5 +377,6 @@ class TestInjectionRegistry:
             "NYISO",
             "PJM",
             "SPP",
+            "NWPP",
         }
         assert INTERCHANGE_INJECTIONS.get("DEFAULT") is None

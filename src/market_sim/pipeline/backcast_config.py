@@ -2263,7 +2263,14 @@ def backcast_config(
     # gas neutralization above leaves COAL on the ERCOT-fitted generic shape,
     # and SPP is the only fallback ISO whose coal actually reads it (lane
     # SPP-40, 2026-09-07). Deep-merged so the structural shares are kept.
-    if iso.upper() == "SPP":
+    # NWPP (registered 2026-09-14, lane NWPP-20) takes the SAME identity bands
+    # on the same rule-25 reasoning: it is the second fallback region whose
+    # fleet carries coal (PACE Utah/Wyoming, NWMT Colstrip, IPCO Bridger), it
+    # has no offer curve of its own, and the charter's offer-band posture is
+    # 1.0 on every band. Declared before any NWPP solve exists; no NWPP
+    # residual has ever been read. The ``iso`` gate keeps every other region
+    # byte-identical.
+    if iso.upper() in ("SPP", "NWPP"):
         config = config.with_overrides(
             offer_curve_by_group=_deep_merge_offer_curve(
                 config.offer_curve_by_group, _SPP_OFFER_CURVE

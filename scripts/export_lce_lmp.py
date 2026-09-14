@@ -99,6 +99,12 @@ _DUMMY_BASE_LMP: dict[str, float] = {
     # generation) and spends 11-13 % of real-time hours at a negative hub price
     # (docs/multi-iso/spp-data-audit.md). PLACEHOLDER, like every row here.
     "SPP": 32.0,
+    # NWPP added 2026-09-14 (lane NWPP-20) on its registration as the eighth
+    # region. Placed between MISO and CAISO in the table's loose ordering: the
+    # footprint is 36 % hydro by nameplate and the Mid-C traded index sits
+    # below the CAISO hubs outside the winter/summer scarcity months
+    # (docs/multi-iso/nwpp-data-audit.md). PLACEHOLDER, like every row here.
+    "NWPP": 36.0,
 }
 _DUMMY_DEFAULT_BASE: float = 40.0  # any ISO not in the table above
 

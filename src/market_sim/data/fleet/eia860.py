@@ -55,8 +55,8 @@ from market_sim.data.fleet.models import (
     EIA_860_PARQUET_NAME,
     EIA_860_RETIRED_WINDOW_PARQUET_NAME,
     Generator,
-    ISO_TO_BA_CODE,
     MIXED_FACILITY_STEAM_HR,
+    ba_codes,
     _clean_fleet_year,
     _read_clean,
     _use_clean,
@@ -578,7 +578,14 @@ def _egrid_boundary_hr_repairs() -> dict[int, float]:
     by the curation script's 3,000-30,000 Btu/kWh window) and King City 10294
     (7.855 -> 8.998, a *degradation* of an already-plausible value). Both are
     correctly rejected — Devon by condition 4, King City by condition 1. Across
-    all six ISOs the accepted set is exactly ``{55641: 6.880}``.
+    the six ISOs of 2026-07 the accepted set was exactly ``{55641: 6.880}``;
+    NWPP's registration (2026-09-14, lane NWPP-20) put a second provable
+    instance in scan range, **Coyote Springs (7350)**: CEMS facility 7350
+    stacks the co-located Coyote Springs II (7931, BPAT, 6 m away, its own
+    ``PLHTIAN`` > 0), the published 13,795.8 Btu/kWh is the whole-facility heat
+    input over the PGE plant's generation alone, and the reconciled 6.918 sits
+    beside the sibling's own 6.894. The accepted set is now
+    ``{7350: 6.918, 55641: 6.880}`` (pinned by the curation test).
 
     A *general* form of this repair — drop every UNT23 unit whose vintage matches
     no EIA-860 generator at its plant — was sized and refused: it touches 47
@@ -1681,10 +1688,12 @@ def _load_fleet_from_parquet(
         return None
 
     df = _normalize_columns(pd.read_parquet(parquet_path))
-    ba_code = ISO_TO_BA_CODE.get(iso)
-    if ba_code is not None and "balancing_authority_code" in df.columns:
+    # Membership over every BA the region comprises (a pool region such as
+    # NWPP has 17; the 1:1 regions select exactly the rows ``== code`` did).
+    codes = ba_codes(iso)
+    if codes and "balancing_authority_code" in df.columns:
         ba = df["balancing_authority_code"].astype(str).str.strip()
-        df = df[ba == ba_code]
+        df = df[ba.isin(codes)]
 
     # Join the plant-level CHP flag (dropped from the processed generators
     # parquet) from the raw EIA-860 operable sheet, so gas cogens are grouped
@@ -2443,7 +2452,7 @@ _PARTIAL_EXIT_COLUMN_MAP: dict[str, str] = {
 
 
 def _partial_plant_exit_rows(
-    data_dir: Path, ba_code: str | None
+    data_dir: Path, codes: tuple[str, ...]
 ) -> "pd.DataFrame | None":
     """Partial-plant mid-window exits in the canonical retiree-channel schema.
 
@@ -2494,8 +2503,9 @@ def _partial_plant_exit_rows(
     df["balancing_authority_code"] = (
         df["plant_id"].map(ba_by_plant).astype("string").str.strip()
     )
-    if ba_code is not None:
-        df = df[df["balancing_authority_code"] == ba_code]
+    if codes:
+        # Membership over every BA the region comprises (NWPP is seventeen).
+        df = df[df["balancing_authority_code"].isin(codes)]
 
     df["planned_retirement_year"] = pd.to_numeric(
         df["planned_retirement_year"], errors="coerce"
@@ -2620,21 +2630,21 @@ def load_retired_within_window(
             iso_config = None
 
     path = data_dir / EIA_860_RETIRED_WINDOW_PARQUET_NAME
-    ba_code = ISO_TO_BA_CODE.get(iso)
+    codes = ba_codes(iso)
 
     frames: list[pd.DataFrame] = []
     if path.exists():
         whole = _normalize_columns(pd.read_parquet(path))
-        if ba_code is not None and "balancing_authority_code" in whole.columns:
+        if codes and "balancing_authority_code" in whole.columns:
             whole = whole[
-                whole["balancing_authority_code"].astype(str).str.strip() == ba_code
+                whole["balancing_authority_code"].astype(str).str.strip().isin(codes)
             ]
         if not whole.empty:
             frames.append(whole)
 
     partial_frame: pd.DataFrame | None = None
     if partial_plant_exit_carry:
-        partial = _partial_plant_exit_rows(data_dir, ba_code)
+        partial = _partial_plant_exit_rows(data_dir, codes)
         if partial is not None and not partial.empty:
             partial_frame = partial
             _register_partial_exit_coal_supply(partial)
@@ -2794,10 +2804,10 @@ def load_mothballed_but_operating(
     snap = _normalize_columns(pd.read_parquet(snap_path))
     if "status" not in snap.columns:
         return []
-    ba_code = ISO_TO_BA_CODE.get(iso)
-    if ba_code is not None and "balancing_authority_code" in snap.columns:
+    codes = ba_codes(iso)
+    if codes and "balancing_authority_code" in snap.columns:
         ba = snap["balancing_authority_code"].astype(str).str.strip()
-        snap = snap[ba == ba_code]
+        snap = snap[ba.isin(codes)]
     status = snap["status"].astype(str).str.strip().str.upper()
     # OA only by default (out of service, expected to return — the mothball
     # status the Cottonwood charter scopes this channel to); OS/SB join the
@@ -2818,9 +2828,9 @@ def load_mothballed_but_operating(
     vint = _normalize_columns(pd.read_parquet(vintage_path))
     if "status" not in vint.columns:
         return []
-    if ba_code is not None and "balancing_authority_code" in vint.columns:
+    if codes and "balancing_authority_code" in vint.columns:
         ba = vint["balancing_authority_code"].astype(str).str.strip()
-        vint = vint[ba == ba_code]
+        vint = vint[ba.isin(codes)]
     vstatus = vint["status"].astype(str).str.strip().str.upper()
     vint = vint[vstatus == "OP"]
 

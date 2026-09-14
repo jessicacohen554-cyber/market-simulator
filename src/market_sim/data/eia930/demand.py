@@ -610,6 +610,34 @@ def _load_spp_hourly_demand(year: int) -> np.ndarray | None:
     )
 
 
+def _load_nwpp_hourly_demand(year: int) -> np.ndarray | None:
+    """Return NWPP footprint hourly demand (MW) for a year, or ``None``.
+
+    Reads the ``Demand`` column of the NWPP POOL frame
+    (:func:`~market_sim.data.eia930.frames._pool_hourly_frame`, code
+    ``"NWPP"`` in ``_ISO_TO_HOURLY_BA``): the seventeen members' EIA-930
+    ``Demand (MW) (Adjusted)`` series, each passed through
+    :func:`_screen_demand_dropouts` BEFORE the sum, joined on UTC onto the
+    Pacific local year (BPAT's clock). The conventions — Adjusted column, per-
+    member dropout screen, **no** spike screen, AVRN/GRID as 0.0 — are fixed
+    on the pool frame itself (NWPP-10 §1.3) so demand and the renewable CF
+    series drawn from the same frame share one clock, the SPP/MISO
+    construction. Reproduces the coincident peaks 49,290 / 52,564 / 50,953 MW
+    (2023/2024/2025). Interchange is served separately as the measured scalar
+    schedule (``_SCALAR_INTERCHANGE_ISOS``, owner ruling N4). Returns ``None``
+    when the pool cannot be assembled, signalling the profiles-parquet
+    fallback (which carries no NWPP rows, so the caller raises rather than
+    serving a stale series).
+    """
+    frame = _eia_hourly_frame_filled("NWPP", year)
+    if frame is None:
+        return None
+    demand = frame["Demand"].to_numpy(dtype=float)
+    if np.isnan(demand).any():
+        return None
+    return demand
+
+
 def _load_pjm_hourly_demand(year: int) -> np.ndarray | None:
     """Return PJM hourly metered demand (MW) for a year, or ``None``.
 
@@ -842,6 +870,20 @@ def _spp_demand_source(
     return _pkg_ns()._load_spp_hourly_demand(year), None
 
 
+def _nwpp_demand_source(
+    year: int, ctx: dict
+) -> tuple[np.ndarray | None, np.ndarray | None]:
+    """NWPP: footprint demand off the seventeen-member EIA-930 pool frame.
+
+    Sourced off the same pool frame as NWPP's renewables so ``demand[t]`` and
+    ``renewable_cf[t]`` refer to the same wall-clock hour (see
+    :func:`_load_nwpp_hourly_demand`). Interchange is served separately as
+    the measured scalar schedule (``_SCALAR_INTERCHANGE_ISOS``, owner ruling
+    N4), so the loader-side interchange slot is ``None``.
+    """
+    return _pkg_ns()._load_nwpp_hourly_demand(year), None
+
+
 # Per-ISO system-demand source registry, replacing load_demand's historical
 # if/elif ladder (pure code motion of each branch into its adapter above).
 # Each adapter maps ``(year, ctx)`` to ``(raw_mw | None, interchange | None)``;
@@ -861,6 +903,12 @@ DEMAND_LOADERS: dict[
     # ``_spp_config`` to ``iso_configs._ISO_BUILDERS`` (the import-time assert
     # below is why the two must land together; plan §2.3 / gate G1).
     "SPP": _spp_demand_source,
+    # NWPP (registered 2026-09-14, lane NWPP-20) — the same commit that added
+    # ``_nwpp_config`` to ``iso_configs._ISO_BUILDERS`` and ``"NWPP"`` to
+    # ``solve_surface.SURFACE_ISOS`` (the import-time assert below and the
+    # pinned-tuple test are why the three must land together; plan §2.3 /
+    # gate G1).
+    "NWPP": _nwpp_demand_source,
 }
 
 # Registry keys are model ISO names: every key must be a registered topology

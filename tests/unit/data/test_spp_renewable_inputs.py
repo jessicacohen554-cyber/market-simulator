@@ -62,7 +62,11 @@ def test_the_other_six_isos_are_untouched():
     its prior cache key.
     """
     assert rn._WIND_ZONE_SHAPE_ISOS == frozenset({"MISO", "SPP"})
-    assert rn._UNCURTAILED_FALLBACK_ISOS == frozenset({"ERCOT", "CAISO", "MISO", "SPP"})
+    # NWPP joined the fallback set at its registration (2026-09-14, lane
+    # NWPP-20): no pool-wide separable curtailment series exists.
+    assert rn._UNCURTAILED_FALLBACK_ISOS == frozenset(
+        {"ERCOT", "CAISO", "MISO", "SPP", "NWPP"}
+    )
     for iso in ("PJM", "NYISO", "NEISO"):
         assert not rn._wind_zone_shape_enabled(iso, ScenarioConfig(iso=iso))
         assert wind_shape_dir(iso) is None

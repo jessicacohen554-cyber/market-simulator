@@ -76,7 +76,7 @@ sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "src"))
 
 from market_sim.config import paths  # noqa: E402
-from market_sim.data.fleet import ISO_TO_BA_CODE  # noqa: E402
+from market_sim.data.fleet import ba_codes  # noqa: E402
 from scripts.lib import clean_io  # noqa: E402
 
 DATATYPE = "hydro-plant-modes"
@@ -215,13 +215,16 @@ def curate(
     raw_root = Path(raw_root) if raw_root is not None else paths.RAW_DIR
     written: list[Path] = []
     for iso in isos or DEFAULT_ISOS:
-        ba_code = ISO_TO_BA_CODE.get(iso.upper())
-        if ba_code is None:
+        codes = ba_codes(iso)
+        if not codes:
             print(f"[skip] {iso}: no balancing-authority code mapping")
             continue
-        eha = _load_eha(raw_root, ba_code)
+        # One EHA read per member BA (NWPP is seventeen; the 1:1 regions one).
+        eha = pd.concat(
+            [_load_eha(raw_root, code) for code in codes], ignore_index=True
+        )
         if eha.empty:
-            print(f"[skip] {iso}: no EHA conventional-hydro rows for {ba_code}")
+            print(f"[skip] {iso}: no EHA conventional-hydro rows for {codes}")
             continue
         flags = _hilarri_flags(raw_root, eha["EHA_PtID"])
         cls = _classify(eha, flags)

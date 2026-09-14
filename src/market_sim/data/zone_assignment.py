@@ -80,6 +80,79 @@ _ISO_TO_BA_CODE: dict[str, str] = {
     "SPP": "SWPP",
 }
 
+# NWPP (registered 2026-09-14, lane NWPP-20; owner rulings N1 + N5). NWPP is
+# a POOL of seventeen balancing authorities, so it has NO entry in the scalar
+# map above — its zones are WHOLE-BA GROUPS keyed on the EIA-860 / eGRID
+# balancing-authority code, NEVER on state or coordinates: a state here holds
+# several BAs (Washington: BPAT, PSEI, SCL, TPWR, CHPD, DOPD, GCPD, AVRN) and
+# a BA holds several states (PACE: UT, WY, ID; BPAT: WA, OR, ID, MT, NV). There
+# is no EIA-930 sub-BA product for any of the 17, so a zone may not split a
+# BA (plan §7 gate G18); the state-keyed ``_SPP_STATE_ZONES`` is the WRONG
+# shape and is deliberately not copied. Five ruled zones (plan §3 card N5,
+# 2024 Adjusted load shares in docs/multi-iso/nwpp-data-audit.md §9.2):
+#   NWPP-NW     BPAT PSEI SCL TPWR CHPD DOPD GCPD  + AVRN generation (37.4 %)
+#   NWPP-OR     PGE PACW                           + GRID generation (15.1 %)
+#   NWPP-INLAND IPCO AVA NWMT WAUW                                   (15.3 %)
+#   NWPP-EAST   PACE                                                 (18.1 %)
+#   NWPP-SNV    NEVP                                                 (14.1 %)
+# AVRN and GRID serve zero load in every hour of 2023-2025 (NWPP-10 §2 item
+# 4) and are placed by geography: AVRN's Columbia-Gorge wind/solar (Klondike,
+# Leaning Juniper, Montague, Klamath) and GRID's Hermiston Power sit on the
+# NW/OR boundary, the one boundary WECC rates no path for. Declared open,
+# not hidden (card N5): GCPD's placement is disputed by load correlation (0.90
+# with IPCO, 0.08-0.16 with its own zone) and stays, because load correlation
+# is not a transmission constraint. The membership set equals
+# ``market_sim.data.fleet.models.NWPP_BAS`` (pinned by test).
+_NWPP_BA_ZONES: dict[str, str] = {
+    "BPAT": "NWPP-NW",
+    "PSEI": "NWPP-NW",
+    "SCL": "NWPP-NW",
+    "TPWR": "NWPP-NW",
+    "CHPD": "NWPP-NW",
+    "DOPD": "NWPP-NW",
+    "GCPD": "NWPP-NW",
+    "AVRN": "NWPP-NW",
+    "PGE": "NWPP-OR",
+    "PACW": "NWPP-OR",
+    "GRID": "NWPP-OR",
+    "IPCO": "NWPP-INLAND",
+    "AVA": "NWPP-INLAND",
+    "NWMT": "NWPP-INLAND",
+    "WAUW": "NWPP-INLAND",
+    "PACE": "NWPP-EAST",
+    "NEVP": "NWPP-SNV",
+}
+
+# NWPP footprint admission predicate (audit §2.8(a); registry form in
+# ``fleet.models.ISO_NERC_REGION_ADMISSION``): a plant carrying a footprint BA
+# code is admitted only when its NERC region is WECC — the Western
+# Interconnection and ERCOT are asynchronously separated, so a Washington PUD
+# (DOPD) cannot balance Pine Forest Solar I (68906, Hopkins County TX, TRE).
+_NWPP_NERC_REGION: str = "WECC"
+
+
+def _iso_ba_codes(iso: str) -> tuple[str, ...]:
+    """Return every balancing-authority code ``iso`` comprises (``()`` if none).
+
+    The 1:1 regions read their scalar ``_ISO_TO_BA_CODE`` entry (so ``isin``
+    over the one-element tuple selects exactly the rows ``==`` selected); NWPP
+    returns its seventeen members. A pool region must never be reduced to one
+    arbitrary code (NWPP-10 §3).
+    """
+    if iso == "NWPP":
+        return tuple(_NWPP_BA_ZONES)
+    code = _ISO_TO_BA_CODE.get(iso)
+    return (code,) if code is not None else ()
+
+
+def _nwpp_admitted(ba: pd.Series, nerc: pd.Series | None) -> pd.Series:
+    """Boolean mask of rows admitted to the NWPP footprint (BA ∈ map AND WECC)."""
+    mask = ba.isin(_NWPP_BA_ZONES)
+    if nerc is not None:
+        mask &= nerc.astype(str).str.strip() == _NWPP_NERC_REGION
+    return mask
+
+
 # ISOs modeled as a single zone, with that zone's name. Every current ISO now
 # has a multi-zone topology, so this is empty; the mechanism stays in place for
 # any future single-zone ISO.
@@ -117,6 +190,12 @@ _LARGEST_ZONE: dict[str, str] = {
     # holds the KS/NE/MO plurality of the footprint's plant count, so an
     # unlocated SPP plant lands there (SPP-20, 2026-09-06).
     "SPP": "SPP-North",
+    # NWPP: NWPP-NW is the largest-load-share zone (0.3769) and holds the
+    # plurality of the footprint's plants (BPAT alone: 130 of 939). Reached
+    # only by ``assign_zone`` for an ORIS absent from BOTH eGRID and the
+    # EIA-860 plant file — i.e. a plant with no balancing-authority record at
+    # all; every real footprint plant resolves through _NWPP_BA_ZONES.
+    "NWPP": "NWPP-NW",
 }
 
 # FIPS state code for Texas; Houston-metro counties are matched within it.
@@ -994,6 +1073,16 @@ def _zone_from_location(
         return _pjm_zone(lat, lon, fips_state, fips_county)
     if iso == "SPP":
         return _spp_zone(lat, fips_state)
+    if iso == "NWPP":
+        # NWPP zones are whole-BA groups (gate G18): no coordinate, state or
+        # county rule can place a plant, because a state holds several BAs.
+        # Callers resolve through the BA-keyed lookups (build_zone_lookup /
+        # _eia860_ba_zones); this raise is what keeps a coordinate fallback
+        # from silently splitting a BA.
+        raise ValueError(
+            "NWPP zones are whole-BA groups keyed on the balancing-authority "
+            "code; no geographic zone rule exists (use build_zone_lookup)"
+        )
     raise ValueError(f"No geographic zone rules for ISO '{iso}'")
 
 
@@ -1029,6 +1118,20 @@ def assign_zone(oris_code: int, iso: str) -> str:
         return _SINGLE_ZONE[iso]
 
     oris = _to_int(oris_code)
+    if iso == "NWPP":
+        # BA-keyed (gate G18): the eGRID BACODE / EIA-860 plant-file lookup is
+        # the only admissible placement; a coordinate read cannot place an
+        # NWPP plant. The fallback fires only for an ORIS in neither source.
+        zone = build_zone_lookup(iso).get(oris) if oris is not None else None
+        if zone is not None:
+            return zone
+        logger.warning(
+            "ORIS %s not in the eGRID/EIA-860 BA lookup for NWPP — assigning "
+            "fallback zone %s",
+            oris_code,
+            _LARGEST_ZONE["NWPP"],
+        )
+        return _LARGEST_ZONE["NWPP"]
     location = _oris_to_location().get(oris) if oris is not None else None
     if location is None:
         fallback = _LARGEST_ZONE.get(iso)
@@ -1068,7 +1171,12 @@ def assign_zone(oris_code: int, iso: str) -> str:
 # supplement resolves them exactly, so no SWPP plant is dropped to the
 # fallback — the Stage-B "every plant resolves" check).
 _EIA860_SUPPLEMENT_ISOS: frozenset[str] = frozenset(
-    {"ERCOT", "CAISO", "NYISO", "NEISO", "MISO", "SPP"}
+    # NWPP seventh at registration (2026-09-14, lane NWPP-20): the footprint
+    # fleet is read from the EIA-860 2025 Early Release, whose 2024-2025
+    # additions post-date eGRID 2023, and the plant file's BA code is the ONLY
+    # placement key a whole-BA zoning can use — so the supplement is not a
+    # refinement here, it is the primary source for every post-eGRID plant.
+    {"ERCOT", "CAISO", "NYISO", "NEISO", "MISO", "SPP", "NWPP"}
 )
 
 
@@ -1089,7 +1197,21 @@ def _eia860_ba_zones(iso: str) -> dict[int, str]:
         return {}
     df = pd.read_parquet(_EIA860_PLANT_PATH)
     ba = df["Balancing Authority Code"].astype(str).str.strip()
-    df = df[ba == _ISO_TO_BA_CODE[iso]]
+    if iso == "NWPP":
+        # Whole-BA zoning (gate G18) under the footprint admission predicate
+        # (BA ∈ map AND NERC == WECC, audit §2.8(a)): the zone IS the BA's
+        # group, coordinates are not read, and a plant with no coordinates is
+        # still placed — there is nothing for a coordinate rule to refine.
+        nerc = df["NERC Region"] if "NERC Region" in df.columns else None
+        df = df[_nwpp_admitted(ba, nerc)]
+        out_nwpp: dict[int, str] = {}
+        for code, ba_code in zip(df["Plant Code"], df["Balancing Authority Code"]):
+            oris = _to_int(code)
+            if oris is None:
+                continue
+            out_nwpp[oris] = _NWPP_BA_ZONES[str(ba_code).strip()]
+        return out_nwpp
+    df = df[ba.isin(_iso_ba_codes(iso))]
 
     codes = df["Plant Code"].to_numpy()
     lats = pd.to_numeric(df["Latitude"], errors="coerce").to_numpy()
@@ -1117,15 +1239,18 @@ def plant_state_lookup(iso: str) -> dict[int, str]:
     unavailable or the ISO has no balancing-authority code registered.
     """
     iso = iso.upper()
-    ba_code = _ISO_TO_BA_CODE.get(iso)
-    if ba_code is None or not _EIA860_PLANT_PATH.exists():
+    codes = _iso_ba_codes(iso)
+    if not codes or not _EIA860_PLANT_PATH.exists():
         return {}
     df = pd.read_parquet(
         _EIA860_PLANT_PATH,
-        columns=["Plant Code", "State", "Balancing Authority Code"],
+        columns=["Plant Code", "State", "Balancing Authority Code", "NERC Region"],
     )
     ba = df["Balancing Authority Code"].astype(str).str.strip()
-    df = df[ba == ba_code]
+    if iso == "NWPP":
+        df = df[_nwpp_admitted(ba, df["NERC Region"])]
+    else:
+        df = df[ba.isin(codes)]
 
     out: dict[int, str] = {}
     for code, state in zip(df["Plant Code"], df["State"]):
@@ -1322,13 +1447,31 @@ def _build_zone_lookup_cached(
     iso: str, use_clean: bool, caiso_fsno: bool = False
 ) -> dict[int, str]:
     """Cache-bearing core of :func:`build_zone_lookup` (already-uppercased ISO)."""
-    ba_code = _ISO_TO_BA_CODE.get(iso)
-    if ba_code is None:
+    codes = _iso_ba_codes(iso)
+    if not codes:
         return {}
 
     df = _plnt23()
     ba = df["BACODE"].astype(str).str.strip()
-    subset = df[ba == ba_code]
+    if iso == "NWPP":
+        # Whole-BA zoning (gate G18): the eGRID BACODE decides the zone
+        # outright, under the same NERC admission predicate the EIA-860
+        # supplement applies (eGRID's ``NERC`` column).
+        nerc = df["NERC"] if "NERC" in df.columns else None
+        subset = df[_nwpp_admitted(ba, nerc)]
+        lookup_nwpp: dict[int, str] = {}
+        for oris_v, ba_v in zip(subset["ORISPL"], subset["BACODE"]):
+            oris = _to_int(oris_v)
+            if oris is None:
+                continue
+            lookup_nwpp[oris] = _NWPP_BA_ZONES[str(ba_v).strip()]
+        for oris, zone in _eia860_ba_zones(iso).items():
+            lookup_nwpp.setdefault(oris, zone)
+        if use_clean:
+            for oris, zone in load_reference_zone_crosswalk(iso).items():
+                lookup_nwpp.setdefault(oris, zone)
+        return lookup_nwpp
+    subset = df[ba.isin(codes)]
 
     lookup: dict[int, str] = {}
     # eGRID county per plant, kept only for the CAISO FSNO county tier below

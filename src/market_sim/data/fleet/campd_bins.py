@@ -29,7 +29,7 @@ from pathlib import Path
 from market_sim.data.fleet.models import (
     FleetArrays,
     Generator,
-    ISO_TO_BA_CODE,
+    ba_codes,
 )
 from market_sim.data.fleet.eia860 import (
     BIN_GROUP_HR_DEFAULT,
@@ -165,11 +165,14 @@ def oil_primary_ct_plants_from_eia860(iso: str) -> frozenset[int]:
         _pkg_ns().EIA_860_DIR / "eia860_generators.parquet",
         columns=["plant_id", "balancing_authority_code"],
     ).drop_duplicates("plant_id")
-    ba_code = ISO_TO_BA_CODE.get(iso.upper())
-    if ba_code:
+    codes = ba_codes(iso)
+    if codes:
+        # Membership over every BA the region comprises: the scalar-inverse
+        # form returned an EMPTY screen for a pool region, indistinguishable
+        # from "no oil-primary plants" (NWPP-10 §3).
         keep = set(
             ba_map.loc[
-                ba_map["balancing_authority_code"].astype(str).str.strip() == ba_code,
+                ba_map["balancing_authority_code"].astype(str).str.strip().isin(codes),
                 "plant_id",
             ].astype(int)
         )

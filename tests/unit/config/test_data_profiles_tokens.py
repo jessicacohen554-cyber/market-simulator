@@ -153,3 +153,60 @@ class TestSplitChildWholeNameMatch:
             if after != before:
                 moved.setdefault((before, after), set()).add(seg[2] + "/" + seg[3])
         assert all(after == "SPP" for (_, after) in moved), moved
+
+
+class TestNwppTokens:
+    """NWPP (lane NWPP-20, 2026-09-14): the worst token trap yet measured.
+
+    Bare ``ava`` / ``grid`` / ``pge`` / ``wpp`` / ``scl`` would each steal other
+    regions' files (plan §7 gate G3, re-measured at the lane's base sha), so
+    every one of those five is claimed only through its delimiter-bounded
+    EIA-930 file form; the pool name and the other twelve BA codes are clean.
+    """
+
+    REFUSED_BARE = ("ava", "grid", "pge", "wpp", "scl")
+
+    def test_nwpp_profile_and_tokens_exist(self, isos):
+        manifest = hydrate_data.load_manifest()
+        assert "NWPP" in isos and isos["NWPP"]["tokens"]
+        assert manifest["profiles"]["nwpp"]["iso"] == "NWPP"
+        tokens = {t.lower() for t in isos["NWPP"]["tokens"]}
+        for bare in self.REFUSED_BARE:
+            assert bare not in tokens, bare
+
+    @pytest.mark.parametrize(
+        "name",
+        [
+            "BPAT hourly.parquet",
+            "NEVP interchange hourly.parquet",
+            "AVA hourly.parquet",
+            "GRID interchange hourly.parquet",
+            "PGE hourly.parquet",
+            "SCL hourly.parquet",
+            "nwpp-weim",
+            "nwpp-hydro",
+            "nwpp-planning",
+            "SOURCES_nwpp_gas.md",
+        ],
+    )
+    def test_nwpp_files_are_nwpp_owned(self, isos, name):
+        assert hydrate_data.iso_for_name(name, isos) == "NWPP"
+
+    @pytest.mark.parametrize(
+        "name",
+        [
+            "ercot-nuclear-availability.csv",  # bare `ava`
+            "nuclear-availability-CAISO.csv",  # bare `ava`
+            "fleet-egrid",  # bare `grid`
+            "egrid_family_heat_rates_NYISO.csv",  # bare `grid`
+            "pge-helms-ps-plant-2008",  # bare `pge` (CAISO's Helms record)
+            "SWPP_fueltype.parquet",  # bare `wpp` (SPP's file)
+            "2_DAY_SCED_AS_DISCLOSURE_2day_Agg_SCED_AS_Offers_NSPIN_2026.parquet",  # `scl`
+        ],
+    )
+    def test_the_trap_names_are_never_nwpp_owned(self, isos, name):
+        assert hydrate_data.iso_for_name(name, isos) != "NWPP"
+
+    def test_split_child_whole_name_resolves(self, isos):
+        assert hydrate_data.iso_for_split_child("nwpp", isos) == "NWPP"
+        assert hydrate_data.iso_for_split_child("NWPP", isos) == "NWPP"

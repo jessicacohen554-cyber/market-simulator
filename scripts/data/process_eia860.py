@@ -30,10 +30,59 @@ from pathlib import Path
 
 import pandas as pd
 
-from market_sim.data.fleet import BA_CODE_TO_ISO, EIA_860_CSV_COLUMNS, EIA_860_DIR
+from market_sim.data.fleet import (
+    BA_CODE_TO_ISO,
+    EIA_860_CSV_COLUMNS,
+    EIA_860_DIR,
+    ISO_NERC_REGION_ADMISSION,
+)
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger("process_eia860")
+
+
+def _admit_footprint(df: pd.DataFrame, plant: pd.DataFrame) -> pd.DataFrame:
+    """Keep the generator rows admitted to a modelled region's footprint.
+
+    Two keys, applied in order: the plant's ``Balancing Authority Code`` must
+    map to a region in ``BA_CODE_TO_ISO`` (the pre-existing filter, unchanged
+    for every 1:1 region), and where ``ISO_NERC_REGION_ADMISSION`` names a
+    NERC region for that region the plant's ``NERC Region`` must equal it.
+    The second key exists for the NWPP pool (registered 2026-09-14, lane
+    NWPP-20): the BA-code field is respondent-entered, and plant 68906 (Pine
+    Forest Solar I, Hopkins County TX, NERC TRE, 500.0 MW) files under DOPD —
+    a Washington PUD cannot balance a resource inside ERCOT, so the row is a
+    source mis-key and leaves the footprint (docs/multi-iso/nwpp-data-audit.md
+    §2.8(a)). A registry predicate, never a per-plant exclusion (rule 24).
+    ``df`` must already carry ``plant_id`` and ``balancing_authority_code``.
+    """
+    df = df[df["balancing_authority_code"].isin(BA_CODE_TO_ISO)]
+    if not ISO_NERC_REGION_ADMISSION:
+        return df
+    required = (
+        df["balancing_authority_code"]
+        .map(BA_CODE_TO_ISO)
+        .map(ISO_NERC_REGION_ADMISSION)
+    )
+    if "NERC Region" not in plant.columns:
+        # A plant frame with no NERC column (a unit-test fixture, or a vintage
+        # sheet lacking the field) can only be admitted on the BA key. That is
+        # exact for every 1:1 region (required is null everywhere); for a
+        # region that DECLARES a NERC predicate it would silently admit the
+        # mis-keyed rows the predicate exists to drop, so refuse loudly.
+        if required.notna().any():
+            raise KeyError(
+                "plant frame carries no 'NERC Region' column but the footprint "
+                f"predicate needs it for {sorted(set(required.dropna()))}"
+            )
+        return df
+    nerc_by_plant = plant.drop_duplicates("Plant Code").set_index("Plant Code")[
+        "NERC Region"
+    ]
+    nerc = df["plant_id"].map(nerc_by_plant).astype("string").str.strip()
+    keep = required.isna() | (nerc == required)
+    return df[keep.fillna(False).to_numpy(dtype=bool)]
+
 
 # Filename marker (workbook) → short slug used in the output parquet name.
 _WORKBOOK_SLUGS: dict[str, str] = {
@@ -200,7 +249,7 @@ def build_generator_table(zip_path: Path) -> pd.DataFrame:
     df["balancing_authority_code"] = (
         df["plant_id"].map(ba_by_plant).astype("string").str.strip()
     )
-    df = df[df["balancing_authority_code"].isin(BA_CODE_TO_ISO)]
+    df = _admit_footprint(df, plant)
 
     df["plant_id"] = df["plant_id"].astype("int64")
     df["generator_id"] = df["generator_id"].map(_stringify)
@@ -284,7 +333,7 @@ def rescope_generator_table_from_parquet(
     df["balancing_authority_code"] = (
         df["plant_id"].map(ba_by_plant).astype("string").str.strip()
     )
-    df = df[df["balancing_authority_code"].isin(BA_CODE_TO_ISO)]
+    df = _admit_footprint(df, plant)
 
     df["plant_id"] = df["plant_id"].astype("int64")
     df["generator_id"] = df["generator_id"].map(_stringify)
@@ -313,9 +362,47 @@ def rescope_generator_table_from_parquet(
 
     before = set(committed["balancing_authority_code"].dropna().astype(str))
     added = sorted(set(df["balancing_authority_code"].dropna().astype(str)) - before)
-    df = df[committed.columns] if list(committed.columns) == list(df.columns) else df
-    df.to_parquet(out, index=False)
-    return len(committed), len(df), added
+
+    # STRICTLY ADDITIVE ON THE COMMITTED BYTES (tightened 2026-09-14, lane
+    # NWPP-20). The first form of this function wrote the whole rebuilt frame,
+    # which (a) dropped the ``heat_rate`` column the canonical build joins
+    # (:func:`_join_egrid_heat_rate`) and re-ordered the columns — so every
+    # region's thermal units would silently fall back to bin-centre heat
+    # rates — and (b) admitted any generator the current sheets carry that
+    # the committed build did not (measured: PJM plant 60781 unit PV1, 0.9 MW),
+    # moving an already-registered region's fleet. Neither is a scope change.
+    # So: every committed row survives byte-for-byte, in place, with its
+    # columns; ONLY rows of the newly registered balancing authorities are
+    # appended, heat-rate-joined the way the canonical build joins them when
+    # the committed file carries that column.
+    new_rows = df[df["balancing_authority_code"].astype(str).isin(added)].copy()
+    if "heat_rate" in committed.columns:
+        _join_egrid_heat_rate(new_rows)
+    new_rows = new_rows.reindex(columns=committed.columns)
+    # Write through pyarrow against the COMMITTED file's own schema, so the
+    # appended rows take the committed column types field by field (a vintage
+    # whose committed ``heat_rate`` is an all-null column stays an all-null
+    # column — pandas alone would promote it to float64 and re-encode every
+    # committed cell) and the committed rows are re-emitted from the table
+    # that was read, untouched.
+    import pyarrow as pa
+    import pyarrow.parquet as pq
+
+    committed_table = pq.read_table(out)
+    schema = committed_table.schema
+    new_table = pa.Table.from_pandas(new_rows, preserve_index=False)
+    columns = []
+    for field in schema:
+        column = new_table.column(field.name)
+        if pa.types.is_null(field.type):
+            column = pa.nulls(new_table.num_rows, type=field.type)
+        elif not column.type.equals(field.type):
+            column = column.cast(field.type)
+        columns.append(column)
+    new_table = pa.Table.from_arrays(columns, schema=schema)
+    merged = pa.concat_tables([committed_table, new_table])
+    pq.write_table(merged, out)
+    return len(committed), merged.num_rows, added
 
 
 def _join_egrid_heat_rate(df: pd.DataFrame) -> None:
@@ -436,7 +523,7 @@ def _project_retired_sheet(
     df["balancing_authority_code"] = (
         df["plant_id"].map(ba_by_plant).astype("string").str.strip()
     )
-    df = df[df["balancing_authority_code"].isin(BA_CODE_TO_ISO)]
+    df = _admit_footprint(df, plant)
     # Within-window exits only.
     df = df[df["planned_retirement_year"] >= cutoff_year]
     if until_year is not None:

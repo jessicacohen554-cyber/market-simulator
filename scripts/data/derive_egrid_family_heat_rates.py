@@ -67,7 +67,7 @@ from market_sim.data.egrid import _EGRID_FILES  # noqa: E402
 from market_sim.data.fleet.eia860 import EIA_860_PARQUET_NAME  # noqa: E402
 from market_sim.data.fleet.models import (  # noqa: E402
     EGRID_PRIME_MOVER_FAMILIES,
-    ISO_TO_BA_CODE,
+    ba_codes,
     egrid_prime_mover_family,
 )
 from scripts.data.process_eia860 import EGRID_HR_WINDOW_BTU_KWH  # noqa: E402
@@ -144,9 +144,9 @@ def iso_plant_ids(iso: str) -> dict[int, str]:
         EIA_860_DIR / EIA_860_PARQUET_NAME,
         columns=["plant_id", "plant_name", "balancing_authority_code", "status"],
     )
-    ba = ISO_TO_BA_CODE[iso.upper()]
+    # Membership over every BA the region comprises (NWPP is seventeen).
     df = df[
-        (df["balancing_authority_code"].astype(str).str.strip() == ba)
+        df["balancing_authority_code"].astype(str).str.strip().isin(ba_codes(iso))
         & (df["status"].astype(str).str.strip().str.upper() == "OP")
     ]
     return {
