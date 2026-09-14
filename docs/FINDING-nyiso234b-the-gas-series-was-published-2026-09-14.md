@@ -148,7 +148,60 @@ series carries the same two defects is **NEISO's lane to measure**, and is flagg
 
 ---
 
-## 5. RULES
+## 5. THE REPAIR IS NOT DONE AT THE DAILY FILE — the MONTHLY ANCHOR is derived from the same incomplete input
+
+Measured after the first repaired fetch, and it changes the shape of the work.
+
+`_nyiso_hub_daily_gas_prices` is **mean-preserving against the monthly hub level**: the daily shape
+factors are renormalized so each month's mean equals `transco_z6_iroquois_monthly.csv`. That file's
+own source note describes it as the *"monthly mean of daily quotes"* — and it is **exactly** the
+mean of the OLD, incomplete dailies, in every month checked:
+
+| month | committed monthly | mean of OLD dailies | mean of REPAIRED dailies |
+|---|---:|---:|---:|
+| **2022-12** | 7.320 | 7.320 (n=15) | **9.287** (n=21) |
+| 2023-01 | 3.301 | 3.301 (n=18) | 3.238 (n=20) |
+| 2024-12 | 3.297 | 3.297 (n=12) | 3.575 (n=20) |
+| 2025-01 | 12.715 | 12.715 (n=21) | 13.634 (n=16) |
+
+**So repairing only the daily file would introduce a NEW distortion.** With Dec-2022's anchor still
+at $7.32 while the dailies now carry Elliott, the mean-preserving renormalization compresses the
+spike *and* funds it by pushing the rest of the month **below its own published prints**. Measured
+on the daily-only repair: Dec 23 lands at **$32.57** against the published **$35.61**, while
+Dec 29/30/31 are driven to **$2.53** against published prints near $3.0–3.3, and the correctly
+observed Dec 16 falls **19.32 → 13.81**. That is error relocation, precisely what rule 14
+`[R-ACCURATE]` forbids — *"do not bury the error back inside an inaccurate input."*
+
+**The repo already owns the downstream recomputation, and it was built for this exact failure.**
+`scripts/data/fetch_nyiso_gas_narrative.py` recomputes, *from the completed daily series*, both
+`transco_z6_iroquois_monthly.csv` (Transco monthly mean of daily quotes + the unchanged NYISO SOM
+annual Iroquois–Transco spread) and the NYISO rows of `gas_basis_by_iso_month.csv` (Iroquois
+monthly − Henry Hub monthly). Its own docstring names the symptom: *"an under-sampled month
+(Dec-2024: 12 early-month prints, none after the 18th) stops under-reading its own measured
+series."* It also merges the NGWU **narrative** prints as a union with the table rows, *"a table row
+wins on a duplicate date — it is the same NGI print without narrative rounding."*
+
+That narrative route is also why the committed series carried **2023-01-04 = 3.35** even though the
+table parser dropped the whole Dec 29 – Jan 4 table: the Jan-12 page's prose hard-dates "last
+Wednesday" and "yesterday", giving two prints a week. **The table repair is strictly the larger
+haul — five prints a week for the skipped weeks instead of two — and the two compose exactly as
+that script already intends.**
+
+**So the intake is a two-step sequence, both steps being the repo's own documented constructions
+and neither introducing a parameter:**
+
+1. the repaired table scrape lands the recovered prints in `transco_z6_ny_daily.csv`;
+2. `fetch_nyiso_gas_narrative.py` unions the narrative prints and **recomputes the monthly hub and
+   basis files from the completed dailies**, so the level and the shape are derived from the same
+   corrected record.
+
+Rule 23 `[R-FROZEN-DERIVE]` is satisfied for the downstream re-derivation by the same citation as
+the upstream one: **the source data changed**, and the change is a coverage/alignment repair, not a
+residual.
+
+---
+
+## 6. RULES
 
 1 `[R-STRUCT]` — the defect was found from the source's publication calendar and the scraper's own
 code, never from a residual; the repair is not sized against any gate.

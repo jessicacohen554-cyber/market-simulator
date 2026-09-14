@@ -19,49 +19,49 @@ Run: ``python3 scripts/probes/_nyiso234_gas_repair_footprint.py <old.csv> <new.c
 
 from __future__ import annotations
 
-import shutil
 import sys
-import tempfile
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
 YEARS = (2022, 2023, 2024, 2025)
-LIVE = Path("data/raw/gas-prices/transco_z6_ny_daily.csv")
-
-
-def _series(year: int) -> np.ndarray:
-    """The delivered gas series the keeper's own path builds for ``year``."""
-    from market_sim.config.scenarios import ScenarioConfig
-    from market_sim.data.fuel import hubs
-
-    for mod in (hubs,):
-        for name in ("_nyiso_hub_daily_gas_prices",):
-            getattr(mod, name)
-    cfg = ScenarioConfig(
-        iso="NYISO", mode="backcast", hindcast=True, start_year=year, end_year=year
-    )
-    return np.asarray(
-        hubs._nyiso_hub_daily_gas_prices(cfg, year, None, None), dtype=float
-    )
 
 
 def _with_csv(csv_path: Path) -> dict[int, np.ndarray]:
-    """Build every year's series with ``csv_path`` installed as the live source."""
-    backup = None
-    if LIVE.exists():
-        backup = Path(tempfile.mkdtemp()) / "live.csv"
-        shutil.copy2(LIVE, backup)
+    """Build every year's delivered gas series reading ``csv_path`` as the source.
+
+    Repoints the module constant ``hubs.TRANSCO_Z6_NY_DAILY_PATH`` and clears the
+    loader's path-keyed caches, so **``data/raw`` is never written to** — the
+    immutable-source-root rule holds even for a diagnostic, and the old and new
+    series can be built in one process without a copy-restore dance that a crash
+    could leave half-done.
+    """
+    from market_sim.config.scenarios import ScenarioConfig
+    from market_sim.data.fuel import hubs
+
+    prev = hubs.TRANSCO_Z6_NY_DAILY_PATH
     try:
-        shutil.copy2(csv_path, LIVE)
-        # the loaders cache on module import; re-import cleanly per install
-        for m in [k for k in list(sys.modules) if k.startswith("market_sim")]:
-            del sys.modules[m]
-        return {y: _series(y) for y in YEARS}
+        hubs.TRANSCO_Z6_NY_DAILY_PATH = csv_path
+        hubs._TRANSCO_DAILY_CACHE.clear()
+        hubs._TRANSCO_DAILY_DATED_CACHE.clear()
+        out = {}
+        for year in YEARS:
+            cfg = ScenarioConfig(
+                iso="NYISO",
+                mode="backcast",
+                hindcast=True,
+                start_year=year,
+                end_year=year,
+            )
+            out[year] = np.asarray(
+                hubs._nyiso_hub_daily_gas_prices(cfg, year, None, None), dtype=float
+            )
+        return out
     finally:
-        if backup is not None:
-            shutil.copy2(backup, LIVE)
+        hubs.TRANSCO_Z6_NY_DAILY_PATH = prev
+        hubs._TRANSCO_DAILY_CACHE.clear()
+        hubs._TRANSCO_DAILY_DATED_CACHE.clear()
 
 
 def main() -> None:
