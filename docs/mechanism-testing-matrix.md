@@ -17707,6 +17707,42 @@ each in full at issuance. Standing rules that already bind the queue:
 - **Rule 28(b)**: the lane that tests a mechanism moves that cell in `SPP.js`
   in the same PR, rejections included. One lever = one lane = one PR.
 
+**DO-NOT-REDO, added by SPP-41 (2026-09-14, card R-bf, ZERO LP).** The coal↔gas
+crossover was root-caused and **every cheap lever on it is dead**; re-opening any
+of these needs new evidence, not a new solve. Record:
+`docs/handoffs/RESULT-spp-41-coal-gas-crossover-2026-09-14.md`.
+
+- **`coal_passthrough_sigmoids` is `I` for SPP, not `U`.** Keeper 11's armed
+  `coal_prb_passthrough_sigmoid` + `_tiered` are **provably inert** — no
+  `("SPP", *)` key in `COAL_SIGMOID_DEFAULTS`, all four scalars `None`, so the
+  flat 1.0 fallback applies. Measured: implied PRB econ passthrough **exactly
+  1.00000** at p05/p50/p95 over 46 plants in four years spanning $2.19–$6.45.
+- **Do NOT "just run `derive_coal_sigmoid.py` for SPP".** It fixes `ceil = 1.0`
+  by design, which is **exactly inert at $6.45** (2022: 96.7 → 96.7 %) and
+  **destroys 2023** (39.5 → 97.3 %). Killed at zero LP; needs a different
+  functional form, not a run. Upstream: SPP is absent from
+  `data/raw/reference/coal_region_crosswalk.csv`.
+- **Do NOT propose a coal energy/capacity ceiling.** The model's PRB peak
+  (17.91 GW, 2022) is **below** SPP's measured max hour (20.13 GW) and
+  max-24 h, and **0 of 29 plants** exceed their own CAMPD-demonstrated maximum.
+  The excess is DURATION, not LEVEL. `coal_takeorpay_committed` /
+  `coal_prb_committed_dispatchable` / `coal_prb_committed_split` /
+  `coal_min_load_floor` stay `U` but are **not the object** — all four are
+  commitment/floor mechanisms and the defect is what coal OFFERS (rule 19).
+- **The rule-1 authorized band-multiplier channel cannot close this.** The
+  measured markup swings **5×** year-on-year, so a year-invariant multiplier
+  (condition (b)) misses the failing years and breaks the passing ones; and
+  `COAL_PRB` and `CC_REGULAR` already carry the **identical 0.93** on all four
+  bands, so moving it scales both stacks together.
+- **NAMED STRUCTURAL SUCCESSOR (`U`, and a DATA INTAKE, not a solve):** a coal
+  offer markup keyed to **coal deliverability / stockpile days**. SPP's own MMU
+  publishes the target — coal offer markups of **$6.02 / $21.12 / $6.88 / $4.29 /
+  $5.81** for 2021–2025 against the model's **$0.00** — and names the 2022
+  driver as *"coal deliverability issues as a result of rail limitations"*
+  (ASOM 2023 fn. 194). It is NOT gas-keyed, so the sigmoid form is wrong for it.
+  Blocked on an EIA-923 Schedule-5 coal receipts-and-stocks intake that does not
+  exist on disk.
+
 **The queue (plan §4 W5, in issue order).**
 
 1. **SPP-51 — priced seams (cards P2 / P3).** **DONE 2026-09-07 (Fable):

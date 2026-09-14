@@ -2649,3 +2649,107 @@ generator (`scripts/gen_spp40_attestation.py`).
 **Next shorthand: spp-41**, first step ZERO LP — score 2025 fuelmix/sysvol when the source data
 lands, which narrows the bracket for free; then a rule-29 phase-0 offer-array delta for a 2022
 gas-price counterfactual before any solve is spent.
+
+## spp-41 — 2026-09-14 — THE COAL↔GAS CROSSOVER IS THE OFFER CONSTRUCTION, AND EVERY CHEAP LEVER IS DEAD (card R-bf)
+
+**ZERO LP. NO SOLVE, NO SCREEN, NO BUNDLE, NO KEEPER CHANGE, NO REGISTRATION.**
+Base `75f0e4561d13977477910077714c15a8dbc5132b`. Control = keeper 11's COMMITTED bundle
+(rule 29(b) form 4); no control solve was spent and none was needed, because nothing was solved.
+Full write-up: `docs/handoffs/RESULT-spp-41-coal-gas-crossover-2026-09-14.md`.
+
+**STEP 0 — the bracket cannot be narrowed.** Re-ran `audit_eia923_completeness.py --year 2025`
+against the raw at HEAD; it reproduces the committed part. Both SPP families read INCOMPLETE
+(CC_REGULAR 17/22 plants, COAL_PRB 26/29, CT_PEAKER 16/62, ST_GAS 20/36), only COAL_LIGNITE and
+CC_CHP gate. C1/C2 on 2025 stay unscored; the bracket stays **$2.57 passes / $3.72 fails**.
+
+**STEP 1 — phase 0 says the offer construction IS the object.** Four `run_year(fleet_only=True)`
+rebuilds of keeper 11's own recipe. Share of CC_REGULAR committed+econ MW priced above the
+DEAREST PRB row: 6.0 % @ $2.19, **0.0 % @ $2.54**, **97.1 % @ $3.72**, 91.7 % @ $6.45. Sweeping
+the 2022 fleet's own decomposition puts the **crossing at $2.33–$2.65/MMBtu with full saturation
+by $3.50** (14.2 → 45.5 → 80.3 → 96.4 % at $2.00/$2.50/$3.00/$3.50, then FLAT to $6.50).
+**Arrays and dispatch agree**, so the lane proceeded rather than redirecting.
+
+**STEP 2a — the sigmoid is NOT being extrapolated; it is NEVER EVALUATED.** `COAL_SIGMOID_DEFAULTS`
+has 10 entries over ERCOT/MISO/PJM and **no `("SPP", *)` key**; keeper 11 leaves all four
+`coal_prb_passthrough_*` scalars `None`; so `coal_sigmoid_params` returns `None` for every supply
+and `coal_passthrough_series` returns the FLAT 1.0. MEASURED, not read off the source: implied PRB
+econ passthrough `(mc − vom)/(fuel × heat_rate)` reads **exactly 1.00000 at p05/p50/p95 over 46
+plants in all four years**, gas-INVARIANT across $2.19–$6.45. Keeper 11's armed
+`coal_prb_passthrough_sigmoid` + `_tiered` are **provably inert** — rule 24 `[R-REGISTRY]`: the
+bundle's `run_config.json`/`meta.json` OVERSTATE what the solve read (xiso-3 shape). Cell
+`coal_passthrough_sigmoids` moves **U → I** in `mechanism-matrix/SPP.js` (rule 28(b)).
+ROOT CAUSE: SPP is absent from `data/raw/reference/coal_region_crosswalk.csv`, which
+`derive_coal_sigmoid.py` iterates, so no SPP row exists downstream either.
+
+**STEP 2b — THE OBVIOUS REPAIR IS DEAD, killed at zero LP.** `derive_coal_sigmoid.py` fixes
+`ceil = 1.0` for every supply BY DESIGN (its header retires the ceil>1.0 opportunity-cost story),
+and all 10 derived rows carry it. Applied to SPP at either existing PRB shape, the hour-by-hour
+merit-order position moves **95.0 → 95.7 % (2021)** and **96.7 → 96.7 % (2022)** — exactly inert
+in the two FAILING years, since passthrough → 1.000 at $6.45 is what the model already does —
+while **2023 goes 39.5 → 97.3 %**. It would leave the defect untouched and destroy both
+CALIBRATED years.
+
+**STEP 2c — the capacity-ceiling hypothesis is dead on measurement.** CAMPD census of the model's
+own 29-plant PRB set, every vintage on disk: fleet max hour 18.45–21.07 GW, best year 90.79 TWh
+gross (2021). Model 2022 = **101.25 TWh at a 17.91 GW peak** — annual energy ~19 % above the best
+measured year on a like-for-like net basis, but a peak **11 % BELOW** the measured 2022 maximum
+hour and below max-24 h. **The excess is DURATION, not LEVEL**, and **0 of 29 plants exceed their
+own CAMPD-demonstrated maximum** (ratios 0.32–0.96), so `derive_coal_max_cf.py`'s demonstrated-
+capability ceiling — the repo's one admissible coal ceiling — would not bind on a single plant.
+`coal_takeorpay_committed` / `coal_prb_committed_dispatchable` / `coal_prb_committed_split` /
+`coal_min_load_floor` stay **U**: all four are commitment/floor objects and the defect is what
+coal OFFERS, so stacking one on an unfixed offer is what rule 19 `[R-ONE-MECH]` forbids.
+
+**STEP 2d — THE DRIVER IS FOUND AND IT IS PUBLISHED BY SPP'S OWN MARKET MONITOR.** The MMU's
+annual coal offer-price markup (offer minus mitigated/reference offer, cleared-MW weighted —
+ASOM 2024 fn. 135), against the model's zero: **$6.02 (2021) · $21.12 (2022) · $6.88 (2023) ·
+$4.29 (2024) · $5.81 (2025)**, all $0.00 in the model. The MMU names the 2022 driver itself
+(ASOM 2023 fn. 194): *"Several coal resources experienced coal deliverability issues as a result
+of rail limitations, which resulted in many resources offering higher than typical mark-ups."*
+The physical scarcity is REAL and DOCUMENTED — and the market expressed it as a PRICE, not an
+energy cap, which is why the ceiling census finds nothing. Applied at own-year values it supplies
+**~2/3 to 3/4** of the separation the failing years need (1.50× short in 2021, 1.32× in 2022) and
+moves 2022 from 96.7 → 65.0 %, 2021 from 95.0 → 69.3 %.
+
+**STEP 2e — AND NO ADMISSIBLE PARAMETERIZATION REACHES IT. This is the result.** (1) A same-year
+MMU overlay is backcast-only — no MMU report exists for a forecast year, so it fails rule 13
+`[R-MEASURED]`'s forward test. (2) The markup is **NOT gas-keyed** ($2.19→$4.29, $2.54→$6.88,
+$3.52→$5.81, $3.72→$6.02, $6.45→$21.12; only 2022 elevated, and the monitor attributes it to
+RAIL), so fitting a four-parameter gas logistic to five points to capture one of them would
+attribute to gas what the monitor attributes to rail — the fitted-mechanism selection rule 1
+`[R-STRUCT]` forbids, and the D-8 weak identification `COAL_SIGMOID_DEFAULTS`' own header flags.
+(3) **The rule-1 authorized band-multiplier channel is PROVABLY INCAPABLE** of closing it:
+condition (b) requires ONE config across every scored year and the real markup swings **5×**
+year-on-year, so a year-invariant +$5.81 leaves 2022 at 95.5 % (from 96.7 %) while pushing 2023
+from 39.5 → 19.3 % — it misses the failing year and breaks the passing ones. SPP's
+`offer_curve_by_group` also already carries the **identical 0.93** on all four bands of BOTH
+`COAL_PRB` and `CC_REGULAR`, so moving it scales the two stacks together and cannot reverse their
+order. (4) The MMU's own named driver WOULD be forecast-admissible, but nothing on disk reaches
+it — there is no EIA-923 Schedule-5 coal receipts/stocks intake, only the purchase-type share.
+
+**NO SCREEN SPENT.** Named structural successor for SPP's queue, entering as `U`: a coal offer
+markup keyed to **coal deliverability / stockpile days**, identified from the MMU's published
+markup series against a Schedule-5 receipts-and-stocks intake. Cost is a DATA INTAKE, not a solve.
+
+**CROSS-ISO, reported not transferred (rule 25 `[R-ISO-SCOPE]`).** Census over every designated
+keeper's committed `run_config.json`: **SPP and CAISO are the only two keepers arming ZERO
+offer-markup machinery of any kind** (every other arms at least `gas_offer_net_revenue_margin`);
+**five of seven carry an armed-but-inert `coal_prb_passthrough_sigmoid`**, so the xiso-3 shape is
+the majority state — harmless where PRB is trivial, load-bearing in coal-dominant SPP (18.5 GW PRB
+against 10.1 GW CC); and **`COAL_SIGMOID_DEFAULTS` disagrees with `coal_sigmoid_params.csv`** —
+the live registry keeps hand-tuned `ceil > 1.0` curves (ERCOT prb 1.50, PJM subbituminous 2.10)
+that the data-grounded derivation was written to retire and re-derives at 1.0, and the derivation
+was never adopted. So the only curve SHAPE in this repo that would address SPP's defect exists
+ONLY as an un-derived hand-tuned number, which rule 25 refuses to transfer. **For the NYISO lane:**
+its gas-monotone tilt is a DIFFERENT instance — NYISO arms `gas_offer_net_revenue_margin`, so its
+gas markup mechanism is live where SPP's is absent entirely. No parameter offered, no cell filled.
+
+**HOUSEKEEPING.** Parity gate still RED on exactly the two pre-existing non-SPP bundles,
+`caiso279_ablate_dswcouple_span` and `soco15_spp_arm` — rule 35 `[R-PROMOTE]` (a) is per-ISO, so
+**not pruned by this lane** (`soco15_spp_arm` carries "spp" in its name but is a SOCO bundle).
+SPP's determination is UNCHANGED: `CALIBRATED` on the 2023–2025 train-tier verdict. The two
+shared-infra defects SPP-40 reported were not re-discovered and not touched; this lane
+re-registers nothing, so no `stamp_touchpoint_holdout.py` re-apply is owed.
+
+**Next shorthand: spp-42.** The cheap lever does not exist; the queue's top item is now an
+owner decision on the Schedule-5 coal receipts/stocks intake, not a modelling session.
