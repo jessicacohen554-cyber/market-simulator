@@ -1,0 +1,20 @@
+facility_name,facility_id,unit_id,unit_capacity_mw,plant_capacity_mw,unit_pct_of_plant,plant_group,capacity_source,outage_start,outage_end,duration_days,peer_units_online,total_units_at_plant
+Amalgamated Sugar Twin Falls,10504,E923,12.7,12.7,100.0,ST_CHP,eia923,2024-05-01,2024-05-31,31.0,0,1
+Colstrip Energy LP,10784,E923,46.1,46.1,100.0,COAL,eia923,2024-04-01,2024-04-30,30.0,0,1
+Nevada Cogen Associates 2 Black Mountain,54349,E923,96.3,96.3,100.0,CC_CHP,eia923,2023-05-01,2023-05-31,31.0,0,1
+Nevada Cogen Associates 2 Black Mountain,54349,E923,96.3,96.3,100.0,CC_CHP,eia923,2023-10-01,2023-10-31,31.0,0,1
+Nevada Cogen Associates 2 Black Mountain,54349,E923,96.3,96.3,100.0,CC_CHP,eia923,2024-12-01,2024-12-31,31.0,0,1
+Nevada Cogen Associates 2 Black Mountain,54349,E923,96.3,96.3,100.0,CC_CHP,eia923,2025-01-01,2025-02-28,59.0,0,1
+Nevada Cogen Associates 2 Black Mountain,54349,E923,96.3,96.3,100.0,CC_CHP,eia923,2025-05-01,2025-05-31,31.0,0,1
+Nevada Cogen Associates 2 Black Mountain,54349,E923,96.3,96.3,100.0,CC_CHP,eia923,2025-10-01,2025-12-31,92.0,0,1
+Sinclair Oil Refinery,54374,E923,5.0,5.0,100.0,CT_CHP,eia923,2023-01-01,2023-12-31,365.0,0,1
+Sinclair Oil Refinery,54374,E923,5.0,5.0,100.0,CT_CHP,eia923,2025-02-01,2025-02-28,28.0,0,1
+Sinclair Oil Refinery,54374,E923,5.0,5.0,100.0,CT_CHP,eia923,2025-07-01,2025-10-31,123.0,0,1
+Amalgamated Sugar LLC Nampa,54690,E923,8.2,8.2,100.0,ST_CHP,eia923,2024-05-01,2024-05-31,31.0,0,1
+Kennecott Power Plant,56163,E923,38.2,38.2,100.0,CT_CHP,eia923,2023-05-01,2023-08-31,123.0,0,1
+Kennecott Power Plant,56163,E923,38.2,38.2,100.0,CT_CHP,eia923,2025-10-01,2025-10-31,31.0,0,1
+Oregon State University Energy Center,57653,E923,5.5,5.5,100.0,CT_CHP,eia923,2023-11-01,2023-11-30,30.0,0,1
+Oregon State University Energy Center,57653,E923,5.5,5.5,100.0,CT_CHP,eia923,2025-09-01,2025-09-30,30.0,0,1
+US Magnesium,58191,E923,48.0,48.0,100.0,CT_CHP,eia923,2023-01-01,2023-12-31,365.0,0,1
+US Magnesium,58191,E923,48.0,48.0,100.0,CT_CHP,eia923,2024-01-01,2024-12-31,366.0,0,1
+US Magnesium,58191,E923,48.0,48.0,100.0,CT_CHP,eia923,2025-01-01,2025-12-31,365.0,0,1
