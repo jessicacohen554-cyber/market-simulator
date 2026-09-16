@@ -28,6 +28,7 @@ under CI's sparse checkout; the two live pins are ``fulldata``-marked.
 from __future__ import annotations
 
 import tempfile
+import types
 import unittest
 from pathlib import Path
 from unittest import mock
@@ -37,13 +38,15 @@ import pandas as pd
 
 from market_sim.config.constants import HOURS_PER_YEAR
 from market_sim.config.paths import EIA_HOURLY_DIR
-from market_sim.data import eia_loader
-from market_sim.data.eia930 import actuals
+from market_sim.data import eia_loader, neighbor_price
+from market_sim.data.eia930 import actuals, envelopes
 from market_sim.data.eia930.demand import _DEMAND_SPIKE_THRESHOLD
 from market_sim.data.eia930.frames import (
+    _POOL_HOURLY_MEMBERS,
     _eia_hourly_frame,
     _eia_hourly_frame_filled,
     _ercot_hourly_frame,
+    _pool_hourly_frame,
 )
 from tests.helpers.base import requires_raw
 
@@ -54,6 +57,10 @@ _SPIKE_MW = 3_589_445.0  # the measured SWPP 2023 h3907 value
 # The magnitude is the measured NWPP 2025 pooled ``NG: WAT`` artifact hour.
 _HYDRO_SPIKE_HOUR = 6817
 _HYDRO_SPIKE_MW = 817_202.0
+# NWPP October 2025 pooled ``NG: WAT`` (TWh) once the AVA 810,113 MW hour is
+# repaired PER MEMBER: 8.2435 raw -> 7.0956 (FINDING-nwpp-37b §3; NWPP-32 §3.2
+# named the +1,166 GWh phantom; the pooled-only pass of #6206 reads 7.1211).
+_NWPP_OCT_2025_HYDRO_TWH = 7.0956
 
 
 def _wind() -> np.ndarray:
@@ -125,6 +132,7 @@ class _SyntheticExtract(unittest.TestCase):
         _eia_hourly_frame.cache_clear()
         _eia_hourly_frame_filled.cache_clear()
         _ercot_hourly_frame.cache_clear()
+        _pool_hourly_frame.cache_clear()
 
     def tearDown(self) -> None:
         self._patch.stop()
@@ -132,6 +140,7 @@ class _SyntheticExtract(unittest.TestCase):
         _eia_hourly_frame.cache_clear()
         _eia_hourly_frame_filled.cache_clear()
         _ercot_hourly_frame.cache_clear()
+        _pool_hourly_frame.cache_clear()
 
     def _write(self, frame: pd.DataFrame, ba: str | None = None) -> None:
         frame.to_parquet(self._dir / f"{ba or self.ba} hourly.parquet", index=False)
@@ -326,6 +335,135 @@ class TestScreenOnTheEnvelopePath(_SyntheticExtract):
             )
 
 
+class TestScreenOnTheNeighbourAndSolarReaders(_SyntheticExtract):
+    """The two remaining direct fuel-column readers (PRECOMMIT-nwpp-37b §1
+    rows 5, 8, 9): the neighbour net-load driver and the CAISO solar share."""
+
+    def test_neighbour_net_load_driver_sees_the_repaired_column(self):
+        # A clean Demand with the slip in NG: WND only (the demand screens are
+        # a different phenomenon and this reader applies none of them).
+        frame = _frame(spike=False)
+        frame.loc[_SPIKE_HOUR, "NG: WND"] = _SPIKE_MW
+        self._write(frame)
+        neighbour = types.SimpleNamespace(
+            ba_code=self.ba, proxy_ba=None, load_shape_kind="net"
+        )
+        load, _mean, ba = neighbor_price._neighbor_load(
+            neighbour, _YEAR, HOURS_PER_YEAR
+        )
+        self.assertEqual(ba, self.ba)
+        demand = frame["Demand"].to_numpy(dtype=float)
+        # Unscreened, net load at the slip hour would be demand − 3.59 TWh < 0.
+        self.assertLess(demand[_SPIKE_HOUR] - _SPIKE_MW, 0.0)
+        # Screened: the wind hour is NaN → the reader's existing fillna(0.0).
+        self.assertAlmostEqual(
+            float(load[_SPIKE_HOUR]),
+            demand[_SPIKE_HOUR] - _solar()[_SPIKE_HOUR],
+            places=6,
+        )
+
+    def test_caiso_solar_fraction_sees_the_repaired_column(self):
+        frame = _frame(spike=False)
+        frame.loc[_SPIKE_HOUR, "NG: SUN"] = _SPIKE_MW
+        self._write(frame, ba="CISO")
+        frac = envelopes.caiso_solar_fraction(_YEAR, HOURS_PER_YEAR)
+        # Screened: the slip hour reads as zero share through fillna(0.0);
+        # unscreened it would clip to 1.0.
+        self.assertEqual(float(frac[_SPIKE_HOUR]), 0.0)
+        self.assertLess(float(frac.max()), 1.0)
+
+    def test_reindexed_short_year_is_screened_too(self):
+        """The gap-bridging branch (a PJM-style short year) screens as well."""
+        frame = _frame(spike=True).drop(index=[0]).reset_index(drop=True)
+        self._write(frame)
+        self.assertIsNone(_eia_hourly_frame(self.ba, _YEAR))
+        seam = _eia_hourly_frame_filled(self.ba, _YEAR)
+        self.assertIsNotNone(seam)
+        self.assertTrue(np.isnan(seam["NG: WND"].iloc[_SPIKE_HOUR]))
+        self.assertEqual(
+            float(seam["NG: WND"].iloc[_SPIKE_HOUR + 1]), _wind()[_SPIKE_HOUR + 1]
+        )
+
+
+def _member_frame(*, spike: bool) -> pd.DataFrame:
+    """A pool-member extract: ``_frame`` plus the Adjusted / forecast columns
+    the pool constructor reads."""
+    frame = _frame(spike=spike)
+    frame["Hour"] = np.arange(HOURS_PER_YEAR) % 24 + 1
+    frame["Demand (Adjusted)"] = frame["Demand"]
+    frame["Demand forecast"] = frame["Demand"]
+    frame["Net generation (Adjusted)"] = frame["Net generation"]
+    frame["Total interchange (Adjusted)"] = frame["Total interchange"]
+    return frame
+
+
+class TestScreenOnThePoolMembers(_SyntheticExtract):
+    """A pool member's slip is repaired on the MEMBER's population, before the
+    sum, and bridged by the member's own interpolation (lane NWPP-37b; the
+    pooled-only pass FINDING-nwpp-37 §5 measured misses 2 of 4 / 3 of 6 NWMT
+    hydro hours by dilution)."""
+
+    ba = "NWPP"
+    iso = "NWPP"
+    _SLIP_MEMBER = "AVA"
+
+    def _write_pool(self) -> None:
+        for member in _POOL_HOURLY_MEMBERS["NWPP"]:
+            self._write(_member_frame(spike=member == self._SLIP_MEMBER), ba=member)
+
+    def test_pooled_columns_carry_the_members_interpolated_hour(self):
+        self._write_pool()
+        with self.assertLogs("market_sim.data.eia930.actuals", level="WARNING") as cm:
+            pool = _eia_hourly_frame_filled("NWPP", _YEAR)
+        self.assertTrue(
+            any(f"{self._SLIP_MEMBER} {_YEAR}" in line for line in cm.output)
+        )
+        n = len(_POOL_HOURLY_MEMBERS["NWPP"])
+        for column, clean, hour in (
+            ("NG: WAT", _hydro(), _HYDRO_SPIKE_HOUR),
+            ("NG: WND", _wind(), _SPIKE_HOUR),
+        ):
+            with self.subTest(column=column):
+                pooled = pool[column].to_numpy(dtype=float)
+                expected = (n - 1) * clean[hour] + 0.5 * (
+                    clean[hour - 1] + clean[hour + 1]
+                )
+                self.assertAlmostEqual(pooled[hour], expected, places=6)
+                mask = np.ones(HOURS_PER_YEAR, dtype=bool)
+                mask[hour] = False
+                np.testing.assert_allclose(pooled[mask], n * clean[mask])
+        # The member's raw extract on disk still carries the slip.
+        raw = pd.read_parquet(self._dir / f"{self._SLIP_MEMBER} hourly.parquet")
+        self.assertEqual(float(raw["NG: WAT"].iloc[_HYDRO_SPIKE_HOUR]), _HYDRO_SPIKE_MW)
+
+    def test_a_pool_member_slip_is_caught_where_the_pooled_pass_would_dilute_it(self):
+        """The dilution FINDING-nwpp-37 §5 measured, reproduced synthetically: a
+        member slip at 10x the member's peak is under 2.5x the pooled peak."""
+        member_slip = 10.0 * float(_hydro().max())
+        for member in _POOL_HOURLY_MEMBERS["NWPP"]:
+            frame = _member_frame(spike=False)
+            if member == self._SLIP_MEMBER:
+                frame.loc[_HYDRO_SPIKE_HOUR, "NG: WAT"] = member_slip
+            self._write(frame, ba=member)
+        n = len(_POOL_HOURLY_MEMBERS["NWPP"])
+        pooled_raw = (n - 1) * _hydro()[_HYDRO_SPIKE_HOUR] + member_slip
+        self.assertLess(pooled_raw, _DEMAND_SPIKE_THRESHOLD * n * float(_hydro().max()))
+        pool = _eia_hourly_frame_filled("NWPP", _YEAR)
+        clean = _hydro()
+        expected = (n - 1) * clean[_HYDRO_SPIKE_HOUR] + 0.5 * (
+            clean[_HYDRO_SPIKE_HOUR - 1] + clean[_HYDRO_SPIKE_HOUR + 1]
+        )
+        self.assertAlmostEqual(
+            float(pool["NG: WAT"].iloc[_HYDRO_SPIKE_HOUR]), expected, places=6
+        )
+
+    def test_measured_monthly_hydro_on_the_pool_has_no_phantom_energy(self):
+        self._write_pool()
+        monthly = envelopes.measured_monthly_hydro("NWPP", _YEAR)
+        n = len(_POOL_HOURLY_MEMBERS["NWPP"])
+        self.assertLess(float(monthly.sum()), n * float(_hydro().sum()) + 1e3)
+
+
 class TestScreenOnTheErcotReaders(_SyntheticExtract):
     """The ERCOT-specific readers (``run_calibration_full._eia930_frame``'s
     ERCOT branch) obtain their frame through the same seam."""
@@ -386,3 +524,38 @@ class TestLivePins(unittest.TestCase):
     def test_nyiso_2024_other(self):
         bench = actuals.load_eia_hourly_benchmark("NYISO", 2024)
         self.assertAlmostEqual(float(bench["other"].sum()) / 1e6, 3.3197, places=4)
+
+
+@requires_raw(
+    EIA_HOURLY_DIR / "BPAT hourly.parquet",
+    EIA_HOURLY_DIR / "AVA hourly.parquet",
+    EIA_HOURLY_DIR / "NWMT hourly.parquet",
+    EIA_HOURLY_DIR / "NEVP hourly.parquet",
+)
+class TestNwppLivePins(unittest.TestCase):
+    """NWPP-32 §3.2 / NWPP-37b §3: the pool's ``NG: WAT`` no longer carries the
+    member slips (AVA 810,113 MW at 2025 h6817; NWMT 65,891 MW at 2024 h5723),
+    measured on the committed member extracts."""
+
+    @classmethod
+    def setUpClass(cls):
+        _pool_hourly_frame.cache_clear()
+        _eia_hourly_frame.cache_clear()
+        _eia_hourly_frame_filled.cache_clear()
+
+    def test_pooled_hydro_peak_is_the_fleets_not_a_telemetry_hour(self):
+        for year in (2024, 2025):
+            with self.subTest(year=year):
+                pool = _eia_hourly_frame_filled("NWPP", year)
+                self.assertIsNotNone(pool)
+                wat = pool["NG: WAT"].to_numpy(dtype=float)
+                self.assertFalse(np.isnan(wat).any())
+                self.assertLess(float(wat.max()), 40_000.0)  # raw: 76,472 / 817,202
+
+    def test_october_2025_pooled_hydro_repin_target(self):
+        """The +1,166 GWh phantom (NWPP-32 §3.2) is gone from the repin target;
+        the value is the FINDING-nwpp-37b §3 measurement."""
+        monthly = envelopes.measured_monthly_hydro("NWPP", 2025)
+        self.assertAlmostEqual(
+            float(monthly[9]) / 1e6, _NWPP_OCT_2025_HYDRO_TWH, places=3
+        )
