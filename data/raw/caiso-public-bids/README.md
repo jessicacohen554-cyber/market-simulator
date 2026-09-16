@@ -73,10 +73,19 @@ its URL, filename and `zips/` directory are byte-unchanged). Charter and the
 pre-registered comparison rule:
 `docs/PRECOMMIT-caiso281-rtm-offer-surface-intake-2026-09-13.md`.
 
-DATA NEEDED: RTM coverage is being fetched quarter by quarter and the OASIS
-retention boundary for the bid archive is UNCONFIRMED (register item N-CA-1
-records the LMP boundary at 2023-04-19 as the strong prior). Per-quarter
-coverage is recorded by each shard's FINDING doc as it lands.
+**RTM intake COMPLETE and the question it was funded for is ANSWERED (caiso-283,
+2026-09-16).** Both market runs were fetched for 2022–2025 (2,919 trade dates,
+three archive holes) and reduced to the derive's exact per-resource-year
+statistics by `scripts/data/reduce_caiso_bid_year.py`
+(`results/rtm-intake/caiso283/`). The reduction reproduces the committed DAM
+surface to 0.000 on every band, and the same CAISO combined cycles bid the
+same energy body into RTM as into DAM (CC econ bands within 0.03 across
+markets): **RTM-FLAT**, `docs/RESULT-caiso283-rtm-flat-2026-09-16.md`. The
+DAM-derived surface stands. Retention, measured by caiso-281: the GroupZip bid
+archive serves trade dates from **2021-08-15** (ERR 1000 before it; 2020 and
+H1-2021 are dead in both markets), and the boundary is rolling — re-measure,
+never hardcode. Raw zips are gitignored and regenerable by the downloader
+(~1.7 h per market-year at `--sleep 16`).
 
 ## Intake status (caiso-178, 2026-08-06)
 
