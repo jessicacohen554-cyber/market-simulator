@@ -117,6 +117,30 @@ driven by the CAMPD outage overlay and commitment, not by this mechanism. That i
 "did anything change outside the window" gate on the *bundle* would have been meaningless
 here, and why G2 was written against the availability construction instead.
 
+**What the bundle *does* show, measured and reported at full magnitude.** Of 43,800 zone-hour
+price rows, **35,605 (81.29 %) are BIT-IDENTICAL** to the control. Two things follow:
+
+1. **There is no dependency-version drift.** The shard flagged pandas/pyarrow/pydantic
+   versions differing from the control's solve environment. Had that perturbed the solve
+   numerically, essentially *no* row would be bit-identical; 81 % identical says the solver
+   path is reproducible and every change is the mechanism's own. The concern is answered.
+2. **Prices propagate outside the derate window, and the propagation is not trivial.**
+
+| | rows | changed | mean abs Δ | max abs Δ | total abs Δ |
+|---|---:|---:|---:|---:|---:|
+| in-window | 1,680 | 1,525 (90.8 %) | $1.7576 | $9.1877 | $2,680.41 |
+| out-of-window | 42,120 | 6,670 (15.8 %) | $0.1757 | $3.1465 | $1,172.03 |
+
+**30.42 % of total absolute price movement lands outside the derate window.** That is an
+order of magnitude more than the ~0.13 % cyclic-storage coupling neiso-109 documented, and it
+should be stated rather than filed under the same precedent: neiso-109 changed a *fuel price*,
+whereas this arm removes *capacity*, which changes commitment and run patterns and therefore
+propagates much further through an 8760-hour LP with cyclic storage. **It is not a window
+violation** — the availability array this mechanism writes is confined to the window by
+construction (`np.where(window, frac, 0.0)`), and total generation moves +0.00161 %
+(100.367599 → 100.369217 TWh), i.e. the solve is essentially energy-conserving. But a price
+confinement gate would have fired on it, which is exactly why G2 was not written as one.
+
 ## 6. A LEAD THE NEXT LANE SHOULD TAKE SERIOUSLY
 
 The 3,359 MW shortfall says the model simply carries **too much available capacity** at
