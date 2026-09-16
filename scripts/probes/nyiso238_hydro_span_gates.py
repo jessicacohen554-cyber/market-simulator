@@ -32,7 +32,12 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+import sys
+
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "src"))
+
+from market_sim.data.fleet.models import _hour_to_month_index  # noqa: E402
 YEARS = (2022, 2023, 2024, 2025)
 G2_ANNUAL_TOL = 0.1   # %
 G2_MONTH_TOL = 0.5    # %
@@ -58,7 +63,14 @@ def _hydro_monthly(bundle: Path, year: int) -> tuple[float, np.ndarray]:
     h = c[c.klass.str.contains("HYDRO", case=False, na=False)]
     by_hour = h.groupby("hour").mw.sum().sort_index()
     n = len(by_hour)
-    month = pd.date_range(f"{year}-01-01", periods=n, freq="h").month
+    # THE MODEL'S OWN HOUR->MONTH MAP, not a calendar one. ``data.fleet.models.
+    # _hour_to_month_index`` walks a representative NON-LEAP year (2023), so in a
+    # LEAP year a ``pd.date_range`` month label drifts 24 h from the model's from
+    # March onward -- which shows up as spurious compensating monthly deltas that
+    # net to zero annually (measured on 2024 before this fix: m05 +13.5, m10 +14.1,
+    # m11 -17.4 GWh against a true annual -0.0 GWh). The hydro budget rows are built
+    # on the model's map, so the identity gate must be scored on the same one.
+    month = _hour_to_month_index(n) + 1
     mo = np.asarray([by_hour.to_numpy()[month == m].sum() / 1e6 for m in range(1, 13)])
     return float(by_hour.sum() / 1e6), mo
 
