@@ -2286,6 +2286,12 @@ results/calibration/_soco40_screen/
 
 # soco-40: the UNSPLIT-coal span (arm A of the coal-split comparison), kept out of main; bytes live on shard commit 9458759f6b8c875a9a302e4b64db9e212420ddf9 (git checkout 9458759f6b8c875a9a302e4b64db9e212420ddf9 -- results/calibration/soco40_baseline_B); never rm (rule 31)
 results/calibration/soco40_baseline_B/
+# nyiso-238 hydro arm bundles - kept out of main (rules 29(c), 31, 32(d));
+# recoverable by full SHA, see docs/RESULT-nyiso238-*.md
+results/calibration/nyiso238_hydro_2022/
+results/calibration/nyiso238_hydro_2023/
+results/calibration/nyiso238_hydro_2024/
+results/calibration/nyiso238_hydro_2025/
 # miso-260 rule-29 [R-SCREEN] screen bundles (2020 ARM + its one-commit-apart
 # CONTROL). Kept OUT of `main` by this .gitignore, which is what discharges rule
 # 29(c) — `rm` never was required and rule 31 [R-RETAIN] forbids it while the
