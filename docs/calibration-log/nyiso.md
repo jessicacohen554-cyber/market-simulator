@@ -14468,3 +14468,52 @@ days** across 2018–2025.
 `tail/actual_tail.json` carries only tail hour counts, not the hourly series, so it cannot
 reconstruct the actual's non-tail mean; the re-measurement needs the raw NYISO RT LMP series
 tail-stripped on the same threshold on both sides. No Object B number is claimed here.
+
+### nyiso-235 PROMOTION — 2026-09-16
+
+**THE OWNER RULED: PROMOTE.** NYISO keeper → **`2026-09-14-nyiso-235-gas-repair`** (bundle
+`results/calibration/nyiso235_gasrepair_span`), superseding `2026-09-13-nyiso-232-st-gas`. The ruling
+answered the rule 31 `[R-RETAIN]` promotion question this session put after the screen cleared; **the
+screen did not promote this arm — a screen may kill an arm and never promote one — the owner did.**
+
+**Rule 35 `[R-PROMOTE]` executed in its required order.** (b) The year union was enumerated from the
+registry **before** anything was pruned — `{2022, 2023, 2024, 2025}`, one registered run — and (c)
+this bundle covers it **exactly**, so no stamped companion is needed. (e) The incoming keeper was
+registered and **verified** (`audit_keepers --iso NYISO`) **before** the outgoing one was deleted.
+(a,d) The superseded keeper's three stores were then pruned with
+`prune_iso_runs.py --iso NYISO --force-uncite` — the intended route, since the guard blocks on the
+governance citations that rule 35(d) says must **stay** as history.
+
+**Final state: `audit_keepers --iso NYISO` PASS, 0 failures**, one warning, the pre-existing E11
+lineage gap (the `nyiso-231` bundle was pruned by an earlier session, so the recipe diff has no
+baseline). Registry/payload parity carries **no NYISO entry**; the two reds that remain
+(`caiso279_ablate_dswcouple_span`, `soco15_spp_arm`) are pre-existing and another lane's (rule 25).
+
+**THE DETERMINATION DID NOT MOVE — this promotion buys fidelity, not a grade.** The registered
+four-year run still reads **NOT-YET on 2022 alone**, and the ISO tier (2023–2025, rule 30(c)) still
+reads **CALIBRATED with C3c the lone ledgered caveat**. What did improve is the span's failing set,
+which **shrinks** from `{fuelmix, price_mean, price_shape, price_tail}` to
+`{fuelmix, price_mean, price_tail}` — C3b drops out. **No C3a or C3b band verdict flips in either
+direction.**
+
+**Attestation.** `calibration_attestation.json` was authored for the new bundle with the DOF ledger
+**carried over byte-identical** (sha256 `926e744b…` on both), because the recipe is byte-identical;
+`authorized_price_tuning` is **NONE**. The attestation records the rule-14 basis, the re-run G-DRIFT,
+the rule-25 verification, and the open anchor finding, and states plainly that the C3a improvement
+was **not** treated as promotion evidence.
+
+**Sidecar.** Carries a `market_story` (rule 15 / skill step 4) telling the oil story: downstate gas at
+$32–36/MMBtu above the $24.85 oil-parity price sent NYC and Long Island dual-fuel units to oil during
+Elliott, which is what they actually did and why 2022's oil burn is three times a normal year's — a
+story the model could not tell while its gas series carried $8.05 flat through the storm. Its
+`definition` leads with the **run-level** verdict (NOT-YET), with the tier stated separately; leading
+with the tier tripped `audit_keepers` E5, correctly.
+
+**Housekeeping.** The 2022 **screen** bundle was removed from local disk under rule 31 trigger (i) —
+the owner has now ruled — with every cited number already in the RESULT doc and the bytes recoverable
+at the immutable shard sha `750e4a72421e4548a5d82b71ccf13e6254cc3b87`. The branch was rebased onto
+`origin/main` (38 commits) at the owner's instruction and force-pushed; the rebase was clean and the
+promotion state was re-verified after it.
+
+**Still open, unchanged by the promotion:** the `gas_offer_margin_anchor_by_zone` annual-mean reach
+(§6 of the RESULT), and Object B, which is still not re-measured.
