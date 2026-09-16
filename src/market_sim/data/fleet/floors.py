@@ -815,6 +815,33 @@ def apply_neiso_coldsnap_derate(
     # Local import: transmission imports from data.fleet at module level.
     from market_sim.model.transmission import inject_neiso_gas_coldsnap_derate
 
+    # Conditional dual-fuel exemption (gated, default off; rule 19 scope
+    # correction). The parent derate exempts every dual-fuel unit on the premise
+    # that apply_dual_fuel_pricing has switched it to oil; that premise holds only
+    # where delivered gas has reached the oil parity, since the switch is
+    # mc = min(gas, oil). Build the SAME comparison here, so the exemption is
+    # granted hour by hour exactly where the switch it cites has actually fired.
+    dual_switch_active = None
+    if getattr(config, "neiso_coldsnap_derate_dualfuel_unswitched", False):
+        from market_sim.data.fuel.dual_fuel import dual_fuel_oil_price_series
+        from market_sim.data.fuel.hubs import iso_hub_daily_gas_prices
+
+        gas_hourly = iso_hub_daily_gas_prices(config, year)
+        if gas_hourly is not None:
+            oil_hourly = dual_fuel_oil_price_series(config, year)
+            dual_switch_active = np.asarray(gas_hourly, dtype=float) >= np.asarray(
+                oil_hourly, dtype=float
+            )
+            logger.info(
+                "%s %d: conditional dual-fuel derate exemption — switch active in "
+                "%d of %d hours; dual-fuel gas capacity is derated in the other %d",
+                iso,
+                year,
+                int(dual_switch_active.sum()),
+                int(dual_switch_active.size),
+                int((~dual_switch_active).sum()),
+            )
+
     if inject_neiso_gas_coldsnap_derate(
         fleet_arrays,
         iso,
@@ -822,6 +849,7 @@ def apply_neiso_coldsnap_derate(
         float(config.neiso_gas_derate_t0_c),
         float(config.neiso_gas_derate_slope_per_c),
         float(config.neiso_gas_derate_cap),
+        dual_switch_active=dual_switch_active,
     ):
         logger.info(
             "%s %d: winter gas-availability derate — non-dual-fuel gas-CC/CT "
