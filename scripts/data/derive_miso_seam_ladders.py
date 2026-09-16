@@ -575,6 +575,32 @@ def _print_ladder(label: str, g: pd.DataFrame) -> None:
         print("    },")
     for n in notes:
         print(f"  note: {n}")
+    # Reproducibility guard (miso-260, 2026-09-16): the three NEIGHBOUR blocks
+    # below read anchor series that start in 2023 — the PJM western-border DA
+    # (``pjm_border_lmp_hourly_MISO.parquet``) and the SPP hub. On an earlier
+    # sample they leave `_derive_one` with an empty flow vector, whose NaN
+    # exceedance duration raises out of ``np.quantile``, so the script could
+    # not be RUN on 2020-2022 at all even though the PRIMARY ladder above
+    # derives cleanly there (that ladder reads only the seam flows and the MISO
+    # hub DA). This is a printing guard and NOT a re-derivation: no value
+    # produced for any year changes, and the 2023-2025 path is untouched
+    # (rule 23 ``[R-FROZEN-DERIVE]`` — the frozen estimator is unmodified).
+    if not len(g.dropna(subset=["pjm_border"])):
+        print(
+            "  note: NO NEIGHBOUR OVERLAY — the PJM western-border DA and SPP "
+            "hub anchors do not cover this sample (both series start 2023). "
+            "The base ladder above is the whole of this year's entry, which is "
+            "the documented degradation of miso_seam_neighbour_* (never an "
+            "unpriced seam)."
+        )
+        for seam, s_ in offline_score(g, ladders).items():
+            print(
+                f"  offline P9 {seam}: {s_['sim_twh']:+.2f} TWh vs "
+                f"{s_['act_twh']:+.2f} actual; duration RMSE {s_['dur_rmse']:.0f} "
+                f"MW; import hours {s_['imp_hrs_sim']:.0f}% vs "
+                f"{s_['imp_hrs_act']:.0f}%; hourly corr {s_['hourly_corr']:+.2f}"
+            )
+        return
     nb, nb_notes = derive_pjm_neighbour(g)
     print(
         f'    # miso-225 NEIGHBOUR-ANCHORED "PJM" (PJM western-border DA ${border_mean:.2f}):'
