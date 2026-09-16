@@ -2244,3 +2244,6 @@ results/calibration/nyiso236_hydroperiod_span2025/
 !results/calibration/_shared/
 results/calibration/_shared/*
 !results/calibration/_shared/SPP/
+
+# soco-40: rule-29 screen bundle, kept out of main (rule 29(c)); bytes live on shard commit d6b7b7d4dc9571b4058fbc9d13487cd9edfee900 (git checkout d6b7b7d4dc9571b4058fbc9d13487cd9edfee900 -- results/calibration/_soco40_screen); never rm (rule 31)
+results/calibration/_soco40_screen/
