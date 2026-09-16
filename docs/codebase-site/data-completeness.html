@@ -28,7 +28,14 @@
     .dc-filters{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:var(--space-md);align-items:center}
     .dc-chip{border:1px solid var(--border-light);background:var(--bg-card);border-radius:18px;
       padding:5px 13px;font-size:.76rem;font-weight:600;cursor:pointer;color:var(--text-muted)}
-    .dc-chip.active{background:var(--hydro,#0EA5E9);color:#fff;border-color:var(--hydro,#0EA5E9)}
+    /* Active chip background is the design system's WCAG-safe blue
+       (--hydro-text #0369A1), NOT --hydro #0EA5E9: measured by lane SOCO-34,
+       white-on---hydro is 2.77:1 and this chip is normal text (0.76rem/600), so
+       it failed AA at both the 4.5:1 and the 3:1 bar. White on --hydro-text is
+       5.93:1. Same hue family, no new colour introduced, and the token already
+       exists for exactly this purpose. Applies to every chip including the SOCO
+       filter this lane added -- one shared style, no per-region value. */
+    .dc-chip.active{background:var(--hydro-text,#0369A1);color:#fff;border-color:var(--hydro-text,#0369A1)}
     /* per-year completeness strip */
     .yr-strip{display:grid;grid-template-columns:repeat(9,1fr);gap:6px;margin-bottom:var(--space-md)}
     .yr-cell{background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius-md);
@@ -357,12 +364,14 @@
     // normalise cov chars to lowercase (uppercase P in data = same as p, just eye-catching in source)
     const covOf = r => r.cov.toLowerCase();
     const rowComplete = r => covOf(r).split('').every(c => c==='y' || c==='b' || c==='x');
-    const ISOS = ['all','ERCOT','CAISO','PJM','MISO','NYISO','NEISO','SPP','NWPP'];
+    const ISOS = ['all','ERCOT','CAISO','PJM','MISO','NYISO','NEISO','SPP','NWPP','SOCO'];
     // THREE regions registered AFTER this page's 2026-07-10 census -- SPP on
     // 2026-09-06 (lane SPP-20), NWPP and SOCO both on 2026-09-14 (NWPP-20,
     // SOCO-20) -- so none of them has an audited row yet. config/iso_configs.
-    // _ISO_BUILDERS carries NINE regions; SOCO's filter entry is owed by that
-    // program's own site lane and is deliberately not added here.
+    // _ISO_BUILDERS carries NINE regions and all nine are filterable here since
+    // lane SOCO-34 added SOCO (2026-09-16). Selecting any of the three shows an
+    // empty table until a census covers it: that is the honest state, not a
+    // rendering fault.
     // The cross-ISO wildcard labels below ("all 6 ISOs", "all ISOs", "all
     // states") were written about the six ISOs registered at census time and
     // were never checked for the post-census three -- so they deliberately do

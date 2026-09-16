@@ -33,8 +33,15 @@ from pathlib import Path
 _REPO_DEFAULT = Path(__file__).resolve().parents[2]
 
 # Display order for dashboards (mirrors build_status.ISO_ORDER; index.json is
-# the runtime source of truth — this is only the fallback).
-DEFAULT_ISO_ORDER = ("ERCOT", "PJM", "CAISO", "NYISO", "NEISO", "MISO")
+# the runtime source of truth — this is only the fallback). ``iso_list`` appends
+# any shard not named here rather than dropping it, so an unlisted region still
+# appears; the tuple only decides order. SOCO added 2026-09-16 (lane SOCO-34) as
+# the ninth registered region — it has no shard until lane SOCO-40 registers its
+# first keeper, so this is pre-wiring, not a claim that one exists. SPP and NWPP
+# are still absent and fall through to the append tail; those are their own desks'
+# gaps, routed by SOCO-34. This module is deliberately STDLIB-ONLY, so it cannot
+# import ``SUPPORTED_ISOS`` — hence the hand-maintained mirror.
+DEFAULT_ISO_ORDER = ("ERCOT", "PJM", "CAISO", "NYISO", "NEISO", "MISO", "SOCO")
 
 
 def _data_dir(repo_root: Path | str | None) -> Path:

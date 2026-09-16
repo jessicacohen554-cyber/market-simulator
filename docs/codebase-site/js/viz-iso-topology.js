@@ -14,11 +14,11 @@ const DATA_URL = 'data/iso-topologies.json';
 const MOUNT_ID = 'viz-iso-topology';
 
 /* Registration order of config/iso_configs._ISO_BUILDERS, which carries NINE
-   regions at this writing (2026-09-14). SOCO registered the same day as NWPP
-   but has no block in iso-topologies.json yet — buildTabBar skips any key the
-   data file does not carry, so listing it here early would be harmless; it is
-   left to the SOCO desk's own lane rather than pre-empted. */
-const ISO_ORDER = ['ERCOT', 'CAISO', 'PJM', 'MISO', 'NYISO', 'NEISO', 'SPP', 'NWPP'];
+   regions at this writing (2026-09-16). All nine are serialized in
+   iso-topologies.json since lane SOCO-34 added SOCO's block; buildTabBar skips
+   any key the data file does not carry, so this list stays fail-safe if a
+   region is registered before it is serialized. */
+const ISO_ORDER = ['ERCOT', 'CAISO', 'PJM', 'MISO', 'NYISO', 'NEISO', 'SPP', 'NWPP', 'SOCO'];
 
 /* ISO accent colors (matches CSS --iso-* vars) */
 const ISO_COLORS = {
@@ -30,6 +30,7 @@ const ISO_COLORS = {
   NEISO: '#9C27B0',
   SPP:   '#14B8A6',
   NWPP:  '#65A30D',
+  SOCO:  '#6366F1',
 };
 
 /* Import-node zone names (styled differently) */
@@ -109,6 +110,20 @@ const GEO_HINTS = {
     'NWPP-INLAND': [0.46, 0.34],
     'NWPP-EAST':   [0.82, 0.44],
     'NWPP-SNV':    [0.54, 0.90],
+  },
+  /* Three zones named for their GEOGRAPHY, never for an operating company
+     (iso_configs._soco_config, owner card S3) — SOCO is a SINGLE balancing
+     authority, not an ISO and not a pool. Placed on the real footprint:
+     SOCO_MS is Mississippi Power's southeastern-Mississippi service area
+     (west and south, toward the Gulf), SOCO_AL is Alabama plus the six SERC
+     Florida-panhandle plants that interconnect west, SOCO_GA is Georgia
+     weighted to the Atlanta load centre. The chain is deliberate: Mississippi
+     connects to the system through Alabama, not Georgia, so SOCO_AL is the
+     middle node carrying both links. */
+  SOCO: {
+    SOCO_MS: [0.12, 0.72],
+    SOCO_AL: [0.46, 0.50],
+    SOCO_GA: [0.84, 0.34],
   },
 };
 
@@ -335,8 +350,21 @@ function renderISO(isoName, isoData, container) {
     .attr('font-size', d => nodeRadius(d) < 20 ? '9px' : '10px')
     .attr('font-weight', '600')
     .attr('font-family', 'DM Sans, sans-serif')
-    .attr('fill', color)
-    .attr('fill-opacity', 0.90)
+    /* ACCENT-AGNOSTIC CONTRAST GUARD (lane SOCO-34, 2026-09-16). The label used
+       to be drawn in `color` — the SAME accent as the circle it sits on, whose
+       fill is that accent at 0.18 over the dark graph area — so it could never
+       contrast with its own background. Measured against the real layering
+       (navy #1A2744 + glass panel 0.06 + graph area 0.02 => #2C3853, circle =
+       accent@0.18 over that), 9-10px/600 is NORMAL text at the 4.5:1 bar and
+       ALL NINE regions failed: NEISO 1.63:1, SOCO 2.05:1, NYISO 2.26:1,
+       NWPP 2.72:1, PJM 2.91:1, MISO 2.97:1, SPP 3.18:1, ERCOT 3.39:1,
+       CAISO 3.60:1. White at 0.95 gives 8.04-10.09:1 on the circle and
+       ~10.7:1 where a label overhangs onto the backdrop, worst case 8.04:1.
+       The circle's accent FILL and accent STROKE are untouched, so the region
+       colour coding is fully preserved and no per-region value is encoded
+       (rule 25 [R-ISO-SCOPE]) — this fixes all nine at once. */
+    .attr('fill', '#FFFFFF')
+    .attr('fill-opacity', 0.95)
     .text(d => {
       const lbl = d.label;
       /* Truncate long labels */

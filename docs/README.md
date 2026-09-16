@@ -122,9 +122,11 @@ produced is L3.)
 > (`docs/codebase-site/calibration-status.html`); treat the snapshots as history.
 
 Living log/reference docs also tracked outside this table (frequently appended, not
-row-indexed to avoid churn): [`calibration-log.md`](calibration-log.md),
-[`calibration-session-log.md`](calibration-session-log.md), and the repo-root
-[`../CHANGELOG.md`](../CHANGELOG.md).
+row-indexed to avoid churn): [`calibration-log.md`](calibration-log.md) (the frozen
+archive, ≤ 2026-07-19) plus its per-region continuations
+[`calibration-log/<iso>.md`](calibration-log/) — one per registered region, with
+`governance.md` for cross-region rulings — [`calibration-session-log.md`](calibration-session-log.md),
+and the repo-root [`../CHANGELOG.md`](../CHANGELOG.md).
 
 ## Moved
 

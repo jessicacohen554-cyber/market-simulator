@@ -398,7 +398,13 @@
          and a tooltip swatch helper. Uses shared.css design tokens.
    --------------------------------------------------------------------------- */
 
-/* ISO-colored tab accents (topology tab bar) */
+/* ISO-colored tab accents (topology tab bar). Fallback path only:
+   viz-iso-topology.js::buildTabBar sets --iso-accent inline on every tab from
+   its own ISO_COLORS map, and an inline custom property wins over these rules.
+   They matter when the tab markup is authored in HTML rather than built by that
+   script. NWPP (registered 2026-09-14) has no row here — an NWPP-desk gap,
+   cosmetically inert for the reason above; routed by lane SOCO-34, not filled
+   here (another region's wiring). */
 .tabs__tab[data-iso="ERCOT"] { --iso-accent: var(--iso-ercot); }
 .tabs__tab[data-iso="CAISO"] { --iso-accent: var(--iso-caiso); }
 .tabs__tab[data-iso="PJM"]   { --iso-accent: var(--iso-pjm); }
@@ -406,11 +412,33 @@
 .tabs__tab[data-iso="NYISO"] { --iso-accent: var(--iso-nyiso); }
 .tabs__tab[data-iso="NEISO"] { --iso-accent: var(--iso-neiso); }
 .tabs__tab[data-iso="SPP"]   { --iso-accent: var(--iso-spp); }
+.tabs__tab[data-iso="SOCO"]  { --iso-accent: var(--iso-soco); }
 
 .tabs__tab.active[data-iso] {
   color: var(--iso-accent);
   border-bottom-color: var(--iso-accent);
 }
+
+/* ACCENT-AGNOSTIC CONTRAST GUARD for the active tab's TEXT inside a dark
+   section — the same shape of fix, and the same reason, as the .iso-badge
+   overlay SPP-34 installed (FINDING-spp-34-2026-09-07.md §7 S-2): a raw ISO
+   accent is a mid-tone hue chosen to read against WHITE, and the topology tab
+   bar lives in `.section-dark` (network.html:326). Measured by lane SOCO-34
+   against the real layered backdrop — navy #1A2744 + .glass-chart-panel
+   rgba(255,255,255,0.06) + .section-dark .tabs__tab.active rgba(255,255,255,0.05)
+   = #333E58 — accent-as-text FAILED WCAG AA on SEVEN of the nine registered
+   accents: NEISO 1.69:1, SOCO 2.39:1, NYISO 2.45:1, NWPP 3.45:1, MISO 3.80:1,
+   PJM 3.84:1, SPP 4.28:1; only ERCOT 4.68:1 and CAISO 4.96:1 passed. Forcing
+   the LABEL to #fff gives 10.66:1 for every region, while the accent stays on
+   the 2px bottom border and on the graph nodes, so the colour coding is
+   untouched — and the active state is independently carried by the border, the
+   5 % background wash and aria-selected, none of which this rule changes.
+   `!important` is what beats viz-iso-topology.js's INLINE `btn.style.color =
+   ISO_COLORS[iso]` (set on build and on every click); this is deliberately
+   accent-agnostic, so it encodes no per-region value and no ISO's tuned number
+   crosses into another's (rule 25 [R-ISO-SCOPE]) — it fixes all nine at once
+   rather than only the region whose lane happened to notice. */
+.section-dark .tabs__tab.active[data-iso] { color: #fff !important; }
 
 /* Tooltip color swatch (used inside .tooltip__key rows) */
 .tooltip__swatch {

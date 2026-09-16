@@ -87,7 +87,15 @@
       't1f': 'T1-F', 't1x': 'T1-X', 't1h': 'T1-H', 'poc': 'POC', 'battery': 'Battery',
       't2': 'T2', 't3': 'T3', 'pb': 'PB', 'scenario': 'Scenario',
     };
-    const ISO_ORDER = ['ERCOT', 'CAISO', 'PJM', 'MISO', 'NYISO', 'NEISO', 'SPP', 'ALL'];
+    /* Sort comparator for the region chips only -- the chip SET comes from
+       META.isos, so a registered region with no forecast run never appears here
+       at all. Order matters because indexOf returns -1 for an unlisted region,
+       which sorts it BEFORE ERCOT rather than after the known ones; SOCO was
+       added by lane SOCO-34 (2026-09-16) so it lands in registration order if
+       and when the forecast program reaches it. 'ALL' (program-wide) stays last.
+       NWPP is still unlisted and carries that -1 behaviour -- an NWPP-desk gap,
+       routed by SOCO-34 rather than filled here. */
+    const ISO_ORDER = ['ERCOT', 'CAISO', 'PJM', 'MISO', 'NYISO', 'NEISO', 'SPP', 'SOCO', 'ALL'];
 
     /* -------- helpers -------- */
     const esc = s => String(s == null ? '' : s)

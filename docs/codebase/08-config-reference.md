@@ -101,11 +101,16 @@ EIA-860 Schedule-3 fossil date is an exogenous step-1b exit and its plant is
 **exempt** from the economic screen, so `forecast_fossil_retirement_economic=True`
 now governs only the residual **undated** fossil fleet.
 `reserve_margin_build_enabled=None` (**tri-state** — resolves ON for the five
-capacity-market ISOs, OFF for energy-only ERCOT and for any ISO absent from
-`MARKET_DESIGN`, which since 2026-09-06 includes energy-only SPP),
+capacity-market ISOs, OFF for energy-only ERCOT and for any region absent from
+`MARKET_DESIGN`. `MARKET_DESIGN` carries six keys — ERCOT, CAISO, PJM, NYISO,
+NEISO, MISO — so all three regions registered since 2026-09-06 resolve OFF
+through `DEFAULT_MARKET_DESIGN`: energy-only SPP, NWPP, and SOCO, which is
+vertically integrated with a bilateral resource-adequacy obligation against an
+IRP rather than any auction, and is deliberately absent by owner card S6),
 `planning_reserve_margin=0.1375` (the per-ISO `PLANNING_RESERVE_MARGIN_BY_ISO`
 registry leads: ERCOT 0.1375, CAISO 0.15, PJM 0.178, MISO 0.157, NYISO 0.244,
-NEISO 0.1277, SPP 0.16). (`retirement_reserve_margin` was **deleted** with the
+NEISO 0.1277, SPP 0.16, NWPP 0.144, SOCO 0.26 — SOCO's is the winter reserve
+margin, the binding season for a winter-peaking footprint). (`retirement_reserve_margin` was **deleted** with the
 floor-accreditation rebuild — rule 26 `[R-DELETE]`; it is no longer a field.)
 
 ### Storage
@@ -156,6 +161,13 @@ curves): `cc_committed_hr_mult=1.23` / `cc_econ_hr_mult=0.96`, with `ct_*`,
   stack, which lever SPP-55 designs; co-optimization is lever SPP-56, queued
   last. `voll=2000.0` = the FERC Order 831 cost-verified ceiling (ruling P10;
   SPP's posted Safety-Net Energy Offer Cap is the lower $1,000/MWh).
+- **SOCO**: **none, and structurally so** (owner card S5). SOCO registered with
+  an empty `default_scenario_overrides` because there is nothing to seed: a
+  single vertically-integrated balancing authority runs no reserve market, posts
+  no offer cap and sets no administrative scarcity price, so there is no
+  published ladder for an ORDC/RCPF analogue to reproduce. Its `voll=61900.0` is
+  therefore **not** an Order 831 ceiling standing in for scarcity — it is a
+  derived economic value of lost load used only as the LP's slack penalty (§8.2).
 - **Reserve co-optimization**: `energy_reserve_coopt`,
   `ercot_multiproduct_as_coopt`.
 
@@ -182,6 +194,13 @@ removed):
 - **SPP**: none. No floor, bridge or derate is registered for SPP — its first
   keeper (lane SPP-40) is built without one, so any later floor arrives through
   rule 17 `[R-FLOOR-WINDOW]` with its own driver and window.
+- **SOCO**: none. There is no `reliability_floor_coeffs_SOCO.csv`, so
+  `RELIABILITY_FLOOR_REGISTRY["SOCO"]` is an empty limb list and no floor, bridge
+  or derate exists for the region; its first keeper (lane SOCO-40) is built
+  without one. Note that a cost-based pooled system is *commitment-heavy* by
+  construction — the temptation to floor it is real — so any later floor arrives
+  through rule 17 `[R-FLOOR-WINDOW]` with a declared driver, window and forward
+  story, not as a residual patch.
 
 ### Transmission / interchange
 
@@ -199,6 +218,18 @@ no `IMPORT_ZONE` / `IMPORT_NODE_LINKS` entry, so `--priced-interchange` builds
 no seam for SPP at HEAD; lane SPP-51 (2026-09-07) killed the spread-clearing
 arm at rule-29 phase 0 on the measured record and routed the two-bus topology
 any LP test needs (`docs/handoffs/FINDING-spp-51-2026-09-07.md`).
+
+**SOCO** is served the same way — `_SCALAR_INTERCHANGE_ISOS["SOCO"] =
+soco_net_interchange` (owner card S4, on the SPP precedent), and like SPP it has
+no `IMPORT_ZONE` / `IMPORT_NODE_LINKS` entry, so no import node and no priced
+seam is built at HEAD. The sign matters for reading a SOCO solve: SOCO is a net
+**exporter** of +10.2 / +10.8 / +13.0 TWh in 2023 / 2024 / 2025, so the served
+series *raises* what the internal fleet must generate in most hours (the opposite
+of NWPP, a net importer over 2023–2024). Its eight `INTERFACE_NEIGHBORS["SOCO"]`
+blocks — `SOCO_TVA`, `SOCO_MISO`, `SOCO_DUK`, `SOCO_SCEG`, `SOCO_SC`, `SOCO_FPL`,
+`SOCO_FPC`, `SOCO_TAL` — are registered **default-off** for lever **SOCO-56**;
+`SOCO_TVA` is the one genuinely two-way seam (−3,150 .. +3,007 MW, exporting in
+27 / 18 / 28 % of hours).
 
 ## 8.2 ISO topology (`iso_configs.py`)
 
@@ -221,16 +252,38 @@ name downstream says "ISO", but the last two are not ISOs: **NWPP** is a pool of
 | **NEISO** | 5: North, Central, Boston, Connecticut, HQ_import | 7 | import pockets + HQ Phase-II HVDC node; `HQ_import_simultaneous` 3,850 MW cap |
 | **SPP** | 2: SPP-North, SPP-South | 1 | registered 2026-09-06 (lane SPP-20, owner rulings P1/P10). The single N↔S link's TTC is **3,400 MW** — the rule-14 `[R-ACCURATE]` reconciled corridor limit lever **SPP-53** derived from SPP's own published flowgate limits, which replaced SPP-20's 48,700 MW Tier-3 placeholder. Unlike that placeholder it **can** bind. No import node: the seams are the served EIA-930 `Total interchange` schedule plus three default-off `NeighborInterface` blocks (MISO / AECI / ERCOT). VOLL $2,000 |
 | **NWPP** | 5: NWPP-NW, NWPP-OR, NWPP-INLAND, NWPP-EAST, NWPP-SNV | 9 | registered 2026-09-14 (lane NWPP-20, owner rulings N1/N3–N8). **A pool of ~17 balancing authorities, not an ISO** — each zone is a BA group. Six of the nine links are cited WECC path limits (Tier-1 Path 35 / Path 16, Tier-2 Path 20 and the aggregated Paths 8+6+14); the symmetric NW↔OR link is a **Tier-3 documented-absence placeholder that cannot bind** (43,600 MW). No import node. VOLL $2,000 — **DECLARED INTERIM** and a ledgered rule-21 `[R-DOF]` free parameter: FERC Order 831's $2,000 applies by its terms to RTOs/ISOs and NWPP is neither, so the value is the WEIM hard offer cap standing in for a customer damage function that does not exist |
-| **SOCO** | 3: SOCO_AL, SOCO_GA, SOCO_MS | 2 | registered 2026-09-14 (lane SOCO-20). **A single balancing authority, not an ISO** — Southern Company's operating companies are dispatched as one integrated system under the IIC, so no inter-OpCo transfer limit is published and both TTCs register **Tier-3 and cannot bind**. VOLL $2,000 |
+| **SOCO** | 3: SOCO_AL, SOCO_GA, SOCO_MS | 2 | registered 2026-09-14 (lane SOCO-20, owner cards S1/S3–S7/S9/S11/S12). **A single balancing authority, not an ISO** — Southern Company Services – Trans runs cost-based pooled dispatch under the Intercompany Interchange Contract with no day-ahead market, no LMP, no capacity auction and no offer cap, so every offer-curve band multiplier is the identity and there are no `default_scenario_overrides`. Zones are named for **geography, never for an operating company** (card S3); MS reaches the system through AL, not GA, so AL is the middle node. Both links are **Tier-3 documented-absence placeholders that cannot bind** — the OpCos "function as a single, integrated public-utility system" and publish no internal interface rating, so each TTC is the smaller side's EIA-860 2025 winter capability (AL↔GA 24,400 MW, AL↔MS 4,300 MW) and the real value is pre-declared lever **SOCO-54**. The static `load_share`s (0.3510 / 0.5842 / 0.0648) are an EIA-860 **fleet-MW fallback, NOT a load share** — lane SOCO-32 replaces them with FERC-714 hourly shapes. No import node: the seams are the served EIA-930 `Total interchange` (a net exporter, +10.2/+10.8/+13.0 TWh) plus eight default-off `NeighborInterface` blocks (lever SOCO-56). **VOLL $61,900** — see below, this is the one region that is not $2,000 |
 
 Zone names above are shown unprefixed for readability; in `iso_configs.py` the
 literal `Zone.name` strings for PJM, MISO, SPP, NWPP and SOCO carry a region
 prefix — `PJM_ComEd`, `MISO-West`, `SPP-North`, `NWPP-NW`, `SOCO_AL`, etc.
 (ERCOT, CAISO, NYISO, NEISO zone names are unprefixed as listed).
 
-VOLL is $2,000/MWh for all eight non-ERCOT regions (FERC Order 831 / tariff
-caps) — with the NWPP caveat noted in its row: Order 831 does not reach a pool
-that is neither an RTO nor an ISO, so NWPP's $2,000 is interim and ledgered.
+VOLL is $2,000/MWh for **seven** of the eight non-ERCOT regions (FERC Order 831 /
+tariff caps), with two exceptions that both follow from a region not being an
+ISO:
+
+- **NWPP — $2,000 but DECLARED INTERIM** and a ledgered rule-21 `[R-DOF]` free
+  parameter: Order 831 applies by its terms to RTOs/ISOs and NWPP is neither, so
+  the value is the WEIM hard offer cap standing in for a customer damage
+  function that does not exist.
+- **SOCO — $61,900**, the only region not on $2,000. SOCO takes no offers and
+  has no offer cap, so there is no tariff referent to inherit; the field is what
+  it always was in the LP — the slack (load-shed) penalty, an *economic* value of
+  lost load — and it is derived rather than borrowed: LBNL/DOE "ICE Calculator 2"
+  (2026-02-27, OSTI 3021993) cost per unserved kWh at the 2-hour interruption
+  column, weighted by the EIA-861 2024 retail-sales customer mix over the 85
+  utility rows with BA code `SOCO` — 0.4009 × $5,030 + 0.5991 × $100,000 =
+  $61,927 → $61,900/MWh. The construction was fixed in
+  `PRECOMMIT-soco-20-2026-09-14.md` §3 before the number was written. Honest
+  width, reported and never selected on: the 8 h column gives $32,384 and the
+  24 h column $19,447. Stated misalignment: ICE 2's cost functions are national
+  pooled models, so the "Southeast" leg is the customer-class **mix**, not a
+  regional cost function.
+
+Because this is the slack penalty, SOCO's VOLL is ~31× the $2,000 regions': any
+unserved energy in a SOCO solve dominates the objective far more sharply than in
+an ISO footprint, which is worth knowing before reading a SOCO dual.
 
 ## 8.3 Constants catalogue (`constants.py`, ~3,900 lines)
 
