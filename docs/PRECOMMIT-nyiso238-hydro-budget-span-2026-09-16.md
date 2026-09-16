@@ -147,3 +147,41 @@ FAILURE.**
   goes to the owner with both arms' numbers.
 * Rule 33 `[R-SHARD-ARCHIVE]`: the shard is archived once the parent has fetched, checked out and
   verified its bundle, and its recovery is recorded by **full SHA**.
+
+---
+
+## ADDENDUM 1 (2026-09-16, BEFORE any bundle landed) — **PER-YEAR FAN-OUT, ON OWNER INSTRUCTION**
+
+**Owner instruction, verbatim: "What the fuck one shard PER YEAR no screen".** §5 above launched the
+span as ONE shard per rule 32(b) `[R-SHARD]`. That shard (`session_01Cyb9mZQoSzj3JsqX6JKmqV`) was
+**interrupted and archived** ~5 min in, and the span is now **four parallel per-year shards**:
+
+| year | out-dir | branch | session |
+|---|---|---|---|
+| 2022 | `results/calibration/nyiso238_hydro_2022` | `claude/nyiso238-hydro-2022` | `session_01AsujaPD2wsZLYsXFSeGFxW` |
+| 2023 | `results/calibration/nyiso238_hydro_2023` | `claude/nyiso238-hydro-2023` | `session_01MpPddw87k3hs9UE3ehmHN4` |
+| 2024 | `results/calibration/nyiso238_hydro_2024` | `claude/nyiso238-hydro-2024` | `session_01PkVyNRV6MbxLjWxNEexApG` |
+| 2025 | `results/calibration/nyiso238_hydro_2025` | `claude/nyiso238-hydro-2025` | `session_01SwC4WmLGGKmp4qgEMJPEMF` |
+
+All four at the same pinned SHA `69c6d4a7e1b7c8e458373bc5ce9db51a5a7a6a39`, same one-field arm, same
+three hard stops, each pushing its OWN bundle under rule 34 `[R-SHARD-PROMOTABLE]` (a). Wall time
+~15 min instead of ~60.
+
+**WHICH READING OF RULE 32(b) THIS FOLLOWS, stated as the handoff requires.** Rule 32(b) bans slim
+per-year fan-out, and its stated reason is mechanical: a shard can only commit the *slim* file set,
+so the legs cannot be composed and the span has to be re-solved anyway. **That reason does not apply
+here, and the difference is the whole point:** each shard pushes its FULL bundle — `dispatch/<yr>_P1.parquet`
+and the bundle-root `system.parquet` included — via the rule 34(a) `.gitignore`-negation route, which
+is exactly the artifact set `render_calibration_html.build_payload` and the per-plant D-1/D-2/D-4
+diagnostics need. The legs therefore compose, which is the precondition rule 32(b)'s ban assumes is
+missing. The composition recipe is the one this lane already has on record (`RESULT-nyiso236` §4,
+owner-authorized for NYISO): every root parquet carries a `year` column, `meta.json` years/gas_prices
+merge, and `metrics.json` + `legitimacy_diagnostics.json` are regenerated **in the parent, zero LP**.
+
+**Nothing else in this PRECOMMIT changes** — not the arm, not the pinned SHA, not the G-DRIFT
+audit, and above all **not the gates in §3, which were written and pushed before any solve.** The
+"no screen" half of the instruction is already the posture of §0: this is not a screen, the arm was
+screened by nyiso-236 and its adjudication stands; what is being re-created is the lost artifact.
+
+**Rule 32(d) still binds the parent**: the per-year bundle dirs are kept OUT of `main`; the composite
+is what gets registered.
