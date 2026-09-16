@@ -2247,3 +2247,25 @@ results/calibration/_shared/*
 
 # soco-40: rule-29 screen bundle, kept out of main (rule 29(c)); bytes live on shard commit d6b7b7d4dc9571b4058fbc9d13487cd9edfee900 (git checkout d6b7b7d4dc9571b4058fbc9d13487cd9edfee900 -- results/calibration/_soco40_screen); never rm (rule 31)
 results/calibration/_soco40_screen/
+# miso-259 PER-YEAR arm bundles (2020/2021/2023/2024/2025; 2022 is the screen arm
+# above). Each is a WHOLE bundle — 17 files including dispatch/, system.parquet,
+# btm.parquet and floors/ — pushed by its own shard under rule 34
+# [R-SHARD-PROMOTABLE] (a). They stay OUT of `main` because rule 32 [R-SHARD] (d)
+# registers the COMPOSITE, not the per-year dirs, and an unregistered bundle dir
+# is a check_registry_payload_parity RED. Rule 31 [R-RETAIN] settles HOW: this
+# .gitignore discharges that duty, `rm` does not, and nothing here is deleted
+# until the owner has ruled on promotion.
+# Recovery by FULL SHA, never branch name — shard branches are auto-deleted
+# within minutes (rule 33 [R-SHARD-ARCHIVE] (d)):
+#   git checkout 921bcc06049fa695fa56560e3ff5abc859b10d6a -- results/calibration/miso259_coalinv_2020
+#   git checkout ed84346c2eee8deda2b4512940a7db84f6dad9dc -- results/calibration/miso259_coalinv_2021
+#   git checkout 597e3959b4a98471331e421440b2f26dfb30be07 -- results/calibration/miso259_coalinv_2023
+#   git checkout 1b39a8d9e9b5d63fd1c8aa0eea79d23927aa1b67 -- results/calibration/miso259_coalinv_2025
+#   (2024 still solving at this commit; its SHA is appended when its shard lands)
+/results/calibration/miso259_coalinv_2020/
+/results/calibration/miso259_coalinv_2021/
+/results/calibration/miso259_coalinv_2022/
+/results/calibration/miso259_coalinv_2023/
+/results/calibration/miso259_coalinv_2024/
+/results/calibration/miso259_coalinv_2025/
+/results/calibration/miso259_coalinv_span/
