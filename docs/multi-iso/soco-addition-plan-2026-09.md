@@ -274,7 +274,7 @@ SOCO-20 lands; before that, `shared`).
 | **SOCO-22** rubric class | **FABLE** · a scorer amendment every ISO's verdict path reads | code | `scripts/calibration_verdict.py` — ONE added determination branch keyed on the absence of an `actual_lmp.json` block; its tests; `FINDING-soco-22-*` | — | **byte-identical verdicts for all seven registered keepers**; the new branch unreachable by any of them; serves NWPP's card N2 too |
 | ~~**SOCO-20** registration~~ **LANDED r#6, graded PASS** | **FABLE** · the pin flip | shared→soco | every §2.3 row, ONE PR (#6152, merged as *"Register SOCO as the **ninth** region"*) | full test suite + `solve_surface_register.py --diff` **0 moved rows for all eight** incumbents | `_ISO_BUILDERS` is nine keys; seven keepers' `cache_key()` byte-identical; **every** remaining test failure carries a same-tree control that fails identically on main's code |
 | **SOCO-21** matrix shard | OPUS | code | `mechanism-matrix/SOCO.js`, base `isos`, `ISO_ORDER`/`ISO_EV_KEY`, `mechanism-matrix.html` tag, shard-migration test, dashboard colour | `scripts/check_mechanism_matrix.py` | ONE commit (gate G2) |
-| **SOCO-30/31/32/33** derivation | OPUS · frozen derives | soco | outages+tranches · benchmarks · zonal shares/solar shape/gas hub · seam derive | non-SOCO diff = ∅ (gate G9) | per-lane FINDING |
+| **SOCO-30/31/32/33** derivation | OPUS · frozen derives | soco | outages+tranches · ~~benchmarks~~ **LANDED (SOCO-31, 2026-09-16)** · zonal shares/solar shape/gas hub · seam derive | non-SOCO diff = ∅ (gate G9) — **SOCO-31 MEASURED IT AS EXACTLY ZERO**: eight pre-existing regions byte-identical on both `isos.<R>` and `egrid_benchmark.<R>`, 39/39 pre-existing capacity CSVs byte-identical | per-lane FINDING |
 | **SOCO-34** site + docs | OPUS | code | site JS/CSS prose, `docs/calibration-log/soco.md` header | `check_registry_payload_parity` | — |
 | **SOCO-40** first solve | **FABLE** · first-keeper determination | soco | ONE shard, ONE `--year 2023 2024 2025` invocation, ONE bundle, registration | preconditions: SOCO-30/31/32 landed | keeper registered with whatever determination it earns |
 
@@ -710,7 +710,7 @@ The desk issues these against the SPP program's own W3/W4 charters, which are co
 
 - **SOCO-30** (outages + tranches) — AL/GA CEMS only landed in W1; the per-plant binning recipe is
   `docs/binning-methodology.md`; **the CAES unit's mapping is card S7's ruling**, applied here.
-- **SOCO-31** (benchmarks) — `build_reference --isos SOCO` **merges**, so non-SOCO rows must diff
+- **SOCO-31** (benchmarks) — **LANDED 2026-09-16, `FINDING-soco-31-2026-09-16.md`.** `build_reference --isos SOCO` **merges**, so non-SOCO rows must diff
   to ∅ (gate G9); `actual_lmp.json` gets a SOCO block **only if SOCO-13 landed a series**, and the
   determination-side consequence of it not landing is card S2's ruling, applied here.
 - **SOCO-32** (zonal shares, solar shape, gas hub) — shares from FERC-714 (§2.5), **not** sub-BA;
@@ -1005,6 +1005,7 @@ the desk appends it VERBATIM to the log and cannot write it for you; plan §5 ro
 | SOCO-21 | `FINDING-soco-21-2026-09-13.md` — the **eighth** matrix shard, one commit; 327 ids = 168 `U` + 159 `·`; keeper/gates empty by design, **no verdict minted** | 2026-09-14 |
 | SOCO-22 | `FINDING-soco-22-2026-09-13.md` + `PRECOMMIT-…` — rubric **v3.8**; **all seven keepers re-score byte-identically** (the only diff on 54 verdict files is `rubric_version` 3.7 → 3.8, declared in the PRECOMMIT before the edit); `PHYSICALLY-CALIBRATED (PRICE UNSCORED)`, never `CALIBRATED`; **NWPP has already adopted it** | 2026-09-14 |
 | SOCO-12 | `docs/handoffs/FINDING-soco-12-2026-09-13.md` — **gate G12 MET**; SEEM corrected (live **Nov 2022**; its **auditor** publishes a monthly price series; FERC settlement 2026-01-05 will oblige hourly posting); PRM 26 % W / 20 % S; NRC ×8; delivered gas | 2026-09-13 (PR #6092) |
+| SOCO-31 | `docs/handoffs/FINDING-soco-31-2026-09-16.md` — **the scoring benchmarks; GATE G9 PASSES with the non-SOCO diff measured as EXACTLY ZERO** (eight regions byte-identical, 39/39 CSVs byte-identical, whole-file +295/−1 with the one deletion the `generated` stamp); SOCO 2023–2025 demand 229.47 / 238.70 / 239.56 TWh and a **net EXPORT of +10.16 / +10.81 / +13.03 TWh every year**; `actual_lmp.json` UNTOUCHED and the G6 skip **verified by execution** (both derives emit zero SOCO rows), G17 upheld; **R-i stated for the determination basis** — 1,306.6 MW of pumped storage UNOBSERVABLE in EIA-930 for 2023 and 99.7 % of 2024 | 2026-09-16 |
 
 ## 10. Ledger
 
