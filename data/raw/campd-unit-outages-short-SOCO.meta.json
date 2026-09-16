@@ -1,0 +1,35 @@
+{
+  "artifact": "campd-unit-outages-short-SOCO.csv",
+  "artifact_rows": 34,
+  "derive_invocation": {
+    "fullstop_override_cf": 0.02,
+    "fullstop_override_days": 5,
+    "high_load_pctl": 0.85,
+    "iso": "SOCO",
+    "merit_order_guard": false,
+    "min_inmerit_hours": 6,
+    "min_outage_days": 1.0,
+    "mixed_gas_routing": false,
+    "no_inmerit_filter": false,
+    "partial_windows": false,
+    "per_unit_crosswalk": false,
+    "short_windows": true,
+    "years": [
+      2023,
+      2024,
+      2025
+    ]
+  },
+  "deriver": "scripts/data/derive_campd_unit_outages.py",
+  "observed_years": [
+    2023,
+    2024,
+    2025
+  ],
+  "sidecar_schema_version": 1,
+  "windows_by_start_year": {
+    "2023": 8,
+    "2024": 10,
+    "2025": 16
+  }
+}
