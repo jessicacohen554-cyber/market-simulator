@@ -40,7 +40,11 @@ class TestLadderRegistry(unittest.TestCase):
         seams = {n.name for n in INTERFACE_NEIGHBORS["MISO"]} | {
             MISO_MANITOBA_SEAM_SPEC.name
         }
-        for year in (2023, 2024, 2025):
+        # 2022 armed by miso-252, 2020 + 2021 by miso-260 — the whole
+        # backcast span the ISO scores, so an unarmed year cannot reappear
+        # silently and drop its seams back onto the flat gas-elastic
+        # reference price (miso-252 §2.4's bang-bang).
+        for year in (2020, 2021, 2022, 2023, 2024, 2025):
             self.assertIn(year, MISO_SEAM_LADDER_BY_YEAR)
             ladder = MISO_SEAM_LADDER_BY_YEAR[year]
             self.assertEqual(set(ladder), seams)
@@ -92,8 +96,12 @@ class TestLadderRegistry(unittest.TestCase):
         one did: miso-243 reported it as per-seam maxima and could not fix it
         (a different object, outside that session's queue item).
 
-        WHAT IS PINNED.  All 192 entries reproduce at ``atol=0.005`` — a half
-        cent, the SPP-hourly pin's own bar — with NO exceptions.
+        WHAT IS PINNED.  All 384 entries reproduce at ``atol=0.005`` — a half
+        cent, the SPP-hourly pin's own bar — with NO exceptions.  (192 when
+        this test was written over 2023-2025; 256 once miso-252 armed 2022;
+        384 since miso-260 armed 2020 + 2021 on the same frozen estimator,
+        which reproduced every previously-committed entry at max |diff|
+        0.0000 — the evidence that the back-fill changed no armed year.)
 
         THE TABLE WAS RECONCILED BY miso-245 (2026-09-08).  miso-244 found
         three entries adrift from their own ``derive()`` by exactly one cent

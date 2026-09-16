@@ -1902,6 +1902,102 @@ MISO_PJM_BORDER_HR_BY_YEAR: dict[int, float] = {
 # below only); displaces miso_pjm_border_anchor / miso_pjm_lmp_import_pricing
 # on the rows it prices (alternatives, never stacked).
 MISO_SEAM_LADDER_BY_YEAR: dict[int, dict[str, dict[str, tuple[float, ...]]]] = {
+    # 2020 + 2021 added by miso-260 (2026-09-16), completing the back-fill
+    # miso-252 could only half-finish. RULE 23 [R-FROZEN-DERIVE] BASIS: THE
+    # SOURCE DATA UPDATED, on 2026-09-13, in the two commits that close the two
+    # halves `FINDING-miso252-seam-fallback-and-the-923-block-2026-09-10.md` §3(a)
+    # named as blocking:
+    #   * `f9259f91` landed MISO's 2020 and 2021 hourly DA/RT hub LMPs into
+    #     `data/raw/_validation-source/actual_lmp_hourly_MISO.parquet` (8,760 h
+    #     each; 2021 DA 8,736 of 8,760) — the price half of the Q-Q coupling,
+    #     which in that finding's table read "2022-2026" and was the reason
+    #     miso-252 could arm 2022 and no earlier year;
+    #   * `00249712` widened `data/raw/eia-930-interchange/MISO interchange
+    #     hourly.parquet` to 2020-2026 — the flow half, which that same table
+    #     recorded as "2023-2025, binding blocker" and which is false at HEAD.
+    # NOT re-derived because a residual moved, and 2022-2025 below are LEFT
+    # EXACTLY AS COMMITTED: `scripts/data/derive_miso_seam_ladders.py` at HEAD
+    # reproduces all four committed years at **256 of 256 entries, max |diff|
+    # 0.0000** (`scripts/probes/_miso260_seam_phase0.py`), so their source data
+    # did not change and rule 23 forbids touching them. The rows below are
+    # verbatim from that same frozen script, same construction, no new
+    # parameter: every number is a quantile of a measured series at a
+    # structurally fixed depth grid (rules 21 [R-DOF] / 24 [R-REGISTRY] — zero
+    # free parameters, zero new ScenarioConfig fields).
+    #
+    # WHAT IT REPLACES, measured off the incumbent keeper's own committed
+    # `unit_hourly` seam-band marginal costs (2026-09-16-miso-259-coal-fuel):
+    # with no entry `inject_miso_seam_ladder_prices` returns at its first guard
+    # and every band takes the flat gas-elastic reference price, which in these
+    # two years is **degenerate across the band grid** —
+    #   2021 South: all 8 import bands at $41.97 and all 8 export bands at
+    #     $37.97, against a measured import ladder rising $65.86 -> $266.26;
+    #   2021 Manitoba: import AND export at the SAME $39.97, i.e. a same-seam
+    #     wash the ladder's no-wash reconciliation forbids by construction;
+    #   2021 PJM import: $48.49 -> $49.02, a $0.53 spread over eight bands,
+    #     against a measured $16.17 -> $82.19;
+    #   2020 South: all 16 bands at $26.55 / $22.55; 2020 Manitoba: $24.55 both
+    #     directions.
+    # A band grid with no spread clears all-or-nothing, which is the bang-bang
+    # miso-252 §2.4 measured (2021: four PJM import bands pinned within 1% of
+    # their own maximum in EVERY hour of the year). It also inverts the seam
+    # merit order: 2021 prices PJM imports ($48.5) ABOVE their measured floor
+    # ($16.17) and South imports ($41.97) BELOW theirs ($65.86).
+    #
+    # MEASURED PER-SEAM CONSEQUENCE under the incumbent, model net flow vs the
+    # EIA-930 measured net (TWh), sum of |per-seam error| over the four seams:
+    #   2020 **36.29**, 2021 **25.41** (both unarmed) against 2022 8.84,
+    #   2023 4.11, 2025 5.21 (all ladder-armed). Two seams carry the WRONG SIGN
+    #   in the unarmed years: 2021 SPP model -2.98 vs measured +2.15, 2021
+    #   South model +1.69 vs measured -7.66, 2020 South model +3.44 vs -2.93.
+    #
+    # NO NEIGHBOUR OVERLAY FOR 2020/2021, the same data boundary 2022 states:
+    # `pjm_border_lmp_hourly_MISO.parquet` and the SPP hub series both start in
+    # 2023, so the overlay tables carry no 2020/2021 key and the code degrades
+    # to THIS base ladder — never to an unpriced seam — which is the documented
+    # behaviour of `miso_seam_neighbour_*`, not a new path.
+    #
+    # Anchor: MISO hub DA mean $22.99 (2020, 8,760 priced hours) / $40.97
+    # (2021, 8,739). Derive-script notes: none — the same-seam no-wash ordering
+    # holds naturally in both years, with no clamp.
+    2020: {
+        "PJM": {
+            "import": (8.09, 8.09, 10.14, 14.14, 17.88, 21.60, 26.74, 37.26),
+            "export": (7.44, 7.44, 7.44, 7.44, 7.44, 7.44, 7.44, 7.44),
+        },
+        "SPP": {
+            "import": (19.88, 25.41, 36.84, 55.39, 71.10, 81.95, 81.95, 81.95),
+            "export": (14.76, 11.18, 8.42, 7.44, 7.44, 7.44, 7.44, 7.44),
+        },
+        "South": {
+            "import": (25.69, 30.39, 36.98, 45.51, 55.00, 62.85, 69.97, 81.95),
+            "export": (22.75, 20.40, 18.03, 15.74, 13.22, 11.24, 9.66, 8.88),
+        },
+        # Manitoba (MHEB) two-way seam — miso-74; P9 +10.79 vs measured +10.80 TWh.
+        "Manitoba": {
+            "import": (14.24, 16.96, 19.11, 21.46, 24.75, 33.92, 44.87, 81.95),
+            "export": (11.16, 9.78, 8.09, 7.44, 7.44, 7.44, 7.44, 7.44),
+        },
+    },
+    2021: {
+        "PJM": {
+            "import": (16.17, 17.34, 19.62, 23.62, 33.60, 52.07, 69.72, 82.19),
+            "export": (14.21, 14.21, 14.21, 14.21, 14.21, 14.21, 14.21, 14.21),
+        },
+        "SPP": {
+            "import": (31.27, 56.65, 87.17, 252.38, 547.48, 547.48, 547.48, 547.48),
+            "export": (22.59, 20.10, 18.92, 18.54, 18.08, 17.69, 17.02, 15.66),
+        },
+        "South": {
+            "import": (65.86, 76.38, 85.33, 97.28, 123.47, 150.94, 193.47, 266.26),
+            "export": (53.43, 43.33, 33.67, 27.17, 23.37, 20.90, 18.87, 17.13),
+        },
+        # Manitoba (MHEB) two-way seam — miso-74; P9 +2.87 vs measured +2.89 TWh.
+        "Manitoba": {
+            "import": (31.27, 38.03, 46.80, 59.05, 81.00, 357.64, 547.48, 547.48),
+            "export": (26.52, 23.09, 20.74, 18.31, 14.21, 14.21, 14.21, 14.21),
+        },
+    },
     # 2022 added by miso-252 (2026-09-10). RULE 23 [R-FROZEN-DERIVE] BASIS: the
     # SOURCE DATA UPDATED — `data/raw/eia-930-interchange/MISO interchange
     # hourly.parquet` was back-filled to 2020-2022 through the fetch script's own
