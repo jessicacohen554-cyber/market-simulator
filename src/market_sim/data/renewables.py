@@ -144,6 +144,7 @@ from market_sim.config.paths import (
     MISO_HSL_DIR,
     NYISO_HSL_DIR,
     SPP_HSL_DIR,
+    solar_shape_dir,
     wind_shape_dir,
 )
 from market_sim.config.scenarios import ScenarioConfig
@@ -370,6 +371,39 @@ _MONTHS_PER_YEAR: int = 12
 # per-zone redistribution cannot move any other ISO's derived outputs; every
 # ISO not listed keeps the legacy single-shape behaviour.
 _SOLAR_ZONE_SHAPE_ISOS: frozenset[str] = frozenset({"CAISO"})
+
+# ISOs whose per-zone solar SHAPE comes from a committed MEASURED-irradiance
+# parquet instead of the clear-sky construction above (see
+# :func:`_solar_zone_reanalysis_shapes`). SOCO is the case, and the reason is
+# the clear-sky path's own stated limitation rather than a preference: that
+# path is keyed on LATITUDE and deliberately omits longitude and the equation
+# of time, on the grounds that "a constant timing offset shared by all zones
+# cancels". For a north-south stack like CAISO's it does. SOCO's three zones
+# are separated EAST-WEST — capacity-weighted solar-fleet centroids at
+# -83.63 (GA) / -86.35 (AL) / -89.16 (MS) degrees east, a 5.53 deg span, i.e.
+# 22.1 minutes of solar time against a 0.68 deg latitude spread — so one
+# latitude-keyed shape would put all three zones' solar peak in the same model
+# hour, which is exactly what the geography says is wrong.
+#
+# The committed parquet (scripts/data/build_soco_solar_shape.py) is NASA POWER
+# hourly all-sky DNI + diffuse at every EIA-860 SOCO solar plant, transposed
+# onto each generator's own filed tilt/azimuth by the same three tracking-class
+# geometries :func:`_clearsky_poa_by_tech` uses, capacity-weighted per zone. It
+# therefore carries FEWER free parameters than the clear-sky path, not more
+# (the measured series replaces the Meinel attenuation pair and the parametric
+# diffuse fraction, and EIA's filed array angles replace the tilt-at-latitude
+# convention). Measured effect: the built zone shapes peak at energy-weighted
+# hour-of-day 11.02 (GA) / 11.27 (AL) / 11.37 (MS), reproducing the pure
+# solar-time prediction to ~0.02 h, and GA vs MS correlate at r = 0.90 with
+# ~40 % of hours more than 10 % apart.
+#
+# Gated per ISO like every sibling set, so no other region's outputs can move:
+# an ISO listed here must have a registered directory in
+# ``paths.SOLAR_SHAPE_DIRS`` and a parquet for the year, or the reader no-ops
+# and the caller keeps its existing behaviour. Membership here and in
+# :data:`_SOLAR_ZONE_SHAPE_ISOS` is mutually exclusive by design (one solar
+# shape per ISO, rule 19 ``[R-ONE-MECH]``); ``tests/unit/data`` asserts it.
+_SOLAR_ZONE_REANALYSIS_ISOS: frozenset[str] = frozenset({"SOCO"})
 
 # ISOs whose WIND capacity spans regions with materially different wind regimes,
 # so a single ISO-wide hourly wind SHAPE applied to every zone is wrong. MISO is
@@ -2390,6 +2424,92 @@ def _wind_shape_hour_mask(start_hour: int, end_hour: int) -> np.ndarray:
     return (hod >= start_hour) & (hod < end_hour)
 
 
+def _solar_zone_reanalysis_shapes(
+    iso: str,
+    fuel: str,
+    zone_names: list[str],
+    cal_year: int | None,
+    data_dir: Path | None = None,
+) -> np.ndarray | None:
+    """Return a per-zone MEASURED-irradiance solar SHAPE matrix, or ``None``.
+
+    The solar twin of :func:`_wind_zone_reanalysis_shapes`, and the same
+    contract: for an ISO in :data:`_SOLAR_ZONE_REANALYSIS_ISOS` it reads the
+    precomputed per-year shape parquet (built offline by
+    scripts/data/build_soco_solar_shape.py from NASA POWER hourly all-sky DNI
+    and diffuse at the ISO's EIA-860 solar-plant coordinates, transposed onto
+    each generator's own filed tilt/azimuth) and returns one relative hourly
+    SHAPE per model zone. The absolute level is irrelevant — the caller
+    reconciles these to the measured ISO-wide ``cf_profile`` via
+    :func:`_redistribute_preserving_total`, which preserves the aggregate
+    exactly in every hour — so only the inter-zone differences survive: for
+    SOCO, the east-west solar-time offset across a 5.53 deg longitude span and
+    the zones' different tracking mixes (see :data:`_SOLAR_ZONE_REANALYSIS_ISOS`
+    and ``data/raw/soco-solar-shape/README.md``).
+
+    Returns ``None`` — signalling the caller to fall through to the clear-sky
+    path and then to the legacy single-shape behaviour — for non-solar fuels,
+    for ISOs not in :data:`_SOLAR_ZONE_REANALYSIS_ISOS`, for an ISO with no
+    directory registered in ``paths.SOLAR_SHAPE_DIRS``, and whenever the parquet
+    is absent or does not carry a column for every model zone.
+
+    Args:
+        iso: ISO identifier.
+        fuel: Renewable fuel; only ``"solar"`` is shaped here.
+        zone_names: Ordered model-zone names of the ISO.
+        cal_year: Calibration year selecting the per-year parquet.
+        data_dir: Solar-shape directory; resolved from the per-ISO path registry
+            (:func:`market_sim.config.paths.solar_shape_dir`) when ``None``.
+
+    Returns:
+        A ``(n_zones, HOURS_PER_YEAR)`` relative solar SHAPE array, or ``None``.
+    """
+    if fuel != "solar" or cal_year is None:
+        return None
+    if iso not in _SOLAR_ZONE_REANALYSIS_ISOS:
+        return None
+    if data_dir is None:
+        # Per-ISO registry, not a hardcoded default — an ISO with no registered
+        # directory resolves to None and no-ops below.
+        data_dir = solar_shape_dir(iso)
+    if data_dir is None:
+        return None
+    path = Path(data_dir) / f"{iso.lower()}_{cal_year}_solar_zone_shape.parquet"
+    if not path.exists():
+        return None
+    df = pd.read_parquet(path)
+    if not set(zone_names) <= set(df.columns) or len(df) != HOURS_PER_YEAR:
+        return None
+    # Same schema as the wind tables (hour index + one column per zone), so the
+    # read is the same read.
+    df = df.sort_values(_WIND_SHAPE_HOUR_COLUMN)
+    shapes = df[zone_names].to_numpy(dtype=float).T  # (n_zones, HOURS_PER_YEAR)
+    shapes = np.where(np.isfinite(shapes), shapes, 0.0)
+    shapes = np.clip(shapes, 0.0, None)
+    if not shapes.any():
+        return None
+    # Arming proof, as for wind: an overlay that silently no-ops through a full
+    # solve is the ERCOT-113 trap, so every fired per-zone solar SHAPE announces
+    # itself with the ISO, year and each zone's energy-weighted mean
+    # hour-of-day — the statistic the shape's own provenance cites, so the log
+    # line is directly checkable against ``soco-solar-shape/README.md``.
+    hod = np.arange(HOURS_PER_YEAR) % 24
+    totals = shapes.sum(axis=1)
+    mean_hod = np.divide(
+        (shapes * hod).sum(axis=1), totals, out=np.zeros_like(totals), where=totals > 0
+    )
+    logger.info(
+        "%s per-zone solar SHAPE (%d): %d zone(s) from %s, "
+        "measured energy-weighted hour-of-day %s",
+        iso,
+        cal_year,
+        shapes.shape[0],
+        path.name,
+        ", ".join(f"{z}={h:.2f}" for z, h in zip(zone_names, mean_hod)),
+    )
+    return shapes
+
+
 def _zone_renewable_shapes(
     iso: str,
     fuel: str,
@@ -2399,13 +2519,22 @@ def _zone_renewable_shapes(
 ) -> np.ndarray | None:
     """Return the per-zone relative SHAPE for a fuel, or ``None`` (no-op).
 
-    Dispatches to the fuel-appropriate per-zone shaper: a clear-sky geometry
-    SHAPE for solar in the gated solar ISOs (see
-    :func:`_solar_zone_clearsky_shapes`) and a MERRA-2 reanalysis SHAPE for wind
-    in the gated wind ISOs (see :func:`_wind_zone_reanalysis_shapes`). Returns
-    ``None`` for any other (iso, fuel), so the caller keeps the legacy
-    single-ISO-wide-shape behaviour. Both shapers preserve the measured
-    ISO-wide aggregate exactly; only the inter-zone split changes.
+    Dispatches to the fuel-appropriate per-zone shaper: for solar, a committed
+    MEASURED-irradiance SHAPE where one is registered (see
+    :func:`_solar_zone_reanalysis_shapes`) and otherwise the clear-sky geometry
+    SHAPE for the gated solar ISOs (see :func:`_solar_zone_clearsky_shapes`);
+    for wind, a MERRA-2 reanalysis SHAPE in the gated wind ISOs (see
+    :func:`_wind_zone_reanalysis_shapes`). Returns ``None`` for any other
+    (iso, fuel), so the caller keeps the legacy single-ISO-wide-shape
+    behaviour. Every shaper preserves the measured ISO-wide aggregate exactly;
+    only the inter-zone split changes.
+
+    The two solar paths are mutually exclusive by membership, not by ordering
+    (rule 19 ``[R-ONE-MECH]``): an ISO sits in
+    :data:`_SOLAR_ZONE_REANALYSIS_ISOS` or in :data:`_SOLAR_ZONE_SHAPE_ISOS`,
+    never both, and a test asserts it. The fall-through below therefore only
+    ever fires for a registered ISO whose parquet is missing for a year; it is
+    not a precedence rule between two live shapers.
 
     Args:
         iso: ISO identifier.
@@ -2418,6 +2547,9 @@ def _zone_renewable_shapes(
         A ``(n_zones, HOURS_PER_YEAR)`` relative SHAPE array, or ``None``.
     """
     if fuel == "solar":
+        measured = _solar_zone_reanalysis_shapes(iso, fuel, zone_names, cal_year)
+        if measured is not None:
+            return measured
         return _solar_zone_clearsky_shapes(iso, fuel, zone_names, cal_year)
     if fuel == "wind":
         return _wind_zone_reanalysis_shapes(

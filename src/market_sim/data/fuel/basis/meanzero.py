@@ -109,6 +109,41 @@ CAISO_ZONAL_GAS_HUB_PATH: Path = RAW_DATA_DIR / "caiso_zonal_gas_hub.csv"
 SPP_ZONAL_GAS_HUB_PATH: Path = RAW_DATA_DIR / "spp_zonal_gas_hub.csv"
 
 
+# SOCO per-zone delivered-gas basis vs Henry Hub ($/MMBtu) by year, 2023-2025.
+# Built by lane SOCO-32 from the COMMITTED per-plant EIA-923 Schedule 2 series
+# (``scripts/data/derive_soco_zonal_gas_hub.py``, the NWPP-33 construction),
+# quantity-weighted across each zone's own plants within a month and
+# month-balanced over the year — not from a state proxy, and for two measured
+# reasons that are in ``data/raw/soco_zonal_gas_hub.SOURCES.md`` in full:
+#
+#   * card S3's zone map puts the six SERC FLORIDA-panhandle plants in
+#     ``SOCO_AL``, and the two of them that burn gas are 20-25 % of that zone's
+#     burn at a ~$1.10/MMBtu premium over the Alabama plants — a delivered
+#     market an Alabama state series cannot see at all (rule 14
+#     ``[R-ACCURATE]``'s "defined on a different boundary than our zones");
+#   * EIA publishes the state series for neither GA nor MS after 2024-12, so a
+#     state-series table would end mid-backcast and either leave 2025 basis-less
+#     or let two zones default to 0.0 and fabricate a spread out of a
+#     publication gap (the trap SPP-32 refused above).
+#
+# Where the zone boundary IS the state line the two routes agree to
+# <= 0.044 $/MMBtu (GA, MS), which is the evidence the route is sound.
+#
+# There is no traded Southeast index to use instead: SOCO-12 swept both free EIA
+# routes and returned a documented NO (no Southeast row in the Weekly Update
+# spot table, no Southeast region on the daily map), so the table's ``hub``
+# column names the transport system (Southern Natural Gas / Transco Zone 4) and
+# the VALUE is the measured delivered price, never a quote.
+#
+# NO APPLIER IS ARMED FOR SOCO. This is a registered path and a measured table,
+# not a mechanism: lane SOCO-32 adds no ``ScenarioConfig`` field (plan §7 gate
+# G8), so nothing reads this yet and no keeper's cache key moves. Arming it is
+# SOCO-40's or a later lever's call. Note for whoever does: SOCO's zones are
+# whole states, so unlike every sibling table this one is NOT a proxy — and its
+# measured mean-zero spread is 0.789 / 0.467 / 0.537 $/MMBtu.
+SOCO_ZONAL_GAS_HUB_PATH: Path = RAW_DATA_DIR / "soco_zonal_gas_hub.csv"
+
+
 _ZONAL_HUB_ISO_CLEAN_CACHE: dict[str, pd.DataFrame | None] = {}
 
 

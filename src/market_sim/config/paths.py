@@ -259,6 +259,39 @@ def wind_shape_dir(iso: str) -> Path | None:
     return WIND_SHAPE_DIRS.get(iso.upper())
 
 
+# SOCO per-zone SOLAR-shape directory (SOCO-32, 2026-09-16). The solar analogue
+# of the wind registry above, and the first of its kind: every other region's
+# per-zone solar shape is the CLEAR-SKY construction
+# ``renewables._solar_zone_clearsky_shapes`` computes from latitude and tracking
+# mix with no file at all. SOCO needs a file because its zones are separated by
+# LONGITUDE (centroids -83.63 / -86.35 / -89.16 E, a 5.53 deg span = 22 minutes
+# of solar time) and that path deliberately omits longitude — see
+# ``data/raw/soco-solar-shape/README.md``. Built by
+# scripts/data/build_soco_solar_shape.py from NASA POWER all-sky irradiance at
+# each EIA-860 solar plant; same parquet schema as the wind tables.
+SOCO_SOLAR_SHAPE_DIR: Path = RAW_DATA_DIR / "soco-solar-shape"
+
+# Per-ISO SOLAR-shape directory registry (no ``if iso ==`` ladder at the call
+# sites). An ISO absent here has no measured per-zone solar SHAPE, which the
+# renewable loader treats as a no-op — it keeps whichever solar path it already
+# had (the clear-sky one for CAISO, the single ISO-wide profile for everyone
+# else). ``data/raw/nwpp-solar-shape`` exists on disk but is deliberately NOT
+# registered: NWPP-33 landed it as data and routed ARMING to NWPP-DESK, which is
+# that region's call to make, not this registry's (rule 25 ``[R-ISO-SCOPE]``).
+SOLAR_SHAPE_DIRS: dict[str, Path] = {
+    "SOCO": SOCO_SOLAR_SHAPE_DIR,
+}
+
+
+def solar_shape_dir(iso: str) -> Path | None:
+    """Return the per-zone solar-shape directory for ``iso``, or ``None``.
+
+    ``None`` means the ISO has no measured per-zone solar SHAPE registered, and
+    the renewable loader keeps its existing solar behaviour.
+    """
+    return SOLAR_SHAPE_DIRS.get(iso.upper())
+
+
 # ---------------------------------------------------------------------------
 # Remaining raw-download subdirectories (registered 2026-07-26, the scripts/
 # path-registry routing pass). One constant per ``data/raw`` subdirectory that

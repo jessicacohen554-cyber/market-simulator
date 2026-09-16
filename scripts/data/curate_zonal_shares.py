@@ -13,7 +13,7 @@ Output schema: ``data/dictionary/schema/zonal-shares.schema.yaml``
 
 Output path (via clean_path): ``data/clean/zonal-shares/<ISO>/zonal-shares_<year>.parquet``
 
-Supported ISOs: ERCOT, CAISO, PJM, MISO, NYISO, NEISO, SPP, NWPP
+Supported ISOs: ERCOT, CAISO, PJM, MISO, NYISO, NEISO, SPP, NWPP, SOCO
 
 Usage
 -----
@@ -22,6 +22,7 @@ Usage
   python scripts/data/curate_zonal_shares.py --iso MISO --year 2023
   python scripts/data/curate_zonal_shares.py --iso SPP --year 2023 2024 2025
   python scripts/data/curate_zonal_shares.py --iso NWPP --year 2023 2024 2025
+  python scripts/data/curate_zonal_shares.py --iso SOCO --year 2023 2024 2025
 """
 
 from __future__ import annotations
@@ -662,6 +663,247 @@ def parse_spp_shares(year: int, zone_names: list[str]) -> np.ndarray | None:
 
 
 # ---------------------------------------------------------------------------
+# SOCO — the one registered region with NO EIA-930 sub-BA product at all, so
+# the zonal load comes from FERC Form 714 Part III Schedule 2 hourly
+# planning-area demand instead.  Landed 2026-09-16 by lane SOCO-32
+# (docs/multi-iso/soco-addition-plan-2026-09.md §2.5, §5 row SOCO-32).
+#
+# Measured at the SOCO charter by listing every ``(Balancing Authority,
+# Sub-Region)`` pair EIA-930's sub-BA product carries: ``CISO ERCO ISNE MISO
+# NYIS PJM PNM SWPP`` — SOCO is not in it, and no amount of fetching makes it
+# appear.  The substitute is a *measured hourly* series per planning area,
+# which is strictly better than the annual retail-sales share a lesser source
+# would give and is rule-13 ``[R-MEASURED]`` admissible: it regenerates for a
+# forward year from the then-current filing and responds to changed
+# conditions.  Provenance, the eight-respondent table and PUDL's ETL route:
+# ``data/raw/zone-specific-demand/SOCO/SOURCES.md``.
+# ---------------------------------------------------------------------------
+
+# FERC Form 714 respondent -> SOCO model zone.  Card S3, RE-RULED 2026-09-14
+# (desk r#5) on the **five fully-cited respondents**: Alabama Power (2),
+# Georgia Power (183), Mississippi Power (184), Oglethorpe (107) and MEAG
+# (210).  Their hourly sum closes the metered EIA-930 BA demand to a
+# 3.03 / 2.92 / 1.18 % residual (2023 / 2024 / 2025, measured on the model
+# clock by this parser; FINDING-soco-11 §3.2-§3.3 reports 3.03 / 2.92 / 1.26 %
+# on the source's own UTC window).
+#
+# **Southern Power (186) is EXCLUDED and this is not a tuning choice.** The
+# six-respondent sum has the SMALLER residual (1.63 / 1.50 / -0.03 %) and the
+# owner chose the five-set anyway: SOCO-14 cited 107 and 210 into the BA from
+# primary sources (NERC/SERC public compliance audit NCR01248 p. 3 for
+# Oglethorpe — GSOC's Balancing Authority is Southern Company Services -
+# Transmission, EIA BA code ``SOCO``; MEAG's own FY2024 Annual Information
+# Statement pp. 25-26 for MEAG) and returned a **documented NO on 186** — no
+# source establishes where respondent 186's planning-area LOAD sits, and its
+# near-flat 0.795-load-factor series is inconsistent with a territorial load.
+# A cited basis beats a smaller residual (rules 1 ``[R-STRUCT]`` / 13
+# ``[R-MEASURED]``), and the six-set's NEGATIVE 2025 residual is exactly the
+# overshoot SOCO-11's PowerSouth+Tallahassee falsifier (-2.28 / -2.41 /
+# -4.15 %) was built to detect.  Re-deriving this map on six respondents is
+# refused here; it needs the load-side citation SOCO-14 could not find, and
+# the card returns to the owner (plan §7 gate G22).
+#
+# **The map is NOT 1:1 and that is the declared construction** (card S3 (ii)):
+# zones are GEOGRAPHIC (``SOCO_AL`` / ``SOCO_GA`` / ``SOCO_MS``), never an
+# operating company, so the two Georgia wholesale respondents join Georgia
+# Power in ``SOCO_GA``.  Their service geography is measured, not assumed:
+# EIA-861 2024 puts all 154 distinct (state, county) pairs Oglethorpe's 38
+# member EMCs serve, and all 51 MEAG's 49 Participants serve, inside the SOCO
+# BA's 252-county footprint, and every one of those counties is in **Georgia**
+# (FINDING-soco-14 §1 link 6, §2; re-measured by this lane, see
+# FINDING-soco-32 §2.2).  Neither entity serves load in Alabama or
+# Mississippi, so no respondent's load is split across zones and the map is a
+# partition.
+_SOCO_RESPONDENT_ZONE_GROUPS: dict[int, str] = {
+    2: "SOCO_AL",  # Alabama Power Company (eia_code 195)
+    107: "SOCO_GA",  # Oglethorpe Power Corporation (13994) — GA EMC G&T
+    183: "SOCO_GA",  # Georgia Power Company (7140)
+    184: "SOCO_MS",  # Mississippi Power Company (12686)
+    210: "SOCO_GA",  # Municipal Electric Authority of Georgia (13100)
+}
+
+# The committed FERC-714 pull (SOCO-11).  One file, all years, sliced per year
+# by the UTC->local map below.
+_SOCO_FERC714_FILE: str = "soco_ferc714_hourly_planning_area_demand_2023-2025.parquet"
+
+# FERC's filed value.  PUDL also ships ``demand_imputed_pudl_mwh``, which is
+# PUDL's OWN derived column (flagged on 550 of 210,431 rows, differing by more
+# than 0.01 MWh on 720) — carried in the raw file for transparency, never
+# consumed: rule 13 ``[R-MEASURED]`` takes the filed measurement, not another
+# party's repair of it.  No reported value is null.
+_SOCO_DEMAND_COLUMN: str = "demand_reported_mwh"
+
+# Hours of the model's local year the committed 714 window cannot cover.
+# STRUCTURAL, not a data defect, and it is the SAME boundary the EIA-930
+# extract has: both fetches were bounded on UTC, so the last 7 Central
+# hour-ending labels of 2025 (18..24 on 2025-12-31 = UTC 2026-01-01
+# 00:00-06:00) were never requested from either source
+# (``docs/multi-iso/soco-data-audit.md`` §3.2, which counts the identical 7
+# rows spilling off the front into local-date 2022-12-31).  0.080 % of the
+# year.  Those columns take the previous hour's SHARE through the shared
+# :func:`_hourly_shares_from_groups` back-fill.
+#
+# Audit §3.2 calls padding/holding-forward WRONG — for the DEMAND SERIES, and
+# it is right: a backcast year scored against 7 invented MW is scoring itself.
+# This is a different object.  A share is an allocation fraction, not a
+# measurement of anything, and the MW those 7 hours dispatch come from the
+# EIA-930 series and its own declared bridge (which announces itself in the
+# loader's log), not from here.  The real alternative is not "7 measured
+# hours" — no filing exists for them on either side — it is dispatching the
+# WHOLE YEAR on the flat static fallback, which is the miso-251 defect rule 14
+# ``[R-ACCURATE]`` exists to stop.  The durable fix is audit §3.2's own:
+# re-fetch both series bounded on LOCAL time (routed to SOCO-DESK in
+# FINDING-soco-32 §6 — the raw files belong to SOCO-11, not to this lane), at
+# which point this constant becomes dead and the back-fill never fires.
+#
+# A gap LARGER than the clock offset is a real coverage failure and the parser
+# rejects the year instead of filling it.
+_SOCO_MAX_UNCOVERED_HOURS: int = 7
+
+
+def _soco_utc_to_local_hoy(period_utc: pd.Series, year: int) -> pd.Series | None:
+    """Map UTC timestamps to SOCO local hour-of-year on the renewable clock.
+
+    The same construction as :func:`_spp_utc_to_local_hoy`, against SOCO's own
+    EIA-930 hourly extract (BA code ``SOCO``, which is also the registry key):
+    the FERC-714 parquet stamps every respondent in UTC, while the renewable
+    CF and the system demand these shares are multiplied into live on SOCO
+    local wall-clock time.  Frame row ``k`` is local hour-of-year ``k``, so
+    inverting the frame's own ``UTC time`` column lands each share at the
+    wall-clock hour the renewables use.
+
+    This is what makes SOCO's **two civil timezones** a non-issue rather than
+    gate G19's hazard (closed by SOCO-10 §3.4): AL/MS keep Central time and
+    Georgia keeps Eastern, but the BA reports on ONE clock — the committed
+    ``SOCO hourly.parquet`` carries exactly two UTC-minus-local offsets, 6 h on
+    9,171 rows and 5 h on 17,133, switching on the US DST dates, i.e. CST/CDT
+    and never EST/EDT.  PUDL resolves each respondent's own zone into
+    ``datetime_utc`` before it is written, so MEAG's ``America/New_York`` rows
+    and Alabama Power's ``America/Chicago`` rows join on the same physical
+    hour with no per-respondent shift.  SOCO-11 verified the join is zero-shift
+    by correlating the respondent sum against the BA series over -4..+4 h: a
+    single sharp peak at k = 0 (r = 0.9935, next-best 0.9755).
+
+    Args:
+        period_utc: UTC timestamps from the FERC-714 parquet's ``datetime_utc``.
+        year: Calendar year whose SOCO frame supplies the clock.
+
+    Returns:
+        Float hour-of-year per input row (NaN outside the year), or ``None``
+        when the SOCO hourly extract for ``year`` is unavailable.
+    """
+    frame = _eia_hourly_frame_filled("SOCO", year)
+    if frame is None:
+        return None
+    # frame row k == model local hour-of-year k; invert UTC time -> k.
+    utc_index = pd.DatetimeIndex(pd.to_datetime(frame["UTC time"]))
+    hoy_of_utc = pd.Series(np.arange(len(frame), dtype=float), index=utc_index)
+    hoy_of_utc = hoy_of_utc[~hoy_of_utc.index.duplicated(keep="first")]
+    return period_utc.map(hoy_of_utc)
+
+
+def parse_soco_shares(year: int, zone_names: list[str]) -> np.ndarray | None:
+    """Parse the FERC-714 planning-area parquet -> ``(n_zones, 8760)`` shares.
+
+    Reads ``data/raw/zone-specific-demand/SOCO/`` +
+    :data:`_SOCO_FERC714_FILE`, keeps the five cited respondents
+    (:data:`_SOCO_RESPONDENT_ZONE_GROUPS`), maps ``datetime_utc`` onto the
+    model's local hour-of-year through SOCO's own EIA-930 frame
+    (:func:`_soco_utc_to_local_hoy`), sums each zone's respondents and
+    normalises every hour to fractions summing to 1.0.
+
+    What the shares are and are NOT.  The five respondents are ~97-99 % of the
+    BA's metered demand, so this sets each zone's hourly SHAPE and its share of
+    the system total — never the level, which stays the measured EIA-930
+    ``SOCO`` demand the caller multiplies these fractions into.  The 1-3 %
+    the five respondents do not cover is therefore spread across the three
+    zones in proportion to their measured shares rather than being attributed
+    to any one of them; the largest known component, Southern Power's
+    3.1-3.4 TWh/yr, is named on the first keeper's determination basis
+    (card S3) and is not absorbed silently here.
+
+    Returns ``None`` when the raw file is absent, when SOCO's hourly frame for
+    the year is unavailable, or when the assembled series leaves more of the
+    year uncovered than :data:`_SOCO_MAX_UNCOVERED_HOURS` (the caller then
+    falls back to the static per-zone ``load_share``, which for SOCO is the
+    EIA-860 fleet-MW fallback ``iso_configs._soco_config`` registers — a
+    capacity share, not a load share, and ~5 points away from the measured
+    AL/GA split this parser produces).
+    """
+    path = ZONE_DEMAND_DIR / "SOCO" / _SOCO_FERC714_FILE
+    if not path.exists():
+        logger.warning("SOCO FERC-714 demand file not found (%s); skipping", path)
+        return None
+    df = pd.read_parquet(
+        path,
+        columns=["datetime_utc", "respondent_id_ferc714", _SOCO_DEMAND_COLUMN],
+    )
+    respondent = pd.to_numeric(df["respondent_id_ferc714"], errors="coerce")
+    df = df[respondent.isin(_SOCO_RESPONDENT_ZONE_GROUPS)].copy()
+    df["respondent"] = respondent[respondent.isin(_SOCO_RESPONDENT_ZONE_GROUPS)].astype(
+        int
+    )
+    hoy_local = _soco_utc_to_local_hoy(pd.to_datetime(df["datetime_utc"]), year)
+    if hoy_local is None:
+        logger.warning("SOCO hourly frame unavailable for %d; skipping", year)
+        return None
+    keep = ~df.duplicated(subset=["datetime_utc", "respondent"], keep="first")
+    keep &= hoy_local.notna().to_numpy()
+    df, hoy_local = df[keep], hoy_local[keep]
+    if df.empty:
+        logger.warning("SOCO FERC-714 file has no rows for %d; skipping", year)
+        return None
+    df = df.assign(
+        hoy=hoy_local.to_numpy(dtype=int),
+        mw=pd.to_numeric(df[_SOCO_DEMAND_COLUMN], errors="coerce"),
+    )
+    # Per-respondent ffill/bfill first, exactly as the MISO and SPP parsers do:
+    # an hour where ONE respondent is missing (2024 carries one, Oglethorpe at
+    # hour 1631) must not drop ~5 GW out of that hour's Georgia total and dent
+    # the zone's share for an hour.
+    wide = (
+        df.pivot_table(index="hoy", columns="respondent", values="mw", aggfunc="first")
+        .sort_index()
+        .ffill()
+        .bfill()
+    )
+    uncovered = HOURS_PER_YEAR - len(wide)
+    if uncovered > _SOCO_MAX_UNCOVERED_HOURS:
+        logger.warning(
+            "SOCO FERC-714 file covers %d only partially (%d/%d hours); skipping",
+            year,
+            len(wide),
+            HOURS_PER_YEAR,
+        )
+        return None
+    if uncovered > 0:
+        # Announce the back-fill rather than letting the shared helper do it
+        # silently: a filled hour is an hour whose SHARE is inherited, and a
+        # reader of this run's logs should be able to see exactly which.
+        logger.info(
+            "SOCO %d: %d hour(s) of the local year past the 714 window "
+            "(hours %s); their zone SHARES carry from the previous hour, the "
+            "demand LEVEL stays the measured EIA-930 series",
+            year,
+            uncovered,
+            f"{int(wide.index.max()) + 1}..{HOURS_PER_YEAR - 1}",
+        )
+    long = (
+        wide.reset_index()
+        .melt(id_vars="hoy", var_name="respondent", value_name="mw")
+        .dropna(subset=["mw"])
+    )
+    mzone = long["respondent"].map(_SOCO_RESPONDENT_ZONE_GROUPS)
+    shares = _hourly_shares_from_groups(
+        mzone, long["hoy"].to_numpy(), long["mw"], zone_names
+    )
+    if shares is None or np.isnan(shares).any():
+        logger.warning("SOCO %d: shares did not assemble; skipping", year)
+        return None
+    return shares
+
+
+# ---------------------------------------------------------------------------
 # NWPP — a POOL of seventeen balancing authorities, so the zonal shares are a
 # REGROUP of the same per-BA series the pool's own system demand is summed
 # from, not a separate sub-BA product (there is none: EIA-930 publishes no
@@ -773,6 +1015,7 @@ _PARSE_FUNCS = {
     "NEISO": parse_neiso_shares,
     "SPP": parse_spp_shares,
     "NWPP": parse_nwpp_shares,
+    "SOCO": parse_soco_shares,
 }
 
 
