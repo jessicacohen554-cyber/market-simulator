@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-16-nwpp-1-cascade",
+  "label": "nwpp 1 cascade",
+  "date": "2026-09-16",
+  "shorthand": "nwpp-1-cascade",
+  "definition": "nwpp-40 first NWPP solve: five whole-BA zones on WECC-catalogue TTC tiers (card N5), served measured EIA-930 interchange with priced seams default-off (card N4), one PRM scalar 0.144 (card N7), legacy heat-rate bins (card N8), Columbia mainstem hydraulic coupling ARMED (owner rulings N3/N12), 2025 hydro backfilled from 2024 for the 263 NO_923_SERIES plants (NWPP-32, R-f), every offer band 1.0, authorized_price_tuning NONE, price UNSCORED (card N2 limb b, rubric v3.8)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NWPP",
+  "file": "frontend/data/backcast/runs/2026-09-16-nwpp-1-cascade.js",
+  "bundle": "results/calibration/nwpp40_span_A"
+}

@@ -1,0 +1,40 @@
+INFO: NWPP backcast: NP6 HSL and coal must-run tuning are ERCOT-only and skipped; per-plant CAMPD + EIA-923 benchmark built for the covered states; the report compares fuel mix, prices and net interchange.
+INFO: cross-year LP warm-start: ON
+INFO: P1 basis seed: ON
+INFO: container preflight: memory ceiling 13.36 GiB (/sys/fs/cgroup/memory/process_api/01a0a985-600a-7263-ba23-9eef59711390/claude-code-bash/memory.limit_in_bytes; MemTotal 15.72 GiB), swap 0.0 GiB, target ceiling+swap 24 GiB
+INFO: container preflight: provisioned 10 GiB swap at /swapfile-marketsim — ceiling 13.36 + swap 10.0 = 23.4 GiB
+INFO: container preflight: solve profile MALLOC_ARENA_MAX=2 MARKET_SIM_HIGHS_THREADS=1 OMP_NUM_THREADS=1
+WARNING: container preflight: ceiling+swap 23.4 GiB is below the 24 GiB target; a per-plant ISO-year LP (MISO, PJM) may be OOM-killed here
+WARNING: eGRID plant 7350 heat rate 13.796 MMBtu/MWh exceeds the combined-cycle physical ceiling 11.500 (PLHTIAN spans co-located plant 7931, 6 m away, whose 1 unit(s) eGRID double-counts) — reconciled to 6.918
+WARNING: eGRID plant 55641 heat rate 14.964 MMBtu/MWh exceeds the combined-cycle physical ceiling 11.500 (PLHTIAN spans co-located plant 64020, 454 m away, whose 2 unit(s) eGRID double-counts) — reconciled to 6.880
+WARNING: eGRID boundary heat-rate reconciliation active for 2 plant(s): 7350->6.918, 55641->6.880
+WARNING: eGRID plant 58266 heat rate 8.537 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 12 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: NWPP: CC plant 7931 fleet pmax sum 290.0 MW exceeds trusted bound 287.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (3.0 MW removed)
+INFO: Loaded NWPP fleet from EIA-860 parquet (445 generators)
+INFO: Rebuilt binned fleet cache for NWPP — 445 plants → nwpp_fleet_binned.parquet
+WARNING: PGE 2023: repairing 1 EIA-930 NG: OTH spike hour(s) [732] (max 119 MW vs p99.9 33 MW) -- unit-slip artifact
+INFO: NWPP net interchange applied for 2023: -1569 MW avg (export-positive, measured EIA-930)
+WARNING: PGE 2023: repairing 1 EIA-930 NG: OTH spike hour(s) [732] (max 119 MW vs p99.9 33 MW) -- unit-slip artifact
+INFO: solving NWPP 2023 (hours=8760, Henry Hub=$2.54/MMBtu, commitment=False)
+WARNING: eGRID plant 58266 heat rate 8.537 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 12 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: NWPP: CC plant 7931 fleet pmax sum 290.0 MW exceeds trusted bound 287.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (3.0 MW removed)
+INFO: Loaded NWPP fleet from EIA-860 parquet (445 generators)
+INFO: Binned fleet cache for NWPP is up to date — loaded from nwpp_fleet_binned.parquet
+WARNING: eGRID plant 58266 heat rate 8.537 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 12 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: NWPP: CC plant 7931 fleet pmax sum 290.0 MW exceeds trusted bound 287.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (3.0 MW removed)
+INFO: Loaded NWPP fleet from EIA-860 parquet (445 generators)
+INFO: Binned fleet cache for NWPP is up to date — loaded from nwpp_fleet_binned.parquet
+INFO: unit-outage derate (NWPP 2023): 177 plant-tranches derated
+INFO: COD ramp (NWPP 2023): 204 unit-months masked offline (mid-year COD / retirement), 17 unit(s) fully not-yet-built/retired
+WARNING: eGRID plant 58266 heat rate 8.537 MMBtu/MWh is below the simple-cycle physical floor 9.000 on a plant whose 12 operating row(s) are all GT/IC — clamped to the floor (SPP-49)
+WARNING: NWPP: CC plant 7931 fleet pmax sum 290.0 MW exceeds trusted bound 287.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (3.0 MW removed)
+INFO: Loaded NWPP fleet from EIA-860 parquet (445 generators)
+INFO: Binned fleet cache for NWPP is up to date — loaded from nwpp_fleet_binned.parquet
+INFO: NWPP 2023 hydro budget: backfilled 5 non-reporting plants (14.0 GWh) from 2024
+INFO: Loaded NWPP 2023 hydro budget: 285 plants, 106949.3 GWh annual, 35817 MW nameplate
+INFO: NWPP 2023: 285 hydro plants in LP (35817 MW, 106.95 TWh monthly budget)
+INFO: unit-outage derate (NWPP 2023): 177 plant-tranches derated
+INFO: COD ramp (NWPP 2023): 216 unit-months masked offline (mid-year COD / retirement), 18 unit(s) fully not-yet-built/retired
+INFO: F923 gas-price plausibility screen for 2023 (NWPP, band [0.5, 2.0] x state N3045 reference): 315 plant-months in band, 7 low, 0 negative, 8 high -> reference (13 plants); 0 months on the US fallback reference, 0 unscreened (no reference), 0 unscreened (reference <= 0)
+INFO: F923 fuel costs for 2023: 165 generators priced from their own plant, 204 gap-filled from nearby (state/zone) plants
+INFO: NWPP 2023: hydro cascade coupling — 5 coupled plants [3921, 3886, 6200, 3075, 3925], 5 links, tau by link [0, 1, 1, 0, 0] h
