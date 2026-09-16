@@ -454,3 +454,57 @@ No screen or screen year (N10-R). No second invocation, no per-year fan-out, no 
 `frontend/data/forecast/**`, no `src/` edit, no other region's shard / registry / payload / log. No
 band ≠ 1.0, no adder, offset, haircut, proxy or floor. No re-derive of any NWPP-3x artifact. Nothing
 deleted from `results/` at any point (rule 31), and the promotion is the owner's decision.
+
+---
+
+## ADDENDUM 1 (2026-09-16 09:20 UTC) — the first shard STOPPED at its 150-minute budget; the budget is re-set to 480 minutes on the MEASURED rate, and nothing else changes
+
+**What happened (from `docs/handoffs/SHARDREPORT-nwpp-40-span-2026-09-16.md`, shard commit
+`4e218d0f01d603c1f14b6866a2486a80dc896ead`, branch `claude/nwpp-40-span-a`).** The shard ran the §2.1
+invocation unmodified at the pin. Year 2023 solved in **7,004.0 s = 116.7 min** (P0 cold 1,728.6 s /
+523,199 simplex iterations; P1 warm **5,217.1 s** / 533,017 iterations); year 2024 was ~32 min into
+P0 when the 150-minute budget expired at 09:16 UTC, and the shard STOPPED and pushed nothing under
+`results/`, exactly as instructed (rule 32(b) STOP rule). §4.5's expectation of 15–45 min for the
+span was **wrong by a factor of ~8** — the measured rate implies **~350 min for three years** on this
+container class (single-thread solve profile, 4 vCPU, 13.36 GiB cgroup ceiling, 10 GiB swap
+provisioned by the preflight). Memory was NOT the constraint: peak 3.13 GB after 2023's release,
+process RSS 2.55–3.28 GB during the solves — below the registry's 5.5 GB estimate.
+
+**Decision, under rule 32(b) exactly as written:** *"where a whole span genuinely cannot fit the
+20-minute ceiling the answer is a longer single shard with the budget stated in its prompt, not a
+fan-out."* A second shard is launched with the **IDENTICAL invocation** (§2.1 — no flag added, none
+removed, no solver setting touched, the runner unmodified) and a stated budget of **480 minutes**
+(the measured 350 min plus a 37 % margin for 2024/2025 running slower than 2023). No per-year
+split; no `--reuse-solved` chain (it cannot compose across containers — rule 32(b)); no change to
+the solve profile (the preflight's single-thread pins are the runner's own and rule 32(c)(8) says a
+shard names no memory or thread recipe of its own).
+
+**Two things the 2023 leg already shows, recorded here BEFORE the second shard runs so they cannot
+be read as discovered afterwards, and both REPORTED rather than repaired (rules 1 / 13 / 14):**
+
+1. **NWPP-SNV prices at VOLL.** In 2023 P1, **23 NWPP-SNV zone-hours clear at exactly $2,000**
+   (hours 4721–4724, 4743–4748, 4841–4844, 4937–4940, 4962, 5801–5804 — July and August), and a
+   further **738 SNV zone-hours** sit in ($200, $1,000); no other zone exceeds $144.12. Slack MWh
+   could not be read off the shard's disk (the zone-hour frame is an end-of-span write). The
+   candidate cause is structural and was declared at the gate: NWPP-SNV (NEVP, 14.1 % of load,
+   summer-peaking at 9,249 MW in 2023) is reached only through the two Tier-1 WECC paths
+   (EAST→SNV 600 MW, INLAND→SNV 500 MW) while its measured external ties — NEVP↔CISO
+   +7.6 / +9.2 / +9.5 TWh export and NEVP↔LDWP −8.7 / −9.3 / −7.5 TWh import (NWPP-11 §4) — enter
+   only as the footprint-wide served scalar spread by load share (§8 line 10). Whatever the FINDING
+   measures on the full span is reported at full magnitude; nothing is added to SNV's supply.
+2. **`hourly/system_<year>.parquet` is not written per year** by the runner on this path (only at
+   the end of the span, with `run_config.json` / `meta.json` / `metrics.json`); a budget STOP
+   therefore leaves no scorable artifact at all. Pre-existing runner behaviour, not this lane's to
+   change; recorded so the budget is understood as all-or-nothing.
+
+The 2023 dispatch (`dispatch/2023_P1.parquet`, 666 LP units × 8,760 h, 270.505 TWh) and the cascade
+sidecar (`hourly/hydro_cascade_2023.parquet`, 43,800 rows) exist on the first shard's ephemeral
+disk. They are **not a bundle** and cannot be composed into one (rule 32(b)); they are asked to be
+pushed to the shard's branch as a labelled diagnostic record (never `main`, never registered) so the
+2023 evidence survives the container (rule 31 `[R-RETAIN]`), and the shard is archived only after
+that push is verified (rule 33(a)).
+
+Class TWh the 2023 leg produced (model only; the benchmark is scored by the parent on the full
+span): hydro 106.872 · CC_REGULAR 53.467 · COAL 38.542 · wind 30.410 · solar 13.003 · nuclear 8.429 ·
+CC_CHP 7.377 · OTHER 5.915 · CT_PEAKER 2.973 · biomass 2.772 · CT_CHP 0.578 · ST_GAS 0.133 ·
+ST_CHP 0.034. Generation-weighted mean LMP 47.63 $/MWh (MODEL-ONLY / UNVERIFIED; no price series).
