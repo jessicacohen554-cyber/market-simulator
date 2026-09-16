@@ -2283,3 +2283,6 @@ results/calibration/_soco40_screen/
 # If that branch is deleted on the environment's own schedule, the leg costs
 # ~15 min of LP to reproduce and nothing scored depends on it.
 /results/calibration/spp43_extract_only/
+
+# soco-40: the UNSPLIT-coal span (arm A of the coal-split comparison), kept out of main; bytes live on shard commit 9458759f6b8c875a9a302e4b64db9e212420ddf9 (git checkout 9458759f6b8c875a9a302e4b64db9e212420ddf9 -- results/calibration/soco40_baseline_B); never rm (rule 31)
+results/calibration/soco40_baseline_B/

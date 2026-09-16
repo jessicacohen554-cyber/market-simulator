@@ -409,3 +409,51 @@ un-chosen). No parameter in this recipe was set by looking at a SOCO residual, b
 6. **R-w** — the SOCO 2024 `NG: OIL` rule-14 false positive in the committed benchmark (§6).
 
 Plus, from this lane's own census: the 2025 hydro input hole (§4.5), stated beside the 2025 column.
+
+---
+
+## 11. ADDENDUM (2026-09-16, after the span landed and BEFORE the re-solve) — the owner's coal-split instruction
+
+**Owner, in-session, verbatim: "Coal should be split into types. Completely eliminate the single coal
+class."** Issued after the all-defaults span (`soco40_baseline_B`, shard commit
+`9458759f6b8c875a9a302e4b64db9e212420ddf9`) had been registered locally and scored **NOT-YET** on C1
+alone, where the failing rows were the coal crosswalk: the benchmark scores SOCO coal as `COAL_PRB`
+22.2 / 24.6 TWh and `COAL_BIT` 13.0 / 12.3 TWh (2023 / 2024, from EIA-923 fuel codes) while the model
+dispatched one bare `COAL` class (33.14 / 34.68 TWh) — the SPP-40 §7.3 defect, because
+`data/raw/_processed-legacy/coal_supply_SOCO.csv` did not exist (MISO / NEISO / PJM / SPP have theirs).
+
+**What was done, zero-LP, in this session (before this addendum was pushed):**
+
+- `scripts/data/derive_coal_supply.py --iso SOCO --census-vintage 2023 2024 2025` (the SPP-62 /
+  SPP-38 construction; rule 23 `[R-FROZEN-DERIVE]` is satisfied because SOCO has never been
+  calibrated against — the derive reads only EIA-923 receipts and the EIA-860 census) wrote **6 rows**:
+  Barry 3 / E C Gaston 26 / Bowen 703 → `bituminous`; James H Miller Jr 6002 / Victor J Daniel Jr
+  6073 / Scherer 6257 → `prb`. Every SOCO coal plant resolves.
+- Measured on the rebuilt 2024 fleet through the live resolver (`data.coal._coal_class_for`):
+  **`COAL_BIT` 5,150.5 MW (Barry 1,118.5 · Gaston 832.0 · Bowen 3,200.0), `COAL_PRB` 6,361.5 MW
+  (Miller 2,777.5 · Daniel 1,004.0 · Scherer 2,580.0), bare `COAL` 0.0 MW.** The single coal class is
+  eliminated for SOCO by construction — no plant falls through to the generic bucket.
+- **Cache key unchanged** (2024: `33a2a47b3206274b`): the split is a DATA input, not a
+  `ScenarioConfig` field, so no key moves and no other ISO's file is touched (rule 25).
+
+**What the re-solve changes and what it does not.** The dispatch persister
+(`run_calibration_full._dispatch_frame`) splits `COAL` into its supply class at write time, so the
+class series and every C1 coal row now score against the benchmark's own rows. The LP is NOT
+byte-identical to arm A: the coal offer curve keys by supply class (`_COAL_SUPPLY_TO_CURVE`, every
+band still 1.0), the per-class delivered-coal pricing keys on it, and the CLI-default PRB
+passthrough sigmoid can now engage for the three PRB plants (SOCO has no `COAL_SIGMOID_DEFAULTS`
+curve, so it should resolve flat — measured in the FINDING, not assumed). No band, share, floor or
+threshold is set; the recipe of §3 is otherwise unchanged.
+
+**The re-solve.** ONE shard, ONE `--year 2023 2024 2025` invocation, on the SHA carrying this
+addendum + the CSV, out-dir `results/calibration/soco40_coalsplit_B`, identical command line
+otherwise. **It is the keeper** (id `2026-09-16-soco-1-baseline`, the most structurally faithful SOCO
+run), and the unsplit `soco40_baseline_B` becomes **arm A of a same-recipe comparison** reported at
+full magnitude in the FINDING (kept out of `main` by the parent's `.gitignore`, bytes on
+`9458759f6b8c875a9a302e4b64db9e212420ddf9`; never `rm`, rule 31). No STOP gate is re-run on a screen
+year: the mechanism is a class crosswalk plus a supply-keyed price, and the span's own legs A–F are
+re-graded on the new bundle exactly as in §5.
+
+**Not a residual-driven change.** The instruction names a STRUCTURE — coal ranks are real, measured,
+plant-specific supply facts that every other coal ISO carries — not a number to move; whatever C1
+reads afterwards is reported, and nothing else is touched if it reads worse (rule 1 / 14).
