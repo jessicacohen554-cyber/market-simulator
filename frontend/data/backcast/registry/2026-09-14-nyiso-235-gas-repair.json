@@ -1,0 +1,17 @@
+{
+ "id": "2026-09-14-nyiso-235-gas-repair",
+ "label": "nyiso 235 gas repair",
+ "date": "2026-09-14",
+ "shorthand": "nyiso-235-gas-repair",
+ "definition": "KEEPER since 2026-09-16 (session nyiso-235, on the OWNER'S RULING to promote). ONE bundle, all four registered years 2022-2025 in a single --years invocation. WHAT CHANGES IS AN INPUT, NOT A MECHANISM: zero ScenarioConfig fields move versus the superseded 2026-09-13-nyiso-232-st-gas, no flag is armed, no offer-curve band multiplier is touched, authorized_price_tuning NONE, and the DOF ledger is carried over BYTE-IDENTICAL (sha256 match) because the recipe is byte-identical - the arm is that keeper's recipe replayed via replay_keeper.py. The only difference is the nyiso-234b repair of the NYISO delivered-gas series (+129 rows, 9 corrected, 3 holiday rows removed, plus the monthly anchor and NYISO basis rows recomputed from it). BASIS IS RULE 14 [R-ACCURATE], NEVER THE RESIDUAL: the superseded input was WRONG on ordinary trading days (a header-pattern defect shifted every price in an affected week onto the FOLLOWING trading day) as well as incomplete through Winter Storm Elliott (EIA published Transco Z6 NY at 32.12 and 35.61 on 2022-12-22/23; the model burned 8.05, its own annual median, flat for eleven days). Screened under rule 29 [R-SCREEN] on 2022 (chosen on FOOTPRINT, 2.9x lead, never the residual) and CLEARED G-1..G-5. DETERMINATION, this registered four-year run: NOT-YET, on 2022 alone - UNCHANGED from the superseded keeper, though the failing set SHRINKS from {fuelmix, price_mean, price_shape, price_tail} to {fuelmix, price_mean, price_tail}. Scored on 2023-2025 the ISO tier under rule 30(c) reads CALIBRATED with C3c the lone ledgered caveat, also unchanged from the superseded keeper. NO C3a OR C3b BAND VERDICT FLIPS IN EITHER DIRECTION (2022 C3a -11.60% -> -10.51%, still FAIL; 2023/2024/2025 still PASS). Full record: docs/RESULT-nyiso235-gas-repair-screen-2026-09-14.md.",
+ "years": [
+  2022,
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "NYISO",
+ "file": "frontend/data/backcast/runs/2026-09-14-nyiso-235-gas-repair.js",
+ "bundle": "results/calibration/nyiso235_gasrepair_span",
+ "market_story": "OIL (+0.485 TWh in 2022, -1.212 -> -0.727 TWh against a measured 1.844 TWh actual): during Winter Storm Elliott, downstate NY delivered gas reached $32-36/MMBtu at Transco Z6 - far above the measured dual-fuel oil-parity price of $24.85/MMBtu - so New York City and Long Island dual-fuel units burned OIL instead of gas, which is exactly what they did in reality and why NYISO's 2022 oil burn is three times a normal year's. The model could not tell that story while its gas series carried $8.05 flat through the storm; with the published prices restored it does. The switch is 99.71% confined to the 72 hours where repaired gas crosses parity (the superseded keeper had ZERO such hours), substitutes one-for-one against the gas family (+0.4848 vs -0.4825 TWh), and rises in 72 of 72 of those hours. GAS (CC_REGULAR 2022 +5.494 -> +5.178 TWh; gas family +5.155 -> +4.673 TWh): the same substitution, seen from the other side - combined-cycle and steam gas units give up the MWh the oil units take, in the hours their fuel became the expensive one. EVERY OTHER CLASS is materially unmoved (nuclear, hydro, wind, solar, imports all within 0.01 TWh), because the repair reprices two winter months and does not touch the rest of the year's physics."
+}

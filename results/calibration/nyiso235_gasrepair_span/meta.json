@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-13T18:55:14",
+  "timestamp": "2026-09-14T19:49:13",
   "iso": "NYISO",
   "years": [
     2022,
@@ -375,6 +375,7 @@
   "chp_export_floor_measured": false,
   "ercot_gtc_limits_measured": false,
   "pjm_measured_interface_limits": false,
+  "committed_band_measured_basis": null,
   "ercot_wtx_curtailment_driver": null,
   "ercot_wtx_curtail_depth_wind": null,
   "ercot_wtx_curtail_depth_solar": null,
@@ -393,8 +394,8 @@
     "unit_outages_layup": "../_shared/NYISO/unit_outages_layup-4f007d991881.parquet",
     "capacity_deliverability": "../_shared/NYISO/capacity_deliverability-a315d4a5cd46.parquet"
   },
-  "git_sha": "0ef1fac3",
-  "basis_sha": "0ef1fac376ffa5740bf3b2b765d2360315068481",
+  "git_sha": "2ebc58df",
+  "basis_sha": "2ebc58df8e5d0425a0f35dbad1eeac11d039c0a3",
   "highspy_version": "1.14.0",
   "environment": {
     "python_version": "3.11.15",

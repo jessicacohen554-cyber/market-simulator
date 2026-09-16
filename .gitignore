@@ -2150,3 +2150,16 @@ results/calibration/pjm_h6_screen2023_arm/
 #   git checkout 9be0e032e8f3832779b70472ae93813d63e2229a -- \
 #     results/calibration/pjm_h7_screen2023_arm
 results/calibration/pjm_h7_screen2023_arm/
+# nyiso-235 screen + span bundles (rule 29 [R-SCREEN] (c): a screen bundle never
+# reaches main, and an unregistered bundle dir is a Class-E parity RED). Kept on
+# LOCAL DISK under rule 31 [R-RETAIN] until the owner rules on promotion —
+# .gitignore, never rm, is what discharges the delete-before-merge duty.
+# Recovery by IMMUTABLE SHA (rule 33(d)), not branch name:
+#   git checkout 750e4a72421e4548a5d82b71ccf13e6254cc3b87 -- results/calibration/nyiso235_gasrepair_2022
+# nyiso235_gasrepair_2022 (the 2022 SCREEN bundle) was removed from local disk 2026-09-16 under
+# rule 31 [R-RETAIN] trigger (i) — the OWNER RULED ON PROMOTION and the span supersedes it. Every
+# number the lane cites from it is in docs/RESULT-nyiso235-gas-repair-screen-2026-09-14.md, and the
+# bytes remain recoverable at the immutable shard sha:
+#   git checkout 750e4a72421e4548a5d82b71ccf13e6254cc3b87 -- results/calibration/nyiso235_gasrepair_2022
+# nyiso235_gasrepair_span is the DESIGNATED KEEPER since 2026-09-16 (session nyiso-235,
+# owner ruling to promote) — it is committed, not ignored. The screen bundle above stays ignored.

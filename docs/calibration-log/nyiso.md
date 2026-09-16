@@ -14371,3 +14371,149 @@ pre-existing E11 baseline gap are all untouched and **none are this session's** 
 not touched). `audit_keepers --iso NYISO` passes **0 failures**. The audit test family is 59 passed
 / 1 failed, that one being `test_e11_set_mirrors_replay_ignore` — a named member of the handoff's
 19-failure baseline and unrelated to E14.
+
+## nyiso-235 — 2026-09-14
+
+**THE RULE-29 `[R-SCREEN]` SCREEN OF THE REPAIRED DELIVERED-GAS SERIES CLEARS (G-1…G-5), AND THE
+FULL SPAN IS SOLVED. KEEPER UNCHANGED — PROMOTION IS THE OWNER'S CALL AND IS OPEN.**
+Full record: `docs/RESULT-nyiso235-gas-repair-screen-2026-09-14.md`. Pre-registration:
+`docs/PRECOMMIT-nyiso234-gas-repair-screen-2026-09-14.md` +
+`docs/PRECOMMIT-nyiso235-gas-repair-screen-ADDENDUM-2026-09-14.md`, both pushed before any solve.
+
+**What was tested: an INPUT, not a mechanism.** Zero `ScenarioConfig` fields moved, no flag armed,
+DOF ledger untouched, `authorized_price_tuning` NONE. The arm is the keeper's frozen recipe replayed
+byte-faithfully (`replay_keeper.py`) with the nyiso-234b repaired gas series as the only difference.
+Its `run_config` differs from the keeper's in exactly two fields, **both propagation not choice**:
+`committed_band_measured_basis` `None`→`False` (the PJM Route-A field materializing at its default —
+same posture, frozen cache-key drop value `"False"`), and `gas_offer_margin_anchor_by_zone`, whose
+delta **equals the signed annual-mean change in delivered gas to 1e-15** and which `meta.json`
+carries only as the boolean `gas_offer_margin_zonal_anchor: True` — i.e. derived at solve time.
+
+**G-DRIFT had to be re-run and the answer was not free.** The parent PRECOMMIT's "zero LIVE hunks"
+was measured at nyiso-234's head; this session's head carries **37 changed solve-path files,
++2,144/−58** (NWPP onboarding, PJM Route-A, CAISO intake). Verdict survives on measurement: every
+hunk classified INERT; the deletion census finds only the `ba_codes` refactor, docstrings and sets
+keeping NYISO's membership; `ba_codes("NYISO")==("NYIS",)` so `.isin` selects what `==` did; the new
+NERC gate keys `{"NWPP":"WECC"}` only; the new eGRID HR repair plant **7350 is PGE/Oregon**, not
+among NYISO's 1,088. Confirmed by `moved_rows("NYISO")=0` and the keeper's own recorded
+`solve_surface.fingerprint bd2b4657f9b5df7e` **reproducing byte-identically at HEAD**. Form 4 valid,
+**no control solve spent**.
+
+**The gates.** G-1 decided PRE-SOLVE on the delivered gas array: it moves 1,464 h across a
+contiguous 61-day run (2022-11-01…12-31, the mean-preserving monthly renormalization) and **0 hours
+outside the two months the repaired inputs touch** — 10 daily dates plus basis rows 2022-11
+`0.7490→1.3122`, 2022-12 `3.5705→5.5376`. G-2 Dec 22–23 load-weighted price **69.20→169.86
+(+100.67 $/MWh)**. G-3 inside the band pre-registered before the arm solved (207.38…410.36); max
+single zone-hour **+193.17**. G-4 **slack and dump exactly 0.000000 in all four years, both arms**.
+G-5 passes the Δmc review its own text requires: oil **+76.7 %** is **99.71 %** confined to the
+**72 hours** where repaired gas crosses the measured $24.85 oil-parity cap (**the control had ZERO
+such hours**), substitutes one-for-one against the gas family (**+0.4848 vs −0.4825 TWh**) and rises
+in **72 of 72**. `dual_fuel_oil_daily_parity` was already armed on the keeper — the repair merely
+pushed gas past parity for the first time, a possibility the ADDENDUM named in advance.
+Rule 25 re-verified on the shared basis file: **30 of 940 rows moved, every one NYISO**.
+
+**THE SPAN RESULT IS MIXED ON PRICE AND NO BAND VERDICT FLIPS.** C3a: 2022 −11.60→**−10.51 %**
+(FAIL→FAIL), 2023 −1.26→−1.76, 2024 −0.74→**−0.13**, 2025 −7.98→**−9.19 %** (all PASS→PASS).
+C3b 0.2175→**0.1990**, 0.1221→0.1233, 0.1788→**0.1619**, 0.1619→0.1670. The PRECOMMIT pre-registered
+that C3a might get WORSE and that this would not justify reverting; 2022 got BETTER, and the
+symmetric discipline binds — **a better C3a is not grounds to promote, and none of these is a gate.**
+
+**The mixed direction is explained, and it is NOT the tail repair.** C3a tracks the **sign of the
+annual-mean gas change in 4 of 4 years** (2022 **+0.2134** UP→better, 2023 **−0.0195** DOWN→worse,
+2024 **+0.0251** UP→better, 2025 **−0.0975** DOWN→worse). The model is under-priced every year, so a
+higher anchor moves prices toward actual. **The annual C3a number is dominated by a LEVEL effect
+transmitted through the annual-mean anchor, not by the tail hours the repair was about.**
+
+**OPEN STRUCTURAL FINDING, SURFACED AND DELIBERATELY NOT ACTED ON.**
+`gas_offer_margin_anchor_by_zone` is anchored to the **annual mean** delivered gas, so a 61-day
+winter repair shifts gas offers — and prices — in **all twelve months**, including the ~7,300 hours
+where the gas array itself did not move: Jan–Oct signed mean price delta **+0.21762 $/MWh**, **ratio
+to the anchor delta 1.020**, near-uniform by month, with **17.3 %** of hours exactly unchanged (the
+non-gas-marginal ones). This does **not** fail G-1, which is written over the gas array in $/MMBtu,
+and it is **not introduced by this repair** — it is a standing property the repair made visible.
+Whether an offer anchor with annual reach is right when the driver is seasonal is the question
+handed forward. Containing it here would have been a compensating tune.
+
+**Physical fidelity moves toward measured and never away.** Oil error 2022 −1.212→**−0.727**, 2025
++0.224→**+0.143**, 2023/2024 unchanged — exactly the footprint pattern. Gas family 2022
++5.155→**+4.673**. CC_REGULAR 2022 +5.494→**+5.178**.
+
+**No legitimacy regression:** D-4's failing set is **identical** in control and arm (9 rows across
+the span, same floors and plants), and D1/D2/D5/D9/D10 pass in both. The shards' "legitimacy FAIL"
+lines report the keeper's standing state, not a finding about the arm.
+
+**RETRIEVABILITY (rule 34 `[R-SHARD-PROMOTABLE]` (e)) — a promotion costs ZERO re-solves.**
+Span: commit **`99f7015445fc0e271b4cd197227bdf34fd5dd38e`** (branch `claude/nyiso-235-span`), 47
+files incl. `dispatch/{2022,2023,2024,2025}_P1.parquet` and root `system.parquet`; recover with
+`git archive 99f7015445fc0e271b4cd197227bdf34fd5dd38e results/calibration/nyiso235_gasrepair_span | tar -x`.
+Screen (2022): commit **`750e4a72421e4548a5d82b71ccf13e6254cc3b87`**, 17 files.
+Both bundles are **gitignored, kept on local disk** under rule 31 `[R-RETAIN]` — not deleted,
+because the owner has not ruled on promotion.
+
+**A defect this session made and fixed:** commit `3bfb1cd7` swept the 17 screen-bundle files onto
+the branch, because `git checkout <shard sha> -- <bundle>` **stages** what it checks out and the
+RESULT commit picked up that index. An unregistered bundle dir on `main` is the Class-E parity RED
+rule 29(c) exists to prevent. Untracked with `git rm -r --cached` (bytes kept on disk per rule 31),
+both bundle paths added to `.gitignore`. **Caught before it reached `main` — `origin/main` carried 0
+of those files.** The span bundle was then extracted with `git archive | tar -x`, which never
+touches the index.
+
+**FLAG TO THE OWNER — NEISO, and worse than the handoff described** (rule 25: NEISO's lane, measured
+read-only here only to make the flag concrete). `algonquin_citygate_daily.csv` carries the identical
+Elliott hole — last print **2022-12-21 $6.51**, next **2023-01-04** — **and is not a daily series at
+all**: its own `source` column reads `wednesday`/`last_wednesday`, with **37 gaps longer than 7
+days** across 2018–2025.
+
+**STILL OPEN:** Object B (the gas-monotone tilt) is **not** re-measured — the committed
+`tail/actual_tail.json` carries only tail hour counts, not the hourly series, so it cannot
+reconstruct the actual's non-tail mean; the re-measurement needs the raw NYISO RT LMP series
+tail-stripped on the same threshold on both sides. No Object B number is claimed here.
+
+### nyiso-235 PROMOTION — 2026-09-16
+
+**THE OWNER RULED: PROMOTE.** NYISO keeper → **`2026-09-14-nyiso-235-gas-repair`** (bundle
+`results/calibration/nyiso235_gasrepair_span`), superseding `2026-09-13-nyiso-232-st-gas`. The ruling
+answered the rule 31 `[R-RETAIN]` promotion question this session put after the screen cleared; **the
+screen did not promote this arm — a screen may kill an arm and never promote one — the owner did.**
+
+**Rule 35 `[R-PROMOTE]` executed in its required order.** (b) The year union was enumerated from the
+registry **before** anything was pruned — `{2022, 2023, 2024, 2025}`, one registered run — and (c)
+this bundle covers it **exactly**, so no stamped companion is needed. (e) The incoming keeper was
+registered and **verified** (`audit_keepers --iso NYISO`) **before** the outgoing one was deleted.
+(a,d) The superseded keeper's three stores were then pruned with
+`prune_iso_runs.py --iso NYISO --force-uncite` — the intended route, since the guard blocks on the
+governance citations that rule 35(d) says must **stay** as history.
+
+**Final state: `audit_keepers --iso NYISO` PASS, 0 failures**, one warning, the pre-existing E11
+lineage gap (the `nyiso-231` bundle was pruned by an earlier session, so the recipe diff has no
+baseline). Registry/payload parity carries **no NYISO entry**; the two reds that remain
+(`caiso279_ablate_dswcouple_span`, `soco15_spp_arm`) are pre-existing and another lane's (rule 25).
+
+**THE DETERMINATION DID NOT MOVE — this promotion buys fidelity, not a grade.** The registered
+four-year run still reads **NOT-YET on 2022 alone**, and the ISO tier (2023–2025, rule 30(c)) still
+reads **CALIBRATED with C3c the lone ledgered caveat**. What did improve is the span's failing set,
+which **shrinks** from `{fuelmix, price_mean, price_shape, price_tail}` to
+`{fuelmix, price_mean, price_tail}` — C3b drops out. **No C3a or C3b band verdict flips in either
+direction.**
+
+**Attestation.** `calibration_attestation.json` was authored for the new bundle with the DOF ledger
+**carried over byte-identical** (sha256 `926e744b…` on both), because the recipe is byte-identical;
+`authorized_price_tuning` is **NONE**. The attestation records the rule-14 basis, the re-run G-DRIFT,
+the rule-25 verification, and the open anchor finding, and states plainly that the C3a improvement
+was **not** treated as promotion evidence.
+
+**Sidecar.** Carries a `market_story` (rule 15 / skill step 4) telling the oil story: downstate gas at
+$32–36/MMBtu above the $24.85 oil-parity price sent NYC and Long Island dual-fuel units to oil during
+Elliott, which is what they actually did and why 2022's oil burn is three times a normal year's — a
+story the model could not tell while its gas series carried $8.05 flat through the storm. Its
+`definition` leads with the **run-level** verdict (NOT-YET), with the tier stated separately; leading
+with the tier tripped `audit_keepers` E5, correctly.
+
+**Housekeeping.** The 2022 **screen** bundle was removed from local disk under rule 31 trigger (i) —
+the owner has now ruled — with every cited number already in the RESULT doc and the bytes recoverable
+at the immutable shard sha `750e4a72421e4548a5d82b71ccf13e6254cc3b87`. The branch was rebased onto
+`origin/main` (38 commits) at the owner's instruction and force-pushed; the rebase was clean and the
+promotion state was re-verified after it.
+
+**Still open, unchanged by the promotion:** the `gas_offer_margin_anchor_by_zone` annual-mean reach
+(§6 of the RESULT), and Object B, which is still not re-measured.
