@@ -26,7 +26,7 @@ WHAT THE DERIVE ACTUALLY CONSUMES (and therefore what this keeps)
    peak.
 
 (2) and (3) both need capacity, which is a year statistic this shard does not
-have. So ``ladder.parquet`` emits the price on a FIXED 21-point grid of
+have. So ``ladder.parquet`` emits the price on a FIXED 20-point grid of
 fractions of the resource's own QUARTER p98 capacity, per-day median across
 hours, and also carries that quarter capacity. The parent rescales the grid to
 the year capacity and interpolates.
@@ -37,7 +37,7 @@ Quarter-p98 capacity is not year-p98 capacity. For a thermal resource with a
 stable registered capacity the two are close, but "close" is an assertion until
 measured — so ``hourly.parquet`` carries the raw hourly maxima and the parent
 MEASURES ``quarter_p98 / year_p98`` per resource and reports its distribution
-rather than assuming it. The 21-point grid is dense enough that a modest
+rather than assuming it. The 20-point grid is dense enough that a modest
 rescale is a within-grid interpolation, not an extrapolation.
 
 This approximation is what ``G-REPRO`` in
