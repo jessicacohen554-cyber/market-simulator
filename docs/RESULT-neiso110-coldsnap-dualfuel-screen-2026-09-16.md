@@ -156,6 +156,35 @@ would cross 3,600 MW and bind. **Establishing what the model's demand boundary a
 and whether the oil fleet sits inside or outside it, is worth more than any further derate
 work.**
 
+## 6b. TEST BASELINE — ZERO REGRESSIONS, MEASURED NOT ASSUMED
+
+The code change is additive and default-off, but that was verified rather than asserted.
+`tests/unit tests/scoring tests/regression` was run in full on this branch and the failing
+set compared, test-by-test, against a clean `origin/main` checkout of the same 20 files:
+
+| | failures |
+|---|---:|
+| this branch | **64** |
+| clean `origin/main` | **64** |
+| only on this branch (regressions introduced) | **0** |
+| only on `origin/main` (silently fixed) | **0** |
+
+The two sets are **identical member-for-member** (`comm -23` and `comm -13` both empty). All
+64 are pre-existing infrastructure/golden drift owned by other lanes — notably 2 NYISO
+keeper-stamp failures (`2026-09-13-nyiso-232-st-gas` in the matrix vs
+`2026-09-14-nyiso-235-gas-repair` in the keeper shard) and 1 NYISO solve-surface pin, both of
+which the matrix guard already flagged at this session's start and neither of which is this
+lane's to fix (rule 25 `[R-ISO-SCOPE]`).
+
+One test *was* legitimately changed by this work and is fixed here, not suppressed:
+`test_fleet_unification.py::test_coldsnap_wrapper_threads_config_fields` asserted the exact
+call signature of `inject_neiso_gas_coldsnap_derate`, which now takes
+`dual_switch_active=None` on the legacy path. The baseline count is 65 → 64 accordingly.
+
+The cache-key pin is separately guarded and passes: `test_caiso_ra_mpb_anchor.py`
+(`547053bdfccd4264` unmoved) and `test_persisted_identity.py[NEISO]`
+(`9d35c270c69e9eee`, 197 rows, `moved {}`).
+
 ## 7. ARTIFACTS, RETRIEVABILITY, AND THE PROMOTION QUESTION (rules 31 / 34)
 
 * **Screen bundle**: `results/calibration/neiso110_dualfuel_screen_2022` — **pushed and
