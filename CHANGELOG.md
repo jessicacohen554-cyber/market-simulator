@@ -1,5 +1,34 @@
 # Changelog
 
+## 2026-09-16 — NWPP r#8: W3b and W3c land, two cards ruled, and W4 opens
+
+Desk refresh r#8 (`docs/handoffs/nwpp-desk-ledger-2026-09.md`). Docs only — no code, no data, no
+registry; every existing keeper's cache key untouched by construction.
+
+- **NWPP-36, NWPP-37 and NWPP-38 all LANDED.** Gate G8 passes on all 25 keys across nine regions;
+  `hydro_cascade_coupling` sits on both cache-key ledgers default-off; the rule-19 invariant holds
+  **exactly** (0.000 % of any coupled plant's monthly energy moves).
+- **Card N12 RULED — accept; G-A3 was mis-specified.** The gate expected coupled plants' within-day
+  amplitude to move ≥ 30 %; it falls 1–10 %, because a coupled plant inherits its upstream's hourly
+  shape. The real effect is the reverse one the gate did not anticipate — Grand Coulee's own January
+  amplitude falls 3.71 → 2.15 as the row transmits Chief Joseph's turbine capacity back *up* the
+  chain. What makes this admissible rather than precedent-setting: the lane **explained the physics
+  instead of moving the bar**, and the miss rides the first keeper's determination basis at full
+  magnitude.
+- **Card N13 RULED — charter NWPP-39.** NWPP-37 found the shared fuel-spike screen **deleting real
+  data**: 4.4 GWh of a coherent Winter Storm Heather peaker run in SOCO, because a near-zero-baseline
+  series (median 0.0 MW, p99.9 71.7 MW) has no operating scale for the 2.5× test to anchor on. The
+  charter requires the guard be **derived from what makes an order statistic a meaningful scale
+  estimator, never fitted to the hours it saves**, and that both known true artifacts still be caught.
+- **NWPP-38's null is stronger than a null usually is.** The systems the PNCA never coordinated moved
+  *more* than the one it did — PGE's intraday ramp 10.95 pre-period standard deviations from its own
+  mean, against a maximum excursion on the coordinated Columbia of 3.04. That is hydrology's
+  signature, not an instrument's.
+- **E-7 recorded against the desk:** its enumeration of unscreened readers was wrong in *both*
+  directions — two at r#7, "a dozen" at r#7b, six as measured. The lane also produced a better
+  argument for the structural fix than the desk's, by measuring that the screen is not idempotent.
+- **W4 is open.** NWPP-40 is the only lane left before a first keeper.
+
 ## 2026-09-16 — SOCO desk r#10: W3 closes — SOCO-32 lands PASS, gate G4 fully discharged, SOCO-40 dispatchable
 
 **Records only — no code, no data, no registry, no solve.**

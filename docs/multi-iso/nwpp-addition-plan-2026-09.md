@@ -1726,6 +1726,102 @@ before/after table for the mainstem, the tributary control, and one of the three
 Report the verdict and the test's power FIRST.
 ```
 
+#### NWPP-39 `[FABLE]` — the zero-baseline guard (owner ruling N13)
+
+```
+COLLISION RULES (plan §8.0, standing):
+1. A lane touches NO shared record. Not the plan, not the ledger, not docs/calibration-log/nwpp.md,
+   not CHANGELOG.md, not the shard's keeper/gates stamp, not docs/mechanism-testing-matrix.md. The
+   DESK writes every one of those at its next refresh, from your FINDING. Your record is ONE new file
+   — your FINDING (+ PRECOMMIT) — carrying a `## Log entry` section the desk appends verbatim.
+2. The only shared file a lane may edit is its OWN CELL LINE in mechanism-matrix/NWPP.js. You add NO
+   ScenarioConfig field, so rule 28(c) does not fire and you add NO matrix row.
+3. Rebase, never merge-in. `git fetch origin main && git rebase origin/main`, re-run the gates,
+   `git push --force-with-lease` on your own branch.
+4. One PR per lane, opened when the lane is DONE.
+5. Data and code regions stay disjoint by construction (FILES YOU OWN); a second lane needing the
+   same file is the desk's sequencing error — STOP and route.
+6. A gate-repair lane re-verifies the gate at ITS OWN base sha before touching anything.
+7. A lane that may produce a PROMOTABLE run asks the promotion question INSIDE its own session
+   (rule 31 [R-RETAIN]). You run no solve.
+8. Every solve runs in a shard; the lane session never runs an LP (rule 32 [R-SHARD]). You run none.
+9. Never charter across a program boundary.
+
+ISSUANCE NOTICE (NWPP-DESK r#8, 2026-09-16). Owner ruling N13: charter the zero-baseline guard.
+REGISTRY: NINE regions, nine matrix shards. KEEPER IDS DRIFT — re-read
+frontend/data/backcast/keepers/*.json at YOUR OWN base sha, never from a prompt. Push by pack size
+(CLAUDE.md "Git & Pushing"; HTTP/1.1 retry on 408/500); fetch-back verify every pushed file >= 300
+lines (rule 27); no CI workflows (private repo, billed minutes); build data/clean before the gates
+(G22); never touch frontend/data/forecast/ or any other region's registry files.
+
+════════════════════════════════════════════════════════════════════════════════════════
+
+You are lane NWPP-39. MODEL: Fable — you are changing the SHARED EIA-930 fuel-spike screen that all
+NINE registered regions now read through ONE seam (NWPP-37 moved it to the frame constructor). The
+licence is narrow and the exit is a byte-identity proof.
+DATA PROFILE: nwpp.  Branch stem: claude/nwpp-39-zero-baseline-<4 chars>.
+Read CLAUDE.md freshly and in full — rule 14 [R-ACCURATE] is the whole of your charter, plus 13
+[R-MEASURED], 19 [R-ONE-MECH], 24, 27; docs/handoffs/FINDING-nwpp-37-2026-09-16.md **§6 IN FULL** (it
+is your specification and its measurement is not to be re-derived) and §5 (the pool-dilution item,
+which is NOT yours — see below); src/market_sim/data/eia930/frames.py and actuals.py::
+_screen_fuel_spike_columns IN FULL, as NWPP-37 left them.
+
+*** THE DEFECT, MEASURED BY NWPP-37 §6 — THE SCREEN DELETES REAL DATA. ***
+SOCO 2024 h386-392 is **2024-01-17 03:00-09:00, Winter Storm Heather**. `NG: OIL` runs 155 -> 530 ->
+660 -> 762 -> **801** -> 350 -> -3 MW while SOCO's net generation goes 41,106 -> 47,123 MW and demand
+tracks it hour for hour. That is a coherent peaker start, ramp and shutdown against the BA's winter
+peak, and 801 MW against 47,123 MW of net generation is entirely ordinary.
+**The screen fires only because a near-zero-baseline series has no operating scale**: SOCO `NG: OIL`
+has median **0.0 MW** and p99.9 **71.7 MW**, so the "robust peak" the 2.5x test anchors on is
+meaningless — any real peaker start is hundreds of times a p99.9 that is itself noise. **4.4 GWh of
+real generation is deleted (0.0056 -> 0.0012 TWh).**
+This is the fuel-column analogue of the CHPD cold-snap failure NWPP-10 found on the DEMAND side, and
+it is a rule-14 [R-ACCURATE] violation by construction: a screen that deletes a documented weather
+event is burying real data, not repairing telemetry.
+**It is PRE-EXISTING, not introduced by NWPP-37** — SOCO `NG: OIL` already reached the committed
+benchmark through `load_eia_hourly_benchmark`. NWPP-37 surfaced it by censusing the two regions
+SPP-41 could not (SOCO and NWPP registered a week after it measured). You are fixing an old defect in
+newly-consolidated code, not a regression.
+
+WHAT YOU BUILD: a **zero-baseline guard** — a series whose robust peak is not a real operating scale
+has nothing to screen against and passes through UNTOUCHED.
+The existing screen already carries the shape of this idea and says so: its docstring notes that "a
+series whose robust peak is not positive (an all-charging storage net series) has no operating scale
+to screen against and passes through". **Your guard is that same sentence, extended from `not
+positive` to `not meaningfully positive`, and the whole adjudication is what "meaningfully" is.**
+FIX IT IN YOUR PRECOMMIT, EX ANTE, AND JUSTIFY IT ON THE SERIES' OWN STATISTICS — never on which
+hours it happens to save. A guard chosen by trying thresholds until the Heather run survives is a
+fitted screen and is refused (rule 1 [R-STRUCT]); a guard derived from what makes an order statistic
+a meaningful scale estimator is a construction. State which you did, in your own words.
+
+THE EXIT — BYTE-IDENTITY ACROSS ALL NINE REGIONS, against NWPP-37's measured control set:
+NWPP-37 measured **1,158 consumer series; 19 move; all 19 NWPP or SOCO**, with ERCOT, CAISO, PJM,
+NYISO, MISO, NEISO and SPP byte-identical. Your guard must **restore** SOCO `NG: OIL` 2024 (0.0012 ->
+0.0056 TWh) and must **not** re-admit any hour the screen is right to catch — in particular the two
+known true artifacts (SPP 2023 wind h3907; NYISO 2024 other h6759) must STILL be repaired. Report a
+table: per region, per year, every series that moves against NWPP-37's post-state, with each move
+classified as *restores real data* or *re-admits an artifact*. **Any re-admitted artifact is a STOP.**
+Add a test pinning the Heather hours survive AND the two known artifacts still do not.
+
+NOT YOURS, AND DO NOT ABSORB IT: NWPP-37 §5's **pool dilution** item is a separate threshold question
+about how a pooled multi-BA series scales, routed by that lane and not fixed by this one. If your
+guard interacts with it, SAY SO and route; do not widen (rule 19 [R-ONE-MECH] — one mechanism per
+phenomenon, and these are two).
+
+FILES YOU OWN: the guard inside `_screen_fuel_spike_columns` and, if the seam requires it,
+`frames.py` — the GUARD ONLY: you change no per-region branch and you do not touch the demand screens
+(`_screen_demand_spikes` / `_screen_demand_dropouts` are a different phenomenon). Plus the test; your
+PRECOMMIT and FINDING.
+MUST NOT TOUCH: any per-region registry or config; ScenarioConfig; scripts/calibration_verdict.py;
+frontend/data/**; NWPP-37's enumeration or seam decision; this plan; the ledger.
+RULES THAT BITE: 14 [R-ACCURATE] above all; 1 [R-STRUCT] (the guard is derived, never fitted to the
+hours it saves); 13; 19; 24; 27 [R-PUSH] (edit locally, push exact bytes, fetch-back verify >= 300-line
+files).
+EXIT: the guard, the test, the nine-region move table with every move classified,
+FINDING-nwpp-39-<date>.md. Report FIRST: how you derived the guard (construction, not fitting), the
+SOCO oil restoration, and confirmation that both known artifacts are still caught.
+```
+
 ### W4 / W5 / W6 — charters issued at the sittings that unblock them
 
 
