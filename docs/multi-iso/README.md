@@ -1,14 +1,20 @@
 # Multi-ISO Expansion — Planning Set
 
 Planning documents for expanding the simulator from ERCOT to a faithful
-backcast across **CAISO, PJM, ISO-NE (NEISO), MISO, NYISO, SPP and the NWPP
-pool** — eight registered regions with ERCOT. (SPP was registered 2026-09-06 by
-lane SPP-20 under the SPP addition program, `spp-addition-plan-2026-09.md`;
-before that it appeared only as a MISO RDT wheeling path. NWPP — seventeen
-WECC balancing authorities under one key, the first pool region — was
-registered 2026-09-14 by lane NWPP-20 under `nwpp-addition-plan-2026-09.md`.)
+backcast across **CAISO, PJM, ISO-NE (NEISO), MISO, NYISO, SPP, the NWPP pool
+and the SOCO balancing authority** — nine registered regions with ERCOT,
+47 zones of which 44 carry load, over 58 transmission links. (SPP was registered
+2026-09-06 by lane SPP-20 under the SPP addition program,
+`spp-addition-plan-2026-09.md`; before that it appeared only as a MISO RDT
+wheeling path. The last two registered on the same day, 2026-09-14, and neither
+is an ISO: NWPP — seventeen WECC balancing authorities under one key, the first
+*pool* region — by lane NWPP-20 under `nwpp-addition-plan-2026-09.md`, and SOCO
+— Southern Company Services – Trans, the first *single balancing authority*,
+with no LMP and no day-ahead market — by lane SOCO-20 under
+`soco-addition-plan-2026-09.md`. NWPP merged first, so SOCO is the ninth
+builder.)
 
-> **Status (largely executed):** these started as forward plans, but all eight
+> **Status (largely executed):** these started as forward plans, but all nine
 > regions are now registered multi-zone in `config/iso_configs.py`, and several
 > (ERCOT, NEISO, NYISO, PJM, CAISO) have backcasts on the calibration dashboard.
 > Treat these as the *rationale and process* record; for current topology and
@@ -28,7 +34,7 @@ registered 2026-09-14 by lane NWPP-20 under `nwpp-addition-plan-2026-09.md`.)
 | `08-neiso-prompt-pack.md` | **Moved → `docs/sessions/multi-iso/08-neiso-prompt-pack.md`** (archived, 2026-07 triage). NEISO (ISO-NE) instantiation — Algonquin winter basis + dual-fuel, HQ Phase II imports, Northfield PS, FCM, RGGI; P0–P13 + P14 Stage G/H sign-off done. |
 | `09-ercot-propagation-prompt-pack.md` | **Reverse direction.** Audit of ERCOT's accumulated changes + a sequenced pack to perpetuate the *generic* engine improvements across all ISOs while leaving the *energy-only-specific* ones (ORDC, AS revenue, RTC+B) in ERCOT. |
 | `spp-addition-plan-2026-09.md` | **SPP addition program (chartered 2026-09-06).** Definition of done, the eight owner cards (P1–P8), wave graph W1–W6, lane table with `[FABLE]`/`[OPUS]` labels, fetch/upload manifest, hard gates, and the prompt pack. Director: the SPP addition desk (`docs/handoffs/spp-desk-handoff-2026-09-06.md`, ledger `spp-desk-ledger-2026-09.md`). SPP stays unregistered until its W2 lane lands. |
-| `soco-addition-plan-2026-09.md` | **SOCO addition program (chartered 2026-09-12).** Adds the **Southern Company balancing authority** (Alabama Power / Georgia Power / Mississippi Power) as the eighth registered region — the footprint the Hillabee Energy Center (EIA plant 55411, Tallapoosa County AL) sits in. SOCO is a **BA, not an RTO**: no LMP, no day-ahead market, no capacity market, so the plan's load-bearing owner card (S2) is what the price benchmark and the determination class are at all. Ten owner cards (S1–S10), wave graph W1–W6, lane table, fetch manifest, hard gates and the prompt pack. Director: the SOCO addition desk (`docs/handoffs/soco-desk-handoff-2026-09-12.md`, ledger `soco-desk-ledger-2026-09.md`). SOCO stays unregistered until its W2 lane lands. |
+| `soco-addition-plan-2026-09.md` | **SOCO addition program (chartered 2026-09-12).** Adds the **Southern Company balancing authority** (Alabama Power / Georgia Power / Mississippi Power) as a registered region — the footprint the Hillabee Energy Center (EIA plant 55411, Tallapoosa County AL) sits in. SOCO is a **BA, not an RTO**: no LMP, no day-ahead market, no capacity market, so the plan's load-bearing owner card (S2) is what the price benchmark and the determination class are at all. Twelve owner cards (S1–S12), wave graph W1–W6, lane table, fetch manifest, hard gates and the prompt pack. Director: the SOCO addition desk (`docs/handoffs/soco-desk-handoff-2026-09-12.md`, ledger `soco-desk-ledger-2026-09.md`). **SOCO was registered 2026-09-14 by lane SOCO-20** (`FINDING-soco-20-2026-09-14.md`): the **ninth** builder in `config/iso_configs.py` — NWPP registered the same day and merged first — three geographic zones (AL / GA / MS), no capacity market, no import node, no price benchmark (`PHYSICALLY-CALIBRATED (PRICE UNSCORED)`, the rubric v3.8 class SOCO-22 landed and NWPP then adopted). Both links are Tier-3 placeholders that cannot bind; VOLL is a derived $61,900/MWh, the only region not on $2,000. No keeper yet — the first solve is lane SOCO-40. |
 | `nwpp-addition-plan-2026-09.md` | **NWPP addition program (chartered 2026-09-13).** Adds the **Northwest Power Pool / Western Power Pool footprint** — ~17 WECC balancing authorities (BPAT, PACE, PACW, PGE, PSEI, AVA, IPCO, NWMT, CHPD, DOPD, GCPD, SCL, TPWR, AVRN, GRID, WAUW, NEVP) — as a registered region: the footprint the **Hermiston Generating Plant** (EIA plant 54761, Umatilla County OR, BA `PACW`) sits in. It is the first region that is a **pool of many BAs** rather than one BA or one RTO, and it is **36.3 % conventional hydro** with eight ≥1 GW plants on one hydraulic chain. There is no NWPP LMP, but unlike SOCO there *are* measured prices (CAISO WEIM 15-minute LMPs; the Mid-C traded index), so card **N2** is what the benchmark and the determination class are. Ten owner cards (N1–N10), wave graph W1–W6, lane table, fetch manifest, hard gates and the prompt pack. Director: the NWPP addition desk (`docs/handoffs/nwpp-desk-handoff-2026-09-13.md`, ledger `nwpp-desk-ledger-2026-09.md`). **NWPP was registered 2026-09-14 by lane NWPP-20** (`FINDING-nwpp-20-2026-09-14.md`): the eighth builder in `config/iso_configs.py`, five whole-BA zones, the seventeen-member EIA-930 pool frame, no capacity market, no import node, no price benchmark (`PHYSICALLY-CALIBRATED (PRICE UNSCORED)`). |
 
 > **Archived session notes → `docs/sessions/multi-iso/`.** The 2026-07 triage

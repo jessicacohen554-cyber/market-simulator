@@ -1,12 +1,126 @@
-# SOCO calibration log
+# Calibration Log — SOCO
 
-Per-region continuation of `docs/calibration-log.md` (frozen archive) for the **SOCO balancing
-authority** — Southern Company (Alabama Power, Georgia Power, Mississippi Power, Southern Power),
-NERC SERC, **not an RTO/ISO**. Program: `docs/multi-iso/soco-addition-plan-2026-09.md`; desk ledger
-`docs/handoffs/soco-desk-ledger-2026-09.md`.
+Per-region continuation of `docs/calibration-log.md` (frozen archive, entries through 2026-07-19) for
+the **SOCO balancing authority** — Southern Company Services, Inc. – Trans (EIA-930 / EIA-860 BA code
+`SOCO`, NERC SERC), which dispatches **Alabama Power, Georgia Power and Mississippi Power** as one
+pooled, cost-based system under the Intercompany Interchange Contract. **SOCO is a single balancing
+authority, not an RTO/ISO** — no day-ahead market, no LMP, no capacity auction, no ancillary-service
+market, no offer cap; every name downstream still says "ISO". Entry format matches the other per-region
+logs — `## <lane> — YYYY-MM-DD — title`, **newest at the BOTTOM**. Only this region's lanes appear
+here, so parallel per-ISO sessions never conflict (the per-ISO lane convention, 2026-07-19; see
+`frontend/data/backcast/keepers/README.md`).
 
 Entries are appended **verbatim** by the SOCO ADDITION DESK from each lane's FINDING `## Log entry`
-section (plan §8.0 rule 1 — a lane never writes this file). Newest last.
+section (plan §8.0 rule 1 — **a lane never writes this file**). Newest last.
+
+Program: `docs/multi-iso/soco-addition-plan-2026-09.md` (definition of done, owner cards S1–S12, wave
+graph W1–W6, lane table, fetch manifest, hard gates, prompt pack). Desk handoff
+`docs/handoffs/soco-desk-handoff-2026-09-12.md`; desk ledger
+`docs/handoffs/soco-desk-ledger-2026-09.md` — **the ledger wins where the two diverge**. Phase-0
+census: `docs/multi-iso/soco-data-audit.md`. Lever queue: `docs/mechanism-testing-matrix.md` §5.8
+(NWPP is §5.9 — SOCO's shard landed first, on 2026-09-13 by lane SOCO-21, so SOCO is the **eighth
+matrix shard** even though it is the **ninth builder**; the two orderings cross and both are correct);
+cell verdicts `docs/codebase-site/data/mechanism-matrix/SOCO.js`.
+
+**Next shorthand: soco-35.** Headings in this file carry the lane's own number, so a lane chartered in
+the plan's §5 table keeps that number (W3's SOCO-30/31/32/33, W4's SOCO-40, W5's SOCO-54–57); soco-35
+is the next free number for a lane the table does not name.
+
+## Lane state (header refreshed 2026-09-16, lane SOCO-34)
+
+**No keeper exists.** SOCO was registered as the **ninth** region on 2026-09-14 by lane SOCO-20
+(`docs/handoffs/FINDING-soco-20-2026-09-14.md`), so `frontend/data/backcast/keepers/SOCO.json` does
+not exist, no bundle has been solved, and there is no run to score, no determination and no gates. The
+first-ever solve and the first keeper are lane **SOCO-40**'s. Training window **2023–2025**, and rule
+16 `[R-ALLYEARS]` binds from day one: a single-year SOCO keeper is refused, and lane SOCO-40 runs
+**one shard, one `--year 2023 2024 2025` invocation, one bundle** (rule 32 `[R-SHARD]`(b)).
+
+**Region count measured at this refresh:** `config/iso_configs._ISO_BUILDERS` carries **NINE** regions
+— ERCOT CAISO MISO PJM NYISO NEISO SPP **NWPP SOCO**. NWPP and SOCO both registered 2026-09-14; NWPP
+merged first, so SOCO is the ninth builder. Derived topology totals over the nine: **47 zones, 44
+carrying load, 58 links**. Seven keeper shards exist (neither NWPP nor SOCO has one). Prose saying
+"seven ISOs" is stale, and prose saying "eight" was true only between the two merges.
+
+**No year is protected, and no SOCO number will be a certified out-of-sample number.** Rule
+`[R-HOLDOUT]` was **removed** 2026-09-09 (owner instruction; CLAUDE.md rule 22's coda — that ordinal
+now carries `[R-C3C]`). Any year may be solved, scored and registered with no authorization, no marker
+and no one-shot. The cost is stated rather than hidden: nothing is held back from being iterated
+against, so every SOCO run is model-**selection** evidence and a skill claim built on a year that has
+been tuned against is not a skill claim. Say what a number is when quoting it. Sibling logs that still
+cite "rule 22 `[R-HOLDOUT]`" as live (`spp.md`) predate the removal.
+
+Facts every SOCO session inherits, so nobody rediscovers one in a residual:
+
+- **THERE IS NO SOCO PRICE, and the rubric already knows it.** Owner card **S2** is the program's
+  load-bearing card precisely because a cost-based BA publishes no LMP, no zonal price, no spread and
+  no congestion archive. Lane **SOCO-13** was chartered to build a candidate series under a STOP gate
+  pre-registered before any data was read, and it **read NO**
+  (`docs/handoffs/FINDING-soco-13-2026-09-13.md`): D2.2 failed every year (3.66 / 2.69 / 2.64 % vs a
+  ≥ 5 % bar), D3.1 failed 2024 and 2025 (+54.2 / +72.1 % vs ±15 %), D4.2 failed 2025. **No bar was
+  moved after the series was seen and nothing landed to `_validation-source`.** So a SOCO run reads a
+  determination **naming its own basis, never a bare `CALIBRATED`**: rubric **v3.8**'s
+  `PHYSICALLY-CALIBRATED (PRICE UNSCORED)` / `PHYSICALLY-CALIBRATED-WITH-CAVEATS (PRICE UNSCORED)`,
+  keyed on the absence of an `actual_lmp.json` block — landed by lane **SOCO-22**, which re-scored all
+  seven keepers byte-identically, and since adopted by NWPP. The zones are validated on **load and
+  dispatch only**.
+- **Both transmission links are Tier-3 placeholders that cannot bind.** No public inter-OpCo transfer
+  limit exists *structurally*: the Operating Companies "function as a single, integrated public-utility
+  system" and are "committed and dispatched as a common System without regard to the ownership of each
+  generating facility" (FY2025 10-K), so they publish no internal interface rating. AL↔GA 24,400 MW
+  and AL↔MS 4,300 MW are each the smaller side's EIA-860 2025 winter capability — an upper bound on
+  any physically possible flow, on the SPP-20 precedent. The real values are pre-declared lever
+  **SOCO-54**, which has **no public source and no price signal to validate against**. Never tune a
+  placeholder to a residual (rules 1 / 13 / 14), and never sell the three-zone split as improving
+  accuracy (card S3 condition (iii)) — until a link binds, a three-zone and a one-zone SOCO produce
+  the same dispatch.
+- **The static `load_share`s are a fleet-MW fallback, NOT load shares.** 0.3510 / 0.5842 / 0.0648 is
+  the EIA-860 2025 ER operable nameplate split (audit §5 row 4), registered only because the load
+  derive is lane **SOCO-32**'s by ruling and because the non-binding links above make it unable to
+  move the dispatch. SOCO-32 replaces it with FERC-714 hourly shapes.
+- **The load basis is FIVE FERC Form 714 respondents, and Southern Power is NOT one of them.** Alabama
+  Power (2), Georgia Power (183), Mississippi Power (184), **Oglethorpe (107)** and **MEAG (210)** —
+  hourly sum closes the metered EIA-930 BA demand to a 3.03 / 2.92 / 1.26 % residual in
+  2023 / 2024 / 2025. **Southern Power (186) is EXCLUDED**: lane SOCO-14 returned a *documented NO* on
+  whether its planning-area load sits in the BA, gate G22 is discharged for the five-set and no other,
+  and 186's 1.3–1.4 % is named on the first keeper's determination basis. Zones are named for
+  **geography, never for an operating company** (card S3) — Georgia Power owns 241.6 MW in Alabama and
+  Oglethorpe + MEAG own 7.1 GW in Georgia that is not Georgia Power's, so OpCos do not map 1:1 onto
+  zones.
+- **VOLL is $61,900/MWh — the only region not on $2,000.** SOCO takes no offers and has no offer cap,
+  so there is no tariff ceiling to inherit; the field is the LP's slack (load-shed) penalty, an
+  *economic* value of lost load, derived rather than borrowed: LBNL/DOE "ICE Calculator 2" (OSTI
+  3021993) cost per unserved kWh at the 2-hour column, weighted by the EIA-861 2024 retail-sales
+  customer mix over the 85 utility rows with BA code `SOCO` — 0.4009 × $5,030 + 0.5991 × $100,000 =
+  $61,927 → $61,900. Construction fixed in `PRECOMMIT-soco-20-2026-09-14.md` §3 **before** the number
+  was written. Honest width, reported and never selected on: 8 h → $32,384, 24 h → $19,447. Stated
+  misalignment: ICE 2's cost functions are national pooled models, so the "Southeast" leg is the
+  customer-class **mix**, not a regional cost function. Because this is the slack penalty at ~31× the
+  $2,000 regions', any unserved energy dominates a SOCO objective far more sharply — read a SOCO dual
+  with that in mind.
+- **Two timezones, one clock** (gate G19, closed by SOCO-10 §3.4). The footprint spans
+  America/Chicago (AL, MS) and America/New_York (GA), but the BA is dispatched from one control centre
+  and EIA stamps it on ONE clock — **`America/Chicago`, DST-aware, hour-ending** — measured over all
+  26,304 rows of the committed `SOCO hourly.parquet` (0 mismatches vs a Central wall clock, 26,301 vs
+  Eastern). Every SOCO series is Central and joins on `UTC time`; all three zones are Central, because
+  the timezone is a property of the BA, not of a zone.
+- **No import node, and no capacity market.** The seams are the served measured EIA-930 `Total
+  interchange` schedule (`_SCALAR_INTERCHANGE_ISOS`, card S4) — SOCO is a net **exporter** of
+  +10.2 / +10.8 / +13.0 TWh, so the served series *raises* what the internal fleet must generate in
+  most hours — plus eight **default-off** `NeighborInterface` blocks for lever **SOCO-56**
+  (`SOCO_TVA` is the one genuinely two-way seam, −3,150 .. +3,007 MW). SOCO is deliberately absent
+  from `capacity_market.MARKET_DESIGN` (→ `DEFAULT_MARKET_DESIGN`, card S6), from every offer-curve
+  tuning channel (gate G5: SOCO takes no offers, so every band multiplier is the identity) and from
+  any reserve co-optimisation or scarcity seed (card S5) — hence no `default_scenario_overrides`.
+  `PLANNING_RESERVE_MARGIN_BY_ISO["SOCO"] = 0.26`, the **winter** margin, the binding season here.
+- **The CEMS gap was the critical path and it is closed.** No AL/GA CEMS existed for any year at
+  charter — 91.6 % of CEMS-eligible fossil MW (45,797.3 of 50,005.0). Lane SOCO-11 landed all 8 AL/GA
+  files schema-equal to `MS_2024`. The **FERC-714 reconciliation gate FAILED at 73.2 %** and
+  **nothing was rescaled** — that failure is inherited, not fixed.
+- **There is no reliability floor, bridge or derate for SOCO**, and no
+  `reliability_floor_coeffs_SOCO.csv`, so `RELIABILITY_FLOOR_REGISTRY["SOCO"]` is empty and lane
+  SOCO-40's keeper is built without one. A cost-based pooled system is commitment-heavy by
+  construction, so the temptation to floor it is real: any later floor arrives through rule 17
+  `[R-FLOOR-WINDOW]` with a declared driver, window and forward story — never as a residual patch.
 
 ---
 
