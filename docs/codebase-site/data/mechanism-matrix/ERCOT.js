@@ -212,6 +212,7 @@ window.MECH_MATRIX_SHARDS.ERCOT = {
     nuclear_unit_availability: { cell: "K" },
     temp_dependent_derate: { cell: "R", ev: "OWNER CLOSURE 2026-07-09 'REJECTED WITH CAUSE for ERCOT' (docs/calibration-log.md:9752), on the ercot48 full-keeper A/B + ercot49 offer-retune pair (four registrations, retention-pruned 2026-07-10 :10745) and three measured instruments (:9654 envelope, :9739 scarcity-hour slopes incl. CC_CHP -1.41 %/C, RTOLCAP telemetry); cell corrected U -> R at ercot-177 (2026-08-07, ex-ante, no solve — results/calibration/FINDING-ercot177-temp-derate-refused-2026-08-07.md; rule-19 water-fill erasure proof scripts/probes/ercot177_waterfill_identity.py)" },
     gas_coldsnap_derate: { cell: "U" },
+    coldsnap_derate_dualfuel_conditional: { cell: ".", ev: "n/a for this ISO: neiso_coldsnap_derate_dualfuel_unswitched is a scope condition on inject_neiso_gas_coldsnap_derate, which returns False unless iso == 'NEISO', so there is no object here to arm and the field is byte-identical. Not a verdict; rule 25 [R-ISO-SCOPE] means a NEISO verdict would never fill this cell either. Row minted neiso-110 (2026-09-16) per rule 28(c)." },
     nysdec_peaker_rule_availability: { cell: "." },
     wefor_statistical_stack: { cell: "K" },
     correlated_forced_outage: { cell: "K", fc: "K" },
