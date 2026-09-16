@@ -240,3 +240,23 @@ screen for, then did not run** — is the one that cost the time, and `unit_outa
 
 `git archive <sha> results/calibration/<dir> | tar -x`. All gitignored, not deleted (rule 31). The 2025
 span leg reproduces the screen probe **byte-identically** (max |ΔMW| = 0.000000).
+
+> ### ⚠️ CORRECTION 2026-09-16 (session nyiso-238) — **EVERY SHA IN THIS TABLE IS DEAD, AND SO IS
+> EVERY BRANCH. THE FOUR BUNDLES ARE UNRECOVERABLE FROM THIS REPOSITORY.**
+>
+> Verified at `39174d6d` (origin/main): `git cat-file -t` returns **UNREACHABLE** for all four
+> commits, and `git ls-remote --heads origin` returns **four branches in total**, none of them a
+> `claude/nyiso-236-hydro-*`. The shard branches were deleted and their commits are unreachable, so
+> the `git archive` command above **fails** — this is exactly the failure mode rule 33
+> `[R-SHARD-ARCHIVE]` (d) and (f)(4) name ("re-pin nothing to a deleted SHA … the recovery route in
+> the doc changes from 'check out this sha' to 're-solve, cost stated'").
+>
+> **The recovery route is a RE-SOLVE, and its cost is ~60 minutes of LP** (four NYISO years at
+> ~15 min, sequential in one `--years 2022 2023 2024 2025` invocation per rules 16 `[R-ALLYEARS]`
+> and 32(b) `[R-SHARD]`). nyiso-238 executed that re-solve into
+> `results/calibration/nyiso238_hydroperiod_span` and **pushed the bundle** under rule 34
+> `[R-SHARD-PROMOTABLE]` (a), so the arm is promotable again; see
+> `docs/RESULT-nyiso238-hydro-budget-span-2026-09-16.md` for the live retrievability line.
+>
+> Nothing in §A1–A5 is withdrawn: those numbers stand as measured. What is corrected is only the
+> claim that the artifacts behind them survive.

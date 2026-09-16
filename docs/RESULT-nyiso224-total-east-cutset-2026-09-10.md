@@ -156,6 +156,17 @@ owner-gated change and it is **named here, not attempted**.
 
 ## 5. The artifacts, and the promotion question (rule 31 `[R-RETAIN]`)
 
+> ### ⚠️ CORRECTION 2026-09-16 (session nyiso-238) — **THE BUNDLE DOES NOT SURVIVE.**
+> Verified at `39174d6d`: branch `claude/nyiso224-cutset-2022` is **gone** (`git ls-remote --heads
+> origin` returns four branches in total, none of them this one), so the paragraph below is false as
+> written — "it is therefore in git and does not depend on either ephemeral container" no longer
+> holds. This is rule 33 `[R-SHARD-ARCHIVE]` (f)(4)'s dead-recovery-line case. **The recovery route
+> is a re-solve: ~4 min for 2022 alone, ~17 min for the full span**, as §5's last line already
+> costed. The owner promotion question below was ruled on 2026-09-10 — **reject as constructed**
+> (`nyiso_total_east_cutset_ttc` stays `False`, armed by nobody) — and nyiso-225 then closed the
+> named successor, so nothing is pending on this bundle; it is recorded here so no later lane plans
+> around bytes that are not there.
+
 **The bundle SURVIVES.** The shard pushed it to branch **`claude/nyiso224-cutset-2022`**
 (`results/calibration/nyiso224_cutset_2022/`: `run_config.json`, `meta.json`,
 `legitimacy_diagnostics.json` and all seven `hourly/` sidecars including `network_2022.parquet`
