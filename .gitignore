@@ -2206,3 +2206,6 @@ results/calibration/spp42_span_a/
 #   git checkout b2b3d7d572ce56cd0fc25c4e08c8b46fce740be7 -- \
 #     results/calibration/pjm_h8_screen2023_arm
 results/calibration/pjm_h8_screen2023_arm/
+# nyiso-236 rule-29 SCREEN bundle — gitignored, NOT deleted (rule 31 [R-RETAIN]).
+# Recover: git archive 478267ba7f6c8df6a36a4db2f488e2f50481049a results/calibration/nyiso236_hydroperiod_2025 | tar -x
+results/calibration/nyiso236_hydroperiod_2025/
