@@ -195,11 +195,24 @@ The cache-key pin is separately guarded and passes: `test_caiso_ra_mpb_anchor.py
   (never `git checkout <sha> -- <path>`, which stages the bundle).
 * **Nothing has been deleted** (rule 31 `[R-RETAIN]`). The working-tree copy does not survive
   this container; the shard branch does.
-* **THE PROMOTION QUESTION, ASKED EXPLICITLY:** there is **nothing to promote as a keeper** —
-  this is a one-year screen, never registrable (rule 29), and it does not improve the model
-  materially. What *is* an open owner decision is **whether to merge the code** (gated,
-  default-off, byte-identical off) as a standing structural correction, and if so whether to
-  arm it on the NEISO keeper. My recommendation: **merge the code, do not arm it** — the
-  exemption is genuinely unearned and the correction should exist, but arming it changes
-  nothing worth a re-solve of six years, and it would spend a DOF-ledger line for +0.1 % of
-  the gap.
+* **THE PROMOTION QUESTION — ASKED, AND ANSWERED BY THE OWNER.** This section originally
+  recommended *merge the code, do not arm it*. **The owner ruled otherwise on 2026-09-16**
+  ("If so plz promote. If structural integrity improves but gates regress that may still be a
+  keeper."), the full 2020-2025 span was solved, and
+  **`2026-09-16-neiso110-dualfuel-derate-scope` is now the designated NEISO keeper.** The
+  recommendation is left above rather than deleted, because the owner routinely promotes what
+  a session declined and the record should show that this is exactly what happened.
+
+  **The full span CONFIRMS this screen rather than overturning it.** The arm closes
+  0.01 / 0.05 / 0.10 / 0.01 / 0.00 / 0.02 % of the oil gap in 2020-2025 (+0.00154 TWh total),
+  and nothing regresses: C3a improves in 5 of 6 years (2020 moves 0.028 pp the other way, every
+  move < 0.09 pp), slack/dump delta 0.0000 in all six years, hours > $300 stay at 0 in both
+  legs, the reserve co-opt stays dormant in both legs, and D1/D2/D4 statuses are identical.
+  Determination **unchanged at CALIBRATED** with the same single ledgered C3c caveat; DOF ledger
+  **unchanged** at n_entries 8 / n_residual 6.
+
+  So the promotion rests on rule 1 `[R-STRUCT]` — a structurally-correct mechanism is kept
+  because it is correct — and **not** on the residual. **§3's finding is untouched and still
+  governs the oil question**: this mechanism is not the fix for ISO-NE's winter oil burn, the
+  miss stays ledgered at full magnitude, and no admissible magnitude of this lever family can
+  produce a reserve-short hour at Elliott.
