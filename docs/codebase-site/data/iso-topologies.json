@@ -1,8 +1,8 @@
 {
   "_meta": {
     "source": "Extracted from src/market_sim/config/iso_configs.py. One-pass serialization of zone names, load shares, links, and TTCs.",
-    "description": "The regions with a serialized zonal topology, transmission links and technical parameters. Serialized from the live config in src/market_sim/config/iso_configs.py; re-serialize if iso_configs.py changes. _ISO_BUILDERS carries NINE registered regions at 2026-09-14 (ERCOT CAISO MISO PJM NYISO NEISO SPP NWPP SOCO); eight are serialized here. SOCO registered the same day as NWPP and its block is owed by the SOCO desk's own site lane, not by this one.",
-    "date": "2026-09-14"
+    "description": "The regions with a serialized zonal topology, transmission links and technical parameters. Serialized from the live config in src/market_sim/config/iso_configs.py; re-serialize if iso_configs.py changes. _ISO_BUILDERS carries NINE registered regions at 2026-09-16 (ERCOT CAISO MISO PJM NYISO NEISO SPP NWPP SOCO) and all NINE are serialized here: SOCO's block was added by lane SOCO-34 on 2026-09-16, closing the debt NWPP-35 recorded in this field. Derived totals over the nine: 47 zones, 44 carrying load, 58 links. NWPP is a POOL of balancing authorities and SOCO is a SINGLE balancing authority (no LMP, no day-ahead market) — neither is an ISO, though every downstream name still says 'iso'. SOCO's voll of 61900.0 is not the 2000.0 the seven non-ERCOT ISOs carry: it is the LBNL/DOE ICE-Calculator-2 customer-mix derivation in _soco_config. SOCO's two links and its load shares are declared TIER-3 PLACEHOLDERS in iso_configs.py — the shares are an EIA-860 fleet-MW fallback, not a load share (lane SOCO-32 replaces them), and the TTCs are upper bounds that cannot bind (lever SOCO-54).",
+    "date": "2026-09-16"
   },
   "ERCOT": {
     "name": "ERCOT",
@@ -726,6 +726,41 @@
       }
     ],
     "n_links": 9,
+    "interface_limits": []
+  },
+  "SOCO": {
+    "name": "SOCO",
+    "voll": 61900.0,
+    "zones": [
+      {
+        "name": "SOCO_AL",
+        "load_share": 0.351
+      },
+      {
+        "name": "SOCO_GA",
+        "load_share": 0.5842
+      },
+      {
+        "name": "SOCO_MS",
+        "load_share": 0.0648
+      }
+    ],
+    "n_zones": 3,
+    "links": [
+      {
+        "from": "SOCO_AL",
+        "to": "SOCO_GA",
+        "ttc_mw": 24400.0,
+        "bidirectional": true
+      },
+      {
+        "from": "SOCO_AL",
+        "to": "SOCO_MS",
+        "ttc_mw": 4300.0,
+        "bidirectional": true
+      }
+    ],
+    "n_links": 2,
     "interface_limits": []
   }
 }

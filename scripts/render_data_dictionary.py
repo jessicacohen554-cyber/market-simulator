@@ -45,8 +45,23 @@ from market_sim.config import paths  # noqa: E402
 
 DOC_PATH: Path = paths.DICTIONARY_DIR / "data-dictionary.md"
 
-# ISO columns of the coverage matrix, in the project's canonical order.
-ISO_ORDER: tuple[str, ...] = ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP")
+# ISO columns of the coverage matrix, in the project's canonical order. SOCO added
+# 2026-09-16 (lane SOCO-34) as the ninth registered region; a region with no
+# curated data for a datatype simply renders an empty column cell, so adding it is
+# safe before its intake lands. NWPP is still absent — an NWPP-desk gap, routed by
+# SOCO-34. The single source of truth for the region set is
+# ``market_sim.config.iso_configs.SUPPORTED_ISOS``; this tuple is a hardcoded
+# mirror and is worth collapsing into an import (see this lane's FINDING).
+ISO_ORDER: tuple[str, ...] = (
+    "ERCOT",
+    "CAISO",
+    "PJM",
+    "MISO",
+    "NYISO",
+    "NEISO",
+    "SPP",
+    "SOCO",
+)
 
 # Datatype sections, in render order. Mostly mirrors scripts/regenerate_clean.DATATYPES,
 # plus `energy-offers`, which ships a schema but is curated by a dedicated pipeline

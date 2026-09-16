@@ -42,56 +42,56 @@ the span of calendar years curated for that datatype and ISO; `—` means none i
 curated. Markets (DAM/RTM) are aggregated here — see each datatype's section
 for the market split.
 
-| datatype | ERCOT | CAISO | PJM | MISO | NYISO | NEISO | SPP |
-|---|---|---|---|---|---|---|---|
-| lmp | — | — | — | — | — | — | — |
-| lmp-components | — | — | — | — | — | — | — |
-| load | — | — | — | — | — | — | — |
-| demand-profile | — | — | — | — | — | — | — |
-| ancillary-services | — | — | — | — | — | — | — |
-| energy-offers | — | — | — | — | — | — | — |
-| dam-public-bids | — | — | — | — | — | — | — |
-| generation | — | — | — | — | — | — | — |
-| renewables | — | — | — | — | — | — | — |
-| validation | — | — | — | — | — | — | — |
-| fuel-basis | — | — | — | — | — | — | — |
-| fuel-zonal-hub | — | — | — | — | — | — | — |
-| unit-outage-events | — | — | — | — | — | — | — |
-| partial-outages | — | — | — | — | — | — | — |
-| capacity-deliverability | — | — | — | — | — | — | — |
-| confirmed-retirements | — | — | — | — | — | — | — |
-| nuclear-license-status | — | — | — | — | — | — | — |
-| gtc-limits | — | — | — | — | — | — | — |
-| transfer-interface-limits | — | — | — | — | — | — | — |
-| transmission-expansion | — | — | — | — | — | — | — |
-| ramp-capability | — | — | — | — | — | — | — |
-| winter-fuel-inventory | — | — | — | — | — | — | — |
-| chp-btm-share | — | — | — | — | — | — | — |
-| nyiso-downstate-gas | — | — | — | — | — | — | — |
-| ercot-wtx-congestion | — | — | — | — | — | — | — |
-| nyiso-renewable-curtailment | — | — | — | — | — | — | — |
-| nyiso-renewable-curtailment-monthly | — | — | — | — | — | — | — |
-| nyiso-reserve-requirements | — | — | — | — | — | — | — |
-| nyiso-operating-events | — | — | — | — | — | — | — |
-| nyiso-interface-flows | — | — | — | — | — | — | — |
-| nyiso-som-hub-fuel-annual | — | — | — | — | — | — | — |
-| reserve-requirements | — | — | — | — | — | — | — |
-| som-competitive-conduct | — | — | — | — | — | — | — |
-| capacity-market-demand-curve | — | — | — | — | — | — | — |
-| capacity-market-auction-price | — | — | — | — | — | — | — |
-| capacity-market-auction-supply | — | — | — | — | — | — | — |
-| capacity-market-elcc | — | — | — | — | — | — | — |
-| transfer-constraint-binding | — | — | — | — | — | — | — |
-| maxgen-events | — | — | — | — | — | — | — |
-| storage-as-awards | — | — | — | — | — | — | — |
-| capacity-market-avoidable-cost-rate | — | — | — | — | — | — | — |
-| benchmark-corridor | — | — | — | — | — | — | — |
-| hydro-plant-modes | — | — | — | — | — | — | — |
-| miso-m2m-flowgates | — | — | — | — | — | — | — |
-| gas-ofo-events | — | — | — | — | — | — | — |
-| ps-water-state | — | — | — | — | — | — | — |
-| ra-import-allocations | — | — | — | — | — | — | — |
-| load-forecast | — | — | — | — | — | — | — |
+| datatype | ERCOT | CAISO | PJM | MISO | NYISO | NEISO | SPP | SOCO |
+|---|---|---|---|---|---|---|---|---|
+| lmp | — | — | — | — | — | — | — | — |
+| lmp-components | — | — | — | — | — | — | — | — |
+| load | — | — | — | — | — | — | — | — |
+| demand-profile | — | — | — | — | — | — | — | — |
+| ancillary-services | — | — | — | — | — | — | — | — |
+| energy-offers | — | — | — | — | — | — | — | — |
+| dam-public-bids | — | — | — | — | — | — | — | — |
+| generation | — | — | — | — | — | — | — | — |
+| renewables | — | — | — | — | — | — | — | — |
+| validation | — | — | — | — | — | — | — | — |
+| fuel-basis | — | — | — | — | — | — | — | — |
+| fuel-zonal-hub | — | — | — | — | — | — | — | — |
+| unit-outage-events | — | — | — | — | — | — | — | — |
+| partial-outages | — | — | — | — | — | — | — | — |
+| capacity-deliverability | — | — | — | — | — | — | — | — |
+| confirmed-retirements | — | — | — | — | — | — | — | — |
+| nuclear-license-status | — | — | — | — | — | — | — | — |
+| gtc-limits | — | — | — | — | — | — | — | — |
+| transfer-interface-limits | — | — | — | — | — | — | — | — |
+| transmission-expansion | — | — | — | — | — | — | — | — |
+| ramp-capability | — | — | — | — | — | — | — | — |
+| winter-fuel-inventory | — | — | — | — | — | — | — | — |
+| chp-btm-share | — | — | — | — | — | — | — | — |
+| nyiso-downstate-gas | — | — | — | — | — | — | — | — |
+| ercot-wtx-congestion | — | — | — | — | — | — | — | — |
+| nyiso-renewable-curtailment | — | — | — | — | — | — | — | — |
+| nyiso-renewable-curtailment-monthly | — | — | — | — | — | — | — | — |
+| nyiso-reserve-requirements | — | — | — | — | — | — | — | — |
+| nyiso-operating-events | — | — | — | — | — | — | — | — |
+| nyiso-interface-flows | — | — | — | — | — | — | — | — |
+| nyiso-som-hub-fuel-annual | — | — | — | — | — | — | — | — |
+| reserve-requirements | — | — | — | — | — | — | — | — |
+| som-competitive-conduct | — | — | — | — | — | — | — | — |
+| capacity-market-demand-curve | — | — | — | — | — | — | — | — |
+| capacity-market-auction-price | — | — | — | — | — | — | — | — |
+| capacity-market-auction-supply | — | — | — | — | — | — | — | — |
+| capacity-market-elcc | — | — | — | — | — | — | — | — |
+| transfer-constraint-binding | — | — | — | — | — | — | — | — |
+| maxgen-events | — | — | — | — | — | — | — | — |
+| storage-as-awards | — | — | — | — | — | — | — | — |
+| capacity-market-avoidable-cost-rate | — | — | — | — | — | — | — | — |
+| benchmark-corridor | — | — | — | — | — | — | — | — |
+| hydro-plant-modes | — | — | — | — | — | — | — | — |
+| miso-m2m-flowgates | — | — | — | — | — | — | — | — |
+| gas-ofo-events | — | — | — | — | — | — | — | — |
+| ps-water-state | — | — | — | — | — | — | — | — |
+| ra-import-allocations | — | — | — | — | — | — | — | — |
+| load-forecast | — | — | — | — | — | — | — | — |
 
 ### National / ISO-agnostic datatypes
 

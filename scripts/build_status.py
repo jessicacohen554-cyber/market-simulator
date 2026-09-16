@@ -55,8 +55,13 @@ SHARED_FILE = STATUS_DIR / "shared.js"
 # refreshed whenever a statmode probe re-measures a keeper.
 STATMODE_D7_FILE = DATA / "statmode_d7.json"
 
-# Display order for the ISO card grid (others fall in alphabetically after these).
-ISO_ORDER = ("ERCOT", "PJM", "CAISO", "NYISO", "NEISO", "MISO", "SPP")
+# Display order for the ISO card grid (others fall in alphabetically after these,
+# so an unlisted region still renders — the list is presentation, not a gate).
+# SOCO added 2026-09-16 (lane SOCO-34); it is the ninth registered region and has
+# no keeper yet, so its card appears only once lane SOCO-40 registers one. NWPP,
+# registered the same day as SOCO, is still unlisted and falls through to the
+# alphabetical tail — an NWPP-desk gap, routed by SOCO-34 rather than filled here.
+ISO_ORDER = ("ERCOT", "PJM", "CAISO", "NYISO", "NEISO", "MISO", "SPP", "SOCO")
 
 
 def _tail_note() -> str:

@@ -21,6 +21,7 @@
     NEISO: '#9C27B0',
     SPP: '#14B8A6',
     NWPP: '#65A30D',
+    SOCO: '#6366F1',
   };
 
   const ISO_DESCRIPTIONS = {
@@ -32,6 +33,7 @@
     NEISO: 'Four load zones plus the HQ import node for the Quebec interconnection.',
     SPP: 'Two zones along the North–South seam; the N↔S TTC is 3,400 MW — the rule-14 reconciled corridor limit derived from SPP’s own published flowgate limits (FINDING-spp-53).',
     NWPP: 'Five zones over ~17 balancing authorities — a POOL, not an ISO. NW (BPAT + Puget-Sound/mid-Columbia), OR (PGE + PacifiCorp West), INLAND (IPCO/AVA/NWMT/WAUW), EAST (PacifiCorp East) and SNV (NV Energy). Six WECC path limits are Tier-1/Tier-2 cited; the NW↔OR link is a Tier-3 documented-absence placeholder that cannot bind.',
+    SOCO: 'Three geographic zones over a SINGLE balancing authority — Southern Company Services – Trans, not an ISO: cost-based pooled dispatch under the Intercompany Interchange Contract, with no day-ahead market, no LMP and no capacity auction. AL (Alabama plus six SERC Florida-panhandle plants), GA (Georgia) and MS (Mississippi, which reaches the system through Alabama). Both links are Tier-3 documented-absence placeholders that cannot bind — the Operating Companies publish no internal interface rating, so each TTC is the smaller side’s EIA-860 winter capability and the real value is lever SOCO-54. The load shares are an EIA-860 fleet-MW fallback, not load shares (lane SOCO-32 replaces them). VOLL is $61,900/MWh, an LBNL/DOE ICE-Calculator-2 customer-mix derivation, not the $2,000 the other non-ERCOT regions carry.',
   };
 
   /**
@@ -232,9 +234,10 @@
 
     let html = '';
     // Registration order of config/iso_configs._ISO_BUILDERS, which carries NINE
-    // regions at 2026-09-14. Only the keys iso-topologies.json actually serializes
-    // render; SOCO's block is owed by that program's own site lane.
-    const isoOrder = ['ERCOT', 'CAISO', 'PJM', 'MISO', 'NYISO', 'NEISO', 'SPP', 'NWPP'];
+    // regions at 2026-09-16, all nine serialized in iso-topologies.json since
+    // lane SOCO-34. Only the keys the data file actually carries render, so this
+    // list stays fail-safe if a region is registered before it is serialized.
+    const isoOrder = ['ERCOT', 'CAISO', 'PJM', 'MISO', 'NYISO', 'NEISO', 'SPP', 'NWPP', 'SOCO'];
     isoOrder.forEach((iso) => {
       if (data[iso]) {
         html += renderIsoSection(iso, data[iso]);
