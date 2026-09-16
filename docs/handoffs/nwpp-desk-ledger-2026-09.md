@@ -11,6 +11,48 @@ recreated fresh from `origin/main`.
 
 ## 0. Live state — newest entry FIRST
 
+### r#7b — 2026-09-16 — **the desk's own R-f enumeration was wrong by more than half**; NWPP-37's charter corrected before issue (main `0d261bdd`)
+
+**The owner asked for the NWPP-37 prompt. Re-verifying the defect at the current pin before handing it
+over turned up that the desk's own line list was incomplete — so the prompt was corrected rather than
+emitted as written.**
+
+At r#7 the desk reported the defect as *"`envelopes.py:109` and `:167`"*. Re-enumerated at
+`0d261bdd` with `grep -rn "_eia_hourly_frame_filled" src/market_sim/`:
+
+| Module | Unscreened direct reads | Note |
+|---|---|---|
+| `eia930/envelopes.py` | **SEVEN** — :109, :167, :371, :440, :1050, :1639, :1883 | r#7 named two of seven; :1883 is an explicit `"NWPP"` read |
+| `data/neighbor_price.py` | :396, :574 | **CONFIRMED fuel-column consumers** — :407-408 and :580-581 read `NG: SUN` / `NG: WND` off the unscreened frame |
+| `data/virtual_bids.py` · `eia930/zonal_shares.py` | :274 · :384 | to classify |
+| `eia930/demand.py` | eight | **Ambiguous and must be classified per call site**: the `Demand` column is a different phenomenon already screened (rule 19 — not to be touched), but several docstrings there say the renewable **CF series** are drawn from the same frame, which would be a fuel-column read |
+
+**Two things this changes, and the desk states both rather than quietly widening the charter.**
+
+1. **The charter no longer hands the lane a list to patch.** It hands it the enumeration *and* an
+   instruction not to treat it as complete: re-enumerate at your own base sha, classify every hit as
+   *reads a `NG:` fuel column* / *reads only `Demand`/`TI`/`NG` total* / *already screened*, and put
+   that table in the FINDING. **The enumeration is the deliverable that makes the fix auditable; the
+   patch is the easy half.**
+2. **It shifts the shape choice.** With one unscreened reader, the narrow fix (B) is a two-line patch.
+   With a dozen across five modules, (B) is a dozen patches that **the next module to read `frames`
+   silently reopens** — the defect repeating rather than being fixed. So the desk now states a
+   position: **(A), the single seam in `frames`, is right IF the nine-region byte-identity holds**,
+   and a (B) taken for convenience rather than for a measured byte-identity failure is the wrong
+   trade. It is written into the charter as a position the lane may overturn with evidence, not as an
+   instruction.
+
+**Recorded as E-6 in §6.** The r#7 diagnosis was right about the mechanism and wrong about its extent,
+because the desk traced the two reads it went looking for — the ones NWPP-32's finding pointed at —
+and did not enumerate the module, let alone the tree. The finding it was checking was a *hydro*
+finding, so the desk looked at the hydro path and stopped. `neighbor_price.py` reading unscreened
+`NG: SUN` / `NG: WND` has nothing to do with NWPP and would not have surfaced from any NWPP lane.
+
+**No gates re-run:** program documents only. The r#6 exits at `8b9b32e4` stand and this branch is now
+rebased onto `0d261bdd`; the next sitting re-runs them at its own pin rather than carrying these.
+
+---
+
 ### r#7 — 2026-09-16 — the owner asked for FIXES to R-f and R-j; **one has one, one does not** — NWPP-37 + NWPP-38 ISSUED (main `8b9b32e4`)
 
 **Owner, verbatim: *"Ok do you have fixes for 1 and 2"*** — routed items **R-f** (the defective 930
@@ -821,3 +863,14 @@ them.)*
   the desk's list it would have built a coupling link that does not physically exist.** The lane's
   charter told it the chain was "a hydrological fact to be cited, not a list to be chosen", and that
   instruction is what caught the desk's own error — which is the argument for writing it that way.
+- **E-6 (r#7b, the desk's own diagnosis was incomplete and the desk caught it only because the owner
+  asked for the prompt).** At r#7 the desk reported R-f's defect as two call sites,
+  `envelopes.py:109` and `:167`. Re-enumerating before issuing found **seven in that file alone** and
+  at least four more across `neighbor_price.py`, `virtual_bids.py` and `zonal_shares.py`, plus eight
+  ambiguous reads in `demand.py`. The cause is a narrow trace: NWPP-32's finding was about hydro, so
+  the desk followed the hydro path, confirmed the mechanism, and stopped — without running the
+  one-line `grep` over the tree that would have shown the rest. **`neighbor_price.py` reading
+  unscreened `NG: SUN` / `NG: WND` is not an NWPP problem at all** and would never have surfaced from
+  an NWPP lane; it was found only because the owner's request forced a re-verification. The lesson
+  recorded for the next diagnosis: *confirming a mechanism is not the same as bounding it*, and the
+  bounding step is usually one grep.

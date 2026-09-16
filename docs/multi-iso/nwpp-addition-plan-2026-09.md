@@ -1594,11 +1594,30 @@ only when it clears 2.5x BOTH the series median AND its own p99.9 robust peak. I
 "this seam screens the frame every reader in this module obtains, so no consumer can reach an
 unscreened copy (rule 19 [R-ONE-MECH])".
 **THAT CLAIM IS TRUE ONLY OF READERS IN `actuals.py`.** Measured: the screen is applied at exactly
-three call sites — actuals.py:351, :412, :488 — and ALL THREE ARE IN THAT MODULE. `envelopes.py`
-obtains its frame at :109 and :167 by calling `frames._eia_hourly_frame_filled(ba, year)` DIRECTLY,
-and that function does no screening at all — it only reindexes present rows onto the complete hourly
-clock. So `measured_monthly_hydro`, `measured_hydro_min_flow_level` and the month x hour-of-day
-envelope read the RAW `NG: WAT` column.
+three call sites — actuals.py:351, :412, :488 — and ALL THREE ARE IN THAT MODULE. Every other reader
+calls `frames._eia_hourly_frame_filled()` DIRECTLY, and that function does no screening at all — read
+it in full: it only reindexes present rows onto the complete hourly clock.
+
+*** SCOPE CORRECTION, DESK r#7b — THE DEFECT IS WIDER THAN THIS CHARTER FIRST SAID, AND THE FIRST
+NUMBER CAME FROM THIS DESK, NOT FROM A LANE. *** The r#7 text named "envelopes.py:109 and :167". Re-
+enumerated at `0d261bdd` that is wrong by more than half. Unscreened direct reads, measured:
+  - `eia930/envelopes.py` — **SEVEN**: :109 (`measured_monthly_hydro`), :167 (`_hydro_wat_month_hod`),
+    :371 (`measured_interchange_envelope`), :440, :1050, :1639, :1883 (the last an explicit "NWPP");
+  - `data/neighbor_price.py` — :396 and :574, and these are **CONFIRMED fuel-column consumers**:
+    :407-408 and :580-581 read `NG: SUN` and `NG: WND` off the unscreened frame;
+  - `data/virtual_bids.py` :274; `eia930/zonal_shares.py` :384;
+  - `eia930/demand.py` — eight reads. **CLASSIFY THESE CAREFULLY AND DO NOT ASSUME**: their `Demand`
+    column is a DIFFERENT phenomenon already screened by `_screen_demand_spikes` /
+    `_screen_demand_dropouts` (rule 19 — do not touch those), but several docstrings there say the
+    renewable **CF series** are drawn from the same frame, which WOULD be a fuel-column read. Decide
+    per call site, on the code, and report the classification.
+**DO NOT PATCH THE LIST ABOVE AS IF IT WERE COMPLETE.** Re-enumerate at YOUR OWN base sha
+(`grep -rn "_eia_hourly_frame_filled" src/market_sim/`), classify every hit as *reads a `NG:` fuel
+column* / *reads only `Demand`/`TI`/`NG` total* / *already screened*, and put that table in your
+FINDING. The enumeration is the deliverable that makes the fix auditable; the patch is the easy half.
+
+So `measured_monthly_hydro`, `measured_hydro_min_flow_level`, the month x hour-of-day envelope and at
+least the neighbour-price solar/wind series all read the RAW fuel columns.
 **The measured cost for NWPP** (NWPP-32 §3.2): one AVA hour at 810,113 MW puts **+1,166 GWh = 14.1 %**
 into October 2025's pooled hydro. The screen would catch it trivially — it is roughly 1,350x that
 series' own robust peak against a 2.5x bar — so this is a plumbing gap, not a threshold question.
@@ -1614,6 +1633,13 @@ WHAT YOU BUILD — TWO SHAPES, AND YOU CHOOSE WITH EVIDENCE, NOT PREFERENCE:
 PICK (A) IF AND ONLY IF IT IS BYTE-IDENTICAL for every pre-existing region; if it moves any other
 region's series, report exactly which and why, then take (B) and say so. Do NOT take (A) and
 "explain" a moved row.
+**THE SCOPE CORRECTION ABOVE SHIFTS THE BALANCE TOWARD (A) AND YOU SHOULD SAY WHETHER YOU AGREE.**
+With one unscreened reader, (B) is a two-line patch. With a dozen across five modules, (B) is a
+dozen patches that the next module to read `frames` will silently reopen — which is the defect
+repeating, not the defect fixed. (A) is the construction the docstring already claims. The desk's
+position is that (A) is right IF the byte-identity holds, and that a (B) taken for convenience rather
+than for a measured byte-identity failure is the wrong trade. **That is a position, not an
+instruction: if you find (A) genuinely unsafe, take (B) and say why, and the desk will record it.**
 
 THE EXIT — BYTE-IDENTITY ACROSS ALL NINE REGIONS. The screen's own measured effect is already known
 and is your control: over all regions 2019-2026 exactly two benchmark series move (SPP 2023 wind
