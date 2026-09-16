@@ -416,6 +416,7 @@ block, which is the ledger entry that test exists to demand. Routed, not fixed
 | **R-3** | **EIA-923 and the EIA state delivered series disagree for Alabama 2023 by 0.23 $/MMBtu** (0.05 in 2024, −0.02 in 2025) even over all of Alabama, with the FL-panhandle effect already removed. Both are EIA products; neither is obviously right | A level question about EIA's own aggregation, with no bearing on this lane's zone-attribution argument and no consequence under a mean-zero applier |
 | **R-4** | **The sibling hub tables carry a ~3.5 % unit bias.** MISO / PJM / SPP subtract a `$/MMBtu` Henry Hub from a `$/Mcf` state series. Measured here: the heat-content-**converted** series is the one that reconciles with EIA-923 (≤0.044 $/MMBtu), the raw one is 0.10–0.13 off. SOCO's table needs no conversion (EIA-923 is natively `$/MMBtu`) and is unaffected | Rule 25 `[R-ISO-SCOPE]`: those are other regions' tables |
 | **R-5** | **`test_persisted_identity` is red on main** for NYISO's solve-surface pin (§5) | NYISO's lane owns the pin and the cause block it must carry |
+| **R-q ANSWERED — no action, and the absence is correct** | The desk routed R-q here (ledger r#8): SOCO-30's `-layup` panel is coal-only because `data/raw/gas_basis_by_iso_month.csv` has **zero SOCO rows**, "routed to SOCO-32 (it lands the gas hub), then a re-derive". **This lane's gas hub cannot serve that path and should not.** `gas_basis_by_iso_month.csv` holds a **named trading-hub monthly index** (Transco Z6 NY, Algonquin Citygate) whose purpose is the winter constrained-hub spike that drives the dual-fuel gas→oil switch. SOCO-12 §4 measured that **no free public Southeast hub index exists** — the daily/monthly index at SOCO's basis is a paywalled ICE/NGI product — so there is nothing measured to put in that row. Filling it from EIA-923 would be **circular**: `load_winter_gas_basis`'s own docstring says an ISO with no hub leg falls back to the 923 ISO-month series, so a 923-derived row would be the same series on both sides of the comparison, dressed as a constrained-hub index (the substitution rule 13 `[R-MEASURED]` forbids and gate G17 refuses by name). **Measured, so the consequence is bounded rather than assumed:** SOCO's 923 ISO-month gas series IS live and carries a real winter signal — January **4.45 / 4.64 / 6.07** $/MMBtu against summer 2.1–3.9 in 2023 / 2024 / 2025 — so the gas path has its documented fallback and only the `-layup` *diagnostic panel* is affected. The ledger's own reading stands: that panel never contained gas | Nothing to build. A SOCO row needs a Southeast trading-hub index this repo cannot reach |
 | **R-6** | **NWPP's committed `nwpp-solar-shape` parquets now have a consumer** — this lane's reader would serve them the moment NWPP joins `_SOLAR_ZONE_REANALYSIS_ISOS` and `SOLAR_SHAPE_DIRS`. NWPP-33 routed arming to NWPP-DESK; worth telling them the path exists | Another region's arming decision (rule 25) |
 
 ---
@@ -531,4 +532,15 @@ the EIA state series disagree for Alabama 2023 by 0.23 $/MMBtu, both EIA;
 R-4 the MISO/PJM/SPP hub tables carry a ~3.5% $/Mcf-vs-$/MMBtu unit bias (SOCO's
 does not); R-5 test_persisted_identity red on main (NYISO); R-6 NWPP's committed
 solar parquets now have a consumer if NWPP-DESK wants to arm them.
+
+R-q ANSWERED, no action: the desk routed the coal-only -layup panel here because
+gas_basis_by_iso_month.csv has no SOCO rows. That file holds a named TRADING-HUB
+monthly index for the winter dual-fuel switch, not a delivered cost, and SOCO-12
+measured that no free Southeast hub index exists (paywalled ICE/NGI). A
+923-derived row would be circular -- load_winter_gas_basis's own fallback IS the
+923 ISO-month series -- and would dress a plant average as a constrained-hub
+index (rule 13, gate G17). Measured so the consequence is bounded: SOCO's 923
+ISO-month gas series is live and carries the winter signal (January 4.45 / 4.64 /
+6.07 $/MMBtu vs summer 2.1-3.9), so only the -layup diagnostic panel is affected
+and the ledger's reading stands -- that panel never contained gas.
 ```
