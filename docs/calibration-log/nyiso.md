@@ -14517,3 +14517,56 @@ promotion state was re-verified after it.
 
 **Still open, unchanged by the promotion:** the `gas_offer_margin_anchor_by_zone` annual-mean reach
 (§6 of the RESULT), and Object B, which is still not re-measured.
+
+## nyiso-236 — 2026-09-16
+
+**ZERO LP.** Orchestrator-only (rule 32 `[R-SHARD]` (a)). The keeper
+`2026-09-14-nyiso-235-gas-repair` is **unchanged**; no `ScenarioConfig` field moved, so no mechanism
+cell moves (rule 28 `[R-MECH-MATRIX]` (b)) and no run was registered. Record:
+`docs/FINDING-nyiso236-the-anchor-grain-and-the-gas-slope-2026-09-16.md`; probes
+`scripts/probes/nyiso236_anchor_grain_phase0.py` and `nyiso236_gas_slope_phase0.py`.
+
+**G-DRIFT re-run at this head** (`edd40943` vs the keeper's solve sha `2ebc58df`): `moved_rows("NYISO")`
+is `{}` and `surface_stamp("NYISO").fingerprint` reproduces the keeper's recorded `bd2b4657f9b5df7e`.
+The diff moves **35 solve-path files, +2,500/−19**, and every hunk classifies **INERT** — SOCO
+registration and NWPP onboarding, with the single NYISO-executed edit (`_eia860_ba_zones`)
+behaviour-identical for a non-SOCO ISO. **Rule 29(b) form 4 valid; no control solve spent or owed.**
+
+**Object C — the annual-mean offer anchor. REAL, AND STOPPED AT PHASE 0 ON IDENTIFICATION.** Located
+to `data/fuel/zonal_anchor.py:145` (`np.nanmean` over 8,760 h, resolved per `(zone, solve-year)` because
+the keeper carries `gas_offer_margin_zonal_anchor_vintage`). The defect is confirmed and is larger than
+the one nyiso-230 closed: the **within-year** delivered-gas spread is 6.51 / 2.48 / 3.89 / 10.86 $/MMBtu
+against a **between-year** spread of 5.83. It is nonetheless **not screened**, and the stop is structural
+rather than residual-driven: the anchor's grain is the mechanism's own claim about markup
+fuel-elasticity, not a measurement detail; the extrapolation argument that justified the year index has a
+limit (`anchor = fuel(t)`) that restores the multiplicative form **rejected on measured evidence** by
+neiso-45/46/47; the year index is *forced* by rule 13's forward test while month/quarter/season are not;
+the markup `(mult − phys)` is a **fitted** quantity so its fuel-elasticity is unidentified by
+construction; and NYISO publishes no 60-Day-DAM equivalent and has no offer corpus, so a grain could be
+chosen **only** against the gates — rule 1 `[R-STRUCT]` condition (c). Disposition `G`, not `R`.
+**Re-open condition:** a published NYISO unit-level energy-offer book, or any measured NYISO conduct
+series identifying the markup's fuel-elasticity directly.
+
+**Object B — RE-MEASURED CORRECTLY FOR THE FIRST TIME.** nyiso-235's dead end was a wrong-file problem:
+the actual hourly RT LMP series is committed at
+`data/raw/_validation-source/actual_lmp_hourly_NYISO.parquet` (2018–2026, 8,760 h/yr), already read by
+`derive_actual_amplitude.py`. Stripping the top 1 % **by actual price from both sides** leaves a
+**9.50 pp** bias spread (2022 −3.57 / 2023 +5.93 / 2024 +5.85 / 2025 −2.18 %), and it resolves into
+**two numbers**: over 48 month-points the actual's non-tail price is `7.481 × gas + 11.05` and the
+model's is `6.432 × gas + 16.29` — a **slope 14.0 % too shallow** and an **intercept 47.4 % too high**,
+crossing at **$5.00/MMBtu**, with bootstrap 95 % CIs `[−1.506, −0.500]` and `[+3.18, +6.91]` both
+excluding zero. The annual-resolution fit agrees (6.708 vs 7.550, crossover $5.02). The model side of
+every year reproduces the scorer exactly; only the actual's weighting basis differs (0.03–0.9 %).
+
+**Object B is NOT Object C, measured pre-solve.** A month-grain anchor changes the load-weighted annual
+price by `markup_hr × (gas_load_weighted − gas_annual)` = +0.290 / +0.003 / +0.064 / +0.353 $/MWh, a
+slope contribution of **+0.049** against a deficit of **−1.049** — **4.7 %**. Fixing Object C would not
+close Object B. (Reported as a separation result only; the §2.2 stop rests on identification alone.)
+
+**Handed forward.** The successor to Object B is a **marginal-unit** question, not an offer-markup one:
+`phys_*` is the measured *average* heat rate over committed hours so it already carries no-load burn,
+which leaves the markup above full physical burn with no physical reason to scale with gas — so the
+−14 % slope gap points at *which unit sets price*. The handoff's CT_PEAKER drift is the visible end of
+the same chain (2.449 TWh model vs 2.687 actual in 2022, drifting away in all four years; share of
+gas-family energy 3.91 / 0.41 / 0.45 / 1.08 % at $8.66 / $3.34 / $2.82 / $5.46 gas). **Not tested here.**
+`gas_offer_margin_anchor_vintage` stays `U` — §2.2 applies to it identically.
