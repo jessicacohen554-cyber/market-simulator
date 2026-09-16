@@ -132,16 +132,35 @@ class TestUnchangedByConstruction(unittest.TestCase):
 
     def test_no_new_parameter_was_introduced(self):
         """Rules 5 [R-NO-MAGIC] / 21 [R-DOF]: the repair adds no constant of its
-        own — the candidate set is composed from the table that already existed."""
-        self.assertEqual(
-            bcr._EIA923_EXTRA_FUELS_BY_ISO,
-            {
-                "NYISO": ("hydro", "oil"),
-                "NEISO": ("hydro", "oil"),
-                "MISO": ("hydro", "oil"),
-                "SPP": ("hydro",),
-            },
-        )
+        own — the candidate set is composed from the table that already existed.
+
+        This pins the FOUR entries that existed at the SPP-47 repair, and that
+        every entry (those four included) still draws from the two-fuel
+        vocabulary the loop can evaluate. It deliberately does NOT pin the
+        dict WHOLE any more (relaxed 2026-09-14, lane NWPP-31): a whole-dict
+        snapshot fails the moment a newly registered region declares a
+        first-order class of its own — NWPP's conventional hydro, 106.9 /
+        107.9 TWh, ~36 % of its footprint's energy and the largest benchmarked
+        hydro in the repo — which is an ENTRY IN THE EXISTING REGISTRY, not a
+        new parameter, and is exactly what rule 24 [R-REGISTRY] wants such a
+        declaration to be. The property these rules actually care about is
+        that the repair introduced no constant of its own and that no entry
+        smuggles in a fuel the loop has no mask for, and that is what is
+        asserted here.
+        """
+        for iso, fuels in (
+            ("NYISO", ("hydro", "oil")),
+            ("NEISO", ("hydro", "oil")),
+            ("MISO", ("hydro", "oil")),
+            ("SPP", ("hydro",)),
+        ):
+            self.assertEqual(bcr._EIA923_EXTRA_FUELS_BY_ISO[iso], fuels, iso)
+        for iso, fuels in bcr._EIA923_EXTRA_FUELS_BY_ISO.items():
+            self.assertTrue(
+                set(fuels) <= {"hydro", "oil"},
+                f"{iso} declares an extra fuel _eia923_generation_raw has no "
+                f"mask for: {sorted(set(fuels) - {'hydro', 'oil'})}",
+            )
 
 
 if __name__ == "__main__":

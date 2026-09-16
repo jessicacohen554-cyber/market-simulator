@@ -71,6 +71,16 @@ OUT = REPO / "frontend" / "data" / "backcast" / "amplitude" / "actual_amplitude.
 # a PRICE artifact and SOCO has no price series (SOCO-13 STOP gate NO; the
 # rubric v3.8 no-price class scores C1/C2/C4/C6/C8 only) — the third of the
 # three TAIL_THRESHOLD-family skips gate G6 names, documented, not forgotten.
+# NWPP is deliberately ABSENT for the SAME reason (NWPP-31, 2026-09-14), and it
+# is the third of ITS OWN three G6 skips: card N2's NWPP-13 built a
+# WEIM-derived hourly series behind a STOP gate pre-registered before any value
+# was read and the gate READ NO (WEIM's on-peak price is 22.6 / 23.6 / 37.5 %
+# below the independent Mid-C Peak traded index against a +/-10 % bar), so
+# nothing landed to _validation-source and no actual_lmp_hourly_NWPP.parquet
+# exists to profile. A neighbouring hub -- SP15, NP15, Palo Verde, all one
+# column away in the same ICE workbook -- stays refused (rule 13
+# [R-MEASURED]; plan gate G17). Evidence:
+# docs/handoffs/FINDING-nwpp-13-2026-09-13.md sections 0 and 3.
 ISOS = ("CAISO", "ERCOT", "MISO", "NEISO", "NYISO", "PJM", "SPP")
 DAYS, HOURS_PER_DAY = 365, 24
 
