@@ -9,6 +9,13 @@
 # ISO-NE SMD CSV, MISO EIA-930 sub-BA CSV).  Curated by
 # scripts/data/curate_zonal_shares.py.
 #
+# NWPP is the one exception to "under data/raw/zone-specific-demand/": it is a
+# POOL of seventeen balancing authorities with no sub-BA product for any of them,
+# so its shares are a REGROUP of the same per-BA EIA-930 extracts its system
+# demand is summed from (data/raw/eia-930-hourly/<BA> hourly.parquet), taken in
+# five whole-BA parts instead of one.  Its zone sum therefore reproduces the pool
+# frame's own Demand column exactly rather than approximately.
+#
 # Validation: for every ISO-year file,
 #   df.groupby('hour')['share'].sum() ≈ 1.0  (within ±1e-9 per hour)
 datatype: zonal-shares
