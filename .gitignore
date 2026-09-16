@@ -2269,3 +2269,17 @@ results/calibration/_soco40_screen/
 /results/calibration/miso259_coalinv_2024/
 /results/calibration/miso259_coalinv_2025/
 /results/calibration/miso259_coalinv_span/
+
+# SPP-43 decomposition leg (rule 29 [R-SCREEN] (c) + rule 31 [R-RETAIN]).
+# The (new extract, clip OFF) cell of the 2x2 that attributed SPP-43's result
+# between the 2019-2022 unit-outage intake and keeper 12's commitment-feasibility
+# clip. A diagnostic leg is NEVER registered, so an unregistered bundle dir on
+# `main` would be a Class-E parity RED -- but rule 31 forbids deleting it before
+# the owner has ruled on promotion, and .gitignore (never `rm`) is what
+# discharges the delete-before-merge duty. Every number this lane cites from it
+# is in docs/handoffs/RESULT-spp-43-unit-outage-intake-2026-09-16.md section 5,
+# as rule 29(c) requires. Recovery by immutable SHA (rule 33 [R-SHARD-ARCHIVE] (d)):
+#   git checkout 2addbeee3cfc7dc91d64739d606de35345909290 -- results/calibration/spp43_extract_only
+# If that branch is deleted on the environment's own schedule, the leg costs
+# ~15 min of LP to reproduce and nothing scored depends on it.
+/results/calibration/spp43_extract_only/
