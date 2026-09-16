@@ -147,6 +147,14 @@ def build_cost_vector(
                 f"n_dis_tranche({layout.n_dis_tranche})"
             )
 
+    # Hydraulic-cascade spill / pond-volume columns (NWPP-36): the rule-9
+    # storage tiebreaker ε on both, a strict preference against gratuitous
+    # spill-then-refill cycles the water balance would otherwise leave
+    # degenerate (≤ 1e-5 of the water value; no other cost, prices stay duals).
+    if layout.n_cascade:
+        c0 = layout._cas_s_off
+        block[:, c0 : c0 + layout.n_cascade] = storage_epsilon
+
     # Transmission flow: zero-cost by default; ``link_flow_cost`` prices a
     # link's directed flow (MISO RDT TCDC tiers — one-way links only, the
     # caller validates, since a positive cost on a signed bidirectional flow

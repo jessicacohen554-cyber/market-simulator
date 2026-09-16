@@ -198,6 +198,7 @@ from market_sim.pipeline import (
     apply_ercot_commitment_posture,
     apply_reserve_coopt,
     build_base_dispatch_kwargs,
+    resolve_hydro_cascade,
     resolve_hydro_period_hours,
     build_caiso_ra_p1_prep,
     build_caiso_reserve_p1_prep,
@@ -3553,6 +3554,14 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 # dispatch-kwargs key set is unchanged.
                 hydro_period_hours=resolve_hydro_period_hours(
                     iso, dispatch_fleet, hydro_gen_idx, config
+                ),
+                # Hydraulic-cascade coupling (NWPP-36, owner ruling N3). UNSET
+                # unless armed AND this ISO-year has a measured cascade
+                # artifact resolving onto the fleet, so every other run's
+                # dispatch-kwargs key set is unchanged. Same shared resolver as
+                # scripts/run_calibration.py.
+                hydro_cascade=resolve_hydro_cascade(
+                    iso, year, dispatch_fleet, hydro_gen_idx, config
                 ),
                 T=config.hours,
             )
