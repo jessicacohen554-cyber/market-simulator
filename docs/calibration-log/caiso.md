@@ -15237,3 +15237,58 @@ price-side DART premium is largely a clearing artifact, so the second branch is 
 possibility; and the DAM corpus cost 422 MB / 1,095 trade dates at 6 s spacing with
 `curate_dam_public_bids.py` carrying a known ~14.3 GB full-year peak-RSS limit (stream day-by-day).
 **Nothing fetched, derived, solved or proposed as a solve.**
+
+## caiso-282 — 2026-09-16
+
+**ZERO LP. Keeper unchanged (`2026-09-12-caiso-275-gascoupling`). Nothing promoted, nothing
+registered, no mechanism cell moved, no threshold moved.** Records:
+`docs/PRECOMMIT-caiso282-rtm-pool-and-gates-2026-09-16.md` (pushed at `b2101553` before any
+pooled number), `docs/RESULT-caiso282-rtm-pool-g-repro-failed-2026-09-16.md`. Instrument
+`scripts/probes/_caiso282_rtm_pool.py`; outputs `results/rtm-intake/caiso281/_caiso282_pool_*.json`.
+
+**G-REPRO FAILED — THE RTM/DAM LADDER COMPARISON IS ABANDONED, NOT ADJUSTED (caiso-281 charter
+§4, applied as written).** The 17-quarter DAM aggregates, run through the derive's own classifier
+on the artifact's own 2023–25 span, reproduce the CC_REGULAR **population** (41 res / 11,421 MW /
+G1 0.833 vs 46 / 11,935 / 0.871) and miss every CC **band**: econ_low **1.164 (+0.098)**,
+econ_high **1.214 (+0.142)**, peak **1.484 (+0.098)** against ±0.01; CT_PEAKER reproduces to
+0.02. `hr_cut` 8.4 moves nothing (≤ 0.001).
+
+**The cause is in the instrument and was written down before the number** (PRECOMMIT §1):
+`aggregate_caiso_bid_ladders._curve_price_at` samples the first breakpoint at or *above* the
+target (`searchsorted side="left"`) where the schema's `segment_mw` semantics and the derive's
+`_price_at_frac` read the last breakpoint at or *below* — **one rung high**. Confirmed on the one
+ladder the intake kept verbatim (514544 / 2023-02-15): `p080` = $300 where the derive reads
+$27.18; 7 of 20 grid points differ. CC curves are steep where the CC bands live (RTM median
+2 rungs/curve), CT curves are near-flat — hence CC fails by 0.1 and CT does not. The declared
+quarter/year capacity approximation is measured and benign (ratio p50 1.000, 84–94 % within ±5 %).
+
+**G-POP FAILED too: the RTM bid file is the WEIM footprint.** Independently classified RTM CC =
+153–208 resources / 35.8–45.4 GW, **G1 2.6–3.3** against [0.5, 1.3]; **57–63 % of that capacity
+belongs to seqs that never bid `PUB_DAM_GRP` in four years**. INCONCLUSIVE by the charter, and
+would have been so had G-REPRO passed.
+
+**The one surviving DIAGNOSTIC (no verdict):** on the DAM-classified CC bucket carried to RTM by
+seq — the charter's original §2 design, runnable now that same-date DAM is held — same 41
+resources, same convention both sides, 2022–2025: Δ RTM − DAM = **−0.005 econ_low / −0.031
+econ_high / −0.016 peak** (CT +0.05, RTM above DAM). Rung counts matched across markets (median
+3 both, 74 % identical). Points at RTM-FLAT; not entitled to be RTM-FLAT on a failed instrument.
+
+**Successor (owner decision, costed, not taken):** one-line rung fix in the aggregator, re-fetch
+and re-aggregate all 34 quarter-markets (~4.5 h wall on two shards, zero LP, rule 34 pushes), then
+the original §2 carry-over design in place of independent classification. G-REPRO first.
+
+**Owner instruction mid-session — "rescore the keeper so it's against rt LMP": checked, already
+so.** At HEAD both keeper runs gate C3a on `rt_lw` ("vs RT (load-weighted)": 2022 94.07/84.49,
+2023 55.89/54.17, 2024 37.55/34.65, 2025 37.06/34.42), C3b on `rt_lw_mon`, C3c on the RT hourly
+tail (2023 coverage 100 %); DA appears only as the never-gated `da_diagnostic` row. A rescore
+would be byte-identical and none was written (RESULT §5).
+
+**OOM workaround, applied (owner instruction):** three concurrent probe runs were killed at the
+13.36 GiB nested-cgroup ceiling with no swap; `scripts/prepare_solve_container.py` added a 10 GiB
+swapfile and the same three completed concurrently with outputs byte-identical to the sequential
+runs (RESULT §7). Solve entry points already call it; a hand-run zero-LP probe over ~3 GB of
+parquet must call it by hand.
+
+**Parity gate:** unchanged — the intake dir carries no bundle and nothing under
+`results/calibration/` was added or removed (rule 31 `[R-RETAIN]`: nothing to retain, no shard
+launched, nothing to archive).

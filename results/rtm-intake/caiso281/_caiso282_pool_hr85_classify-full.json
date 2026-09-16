@@ -1,0 +1,650 @@
+{
+ "hr_cut": 8.5,
+ "markets": {
+  "DAM": {
+   "n_days": 1505,
+   "span": [
+    "2021-08-16",
+    "2025-09-30"
+   ],
+   "n_resources_classified": 650,
+   "n_gas": 181,
+   "st_cut": 11.714285714285714,
+   "G1": {
+    "CC_REGULAR": {
+     "n": 104,
+     "bucket_mw": 21109.0,
+     "fleet_mw": 13708.0,
+     "ratio": 1.54,
+     "bounds": [
+      0.5,
+      1.3
+     ],
+     "pass": false,
+     "slope_wmedian": 6.699
+    },
+    "CT_PEAKER": {
+     "n": 51,
+     "bucket_mw": 5507.0,
+     "fleet_mw": 7616.0,
+     "ratio": 0.723,
+     "bounds": [
+      0.5,
+      1.6
+     ],
+     "pass": true,
+     "slope_wmedian": 9.846
+    },
+    "ST_GAS": {
+     "n": 26,
+     "bucket_mw": 1562.0,
+     "fleet_mw": 2859.0,
+     "ratio": 0.546,
+     "bounds": [
+      0.5,
+      1.6
+     ],
+     "pass": true,
+     "slope_wmedian": 12.565
+    }
+   },
+   "ratio_q_over_y": {
+    "full_quarters": {
+     "n": 8447,
+     "p05": 0.8376,
+     "p50": 1.0,
+     "p95": 1.0131,
+     "within_5pct": 0.842
+    },
+    "2021q3_partial": {
+     "n": 402,
+     "p05": 0.8751,
+     "p50": 1.0,
+     "p95": 1.0415,
+     "within_5pct": 0.8731
+    }
+   },
+   "bands_repro_pool": {
+    "CC_REGULAR": {
+     "n_resources": 104,
+     "bucket_mw": 21108.772399999998,
+     "bands": {
+      "committed": 1.132,
+      "econ_low": 1.277,
+      "econ_high": 1.396,
+      "peak": 1.571
+     },
+     "per_year": {
+      "committed": {
+       "2023": 1.059,
+       "2024": 1.159,
+       "2025": 1.151
+      },
+      "econ_low": {
+       "2023": 1.198,
+       "2024": 1.334,
+       "2025": 1.311
+      },
+      "econ_high": {
+       "2023": 1.264,
+       "2024": 1.476,
+       "2025": 1.456
+      },
+      "peak": {
+       "2023": 1.447,
+       "2024": 1.605,
+       "2025": 1.589
+      }
+     }
+    },
+    "CT_PEAKER": {
+     "n_resources": 51,
+     "bucket_mw": 5507.2742,
+     "bands": {
+      "committed": 1.086,
+      "econ_low": 1.139,
+      "econ_high": 1.162,
+      "peak": 1.172
+     },
+     "per_year": {
+      "committed": {
+       "2023": 1.153,
+       "2024": 0.966,
+       "2025": 1.137
+      },
+      "econ_low": {
+       "2023": 1.149,
+       "2024": 1.061,
+       "2025": 1.192
+      },
+      "econ_high": {
+       "2023": 1.257,
+       "2024": 1.061,
+       "2025": 1.195
+      },
+      "peak": {
+       "2023": 1.261,
+       "2024": 1.061,
+       "2025": 1.195
+      }
+     }
+    },
+    "ST_GAS": {
+     "n_resources": 26,
+     "bucket_mw": 1561.73,
+     "bands": {
+      "committed": 0.945,
+      "econ_low": 0.945,
+      "econ_high": 0.945,
+      "peak": 0.945
+     },
+     "per_year": {
+      "committed": {
+       "2023": 0.957,
+       "2024": 0.928,
+       "2025": 0.946
+      },
+      "econ_low": {
+       "2023": 0.957,
+       "2024": 0.928,
+       "2025": 0.946
+      },
+      "econ_high": {
+       "2023": 0.957,
+       "2024": 0.928,
+       "2025": 0.946
+      },
+      "peak": {
+       "2023": 0.957,
+       "2024": 0.928,
+       "2025": 0.946
+      }
+     }
+    }
+   },
+   "bands_verdict_pool": {
+    "CC_REGULAR": {
+     "n_resources": 104,
+     "bucket_mw": 21108.772399999998,
+     "bands": {
+      "committed": 1.109,
+      "econ_low": 1.222,
+      "econ_high": 1.307,
+      "peak": 1.486
+     },
+     "per_year": {
+      "committed": {
+       "2022": 0.991,
+       "2023": 1.059,
+       "2024": 1.159,
+       "2025": 1.151
+      },
+      "econ_low": {
+       "2022": 1.132,
+       "2023": 1.198,
+       "2024": 1.334,
+       "2025": 1.311
+      },
+      "econ_high": {
+       "2022": 1.238,
+       "2023": 1.264,
+       "2024": 1.476,
+       "2025": 1.456
+      },
+      "peak": {
+       "2022": 1.305,
+       "2023": 1.447,
+       "2024": 1.605,
+       "2025": 1.589
+      }
+     }
+    },
+    "CT_PEAKER": {
+     "n_resources": 51,
+     "bucket_mw": 5507.2742,
+     "bands": {
+      "committed": 1.064,
+      "econ_low": 1.09,
+      "econ_high": 1.153,
+      "peak": 1.157
+     },
+     "per_year": {
+      "committed": {
+       "2022": 1.006,
+       "2023": 1.153,
+       "2024": 0.966,
+       "2025": 1.137
+      },
+      "econ_low": {
+       "2022": 1.024,
+       "2023": 1.149,
+       "2024": 1.061,
+       "2025": 1.192
+      },
+      "econ_high": {
+       "2022": 1.068,
+       "2023": 1.257,
+       "2024": 1.061,
+       "2025": 1.195
+      },
+      "peak": {
+       "2022": 1.069,
+       "2023": 1.261,
+       "2024": 1.061,
+       "2025": 1.195
+      }
+     }
+    },
+    "ST_GAS": {
+     "n_resources": 26,
+     "bucket_mw": 1561.73,
+     "bands": {
+      "committed": 0.974,
+      "econ_low": 0.974,
+      "econ_high": 0.974,
+      "peak": 0.974
+     },
+     "per_year": {
+      "committed": {
+       "2022": 1.011,
+       "2023": 0.957,
+       "2024": 0.928,
+       "2025": 0.946
+      },
+      "econ_low": {
+       "2022": 1.011,
+       "2023": 0.957,
+       "2024": 0.928,
+       "2025": 0.946
+      },
+      "econ_high": {
+       "2022": 1.011,
+       "2023": 0.957,
+       "2024": 0.928,
+       "2025": 0.946
+      },
+      "peak": {
+       "2022": 1.011,
+       "2023": 0.957,
+       "2024": 0.928,
+       "2025": 0.946
+      }
+     }
+    }
+   }
+  },
+  "RTM": {
+   "n_days": 1506,
+   "span": [
+    "2021-08-15",
+    "2025-09-30"
+   ],
+   "n_resources_classified": 1059,
+   "n_gas": 333,
+   "st_cut": null,
+   "G1": {
+    "CC_REGULAR": {
+     "n": 208,
+     "bucket_mw": 45415.0,
+     "fleet_mw": 13708.0,
+     "ratio": 3.313,
+     "bounds": [
+      0.5,
+      1.3
+     ],
+     "pass": false,
+     "slope_wmedian": 6.591
+    },
+    "CT_PEAKER": {
+     "n": 125,
+     "bucket_mw": 13417.0,
+     "fleet_mw": 7616.0,
+     "ratio": 1.762,
+     "bounds": [
+      0.5,
+      1.6
+     ],
+     "pass": false,
+     "slope_wmedian": 10.37
+    },
+    "ST_GAS": {
+     "n": 0,
+     "bucket_mw": 0.0,
+     "fleet_mw": 2859.0,
+     "ratio": 0.0,
+     "bounds": [
+      0.5,
+      1.6
+     ],
+     "pass": false,
+     "slope_wmedian": null
+    }
+   },
+   "ratio_q_over_y": {
+    "full_quarters": {
+     "n": 14646,
+     "p05": 0.9519,
+     "p50": 1.0,
+     "p95": 1.0,
+     "within_5pct": 0.9439
+    },
+    "2021q3_partial": {
+     "n": 714,
+     "p05": 0.9473,
+     "p50": 1.0,
+     "p95": 1.0,
+     "within_5pct": 0.9356
+    }
+   },
+   "bands_repro_pool": {
+    "CC_REGULAR": {
+     "n_resources": 208,
+     "bucket_mw": 45414.94,
+     "bands": {
+      "committed": 0.772,
+      "econ_low": 0.876,
+      "econ_high": 0.97,
+      "peak": 1.046
+     },
+     "per_year": {
+      "committed": {
+       "2023": 0.715,
+       "2024": 0.752,
+       "2025": 0.838
+      },
+      "econ_low": {
+       "2023": 0.815,
+       "2024": 0.872,
+       "2025": 0.892
+      },
+      "econ_high": {
+       "2023": 0.937,
+       "2024": 0.987,
+       "2025": 0.999
+      },
+      "peak": {
+       "2023": 0.978,
+       "2024": 1.029,
+       "2025": 1.121
+      }
+     }
+    },
+    "CT_PEAKER": {
+     "n_resources": 125,
+     "bucket_mw": 13417.0,
+     "bands": {
+      "committed": 0.983,
+      "econ_low": 1.023,
+      "econ_high": 1.039,
+      "peak": 1.052
+     },
+     "per_year": {
+      "committed": {
+       "2023": 1.041,
+       "2024": 0.922,
+       "2025": 0.865
+      },
+      "econ_low": {
+       "2023": 1.074,
+       "2024": 0.949,
+       "2025": 1.001
+      },
+      "econ_high": {
+       "2023": 1.139,
+       "2024": 1.006,
+       "2025": 1.036
+      },
+      "peak": {
+       "2023": 1.148,
+       "2024": 1.032,
+       "2025": 1.043
+      }
+     }
+    },
+    "ST_GAS": null
+   },
+   "bands_verdict_pool": {
+    "CC_REGULAR": {
+     "n_resources": 208,
+     "bucket_mw": 45414.94,
+     "bands": {
+      "committed": 0.818,
+      "econ_low": 0.875,
+      "econ_high": 0.958,
+      "peak": 1.057
+     },
+     "per_year": {
+      "committed": {
+       "2022": 0.841,
+       "2023": 0.715,
+       "2024": 0.752,
+       "2025": 0.838
+      },
+      "econ_low": {
+       "2022": 0.871,
+       "2023": 0.815,
+       "2024": 0.872,
+       "2025": 0.892
+      },
+      "econ_high": {
+       "2022": 0.948,
+       "2023": 0.937,
+       "2024": 0.987,
+       "2025": 0.999
+      },
+      "peak": {
+       "2022": 1.103,
+       "2023": 0.978,
+       "2024": 1.029,
+       "2025": 1.121
+      }
+     }
+    },
+    "CT_PEAKER": {
+     "n_resources": 125,
+     "bucket_mw": 13417.0,
+     "bands": {
+      "committed": 0.979,
+      "econ_low": 1.001,
+      "econ_high": 1.039,
+      "peak": 1.053
+     },
+     "per_year": {
+      "committed": {
+       "2022": 0.924,
+       "2023": 1.041,
+       "2024": 0.922,
+       "2025": 0.865
+      },
+      "econ_low": {
+       "2022": 0.993,
+       "2023": 1.074,
+       "2024": 0.949,
+       "2025": 1.001
+      },
+      "econ_high": {
+       "2022": 1.038,
+       "2023": 1.139,
+       "2024": 1.006,
+       "2025": 1.036
+      },
+      "peak": {
+       "2022": 1.077,
+       "2023": 1.148,
+       "2024": 1.032,
+       "2025": 1.043
+      }
+     }
+    },
+    "ST_GAS": null
+   }
+  }
+ },
+ "G_REPRO": {
+  "base_hr": {
+   "committed": 7.442,
+   "pooled": 7.442,
+   "note": "fleet-geometry constant in the derive; reproduces by construction",
+   "pass": true
+  },
+  "cc_slope_wmedian_measured": 6.699,
+  "econ_low": {
+   "committed": 1.066,
+   "pooled": 1.277,
+   "dev": 0.211,
+   "tol": 0.01,
+   "pass": false
+  },
+  "econ_high": {
+   "committed": 1.072,
+   "pooled": 1.396,
+   "dev": 0.324,
+   "tol": 0.01,
+   "pass": false
+  },
+  "peak": {
+   "committed": 1.386,
+   "pooled": 1.571,
+   "dev": 0.185,
+   "tol": 0.01,
+   "pass": false
+  },
+  "CT_PEAKER_reported": {
+   "econ_low": {
+    "committed": 1.103,
+    "pooled": 1.139
+   },
+   "econ_high": {
+    "committed": 1.146,
+    "pooled": 1.162
+   },
+   "peak": {
+    "committed": 1.154,
+    "pooled": 1.172
+   }
+  },
+  "pass": false
+ },
+ "G_POP": {
+  "CC_REGULAR": {
+   "n": 208,
+   "bucket_mw": 45415.0,
+   "fleet_mw": 13708.0,
+   "ratio": 3.313,
+   "bounds": [
+    0.5,
+    1.3
+   ],
+   "pass": false,
+   "slope_wmedian": 6.591
+  },
+  "CT_PEAKER": {
+   "n": 125,
+   "bucket_mw": 13417.0,
+   "fleet_mw": 7616.0,
+   "ratio": 1.762,
+   "bounds": [
+    0.5,
+    1.6
+   ],
+   "pass": false,
+   "slope_wmedian": 10.37
+  },
+  "pass": false,
+  "jaccard_diagnostic": {
+   "CC_REGULAR": {
+    "rtm": 208,
+    "dam": 104,
+    "both": 75,
+    "jaccard": 0.316
+   },
+   "CT_PEAKER": {
+    "rtm": 125,
+    "dam": 51,
+    "both": 43,
+    "jaccard": 0.323
+   },
+   "all_gas": {
+    "rtm": 333,
+    "dam": 181,
+    "both": 144,
+    "jaccard": 0.389
+   }
+  }
+ },
+ "deltas_rtm_minus_dam_verdict_pool": {
+  "CC_REGULAR": {
+   "committed": -0.291,
+   "econ_low": -0.347,
+   "econ_high": -0.349,
+   "peak": -0.429
+  },
+  "CT_PEAKER": {
+   "committed": -0.085,
+   "econ_low": -0.089,
+   "econ_high": -0.114,
+   "peak": -0.104
+  }
+ },
+ "verdict": "ABANDONED (G-REPRO failed)",
+ "diagnostics": {
+  "rtm_gaslike_never_in_dam": {
+   "CC_REGULAR": {
+    "n": 126,
+    "mw": 25706.0,
+    "share_of_bucket_mw": 0.566
+   },
+   "CT_PEAKER": {
+    "n": 49,
+    "mw": 5590.0,
+    "share_of_bucket_mw": 0.417
+   }
+  },
+  "paired_same_population_same_convention": {
+   "CC_REGULAR": {
+    "n_dam_classified": 104,
+    "n_with_rtm_rows": 94,
+    "rtm_bands_on_dam_population": {
+     "committed": 1.118,
+     "econ_low": 1.248,
+     "econ_high": 1.37,
+     "peak": 1.51
+    },
+    "dam_bands_same_population": {
+     "committed": 1.109,
+     "econ_low": 1.222,
+     "econ_high": 1.307,
+     "peak": 1.486
+    },
+    "delta": {
+     "committed": 0.009,
+     "econ_low": 0.026,
+     "econ_high": 0.063,
+     "peak": 0.024
+    }
+   },
+   "CT_PEAKER": {
+    "n_dam_classified": 51,
+    "n_with_rtm_rows": 50,
+    "rtm_bands_on_dam_population": {
+     "committed": 1.18,
+     "econ_low": 1.188,
+     "econ_high": 1.257,
+     "peak": 1.257
+    },
+    "dam_bands_same_population": {
+     "committed": 1.064,
+     "econ_low": 1.09,
+     "econ_high": 1.153,
+     "peak": 1.157
+    },
+    "delta": {
+     "committed": 0.116,
+     "econ_low": 0.098,
+     "econ_high": 0.104,
+     "peak": 0.1
+    }
+   }
+  }
+ }
+}
