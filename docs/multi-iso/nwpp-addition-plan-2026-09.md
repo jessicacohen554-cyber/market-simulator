@@ -1568,6 +1568,138 @@ armed-response measurement, FINDING-nwpp-36-<date>.md. Report FIRST: the keeper 
 the measured tau per link, and the armed within-month redistribution.
 ```
 
+### W3c — the two routed items the owner asked for fixes on (ISSUED r#7, 2026-09-16)
+
+Owner, r#7: *"do you have fixes for 1 and 2"* — routed items **R-f** (the 930 hydro column) and
+**R-j** (the PNCA termination). They are different in kind and the desk answers them differently:
+**R-f is a defect with a located, small fix** (NWPP-37). **R-j is not a defect and has no code fix** —
+building a post-PNCA regime would invent one — so what is chartered is the **measurement that decides
+whether it matters at all** (NWPP-38).
+
+#### NWPP-37 `[FABLE]` — close the fuel-screen seam so the hydro envelope stops reading raw
+
+```
+You are lane NWPP-37. MODEL: Fable — you are changing a SHARED EIA-930 loader that all NINE
+registered regions read. The licence is narrow and the exit is a byte-identity proof.
+DATA PROFILE: nwpp.  Branch stem: claude/nwpp-37-envelope-screen-<4 chars>.
+Read CLAUDE.md freshly and in full — rules 13 [R-MEASURED], 14 [R-ACCURATE], 19 [R-ONE-MECH], 27;
+src/market_sim/data/eia930/actuals.py::_screen_fuel_spike_columns IN FULL (its docstring is your
+specification AND carries the defect — see below); src/market_sim/data/eia930/envelopes.py;
+src/market_sim/data/eia930/frames.py::_eia_hourly_frame_filled;
+docs/handoffs/FINDING-nwpp-32-2026-09-14.md §3.2 and §7 item 1.
+
+*** THE DEFECT, LOCATED BY THE DESK AT r#7 — VERIFY IT AT YOUR OWN BASE SHA BEFORE FIXING IT. ***
+`_screen_fuel_spike_columns` (actuals.py:219) is a correct two-statistic screen: an hour is repaired
+only when it clears 2.5x BOTH the series median AND its own p99.9 robust peak. Its docstring claims
+"this seam screens the frame every reader in this module obtains, so no consumer can reach an
+unscreened copy (rule 19 [R-ONE-MECH])".
+**THAT CLAIM IS TRUE ONLY OF READERS IN `actuals.py`.** Measured: the screen is applied at exactly
+three call sites — actuals.py:351, :412, :488 — and ALL THREE ARE IN THAT MODULE. `envelopes.py`
+obtains its frame at :109 and :167 by calling `frames._eia_hourly_frame_filled(ba, year)` DIRECTLY,
+and that function does no screening at all — it only reindexes present rows onto the complete hourly
+clock. So `measured_monthly_hydro`, `measured_hydro_min_flow_level` and the month x hour-of-day
+envelope read the RAW `NG: WAT` column.
+**The measured cost for NWPP** (NWPP-32 §3.2): one AVA hour at 810,113 MW puts **+1,166 GWh = 14.1 %**
+into October 2025's pooled hydro. The screen would catch it trivially — it is roughly 1,350x that
+series' own robust peak against a 2.5x bar — so this is a plumbing gap, not a threshold question.
+NWPP-10 separately found the twin defect in the DEMAND column and repaired it demand-side; the
+generation side was never routed through the screen that already exists for it.
+
+WHAT YOU BUILD — TWO SHAPES, AND YOU CHOOSE WITH EVIDENCE, NOT PREFERENCE:
+  (A) STRUCTURAL, and the one the desk prefers IF it proves clean: move the screen into
+      `frames._eia_hourly_frame_filled` (or a single wrapper every reader goes through) so the
+      rule-19 single-seam claim the docstring already makes becomes TRUE. Then delete the now-
+      redundant per-call-site applications rather than leaving them stacked (rule 19).
+  (B) NARROW, the fallback: screen at envelopes.py's two read sites only.
+PICK (A) IF AND ONLY IF IT IS BYTE-IDENTICAL for every pre-existing region; if it moves any other
+region's series, report exactly which and why, then take (B) and say so. Do NOT take (A) and
+"explain" a moved row.
+
+THE EXIT — BYTE-IDENTITY ACROSS ALL NINE REGIONS. The screen's own measured effect is already known
+and is your control: over all regions 2019-2026 exactly two benchmark series move (SPP 2023 wind
+106.6345 -> 103.0488 TWh at h3907; NYISO 2024 other 3.3846 -> 3.3197 at h6759), plus NYISO H1-2026
+other and one delivered wind profile. **Anything your change moves BEYOND that set is a new effect
+and must be named, explained and shown to be a defect repair rather than a behaviour change.**
+Report a table: per region, per year, envelope/floor before and after. NWPP is expected to move (that
+is the point); every other region is expected not to.
+ALSO FIX THE DOCSTRING. It currently asserts a property the code does not have. Whichever shape you
+take, the comment must describe the seam that actually exists (rule 24 in spirit: an unregistered
+reader is an unregistered channel).
+
+FILES YOU OWN: src/market_sim/data/eia930/{actuals,envelopes,frames}.py (the seam ONLY — you change
+no threshold, no statistic, no per-region branch); a test pinning that the envelope path is screened;
+your PRECOMMIT and FINDING.
+MUST NOT TOUCH: any per-region registry or config; ScenarioConfig (you add NO field — this is a data
+repair, not a mechanism, so rule 28(c) does not fire and you add NO matrix row); the demand screens
+(`_screen_demand_spikes` / `_screen_demand_dropouts` are a different phenomenon, rule 19);
+scripts/calibration_verdict.py; frontend/data/**; this plan; the ledger.
+RULES THAT BITE: 13, 14 [R-ACCURATE] — this is a telemetry defect repaired by the same NaN +
+interpolation a missing meter hour gets, never a haircut; 19 [R-ONE-MECH]; 27 [R-PUSH] (these files
+are large: edit locally, push exact bytes, fetch-back verify); 24.
+EXIT: the seam, the docstring repair, the test, the nine-region before/after table,
+FINDING-nwpp-37-<date>.md. Report FIRST: which shape you took and why, and the list of series that
+moved outside the known control set (ideally empty).
+```
+
+#### NWPP-38 `[OPUS]` — does the PNCA termination bite? (measurement only; no code)
+
+```
+You are lane NWPP-38. MODEL: Opus claude-opus-5 — a zero-LP MEASUREMENT. You write no mechanism, no
+config and no src/ code, and that is deliberate: see below.
+DATA PROFILE: nwpp.  Branch stem: claude/nwpp-38-pnca-discontinuity-<4 chars>.
+Read CLAUDE.md freshly and in full — rule 1 [R-STRUCT] is the whole reason this lane is a measurement
+and not a build; docs/handoffs/FINDING-nwpp-32-2026-09-14.md §4, §5(a), §5(b) and §7 item 5;
+docs/multi-iso/nwpp-addition-plan-2026-09.md §2.7.
+
+*** WHY THIS IS NOT A "FIX" LANE, STATED SO YOU DO NOT TRY TO MAKE IT ONE. ***
+NWPP-32 established that the **1997 Pacific Northwest Coordination Agreement TERMINATED 2024-09-15**,
+with **no successor text found**, and that the PNCA is the instrument defining "Period means a
+calendar month" — the accounting period the model's hydro budget already uses. So the coordinating
+instrument for the Columbia system changed **inside the 2023-2025 scored window**.
+**There is no code fix for this and you must not invent one.** There is no successor instrument to
+model TO; a post-PNCA operating regime built from inference would be exactly the fitted mechanism
+rule 1 [R-STRUCT] forbids, and NWPP has no price benchmark against which such a mechanism could ever
+be validated (NWPP-13 read NO). What is missing is not a mechanism — it is **evidence about whether
+the termination changed observable behaviour at all**. That is what you produce.
+
+WHAT YOU MEASURE, using artifacts that already exist (NWPP-32's `data/raw/nwpp-hydro/` per-plant
+monthly budgets 2023-2025 and `nwpp_hydro_chain.csv`, plus NWPP-11's per-BA hourly extracts):
+ 1. **Did the mainstem's behaviour change across 2024-09-15?** Compare the eleven mainstem plants
+    (Grand Coulee -> ... -> Bonneville) before and after, on quantities the monthly budget does NOT
+    already fix by construction: within-month shaping, diurnal amplitude, the plant-to-plant
+    correlation structure down the chain, and the lag between adjacent projects.
+ 2. **Separate the instrument from the hydrology — this is the hard part and the reason the lane is
+    Opus and not a script.** 2024 and 2025 are different water years, so a raw before/after contrast
+    confounds the two. Use the pre-2024 years as the control for normal inter-year variation, state
+    your identification strategy IN THE FINDING BEFORE the numbers, and be explicit that a
+    confounded result is a legitimate outcome to report.
+ 3. **The comparison group.** Tributary systems NOT on the mainstem (Skagit, Cowlitz, Lewis,
+    Deschutes, Willamette, Baker, Nisqually — NWPP-32 §5(a) names them as independent) are outside
+    the PNCA's coordination object in the same water years. If the mainstem moves and they do not,
+    that is evidence; if both move, it is hydrology.
+ 4. **The 2025 data caveat is binding**: the pooled 930 `NG: WAT` series carries the defective hours
+    (routed item R-f; lane NWPP-37 is fixing the seam). Either wait for NWPP-37, or screen the hours
+    yourself and SAY you did — do not read the raw column and report the result as clean.
+
+THREE OUTCOMES, ALL SUCCESSFUL, AND YOU DO NOT GET TO PREFER ONE:
+  (a) **No measurable change** -> the declaration in NWPP-40's PRECOMMIT is sufficient and this item
+      closes. State the power of your test: what size of change would you have detected?
+  (b) **A measurable change** -> report its magnitude, its sign and which plants carry it. That is
+      then evidence for a FUTURE mechanism decision, which is the owner's, not yours. Do NOT propose
+      the mechanism in this lane.
+  (c) **Confounded and unseparable** -> say so plainly, with what additional data would separate it.
+"Inconclusive, and here is why" is a real result; a strained story is not.
+
+FILES YOU OWN: any analysis artifact under data/raw/nwpp-hydro/ your measurement produces; your
+FINDING. MUST NOT TOUCH: src/; ScenarioConfig; any registry; NWPP-32's budget artifacts; this plan;
+the ledger.
+RULES THAT BITE: 1 [R-STRUCT] above all — you may not tune anything and there is no residual to
+consult; 13 [R-MEASURED]; 23 [R-FROZEN-DERIVE]; 27; 32 (zero LP).
+EXIT: FINDING-nwpp-38-<date>.md with the identification strategy stated BEFORE the numbers, the
+before/after table for the mainstem, the tributary control, and one of the three verdicts above.
+Report the verdict and the test's power FIRST.
+```
+
 ### W4 / W5 / W6 — charters issued at the sittings that unblock them
 
 

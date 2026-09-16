@@ -11,6 +11,92 @@ recreated fresh from `origin/main`.
 
 ## 0. Live state — newest entry FIRST
 
+### r#7 — 2026-09-16 — the owner asked for FIXES to R-f and R-j; **one has one, one does not** — NWPP-37 + NWPP-38 ISSUED (main `8b9b32e4`)
+
+**Owner, verbatim: *"Ok do you have fixes for 1 and 2"*** — routed items **R-f** (the defective 930
+hydro column) and **R-j** (the PNCA termination). The desk diagnosed both at the tree rather than
+answering from the routing note, and they are **not the same kind of problem**:
+
+---
+
+**R-f — YES, AND THE DEFECT IS LOCATED TO THE LINE.** Traced this sitting:
+
+- `_screen_fuel_spike_columns` (`actuals.py:219`) already exists and is **exactly the two-statistic
+  screen NWPP-10 asked for**: an hour is repaired only when it clears 2.5× BOTH the series median AND
+  its own p99.9 robust peak. It is well-built and its rule-13 admissibility argument holds.
+- **Its docstring claims** *"this seam screens the frame every reader in this module obtains, so no
+  consumer can reach an unscreened copy (rule 19)"*. **That claim is true only of readers inside
+  `actuals.py`.** Measured: the screen is applied at exactly three call sites — `actuals.py:351`,
+  `:412`, `:488` — **all three in that one module**.
+- **`envelopes.py` is not in that module.** It obtains its frame at `:109` and `:167` by calling
+  `frames._eia_hourly_frame_filled(ba, year)` **directly**, and that function does **no screening at
+  all** — read in full, it only reindexes present rows onto the complete hourly clock. So
+  `measured_monthly_hydro`, `measured_hydro_min_flow_level` and the month × hour-of-day envelope read
+  the **RAW** `NG: WAT` column, exactly as NWPP-32 §7 reported.
+- **So NWPP-32 was right and the screen's own docstring is wrong.** The gap is plumbing, not a
+  threshold question: the AVA hour at 810,113 MW is roughly **1,350×** that series' own robust peak
+  against a **2.5×** bar, so the existing screen would catch it trivially. NWPP-10 found and repaired
+  the twin defect in the DEMAND column; the generation side was simply never routed through the
+  screen that already existed for it.
+
+**Chartered as NWPP-37 `[FABLE]`** — shared EIA-930 loader, so the licence is narrow and the exit is a
+**nine-region byte-identity table**. The lane chooses between (A) moving the screen into `frames` so
+the rule-19 single-seam claim becomes *true*, and (B) screening at the two envelope read sites —
+**(A) only if it proves byte-identical for every pre-existing region**, otherwise (B), and never (A)
+with a moved row explained away. The screen's already-measured effect (SPP 2023 wind, NYISO 2024
+other, NYISO H1-2026 other, one wind profile) is handed over as the control set: anything beyond it is
+a new effect and must be named. **The docstring is repaired too** — it currently asserts a property
+the code does not have.
+
+---
+
+**R-j — NO, AND PROPOSING ONE WOULD BE INVENTING A REGIME.** The desk says this plainly rather than
+manufacturing symmetry with R-f:
+
+- The PNCA **terminated 2024-09-15 with no successor text found** (NWPP-32 §4, §7 item 5). It is the
+  instrument that defines *"Period means a calendar month"* — the accounting period the model's hydro
+  budget already uses. So the coordinating instrument for 56 % of the footprint's hydro changed
+  **inside the scored window**.
+- **This is not a defect.** It is a real-world discontinuity, and there is **nothing to model to**: no
+  successor instrument exists to encode. A post-PNCA operating regime built from inference would be
+  precisely the fitted mechanism rule 1 `[R-STRUCT]` forbids — and NWPP has **no price benchmark**
+  against which such a mechanism could ever be validated, since NWPP-13 read NO. A desk that shipped
+  one would be inventing structure and calling it a fix.
+- **What IS available, cheap and decisive is the measurement nobody has made: does it bite at all?**
+  NWPP-32's artifacts already carry what it needs — per-plant monthly budgets 2023–2025 and
+  `nwpp_hydro_chain.csv`.
+
+**Chartered as NWPP-38 `[OPUS]`, a MEASUREMENT lane that writes no code.** It tests the eleven
+mainstem plants across 2024-09-15 on the quantities the monthly budget does not already fix by
+construction (within-month shaping, diurnal amplitude, the chain's correlation structure, the
+inter-project lag). Its hard part is stated as the hard part: **2024 and 2025 are different water
+years**, so the identification strategy is declared BEFORE the numbers, and the independent tributary
+systems NWPP-32 named (Skagit, Cowlitz, Lewis, Deschutes, Willamette, Baker, Nisqually) are the
+control group — outside the PNCA's coordination object in the same water years. Three outcomes are
+all successful and the lane is told it may not prefer one: no measurable change (with the test's
+POWER stated), a measured change (magnitude reported, **mechanism NOT proposed — that decision is the
+owner's**), or confounded-and-unseparable, said plainly.
+**Binding data caveat carried into it:** the 2025 pooled series still has R-f's defective hours, so
+NWPP-38 either waits for NWPP-37 or screens them itself and *says* it did — it may not read the raw
+column and report the result as clean.
+
+---
+
+**Why the asymmetry is the honest answer.** R-f is a plumbing gap between two pieces of code that
+already exist, and it has a located fix. R-j is the world changing mid-window. The temptation is to
+give the owner two fixes because two were asked for; the correct response is one fix, one
+measurement, and the reason stated. **NWPP-40's PRECOMMIT declares R-j regardless of what NWPP-38
+finds** — the declaration is not contingent on the measurement.
+
+**Gates:** not re-run at this pin — this refresh is program documents only and `8b9b32e4` is the same
+pin r#6 measured six gates at, with the three failures carrying **zero NWPP mentions**. Recorded as
+r#6's exits, unchanged, rather than re-asserted as fresh.
+
+**Next act:** grade NWPP-36, NWPP-37 and NWPP-38 by content as they land; then serve card **N10** and
+charter **NWPP-40**. NWPP-37 is now a soft precondition on NWPP-38 and on NWPP-40's hydro reads.
+
+---
+
 ### r#6 — 2026-09-16 — **ALL SIX W3 LANES LANDED** · the region count is NINE · **W3b / NWPP-36 ISSUED** against NWPP-32's specification (main `8b9b32e4`)
 
 **Re-count at this desk's own pin (handoff §0.3) — the count moved AGAIN, and the desk measured it
@@ -633,6 +719,8 @@ issue W1 (NWPP-10/11/12; NWPP-13 only if N2 rules for option (a)).
 | NWPP-35 site + docs | OPUS | W3 | **LANDED r#6** — measured the count as **NINE** independently and led with it; `calibration-log/nwpp.md` created | merged `ab47320c` | `FINDING-nwpp-35-2026-09-14.md` |
 | **NWPP-32 hydro budget** | **FABLE** | W3 | **LANDED r#6 — reconciles at 0.000 MWh, every plant, every year**; P1–P4 all held; 263 absent plants read `NO_923_SERIES` and stay absent. **Corrected the desk's own chain list** (Boundary is Pend Oreille, not mainstem) | merged `06a80274` | `FINDING-nwpp-32-2026-09-14.md` |
 | **NWPP-36 cascade coupling** | **FABLE** | **W3b** | **ISSUED r#6** — charter composed entirely from NWPP-32 §5–§6. 11 mainstem plants / 20,098.8 MW / 56.14 % of hydro; τ and pondage **must be measured**; ONE default-off field; nine-region G8 proof | pending | — |
+| **NWPP-37 envelope screen seam** | **FABLE** | **W3c** | **ISSUED r#7** — the R-f fix, located to `envelopes.py:109/:167` bypassing `_screen_fuel_spike_columns`. Nine-region byte-identity exit | pending | — |
+| **NWPP-38 PNCA discontinuity** | OPUS | **W3c** | **ISSUED r#7** — a MEASUREMENT, not a fix: R-j has no code fix and inventing one is refused | pending | — |
 | NWPP-40 first solve | FABLE | W4 | **BLOCKED on NWPP-36 ALONE** — all of W3 has landed. Inherits **R-f** (930 hydro unsafe 2024–25) and **R-j** (PNCA terminated in-window) as PRECOMMIT duties; card **N10** is served at its sitting | — | — |
 | NWPP-55…59 levers | — | W5 | pre-declared, not issuable (**NWPP-54 RETIRED into NWPP-36**, ruling N3) | — | — |
 | W6 forecast entry | — | W6 | ROUTED to the capx director (card N9) | — | — |
@@ -663,11 +751,11 @@ issue W1 (NWPP-10/11/12; NWPP-13 only if N2 rules for option (a)).
 | R-c | **~~SOCO divergence~~ — CLOSED AS A ROUTED ITEM at r#3 and replaced by lane NWPP-22.** Owner directive: *"Ignore SOCO desk you focus on nwpp."* The scorer branch that card N2 limb (b) requires is **this program's own work**, not a sibling desk's to supply, and card **N11** ruled *send it now*. What made it urgent is measured: NWPP-13 read **NO**, so NWPP has no admissible price series and NWPP-40 cannot be scored without the branch | **NWPP-22 `[FABLE]`**, issued r#3 | Tracked as a LANE, not a routed item. The only residual cross-program fact — that a sibling program has the same unmet need — is **not this desk's to manage** and is recorded here once, for the record, and never acted on |
 | R-d | 500.0 MW filed under BA `DOPD` with state `TX` / NERC `TRE` | NWPP-10 adjudicates; any upstream EIA correction is outside this program | A silent mis-key would put 500 MW of the wrong interconnection in the fleet |
 | R-e | `data/fleet/models.py:221` inverts `BA_CODE_TO_ISO` with a comprehension that **silently keeps only the last BA per ISO**. Every existing entry is 1:1; NWPP's is **17:1** | NWPP-20 audits it | The single most likely silent bug in the registration |
-| R-f | **The NWPP pool `NG: WAT` series carries the G20 defective hours** (AVA 810,113 MW at 2025-10-12 10:00 UTC + four more; NWMT 65,891 / 65,880 in 2024). NWPP-10's repair was **demand-side only**; `measured_monthly_hydro`, `measured_hydro_min_flow_level` and the envelope read the **unrepaired** column | a `data/eia930` lane | **`eia930_monthly` and the 930-derived hydro floors/envelopes are UNSAFE for NWPP 2024–25 until repaired.** NWPP-32's posture — `backfill_year=2024`, the 2025 repin **refused on rule-14 grounds** — stands. **NWPP-40's PRECOMMIT must state it** |
+| R-f | **The NWPP pool `NG: WAT` series carries the G20 defective hours** (AVA 810,113 MW at 2025-10-12 10:00 UTC + four more; NWMT 65,891 / 65,880 in 2024). NWPP-10's repair was **demand-side only**; `measured_monthly_hydro`, `measured_hydro_min_flow_level` and the envelope read the **unrepaired** column | **NWPP-37 `[FABLE]`, ISSUED r#7** — desk located the defect: `envelopes.py:109/:167` call `frames._eia_hourly_frame_filled` directly, and the screen is applied only at `actuals.py:351/:412/:488` | **`eia930_monthly` and the 930-derived hydro floors/envelopes are UNSAFE for NWPP 2024–25 until repaired.** NWPP-32's posture — `backfill_year=2024`, the 2025 repin **refused on rule-14 grounds** — stands. **NWPP-40's PRECOMMIT must state it** |
 | R-g | **930-vs-923 population mismatch, −2.7 TWh and stable**: WAUW (−2.6/−2.8 TWh) and PACW (−0.7) file their EIA-923 hydro plants under other EIA-930 BAs; Priest Rapids sits in BPAT (860) and GCPD (930) | a `data/eia930` lane | Any level pin between the two series needs a reconciliation the loader does not have — so no lane may pin one casually |
 | R-h | **Swift 2 (72 MW, PACW)** has no EIA-923 series in either complete year | an id/crosswalk lane | An id question, not a data gap; it must not be silently filled |
 | R-i | `curate_hydro_plant_modes.py` registers CAISO only; an NWPP curation is a W4/W5 lever (`hydro_ror_split`) | NWPP W5 | NWPP-32 §5(d) is the evidence it would start from |
-| R-j | **The PNCA TERMINATED 2024-09-15**, no successor text found — the coordinating instrument for the whole Columbia system **changes inside the scored window** | the owner / NWPP-40 | A structural discontinuity between 2024 and 2025 that no mechanism currently expresses. **NWPP-40's PRECOMMIT states it**; it is not something to average over |
+| R-j | **The PNCA TERMINATED 2024-09-15**, no successor text found — the coordinating instrument for the whole Columbia system **changes inside the scored window** | **NWPP-38 `[OPUS]`, ISSUED r#7 — a MEASUREMENT lane.** There is **no code fix**: no successor instrument exists to model to, and inventing a post-PNCA regime is the fitted mechanism rule 1 forbids | A structural discontinuity between 2024 and 2025 that no mechanism currently expresses. **NWPP-40's PRECOMMIT states it**; it is not something to average over |
 
 ## 4. Collision register
 
@@ -690,6 +778,7 @@ issue W1 (NWPP-10/11/12; NWPP-13 only if N2 rules for option (a)).
 | r#4 | 2026-09-14 | **NWPP-20 `[FABLE]` ISSUED** — the pin flip, charter corrected at this refresh for the R-e scope finding and all six card outcomes | **N4, N5, N7, N8 RULED** (all as recommended); **N6 resolved by measurement**; N10 deferred to the W4 sitting |
 | r#5 | 2026-09-14 | **W3 ISSUED — all six lanes** (NWPP-30/31/32/33/34/35). Their charters did not exist: §8 carried only deltas, so the desk composed them against SPP's worked W3 and committed them at plan §8 W3 before issuing | none due — N10 at the W4 sitting, N9 on a keeper |
 | r#6 | 2026-09-16 | **NWPP-36 `[FABLE]` ISSUED** — W3b, composed entirely from NWPP-32 §5–§6 and committed at plan §8 W3b before issuing | none due — **N10 is served at the W4 sitting**, which NWPP-36 now gates; N9 on a keeper |
+| r#7 | 2026-09-16 | **NWPP-37 `[FABLE]` and NWPP-38 `[OPUS]` ISSUED** (wave W3c), on the owner's request for fixes to R-f and R-j | none — the owner's request was answered with a located fix (R-f) and a stated refusal to invent one (R-j) |
 
 ## 6. Errors against interest
 
