@@ -479,6 +479,110 @@ class TestScreenOnTheErcotReaders(_SyntheticExtract):
         np.testing.assert_array_equal(renew["solar"], _solar())
 
 
+# SOCO 2024 h386-392 = 2024-01-17 03:00-09:00 local, Winter Storm Heather
+# (FINDING-nwpp-37 §6), the filed ``NG: OIL`` values.
+_HEATHER_HOURS = tuple(range(386, 393))
+_HEATHER_MW = (530.0, 649.0, 660.0, 687.0, 762.0, 801.0, 350.0)
+
+
+def _zero_baseline_oil() -> np.ndarray:
+    """A peaker-oil series with NO operating scale, Heather-shaped (NWPP-39).
+
+    Zero for 99.6 % of the year, ten scattered three-hour blips of 20-60 MW
+    (the sub-plateau noise a rarely-run oil fleet posts), and ONE seven-hour
+    start 530 -> 801 -> 350 MW at h386-392 preceded by a 155 MW first hour —
+    the measured SOCO 2024 Winter Storm Heather run. Its p99.9 is the largest
+    blip (60 MW) and its p99.0 is 0: the ninth-largest hour is outside every
+    event, exactly the case the guard names.
+    """
+    oil = np.zeros(HOURS_PER_YEAR)
+    for start in range(1_000, 8_000, 700):
+        oil[start : start + 3] = (20.0, 60.0, 30.0)
+    oil[_HEATHER_HOURS[0] - 1] = 155.0
+    oil[_HEATHER_HOURS[0] : _HEATHER_HOURS[-1] + 1] = _HEATHER_MW
+    return oil
+
+
+def _plateau_peaker(*, spike: bool) -> np.ndarray:
+    """A peaker fleet WITH an operating scale: thirty ten-hour runs at
+    1,000-1,180 MW (median still 0), plus an optional 100x slip. The guard
+    must stay inactive here — its test is the plateau, never the median."""
+    fleet = np.zeros(HOURS_PER_YEAR)
+    for start in range(100, 8_600, 290):
+        fleet[start : start + 10] = 1_000.0 + 20.0 * np.arange(10)
+    if spike:
+        fleet[_SPIKE_HOUR] = 100_000.0
+    return fleet
+
+
+class TestZeroBaselineGuard(_SyntheticExtract):
+    """Lane NWPP-39: a series whose robust peak is not a plateau level passes
+    through; a plateau-topped series in the SAME frame is still screened."""
+
+    def _frame_with_oil(self, oil: np.ndarray, *, spike: bool) -> pd.DataFrame:
+        frame = _frame(spike=spike)
+        frame["NG: OIL"] = oil
+        return frame
+
+    def test_the_unguarded_limbs_would_have_flagged_the_heather_run(self):
+        """The pin is load-bearing: without the guard the two-limb test flags
+        the whole start (median 0 makes the median limb vacuous; the p99.9 is
+        the largest blip)."""
+        oil = _zero_baseline_oil()
+        median, peak = np.median(oil), np.percentile(oil, actuals._FUEL_SPIKE_SCALE_PCT)
+        flagged = np.flatnonzero((oil > 2.5 * median) & (oil > 2.5 * peak)).tolist()
+        self.assertEqual(flagged, [_HEATHER_HOURS[0] - 1, *_HEATHER_HOURS])
+        # And the guard's own condition holds on this series.
+        plateau = np.percentile(oil, actuals._FUEL_SPIKE_PLATEAU_PCT)
+        self.assertGreater(peak, actuals._FUEL_SPIKE_RATIO * plateau)
+
+    def test_heather_shaped_run_survives_on_every_path(self):
+        oil = _zero_baseline_oil()
+        self._write(self._frame_with_oil(oil, spike=False))
+        bench = actuals.load_eia_hourly_benchmark(self.iso, _YEAR)
+        np.testing.assert_array_equal(bench["oil"], oil)
+        frame = _eia_hourly_frame_filled(self.ba, _YEAR)
+        np.testing.assert_array_equal(frame["NG: OIL"].to_numpy(dtype=float), oil)
+        np.testing.assert_array_equal(
+            frame["NG: OIL"].to_numpy(dtype=float)[list(_HEATHER_HOURS)], _HEATHER_MW
+        )
+
+    def test_the_guard_is_per_column_so_the_plateau_slip_is_still_repaired(self):
+        """The same frame carries the SWPP-style wind slip: the oil column is
+        released, the wind column is repaired, in one pass."""
+        oil = _zero_baseline_oil()
+        self._write(self._frame_with_oil(oil, spike=True))
+        with self.assertLogs("market_sim.data.eia930.actuals", level="WARNING") as cm:
+            bench = actuals.load_eia_hourly_benchmark(self.iso, _YEAR)
+        self.assertTrue(any("NG: WND" in line for line in cm.output))
+        self.assertFalse(any("NG: OIL" in line for line in cm.output))
+        np.testing.assert_array_equal(bench["oil"], oil)
+        self.assertLess(float(bench["wind"].max()), 30_000.0)
+
+    def test_a_plateau_topped_peaker_is_still_screened(self):
+        """Median 0 does NOT release a series — only a tail-topped one. A
+        peaker fleet with thirty ten-hour runs has a plateau (p99.9/p99 ~ 1.04),
+        so its 100x slip is repaired exactly as before the guard."""
+        fleet = _plateau_peaker(spike=True)
+        self._write(self._frame_with_oil(fleet, spike=False))
+        bench = actuals.load_eia_hourly_benchmark(self.iso, _YEAR)
+        self.assertEqual(float(np.median(fleet)), 0.0)
+        self.assertLess(float(bench["oil"].max()), 2_000.0)
+        expected = 0.5 * (fleet[_SPIKE_HOUR - 1] + fleet[_SPIKE_HOUR + 1])
+        self.assertAlmostEqual(float(bench["oil"][_SPIKE_HOUR]), expected, places=6)
+
+    def test_an_idle_top_percentile_is_the_same_case(self):
+        """p99.0 == 0 under a positive p99.9 needs no special branch: the
+        inequality releases it. Nine hours at 5 MW and one at 500 MW is not a
+        unit slip the screen can adjudicate — the series has no scale."""
+        oil = np.zeros(HOURS_PER_YEAR)
+        oil[100:109] = 5.0
+        oil[4_000] = 500.0
+        self._write(self._frame_with_oil(oil, spike=False))
+        bench = actuals.load_eia_hourly_benchmark(self.iso, _YEAR)
+        self.assertEqual(float(bench["oil"][4_000]), 500.0)
+
+
 class TestScreenIsParameterFree(unittest.TestCase):
     """Rule 24 ``[R-REGISTRY]``: nothing here is a tunable."""
 
@@ -488,6 +592,16 @@ class TestScreenIsParameterFree(unittest.TestCase):
 
     def test_scale_anchor_is_the_series_robust_peak(self):
         self.assertEqual(actuals._FUEL_SPIKE_SCALE_PCT, 99.9)
+
+    def test_plateau_rank_is_one_decade_below_the_anchors(self):
+        """NWPP-39: the guard's rank is DERIVED from the anchor's — the same
+        decade step the anchor takes from the maximum — never chosen."""
+        self.assertEqual(actuals._FUEL_SPIKE_PLATEAU_PCT, 99.0)
+        self.assertAlmostEqual(
+            actuals._FUEL_SPIKE_PLATEAU_PCT,
+            100.0 - 10.0 * (100.0 - actuals._FUEL_SPIKE_SCALE_PCT),
+            places=9,
+        )
 
     def test_only_ng_columns_are_in_scope(self):
         frame = pd.DataFrame(
@@ -559,3 +673,40 @@ class TestNwppLivePins(unittest.TestCase):
         self.assertAlmostEqual(
             float(monthly[9]) / 1e6, _NWPP_OCT_2025_HYDRO_TWH, places=3
         )
+
+
+@requires_raw(
+    EIA_HOURLY_DIR / "SOCO hourly.parquet",
+    EIA_HOURLY_DIR / "SWPP hourly.parquet",
+    EIA_HOURLY_DIR / "NYIS hourly.parquet",
+)
+class TestZeroBaselineGuardLivePins(unittest.TestCase):
+    """NWPP-39's exit, on the committed extracts: the Heather run survives AND
+    the two known artifacts (SPP 2023 wind h3907; NYISO 2024 other h6759) are
+    still repaired. Measured over all nine regions x 2019-2026 the guard
+    releases exactly four series — SOCO ``NG: OIL`` 2023/2024 and one MW-scale
+    hour each in IPCO / NEVP ``NG: OIL`` 2024 — and nothing else moves."""
+
+    @classmethod
+    def setUpClass(cls):
+        _eia_hourly_frame.cache_clear()
+        _eia_hourly_frame_filled.cache_clear()
+
+    def test_soco_2024_heather_oil_run_is_the_filed_series(self):
+        frame = _eia_hourly_frame("SOCO", 2024)
+        self.assertIsNotNone(frame)
+        oil = frame["NG: OIL"].to_numpy(dtype=float)
+        np.testing.assert_array_equal(oil[list(_HEATHER_HOURS)], _HEATHER_MW)
+        bench = actuals.load_eia_hourly_benchmark("SOCO", 2024)
+        # 0.0012 TWh with the run deleted (FINDING-nwpp-37 §6) -> 0.0056 filed.
+        self.assertAlmostEqual(float(bench["oil"].sum()) / 1e6, 0.0056, places=4)
+
+    def test_soco_2023_morning_start_is_the_filed_series(self):
+        """h7975 = 2023-11-29 08:00, a 146 -> 390 -> 100 MW start on a demand
+        ramp; the second series the guard releases."""
+        frame = _eia_hourly_frame("SOCO", 2023)
+        self.assertEqual(float(frame["NG: OIL"].iloc[7975]), 390.0)
+
+    def test_both_known_artifacts_are_still_repaired(self):
+        self.assertTrue(np.isnan(_eia_hourly_frame("SWPP", 2023)["NG: WND"].iloc[3907]))
+        self.assertTrue(np.isnan(_eia_hourly_frame("NYIS", 2024)["NG: OTH"].iloc[6759]))

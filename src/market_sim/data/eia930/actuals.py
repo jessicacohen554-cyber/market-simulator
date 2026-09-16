@@ -208,6 +208,16 @@ _FUEL_SPIKE_RATIO: float = _DEMAND_SPIKE_THRESHOLD
 # handful of artifact hours cannot drag up. See :func:`_screen_fuel_spike_columns`
 # for why the demand screen's median basis cannot be used alone on a fuel series.
 _FUEL_SPIKE_SCALE_PCT: float = 99.9
+# The zero-baseline guard's rank (lane NWPP-39): the anchor above is ITSELF
+# tested by the screen's own premise at the next-coarser rank. The anchor sits
+# one decade of rank below the maximum (rank 1 -> rank ~9, 0.1 % of 8,760);
+# the guard steps the same decade again (rank ~9 -> rank ~88, 1 %), so the
+# rank is DERIVED from the anchor's, not chosen: 100 - 10 * (100 - 99.9) = 99.0
+# (spelled as the literal so ``np.percentile`` sees an exact rank rather than
+# the expression's float noise; the derivation is pinned by test). See
+# :func:`_screen_fuel_spike_columns`, "Why a robust peak can fail to be a
+# scale". No new factor: the guard's factor is :data:`_FUEL_SPIKE_RATIO`.
+_FUEL_SPIKE_PLATEAU_PCT: float = 99.0
 # The screen's scope is the per-fuel ``NG: <CODE>`` columns EXACTLY as card P9
 # ruled (SPP addition plan §5, RULED r#2). ``Net generation`` (the ``NG`` total),
 # ``Total interchange`` (``TI``) and every ``Demand`` column are outside it, and
@@ -295,7 +305,63 @@ def _screen_fuel_spike_columns(
     strengthened and never loosened, and what it can flag is exactly an hour
     above 2.5x the series' own ninth-largest hour. A series whose robust peak is
     not positive (an all-charging storage net series) has no operating scale to
-    screen against and passes through.
+    screen against and passes through — and so does a series whose robust peak
+    is not a PLATEAU level, the zero-baseline guard below.
+
+    **Why a robust peak can fail to be a scale (lane NWPP-39, the zero-baseline
+    guard).** The peak limb's premise is that the top of a legitimate fuel
+    series is a plateau: a fleet dispatched against a nameplate ceiling occupies
+    the neighbourhood of that ceiling for many hours, so no hour can sit 2.5x
+    above the ninth-largest. That premise needs the ninth-largest hour to lie
+    INSIDE the occupied top regime. A series whose operating hours are rare,
+    short events — a peaker oil fleet that is off for 97 % of the year — has
+    its ninth-largest hour OUTSIDE every event, so the "robust peak" is the idle
+    tail, not an operating level, and whether a real start is deleted depends
+    on whether it lasted nine hours. Measured (NWPP-37 §6, the case that made
+    the defect visible): SOCO ``NG: OIL`` 2024 has median 0.0 MW and p99.9
+    71.7 MW (285 positive hours of 8,752; 8 hours >= 100 MW), and h386-392 —
+    2024-01-17 03:00-09:00, Winter Storm Heather — is a coherent peaker start
+    530 → 649 → 660 → 687 → 762 → 801 → 350 MW tracking SOCO's demand ramp from
+    41.0 to 47.4 GW. The unguarded screen deleted it (4.4 GWh, 0.0056 → 0.0012
+    TWh), a rule 14 ``[R-ACCURATE]`` violation by construction: a screen that
+    deletes a documented weather event is burying real data, not repairing
+    telemetry. The same fleet ran >= 9 hours above 851 MW in 2025 and nothing
+    was flagged there. This is the fuel-column analogue of the CHPD cold-snap
+    failure ``frames._pool_hourly_frame`` documents for the DEMAND spike screen.
+
+    The guard is the screen's own premise applied to its own anchor at the
+    next-coarser rank: if the p99.9 is itself more than
+    :data:`_FUEL_SPIKE_RATIO` times the series' p99.0
+    (:data:`_FUEL_SPIKE_PLATEAU_PCT`, the ninth-largest hour against the
+    eighty-eighth), the top 0.1 % of the series is a tail rather than a
+    plateau, the premise the limb rests on is falsified by the series itself,
+    and there is nothing to screen against — the column passes through
+    untouched, exactly as the non-positive case does. A p99.0 of zero under a
+    positive p99.9 (the top 1 % is idle) is the same case and needs no branch.
+    It is a construction, not a fit: the factor is the screen's by import, the
+    rank is one decade below the anchor's exactly as the anchor's is one decade
+    below the maximum's, it is a ratio of two order statistics of the same
+    series (scale-invariant; no MW level, no other column, no residual), and it
+    can only RELEASE a series, never flag an hour the unguarded screen would
+    not. Measured over every ``NG:`` series on disk, 2019-2026 (687 with a
+    positive p99.9): the ratio's median is 1.066 and its p95 is 1.915; the 26
+    series above 2.5 are rarely-run oil fleets, sub-10-MW idle series, and two
+    ERCO ``NG: OTH`` years whose anchor a >= 9-hour run had already lifted
+    (nothing flagged there with or without the guard). Of the 21 series the
+    screen flagged, exactly four are released — SOCO ``NG: OIL`` 2023 (h7975,
+    390 MW, a 2023-11-29 morning start 146 → 390 → 100 MW) and 2024 (Heather),
+    and one MW-scale hour each in IPCO and NEVP ``NG: OIL`` 2024 (6 and 3 MW,
+    both inside a three-hour ramp) — and every other flagged series, the two
+    control artifacts included (SWPP 2023 ``NG: WND`` ratio 1.060; NYIS 2024
+    ``NG: OTH`` 1.051), is byte-identical. Rejected on principle, not on what
+    they flag: a MW floor on the anchor (a magic number, and not scale-invariant
+    between a 200 MW PUD member and a 47 GW BA); ``median > 0`` as eligibility
+    (releases every solar series, whose nameplate plateau is unambiguous); a
+    minimum fraction of positive hours (a new free number, and the median test
+    in disguise). What the guard gives up is stated: a series whose top is a
+    tail is not screened at all, so a future unit slip in such a series passes —
+    but on such a series the unguarded screen could not tell a slip from an
+    operating event either, so no reliable repair is lost.
 
     **Rule 13 ``[R-MEASURED]`` admissibility.** The screen is a property of the
     series itself — two order statistics of the same 8,760 hours — so it
@@ -346,19 +412,10 @@ def _screen_fuel_spike_columns(
     34,565 MW — a fuel exceeding the total is impossible, so the repair is
     unambiguous) and ``NG: OIL`` in 2023-2024.
 
-    **The SOCO ``NG: OIL`` flag is a FALSE POSITIVE and is recorded here as a
-    known defect of this screen** (NWPP-37 §6; pre-existing, reached through
-    :func:`load_eia_hourly_benchmark` since SPP-41). Hours 386-392 of 2024 are
-    2024-01-17 03:00-09:00, Winter Storm Heather: oil ramps 155 → 530 → 649 →
-    660 → 687 → 762 → 801 → 350 MW while SOCO demand ramps 41.0 → 47.4 GW to
-    its winter peak. That is a coherent peaker start tracking the load ramp,
-    and 801 MW against a 47,123 MW ``Net generation`` is entirely possible.
-    The screen fires only because a near-zero-baseline series has no operating
-    scale: median 0.0 MW, p99.9 71.7 MW. This is the fuel-column analogue of
-    the CHPD cold-snap failure ``frames._pool_hourly_frame`` documents for the
-    DEMAND spike screen, and it deletes 4.4 GWh of real generation. Fixing it
-    needs a floor on the anchor (or a minimum-baseline eligibility test), which
-    changes the statistic — routed to the desk, not decided here.
+    The SOCO ``NG: OIL`` flags in that census were the FALSE POSITIVE the
+    zero-baseline guard above now prevents (NWPP-37 §6 routed it; NWPP-39
+    repaired it): with the guard, SOCO ``NG: OIL`` 2023-2024 passes through and
+    the 2024 benchmark ``oil`` reads its filed 0.0056 TWh again.
 
     Only the ``NG: <CODE>`` columns are touched (:data:`_EIA930_FUEL_COLUMN_PREFIX`).
     Returns ``frame`` itself when nothing is flagged and a COPY otherwise. The
@@ -382,6 +439,13 @@ def _screen_fuel_spike_columns(
         median = float(np.median(finite))
         peak = float(np.percentile(finite, _FUEL_SPIKE_SCALE_PCT))
         if peak <= 0.0:
+            continue
+        # Zero-baseline guard (lane NWPP-39): the anchor must pass the screen's
+        # own premise at the next-coarser rank. A ninth-largest hour that is
+        # itself a "spike" against the eighty-eighth means the series' top is a
+        # tail, not a plateau — no operating scale, nothing to screen against.
+        plateau = float(np.percentile(finite, _FUEL_SPIKE_PLATEAU_PCT))
+        if peak > _FUEL_SPIKE_RATIO * plateau:
             continue
         spike = (
             np.isfinite(values)
