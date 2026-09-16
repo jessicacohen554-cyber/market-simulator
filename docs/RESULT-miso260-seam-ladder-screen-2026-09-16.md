@@ -369,3 +369,100 @@ the owner's and is asked) · rule 32 `[R-SHARD]` (the parent ran no LP; §5.1 re
 (b)'s single invocation is impossible for MISO) · rule 33 `[R-SHARD-ARCHIVE]` (both shards
 archived after fetch + checkout + verify; recovery by full SHA; branches kept) · rule 34
 `[R-SHARD-PROMOTABLE]` (both shards pushed whole bundles).
+
+---
+
+# ADDENDUM A — 2026-09-16: the owner promoted, and the rule I stopped on had been removed twelve minutes before I pushed
+
+## A.1 The owner's ruling
+
+> *"Is this a recommended keeper candidate? If so plz promote. … If structural integrity
+> improves but gates regress that may still be a keeper."*
+
+That is rule 31 `[R-RETAIN]` trigger (i) — the owner has ruled on promotion — and it is
+the decision rule 29 reserved to the owner. The span is being spent and the arm promoted.
+
+## A.2 A CORRECTION I OWE, AND IT CUTS AGAINST MY OWN §3
+
+§3 of this document says the arm was killed by rule 29 `[R-SCREEN]` and frames the
+promotion as the owner overriding that kill. **That framing is wrong, and the reason is
+timing I did not check.**
+
+| commit | timestamp (UTC) | what |
+|---|---|---|
+| `fa170333` | **2026-09-16 06:47:56** | *"Remove the screen-year regime from rule 29 `[R-SCREEN]`"* — owner instruction, *"Get rid of the screen year rule altogether"* |
+| `9d1322ad` | 2026-09-16 06:59:09 | this session's PRECOMMIT + arm, pushed **twelve minutes later** |
+
+The amendment removes, **as a requirement and not merely a preference**: the one-year
+screen; the duty to name the screen year on the mechanism's own measured footprint; the
+"full span only if the screen clears its gate" condition; and **the structural STOP GATE
+itself**, with its *"may kill an arm; it may never promote one"* framing and its *"the
+remaining years are never spent"* outcome.
+
+My session's `CLAUDE.md` snapshot was taken before that commit, so **I screened under a
+rule that no longer required a screen, and then stopped on a gate that no longer had the
+authority to stop me.** Under the amended rule the full span was owed unconditionally —
+rule 34 `[R-SHARD-PROMOTABLE]` (c), which now carries the whole of the "how many years"
+question: *a registrable run solves EVERY year the ISO carries.*
+
+**What this changes in the record.** The screen is **evidence**, not an authority that was
+overridden: it is a clean same-recipe A/B one commit apart, every number in §§1–2 stands
+exactly as measured, and G-NOFLIP's failure is a real and reported regression. What it
+never was, at the moment it ran, is a licence to withhold the span. Read §3 with that
+substitution.
+
+**What it does not change.** Rule 1 `[R-STRUCT]` is untouched by the amendment, so my
+refusal to retire G-NOFLIP after seeing it fail still stands, and the two mis-specified
+gates are still retired on grounds independent of which way they went. Clause (b) (no
+control solves; the keeper's committed bundle is the control; `G-DRIFT`) and clause (c)
+(delete before merge) both survive verbatim. Clause (0), zero-LP phase 0, survives as
+practice — which is what §4 was.
+
+One consequential knock-on: rule 32 `[R-SHARD]`'s *"a single-year shard is still correct
+for a rule-29 SCREEN"* is now **spent**, and a single-year shard is simply one leg of the
+per-year fan-out rule 34 (c) prescribes. The handoff's sharding advice and CLAUDE.md no
+longer conflict.
+
+## A.3 The span, as launched
+
+Two shards, both pinned to `36ac25603bcf96599341847db594a85e8f02526c` (this branch
+rebased onto `origin/main` at `08d094fe`), running in parallel, ~60 min budget each:
+
+| leg | years | reserve flags | out-dir | branch |
+|---|---|---|---|---|
+| **V** validation | 2020 2021 2022 | `miso_measured_reserve_requirements=False`, `miso_reserve_online_gated=False` | `miso260_seam_v` | `claude/miso260-span-v` |
+| **T** train | 2023 2024 2025 | both `True` | `miso260_seam_t` | `claude/miso260-span-t` |
+
+Two legs is the **floor**, not a choice: §5.1 measured that MISO's keeper is two configs
+and that `load_miso_reserve_requirements` hard-errors before 2023, so a single
+`--years 2020..2025` invocation raises on its first year. Leg **T** doubles as the HEAD-drift
+measurement — the code change cannot touch 2023–2025, so those three years should
+reproduce the incumbent keeper.
+
+**Rule 35 `[R-PROMOTE]` (b), recorded BEFORE any prune**, because the prune destroys the
+evidence: the union of `years` over every MISO registry sidecar is
+**{2020, 2021, 2022, 2023, 2024, 2025}** — one registered run
+(`2026-09-16-miso-259-coal-fuel`), no folded touchpoints, no dangling `holdout.keeper`.
+The incoming keeper covers exactly that set, so rule 35 (c) is met and the prune is
+authorised.
+
+## A.4 A defect in the incumbent keeper's registration, found while preparing this one
+
+**`2026-09-16-miso-259-coal-fuel` has no committed `calibration_attestation.json`.** Its
+registration commit `0333feb1` carries only the six bench parts, the sidecar, the payload
+and a compose probe — the span bundle was gitignored in full — so on any fresh clone the
+current keeper scores **C6 UNATTESTED**, and `build_status --iso MISO` degrades to
+*"governance gate UNATTESTED: no governance attestation in bundle"*. That is what §6's
+`audit_keepers` E1/S1 failures actually are.
+
+It also omits the rule 15 `[R-DASHBOARD]` keeper sidecars, which that rule requires a
+KEEPER bundle to commit: `hourly/class_hourly_<year>.parquet`,
+`hourly/system_<year>.parquet` and `hourly/reserve_family_<year>.parquet`.
+
+This promotion closes both: `scripts/gen_miso260_attestation.py` carries the last
+**committed** MISO attestation (`miso255_sil_keeper`'s, recovered from git at
+`61c726d0^` — the commit that pruned it), re-stamps `governance.attested_by`, re-measures
+every `price_tail` / `price_mean` exception magnitude on this bundle's own scored records,
+and carries the DOF ledger **verbatim with no new entry** — because this arm adds no
+`ScenarioConfig` field and no free parameter. The attestation and the hourly sidecars are
+committed.
