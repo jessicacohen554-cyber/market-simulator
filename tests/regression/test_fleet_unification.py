@@ -263,7 +263,12 @@ class TestSharedAvailabilityWrappers(unittest.TestCase):
             return_value=False,
         ) as inj:
             apply_neiso_coldsnap_derate(fa, cfg, "NEISO", 2024)
-            inj.assert_called_once_with(fa, "NEISO", 2024, -5.5, 0.02, 0.25)
+            # dual_switch_active=None is the LEGACY exemption (neiso-110): the
+            # conditional dual-fuel scope correction is gated default-off, so an
+            # unarmed config threads None and the call is behaviourally unchanged.
+            inj.assert_called_once_with(
+                fa, "NEISO", 2024, -5.5, 0.02, 0.25, dual_switch_active=None
+            )
 
     def test_coldsnap_coefficient_fields_default_to_cited_values(self):
         """The former getattr literals are now the field defaults."""
