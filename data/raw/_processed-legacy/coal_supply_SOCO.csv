@@ -1,0 +1,7 @@
+plant_code,supply_class,source,weight,n_ranks,ranks
+3,bituminous,generation,20398193.18,2,bituminous:98%;prb:2%
+26,bituminous,generation,18809733.89,1,bituminous:100%
+703,bituminous,generation,87436792.1,1,bituminous:100%
+6002,prb,generation,152638310.5,1,prb:100%
+6073,prb,generation,17222661.008,2,prb:87%;bituminous:13%
+6257,prb,generation,72343805.4,1,prb:100%
