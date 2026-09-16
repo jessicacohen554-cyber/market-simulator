@@ -140,3 +140,103 @@ from it is in §2 and §3 above.
   St. Lawrence 168 h, the other 161 plants untouched.
 * `hydro_ror_split` (`G`), the USGS inflow driver and the day-of-year climatology were **not
   re-opened** — nyiso-219 closed the latter two on measurement.
+
+---
+
+# ADDENDUM — THE FULL SPAN KILLS THE ARM AT G2, AND THE ROOT CAUSE IS NOT OVER-CONSTRAINT
+
+Added 2026-09-16 after the four per-year span shards landed. **The arm is NOT PROMOTABLE.**
+
+## A1. The four-year gate table
+
+| yr | G1 | **G2** ann / worst mo | **G2** | G3 footprint | G3 | G4-written | G4-mat | C3a keeper→arm | G5 |
+|---|---|---|---|---|---|---|---|---|---|
+| 2022 | PASS | **−0.2155 % / 1.275 %** | **FAIL** | 6.36→4.00 | PASS | PASS | PASS | −9.67→**−8.90** | PASS |
+| 2023 | PASS | **−0.0957 % / 0.838 %** | **FAIL** | 5.31→3.18 | PASS | CT_PEAKER −2.28 % | PASS | −1.14→−1.46 | PASS |
+| 2024 | PASS | +0.0000 / 0.000 | PASS | 4.71→2.71 | PASS | PASS | PASS | −0.17→−0.20 | PASS |
+| 2025 | PASS | −0.0000 / 0.000 | PASS | 7.46→4.16 | PASS | CT_PEAKER +4.53 % | PASS | −9.09→−9.25 | PASS |
+
+**G2 is the identity gate and a KILL gate.** Hydro energy is **destroyed, not reallocated**:
+**−55.2 GWh in 2022** (m11 −23.6, m03 −19.1, m04 −10.1 GWh) and **−25.5 GWh in 2023**.
+
+**The one-year screen would have promoted this.** 2025 cleared G2 at 0.000 % in every month. This is
+exactly what rule 16 `[R-ALLYEARS]` exists to catch.
+
+## A2. ROOT CAUSE — measured, and it is NEGATIVE PRICES, not over-constraint
+
+Per-plant dispatch (`dispatch/2022_P1.parquet`) shows Niagara pinned at **exactly its period budget**
+(46,836 MWh) on 29 of 31 March days, at only **80.3 % of its capability** — so neither capability nor
+the budget is the binding problem on normal days. The energy is lost on the *other* days, and those
+days have one signature:
+
+| month | days | Upstate_West price mean | hours ≤ $0 |
+|---|---|---:|---:|
+| m03 **shortfall** | 2 | **−$7.77** | 16 (33 %) |
+| m03 at cap | 29 | +$30.90 | 0 (0 %) |
+| m11 **shortfall** | 15 | **−$6.64** | 127 (35 %) |
+| m11 at cap | 15 | +$29.94 | 4 (1 %) |
+
+**The LP declines to run Niagara when Upstate_West goes negative.** Under the monthly budget it moves
+that water to positive-price days; under a 24 h budget it cannot, so the water is deleted from the model.
+
+**CORRECTION, recorded rather than quietly dropped.** An earlier reading in this session attributed the
+loss to a collision with `hydro_dispatch_envelope`, on the grounds that the envelope tightened through
+late March. That was **correlation, not cause, and it is withdrawn**: every losing month carries
+300–600 GWh of monthly envelope headroom, the arm binds the ceiling *fewer* hours than the keeper
+(2022: 1,089 vs 1,970), and the decisive November shortfall days have **zero** envelope-binding hours.
+The Q2 RECONCILE posture is unaffected.
+
+**Also withdrawn: the per-plant loss decomposition.** An attempt to split the 55.2 GWh between Niagara
+and St Lawrence used "max observed period output" as a proxy for each plant's budget, which is not the
+budget; it returned per-plant shortfalls larger than the fleet loss in three months, so it is
+unreliable and is **not** carried forward. The per-plant split is an OPEN measurement.
+
+## A3. THE LEADING REPAIR HYPOTHESIS — "use it or lose it" was implemented as only "lose it"
+
+Niagara's registry entry is grounded on **0.244 h of measured pondage**: it cannot bank water across
+days. The period cap implements that half. But the same physical fact carries a second half the
+implementation does not: a run-of-river plant with no storage **cannot withhold either** — it passes
+its inflow through the turbines or spills it, it has no fuel to save, and its avoidable cost of
+generating is therefore zero, so it runs at negative LMP. The current constraint is an **upper bound**,
+which hands the LP an option to withhold that the plant does not have.
+
+**Candidate repair:** for a plant whose instrument establishes no pondage, the period energy constraint
+should be an **equality / floor at the period allocation**, not a cap. Zero new parameters — the level
+is the allocation `allocate_period_energy` already computes.
+
+**It must NOT apply uniformly, and that asymmetry is instrument-grounded**: St Lawrence's 168 h entry
+comes from the IJC **peaking-and-ponding** directive, which explicitly grants ponding, so it legitimately
+may withhold within the week and keeps the inequality.
+
+**This is a hypothesis, not a finding.** Its pre-solve test is stated in the handoff: check whether the
+measured EIA-930 NYISO hydro meter actually holds up through hours when the real Upstate_West RT LMP was
+negative. If measured hydro also falls back in those hours, the hypothesis is wrong and the defect is
+elsewhere.
+
+## A4. G4 IS MISCALIBRATED, INDEPENDENT OF THIS ARM
+
+`G4-as-written` fails in 2 of 4 years, on CT_PEAKER, **in opposite directions** (−2.28 % in 2023,
++4.53 % in 2025) at magnitudes of 0.017 and 0.033 TWh — 0.01–0.02 % of ISO load — while `G4-material`
+passes all four. A flat 2 %-per-class band on a 0.74 TWh class is not a bound on a mechanism's reach.
+
+## A5. PROCESS — THE LEVER WAS BUILT AND NEVER RUN FOR EIGHT DAYS
+
+`hydro_budget_period_by_instrument` was built by nyiso-220 on 2026-09-08, **with its screen PRECOMMIT
+written and pushed**, and the screen was never executed; the cell sat at `U` through ~15 sessions while
+the hydro residual was described as the lane's open item. A sweep this session finds **40 of NYISO's 50
+`U` cells have a real `ScenarioConfig` field behind them**. Most are other lanes' rule-28(c) row seeds
+and legitimately sit untested here. The distinguishable class — **a lever this lane built AND wrote a
+screen for, then did not run** — is the one that cost the time, and `unit_outage_per_unit_clip`
+(nyiso-211: "the flag is NOT inert here") is a second member.
+
+## A6. RETRIEVABILITY — all four span legs
+
+| year | branch | commit | files |
+|---|---|---|---|
+| 2022 | `claude/nyiso-236-hydro-2022` | `4f82866b64b9d96a9046ae33111a4f8c4b2089f8` | 17 |
+| 2023 | `claude/nyiso-236-hydro-2023` | `5041ca0dcc20af10137bd8a0dd2d9090544a394e` | 17 |
+| 2024 | `claude/nyiso-236-hydro-2024` | `eee2a08b6b7e8fe94bcea4ff0481a43c0dacf63f` | 17 |
+| 2025 | `claude/nyiso-236-hydro-span2025` | `e77c597dc75fc287dbcd713868395300d5809a13` | 17 |
+
+`git archive <sha> results/calibration/<dir> | tar -x`. All gitignored, not deleted (rule 31). The 2025
+span leg reproduces the screen probe **byte-identically** (max |ΔMW| = 0.000000).
