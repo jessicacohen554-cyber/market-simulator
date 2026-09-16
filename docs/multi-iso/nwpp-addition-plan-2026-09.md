@@ -1822,6 +1822,135 @@ FINDING-nwpp-39-<date>.md. Report FIRST: how you derived the guard (construction
 SOCO oil restoration, and confirmation that both known artifacts are still caught.
 ```
 
+### W4 — the first solve (ISSUED r#9, 2026-09-16; owner ruling N10-R: NO SCREEN)
+
+#### NWPP-40 `[FABLE]` — the first NWPP keeper
+
+```
+COLLISION RULES (plan §8.0, standing):
+1. A lane touches NO shared record — not the plan, not the ledger, not docs/calibration-log/nwpp.md,
+   not CHANGELOG.md, not docs/mechanism-testing-matrix.md. The DESK writes those at its next refresh
+   from your FINDING. EXCEPTION for this lane only: you ARE the registering session, so rule 15
+   [R-DASHBOARD] applies — you write the registry sidecar, the run payload and your own ISO's matrix
+   cell. You still never touch another region's anything.
+2. Your own cell in mechanism-matrix/NWPP.js carries `hydro_cascade_coupling`'s keeper verdict
+   (rule 28(b)). You add NO new field, so 28(c) does not fire.
+3. Rebase, never merge-in. `git fetch origin main && git rebase origin/main`, re-run the gates,
+   `git push --force-with-lease` on your own branch.
+4. One PR, opened when the lane is DONE.
+5. Data and code regions stay disjoint by construction; a second lane needing your file is the desk's
+   sequencing error — STOP and route.
+6. Re-verify every gate at YOUR OWN base sha before acting on it.
+7. **ASK THE PROMOTION QUESTION INSIDE YOUR OWN SESSION** (rule 31 [R-RETAIN]) — the container is
+   ephemeral and this is the first NWPP bundle that has ever existed.
+8. The lane session NEVER runs an LP (rule 32 [R-SHARD](a)). The solve is a SHARD. Zero-LP work —
+   phase 0, scoring, registration — stays in your own session.
+9. Never charter across a program boundary.
+
+ISSUANCE NOTICE (NWPP-DESK r#9, 2026-09-16). REGISTRY: NINE regions, nine matrix shards. NWPP has
+ZERO registered runs — you are producing the first. KEEPER IDS DRIFT; read them at your own base sha.
+
+════════════════════════════════════════════════════════════════════════════════════════
+
+You are lane NWPP-40. MODEL: Fable — this is the first-keeper determination for a region that has
+never been solved. DATA PROFILE: nwpp.  Branch stem: claude/nwpp-40-first-keeper-<4 chars>.
+Read CLAUDE.md freshly and in full — rules 1 [R-STRUCT], 15 [R-DASHBOARD], 16 [R-ALLYEARS], 21
+[R-DOF], 31 [R-RETAIN], 32 [R-SHARD], 34 [R-SHARD-PROMOTABLE]; docs/multi-iso/nwpp-addition-plan-
+2026-09.md §3 (EVERY ruled card), §7 (every gate); and the FINDINGs of NWPP-10, 11, 12, 13, 30, 31,
+32, 33, 34, 36, 37, 38, 39 — they are your inputs and you re-derive none of them.
+
+*** OWNER RULING N10-R (2026-09-16), WHICH SUPERSEDES CARD N10 AS CHARTERED: NO SCREEN. ***
+The card prescribed a screen year chosen by a residual-blind hydro statistic. The owner ruled instead:
+solve all three years directly. **There is no screen, no screen year and no screen gate.**
+**THE FORM IS ONE SHARD, ONE `--year 2023 2024 2025` INVOCATION, ONE BUNDLE** (rule 32(b): a
+registrable run is never fanned out per year — the legs cannot be composed, because registration needs
+`dispatch/<year>_P1.parquet` and the bundle-root `system.parquet` which the slim set does not carry,
+and `--reuse-solved` gates on those same two artifacts, so every composition route ends in a re-solve).
+Years stay SEQUENTIAL inside that one invocation (rule 12 [R-PARALLEL]).
+**BUDGET: this is the largest per-plant LP in the repo** — 939 plants / 1,930 generators / 5 zones,
+three years sequential. Rule 32(b) governs the case explicitly: where a span cannot fit the 20-minute
+ceiling the answer is **a longer single shard with the budget stated in its prompt**, never a fan-out.
+State the budget you gave it. A shard that hits its budget with no artifact **STOPS and reports**; it
+never pushes a half-written bundle.
+
+*** THE SHARD PUSHES ITS BUNDLE (rule 34 [R-SHARD-PROMOTABLE](a)) — NON-NEGOTIABLE. ***
+`printf '\n!results/calibration/<out-dir>/**\n' >> .gitignore` then
+`git add .gitignore && git add results/calibration/<out-dir>` — a **PLAIN `git add`, NEVER `git add
+-f`** (the `-f` form is what the auto-mode classifier refuses, and that refusal has cost a re-solve
+before). The bundle MUST carry `dispatch/<year>_P1.parquet` or registration raises FileNotFoundError.
+Forbid the shard, by name: `git add -A`, `git add .`, `dashboard_add_run.py`, `build_manifest.py`,
+`build_status.py`, `prune_iso_runs.py`, anything under `frontend/data/backcast/**`, any edit under
+`src/` or `scripts/`, opening a PR, and deleting any result. Put this sentence in its prompt: **"A
+shard that stops with a clear report is a SUCCESS; a shard that repairs infrastructure is a FAILURE."**
+Pin `source_revision` to a FULL 40-CHAR SHA (your pushed PRECOMMIT's), never a branch name. Run the
+runner unmodified; never pass `--no-container-preflight`; REPORT the `container preflight:` and
+`memory peak:` log lines.
+
+*** THE CONFIG — EVERY CARD IS RULED; IMPLEMENT, DO NOT RE-LITIGATE. ***
+ - **Cascade coupling ARMED** — `hydro_cascade_coupling=True` (owner ruling N3 put it ahead of the
+   first keeper; NWPP-36 built it default-off). This is the whole point of W3b.
+ - **Legacy heat-rate bins** — `use_campd_bins=False` (card N8). NWPP is absent from
+   `CAMPD_BINNING_ISOS`. NWPP-30's thermal tranches are a W5 lever and **nothing in this run reads
+   them**; its OUTAGE WINDOWS are read.
+ - **Five zones** (card N5) with their ruled TTC tiers; **served measured interchange, priced links
+   default-OFF** (card N4); **one PRM scalar 0.144 with the two-regime mismatch declared** (card N7).
+ - **Offer bands stay 1.0** (gate G5) and the attestation declares `authorized_price_tuning` **as
+   NONE** — C6 FAILS without the declaration even when the answer is none. A band ≠ 1.0 would break
+   rule 25 and there is no NWPP residual to tune against in any case.
+ - **DOF ledger** (rule 21): list every free parameter with its identification source. This region's
+   ledger should be short — say so if it is, because a short ledger is the claim.
+
+*** WHAT THE DETERMINATION WILL BE, AND WHY YOU MUST NOT BE SURPRISED BY IT. ***
+NWPP has **no `actual_lmp.json` block** — NWPP-13's STOP gate read NO (WEIM cleared the volume bar at
+5.5–6.2 % but its on-peak price sits 22.6 / 23.6 / 37.5 % below the Mid-C traded index against a ±10 %
+bar). So C3a/C3b/C3c are **UNSCORED**, and NWPP-22's rubric-v3.8 class fires: the run reads
+**`PHYSICALLY-CALIBRATED (PRICE UNSCORED)`** or **`...-WITH-CAVEATS (PRICE UNSCORED)`**, scored on
+C1/C2/C4/C6/C8. That is owner ruling N2 limb (b) working as designed — **never a bare `CALIBRATED`**,
+with the price gap on the determination basis at full magnitude. Do not add a price series, do not
+substitute a hub (gate G17), do not touch `scripts/calibration_verdict.py`.
+
+*** FIVE THINGS THE PRECOMMIT MUST DECLARE, EX ANTE, BEFORE THE SHARD LAUNCHES. ***
+ 1. **The G-A3 miss, at full magnitude.** NWPP-36's pre-registered armed-response gate FAILED:
+    within-day amplitude at coupled run-of-river plants falls 1–10 % (Chief Joseph 2.34→2.13, Ice
+    Harbor 4.28→3.83), not the ≥ 30 % the gate expected, because a coupled plant INHERITS its
+    upstream's hourly shape. The owner ACCEPTED it (ruling N12) as a mis-specified gate, not as a
+    passing one — it rides this keeper's determination basis. State it; do not soften it.
+ 2. **The PNCA discontinuity (R-j).** The 1997 PNCA terminated **2024-09-15** with no successor text —
+    the Columbia's coordinating instrument changes INSIDE the scored window. **Declare it REGARDLESS
+    of NWPP-38's null**; the declaration was never contingent on the measurement. NWPP-38's result is
+    reported alongside it: verdict (a), 0 of 56 treated cells reach detection, and the control group
+    (independent tributaries) moved MORE than the treated one — hydrology's signature, not an
+    instrument's.
+ 3. **The 30 defective demand hours** (gate G20) named individually, and the demand convention: read
+    `Demand (MW) (Adjusted)`; do **NOT** apply `_screen_demand_spikes` (it deletes 54 hours of a real
+    January 2024 CHPD cold snap containing NWPP-NW's own annual peak); `_screen_demand_dropouts` IS
+    needed (17 exactly-zero NEVP hours in 2025). **Nothing is padded, interpolated or rescaled.**
+ 4. **The 2025 data posture.** 263 plants are absent from the EIA-923 early release and read
+    `NO_923_SERIES`; NWPP-32's `backfill_year=2024` stands and its 2025 `eia930_monthly` repin is
+    REFUSED on rule-14 grounds. NWPP-37 and NWPP-39 have since landed the screen seam and its
+    zero-baseline guard, so the fuel columns are repaired — say which state you read.
+ 5. **Memory (gate G21)** and the shard budget.
+
+*** RULE 31 [R-RETAIN] — READ THIS BEFORE YOU RUN A SINGLE GATE LOCALLY. ***
+`check_registry_payload_parity.py` sweeps the FILESYSTEM (`calib_root.iterdir()`), not just committed
+dirs — CLAUDE.md's own correction, 2026-09-16. A gitignored bundle in your working tree turns that gate
+RED **locally** while CI stays green. **Do NOT "fix" that by deleting a result.** Read the gate's
+unmapped-dir list and confirm every entry is one of your own bundles.
+**ASK THE PROMOTION QUESTION IN-SESSION.** This is the first NWPP bundle that has ever existed; it does
+not survive container reclamation. Do not decide promotion yourself and do not tidy up.
+
+FILES YOU OWN: `results/calibration/<your bundle>/`; `frontend/data/backcast/registry/<id>.json` and
+`runs/<id>.js` and any changed `bench/`; `frontend/data/backcast/keepers/NWPP.json` and
+`status/NWPP.js` IF the owner rules promote in-session; your ISO's matrix cell; PRECOMMIT + FINDING.
+MUST NOT TOUCH: any other region's keeper shard, registry, payload, log or matrix shard;
+`scripts/calibration_verdict.py`; `frontend/data/forecast/**`; src/; this plan; the ledger.
+RULES THAT BITE: 1, 12, 15, 16 [R-ALLYEARS] (all three years, one bundle), 21, 27, 28(b), 31, 32, 34.
+EXIT: the bundle pushed and retrievable, the run registered on the backcast dashboard, the matrix cell
+stamped, FINDING-nwpp-40-<date>.md. **Report FIRST:** the determination string, C1/C2/C4/C6/C8 with
+their numbers, the memory peak, where the bundle is and what a promotion would cost from that state
+(rule 34(e)), and the promotion question put to the owner.
+```
+
 ### W4 / W5 / W6 — charters issued at the sittings that unblock them
 
 

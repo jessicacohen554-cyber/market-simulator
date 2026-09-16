@@ -1,5 +1,34 @@
 # Changelog
 
+## 2026-09-16 — NWPP r#9: the zero-baseline guard lands, and the first NWPP solve is issued
+
+Desk refresh r#9 (`docs/handoffs/nwpp-desk-ledger-2026-09.md`). Docs only — no code, no data, no
+registry; every existing keeper's cache key untouched by construction.
+
+- **NWPP-39 LANDED.** The guard tests the screen's anchor by the screen's **own premise, one decade of
+  rank coarser**: the peak limb assumes a legitimate fuel series tops out in a *plateau*, so if the
+  p99.9 is itself more than 2.5× the p99.0 the top is a **tail**, the premise is falsified by the
+  series, and the column passes through. No new factor, no new rank, and the lane states that no other
+  rank or factor was tried before or after reading the data. SOCO's Winter Storm Heather oil run is
+  restored (0.0017 → 0.0056 TWh); **both known artifacts are still caught** at ratios 1.05–1.09 against
+  a 2.5 bar; 7 of 1,779 signatures move and seven regions are byte-identical. **W3c is closed.**
+- **Card N10 was ruled and then superseded in the same sitting.** First: screen as chartered but
+  exclude 2025 from screen-year candidacy, on ex-ante data-completeness grounds. Then, owner: no screen
+  at all — solve 2023, 2024 and 2025 directly.
+- **The desk raised a rule conflict on the second half and recorded both sides.** Per-year shards are
+  banned by rule 32 `[R-SHARD]` (b) — the owner's own 2026-09-12 instruction — because a per-year leg
+  can push only the slim file set while registration needs `dispatch/<year>_P1.parquet` and the
+  bundle-root `system.parquet`, so every composition route ends in a re-solve. Rule 34 `[R-SHARD-
+  PROMOTABLE]` (c)'s per-year batch was checked and does **not** apply: it governs a promotion re-keying
+  an already-registered year set, and NWPP has zero registered runs. **NWPP-40 is issued as ONE shard,
+  ONE `--year 2023 2024 2025` invocation, ONE bundle** — the instruction's intent without the fan-out.
+- **NWPP-40 issued — the first NWPP solve.** Cascade coupling ARMED (ruling N3), legacy bins (N8), five
+  zones (N5), served interchange with priced links off (N4), one PRM scalar with its mismatch declared
+  (N7), offer bands 1.0 with `authorized_price_tuning` declared as NONE. Five ex-ante PRECOMMIT
+  declarations: the G-A3 miss at full magnitude, the PNCA discontinuity **regardless of NWPP-38's
+  null**, the 30 defective demand hours with the no-`_screen_demand_spikes` convention, the 2025 data
+  posture, and the memory budget.
+
 ## 2026-09-16 — NWPP r#8: W3b and W3c land, two cards ruled, and W4 opens
 
 Desk refresh r#8 (`docs/handoffs/nwpp-desk-ledger-2026-09.md`). Docs only — no code, no data, no
