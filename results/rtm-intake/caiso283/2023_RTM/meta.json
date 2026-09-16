@@ -1,0 +1,94 @@
+{
+  "market": "RTM",
+  "year": 2023,
+  "zip_dir": "data/raw/caiso-public-bids/zips-rtm",
+  "n_zips": 365,
+  "missing_dates": [],
+  "curve_rows": 43444654,
+  "n_resources_any": 1850,
+  "n_resources_cap_ge_min": 965,
+  "n_resource_hours": 6570491,
+  "n_body_daily_rows": 289783,
+  "carbon_usd_per_t": 33.03,
+  "derive_constants": {
+    "body_frac": 0.35,
+    "min_cap_mw": 20.0,
+    "vom": {
+      "CC_REGULAR": 2.0,
+      "CT_PEAKER": 3.5,
+      "ST_GAS": 4.0
+    },
+    "co2_factor": 0.057,
+    "econ_low_share": {
+      "CC_REGULAR": 0.5,
+      "CT_PEAKER": 0.526,
+      "ST_GAS": 0.5
+    },
+    "windows": {
+      "CC_REGULAR": {
+        "committed": [
+          0.0,
+          0.2736824797017821
+        ],
+        "econ_low": [
+          0.2736824797017821,
+          0.6196220045082834
+        ],
+        "econ_high": [
+          0.6196220045082834,
+          0.9655615293147847
+        ],
+        "peak": [
+          0.9655615293147847,
+          1.0
+        ]
+      },
+      "CT_PEAKER": {
+        "committed": [
+          0.0,
+          0.10895549019865287
+        ],
+        "econ_low": [
+          0.10895549019865287,
+          0.5408249023541615
+        ],
+        "econ_high": [
+          0.5408249023541615,
+          0.9299999999999999
+        ],
+        "peak": [
+          0.9299999999999999,
+          1.0
+        ]
+      },
+      "ST_GAS": {
+        "committed": [
+          0.0,
+          0.0661684622918707
+        ],
+        "econ_low": [
+          0.0661684622918707,
+          0.45808423114593533
+        ],
+        "econ_high": [
+          0.45808423114593533,
+          0.85
+        ],
+        "peak": [
+          0.85,
+          1.0
+        ]
+      }
+    },
+    "base_hr": {
+      "CC_REGULAR": 7.44199895682115,
+      "CT_PEAKER": 10.862191339626854,
+      "ST_GAS": 11.847392262487755
+    }
+  },
+  "gas_csv_sha256": "925555422185ea1fe01cfd5b4719208a19236687e84378aa78f88d9b9355c6a2",
+  "git_sha": "f7534746cc4decff3aa5f8f9dd622a38163781a2",
+  "reduced_utc": "2026-09-16T07:15:36+00:00",
+  "resource_year_sha256": "d5d6ec6ec8bbd3955350c670ef341253bf31da78668862609482fcae7176efa7",
+  "body_daily_sha256": "15f4fffba52464423b8391819a7d2b224b66b8c201409293cbd6e5d4bdf71e9d"
+}

@@ -15292,3 +15292,48 @@ parquet must call it by hand.
 **Parity gate:** unchanged — the intake dir carries no bundle and nothing under
 `results/calibration/` was added or removed (rule 31 `[R-RETAIN]`: nothing to retain, no shard
 launched, nothing to archive).
+
+## caiso-283 — 2026-09-16
+
+**ZERO LP. Keeper unchanged (`2026-09-12-caiso-275-gascoupling`). Nothing promoted, nothing
+registered, no mechanism cell moved, no threshold moved, no artifact re-derived.** Owner
+instruction on RESULT caiso-282 §6: *"Just do the successor."* Records:
+`docs/PRECOMMIT-caiso283-rtm-exact-rederive-2026-09-16.md` (pushed at `f7534746` before any shard
+launched), `docs/RESULT-caiso283-rtm-flat-2026-09-16.md`. Instrument:
+`scripts/data/reduce_caiso_bid_year.py` (shard side) + `scripts/probes/_caiso283_pool.py` (parent);
+data `results/rtm-intake/caiso283/` (4.7 MB, eight market-years, every parquet sha256-verified).
+
+**G-REPRO PASSES EXACTLY.** Eight fetch shards (2022–2025 × DAM/RTM, 2,919 trade dates, three
+archive holes) reduced each market-year to the derive's own estimation unit through the curate
+parser; the parent classified DAM 2023–2025 with the derive's classifier and reproduced the
+committed artifact with **deviation 0.000 on every band** — CC 1.066 / 1.072 / 1.386, CT
+1.103 / 1.146 / 1.154, the unarmed committed bands, the per-year detail, and the bucket populations
+(46 / 11,935 MW, 70 / 7,391 MW, 30 / 2,559 MW, `st_cut` 11.738). The caiso-282 miss is thereby
+attributed entirely to that instrument, and the artifact is confirmed as a faithful measurement.
+
+**VERDICT: RTM-FLAT (charter §4, thresholds unchanged).** DAM classification carried to RTM by seq
+(G-OVERLAP 100 %, 116/116 resources, 19,325 MW). CC_REGULAR, same 46 resources, 2022–2025:
+Δ RTM − DAM = **−0.006 econ_low / +0.025 econ_high** (peak −0.054). Robust: 2023–2025 only
++0.002 / +0.025; `hr_cut` 8.4 −0.006 / +0.027; per year every |Δ| ≤ 0.055. **The gap is in the
+clearing, not the offers**: the scorer's "a perfect-foresight LP has no mechanism to price the
+DART premium" stands and CAISO's residual C3a miss (2022 +11.3 % vs RT, folded rung; the in-sample
++0.53 MMBtu/MWh marginal-HR bias vs RT) is a **declared model-class limitation**. Nothing in the
+scorer moves; the folded 2022 rung never downgraded the ISO (rule 30 c). **THIS CLOSES THE LANE
+opened at RESULT caiso-281 §5.1.** The DAM-derived surface stands (rule 23: the new source says
+nothing different). The ×0.92 multiplier loses its last motivation.
+
+**Reported at full magnitude, deciding nothing:** CC *peak* is bid LOWER in RTM (−0.054 pooled,
+−0.265 in 2024) — the RT price tail is not a higher real-time offer from the combined cycles;
+CT_PEAKER is bid HIGHER in RTM (+0.045..+0.070 every band, 2024–2025 driven). The independent RTM
+classifier still returns the WEIM footprint (155 CC-like / 35.5 GW, 62 % never bidding DAM),
+which is why the carry-over design is the right one.
+
+**DO-NOT-REDO added (rule 28 a):** an RTM-basis CAISO CC offer surface — measured FLAT on an exact
+instrument.
+
+**Housekeeping:** the caiso-281 quarter aggregates (174 MB, defective convention) deleted from
+`main` (rule 26; README kept and marked superseded; manifests, verbatim samples and caiso-282 probe
+outputs kept). `data/raw/caiso-public-bids/README.md` DATA NEEDED paragraph retired. All eight
+shards archived after fetch + sha256 verification (rule 33 a); recovery SHAs in RESULT §4.
+Parity gate untouched (no bundle under `results/calibration/`). OOM: none — swap provisioned in
+every shard by `prepare_solve_container.py`.

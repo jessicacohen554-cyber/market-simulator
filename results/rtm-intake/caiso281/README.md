@@ -1,5 +1,13 @@
 # results/rtm-intake/caiso281 — CAISO OASIS public-bid quarter aggregates (RTM + DAM)
 
+**SUPERSEDED AND DELETED 2026-09-16 (caiso-283).** The 34 quarter aggregates (`<q>/agg/` and
+`<q>/agg_dam/`, 174 MB) were written by the defective rung convention described below and were
+removed from `main` once the exact per-market-year reductions under `results/rtm-intake/caiso283/`
+had reproduced the committed surface to 0.000 (`docs/RESULT-caiso283-rtm-flat-2026-09-16.md`).
+Git history is the record. What stays here: this README, the shard `manifest.json` files, the
+verbatim sample CSVs (a test fixture for `tests/curation/test_caiso_bid_reducers.py`), and the
+caiso-282 probe outputs whose numbers the caiso-282 RESULT cites.
+
 17 quarters, 2021q3 .. 2025q3, both market runs, written by the caiso-281 fetch shards with
 `scripts/data/aggregate_caiso_bid_ladders.py` from raw `PUB_RTM_GRP` / `PUB_DAM_GRP` zips that
 no longer exist on any reachable disk. Per quarter: `agg/` (RTM) and `agg_dam/` (DAM), each

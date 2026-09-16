@@ -1,0 +1,545 @@
+{
+ "hr_cut": 8.4,
+ "dam_years": [
+  "2022",
+  "2023",
+  "2024",
+  "2025"
+ ],
+ "rtm_years": [
+  "2022",
+  "2023",
+  "2024",
+  "2025"
+ ],
+ "dam_missing_dates": {
+  "2022": [
+   "20220601"
+  ],
+  "2023": [
+   "20230601"
+  ],
+  "2024": [],
+  "2025": []
+ },
+ "rtm_missing_dates": {
+  "2022": [],
+  "2023": [],
+  "2024": [
+   "20240703"
+  ],
+  "2025": []
+ },
+ "dam_classifier": {
+  "n_classified": 634,
+  "n_gas": 146,
+  "st_cut": 11.74436090225564,
+  "G1": {
+   "CC_REGULAR": {
+    "n": 45,
+    "bucket_mw": 11888.0,
+    "fleet_mw": 13708.0,
+    "ratio": 0.867,
+    "bounds": [
+     0.5,
+     1.3
+    ],
+    "pass": true,
+    "slope_wmedian": 6.335
+   },
+   "CT_PEAKER": {
+    "n": 71,
+    "bucket_mw": 7438.0,
+    "fleet_mw": 7616.0,
+    "ratio": 0.977,
+    "bounds": [
+     0.5,
+     1.6
+    ],
+    "pass": true,
+    "slope_wmedian": 10.122
+   },
+   "ST_GAS": {
+    "n": 30,
+    "bucket_mw": 2559.0,
+    "fleet_mw": 2859.0,
+    "ratio": 0.895,
+    "bounds": [
+     0.5,
+     1.6
+    ],
+    "pass": true,
+    "slope_wmedian": 12.358
+   }
+  }
+ },
+ "G_REPRO": {
+  "base_hr": {
+   "committed": 7.442,
+   "pooled": 7.442,
+   "pass": true,
+   "note": "fleet-geometry constant in the derive; reproduces by construction"
+  },
+  "econ_low": {
+   "committed": 1.066,
+   "pooled": 1.066,
+   "dev": 0.0,
+   "tol": 0.01,
+   "pass": true
+  },
+  "econ_high": {
+   "committed": 1.072,
+   "pooled": 1.071,
+   "dev": -0.001,
+   "tol": 0.01,
+   "pass": true
+  },
+  "peak": {
+   "committed": 1.386,
+   "pooled": 1.385,
+   "dev": -0.001,
+   "tol": 0.01,
+   "pass": true
+  },
+  "CT_PEAKER_reported": {
+   "econ_low": {
+    "committed": 1.103,
+    "pooled": 1.103,
+    "dev": 0.0
+   },
+   "econ_high": {
+    "committed": 1.146,
+    "pooled": 1.145,
+    "dev": -0.001
+   },
+   "peak": {
+    "committed": 1.154,
+    "pooled": 1.151,
+    "dev": -0.003
+   }
+  },
+  "committed_unarmed": {
+   "CC": [
+    1.03,
+    1.03
+   ],
+   "CT": [
+    1.162,
+    1.162
+   ]
+  },
+  "pass": true
+ },
+ "dam_bands_artifact_span": {
+  "CC_REGULAR": {
+   "n_resources": 45,
+   "n_resource_years": 135,
+   "bands": {
+    "committed": 1.03,
+    "econ_low": 1.066,
+    "econ_high": 1.071,
+    "peak": 1.385
+   },
+   "per_year": {
+    "committed": {
+     "2023": 1.042,
+     "2024": 1.022,
+     "2025": 1.071
+    },
+    "econ_low": {
+     "2023": 1.063,
+     "2024": 1.027,
+     "2025": 1.085
+    },
+    "econ_high": {
+     "2023": 1.06,
+     "2024": 1.097,
+     "2025": 1.098
+    },
+    "peak": {
+     "2023": 1.305,
+     "2024": 1.502,
+     "2025": 1.457
+    }
+   }
+  },
+  "CT_PEAKER": {
+   "n_resources": 71,
+   "n_resource_years": 200,
+   "bands": {
+    "committed": 1.162,
+    "econ_low": 1.103,
+    "econ_high": 1.145,
+    "peak": 1.151
+   },
+   "per_year": {
+    "committed": {
+     "2023": 1.231,
+     "2024": 1.173,
+     "2025": 1.079
+    },
+    "econ_low": {
+     "2023": 1.1,
+     "2024": 1.102,
+     "2025": 1.14
+    },
+    "econ_high": {
+     "2023": 1.132,
+     "2024": 1.184,
+     "2025": 1.167
+    },
+    "peak": {
+     "2023": 1.149,
+     "2024": 1.181,
+     "2025": 1.167
+    }
+   }
+  },
+  "ST_GAS": {
+   "n_resources": 30,
+   "n_resource_years": 83,
+   "bands": {
+    "committed": 1.367,
+    "econ_low": 1.563,
+    "econ_high": 1.546,
+    "peak": 1.196
+   },
+   "per_year": {
+    "committed": {
+     "2023": 1.367
+    },
+    "econ_low": {
+     "2023": 1.849,
+     "2024": 1.294,
+     "2025": 1.523
+    },
+    "econ_high": {
+     "2023": 1.628,
+     "2024": 1.217,
+     "2025": 1.389
+    },
+    "peak": {
+     "2023": 1.479,
+     "2024": 1.009,
+     "2025": 1.058
+    }
+   }
+  }
+ },
+ "G_OVERLAP": {
+  "dam_classified_cc_ct_mw": 19325.0,
+  "with_rtm_rows_mw": 19325.0,
+  "coverage": 1.0,
+  "n_dam_classified": 116,
+  "n_with_rtm_rows": 116,
+  "min": 0.6,
+  "pass": true
+ },
+ "verdict_pool": {
+  "CC_REGULAR": {
+   "DAM": {
+    "n_resources": 45,
+    "n_resource_years": 179,
+    "bands": {
+     "committed": 0.992,
+     "econ_low": 1.056,
+     "econ_high": 1.046,
+     "peak": 1.268
+    },
+    "per_year": {
+     "committed": {
+      "2022": 0.871,
+      "2023": 1.042,
+      "2024": 1.022,
+      "2025": 1.071
+     },
+     "econ_low": {
+      "2022": 0.98,
+      "2023": 1.063,
+      "2024": 1.027,
+      "2025": 1.085
+     },
+     "econ_high": {
+      "2022": 0.976,
+      "2023": 1.06,
+      "2024": 1.097,
+      "2025": 1.098
+     },
+     "peak": {
+      "2022": 1.163,
+      "2023": 1.305,
+      "2024": 1.502,
+      "2025": 1.457
+     }
+    }
+   },
+   "RTM": {
+    "n_resources": 45,
+    "n_resource_years": 179,
+    "bands": {
+     "committed": 1.017,
+     "econ_low": 1.05,
+     "econ_high": 1.073,
+     "peak": 1.215
+    },
+    "per_year": {
+     "committed": {
+      "2022": 0.871,
+      "2023": 1.005,
+      "2024": 1.028,
+      "2025": 1.075
+     },
+     "econ_low": {
+      "2022": 0.989,
+      "2023": 1.056,
+      "2024": 1.046,
+      "2025": 1.09
+     },
+     "econ_high": {
+      "2022": 0.994,
+      "2023": 1.075,
+      "2024": 1.1,
+      "2025": 1.153
+     },
+     "peak": {
+      "2022": 1.163,
+      "2023": 1.241,
+      "2024": 1.242,
+      "2025": 1.345
+     }
+    }
+   },
+   "delta_rtm_minus_dam": {
+    "committed": 0.025,
+    "econ_low": -0.006,
+    "econ_high": 0.027,
+    "peak": -0.053
+   },
+   "same_seqs_only": {
+    "n": 45,
+    "DAM": {
+     "committed": 0.992,
+     "econ_low": 1.056,
+     "econ_high": 1.046,
+     "peak": 1.268
+    },
+    "RTM": {
+     "committed": 1.017,
+     "econ_low": 1.05,
+     "econ_high": 1.073,
+     "peak": 1.215
+    },
+    "delta": {
+     "committed": 0.025,
+     "econ_low": -0.006,
+     "econ_high": 0.027,
+     "peak": -0.053
+    }
+   },
+   "per_year_delta": {
+    "2022": {
+     "committed": 0.0,
+     "econ_low": 0.009,
+     "econ_high": 0.018,
+     "peak": 0.0
+    },
+    "2023": {
+     "committed": -0.037,
+     "econ_low": -0.007,
+     "econ_high": 0.015,
+     "peak": -0.064
+    },
+    "2024": {
+     "committed": 0.006,
+     "econ_low": 0.019,
+     "econ_high": 0.003,
+     "peak": -0.26
+    },
+    "2025": {
+     "committed": 0.004,
+     "econ_low": 0.005,
+     "econ_high": 0.055,
+     "peak": -0.112
+    }
+   }
+  },
+  "CT_PEAKER": {
+   "DAM": {
+    "n_resources": 71,
+    "n_resource_years": 267,
+    "bands": {
+     "committed": 1.151,
+     "econ_low": 1.05,
+     "econ_high": 1.085,
+     "peak": 1.11
+    },
+    "per_year": {
+     "committed": {
+      "2022": 0.929,
+      "2023": 1.231,
+      "2024": 1.173,
+      "2025": 1.079
+     },
+     "econ_low": {
+      "2022": 0.916,
+      "2023": 1.1,
+      "2024": 1.102,
+      "2025": 1.14
+     },
+     "econ_high": {
+      "2022": 0.961,
+      "2023": 1.132,
+      "2024": 1.184,
+      "2025": 1.167
+     },
+     "peak": {
+      "2022": 0.993,
+      "2023": 1.149,
+      "2024": 1.181,
+      "2025": 1.167
+     }
+    }
+   },
+   "RTM": {
+    "n_resources": 71,
+    "n_resource_years": 270,
+    "bands": {
+     "committed": 1.206,
+     "econ_low": 1.12,
+     "econ_high": 1.13,
+     "peak": 1.15
+    },
+    "per_year": {
+     "committed": {
+      "2022": 0.932,
+      "2023": 1.19,
+      "2024": 1.223,
+      "2025": 1.261
+     },
+     "econ_low": {
+      "2022": 0.917,
+      "2023": 1.116,
+      "2024": 1.133,
+      "2025": 1.183
+     },
+     "econ_high": {
+      "2022": 0.964,
+      "2023": 1.13,
+      "2024": 1.132,
+      "2025": 1.228
+     },
+     "peak": {
+      "2022": 0.991,
+      "2023": 1.15,
+      "2024": 1.148,
+      "2025": 1.262
+     }
+    }
+   },
+   "delta_rtm_minus_dam": {
+    "committed": 0.055,
+    "econ_low": 0.07,
+    "econ_high": 0.045,
+    "peak": 0.04
+   },
+   "same_seqs_only": {
+    "n": 71,
+    "DAM": {
+     "committed": 1.151,
+     "econ_low": 1.05,
+     "econ_high": 1.085,
+     "peak": 1.11
+    },
+    "RTM": {
+     "committed": 1.206,
+     "econ_low": 1.12,
+     "econ_high": 1.13,
+     "peak": 1.15
+    },
+    "delta": {
+     "committed": 0.055,
+     "econ_low": 0.07,
+     "econ_high": 0.045,
+     "peak": 0.04
+    }
+   },
+   "per_year_delta": {
+    "2022": {
+     "committed": 0.003,
+     "econ_low": 0.001,
+     "econ_high": 0.003,
+     "peak": -0.002
+    },
+    "2023": {
+     "committed": -0.041,
+     "econ_low": 0.016,
+     "econ_high": -0.002,
+     "peak": 0.001
+    },
+    "2024": {
+     "committed": 0.05,
+     "econ_low": 0.031,
+     "econ_high": -0.052,
+     "peak": -0.033
+    },
+    "2025": {
+     "committed": 0.182,
+     "econ_low": 0.043,
+     "econ_high": 0.061,
+     "peak": 0.095
+    }
+   }
+  }
+ },
+ "verdict": "RTM-FLAT",
+ "diag_rtm_independent": {
+  "n_gas": 290,
+  "st_cut": null,
+  "G1": {
+   "CC_REGULAR": {
+    "n": 153,
+    "bucket_mw": 35378.0,
+    "fleet_mw": 13708.0,
+    "ratio": 2.581,
+    "bounds": [
+     0.5,
+     1.3
+    ],
+    "pass": false,
+    "slope_wmedian": 6.164
+   },
+   "CT_PEAKER": {
+    "n": 137,
+    "bucket_mw": 13521.0,
+    "fleet_mw": 7616.0,
+    "ratio": 1.775,
+    "bounds": [
+     0.5,
+     1.6
+    ],
+    "pass": false,
+    "slope_wmedian": 10.648
+   },
+   "ST_GAS": {
+    "n": 0,
+    "bucket_mw": 0.0,
+    "fleet_mw": 2859.0,
+    "ratio": 0.0,
+    "bounds": [
+     0.5,
+     1.6
+    ],
+    "pass": false,
+    "slope_wmedian": null
+   }
+  },
+  "never_in_dam_share_of_bucket_mw": {
+   "CC_REGULAR": 0.624,
+   "CT_PEAKER": 0.192
+  },
+  "jaccard_vs_dam": {
+   "CC_REGULAR": 0.261,
+   "CT_PEAKER": 0.465
+  }
+ }
+}
