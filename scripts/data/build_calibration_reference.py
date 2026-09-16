@@ -72,7 +72,6 @@ from market_sim.data.eia930.actuals import (  # noqa: E402
     _STORAGE_BENCHMARK_SERIES,
     _STORAGE_MIN_COVERAGE_FRAC,
     _ZERO_CODED_GAP_SERIES,
-    _screen_fuel_spike_columns,
 )
 from market_sim.data.eia_loader import (  # noqa: E402
     load_demand_meta,
@@ -825,12 +824,28 @@ def _pool_hourly_benchmark(iso: str, year: int) -> dict[str, np.ndarray]:
     110.2719 -- a 1.17 TWh artifact. The screen is defined on ONE BA's series
     (two order statistics of its own 8,760 hours), so applying it per member is
     the loader's own mechanism at the level it is defined, not a new screen
-    (rules 19 ``[R-ONE-MECH]`` / 23 ``[R-FROZEN-DERIVE]``). NOTE FOR THE DESK:
-    the same unscreened pool columns are what
-    ``renewables._eia_hourly_cf_profile`` would read for a pool's delivered
-    wind/solar bound -- measured harmless for 2023-2025 (no NWPP member has a
-    flagged ``NG: WND`` or ``NG: SUN`` hour in the window) but a live seam;
-    fixing it belongs in ``src/`` and is routed, not patched here.
+    (rules 19 ``[R-ONE-MECH]`` / 23 ``[R-FROZEN-DERIVE]``).
+
+    **This function no longer applies the screen itself** (lane NWPP-37,
+    2026-09-16): ``_eia_hourly_frame`` now screens at the frame-construction
+    seam, so the member frames arrive repaired with the SAME per-member
+    statistics this function's own call used, and the totals here are
+    byte-identical to what they were. The explicit second application was
+    removed because it is not idempotent -- re-running the screen on an
+    already-screened series recomputes the p99.9 anchor with the flagged hours
+    gone, which LOWERS it and can flag more; measured, a second pass takes
+    three further hours (PGE 2023 ``NG: OTH`` 81 MW, NEVP 2025 ``NG: NG``
+    20,354 MW, SOCO 2024 ``NG: OIL`` 155 MW). One application, at the
+    constructor, is the rule-19 form.
+
+    The seam note this docstring used to route to the desk -- that a pool's
+    delivered wind/solar bound would read the UNSCREENED pool columns through
+    ``renewables._eia_hourly_cf_profile`` -- is CLOSED by that lane: the pool
+    frame is screened on its way out of ``_eia_hourly_frame`` too. What that
+    pooled screen cannot see is a member slip the footprint sum dilutes below
+    its bar, which is why this function still sums per member rather than
+    reading the pool's own ``NG:`` columns; on 2025 hydro the pooled screen
+    recovers 110.3171 TWh of the per-member 110.2719, so 96 % of the artifact.
 
     ``net_gen`` and ``interchange`` come from the pool frame's own columns
     because those two quantities are DEFINED at the pool, not summed from
@@ -853,7 +868,6 @@ def _pool_hourly_benchmark(iso: str, year: int) -> dict[str, np.ndarray]:
         if frame is None:
             logger.warning("%s %d: pool member %s has no frame", iso, year, member)
             return {}
-        frame = _screen_fuel_spike_columns(frame, ba_code=member, year=year)
         for name, column in _EIA930_BENCHMARK_COLUMNS:
             if column not in frame.columns:
                 continue
