@@ -1,5 +1,13 @@
 # SOCO Addition Desk — handoff prompt (2026-09-12, charter, r#0)
 
+> **SUPERSEDED 2026-09-16 by `soco-desk-handoff-2026-09-16.md`.** This file is the FOUNDING
+> CHARTER and is kept as the record of what the program was commissioned to do — it is NOT the live
+> handoff and its "live state" section is four sittings stale. A successor reads the 09-16 file.
+> Retained, not deleted: rule 26 `[R-DELETE]` governs re-armable knobs, not historical records, and the
+> charter is the baseline every error in ledger §6 is measured against — including the two the charter
+> itself caused (E-3's gate G13, E-4's uncensused FERC-714 "spine").
+
+
 The paste-whole prompt that opens a SOCO-DESK session. Structure mirrors
 `docs/handoffs/spp-desk-handoff-2026-09-06.md`. **The ledger
 (`docs/handoffs/soco-desk-ledger-2026-09.md`) wins where this and the ledger diverge.**
