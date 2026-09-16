@@ -25,16 +25,17 @@ record; this is the live one. A successor reads THIS, then the ledger, then the 
 
 ---
 
-## 1. Live state at handoff (main `1f586ed7`, 2026-09-16 04:15 UTC)
+## 1. Live state — **REFRESHED AT r#8 (main `e9e1f4f0`)**; the `1f586ed7` column below is kept as the r#7 baseline
 
 | | |
 |---|---|
 | **SOCO** | **REGISTERED — the NINTH region.** `_ISO_BUILDERS` is nine keys ending `"SOCO"` |
 | W1 (data) | LANDED — SOCO-10/11/12/13/14/15 |
 | W2 (registration) | **CLOSED** — SOCO-20 landed (PR #6152) and **graded PASS**; SOCO-21 (matrix shard), SOCO-22 (rubric v3.8) landed |
-| W3 (derives) | **ISSUED, UNDISPATCHED.** Five charters written out in plan §8 |
-| W4–W6 | Not started. W4 blocked on W3; W6 is the capx director's (card S10) |
-| Desk PRs | **#6144 and #6172 both MERGED.** No open desk PR |
+| W3 (derives) | ~~ISSUED, UNDISPATCHED~~ → **FOUR OF FIVE HAVE RUN (r#8).** SOCO-30 / SOCO-31 / SOCO-33 **LANDED and GRADED PASS**; **SOCO-34 FINISHED on `claude/soco-34-site-docs-pxkmb5` @ `1f71ec097b3f4b7e4ef17a5f88225abdd4c988c5` with NO PR — graded PASS off the branch, and it needs merging**; **SOCO-32 never started** (no branch, no commit, no FINDING — NOT graded LOST, gate G15) |
+| W4–W6 | **SOCO-40 is blocked on SOCO-32 ALONE** — gate G4 is 2 of 3, and card S11 was discharged at r#5. W6 is still the capx director's (card S10) |
+| Desk PRs | #6144, #6172 and **#6178 all MERGED**. No open desk PR — and at `e9e1f4f0` **no open PR in the repository at all**, which is why SOCO-34's finished branch is invisible in a PR listing |
+| **NEW at r#8** | **`check_registry_payload_parity` is HALF THIS PROGRAM'S NOW**: `results/calibration/soco15_spp_arm` (34 files / 126 MB) is **tracked on `main`** and maps to no sidecar — a rule 29 `[R-SCREEN]` (c) delete-before-merge bundle that reached `main`. **Not deleted; routed as R-p and put to the owner** (rule 31 `[R-RETAIN]`) |
 | Open cards | **S10 only** — W6 forecast-program routing, due when a keeper exists |
 | Monitoring | **STOPPED** at the owner's instruction, 2026-09-16. No check-in is armed |
 
@@ -42,7 +43,10 @@ record; this is the live one. A successor reads THIS, then the ledger, then the 
 Georgia Power, Mississippi Power, Southern Power. **Not an RTO.** No capacity market, no import node, no
 AS design, every offer band 1.0. Three geographic zones SOCO_AL / SOCO_GA / SOCO_MS on shares
 **0.3510 / 0.5842 / 0.0648**. Fleet 393 thermal units / 55.09 GW; 8 nuclear incl. Vogtle 3 (COD 2023-07)
-and 4 (2024-04). Demand 239.6 / 249.5 / 252.6 TWh; **net exporter every year** (+10.16 / +10.81 / +13.03).
+and 4 (2024-04). **Demand 229.47 / 238.70 / 239.56 TWh** (SOCO-31's committed measurement); **net exporter
+every year** (+10.16 / +10.81 / +13.03), so **net generation** is 239.6 / 249.5 / 252.6.
+*(CORRECTED at r#8 — this line read "Demand 239.6 / 249.5 / 252.6", which is demand **plus** the export.
+The same mislabel went into SOCO-31's charter delta and the lane corrected it; ledger §6 **E-9**.)*
 
 ---
 

@@ -1,5 +1,31 @@
 # Changelog
 
+## 2026-09-16 — SOCO desk r#8: W3 graded — three lanes PASS on `main`, one PASS on a branch with no PR, one never dispatched
+
+**Records only — no code, no data, no registry, no solve.** The desk reopened against a moved `main`
+(`e9e1f4f0`) and found the r#7 handoff's central claim expired: W3 was "issued and undispatched" at
+`1f586ed7` and four of its five lanes had since run.
+
+- **Graded BY CONTENT, with the load-bearing claims re-measured against `main` rather than read off the
+  FINDINGs.** SOCO-30 (outages + tranches, gate G4 both legs, 1,119 windows, **zero measured full-year CEMS
+  outages**), SOCO-31 (benchmarks, **gate G9 exactly zero** — `calibration_reference.json` +295/−1 with the
+  one deletion a date stamp), SOCO-33 (seam derive, net-exporter sanity on both clocks, sign convention
+  verified by a shift test) — **all three PASS**. SOCO-34 **PASS**, graded off its branch: it is finished,
+  conflict-free against `main`, and **has no PR**.
+- **SOCO-32 is not graded and not lost** (gate G15 — the desk asks dispatch status rather than inferring it
+  from absence). It is **SOCO-40's last open precondition**.
+- **The desk's own W3 charter deltas carried two wrong numbers** and two separate lanes corrected them: a
+  coverage share quoted with its polarity inverted (91.6 % was the *missing* share, pre-SOCO-11; coverage is
+  **95.95 %**), and a generation-side total labelled as demand (demand is **229.47 / 238.70 / 239.56 TWh**,
+  not 239.6 / 249.5 / 252.6). Ledger §6 **E-9**; the handoff's demand line is corrected in place.
+- **`results/calibration/soco15_spp_arm` is this program's own parity RED** — 34 files / 126 MB tracked on
+  `main`, mapping to no sidecar. **Found, routed (R-p), and NOT deleted**: rule 31 `[R-RETAIN]`'s bar is the
+  owner's decision, and `results/` is outside this desk's write scope.
+- Seven items routed (**R-p**…**R-v**), including SOCO-33's headline: seven of eight registered SOCO
+  `interface_limit_mw` values are contradicted by SOCO's own meter and would refuse **36–42 %** of measured
+  flow — a rule 14 `[R-ACCURATE]` misalignment, binding on lever SOCO-56 and **inert for the first keeper**.
+- `docs/calibration-log/soco.md` gains soco-30, soco-31 and soco-33's `## Log entry` blocks, **verbatim**.
+
 ## 2026-09-16 — SOCO desk: closed, monitoring stopped, successor handoff written
 
 - **Desk closed at the owner's instruction.** Both desk PRs merged (#6144 03:49, #6172 04:12); both

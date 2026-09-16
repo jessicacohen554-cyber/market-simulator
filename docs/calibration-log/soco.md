@@ -489,3 +489,224 @@ dashboard ISO_ORDER / keepers index (SOCO-34/40), VOLL in forecast screens (SOCO
 the process_eia860 rescope defect. Pre-existing on main, not this lane's:
 ci_refactor_guards script-refs (run_calibration_full -> missing mirror script) and the
 seven test failures above.
+
+## soco-30 — 2026-09-16 — unit outage windows + thermal tranches (W3 frozen derives, zero-LP)
+
+Lane SOCO-30, Opus claude-opus-5, branch claude/soco-30-outages-tranches-r4t8, base edd40943.
+Source `docs/handoffs/FINDING-soco-30-2026-09-16.md`. Zero solves, zero src/ edits, zero
+derive-script edits, zero matrix cells moved (rule 28 — this lane arms nothing). Rule 23
+trivially satisfied: SOCO has never been solved, so there is no residual to derive against.
+
+COVERAGE BY STATE, the headline, re-measured on SOCO-10's own 50,004.8 MW denominator:
+MS 99.83 % · AL 98.86 % · GA 93.52 % · FL 0.00 % (no extract); footprint 95.95 %, uncovered
+2,027.2 MW / 4.05 %. THE CHARTER'S PREMISE IS INVERTED AND IS CORRECTED HERE: SOCO-10's 91.6 %
+was the MISSING share BEFORE SOCO-11 landed AL and GA, not a coverage ceiling. Coal 100.00 %,
+CC 99.68 %, CAES 100.00 % covered; the 4 % gap is peaking CTs and small industrial sites, and
+its two largest members (Dahlberg 919.0 MW, Hartwell 360.0 MW — 63 % of the gap) are CT_PEAKER,
+which the overlay skips in every ISO anyway. Uncovered plants listed by plant and class in the
+FINDING §0.1; nothing padded, no window inferred (rule 13).
+
+SIX ARTIFACTS, six invocations, no flag or constant changed: campd-unit-outages-SOCO.csv 1119
+windows (321f9af3), -short 34, -layup 34, -e923 4, campd-partial-outages-SOCO.csv 12,
+thermal_tranches_SOCO.csv 60 rows (7b7f5f27). Standard extract derived twice byte-identical;
+re-derived guard-off after --merit-order-guard rewrote it (1119 -> 1085) and verified identical
+to the pre-guard blob. CEMS vintage: AL/GA/MS x 2023-2025, nine blobs pinned in FINDING §2.
+
+GATE G4 LEG 1 PASS: AL 196/206/240, GA 115/118/155, MS 21/31/37 = 1119. No state-year zero.
+GATE G4 LEG 2: 8 full-year rows, ALL the eia923_netzero structural fallback, ALL 2025, all small
+non-CEMS CHP, each named by unit in §4; ZERO measured full-year CEMS outages and no unit fell
+back for want of data. The deriver's own diagnostic says 8 candidate plants had NO 2025 EIA-923
+filing against 0 in 2023/2024, so SOCO-40 reads the 2025 rows as a preliminary-vintage FILING gap
+— stated, not adjusted (rule 1). GATE G19 PASS BY INHERITANCE: every window America/Chicago,
+DST-aware, hour-ending per SOCO-10 §1.3; no lane-level timezone decision was taken.
+
+CARD S7 APPLIED, NOT RE-OPENED: McIntosh 7063 is CT_PEAKER at pmax 25.0 MW beside the site's four
+conventional CTs. VOGTLE EMITS ZERO ROWS (plant 649 absent from the extract; no nuclear plant
+appears) — SOCO-15's COD mask owns it and the phantom was not re-introduced.
+
+CLASS BANDS vs MISO, reported never tuned (§8): committed p10/p50/p90 CC_REGULAR 22.5/44.8/70.0
+vs 28.4/42.1/70.0 · CT_PEAKER 7.3/12.2/21.0 vs 7.2/13.4/34.3 · ST_GAS 17.2/18.6/27.6 vs
+9.3/18.4/32.5 · COAL 36.6/43.2/59.8 vs 27.1/36.7/61.2. Three divergences named: coal mustrun_pct
+47.0 vs 28.9 is the estimator's known ~2x-high behaviour on an always-online fleet (Miller 8,760
+online hours) while mustrun_online reads 24.3 vs 27.6, in band; CC peaking 7.7 vs 4.9 is a
+duct-fired summer-peaking fleet; CT_CHP 48.2 vs 69.5 is one plant against five.
+
+STEPS 3 AND 4 COMMIT NOTHING: tag_mixed_plants.py is ERCOT-only and its Plant_Code intersection
+with SOCO's 110 fleet codes is EMPTY (run against scratch copies; both committed sheets verified
+byte-identical, 19d726cd / 49e8d9ee). build_offer_curve_overrides --iso SOCO --list: all 13
+classes 1.0 on committed/econ_low/econ_high/peak, no phys_* rows, delta JSON {} — no ERCOT-fitted
+multiplier leaks (rule 25). SOCO-40 declares authorized_price_tuning: NONE.
+
+THREE FINDINGS ROUTED TO SOCO-DESK, each needing a file this lane must not touch. (1) The layup
+merit guard is COAL-ONLY because gas_basis_by_iso_month.csv has ZERO SOCO rows, so all 238 gas
+units of the 279-unit panel drop out and 15 priced units approx = the 17 coal — NWPP-30 §7.1
+reproduced; re-derive when SOCO-32 lands a gas hub, and until then do not read the companion as
+"SOCO has no economic layup". (2) THE PRIMARY-GROUP FILTER DROPS 15 (plant,group) PAIRS /
+4,872.9 MW FROM THE TRANCHE FILE, INCLUDING 2,954.5 MW — 25.7 % — OF SOCO'S COAL: SOCO has 7
+mixed plants and Barry/Daniel/Gaston each lose their COAL row to a CC or ST primary, which also
+inflates Barry's median_cf to the 150.0 cap. Bounded today because SOCO is deliberately absent
+from CAMPD_BINNING_ISOS and NOTHING IN W4 READS THIS FILE. SOCO-20's comment says SOCO-30 adds
+SOCO to CAMPD_BINNING_ISOS "with the artifact" — THIS LANE CANNOT: it is src/, a declared
+solve_surface value (65b4e3e163ffd580), a gate-G8 cache-key move and a [FABLE] call; the artifact
+now exists and §6.2 is the evidence the desk should weigh. --per-unit-attribution is NOT a safe
+fix as-is: its classifier keys on CAMPD unitType, a prime-mover descriptor with no coal concept,
+and on the 2024 panel it re-seats Barry/Daniel/Gaston onto CC/ST and finds ZERO coal. (3) Four
+SOCO CC plants (6073, 7897, 55382, 57037) carry corrupt EIA-860 summer-capacity rows and
+1,412.3 MW is reconciled away at every fleet load — existing committed behaviour, unchanged here,
+but every unit_pct_of_plant in the extract sits on that basis.
+
+Plan §5 row SOCO-30 -> LANDED. Gate G4 discharged for the SOCO-30 leg of SOCO-40's precondition.
+
+## 2026-09-16 — SOCO-31: the scoring benchmarks (W3, zero-LP)
+
+GATE G9 PASSES, MEASURED AS A DIFF. build_reference --isos SOCO moved nothing else:
+all EIGHT pre-existing regions byte-identical on both isos.<R> and egrid_benchmark.<R>
+(CAISO/ERCOT/MISO/NEISO/NWPP/NYISO/PJM/SPP), 39 of 39 pre-existing renewable-capacity
+CSVs byte-identical by cmp, whole-file diff +295/-1 with the ONE deletion being the
+"generated" date stamp. description / calibration_years / henry_hub_actual unchanged.
+
+SOCO BENCHMARK, 2023/2024/2025. Demand 229.4688 / 238.6990 / 239.5576 TWh; peak
+45,558 / 47,368 / 46,490 MW. NET EXPORTER EVERY YEAR: interchange +10.1562 / +10.8067
+/ +13.0321 TWh, net generation 239.6251 / 249.5057 / 251.8847 TWh, and demand + export
+= 239.63 / 249.51 / 252.59 reproduces the charter's target to the 0.01 TWh. EIA-923 by
+fuel: coal 37.2434 / 40.2395 / 43.2752, gas_cc 117.3899 / 113.7601 / 109.7396, gas_ct
+6.6852 / 6.2537 / 1.9659, gas_st 12.6350 / 9.4821 / 6.6071, nuclear 52.1354 / 63.0598 /
+64.2324, solar 9.0323 / 10.3849 / 10.3165, hydro 6.8150 / 6.3014 / 6.0123 (2025 swapped
+to EIA-930, 923 ratio 0.054), wind 0.0. Three capacity CSVs, 37 lines each -- solar
+only, because SOCO has no wind. egrid_benchmark: eGRID 2023 PLNT23 BACODE=SOCO, 332
+rows, the one non-SERC row (67241 MA) contributing 0.0 MWh and no CO2 -- stated, not
+filtered, and no NERC admission key added for a row that moves no number.
+
+THE PRICE SIDE IS NOT LANDED AND NOT SUBSTITUTED. actual_lmp.json UNTOUCHED -- no SOCO
+block, not even an empty one, because its ABSENCE is the key rubric v3.8 reads:
+_price_reference_absent("SOCO") measured True at HEAD, so a SOCO run reads
+PHYSICALLY-CALIBRATED (PRICE UNSCORED). TAIL_THRESHOLD skipped in all three copies
+(gate G6) and VERIFIED BY EXECUTION: both derives re-run, both emitted ZERO SOCO rows,
+both outputs reverted to committed bytes. Gate G17 upheld -- no neighbouring hub, no
+adjusted MISO-South series, no state average; not reached for.
+
+THE ROUTED MODEL_ISOS ITEM WAS NOT ENOUGH. The legacy eia_demand_profiles extract is
+frozen, has no live builder and carries NO SOCO rows, so curate_all wrote nothing and
+load_demand_meta("SOCO", 2023) still raised -- the F3 failure one axis over.
+curate_unextracted() closes it as the in-window twin of curate_pre_window(): same
+per-BA adapter, same screen, same writer (_write_per_ba_partition), and
+unextracted_iso_years() is data-driven on the raw file -- EMPTY for the seven ISOs the
+extract was built around, so their partitions cannot move. SOCO 2021/2022 SKIPPED and
+reported, never padded. _EIA923_EXTRA_FUELS_BY_ISO["SOCO"] = ("hydro",) on measurement
+(3.52/2.84/2.39 % of footprint energy); oil omitted at 0.11/0.10/0.04 %.
+
+WHAT CANNOT BE SCORED. R-i: SOCO's 1,306.6 MW of pumped storage is UNOBSERVABLE in
+EIA-930 for 2023 (NG: PS 0 of 8,760 hours) and 99.7 % of 2024 (24 hours, all from the
+2024-07-15 taxonomy cut-over), and NG: WAT never goes negative before it (min +32 and
++35 MW) -- so PS charging was NOT folded into hydro, it was NOT REPORTED. A hard
+constraint on the C1 fuelmix benchmark, for the first keeper's determination basis,
+never a hole to fill. R-h loader-seam spikes reported with NO new constant proposed
+(rule 23): NG: OIL 1 h 2023 and 7 h 2024, and four 2025 NG: NG hours at 70,683 MW
+against a 36,336 MW gas fleet. NEW THIS LANE: 2025 demand.min_mw = 12,638 MW is a
+one-hour partial post (2025-10-23 21:00 UTC, D and NG both halve and both recover) that
+NO existing screen catches -- 0.486x median against a documented 0.2 floor -- reported
+and ROUTED, no downward bound invented. Also new: the EIA-930 balance identity
+NG - D - TI is exactly zero in every hour of 2023 and 2024 and nonzero in 633 hours of
+2025 (-0.6963 TWh, 0.28 % of net generation), routed to SOCO-33.
+
+eia923_2025.json regenerated. It carries two non-SOCO deltas -- a NEW NWPP block (the
+audit loops over _ISO_BUILDERS and NWPP-31 never ran it) and a one-plant SPP
+COAL_BIT/COAL_PRB prior-year move with NO status and NO gate change -- and BOTH are
+origin/main's own, proved by a control run of main's code with data/clean removed that
+is BYTE-IDENTICAL to the committed file. Routed to the NWPP and SPP lanes. 2025 carries
+no eia923_incomplete flag (ratio 0.9533, the most complete of all nine regions) but its
+PEAKER census is not: 6 of 23 CT_PEAKER plants and 1 of 6 CC_CHP have filed, so no SOCO
+pair is gate-eligible and a 2025 gas-split comparison must defer to EIA-930.
+
+## soco-33 — 2026-09-16 — seam derive (card S4, zero-LP)
+
+Lane SOCO-33, Opus claude-opus-5, branch claude/soco-33-seam-derive-mz1tng,
+base edd40943. Deliverable: data/raw/reference/soco_seam_{served_schedule,
+hr_by_year,hr_elasticity,diba_duration,limit_binding}.csv + soco_seam_SOURCES.md.
+DERIVE ONLY — FOR A LATER LANE TO ARM. No spec.py, no ScenarioConfig, no
+neighbour's object, no producer script, no matrix cell, no solve; git status is
+those six paths and nothing else (gate G9 holds).
+
+SANITY CHECK PASSES. SOCO is a net EXPORTER in every year on both clocks: the
+served array soco_net_interchange() reads +10.156 / +10.807 / +13.032 TWh, the
+sum of the nine DIBA legs +10.155 / +10.832 / +13.039, reproducing the charter
+and SOCO-11 §4.1 independently. Residuals explained, not padded: 2024's 0.0248
+TWh is 0.0242 leap day (2024-02-29, 24 h, 24.18 GWh, dropped by the 8,760 clock)
++ 0.0007 UTC→local re-binning; 2023 0.0012, 2025 0.0064.
+
+GATE G19 CLOSED ON THIS LANE'S SIDE. Sign convention stated on every row and
+VERIFIED, not asserted: mw>0 = SOCO EXPORTS. Shift test over 26,294 joined
+hours — sum-of-legs equals the BA book exactly in 24,100 h (91.7 %, r +0.9985)
+at zero shift, collapsing to 54 / 52 h (0.2 %, r +0.955) at ∓1 h; both series
+mean +1,293 MW, positive. Both products are America/Chicago; the served array
+is UTC-built onto the model's non-leap 8,760 clock, and each CSV row names its
+clock.
+
+HEADLINE — THE INTERFACE LIMITS, NOT THE HEAT RATES. Arming the eight
+registered blocks at their registered interface_limit_mw would REFUSE 10.66 /
+12.81 / 14.21 TWh, 35.6 / 39.0 / 41.7 % of the eight seams' gross throughput.
+SOCO_SCEG (limit 126 MW, SOCO's largest export seam) is over limit in 99.2 /
+99.8 / 99.8 % of hours and loses 6.02 / 7.74 / 8.68 of 7.12 / 8.85 / 9.78 TWh;
+SOCO_TAL (20 MW) 77/76/73 % refused; TVA (478) 42/40/39 %; DUK (407) 30/32/41 %;
+FPC (50) 31/36/47 %; SC (533) 8/15/18 %; FPL (1,317) 3.6/2.5/1.0 %. SOCO_MISO
+(2,374 MW) is the ONLY seam never exceeded in any hour of any year — and the
+only one with a price anchor. The values are correctly transcribed adequacy-
+study AVERAGE import transfer capability (SOCO-12 §4c), i.e. the wrong QUANTITY
+for a transfer limit: rule 14's misalignment exception, whose instruction is a
+reconciled real quantity, not the estimate and not a guess. Routed to SOCO-56
+on the SPP-51 ERCOT-tie precedent.
+
+hr_by_year — ONE of eight seams is anchorable. SOCO_MISO, off MISO-South's own
+zonal LMP (actual_lmp_hourly_zonal_MISO, 35,040/35,040/35,036 rows): RT 9.52 /
+10.09 / 9.28, DA 9.89 / 10.23 / 9.37; K = 1.0 exactly (every SOCO block is
+load_shape_exponent 1.0). The registered flat 9.63 constructs within 1.1–5.9 %
+of the measured mean in every year. ERROR AGAINST INTEREST: spec.py carries
+9.54 / 10.08 / 9.26 and the producer's arithmetic gives 9.52 / 10.09 / 9.28
+(Δ ≤ 0.02, ≤ 0.24 %) — SOCO-20 hand-computed on unrounded Henry Hub (2.536 /
+2.192 / 3.529) where neighbor_gas_price reads HENRY_HUB_TRAJECTORIES (2.54 /
+2.19 / 3.52). Inert (default-off); routed to SOCO-56, not fixed. The other
+seven neighbours publish no LMP (TVA, DUK, SCEG, SC, FPL, FPC, TAL — all
+vertically integrated) and are REPORTED unanchored with blank hr_by_year, never
+proxied: PJM's 11.6 flat and its (5.6, 14.2) Southeast fit stay PJM's (rule 25),
+and the CSV reports only what the 11.6 placeholder would CONSTRUCT ($29.46 /
+$25.40 / $40.83) with no error column.
+
+ELASTICITY. SOCO_MISO (7.95, 4.96), r² 0.9935, sign OK — but on THREE points
+and two parameters, so r² is near-mechanical and this is a sign and an order of
+magnitude, not a forward-skill claim. Mean |err| 0.12 elastic vs 0.31 flat, yet
+WORSE than flat in 2023 (0.17 vs 0.11). Materiality stated so nobody
+over-invests: the flat is already within 1.1–5.9 %, the elastic buys ~$0.7/MWh
+at 2025 gas, on one seam carrying 4.4–4.7 of a 21–25 TWh gross book. Not SPP's
+(9.0, 3.22) — that fit anchors MISO-West AND South; SOCO's anchors South alone.
+
+DURATION CURVES. Nine DIBAs × three years, 11 percentiles, sign on every row;
+every net TWh and percentile matches SOCO-11 §4.3 to the digit from an
+independent computation. Zero NaN hours, zero impossible prints (max |mw| 3,150,
+so the >20,000 screen is insensitive above ~3,200); grain 8,759 / 8,784 / 8,760,
+the 2023 shortfall the DST spring-forward 02:00. SEPA (−1.95 / −2.58 / −2.31
+TWh of firm federal-hydro import) is correctly outside the priced blocks and
+inside the served schedule — but a priced representation must carry it somehow.
+
+GATE G17 NEVER APPROACHED. No step needs a SOCO price; every anchor is the
+NEIGHBOUR's own realized price on the NEIGHBOUR's own side of the seam. No
+neighbouring hub, adjusted MISO-South series or cost-stack construction stands
+in for a SOCO price anywhere, and none of these files scores a SOCO run. Card
+S2 limb (b) / rubric v3.8 untouched.
+
+ROUTED, NOT ACTED ON. (R-1) derive_neighbor_hr_elasticity.py --iso SOCO exits 0
+with an EMPTY table — its _NEIGHBOR_LMP_ISO is still the pre-SPP-51 GLOBAL name
+map, and SOCO's neighbours are named SOCO_<DIBA> by design (gate G10), so no
+SOCO seam can ever resolve through it; the same silent-drop class SPP-51 fixed
+in the other producer. (R-2) NEIGHBOR_LMP_ANCHORS has no SOCO key, so
+derive_neighbor_hr_by_year.py --iso SOCO exits 1 (fail-closed, working as
+designed); the one-line entry is written out in FINDING §A. (R-3) the
+hr_by_year rounding gap above. (R-4) FLA hourly.parquet ENDS 2025-01-31 (744 h),
+so SOCO_FPL / SOCO_FPC / SOCO_TAL have NO 2025 load shape and cannot be priced
+that year — nothing substituted; a fetch, and a SOCO-56 precondition; blocks
+nothing in the served keeper. (R-5) the limits, above. (R-7) the served scalar
+and eight priced seams are NOT the same quantity: gross throughput roughly
+DOUBLES (net 10–13 TWh vs 21–25 gross export / 11–12 gross import), which is
+the step change SOCO-56 must screen under rule 29 — its phase 0 is computable
+with no LP from soco_seam_diba_duration.csv.
+
+docs/handoffs/FINDING-soco-33-2026-09-16.md.
