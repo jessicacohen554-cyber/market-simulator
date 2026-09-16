@@ -2219,3 +2219,13 @@ results/calibration/pjm_h8_screen2023_arm/
 results/calibration/nyiso236_hydroperiod_2025/
 #   git checkout be5123c29d82c74f464ebc0f3bc5061be94975d7 -- results/calibration/spp42_span_b
 results/calibration/spp42_span_b/
+
+# nyiso-236 span legs — gitignored, NOT deleted (rule 31 [R-RETAIN]).
+# Recover: git archive <sha> results/calibration/nyiso236_hydroperiod_<year> | tar -x
+#   2022 4f82866b64b9d96a9046ae33111a4f8c4b2089f8
+#   2023 5041ca0dcc20af10137bd8a0dd2d9090544a394e
+#   2024 eee2a08b6b7e8fe94bcea4ff0481a43c0dacf63f
+results/calibration/nyiso236_hydroperiod_2022/
+results/calibration/nyiso236_hydroperiod_2023/
+results/calibration/nyiso236_hydroperiod_2024/
+results/calibration/nyiso236_hydroperiod_span2025/
