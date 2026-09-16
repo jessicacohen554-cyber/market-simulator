@@ -7,6 +7,17 @@ test to fitness-for-purpose and commercial-model benchmarks.
 `scripts/calibration_verdict.py` (the scorer), the Calibration Status dashboard
 page (renders §4's comparison table next to live keeper scores).
 
+> **READ THIS FIRST — ONE v2 DESIGN DECISION IN THIS MEMO WAS REVERSED AND THE
+> MEMO WAS NEVER UPDATED.** §4(b)/(c) and the §4 comparison table state that
+> **C3c gates the DA tail** with RT as the report-only companion. **Rubric v2.7
+> (owner amendment 2026-07-16) inverted that: RT GATES, for every ISO, and DA
+> is the non-gated diagnostic.** That is the live behaviour today (rubric v3.8,
+> `score_price_tail`'s `gate_key = "rt_gt"`). Every other anchor, band and
+> comparable in this memo is current. The stale passages are annotated in place
+> rather than rewritten, so the v2 reasoning stays readable as lineage.
+> Found by the caiso-284 rescore-on-RT audit (2026-09-16),
+> `docs/RESULT-caiso284-rescore-on-rt-audit-2026-09-16.md`.
+
 **Hard constraints honored (unchanged by this memo):** the anti-self-deception
 protections — no measured-outcome feedback (rule 13), keep-accurate-data
 (rule 14), holdout quarantine (rule 22) — plus rule 20 (forced-energy budget),
@@ -97,11 +108,27 @@ honestly: at the v2 re-score the budget is not what flips anyone — NYISO uses
 The v1 asymmetries retired: ERCOT's C3c no longer gates on its own ORDC-adder
 proxy (kept as a report-only diagnostic, with the >$500 companion); the tail
 basis is the same DA-expressible count for every ISO, per-ISO only in
-*threshold* ($300 NYISO/NEISO winter city-gate — a market-design fact). The
+*threshold* ($300 NYISO/NEISO winter city-gate — a market-design fact).
+[SUPERSEDED on the DA/RT half by v2.7 — see the box in (c); the *unification*
+and the per-ISO *threshold* both stand, only the gated market flipped.] The
 reported D-7 statmode gaps must be re-measured on one criterion denominator
 (flagged stale; re-measurement is solve work, out of this session's scope).
 
-**(c) Scope-consistent C3c.** Gates the **DA-expressible tail** — the hourly,
+**(c) Scope-consistent C3c.**
+
+> **SUPERSEDED 2026-07-16 BY RUBRIC v2.7 — THE BASIS IS NOW INVERTED.** The
+> owner amendment of 2026-07-16 ("RT-everywhere") made **RT the GATED basis for
+> every ISO** and **DA the non-gated diagnostic companion** — the exact reverse
+> of the v2 design recorded below. Live behaviour is
+> `calibration_verdict.score_price_tail` (`gate_key = "rt_gt"`,
+> `diag_key = "da_gt"`) and rubric §5; the current rubric row is rendered on the
+> Calibration Status page from `build_status.py`, not from this paragraph.
+> The v2 text is kept verbatim for lineage and **must not be read as the current
+> basis** (annotated, not deleted — rule 26 `[R-DELETE]` keeps the record; found
+> and annotated by the caiso-284 rescore-on-RT audit,
+> `docs/RESULT-caiso284-rescore-on-rt-audit-2026-09-16.md` §2 row 21).
+
+Gates the **DA-expressible tail** — the hourly,
 commitment-aware DA market's own count of hours above the threshold, derived
 from measured hub series into the committed `tail/actual_tail.json`
 (2023–2025 only; rule-22 guard in the deriver). The RT count is a report-only
@@ -134,7 +161,7 @@ L = ledgered measured-input caveat):
 |---|---|---|---|---|---|---|---|---|---|
 | C3a mean LMP | ±5% hard-edge | ±5% / ±10% | SEM criterion ±5%; NERA +0.1%; NYISO −2…−17% accepted | ○ +8.2% ('25) | ✗ +41.6% | ✗ −13.3% | L −10.9% | ○ −8.3% | ✗ −19.5% |
 | C3b monthly NRMSE | ≤0.15 | ≤0.15 / ≤0.20 | SEM −9%/+11% period bias accepted; monthly norm 5–15% | ✗ 0.324 ('23) | ✗ 0.459 | ○ 0.196 | L 0.221 | ○ 0.169 | ✗ 0.225 |
-| C3c tail hours | [0.7×,1.5×] vs RT | [0.5×,2×] vs **DA** (<10 h: \|Δ\|≤10) | none published; practice excludes spikes or tunes to them | ✗ 0.30× | ✗ 0.00× | ✗ 0.00× ('25) | ✓ 0.58× | L 0.00× ('25) | ✗ 0.00× |
+| C3c tail hours | [0.7×,1.5×] vs RT | [0.5×,2×] vs **DA** (<10 h: \|Δ\|≤10) — **SUPERSEDED: v2.7 (2026-07-16) flipped the gated basis back to RT for every ISO; see (c)** | none published; practice excludes spikes or tunes to them | ✗ 0.30× | ✗ 0.00× | ✗ 0.00× ('25) | ✓ 0.58× | L 0.00× ('25) | ✗ 0.00× |
 | C1 per-class mix | min(2% load, 8 TWh) & 3 pp | unchanged (single-band) | **none published** (family grain only) — stricter than commercial | ✓ | ✗ +10.1 TWh | ✗ −19.8 TWh | ✓ | ✓ | ✗ +44.4 TWh |
 | C2 family vol (prelim fallback) | ±2.5% | ±2.5% / ±5% | NYISO zonal ~0–4%; AEO gas SD 5.7–9.6% | ○ −5.0% | ✗ +8.1% | ○ +3.9% | ✓ −2.0% | ○ +3.0% | ✗ +8.8% coal |
 | C5a CO2 | ±7% | ±7% / ±10% | no published PCM backcast; AEO SD 3.2–4.9% | ✓ +1.0% | ○ +8.6% | ✓ +4.6% | ○ −8.2% | ✓ +4.1% | ✓ +4.1% |

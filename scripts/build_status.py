@@ -148,8 +148,15 @@ def rubric() -> list[dict]:
             "premia), so RT gates and the DA comparison appears as a separate "
             "non-gated diagnostic row (the DART premium made visible, never "
             "modeled with offers/adders).",
-            "Derived actual hub mean — real-time (avgLMP.rt), falling back to "
-            "day-ahead (avgLMP.da) only when no RT actual is committed.",
+            # Name the field the scorer actually gates (rubric v2.4's
+            # like-for-like load-weighted ladder), not the legacy equal-hour
+            # one: for CAISO 2022 those differ by $5.42/MWh (rt 79.07 vs rt_lw
+            # 84.49), so a reader checking the published number against the
+            # named field got a different answer. caiso-284.
+            "Derived actual hub mean, load-weighted by the same measured demand "
+            "the model dispatches — real-time (avgLMP.rt_lw), falling back to "
+            "day-ahead (avgLMP.da_lw) only when no RT actual is committed, then "
+            "to the legacy equal-hour avgLMP.rt / .da as a labelled fallback.",
             f"±{cv.PRICE_MEAN_TOL * 100:.0f}% passes clean (rubric v2.3: the "
             "target band is set to the commercial band, so there is no caveat "
             "range). The band is the demonstrated planning grade (NYISO's "
@@ -160,7 +167,8 @@ def rubric() -> list[dict]:
         row(
             "price_shape",
             "NRMSE between model and actual monthly load-weighted price vectors.",
-            "Actual monthly RT price (avgLMP.rt_mon), falling back to DA.",
+            "Actual monthly load-weighted RT price (avgLMP.rt_lw_mon), falling "
+            "back to DA, then to the legacy equal-hour avgLMP.rt_mon / .da_mon.",
             f"NRMSE ≤ {cv.PRICE_SHAPE_NRMSE_MAX:.2f} passes clean (rubric v2.3: "
             "single band, no caveat range; published monthly norms run ~5–15%; "
             "SEM's regulator-accepted backcast carried −9% winter-peak / +11% "

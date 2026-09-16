@@ -113,7 +113,26 @@ class ActualHourlyLmpTests(unittest.TestCase):
                 got = rch._actual_lmp_hourly("TEST", 2024)
             np.testing.assert_allclose(got, [10.0, 20.0, 300.0])
 
-    def test_falls_back_to_da_where_rt_nan(self):
+    def test_never_falls_back_to_da_where_rt_nan(self):
+        """An hour with no measured RT price stays NaN — it is NOT DA-filled.
+
+        REVERSED 2026-09-16 (session caiso-284). This test previously asserted
+        the opposite (``test_falls_back_to_da_where_rt_nan``: NaN RT -> the DA
+        price, and the filled hour then counted by the tail proxy), and that
+        assertion is what kept the defect alive. Since rubric v2.7 every ISO's
+        C3c gates on the REAL-TIME tail; splicing a day-ahead hour into a series
+        the payload then labels ``actual`` puts a different market's price under
+        the gated market's name, with nothing recording the substitution.
+
+        Measured effect of the repair, whole repo: exactly one committed
+        ISO-year moved — CAISO 2023, whose 48 RT-NaN hours (two whole days,
+        Jan 4 and Jan 11) were filled from DA at a mean $187.22 and made
+        ``ordc.hoursGt200.actual`` read 62 h against the gated 47 h. No
+        determination moved (the C3c gate reads the pure-RT
+        ``tail/actual_tail.json``, and nothing reads the payload field).
+        Rules 13 `[R-MEASURED]` / 14 `[R-ACCURATE]` / 26 `[R-DELETE]`;
+        ``docs/RESULT-caiso284-rescore-on-rt-audit-2026-09-16.md`` §2 rows 10-12.
+        """
         import tempfile
 
         with tempfile.TemporaryDirectory() as d:
@@ -132,9 +151,10 @@ class ActualHourlyLmpTests(unittest.TestCase):
             )
             with self._patched(tmp):
                 got = rch._actual_lmp_hourly("TEST", 2024)
-            np.testing.assert_allclose(got, [400.0, 25.0])
-            # The da-filled scarcity hour is then counted by the tail proxy.
-            self.assertEqual(rch._tail_hours({"hub": got}, 300.0), 1)
+            self.assertTrue(np.isnan(got[0]), "RT-NaN hour must not be DA-filled")
+            self.assertAlmostEqual(float(got[1]), 25.0)
+            # The DA $400 hour is NOT counted as a real-time scarcity hour.
+            self.assertEqual(rch._tail_hours({"hub": got}, 300.0), 0)
 
 
 class TailVerdictWiringTests(unittest.TestCase):
@@ -337,10 +357,18 @@ class ActualRtPaddedTests(unittest.TestCase):
                 got = rch._actual_rt_padded("TEST", 2024, 5)
             self.assertEqual(len(got), 5)
             np.testing.assert_allclose(got[3], 500.0)
-            np.testing.assert_allclose(got[1], 250.0)  # da fallback where rt NaN
+            # caiso-284: hour 1 has no RT price, so it stays NaN. It used to be
+            # DA-filled to 250.0 here, which both contaminated the ``actual``
+            # tail count and — because the filled hour is then NOT a sentinel in
+            # ``lmpDeltaHr`` — broke the invariant score_diurnal_amplitude's
+            # docstring asserts, that the delta's missing-hour mask and the
+            # committed ``rt_hod`` part's mask coincide.
+            self.assertTrue(np.isnan(got[1]), "RT-NaN hour must not be DA-filled")
             self.assertTrue(np.isnan(got[0]) and np.isnan(got[2]) and np.isnan(got[4]))
-            # Tail count via _gt_count uses the padded array directly.
+            # Tail count via _gt_count uses the padded array directly: the one
+            # real RT scarcity hour counts, the DA $250 hour does not appear.
             self.assertEqual(rch._gt_count(got, 300.0), 1)
+            self.assertEqual(rch._gt_count(got, 200.0), 1)
 
 
 if __name__ == "__main__":
