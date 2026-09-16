@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-09-13T18:55:14",
+  "timestamp": "2026-09-14T19:49:13",
   "git": {
-    "sha": "0ef1fac3",
-    "basis_sha": "0ef1fac376ffa5740bf3b2b765d2360315068481",
+    "sha": "2ebc58df",
+    "basis_sha": "2ebc58df8e5d0425a0f35dbad1eeac11d039c0a3",
     "branch": "HEAD",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "BTM-basis re-solve: byte-faithful replay of the committed keeper config from meta.json, adding btm.parquet (behind-the-meter CHP held out of the LP) so the benchmark scores on the grid-delivered basis.",
+  "model_changes_note": "nyiso-235 full span: keeper 2026-09-13-nyiso-232-st-gas replayed byte-faithfully on 2022-2025 with the nyiso-234b repaired delivered-gas series as the ONLY difference. Zero ScenarioConfig deltas. Rule-29 screen on 2022 cleared G-1..G-5.",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "NYISO",
@@ -118,7 +118,7 @@
     "nyiso_dynamic_reserve_requirements": true,
     "nyiso_hydro_reserve_eligible": true,
     "nyiso_scr_edrp_reserve_eligible": true,
-    "git_sha": "0ef1fac3"
+    "git_sha": "2ebc58df"
   },
   "scenario_config": {
     "weather_year": 2022,
@@ -649,6 +649,7 @@
     "coal_sync_srmc_tranche": false,
     "coal_econ_srmc_bound": false,
     "coal_econ_marginal_hr_bound": false,
+    "committed_band_measured_basis": false,
     "coal_bit_committed_takeorpay": false,
     "coal_committed_takeorpay_all": false,
     "coal_committed_takeorpay_regulated": false,
@@ -979,11 +980,11 @@
     "gas_offer_margin_anchor": 3.9046,
     "gas_offer_margin_zonal_anchor": true,
     "gas_offer_margin_anchor_by_zone": {
-      "Upstate_West": 5.37312712328767,
-      "Capital_Hudson": 8.443127123287672,
-      "Lower_Hudson": 8.443127123287672,
-      "NYC": 6.663127123287671,
-      "Long_Island": 8.443127123287672
+      "Upstate_West": 5.586486301369862,
+      "Capital_Hudson": 8.656486301369862,
+      "Lower_Hudson": 8.656486301369862,
+      "NYC": 6.876486301369861,
+      "Long_Island": 8.656486301369862
     },
     "gas_offer_margin_anchor_vintage": false,
     "gas_offer_margin_zonal_anchor_vintage": true,
@@ -1151,7 +1152,7 @@
     "rows": 210,
     "moved": {},
     "epochs": [],
-    "git_sha": "0ef1fac3"
+    "git_sha": "2ebc58df"
   },
   "environment": {
     "python_version": "3.11.15",
