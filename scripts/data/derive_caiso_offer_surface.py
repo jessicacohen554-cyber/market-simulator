@@ -560,6 +560,32 @@ def _assign_classes(
     return out
 
 
+def class_band_windows(
+    geom: dict[str, dict[str, float]], cls: str
+) -> dict[str, tuple[float, float]]:
+    """Band windows (fractions of resource capacity) from the model's class geometry.
+
+    ``committed`` = [0, pct_committed); ``econ_low`` / ``econ_high`` split the
+    economic window at :data:`ECON_LOW_SHARE`; ``peak`` = [1 - pct_peaking, 1].
+    Module-level (caiso-283) so the per-market-year reducer
+    ``scripts/data/reduce_caiso_bid_year.py`` prices exactly the windows this
+    derive prices — the same function, not a re-typed copy. ``main``'s
+    ``band_windows`` closure delegates here; behaviour is unchanged.
+    """
+    c = geom[cls]["pct_committed"] / 100.0
+    p = geom[cls]["pct_peaking"] / 100.0
+    els = ECON_LOW_SHARE[cls]
+    e_lo = c
+    e_hi = 1.0 - p
+    e_mid = e_lo + (e_hi - e_lo) * els
+    return {
+        "committed": (0.0, c),
+        "econ_low": (e_lo, e_mid),
+        "econ_high": (e_mid, e_hi),
+        "peak": (e_hi, 1.0),
+    }
+
+
 def _classify(
     seg: pd.DataFrame, gas: pd.Series, hr_cut: float
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
@@ -764,18 +790,7 @@ def main(argv: list[str] | None = None) -> int:
     carbon = {y: _carbon_price(y) for y in years}
 
     def band_windows(cls: str) -> dict[str, tuple[float, float]]:
-        c = geom[cls]["pct_committed"] / 100.0
-        p = geom[cls]["pct_peaking"] / 100.0
-        els = ECON_LOW_SHARE[cls]
-        e_lo = c
-        e_hi = 1.0 - p
-        e_mid = e_lo + (e_hi - e_lo) * els
-        return {
-            "committed": (0.0, c),
-            "econ_low": (e_lo, e_mid),
-            "econ_high": (e_mid, e_hi),
-            "peak": (e_hi, 1.0),
-        }
+        return class_band_windows(geom, cls)
 
     def static_bands(
         bucket_map: dict[str, pd.DataFrame], with_detail: bool

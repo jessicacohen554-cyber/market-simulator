@@ -163,13 +163,25 @@ def _expand_hours(df: pd.DataFrame) -> pd.DataFrame:
 def _curve_price_at(mw: np.ndarray, px: np.ndarray, targets: np.ndarray) -> np.ndarray:
     """Price of a monotone cumulative bid curve at each target MW.
 
-    The curve is a step/ladder in cumulative MW: the price that applies at a
-    target is the price of the first breakpoint at or above it (the rung the
-    MW falls in), held flat past the last breakpoint. ``np.searchsorted`` gives
-    exactly that without interpolating across a rung, which would invent prices
-    the resource never offered.
+    The curve is a step/ladder in cumulative MW whose breakpoint ``mw[i]`` is
+    the MW at which ``px[i]`` STARTS to apply
+    (``data/dictionary/schema/dam-public-bids.schema.yaml``, "Bid MW
+    semantics"), so the price applying at a target is that of the LAST
+    breakpoint at or below it — the derive's ``_price_at_frac`` convention —
+    held flat past the last breakpoint, and the first rung below the curve
+    start. ``np.searchsorted`` gives exactly that without interpolating across
+    a rung, which would invent prices the resource never offered.
+
+    CORRECTED caiso-282 (2026-09-16). The original read ``side="left"`` — the
+    first breakpoint at or ABOVE the target — one rung high everywhere the
+    target is not itself a breakpoint. Measured on resource 514544 /
+    2023-02-15: $300 sampled at 80 % of capacity where the derive reads
+    $27.18, and the pooled DAM aggregates then missed G-REPRO on every CC
+    band by +0.10..+0.14 (``docs/RESULT-caiso282-rtm-pool-g-repro-failed-
+    2026-09-16.md``). Every aggregate under ``results/rtm-intake/caiso281/``
+    was written by the OLD convention and is flagged by its README.
     """
-    idx = np.searchsorted(mw, targets, side="left")
+    idx = np.searchsorted(mw, targets, side="right") - 1
     idx = np.clip(idx, 0, len(px) - 1)
     return px[idx]
 
