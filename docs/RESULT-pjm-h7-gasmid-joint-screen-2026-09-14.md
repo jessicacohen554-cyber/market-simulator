@@ -129,6 +129,18 @@ and an owner ruling — the frontier was opened for the joint arm, which is now 
 
 ## 6. THE PROMOTION JUDGMENT (rule 31 `[R-RETAIN]`) — asked, not pre-empted
 
+> **OWNER RULING 2026-09-16: NOT PROMOTING.** The recommendation below was accepted. Recorded
+> by session pjm-h8, which also carries new evidence *for* it: measured against PJM's own
+> published offers, this arm's committed-band basis lands at **1.205 / 1.294 / 1.324×** the
+> measured offer level (2023/2024/2025), i.e. it overshoots PJM's own bids by 21-32 %
+> (`docs/FINDING-pjm-h8-coal-minload-is-the-undisciplined-offer-surface-2026-09-16.md` §2).
+> The same ruling **RE-OPENED the pjm-142 frontier** for the min-load offer basis; successor
+> charter `docs/PRECOMMIT-pjm-h8-minload-measured-offer-2026-09-16.md`.
+> Rule 33 `[R-SHARD-ARCHIVE]` (f)(3) now permits deleting branch `claude/pjm-h7-screen-2023`;
+> pjm-h8 attempted it and **deletion was REFUSED in-session**, so the branch STANDS and §7's
+> recovery command remains valid (rule 33 (f)(5): a session that cannot delete says so rather
+> than reporting a cleanup it did not perform).
+
 **RECOMMENDATION: DO NOT PROMOTE**, and the reason is narrower than h6's.
 
 The owner's 2026-09-14 standard is *"if structural integrity improves but gates regress that

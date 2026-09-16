@@ -774,6 +774,7 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # from the hash at their defaults; an armed run enters the key as a
     # distinct scenario.
     "pjm_offer_midcurve_peak_segments",
+    "pjm_offer_midcurve_minload_segments",
     "pjm_ct_measured_max_reprice",
     # NYISO in-city locational reserve levers (commit fa9fc78, nyiso-83) and
     # the nyiso-84 EAST-tier successors. All four are default-off and
@@ -2096,6 +2097,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "pjm_measured_outage_event_cap": "False",
     "pjm_offer_midcurve_level_segments": "None",
     "pjm_offer_midcurve_peak_segments": "None",
+    "pjm_offer_midcurve_minload_segments": "None",
     "pjm_ct_measured_max_reprice": "False",
     "nyiso_east_reserve_families": "False",
     "nyiso_spin_reserve_online": "False",
@@ -13583,6 +13585,29 @@ class ScenarioConfig:
     # (the pjm-99 top-of-curve surface owns the same rungs — one mechanism per
     # row, rule 19); the pair is rejected in __post_init__.
     pjm_offer_midcurve_peak_segments: tuple[str, ...] | None = None
+    # MIN-LOAD-row scope for the mid-curve surface (default OFF, PJM-gated).
+    # The mid-curve targeting excludes each unit's min-load block by design --
+    # the builder's own docstring: "Committed / must-run / sync tranches are
+    # never touched (their pricing is owned by the coal take-or-pay/passthrough
+    # sigmoids and the commitment scaffolding)". pjm-h8 measured what that
+    # exclusion costs against PJM's OWN published offers, using this very
+    # mechanism's targeting code, on all three measured years: PJM coal bids
+    # its `mustrun` rung at 0.180/0.207/0.205 of the measured offer at that
+    # rung's own within-plant capacity share, and its `committed` rung at
+    # 0.721/0.774/0.792 -- while the rungs this surface DOES govern land at
+    # 0.93-1.08 (docs/FINDING-pjm-h8-coal-minload-is-the-undisciplined-offer-
+    # surface-2026-09-16.md). A segment listed here extends the targeting to
+    # that segment's min-load rungs (`mustrun`/`committed`), priced in LEVEL
+    # form: the measured offer REPLACES the take-or-pay/sigmoid construction on
+    # those rows rather than stacking a floor on top of it, so exactly one
+    # mechanism sets each row's bid (rule 19 [R-ONE-MECH]). `sync` is NOT in
+    # scope: it is not a min-load rung -- it sits at within-plant share 0.871,
+    # ABOVE the econ band, and reads 1.31-1.40x measured, so repricing it would
+    # be a top-of-curve change and would move coal the OTHER way (stated so the
+    # scope cannot be read as selecting the rungs that flatter a residual).
+    # Always intersected with pjm_offer_midcurve_segments, so a segment absent
+    # from the floor scope is never priced by either form (rule 19).
+    pjm_offer_midcurve_minload_segments: tuple[str, ...] | None = None
     # CT_FAST measured max()-seam reprice (default OFF, PJM-gated). The measured
     # CT_FAST corpus prices the fast-start ladder at 22.5-39.6 x delivered gas
     # ($96-174 at 2025 tight-strata gas) against a model marginal CT bid of

@@ -1089,6 +1089,12 @@ def _conditional_surface_markup_contpct(
 #: Model class -> measured physics segment of the PJM mid-curve surface
 #: (scripts/data/derive_pjm_offer_midcurve.py). CHP classes are deliberately
 #: absent (steam-host economics, small idle footprint).
+#: The min-load rungs of a model plant's tranche ladder -- the block at or
+#: below its minimum stable level. `sync` is NOT one of them: PJM coal's sync
+#: rung sits at within-plant share 0.871, ABOVE the econ band, and reads
+#: 1.31-1.40x the measured offer, so it is a top-of-curve rung (pjm-h8).
+_PJM_MINLOAD_SUFFIXES = frozenset({"mustrun", "committed"})
+
 _PJM_MIDCURVE_SEGMENT_OF = {
     "CC_REGULAR": "CC_LIKE",
     "CT_PEAKER": "CT_FAST",
@@ -1322,9 +1328,21 @@ def build_pjm_offer_midcurve_conditional_markup(
     * Targeted rows: the econ tranches (``econ*`` suffixes) of the mapped
       classes, plus the LONG_RUN classes' ``peak`` tranche (CC/CT peak
       rungs stay owned by the pjm-99 top-of-curve surface — one mechanism
-      per row, rule 19). Committed / must-run / sync tranches are never
-      touched (their pricing is owned by the coal take-or-pay/passthrough
-      sigmoids and the commitment scaffolding).
+      per row, rule 19). Committed / must-run / sync tranches are not
+      touched BY DEFAULT (their pricing is owned by the coal
+      take-or-pay/passthrough sigmoids and the commitment scaffolding).
+      ``ScenarioConfig.pjm_offer_midcurve_minload_segments`` (default
+      off) extends the targeting to a listed segment's ``mustrun`` /
+      ``committed`` rungs, in LEVEL form — the measured offer REPLACES
+      that construction rather than stacking a floor on it, so exactly
+      one mechanism sets the row's bid (rule 19). ``sync`` stays out in
+      every case: it is not a min-load rung (PJM coal's sits at
+      within-plant share 0.871, ABOVE the econ band, reading 1.31-1.40x
+      measured). pjm-h8 measured the default exclusion against PJM's own
+      published offers: ``mustrun`` 0.180/0.207/0.205 and ``committed``
+      0.721/0.774/0.792 of the measured offer at the rung's own capacity
+      share (2023/2024/2025), against 0.93-1.08 for the rungs this
+      surface already governs.
       ``ScenarioConfig.pjm_offer_midcurve_peak_segments`` (default off)
       extends the targeting to a listed segment's own ``peak*`` rungs, in
       LEVEL form — the measured top belt REPLACES the fitted rung there,
@@ -1373,6 +1391,16 @@ def build_pjm_offer_midcurve_conditional_markup(
     # (pjm-122 §3). Intersected with the floor scope like the level scope.
     peak_cfg = getattr(config, "pjm_offer_midcurve_peak_segments", None)
     peak_scope = {str(s) for s in peak_cfg} & scoped if peak_cfg else set()
+    # MIN-LOAD-row scope (ScenarioConfig.pjm_offer_midcurve_minload_segments,
+    # default off): extends the targeting to the segment's min-load rungs,
+    # which the base predicate excludes for every segment. Those rows are
+    # ALWAYS priced in LEVEL form -- the measured offer REPLACES the
+    # take-or-pay/sigmoid construction that currently owns them, so exactly
+    # one mechanism sets the row's bid (rule 19 [R-ONE-MECH]); a floor would
+    # leave the replaced construction live in every hour it exceeded the
+    # measured level. Intersected with the floor scope like the others.
+    minload_cfg = getattr(config, "pjm_offer_midcurve_minload_segments", None)
+    minload_scope = {str(s) for s in minload_cfg} & scoped if minload_cfg else set()
 
     ctx = _pjm_midcurve_context(
         fleet_arrays, generators, mc_base, net_load_mw, config, year, scoped
@@ -1384,13 +1412,19 @@ def build_pjm_offer_midcurve_conditional_markup(
     for g, s_g, sfx, seg in ctx.rows:
         is_peak_row = sfx.startswith("peak")
         peak_targeted = is_peak_row and seg in peak_scope
+        # The min-load block is the `mustrun` + `committed` rungs. `sync` is
+        # deliberately NOT here: it is not a min-load rung (PJM coal's sits at
+        # within-plant share 0.871, above the econ band) -- pjm-h8 §"sync".
+        minload_targeted = sfx in _PJM_MINLOAD_SUFFIXES and seg in minload_scope
         is_target = (
-            sfx.startswith("econ") or (sfx == "peak" and seg == "LONG_RUN")
-        ) or peak_targeted
+            (sfx.startswith("econ") or (sfx == "peak" and seg == "LONG_RUN"))
+            or peak_targeted
+            or minload_targeted
+        )
         if not is_target or seg not in tables:
             continue
         target = _pjm_midcurve_row_target(ctx, seg, s_g)  # (T,)
-        if seg in level_scope or peak_targeted:
+        if seg in level_scope or peak_targeted or minload_targeted:
             # LEVEL form: the bid IS the measured target (clamped >= 0,
             # VOLL-capped above) — a signed markup that may lower the
             # fitted band. Hours with no measured coverage (NaN target)
