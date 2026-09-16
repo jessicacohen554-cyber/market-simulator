@@ -111,6 +111,28 @@ def compose(legs: list[Path], out: Path) -> None:
         for l, c in zip(legs, cfgs)
     }
 
+    # ``calibration_flags`` is the solve's own flag snapshot and carries its OWN
+    # year list plus per-year maps (``gas_prices``). A leg's copy names only that
+    # leg's year, so the span's must be rebuilt or ``audit_keepers`` E3 reports the
+    # bundle inconsistent (meta.json years != calibration_flags years).
+    cf = dict(base.get("calibration_flags") or {})
+    if cf:
+        cf["years"] = years
+        leg_cfs = [c.get("calibration_flags") or {} for c in cfgs]
+        for key, val in list(cf.items()):
+            if isinstance(val, dict):
+                merged = {}
+                for lc in leg_cfs:
+                    lv = lc.get(key)
+                    if isinstance(lv, dict):
+                        merged.update(lv)
+                if merged:
+                    cf[key] = merged
+        base["calibration_flags"] = cf
+        print(f"calibration_flags: years -> {years}, per-year maps merged")
+    (out / "run_config.json").write_text(json.dumps(base, indent=2, sort_keys=True))
+    print(f"run_config.json written ({len(base)} top-level keys)")
+
     # --- year-scoped files: copy verbatim -------------------------------------
     copied = 0
     for leg, y in zip(legs, years):
@@ -174,6 +196,24 @@ def compose(legs: list[Path], out: Path) -> None:
                 merged.update(val)
         if merged:
             meta[k] = merged
+    # PRESERVE A SPAN-LEVEL BENCHMARK REBUILD. Each leg's ``shared_inputs`` names
+    # that leg's SINGLE-YEAR benchmark extracts, so copying leg 0's would silently
+    # point a four-year span at a one-year benchmark - and because the refs are
+    # content-addressed the mistake is invisible until the scorer reads it. When the
+    # output bundle already carries refs that resolve on disk (i.e. a
+    # ``run_calibration_full.py --rebuild-benchmark`` has been run against it), keep
+    # THOSE for the benchmark trio and let the legs supply the rest.
+    prior = out / "meta.json"
+    if prior.exists():
+        old_si = (json.loads(prior.read_text()).get("shared_inputs") or {})
+        kept = {}
+        for name in ("eia923", "eia930", "campd"):
+            ref = old_si.get(name)
+            if ref and (out / ref).resolve().exists():
+                kept[name] = ref
+        if kept:
+            meta.setdefault("shared_inputs", {}).update(kept)
+            print(f"shared_inputs: preserved span-level benchmark refs {sorted(kept)}")
     meta["composed_from"] = [l.name for l in legs]
     (out / "meta.json").write_text(json.dumps(meta, indent=2, sort_keys=True))
     print(f"meta.json: years={meta['years']} composed_from={meta['composed_from']}")
