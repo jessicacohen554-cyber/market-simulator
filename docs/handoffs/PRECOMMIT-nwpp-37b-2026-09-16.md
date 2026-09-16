@@ -1,4 +1,14 @@
-# PRECOMMIT — lane NWPP-37: route every EIA-930 fuel-column reader through the unit-slip screen
+# PRECOMMIT — lane NWPP-37 (branch `claude/charming-cannon-q5hkxw`, carried as NWPP-37b): route every EIA-930 fuel-column reader through the unit-slip screen
+
+> **STATUS NOTE, added at the rebase (2026-09-16).** This PRECOMMIT was written at base `6d1a144d`,
+> before any source edit, by a second session issued the NWPP-37 charter in parallel with the one
+> that merged as PR #6206 (`claude/nwpp-37-envelope-screen-tscayg`, commit `e1e8d809`, FINDING /
+> PRECOMMIT `-nwpp-37-`). #6206 landed first with the same shape (A) at the strict-frame constructor.
+> On rebase this branch keeps #6206's construction and carries only what #6206 routed rather than
+> built — the PER-MEMBER pool screen (its FINDING §5) — plus the reader tests and envelope
+> docstrings. The pre-registration below is preserved verbatim as the record of what this session
+> committed to before measuring; the follow-on result is `FINDING-nwpp-37b-2026-09-16.md`.
+
 
 Lane NWPP-37 · model Fable (`claude-fable-5-1`) · branch `claude/charming-cannon-q5hkxw` (the
 session's designated branch; the charter's `claude/nwpp-37-envelope-screen-<4>` stem was
