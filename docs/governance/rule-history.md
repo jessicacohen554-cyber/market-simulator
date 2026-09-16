@@ -1353,10 +1353,70 @@ audit output rather than only in a PRECOMMIT. Guard:
 per-ISO-scope halves). Measured at introduction: all 7 ISOs green, year sets ERCOT 2021-2025,
 PJM/NEISO/MISO 2020-2025, CAISO/NYISO 2022-2025, SPP 2023-2025.
 
-## 21. Changes to this file
+## 21. `[R-SCREEN]` SCREEN-YEAR REGIME REMOVED — a new config goes straight to the full span (owner, 2026-09-16)
+
+**Owner instruction, verbatim:** *"Launch shards for each year and don't bother with a screen.
+Get rid of the screen year rule altogether and rebase before you launch"* (2026-09-16, to
+session `pjm-h9`). Executed the same session.
+
+### What the rule was
+
+Rule 29 `[R-SCREEN]` was added 2026-09-05 on the owner rule *"only run in calibrated years thru
+new configs first … instead of wasting runs on 3 full years before we've addressed whether
+config actually solves the issue"*. It ordered a lane's spend in three steps — **(0)** zero-LP
+phase 0 first; **(1)** a SCREEN solve on ONE year, that year **named in the PRECOMMIT** and
+chosen as the year the mechanism's **own measured footprint is largest**, never the largest
+residual; **(2)** the full span only **if** the screen cleared a pre-registered **STRUCTURAL
+STOP GATE** that *"may kill an arm; it may never promote one"*. Clause (b) (no control solves;
+`G-DRIFT`) and clause (c) (delete before merge) were added under the same ordinal later.
+
+### What is removed
+
+Steps (1) and (2) and the STOP gate, as requirements: the screen solve, the footprint-named
+screen year, the conditionality of the span on the screen, and the "remaining years are never
+spent" outcome. **A span is no longer conditional on anything.**
+
+### What survives, and why it had to
+
+The ordinal and the ID **do not move** — the same discipline `[R-HOLDOUT]`'s removal followed at
+§18 — because `[R-SCREEN]` is cited by name outside CLAUDE.md, in
+`scripts/check_registry_payload_parity.py`'s error text and
+`frontend/data/backcast/keepers/README.md`, and inside it by rules 15 `[R-DASHBOARD]`, 31
+`[R-RETAIN]`, 32 `[R-SHARD]` (b) and 34 `[R-SHARD-PROMOTABLE]` (b). Every one of those still
+resolves to a live clause:
+
+* **clause (b)** — no control solves, the incumbent keeper's committed bundle IS the control,
+  `G-DRIFT` the zero-LP audit that validates form 4 — **verbatim, unchanged**;
+* **clause (c)** — delete before merge, meaning keep it out of `main`, subordinate to rule 31
+  `[R-RETAIN]` — **verbatim, unchanged**, and it remains the parity gate's stated basis;
+* **clause (0)**, zero-LP phase 0, survives as the **practice** it always was rather than a
+  gate. It still answers more per minute than a solve; it no longer blocks one.
+
+Rule 1 `[R-STRUCT]` is untouched — a mechanism is still never selected because the residual
+moved. Rule 16 `[R-ALLYEARS]` and rule 34 (c) are untouched and now carry the whole "how many
+years" question. Rule 32 `[R-SHARD]` (b)'s carve-out *"a single-year shard is still correct for
+a rule-29 `[R-SCREEN]` SCREEN"* (added at §19) is **spent**: there are no screens, so a
+single-year shard is now simply one leg of the per-year fan-out rule 34 (c) prescribes, pushing
+its full bundle like any other.
+
+### The cost, recorded as a deliberate trade
+
+The screen existed because a 3-year CAISO/PJM/MISO/NYISO/NEISO replay is ~35–70 min of LP per
+arm, and an arm killed at one year saved the other two — `pjm-h6`, `pjm-h7` and `pjm-h8` each
+spent ONE year instead of three and each reported a kill. **Dead arms are now paid for in
+full.** That is the owner's call and it is written here as a trade made with open eyes, not an
+oversight to be rediscovered.
+
+### Scored effect
+
+**None.** No scorer path, rubric, gate, marker, keeper or determination is touched; the removal
+is a spending rule, not a scoring rule. Every registered run re-scores byte-identically.
+
+## 22. Changes to this file
 
 | date | change |
 |---|---|
+| 2026-09-16 | Added §21: **rule 29 `[R-SCREEN]`'s SCREEN-YEAR REGIME REMOVED** (owner instruction, verbatim in §21) — a new config goes straight to the full span; the one-year screen solve, the footprint-named screen year, the span's conditionality and the structural STOP gate are all gone as requirements. The ordinal and ID do **not** move (the §18 `[R-HOLDOUT]` discipline), because `[R-SCREEN]` is cited by name in `check_registry_payload_parity.py`, `keepers/README.md` and rules 15/31/32(b)/34(b): clause (b) (`G-DRIFT`, no control solves) and clause (c) (delete before merge) survive verbatim, and clause (0) survives as practice rather than gate. §19's *"a single-year shard is still correct for a rule-29 SCREEN"* carve-out is spent — a single-year shard is now one leg of rule 34 (c)'s per-year fan-out, pushing its full bundle. Rules 1/16/34 untouched. The trade is recorded rather than hidden: the screen saved ~2 of every 3 years on a dead arm (pjm-h6/h7/h8 each spent one), and dead arms are now paid for in full. Nothing scored moves. "Changes to this file" renumbered §21 → §22 (no external reference cited §21). |
 | 2026-09-12 | Added §20: **rule 35 `[R-PROMOTE]` is NEW** (owner instruction, verbatim in §20) — a keeper promotion DELETES the prior keeper's three stores in the promoting session, and the incoming keeper must carry every year the ISO has already run, held-out years included. This gives an owner and a deadline to a duty rule 15 `[R-DASHBOARD]` has required since 2026-09-05 but deferred to "the next registration": measured 2026-09-12, 47 registered runs against 7 keepers (33 superseded), 92 bundle dirs / 579 MB, and the parity gate RED on 5 of them. The two halves are one rule because the registry is the only mechanical record of which years an ISO has run, so deleting before enumerating can silently retire a held-out rung — quietly, since rule 30(a) renders a dangling stamp as unstamped. Rule 15's timing text edited in the same commit; rules 29/31/34 untouched (rule 31 outranks: the owner's promotion ruling IS its trigger (i)). Enforced by `audit_keepers` **E13** + `tests/scoring/test_audit_keepers_orphan_runs.py`, closing a structural blind spot — E1 sees the keeper's own stores, E12 the shard's live pointers, neither the ISO's registered SET. "Changes to this file" renumbered §20 → §21 (no external reference cited §20). |
 | 2026-09-12 | Added §19: rule 32 `[R-SHARD]` (b) amended by owner instruction (verbatim in §19) — **the slim per-year fan-out is BANNED**; a run that will be REGISTERED is solved by ONE shard in ONE `--years <all>` invocation into ONE bundle, and that shard attests, registers and pushes. The old clause actively directed per-year sharding and that is what caused the incident: SPP-36 spent three per-year shards, could not reassemble them, and re-solved the whole span — four solves for one run. Measured cause: registration needs the bundle-root `system.parquet` and the per-plant `dispatch/*.parquet`, both gitignored, and without them D-1/D-2/D-4 return **zero rows and pass VACUOUSLY** (D-4 flipped False→True against 71 rows / 12 failures); `--reuse-solved` gates on the same two files. A second defect it exposed: differencing a single-year arm against a span-solved control is a construction mismatch that produced a false slack finding (1,295.7 / 240.6 MWh added), corrected to **slack unchanged in every year** by the span-vs-span A/B. The 20-minute ceiling survives as a STOP rule, not a split rule; subdivision stays available for diagnostics, and a single-year shard stays correct for a rule-29 `[R-SCREEN]` screen. "Changes to this file" renumbered §19 → §20 (no external reference cited §19). |
 | 2026-09-09 | Added §18: **`[R-HOLDOUT]` REMOVED** (owner instruction, verbatim above; scope selected by the owner as “Year machinery only, keep C3c”). The three-tier regime and all four spend gates are gone — markers as authorizations, the freeze file, `--holdout-authorized`, the launch gate, the registration gate (§4's R-AZ), D-6, H1, and the whole `holdout_policy` authorization surface; the CI job survives, retitled. KEPT: the C3c standing rule entire (now `[R-C3C]`, on rule 22's unchanged ordinal), `tier_for_year` demoted to a pure classifier its v3.6 limb still needs, `calibration-complete.json` as keeper designation + forecast gate (a), and rule 30. Measured over all 15 registered out-of-training runs: **0 determination flips**. “Changes to this file” renumbered §17 → §18 (no external reference cited §17). |
