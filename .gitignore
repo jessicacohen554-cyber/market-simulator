@@ -2286,3 +2286,21 @@ results/calibration/_soco40_screen/
 
 # soco-40: the UNSPLIT-coal span (arm A of the coal-split comparison), kept out of main; bytes live on shard commit 9458759f6b8c875a9a302e4b64db9e212420ddf9 (git checkout 9458759f6b8c875a9a302e4b64db9e212420ddf9 -- results/calibration/soco40_baseline_B); never rm (rule 31)
 results/calibration/soco40_baseline_B/
+
+# pjm-h9 six-year keeper-recipe re-solve at HEAD fa170333 (2026-09-16).
+# NOT registered: a null reproduction of the designated keeper (max |keeper -
+# re-solve| = 0.073 TWh), so it is neither a new keeper nor a run rule 35(f)/E13
+# would accept. Kept on disk under rule 31 [R-RETAIN] until the owner rules.
+# Recovery by FULL immutable SHA (rule 33 [R-SHARD-ARCHIVE] (d)):
+#   git checkout 7f6f8f616069c7cf72931c9789bf64ef4b5f2110 -- results/calibration/pjm_h9_2020
+#   git checkout 9b238fc2b9b87dd14fa1784f33920b759c533989 -- results/calibration/pjm_h9_2021
+#   git checkout 37a64db4269c80548f8a7c19175e16e6f6069ecf -- results/calibration/pjm_h9_2022
+#   git checkout 220e170d6353ef9d563185f93f0482da5be52a61 -- results/calibration/pjm_h9_2023
+#   git checkout a380ff476e02fb365db605e51197c293812f2529 -- results/calibration/pjm_h9_2024
+#   git checkout 30f2367894a321f2a3f60697fb27c4fb890a4b63 -- results/calibration/pjm_h9_2025
+results/calibration/pjm_h9_2020/
+results/calibration/pjm_h9_2021/
+results/calibration/pjm_h9_2022/
+results/calibration/pjm_h9_2023/
+results/calibration/pjm_h9_2024/
+results/calibration/pjm_h9_2025/
