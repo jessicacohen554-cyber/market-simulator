@@ -1,0 +1,25 @@
+neighbor,year,anchor_status,n_points,hr_phys_mmbtu_mwh,hr_adder_usd_mwh,fit_r2,hr_phys_sign_ok,delivered_gas_usd_mmbtu,measured_hr,flat_hr,elastic_hr,abs_err_flat,abs_err_elastic
+SOCO_TVA,2023,NO_ANCHOR — the neighbour BA publishes no organized-market LMP,0,,,,,2.54,,11.6,,,
+SOCO_TVA,2024,NO_ANCHOR — the neighbour BA publishes no organized-market LMP,0,,,,,2.19,,11.6,,,
+SOCO_TVA,2025,NO_ANCHOR — the neighbour BA publishes no organized-market LMP,0,,,,,3.52,,11.6,,,
+SOCO_MISO,2023,DERIVED,3,7.95,4.96,0.9935,True,2.84,9.52,9.63,9.7,0.11,0.17
+SOCO_MISO,2024,DERIVED,3,7.95,4.96,0.9935,True,2.49,10.09,9.63,9.94,0.46,0.15
+SOCO_MISO,2025,DERIVED,3,7.95,4.96,0.9935,True,3.82,9.28,9.63,9.25,0.35,0.03
+SOCO_DUK,2023,NO_ANCHOR — the neighbour BA publishes no organized-market LMP,0,,,,,2.54,,11.6,,,
+SOCO_DUK,2024,NO_ANCHOR — the neighbour BA publishes no organized-market LMP,0,,,,,2.19,,11.6,,,
+SOCO_DUK,2025,NO_ANCHOR — the neighbour BA publishes no organized-market LMP,0,,,,,3.52,,11.6,,,
+SOCO_SCEG,2023,NO_ANCHOR — the neighbour BA publishes no organized-market LMP,0,,,,,2.54,,11.6,,,
+SOCO_SCEG,2024,NO_ANCHOR — the neighbour BA publishes no organized-market LMP,0,,,,,2.19,,11.6,,,
+SOCO_SCEG,2025,NO_ANCHOR — the neighbour BA publishes no organized-market LMP,0,,,,,3.52,,11.6,,,
+SOCO_SC,2023,NO_ANCHOR — the neighbour BA publishes no organized-market LMP,0,,,,,2.54,,11.6,,,
+SOCO_SC,2024,NO_ANCHOR — the neighbour BA publishes no organized-market LMP,0,,,,,2.19,,11.6,,,
+SOCO_SC,2025,NO_ANCHOR — the neighbour BA publishes no organized-market LMP,0,,,,,3.52,,11.6,,,
+SOCO_FPL,2023,NO_ANCHOR — the neighbour BA publishes no organized-market LMP,0,,,,,2.54,,11.6,,,
+SOCO_FPL,2024,NO_ANCHOR — the neighbour BA publishes no organized-market LMP,0,,,,,2.19,,11.6,,,
+SOCO_FPL,2025,NO_ANCHOR — the neighbour BA publishes no organized-market LMP,0,,,,,3.52,,11.6,,,
+SOCO_FPC,2023,NO_ANCHOR — the neighbour BA publishes no organized-market LMP,0,,,,,2.54,,11.6,,,
+SOCO_FPC,2024,NO_ANCHOR — the neighbour BA publishes no organized-market LMP,0,,,,,2.19,,11.6,,,
+SOCO_FPC,2025,NO_ANCHOR — the neighbour BA publishes no organized-market LMP,0,,,,,3.52,,11.6,,,
+SOCO_TAL,2023,NO_ANCHOR — the neighbour BA publishes no organized-market LMP,0,,,,,2.54,,11.6,,,
+SOCO_TAL,2024,NO_ANCHOR — the neighbour BA publishes no organized-market LMP,0,,,,,2.19,,11.6,,,
+SOCO_TAL,2025,NO_ANCHOR — the neighbour BA publishes no organized-market LMP,0,,,,,3.52,,11.6,,,
