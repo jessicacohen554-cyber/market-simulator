@@ -62,7 +62,13 @@ REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "src"))
 
-KEEPER = REPO / "results" / "calibration" / "nyiso213_summer_seam"
+#: The keeper whose committed hourlies the footprint is measured on. Overridable
+#: from the command line because the designated keeper changes: nyiso-220 wrote
+#: this against ``nyiso213_summer_seam``, which rule 15 [R-DASHBOARD]'s
+#: keeper-only retention has since pruned. Re-basing the reference values onto
+#: the CURRENT keeper before a screen is required, not optional -- the gates in
+#: PRECOMMIT-nyiso220-screen.md are stated against "the keeper's 2025 value".
+KEEPER = REPO / "results" / "calibration" / "nyiso235_gasrepair_span"
 OUT_JSON = REPO / "results" / "calibration" / "_nyiso220_phase0_period_overlap.json"
 YEARS = (2023, 2024, 2025)
 
@@ -156,6 +162,16 @@ def _cross_period_energy(mw: np.ndarray, month: np.ndarray, period: np.ndarray) 
 
 def main() -> int:
     """Run the phase-0 footprint and overlap arithmetic and write deterministic JSON."""
+    global KEEPER, OUT_JSON, YEARS
+    import argparse
+
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--keeper", type=Path, default=KEEPER, help="bundle whose hourlies are read")
+    ap.add_argument("--years", type=int, nargs="+", default=list(YEARS))
+    ap.add_argument("--out", type=Path, default=OUT_JSON)
+    args = ap.parse_args()
+    KEEPER, OUT_JSON, YEARS = args.keeper, args.out, tuple(args.years)
+
     from market_sim.data.eia_loader import measured_hydro_hourly_envelope
 
     per_year: dict[str, dict] = {}
