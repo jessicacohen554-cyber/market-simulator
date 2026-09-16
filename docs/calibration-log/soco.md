@@ -710,3 +710,108 @@ the step change SOCO-56 must screen under rule 29 — its phase 0 is computable
 with no LP from soco_seam_diba_duration.csv.
 
 docs/handoffs/FINDING-soco-33-2026-09-16.md.
+
+## soco-34 — 2026-09-16 — SOCO site wiring, nine-region prose, log header, 3 WCAG fixes (zero-LP)
+
+Lane SOCO-34, Opus claude-opus-5, branch claude/soco-34-site-docs-pxkmb5, base
+edd40943. FINDING `docs/handoffs/FINDING-soco-34-2026-09-16.md`. No solve, no
+src/ edit, no ScenarioConfig field, no matrix cell, no shared record.
+
+THE index.html ARITHMETIC, CHECKED NOT ASSUMED: 47/44/58 ALREADY counted SOCO's
+three zones, so index.html needed NO change. 39+5+3=47, 36+5+3=44, 47+9+2=58,
+recomputed twice (get_iso_config over SUPPORTED_ISOS, and re-summed off the
+committed JSON after the edit). NWPP-35's prose had run two days ahead of the
+data; this lane closed the gap rather than moving a number. Both orderings cross
+and both are right: NWPP is the 8th builder but 9th matrix column, SOCO the 9th
+builder but 8th matrix shard (SOCO-21 landed a day earlier) — which is why
+SOCO's lever queue is matrix §5.8, not §5.10 as first written and caught.
+
+THE FOUR CHARTERED DEBTS CLOSED. (a) iso-topologies.json carries a SOCO block —
+3 zones summing to exactly 1.000000, 2 links, voll 61900, no interface limits —
+with the eight existing blocks byte-unchanged and _meta re-stated at nine; all
+nine blocks round-trip against get_iso_config with ZERO per-value mismatches.
+(b) data-completeness.html filter now lists all nine. (c) config-reference.html
+"the eight serialized" → all nine + the 47/44/58 totals. (d) index.html left
+alone, arithmetic reported. Plus SOCO into viz-iso-topology.js
+(ISO_ORDER/ISO_COLORS/GEO_HINTS on real geography — MS→AL→GA a chain because
+Mississippi reaches the system through Alabama), iso-configs-table.js
+(isoOrder/ISO_COLORS/ISO_DESCRIPTIONS), the site.css tab accent,
+build_status.ISO_ORDER, keeper_store.DEFAULT_ISO_ORDER,
+render_data_dictionary.ISO_ORDER, and the regenerated data dictionary — whose
+delta was PROVEN cell-by-cell to be one appended column and nothing else (the
+committed matrix was already all-dashes, so the empty code-profile data/clean
+cost nothing).
+
+forecast-runs.html PROVEN to render for a region with no forecast runs, by
+running the page's own extracted lines against four META shapes: the chip set is
+META.isos so SOCO never appears, empty/absent META do not throw. It also fixed a
+LATENT BUG — indexOf returns -1 for an unlisted region and -1 < 0, so before the
+fix SOCO sorted AHEAD of ERCOT. NWPP still carries that behaviour (routed).
+
+TWO FALSE STATEMENTS CORRECTED against the code in 08-config-reference.md: SOCO's
+row said "VOLL $2,000" and the summary said "$2,000 for all eight non-ERCOT
+regions". SOCO is $61,900 (iso_configs.py:2348) — the LBNL/DOE ICE-2 customer-mix
+derivation, restated with its 8h/24h width and its national-pooled-model
+misalignment, and with the note that at ~31x the $2,000 regions' slack penalty
+unserved energy dominates a SOCO objective far more sharply. Also corrected
+there: MARKET_DESIGN has six keys so SPP/NWPP/SOCO all resolve the build
+backstop OFF (the line named only SPP); the PRM registry was missing NWPP 0.144
+and SOCO 0.26 (winter); and SOCO entries added to the scarcity, reliability-floor
+and interchange mechanism lists (none / none / net EXPORTER + eight default-off
+neighbours). multi-iso/README.md: SOCO was "the eighth registered region" and
+"stays unregistered until its W2 lane lands" — both now false, re-stamped to the
+ninth builder, registered 2026-09-14, cards S1–S12.
+
+THREE ACCESSIBILITY DEFECTS FIXED, ALL PRE-EXISTING AND ALL ACCENT-AGNOSTIC (so
+no per-region value is encoded, rule 25, and all nine regions are repaired at
+once). The calculator was first validated against FINDING-spp-34 §7 S-2's
+committed figures. (1) The dark-section active tab drew its label in the raw
+accent: 7 of 9 failed, NEISO 1.69:1 CRITICAL, SOCO 2.39:1 — now #fff at
+10.66-12.73:1 with the accent kept on the border. (2) Graph node labels were
+drawn in the same accent as the circle they sit on, so ALL NINE failed
+(1.63-3.60:1) — now white at 0.95, worst case 8.04:1. (3) dc-chip.active was
+white on --hydro at 2.77:1 — now the design system's own --hydro-text at
+5.93:1. Where SOCO was already covered it passes best-in-class: .iso-badge
+17.19:1 and .badge--iso-soco 6.81:1, the highest of the nine, via SPP-34's
+overlay — which matters because white-on-SOCO would have been a 4.47:1
+near-miss FAIL.
+
+calibration-log/soco.md HEADER ONLY, entries PROVEN untouched: the entry region
+(## soco-10 → EOF) is byte-identical, sha256 11c17984… before and after, 365
+lines and 9 headings each time, 121 insertions / 7 deletions with all 7
+deletions old header lines. New header matches miso.md's format plus spp/nwpp's
+pointers, carries "Next shorthand: soco-35" with the lane-number convention
+stated, and fixes the old header's claim that Southern Power is a footprint
+member — SOCO-14 returned a documented NO on respondent 186, so the five-set
+(2/183/184/107/210) is named instead. It deliberately does NOT replicate spp.md's
+rule-22 [R-HOLDOUT] block, removed 2026-09-09; it states instead that no year is
+protected, so no SOCO number will be a certified out-of-sample number.
+
+GATES: registry payload parity RED on the same two bundles NWPP-35 reported
+(caiso279_ablate_dswcouple_span, soco15_spp_arm) — proven byte-identically RED
+via git stash, and my diff touches nothing under results/ or frontend/; one is a
+SOCO artifact whose clearing means deleting a solve's results, which rule 31
+[R-RETAIN] forbids before the owner rules, so REPORTED not repaired.
+check_mechanism_matrix EXIT 0 plain and --base (all warnings self-labelled
+pre-existing). ruff format+check clean on 3 files. Dictionary sync: 4 passed /
+144 subtests, 1 pre-existing coal-stocks failure identical via stash. Scoring:
+41 passed; test_gate_a_provenance fails identically without this diff (NYISO/SPP
+superseded-keeper rows from yesterday's promotions). Eleven changed files are
+≥300 lines, none shrank, all surgical (rule 27).
+
+ROUTED: (1) CLAUDE.md:19 STILL SAYS "seven ISOs registered" and also
+mis-states CAISO as 3 zones (it is 6) — replacement text supplied, deliberately
+not edited by a site lane; (2) 00-iso-addition-protocol.md stale in SIX places
+incl. line 59 "SOCO NOT REGISTERED" and line 72 "TWO further regions … NOT
+registered" — SOCO-10's/NWPP-10's file, rule 5; (3) CHANGELOG.md NOT appended:
+sync-docs step 6 says always, plan §8.0 rule 1 forbids a lane touching it — the
+plan wins, the desk writes it, conflict flagged rather than silently skipped;
+(4) plan line 43's own definition-of-done still says "eight regions"; (5) plan §5
+row SOCO-34 → LANDED is the desk's, rule 1; (6) NWPP still missing from four of
+the region lists this lane extended plus its site.css tab accent, consequences
+measured (fail-safe append / alphabetical tail / inert CSS, but front-sorting in
+forecast-runs); (7) keeper_store is stdlib-only so it cannot import
+SUPPORTED_ISOS and its "mirrors build_status" comment had already drifted;
+(8) keepers/index.json untouched — the first-solve lane adds SOCO at
+registration; (9) soco.md:143's stray orphan line sits inside an entry body, the
+desk's, re-routed.

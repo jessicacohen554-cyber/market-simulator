@@ -11,6 +11,115 @@ recreated fresh from `origin/main`.
 
 ## 0. Live state — newest entry FIRST
 
+### r#10 — 2026-09-16 — **W3 IS CLOSED: SOCO-32 LANDS AND GRADES PASS, GATE G4 IS FULLY DISCHARGED, SOCO-40 IS DISPATCHABLE** · the desk was wrong about SOCO-34 for one sitting (main `680d1d82`)
+
+**SOCO-32 LANDED (PRs #6205, #6208) AND GRADES PASS.** W3 is now five for five. Gate **G4 — SOCO-30,
+SOCO-31 and SOCO-32 all landed — IS FULLY DISCHARGED**, which was SOCO-40's only remaining
+precondition. The charter issued at r#9 is dispatchable as written, with the addendum below.
+
+**What SOCO-32 established, beyond passing.**
+
+| | |
+|---|---|
+| **Shares, on the model clock** | AL **0.3022** / GA **0.6382** / MS **0.0596** (2023), 0.2974 / 0.6450 / 0.0576 (2024), 0.2939 / 0.6493 / 0.0568 (2025); residual vs metered EIA-930 BA demand **3.03 / 2.92 / 1.18 %** — SOCO-11's five-respondent diagnostic **reproduced independently** on a different clock |
+| **Card S3** | **Honoured exactly**: the six-respondent set was *"not rebuilt, not evaluated and not tuned toward"*. The hard precondition the desk put in the charter at r#6 did its job |
+| **Solar shape** | A NEW builder on **measured all-sky irradiance at all 482 plant-years** — reconciling to EIA-930 `NG: SUN` at **shift +0 h, r = 0.988 / 0.975 / 0.933**, energy-weighted mean hour-of-day 11.07 vs 11.05 measured, and **nothing pinned** (the reconciliation is a check, never a channel — rule 13) |
+| **Gas hub** | 9 rows from the committed per-plant EIA-923, 3 zones × 3 years, no publication hole, **no applier armed** |
+| **G8** | **HOLDS**: `solve_surface_register.py --diff origin/main` → **0 moved, 0 added, 0 removed**; of 54 region × fuel × year renewable-shape cells hashed before and after, **3 moved and all 3 are `SOCO|solar`** |
+| **Tests** | 51 new, all passing; **9 suite failures and every one reproduces with the lane's `src/` and `scripts/` changes stashed** |
+
+**The same-tree-control standard is now THREE FOR THREE.** SOCO-20 volunteered it, SOCO-31 held it on
+`eia923_2025.json`, and SOCO-32 held it across three suites. It has stopped being a lane's virtue and
+become this program's convention.
+
+**THE DESK'S OWN ROUTED ITEM CAME BACK BETTER THAN IT WENT OUT.** R-q asked SOCO-32 to land the gas
+hub that would un-restrict SOCO-30's coal-only `-layup` panel. **The lane refused, with a measurement,
+and the refusal is right.** `gas_basis_by_iso_month.csv` holds a **named trading-hub monthly index**
+(Transco Z6 NY, Algonquin Citygate) whose object is the winter constrained-hub spike behind the
+dual-fuel gas→oil switch — a different object from a per-zone delivered-cost table, which cannot feed
+it. SOCO-12 already measured that **no free public Southeast hub index exists**, and a 923-derived row
+would be **circular**: `load_winter_gas_basis`'s own documented fallback IS the 923 ISO-month series,
+so it would be the same series on both sides of the comparison dressed as a constrained-hub index —
+the substitution rule 13 `[R-MEASURED]` forbids and gate **G17** refuses by name. Bounded rather than
+asserted: SOCO's 923 ISO-month series is live and carries a real winter signal (January **4.45 / 4.64
+/ 6.07** $/MMBtu against summer 2.1–3.9), so only the `-layup` *diagnostic panel* is affected.
+**R-q is CLOSED as answered.** The desk's routing was a reasonable read of SOCO-30's evidence and the
+lane's answer is better than the desk's question — which is the routing protocol working, not failing.
+
+**E-10 — THE DESK WAS WRONG ABOUT SOCO-34 FOR EXACTLY ONE SITTING, AND IT IS E-2's SHAPE AGAIN.**
+SOCO-34 merged as **PR #6191 at 04:43:09 UTC**. The r#8 pin `e9e1f4f0` is **04:38:15 UTC** — five
+minutes earlier — so r#8's *"finished on its branch, no PR exists"* was **correct against the evidence
+it had**, and the pin simply rotted, which handoff §0.5 says to expect. **r#9 is the error**: it
+pinned `a2dc6d3a`, which already CONTAINED the merge, and still reported *"SOCO-34 needs a PR"* —
+carried forward from r#8 without re-deriving it against r#9's own pin. Full text in §6. SOCO-34's
+grade is unchanged (**PASS**, graded by content off the branch at r#8) and its `## Log entry` is
+appended this sitting.
+
+**R-w — ANOTHER PROGRAM'S SEAM CHANGE LANDED ON SOCO, AND IT DISCLOSED BOTH HALVES.** NWPP-37
+(`e1e8d809`) moved the EIA-930 `NG:` unit-slip screen from three per-reader call sites to the frame
+CONSTRUCTORS, because six `NG:`-column readers were reaching `_eia_hourly_frame_filled` directly and
+getting raw columns. Two consequences for SOCO, and the lane measured and published both rather than
+leaving them to be discovered:
+
+1. **SOCO's committed benchmark is NOT stale.** `build_calibration_reference`'s own output is
+   **byte-identical** — its per-member screen and the new placement agree. SOCO-31's
+   `calibration_reference.json` block stands unchanged, and **no registered keeper's C1/C4 moves**.
+   The one SOCO series that moves is `measured_gas_floor_profile` (2025 `gas_floor` **−19,759 MWh**),
+   and **no SOCO solve path reads it today**.
+2. **SOCO `NG: OIL` IS A RULE-14 FALSE POSITIVE, AND IT IS IN THE COMMITTED BENCHMARK ALREADY.** The
+   screen **deletes 4.4 GWh of a REAL cold-snap oil run** — 2024-01-17 03:00–09:00, **Winter Storm
+   Heather**: 155 → 530 → 660 → 762 → **801** → 350 MW, a coherent peaker start, ramp and shutdown
+   tracking SOCO's winter peak **hour for hour**, and its 07:00 hour is the **47,368 MW BA winter
+   peak this program has quoted since the charter**. 801 MW against 47,123 MW of net generation is
+   entirely possible. The screen fires only because a **near-zero-baseline series has no operating
+   scale** — median 0.0 MW, p99.9 71.7 MW — so the robust peak it tests against is meaningless.
+   SOCO 2024 `NG: OIL` reads **0.0056 → 0.0012 TWh**. For contrast the SOCO `NG: NG` flags are
+   unambiguous and should stay: **70,683 MW of gas in an hour whose entire net generation is 32,574
+   MW**, four such hours in 2025.
+   **This is pre-existing, not introduced** — it reached the benchmark through
+   `load_eia_hourly_benchmark`, and it surfaced only because NWPP-37 censused the two regions SPP-41
+   could not (both were registered a week after it measured). A fix needs a floor on the anchor or a
+   minimum-baseline eligibility test, and **both change the statistic**, so it is not a one-liner and
+   it is not this desk's file. **It belongs on SOCO's first keeper's determination basis**, which is
+   why the SOCO-40 addendum below adds it as a sixth required line rather than leaving it in a
+   routed-items table nobody reads at scoring time.
+
+**SOCO-40 ADDENDUM ISSUED** (plan §8) — G4 discharged, the `NG: OIL` defect added to the
+determination basis, and one clarification the charter needed once SOCO-32 landed: **the charter's
+shard hard-stop signature `0.3510 / 0.5842 / 0.0648` is still literally correct and stays**, but it
+is now the **static fleet-MW FALLBACK** in `_soco_config`, not the operative share — SOCO-32's hourly
+path uses the **measured** 0.2978 / 0.6442 / 0.0580 (three-year mean) and the fallback fires only if
+both the clean parquet and the raw file are absent. A lane reading the hard stop as "the shares" would
+be wrong about which object it had verified.
+
+**Routed this sitting:** **R-w** (above) · **R-x**, SOCO-32's own six items — re-fetch the FERC-714
+parquet and the EIA-930 `SOCO` extract on LOCAL time (both end 7 UTC hours short of the model's 2025
+local year, which retires `_SOCO_MAX_UNCOVERED_HOURS` entirely); **re-key `_soco_config`'s static
+`load_share` to the measured values**, a one-line edit with a real basis that is SOCO-20's file;
+EIA-923 vs the EIA state delivered series disagreeing for Alabama 2023 by 0.23 $/MMBtu; a **~3.5 %
+unit bias in the MISO / PJM / SPP sibling hub tables** (they subtract a `$/MMBtu` Henry Hub from a
+`$/Mcf` state series — SOCO's needs no conversion and is unaffected, rule 25); `test_persisted_identity`
+red on main for NYISO's pin; and NWPP's committed solar-shape parquets now having a reader.
+
+**R-p is STILL OPEN** — `results/calibration/soco15_spp_arm`, 126 MB tracked on `main`, awaiting the
+owner's retention ruling. Not deleted (rule 31 `[R-RETAIN]`).
+
+**Gates:** not re-run this sitting. The r#8 measurement stands and no input in this desk's scope has
+changed; the one gate whose input DID move is `check_registry_payload_parity`, and it moved only by
+SOCO-32's landing, which touches no bundle dir. Recorded UNREAD rather than carried forward green.
+
+**Appended to `docs/calibration-log/soco.md` this sitting, VERBATIM**: soco-32 and soco-34. Thirteen
+entries now. Two formatting deviations recorded rather than silently corrected — **soco-31's heading
+reads `## 2026-09-16 — SOCO-31: …`** where the file's convention is `## soco-31 — …`, and
+**soco-32's is an `###` rather than `##`**. The desk appends verbatim and does not rewrite a lane's
+words; naming them here is the honest alternative.
+
+**Next act:** sitting #11 — dispatch SOCO-40 (the charter and its addendum are paste-ready), then
+grade it by content and **put its promotion question to the owner in that session, while the bundles
+are alive** (rule 31).
+
+---
+
 ### r#9 — 2026-09-16 — **W4 ISSUED: SOCO-40, THE FIRST-EVER SOCO SOLVE** · SOCO-32's dispatch status ASKED AND ANSWERED (main `a2dc6d3a`)
 
 **Gate G15 worked exactly as written, for the fourth time.** At r#8 SOCO-32 had no branch, no commit
@@ -776,10 +885,10 @@ option (a)).
 | SOCO-21 matrix shard | OPUS | W2 | **LANDED r#5 — GRADED PASS**, 327 ids / 168 `U` / 159 `·`, no verdict minted. Owes a `## Log entry` (desk stub in its place) | merged | `FINDING-soco-21-2026-09-13.md` |
 | SOCO-30 outages + tranches | OPUS | W3 | **LANDED r#8 — GRADED PASS.** Gate G4 both legs; 1,119 windows; zero measured full-year CEMS outages; three defects routed | PR #6179 / #6181 | `FINDING-soco-30-2026-09-16.md` |
 | SOCO-31 benchmarks | OPUS | W3 | **LANDED r#8 — GRADED PASS.** Gate G9 **exactly zero**, re-measured by the desk from the diff (+295/−1, the deletion a date stamp); price line held under pressure | PR #6185 | `FINDING-soco-31-2026-09-16.md` |
-| SOCO-32 zonal shares + solar + gas hub | OPUS | W3 | **RUNNING** — confirmed by the owner at r#9. Gate G15 held: asked, not inferred. **SOCO-40's last open precondition** | — | — |
+| SOCO-32 zonal shares + solar + gas hub | OPUS | W3 | **LANDED r#10 — GRADED PASS.** Shares reproduced on the model clock (residual 3.03/2.92/1.18 %), card S3 honoured exactly, solar shape from measured irradiance at all 482 plant-years with **nothing pinned**, **G8 holds (0 values moved)**, 9 test failures all carrying same-tree controls. **ANSWERED R-q with a refusal the desk accepts** | PR #6205 / #6208 | `FINDING-soco-32-2026-09-16.md` |
 | SOCO-33 seam derive | OPUS | W3 | **LANDED r#8 — GRADED PASS.** Net-exporter sanity on both clocks; sign convention verified by shift test; **G17 never approached**; headline = the interface limits | PR #6180 | `FINDING-soco-33-2026-09-16.md` |
-| SOCO-34 site + docs | OPUS | W3 | **FINISHED, NOT MERGED — NO PR EXISTS.** Branch `claude/soco-34-site-docs-pxkmb5` @ `1f71ec097b3f4b7e4ef17a5f88225abdd4c988c5`, zero conflicts vs `main`. **GRADED PASS r#8 off the branch.** The owner owes it a PR | branch only | `FINDING-soco-34-2026-09-16.md` (on the branch) |
-| SOCO-40 first solve | FABLE | W4 | **ISSUED r#9**, pinned `a2dc6d3a`, charter in plan §8. Gate G4 is 2 of 3 and the charter's own PRECONDITION block STOPs on SOCO-32 — so it is dispatchable the moment SOCO-32 lands | — | — |
+| SOCO-34 site + docs | OPUS | W3 | **ON MAIN — PR #6191, merged 04:43:09 UTC**, five minutes after the r#8 pin. Grade unchanged: **PASS** (by content, off the branch, r#8). The r#9 claim that it still needed a PR was the desk's error — **E-10** | PR #6191 | `FINDING-soco-34-2026-09-16.md` |
+| SOCO-40 first solve | FABLE | W4 | **ISSUED r#9 + ADDENDUM r#10. GATE G4 FULLY DISCHARGED — DISPATCHABLE NOW.** SOCO-30 ✓ SOCO-31 ✓ SOCO-32 ✓. The addendum adds the `NG: OIL` rule-14 defect to the determination basis and clarifies the static-vs-measured share | — | — |
 | ~~SOCO-22 rubric class (duplicate row)~~ | — | — | **STALE ROW, superseded by the SOCO-22 row above** — the lane was issued r#3 and graded PASS r#5. Kept struck rather than deleted so the r#2→r#3 sequence stays readable | — | — |
 | SOCO-54/55/56/57 levers | — | W5 | pre-declared, not issuable | — | — |
 | W6 forecast entry | — | W6 | ROUTED to the capx director (card S10) | — | — |
@@ -823,12 +932,15 @@ option (a)).
 | R-n | **`config/solve_surface.py:75` calls SOCO "the eighth registered region"** — it is the NINTH; NWPP took eighth the same day. The PR title was corrected to "ninth" and the `_ISO_BUILDERS` comment is right, so this is the one place the same-day collision left stale | whoever next edits `solve_surface.py` | Cosmetic, and named only so a later reader does not trust it over `SUPPORTED_ISOS`. `src/`, outside this desk's write scope. (Swept the rest: `export_lce_lmp.py:109` and `test_mechanism_matrix_keeper_stamp.py:37` both read correctly in context) |
 | R-o | **NWPP-35 swept the shared codebase-site prose to NINE regions and left SOCO's own blocks owed, citing the debt in place.** `iso-topologies.json` keys are the eight without SOCO and its `_meta.description` says so verbatim; `data-completeness.html:364` carries the same marker in a code comment; `config-reference.html:404` still says "the **eight** serialized … render below" | **SOCO-34** (folded into its §8 charter delta at r#7) | **Not a collision — a clean handover.** NWPP-35 stayed inside rule 25 `[R-ISO-SCOPE]` (it did not serialize another region's topology) and, instead of leaving the gap to be discovered, named the owing lane in the artifact. That is the behaviour this desk should hold its own lanes to, and it is worth saying so rather than only logging the debt |
 | R-p | **`results/calibration/soco15_spp_arm` IS THIS PROGRAM'S OWN PARITY RED — a rule 29 `[R-SCREEN]` (c) delete-before-merge bundle that REACHED `main`.** 34 files / **126 MB**, tracked (commit `59c045e1`, *"SOCO-15 SPP arm: spp38_span recipe replayed at 4f33476c"*), **not** gitignored, mapping to no retained sidecar. Verified committed with `git ls-tree origin/main` — so this is **not** the local-working-tree false positive rule 31's 2026-09-16 correction describes; CI sees it | **the owner (a promotion/retention ruling), then whoever executes the `git rm -r`** | **The desk found it, routed it and did NOT delete it.** Rule 31 `[R-RETAIN]`'s bar is the OWNER's decision — "not needed in my judgement" is the ercot-255 reasoning verbatim — and `results/` is outside this desk's enumerated write scope besides. The record survives the bytes either way: `FINDING-soco-15-2026-09-13.md` carries the eight-footprint A/B at full magnitude, which is exactly what rule 29 (c) requires of a screen's record and what makes the bundle disposable **once ruled**. Until then it reddens `check_registry_payload_parity` on every PR, and a future sitting must not read it as another program's |
-| R-q | **The `-layup` merit-order guard is COAL-ONLY in SOCO**, because `data/raw/gas_basis_by_iso_month.csv` has **zero SOCO rows**: all 238 gas units of the 279-unit panel drop out and the ~15 priced units are the 17 coal. NWPP-30 §7.1 reproduced the same shape | **SOCO-32** (it lands the gas hub), then a re-derive | Bounded and stated: until a SOCO gas basis exists, the `-layup` companion must **not** be read as "SOCO has no economic gas layup" — it is a panel that never contained gas. A one-line consequence of a missing input, not a defect in the derive |
+| ~~R-q~~ **CLOSED r#10 — ANSWERED BY SOCO-32 WITH A REFUSAL THE DESK ACCEPTS.** `gas_basis_by_iso_month.csv` holds a **named trading-hub monthly index** (Transco Z6 NY, Algonquin Citygate) for the winter constrained-hub spike behind the dual-fuel gas→oil switch — a different object from a per-zone delivered-cost table, which cannot feed it. SOCO-12 measured that **no free public Southeast hub index exists**, and a 923-derived row would be **CIRCULAR**: `load_winter_gas_basis`'s documented fallback IS the 923 ISO-month series, so it would be the same series on both sides dressed as a constrained-hub index (rule 13 `[R-MEASURED]`; gate G17 refuses it by name). Bounded: SOCO's 923 series is live and carries a real winter signal — January **4.45 / 4.64 / 6.07** $/MMBtu vs summer 2.1–3.9 — so only the `-layup` *diagnostic panel* is affected, and the desk's own reading ("that panel never contained gas") stands. **The desk's routing was a fair read of SOCO-30's evidence; the lane's answer is better than the question.** Original text follows | SOCO-32 | — |
+| R-q *(original)* | **The `-layup` merit-order guard is COAL-ONLY in SOCO**, because `data/raw/gas_basis_by_iso_month.csv` has **zero SOCO rows**: all 238 gas units of the 279-unit panel drop out and the ~15 priced units are the 17 coal. NWPP-30 §7.1 reproduced the same shape | **SOCO-32** (it lands the gas hub), then a re-derive | Bounded and stated: until a SOCO gas basis exists, the `-layup` companion must **not** be read as "SOCO has no economic gas layup" — it is a panel that never contained gas. A one-line consequence of a missing input, not a defect in the derive |
 | R-r | **The tranche file's primary-group filter drops 15 `(plant, group)` pairs / 4,872.9 MW — including 2,954.5 MW (25.7 %) of SOCO's COAL.** SOCO has 7 mixed plants; Barry, Daniel and Gaston each lose their COAL row to a CC or ST primary, which also inflates Barry's `median_cf` to the 150.0 cap. `--per-unit-attribution` is **not** a safe fix as-is: its classifier keys on CAMPD `unitType`, a prime-mover descriptor with no coal concept, and on the 2024 panel it re-seats all three onto CC/ST and finds **zero** coal | the data-curation owner; a later `[FABLE]` lane for the arming half | **Inert for W4 and the desk is not making it a card.** `CAMPD_BINNING_ISOS` is `{ERCOT, CAISO, NEISO, NYISO, PJM, MISO}` — **verified in `capacity_market.py`** — so SOCO's per-plant path is never entered and nothing in W4 reads this file. SOCO's absence is also the **norm for a new region**, not an omission: NWPP's own `ISOConfig` docstring records the identical posture (*"legacy heat-rate bins … NWPP is absent from `CAMPD_BINNING_ISOS`"*, owner ruling N8) and SPP is absent too. SOCO-20's comment that SOCO-30 would add SOCO "with the artifact" is therefore **not a duty SOCO-30 failed** — it is `src/`, a declared `solve_surface` value (`65b4e3e163ffd580`), a gate-G8 cache-key move and a `[FABLE]` call. The artifact now exists and §6.2 is the evidence a later lever weighs |
 | R-s | **Four SOCO CC plants (6073, 7897, 55382, 57037) carry corrupt EIA-860 summer-capacity rows** and **1,412.3 MW is reconciled away at every fleet load** — existing committed behaviour, unchanged by SOCO-30, but every `unit_pct_of_plant` in the outage extract sits on that basis | the data-curation owner | Reported at full magnitude rather than silenced, as SOCO-32's charter also instructs for the same four plants. Three of the four are > 160 MW, so this is not a rounding-scale item |
 | R-t | **THE INTERFACE LIMITS ARE THE BINDING OBSTACLE ON SOCO'S PRICED SEAMS, WITH A NUMBER ON IT.** Seven of eight registered `interface_limit_mw` values are contradicted by SOCO's own meter: arming them would refuse **10.66 / 12.81 / 14.21 TWh = 35.6 / 39.0 / 41.7 %** of those seams' gross throughput; `SOCO_SCEG` (126 MW) is over limit in **99.8 %** of 2025 hours and would lose 8.68 of its 9.78 TWh. `SOCO_MISO` (2,374 MW) is the only seam never exceeded in any hour of any year | **lever SOCO-56** (W5) — not W4 | **Blocks nothing in the first keeper**: card S4 ruled the served measured schedule, and `spec.py` records that all eight priced blocks are inert until `reference_price_interface` is armed, which no keeper does. It does **not** say the published values are wrong — they are a correctly cited 2024 Reserve Margin Study *average import transfer capability*, an adequacy quantity. It says they are the **wrong quantity for a transfer limit**, which is rule 14 `[R-ACCURATE]`'s misalignment exception, whose instruction is a **reconciled** real quantity (posted firm ATC/TTC, or the measured envelope with a stated basis) — never a guess and never the estimate. SPP-51's ERCOT-tie reconciliation is the precedent `spec.py` already names. **This is a precondition on SOCO-56 ahead of any heat-rate work** |
 | R-u | **Both committed neighbour-heat-rate producers fail on `--iso SOCO`, and one fails SILENTLY.** `derive_neighbor_hr_by_year.py` exits **1** (`no neighbour anchor map registered in NEIGHBOR_LMP_ANCHORS`) — fail-closed, working as designed. `derive_neighbor_hr_elasticity.py` exits **0 with an empty table**: its `_NEIGHBOR_LMP_ISO` is still the pre-SPP-51 **global name map**, and SOCO's neighbours are named `SOCO_<DIBA>` *by design* (plan gate G10, rule 25), so **no** SOCO seam can ever resolve through it | the shared-producer owner (the same defect class SPP-51 fixed in the other producer) | SOCO-33 **routed both rather than patching a shared producer it does not own** — the STOP-and-route discipline again. Also routed by that lane and carried here so they are not lost: **`FLA hourly.parquet` ends 2025-01-31**, so `SOCO_FPL` / `SOCO_FPC` / `SOCO_TAL` have no 2025 load shape and cannot be priced that year (a fetch, a SOCO-56 precondition, **blocks nothing in the served keeper**); and the served scalar and the eight priced seams are **not the same quantity** — gross throughput roughly **doubles** — which is the step change rule 29 `[R-SCREEN]` makes SOCO-56 screen, its phase 0 computable with no LP from `soco_seam_diba_duration.csv` |
 | R-v | **Three EIA-930 data items SOCO-31 found, all reported with NO new constant proposed (rule 23).** (i) **2025 `demand.min_mw` = 12,638 MW is a one-hour partial post** (2025-10-23 21:00 UTC — `D` and `NG` both halve and both recover), **0.486× median against a documented 0.2 floor, which no existing screen catches**; (ii) the **EIA-930 balance identity `NG − D − TI` is exactly zero in every hour of 2023 and 2024 and nonzero in 633 hours of 2025** (−0.6963 TWh, 0.28 % of net generation); (iii) 2025 carries **no** `eia923_incomplete` flag (ratio 0.9533, the most complete of all nine regions) **but its peaker census is not complete** — 6 of 23 `CT_PEAKER` plants and 1 of 6 `CC_CHP` have filed, so **no SOCO pair is gate-eligible and a 2025 gas-split comparison must defer to EIA-930** | the data/curation owner (screens); **SOCO-40** inherits (iii) | Extends **R-h**, which said the repo's screens catch none of SOCO's real defects — (i) is a **fourth** defect class and it is on the LOW side, where `_screen_demand_dropouts` only tests exact 0.0. **No downward bound was invented**, which is the correct refusal: a threshold set after seeing the outlier is a fitted threshold |
+| R-w | **The EIA-930 `NG:` unit-slip screen DELETES A REAL SOCO COLD-SNAP OIL RUN — a rule 14 `[R-ACCURATE]` false positive already in the committed benchmark.** SOCO 2024 h386–392 is **2024-01-17 03:00–09:00, Winter Storm Heather**: 155 → 530 → 660 → 762 → **801** → 350 MW of `NG: OIL`, a coherent peaker start/ramp/shutdown tracking SOCO's winter peak hour for hour, whose 07:00 hour IS the **47,368 MW BA winter peak** this program has quoted since the charter. **4.4 GWh deleted; SOCO 2024 `NG: OIL` reads 0.0056 → 0.0012 TWh.** The screen fires only because a near-zero-baseline series has no operating scale (median **0.0 MW**, p99.9 **71.7 MW**), so its robust peak is meaningless. Found and published by **NWPP-37** (`e1e8d809`), which censused the two regions SPP-41 could not | the screen's owner (`eia930/actuals.py`) — **not this desk's file**; **SOCO-40 carries it on the determination basis** | **Pre-existing, not introduced** — it reached the benchmark through `load_eia_hourly_benchmark`. A fix needs a floor on the anchor or a minimum-baseline eligibility test and **both change the statistic**, so it is not a one-liner. **The contrast matters and the `NG: NG` flags should STAY**: 70,683 MW of gas in an hour whose entire net generation is 32,574 MW, four such hours in 2025 — a single fuel cannot exceed the total. Two other halves of the same seam change, both disclosed by NWPP-37 and both benign here: `build_calibration_reference`'s output is **byte-identical**, so SOCO-31's block is NOT stale and no keeper's C1/C4 moves; and the one SOCO series that moves is `measured_gas_floor_profile` (2025 `gas_floor` −19,759 MWh), which **no SOCO solve path reads today** |
+| R-x | **SOCO-32's own six routed items.** (1) **Re-fetch the FERC-714 parquet and the EIA-930 `SOCO` extract bounded on LOCAL time** — both end 2025-12-31T23 **UTC**, 7 hours short of the model's 2025 local year; doing it retires `_SOCO_MAX_UNCOVERED_HOURS` entirely. (2) **`_soco_config`'s static `load_share` is still the fleet-MW fallback** 0.3510 / 0.5842 / 0.0648 while the **measured** shares now exist at 0.2978 / 0.6442 / 0.0580 (three-year mean) and the hourly path uses them — a one-line re-key with a real basis. (3) EIA-923 and the EIA state delivered series disagree for **Alabama 2023 by 0.23 $/MMBtu**, both EIA products, neither obviously right. (4) **The MISO / PJM / SPP sibling hub tables carry a ~3.5 % UNIT BIAS** — they subtract a `$/MMBtu` Henry Hub from a `$/Mcf` state series; the heat-content-converted series reconciles to EIA-923 within 0.044 $/MMBtu, the raw one is 0.10–0.13 off. (5) `test_persisted_identity` is red on `main` for NYISO's solve-surface pin. (6) NWPP's committed solar-shape parquets now have a reader | (1)(2) SOCO-11's and SOCO-20's files · (3) EIA · (4) **the MISO / PJM / SPP lanes** (rule 25) · (5) NYISO's lane · (6) NWPP-DESK | Item (2) is the one a later SOCO lane most wants: the fallback fires only if BOTH the clean parquet and the raw file are absent, so it is inert today — but it is the number every doc quotes, and it is no longer the operative one. Item (4) is **another program's defect found by a SOCO lane that was unaffected by it** (SOCO's table is natively `$/MMBtu`), which is the cross-ISO value of a careful derive lane |
 
 ## 4. Collision register
 
@@ -846,6 +958,7 @@ option (a)).
 
 | Sitting | Date | Lanes issued | Cards served |
 |---|---|---|---|
+| r#10 | 2026-09-16 | **SOCO-40 ADDENDUM** (plan §8) — no new lane. G4 discharged; the NWPP-37 `NG: OIL` rule-14 defect added as a sixth required determination-basis line; the shard hard-stop share clarified as the static FALLBACK, not the operative measured share | **none served.** **S10** open. **R-p** (the `soco15_spp_arm` retention ruling) still with the owner |
 | r#9 | 2026-09-16 | **SOCO-40** `[FABLE]` — W4, the first-ever SOCO solve, pinned `a2dc6d3a`. Written out in full in plan §8, against SPP-40's committed charter **plus four corrections SPP's text cannot carry**: `--commitment` now errors without `--enable-legacy-p2` (verified in source, and a verbatim copy would have failed the solve); rules 32–35 make the lane an orchestrator whose shards PUSH their bundles; the v3.8 no-price class did not exist when SPP-40 was written; the shares are the five-respondent set. Ends with the pack's EXIT boilerplate including the `## Log entry` line | **none served.** **S10** stays open. **R-p** (the `soco15_spp_arm` retention ruling) remains with the owner from r#8 |
 | r#8 | 2026-09-16 | **NONE — and deliberately none.** All five W3 charters were issued at r#6 and four have since run; **SOCO-32's charter is already paste-ready in plan §8** and carries card S3's five-respondent precondition, so re-transcribing it would risk E-6's failure mode for no gain. The desk **asks its dispatch status** (gate G15) rather than re-issuing it. SOCO-40 is **not** issued: gate G4 is 2 of 3 | **none served.** **S10** stays open (W6 routing, due when a keeper exists). Two questions are put to the owner in the report — SOCO-32's dispatch status, and the **R-p** retention ruling on `soco15_spp_arm` — but neither is a design card and neither is minted as one |
 | r#0 | 2026-09-12 | none (charter commit) | none |
@@ -860,6 +973,34 @@ option (a)).
 
 *(The desk records its own mistakes here, in its own words, so the next refresh does not repeat
 them.)*
+
+**E-10 (r#10, against r#9 — and it is E-2's shape, seven sittings later). The desk carried a finding
+forward into a new sitting without re-deriving it against that sitting's own pin, and reported a
+duty the owner did not owe.**
+
+SOCO-34 merged as **PR #6191 at 04:43:09 UTC**. Two sittings read it differently and only one was
+wrong:
+- **r#8 was RIGHT on its evidence.** Its pin `e9e1f4f0` is **04:38:15 UTC**, five minutes before the
+  merge. *"Finished on its branch, no PR exists"* was true of that pin. The pin rotted under the
+  sitting, which handoff §0.5 says to expect and is nobody's error.
+- **r#9 was WRONG.** It pinned `a2dc6d3a`, which **already contained the merge**, and still reported
+  *"SOCO-34 needs a PR"* — in the ledger, in the PR body and in the report to the owner. One
+  `git merge-base --is-ancestor` would have caught it, and the desk had already fetched that pin.
+
+The specific defect is not the stale fact, it is the **method**: r#9 treated an r#8 conclusion as an
+input rather than re-deriving it. That is **exactly E-2's finding** (*"re-derive a block from the
+plan rather than copy it forward from your own last entry"*), which the desk wrote at r#2 about its
+own scoreboard and has now repeated about its own open-items list. It also inverts gate **G15** in
+the mirror direction: G15 stops the desk inferring a lane is LOST from absence, and here the desk
+inferred a lane was UNMERGED from the absence of an OPEN PR — when `state=open` returning `[]` is
+equally consistent with *merged five minutes ago*.
+
+**Adopted forward, and it is mechanical rather than a resolution to be careful: every open item the
+desk carries into a sitting is re-checked against THAT sitting's pin before it is reported, and for
+a branch the check is `git merge-base --is-ancestor <sha> origin/main`, never the presence of the
+branch or the absence of an open PR.** Cost: one wrong line to the owner and one wrong row in a PR
+body; nothing was built on it, because the item was a request for the owner to act rather than a
+premise for any work.
 
 **E-9 (r#8, against the desk's own W3 charter deltas — and it is the E-5 shape for the THIRD time).
 Two numbers the desk wrote into the W3 charters were wrong, and two different lanes had to correct

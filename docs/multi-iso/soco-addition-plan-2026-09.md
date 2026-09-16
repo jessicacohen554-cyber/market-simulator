@@ -276,10 +276,10 @@ SOCO-20 lands; before that, `shared`).
 | **SOCO-21** matrix shard | OPUS | code | `mechanism-matrix/SOCO.js`, base `isos`, `ISO_ORDER`/`ISO_EV_KEY`, `mechanism-matrix.html` tag, shard-migration test, dashboard colour | `scripts/check_mechanism_matrix.py` | ONE commit (gate G2) |
 | ~~**SOCO-30**~~ outages + tranches | OPUS · frozen derives | soco | **LANDED r#8 — GRADED PASS** (PR #6179/#6181). Six artifacts, 1,119 windows; **gate G4 both legs PASS**; three defects routed | G4 legs 1 & 2 | `FINDING-soco-30-2026-09-16.md` |
 | ~~**SOCO-31**~~ benchmarks | OPUS · frozen derives | soco | **LANDED r#8 — GRADED PASS** (PR #6185). **Gate G9 = EXACTLY ZERO**, verified by the desk from the diff: `calibration_reference.json` **+295 / −1**, the sole deletion the `generated` stamp | non-SOCO diff = ∅ (G9) | `FINDING-soco-31-2026-09-16.md` |
-| **SOCO-32** zonal shares + solar shape + gas hub | OPUS · frozen derives | soco | **RUNNING** (owner, r#9 — dispatch status ASKED and ANSWERED, gate G15 held: it was never graded LOST on absence). **SOCO-40's last open precondition** (gate G4) | shares sum to 1.0; five-respondent basis (card S3) | — |
+| ~~**SOCO-32**~~ zonal shares + solar shape + gas hub | OPUS · frozen derives | soco | **LANDED r#10 — GRADED PASS** (PR #6205/#6208). Shares reproduced on the model clock, residual **3.03 / 2.92 / 1.18 %**; card S3 honoured exactly (the six-set *not rebuilt, not evaluated, not tuned toward*); solar shape from **measured irradiance at all 482 plant-years**, r = 0.988/0.975/0.933 at shift +0 h, **nothing pinned**; **G8 holds — 0 values moved** | shares sum to 1.0; five-respondent basis (card S3) | `FINDING-soco-32-2026-09-16.md` |
 | ~~**SOCO-33**~~ seam derive | OPUS · derive only | soco | **LANDED r#8 — GRADED PASS** (PR #6180). Net-exporter sanity PASSES on both clocks; **G17 never approached**; the headline is the **interface limits**, 7 of 8 would refuse 36–42 % of measured flow | G19 sign convention verified | `FINDING-soco-33-2026-09-16.md` |
-| **SOCO-34** site + docs | OPUS | code | **FINISHED ON ITS BRANCH, NOT MERGED — NO PR EXISTS.** `claude/soco-34-site-docs-pxkmb5` @ `1f71ec097b3f4b7e4ef17a5f88225abdd4c988c5`, 16 files, FINDING shipped, **zero conflicts against `main`**. Graded r#8 by content off the branch: PASS. **The owner owes it a PR** | `check_registry_payload_parity` | `FINDING-soco-34-2026-09-16.md` (on the branch) |
-| **SOCO-40** first solve | **FABLE** · first-keeper determination | soco | **ISSUED r#9** (charter §8, pinned `a2dc6d3a`). ORCHESTRATOR — it never runs an LP (rule 32(a)): a screen shard on one year, then ONE span shard, ONE `--year 2023 2024 2025`, ONE bundle; both shards PUSH their bundles (rule 34(a)). No `--commitment` (P2 is archived and the flag now errors) | preconditions: SOCO-30 ✓ / SOCO-31 ✓ / SOCO-32 **running** | keeper registered with whatever determination it earns — `PHYSICALLY-CALIBRATED (PRICE UNSCORED)` at best, **never `CALIBRATED`** |
+| ~~**SOCO-34**~~ site + docs | OPUS | code | **LANDED — PR #6191, merged 2026-09-16 04:43:09 UTC**, five minutes after the r#8 pin (which is why r#8 read it unmerged, correctly, and r#9 did not — ledger E-10). **GRADED PASS** by content. `iso-topologies.json` now carries all nine regions; `index.html`'s 47/44/58 was **checked and found already correct** | `check_registry_payload_parity` | `FINDING-soco-34-2026-09-16.md` |
+| **SOCO-40** first solve | **FABLE** · first-keeper determination | soco | **ISSUED r#9 + ADDENDUM r#10 — DISPATCHABLE NOW.** ORCHESTRATOR; it never runs an LP (rule 32(a)): a screen shard on one year, then ONE span shard, ONE `--year 2023 2024 2025`, ONE bundle; both shards PUSH their bundles (rule 34(a)). No `--commitment` (P2 is archived and the flag now errors) | **GATE G4 FULLY DISCHARGED**: SOCO-30 ✓ SOCO-31 ✓ SOCO-32 ✓ | keeper registered with whatever determination it earns — `PHYSICALLY-CALIBRATED (PRICE UNSCORED)` at best, **never `CALIBRATED`** |
 
 ---
 
@@ -309,7 +309,7 @@ charter's owner ruling O-3 carries over).
 | G1 | Pin flips half-way: `_ISO_BUILDERS` without `DEMAND_LOADERS` (import-time assert), or `SURFACE_ISOS` left at seven | W2 | ONE PR; §2.3 is the SOCO-20 checklist |
 | G2 | Matrix atomicity: base `isos` + shard + `ISO_ORDER` + `ISO_EV_KEY` + html tag must land together; a shard missing an id hard-errors; every later lane must emit **8** cell lines | W2, forever | SOCO-21 single commit; cross-desk notice; every W3+ charter says "8 shards" |
 | G3 | `data-profiles.yaml` token collision on `soco` | W2 | re-measure the trap at SOCO-20's base sha + a unit test |
-| G4 | Solving before outages / benchmarks / zonal shares exist (an unscorable copperplate) | W3→W4 | SOCO-40 PRECONDITIONS: `git log origin/main --grep=SOCO-3[012]` all landed. **STATUS r#8: TWO OF THREE DISCHARGED, ONE OUTSTANDING.** SOCO-30 landed (its own two legs PASS: windows > 0 in every CEMS state-year — AL 196/206/240, GA 115/118/155, MS 21/31/37 = 1,119; and the 8 full-year rows are ALL the `eia923_netzero` structural fallback, **no unit fell back for want of data**). SOCO-31 landed. **SOCO-32 has not been dispatched** — no branch, no commit, no FINDING — so this gate is NOT discharged and **SOCO-40 is not issuable**. The gate is doing its job: without SOCO-32 there are no zonal shares, no solar shape and no gas hub, which is the unscorable copperplate this row names |
+| G4 | Solving before outages / benchmarks / zonal shares exist (an unscorable copperplate) | W3→W4 | SOCO-40 PRECONDITIONS: `git log origin/main --grep=SOCO-3[012]` all landed. **STATUS r#10: FULLY DISCHARGED — SOCO-30, SOCO-31 AND SOCO-32 ALL LANDED, so SOCO-40 is dispatchable.** (The r#8 reading, kept for the record:) **TWO OF THREE DISCHARGED, ONE OUTSTANDING.** SOCO-30 landed (its own two legs PASS: windows > 0 in every CEMS state-year — AL 196/206/240, GA 115/118/155, MS 21/31/37 = 1,119; and the 8 full-year rows are ALL the `eia923_netzero` structural fallback, **no unit fell back for want of data**). SOCO-31 landed. SOCO-32 had not been dispatched at that pin; it **LANDED at r#10** (PRs #6205/#6208) with its shares reproduced on the model clock and gate G8 holding at 0 moved values, which closes this gate. The gate is doing its job: without SOCO-32 there are no zonal shares, no solar shape and no gas hub, which is the unscorable copperplate this row names |
 | G5 | C6: `authorized_price_tuning` must be declared **even as NONE**; DOF ledger must exist; any band ≠ 1.0 in SOCO's generic fallback breaks rule 25 `[R-ISO-SCOPE]` | W4 | charter states it. **Note for SOCO specifically**: the rule-1 offer-curve carve-out exists to tune *market offers*. SOCO takes no offers — its dispatch is cost-based — so a SOCO band ≠ 1.0 needs a much stronger story than an RTO's, and the desk's posture is **bands stay 1.0 unless the owner rules otherwise** |
 | G6 | C3c needs `TAIL_THRESHOLD["SOCO"]` in three files + a regenerated `actual_tail.json` | W2 + W3 | **RESOLVED r#5 — the skip branch fired.** SOCO-13's STOP gate read **NO**, so card S2 yielded no series and **the three edits are deliberately skipped**, which is this gate's own pre-specified alternative and is documented here and at card S9. Nothing to regenerate |
 | G7 | `test_iso_coverage` sweeps: `QUEUE_CAP_PER_TECH_GW["SOCO"]`, carbon-`None`, "if `IMPORT_TRANCHES` then `IMPORT_ZONE`" | W2 | no import node ⇒ neither key ⇒ `build_import_generators("SOCO") == []` |
@@ -1226,6 +1226,58 @@ desk appends it VERBATIM and cannot write it for you.**
 Report to the owner: the determination and the criterion table FIRST, then the promotion question.
 ```
 
+
+#### SOCO-40 ADDENDUM `[FABLE]` — issued r#10 (2026-09-16, main `680d1d82`), to be pasted BENEATH the charter above
+
+```
+ADDENDUM to lane SOCO-40, issued after SOCO-32 landed. Everything in the charter above stands; these
+four items are added or corrected. Read them before you write your PRECOMMIT.
+
+(1) **GATE G4 IS NOW FULLY DISCHARGED — the charter's PRECONDITION block is satisfied.** SOCO-30, SOCO-31
+    AND SOCO-32 are all on main (PRs #6179/#6181, #6185, #6205/#6208). Verify it yourself anyway —
+    `git log origin/main --grep=SOCO-32` — and STOP if you cannot. SOCO-34 also landed (PR #6191), so
+    the charter's "if it has not merged, register anyway" clause is moot.
+
+(2) **A SIXTH LINE FOR THE DETERMINATION BASIS — SOCO `NG: OIL` IS A RULE-14 FALSE POSITIVE ALREADY IN
+    YOUR BENCHMARK.** The EIA-930 `NG:` unit-slip screen DELETES a real SOCO cold-snap oil run:
+    2024-01-17 03:00-09:00, Winter Storm Heather — 155 -> 530 -> 660 -> 762 -> 801 -> 350 MW of
+    `NG: OIL`, a coherent peaker start, ramp and shutdown tracking SOCO's winter peak hour for hour,
+    whose 07:00 hour IS the 47,368 MW BA winter peak this program has quoted since the charter. 801 MW
+    against 47,123 MW of net generation is entirely possible. The screen fires only because a
+    near-zero-baseline series has no operating scale — median 0.0 MW, p99.9 71.7 MW — so its robust
+    peak is meaningless. **SOCO 2024 `NG: OIL` reads 0.0056 -> 0.0012 TWh: 4.4 GWh of real generation
+    deleted.** Found and published by NWPP-37 (`e1e8d809`, `FINDING-nwpp-37-2026-09-16.md` §6), which
+    censused the two regions SPP-41 could not.
+    **What this means for you, precisely:** your C1 `fuelmix` oil benchmark is biased LOW in 2023-24,
+    and a model that dispatches that oil correctly will score as over-generating oil against it. **State
+    it on the determination basis; do NOT correct the benchmark, do NOT exclude the hours, and do NOT
+    tune anything toward or away from it** (rules 13 and 1). It is pre-existing, it is not yours to fix
+    — a repair needs a floor on the anchor or a minimum-baseline eligibility test and both change the
+    statistic — and it is routed as desk item R-w.
+    **The contrast matters and you should not generalise from it:** the SOCO `NG: NG` flags are
+    unambiguous and correct — 70,683 MW of gas in an hour whose entire net generation is 32,574 MW, four
+    such hours in 2025. A single fuel cannot exceed the total. The screen is right there and wrong on
+    oil; say which is which rather than distrusting the screen as a whole.
+
+(3) **THE SHARD HARD-STOP SIGNATURE IS STILL `0.3510 / 0.5842 / 0.0648` AND IT STAYS — BUT KNOW WHAT
+    OBJECT YOU JUST VERIFIED.** Since SOCO-32 landed, those are the STATIC FLEET-MW FALLBACK in
+    `_soco_config`, which fires only if the clean parquet AND the raw file are both absent. The
+    operative hourly shares are the MEASURED ones: **0.2978 / 0.6442 / 0.0580** (three-year mean;
+    per-year AL 0.3022/0.2974/0.2939, GA 0.6382/0.6450/0.6493, MS 0.0596/0.0576/0.0568). Keep the hard
+    stop — it is a cheap config-identity check and it is still literally correct — and report BOTH in
+    your phase-0 census, so nobody reads the fallback as the share your solve used. Re-keying the static
+    value is desk item R-x(2) and is NOT yours.
+
+(4) **YOUR BENCHMARK IS NOT STALE, and here is the proof so you do not spend a phase-0 check on it.**
+    NWPP-37 moved the `NG:` screen from three per-reader call sites to the frame constructors in the
+    same window SOCO-31 landed. `build_calibration_reference`'s own output is **byte-identical** — its
+    per-member screen and the new placement agree — so SOCO-31's `calibration_reference.json` block
+    stands and no registered keeper's C1/C4 moves. The one SOCO series that moved is
+    `measured_gas_floor_profile` (2025 `gas_floor` -19,759 MWh), and **no SOCO solve path reads it
+    today**. If your own census disagrees with any of that, STOP and route it — do not reconcile it
+    quietly.
+```
+
 ---
 
 ## 9. Findings index
@@ -1245,7 +1297,8 @@ Report to the owner: the determination and the criterion table FIRST, then the p
 | SOCO-31 | `docs/handoffs/FINDING-soco-31-2026-09-16.md` — **the scoring benchmarks; GATE G9 PASSES with the non-SOCO diff measured as EXACTLY ZERO** (eight regions byte-identical, 39/39 CSVs byte-identical, whole-file +295/−1 with the one deletion the `generated` stamp); SOCO 2023–2025 demand 229.47 / 238.70 / 239.56 TWh and a **net EXPORT of +10.16 / +10.81 / +13.03 TWh every year**; `actual_lmp.json` UNTOUCHED and the G6 skip **verified by execution** (both derives emit zero SOCO rows), G17 upheld; **R-i stated for the determination basis** — 1,306.6 MW of pumped storage UNOBSERVABLE in EIA-930 for 2023 and 99.7 % of 2024 | 2026-09-16 |
 | SOCO-30 | `docs/handoffs/FINDING-soco-30-2026-09-16.md` — **1,119 outage windows** over AL/GA/MS × 2023–25, six artifacts, no flag or constant changed; **gate G4 leg 1 PASS** (no state-year zero) and **leg 2 PASS** (8 full-year rows, ALL the `eia923_netzero` structural fallback, **zero measured full-year CEMS outages**); coverage re-measured **95.95 %** of the 50,004.8 MW CEMS-eligible fossil footprint and **the charter's 91.6 % premise corrected — it was the MISSING share before SOCO-11 landed AL/GA**; Vogtle emits zero rows; three defects routed | 2026-09-16 (PR #6179/#6181) |
 | SOCO-33 | `docs/handoffs/FINDING-soco-33-2026-09-16.md` — the seam derive, six files, **derive only**. Net-EXPORTER sanity PASSES on both clocks (+10.156 / +10.807 / +13.032 TWh served; +10.155 / +10.832 / +13.039 summed over nine DIBA legs, every residual explained); **G19 sign convention VERIFIED by a shift test**, not asserted; **G17 never approached** — every anchor is the neighbour's own price on the neighbour's own side. **HEADLINE: seven of eight registered `interface_limit_mw` values are contradicted by SOCO's own meter** — arming them would refuse **35.6 / 39.0 / 41.7 %** of measured flow | 2026-09-16 (PR #6180) |
-| SOCO-34 | `docs/handoffs/FINDING-soco-34-2026-09-16.md` — **ON ITS BRANCH, NOT ON `main`.** SOCO wired into the site's nine-region surface; `index.html`'s 47 / 44 / 58 **checked rather than assumed and found already correct** (39+5+3, 36+5+3, 47+9+2), measured two independent ways; NWPP-35's four cited debts all discharged; the calibration-log header refreshed with **all nine existing entries intact** | **not landed** — no PR |
+| SOCO-34 | `docs/handoffs/FINDING-soco-34-2026-09-16.md` — **LANDED, PR #6191.** SOCO wired into the site's nine-region surface; `index.html`'s 47 / 44 / 58 **checked rather than assumed and found already correct** (39+5+3, 36+5+3, 47+9+2), measured two independent ways; NWPP-35's four cited debts all discharged; the calibration-log header refreshed with **all nine existing entries intact** | 2026-09-16 (PR #6191) |
+| SOCO-32 | `docs/handoffs/FINDING-soco-32-2026-09-16.md` — zonal load shares on the model clock (**AL 0.3022 / GA 0.6382 / MS 0.0596** in 2023; residual **3.03 / 2.92 / 1.18 %**, SOCO-11's five-respondent diagnostic reproduced independently); a NEW per-zone solar-shape builder on **measured all-sky irradiance at all 482 plant-years** reconciling to `NG: SUN` at **shift +0 h, r = 0.988 / 0.975 / 0.933** with **nothing pinned**; a 9-row zonal gas hub from per-plant EIA-923 with **no applier armed**; **G8 HOLDS — `solve_surface_register --diff` 0 moved / 0 added / 0 removed**, and 3 of 54 renewable-shape cells move, all `SOCO\|solar`; **card S3 honoured exactly** — the six-respondent set not rebuilt, not evaluated, not tuned toward; 51 new tests and **all 9 suite failures carrying same-tree controls**; **R-q ANSWERED with a measured refusal** | 2026-09-16 (PR #6205/#6208) |
 
 ## 10. Ledger
 
