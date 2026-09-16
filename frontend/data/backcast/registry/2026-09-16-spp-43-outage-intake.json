@@ -1,0 +1,99 @@
+{
+ "id": "2026-09-16-spp-43-outage-intake",
+ "label": "spp 43 outage intake",
+ "date": "2026-09-16",
+ "shorthand": "spp-43-outage-intake",
+ "definition": "SPP-43: keeper 12's recipe replayed UNREVISED on the 2019-2022 held-out span with the newly intaken CAMPD unit-outage extracts in place. No config change, no --set. Control = the committed results/calibration/spp40_holdout bundle (rule 29(b) form 4).",
+ "years": [
+  2019,
+  2020,
+  2021,
+  2022
+ ],
+ "iso": "SPP",
+ "file": "frontend/data/backcast/runs/2026-09-16-spp-43-outage-intake.js",
+ "bundle": "results/calibration/spp43_holdout_span",
+ "holdout": {
+  "tier": "validation",
+  "year": 2022,
+  "keeper": "2026-09-16-spp-42-commitment-feasibility",
+  "keeperDetermination": "CALIBRATED",
+  "keeperYears": [
+   2023,
+   2024,
+   2025
+  ],
+  "holdoutDetermination": "NOT-YET",
+  "criteria": [
+   {
+    "key": "dispatch_corr",
+    "label": "C4 fleet hourly dispatch correlation",
+    "tier": "supporting",
+    "inSample": "PASS",
+    "holdout": "FAIL",
+    "verdict": "degraded"
+   },
+   {
+    "key": "fuelmix",
+    "label": "C1 fuel-mix by class (grid-delivered)",
+    "tier": "load-bearing",
+    "inSample": "PASS",
+    "holdout": "FAIL",
+    "verdict": "degraded"
+   },
+   {
+    "key": "price_mean",
+    "label": "C3a mean LMP",
+    "tier": "load-bearing",
+    "inSample": "PASS",
+    "holdout": "FAIL",
+    "verdict": "degraded"
+   },
+   {
+    "key": "price_shape",
+    "label": "C3b price duration/shape",
+    "tier": "load-bearing",
+    "inSample": "PASS",
+    "holdout": "FAIL",
+    "verdict": "degraded"
+   },
+   {
+    "key": "price_tail",
+    "label": "C3c price tail / scarcity (RT hourly)",
+    "tier": "supporting",
+    "inSample": "CAVEAT",
+    "holdout": "CAVEAT",
+    "verdict": "carried"
+   },
+   {
+    "key": "forced_share",
+    "label": "C8 forced-energy share (D-2)",
+    "tier": "protective",
+    "inSample": "PASS",
+    "holdout": "PASS",
+    "verdict": "held"
+   },
+   {
+    "key": "governance",
+    "label": "C6 governance gate",
+    "tier": "protective",
+    "inSample": "PASS",
+    "holdout": "PASS",
+    "verdict": "held"
+   },
+   {
+    "key": "sysvol",
+    "label": "C2 system volume (gas/coal families)",
+    "tier": "load-bearing",
+    "inSample": "PASS",
+    "holdout": "PASS",
+    "verdict": "held"
+   }
+  ],
+  "nDegraded": 4,
+  "nCarried": 1,
+  "tierCaveat": "REPORTED, NEVER GATING (rule 30 [R-TOUCHPOINT-FOLD] (c)). SPP's calibration determination is keeper 12's 2023-2025 verdict and nothing else; these four years can neither certify nor decertify it. They are also NOT a certified out-of-sample skill number: [R-HOLDOUT] and its three-tier train/validation/locked-test regime were REMOVED 2026-09-09, so no year in this program is protected from being iterated against and there is no certified out-of-sample number anywhere in it (rule 22 coda). What these years ARE is model-SELECTION evidence: the recipe is keeper 12's, fixed on 2023-2025 and applied here UNREVISED, with no re-cut parameter and no --set.",
+  "envelopeCaveat": "SPP-43 (2026-09-16) \u2014 THE AVAILABILITY ENVELOPE IS WHAT THIS RUN CHANGED, so the delta against 2026-09-13-spp-40-holdout-span is NOT a like-for-like envelope and must not be read as one. Its predecessor's four years were solved with SPP's CAMPD unit-outage extracts covering 2023-2025 ONLY (ZERO rows in 2019-2022), so availability there was the FLAT EFOR BASELINE and every outage-conditioned mechanism was inert \u2014 which is why keeper 12's commitment-feasibility clip measured '21 floored plant-groups tested, 0 infeasible plant-hours, 0.0 MWh released' on exactly these years. SPP-43 intaked those four years from the same 13-state CAMPD panel the committed block was derived on, at the deriver's FROZEN settings, differing only in --years (rule 23 [R-FROZEN-DERIVE]: extending a year range on unchanged source data is a FIRST derivation, not a re-derivation against a residual). ADDITIVE AND PROVEN: 3,803 / 1,069 added rows, ZERO removals, the committed 2023-2025 bytes unchanged including line positions, no new row with outage_end >= 2023-01-01, and the LP's own 2023-2025 availability multiplier arrays BYTE-IDENTICAL before and after (all six), so the keeper's scored years cannot move and were not re-solved. THE DELTA IS THEREFORE THE JOINT EFFECT OF THE INTAKE AND KEEPER 12's CLIP, AND THE TWO ARE NOT SEPARABLE BY CONSTRUCTION: SPP-42 measured the clip PROVABLY INERT on these years without the extract, so the data is the enabling condition and the clip the mechanism. WHAT MOVED, REPORTED AT FULL MAGNITUDE: the C8 ST_GAS forced-share breach SPP-40 named is CLOSED \u2014 FAIL on all four years -> PASS (2019 0.3423 -> 0.1156, 2020 0.3014 -> 0.1211, 2021 0.5041 -> 0.2467, 2022 0.5556 -> 0.3142, the last clearing rule 20's grounded-above-budget route on D-4 provenance plus D-1 shape). NUMERATOR AND DENOMINATOR SEPARATED, because reading the ratio alone is the trap this lane was warned about: the whole improvement is NUMERATOR (forced_twh 5.0294/4.7849/5.4248/5.4898 -> 1.7035/1.7040/1.9543/2.3652) and the DENOMINATOR moved AGAINST it in three of four years (class_total_twh 14.6909/15.8746/10.7616/9.8806 -> 14.7341/14.0692/7.9206/7.5281). D-4 per-unit conduct FAIL rows 33 -> 4, the survivors being plant 3008 in 2019-2021 and a marginal plant 1230 in 2019 (46 binding hours, down from 1391) \u2014 3008 being the fleet's one measured two-shifter, whose defect SPP-27 identified as the WITHIN-DAY grain and never this clip. THE COSTS, DECLARED NOT DISCOVERED: 2022 gains 563.6284 MWh of slack where the control had 0.0000 and its max system price goes 85.58 -> 1102.55 $/MWh; 2020 degrades across the board (C3a +24.0% now FAILs, C3b 0.231 -> 0.319, a new C1 COAL_PRB -10.85 TWh row, reported-only CO2 -4.8% -> +17.5%). Load-weighted price rises 19.8177 -> 22.3866, 18.0677 -> 20.4872, 29.4211 -> 40.1673, 33.7319 -> 43.6848; energy is conserved to <= 0.0159 TWh on 262-288 TWh and dump stays 0.0000 everywhere. The determination remains NOT-YET on four unchanged FAIL criteria, with grade 2 -> 3 and fails 5 -> 4.",
+  "caveats_authored_by": "SPP-43 (2026-09-16). scripts/stamp_touchpoint_holdout.py's hardcoded defaults are NEISO-specific and [R-HOLDOUT]-era: they assert a CAMPD availability-envelope PARITY story that is the exact opposite of this run's object, and state that 'the touch-once locked test (2019 / H1-2026) is NOT spent here' when 2019 IS one of this bundle's four years and the touch-once regime no longer exists. Both fields have ZERO consumers \u2014 the Run Explorer panels that rendered them were DELETED by the rule 30 [R-TOUCHPOINT-FOLD] (a) amendment of 2026-09-06 \u2014 so this corrects inert-but-false committed prose, not a render path. The stamper defect is REPORTED, not patched: it is shared infrastructure other ISOs' stamped runs carry, and repairing it is not this lane's object (rule 25 [R-ISO-SCOPE]). A RE-STAMP RESETS THESE FIELDS \u2014 re-apply after any re-registration."
+ }
+}
