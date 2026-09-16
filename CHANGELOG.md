@@ -1,5 +1,33 @@
 # Changelog
 
+## 2026-09-16 — SOCO desk r#10: W3 closes — SOCO-32 lands PASS, gate G4 fully discharged, SOCO-40 dispatchable
+
+**Records only — no code, no data, no registry, no solve.**
+
+- **SOCO-32 LANDED and GRADED PASS** (PRs #6205/#6208). Shares reproduced on the model clock (residual
+  **3.03 / 2.92 / 1.18 %**); **card S3 honoured exactly** — the six-respondent set *not rebuilt, not
+  evaluated, not tuned toward*; solar shape from **measured all-sky irradiance at all 482 plant-years**,
+  r = 0.988 / 0.975 / 0.933 at shift +0 h, **nothing pinned**; **G8 holds, 0 values moved**; 51 new tests
+  and all 9 suite failures carrying same-tree controls — the third lane running to that standard.
+- **W3 is five for five and gate G4 is FULLY DISCHARGED**, so **SOCO-40 is dispatchable**. An **ADDENDUM**
+  is issued with it (plan §8).
+- **R-q CLOSED — answered by SOCO-32 with a refusal the desk accepts.** A SOCO row in
+  `gas_basis_by_iso_month.csv` would be **circular**: `load_winter_gas_basis`'s documented fallback IS
+  the EIA-923 ISO-month series, so a 923-derived "hub index" would be the same series on both sides of
+  the comparison (rule 13 `[R-MEASURED]`, gate G17). No free public Southeast hub index exists.
+- **R-w NEW — the EIA-930 `NG:` unit-slip screen deletes a REAL SOCO cold-snap oil run.** 2024-01-17
+  03:00–09:00, Winter Storm Heather, peaking **801 MW**, tracking SOCO's **47,368 MW** winter peak hour
+  for hour; **4.4 GWh deleted** (`NG: OIL` 0.0056 → 0.0012 TWh). A rule 14 `[R-ACCURATE]` false positive
+  on a near-zero-baseline series, pre-existing and already in the committed benchmark, found by NWPP-37.
+  Added to SOCO-40's determination basis; **not corrected, not excluded, not tuned toward**. The `NG: NG`
+  flags are correct and stay.
+- **R-x NEW** — SOCO-32's six items, including a **~3.5 % unit bias in the MISO / PJM / SPP hub tables**
+  (a `$/MMBtu` Henry Hub subtracted from a `$/Mcf` state series), found by a SOCO lane that is unaffected
+  by it.
+- **E-10 against the desk**: r#9 reported "SOCO-34 needs a PR" against a pin that already contained its
+  merge — an r#8 conclusion carried forward instead of re-derived. E-2's shape, seven sittings on.
+- `docs/calibration-log/soco.md` gains soco-32 and soco-34 **verbatim** (thirteen entries).
+
 ## 2026-09-16 — SOCO desk r#9: W4 issued — SOCO-40, the first-ever SOCO solve
 
 **Records only — no code, no data, no registry, no solve.** W4 is one lane, so this is the whole wave.
