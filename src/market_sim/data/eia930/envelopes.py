@@ -1861,8 +1861,23 @@ def nwpp_net_interchange(year: int) -> np.ndarray | None:
     ``served = Σ₁₇ (NG_adj − D_adj) − GRID→{PNM, SRP, WALC}``. Sign follows
     :func:`_eia930_net_interchange`: positive raises what the internal fleet
     must serve. Reported, not used: the external-DIBA sum (+12.5 / +17.0 /
-    +21.2 TWh) inherits BPAT's per-leg over-report. The residual adjudication
-    of the BPAT/GRID source conflict is routed (FINDING-nwpp-20 §5; NWPP-34).
+    +21.2 TWh) inherits BPAT's per-leg over-report.
+
+    The BPAT/GRID source conflict this construction routes around was
+    ADJUDICATED by lane NWPP-34 (``docs/handoffs/FINDING-nwpp-34-2026-09-14.md``),
+    which confirms fact 1 and adds the evidence it rested on. BPAT's TI steps
+    onto the repaired convention in ONE hour — hour-ending 2025-06-01 00:00
+    Pacific, where TI falls 4,828 MW (its single largest hourly move of 2025)
+    while Demand and Net generation move at their 80th percentile — and the
+    two constructions then CONVERGE: over the 5,129 post-step hours
+    ``Σ (NG−D)`` and ``Σ TI`` agree to 0.470 TWh (mean gap +92 MW) against
+    83.604 TWh (+3,950 MW) over the 21,166 hours before it. ``Σ (NG−D)`` is
+    therefore the construction that is stable across the reporting change, on
+    a natural experiment rather than on a choice of which column to trust.
+    BPAT's over-report is confined to its INTERNAL legs (mirror asymmetry
+    +16.3 / +15.7 / −4.0 TWh against partners) while its CAISO-facing leg
+    mirrors CISO's own book to −0.001 / +0.057 / +0.022 TWh. Pinned by
+    ``tests/unit/data/test_nwpp_served_interchange_trap.py``.
     ``None`` when the pool frame for ``year`` is unavailable.
     """
     frame = _eia_hourly_frame_filled("NWPP", year)
