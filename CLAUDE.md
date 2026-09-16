@@ -428,9 +428,18 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
     - **What discharges the delete-before-merge duties is `.gitignore`, not `rm`.** Rule 29
       `[R-SCREEN]` (c) and rule 15 `[R-DASHBOARD]`'s keeper-only retention both govern **what
       reaches `main` and what the dashboard shows** — neither has ever required erasing a
-      working-tree file. Add the bundle family to `.gitignore` the moment it is written; the
-      parity gate (`check_registry_payload_parity.py`) only ever sees committed dirs, so an
-      ignored bundle can sit on local disk indefinitely without turning anything red.
+      working-tree file. Add the bundle family to `.gitignore` the moment it is written; **in
+      CI**, which checks out only what is committed, an ignored bundle then turns nothing red.
+      *(CORRECTED 2026-09-16, pjm-h8, code-is-source-of-truth: this clause read "the parity gate
+      (`check_registry_payload_parity.py`) only ever sees committed dirs", and that is FALSE as
+      implemented — `check_registry_payload_parity.py:437` sweeps `calib_root.iterdir()`, a
+      FILESYSTEM walk, so a gitignored bundle sitting in a session's own working tree DOES turn
+      the gate RED **locally** while CI stays green. The remedy is unchanged and the rule's
+      substance is untouched — `.gitignore` still discharges the duty, and `rm` is still never
+      required — but a lane that runs the gate locally over its own screen bundles should expect
+      that RED and must not "fix" it by deleting a result rule 31 protects. Either pass the
+      bundle's parent a clean checkout, or read the gate's unmapped-dir list and confirm every
+      entry is one of its own gitignored bundles before treating the gate as green.)*
     - **Delete only on one of two triggers**: (i) the owner has ruled on promotion and the
       bundle is not needed — a superseded, pruned or declined run may then be removed, and git
       history plus the RESULT doc remain the record exactly as rules 15/29 say; or (ii) the disk

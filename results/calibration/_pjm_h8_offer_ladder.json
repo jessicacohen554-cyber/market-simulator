@@ -1,0 +1,588 @@
+{
+ "what": "model bid vs PJM's OWN measured offer level at the same within-plant capacity share, in implied gas heat rate (price / delivered gas day)",
+ "measured_source": "data/raw/_validation-source/pjm_offer_midcurve_condbinned.json",
+ "years": {
+  "2023": {
+   "bundle": "pjm_d4_4_A",
+   "gas_mean": 3.2024383561643837,
+   "coal_mw": 49371.67140000001,
+   "year_tables": [
+    "CC_LIKE",
+    "CT_FAST",
+    "LONG_RUN"
+   ],
+   "bands": {
+    "committed": {
+     "mw": 12550.2771,
+     "n_rows": 64,
+     "share_capwtd": 0.43399239297391934,
+     "model_implied_gas_hr": 6.116963540722652,
+     "measured_implied_gas_hr": 8.488462186511912,
+     "model_over_measured": 0.720620933016872,
+     "priced_by_midcurve_in_P1": false
+    },
+    "econ": {
+     "mw": 20643.268200000002,
+     "n_rows": 354,
+     "share_capwtd": 0.722854432461544,
+     "model_implied_gas_hr": 9.076858142518248,
+     "measured_implied_gas_hr": 9.720754282756472,
+     "model_over_measured": 0.9337606813721828,
+     "priced_by_midcurve_in_P1": true
+    },
+    "mustrun": {
+     "mw": 14062.1927042,
+     "n_rows": 52,
+     "share_capwtd": 0.17792899900777734,
+     "model_implied_gas_hr": 1.4106583072100316,
+     "measured_implied_gas_hr": 7.856219620265627,
+     "model_over_measured": 0.17955942875771283,
+     "priced_by_midcurve_in_P1": false
+    },
+    "peak": {
+     "mw": 992.3844,
+     "n_rows": 63,
+     "share_capwtd": 0.8430397440021451,
+     "model_implied_gas_hr": 10.18864372764047,
+     "measured_implied_gas_hr": 10.356749064999736,
+     "model_over_measured": 0.9837685226991381,
+     "priced_by_midcurve_in_P1": true
+    },
+    "sync": {
+     "mw": 1123.5489958,
+     "n_rows": 20,
+     "share_capwtd": 0.8707600927413692,
+     "model_implied_gas_hr": 13.668381002635233,
+     "measured_implied_gas_hr": 10.46853648736773,
+     "model_over_measured": 1.3056630235877498,
+     "priced_by_midcurve_in_P1": false
+    }
+   },
+   "by_class": {
+    "COAL": {
+     "committed": {
+      "mw": 12550.2771,
+      "n_rows": 64,
+      "share_capwtd": 0.43399239297391934,
+      "model_implied_gas_hr": 6.116963540722652,
+      "measured_implied_gas_hr": 8.488462186511912,
+      "model_over_measured": 0.720620933016872,
+      "priced_by_midcurve_in_P1": false
+     },
+     "econ": {
+      "mw": 20643.268200000002,
+      "n_rows": 354,
+      "share_capwtd": 0.722854432461544,
+      "model_implied_gas_hr": 9.076858142518248,
+      "measured_implied_gas_hr": 9.720754282756472,
+      "model_over_measured": 0.9337606813721828,
+      "priced_by_midcurve_in_P1": true
+     },
+     "mustrun": {
+      "mw": 14062.1927042,
+      "n_rows": 52,
+      "share_capwtd": 0.17792899900777734,
+      "model_implied_gas_hr": 1.4106583072100316,
+      "measured_implied_gas_hr": 7.856219620265627,
+      "model_over_measured": 0.17955942875771283,
+      "priced_by_midcurve_in_P1": false
+     },
+     "peak": {
+      "mw": 992.3844,
+      "n_rows": 63,
+      "share_capwtd": 0.8430397440021451,
+      "model_implied_gas_hr": 10.18864372764047,
+      "measured_implied_gas_hr": 10.356749064999736,
+      "model_over_measured": 0.9837685226991381,
+      "priced_by_midcurve_in_P1": true
+     },
+     "sync": {
+      "mw": 1123.5489958,
+      "n_rows": 20,
+      "share_capwtd": 0.8707600927413692,
+      "model_implied_gas_hr": 13.668381002635233,
+      "measured_implied_gas_hr": 10.46853648736773,
+      "model_over_measured": 1.3056630235877498,
+      "priced_by_midcurve_in_P1": false
+     }
+    },
+    "ST_GAS": {
+     "committed": {
+      "mw": 2432.3181999999993,
+      "n_rows": 20,
+      "share_capwtd": 0.5782778210104255,
+      "model_implied_gas_hr": 11.255946484474602,
+      "measured_implied_gas_hr": 9.24859102111928,
+      "model_over_measured": 1.217044462099308,
+      "priced_by_midcurve_in_P1": false
+     },
+     "econ": {
+      "mw": 7364.3568000000005,
+      "n_rows": 29,
+      "share_capwtd": 0.3806358494607431,
+      "model_implied_gas_hr": 11.024083644899132,
+      "measured_implied_gas_hr": 8.248602892202852,
+      "model_over_measured": 1.3364788909064655,
+      "priced_by_midcurve_in_P1": true
+     },
+     "peak": {
+      "mw": 1728.8249999999996,
+      "n_rows": 20,
+      "share_capwtd": 0.89833044119561,
+      "model_implied_gas_hr": 17.875501264128342,
+      "measured_implied_gas_hr": 10.581407964947292,
+      "model_over_measured": 1.6893310723245876,
+      "priced_by_midcurve_in_P1": true
+     }
+    },
+    "CC_REGULAR": {
+     "committed": {
+      "mw": 28818.032217376494,
+      "n_rows": 75,
+      "share_capwtd": 0.28388691997675025,
+      "model_implied_gas_hr": 6.359161715334253,
+      "measured_implied_gas_hr": 5.139486310020054,
+      "model_over_measured": 1.2373146520375573,
+      "priced_by_midcurve_in_P1": false
+     },
+     "econ": {
+      "mw": 27774.532859114137,
+      "n_rows": 450,
+      "share_capwtd": 0.6602602611791952,
+      "model_implied_gas_hr": 8.136187740958215,
+      "measured_implied_gas_hr": 6.19293222854257,
+      "model_over_measured": 1.3137860129422032,
+      "priced_by_midcurve_in_P1": true
+     },
+     "peak": {
+      "mw": 3944.885519761499,
+      "n_rows": 58,
+      "share_capwtd": 0.9504059252604431,
+      "model_implied_gas_hr": 34.51946862766898,
+      "measured_implied_gas_hr": 11.043157774441422,
+      "model_over_measured": 3.125869369317692,
+      "priced_by_midcurve_in_P1": true
+     }
+    },
+    "CT_PEAKER": {
+     "committed": {
+      "mw": 3529.2365600000003,
+      "n_rows": 70,
+      "share_capwtd": 0.10469003707986069,
+      "model_implied_gas_hr": 10.589203846634643,
+      "measured_implied_gas_hr": 31.22137613539994,
+      "model_over_measured": 0.33916518607993756,
+      "priced_by_midcurve_in_P1": false
+     },
+     "econ": {
+      "mw": 20414.892939999998,
+      "n_rows": 678,
+      "share_capwtd": 0.5176122959462359,
+      "model_implied_gas_hr": 13.086911225255255,
+      "measured_implied_gas_hr": 27.003852344782842,
+      "model_over_measured": 0.48463126883389485,
+      "priced_by_midcurve_in_P1": true
+     },
+     "peak": {
+      "mw": 2413.780499999999,
+      "n_rows": 119,
+      "share_capwtd": 0.9290320671245794,
+      "model_implied_gas_hr": 38.50286720352661,
+      "measured_implied_gas_hr": 31.93506070922772,
+      "model_over_measured": 1.2056613123143713,
+      "priced_by_midcurve_in_P1": true
+     }
+    }
+   },
+   "elapsed_s": 15.8
+  },
+  "2024": {
+   "bundle": "pjm_d4_4_A",
+   "gas_mean": 2.916219178082192,
+   "coal_mw": 49371.67140000001,
+   "year_tables": [
+    "CC_LIKE",
+    "CT_FAST",
+    "LONG_RUN"
+   ],
+   "bands": {
+    "committed": {
+     "mw": 12550.2771,
+     "n_rows": 64,
+     "share_capwtd": 0.43399239297391934,
+     "model_implied_gas_hr": 6.680589541573612,
+     "measured_implied_gas_hr": 8.632316913336936,
+     "model_over_measured": 0.7739045737827461,
+     "priced_by_midcurve_in_P1": false
+    },
+    "econ": {
+     "mw": 20643.268200000002,
+     "n_rows": 354,
+     "share_capwtd": 0.722854432461544,
+     "model_implied_gas_hr": 10.02414769676844,
+     "measured_implied_gas_hr": 9.866954383712136,
+     "model_over_measured": 1.0159312901370854,
+     "priced_by_midcurve_in_P1": true
+    },
+    "mustrun": {
+     "mw": 14062.1927042,
+     "n_rows": 52,
+     "share_capwtd": 0.17792899900777734,
+     "model_implied_gas_hr": 1.6245487364620939,
+     "measured_implied_gas_hr": 7.84947082214675,
+     "model_over_measured": 0.20696283523706333,
+     "priced_by_midcurve_in_P1": false
+    },
+    "peak": {
+     "mw": 992.3844,
+     "n_rows": 63,
+     "share_capwtd": 0.8430397440021451,
+     "model_implied_gas_hr": 11.229286453361775,
+     "measured_implied_gas_hr": 10.548173711339752,
+     "model_over_measured": 1.0645716273414987,
+     "priced_by_midcurve_in_P1": true
+    },
+    "sync": {
+     "mw": 1123.5489958,
+     "n_rows": 20,
+     "share_capwtd": 0.8707600927413692,
+     "model_implied_gas_hr": 14.84070697382829,
+     "measured_implied_gas_hr": 10.624559359655052,
+     "model_over_measured": 1.3968303504598354,
+     "priced_by_midcurve_in_P1": false
+    }
+   },
+   "by_class": {
+    "COAL": {
+     "committed": {
+      "mw": 12550.2771,
+      "n_rows": 64,
+      "share_capwtd": 0.43399239297391934,
+      "model_implied_gas_hr": 6.680589541573612,
+      "measured_implied_gas_hr": 8.632316913336936,
+      "model_over_measured": 0.7739045737827461,
+      "priced_by_midcurve_in_P1": false
+     },
+     "econ": {
+      "mw": 20643.268200000002,
+      "n_rows": 354,
+      "share_capwtd": 0.722854432461544,
+      "model_implied_gas_hr": 10.02414769676844,
+      "measured_implied_gas_hr": 9.866954383712136,
+      "model_over_measured": 1.0159312901370854,
+      "priced_by_midcurve_in_P1": true
+     },
+     "mustrun": {
+      "mw": 14062.1927042,
+      "n_rows": 52,
+      "share_capwtd": 0.17792899900777734,
+      "model_implied_gas_hr": 1.6245487364620939,
+      "measured_implied_gas_hr": 7.84947082214675,
+      "model_over_measured": 0.20696283523706333,
+      "priced_by_midcurve_in_P1": false
+     },
+     "peak": {
+      "mw": 992.3844,
+      "n_rows": 63,
+      "share_capwtd": 0.8430397440021451,
+      "model_implied_gas_hr": 11.229286453361775,
+      "measured_implied_gas_hr": 10.548173711339752,
+      "model_over_measured": 1.0645716273414987,
+      "priced_by_midcurve_in_P1": true
+     },
+     "sync": {
+      "mw": 1123.5489958,
+      "n_rows": 20,
+      "share_capwtd": 0.8707600927413692,
+      "model_implied_gas_hr": 14.84070697382829,
+      "measured_implied_gas_hr": 10.624559359655052,
+      "model_over_measured": 1.3968303504598354,
+      "priced_by_midcurve_in_P1": false
+     }
+    },
+    "ST_GAS": {
+     "committed": {
+      "mw": 2435.8281999999995,
+      "n_rows": 21,
+      "share_capwtd": 0.5718607797134463,
+      "model_implied_gas_hr": 11.638300583804634,
+      "measured_implied_gas_hr": 9.254553456243345,
+      "model_over_measured": 1.2575755965786934,
+      "priced_by_midcurve_in_P1": false
+     },
+     "econ": {
+      "mw": 7370.791800000002,
+      "n_rows": 31,
+      "share_capwtd": 0.38080553724228094,
+      "model_implied_gas_hr": 11.876267053227927,
+      "measured_implied_gas_hr": 8.297683717634989,
+      "model_over_measured": 1.4312749747242606,
+      "priced_by_midcurve_in_P1": true
+     },
+     "peak": {
+      "mw": 1730.5799999999997,
+      "n_rows": 21,
+      "share_capwtd": 0.9065209669590544,
+      "model_implied_gas_hr": 19.622229491640248,
+      "measured_implied_gas_hr": 10.761590996949,
+      "model_over_measured": 1.823357670552924,
+      "priced_by_midcurve_in_P1": true
+     }
+    },
+    "CC_REGULAR": {
+     "committed": {
+      "mw": 28818.032217376494,
+      "n_rows": 75,
+      "share_capwtd": 0.28388691997675025,
+      "model_implied_gas_hr": 6.457454390787926,
+      "measured_implied_gas_hr": 5.319582808503468,
+      "model_over_measured": 1.2139024098779974,
+      "priced_by_midcurve_in_P1": false
+     },
+     "econ": {
+      "mw": 27774.532859114137,
+      "n_rows": 450,
+      "share_capwtd": 0.6602602611791952,
+      "model_implied_gas_hr": 8.567581449279983,
+      "measured_implied_gas_hr": 6.802755641206302,
+      "model_over_measured": 1.259428076084875,
+      "priced_by_midcurve_in_P1": true
+     },
+     "peak": {
+      "mw": 3944.885519761499,
+      "n_rows": 58,
+      "share_capwtd": 0.9504059252604431,
+      "model_implied_gas_hr": 37.504630559155345,
+      "measured_implied_gas_hr": 13.579446327894592,
+      "model_over_measured": 2.7618674321142374,
+      "priced_by_midcurve_in_P1": true
+     }
+    },
+    "CT_PEAKER": {
+     "committed": {
+      "mw": 3529.2365600000003,
+      "n_rows": 70,
+      "share_capwtd": 0.10469003707986069,
+      "model_implied_gas_hr": 10.930666167149713,
+      "measured_implied_gas_hr": 24.550026194553247,
+      "model_over_measured": 0.4452405093390421,
+      "priced_by_midcurve_in_P1": false
+     },
+     "econ": {
+      "mw": 20420.49294,
+      "n_rows": 684,
+      "share_capwtd": 0.5175800426182073,
+      "model_implied_gas_hr": 13.650165184645141,
+      "measured_implied_gas_hr": 26.132850841808747,
+      "model_over_measured": 0.5223373931636601,
+      "priced_by_midcurve_in_P1": true
+     },
+     "peak": {
+      "mw": 2415.1805,
+      "n_rows": 120,
+      "share_capwtd": 0.9290152381985529,
+      "model_implied_gas_hr": 42.66696412335661,
+      "measured_implied_gas_hr": 35.52247578390104,
+      "model_over_measured": 1.201125855723533,
+      "priced_by_midcurve_in_P1": true
+     }
+    }
+   },
+   "elapsed_s": 13.9
+  },
+  "2025": {
+   "bundle": "pjm_d4_4_A",
+   "gas_mean": 4.209232876712329,
+   "coal_mw": 49477.721399999995,
+   "year_tables": [
+    "CC_LIKE",
+    "CT_FAST",
+    "LONG_RUN"
+   ],
+   "bands": {
+    "committed": {
+     "mw": 12550.2771,
+     "n_rows": 64,
+     "share_capwtd": 0.43491984972857783,
+     "model_implied_gas_hr": 5.241777440299631,
+     "measured_implied_gas_hr": 6.619630786459369,
+     "model_over_measured": 0.7918534446093016,
+     "priced_by_midcurve_in_P1": false
+    },
+    "econ": {
+     "mw": 20613.8712,
+     "n_rows": 354,
+     "share_capwtd": 0.7297566382453711,
+     "model_implied_gas_hr": 7.964046965060022,
+     "measured_implied_gas_hr": 7.691910552665474,
+     "model_over_measured": 1.0353795601926552,
+     "priced_by_midcurve_in_P1": true
+    },
+    "mustrun": {
+     "mw": 14197.639704199999,
+     "n_rows": 55,
+     "share_capwtd": 0.1783644187324774,
+     "model_implied_gas_hr": 1.1392405063291142,
+     "measured_implied_gas_hr": 5.550843343519241,
+     "model_over_measured": 0.20523737310281115,
+     "priced_by_midcurve_in_P1": false
+    },
+    "peak": {
+     "mw": 992.3844,
+     "n_rows": 63,
+     "share_capwtd": 0.8627665470393554,
+     "model_implied_gas_hr": 8.926916300833975,
+     "measured_implied_gas_hr": 8.281048496920269,
+     "model_over_measured": 1.0779934816411116,
+     "priced_by_midcurve_in_P1": true
+    },
+    "sync": {
+     "mw": 1123.5489958,
+     "n_rows": 20,
+     "share_capwtd": 0.7554961192769495,
+     "model_implied_gas_hr": 10.28951647976913,
+     "measured_implied_gas_hr": 7.712924161498879,
+     "model_over_measured": 1.334061669001233,
+     "priced_by_midcurve_in_P1": false
+    }
+   },
+   "by_class": {
+    "COAL": {
+     "committed": {
+      "mw": 12550.2771,
+      "n_rows": 64,
+      "share_capwtd": 0.43491984972857783,
+      "model_implied_gas_hr": 5.241777440299631,
+      "measured_implied_gas_hr": 6.619630786459369,
+      "model_over_measured": 0.7918534446093016,
+      "priced_by_midcurve_in_P1": false
+     },
+     "econ": {
+      "mw": 20613.8712,
+      "n_rows": 354,
+      "share_capwtd": 0.7297566382453711,
+      "model_implied_gas_hr": 7.964046965060022,
+      "measured_implied_gas_hr": 7.691910552665474,
+      "model_over_measured": 1.0353795601926552,
+      "priced_by_midcurve_in_P1": true
+     },
+     "mustrun": {
+      "mw": 14197.639704199999,
+      "n_rows": 55,
+      "share_capwtd": 0.1783644187324774,
+      "model_implied_gas_hr": 1.1392405063291142,
+      "measured_implied_gas_hr": 5.550843343519241,
+      "model_over_measured": 0.20523737310281115,
+      "priced_by_midcurve_in_P1": false
+     },
+     "peak": {
+      "mw": 992.3844,
+      "n_rows": 63,
+      "share_capwtd": 0.8627665470393554,
+      "model_implied_gas_hr": 8.926916300833975,
+      "measured_implied_gas_hr": 8.281048496920269,
+      "model_over_measured": 1.0779934816411116,
+      "priced_by_midcurve_in_P1": true
+     },
+     "sync": {
+      "mw": 1123.5489958,
+      "n_rows": 20,
+      "share_capwtd": 0.7554961192769495,
+      "model_implied_gas_hr": 10.28951647976913,
+      "measured_implied_gas_hr": 7.712924161498879,
+      "model_over_measured": 1.334061669001233,
+      "priced_by_midcurve_in_P1": false
+     }
+    },
+    "ST_GAS": {
+     "committed": {
+      "mw": 2435.8281999999995,
+      "n_rows": 21,
+      "share_capwtd": 0.6084994474158729,
+      "model_implied_gas_hr": 11.189795032710894,
+      "measured_implied_gas_hr": 7.190151832772939,
+      "model_over_measured": 1.5562668623640818,
+      "priced_by_midcurve_in_P1": false
+     },
+     "econ": {
+      "mw": 7370.791800000002,
+      "n_rows": 31,
+      "share_capwtd": 0.38038468693417693,
+      "model_implied_gas_hr": 11.562105009857614,
+      "measured_implied_gas_hr": 6.341491674011026,
+      "model_over_measured": 1.8232468958749768,
+      "priced_by_midcurve_in_P1": true
+     },
+     "peak": {
+      "mw": 1730.5799999999997,
+      "n_rows": 21,
+      "share_capwtd": 0.8567437246472281,
+      "model_implied_gas_hr": 17.325279977141513,
+      "measured_implied_gas_hr": 8.195974023159867,
+      "model_over_measured": 2.113876877621184,
+      "priced_by_midcurve_in_P1": true
+     }
+    },
+    "CC_REGULAR": {
+     "committed": {
+      "mw": 28818.032217376494,
+      "n_rows": 75,
+      "share_capwtd": 0.3208929115940503,
+      "model_implied_gas_hr": 5.9672165696291355,
+      "measured_implied_gas_hr": 4.996415927716084,
+      "model_over_measured": 1.1942994050050622,
+      "priced_by_midcurve_in_P1": false
+     },
+     "econ": {
+      "mw": 27774.532859114137,
+      "n_rows": 450,
+      "share_capwtd": 0.6218639409216119,
+      "model_implied_gas_hr": 7.847137768963304,
+      "measured_implied_gas_hr": 6.364602889984307,
+      "model_over_measured": 1.2329343879901755,
+      "priced_by_midcurve_in_P1": true
+     },
+     "peak": {
+      "mw": 3944.885519761499,
+      "n_rows": 58,
+      "share_capwtd": 0.9504059252604431,
+      "model_implied_gas_hr": 30.339289897270156,
+      "measured_implied_gas_hr": 11.729229737400152,
+      "model_over_measured": 2.586639581329833,
+      "priced_by_midcurve_in_P1": true
+     }
+    },
+    "CT_PEAKER": {
+     "committed": {
+      "mw": 3529.2365600000003,
+      "n_rows": 70,
+      "share_capwtd": 0.10469003707986069,
+      "model_implied_gas_hr": 10.227695084397844,
+      "measured_implied_gas_hr": 30.069911012216192,
+      "model_over_measured": 0.34013054046760377,
+      "priced_by_midcurve_in_P1": false
+     },
+     "econ": {
+      "mw": 20420.49294,
+      "n_rows": 684,
+      "share_capwtd": 0.5175800426182073,
+      "model_implied_gas_hr": 12.051100982760037,
+      "measured_implied_gas_hr": 29.164228408711224,
+      "model_over_measured": 0.4132151488417375,
+      "priced_by_midcurve_in_P1": true
+     },
+     "peak": {
+      "mw": 2414.500499999999,
+      "n_rows": 119,
+      "share_capwtd": 0.9291360625106522,
+      "model_implied_gas_hr": 34.00875111751432,
+      "measured_implied_gas_hr": 32.52681396214249,
+      "model_over_measured": 1.0455604768759903,
+      "priced_by_midcurve_in_P1": true
+     }
+    }
+   },
+   "elapsed_s": 13.6
+  }
+ }
+}
