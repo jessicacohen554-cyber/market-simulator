@@ -207,10 +207,17 @@ def regenerate_diagnostics(out: Path, years: list[int]) -> int:
     print("\nregenerating legitimacy_diagnostics.json over the composite:")
     print("  " + " ".join(cmd))
     rc = subprocess.run(cmd, cwd=REPO).returncode
+    # NOTE: legitimacy_diagnostics.py exits 1 whenever a GATE fails (D-1/D-2/D-4
+    # carry standing MISO failures), so a nonzero exit is the normal case and
+    # says nothing about whether the artifact was written. What matters is that
+    # the artifact exists and spans every year — check that, not the status.
+    art = out / "legitimacy_diagnostics.json"
+    if not art.is_file():
+        print(f"  NO ARTIFACT WRITTEN (exit {rc}) — C8 would score SKIPPED; do not register.")
+        return 1
     if rc != 0:
-        print(f"  FAILED (exit {rc}) — C8 would score SKIPPED; do not register.")
-        return rc
-    d = json.loads((out / "legitimacy_diagnostics.json").read_text())
+        print(f"  (exit {rc} — a failing diagnostic gate, not a missing artifact)")
+    d = json.loads(art.read_text())
     got = sorted(d.get("years") or [])
     print(f"  years in the regenerated artifact: {got}")
     if got != sorted(years):
