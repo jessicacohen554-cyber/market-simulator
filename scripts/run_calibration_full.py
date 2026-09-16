@@ -4077,6 +4077,7 @@ def solve_and_persist(
     caiso_solar_endogenous_spill: bool | None = None,
     caiso_solar_cap_at_delivered: bool | None = None,
     neiso_gas_coldsnap_derate: bool | None = None,
+    neiso_coldsnap_derate_dualfuel_unswitched: bool | None = None,
     neiso_oil_burn_budget: bool | None = None,
     neiso_winter_fuel_inventory: bool | None = None,
     neiso_winter_fuel_start_fill_bbl: float | None = None,
@@ -5030,6 +5031,10 @@ def solve_and_persist(
         if neiso_gas_coldsnap_derate is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 neiso_gas_coldsnap_derate=neiso_gas_coldsnap_derate
+            )
+        if neiso_coldsnap_derate_dualfuel_unswitched is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                neiso_coldsnap_derate_dualfuel_unswitched=neiso_coldsnap_derate_dualfuel_unswitched
             )
         if neiso_oil_burn_budget is not None:
             recorded_cfg = recorded_cfg.with_overrides(
@@ -6017,6 +6022,7 @@ def solve_and_persist(
             caiso_solar_endogenous_spill=caiso_solar_endogenous_spill,
             caiso_solar_cap_at_delivered=caiso_solar_cap_at_delivered,
             neiso_gas_coldsnap_derate=neiso_gas_coldsnap_derate,
+            neiso_coldsnap_derate_dualfuel_unswitched=neiso_coldsnap_derate_dualfuel_unswitched,
             neiso_oil_burn_budget=neiso_oil_burn_budget,
             neiso_winter_fuel_inventory=neiso_winter_fuel_inventory,
             neiso_winter_fuel_start_fill_bbl=neiso_winter_fuel_start_fill_bbl,
@@ -6999,6 +7005,7 @@ def solve_and_persist(
         "caiso_solar_endogenous_spill": caiso_solar_endogenous_spill,
         "caiso_solar_cap_at_delivered": caiso_solar_cap_at_delivered,
         "neiso_gas_coldsnap_derate": neiso_gas_coldsnap_derate,
+        "neiso_coldsnap_derate_dualfuel_unswitched": neiso_coldsnap_derate_dualfuel_unswitched,
         "neiso_oil_burn_budget": neiso_oil_burn_budget,
         "neiso_winter_fuel_inventory": neiso_winter_fuel_inventory,
         "neiso_winter_fuel_start_fill_bbl": neiso_winter_fuel_start_fill_bbl,
@@ -12109,6 +12116,12 @@ def main() -> None:
         "as an A/B reference for --caiso-solar-deliverability. CAISO-only.",
     )
     parser.add_argument(
+        "--neiso-coldsnap-derate-dualfuel-unswitched",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Condition the NEISO cold-snap derate's dual-fuel exemption on its own premise (rule 19 scope correction; NEISO-only, inert unless --neiso-gas-coldsnap-derate is on). The derate exempts every EIA-860 dual-fuel unit because apply_dual_fuel_pricing is said to switch it to oil; that switch is mc=min(gas,oil), so it fires only where delivered gas has reached the oil parity. With this on, a dual-fuel unit is exempt in the hours its oil limb is actually active and derated like any other gas unit in the hours it is not. Adds no floor, no curve and no scalar; every coefficient and the window are unchanged. Default off (byte-identical).",
+    )
+    parser.add_argument(
         "--neiso-gas-coldsnap-derate",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -14346,6 +14359,7 @@ def main() -> None:
         caiso_solar_endogenous_spill=args.caiso_solar_endogenous_spill,
         caiso_solar_cap_at_delivered=args.caiso_solar_cap_at_delivered,
         neiso_gas_coldsnap_derate=args.neiso_gas_coldsnap_derate,
+        neiso_coldsnap_derate_dualfuel_unswitched=args.neiso_coldsnap_derate_dualfuel_unswitched,
         neiso_oil_burn_budget=args.neiso_oil_burn_budget,
         neiso_winter_fuel_inventory=args.neiso_winter_fuel_inventory,
         neiso_winter_fuel_start_fill_bbl=args.neiso_winter_fuel_start_fill_bbl,

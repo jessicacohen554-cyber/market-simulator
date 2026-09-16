@@ -42,6 +42,7 @@ def inject_neiso_gas_coldsnap_derate(
     t0_c: float,
     slope_per_c: float,
     cap: float,
+    dual_switch_active: "np.ndarray | None" = None,
 ) -> bool:
     """Derate NON-dual-fuel gas-fired availability on deep-winter cold snaps.
 
@@ -66,6 +67,24 @@ def inject_neiso_gas_coldsnap_derate(
     :func:`market_sim.data.fuel.apply_dual_fuel_pricing` (their marginal cost
     becomes the oil parity), so derating them too would double-count the
     constraint and wrongly remove deliverable oil-backed capacity.
+
+    **...but only in the hours the switch actually fires** (``dual_switch_active``,
+    gated by ``ScenarioConfig.neiso_coldsnap_derate_dualfuel_unswitched``). The
+    exemption above is a CONDITION stated as a fact: ``apply_dual_fuel_pricing``
+    sets ``mc = min(gas, oil)``, so a dual-fuel unit becomes oil-backed only where
+    delivered gas has actually reached the oil parity. Where it has not, the unit
+    is burning pipeline gas — the very commodity this derate says it cannot get —
+    and exempting it removes nothing while double-counting nothing either. Measured
+    on the NEISO keeper across Winter Storm Elliott (2022-12-23..27): gas
+    $12.54-15.08/MMBtu against an oil parity of $20.985, i.e. the switch is
+    $5.9-8.4/MMBtu from firing, while 6,896 MW (39.3 % of NEISO gas capacity) sat
+    exempt (neiso-110,
+    ``docs/FINDING-neiso110-winter-oil-driver-2026-09-16.md``). Pass a ``(T,)``
+    boolean and the exemption applies per-hour where it is ``True`` and the derate
+    applies where it is ``False``; pass ``None`` (the default) for the unconditional
+    legacy exemption, which is byte-identical. This is a SCOPE correction to this
+    one mechanism (rule 19 [R-ONE-MECH]) — the window, the driver, the temperature
+    key and every coefficient are unchanged (rule 23 [R-FROZEN-DERIVE]).
 
     Pairs with the NEISO reserve co-optimization (``energy_reserve_coopt``): the
     derate is what makes the cold-hour fleet genuinely short of its operating-
@@ -106,8 +125,16 @@ def inject_neiso_gas_coldsnap_derate(
         [(int(plant_codes[i]), str(groups[i])) in dual for i in range(groups.size)],
         dtype=bool,
     )
-    rows = np.flatnonzero(is_gas & ~is_dual & (fleet_arrays.pmax > 0.0))
-    if rows.size == 0:
+    live = is_gas & (fleet_arrays.pmax > 0.0)
+    rows = np.flatnonzero(live & ~is_dual)
+    # Dual-fuel rows are reached ONLY under the conditional exemption (gated);
+    # with dual_switch_active None this stays empty and the legacy behaviour holds.
+    dual_rows = (
+        np.flatnonzero(live & is_dual)
+        if dual_switch_active is not None
+        else np.array([], dtype=int)
+    )
+    if rows.size == 0 and dual_rows.size == 0:
         return False
 
     # Temperature-dependent forced-outage fraction, cold-snap window only.
@@ -118,5 +145,17 @@ def inject_neiso_gas_coldsnap_derate(
     if not np.any(frac > 0.0):
         return False
 
-    fleet_arrays.availability[rows, :] *= (1.0 - frac)[None, :]
-    return True
+    touched = False
+    if rows.size:
+        fleet_arrays.availability[rows, :] *= (1.0 - frac)[None, :]
+        touched = True
+    if dual_rows.size:
+        # The exemption holds exactly where its own premise holds: the unit is
+        # oil-backed in the hours its switch has fired, and a plain gas unit in
+        # the hours it has not.
+        active = np.asarray(dual_switch_active, dtype=bool).reshape(-1)[:hours]
+        dual_frac = np.where(active, 0.0, frac)
+        if np.any(dual_frac > 0.0):
+            fleet_arrays.availability[dual_rows, :] *= (1.0 - dual_frac)[None, :]
+            touched = True
+    return touched

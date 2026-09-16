@@ -758,6 +758,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "caiso_dam_outages",
     "miso_native_outage_source",
     "neiso_operable_capacity_availability",
+    # Cold-snap derate: the dual-fuel exemption conditioned on its own premise
+    # (neiso-110, default off). Dropped from the hash at its default so every
+    # pre-existing cached run -- every ISO's keepers included -- keeps its key;
+    # the field is NEISO-only and byte-identical off (inject_neiso_gas_coldsnap_
+    # derate takes dual_switch_active=None and the legacy exemption holds), and
+    # an armed run derates real dual-fuel unit-hours so it earns a distinct key.
+    "neiso_coldsnap_derate_dualfuel_unswitched",
     "pjm_dam_availability",
     "pjm_measured_outage_event_cap",
     # PJM mid-curve LEVEL-form scope (pjm-121 §5, default None = floor-only).
@@ -2104,6 +2111,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "caiso_dam_outages": "False",
     "miso_native_outage_source": "False",
     "neiso_operable_capacity_availability": "False",
+    "neiso_coldsnap_derate_dualfuel_unswitched": "False",
     "pjm_dam_availability": "False",
     "pjm_measured_outage_event_cap": "False",
     "pjm_offer_midcurve_level_segments": "None",
@@ -6991,6 +6999,32 @@ class ScenarioConfig:
     # (a forecast year's pinned TMIN) and condition-responsive (colder winter ->
     # more derate); the magnitude traces to NERC cold-weather forced-outage data,
     # NOT a fit to the price tail. Default off (byte-identical); NEISO-only.
+    neiso_coldsnap_derate_dualfuel_unswitched: bool = False  # GATED, default-OFF.
+    # SCOPE CORRECTION to neiso_gas_coldsnap_derate above, not a second mechanism
+    # (rule 19 [R-ONE-MECH]): it adds no floor, no curve and no scalar, and changes
+    # only WHICH unit-hours the one existing derate reaches. That derate exempts
+    # every EIA-860 dual-fuel unit unconditionally, on the stated premise that
+    # "their marginal cost becomes the oil parity" (apply_dual_fuel_pricing) so
+    # they "switch to oil, not vanish". THAT PREMISE IS A CONDITION, NOT A FACT:
+    # apply_dual_fuel_pricing sets mc = min(gas, oil), so the switch fires only in
+    # hours where delivered gas >= the oil parity. Measured on the NEISO keeper
+    # (neiso-110, docs/FINDING-neiso110-winter-oil-driver-2026-09-16.md): across
+    # Winter Storm Elliott (2022-12-23..27) Algonquin gas ran $12.54-15.08/MMBtu
+    # against an oil parity of $20.985 — the switch is $5.9-8.4/MMBtu away from
+    # firing — so 6,896 MW (39.3% of NEISO gas capacity) stayed exempt from a
+    # physical fuel-availability constraint while still burning pipeline gas it
+    # could not have been delivered. When True the exemption is CONDITIONED on its
+    # own premise: a dual-fuel unit is exempt in the hours its oil limb is actually
+    # active (gas >= oil parity) and derated like any other gas unit in the hours
+    # it is not. Where the premise holds the behaviour is unchanged, so this can
+    # only remove an exemption that was never earned. DRIVER/WINDOW/FORWARD (rule
+    # 17 [R-FLOOR-WINDOW]) are INHERITED UNCHANGED from the parent derate: the same
+    # gas-electric pipeline constraint, the same NEISO_COLDSNAP_FLOOR_HOURS window
+    # keyed to the same load-weighted daily TMIN below neiso_gas_derate_t0_c, the
+    # same forward regeneration from a forecast year's pinned TMIN. No coefficient
+    # moves (rule 23 [R-FROZEN-DERIVE]: t0/slope/cap are untouched) and no value is
+    # fitted to any residual (rule 13 [R-MEASURED]). Default off (byte-identical);
+    # NEISO-only, and inert unless neiso_gas_coldsnap_derate is itself on.
     neiso_gas_derate_t0_c: float = -7.0  # Cold-limb zero-crossing (~20 degF): above
     # this daily MIN temperature gas forced-outage stays at its base equipment rate
     # (no incremental fuel-constraint derate). NERC cold-weather analyses place the
@@ -20892,6 +20926,7 @@ TIER_TAGS: dict[str, int] = {
     "caiso_solar_endogenous_spill": 1,
     "caiso_solar_cap_at_delivered": 1,
     "neiso_gas_coldsnap_derate": 1,
+    "neiso_coldsnap_derate_dualfuel_unswitched": 1,
     "neiso_gas_derate_t0_c": 1,
     "neiso_gas_derate_slope_per_c": 3,
     "neiso_gas_derate_cap": 2,
