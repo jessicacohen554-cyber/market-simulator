@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Network — Codebase Explorer</title>
   <meta name="description"
-    content="7-ISO topology visualization: pipe-and-bubble transmission model, zone network graphs, interface limits, congestion pricing, and priced seams." />
+    content="Multi-region topology visualization: pipe-and-bubble transmission model, zone network graphs, interface limits, congestion pricing, and priced seams." />
 
   <!-- Design system -->
   <link rel="stylesheet" href="css/shared.css" />
@@ -321,18 +321,27 @@
     <div class="energy-divider"></div>
 
     <!-- ════════════════════════════════════════════════════════════
-         SECTION 2: 7-ISO TOPOLOGIES
+         SECTION 2: REGION TOPOLOGIES
          ════════════════════════════════════════════════════════════ -->
     <section class="section-dark story-section" id="iso-topologies">
       <div class="content-section">
 
         <div class="section-header">
           <div class="section-number">§ 2</div>
-          <h2>7-ISO Topologies</h2>
+          <h2>Region Topologies</h2>
           <p>
-            Click an ISO tab to explore its zonal structure. Zones are sized by
+            Click a region tab to explore its zonal structure. Zones are sized by
             load share; link thickness scales with TTC. Dashed borders mark
             import/synthetic nodes. Drag nodes to re-arrange.
+          </p>
+          <p>
+            <code>config/iso_configs._ISO_BUILDERS</code> carries
+            <strong>nine</strong> registered regions &mdash; 47 zones, 44 of them
+            carrying load, over 58 transmission links. Eight are drawn here;
+            SOCO registered on 2026-09-14 alongside NWPP and its topology block
+            is still owed. Every downstream name says &ldquo;ISO&rdquo;, but NWPP is a
+            <strong>pool of ~17 balancing authorities</strong> and SOCO is a single
+            balancing authority &mdash; neither is an ISO.
           </p>
         </div>
 
@@ -461,7 +470,7 @@
                   </tr>
                   <tr>
                     <td colspan="5" style="color:var(--text-muted);font-size:0.82rem;font-style:italic;">
-                      ERCOT, PJM, NYISO, SPP — no aggregate interface limits modeled (individual TTC limits apply)
+                      ERCOT, PJM, NYISO, SPP, NWPP, SOCO — no aggregate interface limits modeled (individual TTC limits apply)
                     </td>
                   </tr>
                 </tbody>

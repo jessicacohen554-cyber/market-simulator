@@ -630,7 +630,7 @@
           <h3 id="iso-corpora" style="margin-top: var(--space-xl); margin-bottom: var(--space-md); font-size: 1.1rem; font-weight: 600;">The ISO-Specific Corpora</h3>
           <p style="margin-bottom: var(--space-md);">
             The federal sources above are the <strong>cross-ISO backbone</strong>: they describe every plant in
-            every market on one schema, which is what lets one LP serve seven ISOs. What they cannot describe is
+            every market on one schema, which is what lets one LP serve nine registered regions. What they cannot describe is
             how a <em>particular</em> market behaves — what its participants actually bid, where its network
             actually binds, which units its operator declared unavailable, and what it holds back for reserves.
             That is what the roughly two dozen <strong>ISO-specific corpora</strong> under <code>data/raw/</code>
@@ -723,7 +723,7 @@
                 <td><span class="use-tag solve">Solve</span><br><span style="font-size:0.8rem;">Interface limits and delivery factors, read straight by the interchange spec and the loss-surface loader.</span></td>
               </tr>
               <tr>
-                <td><code>lmp-data</code><br><span style="font-size:0.78rem;color:var(--text-muted);">six &mdash; SPP under <code>spp-lmp-alt</code></span></td>
+                <td><code>lmp-data</code><br><span style="font-size:0.78rem;color:var(--text-muted);">six &mdash; SPP under <code>spp-lmp-alt</code>; NWPP and SOCO publish no LMP at all</span></td>
                 <td>Actual per-ISO clearing prices: CAISO OASIS DAM/RTM, MISO hub reports, ISO-NE SMD workbooks, NYISO zonal LBMP, ERCOT settlement-point prices.</td>
                 <td><span class="use-tag score">Score</span><br><span style="font-size:0.8rem;">What the model's LP duals are graded against. Never an input — pinning the backcast to observed prices is exactly what rule 13 forbids.</span></td>
               </tr>
@@ -775,7 +775,7 @@
                 <td><span class="use-tag solve">Solve</span> <span style="font-size:0.78rem;color:var(--text-muted);">(gated)</span><br><span style="font-size:0.8rem;">Under <code>capacity_deliverability_limits</code>, a zone already clearing its published requirement is RA-saturated and its marginal capacity payment collapses.</span></td>
               </tr>
               <tr>
-                <td><code>zone-specific-demand</code><br><span style="font-size:0.78rem;color:var(--text-muted);">all seven</span></td>
+                <td><code>zone-specific-demand</code><br><span style="font-size:0.78rem;color:var(--text-muted);">seven of nine &mdash; no NWPP</span></td>
                 <td>Per-zone metered load: ERCOT weather-zone native load, PJM metered load by zone, CAISO TAC-area load, NYISO zonal actuals, MISO and SPP sub-BA demand.</td>
                 <td><span class="use-tag solve">Solve</span><br><span style="font-size:0.8rem;">Derives each ISO's hourly zonal load-share weights, which split the balancing-authority demand across model zones.</span></td>
               </tr>

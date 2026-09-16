@@ -207,7 +207,9 @@ ttc_mw, is_bidirectional)`, `InterfaceLimit(name, links, cap_mw, bidirectional)`
 `ISOConfig(name, zones, links, voll, interface_limits)`. `get_iso_config(name)`
 (case-insensitive) builds and calls `validate_topology()`.
 
-The seven registered ISOs:
+The **nine registered regions** (`_ISO_BUILDERS`, registration order). Every
+name downstream says "ISO", but the last two are not ISOs: **NWPP** is a pool of
+~17 balancing authorities and **SOCO** is a single balancing authority.
 
 | ISO | Zones | Links | Notable topology |
 |-----|-------|-------|------------------|
@@ -217,14 +219,18 @@ The seven registered ISOs:
 | **MISO** | 6: West, Plains, Illinois, Indiana, East, South | 8 | RDT one-way links (3,000 N→S / 2,500 S→N); five per-zone CIL/CEL interface groups |
 | **NYISO** | 5: Upstate_West, Capital_Hudson, Lower_Hudson, NYC, Long_Island | 4 | nested downstate import cutsets; cable-limited LI |
 | **NEISO** | 5: North, Central, Boston, Connecticut, HQ_import | 7 | import pockets + HQ Phase-II HVDC node; `HQ_import_simultaneous` 3,850 MW cap |
-| **SPP** | 2: SPP-North, SPP-South | 1 | registered 2026-09-06 (lane SPP-20, owner rulings P1/P10). The single N↔S link's 48,700 MW TTC is a **Tier-3 placeholder that cannot bind**, not a rated interface — no public document states an SPP North↔South capability (FINDING-spp-13 §0), so the first solve is a two-zone copperplate on price until lever SPP-53 reconciles one. No import node: the seams are the served EIA-930 `Total interchange` schedule plus three default-off `NeighborInterface` blocks (MISO / AECI / ERCOT). VOLL $2,000 |
+| **SPP** | 2: SPP-North, SPP-South | 1 | registered 2026-09-06 (lane SPP-20, owner rulings P1/P10). The single N↔S link's TTC is **3,400 MW** — the rule-14 `[R-ACCURATE]` reconciled corridor limit lever **SPP-53** derived from SPP's own published flowgate limits, which replaced SPP-20's 48,700 MW Tier-3 placeholder. Unlike that placeholder it **can** bind. No import node: the seams are the served EIA-930 `Total interchange` schedule plus three default-off `NeighborInterface` blocks (MISO / AECI / ERCOT). VOLL $2,000 |
+| **NWPP** | 5: NWPP-NW, NWPP-OR, NWPP-INLAND, NWPP-EAST, NWPP-SNV | 9 | registered 2026-09-14 (lane NWPP-20, owner rulings N1/N3–N8). **A pool of ~17 balancing authorities, not an ISO** — each zone is a BA group. Six of the nine links are cited WECC path limits (Tier-1 Path 35 / Path 16, Tier-2 Path 20 and the aggregated Paths 8+6+14); the symmetric NW↔OR link is a **Tier-3 documented-absence placeholder that cannot bind** (43,600 MW). No import node. VOLL $2,000 — **DECLARED INTERIM** and a ledgered rule-21 `[R-DOF]` free parameter: FERC Order 831's $2,000 applies by its terms to RTOs/ISOs and NWPP is neither, so the value is the WEIM hard offer cap standing in for a customer damage function that does not exist |
+| **SOCO** | 3: SOCO_AL, SOCO_GA, SOCO_MS | 2 | registered 2026-09-14 (lane SOCO-20). **A single balancing authority, not an ISO** — Southern Company's operating companies are dispatched as one integrated system under the IIC, so no inter-OpCo transfer limit is published and both TTCs register **Tier-3 and cannot bind**. VOLL $2,000 |
 
 Zone names above are shown unprefixed for readability; in `iso_configs.py` the
-literal `Zone.name` strings for PJM, MISO and SPP carry an ISO prefix —
-`PJM_ComEd`, `MISO-West`, `SPP-North`, etc. (ERCOT, CAISO, NYISO, NEISO zone
-names are unprefixed as listed).
+literal `Zone.name` strings for PJM, MISO, SPP, NWPP and SOCO carry a region
+prefix — `PJM_ComEd`, `MISO-West`, `SPP-North`, `NWPP-NW`, `SOCO_AL`, etc.
+(ERCOT, CAISO, NYISO, NEISO zone names are unprefixed as listed).
 
-VOLL is $2,000/MWh for all non-ERCOT ISOs (FERC Order 831 / tariff caps).
+VOLL is $2,000/MWh for all eight non-ERCOT regions (FERC Order 831 / tariff
+caps) — with the NWPP caveat noted in its row: Order 831 does not reach a pool
+that is neither an RTO nor an ISO, so NWPP's $2,000 is interim and ledgered.
 
 ## 8.3 Constants catalogue (`constants.py`, ~3,900 lines)
 
