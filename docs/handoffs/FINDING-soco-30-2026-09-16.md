@@ -466,7 +466,7 @@ it, and there is no residual to tune against anyway.
 | committed-% and tranche distributions vs MISO as a sanity band | **§8** — reported, never tuned; the three divergences named with a structural reading and left alone |
 | every output header cites source + method + CEMS vintage | sidecars (§1) + §2 + the commit messages; the CSVs carry the bare MISO-template column header, which rule 23 forbids me altering |
 | offer-curve bands stay 1.0 (rule 25 `[R-ISO-SCOPE]`) | **PASS** — §7: all 13 classes 1.0 on every band, no `phys_*`, delta JSON `{}`, no ERCOT leak |
-| non-SOCO diff = ∅ (gate G9) | `git diff origin/main --name-only` is **eight new SOCO-suffixed files and this doc**; both ERCOT reference sheets verified byte-identical by `sha256sum -c` |
+| non-SOCO diff = ∅ (gate G9) | **PASS** — `git diff $(git merge-base origin/main HEAD) HEAD --name-status` is **ten new SOCO-suffixed files (status `A`) and this doc**, zero `M`, zero `D`, zero non-SOCO rows. *(Measured against the merge base `edd40943`, not against `origin/main`'s live tip: main advanced to `0d261bdd` during this lane with a coal-receipts removal and a CAISO RTM-intake prune, and diffing a branch against a moved tip reports the tip's own commits as this branch's changes. The merge base is what isolates this branch's contribution.)* Both ERCOT reference sheets verified byte-identical by `sha256sum -c` |
 | no `src/`, no derive-script, no `ScenarioConfig` edit (rule 28: no cell moves) | none — the three things that wanted one are **routed** in §6 |
 
 ## 10. Deliverables
@@ -481,7 +481,10 @@ it, and there is no residual to tune against anyway.
 | `data/raw/_processed-legacy/thermal_tranches_SOCO.csv` (+ `.meta.json`) | **NEW** | 2/4 `68407667` |
 | `scripts/tag_mixed_plants.py` | run against scratch copies, **commits nothing** (§7) | 3/4 — no-op |
 | `scripts/data/build_offer_curve_overrides.py` | `--list` read, **writes nothing** (§7) | 4/4 — no-op |
-| `docs/handoffs/FINDING-soco-30-2026-09-16.md` | this file | — |
+| `docs/handoffs/FINDING-soco-30-2026-09-16.md` | this file | 3/4+4/4 `857a32c4` |
+
+Ten new SOCO-suffixed data files in total (five extracts + four deriver-emitted `.meta.json`
+sidecars + the tranche CSV and its sidecar), plus this doc. Nothing else in the tree moves.
 
 Plan §5 row **SOCO-30 → LANDED**. Gate **G4** is the precondition SOCO-40 checks by
 `git log origin/main --grep=SOCO-3[012]`; this lane discharges the `SOCO-30` leg of it.
