@@ -3026,3 +3026,107 @@ are stamped to keeper 12; nothing was pruned. Promote and prune the predecessor 
 itself is unaffected — its availability arrays are byte-identical, proven above.
 
 **LINEAGE**: SPP-40 → SPP-42 → **SPP-43**.
+
+## spp-44 — 2026-09-16
+
+**ZERO LP. No screen, no shard, no bundle, no registration. Keeper 12
+(`2026-09-16-spp-42-commitment-feasibility`) and the 2019–2022 rung
+(`2026-09-16-spp-43-outage-intake`) are both UNCHANGED, and no `ScenarioConfig`
+field, default or keeper file was touched.** Base
+`d54cd9c571359b85cb1a8e1cd5cab68c080a6b0c`. Record:
+`docs/handoffs/RESULT-spp-44-coal-deliverability-2026-09-16.md`; probe
+`scripts/probes/_spp44_coal_deliverability_phase0.py`.
+
+*(Lane-name collision: the 2026-09-07 SPP-44 was the `spp_gas_commitment_bridge`
+lane. Unrelated and untouched; cite both by date.)*
+
+**THE OBJECT** was SPP's NAMED STRUCTURAL SUCCESSOR — "a coal offer markup keyed
+to coal deliverability / stockpile days", entered as `U` by SPP-41 and recorded
+there as blocked on an EIA-923 Schedule-5 coal receipts-and-stocks intake that
+**did not exist on disk**.
+
+**THE BLOCKER IS STALE AND IS NOW CORRECTED IN THE QUEUE.** Both datatypes
+landed 2026-09-14 (`data/raw/coal-receipts`, `data/raw/coal-stocks`, EIA-923
+Pages 5 and 2, 2018–2024, national) with schemas, curation scripts and the
+rule-13-disciplined readers `prior_years_delivery_rate` / `opening_stock_tons`.
+Coverage of SPP's own model coal fleet is complete: **30 of 32 plants in
+receipts, 29–30 in stocks, every year**. The data question is closed.
+
+**THE IDENTIFICATION FAILS ANYWAY, AND THE LEVER IS `R`.** Six legs, all zero-LP.
+Across lagged (≤ Y-1) and same-year, fleet and per-plant, annual tonnage and
+sub-annual timing, **no statistic puts 2022 outside the other years' range**,
+while the MMU target has 2022 at **3.07× the max of every other year**
+($21.12 against [4.29, 6.88]). The decisive pair: **2021 and 2022 are 0.02 %
+apart on the best admissible statistic (prior-2yr receipts/burn 0.9990 vs
+0.9988) and 3.51× apart in the target**, and **2023 is *tighter* than 2022
+(0.9933) on a $6.88 markup** — so a monotone map would need a residual-fitted
+steepness, which rule 1 `[R-STRUCT]` (c) refuses. `L:rec/burn` does rank-correlate
+at ρ −0.900 (n=5) in the expected direction and that is reported honestly, but
+the agreement is carried entirely by the two *loose* years; the statistic has no
+3× feature to produce a 3× spike.
+
+**2022 WAS THE SMOOTHEST DELIVERY YEAR IN THE 2018–2024 RECORD** — fewest
+zero-delivery months (0.20 vs 0.37–1.62), lowest receipt CV (0.326 vs
+0.354–0.589), one plant with a ≥2-month gap (vs 4–9), ρ **−0.800** on all three,
+i.e. the wrong sign. Per-plant, 2022 had **2 of 28** plants under 90 % coverage
+and **zero** under 75 %, against **2024's 10 and 3** (p10 0.651) — and 2024
+carries the record's **lowest** markup. The reporting-frequency confound that
+would have manufactured the timing leg is ruled out by measurement: the filer mix
+is constant at 28 M / 2 A in every year. **The hypothesis is inverted by the data,
+not merely unsupported by it.**
+
+**A SECOND CELL FALLS OUT OF THE SAME MEASUREMENT: `coal_fuel_inventory` MOVES
+`U` → `R` FOR SPP** (cell updated in `SPP.js` this session, rule 28(b)).
+Re-opening SPP-41's "do NOT propose a coal ceiling" line was legitimate rather
+than a re-test: the cell was `U`, the **field did not exist** when SPP-41 was
+written (row added 2026-09-16 by miso-259), the intake it reads was believed
+absent, and every number SPP-41 cited is about **LEVEL** (peak MW, max-24 h,
+per-plant demonstrated maximum) while its own conclusion is that the excess is
+**DURATION** — which is what an **energy** budget constrains. The flat `/12` row
+**would** bind: 0 / 0 / **5** / **5** / 2 / 0 / 3 months in 2019–2025, worst month
+−2.3 / −6.0 / **+45.6** / **+50.1** / +15.9 / −11.3 / +15.8 % over cap, annual
+headroom +51.4 / +81.5 / **+10.9** / **+6.9** / +54.2 / +95.3 / +24.6 %. **But the
+physically correct cumulative constraint binds in ZERO months in all seven years**,
+bottoming at 16.9 days of burn (2022) and 31.6 (2021); the full path is
+88.2 / 137.8 / 31.6 / 16.9 / 99.6 / 186.5 / 89.7 min-days. SPP's measured
+stockpile supports exactly the seasonal drawdown-and-rebuild the `/12` row
+forbids, so the binding is a **form artifact**, not a fuel shortage.
+
+**THAT IT BINDS IN 2021/2022 — precisely SPP-41's two failing crossover years — IS
+REPORTED AND IS EXPLICITLY NOT THE BASIS.** Rule 1 forbids selecting a mechanism
+because the residual moves, and forbids reaching the right number through a
+mechanism that is not real; arming this would do both. Reopening the verdict
+needs a change to the row's **form** (a carryover/cumulative inventory
+constraint), which is shared machinery and a different charter — not a re-run of
+this cell. Rule 25 `[R-ISO-SCOPE]`: the verdict is SPP's own footprint and fills
+no other ISO's cell; MISO's chartering measurement is untouched.
+
+**MEASUREMENT CAVEAT, STATED.** The legs E/F tons are a **screen**: converted from
+the model's class-hourly coal MWh at year Y-1's measured tons/TWh (2019 uses its
+own year — there is no 2018 bench), where the builder would use per-unit heat
+rates and the receipts' own `mmbtu_per_ton`. The conclusion is not close
+(`cum_bind` 0 with 16.9–186.5 days of margin), so no plausible refinement of the
+conversion reaches it.
+
+**RULES.** 13 `[R-MEASURED]` — every candidate built from ≤ Y-1 only; the
+same-year legs are computed and labelled as the forbidden comparator, never as
+candidates. 21 `[R-DOF]` / 24 `[R-REGISTRY]` — zero free parameters proposed,
+zero fields added, nothing armed. 29 `[R-SCREEN]` — zero-LP phase 0 only; **no
+screen year was owed** because both objects died before an arm existed. 32(a) —
+the parent never solved and no shard was launched. 15 `[R-DASHBOARD]` — no
+completed run, so nothing to register. 31 `[R-RETAIN]` — nothing deleted;
+nothing stranded on ephemeral disk.
+
+**PARITY GATE: the same two pre-existing REDs, no new ones** —
+`caiso279_ablate_dswcouple_span` (CAISO) and `soco15_spp_arm` (whose `meta.json`
+reads `iso = SPP`, so it *is* in SPP's rule-35(a) scope, but it is cited as live
+evidence by ten-plus docs across five lanes and rule 31 reserves that call for
+the owner). This lane created no bundle and added none.
+
+**WHAT REMAINS OPEN.** SPP's C1 / C3a / C3b / C4 held-out failures, with **no
+identified forward-admissible instrument** after this lane — the object is now an
+owner data-procurement decision, the same shape as ERCOT's daily-Waha block.
+Untouched by this lane: card R-be's within-day grain on plant 3008, SPP-43's two
+declared costs (2022's 563.6 MWh of new slack, 2020's across-the-board
+degradation) and the Ponca reproducibility defect in the frozen 2023–2025
+extract block.

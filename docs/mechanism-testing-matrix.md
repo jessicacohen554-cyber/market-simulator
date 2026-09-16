@@ -17783,7 +17783,62 @@ of these needs new evidence, not a new solve. Record:
   driver as *"coal deliverability issues as a result of rail limitations"*
   (ASOM 2023 fn. 194). It is NOT gas-keyed, so the sigmoid form is wrong for it.
   Blocked on an EIA-923 Schedule-5 coal receipts-and-stocks intake that does not
-  exist on disk.
+  exist on disk. **— SUPERSEDED 2026-09-16 BY SPP-44: THE INTAKE EXISTS NOW, AND
+  THE LEVER IS DEAD ANYWAY. SEE THE BLOCK DIRECTLY BELOW.**
+
+**DO-NOT-REDO, added by SPP-44 (2026-09-16, card R-bf's successor, ZERO LP — no
+screen, no shard, no bundle, keeper 12 and the 2019–2022 rung both UNCHANGED).**
+Record: `docs/handoffs/RESULT-spp-44-coal-deliverability-2026-09-16.md`; probe
+`scripts/probes/_spp44_coal_deliverability_phase0.py` (six legs, re-runnable in ~40 s
+after the two `curate_coal_*` commands in its docstring). *(Lane-name collision, noted
+so neither record is confused: the 2026-09-07 SPP-44 was the `spp_gas_commitment_bridge`
+lane, adjudicated separately below. Cite these by date.)*
+
+- **THE BLOCKER ABOVE IS STALE.** Both datatypes landed **2026-09-14** —
+  `data/raw/coal-receipts/` and `data/raw/coal-stocks/` (EIA-923 Pages 5 and 2,
+  2018–2024, national), with schemas, `curate_coal_{receipts,stocks}.py`, and the
+  rule-13-disciplined readers `coal_receipts.prior_years_delivery_rate` /
+  `coal_stocks.opening_stock_tons`. **Coverage of SPP's own model coal fleet is
+  complete**: 30 of 32 plants in receipts, 29–30 in stocks, in every year.
+  **Do not re-report this lever as data-blocked.**
+- **THE DELIVERABILITY-KEYED COAL OFFER MARKUP IS `R`, KILLED ON MEASUREMENT.** Across
+  lagged (≤ Y-1) and same-year, fleet and per-plant, tonnage and sub-annual timing,
+  **no statistic puts 2022 outside the other years' range** while the MMU target has
+  2022 at **3.07× the max of every other year**. The decisive number: **2021 and 2022
+  are 0.02 % apart on the best admissible statistic (prior-2yr receipts/burn 0.9990 vs
+  0.9988) and 3.51× apart in the target ($6.02 vs $21.12)**, and **2023 is *tighter*
+  than 2022 (0.9933) on a $6.88 markup**. Mapping a 0.02 % input gap onto a 3.51×
+  output gap needs a residual-fitted steepness — rule 1 `[R-STRUCT]` (c), refused.
+- **2022 WAS THE *SMOOTHEST* DELIVERY YEAR IN THE RECORD**, which inverts the
+  hypothesis rather than weakening it: fewest zero-delivery months (0.20 vs 0.37–1.62),
+  lowest receipt CV (0.326 vs 0.354–0.589), one plant with a ≥2-month gap (vs 4–9);
+  ρ **−0.800** on all three, i.e. the wrong sign. Per-plant, 2022 had **2 of 28**
+  plants under 90 % coverage and **none** under 75 %, against **2024's 10 and 3**
+  (p10 0.651) — and 2024 carries the record's **lowest** markup ($4.29). The
+  reporting-frequency confound that would fake the timing leg is **ruled out**: the
+  filer mix is constant at 28 M / 2 A every year.
+- **WHAT WOULD REOPEN IT: a different DATASET, not a different statistic on this one.**
+  EIA-923 measures tonnage delivered and stock held; the MMU's event was delivery
+  *reliability* (can a trainload be counted on this week), which a fleet prices into its
+  offer while still taking every load it can get — smooth receipts and a markup, exactly
+  what 2022 shows. A rail-performance or delivery-reliability series would be a new
+  intake and an owner procurement decision, the same shape as ERCOT's daily-Waha block.
+- **`coal_fuel_inventory` IS `R` FOR SPP** (cell moved in `SPP.js` this session). The
+  flat `/12` row **would** bind — 5 months in each of 2021 and 2022, peak months
+  +45.6 / +50.1 % over cap — but the physically correct **cumulative** constraint
+  **binds in zero months in all seven years**, bottoming at 16.9 days of burn (2022)
+  and 31.6 (2021). SPP's measured stockpile supports exactly the seasonal drawdown the
+  `/12` row forbids. **That it binds in precisely the two failing crossover years is
+  reported and is explicitly NOT the basis** — rule 1 forbids both selecting on the
+  residual and reaching a number through a mechanism that is not real. Re-opening
+  SPP-41's "do NOT propose a coal ceiling" line was legitimate (the cell was `U`, the
+  field did not exist until 2026-09-16, and SPP-41's evidence is all about **LEVEL**
+  while its own conclusion is that the excess is **DURATION**); re-opening *this*
+  verdict would need a change to the row's **form** — a carryover/cumulative inventory
+  constraint — which is shared machinery and a different charter.
+- **SPP's open C1 / C3a / C3b / C4 held-out failures therefore remain open with NO
+  identified forward-admissible instrument.** After this lane the object is a data
+  procurement decision, not a modelling one. Do not spend a span on either dead cell.
 
 **The queue (plan §4 W5, in issue order).**
 
