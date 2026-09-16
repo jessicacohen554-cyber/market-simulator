@@ -2310,3 +2310,5 @@ results/calibration/soco40_baseline_B/
 #   git checkout 5bb6b99690d74b55ca79247b1113fe0a81525035 -- results/calibration/miso260_seam_v
 /results/calibration/miso260_seam_v/
 /results/calibration/miso260_seam_t/
+#   git fetch origin 5478c2ac2e1985b602ef163459809ef0d919b977
+#   git checkout 5478c2ac2e1985b602ef163459809ef0d919b977 -- results/calibration/miso260_seam_t
