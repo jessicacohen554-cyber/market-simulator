@@ -2199,3 +2199,10 @@ results/calibration/spp42_span_a/
 # so the doc is the record exactly as rule 29(c) requires.
 /results/calibration/miso259_screen_arm/
 /results/calibration/miso259_screen_control/
+
+# pjm-h8 SCREEN bundle (rule 29 [R-SCREEN] (c): never reaches `main`; rule 31
+# [R-RETAIN]: gitignored, NEVER `rm`ed, until the owner rules on promotion).
+# Recovery by IMMUTABLE SHA (rule 33 [R-SHARD-ARCHIVE] (d)):
+#   git checkout b2b3d7d572ce56cd0fc25c4e08c8b46fce740be7 -- \
+#     results/calibration/pjm_h8_screen2023_arm
+results/calibration/pjm_h8_screen2023_arm/
