@@ -2183,3 +2183,19 @@ results/calibration/spp42_screen_arm/
 # RECOVERY BY IMMUTABLE SHA (rule 33(d)):
 #   git checkout df3f59600a12e95b895d540900f7b966eebc5b9a -- results/calibration/spp42_span_a
 results/calibration/spp42_span_a/
+
+# miso-259 screen bundles (2022 arm + its same-HEAD control). Rule 29 [R-SCREEN]
+# (c): a screen bundle, and a control bundle a screen earns, must not reach
+# `main` — an unregistered bundle dir is a check_registry_payload_parity RED and
+# is never an allowlist candidate. Rule 31 [R-RETAIN] settles HOW: .gitignore
+# discharges that duty, `rm` does not, and nothing here may be deleted until the
+# owner has ruled on promotion. The bytes also live on their shard branches, so
+# a promotion costs ZERO re-solves — recover by FULL SHA, never by branch name
+# (rule 33 [R-SHARD-ARCHIVE] (d); shard branches are auto-deleted within minutes):
+#   git checkout 71ad0a1a5a476ec767776b5675654463df09c79a -- results/calibration/miso259_screen_arm
+#   git checkout 70ef3071eed52d694254592258f8e3beec00d3b4 -- results/calibration/miso259_screen_control
+# Every number this session cites from either bundle is carried by
+# docs/PRECOMMIT-miso259-coal-fuel-inventory-2026-09-16.md and the RESULT doc,
+# so the doc is the record exactly as rule 29(c) requires.
+/results/calibration/miso259_screen_arm/
+/results/calibration/miso259_screen_control/
