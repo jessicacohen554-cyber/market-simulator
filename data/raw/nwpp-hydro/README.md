@@ -93,3 +93,36 @@ coupling down a river (eight of the footprint's ten largest hydro plants are one
 Columbia-mainstem chain), sub-monthly reservoir carryover and refill, or
 flood-control / fish-spill obligations. Those are NWPP-32's and NWPP-36's
 problem, not this extract's — but the extract is what they will be built on.
+
+## NWPP-32 artifacts — the budget, the envelope, the chain (2026-09-14)
+
+Built by `scripts/data/build_nwpp_hydro_budget.py` from the extract above, the
+loader's own EIA-860 reader, ORNL EHA FY2024, HILARRI v4 and the 17 per-BA EIA-930
+extracts. A join, a reconciliation and a flag — **no modelling, no gap-filling, no
+rescaling, no fitted scalar** (rules 13 / 14). Pre-registration
+`docs/handoffs/PRECOMMIT-nwpp-32-2026-09-14.md`; result
+`docs/handoffs/FINDING-nwpp-32-2026-09-14.md`.
+
+| file | what |
+|---|---|
+| `nwpp_hydro_budget.parquet` | 877 rows = one per (plant, year) over the union of the 288 EIA-860 `HY` plants and each year's EIA-923 reporters (295 / 294 / 288): `m01..m12` raw monthly MWh (negatives RETAINED — the loader clips them, `loader_clip_mwh` reports the clip), `budget_annual_mwh`, `netgen_annual_mwh_923`, `delta_mwh`, `status`, `max_mw` (EIA-860 nameplate; `max_mw_source` names the loader's peak-monthly-average fallback where 860 is absent), `min_mw` (0 — no floor is stamped by this lane), `zone`, `ba_code`, `river_eha`, `mode_eha`, `dam_owner_eha`, `huc_eha`, `ferc_docket_eha`, HILARRI reservoir-linkage flags, `chain`, `chain_order`, `loader_kept` |
+| `nwpp_hydro_reconciliation.csv` | the per-plant-year gate table (same rows, the columns a reader needs) |
+| `nwpp_hydro_chain_published.csv` | HAND TRANSCRIPTION of published chain facts — BPA *The Columbia River System Inside Story* pp. 14–15 (storage/run-of-river type, storage MAF, average discharge cfs, capacity kW) and the HRFCPPA 2004 seven-project definition — one source column per row; the only file here written by hand |
+| `nwpp_hydro_chain.csv` | the transcription joined to nameplate, 2023–2025 energy, EHA mode/river/HUC/FERC docket and reservoir linkage: **NWPP-36's reach table** |
+| `nwpp_hydro_within_month_930.csv` | per (BA, year, month) within-month shaping statistics off EIA-930 `NG: WAT` for the pool and every member: mean MW, diurnal amplitude, daily-energy CV, first-week/last-week ratio, p5/p50/p95/min/max MW |
+
+**Gate (rule 13):** every plant-year reconciles to EIA-923's own annual column at
+**0.000 MWh** (tolerance 1.0), all three years; nothing is filled. `status` values:
+`RECONCILED`, `ALL_ZERO`, `NON_POSITIVE` (reconcile but carry ≤ 0 energy — the loader
+drops them), `NO_923_SERIES` (in EIA-860, absent from that year's EIA-923 — 5 / 8 / **263**
+plants; 2025 is the early release), `MISMATCH` (none). `no_860_nameplate` marks the
+7 / 6 / 0 EIA-923 reporters with no EIA-860 hydro nameplate — four of them are the
+Klamath dams removed in 2023–2024 (Copco 1, Copco 2, Iron Gate, John C. Boyle: 387.4 GWh
+of real 2023 energy, 8.8 GWh in 2024), for which the loader's peak-monthly-average
+fallback is the correct envelope.
+
+**Pumped storage stays out by design** (one plant, 314.0 MW, BPAT) — storage, not inflow.
+The EIA-930 pool `NG: WAT` is NOT the same population as these plants (−2.5 % stable,
+decomposed by BA in the FINDING §3) and carries known-defective hours (Oct 2025 +14 %),
+so a 2025 `eia930_monthly` repin is refused there; the recommended 2025 posture is
+`backfill_year=2024` alone, with the like-for-like wetness declared.
