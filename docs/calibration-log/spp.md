@@ -2898,3 +2898,112 @@ pruned here.
 
 **Next shorthand: spp-43.** Top queue item is the **2019–2022 CAMPD unit-outage intake**, which
 both unblocks this gate on the held-out years and root-causes SPP-40's C8 breach.
+
+## spp-43 — 2026-09-16 — THE 2019–2022 UNIT-OUTAGE INTAKE: the data gap both open defects root-caused to is CLOSED, and so is the held-out C8 breach
+
+**NO PROMOTION. `frontend/data/backcast/keepers/SPP.json` is UNTOUCHED** and SPP's designated
+keeper remains 12, `2026-09-16-spp-42-commitment-feasibility` (rule 31 `[R-RETAIN]` — promotion
+is the owner's act, and this lane asks the question rather than pre-empting it). SPP's
+determination is UNCHANGED: `CALIBRATED` on the 2023–2025 train-tier verdict, and
+`audit_keepers --iso SPP` passes clean. Full write-up:
+`docs/handoffs/RESULT-spp-43-unit-outage-intake-2026-09-16.md`; charter
+`docs/handoffs/PRECOMMIT-spp-43-unit-outage-intake-2026-09-16.md`.
+
+**THE SOURCE SURVEY CAME FIRST AND IS WHAT LICENSED THE INTAKE** (rule 29 `[R-SCREEN]` step 0,
+`scripts/probes/_spp43_source_survey.py`). 13 of SPP's 14 CAMPD detection states carry a complete
+Jan 1 → Dec 31 unit-level parquet in **every** year 2019–2025; the 14th (**CO**) is absent in
+every year **including 2023–2025**, so the committed block was itself derived on the same
+13-state panel and **the gap is purely TEMPORAL, never spatial**. Fleet CEMS coverage in
+2019–2022 equals or exceeds the in-sample years (112/109/107/107 model plants against
+107/105/106; ST_GAS 19/18/17/17 against 17/17/17; COAL 26/25/24/24 against 24/23/23), and all
+four plants carrying SPP-42's residual D-4 failures (1230 / 1235 / 1271 / 3008) file in all seven.
+
+**RULE 23 `[R-FROZEN-DERIVE]` IN ITS OWN TERMS.** Extending an extract's YEAR RANGE on unchanged
+source data is a FIRST derivation for those years, not a re-derivation against a residual. The
+invocation differs from the committed one in `--years` and nothing else; no detector threshold,
+constant or setting was touched, and the derived years were never compared against a residual
+before being kept. Standard +943/932/982/946 windows, short +181/239/379/270 — the same order of
+magnitude and class composition as 2023–2025. **ADDITIVITY PROVEN FOUR WAYS**: 3,803 / 1,069
+additions and **0 removals**; the committed block's bytes unchanged **including line positions**;
+no new row with `outage_end ≥ 2023-01-01`; and the decisive one — **the LP's own 2023–2025
+availability multiplier arrays are BYTE-IDENTICAL before and after, all six**. The keeper's
+scored years therefore cannot move and were deliberately NOT re-solved, a ~10-minute shard
+killed at zero LP. Reach (`scripts/probes/_spp43_overlay_reach.py`): the 2019–2022 overlays go
+from **0 bins to 77–81**, 363k–403k derated cells against 337k–370k in-sample — the flat-EFOR
+condition is gone.
+
+**THE RESULT** — `2026-09-16-spp-43-outage-intake`, bundle `results/calibration/spp43_holdout_span`,
+keeper 12's recipe replayed UNREVISED (no `--set`, zero differing behavioural keys,
+`offer_curve_by_group` byte-identical SHA-256 `090abd79…62f65`), stamped to keeper 12.
+**SPP-40's held-out C8 breach is CLOSED: `forced_share` FAIL on all four years → PASS.**
+**NUMERATOR AND DENOMINATOR SEPARATED**, because the ratio alone is the trap this lane was
+warned about: the whole improvement is NUMERATOR (ST_GAS `forced_twh`
+5.0294/4.7849/5.4248/5.4898 → **1.7035/1.7040/1.9543/2.3652** TWh) and the DENOMINATOR moved
+**AGAINST** it in three of four years (`class_total_twh` 14.6909/15.8746/10.7616/9.8806 →
+14.7341/**14.0692**/**7.9206**/**7.5281**). Shares 0.3423/0.3014/0.5041/0.5556 →
+0.1156/0.1211/0.2467/0.3142; 2022 stays above the 0.30 cap and clears rule 20's
+**grounded-above-budget** route (all binding mechanisms clear D-4; profile r 0.952, off-peak CV
+ratio 1.438) — a clean PASS surfaced as a report note. **D-4 per-unit conduct FAIL rows 33 → 4**,
+the survivors being plant 3008 in 2019–2021 and a marginal 1230 in 2019 (46 binding hours, down
+from 1391) — 3008 being the fleet's one measured two-shifter whose defect SPP-27 identified as
+the WITHIN-DAY grain, never this mechanism. That is the same residual the in-sample keeper
+carries, so the held-out picture now matches the in-sample one.
+
+**ATTRIBUTION IS JOINT AND SAYS SO.** The arm differs from the `2026-09-13-spp-40-holdout-span`
+control by the intake AND keeper 12's `mustrun_commitment_feasibility_clip`, and the two are
+**NOT separable by construction** — SPP-42 measured the clip PROVABLY INERT on these years
+without the extract, so the data is the enabling condition and the clip the mechanism. A
+decomposition leg (new extract, clip OFF, `results/calibration/spp43_extract_only`) was launched
+to quantify the split; nothing above depends on it.
+
+**THE COSTS, DECLARED NOT DISCOVERED.** 2022 gains **563.6284 MWh of slack** against the
+control's 0.0000 and its max system price goes **85.58 → 1102.55 $/MWh**; **2020 degrades across
+the board** (C3a +24.0 % now FAILs, C3b 0.231 → 0.319, a new C1 COAL_PRB −10.85 TWh row,
+reported-only CO2 −4.8 % → +17.5 %). Load-weighted price rises every year (19.8177 → 22.3866,
+18.0677 → 20.4872, 29.4211 → 40.1673, 33.7319 → 43.6848); hours > $200 0→0 / 0→0 / 14→220 / 0→4;
+energy conserved to ≤ 0.0159 TWh on 262–288 TWh; dump 0.0000 everywhere. **Determination stays
+NOT-YET** on four unchanged FAIL criteria, with **grade 2 → 3** and **fails 5 → 4**: C1 FAIL rows
+4 → 2, C3a 2 → 1, C3b 2021 0.640 → 0.213, C4 3 → 1, C3c 2021 CAVEAT → PASS, D-10 free-class C1
+28/32 → 30/32 (free 20/24 → 22/24). **RULE 14 `[R-ACCURATE]` IS THE BASIS AND THE RESIDUAL IS
+NOT** — that C8 and D-4 improved is a RESULT, and that 2020 and 2022 got worse is a discovered
+root cause to route, never grounds to revert an accurate input. **RULE 29 `[R-SCREEN]`: no screen
+gate and no residual gate**, on the precedent keepers 11 and 12 both record — the screen applies
+to a candidate MECHANISM competing against a correct one, and a MISSING measured input is not a
+candidate mechanism. Form 4 holds: G-DRIFT from the keeper-12 promotion commit `520d9fc0` to this
+base finds **ZERO changed hunks** on the solve path, and the older gap from the control's own
+`git_sha` `3117f06a` was already closed by SPP-42's actual re-solve.
+
+**REPORTED, NOT FOLDED IN.** (1) **The frozen 2023–2025 block is NOT reproducible at HEAD**:
+re-deriving it as a control emits **103 rows it does not carry — all plant 762 (Ponca) units 3–4,
+ST_GAS, ZERO removals** — because Ponca reaches the deriver only through
+`load_retired_within_window` and the frozen block predates that scope. Left untouched since
+changing it would move the keeper's SCORED years; the 2019–2022 block IS at HEAD scope and DOES
+carry Ponca, because rule 14 forbids degrading an accurate input to match a stale one. The short
+extract reproduces byte-identically (coal-only scope). Routed as its own lane. (2) The four
+companion extracts (`layup`, `layup-shortgas`, `shortgas`, `e923`) stay 2023–2025 and were
+deliberately NOT extended — the keeper consumes none of them, and SPP-42's lay-up
+double-subtraction finding is unaffected since there are still no 2019–2022 lay-up rows.
+(3) `stamp_touchpoint_holdout.py`'s NEISO-specific `[R-HOLDOUT]`-era caveat defaults were
+re-applied by the stamp and corrected in place on the new sidecar — they assert an
+envelope-parity story that is the **exact opposite** of this run's object, and claim a touch-once
+locked test is unspent when 2019 is one of this bundle's years. Zero consumers; REPORTED, not
+patched (rule 25); **a re-stamp resets them**. (4) `replay_keeper --out-dir` still propagates
+neither `calibration_attestation.json` (closed by `scripts/gen_spp43_attestation.py`) nor
+`metrics.json` (the parent's scoring step writes it). (5) Parity gate: two pre-existing REDs,
+neither pruned — `caiso279_ablate_dswcouple_span` (CAISO) and `soco15_spp_arm`, whose `meta.json`
+reads **`iso = SPP`**, not SOCO: it is the SOCO-15 lane's *SPP arm* and so IS in this ISO's
+rule-35(a) scope, but it is cited as live evidence by ten-plus docs across five lanes and rule 31
+reserves that call for the owner.
+
+**RETRIEVABILITY** (rule 34 `[R-SHARD-PROMOTABLE]` (e)): the bundle is PUSHED — 44 files
+including all four `dispatch/<year>_P1.parquet` and `_shared/SPP` — on `claude/spp43-holdout-span`
+(PR #6223), rebased onto main at `aea6158f0b12535890a8e8fed35b3b3207410875`. A promotion costs
+**zero re-solves**: `git checkout aea6158f0b12535890a8e8fed35b3b3207410875 -- results/calibration/spp43_holdout_span`.
+
+**THE PROMOTION QUESTION, ASKED NOT PRE-EMPTED**: this run supersedes
+`2026-09-13-spp-40-holdout-span` as SPP's 2019–2022 rung. Both are currently registered and both
+are stamped to keeper 12; nothing was pruned. Promote and prune the predecessor (rule 35
+`[R-PROMOTE]` (a), SPP only)? SPP's registered year set stays at SEVEN either way, and the keeper
+itself is unaffected — its availability arrays are byte-identical, proven above.
+
+**LINEAGE**: SPP-40 → SPP-42 → **SPP-43**.
