@@ -89,6 +89,19 @@ def fleet_heat_rate() -> tuple[float, int]:
     return num / den, den
 
 
+def _crosswalk_storage(plants: set[int]) -> set[int]:
+    """Shared-storage ids the committed crosswalk ties to ``plants``.
+
+    Reads the SAME crosswalk and applies the SAME membership test as
+    :func:`market_sim.data.coal_fuel_inventory.coal_footprint_plant_ids` — a
+    storage entity joins only when the footprint holds a plant it serves — so a
+    phase-0 table can never be scored on a footprint the LP does not use.
+    """
+    from market_sim.data.coal_fuel_inventory import _shared_storage_map
+
+    return {sid for sid, served in _shared_storage_map().items() if served & plants}
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument(
@@ -103,16 +116,44 @@ def main() -> int:
         default="all",
         help="delivery-rate construction: every receipt, or contracted tonnage only",
     )
+    ap.add_argument(
+        "--plant-ids-json",
+        type=Path,
+        default=None,
+        help="JSON list of plant ids to use as THE footprint, overriding --plant-set. "
+        "The bench part is a SCORING artifact, not a fleet census (256 thermal "
+        "plant-keys in MISO 2022, no hydro/nuclear/VRE rows at all), so a "
+        "bench-derived coal set is a PROXY for the LP's own coal fleet and is "
+        "smaller than it. Pass the LP's own plant codes here — read off a solved "
+        "bundle's dispatch/<year>_P1.parquet — to score the footprint the "
+        "mechanism actually constrains.",
+    )
+    ap.add_argument(
+        "--shared-storage",
+        type=int,
+        nargs="*",
+        default=None,
+        help="extra shared-storage/terminal plant ids to fold into the footprint "
+        "(default: the committed coal-shared-storage-crosswalk entries whose "
+        "served plants are present). Pass an explicit list to override.",
+    )
     ap.add_argument("--json-out", type=Path, default=None)
     args = ap.parse_args()
 
     hr, n_units = fleet_heat_rate()
     ptypes = CONTRACT_PURCHASE_TYPES if args.purchase_types == "contract" else None
     union = union_coal_plant_ids()
+    explicit: set[int] | None = None
+    if args.plant_ids_json is not None:
+        explicit = {int(p) for p in json.loads(args.plant_ids_json.read_text())}
+    label = (
+        f"EXPLICIT ({len(explicit)} plants, the LP's own coal fleet)"
+        if explicit is not None
+        else f"{args.plant_set} ({len(union)} plants in the six-year bench union — a PROXY)"
+    )
     print(
         f"coal fleet heat rate {hr:.3f} MMBtu/MWh over {n_units} CAMPD units; "
-        f"footprint = {args.plant_set} ({len(union)} plants in the six-year union); "
-        f"delivery rate = {args.purchase_types}"
+        f"footprint = {label}; delivery rate = {args.purchase_types}"
     )
     print(
         f"{'yr':>5} {'open Mt':>9} {'rate Mt':>9} {'HHV':>7} "
@@ -120,7 +161,17 @@ def main() -> int:
     )
     records = []
     for year in YEARS:
-        ids = union if args.plant_set == "union" else coal_plant_ids(year)
+        if explicit is not None:
+            ids = set(explicit)
+        elif args.plant_set == "union":
+            ids = set(union)
+        else:
+            ids = coal_plant_ids(year)
+        ids |= (
+            set(args.shared_storage)
+            if args.shared_storage
+            else _crosswalk_storage(ids)
+        )
         open_tons = opening_stock_tons(ids, year)
         rate = prior_years_delivery_rate(ids, year, purchase_types=ptypes)
         model = model_coal_twh(year)
