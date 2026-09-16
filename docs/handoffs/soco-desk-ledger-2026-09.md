@@ -11,6 +11,94 @@ recreated fresh from `origin/main`.
 
 ## 0. Live state — newest entry FIRST
 
+### r#9 — 2026-09-16 — **W4 ISSUED: SOCO-40, THE FIRST-EVER SOCO SOLVE** · SOCO-32's dispatch status ASKED AND ANSWERED (main `a2dc6d3a`)
+
+**Gate G15 worked exactly as written, for the fourth time.** At r#8 SOCO-32 had no branch, no commit
+and no FINDING, and the desk **did not grade it LOST** — it asked. The owner's answer: **SOCO-32 is
+running.** Absence was not evidence, again. That is now a four-for-four record (r#2 SOCO-10/11/12,
+r#3 SOCO-13/21, r#4 all five, r#8 SOCO-32) and it is the single cheapest gate in this plan.
+
+**SOCO-40 `[FABLE]` ISSUED**, pinned `a2dc6d3a`, written out in full in plan §8. W4 is ONE lane —
+the wave graph has always said so — so this is the whole wave.
+
+**IT IS NOT A COPY OF SPP-40, AND FOUR OF THE DIFFERENCES ARE CORRECTIONS THAT SPP'S TEXT CANNOT
+CARRY BECAUSE THEY POSTDATE IT.** The desk diffed the charter against the pack charter before issuing
+(E-6's remedy) and against the live code rather than against the SPP prose (E-8's remedy):
+
+1. **`--commitment` WOULD HAVE ERRORED THE SOLVE.** SPP-40's charter says
+   `run_calibration_full.py --iso SPP --year <screen year> --commitment` — twice. P2 has since been
+   ARCHIVED, and `run_calibration_full.py:9014` now makes every P2 flag *"a hard error so P2 is never
+   a silent"* path unless `--enable-legacy-p2` is passed. **Verified in the source, not assumed from
+   CLAUDE.md's prose.** A verbatim copy would have handed the first SOCO solve a command line that
+   fails before the LP starts. SOCO-40 passes neither flag, and the shard's own hard stop is that
+   neither appears anywhere in its command line.
+2. **Rules 32–35 landed 2026-09-09/12, after SPP-40 ran.** SPP-40 solved in its own container; SOCO-40
+   may not. The charter makes it an **orchestrator that never runs an LP**, carries all nine
+   shard-launch requirements of rule 32(c) inline, and states rule 34(a) in the form the miso-255
+   incident produced — **the shard PUSHES its bundle**, `.gitignore` negation then a **plain
+   `git add`**, `dispatch/<year>_P1.parquet` included, **screen shard included** (34(b): you cannot
+   know a screen is only a screen until the owner rules).
+3. **The determination class did not exist when SPP-40 was written.** Rubric v3.8's
+   `PHYSICALLY-CALIBRATED (PRICE UNSCORED)` is SOCO-22's, created by SOCO-13's NO. The charter states
+   `CALIBRATED` is unreachable, names C1/C2/C4/C6/C8 as the scored set, and — the part a lane could
+   get wrong in the expensive direction — says **C3a/C3b/C3c are UNSCORABLE, NOT FAILED**, so they
+   neither read as failures nor consume a caveat slot.
+4. **The zonal shares are the FIVE-respondent set**, card S3 as re-ruled.
+
+**THE SCREEN YEAR IS NAMED WITH A STRUCTURAL CRITERION AND A REASON, AND THE LANE MAY OVERRIDE IT.**
+Rule 29 forbids choosing on a residual — and here there is no residual at all, since SOCO has never
+been solved, so the usual formulation ("largest measured footprint") does not transfer cleanly. The
+criterion written into the charter is *the year that exercises the most novel objects at once on the
+cleanest measured input*, and the desk's stated reading is **2024**: the span's winter peak
+(47,368 MW), both Vogtle units in service for three quarters of it, and an EIA-930 balance identity
+that is **exactly zero in every hour** — where 2025 carries 633 nonzero hours, a −0.6963 TWh residual,
+a one-hour `min_mw` artifact at 12,638 MW and an incomplete peaker census (SOCO-31 §4.3–§4.5).
+**Screening on 2025 would risk grading a data artifact as a structural failure.** The lane may name a
+different year in its PRECOMMIT with its own phase-0 reason; what it may not do is name one after
+seeing a number.
+
+**ONE INCONSISTENCY FOUND AND DELIBERATELY NOT RESOLVED FOR THE LANE.**
+`run_isos_concurrent.py:151` registers `IsoMemoryClass("SOCO", peak_gb=6.0, per_plant=True,
+co_opt=False)`, while `plant_level_fleet` defaults **`False`** and is not set in `_soco_config`, and
+SOCO is **absent** from `CAMPD_BINNING_ISOS` (`{ERCOT, CAISO, NEISO, NYISO, PJM, MISO}` — read from
+`capacity_market.py`). So two registries disagree about whether SOCO's solve is per-plant. The
+charter makes it a **phase-0 census item measured by calling the code**, not a fact the desk asserts —
+which is E-8's adopted-forward rule applied at the moment it would have been easiest to skip. It is
+conservative in the safe direction (over-reserving memory under rule 12), so it is a nit, not a
+blocker; naming it costs the lane a minute and costs nothing if it is already right. The charter also
+states plainly that SOCO's absence from `CAMPD_BINNING_ISOS` is the **norm for a new region** — NWPP's
+own ISOConfig docstring records the identical posture under owner ruling N8, SPP is absent too — so
+the lane does not "fix" it: that is `src/`, a declared solve-surface value and a gate-G8 cache-key
+move.
+
+**WHAT THE CHARTER MAKES THE FIRST KEEPER SAY OUT LOUD.** Five items go on the determination basis, in
+the lane's own words, because each is a thing a reader would otherwise have to reconstruct: the price
+gap at full magnitude; **R-i** (1,306.6 MW of pumped storage unobservable in EIA-930 for 2023 and
+99.7 % of 2024 — a hard C1 `fuelmix` constraint, never a hole to fill); card S3's exclusion of
+Southern Power and the residual it leaves; card S12 / SOCO-15's COD bias, whose floor stands
+regardless of outcome; and **R-v**'s 2025 peaker census, which is incomplete even though 2025 carries
+no `eia923_incomplete` flag.
+
+**The charter also tells the lane, by name, not to touch `results/calibration/soco15_spp_arm`** — it
+will see that gate RED, and rule 31 `[R-RETAIN]` means it is the owner's to rule on, not a lane's to
+tidy. **R-p remains open.**
+
+**Not issued, and why.** W5's levers (SOCO-54/55/56/57) stay pre-declared and un-issuable: each needs
+the keeper SOCO-40 produces, and **SOCO-56 additionally needs R-t resolved** — arming the priced seams
+at the registered `interface_limit_mw` would refuse 36–42 % of measured flow. W6 is the capx
+director's (card S10, still open, still due when a keeper exists). **SOCO-34 needs a PR, not a
+charter** — it is finished on its branch and still merges clean against this pin.
+
+**Gates:** not re-run. This refresh commits one plan section, one ledger entry and one CHANGELOG line;
+no code, data or registry input has changed since r#8's run three hours ago. Recorded UNREAD rather
+than carried forward green.
+
+**Next act:** sitting #10 — grade SOCO-32 when it lands (the last G4 precondition), then grade SOCO-40
+by content and put its promotion question to the owner **in that session, while the bundles are alive**
+(rule 31).
+
+---
+
 ### r#8 — 2026-09-16 — **THE DESK REOPENS AND W3 HAS RUN: FOUR OF FIVE LANES DISPATCHED, THREE LANDED AND GRADED PASS, ONE FINISHED WITH NO PR, ONE NEVER STARTED** (main `e9e1f4f0`)
 
 **The handoff said W3 was "issued and undispatched". That was true at `1f586ed7` and is no longer true**
@@ -688,10 +776,10 @@ option (a)).
 | SOCO-21 matrix shard | OPUS | W2 | **LANDED r#5 — GRADED PASS**, 327 ids / 168 `U` / 159 `·`, no verdict minted. Owes a `## Log entry` (desk stub in its place) | merged | `FINDING-soco-21-2026-09-13.md` |
 | SOCO-30 outages + tranches | OPUS | W3 | **LANDED r#8 — GRADED PASS.** Gate G4 both legs; 1,119 windows; zero measured full-year CEMS outages; three defects routed | PR #6179 / #6181 | `FINDING-soco-30-2026-09-16.md` |
 | SOCO-31 benchmarks | OPUS | W3 | **LANDED r#8 — GRADED PASS.** Gate G9 **exactly zero**, re-measured by the desk from the diff (+295/−1, the deletion a date stamp); price line held under pressure | PR #6185 | `FINDING-soco-31-2026-09-16.md` |
-| SOCO-32 zonal shares + solar + gas hub | OPUS | W3 | **ISSUED, NOT DISPATCHED** — no branch, no commit, no FINDING. **NOT graded LOST** (gate G15). It is SOCO-40's last open precondition | — | — |
+| SOCO-32 zonal shares + solar + gas hub | OPUS | W3 | **RUNNING** — confirmed by the owner at r#9. Gate G15 held: asked, not inferred. **SOCO-40's last open precondition** | — | — |
 | SOCO-33 seam derive | OPUS | W3 | **LANDED r#8 — GRADED PASS.** Net-exporter sanity on both clocks; sign convention verified by shift test; **G17 never approached**; headline = the interface limits | PR #6180 | `FINDING-soco-33-2026-09-16.md` |
 | SOCO-34 site + docs | OPUS | W3 | **FINISHED, NOT MERGED — NO PR EXISTS.** Branch `claude/soco-34-site-docs-pxkmb5` @ `1f71ec097b3f4b7e4ef17a5f88225abdd4c988c5`, zero conflicts vs `main`. **GRADED PASS r#8 off the branch.** The owner owes it a PR | branch only | `FINDING-soco-34-2026-09-16.md` (on the branch) |
-| SOCO-40 first solve | FABLE | W4 | **BLOCKED ON SOCO-32 ALONE.** Card S11 is discharged (SOCO-22 landed r#5, rubric v3.8); SOCO-30 and SOCO-31 landed r#8. Gate G4 is 2 of 3. **The charter is not issuable until SOCO-32 lands** | — | — |
+| SOCO-40 first solve | FABLE | W4 | **ISSUED r#9**, pinned `a2dc6d3a`, charter in plan §8. Gate G4 is 2 of 3 and the charter's own PRECONDITION block STOPs on SOCO-32 — so it is dispatchable the moment SOCO-32 lands | — | — |
 | ~~SOCO-22 rubric class (duplicate row)~~ | — | — | **STALE ROW, superseded by the SOCO-22 row above** — the lane was issued r#3 and graded PASS r#5. Kept struck rather than deleted so the r#2→r#3 sequence stays readable | — | — |
 | SOCO-54/55/56/57 levers | — | W5 | pre-declared, not issuable | — | — |
 | W6 forecast entry | — | W6 | ROUTED to the capx director (card S10) | — | — |
@@ -758,6 +846,7 @@ option (a)).
 
 | Sitting | Date | Lanes issued | Cards served |
 |---|---|---|---|
+| r#9 | 2026-09-16 | **SOCO-40** `[FABLE]` — W4, the first-ever SOCO solve, pinned `a2dc6d3a`. Written out in full in plan §8, against SPP-40's committed charter **plus four corrections SPP's text cannot carry**: `--commitment` now errors without `--enable-legacy-p2` (verified in source, and a verbatim copy would have failed the solve); rules 32–35 make the lane an orchestrator whose shards PUSH their bundles; the v3.8 no-price class did not exist when SPP-40 was written; the shares are the five-respondent set. Ends with the pack's EXIT boilerplate including the `## Log entry` line | **none served.** **S10** stays open. **R-p** (the `soco15_spp_arm` retention ruling) remains with the owner from r#8 |
 | r#8 | 2026-09-16 | **NONE — and deliberately none.** All five W3 charters were issued at r#6 and four have since run; **SOCO-32's charter is already paste-ready in plan §8** and carries card S3's five-respondent precondition, so re-transcribing it would risk E-6's failure mode for no gain. The desk **asks its dispatch status** (gate G15) rather than re-issuing it. SOCO-40 is **not** issued: gate G4 is 2 of 3 | **none served.** **S10** stays open (W6 routing, due when a keeper exists). Two questions are put to the owner in the report — SOCO-32's dispatch status, and the **R-p** retention ruling on `soco15_spp_arm` — but neither is a design card and neither is minted as one |
 | r#0 | 2026-09-12 | none (charter commit) | none |
 | r#1 | 2026-09-13 | **SOCO-10, SOCO-11, SOCO-12** (plan §8 W1, verbatim, pinned `2c2fc065`). SOCO-13 HELD on card S2 | **S1, S2** |
