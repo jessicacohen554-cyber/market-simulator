@@ -87,12 +87,27 @@ def _download(year: int) -> tuple[bytes, str]:
     raise RuntimeError(f"no reachable EIA-923 bulk ZIP for {year}: {last}")
 
 
-def _extract_sheet(blob: bytes) -> tuple[list[list[object]], str, str]:
-    """Return ``(rows, workbook_name, workbook_sha256)`` for the stocks sheet.
+def _extract_sheet(
+    blob: bytes,
+    sheet_name: str = SHEET_NAME,
+    banner_rows: int = _BANNER_ROWS,
+) -> tuple[list[list[object]], str, str]:
+    """Return ``(rows, workbook_name, workbook_sha256)`` for one workbook sheet.
 
     ``rows[0]`` is the header row; EIA's banner rows are dropped. Values come
     back exactly as the workbook stores them — this is an extraction, never a
     transformation.
+
+    Defaults to this script's own coal-stocks sheet. The sibling receipts
+    intake (``fetch_eia923_coal_receipts.py``) passes its own sheet name and
+    banner depth so both read the same downloaded workbook through one
+    extractor rather than duplicating the zip/openpyxl plumbing.
+
+    Args:
+        blob: The downloaded EIA-923 annual bulk ZIP, as bytes.
+        sheet_name: Worksheet to extract.
+        banner_rows: 1-based row number of the real header (EIA prepends a
+            variable number of agency/title/source banner rows per sheet).
     """
     import openpyxl
 
@@ -107,11 +122,11 @@ def _extract_sheet(blob: bytes) -> tuple[list[list[object]], str, str]:
         tmp.write(payload)
         tmp.flush()
         wb = openpyxl.load_workbook(tmp.name, read_only=True, data_only=True)
-        if SHEET_NAME not in wb.sheetnames:
+        if sheet_name not in wb.sheetnames:
             wb.close()
-            raise RuntimeError(f"workbook has no {SHEET_NAME!r} sheet")
-        ws = wb[SHEET_NAME]
-        rows = [list(r) for r in ws.iter_rows(min_row=_BANNER_ROWS, values_only=True)]
+            raise RuntimeError(f"workbook has no {sheet_name!r} sheet")
+        ws = wb[sheet_name]
+        rows = [list(r) for r in ws.iter_rows(min_row=banner_rows, values_only=True)]
         wb.close()
     return rows, name, sha
 
