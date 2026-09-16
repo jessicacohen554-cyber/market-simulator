@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-09-16 — SOCO desk r#7: no SOCO lane moved; SOCO-34's charter repaired from NWPP-35's handover
+
+- **Nothing graded — W3 is still undispatched** (issued 09-14 19:55; no branch, commit, FINDING or PR).
+  Gate G15: no lane graded LOST on absence. The dispatch gap was reported once on 09-15 and is not
+  re-reported; what is recorded is the changed magnitude — NWPP landed its entire W3 (PRs #6167-#6171)
+  in the same window, both programs having registered hours apart on 09-14.
+- **SOCO-34's charter delta repaired.** NWPP-35 swept the shared codebase-site prose to nine regions,
+  correctly did not serialize SOCO under rule 25, and cited the debt in the artifact itself. SOCO-34 now
+  carries all four owed items by name: SOCO's `iso-topologies.json` block, the `data-completeness.html`
+  filter entry, the stale "eight serialized" line in `config-reference.html`, and a check that the site's
+  47-zone count already includes SOCO's three. Routed as R-o.
+- **Hydro-lane question closed with a measurement, not an assumption.** NWPP's W3 has a hydro lane and
+  SOCO's does not; SPP's template has none either, because SOCO's hydro is ~2.5-3.5% of energy against
+  NWPP's hydro-dominated footprint. Recorded DO-NOT-REDO, with the NWPP/SOCO lane-numbering offset named
+  so a charter is never copied across by number.
+
 ## 2026-09-14 — NWPP r#5: the pin flipped — NWPP is the eighth registered region, and W3 is issued
 
 Desk refresh r#5 (`docs/handoffs/nwpp-desk-ledger-2026-09.md`). Docs only — no code, no data, no

@@ -11,6 +11,46 @@ recreated fresh from `origin/main`.
 
 ## 0. Live state — newest entry FIRST
 
+### r#7 — 2026-09-16 — NOTHING OF SOCO'S MOVED, AND THAT IS THE ENTRY: NWPP FINISHED ITS WHOLE W3 IN THE SAME WINDOW (main `8b9b32e4`)
+
+**No SOCO lane was dispatched, so nothing was graded.** W3 (SOCO-30/31/32/33/34) was issued 2026-09-14
+19:55 UTC and at this pin has no branch, no commit, no FINDING and no PR. Gate G15 holds: **no lane is
+graded LOST on absence**, and the dispatch gap itself was already reported once (09-15 08:09) and is not
+re-reported here.
+
+**What IS new is the magnitude, and it is a measurement rather than a repeat.** At the 08:09 report the
+contrast was one work item: NWPP-30 had landed, SOCO-30 had not started. At this pin **NWPP has landed its
+ENTIRE W3** — NWPP-31 benchmarks, NWPP-32 hydro, NWPP-33 zonal shares, NWPP-34 seam, NWPP-35 site+docs
+(PRs #6167–#6171) — while SOCO's five lanes have not begun. Both programs registered on 2026-09-14, hours
+apart. This is recorded, not re-escalated; the paste-ready W3 block is already with the owner and there is
+nothing for the desk to re-issue.
+
+**The sitting's actual deliverable is a charter repair that only became possible now.** NWPP-35 swept the
+shared codebase-site prose to NINE regions and — correctly, under rule 25 `[R-ISO-SCOPE]` — did **not**
+serialize SOCO. What it did instead is the part worth naming: it **cited the debt in the artifact**, in
+`iso-topologies.json`'s own `_meta.description` (*"eight are serialized here. SOCO registered the same day
+as NWPP and its block is owed by the SOCO desk's own site lane, not by this one"*) and again as a code
+comment at `data-completeness.html:364`. That is a clean handover, not a collision, and it is the standard
+this desk should hold its own lanes to. **SOCO-34's §8 charter delta now carries all four owed items
+specifically** — the topology block, the completeness filter entry, the stale "eight serialized" line at
+`config-reference.html:404`, and a CHECK (not an assumption) that `index.html:297`'s "47 zones" already
+counts SOCO's three. Routed as **R-o**.
+
+**A question closed with a measurement rather than an assumption.** NWPP's W3 has a lane SOCO's does not —
+NWPP-32, hydro. The desk checked whether SOCO's W3 is short a lane: **it is not.** SPP's W3, the template
+this program issues against, has no hydro lane either, and the reason is proportion — NWPP is hydro-dominated,
+SOCO's hydro is ~2.5–3.5 % of energy. SOCO's awkward water asset is the 1,306.6 MW of pumped storage, already
+routed as R-i. Recorded as a **DO-NOT-REDO** in §6, with the numbering-offset trap named (NWPP-33 ≈ SOCO-32,
+NWPP-34 ≈ SOCO-33, NWPP-35 ≈ SOCO-34 — a charter copied from NWPP by lane number is the wrong charter).
+
+**PR #6144 MERGED at 03:49:09 UTC**, mid-sitting — the r#5 and r#6 records (SOCO-20's grade, the G23
+correction, R-l/R-m/R-n, the W3 issuance) are on main. The desk's opening state check for this sitting ran
+minutes before the merge and read it open; the merge was caught when the push hint for a branch with no open
+PR came back. Because a merged PR cannot track new work, r#7 moved to a **fresh branch cut from origin/main**,
+`claude/soco-desk-r7`, carrying this entry — the merged `claude/soco-desk-r5` is not reused.
+
+---
+
 ### r#6 — 2026-09-14 — **SOCO IS REGISTERED** · SOCO-20 GRADES PASS · W3 ISSUED · the desk's own G23 was wrong about the one step that mattered (main `d54cd9c5`)
 
 **SOCO is the NINTH registered region.** `_ISO_BUILDERS` on main is nine keys ending `"SOCO"`; PR #6152
@@ -515,6 +555,7 @@ option (a)).
 | R-l | **`process_eia860.rescope_generator_table_from_parquet` is NOT additive when columns differ** — its last line writes the RAW rebuild, so a rescope DROPS the eGRID `heat_rate` join (8,101 populated rows on the canonical table), ADDS `planned_retirement_month`, reorders `balancing_authority_code`, and admits foreign rows (one PJM plant, 60781). Found by SOCO-20 when its own rescope tripped `test_fleet` heat-rate pins, `test_egrid_boundary_heat_rate`, `test_cc_steam_part_reclass` and `test_derive_coal_sigmoid` | the data-curation owner (routed BY SOCO-20 through this desk) | **The committed tables are REPAIRED; the script is not.** The proven recipe is in gate G23 and in SOCO-20's FINDING §4: main's frame byte-for-byte + the new region's rows only, `heat_rate` joined from the PLNT23 cache, and **the non-new slice `.equals()` main's frame** asserted per file. **Every future region addition hits this** — SPP-20 (`3117f06a`) and NWPP-20 both ran the same routine, so their tables are worth the same `.equals()` audit |
 | R-m | **D79 solve-surface: 20 undeclared SOCO rows** (`solve_surface_register.py --diff` shows SOCO 20 = its own new rows). There is no `--declare-iso` route, so a new region cannot declare its own rows without touching the shared declaration file | SOCO-DESK (the R-1 successor) | **Same state SPP-20 left**, so the gap is now two regions wide and is a registration-protocol defect rather than either lane's miss. Gate G8 is unaffected — 0 moved rows for all eight incumbents — so nothing is mis-keyed; what is missing is the declaration, not the correctness |
 | R-n | **`config/solve_surface.py:75` calls SOCO "the eighth registered region"** — it is the NINTH; NWPP took eighth the same day. The PR title was corrected to "ninth" and the `_ISO_BUILDERS` comment is right, so this is the one place the same-day collision left stale | whoever next edits `solve_surface.py` | Cosmetic, and named only so a later reader does not trust it over `SUPPORTED_ISOS`. `src/`, outside this desk's write scope. (Swept the rest: `export_lce_lmp.py:109` and `test_mechanism_matrix_keeper_stamp.py:37` both read correctly in context) |
+| R-o | **NWPP-35 swept the shared codebase-site prose to NINE regions and left SOCO's own blocks owed, citing the debt in place.** `iso-topologies.json` keys are the eight without SOCO and its `_meta.description` says so verbatim; `data-completeness.html:364` carries the same marker in a code comment; `config-reference.html:404` still says "the **eight** serialized … render below" | **SOCO-34** (folded into its §8 charter delta at r#7) | **Not a collision — a clean handover.** NWPP-35 stayed inside rule 25 `[R-ISO-SCOPE]` (it did not serialize another region's topology) and, instead of leaving the gap to be discovered, named the owing lane in the artifact. That is the behaviour this desk should hold its own lanes to, and it is worth saying so rather than only logging the debt |
 
 ## 4. Collision register
 
@@ -618,3 +659,5 @@ whenever a lane trips over it.**
 **E-7 (r#5 check-in, against this desk's own §2.3). The row that found the `_ISO_TO_BA_CODE` pin drew the wrong conclusion from the same evidence.** §2.3's `_ISO_TO_BA_CODE` row closed with *"NWPP's harder case does not apply here — its 17→1 BA map collapses to one arbitrary BA and fails **silently** at 13 `==` call sites, while SOCO is one BA and one code."* That is correct about **SOCO's data** and wrong about **the codebase**: NWPP's case applied to SOCO not as a data problem but as a **merge hazard**, because NWPP-20's repair *deleted the scalar inverse SOCO-20 was concurrently writing*. The desk had the 13-call-site silent-failure sentence in front of it at r#3, quoted it, and still read it as "not our problem" rather than "this construction is being removed from under us." It cost nothing only because the check-in caught it before the merge. **Adopted forward: when another program's lane reports a defect in a surface this program also writes, record what it CHANGED, not only whether the defect reproduces here — a repair that deletes a construction is a collision even when the bug is not.**
 
 **E-8 (r#6, against this desk's own gate G23). The desk called the parquet step mechanical, and it was the one step that needed judgment.** G23, written at the r#5 check-in, told the rebasing lane the 8 `eia860_generators.parquet` conflicts were *"derived artifacts, not data … re-running the curation step on top of merged main regenerates both regions' rows — no re-fetch, **no judgment call**"*, and offered a **census** (plants/generators counts) as the verification. SOCO-20 did exactly that and the routine silently dropped the eGRID `heat_rate` join on four of eight tables, added a column, reordered another and admitted a foreign PJM row. **A census would not have caught any of it** — every count still matched. The suite caught it, and the lane repaired it by hand and routed the script (R-l). The desk reasoned from the script's *inputs* ("it filters on `BA_CODE_TO_ISO`, therefore it regenerates correctly") without reading its *output path*, which is the same shape of error as E-7 one sitting earlier: correct about the data, wrong about the code. **Adopted forward: a gate that prescribes running a script states the assertion that proves the script did what it claims — for a derived table that is an IDENTITY check on the untouched slice (`.equals()`), never a count.** Corrected in G23 with the lane's proven recipe. *(Also corrected here: the desk's r#5 suggestion that the NEISO Mystic `oil != gas_cc` failure might be rescope residue. It is not — SOCO-20 §6.1 measures plant 1588 as genuinely carrying an oil steam unit AND GT1, so the test over-asserts that every unit under the plant is `gas_cc`. A test-expectation defect, not a data corruption; the desk's hypothesis was offered as a lead and the lane's evidence retired it.)*
+
+**DO-NOT-REDO (r#7, not an error — a question closed with a measurement).** NWPP's W3 carries a lane SOCO's does not: **NWPP-32, a hydro energy budget + envelope** for 288 plants. The desk checked whether SOCO's W3 is therefore short a lane, rather than assuming either way. **It is not.** SPP-30/31/32/33/34 — the template this program's W3 is issued against — has **no hydro lane either**, and the reason is proportion, not oversight: NWPP is a hydro-dominated footprint (BPA), while SOCO's hydro is **8.45 / 6.92 / 5.93 TWh against ~240 TWh of demand, i.e. ~2.5–3.5 % of energy** (plan §2.1). SOCO's genuinely awkward water asset is the **1,306.6 MW of pumped storage**, and that is already routed as **R-i** — unobservable in EIA-930 for 2023 and most of 2024, a stated constraint on the C1 `fuelmix` benchmark for SOCO-31, not a missing derive lane. **The W3 issuance stands as five lanes against SPP's template. Do not re-open this by analogy to NWPP** — the lane counts differ because the footprints do, and the numbering is offset besides (NWPP-33 ≈ SOCO-32, NWPP-34 ≈ SOCO-33, NWPP-35 ≈ SOCO-34), so a charter copied from NWPP by lane number would be the wrong charter.

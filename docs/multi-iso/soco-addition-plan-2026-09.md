@@ -716,7 +716,24 @@ The desk issues these against the SPP program's own W3/W4 charters, which are co
 - **SOCO-32** (zonal shares, solar shape, gas hub) — shares from FERC-714 (§2.5), **not** sub-BA;
   no wind in the footprint worth shaping; gas hub per SOCO-12's basis finding.
 - **SOCO-33** (seam derive) — served EIA-930 `Total interchange` (card S4).
-- **SOCO-34** (site + docs) — eight-region prose, `docs/calibration-log/soco.md` header.
+- **SOCO-34** (site + docs) — **NINE**-region prose (not eight — NWPP registered the same day and took
+  the eighth slot), `docs/calibration-log/soco.md` header, **plus the four items SOCO-20 §7 routed here**
+  (`docs/multi-iso/README.md` prose, `build_status.ISO_ORDER`, `keeper_store`, `render_data_dictionary`,
+  `frontend/data/backcast/keepers/index.json` display order). **AND — added r#7 — the explicit debt
+  NWPP-35 left for this lane and cited in place, which did not exist when W3 was issued at r#6.**
+  NWPP-35 swept the shared site prose to nine regions but correctly did NOT serialize SOCO (rule 25
+  `[R-ISO-SCOPE]`), and said so in the artifact rather than leaving it to be discovered:
+  `docs/codebase-site/data/iso-topologies.json` `_meta.description` reads *"_ISO_BUILDERS carries NINE
+  registered regions at 2026-09-14 (… SPP NWPP SOCO); eight are serialized here. SOCO registered the same
+  day as NWPP and its block is owed by the SOCO desk's own site lane, not by this one."* So SOCO-34 owes,
+  specifically: (a) SOCO's block in `iso-topologies.json` (keys are currently the eight without SOCO) and
+  the `_meta.description` updated once it lands; (b) SOCO's filter entry at
+  `docs/codebase-site/data-completeness.html:364`, where the same debt is marked in a code comment;
+  (c) `config-reference.html:404`, which reads *"the **eight** serialized into `iso-topologies.json`
+  render below"* and becomes nine; (d) a CHECK, not an assumption, that `index.html:297`'s
+  *"Nine regions, 47 zones (44 carry load), 58 transmission links"* already counts SOCO's three zones —
+  if it does not, the count is wrong in the other direction and this lane fixes it. **This is a debt
+  handed over cleanly by another program's lane, not a collision** — the citation is in the artifact.
 - **SOCO-40** (first solve) — **ONE shard, ONE `--year 2023 2024 2025`, ONE bundle** (rule 32(b));
   the shard pushes its bundle to its own branch by the §8.0 rule 7 mechanics — `.gitignore`
   negation then a **plain `git add`, never `git add -f`**, bundle including
@@ -730,6 +747,247 @@ The desk issues these against the SPP program's own W3/W4 charters, which are co
   satisfied trivially — but manifest row 9 (holdout years 2019–2022) changes that the moment it
   lands: from then on **every** SOCO solve batch covers the union, one shard per year (rule
   34(c)), and any year not stamped to the keeper drops off the ISO's report silently.
+
+### W3 issuance r#6 (2026-09-14, pinned `d54cd9c5`) — the five charters, written out r#7
+
+Issued against SPP's committed W3 charters (`docs/multi-iso/spp-addition-plan-2026-09.md` §8, SPP-30…34)
+with the SOCO deltas above applied. Every charter ends with the pack's EXIT boilerplate **including the
+`## Log entry` line** — ledger E-6: the two lanes that shipped without one were both desk-drafted charters
+that omitted it.
+
+#### SOCO-30 `[OPUS]` — unit outage windows + thermal tranches (frozen derives)
+
+```
+You are lane SOCO-30. MODEL: Opus claude-opus-5 — frozen derives on a committed recipe (rule 23).
+DATA PROFILE: soco.  Branch stem: claude/soco-30-outages-tranches-<4 chars>.
+Read CLAUDE.md freshly and in full; docs/multi-iso/soco-addition-plan-2026-09.md §5 row SOCO-30, §7 G4
+and G19; docs/multi-iso/05-backcast-playbook.md §0 items 2 and 4, §3 (dependency order); the docstrings of
+scripts/data/derive_campd_unit_outages.py, derive_thermal_tranches.py, scripts/tag_mixed_plants.py (under
+scripts/, not scripts/data/), build_offer_curve_overrides.py; docs/binning-methodology.md;
+data/raw/campd-unit-outages-MISO.csv header (your output template); FINDING-soco-10 (the census, the
+timezone convention, the three measured defects) and FINDING-soco-11 (which CEMS state-years landed).
+
+PRECONDITIONS (git log origin/main --grep=SOCO-20 and --grep=SOCO-11; STOP if unmet): SOCO-20 LANDED —
+get_iso_config("SOCO") works, SOCO is the NINTH registered region; AL and GA CEMS 2023-2025 present
+alongside the MS_2024 template SOCO-11 matched schema-equal.
+FILES YOU OWN: data/raw/campd-unit-outages-SOCO.csv (+ -short/-layup/-e923 siblings exactly as the derive
+emits them), data/raw/campd-partial-outages-SOCO.csv, the SOCO rows of the thermal-tranche / bin-assignment
+outputs (data/raw/reference/custom-bin-assignments.csv rows for SOCO plants — append, never reorder).
+FILES YOU MUST NOT TOUCH: any other region's rows; src/; the derive scripts themselves (if one needs a SOCO
+branch, that is a src-adjacent change — STOP and route to SOCO-DESK); ScenarioConfig.
+RUN, in this order, each its own commit: derive_campd_unit_outages.py --iso SOCO --years 2023 2024 2025 →
+derive_thermal_tranches.py --iso SOCO → scripts/tag_mixed_plants.py → build_offer_curve_overrides.py.
+GATES: window count > 0 in every CEMS state (AL, GA, MS); ZERO full-year fallbacks (a unit falling to the
+fallback is reported BY UNIT with the reason); committed-% and tranche distributions summarised by class
+against MISO's as a sanity band (report, NEVER tune — rule 1). Every output header cites source + method +
+the CEMS vintage.
+SOCO DELTAS, ruled and binding:
+ - CEMS COVERAGE IS 91.6 % OF FOSSIL MW, not 100 % (FINDING-soco-10). State the uncovered 8.4 % by plant
+   and class in the FINDING; do NOT pad it, do NOT infer a window for it (rule 13).
+ - THE CAES UNIT IS SETTLED — card S7: McIntosh (plant 7063) is a 25 MW gas CT at its real rating, not the
+   110 MW nameplate, and the storage loader already skips it (SOCO-20 §4). Bin it as a CT. Do not re-open.
+ - TWO TIMEZONES (gate G19, CLOSED by SOCO-10): the committed convention is America/Chicago, DST-aware,
+   hour-ending. AL/MS are Central and GA is Eastern in the real footprint; the convention is already chosen
+   and you INHERIT it — every window you emit states its timezone, and you never re-decide it.
+ - Vogtle 3 (COD 2023-07) and Vogtle 4 (2024-04) come online mid-window. Their availability is a COD, not
+   an outage: SOCO-15's repair handles the online mask. Do not emit an "outage" for a unit that did not
+   exist yet — that is the phantom SOCO-15 removed.
+RULES THAT BITE: 13 [R-MEASURED], 14 [R-ACCURATE], 23 [R-FROZEN-DERIVE] (nothing re-derives against a
+residual — there is no residual yet, SOCO has never been solved), 27 [R-PUSH] (CSV outputs by git push;
+SHA/row counts in the FINDING), 28 [R-MECH-MATRIX] (no cell moves — you arm nothing).
+EXIT: docs/handoffs/FINDING-soco-30-<date>.md (windows per state-year, units covered %, the uncovered-MW
+list, fallback list, class summaries), ending with a `## Log entry` block in the format the other SOCO
+FINDINGs use — the desk appends it VERBATIM to docs/calibration-log/soco.md and cannot write it for you;
+plan §5 row → LANDED. Report to the owner: coverage % by state first.
+```
+
+#### SOCO-31 `[OPUS]` — the scoring benchmarks, on the NO-PRICE branch
+
+```
+You are lane SOCO-31. MODEL: Opus claude-opus-5 — execution on committed inputs. DATA PROFILE: soco.
+Branch stem: claude/soco-31-benchmarks-<4 chars>.
+Read CLAUDE.md freshly and in full; docs/multi-iso/soco-addition-plan-2026-09.md §5 row SOCO-31, §7 G6,
+G9, G17, and §3 card S2 (the price ruling); scripts/data/build_calibration_reference.py,
+derive_actual_tail.py, derive_actual_amplitude.py, scripts/audit_eia923_completeness.py;
+docs/calibration-determination-rubric.md (what C1-C4 read) AND scripts/calibration_verdict.py's rubric
+v3.8 header; FINDING-soco-13 (the price VERDICT) and FINDING-soco-22 (the v3.8 class SOCO-13's NO created).
+
+PRECONDITIONS: SOCO-20 LANDED. STOP if not.
+**THE DEFINING CONSTRAINT — READ THIS BEFORE ANYTHING ELSE. SOCO HAS NO PRICE BENCHMARK AND YOU WILL NOT
+BUILD ONE.** Southern Company publishes no LMP and never will; SEEM publishes matched volumes, no price.
+SOCO-13 built the FERC-EQR index behind a pre-registered ex-ante STOP gate and the gate read **NO** —
+three of five gates failed (D2.2 every year at 3.66/2.69/2.64 % against a ≥ 5 % bar; D3.1 +54.2/+72.1 % in
+2024/25 against ±15 %; D4.2 in 2025) and NO BAR MOVED AFTER THE SERIES WAS SEEN. Therefore:
+ - `data/raw/_validation-source/actual_lmp.json` gets **NO SOCO BLOCK**. Its ABSENCE is load-bearing: it is
+   the key rubric v3.8 reads to classify SOCO as `PHYSICALLY-CALIBRATED (PRICE UNSCORED)`. Adding an empty
+   or placeholder SOCO block BREAKS the classifier. Leave the file's SOCO-shaped hole exactly as it is.
+ - TAIL_THRESHOLD and amplitude: SOCO-20 SKIPPED all three tail/amplitude registrations deliberately. Keep
+   them skipped. Do not register a threshold for a region with no price series.
+ - **GATE G17 IS ABSOLUTE AND IT BINDS YOU**: you may NEVER substitute a neighbouring market's hub — not
+   MISO-South, not a PJM or TVA proxy, not an EIA state average dressed as a price. If you find yourself
+   reaching for one, STOP and route to SOCO-DESK. The desk has refused this twice and logged both refusals.
+FILES YOU OWN: scripts/data/build_calibration_reference.py (SOCO in its region map, BA "SOCO", eGRID
+BACODE "SOCO"), data/raw/_validation-source/SOCO_{2023,2024,2025}_renewable_capacity.csv,
+calibration_reference.json (SOCO block ONLY), frontend/data/backcast/completeness/eia923_<yr>.json
+(regenerated). ALSO YOURS, routed by SOCO-20 §7: `scripts/data/curate_demand_profile.MODEL_ISOS` gains SOCO.
+FILES YOU MUST NOT TOUCH: actual_lmp.json (see above); any other region's block or row (your exit check is
+that their content is BYTE-IDENTICAL); src/market_sim/.
+GATE (zero-LP, first): SOCO rows exist in the shared eia_demand_profiles.parquet /
+eia_generation_profiles.parquet that build_calibration_reference reads; if not, re-run convert_eia930.py and
+prove every non-SOCO row byte-identical before proceeding.
+BUILD: build_calibration_reference.py for SOCO 2023-2025 → audit_eia923_completeness.py. Target figures to
+reconcile against (plan §2.1, FINDING-soco-10): demand 239.6 / 249.5 / 252.6 TWh; net EXPORT +10.16 / +10.81
+/ +13.03 TWh — SOCO is a net exporter every year and the benchmark must show it; fuel TWh gas 129.6/126.1/
+125.4, nuclear 52.4/63.0/64.2, coal 38.3/40.5/44.0, hydro 8.45/6.92/5.93, solar 8.36/10.14/9.98.
+TWO MEASURED-DATA CONSTRAINTS YOU MUST STATE, NOT FIX (both already routed):
+ - **R-i — SOCO's 1,306.6 MW of pumped storage is UNOBSERVABLE in EIA-930 for 2023 and most of 2024.**
+   `NG: PS`/`BAT`/`SNB`/`OES` are a taxonomy cut-over at 2024-07-15, and `NG: WAT` never goes negative
+   before it (min +32 MW) — so PS charging was not folded into hydro, it was NOT REPORTED. This is a hard
+   constraint on the **C1 `fuelmix`** benchmark, not a bug to fix and not a hole to fill. It must be stated
+   on SOCO's first keeper's determination basis, so write it into your FINDING in the words you want quoted.
+ - **R-h / the loader-seam spike screens**: SOCO NG: OIL 2023 (1 h) / 2024 (7 h) and the four ~70 GW NG: NG
+   hours in 2025 (against a 36,336 MW gas fleet). Documented in FINDING-soco-10. **Propose NO new constant**
+   — setting a threshold after seeing the outliers is a fitted threshold (rule 23). Report them.
+RULES THAT BITE: 13 [R-MEASURED] (benchmarks are measured OUTCOMES used ONLY as the score, never as an
+input), 14, 23, 27 (fetch-back verify anything ≥ 300 lines), 28 (no cell moves).
+EXIT: docs/handoffs/FINDING-soco-31-<date>.md with the SOCO benchmark table (per year: load TWh, gen by
+class TWh, net interchange) and the json-diff proof that no other region moved; a section headed "what
+cannot be scored and why" carrying the price posture and R-i verbatim; and a `## Log entry` block in the
+format the other SOCO FINDINGs use — the desk appends it VERBATIM and cannot write it for you. Plan §5 row
+→ LANDED. Report to the owner: the benchmark table, then the unscorable list.
+```
+
+#### SOCO-32 `[OPUS]` — zonal shares + per-zone SOLAR shape + zonal gas hub
+
+```
+You are lane SOCO-32. MODEL: Opus claude-opus-5 — the data-intake skill's contract on committed inputs.
+DATA PROFILE: soco.  Branch stem: claude/soco-32-zonal-solar-gas-<4 chars>.
+Read CLAUDE.md freshly and in full; invoke the data-intake skill; docs/multi-iso/soco-addition-plan-2026-09.md
+§5 row SOCO-32, §2.5 (the FERC-714 spine), §7 G8/G9/G17, **and §3 card S3 — READ THE RULING IN FULL BEFORE
+YOU DERIVE ANYTHING**; docs/multi-iso/05-backcast-playbook.md §8.1, §8.3; scripts/data/curate_zonal_shares.py
+(_MISO_SUBBA_ZONE_GROUPS as the shape), src/market_sim/data/fuel/hubs.py, src/market_sim/data/renewables.py;
+FINDING-soco-11 (the FERC-714 respondent table and its falsifier), FINDING-soco-14 (the BA-membership
+citations — and the documented NO), FINDING-soco-12 (the gas basis finding).
+
+PRECONDITIONS: SOCO-20 and SOCO-11 and SOCO-14 LANDED. STOP if not.
+**HARD PRECONDITION — CARD S3, RE-RULED BY THE OWNER AT r#5. THE ZONAL SHARES ARE THE FIVE FULLY-CITED
+FERC-714 RESPONDENTS. SOUTHERN POWER (RESPONDENT 186) IS EXCLUDED.** Shares SOCO_AL 0.3510 / SOCO_GA 0.5842
+/ SOCO_MS 0.0648; residual 3.03 / 2.92 / 1.26 % by year. SOCO-20 already registered exactly these.
+WHY, so you do not "improve" it: the six-respondent set has a SMALLER residual (1.63 / 1.50 / **-0.03** %)
+and the owner chose the five-set anyway, because SOCO-14 could cite 107 and 210 from primary sources and
+returned a **documented NO on 186** — a cited basis beats a smaller residual (rule 1 `[R-STRUCT]`), and that
+NEGATIVE 2025 value is the overshoot SOCO-11's PowerSouth+Tallahassee falsifier was built to detect. **Do
+not rebuild the shares on six respondents. Do not tune the residual.** If you believe 186 belongs in, you
+need the load-side citation SOCO-14 could not find — STOP and route to SOCO-DESK; the card returns to the
+owner, it is not yours to re-decide.
+FILES YOU OWN: scripts/data/curate_zonal_shares.py (SOCO branch + the SOCO respondent→zone grouping,
+mirroring MISO's shape); the SOCO rows of the clean zonal-shares datatype; NEW
+scripts/data/build_soco_solar_shape.py (**SOLAR, not wind** — SOCO has no wind worth shaping: the footprint's
+wind is ~0 and forecast-mode derive_cf_profile on an all-zero wind series is already routed to W6/capx, not
+you); data/raw/soco-solar-shape/soco_{2023,2024,2025}_solar_zone_shape.parquet + README/SOURCES;
+data/raw/soco_zonal_gas_hub.csv per SOCO-12's basis finding (MISO's csv schema) + SOURCES;
+src/market_sim/data/fuel/hubs.py (SOCO wiring — extend the registry, **NO if-iso ladder**);
+src/market_sim/data/renewables.py (SOCO membership in the zone-shape region set); tests under
+tests/curation and tests/unit/data for the new SOCO paths (tmp-CLEAN_DIR fixtures — never a raw path CI
+does not sparse-checkout, G17).
+FILES YOU MUST NOT TOUCH: ScenarioConfig (no field; G8); results/cache.py; any other region's rows.
+GATES: zonal shares sum to 1.0 every hour; the redistribution identity holds to 1e-9; solar shapes reconcile
+to the EIA-930 SOCO aggregate within the builder's documented tolerance — **level never pinned** (rule 13);
+the hub csv has 36 rows per zone-month set. G-DRIFT: in the FINDING, classify EVERY hunk you add to
+renewables.py and hubs.py as INERT for each of the other EIGHT regions with the reason (SOCO-keyed branch /
+registry entry), and re-run tests/regression/test_persisted_identity.py.
+SOCO DELTAS: shares come from FERC-714 (§2.5) — **there is no EIA-930 sub-BA product for SOCO**, so do not
+go looking for one; the three zones are geographic (AL/GA/MS) and the plant→zone lookup SOCO-20 registered
+resolves 413 plants (GA 299 / AL 97 / MS 17) with plant 67241 (MA) REJECTED. The CC pmax reconciliation
+warnings on plants 6073 / 7897 / 55382 / 57037 are yours to report, not to silence.
+RULES THAT BITE: 2 [R-VECTOR] (no hour loops — numpy over the parquet), 5 [R-NO-MAGIC], 13, 14, 23, 24
+[R-REGISTRY], 25 [R-ISO-SCOPE], 27 (renewables.py and hubs.py are ≥ 300 lines — Edit tool, fetch-back
+verify), 28 (no cell moves — you arm no mechanism; shape membership is an INPUT, not a lever).
+EXIT: docs/handoffs/FINDING-soco-32-<date>.md (share table by zone-year WITH the five-respondent basis and
+its residual quoted, solar-shape reconciliation stats, hub provenance, the G-DRIFT table) ending with a
+`## Log entry` block in the format the other SOCO FINDINGs use — the desk appends it VERBATIM and cannot
+write it for you; plan §5 row → LANDED.
+```
+
+#### SOCO-33 `[OPUS]` — seam numbers (derive only, no arming)
+
+```
+You are lane SOCO-33. MODEL: Opus claude-opus-5 — derive only; you arm nothing. DATA PROFILE: soco.
+Branch stem: claude/soco-33-seam-derive-<4 chars>.
+Read CLAUDE.md freshly and in full; docs/multi-iso/soco-addition-plan-2026-09.md §5 row SOCO-33 and §3
+card S4 (the seam ruling); scripts/data/derive_neighbor_hr_by_year.py and derive_neighbor_hr_elasticity.py;
+src/market_sim/model/interchange/spec.py INTERFACE_NEIGHBORS["SOCO"] as SOCO-20 registered it (default-off);
+FINDING-soco-11 (the SOCO DIBA interchange series, confirmed to the charter within 0.001 TWh).
+PRECONDITIONS: SOCO-20 and SOCO-11 LANDED.
+CARD S4 AS RULED: the first keeper uses **served, MEASURED EIA-930 `Total interchange`**. You DERIVE the
+numbers; a later lane arms them. SOCO is a **net exporter every year** (+10.16 / +10.81 / +13.03 TWh) — a
+seam derive that comes out net-importing is wrong, and that is your first sanity check.
+FILES YOU OWN: the derive outputs for --iso SOCO, data/raw/reference/soco_seam_*.csv (hr_by_year,
+elasticity, DIBA duration-curve summaries) + SOURCES. FILES YOU MUST NOT TOUCH: interchange/spec.py (a later
+lane arms what you derive); any neighbour's side of a seam (rule 25 — TVA's, MISO-South's and the
+Southeastern utilities' objects are theirs); ScenarioConfig.
+RUN: derive_neighbor_hr_by_year.py --iso SOCO --years 2023 2024 2025; the elasticity derive; the SOCO
+net-interchange duration curves per DIBA per year **with the sign convention stated explicitly** (SOCO's
+two-timezone footprint makes an unstated convention a silent error — gate G19).
+**GATE G17 BINDS YOU TOO**: SOCO has no price series (SOCO-13 read NO). A neighbour-heat-rate derive that
+requires a SOCO price is not available to you — if the producer demands one, STOP and route to SOCO-DESK
+rather than substituting a neighbouring hub. Derive what the measured interchange supports and say plainly
+what it does not.
+RULES THAT BITE: 13, 23, 25 (SOCO's numbers from SOCO's data; nothing mirrored from another region's fitted
+seam), 27, 28 (no cell moves).
+EXIT: docs/handoffs/FINDING-soco-33-<date>.md with the hr_by_year table and the duration summaries, labelled
+"for a later lane to arm", plus a `## Log entry` block in the format the other SOCO FINDINGs use — the desk
+appends it VERBATIM and cannot write it for you; plan §5 row → LANDED.
+```
+
+#### SOCO-34 `[OPUS]` — codebase-site + docs prose + the log header
+
+```
+You are lane SOCO-34. MODEL: Opus claude-opus-5 — execution. DATA PROFILE: code.
+Branch stem: claude/soco-34-site-docs-<4 chars>.
+Read CLAUDE.md freshly and in full; docs/multi-iso/soco-addition-plan-2026-09.md §5 row SOCO-34 and the
+§8 W3 SOCO-34 delta (it lists your owed items by file and line); docs/codebase-site/js/iso-configs-table.js,
+viz-iso-topology.js, css/site.css (the data-iso tab rules), data/iso-topologies.json, forecast-runs.html
+(ISO_ORDER), data-completeness.html; scripts/render_data_dictionary.py; docs/codebase/08-config-reference.md;
+docs/README.md; index.html; docs/handoffs/FINDING-nwpp-35-2026-09-14.md (the lane that swept this surface to
+nine regions the day SOCO registered, and cited what it left you).
+PRECONDITIONS: SOCO-20 LANDED — get_iso_config("SOCO") drives iso-topologies.json.
+**THE COUNT IS NINE, NOT EIGHT.** NWPP registered the same day and took the eighth slot; SOCO is the NINTH.
+**NWPP-35 ALREADY SWEPT THE SHARED PROSE TO NINE and correctly did NOT serialize SOCO (rule 25). It cited
+the debt in the artifacts — these four are yours:**
+ (a) `docs/codebase-site/data/iso-topologies.json` — SOCO's block. Its keys are currently the eight WITHOUT
+     SOCO, and its `_meta.description` says so verbatim: *"eight are serialized here. SOCO registered the
+     same day as NWPP and its block is owed by the SOCO desk's own site lane, not by this one."* Regenerate
+     SOCO's block from get_iso_config and UPDATE that description once it lands.
+ (b) `docs/codebase-site/data-completeness.html` ~L364 — SOCO's filter entry; the same debt is marked there
+     in a code comment.
+ (c) `docs/codebase-site/config-reference.html` ~L404 — reads "the **eight** serialized into
+     iso-topologies.json render below"; becomes nine.
+ (d) `docs/codebase-site/index.html` ~L297 reads "Nine regions, 47 zones (44 carry load), 58 transmission
+     links". **CHECK whether 47 already counts SOCO's three zones — do not assume either way.** If it does
+     not, the count is wrong in the other direction and you fix it. Report the arithmetic.
+ALSO YOURS, routed by FINDING-soco-20 §7: `docs/multi-iso/README.md` nine-region prose;
+`scripts/build_status.py` ISO_ORDER; `keeper_store`; `scripts/render_data_dictionary.py`. Add SOCO to every
+hardcoded region list named in plan §5 row SOCO-34 (ISO_ORDER, ISO_COLORS/DESCRIPTIONS, isoOrder, the
+`.tabs__tab[data-iso="SOCO"]` rule using `--iso-soco`, the ISOS array). Prove forecast-runs.html renders with
+a region that has NO forecast runs. Regenerate the data dictionary. Update 08-config-reference.md's zone
+table and per-region mechanism lists for SOCO.
+**`docs/calibration-log/soco.md` ALREADY EXISTS AND CARRIES LANDED LOG ENTRIES — DO NOT CREATE OR CLOBBER
+IT.** The SOCO desk created it at r#3 and has appended every lane's `## Log entry` verbatim since. Your job
+is the HEADER ONLY (match docs/calibration-log/miso.md's format) plus the "Next shorthand" line. Any edit
+that removes an existing entry is a stop-the-line event.
+FILES YOU MUST NOT TOUCH: `scripts/ff_readiness_battery.py` GOLDEN_ISOS and anything under
+frontend/data/forecast/ (W6, routed to the capx director as card S10); the mechanism-matrix shards
+(SOCO-21's, LANDED); frontend/data/backcast/ (the first-solve lane's); ANY keeper shard;
+`frontend/data/backcast/keepers/index.json` (the first-solve lane adds SOCO at registration, not you).
+Run the accessibility-audit skill on every page touched; run sync-docs at the end.
+RULES THAT BITE: 15 [R-DASHBOARD] (dashboard text is GENERATED from sidecars — never hand-write a status),
+25 [R-ISO-SCOPE], 26 [R-DELETE], 27 (several ≥ 300-line files — Edit tool, fetch-back verify), 28 (no cell
+moves).
+EXIT: docs/handoffs/FINDING-soco-34-<date>.md (file → change table, the index.html zone arithmetic, the
+accessibility-audit output), ending with a `## Log entry` block in the format the other SOCO FINDINGs use —
+the desk appends it VERBATIM to the log and cannot write it for you; plan §5 row → LANDED.
+```
 
 ---
 
