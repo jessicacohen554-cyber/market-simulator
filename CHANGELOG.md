@@ -15,6 +15,62 @@
   SOCO's does not; SPP's template has none either, because SOCO's hydro is ~2.5-3.5% of energy against
   NWPP's hydro-dominated footprint. Recorded DO-NOT-REDO, with the NWPP/SOCO lane-numbering offset named
   so a charter is never copied across by number.
+## 2026-09-16 — NWPP r#7: one routed item had a fix and one did not, and the desk says which
+
+Desk refresh r#7 (`docs/handoffs/nwpp-desk-ledger-2026-09.md`). Docs only — no code, no data, no
+registry. The owner asked for fixes to routed items R-f and R-j; they are different in kind and are
+answered differently.
+
+- **R-f has a fix, located to the line.** `_screen_fuel_spike_columns` (`actuals.py:219`) already
+  implements exactly the two-statistic screen this footprint needs, and its docstring claims no
+  consumer can reach an unscreened copy. **That claim holds only inside `actuals.py`:** the screen is
+  applied at three call sites, all in that module, while `envelopes.py` obtains its frame at `:109`
+  and `:167` from `frames._eia_hourly_frame_filled`, which does no screening at all. So the hydro
+  envelope, the monthly measure and the min-flow level all read the raw `NG: WAT` column. The gap is
+  plumbing, not a threshold question — the AVA hour at 810,113 MW sits ~1,350× that series' own
+  robust peak against a 2.5× bar. **Chartered as NWPP-37** with a nine-region byte-identity exit, the
+  screen's already-measured effect handed over as the control set, and the docstring repaired.
+- **R-j has no code fix, and the desk refuses to invent one.** The PNCA terminated 2024-09-15 with no
+  successor text, so the Columbia's coordinating instrument changes inside the scored window. There
+  is nothing to model *to*; a post-PNCA regime built from inference is the fitted mechanism rule 1
+  forbids, and NWPP has no price benchmark against which one could ever be validated. **Chartered as
+  NWPP-38 instead — a measurement**, testing whether the termination changed observable behaviour at
+  all, with the identification strategy declared before the numbers, the independent tributary
+  systems as the control for water-year confounding, and "inconclusive, and here is why" named in
+  advance as a legitimate result.
+- **NWPP-40's PRECOMMIT declares the PNCA discontinuity regardless of what NWPP-38 finds** — the
+  declaration is not contingent on the measurement.
+
+## 2026-09-16 — NWPP r#6: all of W3 landed, the region count is nine, and W3b is issued
+
+Desk refresh r#6 (`docs/handoffs/nwpp-desk-ledger-2026-09.md`). Docs only — no code, no data, no
+registry; every existing keeper's cache key untouched by construction.
+
+- **All six W3 lanes LANDED.** NWPP-31 cleared gate G9 **exactly** — all 7 pre-existing regions
+  byte-identical in `calibration_reference.json` and all 36 pre-existing renewable-capacity CSVs
+  byte-identical, with the price side verified skipped *by execution* rather than asserted.
+  NWPP-32's budget reconciles to EIA-923 at **0.000 MWh for every plant in every year** against a
+  1.0 MWh pre-registered tolerance, all four predictions held, and the 263 plants absent from the
+  2025 early release read `NO_923_SERIES` and stay absent — nothing filled.
+- **The region count is NINE.** SOCO registered between sittings, so the eight-registry-over-nine-
+  matrix intermediate state r#5 recorded has closed. NWPP-35 measured nine independently and led its
+  FINDING with it.
+- **NWPP-32 corrected the desk's own charter, and the correction is carried.** The desk had written
+  that the Columbia chain held "eight plants ≥ 1 GW"; measured against the ORNL EHA `Water` field,
+  seven are mainstem and **Boundary is on the Pend Oreille**, reaching the Columbia only through
+  Canada. Chartering NWPP-36 from the desk's list would have built a coupling link that does not
+  physically exist.
+- **NWPP-36 issued** (wave W3b, owner ruling N3), composed entirely from NWPP-32 §5–§6: eleven
+  mainstem plants, 20,098.8 MW = 56.14 % of the footprint's conventional hydro and ~58 % of its
+  energy. Two quantities must be **measured, not assumed** — τ per link from the USACE/CROHMS hourly
+  outflow feed, and the pondage bound from NID — because NWPP-32 searched and found neither published
+  at mechanism precision. One default-off `ScenarioConfig` field, registered on both cache-key ledgers
+  in the same commit, with a **nine-region** byte-identity proof as its exit.
+- **Five new routed items.** The load-bearing one: the NWPP pool `NG: WAT` series still carries the
+  G20 defective hours, so `eia930_monthly` and the 930-derived hydro floors and envelopes are
+  **unsafe for NWPP 2024–25** until a `data/eia930` lane repairs them. Also recorded: the PNCA
+  terminated 2024-09-15 with no successor found, so the Columbia's coordinating instrument changes
+  *inside* the scored window — NWPP-40's PRECOMMIT must state both.
 
 ## 2026-09-14 — NWPP r#5: the pin flipped — NWPP is the eighth registered region, and W3 is issued
 

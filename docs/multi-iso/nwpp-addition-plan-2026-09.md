@@ -1447,7 +1447,288 @@ EXIT: FINDING-nwpp-35-<date>.md listing every file whose count changed, with the
 you measured. Report the measured counts FIRST.
 ```
 
-### W3b / W4 / W5 / W6 — charters issued at the sittings that unblock them
+### W3b — the cascade-coupling build (ISSUED r#6, 2026-09-16, against NWPP-32's specification)
+
+#### NWPP-36 `[FABLE]` — Columbia mainstem hydraulic coupling
+
+```
+You are lane NWPP-36. MODEL: Fable — you are building the mechanism owner ruling N3 put AHEAD of the
+first keeper, AGAINST the desk's recommendation, because the owner ruled that the first NWPP number
+must mean more than a test of monthly hydro budgets. W4 does not start without you.
+DATA PROFILE: nwpp.  Branch stem: claude/nwpp-36-cascade-coupling-<4 chars>.
+Read CLAUDE.md freshly and in full — rules 1 [R-STRUCT], 2 [R-VECTOR], 13 [R-MEASURED], 19
+[R-ONE-MECH], 24 [R-REGISTRY], 28 [R-MECH-MATRIX]; docs/handoffs/FINDING-nwpp-32-2026-09-14.md
+**IN FULL — §5(a)-(d) and §6 ARE YOUR SPECIFICATION AND YOU MAY NOT RE-DERIVE THEM**;
+docs/multi-iso/nwpp-addition-plan-2026-09.md §2.7, §5 row NWPP-36, §7 gate G8 AS AMENDED, §3 card N3;
+src/market_sim/config/scenarios.py around `_CACHE_KEY_OPTIONAL_FIELDS` (line ~149) and
+`_CACHE_KEY_OPTIONAL_FIELD_DEFAULTS` — read BOTH ledgers' header comments before you add anything;
+the `hydro_budget_period_by_instrument` entry (lane nyiso-220) is the FIRST entry in that tuple, was
+added on exactly this basis, and is the worked precedent to COPY rather than invent.
+
+PRECONDITIONS (STOP if unmet): NWPP-20 landed; **NWPP-32 landed** with its artifacts
+(`data/raw/nwpp-hydro/`, incl. `nwpp_hydro_chain.csv`) and its FINDING on main.
+
+*** WHAT NWPP-32 ALREADY SETTLED. DO NOT RE-OPEN, DO NOT RE-DERIVE, DO NOT "IMPROVE". ***
+ - THE CHAIN IS ELEVEN PLANTS, read from the ORNL EHA FY2024 `Water` field — a published inventory,
+   not a list anyone chose: Grand Coulee -> Chief Joseph -> Wells -> Rocky Reach -> Rock Island ->
+   Wanapum -> Priest Rapids -> [lower Snake enters at the McNary pool] -> McNary -> John Day ->
+   The Dalles -> Bonneville. **20,098.8 MW = 56.14 % of the footprint's conventional hydro**, and
+   58.84 % / 57.96 % of its 2023 / 2024 hydro energy. The hydrological fact behind it is BPA's own
+   published average discharge rising monotonically down the chain: 107,700 cfs at Grand Coulee ->
+   108,000 Chief Joseph -> 169,800 McNary (after the Snake) -> 172,400 -> 177,900 -> 183,300 at
+   Bonneville.
+ - FEEDING IT: the **lower Snake** (Lower Granite 810 -> Little Goose 810 -> Lower Monumental 810 ->
+   Ice Harbor 603 = 3,033.0 MW, federal run-of-river) entering at the McNary pool, fed in turn by
+   **Hells Canyon** (Brownlee 675 -> Oxbow 190 -> Hells Canyon 411.1 = 1,276.1 MW, Idaho Power) and
+   by **Dworshak** storage. Coupled chains in this footprint total **24,408 MW = 68.2 % of hydro**.
+ - *** A CORRECTION TO THE DESK'S OWN CHARTER, WHICH NWPP-32 CAUGHT — CARRY IT: *** the desk's r#5
+   text said "eight plants >= 1 GW holding 17,821.8 MW" and listed Boundary among them. **SEVEN are
+   mainstem (16,662.1 MW). BOUNDARY (1,159.7 MW) IS ON THE PEND OREILLE** and reaches the Columbia
+   only through Canada — it is coupled to NOTHING ELSE IN THIS FOOTPRINT and must not be in your
+   chain. The Pend Oreille chain (2,700 MW) is coupled internally but reaches the mainstem only via
+   Canadian storage. Skagit, Cowlitz, Lewis, Deschutes, Willamette, Baker and Nisqually are
+   independent tributary systems.
+ - `HYDRO_BUDGET_PERIOD_HOURS_BY_PLANT["NWPP"]` IS EMPTY and stays empty. Eight instruments were read
+   or attempted; none states an energy-conservation period for a named plant, and the one coordinating
+   instrument that defines an accounting period — the 1997 PNCA — defines "Period means a calendar
+   month", which is already the model's default.
+ - **NO SINGLE-UNIT COORDINATION of the seven mid-C projects in 2023-2025** (the HCA expired). Do not
+   model one.
+
+*** WHAT YOU BUILD, AND THE ONE SENTENCE THAT KEEPS IT INSIDE RULE 19 [R-ONE-MECH]. ***
+**The coupling redistributes WHEN energy is produced. It NEVER changes HOW MUCH per month.** The
+EIA-923 monthly budget row NWPP-32 landed is untouched and remains the sole energy-quantity mechanism;
+your coupling is a SECOND PHENOMENON (hydraulic succession), not a second floor on the first. If your
+mechanism can move a plant's monthly energy total, you have built a second budget and it is refused.
+
+THE FORMULATION, from NWPP-32 §5(a) item 1 — fix it in your PRECOMMIT before any code:
+  per link (u -> d):  release_u(t) + side_inflow_d(t) - spill_d(t) - release_d(t) = dStorage_d(t)
+  with release_d bounded by the plant's P/eta*head and dStorage_d bounded by the PUBLISHED pondage
+  band — a few hours of flow for the nine run-of-river links; a seasonal reservoir for Grand Coulee
+  (5.19 MAF) and Brownlee, whose monthly budget stays the measured EIA-923 one.
+  In energy terms: E_d(t) ~= k_d * E_u(t - tau_ud) + E_side,d(t), with k_d the head ratio, which
+  NWPP-32's plant-level `budget_annual_mwh` and the published discharges give DIRECTLY (worked
+  example: Chief Joseph / Grand Coulee energy ratio 0.60 at a discharge ratio of 1.003).
+
+TWO QUANTITIES YOU MUST MEASURE RATHER THAN ASSUME — NWPP-32 searched and did not find them published
+at mechanism precision, and said so:
+  1. **tau per link.** MEASURE from the USACE/CROHMS hourly project-outflow feed
+     (`public.crohms.org` — the same source the HRFCPPA cites for its compliance data), by
+     cross-correlating adjacent projects' hourly discharge. Sanity-check against river mile. A tau
+     taken from memory or from a plausible travel-time rule of thumb is a rule-13 violation.
+  2. **The pondage bound per run-of-river link.** SOURCE from NID. BPA's published order of magnitude
+     is "three to five feet" (BPA *Inside Story* p. 15: run-of-river projects "pass water at the dam
+     at nearly the same rate it enters the reservoir") — that is the ORDER, not the number.
+If either cannot be measured, STOP and report rather than substituting a plausible value.
+
+THE TWO PUBLISHED NON-POWER OPERATING CONDITIONS on the chain (NWPP-32 §5(c)), which your mechanism
+must not contradict: the **HRFCPPA outlet ramp band**, and the **spill season** (ROD: Apr 3 / Apr 10
+through the third week of June, 125 % TDG 16 h/8 h), whose measured signature is Bonneville and the
+lower Snake collapsing to **0.13-0.25 CF for five months**.
+
+*** THE FIELD — ONE, DEFAULT-OFF, AND IT IS THE ONLY SCENARIOCONFIG FIELD THIS ENTIRE PROGRAM MAY
+ADD (gate G8 as amended by ruling N3). ***
+Register it on `_CACHE_KEY_OPTIONAL_FIELDS` **AND** `_CACHE_KEY_OPTIONAL_FIELD_DEFAULTS` **IN THE SAME
+COMMIT** — the guard enforces membership parity and position discipline between the two ledgers, and
+both ledgers' header comments tell you how. At its default the field is dropped from the hash, so
+every pre-existing cached run keeps its key. Copy `hydro_budget_period_by_instrument`'s registration
+shape; do not invent your own.
+GATE G8 EXIT, and it is now NINE regions, not seven: **every existing keeper's `cache_key()` proven
+byte-identical**, measured before and after, reported as a table. Re-read the designated keeper ids
+from `frontend/data/backcast/keepers/*.json` AT YOUR OWN BASE SHA — promotions move them. A single
+moved key is a STOP.
+AND THE OTHER HALF OF THE EXIT: **the mechanism is byte-identical OFF** — prove it, do not assert it —
+**and it ARMS**, i.e. an armed run visibly redistributes within-month hydro down the chain in the
+direction and order of magnitude the pre-solve arithmetic implies.
+
+RULE 2 [R-VECTOR] BINDS YOUR LP ROWS. No Python loop over hours in matrix construction: np.tile,
+np.repeat, scipy.sparse.kron, block_diag. A `for t in range(8760)` in the builder is a defect, not a
+first draft.
+RULE 28(c): add the mechanism's base row in `docs/codebase-site/data/mechanism-matrix.js` PLUS one
+`·` cell line in EVERY foreign shard, in the SAME PR. **There are NINE shards at this pin** (ERCOT
+CAISO PJM MISO NYISO NEISO SPP SOCO NWPP) — re-count at your own base sha, and your own NWPP cell
+carries the verdict.
+RULE 32 [R-SHARD]: you run NO LP in your own session. If the arm needs a screen solve, it is ONE
+shard, and rule 34 [R-SHARD-PROMOTABLE] means that shard PUSHES ITS BUNDLE to its own branch.
+
+WRITE THE PRECOMMIT FIRST AND PUSH IT BEFORE ANY CODE. It fixes, ex ante: the formulation above; how
+tau and the pondage bound will be measured and from which URLs; the field's name, type and default;
+the byte-identity protocol; and what you will do if tau cannot be measured. A specification written
+after the numbers are seen is not a specification.
+
+FILES YOU OWN: the coupling's LP row family under src/market_sim/; ONE new ScenarioConfig field and
+its two ledger entries; the mechanism-matrix base row + one cell line per shard; any new artifact
+under data/raw/nwpp-hydro/ that your tau/pondage measurement produces; your PRECOMMIT and FINDING.
+MUST NOT TOUCH: NWPP-32's budget artifacts or `HYDRO_BUDGET_PERIOD_HOURS_BY_PLANT`; any other region's
+anything; `scripts/calibration_verdict.py`; frontend/data/**; this plan; the ledger.
+RULES THAT BITE: 1, 2 [R-VECTOR], 5, 13, 14, 19 [R-ONE-MECH], 24, 27 [R-PUSH] (src files are large —
+edit locally, push exact bytes, fetch-back verify >= 300-line files), 28, 32.
+EXIT: the mechanism, the matrix rows, the keeper byte-identity table, the OFF-identity proof, the
+armed-response measurement, FINDING-nwpp-36-<date>.md. Report FIRST: the keeper byte-identity result,
+the measured tau per link, and the armed within-month redistribution.
+```
+
+### W3c — the two routed items the owner asked for fixes on (ISSUED r#7, 2026-09-16)
+
+Owner, r#7: *"do you have fixes for 1 and 2"* — routed items **R-f** (the 930 hydro column) and
+**R-j** (the PNCA termination). They are different in kind and the desk answers them differently:
+**R-f is a defect with a located, small fix** (NWPP-37). **R-j is not a defect and has no code fix** —
+building a post-PNCA regime would invent one — so what is chartered is the **measurement that decides
+whether it matters at all** (NWPP-38).
+
+#### NWPP-37 `[FABLE]` — close the fuel-screen seam so the hydro envelope stops reading raw
+
+```
+You are lane NWPP-37. MODEL: Fable — you are changing a SHARED EIA-930 loader that all NINE
+registered regions read. The licence is narrow and the exit is a byte-identity proof.
+DATA PROFILE: nwpp.  Branch stem: claude/nwpp-37-envelope-screen-<4 chars>.
+Read CLAUDE.md freshly and in full — rules 13 [R-MEASURED], 14 [R-ACCURATE], 19 [R-ONE-MECH], 27;
+src/market_sim/data/eia930/actuals.py::_screen_fuel_spike_columns IN FULL (its docstring is your
+specification AND carries the defect — see below); src/market_sim/data/eia930/envelopes.py;
+src/market_sim/data/eia930/frames.py::_eia_hourly_frame_filled;
+docs/handoffs/FINDING-nwpp-32-2026-09-14.md §3.2 and §7 item 1.
+
+*** THE DEFECT, LOCATED BY THE DESK AT r#7 — VERIFY IT AT YOUR OWN BASE SHA BEFORE FIXING IT. ***
+`_screen_fuel_spike_columns` (actuals.py:219) is a correct two-statistic screen: an hour is repaired
+only when it clears 2.5x BOTH the series median AND its own p99.9 robust peak. Its docstring claims
+"this seam screens the frame every reader in this module obtains, so no consumer can reach an
+unscreened copy (rule 19 [R-ONE-MECH])".
+**THAT CLAIM IS TRUE ONLY OF READERS IN `actuals.py`.** Measured: the screen is applied at exactly
+three call sites — actuals.py:351, :412, :488 — and ALL THREE ARE IN THAT MODULE. Every other reader
+calls `frames._eia_hourly_frame_filled()` DIRECTLY, and that function does no screening at all — read
+it in full: it only reindexes present rows onto the complete hourly clock.
+
+*** SCOPE CORRECTION, DESK r#7b — THE DEFECT IS WIDER THAN THIS CHARTER FIRST SAID, AND THE FIRST
+NUMBER CAME FROM THIS DESK, NOT FROM A LANE. *** The r#7 text named "envelopes.py:109 and :167". Re-
+enumerated at `0d261bdd` that is wrong by more than half. Unscreened direct reads, measured:
+  - `eia930/envelopes.py` — **SEVEN**: :109 (`measured_monthly_hydro`), :167 (`_hydro_wat_month_hod`),
+    :371 (`measured_interchange_envelope`), :440, :1050, :1639, :1883 (the last an explicit "NWPP");
+  - `data/neighbor_price.py` — :396 and :574, and these are **CONFIRMED fuel-column consumers**:
+    :407-408 and :580-581 read `NG: SUN` and `NG: WND` off the unscreened frame;
+  - `data/virtual_bids.py` :274; `eia930/zonal_shares.py` :384;
+  - `eia930/demand.py` — eight reads. **CLASSIFY THESE CAREFULLY AND DO NOT ASSUME**: their `Demand`
+    column is a DIFFERENT phenomenon already screened by `_screen_demand_spikes` /
+    `_screen_demand_dropouts` (rule 19 — do not touch those), but several docstrings there say the
+    renewable **CF series** are drawn from the same frame, which WOULD be a fuel-column read. Decide
+    per call site, on the code, and report the classification.
+**DO NOT PATCH THE LIST ABOVE AS IF IT WERE COMPLETE.** Re-enumerate at YOUR OWN base sha
+(`grep -rn "_eia_hourly_frame_filled" src/market_sim/`), classify every hit as *reads a `NG:` fuel
+column* / *reads only `Demand`/`TI`/`NG` total* / *already screened*, and put that table in your
+FINDING. The enumeration is the deliverable that makes the fix auditable; the patch is the easy half.
+
+So `measured_monthly_hydro`, `measured_hydro_min_flow_level`, the month x hour-of-day envelope and at
+least the neighbour-price solar/wind series all read the RAW fuel columns.
+**The measured cost for NWPP** (NWPP-32 §3.2): one AVA hour at 810,113 MW puts **+1,166 GWh = 14.1 %**
+into October 2025's pooled hydro. The screen would catch it trivially — it is roughly 1,350x that
+series' own robust peak against a 2.5x bar — so this is a plumbing gap, not a threshold question.
+NWPP-10 separately found the twin defect in the DEMAND column and repaired it demand-side; the
+generation side was never routed through the screen that already exists for it.
+
+WHAT YOU BUILD — TWO SHAPES, AND YOU CHOOSE WITH EVIDENCE, NOT PREFERENCE:
+  (A) STRUCTURAL, and the one the desk prefers IF it proves clean: move the screen into
+      `frames._eia_hourly_frame_filled` (or a single wrapper every reader goes through) so the
+      rule-19 single-seam claim the docstring already makes becomes TRUE. Then delete the now-
+      redundant per-call-site applications rather than leaving them stacked (rule 19).
+  (B) NARROW, the fallback: screen at envelopes.py's two read sites only.
+PICK (A) IF AND ONLY IF IT IS BYTE-IDENTICAL for every pre-existing region; if it moves any other
+region's series, report exactly which and why, then take (B) and say so. Do NOT take (A) and
+"explain" a moved row.
+**THE SCOPE CORRECTION ABOVE SHIFTS THE BALANCE TOWARD (A) AND YOU SHOULD SAY WHETHER YOU AGREE.**
+With one unscreened reader, (B) is a two-line patch. With a dozen across five modules, (B) is a
+dozen patches that the next module to read `frames` will silently reopen — which is the defect
+repeating, not the defect fixed. (A) is the construction the docstring already claims. The desk's
+position is that (A) is right IF the byte-identity holds, and that a (B) taken for convenience rather
+than for a measured byte-identity failure is the wrong trade. **That is a position, not an
+instruction: if you find (A) genuinely unsafe, take (B) and say why, and the desk will record it.**
+
+THE EXIT — BYTE-IDENTITY ACROSS ALL NINE REGIONS. The screen's own measured effect is already known
+and is your control: over all regions 2019-2026 exactly two benchmark series move (SPP 2023 wind
+106.6345 -> 103.0488 TWh at h3907; NYISO 2024 other 3.3846 -> 3.3197 at h6759), plus NYISO H1-2026
+other and one delivered wind profile. **Anything your change moves BEYOND that set is a new effect
+and must be named, explained and shown to be a defect repair rather than a behaviour change.**
+Report a table: per region, per year, envelope/floor before and after. NWPP is expected to move (that
+is the point); every other region is expected not to.
+ALSO FIX THE DOCSTRING. It currently asserts a property the code does not have. Whichever shape you
+take, the comment must describe the seam that actually exists (rule 24 in spirit: an unregistered
+reader is an unregistered channel).
+
+FILES YOU OWN: src/market_sim/data/eia930/{actuals,envelopes,frames}.py (the seam ONLY — you change
+no threshold, no statistic, no per-region branch); a test pinning that the envelope path is screened;
+your PRECOMMIT and FINDING.
+MUST NOT TOUCH: any per-region registry or config; ScenarioConfig (you add NO field — this is a data
+repair, not a mechanism, so rule 28(c) does not fire and you add NO matrix row); the demand screens
+(`_screen_demand_spikes` / `_screen_demand_dropouts` are a different phenomenon, rule 19);
+scripts/calibration_verdict.py; frontend/data/**; this plan; the ledger.
+RULES THAT BITE: 13, 14 [R-ACCURATE] — this is a telemetry defect repaired by the same NaN +
+interpolation a missing meter hour gets, never a haircut; 19 [R-ONE-MECH]; 27 [R-PUSH] (these files
+are large: edit locally, push exact bytes, fetch-back verify); 24.
+EXIT: the seam, the docstring repair, the test, the nine-region before/after table,
+FINDING-nwpp-37-<date>.md. Report FIRST: which shape you took and why, and the list of series that
+moved outside the known control set (ideally empty).
+```
+
+#### NWPP-38 `[OPUS]` — does the PNCA termination bite? (measurement only; no code)
+
+```
+You are lane NWPP-38. MODEL: Opus claude-opus-5 — a zero-LP MEASUREMENT. You write no mechanism, no
+config and no src/ code, and that is deliberate: see below.
+DATA PROFILE: nwpp.  Branch stem: claude/nwpp-38-pnca-discontinuity-<4 chars>.
+Read CLAUDE.md freshly and in full — rule 1 [R-STRUCT] is the whole reason this lane is a measurement
+and not a build; docs/handoffs/FINDING-nwpp-32-2026-09-14.md §4, §5(a), §5(b) and §7 item 5;
+docs/multi-iso/nwpp-addition-plan-2026-09.md §2.7.
+
+*** WHY THIS IS NOT A "FIX" LANE, STATED SO YOU DO NOT TRY TO MAKE IT ONE. ***
+NWPP-32 established that the **1997 Pacific Northwest Coordination Agreement TERMINATED 2024-09-15**,
+with **no successor text found**, and that the PNCA is the instrument defining "Period means a
+calendar month" — the accounting period the model's hydro budget already uses. So the coordinating
+instrument for the Columbia system changed **inside the 2023-2025 scored window**.
+**There is no code fix for this and you must not invent one.** There is no successor instrument to
+model TO; a post-PNCA operating regime built from inference would be exactly the fitted mechanism
+rule 1 [R-STRUCT] forbids, and NWPP has no price benchmark against which such a mechanism could ever
+be validated (NWPP-13 read NO). What is missing is not a mechanism — it is **evidence about whether
+the termination changed observable behaviour at all**. That is what you produce.
+
+WHAT YOU MEASURE, using artifacts that already exist (NWPP-32's `data/raw/nwpp-hydro/` per-plant
+monthly budgets 2023-2025 and `nwpp_hydro_chain.csv`, plus NWPP-11's per-BA hourly extracts):
+ 1. **Did the mainstem's behaviour change across 2024-09-15?** Compare the eleven mainstem plants
+    (Grand Coulee -> ... -> Bonneville) before and after, on quantities the monthly budget does NOT
+    already fix by construction: within-month shaping, diurnal amplitude, the plant-to-plant
+    correlation structure down the chain, and the lag between adjacent projects.
+ 2. **Separate the instrument from the hydrology — this is the hard part and the reason the lane is
+    Opus and not a script.** 2024 and 2025 are different water years, so a raw before/after contrast
+    confounds the two. Use the pre-2024 years as the control for normal inter-year variation, state
+    your identification strategy IN THE FINDING BEFORE the numbers, and be explicit that a
+    confounded result is a legitimate outcome to report.
+ 3. **The comparison group.** Tributary systems NOT on the mainstem (Skagit, Cowlitz, Lewis,
+    Deschutes, Willamette, Baker, Nisqually — NWPP-32 §5(a) names them as independent) are outside
+    the PNCA's coordination object in the same water years. If the mainstem moves and they do not,
+    that is evidence; if both move, it is hydrology.
+ 4. **The 2025 data caveat is binding**: the pooled 930 `NG: WAT` series carries the defective hours
+    (routed item R-f; lane NWPP-37 is fixing the seam). Either wait for NWPP-37, or screen the hours
+    yourself and SAY you did — do not read the raw column and report the result as clean.
+
+THREE OUTCOMES, ALL SUCCESSFUL, AND YOU DO NOT GET TO PREFER ONE:
+  (a) **No measurable change** -> the declaration in NWPP-40's PRECOMMIT is sufficient and this item
+      closes. State the power of your test: what size of change would you have detected?
+  (b) **A measurable change** -> report its magnitude, its sign and which plants carry it. That is
+      then evidence for a FUTURE mechanism decision, which is the owner's, not yours. Do NOT propose
+      the mechanism in this lane.
+  (c) **Confounded and unseparable** -> say so plainly, with what additional data would separate it.
+"Inconclusive, and here is why" is a real result; a strained story is not.
+
+FILES YOU OWN: any analysis artifact under data/raw/nwpp-hydro/ your measurement produces; your
+FINDING. MUST NOT TOUCH: src/; ScenarioConfig; any registry; NWPP-32's budget artifacts; this plan;
+the ledger.
+RULES THAT BITE: 1 [R-STRUCT] above all — you may not tune anything and there is no residual to
+consult; 13 [R-MEASURED]; 23 [R-FROZEN-DERIVE]; 27; 32 (zero LP).
+EXIT: FINDING-nwpp-38-<date>.md with the identification strategy stated BEFORE the numbers, the
+before/after table for the mainstem, the tributary control, and one of the three verdicts above.
+Report the verdict and the test's power FIRST.
+```
+
+### W4 / W5 / W6 — charters issued at the sittings that unblock them
+
+
 
 ### W3–W6 — charters issued at the sittings that unblock them
 
