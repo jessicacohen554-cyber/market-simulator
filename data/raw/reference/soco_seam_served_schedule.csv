@@ -1,0 +1,7 @@
+year,source,sign_convention,hours,net_twh,export_twh,import_twh,export_hour_share,mean_mw,min_mw,max_mw,note
+2023,served_model_clock,mw>0 = SOCO exports (net),8760,10.1562,10.2909,-0.1347,0.9437,1159.39,-1397.0,4432.0,eia930.envelopes.soco_net_interchange(year) — the array the LP serves
+2023,sum_of_legs_local_clock,mw>0 = SOCO exports (net),8759,10.155,21.0315,-10.8765,,,,,"SOCO interchange hourly.parquet, all 9 DIBAs summed"
+2024,served_model_clock,mw>0 = SOCO exports (net),8760,10.8067,10.8855,-0.0788,0.9647,1233.64,-1659.0,4858.0,eia930.envelopes.soco_net_interchange(year) — the array the LP serves
+2024,sum_of_legs_local_clock,mw>0 = SOCO exports (net),8784,10.8315,23.1223,-12.2908,,,,,"SOCO interchange hourly.parquet, all 9 DIBAs summed"
+2025,served_model_clock,mw>0 = SOCO exports (net),8760,13.0321,13.0802,-0.0482,0.9734,1487.68,-933.0,5147.0,eia930.envelopes.soco_net_interchange(year) — the array the LP serves
+2025,sum_of_legs_local_clock,mw>0 = SOCO exports (net),8760,13.0385,24.7275,-11.689,,,,,"SOCO interchange hourly.parquet, all 9 DIBAs summed"

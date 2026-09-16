@@ -1,0 +1,28 @@
+neighbor,year,run,anchor_status,anchor_file,anchor_kind,anchor_rows,shape_ba,mean_lmp_usd_mwh,henry_hub_usd_mmbtu,gas_basis_usd_mmbtu,delivered_gas_usd_mmbtu,shape_convexity_k,hr_by_year_mmbtu_mwh,registered_marginal_heat_rate,flat_hr_constructed_mean_usd_mwh,flat_hr_error_pct
+SOCO_TVA,2023,n/a,NO_ANCHOR — the neighbour BA publishes no organized-market LMP,,,0,SOCO,,2.54,0.0,2.54,1.0,,11.6,29.464,
+SOCO_TVA,2024,n/a,NO_ANCHOR — the neighbour BA publishes no organized-market LMP,,,0,SOCO,,2.19,0.0,2.19,1.0,,11.6,25.404,
+SOCO_TVA,2025,n/a,NO_ANCHOR — the neighbour BA publishes no organized-market LMP,,,0,SOCO,,3.52,0.0,3.52,1.0,,11.6,40.832,
+SOCO_MISO,2023,rt,DERIVED,actual_lmp_hourly_zonal_MISO.parquet,zonal; per-zone mean over the one bordering zone (MISO-South),35040,MISO,27.042,2.54,0.3,2.84,1.0,9.52,9.63,27.3492,1.14
+SOCO_MISO,2023,da,DERIVED,actual_lmp_hourly_zonal_MISO.parquet,zonal; per-zone mean over the one bordering zone (MISO-South),35040,MISO,28.0903,2.54,0.3,2.84,1.0,9.89,9.63,27.3492,-2.64
+SOCO_MISO,2024,rt,DERIVED,actual_lmp_hourly_zonal_MISO.parquet,zonal; per-zone mean over the one bordering zone (MISO-South),35040,MISO,25.1159,2.19,0.3,2.49,1.0,10.09,9.63,23.9787,-4.53
+SOCO_MISO,2024,da,DERIVED,actual_lmp_hourly_zonal_MISO.parquet,zonal; per-zone mean over the one bordering zone (MISO-South),35040,MISO,25.4835,2.19,0.3,2.49,1.0,10.23,9.63,23.9787,-5.9
+SOCO_MISO,2025,rt,DERIVED,actual_lmp_hourly_zonal_MISO.parquet,zonal; per-zone mean over the one bordering zone (MISO-South),35040,MISO,35.4525,3.52,0.3,3.82,1.0,9.28,9.63,36.7866,3.76
+SOCO_MISO,2025,da,DERIVED,actual_lmp_hourly_zonal_MISO.parquet,zonal; per-zone mean over the one bordering zone (MISO-South),35040,MISO,35.7947,3.52,0.3,3.82,1.0,9.37,9.63,36.7866,2.77
+SOCO_DUK,2023,n/a,NO_ANCHOR — the neighbour BA publishes no organized-market LMP,,,0,SOCO,,2.54,0.0,2.54,1.0,,11.6,29.464,
+SOCO_DUK,2024,n/a,NO_ANCHOR — the neighbour BA publishes no organized-market LMP,,,0,SOCO,,2.19,0.0,2.19,1.0,,11.6,25.404,
+SOCO_DUK,2025,n/a,NO_ANCHOR — the neighbour BA publishes no organized-market LMP,,,0,SOCO,,3.52,0.0,3.52,1.0,,11.6,40.832,
+SOCO_SCEG,2023,n/a,NO_ANCHOR — the neighbour BA publishes no organized-market LMP,,,0,SOCO,,2.54,0.0,2.54,1.0,,11.6,29.464,
+SOCO_SCEG,2024,n/a,NO_ANCHOR — the neighbour BA publishes no organized-market LMP,,,0,SOCO,,2.19,0.0,2.19,1.0,,11.6,25.404,
+SOCO_SCEG,2025,n/a,NO_ANCHOR — the neighbour BA publishes no organized-market LMP,,,0,SOCO,,3.52,0.0,3.52,1.0,,11.6,40.832,
+SOCO_SC,2023,n/a,NO_ANCHOR — the neighbour BA publishes no organized-market LMP,,,0,SOCO,,2.54,0.0,2.54,1.0,,11.6,29.464,
+SOCO_SC,2024,n/a,NO_ANCHOR — the neighbour BA publishes no organized-market LMP,,,0,SOCO,,2.19,0.0,2.19,1.0,,11.6,25.404,
+SOCO_SC,2025,n/a,NO_ANCHOR — the neighbour BA publishes no organized-market LMP,,,0,SOCO,,3.52,0.0,3.52,1.0,,11.6,40.832,
+SOCO_FPL,2023,n/a,NO_ANCHOR — the neighbour BA publishes no organized-market LMP,,,0,FLA,,2.54,0.0,2.54,1.0,,11.6,29.464,
+SOCO_FPL,2024,n/a,NO_ANCHOR — the neighbour BA publishes no organized-market LMP,,,0,FLA,,2.19,0.0,2.19,1.0,,11.6,25.404,
+SOCO_FPL,2025,n/a,NO_ANCHOR — the neighbour BA publishes no organized-market LMP; NO LOAD SHAPE,,,0,MISSING — no extract for ba=FPL / proxy=FLA,,3.52,0.0,3.52,,,11.6,,
+SOCO_FPC,2023,n/a,NO_ANCHOR — the neighbour BA publishes no organized-market LMP,,,0,FLA,,2.54,0.0,2.54,1.0,,11.6,29.464,
+SOCO_FPC,2024,n/a,NO_ANCHOR — the neighbour BA publishes no organized-market LMP,,,0,FLA,,2.19,0.0,2.19,1.0,,11.6,25.404,
+SOCO_FPC,2025,n/a,NO_ANCHOR — the neighbour BA publishes no organized-market LMP; NO LOAD SHAPE,,,0,MISSING — no extract for ba=FPC / proxy=FLA,,3.52,0.0,3.52,,,11.6,,
+SOCO_TAL,2023,n/a,NO_ANCHOR — the neighbour BA publishes no organized-market LMP,,,0,FLA,,2.54,0.0,2.54,1.0,,11.6,29.464,
+SOCO_TAL,2024,n/a,NO_ANCHOR — the neighbour BA publishes no organized-market LMP,,,0,FLA,,2.19,0.0,2.19,1.0,,11.6,25.404,
+SOCO_TAL,2025,n/a,NO_ANCHOR — the neighbour BA publishes no organized-market LMP; NO LOAD SHAPE,,,0,MISSING — no extract for ba=TAL / proxy=FLA,,3.52,0.0,3.52,,,11.6,,
