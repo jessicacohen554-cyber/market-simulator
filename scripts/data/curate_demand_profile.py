@@ -34,6 +34,14 @@ to the corrupted legacy summary and reported a 3,621,097 MW peak — the
 2023-06-12 21:00 unit slip this curator was already flagging and repairing for
 SPP, then discarding (``[skip ] SPP 2023: 1 physically-impossible hour(s)``).
 
+SOCO joined it on 2026-09-16 (lane SOCO-31), and needed more than membership:
+the legacy extract is a FROZEN artifact with no live builder and carries no
+SOCO rows at all, so walking its groups writes nothing for SOCO however many
+registries name it. :func:`curate_unextracted` closes that — the in-window twin
+of :func:`curate_pre_window`, sourcing the per-BA ``SOCO hourly`` extract
+through the same ``load_demand`` adapter. Both are the same F3 repair on
+different axes: pre-window on YEAR (PJM 2019, MISO 2020), unextracted on ISO.
+
 The script is idempotent and reads only ``data/raw``; the clean Parquet is
 overwritten on each run.
 """
@@ -62,8 +70,18 @@ MAX_MEDIAN_RATIO: float = 5.0
 # block among them) reads the repaired clean partition when one exists and the
 # corrupted legacy summary when it does not, so a registered ISO missing from
 # this set is served a 3.6 million MW peak.
+# SOCO was appended 2026-09-16 (lane SOCO-31) after SOCO-20 registered it as
+# the ninth region. SOCO is the FIRST member of this set the legacy extract
+# carries NO rows for at all -- it predates SOCO's registration and has no live
+# builder -- so membership alone writes nothing for it and
+# ``load_demand_meta("SOCO", 2023)`` still raised. What closes it is
+# :func:`curate_unextracted`, the in-window twin of :func:`curate_pre_window`:
+# both source the per-BA EIA-930 hourly extract through the SAME
+# ``load_demand`` adapter, so the partition summarises the identical series the
+# LP dispatches (rule 19 ``[R-ONE-MECH]``, rule 14 ``[R-ACCURATE]``) rather
+# than a second reconstruction of it.
 MODEL_ISOS: frozenset[str] = frozenset(
-    {"ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP"}
+    {"ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO", "SPP", "SOCO"}
 )
 
 # Pre-window years the legacy extract does NOT carry, curated here from the
@@ -188,45 +206,113 @@ def curate_pre_window() -> list:
     written = []
     for year in PRE_WINDOW_YEARS:
         for iso in sorted(MODEL_ISOS):
-            mw = pre_window_series(iso, year)
-            if mw is None or len(mw) != HOURS_PER_YEAR or np.isnan(mw).any():
-                print(
-                    f"  [skip ] {iso} {year}: no usable per-BA hourly series "
-                    "— partition not written"
-                )
-                continue
-            bad = screen_physical_bounds(mw)
-            repaired_mw = repair_by_interpolation(mw, bad)
-            total = repaired_mw.sum()
-            frame = pd.DataFrame(
-                {
-                    "iso": iso,
-                    "year": int(year),
-                    "hour": np.arange(HOURS_PER_YEAR, dtype="int64"),
-                    "raw_mw": repaired_mw,
-                    "normalized": repaired_mw / total if total > 0 else np.nan,
-                    "repaired": bad,
-                }
-            )
-            path = write_clean(
-                frame,
-                "demand-profile",
-                iso=iso,
-                year=int(year),
-                source="data/raw/eia-930-hourly/<BA> hourly.parquet",
-                extra_provenance={
-                    "n_repaired_hours": int(bad.sum()),
-                    "basis": "per-BA EIA-930 hourly extract (load_demand adapter)",
-                },
-            )
-            validate_clean(path)
+            path = _write_per_ba_partition(iso, year, "pre-window")
+            if path is not None:
+                written.append(path)
+    return written
+
+
+def _write_per_ba_partition(iso: str, year: int, label: str) -> str | None:
+    """Write one ``demand-profile`` partition from the per-BA hourly extract.
+
+    Shared by :func:`curate_pre_window` (years below the legacy extract's 2021
+    floor) and :func:`curate_unextracted` (a registered ISO the legacy extract
+    has no rows for at all). Both take the SAME series through the SAME
+    ``load_demand`` adapter and the SAME physical-bounds screen, so a partition
+    written by either is the summary of the array the LP dispatches, never a
+    second reconstruction of it (rule 19 ``[R-ONE-MECH]``). Returns the written
+    path, or ``None`` when the ISO has no usable 8,760-hour series for the year.
+    """
+    mw = pre_window_series(iso, year)
+    if mw is None or len(mw) != HOURS_PER_YEAR or np.isnan(mw).any():
+        print(
+            f"  [skip ] {iso} {year}: no usable per-BA hourly series "
+            "— partition not written"
+        )
+        return None
+    bad = screen_physical_bounds(mw)
+    repaired_mw = repair_by_interpolation(mw, bad)
+    total = repaired_mw.sum()
+    frame = pd.DataFrame(
+        {
+            "iso": iso,
+            "year": int(year),
+            "hour": np.arange(HOURS_PER_YEAR, dtype="int64"),
+            "raw_mw": repaired_mw,
+            "normalized": repaired_mw / total if total > 0 else np.nan,
+            "repaired": bad,
+        }
+    )
+    path = write_clean(
+        frame,
+        "demand-profile",
+        iso=iso,
+        year=int(year),
+        source="data/raw/eia-930-hourly/<BA> hourly.parquet",
+        extra_provenance={
+            "n_repaired_hours": int(bad.sum()),
+            "basis": "per-BA EIA-930 hourly extract (load_demand adapter)",
+        },
+    )
+    validate_clean(path)
+    print(
+        f"  [write] {iso} {year}: {label} partition from the per-BA "
+        f"extract ({int(bad.sum())} hour(s) repaired, "
+        f"peak {repaired_mw.max():,.0f} MW, "
+        f"total {total / 1e6:,.1f} TWh)"
+    )
+    return path
+
+
+def unextracted_iso_years(raw: pd.DataFrame) -> list[tuple[str, int]]:
+    """Return the ``(iso, year)`` pairs the legacy extract omits, in its own span.
+
+    Data-driven on the raw file itself — never an ``iso == "SOCO"`` ladder — so
+    a tenth region registers here with no edit: the candidate years are exactly
+    the years the legacy extract carries for *somebody*, and a pair is returned
+    only when this ISO has no row of its own for that year. For the seven ISOs
+    the extract was built around the result is EMPTY (each carries all of
+    2021-2025), which is why their committed partitions cannot move.
+    """
+    years = sorted({int(y) for y in raw["year"].unique()})
+    have = {(str(i), int(y)) for i, y in zip(raw["iso"], raw["year"], strict=True)}
+    return [
+        (iso, year)
+        for iso in sorted(MODEL_ISOS)
+        for year in years
+        if (iso, year) not in have
+    ]
+
+
+def curate_unextracted(raw: pd.DataFrame) -> list:
+    """Write partitions for registered ISOs the legacy extract never carried.
+
+    THE SOCO GAP, STATED PRECISELY (lane SOCO-31, 2026-09-16). The legacy
+    ``eia_demand_profiles.parquet`` is a frozen artifact with no live builder:
+    it was written before SOCO existed as a region and carries rows for seven
+    ISOs only. :func:`curate_all` walks that file's own groups, so a registered
+    ISO absent from it gets no partition however many registries name it — and
+    ``load_demand_meta`` then falls through to the equally frozen
+    ``eia_demand_meta.parquet`` summary and raises ``No EIA-930 data for ISO
+    'SOCO'``. That single raise blocks
+    ``build_calibration_reference._demand_totals``, and through it SOCO's whole
+    ``calibration_reference.json`` block and its per-year renewable-capacity
+    CSVs — the same F3 failure mode :func:`curate_pre_window` closed for PJM
+    2019 and MISO 2020, one axis over (ISO rather than year).
+
+    The repair is the same one, for the same reason (rule 14 ``[R-ACCURATE]``):
+    source the series from the per-BA EIA-930 hourly extract the LP itself
+    dispatches instead of back-filling a legacy summary that is known corrupt
+    where it does exist. ``raw/`` is untouched, no raw artifact is invented, and
+    a year with no usable series is SKIPPED and reported rather than padded
+    (rule 13 ``[R-MEASURED]``) — SOCO 2021 and 2022 skip on exactly that branch,
+    because ``SOCO hourly.parquet`` starts in 2023.
+    """
+    written = []
+    for iso, year in unextracted_iso_years(raw):
+        path = _write_per_ba_partition(iso, year, "in-window")
+        if path is not None:
             written.append(path)
-            print(
-                f"  [write] {iso} {year}: pre-window partition from the per-BA "
-                f"extract ({int(bad.sum())} hour(s) repaired, "
-                f"peak {repaired_mw.max():,.0f} MW, "
-                f"total {total / 1e6:,.1f} TWh)"
-            )
     return written
 
 
@@ -271,6 +357,13 @@ def curate_all() -> list:
 
     print(f"\npre-window years ({', '.join(str(y) for y in PRE_WINDOW_YEARS)})")
     written.extend(curate_pre_window())
+
+    missing = unextracted_iso_years(raw)
+    print(
+        f"\nregistered ISOs the legacy extract omits "
+        f"({len(missing)} (iso, year) pair(s))"
+    )
+    written.extend(curate_unextracted(raw))
     return written
 
 
