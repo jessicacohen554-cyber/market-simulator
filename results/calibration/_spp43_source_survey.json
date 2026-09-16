@@ -1,0 +1,72 @@
+{
+  "2019": {
+    "coal_seen": 26,
+    "date_max": "2019-12-31",
+    "date_min": "2019-01-01",
+    "facilities": 356,
+    "fleet_plants_seen": 112,
+    "rows": 8580528,
+    "st_gas_seen": 19,
+    "units": 949
+  },
+  "2020": {
+    "coal_seen": 25,
+    "date_max": "2020-12-31",
+    "date_min": "2020-01-01",
+    "facilities": 354,
+    "fleet_plants_seen": 109,
+    "rows": 8588424,
+    "st_gas_seen": 18,
+    "units": 943
+  },
+  "2021": {
+    "coal_seen": 24,
+    "date_max": "2021-12-31",
+    "date_min": "2021-01-01",
+    "facilities": 353,
+    "fleet_plants_seen": 107,
+    "rows": 8591784,
+    "st_gas_seen": 17,
+    "units": 953
+  },
+  "2022": {
+    "coal_seen": 24,
+    "date_max": "2022-12-31",
+    "date_min": "2022-01-01",
+    "facilities": 353,
+    "fleet_plants_seen": 107,
+    "rows": 8690304,
+    "st_gas_seen": 17,
+    "units": 961
+  },
+  "2023": {
+    "coal_seen": 24,
+    "date_max": "2023-12-31",
+    "date_min": "2023-01-01",
+    "facilities": 351,
+    "fleet_plants_seen": 107,
+    "rows": 8764392,
+    "st_gas_seen": 17,
+    "units": 957
+  },
+  "2024": {
+    "coal_seen": 23,
+    "date_max": "2024-12-31",
+    "date_min": "2024-01-01",
+    "facilities": 350,
+    "fleet_plants_seen": 105,
+    "rows": 8810448,
+    "st_gas_seen": 17,
+    "units": 965
+  },
+  "2025": {
+    "coal_seen": 23,
+    "date_max": "2025-12-31",
+    "date_min": "2025-01-01",
+    "facilities": 349,
+    "fleet_plants_seen": 106,
+    "rows": 8744544,
+    "st_gas_seen": 17,
+    "units": 957
+  }
+}

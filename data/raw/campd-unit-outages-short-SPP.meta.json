@@ -1,6 +1,7 @@
 {
   "artifact": "campd-unit-outages-short-SPP.csv",
-  "artifact_rows": 620,
+  "artifact_rows": 1689,
+  "composition_note": "SPP-43 DATA INTAKE 2026-09-16. This artifact is the CONCATENATION of two derive invocations with IDENTICAL detector settings, differing only in --years. The 2023-2025 block is the committed frozen block, preserved BYTE-IDENTICALLY including line positions (diff old->new is 100% additions, 0 removals); the 2019-2022 block is APPENDED after it. It is therefore a FIRST derivation for 2019-2022 on unchanged source data, not a re-derivation against a residual (CLAUDE.md rule 23 [R-FROZEN-DERIVE]). Because the file is a concatenation it is NOT in the deriver's canonical sort (facility_id, unit_id, outage_start) across the seam; the ROW SET is what a single 7-year invocation would emit, and no consumer in market_sim.data.outages is row-order sensitive.",
   "derive_invocation": {
     "fullstop_override_cf": 0.02,
     "fullstop_override_days": 5,
@@ -15,19 +16,50 @@
     "per_unit_crosswalk": false,
     "short_windows": true,
     "years": [
+      2019,
+      2020,
+      2021,
+      2022,
       2023,
       2024,
       2025
     ]
   },
+  "derive_invocations": [
+    {
+      "block": "frozen, preserved byte-identically",
+      "years": [
+        2023,
+        2024,
+        2025
+      ]
+    },
+    {
+      "block": "SPP-43 intake, appended",
+      "years": [
+        2019,
+        2020,
+        2021,
+        2022
+      ]
+    }
+  ],
   "deriver": "scripts/data/derive_campd_unit_outages.py",
   "observed_years": [
+    2019,
+    2020,
+    2021,
+    2022,
     2023,
     2024,
     2025
   ],
   "sidecar_schema_version": 1,
   "windows_by_start_year": {
+    "2019": 181,
+    "2020": 239,
+    "2021": 379,
+    "2022": 270,
     "2023": 163,
     "2024": 211,
     "2025": 246
