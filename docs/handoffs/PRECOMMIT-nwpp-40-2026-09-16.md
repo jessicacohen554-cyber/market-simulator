@@ -508,3 +508,34 @@ Class TWh the 2023 leg produced (model only; the benchmark is scored by the pare
 span): hydro 106.872 · CC_REGULAR 53.467 · COAL 38.542 · wind 30.410 · solar 13.003 · nuclear 8.429 ·
 CC_CHP 7.377 · OTHER 5.915 · CT_PEAKER 2.973 · biomass 2.772 · CT_CHP 0.578 · ST_GAS 0.133 ·
 ST_CHP 0.034. Generation-weighted mean LMP 47.63 $/MWh (MODEL-ONLY / UNVERIFIED; no price series).
+
+---
+
+## ADDENDUM 2 (2026-09-16 15:12 UTC) — shard B's timeline, one container restart, and the budget extended to 600 minutes
+
+Shard B (session `session_01MFciPYgGSZcAsqp8UKDxs7`, branch `claude/nwpp-40-span-b`, pin
+`9580bdd040a10ba5998ccf303129b2cca26bd4f4`) launched the §2.1 invocation at 09:26:44 UTC. **That
+attempt was killed by a container restart at ~10:30 UTC while the shard session sat idle** (its log
+is retained as `results/calibration/nwpp40_span_A.launch.attempt1-killed-by-container-restart.log`
+and is committed beside the shard's report). The shard **relaunched the identical invocation at
+10:31:30 UTC**; that relaunch is THE run — an identical invocation restarted after an infrastructure
+kill is not a second recipe and not a fan-out. To stop a second idle-kill the parent pokes the shard
+by routine every 30 minutes (`:18` / `:48`), and the shard has answered every poke since.
+
+Measured on the relaunch (`SHARDREPORT-nwpp-40-span-b-STATUS-2026-09-16.md`, commit `324bb027`):
+
+| year | data_prep | solve_p0 (cold) | solve_p1 (warm) | total |
+|---|---:|---:|---:|---:|
+| 2023 | 17.0 s | 1,236.5 s | 3,674.2 s | **4,942.9 s = 82.4 min** |
+| 2024 | 3.2 s | 2,235.8 s | **8,156.4 s** | **10,412.0 s = 173.5 min** |
+| 2025 | started ~14:47 UTC; cascade resolved (5 plants, 5 links); 255 non-reporting plants backfilled from 2024 (38,219 GWh); 113,155.5 GWh budget over 280 plants | | | |
+
+2024 took 2.1× 2023 (P1 2.2×). At that rate 2025 lands ~17:40 UTC, inside the 480-minute budget
+(18:31:30 UTC) by under an hour, and a slower 2025 would have been killed by the shard's own STOP
+rule with the whole span lost. **The budget is therefore extended to 600 minutes from the relaunch
+(expires 20:31:30 UTC)**, under rule 32(b) exactly as addendum 1 applied it — a longer single shard
+with its budget stated, never a fan-out; no flag, no solver setting and no recipe changes. The
+directive was delivered to the shard at 15:14 UTC before the original budget could bind.
+
+Nothing in the 2024 leg is read, scored or interpreted here; the parent scores the full span once
+the bundle lands.
