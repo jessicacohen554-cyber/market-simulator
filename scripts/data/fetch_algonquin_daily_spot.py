@@ -41,6 +41,26 @@ dateable anchor ("in advance of the holiday weekend") is left out rather than
 guessed (rule 14). The compact EIA "Spot Prices" table carries no Algonquin row
 in the 2022 pages either (verified), so the narrative remains the only source.
 
+**EVERY PATTERN HERE IS SCOPED TO ALGONQUIN, AND THAT IS THE WHOLE DIFFICULTY.**
+A Weekly Update prices a dozen hubs in one paragraph and names Algonquin in
+summary clauses that belong to other hubs' sentences, so a pattern that is not
+scoped harvests *someone else's price*. The neiso-109 repair
+(``docs/FINDING-neiso109-the-agt-series-is-contaminated-2026-09-16.md``) found
+**82 such rows in the committed file** — 69 through an extremum pattern with no
+Algonquin anchor at all and 13 through the main sentence's character-bounded
+window — including the $28.36 "2023-02-02 arctic print" that
+``data.fuel.hubs.iso_hub_daily_gas_prices`` cites as its worked example and
+which is a **New York** price. Scoping is by :data:`_OTHER_HUBS`, the hub
+vocabulary the archive itself uses: a span may not reach past another hub's name
+(:data:`_SPAN` for the main sentence, :func:`agt_regions` for the extremes).
+
+**TWO GUARDS make the silent failures loud**, and they share no assumption:
+:func:`chain_guard` cross-checks each page's "last Wednesday" against the
+previous page's own Wednesday (date anchoring), and :func:`extremum_guard`
+checks — with no hub vocabulary at all — that a weekly high is not below its own
+week's Wednesday prints (foreign-hub leakage through a hub this file does not
+know about). Both report rather than raise; the operator adjudicates.
+
 Output: ``data/raw/gas-prices/algonquin_citygate_daily.csv``
   columns ``date, algonquin_citygate_usd_mmbtu, source`` where ``source`` is the
   narrative anchor the print came from (``wednesday``/``last_wednesday``/
@@ -124,12 +144,14 @@ _WEEKDAY = {
 #     with a summary clause naming Algonquin ("...to a decline of $5.01/MMBtu at
 #     Algonquin Citygate.") and then prices a DIFFERENT hub in the next sentence.
 #     Inside 220 characters the pattern reached that hub and wrote ITS price into
-#     this series. **Sixteen committed rows are another hub's price**: Sumas
-#     (2022-11-30 $16.46, which is a Canada-Washington border quote standing in
-#     the Boston citygate series through Winter Storm Elliott week), PG&E
-#     Citygate, SoCal Citygate, Waha, FGT Citygate, Florida Gas Zone 3 and
-#     Transco Z6 NY. The largest single error is 2023-07-26, committed at Waha's
-#     $2.27 where Algonquin was $6.31.
+#     this series. **THIRTEEN committed rows are another hub's price** this way:
+#     Sumas (2022-11-30 $16.46, a Canada-Washington border quote standing in the
+#     Boston citygate series through Winter Storm Elliott week), PG&E Citygate,
+#     SoCal Citygate, Waha, FGT Citygate and Transco Z6 NY. The largest single
+#     errors are 2025-01-29 ($4.06 committed, $16.54 actual) and 2024-01-17
+#     ($2.27 committed, $13.35 actual) - both cold-snap weeks.
+#     (A SECOND and LARGER cross-hub channel, 69 rows, ran through the extremum
+#     harvest; see ``_AGT_HILO`` below.)
 # The span is therefore scoped by what it must not cross - :data:`_OTHER_HUBS`,
 # a tempered-dot over the hub vocabulary the archive actually uses. A sentence
 # boundary is the wrong scope: EIA also writes the price anaphorically across one
@@ -243,7 +265,7 @@ def agt_regions(text: str) -> list[str]:
 
 # Explicit-calendar-date weekly/monthly high/low, the dominant 2022-era shape:
 # "Algonquin Citygate price reached a weekly high of $22.81/MMBtu on February 3"
-# / "monthly low of $0.74/MMBtu on November 4". Unlike ``_HILO_TAIL`` (which
+# / "monthly low of $0.74/MMBtu on November 4". Unlike ``_AGT_HILO`` (which
 # pins a weekday name onto a report-week column), this carries an absolute
 # ``Month Day`` that dates the print directly - so it recovers the cold-week
 # extremes on the many 2022 pages that state the peak/trough by calendar date
@@ -550,13 +572,20 @@ def agt_sentence(html: str) -> str | None:
     The identity used by the stale-republish check in :func:`main`: EIA
     occasionally publishes a new Weekly Update whose *Spot Prices* table carries
     the new report week while the **prose is last week's, verbatim**. Measured on
-    the archive: 7 such pages 2018-2026 (2018-01-18, 2018-03-15, 2019-04-18,
-    2022-05-12, 2022-06-23, 2023-09-14, 2024-03-07). Because the column dates
-    advance and the sentence does not, every print such a page yields lands
-    exactly SEVEN DAYS LATE — wrong data on ordinary days, the same class of harm
-    ``fetch_transco_daily_spot``'s one-day shift did, arriving by a completely
-    different route (a stale source page, not a dropped header date). A duplicate
-    sentence carries no new information, so the page is skipped rather than dated.
+    the archive: **4** such pages 2018-2026 — 2018-01-18, 2019-04-18, 2023-09-14
+    and 2024-03-07. Because the column dates advance and the sentence does not,
+    every print such a page yields lands exactly SEVEN DAYS LATE — wrong data on
+    ordinary days, the same class of harm ``fetch_transco_daily_spot``'s one-day
+    shift did, arriving by a completely different route (a stale source page, not
+    a dropped header date). A duplicate sentence carries no new information, so
+    the page is skipped rather than dated.
+
+    **THE SPAN LENGTH IS LOAD-BEARING AND WAS MEASURED, NOT CHOSEN.** A first
+    version stopped at the first period, which truncates at the first decimal
+    ("...went down $1."), and three *normal consecutive weeks* — 2018-03-15,
+    2022-05-12, 2022-06-23 — collided on that prefix and were wrongly skipped as
+    republishes. Admitting a period only when a digit follows carries the span
+    through the sentence's own prices, where the weeks differ.
     """
     text = re.sub(r"<[^>]+>", " ", html)
     text = re.sub(r"\s+", " ", text)
