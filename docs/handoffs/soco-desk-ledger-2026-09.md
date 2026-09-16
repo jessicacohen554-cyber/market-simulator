@@ -43,7 +43,11 @@ SOCO's hydro is ~2.5–3.5 % of energy. SOCO's awkward water asset is the 1,306.
 routed as R-i. Recorded as a **DO-NOT-REDO** in §6, with the numbering-offset trap named (NWPP-33 ≈ SOCO-32,
 NWPP-34 ≈ SOCO-33, NWPP-35 ≈ SOCO-34 — a charter copied from NWPP by lane number is the wrong charter).
 
-**PR #6144 is conflict-free against the moved main** (ten commits landed, zero conflicts) and still unmerged.
+**PR #6144 MERGED at 03:49:09 UTC**, mid-sitting — the r#5 and r#6 records (SOCO-20's grade, the G23
+correction, R-l/R-m/R-n, the W3 issuance) are on main. The desk's opening state check for this sitting ran
+minutes before the merge and read it open; the merge was caught when the push hint for a branch with no open
+PR came back. Because a merged PR cannot track new work, r#7 moved to a **fresh branch cut from origin/main**,
+`claude/soco-desk-r7`, carrying this entry — the merged `claude/soco-desk-r5` is not reused.
 
 ---
 
