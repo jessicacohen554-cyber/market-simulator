@@ -129,6 +129,14 @@ CALIBRATION_ISOS: tuple[str, ...] = (
     # construction that can see a whole pool (NWPP-10 §3: a scalar inverse of
     # the many-to-one BA map silently returns 1/17 of the footprint).
     "NWPP",
+    # SOCO is the NINTH registered region (2026-09-14, lane SOCO-20; this block
+    # landed 2026-09-16 by lane SOCO-31) -- the Southern Company BALANCING
+    # AUTHORITY, not an ISO and not a pool: one EIA-930 BA code, ``SOCO``, so
+    # every lookup here resolves exactly as it did for the seven 1:1 regions
+    # and ``_is_pool_region("SOCO")`` is False. What is unlike every prior
+    # region is the PRICE side, and it is absent by RULING -- see
+    # CALIBRATION_YEARS_BY_ISO["SOCO"] below.
+    "SOCO",
 )
 
 # Per-ISO calibration-year overrides. CAISO's backcast targets 2023-2025
@@ -279,6 +287,38 @@ CALIBRATION_YEARS_BY_ISO: dict[str, tuple[int, ...]] = {
     # column away in the same ICE workbook -- is the load proxy rule 13
     # ``[R-MEASURED]`` forbids and stays refused (plan gate G17).
     "NWPP": (2023, 2024, 2025),
+    # SOCO (registered 2026-09-14 lane SOCO-20; this block landed 2026-09-16 by
+    # lane SOCO-31). 2023-2025 is the whole span the DATA supports, not a tier
+    # choice: ``data/raw/eia-930-hourly/SOCO hourly.parquet`` carries 26,304
+    # rows = three years, so ``pre_window_series("SOCO", y)`` is None for 2019,
+    # 2020, 2021 and 2022 (measured this lane, printed by
+    # ``curate_demand_profile`` as ``[skip ] SOCO <y>``) and the per-BA
+    # partition ``_demand_totals`` reads cannot be written for them. The
+    # EIA-923 vintage agrees: the committed net-generation parquet carries SOCO
+    # rows back to 2018, but with no demand series there is nothing to pair
+    # them with. Extending the span is a SOCO-11-class fetch of more EIA-930
+    # years, not a reference-block edit.
+    #
+    # THE PRICE SIDE IS ABSENT BY RULING, NOT BY OVERSIGHT, AND IT IS NOT A GAP
+    # FOR A LATER LANE TO CLOSE WITH A SUBSTITUTE. Southern Company publishes
+    # no LMP, no day-ahead clearing price and no hourly index, and SEEM -- the
+    # Southeast Energy Exchange Market that covers this footprint -- publishes
+    # matched VOLUMES and, deliberately, no price (plan §2.6). Card S2 chartered
+    # SOCO-13 to build a footprint-hourly volume-weighted index from FERC EQR
+    # transaction data behind a STOP gate pre-registered before any datum was
+    # read, and that gate READ NO: three of its five criteria failed -- hourly
+    # coverage 3.66 / 2.69 / 2.64 % against a >= 5 % bar in every year, the
+    # index +54.2 / +72.1 % above its independent public anchor in 2024/2025
+    # against a +/-15 % bar, and the 2025 shape test -- and NO BAR WAS MOVED
+    # AFTER THE SERIES WAS SEEN (FINDING-soco-13-2026-09-13.md). So SOCO has NO
+    # ``actual_lmp.json`` block, no ``actual_lmp_hourly_SOCO.parquet``, no
+    # ``TAIL_THRESHOLD`` entry and no amplitude row (plan gate G6), and the
+    # scorer reads PRICE-UNSCORED off exactly that ABSENCE, which is therefore
+    # load-bearing (rubric v3.8, lane SOCO-22). Substituting a neighbouring
+    # market's hub -- MISO-South, a PJM or TVA proxy, an EIA state average
+    # dressed as a price -- is the load proxy rule 13 ``[R-MEASURED]`` forbids
+    # and stays refused (plan gate G17; the desk has refused it twice).
+    "SOCO": (2023, 2024, 2025),
 }
 
 # Measured Henry Hub natural-gas spot price, annual average ($/MMBtu).
@@ -616,12 +656,32 @@ _EIA923_OIL_FUELS: frozenset[str] = frozenset({"DFO", "RFO", "JF", "KER", "WO", 
 # the "other" aggregate both eGRID (PLFUELCT GEOTHERMAL -> the map's default)
 # and EIA-930 (``NG: OTH``) already put it in; breaking it out would need a new
 # mask class in :func:`_eia923_generation_raw` and is not this lane's to add.
+# SOCO's conventional hydro clears the 2 % materiality floor in every year of
+# its span and is therefore first-order here too: EIA-930 ``NG: WAT`` reads
+# 8.4465 / 7.0798 / 6.0123 TWh against a 239.6251 / 249.5057 / 251.8847 TWh
+# footprint -- 3.52 / 2.84 / 2.39 %. Declaring it also puts it in the per-fuel
+# incompleteness candidate set, which is what the 2025 vintage needs: EIA-923
+# reports 0.3275 TWh of SOCO hydro that year (ratio 0.054) against a 6.6852 and
+# 6.3014 TWh in the two complete years, by far the worst-reported of SOCO's
+# benchmarked classes, and the guard swaps it to EIA-930 rather than scoring a
+# model class against a 95 %-missing actual. OIL IS DELIBERATELY OMITTED, on the
+# SPP/NWPP precedent and on its own measurement: EIA-923 oil is 0.2666 / 0.2573 /
+# 0.1042 TWh and EIA-930 agrees it is smaller still (0.0009 / 0.0017 / 0.0250),
+# i.e. 0.11 / 0.10 / 0.04 % of footprint energy -- an order of magnitude below
+# the materiality floor, and a starting/backup fleet rather than the winter
+# dual-fuel switch that makes oil first-order in NYISO/NEISO. PUMPED STORAGE is
+# not a candidate and cannot become one here: ``WAT``/``PS`` is storage, the
+# hydro mask below excludes it by prime mover, and SOCO's 1,306.6 MW of it is
+# UNOBSERVABLE in EIA-930 for 2023 and most of 2024 (lane SOCO-31 R-i -- the
+# ``NG: PS``/``BAT`` taxonomy cut-over of 2024-07-15; stated on the first
+# keeper's determination basis, never filled in).
 _EIA923_EXTRA_FUELS_BY_ISO: dict[str, tuple[str, ...]] = {
     "NYISO": ("hydro", "oil"),
     "NEISO": ("hydro", "oil"),
     "MISO": ("hydro", "oil"),
     "SPP": ("hydro",),
     "NWPP": ("hydro",),
+    "SOCO": ("hydro",),
 }
 
 
