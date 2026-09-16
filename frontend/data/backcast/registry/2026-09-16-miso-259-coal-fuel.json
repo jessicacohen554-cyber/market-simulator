@@ -1,0 +1,18 @@
+{
+  "id": "2026-09-16-miso-259-coal-fuel",
+  "label": "miso 259 coal fuel",
+  "date": "2026-09-16",
+  "shorthand": "miso-259-coal-fuel",
+  "definition": "miso-259: coal fuel-inventory budget armed, 2020",
+  "years": [
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-09-16-miso-259-coal-fuel.js",
+  "bundle": "results/calibration/miso259_coalinv_span"
+}
