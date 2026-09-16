@@ -117,9 +117,9 @@
 window.MECH_MATRIX_SHARDS = window.MECH_MATRIX_SHARDS || {};
 window.MECH_MATRIX_SHARDS.SOCO = {
   iso: "SOCO",
-  updated: "2026-09-13",
-  keeper: "",
-  gates: "",
+  updated: "2026-09-16",
+  keeper: "2026-09-16-soco-1-baseline",
+  gates: "NOT-YET (rubric v3.8, PRICE UNSCORED) — C1 FAIL on 1 row of 14 (2023 CT_PEAKER +8.221 TWh, share +3.4pp); C2 PASS, C4 PASS, C6 PASS, C8 PASS; C3a/C3b/C3c UNSCORABLE (no actual_lmp.json block for SOCO — not failed); 0 ledgered, 0 protective caveats; C1 all 13/14, free 9/10. Ceiling is PHYSICALLY-CALIBRATED (PRICE UNSCORED); SOCO can never read CALIBRATED. Open lever: the CT_PEAKER/ST_GAS merit-order split. Evidence: docs/handoffs/FINDING-soco-40-2026-09-16.md",
   cells: {
     cc_steam_part_capacity: { cell: "U", ev: "SOCO-21 (2026-09-13) shard seed, no verdict minted (docs/multi-iso/soco-addition-plan-2026-09.md §4 W5 queue / §5 row SOCO-21) — U: UNTESTED. SOCO has no keeper, no registered run and no solve of any kind at HEAD; rules 25 [R-ISO-SCOPE] / 28(d) mean no other ISO's verdict fills this cell. The lever queue is docs/mechanism-testing-matrix.md §5.8." },
     cc_steam_part_reclass: { cell: "U", ev: "SOCO-21 (2026-09-13) shard seed, no verdict minted (docs/multi-iso/soco-addition-plan-2026-09.md §4 W5 queue / §5 row SOCO-21) — U: UNTESTED. SOCO has no keeper, no registered run and no solve of any kind at HEAD; rules 25 [R-ISO-SCOPE] / 28(d) mean no other ISO's verdict fills this cell. The lever queue is docs/mechanism-testing-matrix.md §5.8." },
