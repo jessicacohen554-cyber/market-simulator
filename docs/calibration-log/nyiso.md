@@ -14570,3 +14570,40 @@ which leaves the markup above full physical burn with no physical reason to scal
 the same chain (2.449 TWh model vs 2.687 actual in 2022, drifting away in all four years; share of
 gas-family energy 3.91 / 0.41 / 0.45 / 1.08 % at $8.66 / $3.34 / $2.82 / $5.46 gas). **Not tested here.**
 `gas_offer_margin_anchor_vintage` stays `U` — §2.2 applies to it identically.
+
+## nyiso-237 — 2026-09-16
+
+**ZERO LP.** Orchestrator-only (rule 32 `[R-SHARD]` (a)); no shard launched, no bundle written, no run
+registered. Keeper `2026-09-14-nyiso-235-gas-repair` **unchanged**. Record:
+`docs/RESULT-nyiso237-hydro-negative-price-phase0-2026-09-16.md`; probe
+`scripts/probes/nyiso237_hydro_negprice_phase0.py`.
+
+**G-DRIFT at `a3df8337`**: `moved_rows("NYISO") == {}`, fingerprint `bd2b4657f9b5df7e` reproduces —
+rule 29(b) form 4 valid, no control solve owed.
+
+**Phase 0 — the "cannot withhold" hypothesis is REFUTED on the meter.** EIA-930 `NG: WAT` against the
+real zonal RT price, (month × hod)-matched, 2022: WEST ≤ $5 (n 277) **0.834** of matched (−461 MW);
+five-zone mean ≤ $0 (n 127) **0.866** (−387 MW); ≤ $10 / ≤ $15 0.850 / 0.862; within-month price
+quintiles Q1 → Q5 **−208 … +198 MW** (demand quintiles −65 … +154). The one cut that "held up" (WEST
+≤ $0, 0.979) is 21 scattered hours. Real hydro backs off ≈ 15 % at the bottom. **The equality floor
+was not built**; the rule-19 reconciliation with `hydro_min_flow_floor` is moot.
+
+**The nyiso-236 G2 kill is a PRICE defect.** Keeper `Upstate_West` ≤ $0 in **498 h** of 2022 (real:
+**21** WEST / **127** five-zone mean; ≤ $5: **2,855 vs 508**); Apr/May/Jun/Oct/Nov model means
+−0.8 / 2.5 / 8.3 / 4.7 / 0.5 $ vs 32.3 / 31.9 / 57.5 / 39.1 / 22.4 measured; 2023: 214 h (May 170).
+2024 / 2025: **0 h ≤ $5**. The arm's hydro loss lands exactly in those months (2022 Mar −19.1 / Apr −10.1 /
+Nov −23.6; 2023 Oct −17.8 / Nov −6.9 GWh; 2024/25 0.000). In every fabricated hour the Central-East link
+is at its monthly measured cap (100 % of hours, 9 of 12 months of 2022) and 217 of 498 clear at exactly
+−$26 = the wind PTC offer. Real system in the same hours: net imports −405 MW, hydro −393 MW, West
+price positive (p1 $1.97). Zonal error keeper−actual 2022 `Upstate_West` **−26.9 $/MWh** (NYC +9 to +16
+in the same months); all 2023–25 zone-months with data +0.9 to +5.8.
+
+**Matrix (rule 28(b))**: `hydro_budget_period_by_instrument` **`U` → `R`** — killed at G2, root-caused,
+re-open condition = a Central-East seam repair that brings the model's 2022 ≤ $0 count to the measured
+order; the 24 h / 168 h lengths are never swept. Shard `keeper:` field and the §5.5 header re-stamped to
+`2026-09-14-nyiso-235-gas-repair` (a nyiso-235 rule-28 duty the CI guard was warning on).
+
+**Successor**: the Central-East seam in 2022–23 (nyiso-224's owner-gated topology change; nyiso-169's
+measured-TTC-correct / wrong-shape reading) — this session adds its price-floor half. Hydro remains
+unscored by C1 (handed forward, unchanged). Rule 31: nothing new to retain or delete; nyiso-236's legs
+stay at their pinned SHAs. Rule 33: no shards to archive.
