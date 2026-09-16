@@ -14131,3 +14131,70 @@ probes `scripts/probes/_miso257_bench_rebuild.py`, `_miso257_bench_gate.py`,
 `_miso257_btm_identity.py`.
 
 * Next number: **miso-258**.
+
+---
+
+## miso-260 — 2026-09-16 — **THE SEAM LADDER IS DERIVABLE FOR 2020/2021 (miso-252's blocker was stale by three days) — AND THE 2020 SCREEN KILLED THE ARM ON ITS OWN G-NOFLIP GATE.** Keeper unchanged, `2026-09-16-miso-259-coal-fuel`
+
+*(Log gap noted, not filled: miso-258 and miso-259 left no entry here. miso-259's
+record is `docs/RESULT-miso259-coal-inventory-screen-2026-09-16.md` and its promotion
+note is on the MISO keeper shard.)*
+
+**PHASE 0, ZERO LP, killed three levers before any solve.** (1) The charter's coal
+**stock-carry** is refuted on **monotonicity**: a carry's feasible set strictly contains
+the no-carry set, so it can only RAISE coal — and coal is over-predicted in five of six
+years while gas is under-predicted in all six. There is no year it helps. (2) The
+**CC_REGULAR level defect** premise is falsified — the sign flips (+5.92 / −9.46 / −9.47
+/ −6.39 / +3.32 / −3.15). (3) A **coal delivered-price** rule-14 repair is refuted on
+coverage: the legacy F923 extract and the new `coal-receipts` datatype price the
+*identical* 52/51/47/42 plants and 559/563/525/478 plant-months at within 0.3–2.4 % —
+incomplete for tonnage, not for price.
+
+**THE LEVER.** `FINDING-miso252` §3(a) named the EIA-930 interchange extract the binding
+blocker on a 2020–2022 seam ladder. **Both halves landed three days later** — `f9259f91`
+(MISO 2020/2021 hourly DA/RT hub LMP) and `00249712` (the extract widened to 2020–2026),
+both 2026-09-13 — and nothing re-checked. The frozen
+`scripts/data/derive_miso_seam_ladders.py` at HEAD reproduces every previously-committed
+entry at **256/256, max |diff| 0.0000**, and derives 2020 and 2021 cleanly. The
+incumbent's band grid in those years is **degenerate**: 2021 South all eight import bands
+at $41.97 and all eight export at $37.97; 2021 Manitoba import AND export at the same
+$39.97; 2021 PJM import spanning **$0.53** over eight bands against a measured $16.17 →
+$82.19. Σ|per-seam net-flow error| vs EIA-930: **36.29 (2020) / 25.41 (2021)** unarmed
+against 8.84 / 4.11 / 5.21 in the armed 2022 / 2023 / 2025.
+
+**THE SCREEN (2020, named ex ante on the largest footprint, never on the residual).**
+G-DIRECTION **PASS** — Σ|per-seam err| **36.302 → 6.505 TWh**, South's sign corrected.
+G-BALANCE **PASS** — slack and dump 0.0000 in both arms. **G-NOFLIP FAILS**: C1 2020
+`COAL_BIT` **−7.00 → −10.29 TWh**, out of the ±8 TWh band. Under rule 29 `[R-SCREEN]`
+that kills the arm; **the span was not spent.** Two further pre-registered gates failed
+on text this session mis-specified and are retired on grounds independent of which way
+they went (G-FOOTPRINT asserted byte-identical non-seam `mc`, which the armed P0→P1
+startup-markup amortization cannot deliver — 405 of 3,227 non-seam rows move, **all gas**,
+zero coal/hydro/nuclear/oil; G-SPREAD counted dispatch pinning, whose premise is false in
+a screen year with 0 pinned control bands).
+
+**Reported, never gated**: gas −13.10 → −25.03, coal +7.75 → **−2.83**, interchange
++17.01 → **−5.99** TWh; CC_REGULAR +5.92 → **+0.45**; demand-weighted price +26.7 % →
++19.9 % against the 2020 RT actual; a NEW D-1 failure (2020 COAL_PRB off-peak CV ratio
+0.451) and D-2 CT_PEAKER forced share 35.9 % → 50.6 %.
+
+**ESCALATED, not resolved.** Rule 29's kill and rule 14 `[R-ACCURATE]` ("keep the
+accurate input, find the real root cause") point opposite ways. The named root cause is
+the standing **gas deficit — 13–35 TWh under in EVERY year of the span**. The promotion
+decision is the owner's (rule 31); nothing was deleted and both screen bundles are
+recoverable by full SHA from `.gitignore`.
+
+**Two by-products worth keeping.** (a) The CONTROL reproduces the keeper's committed 2020
+row **exactly** on all eight C1 classes and all three fuel families — **zero measurable
+HEAD drift on MISO 2020** since the keeper's `git_sha` `3b0a12b4`, established by
+measurement rather than a hunk audit. (b) **MISO's keeper is TWO CONFIGS, not "one recipe
+over two tiers"** as its keeper-shard note claims: `miso_measured_reserve_requirements`
+and `miso_reserve_online_gated` are False in 2020–2022 and True in 2023–2025, and
+`load_miso_reserve_requirements` **hard-errors** before 2023 — so the partition is forced
+by data, and a single `--years 2020..2025` invocation is **impossible** for MISO.
+
+Records: `docs/RESULT-miso260-seam-ladder-screen-2026-09-16.md`,
+`docs/PRECOMMIT-miso260-seam-ladder-2020-2021-2026-09-16.md`, probes
+`scripts/probes/_miso260_seam_phase0.py`, `_miso260_compose_span.py`.
+
+* Next number: **miso-261**.
