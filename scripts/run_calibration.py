@@ -713,6 +713,7 @@ def run_year(
     caiso_solar_endogenous_spill: bool | None = None,
     caiso_solar_cap_at_delivered: bool | None = None,
     neiso_gas_coldsnap_derate: bool | None = None,
+    neiso_coldsnap_derate_dualfuel_unswitched: bool | None = None,
     neiso_oil_burn_budget: bool | None = None,
     neiso_winter_fuel_inventory: bool | None = None,
     neiso_winter_fuel_start_fill_bbl: float | None = None,
@@ -1568,6 +1569,10 @@ def run_year(
     if neiso_gas_coldsnap_derate is not None:
         config = config.with_overrides(
             neiso_gas_coldsnap_derate=neiso_gas_coldsnap_derate
+        )
+    if neiso_coldsnap_derate_dualfuel_unswitched is not None:
+        config = config.with_overrides(
+            neiso_coldsnap_derate_dualfuel_unswitched=neiso_coldsnap_derate_dualfuel_unswitched
         )
     if neiso_oil_burn_budget is not None:
         config = config.with_overrides(neiso_oil_burn_budget=neiso_oil_burn_budget)

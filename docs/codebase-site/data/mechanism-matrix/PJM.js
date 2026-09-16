@@ -212,6 +212,7 @@ window.MECH_MATRIX_SHARDS.PJM = {
     nuclear_unit_availability: { cell: "U", ev: "PJM-NUC-1/1b; pjm-146 triage (2026-08-02, no solve) reclassifies the cell (c)-adjudicated: the build gate failed pre-committed (retention NEGATIVE, self-defeating by construction — near-full-day redistribution IS the scarcity-day population), not re-armable without a NEW level-anchor identification (docs/handoffs/pjm-matrix-column-triage-2026-08.md §2.4)" },
     temp_dependent_derate: { cell: "R", ev: "pjm-95 demotion" },
     gas_coldsnap_derate: { cell: "." },
+    coldsnap_derate_dualfuel_conditional: { cell: ".", ev: "n/a for this ISO: neiso_coldsnap_derate_dualfuel_unswitched is a scope condition on inject_neiso_gas_coldsnap_derate, which returns False unless iso == 'NEISO', so there is no object here to arm and the field is byte-identical. Not a verdict; rule 25 [R-ISO-SCOPE] means a NEISO verdict would never fill this cell either. Row minted neiso-110 (2026-09-16) per rule 28(c)." },
     nysdec_peaker_rule_availability: { cell: "." },
     wefor_statistical_stack: { cell: "K" },
     correlated_forced_outage: { cell: ".", fc: "I" },
