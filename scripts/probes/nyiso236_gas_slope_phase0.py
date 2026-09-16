@@ -57,8 +57,16 @@ def model_hourly(bundle: Path, year: int) -> tuple[np.ndarray, np.ndarray]:
 
 
 def lw(price: np.ndarray, load: np.ndarray, mask: np.ndarray) -> float:
-    """Load-weighted mean of *price* over the hours *mask* selects."""
-    return float(np.nansum(price[mask] * load[mask]) / np.nansum(load[mask]))
+    """Load-weighted mean of *price* over the hours *mask* selects.
+
+    A hour whose price is NaN is dropped from the NUMERATOR **and** the
+    denominator. Summing the numerator with ``nansum`` while leaving that hour's
+    load in the denominator would bias the mean toward zero; NYISO's actual RT
+    series carries two such hours (2025 h3525-3526), so the effect is tiny, but
+    the identity has to be right rather than tiny.
+    """
+    ok = mask & np.isfinite(price) & np.isfinite(load)
+    return float((price[ok] * load[ok]).sum() / load[ok].sum())
 
 
 def main() -> None:
