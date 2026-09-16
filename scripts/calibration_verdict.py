@@ -2357,8 +2357,12 @@ def score_price_tail(year: int, ypay: dict, iso: str) -> list[dict]:
     else:
         actual = float(tail_rec[gate_key])
         cov = tail_rec.get(f"{gate_key[:2]}_coverage", 1.0)
+        # ``.1%`` not ``.0%``: the note only fires below 99.9 % coverage, so the
+        # zero-decimal format printed the self-contradicting "RT coverage 100% —
+        # count is a lower bound" for every partial year in the 99.5–99.9 band
+        # (CAISO 2023, 0.995; SPP every year, 0.999). caiso-284.
         cov_note = (
-            f"; {gate_lbl} coverage {cov:.0%} — count is a lower bound"
+            f"; {gate_lbl} coverage {cov:.1%} — count is a lower bound"
             if cov < 0.999
             else ""
         )

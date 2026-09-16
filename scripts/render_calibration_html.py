@@ -841,13 +841,32 @@ def _actual_lmp_hourly(iso: str, year: int) -> np.ndarray | None:
     """Return the actual hourly LMP series ($/MWh) for an ISO-year, or ``None``.
 
     Loads ``data/raw/_validation-source/actual_lmp_hourly_<ISO>.parquet`` — a
-    single hub series with columns ``year, hour, rt, da`` (not zonal). Prefers
-    real-time (``rt``) — the scarcity-relevant series the C3c tail scores — and
-    falls back to day-ahead (``da``) for hours where ``rt`` is NaN (e.g. CAISO,
-    whose ``rt`` column is partly unpopulated), mirroring the rt→da fallback in
-    ``_actual_avg_lmp`` / C3a. Returns ``None`` when the file or the year is
-    absent, so the tail criterion stays SKIPPED rather than scoring against a
-    missing actual. The returned array is sorted by hour.
+    single hub series with columns ``year, hour, rt, da`` (not zonal). Returns
+    the **real-time series alone** — the scarcity-relevant series the C3c tail
+    scores — with NaN left in place for hours the RT column does not carry.
+    Returns ``None`` when the file or the year is absent, so the tail criterion
+    stays SKIPPED rather than scoring against a missing actual. The returned
+    array is sorted by hour.
+
+    **NO DA FALLBACK (repaired 2026-09-16, session caiso-284).** This function
+    used to fill an RT-NaN hour with that hour's day-ahead price, on the stated
+    rationale that it "mirrors the rt→da fallback in ``_actual_avg_lmp`` / C3a".
+    That rationale was wrong in kind: C3a's ladder falls back to the DA series
+    *as a whole* and then **labels the record ``vs DA``**, so the basis is always
+    declared; this fill spliced DA hours into a series the payload goes on to
+    call ``actual`` RT, with nothing anywhere recording that it had. Rubric v2.7
+    gates every ISO's tail on RT, so a DA hour standing in for a missing RT hour
+    is a benchmark of the wrong market carried under the right market's name.
+    Measured blast radius over every committed ISO-year: the fill changed a
+    tail count in **exactly one** — CAISO 2023, where 48 RT-NaN hours (two whole
+    days, Jan 4 and Jan 11) were filled from DA at a mean of $187.22 and pushed
+    the payload's ``ordc.hoursGt200.actual`` to **62 h against the gated 47 h**.
+    No determination moved, because nothing reads that field and the C3c gate
+    reads the pure-RT ``tail/actual_tail.json`` instead; the defect was that a
+    DA-contaminated number sat in a keeper's committed payload labelled
+    ``actual``. Rules 13 `[R-MEASURED]` / 14 `[R-ACCURATE]`: an hour with no
+    measured RT price has no measured RT price, and NaN says so.
+    (`docs/RESULT-caiso284-rescore-on-rt-audit-2026-09-16.md` §2 rows 10–12.)
     """
     from market_sim.config.paths import CALIBRATION_DIR
 
@@ -859,9 +878,7 @@ def _actual_lmp_hourly(iso: str, year: int) -> np.ndarray | None:
     if df.empty:
         return None
     df = df.sort_values("hour")
-    rt = df["rt"].to_numpy(float)
-    da = df["da"].to_numpy(float) if "da" in df.columns else np.full_like(rt, np.nan)
-    return np.where(np.isnan(rt), da, rt)
+    return df["rt"].to_numpy(float)
 
 
 @lru_cache(maxsize=None)
@@ -877,6 +894,19 @@ def _actual_rt_padded(iso: str, year: int, hours: int) -> np.ndarray | None:
     score every ISO from its own actuals, not just ERCOT. (That function's CAL_DIR
     was repaired to the post-W1 root long ago; the claim here that it "still points
     at the pre-W1 ``inputs/calibration`` tree" was stale and is dropped.)
+
+    **RT ONLY — no DA fallback** (2026-09-16, caiso-284), for the reason spelled
+    out in :func:`_actual_lmp_hourly`. An hour with no measured RT price stays
+    NaN here, which is what makes the two consumers honest: ``hoursGt200.actual``
+    counts only hours the real-time market actually cleared above the threshold,
+    and ``lmpDeltaHr`` carries the int16 NaN sentinel there instead of a
+    model−DA difference. The second one also repairs a calendar mismatch in the
+    REPORTED-ONLY D-A diurnal measurement, whose
+    ``calibration_verdict.score_diurnal_amplitude`` docstring asserts that the
+    delta's missing-hour mask and the committed ``rt_hod`` part's mask
+    "coincide" — with the fill in place they did not (CAISO 2023: a 363-day
+    measured profile was added to a 365-day delta profile, D-A 72.9 % reported
+    as 72.5 %, a 0.4 pp band-free error), and with it gone they do.
     """
     from market_sim.config.paths import CALIBRATION_DIR
 
@@ -890,8 +920,6 @@ def _actual_rt_padded(iso: str, year: int, hours: int) -> np.ndarray | None:
     out = np.full(int(hours), np.nan)
     hr = df["hour"].to_numpy()
     rt = df["rt"].to_numpy(float)
-    if "da" in df.columns:
-        rt = np.where(np.isnan(rt), df["da"].to_numpy(float), rt)
     # Guard against a stray out-of-range hour index (leap-year / DST artifacts).
     valid = (hr >= 0) & (hr < int(hours))
     out[hr[valid]] = rt[valid]
@@ -2383,8 +2411,8 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
             # (model price > actual, orange) or COLD (model < actual, blue) for
             # each of the 8760 hours. Model system price = load-weighted mean of
             # the per-zone energy-only duals (the SAME series the avg-LMP KPI and
-            # the settlement tail use); actual = _actual_rt_padded (RT, DA
-            # fallback) — the ISO-wide real-time reference, since the model's
+            # the settlement tail use); actual = _actual_rt_padded (RT only, no
+            # DA fallback) — the ISO-wide real-time reference, since the model's
             # clearing price is a real-time marginal-energy analogue (no
             # day-ahead unit-commitment smoothing). Hours with no model dual or
             # no actual price stay NaN (neutral). Serialized as signed int16

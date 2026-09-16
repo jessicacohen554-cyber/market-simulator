@@ -676,6 +676,25 @@
       if (a.da != null) return { val: a.da, basis: 'DA', lw: false };
       return null;
     }
+    /* Gated actual MONTHLY price vectors — the C3b counterpart of
+       actualLMPGated, mirroring calibration_verdict.score_price_shape's ladder
+       (rt_lw_mon > da_lw_mon > rt_mon > da_mon).
+
+       Why this exists (caiso-284, 2026-09-16): every monthly price view used to
+       plot the LEGACY EQUAL-HOUR aL.rt_mon / aL.da_mon while the MODEL side
+       (avgLMPMon) is demand-weighted, so the two lines on the chart were
+       different statistics — and neither was the pair C3b scores. For CAISO
+       2022 the annual gap between the two actual bases is $5.42/MWh (rt 79.07
+       vs rt_lw 84.49), i.e. larger than several of the residuals the charts are
+       read to judge. Returns { rt, da, lw } with lw=false only when the ISO-year
+       has no load-weighted vector committed, so the caption can say so. */
+    function actualMonGated(yr) {
+      const a = actualLMP(yr) || {};
+      if (a.rt_lw_mon || a.da_lw_mon) {
+        return { rt: a.rt_lw_mon || null, da: a.da_lw_mon || null, lw: true };
+      }
+      return { rt: a.rt_mon || null, da: a.da_mon || null, lw: false };
+    }
     function ordcInfo(yr) { return RUN(yr).ordc || null; }
     function ordcOverlay(yr) { const o = ordcInfo(yr); return o && o.maeEnergyOnly != null ? o : null; }
 
@@ -1358,9 +1377,13 @@
         if (!mm) { box.innerHTML = '<p style="font-size:0.82rem;color:var(--text-muted)">No model LMP.</p>'; return; }
 
         const ms = avgLMPMonScar(yr);
+        const aM = actualMonGated(yr);
         const sets = [];
-        if (aL.rt_mon) sets.push({ pts: aL.rt_mon, color: '#9aa5b1', name: 'Actual RT', w: 2 });
-        if (aL.da_mon) sets.push({ pts: aL.da_mon, color: '#647184', name: 'Actual DA', w: 3 });
+        // RT is the GATED benchmark (rubric v2.7+), so it is the heavy line and
+        // DA the thin companion — the reverse of the pre-caiso-284 weights,
+        // which drew the never-gated DA series at w:3 over RT at w:2.
+        if (aM.rt) sets.push({ pts: aM.rt, color: '#5b6570', name: 'Actual RT (gated)', w: 3 });
+        if (aM.da) sets.push({ pts: aM.da, color: '#aab3bd', name: 'Actual DA (diag)', w: 1.4, dash: '3 3' });
         if (ms) {
           sets.push({ pts: ms.map(v => v ?? 0), color: OVERLAY_COLOR, name: 'Model+ORDC', w: 3 });
           sets.push({ pts: mm.map(v => v ?? 0), color: '#4A90D9', name: 'Model', w: 1.4, dash: '4 3' });
@@ -1517,55 +1540,19 @@
       drawCfDistribution(yr, grp);
     }
 
-    function drawPriceDuration(yr) {
-      const container = document.getElementById('priceDurChart');
-      if (!container) return;
-      const mm = avgLMPMon(yr);
-      const aL = actualLMP(yr) || {};
-      if (!mm) {
-        container.innerHTML = '<p style="font-size:0.82rem;color:var(--text-muted)">No LMP data for this year.</p>';
-        return;
-      }
-      const w = container.clientWidth || 600;
-      const h = 280;
-      const L = 55, R = 20, Tp = 20, B = 45;
-      const pw = w - L - R, ph = h - Tp - B;
-      const allVals = [...mm.filter(v => v != null), ...(aL.da_mon || []), ...(aL.rt_mon || [])];
-      const ymax = Math.max(20, ...allVals) * 1.15;
-      const barW = pw / 12 * 0.7;
-      const X = i => L + pw * (i + 0.5) / 12;
-      const Y = v => Tp + ph * (1 - Math.min(Math.max(Number(v) || 0, 0), ymax) / ymax);
-
-      const svg = d3.select(container).append('svg')
-        .attr('width', w).attr('height', h).attr('class', 'chart');
-
-      for (let i = 0; i <= 4; i++) {
-        const y = Tp + ph * i / 4;
-        svg.append('line').attr('x1', L).attr('y1', y).attr('x2', w - R).attr('y2', y).attr('stroke', '#eef1f4');
-        svg.append('text').attr('x', L - 7).attr('y', y + 4).attr('text-anchor', 'end').attr('font-size', 12).attr('fill', '#8a93a0')
-          .text('$' + (ymax * (1 - i / 4)).toFixed(0));
-      }
-      MONTHS.forEach((m, i) => svg.append('text').attr('x', X(i)).attr('y', h - 14).attr('text-anchor', 'middle').attr('font-size', 11).attr('fill', '#46505f').text(m));
-
-      for (let i = 0; i < 12; i++) {
-        if (mm[i] != null) {
-          svg.append('rect').attr('x', X(i) - barW / 2).attr('y', Y(mm[i])).attr('width', barW).attr('height', Tp + ph - Y(mm[i]))
-            .attr('fill', isoColor(st.iso)).attr('opacity', 0.7).attr('rx', 2);
-        }
-        if (aL.da_mon?.[i] != null) {
-          svg.append('line').attr('x1', X(i) - barW / 2 - 4).attr('x2', X(i) + barW / 2 + 4)
-            .attr('y1', Y(aL.da_mon[i])).attr('y2', Y(aL.da_mon[i]))
-            .attr('stroke', '#647184').attr('stroke-width', 2.5);
-        }
-      }
-      const leg = svg.append('g').attr('transform', `translate(${L + 10},${Tp - 2})`);
-      leg.append('rect').attr('x', 0).attr('y', -5).attr('width', 12).attr('height', 10).attr('fill', isoColor(st.iso)).attr('opacity', 0.7);
-      leg.append('text').attr('x', 16).attr('y', 4).attr('font-size', 10).attr('fill', '#666').text('Model');
-      if (aL.da_mon) {
-        leg.append('line').attr('x1', 80).attr('x2', 100).attr('y1', 0).attr('y2', 0).attr('stroke', '#647184').attr('stroke-width', 2.5);
-        leg.append('text').attr('x', 104).attr('y', 4).attr('font-size', 10).attr('fill', '#666').text('Actual DA');
-      }
-    }
+    /* drawPriceDuration() was DELETED here 2026-09-16 (session caiso-284,
+       rule 26 [R-DELETE]). It drew the model's monthly price bars with ONLY
+       the day-ahead actual overlaid (aL.da_mon, legend 'Actual DA'); rt_mon was
+       read into the y-axis scale and never plotted. Since rubric v2.7 every
+       ISO's price criteria gate on RT, so that chart compared the model against
+       the wrong market. It was already UNREACHABLE — its container id
+       'priceDurChart' appears in no HTML page and in no other JS, so it had
+       rendered nothing for some time. Deleted rather than repaired or left in
+       place: a dead DA-only render path is a re-armable wrong answer, which is
+       exactly what rule 26 forbids leaving parseable. The live monthly price
+       views are drawMonthlyLmpChart() and lmpMonthlyTable() below, both of
+       which now lead with the gated RT series.
+       docs/RESULT-caiso284-rescore-on-rt-audit-2026-09-16.md §2 row 17. */
 
     function drawMonthlyLmpChart(yr) {
       const container = document.getElementById('monthlyLmpChart');
@@ -1575,9 +1562,11 @@
       if (!mm) { container.innerHTML = '<p style="font-size:0.82rem;color:var(--text-muted)">No monthly LMP data.</p>'; return; }
 
       const ms = avgLMPMonScar(yr);
+      const aM = actualMonGated(yr);
       const sets = [];
-      if (aL.rt_mon) sets.push({ pts: aL.rt_mon, color: '#9aa5b1', name: 'Actual RT', w: 2 });
-      if (aL.da_mon) sets.push({ pts: aL.da_mon, color: '#647184', name: 'Actual DA', w: 3 });
+      // RT heavy (gated), DA thin dashed (diagnostic) — see mountLmpCharts.
+      if (aM.rt) sets.push({ pts: aM.rt, color: '#5b6570', name: 'Actual RT (gated)', w: 3 });
+      if (aM.da) sets.push({ pts: aM.da, color: '#aab3bd', name: 'Actual DA (diag)', w: 1.4, dash: '3 3' });
       if (ms) {
         sets.push({ pts: ms.map(v => v ?? 0), color: OVERLAY_COLOR, name: 'Model+ORDC', w: 3 });
         sets.push({ pts: mm.map(v => v ?? 0), color: '#4A90D9', name: 'Model (energy)', w: 1.4, dash: '4 3' });
@@ -2173,7 +2162,15 @@
       const mm = avgLMPMon(yr);
       if (!mm) return '';
       const aL = actualLMP(yr) || {};
-      const da = aL.da_mon, rt = aL.rt_mon;
+      // caiso-284: gated (load-weighted) monthly vectors, RT first — the model
+      // column is demand-weighted, so pairing it with the legacy equal-hour
+      // actual compared two different statistics. Annual cells follow the same
+      // ladder via actualLMPGated so the row agrees with the year scorecard.
+      const aM = actualMonGated(yr);
+      const rt = aM.rt, da = aM.da;
+      const annG = actualLMPGated(yr);
+      const annRT = annG && annG.basis === 'RT' ? annG.val : (aM.lw ? aL.rt_lw : aL.rt);
+      const annDA = aM.lw ? aL.da_lw : aL.da;
       const ms = avgLMPMonScar(yr);
       const dvals = ms || mm;
 
@@ -2184,19 +2181,22 @@
       };
 
       const dBasis = ms ? 'model + overlay' : 'model';
-      let h = `<div class="bc-panel"><h2>Monthly LMP — model vs actual <span class="panel-sub">(model load-weighted over selected zones; actual = system hub average; Δ = (${dBasis} − actual)/actual)</span></h2>
+      const aBasis = aM.lw
+        ? 'actual = system hub series load-weighted by the same measured demand the model dispatches'
+        : 'actual = system hub equal-hour average (no load-weighted vector committed for this year)';
+      let h = `<div class="bc-panel"><h2>Monthly LMP — model vs actual <span class="panel-sub">(model load-weighted over selected zones; ${aBasis}; RT is the gated benchmark, DA the non-gated DART diagnostic; Δ = (${dBasis} − actual)/actual)</span></h2>
         <div class="bc-table-wrap"><table>
         <thead><tr><th>month</th><th>model $/MWh</th>`;
       if (ms) h += '<th>+ overlay $/MWh</th>';
-      if (da) h += '<th>actual DA</th><th>Δ DA</th>';
-      if (rt) h += '<th>actual RT</th><th>Δ RT</th>';
+      if (rt) h += '<th>actual RT (gated)</th><th>Δ RT</th>';
+      if (da) h += '<th>actual DA (diag)</th><th>Δ DA</th>';
       h += '</tr></thead><tbody>';
 
       for (let m = 0; m < 12; m++) {
         h += `<tr><td>${MONTHS[m]}</td><td class="num">${mm[m] == null ? '—' : '$' + mm[m].toFixed(1)}</td>`;
         if (ms) h += `<td class="num" style="color:${OVERLAY_COLOR}">${ms[m] == null ? '—' : '$' + ms[m].toFixed(1)}</td>`;
-        if (da) h += pair(dvals[m], da[m]);
         if (rt) h += pair(dvals[m], rt[m]);
+        if (da) h += pair(dvals[m], da[m]);
         h += '</tr>';
       }
 
@@ -2204,8 +2204,8 @@
       const annD = annScar ?? ann;
       h += `<tr class="sub"><td>Annual</td><td class="num">${ann == null ? '—' : '$' + ann.toFixed(1)}</td>`;
       if (ms) h += `<td class="num" style="color:${OVERLAY_COLOR}">${annScar == null ? '—' : '$' + annScar.toFixed(1)}</td>`;
-      if (da) h += pair(annD, aL.da);
-      if (rt) h += pair(annD, aL.rt);
+      if (rt) h += pair(annD, annRT);
+      if (da) h += pair(annD, annDA);
       h += '</tr>';
 
       // Diagnostic footnote (+ ORDC MAE improvement when the run carries an
