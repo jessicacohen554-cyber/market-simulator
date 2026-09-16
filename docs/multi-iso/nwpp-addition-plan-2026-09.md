@@ -1447,7 +1447,130 @@ EXIT: FINDING-nwpp-35-<date>.md listing every file whose count changed, with the
 you measured. Report the measured counts FIRST.
 ```
 
-### W3b / W4 / W5 / W6 — charters issued at the sittings that unblock them
+### W3b — the cascade-coupling build (ISSUED r#6, 2026-09-16, against NWPP-32's specification)
+
+#### NWPP-36 `[FABLE]` — Columbia mainstem hydraulic coupling
+
+```
+You are lane NWPP-36. MODEL: Fable — you are building the mechanism owner ruling N3 put AHEAD of the
+first keeper, AGAINST the desk's recommendation, because the owner ruled that the first NWPP number
+must mean more than a test of monthly hydro budgets. W4 does not start without you.
+DATA PROFILE: nwpp.  Branch stem: claude/nwpp-36-cascade-coupling-<4 chars>.
+Read CLAUDE.md freshly and in full — rules 1 [R-STRUCT], 2 [R-VECTOR], 13 [R-MEASURED], 19
+[R-ONE-MECH], 24 [R-REGISTRY], 28 [R-MECH-MATRIX]; docs/handoffs/FINDING-nwpp-32-2026-09-14.md
+**IN FULL — §5(a)-(d) and §6 ARE YOUR SPECIFICATION AND YOU MAY NOT RE-DERIVE THEM**;
+docs/multi-iso/nwpp-addition-plan-2026-09.md §2.7, §5 row NWPP-36, §7 gate G8 AS AMENDED, §3 card N3;
+src/market_sim/config/scenarios.py around `_CACHE_KEY_OPTIONAL_FIELDS` (line ~149) and
+`_CACHE_KEY_OPTIONAL_FIELD_DEFAULTS` — read BOTH ledgers' header comments before you add anything;
+the `hydro_budget_period_by_instrument` entry (lane nyiso-220) is the FIRST entry in that tuple, was
+added on exactly this basis, and is the worked precedent to COPY rather than invent.
+
+PRECONDITIONS (STOP if unmet): NWPP-20 landed; **NWPP-32 landed** with its artifacts
+(`data/raw/nwpp-hydro/`, incl. `nwpp_hydro_chain.csv`) and its FINDING on main.
+
+*** WHAT NWPP-32 ALREADY SETTLED. DO NOT RE-OPEN, DO NOT RE-DERIVE, DO NOT "IMPROVE". ***
+ - THE CHAIN IS ELEVEN PLANTS, read from the ORNL EHA FY2024 `Water` field — a published inventory,
+   not a list anyone chose: Grand Coulee -> Chief Joseph -> Wells -> Rocky Reach -> Rock Island ->
+   Wanapum -> Priest Rapids -> [lower Snake enters at the McNary pool] -> McNary -> John Day ->
+   The Dalles -> Bonneville. **20,098.8 MW = 56.14 % of the footprint's conventional hydro**, and
+   58.84 % / 57.96 % of its 2023 / 2024 hydro energy. The hydrological fact behind it is BPA's own
+   published average discharge rising monotonically down the chain: 107,700 cfs at Grand Coulee ->
+   108,000 Chief Joseph -> 169,800 McNary (after the Snake) -> 172,400 -> 177,900 -> 183,300 at
+   Bonneville.
+ - FEEDING IT: the **lower Snake** (Lower Granite 810 -> Little Goose 810 -> Lower Monumental 810 ->
+   Ice Harbor 603 = 3,033.0 MW, federal run-of-river) entering at the McNary pool, fed in turn by
+   **Hells Canyon** (Brownlee 675 -> Oxbow 190 -> Hells Canyon 411.1 = 1,276.1 MW, Idaho Power) and
+   by **Dworshak** storage. Coupled chains in this footprint total **24,408 MW = 68.2 % of hydro**.
+ - *** A CORRECTION TO THE DESK'S OWN CHARTER, WHICH NWPP-32 CAUGHT — CARRY IT: *** the desk's r#5
+   text said "eight plants >= 1 GW holding 17,821.8 MW" and listed Boundary among them. **SEVEN are
+   mainstem (16,662.1 MW). BOUNDARY (1,159.7 MW) IS ON THE PEND OREILLE** and reaches the Columbia
+   only through Canada — it is coupled to NOTHING ELSE IN THIS FOOTPRINT and must not be in your
+   chain. The Pend Oreille chain (2,700 MW) is coupled internally but reaches the mainstem only via
+   Canadian storage. Skagit, Cowlitz, Lewis, Deschutes, Willamette, Baker and Nisqually are
+   independent tributary systems.
+ - `HYDRO_BUDGET_PERIOD_HOURS_BY_PLANT["NWPP"]` IS EMPTY and stays empty. Eight instruments were read
+   or attempted; none states an energy-conservation period for a named plant, and the one coordinating
+   instrument that defines an accounting period — the 1997 PNCA — defines "Period means a calendar
+   month", which is already the model's default.
+ - **NO SINGLE-UNIT COORDINATION of the seven mid-C projects in 2023-2025** (the HCA expired). Do not
+   model one.
+
+*** WHAT YOU BUILD, AND THE ONE SENTENCE THAT KEEPS IT INSIDE RULE 19 [R-ONE-MECH]. ***
+**The coupling redistributes WHEN energy is produced. It NEVER changes HOW MUCH per month.** The
+EIA-923 monthly budget row NWPP-32 landed is untouched and remains the sole energy-quantity mechanism;
+your coupling is a SECOND PHENOMENON (hydraulic succession), not a second floor on the first. If your
+mechanism can move a plant's monthly energy total, you have built a second budget and it is refused.
+
+THE FORMULATION, from NWPP-32 §5(a) item 1 — fix it in your PRECOMMIT before any code:
+  per link (u -> d):  release_u(t) + side_inflow_d(t) - spill_d(t) - release_d(t) = dStorage_d(t)
+  with release_d bounded by the plant's P/eta*head and dStorage_d bounded by the PUBLISHED pondage
+  band — a few hours of flow for the nine run-of-river links; a seasonal reservoir for Grand Coulee
+  (5.19 MAF) and Brownlee, whose monthly budget stays the measured EIA-923 one.
+  In energy terms: E_d(t) ~= k_d * E_u(t - tau_ud) + E_side,d(t), with k_d the head ratio, which
+  NWPP-32's plant-level `budget_annual_mwh` and the published discharges give DIRECTLY (worked
+  example: Chief Joseph / Grand Coulee energy ratio 0.60 at a discharge ratio of 1.003).
+
+TWO QUANTITIES YOU MUST MEASURE RATHER THAN ASSUME — NWPP-32 searched and did not find them published
+at mechanism precision, and said so:
+  1. **tau per link.** MEASURE from the USACE/CROHMS hourly project-outflow feed
+     (`public.crohms.org` — the same source the HRFCPPA cites for its compliance data), by
+     cross-correlating adjacent projects' hourly discharge. Sanity-check against river mile. A tau
+     taken from memory or from a plausible travel-time rule of thumb is a rule-13 violation.
+  2. **The pondage bound per run-of-river link.** SOURCE from NID. BPA's published order of magnitude
+     is "three to five feet" (BPA *Inside Story* p. 15: run-of-river projects "pass water at the dam
+     at nearly the same rate it enters the reservoir") — that is the ORDER, not the number.
+If either cannot be measured, STOP and report rather than substituting a plausible value.
+
+THE TWO PUBLISHED NON-POWER OPERATING CONDITIONS on the chain (NWPP-32 §5(c)), which your mechanism
+must not contradict: the **HRFCPPA outlet ramp band**, and the **spill season** (ROD: Apr 3 / Apr 10
+through the third week of June, 125 % TDG 16 h/8 h), whose measured signature is Bonneville and the
+lower Snake collapsing to **0.13-0.25 CF for five months**.
+
+*** THE FIELD — ONE, DEFAULT-OFF, AND IT IS THE ONLY SCENARIOCONFIG FIELD THIS ENTIRE PROGRAM MAY
+ADD (gate G8 as amended by ruling N3). ***
+Register it on `_CACHE_KEY_OPTIONAL_FIELDS` **AND** `_CACHE_KEY_OPTIONAL_FIELD_DEFAULTS` **IN THE SAME
+COMMIT** — the guard enforces membership parity and position discipline between the two ledgers, and
+both ledgers' header comments tell you how. At its default the field is dropped from the hash, so
+every pre-existing cached run keeps its key. Copy `hydro_budget_period_by_instrument`'s registration
+shape; do not invent your own.
+GATE G8 EXIT, and it is now NINE regions, not seven: **every existing keeper's `cache_key()` proven
+byte-identical**, measured before and after, reported as a table. Re-read the designated keeper ids
+from `frontend/data/backcast/keepers/*.json` AT YOUR OWN BASE SHA — promotions move them. A single
+moved key is a STOP.
+AND THE OTHER HALF OF THE EXIT: **the mechanism is byte-identical OFF** — prove it, do not assert it —
+**and it ARMS**, i.e. an armed run visibly redistributes within-month hydro down the chain in the
+direction and order of magnitude the pre-solve arithmetic implies.
+
+RULE 2 [R-VECTOR] BINDS YOUR LP ROWS. No Python loop over hours in matrix construction: np.tile,
+np.repeat, scipy.sparse.kron, block_diag. A `for t in range(8760)` in the builder is a defect, not a
+first draft.
+RULE 28(c): add the mechanism's base row in `docs/codebase-site/data/mechanism-matrix.js` PLUS one
+`·` cell line in EVERY foreign shard, in the SAME PR. **There are NINE shards at this pin** (ERCOT
+CAISO PJM MISO NYISO NEISO SPP SOCO NWPP) — re-count at your own base sha, and your own NWPP cell
+carries the verdict.
+RULE 32 [R-SHARD]: you run NO LP in your own session. If the arm needs a screen solve, it is ONE
+shard, and rule 34 [R-SHARD-PROMOTABLE] means that shard PUSHES ITS BUNDLE to its own branch.
+
+WRITE THE PRECOMMIT FIRST AND PUSH IT BEFORE ANY CODE. It fixes, ex ante: the formulation above; how
+tau and the pondage bound will be measured and from which URLs; the field's name, type and default;
+the byte-identity protocol; and what you will do if tau cannot be measured. A specification written
+after the numbers are seen is not a specification.
+
+FILES YOU OWN: the coupling's LP row family under src/market_sim/; ONE new ScenarioConfig field and
+its two ledger entries; the mechanism-matrix base row + one cell line per shard; any new artifact
+under data/raw/nwpp-hydro/ that your tau/pondage measurement produces; your PRECOMMIT and FINDING.
+MUST NOT TOUCH: NWPP-32's budget artifacts or `HYDRO_BUDGET_PERIOD_HOURS_BY_PLANT`; any other region's
+anything; `scripts/calibration_verdict.py`; frontend/data/**; this plan; the ledger.
+RULES THAT BITE: 1, 2 [R-VECTOR], 5, 13, 14, 19 [R-ONE-MECH], 24, 27 [R-PUSH] (src files are large —
+edit locally, push exact bytes, fetch-back verify >= 300-line files), 28, 32.
+EXIT: the mechanism, the matrix rows, the keeper byte-identity table, the OFF-identity proof, the
+armed-response measurement, FINDING-nwpp-36-<date>.md. Report FIRST: the keeper byte-identity result,
+the measured tau per link, and the armed within-month redistribution.
+```
+
+### W4 / W5 / W6 — charters issued at the sittings that unblock them
+
+
 
 ### W3–W6 — charters issued at the sittings that unblock them
 
