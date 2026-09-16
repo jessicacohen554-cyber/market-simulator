@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-09-16 — SOCO desk r#9: W4 issued — SOCO-40, the first-ever SOCO solve
+
+**Records only — no code, no data, no registry, no solve.** W4 is one lane, so this is the whole wave.
+
+- **SOCO-40 `[FABLE]` written out in full in plan §8**, pinned `a2dc6d3a`. Issued against SPP-40's
+  committed charter **plus four corrections SPP's text cannot carry because they postdate it**:
+  (i) `--commitment` is an archived P2 flag that now **errors** without `--enable-legacy-p2`
+  (`run_calibration_full.py:9014`, verified in source) — a verbatim copy would have failed the solve
+  before the LP started; (ii) rules 32–35 make the lane an **orchestrator that never runs an LP**,
+  with shards that **push their bundles** (screen shard included, rule 34(b)); (iii) the determination
+  is rubric **v3.8**'s `PHYSICALLY-CALIBRATED (PRICE UNSCORED)` — never `CALIBRATED`, with
+  **C3a/C3b/C3c UNSCORABLE, not failed**; (iv) the zonal shares are the **five**-respondent set.
+- **Screen year named on a structural criterion, never a residual** (rule 29 — and SOCO has no
+  residual, having never been solved). Desk reading: **2024** — the span's winter peak, both Vogtle
+  units in service for three quarters, and an EIA-930 balance identity exactly zero in every hour,
+  where 2025 has 633 nonzero hours and a `min_mw` artifact. The lane may override it in its PRECOMMIT
+  with its own phase-0 reason.
+- **One registry inconsistency found and deliberately left for the lane to measure**:
+  `IsoMemoryClass("SOCO", per_plant=True)` against `plant_level_fleet=False` and SOCO's absence from
+  `CAMPD_BINNING_ISOS`. Made a phase-0 census item rather than a desk assertion (ledger E-8's rule).
+- **SOCO-32's dispatch status asked and answered — it is running.** Gate G15 held for the fourth time:
+  absence was never graded LOST.
+
 ## 2026-09-16 — SOCO desk r#8: W3 graded — three lanes PASS on `main`, one PASS on a branch with no PR, one never dispatched
 
 **Records only — no code, no data, no registry, no solve.** The desk reopened against a moved `main`

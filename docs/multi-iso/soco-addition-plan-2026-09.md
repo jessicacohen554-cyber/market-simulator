@@ -276,10 +276,10 @@ SOCO-20 lands; before that, `shared`).
 | **SOCO-21** matrix shard | OPUS | code | `mechanism-matrix/SOCO.js`, base `isos`, `ISO_ORDER`/`ISO_EV_KEY`, `mechanism-matrix.html` tag, shard-migration test, dashboard colour | `scripts/check_mechanism_matrix.py` | ONE commit (gate G2) |
 | ~~**SOCO-30**~~ outages + tranches | OPUS · frozen derives | soco | **LANDED r#8 — GRADED PASS** (PR #6179/#6181). Six artifacts, 1,119 windows; **gate G4 both legs PASS**; three defects routed | G4 legs 1 & 2 | `FINDING-soco-30-2026-09-16.md` |
 | ~~**SOCO-31**~~ benchmarks | OPUS · frozen derives | soco | **LANDED r#8 — GRADED PASS** (PR #6185). **Gate G9 = EXACTLY ZERO**, verified by the desk from the diff: `calibration_reference.json` **+295 / −1**, the sole deletion the `generated` stamp | non-SOCO diff = ∅ (G9) | `FINDING-soco-31-2026-09-16.md` |
-| **SOCO-32** zonal shares + solar shape + gas hub | OPUS · frozen derives | soco | **ISSUED, NOT DISPATCHED** — the one W3 lane with no branch, no commit, no FINDING. **It is SOCO-40's last open precondition** (gate G4) | shares sum to 1.0; five-respondent basis (card S3) | — |
+| **SOCO-32** zonal shares + solar shape + gas hub | OPUS · frozen derives | soco | **RUNNING** (owner, r#9 — dispatch status ASKED and ANSWERED, gate G15 held: it was never graded LOST on absence). **SOCO-40's last open precondition** (gate G4) | shares sum to 1.0; five-respondent basis (card S3) | — |
 | ~~**SOCO-33**~~ seam derive | OPUS · derive only | soco | **LANDED r#8 — GRADED PASS** (PR #6180). Net-exporter sanity PASSES on both clocks; **G17 never approached**; the headline is the **interface limits**, 7 of 8 would refuse 36–42 % of measured flow | G19 sign convention verified | `FINDING-soco-33-2026-09-16.md` |
 | **SOCO-34** site + docs | OPUS | code | **FINISHED ON ITS BRANCH, NOT MERGED — NO PR EXISTS.** `claude/soco-34-site-docs-pxkmb5` @ `1f71ec097b3f4b7e4ef17a5f88225abdd4c988c5`, 16 files, FINDING shipped, **zero conflicts against `main`**. Graded r#8 by content off the branch: PASS. **The owner owes it a PR** | `check_registry_payload_parity` | `FINDING-soco-34-2026-09-16.md` (on the branch) |
-| **SOCO-40** first solve | **FABLE** · first-keeper determination | soco | ONE shard, ONE `--year 2023 2024 2025` invocation, ONE bundle, registration | preconditions: SOCO-30/31/32 landed | keeper registered with whatever determination it earns |
+| **SOCO-40** first solve | **FABLE** · first-keeper determination | soco | **ISSUED r#9** (charter §8, pinned `a2dc6d3a`). ORCHESTRATOR — it never runs an LP (rule 32(a)): a screen shard on one year, then ONE span shard, ONE `--year 2023 2024 2025`, ONE bundle; both shards PUSH their bundles (rule 34(a)). No `--commitment` (P2 is archived and the flag now errors) | preconditions: SOCO-30 ✓ / SOCO-31 ✓ / SOCO-32 **running** | keeper registered with whatever determination it earns — `PHYSICALLY-CALIBRATED (PRICE UNSCORED)` at best, **never `CALIBRATED`** |
 
 ---
 
@@ -990,6 +990,240 @@ moves).
 EXIT: docs/handoffs/FINDING-soco-34-<date>.md (file → change table, the index.html zone arithmetic, the
 accessibility-audit output), ending with a `## Log entry` block in the format the other SOCO FINDINGs use —
 the desk appends it VERBATIM to the log and cannot write it for you; plan §5 row → LANDED.
+```
+
+### W4 issuance r#9 (2026-09-16, pinned `a2dc6d3a`) — the first-ever SOCO solve
+
+Issued against SPP's committed W4 charter (`docs/multi-iso/spp-addition-plan-2026-09.md` §8, SPP-40
+L1257) with the SOCO deltas §8's W3–W6 bullet already carries, **plus four corrections SPP-40's text
+cannot carry because they postdate it**: (i) `--commitment` is an ARCHIVED P2 flag and now **errors**
+without `--enable-legacy-p2` (`run_calibration_full.py:9014`) — SOCO-40 never passes either; (ii) rules
+32–35 landed 2026-09-09/12, so the lane is an **orchestrator that never solves** and every solve goes to
+a shard that **pushes its bundle**; (iii) the determination class is rubric **v3.8**'s no-price branch,
+which did not exist when SPP-40 was written; (iv) SOCO's zonal shares are the **five**-respondent set.
+
+#### SOCO-40 `[FABLE]` — phase 0, the rule-29 screen, the 2023–2025 bundle, the first keeper
+
+```
+You are lane SOCO-40. MODEL: Fable claude-fable-5-1 — the first-ever SOCO solve is a novel object:
+kill-grading its screen, writing its attestation and DOF ledger, and promoting the first keeper of a
+region with NO PRICE BENCHMARK are determination consequences, not execution.
+DATA PROFILE: soco.  Branch stem: claude/soco-40-first-keeper-<4 chars>.  Pin: origin/main a2dc6d3a.
+
+Read CLAUDE.md freshly and IN FULL — rules 1 [R-STRUCT], 12 [R-PARALLEL], 13 [R-MEASURED],
+15 [R-DASHBOARD], 16 [R-ALLYEARS], 20 [R-FORCED-BUDGET], 21 [R-DOF], 22 [R-C3C], 29 [R-SCREEN],
+31 [R-RETAIN], 32 [R-SHARD], 33 [R-SHARD-ARCHIVE], 34 [R-SHARD-PROMOTABLE] and 35 [R-PROMOTE] each
+bind specific lines below. Then: docs/multi-iso/soco-addition-plan-2026-09.md §1, §3 cards S2/S3/S4/
+S5/S6/S7/S12, §5 row SOCO-40, §7 gates G4 G5 G6 G13 G17 G19 G20 G21; docs/multi-iso/05-backcast-
+playbook.md §6; FINDING-soco-30/31/32/33 (all four; 30/31/33 are on main, 32 lands before you start);
+FINDING-soco-13 (the price VERDICT) and FINDING-soco-22 (the v3.8 class it created);
+docs/calibration-determination-rubric.md AND scripts/calibration_verdict.py's rubric v3.8 header;
+scripts/run_calibration_full.py --help; the calibration-report skill; scripts/build_status.py,
+dashboard_add_run.py, check_registry_payload_parity.py; frontend/data/backcast/keepers/README.md
+(promotion protocol) and keepers/SPP.json (the shard shape a new region's first keeper takes);
+docs/calibration-log/soco.md (your format — twelve entries, newest last) and one recent
+PRECOMMIT-*.md for the PRECOMMIT form.
+
+PRECONDITIONS — `git log origin/main --grep=SOCO-32`; STOP AND REPORT if unmet:
+SOCO-30 LANDED (outages + tranches), SOCO-31 LANDED (benchmarks), **SOCO-32 LANDED** (zonal shares,
+solar shape, gas hub). All three are gate G4. SOCO-33 is NOT a precondition — card S4 ruled the first
+keeper's seams SERVED, not priced. SOCO-34 is NOT a precondition — it is site prose; if it has not
+merged, say so in your FINDING and register anyway.
+Ask SOCO-DESK whether another per-plant solve is running before you launch (rule 12).
+
+**THE DEFINING CONSTRAINT — READ IT BEFORE YOU PLAN ANYTHING. SOCO HAS NO PRICE BENCHMARK, YOU WILL
+NOT BUILD ONE, AND THE ABSENCE IS LOAD-BEARING.** Southern Company publishes no LMP and never will;
+SEEM publishes matched volumes, no price. SOCO-13 built a FERC-EQR candidate behind a STOP gate
+pre-registered before any data was read and the gate read **NO** — three of five failed and no bar
+moved after the series was seen. Therefore:
+ - `data/raw/_validation-source/actual_lmp.json` HAS NO SOCO BLOCK and MUST NOT GAIN ONE. Its absence
+   is the key `calibration_verdict._price_reference_absent("SOCO")` reads. **An empty or placeholder
+   block BREAKS the classifier.** Verified on main at issuance: the file's top-level keys are the
+   seven price-carrying ISOs and the string `SOCO` appears nowhere in it. Leave it exactly so.
+ - Your determination is rubric v3.8's `PHYSICALLY-CALIBRATED (PRICE UNSCORED)` or
+   `PHYSICALLY-CALIBRATED-WITH-CAVEATS (PRICE UNSCORED)`. **It may NEVER read `CALIBRATED`**, whatever
+   the run does. You are scored on **C1 / C2 / C4 / C6 / C8**. C3a / C3b / C3c are **UNSCORABLE, NOT
+   FAILED** — do not report them as failures and do not let them consume a caveat slot.
+ - **GATE G17 IS ABSOLUTE.** You may never substitute a neighbouring market's hub — not MISO-South,
+   not a TVA or PJM proxy, not an EIA state average, not a cost-stack "price" of your own. If you find
+   yourself reaching for one, STOP and route to SOCO-DESK. The desk has refused this three times and
+   logged every refusal.
+ - TAIL_THRESHOLD and amplitude stay SKIPPED (gate G6's pre-specified branch, card S9 n/a). SOCO-31
+   verified the skip BY EXECUTION — both derives emit zero SOCO rows. Do not register a threshold.
+
+**RULE 32 [R-SHARD]: YOU ARE AN ORCHESTRATOR AND YOU NEVER RUN AN LP.** Not in the foreground, not
+under nohup, not "just the smoke". Phase-0 census, the PRECOMMIT, composition, scoring and
+registration are YOURS and are zero-LP. Every solve goes to a shard launched with
+`create_session`, and every shard prompt carries, or the shard is wasted:
+ 1. `source_revision` = a **FULL 40-CHARACTER SHA** you pushed and pinned — never a branch name;
+    "`git rev-parse HEAD` must equal <sha>" is the shard's first hard stop. The shard NEVER rebases,
+    NEVER `git pull`s, NEVER "syncs".
+ 2. `source_url` = this repo; the prompt names `DATA PROFILE: soco`.
+ 3. Its own `--out-dir`, its own branch, and it commits ONLY its own bundle path
+    (`git add .gitignore && git add <out-dir>`, then `git status --short` showing nothing outside it).
+ 4. **RULE 34(a): THE SHARD PUSHES ITS BUNDLE — a prompt telling it to gitignore or omit the bundle
+    is a DEFECT IN THE PROMPT.** It appends a `.gitignore` **NEGATION** for its own out-dir
+    (`printf '\n!results/calibration/<out-dir>/**\n' >> .gitignore`) and uses a **PLAIN `git add`,
+    NEVER `git add -f`** (the `-f` form is what the auto-mode classifier refuses, and that refusal
+    hardened a shard's permission state in miso-255). The bundle MUST include
+    `dispatch/<year>_P1.parquet` or registration raises `FileNotFoundError`. **This applies to the
+    SCREEN shard too** (rule 34(b): you cannot know a screen is only a screen until the owner rules).
+ 5. Hard stops the shard can check itself: the pinned SHA; `get_iso_config("SOCO")` resolving with
+    three zones on shares **0.3510 / 0.5842 / 0.0648**; **no `--commitment`, no `--enable-legacy-p2`,
+    no `--run-p2`** anywhere in its command line. A shard that sees otherwise STOPS and does not push.
+ 6. What to REPORT in numbers in its final message — the parent may never read its disk — including
+    the `container preflight:` and `memory peak:` log lines the runner emits.
+ 7. FORBID BY NAME: `git add -A`, `git add .`; `dashboard_add_run.py`, `build_manifest.py`,
+    `build_status.py`, `prune_iso_runs.py`, anything under `frontend/data/backcast/**`; any edit under
+    `src/` or `scripts/`; opening a PR; deleting any result (rule 31).
+ 8. Put this sentence in the prompt: "A shard that stops with a clear report is a SUCCESS; a shard
+    that repairs infrastructure is a FAILURE."
+ 9. Memory: the shard runs the runner UNMODIFIED, never passes `--no-container-preflight`, and names
+    no memory recipe of its own — `ensure_solve_container` does the cgroup read and the swapfile.
+
+FILES YOU OWN: `results/calibration/soco40_baseline_B/` (+ `hourly/` sidecars);
+`frontend/data/backcast/registry/<id>.json` + `runs/<id>.js`; `keepers/SOCO.json` (**NEW** — this
+region has no keeper shard yet); `keepers/index.json` (**+ "SOCO"** — SOCO-34's charter explicitly
+leaves this line to you; rebase last, and note NWPP is also absent, which is NOT yours to add);
+`status/SOCO.js` (generated by `build_status.py --iso SOCO`); `bench/SOCO/<yr>.json.gz`;
+`docs/codebase-site/data/mechanism-matrix/SOCO.js` (keeper + gates stamp — the LAST commit, after the
+final rebase); `docs/calibration-log/soco.md` (your `## Log entry`, appended by the DESK — you write
+it into your FINDING, you do not edit the log); `docs/handoffs/PRECOMMIT-soco-40-<date>.md` and
+`FINDING-soco-40-<date>.md`.
+FILES YOU MUST NOT TOUCH: `actual_lmp.json` (above); any other region's shard / status / bench / log /
+keeper file (rule 25); `frontend/data/forecast/**` and `ff_readiness_battery.py` (W6, the capx
+director's — card S10); `ScenarioConfig` defaults; `offer_curve_by_group` bands — **every SOCO band
+stays 1.0 and this keeper declares NO authorized price tuning**. SOCO-30 already proved that
+satisfiable: `build_offer_curve_overrides --iso SOCO --list` reads 1.0 on
+committed/econ_low/econ_high/peak for all 13 classes, no `phys_*` rows, delta JSON `{}`.
+Gate G5 note: SOCO is a **cost-based BA that takes no offers**, so a band ≠ 1.0 would need a far
+stronger story than an RTO's. The desk's posture is bands stay 1.0 unless the OWNER rules otherwise.
+
+DO, IN THIS ORDER:
+
+(0) **PHASE 0 — ZERO-LP, IN THIS SESSION.** Fleet census (plants, MW by class, CHP hosts removed),
+    zone census (three zones carrying load, shares summing to 1.0), offer-array census, and the
+    served-interchange census. **Reconcile one inconsistency the desk found and did not resolve for
+    you, because you are the lane that measures it**: `run_isos_concurrent.py:151` registers
+    `IsoMemoryClass("SOCO", peak_gb=6.0, per_plant=True, co_opt=False)`, while `plant_level_fleet`
+    defaults **False** and is not set in `_soco_config`, and SOCO is **absent** from
+    `CAMPD_BINNING_ISOS` (`{ERCOT, CAISO, NEISO, NYISO, PJM, MISO}`). State which fleet path your
+    solve actually takes, measured by calling the code — not inferred from either registry. If they
+    disagree, that is a FINDING and a route, never a silent fix. (SOCO's absence from
+    `CAMPD_BINNING_ISOS` is the NORM for a new region — NWPP's own ISOConfig docstring records the
+    identical posture under owner ruling N8, and SPP is absent too. Do not add SOCO to it: that is
+    `src/`, a declared solve-surface value, a gate-G8 cache-key move, and not this lane's call.)
+    Fix structural absurdities (a class with no units, a zone with no load) by ROUTING to the owning
+    lane — never by tuning.
+    **WRITE AND PUSH `PRECOMMIT-soco-40-<date>.md` BEFORE ANY SOLVE.** It states:
+      (a) **THE PRICE POSTURE, BEFORE THE SOLVE** — the v3.8 class, the criteria scored, that
+          `CALIBRATED` is unreachable, and that the price gap is reported at FULL MAGNITUDE on the
+          determination basis rather than treated as absent.
+      (b) **THE SCREEN YEAR, NAMED BEFORE THE SCREEN RUNS, ON A STRUCTURAL CRITERION AND NEVER ON A
+          RESIDUAL** — there is no residual: SOCO has never been solved. The criterion is *the year
+          that exercises the most novel objects at once on the cleanest measured input*. The desk's
+          own reading, which you may override in the PRECOMMIT with your phase-0 reason, is **2024**:
+          it carries the span's winter peak (47,368 MW), has both Vogtle units in service for three
+          quarters of it, and its EIA-930 balance identity `NG − D − TI` is **exactly zero in every
+          hour** — where 2025 has 633 nonzero hours, a −0.6963 TWh residual, a one-hour partial post
+          at `min_mw` 12,638 MW, and an incomplete peaker census (SOCO-31 §4.3–§4.5). Screening on
+          2025 risks grading a data artifact as a structural failure.
+      (c) **THE STRUCTURAL STOP GATE**, pre-registered and falsifiable: the served export is served
+          (SOCO is a net EXPORTER every year — +10.16 / +10.81 / +13.03 TWh — and a run that comes out
+          net-importing is wrong); no unserved energy outside a stated tolerance; no negative-price
+          absurdity; fuel classes within an order of magnitude of SOCO-31's committed benchmark;
+          Vogtle 3 and 4 OFF before their CODs (2023-07 and 2024-04) and ON after. **It may kill the
+          arm; it may never promote one, and it never reads a residual** (rule 29).
+      (d) Wall-clock and peak-GB to be measured; and the statement **"control = none; this bundle
+          becomes the rule-29(b) control for every later SOCO lane."**
+(1) **SCREEN — ONE SHARD, ONE YEAR** (rule 29(a)), out-dir `results/calibration/_soco40_screen`,
+    pushed to its own branch per rule 34. Grade against the STOP gate ONLY. **A kill is the session's
+    RESULT and the remaining years are never spent** — report and stop.
+(2) **FULL SPAN — ONE SHARD, ONE `--year 2023 2024 2025` INVOCATION, ONE BUNDLE** (rules 16 + 32(b);
+    years sequential inside it, rule 12), served interchange per card S4, out-dir
+    `results/calibration/soco40_baseline_B`. **Slim per-year fan-out is BANNED** — it cannot be
+    recomposed and always ends in a re-solve. Generate `legitimacy_diagnostics.json` and
+    `calibration_attestation.json`: the DOF ledger names every free parameter with its identification
+    source (**expected: zero residual-identified values**), and `authorized_price_tuning` is declared
+    **NONE** — C6 FAILS without the declaration even when the answer is none (gate G5).
+    Score with `calibration_verdict.py` AFTER the final rebase.
+(3) **REGISTER** (calibration-report skill / `dashboard_add_run.py`): id `2026-09-<dd>-soco-1-baseline`;
+    `keepers/SOCO.json` new, with every field `keepers/README.md` requires; `keepers/index.json`
+    += "SOCO"; `build_status.py --iso SOCO`; bench parts; **`hourly/` sidecars committed** —
+    `class_hourly_<year>.parquet`, `system_<year>.parquet` and `reserve_family_<year>.parquet`
+    (rule 15), so later SOCO sessions read the keeper instead of replaying it.
+    **Whatever the determination reads, it is the keeper, because it is the most structurally
+    faithful SOCO run that exists** (rule 1) — and it is reported at full magnitude with every failing
+    criterion named. **THE DETERMINATION BASIS MUST CARRY ALL FIVE OF THESE, in your own words:**
+      - **the price gap** — no public SOCO price exists, C3a/C3b/C3c unscored, SOCO-13's NO cited;
+      - **R-i** — SOCO's **1,306.6 MW of pumped storage is UNOBSERVABLE in EIA-930** for 2023
+        (0 of 8,760 hours) and 99.7 % of 2024, and `NG: WAT` never goes negative before the
+        2024-07-15 taxonomy cut-over, so PS charging was not folded into hydro, it was NOT REPORTED.
+        A hard constraint on the **C1 `fuelmix`** benchmark — never a hole to fill;
+      - **card S3's exclusion of Southern Power (respondent 186)** from the zonal shares, and the
+        residual it leaves (3.03 / 2.92 / 1.26 %);
+      - **card S12 / SOCO-15's COD bias**, whose floor stands regardless of outcome;
+      - **R-v** — 2025 carries no `eia923_incomplete` flag (ratio 0.9533) but its peaker census does
+        not: 6 of 23 `CT_PEAKER` plants and 1 of 6 `CC_CHP` have filed, so no SOCO pair is
+        gate-eligible and a 2025 gas-split comparison defers to EIA-930.
+    Stamp the SOCO matrix shard (keeper id + open gates) as the LAST commit.
+(4) **GATES BEFORE PUSH**, all exit 0: `audit_keepers.py --check` (**E1 and E13** — E13 is rule 35(f)'s
+    invariant and you are its first SOCO test), `check_registry_payload_parity.py`,
+    `check_mechanism_matrix.py`, `check_bench_freshness.py`, `check_golden_manifest.py`; then the
+    `calibration-keeper-auditor` agent `--iso SOCO`.
+    **Two of these are RED on `main` for reasons that are not yours** and you must not read them as
+    your own regression or try to fix them: `check_gate_a_provenance` (NYISO + SPP superseded markers)
+    and `check_registry_payload_parity`, whose two unmapped dirs are CAISO's
+    `caiso279_ablate_dswcouple_span` **and SOCO's own `soco15_spp_arm`** — the latter is a SOCO-15
+    bundle that reached `main`, is routed as desk item **R-p**, and is **awaiting the owner's
+    retention ruling**. DO NOT DELETE IT (rule 31 [R-RETAIN]). Report the gate's exit with the
+    unmapped list named, and say which entries are pre-existing.
+
+SOCO DELTAS, ruled and binding — do not re-open any of these:
+ - **Card S4**: seams are the SERVED, MEASURED EIA-930 `Total interchange`. All eight priced
+   `NeighborInterface` blocks are DEFAULT-OFF and inert until `reference_price_interface` is armed,
+   which this keeper does not do. **SOCO-33 measured that seven of eight registered
+   `interface_limit_mw` values would refuse 35.6 / 39.0 / 41.7 % of measured flow if armed** — that is
+   lever SOCO-56's precondition (desk item R-t), it does NOT bite this keeper, and you state in one
+   line that your run does not read those limits.
+ - **Card S7**: McIntosh (plant 7063) is a **25 MW gas CT**, not the 110 MW nameplate, and the storage
+   loader already skips it. Settled.
+ - **Card S5**: VOLL is the DOE/LBNL ICE value SOCO-20 registered (61,900 $/MWh), not $2,000.
+ - **Card S6**: adequacy is the **winter 26.0 %** scalar with the misalignment documented.
+ - **Gate G19**: two timezones, one clock — `America/Chicago`, DST-aware, hour-ending. Inherited from
+   SOCO-10, verified by SOCO-33's shift test. Every series you emit states its clock; you never
+   re-decide it.
+ - **No capacity market, no import node, no AS design** — `reserves.spec` refuses SOCO by name, and
+   `build_import_generators("SOCO") == []`. A reserve or capacity result for SOCO is a bug, not a
+   finding.
+ - **Year set**: 2023–2025 IS the union today, so rule 35(c) is satisfied trivially and there is no
+   outgoing keeper to prune (rule 35(a) is a no-op for a first keeper). If manifest row 9 (holdout
+   2019–2022) has landed by the time you run, **every** batch covers the union — one shard per year,
+   rule 34(c) — and an unstamped year drops off the report silently (rule 30(a)).
+
+**RULE 31 [R-RETAIN] — THE PROMOTION QUESTION IS ASKED IN-SESSION, WHILE THE BUNDLES ARE ALIVE.**
+Before you archive any shard: verify retrievability with `git ls-tree -r <shard sha> -- <bundle path>`
+and require **more than zero files** (rule 34(d)); zero means the bytes are on an ephemeral container
+and the honest report is *not promotable without a re-solve, cost stated*. Record recovery by **full
+40-char SHA, never a branch name** (rule 33(d)). Archive each shard only once you have fetched,
+checked out and VERIFIED its bundle (rule 33(a)), never while it is running, and sweep before you
+finish (33(e)). **Never delete a result** — not the screen bundle, not a control — until the owner has
+ruled; `.gitignore` in YOUR tree, never `rm`, is what discharges rule 29(c). State in the RESULT where
+each bundle is and what a promotion would cost from that state (34(e)).
+
+RULES THAT BITE: 1 [R-STRUCT] (a keeper for STRUCTURE, never for MAE — and there is no price MAE here
+at all), 12, 13, 15, 16, 20 [R-FORCED-BUDGET] (report C8 by class), 21 [R-DOF], 27 [R-PUSH] (the run
+payload is ≥ 457 KB → **`git push`, never `push_files`**; hash-verify the sidecar), 28 [R-MECH-MATRIX]
+(stamp SOCO's shard ONLY), 29, 31, 32, 33, 34, 35.
+
+EXIT: the registered keeper visible at `docs/codebase-site/backcast-runs.html#iso=SOCO`;
+`docs/handoffs/FINDING-soco-40-<date>.md` carrying the determination, the per-criterion table (with
+C3a/C3b/C3c marked UNSCORABLE, not failed), the STOP-gate table, the DOF ledger, wall-clock and
+peak-GB, the shard retrievability line, and a recommendation (not a change) re-ordering the §5 lever
+queue by what this bundle showed; plan §5 row → LANDED; plan §1 rows ticked. The FINDING ends with a
+`## Log entry` block in the format the twelve entries in `docs/calibration-log/soco.md` use — **the
+desk appends it VERBATIM and cannot write it for you.**
+Report to the owner: the determination and the criterion table FIRST, then the promotion question.
 ```
 
 ---
