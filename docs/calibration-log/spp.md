@@ -2842,3 +2842,59 @@ this lane**. `[R-HOLDOUT]` was removed 2026-09-09, so `CALIBRATED` is a RUBRIC D
 NOT a certified out-of-sample skill claim.
 
 **Next shorthand: spp-43.**
+
+### spp-42 PROMOTION (same session, 2026-09-16) — SPP KEEPER 12
+
+**OWNER RULING, verbatim: "Promote it when they land."** The lane had not acted;
+`keepers/SPP.json` was untouched until the ruling (rule 31 `[R-RETAIN]`).
+
+**Keeper 12 = `2026-09-16-spp-42-commitment-feasibility`** (bundle `results/calibration/spp42_span_a`,
+committed slim). **CALIBRATED**, 0 FAILS, 1 ledgered C3c caveat, free-class C1 16/16 / 12/12;
+C1/C2/C3a/C3b/C4/C6/C8 all PASS — the same shape as keeper 11. **D-4 conduct FAIL rows 10 → 2**
+(1230/1235/1271 resolve in every year they failed, 3008 resolves in 2025; 3008 remains in
+2023-24, improved). C8 ST_GAS forced share 0.2001/0.1873/0.1535 → **0.1881/0.1769/0.1423**.
+Cost declared at the gate and reported at full magnitude: C1 ST_GAS worsens (−6.362 → −6.494
+TWh in 2023) because the arm removes floor from an under-produced class; **2025's price criteria
+degrade the most** (C3a +5.18 → +6.05 %, C3b 0.1884 → 0.1964 against a 0.20 band) while its
+volume error improves on net.
+
+**SPAN B WAS SOLVED AND THE ARM IS PROVABLY INERT ON 2019–2022.** Dispatch, D-4 rows and D-2
+forced energy are all **byte-identical** to `2026-09-13-spp-40-holdout-span`, because **SPP's
+CAMPD unit-outage extracts cover 2023–2025 ONLY** (880/905/936 windows there, **zero** rows in
+2019–2022) — availability is the flat EFOR baseline (`min availcap == p05 availcap` for all 21
+floored ST_GAS plant-groups in 2019) and the clip's predicate can never fire ("21 floored
+plant-groups tested, **0 infeasible plant-hours**"). The held-out run was therefore **re-stamped**
+to keeper 12 (rules 30(a)/34(c)/35(c)) rather than replaced by a numerically identical twin;
+SPP's registered year set stays at **seven**. Bundle kept and recoverable at
+`be5123c29d82c74f464ebc0f3bc5061be94975d7`.
+
+**CAUTION — a number that must not be read as this arm's.** Held-out C8 ST_GAS forced share
+reads 0.3423/0.3014/0.5041/0.5556 in the SPP-40 control and 0.2497/0.2844/0.4559/0.4995 on this
+base. That is **NOT this arm**: `forced_twh` is byte-identical and only the benchmark-side
+**denominator** moved between bases. **SPP-40's held-out C8 breach stays OPEN**, root-caused to
+the same missing 2019–2022 outage extract and routed as SPP's next **DATA-INTAKE** item.
+
+**PROMOTION MECHANICS (rule 35 `[R-PROMOTE]`, in order).** Year union enumerated FIRST
+(2019–2025, seven years) → both spans attested (`scripts/gen_spp42_attestation.py`; DOF ledger
+machine-checked at **5 entries / 3 residual on both, byte-identical to keeper 11** — the gate
+adds zero free parameters) → registered → holdout re-stamped with SPP's corrected caveat text
+re-applied → `keepers/SPP.json` promoted → `calibration-complete.json` re-keyed (audit M1a) →
+**`audit_keepers.py --iso SPP` PASS, 0 failures 0 warnings (E1/E13) BETWEEN promotion and prune**
+→ `prune_iso_runs.py --iso SPP --force-uncite` removed keeper 11's three stores (the rule-35(d)
+intended route; both surviving citations are historical prose and **stay**) → matrix cell **O → K**,
+shard stamp and §5.7 prose header re-stamped (rule 28).
+
+**ONE INCIDENT, RECORDED.** The first span-B registration collapsed to the same run id as span A
+and **overwrote span A's sidecar** before dying on missing shared inputs, making the keeper
+briefly re-score `NOT-YET` with `governance FAIL`. Caught by re-scoring rather than trusting the
+earlier `CALIBRATED`, and repaired by re-registering span A.
+
+**OPEN, carried at promotion and not absorbed:** (1) D-4 still FAILS on 2 rows, both plant 3008
+in 2023-24 — card R-be's residue is now the **within-day grain alone** (SPP-27's object; a
+per-plant grain predicate stays refused on rule 21, and `mustrun_plant_exclusions` on miso-170's
+warning); (2) C3c remains the accepted model-class limitation; (3) 2025's price degradation.
+Parity gate still RED on the two pre-existing non-SPP bundles — rule 35(a) is per-ISO, not
+pruned here.
+
+**Next shorthand: spp-43.** Top queue item is the **2019–2022 CAMPD unit-outage intake**, which
+both unblocks this gate on the held-out years and root-causes SPP-40's C8 breach.

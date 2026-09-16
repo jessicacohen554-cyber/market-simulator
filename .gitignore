@@ -2177,9 +2177,17 @@ results/calibration/pjm_h7_screen2023_arm/
 results/calibration/spp42_screen_ctl/
 results/calibration/spp42_screen_arm/
 
-# SPP-42 span A — the 2023-2025 arm bundle (rule 34(a): the shard PUSHED it, so a
-# promotion costs ZERO re-solves). Kept OFF `main` until the owner rules on promotion
-# (rule 29(c) governs the repo, rule 31 [R-RETAIN] keeps it on local disk).
+# SPP-42 span A IS SPP KEEPER 12's bundle (2026-09-16-spp-42-commitment-feasibility,
+# promoted 2026-09-16 by owner ruling "Promote it when they land"), so it is COMMITTED
+# SLIM exactly as rule 15 [R-DASHBOARD] requires of a keeper -- the heavy layers stay
+# ignored by the repo-wide rules above. Shard-pushed and also recoverable whole at
+# df3f59600a12e95b895d540900f7b966eebc5b9a (rule 33(d)).
+#
+# SPP-42 span B — the 2019-2022 arm. NOT registered: its dispatch, D-4 rows and D-2
+# forced energy are BYTE-IDENTICAL to 2026-09-13-spp-40-holdout-span because SPP's CAMPD
+# outage extracts cover 2023-2025 only, so the clip's predicate can never fire there
+# ("0 infeasible plant-hours"). That run is re-stamped to keeper 12 instead of being
+# replaced by a numerically identical twin. Kept on local disk under rule 31 [R-RETAIN].
 # RECOVERY BY IMMUTABLE SHA (rule 33(d)):
 #   git checkout df3f59600a12e95b895d540900f7b966eebc5b9a -- results/calibration/spp42_span_a
 results/calibration/spp42_span_a/
@@ -2209,3 +2217,5 @@ results/calibration/pjm_h8_screen2023_arm/
 # nyiso-236 rule-29 SCREEN bundle — gitignored, NOT deleted (rule 31 [R-RETAIN]).
 # Recover: git archive 478267ba7f6c8df6a36a4db2f488e2f50481049a results/calibration/nyiso236_hydroperiod_2025 | tar -x
 results/calibration/nyiso236_hydroperiod_2025/
+#   git checkout be5123c29d82c74f464ebc0f3bc5061be94975d7 -- results/calibration/spp42_span_b
+results/calibration/spp42_span_b/

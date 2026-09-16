@@ -18,8 +18,10 @@ as at risk and is reported rather than absorbed.
 **One pre-registered gate clause fails as literally written and is reported, not rewritten**
 (§3, G2c). The property it was written to test is proven by a strictly stronger check.
 
-Full span (7 years, two registrable bundles) launched on that basis. **No promotion has been
-made; `frontend/data/backcast/keepers/SPP.json` is untouched** (rule 31 `[R-RETAIN]`).
+Full span (7 years) solved on that basis. **PROMOTED 2026-09-16 by owner ruling — SPP keeper 12
+is `2026-09-16-spp-42-commitment-feasibility`, CALIBRATED, D-4 conduct failures 10 → 2 across
+2023-2025. See §7.** The held-out years are covered and the arm is provably INERT there; §7 says
+why, and flags one number that must not be read as this arm's.
 
 ---
 
@@ -203,3 +205,96 @@ is a SOCO bundle). Rule 35(a) is per-ISO — **not pruned by this lane**.
 SPP's determination is **UNCHANGED**: `CALIBRATED` on the 2023–2025 train-tier verdict.
 `[R-HOLDOUT]` was removed 2026-09-09, so no year is protected from having been iterated
 against: that is a **rubric determination, not a certified out-of-sample skill claim**.
+
+---
+
+## 7. PROMOTED — SPP keeper 12 (owner ruling, in-session)
+
+**Owner ruling, verbatim: "Promote it when they land."** The lane had not acted;
+`frontend/data/backcast/keepers/SPP.json` was untouched until the ruling (rule 31 `[R-RETAIN]`).
+
+**New keeper: `2026-09-16-spp-42-commitment-feasibility`** (bundle
+`results/calibration/spp42_span_a`, committed slim per rule 15). **DETERMINATION CALIBRATED**
+(rubric v3.7) — 0 FAILS, 1 ledgered C3c caveat, 0 protective, free-class C1 16/16 all / 12/12
+free; C1 / C2 / C3a / C3b / C4 / C6 / C8 all PASS. The same shape as keeper 11 on every scored
+criterion.
+
+### Span A — the registered result
+
+| | keeper 11 | keeper 12 |
+|---|---|---|
+| D-4 conduct FAIL rows | 10 | **2** |
+| 2023 | 1230, 1235, 1271, 3008 | 3008 |
+| 2024 | 1235, 1271, 3008 | 3008 |
+| 2025 | 1235, 1271, 3008 | **clean** |
+| C8 ST_GAS forced share (cap 0.30) | .2001 / .1873 / .1535 | **.1881 / .1769 / .1423** |
+
+3008 improves in both remaining years (bind_h 2047 → 1836 and 2427 → 1997; zero share
+0.6087 → 0.5839 and 0.5777 → 0.5108) without crossing — the pre-registered placed-vs-binding
+risk, on the only multi-unit plant of the four and the fleet's one measured two-shifter, whose
+defect SPP-27 already identified as the within-day grain.
+
+### Span B — RE-SOLVED, AND THE ARM IS PROVABLY INERT THERE
+
+**This is the lane's second finding and it would have been easy to misreport.** SPP-42 did
+re-solve 2019–2022 with the gate armed (`results/calibration/spp42_span_b`, pushed, recoverable
+at `be5123c29d82c74f464ebc0f3bc5061be94975d7`). Its **dispatch is byte-identical** to
+`2026-09-13-spp-40-holdout-span` in every class and year (271.8128 / 262.6208 / 269.7705 /
+288.1893 TWh), its **D-4 rows are byte-identical** (33 FAIL rows, same plants, same binding
+hours, same zero shares) and its **D-2 forced energy is byte-identical** (5.0294 / 4.7849 /
+5.4248 / 5.4898 TWh).
+
+**Root cause, measured not assumed: SPP's CAMPD unit-outage extracts cover 2023–2025 ONLY.**
+`campd-unit-outages-SPP.csv` holds 880 / 905 / 936 windows in 2023/2024/2025 and **zero rows in
+2019–2022**; likewise the short and lay-up companions. So availability in the held-out years is
+the flat EFOR baseline — verified directly, `min availcap == p05 availcap` for all 21 floored
+ST_GAS plant-groups in 2019 — and the clip's predicate can never fire. The engine says so
+itself: *"mustrun_commitment_feasibility_clip ARMED (SPP 2019): 21 floored plant-groups tested,
+**0 infeasible plant-hours**, 0.0 MWh of commitment floor released"*.
+
+The held-out run was therefore **re-stamped** to keeper 12 (rules 30(a) / 34(c) / 35(c)) rather
+than replaced by a numerically identical twin, and SPP's registered year set stays at **seven**.
+
+> **CAUTION, recorded because the obvious reading is wrong.** Held-out C8 ST_GAS forced share
+> reads 0.3423 / 0.3014 / 0.5041 / 0.5556 in the SPP-40 control and 0.2497 / 0.2844 / 0.4559 /
+> 0.4995 on this base. That looks like a large improvement and **is not this arm**: `forced_twh`
+> is byte-identical and only the **denominator** (`class_total_twh`, the benchmark-side actual)
+> moved between bases. **SPP-40's held-out C8 breach is NOT addressed by this lane and stays
+> open.** Its root cause is the same missing 2019–2022 outage extract — routed as SPP's next
+> **data-intake** item, not a modelling lane.
+
+### Promotion mechanics (rule 35 `[R-PROMOTE]`, in order)
+
+1. **(b) Year union enumerated FIRST**, before any prune: 2019–2025, seven years, from
+   `frontend/data/backcast/registry/*.json`. **(c)** covered — 2023–2025 in the keeper bundle,
+   2019–2022 in the stamped run.
+2. Both spans attested (`scripts/gen_spp42_attestation.py`; the shared
+   `gen_touchpoint_attestation.py` still refuses a multi-tier span on a stale `tier_for_year`
+   guard, and `replay_keeper --out-dir` still does not propagate the attestation — both
+   **reported, not patched**, rule 25). DOF ledger machine-checked: **5 entries / 3 residual on
+   both bundles, byte-identical to keeper 11's** — the gate adds zero free parameters.
+3. Registered; holdout re-stamped; SPP's corrected caveat text re-applied (a re-stamp resets it —
+   the known `stamp_touchpoint_holdout.py` defect, reported not patched).
+4. `keepers/SPP.json` promoted; `calibration-complete.json` re-keyed (audit M1a).
+5. **(e) `audit_keepers.py --iso SPP` run BETWEEN the promotion and the prune: PASS, 0 failures,
+   0 warnings** (E1 and E13 clean).
+6. **(a)/(d) `prune_iso_runs.py --iso SPP --force-uncite`** — keeper 11's three stores removed.
+   `--force-uncite` is the rule-35(d) **intended** route here, used only after checking where the
+   citations are: both are historical prose (`keeper_at_declaration` and the re-key note) and
+   **stay**, exactly as rule 35(d) requires. SPP only.
+7. Matrix cell **O → K**, shard keeper stamp and §5.7 prose header re-stamped (rule 28).
+
+**One incident, recorded rather than smoothed over.** The first span-B registration attempt
+collapsed to the same run id as span A and **overwrote span A's sidecar** (bundle pointer and
+years) before dying on the missing shared inputs, which made the keeper briefly re-score
+`NOT-YET` with `governance FAIL`. Caught by re-scoring instead of trusting the earlier
+`CALIBRATED`, and repaired by re-registering span A. The determination above is the repaired,
+re-verified one.
+
+### Housekeeping
+
+`check_registry_payload_parity.py` is RED on exactly the two **pre-existing, committed, non-SPP**
+bundles `caiso279_ablate_dswcouple_span` and `soco15_spp_arm` — rule 35(a) is per-ISO, **not
+pruned by this lane**. This lane's screen and span-B bundles are **untracked and gitignored** (0
+tracked files each), so they cannot exist in a CI checkout; they stay on local disk under rule 31
+with their immutable recovery SHAs recorded in `.gitignore`.

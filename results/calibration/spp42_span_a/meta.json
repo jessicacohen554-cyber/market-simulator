@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-13T05:40:34",
+  "timestamp": "2026-09-16T04:35:50",
   "iso": "SPP",
   "years": [
     2023,
@@ -54,7 +54,8 @@
     "eia860_vintage_tracks_solve_year": true,
     "st_gas_mustrun_per_plant": true,
     "mustrun_window_commitment_grain": true,
-    "unit_outage_short_windows": true
+    "unit_outage_short_windows": true,
+    "mustrun_commitment_feasibility_clip": true
   },
   "coal_bit_passthrough_sigmoid": false,
   "coal_bit_sigmoid_overrides": {},
@@ -224,6 +225,7 @@
   "caiso_st_gas_peak_measured": false,
   "caiso_ct_peaker_committed_measured": false,
   "nyiso_ct_peaker_bands_measured": false,
+  "nyiso_st_gas_econ_bands_deleaked": false,
   "caiso_offer_surface_conditional": false,
   "nearby_fuel_price_zone_donor_guard": false,
   "fleet_state_from_eia860": false,
@@ -377,6 +379,7 @@
   "chp_export_floor_measured": false,
   "ercot_gtc_limits_measured": false,
   "pjm_measured_interface_limits": false,
+  "committed_band_measured_basis": null,
   "ercot_wtx_curtailment_driver": null,
   "ercot_wtx_curtail_depth_wind": null,
   "ercot_wtx_curtail_depth_solar": null,
@@ -394,12 +397,12 @@
     "unit_outages_e923": "../_shared/SPP/unit_outages_e923-7c8d728413db.parquet",
     "unit_outages_layup": "../_shared/SPP/unit_outages_layup-7de9ff1be257.parquet"
   },
-  "git_sha": "760012f7",
-  "basis_sha": "760012f7a12b5d6fae01c5a6a4c96c9dc8588ed9",
+  "git_sha": "1f586ed7",
+  "basis_sha": "1f586ed75b20db7085eddf70c5c3926687861c69",
   "highspy_version": "1.14.0",
   "environment": {
     "python_version": "3.11.15",
-    "platform": "Linux-6.18.44-fc-v24-x86_64-with-glibc2.39",
+    "platform": "Linux-6.18.44-fc-v33-x86_64-with-glibc2.39",
     "packages": {
       "highspy": "1.14.0",
       "numpy": "2.4.6",
