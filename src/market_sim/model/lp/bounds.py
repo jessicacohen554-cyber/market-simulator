@@ -34,6 +34,7 @@ def build_variable_bounds(
     storage_discharge_cap: np.ndarray | None = None,
     dis_tranche_arm_idx: np.ndarray | None = None,
     dis_tranche_width: np.ndarray | None = None,
+    hydro_cascade_pond_cap: np.ndarray | None = None,
 ) -> tuple[np.ndarray, np.ndarray]:
     """Assemble the LP column (decision-variable) bound vectors.
 
@@ -312,6 +313,21 @@ def build_variable_bounds(
         col_upper[:, dt0 : dt0 + layout.n_dis_tranche] = tr_upper.reshape(
             T, arm.size * k
         )
+
+    # Hydraulic-cascade columns (NWPP-36): spill 0 ≤ S[c,t] ≤ inf (the water
+    # balance row bounds it from above — it is the slack between arriving
+    # water and what the budget-capped turbines take); pond volume
+    # 0 ≤ V[c,t] ≤ B_c, the plant's MEASURED operated pondage band in kcfs·h
+    # (NID surface area × the CROHMS forebay range; hydro_cascade.py).
+    if layout.n_cascade:
+        n_c = layout.n_cascade // 2
+        s0 = layout._cas_s_off
+        col_upper[:, s0 : s0 + n_c] = np.inf
+        v0 = layout._cas_v_off
+        cap = np.asarray(hydro_cascade_pond_cap, dtype=float)
+        if cap.shape != (n_c,):
+            raise ValueError(f"hydro_cascade_pond_cap shape {cap.shape} != ({n_c},)")
+        col_upper[:, v0 : v0 + n_c] = cap[np.newaxis, :]
 
     # Clip the lower bound to never exceed the upper bound. A committed
     # thermal generator carries a positive Pmin, but the commitment screen

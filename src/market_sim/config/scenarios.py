@@ -1807,6 +1807,17 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # SHARED field -- very end, per HOUSE-3. Registered IN THE SAME COMMIT as
     # the field (the nyiso-119 discipline).
     "coal_fuel_inventory",
+    # Columbia mainstem / lower Snake hydraulic-cascade coupling (NWPP-36,
+    # owner ruling N3, default off): dropped from the hash at its default so
+    # every pre-existing cached run -- every ISO's keepers included -- keeps
+    # its key (gate G8 as amended). The arm is byte-identical off by
+    # construction (the shared resolver returns UNSET, so the dispatch-kwargs
+    # key set is unchanged and no row or column is built); an armed run
+    # carries real per-plant-hour water-balance rows and so earns a distinct
+    # key. ISO-agnostic name, per-ISO measured artifact -- the
+    # hydro_budget_period_by_instrument shape. SHARED field -- very end, per
+    # HOUSE-3. Registered IN THE SAME COMMIT as the field.
+    "hydro_cascade_coupling",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -2454,6 +2465,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by miso-259 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "coal_fuel_inventory": "False",
+    # Added by NWPP-36 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "hydro_cascade_coupling": "False",
 }
 
 
@@ -3753,6 +3767,44 @@ class ScenarioConfig:
     #   short-period solution is monthly-feasible; the converse is false), so it
     #   can only remove arbitrage freedom, never add it, and its failure mode is
     #   predictable: over-constraint, not over-freedom.
+    hydro_cascade_coupling: bool = False  # GATED default off (NWPP-36, owner
+    # ruling N3 2026-09-13 -- the mechanism built BEFORE the first NWPP keeper,
+    # against the desk's recommendation, because "the first NWPP number must
+    # mean more than a test of monthly hydro budgets"). Couple the plants of a
+    # measured hydraulic chain with one hourly WATER-BALANCE equality per
+    # coupled downstream plant (model/lp/hydro_cascade.py): the plant's turbine
+    # flow (P/eta) + spill + pond change equals the upstream release arriving a
+    # measured lag tau later plus measured side inflow, with the pond bounded by
+    # the plant's MEASURED operated pondage band. On the Columbia mainstem +
+    # lower Snake that is 14 coupled plants below two heads (Grand Coulee,
+    # Dworshak), 65.9 % of NWPP conventional-hydro nameplate; the artifact is
+    # data/raw/<iso>-hydro/<iso>_hydro_cascade_{links,monthly}.csv, derived by
+    # scripts/data/build_nwpp_hydro_cascade.py from the CROHMS hourly project
+    # feed, NID and EIA-923 (PRECOMMIT-nwpp-36-2026-09-16.md §4) -- every tau,
+    # band, eta and inflow is measured, none assumed (rule 13 [R-MEASURED]).
+    #   THE INVARIANT (rule 19 [R-ONE-MECH]): THE COUPLING REDISTRIBUTES WHEN A
+    #   COUPLED PLANT'S WATER IS TURBINED. IT NEVER CHANGES HOW MUCH PER MONTH.
+    #   The EIA-923 monthly budget row stays the sole energy-quantity mechanism;
+    #   no generation column is added, every row is feasible at zero generation
+    #   (spill is unbounded), so the family can never move a monthly total. A
+    #   mechanism that could is a second budget and is refused.
+    #   THE DEFECT IT ADDRESSES: eleven independent monthly budgets on one river
+    #   grant a run-of-river plant 1/CF (2.3-3.4x nameplate-hours) of freedom to
+    #   concentrate a month's water into any hours, independently of the plant
+    #   above it, on 3-5 ft of pondage (FINDING-nwpp-32 §5(a)); and the budget
+    #   has no spill object, so the ROD spill season (Bonneville and the lower
+    #   Snake at 0.13-0.25 CF for five months) reads as free peaking energy.
+    #   Here spill is the slack between arriving water and the budget-capped
+    #   turbines, with no spill object of its own.
+    #   FORWARD STORY (rule 17c): tau, the band, and the chain are physical
+    #   properties of the river and its dams; eta and the monthly means come
+    #   from the same measured basis as the budget and regenerate for any year
+    #   the budget does. ISO-agnostic: an ISO with no cascade artifact gets
+    #   UNSET from pipeline.kwargs.resolve_hydro_cascade and an unchanged LP.
+    #   A per-plant STOP in the derive (an unmeasurable tau or band) leaves
+    #   that plant UNCOUPLED on its own monthly budget -- never a substituted
+    #   value. Registered on _CACHE_KEY_OPTIONAL_FIELDS (+ the defaults ledger)
+    #   in the same commit, so no existing keeper's cache_key moves (gate G8).
     hydro_min_flow_floor: bool = False  # GATED default off (caiso-124). The
     # LOWER half of the same measured two-sided hydro capability envelope
     # hydro_dispatch_envelope caps from above: hold each conventional-hydro

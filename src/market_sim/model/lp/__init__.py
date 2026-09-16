@@ -37,6 +37,10 @@ from market_sim.data.fleet import (  # noqa: F401  (historical namespace re-expo
 )
 from market_sim.model.lp.bounds import build_variable_bounds  # noqa: F401
 from market_sim.model.lp.costs import build_cost_vector  # noqa: F401
+from market_sim.model.lp.hydro_cascade import (  # noqa: F401
+    HydroCascadeSpec,
+    build_hydro_cascade_rows,
+)
 from market_sim.model.lp.layout import (  # noqa: F401
     VariableLayout,
     _build_zone_gen_map,
@@ -206,6 +210,17 @@ class DispatchResult:
     # each containing the generator LP indices that belong to that area.
     # ``None`` unless ``local_capacity_constraints`` is active.
     lcr_gen_idx: list[np.ndarray] | None = None
+    # --- hydraulic-cascade diagnostics (NWPP-36, owner ruling N3) ----------
+    # Per coupled downstream plant (cascade-local order, see
+    # ``hydro_cascade_plant_codes``): spill ``(n_c, T)`` in kcfs, pond volume
+    # ``(n_c, T)`` in kcfs·h above the bottom of the operated band, and the
+    # water-balance row dual ``(n_c, T)`` — the marginal water value at that
+    # plant-hour in $ per kcfs·h. Read-only extraction; all ``None`` unless
+    # ``hydro_cascade`` was supplied.
+    hydro_cascade_spill: np.ndarray | None = None
+    hydro_cascade_storage: np.ndarray | None = None
+    hydro_cascade_water_value: np.ndarray | None = None
+    hydro_cascade_plant_codes: np.ndarray | None = None
     # --- network duals (the ``network_<year>.parquet`` sidecar) -------------
     # Aggregate-interface row duals, shape ``(n_groups, T)``, and the flow
     # columns' reduced costs, shape ``(n_links, T)`` — both HiGHS-raw (NOT
@@ -420,6 +435,7 @@ def solve_dispatch(
     dis_tranche_arm_idx: np.ndarray | None = None,
     dis_tranche_width: np.ndarray | None = None,
     dis_tranche_price: np.ndarray | None = None,
+    hydro_cascade: "HydroCascadeSpec | None" = None,
     T: int | None = None,
 ) -> DispatchResult:
     """Solve the linear economic-dispatch problem with HiGHS.
@@ -536,6 +552,13 @@ def solve_dispatch(
             unit's SOC back to its day-start level every this-many hours, so
             storage cannot arbitrage across days. ``None`` leaves the annual
             cyclic boundary as the only SOC anchor (full perfect foresight).
+        hydro_cascade: Hydraulic-cascade coupling arrays (NWPP-36, owner
+            ruling N3; :class:`~market_sim.model.lp.hydro_cascade.HydroCascadeSpec`)
+            — one hourly water-balance equality per coupled downstream plant
+            tying its turbine flow, spill and pond change to the lagged
+            upstream release. Redistributes WHEN a coupled plant's monthly
+            budget is turbined, never how much. ``None`` (default) builds no
+            rows and no columns — byte-identical LP.
         T: Number of hours. Inferred from ``demand`` when ``None``.
 
     Returns:
@@ -654,6 +677,7 @@ def solve_dispatch(
         dis_tranche_arm_idx=dis_tranche_arm_idx,
         dis_tranche_width=dis_tranche_width,
         dis_tranche_price=dis_tranche_price,
+        hydro_cascade=hydro_cascade,
         T=T,
     )
     return model.solve(

@@ -97,6 +97,15 @@ class VariableLayout:
     # Tranches per armed battery unit (K). Only meaningful when
     # n_dis_tranche > 0; the accessor uses it to stride armed units.
     dis_tranche_k: int = 0
+    # Hydraulic-cascade coupling columns (NWPP-36, owner ruling N3,
+    # config.hydro_cascade_coupling; model/lp/hydro_cascade.py). Per COUPLED
+    # downstream plant c, a spill column S[c,t] (kcfs, water routed past the
+    # turbines) and a pond-volume column V[c,t] (kcfs·h above the bottom of the
+    # operated band). ``n_cascade == 2 * n_coupled``, laid out spill-block then
+    # volume-block (S at ``_cas_s_off + c``, V at ``_cas_v_off + c``). Appended
+    # AFTER the discharge-tranche block so every existing offset is unchanged;
+    # 0 (the default) leaves the layout byte-identical.
+    n_cascade: int = 0
 
     @property
     def vars_per_hour(self) -> int:
@@ -112,6 +121,7 @@ class VariableLayout:
             + 2 * self.n_posture
             + self.n_rec_acp
             + self.n_dis_tranche
+            + self.n_cascade
         )
 
     @property
@@ -204,6 +214,24 @@ class VariableLayout:
     def _dis_tranche_off(self) -> int:
         """Per-hour offset of the storage discharge-tranche block (ERCOT arm)."""
         return self._rec_acp_off + self.n_rec_acp
+
+    @property
+    def _cas_s_off(self) -> int:
+        """Per-hour offset of the cascade spill block (S[c,t]; NWPP-36)."""
+        return self._dis_tranche_off + self.n_dis_tranche
+
+    @property
+    def _cas_v_off(self) -> int:
+        """Per-hour offset of the cascade pond-volume block (V[c,t]; NWPP-36)."""
+        return self._cas_s_off + self.n_cascade // 2
+
+    def cas_s_col(self, c: int, t: int) -> int:
+        """Return the spill column of coupled cascade plant ``c`` in hour ``t``."""
+        return t * self.vars_per_hour + self._cas_s_off + c
+
+    def cas_v_col(self, c: int, t: int) -> int:
+        """Return the pond-volume column of coupled cascade plant ``c`` in hour ``t``."""
+        return t * self.vars_per_hour + self._cas_v_off + c
 
     def p_col(self, g: int, t: int) -> int:
         """Return the column index of thermal generator ``g`` in hour ``t``."""

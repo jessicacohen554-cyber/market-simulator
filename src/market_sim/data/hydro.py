@@ -21,6 +21,7 @@ import logging
 import os
 from dataclasses import dataclass
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
@@ -38,6 +39,9 @@ from market_sim.data.fleet import (
 )
 
 logger = logging.getLogger(__name__)
+
+if TYPE_CHECKING:  # quoted annotation only; the loader imports the model lazily
+    from market_sim.model.lp.hydro_cascade import HydroCascadeSpec
 
 
 def _use_clean() -> bool:
@@ -302,6 +306,203 @@ def allocate_period_energy(
     energy = np.asarray(monthly_energy, dtype=float)  # (n_hydro, 12)
     period_energy = energy @ share.T  # (n_hydro, n_periods)
     return period_energy, period_index
+
+
+def load_hydro_cascade(
+    iso: str,
+    year: int,
+    plant_codes: np.ndarray | list[int],
+    hours: int = 8760,
+) -> "HydroCascadeSpec | None":
+    """Return the ISO-year's hydraulic-cascade arrays, or ``None`` when uncoupled.
+
+    Reads the measured cascade artifact (NWPP-36, owner ruling N3; derived by
+    ``scripts/data/build_nwpp_hydro_cascade.py`` from the CROHMS hourly project
+    feed, NID and EIA-923 — ``docs/handoffs/PRECOMMIT-nwpp-36-2026-09-16.md``
+    §4) at ``data/raw/<iso>-hydro/<iso>_hydro_cascade_{links,monthly}.csv`` and
+    maps it onto this year's hydro fleet.
+
+    A link couples only when the artifact says ``coupled`` — i.e. its lag,
+    the downstream pondage band and the side-inflow balance all cleared the
+    pre-registered measurement gates; a link that failed any of them is left
+    exactly as the monthly budget already models it (rule 13 ``[R-MEASURED]``:
+    never a substituted value). An upstream plant that carries no spill column
+    of its own — a chain head, or an uncoupled plant — contributes its
+    generation column and its MEASURED monthly-mean spill (or, when it is not
+    an LP unit that year, its measured monthly-mean outflow) on the row's
+    right-hand side. A coupled plant absent from this year's fleet (no
+    EIA-923 series) drops out with its links, logged.
+
+    Returns ``None`` — and the caller builds the unchanged LP — when the ISO
+    has no artifact, the year is outside it, or no coupled plant is in the
+    fleet. The invariant of the mechanism (rule 19 ``[R-ONE-MECH]``): the
+    rows redistribute WHEN a coupled plant's monthly budget is turbined and
+    never how much per month.
+
+    Args:
+        iso: ISO code, e.g. ``"NWPP"``.
+        year: Solve year (the artifact's monthly η / inflow / spill means are
+            per year).
+        plant_codes: EIA plant code of each hydro generator, in fleet order;
+            the returned ``coupled_gen_idx`` / ``link_up_gen_idx`` index INTO
+            this sequence (the caller maps them onto the dispatch fleet).
+        hours: Horizon length; the monthly means are broadcast by
+            ``_hour_to_month_index(hours)``.
+
+    Returns:
+        A :class:`~market_sim.model.lp.hydro_cascade.HydroCascadeSpec` whose
+        generator indices are local to ``plant_codes``, or ``None``.
+    """
+    from market_sim.config.paths import RAW_DATA_DIR
+    from market_sim.data.fleet import _hour_to_month_index
+    from market_sim.model.lp.hydro_cascade import HydroCascadeSpec
+
+    tag = str(iso).lower()
+    hydro_dir = RAW_DATA_DIR / f"{tag}-hydro"
+    links_path = hydro_dir / f"{tag}_hydro_cascade_links.csv"
+    monthly_path = hydro_dir / f"{tag}_hydro_cascade_monthly.csv"
+    if not (links_path.exists() and monthly_path.exists()):
+        return None
+    links = pd.read_csv(links_path)
+    monthly = pd.read_csv(monthly_path)
+    monthly = monthly[monthly["year"] == int(year)]
+    if monthly.empty:
+        logger.info(
+            "%s %d: hydro cascade artifact carries no rows for this year — "
+            "mechanism INERT (the LP is unchanged)",
+            iso,
+            year,
+        )
+        return None
+    links = links[links["coupled"].astype(bool)].sort_values("link")
+    if links.empty:
+        return None
+
+    codes = np.asarray(plant_codes, dtype=int)
+    pos = {int(c): i for i, c in enumerate(codes)}
+    month_of_hour = np.asarray(_hour_to_month_index(hours), dtype=int)  # (T,)
+
+    def _by_month(pid: int, col: str) -> np.ndarray | None:
+        rows = monthly[monthly["plant_id"] == int(pid)].sort_values("month")
+        if len(rows) != _MONTHS_PER_YEAR:
+            return None
+        vals = rows[col].to_numpy(dtype=float)
+        return vals
+
+    def _hourly(vec12: np.ndarray) -> np.ndarray:
+        return vec12[month_of_hour]
+
+    # Coupled plants in chain (link) order; each must be an LP unit with a
+    # full year of measured η.
+    coupled_ids: list[int] = []
+    for pid in links["d_plant_id"].astype(int):
+        if pid in coupled_ids:
+            continue
+        if pid not in pos:
+            logger.info(
+                "%s %d: cascade plant %d is not an LP hydro unit this year — "
+                "it and its links are left uncoupled",
+                iso,
+                year,
+                pid,
+            )
+            continue
+        eta = _by_month(pid, "eta_mwh_per_kcfsh")
+        if eta is None or not np.all(np.isfinite(eta)) or (eta <= 0).any():
+            logger.info(
+                "%s %d: cascade plant %d has no complete measured η — uncoupled",
+                iso,
+                year,
+                pid,
+            )
+            continue
+        coupled_ids.append(int(pid))
+    if not coupled_ids:
+        return None
+    local_of = {pid: c for c, pid in enumerate(coupled_ids)}
+
+    eta_dn = np.vstack(
+        [_hourly(_by_month(pid, "eta_mwh_per_kcfsh")) for pid in coupled_ids]
+    )
+    side = []
+    pond = []
+    for pid in coupled_ids:
+        s = _by_month(pid, "side_inflow_kcfs")
+        s = np.zeros(_MONTHS_PER_YEAR) if s is None else np.nan_to_num(s, nan=0.0)
+        side.append(_hourly(np.maximum(s, 0.0)))
+        pond.append(float(links.loc[links["d_plant_id"] == pid, "pond_kcfsh"].iloc[0]))
+    side_inflow = np.vstack(side)
+    pond_cap = np.asarray(pond, dtype=float)
+
+    l_dn, l_up_gen, l_up_loc, l_tau, l_eta_up, l_head = [], [], [], [], [], []
+    ones = np.ones(hours, dtype=float)
+    for r in links.itertuples():
+        d_pid = int(r.d_plant_id)
+        u_pid = int(r.u_plant_id)
+        if d_pid not in local_of:
+            continue
+        l_dn.append(local_of[d_pid])
+        l_tau.append(int(r.tau_h))
+        if u_pid in local_of:
+            # Coupled upstream: its P/η and its own S column enter the row.
+            l_up_gen.append(pos[u_pid])
+            l_up_loc.append(local_of[u_pid])
+            l_eta_up.append(_hourly(_by_month(u_pid, "eta_mwh_per_kcfsh")))
+            l_head.append(np.zeros(hours))
+        elif u_pid in pos:
+            # Head or uncoupled upstream that IS an LP unit: its P/η enters the
+            # row; its measured monthly-mean spill enters the RHS.
+            eta_u = _by_month(u_pid, "eta_mwh_per_kcfsh")
+            if eta_u is None or not np.all(np.isfinite(eta_u)) or (eta_u <= 0).any():
+                logger.info(
+                    "%s %d: cascade upstream %d has no complete measured η — "
+                    "link %d -> %d left uncoupled",
+                    iso,
+                    year,
+                    u_pid,
+                    u_pid,
+                    d_pid,
+                )
+                l_dn.pop()
+                l_tau.pop()
+                continue
+            spill = _by_month(u_pid, "spill_mean_kcfs")
+            spill = (
+                np.zeros(_MONTHS_PER_YEAR)
+                if spill is None
+                else np.nan_to_num(spill, nan=0.0)
+            )
+            l_up_gen.append(pos[u_pid])
+            l_up_loc.append(-1)
+            l_eta_up.append(_hourly(eta_u))
+            l_head.append(_hourly(np.maximum(spill, 0.0)))
+        else:
+            # Upstream not an LP unit this year (no EIA-923 series): its
+            # measured monthly-mean TOTAL outflow is the arriving water.
+            q = _by_month(u_pid, "outflow_mean_kcfs")
+            q = np.zeros(_MONTHS_PER_YEAR) if q is None else np.nan_to_num(q, nan=0.0)
+            l_up_gen.append(-1)
+            l_up_loc.append(-1)
+            l_eta_up.append(ones)
+            l_head.append(_hourly(np.maximum(q, 0.0)))
+    if not l_dn:
+        return None
+    # A coupled plant whose every link was dropped keeps its row (arrivals =
+    # side inflow only) — that is the artifact's statement, not a guess; it
+    # is logged above wherever it happens.
+    return HydroCascadeSpec(
+        coupled_gen_idx=np.asarray([pos[pid] for pid in coupled_ids], dtype=int),
+        eta_dn=eta_dn,
+        pond_cap=pond_cap,
+        side_inflow=side_inflow,
+        link_dn_local=np.asarray(l_dn, dtype=int),
+        link_up_gen_idx=np.asarray(l_up_gen, dtype=int),
+        link_up_local=np.asarray(l_up_loc, dtype=int),
+        link_tau=np.asarray(l_tau, dtype=int),
+        link_eta_up=np.vstack(l_eta_up),
+        link_head_flow=np.vstack(l_head),
+        plant_codes=np.asarray(coupled_ids, dtype=int),
+    )
 
 
 def resolve_hydro_year_multiplier(hydro_year: str) -> float:

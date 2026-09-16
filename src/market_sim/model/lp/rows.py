@@ -11,6 +11,8 @@ Pure code motion — every def is byte-identical to its pre-split
 import numpy as np
 import scipy.sparse as sp
 
+from typing import TYPE_CHECKING
+
 from market_sim.data.fleet import FUEL_TYPE_MAP, FleetArrays, _hour_to_month_index
 from market_sim.model.lp.layout import (
     VariableLayout,
@@ -18,6 +20,9 @@ from market_sim.model.lp.layout import (
     _build_zone_storage_map,
     _vstack_csr_free,
 )
+
+if TYPE_CHECKING:  # quoted annotation only; the row builder imports lazily
+    from market_sim.model.lp.hydro_cascade import HydroCascadeSpec
 from market_sim.model.lp.reserve_rows import (
     _build_reserve_rows,
     _build_reserve_rows_pergen,
@@ -1358,6 +1363,8 @@ def build_constraints(
     posture_mlf: np.ndarray | None = None,
     link_loss: np.ndarray | None = None,
     dis_tranche_arm_idx: np.ndarray | None = None,
+    hydro_cascade: "HydroCascadeSpec | None" = None,
+    row_offsets: dict | None = None,
 ) -> tuple[sp.csr_matrix, np.ndarray, np.ndarray]:
     """Assemble the LP constraint matrix and its row bound vectors.
 
@@ -1536,6 +1543,9 @@ def build_constraints(
             # not a second injection (zero block; empty off the arm, keeping
             # per_hour width == vph).
             sp.csr_matrix((n_zones, layout.n_dis_tranche)),
+            # Cascade spill / pond-volume columns are WATER, not energy (zero
+            # block; empty off the arm, keeping per_hour width == vph).
+            sp.csr_matrix((n_zones, layout.n_cascade)),
         ],
         format="csr",
     )
@@ -1881,6 +1891,34 @@ def build_constraints(
                 del hydro_block
                 row_lower = np.concatenate([row_lower, hydro_lower])
                 row_upper = np.concatenate([row_upper, hydro_upper])
+
+    # Optional hydraulic-cascade water-balance rows (NWPP-36, owner ruling
+    # N3; config.hydro_cascade_coupling): one EQUALITY per coupled downstream
+    # plant and hour tying its turbine flow (P/η), spill and pond change to
+    # the lagged upstream release plus measured side inflow. A SECOND
+    # PHENOMENON beside the monthly budget above (hydraulic succession), never
+    # a second budget: no generation column is added and every row is feasible
+    # at zero generation, so the monthly cap stays the sole quantity mechanism
+    # (rule 19 [R-ONE-MECH]). Appended right after the hydro budget rows, before
+    # the oil/coal budgets and the end-anchored RPS/reserve tail, so every
+    # existing dual position is unchanged. None (the default, and every run in
+    # every ISO that does not arm the field) adds zero rows — byte-identical.
+    if hydro_cascade is not None and layout.n_cascade:
+        from market_sim.model.lp.hydro_cascade import build_hydro_cascade_rows
+
+        cas_block, cas_lower, cas_upper = build_hydro_cascade_rows(
+            layout, hydro_cascade
+        )
+        if cas_block.shape[0]:
+            if row_offsets is not None:
+                row_offsets["hydro_cascade"] = (
+                    int(row_lower.size),
+                    int(cas_block.shape[0]),
+                )
+            blocks.append(cas_block)
+            del cas_block
+            row_lower = np.concatenate([row_lower, cas_lower])
+            row_upper = np.concatenate([row_upper, cas_upper])
 
     # Optional oil-burn monthly inventory budget: one row per oil-capable
     # generator and month. When the budget binds, the shadow price is the

@@ -25,6 +25,7 @@ from market_sim.model.lp.rows import build_constraints
 
 if TYPE_CHECKING:  # quoted annotations only; runtime imports stay lazy (cycle break)
     from market_sim.model.lp import CrossYearBasis, DispatchResult
+    from market_sim.model.lp.hydro_cascade import HydroCascadeSpec
 
 logger = logging.getLogger(__name__)
 
@@ -189,6 +190,7 @@ class DispatchModel:
         dis_tranche_arm_idx: np.ndarray | None = None,
         dis_tranche_width: np.ndarray | None = None,
         dis_tranche_price: np.ndarray | None = None,
+        hydro_cascade: "HydroCascadeSpec | None" = None,
         T: int | None = None,
     ) -> None:
         build_start = time.perf_counter()
@@ -219,6 +221,13 @@ class DispatchModel:
             n_arm = int(len(np.asarray(dis_tranche_arm_idx)))
             dis_tranche_k = int(len(np.asarray(dis_tranche_width)))
             n_dis_tranche = n_arm * dis_tranche_k
+
+        # Hydraulic-cascade coupling (NWPP-36, config.hydro_cascade_coupling):
+        # two water columns per coupled downstream plant. None / an empty spec
+        # leaves n_cascade = 0 and the layout byte-identical.
+        n_cascade = 0
+        if hydro_cascade is not None and hydro_cascade.n_coupled:
+            n_cascade = 2 * int(hydro_cascade.n_coupled)
 
         # Energy+reserve co-optimization is active when a requirement is given.
         # Reserve is tracked per ZONE and per reserve CLASS (one reserve var +
@@ -419,6 +428,7 @@ class DispatchModel:
             n_rec_acp=n_rec_acp,
             n_dis_tranche=n_dis_tranche,
             dis_tranche_k=dis_tranche_k,
+            n_cascade=n_cascade,
         )
         # The discharge-tranche decomposition rides the base Dis column (which
         # keeps its exact total-discharge meaning), so it composes with the
@@ -463,6 +473,11 @@ class DispatchModel:
             np.add.at(pool_cap_full, col_p, cap_p)
             posture_ucap = pool_cap_full[ppools]
 
+        # Row-offset registry for blocks whose duals are read back after the
+        # solve but which build_constraints's fixed return tuple does not name
+        # (the cascade water-value duals, NWPP-36). Filled in place; empty when
+        # no such block is built.
+        _row_offsets: dict = {}
         (
             A,
             row_lower,
@@ -555,6 +570,8 @@ class DispatchModel:
             posture_mlf=(posture_mlf if standalone_posture else None),
             link_loss=link_loss,
             dis_tranche_arm_idx=(dis_tranche_arm_idx if dis_tranche_on else None),
+            hydro_cascade=(hydro_cascade if n_cascade else None),
+            row_offsets=_row_offsets,
         )
         col_lower, col_upper = build_variable_bounds(
             layout,
@@ -579,6 +596,7 @@ class DispatchModel:
             solar_curtail_share=solar_curtail_share,
             dis_tranche_arm_idx=(dis_tranche_arm_idx if dis_tranche_on else None),
             dis_tranche_width=(dis_tranche_width if dis_tranche_on else None),
+            hydro_cascade_pond_cap=(hydro_cascade.pond_cap if n_cascade else None),
         )
 
         _mem_debug = os.environ.get("MARKET_SIM_MEM_DEBUG") == "1"
@@ -788,6 +806,13 @@ class DispatchModel:
         # below is read by the matrix build or by HiGHS.
         self._iface_row_offset = iface_row_offset
         self._n_iface_groups = n_iface_groups
+        # Cascade rows (NWPP-36): where the water-balance block sits so its
+        # duals (the marginal water value per coupled plant-hour) can be read
+        # back; (-1, 0) when the family is off. The spec is kept for labelling.
+        self._cascade_row_offset, self._n_cascade_rows = _row_offsets.get(
+            "hydro_cascade", (-1, 0)
+        )
+        self._hydro_cascade = hydro_cascade if n_cascade else None
         self._iface_link_idx: list[np.ndarray] = []
         self._iface_signs: list[np.ndarray] = []
         self._iface_cap_up: np.ndarray | None = None
@@ -1460,6 +1485,29 @@ class DispatchModel:
             off_i = self._iface_row_offset
             interface_dual = row_dual[off_i : off_i + n_g * T].reshape(T, n_g).T
 
+        # Hydraulic-cascade diagnostics (NWPP-36): the spill and pond-volume
+        # columns per coupled plant, and the water-balance row duals (the
+        # marginal water value at each coupled plant-hour, $/kcfs·h). Rows are
+        # laid out c-major (r = c*T + t), the columns hour-major. Read-only
+        # extraction; None off the arm.
+        cascade_spill = cascade_storage = cascade_water_value = None
+        cascade_plant_codes = None
+        if layout.n_cascade:
+            n_c = layout.n_cascade // 2
+            s0 = layout._cas_s_off
+            v0 = layout._cas_v_off
+            cascade_spill = block[:, s0 : s0 + n_c].T
+            cascade_storage = block[:, v0 : v0 + n_c].T
+            if self._n_cascade_rows and self._cascade_row_offset >= 0:
+                off_c = self._cascade_row_offset
+                cascade_water_value = row_dual[
+                    off_c : off_c + self._n_cascade_rows
+                ].reshape(n_c, T)
+            if self._hydro_cascade is not None:
+                cascade_plant_codes = np.asarray(
+                    self._hydro_cascade.plant_codes, dtype=int
+                )
+
         return DispatchResult(
             dispatch=dispatch,
             wind_dispatched=wind_dispatched,
@@ -1509,6 +1557,10 @@ class DispatchModel:
             # the caller's objective array.
             gen_mc=gen_mc_f32,
             gen_reduced_cost=gen_reduced_cost,
+            hydro_cascade_spill=cascade_spill,
+            hydro_cascade_storage=cascade_storage,
+            hydro_cascade_water_value=cascade_water_value,
+            hydro_cascade_plant_codes=cascade_plant_codes,
         )
 
     def export_cross_year_basis(self) -> "CrossYearBasis | None":
@@ -1679,6 +1731,21 @@ def _cross_year_column_map(
             new_layout._dis_tranche_off,
             old_layout.n_dis_tranche,
             new_layout.n_dis_tranche,
+        ),
+        # Cascade spill and pond-volume blocks (NWPP-36): positionally stable
+        # for the coupled plants present in both years (the chain membership
+        # is a published inventory, so the local order is year-invariant).
+        (
+            old_layout._cas_s_off,
+            new_layout._cas_s_off,
+            old_layout.n_cascade // 2,
+            new_layout.n_cascade // 2,
+        ),
+        (
+            old_layout._cas_v_off,
+            new_layout._cas_v_off,
+            old_layout.n_cascade // 2,
+            new_layout.n_cascade // 2,
         ),
     ]
     for old_off, new_off, old_n, new_n in blocks:

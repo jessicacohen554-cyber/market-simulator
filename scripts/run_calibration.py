@@ -127,6 +127,7 @@ from market_sim.pipeline import (  # noqa: E402
     apply_reserve_coopt,
     backcast_config,
     build_base_dispatch_kwargs,
+    resolve_hydro_cascade,
     resolve_hydro_period_hours,
     build_caiso_ra_p1_prep,
     build_caiso_reserve_p1_prep,
@@ -5959,6 +5960,11 @@ def run_year(
         hydro_period_hours=resolve_hydro_period_hours(
             iso, fleet, hydro_gen_idx, config
         ),
+        # Hydraulic-cascade coupling (NWPP-36, owner ruling N3). UNSET unless
+        # armed AND this ISO-year has a measured cascade artifact resolving
+        # onto the fleet, so every other run's dispatch-kwargs key set -- and
+        # therefore its LP -- is unchanged. Same shared resolver as runner.py.
+        hydro_cascade=resolve_hydro_cascade(iso, year, fleet, hydro_gen_idx, config),
         oil_monthly_budget=oil_monthly_budget,
         oil_gen_idx=oil_budget_gen_idx,
         oil_month_index=oil_budget_month_index,

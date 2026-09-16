@@ -110,6 +110,77 @@ def resolve_hydro_period_hours(iso, dispatch_fleet, hydro_gen_idx, config):
     return periods
 
 
+def resolve_hydro_cascade(iso, year, dispatch_fleet, hydro_gen_idx, config):
+    """Return the hydraulic-cascade LP spec for this ISO-year, or ``UNSET``.
+
+    ONE resolver for BOTH orchestrators (``runner.py`` and
+    ``scripts/run_calibration.py``), the :func:`resolve_hydro_period_hours`
+    discipline — nyiso-220 wired only the forecast path and the mechanism was
+    silently inert in every backcast solve.
+
+    Loads :func:`~market_sim.data.hydro.load_hydro_cascade` for the year's
+    hydro generators and re-bases its plant-local generator indices onto
+    ``dispatch_fleet`` (``hydro_gen_idx`` indexes the fleet, the hydro units
+    being one contiguous appended block).
+
+    Returns :data:`~market_sim.pipeline.spec.UNSET` — which
+    :meth:`DispatchSpec.to_dispatch_kwargs` omits from the mapping entirely —
+    whenever the mechanism is off (``config.hydro_cascade_coupling`` False),
+    the ISO has no cascade artifact, the year is outside it, or no coupled
+    plant is in the fleet. That is what keeps every unarmed run's
+    dispatch-kwargs key set, and therefore its LP, byte-identical.
+
+    Args:
+        iso: ISO code.
+        year: Solve year.
+        dispatch_fleet: This year's LP-ready generator list.
+        hydro_gen_idx: Indices of the hydro generators within ``dispatch_fleet``.
+        config: Scenario config carrying the gating flag.
+
+    Returns:
+        A :class:`~market_sim.model.lp.hydro_cascade.HydroCascadeSpec` with
+        fleet-level generator indices, or ``UNSET``.
+    """
+    from market_sim.pipeline.spec import UNSET
+
+    if not getattr(config, "hydro_cascade_coupling", False):
+        return UNSET
+    if hydro_gen_idx is None or not len(hydro_gen_idx):
+        return UNSET
+    from dataclasses import replace
+
+    from market_sim.data.hydro import load_hydro_cascade
+
+    hidx = np.asarray(hydro_gen_idx, dtype=int)
+    codes = [int(getattr(dispatch_fleet[i], "plant_code", 0)) for i in hidx]
+    spec = load_hydro_cascade(iso, int(year), codes, hours=int(config.hours))
+    if spec is None:
+        logger.info(
+            "%s %d: hydro cascade coupling armed but INERT — no coupled plant "
+            "resolves onto this year's LP hydro fleet",
+            iso,
+            year,
+        )
+        return UNSET
+    up = np.asarray(spec.link_up_gen_idx, dtype=int)
+    spec = replace(
+        spec,
+        coupled_gen_idx=hidx[np.asarray(spec.coupled_gen_idx, dtype=int)],
+        link_up_gen_idx=np.where(up >= 0, hidx[np.maximum(up, 0)], -1),
+    )
+    logger.info(
+        "%s %d: hydro cascade coupling — %d coupled plants %s, %d links, tau by "
+        "link %s h",
+        iso,
+        year,
+        spec.n_coupled,
+        spec.plant_codes.tolist(),
+        spec.n_links,
+        np.asarray(spec.link_tau).tolist(),
+    )
+    return spec
+
+
 def build_base_dispatch_kwargs(
     spec: DispatchSpec,
     *,

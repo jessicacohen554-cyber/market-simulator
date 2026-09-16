@@ -102,6 +102,12 @@ class DispatchSpec:
     # from to_dispatch_kwargs entirely, so every run that does not arm the
     # mechanism keeps a byte-identical kwargs key set.
     hydro_period_hours: Any = UNSET
+    # Hydraulic-cascade coupling spec (NWPP-36, owner ruling N3,
+    # config.hydro_cascade_coupling): the measured chain's water-balance rows.
+    # UNSET (the default — the flag off, no artifact, or nothing resolves)
+    # is omitted from to_dispatch_kwargs entirely, so every run that does not
+    # arm the mechanism keeps a byte-identical kwargs key set and LP.
+    hydro_cascade: Any = UNSET
     # RPS ACP ceiling ($/MWh) — prices the ACP escape column that keeps the RPS
     # row feasible and caps its dual. UNSET (backcast, which disables the RPS)
     # is omitted from the kwargs, so the LP key set there is unchanged.
