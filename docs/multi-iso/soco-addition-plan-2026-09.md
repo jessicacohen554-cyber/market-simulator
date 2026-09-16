@@ -716,7 +716,24 @@ The desk issues these against the SPP program's own W3/W4 charters, which are co
 - **SOCO-32** (zonal shares, solar shape, gas hub) — shares from FERC-714 (§2.5), **not** sub-BA;
   no wind in the footprint worth shaping; gas hub per SOCO-12's basis finding.
 - **SOCO-33** (seam derive) — served EIA-930 `Total interchange` (card S4).
-- **SOCO-34** (site + docs) — eight-region prose, `docs/calibration-log/soco.md` header.
+- **SOCO-34** (site + docs) — **NINE**-region prose (not eight — NWPP registered the same day and took
+  the eighth slot), `docs/calibration-log/soco.md` header, **plus the four items SOCO-20 §7 routed here**
+  (`docs/multi-iso/README.md` prose, `build_status.ISO_ORDER`, `keeper_store`, `render_data_dictionary`,
+  `frontend/data/backcast/keepers/index.json` display order). **AND — added r#7 — the explicit debt
+  NWPP-35 left for this lane and cited in place, which did not exist when W3 was issued at r#6.**
+  NWPP-35 swept the shared site prose to nine regions but correctly did NOT serialize SOCO (rule 25
+  `[R-ISO-SCOPE]`), and said so in the artifact rather than leaving it to be discovered:
+  `docs/codebase-site/data/iso-topologies.json` `_meta.description` reads *"_ISO_BUILDERS carries NINE
+  registered regions at 2026-09-14 (… SPP NWPP SOCO); eight are serialized here. SOCO registered the same
+  day as NWPP and its block is owed by the SOCO desk's own site lane, not by this one."* So SOCO-34 owes,
+  specifically: (a) SOCO's block in `iso-topologies.json` (keys are currently the eight without SOCO) and
+  the `_meta.description` updated once it lands; (b) SOCO's filter entry at
+  `docs/codebase-site/data-completeness.html:364`, where the same debt is marked in a code comment;
+  (c) `config-reference.html:404`, which reads *"the **eight** serialized into `iso-topologies.json`
+  render below"* and becomes nine; (d) a CHECK, not an assumption, that `index.html:297`'s
+  *"Nine regions, 47 zones (44 carry load), 58 transmission links"* already counts SOCO's three zones —
+  if it does not, the count is wrong in the other direction and this lane fixes it. **This is a debt
+  handed over cleanly by another program's lane, not a collision** — the citation is in the artifact.
 - **SOCO-40** (first solve) — **ONE shard, ONE `--year 2023 2024 2025`, ONE bundle** (rule 32(b));
   the shard pushes its bundle to its own branch by the §8.0 rule 7 mechanics — `.gitignore`
   negation then a **plain `git add`, never `git add -f`**, bundle including
