@@ -11,6 +11,138 @@ recreated fresh from `origin/main`.
 
 ## 0. Live state — newest entry FIRST
 
+### r#6 — 2026-09-14 — **SOCO IS REGISTERED** · SOCO-20 GRADES PASS · W3 ISSUED · the desk's own G23 was wrong about the one step that mattered (main `d54cd9c5`)
+
+**SOCO is the NINTH registered region.** `_ISO_BUILDERS` on main is nine keys ending `"SOCO"`; PR #6152
+merged as *"Register SOCO as the **ninth** region (SOCO-20)"* after the lane rebased onto the
+NWPP-inclusive main. W2 is CLOSED. W3 is unblocked and issued below.
+
+**SOCO-20 — graded PASS, by content.** Verified on main rather than taken from the FINDING:
+`_ISO_BUILDERS` / `DEMAND_LOADERS` / `SURFACE_ISOS` all carry SOCO; `BA_CODE_TO_ISO["SOCO"]="SOCO"` and
+`_ISO_TO_BA_CODE["SOCO"]` both present (the §2.3 pin the desk added at r#3–r#4, and the one NWPP's
+precedent did NOT discharge); three zones on the **five**-respondent shares card S3 re-ruled, Southern
+Power 186 excluded. **G8 holds** — 0 moved rows for all eight incumbents, seven keepers' `cache_key()`
+byte-identical. What earns the grade is not the pin flip but the conduct around it:
+
+- **Every** remaining test failure carries a **same-tree control** — "FAILS on main's code, same tree" —
+  rather than an assertion that it is pre-existing. That is the standard this desk should hold every
+  lane to, and it is the first lane to volunteer it unprompted.
+- The lane found `--rescope-from-parquet` **corrupting** the tables it was told to regenerate, repaired
+  them by hand to an identity standard, and **ROUTED the script defect instead of patching outside its
+  regions** — the STOP-and-route discipline working in the direction that costs the lane time.
+- It shipped its `## Log entry` (appended verbatim to `docs/calibration-log/soco.md` this sitting).
+  E-6's correlation holds at 4/4 for pack-copied charters and 0/2 for desk-drafted ones.
+
+**The desk was wrong, and it was wrong about the step it had just written a gate for.** G23 told the
+rebasing lane the parquet conflicts were mechanical — *"no judgment call"* — and offered a **census** as
+the check. The rescope dropped the eGRID `heat_rate` join on four of eight tables, added a column,
+reordered another and admitted a foreign PJM row; **every count still matched**, so the census this desk
+prescribed would have passed all of it. Recorded as **E-8**, G23 corrected to the lane's proven recipe
+(main's frame byte-for-byte + the new rows, `heat_rate` from the PLNT23 cache, and `.equals()` on the
+untouched slice — an identity, never a count). Two sittings, two errors of the same shape: right about
+the data, wrong about the code.
+
+**Routed this sitting:** **R-l** the `process_eia860` non-additivity (the committed tables are repaired,
+the script is not — and SPP-20 and NWPP-20 ran the same routine, so their tables deserve the same
+`.equals()` audit); **R-m** 20 undeclared D79 SOCO rows, the same state SPP-20 left, now a
+two-region-wide protocol gap rather than either lane's miss; **R-n** `solve_surface.py:75` still calls
+SOCO "the eighth registered region".
+
+**W3 ISSUED — SOCO-30/31/32/33/34**, per §8's standing instruction (against SPP's committed W3 charters
+plus the SOCO deltas). **SOCO-32 carries card S3's exclusion of Southern Power (186) as a hard
+precondition**, so the zonal share is never quietly rebuilt on six respondents — the specific failure
+this desk flagged at r#5 before the lane existed.
+
+**Open, and the owner's:** PR **#6144** (r#5 + r#6 records) is still unmerged, and it is now costing
+something measurable — SOCO-20 had to route *"ledger r#5 five-respondent ruling not on main"* as an item
+because the lane could not cite it. Its seven red checks are all base-branch, covered by one
+standing-down comment, and its diff is markdown only.
+
+---
+
+### r#5 — 2026-09-14 — ALL FIVE LANES LAND AND ALL FIVE PASS · GATE G22 FAILS AND THE GATE IS THE POINT · **SOCO-20 IS CLEARED** (main `39a1c9a1`)
+
+**Graded BY CONTENT — five FINDINGs opened, five PASS.** The r#4 re-emission worked: every lane
+that had stood undispatched came back, and two of them came back with a NO, which is what a
+well-built gate is supposed to produce.
+
+| Lane | Verdict | What it actually established |
+|---|---|---|
+| **SOCO-13** EQR price index | **PASS — and the answer is NO** | Three of five pre-registered gates fail: **D2.2** every year (indexed short-term energy **3.66 / 2.69 / 2.64 %** of SOCO demand vs a ≥ 5 % bar), **D3.1** in 2024/25 (**+54.2 / +72.1 %** vs the SEEM auditor's annual clearing price, ±15 % bar), **D4.2** in 2025 (2.008 vs 0.8–2.0). D1, D2.1, D3.2, D3.3, D4.1, D5 pass. **No bar was moved after the series was seen** — the one post-PRECOMMIT change, addendum A, corrected the D3 anchor's *source* before `build` first ran and moved no number, and the FINDING **reports D3 on the original letter too, where it also fails**. Nothing landed to `_validation-source`; **G17 intact** |
+| **SOCO-14** BA membership | **PASS — gate G22 FAILS** | **Oglethorpe (107) YES** and **MEAG (210) YES**, both from primary sources, both cross-checked against an independent EIA-861 peak that equals the 714 series' own 2024 maximum. **Southern Power (186) a documented NO.** The lane reported the three **separately** as chartered and **refused to stretch** a generation-side document into a load-side claim |
+| **SOCO-15** COD seam | **PASS — the strongest lane of the program** | Repair on `main` (`9398000d`, PR #6127). **All three exit conditions MET** with evidence, not assertion. Eight footprints: four solved (MISO 2020–25, SPP 2023–25, ERCOT 2021–25, PJM 2023–25), four bounded by input census. **Both directions reported at full magnitude** |
+| **SOCO-21** matrix shard | **PASS** | Eighth shard, one commit (G2). **327** ids = **168 `U`** + **159 `·`**, one cell line per base id. `keeper`/`gates` deliberately EMPTY and **no verdict minted** — correct, because SOCO has no keeper, no registered run and no solve at HEAD |
+| **SOCO-22** rubric class | **PASS** | Rubric **v3.8**. Over **54 verdict files** (14 runs full-span + 40 per-year) the union of differing lines is exactly `rubric_version` 3.7 → 3.8, **54 times each, and nothing else**; all 14 `render_text` blocks byte-identical. The one permitted diff was **declared in the PRECOMMIT before the scorer was edited**. `PHYSICALLY-CALIBRATED (PRICE UNSCORED)`, never `CALIBRATED` |
+
+**THE SITTING'S REAL RESULT: A GATE THIS DESK BUILT FIRED, AND IT CHANGED THE ANSWER.** Gate G22
+existed because the desk's r#3 card-S3 ruling rested on an attribution nobody had cited. SOCO-14
+went and looked, found two of three, and returned a **documented NO** on the third rather than
+stretching the IIC contract or EIA-860's 11-of-53 plants into a load claim they do not support.
+The card came back to the owner exactly as designed, and **the owner re-ruled to the FIVE
+fully-cited respondents** — residual **3.03 / 2.92 / 1.26 %** — in preference to the six-respondent
+**1.63 / 1.50 / −0.03 %**. Two things make that the right trade and both are on the record: a
+cited basis beats a smaller residual (rule 13), and the six-set's 2025 residual going **negative**
+is the overshoot SOCO-11's own falsifier was built to detect. 186's 1.3–1.4 % is **excluded and
+named on the first keeper's determination basis**. G22 is now **DISCHARGED for the five-set and no
+other**.
+
+**Two cards closed themselves on the evidence, needing no owner time.** **S9** (`TAIL_THRESHOLD`)
+resolves **n/a** — SOCO-13's NO means no series, so no tail, so gate **G6**'s pre-specified skip
+branch fires and the three edits are deliberately skipped. **S12** closes: the repair is on `main`.
+
+**SOCO-20 IS CLEARED TO PROCEED.** Every precondition is now discharged: cards S1–S8, S11, S12
+ruled; **G12 MET** (SOCO-12's LTLF); **G22 discharged** on the five-set; **SOCO-15 landed** with the
+seven keepers' cache keys byte-identical. Its charter is issued in this sitting's report.
+
+**ERRORS AND OMISSIONS, recorded because the record is the deliverable.** **SOCO-15 and SOCO-21
+shipped no `## Log entry` section**, which plan §8.0 rule 1 requires so the desk can append
+verbatim. The desk **did not fabricate their words**: `docs/calibration-log/soco.md` carries the
+three that exist verbatim and, for those two, a **clearly-labelled DESK-AUTHORED STUB** giving only
+what another ISO's lane must know, pointing at the FINDING. For SOCO-15 that is load-bearing: its
+repair **moves results for registered keepers while leaving cache keys untouched**, so a lane whose
+numbers shift and whose key does not needs to find this entry rather than open a regression hunt.
+
+**Gates at `39a1c9a1`** — the base-branch debt **grew again**, and every increment is another
+program's promotion:
+
+| Gate | Exit | Note |
+|---|---|---|
+| `audit_keepers.py --check` | **1 — RED** | 5 failures: MISO **E13 ×4**, plus **S1** status stale vs current verdicts (ERCOT) |
+| `check_gate_a_provenance.py` | **1 — RED** | now **THREE** ISOs — MISO, NYISO **and SPP** — plus an SPP marker/`calibration-complete.json` inconsistency |
+| `check_forecast_parity.py` (FR-22) | **1 — RED** | now **TWO** undeclared NYISO mechanisms: `gas_offer_margin_zonal_anchor_vintage` **and** `nyiso_st_gas_econ_bands_deleaked` — the second arrived with the nyiso-232 promotion |
+| `check_mechanism_matrix` · `check_bench_freshness` · `check_golden_manifest` | 0 | |
+
+**Next act:** sitting #6 — grade SOCO-20, then issue W3 (SOCO-30/31/32/33/34). **SOCO-32 must be
+issued against the FIVE-respondent set**, and its charter must carry S3's exclusion of 186 so the
+share is never quietly rebuilt on six.
+
+**ADDENDUM — r#5 check-in, 2026-09-14 ~16:40 UTC (main `c6c70190`). SOCO-20 is DONE, and it is
+BLOCKED — by NWPP, not by itself.** The scheduled check-in on PR #6144 fired against a moved main
+and the picture inverted in both directions:
+
+- **SOCO-20 never stalled.** Its tip sat at `e85bd85e` for ~8 h because it **finished** — 5 commits,
+  77 files, `FINDING-soco-20-2026-09-14.md` shipped, PR **#6152 open**. The r#4/r#5 reading of an
+  unmoved tip as an in-flight lane was wrong in the safe direction (gate G15: never grade on
+  absence) but it was still wrong, and one `git ls-tree` on the branch would have shown it.
+- **NWPP-20 (PR #6153) merged first and took the eighth slot.** `_ISO_BUILDERS` on main is nine
+  keys with `"NWPP"` last; `mech_matrix.ISO_ORDER` already carries both (SOCO `O`, NWPP `W`). **SOCO
+  is the NINTH region** and every "eighth" in this plan, in SOCO-20's commit subject and in its own
+  `fleet/models.py` comment is stale.
+- **PR #6152 now carries 55 conflict markers across 25+ files**, and one of them is not mechanical:
+  NWPP-20 made `BA_CODE_TO_ISO` **many-to-one** and **deleted the scalar inverse** as a silent
+  1/17-of-a-pool bug; SOCO-20's branch **writes that exact scalar inverse**. Taking SOCO's side at
+  the merge breaks NWPP. Recorded as collision **C-7**, resolution as gate **G23**, and the desk's
+  own misreading of the same evidence at r#3 as error **E-7**.
+- **PR #6144 (this desk) is clean against the new main** — `merge-tree` reports zero conflicts, so
+  no rebase was needed. This addendum and C-7/E-7/G23 ride it.
+
+**The rebase is the LANE's, not this desk's** — the 8 `eia860_generators.parquet` conflicts and
+every `src/`/`scripts/` hunk are outside this desk's write scope. One comment posted on #6152
+naming the hazard and the resolution; **what the owner owes is a re-dispatch of SOCO-20 to rebase
+per G23**, since a desk cannot rebase a lane's branch for it.
+
+---
+
 ### r#4 — 2026-09-13 — NOTHING LANDED, AND THAT IS THE FINDING: FIVE LANES ISSUED, ZERO DISPATCHED (main `33a7c961`)
 
 **Graded: nothing, because nothing exists to grade.** `git log cd09607a..origin/main --grep=SOCO -i`
@@ -334,12 +466,12 @@ option (a)).
 | SOCO-10 audit | OPUS | W1 | **LANDED r#3 — GRADED PASS** | PR #6091 (`a23a4212`, `b4d0dd92`) | `FINDING-soco-10-2026-09-13.md` + `soco-data-audit.md` |
 | SOCO-11 CEMS + FERC-714 + interchange | OPUS | W1 | **LANDED r#3 — GRADED PASS**, gate failure included | PR #6083 | `FINDING-soco-11-2026-09-13.md` |
 | SOCO-12 documents + gas | OPUS | W1 | **LANDED r#3 — GRADED PASS**; gate G12 MET | PR #6092 (`738fc0ab`, `98c1fd92`) | `FINDING-soco-12-2026-09-13.md` |
-| SOCO-13 EQR price index | FABLE | W1 | **ISSUED r#2, RE-EMITTED r#4** — undispatched ~8 h; carries SOCO-12's anchor candidate and NWPP-13's worked precedent | — | — |
-| SOCO-14 BA membership | OPUS | W1 | **ISSUED r#3, RE-EMITTED r#4** — undispatched; gate G22 blocks SOCO-32 | — | — |
-| SOCO-15 COD seam (cross-ISO) | FABLE | W1.5 | **ISSUED r#3, RE-EMITTED r#4** — undispatched; **blocks SOCO-20** | — | — |
-| SOCO-22 rubric class | FABLE | W1.5 | **ISSUED r#3, RE-EMITTED r#4** — undispatched; **W4 cannot score without it** | — | — |
-| SOCO-20 registration | FABLE | W2 | **UNBLOCKED ON CARDS AND ON G12** (S3–S8 all ruled r#3; G12 MET by SOCO-12). Now blocked only on **SOCO-15 landing** (card S12) and **G22** (SOCO-14's citation). Issuable at sitting #4 | — | — |
-| SOCO-21 matrix shard | OPUS | W2 | **ISSUED r#2, RE-EMITTED r#4** — undispatched ~8 h | — | — |
+| SOCO-13 EQR price index | FABLE | W1 | **LANDED r#5 — GRADED PASS, verdict NO** (3 of 5 gates fail; no bar moved) | PR #6129 | `FINDING-soco-13-2026-09-13.md` |
+| SOCO-14 BA membership | OPUS | W1 | **LANDED r#5 — GRADED PASS; gate G22 FAIL, 2 of 3 cited** → card S3 re-ruled to the five-set | merged | `FINDING-soco-14-2026-09-13.md` |
+| SOCO-15 COD seam (cross-ISO) | FABLE | W1.5 | **LANDED r#5 — GRADED PASS**, all three exit conditions MET; **SOCO-20 CLEARED**. Owes a `## Log entry` (desk stub in its place) | PR #6127/#6135 | `FINDING-soco-15-2026-09-13.md` |
+| SOCO-22 rubric class | FABLE | W1.5 | **LANDED r#5 — GRADED PASS**, rubric v3.8, seven keepers byte-identical; NWPP adopted it | merged | `FINDING-soco-22-2026-09-13.md` |
+| SOCO-20 registration | FABLE | W2 | **CLEARED AND ISSUED r#5** — every precondition discharged: cards ruled, G12 MET, G22 discharged on the five-set, SOCO-15 landed with seven cache keys byte-identical | — | — |
+| SOCO-21 matrix shard | OPUS | W2 | **LANDED r#5 — GRADED PASS**, 327 ids / 168 `U` / 159 `·`, no verdict minted. Owes a `## Log entry` (desk stub in its place) | merged | `FINDING-soco-21-2026-09-13.md` |
 | SOCO-30/31/32/33/34 | OPUS | W3 | BLOCKED on SOCO-20 | — | — |
 | SOCO-40 first solve | FABLE | W4 | BLOCKED on SOCO-30/31/32 **and on card S11** — the scorer cannot express S2's determination class yet | — | — |
 | SOCO-22 rubric class | FABLE | W2/W3 | **NOT ISSUED** — card S11 (sitting #3) decides whether this desk charters it or routes it | — | — |
@@ -359,7 +491,8 @@ option (a)).
 | S6 | adequacy | **RULED r#3**, verbatim: *"Register winter 26.0% as the scalar, misalignment documented (Recommended)"* — SOCO is winter-peaking in 2 of 3 backcast years; a seasonal registry for all ISOs was offered and declined as an ISO-addition act | 2026-09-13 |
 | S7 | the CAES unit | **RULED r#3**, verbatim: *"Map to a gas CT at the 25 MW rating (Recommended)"* — SOCO-10 corrected the charter's 110 MW nameplate to the source's own 25 MW rating, a 77 % derate | 2026-09-13 |
 | S8 | mid-window nuclear commissioning | **ANSWERED AND SUPERSEDED BY S12** — the machinery resolves neither the month nor the year for a brownfield addition | 2026-09-13 |
-| S9 | `TAIL_THRESHOLD` | **STILL DEFERRED behind SOCO-13**, as the plan says | — |
+| S9 | `TAIL_THRESHOLD` | **RESOLVED r#5 — n/a, no card needed.** SOCO-13 returned NO, so no series, so no tail; gate G6's pre-specified skip branch fires and the three edits are deliberately skipped | 2026-09-14 |
+| S3 | topology (RE-RULED) | **RE-RULED r#5**, verbatim: *"FIVE respondents — the fully-cited set (Recommended)"* — AP + GP + MP + Oglethorpe (107) + MEAG (210); Southern Power (186) EXCLUDED as a documented NO and named on the first keeper's determination basis. Residual 3.03 / 2.92 / 1.26 % | 2026-09-14 |
 | S10 | W6 routing | **PENDING** — due when a keeper exists | — |
 | S11 | who implements S2's determination class | **RULED r#3**, verbatim: *"This desk charters it as SOCO-22 [FABLE] (Recommended)"* — one added branch keyed on the ABSENCE of an `actual_lmp.json` block, byte-identity proof over all seven keepers as its exit, serving NWPP's card N2 with the same amendment. Issued r#3 | 2026-09-13 |
 | S12 | the COD-seam defect (SOCO-10's R-4) | **RAISED AND RULED r#3**, verbatim: *"Charter a cross-ISO repair lane BEFORE SOCO-20 (Recommended)"* — issued as SOCO-15 `[FABLE]`. Floor stands regardless of outcome: the bias is stated on SOCO's first keeper's determination basis | 2026-09-13 |
@@ -376,7 +509,12 @@ option (a)).
 | R-g | **SHA256SUMS.txt scope** — SOCO-11 deliberately did not add rows for the tracked 2019-2026 CEMS files, since that file's own header scopes it to the 35 gitignored `<ST>_2018` extracts and git's blob hashes are the tracked files' integrity record | the desk | The desk **agrees with the lane** and records it as correct, not outstanding: adding rows would misrepresent the file's stated scope. No action; noted so a later lane does not "fix" it |
 | R-h | **EIA-930 defect screens catch none of the three real SOCO defects** SOCO-10 found (four `NG: NG` hours at ~70 GW against a 36,336 MW gas fleet; the netgen identity breaking in 2025 only, 595 h; a 1-h partial demand dropout) — `_screen_demand_spikes` is high-side only, `_screen_demand_dropouts` is exact-0.0 only, and **no repo screen touches a fuel column at all** | the data/curation owner | SOCO-10 correctly proposed **no new constant** (rule 23 — setting a threshold after seeing the outliers is a fitted threshold). Cross-ISO, not SOCO's to fix |
 | R-i | **SOCO's 1,306.6 MW of pumped storage is UNOBSERVABLE in EIA-930 for 2023 and most of 2024** — `NG: PS`/`BAT`/`SNB`/`OES` are a taxonomy cut-over at 2024-07-15, and `NG: WAT` never goes negative before it (min +32 MW), so PS charging was not folded into hydro, it was not reported | SOCO-31 (benchmarks) | A hard constraint on the **C1 `fuelmix`** benchmark, not a bug to fix. Must be stated on SOCO's first keeper's determination basis |
+| R-j | **The base-branch debt is now GROWING with each promotion, not static.** At r#5: gate-(a) red on **three** ISOs (MISO, NYISO, **SPP**) plus an SPP marker/`calibration-complete.json` inconsistency; FR-22 on **two** undeclared NYISO mechanisms (`gas_offer_margin_zonal_anchor_vintage`, `nyiso_st_gas_econ_bands_deleaked`); `audit_keepers` at 5 failures including a new **S1** status-stale on ERCOT | the promoting lanes; the capx director's gate (a) | Every increment arrived with a promotion that did not finish its duties — the exact failure mode rule 35 `[R-PROMOTE]` names. Not this desk's files. **Reported once here; the desk will not re-report it each sitting.** **PARTLY FALSIFIED at the r#5 check-in (main `c6c70190`) — corrected rather than left standing.** "Growing with each promotion" was true at r#5 and is not a law: measured just now, `audit_keepers --check` is **1 failure / 4 warnings**, down from 5 failures. **MISO's E13 ×4 CLEARED** — the MISO promotion swept and `2026-09-12-miso-255-sil-measured` is designated with no orphan runs, which is rule 35 `[R-PROMOTE]`'s invariant actually holding. What remains: the lone FAILURE is **S1 status-stale, and it grew from ERCOT alone to ERCOT + CAISO + NEISO** (fix: `python scripts/build_status.py`, three ISOs' `status/*.js`, so rule 35(a) puts it on those lanes); plus two new WARNs — **NYISO E11** (see G21) and **MISO E3** (`meta.json` years `[2020…2025]` vs `calibration_flags` years `[2023]`). The honest shape is **churn, not monotone growth**: promotions clear their own debt and open new debt elsewhere |
 | R-e | `audit_keepers` **E13 RED ×4 on MISO** at `c4d4a108` — `2026-09-09-miso-250-ep-gas` registered but neither keeper nor stamped, and three `miso-251` runs stamped to it; plus E11 on NYISO's missing lineage baseline. Separately: **Ruff** 2 errors (`scripts/gen_nyiso229_attestation.py:63`) and the **default cache-key pin** off its literal (`1eefed49…` → `bd2b4657…`), which reds both the pin check and the structural guards | MISO lane · NYISO lane · capx (cache fingerprint) | All in `src/`/`scripts/`/`frontend/`, none this desk's to write. Stood down on PR #6090 with one comment and no ported fix; no re-run spent (deterministic, reproduced locally). **They will red every SOCO PR until repaired**, so a future sitting must not read them as its own regression |
+| R-k | **The BLOCKING `Structural refactor guards` gate is red on a FALSE POSITIVE stacked on a real stale docstring — and both obvious repairs are wrong.** Root-caused at the r#5 check-in from the #6144 failure. (i) `scripts/ci_refactor_guards.py:52` is `_SCRIPT_REF_RE = re.compile(r"scripts/[\w/.\-]+\.py")` — **no left word boundary**, so any path *containing* `.../scripts/foo.py` is read as repo-root `scripts/foo.py`. Proved empirically: on `scripts/run_calibration_full.py:3780` it yields `scripts/test_recorded_config_gas_anchor_mirror.py`; adding `(?<![\w/])` yields **zero** matches. (ii) that same docstring is **independently wrong** — it cites `tests/unit/`**`scripts`**`/test_recorded_config_gas_anchor_mirror.py` but the file is tracked at `tests/unit/`**`data`**`/…` (created by nyiso-231, `0acedb7e`). So the gate is red for a genuine doc error, surfaced through a buggy lint | the CI owner (the regex) · the NYISO lane (the docstring) | **Both need fixing, and the two tempting one-liners are each a paper-over**: creating a stub at `scripts/` would satisfy a regex bug with a fake file, and adding the string to `KNOWN_DANGLING` would allowlist a real stale path AND leave the regex mis-reporting every future nested `scripts/` reference. A false positive in a blocking gate is worse than a true failure — it trains lanes to read a red as noise. Not this desk's files (`scripts/`). Diagnosis recorded here so the next lane does not repeat the four-call root-cause |
+| R-l | **`process_eia860.rescope_generator_table_from_parquet` is NOT additive when columns differ** — its last line writes the RAW rebuild, so a rescope DROPS the eGRID `heat_rate` join (8,101 populated rows on the canonical table), ADDS `planned_retirement_month`, reorders `balancing_authority_code`, and admits foreign rows (one PJM plant, 60781). Found by SOCO-20 when its own rescope tripped `test_fleet` heat-rate pins, `test_egrid_boundary_heat_rate`, `test_cc_steam_part_reclass` and `test_derive_coal_sigmoid` | the data-curation owner (routed BY SOCO-20 through this desk) | **The committed tables are REPAIRED; the script is not.** The proven recipe is in gate G23 and in SOCO-20's FINDING §4: main's frame byte-for-byte + the new region's rows only, `heat_rate` joined from the PLNT23 cache, and **the non-new slice `.equals()` main's frame** asserted per file. **Every future region addition hits this** — SPP-20 (`3117f06a`) and NWPP-20 both ran the same routine, so their tables are worth the same `.equals()` audit |
+| R-m | **D79 solve-surface: 20 undeclared SOCO rows** (`solve_surface_register.py --diff` shows SOCO 20 = its own new rows). There is no `--declare-iso` route, so a new region cannot declare its own rows without touching the shared declaration file | SOCO-DESK (the R-1 successor) | **Same state SPP-20 left**, so the gap is now two regions wide and is a registration-protocol defect rather than either lane's miss. Gate G8 is unaffected — 0 moved rows for all eight incumbents — so nothing is mis-keyed; what is missing is the declaration, not the correctness |
+| R-n | **`config/solve_surface.py:75` calls SOCO "the eighth registered region"** — it is the NINTH; NWPP took eighth the same day. The PR title was corrected to "ninth" and the `_ISO_BUILDERS` comment is right, so this is the one place the same-day collision left stale | whoever next edits `solve_surface.py` | Cosmetic, and named only so a later reader does not trust it over `SUPPORTED_ISOS`. `src/`, outside this desk's write scope. (Swept the rest: `export_lce_lmp.py:109` and `test_mechanism_matrix_keeper_stamp.py:37` both read correctly in context) |
 
 ## 4. Collision register
 
@@ -388,6 +526,7 @@ option (a)).
 | C-6 | `data/raw/zone-specific-demand/SOCO/SOURCES.md` | SOCO-11 (landed), SOCO-14 (issued) | **Append-only** for SOCO-14 — it adds BA-membership citations beneath SOCO-11's committed eight-respondent table and edits none of it |
 | C-4 | `scripts/lib/mech_matrix.py` `ISO_ORDER`/`ISO_EV_KEY`, `tests/unit/config/test_mechanism_matrix_shard_migration.py` | SOCO-21 (this program), any ISO addition | **Measured gate-independent from SOCO-20 at r#2**: neither `mech_matrix.py` nor `check_mechanism_matrix.py` references `SUPPORTED_ISOS` or `_ISO_BUILDERS`, and the shard test's own comment records SPP's column being seeded before SPP's first keeper. An 8-ISO matrix over a 7-ISO registry is a supported intermediate state |
 | C-3 | W1 lane surfaces (`campd-unit-level/`, `zone-specific-demand/`, the two fetch scripts, doc 00) | — | **CHECKED CLEAR at r#1**, pin `2c2fc065`: last touch `db5f11ea` (PR #6000), not a live lane. No hold |
+| C-7 | `src/market_sim/data/fleet/models.py` `BA_CODE_TO_ISO` + the ISO→BA direction; the 8 `data/raw/eia-860/**/eia860_generators.parquet` tables; and ~23 further registration modules | **NWPP-20 (PR #6153), which MERGED FIRST** — 78 files, registered NWPP as the **eighth** builder at 2026-09-14 | **LIVE AND BLOCKING, measured at the r#5 check-in (main `c6c70190`).** SOCO-20's PR #6152 is complete (5 commits, 77 files, FINDING shipped) and now carries **55 conflict markers across 25+ files**. Two halves, and only one is mechanical: (i) the 8 parquets are **derived** — `process_eia860.py` filters on `BA_CODE_TO_ISO`, so re-running curation on merged main regenerates both regions' rows; (ii) `fleet/models.py` is **semantic** — SOCO-20's scalar inverse is the construction NWPP-20 deleted as a silent 1/17-of-a-pool bug, so taking SOCO's side breaks NWPP. Resolution recorded as gate **G23**; the rebase is the LANE's (parquet + `src/` are outside this desk's write scope). **SOCO is now the NINTH region, not the eighth** — every "eighth" in the plan, in SOCO-20's commit message and in its `fleet/models.py` comment is stale |
 
 ## 5. Issuance record
 
@@ -396,6 +535,8 @@ option (a)).
 | r#0 | 2026-09-12 | none (charter commit) | none |
 | r#1 | 2026-09-13 | **SOCO-10, SOCO-11, SOCO-12** (plan §8 W1, verbatim, pinned `2c2fc065`). SOCO-13 HELD on card S2 | **S1, S2** |
 | r#2 | 2026-09-13 | **SOCO-13** (plan §8 W1, verbatim, pinned `7404ef12` — S2 ruled) · **SOCO-21** (plan §8 W2, verbatim, pinned `7404ef12` — S1 ruled, C-2 lifted) | **S1 RULED, S2 RULED**; **S11 raised**, due sitting #3 |
+| r#6 | 2026-09-14 | **SOCO-30, SOCO-31, SOCO-32, SOCO-33, SOCO-34** (plan §8 W3), pinned `d54cd9c5`. Issued per §8's standing instruction — **against SPP's committed W3 charters** (`docs/multi-iso/spp-addition-plan-2026-09.md` §8, SPP-30 L972 / SPP-31 L1008 / SPP-32 L1056 / SPP-33 L1112 / SPP-34 L1144, read VERBATIM by each lane) **plus the SOCO deltas §8 names**, so the desk transcribes nothing and E-6's desk-drafted-charter failure mode is not re-entered. Each charter ends with the pack's EXIT boilerplate **including the `## Log entry` line** (E-6 remedy). **SOCO-32 carries card S3's exclusion of Southern Power (186) as a HARD PRECONDITION** | none — no card was due; **S10** (W6 forecast routing) stays open until a keeper exists |
+| r#5 | 2026-09-14 | **SOCO-20** `[FABLE]` — the registration pin flip, cleared on every precondition | **S3 RE-RULED** (five-set); **S9 resolved n/a**; **S12 closed** |
 | r#4 | 2026-09-13 | **RE-EMITTED all five undispatched lanes** — SOCO-13, SOCO-14, SOCO-15, SOCO-21, SOCO-22 — as one paste-ready block pinned `33a7c961`, in dependency order (owner ruling r#4). No new lane created | dispatch card SERVED and RULED |
 | r#3 | 2026-09-13 | **SOCO-14** `[OPUS]` · **SOCO-15** `[FABLE]` · **SOCO-22** `[FABLE]` — all three created by this sitting's rulings, pinned `c93b0d27`. None existed in the charter's prompt pack, so all three are written charters rather than verbatim copies (plan §5 rows added) | **S3, S4, S5, S6, S7, S11 RULED; S12 raised AND ruled**; S8 answered/superseded; S9 still deferred |
 
@@ -403,6 +544,16 @@ option (a)).
 
 *(The desk records its own mistakes here, in its own words, so the next refresh does not repeat
 them.)*
+
+**E-6 (r#5, against the desk's own charter-writing). Two of five lanes shipped no `## Log entry`,
+and the charters the desk wrote are why.** Plan §8.0 rule 1 requires it, and the three W1 charters —
+copied verbatim from the committed prompt pack — produced it three times out of three. The r#3/r#4
+charters for SOCO-15 and SOCO-21 were **written by the desk rather than copied from the pack**, and
+both omitted the explicit `## Log entry` line the pack's charters carry; both lanes then omitted the
+section. That is a **100 % correlation between the desk's own drafting and the missing duty**, on a
+population of five. Adopted forward: every desk-written charter ends with the pack's own EXIT
+boilerplate, `## Log entry` line included, and the desk diffs a new charter against a pack charter
+before issuing it.
 
 **E-4 (r#3, against the charter — the biggest of the four so far). The desk built a plan around a
 load spine it never checked, and a two-number test would have falsified it in the chartering
@@ -463,3 +614,7 @@ in the prompt."* The charter is this desk's document; the defect was this desk's
 r#2, before any SOCO solve exists, which is the only reason it cost nothing. **Adopted forward: a
 CLAUDE.md rule that lands after a plan is chartered is a refresh edit due at the NEXT sitting, not
 whenever a lane trips over it.**
+
+**E-7 (r#5 check-in, against this desk's own §2.3). The row that found the `_ISO_TO_BA_CODE` pin drew the wrong conclusion from the same evidence.** §2.3's `_ISO_TO_BA_CODE` row closed with *"NWPP's harder case does not apply here — its 17→1 BA map collapses to one arbitrary BA and fails **silently** at 13 `==` call sites, while SOCO is one BA and one code."* That is correct about **SOCO's data** and wrong about **the codebase**: NWPP's case applied to SOCO not as a data problem but as a **merge hazard**, because NWPP-20's repair *deleted the scalar inverse SOCO-20 was concurrently writing*. The desk had the 13-call-site silent-failure sentence in front of it at r#3, quoted it, and still read it as "not our problem" rather than "this construction is being removed from under us." It cost nothing only because the check-in caught it before the merge. **Adopted forward: when another program's lane reports a defect in a surface this program also writes, record what it CHANGED, not only whether the defect reproduces here — a repair that deletes a construction is a collision even when the bug is not.**
+
+**E-8 (r#6, against this desk's own gate G23). The desk called the parquet step mechanical, and it was the one step that needed judgment.** G23, written at the r#5 check-in, told the rebasing lane the 8 `eia860_generators.parquet` conflicts were *"derived artifacts, not data … re-running the curation step on top of merged main regenerates both regions' rows — no re-fetch, **no judgment call**"*, and offered a **census** (plants/generators counts) as the verification. SOCO-20 did exactly that and the routine silently dropped the eGRID `heat_rate` join on four of eight tables, added a column, reordered another and admitted a foreign PJM row. **A census would not have caught any of it** — every count still matched. The suite caught it, and the lane repaired it by hand and routed the script (R-l). The desk reasoned from the script's *inputs* ("it filters on `BA_CODE_TO_ISO`, therefore it regenerates correctly") without reading its *output path*, which is the same shape of error as E-7 one sitting earlier: correct about the data, wrong about the code. **Adopted forward: a gate that prescribes running a script states the assertion that proves the script did what it claims — for a derived table that is an IDENTITY check on the untouched slice (`.equals()`), never a count.** Corrected in G23 with the lane's proven recipe. *(Also corrected here: the desk's r#5 suggestion that the NEISO Mystic `oil != gas_cc` failure might be rescope residue. It is not — SOCO-20 §6.1 measures plant 1588 as genuinely carrying an oil steam unit AND GT1, so the test over-asserts that every unit under the plant is `gas_cc`. A test-expectation defect, not a data corruption; the desk's hypothesis was offered as a lead and the lane's evidence retired it.)*
