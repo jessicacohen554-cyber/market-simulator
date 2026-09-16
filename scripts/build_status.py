@@ -61,7 +61,10 @@ STATMODE_D7_FILE = DATA / "statmode_d7.json"
 # no keeper yet, so its card appears only once lane SOCO-40 registers one. NWPP,
 # registered the same day as SOCO, is still unlisted and falls through to the
 # alphabetical tail — an NWPP-desk gap, routed by SOCO-34 rather than filled here.
-ISO_ORDER = ("ERCOT", "PJM", "CAISO", "NYISO", "NEISO", "MISO", "SPP", "SOCO")
+# NWPP added 2026-09-16 (lane NWPP-40, the first NWPP registration) after SOCO,
+# the order the two regions registered in (NWPP-20 merged first, SOCO-20
+# second, plan §0) — presentation only; nothing is gated on this tuple.
+ISO_ORDER = ("ERCOT", "PJM", "CAISO", "NYISO", "NEISO", "MISO", "SPP", "SOCO", "NWPP")
 
 
 def _tail_note() -> str:
