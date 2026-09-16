@@ -57,6 +57,12 @@ from scripts.probes._pjm_h8_offer_ladder import (  # noqa: E402
 QUANT = REPO / "results/calibration/_pjm_h9_longrun_mixture_bound.json"
 OUT = REPO / "results/calibration/_pjm_h9_bound_applied.json"
 
+
+def _out_path(ref: str) -> Path:
+    """One artifact per blend reference so the two never overwrite each other."""
+    return OUT if ref == "own" else OUT.with_name(f"_pjm_h9_bound_applied_{ref}.json")
+
+
 #: Independent model-fleet admixture estimate (committed h8 ladder, 2023):
 #: ST_GAS 11,525.5 MW of 60,897.2 MW mapped onto LONG_RUN.
 W_HAT = 0.1893
@@ -75,17 +81,53 @@ def ladder_at(qdoc: dict, seg: str, year: int, p: float) -> np.ndarray:
     return np.array([[row[j] for row in b] for b in bins], dtype=float)
 
 
+def frozen_ladder(surface: dict, seg: str, year: int) -> np.ndarray:
+    """(n_bins, n_shares) ladder straight off the COMMITTED frozen surface."""
+    entry = surface[seg]
+    lad = entry.get("years", {}).get(str(year)) or entry["pooled"]
+    return np.array([[float(pt[1]) for pt in b] for b in lad], dtype=float)
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--years", nargs="*", type=int, default=[2023, 2024, 2025])
+    ap.add_argument(
+        "--allow-provisional",
+        action="store_true",
+        help=(
+            "proceed on a quantile artifact whose G-REPRO hard stop FAILED. Every "
+            "number is then PROVISIONAL and stamped so in the output. Overriding the "
+            "gate is deliberate and on the record; it is never the default."
+        ),
+    )
+    ap.add_argument(
+        "--blend-reference",
+        choices=["own", "frozen"],
+        default="own",
+        help=(
+            "which p=0.5 ladder is the 'measured_blend' the correction is measured "
+            "from: this probe's own re-derivation (default) or the COMMITTED frozen "
+            "surface. Running BOTH is the robustness check that says whether a "
+            "G-REPRO failure can move the verdict at all."
+        ),
+    )
     args = ap.parse_args(argv)
     t0 = time.time()
 
     qdoc = json.loads(QUANT.read_text())
-    if not qdoc.get("g_repro", {}).get("pass"):
-        print("G-REPRO did not pass in the quantile artifact — refusing to proceed.")
+    provisional = not qdoc.get("g_repro", {}).get("pass")
+    if provisional and not args.allow_provisional:
+        print(
+            "G-REPRO did not pass in the quantile artifact — refusing to proceed.\n"
+            "Pass --allow-provisional to override; every number is then PROVISIONAL."
+        )
         return 1
     pg = np.asarray(qdoc["pgrid"], dtype=float)
+    frozen_surface = json.loads(
+        (
+            REPO / "data/raw/_validation-source/pjm_offer_midcurve_condbinned.json"
+        ).read_text()
+    )
 
     out: dict = {
         "what": (
@@ -95,6 +137,15 @@ def main(argv: list[str] | None = None) -> int:
         ),
         "precommit": "docs/PRECOMMIT-pjm-h9-coal-only-comparator-2026-09-16.md",
         "w_hat": W_HAT,
+        "PROVISIONAL": provisional,
+        "provisional_note": (
+            "G-REPRO FAILED on the quantile artifact: these numbers are NOT certified "
+            "against the frozen surface. Run with --blend-reference frozen as well and "
+            "compare the verdicts."
+        )
+        if provisional
+        else None,
+        "blend_reference": args.blend_reference,
         "decision_rule": "phi(w_hat) < 0.25 -> B-NO; > 0.75 -> B-YES; else B-PARTIAL",
         "g_repro_cells": qdoc["g_repro"]["cells_checked"],
         "years": {},
@@ -171,7 +222,12 @@ def main(argv: list[str] | None = None) -> int:
             if sub.empty:
                 continue
             model = capwtd(sub, sub["model_hr"].to_numpy())
-            blend = meas_at(sub, ladder_at(qdoc, "LONG_RUN", y, 0.5))
+            blend = meas_at(
+                sub,
+                frozen_ladder(frozen_surface, "LONG_RUN", y)
+                if args.blend_reference == "frozen"
+                else ladder_at(qdoc, "LONG_RUN", y, 0.5),
+            )
             gap = blend - model
             curve = []
             for w in W_GRID:
@@ -185,17 +241,31 @@ def main(argv: list[str] | None = None) -> int:
                         "phi": round((blend - lo) / gap, 4) if gap else None,
                     }
                 )
-            # w-half / w-star on the dense stored p grid, no interpolation.
-            wh = ws = None
-            for p in pg[pg <= 0.5][::-1]:
-                w = 1.0 - 2.0 * float(p)
-                lo = meas_at(sub, ladder_at(qdoc, "LONG_RUN", y, float(p)))
-                phi = (blend - lo) / gap if gap else 0.0
-                if wh is None and phi >= 0.5:
-                    wh = round(w, 4)
-                if ws is None and phi >= 1.0:
-                    ws = round(w, 4)
-                    break
+            # w-half / w-star by BISECTION on the stored p grid. phi is monotone
+            # in w (a lower quantile is never above a higher one), so bisection
+            # finds the crossing exactly on the grid in ~8 evaluations instead of
+            # ~100 — no interpolation, no approximation of the crossing itself.
+            cand = pg[pg <= 0.5][::-1]  # descending p == ascending w
+
+            def phi_at(j: int) -> float:
+                lo_j = meas_at(sub, ladder_at(qdoc, "LONG_RUN", y, float(cand[j])))
+                return (blend - lo_j) / gap if gap else 0.0
+
+            def first_at_least(target: float):
+                """Smallest w on the grid whose phi >= target, or None."""
+                if phi_at(len(cand) - 1) < target:
+                    return None
+                lo_i, hi_i = 0, len(cand) - 1
+                while lo_i < hi_i:
+                    mid = (lo_i + hi_i) // 2
+                    if phi_at(mid) >= target:
+                        hi_i = mid
+                    else:
+                        lo_i = mid + 1
+                return round(1.0 - 2.0 * float(cand[lo_i]), 4)
+
+            wh = first_at_least(0.5)
+            ws = first_at_least(1.0)
             yr[band] = {
                 "mw": round(float(sub["cap"].sum()), 1),
                 "n_rows": int(len(sub)),
@@ -247,9 +317,10 @@ def main(argv: list[str] | None = None) -> int:
         f"\nPRE-REGISTERED VERDICT ({args.years[0]} COAL committed): phi={phi} -> {verdict}"
     )
 
-    OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(json.dumps(out, indent=1))
-    print(f"wrote {OUT}  ({time.time() - t0:.0f}s)")
+    dest = _out_path(args.blend_reference)
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    dest.write_text(json.dumps(out, indent=1))
+    print(f"wrote {dest}  ({time.time() - t0:.0f}s)")
     return 0
 
 
