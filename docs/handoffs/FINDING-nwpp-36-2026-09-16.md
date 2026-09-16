@@ -389,3 +389,19 @@ data/raw/nwpp-hydro/{crohms/,nwpp_hydro_cascade_{links,monthly,nid}.csv}; script
 {fetch_nwpp_crohms_hourly,build_nwpp_hydro_cascade}.py; tests/unit/model/test_hydro_cascade.py.
 FINDING-nwpp-36-2026-09-16.md.
 ```
+
+## Addendum — rebased onto `origin/main` `e4e612ca` (2026-09-16, same session)
+
+Collision rule 3: the four lane commits were rebased onto main (38 commits ahead of the
+`6d1a144d` base). One conflict, `docs/codebase-site/data/mechanism-matrix/MISO.js` — miso-259 had
+re-written its own `coal_fuel_inventory` cell at the same anchor this lane's `hydro_cascade_coupling`
+cell was inserted after; resolved by keeping main's coal cell and this lane's cascade cell, nothing
+else. Gates re-run on the new base: matrix guard (diff mode, 1 new field registered), cache-key guard
+(1 new field registered, 305 declared defaults match), solve-surface diff (0 moved), ruff clean,
+`test_hydro.py` + `test_hydro_cascade.py` 123 passed / 1 strict xfail.
+
+**Keeper drift on main since §4.1:** SPP's designated keeper moved from
+`2026-09-13-spp-38-vintage-cache` to **`2026-09-16-spp-42-commitment-feasibility`**
+(`results/calibration/spp42_span_a`); the other six keepers are unchanged. The §4.1 table was re-run
+against a sparse worktree at `e4e612ca` and the rebased head with the new SPP keeper:
+**25 of 25 keys identical**, SPP now `95a1252ed2b7a880` (base = head). Gate G8 holds on the merge base.
