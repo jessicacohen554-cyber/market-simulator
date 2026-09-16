@@ -31,6 +31,14 @@ the coal-only median is bounded **exactly**::
 emitting the quantile function instead of only ``p = 0.5``. No unit is classified, no fuel is
 inferred, and nothing is constructed here.
 
+ON A G-REPRO FAILURE the probe still writes its quantiles, but stamped
+``g_repro.pass = False`` and under the key ``PROVISIONAL_g_repro_failed``, and it still exits
+non-zero. ``_pjm_h9_apply_bound.py`` refuses such an artifact unless ``--allow-provisional`` is
+passed explicitly, so the gate keeps its teeth and any override is deliberate and on the record.
+It also writes the per-(segment, year, bin) capacity WEIGHT against the committed
+``pjm_offer_midcurve_summary.csv``, which fingerprints the population and the net-load bin
+assignment separately from the ladder values — that is what says WHICH input drifted.
+
 G-REPRO IS A HARD STOP (PRECOMMIT §5). This probe replicates the frozen derive's two passes
 rather than refactoring it, so its ``p = 0.5`` column MUST reproduce the committed
 ``pjm_offer_midcurve_condbinned.json`` at every (segment, year, bin, share) cell to the
@@ -238,21 +246,59 @@ def main(argv: list[str] | None = None) -> int:
             print("   MISMATCH", m)
         print(
             "\nG-REPRO FAILED — the replication or the corpus does not match the frozen\n"
-            "surface, so the quantiles are NOT trustworthy. Stopping (PRECOMMIT §5)."
+            "surface, so the quantiles are NOT certified. Writing them PROVISIONALLY and\n"
+            "exiting non-zero (PRECOMMIT §5); the bound probe refuses them without an\n"
+            "explicit --allow-provisional."
         )
-        OUT.write_text(
-            json.dumps(
-                {
-                    "g_repro": {
-                        "pass": False,
-                        "cells_checked": checked,
-                        "mismatches": mismatches[:200],
+
+    # ---- WEIGHT FINGERPRINT: which input drifted, population or binning? -----
+    # The committed summary CSV carries mw_weight per (segment, year, bin). It is
+    # a function of the POPULATION and the NET-LOAD BIN ASSIGNMENT only, never of
+    # the ladder values, so it separates the two candidate causes.
+    weights = []
+    csv_path = FROZEN.parent / "pjm_offer_midcurve_summary.csv"
+    frozen_w = {}
+    if csv_path.exists():
+        import csv as _csv
+
+        with csv_path.open() as fh:
+            for row in _csv.DictReader(fh):
+                frozen_w[(row["segment"], int(row["year"]), int(row["bin"]))] = float(
+                    row["mw_weight"]
+                )
+    for s_i, seg in enumerate(seg_names):
+        for y, yr in enumerate(args.years):
+            for b in range(n_bins):
+                mine = float(hist[s_i, y, b].sum())
+                want = frozen_w.get((seg, yr, b))
+                weights.append(
+                    {
+                        "segment": seg,
+                        "year": yr,
+                        "bin": b,
+                        "mine": round(mine, 1),
+                        "frozen": want,
+                        "rel_diff": round(mine / want - 1.0, 8) if want else None,
                     }
-                },
-                indent=1,
+                )
+    wd = [abs(w["rel_diff"]) for w in weights if w["rel_diff"] is not None]
+    print(
+        f"\nWEIGHT FINGERPRINT: {len(wd)} (segment, year, bin) cells vs the committed "
+        f"summary CSV — max |rel diff| = {max(wd):.3e}"
+        if wd
+        else "\nWEIGHT FINGERPRINT: summary CSV not found"
+    )
+    if wd:
+        worst = sorted(
+            (w for w in weights if w["rel_diff"] is not None),
+            key=lambda w: -abs(w["rel_diff"]),
+        )[:6]
+        for w in worst:
+            print(
+                f"   {w['segment']:<9} {w['year']} bin{w['bin']}  "
+                f"mine {w['mine']:.4g}  frozen {w['frozen']:.4g}  "
+                f"rel {w['rel_diff']:+.3e}"
             )
-        )
-        return 1
 
     # ---- the quantile function, per cell ------------------------------------
     out: dict = {
@@ -263,7 +309,13 @@ def main(argv: list[str] | None = None) -> int:
             "redistribution restriction)."
         ),
         "precommit": "docs/PRECOMMIT-pjm-h9-coal-only-comparator-2026-09-16.md",
-        "g_repro": {"pass": True, "cells_checked": checked, "mismatches": 0},
+        "g_repro": {
+            "pass": not mismatches,
+            "cells_checked": checked,
+            "n_mismatches": len(mismatches),
+            "mismatches": mismatches[:400],
+        },
+        "weight_fingerprint": weights,
         "segment_capacity": seg_cap,
         "month_coverage": coverage,
         "netload_pct_edges": list(edges),
@@ -285,10 +337,16 @@ def main(argv: list[str] | None = None) -> int:
             per_year[str(yr)] = bins
         out["quantiles"][seg] = per_year
 
+    if mismatches:
+        out["PROVISIONAL_g_repro_failed"] = (
+            "G-REPRO did not pass: these quantiles are NOT certified against the "
+            "frozen surface. _pjm_h9_apply_bound.py refuses them without an explicit "
+            "--allow-provisional, and anything read from them is PROVISIONAL."
+        )
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(out, indent=1))
     print(f"\nwrote {OUT}  ({time.time() - t0:.0f}s)")
-    return 0
+    return 1 if mismatches else 0
 
 
 if __name__ == "__main__":
