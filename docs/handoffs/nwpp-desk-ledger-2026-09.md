@@ -11,6 +11,78 @@ recreated fresh from `origin/main`.
 
 ## 0. Live state — newest entry FIRST
 
+### r#9 — 2026-09-16 — **NWPP-39 LANDED · card N10 ruled then SUPERSEDED by the owner · NWPP-40 ISSUED — the first solve** (main `28e95cb8`)
+
+**NWPP-39 LANDED CLEAN, and its derivation is the part worth reading.** The guard tests the screen's
+anchor **by the screen's own premise, one decade of rank coarser**: the peak limb assumes the top of a
+legitimate fuel series is a *plateau*, which requires the p99.9 (rank ≈ 9) to sit inside the occupied
+top regime — so if the p99.9 is itself more than 2.5× the p99.0 (rank ≈ 88), the series' top is a
+**tail, not a plateau**, the limb's own premise is falsified by the series, and the column passes
+through untouched. **No new factor** (2.5 is `_FUEL_SPIKE_RATIO`, imported); **no new rank** (99.0 is
+the same decade step the screen already took from the maximum to the p99.9, taken once more). The lane
+states plainly: *"No other rank and no other factor was tried, before or after reading the data."*
+That is a construction, which is exactly what card N13 required and what rule 1 distinguishes from a fit.
+
+| NWPP-39 exit condition | Result |
+|---|---|
+| SOCO `NG: OIL` restored | 2024 benchmark **0.0017 → 0.0056 TWh**; h386–392 carry the filed 530 / 649 / 660 / 687 / 762 / **801** / 350 MW. 2023 restored too (h7975, a 146 → 390 → 100 MW morning start) — an hour NWPP-37 had flagged but not examined |
+| Both known artifacts still caught | SWPP 2023 `NG: WND` h3907 (ratio 1.060) and NYIS 2024 `NG: OTH` h6759 (1.051) still NaN; SPP wind still 103.0488 TWh, NYISO other still 3.3197. Every NWPP member slip and SOCO 2025 `NG: NG` still repaired |
+| Nine-region byte-identity | **1,779 signatures, 7 move**, all in the four series the PRECOMMIT predicted; every released hour classified *restores real data*; **no STOP fired**. ERCOT CAISO PJM NYISO MISO NEISO SPP byte-identical at every frame, member, benchmark and delivered profile |
+
+The guard's margin is what makes it safe rather than lucky: the true artifacts sit at ratios **1.05–1.09**
+against a **2.5** bar, so the guard is nowhere near them. **W3c is closed.**
+
+**CARD N10 WAS RULED, THEN SUPERSEDED BY THE OWNER IN THE SAME SITTING — both are on the record.**
+- **As ruled first:** screen as chartered, but **exclude 2025 from screen-year candidacy** on
+  data-completeness grounds declared ex ante (263 plants absent from the 923 early release), so the
+  residual-blind statistic could not land the screen on the worst-measured year.
+- **N10-R, superseding it, owner verbatim:** *"Actually don't even bother with a screen year .. just
+  launch individual shards for each year 2023 2024 2025."* **There is no screen.** The first bundle is
+  the baseline and becomes every later NWPP lane's rule-29(b) control.
+
+**THE DESK RAISED A CONFLICT ON THE SECOND HALF OF THAT INSTRUCTION AND RECORDS BOTH SIDES.** Per-year
+shards are banned by **rule 32 `[R-SHARD]` (b)**, which the owner wrote on 2026-09-12 in these words:
+*"Ok ban slim shards this is dumb I should only have to wait for one solve wtf."* The rule's reason is
+measured, not asserted: a per-year shard can push only the slim file set, registration needs
+`dispatch/<year>_P1.parquet` and the bundle-root `system.parquet`, and `--reuse-solved` gates on those
+same two artifacts — so **both composition routes end in a re-solve**, and three legs become four
+solves for one registrable run. **Rule 34 `[R-SHARD-PROMOTABLE]` (c)'s one-shard-per-year batch does
+NOT apply here** and the desk checked rather than assumed: that clause governs a *promotion* re-keying
+an ISO's already-registered year set, and **NWPP has zero registered runs** (`registry/*nwpp*` → 0).
+So **rule 32(b) governs and the form issued is ONE shard, ONE `--year 2023 2024 2025` invocation, ONE
+bundle** — which delivers the instruction's actual intent (no screen, all three years, **one** wait)
+without the fan-out. The desk stated this to the owner and proceeded on it; **if the owner reaffirms
+per-year legs, they are permitted as DIAGNOSTIC probes that are never registered**, and the desk will
+re-issue in that form.
+
+**NWPP-40 ISSUED — the first NWPP solve.** Its charter carries every ruled card as an instruction
+rather than a question, and five ex-ante PRECOMMIT declarations: the **G-A3 miss at full magnitude**
+(accepted under N12 as mis-specified, not as passing); the **PNCA declaration, REGARDLESS of NWPP-38's
+null** — that was never contingent on the measurement, and NWPP-38's result is reported beside it; the
+**30 defective demand hours** and the convention that `_screen_demand_spikes` is NOT applied; the 2025
+data posture; and the memory budget. It also carries the rule-31 trap in terms: the parity gate sweeps
+the **filesystem**, so it reads RED locally over the lane's own gitignored bundle, and that is **not**
+to be "fixed" by deleting a result.
+
+**What the determination will be, stated in the charter so the lane is not surprised:** NWPP has no
+`actual_lmp.json` block, so C3a/C3b/C3c are UNSCORED and NWPP-22's rubric-v3.8 class fires —
+**`PHYSICALLY-CALIBRATED (PRICE UNSCORED)`**, scored on C1/C2/C4/C6/C8, never a bare `CALIBRATED`, with
+the price gap on the determination basis at full magnitude. That is ruling N2 limb (b) working exactly
+as designed, eight sittings after it was ruled.
+
+**Gates at `28e95cb8` — 6 run, exits recorded. `grep -ci nwpp` = 0 on all three failures**, unchanged
+in character since r#4: other regions' promotion debris, routed not fixed (rule 25).
+**Recorded UNREAD:** this container has no `pandas`/`numpy`/`pydantic`, so the desk could not compute
+N10's screen-year statistic itself — which is moot under N10-R, and belonged in the lane's phase 0 in
+any case.
+
+**Next act:** grade NWPP-40 by content when it lands, then the **promotion question** (rule 31) and, if
+the owner promotes, the keeper shard + `calibration-complete.json` re-key + rule 35 `[R-PROMOTE]`'s
+prune — which for NWPP is a no-op, there being no outgoing keeper. Card **N9** (forecast entry) becomes
+due the moment a keeper exists, and is ROUTED to the capx director, never this desk.
+
+---
+
 ### r#8 — 2026-09-16 — **W3b + W3c ALL LANDED · cards N12 and N13 RULED · W4 IS OPEN** (main `89a500b7`)
 
 **All three outstanding lanes landed, and every one of them is first-rate work.** Graded by opening
@@ -840,8 +912,8 @@ issue W1 (NWPP-10/11/12; NWPP-13 only if N2 rules for option (a)).
 | **NWPP-36 cascade coupling** | **FABLE** | **W3b** | **LANDED r#8 — G8 PASS (25 keys), rule-19 invariant 0.000 %, G-A3 failed and ACCEPTED as mis-specified (ruling N12)**. Was: ISSUED r#6 | — | `FINDING-nwpp-36-2026-09-16.md` |
 | **NWPP-37 envelope screen seam** | **FABLE** | **W3c** | **LANDED r#8 — shape (A), one seam; 19 of 1,158 series move, all NWPP/SOCO; 7 regions byte-identical**. Was: ISSUED r#7 | — | `FINDING-nwpp-37-2026-09-16.md` |
 | **NWPP-38 PNCA discontinuity** | OPUS | **W3c** | **LANDED r#8 — verdict (a) NO MEASURABLE CHANGE; 0/56 treated cells, control group moved MORE**. Was: ISSUED r#7 | — | `FINDING-nwpp-38-2026-09-16.md` |
-| **NWPP-39 zero-baseline guard** | **FABLE** | **W3c** | **ISSUED r#8** — owner ruling N13; the screen deletes 4.4 GWh of a real Winter Storm Heather oil run | pending | — |
-| NWPP-40 first solve | FABLE | W4 | **UNBLOCKED r#8 — W4 IS OPEN**; NWPP-36 landed. Inherits **R-f** (930 hydro unsafe 2024–25) and **R-j** (PNCA terminated in-window) as PRECOMMIT duties; card **N10** is served at its sitting | — | — |
+| **NWPP-39 zero-baseline guard** | **FABLE** | **W3c** | **LANDED r#9** — guard derived from the screen's own premise one rank-decade coarser; SOCO oil restored; both artifacts still caught; 7 of 1,779 signatures move | merged `59b446ba`…`0e40b966` | `FINDING-nwpp-39-2026-09-16.md` |
+| NWPP-40 first solve | FABLE | W4 | **ISSUED r#9 — THE FIRST SOLVE.** No screen (ruling N10-R); ONE shard, ONE `--year 2023 2024 2025`, ONE bundle (rule 32(b)); coupling ARMED. Inherits **R-f** (930 hydro unsafe 2024–25) and **R-j** (PNCA terminated in-window) as PRECOMMIT duties; card **N10** is served at its sitting | — | — |
 | NWPP-55…59 levers | — | W5 | pre-declared, not issuable (**NWPP-54 RETIRED into NWPP-36**, ruling N3) | — | — |
 | W6 forecast entry | — | W6 | ROUTED to the capx director (card N9) | — | — |
 
@@ -861,7 +933,8 @@ issue W1 (NWPP-10/11/12; NWPP-13 only if N2 rules for option (a)).
 | N6 | timezones | **RESOLVED BY MEASUREMENT, not ruled** — 14 Pacific / 3 Mountain, IPCO files Pacific, UTC canonical. Gate G19 closed | 2026-09-14 |
 | N12 | G-A3's failure | **ACCEPT — G-A3 was MIS-SPECIFIED; W4 proceeds.** The gate encoded the wrong direction (a coupled plant inherits its upstream's shape); every other invariant holds and nothing was tuned. The miss rides the first keeper's determination basis at full magnitude. **Admissible because the lane explained the physics instead of moving the bar** — a future lane that fails a gate and proposes a new threshold is not this case | 2026-09-16 |
 | N13 | the SOCO `NG: OIL` false positive | **CHARTER NWPP-39** — a zero-baseline guard. The screen deletes 4.4 GWh of a real Winter Storm Heather peaker run because a median-0.0 / p99.9-71.7 MW series has no operating scale. Pre-existing, but in code this program just consolidated | 2026-09-16 |
-| N10 | first-solve screen | **NOW DUE** — W4 opened at r#8 | — |
+| N10 | first-solve screen | **RULED then SUPERSEDED, same sitting.** First: screen as chartered but **exclude 2025** from screen-year candidacy on ex-ante data-completeness grounds | 2026-09-16 |
+| **N10-R** | the first solve's form | **NO SCREEN** — owner verbatim: *"Actually don't even bother with a screen year .. just launch individual shards for each year 2023 2024 2025."* The desk raised that per-year shards are banned by rule 32(b) (the owner's own 2026-09-12 instruction) and that rule 34(c) does not apply with zero registered runs, and issued **ONE shard / ONE `--year 2023 2024 2025` / ONE bundle** — the instruction's intent without the fan-out. Per-year legs remain available as never-registered DIAGNOSTIC probes if the owner reaffirms | 2026-09-16 |
 | N9 | W6 routing | **PENDING** — due when a keeper exists | — |
 
 ## 3. Routed — open, not this desk's to fix
@@ -902,6 +975,7 @@ issue W1 (NWPP-10/11/12; NWPP-13 only if N2 rules for option (a)).
 | r#6 | 2026-09-16 | **NWPP-36 `[FABLE]` ISSUED** — W3b, composed entirely from NWPP-32 §5–§6 and committed at plan §8 W3b before issuing | none due — **N10 is served at the W4 sitting**, which NWPP-36 now gates; N9 on a keeper |
 | r#7 | 2026-09-16 | **NWPP-37 `[FABLE]` and NWPP-38 `[OPUS]` ISSUED** (wave W3c), on the owner's request for fixes to R-f and R-j | none — the owner's request was answered with a located fix (R-f) and a stated refusal to invent one (R-j) |
 | r#8 | 2026-09-16 | **NWPP-39 `[FABLE]` ISSUED** (zero-baseline guard, ruling N13) | **N12 and N13 RULED**, both as recommended. **W4 IS OPEN**; N10 is now due |
+| r#9 | 2026-09-16 | **NWPP-40 `[FABLE]` ISSUED — the first NWPP solve** | **N10 ruled, then N10-R superseded it** (no screen). Conflict with rule 32(b) raised and both sides recorded |
 
 ## 6. Errors against interest
 
