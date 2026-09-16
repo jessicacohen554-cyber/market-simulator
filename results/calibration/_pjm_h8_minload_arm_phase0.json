@@ -1,0 +1,168 @@
+{
+ "arm": {
+  "pjm_offer_midcurve_minload_segments": [
+   "LONG_RUN"
+  ]
+ },
+ "years": {
+  "2023": {
+   "G1": {
+    "moved_rows": 136,
+    "expected_rows": 136,
+    "moved_not_expected": [],
+    "expected_not_moved": [],
+    "bands_moved": [
+     "committed",
+     "mustrun"
+    ],
+    "classes_moved": [
+     "COAL",
+     "ST_GAS"
+    ],
+    "PASS": true
+   },
+   "G2": {
+    "max_abs_dev_bid_vs_measured_target": 7.105427357601002e-15,
+    "n_rows_checked": 136,
+    "PASS": true
+   },
+   "G3": {
+    "rows": [
+     {
+      "class": "COAL",
+      "band": "mustrun",
+      "mw": 14062.1927042,
+      "capwtd_delta_usd_mwh": 20.1367420222386,
+      "floored_share_of_potential": 0.8436461576811309,
+      "footprint_usd_mw": 283166.7467514812
+     },
+     {
+      "class": "COAL",
+      "band": "committed",
+      "mw": 12550.2771,
+      "capwtd_delta_usd_mwh": 6.720995669204586,
+      "floored_share_of_potential": 0.00748183947391576,
+      "footprint_usd_mw": 84350.35803641748
+     },
+     {
+      "class": "ST_GAS",
+      "band": "committed",
+      "mw": 2432.3181999999993,
+      "capwtd_delta_usd_mwh": -8.445044470323671,
+      "floored_share_of_potential": 0.05612204833340188,
+      "footprint_usd_mw": -20541.03536497762
+     }
+    ],
+    "coal_minload_footprint_usd_mw": 367517.1047878987,
+    "h6_arm_footprint_usd_mw": 221584.055
+   },
+   "elapsed_s": 15.8
+  },
+  "2024": {
+   "G1": {
+    "moved_rows": 137,
+    "expected_rows": 137,
+    "moved_not_expected": [],
+    "expected_not_moved": [],
+    "bands_moved": [
+     "committed",
+     "mustrun"
+    ],
+    "classes_moved": [
+     "COAL",
+     "ST_GAS"
+    ],
+    "PASS": true
+   },
+   "G2": {
+    "max_abs_dev_bid_vs_measured_target": 1.4210854715202004e-14,
+    "n_rows_checked": 137,
+    "PASS": true
+   },
+   "G3": {
+    "rows": [
+     {
+      "class": "COAL",
+      "band": "mustrun",
+      "mw": 14062.1927042,
+      "capwtd_delta_usd_mwh": 17.94185362964063,
+      "floored_share_of_potential": 0.862065129541777,
+      "footprint_usd_mw": 252301.80321055674
+     },
+     {
+      "class": "COAL",
+      "band": "committed",
+      "mw": 12550.2771,
+      "capwtd_delta_usd_mwh": 5.384730448969061,
+      "floored_share_of_potential": 0.030870558293714708,
+      "footprint_usd_mw": 67579.85924336912
+     },
+     {
+      "class": "ST_GAS",
+      "band": "committed",
+      "mw": 2435.8281999999995,
+      "capwtd_delta_usd_mwh": -9.356681910456341,
+      "floored_share_of_potential": 0.09735943903982569,
+      "footprint_usd_mw": -22791.269655919426
+     }
+    ],
+    "coal_minload_footprint_usd_mw": 319881.6624539259,
+    "h6_arm_footprint_usd_mw": 221584.055
+   },
+   "elapsed_s": 14.3
+  },
+  "2025": {
+   "G1": {
+    "moved_rows": 140,
+    "expected_rows": 140,
+    "moved_not_expected": [],
+    "expected_not_moved": [],
+    "bands_moved": [
+     "committed",
+     "mustrun"
+    ],
+    "classes_moved": [
+     "COAL",
+     "ST_GAS"
+    ],
+    "PASS": true
+   },
+   "G2": {
+    "max_abs_dev_bid_vs_measured_target": 2.842170943040401e-14,
+    "n_rows_checked": 140,
+    "PASS": true
+   },
+   "G3": {
+    "rows": [
+     {
+      "class": "COAL",
+      "band": "mustrun",
+      "mw": 14197.639704199999,
+      "capwtd_delta_usd_mwh": 18.936437397293286,
+      "floored_share_of_potential": 0.8571883659217963,
+      "footprint_usd_mw": 268852.71544790885
+     },
+     {
+      "class": "COAL",
+      "band": "committed",
+      "mw": 12550.2771,
+      "capwtd_delta_usd_mwh": 5.431594816759575,
+      "floored_share_of_potential": 0.02372362373295757,
+      "footprint_usd_mw": 68168.02004525639
+     },
+     {
+      "class": "ST_GAS",
+      "band": "committed",
+      "mw": 2435.8281999999995,
+      "capwtd_delta_usd_mwh": -22.839797616635853,
+      "floored_share_of_potential": 0.08538920159713134,
+      "footprint_usd_mw": -55633.82311689439
+     }
+    ],
+    "coal_minload_footprint_usd_mw": 337020.7354931652,
+    "h6_arm_footprint_usd_mw": 221584.055
+   },
+   "elapsed_s": 14.6
+  }
+ }
+}

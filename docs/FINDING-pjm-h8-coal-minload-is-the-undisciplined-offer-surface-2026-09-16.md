@@ -34,9 +34,11 @@ Probe `scripts/probes/_pjm_h8_offer_ladder.py` · output `results/calibration/_p
 >
 > *(model bid ÷ measured offer, implied gas heat rate)*
 >
-> **The `mustrun` band is the object.** It is 12 % LARGER than the `committed` band, sits
-> **4× further** from PJM's own offers, and carries **3.4× the price footprint** — and it is the
-> one band in PJM's coal stack that no session in the h-chain has looked at.
+> **Both excluded bands are un-governed; the DISPATCH-relevant one is `committed`.**
+> `mustrun` carries the larger *price* gap — 12 % more MW, 4× further from PJM's offers, 3.4×
+> the footprint — and no session in the h-chain has looked at it. **But see the CORRECTION in
+> §2a: it is 84-86 % floored by `min_gen`, so most of that gap is inert to dispatch.** The
+> band that actually moves energy is `committed`, at **0.7-3.1 %** floored.
 
 ## 2. THE FOOTPRINT — why the two spent screens could not have closed this
 
@@ -51,6 +53,29 @@ Mean $-MW of the model-vs-measured-offer gap, 2023-2025:
 
 For scale, **the entire pjm-h6 arm was 221,584 $-MW** (+17.6561 $/MWh × 12,550 MW). The
 untouched band's gap is **22 % larger than the whole arm that was screened twice.**
+
+### 2a. CORRECTION TO THIS DOCUMENT, measured after it was first written
+
+**Most of the `mustrun` footprint is INERT, and the first version of §1-§2 overstated what it
+buys.** Measured from the keeper's own `min_gen` array (2023 / 2024 / 2025):
+
+| band | floored share of available MWh |
+|---|---:|
+| COAL `mustrun` | **84.4 % / 86.2 % / 85.7 %** |
+| COAL `committed` | **0.7 % / 3.1 % / 2.4 %** |
+
+Energy forced by `min_gen` cannot leave dispatch however it is priced — repricing it is close
+to adding a constant to the objective. So the 269,727 $-MW `mustrun` gap is roughly **84 %
+inert**, and its effective share is ~44,180 $-MW. The **`committed` band is the dispatch-
+relevant one**, essentially fully economic, and PJM's own offers size its correction at
+**+6.72 $/MWh** against the **+17.66** pjm-h6 applied.
+
+This **sharpens** the conclusion rather than weakening it: h6 had the right band and the right
+direction and applied **2.32×** too much. It also makes a falsifiable prediction, which the
+screen chartered in `docs/PRECOMMIT-pjm-h8-minload-measured-offer-2026-09-16.md` tests as its
+gate **G-5**: the `mustrun` band carries 77 % of the arm's coal footprint but should produce
+**less than 25 %** of its coal energy change. Stated here because a reader of §1-§2 alone
+would otherwise carry the wrong object forward.
 
 **And h6 overshot the band it did move, by a factor the offer data pins exactly.** PJM's own
 offers put the `committed` gap at **+7.59 $/MWh** (2023). h6 applied **+17.6561** — **2.32×
