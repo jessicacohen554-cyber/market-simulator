@@ -70,22 +70,46 @@ def compose(legs: list[Path], out: Path) -> None:
         raise SystemExit(f"duplicate years across legs: {years}")
     out.mkdir(parents=True, exist_ok=True)
 
-    # --- run_config: must agree outside the known per-year fields -------------
+    # --- run_config: compare the SCENARIO CONFIG, not the wrapper ------------
+    # ``run_config.json`` is a WRAPPER, not a flat config dump: the scenario lives
+    # under ``scenario_config``, beside ``timestamp`` / ``git`` / ``resolved_inputs``
+    # / ``calibration_flags`` / ``environment``, all of which legitimately differ
+    # between legs solved in different containers on different years. Comparing the
+    # wrapper compares solve provenance; comparing ``scenario_config`` compares the
+    # model. (This is also why a top-level read of the arm field returns ``None`` -
+    # it is one level down. See the meta.json note below.)
     cfgs = [json.loads((l / "run_config.json").read_text()) for l in legs]
-    base = cfgs[0]
-    for leg, c in zip(legs[1:], cfgs[1:]):
-        diff = {k for k in set(base) | set(c) if base.get(k) != c.get(k)}
+    scs = [c.get("scenario_config") or {} for c in cfgs]
+    base_sc = scs[0]
+    for leg, sc in zip(legs[1:], scs[1:]):
+        diff = {k for k in set(base_sc) | set(sc) if base_sc.get(k) != sc.get(k)}
         unexpected = diff - PER_YEAR_CONFIG_FIELDS
         if unexpected:
             raise SystemExit(
-                f"{legs[0].name} vs {leg.name}: run_config differs outside the per-year "
-                f"allowance on {sorted(unexpected)} - refusing to compose"
+                f"{legs[0].name} vs {leg.name}: scenario_config differs outside the "
+                f"per-year allowance on {sorted(unexpected)} - refusing to compose"
             )
-    arm = base.get("hydro_budget_period_by_instrument")
-    if arm is not True:
-        raise SystemExit(f"ARM NOT SET: hydro_budget_period_by_instrument={arm!r}")
-    print("run_config: legs agree outside the per-year allowance; arm verified true")
-    (out / "run_config.json").write_text(json.dumps(base, indent=2, sort_keys=True))
+    armed_rc = base_sc.get("hydro_budget_period_by_instrument")
+    if armed_rc is not True:
+        raise SystemExit(
+            f"ARM NOT SET in scenario_config: "
+            f"hydro_budget_period_by_instrument={armed_rc!r}"
+        )
+    fps = {c.get("solve_surface", {}).get("fingerprint") for c in cfgs}
+    if len(fps) != 1:
+        raise SystemExit(f"legs carry DIFFERENT solve-surface fingerprints: {fps}")
+    print(f"scenario_config: legs agree outside the per-year allowance; arm True")
+    print(f"solve_surface fingerprint: {fps.pop()} (identical across legs)")
+    base = dict(cfgs[0])
+    base["scenario_config"] = base_sc
+    base["composed_from"] = [l.name for l in legs]
+    base["per_leg_provenance"] = {
+        str(_leg_year(l)): {
+            "timestamp": c.get("timestamp"),
+            "git": c.get("git"),
+        }
+        for l, c in zip(legs, cfgs)
+    }
 
     # --- year-scoped files: copy verbatim -------------------------------------
     copied = 0
