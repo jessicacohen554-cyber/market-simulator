@@ -2163,3 +2163,16 @@ results/calibration/pjm_h7_screen2023_arm/
 #   git checkout 750e4a72421e4548a5d82b71ccf13e6254cc3b87 -- results/calibration/nyiso235_gasrepair_2022
 # nyiso235_gasrepair_span is the DESIGNATED KEEPER since 2026-09-16 (session nyiso-235,
 # owner ruling to promote) — it is committed, not ignored. The screen bundle above stays ignored.
+
+# SPP-42 (lane spp-42, card R-be). The rule-29 [R-SCREEN] SCREEN bundles for the
+# commitment-feasibility clip: control + arm on 2023, solved by shard
+# session_01F3EGvyQVJHkxbY6xE8uQXP. Rule 29(c) keeps a screen bundle OUT OF `main`,
+# and rule 31 [R-RETAIN] keeps it ON LOCAL DISK until the owner rules on promotion —
+# .gitignore, never `rm`, is what discharges both (the ercot-255 incident).
+# Every number the lane cites from them is in
+# docs/handoffs/RESULT-spp-42-commitment-feasibility-2026-09-16.md.
+# RECOVERY BY IMMUTABLE SHA (rule 33(d) — never by branch name):
+#   git checkout 48e6f7a5635e1c909ddbb817bcffdeb89faea0c6 -- results/calibration/spp42_screen_ctl
+#   git checkout 48e6f7a5635e1c909ddbb817bcffdeb89faea0c6 -- results/calibration/spp42_screen_arm
+results/calibration/spp42_screen_ctl/
+results/calibration/spp42_screen_arm/
