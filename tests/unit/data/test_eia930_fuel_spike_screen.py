@@ -2,13 +2,19 @@
 
 Covers :func:`market_sim.data.eia930.actuals._screen_fuel_spike_columns` — the
 ONE mechanism (rule 19 ``[R-ONE-MECH]``) that repairs EIA-930 unit-slip hours in
-the per-fuel ``NG: <CODE>`` columns, applied at the ONE seam every reader in
-``eia930.actuals`` obtains its frame through, so the benchmark path
-(``load_eia_hourly_benchmark`` → C1/C4 bench), the delivered-profile path the
-LP consumes (``load_eia_hourly_renewable_gen`` → ``renewables.py``) and the
-ERCOT-specific readers all inherit it. It replaces the builder-local
+the per-fuel ``NG: <CODE>`` columns. It replaces the builder-local
 ``build_calibration_reference._screen_fuel_spikes`` (SPP-31), which reached the
 ``calibration_reference.json`` artifact and nothing else (SPP-31 §3.3).
+
+**The seam is the frame CONSTRUCTOR** (lane NWPP-37, 2026-09-16), not the
+reader: ``frames._eia_hourly_frame``, ``frames._eia_hourly_frame_filled``'s
+reconstruction branch, and ``actuals.load_eia_hourly_benchmark``'s own parquet
+read. SPP-41 applied it at three call sites that were ALL inside
+``eia930.actuals``, so the benchmark path, the delivered-profile path and the
+ERCOT readers inherited it while the six readers that call ``frames`` directly
+— the hydro envelopes, the gas floor, the CAISO solar fraction and the two
+neighbour net-load shapes — did not. ``TestScreenOnTheEnvelopePath`` is the
+regression pin for that half.
 
 Motivating measurement (SPP-31 §3.2, reproduced by SPP-41 table 0a/0b): the
 ``SWPP hourly`` extract posts ``NG: WND`` = 3,589,445 MW at h3907 of 2023
@@ -44,6 +50,10 @@ from tests.helpers.base import requires_raw
 _YEAR = 2023
 _SPIKE_HOUR = 4000
 _SPIKE_MW = 3_589_445.0  # the measured SWPP 2023 h3907 value
+# A second slip, in the hydro column, for the envelope readers (lane NWPP-37).
+# The magnitude is the measured NWPP 2025 pooled ``NG: WAT`` artifact hour.
+_HYDRO_SPIKE_HOUR = 6817
+_HYDRO_SPIKE_MW = 817_202.0
 
 
 def _wind() -> np.ndarray:
@@ -64,11 +74,24 @@ def _solar() -> np.ndarray:
     )
 
 
+def _hydro() -> np.ndarray:
+    """A hydro-like series: a broad seasonal freshet on a diurnal shape."""
+    h = np.arange(HOURS_PER_YEAR)
+    return (
+        8_000.0
+        + 4_000.0 * np.sin(2 * np.pi * (h - 2_000) / HOURS_PER_YEAR)
+        + 1_500.0 * np.sin(2 * np.pi * h / 24.0)
+    )
+
+
 def _frame(*, spike: bool, overflow_total: bool = False) -> pd.DataFrame:
     times = pd.date_range(f"{_YEAR}-01-01", periods=HOURS_PER_YEAR, freq="h")
     wind = _wind()
     if spike:
         wind[_SPIKE_HOUR] = _SPIKE_MW
+    hydro = _hydro()
+    if spike:
+        hydro[_HYDRO_SPIKE_HOUR] = _HYDRO_SPIKE_MW
     total = wind + _solar() + 20_000.0
     if overflow_total:
         # PJM 2021 h6981-6983: int32 overflow in the NG total with ordinary
@@ -82,6 +105,8 @@ def _frame(*, spike: bool, overflow_total: bool = False) -> pd.DataFrame:
             "Demand": total + 5.0,
             "NG: WND": wind,
             "NG: SUN": _solar(),
+            "NG: WAT": hydro,
+            "NG: NG": np.full(HOURS_PER_YEAR, 6_000.0),
             "Net generation": total,
             "Total interchange": np.full(HOURS_PER_YEAR, -5.0),
         }
@@ -170,13 +195,135 @@ class TestScreenOnTheDeliveredProfilePath(_SyntheticExtract):
         np.testing.assert_array_equal(gen["solar"], bench["solar"])
         self.assertLess(gen["wind"].max(), 2 * _wind().max())
 
-    def test_the_cached_frame_is_not_mutated(self):
-        """The screen returns a copy: ``frames`` caches the raw extract, and a
-        loader must never write a repair back into the shared cache."""
+    def test_the_frame_loader_itself_returns_the_repair(self):
+        """The seam is the frame CONSTRUCTOR, not the reader (lane NWPP-37).
+
+        This is the property whose absence was the defect: before that lane
+        ``_eia_hourly_frame_filled`` returned the raw column and only the three
+        readers in ``actuals`` screened, so every other consumer — the hydro
+        envelopes, the gas floor, the neighbour net-load shapes — read the slip.
+        """
         self._write(_frame(spike=True))
-        actuals.load_eia_hourly_renewable_gen(self.iso, _YEAR)
-        raw = _eia_hourly_frame_filled(self.ba, _YEAR)
+        frame = _eia_hourly_frame_filled(self.ba, _YEAR)
+        self.assertTrue(np.isnan(float(frame["NG: WND"].iloc[_SPIKE_HOUR])))
+        # The strict loader and the ERCOT wrapper share the one seam.
+        self.assertTrue(
+            np.isnan(
+                float(_eia_hourly_frame(self.ba, _YEAR)["NG: WND"].iloc[_SPIKE_HOUR])
+            )
+        )
+
+    def test_re_reading_the_frame_does_not_cascade(self):
+        """The screen is NOT idempotent, so it must be applied exactly once.
+
+        Re-running it on an already-screened series recomputes the p99.9 anchor
+        with the flagged hours gone, which LOWERS it and can flag further hours
+        (measured on live data: PGE 2023 ``NG: OTH`` 81 MW, NEVP 2025
+        ``NG: NG`` 20,354 MW, SOCO 2024 ``NG: OIL`` 155 MW). Repeated reads of
+        the same (BA, year) must therefore be stable, and the un-flagged hours
+        must equal the raw extract exactly.
+        """
+        self._write(_frame(spike=True))
+        first = _eia_hourly_frame_filled(self.ba, _YEAR)["NG: WND"].to_numpy(float)
+        _eia_hourly_frame_filled.cache_clear()
+        second = _eia_hourly_frame_filled(self.ba, _YEAR)["NG: WND"].to_numpy(float)
+        np.testing.assert_array_equal(first, second)
+        mask = np.ones(HOURS_PER_YEAR, dtype=bool)
+        mask[_SPIKE_HOUR] = False
+        np.testing.assert_array_equal(first[mask], _wind()[mask])
+        self.assertEqual(int(np.isnan(first).sum()), 1)
+
+    def test_the_pool_cache_is_not_written_through(self):
+        """The screen COPIES before it edits, which stays load-bearing.
+
+        ``_pool_hourly_frame`` is itself ``lru_cache``d and its return is
+        screened on the way out of ``_eia_hourly_frame``; a repair written in
+        place would corrupt the pool cache for every later reader.
+        """
+        pool = pd.DataFrame({"NG: WND": _wind()})
+        pool.loc[_SPIKE_HOUR, "NG: WND"] = _SPIKE_MW
+        before = pool["NG: WND"].to_numpy(float).copy()
+        out = actuals._screen_fuel_spike_columns(pool, ba_code="POOL", year=_YEAR)
+        self.assertIsNot(out, pool)
+        np.testing.assert_array_equal(pool["NG: WND"].to_numpy(float), before)
+        self.assertTrue(np.isnan(float(out["NG: WND"].iloc[_SPIKE_HOUR])))
+
+
+class TestScreenOnTheEnvelopePath(_SyntheticExtract):
+    """The readers that go through ``frames`` DIRECTLY, never through
+    ``actuals`` — the six that were unscreened until lane NWPP-37.
+
+    This class is the regression pin for that lane. Each of these calls
+    ``frames._eia_hourly_frame_filled`` itself and reads an ``NG:`` column off
+    the result; before the screen moved to the frame constructor, every one of
+    them returned the raw slip. Measured consequence for the NWPP pool: one AVA
+    hour put +1,166 GWh (14.1 %) into October 2025's pooled hydro, which
+    ``measured_monthly_hydro`` handed straight to the hydro budget
+    (FINDING-nwpp-32 §7 item 1).
+    """
+
+    def test_measured_monthly_hydro_excludes_the_slip(self):
+        from market_sim.data.eia930 import envelopes
+
+        self._write(_frame(spike=True))
+        got = envelopes.measured_monthly_hydro(self.iso, _YEAR)
+        self.assertIsNotNone(got)
+        clean = _hydro()
+        month = pd.date_range(
+            f"{_YEAR}-01-01", periods=HOURS_PER_YEAR, freq="h"
+        ).month.to_numpy()
+        expect = np.array(
+            [float(clean[month == m].sum()) for m in range(1, 13)], dtype=float
+        )
+        # The flagged hour is dropped (nansum), not interpolated, on this path.
+        spike_month = int(month[_HYDRO_SPIKE_HOUR])
+        expect[spike_month - 1] -= float(clean[_HYDRO_SPIKE_HOUR])
+        np.testing.assert_allclose(got, expect, rtol=0, atol=1e-6)
+        self.assertLess(float(got.sum()), float(clean.sum()))
+
+    def test_hydro_envelope_and_min_flow_exclude_the_slip(self):
+        from market_sim.data.eia930 import envelopes
+
+        self._write(_frame(spike=True))
+        env = envelopes.measured_hydro_hourly_envelope(self.iso, _YEAR, HOURS_PER_YEAR)
+        floor = envelopes.measured_hydro_min_flow_level(self.iso, _YEAR)
+        self.assertIsNotNone(env)
+        self.assertIsNotNone(floor)
+        # A percentile ceiling built from a series carrying an 817 GW hour can
+        # never exceed the clean fleet's own maximum.
+        self.assertLessEqual(float(np.nanmax(env)), float(_hydro().max()))
+        self.assertLessEqual(float(np.nanmax(floor)), float(_hydro().max()))
+
+    def test_gas_floor_profile_is_built_off_the_screened_column(self):
+        from market_sim.data.eia930 import envelopes
+
+        self._write(_frame(spike=True))
+        prof = envelopes.measured_gas_floor_profile(self.iso, _YEAR, HOURS_PER_YEAR)
+        self.assertIsNotNone(prof)
+        np.testing.assert_allclose(prof, 6_000.0, rtol=0, atol=1e-6)
+
+    def test_the_frames_seam_is_the_only_unscreened_door(self):
+        """No reader may reach a raw ``NG:`` column through a public loader.
+
+        ``_eia_hourly_frame_raw`` is the single unscreened constructor and is
+        private by contract; both of its callers screen. If a future lane adds
+        a loader that returns an unscreened frame, this fails.
+        """
+        from market_sim.data.eia930 import frames
+
+        self._write(_frame(spike=True))
+        raw = frames._eia_hourly_frame_raw(self.ba, _YEAR)
         self.assertEqual(float(raw["NG: WND"].iloc[_SPIKE_HOUR]), _SPIKE_MW)
+        for loader in (frames._eia_hourly_frame, frames._eia_hourly_frame_filled):
+            frame = loader(self.ba, _YEAR)
+            self.assertTrue(
+                np.isnan(float(frame["NG: WND"].iloc[_SPIKE_HOUR])),
+                f"{loader.__name__} returned an unscreened NG: column",
+            )
+            self.assertTrue(
+                np.isnan(float(frame["NG: WAT"].iloc[_HYDRO_SPIKE_HOUR])),
+                f"{loader.__name__} returned an unscreened NG: column",
+            )
 
 
 class TestScreenOnTheErcotReaders(_SyntheticExtract):

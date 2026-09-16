@@ -245,19 +245,58 @@ def _eia_hourly_path(ba_code: str) -> Path:
     return _pkg.EIA_HOURLY_DIR / f"{ba_code} hourly.parquet"
 
 
-@lru_cache(maxsize=32)
-def _eia_hourly_frame(ba_code: str, year: int) -> pd.DataFrame | None:
-    """Return the EIA-930 ``<BA> hourly`` rows for one calendar year.
+def _screen_fuel_spikes(
+    frame: pd.DataFrame | None, ba_code: str, year: int
+) -> pd.DataFrame | None:
+    """Apply the ``NG:`` unit-slip screen at the frame-CONSTRUCTION seam.
 
-    The rows are restricted to ``year`` (by the BA's local date), sorted
-    chronologically by UTC time, and reduced to a clean 8760-hour series —
-    in a leap year Feb 29 is dropped. Row 0 is the first local hour of the
-    year, matching the HSL parquet's index, so demand, interchange and
-    renewable generation drawn from this frame all share one clock.
+    One mechanism (:func:`~market_sim.data.eia930.actuals.
+    _screen_fuel_spike_columns`, lane SPP-41) applied wherever this module
+    builds an hourly frame out of the parquet, so a reader cannot obtain an
+    unscreened copy by calling a frame loader directly (rule 19
+    ``[R-ONE-MECH]``; lane NWPP-37). The screen itself — its threshold, its two
+    order statistics and its ``NG: <CODE>`` scope — is unchanged and still
+    defined in one place; only the application point moved here, from three
+    per-reader call sites in ``actuals``.
 
-    Returns ``None`` when the file is missing or the year is not covered by a
-    full 8760-hour series. A pool code (``_POOL_HOURLY_MEMBERS``) returns the
-    members' UTC-joined sum via :func:`_pool_hourly_frame`.
+    The import is deferred because ``actuals`` imports this module at module
+    level; this is the same cycle, and the same remedy, as
+    :func:`_pool_hourly_frame`'s local import of ``_screen_demand_dropouts``.
+
+    ``None`` passes through so the callers' "year unavailable" contract is
+    untouched. The screen COPIES before it edits, which stays load-bearing
+    here: :func:`_pool_hourly_frame` is itself cached, so screening its return
+    must not write a repair back into the pool cache.
+    """
+    if frame is None:
+        return None
+    from market_sim.data.eia930.actuals import _screen_fuel_spike_columns
+
+    return _screen_fuel_spike_columns(frame, ba_code=ba_code, year=year)
+
+
+def _eia_hourly_frame_raw(ba_code: str, year: int) -> pd.DataFrame | None:
+    """Return the strict BA-year frame BEFORE the ``NG:`` unit-slip screen.
+
+    The unscreened core of :func:`_eia_hourly_frame`, split out so that
+    :func:`_ercot_hourly_frame` can fill its NaN windows from the long-format
+    API series and screen the RESULT, rather than screening first and then
+    letting :func:`_fill_hourly_frame_from_long` refill the holes the screen
+    just made from a long series that may carry the same slip. That is also
+    the order the ERCOT readers had before the screen moved to this module
+    (lane NWPP-37), so ERCOT stays byte-identical.
+
+    Do NOT call this from a reader: it is the one place in the package that
+    returns unrepaired ``NG:`` columns, and its two callers both screen. Every
+    reader wants :func:`_eia_hourly_frame` or :func:`_eia_hourly_frame_filled`.
+
+    Deliberately NOT ``lru_cache``d, although its two callers are. A third
+    cache would be a third thing every test that patches ``EIA_HOURLY_DIR``
+    has to remember to clear, and the ones that exist clear by name — when
+    this was cached, a synthetic ``SWPP`` extract leaked out of one test class
+    into a live-data assertion in another. The pool branch it delegates to is
+    cached on its own, so the only uncached re-read is one parquet slice for
+    a single BA, taken at most twice per (BA, year).
     """
     if ba_code in _POOL_HOURLY_MEMBERS:
         return _pool_hourly_frame(ba_code, year)
@@ -272,6 +311,30 @@ def _eia_hourly_frame(ba_code: str, year: int) -> pd.DataFrame | None:
     if len(df) != HOURS_PER_YEAR:
         return None
     return df.reset_index(drop=True)
+
+
+@lru_cache(maxsize=32)
+def _eia_hourly_frame(ba_code: str, year: int) -> pd.DataFrame | None:
+    """Return the EIA-930 ``<BA> hourly`` rows for one calendar year.
+
+    The rows are restricted to ``year`` (by the BA's local date), sorted
+    chronologically by UTC time, and reduced to a clean 8760-hour series —
+    in a leap year Feb 29 is dropped. Row 0 is the first local hour of the
+    year, matching the HSL parquet's index, so demand, interchange and
+    renewable generation drawn from this frame all share one clock.
+
+    The ``NG:`` fuel columns are screened for unit-slip artifacts on the way
+    out (:func:`_screen_fuel_spikes`), so every reader of this frame — and of
+    the two loaders built on it, :func:`_eia_hourly_frame_filled` and
+    :func:`_ercot_hourly_frame` — sees the repaired series. ``Demand``,
+    ``Net generation`` and ``Total interchange`` are outside that screen by
+    ruling and are returned exactly as filed.
+
+    Returns ``None`` when the file is missing or the year is not covered by a
+    full 8760-hour series. A pool code (``_POOL_HOURLY_MEMBERS``) returns the
+    members' UTC-joined sum via :func:`_pool_hourly_frame`.
+    """
+    return _screen_fuel_spikes(_eia_hourly_frame_raw(ba_code, year), ba_code, year)
 
 
 # Pool-frame columns carried from the clock member as provenance (the pool's
@@ -414,6 +477,15 @@ def _eia_hourly_frame_filled(ba_code: str, year: int) -> pd.DataFrame | None:
     rows for the caller to interpolate. Row k is local hour k of the year,
     the same clock as the strict frame.
 
+    Both exits are screened for ``NG:`` unit-slip artifacts
+    (:func:`_screen_fuel_spikes`): the fast path inherits the screen from
+    :func:`_eia_hourly_frame`, and the reconstruction below — which reads the
+    parquet itself rather than going through that loader — applies it on its
+    own return. The screen runs on the RAW observations, before any caller's
+    gap-fill, which is the order :func:`~market_sim.data.eia930.actuals.
+    _screen_fuel_spike_columns` documents as load-bearing; the inserted gap
+    rows are NaN in every column and cannot be flagged.
+
     Returns ``None`` when the file is missing, the ``Local time`` anchor
     column is absent, more than :data:`_HOURLY_FRAME_MAX_GAP` hours are
     missing, or the reconstruction does not come out at exactly
@@ -461,7 +533,7 @@ def _eia_hourly_frame_filled(ba_code: str, year: int) -> pd.DataFrame | None:
         .reset_index()
         .rename(columns={"index": "UTC time"})
     )
-    return out
+    return _screen_fuel_spikes(out, ba_code, year)
 
 
 # EIA-930 long-format (API) region ``type`` code -> wide extract column, for
@@ -527,7 +599,9 @@ def _fill_hourly_frame_from_long(frame: pd.DataFrame, ba_code: str) -> pd.DataFr
     for col, series in long_series.items():
         if col not in frame.columns:
             continue
-        vals = frame[col].to_numpy(dtype=float)
+        # copy=True: ``to_numpy`` can hand back a read-only view of the
+        # column's block, and the assignment below writes into it in place.
+        vals = frame[col].to_numpy(dtype=float, copy=True)
         gap = np.isnan(vals)
         if not gap.any():
             continue
@@ -550,10 +624,12 @@ def _ercot_hourly_frame(year: int) -> pd.DataFrame | None:
     the un-filled extracts, so generalizing the fill is a deliberate
     per-ISO re-render decision, not a silent side effect.
     """
-    frame = _eia_hourly_frame("ERCO", year)
+    frame = _eia_hourly_frame_raw("ERCO", year)
     if frame is None:
         return None
-    return _fill_hourly_frame_from_long(frame, "ERCO")
+    return _screen_fuel_spikes(
+        _fill_hourly_frame_from_long(frame, "ERCO"), "ERCO", year
+    )
 
 
 def _filter_iso_year(df: pd.DataFrame, iso: str, year: int) -> pd.DataFrame:
