@@ -412,7 +412,7 @@ class TestColumbiaChainReduced(unittest.TestCase):
 
     def test_g_a2_identity_holds(self):
         for m, res in self.results.items():
-            spec, on, T = res["spec"], res["on"], res["T"]
+            spec, on = res["spec"], res["on"]
             arr = self._arrivals(res)
             for c, g in enumerate(spec.coupled_gen_idx):
                 turb = on.dispatch[g] / spec.eta_dn[c]
