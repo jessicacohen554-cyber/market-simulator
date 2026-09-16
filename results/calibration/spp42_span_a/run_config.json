@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-09-13T05:40:34",
+  "timestamp": "2026-09-16T04:35:50",
   "git": {
-    "sha": "760012f7",
-    "basis_sha": "760012f7a12b5d6fae01c5a6a4c96c9dc8588ed9",
-    "branch": "HEAD",
+    "sha": "1f586ed7",
+    "basis_sha": "1f586ed75b20db7085eddf70c5c3926687861c69",
+    "branch": "claude/spp42-span-a",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "SPP-38: keeper 10 recipe re-solved on the repaired EIA-860 vintage cache (FINDING-spp-37)",
+  "model_changes_note": "SPP-42 span A: keeper 11 recipe + mustrun_commitment_feasibility_clip, 2023-2025",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "SPP",
@@ -43,7 +43,8 @@
       "eia860_vintage_tracks_solve_year": true,
       "st_gas_mustrun_per_plant": true,
       "mustrun_window_commitment_grain": true,
-      "unit_outage_short_windows": true
+      "unit_outage_short_windows": true,
+      "mustrun_commitment_feasibility_clip": true
     },
     "coal_bit_passthrough_sigmoid": false,
     "coal_bit_sigmoid_overrides": {},
@@ -121,7 +122,7 @@
     "nyiso_dynamic_reserve_requirements": null,
     "nyiso_hydro_reserve_eligible": null,
     "nyiso_scr_edrp_reserve_eligible": null,
-    "git_sha": "760012f7"
+    "git_sha": "1f586ed7"
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -636,6 +637,7 @@
     "coal_sync_srmc_tranche": false,
     "coal_econ_srmc_bound": false,
     "coal_econ_marginal_hr_bound": false,
+    "committed_band_measured_basis": false,
     "coal_bit_committed_takeorpay": false,
     "coal_committed_takeorpay_all": false,
     "coal_committed_takeorpay_regulated": false,
@@ -771,6 +773,7 @@
     "caiso_st_gas_peak_measured": false,
     "caiso_ct_peaker_committed_measured": false,
     "nyiso_ct_peaker_bands_measured": false,
+    "nyiso_st_gas_econ_bands_deleaked": false,
     "caiso_offer_surface_conditional": false,
     "caiso_offer_surface_binned_path": null,
     "caiso_offer_surface_netload_pcts": [
@@ -800,6 +803,7 @@
     "st_gas_mustrun_p25_measured_level": false,
     "st_gas_mustrun_oom_level": false,
     "mustrun_layup_window_mask": false,
+    "mustrun_commitment_feasibility_clip": true,
     "mustrun_plant_exclusions": false,
     "cc_capacity_reconcile": false,
     "cc_capacity_reconcile_path": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_SPP.csv",
@@ -1115,11 +1119,11 @@
     "rows": 182,
     "moved": {},
     "epochs": [],
-    "git_sha": "760012f7"
+    "git_sha": "1f586ed7"
   },
   "environment": {
     "python_version": "3.11.15",
-    "platform": "Linux-6.18.44-fc-v24-x86_64-with-glibc2.39",
+    "platform": "Linux-6.18.44-fc-v33-x86_64-with-glibc2.39",
     "packages": {
       "highspy": "1.14.0",
       "numpy": "2.4.6",

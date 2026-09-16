@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-09-13-spp-38-vintage-cache",
+  "run_id": "2026-09-16-spp-42-commitment-feasibility",
   "iso": "SPP",
-  "label": "spp 38 vintage cache",
+  "label": "spp 42 commitment feasibility",
   "target_years": [
     2023,
     2024,
@@ -13,7 +13,8 @@
     2025
   ],
   "data_blocked_years": [],
-  "rubric_version": 3.7,
+  "price_reference_blocked_years": [],
+  "rubric_version": 3.8,
   "determination": "CALIBRATED",
   "reasons": [
     "1 ledgered caveat(s) (measured-input or model-class) \u2014 REPORTED, and NOT determination-downgrading under rubric v3.3: C3c price tail / scarcity (RT hourly)"
@@ -93,8 +94,8 @@
       "label": "D-A diurnal price amplitude, hour-of-day (REPORTED-ONLY, BAND-FREE, v3.5 \u2014 no external comparable exists to band it; see the note)",
       "years": {
         "2023": "amplitude 39.7% of measured (hod range $11.69 vs $29.48); peak h17 vs h17, trough h02 vs h01 \u2014 phase OK; hod r +0.947; 364 complete days",
-        "2024": "amplitude 40.8% of measured (hod range $15.22 vs $37.29); peak h15 vs h16, trough h01 vs h01 \u2014 phase OK; hod r +0.978; 364 complete days",
-        "2025": "amplitude 30.2% of measured (hod range $14.29 vs $47.28); peak h12 vs h17, trough h01 vs h01 \u2014 phase OFF; hod r +0.880; 364 complete days"
+        "2024": "amplitude 40.9% of measured (hod range $15.23 vs $37.29); peak h15 vs h16, trough h01 vs h01 \u2014 phase OK; hod r +0.978; 364 complete days",
+        "2025": "amplitude 30.5% of measured (hod range $14.41 vs $47.28); peak h12 vs h17, trough h01 vs h01 \u2014 phase OFF; hod r +0.880; 364 complete days"
       }
     }
   },
