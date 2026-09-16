@@ -2753,3 +2753,92 @@ re-registers nothing, so no `stamp_touchpoint_holdout.py` re-apply is owed.
 
 **Next shorthand: spp-42.** The cheap lever does not exist; the queue's top item is now an
 owner decision on the Schedule-5 coal receipts/stocks intake, not a modelling session.
+
+## spp-42 — 2026-09-16 — CARD R-be's OPEN HALF IS A CLIP DEFECT, NOT A SELECTION DEFECT; the screen CLEARS and the span is launched
+
+**NO PROMOTION. `frontend/data/backcast/keepers/SPP.json` is UNTOUCHED** and SPP's designated
+keeper remains 11, `2026-09-13-spp-38-vintage-cache` (rule 31 `[R-RETAIN]` — promotion is the
+owner's act). SPP's determination is UNCHANGED: `CALIBRATED` on the 2023–2025 train-tier verdict.
+Full write-up: `docs/handoffs/RESULT-spp-42-commitment-feasibility-2026-09-16.md`; charter
+`docs/handoffs/PRECOMMIT-spp-42-commitment-feasibility-2026-09-14.md`.
+
+**PHASE 0 ESTABLISHED THE SELECTION EXACTLY, THEN OVERTURNED THE CARD'S OWN READING OF IT.**
+The floor's hours are the top `round(online_frac × 8760 / 24)` whole operating days ranked by
+**day-mean SYSTEM LOAD — the identical ranking for every plant**; verified, the placed day set
+is a subset of the top-N load days for all 21 floored plants, and the plant's own record enters
+ONLY through the COUNT and the LEVEL. The confusion matrix splits the four D-4 failures in two:
+1230/1235/1271 are a DAY-selection miss (day precision 0.483/0.500/0.500, within-day
+0.855/0.907/0.847) and 3008 is a WITHIN-DAY miss (0.812 / 0.601, daytime-cycling) — the one
+measured two-shifter SPP-27 named. **But the day-selection reading is largely WRONG**: about
+half of each failing plant's floored hours carry a dated ≥5-day CAMPD full stop and the floor
+SURVIVES it as a fraction of the plant's own minimum online level — single-unit **Cimarron River
+(1230, 50 MW) floored at a MEDIAN 1.33 MW, 6.2 % of its own 21.6 MW level, across 845 hours its
+meter reads zero** (1235 4.00/24.0, 1271 1.68/17.0, 3008 16.91/41.9; passing plants 73–92 %).
+Because a committed tranche's `cc_mustrun_pmin_mw` IS its own `pmax`, the global clip reduces to
+exactly `pmax × availability`: the asserted COMMITMENT inherits the derate LINEARLY, and
+`np.minimum` substitutes a smaller, equally infeasible commitment instead of none.
+
+**THE ARM.** New gated field `mustrun_commitment_feasibility_clip` (default off, registered in
+`_CACHE_KEY_OPTIONAL_FIELDS` at that default in the same commit): zero the floor where the
+plant-group's own available capacity is below the committed level it asserts; every other hour
+keeps the incumbent clip. **Rule 21 `[R-DOF]` ZERO free parameters, zero new artifacts, loaders
+or CLI inputs.** Rule 18 `[R-PHYSICS]` eligibility is unit physics. Rule 13 `[R-MEASURED]`
+nothing measured enters — both operands are arrays the LP already holds — so it is
+FORWARD-NATIVE, deliberately NOT in `_BACKCAST_ONLY_OVERLAY_FIELDS`. Rule 19 `[R-ONE-MECH]`:
+the ONE floor's clip is replaced, nothing stacked; the committed D-2 confirms
+`st_gas_mustrun_per_plant` is the SOLE mechanism flooring SPP ST_GAS.
+
+**TWO SIBLING ROUTES KILLED AT ZERO LP.** (a) `mustrun_layup_window_mask` alone is a rule-19
+**double-subtraction** on SPP — `campd_outage_merit_order_guard` is off, no
+`campd-unit-outages-perunitmerit-SPP.csv` exists, and **1089 of 1089** lay-up rows are already
+present in the `campd-unit-outages-SPP.csv` the keeper reads, with availability inside those
+windows already at 0.040/0.182/0.108/0.297 and ZERO lay-up hours left underated. (b) The blunt
+"zero under ANY dated outage" variant removes 1.15 TWh fleet-wide and destroys CORRECT floors on
+multi-unit plants (2964: 4,326 of its 4,560 zeroed hours are hours the meter says it WAS running).
+
+**THE SCREEN (2023, named ex ante on the mechanism's own largest footprint, 0.1428 TWh against
+0.1154 and 0.0465, and NOT the residual year).** G-DRIFT **VOIDED form 4** and the control solve
+was EARNED: a LIVE hunk sits on the exact path under test (`arrays.py`'s COD-ramp seam moved to
+`cod_ramp.generator_online_mask`, SOCO-15 card S12, whose comment records that `min_gen` is now
+"scaled by the same mask" where it was "zeroed in offline months"), so both legs were solved in
+ONE shard at the SAME base. **The control is faithful — three reproductions of keeper 11's
+committed 2023**: D-4 rows identical, C3a +2.43 % (committed +2.43), C3b 0.1761 (committed
+0.1760). **G1 FIRING PASS** (placed `min_gen` 22.2420 → 22.0992 TWh, −0.1428, hitting the
+zero-LP prediction to 4 dp) · **G2a/G2b PASS** (one differing key; `offer_curve_by_group`
+`090abd79…62f65` in both) · **G3 PASS** (ST_GAS −0.1312 TWh against a 0.4284 bound; CC_REGULAR
++0.0422, CT_PEAKER +0.0391, COAL_PRB +0.0363, COAL_LIGNITE +0.0101; total +0.0002 on 284.64 TWh;
+wind +0.0026, no curtailment traded) · **G4 PASS** (slack 0.0000 and dump 0.0000 in BOTH legs,
+price max 61.4221 byte-identical) · **G5 PASS** (C3a +2.43 → +2.52 %, C3b 0.1761 → 0.1768, C1
+ST_GAS share_pp −0.046, no flip).
+
+**G2c FAILS AS LITERALLY WRITTEN AND IS REPORTED RATHER THAN RE-READ (the SPP-32 discipline).**
+The clause said "no class other than ST_GAS changes its D-2 forced energy"; CC_CHP 0.0533 →
+0.0531 and CT_CHP 0.0474 → 0.0472 moved by 0.0002 TWh each. It names a DISPATCH measure to test
+a MECHANISM property and was drafted loosely. The property is proven by a strictly stronger
+check, pre-registered in the PRECOMMIT's prose and re-run on the SOLVED floor arrays: **6,720
+moved cells, control-leg mechanism stamp id 16 on 100 % and arm-leg id 0 on 100 %, with the
+`chp_steam` (104,016 cells) and `nuclear_mustrun` (17,520 cells) floor arrays BYTE-IDENTICAL.**
+
+**THE TARGET, after the gates and never as one: D-4 FAIL rows 4 → 1.** 1230/1235/1271 all
+RESOLVE; **3008 improves and STILL FAILS** (bind_h 2047 → 1836, zero share 0.6087 → 0.5839).
+That is the pre-registered risk landing: phase 0 predicted 3008's PLACED median would move
+0.0 → 13.8 MW and the rider scores BINDING hours, where it stays 0.0 — the placed-vs-binding
+bound SPP-39 was caught by, biting on one plant of four. 3008 is the only multi-unit plant of
+the four and the fleet's one two-shifter; its defect is the within-day grain (SPP-27), never
+this clip. D-2 ST_GAS forced 2.4998 → 2.4057 TWh, share 0.1935 → 0.1881. **Expectations held
+and were stated at the gate:** C1 ST_GAS worsens −6.362 → −6.494 TWh because the arm REMOVES
+floor from a class already under-produced; load-weighted price 25.7440 → 25.7672.
+
+**SPAN LAUNCHED on the cleared screen — SEVEN years in TWO registrable bundles** (rules 16 /
+32(b) / 34(c); year union enumerated from `frontend/data/backcast/registry/*.json` BEFORE any
+prune, rule 35(b)): `--years 2023 2024 2025` and `--years 2019 2020 2021 2022`, each one shard,
+one bundle, pushing every `dispatch/<year>_P1.parquet`. Span B carries the number SPP-40 named
+as this lane's object: the held-out C8 ST_GAS `forced_share` 0.504/0.556 in 2021/2022 against a
+0.30 cap.
+
+**HOUSEKEEPING.** Parity gate still RED on exactly the two pre-existing non-SPP bundles
+`caiso279_ablate_dswcouple_span` and `soco15_spp_arm` — rule 35(a) is per-ISO, **not pruned by
+this lane**. `[R-HOLDOUT]` was removed 2026-09-09, so `CALIBRATED` is a RUBRIC DETERMINATION,
+NOT a certified out-of-sample skill claim.
+
+**Next shorthand: spp-43.**
