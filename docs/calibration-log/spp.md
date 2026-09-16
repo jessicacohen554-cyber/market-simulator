@@ -2995,10 +2995,15 @@ reads **`iso = SPP`**, not SOCO: it is the SOCO-15 lane's *SPP arm* and so IS in
 rule-35(a) scope, but it is cited as live evidence by ten-plus docs across five lanes and rule 31
 reserves that call for the owner.
 
-**RETRIEVABILITY** (rule 34 `[R-SHARD-PROMOTABLE]` (e)): the bundle is PUSHED — 44 files
-including all four `dispatch/<year>_P1.parquet` and `_shared/SPP` — on `claude/spp43-holdout-span`
-(PR #6223), rebased onto main at `aea6158f0b12535890a8e8fed35b3b3207410875`. A promotion costs
-**zero re-solves**: `git checkout aea6158f0b12535890a8e8fed35b3b3207410875 -- results/calibration/spp43_holdout_span`.
+**RETRIEVABILITY** (rule 34 `[R-SHARD-PROMOTABLE]` (e)): the bundle is **ON `main`**. PR #6223
+(`claude/spp43-holdout-span`) was rebased onto main to clear a `.gitignore` conflict and merged at
+`aea6158f0b12535890a8e8fed35b3b3207410875` — 45 committed files including all four
+`dispatch/<year>_P1.parquet`, their `_fleet` companions and the 8 `_shared/SPP` inputs. **A
+promotion costs zero re-solves and needs no recovery command.** The shard's `.gitignore` negation
+was scoped to SPP before merge: a blanket `!results/calibration/_shared/` would have un-ignored
+EVERY other ISO's shared inputs and let a later `git add` in any lane sweep them onto main
+(rule 32(c)(6)), so the parent re-ignored `results/calibration/_shared/*` and re-opened only
+`_shared/SPP/`.
 
 **THE PROMOTION QUESTION, ASKED NOT PRE-EMPTED**: this run supersedes
 `2026-09-13-spp-40-holdout-span` as SPP's 2019–2022 rung. Both are currently registered and both

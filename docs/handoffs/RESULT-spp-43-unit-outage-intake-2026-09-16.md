@@ -171,11 +171,12 @@ launched to quantify the split. **Its status is recorded in §8.**
 
 ## 8. Retrievability (rule 34 `[R-SHARD-PROMOTABLE]` (e))
 
-* **`results/calibration/spp43_holdout_span` — PUSHED, 44 files including all four
-  `dispatch/<year>_P1.parquet` and `_shared/SPP`.** On branch `claude/spp43-holdout-span`
-  (PR #6223), rebased onto main at **`aea6158f0b12535890a8e8fed35b3b3207410875`**. A promotion
-  from here costs **zero re-solves**.
-  Recovery: `git checkout aea6158f0b12535890a8e8fed35b3b3207410875 -- results/calibration/spp43_holdout_span`
+* **`results/calibration/spp43_holdout_span` — ON `main`.** PR #6223 (branch
+  `claude/spp43-holdout-span`) was rebased onto main to clear a `.gitignore` conflict and
+  **merged at `aea6158f0b12535890a8e8fed35b3b3207410875`**, so the bundle is committed:
+  45 files including all four `dispatch/<year>_P1.parquet`, all four `_fleet` companions and
+  the 8 `_shared/SPP` inputs. **A promotion from here costs zero re-solves and needs no
+  recovery command** — the bytes are on `main`.
 * **`results/calibration/spp43_extract_only`** — the decomposition leg. Status at write-up
   time is in the session report; if its branch `claude/spp43-extract-only` did not land, the
   leg costs **~15 min of LP** to reproduce and **nothing in §4 depends on it** — it refines
