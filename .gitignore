@@ -2286,3 +2286,17 @@ results/calibration/_soco40_screen/
 
 # soco-40: the UNSPLIT-coal span (arm A of the coal-split comparison), kept out of main; bytes live on shard commit 9458759f6b8c875a9a302e4b64db9e212420ddf9 (git checkout 9458759f6b8c875a9a302e4b64db9e212420ddf9 -- results/calibration/soco40_baseline_B); never rm (rule 31)
 results/calibration/soco40_baseline_B/
+# neiso-110 screen bundle (2026-09-16): the rule-29 [R-SCREEN] screen arm for
+# neiso_coldsnap_derate_dualfuel_unswitched on 2022. Ignored so it can never
+# reach `main`, which is the ONLY thing rule 29(c) DELETE-BEFORE-MERGE requires;
+# rule 31 [R-RETAIN] names gitignoring — never `rm` — as what discharges it, so
+# it stays on local disk until the OWNER has ruled (RESULT §7 asks the merge/arm
+# question; the screen itself is never registrable).
+# RECOVERY BY IMMUTABLE SHA (rule 33(d) — never by branch name, branches here are
+# deleted within minutes). The shard pushed the FULL bundle, including
+# dispatch/2022_P1.parquet, so a promotion costs ZERO re-solves:
+#   git archive 7b82a4c08039c04f348884dfad894e196a9a16fb \
+#     results/calibration/neiso110_dualfuel_screen_2022 | tar -x
+# Use `git archive`, NOT `git checkout <sha> -- <path>`, which STAGES the bundle
+# and would sweep it onto the branch.
+results/calibration/neiso110_dualfuel_screen_2022/
