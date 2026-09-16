@@ -2229,3 +2229,18 @@ results/calibration/nyiso236_hydroperiod_2022/
 results/calibration/nyiso236_hydroperiod_2023/
 results/calibration/nyiso236_hydroperiod_2024/
 results/calibration/nyiso236_hydroperiod_span2025/
+# SPP-43 shard: push this lane's bundle + its derived shared inputs (rule 34
+# [R-SHARD-PROMOTABLE] (a) -- registration needs dispatch/<year>_P1.parquet and
+# the _shared/<ISO> inputs, so a shard that omits them strands the run).
+!results/calibration/spp43_holdout_span/
+!results/calibration/spp43_holdout_span/**
+# The _shared negation is SPP-ONLY on purpose. Line ~1679 ignores
+# results/calibration/_shared/ wholesale and git will not descend into an
+# excluded directory, so the parent must be re-opened -- but re-ignoring its
+# contents immediately keeps every OTHER ISO's shared inputs excluded exactly as
+# on main. A blanket `!results/calibration/_shared/` would un-ignore all of them
+# and let a later `git add` in any lane sweep another ISO's inputs onto main
+# (rule 32(c)(6)); already-tracked files are unaffected either way.
+!results/calibration/_shared/
+results/calibration/_shared/*
+!results/calibration/_shared/SPP/
