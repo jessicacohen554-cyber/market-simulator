@@ -1553,6 +1553,58 @@ def _system_frame(
     return pd.concat(rows, ignore_index=True)
 
 
+def _hydro_cascade_frame(year: int, pass_label: str, result) -> "pd.DataFrame | None":
+    """Return the long per-coupled-plant hourly hydraulic-cascade frame.
+
+    One row per (coupled downstream plant, hour): the LP's spill ``S_d(t)``
+    (kcfs), pond volume ``V_d(t)`` above the bottom of the operated band
+    (kcfs·h), and the water-balance row dual (the marginal water value at that
+    plant-hour, $ per kcfs·h). These are the three ``DispatchResult`` arrays
+    ``model/lp/hydro_cascade.py`` extracts when ``ScenarioConfig.
+    hydro_cascade_coupling`` is armed (NWPP-36, owner ruling N3); until this
+    sidecar they were discarded at persist time, so the ONLY evidence of what
+    the coupling did in a solved bundle was the coupled plants' generation
+    shape — FINDING-nwpp-36 §7 item 5 routed their persistence here
+    (NWPP-40). Tiny (n_coupled × 8,760 rows; five plants on the first NWPP
+    keeper) and committable under the ``hourly/`` convention (rule 15).
+
+    Returns ``None`` on every run where the mechanism is off or inert (the
+    arrays are ``None``), so no unarmed bundle gains a file.
+    """
+    spill = getattr(result, "hydro_cascade_spill", None)
+    if spill is None:
+        return None
+    storage = getattr(result, "hydro_cascade_storage", None)
+    wv = getattr(result, "hydro_cascade_water_value", None)
+    codes = getattr(result, "hydro_cascade_plant_codes", None)
+    spill = np.asarray(spill, dtype=float)
+    if spill.ndim != 2 or spill.shape[0] == 0:
+        return None
+    n_c, T = spill.shape
+    if codes is None or len(codes) != n_c:
+        codes = np.arange(n_c)
+    frame = pd.DataFrame(
+        {
+            "year": np.full(n_c * T, int(year), dtype=np.int16),
+            "pass": pass_label,
+            "plant_code": np.repeat(np.asarray(codes, dtype=np.int64), T),
+            "hour": np.tile(np.arange(T, dtype=np.int32), n_c),
+            "spill_kcfs": spill.reshape(-1).astype(np.float32),
+            "pond_kcfsh": (
+                np.asarray(storage, dtype=float).reshape(-1).astype(np.float32)
+                if storage is not None
+                else np.full(n_c * T, np.nan, dtype=np.float32)
+            ),
+            "water_value": (
+                np.asarray(wv, dtype=float).reshape(-1).astype(np.float32)
+                if wv is not None
+                else np.full(n_c * T, np.nan, dtype=np.float32)
+            ),
+        }
+    )
+    return frame
+
+
 def _reserve_family_frame(
     year: int,
     pass_label: str,
@@ -6122,6 +6174,7 @@ def solve_and_persist(
         unit_frames: list[pd.DataFrame] = []
         network_frames: list[pd.DataFrame] = []
         reserve_family_frames: list[pd.DataFrame] = []
+        hydro_cascade_frames: list[pd.DataFrame] = []
 
         for label, res in labelled:
             passes_seen.add(label)
@@ -6245,6 +6298,12 @@ def solve_and_persist(
             if _rfamf is not None:
                 reserve_family_frames.append(_rfamf)
             del _rfamf
+            # Hydraulic-cascade spill / pond / water value per coupled plant
+            # (NWPP-36 arrays; None -> no frame on every unarmed or inert run).
+            _hcf = _hydro_cascade_frame(year, label, res)
+            if _hcf is not None:
+                hydro_cascade_frames.append(_hcf)
+            del _hcf
             system_frames.append(_sysf)
             # Reserve-dual diagnostic sidecar (MARKET_SIM_RESERVE_DUAL_DUMP,
             # default OFF): the per-family reserve balance-row duals
@@ -6358,6 +6417,7 @@ def solve_and_persist(
         _write_hourly_sidecar(run_dir, year, "unit_hourly", unit_frames)
         _write_hourly_sidecar(run_dir, year, "network", network_frames)
         _write_hourly_sidecar(run_dir, year, "reserve_family", reserve_family_frames)
+        _write_hourly_sidecar(run_dir, year, "hydro_cascade", hydro_cascade_frames)
         # ercot-219 stage-2 exhaustion series (ercot_exhaustion_expectation):
         # H margin / sequestered AS / LOLP(H) / within-day P_exhaust — the
         # committed audit trail for G-EXH and the stage-3 offer (PRECOMMIT-
@@ -6474,7 +6534,7 @@ def solve_and_persist(
         # per-year frames accumulated above survive the loop.
         del result, context, result_p1, p2_state, demand, must_run
         del must_run_total, labelled, res
-        del unit_frames, network_frames, reserve_family_frames
+        del unit_frames, network_frames, reserve_family_frames, hydro_cascade_frames
         gc.collect()
         # Hand the freed solve heap back to the kernel. gc.collect() returns the
         # LP's memory to glibc, but glibc holds large fragmented arenas instead
@@ -11654,6 +11714,27 @@ def main() -> None:
         "--hydro-backfill-year, which supplies the per-plant coverage.",
     )
     parser.add_argument(
+        "--hydro-cascade-coupling",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Arm ScenarioConfig.hydro_cascade_coupling (NWPP-36, owner ruling "
+        "N3): couple the plants of a MEASURED hydraulic chain with one hourly "
+        "water-balance equality per coupled downstream plant (spill S >= 0, "
+        "pond 0 <= V <= B_d; model/lp/hydro_cascade.py), on top of -- never in "
+        "place of -- the EIA-923 monthly energy budget, which stays the sole "
+        "quantity mechanism (rule 19 [R-ONE-MECH]). Reads the per-ISO artifact "
+        "data/raw/<iso>-hydro/<iso>_hydro_cascade_{links,monthly}.csv through "
+        "pipeline/kwargs.py::resolve_hydro_cascade; an ISO-year with no "
+        "artifact, or no coupled plant on its LP hydro fleet, is armed-but-"
+        "INERT and its LP is byte-identical. Tri-state: unset (default) keeps "
+        "the recipe / per-ISO value, --no- forces it off. Rides the generic "
+        "prb_overrides ScenarioConfig channel so run_config.json and meta.json "
+        "record it (rule 24 [R-REGISTRY]); the field is on "
+        "_CACHE_KEY_OPTIONAL_FIELDS, so an unset flag moves no cache key. "
+        "Added by lane NWPP-40 (2026-09-16): NWPP-36 built the field with no "
+        "CLI surface, and the first NWPP keeper arms it (plan §8 W4).",
+    )
+    parser.add_argument(
         "--hydro-budget-period-by-instrument",
         action="store_true",
         help="Shorten the conventional-hydro energy-budget period, PER PLANT, "
@@ -14066,6 +14147,11 @@ def main() -> None:
             "coal_waste_passthrough_ceil": args.waste_ceil,
             "coal_waste_passthrough_gas_mid": args.waste_gas_mid,
             "coal_waste_passthrough_gas_slope": args.waste_gas_slope,
+            # Hydraulic-cascade coupling (NWPP-36 / NWPP-40). Tri-state: None
+            # is dropped by the channel and keeps the recipe value; True/False
+            # reach run_year's config AND recorded_cfg, so the arming is
+            # replayable from meta.json / run_config.json (rule 24).
+            "hydro_cascade_coupling": args.hydro_cascade_coupling,
             # Per-plant CC demonstrated-capacity reconciliation (mode=cap
             # bounds a plant AT its CAMPD sustained peak — the EIA-860
             # CA-row block-summer double-count fix). Per-ISO table; never
