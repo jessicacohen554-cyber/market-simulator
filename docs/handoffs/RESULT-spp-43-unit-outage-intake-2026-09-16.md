@@ -117,8 +117,41 @@ measured the clip *provably inert* on these years without the extract ("0 infeas
 plant-hours, 0.0 MWh released"), so the data is the **enabling condition** and the clip the
 **mechanism**. Neither alone produces this result.
 
-A decomposition leg (new extract, clip OFF — `results/calibration/spp43_extract_only`) was
-launched to quantify the split. **Its status is recorded in §8.**
+A decomposition leg settles the split. Three legs, one delta apart each
+(`offer_curve_by_group` byte-identical in all three; the leg's only other differing key is
+`hydro_cascade_coupling` `None` → `False`, a field that did not exist at the arm's base and
+is GATED default-off, so behaviourally identical):
+
+| | **A** ctrl<br>old extract, no clip | **B** NEW extract, no clip | **C** NEW extract + clip (the arm) |
+|---|---|---|---|
+| ST_GAS `forced_twh` 2019 | 5.0294 | **1.8898** | 1.7035 |
+| 2020 | 4.7849 | **1.8185** | 1.7040 |
+| 2021 | 5.4248 | **2.0268** | 1.9543 |
+| 2022 | 5.4898 | **2.4743** | 2.3652 |
+| `class_total_twh` | 14.6909 / 15.8746 / 10.7616 / 9.8806 | 14.9009 / 14.2247 / 7.9955 / 7.6471 | 14.7341 / 14.0692 / 7.9206 / 7.5281 |
+| share | .3423 / .3014 / .5041 / .5556 | .1268 / .1278 / .2535 / .3236 | .1156 / .1211 / .2467 / .3142 |
+| D-4 FAIL rows | **33** | **14** | **4** |
+
+**The intake does 94.4 / 96.3 / 97.9 / 96.5 % of the forced-energy reduction** (A→B over
+A→C) and 19 of the 29 D-4 rows; the clip supplies the last ~4 % of energy and the other 10
+rows.
+
+**But neither alone closes C8, and that is the point of running this leg.** Both B and C
+breach the raw 0.30 cap in 2022 only (32.4 % and 31.4 %). What differs is rule 20's
+**grounded-above-budget** escalation, which needs every binding mechanism to clear D-4:
+
+* **B** still fails D-4 in 2022 on plants 1230, 1235, 3008 → **not grounded → C8 FAILs.**
+* **C** has **zero** D-4 failures in 2022 → **grounded → C8 PASSes.**
+
+So the two are **complements, not substitutes**: the intake supplies almost all the energy,
+and the clip supplies the 2022 D-4 clearance that actually flips the gate. Per-year D-4
+failing plants:
+
+| leg | 2019 | 2020 | 2021 | 2022 |
+|---|---|---|---|---|
+| A | 1230 1233 1235 1417 2226 2952 3008 3476 | 1230 1233 1235 1417 2226 3008 3476 7013 | 1230 1233 1235 1417 2226 3008 3476 3485 7013 | 1230 1233 1235 1417 2226 2952 3008 7013 |
+| B | 1230 1235 1417 3008 | 1230 1235 3008 | 1230 1235 3008 3485 | 1230 1235 3008 |
+| C | 1230 3008 | 3008 | 3008 | **—** |
 
 ## 6. Rules
 
@@ -177,10 +210,16 @@ launched to quantify the split. **Its status is recorded in §8.**
   45 files including all four `dispatch/<year>_P1.parquet`, all four `_fleet` companions and
   the 8 `_shared/SPP` inputs. **A promotion from here costs zero re-solves and needs no
   recovery command** — the bytes are on `main`.
-* **`results/calibration/spp43_extract_only`** — the decomposition leg. Status at write-up
-  time is in the session report; if its branch `claude/spp43-extract-only` did not land, the
-  leg costs **~15 min of LP** to reproduce and **nothing in §4 depends on it** — it refines
-  *attribution* between the intake and the clip, not any number above.
+* **`results/calibration/spp43_extract_only`** — the decomposition leg. **Deliberately kept
+  OFF `main`** (rule 29 `[R-SCREEN]` (c): a diagnostic leg is never registered, and an
+  unregistered bundle on `main` is a parity-gate RED). Verified absent from `main`; its 43
+  files including all four `dispatch/<year>_P1.parquet` live on branch
+  `claude/spp43-extract-only` at **`2addbeee3cfc7dc91d64739d606de35345909290`**, and every
+  number this lane cites from it is in §5 above, as rule 29(c) requires.
+  Recovery: `git checkout 2addbeee3cfc7dc91d64739d606de35345909290 -- results/calibration/spp43_extract_only`
+  — but note the branch may be deleted on the environment's own schedule, after which the leg
+  costs **~15 min of LP** to reproduce. **Nothing in §4 depends on it**: it refines
+  *attribution* between the intake and the clip, not any scored number.
 
 ## 9. Promotion question — for the owner, not pre-empted
 
