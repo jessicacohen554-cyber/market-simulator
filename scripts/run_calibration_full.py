@@ -4029,6 +4029,7 @@ def solve_and_persist(
     neiso_winter_fuel_inventory: bool | None = None,
     neiso_winter_fuel_start_fill_bbl: float | None = None,
     neiso_winter_fuel_mustrun: bool | None = None,
+    coal_fuel_inventory: bool | None = None,
     caiso_import_hub_prices: bool | None = None,
     caiso_import_gas_coupling: bool | None = None,
     caiso_import_solar_shape: bool | None = None,
@@ -4985,6 +4986,10 @@ def solve_and_persist(
         if neiso_winter_fuel_inventory is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 neiso_winter_fuel_inventory=neiso_winter_fuel_inventory
+            )
+        if coal_fuel_inventory is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                coal_fuel_inventory=coal_fuel_inventory
             )
         if neiso_winter_fuel_start_fill_bbl is not None:
             recorded_cfg = recorded_cfg.with_overrides(
@@ -5964,6 +5969,7 @@ def solve_and_persist(
             neiso_winter_fuel_inventory=neiso_winter_fuel_inventory,
             neiso_winter_fuel_start_fill_bbl=neiso_winter_fuel_start_fill_bbl,
             neiso_winter_fuel_mustrun=neiso_winter_fuel_mustrun,
+            coal_fuel_inventory=coal_fuel_inventory,
             caiso_import_hub_prices=caiso_import_hub_prices,
             caiso_import_gas_coupling=caiso_import_gas_coupling,
             caiso_import_solar_shape=caiso_import_solar_shape,
@@ -6937,6 +6943,7 @@ def solve_and_persist(
         "neiso_winter_fuel_inventory": neiso_winter_fuel_inventory,
         "neiso_winter_fuel_start_fill_bbl": neiso_winter_fuel_start_fill_bbl,
         "neiso_winter_fuel_mustrun": neiso_winter_fuel_mustrun,
+        "coal_fuel_inventory": coal_fuel_inventory,
         "caiso_import_hub_prices": caiso_import_hub_prices,
         "caiso_import_gas_coupling": caiso_import_gas_coupling,
         "caiso_import_solar_shape": caiso_import_solar_shape,
@@ -12068,6 +12075,24 @@ def main() -> None:
         "Takes precedence over --neiso-oil-burn-budget. NEISO-only, default off.",
     )
     parser.add_argument(
+        "--coal-fuel-inventory",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Coal fuel-inventory monthly energy budget (miso-259) — the "
+        "missing CEILING on coal. Coal carries take-or-pay and must-run FLOORS "
+        "and nothing caps its energy, so the LP cannot represent a fleet that "
+        "drew its stockpile down one year and could only burn what it received "
+        "the next. One pooled fleet row per month caps coal energy INPUT "
+        "(sum heat_rate * P, MMBtu) at (opening stock + prior-years delivery "
+        "rate) x heat content / 12. RULE-13 ADMISSIBLE: every sizing quantity "
+        "predates the solved year — opening stock is the footprint's December "
+        "ending stock of Y-1 (coal-stocks), the rate is mean receipts over Y-2 "
+        "and Y-1 (coal-receipts). Year Y's own stock path and receipts are "
+        "never read. Minimum operating stock is ZERO (a floor tuned to the "
+        "residual is the fitted mechanism rule 1 forbids). MISO-only, "
+        "backcast-only, default off.",
+    )
+    parser.add_argument(
         "--neiso-winter-fuel-start-fill-bbl",
         type=float,
         default=None,
@@ -14239,6 +14264,7 @@ def main() -> None:
         neiso_winter_fuel_inventory=args.neiso_winter_fuel_inventory,
         neiso_winter_fuel_start_fill_bbl=args.neiso_winter_fuel_start_fill_bbl,
         neiso_winter_fuel_mustrun=args.neiso_winter_fuel_mustrun,
+        coal_fuel_inventory=args.coal_fuel_inventory,
         caiso_import_hub_prices=args.caiso_import_hub_prices,
         caiso_import_gas_coupling=args.caiso_import_gas_coupling,
         caiso_import_solar_shape=args.caiso_import_solar_shape,

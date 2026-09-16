@@ -62,6 +62,11 @@ DATATYPES: tuple[str, ...] = (
     # miso-258 (2026-09-14): plant-level monthly ending coal stocks, the
     # measured fuel-inventory state coal has never carried.
     "coal-stocks",
+    # miso-259 (2026-09-14): the DELIVERY half of that state — plant-level
+    # monthly coal receipts (EIA-923 Page 5). Supersedes the incomplete
+    # _processed-legacy/eia923_monthly_fuel_costs.parquet extract for coal
+    # tonnage (50/67 MISO coal plants, 17-21% understated).
+    "coal-receipts",
     "nyiso-reserve-requirements",
     "nyiso-interface-flows",
     "nyiso-som-hub-fuel-annual",

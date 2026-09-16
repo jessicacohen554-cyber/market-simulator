@@ -1303,6 +1303,11 @@ def build_constraints(
     oil_month_index: np.ndarray | None = None,
     oil_gen_hour_coeff: np.ndarray | None = None,
     oil_group_index: np.ndarray | None = None,
+    coal_monthly_budget: np.ndarray | None = None,
+    coal_gen_idx: np.ndarray | None = None,
+    coal_month_index: np.ndarray | None = None,
+    coal_gen_hour_coeff: np.ndarray | None = None,
+    coal_group_index: np.ndarray | None = None,
     storage_daily_cycle_hours: int | None = None,
     storage_alloc_batt_idx: np.ndarray | None = None,
     storage_alloc_share: np.ndarray | None = None,
@@ -1897,6 +1902,35 @@ def build_constraints(
             del oil_block
             row_lower = np.concatenate([row_lower, oil_lower])
             row_upper = np.concatenate([row_upper, oil_upper])
+
+    # Optional coal fuel-inventory monthly budget: one pooled fleet row per
+    # month, capping coal energy INPUT (heat_rate * P, MMBtu) at the opening
+    # stockpile plus a prior-years delivery rate. The missing CEILING on coal —
+    # coal carries floors and nothing caps its energy, so the LP cannot
+    # represent a fleet that drew its pile down one year and could only burn
+    # what it received the next (data/coal_fuel_inventory.py).
+    #
+    # Shares _build_oil_budget_rows with the NEISO oil budget above but reaches
+    # it through its OWN kwarg family, so the two fuel budgets append as
+    # separate, independent row families and can never silently overwrite one
+    # another (rule 19 [R-ONE-MECH]).
+    if coal_monthly_budget is not None and coal_gen_idx is not None:
+        coal_gen_idx_arr = np.asarray(coal_gen_idx, dtype=int)
+        if coal_month_index is None:
+            coal_month_index = _hour_to_month_index(T)
+        if coal_gen_idx_arr.size:
+            coal_block, coal_lower, coal_upper = _build_oil_budget_rows(
+                layout,
+                coal_gen_idx_arr,
+                coal_monthly_budget,
+                coal_month_index,
+                gen_hour_coeff=coal_gen_hour_coeff,
+                group_index=coal_group_index,
+            )
+            blocks.append(coal_block)
+            del coal_block
+            row_lower = np.concatenate([row_lower, coal_lower])
+            row_upper = np.concatenate([row_upper, coal_upper])
 
     # Optional priced import-node monthly net-throughput band: one row per month
     # pinning the node's net interchange (import tranches minus export sinks) to

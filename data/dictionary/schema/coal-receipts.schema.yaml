@@ -1,0 +1,172 @@
+# Canonical schema: plant-level monthly coal receipts (deliveries to plant)
+#
+# The DELIVERY side of the coal fuel-inventory state. `coal-stocks` carries
+# the month-ending stockpile; this datatype carries the tonnage that arrived
+# to refill it. Together they are the two halves of the inventory identity
+#
+#     ending[m] = ending[m-1] + receipts[m] - burn[m]
+#
+# which is exactly why BOTH halves need the rule-13 warning below.
+#
+# WHY THIS EXISTS AS ITS OWN INTAKE. data/raw/_processed-legacy/
+# eia923_monthly_fuel_costs.parquet already carries a `quantity` column from
+# this same EIA form, and it is an INCOMPLETE extract: measured 2026-09-14 it
+# matches only 50 of the 67 MISO model coal plants and understates MISO coal
+# receipts by 17-21% (2020: 99.10 Mt against the true 120.42 Mt; nationally in
+# 2018 it carries 436 Mt against ~637 Mt actually received). A budget built on
+# it flips two MISO years from inert to marginal and would have produced a
+# false G-FOOTPRINT failure. It is superseded for coal receipts by this
+# datatype and must not be used for them.
+#
+# SOURCE. EIA-923 worksheet "Page 5 Fuel Receipts and Costs", from the same
+# free, keyless annual bulk ZIP the `coal-stocks` intake reads (public domain,
+# US Government work). Fetched by scripts/data/fetch_eia923_coal_receipts.py.
+#
+# SCOPE. The raw extract is the COAL subset of Page 5 (FUEL_GROUP == "Coal"),
+# every column retained. The sheet is all-fuel and this datatype is coal
+# receipts, so the fuel filter is the datatype's own definition rather than a
+# transformation of what it covers; it is applied at fetch so the committed
+# raw corpus stays ~1.6 MB/yr instead of ~7 MB/yr.
+#
+# GRAIN is national plant-level, deliberately, exactly as `coal-stocks` is.
+# ISO scoping is a READ-TIME join against the plant registry
+# (src/market_sim/data/coal_receipts.py), never a partition of this datatype,
+# so one curation serves MISO, PJM, NEISO and any later coal ISO with no
+# per-ISO branch (rule 25 [R-ISO-SCOPE]).
+#
+# AGGREGATION, stated rather than silent. A raw Page 5 row is one receipt LOT
+# — one (plant, month, rank, purchase type, mine, supplier, transport mode)
+# delivery — so the sheet carries no unique key. Curation sums lots to
+# (plant_id, energy_source, year, month, purchase_type,
+# primary_transportation_mode), which is a sum of physically identical tons,
+# and carries the heat content as a QUANTITY-WEIGHTED mean over the lots
+# summed. Nothing a fuel budget reads is lost: purchase_type survives so a
+# contracted-tonnage-only delivery rate is constructible, and transport mode
+# survives so a rail/logistics construction is too.
+#
+# RULE 13 [R-MEASURED] — READ THIS BEFORE BUILDING A BUDGET ON IT.
+# `quantity_tons` is a measured deliveries-to-tank OUTCOME for the year it is
+# reported in. The NEISO oil precedent is explicit on the point
+# (src/market_sim/data/winter_fuel_inventory.py): F923 petroleum *receipts*
+# were REJECTED as "a measured deliveries-to-tank OUTCOME inadmissible under
+# CLAUDE.md #13", and the accepted budget was rebuilt from forward-regenerable
+# capacity/logistics quantities instead. So year Y's own receipts are NOT an
+# admissible delivery rate for year Y's budget, in the same way and for the
+# same reason year Y's own stock path is not. What IS admissible is a rate
+# derived from years <= Y-1, which is a prior-year quantity that regenerates
+# for a forward year from then-current filings and responds to changed
+# conditions. src/market_sim/data/coal_receipts.py exposes exactly that read
+# (`prior_years_delivery_rate_tons`) so the admissible construction is the
+# easy one and the inadmissible one has to be written out by hand.
+#
+# Curated by scripts/data/curate_coal_receipts.py from data/raw/coal-receipts/.
+datatype: coal-receipts
+schema_version: 1
+title: Plant-level monthly coal receipts
+description: >-
+  Coal delivered to each reporting electric power plant in a month, by reported
+  coal rank, purchase type and primary transportation mode, in short tons
+  (EIA-923 Schedule 5, "Page 5 Fuel Receipts and Costs"). National coverage;
+  the burning ISO is resolved at read time from the plant registry.
+
+key_columns:
+  [plant_id, energy_source, year, month, purchase_type, primary_transportation_mode]
+allow_additional_columns: false
+
+columns:
+  - name: plant_id
+    dtype: int64
+    unit: none
+    nullable: false
+    description: >-
+      EIA plant code. Mirrors the coal-stocks / fleet / emissions / outages
+      schemas so they all join, and is the key the bench parts and the plant
+      registry use.
+  - name: energy_source
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      EIA reported fuel type code for the coal rank received (BIT bituminous,
+      SUB subbituminous, LIG lignite, WC waste coal, RC refined coal, SGC
+      coal-derived synthesis gas). Same vocabulary as coal-stocks, so receipts
+      and stock join rank-for-rank.
+  - name: year
+    dtype: int64
+    unit: year
+    nullable: false
+    description: Calendar year the receipt was reported in.
+  - name: month
+    dtype: int64
+    unit: month
+    nullable: false
+    description: Calendar month, 1-12, the coal was received in.
+  - name: purchase_type
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      EIA purchase type of the delivery - C contract, NC new contract, S spot,
+      T tolling. Retained as a key column because a contracted-tonnage-only
+      delivery rate (a forward instrument, rather than a realised spot
+      outcome) is one of the admissible budget constructions and cannot be
+      reconstructed once the categories are summed together.
+  - name: primary_transportation_mode
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      EIA primary transportation mode (RR railroad, RV river, TR truck, CV
+      conveyor, PL pipeline, GL Great Lakes, SP slurry pipeline, TC tramway,
+      WT water unspecified, ...). Retained as a key column so a rail/logistics
+      delivery-capacity construction stays available. Blank in the source
+      becomes the sentinel "UNK" rather than null, so the column can carry a
+      non-null key.
+  - name: quantity_tons
+    dtype: float64
+    unit: short_tons
+    nullable: false
+    description: >-
+      Coal received in this month at this plant for this rank / purchase type /
+      transport mode, in short tons, summed over the underlying receipt lots.
+      Zero is a real reported value, not a gap.
+  - name: heat_content_mmbtu_per_ton
+    dtype: float64
+    unit: mmbtu_per_short_ton
+    nullable: true
+    description: >-
+      Quantity-weighted mean gross heat content of the coal received, MMBtu per
+      short ton, over the lots summed into this row. This is what converts a
+      tonnage budget into the MMBtu an LP energy-budget row is denominated in,
+      so it is carried rather than assumed. Null where every underlying lot
+      withheld it.
+  - name: fuel_cost_cents_per_mmbtu
+    dtype: float64
+    unit: cents_per_mmbtu
+    nullable: true
+    description: >-
+      Quantity-weighted mean delivered fuel cost, cents per MMBtu, as EIA
+      reports it. Provenance/diagnostic only - delivered coal prices for the
+      model come from the existing F923 fuel-price path, not from here. Null
+      where every underlying lot withheld it (EIA withholds cost for
+      non-regulated respondents, so this is null far more often than the
+      quantity is).
+  - name: plant_name
+    dtype: string
+    unit: none
+    nullable: true
+    description: EIA plant name, carried for traceability only.
+  - name: plant_state
+    dtype: string
+    unit: none
+    nullable: true
+    description: Two-letter state postal code of the plant.
+  - name: balancing_authority_code
+    dtype: string
+    unit: none
+    nullable: true
+    description: >-
+      EIA-reported balancing authority (e.g. MISO, PJM). Provenance only - ISO
+      membership is resolved from the plant registry, not from this column,
+      because BA code and modelled ISO zone disagree at several seams. Absent
+      in vintages before 2020.

@@ -130,6 +130,7 @@ window.MECH_MATRIX_SHARDS.NEISO = {
     cc_capacity_reconcile_path: { cell: "U" },
     cc_summer_derate_reconciled_basis: { cell: "U" },
     cc_mustrun_per_plant: { cell: "." },
+    coal_fuel_inventory: { cell: "U", ev: "ROW ADDED 2026-09-16 (miso-259) WITH the field \u2014 U: UNTESTED here, and the field RAISES rather than silently skipping if armed for this ISO. The chartering measurement is MISO's own coal stock and receipts footprint; rules 25 [R-ISO-SCOPE] / 28(d) mean MISO's verdict fills no other ISO's cell. The datatypes are NATIONAL and the read-time join is ISO-agnostic, so a coal ISO arming this needs no new intake \u2014 but it must derive its own footprint, its own delivery-rate construction and its own shared-storage reconciliation from its own market's data, and lift the MISO gate deliberately." },
     winter_fuelsec_posture: { cell: "K" },
     chp_steam_following: { cell: "K" },
     chp_btm_measured: { cell: "U", ev: "row minted at nyiso-147 with the field (rule 28c); never armed here. Rule 25/28(d): the NYISO two-meter identity transfers nothing — this lane derives its own settlement-vs-EIA-923 share from its own market's meters before arming" },
