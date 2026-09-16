@@ -466,3 +466,96 @@ every `price_tail` / `price_mean` exception magnitude on this bundle's own score
 and carries the DOF ledger **verbatim with no new entry** — because this arm adds no
 `ScenarioConfig` field and no free parameter. The attestation and the hourly sidecars are
 committed.
+
+---
+
+# ADDENDUM B — the root cause I named in §3 is NOT established, and I should have checked
+
+## B.1 What §3 claims
+
+§3, §4.1, the calibration-log entry and the mechanism-matrix cell all name **"the
+standing gas deficit — 13 to 35 TWh under in EVERY year of the span"** as the defect the
+seam repair exposes, and §4.1 uses the same numbers to refute the coal stock-carry.
+
+## B.2 Why that is not safe, on evidence that predates this session by six days
+
+Those numbers are the **`fuelRows` per-fuel-family basis**. `docs/calibration-log/miso.md`,
+miso-253 (2026-09-10), measured the committed 2023 MISO benchmark against MISO's own
+EIA-930 telemetry — which reconciles to the BA's reported net generation to **0.0002 %**,
+so it is exhaustive rather than a residual bucket:
+
+> the `classFull` total matches to −0.04 % (616.259 vs 616.516 TWh). **That match is a
+> coincidence of 68.1 TWh of offsetting per-family error**: gas **−33.526**, "other"
+> **+23.111**, coal **+10.827**. The aggregate is therefore worthless as a check.
+
+A benchmark that under-attributes gas by **33.5 TWh** makes the model's gas row read
+~33 TWh low *whatever the model does*. That is the same magnitude and the same sign as
+the "deficit" I named. **On present evidence the two are indistinguishable**, and
+miso-253 stated the competing hypothesis explicitly and could not discriminate it at
+zero LP: MISO's telemetry may label BFG/OG steam cogen `NG` where the bench labels it
+`OTH`, in which case the cogen *is* on the grid and the repair does belong on the gas
+side.
+
+**So §3's root cause is an open question, not a finding.** I did not check the
+calibration log for the basis I was quoting before I named it, and the check cost one
+`sed`.
+
+## B.3 What survives, and what the object actually is
+
+**What survives untouched.** Every *measured* statement in §§1–2 and §4 is on bundle
+artifacts, not on `fuelRows`, and none of it moves: the gate table, the per-seam flow
+table, the C1 grid-delivered table, the price numbers, the legitimacy diagnostics, and
+§4.1's monotonicity refutation of the coal carry — which rests on the direction of the
+**coal** error and on the arithmetic that a carry can only relax the ceiling, not on the
+gas number beside it. The C1 error the arm actually caused, COAL_BIT −7.00 → −10.29, is
+on the gating basis and is real.
+
+**The object, re-derived on the basis that gates** — C1, per class, grid-delivered, from
+the keeper's own scored records (model − actual, TWh):
+
+| class | 2020 | 2021 | 2022 | 2023 | 2024 | 2025 | yrs < 0 | mean |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| **COAL_BIT** | −7.00 | −8.36 | +0.55 | −3.32 | −3.87 | −4.12 | **5/6** | **−4.35** |
+| CC_REGULAR | +5.92 | −9.46 | −9.47 | −6.39 | +3.32 | −3.15 | 4/6 | −3.20 |
+| **ST_GAS** | −3.27 | −3.81 | −3.38 | +0.32 | −2.98 | −2.49 | **5/6** | −2.60 |
+| **ST_CHP** | −2.88 | −2.64 | −2.12 | −2.74 | −2.67 | −1.93 | **6/6** | −2.50 |
+| COAL_PRB | +3.69 | −5.10 | +7.90 | −1.49 | −4.25 | −11.23 | 4/6 | −1.75 |
+
+The stable same-sign misses are **COAL_BIT** (5/6, the largest, and the class this arm
+pushed out of band), **ST_CHP** (6/6, σ < 0.4 TWh — a textbook level defect) and
+**ST_GAS** (5/6). COAL_PRB oscillates while COAL_BIT is persistently short: one coal
+class always short and the other swinging is an **intra-coal merit-order split**, and it
+survived miso-259's coal-*level* repair (2022 coal error +42.61 → +7.98). **That is the
+successor's object**, and it is what this arm's regression actually points at.
+
+## B.4 A gas capacity census, run here at zero LP, for whoever settles B.2
+
+From the keeper's committed `hourly/unit_hourly_<y>.parquet` (per-unit `cap_mw` is the
+availability-adjusted cap; the universe is the 3,227 non-seam rows, i.e. the fleet minus
+the 64 seam bands):
+
+| yr | class | nameplate GW | max-hour cap / nameplate | mean cap / nameplate | gen TWh | **CF on available** |
+|---|---|---:|---:|---:|---:|---:|
+| 2020 | gas_cc | 32.28 | 0.821 | 0.604 | 140.37 | **0.821** |
+| 2021 | gas_cc | 31.98 | — | 0.633 | 112.32 | **0.633** |
+| 2023 | gas_cc | 32.04 | — | 0.739 | 157.76 | **0.761** |
+| 2025 | gas_cc | 31.58 | — | 0.698 | 156.69 | **0.811** |
+| 2020 | gas_ct | 24.07 | 0.807 | 0.778 | 16.58 | 0.101 |
+| 2020 | gas_st | 13.63 | 0.769 | 0.512 | 23.63 | 0.386 |
+| 2020 | coal | 56.79 | 0.893 | 0.532 | 199.42 | 0.753 |
+
+**MISO's CC fleet already dispatches 63–82 % of everything the model lets it have.** So
+if B.2 resolves in favour of a real gas object, it is an **availability** question on CC
+— mean available capacity is 60 % of nameplate in 2020, 82 % even in its best hour — and
+not an offer-curve one: CC has almost no headroom to dispatch more under the current
+derates. CT, by contrast, sits at CF 0.10 with ~147 TWh of headroom, and its C1 error is
+−1.42, so the missing energy is not there either. Reported for the successor; this
+session draws no conclusion from it.
+
+## B.5 What I have corrected, and where
+
+`docs/handoffs/HANDOFF-miso261-2026-09-16.md` is written around the corrected object and
+opens with this correction so the successor cannot inherit the wrong one. The keeper's
+`calibration_attestation.json` names the corrected root cause. §3 above is left standing
+with this addendum attached rather than edited, so the record shows what I claimed and
+what changed it.
