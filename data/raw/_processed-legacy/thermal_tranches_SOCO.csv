@@ -1,0 +1,61 @@
+plant_code,plant_group,name,status,nameplate_mw,online_hours,committed_pct,mustrun_pct,mustrun_online_pct,online_frac,p25_cf,median_cf,peaking_pct,chp_pmin_cf,chp_sector,steam_level_cf
+7697,CC_CHP,Washington County Cogeneration Facility,ok,100.0,8004,70.0,0.0,0.0,,100.0,136.0,3.8,128.0,merchant,135.0
+7698,CC_CHP,General Electric Plastic,ok,84.5,8705,70.0,0.0,0.0,,100.0,138.5,3.1,114.8,merchant,137.6
+7721,CC_CHP,Theodore Cogen Facility,ok,231.0,8336,70.0,0.0,0.0,,90.9,110.8,2.4,75.8,merchant,110.6
+54096,CC_CHP,International Paper Riverdale Mill,eia923_cf,17.0,0,,,,,,,,21.1,industrial,100.0
+54550,CC_CHP,W&T Onshore Treating Facility (OTF),eia923_cf,11.1,0,,,,,,,,20.8,industrial,56.0
+55040,CC_CHP,Mid-Georgia Cogeneration Facility,ok,303.0,303,18.5,0.0,0.0,,71.8,99.7,10.1,0.0,merchant,24.7
+3,CC_REGULAR,Barry,ok,1821.2,8664,70.0,0.0,0.0,1.0,100.0,150.0,16.4,,,
+56,CC_REGULAR,Lowman Energy Center,ok,639.0,6845,70.0,0.0,0.0,0.803,92.5,97.2,3.4,,,
+533,CC_REGULAR,McWilliams,ok,650.0,6685,23.8,0.0,0.0,0.764,40.4,53.5,12.7,,,
+710,CC_REGULAR,Jack McDonough,ok,2471.0,8760,70.0,0.0,0.0,1.0,88.8,98.9,6.4,,,
+6073,CC_REGULAR,Victor J Daniel Jr,ok,1132.4,8640,70.0,0.0,0.0,1.0,99.3,113.9,23.6,,,
+7710,CC_REGULAR,H Allen Franklin Combined Cycle,ok,1901.8,8746,42.0,0.0,0.0,0.998,69.5,87.3,4.0,,,
+7897,CC_REGULAR,E B Harris Electric Generating Plant,ok,1304.0,6951,19.0,0.0,0.0,0.812,46.1,76.2,7.4,,,
+7917,CC_REGULAR,Chattahoochee Energy Facility,ok,466.0,7320,53.0,0.0,0.0,0.838,82.6,104.9,0.9,,,
+7946,CC_REGULAR,Wansley Unit 9,ok,462.8,8010,33.9,0.0,0.0,0.915,62.2,67.8,3.8,,,
+55241,CC_REGULAR,Hog Bayou Energy Center,ok,230.0,4283,70.0,0.0,0.0,0.519,86.5,95.2,3.6,,,
+55271,CC_REGULAR,Tenaska Lindsay Hill Generating Station,ok,848.0,6454,26.2,0.0,0.0,0.739,40.0,42.2,16.3,,,
+55382,CC_REGULAR,Thomas A Smith Energy Facility,ok,1192.0,8304,54.3,0.0,0.0,0.951,77.3,94.1,3.3,,,
+55406,CC_REGULAR,Bobby C Smith Jr Energy Facility,ok,524.6,4717,49.6,0.0,0.0,0.554,63.2,80.4,1.1,,,
+55411,CC_REGULAR,Hillabee Energy Center,ok,752.7,7843,46.2,0.0,0.0,0.9,80.0,96.2,5.5,,,
+55440,CC_REGULAR,Central Alabama Generating Station,ok,917.0,5419,19.4,0.0,0.0,0.627,60.3,78.6,3.9,,,
+55965,CC_REGULAR,Wansley Combined Cycle,ok,1184.8,8658,39.4,0.0,0.0,0.99,73.5,94.3,3.3,,,
+56150,CC_REGULAR,McIntosh Combined Cycle Facility,ok,1315.6,8625,43.3,0.0,0.0,0.985,71.1,88.6,3.3,,,
+57037,CC_REGULAR,Ratcliffe,ok,840.0,8106,33.8,0.0,0.0,0.927,53.8,68.1,6.4,,,
+703,COAL,Bowen,ok,3200.0,8684,64.0,60.0,14.1,0.991,69.6,80.6,,,,
+6002,COAL,James H Miller Jr,ok,2777.5,8760,43.2,43.2,43.2,1.0,61.9,94.3,,,,
+6257,COAL,Scherer,ok,2580.0,8730,34.9,34.9,16.5,0.997,35.9,41.6,,,,
+2047,CT_CHP,Chevron Oil,ok,137.0,8276,48.2,0.0,0.0,,49.6,50.4,,0.0,merchant,47.6
+10416,CT_CHP,Pensacola Florida Plant,eia923_cf,82.0,0,,,,,,,,0.0,industrial,56.3
+54004,CT_CHP,"WestRock Southeast, LLC.",eia923_cf,40.0,0,,,,,,,,0.0,industrial,12.6
+54802,CT_CHP,Mead Coated Board,eia923_cf,21.0,0,,,,,,,,25.2,industrial,85.4
+58484,CT_CHP,MAS ASB Cogen Plant,eia923_cf,6.6,0,,,,,,,,15.8,industrial,66.6
+61927,CT_CHP,Georgia-Pacific Taylorsville Plywood,eia923_cf,6.2,0,,,,,,,,30.8,industrial,100.0
+62449,CT_CHP,Kimberly Clark Mobile - CHP Plant,eia923_cf,43.6,0,,,,,,,,27.1,industrial,96.0
+10,CT_PEAKER,Greene County,ok,740.0,6944,10.0,0.0,0.0,0.795,20.0,20.0,,,,
+6124,CT_PEAKER,McIntosh,ok,657.6,391,7.0,0.0,0.0,0.048,8.8,11.1,,,,
+7063,CT_PEAKER,McIntosh (AL),ok,580.0,1009,10.6,0.0,0.0,0.123,25.9,44.0,,,,
+7764,CT_PEAKER,MPC Generating,ok,302.5,275,14.1,0.0,0.0,0.033,48.3,48.6,,,,
+7768,CT_PEAKER,Sowega Power,ok,92.0,1058,6.5,0.0,0.0,0.126,50.0,51.1,,,,
+7813,CT_PEAKER,Sewell Creek Energy,ok,445.5,1710,14.9,0.0,0.0,0.2,44.9,86.0,,,,
+7829,CT_PEAKER,Smarr Energy Center,ok,190.4,1401,25.7,0.0,0.0,0.161,51.5,98.2,,,,
+7916,CT_PEAKER,Talbot County Energy,ok,572.4,1623,12.6,0.0,0.0,0.192,29.5,57.7,,,,
+55061,CT_PEAKER,Tenaska Georgia Generation Facility,ok,945.0,131,9.0,0.0,0.0,0.016,15.3,29.5,,,,
+55128,CT_PEAKER,Walton County Energy Facility,ok,449.7,1564,18.7,0.0,0.0,0.183,34.5,50.1,,,,
+55141,CT_PEAKER,Hawk Road Facility,ok,447.6,2001,19.0,0.0,0.0,0.236,54.5,97.2,,,,
+55244,CT_PEAKER,Doyle Energy Facility,ok,311.1,354,8.7,0.0,0.0,0.041,19.0,23.8,,,,
+55267,CT_PEAKER,Edward L. Addison Generating Plant,ok,591.9,1003,15.0,0.0,0.0,0.116,37.0,50.5,,,,
+55304,CT_PEAKER,Baconton Power Plant,ok,95.0,1436,7.4,0.0,0.0,0.166,48.4,50.5,,,,
+55332,CT_PEAKER,Washington County Power LLC,ok,623.4,1574,16.5,0.0,0.0,0.188,26.1,29.5,,,,
+55409,CT_PEAKER,Calhoun Energy Center,ok,704.0,807,11.9,0.0,0.0,0.094,30.2,66.3,,,,
+55672,CT_PEAKER,AL Sandersville LLC,ok,576.4,684,8.8,0.0,0.0,0.084,25.0,49.3,,,,
+56018,CT_PEAKER,AMEA Peaking,ok,95.0,401,50.5,0.0,0.0,0.046,100.0,102.1,,,,
+50146,ST_CHP,Imperial Savannah LP,eia923_cf,11.2,0,,,,,,,,13.3,industrial,53.0
+50398,ST_CHP,International Paper Savanna Mill,eia923_cf,71.2,0,,,,,,,,11.2,industrial,33.1
+54358,ST_CHP,Clearwater Paper Corporation - Augusta,eia923_cf,36.5,0,,,,,,,,12.5,industrial,38.5
+54789,ST_CHP,Georgia-Pacific Brewton Mill,eia923_cf,23.8,0,,,,,,,,39.1,industrial,100.0
+55044,ST_CHP,Packaging Corp. of America Jackson Mill,eia923_cf,26.8,0,,,,,,,,5.2,industrial,35.1
+26,ST_GAS,E C Gaston,ok,1020.0,6085,18.6,0.0,0.0,0.777,29.4,54.5,,,,
+728,ST_GAS,Yates,ok,714.0,6973,16.8,0.0,0.0,0.804,18.2,38.2,,,,
+2049,ST_GAS,Jack Watson,ok,721.0,7329,29.9,0.0,0.0,0.852,31.2,50.8,,,,

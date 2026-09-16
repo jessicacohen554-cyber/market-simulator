@@ -1,0 +1,5 @@
+facility_name,facility_id,unit_id,unit_capacity_mw,plant_capacity_mw,unit_pct_of_plant,plant_group,capacity_source,outage_start,outage_end,duration_days,peer_units_online,total_units_at_plant
+Pensacola Florida Plant,10416,E923,102.0,102.0,100.0,CT_CHP,eia923,2023-12-01,2023-12-31,31.0,0,1
+Pensacola Florida Plant,10416,E923,102.0,102.0,100.0,CT_CHP,eia923,2024-01-01,2024-01-31,31.0,0,1
+International Paper Savanna Mill,50398,E923,154.0,154.0,100.0,ST_CHP,eia923,2025-10-01,2025-12-31,92.0,0,1
+International Paper Riverdale Mill,54096,E923,104.2,104.2,100.0,CC_CHP,eia923,2023-08-01,2023-08-31,31.0,0,1
