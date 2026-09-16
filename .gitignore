@@ -2286,6 +2286,18 @@ results/calibration/_soco40_screen/
 
 # soco-40: the UNSPLIT-coal span (arm A of the coal-split comparison), kept out of main; bytes live on shard commit 9458759f6b8c875a9a302e4b64db9e212420ddf9 (git checkout 9458759f6b8c875a9a302e4b64db9e212420ddf9 -- results/calibration/soco40_baseline_B); never rm (rule 31)
 results/calibration/soco40_baseline_B/
+# miso-260 rule-29 [R-SCREEN] screen bundles (2020 ARM + its one-commit-apart
+# CONTROL). Kept OUT of `main` by this .gitignore, which is what discharges rule
+# 29(c) — `rm` never was required and rule 31 [R-RETAIN] forbids it while the
+# promotion is undecided. Every number either bundle carries is in
+# docs/RESULT-miso260-seam-ladder-screen-2026-09-16.md.
+# Recovery by FULL SHA, never branch name (rule 33 [R-SHARD-ARCHIVE] (d)):
+#   git fetch origin cb3049fff5e572ebb12a835d71ade800ce423266
+#   git checkout cb3049fff5e572ebb12a835d71ade800ce423266 -- results/calibration/miso260_screen_arm
+#   git fetch origin 02a09bb2b0f73c142bb95dfb84fa881f5c6bf8a3
+#   git checkout 02a09bb2b0f73c142bb95dfb84fa881f5c6bf8a3 -- results/calibration/miso260_screen_control
+/results/calibration/miso260_screen_arm/
+/results/calibration/miso260_screen_control/
 # neiso-110 screen bundle (2026-09-16): the rule-29 [R-SCREEN] screen arm for
 # neiso_coldsnap_derate_dualfuel_unswitched on 2022. Ignored so it can never
 # reach `main`, which is the ONLY thing rule 29(c) DELETE-BEFORE-MERGE requires;
