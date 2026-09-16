@@ -126,3 +126,29 @@ The EIA-930 pool `NG: WAT` is NOT the same population as these plants (−2.5 % 
 decomposed by BA in the FINDING §3) and carries known-defective hours (Oct 2025 +14 %),
 so a 2025 `eia930_monthly` repin is refused there; the recommended 2025 posture is
 `backfill_year=2024` alone, with the like-for-like wetness declared.
+
+## NWPP-36 artifacts — the cascade coupling measurement (2026-09-16)
+
+The measured inputs of `ScenarioConfig.hydro_cascade_coupling` (owner ruling N3;
+`docs/handoffs/PRECOMMIT-nwpp-36-2026-09-16.md` §4, result
+`docs/handoffs/FINDING-nwpp-36-2026-09-16.md`). Read by
+`market_sim.data.hydro.load_hydro_cascade`. **Every τ, band, η and inflow is
+measured; a link that fails a pre-registered gate is left `coupled = False` with
+its reason — never a substituted value** (rule 13). Rule 23: re-derive only when
+CROHMS, NID or EIA-923 update, never against a residual.
+
+| file | what | built by |
+|---|---|---|
+| `crohms/nwpp_crohms_hourly.parquet` | 2,103,124 rows, long form `station, series, ts, value, quality`: the 16 hourly-instrumented chain projects (GCL CHJ WEL RRH RIS WAN PRD MCN JDA TDA BON DWR LWG LGS LMN IHR) × `Flow-Out.Ave.1Hour.1Hour.CBT-REV`, `Flow-Spill.…CBT-REV`, `Flow-Gen.…CBT-REV` (kcfs), `Elev-Forebay.Inst.1Hour.0.CBT-REV` (ft), `Power.Total.1Hour.1Hour.CBT-RAW` (MW), 2023-01-01 → 2026-01-01 in the service's fixed standard time, all quality code 0; ≤ 140 missing hours per series (Dworshak), sentinels (−99999 in two Power series, isolated 0.0 forebay readings) screened by the derive, not here | `scripts/data/fetch_nwpp_crohms_hourly.py` — `https://public.crohms.org/dd/common/web_service/webexec/getjson?query=["<STATION>.<series>",…]&startdate=MM/DD/YYYY HH:MM&enddate=…`, calendar-quarter windows, pulled 2026-09-16 |
+| `crohms/nwpp_crohms_daily_idp.parquet` | the Idaho Power Hells Canyon series CROHMS carries — DAILY only (`BRN.Flow-Out.Inst.~1Day.0.IDP-COMPUTED-REV`, `HCD.Flow-Out.Ave.~1Day.1Day.IDP-REV`; nothing for Oxbow) — the record behind "unmeasurable at hourly precision"; never used to couple | same |
+| `crohms/nwpp_crohms_catalog.json` | the `tscatalog` response for the 19 stations (coordinates, datum, series inventory); the celerity check's distances | same |
+| `crohms/SHA256SUMS.txt` | identity record of the pull | same |
+| `nwpp_hydro_cascade_nid.csv` | the 16 chain dams' rows from the NID national CSV (`nid.sec.usace.army.mil/api/nation/csv`, "Data Last Updated 2026-9-11"), verbatim columns: surface area, storage, heights, coordinates | `scripts/data/build_nwpp_hydro_cascade.py --nid-national <csv>` |
+| `nwpp_hydro_cascade_links.csv` | one row per link (15): τ and its r-table (r(τ), r(τ±1), r(0), 2023-only / 2024-only / 2025 τ), distance and implied celerity, the §4.1 verdict, the downstream plant's band (p99.5−p0.5 forebay by year, the year used, NID area, `pond_kcfsh`, the band in hours of published and measured discharge, the NID max−normal cross-check), and the composite `coupled` / `reason` | same |
+| `nwpp_hydro_cascade_monthly.csv` | one row per plant-month (16 × 36): η (EIA-923 net MWh per kcfs·h of CROHMS turbine flow; `eta_source_year` names the nearest-year substitution for McNary / Dworshak 2025), the CROHMS gross ratio and net/gross, monthly-mean outflow and spill, and for plants with an upstream the measured side inflow (raw, floored, the floor magnitude and the 2 % STOP flag) | same |
+
+**Verdict at this pull (details in the FINDING):** 5 of 15 links couple — GCL→CHJ,
+CHJ→WEL, RRH→RIS, TDA→BON, LMN→IHR. Ten fail a gate: WEL→RRH (celerity 34.9 mph),
+RIS→WAN (per-year τ disagree), DWR→LWG (r 0.02), and seven on the 2 % side-inflow
+floor in spill-season months (downstream metered outflow 2–8 % below upstream, a
+spill-metering artefact at the federal lower-river projects).
