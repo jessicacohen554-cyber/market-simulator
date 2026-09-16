@@ -120,6 +120,7 @@ from market_sim.data.renewables import (  # noqa: E402
 )
 from market_sim.data.input_completeness import check_clean_partitions  # noqa: E402
 from market_sim.pipeline import (  # noqa: E402
+    UNSET,
     DispatchSpec,
     EnergySolveResult,
     apply_ercot_commitment_posture,
@@ -715,6 +716,7 @@ def run_year(
     neiso_winter_fuel_inventory: bool | None = None,
     neiso_winter_fuel_start_fill_bbl: float | None = None,
     neiso_winter_fuel_mustrun: bool | None = None,
+    coal_fuel_inventory: bool | None = None,
     caiso_import_hub_prices: bool | None = None,
     caiso_import_gas_coupling: bool | None = None,
     caiso_import_solar_shape: bool | None = None,
@@ -1572,6 +1574,8 @@ def run_year(
         config = config.with_overrides(
             neiso_winter_fuel_inventory=neiso_winter_fuel_inventory
         )
+    if coal_fuel_inventory is not None:
+        config = config.with_overrides(coal_fuel_inventory=coal_fuel_inventory)
     if neiso_winter_fuel_start_fill_bbl is not None:
         config = config.with_overrides(
             neiso_winter_fuel_start_fill_bbl=neiso_winter_fuel_start_fill_bbl
@@ -5785,6 +5789,91 @@ def run_year(
         if _oil_result is not None:
             oil_budget_gen_idx, oil_monthly_budget = _oil_result
 
+    # Coal fuel-inventory budget (MISO-gated, backcast only). The missing
+    # CEILING on coal: coal carries take-or-pay and must-run FLOORS and nothing
+    # caps its energy, so the LP cannot represent "the fleet drew its stockpile
+    # down in one year and could only burn what it received in the next"
+    # (FINDING-miso256 section 4 / FINDING-miso258). Rule 19 [R-ONE-MECH]: a
+    # MISSING LIMB, not a competing mechanism — there is no incumbent coal
+    # ceiling, and this is never stacked on a coal floor.
+    #
+    # Reaches lp/rows.py::_build_oil_budget_rows through its OWN coal_* kwarg
+    # family, so the coal and NEISO-oil budgets append as separate independent
+    # row families and can never silently overwrite one another.
+    #
+    # Rule 13 [R-MEASURED]: every sizing quantity predates `year` — the
+    # footprint's December ending stock of year-1 plus mean receipts over
+    # year-2 and year-1. The builder returns None (leaving the solve
+    # byte-identical) when either measured input is missing; a missing input is
+    # never substituted.
+    # UNSET, not None: DispatchSpec drops UNSET fields outright, so an UNARMED
+    # run's dispatch-kwargs KEY SET is unchanged and its LP is byte-identical --
+    # the same discipline hydro_period_hours uses a few lines below.
+    coal_monthly_budget = UNSET
+    coal_budget_gen_idx = UNSET
+    coal_budget_month_index = UNSET
+    coal_budget_gen_hour_coeff = UNSET
+    coal_budget_group_index = UNSET
+    if getattr(config, "coal_fuel_inventory", False):
+        if iso.upper() != "MISO":
+            raise ValueError(
+                "coal_fuel_inventory is MISO-gated (rule 25 [R-ISO-SCOPE]): its "
+                "footprint crosswalk and delivery-rate construction were "
+                f"identified on MISO's own market, not {iso}'s. Arming it for "
+                "another ISO needs that ISO's own evidence and its own matrix "
+                "cell, which enters as U."
+            )
+        if config.mode != "backcast":
+            raise ValueError(
+                "coal_fuel_inventory is backcast-only: a forecast year's "
+                "opening stock is the model's OWN carried inventory from the "
+                "prior simulated year, and that carry is not built yet. "
+                "Arming it in forecast mode would read a measured prior-year "
+                "stock into a forward run."
+            )
+        from market_sim.data.coal_fuel_inventory import build_coal_fuel_budget
+
+        _coal_result = build_coal_fuel_budget(
+            fleet_arrays,
+            year,
+            hours=config.hours,
+        )
+        if _coal_result is None:
+            logger.warning(
+                "coal fuel-inventory budget (%s %d): NOT APPLIED — no coal "
+                "generators, or no curated opening stock / prior-years "
+                "delivery rate for this year. The solve is byte-identical to "
+                "an unarmed run; the budget is never sized on a substitute.",
+                iso,
+                year,
+            )
+        else:
+            (
+                coal_budget_gen_idx,
+                coal_monthly_budget,
+                coal_budget_month_index,
+                coal_budget_gen_hour_coeff,
+                coal_budget_group_index,
+                _coal_prov,
+            ) = _coal_result
+            logger.info(
+                "coal fuel-inventory budget (%s %d): %d coal gens over %d "
+                "plants (%d shared-storage), opening stock %.2f Mt + delivery "
+                "rate %.2f Mt/yr (from %s) @ %.3f MMBtu/ton -> annual %.1f "
+                "TWh-equiv @HR10.661, monthly cap %.2f M MMBtu",
+                iso,
+                year,
+                _coal_prov.n_generators,
+                _coal_prov.n_plants,
+                _coal_prov.n_storage_entities,
+                _coal_prov.opening_stock_tons / 1e6,
+                _coal_prov.delivery_rate_tons_per_year / 1e6,
+                "+".join(str(y) for y in _coal_prov.rate_source_years),
+                _coal_prov.mmbtu_per_ton,
+                _coal_prov.annual_budget_mmbtu / 10.661 / 1e6,
+                _coal_prov.monthly_budget_mmbtu / 1e6,
+            )
+
     # Base dispatch kwargs + priced import-node band: the shared pipeline
     # assembly (orchestrator-unification Stage 2) — the same key set the
     # inline dict carried, byte-identical values. The backcast-only keys
@@ -5875,6 +5964,11 @@ def run_year(
         oil_month_index=oil_budget_month_index,
         oil_gen_hour_coeff=oil_budget_gen_hour_coeff,
         oil_group_index=oil_budget_group_index,
+        coal_monthly_budget=coal_monthly_budget,
+        coal_gen_idx=coal_budget_gen_idx,
+        coal_month_index=coal_budget_month_index,
+        coal_gen_hour_coeff=coal_budget_gen_hour_coeff,
+        coal_group_index=coal_budget_group_index,
         T=config.hours,
     )
     dispatch_kwargs = build_base_dispatch_kwargs(

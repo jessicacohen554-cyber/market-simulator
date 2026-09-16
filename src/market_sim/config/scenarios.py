@@ -1791,6 +1791,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # earns a distinct key. SHARED field -- very end, per HOUSE-3. Registered
     # IN THE SAME COMMIT as the field.
     "mustrun_window_commitment_grain",
+    # miso-259: the coal fuel-inventory monthly energy budget (default off).
+    # Dropped from the hash at its default so every pre-existing cached run --
+    # every ISO's keepers included -- keeps its key; an armed run hands the LP a
+    # genuine monthly ceiling on coal energy input and so earns a distinct key.
+    # SHARED field -- very end, per HOUSE-3. Registered IN THE SAME COMMIT as
+    # the field (the nyiso-119 discipline).
+    "coal_fuel_inventory",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -2431,6 +2438,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by SPP-27 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "mustrun_window_commitment_grain": "False",
+    # Added by miso-259 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "coal_fuel_inventory": "False",
 }
 
 
@@ -7082,6 +7092,38 @@ class ScenarioConfig:
     # security stress begins and ISO-NE postures the fuel-secure fleet. A
     # published physical threshold, NOT swept to land a target tail-hour or
     # winter-energy count (rule 24).
+    coal_fuel_inventory: bool = False  # Coal fuel-inventory monthly energy
+    # budget (miso-259) — the missing CEILING on coal, and the coal analogue of
+    # the neiso_winter_fuel_inventory oil budget above. Coal units carry
+    # take-or-pay and must-run FLOORS and nothing whatever caps their energy, so
+    # the LP cannot represent "the fleet drew its stockpile down in one year and
+    # could only burn what it received in the next". Rule 19 [R-ONE-MECH] is
+    # clean: a MISSING LIMB, not a competing mechanism — there is no incumbent
+    # coal ceiling to reconcile with, and this must never be stacked on a coal
+    # floor. One pooled fleet row per month caps coal energy INPUT
+    # (sum heat_rate[g] * P[g,t], MMBtu) at (opening stock + prior-years
+    # delivery rate) x heat content / 12, through the shared
+    # lp/rows.py::_build_oil_budget_rows builder reached by its OWN coal_*
+    # dispatch kwargs so the two fuel budgets can never silently stack.
+    # RULE 13 [R-MEASURED] ADMISSIBLE: every sizing quantity PREDATES the solved
+    # year — opening stock is the footprint's December ending stock of Y-1
+    # (coal-stocks), the delivery rate is mean receipts over Y-2 and Y-1
+    # (coal-receipts), the heat content is quantity-weighted over those same
+    # prior years. Year Y's own stock path is never read (it embeds the burn:
+    # ending[m] = ending[m-1] + receipts[m] - burn[m]) and neither are year Y's
+    # own receipts (the NEISO precedent rejected exactly that quantity as "a
+    # measured deliveries-to-tank OUTCOME"). FORWARD STORY, which is rule 13's
+    # actual test: in a forecast year the opening stock is the model's OWN
+    # carried inventory from the prior simulated year (the role a storage SOC
+    # boundary plays) and the rate is a trailing/contracted volume — both
+    # regenerate from forward drivers with no measured input, and both respond
+    # to changed conditions. Minimum operating stock is ZERO: a real fleet never
+    # runs its piles down to nothing, so the budget is LOOSER than physics, and
+    # it is left that way because a floor chosen to close the residual is the
+    # fitted mechanism rule 1 [R-STRUCT] forbids. Monthly rows do NOT carry
+    # stock across months — a stated limitation, not a defect. Backcast-only,
+    # MISO-gated at the call site, default off (byte-identical).
+    # See data/coal_fuel_inventory.py:build_coal_fuel_budget.
     nyiso_local_selfsupply: bool = False  # NYISO Long Island (zone K) local
     # self-supply floor: zone K is cable-islanded (NYC->LI 1,650 MW + ~1.2 GW
     # external ties) and carries NYISO locational-minimum-installed-capacity
@@ -20711,6 +20753,7 @@ TIER_TAGS: dict[str, int] = {
     "neiso_gas_derate_cap": 2,
     "neiso_oil_burn_budget": 1,
     "neiso_winter_fuel_inventory": 1,
+    "coal_fuel_inventory": 1,
     "neiso_winter_fuel_start_fill_bbl": 1,
     "neiso_net_icr_requirement": 1,
     "pjm_accreditation_design_vintage": 1,

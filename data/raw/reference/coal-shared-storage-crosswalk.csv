@@ -1,0 +1,49 @@
+# Coal shared-storage / terminal entities -> the modelled generator plants they serve.
+#
+# WHY THIS FILE EXISTS. EIA files some coal receipts and stocks against a
+# third-party terminal or shared coal yard that holds its own EIA plant id and
+# is NOT a generator. A fuel-inventory footprint built from modelled GENERATOR
+# plant ids therefore cannot see those deliveries, and the units they feed look
+# as though they were sent no coal at all. Measured 2026-09-14: Belle River
+# (id 6034, 1,395 MW of MISO PRB) shows ZERO receipts under its own id, while
+# `DTE-BRSC Shared Storage` (id 8841, the Belle River / St Clair shared yard)
+# received 32.01 Mt over 2018-2024.
+#
+# This is a rule 14 [R-ACCURATE] boundary misalignment, not missing data: the
+# tons are real and they are burned by modelled units, but they are filed at an
+# entity grain the fleet does not carry. Rule 14's own exception is for data
+# that would make results LESS reflective of reality if used literally; that is
+# not this case, so the reconciled version is preferred to the gap.
+#
+# HOW IT IS USED. src/market_sim/data/coal_fuel_inventory.py includes a storage
+# entity's stock and receipts in an ISO footprint if and ONLY IF at least one
+# plant it serves is in that ISO's modelled coal fleet. So the crosswalk adds
+# no fuel to a fleet that cannot burn it, and it is inert for every ISO whose
+# fleet contains none of the served plants.
+#
+# ADMISSIBILITY. Every row is a published ownership/facility fact, fixed before
+# any solve and not selectable by a result (rules 1 [R-STRUCT] / 24
+# [R-REGISTRY]). A row is added only when the served plants can be identified
+# from the entity's own EIA filing (name, operator, state) - never inferred
+# from which ISO would benefit. Adding id 8841 LOOSENS the MISO 2022 coal
+# budget (slack -16.1 -> -8.3 TWh), i.e. it cuts against the mechanism it
+# feeds; that direction is the point, and it is recorded here so a later
+# session cannot mistake the row for a convenience.
+#
+# NOT EXHAUSTIVE, deliberately. Other terminals appear in the EIA-923 record
+# (`CCT Terminal` IL 23.44 Mt, `Four Rivers Terminal` KY 2.77 Mt, `GRT
+# Terminal` KY, `Keystone Fuels` / `Conemaugh Fuels` PA, `Ceredo` WV,
+# `Associated Terminals` MS) whose served plants CANNOT be identified from the
+# data alone. They are omitted rather than guessed, which leaves every
+# footprint built on this file CONSERVATIVELY TIGHT by an unquantified amount.
+# Adding one needs a citable source in the `source` column, not a name match.
+#
+# Columns:
+#   storage_plant_id   EIA plant code of the storage/terminal entity
+#   storage_plant_name EIA plant name, verbatim, for traceability
+#   served_plant_ids   space-separated EIA plant codes of the generators served
+#   iso                the modelled ISO those generators sit in (provenance only;
+#                      the code gates on fleet membership, never on this column)
+#   source             how the served set was identified
+storage_plant_id,storage_plant_name,served_plant_ids,iso,source
+8841,DTE-BRSC Shared Storage,6034 1743,MISO,"EIA-923 plant name 'BRSC' = Belle River / St Clair; both DTE Electric coal stations in Michigan, both in the MISO modelled fleet. Belle River (6034) files no receipts of its own; St Clair (1743) files 0.22 Mt over 2018-2024 against a 1,400 MW station, so the yard carries both."
