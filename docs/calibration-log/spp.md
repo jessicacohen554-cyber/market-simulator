@@ -2953,8 +2953,22 @@ carries, so the held-out picture now matches the in-sample one.
 control by the intake AND keeper 12's `mustrun_commitment_feasibility_clip`, and the two are
 **NOT separable by construction** — SPP-42 measured the clip PROVABLY INERT on these years
 without the extract, so the data is the enabling condition and the clip the mechanism. A
-decomposition leg (new extract, clip OFF, `results/calibration/spp43_extract_only`) was launched
-to quantify the split; nothing above depends on it.
+decomposition leg settles the split — three legs one delta apart, `offer_curve_by_group`
+byte-identical in all three. **A** = ctrl (old extract, no clip), **B** = NEW extract with the
+clip OFF, **C** = the arm. ST_GAS `forced_twh` A/B/C: 5.0294/**1.8898**/1.7035,
+4.7849/**1.8185**/1.7040, 5.4248/**2.0268**/1.9543, 5.4898/**2.4743**/2.3652; shares
+.3423/.3014/.5041/.5556 → .1268/.1278/.2535/.3236 → .1156/.1211/.2467/.3142; D-4 FAIL rows
+**33 → 14 → 4**. **THE INTAKE DOES 94.4 / 96.3 / 97.9 / 96.5 % OF THE FORCED-ENERGY REDUCTION**
+and 19 of the 29 D-4 rows; the clip supplies the last ~4 % of energy and the other 10 rows.
+**BUT NEITHER ALONE CLOSES C8, WHICH IS WHY THE LEG WAS WORTH SOLVING**: both B and C breach the
+raw 0.30 cap in 2022 only (32.4 % and 31.4 %), and what differs is rule 20's grounded-above-budget
+escalation, which needs every binding mechanism to clear D-4 — **B still fails D-4 in 2022 on
+plants 1230/1235/3008 so it is NOT grounded and C8 FAILs; C has ZERO 2022 D-4 failures so it IS
+grounded and C8 PASSes.** The intake and the clip are **complements, not substitutes**: the data
+supplies almost all the energy, the clip supplies the 2022 D-4 clearance that flips the gate. The
+leg is deliberately kept OFF `main` (rule 29(c)) on `claude/spp43-extract-only` at
+`2addbeee3cfc7dc91d64739d606de35345909290`; every number cited from it is recorded here and in the
+RESULT, and nothing scored depends on it.
 
 **THE COSTS, DECLARED NOT DISCOVERED.** 2022 gains **563.6284 MWh of slack** against the
 control's 0.0000 and its max system price goes **85.58 → 1102.55 $/MWh**; **2020 degrades across
