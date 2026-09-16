@@ -1,0 +1,320 @@
+Using CPython 3.11.15 interpreter at: /usr/local/bin/python3
+Creating virtual environment at: .venv
+   Building market-sim @ file:///home/user/market-simulator
+Downloading numpy (16.1MiB)
+Downloading pygments (1.2MiB)
+Downloading pydantic-core (2.0MiB)
+Downloading pyarrow (46.6MiB)
+Downloading ruff (11.0MiB)
+Downloading scipy (33.7MiB)
+Downloading pandas (10.8MiB)
+Downloading highspy (2.5MiB)
+ Downloading highspy
+ Downloading pygments
+ Downloading pydantic-core
+ Downloading ruff
+ Downloading pyarrow
+ Downloading numpy
+ Downloading scipy
+ Downloading pandas
+      Built market-sim @ file:///home/user/market-simulator
+Installed 32 packages in 34ms
+INFO: SOCO backcast: NP6 HSL and coal must-run tuning are ERCOT-only and skipped; per-plant CAMPD + EIA-923 benchmark built for the covered states; the report compares fuel mix, prices and net interchange.
+INFO: cross-year LP warm-start: ON
+INFO: P1 basis seed: ON
+INFO: container preflight: memory ceiling 13.36 GiB (/sys/fs/cgroup/memory/process_api/01a0aab2-bae3-74b0-9eaf-c756265a9a3c/claude-code-bash/memory.limit_in_bytes; MemTotal 15.72 GiB), swap 0.0 GiB, target ceiling+swap 24 GiB
+INFO: container preflight: provisioned 10 GiB swap at /swapfile-marketsim — ceiling 13.36 + swap 10.0 = 23.4 GiB
+INFO: container preflight: solve profile MALLOC_ARENA_MAX=2 MARKET_SIM_HIGHS_THREADS=1 OMP_NUM_THREADS=1
+WARNING: container preflight: ceiling+swap 23.4 GiB is below the 24 GiB target; a per-plant ISO-year LP (MISO, PJM) may be OOM-killed here
+WARNING: eGRID plant 7350 heat rate 13.796 MMBtu/MWh exceeds the combined-cycle physical ceiling 11.500 (PLHTIAN spans co-located plant 7931, 6 m away, whose 1 unit(s) eGRID double-counts) — reconciled to 6.918
+WARNING: eGRID plant 55641 heat rate 14.964 MMBtu/MWh exceeds the combined-cycle physical ceiling 11.500 (PLHTIAN spans co-located plant 64020, 454 m away, whose 2 unit(s) eGRID double-counts) — reconciled to 6.880
+WARNING: eGRID boundary heat-rate reconciliation active for 2 plant(s): 7350->6.918, 55641->6.880
+WARNING: SOCO: CC plant 6073 fleet pmax sum 1904.4 MW exceeds trusted bound 1132.4 MW (nameplate; corrupt summer-capacity rows) — reconciled (772.0 MW removed)
+WARNING: SOCO: CC plant 7897 fleet pmax sum 1314.8 MW exceeds trusted bound 1304.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (10.8 MW removed)
+WARNING: SOCO: CC plant 55382 fleet pmax sum 1353.0 MW exceeds trusted bound 1192.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (161.0 MW removed)
+WARNING: SOCO: CC plant 57037 fleet pmax sum 1308.5 MW exceeds trusted bound 840.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (468.5 MW removed)
+WARNING: SOCO plant 67241 (eGRID FIPS state 25) fails the footprint admission rule — REJECTED, not zoned (soco-data-audit §2.6(a))
+WARNING: SOCO plant 67241 (EIA-860 State MA) fails the footprint admission rule (AL/GA/MS/FL) — a balancing-authority mis-entry, REJECTED, not zoned (soco-data-audit §2.6(a))
+INFO: Loaded SOCO fleet from EIA-860 parquet (393 generators)
+INFO: Rebuilt binned fleet cache for SOCO — 393 plants → soco_fleet_binned.parquet
+INFO: SOCO net interchange applied for 2023: +1159 MW avg (export-positive, measured EIA-930)
+INFO: solving SOCO 2023 (hours=8760, Henry Hub=$2.54/MMBtu, commitment=False)
+INFO: SOCO per-zone solar SHAPE (2023): 3 zone(s) from soco_2023_solar_zone_shape.parquet, measured energy-weighted hour-of-day SOCO_AL=11.25, SOCO_GA=11.03, SOCO_MS=11.39
+WARNING: SOCO: CC plant 6073 fleet pmax sum 1904.4 MW exceeds trusted bound 1132.4 MW (nameplate; corrupt summer-capacity rows) — reconciled (772.0 MW removed)
+WARNING: SOCO: CC plant 7897 fleet pmax sum 1314.8 MW exceeds trusted bound 1304.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (10.8 MW removed)
+WARNING: SOCO: CC plant 55382 fleet pmax sum 1353.0 MW exceeds trusted bound 1192.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (161.0 MW removed)
+WARNING: SOCO: CC plant 57037 fleet pmax sum 1308.5 MW exceeds trusted bound 840.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (468.5 MW removed)
+INFO: Loaded SOCO fleet from EIA-860 parquet (393 generators)
+INFO: Binned fleet cache for SOCO is up to date — loaded from soco_fleet_binned.parquet
+WARNING: SOCO: CC plant 6073 fleet pmax sum 1904.4 MW exceeds trusted bound 1132.4 MW (nameplate; corrupt summer-capacity rows) — reconciled (772.0 MW removed)
+WARNING: SOCO: CC plant 7897 fleet pmax sum 1314.8 MW exceeds trusted bound 1304.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (10.8 MW removed)
+WARNING: SOCO: CC plant 55382 fleet pmax sum 1353.0 MW exceeds trusted bound 1192.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (161.0 MW removed)
+WARNING: SOCO: CC plant 57037 fleet pmax sum 1308.5 MW exceeds trusted bound 840.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (468.5 MW removed)
+INFO: Loaded SOCO fleet from EIA-860 parquet (393 generators)
+INFO: Binned fleet cache for SOCO is up to date — loaded from soco_fleet_binned.parquet
+INFO: unit-outage derate (SOCO 2023): 121 plant-tranches derated
+INFO: COD ramp (SOCO 2023): 167 unit-months masked offline (mid-year COD / retirement), 7 unit(s) fully not-yet-built/retired
+WARNING: SOCO: CC plant 6073 fleet pmax sum 1904.4 MW exceeds trusted bound 1132.4 MW (nameplate; corrupt summer-capacity rows) — reconciled (772.0 MW removed)
+WARNING: SOCO: CC plant 7897 fleet pmax sum 1314.8 MW exceeds trusted bound 1304.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (10.8 MW removed)
+WARNING: SOCO: CC plant 55382 fleet pmax sum 1353.0 MW exceeds trusted bound 1192.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (161.0 MW removed)
+WARNING: SOCO: CC plant 57037 fleet pmax sum 1308.5 MW exceeds trusted bound 840.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (468.5 MW removed)
+INFO: Loaded SOCO fleet from EIA-860 parquet (393 generators)
+INFO: Binned fleet cache for SOCO is up to date — loaded from soco_fleet_binned.parquet
+INFO: Loaded SOCO 2023 hydro budget: 42 plants, 6815.0 GWh annual, 3314 MW nameplate
+INFO: SOCO 2023: 42 hydro plants in LP (3314 MW, 6.82 TWh monthly budget)
+INFO: unit-outage derate (SOCO 2023): 121 plant-tranches derated
+INFO: COD ramp (SOCO 2023): 185 unit-months masked offline (mid-year COD / retirement), 8 unit(s) fully not-yet-built/retired
+INFO: F923 gas-price plausibility screen for 2023 (SOCO, band [0.5, 2.0] x state N3045 reference): 272 plant-months in band, 1 low, 0 negative, 8 high -> reference (4 plants); 0 months on the US fallback reference, 0 unscreened (no reference), 0 unscreened (reference <= 0)
+INFO: F923 fuel costs for 2023: 154 generators priced from their own plant, 162 gap-filled from nearby (state/zone) plants
+INFO: Matrix build: 1.773s, Solve: 27.568s (cold, simplex iterations 97658, objective 3690944814.1196)
+INFO: Matrix build: 1.773s, Solve: 7.381s (warm, simplex iterations 13630, objective 3721260119.1639)
+WARNING: CAMPD extract not found for FL 2023 (looked in /home/user/market-simulator/data/raw/campd-facility-level, /campd-unit-level, and the flat dir)
+INFO: EIA-923 2023: CAMPD-backfilled 1 under-reported plant(s) across 1 class-row(s) (1 replaced, 0 added)
+INFO: EIA-923 2023 hydro 6.82 TWh under-counts EIA-930 8.45 TWh; using EIA-930 grid total
+INFO: year 2023 phase timing: data_prep=28.6s solve_p0=27.6s markup=3.5s solve_p1=7.4s results_write=4.3s total=71.4s (markup: setup=0.0s p0_post=0.6s markup=0.0s seam=0.0s p1_post=0.7s tail=2.2s other=0.0s) (results_write: state=0.1s frames=0.2s parquet=0.5s bench=1.8s sidecars=1.6s)
+INFO: year 2023 memory after release: resident=0.82 GB peak=1.89 GB (malloc_trim=yes) | accumulators 0.01 GB ()
+INFO: year 2023 glibc arena: total=1.05 GB in_use=0.07 GB free_retained=0.98 GB mmapped=0.05 GB trim_top=0.00 GB
+INFO: year 2023 retained heap: ndarray=0.02 GB (n=216) [pandas=0.04 GB n=12, sparse=0.00 GB n=0 — slices, not additions] | 22 populated cache(s), 24 entries | top: _chp_by_plant=2, thermal_tranche_overrides=2, _load_cod_map=1, _load_unit_cod_map=1, _iso_plant_capacity_cached=1
+INFO: year 2023 retained frame: 22.9 MB  126342 x 20  cols=plant_id,plant_name,prime_mover,fuel_type,chp,netgen_annual_mwh,ba_code,netgen_january_mwh,netgen_february_mwh,netgen_march_mwh,netgen_april_mwh,netgen_may_mwh
+INFO: year 2023 retained frame: 9.0 MB  674520 x 4  cols=year,plant_id,hour,net_mw
+INFO: year 2023 retained frame: 4.4 MB  68919 x 7  cols=year,month,plant_id,state,fuel_group,price_per_mmbtu,quantity
+INFO: year 2023 retained frame: 2.3 MB  87600 x 4  cols=year,series,hour,mw
+INFO: year 2023 retained frame: 1.8 MB  26280 x 9  cols=year,pass,zone,hour,price,slack,dump,demand,reserve_price
+INFO: year 2023 retained frame: 0.9 MB  17520 x 6  cols=year,pass,from_zone,to_zone,hour,mw
+WARNING: SOCO: CC plant 6073 fleet pmax sum 1904.4 MW exceeds trusted bound 1132.4 MW (nameplate; corrupt summer-capacity rows) — reconciled (772.0 MW removed)
+WARNING: SOCO: CC plant 7897 fleet pmax sum 1314.8 MW exceeds trusted bound 1304.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (10.8 MW removed)
+WARNING: SOCO: CC plant 55382 fleet pmax sum 1353.0 MW exceeds trusted bound 1192.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (161.0 MW removed)
+WARNING: SOCO: CC plant 57037 fleet pmax sum 1308.5 MW exceeds trusted bound 840.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (468.5 MW removed)
+INFO: Loaded SOCO fleet from EIA-860 parquet (393 generators)
+INFO: Binned fleet cache for SOCO is up to date — loaded from soco_fleet_binned.parquet
+INFO: SOCO net interchange applied for 2024: +1234 MW avg (export-positive, measured EIA-930)
+INFO: solving SOCO 2024 (hours=8760, Henry Hub=$2.19/MMBtu, commitment=False)
+INFO: SOCO per-zone solar SHAPE (2024): 3 zone(s) from soco_2024_solar_zone_shape.parquet, measured energy-weighted hour-of-day SOCO_AL=11.28, SOCO_GA=11.03, SOCO_MS=11.38
+WARNING: SOCO: CC plant 6073 fleet pmax sum 1904.4 MW exceeds trusted bound 1132.4 MW (nameplate; corrupt summer-capacity rows) — reconciled (772.0 MW removed)
+WARNING: SOCO: CC plant 7897 fleet pmax sum 1314.8 MW exceeds trusted bound 1304.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (10.8 MW removed)
+WARNING: SOCO: CC plant 55382 fleet pmax sum 1353.0 MW exceeds trusted bound 1192.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (161.0 MW removed)
+WARNING: SOCO: CC plant 57037 fleet pmax sum 1308.5 MW exceeds trusted bound 840.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (468.5 MW removed)
+INFO: Loaded SOCO fleet from EIA-860 parquet (393 generators)
+INFO: Binned fleet cache for SOCO is up to date — loaded from soco_fleet_binned.parquet
+INFO: unit-outage derate (SOCO 2024): 119 plant-tranches derated
+INFO: COD ramp (SOCO 2024): 84 unit-months masked offline (mid-year COD / retirement), 7 unit(s) fully not-yet-built/retired
+WARNING: SOCO: CC plant 6073 fleet pmax sum 1904.4 MW exceeds trusted bound 1132.4 MW (nameplate; corrupt summer-capacity rows) — reconciled (772.0 MW removed)
+WARNING: SOCO: CC plant 7897 fleet pmax sum 1314.8 MW exceeds trusted bound 1304.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (10.8 MW removed)
+WARNING: SOCO: CC plant 55382 fleet pmax sum 1353.0 MW exceeds trusted bound 1192.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (161.0 MW removed)
+WARNING: SOCO: CC plant 57037 fleet pmax sum 1308.5 MW exceeds trusted bound 840.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (468.5 MW removed)
+INFO: Loaded SOCO fleet from EIA-860 parquet (393 generators)
+INFO: Binned fleet cache for SOCO is up to date — loaded from soco_fleet_binned.parquet
+INFO: Loaded SOCO 2024 hydro budget: 42 plants, 6301.5 GWh annual, 3314 MW nameplate
+INFO: SOCO 2024: 42 hydro plants in LP (3314 MW, 6.30 TWh monthly budget)
+INFO: unit-outage derate (SOCO 2024): 119 plant-tranches derated
+INFO: COD ramp (SOCO 2024): 87 unit-months masked offline (mid-year COD / retirement), 7 unit(s) fully not-yet-built/retired
+INFO: F923 gas-price plausibility screen for 2024 (SOCO, band [0.5, 2.0] x state N3045 reference): 287 plant-months in band, 0 low, 0 negative, 6 high -> reference (4 plants); 0 months on the US fallback reference, 0 unscreened (no reference), 0 unscreened (reference <= 0)
+INFO: F923 fuel costs for 2024: 156 generators priced from their own plant, 162 gap-filled from nearby (state/zone) plants
+INFO: Matrix build: 0.714s, Solve: 11.554s (cold, simplex iterations 24319, objective 3398767416.6013)
+INFO: Matrix build: 0.714s, Solve: 8.125s (warm, simplex iterations 14804, objective 3437251073.4731)
+WARNING: CAMPD extract not found for FL 2024 (looked in /home/user/market-simulator/data/raw/campd-facility-level, /campd-unit-level, and the flat dir)
+INFO: EIA-923 2024: CAMPD-backfilled 1 under-reported plant(s) across 1 class-row(s) (1 replaced, 0 added)
+INFO: EIA-923 2024 hydro 6.30 TWh under-counts EIA-930 7.08 TWh; using EIA-930 grid total
+INFO: year 2024 phase timing: data_prep=2.3s solve_p0=11.6s markup=3.4s solve_p1=8.1s results_write=3.8s total=29.1s (markup: setup=0.3s p0_post=0.6s markup=0.0s seam=0.0s p1_post=0.6s tail=1.8s other=0.0s) (results_write: state=0.1s frames=0.2s parquet=0.5s bench=1.3s sidecars=1.7s)
+INFO: year 2024 memory after release: resident=0.88 GB peak=2.18 GB (malloc_trim=yes) | accumulators 0.03 GB (campd=0.02)
+INFO: year 2024 glibc arena: total=1.31 GB in_use=0.09 GB free_retained=1.23 GB mmapped=0.05 GB trim_top=0.00 GB
+INFO: year 2024 retained heap: ndarray=0.03 GB (n=310) [pandas=0.06 GB n=20, sparse=0.00 GB n=0 — slices, not additions] | 22 populated cache(s), 30 entries | top: _chp_by_plant=3, unit_outage_derate_factors=2, coal_chp_overrides=2, _measured_plant_rate_map_v2=2, thermal_tranche_overrides=2
+INFO: year 2024 retained frame: 22.9 MB  126342 x 20  cols=plant_id,plant_name,prime_mover,fuel_type,chp,netgen_annual_mwh,ba_code,netgen_january_mwh,netgen_february_mwh,netgen_march_mwh,netgen_april_mwh,netgen_may_mwh
+INFO: year 2024 retained frame: 9.0 MB  674520 x 4  cols=year,plant_id,hour,net_mw
+INFO: year 2024 retained frame: 8.9 MB  665760 x 4  cols=year,plant_id,hour,net_mw
+INFO: year 2024 retained frame: 4.4 MB  68919 x 7  cols=year,month,plant_id,state,fuel_group,price_per_mmbtu,quantity
+INFO: year 2024 retained frame: 2.3 MB  87600 x 4  cols=year,series,hour,mw
+INFO: year 2024 retained frame: 2.3 MB  87600 x 4  cols=year,series,hour,mw
+WARNING: SOCO: CC plant 6073 fleet pmax sum 1904.4 MW exceeds trusted bound 1132.4 MW (nameplate; corrupt summer-capacity rows) — reconciled (772.0 MW removed)
+WARNING: SOCO: CC plant 7897 fleet pmax sum 1314.8 MW exceeds trusted bound 1304.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (10.8 MW removed)
+WARNING: SOCO: CC plant 55382 fleet pmax sum 1353.0 MW exceeds trusted bound 1192.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (161.0 MW removed)
+WARNING: SOCO: CC plant 57037 fleet pmax sum 1308.5 MW exceeds trusted bound 840.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (468.5 MW removed)
+INFO: Loaded SOCO fleet from EIA-860 parquet (393 generators)
+INFO: Binned fleet cache for SOCO is up to date — loaded from soco_fleet_binned.parquet
+WARNING: SOCO 2025: repairing 4 EIA-930 NG: NG spike hour(s) [1172, 1240, 2751, 7527] (max 70683 MW vs p99.9 26642 MW) -- unit-slip artifact
+WARNING: SOCO 2025: 7 missing meter hour(s) in the EIA-930 extract bridged by interpolation/fill (2025: the seven UTC-bounded trailing hours, audit §3.2) — extend the fetch, do not read these as measured
+INFO: SOCO net interchange applied for 2025: +1488 MW avg (export-positive, measured EIA-930)
+INFO: SOCO 2025: 7 hour(s) of the local year past the 714 window (hours 8753..8759); their zone SHARES carry from the previous hour, the demand LEVEL stays the measured EIA-930 series
+WARNING: SOCO 2025: repairing 4 EIA-930 NG: NG spike hour(s) [1172, 1240, 2751, 7527] (max 70683 MW vs p99.9 26642 MW) -- unit-slip artifact
+INFO: solving SOCO 2025 (hours=8760, Henry Hub=$3.52/MMBtu, commitment=False)
+INFO: SOCO per-zone solar SHAPE (2025): 3 zone(s) from soco_2025_solar_zone_shape.parquet, measured energy-weighted hour-of-day SOCO_AL=11.27, SOCO_GA=11.02, SOCO_MS=11.37
+WARNING: SOCO: CC plant 6073 fleet pmax sum 1904.4 MW exceeds trusted bound 1132.4 MW (nameplate; corrupt summer-capacity rows) — reconciled (772.0 MW removed)
+WARNING: SOCO: CC plant 7897 fleet pmax sum 1314.8 MW exceeds trusted bound 1304.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (10.8 MW removed)
+WARNING: SOCO: CC plant 55382 fleet pmax sum 1353.0 MW exceeds trusted bound 1192.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (161.0 MW removed)
+WARNING: SOCO: CC plant 57037 fleet pmax sum 1308.5 MW exceeds trusted bound 840.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (468.5 MW removed)
+INFO: Loaded SOCO fleet from EIA-860 parquet (393 generators)
+INFO: Binned fleet cache for SOCO is up to date — loaded from soco_fleet_binned.parquet
+INFO: unit-outage derate (SOCO 2025): 131 plant-tranches derated
+INFO: COD ramp (SOCO 2025): 84 unit-months masked offline (mid-year COD / retirement), 7 unit(s) fully not-yet-built/retired
+WARNING: SOCO: CC plant 6073 fleet pmax sum 1904.4 MW exceeds trusted bound 1132.4 MW (nameplate; corrupt summer-capacity rows) — reconciled (772.0 MW removed)
+WARNING: SOCO: CC plant 7897 fleet pmax sum 1314.8 MW exceeds trusted bound 1304.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (10.8 MW removed)
+WARNING: SOCO: CC plant 55382 fleet pmax sum 1353.0 MW exceeds trusted bound 1192.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (161.0 MW removed)
+WARNING: SOCO: CC plant 57037 fleet pmax sum 1308.5 MW exceeds trusted bound 840.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (468.5 MW removed)
+INFO: Loaded SOCO fleet from EIA-860 parquet (393 generators)
+INFO: Binned fleet cache for SOCO is up to date — loaded from soco_fleet_binned.parquet
+INFO: Loaded SOCO 2025 hydro budget: 5 plants, 327.5 GWh annual, 368 MW nameplate
+INFO: SOCO 2025: 5 hydro plants in LP (368 MW, 0.33 TWh monthly budget)
+INFO: unit-outage derate (SOCO 2025): 131 plant-tranches derated
+INFO: COD ramp (SOCO 2025): 84 unit-months masked offline (mid-year COD / retirement), 7 unit(s) fully not-yet-built/retired
+INFO: F923 gas-price plausibility screen for 2025 (SOCO, band [0.5, 2.0] x state N3045 reference): 296 plant-months in band, 0 low, 0 negative, 5 high -> reference (4 plants); 215 months on the US fallback reference, 0 unscreened (no reference), 0 unscreened (reference <= 0)
+INFO: F923 fuel costs for 2025: 153 generators priced from their own plant, 164 gap-filled from nearby (state/zone) plants
+INFO: Matrix build: 0.969s, Solve: 5.676s (cold, simplex iterations 19790, objective 5680277825.0155)
+INFO: Matrix build: 0.969s, Solve: 2.609s (warm, simplex iterations 10412, objective 5741089677.6870)
+WARNING: CAMPD extract not found for FL 2025 (looked in /home/user/market-simulator/data/raw/campd-facility-level, /campd-unit-level, and the flat dir)
+INFO: EIA-923 2025: CAMPD-backfilled 14 under-reported plant(s) across 14 class-row(s) (2 replaced, 12 added)
+INFO: EIA-923 2025 hydro 0.33 TWh under-counts EIA-930 6.01 TWh; using EIA-930 grid total
+INFO: year 2025 phase timing: data_prep=2.5s solve_p0=5.7s markup=3.4s solve_p1=2.6s results_write=4.0s total=18.2s (markup: setup=0.3s p0_post=0.5s markup=0.0s seam=0.0s p1_post=0.6s tail=2.0s other=0.0s) (results_write: state=0.1s frames=0.2s parquet=0.4s bench=1.2s sidecars=2.0s)
+INFO: year 2025 memory after release: resident=0.90 GB peak=2.18 GB (malloc_trim=yes) | accumulators 0.04 GB (campd=0.03)
+INFO: year 2025 glibc arena: total=1.15 GB in_use=0.10 GB free_retained=1.04 GB mmapped=0.05 GB trim_top=0.00 GB
+INFO: year 2025 retained heap: ndarray=0.05 GB (n=412) [pandas=0.07 GB n=28, sparse=0.00 GB n=0 — slices, not additions] | 22 populated cache(s), 36 entries | top: _chp_by_plant=4, unit_outage_derate_factors=3, coal_chp_overrides=3, _measured_plant_rate_map_v2=3, _eia_hourly_frame=3
+INFO: year 2025 retained frame: 22.9 MB  126342 x 20  cols=plant_id,plant_name,prime_mover,fuel_type,chp,netgen_annual_mwh,ba_code,netgen_january_mwh,netgen_february_mwh,netgen_march_mwh,netgen_april_mwh,netgen_may_mwh
+INFO: year 2025 retained frame: 9.0 MB  674520 x 4  cols=year,plant_id,hour,net_mw
+INFO: year 2025 retained frame: 8.9 MB  665760 x 4  cols=year,plant_id,hour,net_mw
+INFO: year 2025 retained frame: 8.9 MB  665760 x 4  cols=year,plant_id,hour,net_mw
+INFO: year 2025 retained frame: 4.4 MB  68919 x 7  cols=year,month,plant_id,state,fuel_group,price_per_mmbtu,quantity
+INFO: year 2025 retained frame: 2.8 MB  105120 x 4  cols=year,series,hour,mw
+INFO: capacity-deliverability: no partition for ISO SOCO (energy-only / no locational RA construct)
+WARNING: no hydro-plant-modes clean partition for SOCO — run scripts/data/curate_hydro_plant_modes.py (and review the completion rule for this ISO first)
+WARNING: no hydro-plant-modes clean partition for SOCO — run scripts/data/curate_hydro_plant_modes.py (and review the completion rule for this ISO first)
+INFO: wrote calibration bundle to results/calibration/soco40_coalsplit_B
+INFO: memory peak: cgroup_peak_rss_gib=2.65, cgroup_peak_rss_plus_swap_gib=2.65, process_vmhwm_gib=2.18, process_vmswap_now_gib=0.00
+
+================================================================================
+  CALIBRATION REPORT  (SOCO; run 2026-09-16T14:58:53; git 71884144)
+  bundle: results/calibration/soco40_coalsplit_B
+================================================================================
+
+================================================================================
+  SOCO 2023 BACKCAST  (energy-only)
+================================================================================
+
+  [1] Generation by fuel (TWh; share of own total)
+    (EIA-930 column = measured grid total (net gen = demand + interchange): itemized fuels + repaired renewables + carried biomass
+     + unspecified 'other' residual — the like-for-like actual total. EIA-923 column = raw reference vintage, biomass/other incomplete in a
+     partial current-year release.)
+    fuel        model  mdl% EIA-930  930% EIA-923  923%
+    coal        33.14  13.8   38.25  16.0   37.24  15.4
+    gas        130.89  54.5  129.59  54.1  136.71  56.5
+    nuclear     51.91  21.6   52.43  21.9   52.14  21.5
+    wind         0.00     —    0.00     —       —     —
+    solar        8.36   3.5    8.36   3.5       —     —
+    hydro        6.81   2.8    8.45   3.5    6.82   2.8
+    oil          0.00     —    0.00   0.0       —     —
+    biomass      8.82   3.7    8.82   3.7       —     —
+    other        0.14   0.1    2.54   1.1       —     —
+    TOTAL      240.08 100.0  239.63 100.0  241.94 100.0
+    import          —     —  -10.16  -4.4       —     —   (net; serves load, not in generation total)
+    energy balance: model gen  240.08 − EIA-930 net gen  239.63 =  +0.46 TWh (tol ±3.0)
+    note: EIA-930 'gas' (129.6) folds in geothermal+biomass (~9.0 TWh here); compare model gas to the EIA-923 cell, not EIA-930.
+
+  [2] Net interchange (EIA sign: + = net export)
+    actual (EIA-930): +10.16 TWh (+1159 MW avg)
+    model            :    0.00 TWh (energy-only; no external interchange node)
+
+  [2b] Battery cycling — 2023 (model EIA-860 fleet vs EIA-930 BAT)
+                                metric  model  EIA-930
+                         discharge TWh   0.05        —
+                            charge TWh   0.06        —
+    evening (h17-22) discharge share %   30.6        —
+    (no EIA-930 battery series in this BA extract — model throughput reported alone)
+    pumped-storage discharge: model 1.80 TWh; EIA-930 —
+
+  [3] Zonal price level ($/MWh)
+    zone                avg  neg-hrs
+    SOCO_AL           32.49        0
+    SOCO_GA           32.49        0
+    SOCO_MS           32.49        0
+
+  [3] System price duration ($/MWh)
+    avg    32.49   max    70.22   p90   39.00   p50   32.00   p10   25.79   min    21.27
+    negative-price hours: 0
+
+================================================================================
+  SOCO 2024 BACKCAST  (energy-only)
+================================================================================
+
+  [1] Generation by fuel (TWh; share of own total)
+    (EIA-930 column = measured grid total (net gen = demand + interchange): itemized fuels + repaired renewables + carried biomass
+     + unspecified 'other' residual — the like-for-like actual total. EIA-923 column = raw reference vintage, biomass/other incomplete in a
+     partial current-year release.)
+    fuel        model  mdl% EIA-930  930% EIA-923  923%
+    coal        34.68  13.9   40.45  16.2   40.24  16.1
+    gas        126.37  50.6  125.68  50.4  129.50  51.9
+    nuclear     62.92  25.2   62.84  25.2   63.06  25.3
+    wind         0.00     —    0.00     —       —     —
+    solar       10.13   4.1   10.12   4.1       —     —
+    hydro        6.30   2.5    7.08   2.8    6.30   2.5
+    oil          0.00     —    0.01   0.0       —     —
+    biomass      9.32   3.7    9.32   3.7       —     —
+    other        0.19   0.1    2.47   1.0       —     —
+    TOTAL      249.89 100.0  249.51 100.0  249.48 100.0
+    import          —     —  -10.81  -4.5       —     —   (net; serves load, not in generation total)
+    energy balance: model gen  249.89 − EIA-930 net gen  249.51 =  +0.39 TWh (tol ±3.0)
+    note: EIA-930 'gas' (125.7) folds in geothermal+biomass (~9.5 TWh here); compare model gas to the EIA-923 cell, not EIA-930.
+
+  [2] Net interchange (EIA sign: + = net export)
+    actual (EIA-930): +10.81 TWh (+1234 MW avg)
+    model            :    0.00 TWh (energy-only; no external interchange node)
+
+  [2b] Battery cycling — 2024 (model EIA-860 fleet vs EIA-930 BAT)
+                                metric  model  EIA-930
+                         discharge TWh   0.13        —
+                            charge TWh   0.15        —
+    evening (h17-22) discharge share %   33.4        —
+    (no EIA-930 battery series in this BA extract — model throughput reported alone)
+    pumped-storage discharge: model 1.46 TWh; EIA-930 —
+
+  [3] Zonal price level ($/MWh)
+    zone                avg  neg-hrs
+    SOCO_AL           30.22        0
+    SOCO_GA           30.22        0
+    SOCO_MS           30.22        0
+
+  [3] System price duration ($/MWh)
+    avg    30.22   max    72.73   p90   41.29   p50   29.47   p10   22.29   min    18.16
+    negative-price hours: 0
+
+================================================================================
+  SOCO 2025 BACKCAST  (energy-only)
+================================================================================
+
+  [1] Generation by fuel (TWh; share of own total)
+    (EIA-930 column = measured grid total (net gen = demand + interchange): itemized fuels + repaired renewables + carried biomass
+     + unspecified 'other' residual — the like-for-like actual total. EIA-923 column = raw reference vintage, biomass/other incomplete in a
+     partial current-year release.)
+    fuel        model  mdl% EIA-930  930% EIA-923  923%
+    coal        47.66  18.8   44.08  17.5   43.28  17.9
+    gas        127.00  50.2  125.28  49.7  118.31  48.9
+    nuclear     63.99  25.3   64.22  25.5   64.23  26.5
+    wind         0.00     —    0.00     —       —     —
+    solar        9.99   3.9    9.99   4.0       —     —
+    hydro        0.33   0.1    6.01   2.4    6.01   2.5
+    oil          0.02   0.0    0.02   0.0       —     —
+    biomass      4.17   1.6    4.17   1.7       —     —
+    other        0.05   0.0    1.88   0.7       —     —
+    TOTAL      253.21 100.0  251.88 100.0  242.15 100.0
+    import          —     —  -13.03  -5.5       —     —   (net; serves load, not in generation total)
+    energy balance: model gen  253.21 − EIA-930 net gen  251.88 =  +1.32 TWh (tol ±3.0)
+    note: EIA-930 'gas' (125.3) folds in geothermal+biomass (~4.2 TWh here); compare model gas to the EIA-923 cell, not EIA-930.
+
+  [2] Net interchange (EIA sign: + = net export)
+    actual (EIA-930): +13.03 TWh (+1488 MW avg)
+    model            :    0.00 TWh (energy-only; no external interchange node)
+
+  [2b] Battery cycling — 2025 (model EIA-860 fleet vs EIA-930 BAT)
+                                metric  model  EIA-930
+                         discharge TWh   0.16     0.08
+                            charge TWh   0.18     0.09
+    evening (h17-22) discharge share %   44.2     28.7
+                  hourly net Pearson r  0.468         
+    pumped-storage discharge: model 2.39 TWh; EIA-930 1.96
+
+  [3] Zonal price level ($/MWh)
+    zone                avg  neg-hrs
+    SOCO_AL          136.40        0
+    SOCO_GA          136.40        0
+    SOCO_MS          136.40        0
+
+  [3] System price duration ($/MWh)
+    avg   136.40   max 61900.00   p90   57.03   p50   41.78   p10   31.80   min    26.88
+    negative-price hours: 0

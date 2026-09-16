@@ -1,0 +1,167 @@
+{
+ "free_parameters": {
+  "schema": "dof-ledger/v1",
+  "seeded": "2026-07-04 S5 governance session — audit §3 class-C table + W1d residual-identified/forecast-risk markers (docs/model-legitimacy-audit-2026-07.md; CLAUDE.md rule 20)",
+  "n_entries": 3,
+  "n_residual": 1,
+  "entries": [
+   {
+    "name": "offer_curve_by_group",
+    "where": "run_config.scenario_config.offer_curve_by_group",
+    "identification": "measured-physical",
+    "lineage_solves": "unknown",
+    "value": {
+     "CC_REGULAR": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "CC_INTERMEDIATE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "CC_CHP": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "CT_CHP": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "CT_PEAKER": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "CT_INTERMEDIATE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "ST_GAS": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "ST_GAS_INTERMEDIATE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "COAL_LIGNITE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL_PRB": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL_BIT": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL_WC": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ]
+    },
+    "n_scalars": 72,
+    "source": "per-group HR-band multipliers — the rule-#1-sanctioned offer-curve tuning surface (audit C-8/C-11/C-13)",
+    "n_scalars_tuned_on_soco_residual": 0,
+    "retag_basis": "measured-physical. THE FOUR PRICE-TUNING BANDS ARE AT THE IDENTITY 1.0 ON ALL 13 GROUPS (committed / econ_low / econ_high / peak — machine-verified on this bundle's own run_config.scenario_config.offer_curve_by_group: the set of distinct values per band is exactly {1.0}), offer_curve_overrides is null and offer_curve_deltas is null. SOCO therefore carries ZERO scalars tuned on a SOCO residual through the rule 1 [R-STRUCT] authorized channel, and gate G17 makes it impossible in principle: SOCO has no committed price benchmark (no actual_lmp.json block, rubric v3.8 _price_reference_absent('SOCO') is True), so there is no price residual to fit against and none was ever computed. The two NON-identity keys in this mapping, econ_low_share (0.500-0.556) and pct_peaking (5-15), are NOT the authorized channel and are NOT SOCO values: rule 1's carve-out names them as structural shares that are excluded from it, and they arrive verbatim from the ISO-agnostic pipeline/offer_curve_base/generic.py GENERIC_BASE_OFFER_CURVE, whose module docstring states that per-ISO fitted values are NEVER merged into the generic defaults. There is no soco.py delta module (the package holds only ercot.py and pjm.py), so SOCO rides the pure generic base and rule 25 [R-ISO-SCOPE]'s neutral-fallback requirement is met by construction. The shares themselves are measured-physical upstream: CAMPD observed heat-rate curves and measured duct-fire headroom, per the generic table's own provenance comments."
+   },
+   {
+    "name": "offer_curve_smoothing",
+    "where": "run_config.scenario_config.offer_curve_smoothing_*",
+    "identification": "measured-physical",
+    "lineage_solves": "unknown",
+    "value": {
+     "offer_curve_smoothing_n": 6,
+     "offer_curve_smoothing_exp": 1.0
+    },
+    "n_scalars": 2,
+    "source": "econ-ramp shape of the offer curve (rule-#1 scope)",
+    "n_scalars_tuned_on_soco_residual": 0,
+    "retag_basis": "measured-physical. UNSET ON THIS RUN — both offer_curve_smoothing and curve_smoothing are null in this bundle's run_config (machine-verified), so no smoothing span, anchor or ramp was configured and there is no scalar to identify. Nothing was tuned because nothing was set."
+   },
+   {
+    "name": "wefor_multiplier",
+    "where": "run_config.scenario_config.wefor_multiplier",
+    "identification": "residual",
+    "lineage_solves": "unknown",
+    "value": 0.7,
+    "source": "wind EFOR haircut (audit C-15) — the name admits residual identification; stated purpose is coal shoulder-month generation",
+    "root_cause": "audit C-15 open item: replace with a measured wind availability/curtailment input or delete; identified in-sample only (2023-2025); no held-out validation exists — open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   }
+  ],
+  "retag_note": "SOCO-40 re-tagged offer_curve_by_group and offer_curve_smoothing from the builder's default 'residual' to 'measured-physical'. build_dof_ledger.py tags both residual on every ISO because on every OTHER ISO they carry fitted band multipliers; on SOCO they do not, and cannot. Each re-tag states the machine-checked identity it rests on (see retag_basis). wefor_multiplier is left at 'residual' with its inherited root_cause — it is the single residual-identified free parameter this keeper carries."
+ },
+ "schema": "calibration-attestation/v1",
+ "governance": {
+  "levers_trace_to_measured_input": true,
+  "no_fit_to_price_residuals": true,
+  "no_pinning_to_actuals": true,
+  "outage_filter_exogenous_net_load": true,
+  "attested_by": "SOCO-40 (lane), run 2026-09-16-soco-1-baseline — the FIRST SOCO keeper: the CLI's all-defaults ISO-agnostic backcast construction on three geographic zones (SOCO_AL / SOCO_GA / SOCO_MS) over measured FERC-714 shares, with COAL split to COAL_BIT / COAL_PRB on the measured EIA-923 supply census per the owner's in-session instruction. No band, share, floor, threshold or adder was set by this lane.",
+  "authorized_price_tuning_declared": "NONE. No authorized price-tuning channel is in use on this run, so no authorized_price_tuning declaration block is present (a block would name a channel IN USE, and would be validated as such by calibration_verdict._authorized_tuning_finding). All four governance assertions above read TRUE unscoped, so the rule 1 [R-STRUCT] carve-out is never reached. Machine basis: every committed / econ_low / econ_high / peak band is exactly 1.0 across all 13 groups; offer_curve_overrides and offer_curve_deltas are null. Gate G17 forbids the channel to SOCO in principle — SOCO has no committed price benchmark, so there is no price residual to tune against and none was computed.",
+  "owner_attestation": "Owner attested the four governance assertions in-session on 2026-09-16, verbatim: \"I attest\". The same sitting issued the coal-split instruction this run executes, verbatim: \"Coal should be split into types. Completely eliminate the single coal class.\"",
+  "dof_basis": "scripts/build_dof_ledger.py --iso SOCO run at HEAD on this bundle's own run_config, then two entries re-tagged measured-physical against machine-checked identities recorded in free_parameters.retag_note / entries[].retag_basis. n_entries 3, n_residual 1 (wefor_multiplier 0.7, inherited, carrying its audit C-15 root cause). No free parameter was introduced by this lane."
+ },
+ "exceptions": [],
+ "disclosures": {
+  "note": "SOCO-40 determination basis — the six lines PRECOMMIT §10 requires, plus this lane's own 2025 hydro input hole. Reported, never patched (rules 1 / 13 / 14). Nothing here is corrected, excluded or tuned around.",
+  "1_the_price_gap": "NO PUBLIC SOCO PRICE EXISTS AND NONE EVER WILL. SOCO's footprint publishes no LMP, hub or clearing price, so data/raw/_validation-source/actual_lmp.json carries no SOCO block and MUST NOT GAIN ONE — a placeholder would break calibration_verdict._price_reference_absent and silently move SOCO onto the ordinary determination path. C3a (price level), C3b (price shape) and C3c (price tail / scarcity) are therefore UNSCORABLE — NOT FAILED. The determination ceiling is rubric v3.8 PHYSICALLY-CALIBRATED (PRICE UNSCORED); this run can never read CALIBRATED. Gate G17 stands: no neighbouring hub, no proxy, no cost-stack reconstruction, ever. The model's own load-weighted mean price is printed as MODEL-ONLY / UNVERIFIED and is not evidence of price skill. SOCO-13's NO is the governing ruling.",
+  "2_R_i_pumped_storage_unobservable": "1,306.6 MW of pumped storage is UNOBSERVABLE in EIA-930: 0 of 8,760 hours in 2023 and 99.7 % of 2024. NG: WAT is never negative before the 2024-07-15 cut-over, so PS charging was NOT REPORTED rather than folded into hydro. This is a hard constraint on the C1 fuelmix benchmark itself, never a hole to fill: the model dispatches 1.80 / 1.46 / 2.39 TWh of PS discharge against an EIA-930 comparator that exists only for 2025 (1.96 TWh).",
+  "3_card_S3_southern_power_excluded": "The zonal shares are built from FIVE fully-cited FERC-714 respondents (Alabama Power, Georgia Power, Mississippi Power, Oglethorpe 107, MEAG 210). Southern Power (respondent 186) is EXCLUDED — a documented NO: nothing establishes where its FERC-714 planning-area load sits. Its 3.211 / 3.401 / 3.084 TWh is named here and never absorbed. Residual 3.03 / 2.92 / 1.26 % (1.18 % on the model clock). The owner chose the cited five over the six-respondent set whose residual is smaller (1.63 / 1.50 / -0.03 %) precisely because the smaller residual rested on an uncited component (rule 13).",
+  "4_card_S12_COD_month_grain": "Unit COD months govern the ramp (Vogtle 3 2023-07, Vogtle 4 2024-04). What the MONTH-grain leaves is stated at full magnitude: nuclear runs 51.915 / 62.916 / 63.988 TWh against EIA-930 52.43 / 62.84 / 64.22 — the 2023 Vogtle-3 year is the one that under-runs (-0.52 TWh), consistent with a mid-month COD resolved to a month boundary. The Vogtle-4 April step is present and physical (Jan-Mar 6,562 MW -> Apr-Dec 7,385 MW, max 7,999 MW against 8,080 MW nameplate).",
+  "5_R_v_2025_peaker_census": "2025 carries no eia923_incomplete flag (ratio 0.9533) but its peaker census is thin: only 6 of 23 CT_PEAKER and 1 of 6 CC_CHP plants have filed. No SOCO pair is gate-eligible for 2025 and the 2025 gas split defers to EIA-930. Every 2025 C1 row inherits that vintage limitation.",
+  "6_R_w_oil_false_positive_DISCHARGED": "DISCHARGED BY THIS RUN, AND MEASURED RATHER THAN ASSERTED. PRECOMMIT §10 line 6 recorded the SOCO 2024 NG: OIL rule-14 false positive: the EIA-930 unit-slip screen deleted 4.4 GWh of a REAL Winter Storm Heather oil run (2024-01-17 03:00-09:00, 530 -> 649 -> 660 -> 687 -> 762 -> 801 -> 350 MW, tracking SOCO demand from 41.0 to 47.4 GW), biasing the C1 oil benchmark LOW. Between arm A's basis (13198951) and this keeper's pin (71884144), lane NWPP-39 landed a zero-baseline guard on that screen (_FUEL_SPIKE_PLATEAU_PCT = 99.0): a series whose p99.9 is itself more than _FUEL_SPIKE_RATIO times its p99.0 has a tail rather than a plateau at the top, the screen's own premise is falsified by the series, and the column passes through untouched. MEASURED ON THE TWO LAUNCH LOGS: arm A repairs SOCO NG: OIL 2023 h7975 and 2024 h386-392; THIS RUN REPAIRS NEITHER, while the GENUINE 2025 NG: NG spikes (70,683 MW in a 32,574 MW hour, four hours) still fire in BOTH. Releasing the false positives while keeping the true ones is the discriminating signature. The 2024 EIA-930 oil benchmark moves 0.00 -> 0.01 TWh accordingly. This was audited and declared as the single LIVE G-DRIFT hunk BEFORE the solve (docs/handoffs/ADDENDUM-soco40-armB-relaunch-and-gdrift-2026-09-16.md §3.1), not discovered in the result.",
+  "7_2025_hydro_input_hole": "NOT A MODEL DEFECT — AN INPUT HOLE, NAMED IN PRECOMMIT §4.5 BEFORE THE SOLVE. The EIA-923 hydro budget for 2025 resolves only 5 plants / 0.3275 TWh / 368 MW against 6.01 TWh measured by EIA-930, where 2023 and 2024 resolve 42 plants / 6.82 and 6.30 TWh. The LP is handed ~5.7 TWh less hydro than the year actually had. Consequences, reported at full magnitude and NOT absorbed: (a) coal backfills it — COAL_PRB 31.541 and COAL_BIT 16.121 TWh in 2025 against 2024's 22.420 / 12.256, so 2025 coal runs 47.66 TWh against 44.08 measured; (b) the LP cannot serve 13 summer afternoon hours and posts 8,930 MWh of slack at VOLL 61,900 $/MWh (2025-06-25 15-17h, 07-29 12-16h, 08-18 13-15h, 09-05 13-14h), which is what drags the 2025 MODEL-ONLY mean price to 136.40 $/MWh against 32.49 / 30.22 in 2023 / 2024. NO REPAIR WAS ARMED: --hydro-backfill-year and --hydro-eia930-monthly were deliberately NOT passed (PRECOMMIT §3.1), because arming a one-year input repair inside the first keeper is a lever decision the desk queue owns, not this lane's. Routed as SOCO's next data-intake item.",
+  "8_what_the_coal_split_did_and_did_not_do": "The owner's instruction is executed and the single coal class is GONE: every year now carries COAL_BIT and COAL_PRB and no bare COAL (machine-verified on all three class_hourly parquets). It is a RECLASSIFICATION, not a re-dispatch: every non-coal class is byte-identical to arm A, COAL_BIT + COAL_PRB sums to arm A's bare COAL to the GWh in all three years (33.142 / 34.676 / 47.662), and the 2023 and 2024 P0 objectives are IDENTICAL to arm A's to the cent (3690944814.1196 and 3398767416.6013). Only 2025's objective moves (5682126660.3872 -> 5680277825.0155), in the scarcity hours the hydro hole creates. What it BUYS is that C1's coal rows now score against the benchmark's own EIA-923 fuel-code rows instead of one blended class against two — the SPP-40 §7.3 defect — and that D-1 now resolves its shape miss to COAL_BIT specifically rather than to a blended COAL."
+ }
+}
