@@ -217,8 +217,14 @@ carries a paired control too, and the drift is a finding in its own right.
 |---|---|---|
 | 0 | phase 0 above, the repair, the FINDING | **none** — done, in this parent |
 | 1 | **SCREEN**: one shard, 2025, **two legs** (control + arm), gates G-1…G-5 | 2 × one NEISO year |
-| 2 | **only if the screen clears**: one shard, **`--years 2020 2021 2022 2023 2024 2025`**, ONE bundle (rules 16 / 32(b) / 34(c)) | 6 years, arm (+ control iff step 1 shows drift) |
+| 2 | ~~**only if the screen clears**~~ **SUPERSEDED — the owner directed "Run all years" (2026-09-16), so the span was launched in parallel with the screen**: one shard, **`--years 2020 2021 2022 2023 2024 2025`**, ONE bundle (rules 16 / 32(b) / 34(c)) | 6 years, arm |
 | 3 | parent composes, scores, registers, and **asks the owner the promotion question** | none |
+
+> **AMENDED 2026-09-16 by owner instruction — see `docs/ADDENDUM-neiso109-run-all-years-2026-09-16.md`.**
+> The screen's *gating* role is waived; **G-1 … G-5 still bind on the span as STOP gates**, the
+> pre-registered expectations in §3 are unedited, and nothing here promotes anything. The screen
+> shard was NOT cancelled: its control leg is the only control this lane has and the only instrument
+> that can settle §5's open G-DRIFT question.
 
 **Rule 32 `[R-SHARD]` (a): this parent runs ZERO LP.** Rule 34 `[R-SHARD-PROMOTABLE]` (a): every
 shard pushes its bundle to its own branch, including `dispatch/<year>_P1.parquet`, via a
