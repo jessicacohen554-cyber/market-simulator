@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-09-16 — SOCO desk: closed, monitoring stopped, successor handoff written
+
+- **Desk closed at the owner's instruction.** Both desk PRs merged (#6144 03:49, #6172 04:12); both
+  scheduled check-ins deleted. No open desk PR, no armed watch, nothing in flight.
+- **New successor handoff** `docs/handoffs/soco-desk-handoff-2026-09-16.md` replaces the r#0 charter,
+  which is annotated SUPERSEDED in place rather than deleted (it is the baseline the ledger's errors are
+  measured against, including the two it caused itself).
+- **Program state:** W1 and W2 closed — SOCO is the ninth registered region, SOCO-20 graded PASS. W3
+  issued and undispatched, five paste-ready charters in plan section 8. W4 blocked on W3. One open card
+  (S10, forecast routing). Fifteen routed items, none the desk's to write.
+
 ## 2026-09-16 — SOCO desk r#7: no SOCO lane moved; SOCO-34's charter repaired from NWPP-35's handover
 
 - **Nothing graded — W3 is still undispatched** (issued 09-14 19:55; no branch, commit, FINDING or PR).

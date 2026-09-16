@@ -11,6 +11,35 @@ recreated fresh from `origin/main`.
 
 ## 0. Live state — newest entry FIRST
 
+### DESK CLOSED — 2026-09-16 — monitoring stopped at owner instruction; successor handoff written (main `1f586ed7`)
+
+**Both desk PRs merged within 23 minutes of each other** — #6144 at 03:49 (r#5 + r#6) and #6172 at 04:12
+(r#7). Verified on main: all five W3 charters present in plan §8, plan 1012 L, ledger 663 L. **No open desk
+PR, no armed check-in, nothing in flight.**
+
+**Monitoring STOPPED** at the owner's explicit instruction. Both scheduled triggers were deleted
+(`trig_018sP2aGF8ygSLL2CbCt917u`, the #6172 watch; `trig_01Uf5jTosMAbVLDUeGHPBv7f`, the W3 dispatch watch).
+Nothing will wake this session. **A successor does not inherit a watch — if one is wanted, it is armed fresh.**
+
+**The successor handoff is `docs/handoffs/soco-desk-handoff-2026-09-16.md`**, and the r#0 charter
+(`…-2026-09-12.md`) is annotated SUPERSEDED in place rather than deleted — it is the baseline every error in
+§6 is measured against, including the two it caused itself (E-3's gate G13, E-4's uncensused FERC-714 "spine").
+
+**Where the program stands.** W1 and W2 are closed: SOCO is the **ninth registered region**, SOCO-20 graded
+PASS. W3 is **issued and undispatched** — five paste-ready charters in plan §8, all independent. W4 is blocked
+on W3. One card is open: **S10**, the W6 forecast routing, due when a keeper exists. Fifteen items are routed
+(R-a…R-o), none of them this desk's to write.
+
+**What this desk got wrong, since that is the part worth inheriting.** Eight errors against interest, and the
+last two are the same shape one sitting apart: **right about the data, wrong about the code.** E-7 read another
+program's defect report as "not our problem" instead of "this construction is being removed from under us";
+E-8 wrote a gate calling the EIA-860 parquet rebase mechanical and offered a **census** as its check — the
+routine then corrupted four tables **with every count still matching**. The rule the desk leaves behind:
+**a gate that prescribes running a script must state the assertion that proves the script did what it claims,
+and for a derived table that is an identity check, never a count.**
+
+---
+
 ### r#7 — 2026-09-16 — NOTHING OF SOCO'S MOVED, AND THAT IS THE ENTRY: NWPP FINISHED ITS WHOLE W3 IN THE SAME WINDOW (main `8b9b32e4`)
 
 **No SOCO lane was dispatched, so nothing was graded.** W3 (SOCO-30/31/32/33/34) was issued 2026-09-14
