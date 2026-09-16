@@ -337,6 +337,67 @@ def _eia_hourly_frame(ba_code: str, year: int) -> pd.DataFrame | None:
     return _screen_fuel_spikes(_eia_hourly_frame_raw(ba_code, year), ba_code, year)
 
 
+def _screen_pool_member_frame(
+    df: pd.DataFrame, *, member: str, year: int
+) -> pd.DataFrame:
+    """Screen ONE pool member's ``NG:`` columns and bridge the flagged hours.
+
+    A pool's fuel column is the sum of its members', so a member's unit-slip
+    hour has to be repaired on the member's OWN population before the sum —
+    the NWPP-10 dropout precedent ("a footprint sum can never read zero, so
+    the screen has to run per member") in the other direction, and the
+    population ``build_calibration_reference._pool_hourly_benchmark`` already
+    screens on (FINDING-nwpp-37 §5 named the two paths' disagreement as the
+    real finding). The statistic is unchanged — :func:`_screen_fuel_spikes`'s
+    function, factor and anchor — only the series it is computed over is the
+    member's: NWMT posts ``NG: WAT`` = 65,891 MW against its own 641 MW robust
+    peak (2024, h5723), which the pooled series' 19,533 MW peak lets through a
+    2.5x bar (measured: the pooled pass catches 2 of NWMT's 4 hydro hours in
+    2024 and 3 of the 6 in 2025; per member catches all — lane NWPP-37b).
+
+    The flagged hours are then bridged by the member's own linear
+    interpolation, evaluated at the flagged positions ONLY — the fill a
+    single-BA reader applies to a screened hour, and the per-member
+    interpolation the reference builder sums — so the pooled hour carries the
+    member's interpolated output instead of dropping the member from the sum.
+    Every hour the screen did not flag keeps the pool's existing semantics: an
+    hour a member does not carry stays NaN for the ``min_count=1`` sum, and a
+    storage series that has not started reporting is not back-filled. Returns
+    ``df`` itself when nothing is flagged. The pooled frame still passes
+    :func:`_screen_fuel_spikes` once on its way out of :func:`_eia_hourly_frame`
+    (the constructor's uniform guarantee); with the members repaired first that
+    pass is measured inert on NWPP 2023-2025 (0 flags), and it is a different
+    series, so no series is screened twice.
+    """
+    from market_sim.data.eia930.actuals import (
+        _EIA930_FUEL_COLUMN_PREFIX,
+        _screen_fuel_spike_columns,
+    )
+
+    screened = _screen_fuel_spike_columns(df, ba_code=member, year=year)
+    if screened is df:
+        return df
+    for column in screened.columns:
+        if not str(column).startswith(_EIA930_FUEL_COLUMN_PREFIX):
+            continue
+        raw = pd.to_numeric(df[column], errors="coerce").to_numpy(dtype=float)
+        # ``to_numpy`` may hand back a read-only view; the repair writes in place.
+        repaired = (
+            pd.to_numeric(screened[column], errors="coerce")
+            .to_numpy(dtype=float)
+            .copy()
+        )
+        flagged = np.isnan(repaired) & ~np.isnan(raw)
+        if not flagged.any():
+            continue
+        bridged = (
+            pd.Series(repaired).interpolate().bfill().ffill().to_numpy(dtype=float)
+        )
+        repaired[flagged] = bridged[flagged]
+        screened[column] = repaired
+    return screened
+
+
 # Pool-frame columns carried from the clock member as provenance (the pool's
 # own clock), never summed.
 _POOL_CLOCK_COLUMNS: tuple[str, ...] = ("UTC time", "Local date", "Hour", "Local time")
@@ -351,6 +412,9 @@ def _pool_member_frames(pool: str, year: int) -> dict[str, pd.DataFrame] | None:
     column — a pure UTC join, so a Mountain member's rows land on the Pacific
     hour that is the same physical hour. Hours a member does not carry come
     back NaN (none in 2023-2025: NWPP-11 §3 measured zero gaps for all 17).
+    Each member's ``NG:`` fuel columns then pass through the unit-slip screen
+    on the member's OWN population (:func:`_screen_pool_member_frame`, lane
+    NWPP-37b) — the pool sum is built from repaired members, never raw ones.
     Returns ``None`` when the clock member's year is unavailable or ANY member
     file is missing — a pool is never silently served from a subset.
     """
@@ -367,7 +431,9 @@ def _pool_member_frames(pool: str, year: int) -> dict[str, pd.DataFrame] | None:
             return None
         df = pd.read_parquet(path).drop_duplicates(subset="UTC time")
         df = df.set_index(pd.DatetimeIndex(df["UTC time"])).reindex(utc)
-        out[member] = df.reset_index(drop=True)
+        out[member] = _screen_pool_member_frame(
+            df.reset_index(drop=True), member=member, year=year
+        )
     return out
 
 
@@ -412,9 +478,11 @@ def _pool_hourly_frame(pool: str, year: int) -> pd.DataFrame | None:
       nwpp_net_interchange`, the GRID Desert-Southwest legs) where the
       per-counterparty file is read.
 
-    Fuel columns (``NG: *``) are plain sums with ``min_count=1`` (an hour every
-    member lacks stays NaN for the caller's own gap handling). Returns ``None``
-    when the members cannot be assembled.
+    Fuel columns (``NG: *``) are plain sums of the members' SCREENED columns
+    (:func:`_screen_pool_member_frame` — the unit-slip screen runs per member,
+    before the sum, on the member's own population, lane NWPP-37b) with
+    ``min_count=1`` (an hour every member lacks stays NaN for the caller's own
+    gap handling). Returns ``None`` when the members cannot be assembled.
     """
     members = _pool_member_frames(pool, year)
     if members is None:

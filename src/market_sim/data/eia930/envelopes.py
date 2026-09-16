@@ -106,6 +106,14 @@ def measured_monthly_hydro(iso: str, year: int) -> np.ndarray | None:
     # the repin silently no-ops on the very year it is meant to fix; the filled
     # loader bridges the <=72h hole. The inserted gap rows carry NaT dates and
     # NaN NG: WAT, so the per-month nansum below ignores them.
+    # The NG: WAT column arrives unit-slip-SCREENED at that seam (lane NWPP-37,
+    # 2026-09-16; NWPP-32 §3.2 measured one AVA hour of 810,113 MW putting
+    # +1,166 GWh = 14.1 % into October 2025's pooled hydro through this very
+    # nansum). A flagged single-BA hour is NaN here and left out of the month
+    # exactly as an inserted gap row is; a pool member's flagged hour is bridged
+    # by that member's own interpolation BEFORE the pool sum (frames.
+    # _screen_pool_member_frame), so the pooled month keeps the member's real
+    # output.
     frame = _eia_hourly_frame_filled(ba, year)
     if frame is None or "NG: WAT" not in frame.columns:
         return None
@@ -159,7 +167,12 @@ def _hydro_wat_month_hod(iso: str, year: int) -> "pd.DataFrame | None":
     serves), NOT from the extract's ``Local time`` labels, whose stamps carry
     a fixed-offset error against the model clock. Leap years carry 8760 rows
     (Feb 29 dropped by the frame loader), so the fixed non-leap calendar maps
-    every row. Returns ``None`` when the extract or column is absent.
+    every row. The ``NG: WAT`` values are the frames seam's unit-slip-screened
+    column (lane NWPP-37): a flagged hour is NaN and the two percentile readers
+    built on this (:func:`measured_hydro_hourly_envelope`,
+    :func:`measured_hydro_min_flow_level`) drop it (``dropna``) rather than let
+    a 810,113 MW telemetry hour sit in a (month, hod) bucket. Returns ``None``
+    when the extract or column is absent.
     """
     ba = _ISO_TO_HOURLY_BA.get(iso)
     if ba is None:
@@ -428,7 +441,11 @@ def measured_gas_floor_profile(
     Note ``NG: NG`` is the EIA-930 gas figure, which for CISO silently absorbs
     geothermal/biomass (EIA-930 reports neither for CISO); that inflation is
     irrelevant here — this profile shapes a *floor*, not a benchmark, and gas
-    generation is still validated against EIA-923, not this series.
+    generation is still validated against EIA-923, not this series. The column
+    arrives unit-slip-screened at the frames seam (lane NWPP-37; inert for
+    CISO, which flags no hour 2019-2025 — SOCO 2025 posts four ~70 GW hours
+    against a 26.6 GW p99.9 that the screen repairs): a flagged hour is NaN and
+    excluded from its bucket percentile below.
 
     Returns ``(hours,)`` MW, or ``None`` when the ISO has no BA hourly extract,
     the ``NG: NG`` column is absent, or the year is uncovered (a forecast
@@ -1042,6 +1059,11 @@ def caiso_solar_fraction(year: int, hours: int) -> np.ndarray | None:
     shares CAISO's solar resource and time zone, so the CISO share proxies the
     corridor's midday saturation; it responds to a changed forecast solar build,
     unlike the measured corridor flow.
+
+    ``NG: SUN`` arrives unit-slip-screened at the frames seam (lane NWPP-37;
+    inert for CISO, which flags no hour 2019-2025): a flagged hour would read
+    as zero solar share through the existing ``fillna(0.0)`` below — the same
+    treatment a missing solar hour already gets here.
 
     Returns a ``(hours,)`` fraction clipped to ``[0, 1]``, or ``None`` when the
     CISO extract is absent / too short (a forecast year with no extract — the
