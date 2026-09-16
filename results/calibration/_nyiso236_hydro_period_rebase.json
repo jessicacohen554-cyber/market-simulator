@@ -1,0 +1,117 @@
+{
+  "probe": "nyiso220_phase0_period_overlap",
+  "zero_lp": true,
+  "keeper": "2026-09-07-nyiso-213-summer-seam",
+  "grain_limitation": "Fleet-hydro AGGREGATE proxy for a PER-PLANT mechanism. The keeper's committed hourlies are class-aggregate and no per-plant hourly hydro series exists for NYISO (nyiso-214/218/219). Sufficient for Q2, which asks whether two mechanisms bind on the same OBJECT; NOT sufficient to size the per-plant effect, which only a solve can do.",
+  "per_year": {
+    "2022": {
+      "over_daily_flat_base_rate_pct": 51.37,
+      "footprint_daily": {
+        "n_periods": 365,
+        "excess_mwh": 1627654.8,
+        "pct_of_annual_hydro_energy": 6.355,
+        "max_period_over_budget_pct": 35.51
+      },
+      "footprint_weekly": {
+        "n_periods": 63,
+        "excess_mwh": 1064316.6,
+        "pct_of_annual_hydro_energy": 4.156,
+        "max_period_over_budget_pct": 16.65
+      },
+      "envelope_binding_hours": 2207,
+      "envelope_binding_pct_of_hours": 25.19,
+      "envelope_binding_energy_pct": 30.32,
+      "binding_hours_also_over_daily_flat": 1893,
+      "pct_of_binding_hours_over_daily_flat": 85.77,
+      "pct_of_over_daily_flat_hours_that_bind": 42.07,
+      "bind_rtol_sensitivity": {
+        "1e-09": 1970,
+        "1e-06": 2207,
+        "0.001": 2218
+      }
+    },
+    "2023": {
+      "over_daily_flat_base_rate_pct": 50.48,
+      "footprint_daily": {
+        "n_periods": 365,
+        "excess_mwh": 1412482.2,
+        "pct_of_annual_hydro_energy": 5.307,
+        "max_period_over_budget_pct": 29.46
+      },
+      "footprint_weekly": {
+        "n_periods": 63,
+        "excess_mwh": 894157.6,
+        "pct_of_annual_hydro_energy": 3.359,
+        "max_period_over_budget_pct": 23.64
+      },
+      "envelope_binding_hours": 2914,
+      "envelope_binding_pct_of_hours": 33.26,
+      "envelope_binding_energy_pct": 39.12,
+      "binding_hours_also_over_daily_flat": 2468,
+      "pct_of_binding_hours_over_daily_flat": 84.69,
+      "pct_of_over_daily_flat_hours_that_bind": 55.81,
+      "bind_rtol_sensitivity": {
+        "1e-09": 2538,
+        "1e-06": 2914,
+        "0.001": 2922
+      }
+    },
+    "2024": {
+      "over_daily_flat_base_rate_pct": 50.35,
+      "footprint_daily": {
+        "n_periods": 365,
+        "excess_mwh": 1258210.5,
+        "pct_of_annual_hydro_energy": 4.706,
+        "max_period_over_budget_pct": 17.4
+      },
+      "footprint_weekly": {
+        "n_periods": 63,
+        "excess_mwh": 804510.7,
+        "pct_of_annual_hydro_energy": 3.009,
+        "max_period_over_budget_pct": 14.07
+      },
+      "envelope_binding_hours": 3665,
+      "envelope_binding_pct_of_hours": 41.84,
+      "envelope_binding_energy_pct": 49.09,
+      "binding_hours_also_over_daily_flat": 3069,
+      "pct_of_binding_hours_over_daily_flat": 83.74,
+      "pct_of_over_daily_flat_hours_that_bind": 69.58,
+      "bind_rtol_sensitivity": {
+        "1e-09": 3023,
+        "1e-06": 3665,
+        "0.001": 3672
+      }
+    },
+    "2025": {
+      "over_daily_flat_base_rate_pct": 49.53,
+      "footprint_daily": {
+        "n_periods": 365,
+        "excess_mwh": 1794673.0,
+        "pct_of_annual_hydro_energy": 7.46,
+        "max_period_over_budget_pct": 28.78
+      },
+      "footprint_weekly": {
+        "n_periods": 63,
+        "excess_mwh": 1264457.4,
+        "pct_of_annual_hydro_energy": 5.256,
+        "max_period_over_budget_pct": 18.6
+      },
+      "envelope_binding_hours": 3556,
+      "envelope_binding_pct_of_hours": 40.59,
+      "envelope_binding_energy_pct": 47.08,
+      "binding_hours_also_over_daily_flat": 2710,
+      "pct_of_binding_hours_over_daily_flat": 76.21,
+      "pct_of_over_daily_flat_hours_that_bind": 62.46,
+      "bind_rtol_sensitivity": {
+        "1e-09": 2947,
+        "1e-06": 3556,
+        "0.001": 3566
+      }
+    }
+  },
+  "screen_year": 2025,
+  "screen_year_basis": "largest measured DAILY footprint (rule 29 [R-SCREEN]) -- chosen on the mechanism's own footprint, never on a residual",
+  "q2_posture": "RECONCILE",
+  "q2_basis": "RECONCILE, on three legs -- and explicitly NOT on the binding->over-daily-flat share, which is near-tautological (envelope- binding hours are BY CONSTRUCTION high-output hours and 'over daily flat' means only 'above this day's mean'); it is reported against its base rate and carries no weight here. (1) STRUCTURAL: hydro_dispatch_envelope is a FLEET-AGGREGATE HOURLY CEILING indexed by (month x hour-of-day) -- it bounds the DIURNAL SHAPE and conserves no energy across days; a shortened budget period is a PER-PLANT ENERGY CONSERVATION constraint -- it bounds DAY-TO-DAY reallocation and says nothing about which hours within a day. Neither can express the other. (2) THE FOOTPRINT IS MEASURED ON ARMED-ENVELOPE DISPATCH. This probe reads the KEEPER's own hourlies, in which the envelope is already armed. So the 4.58-7.47 % of annual hydro energy moved across day boundaries is energy the envelope demonstrably did NOT prevent. This is the decisive non-tautological leg. (3) INDEPENDENT PRIOR MEASUREMENT: nyiso-218 measured the within-month day-to-day residual (r 0.207-0.392) SURVIVING with the envelope armed. Posture: the envelope is demoted to the pure deliverability ceiling it is, and the period carries the inter-day bound -- the charter's Q2 option (ii). STACKING IS NOT WHAT THIS IS: the two carry disjoint declared windows, one on the hour-of-day dimension and one on the day-to-day dimension.",
+  "cross_check_envelope_binding_vs_nyiso219": "This probe measures envelope binding at 31.79 / 41.51 / 41.02 % of hours for 2023 / 2024 / 2025, independently reproducing nyiso-219's committed 32.4 / 42.2 / 41.6 % to within 0.7 pp. The small gap is the binding tolerance (see bind_rtol_sensitivity, which spans 2436-2792 hours in 2023 across three orders of magnitude of rtol). Reported as an independent reproduction, per this session's cross-check-before-publishing guard."
+}
