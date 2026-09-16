@@ -249,39 +249,42 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
     touch (duty b). The `.claude/hooks/mechanism-matrix-reminder.sh` SessionStart hook surfaces
     these duties at the start of every session.
 
-1. `[R-SCREEN]` **Screen a new config on ONE year before spending the full span — and screen it on
-    what the mechanism DOES, never on whether the residual moved.** *(Owner rule, 2026-09-05: "only
-    run in calibrated years thru new configs first … instead of wasting runs on 3 full years before
-    we've addressed whether config actually solves the issue".)* A 3-year CAISO/PJM/MISO/NYISO/NEISO
-    replay is ~35–70 min of LP **per arm**, and an A/B spends two of them. The order is now:
-    - **(0) Zero-LP phase 0 first, wherever one exists.** An on-recipe `fleet_only` rebuild, an
-      offer-array delta, a footprint census or a committed-sidecar reconstruction costs ~90 s and
-      kills more arms than any solve. An arm that has a computable pre-solve gate does not reach a
-      solve until that gate passes.
-    - **(1) A SCREEN solve on ONE year.** The screen year is **named in the PRECOMMIT before the
-      screen runs**, and it is the year the mechanism's **own measured footprint is largest**
-      (from step 0) — **never** the year with the biggest residual, which would make the choice a
-      residual-driven one. A control for the same single year is screened alongside it when
-      G-CTRL needs one.
-    - **(2) The full span only if the screen clears its pre-registered gate**, as one
-      `--year 2023 2024 2025` invocation and ONE bundle. Rule 16 `[R-ALLYEARS]` is untouched: the
-      screen bundle is a **throwaway diagnostic probe** — never registered on the dashboard, never
-      a keeper, never quoted as a keeper number, and its year is re-solved inside the full bundle.
-
-    **The screen gate is STRUCTURAL and it is a STOP gate only.** It asks whether the mechanism
-    does what its own arithmetic says it does — the dispatch response has the direction and order
-    of magnitude the pre-solve delta implies; the footprint is confined to the rows the mechanism
-    claims; the identity it asserts holds; no non-target load-bearing criterion flips PASS → FAIL.
-    It **may kill an arm; it may never promote one**, it never contributes to a determination, and
-    it is **never gated on the target residual** (a screen that reads "did C3a improve" is exactly
-    the fitted-mechanism selection rule 1 `[R-STRUCT]` forbids, done one year at a time).
-    A screen that kills an arm is reported as the session's result and the remaining years are
-    never spent.
-
-    **Where it does not apply:** a mechanism measured INERT in the candidate screen year (screen it
-    where it is live, or go straight to the full span — G-CTRL form 2's inert-year logic already
-    depends on that); and a year-scoped mechanism whose object only exists in one year, which is
-    the screen and the full span at once.
+1. `[R-SCREEN]` **THE SCREEN-YEAR REGIME IS REMOVED. A new config goes STRAIGHT TO THE FULL
+    SPAN.** *(Owner instruction 2026-09-16, verbatim: "Get rid of the screen year rule
+    altogether"; executed by session pjm-h9. Genealogy, and the full text of what is removed:
+    `docs/governance/rule-history.md` §21.)*
+    What is gone, and gone as a requirement rather than merely discouraged: the **(1) SCREEN
+    solve on ONE year**; the duty to name that year in the PRECOMMIT on the mechanism's **own
+    measured footprint**; the **(2) full span only if the screen clears its gate** condition; and
+    the **STRUCTURAL STOP GATE** itself, with its "may kill an arm, may never promote one"
+    framing and its "the remaining years are never spent" outcome. A lane no longer owes a screen
+    before a span, and **a span is no longer conditional on anything**.
+    **THE ORDINAL AND THE ID DO NOT MOVE**, so every existing citation of "rule 29" or
+    `[R-SCREEN]` — in `scripts/check_registry_payload_parity.py`'s error text, in
+    `frontend/data/backcast/keepers/README.md`, and in rules 15 `[R-DASHBOARD]`, 31
+    `[R-RETAIN]`, 32 `[R-SHARD]` (b) and 34 `[R-SHARD-PROMOTABLE]` (b) — still lands here and
+    still resolves to a live clause.
+    **WHAT SURVIVES, UNCHANGED AND STILL BINDING**, because other rules and a CI gate depend on
+    it by name: **clause (b)** (no control solves; the incumbent keeper's committed bundle is the
+    control; `G-DRIFT` is the zero-LP audit that validates form 4) and **clause (c)** (delete
+    before merge, meaning keep it out of `main`, subordinate to rule 31 `[R-RETAIN]`). Both are
+    reproduced verbatim below. **Clause (0), zero-LP phase 0, also survives — as the PRACTICE it
+    always was rather than a gate**: a `fleet_only` rebuild, an offer-array delta, a footprint
+    census or a committed-sidecar reconstruction still costs ~90 s and still answers more
+    questions than a solve, and a lane that can compute an answer without an LP still should.
+    What it no longer does is **gate** a solve.
+    **WHAT IS UNAFFECTED.** Rule 1 `[R-STRUCT]` is untouched: a mechanism is still never selected
+    because the residual moved, and a run is still a keeper for being structurally faithful
+    rather than for the lowest MAE. Rule 16 `[R-ALLYEARS]` and rule 34
+    `[R-SHARD-PROMOTABLE]` (c) are untouched and now carry the whole of the "how many years"
+    question: **a registrable run solves EVERY year the ISO carries.** Rule 32 `[R-SHARD]`'s
+    reference to "a single-year shard is still correct for a rule-29 SCREEN" is **spent** — there
+    are no screens — so a single-year shard is now simply one leg of the per-year fan-out rule 34
+    (c) prescribes, and it pushes its full bundle like any other.
+    **THE COST, STATED RATHER THAN HIDDEN.** The screen existed because a 3-year replay is
+    ~35–70 min of LP per arm and a dead arm found at one year saved the other two. Removing it
+    means dead arms are now paid for in full. That is the owner's call and it is recorded as a
+    deliberate trade, not an oversight.
 
     **(b) NO CONTROL SOLVES. The incumbent keeper's COMMITTED bundle IS the control** *(owner rule,
     2026-09-05: "stop doing control solves … just use the last keeper as the control")*. G-CTRL
