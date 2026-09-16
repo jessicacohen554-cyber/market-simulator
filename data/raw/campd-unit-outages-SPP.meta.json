@@ -1,6 +1,7 @@
 {
   "artifact": "campd-unit-outages-SPP.csv",
-  "artifact_rows": 2721,
+  "artifact_rows": 6524,
+  "composition_note": "SPP-43 DATA INTAKE 2026-09-16. This artifact is the CONCATENATION of two derive invocations with IDENTICAL detector settings, differing only in --years. The 2023-2025 block is the committed frozen block, preserved BYTE-IDENTICALLY including line positions (diff old->new is 100% additions, 0 removals); the 2019-2022 block is APPENDED after it. It is therefore a FIRST derivation for 2019-2022 on unchanged source data, not a re-derivation against a residual (CLAUDE.md rule 23 [R-FROZEN-DERIVE]). Because the file is a concatenation it is NOT in the deriver's canonical sort (facility_id, unit_id, outage_start) across the seam; the ROW SET is what a single 7-year invocation would emit, and no consumer in market_sim.data.outages is row-order sensitive. REPRODUCIBILITY, MEASURED AT THE INTAKE AND NOT FOLDED IN: re-deriving 2023-2025 at HEAD emits 103 rows this frozen block does NOT carry, all plant 762 (Ponca) units 3 and 4, ST_GAS, 0 removals. Ponca reaches the deriver only through load_retired_within_window, so the frozen block predates that scope. The block is left untouched here because changing it would move the keeper's SCORED years, which is a separate lane's object; the 2019-2022 block IS derived at HEAD scope and therefore DOES carry Ponca (rule 14 [R-ACCURATE]: the accurate input is not degraded to match the stale one). The short extract reproduces BYTE-IDENTICALLY at HEAD (coal-only scope, which Ponca is not in).",
   "derive_invocation": {
     "fullstop_override_cf": 0.02,
     "fullstop_override_days": 5,
@@ -15,19 +16,50 @@
     "per_unit_crosswalk": false,
     "short_windows": false,
     "years": [
+      2019,
+      2020,
+      2021,
+      2022,
       2023,
       2024,
       2025
     ]
   },
+  "derive_invocations": [
+    {
+      "block": "frozen, preserved byte-identically",
+      "years": [
+        2023,
+        2024,
+        2025
+      ]
+    },
+    {
+      "block": "SPP-43 intake, appended",
+      "years": [
+        2019,
+        2020,
+        2021,
+        2022
+      ]
+    }
+  ],
   "deriver": "scripts/data/derive_campd_unit_outages.py",
   "observed_years": [
+    2019,
+    2020,
+    2021,
+    2022,
     2023,
     2024,
     2025
   ],
   "sidecar_schema_version": 1,
   "windows_by_start_year": {
+    "2019": 943,
+    "2020": 932,
+    "2021": 982,
+    "2022": 946,
     "2023": 880,
     "2024": 905,
     "2025": 936
