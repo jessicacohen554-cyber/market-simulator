@@ -865,6 +865,22 @@ def main() -> None:
         "as run_calibration_full --offer-curve-json). Single-delta offer-"
         "surface probe of the keeper — pair with --out-dir and --note.",
     )
+    ap.add_argument(
+        "--persist-p0-commitment",
+        action="store_true",
+        help="also write hourly/p0_commitment_<year>.parquet (the bit-packed "
+        "P0 on/off pattern) and hourly/startup_run_ratio_<year>.parquet, the "
+        "same artifacts run_calibration_full's flag of this name writes. "
+        "WRITE-ONLY and additive: it is read after both LPs have already run, "
+        "so it CANNOT change the solve and the replay stays byte-faithful. "
+        "Needed because the P0 run pattern is the sole input to the RA "
+        "must-offer bridge's candidacy detector, and no committed CAISO "
+        "bundle carries it — a keeper solved without the flag cannot be "
+        "interrogated about WHICH units it bridged (caiso-284 phase 0). "
+        "Exposed here rather than left to a hand-rebuilt "
+        "run_calibration_full invocation so an instrumented replay stays a "
+        "one-command shard: rule 32(c)(6) forbids a shard editing scripts/.",
+    )
     args = ap.parse_args()
 
     bundle = Path(args.bundle)
@@ -932,6 +948,12 @@ def main() -> None:
         )
     if args.note is not None:
         kwargs["note"] = args.note
+    # Write-only persistence flag, applied AFTER the --set loop and BEFORE the
+    # legacy-P2 gate, on the persist_p2_state precedent. Only ever turned ON
+    # here: the absence of the flag leaves whatever the keeper's own meta
+    # recorded, so a replay of a bundle that already had it keeps it.
+    if args.persist_p0_commitment:
+        kwargs["persist_p0_commitment"] = True
     # ARCHIVED-P2 gate on the RECONSTRUCTED recipe (audit row O5). Placed AFTER
     # the --set loop so `--set commitment=false` is what disarms it, and before
     # the solve so a bundle recorded with commitment=true can never re-arm P2
