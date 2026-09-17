@@ -4167,6 +4167,7 @@ def solve_and_persist(
     chp_layup_duty_split: bool | None = None,
     chp_layup_duty_curve: bool | None = None,
     egrid_identity_heat_rates: bool | None = None,
+    measured_ct_heat_rates: bool | None = None,
     egrid_family_heat_rates: bool | None = None,
     egrid_steam_collapse_heat_rates: bool | None = None,
     nyiso_gas_bridge_cc_min_run_hours: float | None = None,
@@ -5240,6 +5241,10 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 egrid_identity_heat_rates=egrid_identity_heat_rates
             )
+        if measured_ct_heat_rates is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                measured_ct_heat_rates=measured_ct_heat_rates
+            )
         if egrid_family_heat_rates is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 egrid_family_heat_rates=egrid_family_heat_rates
@@ -6115,6 +6120,7 @@ def solve_and_persist(
             chp_layup_duty_split=chp_layup_duty_split,
             chp_layup_duty_curve=chp_layup_duty_curve,
             egrid_identity_heat_rates=egrid_identity_heat_rates,
+            measured_ct_heat_rates=measured_ct_heat_rates,
             egrid_family_heat_rates=egrid_family_heat_rates,
             egrid_steam_collapse_heat_rates=egrid_steam_collapse_heat_rates,
             nyiso_gas_bridge_cc_min_run_hours=nyiso_gas_bridge_cc_min_run_hours,
@@ -7097,6 +7103,7 @@ def solve_and_persist(
         "chp_layup_duty_split": chp_layup_duty_split,
         "chp_layup_duty_curve": chp_layup_duty_curve,
         "egrid_identity_heat_rates": egrid_identity_heat_rates,
+        "measured_ct_heat_rates": measured_ct_heat_rates,
         "egrid_family_heat_rates": egrid_family_heat_rates,
         "egrid_steam_collapse_heat_rates": egrid_steam_collapse_heat_rates,
         "nyiso_gas_bridge_cc_min_run_hours": nyiso_gas_bridge_cc_min_run_hours,
@@ -13712,6 +13719,26 @@ def main() -> None:
         "constants.",
     )
     parser.add_argument(
+        "--measured-ct-heat-rates",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="MEASURED CT_PEAKER loaded heat rates (nyiso-89; wired to this "
+        "orchestrator by soco-53). A CT_PEAKER generator whose plant the "
+        "committed artifact covers (campd_ct_heat_rates_<ISO>.csv, "
+        "scripts/data/derive_campd_ct_heat_rates.py) takes its plant's "
+        "CAMPD-measured LOADED heat rate (MMBtu per net MWh, pooled over "
+        "unitType == 'Combustion turbine' hours at load) ahead of the eGRID "
+        "plant-average ANNUAL rate. eGRID publishes ONE rate per plant, so a "
+        "mixed facility's turbines inherit its steam boilers' rate; the error "
+        "is source noise in BOTH directions, so no multiplier substitutes for "
+        "the measurement (rule 14 [R-ACCURATE]). Applied per generator by "
+        "class, so only the turbines of a mixed plant are repriced. Zero "
+        "fitted parameters; no-op for an ISO with no artifact. The field and "
+        "its consumer predate this flag — ScenarioConfig.measured_ct_heat_rates "
+        "was reachable only by constructing a config directly, so no run "
+        "driven by this orchestrator could arm it.",
+    )
+    parser.add_argument(
         "--egrid-identity-heat-rates",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -14456,6 +14483,7 @@ def main() -> None:
         chp_layup_duty_split=args.chp_layup_duty_split,
         chp_layup_duty_curve=args.chp_layup_duty_curve,
         egrid_identity_heat_rates=args.egrid_identity_heat_rates,
+        measured_ct_heat_rates=args.measured_ct_heat_rates,
         egrid_family_heat_rates=args.egrid_family_heat_rates,
         egrid_steam_collapse_heat_rates=args.egrid_steam_collapse_heat_rates,
         nyiso_gas_bridge_cc_min_run_hours=args.nyiso_gas_bridge_cc_min_run_hours,
