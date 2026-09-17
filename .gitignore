@@ -2336,3 +2336,5 @@ results/calibration/nyiso238_hydro_2025/
 # Use `git archive`, NOT `git checkout <sha> -- <path>`, which STAGES the bundle
 # and would sweep it onto the branch.
 results/calibration/neiso110_dualfuel_screen_2022/
+
+!results/calibration/soco53_measured_ct_hr/**
