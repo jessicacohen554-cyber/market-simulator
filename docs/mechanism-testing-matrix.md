@@ -18058,6 +18058,57 @@ closes the rule-1 `[R-STRUCT]` authorized channel, not `offer_curve_by_group`'s
 own object, since SOCO's first keeper will carry per-class band curves at neutral
 1.0.
 
+**LANE SOCO-53 LANDED 2026-09-17 AND RE-RANKS THIS QUEUE ON ITS OWN MEASUREMENTS.** It took the
+first item SOCO-40 recommended — the `CT_PEAKER` / `ST_GAS` merit-order split — and established,
+zero-LP, that **it is not a merit-order problem at all**: (a) every `offer_curve_by_group` band is
+the identity 1.0 on all 13 groups, so each SOCO class is a **single flat price block** and every
+curve-*shaped* lever is **provably inert for SOCO by construction**; (b) the model **already
+over-separates** `CT_PEAKER` from `ST_GAS` by **+1.983 MMBtu/MWh against a measured +0.713** — 2.8× —
+and the class still over-runs by 8.221 TWh, so no cost-side lever can close it; (c) the real
+separation is **COMMITMENT** — at unit grain SOCO gas boilers run **94–144 h** campaigns and start
+**~10×/yr** while combustion turbines run **8–9 h** blocks and start **~58×/yr**, against
+`min_run_hours = min_down_hours = 0` in the model. Two cells were adjudicated without spending a
+span: **`gas_commitment_bridge` → `R`** (98.6 % of boiler downtime-hours sit in gaps > 72 h; only
+150 unit-hours across three years fall inside the 8 h `ST_GAS` min-down — SOCO's boilers do not
+two-shift) and **`tranche_startup_amortization` → `G`, no reopen condition** (it is the FERC
+Order-825 fast-start **pricing** object and SOCO has no clearing price at all). The arm it did solve,
+`measured_ct_heat_rates` → **`O`**, was **predicted adverse before the solve and confirmed**
+(C1 one failing row → two) and is **kept** under rule 14 `[R-ACCURATE]`; its promotion is open and
+is the owner's. **SOCO's only available levers are physics and data levers.** Evidence:
+`docs/handoffs/FINDING-soco-53-2026-09-17.md`.
+
+**The live queue, re-ranked on that evidence — these three come first:**
+
+1. **SOCO-53c — `egrid_family_heat_rates`, the COMPLETING plant-blend repair.** `[OPUS]`.
+   **11,777 MW — 26.0 % of SOCO's thermal fleet — sits at NINE multi-technology plants, and at
+   EIGHT of them EVERY unit carries a SINGLE blended heat rate regardless of technology**: Barry (3)
+   prices 1,118.5 MW of coal + 1,821.2 MW of gas CC + 160.0 MW of gas steam all at **8.994965**;
+   Victor J Daniel Jr (6073) prices 1,004.0 MW of coal + 1,132.4 MW of gas CC all at **8.399**,
+   which no coal unit can physically attain; E C Gaston (26) prices coal, gas steam and oil all at
+   11.551. SOCO-53 repaired only the CT slice. The mechanism is already registered and already
+   reachable from the CLI, and its SOCO derive was RUN as evidence (18 rows / 9 plants, 12 applied:
+   Barry ST 8.995 → 12.610 and CC → 7.821; Daniel ST → 12.895 and CC → 7.553; Greene GT → 14.105)
+   and its output deliberately **not** committed, so the successor re-derives against its own
+   vintage. Rows: `egrid_family_heat_rates`.
+2. **SOCO-53d — a COMMITMENT mechanism for multi-week campaigns.** `[OPUS]`. The root cause of the
+   `CT_PEAKER` / `ST_GAS` split. It is **NOT** a gap bridge (SOCO-53 refuted that by measurement:
+   `gas_commitment_bridge` `R`) and **NOT** a pricing rule (`tranche_startup_amortization` `G`). The
+   measured target is a boiler that holds a 94–144 h campaign and starts ~10×/yr, and a turbine that
+   holds 8–9 h and starts ~58×/yr, where the model gives both zero min-run and zero min-down and the
+   CT econ/peak tranches — holding 10.9 of the class's 12.755 TWh — carry zero startup cost. Derive
+   any parameter from SOCO's own CAMPD conduct (rule 25); the unit-grain `min_load_frac` is already
+   measured at cap-wtd p50 **0.1782** over 13 units / 3,533 MW, and the committed plant-basis
+   artifact is **unsound for SOCO** (it reports 0.0848 / 6.0 h — turbine conduct leaking through a
+   shared CEMS facility id) and was deliberately not committed.
+3. **SOCO-53b — the 2025 EIA-923 hydro backfill** (data-intake, as SOCO-40 routed it). 5 plants /
+   0.327 TWh resolve against 6.012 TWh measured where 2023/2024 resolve 42; coal backfills it and
+   the LP posts VOLL slack, which is what makes the 2025 model price uninterpretable. Decide the
+   instrument (`--hydro-backfill-year` / `--hydro-eia930-monthly`) explicitly.
+
+**Then** the plan's pre-declared W5 list below, unchanged. Note SOCO-40's standing observation that
+**SOCO-54 is explicitly NOT urgent**: both Tier-3 links measured dual **0.000** in every year and
+cannot bind, so deriving a real limit changes no dispatch until something else does.
+
 The queue below is the plan's **pre-declared W5 list**
 (`docs/multi-iso/soco-addition-plan-2026-09.md` §4), seeded here by rule 28
 `[R-MECH-MATRIX]` alongside the shard. **Nothing in it has been tested**, so no

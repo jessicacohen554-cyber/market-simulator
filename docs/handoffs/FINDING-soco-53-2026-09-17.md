@@ -290,7 +290,7 @@ fleet loaders called directly.
 
 | gate | exit | result |
 |---|---|---|
-| `audit_keepers.py --check --iso SOCO` | **0** | PASS, 0 failures 0 warnings |
+| `audit_keepers.py --check --iso SOCO` | **1** | **E13 RED, and it is a RULE CONFLICT rather than a defect — see §9.1. Everything else passes (holdout, marker, status all clean).** |
 | `check_mechanism_matrix.py` | **0** | PASS (warnings pre-existing: anchor drift on ten unrelated rows, NEISO prose-header drift — another ISO's lane) |
 | `check_golden_manifest.py` | **0** | OK |
 | `check_cache_key_registration.py` | **0** | ok — 851 fields, 306 registered, all resolve |
@@ -306,6 +306,43 @@ repo's own `<datatype>-SOCO.csv` convention violates (`campd-unit-outages-SOCO.c
 `coal_supply_SOCO.csv`, `thermal_tranches_SOCO.csv`, all pre-dating this lane). The remedy is a
 judgement about the profile-token contract and is **routed to the SOCO desk**, not patched here.
 
+### 9.1 E13 is RED, and clearing it would require breaking a rule — so it is reported, not cleared
+
+`audit_keepers` **E13** fires:
+
+> `2026-09-17-soco53-measured-ct-hr` is registered for SOCO but not the keeper and stamped to no
+> keeper — a superseded run left behind a promotion.
+
+**It is not a superseded run left behind a promotion.** It is a newly registered candidate whose
+promotion the owner has not yet ruled on, and E13 has no state for that. The red is the direct,
+unavoidable consequence of obeying three rules at once:
+
+- **rule 15 `[R-DASHBOARD]`** requires every completed run to be registered *the moment it
+  finishes* — *"a rejected probe still registers the moment it finishes"*;
+- **rule 31 `[R-RETAIN]`** forbids deleting a result before the owner has ruled on promotion — the
+  ercot-255 failure mode this rule was written out of;
+- **rule 35(f)** / E13 requires every registered run to be the keeper or stamped to it.
+
+Each of the three available ways to turn E13 green breaks one of them:
+
+| option | why it is refused |
+|---|---|
+| prune the new run | deletes a result before the owner has ruled — **rule 31**, no exceptions |
+| stamp it `holdout.keeper` to SOCO-40 | **factually false.** Rule 30 `[R-TOUCHPOINT-FOLD]` (a) is for *"the keeper's frozen recipe replayed on a held-out year — same config, different year."* This is a **different config on the same years**, and stamping it would fold a different recipe into the keeper's report as if it were the keeper's own result |
+| promote it | the owner has not ruled (§7) |
+
+**Either ruling clears E13 immediately** — promote and it becomes the keeper (SOCO-40 then prunes
+under rule 35(a)); decline and it prunes. Only the *pending* state is red, which is the correct
+signal. Measured across the registry: **every other ISO carries zero unstamped non-keeper runs**
+(NWPP's one is a first solve with no keeper designated yet), so this state is genuinely new rather
+than a tolerated norm — which is why it is named here instead of worked around.
+
+**Routed:** E13 has no representation for "registered candidate, promotion pending". A
+`candidate: true` sidecar field, or an E13 exemption for a run registered after the current
+keeper's date with no promotion recorded, would let rules 15, 31 and 35(f) compose. Until then the
+red is expected on any lane that registers a candidate and waits, and a lane must not clear it by
+deleting its own result.
+
 ## 10. ROUTED ITEMS
 
 | item | to |
@@ -318,6 +355,7 @@ judgement about the profile-token contract and is **routed to the SOCO desk**, n
 | `test_soco_token_collides_with_no_other_raw_name` red at HEAD | SOCO desk |
 | `soco15_spp_arm` — dead committed bundle holding parity RED in CI; **not deleted** (rule 31) | SOCO desk / owner |
 | `peak_gb` re-key: SOCO registered at 6.0, measured 2.65 GiB | desk / infra |
+| **`audit_keepers` E13 has no state for a registered candidate awaiting a promotion ruling** (§9.1) — rules 15, 31 and 35(f) cannot all be satisfied while one is pending | governance / desk |
 
 ---
 
