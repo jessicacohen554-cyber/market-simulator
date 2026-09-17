@@ -55,6 +55,23 @@ OTHER_FOSSIL: str = "OTHER_FOSSIL"
 GAS_GROUPS: tuple[str, ...] = (*GAS_CLASSES, OTHER_FOSSIL)
 COAL_GROUPS: tuple[str, ...] = COAL_CLASSES
 
+# The liquid-petroleum class, and the THIRD member of the reconcile family
+# (nyiso-239, 2026-09-16). EIA-923 books a plant's generation under the fuel it
+# BURNED, so `_classify_f923` routes every DFO / RFO / JF / KER / WO / PC row to
+# `oil` — while a dual-fuel plant's CC/CT/ST MWh stay in the gas classes. EIA-930
+# books the SAME generation hour by hour under `NG: OIL`. Comparing the 923 gas
+# classes against the 930 `gas` cell alone therefore straddles a fuel boundary,
+# and in a year with a material oil-labelled block it reads a false LEVEL error:
+# NYISO 2022 reads +5.13 % on the gas-only basis and +0.08 % with oil on both
+# sides, so the reconcile fired and deflated every NYISO fossil class by
+# x0.951167 — 1.62 TWh of it on `CC_REGULAR`, which is the whole of that year's
+# C1 band breach. This is the same failure mode the reconcile ALREADY refuses to
+# propagate one fuel over: its docstring declines to force EIA-930's coal/gas
+# attribution onto the 923 split because that attribution is unreliable against
+# CAMPD. Evidence, four independent arbiters and the cross-ISO census:
+# docs/FINDING-nyiso239-c1-2022-bench-oil-attribution-2026-09-16.md.
+OIL_GROUPS: tuple[str, ...] = ("oil",)
+
 
 # --------------------------------------------------------------------------- #
 # Combined-fossil vintage reconcile deadband

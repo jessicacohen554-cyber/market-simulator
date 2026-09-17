@@ -187,6 +187,12 @@ MIX_GROUPS = list(FOSSIL_GROUPS)
 # from the family grid-delivered reconciliation here.
 _GAS_GROUPS = bs.GAS_GROUPS
 _COAL_GROUPS = bs.COAL_GROUPS
+# The third reconcile-family member (nyiso-239): EIA-923 books a dual-fuel
+# plant's oil burn under `oil` while EIA-930 books the same generation under
+# `NG: OIL`, so a gas-only comparison straddles a fuel boundary. Joined to the
+# family ONLY when the bundle's extract carries the 930 `oil` series — see
+# reconcile_vintage_classes.
+_OIL_GROUPS = bs.OIL_GROUPS
 # Grid-delivered benchmark reconciliation deadband (half-width ~3%). The COMBINED
 # fossil (gas + coal) grid-delivered EIA-923 total is reconciled to the complete
 # EIA-930 grid series — the authority the model's fossil volume is scored on — in
@@ -310,9 +316,35 @@ def reconcile_vintage_classes(
     # across coal and gas even when they under-report by different amounts — a
     # CAMPD-per-class target (complete in every vintage) is the follow-up refinement
     # (docs/handoffs/pjm-cc-overrun-benchmark-basis-g21-2026-07.md §6).
-    _present = [g for g in (*_GAS_GROUPS, *_COAL_GROUPS) if g in classfull]
+    # FAMILY MEMBERSHIP. Gas + coal, plus OIL when — and only when — the bundle's
+    # extract carries EIA-930's own `NG: OIL` cell (nyiso-239). EIA-923 books a
+    # plant's MWh under the fuel it BURNED, so a dual-fuel unit's oil hours land
+    # in the 923 `oil` class while its gas hours stay in the CC/CT/ST classes;
+    # EIA-930 books the same generation under `NG: OIL`. Comparing the 923 gas
+    # classes against the 930 `gas` cell alone therefore straddles that boundary
+    # and reads an attribution difference as a LEVEL error — exactly the failure
+    # this function already refuses to propagate one fuel over (the coal/gas
+    # paragraph above). Measured on NYISO 2022: +5.13 % gas-only (fires, x0.951167
+    # on every fossil class, 1.62 TWh of it on `CC_REGULAR`) against +0.08 % with
+    # oil on both sides — the tightest agreement of any complete NYISO vintage,
+    # corroborated by the ISO's OWN published fuel mix (which files oil-capable
+    # units under `Dual Fuel` and publishes no oil category at all), by CEMS on a
+    # fixed plant set, and on SHAPE, where model(gas+oil) vs 930(gas+oil) beats
+    # model(gas) vs 930(gas) on r AND NRMSE in all four years.
+    # A bundle whose extract predates the series has no "oil" key: the family
+    # stays gas+coal and the bench part re-renders byte-identical — the same
+    # fallback contract the "other" (NG: OTH) series already carries.
+    _oil930 = e930.get("oil")
+    _families = (
+        (*_GAS_GROUPS, *_COAL_GROUPS)
+        if _oil930 is None
+        else (*_GAS_GROUPS, *_COAL_GROUPS, *_OIL_GROUPS)
+    )
+    _present = [g for g in _families if g in classfull]
     _cur = sum(classfull[g] for g in _present)
     _tgt = float(e930.get("gas", 0.0)) + float(e930.get("coal", 0.0))
+    if _oil930 is not None:
+        _tgt += float(_oil930)
     _tgt -= _gas_foldin_deflation(classfull, e930, iso)
     # CEMS-anchor cap (owner-signed 2026-07-12): for a BA whose 930 NG cell is
     # corrupted (EIA930_NG_CELL_CORRUPT), the reconcile target may never
@@ -324,7 +356,17 @@ def reconcile_vintage_classes(
     if iso in EIA930_NG_CELL_CORRUPT:
         _anchor = e930.get("fossil_cems_grid")
         if _anchor is not None and float(_anchor) > 0.0:
-            _tgt = min(_tgt, float(_anchor))
+            # The anchor is built from the CEMS gas block + the 923 non-CEMS cogen
+            # block + 923 coal, so it spans gas+coal ONLY. When oil joins the
+            # family the cap must span the same boundary as `_cur`, or it would
+            # bind a wider current against a narrower target (nyiso-239). CAISO is
+            # the only capped ISO and its 930 oil cell is 0.45-0.61 % of gas, so
+            # this is a measured near-no-op there — it exists to keep the two
+            # sides on one boundary, not to move CAISO.
+            _cap = float(_anchor)
+            if _oil930 is not None:
+                _cap += sum(classfull.get(g, 0.0) for g in _OIL_GROUPS)
+            _tgt = min(_tgt, _cap)
     if (
         _tgt > 0.0
         and _cur > 0.0
@@ -1694,6 +1736,14 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
             # EIA930_GAS_FOLDS_GEO_BIOMASS allowlist — no silent regression.
             if "other" in e:
                 _e930d["other"] = round(float(e["other"].sum()) / 1e6, 3)
+            # Carry the EIA-930 "Petroleum" total (NG: OIL) on the same terms:
+            # present when the bundle's extract carries the series, absent
+            # otherwise, so reconcile_vintage_classes falls back to the gas-only
+            # family and a bundle predating it re-renders byte-identical
+            # (nyiso-239; the identical "carry it when present" contract the
+            # "other" series above established).
+            if "oil" in e:
+                _e930d["oil"] = round(float(e["oil"].sum()) / 1e6, 3)
             # G-21b split anchor: CEMS-net coal-family total (every coal unit
             # ≥25 MW is metered), consumed by calibration_verdict's C2
             # preliminary-vintage fallback so an incomplete family gates the
