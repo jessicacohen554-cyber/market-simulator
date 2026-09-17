@@ -2336,3 +2336,20 @@ results/calibration/nyiso238_hydro_2025/
 # Use `git archive`, NOT `git checkout <sha> -- <path>`, which STAGES the bundle
 # and would sweep it onto the branch.
 results/calibration/neiso110_dualfuel_screen_2022/
+
+# pjm-h9c: PJM 2020-2025 on the OWN-YEAR measured offer surface (HEAD 73a68234).
+# Kept out of `main` per rule 29 [R-SCREEN] (c); retained on disk per rule 31
+# [R-RETAIN] until the owner rules on promotion. Every byte is on `origin`.
+# Recovery by FULL immutable SHA (rule 33 [R-SHARD-ARCHIVE] (d)):
+#   git checkout a75c4cda97c7025e8405ce6bd2afaa5e4e939c5b -- results/calibration/pjm_h9c_2020
+#   git checkout 7d524b6654f2c337b39478caac74d8f7751cf078 -- results/calibration/pjm_h9c_2021
+#   git checkout be240ce55424cfdc12f248005e14b60adece0a25 -- results/calibration/pjm_h9c_2022
+#   git checkout d73cbc83c26e9c28bf3fe17e48fa43d7cf94fc42 -- results/calibration/pjm_h9c_2023
+#   git checkout da3edc9481f584e3dbad25dc2abe984ae89e372f -- results/calibration/pjm_h9c_2024
+#   git checkout f4991368d6016ef61613f6ffdf6e7508f45ff7aa -- results/calibration/pjm_h9c_2025
+results/calibration/pjm_h9c_2020/
+results/calibration/pjm_h9c_2021/
+results/calibration/pjm_h9c_2022/
+results/calibration/pjm_h9c_2023/
+results/calibration/pjm_h9c_2024/
+results/calibration/pjm_h9c_2025/
