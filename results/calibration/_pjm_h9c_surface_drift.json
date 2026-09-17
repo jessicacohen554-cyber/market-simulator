@@ -1,0 +1,172 @@
+{
+ "precommit": "docs/PRECOMMIT-pjm-h9c-offer-surface-own-year-2026-09-16.md",
+ "frozen": "/tmp/claude-0/-home-user-market-simulator/295062f4-17fa-57cd-a79f-b1ca26c77dff/scratchpad/frozen_surface.json",
+ "candidate": "/tmp/claude-0/-home-user-market-simulator/295062f4-17fa-57cd-a79f-b1ca26c77dff/scratchpad/candidate_6yr.json",
+ "D1_segment_stability": {
+  "CC_LIKE": {
+   "frozen": 883,
+   "candidate": 1603,
+   "delta": 720
+  },
+  "CT_FAST": {
+   "frozen": 1064,
+   "candidate": 2455,
+   "delta": 1391
+  },
+  "LONG_RUN": {
+   "frozen": 216,
+   "candidate": 477,
+   "delta": 261
+  }
+ },
+ "D2_in_sample_ladder_drift": {
+  "cells": 432,
+  "moved": 129,
+  "abs_delta_median": 0.0,
+  "abs_delta_p90": 0.145,
+  "abs_delta_max": 0.65,
+  "sign_up": 73,
+  "sign_down": 56,
+  "worst": [
+   {
+    "segment": "CT_FAST",
+    "year": 2023,
+    "bin": 1,
+    "share": 0.05,
+    "frozen": 35.475,
+    "candidate": 34.825,
+    "delta": -0.65
+   },
+   {
+    "segment": "CT_FAST",
+    "year": 2024,
+    "bin": 2,
+    "share": 0.97,
+    "frozen": 39.875,
+    "candidate": 40.475,
+    "delta": 0.6
+   },
+   {
+    "segment": "CT_FAST",
+    "year": 2024,
+    "bin": 2,
+    "share": 0.85,
+    "frozen": 28.175,
+    "candidate": 28.725,
+    "delta": 0.55
+   },
+   {
+    "segment": "CT_FAST",
+    "year": 2024,
+    "bin": 1,
+    "share": 0.75,
+    "frozen": 28.825,
+    "candidate": 28.375,
+    "delta": -0.45
+   },
+   {
+    "segment": "CT_FAST",
+    "year": 2024,
+    "bin": 2,
+    "share": 0.35,
+    "frozen": 23.575,
+    "candidate": 23.975,
+    "delta": 0.4
+   },
+   {
+    "segment": "CT_FAST",
+    "year": 2024,
+    "bin": 1,
+    "share": 0.55,
+    "frozen": 26.325,
+    "candidate": 25.975,
+    "delta": -0.35
+   },
+   {
+    "segment": "CT_FAST",
+    "year": 2024,
+    "bin": 1,
+    "share": 0.65,
+    "frozen": 26.975,
+    "candidate": 26.625,
+    "delta": -0.35
+   },
+   {
+    "segment": "CT_FAST",
+    "year": 2024,
+    "bin": 1,
+    "share": 0.85,
+    "frozen": 30.475,
+    "candidate": 30.125,
+    "delta": -0.35
+   },
+   {
+    "segment": "CT_FAST",
+    "year": 2024,
+    "bin": 1,
+    "share": 0.95,
+    "frozen": 37.825,
+    "candidate": 37.475,
+    "delta": -0.35
+   },
+   {
+    "segment": "CT_FAST",
+    "year": 2024,
+    "bin": 2,
+    "share": 0.45,
+    "frozen": 24.675,
+    "candidate": 25.025,
+    "delta": 0.35
+   },
+   {
+    "segment": "CT_FAST",
+    "year": 2024,
+    "bin": 3,
+    "share": 0.95,
+    "frozen": 31.225,
+    "candidate": 31.575,
+    "delta": 0.35
+   },
+   {
+    "segment": "CT_FAST",
+    "year": 2024,
+    "bin": 1,
+    "share": 0.05,
+    "frozen": 25.075,
+    "candidate": 24.775,
+    "delta": -0.3
+   }
+  ]
+ },
+ "D3_vs_reproduction_floor": {
+  "floor_median_implied_hr": 0.1,
+  "measured_median": 0.0,
+  "verdict": "AT OR BELOW the pjm-h9 reproduction floor \u2014 restatement noise, not this change"
+ },
+ "candidate_years_per_segment": {
+  "CC_LIKE": [
+   "2020",
+   "2021",
+   "2022",
+   "2023",
+   "2024",
+   "2025"
+  ],
+  "CT_FAST": [
+   "2020",
+   "2021",
+   "2022",
+   "2023",
+   "2024",
+   "2025"
+  ],
+  "LONG_RUN": [
+   "2020",
+   "2021",
+   "2022",
+   "2023",
+   "2024",
+   "2025"
+  ]
+ }
+}
