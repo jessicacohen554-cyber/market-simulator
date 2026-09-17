@@ -117,6 +117,16 @@ reads state the committed bundle does not carry:
 1. **The P0 run pattern.** `caiso_ra_mustoffer_min_gen` detects bridges from the **P0** dispatch.
    Every committed CAISO sidecar holds **P1 only** (`class_hourly`, `class_band_hourly`,
    `system` all report `passes: ['P1']`). Candidacy cannot be reconstructed.
+
+   > **CORRECTED 2026-09-17 — THIS NEEDS NO CODE CHANGE, ONLY A FLAG.** An earlier revision of
+   > this finding (and the session's own report) said persisting P0 was a change to write. **That
+   > was wrong.** `scripts/run_calibration_full.py --persist-p0-commitment` already exists, is a
+   > plain CLI flag with **no** `--enable-legacy-p2` gate, and writes
+   > `hourly/p0_commitment_<year>.parquet` — the bit-packed P0 on/off pattern from
+   > `p0_commitment_pattern(energy_solve.r0.dispatch, fleet_arrays.pmax)`, which is *exactly* the
+   > run pattern the bridge detector keys on — plus
+   > `hourly/startup_run_ratio_<year>.parquet`. The CAISO keeper simply did not pass it. **The
+   > next CAISO solve passes `--persist-p0-commitment` and the P0 gap closes with zero code.**
 2. **Per-unit storage SOC.** The screen excludes storage-charge headroom from `absorb` on an
    explicit **energy**-capacity premise (*"the fleet already fills by the belly in P1"*). The
    keeper's sidecars show **1,477 / 1,945 / 2,391 MW of unused charge POWER** in the mean belly
@@ -129,11 +139,28 @@ reads state the committed bundle does not carry:
    aggregation destroys it). **That reconstruction is reported as failed and no number from it is
    quoted or used.**
 
-**The cheap unblock, for the owner to weigh:** persist the P0 class-hourly pass and a per-unit SOC
-column into the bundle sidecars. Both are additive writes on the persistence path, cost no LP time
-of their own, and the *next* CAISO solve would carry them — after which candidacy and the energy
-premise are both answerable at zero LP. Doing it the other way round — solving a span now to see
-what happens — is the exploration rule 29's phase-0 practice exists to avoid.
+**The unblock — LANDED 2026-09-17 on the owner's instruction ("Yes make the change").** Both
+halves are now in place and neither costs LP time of its own:
+
+* **P0 — no code needed.** `--persist-p0-commitment` already existed (see the correction above).
+  The next CAISO solve passes it.
+* **SOC — landed.** `scripts/run_calibration_full.py::_storage_frame` now emits `soc_mwh` and
+  `energy_cap_mwh` per storage unit-hour, and `_write_storage_hourly_sidecar` sums both into the
+  committed per-tech sidecar. `DispatchResult.storage_soc` was already solved on every path — the
+  SOC recursion is a core LP constraint — so this persists an existing variable rather than
+  computing anything new. Because stored energy is extensive, `Σ cap − Σ soc` at tech grain is the
+  tech's true absorption headroom, which is precisely the quantity the decommit screen's premise
+  is about and precisely what a reconstruction cannot recover. WRITE-ONLY, read after both LPs
+  have run, no `ScenarioConfig` field (rule 24 `[R-REGISTRY]` scopes to tunables that can change a
+  solve). `soc_mwh` is NaN — never 0.0 — where a solve carried no SOC block, since 0.0 would read
+  as "the reservoir is empty", a real and very wrong claim about headroom. Guard:
+  `tests/scoring/test_storage_soc_sidecar.py` (7 tests, incl. that the charge/discharge
+  aggregation is byte-unchanged).
+
+**Already-committed bundles do not gain the columns** — they are written at solve time. The next
+CAISO solve carries both, after which candidacy and the energy premise are answerable at zero LP.
+Doing it the other way round — solving a span now to see what happens — is the exploration
+rule 29's phase-0 practice exists to avoid.
 
 ---
 
@@ -156,8 +183,10 @@ price for testing a pre-registered hypothesis and the wrong price for finding on
 
 ## 5. Successor, ranked
 
-1. **Persist P0 + per-unit SOC in the bundle sidecars** (additive, no LP). Unblocks both open
-   questions and makes the next CAISO phase 0 decisive.
+1. ~~**Persist P0 + per-unit SOC in the bundle sidecars**~~ — **DONE 2026-09-17.** SOC landed
+   (`_storage_frame` / `_write_storage_hourly_sidecar`); P0 needed no change, only
+   `--persist-p0-commitment`. **Both must be on the next CAISO solve**, which is a one-year
+   instrumented probe, not a span.
 2. **Then** identify the coverage mechanism from the P0 pattern: is the shortfall in
    `RA_BRIDGE_ECON_MIN_DOWN_HOURS` eligibility, in the `DA_COMMITMENT_HORIZON_HOURS` multi-day cap,
    or in the restart inequality's `mc_gap` term? Each is separately measurable once P0 is on disk.
