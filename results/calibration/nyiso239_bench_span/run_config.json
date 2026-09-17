@@ -88,7 +88,7 @@
       "2024": 2.19,
       "2025": 3.52
     },
-    "git_sha": "69c6d4a7",
+    "git_sha": "3edb8ad8",
     "hours": 8760,
     "iso": "NYISO",
     "nyiso_dynamic_reserve_requirements": true,
@@ -112,10 +112,10 @@
     ]
   },
   "composed_from": [
-    "nyiso238_hydro_2022",
-    "nyiso238_hydro_2023",
-    "nyiso238_hydro_2024",
-    "nyiso238_hydro_2025"
+    "nyiso239_bench_2022",
+    "nyiso239_bench_2023",
+    "nyiso239_bench_2024",
+    "nyiso239_bench_2025"
   ],
   "environment": {
     "cache_key_path_roots": [
@@ -137,58 +137,58 @@
     "python_version": "3.11.15"
   },
   "git": {
-    "basis_sha": "69c6d4a7e1b7c8e458373bc5ce9db51a5a7a6a39",
-    "branch": "claude/nyiso238-hydro-2022",
+    "basis_sha": "3edb8ad8ce4737b2f860d84e58bae26e4cb6aa1c",
+    "branch": "HEAD",
     "changed_files": [],
     "diffstat": "",
     "dirty": false,
-    "sha": "69c6d4a7"
+    "sha": "3edb8ad8"
   },
   "model_changes_note": "BTM-basis re-solve: byte-faithful replay of the committed keeper config from meta.json, adding btm.parquet (behind-the-meter CHP held out of the LP) so the benchmark scores on the grid-delivered basis.",
   "per_leg_provenance": {
     "2022": {
       "git": {
-        "basis_sha": "69c6d4a7e1b7c8e458373bc5ce9db51a5a7a6a39",
-        "branch": "claude/nyiso238-hydro-2022",
+        "basis_sha": "3edb8ad8ce4737b2f860d84e58bae26e4cb6aa1c",
+        "branch": "HEAD",
         "changed_files": [],
         "diffstat": "",
         "dirty": false,
-        "sha": "69c6d4a7"
+        "sha": "3edb8ad8"
       },
-      "timestamp": "2026-09-16T07:04:09"
+      "timestamp": "2026-09-17T03:38:07"
     },
     "2023": {
       "git": {
-        "basis_sha": "69c6d4a7e1b7c8e458373bc5ce9db51a5a7a6a39",
-        "branch": "claude/nyiso238-hydro-2023",
+        "basis_sha": "3edb8ad8ce4737b2f860d84e58bae26e4cb6aa1c",
+        "branch": "HEAD",
         "changed_files": [],
         "diffstat": "",
         "dirty": false,
-        "sha": "69c6d4a7"
+        "sha": "3edb8ad8"
       },
-      "timestamp": "2026-09-16T07:01:53"
+      "timestamp": "2026-09-17T03:38:08"
     },
     "2024": {
       "git": {
-        "basis_sha": "69c6d4a7e1b7c8e458373bc5ce9db51a5a7a6a39",
-        "branch": "claude/nyiso238-hydro-2024",
+        "basis_sha": "3edb8ad8ce4737b2f860d84e58bae26e4cb6aa1c",
+        "branch": "HEAD",
         "changed_files": [],
         "diffstat": "",
         "dirty": false,
-        "sha": "69c6d4a7"
+        "sha": "3edb8ad8"
       },
-      "timestamp": "2026-09-16T07:03:11"
+      "timestamp": "2026-09-17T03:39:54"
     },
     "2025": {
       "git": {
-        "basis_sha": "69c6d4a7e1b7c8e458373bc5ce9db51a5a7a6a39",
-        "branch": "claude/nyiso238-hydro-2025",
+        "basis_sha": "3edb8ad8ce4737b2f860d84e58bae26e4cb6aa1c",
+        "branch": "HEAD",
         "changed_files": [],
         "diffstat": "",
         "dirty": false,
-        "sha": "69c6d4a7"
+        "sha": "3edb8ad8"
       },
-      "timestamp": "2026-09-16T07:03:20"
+      "timestamp": "2026-09-17T03:40:32"
     }
   },
   "resolved_inputs": {
@@ -840,6 +840,7 @@
     "nearby_fuel_price_zone_donor_guard": false,
     "negative_renewable_offers": false,
     "neighbor_hr_forward_skill": null,
+    "neiso_coldsnap_derate_dualfuel_unswitched": false,
     "neiso_dynamic_reserve_requirements": false,
     "neiso_gas_coldsnap_derate": false,
     "neiso_gas_derate_cap": 0.2,
@@ -1262,11 +1263,11 @@
   "solve_surface": {
     "epochs": [],
     "fingerprint": "bd2b4657f9b5df7e",
-    "git_sha": "69c6d4a7",
+    "git_sha": "3edb8ad8",
     "iso": "NYISO",
     "moved": {},
     "rows": 210,
     "schema": 1
   },
-  "timestamp": "2026-09-16T07:04:09"
+  "timestamp": "2026-09-17T03:38:07"
 }

@@ -2380,3 +2380,24 @@ results/calibration/pjm_h9c_2025/
 # sweeps the FILESYSTEM, not the index (rule 31's 2026-09-16 correction). CI,
 # which checks out only what is committed, stays green.
 results/calibration/caiso285_instr_2024/
+!results/calibration/caiso285_instr_2024/**
+# nyiso-239 per-year shard legs (rule 32 [R-SHARD] (d): the per-year dirs stay OUT of
+# `main`; only the composite `nyiso239_bench_span` is registered). Ignored rather than
+# deleted, per rule 31 [R-RETAIN] — `.gitignore` is what discharges the delete-before-merge
+# duty, `rm` never was. NOTE (rule 31, corrected clause): check_registry_payload_parity.py
+# walks the FILESYSTEM, so these turn the gate RED in a working tree that holds them while
+# CI, which checks out only what is committed, stays green. Read the gate's unmapped list
+# and confirm each entry is one of these before treating that RED as real.
+#
+# RECOVERY BY FULL SHA (rule 33 [R-SHARD-ARCHIVE] (d) — branch names are deleted within
+# days, a SHA is not):
+#   git checkout 5802986acd77b69cfeb13720a8f0167f6ccb80a7 -- results/calibration/nyiso239_bench_2022
+#   git checkout 0f03dd49b1daee41a1fd0244474e6c4cea7c0c9b -- results/calibration/nyiso239_bench_2023
+#   git checkout ce299f37da628cf7299cba5422f52f4ab05765bb -- results/calibration/nyiso239_bench_2024
+#   git checkout 9859790c33415e9c6dc54ecfb1c799ecc8fb76da -- results/calibration/nyiso239_bench_2025
+# then compose with scripts/probes/nyiso238_compose_span.py. 17 files per leg, verified by
+# `git ls-tree -r <sha>` before any shard was archived (rule 34 [R-SHARD-PROMOTABLE] (d)).
+results/calibration/nyiso239_bench_2022/
+results/calibration/nyiso239_bench_2023/
+results/calibration/nyiso239_bench_2024/
+results/calibration/nyiso239_bench_2025/
