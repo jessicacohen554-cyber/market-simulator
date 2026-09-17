@@ -15337,3 +15337,86 @@ outputs kept). `data/raw/caiso-public-bids/README.md` DATA NEEDED paragraph reti
 shards archived after fetch + sha256 verification (rule 33 a); recovery SHAs in RESULT §4.
 Parity gate untouched (no bundle under `results/calibration/`). OOM: none — swap provisioned in
 every shard by `prepare_solve_container.py`.
+
+## 2026-09-17 — CAISO — caiso-285: the belly deficit is the RESTART INEQUALITY, not a candidacy gate — every named suspect EXONERATED, the bridge needs +$14/MWh to hold a belly it clears at −$6.71
+
+**Keeper UNCHANGED** `2026-09-12-caiso-275-gascoupling`. **ONE year of LP, in ONE shard** (rule 32
+`[R-SHARD]` (a) — the parent never solved). Nothing armed, no `ScenarioConfig` field, no derive
+re-run, **nothing registered** (a 2024-only replay of a 2023–2025 keeper is not registrable under
+rule 16 `[R-ALLYEARS]`). Pre-registered at
+`docs/PRECOMMIT-caiso285-instrumented-probe-2026-09-17.md`, pushed
+`b48448cbacc3eabebf57a051039797847ff9cf14` **before** the shard launched. Full write-up:
+`docs/RESULT-caiso285-bridge-candidacy-2026-09-17.md`.
+
+**The probe.** The instrumented replay caiso-284 was blocked on:
+`replay_keeper.py --years 2024 --persist-p0-commitment` against the keeper bundle, giving the
+bit-packed **P0 run pattern**, the caiso-284 **storage SOC** columns and the committed **`floors/`
+arrays** (min_gen + mechanism ids) — the three artifacts no committed CAISO bundle carried.
+**G1 (reproduction) PASSES**: load-weighted 2024 price 37.547070 vs the keeper's 37.547014
+(Δ **+$0.000056**), and the **belly dispatch is byte-identical** (CC_REGULAR belly `committed`
+670.470581 in both, all twelve bands Δ 0.0). The residual movement is 532 of 61,320 zone-hours,
+**390 of them on the `WECC_PNW` external node's degenerate dual**; CA zones move in 27 zone-hours
+each (max |Δ| $0.28 all year, **$0.0044 in the belly**). Zero registry drift (CAISO solve-surface
+fingerprint `cba92d202f32f9fd`, 204 rows, identical `moved` set), and the nine config fields that
+differ from the keeper are all fields that **did not exist** at its sha, all at HEAD default `False`.
+
+**THE RESULT — three of four suspects dead, including the one this session added.** On the
+pre-registered exhaustive partition of the frozen 876-hour belly (hour set
+`_caiso285_belly_2024.json`, `sha256[:16] c5948fb0d43620a1`), CC_REGULAR deficit 1,921.4 mean belly
+MW: **`S3_5` (restart inequality **or** decommit) 1,593.4 MW, share 0.829 → IMPLICATED**; `S2` (DA
+horizon) 302.1 / 0.157 CONTRIBUTORY; **`S0` (no anchor) 0.014 → EXONERATED — the fleet anchors**;
+**`S1` (the 4 h min-down rule) 0.000 → EXONERATED**, all 30 CC plants clear it; **`S4`
+(`caiso_ra_bridge_startup_aware`, the gate the handoff did not name and which IS armed in the keeper)
+0.000 → EXONERATED**. `S1` is the whole CT_PEAKER story instead (0.960, `min_down` 1.0 h on all 44
+rows) and that is rule 18 `[R-PHYSICS]` by design, not a defect. `caiso_ra_mustoffer_quantity_gate`
+is OFF on the keeper and was ruled out with no probe.
+
+**`S3_5` SPLIT WITHOUT THE P0 DUAL, by inverting the inequality over ALL 1,866 belly gaps.** The
+bridge holds iff `lmp > mc_gap − startup_per_mw/(frac × gap)`. MW-weighted median: `mc_gap`
+**$31.36**, gap **11 h**, so the bridge needs a gap LMP of **+$14.24/MWh** (p1 +$5.65) against a
+belly that clears at **−$6.71**. **99.88 % of belly weight fails at $0; 100.0 % fails at the actual
+price and at the −$20 surplus floor.** So it is **THE RESTART INEQUALITY**, and the surplus
+**DECOMMIT screen is EXONERATED because it is never reached** — sharpening caiso-284 §2.3's
+mean-hour "not binding" into a proof.
+
+**The exact identity that names the object.** The ACTUAL RA `min_gen` in the belly is **670.470 MW**
+against the keeper's committed-band delivery of **670.471 MW** — *the CC_REGULAR belly output IS the
+floor, exactly; the band delivers its minimum and not one megawatt more.* The sole remaining term is
+`BIN_STARTUP_COST_PER_MW["CC_REGULAR"] = 50.0 $/MW` (`data/fleet/eia860.py:3230`, NREL/SR-5500-55433
+class midpoint) — **flat across all 30 plants and every gap length from 4 h to 24 h**, where holding
+the median 11 h gap costs **~$97/MW** even crediting the energy at $0 ($115/MW at the belly price).
+**The $97–$115/MW inversion is the arithmetic BAR and is explicitly NOT a proposed value** (rule 1
+`[R-STRUCT]`: selecting a parameter by inverting a residual is the fitted mechanism the rule
+forbids). The open successor is a **MEASURED downtime-dependent** CC start cost (rule 14
+`[R-ACCURATE]`) — CAISO's published start-up cost bids by configuration, or the hot/warm/cold
+structure the cited NREL source distinguishes and this repo carries nowhere — obtained **before** any
+solve, and reported wherever it lands relative to the bar.
+
+**STORAGE ENERGY PREMISE FALSIFIED, AND INERT.** With caiso-284's SOC columns, the decommit screen's
+premise that *"the fleet already fills by the belly in P1"* is false by more than 9× the
+pre-registered cut: median belly headroom **427,293 MWh = 47.8 %** of the 894,577 MWh fleet capacity
+(p10 0.167, p90 0.938), ~**220 h** of sustainable charging behind caiso-284's unused 1,945 MW of
+charge power. **It changes nothing for this object** — widening `absorb` credits held energy at the
+LMP instead of −$20, and the inequality fails at any price ≤ $0 — so it is recorded as a correction
+to the record, **not promoted to a lever**.
+
+**A DEFECT FOUND AND FIXED IN THE SANCTIONED ZERO-LP REBUILD ROUTE.** Gate G2 failed on the first
+attempt: `scripts/lib/bundle_fleet.reconstruct_bundle_fleet` did **not** splat
+`replay_keeper.derived_run_year_inputs`, so the rebuild carried **200 phantom biomass LP rows**
+(1,905 vs the solve's 1,705) — exactly the caiso-248 defect, inside the helper written to make it
+unreachable, which `replay_keeper` has documented as a duty since caiso-248 (*"every fleet-only
+rebuild should splat this"*). **Repaired** in this session; post-repair G2 passes on all three legs.
+The eligible population is unaffected (phantom rows are not `gas_cc`/`gas_ct`), **but any prior
+CAISO probe that measured something row-aligned to a bundle artifact through this helper read a
+fleet 200 rows wider than the solve.**
+
+**Rule 28 `[R-MECH-MATRIX]`:** no mechanism was *tested* (this instruments one already in the
+keeper), so no cell verdict moves — `gas_commitment_bridge` stays **K**; its evidence line is
+extended with the candidacy closure and the DO-NOT-REDO list. **Rules 31/33/34:** the shard pushed
+its whole 92 MB bundle (17 files, `dispatch/` and `floors/` included), the parent verified
+`git ls-tree` > 0 before archiving, and the bundle is **`.gitignore`d, never deleted**. Recovery
+without a re-solve, by full SHA:
+`git checkout 203124e310f7be4f806ad968d6cf5755f96bbc00 -- results/calibration/caiso285_instr_2024`.
+Shard branch left in place — branch deletion returns HTTP 403 for this credential.
+
+**PRECOMMIT §6.3's "no lever identified ⇒ no span launched" was respected. No span was launched.**

@@ -216,8 +216,25 @@ def reconstruct_bundle_fleet(
         ``(state, meta)`` — ``run_year``'s ``fleet_only`` state dict (``fleet``,
         ``fleet_arrays``, ``config``, ``mc_base``, ``demand``, the renewable
         capacity/CF arrays) and the bundle's ``meta.json``.
+
+    The rebuild also carries :data:`replay_keeper.DERIVED_RUN_YEAR_INPUTS` — the
+    ``run_year`` inputs ``solve_and_persist`` derives from its own locals and
+    the bundle therefore never records, recovered from the bundle's own
+    sidecars by :func:`replay_keeper.derived_run_year_inputs`. Today that is
+    ``inject_biomass_mustrun``, which ``run_year`` passes as
+    ``drop_biomass_units``: without it the rebuild carries phantom biomass LP
+    rows the scored solve never had (caiso-248), and the rebuilt fleet is then
+    not row-aligned with the bundle's own per-unit artifacts. Measured on the
+    CAISO 2024 keeper at caiso-285: 1,905 rebuilt rows against the solve's
+    1,705, a strict superset of exactly 200 biomass rows, which broke the
+    row alignment of ``hourly/p0_commitment_<year>.parquet`` and
+    ``floors/<year>_P1.npz``. ``replay_keeper`` has documented this duty since
+    caiso-248 (*"every fleet-only rebuild should splat this"*), but the
+    SANCTIONED helper every such rebuild is supposed to go through did not,
+    so the duty could not be discharged by using the sanctioned route.
     """
     ensure_probe_path()
+    from scripts.replay_keeper import derived_run_year_inputs
     from scripts.run_calibration import run_year
 
     meta = json.loads((Path(bundle) / "meta.json").read_text())
@@ -230,6 +247,7 @@ def reconstruct_bundle_fleet(
         int(meta["hours"]),
         gas_price,
         **full_run_year_kwargs(meta),
+        **derived_run_year_inputs(bundle, year),
     )
     assert_reconstruction_fidelity(
         meta, state["config"], required_flags, required_sequences

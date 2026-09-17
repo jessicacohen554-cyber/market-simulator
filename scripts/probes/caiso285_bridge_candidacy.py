@@ -37,7 +37,6 @@ partition whose buckets and cuts were pre-registered.
 
 from __future__ import annotations
 
-import collections
 import json
 import sys
 from pathlib import Path
@@ -142,7 +141,9 @@ def main(probe_bundle: Path, fleet_npz: Path, out_path: Path) -> None:
     n_gen = len(uid)
 
     # ---- G2, the alignment gate (PRECOMMIT section 5) -----------------------
-    on, p0_uid = unpack_p0(probe_bundle / "hourly" / f"p0_commitment_{YEAR}.parquet", n_gen)
+    on, p0_uid = unpack_p0(
+        probe_bundle / "hourly" / f"p0_commitment_{YEAR}.parquet", n_gen
+    )
     fz = np.load(probe_bundle / "floors" / f"{YEAR}_P1.npz", allow_pickle=False)
     fl_uid = [str(u) for u in fz["unit_ids"]]
     g2 = {
@@ -152,7 +153,10 @@ def main(probe_bundle: Path, fleet_npz: Path, out_path: Path) -> None:
         "detector_run_threshold_frac": 0.05,
         "thresholds_identical": True,
     }
-    if not (g2["p0_vs_fleet_unit_ids_identical"] and g2["floors_vs_fleet_unit_ids_identical"]):
+    if not (
+        g2["p0_vs_fleet_unit_ids_identical"]
+        and g2["floors_vs_fleet_unit_ids_identical"]
+    ):
         raise SystemExit(f"G2 FAIL — unit-id alignment: {g2}")
 
     min_gen = fz["min_gen"].astype(np.float32)
@@ -174,7 +178,8 @@ def main(probe_bundle: Path, fleet_npz: Path, out_path: Path) -> None:
     # ---- the exhaustive partition (PRECOMMIT section 6.2) -------------------
     rows = np.flatnonzero(elig)
     tally: dict[str, dict[str, float]] = {
-        scope: dict.fromkeys(BUCKETS, 0.0) for scope in ("ALL", "CC_REGULAR", "CT_PEAKER")
+        scope: dict.fromkeys(BUCKETS, 0.0)
+        for scope in ("ALL", "CC_REGULAR", "CT_PEAKER")
     }
     per_unit: dict[str, dict] = {}
     s35_gaps: list[dict] = []
@@ -201,12 +206,19 @@ def main(probe_bundle: Path, fleet_npz: Path, out_path: Path) -> None:
         b_s4 = in_gap & (glenb < md)
         b_s1 = in_gap & (glenb >= md) & (not is_econ)
         b_s2 = in_gap & (glenb >= md) & is_econ & (glenb > DA_COMMITMENT_HORIZON_HOURS)
-        b_s35 = in_gap & (glenb >= md) & is_econ & (glenb <= DA_COMMITMENT_HORIZON_HOURS)
+        b_s35 = (
+            in_gap & (glenb >= md) & is_econ & (glenb <= DA_COMMITMENT_HORIZON_HOURS)
+        )
 
         counts = {
-            "P_UNAVAIL": int(b_unavail.sum()), "P_ON": int(b_on.sum()),
-            "P_FLOOR": int(b_floor.sum()), "S4": int(b_s4.sum()), "S1": int(b_s1.sum()),
-            "S2": int(b_s2.sum()), "S3_5": int(b_s35.sum()), "S0": int(b_s0.sum()),
+            "P_UNAVAIL": int(b_unavail.sum()),
+            "P_ON": int(b_on.sum()),
+            "P_FLOOR": int(b_floor.sum()),
+            "S4": int(b_s4.sum()),
+            "S1": int(b_s1.sum()),
+            "S2": int(b_s2.sum()),
+            "S3_5": int(b_s35.sum()),
+            "S0": int(b_s0.sum()),
         }
         assert sum(counts.values()) == belly.size, (uid[g], counts)
 
@@ -216,10 +228,13 @@ def main(probe_bundle: Path, fleet_npz: Path, out_path: Path) -> None:
                 for k, v in counts.items():
                     tally[scope][k] += v * tgt
         per_unit[uid[g]] = {
-            "plant_group": klass, "pmax": round(float(pmax[g]), 3),
-            "target_mw": round(tgt, 3), "min_down": md,
+            "plant_group": klass,
+            "pmax": round(float(pmax[g]), 3),
+            "target_mw": round(tgt, 3),
+            "min_down": md,
             "startup_per_mw": round(float(startup_pm[g]), 3),
-            "econ_eligible": is_econ, "p0_runs_year": len(runs),
+            "econ_eligible": is_econ,
+            "p0_runs_year": len(runs),
             "p0_online_hours_year": int(on[g, :].sum()),
             "ra_floor_hours_year": int(ra_held[g, :].sum()),
             "belly": counts,
@@ -241,11 +256,17 @@ def main(probe_bundle: Path, fleet_npz: Path, out_path: Path) -> None:
                     continue
                 mc_gap = float(np.mean(mc_base[g, ep:sn]))
                 thr = mc_gap - float(startup_pm[g]) / (MIN_LOAD_FRAC * L)
-                s35_gaps.append({
-                    "unit_id": uid[g], "gap_hours": int(L), "mc_gap": round(mc_gap, 4),
-                    "lmp_threshold_to_hold": round(thr, 4),
-                    "belly_hours_in_gap": int(np.isin(np.arange(ep, sn), belly).sum()),
-                })
+                s35_gaps.append(
+                    {
+                        "unit_id": uid[g],
+                        "gap_hours": int(L),
+                        "mc_gap": round(mc_gap, 4),
+                        "lmp_threshold_to_hold": round(thr, 4),
+                        "belly_hours_in_gap": int(
+                            np.isin(np.arange(ep, sn), belly).sum()
+                        ),
+                    }
+                )
 
     def mean_mw(d: dict[str, float]) -> dict[str, float]:
         return {k: round(v / belly.size, 3) for k, v in d.items()}
@@ -305,7 +326,8 @@ def main(probe_bundle: Path, fleet_npz: Path, out_path: Path) -> None:
             if deficit and mw["S0"] / deficit >= IMPLICATED_AT
             else "NO LEVER IDENTIFIED — no bucket reaches 0.40 and the four gates "
             "together are under 0.60 of the deficit; no span is launched"
-            if deficit and max(mw[k] for k in DEFICIT_BUCKETS) < IMPLICATED_AT
+            if deficit
+            and max(mw[k] for k in DEFICIT_BUCKETS) < IMPLICATED_AT
             and gated / deficit < 0.60
             else "a gate is IMPLICATED — see buckets"
         )
@@ -333,7 +355,9 @@ def main(probe_bundle: Path, fleet_npz: Path, out_path: Path) -> None:
     st = pd.read_parquet(probe_bundle / "hourly" / f"storage_{YEAR}.parquet")
     st = st[st["pass"] == "P1"]
     if "soc_mwh" not in st.columns:
-        report["storage_energy_premise"] = {"verdict": "ABSENT — bundle carries no soc_mwh"}
+        report["storage_energy_premise"] = {
+            "verdict": "ABSENT — bundle carries no soc_mwh"
+        }
     else:
         per_hour = st.groupby("hour")[["soc_mwh", "energy_cap_mwh"]].sum()
         per_hour = per_hour.reindex(range(T))
@@ -352,13 +376,16 @@ def main(probe_bundle: Path, fleet_npz: Path, out_path: Path) -> None:
             "unused_belly_charge_power_mw_caiso284": UNUSED_CHARGE_POWER_MW_2024,
             "hours_that_power_could_be_sustained": round(sustain, 3),
             "verdict": (
-                "UPHELD" if ratio < SOC_UPHELD_BELOW
-                else "FALSIFIED" if ratio >= SOC_FALSIFIED_AT
+                "UPHELD"
+                if ratio < SOC_UPHELD_BELOW
+                else "FALSIFIED"
+                if ratio >= SOC_FALSIFIED_AT
                 else "INDETERMINATE"
             ),
             "power_operative_note": (
                 "under 0.5 h — the unused charge POWER is unusable whatever the ratio says"
-                if sustain < 0.5 else "the unused charge power is sustainable for this long"
+                if sustain < 0.5
+                else "the unused charge power is sustainable for this long"
             ),
         }
 
@@ -375,7 +402,16 @@ def main(probe_bundle: Path, fleet_npz: Path, out_path: Path) -> None:
     report["per_unit"] = per_unit
 
     out_path.write_text(json.dumps(report, indent=1))
-    print(json.dumps({k: v for k, v in report.items() if k not in ("per_unit", "s35_gap_restart_thresholds_CONTEXT_ONLY")}, indent=1))
+    print(
+        json.dumps(
+            {
+                k: v
+                for k, v in report.items()
+                if k not in ("per_unit", "s35_gap_restart_thresholds_CONTEXT_ONLY")
+            },
+            indent=1,
+        )
+    )
     print(f"\nwrote {out_path}")
 
 
@@ -385,6 +421,8 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--probe-bundle", default="results/calibration/caiso285_instr_2024")
     ap.add_argument("--fleet-npz", required=True)
-    ap.add_argument("--out", default="results/calibration/_caiso285_bridge_candidacy.json")
+    ap.add_argument(
+        "--out", default="results/calibration/_caiso285_bridge_candidacy.json"
+    )
     a = ap.parse_args()
     main(REPO / a.probe_bundle, Path(a.fleet_npz), REPO / a.out)

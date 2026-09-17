@@ -2368,3 +2368,16 @@ results/calibration/pjm_h9c_2024/
 results/calibration/pjm_h9c_2025/
 
 !results/calibration/caiso285_instr_2024/**
+# caiso-285 INSTRUMENTED DIAGNOSTIC BUNDLE (rule 29 [R-SCREEN] (c) + rule 31
+# [R-RETAIN]). A 2024-only byte-faithful replay of the CAISO keeper carrying the
+# --persist-p0-commitment P0 pattern, the storage SOC columns and the floors/
+# arrays. It is NOT registrable — a single-year replay of a 2023-2025 keeper
+# would violate rule 16 [R-ALLYEARS] — so it must not reach `main`, and per
+# rule 31 it is NOT deleted from local disk either: .gitignore discharges the
+# duty on its own. The bytes are recoverable without a re-solve from the shard
+# commit (rule 33 [R-SHARD-ARCHIVE] (d), full SHA, branch names are not durable):
+#   git checkout 203124e310f7be4f806ad968d6cf5755f96bbc00 -- results/calibration/caiso285_instr_2024
+# Expect scripts/check_registry_payload_parity.py to list this dir locally: it
+# sweeps the FILESYSTEM, not the index (rule 31's 2026-09-16 correction). CI,
+# which checks out only what is committed, stays green.
+results/calibration/caiso285_instr_2024/
