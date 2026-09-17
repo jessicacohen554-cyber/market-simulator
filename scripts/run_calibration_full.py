@@ -839,15 +839,25 @@ def _write_storage_hourly_sidecar(
     """Write the committable per-tech storage-hour sidecar for one year.
 
     Aggregates this year's (gitignored) ``storage.parquet`` frames to
-    ``(year, pass, tech, hour, charge_mw, discharge_mw)`` and writes
-    ``hourly/storage_<year>.parquet``. The class sidecar carries generator
-    classes only, so before this the sole storage series a committed slim
-    bundle exposed was the ISO-aggregate net recovered from the energy balance
-    — battery and pumped storage inseparable, which is exactly the band
-    FINDING-caiso125 §4a/§6.4 flagged as unobservable and FINDING-caiso127 §2
-    needs to attribute the evening-overnight price pin to a technology.
-    Write-only and solve-invariant. Returns the path written, or ``None`` when
-    the fleet is empty.
+    ``(year, pass, tech, hour, charge_mw, discharge_mw, soc_mwh,
+    energy_cap_mwh)`` and writes ``hourly/storage_<year>.parquet``. The class
+    sidecar carries generator classes only, so before this the sole storage
+    series a committed slim bundle exposed was the ISO-aggregate net recovered
+    from the energy balance — battery and pumped storage inseparable, which is
+    exactly the band FINDING-caiso125 §4a/§6.4 flagged as unobservable and
+    FINDING-caiso127 §2 needs to attribute the evening-overnight price pin to a
+    technology. Write-only and solve-invariant. Returns the path written, or
+    ``None`` when the fleet is empty.
+
+    **``soc_mwh`` / ``energy_cap_mwh`` (2026-09-16, caiso-284)** carry through
+    from :func:`_storage_frame` — see its docstring for why. SUMMING them over
+    a tech's units is the right aggregation and is what makes the pair usable
+    at this grain: stored energy is extensive, so ``Σ soc`` is the tech's total
+    reservoir content and ``Σ cap - Σ soc`` is its true absorption headroom.
+    (That is precisely what a per-unit *reconstruction* from charge/discharge
+    cannot recover, because each unit's cyclic constraint binds separately.)
+    ``soc_mwh`` sums with ``min_count=1`` so an all-NaN tech-hour — a solve that
+    carried no SOC block — stays NaN instead of collapsing to a misleading 0.0.
     """
     rows = [f for f in frames if f is not None and int(f["year"].iloc[0]) == year]
     if not rows:
@@ -855,15 +865,21 @@ def _write_storage_hourly_sidecar(
     hourly_dir = run_dir / "hourly"
     hourly_dir.mkdir(parents=True, exist_ok=True)
     out = hourly_dir / f"storage_{year}.parquet"
-    (
-        pd.concat(rows, ignore_index=True)
-        .groupby(["year", "pass", "tech", "hour"], observed=True)[
-            ["charge_mw", "discharge_mw"]
-        ]
-        .sum()
-        .reset_index()
-        .to_parquet(out, index=False)
+    df = pd.concat(rows, ignore_index=True)
+    keys = ["year", "pass", "tech", "hour"]
+    # Older frames (a resumed/reused year written before this column existed)
+    # may lack the pair; emit NaN rather than raising, so a mixed bundle still
+    # writes and the reader sees "not recorded" explicitly.
+    for col in ("soc_mwh", "energy_cap_mwh"):
+        if col not in df.columns:
+            df[col] = np.float32("nan")
+    agg = df.groupby(keys, observed=True).agg(
+        charge_mw=("charge_mw", "sum"),
+        discharge_mw=("discharge_mw", "sum"),
+        soc_mwh=("soc_mwh", lambda s: s.sum(min_count=1)),
+        energy_cap_mwh=("energy_cap_mwh", lambda s: s.sum(min_count=1)),
     )
+    agg.reset_index().to_parquet(out, index=False)
     return out
 
 
@@ -1723,18 +1739,48 @@ def _storage_frame(
     result,
     storage_units,
 ) -> pd.DataFrame | None:
-    """Return the long per-storage-unit hourly charge/discharge frame.
+    """Return the long per-storage-unit hourly charge/discharge/SOC frame.
 
     One row per (storage unit, hour) carrying the unit's charge and
     discharge MW plus its tech (li_ion / pumped_storage) and zone, so the
     bundle exposes storage throughput the way ``dispatch/`` exposes
     generator output. Returns ``None`` when the fleet is empty.
+
+    **``soc_mwh`` / ``energy_cap_mwh`` added 2026-09-16 (session caiso-284),
+    additive and solve-invariant.** ``DispatchResult.storage_soc`` has always
+    been solved — the LP's SOC recursion is one of its core constraints — but
+    was the one storage decision variable no artifact persisted, so a committed
+    bundle exposed throughput with no reservoir state. The consequence is
+    concrete: the CAISO RA-bridge decommit screen
+    (``model/commitment._write_economic_bridges``) excludes storage-charge
+    headroom from its absorption term on an explicit ENERGY-capacity premise
+    (*"the fleet already fills by the belly in P1"*), and caiso-284 phase 0
+    could neither confirm nor refute that premise from committed artifacts —
+    the tech-aggregated sidecar carries no SOC, and integrating charge/discharge
+    to recover it FAILS, because each unit has its own cyclic SOC constraint and
+    the aggregation destroys it (the attempt returned a reconstructed span of
+    420-4,121 % of implied capacity). Persisting the solved variable removes the
+    reconstruction entirely. ``energy_cap_mwh`` rides along because headroom is
+    ``cap - soc`` and the cap is per-unit, so a tech-level sum of SOC alone is
+    not interpretable. Both are WRITE-ONLY: read after the LP has solved, they
+    cannot perturb a solve, and they add no ``ScenarioConfig`` field (rule 24
+    ``[R-REGISTRY]`` scopes to tunables that can change a solve).
+    ``docs/FINDING-caiso284-belly-commitment-phase0-2026-09-16.md`` §3.
     """
     if not storage_units or result.storage_discharge is None:
         return None
     chg = np.asarray(result.storage_charge, dtype=np.float32)
     dis = np.asarray(result.storage_discharge, dtype=np.float32)
     n_storage, T = dis.shape
+    # ``storage_soc`` is Optional on DispatchResult and is None on any path that
+    # solved without the SOC block; emit NaN there rather than dropping the
+    # column, so the schema is the same shape on every bundle and a reader can
+    # tell "not solved" (NaN) from "empty reservoir" (0.0).
+    soc = (
+        np.asarray(result.storage_soc, dtype=np.float32)
+        if getattr(result, "storage_soc", None) is not None
+        else np.full((n_storage, T), np.nan, dtype=np.float32)
+    )
     hours = np.tile(np.arange(T, dtype=np.int32), n_storage)
     rep = lambda vals: np.repeat(np.asarray(vals, dtype=object), T)  # noqa: E731
     df = pd.DataFrame(
@@ -1745,6 +1791,13 @@ def _storage_frame(
             "hour": hours,
             "charge_mw": chg.reshape(-1),
             "discharge_mw": dis.reshape(-1),
+            "soc_mwh": soc.reshape(-1),
+            "energy_cap_mwh": np.repeat(
+                np.asarray(
+                    [float(u.energy_cap_mwh) for u in storage_units], dtype=np.float32
+                ),
+                T,
+            ),
         }
     )
     df.insert(0, "pass", pass_label)
