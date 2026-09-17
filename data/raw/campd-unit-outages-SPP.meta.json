@@ -1,7 +1,7 @@
 {
   "artifact": "campd-unit-outages-SPP.csv",
-  "artifact_rows": 6524,
-  "composition_note": "SPP-43 DATA INTAKE 2026-09-16. This artifact is the CONCATENATION of two derive invocations with IDENTICAL detector settings, differing only in --years. The 2023-2025 block is the committed frozen block, preserved BYTE-IDENTICALLY including line positions (diff old->new is 100% additions, 0 removals); the 2019-2022 block is APPENDED after it. It is therefore a FIRST derivation for 2019-2022 on unchanged source data, not a re-derivation against a residual (CLAUDE.md rule 23 [R-FROZEN-DERIVE]). Because the file is a concatenation it is NOT in the deriver's canonical sort (facility_id, unit_id, outage_start) across the seam; the ROW SET is what a single 7-year invocation would emit, and no consumer in market_sim.data.outages is row-order sensitive. REPRODUCIBILITY, MEASURED AT THE INTAKE AND NOT FOLDED IN: re-deriving 2023-2025 at HEAD emits 103 rows this frozen block does NOT carry, all plant 762 (Ponca) units 3 and 4, ST_GAS, 0 removals. Ponca reaches the deriver only through load_retired_within_window, so the frozen block predates that scope. The block is left untouched here because changing it would move the keeper's SCORED years, which is a separate lane's object; the 2019-2022 block IS derived at HEAD scope and therefore DOES carry Ponca (rule 14 [R-ACCURATE]: the accurate input is not degraded to match the stale one). The short extract reproduces BYTE-IDENTICALLY at HEAD (coal-only scope, which Ponca is not in).",
+  "artifact_rows": 6627,
+  "composition_note": "SPP-45 REPRODUCIBILITY REPAIR 2026-09-17. This artifact is now a SINGLE 7-year derive invocation at the frozen settings recorded in derive_invocation, in the deriver's canonical sort \u2014 it reproduces byte-identically from its own recorded invocation, which the previous two-block concatenation did NOT. It SUPERSEDES the SPP-43 concatenation (2023-2025 frozen block + appended 2019-2022 block), whose two blocks sat at DIFFERENT deriver scopes: the frozen block predated load_retired_within_window and so omitted plant 762 (Ponca), while the 2019-2022 block carried it. VERIFIED PURE SUPERSET: all 6524 previously-committed rows reproduce with every field byte-identical (0 rows differ, 0 removals); the only change is +103 rows, all plant 762 units 3 and 4, ST_GAS (2023: 32, 2024: 34, 2025: 37). MEASURED LP EFFECT: ZERO, in every scored year. Established at zero LP by scripts/probes/_spp45_ponca_reach_phase0.py on keeper 12's own recipe (results/calibration/spp42_span_a), each leg in its OWN PROCESS because outages.unit_outage_derate_factors is @lru_cache'd on its ARGUMENTS, so an in-process monkeypatched-path arm silently returns the control's factors. Plant 762 is ABSENT from the LP fleet in 2023 and 2024 (the 66 rows there cannot reach the LP), and PRESENT in 2025 (4 ST_GAS tranches, 34.000 MW) where the added rows DO reach the overlay (a new (762, 'ST_GAS') key, derate < 1.0 in 7176 of 8760 hours) but bite an availability array that is IDENTICALLY ZERO across all 8760 hours (the COD/retirement mask), so 0.000 MWh moves. All 15 fleet_arrays LP inputs \u2014 availability, min_gen, min_gen_mechanism, pmax, pmin, heat_rate, vom, emission_rate, nox_rate, so2_rate, zone_idx, fuel_type_idx, efficiency_bin, plant_code, unit_ids \u2014 hash BYTE-IDENTICAL between the committed and repaired extracts in 2023, 2024 AND 2025. The keeper's scored years therefore CANNOT move: no re-solve, no re-gate and no promotion is owed by this repair (rule 23 [R-FROZEN-DERIVE]: this is a deriver-SCOPE consistency repair with a measured zero effect, not a re-derivation against a residual \u2014 no residual moved and none was consulted). CORRECTION TO THE RECORD: RESULT-spp-44-coal-deliverability-2026-09-16.md states plant 762 is absent from the LP fleet in ALL of 2019-2022 and that the 105 rows already carried are therefore inert. That is FALSE for 2019, where 762 IS in the fleet (34.000 MW) and those rows remove 201656.459 MWh of available energy (242143.920 -> 40487.461 MWh, 83.28%, live hours 8760 -> 1368). They are inert in 2020-2022 only. This changes no committed number \u2014 spp43_holdout_span solved WITH those rows \u2014 but the inference SPP-44 drew from their supposed inertness does not hold, and the zero-reach conclusion here rests on direct measurement instead.",
   "derive_invocation": {
     "fullstop_override_cf": 0.02,
     "fullstop_override_days": 5,
@@ -25,25 +25,6 @@
       2025
     ]
   },
-  "derive_invocations": [
-    {
-      "block": "frozen, preserved byte-identically",
-      "years": [
-        2023,
-        2024,
-        2025
-      ]
-    },
-    {
-      "block": "SPP-43 intake, appended",
-      "years": [
-        2019,
-        2020,
-        2021,
-        2022
-      ]
-    }
-  ],
   "deriver": "scripts/data/derive_campd_unit_outages.py",
   "observed_years": [
     2019,
@@ -60,8 +41,8 @@
     "2020": 932,
     "2021": 982,
     "2022": 946,
-    "2023": 880,
-    "2024": 905,
-    "2025": 936
+    "2023": 912,
+    "2024": 939,
+    "2025": 973
   }
 }
