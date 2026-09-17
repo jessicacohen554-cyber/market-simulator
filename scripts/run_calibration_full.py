@@ -1937,9 +1937,32 @@ def _eia930_frame_generic(year: int, iso: str) -> pd.DataFrame | None:
 
     Carries each delivered per-fuel series plus the BA's net generation and
     net interchange, read straight from the per-BA ``<BA> hourly`` extract.
+
+    A POOL region (several EIA-930 balancing authorities under one registry
+    key — NWPP is seventeen) names no single ``<BA> hourly`` file, so
+    :func:`load_eia_hourly_benchmark` is ``None`` for it by construction
+    (FINDING-nwpp-39 §4). Such a region is served by
+    ``build_calibration_reference._pool_hourly_benchmark`` — the loader's own
+    per-BA construction applied to each member and summed, with ``net_gen`` /
+    ``interchange`` read off the registered pool frame — the SAME dict the
+    scorer's ``calibration_reference.json`` block is built from, so the bench
+    part and the reference cannot disagree. The dispatch is data-driven on
+    ``_is_pool_region`` (never an ``iso ==`` ladder); every 1:1 region still
+    takes the loader and is byte-identical. Added by lane NWPP-40
+    (2026-09-16): without it the first NWPP bundle carried no ``eia930``
+    input and ``render_calibration_html.build_payload`` could not register it.
     """
-    bench = load_eia_hourly_benchmark(iso, year)
-    if bench is None:
+    from scripts.data.build_calibration_reference import (
+        _is_pool_region,
+        _pool_hourly_benchmark,
+    )
+
+    bench = (
+        _pool_hourly_benchmark(iso, year)
+        if _is_pool_region(iso)
+        else load_eia_hourly_benchmark(iso, year)
+    )
+    if not bench:
         return None
     out = []
     for name, arr in bench.items():
