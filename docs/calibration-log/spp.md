@@ -3130,3 +3130,85 @@ Untouched by this lane: card R-be's within-day grain on plant 3008, SPP-43's two
 declared costs (2022's 563.6 MWh of new slack, 2020's across-the-board
 degradation) and the Ponca reproducibility defect in the frozen 2023–2025
 extract block.
+
+## spp-45 — 2026-09-17 — THE PONCA EXTRACT DEFECT IS COSMETIC: zero LP reach, measured; and the "inert rows" premise it was routed on is FALSE
+
+**Base** `d54cd9c5`. **Keeper 12 `2026-09-16-spp-42-commitment-feasibility` (`spp42_span_a`)
+— UNCHANGED.** 2019–2022 rung `2026-09-16-spp-43-outage-intake` — UNCHANGED. **ZERO LP; no
+bundle, no run registered, no cell armed, no shard launched.** Record:
+`docs/handoffs/RESULT-spp-45-ponca-reach-2026-09-17.md`; probe
+`scripts/probes/_spp45_ponca_reach_phase0.py`.
+
+**THE GATE CLOSES, BUT NOT WHERE IT WAS EXPECTED TO.** SPP-43 §7 item 1 routed the frozen
+2023–2025 block of `data/raw/campd-unit-outages-SPP.csv` — which re-derives at HEAD with
+**+103 rows, 0 removals, all plant 762 (Ponca) units 3/4 ST_GAS**, split 2023: 32 / 2024: 34
+/ **2025: 37** — as its own lane, on the belief that repairing it "moves the keeper's SCORED
+years". It does not, and the reason is **not** the predicted one. Plant 762 **IS** in the LP
+fleet in **2025** (4 ST_GAS tranches, **34.000 MW**), and the added rows genuinely **reach the
+overlay** there — a new `(762, 'ST_GAS')` key with derate < 1.0 in **7,176 of 8,760 hours**.
+They still move **0.000 MWh**, because 762's availability is **identically zero across all
+8,760 hours** (min = max = 0, live hours 0/8760): a retired plant entering via
+`load_retired_within_window` and then masked fully offline by the COD/retirement ramp. A
+derate applied to zero is zero. **This is a stronger null than the predicted one** — the pipe
+demonstrably works and the answer is still zero. **All 15 `FleetArrays` LP inputs hash
+BYTE-IDENTICAL in 2023, 2024 AND 2025** (`availability`, `min_gen`, `min_gen_mechanism`,
+`pmax`, `pmin`, `heat_rate`, `vom`, `emission_rate`, `nox_rate`, `so2_rate`, `zone_idx`,
+`fuel_type_idx`, `efficiency_bin`, `plant_code`, `unit_ids`); fleet available energy identical
+to the sixth decimal (2023 335,652,747.693079 / 2024 327,408,849.067823 / 2025
+339,256,583.891876 MWh). **Cosmetic reproducibility wart: no re-solve, no re-gate, no
+promotion owed.**
+
+**CORRECTION TO THE RECORD — the 105 committed Ponca rows are NOT inert.** The lane brief
+asserted "plant 762 is ABSENT from the LP fleet in all four years 2019–2022", and inferred the
+omitted rows were probably inert too. **False for 2019**, where 762 is present (34.000 MW) and
+those rows remove **201,656.459 MWh** of available energy (242,143.920 → 40,487.461, **−83.28 %**;
+live hours 8760 → **1368**) — a delta **exactly equal at plant and fleet level**, so confined to
+762 and nothing else. Inert in 2020–2022 only. **This changes no committed number** —
+`spp43_holdout_span` solved WITH those rows, which is correct behaviour — but the analogy the
+2023–2025 conclusion was resting on is void, and that conclusion now rests on direct
+measurement. The claim is in the **lane brief only**; `RESULT-spp-44-…-2026-09-16.md` makes no
+fleet-membership claim and **no other lane's record is altered**.
+
+**TWO MEASUREMENT TRAPS, BOTH HIT AND BOTH GENERAL — read these before the next zero-LP probe.**
+(1) **The unit-id convention.** Most SPP units are `<CLASS>_<zone>_p<plant>_<tranche>`
+(`ST_GAS_SPP-South_p762_peak`), a minority `<plant>_<unit>` (`210_1`). A `startswith("762_")`
+test sees only the second and reports "absent" — it loses **~57 %** of the fleet's plant codes
+(2019: 137 found vs **315** real). That is the entire origin of the false premise above.
+(2) **`outages.unit_outage_derate_factors` is `@lru_cache`d on its ARGUMENTS, never on the
+extract's CONTENTS.** An arm/control that swaps the extract by monkeypatching
+`unit_outage_csv_for_iso` **in one process** gets a cache hit and silently re-reads the
+**control's** factors, returning a delta of **exactly 0.000** — indistinguishable from a real
+null, and exactly what a lane hoping to close a stop gate wants to see. This lane produced that
+spurious zero and caught it only on a contradiction (the overlay reported a 7,392-hour derate
+the "measured" delta said changed nothing). **Every leg now forks its own interpreter.**
+
+**REPAIR INSTALLED (the one judgement call, flagged for the owner).** The extract is now a
+**single 7-year derive** at the sidecar's frozen settings in canonical sort — a **verified pure
+superset**: all 6,524 prior rows reproduce **every field byte-identical**, 0 removals, +103
+Ponca rows (6,524 → 6,627). It fixes a genuine provenance defect (the recorded
+`derive_invocation` did **not** reproduce the two-block concatenation) and an internal
+inconsistency (the two blocks sat at different deriver scopes). **Rule 23 `[R-FROZEN-DERIVE]` is
+satisfied, not bent** — a deriver-SCOPE repair with a measured zero effect; no residual moved
+and none was consulted. Reverting is a one-file revert with no re-solve either way.
+
+**RULES.** 15 — no completed run, nothing to register, dashboard unchanged and correct.
+21/24 — zero free parameters, zero new tunables, `offer_curve_by_group` untouched.
+25 — SPP's own extract only; the two shared-infra defects reported, not patched.
+28 — **no cell moves and none is owed**: no mechanism was tested (a stale measured input is
+not a candidate mechanism, per the SPP-38/42/43 precedent), and no SPP cell asserts anything
+this lane contradicts. 29 — zero-LP phase 0 only, no screen owed; **G-DRIFT moot** (no control
+differencing, no LP), and the branch changes **nothing** on the solve path. 31 — nothing
+deleted, nothing stranded. 32/33/34 — no shard launched; the parent solved nothing.
+
+**PARITY GATE: the same two pre-existing REDs, no new ones** — `caiso279_ablate_dswcouple_span`
+(CAISO) and `soco15_spp_arm`. Neither pruned; `soco15_spp_arm` is in SPP's rule-35(a) scope but
+is cited as live evidence by ten-plus docs across five lanes and rule 31 reserves that call for
+the owner.
+
+**STILL OPEN, cheapest first:** SPP-43's two declared costs on the 2019–2022 rung — 2022's
+563.6284 MWh of new slack (max system price 85.58 → 1102.55 $/MWh) and 2020's across-the-board
+degradation with its new C1 `COAL_PRB` −10.85 TWh row — **both differenceable at ZERO LP against
+the committed `spp43_holdout_span` `hourly/` sidecars, and now SPP's cheapest open objects**;
+card R-be's within-day grain on plant 3008, which needs a genuinely new idea rather than a new
+solve; and the coal↔gas crossover, **fully data-blocked** pending a new dataset (rail-performance
+or delivery-reliability) — an owner data-procurement decision, not a modelling lane.
