@@ -739,6 +739,19 @@ results/calibration/miso_fuelvintage_*/
 # [R-RETAIN] forbids removing them from disk before the owner rules on
 # promotion. A promoted bundle's slim set overrides this rule via `git add -f`.
 results/calibration/miso248_*/
+# miso-260 PER-YEAR SPAN LEG bundles, recovered by miso-261 from the two shard
+# branches and composed into the registered keeper `miso260_seam_span`. Rule 32
+# [R-SHARD] (d) requires the per-year leg dirs to stay OUT of `main` — only the
+# composite is registered, and an unregistered per-year dir left committed is
+# the exact Class-E parity RED rule 29 [R-SCREEN] (c) forbids. Gitignoring is
+# what discharges that (rule 31 [R-RETAIN]); it is NOT a licence to delete —
+# these stay on local disk, and they remain retrievable for ever from their
+# shard commits:
+#   git checkout 5bb6b99690d74b55ca79247b1113fe0a81525035 -- results/calibration/miso260_seam_v
+#   git checkout 5478c2ac2e1985b602ef163459809ef0d919b977 -- results/calibration/miso260_seam_t
+# The COMPOSITE's slim set is committed and overrides nothing here (different path).
+results/calibration/miso260_seam_v/
+results/calibration/miso260_seam_t/
 # ercot-235 2023-discrete offer-sweep grid points (PRECOMMIT-ercot235: local
 # W-2 probe bundles; each point's record is its ercot235_point_score.json +
 # official_2023.json, quoted in the FINDING/log; the selected WINNER is
