@@ -338,6 +338,34 @@ some offline resources reachable inside thirty minutes, so a properly designed m
 
 ---
 
+## 6b. DISPOSITION — **CLOSED. NO LANE IS OWED. Do not pick this up as open work.**
+
+**Owner ruling, 2026-09-17, on reading §0-§6:** *"Wait actually isn't NEISO calibrated frontier
+and complete? We can be done."* **Checked and it holds.** NEISO sits in
+`frontend/data/backcast/calibration-complete.json` `complete` (declared **2026-07-07** by the
+owner, keeper field already re-keyed to `2026-09-16-neiso110-dualfuel-derate-scope`), frontier
+was declared at **neiso-75, 2026-08-02**, and the keeper scores **CALIBRATED** on all six years
+under rubric **3.8** with **zero FAILs** — 7 PASS and 1 CAVEAT, that caveat being C3c, inside a
+ledgered budget of 1 of 1 and 0 of 0 protective.
+
+C3c is **not an open defect on this ISO**. Rule 22 `[R-C3C]` classifies a lone C3c as an
+`ACCEPTED MODEL-CLASS LIMITATION` that is reported at full magnitude and **does not downgrade
+the determination** — owner, 2026-08-17: *"C3c is an acceptable miss and shouldn't change a
+declaration from calibrated to calibrated with caveats because it's a known model limitation
+that's been ledgered."*
+
+**So §7 below is an AVAILABLE lane, not an OWED one.** Read it as a costed option if NEISO's
+C3c is ever re-opened; it is not a work item, and no session should treat it as one.
+
+**What this session's work is FOR, given that:** it moves C3c from *ledgered but unexplained* to
+*ledgered and root-caused* — §5's measurement is the answer to "why is the co-opt dormant", which
+neiso-110 could establish only negatively. Three repairs land on their own merits regardless:
+the rule 28(c) `neiso_rcpf_postsolve_overlay` row (a solve-affecting field with no matrix row),
+the `requirements/README.md` coverage policy resting on a rule removed 2026-09-09, and the
+§5.6 prose-header drift left by the neiso-110 promotion.
+
+---
+
 ## 7. WHAT I RECOMMEND, AND WHAT I DID NOT DO
 
 **No mechanism was built and no LP was spent.** The candidate is off the charter's queue and
