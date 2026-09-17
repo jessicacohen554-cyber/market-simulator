@@ -81,6 +81,7 @@ window.MECH_MATRIX_SHARDS.NYISO = {
     nyiso_local_selfsupply: { cell: "K", ev: "keeper DOF ledger (residual); caiso-155 (D-4 filing); nyiso-113 (row added)" },
     nyiso_firm_imports: { cell: "K", ev: "caiso-155 stub (D-2/D-4 visibility fix); nyiso-113 (row added)" },
     nyiso_rcpf_postsolve_overlay: { cell: "G", ev: "reserves/spec.py::_nyiso_design rule-19 guard; nyiso-113 (row added)" },
+    neiso_rcpf_postsolve_overlay: { cell: "." },
     nyiso_nyc_rcpf_step_curve: { cell: "K", ev: "nyiso-115 (row + field added; ex-ante screen, results/calibration/nyiso115_nyc_rcpf_curve_screen.json); instrument from nyiso-114 (FINDING-nyiso114-reserve-family-sidecar-2026-08-03.md §3)" },
     nyiso_ordc_measured_step_span: { cell: "K", ev: "nyiso-113 (row added); construction documented in reserves/spec.py::_nyiso_design" },
     nyiso_seny_rcpf_increment_step: { cell: "K", ev: "nyiso-119 (row added with the field); PREREG-nyiso119-seny-increment-2026-08-03.md; nyiso119_seny_increment_construction_probe.json; screen evidence nyiso117_seny_rcpf_curve_screen.json" },

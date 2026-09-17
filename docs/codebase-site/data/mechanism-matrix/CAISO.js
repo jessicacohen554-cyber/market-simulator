@@ -81,6 +81,7 @@ window.MECH_MATRIX_SHARDS.CAISO = {
     nyiso_local_selfsupply: { cell: "." },
     nyiso_firm_imports: { cell: "." },
     nyiso_rcpf_postsolve_overlay: { cell: "." },
+    neiso_rcpf_postsolve_overlay: { cell: "." },
     nyiso_nyc_rcpf_step_curve: { cell: "." },
     nyiso_ordc_measured_step_span: { cell: "." },
     nyiso_seny_rcpf_increment_step: { cell: "." },
