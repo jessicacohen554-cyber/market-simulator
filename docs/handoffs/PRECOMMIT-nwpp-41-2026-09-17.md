@@ -575,3 +575,50 @@ claim whatever about the arm's merit**: solve time is not a criterion (rule 1 `[
 lane has already retracted one such claim (Addendum 4 §A4.1). The real per-pass seconds and
 iteration counts come from the shard's log at the end — they have never once appeared in an interim
 status.
+
+---
+
+# ADDENDUM 6 (2026-09-18) — 2024 is DONE, the final pass is running, ceiling 1,320 → 1,680 min
+
+**Recipe unchanged. Pin unchanged. Only the ceiling moves, for the last time unless the final pass
+goes past ~3.5×.**
+
+**Observed at 13:06:29Z:** `LP invocation in progress (2025 P0 done, P1 running)`. So **2024 P1
+finished** (it was at 308 min and running at 12:06:29Z, so it landed between 12:06 and ~12:26 →
+**≈2.27–2.41×** NWPP-40's 135.9 min), **2025 P0 finished**, and the run is in **2025 P1 — the last
+pass and the longest in the span** (263.9 min on NWPP-40).
+
+**Why the ceiling moves.** 2025 P1 alone decides the total now:
+
+| 2025 P1 at | ends | span total | vs 1,320 |
+|---|---|---|---|
+| 2.3× | 22:32–23:12Z | 1,158–1,198 | inside |
+| 2.5× | 23:25Z–00:05Z | 1,211–1,251 | inside |
+| 2.8× | 00:44–01:24Z | 1,290–1,330 | **borderline / OVER** |
+| 3.0× | 01:37–02:17Z | 1,343–1,383 | **OVER** |
+
+The realised per-pass ratio has trended **upward** all run (1.22× → ~1.42× → ≈2.3×), so 2.8× on the
+final pass is not a tail case. **1,680 min** (expires ~07:35Z on the 19th) covers ~3.5×.
+
+**The asymmetry is at its sharpest here and that is the whole argument:** a ceiling hit now would
+throw away a span with **all three years solved and nothing pushed**, because rule 32(b) forbids
+pushing a partial bundle. Raising costs nothing. This is the fourth raise
+(600 → 780 → 1,020 → 1,320 → 1,680) and the lane's projections have been optimistic at every step;
+that record, not this single table, is why the ceiling is set well clear of the estimate rather than
+next to it.
+
+**Live trigger IDs, superseding all four earlier pairs** — the two the promoting check-in must delete
+(rule 33): **`trig_01AFKxvKmbq5auf3GWWX2GHV`** (minute 5) and **`trig_01Y8Ug2sR3mFUGFudTVoBx67`**
+(minute 35). Eight earlier IDs are dead; every one fired `SUCCEEDED` before deletion (last 13:06:09Z
+and 12:35:57Z), so the wake channel has held across ten routines.
+
+**Both pokes now lead with the push**, since that is all that remains: the four signature checks the
+instant the bundle exists, then the `.gitignore` negation + plain `git add` to `claude/nwpp-41-span`,
+the `dispatch/<year>_P1.parquet` + bundle-root `system.parquet` requirement, the HTTP/1.1 retry, and
+the report items — per-pass seconds and iterations, class TWh per year, and confirmation that **no
+bare `COAL` row survives (expected 0.000 TWh)**, which is the C1 fix's own acceptance test.
+
+**Unchanged:** §A1.3's expected numbers, the hard-stop signature, registration and promotion, the
+rule-35 year-set enumeration, and Addendum 5's two standing conclusions (the diagnostic stays
+abandoned; whether HiGHS was iterating through 2024 P1 was never established and is recorded as a
+gap).
