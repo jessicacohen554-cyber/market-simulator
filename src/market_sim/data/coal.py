@@ -69,6 +69,31 @@ def _derived_coal_supply() -> dict[int, str]:
     return out
 
 
+@lru_cache(maxsize=16)
+def coal_supply_by_iso(iso: str) -> dict[int, str]:
+    """Return ``{plant_code: supply_class}`` for ONE ISO's derived coal ranks.
+
+    Reads that ISO's own ``data/raw/_processed-legacy/coal_supply_<ISO>.csv``
+    alone, where :func:`_derived_coal_supply` unions every ISO's file into one
+    national map. The union is right for *resolving a plant* — EIA plant codes
+    are national, so the files never collide — but wrong for *pooling a
+    population*, which is what the measured PRB delivered-cost proxy does
+    (:func:`market_sim.data.fuel.coal._prb_monthly_actuals`): a proxy pooled
+    across ISOs prices one market's plants on another market's receipts, which
+    rule 25 ``[R-ISO-SCOPE]`` forbids.
+
+    Returns an empty dict when the ISO has no derived file (ERCOT, whose ranks
+    are the curated :data:`COAL_PLANT_SUPPLY`, and any ISO not yet derived), so
+    a caller falls back to whatever it did before rather than to an empty
+    population.
+    """
+    path = PROCESSED_DIR / f"coal_supply_{str(iso).upper()}.csv"
+    if not path.exists():
+        return {}
+    df = pd.read_csv(path)
+    return {int(c): str(s) for c, s in zip(df["plant_code"], df["supply_class"])}
+
+
 @lru_cache(maxsize=1)
 def _eia860_retiree_coal_supply() -> dict[int, str]:
     """Return ``{plant_code: supply_class}`` for mid-backcast coal retirees.

@@ -244,3 +244,97 @@ is worth the desk's attention independently of NWPP.
 - **(c)** → land the derive + the ISO-scoped PRB proxy, PRECOMMIT addendum with the expected numbers,
   then ONE shard, ONE `--year 2023 2024 2025` invocation, 600-min budget (measured 551 min), bundle
   pushed with a `.gitignore` negation and a plain `git add` (rules 32 / 34).
+
+---
+
+# ADDENDUM 1 (2026-09-18) — the desk ruled; route (c) is built, and these are its expected numbers BEFORE the solve
+
+**Owner ruling, this session, on the three questions §3 and §6 put:**
+
+1. **C1 route → (c), the ISO-scoped PRB proxy.** The `src/` edit is routed.
+2. **C4 → route it, do not attempt it here.** Leave C4 FAIL, reported at full magnitude, with the
+   prerequisite named. No band multiplier is chosen on a value NWPP has not measured.
+3. **Promotion → promote AFTER the C1 fix lands.** The corrected run becomes the first NWPP keeper;
+   `2026-09-16-nwpp-1-cascade` is not designated as-is.
+
+Everything below is fixed **before any LP runs**, so nothing here can be written to fit a result.
+
+## A1.1 What was built
+
+| # | change | why it is not a free parameter |
+|---|---|---|
+| 1 | `data/raw/_processed-legacy/coal_supply_NWPP.csv` — 17 rows, 9 `prb` / 6 `bituminous` / 2 `waste`, 0 unresolved | `derive_coal_supply.py --iso NWPP --census-vintage 2023 2024 2025`, the artifact every other coal ISO already has. md5 `4bc7f9a61724ec4562599230ca77e4c6`; reproducible in ~90 s |
+| 2 | `data.coal.coal_supply_by_iso(iso)` — reads ONE ISO's rank file | new reader, no value. `_derived_coal_supply` unions every ISO's file, which is right for *resolving a plant* and wrong for *pooling a population* |
+| 3 | `data.fuel.coal._prb_monthly_actuals(iso=None)` — `None` keeps today's ERCOT-pooled series byte-for-byte; an ISO pools its own reporters | quantity-weighted mean of that market's own filed EIA-923 receipts — the identical construction ERCOT already uses |
+| 4 | `ScenarioConfig.coal_prb_proxy_own_iso: bool = False`, on `_CACHE_KEY_OPTIONAL_FIELDS` with frozen drop value `"False"`, `TIER_TAGS` 3 | a gate, not a number |
+| 5 | armed in `pipeline/backcast_config.py` as `coal_prb_proxy_own_iso=(iso.upper() == "NWPP")` | same idiom as the adjacent `coal_takeorpay_from_data=(iso.upper() == "MISO")` |
+| 6 | matrix row + a cell in all nine ISO shards | rule 28(c) |
+
+**The arming seam was corrected mid-build and the reason is worth recording.** The first attempt armed
+the flag through `iso_configs._nwpp_config.default_scenario_overrides`, copying the D57 / D67 / D75-R
+pattern. That is a **forecast-only** seam: `runner.py`'s own docstring states that
+`run_calibration_full.py` *"never applies `default_scenario_overrides` at all"*, so the arm would have
+been **dead on the backcast path** — the lever would have looked armed in the config and changed
+nothing in the solve. Those three precedents are all capacity-screen (forecast) arms. Reverted; the
+arm is in `backcast_config`, which is the builder the backcast actually goes through.
+
+## A1.2 Confinement and key-inertness — measured, zero LP
+
+`scripts/probes/_nwpp41_coalrank_phase0.py 2023 2024 2025 --own-iso`, `run_year(..., fleet_only=True)`
+on the registered bundle's own recipe:
+
+| year | NON-COAL offer max&#124;Δ&#124; | coal rows moved | `pmax` max&#124;Δ&#124; | `availability` max&#124;Δ&#124; | coal cap-wtd mean offer Δ |
+|---|---|---|---|---|---|
+| 2023 | **$0.0000000000** (0 rows) | 7 | 0.0000000000 | 0.000000000000 | −$0.6528 |
+| 2024 | **$0.0000000000** (0 rows) | 7 | 0.0000000000 | 0.000000000000 | −$0.8278 |
+| 2025 | **$0.0000000000** (0 rows) | 11 | 0.0000000000 | 0.000000000000 | −$0.8857 |
+
+The movers are only the PRB plants that file no delivered cost: **6076 Colstrip** and **55749 Hardin**
+every year, **56224 TS Power** in 2025 only. `62319 Western Sugar` is repriced too but carries 0.655 MW
+and contributes no distinct offer row.
+
+| plant · band | 2023 ctl → arm | 2024 | 2025 |
+|---|---|---|---|
+| Colstrip `committed` / `peak` | 34.252 → **27.226** | 34.550 → **25.640** | 34.850 → **25.640** |
+| Colstrip `mustrun` | 4.500 → 4.500 (VOM-only, unmoved) | same | same |
+| Hardin `committed` / `econlo` / `econhi` / `peak` | 49.093 → **38.562** | 49.539 → **36.186** | 49.989 → **36.186** |
+| TS Power (2025 only) | — | — | 56.272 → **53.973** |
+
+**The scoping is the point, and it is worth $2–4/MWh.** Under the unscoped route (a) Colstrip would
+have gone to 23.766 / 23.016 / 21.560 — i.e. route (c) prices it **$3.5 / $2.6 / $4.1 higher**, which is
+exactly the Texas-rail discount rule 25 refuses.
+
+**Cache keys.** Every one of the **19 committed `run_config.json`** reconstructs with
+`coal_prb_proxy_own_iso = False`, the frozen drop value — including `nwpp40_span_A` itself — so **no
+existing bundle re-keys** and no other ISO's keeper moves. A fresh armed NWPP run earns a distinct key
+(`4e9a865340b97c0b` → `71eab0fef3bb3ecb` on a bare NWPP config).
+
+## A1.3 Expected result of the solve, pre-registered
+
+- **C1: 5 FAIL → 0 FAIL.** §2's relabel measurement holds by construction for the taxonomy half; the
+  repricing half moves coal volumes, so the exact rows will differ from §2's table. **Pre-registered
+  direction and bound:** Colstrip and Hardin get cheaper, so model coal can only rise or hold —
+  2023 `COAL_BIT` +1.38 TWh is the only row with headroom to spare (band ±8 TWh, ±3 pp), and the
+  2024/2025 coal rows are all currently NEGATIVE (−5.29, −2.18, −0.33), so a rise moves them toward
+  zero. C1 is expected to pass in 2023 and 2024; 2025 stays SKIPPED.
+- **C2 coal, 2024:** model 26.49 vs 34.32 actual today. Expected to rise; **no target is named** and
+  C2 already PASSes on the family band, so this is a report line, not a criterion.
+- **C4: still FAIL, and that is the expected outcome.** The repricing lowers two plants' *level*; it
+  does not put a band between $4.50 and $37.7 (§4). A 2025 coal peak/trough of 1.02 → anything below
+  ~1.2 leaves `cv_ratio` short of the 0.5 gate. **If C4 passes, that is a surprise and this lane will
+  say so rather than claim it.**
+- **C3a/C3b/C3c: UNSCORED**, unchanged — NWPP has no `actual_lmp.json` block, so the run certifies no
+  price level, shape or tail, and its determination names that basis (owner ruling N2).
+- **Expected determination: `NOT-YET`**, with **C4 coal shape as the single remaining failure** where
+  the registered run has five. That is the promotion the desk authorised, and it is not `CALIBRATED`.
+- **Report-only items carried unchanged, not absorbed:** CO2 −55 to −66 %; energy balance −7 to
+  −10 TWh/yr; NWPP-SNV VOLL hours 23 + 34; Chief Joseph 2025 coupling dual −325.17 for 5,808 h.
+
+## A1.4 The shard
+
+ONE shard, ONE `--year 2023 2024 2025` invocation, years sequential inside it (rules 12 / 16 / 32(b)),
+**600-minute budget** (NWPP-40 measured 551 min; peak 4.35 GiB against a 13.36 GiB cgroup). It pushes
+its own bundle to its own branch via a `.gitignore` negation and a **plain `git add`** (rule 34(a)), and
+it must show the armed signature — `coal_prb_proxy_own_iso: true`, `coal_supply_NWPP.csv` present with
+md5 `4bc7f9a61724ec4562599230ca77e4c6`, `hydro_cascade_coupling true`, `hydro_backfill_year 2024` — or
+STOP without pushing. The parent registers, promotes and prunes (rules 15 / 32(d) / 35).

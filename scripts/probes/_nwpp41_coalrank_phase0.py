@@ -71,6 +71,14 @@ def build(year: int, arm: bool):
     try:
         if arm:
             shutil.copyfile(SCRATCH, DERIVED)
+            if OWN_ISO:
+                # Leg (c), the DESK-ROUTED route: the derive lands AND the
+                # ISO-scoped PRB proxy is armed, so Colstrip / Hardin / Western
+                # Sugar take NWPP's own measured PRB delivered cost instead of
+                # ERCOT's. This is what backcast_config now sets for NWPP; the
+                # probe sets it explicitly so the leg is selectable here.
+                kw["prb_overrides"] = dict(kw.get("prb_overrides") or {})
+                kw["prb_overrides"]["coal_prb_proxy_own_iso"] = True
             if NO_REPRICE:
                 # Leg (b): the derive lands (so the REPORTING class splits) but
                 # ``coal_supply_repricing`` is off, so no coal plant takes a
@@ -111,6 +119,7 @@ def _arrays(state):
 
 COAL_CODES = set()
 NO_REPRICE = "--no-reprice" in sys.argv
+OWN_ISO = "--own-iso" in sys.argv
 
 
 def _coal_rows(a):

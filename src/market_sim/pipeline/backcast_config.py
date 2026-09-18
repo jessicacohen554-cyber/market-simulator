@@ -1795,6 +1795,23 @@ def backcast_config(
         coal_plant_monthly_pricing=True,  # plant-specific EIA-923 monthly coal
         #   cost where reported (Fayette/San Miguel/J K Spruce); the rest fall
         #   back to the flat lignite/PRB average.
+        coal_prb_proxy_own_iso=(iso.upper() == "NWPP"),  # NWPP-41: the flat
+        #   PRB average the line above falls back to is pooled over
+        #   data.coal.COAL_PLANT_SUPPLY, EVERY plant of which is in TEXAS, so
+        #   by default a non-reporting PRB plant anywhere else is priced on
+        #   ERCOT rail economics. NWPP has FOUR of its own PRB reporters
+        #   covering all 36 months of 2023-2025 (Dave Johnston, Naughton,
+        #   Wyodak, Jim Bridger, all Wyoming) at 2.463 / 2.134 / 2.066 $/MMBtu
+        #   against ERCOT's 1.818 / 1.760 / 1.622 -- so the default under-
+        #   prices Colstrip, Hardin and Western Sugar (and TS Power in 2025),
+        #   which file none. Rules 14 [R-ACCURATE] / 25 [R-ISO-SCOPE]; zero
+        #   free parameters (the identical quantity-weighted construction
+        #   ERCOT already uses, over this market's own filed receipts).
+        #   NWPP ONLY, by the same idiom as coal_takeorpay_from_data below:
+        #   the defect also reaches MISO (12 plants), PJM (2) and SPP (3-5),
+        #   and each is its OWN lane's to move on its own market's data
+        #   (rule 28(d)). Backcast only -- NWPP has no forecast lane yet
+        #   (card N9), so no forecast posture is armed here.
         coal_takeorpay_from_data=(iso.upper() == "MISO"),  # MISO's coal
         #   take-or-pay depth is sized from measured contract shares (consumed
         #   by campd_tranche_fuel_frac on the CAMPD limb). Replace the uniform

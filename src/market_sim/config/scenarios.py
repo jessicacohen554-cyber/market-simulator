@@ -163,6 +163,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # key -- the arm must be byte-identical off; an armed run carries a real
     # min-gen floor and so gets a distinct key.
     "ercot_coal_min_config_floor",
+    # ISO-scoped measured PRB delivered-cost proxy (NWPP-41, default off):
+    # dropped from the hash at its default so every pre-existing cached run --
+    # every ISO's keepers included -- keeps its key. Byte-identical off (the
+    # pool is unchanged); an armed run prices its non-reporting PRB plants on
+    # its own market's receipts and so earns a distinct key.
+    "coal_prb_proxy_own_iso",
     # MISO regulated-PRB committed-band arms (miso-111 whole-band flex and its
     # miso-112 measured split successor), both default off. REGISTERED LATE, by
     # the FFR-W1X Wave-1 close (2026-08-02), as the ROOT-CAUSE repair of the
@@ -1888,6 +1894,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "hindcast": "False",
     "hindcast_fuel_variant": "'realized'",
     "ercot_coal_min_config_floor": "False",
+    "coal_prb_proxy_own_iso": "False",
     "coal_prb_committed_dispatchable": "False",
     "coal_prb_committed_split": "False",
     "miso_coal_night_floor": "False",
@@ -10533,6 +10540,29 @@ class ScenarioConfig:
     # 1.0. Override below 1.0 only to study a flat PRB delivered-cost
     # discount on top of the must-run staircase.
     coal_prb_contract_passthrough: float = 1.00
+
+    # Tier 3 (calibration) — ISO-SCOPED measured PRB delivered-cost proxy.
+    # ``apply_coal_supply_pricing`` prices a PRB plant that files no EIA-923
+    # delivered cost from a proxy pooled over the PRB plants that DO file. The
+    # default pool is the hand-curated ``data.coal.COAL_PLANT_SUPPLY``, every
+    # plant in which is in TEXAS — so by default a non-reporting PRB plant in
+    # any other footprint is priced on ERCOT's railed-PRB economics. When True
+    # the pool is THIS ISO's own PRB reporters instead
+    # (``data.coal.coal_supply_by_iso``), which is rule 25 ``[R-ISO-SCOPE]``:
+    # a delivered fuel cost measured in one market is not evidence about
+    # another. Zero free parameters — the value is a quantity-weighted mean of
+    # the ISO's own filed receipts, the identical construction ERCOT already
+    # uses. An ISO with no PRB reporter falls through to the flat annual
+    # trajectory, never to an empty pool.
+    #
+    # Default False, so every existing bundle keeps the series it solved on,
+    # and registered on ``_CACHE_KEY_OPTIONAL_FIELDS`` with its frozen drop
+    # value in ``_CACHE_KEY_OPTIONAL_FIELD_DEFAULTS`` in the same commit, so no
+    # existing config re-keys. Armed for NWPP alone via ``_nwpp_config``'s
+    # ``default_scenario_overrides`` (lane NWPP-41). Measured at the gate: the
+    # ERCOT series also reaches non-reporting PRB plants in MISO (12), PJM (2)
+    # and SPP (3-5); those are each their OWN lane's to move (rule 28(d)).
+    coal_prb_proxy_own_iso: bool = False
 
     # Tier 3 (calibration) — CAMPD coal committed-tranche price-taking.
     # A PRB coal unit that is online price-takes across all the capacity it
@@ -21171,6 +21201,7 @@ TIER_TAGS: dict[str, int] = {
     "caiso_fsno_subzonal_topology": 1,
     "cod_ramp_enabled": 3,
     "coal_prb_contract_passthrough": 3,
+    "coal_prb_proxy_own_iso": 3,
     "coal_prb_passthrough": 3,
     "coal_prb_passthrough_sigmoid": 3,
     "coal_prb_passthrough_floor": 3,
