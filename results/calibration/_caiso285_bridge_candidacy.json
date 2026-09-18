@@ -1,0 +1,2064 @@
+{
+ "lane": "caiso-285",
+ "precommit": "docs/PRECOMMIT-caiso285-instrumented-probe-2026-09-17.md",
+ "precommit_sha": "b48448cbacc3eabebf57a051039797847ff9cf14",
+ "probe_bundle": "results/calibration/caiso285_instr_2024",
+ "keeper_bundle": "results/calibration/caiso275_B_gascoupling_span",
+ "year": 2024,
+ "belly_hours": 876,
+ "belly_sha256_16": "c5948fb0d43620a1",
+ "G1_reproduction": {
+  "probe_load_weighted_price": 37.54707,
+  "keeper_load_weighted_price": 37.547014,
+  "delta": 5.6e-05,
+  "tolerance": 0.01,
+  "verdict": "PASS"
+ },
+ "G2_alignment": {
+  "p0_vs_fleet_unit_ids_identical": true,
+  "floors_vs_fleet_unit_ids_identical": true,
+  "p0_threshold_frac": 0.05,
+  "detector_run_threshold_frac": 0.05,
+  "thresholds_identical": true
+ },
+ "population_E": {
+  "rows": 74,
+  "pmax_mw": 5296.065,
+  "by_group": {
+   "CC_REGULAR": {
+    "rows": 30,
+    "pmax_mw": 4466.228,
+    "econ_eligible_rows": 30,
+    "target_mw_total": 3631.178
+   },
+   "CT_PEAKER": {
+    "rows": 44,
+    "pmax_mw": 829.838,
+    "econ_eligible_rows": 0,
+    "target_mw_total": 789.488
+   }
+  }
+ },
+ "partition_mean_belly_mw": {
+  "ALL": {
+   "P_UNAVAIL": 914.306,
+   "P_ON": 18.409,
+   "P_FLOOR": 777.062,
+   "S4": 0.0,
+   "S1": 757.779,
+   "S2": 302.095,
+   "S3_5": 1593.415,
+   "S0": 57.6
+  },
+  "CC_REGULAR": {
+   "P_UNAVAIL": 914.306,
+   "P_ON": 18.409,
+   "P_FLOOR": 777.062,
+   "S4": 0.0,
+   "S1": 0.0,
+   "S2": 302.095,
+   "S3_5": 1593.415,
+   "S0": 25.891
+  },
+  "CT_PEAKER": {
+   "P_UNAVAIL": 0.0,
+   "P_ON": 0.0,
+   "P_FLOOR": 0.0,
+   "S4": 0.0,
+   "S1": 757.779,
+   "S2": 0.0,
+   "S3_5": 0.0,
+   "S0": 31.709
+  }
+ },
+ "verdicts": {
+  "ALL": {
+   "deficit_mean_belly_mw": 2710.889,
+   "held_mean_belly_mw": 777.062,
+   "online_mean_belly_mw": 18.409,
+   "unavailable_mean_belly_mw": 914.306,
+   "buckets": {
+    "S0": {
+     "mean_belly_mw": 57.6,
+     "share_of_deficit": 0.0212,
+     "verdict": "EXONERATED",
+     "meaning": "no anchor \u2014 the unit is not running adjacent to the belly at all"
+    },
+    "S1": {
+     "mean_belly_mw": 757.779,
+     "share_of_deficit": 0.2795,
+     "verdict": "CONTRIBUTORY",
+     "meaning": "min-down eligibility (RA_BRIDGE_ECON_MIN_DOWN_HOURS = 4.0)"
+    },
+    "S2": {
+     "mean_belly_mw": 302.095,
+     "share_of_deficit": 0.1114,
+     "verdict": "CONTRIBUTORY",
+     "meaning": "day-ahead horizon cap (DA_COMMITMENT_HORIZON_HOURS = 24)"
+    },
+    "S3_5": {
+     "mean_belly_mw": 1593.415,
+     "share_of_deficit": 0.5878,
+     "verdict": "IMPLICATED",
+     "meaning": "restart inequality (mc_gap) OR the surplus decommit screen \u2014 jointly"
+    },
+    "S4": {
+     "mean_belly_mw": 0.0,
+     "share_of_deficit": 0.0,
+     "verdict": "EXONERATED",
+     "meaning": "startup_aware run screen dropped the anchoring runs"
+    }
+   },
+   "gate_share_total": 0.9788,
+   "reading": "a gate is IMPLICATED \u2014 see buckets"
+  },
+  "CC_REGULAR": {
+   "deficit_mean_belly_mw": 1921.401,
+   "held_mean_belly_mw": 777.062,
+   "online_mean_belly_mw": 18.409,
+   "unavailable_mean_belly_mw": 914.306,
+   "buckets": {
+    "S0": {
+     "mean_belly_mw": 25.891,
+     "share_of_deficit": 0.0135,
+     "verdict": "EXONERATED",
+     "meaning": "no anchor \u2014 the unit is not running adjacent to the belly at all"
+    },
+    "S1": {
+     "mean_belly_mw": 0.0,
+     "share_of_deficit": 0.0,
+     "verdict": "EXONERATED",
+     "meaning": "min-down eligibility (RA_BRIDGE_ECON_MIN_DOWN_HOURS = 4.0)"
+    },
+    "S2": {
+     "mean_belly_mw": 302.095,
+     "share_of_deficit": 0.1572,
+     "verdict": "CONTRIBUTORY",
+     "meaning": "day-ahead horizon cap (DA_COMMITMENT_HORIZON_HOURS = 24)"
+    },
+    "S3_5": {
+     "mean_belly_mw": 1593.415,
+     "share_of_deficit": 0.8293,
+     "verdict": "IMPLICATED",
+     "meaning": "restart inequality (mc_gap) OR the surplus decommit screen \u2014 jointly"
+    },
+    "S4": {
+     "mean_belly_mw": 0.0,
+     "share_of_deficit": 0.0,
+     "verdict": "EXONERATED",
+     "meaning": "startup_aware run screen dropped the anchoring runs"
+    }
+   },
+   "gate_share_total": 0.9865,
+   "reading": "a gate is IMPLICATED \u2014 see buckets"
+  },
+  "CT_PEAKER": {
+   "deficit_mean_belly_mw": 789.488,
+   "held_mean_belly_mw": 0.0,
+   "online_mean_belly_mw": 0.0,
+   "unavailable_mean_belly_mw": 0.0,
+   "buckets": {
+    "S0": {
+     "mean_belly_mw": 31.709,
+     "share_of_deficit": 0.0402,
+     "verdict": "EXONERATED",
+     "meaning": "no anchor \u2014 the unit is not running adjacent to the belly at all"
+    },
+    "S1": {
+     "mean_belly_mw": 757.779,
+     "share_of_deficit": 0.9598,
+     "verdict": "IMPLICATED",
+     "meaning": "min-down eligibility (RA_BRIDGE_ECON_MIN_DOWN_HOURS = 4.0)"
+    },
+    "S2": {
+     "mean_belly_mw": 0.0,
+     "share_of_deficit": 0.0,
+     "verdict": "EXONERATED",
+     "meaning": "day-ahead horizon cap (DA_COMMITMENT_HORIZON_HOURS = 24)"
+    },
+    "S3_5": {
+     "mean_belly_mw": 0.0,
+     "share_of_deficit": 0.0,
+     "verdict": "EXONERATED",
+     "meaning": "restart inequality (mc_gap) OR the surplus decommit screen \u2014 jointly"
+    },
+    "S4": {
+     "mean_belly_mw": 0.0,
+     "share_of_deficit": 0.0,
+     "verdict": "EXONERATED",
+     "meaning": "startup_aware run screen dropped the anchoring runs"
+    }
+   },
+   "gate_share_total": 0.9598,
+   "reading": "a gate is IMPLICATED \u2014 see buckets"
+  }
+ },
+ "identity_checks": {
+  "1_cc_floor_le_committed_band": {
+   "cc_ra_floor_mean_belly_mw": 777.062,
+   "keeper_committed_band_mean_belly_mw": 670.471,
+   "verdict": "FAIL"
+  },
+  "2_floor_and_online_disjoint": {
+   "overlapping_gen_belly_hours": 3,
+   "verdict": "FAIL"
+  },
+  "3_every_floored_unit_has_a_p0_run": {
+   "units_floored_with_zero_p0_runs": [],
+   "verdict": "PASS"
+  }
+ },
+ "storage_energy_premise": {
+  "total_energy_cap_mwh": 894576.688,
+  "median_belly_headroom_mwh": 427293.219,
+  "median_belly_headroom_ratio": 0.4776,
+  "p10_belly_headroom_ratio": 0.1666,
+  "p90_belly_headroom_ratio": 0.9382,
+  "unused_belly_charge_power_mw_caiso284": 1945.0,
+  "hours_that_power_could_be_sustained": 219.688,
+  "verdict": "FALSIFIED",
+  "power_operative_note": "the unused charge power is sustainable for this long"
+ },
+ "s35_gap_restart_thresholds_CONTEXT_ONLY": {
+  "note": "NOT part of the pre-registered partition. The P0 dual is not persisted, so the restart inequality cannot be evaluated; this reports, per S3_5 gap touching the belly, the P0 gap LMP ABOVE which the bridge would hold (lmp > mc_gap - startup_per_mw / (0.26 * gap_hours)).",
+  "n_gaps": 2481,
+  "gaps": [
+   {
+    "unit_id": "CC_REGULAR_NP15_p260_committed",
+    "gap_hours": 13,
+    "mc_gap": 27.0206,
+    "lmp_threshold_to_hold": 12.2277,
+    "belly_hours_in_gap": 10
+   },
+   {
+    "unit_id": "CC_REGULAR_NP15_p260_committed",
+    "gap_hours": 12,
+    "mc_gap": 27.0206,
+    "lmp_threshold_to_hold": 10.995,
+    "belly_hours_in_gap": 10
+   },
+   {
+    "unit_id": "CC_REGULAR_NP15_p260_committed",
+    "gap_hours": 11,
+    "mc_gap": 29.8589,
+    "lmp_threshold_to_hold": 12.3763,
+    "belly_hours_in_gap": 10
+   },
+   {
+    "unit_id": "CC_REGULAR_NP15_p260_committed",
+    "gap_hours": 13,
+    "mc_gap": 29.4222,
+    "lmp_threshold_to_hold": 14.6293,
+    "belly_hours_in_gap": 10
+   },
+   {
+    "unit_id": "CC_REGULAR_NP15_p260_committed",
+    "gap_hours": 18,
+    "mc_gap": 25.7107,
+    "lmp_threshold_to_hold": 15.0269,
+    "belly_hours_in_gap": 10
+   },
+   {
+    "unit_id": "CC_REGULAR_NP15_p260_committed",
+    "gap_hours": 12,
+    "mc_gap": 25.7107,
+    "lmp_threshold_to_hold": 9.6851,
+    "belly_hours_in_gap": 10
+   },
+   {
+    "unit_id": "CC_REGULAR_LA_BASIN_p358_committed",
+    "gap_hours": 11,
+    "mc_gap": 31.6025,
+    "lmp_threshold_to_hold": 14.12,
+    "belly_hours_in_gap": 10
+   },
+   {
+    "unit_id": "CC_REGULAR_ZP26_p55151_committed",
+    "gap_hours": 15,
+    "mc_gap": 29.2406,
+    "lmp_threshold_to_hold": 16.42,
+    "belly_hours_in_gap": 10
+   },
+   {
+    "unit_id": "CC_REGULAR_ZP26_p55151_committed",
+    "gap_hours": 17,
+    "mc_gap": 29.2406,
+    "lmp_threshold_to_hold": 17.9283,
+    "belly_hours_in_gap": 10
+   },
+   {
+    "unit_id": "CC_REGULAR_ZP26_p55151_committed",
+    "gap_hours": 11,
+    "mc_gap": 32.222,
+    "lmp_threshold_to_hold": 14.7395,
+    "belly_hours_in_gap": 10
+   },
+   {
+    "unit_id": "CC_REGULAR_ZP26_p55151_committed",
+    "gap_hours": 22,
+    "mc_gap": 27.8645,
+    "lmp_threshold_to_hold": 19.1233,
+    "belly_hours_in_gap": 10
+   },
+   {
+    "unit_id": "CC_REGULAR_ZP26_p55151_committed",
+    "gap_hours": 12,
+    "mc_gap": 27.8645,
+    "lmp_threshold_to_hold": 11.8389,
+    "belly_hours_in_gap": 10
+   },
+   {
+    "unit_id": "CC_REGULAR_ZP26_p55182_committed",
+    "gap_hours": 13,
+    "mc_gap": 26.9728,
+    "lmp_threshold_to_hold": 12.1799,
+    "belly_hours_in_gap": 10
+   },
+   {
+    "unit_id": "CC_REGULAR_ZP26_p55182_committed",
+    "gap_hours": 12,
+    "mc_gap": 26.9728,
+    "lmp_threshold_to_hold": 10.9472,
+    "belly_hours_in_gap": 10
+   },
+   {
+    "unit_id": "CC_REGULAR_ZP26_p55182_committed",
+    "gap_hours": 11,
+    "mc_gap": 29.7316,
+    "lmp_threshold_to_hold": 12.2491,
+    "belly_hours_in_gap": 10
+   },
+   {
+    "unit_id": "CC_REGULAR_ZP26_p55182_committed",
+    "gap_hours": 13,
+    "mc_gap": 29.3072,
+    "lmp_threshold_to_hold": 14.5143,
+    "belly_hours_in_gap": 10
+   },
+   {
+    "unit_id": "CC_REGULAR_ZP26_p55182_committed",
+    "gap_hours": 18,
+    "mc_gap": 25.6995,
+    "lmp_threshold_to_hold": 15.0158,
+    "belly_hours_in_gap": 10
+   },
+   {
+    "unit_id": "CC_REGULAR_ZP26_p55182_committed",
+    "gap_hours": 12,
+    "mc_gap": 25.6995,
+    "lmp_threshold_to_hold": 9.6739,
+    "belly_hours_in_gap": 10
+   },
+   {
+    "unit_id": "CC_REGULAR_SP15_rest_p55295_committed",
+    "gap_hours": 21,
+    "mc_gap": 30.0699,
+    "lmp_threshold_to_hold": 20.9124,
+    "belly_hours_in_gap": 10
+   },
+   {
+    "unit_id": "CC_REGULAR_SP15_rest_p55295_committed",
+    "gap_hours": 23,
+    "mc_gap": 30.0699,
+    "lmp_threshold_to_hold": 21.7087,
+    "belly_hours_in_gap": 10
+   },
+   {
+    "unit_id": "CC_REGULAR_SP15_rest_p55295_committed",
+    "gap_hours": 12,
+    "mc_gap": 33.2235,
+    "lmp_threshold_to_hold": 17.1979,
+    "belly_hours_in_gap": 10
+   },
+   {
+    "unit_id": "CC_REGULAR_SP15_rest_p55295_committed",
+    "gap_hours": 13,
+    "mc_gap": 28.6144,
+    "lmp_threshold_to_hold": 13.8215,
+    "belly_hours_in_gap": 10
+   },
+   {
+    "unit_id": "CC_REGULAR_SDGE_p55345_committed",
+    "gap_hours": 12,
+    "mc_gap": 27.3377,
+    "lmp_threshold_to_hold": 11.312,
+    "belly_hours_in_gap": 10
+   },
+   {
+    "unit_id": "CC_REGULAR_SDGE_p55345_committed",
+    "gap_hours": 12,
+    "mc_gap": 27.3377,
+    "lmp_threshold_to_hold": 11.312,
+    "belly_hours_in_gap": 10
+   },
+   {
+    "unit_id": "CC_REGULAR_SDGE_p55345_committed",
+    "gap_hours": 11,
+    "mc_gap": 30.1203,
+    "lmp_threshold_to_hold": 12.6378,
+    "belly_hours_in_gap": 10
+   },
+   {
+    "unit_id": "CC_REGULAR_SDGE_p55345_committed",
+    "gap_hours": 13,
+    "mc_gap": 29.6922,
+    "lmp_threshold_to_hold": 14.8993,
+    "belly_hours_in_gap": 10
+   },
+   {
+    "unit_id": "CC_REGULAR_SDGE_p55345_committed",
+    "gap_hours": 18,
+    "mc_gap": 26.0534,
+    "lmp_threshold_to_hold": 15.3696,
+    "belly_hours_in_gap": 10
+   },
+   {
+    "unit_id": "CC_REGULAR_SDGE_p55345_committed",
+    "gap_hours": 12,
+    "mc_gap": 26.0534,
+    "lmp_threshold_to_hold": 10.0277,
+    "belly_hours_in_gap": 10
+   },
+   {
+    "unit_id": "CC_REGULAR_NP15_p55393_committed",
+    "gap_hours": 14,
+    "mc_gap": 28.0749,
+    "lmp_threshold_to_hold": 14.3387,
+    "belly_hours_in_gap": 10
+   },
+   {
+    "unit_id": "CC_REGULAR_NP15_p55393_committed",
+    "gap_hours": 15,
+    "mc_gap": 28.0749,
+    "lmp_threshold_to_hold": 15.2544,
+    "belly_hours_in_gap": 10
+   },
+   {
+    "unit_id": "CC_REGULAR_NP15_p55393_committed",
+    "gap_hours": 11,
+    "mc_gap": 30.9489,
+    "lmp_threshold_to_hold": 13.4664,
+    "belly_hours_in_gap": 10
+   },
+   {
+    "unit_id": "CC_REGULAR_NP15_p55393_committed",
+    "gap_hours": 20,
+    "mc_gap": 30.5068,
+    "lmp_threshold_to_hold": 20.8914,
+    "belly_hours_in_gap": 10
+   },
+   {
+    "unit_id": "CC_REGULAR_NP15_p55393_committed",
+    "gap_hours": 19,
+    "mc_gap": 26.7485,
+    "lmp_threshold_to_hold": 16.627,
+    "belly_hours_in_gap": 10
+   },
+   {
+    "unit_id": "CC_REGULAR_NP15_p55393_committed",
+    "gap_hours": 12,
+    "mc_gap": 26.7485,
+    "lmp_threshold_to_hold": 10.7228,
+    "belly_hours_in_gap": 10
+   },
+   {
+    "unit_id": "CC_REGULAR_SP15_rest_p55518_committed",
+    "gap_hours": 11,
+    "mc_gap": 30.4455,
+    "lmp_threshold_to_hold": 12.963,
+    "belly_hours_in_gap": 10
+   },
+   {
+    "unit_id": "CC_REGULAR_SP15_rest_p55518_committed",
+    "gap_hours": 20,
+    "mc_gap": 30.013,
+    "lmp_threshold_to_hold": 20.3976,
+    "belly_hours_in_gap": 10
+   },
+   {
+    "unit_id": "CC_REGULAR_SP15_rest_p55656_committed",
+    "gap_hours": 13,
+    "mc_gap": 33.87,
+    "lmp_threshold_to_hold": 19.0771,
+    "belly_hours_in_gap": 10
+   },
+   {
+    "unit_id": "CC_REGULAR_SP15_rest_p55656_committed",
+    "gap_hours": 13,
+    "mc_gap": 29.4861,
+    "lmp_threshold_to_hold": 14.6932,
+    "belly_hours_in_gap": 10
+   },
+   {
+    "unit_id": "CC_REGULAR_NP15_p55933_committed",
+    "gap_hours": 13,
+    "mc_gap": 30.4712,
+    "lmp_threshold_to_hold": 15.6783,
+    "belly_hours_in_gap": 10
+   },
+   {
+    "unit_id": "CC_REGULAR_NP15_p56026_committed",
+    "gap_hours": 13,
+    "mc_gap": 33.9186,
+    "lmp_threshold_to_hold": 19.1257,
+    "belly_hours_in_gap": 10
+   }
+  ]
+ },
+ "per_unit": {
+  "CC_REGULAR_NP15_p260_committed": {
+   "plant_group": "CC_REGULAR",
+   "pmax": 234.864,
+   "target_mw": 234.864,
+   "min_down": 6.0,
+   "startup_per_mw": 50.0,
+   "econ_eligible": true,
+   "p0_runs_year": 269,
+   "p0_online_hours_year": 6869,
+   "ra_floor_hours_year": 1173,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 19,
+    "P_FLOOR": 447,
+    "S4": 0,
+    "S1": 0,
+    "S2": 0,
+    "S3_5": 410,
+    "S0": 0
+   }
+  },
+  "CT_PEAKER_LA_BASIN_p341_committed": {
+   "plant_group": "CT_PEAKER",
+   "pmax": 21.06,
+   "target_mw": 21.06,
+   "min_down": 1.0,
+   "startup_per_mw": 20.0,
+   "econ_eligible": false,
+   "p0_runs_year": 11,
+   "p0_online_hours_year": 17,
+   "ra_floor_hours_year": 0,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 78,
+    "S2": 0,
+    "S3_5": 0,
+    "S0": 798
+   }
+  },
+  "CC_REGULAR_LA_BASIN_p358_committed": {
+   "plant_group": "CC_REGULAR",
+   "pmax": 180.403,
+   "target_mw": 180.403,
+   "min_down": 4.0,
+   "startup_per_mw": 50.0,
+   "econ_eligible": true,
+   "p0_runs_year": 291,
+   "p0_online_hours_year": 4454,
+   "ra_floor_hours_year": 1371,
+   "belly": {
+    "P_UNAVAIL": 518,
+    "P_ON": 0,
+    "P_FLOOR": 215,
+    "S4": 0,
+    "S1": 0,
+    "S2": 5,
+    "S3_5": 138,
+    "S0": 0
+   }
+  },
+  "CT_PEAKER_LA_BASIN_p422_committed": {
+   "plant_group": "CT_PEAKER",
+   "pmax": 16.054,
+   "target_mw": 16.054,
+   "min_down": 1.0,
+   "startup_per_mw": 20.0,
+   "econ_eligible": false,
+   "p0_runs_year": 68,
+   "p0_online_hours_year": 232,
+   "ra_floor_hours_year": 0,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 801,
+    "S2": 0,
+    "S3_5": 0,
+    "S0": 75
+   }
+  },
+  "CC_REGULAR_LA_BASIN_p422_committed": {
+   "plant_group": "CC_REGULAR",
+   "pmax": 39.15,
+   "target_mw": 22.62,
+   "min_down": 4.0,
+   "startup_per_mw": 50.0,
+   "econ_eligible": true,
+   "p0_runs_year": 232,
+   "p0_online_hours_year": 953,
+   "ra_floor_hours_year": 272,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 0,
+    "S2": 774,
+    "S3_5": 97,
+    "S0": 5
+   }
+  },
+  "CT_PEAKER_NP15_p7449_committed": {
+   "plant_group": "CT_PEAKER",
+   "pmax": 11.29,
+   "target_mw": 11.29,
+   "min_down": 1.0,
+   "startup_per_mw": 20.0,
+   "econ_eligible": false,
+   "p0_runs_year": 501,
+   "p0_online_hours_year": 2576,
+   "ra_floor_hours_year": 0,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 876,
+    "S2": 0,
+    "S3_5": 0,
+    "S0": 0
+   }
+  },
+  "CC_REGULAR_LA_BASIN_p10169_committed": {
+   "plant_group": "CC_REGULAR",
+   "pmax": 5.636,
+   "target_mw": 5.636,
+   "min_down": 4.0,
+   "startup_per_mw": 50.0,
+   "econ_eligible": true,
+   "p0_runs_year": 371,
+   "p0_online_hours_year": 1894,
+   "ra_floor_hours_year": 455,
+   "belly": {
+    "P_UNAVAIL": 416,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 0,
+    "S2": 141,
+    "S3_5": 319,
+    "S0": 0
+   }
+  },
+  "CT_PEAKER_NP15_p10350_committed": {
+   "plant_group": "CT_PEAKER",
+   "pmax": 9.0,
+   "target_mw": 9.0,
+   "min_down": 1.0,
+   "startup_per_mw": 20.0,
+   "econ_eligible": false,
+   "p0_runs_year": 288,
+   "p0_online_hours_year": 1130,
+   "ra_floor_hours_year": 0,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 871,
+    "S2": 0,
+    "S3_5": 0,
+    "S0": 5
+   }
+  },
+  "CT_PEAKER_LA_BASIN_p10776_committed": {
+   "plant_group": "CT_PEAKER",
+   "pmax": 9.991,
+   "target_mw": 9.991,
+   "min_down": 1.0,
+   "startup_per_mw": 20.0,
+   "econ_eligible": false,
+   "p0_runs_year": 357,
+   "p0_online_hours_year": 1579,
+   "ra_floor_hours_year": 0,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 871,
+    "S2": 0,
+    "S3_5": 0,
+    "S0": 5
+   }
+  },
+  "CC_REGULAR_LA_BASIN_p50541_committed": {
+   "plant_group": "CC_REGULAR",
+   "pmax": 48.33,
+   "target_mw": 27.924,
+   "min_down": 4.0,
+   "startup_per_mw": 50.0,
+   "econ_eligible": true,
+   "p0_runs_year": 25,
+   "p0_online_hours_year": 62,
+   "ra_floor_hours_year": 21,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 0,
+    "S2": 78,
+    "S3_5": 0,
+    "S0": 798
+   }
+  },
+  "CC_REGULAR_NP15_p50748_committed": {
+   "plant_group": "CC_REGULAR",
+   "pmax": 14.4,
+   "target_mw": 8.32,
+   "min_down": 4.0,
+   "startup_per_mw": 50.0,
+   "econ_eligible": true,
+   "p0_runs_year": 101,
+   "p0_online_hours_year": 350,
+   "ra_floor_hours_year": 84,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 0,
+    "S2": 860,
+    "S3_5": 11,
+    "S0": 5
+   }
+  },
+  "CC_REGULAR_SP15_rest_p55077_committed": {
+   "plant_group": "CC_REGULAR",
+   "pmax": 166.563,
+   "target_mw": 96.236,
+   "min_down": 4.0,
+   "startup_per_mw": 50.0,
+   "econ_eligible": true,
+   "p0_runs_year": 353,
+   "p0_online_hours_year": 2868,
+   "ra_floor_hours_year": 729,
+   "belly": {
+    "P_UNAVAIL": 499,
+    "P_ON": 0,
+    "P_FLOOR": 40,
+    "S4": 0,
+    "S1": 0,
+    "S2": 22,
+    "S3_5": 315,
+    "S0": 0
+   }
+  },
+  "CC_REGULAR_ZP26_p55151_committed": {
+   "plant_group": "CC_REGULAR",
+   "pmax": 116.756,
+   "target_mw": 116.756,
+   "min_down": 4.0,
+   "startup_per_mw": 50.0,
+   "econ_eligible": true,
+   "p0_runs_year": 499,
+   "p0_online_hours_year": 4047,
+   "ra_floor_hours_year": 1355,
+   "belly": {
+    "P_UNAVAIL": 58,
+    "P_ON": 0,
+    "P_FLOOR": 119,
+    "S4": 0,
+    "S1": 0,
+    "S2": 38,
+    "S3_5": 661,
+    "S0": 0
+   }
+  },
+  "CC_REGULAR_ZP26_p55182_committed": {
+   "plant_group": "CC_REGULAR",
+   "pmax": 195.282,
+   "target_mw": 178.152,
+   "min_down": 6.0,
+   "startup_per_mw": 50.0,
+   "econ_eligible": true,
+   "p0_runs_year": 313,
+   "p0_online_hours_year": 6470,
+   "ra_floor_hours_year": 1058,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 3,
+    "P_FLOOR": 220,
+    "S4": 0,
+    "S1": 0,
+    "S2": 0,
+    "S3_5": 653,
+    "S0": 0
+   }
+  },
+  "CC_REGULAR_SP15_rest_p55295_committed": {
+   "plant_group": "CC_REGULAR",
+   "pmax": 146.568,
+   "target_mw": 146.568,
+   "min_down": 4.0,
+   "startup_per_mw": 50.0,
+   "econ_eligible": true,
+   "p0_runs_year": 547,
+   "p0_online_hours_year": 3887,
+   "ra_floor_hours_year": 1009,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 48,
+    "S4": 0,
+    "S1": 0,
+    "S2": 77,
+    "S3_5": 751,
+    "S0": 0
+   }
+  },
+  "CC_REGULAR_NP15_p55333_committed": {
+   "plant_group": "CC_REGULAR",
+   "pmax": 287.767,
+   "target_mw": 245.31,
+   "min_down": 6.0,
+   "startup_per_mw": 50.0,
+   "econ_eligible": true,
+   "p0_runs_year": 169,
+   "p0_online_hours_year": 4587,
+   "ra_floor_hours_year": 763,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 12,
+    "P_FLOOR": 215,
+    "S4": 0,
+    "S1": 0,
+    "S2": 510,
+    "S3_5": 139,
+    "S0": 0
+   }
+  },
+  "CC_REGULAR_SDGE_p55345_committed": {
+   "plant_group": "CC_REGULAR",
+   "pmax": 193.31,
+   "target_mw": 184.782,
+   "min_down": 6.0,
+   "startup_per_mw": 50.0,
+   "econ_eligible": true,
+   "p0_runs_year": 269,
+   "p0_online_hours_year": 6823,
+   "ra_floor_hours_year": 1034,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 3,
+    "P_FLOOR": 330,
+    "S4": 0,
+    "S1": 0,
+    "S2": 0,
+    "S3_5": 543,
+    "S0": 0
+   }
+  },
+  "CC_REGULAR_NP15_p55393_committed": {
+   "plant_group": "CC_REGULAR",
+   "pmax": 215.265,
+   "target_mw": 165.1,
+   "min_down": 6.0,
+   "startup_per_mw": 50.0,
+   "econ_eligible": true,
+   "p0_runs_year": 363,
+   "p0_online_hours_year": 6204,
+   "ra_floor_hours_year": 1137,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 2,
+    "P_FLOOR": 217,
+    "S4": 0,
+    "S1": 0,
+    "S2": 0,
+    "S3_5": 657,
+    "S0": 0
+   }
+  },
+  "CT_PEAKER_NP15_p55499_committed": {
+   "plant_group": "CT_PEAKER",
+   "pmax": 9.984,
+   "target_mw": 9.984,
+   "min_down": 1.0,
+   "startup_per_mw": 20.0,
+   "econ_eligible": false,
+   "p0_runs_year": 388,
+   "p0_online_hours_year": 1598,
+   "ra_floor_hours_year": 0,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 871,
+    "S2": 0,
+    "S3_5": 0,
+    "S0": 5
+   }
+  },
+  "CT_PEAKER_NP15_p55508_committed": {
+   "plant_group": "CT_PEAKER",
+   "pmax": 13.008,
+   "target_mw": 12.48,
+   "min_down": 1.0,
+   "startup_per_mw": 20.0,
+   "econ_eligible": false,
+   "p0_runs_year": 278,
+   "p0_online_hours_year": 1036,
+   "ra_floor_hours_year": 0,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 871,
+    "S2": 0,
+    "S3_5": 0,
+    "S0": 5
+   }
+  },
+  "CT_PEAKER_SDGE_p55510_committed": {
+   "plant_group": "CT_PEAKER",
+   "pmax": 6.0,
+   "target_mw": 6.0,
+   "min_down": 1.0,
+   "startup_per_mw": 20.0,
+   "econ_eligible": false,
+   "p0_runs_year": 389,
+   "p0_online_hours_year": 1659,
+   "ra_floor_hours_year": 0,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 871,
+    "S2": 0,
+    "S3_5": 0,
+    "S0": 5
+   }
+  },
+  "CT_PEAKER_SDGE_p55512_committed": {
+   "plant_group": "CT_PEAKER",
+   "pmax": 13.003,
+   "target_mw": 12.662,
+   "min_down": 1.0,
+   "startup_per_mw": 20.0,
+   "econ_eligible": false,
+   "p0_runs_year": 39,
+   "p0_online_hours_year": 145,
+   "ra_floor_hours_year": 0,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 845,
+    "S2": 0,
+    "S3_5": 0,
+    "S0": 31
+   }
+  },
+  "CT_PEAKER_SDGE_p55513_committed": {
+   "plant_group": "CT_PEAKER",
+   "pmax": 9.024,
+   "target_mw": 9.024,
+   "min_down": 1.0,
+   "startup_per_mw": 20.0,
+   "econ_eligible": false,
+   "p0_runs_year": 356,
+   "p0_online_hours_year": 1509,
+   "ra_floor_hours_year": 0,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 871,
+    "S2": 0,
+    "S3_5": 0,
+    "S0": 5
+   }
+  },
+  "CC_REGULAR_SP15_rest_p55518_committed": {
+   "plant_group": "CC_REGULAR",
+   "pmax": 339.84,
+   "target_mw": 249.6,
+   "min_down": 6.0,
+   "startup_per_mw": 50.0,
+   "econ_eligible": true,
+   "p0_runs_year": 310,
+   "p0_online_hours_year": 5570,
+   "ra_floor_hours_year": 1209,
+   "belly": {
+    "P_UNAVAIL": 298,
+    "P_ON": 0,
+    "P_FLOOR": 197,
+    "S4": 0,
+    "S1": 0,
+    "S2": 3,
+    "S3_5": 378,
+    "S0": 0
+   }
+  },
+  "CT_PEAKER_SDGE_p55538_committed": {
+   "plant_group": "CT_PEAKER",
+   "pmax": 7.02,
+   "target_mw": 7.02,
+   "min_down": 1.0,
+   "startup_per_mw": 20.0,
+   "econ_eligible": false,
+   "p0_runs_year": 542,
+   "p0_online_hours_year": 3293,
+   "ra_floor_hours_year": 0,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 876,
+    "S2": 0,
+    "S3_5": 0,
+    "S0": 0
+   }
+  },
+  "CT_PEAKER_SDGE_p55540_committed": {
+   "plant_group": "CT_PEAKER",
+   "pmax": 7.998,
+   "target_mw": 7.998,
+   "min_down": 1.0,
+   "startup_per_mw": 20.0,
+   "econ_eligible": false,
+   "p0_runs_year": 10,
+   "p0_online_hours_year": 30,
+   "ra_floor_hours_year": 0,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 18,
+    "S2": 0,
+    "S3_5": 0,
+    "S0": 858
+   }
+  },
+  "CT_PEAKER_LA_BASIN_p55541_committed": {
+   "plant_group": "CT_PEAKER",
+   "pmax": 21.945,
+   "target_mw": 21.945,
+   "min_down": 1.0,
+   "startup_per_mw": 20.0,
+   "econ_eligible": false,
+   "p0_runs_year": 298,
+   "p0_online_hours_year": 1132,
+   "ra_floor_hours_year": 0,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 871,
+    "S2": 0,
+    "S3_5": 0,
+    "S0": 5
+   }
+  },
+  "CT_PEAKER_SDGE_p55542_committed": {
+   "plant_group": "CT_PEAKER",
+   "pmax": 14.106,
+   "target_mw": 14.106,
+   "min_down": 1.0,
+   "startup_per_mw": 20.0,
+   "econ_eligible": false,
+   "p0_runs_year": 298,
+   "p0_online_hours_year": 1118,
+   "ra_floor_hours_year": 0,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 871,
+    "S2": 0,
+    "S3_5": 0,
+    "S0": 5
+   }
+  },
+  "CT_PEAKER_NP15_p55625_committed": {
+   "plant_group": "CT_PEAKER",
+   "pmax": 6.0,
+   "target_mw": 6.0,
+   "min_down": 1.0,
+   "startup_per_mw": 20.0,
+   "econ_eligible": false,
+   "p0_runs_year": 285,
+   "p0_online_hours_year": 1078,
+   "ra_floor_hours_year": 0,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 871,
+    "S2": 0,
+    "S3_5": 0,
+    "S0": 5
+   }
+  },
+  "CT_PEAKER_NP15_p55626_committed": {
+   "plant_group": "CT_PEAKER",
+   "pmax": 16.008,
+   "target_mw": 11.96,
+   "min_down": 1.0,
+   "startup_per_mw": 20.0,
+   "econ_eligible": false,
+   "p0_runs_year": 255,
+   "p0_online_hours_year": 974,
+   "ra_floor_hours_year": 0,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 871,
+    "S2": 0,
+    "S3_5": 0,
+    "S0": 5
+   }
+  },
+  "CT_PEAKER_NP15_p55627_committed": {
+   "plant_group": "CT_PEAKER",
+   "pmax": 14.976,
+   "target_mw": 12.48,
+   "min_down": 1.0,
+   "startup_per_mw": 20.0,
+   "econ_eligible": false,
+   "p0_runs_year": 265,
+   "p0_online_hours_year": 997,
+   "ra_floor_hours_year": 0,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 871,
+    "S2": 0,
+    "S3_5": 0,
+    "S0": 5
+   }
+  },
+  "CC_REGULAR_SP15_rest_p55656_committed": {
+   "plant_group": "CC_REGULAR",
+   "pmax": 174.496,
+   "target_mw": 174.496,
+   "min_down": 4.0,
+   "startup_per_mw": 50.0,
+   "econ_eligible": true,
+   "p0_runs_year": 547,
+   "p0_online_hours_year": 3743,
+   "ra_floor_hours_year": 1268,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 80,
+    "S4": 0,
+    "S1": 0,
+    "S2": 134,
+    "S3_5": 662,
+    "S0": 0
+   }
+  },
+  "CT_PEAKER_ZP26_p55698_committed": {
+   "plant_group": "CT_PEAKER",
+   "pmax": 15.973,
+   "target_mw": 15.973,
+   "min_down": 1.0,
+   "startup_per_mw": 20.0,
+   "econ_eligible": false,
+   "p0_runs_year": 294,
+   "p0_online_hours_year": 1135,
+   "ra_floor_hours_year": 0,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 871,
+    "S2": 0,
+    "S3_5": 0,
+    "S0": 5
+   }
+  },
+  "CC_REGULAR_NP15_p55748_committed": {
+   "plant_group": "CC_REGULAR",
+   "pmax": 46.833,
+   "target_mw": 46.833,
+   "min_down": 4.0,
+   "startup_per_mw": 50.0,
+   "econ_eligible": true,
+   "p0_runs_year": 226,
+   "p0_online_hours_year": 1287,
+   "ra_floor_hours_year": 478,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 8,
+    "S4": 0,
+    "S1": 0,
+    "S2": 621,
+    "S3_5": 243,
+    "S0": 4
+   }
+  },
+  "CT_PEAKER_NP15_p55807_committed": {
+   "plant_group": "CT_PEAKER",
+   "pmax": 14.045,
+   "target_mw": 14.045,
+   "min_down": 1.0,
+   "startup_per_mw": 20.0,
+   "econ_eligible": false,
+   "p0_runs_year": 378,
+   "p0_online_hours_year": 1597,
+   "ra_floor_hours_year": 0,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 871,
+    "S2": 0,
+    "S3_5": 0,
+    "S0": 5
+   }
+  },
+  "CT_PEAKER_NP15_p55810_committed": {
+   "plant_group": "CT_PEAKER",
+   "pmax": 15.984,
+   "target_mw": 15.984,
+   "min_down": 1.0,
+   "startup_per_mw": 20.0,
+   "econ_eligible": false,
+   "p0_runs_year": 368,
+   "p0_online_hours_year": 1543,
+   "ra_floor_hours_year": 0,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 871,
+    "S2": 0,
+    "S3_5": 0,
+    "S0": 5
+   }
+  },
+  "CT_PEAKER_NP15_p55847_committed": {
+   "plant_group": "CT_PEAKER",
+   "pmax": 15.984,
+   "target_mw": 12.48,
+   "min_down": 1.0,
+   "startup_per_mw": 20.0,
+   "econ_eligible": false,
+   "p0_runs_year": 102,
+   "p0_online_hours_year": 350,
+   "ra_floor_hours_year": 0,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 871,
+    "S2": 0,
+    "S3_5": 0,
+    "S0": 5
+   }
+  },
+  "CT_PEAKER_NP15_p55855_committed": {
+   "plant_group": "CT_PEAKER",
+   "pmax": 9.353,
+   "target_mw": 9.353,
+   "min_down": 1.0,
+   "startup_per_mw": 20.0,
+   "econ_eligible": false,
+   "p0_runs_year": 203,
+   "p0_online_hours_year": 797,
+   "ra_floor_hours_year": 0,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 871,
+    "S2": 0,
+    "S3_5": 0,
+    "S0": 5
+   }
+  },
+  "CC_REGULAR_NP15_p55933_committed": {
+   "plant_group": "CC_REGULAR",
+   "pmax": 98.813,
+   "target_mw": 87.386,
+   "min_down": 4.0,
+   "startup_per_mw": 50.0,
+   "econ_eligible": true,
+   "p0_runs_year": 439,
+   "p0_online_hours_year": 2781,
+   "ra_floor_hours_year": 878,
+   "belly": {
+    "P_UNAVAIL": 324,
+    "P_ON": 0,
+    "P_FLOOR": 45,
+    "S4": 0,
+    "S1": 0,
+    "S2": 107,
+    "S3_5": 400,
+    "S0": 0
+   }
+  },
+  "CT_PEAKER_LA_BASIN_p55951_committed": {
+   "plant_group": "CT_PEAKER",
+   "pmax": 7.0,
+   "target_mw": 7.0,
+   "min_down": 1.0,
+   "startup_per_mw": 20.0,
+   "econ_eligible": false,
+   "p0_runs_year": 123,
+   "p0_online_hours_year": 428,
+   "ra_floor_hours_year": 0,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 871,
+    "S2": 0,
+    "S3_5": 0,
+    "S0": 5
+   }
+  },
+  "CT_PEAKER_NP15_p55963_committed": {
+   "plant_group": "CT_PEAKER",
+   "pmax": 15.98,
+   "target_mw": 12.22,
+   "min_down": 1.0,
+   "startup_per_mw": 20.0,
+   "econ_eligible": false,
+   "p0_runs_year": 243,
+   "p0_online_hours_year": 945,
+   "ra_floor_hours_year": 0,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 871,
+    "S2": 0,
+    "S3_5": 0,
+    "S0": 5
+   }
+  },
+  "CC_REGULAR_SDGE_p55985_committed": {
+   "plant_group": "CC_REGULAR",
+   "pmax": 195.65,
+   "target_mw": 145.34,
+   "min_down": 6.0,
+   "startup_per_mw": 50.0,
+   "econ_eligible": true,
+   "p0_runs_year": 82,
+   "p0_online_hours_year": 3309,
+   "ra_floor_hours_year": 402,
+   "belly": {
+    "P_UNAVAIL": 753,
+    "P_ON": 0,
+    "P_FLOOR": 110,
+    "S4": 0,
+    "S1": 0,
+    "S2": 0,
+    "S3_5": 13,
+    "S0": 0
+   }
+  },
+  "CC_REGULAR_NP15_p56026_committed": {
+   "plant_group": "CC_REGULAR",
+   "pmax": 96.866,
+   "target_mw": 40.04,
+   "min_down": 4.0,
+   "startup_per_mw": 50.0,
+   "econ_eligible": true,
+   "p0_runs_year": 470,
+   "p0_online_hours_year": 3262,
+   "ra_floor_hours_year": 1241,
+   "belly": {
+    "P_UNAVAIL": 166,
+    "P_ON": 0,
+    "P_FLOOR": 76,
+    "S4": 0,
+    "S1": 0,
+    "S2": 131,
+    "S3_5": 503,
+    "S0": 0
+   }
+  },
+  "CC_REGULAR_LA_BASIN_p56041_committed": {
+   "plant_group": "CC_REGULAR",
+   "pmax": 32.76,
+   "target_mw": 32.76,
+   "min_down": 4.0,
+   "startup_per_mw": 50.0,
+   "econ_eligible": true,
+   "p0_runs_year": 500,
+   "p0_online_hours_year": 2821,
+   "ra_floor_hours_year": 991,
+   "belly": {
+    "P_UNAVAIL": 43,
+    "P_ON": 0,
+    "P_FLOOR": 33,
+    "S4": 0,
+    "S1": 0,
+    "S2": 154,
+    "S3_5": 646,
+    "S0": 0
+   }
+  },
+  "CT_PEAKER_LA_BASIN_p56143_committed": {
+   "plant_group": "CT_PEAKER",
+   "pmax": 19.992,
+   "target_mw": 19.992,
+   "min_down": 1.0,
+   "startup_per_mw": 20.0,
+   "econ_eligible": false,
+   "p0_runs_year": 379,
+   "p0_online_hours_year": 1676,
+   "ra_floor_hours_year": 0,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 871,
+    "S2": 0,
+    "S3_5": 0,
+    "S0": 5
+   }
+  },
+  "CT_PEAKER_SDGE_p56232_committed": {
+   "plant_group": "CT_PEAKER",
+   "pmax": 29.046,
+   "target_mw": 24.44,
+   "min_down": 1.0,
+   "startup_per_mw": 20.0,
+   "econ_eligible": false,
+   "p0_runs_year": 377,
+   "p0_online_hours_year": 1610,
+   "ra_floor_hours_year": 0,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 871,
+    "S2": 0,
+    "S3_5": 0,
+    "S0": 5
+   }
+  },
+  "CT_PEAKER_NP15_p56239_committed": {
+   "plant_group": "CT_PEAKER",
+   "pmax": 18.048,
+   "target_mw": 18.048,
+   "min_down": 1.0,
+   "startup_per_mw": 20.0,
+   "econ_eligible": false,
+   "p0_runs_year": 459,
+   "p0_online_hours_year": 2128,
+   "ra_floor_hours_year": 0,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 876,
+    "S2": 0,
+    "S3_5": 0,
+    "S0": 0
+   }
+  },
+  "CC_REGULAR_NP15_p56467_committed": {
+   "plant_group": "CC_REGULAR",
+   "pmax": 163.75,
+   "target_mw": 163.75,
+   "min_down": 6.0,
+   "startup_per_mw": 50.0,
+   "econ_eligible": true,
+   "p0_runs_year": 388,
+   "p0_online_hours_year": 5902,
+   "ra_floor_hours_year": 828,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 192,
+    "S4": 0,
+    "S1": 0,
+    "S2": 11,
+    "S3_5": 673,
+    "S0": 0
+   }
+  },
+  "CT_PEAKER_LA_BASIN_p56471_committed": {
+   "plant_group": "CT_PEAKER",
+   "pmax": 17.983,
+   "target_mw": 12.74,
+   "min_down": 1.0,
+   "startup_per_mw": 20.0,
+   "econ_eligible": false,
+   "p0_runs_year": 394,
+   "p0_online_hours_year": 1763,
+   "ra_floor_hours_year": 0,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 871,
+    "S2": 0,
+    "S3_5": 0,
+    "S0": 5
+   }
+  },
+  "CT_PEAKER_LA_BASIN_p56472_committed": {
+   "plant_group": "CT_PEAKER",
+   "pmax": 2.99,
+   "target_mw": 2.99,
+   "min_down": 1.0,
+   "startup_per_mw": 20.0,
+   "econ_eligible": false,
+   "p0_runs_year": 385,
+   "p0_online_hours_year": 1710,
+   "ra_floor_hours_year": 0,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 871,
+    "S2": 0,
+    "S3_5": 0,
+    "S0": 5
+   }
+  },
+  "CT_PEAKER_LA_BASIN_p56473_committed": {
+   "plant_group": "CT_PEAKER",
+   "pmax": 24.01,
+   "target_mw": 12.74,
+   "min_down": 1.0,
+   "startup_per_mw": 20.0,
+   "econ_eligible": false,
+   "p0_runs_year": 406,
+   "p0_online_hours_year": 1893,
+   "ra_floor_hours_year": 0,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 871,
+    "S2": 0,
+    "S3_5": 0,
+    "S0": 5
+   }
+  },
+  "CT_PEAKER_LA_BASIN_p56474_committed": {
+   "plant_group": "CT_PEAKER",
+   "pmax": 16.023,
+   "target_mw": 12.74,
+   "min_down": 1.0,
+   "startup_per_mw": 20.0,
+   "econ_eligible": false,
+   "p0_runs_year": 352,
+   "p0_online_hours_year": 1525,
+   "ra_floor_hours_year": 0,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 871,
+    "S2": 0,
+    "S3_5": 0,
+    "S0": 5
+   }
+  },
+  "CT_PEAKER_LA_BASIN_p56475_committed": {
+   "plant_group": "CT_PEAKER",
+   "pmax": 3.008,
+   "target_mw": 3.008,
+   "min_down": 1.0,
+   "startup_per_mw": 20.0,
+   "econ_eligible": false,
+   "p0_runs_year": 344,
+   "p0_online_hours_year": 1474,
+   "ra_floor_hours_year": 0,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 871,
+    "S2": 0,
+    "S3_5": 0,
+    "S0": 5
+   }
+  },
+  "CC_REGULAR_NP15_p56476_committed": {
+   "plant_group": "CC_REGULAR",
+   "pmax": 246.641,
+   "target_mw": 161.122,
+   "min_down": 6.0,
+   "startup_per_mw": 50.0,
+   "econ_eligible": true,
+   "p0_runs_year": 338,
+   "p0_online_hours_year": 6371,
+   "ra_floor_hours_year": 1153,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 7,
+    "P_FLOOR": 312,
+    "S4": 0,
+    "S1": 0,
+    "S2": 0,
+    "S3_5": 557,
+    "S0": 0
+   }
+  },
+  "CC_REGULAR_NP15_p56532_committed": {
+   "plant_group": "CC_REGULAR",
+   "pmax": 222.269,
+   "target_mw": 185.224,
+   "min_down": 6.0,
+   "startup_per_mw": 50.0,
+   "econ_eligible": true,
+   "p0_runs_year": 363,
+   "p0_online_hours_year": 6160,
+   "ra_floor_hours_year": 1188,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 1,
+    "P_FLOOR": 244,
+    "S4": 0,
+    "S1": 0,
+    "S2": 0,
+    "S3_5": 631,
+    "S0": 0
+   }
+  },
+  "CT_PEAKER_NP15_p56639_committed": {
+   "plant_group": "CT_PEAKER",
+   "pmax": 19.126,
+   "target_mw": 19.126,
+   "min_down": 1.0,
+   "startup_per_mw": 20.0,
+   "econ_eligible": false,
+   "p0_runs_year": 108,
+   "p0_online_hours_year": 366,
+   "ra_floor_hours_year": 0,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 871,
+    "S2": 0,
+    "S3_5": 0,
+    "S0": 5
+   }
+  },
+  "CT_PEAKER_NP15_p56803_committed": {
+   "plant_group": "CT_PEAKER",
+   "pmax": 74.108,
+   "target_mw": 74.108,
+   "min_down": 1.0,
+   "startup_per_mw": 20.0,
+   "econ_eligible": false,
+   "p0_runs_year": 484,
+   "p0_online_hours_year": 2269,
+   "ra_floor_hours_year": 0,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 876,
+    "S2": 0,
+    "S3_5": 0,
+    "S0": 0
+   }
+  },
+  "CT_PEAKER_SDGE_p56914_committed": {
+   "plant_group": "CT_PEAKER",
+   "pmax": 17.971,
+   "target_mw": 17.971,
+   "min_down": 1.0,
+   "startup_per_mw": 20.0,
+   "econ_eligible": false,
+   "p0_runs_year": 417,
+   "p0_online_hours_year": 1892,
+   "ra_floor_hours_year": 0,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 871,
+    "S2": 0,
+    "S3_5": 0,
+    "S0": 5
+   }
+  },
+  "CT_PEAKER_SDGE_p57001_committed": {
+   "plant_group": "CT_PEAKER",
+   "pmax": 15.004,
+   "target_mw": 15.004,
+   "min_down": 1.0,
+   "startup_per_mw": 20.0,
+   "econ_eligible": false,
+   "p0_runs_year": 369,
+   "p0_online_hours_year": 1572,
+   "ra_floor_hours_year": 0,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 871,
+    "S2": 0,
+    "S3_5": 0,
+    "S0": 5
+   }
+  },
+  "CT_PEAKER_LA_BASIN_p57027_committed": {
+   "plant_group": "CT_PEAKER",
+   "pmax": 20.938,
+   "target_mw": 20.938,
+   "min_down": 1.0,
+   "startup_per_mw": 20.0,
+   "econ_eligible": false,
+   "p0_runs_year": 265,
+   "p0_online_hours_year": 1012,
+   "ra_floor_hours_year": 0,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 871,
+    "S2": 0,
+    "S3_5": 0,
+    "S0": 5
+   }
+  },
+  "CT_PEAKER_NP15_p57267_committed": {
+   "plant_group": "CT_PEAKER",
+   "pmax": 81.111,
+   "target_mw": 81.111,
+   "min_down": 1.0,
+   "startup_per_mw": 20.0,
+   "econ_eligible": false,
+   "p0_runs_year": 103,
+   "p0_online_hours_year": 352,
+   "ra_floor_hours_year": 0,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 871,
+    "S2": 0,
+    "S3_5": 0,
+    "S0": 5
+   }
+  },
+  "CT_PEAKER_LA_BASIN_p57482_committed": {
+   "plant_group": "CT_PEAKER",
+   "pmax": 49.6,
+   "target_mw": 49.6,
+   "min_down": 1.0,
+   "startup_per_mw": 20.0,
+   "econ_eligible": false,
+   "p0_runs_year": 496,
+   "p0_online_hours_year": 2493,
+   "ra_floor_hours_year": 0,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 876,
+    "S2": 0,
+    "S3_5": 0,
+    "S0": 0
+   }
+  },
+  "CT_PEAKER_NP15_p57483_committed": {
+   "plant_group": "CT_PEAKER",
+   "pmax": 24.95,
+   "target_mw": 24.95,
+   "min_down": 1.0,
+   "startup_per_mw": 20.0,
+   "econ_eligible": false,
+   "p0_runs_year": 382,
+   "p0_online_hours_year": 1645,
+   "ra_floor_hours_year": 0,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 871,
+    "S2": 0,
+    "S3_5": 0,
+    "S0": 5
+   }
+  },
+  "CT_PEAKER_LA_BASIN_p57515_committed": {
+   "plant_group": "CT_PEAKER",
+   "pmax": 43.043,
+   "target_mw": 43.043,
+   "min_down": 1.0,
+   "startup_per_mw": 20.0,
+   "econ_eligible": false,
+   "p0_runs_year": 516,
+   "p0_online_hours_year": 2740,
+   "ra_floor_hours_year": 0,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 876,
+    "S2": 0,
+    "S3_5": 0,
+    "S0": 0
+   }
+  },
+  "CT_PEAKER_SDGE_p57555_committed": {
+   "plant_group": "CT_PEAKER",
+   "pmax": 26.076,
+   "target_mw": 26.076,
+   "min_down": 1.0,
+   "startup_per_mw": 20.0,
+   "econ_eligible": false,
+   "p0_runs_year": 537,
+   "p0_online_hours_year": 2951,
+   "ra_floor_hours_year": 0,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 876,
+    "S2": 0,
+    "S3_5": 0,
+    "S0": 0
+   }
+  },
+  "CC_REGULAR_NP15_p57564_committed": {
+   "plant_group": "CC_REGULAR",
+   "pmax": 11.008,
+   "target_mw": 11.008,
+   "min_down": 4.0,
+   "startup_per_mw": 50.0,
+   "econ_eligible": true,
+   "p0_runs_year": 153,
+   "p0_online_hours_year": 541,
+   "ra_floor_hours_year": 90,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 0,
+    "S2": 831,
+    "S3_5": 40,
+    "S0": 5
+   }
+  },
+  "CC_REGULAR_LA_BASIN_p57901_committed": {
+   "plant_group": "CC_REGULAR",
+   "pmax": 241.83,
+   "target_mw": 139.724,
+   "min_down": 6.0,
+   "startup_per_mw": 50.0,
+   "econ_eligible": true,
+   "p0_runs_year": 44,
+   "p0_online_hours_year": 1959,
+   "ra_floor_hours_year": 157,
+   "belly": {
+    "P_UNAVAIL": 805,
+    "P_ON": 0,
+    "P_FLOOR": 58,
+    "S4": 0,
+    "S1": 0,
+    "S2": 3,
+    "S3_5": 10,
+    "S0": 0
+   }
+  },
+  "CC_REGULAR_NP15_p57978_committed": {
+   "plant_group": "CC_REGULAR",
+   "pmax": 111.227,
+   "target_mw": 75.114,
+   "min_down": 6.0,
+   "startup_per_mw": 50.0,
+   "econ_eligible": true,
+   "p0_runs_year": 463,
+   "p0_online_hours_year": 2874,
+   "ra_floor_hours_year": 767,
+   "belly": {
+    "P_UNAVAIL": 274,
+    "P_ON": 0,
+    "P_FLOOR": 31,
+    "S4": 0,
+    "S1": 0,
+    "S2": 106,
+    "S3_5": 465,
+    "S0": 0
+   }
+  },
+  "CT_PEAKER_SP15_rest_p58122_committed": {
+   "plant_group": "CT_PEAKER",
+   "pmax": 17.001,
+   "target_mw": 15.73,
+   "min_down": 1.0,
+   "startup_per_mw": 20.0,
+   "econ_eligible": false,
+   "p0_runs_year": 383,
+   "p0_online_hours_year": 1707,
+   "ra_floor_hours_year": 0,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 871,
+    "S2": 0,
+    "S3_5": 0,
+    "S0": 5
+   }
+  },
+  "CT_PEAKER_LA_BASIN_p60698_committed": {
+   "plant_group": "CT_PEAKER",
+   "pmax": 9.024,
+   "target_mw": 9.024,
+   "min_down": 1.0,
+   "startup_per_mw": 20.0,
+   "econ_eligible": false,
+   "p0_runs_year": 246,
+   "p0_online_hours_year": 908,
+   "ra_floor_hours_year": 0,
+   "belly": {
+    "P_UNAVAIL": 0,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 871,
+    "S2": 0,
+    "S3_5": 0,
+    "S0": 5
+   }
+  },
+  "CC_REGULAR_LA_BASIN_p62115_committed": {
+   "plant_group": "CC_REGULAR",
+   "pmax": 160.686,
+   "target_mw": 160.686,
+   "min_down": 8.0,
+   "startup_per_mw": 50.0,
+   "econ_eligible": true,
+   "p0_runs_year": 133,
+   "p0_online_hours_year": 6321,
+   "ra_floor_hours_year": 593,
+   "belly": {
+    "P_UNAVAIL": 419,
+    "P_ON": 18,
+    "P_FLOOR": 307,
+    "S4": 0,
+    "S1": 0,
+    "S2": 6,
+    "S3_5": 126,
+    "S0": 0
+   }
+  },
+  "CC_REGULAR_LA_BASIN_p62116_committed": {
+   "plant_group": "CC_REGULAR",
+   "pmax": 162.914,
+   "target_mw": 162.914,
+   "min_down": 8.0,
+   "startup_per_mw": 50.0,
+   "econ_eligible": true,
+   "p0_runs_year": 126,
+   "p0_online_hours_year": 6177,
+   "ra_floor_hours_year": 561,
+   "belly": {
+    "P_UNAVAIL": 429,
+    "P_ON": 19,
+    "P_FLOOR": 302,
+    "S4": 0,
+    "S1": 0,
+    "S2": 0,
+    "S3_5": 126,
+    "S0": 0
+   }
+  },
+  "CC_REGULAR_SP15_rest_p55853_committed": {
+   "plant_group": "CC_REGULAR",
+   "pmax": 310.5,
+   "target_mw": 179.4,
+   "min_down": 6.0,
+   "startup_per_mw": 50.0,
+   "econ_eligible": true,
+   "p0_runs_year": 0,
+   "p0_online_hours_year": 0,
+   "ra_floor_hours_year": 0,
+   "belly": {
+    "P_UNAVAIL": 876,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 0,
+    "S2": 0,
+    "S3_5": 0,
+    "S0": 0
+   }
+  },
+  "CC_REGULAR_SP15_rest_p58083_committed": {
+   "plant_group": "CC_REGULAR",
+   "pmax": 5.85,
+   "target_mw": 3.11,
+   "min_down": 4.0,
+   "startup_per_mw": 50.0,
+   "econ_eligible": true,
+   "p0_runs_year": 0,
+   "p0_online_hours_year": 0,
+   "ra_floor_hours_year": 0,
+   "belly": {
+    "P_UNAVAIL": 876,
+    "P_ON": 0,
+    "P_FLOOR": 0,
+    "S4": 0,
+    "S1": 0,
+    "S2": 0,
+    "S3_5": 0,
+    "S0": 0
+   }
+  }
+ }
+}
