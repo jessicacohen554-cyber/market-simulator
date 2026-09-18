@@ -783,6 +783,7 @@ def run_year(
     chp_layup_duty_split: bool | None = None,
     chp_layup_duty_curve: bool | None = None,
     egrid_identity_heat_rates: bool | None = None,
+    measured_ct_heat_rates: bool | None = None,
     egrid_family_heat_rates: bool | None = None,
     egrid_steam_collapse_heat_rates: bool | None = None,
     nyiso_gas_bridge_cc_min_run_hours: float | None = None,
@@ -1872,6 +1873,8 @@ def run_year(
         config = config.with_overrides(
             egrid_identity_heat_rates=egrid_identity_heat_rates
         )
+    if measured_ct_heat_rates is not None:
+        config = config.with_overrides(measured_ct_heat_rates=measured_ct_heat_rates)
     if egrid_family_heat_rates is not None:
         config = config.with_overrides(egrid_family_heat_rates=egrid_family_heat_rates)
     if egrid_steam_collapse_heat_rates is not None:
