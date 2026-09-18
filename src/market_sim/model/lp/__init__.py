@@ -264,6 +264,40 @@ class DispatchResult:
     # Both ``None`` when the LP carried no generators.
     gen_mc: np.ndarray | None = None
     gen_reduced_cost: np.ndarray | None = None
+    # --- marginal emission rate (the "emissions dual") ---------------------
+    # ``(n_zones, T)`` tCO2/MWh: the exact dCO2/d(demand[z,t]) at this solve's
+    # own optimal basis, i.e. the CO2 consequence of one more MWh of load in
+    # zone z at hour t -- equivalently, of one FEWER MWh delivered by a new
+    # zero-carbon resource there.
+    #
+    # It is the same linear-algebra object as the price. The zonal price is
+    # ``lambda = c_B' B^-1`` (the cost vector restricted to the basic columns,
+    # times the basis inverse); the marginal emission rate is ``r_B' B^-1``
+    # with the per-generator CO2 rate vector ``r`` in place of the cost vector
+    # ``c``. So it is a DUAL, not a lookup: it is NOT "the emission rate of the
+    # unit whose mc equals the price". That naive read is wrong here and
+    # measurably so -- with reserve co-optimization, min-gen floors and
+    # transmission rows charging rent, an interior unit's mc is not the energy
+    # price (the generation column's own stationarity identity, above, is why),
+    # and the tranched offer curves put several columns at the margin at once.
+    #
+    # Two properties a consumer must carry:
+    #
+    # * **Direction.** At a degenerate vertex the dual is one-sided, exactly as
+    #   the price is, and HiGHS reports the DOWN derivative. That is the right
+    #   direction for abatement questions -- a new wind or solar MWh removes
+    #   net load -- but it is not the cost of serving one more MWh of load,
+    #   which at such an hour can be strictly larger.
+    # * **Boundary.** Zero-carbon columns carry rate 0, so an hour whose margin
+    #   is wind, solar, hydro, nuclear or storage reads ~0. Import pseudo-units
+    #   also carry rate 0 BY DESIGN (imports are outside the modeled emissions
+    #   boundary; see ``interchange.import_nodes`` and the reported-only
+    #   ``results.export.import_co2_mt_reported``), so an import-marginal hour
+    #   reads 0 and understates true system consequence.
+    #
+    # ``None`` when the LP carried no generators or the emissions re-pricing
+    # could not be completed (it is a diagnostic; it never fails a solve).
+    marginal_emission_rate: np.ndarray | None = None
 
 
 @dataclass

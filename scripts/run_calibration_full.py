@@ -22,6 +22,10 @@ A run bundle lives in ``results/calibration/<iso>/<timestamp>/`` and holds:
     — committable slim sidecars (class-hour
     dispatch aggregate; per-year system slices; per-tech storage; per-unit
     dispatch AND availability cap; per-link/per-group flow, dual and limit;
+    per-zone-hour MARGINAL EMISSION RATE (``marginal_emission_rate``, the
+    emissions dual on the ``system`` slice — tCO2 per marginal MWh, the basis
+    for any marginal-abatement-cost reading; see
+    ``DispatchResult.marginal_emission_rate``);
     per-reserve-family balance dual, requirement and ORDC shortfall — the only
     artifact in which a LOCATIONAL reserve family's binding is observable,
     since ``system``'s ``reserve_price`` is the cross-family sum broadcast
@@ -1294,6 +1298,14 @@ def _system_frame(
 ) -> pd.DataFrame:
     """Return the per-zone hourly price / slack / demand frame.
 
+    Also carries ``marginal_emission_rate`` (tCO2/MWh) when the solve produced
+    one — the emissions dual, i.e. the CO2 consequence of a marginal MWh in
+    that zone-hour. It is the committable basis for marginal-abatement-cost
+    work; ``DispatchResult.marginal_emission_rate`` states what it is and the
+    two properties (direction at a degenerate vertex, and the zero-carbon /
+    import boundary) a consumer has to carry. Absent for a year restored from
+    a cache written before the dual was wired.
+
     When energy+reserve co-optimization is on, ``result.reserve_price`` is the
     reserve-balance-row dual (the reserve clearing price already folded into the
     energy ``price`` via the shared-headroom constraint); it is persisted as a
@@ -1539,6 +1551,18 @@ def _system_frame(
                 ordc_adder = np.asarray(rpf, dtype=float)[:T, -1].copy()
             else:
                 ordc_adder = rp.copy()
+    # Marginal emission rate (tCO2/MWh), the emissions dual -- see
+    # ``DispatchResult.marginal_emission_rate``. Written RAW, i.e. against the
+    # LP's own energy-balance dual rather than the overlaid ``price`` column
+    # below: the ORDC / RTORDPA / DAM-AS adders are POST-SOLVE price adders
+    # that leave dispatch untouched by construction, so they cannot move a CO2
+    # response and adding them here would only invite a reader to difference
+    # two objects that never shared a basis.
+    mer = getattr(result, "marginal_emission_rate", None)
+    if mer is not None:
+        mer = np.asarray(mer, dtype=float)
+        if mer.shape != (n_zones, T):
+            mer = None
     total_overlay = np.zeros(T, dtype=float)
     if overlay is not None:
         total_overlay = total_overlay + overlay
@@ -1559,6 +1583,8 @@ def _system_frame(
             "demand": demand[z, :T],
             "reserve_price": rp,
         }
+        if mer is not None:
+            cols["marginal_emission_rate"] = mer[z]
         if overlay is not None:
             cols["rtordpa_overlay"] = overlay
         if dam_as is not None:

@@ -1508,6 +1508,19 @@ class DispatchModel:
                     self._hydro_cascade.plant_codes, dtype=int
                 )
 
+        # Read the objective and the model status BEFORE the emissions
+        # re-pricing below. That re-pricing leaves the CO2 rates installed as
+        # the objective and ends on a deliberate zero-iteration ``run()``, so
+        # afterwards ``getObjectiveValue()`` reports the CO2 total and
+        # ``getModelStatus()`` reports ``kIterationLimit`` -- neither of which
+        # is this solve's answer. The next pass reinstalls the real cost vector
+        # (``changeColsCost`` runs on every pass), and everything else returned
+        # here is already extracted, so these two reads are the only ones that
+        # have to happen first.
+        objective_value = h.getObjectiveValue()
+        status = h.modelStatusToString(h.getModelStatus())
+        marginal_emission_rate = self._marginal_emission_rate(n_zones, T)
+
         return DispatchResult(
             dispatch=dispatch,
             wind_dispatched=wind_dispatched,
@@ -1515,12 +1528,13 @@ class DispatchModel:
             slack=slack,
             dump=dump,
             prices=prices,
+            marginal_emission_rate=marginal_emission_rate,
             storage_charge=storage_charge,
             storage_discharge=storage_discharge,
             storage_soc=storage_soc,
             flows=flows,
-            objective_value=h.getObjectiveValue(),
-            status=h.modelStatusToString(h.getModelStatus()),
+            objective_value=objective_value,
+            status=status,
             reserve_dispatch=reserve_dispatch,
             reserve_price=reserve_price,
             reserve_price_by_family=reserve_price_by_family,
@@ -1562,6 +1576,107 @@ class DispatchModel:
             hydro_cascade_water_value=cascade_water_value,
             hydro_cascade_plant_codes=cascade_plant_codes,
         )
+
+    def _marginal_emission_rate(self, n_zones: int, T: int) -> "np.ndarray | None":
+        """Return ``(n_zones, T)`` dCO2/d(demand) at the solve's optimal basis.
+
+        The marginal emission rate is the **emissions dual**: the price is
+        ``lambda = c_B' B^-1``, and this is the same product with the
+        per-generator CO2 rate vector in place of the cost vector. It is
+        therefore the exact CO2 response to a marginal MWh of load in that
+        zone-hour, distributed over the whole re-dispatch the basis implies --
+        not the rate of any single "marginal unit", which is not even
+        well-defined here (the tranched offer curves and the co-optimized
+        reserve rows routinely put several generation columns at the margin
+        at once, and an interior column's ``mc`` is not the energy price).
+
+        **How it is computed, and why this way.** HiGHS exposes
+        ``getBasisTransposeSolve``, which would give ``r_B' B^-1`` in one
+        triangular solve -- but its right-hand side is indexed by BASIS
+        POSITION, and highspy exposes no accessor for HiGHS's ``basicIndex``
+        ordering. Assuming the natural sorted ``[columns | row slacks]`` order
+        is wrong: measured against brute-force RHS perturbation over 60
+        randomized LPs it disagreed on 58 of them. So the dual is obtained the
+        ordering-free way instead -- freeze the cost-optimal basis, swap the
+        objective to the CO2 rate vector, and re-price with the simplex
+        iteration limit at zero, which makes HiGHS report ``r_B' B^-1`` in ROW
+        order with no permutation to recover. On the same 60 LPs that agrees
+        with perturbation on 59; the one exception is a degenerate vertex where
+        the derivative is genuinely one-sided and the dual returns the DOWN
+        side (``tests/unit/model/test_marginal_emission_rate.py`` pins both).
+
+        Zero iterations means no pivot can occur, so the basis, the primal
+        solution and every dual already extracted are untouched. The objective
+        is left holding the CO2 rates on return: ``solve`` installs the full
+        cost vector through ``changeColsCost`` on every pass, so the next pass
+        overwrites it regardless (the same property the ``del cost`` lifetime
+        fix above already relies on). The basis and the iteration-limit option
+        ARE restored, because the next pass warm-starts from the basis.
+
+        Args:
+            n_zones: Number of price zones (the energy-balance row block is
+                the first ``n_zones * T`` rows, hour-major).
+            T: Hours in the solve.
+
+        Returns:
+            The ``(n_zones, T)`` rate array in tCO2/MWh, or ``None`` when the
+            LP carried no generators or the re-pricing did not complete. This
+            is a write-only diagnostic: it never raises into the solve path.
+        """
+        layout = self.layout
+        if not layout.n_gen or not n_zones:
+            return None
+        rate = np.asarray(self.fleet.emission_rate, dtype=float)
+        if rate.shape != (layout.n_gen,):
+            return None
+
+        h = self._h
+        saved = None
+        prev_limit = None
+        try:
+            saved = h.getBasis()
+            _, prev_limit = h.getOptionValue("simplex_iteration_limit")
+
+            # One hour's objective under the CO2 rates: the generation block
+            # carries each unit's rate, every other column (wind, solar,
+            # storage, flow, slack, dump, reserve, ...) emits nothing. Installed
+            # in hour CHUNKS so the transient stays a few MB rather than a
+            # second full-length float64 copy of the objective -- this runs in
+            # the same post-solve window that owns the measured year peak
+            # (miso-253), where the cost vector alone is 237 MB at plant-level
+            # MISO scale.
+            vpr = layout.vars_per_hour
+            hour_block = np.zeros(vpr, dtype=np.float64)
+            hour_block[layout._p_off : layout._p_off + layout.n_gen] = rate
+            chunk = max(1, min(T, 512))
+            for t0 in range(0, T, chunk):
+                t1 = min(t0 + chunk, T)
+                idx = np.arange(t0 * vpr, t1 * vpr, dtype=np.int32)
+                h.changeColsCost(idx.size, idx, np.tile(hour_block, t1 - t0))
+            del hour_block
+
+            h.setBasis(saved)
+            h.setOptionValue("simplex_iteration_limit", 0)
+            h.run()
+            duals = np.asarray(h.getSolution().row_dual, dtype=float)
+            if duals.size < n_zones * T:
+                return None
+            # Same slice and orientation as the energy-balance price block.
+            return duals[: n_zones * T].reshape(T, n_zones).T.copy()
+        except Exception:  # pragma: no cover - a diagnostic never fails a solve
+            logger.warning("marginal emission rate unavailable", exc_info=True)
+            return None
+        finally:
+            if prev_limit is not None:
+                try:
+                    h.setOptionValue("simplex_iteration_limit", int(prev_limit))
+                except Exception:
+                    pass
+            if saved is not None:
+                try:
+                    h.setBasis(saved)
+                except Exception:
+                    pass
 
     def export_cross_year_basis(self) -> "CrossYearBasis | None":
         """Snapshot this model's current optimal basis for next year's solve.

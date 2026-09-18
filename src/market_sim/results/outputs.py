@@ -148,6 +148,7 @@ _ARRAY_COLUMNS: tuple[tuple[str, str, bool], ...] = (
     ("storage_soc", "storage_soc", True),
     ("flows", "flows", True),
     ("emissions", "emissions", True),
+    ("marginal_emission_rate", "marginal_emission_rate", True),
 )
 
 
@@ -385,6 +386,14 @@ def from_parquet(cls: type[DispatchResult], path) -> DispatchResult:
         slack=array("slack"),
         dump=array("dump"),
         prices=array("price"),
+        # Presence-checked rather than metadata-flagged: results cached
+        # before the emissions dual was wired carry no such column, and
+        # it is a diagnostic, so a missing one is None and never an error.
+        marginal_emission_rate=(
+            array("marginal_emission_rate")
+            if "marginal_emission_rate" in table.column_names
+            else None
+        ),
         storage_charge=array("storage_charge") if has_storage else None,
         storage_discharge=array("storage_discharge") if has_storage else None,
         storage_soc=array("storage_soc") if has_storage else None,
