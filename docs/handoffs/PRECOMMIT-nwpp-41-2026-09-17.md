@@ -622,3 +622,91 @@ bare `COAL` row survives (expected 0.000 TWh)**, which is the C1 fix's own accep
 rule-35 year-set enumeration, and Addendum 5's two standing conclusions (the diagnostic stays
 abandoned; whether HiGHS was iterating through 2024 P1 was never established and is recorded as a
 gap).
+
+---
+
+# ADDENDUM 7 (2026-09-18) — THE SOLVE WAS KILLED IN ITS FINAL PASS. 2023+2024 SURVIVE AND **CONFIRM THE C1 FIX IN A REAL SOLVE**; 2025 IS LOST; NO REGISTRABLE BUNDLE. RE-SOLVE COST STATED, DECISION OWED TO THE OWNER (rule 31).
+
+## A7.1 What happened
+
+A platform restart took out the shard's worker (its record went `connected` → `disconnected`,
+`worker_epoch` 1 → 2 → 3) at roughly the same moment the parent container restarted. The shard's own
+verdict, verbatim: **`LP solver killed mid-run; 2025 missing from bundle`**. It then did the right
+thing — pushed what it had and STOPPED to ask rather than relaunching unilaterally.
+
+**This lane's liveness test is what caught it, and it was set up before the answer was known.** With
+the 2025 P1 start anchored at ~13:52Z by two agreeing samples (74 min at 15:06Z, 163 min at 16:35Z),
+the test was pre-registered as: *alive ⇒ elapsed ~193 min at 17:05Z; dead ⇒ elapsed freezes near 163
+or no process*. The status at 16:35 still read `LP running (163 min)`, which alone is
+indistinguishable from a stale log read — the pre-registered test is the only reason the distinction
+was ever made rather than assumed.
+
+## A7.2 What survives, and what it proves
+
+Pushed at **`14f485ce21b322d600b67aecfe7ef2da41fd87a9`** on `claude/nwpp-41-span`, **18 files**:
+`dispatch/{2023,2024}_P1.parquet` (+ `_fleet`), `floors/{2023,2024}_P1.npz`, and the 2023/2024
+`hourly/` set (`class_hourly`, `class_band_hourly`, `hydro_cascade`, `network`, `storage`,
+`unit_hourly`). **Absent: everything 2025, and every bundle-root file** — no `meta.json`, no
+`run_config.json`, no `system.parquet`. Those are written in the persist/report phase the run never
+reached.
+
+**THE ACCEPTANCE TEST PASSES ON BOTH SURVIVING YEARS. The C1 seam is closed in a real solve, not
+only in the zero-LP relabel:**
+
+| year | `COAL_PRB` | `COAL_BIT` | `COAL_WC` | bare `COAL` | coal family |
+|---|---|---|---|---|---|
+| 2023 | 24.2042 | 14.9844 | 0.4247 | **0.0000** | 39.6133 |
+| 2024 | 19.3232 | 7.4515 | 0.2329 | **0.0000** | 27.0076 |
+
+**Zero bare `COAL` in either year** — the defect that put 38.5 / 26.5 TWh into a class the benchmark
+has no row for is gone. And the repricing moved coal in the **pre-registered direction** (§A1.3: "the
+model coal can only rise or hold"): the coal family is **39.613 vs the control's 38.542 (+1.07 TWh)**
+in 2023 and **27.008 vs 26.489 (+0.52)** in 2024, i.e. a cheaper Colstrip/Hardin dispatched more.
+Against the committed benchmark the coal rows read **2023** BIT +1.089 / PRB −1.077 / WC −0.134 and
+**2024** BIT −5.325 / PRB −1.635 / WC −0.331 — every one inside the ±8 TWh band, so **C1's coal rows
+would pass in both solved years.**
+
+## A7.3 Why the surviving work CANNOT be reused — checked in code, not assumed
+
+The shard offered "re-solve 2025 only (~4–5 h)". **That path does not exist.**
+`run_calibration_full.plan_reuse_solved` (line 3509) requires, among other conditions, the prior
+bundle's **`meta.json` kwargs**, its **`run_config.json` `scenario_config`**, and per year that
+"its per-year artifacts (`dispatch/<year>_<pass>` files for every recorded pass, **`system.parquet`
+rows**) exist". None of those three files was written, so the gate refuses the whole bundle. This is
+exactly what rule 32(b) already states in the abstract — *"a chain cannot carry years across
+containers either. Both composition routes therefore end in a re-solve, always"* — and it is now
+measured rather than quoted.
+
+Nor is the partial registrable: `render_calibration_html.build_payload` reads the bundle-root
+`system.parquet` per year, and rule 16 `[R-ALLYEARS]` forbids a partial-span keeper regardless.
+
+## A7.4 The cost, stated before anything is relaunched (rule 31 `[R-RETAIN]`)
+
+Rule 31: *"A cost estimate is owed BEFORE re-solving, not after. If results were lost anyway, the
+session states the LP cost of reproducing them and waits, rather than silently launching hours of
+solves."* So: **nothing has been relaunched, and nothing has been deleted.**
+
+- **Full span re-solve, fresh container: ~9–14 h.** NWPP-40 did this span in 551 min; the dead
+  container ran ~2.3× slow (2023 P0 1.22×, 2023 P1 ~1.42×, 2024 P1 ~2.3×), and a fresh container may
+  or may not be quicker. ~9 h at NWPP-40's pace, ~14 h at this container's.
+- **Partial re-solve: unavailable** (§A7.3).
+- **Not re-solving: the lane's SUBSTANCE is already secured.** C1's root cause, its fix and its
+  effect are proven zero-LP in §1–§2 and now corroborated on two real solved years in §A7.2. The
+  solve is needed only to *register and promote a bundle*, not to establish the finding.
+
+**An unavoidable honesty about a relaunch:** it is all-or-nothing again. The runner writes
+`meta.json` / `run_config.json` / `system.parquet` only after the last year, so a restart at any point
+before that loses everything again — and this is the SECOND NWPP lane in two to be hit
+(NWPP-40 attempt 1 was "killed by a container restart while the shard session was idle"). **Routed as
+a repo finding, not fixed here** (it is a `src/`-adjacent runner change, out of this lane's scope):
+persist the bundle-root files incrementally, or make `plan_reuse_solved` able to accept a per-year
+checkpoint, so a 13-hour span stops being a single point of failure. Until that exists, a per-year
+shard fan-out is still banned by rule 32(b) and a long span is still un-resumable.
+
+## A7.5 Housekeeping done
+
+Both keep-alive pokes deleted (`trig_01AFKxvKmbq5auf3GWWX2GHV`, `trig_01Y8Ug2sR3mFUGFudTVoBx67`) —
+there is no live solve to protect. Shard `session_01HwZuaGLXEia9RBheos1KDD` **archived** after
+fetch + verify (rule 33(a)/(d)); its branch and the 18-file partial are left in place at the full SHA
+above (rule 31 — nothing deleted, and the branch is the only copy). Recovery line:
+`git checkout 14f485ce21b322d600b67aecfe7ef2da41fd87a9 -- results/calibration/nwpp41_span_A`.
