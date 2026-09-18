@@ -14200,6 +14200,50 @@ Records: `docs/RESULT-miso260-seam-ladder-screen-2026-09-16.md`,
 * Next number: **miso-261**.
 
 
+**PROMOTION SECTION RECOVERED 2026-09-18 (miso-261) FROM PR #6259, WHICH NEVER MERGED.**
+miso-260 did promote, in its own session; its PR went conflicted and never landed, so this
+entry sat on `main` as the pre-promotion version. The promotion that IS on `main` is
+miso-261's re-composition of the same two legs (PR #6274) — same solve, actual side
+re-verified at 0.000000. The text below is miso-260's own, verbatim, because it carries the
+before/after evidence miso-261 could not reproduce without miso-259's bundle.
+
+**PROMOTED, same session, on the owner's ruling** (2026-09-16, verbatim: *"If structural
+integrity improves but gates regress that may still be a keeper"*) — rule 31 `[R-RETAIN]`
+trigger (i). **MISO keeper → `2026-09-16-miso-260-seam-ladder`**, bundle
+`results/calibration/miso260_seam_span`, years 2020–2025, solved as **two partition legs**
+(the minimum: `load_miso_reserve_requirements` hard-errors before 2023, so a single
+`--years 2020..2025` invocation raises on its first year) and composed.
+
+**THE TRAIN TIER DID NOT MOVE, AND THE PROOF IS BYTE-LEVEL.** The 2022–2025 table rows are
+byte-identical, so those years cannot move — and the re-solve confirms it across 27 commits
+of `main`: 2022, 2023 and 2025 each reproduce the incumbent keeper at **max |d class TWh| =
+0.000000**. Train tier **CALIBRATED**, grade scored 8 / target 7 / ledgered 1 / **fails 0**,
+identical to the incumbent. MISO's card reads **CALIBRATED**.
+
+**FULL SPAN, both directions. WON:** C1 2021 CC_REGULAR **−9.46 → −2.92** and C1 2021
+COAL_BIT **−8.36 → −7.02**, *both* out-of-band failures closing; C3b 2020 **0.246 → PASS**;
+C3a 2020 **+22.9 % → +16.3 %**; the D-2 2021 ST_GAS forced-share failure cleared. **LOST:**
+C1 2020 COAL_BIT **−7.00 → −10.29**, crossing the ±8 TWh band; C3b 2021 0.285 → 0.299; a new
+D-1 failure (2020 COAL_PRB CV ratio 0.451); D-2 2020 CT_PEAKER 35.9 % → 50.6 %. **Net over
+the registered span: seven failing criterion records → five.**
+
+**TWO INCUMBENT DEFECTS CLOSED.** miso-259 committed **no `calibration_attestation.json`**
+(so a fresh clone scored it **C6 UNATTESTED**) and none of the rule-15 hourly sidecars. This
+keeper commits both, plus the `config_partition_overrides` stamp recording MISO's
+data-forced two-config partition — which the incumbent never carried.
+
+**RULE 35 `[R-PROMOTE]` discharged in order**: year union enumerated **before** the prune
+({2020–2025}, one registered run, no folded touchpoints) → incoming keeper verified by
+`audit_keepers` E1 → **only then** `prune_iso_runs.py --iso MISO --force-uncite`.
+`audit_keepers --iso MISO` now **PASSES, 0 failures**. Gate-(a) provenance re-keyed by the
+promoting session; miso-259 had not touched it.
+
+Records: `docs/RESULT-miso260-seam-ladder-screen-2026-09-16.md` (+ Addenda A, B, C),
+`docs/PRECOMMIT-miso260-seam-ladder-2020-2021-2026-09-16.md`,
+`docs/handoffs/HANDOFF-miso261-2026-09-16.md`.
+
+* Next number: **miso-261**.
+
 ## miso-261 — 2026-09-17 — **THE OWNER'S PROMOTION HAD NEVER BEEN EXECUTED. EXECUTED IT AT ZERO LP FROM TWO STRANDED SHARD LEGS, AND SETTLED THE BENCH FUEL-FAMILY ATTRIBUTION THAT WAS BLOCKING EVERY MISO GAS LANE.** Keeper `2026-09-16-miso-259-coal-fuel` → **`2026-09-16-miso-260-seam-ladder`**, train tier **CALIBRATED**
 
 **ZERO LP. NO SHARD LAUNCHED. NO MECHANISM TESTED. NO PARAMETER TUNED.** 43 DOF entries carried,
@@ -14211,8 +14255,7 @@ Records: `docs/RESULT-miso260-seam-ladder-screen-2026-09-16.md`,
 sidecar or payload, and MISO's card was CALIBRATED on the *superseded* keeper. miso-260's own
 RESULT explains it — ADDENDUM A.1 records the owner's ruling (*"Is this a recommended keeper
 candidate? If so plz promote. … If structural integrity improves but gates regress that may
-still be a keeper."*) and A.3 records the span *"as launched"*. **A.3 is the last thing that
-session wrote**: it launched both legs and ran out of session before it could compose them.
+still be a keeper."*) and A.3 records the span *"as launched"*. **A.3 is not the last thing that session did**: it launched both legs and opened PR #6259, which went conflicted and never merged.
 
 **THE PROMOTION COST NOTHING BECAUSE miso-260 DISCHARGED RULE 34 PROPERLY.** Both shard branches
 survived with their bundles, `dispatch/<y>_P1.parquet` included —

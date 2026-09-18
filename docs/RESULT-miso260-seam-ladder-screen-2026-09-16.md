@@ -559,3 +559,125 @@ opens with this correction so the successor cannot inherit the wrong one. The ke
 `calibration_attestation.json` names the corrected root cause. §3 above is left standing
 with this addendum attached rather than edited, so the record shows what I claimed and
 what changed it.
+
+---
+
+> **RECOVERED 2026-09-18 BY SESSION miso-261 FROM PR #6259, WHICH NEVER MERGED.**
+> miso-260 completed its promotion and opened PR #6259 at 2026-09-17T03:07:23Z; the PR
+> went conflicted and was never merged, so `main` carried this document without its
+> Addendum C. miso-261 re-executed the same promotion from the two shard legs and landed
+> it via PR #6274 — so the KEEPER on `main` is miso-261's re-composition, not the bundle
+> this addendum was written against. The two are the same solve (same legs, same shard
+> SHAs, same `git 36ac2560`); miso-261 re-verified the actual side at
+> **max |d class TWh| = 0.000000**. What is recovered here is the EVIDENCE, which
+> miso-261 could not reproduce: the byte-level HEAD-drift proof and the before/after
+> comparison against the incumbent keeper both required miso-259's bundle, which is not
+> on disk. Two numbers below are stamped to miso-260's HEAD and have since moved, stated
+> so they are not re-quoted as current: `pytest tests/scoring` read **19/19** there and
+> **22/22** at miso-261's HEAD (main added tests between), and
+> `check_cache_key_registration` read 850/305 there and 851/306 at miso-261's.
+> Everything else stands as measured.
+
+# ADDENDUM C — the span, and the promotion
+
+## C.1 The span as solved
+
+| leg | years | reserve flags | shard | recovery SHA (full) |
+|---|---|---|---|---|
+| **V** validation | 2020 2021 2022 | both `False` | `session_018VTV983kSAMcBir7pwirE4`, archived | `5bb6b99690d74b55ca79247b1113fe0a81525035` |
+| **T** train | 2023 2024 2025 | both `True` | `session_016b4og6tJnfqVaGu3qoT5xs`, archived | `5478c2ac2e1985b602ef163459809ef0d919b977` |
+
+Composed by `scripts/probes/_miso260_compose_span.py` into
+`results/calibration/miso260_seam_span`, which checked that the two legs agree on
+nine shared fields and the solve-surface fingerprint and differ **only** on the two
+data-forced reserve fields, in the declared direction. `legitimacy_diagnostics.json`
+was **regenerated over the composite** (60 D-1 rows, 47 D-2, 113 D-4, all six years)
+rather than copied from a leg — the trap that silently sends C8 to SKIPPED.
+`stamp_config_partition.py --check` re-derives clean.
+
+## C.2 THE TRAIN TIER DID NOT MOVE, AND THE PROOF IS BYTE-LEVEL
+
+The change adds table rows for 2020 and 2021 only, so 2022–2025 cannot move. They
+did not, and this is measured rather than asserted — the train leg re-solved 2023
+and 2025 at HEAD, 27 commits of `main` after the incumbent keeper's own `git_sha`:
+
+| year | max \|d class TWh\| vs the incumbent keeper |
+|---|---|
+| 2022 (in the validation leg) | **0.000000** |
+| 2023 | **0.000000** |
+| 2025 | **0.000000** |
+
+So G-NOFLIP on the train tier holds absolutely, and MISO carries **zero measurable
+HEAD drift** across those 27 commits. Train-tier determination: **CALIBRATED**,
+grade scored 8 / target 7 / ledgered 1 / **fails 0** — identical to the incumbent.
+
+## C.3 THE FULL SPAN, BOTH DIRECTIONS
+
+| | incumbent keeper | **miso-260** |
+|---|---|---|
+| C1 2021 CC_REGULAR | **−9.46 FAIL** | **−2.92 PASS** |
+| C1 2021 COAL_BIT | **−8.36 FAIL** | **−7.02 PASS** |
+| C1 2020 COAL_BIT | −7.00 PASS | **−10.29 FAIL** |
+| C1 2022 CC_REGULAR | −9.47 FAIL | −9.47 FAIL (2022 byte-identical) |
+| C3a 2020 | +22.9 % FAIL | **+16.3 % FAIL** |
+| C3a 2022 | −14.6 % FAIL | −14.6 % FAIL |
+| C3b 2020 | **0.246 FAIL** | **PASS** |
+| C3b 2021 | 0.285 FAIL | **0.299 FAIL** |
+| C4 | PASS | PASS |
+| C6 | **UNATTESTED** | **PASS** |
+| C8 | PASS | PASS |
+| **failing records** | **7** | **5** |
+
+Diagnostics, against the incumbent's own committed per-year artifacts: the **2021
+ST_GAS D-2 failure (31.9 % > 30 %) is cleared**; 2021 CT_PEAKER improves 49.3 % →
+45.7 %; 2020 CT_PEAKER worsens 35.9 % → 50.6 %; one **new** D-1 failure (2020
+COAL_PRB CV ratio 0.451). The 2022 COAL_PRB D-1 failure and all four D-4 rows are
+**pre-existing and unchanged**.
+
+The full-span pooled determination stays **NOT-YET**, with every failure on an
+out-of-training year and none in any training year. Under rule 30(c) that neither
+certifies nor decertifies: the ISO headline is the train tier, and it reads
+**CALIBRATED**.
+
+## C.4 THE PROMOTION, AND RULE 35 `[R-PROMOTE]` DISCHARGED IN ORDER
+
+1. **(b) Year union enumerated BEFORE the prune**, because the prune destroys the
+   evidence: `{2020, 2021, 2022, 2023, 2024, 2025}` over every MISO sidecar — one
+   registered run, no folded touchpoints, no dangling `holdout.keeper`.
+2. **(c)** The incoming keeper covers that union in its own bundle.
+3. **(e) Promote, verify, then delete**: keeper shard re-keyed → `build_status`
+   rebuilt → `audit_keepers --iso MISO` E1 confirmed the incoming three stores
+   resolve → **only then** `prune_iso_runs.py --iso MISO --force-uncite` removed
+   `2026-09-16-miso-259-coal-fuel`'s sidecar and payload. `--force-uncite` is the
+   **intended** route here, not a safety override (rule 35 (d)).
+4. **(f)** `audit_keepers --iso MISO` now **PASSES, 0 failures** (1 pre-existing E3
+   warning). E13 fired before the prune and is clear after it.
+5. Gate-(a) provenance re-keyed **by the promoting session**; miso-259 did not touch
+   it, which is why `check_gate_a_provenance` was failing on MISO at session start.
+   MISO's row now passes; NEISO, NYISO and SPP still fail and are not this lane's
+   (rule 25 `[R-ISO-SCOPE]`).
+
+## C.5 GATES AT THE PROMOTION
+
+| check | result |
+|---|---|
+| `audit_keepers --iso MISO` | **PASS, 0 failures**, 1 pre-existing E3 warning |
+| `build_status --iso MISO --check` | **in sync** — MISO reads **CALIBRATED** |
+| bench parity vs `origin/main` | 6 parts, **max \|d actual class TWh\| = 0.000000** |
+| `check_bench_freshness --iso MISO` | 6 parts, **0 STALE**, 0 engine drift |
+| `check_cache_key_registration --base origin/main` | **ok**, 850 fields / 305 registered |
+| `check_mechanism_matrix --base origin/main` | **exit 0**; keeper stamp and §5.4 header re-stamped |
+| `check_gate_a_provenance` | MISO **passes**; NEISO / NYISO / SPP fail, not this lane's |
+| `check_registry_payload_parity` | the 2 pre-existing REDs plus 10 of this session's own **gitignored local** bundles — invisible to CI, and **nothing `rm`'d** (rule 31) |
+| `pytest tests/scoring` | **19 failed at HEAD, 19 with my source files reverted to `origin/main`, identical sets — ZERO NEW** |
+| `_miso257_btm_identity.py` | run; worst \|diff\| over the CHP classes 0.8326 TWh |
+| `node --check` on the matrix shard | pass |
+
+## C.6 RETRIEVABILITY AND SHARDS
+
+Four shards this session, **all archived after fetch + checkout + verify**, none
+left alive. Every bundle recoverable by **full SHA** from `.gitignore`; nothing
+deleted (rule 31). The keeper's own bundle is committed at its slim + hourly-sidecar
++ attestation set (41 files, 15 MB), so the registration no longer depends on an
+ephemeral container — the failure mode that cost miso-259's 2024 leg, whose shard
+SHA was never recorded and which remains this repo's one unrecoverable MISO year.
