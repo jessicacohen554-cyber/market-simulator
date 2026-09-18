@@ -338,3 +338,51 @@ its own bundle to its own branch via a `.gitignore` negation and a **plain `git 
 it must show the armed signature — `coal_prb_proxy_own_iso: true`, `coal_supply_NWPP.csv` present with
 md5 `4bc7f9a61724ec4562599230ca77e4c6`, `hydro_cascade_coupling true`, `hydro_backfill_year 2024` — or
 STOP without pushing. The parent registers, promotes and prunes (rules 15 / 32(d) / 35).
+
+---
+
+# ADDENDUM 2 (2026-09-18) — the shard's budget is raised 600 → 780 min on its OWN measured P0 rate
+
+**Recipe unchanged. Pin unchanged (`666343a2bf86f204c5ca6c672a680da32150a640`). Only the time
+budget moves**, and it moves *before* the shard could hit the old ceiling rather than after.
+
+**The measurement.** The shard's first status report, at 04:35:48Z:
+`2023 P0 complete (1512.4s, 515K iterations); now in P1`.
+
+| | NWPP-40 (registered run) | NWPP-41 shard | ratio |
+|---|---|---|---|
+| 2023 P0 seconds | 1,236.5 | **1,512.4** | **1.22×** |
+| 2023 P0 HiGHS iterations | 523,199 | ~515,000 | 0.98× |
+
+**The same LP on a slower container, not a regression.** The iteration count is within 2 % of
+NWPP-40's, so the problem HiGHS is solving is the same size and shape — which is what the
+offer-array probe already proved from the other direction (non-coal max&#124;Δ&#124; exactly
+$0.0000000000; only 7 coal rows move). What differs is seconds per iteration.
+
+**The projection, and why waiting would have been the expensive choice.** NWPP-40's span was
+33,038.5 s = 550.6 min. At 1.22× that projects to **≈672 min**, which overruns the 600-min budget
+Addendum 1 §A1.4 set — and rule 32(b)'s stop rule is unambiguous: *"A shard approaching 20 minutes
+with no artifact stops and reports; it never pushes a half-written bundle."* Applied to a 600-min
+budget that means the shard would have stopped somewhere inside 2025 P1, with two years solved and
+nothing pushed. **780 min** carries the projection with ~16 % margin. Precedent: NWPP-40 re-budgeted
+twice by exactly this route (150 → 480 min on its own measured 2023 rate, then → 600 min), its
+Addenda 1 and 2.
+
+**Mechanics, recorded because the first attempt failed.** A routine's prompt can only be edited from
+the conversation it posts into, so the two keep-alive pokes were **deleted and recreated** rather
+than updated: `trig_01EPuqbN1HZ4HSc7EYQ6eotf` / `trig_015e6z1RbJ75tuWqGwk9X9hA` →
+**`trig_016ykqCP9jmUezNDBJu6BCE1`** (minute 5) and **`trig_01EBYncSmmRn77caEo3W33i5`** (minute 35).
+Both carry the 780-min budget and state that it supersedes the 600 in the shard's original prompt.
+**These two are the triggers the promoting check-in must delete** (rule 33), not the deleted pair.
+
+**The poke mechanism is confirmed working, by measurement.** The shard ran no turn between 03:51:48Z
+and the first poke; the deleted offset trigger's `last_run` reads
+`SUCCEEDED, fired_at 2026-09-18T04:35:37.968Z`, and the shard's `updated_at` moved to 04:35:48Z with
+a fresh per-pass status detail. That matters because a cloud shard is **not** reachable by
+`SendMessage` from the parent (`ListAgents` shows no peers; a direct send returns *"No agent named …
+is reachable"*), so the persistent-session routine is the ONLY channel the parent has — and a shard
+that never wakes never pushes, which is the rule-34 `[R-SHARD-PROMOTABLE]` stranding this lane's
+whole 780-minute budget rides on.
+
+**Unchanged by this addendum:** every expected number in §A1.3, the hard-stop signature the shard
+must show, the registration and promotion sequence, and the rule-35 year-set enumeration.
