@@ -240,7 +240,64 @@ mechanism on the same phenomenon in the same run.
 
 ---
 
-## 7. THE PROMOTION QUESTION (rule 31 `[R-RETAIN]`) — OPEN, AND IT IS THE OWNER'S
+## 7. THE PROMOTION — RULED AND EXECUTED 2026-09-18
+
+**The owner ruled: promote.** Verbatim: *"Is this a recommended keeper candidate? If so plz
+promote. If structural integrity improves but gates regress that may still be a keeper."* That
+ruling names this case exactly — structural integrity improves, the gates regress — and the lane's
+own recommendation to hold for the completing repair was **overruled and the trade taken
+deliberately**.
+
+> **SOCO's keeper is now `2026-09-17-soco53-measured-ct-hr`.**
+> `2026-09-16-soco-1-baseline` is superseded and pruned.
+
+Executed in rule 35 `[R-PROMOTE]`'s fixed order, each step gating the next:
+
+| step | rule | result |
+|---|---|---|
+| **(b)** enumerate the year union BEFORE pruning | 35(b) | **{2023, 2024, 2025}** over every SOCO sidecar — both runs carry all three |
+| **(c)** incoming keeper covers the union | 35(c) | **yes, in its own bundle** — one `--year 2023 2024 2025` invocation, so no `holdout.keeper` stamp is needed and none was invented |
+| **(e)** promote, then VERIFY, then delete | 35(e) + plan gate G21 | keeper shard re-pointed with a structured `superseded.former_keeper` lineage; `build_status.py --iso SOCO` rebuilt; **`audit_keepers` E1 and E11 both green BEFORE the prune** |
+| **(a)** prune the outgoing keeper's THREE stores | 35(a) | `prune_iso_runs.py --iso SOCO --force-uncite` removed `registry/<id>.json`, `runs/<id>.js` and `results/calibration/soco40_coalsplit_B` together |
+| **(d)** `--force-uncite` is the INTENDED route | 35(d) | the guard fired on this lane's own lineage citation; the "looking" it exists to force is the year enumeration and the E1/E11 verification above |
+| **(f)** the invariant | 35(f) | **`audit_keepers --check --iso SOCO` now PASSES, 0 failures.** One registered SOCO run, it *is* the keeper, year set unchanged |
+
+### 7.1 E11 was run BEFORE the prune, and its substance is recorded here because the prune destroys it
+
+The plan's gate **G21** warns that rule 35(a)'s prune of the outgoing bundle destroys E11's
+baseline and that the guard then degrades to a **WARN rather than a FAIL** — *"the guard built to
+catch the nyiso-108→155 silent de-arm is itself silently disarmed."* So E11 was run first and was
+**green** (it is demonstrably live: it emits *"lineage recipe diff not computable"* for NYISO,
+whose former bundle is already gone, and emitted nothing for SOCO).
+
+Because it is now non-computable for SOCO too, the diff it certified is written out rather than
+left to a gate that can no longer run it — measured directly from the two `run_config.json` files
+while both were on disk:
+
+> **Of 851 `scenario_config` fields, exactly TWO differ:**
+> `measured_ct_heat_rates` **False → True** (the declared mechanism) and
+> `neiso_coldsnap_derate_dualfuel_unswitched` **None → False** (a NEISO-only field that did not
+> exist at the superseded run's basis, sitting at its default and dropped from the cache key there
+> — G-DRIFT hunk #2, already classified INERT for SOCO).
+> **SILENT DE-ARMS (True → not-True): NONE.**
+
+### 7.2 What the promotion costs, stated rather than softened
+
+The ISO's headline moves from **one** failing C1 row to **two**, and C1 all/free from 13/14 · 9/10
+to **12/14 · 8/10**. That is the accepted price of the rule 14 repair, it was registered in the
+PRECOMMIT **before** the solve, and it is recorded on the keeper's own note, the matrix gates stamp
+and the status page rather than being smoothed over. The determination is **NOT-YET** either way,
+so no determination was gained or lost by the promotion.
+
+**Retrievability after the prune.** The superseded bundle is deleted from the tree, and **git
+history is the record** exactly as rule 15 `[R-DASHBOARD]` says of pruned runs:
+
+| bundle | full SHA | recovery |
+|---|---|---|
+| `soco53_measured_ct_hr` (**the keeper**) | `3f477ec55ffb2cafc29df6121203c5b8f75611ef` | `git archive 3f477ec55ffb2cafc29df6121203c5b8f75611ef results/calibration/soco53_measured_ct_hr \| tar -x` |
+| `soco40_coalsplit_B` (superseded, pruned) | `dcb03c6bd346f9ab0d4356d5166b18c4ad42a214` | `git archive dcb03c6bd346f9ab0d4356d5166b18c4ad42a214 results/calibration/soco40_coalsplit_B \| tar -x` |
+
+## 7.3 THE ORIGINAL QUESTION AS PUT (superseded by §7, kept for the record)
 
 **The incumbent keeper `2026-09-16-soco-1-baseline` is UNCHANGED. Nothing was pruned and nothing
 was deleted.** SOCO's registered year union was enumerated **before** any prune (rule 35(b)) and is
@@ -290,7 +347,7 @@ fleet loaders called directly.
 
 | gate | exit | result |
 |---|---|---|
-| `audit_keepers.py --check --iso SOCO` | **1** | **E13 RED, and it is a RULE CONFLICT rather than a defect — see §9.1. Everything else passes (holdout, marker, status all clean).** |
+| `audit_keepers.py --check --iso SOCO` | **0** | **PASS, 0 failures** (after the promotion). 1 warning: E11 non-computable post-prune — expected, and its substance is recorded in §7.1 |
 | `check_mechanism_matrix.py` | **0** | PASS (warnings pre-existing: anchor drift on ten unrelated rows, NEISO prose-header drift — another ISO's lane) |
 | `check_golden_manifest.py` | **0** | OK |
 | `check_cache_key_registration.py` | **0** | ok — 851 fields, 306 registered, all resolve |
@@ -306,7 +363,16 @@ repo's own `<datatype>-SOCO.csv` convention violates (`campd-unit-outages-SOCO.c
 `coal_supply_SOCO.csv`, `thermal_tranches_SOCO.csv`, all pre-dating this lane). The remedy is a
 judgement about the profile-token contract and is **routed to the SOCO desk**, not patched here.
 
-### 9.1 E13 is RED, and clearing it would require breaking a rule — so it is reported, not cleared
+### 9.1 E13 — RESOLVED BY THE PROMOTION (recorded because the conflict is real and will recur)
+
+**`audit_keepers --check --iso SOCO` now PASSES with 0 failures.** The owner's promotion ruling
+cleared E13 exactly as predicted below: the candidate became the keeper and the superseded run was
+pruned. The analysis is kept because the conflict it names is structural and the next lane to
+register a candidate and wait will hit it again.
+
+**The original finding, as written while the promotion was open:** E13 fired on a registered
+candidate whose promotion had not been ruled on, and there was no way to clear it without breaking
+a rule —
 
 `audit_keepers` **E13** fires:
 
