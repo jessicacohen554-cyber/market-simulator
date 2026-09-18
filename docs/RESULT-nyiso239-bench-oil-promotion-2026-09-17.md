@@ -126,6 +126,36 @@ verdict in **exactly one**:
 **Verified at registration**: the only bench parts whose bytes moved anywhere are NYISO's four, and
 two of those moved only by gaining the `e930.oil` key.
 
+### 4.1 CORRECTION, added 2026-09-18 after the repair had been live on `main` for a day
+
+**The table above over-states the reach, and the "only when that ISO next re-renders" clause is
+wrong. The right word is RE-EXTRACTS.** `reconcile_vintage_classes` reads the 930 `oil` cell out of
+the **bundle's own committed `eia930` parquet**, not the live loader — and **no committed bundle in
+the repo carried an `oil` series** when the census was taken (measured: "any bench e930 carrying
+oil: False" across all 41 parts). So a lane that merely re-renders an existing bundle gets the
+FALLBACK and moves nothing; the series appears only when a lane re-solves and writes a fresh
+extract. NYISO's is the first and, at this writing, only bundle that has one.
+
+The census answered "does this BA's EIA-930 feed carry an OIL series" by querying the **live**
+loader. That is the right question for *whether the repair could ever bite*, and the wrong one for
+*when*. The distinction was not drawn at the time and is drawn here.
+
+**Measured on `main`, and it cuts both ways — one prediction confirmed, one still untested:**
+
+* **MISO CONFIRMS the fallback.** `miso-261` (`c5399655`) re-registered MISO's span **with the
+  repair in its ancestry**, and all six MISO bench parts are **byte-identical**, `e930.oil` still
+  absent. That is the prediction exactly: MISO's BA feed has no OIL series at all, so the family
+  stays gas+coal by construction.
+* **SOCO is NOT a counter-example, and I initially misread it as one.** SOCO's bench parts also did
+  not move — but `soco-53` (`c4662e27`) was built on a **pre-repair base** (`git merge-base
+  --is-ancestor 3edb8ad8 c4662e27` → false), so its re-render ran the old code and says nothing
+  either way. **Checking the ancestry is what distinguished the two; the byte-diff alone did not.**
+
+**What this means for CAISO / PJM / NEISO / SPP**, whose live feeds do carry oil: the repair is
+**inert in their committed bench today** and stays inert until each lane re-solves. When one does,
+expect its fossil `classFull` to move by the census's **−1.53 % to +0.29 %** — and none of those
+cells' fire/no-fire verdict changes, so no determination should flip on it. A lane surprised by a
+moved benchmark should read this section first.
 The fallback is the same "carry it when present" contract the `NG: OTH` (`other`) series already
 established, so **no committed bundle can regress**. Guard:
 `tests/scoring/test_vintage_reconcile_oil_family.py` — 6 tests pinning the live NYISO 2022 numbers on
