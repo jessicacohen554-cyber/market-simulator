@@ -1,9 +1,0 @@
-# Runtime dependencies for the standalone Scope 2 Hourly LCE Portfolio tool
-# (mirrors pyproject.toml's [project.dependencies]; see ADR 0016 §4 — the
-# desktop launcher scripts never auto-create a venv or pip install, they only
-# point the user at this file).
-highspy
-numpy
-scipy
-pandas
-pyarrow
