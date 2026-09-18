@@ -439,3 +439,71 @@ the conversation it posts into. All four earlier pokes fired `SUCCEEDED` before 
 promotion sequence, and the rule-35 year-set enumeration. **A slower container is not a different
 LP** — the 2023 P0 iteration count was 0.98× NWPP-40's, and the offer-array probe already bounded the
 arm to 7 coal rows with non-coal max|Δ| exactly $0.0000000000.
+
+---
+
+# ADDENDUM 4 (2026-09-18) — budget 1,020 → 1,320 min; and a CORRECTION to Addendum 3's successor reading
+
+**Recipe unchanged. Pin unchanged (`666343a2bf86f204c5ca6c672a680da32150a640`). Only the ceiling moves.**
+
+## A4.1 The correction, stated first because a wrong number was acted on
+
+At 08:35:54Z the shard reported `98 min P1 done; P2025 pending`. **This lane read that as "2024 P1
+finished in 98 min" and concluded the run had SPED UP to 0.72× of NWPP-40, with a cumulative ratio of
+1.05×.** That was wrong. The phrase meant *98 minutes **of** 2024 P1 done* — the pass was still
+running. The next two reports settle it beyond doubt: `2024 P1 @129m` at 09:06:53Z and
+`2024 P1 still running (189 min)` at 10:06:54Z.
+
+**The retracted claims, named so they are not carried forward:** there was no 0.72× pass, no
+cumulative 1.05×, and no "the arm makes the coal merit order less degenerate, which simplifies the
+basis" story. That last one was an *explanation invented for an artefact of a misparse*, and it is
+withdrawn in full. It is also exactly the kind of claim rule 1 `[R-STRUCT]` exists to refuse: solve
+time is not a criterion, and a mechanism is never credited for one.
+
+**The surviving measurement** is Addendum 3's anchor, unchanged: LP start ~04:08Z → 2024 P1 start
+~06:58Z = 170 min for work NWPP-40 did in 119.1 min, i.e. **~1.43×**.
+
+## A4.2 Why the ceiling moves again
+
+2024 P1 passed **189 min against NWPP-40's 135.9 (1.39×) and was still running**, so it has no
+measured upper bound — and 2025 P1, the single biggest pass in the span (263.9 min on NWPP-40), has
+not started. Gridding the two unknowns against the 1,020 ceiling (`+20 min` for verify and push):
+
+| 2024 P1 ends at | 2025 at 1.43× | 1.60× | 1.80× | 2.20× |
+|---|---|---|---|---|
+| 194 min (1.43×) | 838 | 888 | 947 | **1,065** |
+| 220 min (1.62×) | 864 | 914 | 973 | **1,091** |
+| 250 min (1.84×) | 894 | 944 | 1,003 | **1,121** |
+| 290 min (2.13×) | 934 | 984 | **1,043** | **1,161** |
+
+**Five of sixteen cells overrun 1,020**, and the survivors include several with under 50 min of slack.
+Against that, raising the ceiling costs **nothing** — a shard that finishes early simply finishes
+early — while being wrong costs the entire ~13-hour span, because rule 32(b) forbids pushing a
+half-written bundle. **1,320 min** (expires ~01:35Z on the 19th) clears every cell in the grid.
+
+**This is the third raise (600 → 780 → 1,020 → 1,320), and the honest summary is that this lane's
+projections have been optimistic three times running.** The ratio estimate has moved 1.22× → 1.43× →
+(a spurious 1.05×) → ≥1.39× unbounded. That pattern, not any single datapoint, is the argument for a
+ceiling with real headroom rather than one fitted to the current best guess.
+
+## A4.3 Live trigger IDs, superseding all three earlier pairs
+
+**`trig_017Kh9n7aHcbrZWkhpZePA7y`** (minute 5) and **`trig_01Gi7KPLxx2zm66CDe6LcYA4`** (minute 35) —
+these are the two the promoting check-in must delete (rule 33). Dead: `trig_01EPuqbN1HZ4HSc7EYQ6eotf`,
+`trig_015e6z1RbJ75tuWqGwk9X9hA`, `trig_016ykqCP9jmUezNDBJu6BCE1`, `trig_01EBYncSmmRn77caEo3W33i5`,
+`trig_01RmFVXvCgL71mHpipuv3pz1`, `trig_019jRppxsbiZdiF5o5wfsfxa`. Every one fired `SUCCEEDED` before
+deletion (last: 10:06:34Z and 09:35:48Z), so the wake channel has never missed a beat across six
+routines.
+
+## A4.4 The reporting fix, sharpened
+
+Both recreated pokes now require the per-pass table to say **FINISHED or STILL RUNNING explicitly**,
+with seconds and HiGHS iterations grepped from the log. The A4.1 misread is the whole reason: a status
+of the form `N min P1 done` is ambiguous between elapsed and total, and this lane resolved it the
+favourable way. The next check-in is instructed that when a reading is ambiguous it must treat the
+pass as still running and **say the reading is ambiguous** rather than pick the flattering branch.
+
+**Unchanged:** every expected number in §A1.3, the hard-stop signature, the registration and promotion
+sequence, and the rule-35 year-set enumeration. The FINDING will carry the ACTUAL per-pass seconds and
+iteration counts from the shard's log — the interim status never supplied them — and will state the
+realised span ratio rather than any of the running estimates above.
