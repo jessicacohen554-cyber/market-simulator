@@ -28,8 +28,8 @@ ESCALATED: three things, in section 6 -- none absorbed.
 
 miso-260's own `RESULT` explains why: ADDENDUM A.1 records the owner's ruling (*"Is this a
 recommended keeper candidate? If so plz promote"*), and A.3 records the span *"as launched"* —
-two shards, pinned SHAs, out-dirs, branches. **A.3 is the last thing that session wrote.** It
-launched the legs and ran out of session before it could compose them. The promotion the owner
+two shards, pinned SHAs, out-dirs, branches. **A.3 is not where that session stopped.** It
+launched the legs and opened PR #6259, which went conflicted and never merged. The promotion the owner
 ruled on has been outstanding since 2026-09-16, and so has miso-260's own forecast gate-(a)
 re-key.
 
@@ -94,8 +94,12 @@ with this session's changes  : 22 failed, 1530 passed, 18 skipped, 178 subtests 
 diff of the FAILED name sets : IDENTICAL
 ```
 
-**Zero new failures.** The charter's 19 is as stale as the 18 it corrects; the number in this
-container is **22**.
+**Zero new failures.** The number in this container is **22**. *(CORRECTED 2026-09-18: I wrote
+that the charter's 19 was "as stale as the 18 it corrects". That was unfair — PR #6259 §C.5
+shows miso-260 measuring **19 at HEAD and 19 reverted, identical sets**, so 19 was accurate
+when written. `main` added tests between its session and mine and the baseline moved to 22.
+The charter's instruction — measure it yourself both ways — is the durable point, and it is
+why this drift was caught rather than mistaken for a regression.)*
 
 ## 3. WHAT THE KEEPER SCORES, WITH EVERY REGRESSION AT FULL MAGNITUDE
 
@@ -184,19 +188,46 @@ named settling sources: `data/raw/_processed-legacy/eia923_monthly_generation.pa
 
 ## 6. WHAT I ESCALATED RATHER THAN ABSORBED
 
-1. **The compose probe's false stop** (§1.1). A lane that trusts its *"do not register"* line will
-   conclude a healthy composite is broken. Not patched here — rule 32(c)(6).
+**AMENDED 2026-09-18, and item 1 is now CLOSED and item 3 RE-DIAGNOSED.** The owner pointed me
+at **PR #6259** — miso-260's own promotion PR, opened 2026-09-17T03:07:23Z, **five minutes
+before this session began**, and never merged. Everything below is corrected against it.
+
+1. **The compose probe's false stop — FIXED, and miso-260 had already fixed it.** PR #6259
+   carries the exact repair: check that the ARTIFACT exists and spans every year, rather than
+   reading `legitimacy_diagnostics.py`'s exit status, *"so a nonzero exit is the normal case and
+   says nothing about whether the artifact was written."* Recovered onto `main` 2026-09-18. I
+   diagnosed this correctly and then left it unpatched under rule 32(c)(6); the fix existed in an
+   unmerged PR the whole time, which is itself an instance of item 3.
 2. **`check_gate_a_provenance` still fails for NEISO, NYISO and SPP**, each citing a superseded
-   keeper. Not mine (rule 25 / the keeper README's per-ISO scope); named so the next cross-ISO
-   sweep has the list.
-3. **The promotion-loss mode itself.** miso-260 discharged rule 34 perfectly — it pushed both
-   bundles, so nothing was lost — but the *promotion* still did not land, because nothing in the
-   rules makes the composition step survive a session boundary. Rule 34 protects the **bytes**;
-   there is no rule protecting an **owner ruling that has been given but not executed**. That gap
-   cost one session here and would have cost a full re-solve of six years if either shard branch
-   had been deleted first (rule 33(f) permits deleting a shard branch once "the bytes are
-   somewhere that is not that branch" — here they were not). Reported for the owner: a promotion
-   the owner has ruled on and that a session has not executed is currently invisible to every gate.
+   keeper. Unchanged, and still not mine (rule 25 / the keeper README's per-ISO scope).
+3. **THE PROMOTION-LOSS MODE — MY ORIGINAL DIAGNOSIS WAS WRONG.** I wrote that miso-260 *"ran out
+   of session before it could compose"* and that *"nothing in the rules makes the composition step
+   survive a session boundary."* **Both are false.** miso-260 composed, stamped, attested,
+   registered, promoted, pruned, re-keyed gate-(a), ran its gates and opened a PR — a complete,
+   correct promotion. What failed is one step later and entirely mundane: **its PR went
+   `mergeable_state: dirty` and nobody merged it.** Rule 34 protects the bytes and worked; rule 35
+   sequences the promotion and miso-260 discharged it in order. The unprotected step is the
+   LAST one — **a fully-executed promotion sitting in an unmerged PR is invisible to every gate in
+   this repo.** `audit_keepers`, `build_status`, `check_gate_a_provenance` and the parity sweep all
+   read the working tree or `main`; none of them can see that the ISO's real promotion is sitting
+   in an open PR. So a successor clones `main`, sees the superseded keeper, and does the whole
+   thing again — which is exactly what this session did, at the cost of a duplicated promotion and
+   a wrong root cause published in five places. The cheap guard is the one I did not have and the
+   next lane now does: **before building on a keeper, check for an open PR against that ISO's
+   files.** Reported for the owner as the real gap; it is not a rule-34 or rule-35 defect.
+4. **A duplicate-work cost, stated plainly.** Because #6259 never merged, `main` carried
+   miso-260's RESULT without its Addendum C and its calibration-log entry without its promotion
+   section — the whole of the STRUCTURAL-IMPROVEMENT case for this keeper. My own §3 reported the
+   regressions faithfully and could not report the wins at all, because the before/after
+   comparison needs miso-259's bundle, which is not on disk. Both are recovered verbatim
+   2026-09-18 (RESULT ADDENDUM C; the log's promotion section), and they are what the owner's
+   standing rule actually turns on: **failing criterion records over the registered span go
+   7 -> 5**, C1 2021 CC_REGULAR **-9.46 FAIL -> -2.92 PASS**, C1 2021 COAL_BIT **-8.36 FAIL ->
+   -7.02 PASS**, C3b 2020 **0.246 FAIL -> PASS**, C3a 2020 **+22.9% -> +16.3%**, and the D-2 2021
+   ST_GAS forced-share failure cleared — against the one loss this document already carried, C1
+   2020 COAL_BIT -7.00 -> -10.29. miso-260 also measured what I could not: across **27 commits of
+   `main`**, 2022, 2023 and 2025 each reproduce the incumbent keeper at **max |d class TWh| =
+   0.000000**, so the train tier provably did not move.
 
 ## 7. RETRIEVABILITY AND THE PROMOTION QUESTION (rules 31 / 34)
 
