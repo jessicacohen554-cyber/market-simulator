@@ -64,28 +64,64 @@ def _build_coal_price_trajectories() -> tuple[dict[int, float], dict[int, float]
 COAL_PRICE_LIGNITE_BY_YEAR, COAL_PRICE_PRB_BY_YEAR = _build_coal_price_trajectories()
 
 
-@lru_cache(maxsize=1)
-def _prb_monthly_actuals() -> dict[int, np.ndarray]:
+@lru_cache(maxsize=16)
+def _prb_monthly_actuals(iso: str | None = None) -> dict[int, np.ndarray]:
     """Return ``{year: (12,) $/MMBtu}`` measured PRB delivered cost by month.
 
     Quantity-weighted across the EIA-923 coal-cost reporters whose plant is
-    tagged PRB-by-rail in :data:`market_sim.data.fleet.COAL_PLANT_SUPPLY`
-    (ERCOT: Fayette and J K Spruce — the merchant fleet's receipts are
-    confidential). The series proxies the delivered PRB cost for the
+    tagged PRB-by-rail. The series proxies the delivered PRB cost for the
     *non-reporting* PRB plants in :func:`apply_coal_supply_pricing`; the
     reporters themselves are overwritten with their own plant-months by
     :func:`apply_plant_monthly_fuel_prices` afterwards. Months without a
     report carry the year's mean of the reported months. Lignite has no
     usable monthly proxy (the only reporter, San Miguel, burns its own
     high-cost mine) and stays on the flat annual trajectory. Returns an
-    empty dict when the F923 parquet is absent.
+    empty dict when the F923 parquet is absent, or when ``iso`` is given and
+    that ISO has no PRB reporter at all — the caller then falls back to the
+    flat annual trajectory rather than to an empty population.
+
+    ``iso=None`` (the default) pools the reporters in the hand-curated
+    :data:`market_sim.data.coal.COAL_PLANT_SUPPLY`. **Every plant in that map
+    is in Texas** (Limestone, W A Parish, Martin Lake, Coleto Creek, Fayette,
+    Oak Grove, San Miguel, Major Oak, J K Spruce, Sandy Creek), so the default
+    series is ERCOT's railed-PRB delivered cost. That is correct for ERCOT and
+    is kept as the default so no existing bundle moves.
+
+    ``iso="<ISO>"`` pools that ISO's OWN PRB reporters instead, from its own
+    derived rank file (:func:`market_sim.data.coal.coal_supply_by_iso`). This
+    is rule 25 ``[R-ISO-SCOPE]``: a delivered fuel cost measured in one market
+    is not evidence about another, and the difference is not small — NWPP's own
+    four PRB reporters (Dave Johnston, Naughton, Wyodak, Jim Bridger, all
+    Wyoming, all 36 months of 2023-2025) paid **2.463 / 2.134 / 2.066 $/MMBtu**
+    against ERCOT's **1.818 / 1.760 / 1.622**, so the default would under-price
+    a Montana mine-mouth plant by $0.44-0.65/MMBtu on Texas rail economics.
+    Gated per ISO by ``ScenarioConfig.coal_prb_proxy_own_iso``; see
+    :func:`apply_coal_supply_pricing`.
+
+    Measured at the gate (lane NWPP-41, zero LP): the ERCOT series currently
+    sticks to non-reporting PRB plants in **MISO (12 plants), PJM (2) and SPP
+    (3-5)** as well as NWPP (5), so this is a cross-ISO defect. It is NOT fixed
+    for them here — rule 25 and rule 28(d) make each ISO's own lane the only
+    place its fleet may move, and each must verify on its own market's data.
     """
     costs = _pkg_ns()._load_monthly_cache(None)
     if costs is None:
         return {}
-    from market_sim.data.coal import COAL_PLANT_SUPPLY
+    from market_sim.data.coal import COAL_PLANT_SUPPLY, coal_supply_by_iso
 
-    prb_plants = {p for p, s in COAL_PLANT_SUPPLY.items() if s == "prb"}
+    if iso is None:
+        prb_plants = {p for p, s in COAL_PLANT_SUPPLY.items() if s == "prb"}
+    else:
+        # "subbituminous" and "prb" are the same supply class (PRB == sub-bit,
+        # one name across ISOs — plant_taxonomy.COAL_SUPPLY_TO_CLASS), so both
+        # tags join the population.
+        prb_plants = {
+            p
+            for p, s in coal_supply_by_iso(iso).items()
+            if s in ("prb", "subbituminous")
+        }
+        if not prb_plants:
+            return {}
     sub = costs[
         costs["plant_id"].isin(prb_plants)
         & (costs["fuel_group"] == "Coal")
@@ -142,7 +178,19 @@ def apply_coal_supply_pricing(
     # (see _prb_monthly_actuals), expanded hour-by-hour; the flat annual
     # trajectory where no reports exist (forward years). Reporting plants
     # are overwritten with their own months downstream.
-    monthly = _prb_monthly_actuals().get(year)
+    #
+    # ``coal_prb_proxy_own_iso`` (rule 25 [R-ISO-SCOPE]) pools the proxy over
+    # THIS ISO's own PRB reporters instead of the hand-curated, ERCOT-only
+    # COAL_PLANT_SUPPLY. Default False, so every existing bundle keeps the
+    # series it solved on; armed per ISO through the ISO's own
+    # ``default_scenario_overrides``. An ISO with no PRB reporter of its own
+    # falls through to the flat annual trajectory, never to an empty pool.
+    proxy_iso = (
+        str(getattr(config, "iso", "") or "")
+        if bool(getattr(config, "coal_prb_proxy_own_iso", False))
+        else None
+    )
+    monthly = _prb_monthly_actuals(proxy_iso or None).get(year)
     if monthly is not None:
         prb_price = monthly[_month_index(fuel_prices.shape[1])]
     else:

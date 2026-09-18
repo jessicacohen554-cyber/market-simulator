@@ -200,6 +200,7 @@ window.MECH_MATRIX_SHARDS.ERCOT = {
     dual_fuel_switching: { cell: "U" },
     gas_price_override: { cell: "K" },
     coal_plant_monthly_pricing: { cell: "K" },
+    coal_prb_proxy_own_iso: { cell: ".", ev: "n/a \u2014 the DEFAULT pool IS ERCOT's own reporters (data.coal.COAL_PLANT_SUPPLY is the hand-curated ERCOT map), so arming this flag for ERCOT would change nothing: coal_supply_by_iso(\"ERCOT\") is empty by construction and the armed path falls back to the same series. Nothing to test." },
     campd_outage_windows: { cell: "K" },
     outage_artifact_provenance: { cell: "I", ev: "xiso-2 §4 (byte-identical)" },
     dam_availability_rebasis: { cell: "K", ev: "ercot-191 (signature A1): rulings #9/#8/#10 repaired in the deriver/crosswalk/pin and the family re-derived + re-gated (keeper 2026-08-12-run191-dam-deriver-regate; PRECOMMIT-ercot191; CT/ST class-day byte-identical, COAL 2025-only Martin Lake U1, CC train-sum +5.0 GW rating); ERCOT-96/97 + ERCOT-134 + ERCOT-137 (coal scope ADOPTED, run 2026-07-29-ercot137-coal-margin-measured; water-fill ceiling fix)" },

@@ -2144,6 +2144,9 @@ window.MECH_MATRIX = {
     { id: "coal_plant_monthly_pricing", cat: "fuel", name: "Per-plant monthly coal pricing (EIA-923)",
       def: "scenarios.py:15654 (default True)", mode: "B",
       note: "Default-on measured input, all six." },
+    { id: "coal_prb_proxy_own_iso", cat: "fuel", name: "ISO-scoped measured PRB delivered-cost proxy",
+      def: "scenarios.py coal_prb_proxy_own_iso (default False); armed for NWPP by pipeline/backcast_config.py (iso == \"NWPP\"), backcast only", mode: "B",
+      note: "A PRB plant that files no EIA-923 delivered cost is priced from a proxy pooled over the PRB plants that DO file. The default pool is the hand-curated data.coal.COAL_PLANT_SUPPLY, EVERY plant of which is in TEXAS \u2014 so by default a non-reporting PRB plant in any other footprint is priced on ERCOT rail economics. Armed, the pool is that ISO's own PRB reporters (data.coal.coal_supply_by_iso). Rule 25 [R-ISO-SCOPE] / rule 14 [R-ACCURATE]; ZERO free parameters \u2014 the identical quantity-weighted construction ERCOT already uses, over the ISO's own filed receipts. Measured zero-LP by NWPP-41: NWPP's four own reporters (Dave Johnston, Naughton, Wyodak, Jim Bridger, all Wyoming, all 36 months of 2023-2025) paid 2.463/2.134/2.066 $/MMBtu against ERCOT's 1.818/1.760/1.622. Confinement is exact \u2014 non-coal offer max|d| $0.0000000000 and pmax/availability max|d| 0 in all three years; only Colstrip, Hardin (and TS Power in 2025) move. THE SAME DEFECT REACHES MISO (12 plants), PJM (2) and SPP (3-5) and is NOT fixed for them here: each is its own lane's to move on its own market's data (rule 28(d)). Evidence: docs/handoffs/PRECOMMIT-nwpp-41-2026-09-17.md \u00a73." },
 
     /* ============ outage ============ */
     { id: "campd_outage_windows", cat: "outage", name: "CAMPD unit outage windows (historic outage source)",
