@@ -14198,3 +14198,122 @@ Records: `docs/RESULT-miso260-seam-ladder-screen-2026-09-16.md`,
 `scripts/probes/_miso260_seam_phase0.py`, `_miso260_compose_span.py`.
 
 * Next number: **miso-261**.
+
+
+## miso-261 — 2026-09-17 — **THE OWNER'S PROMOTION HAD NEVER BEEN EXECUTED. EXECUTED IT AT ZERO LP FROM TWO STRANDED SHARD LEGS, AND SETTLED THE BENCH FUEL-FAMILY ATTRIBUTION THAT WAS BLOCKING EVERY MISO GAS LANE.** Keeper `2026-09-16-miso-259-coal-fuel` → **`2026-09-16-miso-260-seam-ladder`**, train tier **CALIBRATED**
+
+**ZERO LP. NO SHARD LAUNCHED. NO MECHANISM TESTED. NO PARAMETER TUNED.** 43 DOF entries carried,
+**0 added** — the arm adds no `ScenarioConfig` field and no free parameter.
+
+**THE STATE WAS NOT WHAT THE CHARTER SAID.** `HANDOFF-miso261` opens *"KEEPER YOU INHERIT:
+2026-09-16-miso-260-seam-ladder … MISO's card reads CALIBRATED."* At `origin/main` `73281357`
+**none of that existed**: the keeper shard read `miso-259`, there was no `miso260` bundle,
+sidecar or payload, and MISO's card was CALIBRATED on the *superseded* keeper. miso-260's own
+RESULT explains it — ADDENDUM A.1 records the owner's ruling (*"Is this a recommended keeper
+candidate? If so plz promote. … If structural integrity improves but gates regress that may
+still be a keeper."*) and A.3 records the span *"as launched"*. **A.3 is the last thing that
+session wrote**: it launched both legs and ran out of session before it could compose them.
+
+**THE PROMOTION COST NOTHING BECAUSE miso-260 DISCHARGED RULE 34 PROPERLY.** Both shard branches
+survived with their bundles, `dispatch/<y>_P1.parquet` included —
+`claude/miso260-span-v` @ **`5bb6b99690d74b55ca79247b1113fe0a81525035`** (2020–2022,
+`miso260_seam_v`, 37 files / 592 MB) and `claude/miso260-span-t` @
+**`5478c2ac2e1985b602ef163459809ef0d919b977`** (2023–2025, `miso260_seam_t`, 37 files / 607 MB).
+Both legs verified before composing: same solve `git 36ac2560`, `miso_seam_measured_ladder:
+true`, and the two-config reserve partition in the declared direction. Then compose →
+`stamp_config_partition --check` (*"every year resolves identically"*) → `--rebuild-benchmark` →
+register → `gen_miso260_attestation.py` → re-score.
+
+**TRAIN TIER 2023–2025 = CALIBRATED**, C1/C2/C3a/C3b/C4/C6/C8 PASS, C3c the lone ledgered caveat
+(non-downgrading, rubric v3.3). **REGISTERED FULL SPAN = NOT-YET, and EVERY failing cell is a
+validation rung** — reported at full magnitude, never gating (rule 30(c)): **C1 2020 COAL_BIT
+−7.00 → −10.29 TWh**, out of the ±8 TWh band (miso-260's own G-NOFLIP failure, which the owner's
+ruling covers in terms and which is the real cost this promotion carries); C1 2022 CC_REGULAR
+−9.47; C3a 2020 +16.3 % / 2022 −14.6 %; C3b 2021 NRMSE 0.299. **C6 scored UNATTESTED at first
+registration** — the incumbent's defect, diagnosed in `RESULT-miso260` A.4 — and is closed here.
+**The status headline needed a second edit the keepers README does not mention**: after the
+keeper flip `build_status` still printed `MISO:NOT-YET`, because the shard's `config_partition`
+pins a `run_id` **per config** and both still named `miso-259`; re-keying those two restored
+`MISO:CALIBRATED` on the live scorer.
+
+**THE BENCH FUEL-FAMILY ATTRIBUTION IS SETTLED AND THE ±33 TWh CAVEAT IS LIFTED** — the charter's
+first task, answered at zero LP with nothing fetched. miso-253's 68.1 TWh of "offsetting
+per-family error" (gas −33.526 / other +23.111 / coal +10.827) **differenced a GRID-DELIVERED
+benchmark against a FULL-PLANT telemetry cell**. Measured on three sources: `classFull` coal 2023
+= 185.787 TWh reproduces an independent EIA-923-by-`ba_code` reconstruction **to four decimals**;
+the deflated EIA-930 NG cell tracks **CAMPD full-plant net gas** to −7.7 %…+4.6 % across six years
+while `classFull` gas sits 20–25 TWh below it and the measured BTM hold-out on those same plants
+is 22.5–24.8 TWh **every year** — the gap IS the hold-out; a further 18–30 TWh/yr of EIA-923 NG
+sits at plants the dispatch set does not model at all, **73–86 % of it `chp=Y`** Gulf-Coast
+refinery/chemical cogen (Dow St Charles, PPG, Westlake Plaquemine, Motiva Port Arthur, Air
+Products, ExxonMobil Baton Rouge, Shell Chemical, SABIC, Geismar) plus Gary Works. The coal leg is
+the **930 COL cell reading 17.5–21.1 TWh BELOW CAMPD in every year** — exactly the "−17..−21
+BELOW" already committed at `render_calibration_html.py:260` two months before miso-253.
+**The rival BFG/OG relabelling hypothesis is REFUTED on magnitude**: the whole MISO BFG+OG block
+is 2.2–5.9 TWh against a 33.5 TWh number. **DO NOT OPEN A MISO GAS LANE ON `fuelRows`** — it is
+the 930 full-plant cell, not the C1 gating basis. miso-253's *"neither on disk — intake work, not
+a solve"* was wrong about the first of its two named settling sources:
+`data/raw/_processed-legacy/eia923_monthly_generation.parquet` carries `ba_code` per plant per
+fuel per year and always has. ONE genuine coverage gap found and **reported, not acted on**:
+**West Riverside Energy Center** (EIA 64020, `chp=N`, `ba_code` MISO, 1.9 → 5.0 TWh 2020–2025) is
+absent from the bench dispatch set in all six years — a rule 14 `[R-ACCURATE]` intake item worth
+~4–5 TWh, **not** a gas object.
+
+**COAL_BIT IS TWO OBJECTS, AND THE CHARTER'S FRAMING IS HALF RIGHT.** Phase 0, zero LP, from the
+recovered keeper's `unit_hourly` joined to the bench part's coal sub-class map. Capacity-weighted
+`mc` quantiles: both coal classes floor **identically at $4.50 through q25** (the take-or-pay
+band) and sit near $5 at the median, so their must-run stacks are indistinguishable. In **2023
+and 2025** the divergence is entirely economic/peaking — COAL_BIT's q75 runs **+$4.76 / +$2.66**
+above COAL_PRB's and its q90 **+$7.88 / +$1.47** — and BIT's utilization is correspondingly lower
+(0.726 vs 0.792; 0.835 vs 0.864). That IS the charter's intra-coal merit split, and it is real.
+**In 2020 it does not exist**: q75 28.77 vs 28.73, q90 31.29 vs 32.47, utilization 0.715 vs 0.710
+— the distributions coincide — **yet 2020 carries the largest BIT deficit**. A merit split that is
+absent cannot explain −7.00, still less the armed −10.29; and the fact that the *seam ladder* is
+what pushed 2020 from −7.00 to −10.29 points the 2020 object at the **import/seam channel
+displacing BIT**, not at coal's own offer stack. A successor that tunes BIT's offer bands to close
+2023–2025 will not touch 2020 and may widen it.
+
+**GATES.** `audit_keepers --iso MISO` PASS (E13 fired before the prune exactly as rule 35(f)
+predicts, then cleared; E3 is the pre-existing warning). `build_status --iso MISO --check` in
+sync. `check_mechanism_matrix` PASS — and it cleared a **MISO-owned** warning the charter did not
+mention (§5.4's prose header did not name the designated keeper). `check_cache_key_registration`
+PASS, no new fields. `check_bench_freshness` 6 parts / 0 STALE. **`_miso260_bench_parity.py` run
+TWICE, before AND after registration: max |Δ actual class TWh| = 0.000000 in all six years.**
+`_miso257_btm_identity.py` worst |diff| 0.8326 TWh over the CHP classes, against the ±17–20 TWh
+signature of the miso-257 defect. `check_registry_payload_parity` shows the 2 pre-existing REDs
+plus this session's 2 untracked leg dirs — a filesystem-walk artifact (rule 31's 2026-09-16
+correction), invisible to CI; **neither pre-existing bundle `rm`'d**.
+**THE CHARTER'S PYTEST BASELINE IS WRONG AND I MEASURED IT BOTH WAYS AS INSTRUCTED**: the baseline
+in this container is **22 failures, not 19 and not 18** — `22 failed / 1530 passed` at the
+`origin/main` state and `22 failed / 1530 passed` with this session's changes, with the **FAILED
+name sets IDENTICAL**. Zero new failures.
+`check_gate_a_provenance`: **the charter says "MISO's row was repaired by miso-260" — IT WAS
+NOT.** The row cited `2026-09-12-miso-255-sil-measured`, i.e. it was **two** promotions stale,
+because miso-260's re-key never landed for the same reason its promotion did not. Re-keyed here.
+NEISO / NYISO / SPP still fail and are not this lane's.
+
+**RULE 35 `[R-PROMOTE]` DISCHARGED IN-SESSION.** Year-set union over every MISO sidecar recorded
+**before** the prune: **{2020, 2021, 2022, 2023, 2024, 2025}** — one registered run, no folded
+touchpoints, no dangling `holdout.keeper`; the incoming keeper covers it exactly, so (c) is met.
+`audit_keepers` E1 verified BEFORE pruning (rule 35(e) order); `2026-09-16-miso-259-coal-fuel`
+then pruned with `--force-uncite`, the **intended** route per rule 35(d) — the blocking citation
+is this session's own promotion note, which is exactly the history rule 35(d) says must stay.
+
+**ESCALATED, NOT ABSORBED.** (1) `_miso260_compose_span.py::regenerate_diagnostics` treats
+`legitimacy_diagnostics.py`'s **verdict** exit code as a regeneration failure and prints *"FAILED
+(exit 1) — C8 would score SKIPPED; do not register"* on a composite whose artifact is complete and
+whose C8 scores **PASS**; left unpatched (rule 32(c)(6)) and reported. (2) `check_gate_a_provenance`
+still red for NEISO / NYISO / SPP. (3) **The promotion-loss mode itself**: rule 34 protects the
+*bytes* and worked perfectly here, but **nothing protects an owner ruling that has been given and
+not executed** — it is invisible to every gate, it cost one session, and it would have cost a full
+six-year re-solve had either shard branch been deleted first.
+
+**RETRIEVABILITY.** The keeper is committed and pushed. The two leg bundles live untracked on this
+container **and** on their shard branches at the full SHAs above; a promotion from that state costs
+**zero** (`git checkout <sha> -- <path>`). The shard branches are **deliberately left alive and
+undeleted** under rule 33(f)(3) — they hold the only copies of the per-year legs outside this
+ephemeral container, and this session launched no shards of its own.
+
+Evidence: `docs/RESULT-miso261-promotion-and-attribution-2026-09-17.md`,
+`docs/FINDING-miso261-bench-fuel-attribution-2026-09-17.md`,
+`docs/RESULT-miso260-seam-ladder-screen-2026-09-16.md` (+ addenda A/B).
