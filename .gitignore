@@ -2367,7 +2367,6 @@ results/calibration/pjm_h9c_2023/
 results/calibration/pjm_h9c_2024/
 results/calibration/pjm_h9c_2025/
 
-!results/calibration/caiso285_instr_2024/**
 # caiso-285 INSTRUMENTED DIAGNOSTIC BUNDLE (rule 29 [R-SCREEN] (c) + rule 31
 # [R-RETAIN]). A 2024-only byte-faithful replay of the CAISO keeper carrying the
 # --persist-p0-commitment P0 pattern, the storage SOC columns and the floors/
