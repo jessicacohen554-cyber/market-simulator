@@ -507,3 +507,71 @@ pass as still running and **say the reading is ambiguous** rather than pick the 
 sequence, and the rule-35 year-set enumeration. The FINDING will carry the ACTUAL per-pass seconds and
 iteration counts from the shard's log — the interim status never supplied them — and will state the
 realised span ratio rather than any of the running estimates above.
+
+---
+
+# ADDENDUM 5 (2026-09-18) — a parent CANNOT observe a shard beyond its status line; the diagnostic is abandoned and the solve runs on
+
+**No change to the recipe, the pin, or the 1,320-min ceiling.** This addendum records an
+**operational limitation that cost this lane two round trips**, and the decision taken because of it.
+
+## A5.1 What was tried, and what came back
+
+2024 P1 passed 1.83× of NWPP-40 and kept climbing, and the question "is HiGHS converging slowly or
+cycling degenerately?" cannot be answered from an elapsed figure. Two attempts to get the answer:
+
+1. **11:27Z** — fired the `:05` poke with appended text asking for `ps` CPU-time vs elapsed, two
+   HiGHS iteration samples ten minutes apart, the log tail, and the cgroup ceiling. The shard ran a
+   turn at 11:35:55Z and returned `solve NWPP-41 span_A in flight (278 min); awaiting P1 completion`.
+2. **11:51Z** — fired the `:35` poke asking it to write the same diagnostic to
+   `docs/handoffs/SHARDDIAG-nwpp-41-2026-09-18.md` and push it to a new branch `claude/nwpp-41-diag`,
+   on the theory that a file is readable where prose is not. The shard ran a turn at 12:06:40Z and
+   returned `waiting on 2024 P1 solve (308m elapsed, 2025 pending)`. **`git fetch origin
+   claude/nwpp-41-diag` → `couldn't find remote ref`.** The branch was never created.
+
+**TWO FINDINGS FOR EVERY FUTURE SHARDED LANE**, neither of which is in rule 32 today:
+
+- **(a) The parent can read a shard's `post_turn_summary.status_detail` and NOTHING ELSE.** There is
+  no transcript access, and a cloud shard is not reachable by `SendMessage` (Addendum 2). So any
+  question whose answer is prose is **structurally unanswerable**. Rule 32(c)(5) already says to tell
+  a shard what to report *in numbers in its final message*; the sharper lesson is that the same
+  applies to every INTERIM report, and that anything the parent will need mid-flight must be
+  designed into the status line from the start — or written to a file the shard pushes *as part of
+  its standing instructions*, not as an afterthought.
+- **(b) Text appended to a keep-alive routine is not reliably acted on.** Both one-off requests were
+  delivered (`fire_trigger` returned success, and the shard demonstrably ran a turn within minutes of
+  each) and both were ignored in favour of the routine's own numbered steps, which say *"check,
+  report, end the turn — never block a single tool call for hours."* That instruction is doing its
+  job; the appended request simply loses to it. A mid-flight ask therefore belongs in the **routine's
+  own prompt** (delete-and-recreate), not appended — and even then it competes with the brevity rule.
+
+## A5.2 The decision: let it run, and stop chasing the diagnostic
+
+The diagnostic was only ever worth having if it could tell this lane to **stop early**. It cannot,
+because stopping early is dominated. At 12:18Z the shard is **523 min into a 1,320-min ceiling with
+797 min left**, and the remaining work fits in all but the most extreme cell:
+
+| 2024 P1 ends | 2025 @1.8× | @2.27× | @2.5× |
+|---|---|---|---|
+| 320 min | 1,073 | 1,211 | 1,279 |
+| 360 min | 1,113 | 1,251 | 1,319 |
+| 420 min | 1,173 | 1,311 | **1,379 OVER** |
+
+Against that, stopping now **guarantees** the loss of ~9 h of LP with no bundle, and rule 31
+`[R-RETAIN]` forbids destroying what exists. Even in the degenerate-cycling case the lane learns
+that at the ceiling with exactly the information it has now, having lost nothing extra — the
+container is doing nothing else. **So the diagnostic is abandoned, no further one-off pokes are
+fired, and the solve runs to completion or to its ceiling.**
+
+**What is known, and stated as its limit:** 2024 P1's elapsed advances with wall clock across four
+samples (189 → 248 → 278 → 308 min) and the shard has never reported the traceback its step 1
+requires on death, so the process is present. **Whether HiGHS is still iterating is UNKNOWN and this
+lane could not establish it.** That is recorded as a gap, not papered over.
+
+## A5.3 For the FINDING
+
+2024 P1 at **≥2.27× the control and unfinished** is worth one line as an observation, with **no
+claim whatever about the arm's merit**: solve time is not a criterion (rule 1 `[R-STRUCT]`), and this
+lane has already retracted one such claim (Addendum 4 §A4.1). The real per-pass seconds and
+iteration counts come from the shard's log at the end — they have never once appeared in an interim
+status.
