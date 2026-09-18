@@ -386,3 +386,56 @@ whole 780-minute budget rides on.
 
 **Unchanged by this addendum:** every expected number in §A1.3, the hard-stop signature the shard
 must show, the registration and promotion sequence, and the rule-35 year-set enumeration.
+
+---
+
+# ADDENDUM 3 (2026-09-18) — budget raised again, 780 → 1,020 min; 2023 is solved and the ratio is WORSE than Addendum 2 projected
+
+**Recipe unchanged. Pin unchanged (`666343a2bf86f204c5ca6c672a680da32150a640`). Only the ceiling moves.**
+
+**Observed.** At 06:35:56Z: `span_A solve in progress (2024 P0, 2025 pending)` — so 2023 is complete
+on both passes and the run is in 2024 P0. The two interim reports were
+`2023 P0 complete (1512.4s, 515K iterations)` at 04:35:48Z and
+`LP pass 2023 P1 in progress (63 min)` at 05:36:09Z.
+
+**The problem: 2023 P1's completion time was never reported, only bracketed.** The status prose
+carried no per-pass seconds for it, so the ratio has to be inferred from when 2024 P0 appeared. On an
+LP start of ~04:08Z (2023 P0 = 1,512.4 s, finishing just before its 04:35:48Z report):
+
+| 2023 done at | 2023 elapsed | ratio vs NWPP-40's 81.8 min | projected 2024+2025 | TOTAL from shard start | vs 780 |
+|---|---|---|---|---|---|
+| ~05:50Z | 102 min | 1.25× | ~583 min | ~718 min | inside |
+| ~06:05Z | 117 min | 1.43× | ~668 min | ~818 min | **OVER** |
+| ~06:20Z | 132 min | 1.61× | ~754 min | ~919 min | **OVER** |
+| ~06:35Z | 147 min | 1.80× | ~840 min | ~1,020 min | **OVER** |
+
+2024 + 2025 are **85 %** of NWPP-40's span (467.6 of 549.5 min), so the remaining work is where the
+ratio bites. **Three of the four brackets overrun 780 min**, and only the most optimistic survives.
+
+**Decision: 1,020 min.** It covers even the 1.80× bracket. The asymmetry is the whole argument — a
+shard that finishes early simply finishes early and costs nothing, while a shard that stops at its
+ceiling has two years solved, nothing pushed, and rule 32(b) forbids pushing the partial bundle. This
+is the second re-budget of the lane and it is again made *before* the ceiling is approached, on
+measurement rather than on a stop.
+
+**The reporting gap is closed at the same time.** Both recreated pokes now REQUIRE the finished
+passes as an explicit seconds-and-iterations table grepped from the log
+(`2023 P0 1512.4s/515K, P1 5820.3s/612K; 2024 P0 in progress 12 min`) rather than prose, because a
+bracket four brackets wide is not a measurement and this lane should not be re-deriving it from
+timestamps. That the gap existed at all is the finding: a shard prompt that asks for per-pass numbers
+"in the final report" gets prose in the interim status, and the parent's budget decisions depend on
+the interim.
+
+**Live trigger IDs, superseding BOTH earlier pairs** — these are the two the promoting check-in must
+delete (rule 33), and the four earlier IDs are dead:
+**`trig_01RmFVXvCgL71mHpipuv3pz1`** (minute 5) and **`trig_019jRppxsbiZdiF5o5wfsfxa`** (minute 35).
+Dead: `trig_01EPuqbN1HZ4HSc7EYQ6eotf`, `trig_015e6z1RbJ75tuWqGwk9X9hA` (Addendum 2's pair),
+`trig_016ykqCP9jmUezNDBJu6BCE1`, `trig_01EBYncSmmRn77caEo3W33i5`. Every delete-and-recreate is forced
+by the same platform constraint Addendum 2 recorded: a routine's prompt cannot be edited from outside
+the conversation it posts into. All four earlier pokes fired `SUCCEEDED` before deletion (last:
+06:14:26Z and 06:35:29Z), so the wake channel has never missed.
+
+**Unchanged:** every expected number in §A1.3, the hard-stop signature, the registration and
+promotion sequence, and the rule-35 year-set enumeration. **A slower container is not a different
+LP** — the 2023 P0 iteration count was 0.98× NWPP-40's, and the offer-array probe already bounded the
+arm to 7 coal rows with non-coal max|Δ| exactly $0.0000000000.
