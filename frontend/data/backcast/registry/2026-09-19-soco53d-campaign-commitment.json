@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-19-soco53d-campaign-commitment",
+  "label": "soco53d campaign commitment",
+  "date": "2026-09-19",
+  "shorthand": "soco53d-campaign-commitment",
+  "definition": "soco-53d: P1-native gas-steam CAMPAIGN commitment floor on SOCO's four campaign-duty boilers at their own measured plant-basis minimum stable load and minimum campaign duration (rules 1/14/17/19); measured_ct_heat_rates + egrid_family_heat_rates retained from the keeper; every offer band 1.0, authorized_price_tuning NONE",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "SOCO",
+  "file": "frontend/data/backcast/runs/2026-09-19-soco53d-campaign-commitment.js",
+  "bundle": "results/calibration/soco53d_campaign"
+}
