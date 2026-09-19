@@ -2491,3 +2491,16 @@ results/calibration/ercot_mer20260919_20*/
 # an unregistered per-year dir left committed is the Class-E parity RED that
 # rule 29 [R-SCREEN] (c) forbids (rule 32 [R-SHARD] (d)).
 results/calibration/miso262_mer_*/
+
+# miso-262: the COMPOSED cold per-year span — MISO's keeper candidate under the
+# rule 36 [R-YEAR-ISOLATION] posture, built at zero LP from the six per-year
+# bundles above. Ignored while the promotion is UNDECIDED (rule 31 [R-RETAIN]:
+# ignored, never deleted — an undecided candidate is exactly what rule 31
+# protects). Reproduce it from the six shard SHAs above with:
+#   uv run python scripts/probes/_miso260_compose_span.py \
+#     --leg 2020=miso262_mer_2020 ... --leg 2025=miso262_mer_2025 \
+#     --out results/calibration/miso262_cold_span
+# IF IT IS PROMOTED, the registering commit appends a NEGATION for the
+# committable slim set (rule 34 [R-SHARD-PROMOTABLE] (a)'s pattern) rather than
+# using `git add -f`, which the auto-mode classifier refuses.
+results/calibration/miso262_cold_span/
