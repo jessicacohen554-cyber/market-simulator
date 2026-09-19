@@ -2427,3 +2427,8 @@ results/calibration/spp_mer_20260919_rung/
 # `/**` negation can then override them. The arm bundle is a single registrable
 # span (rule 34 [R-SHARD-PROMOTABLE] (a) requires the shard to PUSH it), so the
 # parent simply does not commit it to main rather than ignoring it.
+# soco-53c: the rule 29 [R-SCREEN] (b) CONTROL bundle — the keeper's own recipe re-solved at the
+# lane's pinned SHA to test commit fba0ecd7's byte-identity claim. Kept OUT OF MAIN per rule 29(c),
+# never `rm` (rule 31 [R-RETAIN]). Its numbers live in FINDING-soco-53c-2026-09-19.md.
+# Recover: git archive adb289959d43ce95da3d586aa0dc6b7763784106 results/calibration/soco53c_control | tar -x
+results/calibration/soco53c_control/
