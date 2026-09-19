@@ -2401,3 +2401,10 @@ results/calibration/nyiso239_bench_2022/
 results/calibration/nyiso239_bench_2023/
 results/calibration/nyiso239_bench_2024/
 results/calibration/nyiso239_bench_2025/
+
+# soco-53c arm shard: push this bundle to the shard branch (rule 34(a)).
+!results/calibration/soco53c_family/**
+!results/calibration/soco53c_family/dispatch/
+!results/calibration/soco53c_family/dispatch/**
+!results/calibration/_shared/SOCO/
+!results/calibration/_shared/SOCO/**
