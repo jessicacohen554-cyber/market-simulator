@@ -1,0 +1,957 @@
+{
+ "census": {
+  "CAISO": {
+   "n_current_lookup": 1989,
+   "n_vintage_union": 2071,
+   "n_missing": 82,
+   "years": [
+    {
+     "year": 2022,
+     "n_plants_with_gen": 11,
+     "gwh": 174.974
+    },
+    {
+     "year": 2023,
+     "n_plants_with_gen": 5,
+     "gwh": 24.49
+    },
+    {
+     "year": 2024,
+     "n_plants_with_gen": 7,
+     "gwh": 144.624
+    },
+    {
+     "year": 2025,
+     "n_plants_with_gen": 3,
+     "gwh": 1259.076
+    }
+   ]
+  },
+  "ERCOT": {
+   "n_current_lookup": 1406,
+   "n_vintage_union": 1442,
+   "n_missing": 37,
+   "years": [
+    {
+     "year": 2021,
+     "n_plants_with_gen": 1,
+     "gwh": 1.538
+    },
+    {
+     "year": 2022,
+     "n_plants_with_gen": 0,
+     "gwh": 0.0
+    },
+    {
+     "year": 2023,
+     "n_plants_with_gen": 0,
+     "gwh": 0.0
+    },
+    {
+     "year": 2024,
+     "n_plants_with_gen": 0,
+     "gwh": 0.0
+    },
+    {
+     "year": 2025,
+     "n_plants_with_gen": 0,
+     "gwh": 0.0
+    }
+   ]
+  },
+  "MISO": {
+   "n_current_lookup": 2861,
+   "n_vintage_union": 3001,
+   "n_missing": 143,
+   "years": [
+    {
+     "year": 2020,
+     "n_plants_with_gen": 45,
+     "gwh": 8036.9671
+    },
+    {
+     "year": 2021,
+     "n_plants_with_gen": 21,
+     "gwh": 4524.8189
+    },
+    {
+     "year": 2022,
+     "n_plants_with_gen": 11,
+     "gwh": 4449.123
+    },
+    {
+     "year": 2023,
+     "n_plants_with_gen": 10,
+     "gwh": 1628.482
+    },
+    {
+     "year": 2024,
+     "n_plants_with_gen": 11,
+     "gwh": 1745.216
+    },
+    {
+     "year": 2025,
+     "n_plants_with_gen": 2,
+     "gwh": 1176.26
+    }
+   ]
+  },
+  "NEISO": {
+   "n_current_lookup": 1561,
+   "n_vintage_union": 1606,
+   "n_missing": 45,
+   "years": [
+    {
+     "year": 2020,
+     "n_plants_with_gen": 12,
+     "gwh": 358.009
+    },
+    {
+     "year": 2021,
+     "n_plants_with_gen": 9,
+     "gwh": 326.799
+    },
+    {
+     "year": 2022,
+     "n_plants_with_gen": 6,
+     "gwh": 152.505
+    },
+    {
+     "year": 2023,
+     "n_plants_with_gen": 0,
+     "gwh": 0.0
+    },
+    {
+     "year": 2024,
+     "n_plants_with_gen": 0,
+     "gwh": 0.0
+    },
+    {
+     "year": 2025,
+     "n_plants_with_gen": 0,
+     "gwh": 0.0
+    }
+   ]
+  },
+  "NWPP": {
+   "n_current_lookup": 1083,
+   "n_vintage_union": 1125,
+   "n_missing": 43,
+   "years": [
+    {
+     "year": 2023,
+     "n_plants_with_gen": 0,
+     "gwh": 0.0
+    },
+    {
+     "year": 2024,
+     "n_plants_with_gen": 0,
+     "gwh": 0.0
+    },
+    {
+     "year": 2025,
+     "n_plants_with_gen": 0,
+     "gwh": 0.0
+    }
+   ]
+  },
+  "NYISO": {
+   "n_current_lookup": 1257,
+   "n_vintage_union": 1284,
+   "n_missing": 28,
+   "years": [
+    {
+     "year": 2022,
+     "n_plants_with_gen": 2,
+     "gwh": 134.2131
+    },
+    {
+     "year": 2023,
+     "n_plants_with_gen": 0,
+     "gwh": 0.0
+    },
+    {
+     "year": 2024,
+     "n_plants_with_gen": 0,
+     "gwh": 0.0
+    },
+    {
+     "year": 2025,
+     "n_plants_with_gen": 0,
+     "gwh": 0.0
+    }
+   ]
+  },
+  "PJM": {
+   "n_current_lookup": 1727,
+   "n_vintage_union": 2584,
+   "n_missing": 857,
+   "years": [
+    {
+     "year": 2020,
+     "n_plants_with_gen": 56,
+     "gwh": 10131.6745
+    },
+    {
+     "year": 2021,
+     "n_plants_with_gen": 35,
+     "gwh": 9185.2575
+    },
+    {
+     "year": 2022,
+     "n_plants_with_gen": 24,
+     "gwh": 5145.598
+    },
+    {
+     "year": 2023,
+     "n_plants_with_gen": 4,
+     "gwh": 169.9331
+    },
+    {
+     "year": 2024,
+     "n_plants_with_gen": 114,
+     "gwh": 2596.968
+    },
+    {
+     "year": 2025,
+     "n_plants_with_gen": 47,
+     "gwh": 8991.2104
+    }
+   ]
+  },
+  "SOCO": {
+   "n_current_lookup": 413,
+   "n_vintage_union": 423,
+   "n_missing": 12,
+   "years": [
+    {
+     "year": 2023,
+     "n_plants_with_gen": 2,
+     "gwh": 1128.126
+    },
+    {
+     "year": 2024,
+     "n_plants_with_gen": 3,
+     "gwh": 1433.027
+    },
+    {
+     "year": 2025,
+     "n_plants_with_gen": 2,
+     "gwh": 1137.628
+    }
+   ]
+  },
+  "SPP": {
+   "n_current_lookup": 830,
+   "n_vintage_union": 850,
+   "n_missing": 20,
+   "years": [
+    {
+     "year": 2019,
+     "n_plants_with_gen": 6,
+     "gwh": 2668.5496
+    },
+    {
+     "year": 2020,
+     "n_plants_with_gen": 6,
+     "gwh": 1127.3441
+    },
+    {
+     "year": 2021,
+     "n_plants_with_gen": 2,
+     "gwh": 4.172
+    },
+    {
+     "year": 2022,
+     "n_plants_with_gen": 2,
+     "gwh": 0.471
+    },
+    {
+     "year": 2023,
+     "n_plants_with_gen": 1,
+     "gwh": 0.655
+    },
+    {
+     "year": 2024,
+     "n_plants_with_gen": 1,
+     "gwh": 0.175
+    },
+    {
+     "year": 2025,
+     "n_plants_with_gen": 0,
+     "gwh": 0.0
+    }
+   ]
+  }
+ },
+ "shapes": {
+  "per_iso": {
+   "CAISO": [
+    {
+     "year": 2022,
+     "add_gwh": 148.026,
+     "strict_delete_gwh": 0.0
+    },
+    {
+     "year": 2023,
+     "add_gwh": 0.0,
+     "strict_delete_gwh": 0.0
+    },
+    {
+     "year": 2024,
+     "add_gwh": 0.0,
+     "strict_delete_gwh": 0.0
+    },
+    {
+     "year": 2025,
+     "add_gwh": 0.0,
+     "strict_delete_gwh": 0.0
+    }
+   ],
+   "ERCOT": [
+    {
+     "year": 2021,
+     "add_gwh": 1.538,
+     "strict_delete_gwh": 0.0
+    },
+    {
+     "year": 2022,
+     "add_gwh": 0.0,
+     "strict_delete_gwh": 0.0
+    },
+    {
+     "year": 2023,
+     "add_gwh": 0.0,
+     "strict_delete_gwh": 0.0
+    },
+    {
+     "year": 2024,
+     "add_gwh": 0.0,
+     "strict_delete_gwh": 599.921
+    },
+    {
+     "year": 2025,
+     "add_gwh": 0.0,
+     "strict_delete_gwh": 564.04
+    }
+   ],
+   "MISO": [
+    {
+     "year": 2020,
+     "add_gwh": 6884.195,
+     "strict_delete_gwh": 6.32
+    },
+    {
+     "year": 2021,
+     "add_gwh": 3243.948,
+     "strict_delete_gwh": 0.0
+    },
+    {
+     "year": 2022,
+     "add_gwh": 3030.903,
+     "strict_delete_gwh": 0.275
+    },
+    {
+     "year": 2023,
+     "add_gwh": 0.0,
+     "strict_delete_gwh": 0.0
+    },
+    {
+     "year": 2024,
+     "add_gwh": 0.0,
+     "strict_delete_gwh": 0.0
+    },
+    {
+     "year": 2025,
+     "add_gwh": 0.0,
+     "strict_delete_gwh": 0.0
+    }
+   ],
+   "NEISO": [
+    {
+     "year": 2020,
+     "add_gwh": 358.009,
+     "strict_delete_gwh": 0.0
+    },
+    {
+     "year": 2021,
+     "add_gwh": 326.799,
+     "strict_delete_gwh": 0.0
+    },
+    {
+     "year": 2022,
+     "add_gwh": 142.99,
+     "strict_delete_gwh": 0.0
+    },
+    {
+     "year": 2023,
+     "add_gwh": 0.0,
+     "strict_delete_gwh": 0.0
+    },
+    {
+     "year": 2024,
+     "add_gwh": 0.0,
+     "strict_delete_gwh": 0.0
+    },
+    {
+     "year": 2025,
+     "add_gwh": 0.0,
+     "strict_delete_gwh": 0.0
+    }
+   ],
+   "NWPP": [
+    {
+     "year": 2023,
+     "add_gwh": 0.0,
+     "strict_delete_gwh": 0.135
+    },
+    {
+     "year": 2024,
+     "add_gwh": 0.0,
+     "strict_delete_gwh": 0.0
+    },
+    {
+     "year": 2025,
+     "add_gwh": 0.0,
+     "strict_delete_gwh": 0.0
+    }
+   ],
+   "NYISO": [
+    {
+     "year": 2022,
+     "add_gwh": 134.213,
+     "strict_delete_gwh": 0.0
+    },
+    {
+     "year": 2023,
+     "add_gwh": 0.0,
+     "strict_delete_gwh": 0.0
+    },
+    {
+     "year": 2024,
+     "add_gwh": 0.0,
+     "strict_delete_gwh": 0.0
+    },
+    {
+     "year": 2025,
+     "add_gwh": 0.0,
+     "strict_delete_gwh": 0.0
+    }
+   ],
+   "PJM": [
+    {
+     "year": 2020,
+     "add_gwh": 10049.663,
+     "strict_delete_gwh": 9077.743
+    },
+    {
+     "year": 2021,
+     "add_gwh": 9001.296,
+     "strict_delete_gwh": 0.0
+    },
+    {
+     "year": 2022,
+     "add_gwh": 4933.185,
+     "strict_delete_gwh": 0.0
+    },
+    {
+     "year": 2023,
+     "add_gwh": 0.097,
+     "strict_delete_gwh": 0.0
+    },
+    {
+     "year": 2024,
+     "add_gwh": 2457.423,
+     "strict_delete_gwh": 0.0
+    },
+    {
+     "year": 2025,
+     "add_gwh": 8808.284,
+     "strict_delete_gwh": 0.0
+    }
+   ],
+   "SOCO": [
+    {
+     "year": 2023,
+     "add_gwh": 0.0,
+     "strict_delete_gwh": 0.0
+    },
+    {
+     "year": 2024,
+     "add_gwh": 0.403,
+     "strict_delete_gwh": 7275.894
+    },
+    {
+     "year": 2025,
+     "add_gwh": 0.0,
+     "strict_delete_gwh": 6168.901
+    }
+   ],
+   "SPP": [
+    {
+     "year": 2019,
+     "add_gwh": 2668.406,
+     "strict_delete_gwh": 893.138
+    },
+    {
+     "year": 2020,
+     "add_gwh": 1127.316,
+     "strict_delete_gwh": 879.687
+    },
+    {
+     "year": 2021,
+     "add_gwh": 0.0,
+     "strict_delete_gwh": 828.804
+    },
+    {
+     "year": 2022,
+     "add_gwh": 0.275,
+     "strict_delete_gwh": 892.629
+    },
+    {
+     "year": 2023,
+     "add_gwh": 0.0,
+     "strict_delete_gwh": 537.529
+    },
+    {
+     "year": 2024,
+     "add_gwh": 0.0,
+     "strict_delete_gwh": 0.0
+    },
+    {
+     "year": 2025,
+     "add_gwh": 0.0,
+     "strict_delete_gwh": 0.0
+    }
+   ]
+  },
+  "double_count": [
+   {
+    "year": 2020,
+    "a": "MISO",
+    "b": "PJM",
+    "plant": 56464,
+    "gwh": 20.88
+   },
+   {
+    "year": 2020,
+    "a": "MISO",
+    "b": "PJM",
+    "plant": 57250,
+    "gwh": 29.789
+   },
+   {
+    "year": 2020,
+    "a": "MISO",
+    "b": "SPP",
+    "plant": 61450,
+    "gwh": 4.037
+   },
+   {
+    "year": 2020,
+    "a": "MISO",
+    "b": "SPP",
+    "plant": 56859,
+    "gwh": 66.878
+   },
+   {
+    "year": 2020,
+    "a": "MISO",
+    "b": "SPP",
+    "plant": 56013,
+    "gwh": 80.036
+   },
+   {
+    "year": 2020,
+    "a": "MISO",
+    "b": "SPP",
+    "plant": 56478,
+    "gwh": 111.583
+   },
+   {
+    "year": 2021,
+    "a": "MISO",
+    "b": "SPP",
+    "plant": 61450,
+    "gwh": 4.011
+   },
+   {
+    "year": 2021,
+    "a": "MISO",
+    "b": "SPP",
+    "plant": 56859,
+    "gwh": 68.679
+   },
+   {
+    "year": 2021,
+    "a": "MISO",
+    "b": "SPP",
+    "plant": 56013,
+    "gwh": 123.414
+   },
+   {
+    "year": 2021,
+    "a": "MISO",
+    "b": "SPP",
+    "plant": 56478,
+    "gwh": 66.838
+   },
+   {
+    "year": 2022,
+    "a": "MISO",
+    "b": "SPP",
+    "plant": 61450,
+    "gwh": 4.12
+   },
+   {
+    "year": 2022,
+    "a": "MISO",
+    "b": "SPP",
+    "plant": 56859,
+    "gwh": 65.92
+   },
+   {
+    "year": 2022,
+    "a": "MISO",
+    "b": "SPP",
+    "plant": 56013,
+    "gwh": 156.912
+   },
+   {
+    "year": 2022,
+    "a": "MISO",
+    "b": "SPP",
+    "plant": 56478,
+    "gwh": 104.89
+   }
+  ]
+ },
+ "inert": {
+  "CAISO": [
+   {
+    "year": 2022,
+    "n_added": 16,
+    "rows": 12,
+    "mwh": 148026.0,
+    "verdict": "LIVE"
+   },
+   {
+    "year": 2023,
+    "n_added": 6,
+    "rows": 0,
+    "mwh": 0.0,
+    "verdict": "INERT (frame byte-identical)"
+   },
+   {
+    "year": 2024,
+    "n_added": 0,
+    "rows": 0,
+    "mwh": 0.0,
+    "verdict": "INERT (frame byte-identical)"
+   },
+   {
+    "year": 2025,
+    "n_added": 0,
+    "rows": 0,
+    "mwh": 0.0,
+    "verdict": "INERT (frame byte-identical)"
+   }
+  ],
+  "ERCOT": [
+   {
+    "year": 2021,
+    "n_added": 17,
+    "rows": 3,
+    "mwh": 1538.0,
+    "verdict": "LIVE"
+   },
+   {
+    "year": 2022,
+    "n_added": 10,
+    "rows": 1,
+    "mwh": 0.0,
+    "verdict": "LIVE"
+   },
+   {
+    "year": 2023,
+    "n_added": 6,
+    "rows": 0,
+    "mwh": 0.0,
+    "verdict": "INERT (frame byte-identical)"
+   },
+   {
+    "year": 2024,
+    "n_added": 0,
+    "rows": 0,
+    "mwh": 0.0,
+    "verdict": "INERT (frame byte-identical)"
+   },
+   {
+    "year": 2025,
+    "n_added": 0,
+    "rows": 0,
+    "mwh": 0.0,
+    "verdict": "INERT (frame byte-identical)"
+   }
+  ],
+  "MISO": [
+   {
+    "year": 2020,
+    "n_added": 80,
+    "rows": 77,
+    "mwh": 6756889.111,
+    "verdict": "LIVE"
+   },
+   {
+    "year": 2021,
+    "n_added": 50,
+    "rows": 37,
+    "mwh": 3243947.9080000003,
+    "verdict": "LIVE"
+   },
+   {
+    "year": 2022,
+    "n_added": 36,
+    "rows": 20,
+    "mwh": 3030902.957,
+    "verdict": "LIVE"
+   },
+   {
+    "year": 2023,
+    "n_added": 15,
+    "rows": 1,
+    "mwh": 0.0,
+    "verdict": "LIVE"
+   },
+   {
+    "year": 2024,
+    "n_added": 0,
+    "rows": 0,
+    "mwh": 0.0,
+    "verdict": "INERT (frame byte-identical)"
+   },
+   {
+    "year": 2025,
+    "n_added": 0,
+    "rows": 0,
+    "mwh": 0.0,
+    "verdict": "INERT (frame byte-identical)"
+   }
+  ],
+  "NEISO": [
+   {
+    "year": 2020,
+    "n_added": 34,
+    "rows": 38,
+    "mwh": 358009.00800000003,
+    "verdict": "LIVE"
+   },
+   {
+    "year": 2021,
+    "n_added": 21,
+    "rows": 34,
+    "mwh": 326798.99299999996,
+    "verdict": "LIVE"
+   },
+   {
+    "year": 2022,
+    "n_added": 16,
+    "rows": 20,
+    "mwh": 142989.999,
+    "verdict": "LIVE"
+   },
+   {
+    "year": 2023,
+    "n_added": 4,
+    "rows": 1,
+    "mwh": 0.0,
+    "verdict": "LIVE"
+   },
+   {
+    "year": 2024,
+    "n_added": 0,
+    "rows": 0,
+    "mwh": 0.0,
+    "verdict": "INERT (frame byte-identical)"
+   },
+   {
+    "year": 2025,
+    "n_added": 0,
+    "rows": 0,
+    "mwh": 0.0,
+    "verdict": "INERT (frame byte-identical)"
+   }
+  ],
+  "NWPP": [
+   {
+    "year": 2023,
+    "n_added": 3,
+    "rows": 0,
+    "mwh": 0.0,
+    "verdict": "INERT (frame byte-identical)"
+   },
+   {
+    "year": 2024,
+    "n_added": 0,
+    "rows": 0,
+    "mwh": 0.0,
+    "verdict": "INERT (frame byte-identical)"
+   },
+   {
+    "year": 2025,
+    "n_added": 0,
+    "rows": 0,
+    "mwh": 0.0,
+    "verdict": "INERT (frame byte-identical)"
+   }
+  ],
+  "NYISO": [
+   {
+    "year": 2022,
+    "n_added": 10,
+    "rows": 6,
+    "mwh": 134213.14,
+    "verdict": "LIVE"
+   },
+   {
+    "year": 2023,
+    "n_added": 5,
+    "rows": 1,
+    "mwh": 0.0,
+    "verdict": "LIVE"
+   },
+   {
+    "year": 2024,
+    "n_added": 0,
+    "rows": 0,
+    "mwh": 0.0,
+    "verdict": "INERT (frame byte-identical)"
+   },
+   {
+    "year": 2025,
+    "n_added": 0,
+    "rows": 0,
+    "mwh": 0.0,
+    "verdict": "INERT (frame byte-identical)"
+   }
+  ],
+  "PJM": [
+   {
+    "year": 2020,
+    "n_added": 242,
+    "rows": 113,
+    "mwh": 10045592.526,
+    "verdict": "LIVE"
+   },
+   {
+    "year": 2021,
+    "n_added": 234,
+    "rows": 82,
+    "mwh": 8999930.541000001,
+    "verdict": "LIVE"
+   },
+   {
+    "year": 2022,
+    "n_added": 276,
+    "rows": 54,
+    "mwh": 4933185.006999999,
+    "verdict": "LIVE"
+   },
+   {
+    "year": 2023,
+    "n_added": 363,
+    "rows": 8,
+    "mwh": 97.0,
+    "verdict": "LIVE"
+   },
+   {
+    "year": 2024,
+    "n_added": 515,
+    "rows": 138,
+    "mwh": 2452963.998,
+    "verdict": "LIVE"
+   },
+   {
+    "year": 2025,
+    "n_added": 702,
+    "rows": 47,
+    "mwh": 8804034.370000001,
+    "verdict": "LIVE"
+   }
+  ],
+  "SOCO": [
+   {
+    "year": 2023,
+    "n_added": 4,
+    "rows": 7,
+    "mwh": 0.0,
+    "verdict": "LIVE"
+   },
+   {
+    "year": 2024,
+    "n_added": 1,
+    "rows": 2,
+    "mwh": 403.0,
+    "verdict": "LIVE"
+   },
+   {
+    "year": 2025,
+    "n_added": 1,
+    "rows": 0,
+    "mwh": 0.0,
+    "verdict": "INERT (frame byte-identical)"
+   }
+  ],
+  "SPP": [
+   {
+    "year": 2019,
+    "n_added": 12,
+    "rows": 11,
+    "mwh": 2668405.62,
+    "verdict": "LIVE"
+   },
+   {
+    "year": 2020,
+    "n_added": 13,
+    "rows": 8,
+    "mwh": 1127316.1369999999,
+    "verdict": "LIVE"
+   },
+   {
+    "year": 2021,
+    "n_added": 10,
+    "rows": 2,
+    "mwh": 0.0,
+    "verdict": "LIVE"
+   },
+   {
+    "year": 2022,
+    "n_added": 7,
+    "rows": 3,
+    "mwh": 275.0,
+    "verdict": "LIVE"
+   },
+   {
+    "year": 2023,
+    "n_added": 3,
+    "rows": 0,
+    "mwh": 0.0,
+    "verdict": "INERT (frame byte-identical)"
+   },
+   {
+    "year": 2024,
+    "n_added": 0,
+    "rows": 0,
+    "mwh": 0.0,
+    "verdict": "INERT (frame byte-identical)"
+   },
+   {
+    "year": 2025,
+    "n_added": 0,
+    "rows": 0,
+    "mwh": 0.0,
+    "verdict": "INERT (frame byte-identical)"
+   }
+  ]
+ }
+}

@@ -87,7 +87,10 @@ _ALL_PLANTS = frozenset({1, 2, 3, 4, 5, 6})
 class _IsoPlantPatch(unittest.TestCase):
     def setUp(self):
         self._orig = rcf._iso_plant_ids
-        rcf._iso_plant_ids = lambda iso: _ALL_PLANTS
+        # spp-49 widened the seam to (iso, year, vintage_union); the
+        # patch absorbs the extra arguments so this fixture keeps
+        # pinning the partition and nothing else.
+        rcf._iso_plant_ids = lambda iso, *_a, **_kw: _ALL_PLANTS
 
     def tearDown(self):
         rcf._iso_plant_ids = self._orig

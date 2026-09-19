@@ -81,7 +81,8 @@ class TestReconciledBiomassMatchesBenchmark(unittest.TestCase):
 
     def setUp(self):
         self._orig = rcf._iso_plant_ids
-        rcf._iso_plant_ids = lambda iso: frozenset({1, 2})
+        # spp-49 widened the seam to (iso, year, vintage_union).
+        rcf._iso_plant_ids = lambda iso, *_a, **_kw: frozenset({1, 2})
 
     def tearDown(self):
         rcf._iso_plant_ids = self._orig

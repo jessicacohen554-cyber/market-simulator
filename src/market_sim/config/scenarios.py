@@ -1511,6 +1511,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # distinctly. Registered IN THE SAME COMMIT as the field (the nyiso-119
     # discipline).
     "mustrun_chp_btm_holdout",
+    # spp-49 vintage-aware UNION of the benchmark's ISO plant membership,
+    # default off: dropped from the hash at its False default so every
+    # pre-existing key in every ISO (each designated keeper's included) stays
+    # valid, and ON it admits the solve year's own EIA-860 BA cohort to the
+    # benchmark's `isin` filter and hashes distinctly. Registered IN THE SAME
+    # COMMIT as the field (the nyiso-119 discipline).
+    "benchmark_membership_vintage_union",
     # ercot-255 EP-reference of the F923-sourced rows of the ERCOT zonal gas
     # SPREAD, default off: dropped from the hash at its False default so every
     # pre-existing ERCOT key (the designated keeper's included) stays
@@ -2346,6 +2353,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by miso-253 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "mustrun_chp_btm_holdout": "False",
+    # Added by spp-49 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "benchmark_membership_vintage_union": "False",
     # Added by ercot-255 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "ercot_zonal_spread_ep_referenced": "False",
@@ -19106,6 +19116,65 @@ class ScenarioConfig:
     # own input, for which EIA-930 OTH is the named route; it is NOT this flag.
     mustrun_chp_btm_holdout: bool = False
 
+    # spp-49: VINTAGE-AWARE UNION of the benchmark's ISO plant membership.
+    #
+    # THE DEFECT, measured rather than hypothesised. The benchmark's ISO
+    # membership is ``run_calibration_full._iso_plant_ids`` ->
+    # ``zone_assignment.build_zone_lookup``, whose plant set is eGRID-2023
+    # coordinates supplemented — for ``_EIA860_SUPPLEMENT_ISOS`` only — from
+    # ``zone_assignment._EIA860_PLANT_PATH``. That module-level constant is
+    # bound at import to the CANONICAL ``EIA_860_DIR`` (the 2025 Early
+    # Release), NOT to ``paths.active_eia860_dir()``, so the supplement never
+    # follows ``eia860_vintage_tracks_solve_year``. Measured one interpreter
+    # per vintage: SPP's benchmark plant set is 830 under canonical / 2019 /
+    # 2020 / 2021 / 2022 / 2023 alike, with Oklaunion (plant 127, ba_code
+    # SWPP, EIA retirement 9/2020) ABSENT from every one — although
+    # ``vintage_2018/2019/2020``'s own plant file carries it with BA code
+    # SWPP and valid coordinates.
+    #
+    # WHY IT MATTERS, as an asymmetry rather than a magnitude: the LP FLEET
+    # has a fallback-zone path for a plant eGRID lacks ("N of M SPP
+    # generators not in eGRID lookup - assigned fallback zone"), while the
+    # benchmark applies a hard ``isin`` with NO fallback. So a mid-window
+    # retiree is IN the model and OUT of the actual at the same time, and C1
+    # reads a miss that is partly an artifact of two different membership
+    # rules.
+    #
+    # WHAT THIS FLAG DOES. For benchmark year ``y`` the ISO's plant set
+    # becomes ``build_zone_lookup(iso)`` UNION the plants BA-coded to the ISO
+    # in the EIA-860 vintage that COVERS ``y`` (``vintage_<y>``, holding last
+    # to canonical past the final committed vintage). Derived from the run's
+    # year, NOT from ``eia860_vintage_year``, so the benchmark stays a
+    # function of ``(iso, year)`` and the reference data — the property
+    # ``rebuild_benchmark`` documents and relies on.
+    #
+    # ADDITIVE, AND THAT IS THE WHOLE SAFETY ARGUMENT (rules 13 / 14). The
+    # union NEVER removes a plant, so it can only ever ADD real metered
+    # generation; and a plant contributes exactly what EIA-923 reports for
+    # that year, so it cannot inject generation that did not happen. The
+    # REPLACE variant was built and REFUSED on measurement: it deletes real
+    # metered generation in 7 of 9 registered regions (SOCO 2024 -7,275.9
+    # GWh, PJM 2020 -9,077.7, ERCOT 2024 -599.9, SPP -828.8..-893.1 in every
+    # year 2019-2023) — "rescaling an input so the model's output lands on
+    # the actuals" (rule 13) and "burying the error back inside an inaccurate
+    # input" (rule 14), the same refusal spp-48 made of a HEAD rebuild.
+    #
+    # NO DOUBLE COUNT, by measurement not by assertion: the CAMPD backfill's
+    # firing test skips any plant whose mapped class EIA-923 already reports
+    # at or above ``_CAMPD_BACKFILL_MIN_MWH`` (50,000 MWh), and every plant
+    # this union admits with material generation clears that bar (Oklaunion
+    # 2,601,923 MWh in 2019 / 1,103,627 in 2020). The two membership gates —
+    # this one, and the fleet-keyed ``group_by_code`` the backfill uses —
+    # therefore compose rather than stack (rule 19).
+    #
+    # DEFAULT OFF, AND IT STAYS OFF (rule 25 [R-ISO-SCOPE]): the seam is
+    # shared and cross-ISO, and the census establishes that MORE than SPP
+    # moves — so this is armed per ISO by an explicit recipe, never by a
+    # shared default. Zero free parameters (rules 21 / 24): a union over
+    # EIA's own published per-vintage BA codes, with no threshold, no
+    # tolerance and nothing selected against a residual.
+    benchmark_membership_vintage_union: bool = False
+
     def __post_init__(self) -> None:
         # YAML round-trip type repair: YAML has no tuple type, so a config
         # loaded back from a sidecar (``from_yaml`` over a ``to_yaml_full``
@@ -21646,6 +21715,7 @@ TIER_TAGS: dict[str, int] = {
     "nyiso_hub_gap_month_level": 3,
     "nyiso_total_east_cutset_ttc": 3,
     "mustrun_chp_btm_holdout": 3,
+    "benchmark_membership_vintage_union": 3,
     "ercot_zonal_spread_ep_referenced": 3,
     "ercot_gas_delivered_floor_basis": 3,
     "ercot_gas_contract_haircut": 3,

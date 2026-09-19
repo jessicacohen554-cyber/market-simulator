@@ -3463,3 +3463,56 @@ promoting lane does not repeat them:
 rung reports and can neither certify nor decertify. Mechanism-matrix SPP cell `mid_vintage_exit_carry`
 **O → K**. The gate remains **default-off** and is **not** armed in `_spp_config`; a default flip is
 a separate owner ruling and was not taken.
+
+## spp-49 — 2026-09-19
+
+**The benchmark-membership defect: the model and the actual disagree about which plants exist.**
+The successor SPP-48 §4 filed, taken up as its own object. **Zero LP** (rule 32(a)); nothing armed,
+nothing registered, **keeper 12 and the 2019–2022 rung both untouched**.
+Branch `claude/spp-benchmark-membership-defect-4yqm2f`, commit `3f64471e`.
+Docs: `PRECOMMIT-spp-49-benchmark-membership-2026-09-19.md` /
+`RESULT-spp-49-benchmark-membership-2026-09-19.md`; probe
+`scripts/probes/_spp49_membership_census.py`.
+
+**Root cause, pinned to one line.** `zone_assignment._EIA860_PLANT_PATH` is a module-level constant
+bound **at import** to the canonical `EIA_860_DIR`, never to `paths.active_eia860_dir()` — so the
+benchmark's EIA-860 supplement cannot follow `eia860_vintage_tracks_solve_year` and **no config can
+redirect it**. SPP's plant set reads 830 under every vintage with Oklaunion (127) absent from all of
+them, although `vintage_2018/2019/2020`'s own plant file carries it BA-coded SWPP with coordinates.
+The LP fleet has a fallback-zone path for such a plant; the benchmark has a hard `isin` with none.
+
+**Built:** `ScenarioConfig.benchmark_membership_vintage_union`, **default off**, at the single
+`_iso_plant_ids` seam that bench, injection, class-shares and the completeness probe all read
+(rule 19). **ADDITIVE** — it never removes a plant, so it can only add real metered generation.
+The year-matched **REPLACE** variant was built and **REFUSED on measurement**: it deletes real
+generation in **7 of 9** registered regions (SOCO 2024 −7,275.9 GWh, PJM 2020 −9,077.7, SPP
+−828.8…−893.1 every year 2019–2023) — rules 13/14, the same refusal SPP-48 made of a HEAD rebuild.
+Byte-identity off is **proven**: the flag-off rebuild reproduces SPP-48's HEAD hash
+`eia923-78357736757d` exactly.
+
+**It makes C1 WORSE, and that is the finding.** Model unchanged; the actual moves. 2019 `COAL_PRB`
+miss **−6.3392 → −8.9351 TWh**, 2020 **−8.8037 → −9.9044** on a like-for-like HEAD basis (against
+the *committed* frame 2020 reads −10.0129 → −9.9044, but that is purely the CAMPD→EIA-923 basis
+shift, not a dispatch gain). Rules 1/14: a real market behaviour stays in even when the fit worsens,
+and the worse number is a **discovered bug signal** — the model is ~8.9 TWh short of SPP's 2019 PRB
+coal, which is SPP-47's "Object A" coal↔CC elasticity, made bigger and more honest rather than
+closed. Determination unchanged, failing set unchanged `{C1, C3a, C3b, C4}`.
+
+**A promotion would cost ZERO re-solves.** The arm moves no LP input: no union-added plant
+classifies as an injected class (adds are `COAL_PRB`/`CT_PEAKER`/`oil`/`wind` only) and
+`_vintage_completeness` never approaches the 0.90 carry threshold (0.983–0.999 both sides). So the
+scored result is the committed dispatch against a rebuilt benchmark.
+
+**Gate is default-off because MORE THAN SPP MOVES** (rule 25 — shared cross-ISO seams). Measured at
+row grain: SPP's **2023–2025 keeper years are INERT** (0 added rows, frame byte-identical; pinned by
+a test as a stop-the-line tripwire), but **PJM is LIVE in every year**, incl. **8.8 TWh absent from
+its 2025 ACTUAL** — a live keeper year — for the SEPARATE reason that **PJM is not in
+`_EIA860_SUPPLEMENT_ISOS` at all** (857 plants missing). Reported, not repaired; PJM's lane decides.
+
+**Second defect filed, not fixed:** `rebuild_benchmark` builds `group_by_code` from `iso_config`
+defaults, so a rebuild does **not** reproduce the solve path's benchmark for a fleet-changing config
+— which is *why* SPP-48 §A.1's two-leg rebuild read "invariant". Different seam.
+
+Mechanism-matrix row added plus a cell in **all nine** ISO shards (rule 28), every one `O`.
+`check_cache_key_registration.py` and `check_mechanism_matrix.py --base` both pass; both ≥300-line
+files blob-verified after push (rule 27). **Promotion question asked, not pre-empted** (rule 31).
