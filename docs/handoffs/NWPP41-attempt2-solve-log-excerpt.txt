@@ -1,0 +1,15 @@
+3:INFO: P1 basis seed: ON
+4:INFO: container preflight: memory ceiling 13.36 GiB (/sys/fs/cgroup/memory/process_api/01a0b70c-e91d-752f-a720-9942712d6890/claude-code-bash/memory.limit_in_bytes; MemTotal 15.72 GiB), swap 0.0 GiB, target ceiling+swap 24 GiB
+5:INFO: container preflight: provisioned 5 GiB swap at /swapfile-marketsim — ceiling 13.36 + swap 5.0 = 18.4 GiB
+6:INFO: container preflight: solve profile MALLOC_ARENA_MAX=2 MARKET_SIM_HIGHS_THREADS=1 OMP_NUM_THREADS=1
+7:WARNING: container preflight: ceiling+swap 18.4 GiB is below the 24 GiB target; a per-plant ISO-year LP (MISO, PJM) may be OOM-killed here
+42:INFO: Matrix build: 4.056s, Solve: 1220.696s (cold, simplex iterations 515050, objective 2626482954.5376)
+43:INFO: Matrix build: 4.056s, Solve: 7043.034s (warm, simplex iterations 588306, objective 2636437995.3270)
+45:INFO: year 2023 phase timing: data_prep=38.8s solve_p0=1220.7s markup=10.6s solve_p1=7043.0s results_write=10.3s total=8323.4s (markup: setup=0.0s p0_post=1.5s markup=0.0s seam=0.0s p1_post=1.7s tail=7.3s other=0.1s) (results_write: state=0.1s frames=0.5s parquet=1.0s bench=4.1s sidecars=4.6s)
+90:INFO: Matrix build: 1.974s, Solve: 1702.666s (cold, simplex iterations 347060, objective 1142805010.7693)
+91:INFO: Matrix build: 1.974s, Solve: 18406.523s (warm, simplex iterations 1046904, objective 1151091663.9436)
+93:INFO: year 2024 phase timing: data_prep=5.5s solve_p0=1702.7s markup=9.2s solve_p1=18406.5s results_write=9.1s total=20133.0s (markup: setup=1.3s p0_post=1.4s markup=0.0s seam=0.0s p1_post=1.8s tail=4.6s other=0.1s) (results_write: state=0.1s frames=0.5s parquet=1.0s bench=3.0s sidecars=4.5s)
+144:INFO: Matrix build: 3.103s, Solve: 2187.199s (cold, simplex iterations 360716, objective 1481004931.9932)
+145:INFO: Matrix build: 3.103s, Solve: 14291.491s (warm, simplex iterations 1006273, objective 1490495086.2831)
+150:INFO: year 2025 phase timing: data_prep=6.5s solve_p0=2187.2s markup=10.2s solve_p1=14291.5s results_write=8.8s total=16504.1s (markup: setup=1.4s p0_post=1.6s markup=0.0s seam=0.0s p1_post=2.0s tail=5.0s other=0.0s) (results_write: state=0.1s frames=0.5s parquet=1.0s bench=2.8s sidecars=4.4s)
+164:INFO: memory peak: cgroup_peak_rss_gib=4.78, cgroup_peak_rss_plus_swap_gib=4.78, process_vmhwm_gib=3.94, process_vmswap_now_gib=0.00

@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-09-16-nwpp-1-cascade",
+  "run_id": "2026-09-19-nwpp41-coal-taxonomy-own",
   "iso": "NWPP",
-  "label": "nwpp 1 cascade",
+  "label": "nwpp41 coal taxonomy own",
   "target_years": [
     2023,
     2024,
@@ -21,15 +21,15 @@
   "rubric_version": 3.8,
   "determination": "NOT-YET",
   "reasons": [
-    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, dispatch_corr",
-    "PRICE UNSCORED \u2014 no actual_lmp.json block exists for NWPP, so C3a mean LMP, C3b price duration/shape and C3c price tail / scarcity (RT hourly) are NOT SCORED in any year (2023, 2024, 2025); this determination is scored on C1/C2/C4/C6/C8 ONLY and certifies NO price level, shape or tail (owner ruling card S2, 2026-09-13; rubric v3.8). It is not a CALIBRATED reading. Model system load-weighted mean LMP, MODEL-ONLY and UNVERIFIED \u2014 no measured reference exists to compare against: 2023: $48.71/MWh, 2024: $28.59/MWh, 2025: $31.82/MWh."
+    "undocumented out-of-tolerance (FAIL) criteria: dispatch_corr",
+    "PRICE UNSCORED \u2014 no actual_lmp.json block exists for NWPP, so C3a mean LMP, C3b price duration/shape and C3c price tail / scarcity (RT hourly) are NOT SCORED in any year (2023, 2024, 2025); this determination is scored on C1/C2/C4/C6/C8 ONLY and certifies NO price level, shape or tail (owner ruling card S2, 2026-09-13; rubric v3.8). It is not a CALIBRATED reading. Model system load-weighted mean LMP, MODEL-ONLY and UNVERIFIED \u2014 no measured reference exists to compare against: 2023: $48.47/MWh, 2024: $28.39/MWh, 2025: $30.76/MWh."
   ],
   "notes": [],
   "criteria": {
     "fuelmix": {
       "label": "C1 fuel-mix by class (grid-delivered)",
       "tier": "load-bearing",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "sysvol": {
       "label": "C2 system volume (gas/coal families)",
@@ -78,18 +78,18 @@
   },
   "grade_summary": {
     "scored": 5,
-    "target_grade": 3,
+    "target_grade": 4,
     "commercial_grade": 0,
     "ledgered": 0,
-    "fails": 2
+    "fails": 1
   },
   "reported": {
     "co2": {
       "label": "C5a CO2 vs eGRID (REPORTED-ONLY, v2.9 \u2014 see the CRITERIA note)",
       "years": {
-        "2023": "-65.9%",
-        "2024": "-58.8%",
-        "2025": "-55.0%"
+        "2023": "-15.1%",
+        "2024": "-23.7%",
+        "2025": "-21.4%"
       }
     },
     "diurnal_amplitude": {
@@ -117,14 +117,14 @@
       "ST_CHP"
     ],
     "all": {
-      "pass": 13,
+      "pass": 18,
       "total": 18
     },
     "free": {
-      "pass": 9,
+      "pass": 14,
       "total": 14
     },
-    "headline": "C1 all 13/18 \u00b7 free 9/14"
+    "headline": "C1 all 18/18 \u00b7 free 14/14"
   },
   "price_unscored": {
     "basis": "no actual_lmp.json block for NWPP",
@@ -141,9 +141,9 @@
       "forced_share"
     ],
     "model_mean_lmp_by_year": {
-      "2023": 48.71,
-      "2024": 28.59,
-      "2025": 31.82
+      "2023": 48.47,
+      "2024": 28.39,
+      "2025": 30.76
     }
   }
 }

@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-09-16T19:42:28",
+  "timestamp": "2026-09-19T13:04:13",
   "git": {
-    "sha": "d59b84bd",
-    "basis_sha": "d59b84bd374a59d5f4199522f0e988db52254fe0",
-    "branch": "claude/nwpp-40-span-b",
+    "sha": "f932a881",
+    "basis_sha": "f932a8816f2e0d2f2641708e914375f7058b440e",
+    "branch": "claude/nwpp-41-span-a2",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "nwpp-40 first NWPP solve: five whole-BA zones on WECC-catalogue TTC tiers (card N5), served measured EIA-930 interchange with priced seams default-off (card N4), one PRM scalar 0.144 (card N7), legacy heat-rate bins (card N8), Columbia mainstem hydraulic coupling ARMED (owner rulings N3/N12), 2025 hydro backfilled from 2024 for the 263 NO_923_SERIES plants (NWPP-32, R-f), every offer band 1.0, authorized_price_tuning NONE, price UNSCORED (card N2 limb b, rubric v3.8)",
+  "model_changes_note": "nwpp-41 attempt 2: NWPP-40's recipe plus the ISO-SCOPED measured PRB delivered-cost proxy (coal_prb_proxy_own_iso, armed for NWPP in backcast_config) and NWPP's own derived coal ranks (coal_supply_NWPP.csv). Closes the C1 coal-taxonomy seam: the model dispatched all 17 coal plants as the bare COAL class the benchmark has no row for. Rules 14/25: Colstrip, Hardin and TS Power file no EIA-923 delivered cost and now take NWPP's OWN four PRB reporters' quantity-weighted cost (2.463/2.134/2.066 dollars per MMBtu) instead of ERCOT's Texas-pooled 1.818/1.760/1.622. Cascade coupling ARMED, 2025 hydro backfilled from 2024, every offer band 1.0, authorized_price_tuning NONE, price UNSCORED. Attempt 1 was killed by a platform restart in 2025 P1.",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "NWPP",
@@ -57,7 +57,7 @@
     "nyiso_dynamic_reserve_requirements": null,
     "nyiso_hydro_reserve_eligible": null,
     "nyiso_scr_edrp_reserve_eligible": null,
-    "git_sha": "d59b84bd"
+    "git_sha": "f932a881"
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -344,6 +344,7 @@
     "caiso_ra_bridge_curtailment_release": false,
     "caiso_ra_startup_trajectory": false,
     "neiso_gas_coldsnap_derate": false,
+    "neiso_coldsnap_derate_dualfuel_unswitched": false,
     "neiso_gas_derate_t0_c": -7.0,
     "neiso_gas_derate_slope_per_c": 0.018,
     "neiso_gas_derate_cap": 0.2,
@@ -529,6 +530,7 @@
     "vintage_capacity_ramp": true,
     "storage_vintage_ramp": false,
     "coal_prb_contract_passthrough": 1.0,
+    "coal_prb_proxy_own_iso": true,
     "coal_prb_passthrough": 1.0,
     "coal_prb_passthrough_sigmoid": true,
     "coal_prb_passthrough_floor": null,
@@ -1057,11 +1059,11 @@
     "rows": 180,
     "moved": {},
     "epochs": [],
-    "git_sha": "d59b84bd"
+    "git_sha": "f932a881"
   },
   "environment": {
     "python_version": "3.11.15",
-    "platform": "Linux-6.18.44-fc-v33-x86_64-with-glibc2.39",
+    "platform": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
     "packages": {
       "highspy": "1.14.0",
       "numpy": "2.4.6",
