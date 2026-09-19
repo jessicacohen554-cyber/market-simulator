@@ -2534,3 +2534,10 @@ results/calibration/miso262_mer_*/
 results/calibration/nwpp42_measured_coal_hr/
 results/calibration/nwpp42_measured_coal_hr_v2/
 results/calibration/nwpp_mer_2026-09-19/
+# caiso-287: per-year instrumented + MER control shard bundles. Pushed by each
+# shard to its OWN branch (rule 34 [R-SHARD-PROMOTABLE] (a)) and kept out of
+# main from the parent's tree (rule 32(d)); never `rm` (rule 31 [R-RETAIN]).
+# Recover by FULL immutable SHA, never branch name (rule 33(d)):
+#   git checkout d8e7b39c1e4d17e3c5c53780987b24ac80e8ee2d -- results/calibration/caiso287_instr_2024
+results/calibration/caiso287_instr_*/
+results/calibration/caiso_mer_*/
