@@ -881,6 +881,23 @@ def main() -> None:
         "run_calibration_full invocation so an instrumented replay stays a "
         "one-command shard: rule 32(c)(6) forbids a shard editing scripts/.",
     )
+    ap.add_argument(
+        "--persist-p0-dispatch",
+        action="store_true",
+        help="also write hourly/p0_dispatch_<year>.parquet (the P0 dispatch in "
+        "MW) and hourly/p0_prices_<year>.parquet (the P0 zonal duals), the "
+        "same artifacts run_calibration_full's flag of this name writes. "
+        "WRITE-ONLY and additive, on the same argument as the flag above: read "
+        "after both LPs have run, so the replay stays byte-faithful. The "
+        "on/off pattern that flag writes recovers the RA bridge's detected "
+        "runs but NOT the two screens that then act on them — the "
+        "startup_aware run screen scores runs on (price - mc) x dispatch and "
+        "the surplus decommit screen derives absorption from the interchange "
+        "rows' dispatch, both in MW and both against the P0 duals rather than "
+        "the P1 prices the committed sidecars carry. With this pair a later "
+        "session replays the detector exactly at zero LP instead of bounding "
+        "it analytically (caiso-287; RESULT-caiso286 section 7).",
+    )
     args = ap.parse_args()
 
     bundle = Path(args.bundle)
@@ -954,6 +971,8 @@ def main() -> None:
     # recorded, so a replay of a bundle that already had it keeps it.
     if args.persist_p0_commitment:
         kwargs["persist_p0_commitment"] = True
+    if args.persist_p0_dispatch:
+        kwargs["persist_p0_dispatch"] = True
     # ARCHIVED-P2 gate on the RECONSTRUCTED recipe (audit row O5). Placed AFTER
     # the --set loop so `--set commitment=false` is what disarms it, and before
     # the solve so a bundle recorded with commitment=true can never re-arm P2

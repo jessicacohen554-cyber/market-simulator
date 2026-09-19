@@ -837,6 +837,7 @@ def run_year(
     xyear_cache: "list | None" = None,
     demand: "np.ndarray | None" = None,
     persist_p0_commitment: bool = False,
+    persist_p0_dispatch: bool = False,
 ) -> "tuple[object, FleetContext, object | None, dict] | dict":
     """Solve the single-year calibration dispatch for one ISO-year.
 
@@ -903,6 +904,30 @@ def run_year(
             ``ScenarioConfig`` field (CLAUDE.md rule 24 ``[R-REGISTRY]``
             governs tunables that can change a solve). See
             :func:`p0_commitment_pattern`.
+        persist_p0_dispatch: OPT-IN (default ``False``), WRITE-ONLY, and the
+            MW-valued sibling of ``persist_p0_commitment``. When set, stash the
+            P0 dispatch array and the P0 zonal duals in ``p2_state`` so the
+            caller can persist them as bundle sidecars. Same solve-invariance
+            argument as its sibling — both are read after P0 and P1 have run
+            and neither is consumed by anything downstream — so it is a
+            persistence parameter, not a ``ScenarioConfig`` field.
+
+            Why the MW array and not only the bit-packed pattern (caiso-287):
+            the commitment sidecar carries the on/off pattern at the
+            detector's ``0.05 x pmax`` threshold, which is enough to recover
+            the bridge detector's ``runs`` but NOT enough to replay either
+            screen that acts on them. The ``startup_aware`` run screen scores
+            each run by ``sum((price - mc) * dispatch) / pmax``
+            (:func:`model.commitment.caiso_ra_mustoffer_min_gen`), and the
+            surplus decommit screen derives its hourly absorption from the
+            interchange rows' dispatch
+            (:func:`model.commitment._apply_economic_bridges`) — both read MW,
+            and both read the P0 DUALS rather than the P1 prices the committed
+            ``hourly/system_<year>.parquet`` carries. Persisting the two arrays
+            the prep hook actually passes (``r0.dispatch``, ``r0.prices``, via
+            :func:`pipeline.commitment.build_caiso_ra_p1_prep`) lets a later
+            session replay both screens exactly, offline and at zero LP,
+            instead of bounding them analytically.
 
     Returns:
         A tuple ``(result, context, result_p1, p2_state)``. ``result`` is the
@@ -6865,6 +6890,27 @@ def run_year(
         if persist_p0_commitment
         else None
     )
+    # OPT-IN P0 dispatch/dual record (caiso-287), taken at the SAME seam and
+    # for the same reason: these are the two arrays
+    # ``pipeline.commitment.build_caiso_ra_p1_prep`` hands the bridge detector
+    # (``r0.dispatch``, ``r0.prices``), so capturing them here — before
+    # ``fleet_arrays`` is rebound — records exactly what the screens saw,
+    # rather than a P1 stand-in for it. Copied, not aliased: ``r0`` stays live
+    # below and a view would let a later in-place write reach the sidecar.
+    # float64, NOT a narrowed float32: the point of this pair is that the
+    # screens replay EXACTLY, so the reproduction gate against the committed
+    # floors array is an equality rather than a tolerance. Halving the file
+    # would buy ~60 MB at the cost of the only property it has.
+    _p0_dispatch_mw = (
+        np.array(energy_solve.r0.dispatch, dtype=np.float64)
+        if persist_p0_dispatch
+        else None
+    )
+    _p0_zonal_prices = (
+        np.array(energy_solve.r0.prices, dtype=np.float64)
+        if persist_p0_dispatch
+        else None
+    )
     result = energy_solve.p1
     mc_bid = energy_solve.mc_bid
     # The fleet P1 actually solved on — the RA-floored fleet when the bridge
@@ -6986,6 +7032,21 @@ def run_year(
                 "startup_run_ratio_t": startup_run_ratio_t,
             }
             if persist_p0_commitment
+            else {}
+        ),
+        # OPT-IN P0 dispatch/dual record (--persist-p0-dispatch, default off),
+        # the MW-valued sibling of the pair above. Same property, same reason
+        # it cannot perturb a solve: read after both LPs have run, consumed by
+        # nothing downstream, and absent entirely at default — which is what
+        # keeps every existing bundle byte-identical. The pair is exactly what
+        # the RA-bridge screens are called with, so persisting it lets a later
+        # session replay ``caiso_ra_mustoffer_min_gen`` offline at zero LP.
+        **(
+            {
+                "p0_dispatch_mw": _p0_dispatch_mw,
+                "p0_zonal_prices": _p0_zonal_prices,
+            }
+            if persist_p0_dispatch
             else {}
         ),
         # ``build_s`` / ``solve_p0_s`` / ``solve_p1_s`` are SUMMED over every
