@@ -4,23 +4,39 @@
 **Date** 2026-09-19. **Pre-registration** `docs/PRECOMMIT-nyiso241-ct-peaker-merit-2026-09-19.md`,
 pushed at `5356fb712f8ff3ad2b785421d34ed9b4cae71f4c` **before either LP**.
 
-**Incumbent keeper** `2026-09-17-nyiso240-bench-attribution` — **UNCHANGED**. Nothing is promoted
-in this session; **the promotion decision is the owner's and it is open (§7).**
+**KEEPER, AS OF THIS SESSION** `2026-09-19-nyiso241-ct-committed-measured` (bundle
+`results/calibration/nyiso241_ctcommitted_span`) — **ARM A WAS PROMOTED on the owner's ruling**,
+superseding `2026-09-17-nyiso240-bench-attribution`, pruned in the promoting session (rule 35
+`[R-PROMOTE]`). §7 records the decision and §10 the execution.
+
+> **CORRECTION TO THIS LANE'S OWN EARLIER FRAMING, because it changes the decision it informed.**
+> While the promotion was being executed, the ISO-tier verdict was scored and
+> **NYISO REMAINS `CALIBRATED`**. Under rule 30 `[R-TOUCHPOINT-FOLD]` (c) the ISO determination is
+> the **train-tier (2023–2025)** verdict and nothing else, and on 2023–2025 this keeper reads
+> **CALIBRATED** with C3c the lone ledgered caveat and C1/C2/C3a/C3b/C4/C6/C8 all passing. Only the
+> **registered full-span (2022–2025)** verdict is NOT-YET, and the whole difference is 2022 — a year
+> rule 30(c) says can neither certify nor decertify the ISO. Everywhere below that this document
+> says the promotion costs the CALIBRATED headline, read it as costing the **full-span** headline;
+> the ISO's own determination is unchanged.
 
 ---
 
 ## 1. THE HEADLINE
 
-| | determination | C1 | C2 | C3a | C3b | C3c | C4 | C6 | C8 |
+Determinations below are the **registered full-span (2022–2025)** verdict. The ISO determination
+(rule 30(c), train tier 2023–2025) is **CALIBRATED** for both the superseded keeper and arm A.
+
+| | full-span determination | C1 | C2 | C3a | C3b | C3c | C4 | C6 | C8 |
 |---|---|---|---|---|---|---|---|---|---|
-| **keeper** | **CALIBRATED** | PASS | PASS | PASS | PASS | CAVEAT | PASS | PASS | PASS |
+| **superseded keeper** | **CALIBRATED** | PASS | PASS | PASS | PASS | CAVEAT | PASS | PASS | PASS |
 | **ARM A** committed-only | NOT-YET | PASS | PASS | **FAIL** (2022 only) | **FAIL** (2022 only) | FAIL | PASS | PASS | PASS |
 | **ARM B** three-band | NOT-YET | **FAIL** | PASS | **FAIL** (2022, 2025) | **FAIL** (2022, 2025) | FAIL | PASS | PASS | **FAIL** |
 
 * **ARM B is REJECTED on its own pre-registered gates**, its named risk included. Its two matrix
   cells stay `R` and their nyiso-200 re-test condition is now **SPENT** (§4).
-* **ARM A is a clean structural repair whose cost is two hair's-breadth 2022 crossings** (§3). Its
-  cell moves `U` → `O`, and what to do about it is a judgement this session does not make.
+* **ARM A is a clean structural repair whose cost is two hair's-breadth 2022 crossings** (§3), and
+  it was **PROMOTED**. Its cell moves `U` → `O`. The ISO stays `CALIBRATED` on the train tier; what
+  moves is the full-span headline.
 
 ---
 
@@ -291,3 +307,50 @@ Unchanged from nyiso-240 and re-verified as not made worse here:
 * `data/raw/gas-prices/SOURCES_nyiso_downstate_ldc_transport.md` still says 2022 is
   "holdout-quarantined (CLAUDE.md rule 22)". `[R-HOLDOUT]` was removed 2026-09-09 and the CSV now
   carries 12 rows of 2022 for both LDCs — stale prose over live data. Cosmetic; not fixed here.
+
+---
+
+## 10. EXECUTION OF THE PROMOTION (rule 35 `[R-PROMOTE]`, in order)
+
+Owner ruling received this session. Executed as follows, with the verify step **between** the
+promotion and the delete (35(e)), not after:
+
+1. **Year union enumerated from the registry BEFORE anything was pruned** (35(b)):
+   `{2022, 2023, 2024, 2025}` over all three NYISO sidecars. The incoming keeper covers it
+   **exactly**, so 35(c) needs no stamped companion and no year is lost.
+2. **Keeper shard re-keyed** — `frontend/data/backcast/keepers/NYISO.json` → `2026-09-19-nyiso241-ct-committed-measured`,
+   with the promotion prose, the `superseded` block, and an explicit **E11 declaration** (below).
+3. **`audit_keepers --iso NYISO` run BEFORE the prune.** E1 clean (the incoming three stores
+   resolve). It surfaced exactly what it should: E11 undeclared recipe surfaces, E13 × 2, M1a, S1.
+4. **E11 declared value-by-value rather than waived.** Two surfaces move and nothing else does:
+   `offer_curve_by_group` — the **only** value difference across all 13 classes and every band is
+   `CT_PEAKER.committed 1.35 → 0.843`, the rest being key-ordering from serialization; and
+   `coal_prb_sigmoid_overrides` — one added key, `nyiso_ct_peaker_committed_measured: True`, because
+   `replay_keeper --set` routes the arm through the generic channel as well as the named kwarg.
+   Measured while the superseded bundle was still on disk, which is why it could be checked at all.
+5. **`calibration-complete.json` re-keyed** (M1a). The `complete` **declaration** is untouched — it
+   remains the 2026-09-06 owner ruling; only the keeper designation moves. Its `determination` field
+   now reads the live full-span `NOT-YET` with a note recording that the **ISO determination is
+   CALIBRATED** on the train tier (rule 30(c)).
+6. **Pruned** with `prune_iso_runs.py --iso NYISO --force-uncite` (35(a), 35(d)): the superseded
+   keeper's three stores and arm B's three stores. `--force-uncite` is the intended route here, not
+   a safety override — the guard exists to make the operator look, and step 1 is the looking.
+7. **`build_status.py --iso NYISO`** re-run **after** the prune (the nyiso-240 lesson: building
+   status before pruning left it stale and cost an extra commit).
+8. **Re-audited: `audit_keepers --iso NYISO` PASSES, 0 failures, 1 warning** — the E11 *lineage*
+   warning inherent to keeper-only retention once the former bundle is gone, identical to the one
+   nyiso-239 and nyiso-240 each left, and harmless precisely because step 4 did the comparison
+   while the baseline still existed.
+9. **Matrix re-stamped** (rule 28, promoting-session duty): the shard `keeper:` field, the shard
+   `gates:` prose, and the §5.5 prose header. `check_mechanism_matrix.py` reports *keeper stamps
+   match* and *§5.x prose headers match*.
+10. **Keeper bundle committed** at the slim keeper shape the superseded keeper carried — the four
+    `hourly/` families (`class_hourly`, `class_band_hourly`, `system`, `reserve_family`, `storage`)
+    plus `meta.json`, `run_config.json`, `metrics.json`, `calibration_attestation.json` and
+    `legitimacy_diagnostics.json`. `dispatch/` and `floors/` stay out under the repo-wide ignores;
+    the full-fidelity copy including `dispatch/` remains recoverable at
+    `2d15779b986ae8af11d60d86fbb5359ea0f82d6d`, recorded in `.gitignore`.
+
+**Arm B's bundle is pruned from `main` and remains on `claude/nyiso241-arm-b` at
+`b97cbede095577f7e1682a136f2282b67b13592d`.** Its numbers live in §4 of this document, which is
+what rule 29 `[R-SCREEN]` (c) asks of a refused arm's record.
