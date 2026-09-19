@@ -3422,3 +3422,44 @@ constraint whose dual reaches the zonal price — still the only object addressi
 **S-3** R-ba, the ST_GAS/CT_PEAKER merit-order inversion — note this lane made 2020 `ST_GAS`
 slightly worse, which is consistent with R-ba and does not change its routing. **S-4** the coal↔CC
 elasticity (Object A), unchanged and still with no structural successor.
+
+### spp-48 PROMOTION — 2026-09-19 (same session)
+
+**OWNER RULING, verbatim:** *"Is this a recommended keeper candidate? If so plz promote... If
+structural integrity improves but gates regress that may still be a keeper"* — answered
+**PROMOTE**. The lane had recommended and **not** acted; `keepers/SPP.json` was untouched until the
+ruling (rule 31 `[R-RETAIN]`).
+
+`2026-09-19-spp-48-midvintage-exit` is now SPP's registered **2019–2022 rung**, replacing
+`2026-09-16-spp-43-outage-intake`. **The keeper itself is untouched** — SPP's designated keeper
+stays `2026-09-16-spp-42-commitment-feasibility`, `spp42_span_a` is byte-identical and was
+deliberately **not** re-solved, because the mechanism is inert in all three scored years *by
+construction* (`vintage_2023/` and `vintage_2024/` ship no Retired-and-Canceled sheet; 2025 has no
+vintage directory), verified byte-identical on all 14 `FleetArrays` LP inputs.
+
+Rule 35 `[R-PROMOTE]` executed in order, with the two traps this lane hit recorded so the next
+promoting lane does not repeat them:
+
+* **(b) year union enumerated FIRST**, before any delete — **2019–2025, seven years**. After the
+  promotion it is still seven (keeper 2023–2025 + rung 2019–2022).
+* **(a)** incoming stamped to the keeper (rule 30(a)); keeper shard re-pointed at it, with the
+  superseded id **retained** in the narrative as the supersession record (35(d)).
+* **(e) promote → verify → delete.** `audit_keepers --iso SPP` passed (0 failures) *before* the
+  prune.
+* **(a) prune.** **TRAP 1:** `prune_iso_runs.py` keeps only the **designated keeper**, so a blanket
+  `--force-uncite` would have pruned the **newly promoted run** as well — a dry-run showed exactly
+  that. The correct invocation carries an explicit `--keep <incoming>`. `--force-uncite` is still
+  the intended route (35(d)) because both runs are cited by governance files.
+* **(f)** invariant re-checked after: every SPP registered run is the keeper or stamped to it, and
+  the year set did not shrink.
+* **TRAP 2 (rule 30(a), the known stamper defect):** the stamp **reset** SPP's corrected caveat
+  fields to the NEISO-specific `[R-HOLDOUT]`-era defaults — asserting a *"touch-once locked test
+  (2019 / H1-2026) is NOT spent here"* when 2019 **is** one of this bundle's years and the regime no
+  longer exists, plus an availability-envelope **parity** story that is the opposite of this run's
+  object. `tierCaveat` / `envelopeCaveat` / `caveats_authored_by` were re-authored after stamping.
+  Reported, not patched (shared infrastructure, rule 25).
+
+`build_status.py --iso SPP` rebuilt; **SPP reads CALIBRATED**, unchanged — rule 30(c): a held-out
+rung reports and can neither certify nor decertify. Mechanism-matrix SPP cell `mid_vintage_exit_carry`
+**O → K**. The gate remains **default-off** and is **not** armed in `_spp_config`; a default flip is
+a separate owner ruling and was not taken.
