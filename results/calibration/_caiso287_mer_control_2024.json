@@ -1,0 +1,91 @@
+{
+  "year": 2024,
+  "keeper_bundle": "results/calibration/caiso275_B_gascoupling_span",
+  "replay_bundle": "results/calibration/caiso_mer_2024",
+  "keeper_git_sha": "b8ddf8bc",
+  "replay_git_sha": "4583e70b",
+  "zone_hours": 61320,
+  "PRIMAL_max_abs_delta": {
+    "slack": 0.0,
+    "dump": 0.0,
+    "demand": 0.0
+  },
+  "primal_identical": true,
+  "SCORED_load_weighted_mean_price": {
+    "keeper": 37.547013770607705,
+    "replay": 37.547069665075796,
+    "delta": 5.589446809040055e-05,
+    "rel_delta": 1.488652824213559e-06
+  },
+  "dual_drift": {
+    "n_differing": 8821,
+    "share_differing": 0.1438519243313764,
+    "max_abs_delta": 171.27866356878772,
+    "share_of_differing_under_1cent": 0.9524997165854212,
+    "share_of_all_over_1dollar": 0.006050228310502283,
+    "per_zone": {
+      "LA_BASIN": {
+        "n_differing": 1260,
+        "share_differing": 0.14383561643835616,
+        "max_abs_delta": 0.27984590572960855,
+        "mean_delta": 5.871343183882947e-05
+      },
+      "NP15": {
+        "n_differing": 1802,
+        "share_differing": 0.20570776255707762,
+        "max_abs_delta": 0.2714295199476382,
+        "mean_delta": 5.726440889288672e-05
+      },
+      "SDGE": {
+        "n_differing": 1189,
+        "share_differing": 0.13573059360730594,
+        "max_abs_delta": 0.2831657006686328,
+        "mean_delta": 5.191332903337557e-05
+      },
+      "SP15_rest": {
+        "n_differing": 1240,
+        "share_differing": 0.1415525114155251,
+        "max_abs_delta": 0.27142951994764886,
+        "mean_delta": 5.704169348041904e-05
+      },
+      "WECC_DSW": {
+        "n_differing": 514,
+        "share_differing": 0.05867579908675799,
+        "max_abs_delta": 0.27142951994764886,
+        "mean_delta": 4.186079355524582e-05
+      },
+      "WECC_PNW": {
+        "n_differing": 1562,
+        "share_differing": 0.17831050228310502,
+        "max_abs_delta": 171.27866356878772,
+        "mean_delta": 0.04633686908232475
+      },
+      "ZP26": {
+        "n_differing": 1254,
+        "share_differing": 0.14315068493150684,
+        "max_abs_delta": 0.27142951994764886,
+        "mean_delta": 5.68499294682487e-05
+      }
+    }
+  },
+  "marginal_emission_rate": {
+    "present": true,
+    "all_null": false,
+    "load_weighted_mean": 0.2927247423953963,
+    "p10_median_p90": [
+      -0.0,
+      0.36743582114332957,
+      0.4461728614043321
+    ],
+    "share_exactly_zero_overall": 0.3599315068493151,
+    "share_exactly_zero_by_zone": {
+      "LA_BASIN": 0.30810502283105023,
+      "NP15": 0.2639269406392694,
+      "SDGE": 0.31061643835616437,
+      "SP15_rest": 0.30810502283105023,
+      "WECC_DSW": 0.5841324200913242,
+      "WECC_PNW": 0.44075342465753425,
+      "ZP26": 0.3038812785388128
+    }
+  }
+}
