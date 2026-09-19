@@ -2567,7 +2567,12 @@ MISO_SEAM_LADDER_NEIGHBOUR_POOLED: dict[str, dict[str, tuple[float, ...]]] = {
 # the model already uses in pjm_net_interchange and the seam envelopes);
 # offline P9 reproduces every seam's measured volume within ±0.06 TWh and
 # the import-hour shares (MISO 0-1% vs 0-2% measured). Same-seam no-wash
-# ordering holds naturally in all years (no clamp fired); cross-seam
+# ordering held naturally in every year written before 2026-09-19 (no clamp
+# fired); pjm-h11's 2020 row is the first where one does (MISO export band 1
+# $66.94 -> $66.93), which is the reconciliation working, not a defect —
+# 2020's MISO seam exports in essentially all hours, so its deepest export
+# sink and its cheapest import band both land on the year's own DA maximum.
+# Cross-seam
 # counterflow (import TVA while exporting MISO) is real wheel-through the
 # multi-link external node carries, bounded by the measured envelopes.
 #
@@ -2621,6 +2626,74 @@ PJM_SEAM_LADDER_BY_YEAR: dict[int, dict[str, dict[str, tuple[float, ...]]]] = {
         "LGEE": {
             "import": (18.99, 21.36, 24.08, 26.85, 30.35, 34.72, 39.6, 49.34),
             "export": (16.99, 14.34, 12.17, 8.38, 8.18, 8.18, 8.18, 8.18),
+        },
+    },
+    # 2020 ADDED by pjm-h11 (2026-09-19), closing the STALE-INVARIANT gap
+    # pjm-h10 found: this table covered {2019, 2021..2025} and
+    # firm_export_floor_by_year covers only 2023-2025, so PJM's keeper year
+    # 2020 ran NEITHER measured seam mechanism and fell through to the
+    # FORECAST gas-elastic reference-price track. pjm-160 extended the table to
+    # 2019/2021/2022 and skipped 2020 -- correct then, because the keeper span
+    # was 2023-2025 and the touchpoint reached back only to 2021; pjm-173
+    # verified "covers every year PJM solves" on that span. 2020 entered PJM's
+    # solved span later with pjm_d4_4_TP and nothing re-checked the claim.
+    #
+    # Rule 23 [R-FROZEN-DERIVE] re-derivation, ZERO new parameters: the frozen
+    # Q-Q duration coupling of scripts/data/derive_pjm_seam_ladders.py over
+    # sources that already cover 2020 (PJM_2020_import_export_act_sch_
+    # interchange.csv; actual_lmp_hourly_PJM.parquet carries 2018-2025). Rule 21
+    # [R-DOF]: every number is a quantile of a measured series at a structurally
+    # fixed depth grid. Rule 24 [R-REGISTRY]: no ScenarioConfig field is added --
+    # this is one key in an existing registry.
+    #
+    # VERIFIED before the row was written (PRECOMMIT-pjm-h11-2026-09-19.md §3.2):
+    #   * adding 2020 to the estimator's frame moves NOTHING on any existing
+    #     year -- 240 shared rungs compared against the original --years
+    #     2023 2024 2025 derivation, 0 moved; 2019/2021/2022 reproduce the
+    #     committed rows exactly.
+    #   * export rungs monotone descending, import ascending, all five seams.
+    #     One no-wash clamp (MISO export band 1 $66.94 -> $66.93), the same
+    #     same-seam reconciliation every other year carries.
+    #   * pjm-160's own acceptance bar met: offline P9 volume error <= 0.04 TWh
+    #     (MISO -38.00 vs -38.04 actual, NYISO -10.13 vs -10.14, Carolinas
+    #     -0.47 vs -0.47, TVA +6.24 vs +6.25, LGEE +0.77 vs +0.76), duration
+    #     RMSE 40-276 MW, import-hour shares within 2-11 points.
+    #
+    # STATED AGAINST INTEREST, because rule 1 [R-STRUCT] requires it: this is
+    # PREDICTED TO MAKE 2020's EXPORT RESIDUAL WORSE, quantified ex ante at zero
+    # LP. 2020 currently has the SMALLEST shortfall of any PJM year (-2.816 TWh
+    # against -8.5..-13.5 elsewhere) precisely BECAUSE the unmechanised forecast
+    # track exports more; this ladder's GROSS ceiling at the model's own 2020
+    # price is 37.340 TWh, BELOW the 38.810 TWh net the forecast track delivers
+    # today, against 41.626 measured. The case is rules 14 [R-ACCURATE] / 23 --
+    # a keeper year must run the keeper's own mechanism, and a small residual
+    # reached through the wrong mechanism is the compensating estimate rule 14
+    # describes -- and it is NOT a residual argument. If the residual worsens the
+    # mechanism STAYS IN and the real root cause gets fixed. The root cause this
+    # points at: 2020's model-price-to-measured-DA gap is 13.441 TWh, the largest
+    # of any year (next 2021 at 7.82), the same defect as its CC_REGULAR +7.5 /
+    # COAL_BIT +16.9 TWh over-run. The ladder converts a hidden price error into
+    # a visible volume error, which is the point.
+    2020: {
+        "MISO": {
+            "import": (66.94, 66.94, 66.94, 66.94, 66.94, 66.94, 66.94, 66.94),
+            "export": (66.93, 57.12, 36.2, 25.46, 20.05, 15.95, 11.93, 8.68),
+        },
+        "NYISO": {
+            "import": (64.23, 66.94, 66.94, 66.94, 66.94, 66.94, 66.94, 66.94),
+            "export": (36.2, 22.34, 17.55, 14.66, 12.19, 9.93, 8.79, 7.35),
+        },
+        "Carolinas": {
+            "import": (20.67, 24.51, 30.84, 37.56, 46.52, 58.22, 66.94, 66.94),
+            "export": (17.88, 15.39, 13.03, 11.28, 9.85, 8.82, 5.31, 5.31),
+        },
+        "TVA": {
+            "import": (11.76, 13.71, 15.82, 18.28, 21.41, 25.95, 34.18, 48.42),
+            "export": (10.32, 9.2, 8.11, 5.31, 5.31, 5.31, 5.31, 5.31),
+        },
+        "LGEE": {
+            "import": (18.24, 21.89, 28.17, 35.78, 49.0, 60.32, 66.22, 66.94),
+            "export": (15.49, 12.35, 9.98, 8.79, 8.08, 5.31, 5.31, 5.31),
         },
     },
     2021: {
