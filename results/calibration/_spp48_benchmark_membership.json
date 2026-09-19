@@ -1,0 +1,42 @@
+{
+ "rows": [
+  {
+   "vintage": "none",
+   "active_dir": "eia-860",
+   "n_plants": 830,
+   "oklaunion_present": false
+  },
+  {
+   "vintage": "2019",
+   "active_dir": "vintage_2019",
+   "n_plants": 830,
+   "oklaunion_present": false
+  },
+  {
+   "vintage": "2020",
+   "active_dir": "vintage_2020",
+   "n_plants": 830,
+   "oklaunion_present": false
+  },
+  {
+   "vintage": "2021",
+   "active_dir": "vintage_2021",
+   "n_plants": 830,
+   "oklaunion_present": false
+  },
+  {
+   "vintage": "2022",
+   "active_dir": "vintage_2022",
+   "n_plants": 830,
+   "oklaunion_present": false
+  },
+  {
+   "vintage": "2023",
+   "active_dir": "vintage_2023",
+   "n_plants": 830,
+   "oklaunion_present": false
+  }
+ ],
+ "membership_invariant": true,
+ "oklaunion_never_present": true
+}

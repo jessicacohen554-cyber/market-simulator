@@ -243,3 +243,62 @@ reason to revert (rule 1 `[R-STRUCT]`). C1-2020 `COAL_PRB` is expected to improv
 3. On promotion the rung's `holdout.keeper` stamp must be **re-applied**
    (`stamp_touchpoint_holdout.py`), and its corrected caveat text **re-authored** — a re-stamp
    resets it (known defect, `docs/calibration-log/spp.md`).
+
+---
+
+## ADDENDUM A (same session, before the arm landed) — SPP-47 §2.2 IS REFUTED, and the arm must be scored against the COMMITTED benchmark
+
+SPP-47 §2.2 predicted that once the fleet carries Oklaunion *"the benchmark question is moot,
+because the plant is then in the fleet map the builder keys on."* **That is false as implemented**,
+and it changes how this lane's C1 number must be read. Measured at zero LP
+(`scripts/probes/_spp48_benchmark_membership.py`, plus a two-leg `--rebuild-benchmark`).
+
+### A.1 The benchmark is INVARIANT to the fleet repair
+
+Two copies of the committed rung bundle, metas differing **only** in `mid_vintage_exit_carry`,
+each rebuilt through `run_calibration_full.py --rebuild-benchmark`. Both legs wrote the **same**
+content-addressed frame `eia923-78357736757d.parquet`. The repair does not touch the actual.
+
+### A.2 What the rebuild does to the actual
+
+| | plant 127, 2020 | 2020 `COAL_PRB` actual |
+|---|---|---|
+| **committed** `eia923-cda580e2f71c` | **1,209,201 MWh** (m05–m09 = 86,240 / 219,325 / 289,823 / 329,299 / 284,514 — the CAMPD shape) | **67.0581 TWh** |
+| **HEAD rebuild** `eia923-78357736757d` (arm and control alike) | **0 rows** | **65.8489 TWh** |
+
+Every other 2020 class is identical to four decimals.
+
+### A.3 Root cause — a DIFFERENT defect, in a different seam
+
+The benchmark's ISO membership is `run_calibration_full._iso_plant_ids` →
+`zone_assignment.build_zone_lookup`, whose plant set is **eGRID-2023 coordinates**, supplemented
+for the `_EIA860_SUPPLEMENT_ISOS` (SPP included) from the **canonical** EIA-860 plant file — the
+2025 Early Release. Neither source knows a plant that retired in 2020, and the supplement is
+**forward-only** by its own docstring (*"covers plants too new for the eGRID vintage"*).
+
+Measured, one interpreter per vintage: SPP's benchmark plant set is **830 with plant 127 ABSENT**
+under *every* vintage — canonical, 2019, 2020, 2021, 2022, 2023. **The lookup does not follow
+`eia860_vintage_tracks_solve_year` at all.**
+
+The asymmetry is the point: the **LP fleet** has a fallback-zone path for a plant eGRID lacks (the
+loader logs *"1 of 5 SPP generators not in eGRID lookup — assigned fallback zone"*), while the
+**benchmark** applies a hard `isin` filter with **no** fallback. So a mid-window retiree can be
+**in the model and out of the actual at the same time**.
+
+### A.4 Consequence, pre-declared before the arm's numbers exist
+
+The arm bundle carries a **freshly rebuilt** benchmark (no plant 127 → 2020 `COAL_PRB` actual
+65.8489); the committed control carries the older one (with plant 127 → 67.0581). Scoring the arm
+against **its own** benchmark would move C1-2020 by the model-side repair **and** by a 1.2092 TWh
+deletion from the actual — and that second half is "rescaling an input so the model's output lands
+on the actuals" (rule 13 `[R-MEASURED]`) and "burying the error back inside an inaccurate input"
+(rule 14 `[R-ACCURATE]`).
+
+**Therefore: the arm is scored against the COMMITTED benchmark**, both figures are reported
+separately, and the benchmark regression is filed as **its own object** — the named successor to
+this lane, not part of its result.
+
+Arithmetic for the record, so neither number can be quoted loosely:
+committed actual 67.0581 − model 56.2097 = **−10.8484 TWh** (the failing C1 row, reproduced);
+HEAD-rebuild actual 65.8489 − the same model = **−9.6392 TWh**, a 11.1 % improvement bought
+**entirely by deleting real metered generation** and therefore refused.
