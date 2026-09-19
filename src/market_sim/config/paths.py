@@ -386,6 +386,14 @@ RAW_DIR: Path = RAW_DATA_DIR
 CLEAN_DIR: Path = DATA_ROOT / "data" / "clean"
 DICTIONARY_DIR: Path = DATA_ROOT / "data" / "dictionary"
 
+# Hand-off extracts: DERIVED, human-facing CSV cuts of a raw archive, produced
+# on request and committed so the exact bytes handed to a reader are on the
+# record. NOT a model input — nothing under ``src/market_sim/`` reads this
+# tree, and no curator writes it; the clean tree (``CLEAN_DIR``) remains the
+# only derived input surface. Each subdirectory carries a README naming its
+# raw source and the script that regenerates it.
+EXPORTS_DIR: Path = DATA_ROOT / "data" / "exports"
+
 # ---------------------------------------------------------------------------
 # Results tree (derived, disposable) and its ensemble subtree. Both were
 # previously reached with cwd-relative literals (``Path("results")`` in
