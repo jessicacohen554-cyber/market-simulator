@@ -128,7 +128,8 @@ class TestRenewableBackfill(unittest.TestCase):
         self._orig_ids = rcf._iso_plant_ids
         # Plant 3 (solar) is only present in the _gen_with_solar frames, so
         # widening the set is a no-op for every other test here.
-        rcf._iso_plant_ids = lambda iso: frozenset({1, 2, 3})
+        # spp-49 widened the seam to (iso, year, vintage_union).
+        rcf._iso_plant_ids = lambda iso, *_a, **_kw: frozenset({1, 2, 3})
 
     def tearDown(self):
         rcf._iso_plant_ids = self._orig_ids

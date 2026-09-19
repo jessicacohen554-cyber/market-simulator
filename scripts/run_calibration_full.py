@@ -2234,15 +2234,72 @@ def _campd_hourly_frame(
     return pd.concat(frames, ignore_index=True)
 
 
-@lru_cache(maxsize=8)
-def _iso_plant_ids(iso: str) -> frozenset[int]:
+@lru_cache(maxsize=32)
+def _eia860_vintage_ba_plants(iso: str, year: int) -> frozenset[int]:
+    """Plants BA-coded to ``iso`` in the EIA-860 vintage that COVERS ``year``.
+
+    The benchmark's supplement (``zone_assignment._eia860_ba_zones``) reads
+    ``_EIA860_PLANT_PATH``, a module-level constant bound at import to the
+    CANONICAL ``EIA_860_DIR``. It therefore never follows the solved year,
+    and a plant that retired mid-window is absent from the ISO's benchmark
+    membership in the very years it demonstrably ran (spp-49).
+
+    This reads ``vintage_<year>/eia860_plant.parquet`` instead, holding last
+    to the canonical file for years past the final committed vintage. The
+    admission predicate is the SAME one ``zone_assignment`` applies — the
+    ISO's own BA codes, and for NWPP the BA-plus-WECC footprint rule — so
+    this widens WHICH VINTAGE is read and nothing else.
+
+    Keyed on ``(iso, year)`` and read-only over committed parquet, so it is a
+    pure function of the reference data (no ``ScenarioConfig``, no
+    ``active_eia860_dir()`` process global).
+    """
+    from market_sim.config.paths import EIA_860_DIR
+    from market_sim.data.zone_assignment import _iso_ba_codes, _nwpp_admitted
+
+    vintage = EIA_860_DIR / f"vintage_{int(year)}"
+    path = vintage / "eia860_plant.parquet"
+    if not path.exists():
+        # Hold last: years past the final committed vintage read the
+        # canonical file, which IS that year's best published snapshot.
+        path = EIA_860_DIR / "eia860_plant.parquet"
+    if not path.exists():
+        return frozenset()
+    df = pd.read_parquet(path)
+    ba = df["Balancing Authority Code"].astype(str).str.strip()
+    if iso == "NWPP":
+        nerc = df["NERC Region"] if "NERC Region" in df.columns else None
+        mask = _nwpp_admitted(ba, nerc)
+    else:
+        codes = _iso_ba_codes(iso)
+        if not codes:
+            return frozenset()
+        mask = ba.isin(codes)
+    plants = pd.to_numeric(df["Plant Code"], errors="coerce")[mask].dropna()
+    return frozenset(int(p) for p in plants)
+
+
+@lru_cache(maxsize=128)
+def _iso_plant_ids(
+    iso: str, year: int | None = None, vintage_union: bool = False
+) -> frozenset[int]:
     """ORIS codes physically located in ``iso`` (eGRID/EIA-860 BA geography).
 
     EIA-923's ``generation`` table is national; without restricting to the
     ISO the per-class benchmark totals leak in every other US plant (e.g. PRB
     coal shows the ~639 TWh national figure instead of ERCOT's ~47 TWh).
+
+    ``vintage_union`` (``ScenarioConfig.benchmark_membership_vintage_union``,
+    default off, byte-identical off — the base branch is returned unchanged
+    and the added arguments only widen the cache key) UNIONS in the solve
+    year's own EIA-860 BA cohort via :func:`_eia860_vintage_ba_plants`. See
+    that field's comment for the defect, the measurement and why the union is
+    additive rather than a replacement (rules 13 / 14).
     """
-    return frozenset(build_zone_lookup(iso))
+    base = frozenset(build_zone_lookup(iso))
+    if not vintage_union or year is None:
+        return base
+    return base | _eia860_vintage_ba_plants(iso, int(year))
 
 
 def _eia923_frame(
@@ -2250,6 +2307,7 @@ def _eia923_frame(
     generation: pd.DataFrame,
     iso: str = "ERCOT",
     mustrun_chp_btm_holdout: bool = False,
+    benchmark_membership_vintage_union: bool = False,
 ) -> pd.DataFrame:
     """Return EIA-923 net generation per (plant, class), annual and monthly.
 
@@ -2269,9 +2327,13 @@ def _eia923_frame(
     ``coal_chp_overrides``, and :func:`_plant_class_shares` filters to
     :data:`_BACKFILL_TARGET_KLASSES` before it ever sees these rows.
     Zero free parameters — a partition on one published boolean (rules 21 / 24).
+
+    ``benchmark_membership_vintage_union`` (default off, byte-identical off)
+    widens the ISO membership to the solve year's own EIA-860 BA cohort — see
+    :func:`_iso_plant_ids` and the ``ScenarioConfig`` field's comment.
     """
     df = generation[generation["year"] == year].copy()
-    iso_plants = _iso_plant_ids(iso)
+    iso_plants = _iso_plant_ids(iso, year, bool(benchmark_membership_vintage_union))
     if iso_plants:
         df = df[df["plant_id"].isin(iso_plants)].copy()
     df["klass"] = [
@@ -2366,6 +2428,7 @@ def _must_run_profiles(
     skip_classes: frozenset[str] = frozenset(),
     e930: pd.DataFrame | None = None,
     mustrun_chp_btm_holdout: bool = False,
+    benchmark_membership_vintage_union: bool = False,
 ) -> dict[str, np.ndarray]:
     """Per-zone hourly must-run MW for each injected residual class.
 
@@ -2395,7 +2458,13 @@ def _must_run_profiles(
         # in a partial current-year EIA-923 vintage where biomass AND OTHER are
         # truncated (both absent from CAMPD/EIA-930).
         annual, monthly = _reconciled_mustrun_class(
-            klass, year, generation, iso, e930, mustrun_chp_btm_holdout
+            klass,
+            year,
+            generation,
+            iso,
+            e930,
+            mustrun_chp_btm_holdout,
+            benchmark_membership_vintage_union,
         )
         monthly = np.clip(monthly, 0.0, None)
         if annual <= 0:
@@ -2945,16 +3014,22 @@ def _vintage_completeness(
     generation: pd.DataFrame,
     iso: str,
     e930: pd.DataFrame | None,
+    benchmark_membership_vintage_union: bool = False,
 ) -> float:
     """ISO EIA-923 total net gen as a fraction of the EIA-930 grid net_gen.
 
     ~1.0 for a complete vintage; the 2025 early monthly survey reads ~0.73.
     Returns 1.0 when no EIA-930 net_gen is available (no swap then).
+
+    Reads the SAME membership as :func:`_eia923_frame` (spp-49): a completeness
+    ratio taken over a narrower plant set than the frame it gates would make
+    the vintage look less complete than it is and fire a carry the frame does
+    not need.
     """
     ann930_net, _ = _e930_series_annual_monthly(e930, "net_gen", year)
     if ann930_net <= 0.0:
         return 1.0
-    iso_plants = _iso_plant_ids(iso)
+    iso_plants = _iso_plant_ids(iso, year, bool(benchmark_membership_vintage_union))
     g = generation[generation["year"] == year]
     if iso_plants:
         g = g[g["plant_id"].isin(iso_plants)]
@@ -2969,6 +3044,7 @@ def _reconciled_mustrun_class(
     iso: str,
     e930: pd.DataFrame | None,
     mustrun_chp_btm_holdout: bool = False,
+    benchmark_membership_vintage_union: bool = False,
 ) -> tuple[float, np.ndarray]:
     """Measured injected-class energy ``(annual_mwh, monthly[12])`` with the carry.
 
@@ -2989,7 +3065,13 @@ def _reconciled_mustrun_class(
     mcols = [f"m{i:02d}" for i in range(1, 13)]
 
     def _rows(yr: int) -> pd.DataFrame:
-        df = _eia923_frame(yr, generation, iso, mustrun_chp_btm_holdout)
+        df = _eia923_frame(
+            yr,
+            generation,
+            iso,
+            mustrun_chp_btm_holdout,
+            benchmark_membership_vintage_union,
+        )
         df = df[df["klass"] == klass]
         if klass == "OTHER":
             df = df[~df["plant_id"].isin(_pumped_storage_plant_ids())]
@@ -2998,7 +3080,9 @@ def _reconciled_mustrun_class(
     cur = _rows(year)
     annual = float(cur["annual_mwh"].sum())
     monthly = cur[mcols].sum().to_numpy(dtype=float)
-    completeness = _vintage_completeness(year, generation, iso, e930)
+    completeness = _vintage_completeness(
+        year, generation, iso, e930, benchmark_membership_vintage_union
+    )
     if completeness < _EIA923_VINTAGE_COMPLETENESS_FRACTION:
         prior = _rows(year - 1)
         prior_ann = float(prior["annual_mwh"].sum())
@@ -3036,6 +3120,7 @@ def _backfill_renewables_eia930(
     generation: pd.DataFrame,
     e930: pd.DataFrame | None,
     mustrun_chp_btm_holdout: bool = False,
+    benchmark_membership_vintage_union: bool = False,
 ) -> pd.DataFrame:
     """Source under-counted renewables from EIA-930 and biomass from a prior year.
 
@@ -3119,7 +3204,13 @@ def _backfill_renewables_eia930(
             # Evidence: results/calibration/FINDING-nyiso106-solar-benchmark-
             # vintage-2026-07-31.md.
             ann, mon = _reconciled_mustrun_class(
-                klass, year, generation, iso, e930, mustrun_chp_btm_holdout
+                klass,
+                year,
+                generation,
+                iso,
+                e930,
+                mustrun_chp_btm_holdout,
+                benchmark_membership_vintage_union,
             )
             cur = float(cls_total.get(klass, 0.0))
             if ann > cur:
@@ -3147,10 +3238,18 @@ def _backfill_renewables_eia930(
             )
             e923 = _replace_class_total(e923, klass, year, ann930, mon930)
 
-    completeness = _vintage_completeness(year, generation, iso, e930)
+    completeness = _vintage_completeness(
+        year, generation, iso, e930, benchmark_membership_vintage_union
+    )
     if completeness < _EIA923_VINTAGE_COMPLETENESS_FRACTION:
         mcols = [f"m{i:02d}" for i in range(1, 13)]
-        prior = _eia923_frame(year - 1, generation, iso, mustrun_chp_btm_holdout)
+        prior = _eia923_frame(
+            year - 1,
+            generation,
+            iso,
+            mustrun_chp_btm_holdout,
+            benchmark_membership_vintage_union,
+        )
         prior_bio = prior[prior["klass"] == "biomass"]
         prior_ann = float(prior_bio["annual_mwh"].sum())
         cur_bio = float(cls_total.get("biomass", 0.0))
@@ -3186,6 +3285,7 @@ def _plant_class_shares(
     iso: str,
     generation: pd.DataFrame,
     year: int,
+    benchmark_membership_vintage_union: bool = False,
 ) -> dict[int, dict[str, float]]:
     """Return ``{plant_id: {klass: share}}`` — each plant's EIA-923 prime-mover
     class split across the CAMPD-backfill-eligible thermal classes, shares summing
@@ -3210,7 +3310,12 @@ def _plant_class_shares(
     """
 
     def _vintage(yr: int) -> pd.Series:
-        df = _eia923_frame(yr, generation, iso)
+        df = _eia923_frame(
+            yr,
+            generation,
+            iso,
+            benchmark_membership_vintage_union=(benchmark_membership_vintage_union),
+        )
         df = df[df["klass"].isin(_BACKFILL_TARGET_KLASSES)]
         return df.groupby(["plant_id", "klass"])["annual_mwh"].sum()
 
@@ -3376,6 +3481,7 @@ def _benchmark_eia923_frame(
     btm_backfill_year: int | None = None,
     campd_active: set[int] | None = None,
     mustrun_chp_btm_holdout: bool = False,
+    benchmark_membership_vintage_union: bool = False,
 ) -> pd.DataFrame:
     """The bundle's per-class EIA-923 benchmark: CAMPD thermal backfill + the
     EIA-930 renewable / prior-year biomass repair for incomplete vintages.
@@ -3388,12 +3494,29 @@ def _benchmark_eia923_frame(
     benchmark for the CHP classes the CAMPD backfill does not reach — see
     :func:`_backfill_chp_eia923_from_donor`. Unset (or a complete vintage) is a
     no-op.
+
+    ``benchmark_membership_vintage_union`` (spp-49, default off,
+    byte-identical off) reaches EVERY membership read below — the frame, the
+    class shares, and the renewable/biomass repair's completeness probe — so
+    the benchmark and the must-run injection cannot end up on two different
+    plant populations (rule 19 [R-ONE-MECH], the same single-seam discipline
+    ``mustrun_chp_btm_holdout`` follows).
     """
     class_shares = (
-        None if iso == "ERCOT" else _plant_class_shares(iso, generation, year)
+        None
+        if iso == "ERCOT"
+        else _plant_class_shares(
+            iso, generation, year, benchmark_membership_vintage_union
+        )
     )
     e923 = _backfill_eia923_with_campd(
-        _eia923_frame(year, generation, iso, mustrun_chp_btm_holdout),
+        _eia923_frame(
+            year,
+            generation,
+            iso,
+            mustrun_chp_btm_holdout,
+            benchmark_membership_vintage_union,
+        ),
         campd_year,
         group_by_code,
         year,
@@ -3426,7 +3549,13 @@ def _benchmark_eia923_frame(
             campd_active=campd_active,
         )
     return _backfill_renewables_eia930(
-        e923, year, iso, generation, e930, mustrun_chp_btm_holdout
+        e923,
+        year,
+        iso,
+        generation,
+        e930,
+        mustrun_chp_btm_holdout,
+        benchmark_membership_vintage_union,
     )
 
 
@@ -6257,6 +6386,10 @@ def solve_and_persist(
         # silently inject the un-partitioned array while run_config.json
         # recorded the armed posture.
         _mustrun_chp_btm = _caiso_demand_flag("mustrun_chp_btm_holdout")
+        # spp-49: read through the SAME seam as the benchmark below, so the
+        # injected residual and the frame it is scored against share one
+        # plant population (rule 19 [R-ONE-MECH]).
+        _bench_vintage_union = _caiso_demand_flag("benchmark_membership_vintage_union")
         must_run = _must_run_profiles(
             year,
             generation,
@@ -6265,6 +6398,7 @@ def solve_and_persist(
             skip_classes=frozenset(),
             e930=e930_year,
             mustrun_chp_btm_holdout=_mustrun_chp_btm,
+            benchmark_membership_vintage_union=_bench_vintage_union,
         )
         must_run_total = np.sum(list(must_run.values()), axis=0) if must_run else None
         inject_biomass = "biomass" in must_run
@@ -6895,6 +7029,7 @@ def solve_and_persist(
                     # Same seam as the injection above, so bench and model move
                     # in lockstep (miso-253).
                     mustrun_chp_btm_holdout=_mustrun_chp_btm,
+                    benchmark_membership_vintage_union=_bench_vintage_union,
                 )
             )
             if campd_year is not None:
@@ -8453,6 +8588,9 @@ def run_p2_layer(bundle: Path, screen_coal: bool) -> None:
             mustrun_chp_btm_holdout=bool(
                 getattr(cfg, "mustrun_chp_btm_holdout", False)
             ),
+            benchmark_membership_vintage_union=bool(
+                getattr(cfg, "benchmark_membership_vintage_union", False)
+            ),
         )
         _dispatch_frame(
             year,
@@ -9469,6 +9607,13 @@ def rebuild_benchmark(bundle: Path) -> None:
     # its dispatch keeps the partitioned one -- a bench/model basis split, which
     # is the defect class the single-seam design exists to prevent.
     _mustrun_chp_btm = False
+    # spp-49: a rebuild must likewise reproduce the bundle's OWN benchmark
+    # membership, or an armed bundle silently regains the canonical-only
+    # population while its dispatch keeps the vintage-union one -- the same
+    # bench/model basis split the miso-253 recovery above exists to prevent.
+    # meta.json is checked FIRST for the same reason it is there: it is
+    # written from the solve kwargs.
+    _bench_vintage_union = bool(meta.get("benchmark_membership_vintage_union"))
     _rc = bundle / "run_config.json"
     if _rc.exists():
         _cfg = json.loads(_rc.read_text())
@@ -9476,6 +9621,13 @@ def rebuild_benchmark(bundle: Path) -> None:
             if isinstance(_blk, dict) and _blk.get("mustrun_chp_btm_holdout"):
                 _mustrun_chp_btm = True
                 break
+        if not _bench_vintage_union:
+            for _blk in (_cfg, _cfg.get("calibration_flags") or {}):
+                if isinstance(_blk, dict) and _blk.get(
+                    "benchmark_membership_vintage_union"
+                ):
+                    _bench_vintage_union = True
+                    break
 
     e923f, e930f, campdf = [], [], []
     for year in years:
@@ -9498,6 +9650,7 @@ def rebuild_benchmark(bundle: Path) -> None:
                 btm_backfill_year=_btm_backfill_year,
                 campd_active=_campd_active,
                 mustrun_chp_btm_holdout=_mustrun_chp_btm,
+                benchmark_membership_vintage_union=_bench_vintage_union,
             )
         )
         if e930 is not None:
@@ -11873,6 +12026,38 @@ def main() -> None:
         "miss is created -- which also means biomass/OTHER stay SELF-SCORED; "
         "this flag does not close that validation gap. ISO-generic; default "
         "off, byte-identical off -- every keeper replays unchanged.",
+    )
+    parser.add_argument(
+        "--benchmark-membership-vintage-union",
+        dest="benchmark_membership_vintage_union",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Union the solve year's OWN EIA-860 BA cohort into the "
+        "benchmark's ISO plant membership "
+        "(ScenarioConfig.benchmark_membership_vintage_union, spp-49). The "
+        "benchmark's membership is zone_assignment.build_zone_lookup, whose "
+        "EIA-860 supplement reads a module-level path bound at import to the "
+        "CANONICAL (2025 Early Release) directory -- so it never follows the "
+        "solved year, and a plant that retired mid-window is absent from the "
+        "ACTUAL in the very years it demonstrably ran. Measured: SPP's "
+        "benchmark plant set is 830 under EVERY vintage, with Oklaunion "
+        "(plant 127, retired 9/2020) absent from all of them, although "
+        "vintage_2019/2020's own plant file carries it BA-coded SWPP. The "
+        "LP FLEET has a fallback-zone path for such a plant; the benchmark "
+        "has a hard isin with none -- so a mid-window retiree is IN the model "
+        "and OUT of the actual at once. ADDITIVE by construction: the union "
+        "never removes a plant, so it can only ADD real metered generation, "
+        "and each plant contributes exactly what EIA-923 reports for that "
+        "year. The REPLACE variant was built and REFUSED on measurement "
+        "(it deletes real generation in 7 of 9 regions -- SOCO 2024 -7,275.9 "
+        "GWh, PJM 2020 -9,077.7, SPP -828.8..-893.1 every year 2019-2023 -- "
+        "rules 13/14). No double count: the CAMPD backfill skips any plant "
+        "EIA-923 already reports at/above 50,000 MWh. Applied at the single "
+        "_iso_plant_ids seam BOTH the injection and the benchmark read, so "
+        "the two move in lockstep (rule 19). Zero free parameters (rules "
+        "21/24). SHARED AND CROSS-ISO, so default OFF and armed per ISO by an "
+        "explicit recipe (rule 25) -- byte-identical off; every keeper "
+        "replays unchanged.",
     )
     parser.add_argument(
         "--caiso-dsw-lateevening-clean",
@@ -14503,6 +14688,12 @@ def main() -> None:
                 or "--no-mustrun-chp-btm-holdout" in sys.argv
                 else None
             ),
+            benchmark_membership_vintage_union=(
+                args.benchmark_membership_vintage_union
+                if "--benchmark-membership-vintage-union" in sys.argv
+                or "--no-benchmark-membership-vintage-union" in sys.argv
+                else None
+            ),
             nyiso_ct_peaker_bands_measured=args.nyiso_ct_peaker_bands_measured,
             nyiso_ct_peaker_committed_measured=(
                 args.nyiso_ct_peaker_committed_measured
@@ -14730,6 +14921,16 @@ def main() -> None:
             # (rule 24 [R-REGISTRY]) because prb_overrides is applied to
             # recorded_cfg. None keeps the config/recipe value untouched.
             "mustrun_chp_btm_holdout": args.mustrun_chp_btm_holdout,
+            # spp-49: the benchmark's vintage-aware membership union rides the
+            # same generic channel for the same reasons -- ONE read path for a
+            # fresh solve, a replay override and a recipe, and
+            # run_config.json records it (rule 24 [R-REGISTRY]) because
+            # prb_overrides is applied to recorded_cfg, which is what
+            # rebuild_benchmark later recovers it from. None keeps the
+            # config/recipe value untouched.
+            "benchmark_membership_vintage_union": (
+                args.benchmark_membership_vintage_union
+            ),
             "coal_warm_committed": True if args.coal_warm_committed else None,
             "committed_ramp_spread": args.committed_ramp_spread,
             "cc_duct_peaking": True if args.cc_duct_peaking else None,
