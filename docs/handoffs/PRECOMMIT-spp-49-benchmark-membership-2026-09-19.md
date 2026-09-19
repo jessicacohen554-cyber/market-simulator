@@ -240,15 +240,18 @@ not merely argued.
 
 2020 `COAL_PRB` actual: **65.8489 (OFF) → 66.9496 (ON)**, against the committed **67.0581**.
 
-### 5.1 It moves C1 in BOTH directions — reported at full magnitude
+### 5.1 What it does to C1 — and the framing corrected
 
-This is the part that matters for rule 1 `[R-STRUCT]`, and it is stated plainly because it is the
-evidence that the repair is not a residual-shrinker:
+The *actual* moves in both directions (2019 up 2.5959 TWh; 2020 down 0.1085 TWh against the
+committed frame). At **criterion** level, measured like-for-like against the same HEAD baseline,
+the load-bearing `COAL_PRB` row gets **WORSE in both live years** — see the RESULT doc §2 for the
+table. Only against the *committed* frame does 2020 improve, and that improvement is entirely the
+CAMPD→EIA-923 basis shift of §5.2, not a dispatch gain.
 
-* **2019's actual GROWS by 2.5959 TWh**, which *enlarges* that year's C1 miss.
-* **2020's actual falls by 0.1085 TWh** against the committed frame, which *shrinks* its miss.
-
-A mechanism selected to close a residual does not move a criterion both ways.
+**That is the expected and acceptable outcome, not a reason to revert.** Rule 1 `[R-STRUCT]`: a
+real market behaviour stays in even when it makes the fit worse. Rule 14 `[R-ACCURATE]`: a worse
+fit from an accurate input is a *discovered bug* — here, that the model is ~8.9 TWh short of SPP's
+2019 PRB coal, which is the coal↔CC elasticity SPP-47 filed as "Object A".
 
 ### 5.2 The one number that goes down, and why it is not a deletion
 
