@@ -34,8 +34,12 @@ PRICE UNSCORED) on both sides, C1 all **13/14** · free **9/10** on both sides, 
 unchanged). 2023 `CT_PEAKER` stays the single failure at **+9.82 TWh**, so **SOCO's headline defect
 is not fixed** — which the PRECOMMIT said first, with the number.
 
-The promotion is **open and the owner's** (rule 31 `[R-RETAIN]`): the keeper is unchanged and
-nothing has been pruned.
+**The owner ruled `Promote` and it is executed** (§10): SOCO's keeper is now
+`2026-09-19-soco53e-measured-st-gas`, the outgoing keeper's three stores are pruned, and
+`audit_keepers --check --iso SOCO` returns **0 failures**. The promotion also surfaced a defect
+that is this lane's own — the solve shard ran on **unpinned** dependencies, including HiGHS 1.15.1
+against the control's pinned 1.14.0 — which is reported at full magnitude in §10.2 with the
+evidence that bounds it and the pin-confirm re-solve that closes it.
 
 ---
 
@@ -377,7 +381,75 @@ becomes computable for this promotion**, because the outgoing keeper's bundle
 
 ---
 
-## 10. THE PROMOTION QUESTION (rule 31 `[R-RETAIN]`)
+## 10. THE OWNER RULED **PROMOTE** — AND ONE DEFECT THE PROMOTION SURFACED
+
+**Owner ruling, 2026-09-19: "Promote".** Executed in this session under rule 35 `[R-PROMOTE]`.
+SOCO's keeper is now **`2026-09-19-soco53e-measured-st-gas`**.
+
+### 10.1 What the promotion did, in rule-35 order
+
+| step | rule | result |
+|---|---|---|
+| Enumerate the year union **before** deleting | 35(b) | **{2023, 2024, 2025}** over both registered runs; no folded touchpoints, no dangling `holdout.keeper` |
+| Capture the lineage diff while **both** bundles were on disk | 35(b) | over all **856** `scenario_config` fields the recipes differ in **three**, and only **one** is solve-affecting — `measured_st_heat_rates` absent → true. `measured_coal_heat_rates` and `mid_vintage_exit_carry` did not exist at the outgoing keeper's basis `0b3f2fdc` and sit at their inert defaults `false`, exactly as §6's G-DRIFT classified them |
+| Incoming keeper covers the union | 35(c) | yes — all three years in one `--year` invocation, so the promotion **shrinks nothing** |
+| Write the keeper shard | 35(a) | `frontend/data/backcast/keepers/SOCO.json` → the new id, with `superseded` and `promotion_note_soco53e` |
+| `calibration-complete.json` | 35(d) | **no change, deliberately** — SOCO has never had an entry (it is `NOT-YET`, not "complete"), so there is nothing to re-key |
+| **Verify before deleting** | 35(e) | `audit_keepers --check --iso SOCO` run **between** promotion and prune: the incoming three stores resolve |
+| Rebuild the status part | 30(b) | `build_status.py --iso SOCO` → `run_id` `2026-09-19-soco53e-measured-st-gas`, `NOT-YET` |
+| Re-stamp the matrix shard + §5.8 prose | 28 | shard `keeper`/`gates` re-stamped, cell **`O` → `K`**, §5.8 header rewritten; `check_mechanism_matrix` green on all of it |
+| **Then** prune | 35(a)/(d) | `prune_iso_runs.py --iso SOCO --force-uncite` removed the outgoing keeper's **three stores together** — `registry/<id>.json`, `runs/<id>.js` and `results/calibration/soco53d_campaign`. `--force-uncite` is the **intended** route here (35(d)): the only citation was this lane's own `superseded` history block, which rule 35(d) says stays as the audit trail |
+| Invariant | 35(f) | **`audit_keepers --check --iso SOCO` → 0 failures.** E13 cleared |
+
+The outgoing keeper's bundle is recoverable in full at
+`730ae912e0e608695e3425e00daa00ad18138706` (with `results/calibration/_shared/SOCO` on the same
+SHA); git history is the record, exactly as rule 15 says.
+
+### 10.2 A DEFECT THE PROMOTION SURFACED, AND IT IS THIS LANE'S
+
+`audit_keepers` **E14** fires four times on the new keeper:
+
+| package | this keeper solved on | `requirements.txt` pins | the control solved on |
+|---|---|---|---|
+| **`highspy`** | **1.15.1** | **1.14.0** | **1.14.0** |
+| `pandas` | 3.0.6 | 3.0.3 | 3.0.3 |
+| `pyarrow` | 25.0.1 | 24.0.0 | 24.0.0 |
+| `pydantic` | 2.13.5 | 2.13.4 | 2.13.4 |
+
+**The cause is a defect in this lane's own shard prompt**, not in the mechanism: it said
+`pip install numpy pandas pyarrow pydantic scipy highspy` where it should have said
+`pip install -r requirements.txt`. This container image ships **without** those packages, so the
+shard installed the latest of each. The control had been solved a day earlier in a container that
+already carried the pins. **So the A/B differs in the LP solver version as well as in the
+mechanism, and that is stated rather than buried.**
+
+**What bounds it.** Differencing the arm against the control over all 45 class-years, **28 are
+EXACTLY 0.0 MWh** — bit-identical — across **ten** classes: nuclear, hydro, wind, solar, biomass,
+oil, `ST_CHP`, `CC_CHP`, `OTHER` and `COAL_BIT` (2023). A solver-version change that was
+re-selecting among degenerate optima would not leave ten classes bit-identical in three separate
+years. The classes that *do* move are precisely the ones the mechanism prices, in the predicted
+direction and magnitude, and the arm's per-plant marginal costs reproduced the zero-LP offer-array
+prediction to four decimals.
+
+**That is strong evidence, not proof, so a pin-confirm re-solve was launched** — the identical
+config on `pip install -r requirements.txt`, into `results/calibration/soco53e_pinned`, with a
+hard stop if any version differs from the pins. Its result is recorded in §10.3.
+
+**Two things follow beyond this lane.** (a) Every shard prompt in this repo should say
+`pip install -r requirements.txt`; mine is the template others copy, and it was wrong. (b) The
+container image no longer ships the pinned scientific stack, so **any** lane that installs
+ad hoc will silently solve off-pin — an environment finding for the desk, not for SOCO.
+
+### 10.3 THE PIN-CONFIRM RE-SOLVE
+
+*(recorded below when the shard reports; the promotion stands either way, and if the pinned solve
+differs materially the keeper is re-registered from it.)*
+
+---
+
+## 11. THE ORIGINAL PROMOTION QUESTION (rule 31 `[R-RETAIN]`) — ANSWERED
+
+### 11.1 The case as it was put to the owner
 
 **The promotion is open and it is the owner's.** SOCO's keeper is unchanged at
 `2026-09-19-soco53d-campaign-commitment`; nothing has been pruned.
