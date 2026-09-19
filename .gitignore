@@ -2672,3 +2672,24 @@ results/calibration/nyiso241_ctbands_span/
 # the composed `miso263_coalcap_span`, which is the registrable run and MUST
 # commit its slim set (rule 15 [R-DASHBOARD]).
 results/calibration/miso263_coalcap_20[0-9][0-9]/
+
+# pjm-h11 (2026-09-19): the C-1 per-year shard bundles (2 arms x 6 years). Rule
+# 32 [R-SHARD] (d) / 29 [R-SCREEN] (c): a per-year shard dir is kept OUT of main
+# — only a composed, registered run goes there — and rule 31 [R-RETAIN] says
+# .gitignore is what discharges that, never `rm`. These are RESULTS: the owner
+# has not yet ruled on promotion, so nothing here is deleted.
+# Bytes live on immutable shard commits (rule 33 [R-SHARD-ARCHIVE] (d) — a FULL
+# sha, never a branch name, because shard branches are deleted or force-moved):
+#   git checkout f3bf920ddfa9d4bd86be1c71b2984647b89d0681 -- results/calibration/pjm_h11_ctl_2020
+#   git checkout e24901cb6dacd2ec6daaeafe86e7a6e4b0252c55 -- results/calibration/pjm_h11_ctl_2021
+#   git checkout 3510c19c16d9913d3920ea29c3c6c0f4c7736d16 -- results/calibration/pjm_h11_ctl_2023
+# The remaining nine land on claude/pjm-h11-{ctl,arm}-<year>-r2; their recovery
+# shas are recorded in docs/RESULT-pjm-h11-*.md as each one reports.
+#
+# NOTE for any later r3 shard: this is a DIRECTORY-grain ignore, and git will not
+# descend into an excluded directory, so a shard's `!<bundle>/**` negation cannot
+# re-include anything under it (the SPP-48 stranding, .gitignore ~line 2416).
+# The live shards are unaffected — they are pinned to 0fae26c3 / 3b719484, which
+# predate this block. A future r3 must likewise pin to a sha before it, or use a
+# bundle name outside this glob.
+results/calibration/pjm_h11_*/
