@@ -90,197 +90,209 @@ _BANDS = ("committed", "econ_low", "econ_high", "peak")
 #: posture, the PRM regime mismatch, the demand convention, the interim VOLL and
 #: the Tier-3 placeholder all ride unchanged onto this determination basis.
 #: Extracted mechanically from the committed NWPP-40 JSON, not retyped.
-_INHERITED_DISCLOSURES = {'coal_fuel_price_gap': 'Colstrip (6076) and Centralia (3845) file no EIA-923 Schedule-2 '
-                        'fuel price in any year — 2,377.3 of 8,910.2 MW of coal (26.7 %), '
-                        'the whole coal fleet of NWPP-INLAND and NWPP-NW; they price on the '
-                        'supply-class trajectory (NWPP-12 §2.5). Reported, not filled.',
- 'coupled_set_is_16pct': 'The coupling reaches 5 of 15 measured links — 5,717 MW, 16.0 % of '
-                         'conventional-hydro nameplate — not the 14 plants / 65.9 % the '
-                         'PRECOMMIT asked for: 3 links uncoupled on tau (Wells->Rocky Reach '
-                         'celerity 34.9 mph; Rock Island->Wanapum diurnal alias; '
-                         'Dworshak->Lower Granite r = 0.02) and 7 on the 2 % side-inflow '
-                         'floor, a spill-metering artefact at the federal lower-river '
-                         'projects (FINDING-nwpp-36 §3.4 / §7 item 1). Grand Coulee, McNary, '
-                         'John Day, The Dalles and the lower Snake above Ice Harbor dispatch '
-                         'on their monthly budgets.',
- 'data_posture_2025': '263 conventional-hydro plants absent from the 2025 EIA-923 early '
-                      'release carry 2024 water (see hydro_backfill_year_2024); '
-                      'eia923_incomplete: true (BA total / EIA-930 net gen = 0.7881), so '
-                      '2025 C1 rows gate only where the completeness audit reads COMPLETE '
-                      'and the rest route to the C2 EIA-930 family fallback; 2025 wind '
-                      '(923/930 = 0.5746) and hydro (0.6796) benchmarks are swapped to '
-                      'EIA-930. The fuel columns this solve reads carry the NWPP-37 / 37b / '
-                      '39 screen state (pooled NG: WAT 2025 peak 23,607 MW; '
-                      'measured_monthly_hydro 2025 110.2639 TWh); the committed '
-                      'nwpp_hydro_budget.parquet is EIA-923-derived and never carried a 930 '
-                      'hour.',
- 'demand_convention_and_the_30_hours': 'LP demand reads Demand (MW) (Adjusted) per member '
-                                       'BA; _screen_demand_dropouts applied per member (the '
-                                       '17 exactly-zero NEVP hours of 2025); '
-                                       '_screen_demand_spikes NOT applied (it would delete '
-                                       '54 real hours of the 12-16 January 2024 CHPD cold '
-                                       "snap holding NWPP-NW's own 2024 peak, 21,560 MW at "
-                                       '2024-01-13 19:00 UTC). The 30 raw-feed artifacts '
-                                       '(AVA 10, NWMT 11, NEVP 6, PACE 1, SCL 2; 558x median '
-                                       'at AVA 2025-10-12 10:00 UTC, -58,286 MW at AVA '
-                                       '2024-01-05 16:00) are named individually in '
-                                       'PRECOMMIT-nwpp-40 §4.3 and are all repaired in the '
-                                       'Adjusted column. Nothing padded, interpolated or '
-                                       'rescaled.',
- 'g_a3_miss': "NWPP-36's armed-response gate G-A3 FAILED and rides this basis (owner ruling "
-              'N12): within-day amplitude at coupled run-of-river plants falls 1-10 % (Chief '
-              'Joseph 2.339 -> 2.131, Wells 2.153 -> 2.088, Rock Island 2.489 -> 2.394, '
-              'Bonneville 2.045 -> 2.027, Ice Harbor 4.275 -> 3.825; January 2023), not the '
-              ">= 30 % the gate expected; Rock Island's armed peak (606 MW) exceeds the "
-              'flat-arrivals bound (552 MW) because its UNCOUPLED upstream Rocky Reach peaks '
-              "into it; the pond is never drawn. Grand Coulee's own January amplitude falls "
-              '3.71 -> 2.15 instead. A mis-specified gate, not a passing one.',
- 'nw_or_tier3_placeholder': 'NWPP-NW <-> NWPP-OR carries a 43,600 MW Tier-3 placeholder (the '
-                            'NW zone nameplate), non-binding by construction: no WECC path '
-                            'rates that boundary and none will — it is a multi-point '
-                            'interconnection around Portland; Paths 4 / 5 / 71 / 86-88 are '
-                            'east-west cuts, not BA interfaces (card N5). Lever NWPP-55.',
- 'pnca_terminated_inside_window': 'The 1997 Pacific Northwest Coordination Agreement — the '
-                                  "instrument that defines 'Period means a calendar month', "
-                                  "the model's own budget period — terminated 2024-09-15 "
-                                  'with no successor text found (card R-j). Declared '
-                                  "regardless of the measurement; NWPP-38's result reported "
-                                  'alongside: verdict (a), no measurable change — 0 of 56 '
-                                  'treated cells (BPAT CHPD DOPD GCPD) reach the |z| >= 4.07 '
-                                  'detection threshold in 2024 or 2025 (max 2.45 / 3.04) '
-                                  'while the control group (PGE TPWR PACW) moved MORE (1 / 8 '
-                                  'cells past threshold; PGE ramp z = 10.95); a 2022-09-15 '
-                                  'placebo returns a bigger effect (t = +4.76) than the real '
-                                  'date (t = -1.17). Power: a one-fifth change in within-day '
-                                  'shaping would have been detected; a one-tenth change '
-                                  'would not.',
- 'price_unscored': 'There is NO admissible NWPP hourly price series. NWPP-13 built the '
-                   'WEIM-derived footprint index under a STOP gate pre-registered before any '
-                   'data was read and it read NO: the NW-group WEIM on-peak price sits -37.5 '
-                   '/ -22.6 / -23.6 % (2023 Jun-Dec / 2024 / 2025) below the independent '
-                   'Mid-C Peak index against a +/-10 % bar, at daily correlation 0.74 / 0.95 '
-                   '/ 0.67 against 0.80, while clearing 5.5-6.2 % of footprint energy net. '
-                   'Nothing landed to _validation-source; actual_lmp.json carries no NWPP '
-                   'block; TAIL_THRESHOLD has no NWPP key. C3a / C3b / C3c are therefore '
-                   "UNSCORED (never PASS) and the run reads rubric v3.8's "
-                   'PHYSICALLY-CALIBRATED ... (PRICE UNSCORED) class — never a bare '
-                   "CALIBRATED (owner ruling N2 limb b). The model's own annual mean price "
-                   'is printed MODEL-ONLY / UNVERIFIED. A neighbouring-hub proxy stays '
-                   'refused (gate G17).',
- 'prm_two_regime_mismatch': 'Card N7: one PLANNING_RESERVE_MARGIN_BY_ISO scalar 0.144 '
-                            '(PacifiCorp 2025 IRP summer, adopted from WRAP) tested against '
-                            'the summer coincident peak, while NWPP-NW peaks in WINTER every '
-                            'year (winter/summer 0.86 / 0.80 / 0.82), NWPP-SNV in SUMMER at '
-                            '1.95 / 2.06 / 1.87x its winter load, and NWPP-INLAND mixes both '
-                            'regimes inside one zone (8 winter-peaking BAs, 6 summer, 1 '
-                            'flipping). Largely inert in a backcast (capacity evolution is '
-                            "forecast-mode); lever NWPP-57. WRAP's first binding season is "
-                            'Winter 2027-28 (WPP BPM 109 p. 4) — forecast-side only.',
- 'served_interchange_limits': 'See '
-                              'governance.measured_input_switches.served_measured_interchange.limit.',
- 'voll_interim': 'See governance.measured_input_switches.voll_interim_2000.'}
+_INHERITED_DISCLOSURES = {
+    "coal_fuel_price_gap": "Colstrip (6076) and Centralia (3845) file no EIA-923 Schedule-2 "
+    "fuel price in any year — 2,377.3 of 8,910.2 MW of coal (26.7 %), "
+    "the whole coal fleet of NWPP-INLAND and NWPP-NW; they price on the "
+    "supply-class trajectory (NWPP-12 §2.5). Reported, not filled.",
+    "coupled_set_is_16pct": "The coupling reaches 5 of 15 measured links — 5,717 MW, 16.0 % of "
+    "conventional-hydro nameplate — not the 14 plants / 65.9 % the "
+    "PRECOMMIT asked for: 3 links uncoupled on tau (Wells->Rocky Reach "
+    "celerity 34.9 mph; Rock Island->Wanapum diurnal alias; "
+    "Dworshak->Lower Granite r = 0.02) and 7 on the 2 % side-inflow "
+    "floor, a spill-metering artefact at the federal lower-river "
+    "projects (FINDING-nwpp-36 §3.4 / §7 item 1). Grand Coulee, McNary, "
+    "John Day, The Dalles and the lower Snake above Ice Harbor dispatch "
+    "on their monthly budgets.",
+    "data_posture_2025": "263 conventional-hydro plants absent from the 2025 EIA-923 early "
+    "release carry 2024 water (see hydro_backfill_year_2024); "
+    "eia923_incomplete: true (BA total / EIA-930 net gen = 0.7881), so "
+    "2025 C1 rows gate only where the completeness audit reads COMPLETE "
+    "and the rest route to the C2 EIA-930 family fallback; 2025 wind "
+    "(923/930 = 0.5746) and hydro (0.6796) benchmarks are swapped to "
+    "EIA-930. The fuel columns this solve reads carry the NWPP-37 / 37b / "
+    "39 screen state (pooled NG: WAT 2025 peak 23,607 MW; "
+    "measured_monthly_hydro 2025 110.2639 TWh); the committed "
+    "nwpp_hydro_budget.parquet is EIA-923-derived and never carried a 930 "
+    "hour.",
+    "demand_convention_and_the_30_hours": "LP demand reads Demand (MW) (Adjusted) per member "
+    "BA; _screen_demand_dropouts applied per member (the "
+    "17 exactly-zero NEVP hours of 2025); "
+    "_screen_demand_spikes NOT applied (it would delete "
+    "54 real hours of the 12-16 January 2024 CHPD cold "
+    "snap holding NWPP-NW's own 2024 peak, 21,560 MW at "
+    "2024-01-13 19:00 UTC). The 30 raw-feed artifacts "
+    "(AVA 10, NWMT 11, NEVP 6, PACE 1, SCL 2; 558x median "
+    "at AVA 2025-10-12 10:00 UTC, -58,286 MW at AVA "
+    "2024-01-05 16:00) are named individually in "
+    "PRECOMMIT-nwpp-40 §4.3 and are all repaired in the "
+    "Adjusted column. Nothing padded, interpolated or "
+    "rescaled.",
+    "g_a3_miss": "NWPP-36's armed-response gate G-A3 FAILED and rides this basis (owner ruling "
+    "N12): within-day amplitude at coupled run-of-river plants falls 1-10 % (Chief "
+    "Joseph 2.339 -> 2.131, Wells 2.153 -> 2.088, Rock Island 2.489 -> 2.394, "
+    "Bonneville 2.045 -> 2.027, Ice Harbor 4.275 -> 3.825; January 2023), not the "
+    ">= 30 % the gate expected; Rock Island's armed peak (606 MW) exceeds the "
+    "flat-arrivals bound (552 MW) because its UNCOUPLED upstream Rocky Reach peaks "
+    "into it; the pond is never drawn. Grand Coulee's own January amplitude falls "
+    "3.71 -> 2.15 instead. A mis-specified gate, not a passing one.",
+    "nw_or_tier3_placeholder": "NWPP-NW <-> NWPP-OR carries a 43,600 MW Tier-3 placeholder (the "
+    "NW zone nameplate), non-binding by construction: no WECC path "
+    "rates that boundary and none will — it is a multi-point "
+    "interconnection around Portland; Paths 4 / 5 / 71 / 86-88 are "
+    "east-west cuts, not BA interfaces (card N5). Lever NWPP-55.",
+    "pnca_terminated_inside_window": "The 1997 Pacific Northwest Coordination Agreement — the "
+    "instrument that defines 'Period means a calendar month', "
+    "the model's own budget period — terminated 2024-09-15 "
+    "with no successor text found (card R-j). Declared "
+    "regardless of the measurement; NWPP-38's result reported "
+    "alongside: verdict (a), no measurable change — 0 of 56 "
+    "treated cells (BPAT CHPD DOPD GCPD) reach the |z| >= 4.07 "
+    "detection threshold in 2024 or 2025 (max 2.45 / 3.04) "
+    "while the control group (PGE TPWR PACW) moved MORE (1 / 8 "
+    "cells past threshold; PGE ramp z = 10.95); a 2022-09-15 "
+    "placebo returns a bigger effect (t = +4.76) than the real "
+    "date (t = -1.17). Power: a one-fifth change in within-day "
+    "shaping would have been detected; a one-tenth change "
+    "would not.",
+    "price_unscored": "There is NO admissible NWPP hourly price series. NWPP-13 built the "
+    "WEIM-derived footprint index under a STOP gate pre-registered before any "
+    "data was read and it read NO: the NW-group WEIM on-peak price sits -37.5 "
+    "/ -22.6 / -23.6 % (2023 Jun-Dec / 2024 / 2025) below the independent "
+    "Mid-C Peak index against a +/-10 % bar, at daily correlation 0.74 / 0.95 "
+    "/ 0.67 against 0.80, while clearing 5.5-6.2 % of footprint energy net. "
+    "Nothing landed to _validation-source; actual_lmp.json carries no NWPP "
+    "block; TAIL_THRESHOLD has no NWPP key. C3a / C3b / C3c are therefore "
+    "UNSCORED (never PASS) and the run reads rubric v3.8's "
+    "PHYSICALLY-CALIBRATED ... (PRICE UNSCORED) class — never a bare "
+    "CALIBRATED (owner ruling N2 limb b). The model's own annual mean price "
+    "is printed MODEL-ONLY / UNVERIFIED. A neighbouring-hub proxy stays "
+    "refused (gate G17).",
+    "prm_two_regime_mismatch": "Card N7: one PLANNING_RESERVE_MARGIN_BY_ISO scalar 0.144 "
+    "(PacifiCorp 2025 IRP summer, adopted from WRAP) tested against "
+    "the summer coincident peak, while NWPP-NW peaks in WINTER every "
+    "year (winter/summer 0.86 / 0.80 / 0.82), NWPP-SNV in SUMMER at "
+    "1.95 / 2.06 / 1.87x its winter load, and NWPP-INLAND mixes both "
+    "regimes inside one zone (8 winter-peaking BAs, 6 summer, 1 "
+    "flipping). Largely inert in a backcast (capacity evolution is "
+    "forecast-mode); lever NWPP-57. WRAP's first binding season is "
+    "Winter 2027-28 (WPP BPM 109 p. 4) — forecast-side only.",
+    "served_interchange_limits": "See "
+    "governance.measured_input_switches.served_measured_interchange.limit.",
+    "voll_interim": "See governance.measured_input_switches.voll_interim_2000.",
+}
 
 #: Measured-input switches inherited from NWPP-40, unchanged by this lane.
-_INHERITED_SWITCHES = {'hydro_backfill_year_2024': {'identification': 'measured-physical',
-                              'limit': 'Reported, not absorbed: 2025 hydro is one third '
-                                       "carried water; the benchmark's own 2025 hydro is the "
-                                       'EIA-930 value 110.2719 TWh (923/930 = 0.6796 < '
-                                       '0.80), so the 2025 hydro C1 row compares a '
-                                       'backfilled budget against a pool total. Named at the '
-                                       'gate as part of the 2025 data posture.',
-                              'source': 'FINDING-nwpp-32 §2-§3: 2025 EIA-923 is an early '
-                                        'release with 25 of 288 conventional-hydro plants '
-                                        'reporting; the 263 NO_923_SERIES plants carry their '
-                                        '2024 monthly water, giving a 2025 budget of 113.156 '
-                                        'TWh over 280 plants (66.2 % measured 2025 energy — '
-                                        'every >= 1 GW plant among the reporters — and 33.8 '
-                                        '% carried 2024 water). The eia930_monthly repin was '
-                                        'REFUSED (card R-f): the -2.5 % 930-vs-923 gap is a '
-                                        'BA population mismatch (Priest Rapids 860->BPAT / '
-                                        '930->GCPD; WAUW -2.6/-2.8 TWh), so a repin would '
-                                        'rescale a measured input to a different boundary '
-                                        '(rule 14).',
-                              'value': 2024,
-                              'where': 'run_calibration_full --hydro-backfill-year '
-                                       '(meta.json hydro_backfill_year)'},
- 'hydro_cascade_coupling': {'forward_test': 'Rule 13: tau, the band and the chain are '
-                                            'physical properties of the river and its dams; '
-                                            'eta and the monthly means regenerate from the '
-                                            'CROHMS feed for any year and respond to changed '
-                                            'water.',
-                            'identification': 'measured-physical',
-                            'one_mech': 'Rule 19 [R-ONE-MECH]: the coupling redistributes '
-                                        "WHEN a coupled plant's monthly water is turbined "
-                                        'and never how much — G-A1 measured a 0.000 % move '
-                                        'in monthly energy; the EIA-923 monthly budget stays '
-                                        'the sole quantity mechanism and no generation '
-                                        'column is added.',
-                            'reach': '5 coupled downstream plants / 5 links in every solved '
-                                     'year — Chief Joseph 3921, Wells 3886, Rock Island '
-                                     '6200, Bonneville 3075, Ice Harbor 3925 = 5,717 MW = '
-                                     '16.0 % of NWPP conventional-hydro nameplate (NOT the '
-                                     "14 plants / 65.9 % the mechanism's docstring "
-                                     'describes: 3 links uncoupled on tau, 7 on the 2 % '
-                                     'side-inflow floor). tau by link 0 / 1 / 1 / 0 / 0 h.',
-                            'source': 'data/raw/nwpp-hydro/nwpp_hydro_cascade_{links,monthly}.csv, '
-                                      'derived by scripts/data/build_nwpp_hydro_cascade.py '
-                                      'from the CROHMS hourly project feed (2,103,124 '
-                                      'values, every one quality code 0), NID and EIA-923 '
-                                      '(PRECOMMIT-nwpp-36 §4; FINDING-nwpp-36 §3). Every '
-                                      'tau, pondage band, eta and side inflow is MEASURED; a '
-                                      'link that failed its pre-registered measurement gate '
-                                      'is left UNCOUPLED on its monthly budget, never given '
-                                      'a substituted value (rule 13).',
-                            'value': True,
-                            'warrant': "Owner ruling N3 (2026-09-13, against the desk's "
-                                       'recommendation): build the coupling BEFORE the first '
-                                       "keeper. Owner ruling N12 (2026-09-16): NWPP-36's "
-                                       'pre-registered armed-response gate G-A3 FAILED '
-                                       '(within-day amplitude at coupled run-of-river plants '
-                                       'falls 1-10 % — Chief Joseph 2.34 -> 2.13, Ice Harbor '
-                                       '4.28 -> 3.83 — not the >= 30 % the gate expected, '
-                                       "because a coupled plant INHERITS its upstream's "
-                                       'hourly shape) and was ACCEPTED as a mis-specified '
-                                       'gate, not a passing one; W4 proceeds with the miss '
-                                       'carried at full magnitude on this determination '
-                                       'basis.',
-                            'where': 'ScenarioConfig.hydro_cascade_coupling via '
-                                     '--hydro-cascade-coupling (prb_overrides channel)'},
- 'served_measured_interchange': {'identification': 'measured-physical',
-                                 'limit': 'A footprint-wide scalar spread across the five '
-                                          'zones by load share, so CAISO-facing flow lands '
-                                          'on NWPP-EAST / NWPP-INLAND, which have no '
-                                          'California leg; and it is exogenous and '
-                                          'price-inelastic. Priced NeighborInterfaces are '
-                                          'registered and default-OFF (card N4; lever '
-                                          'NWPP-56).',
-                                 'source': 'Sigma over the 17 members of (Net generation - '
-                                           "Demand)(Adjusted) minus GRID's Desert-Southwest "
-                                           'legs, export-positive: -13.745 / -12.891 / '
-                                           '-4.785 TWh in 2023 / 2024 / 2025 (NWPP-34 §3). '
-                                           'The naive Sigma Total-interchange derive would '
-                                           'have read a net EXPORTER (+28.8 / +32.6 / +18.3 '
-                                           "TWh) because BPAT's balance identity fails "
-                                           'structurally (mean residual -3,206 MW, 81.5 % of '
-                                           'hours) until a one-hour reporting step at UTC '
-                                           '2025-06-01 07:00.',
-                                 'value': True,
-                                 'where': 'envelopes.nwpp_net_interchange via '
-                                          "_SCALAR_INTERCHANGE_ISOS['NWPP'] (NWPP-20 / "
-                                          'NWPP-34)'},
- 'voll_interim_2000': {'identification': 'published',
-                       'source': 'The WEIM hard offer cap (CAISO Tariff §39.6.1, the FERC '
-                                 'Order 831 $2,000/MWh cap) — eleven of the seventeen '
-                                 'balancing areas bid into WEIM, which clears 5.5-6.2 % of '
-                                 'footprint energy net (NWPP-13). DECLARED INTERIM (NWPP-10 '
-                                 '§7.1; iso_configs comment): the cap of an imbalance market '
-                                 'that clears ~6 % of energy is NOT a customer damage '
-                                 'function. No participant IRP states a $/MWh loss-of-load '
-                                 "cost; the LBNL-ICE derivation on the footprint's own "
-                                 'customer mix is the routed successor (FINDING-nwpp-20 §5). '
-                                 'Never swept against a gate.',
-                       'value': 2000.0,
-                       'where': 'config/iso_configs._nwpp_config voll'}}
+_INHERITED_SWITCHES = {
+    "hydro_backfill_year_2024": {
+        "identification": "measured-physical",
+        "limit": "Reported, not absorbed: 2025 hydro is one third "
+        "carried water; the benchmark's own 2025 hydro is the "
+        "EIA-930 value 110.2719 TWh (923/930 = 0.6796 < "
+        "0.80), so the 2025 hydro C1 row compares a "
+        "backfilled budget against a pool total. Named at the "
+        "gate as part of the 2025 data posture.",
+        "source": "FINDING-nwpp-32 §2-§3: 2025 EIA-923 is an early "
+        "release with 25 of 288 conventional-hydro plants "
+        "reporting; the 263 NO_923_SERIES plants carry their "
+        "2024 monthly water, giving a 2025 budget of 113.156 "
+        "TWh over 280 plants (66.2 % measured 2025 energy — "
+        "every >= 1 GW plant among the reporters — and 33.8 "
+        "% carried 2024 water). The eia930_monthly repin was "
+        "REFUSED (card R-f): the -2.5 % 930-vs-923 gap is a "
+        "BA population mismatch (Priest Rapids 860->BPAT / "
+        "930->GCPD; WAUW -2.6/-2.8 TWh), so a repin would "
+        "rescale a measured input to a different boundary "
+        "(rule 14).",
+        "value": 2024,
+        "where": "run_calibration_full --hydro-backfill-year "
+        "(meta.json hydro_backfill_year)",
+    },
+    "hydro_cascade_coupling": {
+        "forward_test": "Rule 13: tau, the band and the chain are "
+        "physical properties of the river and its dams; "
+        "eta and the monthly means regenerate from the "
+        "CROHMS feed for any year and respond to changed "
+        "water.",
+        "identification": "measured-physical",
+        "one_mech": "Rule 19 [R-ONE-MECH]: the coupling redistributes "
+        "WHEN a coupled plant's monthly water is turbined "
+        "and never how much — G-A1 measured a 0.000 % move "
+        "in monthly energy; the EIA-923 monthly budget stays "
+        "the sole quantity mechanism and no generation "
+        "column is added.",
+        "reach": "5 coupled downstream plants / 5 links in every solved "
+        "year — Chief Joseph 3921, Wells 3886, Rock Island "
+        "6200, Bonneville 3075, Ice Harbor 3925 = 5,717 MW = "
+        "16.0 % of NWPP conventional-hydro nameplate (NOT the "
+        "14 plants / 65.9 % the mechanism's docstring "
+        "describes: 3 links uncoupled on tau, 7 on the 2 % "
+        "side-inflow floor). tau by link 0 / 1 / 1 / 0 / 0 h.",
+        "source": "data/raw/nwpp-hydro/nwpp_hydro_cascade_{links,monthly}.csv, "
+        "derived by scripts/data/build_nwpp_hydro_cascade.py "
+        "from the CROHMS hourly project feed (2,103,124 "
+        "values, every one quality code 0), NID and EIA-923 "
+        "(PRECOMMIT-nwpp-36 §4; FINDING-nwpp-36 §3). Every "
+        "tau, pondage band, eta and side inflow is MEASURED; a "
+        "link that failed its pre-registered measurement gate "
+        "is left UNCOUPLED on its monthly budget, never given "
+        "a substituted value (rule 13).",
+        "value": True,
+        "warrant": "Owner ruling N3 (2026-09-13, against the desk's "
+        "recommendation): build the coupling BEFORE the first "
+        "keeper. Owner ruling N12 (2026-09-16): NWPP-36's "
+        "pre-registered armed-response gate G-A3 FAILED "
+        "(within-day amplitude at coupled run-of-river plants "
+        "falls 1-10 % — Chief Joseph 2.34 -> 2.13, Ice Harbor "
+        "4.28 -> 3.83 — not the >= 30 % the gate expected, "
+        "because a coupled plant INHERITS its upstream's "
+        "hourly shape) and was ACCEPTED as a mis-specified "
+        "gate, not a passing one; W4 proceeds with the miss "
+        "carried at full magnitude on this determination "
+        "basis.",
+        "where": "ScenarioConfig.hydro_cascade_coupling via "
+        "--hydro-cascade-coupling (prb_overrides channel)",
+    },
+    "served_measured_interchange": {
+        "identification": "measured-physical",
+        "limit": "A footprint-wide scalar spread across the five "
+        "zones by load share, so CAISO-facing flow lands "
+        "on NWPP-EAST / NWPP-INLAND, which have no "
+        "California leg; and it is exogenous and "
+        "price-inelastic. Priced NeighborInterfaces are "
+        "registered and default-OFF (card N4; lever "
+        "NWPP-56).",
+        "source": "Sigma over the 17 members of (Net generation - "
+        "Demand)(Adjusted) minus GRID's Desert-Southwest "
+        "legs, export-positive: -13.745 / -12.891 / "
+        "-4.785 TWh in 2023 / 2024 / 2025 (NWPP-34 §3). "
+        "The naive Sigma Total-interchange derive would "
+        "have read a net EXPORTER (+28.8 / +32.6 / +18.3 "
+        "TWh) because BPAT's balance identity fails "
+        "structurally (mean residual -3,206 MW, 81.5 % of "
+        "hours) until a one-hour reporting step at UTC "
+        "2025-06-01 07:00.",
+        "value": True,
+        "where": "envelopes.nwpp_net_interchange via "
+        "_SCALAR_INTERCHANGE_ISOS['NWPP'] (NWPP-20 / "
+        "NWPP-34)",
+    },
+    "voll_interim_2000": {
+        "identification": "published",
+        "source": "The WEIM hard offer cap (CAISO Tariff §39.6.1, the FERC "
+        "Order 831 $2,000/MWh cap) — eleven of the seventeen "
+        "balancing areas bid into WEIM, which clears 5.5-6.2 % of "
+        "footprint energy net (NWPP-13). DECLARED INTERIM (NWPP-10 "
+        "§7.1; iso_configs comment): the cap of an imbalance market "
+        "that clears ~6 % of energy is NOT a customer damage "
+        "function. No participant IRP states a $/MWh loss-of-load "
+        "cost; the LBNL-ICE derivation on the footprint's own "
+        "customer mix is the routed successor (FINDING-nwpp-20 §5). "
+        "Never swept against a gate.",
+        "value": 2000.0,
+        "where": "config/iso_configs._nwpp_config voll",
+    },
+}
 
 
 def _check_recipe(bundle: Path) -> dict:
@@ -295,7 +307,9 @@ def _check_recipe(bundle: Path) -> dict:
         problems.append(f"mode is {sc.get('mode')!r}, not backcast")
     # The lane's one arm.
     if sc.get("coal_prb_proxy_own_iso") is not True:
-        problems.append("coal_prb_proxy_own_iso is not true — this is NOT the NWPP-41 arm")
+        problems.append(
+            "coal_prb_proxy_own_iso is not true — this is NOT the NWPP-41 arm"
+        )
     # NWPP-40's recipe, which this run inherits unchanged.
     if sc.get("hydro_cascade_coupling") is not True:
         problems.append("hydro_cascade_coupling is not true")
@@ -488,7 +502,7 @@ def build(bundle: Path = DEFAULT_BUNDLE) -> dict:
     disc["c1_coal_taxonomy_seam_repaired"] = (
         "This lane's headline, and it was a PLUMBING defect rather than a dispatch one. "
         "data/raw/_processed-legacy/coal_supply_NWPP.csv had never been derived, so "
-        "coal_supply_class returned \"\" for all 17 NWPP coal plants and every one binned to "
+        'coal_supply_class returned "" for all 17 NWPP coal plants and every one binned to '
         "the bare class COAL — which the benchmark has no row for, because the benchmark "
         "passes the EIA-923 row's own fuel code to the SAME resolver and itemizes COAL_PRB / "
         "COAL_BIT / COAL_WC. Five C1 rows failed on that asymmetry. The seam also corrupted "
@@ -570,8 +584,10 @@ def main() -> None:
     print(f"wrote {out}")
     print(f"  DOF ledger: n_entries={fp['n_entries']} n_residual={fp['n_residual']}")
     print(f"  entries: {[e['name'] for e in fp['entries']]}")
-    print(f"  gate G5: authorized_price_tuning = NONE (verified from dispatch)")
-    print(f"  dispatched classes: {len(att['disclosures']['recorded_signature']['dispatched_classes'])}")
+    print("  gate G5: authorized_price_tuning = NONE (verified from dispatch)")
+    print(
+        f"  dispatched classes: {len(att['disclosures']['recorded_signature']['dispatched_classes'])}"
+    )
 
 
 if __name__ == "__main__":
