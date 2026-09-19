@@ -1,0 +1,709 @@
+{
+ "lane": "caiso-286",
+ "precommit": "docs/PRECOMMIT-caiso286-cc-start-cost-2026-09-19.md",
+ "precommit_sha": "7562f345d25eb96c7785f82b201c230f00f7402f",
+ "probe_bundle": "results/calibration/caiso285_instr_2024",
+ "probe_bundle_recovered_from_sha": "203124e310f7be4f806ad968d6cf5755f96bbc00",
+ "year": 2024,
+ "G_C_reproduction": {
+  "fleet_rows": 1705,
+  "p0_vs_fleet_unit_ids_identical": true,
+  "floors_vs_fleet_unit_ids_identical": true,
+  "belly_sha256_16": "c5948fb0d43620a1",
+  "belly_sha_matches_caiso285": true,
+  "zone_index_map": {
+   "0": "NP15",
+   "1": "ZP26",
+   "2": "LA_BASIN",
+   "3": "SDGE",
+   "4": "SP15_rest",
+   "5": "WECC_PNW",
+   "6": "WECC_DSW"
+  }
+ },
+ "population": {
+  "bridge_eligible_rows": 74,
+  "econ_eligible_CC_REGULAR_rows": 30
+ },
+ "declared_value_usd_per_mw": 77.1383,
+ "bar_at_zero_usd_per_mw": 96.9,
+ "bar_at_price_usd_per_mw": 115.4,
+ "G_A_bar_test": "BELOW THE BAR",
+ "candidate_start_costs_usd_per_mw": {
+  "incumbent_flat_50": 50.0,
+  "DECLARED_warm_median_2024usd": 77.1383,
+  "context_warm_median_2011usd": 55.438,
+  "context_hot_median_2024usd": 49.2254,
+  "context_cold_median_2024usd": 110.6952,
+  "context_warm_p25_2024usd": 45.0636,
+  "context_warm_p75_2024usd": 130.1313,
+  "context_bar_at_zero": 96.9,
+  "context_bar_at_price": 115.4
+ },
+ "G_B_mean_belly_mw_held_UPPER_BOUND": {
+  "incumbent_flat_50": 270.2789,
+  "DECLARED_warm_median_2024usd": 491.6136,
+  "context_warm_median_2011usd": 305.6456,
+  "context_hot_median_2024usd": 265.7764,
+  "context_cold_median_2024usd": 836.0925,
+  "context_warm_p25_2024usd": 235.4271,
+  "context_warm_p75_2024usd": 1040.6502,
+  "context_bar_at_zero": 679.1329,
+  "context_bar_at_price": 878.8354
+ },
+ "G_B_mean_belly_mw_held_CC_REGULAR_UPPER_BOUND": {
+  "incumbent_flat_50": 270.2789,
+  "DECLARED_warm_median_2024usd": 491.6136,
+  "context_warm_median_2011usd": 305.6456,
+  "context_hot_median_2024usd": 265.7764,
+  "context_cold_median_2024usd": 836.0925,
+  "context_warm_p25_2024usd": 235.4271,
+  "context_warm_p75_2024usd": 1040.6502,
+  "context_bar_at_zero": 679.1329,
+  "context_bar_at_price": 878.8354
+ },
+ "G_B_materiality": {
+  "cc_belly_deficit_mw": 1921.4,
+  "material_at_mw": 192.1,
+  "declared_held_cc_mw": 491.6136,
+  "verdict": "MATERIAL"
+ },
+ "bound_looseness_calibration": {
+  "note": "At the INCUMBENT $50 the same upper bound scores a non-zero level, while the committed floors show the solve held none of it. That difference is the combined effect of the two screens this bound omits (startup_aware gap-merging and the surplus decommit screen), measured rather than assumed.",
+  "upper_bound_at_incumbent_mw": 270.2789,
+  "actual_ra_held_mean_belly_mw": 670.4704,
+  "s35_belly_mw_at_stake_availability_weighted": 1193.0269,
+  "increment_over_incumbent_mw": 221.3347,
+  "incumbent_pass_mw_floored_by_ANOTHER_mechanism": 0.0,
+  "incumbent_pass_mw_floored_by_NOTHING": 270.2789
+ },
+ "caiso285_uniform_price_crosscheck": {
+  "note": "caiso-285 section 6 applied ONE uniform price to every gap; the code uses each gap's own mean LMP. Same gap set, both bases.",
+  "published_share_failing": {
+   "at_zero": 0.9988,
+   "at_belly_mean_-6.71": 1.0
+  },
+  "reproduced_share_failing_uniform_basis": {
+   "at_zero": 0.9992,
+   "at_belly_mean_-6.71": 1.0
+  },
+  "share_failing_PER_GAP_basis_at_incumbent": 0.7735
+ },
+ "gap_start_type_census": {
+  "hot": {
+   "n_gaps": 0,
+   "belly_mw_at_stake": 0.0
+  },
+  "warm": {
+   "n_gaps": 2481,
+   "belly_mw_at_stake": 1193.0269
+  },
+  "cold": {
+   "n_gaps": 0,
+   "belly_mw_at_stake": 0.0
+  }
+ },
+ "n_gaps_scanned": 2481,
+ "gaps_CONTEXT_ONLY": [
+  {
+   "unit_id": "CC_REGULAR_SP15_rest_p55518_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 20,
+   "start_type": "warm",
+   "mc_gap": 30.013,
+   "lmp_gap": 2.9255,
+   "hold_cost_per_mw": 140.8546,
+   "belly_mw_at_stake": 2496.0
+  },
+  {
+   "unit_id": "CC_REGULAR_NP15_p260_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 13,
+   "start_type": "warm",
+   "mc_gap": 27.0206,
+   "lmp_gap": -11.4697,
+   "hold_cost_per_mw": 130.0974,
+   "belly_mw_at_stake": 2348.64
+  },
+  {
+   "unit_id": "CC_REGULAR_NP15_p260_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 12,
+   "start_type": "warm",
+   "mc_gap": 27.0206,
+   "lmp_gap": -15.2447,
+   "hold_cost_per_mw": 131.868,
+   "belly_mw_at_stake": 2348.64
+  },
+  {
+   "unit_id": "CC_REGULAR_NP15_p260_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 13,
+   "start_type": "warm",
+   "mc_gap": 29.4222,
+   "lmp_gap": -10.8887,
+   "hold_cost_per_mw": 136.2508,
+   "belly_mw_at_stake": 2348.64
+  },
+  {
+   "unit_id": "CC_REGULAR_SP15_rest_p55518_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 11,
+   "start_type": "warm",
+   "mc_gap": 30.7338,
+   "lmp_gap": -5.1884,
+   "hold_cost_per_mw": 102.7375,
+   "belly_mw_at_stake": 2246.4
+  },
+  {
+   "unit_id": "CC_REGULAR_SP15_rest_p55518_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 12,
+   "start_type": "warm",
+   "mc_gap": 30.013,
+   "lmp_gap": -11.5739,
+   "hold_cost_per_mw": 129.751,
+   "belly_mw_at_stake": 2246.4
+  },
+  {
+   "unit_id": "CC_REGULAR_SP15_rest_p55518_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 11,
+   "start_type": "warm",
+   "mc_gap": 29.4363,
+   "lmp_gap": -2.7324,
+   "hold_cost_per_mw": 92.0023,
+   "belly_mw_at_stake": 2246.4
+  },
+  {
+   "unit_id": "CC_REGULAR_SP15_rest_p55518_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 12,
+   "start_type": "warm",
+   "mc_gap": 30.013,
+   "lmp_gap": -4.791,
+   "hold_cost_per_mw": 108.5882,
+   "belly_mw_at_stake": 2246.4
+  },
+  {
+   "unit_id": "CC_REGULAR_SP15_rest_p55518_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 12,
+   "start_type": "warm",
+   "mc_gap": 31.1663,
+   "lmp_gap": -8.6583,
+   "hold_cost_per_mw": 124.2527,
+   "belly_mw_at_stake": 2246.4
+  },
+  {
+   "unit_id": "CC_REGULAR_SP15_rest_p55518_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 11,
+   "start_type": "warm",
+   "mc_gap": 32.3197,
+   "lmp_gap": -4.5563,
+   "hold_cost_per_mw": 105.4654,
+   "belly_mw_at_stake": 2246.4
+  },
+  {
+   "unit_id": "CC_REGULAR_SP15_rest_p55518_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 12,
+   "start_type": "warm",
+   "mc_gap": 32.3197,
+   "lmp_gap": -6.1894,
+   "hold_cost_per_mw": 120.1485,
+   "belly_mw_at_stake": 2246.4
+  },
+  {
+   "unit_id": "CC_REGULAR_SP15_rest_p55518_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 14,
+   "start_type": "warm",
+   "mc_gap": 26.5529,
+   "lmp_gap": -9.3277,
+   "hold_cost_per_mw": 130.6052,
+   "belly_mw_at_stake": 2246.4
+  },
+  {
+   "unit_id": "CC_REGULAR_SP15_rest_p55518_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 16,
+   "start_type": "warm",
+   "mc_gap": 29.7967,
+   "lmp_gap": -0.6409,
+   "hold_cost_per_mw": 126.6204,
+   "belly_mw_at_stake": 2246.4
+  },
+  {
+   "unit_id": "CC_REGULAR_SP15_rest_p55518_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 20,
+   "start_type": "warm",
+   "mc_gap": 31.3105,
+   "lmp_gap": 5.0541,
+   "hold_cost_per_mw": 136.5333,
+   "belly_mw_at_stake": 2246.4
+  },
+  {
+   "unit_id": "CC_REGULAR_NP15_p55333_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 11,
+   "start_type": "warm",
+   "mc_gap": 29.7758,
+   "lmp_gap": -7.8956,
+   "hold_cost_per_mw": 107.7404,
+   "belly_mw_at_stake": 2207.79
+  },
+  {
+   "unit_id": "CC_REGULAR_NP15_p55333_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 12,
+   "start_type": "warm",
+   "mc_gap": 30.9267,
+   "lmp_gap": -8.6775,
+   "hold_cost_per_mw": 123.5651,
+   "belly_mw_at_stake": 2207.79
+  },
+  {
+   "unit_id": "CC_REGULAR_NP15_p55333_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 11,
+   "start_type": "warm",
+   "mc_gap": 32.0775,
+   "lmp_gap": -1.9181,
+   "hold_cost_per_mw": 97.2277,
+   "belly_mw_at_stake": 2207.79
+  },
+  {
+   "unit_id": "CC_REGULAR_NP15_p55333_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 12,
+   "start_type": "warm",
+   "mc_gap": 32.0775,
+   "lmp_gap": -6.201,
+   "hold_cost_per_mw": 119.4289,
+   "belly_mw_at_stake": 2207.79
+  },
+  {
+   "unit_id": "CC_REGULAR_NP15_p55333_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 13,
+   "start_type": "warm",
+   "mc_gap": 26.3232,
+   "lmp_gap": -11.9558,
+   "hold_cost_per_mw": 129.3829,
+   "belly_mw_at_stake": 2207.79
+  },
+  {
+   "unit_id": "CC_REGULAR_NP15_p55333_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 15,
+   "start_type": "warm",
+   "mc_gap": 29.56,
+   "lmp_gap": -2.1598,
+   "hold_cost_per_mw": 123.7072,
+   "belly_mw_at_stake": 2207.79
+  },
+  {
+   "unit_id": "CC_REGULAR_NP15_p260_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 9,
+   "start_type": "warm",
+   "mc_gap": 30.15,
+   "lmp_gap": -5.9967,
+   "hold_cost_per_mw": 84.5832,
+   "belly_mw_at_stake": 2113.776
+  },
+  {
+   "unit_id": "CC_REGULAR_NP15_p260_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 11,
+   "start_type": "warm",
+   "mc_gap": 29.4222,
+   "lmp_gap": -15.0524,
+   "hold_cost_per_mw": 127.1973,
+   "belly_mw_at_stake": 2113.776
+  },
+  {
+   "unit_id": "CC_REGULAR_NP15_p260_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 11,
+   "start_type": "warm",
+   "mc_gap": 29.4222,
+   "lmp_gap": -7.8956,
+   "hold_cost_per_mw": 106.7291,
+   "belly_mw_at_stake": 2113.776
+  },
+  {
+   "unit_id": "CC_REGULAR_NP15_p260_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 12,
+   "start_type": "warm",
+   "mc_gap": 30.5866,
+   "lmp_gap": -8.6775,
+   "hold_cost_per_mw": 122.5041,
+   "belly_mw_at_stake": 2113.776
+  },
+  {
+   "unit_id": "CC_REGULAR_NP15_p260_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 11,
+   "start_type": "warm",
+   "mc_gap": 31.751,
+   "lmp_gap": -1.9181,
+   "hold_cost_per_mw": 96.2938,
+   "belly_mw_at_stake": 2113.776
+  },
+  {
+   "unit_id": "CC_REGULAR_NP15_p260_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 12,
+   "start_type": "warm",
+   "mc_gap": 31.751,
+   "lmp_gap": -6.201,
+   "hold_cost_per_mw": 118.4101,
+   "belly_mw_at_stake": 2113.776
+  },
+  {
+   "unit_id": "CC_REGULAR_NP15_p260_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 13,
+   "start_type": "warm",
+   "mc_gap": 28.6945,
+   "lmp_gap": -11.2384,
+   "hold_cost_per_mw": 134.973,
+   "belly_mw_at_stake": 2113.776
+  },
+  {
+   "unit_id": "CC_REGULAR_NP15_p260_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 11,
+   "start_type": "warm",
+   "mc_gap": 27.4573,
+   "lmp_gap": 4.978,
+   "hold_cost_per_mw": 64.2907,
+   "belly_mw_at_stake": 2113.776
+  },
+  {
+   "unit_id": "CC_REGULAR_NP15_p260_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 12,
+   "start_type": "warm",
+   "mc_gap": 27.7484,
+   "lmp_gap": -3.7885,
+   "hold_cost_per_mw": 98.3952,
+   "belly_mw_at_stake": 2113.776
+  },
+  {
+   "unit_id": "CC_REGULAR_NP15_p260_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 15,
+   "start_type": "warm",
+   "mc_gap": 25.7107,
+   "lmp_gap": -9.346,
+   "hold_cost_per_mw": 136.7211,
+   "belly_mw_at_stake": 2113.776
+  },
+  {
+   "unit_id": "CC_REGULAR_NP15_p260_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 13,
+   "start_type": "warm",
+   "mc_gap": 25.929,
+   "lmp_gap": -11.9558,
+   "hold_cost_per_mw": 128.0505,
+   "belly_mw_at_stake": 2113.776
+  },
+  {
+   "unit_id": "CC_REGULAR_NP15_p260_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 13,
+   "start_type": "warm",
+   "mc_gap": 29.2039,
+   "lmp_gap": -7.0,
+   "hold_cost_per_mw": 122.3693,
+   "belly_mw_at_stake": 2113.776
+  },
+  {
+   "unit_id": "CC_REGULAR_NP15_p260_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 18,
+   "start_type": "warm",
+   "mc_gap": 30.7322,
+   "lmp_gap": 2.1322,
+   "hold_cost_per_mw": 133.8476,
+   "belly_mw_at_stake": 2113.776
+  },
+  {
+   "unit_id": "CC_REGULAR_SP15_rest_p55518_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 11,
+   "start_type": "warm",
+   "mc_gap": 30.4455,
+   "lmp_gap": -10.9213,
+   "hold_cost_per_mw": 118.3089,
+   "belly_mw_at_stake": 1996.8
+  },
+  {
+   "unit_id": "CC_REGULAR_SP15_rest_p55518_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 11,
+   "start_type": "warm",
+   "mc_gap": 30.3013,
+   "lmp_gap": 8.4655,
+   "hold_cost_per_mw": 62.4504,
+   "belly_mw_at_stake": 1996.8
+  },
+  {
+   "unit_id": "CC_REGULAR_SP15_rest_p55518_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 11,
+   "start_type": "warm",
+   "mc_gap": 30.8059,
+   "lmp_gap": 7.4386,
+   "hold_cost_per_mw": 66.8304,
+   "belly_mw_at_stake": 1996.8
+  },
+  {
+   "unit_id": "CC_REGULAR_SP15_rest_p55518_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 15,
+   "start_type": "warm",
+   "mc_gap": 26.5529,
+   "lmp_gap": -7.3907,
+   "hold_cost_per_mw": 132.3799,
+   "belly_mw_at_stake": 1996.8
+  },
+  {
+   "unit_id": "CC_REGULAR_SP15_rest_p55518_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 14,
+   "start_type": "warm",
+   "mc_gap": 29.7967,
+   "lmp_gap": 11.4754,
+   "hold_cost_per_mw": 66.6896,
+   "belly_mw_at_stake": 1996.8
+  },
+  {
+   "unit_id": "CC_REGULAR_SP15_rest_p55518_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 10,
+   "start_type": "warm",
+   "mc_gap": 30.5176,
+   "lmp_gap": 1.6914,
+   "hold_cost_per_mw": 74.948,
+   "belly_mw_at_stake": 1996.8
+  },
+  {
+   "unit_id": "CC_REGULAR_NP15_p55333_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 15,
+   "start_type": "warm",
+   "mc_gap": 26.3232,
+   "lmp_gap": -6.8805,
+   "hold_cost_per_mw": 129.4943,
+   "belly_mw_at_stake": 1962.48
+  },
+  {
+   "unit_id": "CC_REGULAR_NP15_p55333_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 12,
+   "start_type": "warm",
+   "mc_gap": 29.56,
+   "lmp_gap": 10.9492,
+   "hold_cost_per_mw": 58.0658,
+   "belly_mw_at_stake": 1962.48
+  },
+  {
+   "unit_id": "CC_REGULAR_NP15_p260_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 11,
+   "start_type": "warm",
+   "mc_gap": 29.7133,
+   "lmp_gap": 8.5191,
+   "hold_cost_per_mw": 60.6156,
+   "belly_mw_at_stake": 1878.912
+  },
+  {
+   "unit_id": "CC_REGULAR_NP15_p260_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 11,
+   "start_type": "warm",
+   "mc_gap": 30.2227,
+   "lmp_gap": 7.4739,
+   "hold_cost_per_mw": 65.0617,
+   "belly_mw_at_stake": 1878.912
+  },
+  {
+   "unit_id": "CC_REGULAR_NP15_p260_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 13,
+   "start_type": "warm",
+   "mc_gap": 32.4788,
+   "lmp_gap": 21.1857,
+   "hold_cost_per_mw": 38.1706,
+   "belly_mw_at_stake": 1878.912
+  },
+  {
+   "unit_id": "CC_REGULAR_NP15_p260_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 10,
+   "start_type": "warm",
+   "mc_gap": 28.6945,
+   "lmp_gap": -0.2752,
+   "hold_cost_per_mw": 75.3212,
+   "belly_mw_at_stake": 1878.912
+  },
+  {
+   "unit_id": "CC_REGULAR_NP15_p260_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 11,
+   "start_type": "warm",
+   "mc_gap": 28.84,
+   "lmp_gap": 10.8375,
+   "hold_cost_per_mw": 51.4871,
+   "belly_mw_at_stake": 1878.912
+  },
+  {
+   "unit_id": "CC_REGULAR_NP15_p260_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 18,
+   "start_type": "warm",
+   "mc_gap": 25.7107,
+   "lmp_gap": -4.111,
+   "hold_cost_per_mw": 139.5656,
+   "belly_mw_at_stake": 1878.912
+  },
+  {
+   "unit_id": "CC_REGULAR_NP15_p260_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 11,
+   "start_type": "warm",
+   "mc_gap": 25.7107,
+   "lmp_gap": -2.7071,
+   "hold_cost_per_mw": 81.2748,
+   "belly_mw_at_stake": 1878.912
+  },
+  {
+   "unit_id": "CC_REGULAR_NP15_p260_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 12,
+   "start_type": "warm",
+   "mc_gap": 29.2039,
+   "lmp_gap": 10.9492,
+   "hold_cost_per_mw": 56.9547,
+   "belly_mw_at_stake": 1878.912
+  },
+  {
+   "unit_id": "CC_REGULAR_ZP26_p55182_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 13,
+   "start_type": "warm",
+   "mc_gap": 26.9728,
+   "lmp_gap": -11.4956,
+   "hold_cost_per_mw": 130.0234,
+   "belly_mw_at_stake": 1781.52
+  },
+  {
+   "unit_id": "CC_REGULAR_ZP26_p55182_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 12,
+   "start_type": "warm",
+   "mc_gap": 26.9728,
+   "lmp_gap": -15.2577,
+   "hold_cost_per_mw": 131.7591,
+   "belly_mw_at_stake": 1781.52
+  },
+  {
+   "unit_id": "CC_REGULAR_ZP26_p55182_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 13,
+   "start_type": "warm",
+   "mc_gap": 29.3072,
+   "lmp_gap": -10.8942,
+   "hold_cost_per_mw": 135.8805,
+   "belly_mw_at_stake": 1781.52
+  },
+  {
+   "unit_id": "CC_REGULAR_SP15_rest_p55518_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 13,
+   "start_type": "warm",
+   "mc_gap": 30.013,
+   "lmp_gap": -1.3046,
+   "hold_cost_per_mw": 105.8533,
+   "belly_mw_at_stake": 1747.2
+  },
+  {
+   "unit_id": "CC_REGULAR_SP15_rest_p55518_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 11,
+   "start_type": "warm",
+   "mc_gap": 31.2384,
+   "lmp_gap": -3.7833,
+   "hold_cost_per_mw": 100.1622,
+   "belly_mw_at_stake": 1747.2
+  },
+  {
+   "unit_id": "CC_REGULAR_SP15_rest_p55518_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 18,
+   "start_type": "warm",
+   "mc_gap": 31.3105,
+   "lmp_gap": 13.8118,
+   "hold_cost_per_mw": 81.8939,
+   "belly_mw_at_stake": 1747.2
+  },
+  {
+   "unit_id": "CC_REGULAR_SP15_rest_p55656_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 13,
+   "start_type": "warm",
+   "mc_gap": 33.87,
+   "lmp_gap": -4.4469,
+   "hold_cost_per_mw": 129.5109,
+   "belly_mw_at_stake": 1744.96
+  },
+  {
+   "unit_id": "CC_REGULAR_NP15_p55333_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 8,
+   "start_type": "warm",
+   "mc_gap": 29.9916,
+   "lmp_gap": -8.9639,
+   "hold_cost_per_mw": 81.0274,
+   "belly_mw_at_stake": 1717.17
+  },
+  {
+   "unit_id": "CC_REGULAR_NP15_p56532_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 20,
+   "start_type": "warm",
+   "mc_gap": 31.6647,
+   "lmp_gap": 6.5363,
+   "hold_cost_per_mw": 130.6679,
+   "belly_mw_at_stake": 1667.016
+  },
+  {
+   "unit_id": "CC_REGULAR_NP15_p56532_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 12,
+   "start_type": "warm",
+   "mc_gap": 28.866,
+   "lmp_gap": -3.7885,
+   "hold_cost_per_mw": 101.8821,
+   "belly_mw_at_stake": 1667.016
+  },
+  {
+   "unit_id": "CC_REGULAR_NP15_p56532_committed",
+   "plant_group": "CC_REGULAR",
+   "gap_hours": 14,
+   "start_type": "warm",
+   "mc_gap": 27.0344,
+   "lmp_gap": -9.195,
+   "hold_cost_per_mw": 131.8748,
+   "belly_mw_at_stake": 1667.016
+  }
+ ]
+}
