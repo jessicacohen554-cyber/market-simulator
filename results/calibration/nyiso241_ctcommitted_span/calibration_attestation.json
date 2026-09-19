@@ -5,88 +5,10 @@
   "no_fit_to_price_residuals": true,
   "no_pinning_to_actuals": true,
   "outage_filter_exogenous_net_load": true,
-  "attested_by": "session nyiso-240 (2026-09-19), on the OWNER'S RULING to promote: \"Is this a recommended keeper candidate? If so plz promote. If structural integrity improves but gates regress that may still be a keeper..\" Phase-0 evidence: docs/FINDING-nyiso240-c1-margin-bench-attribution-2026-09-19.md (merged to main as PR #6285 BEFORE this rebuild); probe scripts/probes/nyiso240_c1_margin_bench_phase0.py -> results/calibration/_nyiso240_c1_margin_bench_phase0.json. ZERO LP WAS SPENT AND ZERO ScenarioConfig FIELDS MOVE versus the superseded keeper 2026-09-17-nyiso239-bench-oil-basis. THE DISPATCH IS THAT KEEPER'S OWN DISPATCH, BYTE-FOR-BYTE: this bundle is the four nyiso-239 per-year shard bundles (5802986acd77b69cfeb13720a8f0167f6ccb80a7 / 0f03dd49b1daee41a1fd0244474e6c4cea7c0c9b / ce299f37da628cf7299cba5422f52f4ab05765bb / 9859790c33415e9c6dc54ecfb1c799ecc8fb76da) re-fetched by full SHA and re-composed with scripts/probes/nyiso238_compose_span.py, then re-rendered with run_calibration_full.py --rebuild-benchmark. No solve was re-entered, so G-1 replay fidelity is preserved BY CONSTRUCTION rather than re-argued, and solve_surface.fingerprint stays bd2b4657f9b5df7e. The DOF ledger, the free_parameters block and authorized_price_tuning=NONE carry over BYTE-IDENTICAL and nothing in them is re-derived. WHAT CHANGED IS THE BENCHMARK, NOT THE MODEL, and the basis is rule 14 [R-ACCURATE], never the residual. TWO boundary repairs land in the shared bench path of scripts/run_calibration_full.py, both AFTER the annual-floor CAMPD backfill and neither changing which plants that backfill reaches: (R1) _backfill_eia923_missing_months -- EIA-923 drops months a respondent withheld, and EIA'S OWN PUBLISHED ANNUAL (the form's \"Net Generation (Megawatthours)\" column) is the sum of the months filed, so a withheld month is absent from the ANNUAL class benchmark and not merely from its shape. _backfill_eia923_with_campd cannot see this because it gates on a 50 GWh ANNUAL floor: ten good months hide two missing ones. Instance: Bethlehem Energy Center (2539), a 750 MW NYISO CC, filed no February and no November 2022 while CAMPD meters 596.0 GWh there. Census over every committed bench part: 67 plant-years across nine BAs. (R2) _reattribute_dual_fuel_oil -- _classify_f923 routes 100 % of DFO/RFO/JF/KER/WO/PC to the `oil` class because EIA-923 books MWh under the fuel BURNED, while the LP keeps a dual-fuel unit dispatching in its own class (dual_fuel_switching prices it at min(gas,oil) and never moves it). Verified at the unit layer: the model's ENTIRE oil-fuel fleet in NYISO 2022 is 11.1 GWh across four plants against an `oil` class benchmark of 1,843.7 GWh. This is the nyiso-239 misalignment one layer lower -- there at reconcile_vintage_classes' TARGET, here in the 923 class split itself. ZERO ScenarioConfig fields, ZERO free parameters (the R1 scale is the plant's OWN measured reported-month 923/CAMPD ratio, the same arithmetic _book already performs), no mechanism-matrix row (a bench construction has none), no solve path touched. RULE 25 [R-ISO-SCOPE] WAS DISCHARGED BEFORE LANDING, NOT AFTER: every ISO's designated keeper was re-scored through calibration_verdict.determine() against a repaired copy of its own bench -- 42 C1 rows move >= 0.05 pp, ZERO change status, and ZERO of the eight determinations flip. REPORTED AT FULL MAGNITUDE: this does NOT close the object. 2023 ST_GAS and 2024 CC_REGULAR are barely touched, R2 moves 2022/2025 ST_GAS AWAY from its actual, and +2.26 TWh of the 2022 CC_REGULAR over-run is real and remains this lane's open object (successor: the CT_PEAKER merit collapse from 2023, FINDING section 7). || PRIOR ATTESTATION (carried, unchanged): session nyiso-239 (2026-09-17), on the OWNER'S RULING to promote: \"Is this a recommended keeper candidate? If so plz promote. If structural integrity improves but gates regress that may still be a keeper..\" Pre-registration: docs/PRECOMMIT-nyiso239-bench-oil-rerender-2026-09-17.md, PUSHED BEFORE THE FIRST LP at pinned SHA 3edb8ad8ce4737b2f860d84e58bae26e4cb6aa1c. Phase-0 evidence: docs/FINDING-nyiso239-c1-2022-bench-oil-attribution-2026-09-16.md; probe scripts/probes/nyiso239_c1_bench_oil_phase0.py. ZERO ScenarioConfig FIELDS MOVE versus the superseded keeper 2026-09-16-nyiso-238-hydro-budget: this bundle is that keeper's recipe replayed BYTE-FAITHFULLY (scripts/replay_keeper.py, no --set), and the replay is verified against the superseded keeper's committed class hourlies at a worst per-class deviation of 5.0e-7 TWh over four years (gate G-1). The DOF ledger, the free_parameters block and authorized_price_tuning=NONE are therefore carried over BYTE-IDENTICAL from that attestation and nothing in them is re-derived. WHAT CHANGED IS THE BENCHMARK, NOT THE MODEL. render_calibration_html.reconcile_vintage_classes scaled the EIA-923 grid-delivered fossil classes to EIA-930's gas+coal cell ALONE. EIA-923 books a plant's MWh under the fuel it BURNED, so a dual-fuel unit's oil hours land in the 923 `oil` class while its gas hours stay in the CC/CT/ST classes; EIA-930 books the same generation under NG: OIL. The comparison straddled a fuel boundary and read an ATTRIBUTION difference as a LEVEL error -- the identical failure the function already refuses to propagate one fuel over (its own docstring declines to force EIA-930's coal/gas attribution onto the 923 split). Oil now joins the family on BOTH sides. NYISO 2022 reads +5.13 % gas-only (fired, x0.951167 on every fossil class) and +0.08 % with oil on both sides (does not fire) -- the tightest agreement of any complete NYISO vintage. THE BASIS IS RULE 14 [R-ACCURATE], NEVER THE RESIDUAL, and four independent sources arbitrate: NYISO's OWN published hourly fuel mix (which files oil-capable units under `Dual Fuel` and publishes no oil category at all -- the repair closes a -5.413 TWh gap in 2022 and -2.337 in 2023 and is a NEAR NO-OP in 2024, the year the mislabelled block is already gone); the EIA-923 liquid-fuel routing (100 % of DFO/RFO/JF/KER/WO/PC -> the `oil` class); the 930 NG: OIL block's own shape (a flat ~550 MW baseload EVERY month of 2022, stepping to ~zero at 2023-m07); and CEMS on a fixed 67-plant set (930gas/CAMPD 0.9061 in 2022 vs 0.9554/0.9555/0.9635). The decisive leg is SHAPE, which no level scale can fake: model(gas+oil) vs 930(gas+oil) beats model(gas) vs 930(gas) on r AND NRMSE in all four years, 8 of 8. REPORTED AT FULL MAGNITUDE AND NOT HIDDEN: C1 2022 CC_REGULAR still misses by +3.14 TWh and its share leg lands at +2.96 pp against a +/-3.0 pp band -- a ~0.04 pp margin, ~1.3 % of the band. The model's CC_REGULAR over-run is REAL and remains this lane's open object (NYC 88 % of it; February and November 61 % of the annual miss). This repair corrects how that miss is MEASURED, not the miss. The G2 hydro energy loss (-55.2 / -25.5 GWh in 2022 / 2023) carries over UNCHANGED as a LEDGERED OPEN ROOT-CAUSE ISSUE (rule 21 [R-DOF]), not an accepted limitation.",
-  "note": "authorized_price_tuning is NONE. This run DOES move two offer-curve band multipliers -- ST_GAS.econ_low and ST_GAS.econ_high, both to 1.0 -- and check (2) states that movement in full rather than denying it. It is not the rules 1/13 carve-out because the carve-out governs a band IDENTIFIED BY THE PRICE RESIDUAL, and this band is identified by the rule-24/25 neutral prescription, introduces zero new literals, and moves price DOWN in all four years against residuals already negative in two of them. || nyiso-239: cross-ISO blast radius measured BEFORE landing the shared bench edit (rule 25 [R-ISO-SCOPE]). The reconcile fires in 12 of 41 committed bench parts; the repair changes the fire/no-fire verdict in EXACTLY ONE, NYISO 2022. Ten cells still fire with the scale factor moving -1.53 % to +0.29 % (9 of 10 under 0.30 %) and only when that ISO next re-renders; MISO and ERCOT carry no 930 oil series and take the byte-identical fallback. Measured at registration: the ONLY bench parts whose bytes moved are NYISO's four, and NYISO 2023 / 2024 classFull are BYTE-IDENTICAL (gate G-2). G-DRIFT (rule 29(b) form 4): all six solve-path hunks since the superseded keeper's git_sha 69c6d4a7 classified INERT for a NYISO backcast -- a NEISO-only default-off ScenarioConfig field absent from this recipe, its floors.py guard, two NEISO interchange modules, the NWPP hydro-cascade sidecar (returns None unarmed) and the NWPP pool branch of _eia930_frame_generic (NYISO is 1:1). No control solve spent; G-1 then confirmed the classification empirically at 5.0e-7 TWh. | nyiso-240 (2026-09-19): no lever, mechanism or ScenarioConfig field was armed, screened or changed; the two changes are benchmark CONSTRUCTIONS in the shared bench path and the model's dispatch is bit-for-bit the superseded keeper's. The D-4 unit-conduct gate reads False both BEFORE and AFTER (identical row set) -- pre-existing, not a regression at this promotion, and it routes through rule 20's conditional-pass path exactly as it did for the incumbent.",
+  "attested_by": "session nyiso-241 (2026-09-19), ARM A. Pre-registration: docs/PRECOMMIT-nyiso241-ct-peaker-merit-2026-09-19.md, pushed at 5356fb712f8ff3ad2b785421d34ed9b4cae71f4c BEFORE either LP, carrying the phase-0 measurements, the gates and the DECISION RULE between the two arms. Matrix cell(s): ct_peaker_committed_measured. THE BASIS IS STRUCTURAL AND NEVER THE RESIDUAL, on two independent grounds. (1) Rule 14 [R-ACCURATE] / rule 25 [R-ISO-SCOPE]: CT_PEAKER's registered committed 1.35 rests on a three-way citation ring \u2014 it reads 'NYISO/CAISO-grounded' in _NYISO_OFFER_CURVE, 'NYISO-grounded' in CAISO's and 'NYISO/CAISO-grounded' in NEISO's, and NO ISO cites a measurement; NYISO's registered-to-measured ratio 1.35/0.843 = 1.60 is the largest in the model. Each lane grounds its OWN band on its OWN number and nothing crosses: CAISO's 0.991 and NEISO's 0.985 are never carried here. (2) Rule 19 [R-ONE-MECH]: the keeper carries tranche_startup_amortization, so the CT_PEAKER _committed rows ALREADY pay a measured start recovery of $11.97 / $16.48 / $15.78 / $13.22 per MWh in 2022-2025 (model/commitment.compute_monthly_markup, per LP row from that row's own P0 run length; measured at zero LP in results/calibration/_nyiso241_ct_offer_anatomy.json). A 1.35 multiplicative 'start hurdle' on top of that charges the same phenomenon twice, and the substitution removes the duplicate rather than discounting the real one. SIZED BEFORE IT WAS PROPOSED, AND REPORTED AGAINST ITSELF (PRECOMMIT \u00a72.3): against the keeper's own hourly prices a deliberately GENEROUS upper bound \u2014 the fleet flat out in every zone-hour its offer clears, no min-run, no ramp, no start, no competition \u2014 reaches only 16-41 % (arm A) or 53-66 % (arm B) of metered CT_PEAKER energy in 2023-2025. So even the wider arm leaves at least a third of the object unreachable from the offer side, and NEITHER ARM IS PROMOTABLE AS 'THE CT_PEAKER FIX'. The residual belongs to the price side (the ledgered C3c tail: model 7 / 0 / 0 / 3 h > $300 against 101 / 10 / 13 / 42 actual) or to a commitment / local-reliability obligation. That is recorded here so a favourable C1 move cannot later be read as the object closing. RULE 28 [R-MECH-MATRIX] (a) WAS DISCHARGED BEFORE ANYTHING WAS PROPOSED: two DO-NOT-REDO cells were checked and are NOT re-tested \u2014 gas_st_startup_cost (refused two independent ways by nyiso-172, no new grounding evidence offered here, even though this session's phase 0 measures ST_GAS paying EXACTLY ZERO startup amortization against CT's $12-16/MWh) and the downstate CT gas basis (extending it to the LI CC/ST fleet refuted on measured EIA-923 Schedule 5 evidence, 2026-08-19) \u2014 the latter being, on this session's own measurement, the object's dominant carrier at +1.00 / +1.40 / +2.04 / +2.57 $/MMBtu over the CC/ST fleet, i.e. $16-41/MWh at HR 15.8, and correct.",
+  "note": "authorized_price_tuning is NONE for this run. The rules 1 [R-STRUCT] / 13 [R-MEASURED] authorized price-tuning carve-out governs an offer_curve_by_group band multiplier IDENTIFIED BY THE PRICE RESIDUAL. These bands are identified by NYISO's own CAMPD conduct \u2014 the phys_* measurements the band dict already carried \u2014 so there is no value to declare, none to sweep, and no DOF entry (the nyiso-232 precedent, where two band multipliers moved and authorized_price_tuning was likewise NONE).",
   "computed_checks": {
-   "single_field_delta": {
-    "fields_moved": [
-     "nyiso_st_gas_econ_bands_deleaked"
-    ],
-    "from": false,
-    "to": true,
-    "per_year_resolved_excluded": [
-     "gas_price_override",
-     "weather_year"
-    ],
-    "resolved_by_the_gate_excluded": [
-     "offer_curve_by_group"
-    ],
-    "schema_drift_absent_in_keeper_and_at_live_default": {}
-   },
-   "band_movement_stated_in_full": {
-    "bands_moved": {
-     "ST_GAS.econ_high": [
-      1.13,
-      1.0
-     ],
-     "ST_GAS.econ_low": [
-      1.08,
-      1.0
-     ]
-    },
-    "target_value": 1.0,
-    "target_source": "rules 24/24 [R-REGISTRY] / 25 [R-ISO-SCOPE]: 'generic fallbacks carry neutral (1.0) bands'",
-    "new_literals_introduced": 0,
-    "phys_keys_moved": 0,
-    "committed_and_peak_unchanged": {
-     "committed": 1.05,
-     "peak": 4.2
-    },
-    "why_this_is_not_the_rules_1_13_carve_out": "The carve-out governs a band multiplier IDENTIFIED BY THE PRICE RESIDUAL (rule 20 [R-DOF] cross-reference R-AY). This band is identified by the rule-24/25 neutral prescription, introduces zero new literals, and moves the mean LMP DOWN in every one of the four years (-1.42 / -0.60 / -0.68 / -1.36 $/MWh), against residuals that are already negative in 2022 and 2025 -- so it cannot be a price fit even in principle, and it was pre-registered as an expected C3a-2022 FAILURE before the solve. The governing precedent is nyiso-199's owner ruling of 2026-09-06 on the structurally identical CT_PEAKER band substitution, recorded in scenarios.py: 'a band multiplier is otherwise the rule 1 carve-out channel; the values remain MEASURED, so rule 20 adds no ledger entry (R-AY applies to a band identified by the PRICE RESIDUAL, which this is not).' This run's own owner ruling is 'Arm it' (2026-09-13), on PRECOMMIT-nyiso232-st-gas-deleak.md Addendum A."
-   },
-   "removed_value_is_a_rule_25_leak": {
-    "cited_construction": "ST_GAS econ band = native steam marginal HR x (CC econ_high 1.21 / native CC marginal 0.925)",
-    "leaked_reach": 1.308108,
-    "registered_econ_low": 1.08,
-    "relative_agreement_by_native_triple": {
-     "0.83": 0.005305,
-     "0.828": 0.002883,
-     "0.825": 0.000751
-    },
-    "current_reach_cannot_reproduce_it": {
-     "current_reach": 1.081081,
-     "implied_band": 0.897297,
-     "relative_gap": 0.169169
-    },
-    "note": "1.21 is an ERCOT KEEPER value the NYISO offer-curve file names as such and records as REMOVED under rule 25 (audit C-13, B-NYI-1). The registered ST_GAS econ band reproduces the CITED construction to under 1 % on every native-steam triple the file records, and is 16.9 % away from what the CURRENT reach gives -- i.e. it carries the removed value multiplicatively (rule 26 [R-DELETE], one derivation step removed)."
-   },
-   "served_demand_identical_and_no_slack": {
-    "2022": {
-     "served_twh_arm": 152.68167,
-     "served_twh_incumbent": 152.68167,
-     "slack_mwh": 0.0,
-     "dump_mwh": 0.0
-    },
-    "2023": {
-     "served_twh_arm": 147.04885,
-     "served_twh_incumbent": 147.04885,
-     "slack_mwh": 0.0,
-     "dump_mwh": 0.0
-    },
-    "2024": {
-     "served_twh_arm": 150.51666,
-     "served_twh_incumbent": 150.51666,
-     "slack_mwh": 0.0,
-     "dump_mwh": 0.0
-    },
-    "2025": {
-     "served_twh_arm": 151.58975,
-     "served_twh_incumbent": 151.58975,
-     "slack_mwh": 0.0,
-     "dump_mwh": 0.0
-    }
-   },
-   "solved_on_pin_all_years_one_bundle": {
+   "environment_matches_the_keeper": {
     "packages": {
      "highspy": "1.14.0",
      "numpy": "2.4.6",
@@ -95,21 +17,87 @@
      "pyarrow": "24.0.0",
      "pydantic": "2.13.4"
     },
-    "matches_requirements_txt": true,
+    "python_version": "3.11.15",
+    "platform_keeper": "Linux-6.18.44-fc-v33-x86_64-with-glibc2.39",
+    "platform_arm": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
+    "platform_is_container_provenance_not_numerics": true
+   },
+   "one_declared_delta": {
+    "keeper": "results/calibration/nyiso240_benchfix_span",
+    "fields_moved": {
+     "nyiso_ct_peaker_committed_measured": [
+      null,
+      true
+     ]
+    },
+    "override_channel_deltas": {
+     "nyiso_ct_peaker_committed_measured": [
+      null,
+      true
+     ]
+    },
+    "each_declared_field_armed_on_the_resolved_config": {
+     "nyiso_ct_peaker_committed_measured": [
+      "meta",
+      "override_channel",
+      "run_config.scenario_config"
+     ]
+    },
+    "provenance_only_deltas": [
+     "basis_sha",
+     "composed_from",
+     "environment",
+     "git_sha",
+     "timestamp"
+    ],
+    "undeclared_deltas": 0
+   },
+   "bands_are_the_registered_measurements": {
+    "source": "data/raw/reference/nyiso_campd_marginal_hr_summary.csv (avg_committed_p50 / marg_econ_{low,high}_p50, n = 70), carried in _NYISO_OFFER_CURVE as phys_*",
+    "grounded": {
+     "committed": {
+      "registered": 1.35,
+      "measured": 0.843,
+      "source_key": "phys_committed"
+     }
+    },
+    "values_chosen_by_this_session": 0,
+    "values_swept_against_any_gate": 0
+   },
+   "undeclared_bands_untouched": {
+    "bands": {
+     "econ_low": 1.0,
+     "econ_high": 1.0,
+     "peak": 4.0,
+     "econ_low_share": 0.526,
+     "pct_peaking": 7.0
+    },
+    "peak_left_at_the_offer_cap_wall": 4.0
+   },
+   "one_config_across_every_scored_year": {
     "years": [
      2022,
      2023,
      2024,
      2025
     ],
-    "one_invocation": true
+    "per_year_field_values": 0,
+    "solved_in_one_invocation_into_one_bundle": true
    },
    "dof_ledger_carried_verbatim": {
-    "source": "results/calibration/nyiso231_anchor_span/calibration_attestation.json",
-    "n_entries": 13,
+    "source": "results/calibration/nyiso240_benchfix_span/calibration_attestation.json",
+    "n_entries": 14,
     "n_residual": 6,
-    "new_entries_added_by_this_run": 0,
-    "why_no_entry": "The band's value is 1.0, the rule-24/25 neutral, not a number identified by any residual. Per nyiso-199's owner ruling, a band substitution whose value is not identified by the price residual adds no ledger entry."
+    "new_entries_added_by_this_run": 0
+   },
+   "per_plant_layer_present": {
+    "years": [
+     2022,
+     2023,
+     2024,
+     2025
+    ],
+    "missing": []
    }
   }
  },
