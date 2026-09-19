@@ -2628,8 +2628,19 @@ results/calibration/nyiso241_ctbands_span/
 #   git checkout 34543fa20aeac6b4d7e7f6ef661a81c32401d437 -- results/calibration/miso263_coalcap_2020
 #   git checkout ba84be60f3ccdbe0c123c09bbef052b3a38e254a -- results/calibration/miso263_coalcap_2021
 #   git checkout cfacc9044cfd3dc18046735e00ac6c26e8565ed7 -- results/calibration/miso263_coalcap_2022
-#   git checkout c64a50c9f715a22cc9b3d296b1dbde016f3ab052 -- results/calibration/miso263_coalcap_2025
-#   (2023 / 2024 SHAs appended when their shards land)
+#   git checkout c64a50c9f715a22cc9b3d296b1dbde016f3ab052 -- results/calibration/miso263_coalcap_2025   [SUPERSEDED]
+#   git checkout 4b30d39c7d446c34539db1fcfa3f041b61355b7b -- results/calibration/miso263_coalcap_2024   [SUPERSEDED]
+#
+# The two marked SUPERSEDED solved 2024/2025 on the VALIDATION leg's reserve
+# configuration: replay_keeper.py takes its recipe from the span-wide meta.json,
+# which for this composite carries the 2020 leg's values, and MISO's keeper is
+# partitioned at 2023 (miso_measured_reserve_requirements / miso_reserve_online_gated
+# are False for 2020-2022 and True for 2023-2025). They are kept, not deleted
+# (rule 31 [R-RETAIN]); they are simply not composable. 2020/2021/2022 are
+# UNAFFECTED — their own per-year flags match the composite base. See
+# docs/ADDENDUM-miso263-replay-keeper-has-no-per-year-dimension-2026-09-19.md.
+# Corrected 2023/2024/2025 shards push to claude/miso263-coalcap-<year>b; their
+# SHAs are appended when they land.
 #
 # The pattern is YEAR-SCOPED on purpose: `miso263_coalcap_*` would also swallow
 # the composed `miso263_coalcap_span`, which is the registrable run and MUST
