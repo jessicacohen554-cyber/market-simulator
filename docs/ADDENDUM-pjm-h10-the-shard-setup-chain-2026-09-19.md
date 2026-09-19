@@ -18,9 +18,9 @@ they were environment setup, and **two of the four were caused by an instruction
 | 1 | `session_01GVm2g4rPYhEHZT6kRmiB3S` | ended its turn after preflight, mid-solve; later resumed into env setup; archived |
 | 2 | `session_01WiG8kSC7zZRG9R6xb85HJp` | began regenerating the clean tree (**correctly**), ended its turn; archived |
 | 3 | `session_01FKXs8PaaohGkVSsYJTp6gK` | solve **died at 59 s on missing `data/clean`** — which my prompt had forbidden it to rebuild |
-| 4 | `session_01HSskC9q1YEKBMcv9RydYHr` | same generation, same blocker |
-| 5 | `session_013WuzZpNy1yBLDuXVVN8AcT` | relaunched with the clean-tree step required (`claude/pjm-h10-mer-a3`) |
-| 6 | `session_01DG8713GuWS33fC7aJybGoW` | same, holdout span (`claude/pjm-h10-mer-tp3`) |
+| 4 | `session_01HSskC9q1YEKBMcv9RydYHr` | cleared every blocker itself, **OOM-killed in the 2020 P0->P1 seam**, and pushed a finding instead of a bundle — a SUCCESS by the rule's own definition (`claude/pjm-h10-mer-tp2`, `0bcb1a3c6265cdb253e5447b08288e4aa030bdf7`) |
+| 5 | `session_013WuzZpNy1yBLDuXVVN8AcT` | relaunched with the clean-tree step required; **yielded mid-rebuild and stalled** — no bundle |
+| 6 | `session_01DG8713GuWS33fC7aJybGoW` | same; got as far as the DA-virtuals fetch and **yielded mid-fetch** — no bundle |
 
 **Shard 2 was right and my prompt overrode it.** It independently decided to regenerate the clean
 tree; generation 2's prompt then explicitly forbade exactly that, on my assumption that the raw tree
@@ -85,6 +85,39 @@ Two traps in it:
 Shard 1 discovered this on its own ("fetching PJM DA virtuals (36mo)") — 36 months is the 2023–2025
 default, i.e. it had the training span and would still have been short for the holdout span.
 
+### (e) TWO MORE clean partitions the shard found that I had not
+The TP shard (`0bcb1a3c6265cdb253e5447b08288e4aa030bdf7`) hit two further hard raises before the LP,
+each from a mechanism the keeper arms, and each fixed by a **narrow per-datatype curate script**
+rather than the full regeneration:
+
+| blocker | armed by | resolved by |
+|---|---|---|
+| `transfer-interface-limits` clean partition absent | `pjm_measured_interface_limits = True` | `scripts/data/curate_transfer_interface_limits.py --isos PJM` → 7 partitions (2019–2025), 87,600 rows each |
+| `ramp-capability` clean partition absent | `measured_ramp_capability = True` | `scripts/data/curate_ramp_capability.py --isos PJM` → 749 rows |
+
+Neither "silently no-ops" — both hard-raise, which is the correct behaviour and is why the failure is
+legible at all.
+
+### (f) Dependencies: `uv sync --no-dev` is the better route
+The shard's container shipped **no Python dependencies at all** (`numpy` absent). `uv sync --no-dev`
+installed the `uv.lock` pins, and they **match the source bundle's recorded environment exactly** —
+highspy 1.14.0, numpy 2.4.6, scipy 1.17.1, pandas 3.0.3, pyarrow 24.0.0, pydantic 2.13.4, Python
+3.11.15. That is strictly better than the `pip install -r requirements.txt` route in (b), because it
+reproduces the environment the bundle was solved in rather than merely a working one.
+
+### THE OPEN QUESTION IS ANSWERED: DataMiner2 DOES still serve 2020–2022
+This document originally asked whether `hrl_da_incs_decs` is still available for the holdout span, and
+flagged that if not, the PJM 2020–2022 touchpoint would not be reproducible from a cold container.
+**It is available.** The shard ran
+`scripts/data/fetch_pjm_da_virtuals.py --years 2020 2021 2022 --feeds hrl_da_incs_decs` and got
+**36 files, 15 MB, in 577 s**. So the touchpoint's inputs *are* re-obtainable; the corpus stays
+gitignored and nothing was committed, so PJM's non-member redistribution restriction is respected.
+Two corrections that go with it: `build_pjm_da_virtual_units`
+(`src/market_sim/data/virtual_bids.py:335`) has **no fallback and no year gate**, so the committed
+touchpoint's own container demonstrably held these parquets — the fetch restores the control's input
+rather than adding a new one; and the curate docstring's "committed 2023–2025 raw drops" is **stale**
+(the PJM raw feed on disk covers 2019–2026).
+
 ### What is NOT needed, checked so nobody over-fetches
 Six other PJM-relevant corpora are also README-only at tip, and **none is required to solve**:
 `pjm-energy-offers` (only to *re-derive* the midcurve surface; the surface itself,
@@ -124,6 +157,41 @@ cannot be corrected, extended or nudged after launch. Two concrete duties follow
 
 ---
 
+## 3b. THE MEMORY FINDING, which is governance-relevant and is NOT about the emissions dual
+
+Shard 4 was **OOM-killed by the binding memcg**, and its numbers contradict a premise rule 32
+`[R-SHARD]` (c)(8) rests on. Full record: `docs/FINDING-pjm-h10-shard-mer-tp-oom-2026-09-19.md`.
+
+```
+oom-kill:constraint=CONSTRAINT_MEMCG, task=python
+total-vm:31045096kB  anon-rss:13949260kB
+```
+
+* **13,949,260 kB = 13.30 GiB against a 13.36 GiB ceiling** — the *identical* 13.30 GiB figure rule
+  32(c)(8) already records for the miso-252/253 incident. PJM per-plant across 8 zones needs
+  **>13.3 GiB anon in the P0→P1 seam alone**.
+* It died **after** 2020 P0 completed and printed its objective (`Solve 574.607 s`, 382,243 simplex
+  iterations), during the P0→P1 seam. The python process held essentially the whole ceiling; other
+  processes in the cgroup were under 2 MB, so shard tooling did not cause it.
+* **THE RUNNER'S SWAP MITIGATION WAS INERT.** A 5.0 GiB swapfile was active and `/proc/swaps` showed
+  **Used = 0** at the moment of the kill; the kernel OOM-killed under `constraint=CONSTRAINT_MEMCG`
+  rather than swapping (`memory.memsw.limit_in_bytes` unreadable in this cgroup). Preflight had
+  *already said so*, verbatim: *"ceiling+swap 18.4 GiB is below the 24 GiB target; a per-plant ISO-year
+  LP (MISO, PJM) may be OOM-killed here"*, and disk had only 7.0 GiB free so a larger swapfile was not
+  available. **Rule 32(c)(8) states that provisioning a swapfile is what lets a per-plant PJM/MISO year
+  fit here. On this container it did not, and the runner predicted its own failure and ran anyway.**
+* **The MER attribution is CONFOUNDED and stays open, and the shard said so itself.** The dual cannot
+  be toggled at this HEAD without a code edit the shard was forbidden to make; the container was
+  flagged under-provisioned before the dual was reached. **Nobody may cite this as evidence that the
+  emissions dual is too expensive at per-plant scale** — it is equally consistent with PJM per-plant
+  simply not fitting in a 13.36 GiB cgroup, with or without the dual. No retry was spent, correctly:
+  the failure is deterministic and an identical re-run would only reproduce it.
+* One thing it *did* confirm — the 2020 build logged `year table 2020`, i.e. 2020 now draws its own
+  PJM midcurve offer table instead of the pooled 2023–2025 fallback, **exactly the HEAD change the
+  parent's zero-LP drift audit predicted** (PRECOMMIT §3). No scored number survived to quantify it.
+
+---
+
 ## 4. Proposed amendment to rule 32 `[R-SHARD]` (c) — for the owner, not self-applied
 
 Not written into `CLAUDE.md` by this session: rule 32 is governance and the owner amends it.
@@ -139,11 +207,19 @@ Recommended, as a new clause (c)(9) or an extension of (c)(2):
 > solve is running**, and the prompt says so: background job plus an in-turn poll loop, because the
 > parent has no way to message it afterwards.
 
-**Open question the owner may want answered before the next holdout replay is chartered:** whether
-DataMiner2 still serves `hrl_da_incs_decs` for 2020–2022 at all. If it does not, then **the PJM
-2020–2022 touchpoint is not reproducible from a cold container**, and that is a retention problem in
-the class `docs/FINDING-history-rewrite-2026-08-16.md` already names — a committed bundle whose inputs
-cannot be re-obtained. Nothing in this session tested it.
+**A SECOND amendment the memory finding argues for, also the owner's call:** rule 32(c)(8) tells a
+lane to run the runner unmodified and report the preflight and memory-peak lines, on the premise that
+the runner's swapfile is what makes a per-plant PJM/MISO year fit. §3b shows a container where the
+swapfile was active, unused, and irrelevant — and where **preflight printed a warning predicting the
+OOM and the run proceeded anyway**. Worth considering: when preflight's own `ceiling+swap` falls short
+of its target for a per-plant ISO, the runner should **refuse to start** and say so, rather than
+spending ~10 minutes of setup and ~10 minutes of P0 to be killed. That converts a wasted container
+into an immediate, legible stop — which is what rule 32's "a shard that stops with a clear report is a
+SUCCESS" is for.
+
+**The open question this document originally raised is ANSWERED and no longer open:** DataMiner2 still
+serves `hrl_da_incs_decs` for 2020–2022 (36 files, 15 MB, 577 s), so the PJM holdout touchpoint's
+inputs *are* re-obtainable from a cold container. See §2's DA-virtuals subsection.
 
 ---
 
