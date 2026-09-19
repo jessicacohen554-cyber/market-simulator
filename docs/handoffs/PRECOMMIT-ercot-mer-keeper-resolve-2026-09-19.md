@@ -161,3 +161,50 @@ commits) so a later-leg failure cannot strand an earlier leg's bytes
 * Rule 31 `[R-RETAIN]`: nothing is deleted. The promotion question is put to the
   owner explicitly in the RESULT, with the statement that the bundles do not
   survive container reclamation.
+
+---
+
+# AMENDMENT 1 — OWNER OVERRIDE: ONE SHARD PER YEAR, THEN COMPILE (2026-09-19)
+
+**Owner instruction, verbatim:** *"What the fuck launch one shard per year then compile"*.
+
+This **supersedes §2 and §7 above**. The single three-leg shard
+(`session_01P6ZYCiNKAPDKjc1NcUt2k2`) was interrupted ~6 min into LEG 1, had pushed
+**nothing** (`git ls-remote` showed no `ercot-mer` branch), and was archived — so no
+result was lost and rule 31 `[R-RETAIN]` is not engaged.
+
+**FIVE SHARDS, ONE YEAR EACH**, all pinned to `5017c3602adf7bc9389cf10755fc22833f8f1b2d`,
+launched concurrently, each pushing its own bundle to its own branch:
+
+| year | recipe leg | out-dir | branch | session |
+|---|---|---|---|---|
+| 2021 | carve-out A | `results/calibration/ercot_mer20260919_2021/` | `claude/ercot-mer-2021` | `session_01XAPSJtKQgkgJFRmxvhKpRE` |
+| 2022 | carve-out A | `results/calibration/ercot_mer20260919_2022/` | `claude/ercot-mer-2022` | `session_01RRhQsYd2hLrTrKcpsFxbKP` |
+| **2023** | **carve-out B** (`ep_referenced=false`) | `results/calibration/ercot_mer20260919_2023/` | `claude/ercot-mer-2023` | `session_018sZN9sa47f5PBrKi2jhkLu` |
+| 2024 | forward | `results/calibration/ercot_mer20260919_2024/` | `claude/ercot-mer-2024` | `session_01L44zSgtycE6LNJKk4vrU9k` |
+| 2025 | forward | `results/calibration/ercot_mer20260919_2025/` | `claude/ercot-mer-2025` | `session_013uD117W2qrc3RgxKtcsUYi` |
+
+**Wall-clock is now ~35 min, not ~120** — five per-plant years solve in parallel in five
+containers instead of sequentially in one. Rule 12 `[R-PARALLEL]`'s ~2-invocation cap is a
+**within-container memory** limit and does not bind across separate containers; the
+precedent is exact — ercot-264 (`docs/RESULT-ercot264-keeper-repro-2026-09-09.md`) ran this
+identical five-shard, one-year-each fan-out on this identical keeper.
+
+**Rule 32 `[R-SHARD]` (b) is set aside on the owner's instruction, and the cost is stated
+rather than hidden.** The ban exists because a slim per-year fan-out cannot be recomposed
+(`render_calibration_html.build_payload` needs the bundle-root `system.parquet`, and the
+per-plant D-1/D-2/D-4 diagnostics PASS VACUOUSLY off an unregistered composite). **That
+failure mode is closed here by rule 34 `[R-SHARD-PROMOTABLE]` (a): every shard PUSHES its
+full bundle, `dispatch/<year>_P1.parquet` included**, so the parent receives real bytes and
+compiles from them. What made the miso-255 / SPP-36 fan-outs unrecoverable was shards that
+gitignored their bundles — not the fan-out itself.
+
+**Compilation is the parent's job (rule 32(d)):** fetch all five branches, check out each
+bundle, verify each leg's config signature and its `marginal_emission_rate` column, compile
+the five per-year legs into one bundle span, and re-derive the partition block with
+`scripts/stamp_config_partition.py --check` — which must reproduce the three recipe groups
+of §1. The compile is zero-LP.
+
+Every other section stands: the pinned SHA and its MER-ancestry check (§3), the drift
+posture (§4), the baseline table (§5), the six sealed predictions (§6), and the retention
+and retrievability duties (§8).
