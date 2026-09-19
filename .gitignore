@@ -2406,3 +2406,7 @@ results/calibration/nyiso239_bench_2022/
 results/calibration/nyiso239_bench_2023/
 results/calibration/nyiso239_bench_2024/
 results/calibration/nyiso239_bench_2025/
+
+# SPP-48 MER control shard A (keeper replay, rule 34(a)): push this bundle
+!results/calibration/spp_mer_20260919_keeper/**
+results/calibration/spp_mer_20260919_keeper/_shared/
