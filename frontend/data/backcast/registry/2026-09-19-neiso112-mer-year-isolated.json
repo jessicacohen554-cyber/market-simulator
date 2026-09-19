@@ -1,0 +1,19 @@
+{
+ "id": "2026-09-19-neiso112-mer-year-isolated",
+ "label": "neiso112 mer year isolated",
+ "date": "2026-09-19",
+ "shorthand": "neiso112-mer-year-isolated",
+ "definition": "neiso-112 span, 2020-2025: the 2026-09-16-neiso110-dualfuel-derate-scope recipe replayed UNCHANGED (replay_keeper.py from that keeper's own meta.json), but with every year solved ALONE in its own shard container under rule 36 [R-YEAR-ISOLATION], then composed at zero LP. Adds the per-zone-hour marginal emission rate -- the emissions dual, dCO2/d(demand) at the solve's own optimal basis -- which the incumbent predates and which no sidecar could be post-processed into. DETERMINATION CALIBRATED, criterion-for-criterion identical to the incumbent (8 scored, 0 fails, the same lone ledgered C3c). The year-isolated solves reproduce the incumbent's single six-year invocation with prices BIT-IDENTICAL (max |dPrice| 5.7e-14; 0 of 262,800 zone-hour cells past $0.01/MWh) and annual class energy identical to ~1e-9 of total, so the MISO year-grouping defect does not appear in NEISO. What does move is 1.2-1.6% of class-hours at an unchanged objective and unchanged prices: alternate-optimum reshuffling of a degenerate LP, the signature neiso-107 already root-caused against this keeper.",
+ "years": [
+  2020,
+  2021,
+  2022,
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "NEISO",
+ "file": "frontend/data/backcast/runs/2026-09-19-neiso112-mer-year-isolated.js",
+ "bundle": "results/calibration/neiso112_mer_span",
+ "market_story": "NEISO's margin is gas essentially all of the time, and the new marginal-emission-rate column is what makes that visible rather than inferred: the load-weighted rate sits at 0.489-0.559 tCO2/MWh with a p90 of only 0.65-0.68, and 0.00-0.01% of zone-hours have a non-emitting unit on the margin. That is a combined-cycle setting price almost every hour, which is what ISO-NE's fleet is -- and it is the photographic negative of MISO's coal-margin p90 near 1.0 with 13-23% zero-margin hours. CC_REGULAR is the class the market puts at the margin and the class this run's hourly reshuffling moves; hydro, oil and CT_PEAKER trade against it in the tied hours because in a gas-priced stack their offers sit close enough to be co-marginal. Wind's avoided rate lands 0.4-2.4% BELOW the load-weighted mean (it blows in lower-margin hours) and solar's at or just above it -- both gaps small precisely because the marginal fuel barely changes, which is the real market fact an ISO-NE abatement calculation has to start from."
+}

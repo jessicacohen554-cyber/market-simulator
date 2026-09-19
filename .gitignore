@@ -2588,4 +2588,7 @@ results/calibration/caiso_mer_*/
 # FILESYSTEM, so these dirs turn that gate RED in a working tree that holds them
 # while CI (which sees only committed files) stays green. That RED is expected
 # here and is NEVER fixed by deleting a bundle this rule protects.
-results/calibration/neiso112_mer_*/
+# NOTE the pattern is year-scoped on purpose: `neiso112_mer_*` would also swallow
+# the COMPOSED span bundle `neiso112_mer_span`, which is the registered keeper and
+# MUST commit its slim set (rule 15 [R-DASHBOARD]).
+results/calibration/neiso112_mer_20[0-9][0-9]/
