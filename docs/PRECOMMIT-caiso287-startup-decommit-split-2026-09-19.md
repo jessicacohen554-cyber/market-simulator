@@ -109,8 +109,27 @@ rather than pad; and — the load-bearing case — the **real** `caiso_ra_mustof
 screens armed, returns an **identical** floor from the round-tripped arrays as from the originals,
 behind a `want.any()` vacuity guard that already caught one inert fixture.
 
-**This change LANDS ON `main` BEFORE any shard is launched**, so every shard in this session pins
-one clean post-merge SHA and no control is a replay of a lane-local edit (handoff §10).
+### 3.1 THE SHA SPLIT — stated explicitly, because the handoff forbids leaving it implicit
+
+The intended resolution of handoff §10 was to land this change on `main` first and pin all three
+shards to one clean post-merge SHA. **That is not available here:**
+`claude/caiso-287-startup-decommit-split-qwdxfc` is this session's designated deliverable branch,
+it does not auto-merge, and opening a PR to force it is not authorized. So the handoff's own
+stated fallback is taken, and recorded here rather than left implicit:
+
+| shard | pinned SHA | why |
+|---|---|---|
+| 1, the probe | **`92b8e4dbf6017a8571026c3f58fb20914e590875`** (this branch) | it is the only SHA carrying `--persist-p0-dispatch`, which is the whole point of the probe |
+| 2 and 3, the MER controls | **`4583e70b864a7d5c99a206b06eddf3c36af495bf`** (clean `origin/main`) | a control must be a keeper replay with **no** lane-local code in it |
+
+This is **better** for the controls than the merged-first plan, not a compromise: pinned to clean
+`main`, they carry zero caiso-287 code, so their G-DRIFT form-4 confirmation is unambiguous and
+cannot be explained by anything this session wrote. The probe's extra commit is proved write-only
+by the four legs above, and the probe is a throwaway that is never registered in any case.
+
+**Both SHAs were checked to contain the marginal-emission-rate commit**
+`2ec096633f5624585eb9db1728ebc7c8ca5ccbdf` (`git merge-base --is-ancestor`), as the append
+requires, so no shard can produce a bundle without `marginal_emission_rate`.
 
 ## 4. THE MEASUREMENT — a 2x2 over the two screens, at zero further LP
 
