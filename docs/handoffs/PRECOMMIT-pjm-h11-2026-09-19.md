@@ -332,6 +332,59 @@ and `hourly/network_<year>.parquet` (C-2).
 
 ---
 
+## 5b. RETRIEVABILITY VERIFIED BEFORE THE SHARDS REACH THEIR PUSH STEP
+
+The thing that strands a sharded result is not the solve — it is `git add` refusing the bundle, which
+is the miso-255 stranding and which SPP-48 re-diagnosed on 2026-09-19 (`.gitignore` ~line 2416).
+The failure is specific: **git will not descend into a directory excluded at DIRECTORY grain**, so a
+`!<bundle>/**` negation cannot re-include anything inside one, `git add` fails, and the only way
+through is `git add -f` — which the auto-mode classifier REFUSES as [Modify Shared Resources].
+
+**Checked, not assumed, for this lane's names.** `git check-ignore -v` on
+`results/calibration/pjm_h11_{ctl,arm}_<year>/` returns **no match** — none of the directory-grain
+families (`pjm_d4_*/`, `pjm_h9*/`, `*_y20[0-9][0-9]/`, `*probe*/`, …) catches `pjm_h11_*`. So these
+bundles are in the working case, not the stranding case.
+
+**Then verified end to end, in this repo, against this `.gitignore`**, with a dummy bundle carrying
+the files registration actually needs. Without the negation, `git add --dry-run` stages **3 of 6** —
+`dispatch/2020_P1.parquet`, `system.parquet` and `hourly/network_2020.parquet` are all dropped by the
+generic slim-bundle rules, and those are precisely the three the registration payload and C-2 need.
+With the exact line the shard prompts prescribe, `printf '\n!results/calibration/<bundle>/**\n' >>
+.gitignore`, it stages **6 of 6**, including all three, under a **plain `git add`** with no `-f`.
+The dummy bundle and the `.gitignore` edit were reverted immediately; the working tree is clean.
+
+So the 12 shards can push what a promotion would need. Rule 34 `[R-SHARD-PROMOTABLE]` (d) still
+applies on the return trip — the parent confirms `git ls-tree -r <sha> -- <bundle> | wc -l > 0`
+before archiving anything.
+
+---
+
+## 5c. WHAT A PROMOTION WOULD HAVE TO COMPOSE (rule 35 `[R-PROMOTE]` (b), done BEFORE any prune)
+
+Rule 35(b) requires the ISO's registered year union be enumerated **before** pruning, because the
+prune destroys the evidence. Read from `frontend/data/backcast/registry/*.json` at write time:
+
+| registered run | years | bundle | stamped to |
+|---|---|---|---|
+| `2026-09-11-pjm-d4-4-gasoutage` (**the keeper**) | 2023, 2024, 2025 | `pjm_d4_4_A` | — |
+| `2026-09-11-pjm-holdout-gasoutage-touchpoint` | 2020, 2021, 2022 | `pjm_d4_4_TP` | `2026-09-11-pjm-d4-4-gasoutage` |
+
+**PJM's registered year union is {2020, 2021, 2022, 2023, 2024, 2025}** — exactly the six the 12
+shards cover, so rule 35(c) (the incoming keeper must cover the union) is satisfiable without
+solving anything further.
+
+It also fixes the shape of a promotion: PJM is registered as **two runs, not one** — a keeper over
+the training span plus a touchpoint over the holdout span folded to it by `holdout.keeper`
+(rule 30 `[R-TOUCHPOINT-FOLD]` (a)). So the 12 per-year bundles compose into **two** registrable
+runs of three years each, not one of six. Whether that composition succeeds is a question about
+`render_calibration_html.build_payload`, which reads the **bundle-root** `system.parquet` and the
+shared inputs — it is answered against the real bundles when they land, not theorised here. What is
+already established is that rule 32(b)'s reason for banning the fan-out ("a shard can only push the
+slim set") **does not hold for this lane**, per §5b: these shards push `dispatch/` and
+`system.parquet` too.
+
+---
+
 ## 6. OPEN QUESTIONS FOR THE OWNER
 
 **Q1 — the three truncated ladder rungs (§3.2, G1).** Three committed rungs are one cent below
