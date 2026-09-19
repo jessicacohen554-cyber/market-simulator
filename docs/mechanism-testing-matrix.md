@@ -18081,19 +18081,36 @@ is the owner's. **SOCO's only available levers are physics and data levers.** Ev
 
 1. ~~**SOCO-53c — `egrid_family_heat_rates`.**~~ ✅ **LANDED AND PROMOTED 2026-09-19 — SOCO's keeper is now `2026-09-19-soco53c-egrid-family-hr`.** Gates FLAT (C1 all 12/14 · free 8/10 both sides, same two failing rows, no row changed status, C2's ungated 2025 coal row improved +16.0 % → +12.3 %). It reaches **four** of the nine multi-technology plants, not all nine: Gaston (26) has one live family so the construction cannot separate its coal from its gas steam, and McDonough (710) files −52 MWh on its GT generators. **The lane also repaired the mechanism's own construction** — the derive's boundary claim is an identity, and checking it refuses five cogeneration plants whose families recompose 4.05–8.40× off their own `PLHTRT` (the pre-existing window guard caught only their steam halves while the turbine halves were being applied to `CT_CHP`/`CC_CHP`). **It does NOT fix the `CT_PEAKER`/`ST_GAS` split, and said so before solving.** Evidence: `docs/handoffs/FINDING-soco-53c-2026-09-19.md`.
 2. ~~**SOCO-53d — a COMMITMENT mechanism for multi-week campaigns.**~~ ✅ **LANDED 2026-09-19 — run `2026-09-19-soco53d-campaign-commitment`, PROMOTION OPEN AND THE OWNER'S** (rule 31 `[R-RETAIN]`; the keeper is unchanged and nothing was pruned). `soco_gas_st_campaign_commitment`, the shared detector on `gas_st` alone with exactly two legs — the measured minimum-run extension and the online-hours LSL state floor. **THE GATES IMPROVE AND THAT FALSIFIES THE LANE'S OWN PREDICTION**: the 2023 `ST_GAS` row crosses back INTO band (−7.359 TWh / −3.07pp → −6.972 / −2.91 against ±7.19 TWh and ±3.00pp), so C1 goes from TWO failing rows to ONE and C1 all/free 12/14 · 8/10 → 13/14 · 9/10 — a NARROW pass, 0.09pp of share margin. 2023 `CT_PEAKER` stays FAILED at +9.898 TWh, so the headline defect is NOT fixed and the PRECOMMIT said so first. Determination NOT-YET both ways; C2/C4/C6/C8 PASS; 0 ledgered, 0 protective; **zero free parameters added**. The object, measured zero-LP: SOCO's gas boilers start **5.0–9.7×/yr** and are **synchronized 63.9–92.0 % of all hours**, while the model cycles the same plants **10–349×/yr in 2–11 h blocks** with `min_run_hours = min_down_hours = 0`. The structural evidence is independent of the gates — D-1 `ST_GAS` off-peak CV falls 0.709/0.864/0.608 → 0.545/0.658/0.448 toward the measured 0.281/0.263/0.207. Rule 17 holds in all twelve plant-years (every binding share at or below that plant's own synchronized share; floored blocks median 86–459 h; Barry, synchronized 6.3 % of the year, carries ZERO floored hours by the derive's ex-ante campaign-duty gate). Rule 20: forced share 0.094/0.100/0.116 against the 30 % cap. The restart legs, `startup_aware` and a CT leg were all REFUSED EX ANTE with reasons, so `gas_commitment_bridge`'s `R` is NOT re-tested. Evidence: `docs/handoffs/FINDING-soco-53d-2026-09-19.md`.
-3. **SOCO-53e — `measured_st_heat_rates`. NEW, AND IT FALSIFIES THIS QUEUE'S OWN "COST SIDE IS
-   EXHAUSTED" PREMISE.** `[OPUS]`. SOCO-53's *"the model over-separates the two classes by 2.8×"*
-   was measured on the PRE-`measured_ct_heat_rates` fleet. At HEAD `CT_PEAKER` sits at 11.2666 and
-   `ST_GAS` still rides eGRID at 10.9613, while SOCO's gas-steam fleet **measures 10.4223** on its
-   own CAMPD meter — the model is **+0.539 MMBtu/MWh (+5.2 %) too dear on 3,131 MW** (Gaston
-   −0.909, Watson −0.475, Greene −0.461, Yates −0.455; only Barry's 160 MW is understated). The
-   model now **UNDER-separates by 2.3×** (+0.305 against a measured +0.713), which is the sign of
-   the defect: `ST_GAS` is too dear *relative to* `CT_PEAKER`. At $3.2–3.6/MMBtu that is
-   $1.5–3.3/MWh — enough to move Gaston (43.23 → ~40.1) and Yates (43.24 → ~41.6) below a large
-   part of the CT stack. It is the exact sibling of SOCO's promoted keeper mechanism, a pure rule
-   14 `[R-ACCURATE]` repair with **zero free parameters**, and **probably the larger lever**.
-   Measured by SOCO-53d and routed rather than stacked (rule 19). Evidence:
-   `docs/handoffs/FINDING-soco-53d-2026-09-19.md` §8.1.
+3. **SOCO-53e — `measured_st_heat_rates`. LANDED 2026-09-19, AND IT CORRECTS THE NUMBER THIS
+   QUEUE ITEM WAS WRITTEN WITH.** `[OPUS]`. The lever is real and is armed, but the routed
+   magnitude was wrong: SOCO-53d §8.1's *"+0.539 MMBtu/MWh, +5.2 %, worth $1.5–3.3/MWh"*
+   converted SOCO's **boilers** at the `CT_PEAKER` parasitic factor **0.99**, where the `ST_GAS`
+   class factor is **0.95**, so every rate was understated by 4.2 %. SOCO-53e re-derived from
+   scratch (reproducing 53d's table to ±0.03 at 0.99, so the number was right and the basis was
+   wrong) and settled the basis by measurement rather than convention: SOCO's own metered
+   net/gross over its eight unambiguous plant-years is **0.938–0.943** (EIA-923 `ST`/`NG` net
+   over CAMPD gas-boiler gross), which the committed class default 0.95 reproduces to 1.2 % and
+   0.99 misses by 5.5 %. **On the right basis the LEVEL barely moves — capacity-weighted 10.9613
+   → 10.8522, −1.0 %, not −5.2 % — and the first-order displacement bound is +0.066 / +0.154 /
+   +0.053 TWh, roughly a TENTH of what was routed.** What survives, and is the real case, is the
+   **per-plant structure**: E C Gaston −0.476 on 1,020 MW, because its ST prime-mover-family rate
+   blends an 832 MW **coal** boiler with four ~255 MW **gas** boilers and no eGRID construction
+   can separate two machines inside one family — 11.0744 measured against the 10.887 eGRID
+   gas-steam SUB-family rate SOCO-53c routed, two independent sources agreeing. **This therefore
+   SUBSUMES the Gaston fuel-subfamily lever below.** Barry moves the OTHER way, +1.374 (two
+   1954-vintage 80 MW boilers metered at 13.98, 98 % of their hours in band, run 1.6 % of the
+   time), applied at full magnitude and independently corroborating SOCO-53d's campaign-duty gate
+   refusing Barry at a 6.3 % synchronized share. A NEW default-off field, not a widened
+   `measured_ct_heat_rates` — widening would arm five other ISOs' keepers on a measurement their
+   lanes never made (rules 25 / 28(d)), and is refused. **Zero free parameters**; membership is a
+   capacity-rank pairing to the plant's own model boiler rows, because the coal sibling's
+   `primaryFuelInfo` tag would wrongly pull in Barry unit 4 (CAMPD files that 330 MW boiler as
+   Pipeline Natural Gas; the model carries it as a 362 MW `COAL` row). Rule 19 established
+   mechanically at two grains: 12 of 393 built-fleet rows and **20 of 327 LP rows** move, all
+   `ST_GAS`, every other class at max |Δ| exactly 0.0000000000. **STATED AT THE GATE: it does not
+   fix the 2023 `CT_PEAKER` +9.90 TWh headline either** — it closes at most 0.7 % of it — and is
+   armed on rules 1 / 14, not on the residual. Evidence:
+   `docs/handoffs/PRECOMMIT-soco-53e-2026-09-19.md`.
 4. **SOCO-53b — the 2025 EIA-923 hydro backfill** (data-intake, as SOCO-40 routed it). 5 plants /
    0.327 TWh resolve against 6.012 TWh measured where 2023/2024 resolve 42; coal backfills it and
    the LP posts VOLL slack, which is what makes the 2025 model price uninterpretable. Decide the
