@@ -48,8 +48,19 @@ from market_sim.model.commitment import (  # noqa: E402
 )
 from market_sim.pipeline.commitment import cc_startup_lead_hours  # noqa: E402
 
-YEAR = 2024
 T = 8760
+#: Lowest DECILE of model net load: 8760 // 10. caiso-285's own belly size.
+BELLY_N = 876
+
+#: Which committed keeper bundle supplies a year's net load. The belly is built
+#: from the KEEPER, never from the instrumented replay, so it is fixed by the
+#: keeper and independent of the run being measured (caiso-285's own choice).
+KEEPER_FOR_YEAR: dict[int, str] = {
+    2022: "results/calibration/caiso275_B_gascoupling_2022",
+    2023: "results/calibration/caiso275_B_gascoupling_span",
+    2024: "results/calibration/caiso275_B_gascoupling_span",
+    2025: "results/calibration/caiso275_B_gascoupling_span",
+}
 
 # The keeper's armed posture, read from its own run_config.json and re-asserted
 # against the probe bundle's at runtime rather than trusted (PRECOMMIT 2(d)).
@@ -96,24 +107,57 @@ DOMINANCE_FRAC = 0.70
 NO_OBJECT_MW = 10.0
 
 
-def load_belly() -> np.ndarray:
-    """The frozen 876-hour belly, re-verified by its own sha recipe."""
-    rec = json.loads(BELLY.read_bytes())
-    hours = np.asarray(rec["hours"], dtype=int)
-    sha16 = hashlib.sha256(
-        np.asarray(rec["hours"], dtype=np.int32).tobytes()
-    ).hexdigest()[:16]
-    if hours.size != 876 or sha16 != BELLY_SHA16:
+def _sha16(hours: np.ndarray) -> str:
+    return hashlib.sha256(np.asarray(hours, dtype=np.int32).tobytes()).hexdigest()[:16]
+
+
+def derive_belly(year: int) -> tuple[np.ndarray, str]:
+    """Build ``year``'s belly by caiso-285's OWN published construction.
+
+    Verbatim from ``_caiso285_belly_2024.json``'s ``construction`` field::
+
+        net_load[h] = sum_zones system.demand[h]
+                      - class_hourly.mw[klass=='wind'][h]
+                      - class_hourly.mw[klass=='solar'][h]
+        belly = numpy.sort(numpy.argsort(net_load, kind='stable')[:876])
+
+    both read from the COMMITTED KEEPER bundle. This is a transposition of
+    caiso-285's rule to the other years, **not a new metric**: the rule is
+    year-agnostic (the lowest decile of model net load) and nothing about it is
+    chosen after seeing a result.
+
+    The implementation is self-checked: on 2024 it must reproduce caiso-285's
+    published ``sha256_int32_le[:16]``, or this function is wrong and the other
+    years' bellies cannot be trusted either.
+    """
+    kb = REPO / KEEPER_FOR_YEAR[year]
+    sysf = pd.read_parquet(kb / "hourly" / f"system_{year}.parquet")
+    sysf = sysf[sysf["pass"] == "P1"]
+    demand = sysf.groupby("hour")["demand"].sum().sort_index().to_numpy()
+    cls = pd.read_parquet(kb / "hourly" / f"class_hourly_{year}.parquet")
+    cls = cls[cls["pass"] == "P1"]
+    vre = np.zeros(T, dtype=float)
+    for k in ("wind", "solar"):
+        s = cls[cls["klass"] == k].groupby("hour")["mw"].sum().sort_index()
+        vre += s.reindex(range(T), fill_value=0.0).to_numpy()
+    if demand.size != T:
+        raise SystemExit(f"G-R1 FAIL: {year} demand has {demand.size} hours, want {T}")
+    net = demand - vre
+    belly = np.sort(np.argsort(net, kind="stable")[:BELLY_N])
+    sha = _sha16(belly)
+
+    if year == 2024 and sha != BELLY_SHA16:
         raise SystemExit(
-            f"G-R1 FAIL: belly is {hours.size} h / sha {sha16}, "
-            f"expected 876 / {BELLY_SHA16}"
+            f"G-R1 FAIL: the belly construction does not reproduce caiso-285 on "
+            f"2024 (got {sha}, published {BELLY_SHA16}). The derivation is wrong, "
+            "so no year's belly can be trusted — stopping rather than proceeding."
         )
-    return hours
+    return belly, sha
 
 
-def read_p0_dispatch(bundle: Path) -> tuple[np.ndarray, list[str]]:
+def read_p0_dispatch(bundle: Path, year: int) -> tuple[np.ndarray, list[str]]:
     """The ``(n_gen, T)`` P0 dispatch in MW, plus its unit-id order."""
-    path = bundle / "hourly" / f"p0_dispatch_{YEAR}.parquet"
+    path = bundle / "hourly" / f"p0_dispatch_{year}.parquet"
     if not path.exists():
         raise SystemExit(
             f"MISSING {path}. This bundle was not solved with "
@@ -128,7 +172,7 @@ def read_p0_dispatch(bundle: Path) -> tuple[np.ndarray, list[str]]:
     return mw, [str(u) for u in df["unit_id"]]
 
 
-def read_p0_prices(bundle: Path, zone_names: list[str]) -> np.ndarray:
+def read_p0_prices(bundle: Path, zone_names: list[str], year: int) -> np.ndarray:
     """The ``(n_zones, T)`` P0 duals, rows ordered to match ``zone_names``.
 
     The zone NAMES are read from the file rather than re-derived: on a
@@ -136,7 +180,7 @@ def read_p0_prices(bundle: Path, zone_names: list[str]) -> np.ndarray:
     falls through to ``sorted(unique)`` reads every price from the wrong zone
     (the defect caiso-286 section 4 caught in its own probe).
     """
-    path = bundle / "hourly" / f"p0_prices_{YEAR}.parquet"
+    path = bundle / "hourly" / f"p0_prices_{year}.parquet"
     if not path.exists():
         raise SystemExit(f"MISSING {path} (see read_p0_dispatch).")
     df = pd.read_parquet(path)
@@ -213,10 +257,10 @@ def belly_mean_mw(floor: np.ndarray, belly: np.ndarray, rows: np.ndarray) -> flo
     return float(floor[np.ix_(rows, belly)].sum(axis=0).mean())
 
 
-def main(bundle: Path, out_path: Path) -> None:
+def main(bundle: Path, out_path: Path, year: int) -> None:
     from scripts.lib.bundle_fleet import reconstruct_bundle_fleet
 
-    belly = load_belly()
+    belly, belly_sha = derive_belly(year)
 
     # ---- posture, re-asserted from the probe bundle's OWN run_config --------
     cfg = json.loads((bundle / "run_config.json").read_text())["scenario_config"]
@@ -227,26 +271,31 @@ def main(bundle: Path, out_path: Path) -> None:
         raise SystemExit(f"G-R1 FAIL: posture drift (want, got): {diff}")
 
     # ---- the sanctioned zero-LP fleet rebuild ------------------------------
-    state, meta = reconstruct_bundle_fleet(bundle, YEAR)
+    state, meta = reconstruct_bundle_fleet(bundle, year)
     generators = state["fleet"]
     fa = state["fleet_arrays"]
     mc_base = np.asarray(state["mc_base"], dtype=float)
     n_gen = len(generators)
-    if n_gen != EXPECT_FLEET_ROWS:
+    # caiso-286 published 1,705 rows for 2024 ONLY. Fleet size legitimately
+    # differs across years (retirements, additions), so this is gated on 2024
+    # and merely REPORTED elsewhere. The substantive G-R1 content is the
+    # unit-id alignment below, which is year-agnostic and is what makes the
+    # p0_dispatch / floors arrays addressable by the rebuilt fleet at all.
+    if year == 2024 and n_gen != EXPECT_FLEET_ROWS:
         raise SystemExit(
             f"G-R1 FAIL: rebuilt {n_gen} rows, caiso-286 published "
-            f"{EXPECT_FLEET_ROWS}"
+            f"{EXPECT_FLEET_ROWS} for 2024"
         )
 
     uid = [str(g.unit_id) for g in generators]
-    p0_dispatch, p0_uid = read_p0_dispatch(bundle)
+    p0_dispatch, p0_uid = read_p0_dispatch(bundle, year)
     if p0_uid != uid:
         raise SystemExit("G-R1 FAIL: p0_dispatch unit ids are not the fleet's")
 
     zone_names = zone_names_from_fleet(generators, fa.zone_idx)
-    prices = read_p0_prices(bundle, zone_names)
+    prices = read_p0_prices(bundle, zone_names, year)
 
-    fz = np.load(bundle / "floors" / f"{YEAR}_P1.npz", allow_pickle=False)
+    fz = np.load(bundle / "floors" / f"{year}_P1.npz", allow_pickle=False)
     if [str(u) for u in fz["unit_ids"]] != uid:
         raise SystemExit("G-R1 FAIL: floors unit ids are not the fleet's")
     min_gen_raw = fz["min_gen"]  # float32 as stored — the precision it can hold
@@ -314,7 +363,13 @@ def main(bundle: Path, out_path: Path) -> None:
 
     # ---- G-R3 --------------------------------------------------------------
     belly_ra_mean = float(np.where(ra_hours, min_gen, 0.0)[:, belly].sum(axis=0).mean())
-    g_r3 = abs(belly_ra_mean - EXPECT_BELLY_RA_MEAN_MW) <= G_R3_TOL_MW
+    # caiso-286 published this value for 2024 only; other years have no
+    # published expectation, so the figure is REPORTED rather than gated.
+    g_r3 = (
+        abs(belly_ra_mean - EXPECT_BELLY_RA_MEAN_MW) <= G_R3_TOL_MW
+        if year == 2024
+        else None
+    )
 
     # ---- G-S ---------------------------------------------------------------
     R_SA = M["M_none"] - M["M_sa"]
@@ -334,15 +389,17 @@ def main(bundle: Path, out_path: Path) -> None:
 
     rec = {
         "bundle": str(bundle.resolve()).replace(f"{REPO}/", ""),
-        "year": YEAR,
+        "year": year,
         "git_sha_of_bundle": meta.get("git_sha"),
         "posture_reasserted": posture,
         "fleet_rows": n_gen,
+        "fleet_rows_published_2024": EXPECT_FLEET_ROWS if year == 2024 else None,
         "cc_regular_rows": int(cc_rows.size),
         "zone_index_map": dict(enumerate(zone_names)),
         "surplus_floor_value": surplus_value,
         "belly_hours": int(belly.size),
-        "belly_sha256_16": BELLY_SHA16,
+        "belly_sha256_16": belly_sha,
+        "belly_construction": "caiso-285 rule: lowest 876 h of keeper net load (demand - wind - solar)",
         "gates": {
             "G_R1": "PASS",
             "G_R2": "PASS" if g_r2 else "FAIL",
@@ -363,9 +420,9 @@ def main(bundle: Path, out_path: Path) -> None:
             ),
             "G_R2_gen_hours_exceeding_elsewhere": n_exceed,
             "G_R2_absorption_rows_excluded": n_absorb_rows,
-            "G_R3": "PASS" if g_r3 else "FAIL",
+            "G_R3": ("PASS" if g_r3 else "FAIL") if g_r3 is not None else "REPORTED (no published expectation off 2024)",
             "G_R3_belly_ra_mean_mw": belly_ra_mean,
-            "G_R3_expected_mw": EXPECT_BELLY_RA_MEAN_MW,
+            "G_R3_expected_mw": EXPECT_BELLY_RA_MEAN_MW if year == 2024 else None,
         },
         "M_mean_belly_mw": M,
         "removals_mean_belly_mw": {
@@ -396,13 +453,12 @@ if __name__ == "__main__":
         "bundle",
         type=Path,
         nargs="?",
-        default=REPO / "results/calibration/caiso287_instr_2024",
+        default=None,
         help="the instrumented bundle (needs hourly/p0_dispatch_<year>.parquet)",
     )
-    ap.add_argument(
-        "--out",
-        type=Path,
-        default=REPO / "results/calibration/_caiso287_screen_split.json",
-    )
+    ap.add_argument("--year", type=int, required=True)
+    ap.add_argument("--out", type=Path, default=None)
     a = ap.parse_args()
-    main(a.bundle, a.out)
+    bundle = a.bundle or REPO / f"results/calibration/caiso287_instr_{a.year}"
+    out = a.out or REPO / f"results/calibration/_caiso287_screen_split_{a.year}.json"
+    main(bundle, out, a.year)
