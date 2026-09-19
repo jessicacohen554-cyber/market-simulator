@@ -5953,3 +5953,92 @@ still owed.
 **STILL OWED:** the marginal-emission-rate series for PJM, and the empirical check on the G-DRIFT
 verdict. Cost to reproduce: one shard per span on a container whose **binding cgroup** exceeds
 ~13.36 GiB (or with usable swap charged to that cgroup), plus ~10 min of curate + fetch before any LP.
+
+## pjm-h11 — 2026-09-19 — C-1 ARMED (2020 joins the seam ladder), G-DRIFT QUANTIFIED, and the offer-table rebuild is shown to push 2020/2021 the WRONG way
+
+**Orchestrator session. ZERO LP MINUTES** (rule 32 `[R-SHARD]` (a)). Every number below is a
+zero-LP phase 0: a frozen-formula re-derivation, an offer-array delta, a committed-sidecar
+reconstruction and a code-level drift audit. Keeper UNCHANGED at write time
+(`2026-09-11-pjm-d4-4-gasoutage`). **PRECOMMIT:** `docs/handoffs/PRECOMMIT-pjm-h11-2026-09-19.md`.
+
+**C-1 ARMED: 2020 added to `PJM_SEAM_LADDER_BY_YEAR`** (`spec.py`, commit `3b719484`). Closes the
+stale invariant pjm-h10 found — the table covered {2019, 2021–2025} and `firm_export_floor_by_year`
+covers only 2023–2025 and is displaced where the ladder has data, so PJM's keeper year **2020 ran
+NEITHER measured seam mechanism** and fell through to the forecast gas-elastic track. Rule 23
+`[R-FROZEN-DERIVE]` re-derivation over sources that already cover 2020; **zero new parameters, zero
+`ScenarioConfig` fields** (rules 21/24).
+
+**Gates, declared ex ante.** G2 (monotonicity), G3 (no new field/scalar) and G4 — **added by this
+session**, pjm-160's own published acceptance bar — all PASS: offline P9 volume error ≤ **0.04 TWh**,
+duration RMSE **40–276 MW**, import-hour shares within 2–11 points.
+
+**G1 as literally written FAILS, and the failure is PRE-EXISTING. It is reported, not rewritten.**
+477 of 480 rungs reproduce exactly; three do not — 2023 Carolinas.import b2 (24.10 → 24.11), 2024
+Carolinas.export b2 (13.75 → 13.76), 2025 LGEE.import b3 (40.64 → 40.65). The unrounded values sit
+**0.07–0.28 cents from any rounding boundary**, so this is not a tie, not banker's rounding and not a
+ULP; the script's own `round(p, 2)` gives `.11/.76/.65` and the registry holds the **truncations**.
+Three hand-transcription truncations, made when the rows were written. **Decisive:** re-running with
+the original `--years 2023 2024 2025` set — no 2020 anywhere in the frame — moves **the same three
+cents**, and comparing the with-2020 against the without-2020 derivation rung-for-rung gives
+**240 rungs compared, 0 moved**. So **G1's INTENT passes** and the arm adds the 2020 key only. The
+three rungs are deliberately left untouched (fixing them would move three rungs inside the
+CALIBRATED training keeper's own scored years with no data change to cite, rule 23) and go to the
+owner as PRECOMMIT **Q1**.
+
+**EX-ANTE PREDICTION, declared before any solve: C-1 makes 2020's export residual WORSE.** Measured
+from the committed `pjm_d4_4_TP` sidecar by FINDING pjm-h10 §2.4's construction (method validated —
+its `@measured DA` column reproduces **exactly** in all five years): the 2020 ladder's **gross**
+export ceiling at the model's own price is **37.340 TWh**, **below** the **38.810 TWh net** the
+forecast track delivers today, against **41.626** measured. Net ≤ gross, so 2020's shortfall widens
+from −2.816 toward ~−4 TWh. Armed on rules 14 `[R-ACCURATE]` / 23 — a keeper year must run the
+keeper's own mechanism, and 2020's small residual is the compensating estimate rule 14 describes —
+and **never on the residual**; rule 1 `[R-STRUCT]` keeps it in if a gate moves the wrong way. The
+root cause it points at: 2020's model-price→measured-DA gap is **13.441 TWh, the largest of any
+year** (next 2021 at 7.82), the same defect as its CC_REGULAR **+7.5** / COAL_BIT **+16.9 TWh**
+over-run. The ladder converts a hidden price error into a visible volume error.
+
+**G-DRIFT (rule 29 `[R-SCREEN]` (b)) re-audited `f09eddbe → 995f7b7e` and QUANTIFIED** — the number
+pjm-h10 owed. `git fetch origin f09eddbe…` resolves. **The increment since pjm-h10's audit base adds
+NO new LIVE hunk**: `measured_coal_heat_rates` (NWPP-42) and `mid_vintage_exit_carry` (SPP-48) are
+both default-off and **absent from both PJM keeper recipes**, with clean early-return gating; the new
+`interchange/spec.py` registries are NWPP/SOCO and its two new `"PJM": {` blocks sit inside
+**`MISO_SEAM_LADDER_BY_YEAR`** — another ISO's branch; `eia930/envelopes.py` is additive with no PJM
+function body moved.
+
+**The offer-midcurve rebuild is the big LIVE hunk, and scoping it changes the story.** The keeper
+runs `pjm_offer_midcurve_segments = ['LONG_RUN', 'CC_LIKE']`, so **CT_FAST is out of scope** and its
+−50 % move is inert — quoting it would have been wrong. Scoped to what the keeper actually reads:
+
+* **Training keeper `pjm_d4_4_A` (2023–2025): essentially untouched** — mean drift ≤ +0.2 % on a
+  multiplier of 7–12, **2025 byte-identical**. Its CALIBRATED 8/8 is not in question from this hunk.
+* **Touchpoint `pjm_d4_4_TP` (2020–2022): materially changed**, every rung of 2021 included —
+  LONG_RUN **−3.2 / −23.9 / −2.6 %** and CC_LIKE **−11.0 / −7.6 / +11.9 %** for 2020/2021/2022
+  against the pooled fallback it actually used. **The direction is against this lane's target**: the
+  2020/2021 multipliers move DOWN, making those units cheaper, so they dispatch MORE — in exactly
+  the years C1 already fails with CC_REGULAR **+7.5 / +26.2 TWh OVER**. HEAD's rebuild is expected
+  to push C1-2020/2021 **further over**.
+
+So **form 4 stays FALSIFIED and a control at HEAD is EARNED — now with a number**, and an arm result
+cannot be attributed without it.
+
+**NEW, and it is a structural obstacle rather than a hunk: the MER dual is UNGATED.**
+`model/lp/model.py::_marginal_emission_rate` is new at HEAD, has **no `ScenarioConfig` field
+anywhere**, and `solve()` calls it on **every pass of every solve of every ISO**, running a second
+HiGHS `run()` in the post-solve window — **the exact window the pjm-h10 PJM shard was OOM-killed
+in**. The attribution stays genuinely confounded and **this is not evidence the dual caused that
+kill**. What is now fact rather than inference: **no shard can avoid it without the code edit its
+prompt forbids.** PRECOMMIT **Q3** puts the gating question to the owner.
+
+**Also established:** `pjm_d4_4_A` and `pjm_d4_4_TP` carry **byte-identical `scenario_config` across
+all 841 fields** — the PJM keeper is ONE config solved into two bundles, not a partitioned keeper, so
+a single six-year replay reproduces the whole of it.
+
+**C-2 (the gross/net seam split) cannot be closed in the parent**: `hourly/network_<year>.parquet`
+is verified **absent** from both committed bundles' sidecar sets. It rides the shards.
+
+**SHARDS:** two, each one `--years 2020 2021 2022 2023 2024 2025` invocation into one bundle
+(rules 16 / 32(b) / 34(c); per-year fan-out banned) — CONTROL at `0fae26c3` (no 2020 key) and ARM at
+`3b719484` (2020 key present). Differencing two immutable SHAs is what makes the arm a single delta
+**without a new `ScenarioConfig` field**. Both prompts carry the memory gate first (STOP below
+16 GiB, binding cgroup only), the full six-step setup with **nothing on a forbidden list**, the
+in-turn poll loop, and the rule-34(a) `.gitignore`-negation + plain-`git add` bundle push.
