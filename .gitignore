@@ -260,6 +260,13 @@ frontend/data/forecast/runs/
 frontend/data/forecast/manifest.js
 frontend/data/forecast/program-status.js
 
+# Marginal-abatement dashboard. The per-grid-year sidecars
+# (frontend/data/mac/<ISO>-<year>.json) are COMMITTED — they are the record.
+# manifest.js is DERIVED from them by scripts/build_mac_sidecar.py --reindex,
+# which the Pages deploy runs, so it is generated-not-committed exactly as the
+# backcast and forecast indexes are. Rebuild locally for the file:// preview.
+frontend/data/mac/manifest.js
+
 # -----------------------------------------------------------------------------
 # 7. results/ forecast & scenario caches — transient per-ISO LP outputs keyed by
 #    cache_key (results/<ISO>/<cache_key>/). Only results/calibration/ bundles

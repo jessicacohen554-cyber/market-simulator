@@ -26,6 +26,7 @@ on:
       - "scripts/build_codebase_site_backcast.py"
       - "scripts/register_hindcast.py"
       - "scripts/register_forecast_run.py"
+      - "scripts/build_mac_sidecar.py"
       - ".github/workflows/deploy-pages.yml"
   # Manual trigger (Actions tab → this workflow → "Run workflow").
   workflow_dispatch: {}
@@ -85,6 +86,9 @@ jobs:
           # (gitignored — deploy is their single writer). The Run Explorer +
           # Program Status pages read them from frontend/data/forecast/.
           python3 scripts/register_forecast_run.py --reindex --site-dir _site
+          # Marginal-abatement index: derived from the committed per-grid-year
+          # sidecars in frontend/data/mac/. Stdlib only, no model deps.
+          python3 scripts/build_mac_sidecar.py --reindex --site-dir _site
           echo "Staged $(find _site -type f | wc -l) files, $(du -sh _site | cut -f1)"
 
       - name: Configure Pages
