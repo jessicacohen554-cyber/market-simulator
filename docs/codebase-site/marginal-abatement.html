@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Marginal Abatement Cost — Codebase Explorer</title>
+  <meta name="description" content="What it costs, per tonne of CO2, to abate with new wind and new solar on each modeled grid — built on the LP's emissions dual (the marginal emission rate), post-IRA and pre-IRA.">
+  <link rel="stylesheet" href="css/shared.css">
+  <link rel="stylesheet" href="css/site.css">
+  <link rel="stylesheet" href="css/bc-pages.css">
+  <style>
+    /* ======================================================================
+       Marginal Abatement Cost — page-local styles.
+       Archetype: mechanism-matrix.html (a committed-data page that is a pure
+       renderer). Colors are declared once as tokens on .mac-scope and
+       REDECLARED for .section-dark — this design system has NO global dark
+       toggle, only the section-level light/dark rhythm, so both modes are
+       exercised in production rather than behind a switch.
+
+       Every categorical/ordinal color below cleared
+       dataviz scripts/validate_palette.js before it was written here:
+         sequential light  #6FB9E0 #3E9ACB #1B82B4 #0E5E88 #08405E  ALL PASS
+         sequential dark   #BDE6F8 #82CAEB #4AA6D4 #2E7B9C #31586F  ALL PASS
+       Region identity is NOT a categorical channel: swapping the region order
+       would not change meaning, so every region takes the SAME slot-1 hue and
+       position/length carries the value (color-formula.md, "nominal
+       categorical"). That is also why a 9-region chart needs no 9-hue palette.
+       ====================================================================== */
+
+    .mac-scope {
+      --mac-accent:   #0E5E88;   /* post-IRA mark   — 7.06:1 on white */
+      --mac-accent-2: #3E9ACB;   /* pre-IRA mark    — 3.14:1, same hue, 2nd shade */
+      --mac-context:  #94A3B8;   /* de-emphasis (context series) */
+      --mac-warm:     #C2410C;   /* waterfall: cost adds    — 5.18:1 */
+      --mac-cool:     #0E5E88;   /* waterfall: credit subtracts */
+      --mac-total:    #334155;   /* waterfall: subtotal / total */
+      /* STATUS — reserved, never reused as a series color, always shipped with
+         the clock icon + the word. #B45309 measured 4.49:1 on the pending
+         card's own tinted surface (rgb 241,242,246) — one hundredth under AA
+         — so it is stepped one down: 5.73:1 there, 6.40:1 on white. */
+      --mac-pending:  #9A4708;
+      --mac-s1: #6FB9E0; --mac-s2: #3E9ACB; --mac-s3: #1B82B4;
+      --mac-s4: #0E5E88; --mac-s5: #08405E;
+      --mac-grid:      rgba(15,23,42,0.10);
+      --mac-axis:      rgba(15,23,42,0.30);
+      --mac-ink:       var(--text-primary);
+      --mac-ink-2:     var(--text-secondary);
+      --mac-ink-muted: var(--text-muted);
+      --mac-surface:   #FFFFFF;
+      --mac-surface-2: rgba(15,23,42,0.03);
+      --mac-border:    var(--border-light);
+    }
+    .section-dark .mac-scope {
+      --mac-accent:   #82CAEB;   /* 8.66:1 on the navy surface */
+      --mac-accent-2: #4AA6D4;
+      --mac-context:  #94A3B8;   /* 6.11:1 */
+      --mac-warm:     #FDBA74;   /* 9.29:1 */
+      --mac-cool:     #82CAEB;
+      --mac-total:    #CBD5E1;
+      --mac-pending:  #FCD34D;   /* 10.87:1 */
+      --mac-s1: #31586F; --mac-s2: #2E7B9C; --mac-s3: #4AA6D4;
+      --mac-s4: #82CAEB; --mac-s5: #BDE6F8;
+      --mac-grid:      rgba(255,255,255,0.12);
+      --mac-axis:      rgba(255,255,255,0.35);
+      --mac-ink:       #FFFFFF;
+      --mac-ink-2:     rgba(255,255,255,0.88);
+      --mac-ink-muted: rgba(255,255,255,0.68);
+      --mac-surface:   rgba(255,255,255,0.06);
+      --mac-surface-2: rgba(255,255,255,0.04);
+      --mac-border:    rgba(255,255,255,0.14);
+    }
+
+    /* ---- SYNTHETIC banner — deliberately impossible to miss -------------- */
+    .synth-banner {
+      position: sticky; top: var(--nav-height); z-index: 40;
+      background: #7C2D12; color: #FFF7ED;
+      border-bottom: 3px solid #FDBA74;
+      padding: 10px 20px;
+      display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px;
+      font-family: var(--font-body); font-size: 0.88rem; line-height: 1.45;
+    }
+    .synth-banner__tag {
+      font-family: var(--font-mono); font-weight: 700; font-size: 0.76rem;
+      letter-spacing: 0.10em; background: #FDBA74; color: #431407;
+      padding: 3px 10px; border-radius: 4px; white-space: nowrap;
+    }
+    .synth-banner__text { flex: 1 1 380px; }
+    .synth-banner__text b { color: #FFEDD5; }
+    /* The site's default <code> is #0369A1 on a pale tint — invisible on this
+       dark-red surface. The banner supplies its own. */
+    .synth-banner code {
+      background: rgba(255,237,213,0.16); color: #FFEDD5;
+      border-radius: 3px; padding: 1px 5px; font-size: 0.82em;
+    }
+    .synth-banner__states { display: flex; gap: 6px; flex-wrap: wrap; }
+    .synth-banner__states button {
+      font: inherit; font-size: 0.78rem; cursor: pointer;
+      background: rgba(255,255,255,0.10); color: #FFF7ED;
+      border: 1px solid rgba(253,186,116,0.55); border-radius: 999px;
+      padding: 3px 11px;
+    }
+    .synth-banner__states button:hover { background: rgba(255,255,255,0.20); }
+    .synth-banner__states button[aria-pressed="true"] {
+      background: #FDBA74; color: #431407; border-color: #FDBA74; font-weight: 700;
+    }
+    .synth-banner__states button:focus-visible { outline: 2px solid #FFF7ED; outline-offset: 2px; }
+
+    /* ---- hero ------------------------------------------------------------ */
+    .mac-hero { padding: 26px 0 8px; }
+    .mac-hero__eyebrow {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--hydro-text); margin-bottom: 8px;
+    }
+    .mac-hero__finding {
+      font-family: var(--font-heading); font-weight: 700;
+      font-size: clamp(1.15rem, 2.4vw, 1.65rem); line-height: 1.38;
+      letter-spacing: -0.015em; color: var(--mac-ink);
+      max-width: 62ch; margin-bottom: 10px;
+    }
+    .mac-hero__finding em { font-style: normal; color: var(--hydro-text); }
+    .mac-hero__sub {
+      font-size: 0.95rem; color: var(--mac-ink-muted); line-height: 1.6;
+      max-width: 78ch; margin-bottom: 4px;
+    }
+    .mac-hero__selection {
+      font-size: 0.86rem; color: var(--mac-ink-muted); margin-bottom: 16px;
+    }
+    .mac-hero__selection code { font-size: 0.82rem; }
+
+    .mac-progress { display: flex; align-items: center; gap: 12px; margin: 14px 0 18px; flex-wrap: wrap; }
+    .mac-progress__bar {
+      flex: 0 1 260px; height: 9px; border-radius: 999px;
+      background: var(--mac-surface-2); border: 1px solid var(--mac-border);
+      overflow: hidden;
+    }
+    .mac-progress__fill { height: 100%; background: var(--mac-accent); border-radius: 999px; }
+    .mac-progress__label { font-size: 0.85rem; color: var(--mac-ink-2); font-variant-numeric: tabular-nums; }
+    .mac-progress__label b { font-weight: 700; }
+
+    /* ---- KPI tiles ------------------------------------------------------- */
+    .mac-tiles {
+      display: grid; gap: 12px;
+      grid-template-columns: repeat(auto-fill, minmax(196px, 1fr));
+      margin-bottom: 8px;
+    }
+    .mac-tile {
+      background: var(--mac-surface); border: 1px solid var(--mac-border);
+      border-left: 4px solid var(--mac-accent);
+      border-radius: var(--radius-md); padding: 12px 14px;
+    }
+    .mac-tile.is-pending { border-left-style: dashed; border-left-color: var(--mac-pending); }
+    .mac-tile__iso {
+      font-family: var(--font-heading); font-weight: 700; font-size: 0.94rem;
+      color: var(--mac-ink); display: flex; align-items: baseline;
+      justify-content: space-between; gap: 8px;
+    }
+    .mac-tile__val {
+      font-family: var(--font-heading); font-weight: 800;
+      font-size: 1.85rem; letter-spacing: -0.02em; line-height: 1.15;
+      color: var(--mac-ink); font-variant-numeric: tabular-nums; margin-top: 4px;
+    }
+    .mac-tile__val .unit { font-size: 0.82rem; font-weight: 600; color: var(--mac-ink-muted); margin-left: 3px; }
+    .mac-tile__pre {
+      font-size: 0.82rem; color: var(--mac-ink-2); margin-top: 2px;
+      font-variant-numeric: tabular-nums;
+    }
+    .mac-tile__foot {
+      font-size: 0.75rem; color: var(--mac-ink-muted); margin-top: 6px;
+      font-variant-numeric: tabular-nums;
+    }
+    .mac-tile__pendingmsg { font-size: 0.79rem; color: var(--mac-ink-2); margin-top: 6px; line-height: 1.5; }
+    .mac-tile__pendingmsg code { font-size: 0.7rem; word-break: break-all; }
+
+    .pending-chip {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-family: var(--font-body); font-size: 0.68rem; font-weight: 700;
+      letter-spacing: 0.07em; text-transform: uppercase;
+      color: var(--mac-pending); border: 1px solid currentColor;
+      border-radius: 999px; padding: 1px 8px; white-space: nowrap;
+    }
+    .pending-chip svg { width: 11px; height: 11px; flex: 0 0 auto; }
+
+    /* ---- controls -------------------------------------------------------- */
+    .mac-controls {
+      display: flex; flex-wrap: wrap; gap: 14px 26px; align-items: center;
+      padding: 12px 0 4px; margin: 6px 0 18px;
+      border-top: 1px solid var(--mac-border); border-bottom: 1px solid var(--mac-border);
+    }
+    .mac-controls .ctl { display: flex; align-items: center; gap: 8px; }
+    .mac-controls .ctl-label {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--mac-ink-muted);
+    }
+
+    /* ---- figures --------------------------------------------------------- */
+    .mac-figgrid { display: grid; gap: 18px; grid-template-columns: 1fr; }
+    @media (min-width: 1040px) { .mac-figgrid.two { grid-template-columns: 1fr 1fr; } }
+    .mac-fig {
+      background: var(--mac-surface); border: 1px solid var(--mac-border);
+      border-radius: var(--radius-md); padding: 16px 18px 14px;
+    }
+    .mac-fig__head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+    .mac-fig__title {
+      font-family: var(--font-heading); font-weight: 700; font-size: 1.0rem;
+      color: var(--mac-ink); margin: 0;
+    }
+    .mac-fig__sub { font-size: 0.82rem; color: var(--mac-ink-muted); line-height: 1.55; margin: 5px 0 12px; max-width: 76ch; }
+    .mac-fig__toggle {
+      font: inherit; font-size: 0.76rem; cursor: pointer; white-space: nowrap;
+      background: transparent; color: var(--mac-ink-2);
+      border: 1px solid var(--mac-border); border-radius: 6px; padding: 3px 10px;
+    }
+    .mac-fig__toggle:hover { border-color: var(--mac-accent); color: var(--mac-accent); }
+    .mac-fig__toggle:focus-visible { outline: 2px solid var(--mac-accent); outline-offset: 2px; }
+    .mac-fig svg { display: block; width: 100%; height: auto; overflow: visible; }
+    /* The chip's own icon must NOT be caught by the rule above (equal specificity,
+       and that rule is later in the sheet), or it inflates to the figure width. */
+    .mac-fig .pending-chip svg, .pending-chip svg {
+      display: inline-block; width: 11px; height: 11px; flex: 0 0 auto;
+    }
+    .mac-fig text { font-family: var(--font-body); fill: var(--mac-ink-2); }
+    .mac-fig .ax-label { font-size: 11px; fill: var(--mac-ink-muted); }
+    .mac-fig .ax-title { font-size: 11px; font-weight: 600; fill: var(--mac-ink-muted); letter-spacing: 0.03em; }
+    .mac-fig .val-label { font-size: 11.5px; font-weight: 700; fill: var(--mac-ink); font-variant-numeric: tabular-nums; }
+    .mac-fig .row-label { font-size: 12px; font-weight: 600; fill: var(--mac-ink); }
+    .mac-fig .grid-line { stroke: var(--mac-grid); stroke-width: 1; }
+    .mac-fig .zero-line { stroke: var(--mac-axis); stroke-width: 1.5; }
+
+    .mac-legend {
+      display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center;
+      font-size: 0.79rem; color: var(--mac-ink-2); margin-top: 10px;
+    }
+    .mac-legend span { display: inline-flex; align-items: center; gap: 6px; }
+    .mac-legend i { width: 11px; height: 11px; border-radius: 50%; display: inline-block; flex: 0 0 auto; }
+    .mac-legend i.sq { border-radius: 2px; }
+
+    /* ---- data table (the relief channel for sub-3:1 marks) ---------------- */
+    .mac-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; margin-top: 10px; }
+    .mac-table th, .mac-table td { padding: 5px 9px; border-bottom: 1px solid var(--mac-border); text-align: right; }
+    .mac-table th:first-child, .mac-table td:first-child { text-align: left; }
+    .mac-table th { font-weight: 700; color: var(--mac-ink); white-space: nowrap; }
+    .mac-table td { color: var(--mac-ink-2); font-variant-numeric: tabular-nums; }
+    .mac-table td.pend { color: var(--mac-pending); font-weight: 600; }
+    [hidden] { display: none !important; }
+
+    /* ---- meters ---------------------------------------------------------- */
+    .meter-row { display: grid; grid-template-columns: 70px 1fr 122px; gap: 10px; align-items: center; margin-bottom: 7px; }
+    .meter-row__iso { font-size: 0.82rem; font-weight: 600; color: var(--mac-ink); }
+    .meter-row__track {
+      height: 13px; border-radius: 4px; background: var(--mac-surface-2);
+      border: 1px solid var(--mac-border); overflow: hidden; position: relative;
+    }
+    .meter-row__fill { height: 100%; background: var(--mac-s4); }
+    .meter-row__fill.hi { background: var(--mac-warm); }
+    .meter-row__val { font-size: 0.8rem; color: var(--mac-ink-2); font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+    .meter-row__val.pend { color: var(--mac-pending); font-weight: 600; font-size: 0.72rem; }
+
+    /* ---- pending card ---------------------------------------------------- */
+    .pending-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+    .pending-card {
+      border: 1.5px dashed var(--mac-pending); border-radius: var(--radius-md);
+      padding: 13px 15px; background: var(--mac-surface-2);
+    }
+    .pending-card h4 {
+      font-family: var(--font-heading); font-size: 0.95rem; font-weight: 700;
+      color: var(--mac-ink); margin: 0 0 6px; display: flex;
+      justify-content: space-between; align-items: center; gap: 8px;
+    }
+    .pending-card p { font-size: 0.81rem; color: var(--mac-ink-2); line-height: 1.55; margin: 0 0 6px; }
+    .pending-card code { font-size: 0.7rem; word-break: break-all; }
+
+    /* ---- caveats / method ------------------------------------------------ */
+    .mac-caveats { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); }
+    .mac-caveat {
+      border: 1px solid var(--mac-border); border-left: 4px solid var(--mac-warm);
+      border-radius: var(--radius-sm); padding: 11px 14px; background: var(--mac-surface);
+    }
+    .mac-caveat h4 {
+      font-family: var(--font-heading); font-size: 0.85rem; font-weight: 700;
+      color: var(--mac-ink); margin: 0 0 4px;
+    }
+    .mac-caveat p { font-size: 0.82rem; color: var(--mac-ink-2); line-height: 1.58; margin: 0; }
+    .mac-caveat code { font-size: 0.74rem; }
+
+    .mac-h2 {
+      font-family: var(--font-heading); font-size: 1.22rem; font-weight: 700;
+      color: var(--mac-ink); margin: 30px 0 4px;
+    }
+    .mac-h2:first-child { margin-top: 0; }
+    .mac-sub { font-size: 0.88rem; color: var(--mac-ink-muted); line-height: 1.6; max-width: 88ch; margin-bottom: 14px; }
+    .mac-formula {
+      font-family: var(--font-mono); font-size: 0.8rem; line-height: 1.85;
+      background: var(--mac-surface-2); border: 1px solid var(--mac-border);
+      border-radius: var(--radius-sm); padding: 12px 15px; overflow-x: auto;
+      color: var(--mac-ink-2); white-space: pre;
+    }
+    .mac-filelist { font-size: 0.84rem; color: var(--mac-ink-2); line-height: 1.75; }
+    .mac-filelist b { color: var(--mac-ink); }
+
+    @media (max-width: 720px) {
+      .mac-controls { gap: 10px 16px; }
+      .meter-row { grid-template-columns: 58px 1fr 108px; }
+      .synth-banner { font-size: 0.82rem; }
+    }
+  </style>
+</head>
+
+<body>
+<nav id="topNav" aria-label="Site navigation"></nav>
+
+<!-- ======================================================================
+     SYNTHETIC banner. Remove this element, and
+     data/marginal-abatement-synthetic.js, in the commit that first wires
+     frontend/data/mac/<ISO>-<year>.json.
+     ====================================================================== -->
+<div class="synth-banner" role="alert">
+  <span class="synth-banner__tag">SYNTHETIC DATA</span>
+  <span class="synth-banner__text">
+    <b>Every number on this page is a placeholder.</b> No committed run sidecar carries
+    <code>marginal_emission_rate</code> yet, so there is nothing real to render. This is a
+    layout mock seeded at realistic magnitudes from
+    <code>data/marginal-abatement-synthetic.js</code>. <b>Do not cite anything here.</b>
+  </span>
+  <span class="synth-banner__states" role="group" aria-label="Preview the data-arrival states">
+    <button type="button" data-state="empty">0 ready</button>
+    <button type="button" data-state="partial" aria-pressed="true">3 ready</button>
+    <button type="button" data-state="full">9 ready</button>
+  </span>
+</div>
+
+<!-- ====================== LIGHT BAND 1 — hero + ranking ================== -->
+<section class="section-light" style="padding: 26px 24px 46px;">
+<div class="content-section mac-scope">
+
+  <div class="bc-page-header"><h1>Marginal Abatement Cost</h1></div>
+  <p class="bc-page-sub">
+    What it costs, per tonne of CO<sub>2</sub>, to abate with <b>new wind</b> and <b>new solar</b> on each
+    modeled grid — built on the LP's <b>emissions dual</b>, reported post-IRA and pre-IRA.
+  </p>
+
+  <div class="mac-hero">
+    <div class="mac-hero__eyebrow">The finding</div>
+    <p class="mac-hero__finding" id="heroFinding"></p>
+    <p class="mac-hero__sub" id="heroSub"></p>
+    <p class="mac-hero__selection" id="heroSelection"></p>
+
+    <div class="mac-progress">
+      <div class="mac-progress__bar"><div class="mac-progress__fill" id="progFill" style="width:0%"></div></div>
+      <div class="mac-progress__label" id="progLabel"></div>
+    </div>
+  </div>
+
+  <!-- controls -->
+  <div class="mac-controls">
+    <div class="ctl">
+      <span class="ctl-label" id="lblYear">Year</span>
+      <span class="seg-ctrl" id="yearSel" role="group" aria-labelledby="lblYear"></span>
+    </div>
+    <div class="ctl">
+      <span class="ctl-label" id="lblTech">Technology</span>
+      <span class="seg-ctrl" id="techSel" role="group" aria-labelledby="lblTech"></span>
+    </div>
+    <div class="ctl">
+      <span class="ctl-label"><label for="isoSel">Focus grid</label></span>
+      <div class="iso-select-wrap">
+        <span class="iso-dot" id="isoDot"></span>
+        <select class="iso-select" id="isoSel" style="min-width:150px"></select>
+      </div>
+    </div>
+  </div>
+
+  <div class="mac-tiles" id="tiles"></div>
+
+  <!-- CHART 1 — MAC ranking, dumbbell -->
+  <div class="mac-fig" style="margin-top:18px">
+    <div class="mac-fig__head">
+      <h3 class="mac-fig__title" id="rankTitle">Marginal abatement cost by grid</h3>
+      <button class="mac-fig__toggle" type="button" data-table="rank" aria-expanded="false" aria-controls="rankTable">Table</button>
+    </div>
+    <p class="mac-fig__sub">
+      Two values per grid, so the credit can never be mistaken for the cost: the <b>filled</b> dot is
+      post-IRA, the <b>open</b> dot is pre-IRA, and <b>the connector between them is the IRA credit</b>.
+      Grids with no data yet are listed with no marks and a <span class="pending-chip" style="vertical-align:-2px"><svg viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M6 3.2v3.2l2 1.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>pending</span> chip — never a zero, never an interpolation.
+    </p>
+    <div id="rankChart"></div>
+    <div class="mac-legend" id="rankLegend">
+      <span><i style="background:var(--mac-accent)"></i> post-IRA, $ per tonne</span>
+      <span><i style="border:2px solid var(--mac-accent-2);background:var(--mac-surface)"></i> pre-IRA, $ per tonne</span>
+      <span><i class="sq" style="background:var(--mac-pending)"></i> pending — not measured</span>
+    </div>
+    <div id="rankTable" hidden></div>
+  </div>
+
+  <!-- PENDING detail -->
+  <h2 class="mac-h2" id="pendingHead">Grids still pending</h2>
+  <p class="mac-sub">
+    Results arrive one grid at a time, as each lane's control replay lands. A grid is listed here until
+    its keeper bundle carries the dual — never dropped from the roster, never filled from a neighbour
+    (rule 25 <code>[R-ISO-SCOPE]</code>), never zero.
+  </p>
+  <div class="pending-grid" id="pendingGrid"></div>
+
+</div>
+</section>
+
+<div class="section-transition-light-to-dark"></div>
+
+<!-- ============ DARK BAND — the MER evidence (both modes exercised) ====== -->
+<section class="section-dark" style="padding: 48px 24px;">
+<div class="content-section mac-scope">
+
+  <h2 class="mac-h2" style="margin-top:0">It is not an average</h2>
+  <p class="mac-sub">
+    The denominator of every number above is the <b>emissions dual</b> — <code>r_B' B⁻¹</code>, the same
+    triangular solve as the zonal price with the CO<sub>2</sub> rate vector in place of the cost vector.
+    It is <b>not</b> the emission rate of the unit whose marginal cost equals the price; at a tranched,
+    reserve-co-optimized vertex that unit is not even well defined. These two views are where the
+    difference is visible — and where wind's and solar's costs come apart inside one market.
+  </p>
+
+  <div class="mac-figgrid two">
+
+    <!-- CHART 2 — MER duration curve, emphasis -->
+    <div class="mac-fig">
+      <div class="mac-fig__head">
+        <h3 class="mac-fig__title">Marginal emission rate — duration curve</h3>
+        <button class="mac-fig__toggle" type="button" data-table="dur" aria-expanded="false" aria-controls="durTable">Table</button>
+      </div>
+      <p class="mac-fig__sub">
+        The focus grid in colour, every other measured grid in grey for context. The
+        <b>flat tail at the right is the zero-rate share</b> — hours whose marginal resource is
+        zero-carbon <em>or an import</em>, which carries rate 0 by design (G-E3). That tail is
+        caveat 2, drawn rather than claimed.
+      </p>
+      <div id="durChart"></div>
+      <div class="mac-legend" id="durLegend">
+        <span><i class="sq" style="background:var(--mac-accent)"></i> <span id="durFocusName">focus grid</span></span>
+        <span><i class="sq" style="background:var(--mac-context)"></i> other measured grids</span>
+        <span><i class="sq" style="background:var(--mac-warm);opacity:.3"></i> zero-rate tail</span>
+      </div>
+      <div id="durTable" hidden></div>
+    </div>
+
+    <!-- Zero-share meters -->
+    <div class="mac-fig">
+      <div class="mac-fig__head">
+        <h3 class="mac-fig__title">Zero-rate hour share — size caveat 2 yourself</h3>
+      </div>
+      <p class="mac-fig__sub">
+        Share of hours reading exactly 0 tCO<sub>2</sub>/MWh. An import-marginal hour reads 0 and so
+        <b>understates true system consequence</b>. The larger this bar, the more the grid's MAC is
+        an <em>understatement of cost</em> — i.e. its true abatement cost is higher than shown. It is
+        large in CAISO and NEISO, and the import-marginal part of it is called out separately.
+      </p>
+      <div id="meterList"></div>
+      <div class="mac-legend">
+        <span><i class="sq" style="background:var(--mac-s4)"></i> zero-rate hours</span>
+        <span><i class="sq" style="background:var(--mac-warm)"></i> &gt; 20 % — read the MAC as a floor</span>
+      </div>
+    </div>
+
+    <!-- CHART 3 — month x hour-of-day heatmap -->
+    <div class="mac-fig" style="grid-column:1/-1">
+      <div class="mac-fig__head">
+        <h3 class="mac-fig__title" id="heatTitle">Marginal emission rate — month × hour of day</h3>
+        <button class="mac-fig__toggle" type="button" id="shapeToggle" aria-pressed="false">Overlay the technology's hours</button>
+      </div>
+      <p class="mac-fig__sub">
+        This is the <b>mechanism</b> by which wind's and solar's abatement costs differ in the same
+        market: each technology earns the rate only in the hours it actually generates. Press the
+        overlay to dim the hours the selected technology does not produce in — what stays lit is the
+        rate its own shape weights. Without this the two numbers look like two assumptions.
+      </p>
+      <div id="heatChart"></div>
+      <div class="mac-legend" id="heatLegend"></div>
+    </div>
+
+  </div>
+</div>
+</section>
+
+<div class="section-transition-dark-to-light"></div>
+
+<!-- =============== LIGHT BAND 2 — waterfall, caveats, method ============= -->
+<section class="section-light" style="padding: 44px 24px 64px;">
+<div class="content-section mac-scope">
+
+  <!-- CHART 4 — cost stack, $/MWh only -->
+  <div class="mac-fig">
+    <div class="mac-fig__head">
+      <h3 class="mac-fig__title" id="wfTitle">How the number is built</h3>
+      <button class="mac-fig__toggle" type="button" data-table="wf" aria-expanded="false" aria-controls="wfTable">Table</button>
+    </div>
+    <p class="mac-fig__sub">
+      The audit trail for the focus grid, in <b>$/MWh throughout</b> — one axis, one unit. The
+      conversion to $/tonne is the single division at the end, stated rather than drawn, because a
+      waterfall that changes units mid-chart is a two-scale chart wearing a bridge costume.
+    </p>
+    <div id="wfChart"></div>
+    <div class="mac-legend" id="wfLegend">
+      <span><i class="sq" style="background:var(--mac-warm)"></i> adds to cost</span>
+      <span><i class="sq" style="background:var(--mac-cool)"></i> subtracts from cost</span>
+      <span><i class="sq" style="background:var(--mac-total)"></i> subtotal</span>
+    </div>
+    <div id="wfTable" hidden></div>
+  </div>
+
+  <h2 class="mac-h2">What this number is not</h2>
+  <p class="mac-sub">Visible, not footnoted. Each of these changes how the figures above should be read.</p>
+  <div class="mac-caveats">
+
+    <div class="mac-caveat">
+      <h4>1 · The dual is one-sided, and this is the DOWN derivative</h4>
+      <p>At a degenerate vertex the derivative genuinely has two sides and HiGHS reports the down one.
+      That is the <b>correct direction for abatement</b> — a new VRE MWh removes net load — but it is
+      <b>not</b> the cost of serving one more MWh, and it should not be quoted as one. Both sides are
+      pinned by <code>tests/unit/model/test_marginal_emission_rate.py</code>.</p>
+    </div>
+
+    <div class="mac-caveat">
+      <h4>2 · Zero-carbon <em>and import</em> columns carry rate 0 by design</h4>
+      <p>Imports carry no emissions in this model (<code>import_nodes.py</code>; gap G-E3), so an
+      import-marginal hour reads 0 and <b>understates true system consequence</b>. The zero-share meter
+      above sizes it per grid — it is large in CAISO and NEISO, where imports are 10–30 % of energy.</p>
+    </div>
+
+    <div class="mac-caveat">
+      <h4>3 · New-build capex and base CF are NATIONAL</h4>
+      <p><code>cf_base</code> is 0.38 wind / 0.27 solar in <em>every</em> grid, and capex is one ATB
+      number. Differences between grids come through <b>capture price and expected CF only</b> — never
+      through resource-quality-differentiated capex. A windy grid does not get cheaper turbines here.</p>
+    </div>
+
+    <div class="mac-caveat">
+      <h4>4 · LCOE excludes integration, interconnection and transmission</h4>
+      <p>None of those are in the cost. Curtailment enters <em>only</em> through <code>cf_expected</code>
+      being the incumbent fleet's delivered CF — a proxy for a new project's, not a project-specific
+      curtailment estimate.</p>
+    </div>
+
+    <div class="mac-caveat">
+      <h4>5 · These are model-SELECTION numbers, not forecast skill</h4>
+      <p>Since rule 22's <code>[R-HOLDOUT]</code> removal there is <b>no certified out-of-sample year
+      anywhere in this program</b> — no year is protected from being iterated against. Nothing on this
+      page is evidence of forecast skill, and it must not be quoted as such.</p>
+    </div>
+
+    <div class="mac-caveat">
+      <h4>6 · Two v1 approximations, both stated at the gate</h4>
+      <p><b>(a)</b> The rate and the price are <em>per zone</em>; the technology shape is
+      <em>ISO-wide</em>. v1 collapses zones <b>load-weighted</b>, so a grid whose VRE sits in one
+      congested corner is scored at its load centre's rate. <b>(b)</b> The capture price is the
+      <em>settled</em> price (overlays in); the rate is raw against the LP's own energy dual. Both are
+      quantified under Method.</p>
+    </div>
+
+  </div>
+
+  <h2 class="mac-h2">Method</h2>
+  <p class="mac-sub">
+    Everything here is <b>zero-LP</b>: it is computed from committed run sidecars, never by replaying
+    a solve.
+  </p>
+
+  <div class="mac-formula">MAC ($/tCO2) = (cost per delivered MWh  −  energy capture price) / MER_tech
+
+  cost per delivered MWh = compute_lcoe(tech, year, config) × cf_base / cf_expected
+  energy capture price   = Σ(price × tech_shape) / Σ(tech_shape)
+  MER_tech               = Σ(MER   × tech_shape) / Σ(tech_shape)</div>
+
+  <p class="mac-sub" style="margin-top:14px">
+    <b>Post-IRA vs pre-IRA.</b> They differ by roughly 3×, so the page never shows one without the
+    other. Pre-IRA strips each credit at the layer <code>compute_lcoe</code> applies it: wind adds back
+    <code>wind_ptc_levelized_per_mwh</code> in $/MWh (levelized <code>CRF(life)/CRF(window)</code>, not
+    over the full book life); solar re-annualizes from <code>capex_wright_per_kw</code> instead of
+    <code>capex_after_credit_per_kw</code> — the ITC is undone <em>before</em> the capital recovery
+    factor, never as a $/MWh subtraction.
+  </p>
+
+  <p class="mac-sub">
+    <b>Which price the capture calculation uses — the settled <code>price</code> column, overlays
+    included.</b> A project is paid the settled price, so the revenue side of the comparison uses it.
+    The marginal emission rate is written <em>raw</em> against the LP's own energy dual, deliberately:
+    the ORDC / RTORDPA / DAM-AS adders are post-solve price adders that leave dispatch untouched, so
+    they cannot move a CO<sub>2</sub> response. The mismatch is therefore disclosed numerically rather
+    than asserted — the overlay's own $/MWh is carried per grid-year and shown on the tile. The overlay
+    branch is gated on <code>ercot_*</code> flags only, so it is non-zero for ERCOT and
+    <b>exactly 0.00 for every other grid</b>.
+  </p>
+
+  <p class="mac-sub">
+    <b>The zonal collapse, and its bias.</b> <code>marginal_emission_rate</code> and
+    <code>price</code> are per zone-hour; <code>class_hourly_&lt;year&gt;.parquet</code> is ISO-wide
+    with no zone column, and no committed sidecar carries per-zone VRE. v1 therefore collapses
+    load-weighted before applying the ISO-wide shape. VRE is concentrated in particular zones (ERCOT
+    West/Panhandle, CAISO SP15, MISO North/West); in a congested hour that zone's rate differs from the
+    load centre's and this collapse cannot see it. <b>The direction of the bias is not signable a
+    priori.</b> Routed, not absorbed: the LP already holds per-zone <code>wind_dispatched</code> /
+    <code>solar_dispatched</code>, so a <code>hourly/vre_zone_&lt;year&gt;.parquet</code> sidecar closes
+    it exactly — a v2 item on the solve path.
+  </p>
+
+  <p class="mac-filelist" style="margin-top:16px">
+    <b>Inputs</b> (per grid-year, from that grid's designated keeper bundle, pass P1):<br>
+    · <code>hourly/system_&lt;year&gt;.parquet</code> — per zone-hour <code>price</code>,
+      <code>demand</code>, <code>marginal_emission_rate</code><br>
+    · <code>hourly/class_hourly_&lt;year&gt;.parquet</code> — hourly MW by class, incl. the wind/solar
+      pseudo-units (the technology shape)<br>
+    · <code>run_config_&lt;year&gt;.json</code> — rebuilds the <code>ScenarioConfig</code> for
+      <code>compute_lcoe</code><br>
+    · installed wind/solar MW — the one input no sidecar carries, resolved from EIA-860 at the keeper's
+      own vintage and written into the artifact <b>with its provenance</b>. Unresolvable ⇒ the grid-year
+      stays <b>pending</b>, never estimated.<br>
+    <br>
+    <b>Artifacts</b> — <b>committed</b>: <code>frontend/data/mac/&lt;ISO&gt;-&lt;year&gt;.json</code>
+    (the scalars, a 200-point MER duration curve, and a 12 × 24 month × hour-of-day MER grid).
+    <b>Generated at deploy</b> (gitignored, the Pages deploy its single writer):
+    <code>frontend/data/mac/manifest.js</code>. Same committed-sidecar / generated-index split the
+    backcast namespace already uses. The page never parses parquet.
+  </p>
+
+</div>
+</section>
+
+<script src="data/marginal-abatement-synthetic.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/shared.js"></script>
+<script src="js/marginal-abatement.js"></script>
+</body>
+</html>

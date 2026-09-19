@@ -45,6 +45,7 @@
         { label: 'Scarcity Deep Dive',   href: 'scarcity-deep-dive.html', num: '&#9889;' },
         { label: 'Model Validity',       href: 'model-validity.html',     num: '&#8982;' },
         { label: 'Mechanism Matrix',     href: 'mechanism-matrix.html',   num: '&#9638;' },
+        { label: 'Marginal Abatement',   href: 'marginal-abatement.html', num: '&#9711;' },
         { label: 'Data Completeness',    href: 'data-completeness.html',  num: '&#9745;' },
       ],
     },
