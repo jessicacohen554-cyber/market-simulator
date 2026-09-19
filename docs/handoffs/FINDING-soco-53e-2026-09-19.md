@@ -39,7 +39,8 @@ is not fixed** — which the PRECOMMIT said first, with the number.
 `audit_keepers --check --iso SOCO` returns **0 failures**. The promotion also surfaced a defect
 that is this lane's own — the solve shard ran on **unpinned** dependencies, including HiGHS 1.15.1
 against the control's pinned 1.14.0 — which is reported at full magnitude in §10.2 with the
-evidence that bounds it and the pin-confirm re-solve that closes it.
+evidence that bounds it — and which is **not** closed, because the pin-confirm re-solve was
+abandoned unfinished (§10.3).
 
 ---
 
@@ -374,9 +375,17 @@ becomes computable for this promotion**, because the outgoing keeper's bundle
 - **The shard container is ARCHIVED** (rule 33(a): fetched, checked out, config-signature and
   artifact-sha verified first — and the flag confirmed to have BITTEN, by the arm's per-plant `mc`
   reproducing the zero-LP prediction to four decimals). **Its branch `claude/soco-53e-span` is
-  DELIBERATELY KEPT** (rule 33(f) step 3): it carries the per-plant layer a registration needs, and
-  deleting it while the promotion is undecided is the ercot-255 failure mode rule 31 forbids in
-  those words. It goes once the owner rules.
+  DELIBERATELY KEPT, and stays kept even now that the owner has ruled** (rule 33(f) step 3). The
+  ruling was PROMOTE, so this branch carries the **current keeper's** full per-plant layer, not a
+  declined candidate's: `main` holds 17 of the bundle's files and this branch holds all 34, so
+  `dispatch/*_P1.parquet`, `floors/`, `unit_hourly`, `system.parquet` and the rest exist NOWHERE
+  else. Deleting it would strand the layer a re-registration or any unit-level diagnostic needs and
+  would kill the recovery command cited in this doc, in `keepers/SOCO.json` and in the matrix
+  stamp — which rule 33(f) step 4 forbids leaving dead. It is not a stale result. (A deletion was
+  attempted during the owner's shard sweep and refused with **HTTP 403**, which rule 33(f)(5)
+  documents as this environment's behaviour: the session credential can create and update refs but
+  not delete them. No harm done, but the attempt was the wrong call and is recorded rather than
+  quietly dropped.)
 - **Nothing was deleted.** The two parity-red bundle dirs are named, not removed.
 
 ---
@@ -440,10 +449,36 @@ hard stop if any version differs from the pins. Its result is recorded in §10.3
 container image no longer ships the pinned scientific stack, so **any** lane that installs
 ad hoc will silently solve off-pin — an environment finding for the desk, not for SOCO.
 
-### 10.3 THE PIN-CONFIRM RE-SOLVE
+### 10.3 THE PIN-CONFIRM RE-SOLVE WAS **ABANDONED**, AND THE E14 QUESTION STAYS OPEN
 
-*(recorded below when the shard reports; the promotion stands either way, and if the pinned solve
-differs materially the keeper is re-registered from it.)*
+**It did not complete, and no pinned bundle exists.** The shard was launched
+(`results/calibration/soco53e_pinned`, same config, `pip install -r requirements.txt` with a hard
+stop on any off-pin version), reported *"solve running (PID 722); fleet build underway"*, and then
+**ended its turn instead of blocking on the process** — the same shard-lifecycle defect that
+wastes a container. It could not be woken: `SendMessage` reports the session unreachable, because
+peer messaging only reaches sessions on this machine and a cloud shard is not one. The owner then
+directed a shard sweep, and it was **archived unfinished**. Branch `claude/soco-53e-pinned` was
+never pushed and does not exist.
+
+**So the E14 dependency drift on this keeper is NOT closed — it is BOUNDED, and the two are
+different claims.** What stands is §10.2's evidence: 28 of 45 class-years difference to **exactly
+0.0 MWh** across ten classes, the moved classes are exactly the ones the mechanism prices, and the
+per-plant marginal costs reproduce the zero-LP prediction to four decimals. That is strong
+circumstantial evidence that HiGHS 1.15.1 returned the same solution 1.14.0 would have, and it is
+**not** the direct confirmation a pinned re-solve would give.
+
+**Consequence for the keeper, stated plainly:** `2026-09-19-soco53e-measured-st-gas` remains SOCO's
+keeper and its determination, gates and per-plant results are unaffected by this — but its
+`environment.packages` record an off-pin solve, `audit_keepers` will keep emitting four E14
+warnings against it, and **no run in this repo has yet demonstrated that SOCO's LP is invariant to
+that HiGHS minor version.** A future lane that needs a clean controlled A/B against this keeper
+should re-run the pin-confirm first; the recipe is in this section and costs ~10 minutes of one
+shard. `FINDING-soco-53f`'s handoff carries it as its first task.
+
+**The re-usable lesson, which is bigger than this lane:** a shard prompt must tell the shard to
+**block on its solve** (`wait`, or an `until` loop on the PID) rather than end a turn while a
+background process runs, because a parent cannot read a shard's disk and an idle cloud shard
+cannot be poked back awake.
 
 ---
 
