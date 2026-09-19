@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-19-soco53e-measured-st-gas",
+  "label": "soco53e measured st gas",
+  "date": "2026-09-19",
+  "shorthand": "soco53e-measured-st-gas",
+  "definition": "Calibration run from bundle soco53e_st_hr.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "SOCO",
+  "file": "frontend/data/backcast/runs/2026-09-19-soco53e-measured-st-gas.js",
+  "bundle": "results/calibration/soco53e_st_hr"
+}
