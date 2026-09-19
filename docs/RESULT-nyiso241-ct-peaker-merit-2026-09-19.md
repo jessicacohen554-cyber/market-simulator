@@ -354,3 +354,37 @@ promotion and the delete (35(e)), not after:
 **Arm B's bundle is pruned from `main` and remains on `claude/nyiso241-arm-b` at
 `b97cbede095577f7e1682a136f2282b67b13592d`.** Its numbers live in §4 of this document, which is
 what rule 29 `[R-SCREEN]` (c) asks of a refused arm's record.
+
+---
+
+## 11. SHARD AND BRANCH DISPOSITION (rule 33 `[R-SHARD-ARCHIVE]`)
+
+**Shards: both archived, nothing left running.** This session launched exactly two
+(`session_019N9AfLmpDWhsMzXgWXF8Y7` arm A, `session_01EvoDzAQniSPzd8ReC8Fw3y` arm B) and both were
+archived per 33(a) only after the parent had fetched, checked out and verified their bundles —
+config signature, `git ls-tree` file count, and the shared-input hash match. A `list_sessions`
+sweep confirms no other session carries this one's `parent_session_id`; every other live container
+in the account belongs to another lane (miso-263, pjm-h11, nwpp-42, soco-53e) and is **not this
+lane's to touch**.
+
+**Branches — two kept deliberately, one wanted gone and refused by the remote.**
+
+| branch | disposition |
+|---|---|
+| `claude/nyiso-ct-peaker-merit-6kyxcd` | **KEEP** — carries the promotion commit `6ba9ee2f`, not yet merged to `main`. |
+| `claude/nyiso241-arm-a` @ `2d15779b98…` | **KEEP** — the **only** copy of the designated keeper's full-fidelity bundle including `dispatch/<yr>_P1.parquet` and `hourly/unit_hourly_<yr>.parquet`. `main` carries the slim keeper set (25 files), which is the committed shape the superseded keeper also had, so the per-plant layer exists nowhere else. The nyiso-242 handoff cites this SHA for its phase 0. Deleting it would break that and cost a re-solve (rule 33(f)(3)/(4)). |
+| `claude/nyiso241-arm-b` @ `b97cbede09…` | **DELETION ATTEMPTED AND REFUSED.** Its content is disposable — the arm is refused, pruned from `main`, and §4 carries every number this lane will ever cite from it. `git push origin --delete` returns **HTTP 403 on both HTTP/2 and HTTP/1.1**, and the GitHub MCP server exposes `create_branch` with no counterpart, which is exactly the limitation rule 33(f)(5) records: this session's credential can create and update refs but not delete them. **Reported rather than claimed as done.** The environment's own auto-delete on merge is the normal disposal route, and this branch will never merge. |
+
+**Local working copies removed** (rule 31 `[R-RETAIN]` trigger (i) — the owner has ruled on
+promotion and these are not needed): the four `results/calibration/nyiso_mer_2026-09-19_<yr>`
+checkouts, ~155 MB. Each SHA was re-verified as still advertised by the remote *before* deletion,
+even though their shard branches are gone. This also took
+`check_registry_payload_parity.py` from **6 local REDs to 1**, and the survivor
+(`caiso279_ablate_dswcouple_span`) is pre-existing and not NYISO's.
+
+**The nyiso-240 MER open question is CLOSED BY CONSTRUCTION, not by a ruling.** It asked how to make
+the `marginal_emission_rate` series durable without committing an unregistered bundle or adding an
+allowlist entry. The promoted keeper's `hourly/system_<yr>.parquet` **carries the column for all
+four years** and is committed to `main` under rule 15's keeper-sidecar requirement, so the
+marginal-abatement page reads it from the keeper. No allowlist entry, no unregistered dir, no
+decision needed.
