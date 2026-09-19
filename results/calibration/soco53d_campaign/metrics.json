@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-09-17-soco53-measured-ct-hr",
+  "run_id": "2026-09-19-soco53d-campaign-commitment",
   "iso": "SOCO",
-  "label": "soco53 measured ct hr",
+  "label": "soco53d campaign commitment",
   "target_years": [
     2023,
     2024,
@@ -22,7 +22,7 @@
   "determination": "NOT-YET",
   "reasons": [
     "undocumented out-of-tolerance (FAIL) criteria: fuelmix",
-    "PRICE UNSCORED \u2014 no actual_lmp.json block exists for SOCO, so C3a mean LMP, C3b price duration/shape and C3c price tail / scarcity (RT hourly) are NOT SCORED in any year (2023, 2024, 2025); this determination is scored on C1/C2/C4/C6/C8 ONLY and certifies NO price level, shape or tail (owner ruling card S2, 2026-09-13; rubric v3.8). It is not a CALIBRATED reading. Model system load-weighted mean LMP, MODEL-ONLY and UNVERIFIED \u2014 no measured reference exists to compare against: 2023: $32.37/MWh, 2024: $30.51/MWh, 2025: $198.06/MWh."
+    "PRICE UNSCORED \u2014 no actual_lmp.json block exists for SOCO, so C3a mean LMP, C3b price duration/shape and C3c price tail / scarcity (RT hourly) are NOT SCORED in any year (2023, 2024, 2025); this determination is scored on C1/C2/C4/C6/C8 ONLY and certifies NO price level, shape or tail (owner ruling card S2, 2026-09-13; rubric v3.8). It is not a CALIBRATED reading. Model system load-weighted mean LMP, MODEL-ONLY and UNVERIFIED \u2014 no measured reference exists to compare against: 2023: $32.34/MWh, 2024: $30.27/MWh, 2025: $197.70/MWh."
   ],
   "notes": [],
   "criteria": {
@@ -87,9 +87,9 @@
     "co2": {
       "label": "C5a CO2 vs eGRID (REPORTED-ONLY, v2.9 \u2014 see the CRITERIA note)",
       "years": {
-        "2023": "-5.6%",
-        "2024": "-9.0%",
-        "2025": "+4.8%"
+        "2023": "-6.0%",
+        "2024": "-10.0%",
+        "2025": "+3.9%"
       }
     },
     "diurnal_amplitude": {
@@ -117,14 +117,14 @@
       "ST_CHP"
     ],
     "all": {
-      "pass": 12,
+      "pass": 13,
       "total": 14
     },
     "free": {
-      "pass": 8,
+      "pass": 9,
       "total": 10
     },
-    "headline": "C1 all 12/14 \u00b7 free 8/10"
+    "headline": "C1 all 13/14 \u00b7 free 9/10"
   },
   "price_unscored": {
     "basis": "no actual_lmp.json block for SOCO",
@@ -141,9 +141,9 @@
       "forced_share"
     ],
     "model_mean_lmp_by_year": {
-      "2023": 32.37,
-      "2024": 30.51,
-      "2025": 198.06
+      "2023": 32.34,
+      "2024": 30.27,
+      "2025": 197.7
     }
   }
 }

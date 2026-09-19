@@ -48,6 +48,11 @@ _BRIDGE_BUILDERS: dict[str, str] = {
     # SPP-44: the SPP leg of the gas commitment bridge family, registered on
     # the roster in the same PR that wires it (the miso-113 lesson).
     "build_spp_gas_bridge_p1_prep": "spp_bridge_prep",
+    # SOCO-53d: the SOCO gas-steam campaign commitment floor, registered on
+    # the roster in the same PR that wires it (the miso-113 lesson). This test
+    # caught it missing from two of the three orchestrators before the arm was
+    # ever solved, which is exactly what it is for.
+    "build_soco_gas_st_campaign_p1_prep": "soco_campaign_prep",
 }
 
 _ORCHESTRATORS: tuple[str, ...] = (

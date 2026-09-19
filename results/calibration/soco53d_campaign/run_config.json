@@ -1,14 +1,14 @@
 {
-  "timestamp": "2026-09-17T03:53:12",
+  "timestamp": "2026-09-19T17:49:31",
   "git": {
-    "sha": "0f6bd121",
-    "basis_sha": "0f6bd1215b13dcc5a0fc4be5b5ab17dcb74330b1",
+    "sha": "0b3f2fdc",
+    "basis_sha": "0b3f2fdcd0ebc41bdf96cd90406b40dc979596b5",
     "branch": "HEAD",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "soco-53: measured CT_PEAKER loaded heat rates from SOCO's own CAMPD record (rule 14 [R-ACCURATE]); all-defaults otherwise, every offer band 1.0, authorized_price_tuning NONE",
+  "model_changes_note": "soco-53d: P1-native gas-steam CAMPAIGN commitment floor on SOCO's four campaign-duty boilers at their own measured plant-basis minimum stable load and minimum campaign duration (rules 1/14/17/19); measured_ct_heat_rates + egrid_family_heat_rates retained from the keeper; every offer band 1.0, authorized_price_tuning NONE",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "SOCO",
@@ -55,7 +55,7 @@
     "nyiso_dynamic_reserve_requirements": null,
     "nyiso_hydro_reserve_eligible": null,
     "nyiso_scr_edrp_reserve_eligible": null,
-    "git_sha": "0f6bd121"
+    "git_sha": "0b3f2fdc"
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -244,7 +244,7 @@
     "measured_ct_heat_rates": true,
     "measured_chp_heat_rates": false,
     "egrid_identity_heat_rates": false,
-    "egrid_family_heat_rates": false,
+    "egrid_family_heat_rates": true,
     "egrid_steam_collapse_heat_rates": false,
     "cc_steam_part_capacity": false,
     "cc_steam_part_reclass": false,
@@ -393,6 +393,7 @@
     "nyiso_gas_bridge_online_hours": false,
     "nyiso_gas_bridge_state_floor_min_run": false,
     "spp_gas_commitment_bridge": false,
+    "soco_gas_st_campaign_commitment": true,
     "nyiso_chp_btm_measured": false,
     "nyiso_spin_reserve_online": false,
     "nyiso_synchronised_reserve": false,
@@ -528,6 +529,7 @@
     "vintage_capacity_ramp": true,
     "storage_vintage_ramp": false,
     "coal_prb_contract_passthrough": 1.0,
+    "coal_prb_proxy_own_iso": false,
     "coal_prb_passthrough": 1.0,
     "coal_prb_passthrough_sigmoid": true,
     "coal_prb_passthrough_floor": null,
@@ -1056,11 +1058,11 @@
     "rows": 180,
     "moved": {},
     "epochs": [],
-    "git_sha": "0f6bd121"
+    "git_sha": "0b3f2fdc"
   },
   "environment": {
     "python_version": "3.11.15",
-    "platform": "Linux-6.18.44-fc-v33-x86_64-with-glibc2.39",
+    "platform": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
     "packages": {
       "highspy": "1.14.0",
       "numpy": "2.4.6",

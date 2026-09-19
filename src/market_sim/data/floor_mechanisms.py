@@ -188,6 +188,25 @@ MECH_ERCOT_RUC_COMMITMENT: int = 23
 # CC_REGULAR / ST_GAS / CT_PEAKER), so this stacks on nothing. A merchant
 # commitment floor — subject to the D-2 forced-share gate.
 MECH_SPP_GAS_COMMITMENT_BRIDGE: int = 24
+# soco_gas_st_campaign_commitment (SOCO-53d,
+# pipeline.commitment.build_soco_gas_st_campaign_p1_prep): the P1-native
+# CAMPAIGN commitment floor on SOCO's gas-STEAM fleet. Same ISO-neutral
+# detector as the CAISO / ERCOT / NYISO / SPP legs
+# (model.commitment.caiso_ra_mustoffer_min_gen) but a DIFFERENT leg of it: the
+# measured minimum-RUN extension plus the online-hours LSL state floor, with
+# the gap-bridge legs deliberately NOT armed. SOCO's boilers do not two-shift
+# — 98.6 % of their downtime-hours sit in gaps longer than 72 h, which is why
+# the gap bridge is recorded `R` for this ISO (SOCO-53) — they synchronize for
+# CAMPAIGNS: 5.0-9.7 starts a year and 64-192 h minimum campaigns at plant
+# grain, against 10-349 model starts of 2-11 h median. Level and horizon are
+# per-plant measured (data.gas_st_campaign; rule 25 [R-ISO-SCOPE] — SOCO's own
+# plants only). Its own id, the MECH_SPP_GAS_COMMITMENT_BRIDGE precedent, so
+# D-2/D-4 attribution and per-ISO arming stay independent. Rule 19
+# [R-ONE-MECH]: SOCO's gas classes carry NO other floor, bridge, drag or
+# posture (keeper D-2: 0.0 % forced on CC_REGULAR / ST_GAS / CT_PEAKER / COAL),
+# so this stacks on nothing. A merchant commitment floor — subject to the D-2
+# forced-share gate.
+MECH_SOCO_GAS_ST_CAMPAIGN: int = 25
 
 MECH_NAMES: dict[int, str] = {
     MECH_NONE: "none",
@@ -215,6 +234,7 @@ MECH_NAMES: dict[int, str] = {
     MECH_MISO_COAL_NIGHT_FLOOR: "miso_coal_night_floor",
     MECH_ERCOT_RUC_COMMITMENT: "ercot_ruc_commitment",
     MECH_SPP_GAS_COMMITMENT_BRIDGE: "spp_gas_commitment_bridge",
+    MECH_SOCO_GAS_ST_CAMPAIGN: "soco_gas_st_campaign_commitment",
 }
 
 # Mechanisms whose forced energy is exempt from the D-2 merchant-class gates
@@ -283,6 +303,9 @@ MECH_ABLATION_FIELDS: dict[int, dict[str, object]] = {
     # SPP-44: the SPP leg of the gas commitment bridge family, ABLATED like
     # the ERCOT and NYISO legs (a visible, switchable merchant floor).
     MECH_SPP_GAS_COMMITMENT_BRIDGE: {"spp_gas_commitment_bridge": False},
+    # SOCO-53d: the SOCO gas-steam CAMPAIGN commitment floor, ABLATED like
+    # every other leg of the family (a visible, switchable merchant floor).
+    MECH_SOCO_GAS_ST_CAMPAIGN: {"soco_gas_st_campaign_commitment": False},
 }
 
 # Mechanisms KEPT in the ablation twin (carry NO ablation entry): the structural

@@ -1,6 +1,6 @@
 {
  "schema": "legitimacy-diagnostics/v1",
- "bundle": "/home/user/market-simulator/results/calibration/soco53_measured_ct_hr",
+ "bundle": "/home/user/market-simulator/results/calibration/soco53d_campaign",
  "iso": "SOCO",
  "years": [
   2023,
@@ -30,30 +30,30 @@
     {
      "year": 2023,
      "class": "CC_REGULAR",
-     "profile_r": 0.983,
+     "profile_r": 0.977,
      "model_offpeak_cv": 0.019,
      "actual_offpeak_cv": 0.059,
-     "cv_ratio": 0.314,
+     "cv_ratio": 0.326,
      "gated": false,
      "verdict": "pass"
     },
     {
      "year": 2023,
      "class": "COAL_BIT",
-     "profile_r": 0.433,
+     "profile_r": 0.474,
      "model_offpeak_cv": 0.0,
      "actual_offpeak_cv": 0.044,
-     "cv_ratio": 0.002,
+     "cv_ratio": 0.001,
      "gated": true,
      "verdict": "FAIL"
     },
     {
      "year": 2023,
      "class": "COAL_PRB",
-     "profile_r": 0.986,
-     "model_offpeak_cv": 0.082,
+     "profile_r": 0.984,
+     "model_offpeak_cv": 0.079,
      "actual_offpeak_cv": 0.145,
-     "cv_ratio": 0.566,
+     "cv_ratio": 0.546,
      "gated": true,
      "verdict": "pass"
     },
@@ -70,20 +70,20 @@
     {
      "year": 2023,
      "class": "CT_PEAKER",
-     "profile_r": 0.95,
-     "model_offpeak_cv": 0.671,
+     "profile_r": 0.949,
+     "model_offpeak_cv": 0.669,
      "actual_offpeak_cv": 1.218,
-     "cv_ratio": 0.551,
+     "cv_ratio": 0.55,
      "gated": true,
      "verdict": "pass"
     },
     {
      "year": 2023,
      "class": "ST_GAS",
-     "profile_r": 0.982,
-     "model_offpeak_cv": 0.662,
+     "profile_r": 0.984,
+     "model_offpeak_cv": 0.545,
      "actual_offpeak_cv": 0.281,
-     "cv_ratio": 2.358,
+     "cv_ratio": 1.942,
      "gated": true,
      "verdict": "pass"
     },
@@ -100,30 +100,30 @@
     {
      "year": 2024,
      "class": "CC_REGULAR",
-     "profile_r": 0.988,
-     "model_offpeak_cv": 0.029,
+     "profile_r": 0.971,
+     "model_offpeak_cv": 0.028,
      "actual_offpeak_cv": 0.056,
-     "cv_ratio": 0.525,
+     "cv_ratio": 0.496,
      "gated": false,
      "verdict": "pass"
     },
     {
      "year": 2024,
      "class": "COAL_BIT",
-     "profile_r": 0.942,
-     "model_offpeak_cv": 0.018,
+     "profile_r": 0.941,
+     "model_offpeak_cv": 0.008,
      "actual_offpeak_cv": 0.042,
-     "cv_ratio": 0.415,
+     "cv_ratio": 0.178,
      "gated": true,
      "verdict": "FAIL"
     },
     {
      "year": 2024,
      "class": "COAL_PRB",
-     "profile_r": 0.964,
-     "model_offpeak_cv": 0.07,
+     "profile_r": 0.955,
+     "model_offpeak_cv": 0.063,
      "actual_offpeak_cv": 0.122,
-     "cv_ratio": 0.575,
+     "cv_ratio": 0.52,
      "gated": true,
      "verdict": "pass"
     },
@@ -141,19 +141,19 @@
      "year": 2024,
      "class": "CT_PEAKER",
      "profile_r": 0.968,
-     "model_offpeak_cv": 0.628,
+     "model_offpeak_cv": 0.677,
      "actual_offpeak_cv": 1.181,
-     "cv_ratio": 0.532,
+     "cv_ratio": 0.573,
      "gated": true,
      "verdict": "pass"
     },
     {
      "year": 2024,
      "class": "ST_GAS",
-     "profile_r": 0.992,
-     "model_offpeak_cv": 0.798,
+     "profile_r": 0.991,
+     "model_offpeak_cv": 0.658,
      "actual_offpeak_cv": 0.263,
-     "cv_ratio": 3.029,
+     "cv_ratio": 2.499,
      "gated": true,
      "verdict": "pass"
     },
@@ -170,32 +170,32 @@
     {
      "year": 2025,
      "class": "CC_REGULAR",
-     "profile_r": 0.968,
-     "model_offpeak_cv": 0.036,
+     "profile_r": 0.957,
+     "model_offpeak_cv": 0.031,
      "actual_offpeak_cv": 0.039,
-     "cv_ratio": 0.929,
+     "cv_ratio": 0.792,
      "gated": false,
      "verdict": "pass"
     },
     {
      "year": 2025,
      "class": "COAL_BIT",
-     "profile_r": 0.769,
-     "model_offpeak_cv": 0.013,
+     "profile_r": 0.877,
+     "model_offpeak_cv": 0.033,
      "actual_offpeak_cv": 0.023,
-     "cv_ratio": 0.544,
+     "cv_ratio": 1.408,
      "gated": true,
-     "verdict": "FAIL"
+     "verdict": "pass"
     },
     {
      "year": 2025,
      "class": "COAL_PRB",
-     "profile_r": 0.955,
-     "model_offpeak_cv": 0.035,
+     "profile_r": 0.95,
+     "model_offpeak_cv": 0.044,
      "actual_offpeak_cv": 0.08,
-     "cv_ratio": 0.441,
+     "cv_ratio": 0.558,
      "gated": true,
-     "verdict": "FAIL"
+     "verdict": "pass"
     },
     {
      "year": 2025,
@@ -211,31 +211,29 @@
      "year": 2025,
      "class": "CT_PEAKER",
      "profile_r": 0.961,
-     "model_offpeak_cv": 0.506,
+     "model_offpeak_cv": 0.523,
      "actual_offpeak_cv": 1.052,
-     "cv_ratio": 0.481,
+     "cv_ratio": 0.498,
      "gated": true,
      "verdict": "FAIL"
     },
     {
      "year": 2025,
      "class": "ST_GAS",
-     "profile_r": 0.979,
-     "model_offpeak_cv": 0.553,
+     "profile_r": 0.982,
+     "model_offpeak_cv": 0.448,
      "actual_offpeak_cv": 0.207,
-     "cv_ratio": 2.678,
+     "cv_ratio": 2.166,
      "gated": true,
      "verdict": "pass"
     }
    ],
    "summary": [],
    "failures": [
-    "2023 COAL_BIT: profile r 0.433 < 0.8",
-    "2023 COAL_BIT: off-peak CV ratio 0.002 (model 0.000 / actual 0.044) < 0.5",
-    "2024 COAL_BIT: off-peak CV ratio 0.415 (model 0.018 / actual 0.042) < 0.5",
-    "2025 COAL_BIT: profile r 0.769 < 0.8",
-    "2025 COAL_PRB: off-peak CV ratio 0.441 (model 0.035 / actual 0.080) < 0.5",
-    "2025 CT_PEAKER: off-peak CV ratio 0.481 (model 0.506 / actual 1.052) < 0.5"
+    "2023 COAL_BIT: profile r 0.474 < 0.8",
+    "2023 COAL_BIT: off-peak CV ratio 0.001 (model 0.000 / actual 0.044) < 0.5",
+    "2024 COAL_BIT: off-peak CV ratio 0.178 (model 0.008 / actual 0.042) < 0.5",
+    "2025 CT_PEAKER: off-peak CV ratio 0.498 (model 0.523 / actual 1.052) < 0.5"
    ],
    "notes": []
   },
@@ -264,8 +262,16 @@
      "class": "CT_CHP",
      "mechanism": "chp_steam",
      "forced_twh": 0.0244,
-     "class_total_twh": 1.0968,
-     "share_of_class": 0.0223
+     "class_total_twh": 1.0971,
+     "share_of_class": 0.0222
+    },
+    {
+     "year": 2023,
+     "class": "ST_GAS",
+     "mechanism": "soco_gas_st_campaign_commitment",
+     "forced_twh": 0.3756,
+     "class_total_twh": 3.9779,
+     "share_of_class": 0.0944
     },
     {
      "year": 2024,
@@ -287,9 +293,9 @@
      "year": 2024,
      "class": "CT_CHP",
      "mechanism": "chp_steam",
-     "forced_twh": 0.0227,
-     "class_total_twh": 1.1004,
-     "share_of_class": 0.0206
+     "forced_twh": 0.0219,
+     "class_total_twh": 1.103,
+     "share_of_class": 0.0198
     },
     {
      "year": 2024,
@@ -298,6 +304,14 @@
      "forced_twh": 0.0,
      "class_total_twh": 0.4002,
      "share_of_class": 0.0
+    },
+    {
+     "year": 2024,
+     "class": "ST_GAS",
+     "mechanism": "soco_gas_st_campaign_commitment",
+     "forced_twh": 0.4046,
+     "class_total_twh": 4.043,
+     "share_of_class": 0.1001
     },
     {
      "year": 2025,
@@ -319,17 +333,25 @@
      "year": 2025,
      "class": "CT_CHP",
      "mechanism": "chp_steam",
-     "forced_twh": 0.0202,
-     "class_total_twh": 1.1086,
-     "share_of_class": 0.0182
+     "forced_twh": 0.0201,
+     "class_total_twh": 1.1087,
+     "share_of_class": 0.0181
     },
     {
      "year": 2025,
      "class": "ST_CHP",
      "mechanism": "chp_steam",
-     "forced_twh": 0.0005,
-     "class_total_twh": 0.1674,
-     "share_of_class": 0.0027
+     "forced_twh": 0.0006,
+     "class_total_twh": 0.1661,
+     "share_of_class": 0.0037
+    },
+    {
+     "year": 2025,
+     "class": "ST_GAS",
+     "mechanism": "soco_gas_st_campaign_commitment",
+     "forced_twh": 0.5353,
+     "class_total_twh": 4.6159,
+     "share_of_class": 0.116
     }
    ],
    "summary": [
@@ -337,7 +359,7 @@
      "year": 2023,
      "class": "CC_REGULAR",
      "forced_twh": 0.0,
-     "class_total_twh": 114.652,
+     "class_total_twh": 114.088,
      "forced_share": 0.0,
      "limit": 0.3,
      "load_share": null,
@@ -350,7 +372,7 @@
      "year": 2023,
      "class": "COAL",
      "forced_twh": 0.0,
-     "class_total_twh": 27.2933,
+     "class_total_twh": 27.0683,
      "forced_share": 0.0,
      "limit": 0.3,
      "load_share": null,
@@ -363,7 +385,7 @@
      "year": 2023,
      "class": "CT_PEAKER",
      "forced_twh": 0.0,
-     "class_total_twh": 14.695,
+     "class_total_twh": 15.0008,
      "forced_share": 0.0,
      "limit": 0.15,
      "load_share": null,
@@ -375,9 +397,9 @@
     {
      "year": 2023,
      "class": "ST_GAS",
-     "forced_twh": 0.0,
-     "class_total_twh": 3.4687,
-     "forced_share": 0.0,
+     "forced_twh": 0.3756,
+     "class_total_twh": 3.9779,
+     "forced_share": 0.0944,
      "limit": 0.3,
      "load_share": null,
      "immaterial": false,
@@ -402,7 +424,7 @@
      "year": 2024,
      "class": "CC_REGULAR",
      "forced_twh": 0.0,
-     "class_total_twh": 113.8955,
+     "class_total_twh": 113.3786,
      "forced_share": 0.0,
      "limit": 0.3,
      "load_share": null,
@@ -415,7 +437,7 @@
      "year": 2024,
      "class": "COAL",
      "forced_twh": 0.0,
-     "class_total_twh": 28.2915,
+     "class_total_twh": 28.0224,
      "forced_share": 0.0,
      "limit": 0.3,
      "load_share": null,
@@ -428,7 +450,7 @@
      "year": 2024,
      "class": "CT_PEAKER",
      "forced_twh": 0.0,
-     "class_total_twh": 11.3488,
+     "class_total_twh": 11.7622,
      "forced_share": 0.0,
      "limit": 0.15,
      "load_share": null,
@@ -440,9 +462,9 @@
     {
      "year": 2024,
      "class": "ST_GAS",
-     "forced_twh": 0.0,
-     "class_total_twh": 3.5858,
-     "forced_share": 0.0,
+     "forced_twh": 0.4046,
+     "class_total_twh": 4.043,
+     "forced_share": 0.1001,
      "limit": 0.3,
      "load_share": null,
      "immaterial": false,
@@ -467,7 +489,7 @@
      "year": 2025,
      "class": "CC_REGULAR",
      "forced_twh": 0.0,
-     "class_total_twh": 113.3631,
+     "class_total_twh": 113.0673,
      "forced_share": 0.0,
      "limit": 0.3,
      "load_share": null,
@@ -480,7 +502,7 @@
      "year": 2025,
      "class": "COAL",
      "forced_twh": 0.0,
-     "class_total_twh": 38.9447,
+     "class_total_twh": 38.7277,
      "forced_share": 0.0,
      "limit": 0.3,
      "load_share": null,
@@ -493,7 +515,7 @@
      "year": 2025,
      "class": "CT_PEAKER",
      "forced_twh": 0.0,
-     "class_total_twh": 14.5875,
+     "class_total_twh": 14.7726,
      "forced_share": 0.0,
      "limit": 0.15,
      "load_share": null,
@@ -505,9 +527,9 @@
     {
      "year": 2025,
      "class": "ST_GAS",
-     "forced_twh": 0.0,
-     "class_total_twh": 4.2363,
-     "forced_share": 0.0,
+     "forced_twh": 0.5353,
+     "class_total_twh": 4.6159,
+     "forced_share": 0.116,
      "limit": 0.3,
      "load_share": null,
      "immaterial": false,
@@ -576,10 +598,38 @@
      "plant": "7698",
      "floored_twh": 0.412,
      "offwindow_twh": "",
-     "offwindow_share": 0.442,
+     "offwindow_share": 0.4421,
      "binding_hours": 8160,
      "measured_median_mw": 118.213,
      "measured_zero_share": 0.0067,
+     "verdict": "pass"
+    },
+    {
+     "year": 2023,
+     "check": "window",
+     "floor": "soco_gas_st_campaign_commitment \u00d7 ST_GAS",
+     "window": "h0-23",
+     "plant": "",
+     "floored_twh": 0.3756,
+     "offwindow_twh": 0.0,
+     "offwindow_share": 0.0,
+     "binding_hours": "",
+     "measured_median_mw": "",
+     "measured_zero_share": "",
+     "verdict": "pass"
+    },
+    {
+     "year": 2023,
+     "check": "unit-conduct",
+     "floor": "soco_gas_st_campaign_commitment \u00d7 ST_GAS",
+     "window": "h0-23",
+     "plant": "728",
+     "floored_twh": 0.0606,
+     "offwindow_twh": "",
+     "offwindow_share": 0.1612,
+     "binding_hours": 1117,
+     "measured_median_mw": 371.362,
+     "measured_zero_share": 0.0,
      "verdict": "pass"
     },
     {
@@ -588,7 +638,7 @@
      "floor": "chp_steam",
      "window": "h0-23",
      "plant": "",
-     "floored_twh": 0.9464,
+     "floored_twh": 0.9455,
      "offwindow_twh": 0.0,
      "offwindow_share": 0.0,
      "binding_hours": "",
@@ -604,7 +654,7 @@
      "plant": "7697",
      "floored_twh": 0.4812,
      "offwindow_twh": "",
-     "offwindow_share": 0.5085,
+     "offwindow_share": 0.509,
      "binding_hours": 8064,
      "measured_median_mw": 135.995,
      "measured_zero_share": 0.0073,
@@ -618,10 +668,38 @@
      "plant": "7698",
      "floored_twh": 0.4424,
      "offwindow_twh": "",
-     "offwindow_share": 0.4675,
+     "offwindow_share": 0.4679,
      "binding_hours": 8760,
      "measured_median_mw": 117.249,
      "measured_zero_share": 0.0063,
+     "verdict": "pass"
+    },
+    {
+     "year": 2024,
+     "check": "window",
+     "floor": "soco_gas_st_campaign_commitment \u00d7 ST_GAS",
+     "window": "h0-23",
+     "plant": "",
+     "floored_twh": 0.4046,
+     "offwindow_twh": 0.0,
+     "offwindow_share": 0.0,
+     "binding_hours": "",
+     "measured_median_mw": "",
+     "measured_zero_share": "",
+     "verdict": "pass"
+    },
+    {
+     "year": 2024,
+     "check": "unit-conduct",
+     "floor": "soco_gas_st_campaign_commitment \u00d7 ST_GAS",
+     "window": "h0-23",
+     "plant": "728",
+     "floored_twh": 0.1423,
+     "offwindow_twh": "",
+     "offwindow_share": 0.3519,
+     "binding_hours": 3303,
+     "measured_median_mw": 161.402,
+     "measured_zero_share": 0.0088,
      "verdict": "pass"
     },
     {
@@ -630,7 +708,7 @@
      "floor": "chp_steam",
      "window": "h0-23",
      "plant": "",
-     "floored_twh": 0.9361,
+     "floored_twh": 0.9362,
      "offwindow_twh": 0.0,
      "offwindow_share": 0.0,
      "binding_hours": "",
@@ -665,15 +743,46 @@
      "measured_median_mw": 107.667,
      "measured_zero_share": 0.0177,
      "verdict": "pass"
+    },
+    {
+     "year": 2025,
+     "check": "window",
+     "floor": "soco_gas_st_campaign_commitment \u00d7 ST_GAS",
+     "window": "h0-23",
+     "plant": "",
+     "floored_twh": 0.5353,
+     "offwindow_twh": 0.0,
+     "offwindow_share": 0.0,
+     "binding_hours": "",
+     "measured_median_mw": "",
+     "measured_zero_share": "",
+     "verdict": "pass"
+    },
+    {
+     "year": 2025,
+     "check": "unit-conduct",
+     "floor": "soco_gas_st_campaign_commitment \u00d7 ST_GAS",
+     "window": "h0-23",
+     "plant": "728",
+     "floored_twh": 0.167,
+     "offwindow_twh": "",
+     "offwindow_share": 0.3119,
+     "binding_hours": 4810,
+     "measured_median_mw": 121.184,
+     "measured_zero_share": 0.0,
+     "verdict": "pass"
     }
    ],
    "summary": [],
    "failures": [],
    "notes": [
     "2023: ct_only vintage guard extended the flag from sibling-year vintages for 3 plant(s): 10, 26, 3",
+    "2023: per-unit conduct rider skipped 3 floored plant(s) carrying the benchmark's CT-only CEMS flag (EIA-923 net > 1.1x CAMPD gross \u21d2 scored on EIA-923 MONTHLY, hourly CAMPD incomplete) \u2014 a zero median in a series the benchmark itself declines to trust is a metering artifact, not conduct: 10, 2049, 26",
     "2023: per-unit conduct rider skipped 1 floored row(s) with no measured series (hydro / nuclear / renewables / interchange pseudo-units) \u2014 the rider is a measured-conduct test and never fails a mechanism for a missing meter: 62449",
     "2024: ct_only vintage guard extended the flag from sibling-year vintages for 3 plant(s): 10, 26, 3",
+    "2024: per-unit conduct rider skipped 3 floored plant(s) carrying the benchmark's CT-only CEMS flag (EIA-923 net > 1.1x CAMPD gross \u21d2 scored on EIA-923 MONTHLY, hourly CAMPD incomplete) \u2014 a zero median in a series the benchmark itself declines to trust is a metering artifact, not conduct: 10, 2049, 26",
     "2024: per-unit conduct rider skipped 2 floored row(s) with no measured series (hydro / nuclear / renewables / interchange pseudo-units) \u2014 the rider is a measured-conduct test and never fails a mechanism for a missing meter: 50398, 62449",
+    "2025: per-unit conduct rider skipped 3 floored plant(s) carrying the benchmark's CT-only CEMS flag (EIA-923 net > 1.1x CAMPD gross \u21d2 scored on EIA-923 MONTHLY, hourly CAMPD incomplete) \u2014 a zero median in a series the benchmark itself declines to trust is a metering artifact, not conduct: 10, 2049, 26",
     "2025: per-unit conduct rider skipped 2 floored row(s) with no measured series (hydro / nuclear / renewables / interchange pseudo-units) \u2014 the rider is a measured-conduct test and never fails a mechanism for a missing meter: 50398, 62449"
    ]
   },
@@ -747,31 +856,31 @@
    "passed": true,
    "rows": [
     {
-     "bundle": "soco53_measured_ct_hr",
+     "bundle": "soco53d_campaign",
      "check": "ct_deployment_overlay",
      "value": false,
      "verdict": "pass"
     },
     {
-     "bundle": "soco53_measured_ct_hr",
+     "bundle": "soco53d_campaign",
      "check": "reliability_deployment_overlay",
      "value": false,
      "verdict": "pass"
     },
     {
-     "bundle": "soco53_measured_ct_hr",
+     "bundle": "soco53d_campaign",
      "check": "ct_mustrun_per_plant",
      "value": false,
      "verdict": "pass"
     },
     {
-     "bundle": "soco53_measured_ct_hr",
+     "bundle": "soco53d_campaign",
      "check": "ordc_reliability_deployment_mw",
      "value": null,
      "verdict": "pass"
     },
     {
-     "bundle": "soco53_measured_ct_hr",
+     "bundle": "soco53d_campaign",
      "check": "caiso_gas_commitment_floor",
      "value": false,
      "verdict": "pass"

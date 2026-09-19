@@ -2271,3 +2271,172 @@ def run_commitment_pass(state: dict, config=None):
     # P2 dispatch actually saw (D-2 forced-energy attribution).
     state["fleet_arrays_p2"] = fa_p2
     return solve_dispatch(fa_p2, state["demand"], mc=state["mc_bid"], **dk_p2)
+
+
+# ---------------------------------------------------------------------------
+# SOCO gas-steam CAMPAIGN commitment floor (SOCO-53d)
+# ---------------------------------------------------------------------------
+def _soco_gas_st_campaign_floor(
+    iso: str,
+    fleet: list,
+    fleet_arrays,
+    p0_dispatch: np.ndarray,
+) -> np.ndarray | None:
+    """Compute the raw ``(n_gen, T)`` SOCO gas-steam campaign commitment floor.
+
+    Runs the ISO-neutral detector ONCE, on ``gas_st`` alone, with **only two of
+    its legs armed**: the measured minimum-RUN extension and the online-hours
+    LSL state floor. The restart legs are deliberately left off
+    (``startup_bridge=False``) because SOCO's boilers do not two-shift — 98.6 %
+    of their measured downtime-hours sit in gaps longer than 72 h and only 150
+    unit-hours across three years fall inside the 8 h min-down, which is why
+    ``gas_commitment_bridge`` is recorded ``R`` for this ISO (SOCO-53). The
+    commitment-real run screen (``startup_aware``) is also off, and for a
+    stated reason rather than by omission: it asks whether an individual
+    unit's margin against an LMP repays its startup, which is a MERCHANT test,
+    and SOCO has no LMP, no offers and no market at all (the same ground on
+    which ``tranche_startup_amortization`` is refused for this ISO).
+
+    Level, horizon and membership are per-plant MEASURED statistics read from
+    ``data.gas_st_campaign`` — nothing here is a scalar and nothing crosses an
+    ISO boundary (rules 21 / 23 / 25). A plant absent from the artifact, or
+    below its campaign-duty gate, carries ``min_load_frac_by_gen = 0`` and is
+    scoped out of the mechanism entirely through the detector's own population
+    gate (the miso-113 convention), so no class-name tuple is needed.
+
+    Args:
+        iso: The ISO name (selects the artifact).
+        fleet: The dispatch fleet, aligned with ``fleet_arrays`` rows.
+        fleet_arrays: The vectorized fleet.
+        p0_dispatch: The base-cost P0 dispatch, ``(n_gen, T)``.
+
+    Returns:
+        The ``(n_gen, T)`` floor, or ``None`` when it floors nothing.
+    """
+    from market_sim.data.gas_st_campaign import load_gas_st_campaign_params
+    from market_sim.model.commitment import caiso_ra_mustoffer_min_gen, find_runs
+
+    params = load_gas_st_campaign_params(iso)
+    if not params:
+        return None
+    n_gen = len(fleet)
+    frac_by_gen = np.zeros(n_gen, dtype=float)
+    min_run = np.zeros(n_gen, dtype=float)
+    covered_mw = 0.0
+    for g, gen in enumerate(fleet):
+        if gen.fuel_type != "gas_st" or gen.plant_group.endswith("_CHP"):
+            continue
+        entry = params.get(int(getattr(gen, "plant_code", 0) or 0))
+        if entry is None:
+            continue
+        frac_by_gen[g] = entry.min_load_frac
+        min_run[g] = float(entry.min_run_hours)
+        covered_mw += float(fleet_arrays.pmax[g])
+    if not np.any(frac_by_gen > 0.0):
+        logger.info(
+            "SOCO gas-steam campaign commitment floor: artifact covers %d "
+            "plant(s) but no fleet row matched — inert",
+            len(params),
+        )
+        return None
+    logger.info(
+        "SOCO gas-steam campaign commitment floor: %d campaign-duty plant(s) "
+        "(%s), %.1f MW of gas_st rows in population; per-plant min_load_frac "
+        "%s, min_run %s h",
+        len(params),
+        sorted(params),
+        covered_mw,
+        {p: round(v.min_load_frac, 4) for p, v in sorted(params.items())},
+        {p: v.min_run_hours for p, v in sorted(params.items())},
+    )
+    floor = caiso_ra_mustoffer_min_gen(
+        p0_dispatch,
+        fleet_arrays,
+        fleet,
+        0.0,
+        startup_bridge=False,
+        fuel_types=("gas_st",),
+        min_run_hours=min_run,
+        floor_online_hours=True,
+        min_load_frac_by_gen=frac_by_gen,
+        startup_aware=False,
+    )
+    if not np.any(floor > 0.0):
+        logger.info(
+            "SOCO gas-steam campaign commitment floor: detector produced no "
+            "floor — inert (the P0 pattern has no run on any covered plant)"
+        )
+        return None
+    # D-4 trace: with the online-hours leg armed a floored segment IS a
+    # committed CAMPAIGN (runs and their min-run extensions fuse into one
+    # block), so its length distribution is the direct evidence that what the
+    # mechanism places are campaigns rather than gap fills. Reported against
+    # each plant's own measured synchronized share, which is the window
+    # declaration's evidence (rule 17 [R-FLOOR-WINDOW]).
+    T = floor.shape[1]
+    for code, entry in sorted(params.items()):
+        rows = [
+            g
+            for g, gen in enumerate(fleet)
+            if int(getattr(gen, "plant_code", 0) or 0) == code
+            and gen.fuel_type == "gas_st"
+        ]
+        if not rows:
+            continue
+        plant_floor = floor[rows, :].sum(axis=0)
+        binding = plant_floor > 0.0
+        seg = np.array([e - s for s, e in find_runs(binding)])
+        logger.info(
+            "SOCO campaign floor, plant %d: %.4f TWh floored over %d h "
+            "(%.3f of the year) in %d campaign block(s), median %.0f h; the "
+            "plant's OWN measured synchronized share is %.3f",
+            code,
+            float(plant_floor.sum()) / 1e6,
+            int(binding.sum()),
+            float(binding.sum()) / max(T, 1),
+            int(seg.size),
+            float(np.median(seg)) if seg.size else 0.0,
+            entry.sync_share,
+        )
+    logger.info(
+        "SOCO gas-steam campaign commitment floor: %d unit-hours floored, "
+        "%.4f TWh floor volume",
+        int((floor > 0.0).sum()),
+        float(floor.sum()) / 1e6,
+    )
+    return floor
+
+
+def build_soco_gas_st_campaign_p1_prep(config, iso: str, fleet: list, fleet_arrays):
+    """Return a ``p1_fleet_prep`` hook for the SOCO gas-steam campaign floor.
+
+    The SOCO leg of the P1-native committed-state family (lane SOCO-53d), and
+    the only one whose object is a multi-WEEK campaign rather than an overnight
+    or midday gap: SOCO's gas boilers synchronize 5.0-9.7 times a year and stay
+    on 64-92 % of all hours, while the model cycles the same plants 10-349
+    times a year. Detector: :func:`_soco_gas_st_campaign_floor`; D-2
+    attribution: ``MECH_SOCO_GAS_ST_CAMPAIGN``.
+
+    Returns ``None`` when the mechanism is off or the ISO is not SOCO, so every
+    other path is byte-identical. ISO-exclusive with the CAISO, ERCOT, NYISO,
+    SPP, MISO and PJM P1-prep hooks by construction (each gates on its own
+    ISO).
+    """
+    if not (
+        getattr(config, "soco_gas_st_campaign_commitment", False) and iso == "SOCO"
+    ):
+        return None
+
+    from market_sim.data.floor_mechanisms import MECH_SOCO_GAS_ST_CAMPAIGN
+
+    def _fleet_prep(r0):
+        campaign_floor = _soco_gas_st_campaign_floor(
+            iso, fleet, fleet_arrays, r0.dispatch
+        )
+        if campaign_floor is None:
+            return None
+        return _bridge_floored_fleet(
+            fleet_arrays, campaign_floor, MECH_SOCO_GAS_ST_CAMPAIGN
+        )
+
+    return _fleet_prep

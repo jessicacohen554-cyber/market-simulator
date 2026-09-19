@@ -205,6 +205,7 @@ from market_sim.pipeline import (
     build_ercot_gas_bridge_p1_preps,
     build_miso_coal_night_floor_p1_prep,
     build_nyiso_gas_bridge_p1_prep,
+    build_soco_gas_st_campaign_p1_prep,
     build_spp_gas_bridge_p1_prep,
     build_pjm_reserve_p1_prep,
     reset_pass_timing_log,
@@ -3820,6 +3821,18 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             spp_bridge_prep = build_spp_gas_bridge_p1_prep(
                 config, iso, dispatch_fleet, fleet_arrays, mc_base
             )
+            # P1-native SOCO gas-steam CAMPAIGN commitment floor (SOCO-53d):
+            # the SOCO leg of the same family, and the only one whose object is
+            # a multi-WEEK campaign rather than an overnight or midday gap.
+            # Measured minimum-run extension + online-hours LSL state floor on
+            # SOCO's campaign-duty gas boilers, at their own measured
+            # plant-basis minimum stable load; the restart legs are NOT armed
+            # (SOCO's boilers do not two-shift). Forward-native, so the forecast
+            # path carries it identically (D-5 parity). None for every non-SOCO
+            # / gate-off run (byte-identical).
+            soco_campaign_prep = build_soco_gas_st_campaign_p1_prep(
+                config, iso, dispatch_fleet, fleet_arrays
+            )
             # P1-native MISO regulated-coal night floor (miso-113):
             # committed-state floor on the regulated PRB/subbituminous fleet
             # at each plant's OWN measured within-run night level, net of its
@@ -3867,6 +3880,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     or ercot_bridge_prep
                     or nyiso_bridge_prep
                     or spp_bridge_prep
+                    or soco_campaign_prep
                     or miso_night_floor_prep
                     or pjm_fleet_prep
                 ),

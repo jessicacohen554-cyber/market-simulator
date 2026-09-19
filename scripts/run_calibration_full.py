@@ -4327,6 +4327,7 @@ def solve_and_persist(
     reliability_floor_overrides: dict | None = None,
     nyiso_gas_commitment_bridge: bool | None = None,
     spp_gas_commitment_bridge: bool | None = None,
+    soco_gas_st_campaign_commitment: bool | None = None,
     miso_coal_night_floor: bool | None = None,
     nyiso_gas_bridge_cc_min_load_frac: float | None = None,
     nyiso_gas_bridge_st_min_load_frac: float | None = None,
@@ -5360,6 +5361,10 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 spp_gas_commitment_bridge=spp_gas_commitment_bridge
             )
+        if soco_gas_st_campaign_commitment is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                soco_gas_st_campaign_commitment=soco_gas_st_campaign_commitment
+            )
         if miso_coal_night_floor is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 miso_coal_night_floor=miso_coal_night_floor
@@ -6290,6 +6295,7 @@ def solve_and_persist(
             nyiso_spin_reserve_online=nyiso_spin_reserve_online,
             nyiso_gas_commitment_bridge=nyiso_gas_commitment_bridge,
             spp_gas_commitment_bridge=spp_gas_commitment_bridge,
+            soco_gas_st_campaign_commitment=soco_gas_st_campaign_commitment,
             miso_coal_night_floor=miso_coal_night_floor,
             nyiso_gas_bridge_cc_min_load_frac=nyiso_gas_bridge_cc_min_load_frac,
             nyiso_gas_bridge_st_min_load_frac=nyiso_gas_bridge_st_min_load_frac,
@@ -7276,6 +7282,7 @@ def solve_and_persist(
         "reliability_floor_overrides": reliability_floor_overrides,
         "nyiso_gas_commitment_bridge": nyiso_gas_commitment_bridge,
         "spp_gas_commitment_bridge": spp_gas_commitment_bridge,
+        "soco_gas_st_campaign_commitment": soco_gas_st_campaign_commitment,
         "miso_coal_night_floor": miso_coal_night_floor,
         "nyiso_gas_bridge_cc_min_load_frac": nyiso_gas_bridge_cc_min_load_frac,
         "nyiso_gas_bridge_st_min_load_frac": nyiso_gas_bridge_st_min_load_frac,
@@ -13801,6 +13808,24 @@ def main() -> None:
         "stacked or replaced. Default off (byte-identical).",
     )
     parser.add_argument(
+        "--soco-gas-st-campaign-commitment",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="SOCO P1-native gas-steam CAMPAIGN commitment floor (SOCO-53d): "
+        "hold SOCO's campaign-duty gas boilers at their OWN measured "
+        "plant-basis minimum stable load through the campaigns the model's own "
+        "P0 pattern starts, using the measured minimum-run extension and the "
+        "online-hours LSL state floor. The restart legs are NOT armed - SOCO's "
+        "boilers do not two-shift (98.6 %% of their downtime-hours sit in gaps "
+        "longer than 72 h), which is why gas_commitment_bridge is recorded R "
+        "for this ISO. Level, horizon and membership are per-plant measured "
+        "rows of campd_gas_st_campaign_params_SOCO.csv (rules 21/23/25); a "
+        "plant synchronized less than half the year is standby iron and is "
+        "never floored (rule 17). Rule 19: SOCO's gas and coal classes carry "
+        "no other floor, so nothing is stacked or replaced. Default off "
+        "(byte-identical).",
+    )
+    parser.add_argument(
         "--nyiso-gas-bridge-cc-min-load-frac",
         type=float,
         default=None,
@@ -14693,6 +14718,7 @@ def main() -> None:
         nyiso_spin_reserve_online=args.nyiso_spin_reserve_online,
         nyiso_gas_commitment_bridge=args.nyiso_gas_commitment_bridge,
         spp_gas_commitment_bridge=args.spp_gas_commitment_bridge,
+        soco_gas_st_campaign_commitment=args.soco_gas_st_campaign_commitment,
         miso_coal_night_floor=args.miso_coal_night_floor,
         nyiso_gas_bridge_cc_min_load_frac=args.nyiso_gas_bridge_cc_min_load_frac,
         nyiso_gas_bridge_st_min_load_frac=args.nyiso_gas_bridge_st_min_load_frac,
