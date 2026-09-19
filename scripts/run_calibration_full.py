@@ -837,6 +837,99 @@ def _write_p0_commitment_sidecar(
     return written
 
 
+def _write_p0_dispatch_sidecar(
+    run_dir: Path, year: int, p2_state: dict
+) -> "list[Path]":
+    """Write the OPT-IN P0 dispatch / dual sidecars for one year.
+
+    ``--persist-p0-dispatch`` only. Writes, into ``hourly/``:
+
+    * ``p0_dispatch_<year>.parquet`` — one row per generator,
+      ``(year, gen_index, unit_id, n_hours, mw)``, where ``mw`` is the
+      generator's ``(T,)`` P0 dispatch as raw little-endian ``float64`` bytes.
+      Stored packed per row rather than long-form because the array is
+      ``n_gen x 8760`` — on CAISO 1,705 x 8,760 — and a long frame would be
+      ~15 M rows. ``float64`` and not a narrowed ``float32``: the sidecar
+      exists so the screens replay EXACTLY, which makes the reproduction gate
+      against the committed ``floors/`` array an equality rather than a
+      tolerance; narrowing would buy ~60 MB at the cost of that property.
+    * ``p0_prices_<year>.parquet`` — ``(year, zone, hour, price)``, the P0
+      zonal duals, long-form (``n_zones x 8760`` is small). ``zone`` is the
+      NAME, taken from ``p2_state["zone_names"]`` — the solve's own
+      ``iso_config.zone_names``, which is the array's authoritative row
+      ordering. It is written rather than left to be re-derived because a
+      later ``fleet_only`` rebuild has ``config.zones is None`` and falls
+      through to ``sorted(unique)``, which silently reorders the zones and
+      reads every price from the wrong one (the defect caiso-286 section 4
+      caught in its own probe).
+
+    Why this exists (caiso-287): ``p0_commitment_<year>.parquet`` carries the
+    on/off pattern only, which recovers the RA-bridge detector's ``runs`` but
+    not the two screens that then act on them — the ``startup_aware`` run
+    screen scores runs on ``(price - mc) x dispatch`` and the surplus decommit
+    screen derives absorption from the interchange rows' dispatch, both in MW
+    and both against the P0 duals. With this pair a later session replays
+    :func:`model.commitment.caiso_ra_mustoffer_min_gen` exactly, offline and
+    at zero LP, instead of bounding it analytically
+    (``docs/RESULT-caiso286-cc-start-cost-2026-09-19.md`` section 7).
+
+    Write-only and solve-invariant: at default the flag is off, ``p2_state``
+    carries neither key, and this is never called. Returns the paths written
+    (empty when the state carries no record).
+    """
+    if "p0_dispatch_mw" not in p2_state:
+        return []
+    hourly_dir = run_dir / "hourly"
+    hourly_dir.mkdir(parents=True, exist_ok=True)
+    written: list[Path] = []
+
+    disp = np.asarray(p2_state["p0_dispatch_mw"], dtype=np.float64)
+    # Direct access, never a 3-arg getattr (T-2): ``Generator.unit_id`` is a
+    # required field, so a default would only mask a renamed attribute.
+    unit_ids = [str(g.unit_id) for g in p2_state["fleet"]]
+    if disp.shape[0] != len(unit_ids):
+        raise ValueError(
+            f"p0_dispatch has {disp.shape[0]} rows but the fleet has "
+            f"{len(unit_ids)} — row alignment is the whole value of this "
+            "sidecar, so a mismatch is a defect, not something to pad."
+        )
+    out = hourly_dir / f"p0_dispatch_{year}.parquet"
+    pd.DataFrame(
+        {
+            "year": np.int16(year),
+            "gen_index": np.arange(disp.shape[0], dtype=np.int32),
+            "unit_id": unit_ids,
+            "n_hours": np.int32(disp.shape[1]),
+            "mw": [row.tobytes() for row in disp],
+        }
+    ).to_parquet(out, index=False)
+    written.append(out)
+
+    prices = p2_state.get("p0_zonal_prices")
+    if prices is not None:
+        prices = np.asarray(prices, dtype=float)
+        zone_names = [str(z) for z in p2_state["zone_names"]]
+        if prices.shape[0] != len(zone_names):
+            raise ValueError(
+                f"p0 prices have {prices.shape[0]} zone rows but the run "
+                f"carries {len(zone_names)} zone names — the name map is the "
+                "point of this file, so a mismatch is a defect."
+            )
+        n_z, n_t = prices.shape
+        out_p = hourly_dir / f"p0_prices_{year}.parquet"
+        pd.DataFrame(
+            {
+                "year": np.int16(year),
+                "zone": np.repeat(np.asarray(zone_names, dtype=object), n_t),
+                "zone_index": np.repeat(np.arange(n_z, dtype=np.int32), n_t),
+                "hour": np.tile(np.arange(n_t, dtype=np.int32), n_z),
+                "price": prices.reshape(-1).astype(np.float64),
+            }
+        ).to_parquet(out_p, index=False)
+        written.append(out_p)
+    return written
+
+
 def _write_storage_hourly_sidecar(
     run_dir: Path, year: int, frames: "list[pd.DataFrame]"
 ) -> "Path | None":
@@ -3474,6 +3567,11 @@ _REUSE_KWARG_EXEMPT = frozenset(
         # listed — left alone deliberately, since changing an ARCHIVED-P2 knob's
         # reuse eligibility is another lane's call, not this one's.)
         "persist_p0_commitment",
+        # Same property, same reason (caiso-287): its MW-valued sibling is
+        # read after both LPs have run and consumed by nothing downstream, so
+        # two runs differing only in this flag have BYTE-IDENTICAL solves and
+        # the prior year stays reusable.
+        "persist_p0_dispatch",
     }
 )
 
@@ -4299,6 +4397,7 @@ def solve_and_persist(
     reuse_solved: "Path | None" = None,
     note: str = "",
     persist_p0_commitment: bool = False,
+    persist_p0_dispatch: bool = False,
 ) -> Path:
     """Solve every year/pass, write the parquet bundle, return the run dir.
 
@@ -4323,6 +4422,12 @@ def solve_and_persist(
     ``persist_p2_state`` precedent rather than a ``ScenarioConfig`` field
     (CLAUDE.md rule 24 ``[R-REGISTRY]`` scopes to tunables that can change a
     solve; this one is read after both LPs have already run).
+
+    ``persist_p0_dispatch`` (OPT-IN, ``--persist-p0-dispatch``): also write the
+    per-year P0 dispatch / dual sidecars (see
+    :func:`_write_p0_dispatch_sidecar`) — the MW-valued sibling of
+    ``persist_p0_commitment``, with the same WRITE-ONLY and additive-only
+    property and the same rationale for not being a ``ScenarioConfig`` field.
     """
     # Snapshot every solve-affecting keyword argument BEFORE any other local
     # is bound (locals() here is exactly the parameter set): plan_reuse_solved
@@ -6248,6 +6353,7 @@ def solve_and_persist(
             zero_forcing_ablation=zero_forcing_ablation,
             xyear_cache=xyear_cache,
             persist_p0_commitment=persist_p0_commitment,
+            persist_p0_dispatch=persist_p0_dispatch,
         )
         _t_post_solve = time.perf_counter()
         if persist_p2_state:
@@ -6527,6 +6633,7 @@ def solve_and_persist(
         _write_class_hourly_sidecar(run_dir, year, [lbl for lbl, _ in labelled])
         _write_class_band_hourly_sidecar(run_dir, year, [lbl for lbl, _ in labelled])
         _write_p0_commitment_sidecar(run_dir, year, p2_state)
+        _write_p0_dispatch_sidecar(run_dir, year, p2_state)
         _write_storage_hourly_sidecar(run_dir, year, storage_frames)
         _write_hourly_sidecar(run_dir, year, "unit_hourly", unit_frames)
         _write_hourly_sidecar(run_dir, year, "network", network_frames)
@@ -10259,6 +10366,20 @@ def main() -> None:
             "WRITE-ONLY and additive — cannot change a solve. Lets a later "
             "session replay the PRODUCTION P1 startup amortization "
             "bit-identically instead of reconstructing it from P1 prices."
+        ),
+    )
+    parser.add_argument(
+        "--persist-p0-dispatch",
+        action="store_true",
+        help=(
+            "Also write hourly/p0_dispatch_<year>.parquet (the P0 dispatch in "
+            "MW, float64, packed per generator) and "
+            "hourly/p0_prices_<year>.parquet (the P0 zonal duals, with their "
+            "zone NAMES). WRITE-ONLY and additive — cannot change a solve. "
+            "The MW-valued sibling of --persist-p0-commitment: the on/off "
+            "pattern recovers the RA-bridge detector's runs, this pair "
+            "recovers the two screens that act on them, so a later session "
+            "can replay caiso_ra_mustoffer_min_gen exactly at zero LP."
         ),
     )
     parser.add_argument(
@@ -14184,6 +14305,7 @@ def main() -> None:
         run_dir=run_dir,
         persist_p2_state=args.persist_p2_state,
         persist_p0_commitment=args.persist_p0_commitment,
+        persist_p0_dispatch=args.persist_p0_dispatch,
         outage_source=args.outage_source,
         ct_mustrun_per_plant=args.ct_mustrun_per_plant,
         ct_mustrun_floor_frac=args.ct_mustrun_floor_frac,
