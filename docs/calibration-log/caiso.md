@@ -15420,3 +15420,70 @@ without a re-solve, by full SHA:
 Shard branch left in place — branch deletion returns HTTP 403 for this credential.
 
 **PRECOMMIT §6.3's "no lever identified ⇒ no span launched" was respected. No span was launched.**
+
+## caiso-286 — 2026-09-19
+
+**The measured CC start cost lands BELOW the bar, and caiso-285's exoneration of the decommit screen
+does not survive a per-gap evaluation.** Keeper **UNCHANGED** (`2026-09-12-caiso-275-gascoupling`).
+**ZERO LP** — no shard launched, no span, nothing armed, nothing registered, nothing deleted.
+PRECOMMIT `docs/PRECOMMIT-caiso286-cc-start-cost-2026-09-19.md` pushed at
+`7562f345d25eb96c7785f82b201c230f00f7402f` **before** the arithmetic was written; RESULT
+`docs/RESULT-caiso286-cc-start-cost-2026-09-19.md`; artifact
+`results/calibration/_caiso286_start_cost_coverage.json`.
+
+**Instrument survey, adjudicated by measurement.** (a) CAISO's own public bid corpus is **dead** as a
+start-cost instrument — one live OASIS `PUB_DAM_GRP` trade date carries 26 columns and 10 products
+(`EN`/`SR`/`RD`/`RU`/`NR`/`RMD`/`RMU`/`RC`/`LFU`/`LFD`), all energy and AS, **no start-up, min-load or
+transition cost at any date** (rule 28 (a): do not re-fetch it for a commitment cost). (b)
+**NREL/SR-5500-55433 — the report `BIN_STARTUP_COST_PER_MW` already cites — was recovered in full
+from OSTI** (`nrel.gov` is refused by the egress policy) and **does** key CC start cost to offline
+hours: Table 1-1 Gas-CC C&M **35 / 55 / 79** $/MW hot/warm/cold (median, CY2011$) with a **warm
+offline band of 5–40 h**; Table 1-3 start fuel **0.19 / 0.20 / 0.24** MMBtu/MW and other-start-cost
+**n/a** for CC. (c) A CAMPD start-fuel derive was **declined with the reason stated** — the quantity
+is $0.44/MW at the keeper's own gas price.
+
+**The answer.** The belly's 8–22 h gap distribution lies **entirely inside the warm band**, so the
+measured value is the warm median: **$55.44/MW (2011$) = $77.14/MW (2024$)**, CPI-U 224.939 → 313.689
+(BLS `CUUR0000SA0`, cross-checked against FRED `CPIAUCNS` on nine overlapping years). Against the
+caiso-285 bar of **$96.9** (at a $0 credit) / **$115.4** (at price): **BELOW THE BAR**, ratio
+**0.796**, and below it unescalated too — so the verdict does not turn on the deflator. The warm
+**75th centile** ($130.13/MW) **would** clear and was **refused ex ante** as fitted-mechanism
+selection (rule 1 `[R-STRUCT]`); `startup_per_mw` was never swept against a gate.
+
+**Second structural finding.** The bridge's admissible gap window is `[min_down, 24 h]` = **[4, 24]
+h**, inside the 5–40 h warm band, and **all 2,481 gaps scanned in 2024 are warm (0 hot, 0 cold)** —
+so for this mechanism the "flat versus downtime-keyed" distinction caiso-285 opened **degenerates to
+a single number** and is closed.
+
+**THE FINDING — one caiso-285 closure re-opened, with new evidence.** Its §6 exonerated the surplus
+**decommit** screen on the ground that the restart inequality *"fails on 100.0 % of belly weight"* —
+but that was computed by applying **one uniform price** (the belly mean, −$6.71) to every gap, where
+`commitment.py:1229` uses **each gap's own mean LMP**. On the per-gap basis the code actually
+computes, over the identical 2,481-gap set, the share failing at the incumbent $50 is **0.7735, not
+1.0000**: **270.279 mean-belly-MW passes the inequality**, and `floors/2024_P1.npz` shows those
+gen-hours floored by **nothing** (0.000 MW floored by any other mechanism). The inequality does
+**not** fail first, so the decommit screen **and** the `startup_aware` **gap-merging** channel
+(`runs` is rebound to `kept_runs`, fusing two short gaps into one long one) are back in scope. This
+is now the sharpest remaining object in the CAISO belly.
+
+**Reproduction.** caiso-286 lands on caiso-285 on **six** independent numbers: 1,705 fleet rows;
+belly `sha256_int32_le[:16] = c5948fb0d43620a1`; 74 bridge-eligible rows; 30/30 econ-eligible CC;
+2,481 gaps; S3_5 availability-weighted **1,193.0269 MW**; actual RA belly floor **670.4704 MW**; and
+its uniform-price shares **0.9992 / 1.0000** against the published 0.9988 / 1.0000. A defect in this
+session's **own** probe — `config.zones` is `None` on a `fleet_only` rebuild, so an early draft fell
+through to alphabetical order and read every gap LMP from the wrong zone — was found and fixed before
+any number was reported; the zone map is now derived from the generators' own `zone` and asserted
+one-to-one, and no pre-fix figure is quoted anywhere.
+
+**Rule 28 `[R-MECH-MATRIX]`:** no mechanism was *tested* (this measures an **input** to one already in
+the keeper), so no cell verdict moves — `gas_commitment_bridge` stays **K** and its evidence line is
+extended. **`BIN_STARTUP_COST_PER_MW` was NOT edited**: it is a shared cross-ISO constant, so changing
+it moves every CAMPD-binned ISO's keeper and re-keys their caches (rules 25 `[R-ISO-SCOPE]`, 27
+`[R-PUSH]`) — a cross-ISO governance item, and on the measurement there is no reason to make it.
+**Rule 31 `[R-RETAIN]`:** the caiso-285 bundle was **recovered, not re-solved**, from
+`203124e310f7be4f806ad968d6cf5755f96bbc00`, kept `.gitignore`d and unstaged so it cannot reach
+`main`; nothing was deleted.
+
+**Successor, named and costed but NOT launched:** an instrumented 2024 replay persisting the **P0
+dispatch MW** — the one artifact caiso-285 did not land — which splits the 270.3 MW between the
+decommit screen and `startup_aware` gap-merging exactly. One year, one shard, its own PRECOMMIT.
