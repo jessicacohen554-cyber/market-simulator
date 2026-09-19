@@ -39,6 +39,7 @@ class _Config:
         )
         self.hydro_ror_split = flags.get("hydro_ror_split", False)
         self.outage_source = flags.get("outage_source", "statistical")
+        self.coal_fuel_inventory = flags.get("coal_fuel_inventory", False)
 
 
 @pytest.fixture()
@@ -280,3 +281,46 @@ def test_unreadable_partition_is_degraded_not_healthy(empty_clean, monkeypatch):
 
     # Non-strict stays loud but survives.
     check_clean_partitions(_Config(hydro_ror_split=True), "CAISO", strict=False)
+
+
+def test_coal_fuel_inventory_is_registered(empty_clean, monkeypatch):
+    """The fourth requirement: MISO's coal fuel-inventory monthly budget.
+
+    miso-263. ``build_coal_fuel_budget`` returns ``None`` when EITHER of its
+    two clean partitions resolves empty, appending zero budget rows and
+    leaving coal with floors and no ceiling — so the mechanism has NO
+    fallback and is fatal in every mode, the ``hydro_ror_split`` severity
+    class. The keeper ``2026-09-19-miso-262-cold-year`` was promoted out of
+    exactly this state: six shard containers with a hydrated ``data/raw`` and
+    no curated coal partitions, each recording ``coal_fuel_inventory: true``
+    and solving without the row.
+    """
+    from market_sim.data import coal_receipts, coal_stocks
+
+    # Not armed -> never reached, even on a fresh container's empty tree.
+    check_clean_partitions(_Config(), "MISO", strict=True)
+
+    # Armed + absent -> fatal, and the message hands back both curate commands.
+    with pytest.raises(DegradedInputError) as excinfo:
+        check_clean_partitions(_Config(coal_fuel_inventory=True), "MISO", strict=True)
+    message = str(excinfo.value)
+    assert "coal_fuel_inventory" in message
+    assert "curate_coal_stocks.py" in message
+    assert "curate_coal_receipts.py" in message
+
+    # No declared fallback, so a non-strict lane is fatal too.
+    with pytest.raises(DegradedInputError):
+        check_clean_partitions(_Config(coal_fuel_inventory=True), "MISO", strict=False)
+
+    # EITHER half missing is the degraded state, not both-and.
+    monkeypatch.setattr(
+        coal_stocks, "load_coal_stocks", lambda *a, **k: pd.DataFrame({"x": [1]})
+    )
+    with pytest.raises(DegradedInputError):
+        check_clean_partitions(_Config(coal_fuel_inventory=True), "MISO", strict=True)
+
+    # Both present -> the guard passes.
+    monkeypatch.setattr(
+        coal_receipts, "load_coal_receipts", lambda *a, **k: pd.DataFrame({"x": [1]})
+    )
+    check_clean_partitions(_Config(coal_fuel_inventory=True), "MISO", strict=True)
