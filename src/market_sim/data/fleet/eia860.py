@@ -1144,6 +1144,7 @@ def _rows_to_generators(
     apply_cc_summer_guard: bool = True,
     measured_ct_heat_rates: bool = False,
     measured_coal_heat_rates: bool = False,
+    measured_st_heat_rates: bool = False,
     cc_steam_part_capacity: bool = False,
     cc_steam_part_reclass: bool = False,
     egrid_family_heat_rates: bool = False,
@@ -1174,6 +1175,11 @@ def _rows_to_generators(
     the CAMPD-measured steady-state OPERATING rate on COAL rows the artifact
     covers — see the row loop below and
     :func:`market_sim.data.fleet.campd_bins.measured_coal_heat_rates`.
+    ``measured_st_heat_rates`` (``ScenarioConfig.measured_st_heat_rates``) is
+    the third, doing the same for ST_GAS rows — and the only one of the three
+    that reaches a mixed coal/gas STEAM station, whose two boilers share a
+    prime mover and are therefore blended by the plant rate and by the
+    prime-mover-family rate alike.
 
     ``cc_steam_part_capacity`` (``ScenarioConfig.cc_steam_part_capacity``)
     restores the combined-cycle STEAM parts the fuel-type map drops. EIA-860's
@@ -1245,6 +1251,16 @@ def _rows_to_generators(
     # eGRID rate.
     coal_heat_rates: dict[int, float] = (
         _pkg_ns().measured_coal_heat_rates(iso) if measured_coal_heat_rates else {}
+    )
+
+    # Measured GAS-STEAM operating heat rates (config.measured_st_heat_rates).
+    # The third sibling of the two resolutions above, on the same seam and the
+    # same class-scoped application: only a row that resolves to ST_GAS may
+    # take it, so a mixed steam site's coal boiler keeps the rate its own class
+    # assigns. Empty when the flag is off or the ISO has no committed artifact,
+    # in which case every row keeps its eGRID rate.
+    st_heat_rates: dict[int, float] = (
+        _pkg_ns().measured_st_heat_rates(iso) if measured_st_heat_rates else {}
     )
 
     # Combined-cycle steam parts to restore (config.cc_steam_part_capacity).
@@ -1426,6 +1442,21 @@ def _rows_to_generators(
             measured_coal_hr = coal_heat_rates.get(plant_code)
             if measured_coal_hr is not None:
                 heat_rate = measured_coal_hr
+
+        # The same rule-14 [R-ACCURATE] substitution for ST_GAS, and the one
+        # place a per-UNIT meter reaches what no eGRID construction can. A
+        # southeastern steam station is routinely a coal boiler and a gas
+        # boiler behind one ORIS code; the plant rate blends them, and so does
+        # the prime-mover-FAMILY rate applied at frame level above, because
+        # both machines are prime mover ST. Gated on ``group`` so only gas
+        # steam rows take it (rule 19 [R-ONE-MECH]: disjoint from the COAL and
+        # CT_PEAKER branches above by construction — a row resolves to one
+        # group — and it REPLACES the family rate on the rows it covers rather
+        # than stacking, because it is the later assignment to the same field).
+        if st_heat_rates and group == "ST_GAS":
+            measured_st_hr = st_heat_rates.get(plant_code)
+            if measured_st_hr is not None:
+                heat_rate = measured_st_hr
 
         record = {
             "plant_id": plant_id,
@@ -1716,6 +1747,7 @@ def _load_fleet_from_parquet(
     apply_cc_summer_guard: bool = True,
     measured_ct_heat_rates: bool = False,
     measured_coal_heat_rates: bool = False,
+    measured_st_heat_rates: bool = False,
     cc_steam_part_capacity: bool = False,
     cc_steam_part_reclass: bool = False,
     egrid_family_heat_rates: bool = False,
@@ -1771,6 +1803,7 @@ def _load_fleet_from_parquet(
         apply_cc_summer_guard=apply_cc_summer_guard,
         measured_ct_heat_rates=measured_ct_heat_rates,
         measured_coal_heat_rates=measured_coal_heat_rates,
+        measured_st_heat_rates=measured_st_heat_rates,
         cc_steam_part_capacity=cc_steam_part_capacity,
         cc_steam_part_reclass=cc_steam_part_reclass,
         egrid_family_heat_rates=egrid_family_heat_rates,
@@ -1853,6 +1886,7 @@ def _load_fleet_from_clean(
     apply_cc_summer_guard: bool = True,
     measured_ct_heat_rates: bool = False,
     measured_coal_heat_rates: bool = False,
+    measured_st_heat_rates: bool = False,
     cc_steam_part_capacity: bool = False,
     cc_steam_part_reclass: bool = False,
     egrid_family_heat_rates: bool = False,
@@ -1884,6 +1918,7 @@ def _load_fleet_from_clean(
         apply_cc_summer_guard=apply_cc_summer_guard,
         measured_ct_heat_rates=measured_ct_heat_rates,
         measured_coal_heat_rates=measured_coal_heat_rates,
+        measured_st_heat_rates=measured_st_heat_rates,
         cc_steam_part_capacity=cc_steam_part_capacity,
         cc_steam_part_reclass=cc_steam_part_reclass,
         egrid_family_heat_rates=egrid_family_heat_rates,
@@ -2121,6 +2156,7 @@ def load_fleet_from_csv(
     apply_cc_summer_guard: bool = True,
     measured_ct_heat_rates: bool = False,
     measured_coal_heat_rates: bool = False,
+    measured_st_heat_rates: bool = False,
     measured_chp_heat_rates: bool = False,
     egrid_identity_heat_rates: bool = False,
     apply_chp_steam_credit_correction: bool = True,
@@ -2170,6 +2206,14 @@ def load_fleet_from_csv(
             OPERATING heat rate instead of the eGRID plant-average annual
             rate. Only the coal rows of a site are affected, so a
             gas-converted boiler at the same plant is untouched.
+        measured_st_heat_rates: When True (``ScenarioConfig.
+            measured_st_heat_rates``), ST_GAS generators at plants the
+            committed CAMPD artifact covers take their measured steady-state
+            OPERATING heat rate instead of the eGRID plant-average annual
+            rate. Only the gas-steam rows of a site are affected, so the coal
+            boiler beside them keeps the rate its own class assigns — which is
+            the point: at a mixed steam station the plant rate AND the
+            prime-mover-family rate both blend the two.
         measured_chp_heat_rates: When True (``ScenarioConfig.
             measured_chp_heat_rates``), topping-cycle CHP generators
             (``CC_CHP`` / ``CT_CHP``) at plants the committed artifact covers
@@ -2251,6 +2295,7 @@ def load_fleet_from_csv(
             apply_cc_summer_guard=apply_cc_summer_guard,
             measured_ct_heat_rates=measured_ct_heat_rates,
             measured_coal_heat_rates=measured_coal_heat_rates,
+            measured_st_heat_rates=measured_st_heat_rates,
             cc_steam_part_capacity=cc_steam_part_capacity,
             cc_steam_part_reclass=cc_steam_part_reclass,
             egrid_family_heat_rates=egrid_family_heat_rates,
@@ -2274,6 +2319,7 @@ def load_fleet_from_csv(
             apply_cc_summer_guard=apply_cc_summer_guard,
             measured_ct_heat_rates=measured_ct_heat_rates,
             measured_coal_heat_rates=measured_coal_heat_rates,
+            measured_st_heat_rates=measured_st_heat_rates,
             cc_steam_part_capacity=cc_steam_part_capacity,
             cc_steam_part_reclass=cc_steam_part_reclass,
             egrid_family_heat_rates=egrid_family_heat_rates,
@@ -2295,6 +2341,7 @@ def load_fleet_from_csv(
             apply_cc_summer_guard=apply_cc_summer_guard,
             measured_ct_heat_rates=measured_ct_heat_rates,
             measured_coal_heat_rates=measured_coal_heat_rates,
+            measured_st_heat_rates=measured_st_heat_rates,
             cc_steam_part_capacity=cc_steam_part_capacity,
             cc_steam_part_reclass=cc_steam_part_reclass,
             egrid_family_heat_rates=egrid_family_heat_rates,

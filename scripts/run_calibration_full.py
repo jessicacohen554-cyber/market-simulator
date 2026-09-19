@@ -4347,6 +4347,7 @@ def solve_and_persist(
     egrid_identity_heat_rates: bool | None = None,
     measured_ct_heat_rates: bool | None = None,
     measured_coal_heat_rates: bool | None = None,
+    measured_st_heat_rates: bool | None = None,
     egrid_family_heat_rates: bool | None = None,
     egrid_steam_collapse_heat_rates: bool | None = None,
     nyiso_gas_bridge_cc_min_run_hours: float | None = None,
@@ -5439,6 +5440,10 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 measured_coal_heat_rates=measured_coal_heat_rates
             )
+        if measured_st_heat_rates is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                measured_st_heat_rates=measured_st_heat_rates
+            )
         if egrid_family_heat_rates is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 egrid_family_heat_rates=egrid_family_heat_rates
@@ -6317,6 +6322,7 @@ def solve_and_persist(
             egrid_identity_heat_rates=egrid_identity_heat_rates,
             measured_ct_heat_rates=measured_ct_heat_rates,
             measured_coal_heat_rates=measured_coal_heat_rates,
+            measured_st_heat_rates=measured_st_heat_rates,
             egrid_family_heat_rates=egrid_family_heat_rates,
             egrid_steam_collapse_heat_rates=egrid_steam_collapse_heat_rates,
             nyiso_gas_bridge_cc_min_run_hours=nyiso_gas_bridge_cc_min_run_hours,
@@ -7304,6 +7310,7 @@ def solve_and_persist(
         "egrid_identity_heat_rates": egrid_identity_heat_rates,
         "measured_ct_heat_rates": measured_ct_heat_rates,
         "measured_coal_heat_rates": measured_coal_heat_rates,
+        "measured_st_heat_rates": measured_st_heat_rates,
         "egrid_family_heat_rates": egrid_family_heat_rates,
         "egrid_steam_collapse_heat_rates": egrid_steam_collapse_heat_rates,
         "nyiso_gas_bridge_cc_min_run_hours": nyiso_gas_bridge_cc_min_run_hours,
@@ -13992,6 +13999,29 @@ def main() -> None:
         "for an ISO with no artifact.",
     )
     parser.add_argument(
+        "--measured-st-heat-rates",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="MEASURED ST_GAS steady-state operating heat rates (soco-53e). An "
+        "ST_GAS generator whose plant the committed artifact covers "
+        "(campd_st_heat_rates_<ISO>.csv, "
+        "scripts/data/derive_campd_gas_st_heat_rates.py) takes its plant's "
+        "CAMPD-measured OPERATING heat rate (MMBtu per net MWh, pooled over "
+        "the plant's own boiler units, on hours with opTime >= 0.99) ahead of "
+        "the eGRID plant-average ANNUAL rate. The gas-steam sibling of "
+        "--measured-ct-heat-rates and --measured-coal-heat-rates, on the "
+        "identical seam and artifact schema. Both of their reasons apply, plus "
+        "one only a per-UNIT meter can reach: a mixed coal/gas STEAM station "
+        "sits behind one ORIS code and both boilers are prime mover ST, so the "
+        "plant rate AND the prime-mover-family rate blend them (SOCO's "
+        "E C Gaston: an 832 MW coal boiler blended with four ~255 MW gas "
+        "boilers). The error is per-plant, not a bias -- SOCO measures -0.476 "
+        "at Gaston and +1.374 at Barry -- so no multiplier substitutes for the "
+        "measurement (rule 14 [R-ACCURATE]). Applied per generator by class, "
+        "so the coal boiler beside it is untouched. Zero fitted parameters; "
+        "no-op for an ISO with no artifact.",
+    )
+    parser.add_argument(
         "--egrid-identity-heat-rates",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -14740,6 +14770,7 @@ def main() -> None:
         egrid_identity_heat_rates=args.egrid_identity_heat_rates,
         measured_ct_heat_rates=args.measured_ct_heat_rates,
         measured_coal_heat_rates=args.measured_coal_heat_rates,
+        measured_st_heat_rates=args.measured_st_heat_rates,
         egrid_family_heat_rates=args.egrid_family_heat_rates,
         egrid_steam_collapse_heat_rates=args.egrid_steam_collapse_heat_rates,
         nyiso_gas_bridge_cc_min_run_hours=args.nyiso_gas_bridge_cc_min_run_hours,

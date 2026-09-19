@@ -315,6 +315,52 @@ def measured_coal_heat_rates(iso: str) -> dict[int, float]:
 
 
 @lru_cache(maxsize=8)
+def measured_st_heat_rates(iso: str) -> dict[int, float]:
+    """Return ``{plant_code: measured operating heat rate}`` for an ISO's ST_GAS.
+
+    Reads the committed CAMPD-measured artifact
+    (``scripts/data/derive_campd_gas_st_heat_rates.py`` →
+    ``data/raw/_processed-legacy/campd_st_heat_rates_<ISO>.csv``): per-plant
+    MMBtu per **net** MWh over the plant's own steady-state operating hours,
+    pooled 2023-2025 over the CAMPD boiler units the derive pairs to that
+    plant's model ``ST_GAS`` rows. It replaces the eGRID plant-average ANNUAL
+    heat rate the fleet loader otherwise gives a gas-fired steam boiler
+    (CLAUDE.md rule 14 [R-ACCURATE]).
+
+    The gas-steam sibling of :func:`measured_ct_heat_rates` and
+    :func:`measured_coal_heat_rates`, on the identical identification: a
+    machine's operating heat rate is a physical characteristic that
+    regenerates for a forward year and responds to changed conditions, so it
+    is an INPUT under rule 13 [R-MEASURED], never a measured outcome fed back
+    to close a residual, and it carries zero free parameters.
+
+    What it reaches that the two mechanisms above it cannot: a southeastern
+    steam station is routinely a coal boiler and a gas boiler behind one ORIS
+    code, and BOTH the eGRID plant rate and the prime-mover-FAMILY rate
+    (``ScenarioConfig.egrid_family_heat_rates``) blend them, because both
+    machines are prime mover ``ST``. Only a per-unit meter separates them.
+    Measured on SOCO: E C Gaston's ST family rate 11.5505 blends one 832 MW
+    coal boiler with four ~255 MW gas boilers whose own metered rate is
+    11.0744.
+
+    Only ``flag == "ok"`` rows are returned: the derive marks any plant outside
+    the physical gas-steam band, or whose capacity pairing is structurally
+    mismatched, as a defect rather than applying it. Empty dict when the ISO
+    has no artifact, which leaves every plant on its eGRID rate — never a
+    silent hand number (rule 23 [R-FROZEN-DERIVE]).
+    """
+    path = PROCESSED_DIR / f"campd_st_heat_rates_{iso.upper()}.csv"
+    if not path.exists():
+        return {}
+    df = pd.read_csv(path, usecols=["plant_code", "heat_rate", "flag"])
+    return {
+        int(r.plant_code): float(r.heat_rate)
+        for r in df.itertuples(index=False)
+        if str(r.flag) == "ok" and float(r.heat_rate) > 0.0
+    }
+
+
+@lru_cache(maxsize=8)
 def measured_chp_heat_rates(iso: str) -> dict[tuple[int, str], float]:
     """Return ``{(plant_code, class): measured power-only heat rate}`` for CHP.
 

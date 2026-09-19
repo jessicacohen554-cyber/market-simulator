@@ -241,6 +241,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # so every pre-existing cached run keeps its key; an armed run carries a
     # different fleet cost and so gets a distinct key.
     "measured_coal_heat_rates",
+    # Measured ST_GAS steady-state operating heat rates (soco-53e, default
+    # off): the gas-steam sibling of the two directly above, registered the
+    # same way and for the same reason -- dropped from the hash at its default
+    # so every pre-existing cached run keeps its key; an armed run carries a
+    # different fleet cost and so gets a distinct key.
+    "measured_st_heat_rates",
     # Measured power-only CHP heat rates (miso-99, default off): dropped from
     # the hash at its default so every pre-existing cached run keeps its key;
     # an armed run carries a different fleet cost and so gets a distinct key.
@@ -1930,6 +1936,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "ramp_limits": "False",
     "measured_ct_heat_rates": "False",
     "measured_coal_heat_rates": "False",
+    "measured_st_heat_rates": "False",
     "measured_chp_heat_rates": "False",
     "egrid_identity_heat_rates": "False",
     "egrid_family_heat_rates": "False",
@@ -5168,6 +5175,50 @@ class ScenarioConfig:
     # keep the rate their own class assigns. See
     # docs/handoffs/PRECOMMIT-nwpp-42-2026-09-19.md.
     measured_coal_heat_rates: bool = False
+
+    # Measured ST_GAS steady-state operating heat rates (soco-53e, default OFF,
+    # byte-identical off). scripts/data/derive_campd_gas_st_heat_rates.py ->
+    # data/raw/_processed-legacy/campd_st_heat_rates_<ISO>.csv
+    # When True, an ST_GAS generator whose plant the artifact covers takes its
+    # plant's CAMPD-measured OPERATING heat rate (MMBtu per net MWh, pooled
+    # 2023-2025 over the plant's own boiler units, on hours with
+    # opTime >= 0.99) ahead of the eGRID plant-average ANNUAL rate the loader
+    # otherwise assigns. The gas-steam sibling of measured_ct_heat_rates and
+    # measured_coal_heat_rates directly above, on the identical seam, the
+    # identical identification and the identical artifact schema.
+    #
+    # Both reasons the coal sibling records apply verbatim (an ANNUAL average
+    # folds startup fuel, shutdown tails and offline fuel into the offer; its
+    # LEVEL moves with the vintage year's capacity factor). The reason that is
+    # SPECIFIC to this class, and that neither sibling nor any eGRID
+    # construction can reach: a southeastern steam station is routinely a coal
+    # boiler and a gas boiler behind ONE ORIS code, and because both machines
+    # are prime mover ST, the plant rate blends them AND so does the
+    # prime-mover-FAMILY rate (egrid_family_heat_rates). Only a per-UNIT meter
+    # separates two boilers inside one family.
+    #
+    # Measured on SOCO's own fleet (lane SOCO-53e, 5 of 5 plants / 100 % of
+    # ST_GAS capacity): capacity-weighted 10.9613 -> 10.8522 MMBtu/MWh
+    # (-1.0 %), which is a LEVEL that barely moves over a per-plant structure
+    # that moves a great deal -- E C Gaston -0.476 (its ST family rate blends
+    # an 832 MW coal boiler with four ~255 MW gas boilers), Greene County
+    # -0.049, Jack Watson -0.053, Yates -0.017, and Barry +1.374 the other way
+    # (two 1954-vintage 80 MW boilers metered at 13.98 across 2,521 steady
+    # hours, run 1.6 % of the time). It is a per-plant source defect, not a
+    # bias, which is why no single multiplier can stand in for it.
+    #
+    # Rule 13 [R-MEASURED] admissible: a machine's operating heat rate is a
+    # physical characteristic that regenerates for a forward year and responds
+    # to changed conditions (a retrofit moves it; a re-powered unit changes
+    # class and leaves the population), not a measured outcome fed back to
+    # close a residual -- and SOCO has no price benchmark, so there is no price
+    # residual it could be fitted to even in principle. Rule 21 [R-DOF]: ZERO
+    # free parameters -- every applied number is sum(heatInput)/sum(grossLoad)
+    # over the plant's own hours. Rule 25 [R-ISO-SCOPE]: a per-ISO artifact, a
+    # strict no-op for an ISO with none. Applied per generator BY CLASS, so a
+    # mixed steam site's coal boiler keeps the rate its own class assigns. See
+    # docs/handoffs/PRECOMMIT-soco-53e-2026-09-19.md.
+    measured_st_heat_rates: bool = False
 
     # Measured POWER-ONLY heat rates for topping-cycle CHP (miso-99; default
     # OFF, byte-identical off). eGRID's ``PLHTRT`` is the number the model
