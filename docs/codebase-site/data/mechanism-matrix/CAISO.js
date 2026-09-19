@@ -173,6 +173,7 @@ window.MECH_MATRIX_SHARDS.CAISO = {
     coal_perplant_offer_level: { cell: "." },
     coal_offer_level_rebasis: { cell: "." },
     tranche_startup_amortization: { cell: "G", ev: "caiso-149 (results/calibration/FINDING-caiso149-tranche-startup-2026-07-31.md; CAISO DMM FERC RM17-3 comments 2017-02-28 + BOSR fast-start-pricing deck 2025-01-10 — the independent market-design source)" },
+    measured_coal_heat_rates: { cell: "U", ev: "SEEDED by lane NWPP-42 (2026-09-19), the PR that adds this mechanism — a mechanical emission under rule 28(c) (a new solve-affecting field lands its base row plus a cell line in EVERY shard in one PR), NO VERDICT MINTED and NOTHING TRANSFERRED. Rule 25 [R-ISO-SCOPE] / 28(d): NWPP's measurement fills no other ISO's cell. This ISO has no campd_coal_heat_rates_<ISO>.csv at this commit, so the field is a STRICT NO-OP here — armed or not, every coal row keeps its eGRID rate. To move this cell an ISO lane runs scripts/data/derive_campd_coal_heat_rates.py --iso <ISO> over its OWN plants and solves its own span." },
     measured_ct_heat_rates: { cell: "K", ev: "caiso-146 (results/calibration/FINDING-caiso146-measured-ct-heat-rates-2026-07-31.md)" },
     measured_chp_heat_rates: { cell: "K", ev: "caiso-147 (results/calibration/FINDING-caiso147-measured-chp-heat-rates-2026-07-31.md)" },
     egrid_identity_heat_rates: { cell: "U" },

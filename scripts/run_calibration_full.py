@@ -4247,6 +4247,7 @@ def solve_and_persist(
     chp_layup_duty_curve: bool | None = None,
     egrid_identity_heat_rates: bool | None = None,
     measured_ct_heat_rates: bool | None = None,
+    measured_coal_heat_rates: bool | None = None,
     egrid_family_heat_rates: bool | None = None,
     egrid_steam_collapse_heat_rates: bool | None = None,
     nyiso_gas_bridge_cc_min_run_hours: float | None = None,
@@ -5324,6 +5325,10 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 measured_ct_heat_rates=measured_ct_heat_rates
             )
+        if measured_coal_heat_rates is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                measured_coal_heat_rates=measured_coal_heat_rates
+            )
         if egrid_family_heat_rates is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 egrid_family_heat_rates=egrid_family_heat_rates
@@ -6200,6 +6205,7 @@ def solve_and_persist(
             chp_layup_duty_curve=chp_layup_duty_curve,
             egrid_identity_heat_rates=egrid_identity_heat_rates,
             measured_ct_heat_rates=measured_ct_heat_rates,
+            measured_coal_heat_rates=measured_coal_heat_rates,
             egrid_family_heat_rates=egrid_family_heat_rates,
             egrid_steam_collapse_heat_rates=egrid_steam_collapse_heat_rates,
             nyiso_gas_bridge_cc_min_run_hours=nyiso_gas_bridge_cc_min_run_hours,
@@ -7183,6 +7189,7 @@ def solve_and_persist(
         "chp_layup_duty_curve": chp_layup_duty_curve,
         "egrid_identity_heat_rates": egrid_identity_heat_rates,
         "measured_ct_heat_rates": measured_ct_heat_rates,
+        "measured_coal_heat_rates": measured_coal_heat_rates,
         "egrid_family_heat_rates": egrid_family_heat_rates,
         "egrid_steam_collapse_heat_rates": egrid_steam_collapse_heat_rates,
         "nyiso_gas_bridge_cc_min_run_hours": nyiso_gas_bridge_cc_min_run_hours,
@@ -13818,6 +13825,27 @@ def main() -> None:
         "driven by this orchestrator could arm it.",
     )
     parser.add_argument(
+        "--measured-coal-heat-rates",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="MEASURED COAL steady-state operating heat rates (nwpp-42). A "
+        "COAL generator whose plant the committed artifact covers "
+        "(campd_coal_heat_rates_<ISO>.csv, "
+        "scripts/data/derive_campd_coal_heat_rates.py) takes its plant's "
+        "CAMPD-measured OPERATING heat rate (MMBtu per net MWh, pooled over "
+        "the units whose primaryFuelInfo is a coal, on hours with opTime >= "
+        "0.99) ahead of the eGRID plant-average ANNUAL rate. The coal sibling "
+        "of --measured-ct-heat-rates, on the identical seam and artifact "
+        "schema. eGRID's annual average folds startup fuel, shutdown tails "
+        "and the offline hours' fuel into the number that sets the plant's "
+        "offer, and its level moves with the plant's capacity factor in the "
+        "vintage year; the error is per-plant source noise, not a uniform "
+        "bias, so no multiplier substitutes for the measurement (rule 14 "
+        "[R-ACCURATE]). Applied per generator by class, so a coal site's "
+        "gas-converted boilers are untouched. Zero fitted parameters; no-op "
+        "for an ISO with no artifact.",
+    )
+    parser.add_argument(
         "--egrid-identity-heat-rates",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -14563,6 +14591,7 @@ def main() -> None:
         chp_layup_duty_curve=args.chp_layup_duty_curve,
         egrid_identity_heat_rates=args.egrid_identity_heat_rates,
         measured_ct_heat_rates=args.measured_ct_heat_rates,
+        measured_coal_heat_rates=args.measured_coal_heat_rates,
         egrid_family_heat_rates=args.egrid_family_heat_rates,
         egrid_steam_collapse_heat_rates=args.egrid_steam_collapse_heat_rates,
         nyiso_gas_bridge_cc_min_run_hours=args.nyiso_gas_bridge_cc_min_run_hours,
