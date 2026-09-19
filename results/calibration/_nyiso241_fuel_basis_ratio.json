@@ -1,0 +1,221 @@
+{
+  "hub_annual_usd_mmbtu": {
+    "2022": 6.86,
+    "2023": 1.984,
+    "2024": 2.104,
+    "2025": 4.086
+  },
+  "base_year": 2022,
+  "classes": {
+    "CT_PEAKER": {
+      "2022": {
+        "plants": 27,
+        "energy_at_band_1_mean": 93.06415557861328,
+        "plant_ratio_median": 1.0,
+        "hub_ratio": 1.0,
+        "excess_over_hub": 1.0
+      },
+      "2023": {
+        "plants": 27,
+        "energy_at_band_1_mean": 32.92536926269531,
+        "plant_ratio_median": 0.3288635313510895,
+        "hub_ratio": 0.2892128279883382,
+        "excess_over_hub": 1.1370986700057983
+      },
+      "2024": {
+        "plants": 27,
+        "energy_at_band_1_mean": 31.067638397216797,
+        "plant_ratio_median": 0.3350476324558258,
+        "hub_ratio": 0.30670553935860057,
+        "excess_over_hub": 1.0924081802368164
+      },
+      "2025": {
+        "plants": 27,
+        "energy_at_band_1_mean": 58.65217208862305,
+        "plant_ratio_median": 0.6313185095787048,
+        "hub_ratio": 0.5956268221574345,
+        "excess_over_hub": 1.0599229335784912
+      }
+    },
+    "ST_GAS": {
+      "2022": {
+        "plants": 11,
+        "energy_at_band_1_mean": 87.92803192138672,
+        "plant_ratio_median": 1.0,
+        "hub_ratio": 1.0,
+        "excess_over_hub": 1.0
+      },
+      "2023": {
+        "plants": 11,
+        "energy_at_band_1_mean": 31.158363342285156,
+        "plant_ratio_median": 0.3852772116661072,
+        "hub_ratio": 0.2892128279883382,
+        "excess_over_hub": 1.332158088684082
+      },
+      "2024": {
+        "plants": 11,
+        "energy_at_band_1_mean": 28.103544235229492,
+        "plant_ratio_median": 0.3260008990764618,
+        "hub_ratio": 0.30670553935860057,
+        "excess_over_hub": 1.0629117488861084
+      },
+      "2025": {
+        "plants": 11,
+        "energy_at_band_1_mean": 52.292972564697266,
+        "plant_ratio_median": 0.6284471154212952,
+        "hub_ratio": 0.5956268221574345,
+        "excess_over_hub": 1.0551021099090576
+      }
+    },
+    "CC_REGULAR": {
+      "2022": {
+        "plants": 11,
+        "energy_at_band_1_mean": 87.32595825195312,
+        "plant_ratio_median": 1.0,
+        "hub_ratio": 1.0,
+        "excess_over_hub": 1.0
+      },
+      "2023": {
+        "plants": 11,
+        "energy_at_band_1_mean": 52.39823913574219,
+        "plant_ratio_median": 0.6369250416755676,
+        "hub_ratio": 0.2892128279883382,
+        "excess_over_hub": 2.202270984649658
+      },
+      "2024": {
+        "plants": 11,
+        "energy_at_band_1_mean": 46.04905700683594,
+        "plant_ratio_median": 0.5336650013923645,
+        "hub_ratio": 0.30670553935860057,
+        "excess_over_hub": 1.7399914264678955
+      },
+      "2025": {
+        "plants": 11,
+        "energy_at_band_1_mean": 55.54849624633789,
+        "plant_ratio_median": 0.6433839797973633,
+        "hub_ratio": 0.5956268221574345,
+        "excess_over_hub": 1.0801796913146973
+      }
+    },
+    "CC_CHP": {
+      "2022": {
+        "plants": 11,
+        "energy_at_band_1_mean": 97.7303237915039,
+        "plant_ratio_median": 1.0,
+        "hub_ratio": 1.0,
+        "excess_over_hub": 1.0
+      },
+      "2023": {
+        "plants": 11,
+        "energy_at_band_1_mean": 56.024288177490234,
+        "plant_ratio_median": 0.5566613674163818,
+        "hub_ratio": 0.2892128279883382,
+        "excess_over_hub": 1.9247465133666992
+      },
+      "2024": {
+        "plants": 11,
+        "energy_at_band_1_mean": 48.8521842956543,
+        "plant_ratio_median": 0.4966336190700531,
+        "hub_ratio": 0.30670553935860057,
+        "excess_over_hub": 1.6192522048950195
+      },
+      "2025": {
+        "plants": 11,
+        "energy_at_band_1_mean": 44.35366439819336,
+        "plant_ratio_median": 0.3221387565135956,
+        "hub_ratio": 0.5956268221574345,
+        "excess_over_hub": 0.5408399105072021
+      }
+    }
+  },
+  "ct_peaker_by_zone": {
+    "2022": {
+      "Capital_Hudson": {
+        "plants": 3,
+        "ratio_median": 1.0,
+        "excess_over_hub": 1.0
+      },
+      "Long_Island": {
+        "plants": 10,
+        "ratio_median": 1.0,
+        "excess_over_hub": 1.0
+      },
+      "NYC": {
+        "plants": 13,
+        "ratio_median": 1.0,
+        "excess_over_hub": 1.0
+      },
+      "Upstate_West": {
+        "plants": 1,
+        "ratio_median": 1.0,
+        "excess_over_hub": 1.0
+      }
+    },
+    "2023": {
+      "Capital_Hudson": {
+        "plants": 3,
+        "ratio_median": 0.38503727316856384,
+        "excess_over_hub": 1.3313285112380981
+      },
+      "Long_Island": {
+        "plants": 10,
+        "ratio_median": 0.3864611089229584,
+        "excess_over_hub": 1.3362516164779663
+      },
+      "NYC": {
+        "plants": 13,
+        "ratio_median": 0.31542712450027466,
+        "excess_over_hub": 1.0906401872634888
+      },
+      "Upstate_West": {
+        "plants": 1,
+        "ratio_median": 0.3288635313510895,
+        "excess_over_hub": 1.1370986700057983
+      }
+    },
+    "2024": {
+      "Capital_Hudson": {
+        "plants": 3,
+        "ratio_median": 0.324984073638916,
+        "excess_over_hub": 1.0595964193344116
+      },
+      "Long_Island": {
+        "plants": 10,
+        "ratio_median": 0.33749204874038696,
+        "excess_over_hub": 1.1003780364990234
+      },
+      "NYC": {
+        "plants": 13,
+        "ratio_median": 0.3341841995716095,
+        "excess_over_hub": 1.0895929336547852
+      },
+      "Upstate_West": {
+        "plants": 1,
+        "ratio_median": 0.32613617181777954,
+        "excess_over_hub": 1.0633527040481567
+      }
+    },
+    "2025": {
+      "Capital_Hudson": {
+        "plants": 3,
+        "ratio_median": 0.6255654096603394,
+        "excess_over_hub": 1.0502640008926392
+      },
+      "Long_Island": {
+        "plants": 10,
+        "ratio_median": 0.6500470042228699,
+        "excess_over_hub": 1.091366171836853
+      },
+      "NYC": {
+        "plants": 13,
+        "ratio_median": 0.6276839375495911,
+        "excess_over_hub": 1.0538208484649658
+      },
+      "Upstate_West": {
+        "plants": 1,
+        "ratio_median": 0.4390625059604645,
+        "excess_over_hub": 0.7371435761451721
+      }
+    }
+  }
+}

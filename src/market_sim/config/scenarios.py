@@ -1280,6 +1280,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # hashes distinctly. Registered WITH the field, in the same commit, per the
     # nyiso-119 discipline.
     "nyiso_ct_peaker_bands_measured",
+    # nyiso-241: same contract again — the off path never touches
+    # `offer_curve_by_group`, so it is byte-identical by construction; an armed
+    # run prices the NYISO CT_PEAKER `_committed` tranches at a different heat
+    # rate (a different offer surface) and hashes distinctly. Registered WITH
+    # the field, in the same commit, per the nyiso-119 discipline.
+    "nyiso_ct_peaker_committed_measured",
     "nyiso_st_gas_econ_bands_deleaked",
     # miso-224: the off path never touches a fuel price (byte-identical by
     # construction); an armed run reprices every MISO gas row at the daily hub
@@ -2268,6 +2274,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by nyiso-199 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "nyiso_ct_peaker_bands_measured": "False",
+    # Added by nyiso-241 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "nyiso_ct_peaker_committed_measured": "False",
     "nyiso_st_gas_econ_bands_deleaked": "False",
     # Added by miso-224 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
@@ -13651,6 +13660,50 @@ class ScenarioConfig:
     # A NYISO CT_PEAKER band missing any of the three `phys_*` keys, or arming
     # on any other ISO, is a HARD ERROR — never a silent no-op (rule 25).
     nyiso_ct_peaker_bands_measured: bool = False
+    # nyiso-241: the COMMITTED-ONLY limb of the same repair — the matrix's
+    # `ct_peaker_committed_measured` cell (`U`), which the cross-ISO census
+    # (caiso-241) recorded as "an ASK FOR THE NYISO LANE, never an arm from
+    # here". It replaces `_NYISO_OFFER_CURVE`'s CT_PEAKER `committed` 1.35 with
+    # the class's OWN registered `phys_committed` 0.843 (avg_committed_p50,
+    # `nyiso_campd_marginal_hr_summary.csv`, n = 70) and touches NOTHING else:
+    # the `econ*` bands stay at the registered neutral 1.0 and `peak` stays at
+    # the $1,000-offer-cap scarcity wall 4.0. That is the whole difference from
+    # `nyiso_ct_peaker_bands_measured` above, which moves all three fuel-scaled
+    # bands and is a separate matrix cell carrying its own `R` verdict and its
+    # own nyiso-200 re-test condition; the two are alternatives, never stacked
+    # (rule 19 [R-ONE-MECH]), and arming both is refused in `backcast_config`.
+    #
+    # THE DEFECT, and it is a citation ring rather than a residual: 1.35 is
+    # documented in this file as a "NYISO/CAISO-grounded evening-ramp start
+    # hurdle" while CAISO's identical 1.35 reads "NYISO-grounded" and NEISO's
+    # reads "NYISO/CAISO-grounded" — three ISOs citing each other and NONE
+    # citing a measurement. NYISO's ratio of registered to measured, 1.35/0.843
+    # = 1.60, is the LARGEST in the model. Grounding NYISO's band on NYISO's own
+    # number is a rule 14 [R-ACCURATE] substitution and a rule 25 [R-ISO-SCOPE]
+    # repair, NOT a transfer: CAISO's 0.991 and NEISO's 0.985 never cross.
+    #
+    # SECOND, INDEPENDENT GROUND (rule 19 [R-ONE-MECH]), measured by nyiso-241
+    # phase 0 at zero LP: the keeper carries `tranche_startup_amortization`, so
+    # the CT_PEAKER `committed` rows ALREADY pay a real start recovery of
+    # $11.97 / $16.48 / $15.78 / $13.22 per MWh in 2022-2025
+    # (`model/commitment.compute_monthly_markup`, per LP row from that row's own
+    # P0 run length). A 1.35 multiplicative "start hurdle" on top of that is a
+    # SECOND charge for the same phenomenon, and 0.843 removes the duplicate
+    # rather than discounting the real one.
+    #
+    # SIZED BEFORE IT WAS PROPOSED, and reported against itself: the band is
+    # 346.7 MW of the class's 3,034.0 MW (11.4 %), the substitution moves 22 LP
+    # rows with max |delta| exactly $0.00 anywhere else, and against the
+    # keeper's own hourly prices a GENEROUS upper bound (the fleet flat out
+    # wherever it clears) reaches only 16-41 % of the metered CT_PEAKER energy
+    # in 2023-2025. It is a grounding repair and NOT the fix for the CT_PEAKER
+    # merit collapse; the sibling CAISO arm closed 7 % of its own miss.
+    # `authorized_price_tuning` stays NONE on the nyiso-232 precedent: the rule
+    # 1 carve-out governs a band identified by the PRICE RESIDUAL, and 0.843 is
+    # identified by NYISO's own CAMPD conduct.
+    # A NYISO CT_PEAKER band missing `phys_committed`, or arming on any other
+    # ISO, is a HARD ERROR — never a silent no-op (rule 25).
+    nyiso_ct_peaker_committed_measured: bool = False
     # nyiso-232: the THIRD limb of the same rule-25 [R-ISO-SCOPE] de-leak, on
     # `_NYISO_OFFER_CURVE`'s ST_GAS `econ_low`/`econ_high`. THE DEFECT: that
     # block states its own basis as "the CC class's own defensible reach ratio
