@@ -2397,6 +2397,11 @@ results/calibration/caiso285_instr_2024/
 #   git checkout 9859790c33415e9c6dc54ecfb1c799ecc8fb76da -- results/calibration/nyiso239_bench_2025
 # then compose with scripts/probes/nyiso238_compose_span.py. 17 files per leg, verified by
 # `git ls-tree -r <sha>` before any shard was archived (rule 34 [R-SHARD-PROMOTABLE] (d)).
+# RE-VERIFIED WORKING 2026-09-19 by nyiso-240: all four SHAs still resolve via
+# `git fetch origin <sha>` two days on, and all four legs were checked out again (155 MB,
+# dispatch/ + hourly/unit_hourly_<YR>.parquet present). A NYISO bench re-render therefore
+# costs ZERO LP, which falsifies the ~18 min four-shard re-solve assumed at
+# docs/FINDING-nyiso239-c1-2022-bench-oil-attribution-2026-09-16.md section 7.
 results/calibration/nyiso239_bench_2022/
 results/calibration/nyiso239_bench_2023/
 results/calibration/nyiso239_bench_2024/
