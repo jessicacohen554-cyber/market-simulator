@@ -1,0 +1,16 @@
+{
+  "id": "2026-09-19-spp-48-midvintage-exit",
+  "label": "spp 48 midvintage exit",
+  "date": "2026-09-19",
+  "shorthand": "spp-48-midvintage-exit",
+  "definition": "SPP-48 arm: mid-vintage-year whole-plant exit carry (ScenarioConfig.mid_vintage_exit_carry). Single delta against the committed 2019-2022 rung 2026-09-16-spp-43-outage-intake. Re-injects plants a year-matched native EIA-860 vintage drops from BOTH sheets because they retired DURING that year (Oklaunion, plant 127, EIA retirement 9/2020, 1209.2 GWh metered May-September). Rule 14 [R-ACCURATE] input repair, zero free parameters.",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022
+  ],
+  "iso": "SPP",
+  "file": "frontend/data/backcast/runs/2026-09-19-spp-48-midvintage-exit.js",
+  "bundle": "results/calibration/spp48_arm_span"
+}
