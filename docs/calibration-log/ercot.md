@@ -14425,3 +14425,51 @@ force-added instead of kept out of `main`, rule 29(c)), and the fix is the same,
 lane's to make**. Every ERCOT dir is clear.
 
 **Next shorthand: ercot-268** (ercot-199 and ercot-257 remain unclaimed).
+
+## ercot-mer — 2026-09-19
+
+**KEEPER PROMOTED: `2026-09-19-ercot266-mer-five-year`** (bundle
+`results/calibration/ercot_mer20260919_five_year`), superseding
+`2026-09-09-ercot265-receipts-fallback`. Owner instruction, verbatim: *"Promote it"*.
+
+**Not a recipe change.** The superseded keeper's own configuration re-solved at HEAD — five
+years, one shard each at pinned SHA `5926ca52e9acf140cdab1221464bc13be4938f32`, composed by the
+parent. Zero mechanism, parameter or offer-curve changes; the DOF ledger carries over verbatim
+at n_entries=12 / n_residual=7 (rule 21 `[R-DOF]`). `stamp_config_partition.py --check`
+re-derives the three recipe groups and the block is **byte-identical** to the superseded
+keeper's, so the owner's 2026-08-26 two-config structure is carried exactly.
+
+**Determination CALIBRATED; every scored criterion identical** to the superseded keeper
+(C1/C2/C3a/C3b/C4/C6/C8 PASS, C3c the lone ledgered caveat, non-downgrading under rubric v3.3).
+`grade_summary` identical (scored 8, target 7, ledgered 1, fails 0). Year set unchanged
+{2021..2025}. `audit_keepers --iso ERCOT`: 0 failures, 0 warnings.
+
+**What it adds.** `marginal_emission_rate` — the emissions dual, per-zone-hour tCO2/MWh — in
+`hourly/system_<year>.parquet` for all five years. Load-weighted means 0.5497 / 0.5254 / 0.5974
+/ 0.5961 / 0.5369 tCO2/MWh (2021–2025); share of zone-hours at exactly 0.0 runs 5.6–8.6%. The
+dual peaked at **12.59 GiB against a 13.34 GiB cgroup ceiling** on ERCOT 2021 — measured for
+ERCOT only, explicitly NOT a clearance for per-plant MISO/PJM. Unexplained: 2024's minimum of
+**−7.7000**, far outside the other four years.
+
+**What it costs, at full magnitude.** The recipe no longer reproduces its own superseded numbers
+at HEAD: 2025 byte-exact on all 61,320 zone-hours, but 2021 +0.6332, 2022 +0.2855, **2023
++3.6060 (+6.0%)**, 2024 +0.1296 $/MWh load-weighted. Total generation identical to ~1e-6 while
+CC_CHP ↔ CC_REGULAR / CT_CHP reallocate ~0.08% — a plant→class mapping change, not the LP.
+**Localised, not root-caused**; leading UNCONFIRMED candidate `760012f7` (EIA-860
+vintage-sensitive cache keying), not bisected. Ruled out by measurement: not the `replay_keeper`
+routing fix (Feb-2021 $1,691.7 vs the keeper's $1,690.9 — the receipts fallback armed) and not
+the MER dual (2025 bit-exact). **A bisect lane is owed.**
+
+**What the promotion closes.** Rule 29 `[R-SCREEN]` (b) form 4 had been refuted for ERCOT on
+four of five years, so any arm differenced against the committed keeper was differenced against
+an invalid control. The new keeper is HEAD-current, so form 4 is valid for ERCOT again.
+
+**Enabling fix.** `scripts/replay_keeper.py::build_kwargs` gained a per-key route for the
+top-level `ercot_ep_gas_basis_receipts_fallback`, which the ercot-265 promotion (`c79e89ef`)
+stamped into `meta.json` as provenance. Without it the ERCOT keeper had been **unreplayable on
+every year since 2026-09-10**; all five first-attempt shards stopped there before any LP.
+
+Records: `docs/handoffs/PRECOMMIT-ercot-mer-keeper-resolve-2026-09-19.md` (+ Amendment 1),
+`docs/handoffs/RESULT-ercot-mer-keeper-resolve-2026-09-19.md`,
+`docs/handoffs/FINDING-ercot-mer-replay-blocked-2026-09-19.md`,
+`docs/handoffs/HANDOFF-ercot-mer-promotion-blocked-2026-09-19.md`.

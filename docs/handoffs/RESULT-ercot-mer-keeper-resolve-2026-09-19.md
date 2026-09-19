@@ -193,3 +193,73 @@ be) or whether the solve path should stop requiring it.
 
 The 2021 shard noted a **D-4 legitimacy FAIL that is already present in the committed keeper**.
 It is carried here only so a later reader does not mistake it for a consequence of the re-solve.
+
+---
+
+# PROMOTION EXECUTED — 2026-09-19, owner instruction "Promote it"
+
+The promotion question in §"THE PROMOTION QUESTION" above is **ANSWERED: promote.** My
+recommendation was to register nothing; the owner ruled otherwise, which is rule 31
+`[R-RETAIN]` trigger (i). Executed in this session.
+
+**New ERCOT keeper: `2026-09-19-ercot266-mer-five-year`**
+(bundle `results/calibration/ercot_mer20260919_five_year`), superseding
+`2026-09-09-ercot265-receipts-fallback`.
+
+## The score — every criterion identical
+
+| criterion | superseded keeper | new keeper |
+|---|---|---|
+| C1 fuel-mix by class | PASS | PASS |
+| C2 system volume | PASS | PASS |
+| C3a mean LMP | PASS | PASS |
+| C3b price duration/shape | PASS | PASS |
+| C3c price tail / scarcity | CAVEAT | CAVEAT |
+| C4 fleet dispatch correlation | PASS | PASS |
+| C6 governance gate | PASS | PASS |
+| C8 forced-energy share | PASS | PASS |
+| **determination** | **CALIBRATED** | **CALIBRATED** |
+
+`grade_summary` identical (scored 8, target 7, commercial 0, ledgered 1, fails 0). Year set
+identical {2021, 2022, 2023, 2024, 2025}.
+
+**The drift did not cost a gate.** That is the measured answer to the owner's standing rule
+("structural integrity up, gates down may still be a keeper") — here nothing regressed at all,
+which is a stronger outcome than that rule contemplates. It does **not** retire the drift
+finding: the prices moved, the cause is still unknown, and the criteria simply had enough band
+to absorb it.
+
+## Rule 35 `[R-PROMOTE]` compliance, in order
+
+1. **(b) Year union enumerated BEFORE the prune** — {2021..2025} from the single registered
+   ERCOT run; recorded in the HANDOFF doc and here, so the delete could not destroy it.
+2. **(c) Coverage not shrunk** — the incoming bundle carries all five years itself.
+3. **(e) Promote → verify → delete** — registered, then keeper shard + status +
+   `calibration-complete.json` re-keyed, then `audit_keepers --iso ERCOT` returned
+   **PASS, 0 failures, 0 warnings**, and only then `prune_iso_runs --iso ERCOT --force-uncite`
+   removed the superseded run's three stores together.
+4. **(a) Per-ISO scope** — ERCOT lane files only; no other ISO's shard or status part touched.
+5. **(d) Narrative preserved** — the superseded id stays in `frontier_basis`, the keeper shard
+   prose and the FINDING/RESULT records as the audit trail; `--force-uncite` was the intended
+   route, not a safety override.
+
+Rule 23 `[R-MECH-MATRIX]`: `docs/codebase-site/data/mechanism-matrix/ERCOT.js` re-stamped with
+the new keeper id and the open drift gate. **No cell moved and no mechanism was tested** — the
+new keeper is the old recipe, so every cell verdict stands as it was.
+
+## One fix landed along the way
+
+`scripts/replay_keeper.py::build_kwargs` now routes the top-level
+`ercot_ep_gas_basis_receipts_fallback` to `prb_overrides`. Without it the ERCOT keeper had been
+**unreplayable on every year since 2026-09-10**; all five v1 shards stopped there before any LP.
+
+## What is STILL OPEN after the promotion
+
+* **The drift is not root-caused.** Leading unconfirmed candidate `760012f7`, not bisected.
+  A bisect lane is owed. Any ERCOT cell verdict stamped against a pre-2026-09-19 keeper was
+  differenced against a control that no longer reproduces.
+* **What the promotion DOES close:** rule 29 `[R-SCREEN]` (b) form 4 is valid for ERCOT again,
+  because the keeper is now HEAD-current. That was the finding's most disruptive consequence.
+* **2024's MER minimum of −7.7000 tCO2/MWh** is unexplained and sits far outside the other four
+  years. Worth resolving before a marginal-abatement curve is built on 2024.
+* **`tzdata` missing from the runtime deps** — three shards hit it; left unfixed, out of lane.

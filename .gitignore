@@ -2474,3 +2474,7 @@ results/calibration/nyiso_mer_2026-09-19_2022/
 results/calibration/nyiso_mer_2026-09-19_2023/
 results/calibration/nyiso_mer_2026-09-19_2024/
 results/calibration/nyiso_mer_2026-09-19_2025/
+# The per-year LEG dirs only (_2021.._2025). The COMPOSITE
+# ercot_mer20260919_five_year is the REGISTERED KEEPER bundle since 2026-09-19 and is
+# committed slim, like every keeper (rule 15 [R-DASHBOARD]).
+results/calibration/ercot_mer20260919_20*/
