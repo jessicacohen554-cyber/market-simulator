@@ -235,6 +235,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # hash at its default so every pre-existing cached run keeps its key; an
     # armed run carries a different fleet cost and so gets a distinct key.
     "measured_ct_heat_rates",
+    # Measured COAL steady-state operating heat rates (nwpp-42, default off):
+    # the coal sibling of measured_ct_heat_rates directly above, registered the
+    # same way and for the same reason -- dropped from the hash at its default
+    # so every pre-existing cached run keeps its key; an armed run carries a
+    # different fleet cost and so gets a distinct key.
+    "measured_coal_heat_rates",
     # Measured power-only CHP heat rates (miso-99, default off): dropped from
     # the hash at its default so every pre-existing cached run keeps its key;
     # an armed run carries a different fleet cost and so gets a distinct key.
@@ -1914,6 +1920,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "temp_derate_slope_ct_chp": "None",
     "ramp_limits": "False",
     "measured_ct_heat_rates": "False",
+    "measured_coal_heat_rates": "False",
     "measured_chp_heat_rates": "False",
     "egrid_identity_heat_rates": "False",
     "egrid_family_heat_rates": "False",
@@ -5108,6 +5115,47 @@ class ScenarioConfig:
     # only the turbines of a mixed plant are repriced. See
     # docs/FINDING-nyiso88-peaker-heat-rate-2026-07-27.md sec 4.
     measured_ct_heat_rates: bool = False
+
+    # Measured COAL steady-state operating heat rates (nwpp-42, default OFF,
+    # byte-identical off). scripts/data/derive_campd_coal_heat_rates.py ->
+    # data/raw/_processed-legacy/campd_coal_heat_rates_<ISO>.csv
+    # When True, a COAL generator whose plant the artifact covers takes its
+    # plant's CAMPD-measured OPERATING heat rate (MMBtu per net MWh, pooled
+    # 2023-2025 over the units whose primaryFuelInfo is a coal, on hours with
+    # opTime >= 0.99) ahead of the eGRID plant-average ANNUAL rate the loader
+    # otherwise assigns. The coal sibling of measured_ct_heat_rates directly
+    # above, on the identical seam, the identical identification and the
+    # identical artifact schema.
+    #
+    # The eGRID figure is wrong for a coal steam unit twice over. (1) It is an
+    # ANNUAL average over PLNGENAN, so it folds startup fuel, shutdown tails
+    # and the offline hours' bank / unit-heater fuel into the number that sets
+    # the plant's offer; the rate that sets an offer is the rate at which the
+    # machine burns fuel while it is running. (2) Its LEVEL moves with the
+    # plant's capacity factor in the vintage year, so a low-CF vintage inflates
+    # the published rate, the model prices the plant out of merit, and its
+    # modelled CF falls further -- a feedback the measurement breaks.
+    #
+    # Measured on NWPP's own fleet (lane NWPP-42, 12 of 17 plants / 98.2 % of
+    # COAL capacity): the assigned rate is above the plant's own metered
+    # operating rate at EVERY covered plant, capacity-weighted 11.868 -> 11.066
+    # MMBtu/MWh (-6.8 %). The overstatement is per-plant source noise, not a
+    # uniform bias -- Hunter -17.7 %, North Valmy -13.3 %, Hardin -9.7 % against
+    # Jim Bridger -0.8 % and Naughton -0.9 % -- which is why no single
+    # multiplier can stand in for it (the same argument measured_ct_heat_rates
+    # makes for E F Barrett / Bayswater).
+    #
+    # Rule 13 [R-MEASURED] admissible: a machine's operating heat rate is a
+    # physical characteristic that regenerates for a forward year and responds
+    # to changed conditions (a retrofit moves it; a converted unit drops out of
+    # the coal population), not a measured outcome fed back to close a
+    # residual. Rule 21 [R-DOF]: ZERO free parameters -- every applied number is
+    # sum(heatInput)/sum(grossLoad) over the plant's own hours. Rule 25
+    # [R-ISO-SCOPE]: a per-ISO artifact, a strict no-op for an ISO with none.
+    # Applied per generator BY CLASS, so a coal site's gas-converted boilers
+    # keep the rate their own class assigns. See
+    # docs/handoffs/PRECOMMIT-nwpp-42-2026-09-19.md.
+    measured_coal_heat_rates: bool = False
 
     # Measured POWER-ONLY heat rates for topping-cycle CHP (miso-99; default
     # OFF, byte-identical off). eGRID's ``PLHTRT`` is the number the model

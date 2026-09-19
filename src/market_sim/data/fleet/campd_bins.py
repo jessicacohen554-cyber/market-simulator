@@ -278,6 +278,43 @@ def measured_ct_heat_rates(iso: str) -> dict[int, float]:
 
 
 @lru_cache(maxsize=8)
+def measured_coal_heat_rates(iso: str) -> dict[int, float]:
+    """Return ``{plant_code: measured operating heat rate}`` for an ISO's COAL.
+
+    Reads the committed CAMPD-measured artifact
+    (``scripts/data/derive_campd_coal_heat_rates.py`` →
+    ``data/raw/_processed-legacy/campd_coal_heat_rates_<ISO>.csv``): per-plant
+    MMBtu per **net** MWh over the plant's own steady-state operating hours,
+    pooled 2023-2025 over the CAMPD units whose ``primaryFuelInfo`` is a coal.
+    It replaces the eGRID plant-average ANNUAL heat rate the fleet loader
+    otherwise gives a coal generator, which folds startup fuel, shutdown tails
+    and the offline hours' fuel into the number that sets the plant's offer and
+    which moves with the plant's capacity factor in the vintage year
+    (CLAUDE.md rule 14 [R-ACCURATE]).
+
+    The coal sibling of :func:`measured_ct_heat_rates`, on the identical
+    identification: a machine's operating heat rate is a physical
+    characteristic that regenerates for a forward year and responds to changed
+    conditions, so it is an INPUT under rule 13 [R-MEASURED], never a measured
+    outcome fed back to close a residual, and it carries zero free parameters.
+
+    Only ``flag == "ok"`` rows are returned: the derive marks any plant outside
+    the physical coal-steam band as a meter defect rather than applying it.
+    Empty dict when the ISO has no artifact, which leaves every plant on its
+    eGRID rate — never a silent hand number (rule 23 [R-FROZEN-DERIVE]).
+    """
+    path = PROCESSED_DIR / f"campd_coal_heat_rates_{iso.upper()}.csv"
+    if not path.exists():
+        return {}
+    df = pd.read_csv(path, usecols=["plant_code", "heat_rate", "flag"])
+    return {
+        int(r.plant_code): float(r.heat_rate)
+        for r in df.itertuples(index=False)
+        if str(r.flag) == "ok" and float(r.heat_rate) > 0.0
+    }
+
+
+@lru_cache(maxsize=8)
 def measured_chp_heat_rates(iso: str) -> dict[tuple[int, str], float]:
     """Return ``{(plant_code, class): measured power-only heat rate}`` for CHP.
 
