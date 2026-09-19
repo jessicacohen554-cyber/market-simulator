@@ -14530,3 +14530,71 @@ REGISTERED: no dashboard id, keeper bundle untouched, no re-registration.
 Record: `docs/RESULT-miso262-mer-control-and-the-year-grouping-defect-2026-09-19.md`.
 
 * Next number: **miso-263**.
+
+## miso-262c — 2026-09-19 — **WARM START AND THE P1 BASIS SEED DEFAULT OFF; RULE 36 `[R-YEAR-ISOLATION]`; AND THE COLD YEAR-ISOLATED SPAN IS PROMOTED TO KEEPER.** Keeper `2026-09-16-miso-260-seam-ladder` → **`2026-09-19-miso-262-cold-year`**, train tier **CALIBRATED**
+
+**OWNER RULING 2026-09-19**, three parts: *"default both off and give clear direction that
+each year of a backcast gets its own shard/container to avoid cross pollination"*, and
+*"Is this a recommended keeper candidate? If so plz promote. If structural integrity
+improves but gates regress that may still be a keeper."*
+
+**THE ARCHITECTURAL POINT, which the code confirms.** A backcast's years are independent:
+every input is that year's own EIA-860/923 vintage, and the backcast year loop carries no
+`evolve_fleet`, no `prior_results` and no carry-forward — **the LP basis was the ONLY
+channel crossing a year boundary**. Cross-year warm start was a wallclock optimisation for
+multi-year spans and per-year shard containers make it obsolete. A FORECAST is the
+opposite (year 2's builds set year 3's fleet) and is untouched: it passes an explicit
+`xyear_warmstart` and never reads these env vars.
+
+**BOTH KNOBS NOW DEFAULT OFF** — `resolve_xyear_warmstart_default` and
+`resolve_p1_basis_seed_default`, flipped together because `pipeline/solve.py` arms the
+second only inside the first's gate. Both docstrings' neutrality claims are **WITHDRAWN in
+place**. They were tolerated off-registry as PERFORMANCE knobs; that exemption lapses with
+the claim (rule 24 `[R-REGISTRY]` / rule 26 `[R-DELETE]`). **New rule 36
+`[R-YEAR-ISOLATION]`** in CLAUDE.md, which amends rule 32 `[R-SHARD]` (b) in place: the
+per-year fan-out ban existed because slim legs could not be reassembled, and rule 34
+`[R-SHARD-PROMOTABLE]` (a) already fixed that by making every shard push its full bundle.
+
+**THE PROMOTION.** `2026-09-19-miso-262-cold-year`, bundle
+`results/calibration/miso262_cold_span`, years 2020–2025. **The SAME recipe** — zero
+`ScenarioConfig` deltas, zero free parameters, 43 DOF entries carried and 0 added — solved
+one year per shard and composed at zero LP. **It is the better optimum, not merely a
+different one**: the predecessor's 2022 served identical demand while running 24 TWh more
+CC_REGULAR (median `mc` $54.52/MWh) and 24 TWh less coal ($31.93/MWh), ~$500 M of
+objective.
+
+**TRAIN TIER 2023–2025 DOES NOT MOVE** — no criterion fails in any of the three in either
+run; `build_status` prints **MISO:CALIBRATED**.
+
+**THE REGRESSION, AT FULL MAGNITUDE, ENTIRELY IN 2021–2022 AND ALL ON VALIDATION RUNGS**
+(rule 30(c)): failing criteria **3 → 4**, failing C1 cells **2 → 5**. C1 2020 COAL_BIT
+−10.29 → −10.30; **NEW** 2021 CC_REGULAR −9.62; 2022 CC_REGULAR −9.47 → **−28.20**;
+**NEW** 2022 COAL_PRB **+32.08**; **NEW** 2022 COAL_BIT +10.42. C3a 2022 −14.6 % →
+**−23.3 %**. C3b 2021 0.299 → 0.305, **NEW** 2022 0.287. C4 **PASS → FAIL** (2022 gas
+r=0.838, NRMSE 0.346). C3c the lone ledgered caveat; C2/C6/C8 PASS.
+
+**WHY THAT ARGUES FOR THE PROMOTION.** 2022 is the $6.45 gas year, and at its true optimum
+the model fills the gap expensive gas leaves with 32 TWh of surplus coal the real market
+did not burn — i.e. **no binding coal supply ceiling**, the object `coal_fuel_inventory`
+exists for and which miso-259 closed 2022 on as "the passthrough object". The warm-start
+artifact was MASKING it. A keeper that hides a real defect behind a solve-path artifact is
+worse evidence than one that exposes it. **THE 2022 COAL OVER-RUN IS THE SUCCESSOR'S NAMED
+OBJECT.**
+
+**GATES:** `build_status --check` in sync · `check_gate_a_provenance --iso MISO` **OK**
+(re-keyed) · `check_cache_key_registration` OK · `check_mechanism_matrix` **0 errors**
+after re-stamping the shard and the §5.4 header · `node --check` PASS · bench freshness 6
+parts **0 STALE** · parity RED on the 2 pre-existing plus this session's 6 gitignored
+per-year dirs (filesystem sweep; CI stays green).
+
+**NOT DONE, AND FLAGGED RATHER THAN WORKED AROUND: the outgoing keeper is NOT pruned.**
+`scripts/prune_iso_runs.py --iso MISO --force-uncite` was refused by the permission
+classifier as an irreversible deletion, so **`audit_keepers` E13 is RED** pending it (rule
+35 `[R-PROMOTE]` (a)/(f)). Rule 35(e)'s order was still honoured: E1 verified the incoming
+keeper BEFORE any prune was attempted, and the year-set union {2020–2025} was recorded
+first. The E3 warning (composite `calibration_flags` years read `[2020]`, the first leg's)
+is the same provenance defect class this session documented in the predecessor.
+
+Records: `docs/RESULT-miso262-mer-control-and-the-year-grouping-defect-2026-09-19.md`.
+
+* Next number: **miso-263**.
