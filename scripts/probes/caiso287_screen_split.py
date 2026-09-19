@@ -278,9 +278,22 @@ def main(bundle: Path, out_path: Path) -> None:
     exact = bool(np.array_equal(keeper[on_ra], min_gen[on_ra]))
     max_abs = float(np.max(np.abs(keeper[on_ra] - min_gen[on_ra]))) if on_ra.any() else 0.0
     # Off the RA-attributed hours another mechanism wrote the winning value, so
-    # the detector's own floor may only be LOWER, never higher.
-    off = ~on_ra
+    # the detector's own floor may only be LOWER, never higher
+    # (``_bridge_floored_fleet`` composes by maximum and tags the mechanism
+    # only where the composed floor strictly ROSE).
+    #
+    # The absorption rows are excluded and counted separately rather than
+    # folded in: a priced export sink carries pmin < 0 as its composition
+    # base, while the detector returns a zeros-initialised array, so a bare
+    # ``0 > pmin`` comparison on those rows reports an exceedance that is an
+    # artifact of the sign convention and not a reproduction failure. (With
+    # ``caiso_p1_export_sink_seam`` off — this keeper — those rows compose to
+    # max(pmin, 0) = 0 and ARE tagged RA, so they land in the exact leg above
+    # at 0 == 0; the exclusion is belt-and-braces for the other polarity.)
+    absorb_rows = np.asarray(fa.pmin, dtype=float) < 0.0
+    off = ~on_ra & ~absorb_rows[:, None]
     n_exceed = int(np.sum(keeper[off] > min_gen[off] + 1e-9))
+    n_absorb_rows = int(absorb_rows.sum())
     g_r2 = exact and n_exceed == 0
 
     # ---- G-R3 --------------------------------------------------------------
@@ -320,6 +333,7 @@ def main(bundle: Path, out_path: Path) -> None:
             "G_R2_exact_on_ra_hours": exact,
             "G_R2_max_abs_diff_on_ra_hours_mw": max_abs,
             "G_R2_gen_hours_exceeding_elsewhere": n_exceed,
+            "G_R2_absorption_rows_excluded": n_absorb_rows,
             "G_R3": "PASS" if g_r3 else "FAIL",
             "G_R3_belly_ra_mean_mw": belly_ra_mean,
             "G_R3_expected_mw": EXPECT_BELLY_RA_MEAN_MW,
