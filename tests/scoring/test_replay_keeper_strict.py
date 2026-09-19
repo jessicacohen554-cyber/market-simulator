@@ -118,3 +118,53 @@ class TestCurrentKeepersReplayCleanly(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestErcotReceiptsFallbackRouting(unittest.TestCase):
+    """The ERCOT keeper's top-level ``ercot_ep_gas_basis_receipts_fallback``.
+
+    The ercot-265 promotion stamped this ScenarioConfig field into meta.json's
+    TOP LEVEL as a provenance record. It is not a ``solve_and_persist`` kwarg,
+    so the strict guard rejected it and the ERCOT keeper became unreplayable on
+    EVERY year (all five ERCOT MER shards stopped here, 2026-09-19). It is
+    routed per-key to ``prb_overrides`` — the channel the calibration CLI itself
+    arms it through, and the one its sibling ``ercot_ep_gas_basis_corroborated``
+    already travels in.
+    """
+
+    KEY = "ercot_ep_gas_basis_receipts_fallback"
+
+    def test_true_routes_to_prb_overrides(self):
+        kwargs = build_kwargs(dict(_BASE, iso="ERCOT", **{self.KEY: True}))
+        self.assertTrue((kwargs.get("prb_overrides") or {})[self.KEY])
+        # and never leaks out as a bogus direct kwarg
+        self.assertNotIn(self.KEY, {k: v for k, v in kwargs.items()})
+
+    def test_false_fabricates_no_override(self):
+        # The ScenarioConfig default is already False, matching the CLI's
+        # ``True if <flag> else None`` — a recorded False needs no override.
+        kwargs = build_kwargs(dict(_BASE, iso="ERCOT", **{self.KEY: False}))
+        self.assertNotIn(self.KEY, kwargs.get("prb_overrides") or {})
+
+    def test_does_not_mutate_the_callers_meta(self):
+        # prb_overrides is bound straight off meta["coal_prb_sigmoid_overrides"],
+        # so a setdefault-and-mutate would contaminate the caller's dict and
+        # every later reconstruction from it.
+        bag = {"coal_prb_passthrough_floor": 0.5}
+        meta = dict(
+            _BASE, iso="ERCOT", coal_prb_sigmoid_overrides=bag, **{self.KEY: True}
+        )
+        first = build_kwargs(meta)
+        self.assertNotIn(self.KEY, bag)
+        self.assertEqual(first, build_kwargs(meta))
+
+    def test_blanket_fallback_was_not_introduced(self):
+        # The routing is per-key ON PURPOSE: the unmapped hard stop is the
+        # miso-50..53 guard, and a generic "any ScenarioConfig field falls
+        # through to prb_overrides" would silently admit every future stray key.
+        # ercot_zonal_gas_basis is a ScenarioConfig field AND env-gated-inert,
+        # so pick a plain one that is a config field but no solve kwarg.
+        meta = dict(_BASE, iso="ERCOT", ercot_ep_gas_basis_monthly=True)
+        with self.assertRaises(SystemExit) as ctx:
+            build_kwargs(meta)
+        self.assertIn("ercot_ep_gas_basis_monthly", str(ctx.exception))
