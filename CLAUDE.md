@@ -747,6 +747,65 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
       carrying a registered run that is neither — the gap this rule was written for, since `audit_keepers`
       passed cleanly on all 47 runs the day 33 of them were superseded.
 
+1. `[R-YEAR-ISOLATION]` **A BACKCAST YEAR IS SOLVED ALONE, IN ITS OWN SHARD CONTAINER. NO
+    CROSS-YEAR STATE, NO CROSS-YEAR WARM START.** *(Owner ruling 2026-09-19, miso-262:
+    "default both off and give clear direction that each year of a backcast gets its own
+    shard/container to avoid cross pollination". The incident: MISO's designated keeper,
+    replayed year-by-year against its own committed bundle at one pinned HEAD, reproduced
+    the FIRST year of each solve leg and diverged in the later ones — max |Δ class TWh|
+    0.0048 (2020) and 0.1440 (2023) against **7.1586 / 24.1796 / 4.0034** (2021 / 2022 /
+    2025), 43,160 of 70,080 price cells moving in 2022. Deterministic — two independent
+    shards reproduced 2021 byte-identically — and NOT two optima of one LP: the 2022 swap
+    moves 24 TWh off CC_REGULAR at a $54.52/MWh median `mc` onto coal at $31.93 to serve
+    identical demand, ~$500 M of objective, so the warm-started solve was not at the
+    optimum. Record:
+    `docs/RESULT-miso262-mer-control-and-the-year-grouping-defect-2026-09-19.md`.)*
+    - **(a) THE RULE.** Every year of a backcast span is solved in its OWN shard, its own
+      container, its own `--out-dir`, from ONE `--years <single year>` invocation. The
+      parent composes the per-year bundles afterwards — a zero-LP file operation
+      (`scripts/probes/_miso260_compose_span.py` is the worked example; its
+      `check_recipes` takes any number of legs). **This is the one place rule 32
+      `[R-SHARD]` (b)'s ban on per-year fan-out does NOT apply**, and (b) is amended
+      accordingly: the ban exists because slim per-year legs could not be reassembled,
+      which rule 34 `[R-SHARD-PROMOTABLE]` (a) fixed by making every shard push its FULL
+      bundle including `dispatch/<y>_P1.parquet`. With the full bundle pushed, the legs
+      compose; without year isolation, the span is contaminated. A registrable backcast
+      run is therefore **one shard per year**, composed.
+    - **(b) WHY A BACKCAST HAS NO SPAN TO PRESERVE.** Its years are independent by
+      construction: every input is that year's own EIA-860/923 vintage, and the backcast
+      year loop carries no `evolve_fleet`, no `prior_results` and no carry-forward — the
+      LP basis (`xyear_cache`) was the ONLY channel crossing a year boundary. Nothing
+      physical is lost by isolating years, and the resource-specific availability
+      assumptions a span would smuggle in are exactly what a backcast must not make.
+    - **(c) A FORECAST IS THE OPPOSITE AND IS UNTOUCHED.** There, year 2's builds and
+      exits set year 3's fleet, so the span IS the mechanism and the years must run
+      sequentially in one invocation (rule 12 `[R-PARALLEL]`). The forecast path passes an
+      explicit `xyear_warmstart` argument and never reads the env vars in (d), so nothing
+      in the forecast lane moves.
+    - **(d) BOTH SOLVE-PATH KNOBS NOW DEFAULT OFF**, flipped together because
+      `pipeline/solve.py` arms the second only inside the first's gate:
+      `MARKET_SIM_WARMSTART_XYEAR` (`resolve_xyear_warmstart_default`) and
+      `MARKET_SIM_P1_BASIS_SEED` (`resolve_p1_basis_seed_default`), both in
+      `scripts/run_calibration.py`. An explicitly-set env var is still honored, so a
+      deliberate wallclock experiment remains possible — but it is then a
+      **solve-affecting** choice the run must declare, not a free performance knob.
+    - **(e) THE NEUTRALITY CLAIMS THAT JUSTIFIED THEM ARE WITHDRAWN.** Both resolvers
+      documented the knobs as basis-neutral (*"objective, every zonal price and total
+      generation are bit-identical"*; *"objective and total generation identical,
+      per-unit differences marginal-tie only"*). The measurement above falsifies both on
+      the calibration path. They were tolerated off-registry as PERFORMANCE knobs; that
+      exemption lapses with the claim, so under rule 24 `[R-REGISTRY]` they are now
+      solve-affecting env vars living on borrowed time — a successor either promotes them
+      to `ScenarioConfig` + the cache key or deletes them outright (rule 26 `[R-DELETE]`:
+      deleted, not zeroed).
+    - **(f) THE COST, STATED RATHER THAN HIDDEN.** Every ISO's keeper was solved through
+      the CLI with both knobs ON, so every keeper carries some of this artifact and its
+      registered numbers will move when it is next re-solved. **Its size is unmeasured
+      outside MISO** — NYISO's 2025 replay merged identically, which bounds it at "small
+      or absent" there and nothing more. No ISO's keeper is invalidated by this rule; each
+      lane re-solves on its own cadence and reports the movement at full magnitude.
+
+
 Rules 17–26 are the protective rules from `docs/model-legitimacy-audit-2026-07.md` §8, numbered
 **16–25 there** — a doc reference to "audit rule N" maps to rule N+1 here. Mapping table, per-rule
 amendment genealogy and the incident record: `docs/governance/rule-history.md`.

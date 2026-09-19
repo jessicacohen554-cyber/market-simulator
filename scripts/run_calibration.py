@@ -7581,12 +7581,25 @@ def resolve_p1_basis_seed_default(disable: bool) -> bool:
     P1-native floor bridge takes — the same year's P0 optimal basis before its
     first solve. Validated warm-start-class neutral (objective and total
     generation identical, per-unit differences marginal-tie only, price
-    differences dual-degenerate hours only; memo §3), so it defaults **ON**
-    here. Same precedence as the cross-year resolver, highest first:
+    differences dual-degenerate hours only; memo §3).
+
+    **THAT VALIDATION DID NOT HOLD AND THIS NOW DEFAULTS OFF** (owner ruling
+    2026-09-19, miso-262 — the same ruling that flipped
+    :func:`resolve_xyear_warmstart_default`, and the two are flipped together
+    because the solve core arms this seed only INSIDE the cross-year gate).
+    The seed is the component that moves a LEG-FIRST year, where no prior-year
+    basis exists: MISO 2020 and 2023 are the first years of their legs and
+    still diverge from a pinned-cold replay by 0.0048 and 0.1440 TWh, which is
+    small but is not the "identical" the memo claims. On later years it
+    compounds with the cross-year basis into 7.16-24.18 TWh. Evidence:
+    ``docs/RESULT-miso262-mer-control-and-the-year-grouping-defect-2026-09-19.md``
+    §3.
+
+    Same precedence as the cross-year resolver, highest first:
 
     1. ``--no-p1-basis-seed`` (``disable=True``) → force OFF.
     2. An explicitly-set ``MARKET_SIM_P1_BASIS_SEED`` env var → honored as-is.
-    3. Otherwise → default ON.
+    3. Otherwise → default **OFF**.
 
     Sets ``os.environ["MARKET_SIM_P1_BASIS_SEED"]`` so the shared solve core
     (``pipeline.solve.run_energy_solve``) reads the resolved value, and returns
@@ -7602,7 +7615,8 @@ def resolve_p1_basis_seed_default(disable: bool) -> bool:
     if disable:
         os.environ["MARKET_SIM_P1_BASIS_SEED"] = "0"
     elif "MARKET_SIM_P1_BASIS_SEED" not in os.environ:
-        os.environ["MARKET_SIM_P1_BASIS_SEED"] = "1"
+        # Owner ruling 2026-09-19 (miso-262): default OFF. Was "1".
+        os.environ["MARKET_SIM_P1_BASIS_SEED"] = "0"
     # else: env var explicitly set by the caller -> honor it verbatim.
     return os.environ.get("MARKET_SIM_P1_BASIS_SEED", "0") != "0"
 
@@ -7615,12 +7629,40 @@ def resolve_xyear_warmstart_default(disable: bool) -> bool:
     basis-neutral on the calibration/backcast path — objective, every zonal
     price and total generation are bit-identical; the only movement is the
     marginal-tie reshuffling the intra-year warm start already ships (see
-    ``docs/cross-year-warmstart.md``) — so it defaults **ON** here. Precedence,
-    highest first:
+    ``docs/cross-year-warmstart.md``).
+
+    **THAT NEUTRALITY CLAIM IS FALSIFIED AND THIS NOW DEFAULTS OFF** (owner
+    ruling 2026-09-19, miso-262). Measured on MISO's designated keeper by
+    replaying each of its six years standalone against the same committed
+    bundle at one pinned HEAD: the first year of each solve leg reproduces
+    (max |Δ class TWh| 0.0048 in 2020, 0.1440 in 2023) and the later years do
+    not (7.1586 / 24.1796 / 4.0034 in 2021 / 2022 / 2025), with 43,160 of
+    70,080 price cells moving in 2022. It is deterministic — two independent
+    shards in different containers reproduced 2021 byte-identically — and it is
+    not two optima of one LP: the 2022 swap moves 24 TWh off CC_REGULAR
+    (median ``mc`` $54.52/MWh) onto coal ($31.93/MWh) to serve identical
+    demand, of order $500 M of objective, so the warm-started solve was not at
+    the optimum. Record:
+    ``docs/RESULT-miso262-mer-control-and-the-year-grouping-defect-2026-09-19.md``.
+
+    **A BACKCAST HAS NO REASON TO WANT THIS.** Its years are independent by
+    construction — every input is that year's own EIA-860/923 vintage, and the
+    backcast year loop carries no ``evolve_fleet``, no ``prior_results`` and no
+    carry-forward of any kind, so the LP basis was the ONLY channel crossing a
+    year boundary. Cross-year warm start was a wallclock optimisation for
+    multi-year spans, and per-year shard containers (CLAUDE.md rule 36
+    ``[R-YEAR-ISOLATION]``) make it obsolete. A FORECAST genuinely needs the
+    span — year 2's builds set year 3's fleet — but the forecast never reads
+    this env var (it passes an explicit ``xyear_warmstart``), so nothing there
+    moves.
+
+    Precedence, highest first:
 
     1. ``--no-xyear-warmstart`` (``disable=True``) → force OFF.
-    2. An explicitly-set ``MARKET_SIM_WARMSTART_XYEAR`` env var → honored as-is.
-    3. Otherwise → default ON.
+    2. An explicitly-set ``MARKET_SIM_WARMSTART_XYEAR`` env var → honored as-is
+       (the escape hatch for a deliberate wallclock experiment, which is then
+       a solve-affecting choice the run must declare).
+    3. Otherwise → default **OFF**.
 
     Sets ``os.environ["MARKET_SIM_WARMSTART_XYEAR"]`` so the shared solve core
     (``pipeline.solve.run_energy_solve``) reads the resolved value, and returns
@@ -7641,7 +7683,8 @@ def resolve_xyear_warmstart_default(disable: bool) -> bool:
     if disable:
         os.environ["MARKET_SIM_WARMSTART_XYEAR"] = "0"
     elif "MARKET_SIM_WARMSTART_XYEAR" not in os.environ:
-        os.environ["MARKET_SIM_WARMSTART_XYEAR"] = "1"
+        # Owner ruling 2026-09-19 (miso-262): default OFF. Was "1".
+        os.environ["MARKET_SIM_WARMSTART_XYEAR"] = "0"
     # else: env var explicitly set by the caller -> honor it verbatim.
     return os.environ.get("MARKET_SIM_WARMSTART_XYEAR", "0") != "0"
 
