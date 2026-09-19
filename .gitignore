@@ -2693,3 +2693,9 @@ results/calibration/miso263_coalcap_20[0-9][0-9]/
 # predate this block. A future r3 must likewise pin to a sha before it, or use a
 # bundle name outside this glob.
 results/calibration/pjm_h11_*/
+# caiso-287: the 2022 leg became the REGISTERED touchpoint at the 2026-09-19 MER
+# promotion, so it must reach main (rule 15 [R-DASHBOARD]) — un-ignore the dir
+# only. The slim-bundle rules above (dispatch/, floors/, root *.parquet,
+# unit_hourly, network) still match the files inside and still apply, so this
+# commits the slim set every keeper commits, not the 50 MB working bundle.
+!results/calibration/caiso287_instr_2022/
