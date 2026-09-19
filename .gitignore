@@ -2568,3 +2568,27 @@ results/calibration/nwpp42_mer_composite/
 #   git checkout d8e7b39c1e4d17e3c5c53780987b24ac80e8ee2d -- results/calibration/caiso287_instr_2024
 results/calibration/caiso287_instr_*/
 results/calibration/caiso_mer_*/
+
+# neiso-112 (2026-09-19): the six YEAR-ISOLATED MER bundles (rule 36
+# [R-YEAR-ISOLATION]). Kept OUT OF `main` per rule 32 [R-SHARD] (d) — the parent
+# never commits per-year dirs — and kept ON DISK per rule 31 [R-RETAIN], which
+# forbids deleting a result before the owner has ruled on promotion. Each was
+# pushed in full (17 files, incl. dispatch/<y>_P1.parquet) to its own shard
+# branch under rule 34 [R-SHARD-PROMOTABLE] (a), so a promotion costs ZERO
+# re-solves. Recover any of them by IMMUTABLE SHA (rule 33 [R-SHARD-ARCHIVE] (d)
+# — never by branch name; the branches are deliberately NOT deleted while the
+# promotion is open, per rule 33 (f)(3)):
+#   git checkout c36b794b5b6363db3255edcca929ccf7d74768f4 -- results/calibration/neiso112_mer_2020
+#   git checkout 5b4833a80833ac65ba2bd7554819a027b6d64e0b -- results/calibration/neiso112_mer_2021
+#   git checkout a5f3a9a430249708448425d9459a6ec1f7b6cdb5 -- results/calibration/neiso112_mer_2022
+#   git checkout 49c7022f48fac32952d4290980826fb8e8f85175 -- results/calibration/neiso112_mer_2023
+#   git checkout b67072908d9deaec03e8ff14d120eaada40fc1e6 -- results/calibration/neiso112_mer_2024
+#   git checkout 165f1db0b25939e0d60215c15611edbd9a1464c2 -- results/calibration/neiso112_mer_2025
+# NOTE (rule 31, pjm-h8 correction): check_registry_payload_parity.py walks the
+# FILESYSTEM, so these dirs turn that gate RED in a working tree that holds them
+# while CI (which sees only committed files) stays green. That RED is expected
+# here and is NEVER fixed by deleting a bundle this rule protects.
+# NOTE the pattern is year-scoped on purpose: `neiso112_mer_*` would also swallow
+# the COMPOSED span bundle `neiso112_mer_span`, which is the registered keeper and
+# MUST commit its slim set (rule 15 [R-DASHBOARD]).
+results/calibration/neiso112_mer_20[0-9][0-9]/
