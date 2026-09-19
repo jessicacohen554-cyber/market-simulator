@@ -5798,7 +5798,11 @@ keeper bundle does not commit** — one parquet, no re-solve beyond the replays.
 2019, 2021, 2022, 2023, 2024, 2025 — **2020 is absent** — and `firm_export_floor_by_year` covers only
 2023–2025 (and is *displaced* by the ladder wherever it has data, so it is **inert in every keeper
 year**). So 2020 falls through to the **forecast gas-elastic track**, which is the exact defect
-pjm-160 fixed for 2022 and left behind when it extended to 2019/2021/2022. **Both 2020 source inputs
+pjm-160 fixed for 2022 and left behind when it extended to 2019/2021/2022. **This is a STALE INVARIANT, not a second oversight**: pjm-173 recorded that the ladder
+"covers {2019, 2021, 2022, 2023, 2024, 2025} = EVERY year PJM solves", and that was TRUE when written
+— the then-keeper `pjm_debugb_inputclock_A` (pjm-162) solved 2023–2025. **2020 entered PJM's solved
+span with the `pjm_d4_4_TP` touchpoint and nothing re-checked the claim**, which is why a rule-19
+inertness argument has to be re-verified whenever an ISO's year set grows. **Both 2020 source inputs
 are on disk** (`PJM_2020_import_export_act_sch_interchange.csv`; the DA LMP parquet covers 2018–2025),
 so filling it is a rule-23 `[R-FROZEN-DERIVE]` re-derivation with zero new parameters. **Stated
 against interest (rule 1 `[R-STRUCT]`): it will probably make 2020 WORSE** — 2020 currently has the
@@ -5828,12 +5832,20 @@ and ST_CHP −2.1…−2.4 (together −4.4…−5.0/yr)**, **`oil` = 0.000 TWh 
 measured, **solar −2.9…−5.3**, and **COAL_PRB −2.7…−6.1 while COAL_BIT is over in 4 of 5** — a
 within-coal merit-order misallocation invisible to C2, which scores the family.
 
-**Q3 the virtual net** is −1.88 / −9.97 / −12.14 / +1.99 / +2.42 / −2.42 TWh; the INC/DEC pair is
-**not** volume-balanced by construction and is not meant to be (one net curve, crossing price λ0,
-endogenous both sides). But the layer's own admissibility figure at actual DA prices is
-**−0.6/−0.9/+1.3**, and **2021/2022 are 8–10× that band**. pjm-158 closed the invariant-price question
-and is not re-litigated; the pre-2023 *magnitude* is new, and lands on the same years as the CC
-over-run and the worst under-export.
+**Q3 WAS ALREADY ADJUDICATED — by pjm-d4-3, not here** (`docs/RESULT-pjm-d4-3-da-virtual-net-2026-09-10.md`
+§4, carried on the matrix cell `da_virtual_bids`; rule 28(a) DO-NOT-REDO). It measured `net @ actual DA`
+on all six years — **+16.537 / +16.812 / +12.248 TWh** of net virtual demand in 2020–22 against
+−0.755 / −1.620 / +0.204 in 2023–25 — and established that the layer's ≈0 admissibility anchor is a
+property of **2023–2025, not of the construction**: in the holdout years there is no price at which
+the curve nets to ~0. Cause is PJM's own book (gross INC 51.4 → 103.5 TWh 2021→2025, DEC/INC ratio
+1.69 → 1.28, the off-peak *supply* side thinner pre-2023), and the disposition is the standing
+pjm-159 architecture escalation. **This session adds only corroboration on the CURRENT keeper**, which
+pjm-d4-3 could not use: net phantom demand +1.883 / +9.971 / +12.138 / −1.987 / −2.416 / +2.415 TWh
+against its +2.414 / +10.525 / +13.013 / −1.338 / −1.713 / +2.870 — same sign in all six years, within
+0.5–0.9 TWh, so **the d4-4 promotion did not move this object.** The only new content is the
+cross-reference: the years of largest net phantom demand (2021, 2022) are exactly the years CC_REGULAR
+is most over and the under-export is worst; pjm-d4-3's own channel gain already bounds that at
+~7–12 TWh of the pre-2023 CC over-run, and no new attribution is asserted.
 
 **TWO CORRECTIONS to the state handed in.** (a) The model's internal sink is **NOT** storage
 round-trip loss: storage is **28–41 %** of it and **not monotone** (1.374/1.267/1.284/1.307/1.455/
