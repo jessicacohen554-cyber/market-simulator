@@ -284,75 +284,137 @@ Not touched: `backcast-runs.html`, `calibration-status.html`, `frontend/data/bac
 
 ---
 
-## 8. What the mock actually built, and what the build changed
+## 8. REVISION — owner review, same day
 
-Committed in this session:
+The first mock was rejected as too long, too jargony, and too dependent on knowing this repo.
+Four instructions, and what each changed.
+
+**(1) "I don't need to see every ISO summarized together the whole way thru."** The page is now
+two parts. The top is **one chart** — wind and solar together, every grid, for the selected year.
+Below it, **everything is one grid at a time**, behind a row of grid buttons. The per-grid KPI tile
+grid, the nine-line duration curve, the nine-row zero-share meter list and the pending-card grid
+are all gone; each collapsed into its single-grid form or was cut. Page height fell **5,517 → 3,522 px**
+(−36%) in the default state, and the empty state fell to 2,568.
+
+**(2) "Simpler explanation — some of this isn't digestible."** Named as the example:
+*"Zero-rate hour share — size caveat 2 yourself."* That panel is **deleted**, not reworded. So is
+every cross-reference of the "caveat 2" kind. Headings are now questions a reader actually has —
+*When is the grid dirtiest? · How much does it vary? · Where the cost comes from* — and the four
+caveats are written without a single rule number, gap id, file path or commit. The method section
+is three sentences and one line of arithmetic.
+
+**(3) "Imports should be given an emission rate."** Done, as a real toggle rather than a footnote.
+Imported power is charged the **average emission rate of the grid it came from**, applied after the
+fact, and **this is the default**. The `Ignored` setting reproduces the old treatment for
+comparison. It moves what it should: **CAISO wind $56 → $44**, NWPP wind $42 → $40, while ERCOT and
+SPP — which import almost nothing — do not move at all. The duration curve honours the toggle too:
+the flat run of exact zeros is the tail where the marginal resource emits nothing *on this grid*,
+and counting imports lifts that share of it onto the source region's rate and re-sorts, so the
+chart shows the same quantity the headline does. Leaving a visible zero cliff under a headline that
+counts imports would have been a lie. **The heatmap stays raw** and now says so in words — it is
+emissions *at power plants on this grid* — because the fixture has no hour-level import split and
+distributing the lift across 288 cells would be invented precision.
+
+**(4) "Get rid of the self-referential bullshit."** Every reader-facing mention of a commit hash, a
+bundle path, a parquet column, a lane, a control replay, a rubric rule or a criterion id is gone. A
+grid with no data now says **`pending`** and nothing else. The renderer carries a standing comment
+saying the page must read standalone. What survives is one line in the synthetic banner naming the
+placeholder data file — which is about *this mock*, not the model, and leaves with it.
+
+**What did not change:** the pending discipline (full roster always, never a zero, never an
+interpolation, no dollar axis when nothing is measured), the with/without-credits pairing shown
+everywhere, the committed-sidecar / generated-index data contract in §2, and the zonal-collapse
+decision in §1(b).
+
+### Files, after the revision
 
 | File | Lines | What it is |
 |---|---:|---|
-| `docs/codebase-site/marginal-abatement.html` | ~530 | the page — markup, page-local tokens, caveats, method |
-| `docs/codebase-site/js/marginal-abatement.js` | ~690 | the renderer: hand-rolled SVG, no CDN dependency |
-| `docs/codebase-site/data/marginal-abatement-synthetic.js` | 117 KB | **the synthetic fixture — delete with the banner when real data lands** |
-| `docs/codebase-site/js/nav.js` | +1 | one nav entry under **Backcast** |
+| `docs/codebase-site/marginal-abatement.html` | ~470 | the page |
+| `docs/codebase-site/js/marginal-abatement.js` | ~640 | the renderer |
+| `docs/codebase-site/data/marginal-abatement-synthetic.js` | 124 KB | **synthetic — delete with the banner** |
+| `docs/codebase-site/js/nav.js` | +1 | one nav entry |
 
-**What is real in the fixture, and only this:** the LCOEs, computed from the shipped
-`NEW_ENTRY_COSTS` constants through the real `compute_lcoe` formula — wind $50.71 pre / $35.15
-post, solar $62.66 pre / $46.69 post. Every capture price, marginal emission rate, expected CF,
-installed MW, duration curve and month × hour grid is **invented**. The MACs are then computed
-from those invented inputs with the real formula, so a reviewer can check any tile against its own
-waterfall — verified: **0 arithmetic mismatches across all 27 grid-years × 2 technologies.**
-Resulting spread: post-IRA −$10 to $64/t, pre-IRA $24 to $124/t. The one negative
-(NEISO wind 2023) is kept deliberately: it is a real result shape — capture price above cost, so
-abatement paid for itself — and it stress-tests a zero-crossing axis.
+The sidecar in §2 gains three fields for the import correction: `import_emission_rate`,
+`import_source` (a plain-English phrase the page prints), and a per-technology
+`import_marginal_share`, from which `mer_tech_with_imports` and the `*_with_imports` costs are
+derived. Arithmetic re-verified: **0 mismatches** over 27 grid-years × 2 technologies, on both the
+raw and the import-corrected path.
 
-**Palette, validated not eyeballed** (`dataviz/scripts/validate_palette.js`):
+### Verification after the revision
 
-- sequential light `#6FB9E0 #3E9ACB #1B82B4 #0E5E88 #08405E` — **ALL PASS** (ordinal)
-- sequential dark `#BDE6F8 #82CAEB #4AA6D4 #2E7B9C #31586F` — **ALL PASS** (ordinal)
-- The site's own `--wind` / `--solar` tokens were **rejected as a pair**: ΔE 5.7 under protanopia,
-  below the 6–8 floor. They are not needed — technology is a *toggle*, not a series, and region
-  identity is **nominal categorical**, so every region takes the same slot-1 hue and
-  position/length carries the value. That is why a nine-region chart needs no nine-hue palette.
+Palette re-validated for the new wind/solar pair, which now share one chart and so are a genuine
+categorical pair: **`#2A78D6` / `#EB6834` light and `#4589D6` / `#D4753E` dark, ALL CHECKS PASS**.
+(The site's own `--wind` / `--solar` tokens were re-confirmed unusable as a pair: ΔE 5.7 under
+protanopia, below the floor.) Contrast re-audited over every text node in all three data states:
+**clean on this page**. One latent trap was fixed while there — the selected grid button's ink was
+pinned to a dark navy that works on the dark section's light accent but would have been 2.2:1 if
+the picker ever moved to a light section; it now flips with the accent. No console errors, no
+horizontal scroll at 390 px, and the pending invariants still hold in the empty state: **0** bars,
+**0** dollar ticks, 9 named rows.
 
-**Defects the render pass caught and fixed** (the validator checks color, not layout — each of
-these was found by opening the page, not by reading the code):
+The pre-existing `shared.css:395` mobile-nav finding (3.2:1, all 23 pages) is still **named and
+left** — it is not this page's.
 
-1. `.mac-fig svg { width:100% }` captured the pending chip's own 12 px icon and inflated it to the
-   figure width — a full-panel clock. Fixed with an explicit chip override.
-2. The banner's `<code>` inherited the site's light-surface style (`#0369A1` on `#7C2D12`):
-   **invisible**. The banner now supplies its own.
-3. `.ax-title { text-transform: uppercase }` rendered the unit as `TCO₂/MWH`.
-4. The dumbbell's post-IRA label collided with the row name at phone width whenever a grid sat near
-   the domain minimum. Moved to the **left gutter** — collision-free at every width, no per-row
-   special-casing.
-5. In the empty state the ranking chart still drew a dollar axis across nine empty rows, and three
-   legends sat over empty panels. Both suppressed: **a $-scale over no data invites the reader to
-   place the missing values near zero, which is the one reading this page must never permit.**
+---
 
-**Accessibility.** Audited by walking every text node in the live browser and compositing each
-against its effective background (including SVG fills and the `.section-dark` gradient, which
-computes as transparent), in all three data states. One finding on this page: the pending status
-color `#B45309` measured **4.49:1** on the pending card's own tinted surface — one hundredth under
-AA — stepped to `#9A4708` (5.73:1 there, 6.40:1 on white). **The page is now clean.**
+## 9. REFRESH — what has actually landed, 2026-09-19 (rebased onto `142b10bc`)
 
-One finding is **pre-existing and NOT this page's**: `.top-nav__mobile-section-label` in
-`shared.css:395` is `rgba(255,255,255,0.35)` on navy = **3.2:1**, failing AA for its 10.9 px bold
-text. It affects the mobile menu of **all 23 codebase-site pages**. Medium severity, one line, but
-it is shared CSS outside this task's scope — **named, left, and routed to whoever next touches the
-nav.**
+Fifty commits arrived on `main` since this branch's base, several of them emissions-dual work.
+Re-scanned **all 68 committed `system_<year>.parquet` sidecars** for the column:
 
-**Both themes are exercised in production, not behind a switch.** This design system has no global
-dark toggle, only the section-level rhythm, so the page is laid out with the MER evidence band
-(duration curve, zero-share meters, heatmap) in `.section-dark` and the rest in `.section-light`.
-Tokens are declared on `.mac-scope` and redeclared under `.section-dark`; the heatmap ramp flips
-its anchor so *more* reads *lighter* on the dark surface.
+| Bundle | Years with the dual | Is it that grid's designated keeper? | Usable on this page (2023–2025)? |
+|---|---|---|---|
+| `soco53d_campaign` | **2023, 2024, 2025** | **yes** (`2026-09-19-soco53d-campaign-commitment`) | **YES** |
+| `spp48_arm_span` | 2019, 2020, 2021, 2022 | no (SPP's keeper is `spp42_span_a`) | no — wrong years *and* not the keeper |
 
-**Verified behaviour:** nav entry present and `aria-current="page"`; hash round-trips
-(`#iso=CAISO&year=2025&tech=solar&state=full` survives reload); no console errors in any state (the
-only browser complaint is the Google Fonts fetch failing offline); no horizontal scroll at 390 px;
-and the invariants — in the empty state **0** dollar ticks, **0** marks, 9 named pending rows,
-**0** digits inside any pending tile, **0** meter fills for a pending grid.
+**So the score is 1 of 9, not the 3 or 4 the commit titles suggest.** Two of those titles are
+misleading if read quickly and are worth writing down:
 
-**The mock ships three preview states** as buttons in the banner — `0 ready`, `3 ready`, `9 ready`
-— so the pending path is reviewable without editing a URL. The default is **3 of 9**, because that
-is what the page will actually look like while lanes land one at a time.
+- `58007ba2` — *"nyiso-240 MER control … NYISO gets its emissions dual"*. NYISO's keeper was
+  re-promoted to `nyiso240_benchfix_span`, and **that bundle does not carry the column.** The MER
+  control arm was a separate solve that is not the registered keeper.
+- `d8183961` / `9d344f71` — *"MER delivered for all 5 years"* for ERCOT, then
+  *"promotion prepared; **blocked at the registration step**"*. `7ec23b54` then explicitly
+  **kept the ercot-mer per-year shard bundles out of `main`**. ERCOT's numbers exist on shard
+  disk; nothing on `main` can be read by a build script.
+
+Consequence for this page: the build script in §2 can produce exactly **one real grid-year set
+today — SOCO 2023/24/25**. ERCOT unblocks as soon as its registration lands; NYISO needs its MER
+arm folded into the registered keeper rather than kept beside it.
+
+The mock's default preview state is now **`['SOCO']`**, not three arbitrary grids, so the layout
+being reviewed is the layout that will actually ship. The banner says so in one line.
+
+## 10. Palette change — solar yellow, wind lime green (owner request)
+
+Applied, with one thing worth knowing before anyone "brightens it up":
+
+**Bright lime and bright yellow are not distinguishable under red–green colour blindness.** They
+are adjacent hues at similar lightness, and no amount of hue nudging fixes it — the obvious pair
+(`#84CC16` / `#EAB308`) measures **ΔE 2.9 under protanopia**, and even its *normal-vision* score is
+14.8, below the floor. A 77-pair search over the dark surface returned only combinations that had
+stopped being lime and yellow at all.
+
+The separation is therefore carried by **lightness**, which is why one of the pair is deep in each
+mode:
+
+| | wind (lime) | solar (yellow) | CVD ΔE | normal ΔE | contrast |
+|---|---|---|---|---|---|
+| light | `#4D7C0F` | `#CA8A04` | **9.5 PASS** | 19.9 PASS | 5.0:1 / 2.9:1 |
+| dark | `#65A30D` | `#FACC15` | **16.7 PASS** | 24.3 PASS | 5.1:1 / 10.2:1 |
+
+Two deviations, both deliberate and both the lesser evil:
+
+- **Light mode, contrast WARN on the yellow (2.9:1).** The skill calls this non-dismissable but
+  dischargeable by a relief channel — and the chart already ships both it names: every bar carries
+  a visible value label, and there is a table view. The alternative (`#B8860B`, 3.25:1) drops CVD
+  separation to 7.4, into the floor band. A CVD WARN is worse than a contrast WARN, because CVD is
+  what actually makes two series indistinguishable.
+- **Dark mode, lightness-band FAIL on the yellow (L 0.861 vs a 0.67 ceiling).** That band is
+  calibrated to a lighter dark surface than this page's navy; the *surface-aware* contrast check
+  passes at 10.2:1. Pulling the yellow into the band means both marks go dark and CVD collapses
+  to 4.2 — unreadable for a red–green colourblind reader. Taken knowingly.
+
+Contrast re-audited over every text node in all three data states after the change: **clean on this
+page**; the pre-existing `shared.css:395` mobile-nav finding is still named and left.

@@ -1,119 +1,96 @@
 /**
  * marginal-abatement.js — renderer for marginal-abatement.html.
  *
- * MOCK STATE: reads window.MAC_SYNTHETIC (data/marginal-abatement-synthetic.js).
- * When real data lands this module keeps its shape and swaps `loadCells()` for a
- * fetch of the committed per-grid-year sidecars listed in
- * frontend/data/mac/manifest.js — nothing else here changes, because the page
- * already treats "this grid-year has no data" as a first-class render path.
+ * MOCK STATE: reads window.MAC_SYNTHETIC. When real results land, swap the
+ * data source; nothing else here changes, because "this grid has no data yet"
+ * is already a first-class render path.
  *
- * Charts are hand-rolled SVG (no CDN dependency, deterministic, and themed by
- * the CSS custom properties declared on .mac-scope — which this design system
- * redeclares under .section-dark rather than behind a global toggle).
+ * Charts are hand-rolled SVG — no CDN dependency, and themed entirely by the
+ * CSS custom properties on .mac-scope, which the page redeclares under
+ * .section-dark (this design system has no global dark toggle).
  *
- * Every color used here cleared dataviz/scripts/validate_palette.js first; the
- * results are recorded in the page's <style> header.
+ * Reader-facing text in here carries NO repo, commit or file references: the
+ * page has to stand on its own for someone who has never seen this codebase.
  */
 (function () {
   'use strict';
 
-  // ---------------------------------------------------------------------------
-  // Roster. Order = config/iso_configs.py::_ISO_BUILDERS registration order, so
-  // the page's roster is the model's roster. A grid is NEVER dropped from this
-  // list for lack of data — a short list would read as "these are the grids".
-  // ---------------------------------------------------------------------------
   var ISOS = ['ERCOT', 'CAISO', 'MISO', 'PJM', 'NYISO', 'NEISO', 'SPP', 'NWPP', 'SOCO'];
   var YEARS = [2023, 2024, 2025];
-  var TECHS = [['wind', 'New wind'], ['solar', 'New solar']];
   var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-  // Which grids the mock pretends have landed, per preview state. The DEFAULT is
-  // `partial` because that is what the page will actually look like for a while:
-  // results arrive one lane at a time. `empty` and `full` are there so the
-  // pending path and the full-data layout are both reviewable without editing a URL.
-  var SYNTH_STATES = {
-    empty: [],
-    partial: ['ERCOT', 'MISO', 'CAISO'],
-    full: ISOS.slice()
-  };
-
-  // The keeper bundle each grid's number will come from — named in the pending
-  // card so a reader can see exactly which artifact is blocking.
-  var KEEPER_BUNDLE = {
-    ERCOT: 'ercot265_receipts_fallback', CAISO: 'caiso275_B_gascoupling_span',
-    MISO: 'miso260_seam_ladder', PJM: 'pjm_d4_4_A', NYISO: 'nyiso239_bench_span',
-    NEISO: 'neiso110_dualfuel_derate_scope', SPP: 'spp42_span_a',
-    NWPP: 'nwpp41_span_A', SOCO: 'soco53_measured_ct_hr'
-  };
+  // Mock-only: which grids pretend to have landed. Default `partial`, because
+  // results arrive one grid at a time and that is the page's normal condition.
+  // `partial` mirrors reality as of 2026-09-19: exactly one grid (SOCO) has the
+  // underlying hourly measurement for 2023-2025. It is the default for that
+  // reason — the page's normal condition is 'almost everything is pending'.
+  var SYNTH_STATES = { empty: [], partial: ['SOCO'], full: ISOS.slice() };
 
   var DATA = window.MAC_SYNTHETIC || { cells: {}, lcoe: {}, shape: {} };
 
-  var state = { year: 2024, tech: 'wind', iso: 'ERCOT', synth: 'partial', shape: false };
-  var tables = { rank: false, dur: false, wf: false };
+  // imports: 'counted' charges imported power the average rate of the grid it
+  // came from; 'zero' leaves it at zero. 'counted' is the default — it is the
+  // more accurate of the two.
+  var state = { year: 2024, tech: 'wind', iso: 'SOCO', synth: 'partial', shape: false, imports: 'counted' };
+  var tables = { range: false, dur: false, wf: false };
 
   // ---------------------------------------------------------------------------
   // data access
   // ---------------------------------------------------------------------------
   function readySet() { return SYNTH_STATES[state.synth] || []; }
-  function isReady(iso) { return readySet().indexOf(iso) >= 0; }
-
-  /** The cell for a grid-year, or null when that grid-year has not landed. */
   function cell(iso, year) {
-    if (!isReady(iso)) return null;
+    if (readySet().indexOf(iso) < 0) return null;
     return DATA.cells[iso + '-' + year] || null;
   }
   function scalars(iso, year, tech) {
     var c = cell(iso, year);
     return c && c.scalars ? c.scalars[tech] : null;
   }
+  var withImports = function () { return state.imports === 'counted'; };
+  /** Headline cost per tonne, under the current import treatment. */
+  function mac(s, which) {
+    return s['mac_' + which + '_ira' + (withImports() ? '_with_imports' : '')];
+  }
+  /** CO2 avoided per MWh, under the current import treatment. */
+  function rate(s) { return withImports() ? s.mer_tech_with_imports : s.mer_tech; }
 
   // ---------------------------------------------------------------------------
   // formatting
   // ---------------------------------------------------------------------------
-  function fmtT(v) { return (v < 0 ? '−' : '') + '$' + Math.abs(v).toFixed(1); }
+  function fmtT(v) { return (v < 0 ? '−' : '') + '$' + Math.abs(v).toFixed(0); }
+  function fmtT1(v) { return (v < 0 ? '−' : '') + '$' + Math.abs(v).toFixed(1); }
   function fmtMWh(v) { return (v < 0 ? '−' : '') + '$' + Math.abs(v).toFixed(2); }
   function fmtRate(v) { return v.toFixed(3); }
-  function fmtPct(v) { return (v * 100).toFixed(1) + '%'; }
   function esc(s) {
     return String(s).replace(/[&<>"]/g, function (c) {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
     });
   }
-  function techLabel(t) { return t === 'wind' ? 'new wind' : 'new solar'; }
+  function techLabel(t) { return t === 'wind' ? 'wind' : 'solar'; }
 
-  var PENDING_SVG =
+  var CLOCK =
     '<svg viewBox="0 0 12 12" aria-hidden="true">' +
     '<circle cx="6" cy="6" r="5" fill="none" stroke="currentColor" stroke-width="1.6"/>' +
     '<path d="M6 3.2v3.2l2 1.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
-  function pendingChip() {
-    // Status color NEVER travels alone — icon + the word, every time.
-    return '<span class="pending-chip">' + PENDING_SVG + 'pending</span>';
-  }
 
   // ---------------------------------------------------------------------------
-  // tooltip (one shared node; the hover layer dataviz asks for by default)
+  // tooltip
   // ---------------------------------------------------------------------------
   var tip = document.createElement('div');
   tip.className = 'bc-tooltip';
-  tip.setAttribute('role', 'presentation');
   tip.style.display = 'none';
   document.body.appendChild(tip);
-
   function bindTip(node, html) {
     node.addEventListener('mousemove', function (e) {
-      tip.innerHTML = html;
-      tip.style.display = 'block';
-      var w = tip.offsetWidth, h = tip.offsetHeight;
-      var x = Math.min(e.clientX + 14, window.innerWidth - w - 10);
-      var y = Math.max(e.clientY - h - 12, 8);
-      tip.style.left = x + 'px';
-      tip.style.top = y + 'px';
+      tip.innerHTML = html; tip.style.display = 'block';
+      tip.style.left = Math.min(e.clientX + 14, window.innerWidth - tip.offsetWidth - 10) + 'px';
+      tip.style.top = Math.max(e.clientY - tip.offsetHeight - 12, 8) + 'px';
     });
     node.addEventListener('mouseleave', function () { tip.style.display = 'none'; });
   }
 
   // ---------------------------------------------------------------------------
-  // tiny SVG helpers
+  // SVG helpers
   // ---------------------------------------------------------------------------
   var NS = 'http://www.w3.org/2000/svg';
   function svgEl(tag, attrs) {
@@ -122,24 +99,13 @@
     return e;
   }
   function svgRoot(w, h, label) {
-    var s = svgEl('svg', {
-      width: w, height: h, viewBox: '0 0 ' + w + ' ' + h,
-      role: 'img', 'aria-label': label
-    });
-    return s;
+    return svgEl('svg', { width: w, height: h, viewBox: '0 0 ' + w + ' ' + h, role: 'img', 'aria-label': label });
   }
   function txt(parent, x, y, s, cls, anchor) {
     var t = svgEl('text', { x: x, y: y, class: cls || '', 'text-anchor': anchor || 'start' });
-    t.textContent = s;
-    parent.appendChild(t);
-    return t;
+    t.textContent = s; parent.appendChild(t); return t;
   }
-  function title(node, s) {
-    var t = svgEl('title', {});
-    t.textContent = s;
-    node.appendChild(t);
-  }
-  /** Nice axis ticks spanning [lo, hi]. */
+  function title(node, s) { var t = svgEl('title', {}); t.textContent = s; node.appendChild(t); }
   function ticks(lo, hi, want) {
     var span = hi - lo;
     if (!(span > 0)) return [lo];
@@ -151,137 +117,97 @@
     for (; v <= hi + 1e-9; v += step) out.push(Math.abs(v) < 1e-9 ? 0 : v);
     return out;
   }
-  /** Hide a legend whose chart drew nothing — a legend over an empty panel
-   *  invites the reader to look for marks that do not exist. */
-  function legend(id, show) {
-    var el = document.getElementById(id);
-    if (el) el.hidden = !show;
-  }
+  function legend(id, show) { var el = document.getElementById(id); if (el) el.hidden = !show; }
   function width(id, fallback) {
     var el = document.getElementById(id);
-    var w = el ? el.clientWidth : 0;
-    return Math.max(w || fallback || 640, 300);
+    return Math.max((el ? el.clientWidth : 0) || fallback || 640, 300);
   }
 
   // ===========================================================================
   // HERO
   // ===========================================================================
   function renderHero() {
-    var ready = readySet();
-    var rows = ready.map(function (iso) {
-      var s = scalars(iso, state.year, state.tech);
-      return s ? { iso: iso, post: s.mac_post_ira, pre: s.mac_pre_ira } : null;
-    }).filter(Boolean).sort(function (a, b) { return a.post - b.post; });
+    var rows = [];
+    readySet().forEach(function (iso) {
+      ['wind', 'solar'].forEach(function (t) {
+        var s = scalars(iso, state.year, t);
+        if (s) rows.push({ iso: iso, tech: t, v: mac(s, 'post') });
+      });
+    });
+    rows.sort(function (a, b) { return a.v - b.v; });
 
     var find = document.getElementById('heroFinding');
     var sub = document.getElementById('heroSub');
-    var sel = document.getElementById('heroSelection');
+    var n = readySet().length;
 
     if (!rows.length) {
-      find.innerHTML = 'No grid has been measured yet — so this page has ' +
-        '<em>nothing to report</em>, and says so rather than showing a zero.';
-      sub.innerHTML = 'The marginal emission rate is emitted by every solve from commit ' +
-        '<code>fba0ecd7</code> onward, but every designated keeper predates it. The first grid ' +
-        'to light up will be whichever lane next completes a control replay; each one appears on ' +
-        'its own, and nothing is inferred for the others.';
-    } else {
-      var lo = rows[0], hi = rows[rows.length - 1];
-      var one = rows.length === 1;
-      find.innerHTML = one
-        ? ('Abating with ' + techLabel(state.tech) + ' costs <em>' + fmtT(lo.post) +
-           '/tCO<sub>2</sub></em> in ' + lo.iso + ' post-IRA — and <em>' + fmtT(lo.pre) +
-           '</em> without the credit.')
-        : ('Abating with ' + techLabel(state.tech) + ' is cheapest in <em>' + lo.iso +
-           '</em> at ' + fmtT(lo.post) + '/tCO<sub>2</sub> and dearest in <em>' + hi.iso +
-           '</em> at ' + fmtT(hi.post) + ' — a ' +
-           (hi.post > 0 && lo.post > 0 ? (hi.post / lo.post).toFixed(1) + '× spread' :
-            'spread of ' + fmtT(hi.post - lo.post)) + ' across grids that buy the same turbines.');
-      var ratio = (rows.reduce(function (a, r) { return a + r.pre; }, 0) /
-                   Math.max(rows.reduce(function (a, r) { return a + r.post; }, 0), 1e-9));
-      sub.innerHTML = 'Strip the IRA credit and every one of those numbers rises — on this ' +
-        'selection by about <b>' + ratio.toFixed(1) + '×</b>. Post-IRA and pre-IRA are shown ' +
-        'together everywhere on this page, because quoting one as the other is the easiest way to ' +
-        'publish a wrong number. The denominator is the LP’s <b>emissions dual</b>, weighted by ' +
-        'the technology’s own hourly output — not a fleet or fossil average.';
+      find.innerHTML = 'No grid has been measured yet, so there is <em>nothing to report</em> here.';
+      sub.innerHTML = 'Results appear one grid at a time. Until a grid has been measured it is ' +
+        'marked pending — never filled in from a neighbour, and never shown as zero.';
+      return;
     }
-    sel.innerHTML = 'Showing <b>' + techLabel(state.tech) + '</b> in <b>' + state.year +
-      '</b>. These are model-SELECTION numbers: since rule 22’s <code>[R-HOLDOUT]</code> ' +
-      'removal there is no certified out-of-sample year in this program, so nothing here is ' +
-      'evidence of forecast skill.';
-
-    var n = ready.length;
-    document.getElementById('progFill').style.width = (100 * n / ISOS.length).toFixed(1) + '%';
-    document.getElementById('progLabel').innerHTML =
-      '<b>' + n + ' of ' + ISOS.length + '</b> modeled grids measured' +
-      (n < ISOS.length ? ' · ' + (ISOS.length - n) + ' awaiting a control replay' : '');
+    var lo = rows[0], hi = rows[rows.length - 1];
+    find.innerHTML = rows.length === 1
+      ? ('Cutting a tonne of CO<sub>2</sub> with new ' + techLabel(lo.tech) + ' in ' + lo.iso +
+         ' costs <em>' + fmtT(lo.v) + '</em>.')
+      : ('The cheapest way to cut a tonne of CO<sub>2</sub> is new ' + techLabel(lo.tech) + ' in <em>' +
+         lo.iso + '</em> at ' + fmtT(lo.v) + '. The dearest is new ' + techLabel(hi.tech) + ' in <em>' +
+         hi.iso + '</em> at ' + fmtT(hi.v) + '.');
+    sub.innerHTML = 'Same turbines, same panels — the gap is entirely about what the power sells ' +
+      'for on each grid, how much of it the local weather delivers, and how dirty the electricity ' +
+      'it pushes off the system is. ' +
+      (n < ISOS.length ? '<b>' + n + ' of ' + ISOS.length + ' grids measured so far.</b>' : '') +
+      ' Without the tax credits every number roughly triples.';
   }
 
   // ===========================================================================
-  // KPI TILES
+  // CHART 1 — wind + solar range bars, every grid
   // ===========================================================================
-  function renderTiles() {
-    var host = document.getElementById('tiles');
-    host.innerHTML = ISOS.map(function (iso) {
-      var s = scalars(iso, state.year, state.tech);
-      if (!s) {
-        return '<div class="mac-tile is-pending">' +
-          '<div class="mac-tile__iso">' + iso + pendingChip() + '</div>' +
-          '<div class="mac-tile__pendingmsg">Not measured. Its keeper predates the emissions dual.</div>' +
-          '</div>';
-      }
-      var c = cell(iso, state.year);
-      var ov = c.system.capture_price_overlay_usd_per_mwh;
-      return '<div class="mac-tile">' +
-        '<div class="mac-tile__iso">' + iso + '</div>' +
-        '<div class="mac-tile__val">' + fmtT(s.mac_post_ira) +
-          '<span class="unit">/tCO₂ post-IRA</span></div>' +
-        '<div class="mac-tile__pre">' + fmtT(s.mac_pre_ira) + ' pre-IRA</div>' +
-        '<div class="mac-tile__foot">rate ' + fmtRate(s.mer_tech) + ' tCO₂/MWh · ' +
-          'capture ' + fmtMWh(s.capture_price) + '/MWh' +
-          (ov > 0 ? ' (incl. ' + fmtMWh(ov) + ' overlay)' : '') + '</div>' +
-        '</div>';
-    }).join('');
-  }
-
-  // ===========================================================================
-  // CHART 1 — MAC ranking, dumbbell (1 hue, 2 shades; "before → after per item")
-  // ===========================================================================
-  function renderRank() {
-    var host = document.getElementById('rankChart');
+  function renderRange() {
+    var host = document.getElementById('rangeChart');
     host.innerHTML = '';
-    document.getElementById('rankTitle').textContent =
-      'Marginal abatement cost by grid — ' + techLabel(state.tech) + ', ' + state.year;
+    document.getElementById('rangeTitle').innerHTML =
+      'Cost to cut a tonne of CO<sub>2</sub> — ' + state.year;
 
-    var ready = [], pend = [];
-    ISOS.forEach(function (iso) {
-      var s = scalars(iso, state.year, state.tech);
-      if (s) ready.push({ iso: iso, post: s.mac_post_ira, pre: s.mac_pre_ira, s: s });
-      else pend.push({ iso: iso });
+    var rows = ISOS.map(function (iso) {
+      var w = scalars(iso, state.year, 'wind'), s = scalars(iso, state.year, 'solar');
+      return { iso: iso, wind: w, solar: s, ready: !!(w && s),
+               sort: w ? Math.min(mac(w, 'post'), mac(s, 'post')) : Infinity };
     });
-    ready.sort(function (a, b) { return a.post - b.post; });
-    pend.sort(function (a, b) { return a.iso < b.iso ? -1 : 1; });
-    var rows = ready.concat(pend);   // pending always listed, always last, never a mark
+    rows.sort(function (a, b) {
+      if (a.sort !== b.sort) return a.sort - b.sort;
+      return a.iso < b.iso ? -1 : 1;
+    });
+    var ready = rows.filter(function (r) { return r.ready; });
 
-    var W = width('rankChart', 860);
-    var padL = 112, padR = 66, padT = 26, padB = 34;
-    var rowH = 30, H = padT + rows.length * rowH + padB;
+    var W = width('rangeChart', 880);
+    // The tech word needs its own column beside the grid name; below ~620px
+    // there isn't room, and colour + legend + the value label carry it alone
+    // (two series — the series-count ladder allows it).
+    var showTech = W >= 620;
+    var padL = showTech ? 122 : 76, padR = 58, padT = 26, padB = 32;
+    // A measured grid needs room for two bars; a pending one needs a single
+    // line. Giving them the same slot padded the chart with empty space when
+    // most grids are pending — which is most of the time, early on.
+    var groupH = 46, pendH = 26, barH = 13;
+    var yTop = [], acc = padT;
+    rows.forEach(function (r) { yTop.push(acc); acc += r.ready ? groupH : pendH; });
+    var H = acc + padB;
 
-    // Domain always includes 0 so a negative MAC reads as "below zero", not as a
-    // short bar. A negative is a real result (capture above cost), not an error.
-    var vals = ready.reduce(function (a, r) { return a.concat([r.post, r.pre]); }, [0]);
+    var vals = [0];
+    ready.forEach(function (r) {
+      ['wind', 'solar'].forEach(function (t) { vals.push(mac(r[t], 'post'), mac(r[t], 'pre')); });
+    });
     var lo = Math.min.apply(null, vals), hi = Math.max.apply(null, vals);
-    var pad = (hi - lo) * 0.08 || 1;
-    lo -= pad; hi += pad;
+    var padv = (hi - lo) * 0.06 || 1;
+    lo -= padv; hi += padv;
     var x = function (v) { return padL + (v - lo) / (hi - lo) * (W - padL - padR); };
 
-    var svg = svgRoot(W, H,
-      'Marginal abatement cost by grid for ' + techLabel(state.tech) + ' in ' + state.year +
-      '. Post-IRA and pre-IRA dollars per tonne, ' + ready.length + ' grids measured, ' +
-      pend.length + ' pending.');
+    var svg = svgRoot(W, H, 'Cost to cut a tonne of CO2 with new wind and new solar on each grid in ' +
+      state.year + '. ' + ready.length + ' of ' + rows.length + ' grids measured.');
 
-    // No measured grid ⇒ NO dollar axis. A $-scale drawn across nine empty rows
-    // invites the reader to place the missing values somewhere near zero, which
-    // is the one reading this page must never permit.
+    // No measured grid ⇒ no dollar scale. A $-axis over empty rows invites the
+    // reader to place the missing values near zero.
     if (ready.length) {
       ticks(lo, hi, 6).forEach(function (t) {
         svg.appendChild(svgEl('line', {
@@ -290,123 +216,210 @@
         }));
         txt(svg, x(t), padT - 13, '$' + t, 'ax-label', 'middle');
       });
-      txt(svg, 2, H - 8, W < 560 ? '$ per tonne CO₂ — lower is cheaper'
-                                 : '$ per tonne CO₂  —  lower is cheaper to abate', 'ax-title');
+      txt(svg, 2, H - 8, 'dollars per tonne of CO₂ avoided — further left is cheaper', 'ax-title');
     } else {
-      txt(svg, 2, H - 8,
-        'No scale is drawn — no grid has been measured for ' + state.year + '.', 'ax-title');
+      txt(svg, 2, H - 8, 'No scale shown — no grid has been measured for ' + state.year + '.', 'ax-title');
     }
-    legend('rankLegend', ready.length > 0);
+    legend('rangeLegend', ready.length > 0);
 
     rows.forEach(function (r, i) {
-      var cy = padT + i * rowH + rowH / 2;
-      txt(svg, 2, cy + 4, r.iso, 'row-label', 'start');
+      var y0 = yTop[i], gh = r.ready ? groupH : pendH;
+      txt(svg, 2, y0 + gh / 2 + 4, r.iso, 'row-label', 'start');
 
-      if (!r.s) {
-        // PENDING: the row exists, the marks do not. No zero, no dash, no bar.
-        var g = svgEl('g', { class: 'pend-row' });
+      if (!r.ready) {
+        var g = svgEl('g', {});
         g.appendChild(svgEl('line', {
-          x1: padL, x2: W - padR, y1: cy, y2: cy,
-          stroke: 'var(--mac-pending)', 'stroke-width': 1,
-          'stroke-dasharray': '3 5', opacity: 0.45
+          x1: padL, x2: W - padR, y1: y0 + pendH / 2, y2: y0 + pendH / 2,
+          stroke: 'var(--mac-pending)', 'stroke-width': 1, 'stroke-dasharray': '3 5', opacity: 0.45
         }));
-        var pl = txt(g, W - padR + 8, cy + 4, 'pending', 'ax-label');
+        var pl = txt(g, W - padR + 8, y0 + pendH / 2 + 4, 'pending', 'ax-label');
         pl.setAttribute('fill', 'var(--mac-pending)');
         pl.setAttribute('font-weight', '700');
-        title(g, r.iso + ' — not measured yet. No value is shown because none exists.');
+        title(g, r.iso + ' — pending.');
         svg.appendChild(g);
         return;
       }
 
-      var g2 = svgEl('g', {});
-      g2.appendChild(svgEl('line', {           // the connector IS the credit
-        x1: x(r.post), x2: x(r.pre), y1: cy, y2: cy,
-        stroke: 'var(--mac-accent-2)', 'stroke-width': 2.5, 'stroke-linecap': 'round', opacity: 0.55
-      }));
-      // 2px surface ring on overlapping marks (marks-and-anatomy)
-      g2.appendChild(svgEl('circle', {
-        cx: x(r.pre), cy: cy, r: 6, fill: 'var(--mac-surface)',
-        stroke: 'var(--mac-accent-2)', 'stroke-width': 2.5
-      }));
-      g2.appendChild(svgEl('circle', {
-        cx: x(r.post), cy: cy, r: 6, fill: 'var(--mac-accent)',
-        stroke: 'var(--mac-surface)', 'stroke-width': 2
-      }));
-      // Direct labels on both ends — the relief channel for the pre-IRA mark's
-      // sub-3:1 fill, and what keeps a 2-shade ramp readable under CVD.
-      // The post-IRA value lives in the LEFT GUTTER, not beside its dot: a dot
-      // near the domain minimum sits only a few px into the plot, and a label
-      // hung off it collides with the row name at phone width. Gutter placement
-      // is collision-free at every width and needs no per-row special-casing.
-      var pa = txt(g2, padL - 12, cy + 4, fmtT(r.post), 'val-label', 'end');
-      pa.setAttribute('fill', 'var(--mac-ink)');
-      // pre-IRA is always the larger number (a credit only lowers cost), so its
-      // label always goes to the right of its dot, clamped inside the canvas.
-      var pb = txt(g2, Math.min(x(r.pre) + 11, W - 4), cy + 4, fmtT(r.pre), 'ax-label', 'start');
-      pb.setAttribute('font-weight', '600');
-
-      bindTip(g2,
-        '<b>' + r.iso + ' · ' + techLabel(state.tech) + ' · ' + state.year + '</b><br>' +
-        'post-IRA <b>' + fmtT(r.post) + '</b> / tCO₂<br>' +
-        'pre-IRA <b>' + fmtT(r.pre) + '</b> / tCO₂<br>' +
-        'cost ' + fmtMWh(r.s.cost_per_delivered_mwh_post_ira) + '/MWh − capture ' +
-        fmtMWh(r.s.capture_price) + '/MWh<br>' +
-        '÷ rate ' + fmtRate(r.s.mer_tech) + ' tCO₂/MWh');
-      title(g2, r.iso + ': ' + fmtT(r.post) + ' post-IRA, ' + fmtT(r.pre) + ' pre-IRA per tonne.');
-      svg.appendChild(g2);
+      [['wind', 0], ['solar', 1]].forEach(function (pair) {
+        var t = pair[0];
+        var s = r[t];
+        var cy = y0 + 12 + pair[1] * (barH + 6) + barH / 2;
+        var col = t === 'wind' ? 'var(--mac-wind)' : 'var(--mac-solar)';
+        var a = mac(s, 'post'), b = mac(s, 'pre');
+        var g2 = svgEl('g', {});
+        g2.appendChild(svgEl('rect', {
+          x: Math.min(x(a), x(b)), y: cy - barH / 2,
+          width: Math.max(Math.abs(x(b) - x(a)), 3), height: barH, rx: 4,
+          fill: col, opacity: 0.42
+        }));
+        // filled end = with credits; open end = without. Shape, not just color,
+        // so the pair reads without relying on hue.
+        g2.appendChild(svgEl('circle', {
+          cx: x(a), cy: cy, r: 5.5, fill: col, stroke: 'var(--mac-surface)', 'stroke-width': 2
+        }));
+        g2.appendChild(svgEl('circle', {
+          cx: x(b), cy: cy, r: 5.5, fill: 'var(--mac-surface)', stroke: col, 'stroke-width': 2.5
+        }));
+        var l = txt(g2, Math.min(x(b) + 10, W - 4), cy + 4, fmtT(a) + ' → ' + fmtT(b), 'ax-label');
+        l.setAttribute('font-weight', '600');
+        if (showTech) {
+          var tl = txt(g2, padL - 10, cy + 4, t, 'ax-label', 'end');
+          tl.setAttribute('fill', col);
+          tl.setAttribute('font-weight', '700');
+        }
+        bindTip(g2, '<b>' + r.iso + ' · new ' + techLabel(t) + ' · ' + state.year + '</b><br>' +
+          'with credits <b>' + fmtT1(a) + '</b> per tonne<br>' +
+          'without credits <b>' + fmtT1(b) + '</b> per tonne<br>' +
+          'avoids ' + fmtRate(rate(s)) + ' tonnes per MWh');
+        title(g2, r.iso + ' ' + techLabel(t) + ': ' + fmtT1(a) + ' per tonne with credits, ' +
+          fmtT1(b) + ' without.');
+        svg.appendChild(g2);
+      });
     });
-
     host.appendChild(svg);
 
-    // table view (always available — the WARN relief for the lighter mark)
-    var tb = '<table class="mac-table"><caption class="mac-fig__sub" style="text-align:left">' +
-      'Same data, ' + techLabel(state.tech) + ', ' + state.year +
-      '.</caption><thead><tr><th scope="col">Grid</th><th scope="col">post-IRA $/t</th>' +
-      '<th scope="col">pre-IRA $/t</th><th scope="col">cost $/MWh</th>' +
-      '<th scope="col">capture $/MWh</th><th scope="col">rate tCO₂/MWh</th></tr></thead><tbody>' +
+    document.getElementById('rangeTable').innerHTML =
+      '<table class="mac-table"><thead><tr><th scope="col">Grid</th>' +
+      '<th scope="col">Wind, with credits</th><th scope="col">Wind, without</th>' +
+      '<th scope="col">Solar, with credits</th><th scope="col">Solar, without</th></tr></thead><tbody>' +
       rows.map(function (r) {
-        if (!r.s) return '<tr><td>' + r.iso + '</td><td class="pend" colspan="5">pending — not measured</td></tr>';
-        return '<tr><td>' + r.iso + '</td><td>' + fmtT(r.post) + '</td><td>' + fmtT(r.pre) +
-          '</td><td>' + fmtMWh(r.s.cost_per_delivered_mwh_post_ira) + '</td><td>' +
-          fmtMWh(r.s.capture_price) + '</td><td>' + fmtRate(r.s.mer_tech) + '</td></tr>';
-      }).join('') + '</tbody></table>';
-    document.getElementById('rankTable').innerHTML = tb;
+        if (!r.ready) return '<tr><td>' + r.iso + '</td><td class="pend" colspan="4">pending</td></tr>';
+        return '<tr><td>' + r.iso + '</td>' +
+          '<td>' + fmtT1(mac(r.wind, 'post')) + '</td><td>' + fmtT1(mac(r.wind, 'pre')) + '</td>' +
+          '<td>' + fmtT1(mac(r.solar, 'post')) + '</td><td>' + fmtT1(mac(r.solar, 'pre')) + '</td></tr>';
+      }).join('') +
+      '</tbody></table><p class="mac-fig__sub" style="margin:8px 0 0">Dollars per tonne of CO₂, ' +
+      state.year + '.</p>';
   }
 
   // ===========================================================================
-  // CHART 2 — MER duration curve (emphasis: focus in hue, rest in gray)
+  // Selected grid — headline cards
+  // ===========================================================================
+  function renderCards() {
+    var host = document.getElementById('cards');
+    var c = cell(state.iso, state.year);
+    if (!c) {
+      host.innerHTML = '<div class="mac-card" style="grid-column:1/-1;border-left-color:var(--mac-pending)">' +
+        '<div class="mac-card__t">' + state.iso + ' · ' + state.year + '</div>' +
+        '<div class="mac-card__pend"><span class="pending-chip">' + CLOCK + 'pending</span>' +
+        ' &nbsp;This grid has not been measured yet.</div></div>';
+      return;
+    }
+    host.innerHTML = ['wind', 'solar'].map(function (t) {
+      var s = c.scalars[t];
+      var net = s.cost_per_delivered_mwh_post_ira - s.capture_price;
+      return '<div class="mac-card' + (t === 'solar' ? ' solar' : '') + '">' +
+        '<div class="mac-card__t">New ' + techLabel(t) + '</div>' +
+        '<div class="mac-card__v">' + fmtT1(mac(s, 'post')) + '<span class="unit">per tonne of CO₂</span></div>' +
+        '<div class="mac-card__alt">' + fmtT1(mac(s, 'pre')) + ' without the tax credits</div>' +
+        '<div class="mac-card__rows">' +
+        'Costs <b>' + fmtMWh(s.cost_per_delivered_mwh_post_ira) + '</b> to deliver a MWh here<br>' +
+        'Earns <b>' + fmtMWh(s.capture_price) + '</b> when it sells that MWh<br>' +
+        'Avoids <b>' + fmtRate(rate(s)) + '</b> tonnes of CO₂ per MWh<br>' +
+        '<span style="opacity:.8">' + fmtMWh(net) + ' extra ÷ ' + fmtRate(rate(s)) +
+        ' tonnes = ' + fmtT1(mac(s, 'post')) + '</span>' +
+        '</div></div>';
+    }).join('');
+  }
+
+  // ===========================================================================
+  // CHART 2 — month × hour heatmap
+  // ===========================================================================
+  function renderHeat() {
+    var host = document.getElementById('heatChart');
+    host.innerHTML = '';
+    var legendEl = document.getElementById('heatLegend');
+    document.getElementById('heatTitle').textContent =
+      'When is ' + state.iso + ' dirtiest? · ' + state.year;
+
+    var c = cell(state.iso, state.year);
+    if (!c) {
+      host.innerHTML = '<p class="mac-fig__sub" style="margin:8px 0 0">' + state.iso + ' is pending.</p>';
+      legendEl.innerHTML = '';
+      return;
+    }
+    var grid = c.mer_month_hour;
+    var shape = (DATA.shape || {})[state.tech] || null;
+
+    var W = width('heatChart', 560);
+    var padL = 38, padR = 8, padT = 18, padB = 30;
+    var cw = (W - padL - padR) / 24, ch = 19, H = padT + 12 * ch + padB;
+
+    var hi = 0;
+    grid.forEach(function (r) { r.forEach(function (v) { if (v > hi) hi = v; }); });
+    var STEPS = ['--mac-s1', '--mac-s2', '--mac-s3', '--mac-s4', '--mac-s5'];
+    function bin(v) { return Math.min(Math.floor(v / hi * STEPS.length), STEPS.length - 1); }
+
+    var svg = svgRoot(W, H, 'CO2 caused by one extra megawatt-hour of demand in ' + state.iso +
+      ' ' + state.year + ', by month and hour of day.');
+    for (var h = 0; h < 24; h += 4) txt(svg, padL + (h + 0.5) * cw, padT - 5, String(h), 'ax-label', 'middle');
+    grid.forEach(function (row, m) {
+      txt(svg, padL - 6, padT + m * ch + ch / 2 + 4, MONTHS[m], 'ax-label', 'end');
+      row.forEach(function (v, hh) {
+        var dim = state.shape && shape ? shape[m][hh] : 1;
+        var r = svgEl('rect', {
+          x: padL + hh * cw + 1, y: padT + m * ch + 1,
+          width: Math.max(cw - 2, 1), height: ch - 2, rx: 2,
+          fill: 'var(' + STEPS[bin(v)] + ')',
+          opacity: state.shape && shape ? (0.12 + 0.88 * Math.min(dim / 0.55, 1)) : 1
+        });
+        title(r, MONTHS[m] + ', hour ' + hh + ': ' + fmtRate(v) + ' tonnes per MWh');
+        bindTip(r, '<b>' + MONTHS[m] + ' · hour ' + hh + '</b><br>' + fmtRate(v) + ' tonnes of CO₂ ' +
+          'per extra MWh' + (shape ? '<br>' + techLabel(state.tech) + ' output: ' +
+          (shape[m][hh] * 100).toFixed(0) + '% of its peak' : ''));
+        svg.appendChild(r);
+      });
+    });
+    txt(svg, 2, H - 8, 'hour of day', 'ax-title');
+    host.appendChild(svg);
+
+    legendEl.innerHTML = STEPS.map(function (s, i) {
+      return '<span><i style="background:var(' + s + ')"></i>' +
+        (hi * i / STEPS.length).toFixed(2) + '–' + (hi * (i + 1) / STEPS.length).toFixed(2) + '</span>';
+    }).join('') + '<span style="opacity:.85">tonnes of CO₂ per extra MWh' +
+      (state.shape ? ' · faded = hours ' + techLabel(state.tech) + ' barely generates' : '') + '</span>';
+  }
+
+  // ===========================================================================
+  // CHART 3 — duration curve, one grid
   // ===========================================================================
   function renderDuration() {
     var host = document.getElementById('durChart');
     host.innerHTML = '';
-    document.getElementById('durFocusName').textContent = state.iso;
-
-    var series = readySet().map(function (iso) {
-      var c = cell(iso, state.year);
-      return c ? { iso: iso, d: c.mer_duration, zero: c.system.zero_mer_hour_share } : null;
-    }).filter(Boolean);
-
-    if (!series.length) {
-      host.innerHTML = '<p class="mac-fig__sub" style="margin:8px 0 0">' +
-        'No grid has landed for ' + state.year + ' yet, so there is no curve to draw.</p>';
+    var c = cell(state.iso, state.year);
+    if (!c) {
+      host.innerHTML = '<p class="mac-fig__sub" style="margin:8px 0 0">' + state.iso + ' is pending.</p>';
       document.getElementById('durTable').innerHTML = '';
       legend('durLegend', false);
       return;
     }
+    legend('durLegend', true);
 
-    var W = width('durChart', 520), H = 300;
-    var padL = 46, padR = 14, padT = 14, padB = 40;
-    var hi = 0;
-    series.forEach(function (s) { s.d.forEach(function (v) { if (v > hi) hi = v; }); });
-    hi = hi * 1.06 || 1;
-    var n = series[0].d.length;
+    // The raw curve ends in a flat run of exact zeros: hours whose marginal
+    // resource emits nothing *on this grid*. Some of those are genuinely clean
+    // (nuclear, hydro, wind); the rest are imports, where the emissions simply
+    // happen across the border. When imports are being counted, lift that share
+    // of the tail onto the source region's rate and re-sort, so the chart shows
+    // the same quantity the headline does.
+    var d = c.mer_duration.slice(), n = d.length;
+    if (withImports() && c.system.import_marginal_hour_share > 0) {
+      var nLift = Math.round(c.system.import_marginal_hour_share * n);
+      var ef = c.system.import_emission_rate;
+      for (var i = n - 1, done = 0; i >= 0 && done < nLift; i--) {
+        if (d[i] === 0) { d[i] = ef; done++; }
+      }
+      d.sort(function (a, b) { return b - a; });
+    }
+    var avg = d.reduce(function (a, v) { return a + v; }, 0) / n;
+
+    var W = width('durChart', 560), H = 268;
+    var padL = 42, padR = 12, padT = 14, padB = 38;
+    var hi = Math.max.apply(null, d) * 1.08 || 1;
     var x = function (i) { return padL + i / (n - 1) * (W - padL - padR); };
     var y = function (v) { return H - padB - v / hi * (H - padT - padB); };
 
-    var svg = svgRoot(W, H,
-      'Marginal emission rate duration curve for ' + state.year + ', ' + state.iso +
-      ' emphasised against ' + (series.length - 1) + ' other measured grids.');
-
+    var svg = svgRoot(W, H, 'Every hour of ' + state.year + ' in ' + state.iso +
+      ', sorted from the dirtiest to the cleanest.');
     ticks(0, hi, 5).forEach(function (t) {
       svg.appendChild(svgEl('line', { x1: padL, x2: W - padR, y1: y(t), y2: y(t), class: 'grid-line' }));
       txt(svg, padL - 7, y(t) + 4, t.toFixed(2), 'ax-label', 'end');
@@ -414,199 +427,77 @@
     [0, 25, 50, 75, 100].forEach(function (p) {
       txt(svg, x((p / 100) * (n - 1)), H - padB + 15, p + '%', 'ax-label', 'middle');
     });
-    txt(svg, 2, H - 8, 'hours ranked, highest rate first', 'ax-title');
-    txt(svg, 12, padT + 6, 'tCO₂/MWh', 'ax-title');
+    txt(svg, 2, H - 8, 'hours of the year, dirtiest first', 'ax-title');
+    txt(svg, 8, padT + 4, 'tonnes CO₂ / MWh', 'ax-title');
 
-    legend('durLegend', true);
-    var focus = null;
-    function path(s) {
-      return s.d.map(function (v, i) { return (i ? 'L' : 'M') + x(i).toFixed(1) + ' ' + y(v).toFixed(1); }).join('');
-    }
-    // Context first, emphasis last — one series is the point, the rest are context.
-    series.forEach(function (s) {
-      if (s.iso === state.iso) { focus = s; return; }
-      var p = svgEl('path', {
-        d: path(s), fill: 'none', stroke: 'var(--mac-context)',
-        'stroke-width': 1.25, opacity: 0.5
-      });
-      title(p, s.iso + ' (context)');
-      svg.appendChild(p);
+    var area = svgEl('path', {
+      d: d.map(function (v, i) { return (i ? 'L' : 'M') + x(i).toFixed(1) + ' ' + y(v).toFixed(1); }).join('') +
+         'L' + x(n - 1).toFixed(1) + ' ' + y(0) + 'L' + x(0).toFixed(1) + ' ' + y(0) + 'Z',
+      fill: 'var(--mac-accent)', opacity: 0.14
     });
-
-    if (focus) {
-      // The zero-rate tail, shaded: caveat 2 made visible.
-      var z0 = x((1 - focus.zero) * (n - 1));
-      if (focus.zero > 0.005) {
-        svg.appendChild(svgEl('rect', {
-          x: z0, y: padT, width: Math.max(W - padR - z0, 0), height: H - padT - padB,
-          fill: 'var(--mac-warm)', opacity: 0.16
-        }));
-        svg.appendChild(svgEl('line', {
-          x1: z0, x2: z0, y1: padT, y2: H - padB,
-          stroke: 'var(--mac-warm)', 'stroke-width': 1.5, 'stroke-dasharray': '4 3'
-        }));
-        var zl = txt(svg, Math.min(z0 + 6, W - padR - 4), padT + 13,
-                     fmtPct(focus.zero) + ' at rate 0', 'ax-label',
-                     z0 > W - padR - 92 ? 'end' : 'start');
-        zl.setAttribute('fill', 'var(--mac-warm)');
-        zl.setAttribute('font-weight', '700');
-      }
-      var fp = svgEl('path', {
-        d: path(focus), fill: 'none', stroke: 'var(--mac-accent)',
-        'stroke-width': 2.5, 'stroke-linejoin': 'round'
-      });
-      title(fp, state.iso + ' (focus)');
-      svg.appendChild(fp);
-      var fl = txt(svg, x(4), y(focus.d[0]) - 9, state.iso, 'val-label');
-      fl.setAttribute('fill', 'var(--mac-accent)');
-    } else {
-      txt(svg, W / 2, padT + 22, state.iso + ' — pending, no curve', 'val-label', 'middle')
-        .setAttribute('fill', 'var(--mac-pending)');
-    }
+    svg.appendChild(area);
+    svg.appendChild(svgEl('path', {
+      d: d.map(function (v, i) { return (i ? 'L' : 'M') + x(i).toFixed(1) + ' ' + y(v).toFixed(1); }).join(''),
+      fill: 'none', stroke: 'var(--mac-accent)', 'stroke-width': 2.5, 'stroke-linejoin': 'round'
+    }));
+    // The average, drawn so "it is not an average" is a thing you can see.
+    svg.appendChild(svgEl('line', {
+      x1: padL, x2: W - padR, y1: y(avg), y2: y(avg),
+      stroke: 'var(--mac-warm)', 'stroke-width': 1.5, 'stroke-dasharray': '5 4'
+    }));
+    var al = txt(svg, W - padR - 2, y(avg) - 6, 'average ' + fmtRate(avg), 'ax-label', 'end');
+    al.setAttribute('fill', 'var(--mac-warm)');
+    al.setAttribute('font-weight', '700');
     host.appendChild(svg);
 
-    var f = focus;
-    document.getElementById('durTable').innerHTML = f
-      ? ('<table class="mac-table"><thead><tr><th scope="col">Percentile of hours</th>' +
-         '<th scope="col">' + state.iso + ' rate tCO₂/MWh</th></tr></thead><tbody>' +
-         [0, 10, 25, 50, 75, 90, 95, 99].map(function (p) {
-           return '<tr><td>' + p + 'th</td><td>' +
-             fmtRate(f.d[Math.min(Math.round(p / 100 * (n - 1)), n - 1)]) + '</td></tr>';
-         }).join('') +
-         '<tr><td>share at exactly 0</td><td>' + fmtPct(f.zero) + '</td></tr></tbody></table>')
-      : '<p class="mac-fig__sub">' + state.iso + ' is pending — no rows.</p>';
+    document.getElementById('durLegend').innerHTML =
+      '<span><i style="background:var(--mac-accent)"></i> ' + state.iso + ', every hour sorted</span>' +
+      '<span><i style="background:var(--mac-warm)"></i> the yearly average</span>';
+
+    document.getElementById('durTable').innerHTML =
+      '<table class="mac-table"><thead><tr><th scope="col">Hours of the year</th>' +
+      '<th scope="col">Tonnes CO₂ per MWh</th></tr></thead><tbody>' +
+      [['dirtiest hour', 0], ['dirtiest 10%', 10], ['dirtiest 25%', 25], ['middle', 50],
+       ['cleanest 25%', 75], ['cleanest 10%', 90]].map(function (p) {
+        return '<tr><td>' + p[0] + '</td><td>' +
+          fmtRate(d[Math.min(Math.round(p[1] / 100 * (n - 1)), n - 1)]) + '</td></tr>';
+      }).join('') +
+      '<tr><td><b>yearly average</b></td><td><b>' + fmtRate(avg) + '</b></td></tr></tbody></table>';
   }
 
   // ===========================================================================
-  // Zero-share meters (a single ratio against a limit → meter, not a chart)
-  // ===========================================================================
-  function renderMeters() {
-    var host = document.getElementById('meterList');
-    var max = 0.40;
-    host.innerHTML = ISOS.map(function (iso) {
-      var c = cell(iso, state.year);
-      if (!c) {
-        return '<div class="meter-row"><div class="meter-row__iso">' + iso + '</div>' +
-          '<div class="meter-row__track"></div>' +
-          '<div class="meter-row__val pend">pending</div></div>';
-      }
-      var z = c.system.zero_mer_hour_share, imp = c.system.import_marginal_hour_share;
-      var pct = Math.min(z / max, 1) * 100;
-      return '<div class="meter-row" title="' + esc(iso + ': ' + fmtPct(z) +
-        ' of hours read exactly 0 tCO2/MWh, of which ' + fmtPct(imp) +
-        ' are import-marginal. The MAC shown is a floor by that much.') + '">' +
-        '<div class="meter-row__iso">' + iso + '</div>' +
-        '<div class="meter-row__track"><div class="meter-row__fill' + (z > 0.20 ? ' hi' : '') +
-          '" style="width:' + pct.toFixed(1) + '%"></div></div>' +
-        '<div class="meter-row__val">' + fmtPct(z) +
-          '<span style="opacity:.62"> · imp ' + fmtPct(imp) + '</span></div>' +
-        '</div>';
-    }).join('');
-  }
-
-  // ===========================================================================
-  // CHART 3 — month × hour-of-day MER heatmap (sequential, one hue)
-  // ===========================================================================
-  function renderHeat() {
-    var host = document.getElementById('heatChart');
-    host.innerHTML = '';
-    var legend = document.getElementById('heatLegend');
-    document.getElementById('heatTitle').textContent =
-      'Marginal emission rate — month × hour of day · ' + state.iso + ' ' + state.year;
-
-    var c = cell(state.iso, state.year);
-    if (!c) {
-      host.innerHTML = '<p class="mac-fig__sub" style="margin:8px 0 0">' + state.iso +
-        ' is <b>pending</b> for ' + state.year +
-        ' — no grid is drawn, because no rate has been measured. Pick another grid, or wait ' +
-        'for this lane’s control replay.</p>';
-      legend.innerHTML = '';
-      return;
-    }
-    var grid = c.mer_month_hour;
-    var shape = (DATA.shape || {})[state.tech] || null;
-
-    var W = width('heatChart', 900);
-    var padL = 46, padR = 12, padT = 20, padB = 34;
-    var cw = (W - padL - padR) / 24, ch = 21, H = padT + 12 * ch + padB;
-
-    var hi = 0;
-    grid.forEach(function (r) { r.forEach(function (v) { if (v > hi) hi = v; }); });
-    var STEPS = ['--mac-s1', '--mac-s2', '--mac-s3', '--mac-s4', '--mac-s5'];
-    function bin(v) { return Math.min(Math.floor(v / hi * STEPS.length), STEPS.length - 1); }
-
-    var svg = svgRoot(W, H,
-      'Marginal emission rate by month and hour of day for ' + state.iso + ' ' + state.year +
-      ', tonnes CO2 per megawatt hour.');
-
-    for (var h = 0; h < 24; h += 3) {
-      txt(svg, padL + (h + 0.5) * cw, padT - 6, String(h), 'ax-label', 'middle');
-    }
-    grid.forEach(function (row, m) {
-      txt(svg, padL - 7, padT + m * ch + ch / 2 + 4, MONTHS[m], 'ax-label', 'end');
-      row.forEach(function (v, hh) {
-        var dim = state.shape && shape ? shape[m][hh] : 1;
-        var r = svgEl('rect', {
-          x: padL + hh * cw + 1, y: padT + m * ch + 1,           // 2px surface gap between fills
-          width: Math.max(cw - 2, 1), height: ch - 2, rx: 2,
-          fill: 'var(' + STEPS[bin(v)] + ')',
-          opacity: state.shape && shape ? (0.13 + 0.87 * Math.min(dim / 0.55, 1)) : 1
-        });
-        title(r, MONTHS[m] + ', hour ' + hh + ': ' + fmtRate(v) + ' tCO₂/MWh' +
-          (shape ? ' · ' + techLabel(state.tech) + ' output ' +
-                   (shape[m][hh] * 100).toFixed(0) + '% of its peak' : ''));
-        bindTip(r, '<b>' + MONTHS[m] + ' · hour ' + hh + '</b><br>rate <b>' + fmtRate(v) +
-          '</b> tCO₂/MWh' + (shape ? '<br>' + techLabel(state.tech) + ' output ' +
-          (shape[m][hh] * 100).toFixed(0) + '% of peak' : ''));
-        svg.appendChild(r);
-      });
-    });
-    txt(svg, 2, H - 8, 'hour of day (local)', 'ax-title');
-    host.appendChild(svg);
-
-    legend.innerHTML = STEPS.map(function (s, i) {
-      var a = (hi * i / STEPS.length), b = (hi * (i + 1) / STEPS.length);
-      return '<span><i class="sq" style="background:var(' + s + ')"></i>' +
-        a.toFixed(2) + '–' + b.toFixed(2) + '</span>';
-    }).join('') + '<span style="opacity:.8">tCO₂/MWh' +
-      (state.shape ? ' · dimmed = hours ' + techLabel(state.tech) + ' barely generates in' : '') +
-      '</span>';
-  }
-
-  // ===========================================================================
-  // CHART 4 — cost stack, $/MWh only (the unit never changes mid-chart)
+  // CHART 4 — cost stack, $/MWh only
   // ===========================================================================
   function renderWaterfall() {
     var host = document.getElementById('wfChart');
     host.innerHTML = '';
     document.getElementById('wfTitle').textContent =
-      'How the number is built — ' + state.iso + ', ' + techLabel(state.tech) + ', ' + state.year;
+      'Where the cost comes from — ' + state.iso + ', new ' + techLabel(state.tech) + ', ' + state.year;
 
     var s = scalars(state.iso, state.year, state.tech);
     if (!s) {
-      host.innerHTML = '<p class="mac-fig__sub" style="margin:8px 0 0">' + state.iso +
-        ' is <b>pending</b> for ' + state.year + ' — there is no stack to build.</p>';
+      host.innerHTML = '<p class="mac-fig__sub" style="margin:8px 0 0">' + state.iso + ' is pending.</p>';
       document.getElementById('wfTable').innerHTML = '';
       legend('wfLegend', false);
       return;
     }
-
     legend('wfLegend', true);
-    var credit = s.lcoe_post_ira - s.lcoe_pre_ira;                 // negative
-    var cfAdj = s.cost_per_delivered_mwh_post_ira - s.lcoe_post_ira;   // either sign
+
+    var credit = s.lcoe_post_ira - s.lcoe_pre_ira;
+    var cfAdj = s.cost_per_delivered_mwh_post_ira - s.lcoe_post_ira;
     var net = s.cost_per_delivered_mwh_post_ira - s.capture_price;
     var steps = [
-      { k: 'LCOE, national base CF', v: s.lcoe_pre_ira, type: 'start' },
-      { k: 'IRA credit (' + (state.tech === 'wind' ? '§45 PTC' : '§48 ITC') + ')', v: credit, type: 'delta' },
-      { k: 'LCOE after credit', v: s.lcoe_post_ira, type: 'sub' },
-      { k: 'CF adjustment (' + s.cf_base.toFixed(2) + ' → ' + s.cf_expected.toFixed(3) + ')', v: cfAdj, type: 'delta' },
-      { k: 'Cost per delivered MWh', v: s.cost_per_delivered_mwh_post_ira, type: 'sub' },
-      { k: 'less capture price', v: -s.capture_price, type: 'delta' },
-      { k: 'Net cost gap', v: net, type: 'total' }
+      { k: 'Cost to build and run it', v: s.lcoe_pre_ira, type: 'start' },
+      { k: 'Less the tax credit', v: credit, type: 'delta' },
+      { k: 'After the credit', v: s.lcoe_post_ira, type: 'sub' },
+      { k: (cfAdj < 0 ? 'Better' : 'Worse') + ' local weather than average', v: cfAdj, type: 'delta' },
+      { k: 'Cost per MWh delivered here', v: s.cost_per_delivered_mwh_post_ira, type: 'sub' },
+      { k: 'Less what the power sells for', v: -s.capture_price, type: 'delta' },
+      { k: 'Extra cost of the clean MWh', v: net, type: 'total' }
     ];
 
     var W = width('wfChart', 880);
-    var padL = 200, padR = 96, padT = 16, padB = 46;
+    var padL = Math.min(230, Math.max(150, W * 0.26)), padR = 92, padT = 16, padB = 48;
     var rowH = 34, H = padT + steps.length * rowH + padB;
 
     var run = 0, lo = 0, hi = 0;
@@ -619,8 +510,8 @@
     lo -= padv; hi += padv;
     var x = function (v) { return padL + (v - lo) / (hi - lo) * (W - padL - padR); };
 
-    var svg = svgRoot(W, H, 'Cost stack in dollars per megawatt hour for ' + state.iso +
-      ', ' + techLabel(state.tech) + ', ' + state.year + '.');
+    var svg = svgRoot(W, H, 'How the cost per megawatt-hour is built up for new ' +
+      techLabel(state.tech) + ' in ' + state.iso + ', ' + state.year + '.');
     ticks(lo, hi, 5).forEach(function (t) {
       svg.appendChild(svgEl('line', {
         x1: x(t), x2: x(t), y1: padT - 6, y2: H - padB + 2,
@@ -628,106 +519,78 @@
       }));
       txt(svg, x(t), padT - 11, '$' + t, 'ax-label', 'middle');
     });
-    txt(svg, 2, H - 26, '$ per MWh — one unit throughout', 'ax-title');
+    txt(svg, 2, H - 28, 'dollars per megawatt-hour', 'ax-title');
 
     steps.forEach(function (st, i) {
       var cy = padT + i * rowH + rowH / 2;
-      txt(svg, padL - 12, cy + 4, st.k, 'row-label', 'end');
+      txt(svg, padL - 12, cy + 4, st.k, 'row-label', 'end').setAttribute('font-size', '12px');
       var x0 = Math.min(x(st.from), x(st.to)), x1 = Math.max(x(st.from), x(st.to));
       var fill = st.type === 'delta'
         ? (st.v >= 0 ? 'var(--mac-warm)' : 'var(--mac-cool)')
         : 'var(--mac-total)';
-      var r = svgEl('rect', {
-        x: x0, y: cy - 9, width: Math.max(x1 - x0, 2.5), height: 18, rx: 4, fill: fill
-      });
+      var r = svgEl('rect', { x: x0, y: cy - 9, width: Math.max(x1 - x0, 2.5), height: 18, rx: 4, fill: fill });
       title(r, st.k + ': ' + fmtMWh(st.type === 'delta' ? st.v : st.to) + ' per MWh');
       bindTip(r, '<b>' + esc(st.k) + '</b><br>' +
-        (st.type === 'delta' ? (st.v >= 0 ? 'adds ' : 'subtracts ') + fmtMWh(Math.abs(st.v))
-                             : 'running total ' + fmtMWh(st.to)) + ' /MWh');
+        (st.type === 'delta' ? (st.v >= 0 ? 'adds ' : 'takes off ') + fmtMWh(Math.abs(st.v))
+                             : 'running total ' + fmtMWh(st.to)) + ' per MWh');
       svg.appendChild(r);
-      var lbl = txt(svg, x1 + 8, cy + 4,
-        (st.type === 'delta' ? (st.v >= 0 ? '+' : '−') + fmtMWh(Math.abs(st.v)).replace('$', '$')
-                             : fmtMWh(st.to)), 'val-label');
-      lbl.setAttribute('fill', 'var(--mac-ink)');
+      txt(svg, x1 + 8, cy + 4,
+        st.type === 'delta' ? (st.v >= 0 ? '+' : '−') + fmtMWh(Math.abs(st.v)) : fmtMWh(st.to),
+        'val-label').setAttribute('fill', 'var(--mac-ink)');
     });
 
-    // The one division, stated rather than drawn — this is where the unit changes.
-    var div = svgEl('text', { x: padL, y: H - 6, class: 'val-label' });
-    div.textContent = '÷ ' + fmtRate(s.mer_tech) + ' tCO₂/MWh  =  ' +
-      fmtT(s.mac_post_ira) + ' per tonne  (pre-IRA ' + fmtT(s.mac_pre_ira) + ')';
+    var div = svgEl('text', { x: 2, y: H - 8, class: 'val-label' });
+    div.textContent = fmtMWh(net) + ' ÷ ' + fmtRate(rate(s)) + ' tonnes per MWh = ' +
+      fmtT1(mac(s, 'post')) + ' per tonne';
     div.setAttribute('fill', 'var(--mac-accent)');
     svg.appendChild(div);
     host.appendChild(svg);
 
     document.getElementById('wfTable').innerHTML =
-      '<table class="mac-table"><thead><tr><th scope="col">Step</th>' +
-      '<th scope="col">$/MWh</th><th scope="col">Running</th></tr></thead><tbody>' +
+      '<table class="mac-table"><thead><tr><th scope="col">Step</th><th scope="col">$/MWh</th>' +
+      '<th scope="col">Running total</th></tr></thead><tbody>' +
       steps.map(function (st) {
         return '<tr><td>' + esc(st.k) + '</td><td>' +
           (st.type === 'delta' ? fmtMWh(st.v) : '—') + '</td><td>' + fmtMWh(st.to) + '</td></tr>';
       }).join('') +
-      '<tr><td><b>÷ marginal emission rate</b></td><td>' + fmtRate(s.mer_tech) +
-      ' tCO₂/MWh</td><td><b>' + fmtT(s.mac_post_ira) + '/t</b></td></tr></tbody></table>';
+      '<tr><td><b>÷ CO₂ avoided per MWh</b></td><td>' + fmtRate(rate(s)) +
+      '</td><td><b>' + fmtT1(mac(s, 'post')) + ' per tonne</b></td></tr></tbody></table>';
   }
 
   // ===========================================================================
-  // PENDING detail cards
-  // ===========================================================================
-  function renderPending() {
-    var host = document.getElementById('pendingGrid');
-    var head = document.getElementById('pendingHead');
-    var pend = ISOS.filter(function (iso) { return !cell(iso, state.year); });
-    head.textContent = pend.length
-      ? 'Grids still pending — ' + pend.length + ' of ' + ISOS.length + ' for ' + state.year
-      : 'Every grid has landed for ' + state.year;
-    if (!pend.length) {
-      host.innerHTML = '<p class="mac-sub" style="margin:0">All ' + ISOS.length +
-        ' modeled grids carry a measured marginal emission rate for ' + state.year + '.</p>';
-      return;
-    }
-    host.innerHTML = pend.map(function (iso) {
-      return '<div class="pending-card"><h4>' + iso + pendingChip() + '</h4>' +
-        '<p>Its designated keeper predates <code>fba0ecd7</code>, the commit that first emitted the ' +
-        'emissions dual, so the column simply is not in the file:</p>' +
-        '<p><code>results/calibration/' + KEEPER_BUNDLE[iso] + '/hourly/system_' + state.year +
-        '.parquet</code> — <b>no <code>marginal_emission_rate</code> column</b></p>' +
-        '<p style="margin-bottom:0">Unblocked by that lane’s next control replay. Nothing is ' +
-        'estimated, carried over from another grid, or shown as zero in the meantime.</p></div>';
-    }).join('');
-  }
-
-  // ===========================================================================
-  // controls, hash, wiring
+  // controls
   // ===========================================================================
   function seg(hostId, items, current, onPick) {
     var host = document.getElementById(hostId);
     host.innerHTML = items.map(function (it) {
-      var v = it[0], l = it[1];
-      return '<button type="button" data-v="' + v + '"' +
-        (String(v) === String(current) ? ' class="active" aria-pressed="true"' : ' aria-pressed="false"') +
-        '>' + l + '</button>';
+      return '<button type="button" data-v="' + it[0] + '"' +
+        (String(it[0]) === String(current) ? ' class="active" aria-pressed="true"' : ' aria-pressed="false"') +
+        '>' + it[1] + '</button>';
     }).join('');
     Array.prototype.forEach.call(host.querySelectorAll('button'), function (b) {
       b.addEventListener('click', function () { onPick(b.getAttribute('data-v')); });
     });
   }
 
-  function renderIsoSelect() {
-    var sel = document.getElementById('isoSel');
-    sel.innerHTML = ISOS.map(function (iso) {
+  function renderPicker() {
+    var host = document.getElementById('isoPicker');
+    host.innerHTML = ISOS.map(function (iso) {
       var ok = !!cell(iso, state.year);
-      return '<option value="' + iso + '"' + (iso === state.iso ? ' selected' : '') + '>' +
-        iso + (ok ? '' : '  — pending') + '</option>';
+      return '<button type="button" class="iso-btn' + (ok ? '' : ' is-pending') + '" data-iso="' + iso + '"' +
+        ' aria-pressed="' + (iso === state.iso ? 'true' : 'false') + '">' +
+        (ok ? '' : '<span class="dot" aria-hidden="true"></span>') + iso +
+        (ok ? '' : ' <span style="font-weight:500;opacity:.85">pending</span>') + '</button>';
     }).join('');
-    var dot = document.getElementById('isoDot');
-    var ok = !!cell(state.iso, state.year);
-    dot.style.background = ok ? 'var(--mac-accent)' : 'var(--mac-pending)';
-    dot.style.boxShadow = 'none';
+    Array.prototype.forEach.call(host.querySelectorAll('.iso-btn'), function (b) {
+      b.addEventListener('click', function () {
+        state.iso = b.getAttribute('data-iso'); writeHash(); renderAll();
+      });
+    });
   }
 
   function writeHash() {
-    location.replace('#iso=' + state.iso + '&year=' + state.year +
-      '&tech=' + state.tech + '&state=' + state.synth);
+    location.replace('#grid=' + state.iso + '&year=' + state.year + '&tech=' + state.tech +
+      '&imports=' + state.imports + '&state=' + state.synth);
   }
   function readHash() {
     var p = {};
@@ -735,50 +598,69 @@
       var i = kv.indexOf('=');
       if (i > 0) p[kv.slice(0, i)] = decodeURIComponent(kv.slice(i + 1));
     });
-    if (ISOS.indexOf(p.iso) >= 0) state.iso = p.iso;
+    if (ISOS.indexOf(p.grid) >= 0) state.iso = p.grid;
     if (YEARS.indexOf(parseInt(p.year, 10)) >= 0) state.year = parseInt(p.year, 10);
     if (p.tech === 'wind' || p.tech === 'solar') state.tech = p.tech;
+    if (p.imports === 'counted' || p.imports === 'zero') state.imports = p.imports;
     if (SYNTH_STATES[p.state]) state.synth = p.state;
+  }
+
+  function syncShapeToggle() {
+    var st = document.getElementById('shapeToggle');
+    st.setAttribute('aria-pressed', state.shape ? 'true' : 'false');
+    st.textContent = state.shape ? 'Showing ' + techLabel(state.tech) + "'s hours"
+                                 : "Show " + techLabel(state.tech) + "'s hours";
   }
 
   function renderAll() {
     seg('yearSel', YEARS.map(function (y) { return [y, y]; }), state.year, function (v) {
       state.year = parseInt(v, 10); writeHash(); renderAll();
     });
-    seg('techSel', TECHS, state.tech, function (v) { state.tech = v; writeHash(); renderAll(); });
-    renderIsoSelect();
+    seg('impSel', [['counted', 'Counted'], ['zero', 'Ignored']], state.imports, function (v) {
+      state.imports = v; writeHash(); renderAll();
+    });
+    seg('techSel', [['wind', 'Wind'], ['solar', 'Solar']], state.tech, function (v) {
+      state.tech = v; writeHash(); renderAll();
+    });
+    renderPicker();
     renderHero();
-    renderTiles();
-    renderRank();
-    renderDuration();
-    renderMeters();
+    renderRange();
+    renderCards();
     renderHeat();
+    renderDuration();
     renderWaterfall();
-    renderPending();
+    renderIntro();
     Object.keys(tables).forEach(function (k) {
       var el = document.getElementById(k + 'Table');
       if (el) el.hidden = !tables[k];
     });
-    var st = document.getElementById('shapeToggle');
-    st.setAttribute('aria-pressed', state.shape ? 'true' : 'false');
-    st.textContent = state.shape
-      ? 'Overlay on — showing ' + techLabel(state.tech) + '’s hours'
-      : 'Overlay the technology’s hours';
+    syncShapeToggle();
+  }
+
+  /** One plain sentence about the selected grid, including its import treatment. */
+  function renderIntro() {
+    var el = document.getElementById('gridIntro');
+    var c = cell(state.iso, state.year);
+    var base = 'Pick a grid to see what drives its number: when its emissions actually sit on the ' +
+      'margin, and how the cost is built up.';
+    if (!c) { el.innerHTML = base; return; }
+    var imp = c.system.import_marginal_hour_share, src = c.system.import_source;
+    var pct = (imp * 100).toFixed(0);
+    el.innerHTML = base + ' ' + (imp >= 0.02
+      ? ('In ' + state.iso + ', about <b>' + pct + '% of hours</b> are met at the margin by power ' +
+         'brought in from ' + esc(src) + '. ' + (withImports()
+           ? 'Those hours are currently charged that region\'s average emission rate of <b>' +
+             fmtRate(c.system.import_emission_rate) + '</b> tonnes per MWh.'
+           : 'Those hours are currently counted as <b>zero emissions</b>, which flatters the ' +
+             'numbers below — switch “Imported power” to <i>Counted</i> above.'))
+      : (state.iso + ' imports very little, so the import setting barely moves its numbers.'));
   }
 
   function init() {
     readHash();
 
-    document.getElementById('isoSel').addEventListener('change', function (e) {
-      state.iso = e.target.value; writeHash(); renderAll();
-    });
     document.getElementById('shapeToggle').addEventListener('click', function () {
-      state.shape = !state.shape; renderHeat();
-      var st = document.getElementById('shapeToggle');
-      st.setAttribute('aria-pressed', state.shape ? 'true' : 'false');
-      st.textContent = state.shape
-        ? 'Overlay on — showing ' + techLabel(state.tech) + '’s hours'
-        : 'Overlay the technology’s hours';
+      state.shape = !state.shape; renderHeat(); syncShapeToggle();
     });
     Array.prototype.forEach.call(document.querySelectorAll('[data-table]'), function (b) {
       b.addEventListener('click', function () {
@@ -804,7 +686,7 @@
     window.addEventListener('resize', function () {
       if (rid) cancelAnimationFrame(rid);
       rid = requestAnimationFrame(function () {
-        renderRank(); renderDuration(); renderHeat(); renderWaterfall();
+        renderRange(); renderHeat(); renderDuration(); renderWaterfall();
       });
     });
 
