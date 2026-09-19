@@ -2432,3 +2432,19 @@ results/calibration/spp_mer_20260919_rung/
 # never `rm` (rule 31 [R-RETAIN]). Its numbers live in FINDING-soco-53c-2026-09-19.md.
 # Recover: git archive adb289959d43ce95da3d586aa0dc6b7763784106 results/calibration/soco53c_control | tar -x
 results/calibration/soco53c_control/
+# ercot-mer 2026-09-19 — the ERCOT keeper re-solved per year for the
+# marginal_emission_rate column (the emissions dual). The PARENT keeps these
+# per-year shard bundle dirs OUT OF `main` (rule 32 [R-SHARD] (d); rule 29
+# [R-SCREEN] (c), which .gitignore discharges in full — `rm` is NEVER required,
+# rule 31 [R-RETAIN]). Each bundle IS pushed on its own shard branch, so the
+# bytes are retrievable without a re-solve (rule 34 [R-SHARD-PROMOTABLE] (a)).
+# Recovery by FULL IMMUTABLE SHA, never branch name (rule 33 [R-SHARD-ARCHIVE] (d)):
+#   git checkout e702b98b57cd4027f2bb9f74ca96c179fbb04ee3 -- results/calibration/ercot_mer20260919_2021
+#   git checkout b66fd8a49c8895163f6757080c0f0be52ffd6973 -- results/calibration/ercot_mer20260919_2022
+#   git checkout 9ab2461485a9feeb4a9cf191c2216056955e54c6 -- results/calibration/ercot_mer20260919_2024
+#   git checkout a6429ae94eef82079f349a2a75b93a7f257778b5 -- results/calibration/ercot_mer20260919_2025
+#   (2023: claude/ercot-mer-2023-v2, sha recorded in the RESULT doc when it lands)
+# NOTE (rule 31, pjm-h8 correction): check_registry_payload_parity.py sweeps the
+# FILESYSTEM, so these gitignored dirs turn that gate RED *locally* while CI stays
+# green. That is expected — do NOT "fix" it by deleting a result.
+results/calibration/ercot_mer20260919_*/
