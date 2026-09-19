@@ -1,0 +1,37 @@
+{
+  "year": 2025,
+  "belly_sha256_16": "b0b7d285bf4e66e8",
+  "runs_detected": 8221,
+  "runs_dropped_by_screen": 4760,
+  "share_runs_dropped": 0.5790049872278311,
+  "kept_gap_classes": {
+    "unfused": {
+      "gaps": 2217,
+      "belly_mw": 720106.6355313556,
+      "mean_belly_mw": 822.0395382778032
+    },
+    "fused_within_da": {
+      "gaps": 166,
+      "belly_mw": 26402.065599999998,
+      "mean_belly_mw": 30.13934429223744
+    },
+    "fused_over_da": {
+      "gaps": 559,
+      "belly_mw": 1256902.431885358,
+      "mean_belly_mw": 1434.8201277230114
+    },
+    "unfused_over_da": {
+      "gaps": 33,
+      "belly_mw": 1052.5272,
+      "mean_belly_mw": 1.2015150684931506
+    }
+  },
+  "summary_mean_belly_mw": {
+    "fused_gaps": 1464.9594720152488,
+    "unfused_gaps": 823.2410533462963,
+    "total_kept_gap_mw": 2288.2005253615453,
+    "share_on_fused_gaps": 0.6402233789295102,
+    "over_da_horizon_excluded": 1436.0216427915045,
+    "share_on_over_da": 0.6275768346677602
+  }
+}
