@@ -338,3 +338,375 @@ its own bundle to its own branch via a `.gitignore` negation and a **plain `git 
 it must show the armed signature — `coal_prb_proxy_own_iso: true`, `coal_supply_NWPP.csv` present with
 md5 `4bc7f9a61724ec4562599230ca77e4c6`, `hydro_cascade_coupling true`, `hydro_backfill_year 2024` — or
 STOP without pushing. The parent registers, promotes and prunes (rules 15 / 32(d) / 35).
+
+---
+
+# ADDENDUM 2 (2026-09-18) — the shard's budget is raised 600 → 780 min on its OWN measured P0 rate
+
+**Recipe unchanged. Pin unchanged (`666343a2bf86f204c5ca6c672a680da32150a640`). Only the time
+budget moves**, and it moves *before* the shard could hit the old ceiling rather than after.
+
+**The measurement.** The shard's first status report, at 04:35:48Z:
+`2023 P0 complete (1512.4s, 515K iterations); now in P1`.
+
+| | NWPP-40 (registered run) | NWPP-41 shard | ratio |
+|---|---|---|---|
+| 2023 P0 seconds | 1,236.5 | **1,512.4** | **1.22×** |
+| 2023 P0 HiGHS iterations | 523,199 | ~515,000 | 0.98× |
+
+**The same LP on a slower container, not a regression.** The iteration count is within 2 % of
+NWPP-40's, so the problem HiGHS is solving is the same size and shape — which is what the
+offer-array probe already proved from the other direction (non-coal max&#124;Δ&#124; exactly
+$0.0000000000; only 7 coal rows move). What differs is seconds per iteration.
+
+**The projection, and why waiting would have been the expensive choice.** NWPP-40's span was
+33,038.5 s = 550.6 min. At 1.22× that projects to **≈672 min**, which overruns the 600-min budget
+Addendum 1 §A1.4 set — and rule 32(b)'s stop rule is unambiguous: *"A shard approaching 20 minutes
+with no artifact stops and reports; it never pushes a half-written bundle."* Applied to a 600-min
+budget that means the shard would have stopped somewhere inside 2025 P1, with two years solved and
+nothing pushed. **780 min** carries the projection with ~16 % margin. Precedent: NWPP-40 re-budgeted
+twice by exactly this route (150 → 480 min on its own measured 2023 rate, then → 600 min), its
+Addenda 1 and 2.
+
+**Mechanics, recorded because the first attempt failed.** A routine's prompt can only be edited from
+the conversation it posts into, so the two keep-alive pokes were **deleted and recreated** rather
+than updated: `trig_01EPuqbN1HZ4HSc7EYQ6eotf` / `trig_015e6z1RbJ75tuWqGwk9X9hA` →
+**`trig_016ykqCP9jmUezNDBJu6BCE1`** (minute 5) and **`trig_01EBYncSmmRn77caEo3W33i5`** (minute 35).
+Both carry the 780-min budget and state that it supersedes the 600 in the shard's original prompt.
+**These two are the triggers the promoting check-in must delete** (rule 33), not the deleted pair.
+
+**The poke mechanism is confirmed working, by measurement.** The shard ran no turn between 03:51:48Z
+and the first poke; the deleted offset trigger's `last_run` reads
+`SUCCEEDED, fired_at 2026-09-18T04:35:37.968Z`, and the shard's `updated_at` moved to 04:35:48Z with
+a fresh per-pass status detail. That matters because a cloud shard is **not** reachable by
+`SendMessage` from the parent (`ListAgents` shows no peers; a direct send returns *"No agent named …
+is reachable"*), so the persistent-session routine is the ONLY channel the parent has — and a shard
+that never wakes never pushes, which is the rule-34 `[R-SHARD-PROMOTABLE]` stranding this lane's
+whole 780-minute budget rides on.
+
+**Unchanged by this addendum:** every expected number in §A1.3, the hard-stop signature the shard
+must show, the registration and promotion sequence, and the rule-35 year-set enumeration.
+
+---
+
+# ADDENDUM 3 (2026-09-18) — budget raised again, 780 → 1,020 min; 2023 is solved and the ratio is WORSE than Addendum 2 projected
+
+**Recipe unchanged. Pin unchanged (`666343a2bf86f204c5ca6c672a680da32150a640`). Only the ceiling moves.**
+
+**Observed.** At 06:35:56Z: `span_A solve in progress (2024 P0, 2025 pending)` — so 2023 is complete
+on both passes and the run is in 2024 P0. The two interim reports were
+`2023 P0 complete (1512.4s, 515K iterations)` at 04:35:48Z and
+`LP pass 2023 P1 in progress (63 min)` at 05:36:09Z.
+
+**The problem: 2023 P1's completion time was never reported, only bracketed.** The status prose
+carried no per-pass seconds for it, so the ratio has to be inferred from when 2024 P0 appeared. On an
+LP start of ~04:08Z (2023 P0 = 1,512.4 s, finishing just before its 04:35:48Z report):
+
+| 2023 done at | 2023 elapsed | ratio vs NWPP-40's 81.8 min | projected 2024+2025 | TOTAL from shard start | vs 780 |
+|---|---|---|---|---|---|
+| ~05:50Z | 102 min | 1.25× | ~583 min | ~718 min | inside |
+| ~06:05Z | 117 min | 1.43× | ~668 min | ~818 min | **OVER** |
+| ~06:20Z | 132 min | 1.61× | ~754 min | ~919 min | **OVER** |
+| ~06:35Z | 147 min | 1.80× | ~840 min | ~1,020 min | **OVER** |
+
+2024 + 2025 are **85 %** of NWPP-40's span (467.6 of 549.5 min), so the remaining work is where the
+ratio bites. **Three of the four brackets overrun 780 min**, and only the most optimistic survives.
+
+**Decision: 1,020 min.** It covers even the 1.80× bracket. The asymmetry is the whole argument — a
+shard that finishes early simply finishes early and costs nothing, while a shard that stops at its
+ceiling has two years solved, nothing pushed, and rule 32(b) forbids pushing the partial bundle. This
+is the second re-budget of the lane and it is again made *before* the ceiling is approached, on
+measurement rather than on a stop.
+
+**The reporting gap is closed at the same time.** Both recreated pokes now REQUIRE the finished
+passes as an explicit seconds-and-iterations table grepped from the log
+(`2023 P0 1512.4s/515K, P1 5820.3s/612K; 2024 P0 in progress 12 min`) rather than prose, because a
+bracket four brackets wide is not a measurement and this lane should not be re-deriving it from
+timestamps. That the gap existed at all is the finding: a shard prompt that asks for per-pass numbers
+"in the final report" gets prose in the interim status, and the parent's budget decisions depend on
+the interim.
+
+**Live trigger IDs, superseding BOTH earlier pairs** — these are the two the promoting check-in must
+delete (rule 33), and the four earlier IDs are dead:
+**`trig_01RmFVXvCgL71mHpipuv3pz1`** (minute 5) and **`trig_019jRppxsbiZdiF5o5wfsfxa`** (minute 35).
+Dead: `trig_01EPuqbN1HZ4HSc7EYQ6eotf`, `trig_015e6z1RbJ75tuWqGwk9X9hA` (Addendum 2's pair),
+`trig_016ykqCP9jmUezNDBJu6BCE1`, `trig_01EBYncSmmRn77caEo3W33i5`. Every delete-and-recreate is forced
+by the same platform constraint Addendum 2 recorded: a routine's prompt cannot be edited from outside
+the conversation it posts into. All four earlier pokes fired `SUCCEEDED` before deletion (last:
+06:14:26Z and 06:35:29Z), so the wake channel has never missed.
+
+**Unchanged:** every expected number in §A1.3, the hard-stop signature, the registration and
+promotion sequence, and the rule-35 year-set enumeration. **A slower container is not a different
+LP** — the 2023 P0 iteration count was 0.98× NWPP-40's, and the offer-array probe already bounded the
+arm to 7 coal rows with non-coal max|Δ| exactly $0.0000000000.
+
+---
+
+# ADDENDUM 4 (2026-09-18) — budget 1,020 → 1,320 min; and a CORRECTION to Addendum 3's successor reading
+
+**Recipe unchanged. Pin unchanged (`666343a2bf86f204c5ca6c672a680da32150a640`). Only the ceiling moves.**
+
+## A4.1 The correction, stated first because a wrong number was acted on
+
+At 08:35:54Z the shard reported `98 min P1 done; P2025 pending`. **This lane read that as "2024 P1
+finished in 98 min" and concluded the run had SPED UP to 0.72× of NWPP-40, with a cumulative ratio of
+1.05×.** That was wrong. The phrase meant *98 minutes **of** 2024 P1 done* — the pass was still
+running. The next two reports settle it beyond doubt: `2024 P1 @129m` at 09:06:53Z and
+`2024 P1 still running (189 min)` at 10:06:54Z.
+
+**The retracted claims, named so they are not carried forward:** there was no 0.72× pass, no
+cumulative 1.05×, and no "the arm makes the coal merit order less degenerate, which simplifies the
+basis" story. That last one was an *explanation invented for an artefact of a misparse*, and it is
+withdrawn in full. It is also exactly the kind of claim rule 1 `[R-STRUCT]` exists to refuse: solve
+time is not a criterion, and a mechanism is never credited for one.
+
+**The surviving measurement** is Addendum 3's anchor, unchanged: LP start ~04:08Z → 2024 P1 start
+~06:58Z = 170 min for work NWPP-40 did in 119.1 min, i.e. **~1.43×**.
+
+## A4.2 Why the ceiling moves again
+
+2024 P1 passed **189 min against NWPP-40's 135.9 (1.39×) and was still running**, so it has no
+measured upper bound — and 2025 P1, the single biggest pass in the span (263.9 min on NWPP-40), has
+not started. Gridding the two unknowns against the 1,020 ceiling (`+20 min` for verify and push):
+
+| 2024 P1 ends at | 2025 at 1.43× | 1.60× | 1.80× | 2.20× |
+|---|---|---|---|---|
+| 194 min (1.43×) | 838 | 888 | 947 | **1,065** |
+| 220 min (1.62×) | 864 | 914 | 973 | **1,091** |
+| 250 min (1.84×) | 894 | 944 | 1,003 | **1,121** |
+| 290 min (2.13×) | 934 | 984 | **1,043** | **1,161** |
+
+**Five of sixteen cells overrun 1,020**, and the survivors include several with under 50 min of slack.
+Against that, raising the ceiling costs **nothing** — a shard that finishes early simply finishes
+early — while being wrong costs the entire ~13-hour span, because rule 32(b) forbids pushing a
+half-written bundle. **1,320 min** (expires ~01:35Z on the 19th) clears every cell in the grid.
+
+**This is the third raise (600 → 780 → 1,020 → 1,320), and the honest summary is that this lane's
+projections have been optimistic three times running.** The ratio estimate has moved 1.22× → 1.43× →
+(a spurious 1.05×) → ≥1.39× unbounded. That pattern, not any single datapoint, is the argument for a
+ceiling with real headroom rather than one fitted to the current best guess.
+
+## A4.3 Live trigger IDs, superseding all three earlier pairs
+
+**`trig_017Kh9n7aHcbrZWkhpZePA7y`** (minute 5) and **`trig_01Gi7KPLxx2zm66CDe6LcYA4`** (minute 35) —
+these are the two the promoting check-in must delete (rule 33). Dead: `trig_01EPuqbN1HZ4HSc7EYQ6eotf`,
+`trig_015e6z1RbJ75tuWqGwk9X9hA`, `trig_016ykqCP9jmUezNDBJu6BCE1`, `trig_01EBYncSmmRn77caEo3W33i5`,
+`trig_01RmFVXvCgL71mHpipuv3pz1`, `trig_019jRppxsbiZdiF5o5wfsfxa`. Every one fired `SUCCEEDED` before
+deletion (last: 10:06:34Z and 09:35:48Z), so the wake channel has never missed a beat across six
+routines.
+
+## A4.4 The reporting fix, sharpened
+
+Both recreated pokes now require the per-pass table to say **FINISHED or STILL RUNNING explicitly**,
+with seconds and HiGHS iterations grepped from the log. The A4.1 misread is the whole reason: a status
+of the form `N min P1 done` is ambiguous between elapsed and total, and this lane resolved it the
+favourable way. The next check-in is instructed that when a reading is ambiguous it must treat the
+pass as still running and **say the reading is ambiguous** rather than pick the flattering branch.
+
+**Unchanged:** every expected number in §A1.3, the hard-stop signature, the registration and promotion
+sequence, and the rule-35 year-set enumeration. The FINDING will carry the ACTUAL per-pass seconds and
+iteration counts from the shard's log — the interim status never supplied them — and will state the
+realised span ratio rather than any of the running estimates above.
+
+---
+
+# ADDENDUM 5 (2026-09-18) — a parent CANNOT observe a shard beyond its status line; the diagnostic is abandoned and the solve runs on
+
+**No change to the recipe, the pin, or the 1,320-min ceiling.** This addendum records an
+**operational limitation that cost this lane two round trips**, and the decision taken because of it.
+
+## A5.1 What was tried, and what came back
+
+2024 P1 passed 1.83× of NWPP-40 and kept climbing, and the question "is HiGHS converging slowly or
+cycling degenerately?" cannot be answered from an elapsed figure. Two attempts to get the answer:
+
+1. **11:27Z** — fired the `:05` poke with appended text asking for `ps` CPU-time vs elapsed, two
+   HiGHS iteration samples ten minutes apart, the log tail, and the cgroup ceiling. The shard ran a
+   turn at 11:35:55Z and returned `solve NWPP-41 span_A in flight (278 min); awaiting P1 completion`.
+2. **11:51Z** — fired the `:35` poke asking it to write the same diagnostic to
+   `docs/handoffs/SHARDDIAG-nwpp-41-2026-09-18.md` and push it to a new branch `claude/nwpp-41-diag`,
+   on the theory that a file is readable where prose is not. The shard ran a turn at 12:06:40Z and
+   returned `waiting on 2024 P1 solve (308m elapsed, 2025 pending)`. **`git fetch origin
+   claude/nwpp-41-diag` → `couldn't find remote ref`.** The branch was never created.
+
+**TWO FINDINGS FOR EVERY FUTURE SHARDED LANE**, neither of which is in rule 32 today:
+
+- **(a) The parent can read a shard's `post_turn_summary.status_detail` and NOTHING ELSE.** There is
+  no transcript access, and a cloud shard is not reachable by `SendMessage` (Addendum 2). So any
+  question whose answer is prose is **structurally unanswerable**. Rule 32(c)(5) already says to tell
+  a shard what to report *in numbers in its final message*; the sharper lesson is that the same
+  applies to every INTERIM report, and that anything the parent will need mid-flight must be
+  designed into the status line from the start — or written to a file the shard pushes *as part of
+  its standing instructions*, not as an afterthought.
+- **(b) Text appended to a keep-alive routine is not reliably acted on.** Both one-off requests were
+  delivered (`fire_trigger` returned success, and the shard demonstrably ran a turn within minutes of
+  each) and both were ignored in favour of the routine's own numbered steps, which say *"check,
+  report, end the turn — never block a single tool call for hours."* That instruction is doing its
+  job; the appended request simply loses to it. A mid-flight ask therefore belongs in the **routine's
+  own prompt** (delete-and-recreate), not appended — and even then it competes with the brevity rule.
+
+## A5.2 The decision: let it run, and stop chasing the diagnostic
+
+The diagnostic was only ever worth having if it could tell this lane to **stop early**. It cannot,
+because stopping early is dominated. At 12:18Z the shard is **523 min into a 1,320-min ceiling with
+797 min left**, and the remaining work fits in all but the most extreme cell:
+
+| 2024 P1 ends | 2025 @1.8× | @2.27× | @2.5× |
+|---|---|---|---|
+| 320 min | 1,073 | 1,211 | 1,279 |
+| 360 min | 1,113 | 1,251 | 1,319 |
+| 420 min | 1,173 | 1,311 | **1,379 OVER** |
+
+Against that, stopping now **guarantees** the loss of ~9 h of LP with no bundle, and rule 31
+`[R-RETAIN]` forbids destroying what exists. Even in the degenerate-cycling case the lane learns
+that at the ceiling with exactly the information it has now, having lost nothing extra — the
+container is doing nothing else. **So the diagnostic is abandoned, no further one-off pokes are
+fired, and the solve runs to completion or to its ceiling.**
+
+**What is known, and stated as its limit:** 2024 P1's elapsed advances with wall clock across four
+samples (189 → 248 → 278 → 308 min) and the shard has never reported the traceback its step 1
+requires on death, so the process is present. **Whether HiGHS is still iterating is UNKNOWN and this
+lane could not establish it.** That is recorded as a gap, not papered over.
+
+## A5.3 For the FINDING
+
+2024 P1 at **≥2.27× the control and unfinished** is worth one line as an observation, with **no
+claim whatever about the arm's merit**: solve time is not a criterion (rule 1 `[R-STRUCT]`), and this
+lane has already retracted one such claim (Addendum 4 §A4.1). The real per-pass seconds and
+iteration counts come from the shard's log at the end — they have never once appeared in an interim
+status.
+
+---
+
+# ADDENDUM 6 (2026-09-18) — 2024 is DONE, the final pass is running, ceiling 1,320 → 1,680 min
+
+**Recipe unchanged. Pin unchanged. Only the ceiling moves, for the last time unless the final pass
+goes past ~3.5×.**
+
+**Observed at 13:06:29Z:** `LP invocation in progress (2025 P0 done, P1 running)`. So **2024 P1
+finished** (it was at 308 min and running at 12:06:29Z, so it landed between 12:06 and ~12:26 →
+**≈2.27–2.41×** NWPP-40's 135.9 min), **2025 P0 finished**, and the run is in **2025 P1 — the last
+pass and the longest in the span** (263.9 min on NWPP-40).
+
+**Why the ceiling moves.** 2025 P1 alone decides the total now:
+
+| 2025 P1 at | ends | span total | vs 1,320 |
+|---|---|---|---|
+| 2.3× | 22:32–23:12Z | 1,158–1,198 | inside |
+| 2.5× | 23:25Z–00:05Z | 1,211–1,251 | inside |
+| 2.8× | 00:44–01:24Z | 1,290–1,330 | **borderline / OVER** |
+| 3.0× | 01:37–02:17Z | 1,343–1,383 | **OVER** |
+
+The realised per-pass ratio has trended **upward** all run (1.22× → ~1.42× → ≈2.3×), so 2.8× on the
+final pass is not a tail case. **1,680 min** (expires ~07:35Z on the 19th) covers ~3.5×.
+
+**The asymmetry is at its sharpest here and that is the whole argument:** a ceiling hit now would
+throw away a span with **all three years solved and nothing pushed**, because rule 32(b) forbids
+pushing a partial bundle. Raising costs nothing. This is the fourth raise
+(600 → 780 → 1,020 → 1,320 → 1,680) and the lane's projections have been optimistic at every step;
+that record, not this single table, is why the ceiling is set well clear of the estimate rather than
+next to it.
+
+**Live trigger IDs, superseding all four earlier pairs** — the two the promoting check-in must delete
+(rule 33): **`trig_01AFKxvKmbq5auf3GWWX2GHV`** (minute 5) and **`trig_01Y8Ug2sR3mFUGFudTVoBx67`**
+(minute 35). Eight earlier IDs are dead; every one fired `SUCCEEDED` before deletion (last 13:06:09Z
+and 12:35:57Z), so the wake channel has held across ten routines.
+
+**Both pokes now lead with the push**, since that is all that remains: the four signature checks the
+instant the bundle exists, then the `.gitignore` negation + plain `git add` to `claude/nwpp-41-span`,
+the `dispatch/<year>_P1.parquet` + bundle-root `system.parquet` requirement, the HTTP/1.1 retry, and
+the report items — per-pass seconds and iterations, class TWh per year, and confirmation that **no
+bare `COAL` row survives (expected 0.000 TWh)**, which is the C1 fix's own acceptance test.
+
+**Unchanged:** §A1.3's expected numbers, the hard-stop signature, registration and promotion, the
+rule-35 year-set enumeration, and Addendum 5's two standing conclusions (the diagnostic stays
+abandoned; whether HiGHS was iterating through 2024 P1 was never established and is recorded as a
+gap).
+
+---
+
+# ADDENDUM 7 (2026-09-18) — THE SOLVE WAS KILLED IN ITS FINAL PASS. 2023+2024 SURVIVE AND **CONFIRM THE C1 FIX IN A REAL SOLVE**; 2025 IS LOST; NO REGISTRABLE BUNDLE. RE-SOLVE COST STATED, DECISION OWED TO THE OWNER (rule 31).
+
+## A7.1 What happened
+
+A platform restart took out the shard's worker (its record went `connected` → `disconnected`,
+`worker_epoch` 1 → 2 → 3) at roughly the same moment the parent container restarted. The shard's own
+verdict, verbatim: **`LP solver killed mid-run; 2025 missing from bundle`**. It then did the right
+thing — pushed what it had and STOPPED to ask rather than relaunching unilaterally.
+
+**This lane's liveness test is what caught it, and it was set up before the answer was known.** With
+the 2025 P1 start anchored at ~13:52Z by two agreeing samples (74 min at 15:06Z, 163 min at 16:35Z),
+the test was pre-registered as: *alive ⇒ elapsed ~193 min at 17:05Z; dead ⇒ elapsed freezes near 163
+or no process*. The status at 16:35 still read `LP running (163 min)`, which alone is
+indistinguishable from a stale log read — the pre-registered test is the only reason the distinction
+was ever made rather than assumed.
+
+## A7.2 What survives, and what it proves
+
+Pushed at **`14f485ce21b322d600b67aecfe7ef2da41fd87a9`** on `claude/nwpp-41-span`, **18 files**:
+`dispatch/{2023,2024}_P1.parquet` (+ `_fleet`), `floors/{2023,2024}_P1.npz`, and the 2023/2024
+`hourly/` set (`class_hourly`, `class_band_hourly`, `hydro_cascade`, `network`, `storage`,
+`unit_hourly`). **Absent: everything 2025, and every bundle-root file** — no `meta.json`, no
+`run_config.json`, no `system.parquet`. Those are written in the persist/report phase the run never
+reached.
+
+**THE ACCEPTANCE TEST PASSES ON BOTH SURVIVING YEARS. The C1 seam is closed in a real solve, not
+only in the zero-LP relabel:**
+
+| year | `COAL_PRB` | `COAL_BIT` | `COAL_WC` | bare `COAL` | coal family |
+|---|---|---|---|---|---|
+| 2023 | 24.2042 | 14.9844 | 0.4247 | **0.0000** | 39.6133 |
+| 2024 | 19.3232 | 7.4515 | 0.2329 | **0.0000** | 27.0076 |
+
+**Zero bare `COAL` in either year** — the defect that put 38.5 / 26.5 TWh into a class the benchmark
+has no row for is gone. And the repricing moved coal in the **pre-registered direction** (§A1.3: "the
+model coal can only rise or hold"): the coal family is **39.613 vs the control's 38.542 (+1.07 TWh)**
+in 2023 and **27.008 vs 26.489 (+0.52)** in 2024, i.e. a cheaper Colstrip/Hardin dispatched more.
+Against the committed benchmark the coal rows read **2023** BIT +1.089 / PRB −1.077 / WC −0.134 and
+**2024** BIT −5.325 / PRB −1.635 / WC −0.331 — every one inside the ±8 TWh band, so **C1's coal rows
+would pass in both solved years.**
+
+## A7.3 Why the surviving work CANNOT be reused — checked in code, not assumed
+
+The shard offered "re-solve 2025 only (~4–5 h)". **That path does not exist.**
+`run_calibration_full.plan_reuse_solved` (line 3509) requires, among other conditions, the prior
+bundle's **`meta.json` kwargs**, its **`run_config.json` `scenario_config`**, and per year that
+"its per-year artifacts (`dispatch/<year>_<pass>` files for every recorded pass, **`system.parquet`
+rows**) exist". None of those three files was written, so the gate refuses the whole bundle. This is
+exactly what rule 32(b) already states in the abstract — *"a chain cannot carry years across
+containers either. Both composition routes therefore end in a re-solve, always"* — and it is now
+measured rather than quoted.
+
+Nor is the partial registrable: `render_calibration_html.build_payload` reads the bundle-root
+`system.parquet` per year, and rule 16 `[R-ALLYEARS]` forbids a partial-span keeper regardless.
+
+## A7.4 The cost, stated before anything is relaunched (rule 31 `[R-RETAIN]`)
+
+Rule 31: *"A cost estimate is owed BEFORE re-solving, not after. If results were lost anyway, the
+session states the LP cost of reproducing them and waits, rather than silently launching hours of
+solves."* So: **nothing has been relaunched, and nothing has been deleted.**
+
+- **Full span re-solve, fresh container: ~9–14 h.** NWPP-40 did this span in 551 min; the dead
+  container ran ~2.3× slow (2023 P0 1.22×, 2023 P1 ~1.42×, 2024 P1 ~2.3×), and a fresh container may
+  or may not be quicker. ~9 h at NWPP-40's pace, ~14 h at this container's.
+- **Partial re-solve: unavailable** (§A7.3).
+- **Not re-solving: the lane's SUBSTANCE is already secured.** C1's root cause, its fix and its
+  effect are proven zero-LP in §1–§2 and now corroborated on two real solved years in §A7.2. The
+  solve is needed only to *register and promote a bundle*, not to establish the finding.
+
+**An unavoidable honesty about a relaunch:** it is all-or-nothing again. The runner writes
+`meta.json` / `run_config.json` / `system.parquet` only after the last year, so a restart at any point
+before that loses everything again — and this is the SECOND NWPP lane in two to be hit
+(NWPP-40 attempt 1 was "killed by a container restart while the shard session was idle"). **Routed as
+a repo finding, not fixed here** (it is a `src/`-adjacent runner change, out of this lane's scope):
+persist the bundle-root files incrementally, or make `plan_reuse_solved` able to accept a per-year
+checkpoint, so a 13-hour span stops being a single point of failure. Until that exists, a per-year
+shard fan-out is still banned by rule 32(b) and a long span is still un-resumable.
+
+## A7.5 Housekeeping done
+
+Both keep-alive pokes deleted (`trig_01AFKxvKmbq5auf3GWWX2GHV`, `trig_01Y8Ug2sR3mFUGFudTVoBx67`) —
+there is no live solve to protect. Shard `session_01HwZuaGLXEia9RBheos1KDD` **archived** after
+fetch + verify (rule 33(a)/(d)); its branch and the 18-file partial are left in place at the full SHA
+above (rule 31 — nothing deleted, and the branch is the only copy). Recovery line:
+`git checkout 14f485ce21b322d600b67aecfe7ef2da41fd87a9 -- results/calibration/nwpp41_span_A`.
