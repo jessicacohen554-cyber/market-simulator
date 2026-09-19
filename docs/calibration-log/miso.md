@@ -14488,13 +14488,22 @@ containers produced **byte-identical** output and the identical 7.1586 divergenc
 in a year-keyed stamp; demand matches to the MWh; highspy 1.14.0 throughout. The gas
 price looks like the cause and is not: **2024 is the control** — its stale stamp reads
 2.54 while the replay used 2024's own 2.19, and it still reproduces to 0.0023 TWh.
-**What DOES differ is the injected `min_gen` floors** (D-2, 2022: `ct_netload_drag`
-5.0067 → 6.6063, `st_gas_mustrun_per_plant` 4.3727 → 5.0457, `chp_steam` 5.3601 →
-5.9436, `COAL reliability_floor` 0.8280 → 0.4241), and they match to ~1e-4 in 2020
-where the dispatch matches. A different floor set is a DIFFERENT LP, so this is a
-correct solution to a different problem — not degeneracy, not kernel drift. Why a
-floor for year N depends on whether N−1 and N−2 solved in the same process is NOT
-identified here and is deliberately not guessed at.
+**The D-2 floor rows move too** (2022: `ct_netload_drag` 5.0067 → 6.6063,
+`st_gas_mustrun_per_plant` 4.3727 → 5.0457, `chp_steam` 5.3601 → 5.9436), matching to
+~1e-4 in 2020 where the dispatch matches — but that is an OUTCOME, **not** the cause,
+and this entry's first revision wrongly called it one. `forced_twh` is energy sitting AT
+a binding floor and the same rows' `class_total_twh` moves with it;
+`apply_ct_netload_drag_floor` takes **net load** (demand − wind − solar), pure data, so
+the floor LEVEL cannot differ between two solves of one year on one config. **The cause
+is NOT identified.** What is established: this is not two optima of one LP — swapping
+24 TWh from CC (median mc $54.52) onto coal ($31.93) is ~$500 M of objective. Live
+hypothesis: `replay_keeper` pins `MARKET_SIM_WARMSTART_XYEAR=0`, which per
+`pipeline/solve.py` also disarms the same-year P1 basis seed, while the keeper's CLI
+legs had both ON — and MISO's P1 builds a SECOND `DispatchModel` on the floored fleet
+seeded `alien=True`, which is where a documented "basis-neutral" claim could fail. **The
+decisive test is ONE shard, ~40 min: re-solve `--years 2020 2021 2022` with warm-start
+OFF.** Unexplained either way: T-leg 2023 (leg-first) is 0.144, not ~0, while 2024
+(leg-middle, warm) is the cleanest year in the grid.
 
 **THE COST: G-DRIFT form 4 is NOT confirmed for MISO.** Rule 29 `[R-SCREEN]` (b)'s
 "use the committed keeper as the control" is valid only against an arm solved with the

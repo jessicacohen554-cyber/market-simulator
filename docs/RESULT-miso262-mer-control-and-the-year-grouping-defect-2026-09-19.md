@@ -69,6 +69,10 @@ the recovery line. **The shard branches are NOT deleted** (rule 33 `[R-SHARD-ARC
 
 ## 3. THE DEFECT — A KEEPER YEAR DOES NOT REPRODUCE WHEN SOLVED STANDALONE
 
+*(§3.2 carries a CORRECTION to this session's first diagnosis: the D-2 floor rows
+are an outcome of the divergence, not its cause. The measurements in §3 and §3.1
+are unaffected.)*
+
 Each replay differenced against the committed keeper's own `class_hourly` and
 `system` sidecars, on P1, at the same pinned HEAD `4583e70b`:
 
@@ -108,7 +112,7 @@ Ruled out by measurement, each on its own evidence:
   the stamps are stale and both sides used per-year gas. The replay's own unit `mc`
   confirms it (2022 CC_REGULAR median $54.52, an expensive-gas world).
 
-### 3.2 What DOES differ: the injected floors — so it is a different LP
+### 3.2 CORRECTED — the D-2 floor rows are an OUTCOME, not the cause
 
 From the committed `legitimacy_diagnostics.json` D-2 mechanism attribution, keeper
 against replay, forced TWh:
@@ -124,18 +128,44 @@ against replay, forced TWh:
 | 2022 | `CC_CHP chp_steam` | 5.3601 | 5.9436 |
 | 2022 | `COAL reliability_floor` | 0.8280 | 0.4241 |
 
-**The `min_gen` floors the LP is built with are not the same**, and they match exactly
-in the year where the dispatch matches (2020). A different floor set is a different LP,
-so the dispatch difference is a correct solution to a different problem — not
-degeneracy, not an alternate optimum, not kernel drift. The floors that move are the
-net-load-driven and steam-following families (`ct_netload_drag`, `chp_steam`,
-`st_gas_mustrun_per_plant`), which is where a successor should start.
+**CORRECTION, made before this doc was acted on.** An earlier revision of this section
+read *"the min_gen floors the LP is built with are not the same, so it is a different
+LP."* **That inference does not hold and is withdrawn.** D-2's `forced_twh` is the
+energy sitting AT a binding floor — an OUTCOME of the dispatch, not the floor level fed
+into it — and the same rows' `class_total_twh` moves in the same direction (CT_PEAKER
+18.509 → 15.2715). `apply_ct_netload_drag_floor(fleet_arrays, generators, net_load_mw,
+config, ...)` takes **net load**, a pure data quantity (demand − wind − solar), so the
+floor LEVEL cannot differ between two solves of the same year on the same config. The
+D-2 table above is a symptom, correctly measured and wrongly attributed.
 
-**Not identified here, and deliberately not guessed at:** WHY a floor derived for year
-N depends on whether years N−1 and N−2 were solved in the same process. The shape of the
-V leg (0.005 → 7.16 → 24.18, monotone) suggests something accumulating across the year
-loop; the T leg (0.144 → 0.002 → 4.00) does not fit that cleanly and the successor must
-explain both.
+**What IS established, and it is still decisive:** the two runs are not two optima of
+one LP. The swap is 24 TWh from CC_REGULAR (replay median `mc` $54.52/MWh) onto coal
+(median $31.93/MWh) — of order $500 M of objective. Two optimal solutions to the same
+LP cannot differ by that; so either the two runs solve genuinely different problems, or
+one of them is not at the optimum.
+
+**The live hypothesis, with the experiment that settles it.** The one deliberate
+solve-path difference is that `replay_keeper.py` pins `MARKET_SIM_WARMSTART_XYEAR=0`
+(its `DETERMINISM_ENV`), while the keeper's legs ran through the calibration CLI, which
+defaults it ON — and per `pipeline/solve.py` the **same-year P1 basis seed**
+(`MARKET_SIM_P1_BASIS_SEED`) is *"armed only inside the cross-year gate"*, so the pin
+disarms that too. Both are documented as basis-neutral (*"objective and total generation
+identical"*). **If that claim is false in the presence of MISO's P1-native floor
+bridges — where P1 builds a SECOND `DispatchModel` on the floored fleet and seeds it
+`alien=True` — then a warm-started later year can land somewhere a cold solve does not,
+and the first year of each leg, which has no prior basis, would agree. That is exactly
+the observed pattern.**
+
+**THE DECISIVE TEST IS ONE SHARD, ~40 minutes:** re-solve the V leg `--years 2020 2021
+2022` exactly as the keeper did but with cross-year warm-start OFF. If its 2022 then
+reproduces the REPLAY, warm-start/basis-seed is the cause and "basis-neutral" is false
+for MISO. If it reproduces the KEEPER, the cause is year-grouping through some other
+in-process state and the warm-start hypothesis dies. Not run here.
+
+**Still unexplained either way:** the T leg's shape. 2023 (leg-first) is 0.144 rather
+than ~0, and 2024 (leg-middle, warm-started) is the *cleanest* year in the whole grid at
+0.0023. A pure warm-start story predicts the opposite ordering, so whatever the
+successor finds must account for that too.
 
 ### 3.3 What this costs, stated plainly
 
