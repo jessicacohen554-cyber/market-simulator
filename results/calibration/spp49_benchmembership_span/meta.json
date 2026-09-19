@@ -395,7 +395,7 @@
   "btm_backfill_year": null,
   "shared_inputs": {
     "eia930": "../_shared/SPP/eia930-c5782c7cfbcd.parquet",
-    "eia923": "../_shared/SPP/eia923-cda580e2f71c.parquet",
+    "eia923": "../_shared/SPP/eia923-123ac1612fd5.parquet",
     "campd": "../_shared/SPP/campd-03da4256380e.parquet",
     "unit_outages": "../_shared/SPP/unit_outages-95078f62464a.parquet",
     "unit_outages_short": "../_shared/SPP/unit_outages_short-ec0df7e42a43.parquet",

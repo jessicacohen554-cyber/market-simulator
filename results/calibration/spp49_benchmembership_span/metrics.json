@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-09-19-spp-48-midvintage-exit",
+  "run_id": "2026-09-19-spp-49-benchmark-membership",
   "iso": "SPP",
-  "label": "spp 48 midvintage exit",
+  "label": "spp 49 benchmark membership",
   "target_years": [
     2019,
     2020,
@@ -19,7 +19,7 @@
   "rubric_version": 3.8,
   "determination": "NOT-YET",
   "reasons": [
-    "governance gate UNATTESTED: no governance attestation in bundle"
+    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, price_mean, price_shape, dispatch_corr"
   ],
   "notes": [
     "C8 2022 ST_GAS: grounded above budget \u2014 31.5% forced (2.3667 of 7.5228 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.952 (\u22650.8) & off-peak CV ratio 1.436 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
@@ -48,7 +48,8 @@
     "price_tail": {
       "label": "C3c price tail / scarcity (RT hourly)",
       "tier": "supporting",
-      "status": "FAIL"
+      "status": "CAVEAT",
+      "caveat_kind": "ledgered"
     },
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
@@ -58,7 +59,7 @@
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "UNATTESTED"
+      "status": "PASS"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
@@ -68,7 +69,9 @@
   },
   "caveats": {
     "protective": [],
-    "ledgered": [],
+    "ledgered": [
+      "C3c price tail / scarcity (RT hourly)"
+    ],
     "commercial_band": [],
     "budget": {
       "protective_max": 0,
@@ -76,20 +79,20 @@
     }
   },
   "grade_summary": {
-    "scored": 7,
-    "target_grade": 2,
+    "scored": 8,
+    "target_grade": 3,
     "commercial_grade": 0,
-    "ledgered": 0,
-    "fails": 5
+    "ledgered": 1,
+    "fails": 4
   },
   "reported": {
     "co2": {
       "label": "C5a CO2 vs eGRID (REPORTED-ONLY, v2.9 \u2014 see the CRITERIA note)",
       "years": {
-        "2019": "-1.1%",
-        "2020": "+16.4%",
-        "2021": "-2.0%",
-        "2022": "-0.5%"
+        "2019": "-2.7%",
+        "2020": "+15.8%",
+        "2021": "-2.4%",
+        "2022": "-0.9%"
       }
     },
     "diurnal_amplitude": {

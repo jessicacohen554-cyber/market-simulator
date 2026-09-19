@@ -3516,3 +3516,57 @@ defaults, so a rebuild does **not** reproduce the solve path's benchmark for a f
 Mechanism-matrix row added plus a cell in **all nine** ISO shards (rule 28), every one `O`.
 `check_cache_key_registration.py` and `check_mechanism_matrix.py --base` both pass; both ≥300-line
 files blob-verified after push (rule 27). **Promotion question asked, not pre-empted** (rule 31).
+
+## spp-49 promotion — 2026-09-19
+
+**OWNER RULING, in-session, verbatim:** *"Is this a recommended keeper candidate? If so plz
+promote... If structural integrity improves but gates regress that may still be a keeper"* —
+answered **PROMOTE**. The lane had recommended and **not** acted; nothing was armed or registered
+until the ruling (rule 31 `[R-RETAIN]`).
+
+**New 2019–2022 rung: `2026-09-19-spp-49-benchmark-membership`** (bundle
+`results/calibration/spp49_benchmembership_span`), stamped to keeper 12 (rule 30(a)). The
+superseded `2026-09-19-spp-48-midvintage-exit` was **pruned in this session** per rule 35(a),
+after the year union was enumerated **first** per 35(b) — **2019–2025, seven years, unchanged** —
+and `audit_keepers` confirmed the incoming three stores resolve per 35(e). **The keeper itself is
+untouched**: `spp42_span_a` was not re-solved and `keepers/SPP.json`'s keeper id is unchanged.
+
+**ZERO LP, as measured before the ruling.** The repair moves no LP input — no union-added plant
+classifies as an injected `biomass`/`OTHER` class, and `_vintage_completeness` stays at
+0.983–0.999 against a 0.90 carry threshold in every year — so this is **SPP-48's own dispatch,
+re-benchmarked**. The full 43-file bundle was recovered byte-identical from shard commit
+`03a17b9acf9f47251057637d7f7285f3d61cc881` (rule 33(d) pinning doing exactly its job; the shard
+branch itself is long gone).
+
+**Armed via `run_config` only** — `benchmark_membership_vintage_union: true`. The **shared default
+stays OFF** and `_spp_config` is **not** armed (rule 25 `[R-ISO-SCOPE]`): the census proves more
+than SPP moves.
+
+**The flag's own effect, isolated** against a flag-OFF control rebuilt from the same bundle at the
+same HEAD: **+3.7960 TWh** across 2019–2022, **every per-class delta positive**, reproducing the
+pre-promotion measurement *exactly*. Plant 127 restored at 2019 `COAL_PRB` 2,595,886 MWh + `oil`
+6,037 and 2020 `COAL_PRB` 1,100,658 + `oil` 2,969.
+
+**The gates regress, and that is the point.** C1's `COAL_PRB` miss **grows** — 2019 −6.3392 →
+−8.9351 TWh, 2020 −8.8037 → −9.9044 like-for-like — because real metered generation is now *in*
+the actual. Rules 1 `[R-STRUCT]` / 14 `[R-ACCURATE]`: a real behaviour stays in even when the fit
+worsens, and the worse number is a **discovered bug** — the model is ~8.9 TWh short of SPP's 2019
+PRB coal, which is SPP-47's "Object A" coal↔CC elasticity, made bigger and more honest rather
+than closed. **Determination UNCHANGED at NOT-YET on the SAME failing set `{C1, C3a, C3b, C4}`**;
+C2/C6/C8 hold PASS. `build_status.py --iso SPP` rebuilt; **SPP reads CALIBRATED**, unchanged —
+rule 30(c): a held-out rung reports and can neither certify nor decertify.
+
+**Reported separately, not buried.** The registered bundle also carries **inherited HEAD-rebuild
+drift of NET −0.3528 TWh**, measured against the flag-OFF control so the two are never conflated:
+`oil` −0.17…−0.43 TWh/yr, largely **reclassified** into `CT_PEAKER`/`ST_GAS`, and 2020 `COAL_PRB`
+−0.9276 — which is the plant-127 CAMPD row *this repair replaces* with its EIA-923 survey value
+(committed 1,209,201 MWh CAMPD CEMS net → 1,100,658 survey: a **basis normalisation** to the
+benchmark's own documented preference, not a deletion). That drift is **not** this lane's
+mechanism.
+
+Mechanism-matrix SPP cell `benchmark_membership_vintage_union` **O → K**.
+
+**Still open, and not closed by this promotion:** SPP's **2023–2025 bench parts read STALE** at
+HEAD (the keeper's own years — flagged by `dashboard_add_run` and `build_status` on every run),
+and **PJM carries 8.8 TWh missing from its 2025 ACTUAL** through the separate
+`_EIA860_SUPPLEMENT_ISOS` gap.
