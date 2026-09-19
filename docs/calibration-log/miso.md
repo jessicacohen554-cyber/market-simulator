@@ -14461,3 +14461,63 @@ Records: `docs/FINDING-miso262-the-seam-is-a-price-transducer-2026-09-19.md`, pr
 `scripts/probes/_miso262_seam_price_transducer.py` (sections A-F reproduce every number).
 
 * Next number: **miso-263**.
+
+## miso-262b — 2026-09-19 — **MARGINAL-CARBON CONTROL LANDED FOR ALL SIX YEARS — AND IT UNCOVERED A REPLAY DEFECT: a keeper year does NOT reproduce when solved standalone (up to 24.18 TWh), because the injected floors differ.** Keeper unchanged, `2026-09-16-miso-260-seam-ladder`
+
+**SIX PER-YEAR CONTROL REPLAYS** (owner instruction 2026-09-19: *"launch one shard per
+year then compile"*), all pinned to `4583e70b`, all pushing full bundles to their own
+branches. **`marginal_emission_rate` delivered for 2020-2025**, 70,080 zone-hours per
+year, zero nulls: load-weighted mean **0.6176 / 0.6011 / 0.4789 / 0.5407 / 0.5271 /
+0.5560** tCO2/MWh, p90 0.94-1.02 (coal marginal), 13.1-22.9 % of zone-hours exactly
+zero, and a real negative limb to −1.33. The bundles also carry
+`hourly/network_<y>.parquet` and `hourly/unit_hourly_<y>.parquet`, which no keeper
+commits — that unblocks the per-seam MODEL flow miso-262's own FINDING recorded as
+unreachable.
+
+**THE DEFECT, and it is why the span was NOT composed.** Differencing each replay
+against the committed keeper, max |d class TWh|: **2020 0.0048 · 2021 7.1586 · 2022
+24.1796 · 2023 0.1440 · 2024 0.0023 · 2025 4.0034**, worst class COAL_PRB in every
+diverging year (2022: PRB **+24.18**, BIT +9.87, CC_REGULAR **−19.08**, imports −6.92;
+43,160 of 70,080 price cells moved). **The FIRST year of each of the keeper's two solve
+legs reproduces exactly; the later years do not** — the pattern tracks position in the
+`--years` invocation, not the calendar.
+
+**NOT solver noise and NOT the config.** Two INDEPENDENT 2021 shards in different
+containers produced **byte-identical** output and the identical 7.1586 divergence.
+`scenario_config` differs in 4 fields, all accounted for; `resolved_inputs` differ only
+in a year-keyed stamp; demand matches to the MWh; highspy 1.14.0 throughout. The gas
+price looks like the cause and is not: **2024 is the control** — its stale stamp reads
+2.54 while the replay used 2024's own 2.19, and it still reproduces to 0.0023 TWh.
+**What DOES differ is the injected `min_gen` floors** (D-2, 2022: `ct_netload_drag`
+5.0067 → 6.6063, `st_gas_mustrun_per_plant` 4.3727 → 5.0457, `chp_steam` 5.3601 →
+5.9436, `COAL reliability_floor` 0.8280 → 0.4241), and they match to ~1e-4 in 2020
+where the dispatch matches. A different floor set is a DIFFERENT LP, so this is a
+correct solution to a different problem — not degeneracy, not kernel drift. Why a
+floor for year N depends on whether N−1 and N−2 solved in the same process is NOT
+identified here and is deliberately not guessed at.
+
+**THE COST: G-DRIFT form 4 is NOT confirmed for MISO.** Rule 29 `[R-SCREEN]` (b)'s
+"use the committed keeper as the control" is valid only against an arm solved with the
+SAME year grouping; a per-year MISO arm differenced against this keeper would
+mis-attribute up to 24 TWh of year-grouping artifact to its mechanism. **The six
+bundles ARE that per-year control** — the one unambiguously good outcome.
+
+**TWO PROVENANCE DEFECTS in the committed keeper, found on the way.** (1) The per-year
+`run_config_<y>.json` files are stale copies of each leg's FIRST year (2020/21/22 all
+read gas 2.03 / weather 2020; 2023/24/25 all read 2.54 / 2023), which falsifies
+`_miso260_compose_span.py`'s own docstring claim that *"the per-year `run_config_<y>.json`
+files carry the truth"*. (2) The composite's `meta.json` carries `gas_prices` for only
+`{2020, 2021, 2022}` — the V leg's, never merged with T's. Neither changes what was
+solved; both make the bundle's provenance record unreliable.
+
+**SHARDS: nine, all archived.** The first 2025 attempt was **KILLED by disk exhaustion**
+at an 18.36 GiB swap budget — a finding about the emissions dual, reported not absorbed
+(a MISO year needs 16.4-18.9 GiB RSS+swap against a ~13.34 GiB nested-cgroup ceiling, so
+swapfile provisioning is load-bearing and bounded by free disk). Containers also ship
+**without numpy/highspy** (`uv sync --no-dev` first). Every bundle is retrievable at a
+full 40-char SHA; branches kept until the owner rules (rule 33(f)(3)). NOTHING
+REGISTERED: no dashboard id, keeper bundle untouched, no re-registration.
+
+Record: `docs/RESULT-miso262-mer-control-and-the-year-grouping-defect-2026-09-19.md`.
+
+* Next number: **miso-263**.
