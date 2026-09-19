@@ -2527,8 +2527,23 @@ results/calibration/miso262_mer_*/
 # LP against the keeper's 749.3 because the cascade is ~98 % of the cost, and it
 # carries no hourly/hydro_cascade_*.parquet. It is NOT the arm and must never be
 # registered as one — but it IS a real, unintended cascade + backfill ablation.
-# Recovery by FULL IMMUTABLE SHA (rule 33(d), never a branch name):
+# RECOVERY IS RE-SOLVE ONLY — the sha route is DEAD (rule 33(f)(4)).
+# This entry ORIGINALLY carried
 #   git checkout eb526988960132dc900a29a4587aa83a21024c73 -- results/calibration/nwpp42_measured_coal_hr
+# and that command NO LONGER WORKS: the environment auto-deleted branch
+# claude/nwpp-42-arm-span after its parent merged, so eb526988 is on no remote
+# ref (verified 2026-09-19: `git ls-remote origin | grep eb526988` returns
+# nothing) and will be garbage-collected. Rule 33(f)(4) requires saying that
+# plainly rather than keeping a command that will fail.
+# COST IF EVER WANTED: ~17 min of LP (the original leg measured 16.9 min,
+# because it ran WITHOUT the cascade). DELIBERATELY NOT RESCUED, and the
+# reasoning is on the record: this bundle is invalid TWICE OVER -- an invalid
+# A/B (three config fields moved, not the intended one) and, since rule 36
+# [R-YEAR-ISOLATION], a span solve carrying the cross-year warm start. It can
+# never be registered or promoted under any reading, so rule 31 [R-RETAIN]'s
+# protection of an undecided result does not attach to it. If the desk wants
+# the cascade+backfill ablation it encodes, it should be re-run properly as a
+# year-isolated pair, not recovered.
 #
 # nwpp42_measured_coal_hr_v2 is the CORRECTED arm and nwpp_mer_2026-09-19 the
 # marginal-carbon keeper replay; both are in flight at this commit and their
