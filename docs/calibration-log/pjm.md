@@ -5763,3 +5763,123 @@ miss, and it is already scheduled to move to **+12.81 TWh** at the next registra
 `gov-hydro-seam-1` PS→`OTHER` repair makes `reconcile_vintage_classes` fire in PJM 2021/2022
 (pjm-h2 §3; zero determination flips). Re-measure the residual **after** that lands before
 proposing anything.
+
+## pjm-h10 — 2026-09-19 — the ENERGY IDENTITY reconciles; the 923↔930 "gap" does not exist; the live defect is the SEAM, and PJM's 2020 runs no measured seam at all
+
+**Branch:** `claude/pjm-energy-identity-s4l8ow` · **Base:** `origin/main` @ `4583e70b`
+**Finding:** `docs/FINDING-pjm-h10-the-energy-identity-2026-09-19.md`
+**PRECOMMIT:** `docs/handoffs/PRECOMMIT-pjm-h10-2026-09-19.md`
+**Keeper UNCHANGED** (`2026-09-11-pjm-d4-4-gasoutage`) · **no run registered, no mechanism armed,
+no matrix cell moved, no determination changed** · **ZERO LP minutes in this session** (rule 32
+`[R-SHARD]` (a); two control replays were sharded).
+
+**THE PREMISE IS REFUTED. There is no 60–75 TWh EIA-923↔EIA-930 gap for PJM.** The bridge closes to
+**−6.43 … +9.29 TWh (−0.76 % … +1.10 %)** in every complete year. The quoted **739 TWh reproduces at
+738.42** as EIA-923's PJM footprint **minus CHP minus wind+solar** — 66.93 TWh in 2020, 87.10 in
+2024, which *is* the apparent gap. The premise's sign was also inverted (PJM exports, so the identity
+is generation − net export ≈ demand). The three plant sets are near-identical: `ba_code == 'PJM'` vs
+the model's 8 zones differ by 10.05 TWh in 2020 (retirees the current eGRID/860 vintage cannot place,
+led by W H Zimmer 5.57; plus OVEC 9.03 the other way — its own BA inside PJM's footprint) and by
+**exactly 0.00 in 2023**.
+
+**THE LIVE DEFECT IS THE SEAM, AND IT IS NOT A CAP AND NOT THE NEIGHBOUR PRICE.** PJM's settlement
+tie-line file and EIA-930 `Total interchange` agree to **≤0.19 TWh in 2020–2024**; the model is handed
+that number and delivers **2.816 / 13.541 / 9.108 / 9.104 / 10.548 / 8.546 TWh less** (2020–2025).
+The measured export envelope is **never binding — 0 hours at ≥95 % of the system cap in any year**,
+median export 22–36 % of cap; and the whole hourly distribution is shifted down (2023 p50 4,477 →
+3,393 MW, p95 8,542 → 6,489), which is a price signature, not a limit. The ladder-at-model-price vs
+ladder-at-measured-DA gap is **2.583–7.841 TWh** — real, consistent with pjm-h3b's +1.5 % over-priced
+body, but not the 9–13.5 to be explained. The remainder is arithmetically on the seam's **IMPORT**
+side (gross export short ~4–5 TWh, net short 9–13.5), which is `spec.py`'s own named failure mode
+("phantom imports that displace CC_REGULAR"). **It needs `hourly/network_<year>.parquet`, which the
+keeper bundle does not commit** — one parquet, no re-solve beyond the replays.
+
+**NEW: PJM's keeper 2020 runs NEITHER measured seam mechanism.** `PJM_SEAM_LADDER_BY_YEAR` covers
+2019, 2021, 2022, 2023, 2024, 2025 — **2020 is absent** — and `firm_export_floor_by_year` covers only
+2023–2025 (and is *displaced* by the ladder wherever it has data, so it is **inert in every keeper
+year**). So 2020 falls through to the **forecast gas-elastic track**, which is the exact defect
+pjm-160 fixed for 2022 and left behind when it extended to 2019/2021/2022. **Both 2020 source inputs
+are on disk** (`PJM_2020_import_export_act_sch_interchange.csv`; the DA LMP parquet covers 2018–2025),
+so filling it is a rule-23 `[R-FROZEN-DERIVE]` re-derivation with zero new parameters. **Stated
+against interest (rule 1 `[R-STRUCT]`): it will probably make 2020 WORSE** — 2020 currently has the
+*smallest* export shortfall precisely because the unmechanised track exports more. The case is
+representation consistency, never the residual.
+
+**EIA-930's OWN IDENTITY DOES NOT CLOSE FOR PJM in 2019/2020/2025.** `D + TI − NG` = **+9.85 / +8.56 /
+−14.76 TWh** against ≤0.19 in 2021–2024. Consequences: **~9 of 2020's apparent +12.66 TWh "generation
+overshoot" is EIA-930's, not the model's**; **EIA-930's 2025 `Total interchange` is the defective
+series**, and against PJM's tie file 2025 *under*-exports by 8.55 TWh like every other year — the
+charter's "+6.41 over-export" was an artifact of the wrong benchmark.
+
+**Q5: the 2021 repair is SOUND, the 2020 repair is NOT.** Raw 2021 sums to 4,902.23 TWh with a worst
+hour of 2,147,480,064 MW (int32 overflow); the screen flags 3 hours → **796.17 TWh**, peak 149,590 MW.
+But **two 2020 hours survive** the 2.5×-median bar: 2020-07-28 **H13 at 192,229 MW** (2.26× median,
+**16 % above PJM's all-time peak**, at 1 p.m. on a day whose own H17 reads lower, and failing the
+extract's own identity by −56,665 MW) and 2020-07-29 H17 at 176,085 MW. The model serves both.
+
+**Q4 per-class, on the EIA-923 basis** (EIA-930's `NG: SUN` is 0.2–1.0 TWh against 6–21 measured —
+**unusable for PJM**, and the apparent "solar overshoot" reverses sign on the correct benchmark).
+CC_REGULAR **+26.2 (2021) / +22.5 (2022)** but **+2.9 / +0.7 in 2023/2024 — a PRE-2023 phenomenon
+only**; the registered C1 payload reads **+21.1** for 2022, and the predicted move to +12.81 from the
+PS→`OTHER` repair **has not happened yet** (it is a LIVE hunk, so the shard replays are its test).
+What is systematically UNDER every year, answering "something else must be under": **CT_CHP −2.2…−2.9
+and ST_CHP −2.1…−2.4 (together −4.4…−5.0/yr)**, **`oil` = 0.000 TWh in every year** against 0.6–2.0
+measured, **solar −2.9…−5.3**, and **COAL_PRB −2.7…−6.1 while COAL_BIT is over in 4 of 5** — a
+within-coal merit-order misallocation invisible to C2, which scores the family.
+
+**Q3 the virtual net** is −1.88 / −9.97 / −12.14 / +1.99 / +2.42 / −2.42 TWh; the INC/DEC pair is
+**not** volume-balanced by construction and is not meant to be (one net curve, crossing price λ0,
+endogenous both sides). But the layer's own admissibility figure at actual DA prices is
+**−0.6/−0.9/+1.3**, and **2021/2022 are 8–10× that band**. pjm-158 closed the invariant-price question
+and is not re-litigated; the pre-2023 *magnitude* is new, and lands on the same years as the CC
+over-run and the worst under-export.
+
+**TWO CORRECTIONS to the state handed in.** (a) The model's internal sink is **NOT** storage
+round-trip loss: storage is **28–41 %** of it and **not monotone** (1.374/1.267/1.284/1.307/1.455/
+1.427); the majority is the measured `pjm_zonal_loss_surface` (+2.037…+3.692). (b) The touchpoint's
+**C2 is a PASS**, not a FAIL — the failures are C1/C3a/C3b with C3c ledgered.
+
+**The model's energy identity closes EXACTLY**: `physical gen = demand + net export + storage loss +
+zonal tx loss − virtual net − slack + dump`, residual **0.000000 TWh** in all six years. So total
+generation is not free and cannot "overshoot"; only the terms can be wrong, and the wrong ones are
+**net export** and **virtual net**.
+
+**G-DRIFT (rule 29 `[R-SCREEN]` (b)): form 4 is FALSIFIED for PJM at this HEAD.** Unlike pjm-162's,
+this keeper's `git_sha f09eddbe` **does resolve** (pjm-167's "unrecoverable" was the *previous*
+keeper), so the audit is dischargeable. 81 files / 9,125 insertions / 264 deletions over 8 days; 56
+files pure-add. **Four LIVE hunks**: the **rebuilt `pjm_offer_midcurve_condbinned.json`** (the
+keeper's own live offer input — 3 → 6 delivery years, and quantified per rung: 2025 **0/48 rungs
+move**, 2023 ≤0.05 on 10/48, 2024 ≤0.15 on 27/48 for the keeper's named LONG_RUN+CC_LIKE, while the
+*pooled* table the pre-2023 years used to fall back to moves up to 4.35 $/MWh); the **SOCO-15 card-S12
+COD-grain** change (`cod_ramp_enabled=True` + plant-level CAMPD bins → fractional online mask);
+**`plant_taxonomy` PS→`OTHER`**; and the **MER dual** itself. Everything else classified INERT with
+its gate checked against the keeper's recipe (`eia860_vintage_tracks_solve_year=False` kills SPP-38's
+cache re-key; `campd_per_unit_attribution=False` kills `hour_grain`; PJM absent from every changed
+ISO gate set; `ba_codes('PJM')==('PJM',)`; NWPP/SOCO registration; and NWPP-37's own census proves
+**PJM carries no flagged `NG:` hour in any year**). `calibration_reference.json`: **319 PJM leaf keys,
+0 changed.**
+
+**Q6 GOVERNANCE, PROPOSED ONLY — nothing adopted, nothing re-scored.** A **total-energy** criterion
+would be **vacuous** (the identity above closes to zero, so it cannot fail independently) — recommend
+refusing it. An **interchange-volume** criterion has content, but **five of nine ISOs have no `import`
+class** (ERCOT/NEISO/SPP/SOCO/NWPP apply interchange as an exogenous demand adder, so they
+**auto-PASS**), so it could only ever fail the four carrying a *priced* seam — a rule-1 inversion that
+penalises the more structural representation. Retroactive, scored zero-LP from committed sidecars:
+worst-year |error| as % of served load is **CAISO 4.83 %** (−10.02 TWh, 2023), MISO 1.55 %, PJM
+1.28 %, NYISO 0.33 %; at a 2 % threshold **exactly one determination flips (CAISO CALIBRATED →
+NOT-YET)**, at 1 % two (CAISO and PJM). **Recommendation: reported-only now, alongside `co2` and
+`diurnal_amplitude`; do not gate until every ISO's seam is priced and each ISO's interchange boundary
+is named in the data contract.**
+
+**Shards.** Two control replays of the committed bundles at the pinned SHA, for the marginal-emission
+rate PJM owes the marginal-abatement page and as the empirical check on the G-DRIFT verdict. The
+first pair (`session_01GVm2g4rPYhEHZT6kRmiB3S`, `session_01WiG8kSC7zZRG9R6xb85HJp`) **stalled — each
+ended its turn before its solve completed**, and there is **no cross-session messaging route from a
+CCR parent to a CCR shard** (`SendMessage` returns "no agent reachable"; the MCP surface exposes
+`create_session` but no `send_message`), so they could not be nudged. **Operational lesson for rule 32
+`[R-SHARD]` (c): a shard prompt cannot be steered after launch and must therefore state explicitly
+that the turn may not end while the solve is running — a background job plus an in-turn poll loop.**
+Relaunched as `session_01FKXs8PaaohGkVSsYJTp6gK` (branch `claude/pjm-h10-mer-a2`, 2023–2025) and
+`session_01HSskC9q1YEKBMcv9RydYHr` (branch `claude/pjm-h10-mer-tp2`, 2020–2022) with that instruction
+added. **A metrics difference in these replays is EXPECTED, not a regression** (the four LIVE hunks),
+and neither may re-register or overwrite the keeper.
