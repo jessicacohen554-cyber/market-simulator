@@ -895,3 +895,43 @@ absorbed**. Also recorded: real per-pass seconds and iteration counts from the s
 realised span ratio, the non-uniform P1 penalty as an observation with no mechanism attached (§A8.4),
 the cross-attempt determinism check (§A8.2), and that the shard's interim ratio arithmetic was
 unreliable (correct at 08:06Z, wrong at 06:35Z).
+
+---
+
+# ADDENDUM 10 (2026-09-19) — CLOSED. The bundle landed, both predictions held, NWPP has its first keeper
+
+Full record: **`docs/handoffs/FINDING-nwpp-41-2026-09-19.md`**. Log entry:
+`docs/calibration-log/nwpp.md` "## nwpp-41 — 2026-09-19". This addendum records only what this
+PRECOMMIT itself got wrong, so the doc is not left asserting superseded numbers.
+
+**§A10.1 The result.** C1 fuel-mix **FAIL (5 rows) → PASS** (18/18 all, 14/14 free); C4 **still
+FAILs**. Both were pre-registered in §A1.3 and both landed. Determination **NOT-YET** on C4 alone,
+basis shrunk from `{fuelmix, dispatch_corr}`. Promoted as NWPP's first keeper,
+`2026-09-19-nwpp41-coal-taxonomy-own`.
+
+**§A10.2 Corrections to this document.**
+
+- **§A9.2 ordered scoring before registration. Wrong way round** — `calibration_verdict.py` reads
+  *committed* artifacts including the per-(ISO, year) benchmark parts that `dashboard_add_run`
+  writes, so registration comes first. The rest of §A9's sequence held exactly.
+- **§A9.3 steps 4 and R-T are no-ops for NWPP**, not omissions: `calibration-complete.json` has no
+  NWPP entry to re-key (declaring an ISO complete is a separate owner act, and NOT-YET is not a
+  candidate) and `program-status.json` has no NWPP forecast stamp.
+- **Addenda 6 and 8's span projections ran high.** Addendum 8 projected 1,080–1,220 min; the runner
+  reports **749.3 min** of LP (≈820 min wall — the gap is preflight, loading, benchmark and writes).
+  The status line's minutes are not LP-pass time.
+- **Addendum 8's "attempt 2 is tracking faster than attempt 1" on 2024 P1 is withdrawn.** Measured
+  **2.26×**, which is *inside* attempt 1's 2.27–2.41× band rather than below it. The 2.24× estimate
+  in the same addendum was, however, accurate.
+- **The `worker_epoch` death test gave a false positive.** It jumped 1 → 5 *after* the push while the
+  shard idled. The **tree is the authority, not the epoch** — reading the epoch alone would have
+  declared a finished solve dead. Any future lane reusing this liveness test should invert the order:
+  gate on the tree first, treat the epoch as corroboration only.
+
+**§A10.3 What §4's C4 diagnosis got right, and the one number it understated.** The bimodal offer
+stack, the price-insensitive ~90 %, the out-of-merit ~4,600 MW and the solar-deepening trough all
+hold, and D-1 FAILs on `COAL` in all three years as predicted. What §4 did not size: **coal VOLUME**
+is off by far more than its shape — 2025 model coal **27.21 TWh against 42.26 actual**, and the C2
+2025 coal row reads **−28.8 %** (SKIPPED on the preliminary EIA-923 vintage, so ungated). The volume
+gap is the larger half of the same root cause and the successor lane should treat it as the primary
+symptom rather than a consequence of the shape miss.

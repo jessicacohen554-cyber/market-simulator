@@ -114,3 +114,71 @@ uv run ruff check .
 ```
 
 ---
+
+## nwpp-41 — 2026-09-19
+
+**NWPP's FIRST KEEPER.** `2026-09-19-nwpp41-coal-taxonomy-own`, bundle
+`results/calibration/nwpp41_span_A`, 2023–2025. Promoted on the owner's pre-solve ruling *"Promote
+after the C1 fix lands"*. **Determination `NOT-YET` — a keeper is not a calibration**, and NWPP is
+additionally PRICE UNSCORED (rubric v3.8), so nothing here certifies a price level, shape or tail.
+
+**One field armed**: `coal_prb_proxy_own_iso`, for NWPP alone in `pipeline/backcast_config.py`. It
+closes two defects at one seam, both plumbing, both proven zero-LP before any solve:
+
+1. **C1** — `coal_supply_NWPP.csv` had never been derived, so all 17 NWPP coal plants binned to the
+   bare class `COAL`, which the benchmark has no row for (the benchmark passes the EIA-923 row's own
+   fuel code to the *same* resolver and itemizes `COAL_PRB`/`COAL_BIT`/`COAL_WC`). The seam also
+   corrupted the share denominator, since `_gen_totals` sums the model over *benchmark* keys and so
+   excluded the model's whole coal output from its own total (2024 `CC_REGULAR` +3.6 pp → +1.4 pp).
+2. **Rule 25** — `_prb_monthly_actuals` pooled `COAL_PLANT_SUPPLY`, **every plant of which is in
+   Texas**, so an NWPP plant with no Schedule-2 filing priced against ERCOT's delivered PRB cost
+   ($1.818/$1.760/$1.622 per MMBtu) instead of NWPP's own reporters' ($2.463/$2.134/$2.066). Not a
+   corner case here: Colstrip and Centralia file no price in any year, 26.7 % of coal MW.
+
+**Rule 14 `[R-ACCURATE]` is the basis, never the residual.** Zero free parameters — the DOF ledger is
+3 entries / 3 residual, identical to NWPP-40's, because the flag selects *which measured series* the
+proxy pools. Confinement measured: only Colstrip and Hardin move in every year (TS Power also in
+2025); non-coal offer max|Δ| **$0.0000000000**, `pmax`/`availability` max|Δ| exactly 0.
+
+**Gates**, against the lane-NWPP-40 control differenced at rule-29(b) form 4, **no control solve**
+(G-DRIFT classified the one other config delta, `neiso_coldsnap_derate_dualfuel_unswitched` at its
+NEISO-gated default, INERT): **C1 FAIL (5 rows) → PASS** (18/18 all, 14/14 free); C2 PASS; **C4 FAIL**
+(coal r .511/.535/.475 → .539/.546/.502); C6 PASS (authorized_price_tuning NONE, verified from
+dispatch — the three non-unity-band groups carry zero NWPP energy); C8 PASS (0.0 % forced everywhere).
+Basis shrank from `{fuelmix, dispatch_corr}` to `{dispatch_corr}`.
+
+**Both pre-registered predictions landed** (C1 closed, C4 still FAILs). Two unpredicted moves are
+**side effects reported, not achievements claimed** (rule 1 — no dispatch mechanism was touched):
+C4's r and NRMSE both improved, and reported-only C5a CO2 went −65.9/−58.7/−54.8 % →
+−15.1/−23.7/−21.4 % (likely per-class emission-rate coverage restored by the taxonomy fix, since less
+coal would push the error the other way; no ablation run).
+
+**C4 ROUTED, not attempted** (owner ruling). Diagnosis: the coal offer stack is bimodal — a $4.50
+must-run tranche in the money 100 % of hours against $37.7–42.8 for everything else, versus a $26.15
+mean price — so ~90 % of model coal is price-insensitive and ~4,600 MW of available coal sits out of
+merit 87 % of hours; availability was measured and ruled out. The measured fleet's midday trough
+**deepens** with solar (peak/trough 1.21 → 1.32 → 1.40) where the model reads 1.02. **Successor
+blocked on `bin_assignments_NWPP.csv`**, absent for every legacy-bin ISO.
+
+**Still carried, absorbed nowhere**: 2025 coal volume −28.8 % (row SKIPPED on the preliminary EIA-923
+vintage; model 27.21 vs 42.26 TWh — the bigger half of C4's cause), energy balance −10.02 TWh vs a
+±3.0 tol, the Chief Joseph 2025 pond dual (−325.17 $/kcfs·h for 5,808 h), NWPP-SNV VOLL hours 23+34,
+and every NWPP-40 disclosure inherited verbatim.
+
+**Reported and deliberately NOT fixed**: the same PRB-proxy defect reaches MISO (12 plants), PJM (2)
+and SPP (3–5); their matrix cells stay `O` (rules 25 / 28(d)).
+
+**Solve**: ONE shard, ONE `--year 2023 2024 2025` invocation, years sequential; the parent ran no LP.
+44,960.5 s = 749.3 min = 1.36× NWPP-40, peak RSS 4.78 GiB, no swap. Per-pass ratios are strongly
+non-uniform — 2023 P0 0.99×, **2024 P1 2.26×**, **2025 P1 0.90×** — with 2024 P1 the sole outlier at
+1.8× 2023 P1's iterations *and* the slowest iterations/s of the six. No mechanism attached.
+**Attempt 1 was lost to a platform restart** mid-2025-P1 after ~13 h; reuse was foreclosed (verified
+in code), the owner ruled relaunch, and 2023/2024 reproduced to four decimals across attempts.
+
+Records: `docs/handoffs/FINDING-nwpp-41-2026-09-19.md`,
+`docs/handoffs/PRECOMMIT-nwpp-41-2026-09-17.md` (nine addenda),
+`docs/handoffs/NWPP41-attempt2-solve-log-excerpt.txt`, `scripts/gen_nwpp41_attestation.py`,
+`scripts/probes/_nwpp41_coalrank_phase0.py`. Full 36-file bundle recoverable at
+`1fb4b6b5c680ca5ae0ef9375eb11b7cbbb08d64d`.
+
+---
