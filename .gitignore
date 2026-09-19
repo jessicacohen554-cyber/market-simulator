@@ -2406,3 +2406,24 @@ results/calibration/nyiso239_bench_2022/
 results/calibration/nyiso239_bench_2023/
 results/calibration/nyiso239_bench_2024/
 results/calibration/nyiso239_bench_2025/
+
+# SPP-48 (2026-09-19): the MER control replays and the mid-vintage-year arm.
+# Rule 31 [R-RETAIN]: these are RESULTS — never `rm` them; .gitignore is what
+# keeps them out of `main`, not deletion. Bytes live on immutable shard commits:
+#   git checkout 22f3f9d929565ba0a14bce2662ea772b045990eb -- results/calibration/spp_mer_20260919_keeper
+#   git checkout a71abb73e9ccef35d651683028b9561609b4bdf3 -- results/calibration/spp_mer_20260919_rung
+results/calibration/spp_mer_20260919_keeper/
+results/calibration/spp_mer_20260919_rung/
+# NOTE (SPP-48, corrected 2026-09-19): the arm bundle is deliberately NOT
+# ignored at DIRECTORY grain. Git will not descend into an excluded directory,
+# so a shard's `!results/calibration/spp48_arm_span/**` negation can never
+# re-include anything inside one — `git add` then fails with "paths are ignored
+# by one of your .gitignore files", and the only way through is `git add -f`,
+# which the auto-mode classifier REFUSES as [Modify Shared Resources]. That is
+# the miso-255 stranding, one layer over. Reproduced in a scratch repo both
+# ways before this line was removed: with the directory ignored, 0 of 6 bundle
+# files stage; without it, 6 of 6 do, because the generic
+# `results/calibration/*/dispatch/`-class rules leave the PARENT visible and a
+# `/**` negation can then override them. The arm bundle is a single registrable
+# span (rule 34 [R-SHARD-PROMOTABLE] (a) requires the shard to PUSH it), so the
+# parent simply does not commit it to main rather than ignoring it.

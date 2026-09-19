@@ -1,0 +1,683 @@
+[
+ {
+  "year": 2019,
+  "bundle": "spp43_holdout_span",
+  "ctl": {
+   "bundle": "spp43_holdout_span",
+   "year": 2019,
+   "armed": false,
+   "n_units": 1126,
+   "hashes": {
+    "pmax": "9581fe5f55ce14a4",
+    "pmin": "188bac9cbaa515e5",
+    "heat_rate": "a4007e2cb16822b1",
+    "vom": "e8c1a6a5ff646c9b",
+    "emission_rate": "7af483af8b43ecb7",
+    "nox_rate": "7abb321eac83e19a",
+    "so2_rate": "b8d134a6720c9d73",
+    "zone_idx": "274b8d583198178b",
+    "fuel_type_idx": "cb5f86399017c4cf",
+    "availability": "0a5fa0c3633a66aa",
+    "efficiency_bin": "9df09ae54526ff9a",
+    "plant_code": "a555770438946db2",
+    "min_gen": "04ba27623ababaf8",
+    "min_gen_mechanism": "10eca0085a4679fc"
+   },
+   "fleet_pmax_sum": 59194.77322348387,
+   "fleet_avail_energy_mwh": 343562813.9877438,
+   "oklaunion": {
+    "present": true,
+    "unit_ids": [
+     "COAL_SPP-North_p127_mustrun",
+     "COAL_SPP-North_p127_committed",
+     "COAL_SPP-North_p127_econlo",
+     "COAL_SPP-North_p127_econhi",
+     "COAL_SPP-North_p127_peak"
+    ],
+    "pmax_sum": 650.0,
+    "avail_all_zero": false,
+    "avail_max": 0.97,
+    "avail_mean": 0.654931506849315,
+    "live_hours_any_unit": 6216,
+    "available_energy_mwh": 3729180.0,
+    "monthly_live_hours": {
+     "1": 744,
+     "2": 672,
+     "3": 624,
+     "4": 168,
+     "5": 744,
+     "6": 720,
+     "7": 744,
+     "8": 624,
+     "9": 648,
+     "10": 528,
+     "11": 0,
+     "12": 0
+    },
+    "monthly_available_gwh": {
+     "1": 428.5,
+     "2": 387.0,
+     "3": 359.4,
+     "4": 96.8,
+     "5": 428.5,
+     "6": 454.0,
+     "7": 469.1,
+     "8": 393.4,
+     "9": 408.6,
+     "10": 304.1,
+     "11": 0.0,
+     "12": 0.0
+    }
+   }
+  },
+  "arm": {
+   "bundle": "spp43_holdout_span",
+   "year": 2019,
+   "armed": true,
+   "n_units": 1134,
+   "hashes": {
+    "pmax": "7bf6f8e5882c3ac9",
+    "pmin": "f99ce5ca5fe81721",
+    "heat_rate": "53ab19484d1acc65",
+    "vom": "4a37fbb4bb391906",
+    "emission_rate": "e8d5ad16057cde7a",
+    "nox_rate": "2d8635e3db817613",
+    "so2_rate": "8f23754a0b5b965d",
+    "zone_idx": "c9f9341961398305",
+    "fuel_type_idx": "9c31f6db440ae845",
+    "availability": "f4c74c9f99e53e5d",
+    "efficiency_bin": "92f6efe4a068b35b",
+    "plant_code": "278567eefbc7239f",
+    "min_gen": "ed858d94dc6c5d83",
+    "min_gen_mechanism": "2a54738ff62fcbfb"
+   },
+   "fleet_pmax_sum": 59208.386223483874,
+   "fleet_avail_energy_mwh": 343605976.55435437,
+   "oklaunion": {
+    "present": true,
+    "unit_ids": [
+     "COAL_SPP-North_p127_mustrun",
+     "COAL_SPP-North_p127_committed",
+     "COAL_SPP-North_p127_econlo",
+     "COAL_SPP-North_p127_econhi",
+     "COAL_SPP-North_p127_peak"
+    ],
+    "pmax_sum": 650.0,
+    "avail_all_zero": false,
+    "avail_max": 0.97,
+    "avail_mean": 0.654931506849315,
+    "live_hours_any_unit": 6216,
+    "available_energy_mwh": 3729180.0,
+    "monthly_live_hours": {
+     "1": 744,
+     "2": 672,
+     "3": 624,
+     "4": 168,
+     "5": 744,
+     "6": 720,
+     "7": 744,
+     "8": 624,
+     "9": 648,
+     "10": 528,
+     "11": 0,
+     "12": 0
+    },
+    "monthly_available_gwh": {
+     "1": 428.5,
+     "2": 387.0,
+     "3": 359.4,
+     "4": 96.8,
+     "5": 428.5,
+     "6": 454.0,
+     "7": 469.1,
+     "8": 393.4,
+     "9": 408.6,
+     "10": 304.1,
+     "11": 0.0,
+     "12": 0.0
+    }
+   }
+  },
+  "moved": [
+   "pmax",
+   "pmin",
+   "heat_rate",
+   "vom",
+   "emission_rate",
+   "nox_rate",
+   "so2_rate",
+   "zone_idx",
+   "fuel_type_idx",
+   "availability",
+   "efficiency_bin",
+   "plant_code",
+   "min_gen",
+   "min_gen_mechanism"
+  ]
+ },
+ {
+  "year": 2020,
+  "bundle": "spp43_holdout_span",
+  "ctl": {
+   "bundle": "spp43_holdout_span",
+   "year": 2020,
+   "armed": false,
+   "n_units": 1110,
+   "hashes": {
+    "pmax": "1a0a74993af916b9",
+    "pmin": "f7ba1b28faa1db26",
+    "heat_rate": "652d9c7d739923ea",
+    "vom": "9fb655da4275ad5b",
+    "emission_rate": "0d3e08105bc39cc0",
+    "nox_rate": "927f7f5983d88428",
+    "so2_rate": "f08ad8b2fa2449ee",
+    "zone_idx": "e4a3cd07a836e774",
+    "fuel_type_idx": "30816695d2c1ef3f",
+    "availability": "42567ef402fab882",
+    "efficiency_bin": "85e996cd86d83543",
+    "plant_code": "d73df4bd2ae6bad4",
+    "min_gen": "8fef0de0027c7562",
+    "min_gen_mechanism": "61b13c11d0d31e5b"
+   },
+   "fleet_pmax_sum": 58058.289538000005,
+   "fleet_avail_energy_mwh": 331343556.35876626,
+   "oklaunion": {
+    "present": false,
+    "unit_ids": [],
+    "pmax_sum": 0.0
+   }
+  },
+  "arm": {
+   "bundle": "spp43_holdout_span",
+   "year": 2020,
+   "armed": true,
+   "n_units": 1127,
+   "hashes": {
+    "pmax": "9728d95184cc9371",
+    "pmin": "5e201bbde9c097e6",
+    "heat_rate": "f36215df0f00c0be",
+    "vom": "7b6e31230a232597",
+    "emission_rate": "d2aaeb5bedd60a33",
+    "nox_rate": "1b08cba89b5b9081",
+    "so2_rate": "b6eb7e7c4a95a231",
+    "zone_idx": "f5d3ae065245f1f6",
+    "fuel_type_idx": "4cf0ed4e1758d551",
+    "availability": "f0da734a76dc781a",
+    "efficiency_bin": "b3d5ed4ef29a2442",
+    "plant_code": "64025e3eb426384f",
+    "min_gen": "6a7c42919ceb9506",
+    "min_gen_mechanism": "a1a7a5fe1ddb948c"
+   },
+   "fleet_pmax_sum": 58989.889537999996,
+   "fleet_avail_energy_mwh": 334047034.62525094,
+   "oklaunion": {
+    "present": true,
+    "unit_ids": [
+     "COAL_SPP-North_p127_r202009_mustrun",
+     "COAL_SPP-North_p127_r202009_committed",
+     "COAL_SPP-North_p127_r202009_econlo",
+     "COAL_SPP-North_p127_r202009_econhi",
+     "COAL_SPP-North_p127_r202009_peak"
+    ],
+    "pmax_sum": 650.0,
+    "avail_all_zero": false,
+    "avail_max": 0.97,
+    "avail_mean": 0.34006027397260274,
+    "live_hours_any_unit": 3096,
+    "available_energy_mwh": 1936303.2,
+    "monthly_live_hours": {
+     "1": 0,
+     "2": 0,
+     "3": 0,
+     "4": 0,
+     "5": 312,
+     "6": 720,
+     "7": 744,
+     "8": 744,
+     "9": 576,
+     "10": 0,
+     "11": 0,
+     "12": 0
+    },
+    "monthly_available_gwh": {
+     "1": 0.0,
+     "2": 0.0,
+     "3": 0.0,
+     "4": 0.0,
+     "5": 181.0,
+     "6": 454.0,
+     "7": 469.1,
+     "8": 469.1,
+     "9": 363.2,
+     "10": 0.0,
+     "11": 0.0,
+     "12": 0.0
+    }
+   }
+  },
+  "moved": [
+   "pmax",
+   "pmin",
+   "heat_rate",
+   "vom",
+   "emission_rate",
+   "nox_rate",
+   "so2_rate",
+   "zone_idx",
+   "fuel_type_idx",
+   "availability",
+   "efficiency_bin",
+   "plant_code",
+   "min_gen",
+   "min_gen_mechanism"
+  ]
+ },
+ {
+  "year": 2021,
+  "bundle": "spp43_holdout_span",
+  "ctl": {
+   "bundle": "spp43_holdout_span",
+   "year": 2021,
+   "armed": false,
+   "n_units": 1109,
+   "hashes": {
+    "pmax": "af732e67f2df5805",
+    "pmin": "94f8b12e5faf8dc4",
+    "heat_rate": "ae20de852cfc298d",
+    "vom": "c5c7b12c204f2667",
+    "emission_rate": "a3b4836e02d44930",
+    "nox_rate": "6eadccb632871cb5",
+    "so2_rate": "6fe8df1835ee11c6",
+    "zone_idx": "7113b053ad7b8a36",
+    "fuel_type_idx": "1c3ff17702f5714f",
+    "availability": "e0e3756f01a65aed",
+    "efficiency_bin": "5ecf3e6efc5c0214",
+    "plant_code": "824511702bc8c856",
+    "min_gen": "3a97833d8d5518cc",
+    "min_gen_mechanism": "b9d34e4ae646d207"
+   },
+   "fleet_pmax_sum": 58239.215798000005,
+   "fleet_avail_energy_mwh": 329457055.95745134,
+   "oklaunion": {
+    "present": false,
+    "unit_ids": [],
+    "pmax_sum": 0.0
+   }
+  },
+  "arm": {
+   "bundle": "spp43_holdout_span",
+   "year": 2021,
+   "armed": true,
+   "n_units": 1109,
+   "hashes": {
+    "pmax": "af732e67f2df5805",
+    "pmin": "94f8b12e5faf8dc4",
+    "heat_rate": "ae20de852cfc298d",
+    "vom": "c5c7b12c204f2667",
+    "emission_rate": "a3b4836e02d44930",
+    "nox_rate": "6eadccb632871cb5",
+    "so2_rate": "6fe8df1835ee11c6",
+    "zone_idx": "7113b053ad7b8a36",
+    "fuel_type_idx": "1c3ff17702f5714f",
+    "availability": "e0e3756f01a65aed",
+    "efficiency_bin": "5ecf3e6efc5c0214",
+    "plant_code": "824511702bc8c856",
+    "min_gen": "3a97833d8d5518cc",
+    "min_gen_mechanism": "b9d34e4ae646d207"
+   },
+   "fleet_pmax_sum": 58239.215798000005,
+   "fleet_avail_energy_mwh": 329457055.95745134,
+   "oklaunion": {
+    "present": false,
+    "unit_ids": [],
+    "pmax_sum": 0.0
+   }
+  },
+  "moved": []
+ },
+ {
+  "year": 2022,
+  "bundle": "spp43_holdout_span",
+  "ctl": {
+   "bundle": "spp43_holdout_span",
+   "year": 2022,
+   "armed": false,
+   "n_units": 1094,
+   "hashes": {
+    "pmax": "cc5c865f0024c080",
+    "pmin": "ef51a84d5d71a2db",
+    "heat_rate": "8b71a031364fafae",
+    "vom": "5657e87aeef30ca4",
+    "emission_rate": "3f4a51717c66dc02",
+    "nox_rate": "430b15464fb006aa",
+    "so2_rate": "a51b2ec02725fb4c",
+    "zone_idx": "aa3533040bc69850",
+    "fuel_type_idx": "7dbffdf8bdb5a0b5",
+    "availability": "6f5b68dd454cd194",
+    "efficiency_bin": "4eb67f6f5e94276a",
+    "plant_code": "a4e481f08ac8c8bb",
+    "min_gen": "7bdbd63529f37f6c",
+    "min_gen_mechanism": "2fc5e1ee7adfcea2"
+   },
+   "fleet_pmax_sum": 58245.605798,
+   "fleet_avail_energy_mwh": 339623905.82539475,
+   "oklaunion": {
+    "present": false,
+    "unit_ids": [],
+    "pmax_sum": 0.0
+   }
+  },
+  "arm": {
+   "bundle": "spp43_holdout_span",
+   "year": 2022,
+   "armed": true,
+   "n_units": 1109,
+   "hashes": {
+    "pmax": "a53c941ec57bf7f2",
+    "pmin": "3599844af12ab82e",
+    "heat_rate": "6c5f1d39f9dad2c2",
+    "vom": "f92ce48d9f80e270",
+    "emission_rate": "bbb2b8251418eb39",
+    "nox_rate": "11225dc2330b7d67",
+    "so2_rate": "6fe8df1835ee11c6",
+    "zone_idx": "a54c2908fb5d6dbd",
+    "fuel_type_idx": "58de7ced6f66d1a8",
+    "availability": "b427c6379e5b8ccf",
+    "efficiency_bin": "b7dfd4ef5d167439",
+    "plant_code": "1ca6498a92d7a72d",
+    "min_gen": "1a4b23edba4d7289",
+    "min_gen_mechanism": "25389a0f174336aa"
+   },
+   "fleet_pmax_sum": 58299.605798,
+   "fleet_avail_energy_mwh": 339700344.75173193,
+   "oklaunion": {
+    "present": false,
+    "unit_ids": [],
+    "pmax_sum": 0.0
+   }
+  },
+  "moved": [
+   "pmax",
+   "pmin",
+   "heat_rate",
+   "vom",
+   "emission_rate",
+   "nox_rate",
+   "so2_rate",
+   "zone_idx",
+   "fuel_type_idx",
+   "availability",
+   "efficiency_bin",
+   "plant_code",
+   "min_gen",
+   "min_gen_mechanism"
+  ]
+ },
+ {
+  "year": 2023,
+  "bundle": "spp42_span_a",
+  "ctl": {
+   "bundle": "spp42_span_a",
+   "year": 2023,
+   "armed": false,
+   "n_units": 1086,
+   "hashes": {
+    "pmax": "69687cf04d6bdc3b",
+    "pmin": "17d8c45b7cbc28a3",
+    "heat_rate": "8775b0c20421307d",
+    "vom": "cb06d76926aca797",
+    "emission_rate": "f0e29ef318d3a067",
+    "nox_rate": "083263de4c1d970a",
+    "so2_rate": "d817bd8a633483d8",
+    "zone_idx": "2c69ed7c00dbe1df",
+    "fuel_type_idx": "b9b338e516b64888",
+    "availability": "60913d75aa781f02",
+    "efficiency_bin": "2239559b39cdad3d",
+    "plant_code": "5aea513073a7916d",
+    "min_gen": "43f8e1d826cac606",
+    "min_gen_mechanism": "bd0f2ed555283564"
+   },
+   "fleet_pmax_sum": 57745.984798,
+   "fleet_avail_energy_mwh": 335652747.6930795,
+   "oklaunion": {
+    "present": false,
+    "unit_ids": [],
+    "pmax_sum": 0.0
+   }
+  },
+  "arm": {
+   "bundle": "spp42_span_a",
+   "year": 2023,
+   "armed": true,
+   "n_units": 1086,
+   "hashes": {
+    "pmax": "69687cf04d6bdc3b",
+    "pmin": "17d8c45b7cbc28a3",
+    "heat_rate": "8775b0c20421307d",
+    "vom": "cb06d76926aca797",
+    "emission_rate": "f0e29ef318d3a067",
+    "nox_rate": "083263de4c1d970a",
+    "so2_rate": "d817bd8a633483d8",
+    "zone_idx": "2c69ed7c00dbe1df",
+    "fuel_type_idx": "b9b338e516b64888",
+    "availability": "60913d75aa781f02",
+    "efficiency_bin": "2239559b39cdad3d",
+    "plant_code": "5aea513073a7916d",
+    "min_gen": "43f8e1d826cac606",
+    "min_gen_mechanism": "bd0f2ed555283564"
+   },
+   "fleet_pmax_sum": 57745.984798,
+   "fleet_avail_energy_mwh": 335652747.6930795,
+   "oklaunion": {
+    "present": false,
+    "unit_ids": [],
+    "pmax_sum": 0.0
+   }
+  },
+  "moved": []
+ },
+ {
+  "year": 2024,
+  "bundle": "spp42_span_a",
+  "ctl": {
+   "bundle": "spp42_span_a",
+   "year": 2024,
+   "armed": false,
+   "n_units": 1105,
+   "hashes": {
+    "pmax": "d2edb05e1f0b1de1",
+    "pmin": "73d2660b60f2de6e",
+    "heat_rate": "b915730d9e28673f",
+    "vom": "0e07fb67fe29ce4c",
+    "emission_rate": "dc19571ea6371ef2",
+    "nox_rate": "2946a121ac0d8c21",
+    "so2_rate": "b3e2e3fd3a70ef3f",
+    "zone_idx": "bf92d7914eca8f30",
+    "fuel_type_idx": "bbb631d81eb1d721",
+    "availability": "b1fb17630250f442",
+    "efficiency_bin": "7b8fd64f1d4bb9ea",
+    "plant_code": "f24573de17c6fb6e",
+    "min_gen": "fa1603110932240e",
+    "min_gen_mechanism": "3a06d92cae7a04be"
+   },
+   "fleet_pmax_sum": 57282.314898,
+   "fleet_avail_energy_mwh": 327408849.0678233,
+   "oklaunion": {
+    "present": false,
+    "unit_ids": [],
+    "pmax_sum": 0.0
+   }
+  },
+  "arm": {
+   "bundle": "spp42_span_a",
+   "year": 2024,
+   "armed": true,
+   "n_units": 1105,
+   "hashes": {
+    "pmax": "d2edb05e1f0b1de1",
+    "pmin": "73d2660b60f2de6e",
+    "heat_rate": "b915730d9e28673f",
+    "vom": "0e07fb67fe29ce4c",
+    "emission_rate": "dc19571ea6371ef2",
+    "nox_rate": "2946a121ac0d8c21",
+    "so2_rate": "b3e2e3fd3a70ef3f",
+    "zone_idx": "bf92d7914eca8f30",
+    "fuel_type_idx": "bbb631d81eb1d721",
+    "availability": "b1fb17630250f442",
+    "efficiency_bin": "7b8fd64f1d4bb9ea",
+    "plant_code": "f24573de17c6fb6e",
+    "min_gen": "fa1603110932240e",
+    "min_gen_mechanism": "3a06d92cae7a04be"
+   },
+   "fleet_pmax_sum": 57282.314898,
+   "fleet_avail_energy_mwh": 327408849.0678233,
+   "oklaunion": {
+    "present": false,
+    "unit_ids": [],
+    "pmax_sum": 0.0
+   }
+  },
+  "moved": []
+ },
+ {
+  "year": 2025,
+  "bundle": "spp42_span_a",
+  "ctl": {
+   "bundle": "spp42_span_a",
+   "year": 2025,
+   "armed": false,
+   "n_units": 1166,
+   "hashes": {
+    "pmax": "11b5e2bfef764bc2",
+    "pmin": "521d26bfb0e4759e",
+    "heat_rate": "e641d8d745ba0213",
+    "vom": "db3dc816a8ecaef5",
+    "emission_rate": "2ef084279bb7a364",
+    "nox_rate": "8e5e090bb25dc156",
+    "so2_rate": "4b52ef4a9a90538c",
+    "zone_idx": "8074222c460e11b2",
+    "fuel_type_idx": "838935f863dc0022",
+    "availability": "18148e2db55a4918",
+    "efficiency_bin": "3c569c6c24b83f1c",
+    "plant_code": "a7190cf292d5ad3c",
+    "min_gen": "7d1ab9bf29505970",
+    "min_gen_mechanism": "606fec66492d13dd"
+   },
+   "fleet_pmax_sum": 60463.007600000004,
+   "fleet_avail_energy_mwh": 339256583.8918761,
+   "oklaunion": {
+    "present": true,
+    "unit_ids": [
+     "COAL_SPP-North_p127_mustrun",
+     "COAL_SPP-North_p127_committed",
+     "COAL_SPP-North_p127_econlo",
+     "COAL_SPP-North_p127_econhi",
+     "COAL_SPP-North_p127_peak"
+    ],
+    "pmax_sum": 650.0,
+    "avail_all_zero": true,
+    "avail_max": 0.0,
+    "avail_mean": 0.0,
+    "live_hours_any_unit": 0,
+    "available_energy_mwh": 0.0,
+    "monthly_live_hours": {
+     "1": 0,
+     "2": 0,
+     "3": 0,
+     "4": 0,
+     "5": 0,
+     "6": 0,
+     "7": 0,
+     "8": 0,
+     "9": 0,
+     "10": 0,
+     "11": 0,
+     "12": 0
+    },
+    "monthly_available_gwh": {
+     "1": 0.0,
+     "2": 0.0,
+     "3": 0.0,
+     "4": 0.0,
+     "5": 0.0,
+     "6": 0.0,
+     "7": 0.0,
+     "8": 0.0,
+     "9": 0.0,
+     "10": 0.0,
+     "11": 0.0,
+     "12": 0.0
+    }
+   }
+  },
+  "arm": {
+   "bundle": "spp42_span_a",
+   "year": 2025,
+   "armed": true,
+   "n_units": 1166,
+   "hashes": {
+    "pmax": "11b5e2bfef764bc2",
+    "pmin": "521d26bfb0e4759e",
+    "heat_rate": "e641d8d745ba0213",
+    "vom": "db3dc816a8ecaef5",
+    "emission_rate": "2ef084279bb7a364",
+    "nox_rate": "8e5e090bb25dc156",
+    "so2_rate": "4b52ef4a9a90538c",
+    "zone_idx": "8074222c460e11b2",
+    "fuel_type_idx": "838935f863dc0022",
+    "availability": "18148e2db55a4918",
+    "efficiency_bin": "3c569c6c24b83f1c",
+    "plant_code": "a7190cf292d5ad3c",
+    "min_gen": "7d1ab9bf29505970",
+    "min_gen_mechanism": "606fec66492d13dd"
+   },
+   "fleet_pmax_sum": 60463.007600000004,
+   "fleet_avail_energy_mwh": 339256583.8918761,
+   "oklaunion": {
+    "present": true,
+    "unit_ids": [
+     "COAL_SPP-North_p127_mustrun",
+     "COAL_SPP-North_p127_committed",
+     "COAL_SPP-North_p127_econlo",
+     "COAL_SPP-North_p127_econhi",
+     "COAL_SPP-North_p127_peak"
+    ],
+    "pmax_sum": 650.0,
+    "avail_all_zero": true,
+    "avail_max": 0.0,
+    "avail_mean": 0.0,
+    "live_hours_any_unit": 0,
+    "available_energy_mwh": 0.0,
+    "monthly_live_hours": {
+     "1": 0,
+     "2": 0,
+     "3": 0,
+     "4": 0,
+     "5": 0,
+     "6": 0,
+     "7": 0,
+     "8": 0,
+     "9": 0,
+     "10": 0,
+     "11": 0,
+     "12": 0
+    },
+    "monthly_available_gwh": {
+     "1": 0.0,
+     "2": 0.0,
+     "3": 0.0,
+     "4": 0.0,
+     "5": 0.0,
+     "6": 0.0,
+     "7": 0.0,
+     "8": 0.0,
+     "9": 0.0,
+     "10": 0.0,
+     "11": 0.0,
+     "12": 0.0
+    }
+   }
+  },
+  "moved": []
+ }
+]

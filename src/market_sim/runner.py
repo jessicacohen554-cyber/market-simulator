@@ -1669,12 +1669,18 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         # same gated membership widening (leg 1 only — the mothball re-carry
         # is deliberately not wired here, per the Cottonwood owner default).
         _ppx = getattr(config, "partial_plant_exit_carry", False)
+        # SPP-48 mid-vintage-year exit carry: the plants a year-matched native
+        # vintage drops from BOTH its sheets because they retired during that
+        # very year. Needs the solved year (it selects on it), so it joins the
+        # same year-threading predicate; default-off and byte-inert while off.
+        _mvx = getattr(config, "mid_vintage_exit_carry", False)
         retired_within_window = load_retired_within_window(
             iso,
             iso_config,
-            year=int(config.weather_year) if (_rvs or _ppx) else None,
+            year=int(config.weather_year) if (_rvs or _ppx or _mvx) else None,
             vintage_status_scope=_rvs,
             partial_plant_exit_carry=_ppx,
+            mid_vintage_exit_carry=_mvx,
         )
 
     campd_bins = load_or_synthesize_bins(config, iso, iso_config, retired_within_window)

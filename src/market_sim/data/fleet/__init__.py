@@ -221,6 +221,19 @@ class Generator(BaseModel):
     # out at unit grain. Loader-stamped plumbing, not a config tunable (rule
     # 24): no residual can be closed by it and nothing else reads it.
     partial_exit_unit: bool = False
+    # Provenance: True only on units injected by the mid-vintage-year
+    # whole-plant exit channel (eia860._mid_vintage_exit_rows, stamped by
+    # load_retired_within_window under ScenarioConfig.mid_vintage_exit_carry;
+    # SPP-48). The exact sibling of partial_exit_unit above and read by the
+    # exact same single consumer — fleet_to_bins' exit-cohort routing — for
+    # the same reason: without a date-scoped bin, a plant-binned LP discards
+    # the unit's own EIA-860 retirement and runs the plant past its real
+    # death. Measured before this stamp existed: Oklaunion (plant 127, EIA
+    # retirement 9/2020) came back online in ALL TWELVE months of 2020, three
+    # of them after it had retired, which is a rule 17 [R-FLOOR-WINDOW]
+    # violation by construction. Loader-stamped plumbing, not a config
+    # tunable (rule 24 [R-REGISTRY]).
+    mid_vintage_exit_unit: bool = False
 
     # CAMPD operational-bin attributes. Set only for generators built by
     # :func:`bins_to_fleet`; left at defaults for the legacy fleet. These

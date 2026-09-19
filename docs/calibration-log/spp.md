@@ -3330,3 +3330,95 @@ authorized offer-curve channel. Card R-be's within-day grain on plant 3008 is un
 still needs a new idea rather than a new solve. The coal↔gas **supply** lane (deliverability
 markup, stockpile inventory) remains data-blocked per SPP-44 and is untouched here — Object A is
 a different object, about relative merit-order elasticity, not coal supply.
+
+---
+
+## spp-48 — 2026-09-19
+
+**S-1 BUILT AND SOLVED.** The mid-vintage-year retiree injection SPP-47 filed as owed. Registered
+`2026-09-19-spp-48-midvintage-exit` (`results/calibration/spp48_arm_span`, 2019–2022),
+**determination NOT-YET on the same failing set as the control** {C1, C3a, C3b, C4}. Keeper 12
+`2026-09-16-spp-42-commitment-feasibility` **UNCHANGED and proven un-movable by this lane**.
+Full record: `docs/handoffs/PRECOMMIT-spp-48-midvintage-exit-2026-09-19.md` (+ Addendum A) and
+`docs/handoffs/RESULT-spp-48-midvintage-exit-2026-09-19.md`.
+
+**ONE FALSE ASSUMPTION, THREE SEAMS — and SPP-47 named only the first.** Fixing the injection gate
+alone put Oklaunion online in **all twelve months of 2020**, three of them after it retired (a
+rule 17 `[R-FLOOR-WINDOW]` violation). Seam 2 is `fleet_to_bins` discarding the unit's own EIA-860
+retirement for a plant-binned LP — the miso-191 defect, so the **same exit-cohort router is reused**
+under its own flag (rule 19). Seam 3 is the outage derate **denominator**, whose own comment
+predicts exactly this: the committed `campd-unit-outages-SPP.csv` already carries Oklaunion's real
+stops (`2020-01-01 → 05-19`, `2020-09-26 → 12-31`, matching CAMPD) and they were being silently
+skipped. Repaired at all three, the plant is available **May–September only**, 3,933.2 → **1,936.3
+GWh**, on an envelope covering the metered 1,209.1 GWh in every month and **zero in exactly the
+zero-metered months** (implied monthly CF 0.490–0.744).
+
+**BLAST RADIUS = SPP ALONE**, measured over **all 227 committed `run_config` records** before the
+shared seam was touched: the channel is backcast-only and the only route to a native vintage is
+`eia860_vintage_tracks_solve_year`, which **SPP alone arms**; every explicit `eia860_vintage_year`
+pin is a `mode="forecast"` hindcast. Potential exposure elsewhere is recorded and **not live**
+(MISO 13,547.5 GWh, PJM 6,885.3, NYISO 365.7, CAISO 33.8, ERCOT 11.3, NEISO 4.8).
+
+**THE KEEPER CANNOT MOVE:** `vintage_2023/` and `vintage_2024/` ship **no** Retired-and-Canceled
+sheet and 2025 has no vintage dir, so 2023–2025 are byte-identical on all 14 `FleetArrays` LP
+inputs. The control leg reproduces the committed `<year>_P1_fleet.parquet` **exactly** in all four
+rung years — rule 29(b) form 4 confirmed empirically rather than assumed.
+
+**WHAT MOVED, like-for-like on the SAME benchmark frame** (`eia923-cda580e2f71c`, verified to carry
+plant 127 at 1,209,201 MWh, so no part of this is a changed denominator): C1 2020 `COAL_PRB`
+**−10.85 → −10.01 TWh** (share −4.0 → −3.7 pp, **still FAIL**), C3a 2020 **+24.0 → +23.4 %**,
+C3b 2020 **0.319 → 0.316**, reported-only C5a CO2 2020 **+17.5 → +16.4 %**; C1 2022, C3b 2021/2022
+and C4 2022 unchanged; C2/C6/C8 hold PASS. **Every criterion that moves, improves; none degrades;
+nothing closes.** Reported at full magnitude anyway: at class grain 2020 `ST_GAS` −5.3599 → −5.5365
+and `COAL_LIGNITE` −2.6650 → −2.7235 **degrade**, while `CT_PEAKER` +6.7508 → +6.3680 and
+`CC_REGULAR` +3.9269 → +3.7332 improve; energy conserved to 0.001 TWh on 262.64; 2020 LW price
+20.4872 → 20.3776 $/MWh; 2022 slack 563.6284 → 501.3472 MWh; dump 0.0000 everywhere.
+
+**SPP-47 §2.2 IS REFUTED, and it changed how the number had to be read.** Two copies of the rung
+bundle differing only in the flag rebuild to the **same** EIA-923 frame — the benchmark is
+**invariant** to the fleet repair. The benchmark's ISO membership (`_iso_plant_ids` →
+`build_zone_lookup`) is eGRID-2023-based, supplemented **forward-only** from the canonical 2025ER
+plant file, and does **not** follow `eia860_vintage_tracks_solve_year` (830 plants, 127 absent under
+every vintage). A HEAD rebuild would move the 2020 `COAL_PRB` **actual** 67.0581 → 65.8489 TWh —
+improving the failing row by 11.1 % **by deleting 1,209,201 MWh of real metered generation**.
+**Refused** (rules 13/14) and filed as the successor; this run is unaffected and that was checked.
+
+**RULES.** 1 — nothing selected on a residual; the repair was specified and gated before any LP.
+13/14 — rule 14 is the whole basis; the arm does **not** close what it touches, stated so it
+cannot be over-bought. 15 — run registered the session it was produced. 19 — one router, two
+memberships, neither arming the other; the new membership is the strict complement of the
+partial-exit channel's. 21/24 — **zero free parameters**; one boolean, registered in
+`_CACHE_KEY_OPTIONAL_FIELDS` at `"False"` and in the DOF ledger; `offer_curve_by_group`
+byte-identical. 23 — nothing re-derived. 25 — default **OFF**, **not** armed in `_spp_config`;
+off-path byte-identity is structural (every widened outage call keeps its **original arity** while
+off, so `lru_cache` keys are unchanged too). 27 — all eight core-file blobs verified after push.
+28 — row + a cell in all nine shards; SPP minted **`O`** (built, solved, promotion undecided).
+29 — no screen (measured-input repair); zero-LP phase 0 done in full, three committed probes.
+30(c) — held-out years report; SPP stays **CALIBRATED** on 2023–2025.
+31 — **nothing deleted**; the promotion question is asked explicitly in RESULT §8 and is **open**.
+32/33/34 — three shards launched, all pushed their bundles and were archived after fetch + checkout
++ verify; recovery pinned by full SHA.
+
+**MARGINAL-CARBON CONTROL ARM (owner instruction).** Both owed shards run, neither registered.
+`spp_mer_20260919_keeper` (2023–25) at `22f3f9d929565ba0a14bce2662ea772b045990eb`;
+`spp_mer_20260919_rung` (2019–22) at `a71abb73e9ccef35d651683028b9561609b4bdf3`.
+`marginal_emission_rate` non-degenerate in all seven years, absent from both committed sidecars.
+LW mean 0.7370/0.7174/0.7097 (2023–25) and 0.7267/0.7333/0.6479/0.6530 (2019–22) tCO2/MWh.
+**Program-level finding:** committed bundles were solved on **highspy 1.14.0**, the replays on
+**1.15.1** — the environment is not pinned. Scored-grain consequence **none** (prices identical to
+1e-14; annual class energy within 0.006 %, net zero, in within-family tie pairs), but hourly
+`class_hourly.mw` moves up to 999 MW in thousands of rows.
+
+**PRE-EXISTING ON `main`, REPORTED NOT PATCHED:** four red tests at base `4583e70b` (ERCOT
+`FleetArrays` golden, NYISO solve-surface pin, capacity-evolution soundness e2e, NEISO Mystic
+retiree). Each fails identically at base; the ERCOT golden's failing hash is byte-identical at base
+and HEAD. With them deselected, 1,199 passed / 0 failed.
+
+**STILL OPEN, ranked:** **S-1 is now built and awaiting a promotion ruling.** **S-1b (NEW, and the
+larger object)** — the benchmark-membership defect above: it reaches every ISO, makes the model and
+the actual disagree about which plants exist, and must **not** be "fixed" by rebuilding the
+benchmark, which would delete real metered generation. **S-2** R-bc, curtailment as an LP
+constraint whose dual reaches the zonal price — still the only object addressing C3b's floor half.
+**S-3** R-ba, the ST_GAS/CT_PEAKER merit-order inversion — note this lane made 2020 `ST_GAS`
+slightly worse, which is consistent with R-ba and does not change its routing. **S-4** the coal↔CC
+elasticity (Object A), unchanged and still with no structural successor.

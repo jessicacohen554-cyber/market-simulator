@@ -2539,6 +2539,113 @@ def _partial_plant_exit_rows(
     return df
 
 
+def _mid_vintage_exit_rows(
+    data_dir: Path, codes: tuple[str, ...], year: int
+) -> "pd.DataFrame | None":
+    """Whole-plant exits that retired DURING a year-matched native vintage.
+
+    The SPP-48 repair of the mid-vintage-year gap
+    (``docs/handoffs/RESULT-spp-47-four-failures-2026-09-18.md`` §2;
+    ``ScenarioConfig.mid_vintage_exit_carry``). Under
+    ``eia860_vintage_tracks_solve_year`` the active directory is
+    ``vintage_<year>/``, which ships no whole-plant retiree parquet, so
+    :func:`load_retired_within_window` returns nothing — on the stated
+    assumption that "the operable fleet already has them". That is TRUE of a
+    plant retiring AFTER the vintage year and FALSE of one retiring DURING it:
+    the vintage's operable sheet is a YEAR-END snapshot which has already moved
+    that plant to the Retired-and-Canceled sheet. The plant is then absent from
+    both sheets the channel reads and vanishes from the fleet entirely, taking
+    its real operating months with it (Oklaunion, plant 127 — a 720 MW SPP coal
+    plant, ``Retirement Month`` 9 / ``Retirement Year`` 2020, metered by CAMPD
+    at 1,209.2 GWh over May-September 2020, present in the 2019 fleet and absent
+    from 2020's).
+
+    The machinery to dispatch such a unit correctly ALREADY EXISTS — each row
+    carries its own actual retirement in ``planned_retirement_*``, which
+    ``cod_ramp.effective_cod`` prefers over the plant-collapsed date, so the COD
+    ramp holds the plant online through its real retirement month and zeros it
+    after. What was wrong is the INJECTION GATE, not the ramp.
+
+    Membership is the WHOLE-PLANT grain this channel already emits, and is the
+    exact complement of :func:`_partial_plant_exit_rows`' (whose rows are
+    plants that SURVIVE in the operable snapshot), so the two can never select
+    the same row:
+
+    * on the vintage's Retired-and-Canceled sheet with ``Retirement Year ==
+      year`` — retired DURING the solved year, so it ran for part of it;
+    * inside the region's balancing authorities;
+    * and whose PLANT is absent from the same vintage's operable snapshot.
+
+    Returns ``None`` when the whole-plant retiree parquet IS present — the
+    canonical snapshot's case, where that channel already carries these plants
+    (all 17 MISO / 12 PJM / 2 SPP mid-vintage-year retirees measured 2026-09-19)
+    and injecting again would double-count — or when any source parquet is
+    absent (``vintage_2023``/``vintage_2024`` ship no Retired-and-Canceled
+    sheet, so the channel self-neutralizes there by construction).
+
+    Zero free parameters (rule 21 ``[R-DOF]``): the retirement month is EIA's
+    own published field and the membership is a set difference over EIA's own
+    two sheets. Rule 13 ``[R-MEASURED]``: the identical construction regenerates
+    for a forward year from the then-current EIA-860, so it is a reproducible
+    physical input, not a measured outcome fed back.
+    """
+    if (data_dir / EIA_860_RETIRED_WINDOW_PARQUET_NAME).exists():
+        # Not a native vintage: the whole-plant channel already carries these.
+        return None
+    ret_path = data_dir / _RETIRED_CANCELED_PARQUET_NAME
+    op_path = data_dir / EIA_860_PARQUET_NAME
+    plant_path = data_dir / _PLANT_PARQUET_NAME
+    if not (ret_path.exists() and op_path.exists() and plant_path.exists()):
+        return None
+
+    raw = pd.read_parquet(ret_path)
+    cols = [c for c in _PARTIAL_EXIT_COLUMN_MAP if c in raw.columns]
+    df = raw[cols].rename(columns=_PARTIAL_EXIT_COLUMN_MAP)
+    df["plant_id"] = pd.to_numeric(df["plant_id"], errors="coerce")
+    df = df[df["plant_id"].notna()].copy()
+    df["plant_id"] = df["plant_id"].astype("int64")
+
+    plant = pd.read_parquet(plant_path)
+    ba_by_plant = (
+        plant[pd.to_numeric(plant["Plant Code"], errors="coerce").notna()]
+        .drop_duplicates("Plant Code")
+        .set_index("Plant Code")["Balancing Authority Code"]
+    )
+    ba_by_plant.index = pd.to_numeric(ba_by_plant.index, errors="coerce").astype(
+        "int64"
+    )
+    df["balancing_authority_code"] = (
+        df["plant_id"].map(ba_by_plant).astype("string").str.strip()
+    )
+    if codes:
+        # Membership over every BA the region comprises (NWPP is seventeen).
+        df = df[df["balancing_authority_code"].isin(codes)]
+
+    # Retired DURING the solved year — the whole of the gap. A unit retiring in
+    # a LATER year is already in this vintage's operable sheet, and one retiring
+    # EARLIER did not run in this year at all.
+    df["planned_retirement_year"] = pd.to_numeric(
+        df["planned_retirement_year"], errors="coerce"
+    )
+    df = df[df["planned_retirement_year"] == int(year)]
+
+    # WHOLE-PLANT grain: the plant must be absent from the vintage's own
+    # operable snapshot (the canonical snake_case fleet file, the same
+    # membership the dispatch fleet reads). A plant with any surviving row is
+    # "present" and belongs to the partial-exit channel, never to this one.
+    op = pd.read_parquet(op_path, columns=["plant_id"])
+    op_ids = set(pd.to_numeric(op["plant_id"], errors="coerce").dropna().astype(int))
+    df = df[~df["plant_id"].isin(op_ids)]
+    if df.empty:
+        return df
+
+    df = df.copy()
+    # The unit operated during the solved year; OP keeps it through
+    # _rows_to_generators' status filter — the COD ramp owns the exit.
+    df["status"] = "OP"
+    return df
+
+
 def _register_partial_exit_coal_supply(df: pd.DataFrame) -> None:
     """Register injected coal units' supply classes from their own codes.
 
@@ -2573,6 +2680,7 @@ def load_retired_within_window(
     year: int | None = None,
     vintage_status_scope: bool = False,
     partial_plant_exit_carry: bool = False,
+    mid_vintage_exit_carry: bool = False,
 ) -> list[Generator]:
     """Load whole-plant exits that retired mid-backcast for an ISO.
 
@@ -2602,6 +2710,16 @@ def load_retired_within_window(
     native vintage carries its within-window exits in its own operable file and
     ships no retiree parquet, so this returns an empty list there — the operable
     fleet already has them, and injecting again would double-count.
+
+    **That last sentence is true only of a plant retiring AFTER the vintage
+    year** (SPP-47, 2026-09-18). A plant retiring DURING it has already been
+    moved to the vintage's Retired-and-Canceled sheet by its year-end operable
+    snapshot, so it is in NEITHER sheet this channel reads and vanishes from the
+    fleet with its real operating months. ``mid_vintage_exit_carry`` (GATED
+    default-off; SPP-48, ``ScenarioConfig.mid_vintage_exit_carry``) closes
+    exactly that hole and nothing else — see :func:`_mid_vintage_exit_rows` for
+    the membership, which is the strict complement of the partial-exit channel's
+    and is inert wherever the whole-plant retiree parquet exists.
 
     ``vintage_status_scope`` (GATED default-off; miso-188,
     ``ScenarioConfig.retiree_vintage_status_scope``,
@@ -2671,6 +2789,31 @@ def load_retired_within_window(
             )
             frames.append(partial)
 
+    # SPP-48 mid-vintage-year exit carry: the plants a year-matched native
+    # vintage drops from BOTH sheets because they retired during that very
+    # year. Unioned here, beside the partial-exit membership and BEFORE the
+    # vintage-status oracle below, so an armed ``vintage_status_scope`` scopes
+    # all three memberships uniformly (rule 19 [R-ONE-MECH]: one channel, one
+    # oracle). Inert wherever the whole-plant retiree parquet exists, so it can
+    # never double-count with the ``frames[0]`` rows above.
+    mid_frame: pd.DataFrame | None = None
+    if mid_vintage_exit_carry and year is not None:
+        mid = _mid_vintage_exit_rows(data_dir, codes, int(year))
+        if mid is not None and not mid.empty:
+            mid_frame = mid
+            logger.info(
+                "mid-vintage-year exit carry (%s %d): injecting %d unit(s), "
+                "%.0f MW — plants %s",
+                iso,
+                int(year),
+                len(mid),
+                pd.to_numeric(mid["net_summer_capacity_mw"], errors="coerce")
+                .fillna(0.0)
+                .sum(),
+                sorted(set(mid["plant_id"].astype(int))),
+            )
+            frames.append(mid)
+
     if not frames:
         return []
     df = pd.concat(frames, ignore_index=True) if len(frames) > 1 else frames[0]
@@ -2722,6 +2865,20 @@ def load_retired_within_window(
             _gid = g.unit_id.split("_", 1)[1].strip() if "_" in g.unit_id else ""
             if (int(g.plant_code), _gid) in _partial_keys:
                 g.partial_exit_unit = True
+    if mid_frame is not None:
+        # The same provenance stamp for the SPP-48 mid-vintage-year channel
+        # (rule 19 [R-ONE-MECH]: one exit-cohort router, two memberships),
+        # keyed the same way _rows_to_generators keys a unit. Without it the
+        # plant-binned LP discards each unit's own EIA-860 retirement month
+        # and runs the plant past its real death.
+        _mid_keys = {
+            (int(p), str(g).strip())
+            for p, g in zip(mid_frame["plant_id"], mid_frame["generator_id"])
+        }
+        for g in generators:
+            _gid = g.unit_id.split("_", 1)[1].strip() if "_" in g.unit_id else ""
+            if (int(g.plant_code), _gid) in _mid_keys:
+                g.mid_vintage_exit_unit = True
     if generators:
         logger.info(
             "loaded %d within-window retiree units for %s (%.0f MW, plants %s)",

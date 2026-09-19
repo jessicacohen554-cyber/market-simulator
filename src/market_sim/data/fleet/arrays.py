@@ -1193,6 +1193,15 @@ def _apply_outage_overlays(
                 config, "unit_outage_extract_basis_share", False
             ),
             fleet_status_scope=getattr(config, "unit_outage_fleet_status_scope", False),
+            # SPP-48: the mid-vintage-year whole-plant exit channel injects
+            # plants a year-matched native vintage drops from BOTH EIA sheets,
+            # so the derate DENOMINATOR must carry them too — otherwise their
+            # measured outage rows route to a (plant_code, plant_group) absent
+            # from the map and are silently skipped, leaving the injected plant
+            # un-capped (Oklaunion 127: the committed SPP extract carries its
+            # real 2020-01-01 -> 05-19 and 09-26 -> 12-31 stops). Byte-inert
+            # while off.
+            mid_vintage_exit_carry=getattr(config, "mid_vintage_exit_carry", False),
             # miso-200 (rule 14 [R-ACCURATE]): route each unit's window by its
             # OWN CAMPD unitType at a facility carrying two or more model gas
             # bins, where _resolve_unit_group's fac_group short-circuit loses
@@ -1370,6 +1379,12 @@ def _apply_outage_overlays(
                 # does not stack on the coal scope (disjoint plant groups) or on
                 # the >= 5-day overlay (disjoint durations).
                 gas_scope=getattr(config, "unit_outage_short_windows_gas", False),
+                # SPP-48: the mid-vintage-year exit channel injects plants a
+                # year-matched native vintage drops from BOTH EIA sheets, so
+                # the derate DENOMINATOR must carry them or their measured
+                # outage rows route to an absent (plant_code, plant_group) and
+                # are silently skipped. Byte-inert while off.
+                mid_vintage_exit_carry=getattr(config, "mid_vintage_exit_carry", False),
             )
             if sfac:
                 applied_s = 0
