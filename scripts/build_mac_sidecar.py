@@ -6,7 +6,7 @@ refuses rather than guesses when an input is missing.
 
     MAC ($/tCO2) = (cost per delivered MWh - energy capture price) / MER_tech
 
-      cost per delivered MWh = compute_lcoe(tech, year, config) x cf_base / cf_expected
+      cost per delivered MWh = compute_lcoe(tech, year, config)   [national base CF]
       energy capture price   = sum(price x tech_shape) / sum(tech_shape)
       MER_tech               = sum(MER   x tech_shape) / sum(tech_shape)
 
@@ -18,7 +18,6 @@ INPUTS (per grid-year, from that grid's designated keeper bundle, pass P1)
   hourly/system_<year>.parquet       per zone-hour price, demand, marginal_emission_rate
   hourly/class_hourly_<year>.parquet hourly MW by class, incl. the wind/solar pseudo-units
   run_config_<year>.json             rebuilds the ScenarioConfig for compute_lcoe
-  EIA-860 operable capacity          the one input no sidecar carries (see cf_expected)
 
 TWO APPROXIMATIONS, both surfaced in the output so the page can state them:
 
@@ -105,8 +104,6 @@ def build_year(iso: str, year: int, bundle: str, run_id: str) -> dict:
 
     sys.path.insert(0, str(REPO / "src"))
     from market_sim.config.constants import NEW_ENTRY_COSTS
-    from market_sim.config.iso_configs import get_iso_config
-    from market_sim.data.renewables import _eia860_monthly_capacity
     from market_sim.model.capacity_evolution.new_entry import compute_lcoe
     from market_sim.config.scenarios import ScenarioConfig
 
@@ -184,8 +181,36 @@ def build_year(iso: str, year: int, bundle: str, run_id: str) -> dict:
     zero_hr = mer_iso <= 1e-9
     import_marginal = zero_hr & (import_mw > 0.0)
 
-    zones = [z.name for z in get_iso_config(iso).zones]
     cfg = load_config(bundle, year, ScenarioConfig)
+
+    # NO LOCAL CAPACITY-FACTOR ADJUSTMENT. The cost per delivered MWh is the
+    # NATIONAL levelized cost at the national base capacity factor, full stop.
+    #
+    # The obvious refinement -- rescale by cf_base / cf_expected so a windy grid
+    # spreads its annual cost over more megawatt-hours -- needs a local expected
+    # capacity factor, and THAT NUMBER IS NOT RECOVERABLE from what a run
+    # commits. Both available denominators were tried and both are misaligned
+    # with the class_hourly dispatch that forms the numerator:
+    #
+    #   * EIA-860 operable capacity counts behind-the-meter solar the LP never
+    #     dispatches (it is netted into load). NYISO solar came out at an
+    #     expected CF of 0.022 and NEISO 0.049, against a real regional ~0.14.
+    #   * The model's own renewable object cannot be rebuilt either: a slim
+    #     bundle commits one run_config.json, not the per-year config the solve
+    #     used, so load_renewable_profiles returns a different fleet. It put
+    #     MISO 2025 solar at 7,000 MW while that year dispatches 29.75 TWh of
+    #     solar -- 2.7x more energy than that capacity can physically produce.
+    #     "Delivered exceeds potential" is proof the two objects are not the
+    #     same fleet, so neither ratio can be trusted.
+    #
+    # Publishing a cost built on either would have put NYISO solar at
+    # $1,040/tCO2. The page already discloses that build cost and base capacity
+    # factor are national; this makes the arithmetic match that disclosure
+    # instead of quietly contradicting it. Differences between grids therefore
+    # come from CAPTURE PRICE and EMISSION RATE only -- both fully derivable
+    # from the committed hourly sidecars. Closing this properly needs the solve
+    # to commit its own per-tech capacity, which is a one-line sidecar addition
+    # on the solve path.
 
     scalars = {}
     for tech in TECHS:
@@ -194,25 +219,14 @@ def build_year(iso: str, year: int, bundle: str, run_id: str) -> dict:
         if not w > 0.0:
             scalars[tech] = {"unavailable": f"the grid dispatched no {tech} in {year}"}
             continue
-        cap = _eia860_monthly_capacity(iso, tech, zones, year)
-        if cap is None or float(cap.sum(axis=0).mean()) <= 0.0:
-            scalars[tech] = {
-                "unavailable": f"no operable {tech} capacity on record for {year}"
-            }
-            continue
-        installed = float(cap.sum(axis=0).mean())
-        cf_expected = float(w / (installed * T))
         sw = float(shape[served].sum()) or 1.0
         capture = float((price_iso * shape)[served].sum() / sw)
         mer_tech = float((mer_iso * shape)[served].sum() / sw)
         imp_share = float(shape[import_marginal].sum() / w)
         mer_imp = mer_tech + imp_share * import_ef
 
-        base_cf = float(NEW_ENTRY_COSTS[tech]["base_cf"])
         row = {
-            "cf_base": base_cf,
-            "cf_expected": round(cf_expected, 4),
-            "installed_mw": round(installed, 1),
+            "cf_base": float(NEW_ENTRY_COSTS[tech]["base_cf"]),
             "capture_price": round(capture, 2),
             "mer_tech": round(mer_tech, 4),
             "mer_tech_with_imports": round(mer_imp, 4),
@@ -220,7 +234,7 @@ def build_year(iso: str, year: int, bundle: str, run_id: str) -> dict:
         }
         for tag, credits in (("post_ira", True), ("pre_ira", False)):
             lcoe = lcoe_for(compute_lcoe, tech, year, cfg, credits)
-            cost = lcoe * base_cf / cf_expected
+            cost = lcoe
             row[f"lcoe_{tag}"] = round(lcoe, 2)
             row[f"cost_per_delivered_mwh_{tag}"] = round(cost, 2)
             row[f"mac_{tag}"] = round((cost - capture) / mer_tech, 1)
