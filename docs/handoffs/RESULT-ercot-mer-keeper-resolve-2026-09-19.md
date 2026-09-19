@@ -156,3 +156,40 @@ judgement is not mine to act on, so nothing has been deleted and the question is
 
 **Whatever you decide, the drift finding stands on its own and is the more important half of this run:**
 an ERCOT arm differenced against the committed keeper today is differenced against an invalid control.
+
+---
+
+## ADDENDUM — two operational findings from the shards
+
+### 1. THE MER DUAL'S MEMORY COST IS REAL AND CLOSE TO THE CEILING
+
+The 2021 shard reported a cold solve at **235 s with a peak of 12.59 GiB**, against the
+**13.34 GiB** binding-cgroup ceiling rule 32(c)(8) records for a CCR bash cgroup. That is
+**~94% of the ceiling** — it fit, with roughly 0.75 GiB of headroom.
+
+ERCOT cleared. **Do not read that as a general clearance.** Rule 32(c)(8) records that a
+per-plant MISO or PJM year already peaks *above* 13.34 GiB inside HiGHS `run()` and only fits
+because `ensure_solve_container` provisions swap. The dual adds a basis refactorization *after*
+the main solve, i.e. in the same post-solve window that already owns the measured year peak. So
+the first MISO/PJM lane to re-solve at a MER-carrying SHA should **expect swap pressure and
+report `memory peak:` RSS *and* RSS+swap**, and an OOM there is a finding about the dual —
+exactly as the owner's append framed it — not a model regression.
+
+The owner's append asked for this number because it was unvalidated. It is now measured **for
+ERCOT only**.
+
+### 2. `tzdata` IS MISSING FROM THE RUNTIME DEPENDENCIES
+
+Three shards independently hit it: a container that installs with `uv sync --no-dev` has no
+`tzdata`, and the solve path needs it. Each worked around it with `uv pip install tzdata`; the
+2022 shard called it out as a packaging defect rather than an environment quirk.
+
+**Not fixed here** — it is outside this lane's scope and belongs in `pyproject.toml`'s runtime
+deps, not in a shard prompt workaround. Recorded so the next lane does not rediscover it, and so
+whoever owns packaging can decide whether `tzdata` is a genuine runtime dependency (it appears to
+be) or whether the solve path should stop requiring it.
+
+### 3. Pre-existing, NOT caused by this run
+
+The 2021 shard noted a **D-4 legitimacy FAIL that is already present in the committed keeper**.
+It is carried here only so a later reader does not mistake it for a consequence of the re-solve.
