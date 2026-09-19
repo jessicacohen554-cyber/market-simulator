@@ -62,12 +62,25 @@ KEEPER_POSTURE: dict[str, object] = {
     "caiso_ra_min_load_frac": 0.26,
     "caiso_ra_mustoffer_quantity_gate": False,
     "caiso_ra_bridge_curtailment_release": False,
-    "negative_renewable_offers": False,
+    # ON for this keeper, which is WHY the surplus reprice is -$20 and not 0.
+    # Asserted here because the value it selects is an input to the decommit
+    # screen this probe exists to measure: an early draft of this file assumed
+    # 0.0 and the posture gate below caught it.
+    "negative_renewable_offers": True,
+    "renewable_keep_running_value": 20.0,
 }
 MIN_LOAD_FRAC = 0.26
-#: negative_renewable_offers is OFF on this keeper, so the surplus reprice value
-#: is 0.0 (pipeline/commitment.py:189-193). Asserted, not assumed.
-SURPLUS_FLOOR_VALUE = 0.0
+
+
+def surplus_floor_value(cfg: dict) -> float:
+    """The keeper's surplus reprice value, derived as production derives it.
+
+    Mirrors ``pipeline/commitment.py:189-193`` rather than hard-coding a
+    number, so the probe cannot drift from the code it is replaying.
+    """
+    if not cfg.get("negative_renewable_offers", False):
+        return 0.0
+    return -float(cfg["renewable_keep_running_value"])
 
 BELLY = REPO / "results/calibration/_caiso285_belly_2024.json"
 BELLY_SHA16 = "c5948fb0d43620a1"
@@ -167,6 +180,7 @@ def run_detector(
     prices: np.ndarray,
     mc_base: np.ndarray,
     startup_lead: np.ndarray | None,
+    surplus_value: float,
     *,
     startup_aware: bool,
     bridge_decommit: bool,
@@ -187,7 +201,7 @@ def run_detector(
         base_mc=mc_base,
         startup_bridge=True,
         bridge_decommit=bridge_decommit,
-        surplus_floor_value=SURPLUS_FLOOR_VALUE,
+        surplus_floor_value=surplus_value,
         startup_aware=startup_aware,
         release_hours=None,
         startup_lead_hours=startup_lead,
@@ -239,6 +253,7 @@ def main(bundle: Path, out_path: Path) -> None:
     ra_hours = fz["mechanism"] == MECH_RA_MUSTOFFER
 
     startup_lead = cc_startup_lead_hours(generators, fa, "CAISO")
+    surplus_value = surplus_floor_value(cfg)
     cc_rows = np.array(
         [i for i, g in enumerate(generators) if g.plant_group == "CC_REGULAR"]
     )
@@ -253,7 +268,7 @@ def main(bundle: Path, out_path: Path) -> None:
     }.items():
         floors[label] = run_detector(
             p0_dispatch, fa, generators, prices, mc_base, startup_lead,
-            startup_aware=sa, bridge_decommit=dc,
+            surplus_value, startup_aware=sa, bridge_decommit=dc,
         )
     M = {k: belly_mean_mw(v, belly, cc_rows) for k, v in floors.items()}
 
@@ -296,6 +311,7 @@ def main(bundle: Path, out_path: Path) -> None:
         "fleet_rows": n_gen,
         "cc_regular_rows": int(cc_rows.size),
         "zone_index_map": dict(enumerate(zone_names)),
+        "surplus_floor_value": surplus_value,
         "belly_hours": int(belly.size),
         "belly_sha256_16": BELLY_SHA16,
         "gates": {
