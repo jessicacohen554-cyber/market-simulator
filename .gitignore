@@ -2507,3 +2507,30 @@ results/calibration/miso262_mer_*/
 # tracked and the blanket ignore is REMOVED: the generic results/calibration rules
 # above already hold back dispatch/, floors/, root *.parquet, unit_hourly_* and
 # network_*, which is exactly the slim keeper set.
+# --- NWPP-42 shard bundles (rule 29 [R-SCREEN] (c) / rule 31 [R-RETAIN]) ------
+# Kept OUT OF `main` — an unregistered bundle dir committed here is the Class-E
+# parity RED rule 29(c) forbids — but NOT deleted: rule 31 protects a result
+# until the owner has ruled on promotion, and `.gitignore` is what discharges
+# the delete-before-merge duty. `rm` is never required.
+#
+# nwpp42_measured_coal_hr is ARM ATTEMPT 1 and is an INVALID A/B: it diverged
+# from the keeper on THREE fields (measured_coal_heat_rates None->True as
+# intended, but ALSO hydro_cascade_coupling True->False and hydro_backfill_year
+# 2024->None, both omitted from the parent's shard prompt). It ran 16.9 min of
+# LP against the keeper's 749.3 because the cascade is ~98 % of the cost, and it
+# carries no hourly/hydro_cascade_*.parquet. It is NOT the arm and must never be
+# registered as one — but it IS a real, unintended cascade + backfill ablation.
+# Recovery by FULL IMMUTABLE SHA (rule 33(d), never a branch name):
+#   git checkout eb526988960132dc900a29a4587aa83a21024c73 -- results/calibration/nwpp42_measured_coal_hr
+#
+# nwpp42_measured_coal_hr_v2 is the CORRECTED arm and nwpp_mer_2026-09-19 the
+# marginal-carbon keeper replay; both are in flight at this commit and their
+# recovery shas land in FINDING-nwpp-42 when they do.
+#
+# A local run of check_registry_payload_parity.py will read these dirs off the
+# FILESYSTEM and report them unmapped (rule 31's 2026-09-16 correction). That
+# RED is expected and is NOT to be "fixed" by deleting a protected result; CI,
+# which checks out only what is committed, stays green.
+results/calibration/nwpp42_measured_coal_hr/
+results/calibration/nwpp42_measured_coal_hr_v2/
+results/calibration/nwpp_mer_2026-09-19/
