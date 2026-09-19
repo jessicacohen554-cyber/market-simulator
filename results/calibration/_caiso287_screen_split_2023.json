@@ -1,0 +1,65 @@
+{
+  "bundle": "results/calibration/caiso287_instr_2023",
+  "year": 2023,
+  "git_sha_of_bundle": "92b8e4db",
+  "posture_reasserted": {
+    "caiso_ra_mustoffer": true,
+    "caiso_ra_startup_bridge": true,
+    "caiso_ra_bridge_decommit": true,
+    "caiso_ra_bridge_startup_aware": true,
+    "caiso_ra_startup_trajectory": true,
+    "caiso_ra_min_load_frac": 0.26,
+    "caiso_ra_mustoffer_quantity_gate": false,
+    "caiso_ra_bridge_curtailment_release": false,
+    "negative_renewable_offers": true,
+    "renewable_keep_running_value": 20.0
+  },
+  "fleet_rows": 1711,
+  "fleet_rows_published_2024": null,
+  "cc_regular_rows": 285,
+  "zone_index_map": {
+    "0": "NP15",
+    "1": "ZP26",
+    "2": "LA_BASIN",
+    "3": "SDGE",
+    "4": "SP15_rest",
+    "5": "WECC_PNW",
+    "6": "WECC_DSW"
+  },
+  "surplus_floor_value": -20.0,
+  "belly_hours": 876,
+  "belly_sha256_16": "f6198c77ffa35607",
+  "belly_construction": "caiso-285 rule: lowest 876 h of keeper net load (demand - wind - solar)",
+  "gates": {
+    "G_R1": "PASS",
+    "G_R2": "PASS",
+    "G_R2_exact_at_artifact_precision": true,
+    "G_R2_mismatching_ra_gen_hours": 0,
+    "G_R2_ra_gen_hours": 42409,
+    "G_R2_exact_AS_WRITTEN_float64_vs_float32_store": false,
+    "G_R2_max_abs_diff_on_ra_hours_mw": 7.463727712320178e-06,
+    "G_R2_max_rel_diff_vs_float32_eps": {
+      "max_rel": 5.792147144423299e-08,
+      "float32_eps": 1.1920928955078125e-07
+    },
+    "G_R2_note": "The PRECOMMIT wrote this as a float64 equality; the store is float32, so that form cannot pass even on a bit-exact reproduction. Both are reported. The artifact-precision form is the one with meaning.",
+    "G_R2_gen_hours_exceeding_elsewhere": 0,
+    "G_R2_absorption_rows_excluded": 2,
+    "G_R3": "REPORTED (no published expectation off 2024)",
+    "G_R3_belly_ra_mean_mw": 785.4718338809057,
+    "G_R3_expected_mw": null
+  },
+  "M_mean_belly_mw": {
+    "M_both": 785.4718337345577,
+    "M_sa": 872.817316909387,
+    "M_dc": 1180.9922542642732,
+    "M_none": 1183.277241237757
+  },
+  "removals_mean_belly_mw": {
+    "R_SA_startup_aware_solo": 310.4599243283699,
+    "R_DC_decommit_solo": 2.284986973483683,
+    "R_total_joint": 397.80540750319926,
+    "dominance_bar_70pct": 278.46378525223946
+  },
+  "VERDICT": "(A) GAP-MERGING DOMINANT"
+}
