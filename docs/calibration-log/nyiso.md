@@ -14684,3 +14684,40 @@ ROOT-CAUSE ISSUE (rule 21), not a caveat.
 flat ~2.1-2.8 actual, capacity intact), which plausibly owns both remaining tight rows. Recommended
 lever `ct_peaker_committed_measured` (**U**). `nyiso_ct_peaker_bands_measured` stays **R**, not re-tested.
 Rule 31: the four retrieved nyiso-239 legs stay on disk, gitignored, never `rm`'d. Rule 33: no shards.
+
+## nyiso-240 (MER control) — 2026-09-19
+
+**G-DRIFT FORM 4 CONFIRMED EMPIRICALLY, AT BYTE IDENTITY.** The keeper's dispatch was solved at
+`3edb8ad8`; the solve path has moved 14 files / +3,176 lines since. Replayed at HEAD
+(`1fdcc69c`), **`dispatch/<yr>_P1.parquet` is byte-identical by sha256 in all four years**, as is
+`unit_hourly`; `class_hourly` deviates by **0.000e+00** on every class and every hour; `system`
+prices are identical. The only differences anywhere are ADDED COLUMNS. Record:
+`docs/RESULT-nyiso240-bench-attribution-promotion-2026-09-19.md` **Addendum A**.
+
+**Why a control was owed despite the arm being promoted**: the promotion was zero-LP, so the keeper's
+bundle is nyiso-239's 2026-09-17 dispatch and predates the emissions dual (`2ec09663`, 2026-09-18).
+The owner's skip-clause assumes the arm carries the column; it does not.
+
+**Per-year fan-out on the OWNER'S EXPLICIT INSTRUCTION, and rule-32(b)-legal**: 32(b) bans fanning
+out a run that must recombine FOR REGISTRATION and names the diagnostic carve-out this never-
+registered control sits in. Four legs, one per year, ~15 min wall instead of ~45.
+
+**Marginal emission rate** (per zone-hour, tCO2/MWh, load-weighted mean): 2022 **0.4508**, 2023
+**0.4753**, 2024 **0.5219**, 2025 **0.5310**; zero-share falls 10.92 % → 1.27 %; zero NaN. The level
+is a gas CC at the margin and sits far above NYISO's average grid intensity, which is what a
+marginal rate should do in a nuclear+hydro-diluted system.
+
+**Retrievability** (rule 34(d), verified 17 files per leg BEFORE archiving; branch names die, SHAs
+do not): 2022 `93eb1aa918c039a01d6e5ba6265eedd7f69fdb03`, 2023 `24a75c15f0b08ccb51c59107f1f36163a02a5fef`,
+2024 `0573d6382a2526cb482d544567c967767f50556e`, 2025 `5633d28698ee5bd07a2afccab63e02d2d8b70382`;
+composed at `results/calibration/nyiso_mer_2026-09-19`. **OPEN for the owner**: the control is
+unregistered by instruction, so these live only on shard branches — a marginal-abatement page needing
+them durably needs a registration or allowlist decision (RESULT §A.3).
+
+**SEPARATE FINDING, wants an owner**: `legitimacy_diagnostics.py` is **not reproducible** on its
+measured columns — nine rows (seven D-1, two D-4 plant 2500) wobble at the 3rd decimal, and re-running
+it on the IDENTICAL bundle twice reproduces exactly the same nine wobbles. Not drift. No verdict moves
+today, but C8 and rule 20's conditional-pass path both read this gating artifact (RESULT §A.6).
+
+Nothing registered, no dashboard id minted, keeper unchanged. Rule 31: nothing deleted; the legs and
+the composed span are gitignored, not removed. Rule 33: all five shards archived after verification.

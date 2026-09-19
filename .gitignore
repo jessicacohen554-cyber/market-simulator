@@ -2448,3 +2448,29 @@ results/calibration/soco53c_control/
 # FILESYSTEM, so these gitignored dirs turn that gate RED *locally* while CI stays
 # green. That is expected — do NOT "fix" it by deleting a result.
 results/calibration/ercot_mer20260919_*/
+# nyiso-240 MER CONTROL legs (2026-09-19) — the marginal-emission-rate dual (`marginal_emission_rate`,
+# per zone-hour tCO2/MWh in hourly/system_<year>.parquet), which landed on main 2026-09-18 at
+# 2ec096633f5624585eb9db1728ebc7c8ca5ccbdf and which NO committed NYISO keeper carries: the keeper's
+# dispatch was solved at 3edb8ad8 (2026-09-17). These are a CONTROL, never registered (rule 15
+# [R-DASHBOARD] keeper-only retention), so they stay out of `main` — hence these ignore lines.
+# The per-year fan-out was the OWNER'S EXPLICIT INSTRUCTION (2026-09-19) and is rule-32(b)-legal
+# here: 32(b) bans fanning out a run that must come back together FOR REGISTRATION, and names the
+# diagnostic carve-out this control sits in.
+#
+# RECOVERY BY FULL SHA (rule 33 [R-SHARD-ARCHIVE] (d) — branch names are deleted within days):
+#   git fetch origin <sha> && git checkout <sha> -- results/calibration/nyiso_mer_2026-09-19_<yr>
+#     2022  93eb1aa918c039a01d6e5ba6265eedd7f69fdb03
+#     2023  24a75c15f0b08ccb51c59107f1f36163a02a5fef
+#     2024  0573d6382a2526cb482d544567c967767f50556e
+#     2025  5633d28698ee5bd07a2afccab63e02d2d8b70382
+#   then: python3 scripts/probes/nyiso238_compose_span.py \
+#           --legs results/calibration/nyiso_mer_2026-09-19_{2022,2023,2024,2025} \
+#           --out  results/calibration/nyiso_mer_2026-09-19
+# 17 files per leg, verified by `git ls-tree -r <sha>` BEFORE any shard was archived (rule 34
+# [R-SHARD-PROMOTABLE] (d)). Record: docs/RESULT-nyiso240-bench-attribution-promotion-2026-09-19.md
+# addendum A.
+results/calibration/nyiso_mer_2026-09-19/
+results/calibration/nyiso_mer_2026-09-19_2022/
+results/calibration/nyiso_mer_2026-09-19_2023/
+results/calibration/nyiso_mer_2026-09-19_2024/
+results/calibration/nyiso_mer_2026-09-19_2025/

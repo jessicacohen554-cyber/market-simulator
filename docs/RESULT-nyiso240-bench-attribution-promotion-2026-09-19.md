@@ -243,3 +243,138 @@ was not re-tested.
   what is committed and stays green.
 * **`dashboard_add_run.py`'s docstring still describes `enforce_registration_marker_gate`**, removed
   with `[R-HOLDOUT]` on 2026-09-09. Harmless but stale.
+
+---
+
+# ADDENDUM A — the MARGINAL-CARBON CONTROL ARM (owner instruction, 2026-09-19)
+
+**Result: G-DRIFT form 4 is CONFIRMED EMPIRICALLY, at BYTE IDENTITY.** The keeper's dispatch was
+solved at `3edb8ad8`; `git diff 3edb8ad8 HEAD` over the solve path is **14 files / +3,176 lines**.
+Replayed at HEAD, **`dispatch/<yr>_P1.parquet` is byte-identical by sha256 in all four years**, and
+so is `hourly/unit_hourly_<yr>.parquet`. The only differences anywhere in the bundle are **ADDED
+COLUMNS**. That is a far stronger statement than "two numbers agree": it says the drift is inert.
+
+## A.1 Why this lane owed a control at all
+
+The owner's instruction exempts a session whose **arm** becomes the keeper, on the grounds that
+*"your arm's own bundle will carry the column."* **That premise fails here, and the exemption with
+it.** This session's arm was promoted at **zero LP** — the keeper's dispatch is nyiso-239's
+2026-09-17 solve at `3edb8ad8`, which predates the emissions dual
+(`2ec096633f5624585eb9db1728ebc7c8ca5ccbdf`, 2026-09-18). Measured before launching:
+`nyiso240_benchfix_span/hourly/system_2022.parquet` carries
+`['year','pass','zone','hour','price','slack','dump','demand','reserve_price']` and **no
+`marginal_emission_rate`**. NYISO therefore had no marginal-carbon data and the control was owed.
+
+## A.2 Shape — per-year fan-out, on the owner's instruction, and it is rule-legal
+
+The owner directed *"launch one shard per year then compile."* This is **rule-32(b)-legal here, not
+an exception to it.** Rule 32 `[R-SHARD]` (b) bans fanning out **a run that must come back together
+FOR REGISTRATION** — its stated failure modes are registration-path ones (`build_payload` reading
+the bundle-root `system.parquet`; the per-plant D-1/D-2 diagnostics falling back to the registered
+payload and passing vacuously). It then names the carve-out this control sits in: *"Subdividing …
+remains available for DIAGNOSTIC work that will never be registered."* **This control is never
+registered** — the owner's own instruction says so. My earlier single-span framing was the more
+cautious reading of the rule, not the correct one.
+
+Four shards, all pinned to the full immutable SHA `1fdcc69c1b6a1e5e0859edd135f3c3d7d476f15d` (this
+lane's own branch head, because the promotion had not yet auto-merged and `origin/main` carried
+neither the new keeper bundle nor the bench repairs), each `replay_keeper.py … --years <YR>` with no
+`--set` and no `--reuse-solved`. The initially-launched single-span shard was interrupted and
+archived. **Wall clock ~15 min instead of ~45.**
+
+## A.3 RETRIEVABILITY — the bundle paths and their FULL IMMUTABLE SHAs
+
+*(A marginal-abatement page is being built against these. Branch names are deleted within days;
+these SHAs are the durable handle. Rule 34 `[R-SHARD-PROMOTABLE]` (d) verified — `git ls-tree -r`
+returned **17 files** for every leg **before** any shard was archived.)*
+
+| year | leg bundle | **commit** | files |
+|---|---|---|---|
+| 2022 | `results/calibration/nyiso_mer_2026-09-19_2022` | `93eb1aa918c039a01d6e5ba6265eedd7f69fdb03` | 17 |
+| 2023 | `results/calibration/nyiso_mer_2026-09-19_2023` | `24a75c15f0b08ccb51c59107f1f36163a02a5fef` | 17 |
+| 2024 | `results/calibration/nyiso_mer_2026-09-19_2024` | `0573d6382a2526cb482d544567c967767f50556e` | 17 |
+| 2025 | `results/calibration/nyiso_mer_2026-09-19_2025` | `5633d28698ee5bd07a2afccab63e02d2d8b70382` | 17 |
+
+**Composed span**: `results/calibration/nyiso_mer_2026-09-19` (153 MB; the four
+`hourly/system_<yr>.parquet` that carry the MER series are **3.7 MB** of that), built with
+`scripts/probes/nyiso238_compose_span.py`. The composer independently reported
+*"solve_surface fingerprint: bd2b4657f9b5df7e (identical across legs)"*. Recovery commands are in
+`.gitignore` beside the ignore lines.
+
+**OPEN, AND THE OWNER'S CALL — stated rather than left to be discovered.** The control is
+**unregistered by instruction**, so the composed bundle and its legs are **gitignored and live only
+on shard branches**. A branch deleted or garbage-collected takes them with it. If the
+marginal-abatement page needs this data **durably**, it needs either a registration decision or a
+`KEEP_REQUIRED_UNMAPPED_BUNDLES` allowlist entry — committing an unregistered bundle dir to `main`
+turns `check_registry_payload_parity.py` RED (Class-E point 4). **I have not invented a third
+route.** Re-solve cost if the branches are lost: ~15 min wall, four parallel shards.
+
+## A.4 THE G-DRIFT EVIDENCE, measured
+
+| layer | keeper vs replay |
+|---|---|
+| `dispatch/<yr>_P1.parquet` | **byte-identical (sha256), all four years** |
+| `hourly/unit_hourly_<yr>.parquet` | identical |
+| `hourly/class_hourly_<yr>.parquet` | max \|Δ\| class-total **0.000e+00 TWh**; max \|Δ\| hourly **0.000e+00 MW**; 16 classes × 4 years |
+| `hourly/system_<yr>.parquet` | shared columns **identical**; max \|Δ price\| **0.000e+00** |
+| `hourly/class_band_hourly_`, `reserve_family_` | byte-identical |
+| `hourly/storage_<yr>.parquet` | shared columns **identical**; **+2 new columns** `soc_mwh`, `energy_cap_mwh` |
+| legitimacy diagnostics | **every verdict tuple identical** across D1 / D2 / D4 / D5 / D9 / D10 |
+
+**The only differences anywhere are additive**: `marginal_emission_rate` in `system`, and
+`soc_mwh` / `energy_cap_mwh` in `storage` (another lane's column, landed since `3edb8ad8`).
+
+## A.5 THE MARGINAL EMISSION RATE — what NYISO's dual actually says
+
+Per zone-hour, P1, tCO2/MWh, over 52,560 zone-hours per year (5 zones × 8,760 h):
+
+| year | load-wtd mean | p10 | median | p90 | max | zone-hours at exactly 0.0 | NaN |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| 2022 | 0.4508 | −0.0000 | 0.4584 | 0.6897 | 1.8095 | 10.92 % | 0 |
+| 2023 | 0.4753 | 0.3695 | 0.4498 | 0.6791 | 4.9220 | 5.29 % | 0 |
+| 2024 | 0.5219 | 0.3667 | 0.5027 | 0.8210 | 5.8836 | 3.82 % | 0 |
+| 2025 | 0.5310 | 0.3712 | 0.5272 | 0.8073 | 1.8304 | 1.27 % | 0 |
+
+**Two sanity checks that the series is physical, not plumbing.** (1) The load-weighted mean sits at
+**0.45–0.53 tCO2/MWh**, which is a gas combined cycle at the margin (7–9 MMBtu/MWh × 0.0585
+tCO2/MMBtu ≈ 0.41–0.53) — and it is *far above* NYISO's average grid intensity, exactly as it must
+be in a system whose average is diluted by nuclear and hydro that are almost never marginal.
+(2) The zero share falls monotonically **10.92 % → 1.27 %** across the span: those are hours where
+the marginal resource carries no carbon. **Reported, not interpreted** — whether that trend is the
+fleet or the model is a question for the lane that uses this series, not a claim this control makes.
+2022 carries a p10 of −0.0000 (a handful of very small negative duals, the sign convention at
+zero-carbon-marginal hours).
+
+## A.6 A SEPARATE FINDING — `legitimacy_diagnostics.py` is NOT reproducible at the 3rd decimal
+
+Nine diagnostic rows differ between the keeper's committed artifact and the replay's: seven D-1 rows
+(`actual_offpeak_cv`, and `profile_r` / `cv_ratio` derived from it) and two D-4 rows (plant 2500
+Ravenswood, `measured_median_mw` 99.494 → 99.737 and 78.417 → 78.457).
+
+**This is NOT drift, and I checked rather than assumed.** Re-running
+`legitimacy_diagnostics.py` **on the identical keeper bundle, twice**, reproduces **exactly the same
+nine rows with exactly the same wobble**. The diagnostic is nondeterministic on its **measured**
+columns; every **model** column (`model_offpeak_cv`) is stable, and the dispatch it reads is
+byte-identical.
+
+**Reported, not fixed** — a scorer change is outside this lane (rule 25), and no verdict moves
+today. But it is a real reproducibility defect in a **gating** artifact: C8 and rule 20
+`[R-FORCED-BUDGET]`'s conditional-pass path both read this file, so a row that today wobbles at the
+3rd decimal could in principle straddle a gate threshold on some future run. **It wants an owner.**
+
+## A.7 GOVERNANCE
+
+* **Not a new run.** No dashboard id was minted, the keeper bundle was not overwritten, nothing was
+  re-registered. A replay that reproduces the keeper is not a run (owner instruction).
+* **Rule 32 `[R-SHARD]`** — the parent ran ZERO LP: it launched, fetched, composed, diffed. (a) held
+  throughout. The per-year fan-out is (b)'s diagnostic carve-out, per §A.2.
+* **Rule 34 `[R-SHARD-PROMOTABLE]`** — every leg pushed its full bundle to its own branch via
+  `.gitignore` negation + plain `git add`; `git ls-tree` verified 17 files per leg **before** any
+  archive; (e) retrievability is §A.3, including what it costs if the branches go.
+* **Rule 33 `[R-SHARD-ARCHIVE]`** — all five shards (four legs + the superseded single-span one)
+  archived only after fetch + checkout + verify. Recovery recorded by full SHA, never branch name.
+* **Rule 31 `[R-RETAIN]`** — nothing deleted. The legs and the composed span are **gitignored, not
+  removed**, and §A.3 asks the durability question rather than pre-empting it.
+* **Memory** — the dual's cost at per-plant scale was flagged UNVALIDATED in every shard prompt, with
+  an instruction that an OOM is a finding about the dual and not a model regression. **No shard was
+  OOM-killed**; all four completed inside their budget.
