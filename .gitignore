@@ -2592,3 +2592,11 @@ results/calibration/caiso_mer_*/
 # the COMPOSED span bundle `neiso112_mer_span`, which is the registered keeper and
 # MUST commit its slim set (rule 15 [R-DASHBOARD]).
 results/calibration/neiso112_mer_20[0-9][0-9]/
+
+# nyiso-241 arm A bundle — recover with:
+#   git fetch origin 2d15779b986ae8af11d60d86fbb5359ea0f82d6d && git checkout 2d15779b986ae8af11d60d86fbb5359ea0f82d6d -- results/calibration/nyiso241_ctcommitted_span
+results/calibration/nyiso241_ctcommitted_span/
+
+# nyiso-241 arm B bundle — recover with:
+#   git fetch origin b97cbede095577f7e1682a136f2282b67b13592d && git checkout b97cbede095577f7e1682a136f2282b67b13592d -- results/calibration/nyiso241_ctbands_span
+results/calibration/nyiso241_ctbands_span/

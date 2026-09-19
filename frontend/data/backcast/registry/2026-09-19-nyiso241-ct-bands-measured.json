@@ -1,0 +1,16 @@
+{
+  "id": "2026-09-19-nyiso241-ct-bands-measured",
+  "label": "nyiso241 ct bands measured",
+  "date": "2026-09-19",
+  "shorthand": "nyiso241-ct-bands-measured",
+  "definition": "nyiso-241 ARM B: three-way re-test of nyiso_ct_peaker_bands_measured + cc_duct_peaking_row_scoped over the keeper's armed nyiso_gas_bridge_startup_aware (rules 14/19/21/25; nyiso-200 sharpened re-test condition, C3a-2025 the named risk). PRECOMMIT docs/PRECOMMIT-nyiso241-ct-peaker-merit-2026-09-19.md",
+  "years": [
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-09-19-nyiso241-ct-bands-measured.js",
+  "bundle": "results/calibration/nyiso241_ctbands_span"
+}
