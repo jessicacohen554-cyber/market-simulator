@@ -710,3 +710,79 @@ there is no live solve to protect. Shard `session_01HwZuaGLXEia9RBheos1KDD` **ar
 fetch + verify (rule 33(a)/(d)); its branch and the 18-file partial are left in place at the full SHA
 above (rule 31 — nothing deleted, and the branch is the only copy). Recovery line:
 `git checkout 14f485ce21b322d600b67aecfe7ef2da41fd87a9 -- results/calibration/nwpp41_span_A`.
+
+---
+
+# ADDENDUM 8 (2026-09-19) — attempt 2: 2024 lands, the C1 fix is confirmed on a SECOND year, and attempt 1's numbers reproduce exactly
+
+**Recipe unchanged. Pin unchanged (`666343a2bf86f204c5ca6c672a680da32150a640`). Ceiling unchanged
+at 1,680 min — every projection below is inside it, so nothing moves this time.**
+
+## A8.1 What the shard has pushed
+
+`claude/nwpp-41-span-a2` moved `81ca15f2…` → **`f932a8816f2e0d2f2641708e914375f7058b440e`**, 18 files:
+2023 + 2024 evidence only (`dispatch/{2023,2024}_P1.parquet` + `_fleet`, `floors/`, and the six
+`hourly/` sidecars per year). **No 2025, and no bundle-root `system.parquet` / `meta.json` /
+`run_config.json`** — those are written only after the last year, which is the un-resumable-runner
+property already routed in §A7.3. So this is an **EVIDENCE push, not the bundle**: the completeness
+gate FAILS by design, the shard stays alive, and nothing is archived (rule 33 `[R-SHARD-ARCHIVE]`
+(a) — the parent does not have the bundle yet).
+
+This is byte-for-byte the same shape attempt 1 reached at `14f485ce21b322d600b67aecfe7ef2da41fd87a9`.
+
+## A8.2 The acceptance test on 2024 — passed, and identical to attempt 1
+
+Computed zero-LP in the parent from the pushed `hourly/class_hourly_2024.parquet`:
+
+| class | attempt 2 (TWh) | attempt 1 (TWh) | Δ |
+|---|---|---|---|
+| `COAL_BIT` | 7.4515 | 7.4515 | 0 |
+| `COAL_PRB` | 19.3232 | 19.3232 | 0 |
+| `COAL_WC` | 0.2329 | 0.2329 | 0 |
+| **family total** | **27.0076** | **27.0076** | **0** |
+| bare `COAL` | **absent** | absent | — |
+
+Two things this establishes, neither of them a claim about the residual (rule 1 `[R-STRUCT]`):
+
+1. **The C1 seam fix holds in a real solve on 2024 as well as 2023.** The model now emits the three
+   itemized coal classes the benchmark carries rows for, and emits **no** bare `COAL` — which is the
+   whole of the C1 defect located in §1 and predicted in §2.
+2. **Cross-attempt determinism is confirmed on a second year.** 2023 already reproduced attempt 1
+   exactly (`COAL_BIT` 14.9844 / `COAL_PRB` 24.2042 / `COAL_WC` 0.4247, every delta < 5e-4);
+   2024 now reproduces to **four decimal places on every class**. Two independent containers, two
+   independent solves, the same pinned recipe, the same numbers. The attempt-1 loss cost wall-clock
+   and nothing else.
+
+C4 is **not** tested by this and is still expected to FAIL (§A1.3). Nothing here speaks to it.
+
+## A8.3 Where the run is, and the re-projection
+
+**Observed 09:35:33Z:** `2025 P1 solve running (36/264 min)`. So **2024 P1 finished** and **2025 P0
+finished**; the run is in the last and longest pass.
+
+2025 P1 began ≈**08:59Z**. 2024 P1 began ≈03:30Z, so 2024 P1 + 2025 P0 together took ≈329 min;
+netting a ~25 min 2025 P0 puts **2024 P1 at ≈304 min ≈ 2.24×** NWPP-40's 135.9 — just *below*
+attempt 1's 2.27–2.41× on the same pass, i.e. inside the already-observed band rather than a new
+pathology.
+
+2025 P1 against NWPP-40's 263.9 min:
+
+| 2025 P1 at | ends | span total (from 00:24Z) | vs 1,680 |
+|---|---|---|---|
+| 2.24× (this run's 2024 P1) | 18:50Z | 1,106 | inside |
+| 2.5× | 19:59Z | 1,175 | inside |
+| 3.0× | 22:11Z | 1,307 | inside |
+| 3.5× | 00:23Z (20th) | 1,439 | inside |
+
+The ceiling expires ≈**04:24Z on the 20th**, so even 3.5× — the tail case Addendum 6 sized the last
+raise for — clears it with ~4 h of margin. **No fifth raise.** The lane's projections have been
+optimistic at every earlier step, which is why this table is read as "no raise needed" rather than
+"comfortable".
+
+## A8.4 Observation carried, not absorbed
+
+The realised P1 penalty against NWPP-40 remains **non-uniform** (0.99× / ~1.9× / ~1.1× / 1.37× /
+2.24× across the passes measured in both attempts). It is recorded as an **observation about this
+platform's LP throughput**, with no mechanism attached — the lane withdrew one such explanation
+already (§A4.1) and is not offering another. Real per-pass seconds and iteration counts come from
+the shard's own log at the end; they have never appeared in an interim status.
