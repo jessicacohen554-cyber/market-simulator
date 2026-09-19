@@ -2617,3 +2617,21 @@ results/calibration/neiso112_mer_20[0-9][0-9]/
 # nyiso-241 arm B bundle — recover with:
 #   git fetch origin b97cbede095577f7e1682a136f2282b67b13592d && git checkout b97cbede095577f7e1682a136f2282b67b13592d -- results/calibration/nyiso241_ctbands_span
 results/calibration/nyiso241_ctbands_span/
+# miso-263 (2026-09-19): the six PER-YEAR coal-ceiling repair bundles.
+#
+# Rule 32 [R-SHARD] (d) keeps per-year shard dirs OUT of `main` — the COMPOSED
+# span is what gets registered — and rule 31 [R-RETAIN] says the way to
+# discharge that is `.gitignore`, never `rm`. Nothing here is deleted: every
+# bundle is on its own shard branch at a full immutable SHA, and a promotion
+# from this state costs ZERO re-solves.
+#
+#   git checkout 34543fa20aeac6b4d7e7f6ef661a81c32401d437 -- results/calibration/miso263_coalcap_2020
+#   git checkout ba84be60f3ccdbe0c123c09bbef052b3a38e254a -- results/calibration/miso263_coalcap_2021
+#   git checkout cfacc9044cfd3dc18046735e00ac6c26e8565ed7 -- results/calibration/miso263_coalcap_2022
+#   git checkout c64a50c9f715a22cc9b3d296b1dbde016f3ab052 -- results/calibration/miso263_coalcap_2025
+#   (2023 / 2024 SHAs appended when their shards land)
+#
+# The pattern is YEAR-SCOPED on purpose: `miso263_coalcap_*` would also swallow
+# the composed `miso263_coalcap_span`, which is the registrable run and MUST
+# commit its slim set (rule 15 [R-DASHBOARD]).
+results/calibration/miso263_coalcap_20[0-9][0-9]/
