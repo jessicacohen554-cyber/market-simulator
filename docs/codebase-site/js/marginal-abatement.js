@@ -1,9 +1,11 @@
 /**
  * marginal-abatement.js — renderer for marginal-abatement.html.
  *
- * MOCK STATE: reads window.MAC_SYNTHETIC. When real results land, swap the
- * data source; nothing else here changes, because "this grid has no data yet"
- * is already a first-class render path.
+ * Reads window.MAC_DATA — the generated index over the committed per-grid-year
+ * sidecars in frontend/data/mac/. A grid with no sidecar for the selected year
+ * renders as `pending`; a grid whose sidecar says a technology is not present
+ * (no wind fleet at all, say) renders that reason instead of a number. Neither
+ * is ever shown as a zero.
  *
  * Charts are hand-rolled SVG — no CDN dependency, and themed entirely by the
  * CSS custom properties on .mac-scope, which the page redeclares under
@@ -19,32 +21,36 @@
   var YEARS = [2023, 2024, 2025];
   var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-  // Mock-only: which grids pretend to have landed. Default `partial`, because
-  // results arrive one grid at a time and that is the page's normal condition.
-  // `partial` mirrors reality as of 2026-09-19: exactly one grid (SOCO) has the
-  // underlying hourly measurement for 2023-2025. It is the default for that
-  // reason — the page's normal condition is 'almost everything is pending'.
-  var SYNTH_STATES = { empty: [], partial: ['SOCO'], full: ISOS.slice() };
-
-  var DATA = window.MAC_SYNTHETIC || { cells: {}, lcoe: {}, shape: {} };
+  var DATA = window.MAC_DATA || { cells: {}, isos: [], years: [] };
 
   // imports: 'counted' charges imported power the average rate of the grid it
   // came from; 'zero' leaves it at zero. 'counted' is the default — it is the
   // more accurate of the two.
-  var state = { year: 2024, tech: 'wind', iso: 'SOCO', synth: 'partial', shape: false, imports: 'counted' };
+  var state = { year: 2024, tech: 'wind', iso: null, shape: false, imports: 'counted' };
   var tables = { range: false, dur: false, wf: false };
 
   // ---------------------------------------------------------------------------
   // data access
   // ---------------------------------------------------------------------------
-  function readySet() { return SYNTH_STATES[state.synth] || []; }
-  function cell(iso, year) {
-    if (readySet().indexOf(iso) < 0) return null;
-    return DATA.cells[iso + '-' + year] || null;
+  /** Grids with a sidecar for the selected year, in roster order. */
+  function readySet() {
+    return ISOS.filter(function (iso) { return !!DATA.cells[iso + '-' + state.year]; });
   }
+  function cell(iso, year) { return DATA.cells[iso + '-' + year] || null; }
+  /** Scalars for a grid-year-technology, or null when there is no number.
+   *  Null covers two different things the UI must not conflate: the grid is
+   *  pending, or the grid genuinely has no fleet of that technology. Callers
+   *  that need to tell them apart use unavailableReason(). */
   function scalars(iso, year, tech) {
     var c = cell(iso, year);
-    return c && c.scalars ? c.scalars[tech] : null;
+    var s = c && c.scalars ? c.scalars[tech] : null;
+    return s && !s.unavailable ? s : null;
+  }
+  /** Why a technology has no number on a grid that HAS landed, else null. */
+  function unavailableReason(iso, year, tech) {
+    var c = cell(iso, year);
+    var s = c && c.scalars ? c.scalars[tech] : null;
+    return s && s.unavailable ? s.unavailable : null;
   }
   var withImports = function () { return state.imports === 'counted'; };
   /** Headline cost per tonne, under the current import treatment. */
@@ -126,6 +132,16 @@
   // ===========================================================================
   // HERO
   // ===========================================================================
+  function renderCoverage() {
+    var el = document.getElementById('coverage');
+    if (!el) return;
+    var n = readySet().length, tot = ISOS.length;
+    el.innerHTML = n === tot
+      ? 'All ' + tot + ' modelled grids, ' + state.year + '.'
+      : '<b>' + n + ' of ' + tot + ' modelled grids</b> have been measured for ' +
+        state.year + '. The rest are marked pending — nothing is estimated for them.';
+  }
+
   function renderHero() {
     var rows = [];
     readySet().forEach(function (iso) {
@@ -151,7 +167,7 @@
       ? ('Cutting a tonne of CO<sub>2</sub> with new ' + techLabel(lo.tech) + ' in ' + lo.iso +
          ' costs <em>' + fmtT(lo.v) + '</em>.')
       : ('The cheapest way to cut a tonne of CO<sub>2</sub> is new ' + techLabel(lo.tech) + ' in <em>' +
-         lo.iso + '</em> at ' + fmtT(lo.v) + '. The dearest is new ' + techLabel(hi.tech) + ' in <em>' +
+         lo.iso + '</em> at ' + fmtT(lo.v) + '. The most expensive is new ' + techLabel(hi.tech) + ' in <em>' +
          hi.iso + '</em> at ' + fmtT(hi.v) + '.');
     sub.innerHTML = 'Same turbines, same panels — the gap is entirely about what the power sells ' +
       'for on each grid, how much of it the local weather delivers, and how dirty the electricity ' +
@@ -171,8 +187,10 @@
 
     var rows = ISOS.map(function (iso) {
       var w = scalars(iso, state.year, 'wind'), s = scalars(iso, state.year, 'solar');
-      return { iso: iso, wind: w, solar: s, ready: !!(w && s),
-               sort: w ? Math.min(mac(w, 'post'), mac(s, 'post')) : Infinity };
+      var any = w || s;
+      return { iso: iso, wind: w, solar: s, ready: !!any,
+               sort: any ? Math.min.apply(null, [w, s].filter(Boolean)
+                      .map(function (x) { return mac(x, 'post'); })) : Infinity };
     });
     rows.sort(function (a, b) {
       if (a.sort !== b.sort) return a.sort - b.sort;
@@ -196,7 +214,9 @@
 
     var vals = [0];
     ready.forEach(function (r) {
-      ['wind', 'solar'].forEach(function (t) { vals.push(mac(r[t], 'post'), mac(r[t], 'pre')); });
+      ['wind', 'solar'].forEach(function (t) {
+        if (r[t]) vals.push(mac(r[t], 'post'), mac(r[t], 'pre'));
+      });
     });
     var lo = Math.min.apply(null, vals), hi = Math.max.apply(null, vals);
     var padv = (hi - lo) * 0.06 || 1;
@@ -243,6 +263,21 @@
       [['wind', 0], ['solar', 1]].forEach(function (pair) {
         var t = pair[0];
         var s = r[t];
+        if (!s) {
+          // Measured grid, no fleet of this technology — say so, don't draw a
+          // bar. The note goes INSIDE the plot area: it is too long for the
+          // label gutter and would run back over the grid's name.
+          var cyN = y0 + 12 + pair[1] * (barH + 6) + barH / 2 + 4;
+          if (showTech) {
+            var tn = txt(svg, padL - 10, cyN, t, 'ax-label', 'end');
+            tn.setAttribute('fill', t === 'wind' ? 'var(--mac-wind)' : 'var(--mac-solar)');
+            tn.setAttribute('font-weight', '700');
+            tn.setAttribute('opacity', '0.55');
+          }
+          var nl = txt(svg, padL + 6, cyN, 'none on this grid', 'ax-label', 'start');
+          nl.setAttribute('opacity', '0.7');
+          return;
+        }
         var cy = y0 + 12 + pair[1] * (barH + 6) + barH / 2;
         var col = t === 'wind' ? 'var(--mac-wind)' : 'var(--mac-solar)';
         var a = mac(s, 'post'), b = mac(s, 'pre');
@@ -278,6 +313,12 @@
     });
     host.appendChild(svg);
 
+    // A grid can be measured and still have no fleet of one technology.
+    function cellPair(x) {
+      return x
+        ? '<td>' + fmtT1(mac(x, 'post')) + '</td><td>' + fmtT1(mac(x, 'pre')) + '</td>'
+        : '<td colspan="2" style="text-align:center;opacity:.7">none on this grid</td>';
+    }
     document.getElementById('rangeTable').innerHTML =
       '<table class="mac-table"><thead><tr><th scope="col">Grid</th>' +
       '<th scope="col">Wind, with credits</th><th scope="col">Wind, without</th>' +
@@ -285,8 +326,7 @@
       rows.map(function (r) {
         if (!r.ready) return '<tr><td>' + r.iso + '</td><td class="pend" colspan="4">pending</td></tr>';
         return '<tr><td>' + r.iso + '</td>' +
-          '<td>' + fmtT1(mac(r.wind, 'post')) + '</td><td>' + fmtT1(mac(r.wind, 'pre')) + '</td>' +
-          '<td>' + fmtT1(mac(r.solar, 'post')) + '</td><td>' + fmtT1(mac(r.solar, 'pre')) + '</td></tr>';
+          cellPair(r.wind) + cellPair(r.solar) + '</tr>';
       }).join('') +
       '</tbody></table><p class="mac-fig__sub" style="margin:8px 0 0">Dollars per tonne of CO₂, ' +
       state.year + '.</p>';
@@ -306,6 +346,12 @@
       return;
     }
     host.innerHTML = ['wind', 'solar'].map(function (t) {
+      var why = unavailableReason(state.iso, state.year, t);
+      if (why) {
+        return '<div class="mac-card' + (t === 'solar' ? ' solar' : '') + '">' +
+          '<div class="mac-card__t">New ' + techLabel(t) + '</div>' +
+          '<div class="mac-card__pend">No figure: ' + esc(why) + '.</div></div>';
+      }
       var s = c.scalars[t];
       var net = s.cost_per_delivered_mwh_post_ira - s.capture_price;
       return '<div class="mac-card' + (t === 'solar' ? ' solar' : '') + '">' +
@@ -339,6 +385,9 @@
       return;
     }
     var grid = c.mer_month_hour;
+    // The per-technology hourly shape is not in the committed sidecar (it would
+    // roughly double its size for a presentational overlay), so the overlay
+    // button only appears when a shape is available.
     var shape = (DATA.shape || {})[state.tech] || null;
 
     var W = width('heatChart', 560);
@@ -414,13 +463,26 @@
 
     var W = width('durChart', 560), H = 268;
     var padL = 42, padR = 12, padT = 14, padB = 38;
-    var hi = Math.max.apply(null, d) * 1.08 || 1;
+    // ROBUST SCALE. At a degenerate optimum the underlying derivative is
+    // genuinely two-sided and the solver can report an extreme value — measured
+    // across these grids, a handful of hours a year, once as far as -7.7 against
+    // a physical range of roughly 0 to 1.4. They move the yearly averages by
+    // less than 0.005, so they are NOT removed from the data; but on a linear
+    // axis one of them flattens the whole curve, so the SCALE is set from the
+    // 1st/99th percentile and outliers are drawn clamped to the edge and
+    // counted underneath. Nothing is hidden: the count is on the page.
+    var sorted = d.slice().sort(function (a, b) { return a - b; });
+    var q = function (f) { return sorted[Math.min(n - 1, Math.max(0, Math.round(f * (n - 1))))]; };
+    var hi = Math.max(q(0.99) * 1.10, 0.1);
+    var lo = Math.min(q(0.01), 0);
+    var nOut = d.filter(function (v) { return v > hi || v < lo; }).length;
+    var clamp = function (v) { return Math.min(hi, Math.max(lo, v)); };
     var x = function (i) { return padL + i / (n - 1) * (W - padL - padR); };
-    var y = function (v) { return H - padB - v / hi * (H - padT - padB); };
+    var y = function (v) { return H - padB - (clamp(v) - lo) / (hi - lo) * (H - padT - padB); };
 
     var svg = svgRoot(W, H, 'Every hour of ' + state.year + ' in ' + state.iso +
       ', sorted from the dirtiest to the cleanest.');
-    ticks(0, hi, 5).forEach(function (t) {
+    ticks(lo, hi, 5).forEach(function (t) {
       svg.appendChild(svgEl('line', { x1: padL, x2: W - padR, y1: y(t), y2: y(t), class: 'grid-line' }));
       txt(svg, padL - 7, y(t) + 4, t.toFixed(2), 'ax-label', 'end');
     });
@@ -432,7 +494,7 @@
 
     var area = svgEl('path', {
       d: d.map(function (v, i) { return (i ? 'L' : 'M') + x(i).toFixed(1) + ' ' + y(v).toFixed(1); }).join('') +
-         'L' + x(n - 1).toFixed(1) + ' ' + y(0) + 'L' + x(0).toFixed(1) + ' ' + y(0) + 'Z',
+         'L' + x(n - 1).toFixed(1) + ' ' + y(lo) + 'L' + x(0).toFixed(1) + ' ' + y(lo) + 'Z',
       fill: 'var(--mac-accent)', opacity: 0.14
     });
     svg.appendChild(area);
@@ -452,7 +514,9 @@
 
     document.getElementById('durLegend').innerHTML =
       '<span><i style="background:var(--mac-accent)"></i> ' + state.iso + ', every hour sorted</span>' +
-      '<span><i style="background:var(--mac-warm)"></i> the yearly average</span>';
+      '<span><i style="background:var(--mac-warm)"></i> the yearly average</span>' +
+      (nOut ? '<span style="opacity:.8">' + nOut + ' hour' + (nOut > 1 ? 's' : '') +
+              ' fall outside this scale (see the last note below)</span>' : '');
 
     document.getElementById('durTable').innerHTML =
       '<table class="mac-table"><thead><tr><th scope="col">Hours of the year</th>' +
@@ -590,7 +654,7 @@
 
   function writeHash() {
     location.replace('#grid=' + state.iso + '&year=' + state.year + '&tech=' + state.tech +
-      '&imports=' + state.imports + '&state=' + state.synth);
+      '&imports=' + state.imports);
   }
   function readHash() {
     var p = {};
@@ -602,11 +666,14 @@
     if (YEARS.indexOf(parseInt(p.year, 10)) >= 0) state.year = parseInt(p.year, 10);
     if (p.tech === 'wind' || p.tech === 'solar') state.tech = p.tech;
     if (p.imports === 'counted' || p.imports === 'zero') state.imports = p.imports;
-    if (SYNTH_STATES[p.state]) state.synth = p.state;
+
   }
 
   function syncShapeToggle() {
     var st = document.getElementById('shapeToggle');
+    var c = cell(state.iso, state.year);
+    st.hidden = !((DATA.shape || {})[state.tech]) || !c;
+    if (st.hidden) { state.shape = false; return; }
     st.setAttribute('aria-pressed', state.shape ? 'true' : 'false');
     st.textContent = state.shape ? 'Showing ' + techLabel(state.tech) + "'s hours"
                                  : "Show " + techLabel(state.tech) + "'s hours";
@@ -623,6 +690,7 @@
       state.tech = v; writeHash(); renderAll();
     });
     renderPicker();
+    renderCoverage();
     renderHero();
     renderRange();
     renderCards();
@@ -658,6 +726,9 @@
 
   function init() {
     readHash();
+    // Default focus: the first grid that actually has data, so the per-grid
+    // section is never pointed at a pending grid on load.
+    if (!state.iso) state.iso = readySet()[0] || ISOS[0];
 
     document.getElementById('shapeToggle').addEventListener('click', function () {
       state.shape = !state.shape; renderHeat(); syncShapeToggle();
@@ -671,17 +742,6 @@
         b.textContent = tables[k] ? 'Hide table' : 'Table';
       });
     });
-    Array.prototype.forEach.call(document.querySelectorAll('.synth-banner__states button'), function (b) {
-      b.addEventListener('click', function () {
-        state.synth = b.getAttribute('data-state');
-        Array.prototype.forEach.call(document.querySelectorAll('.synth-banner__states button'), function (o) {
-          o.setAttribute('aria-pressed', o === b ? 'true' : 'false');
-        });
-        writeHash(); renderAll();
-      });
-      b.setAttribute('aria-pressed', b.getAttribute('data-state') === state.synth ? 'true' : 'false');
-    });
-
     var rid = null;
     window.addEventListener('resize', function () {
       if (rid) cancelAnimationFrame(rid);

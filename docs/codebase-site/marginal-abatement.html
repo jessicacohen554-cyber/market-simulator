@@ -76,33 +76,6 @@
       --mac-border:    rgba(255,255,255,0.14);
     }
 
-    /* ---- SYNTHETIC banner ------------------------------------------------ */
-    .synth-banner {
-      position: sticky; top: var(--nav-height); z-index: 40;
-      background: #7C2D12; color: #FFF7ED; border-bottom: 3px solid #FDBA74;
-      padding: 8px 20px; display: flex; flex-wrap: wrap;
-      align-items: center; gap: 8px 16px;
-      font-family: var(--font-body); font-size: 0.85rem; line-height: 1.4;
-    }
-    .synth-banner__tag {
-      font-family: var(--font-mono); font-weight: 700; font-size: 0.72rem;
-      letter-spacing: 0.10em; background: #FDBA74; color: #431407;
-      padding: 3px 9px; border-radius: 4px; white-space: nowrap;
-    }
-    .synth-banner__text { flex: 1 1 320px; }
-    .synth-banner__text b { color: #FFEDD5; }
-    .synth-banner__states { display: flex; gap: 5px; flex-wrap: wrap; }
-    .synth-banner__states button {
-      font: inherit; font-size: 0.75rem; cursor: pointer;
-      background: rgba(255,255,255,0.10); color: #FFF7ED;
-      border: 1px solid rgba(253,186,116,0.55); border-radius: 999px; padding: 2px 10px;
-    }
-    .synth-banner__states button:hover { background: rgba(255,255,255,0.22); }
-    .synth-banner__states button[aria-pressed="true"] {
-      background: #FDBA74; color: #431407; border-color: #FDBA74; font-weight: 700;
-    }
-    .synth-banner__states button:focus-visible { outline: 2px solid #FFF7ED; outline-offset: 2px; }
-
     /* ---- hero ------------------------------------------------------------ */
     .mac-hero__finding {
       font-family: var(--font-heading); font-weight: 700;
@@ -237,28 +210,11 @@
       color: var(--mac-ink-2); white-space: pre;
     }
 
-    @media (max-width: 720px) { .synth-banner { font-size: 0.8rem; } }
   </style>
 </head>
 
 <body>
 <nav id="topNav" aria-label="Site navigation"></nav>
-
-<!-- Remove this banner and data/marginal-abatement-synthetic.js together, in
-     the commit that first wires real data. -->
-<div class="synth-banner" role="alert">
-  <span class="synth-banner__tag">SYNTHETIC DATA</span>
-  <span class="synth-banner__text">
-    <b>Every number on this page is a placeholder</b>, seeded at realistic magnitudes so the layout
-    can be reviewed. Nothing here is a result. Do not cite it. <b>One grid (SOCO) now has the
-    underlying measurement for 2023–2025</b>; the rest are still being produced.
-  </span>
-  <span class="synth-banner__states" role="group" aria-label="Preview how the page looks as results arrive">
-    <button type="button" data-state="empty">none ready</button>
-    <button type="button" data-state="partial" aria-pressed="true">1 ready</button>
-    <button type="button" data-state="full">all ready</button>
-  </span>
-</div>
 
 <!-- ============================ ALL GRIDS =============================== -->
 <section class="section-light" style="padding: 26px 24px 44px;">
@@ -269,6 +225,7 @@
     What it costs, per tonne of CO<sub>2</sub>, to cut emissions by building <b>new wind</b> or
     <b>new solar</b> on each grid — with and without the IRA tax credits.
   </p>
+  <p class="bc-page-sub" id="coverage" style="margin-top:-6px"></p>
 
   <p class="mac-hero__finding" id="heroFinding"></p>
   <p class="mac-hero__sub" id="heroSub"></p>
@@ -413,6 +370,15 @@
     </div>
 
     <div class="mac-caveat">
+      <h4>A handful of hours are ambiguous</h4>
+      <p>In a few hours a year the underlying maths has no single answer — two different values are
+      equally valid — and the figure that comes out can be far outside the physical range. They are
+      rare (single digits on a grid-year, out of 8,760) and shift the yearly averages by less than
+      half a percent, so they are left in the data rather than quietly dropped. The variation chart
+      scales past them and says how many it did that to.</p>
+    </div>
+
+    <div class="mac-caveat">
       <h4>These are backward-looking numbers</h4>
       <p>They describe grids as the model reproduces them for 2023–2025. They are not a forecast,
       and they carry no claim about how accurate a forecast built on the same machinery would be.</p>
@@ -448,7 +414,10 @@
 </div>
 </section>
 
-<script src="data/marginal-abatement-synthetic.js"></script>
+<!-- Generated index over the committed per-grid-year sidecars in
+     frontend/data/mac/. Rebuild locally with
+     `python3 scripts/build_mac_sidecar.py --reindex`. -->
+<script src="../../frontend/data/mac/manifest.js"></script>
 <script src="js/nav.js"></script>
 <script src="js/shared.js"></script>
 <script src="js/marginal-abatement.js"></script>

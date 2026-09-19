@@ -166,7 +166,7 @@ renderer). Adds one `nav.js` entry under **Backcast** → *Marginal Abatement*.
 1. **SYNTHETIC banner** — full-bleed, high-contrast, sticky under the nav, unmissable. Present
    only in the mock; removed by the commit that first wires real data.
 2. **Hero banner** — reads as a *finding*, not a legend: one sentence naming the cheapest and
-   dearest grid to abate on at the selected year/tech, then a KPI row of per-region stat tiles
+   most expensive grid to abate on at the selected year/tech, then a KPI row of per-region stat tiles
    (post-IRA $/t large, pre-IRA beneath, MER as the sub-label). With zero regions ready it says
    so plainly and names what lands first. A `n of 9 grids measured` progress strip sits beside it.
 3. **Controls** — `seg-ctrl` for year (2023 / 2024 / 2025) and tech (wind / solar / both), and an
@@ -358,63 +358,85 @@ left** — it is not this page's.
 
 ---
 
-## 9. REFRESH — what has actually landed, 2026-09-19 (rebased onto `142b10bc`)
+## 9. THE PAGE IS NOW ON REAL DATA (2026-09-19, rebased onto `ab37e7ef`)
 
-Fifty commits arrived on `main` since this branch's base, several of them emissions-dual work.
-Re-scanned **all 68 committed `system_<year>.parquet` sidecars** for the column:
+The synthetic fixture and its banner are **deleted**. The page reads
+`frontend/data/mac/manifest.js`, a generated index over committed per-grid-year sidecars built by
+the new `scripts/build_mac_sidecar.py`.
 
-| Bundle | Years with the dual | Is it that grid's designated keeper? | Usable on this page (2023–2025)? |
-|---|---|---|---|
-| `soco53d_campaign` | **2023, 2024, 2025** | **yes** (`2026-09-19-soco53d-campaign-commitment`) | **YES** |
-| `spp48_arm_span` | 2019, 2020, 2021, 2022 | no (SPP's keeper is `spp42_span_a`) | no — wrong years *and* not the keeper |
+**Coverage: 3 of 9 grids, all three years each.** Re-scanned all 64 committed system sidecars:
 
-**So the score is 1 of 9, not the 3 or 4 the commit titles suggest.** Two of those titles are
-misleading if read quickly and are worth writing down:
+| Grid | Keeper bundle | 2023 / 2024 / 2025 |
+|---|---|---|
+| ERCOT | `ercot_mer20260919_five_year` | ✅ ✅ ✅ |
+| MISO | `miso262_cold_span` | ✅ ✅ ✅ |
+| SOCO | `soco53d_campaign` | ✅ ✅ ✅ |
+| CAISO · NEISO · NWPP · NYISO · PJM · SPP | — | pending |
 
-- `58007ba2` — *"nyiso-240 MER control … NYISO gets its emissions dual"*. NYISO's keeper was
-  re-promoted to `nyiso240_benchfix_span`, and **that bundle does not carry the column.** The MER
-  control arm was a separate solve that is not the registered keeper.
-- `d8183961` / `9d344f71` — *"MER delivered for all 5 years"* for ERCOT, then
-  *"promotion prepared; **blocked at the registration step**"*. `7ec23b54` then explicitly
-  **kept the ercot-mer per-year shard bundles out of `main`**. ERCOT's numbers exist on shard
-  disk; nothing on `main` can be read by a build script.
+SPP's `spp48_arm_span` carries the dual for 2019–2022, but it is not SPP's designated keeper and
+those are not this page's years. ERCOT's registration (blocked last time) has landed; MISO's cold
+span was promoted and carries the column.
 
-Consequence for this page: the build script in §2 can produce exactly **one real grid-year set
-today — SOCO 2023/24/25**. ERCOT unblocks as soon as its registration lands; NYISO needs its MER
-arm folded into the registered keeper rather than kept beside it.
+### Three defects the real data exposed that synthetic data could not
 
-The mock's default preview state is now **`['SOCO']`**, not three arbitrary grids, so the layout
-being reviewed is the layout that will actually ship. The banner says so in one line.
+**1. Unserved-energy hours are not priced hours.** SOCO 2025 has 13 hours clearing at
+**$61,900/MWh** — every one of them an hour the LP could not serve all demand, where the clearing
+value is the value-of-lost-load *penalty*, not a price anyone settles at. Left in, those 13 hours
+supplied **68 % of the year's mean price** and dragged SOCO's solar abatement cost to
+**−$189/tCO₂**. They are now excluded from both weighted averages and the count is reported
+(`unserved_hours_excluded`). SOCO 2025 solar: **−$189 → +$25.7**, in line with its own 2023
+($33.9) and 2024 ($34.9). Genuine scarcity *below* the offer cap is untouched — ERCOT 2023 keeps
+62 of its 63 hours over $1,000.
 
-## 10. Palette change — solar yellow, wind lime green (owner request)
+**2. The emissions dual is occasionally degenerate, exactly as caveat 1 predicted.** ERCOT 2024
+contains an hour at **−7.7 tCO₂/MWh**, against a physical range of about 0 to 1.4. Measured across
+all nine grid-years: at most a handful of such hours each, and clipping them to [0, 1.3] moves the
+annual mean by **≤ 0.003**. So they are *not* removed from the data — but one of them flattens a
+linear axis, so the variation chart scales on the 1st/99th percentile, clamps outliers to the edge,
+and **prints how many it did that to**. A new plain-language caveat card says the same thing.
 
-Applied, with one thing worth knowing before anyone "brightens it up":
+**3. A measured grid can still have no fleet.** SOCO has **no wind at all** — correct for the
+Southeast. That is a third state the UI had never needed: not pending, not a number. It now renders
+"none on this grid" in the chart and a reason on the card, and the axis domain, the table and the
+hero all skip it rather than crashing (they did crash first).
 
-**Bright lime and bright yellow are not distinguishable under red–green colour blindness.** They
-are adjacent hues at similar lightness, and no amount of hue nudging fixes it — the obvious pair
-(`#84CC16` / `#EAB308`) measures **ΔE 2.9 under protanopia**, and even its *normal-vision* score is
-14.8, below the floor. A 77-pair search over the dark surface returned only combinations that had
-stopped being lime and yellow at all.
+### The import correction is now derived, not assumed
 
-The separation is therefore carried by **lightness**, which is why one of the pair is deep in each
-mode:
+It uses the repo's own published ladder — `results.emissions.import_tranche_ef` and
+`CARB_UNSPECIFIED_IMPORT_EF`, the same factors the solved run books its reported-only import CO₂
+at — and it is scoped to hours where the LP's *own* import pseudo-units are serving load. A grid
+with no import node gets exactly 0.0 by construction. Of the three ready grids only MISO has one,
+so the toggle moves MISO (8.4 % of hours) and is inert for ERCOT and SOCO. That inertness is a
+measured fact, not an assumption.
 
-| | wind (lime) | solar (yellow) | CVD ΔE | normal ΔE | contrast |
-|---|---|---|---|---|---|
-| light | `#4D7C0F` | `#CA8A04` | **9.5 PASS** | 19.9 PASS | 5.0:1 / 2.9:1 |
-| dark | `#65A30D` | `#FACC15` | **16.7 PASS** | 24.3 PASS | 5.1:1 / 10.2:1 |
+### Results, with credits / without, imports counted ($/tCO₂)
 
-Two deviations, both deliberate and both the lesser evil:
+| Grid | 2023 wind | 2023 solar | 2024 wind | 2024 solar | 2025 wind | 2025 solar |
+|---|---|---|---|---|---|---|
+| ERCOT | −1.9 / 24.7 | −48.6 / −28.2 | 20.4 / 47.4 | 17.8 / 38.6 | 11.9 / 41.7 | 18.3 / 42.6 |
+| MISO | 2.4 / 27.8 | 76.0 / 120.9 | 3.8 / 29.6 | 53.1 / 88.8 | −12.5 / 12.4 | 25.5 / 57.3 |
+| SOCO | no wind fleet | 33.9 / 62.3 | no wind fleet | 34.9 / 62.7 | no wind fleet | 25.7 / 56.9 |
 
-- **Light mode, contrast WARN on the yellow (2.9:1).** The skill calls this non-dismissable but
-  dischargeable by a relief channel — and the chart already ships both it names: every bar carries
-  a visible value label, and there is a table view. The alternative (`#B8860B`, 3.25:1) drops CVD
-  separation to 7.4, into the floor band. A CVD WARN is worse than a contrast WARN, because CVD is
-  what actually makes two series indistinguishable.
-- **Dark mode, lightness-band FAIL on the yellow (L 0.861 vs a 0.67 ceiling).** That band is
-  calibrated to a lighter dark surface than this page's navy; the *surface-aware* contrast check
-  passes at 10.2:1. Pulling the yellow into the band means both marks go dark and CVD collapses
-  to 4.2 — unreadable for a red–green colourblind reader. Taken knowingly.
+**The surviving negatives are results, not bugs**, and were checked individually. ERCOT 2023 was a
+severe scarcity year whose spikes fall in solar's own hours, so new solar earned more than it cost —
+its abatement was free. MISO 2025 wind is profitable on energy alone at the PTC, with no scarcity
+hours anywhere in the year (its highest price is $716). Both are the real-world story.
 
-Contrast re-audited over every text node in all three data states after the change: **clean on this
-page**; the pre-existing `shared.css:395` mobile-nav finding is still named and left.
+### Files
+
+**New:** `scripts/build_mac_sidecar.py` — zero LP; reads the committed hourly sidecars plus the
+shipped constants, and **refuses rather than guesses** when an input is missing.
+`frontend/data/mac/<ISO>-<year>.json` — committed, 9 files, ~4.5 KB each.
+**Generated (gitignored):** `frontend/data/mac/manifest.js`, rebuilt by
+`--reindex`, which is **stdlib-only** (verified by running it with site-packages stripped from
+`sys.path`) so the Pages deploy can run it. **Deleted:** the synthetic fixture and its banner.
+**Edited:** one line in the existing `deploy-pages.yml` assemble step and its path filter — **no new
+workflow** (private repo, billed minutes).
+
+### Still open
+
+`cf_expected` comes from EIA-860 operable capacity, the one input no sidecar carries. Its weakest
+value is MISO solar at **0.137–0.199** — a fast-growing fleet measured against annual-mean capacity.
+The month-precise COD ramp should handle it, but it is the input most worth a second look, and it
+drives MISO's high solar numbers directly. The load-weighted zonal collapse of §1(b) is unchanged
+and still the main structural approximation.
