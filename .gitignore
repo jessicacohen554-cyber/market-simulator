@@ -2678,8 +2678,10 @@ results/calibration/nyiso241_ctbands_span/
 # (rule 31 [R-RETAIN]); they are simply not composable. 2020/2021/2022 are
 # UNAFFECTED — their own per-year flags match the composite base. See
 # docs/ADDENDUM-miso263-replay-keeper-has-no-per-year-dimension-2026-09-19.md.
-# Corrected 2023/2024/2025 shards push to claude/miso263-coalcap-<year>b; their
-# SHAs are appended when they land.
+# Corrected 2023/2024/2025 shards push to claude/miso263-coalcap-<year>b:
+#
+#   git checkout d2bf6e4bec19a7b8966f310a9dd5a4d332b1ff06 -- results/calibration/miso263_coalcap_2023
+#   (2024b / 2025b SHAs appended when they land)
 #
 # The two SUPERSEDED branches were NOT deleted, and that is not an oversight:
 # `git push origin --delete` returns HTTP 403 here (this session's credential
