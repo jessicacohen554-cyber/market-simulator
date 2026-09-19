@@ -14607,3 +14607,41 @@ order; the 24 h / 168 h lengths are never swept. Shard `keeper:` field and the �
 measured-TTC-correct / wrong-shape reading) — this session adds its price-floor half. Hydro remains
 unscored by C1 (handed forward, unchanged). Rule 31: nothing new to retain or delete; nyiso-236's legs
 stay at their pinned SHAs. Rule 33: no shards to archive.
+
+## nyiso-240 — 2026-09-19
+
+**ZERO LP. Keeper UNCHANGED** (`2026-09-17-nyiso239-bench-oil-basis`, years {2022,2023,2024,2025},
+`CALIBRATED`, grade 7, fails 0, C3c the lone ledgered caveat). Nothing armed, screened, solved,
+promoted or registered; no mechanism-matrix cell moves. Record:
+`docs/FINDING-nyiso240-c1-margin-bench-attribution-2026-09-19.md`; probe
+`scripts/probes/nyiso240_c1_margin_bench_phase0.py` →
+`results/calibration/_nyiso240_c1_margin_bench_phase0.json`.
+
+**The handoff's winter/deliverability lead is WITHDRAWN on evidence.** Against NYISO's own published
+hourly fuel mix the model's total fossil is **+2.0 % in February and +0.8 % in November** 2022
+(−1.1 % for the year); the month-grain outliers are January −7.6 % and December −10.6 %, both
+*under*-runs. The `CC_REGULAR` over-run is intra-fossil misallocation, not a fuel-delivery event.
+
+**Two benchmark defects named, both shared across every ISO, neither landed (rule 25).**
+**R1** — EIA-923 drops whole months and its *published annual* drops them with it: Bethlehem Energy
+Center (2539) is absent for Feb and Nov 2022, CAMPD meters 596.0 GWh there (879.6 GWh scaled by the
+plant's own measured ten-month ratio), and `_backfill_eia923_with_campd` cannot see it because it
+gates on a 50 GWh **annual** floor against Bethlehem's 4,262 GWh. **67 plant-years across nine BAs.**
+**R2** — `_classify_f923` routes 100 % of DFO/RFO/JF/KER/WO/PC to the `oil` class while the model
+books every MWh of Astoria Energy / Astoria II / Zeltmann as `CC_REGULAR/gas_cc` (the model's whole
+`oil`-fuel fleet is 11.1 GWh against a bench `oil` class of 1,843.7 GWh).
+
+**Margin**: 2022 `CC_REGULAR` **+2.95 → +1.93 pp** against ±3.0 (headroom 0.05 → 1.07 pp). **Cross-ISO
+verdict census — every ISO's keeper re-scored: 42 C1 rows move ≥ 0.05 pp, ZERO change status, ZERO of
+the eight determinations flip.** Stated at full magnitude: 2023 `ST_GAS` (+2.85 → +2.70) and 2024
+`CC_REGULAR` (+2.46 → +2.44) are barely touched and +2.26 TWh of the 2022 over-run is real.
+
+**Cost**: nyiso-239's four shard SHAs still resolve — all four legs retrieved with `dispatch/` and
+`unit_hourly/`, so the NYISO realisation is a `--rebuild-benchmark` re-render at **zero LP**.
+
+**Successor**: `CT_PEAKER` collapses out of merit from 2023 (model 2.43 → 0.25 / 0.30 / 0.77 TWh
+against a flat ~2.1–2.8 actual) with capacity intact, and the displaced energy is exactly 2023
+`ST_GAS` +3.40 and 2024 `CC_REGULAR` +2.94 — the two C1 rows the bench repairs do not touch.
+Recommended lever: `ct_peaker_committed_measured` (cell **U**, NYISO's own 0.843 vs the transferred
+1.35). `nyiso_ct_peaker_bands_measured` stays **R** and was not re-tested. Rule 31: nothing new to
+retain or delete. Rule 33: no shards launched.
