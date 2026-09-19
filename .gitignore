@@ -2457,9 +2457,23 @@ results/calibration/soco53c_control/
 results/calibration/ercot_mer20260919_*/
 # nyiso-240 MER CONTROL legs (2026-09-19) — the marginal-emission-rate dual (`marginal_emission_rate`,
 # per zone-hour tCO2/MWh in hourly/system_<year>.parquet), which landed on main 2026-09-18 at
-# 2ec096633f5624585eb9db1728ebc7c8ca5ccbdf and which NO committed NYISO keeper carries: the keeper's
-# dispatch was solved at 3edb8ad8 (2026-09-17). These are a CONTROL, never registered (rule 15
+# 2ec096633f5624585eb9db1728ebc7c8ca5ccbdf. These are a CONTROL, never registered (rule 15
 # [R-DASHBOARD] keeper-only retention), so they stay out of `main` — hence these ignore lines.
+#
+# SUPERSEDED 2026-09-19 (nyiso-241), AND THE OPEN QUESTION THEY CARRIED IS CLOSED BY CONSTRUCTION.
+# Two things changed. (1) The clause above that said "NO committed NYISO keeper carries" the dual is
+# NO LONGER TRUE: the keeper promoted this session, 2026-09-19-nyiso241-ct-committed-measured, commits
+# `hourly/system_<yr>.parquet` WITH `marginal_emission_rate` for all four years (rule 15 commits a
+# keeper's hourly/ sidecars), so the MER series is now durably on `main` for the CURRENT keeper with
+# no allowlist entry and no unregistered bundle. The marginal-abatement page reads it there. That
+# settles the owner question nyiso-240 raised (RESULT A.3) without anyone having to rule on it.
+# (2) These legs are the SUPERSEDED keeper's dispatch — they no longer match the designated keeper at
+# all, since nyiso_ct_peaker_committed_measured moved CT_PEAKER's committed band.
+# The four local checkouts were therefore DELETED from this container 2026-09-19 (rule 31
+# [R-RETAIN] trigger (i): the owner has ruled on promotion and these are not needed). They remain
+# fully recoverable at the SHAs below, each re-verified as still advertised by the remote at the time
+# of deletion even though their shard branches are gone. The ignore lines stay so a future checkout
+# of them cannot reach `main`.
 # The per-year fan-out was the OWNER'S EXPLICIT INSTRUCTION (2026-09-19) and is rule-32(b)-legal
 # here: 32(b) bans fanning out a run that must come back together FOR REGISTRATION, and names the
 # diagnostic carve-out this control sits in.
