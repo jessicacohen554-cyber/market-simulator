@@ -5814,7 +5814,8 @@ charter's "+6.41 over-export" was an artifact of the wrong benchmark.
 **Q5: the 2021 repair is SOUND, the 2020 repair is NOT.** Raw 2021 sums to 4,902.23 TWh with a worst
 hour of 2,147,480,064 MW (int32 overflow); the screen flags 3 hours → **796.17 TWh**, peak 149,590 MW.
 But **two 2020 hours survive** the 2.5×-median bar: 2020-07-28 **H13 at 192,229 MW** (2.26× median,
-**16 % above PJM's all-time peak**, at 1 p.m. on a day whose own H17 reads lower, and failing the
+**20–30 % above every clean year's maximum in the very file the model reads** — the extract's clean
+years top out at 147,605–160,560 MW; at 1 p.m. on a day whose own H17 reads lower; and failing the
 extract's own identity by −56,665 MW) and 2020-07-29 H17 at 176,085 MW. The model serves both.
 
 **Q4 per-class, on the EIA-923 basis** (EIA-930's `NG: SUN` is 0.2–1.0 TWh against 6–21 measured —

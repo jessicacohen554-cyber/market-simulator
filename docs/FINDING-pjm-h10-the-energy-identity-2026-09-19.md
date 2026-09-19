@@ -15,7 +15,7 @@
 3. **A NEW defect, previously unnamed: PJM's keeper 2020 does not run the keeper's own seam representation.** `PJM_SEAM_LADDER_BY_YEAR` covers 2019, 2021, 2022, 2023, 2024, 2025 — **2020 is absent**, and so is `firm_export_floor_by_year`, so 2020 falls through to the *forecast* gas-elastic track. Both source inputs for 2020 are on disk. This is the identical defect the lane already fixed for 2022 at pjm-160, in the same channel, left behind.
 4. **EIA-930's own accounting identity does not close for PJM in 2019, 2020 and 2025** (`D + TI − NG` = **+9.85 / +8.56 / −14.76 TWh**; ≤0.19 TWh in 2021–2024). Most of the apparent 2020 "generation overshoot" is this, not the model.
 5. **Two corrections to the state I was given** (§6): the model's internal energy sink is **not** storage round-trip loss — storage is only 28–41 % of it, the rest is the measured zonal loss surface; and the PJM touchpoint's **C2 is a PASS**, not a FAIL.
-6. **The 2020 demand repair is incomplete.** A **192,229 MW** hour survives the spike screen — 16 % above PJM's all-time peak, at 1 p.m. on a day whose own 5 p.m. reads lower, and internally inconsistent by −56,665 MW against its own row.
+6. **The 2020 demand repair is incomplete.** A **192,229 MW** hour survives the spike screen — 20–30 % above every clean year's maximum in the very file the model reads, at 1 p.m. on a day whose own 5 p.m. reads lower, and internally inconsistent by −56,665 MW against its own row.
 
 ---
 
@@ -252,7 +252,17 @@ The screen's bar is 2.5 × the annual median, which for 2020 is 212,426 MW. In e
 | 5003 | 2020-07-28 **H13** | **192,229** | 2.26 | 140,956 | +5,392 | **−56,665** |
 | 5031 | 2020-07-29 H17 | **176,085** | 2.07 | 147,277 | +5,919 | **−34,727** |
 
-Three independent reasons each is an artifact: (i) **192,229 MW exceeds PJM's all-time peak (165,563 MW, 2006-08-02) by 16 %**; (ii) H13 is **1 p.m.**, and every genuine annual peak in 2019–2025 lands at H16–H19 — that same day's H17 reads lower; (iii) the row **fails EIA-930's own accounting identity** by −56,665 MW, where 2021–2024 close to a mean |residual| of 7–133 MW.
+Three independent reasons each is an artifact, all from the model's own input file:
+
+* **(i) Level.** In the extract's clean years the annual maximum is 147,605–160,560 MW and the
+  p99.9 hour is 144,591–156,635 MW. **192,229 MW is 20–30 % above every clean year's maximum in
+  the very file the model reads.** (For context, outside the repo PJM's all-time peak is commonly
+  cited as 165,563 MW on 2006-08-02, which the hour also exceeds by 16 % — but the in-file
+  comparison above is the load-bearing one and needs no external source.)
+* **(ii) Shape.** H13 is **1 p.m.** Every genuine annual peak in 2019–2025 lands at **H16–H19**,
+  and that same day's H17 reads *lower* than its H13.
+* **(iii) Internal consistency.** The row **fails EIA-930's own accounting identity by
+  −56,665 MW**, where 2021–2024 close to a mean |residual| of 7–133 MW.
 
 **The model serves both hours.** This is a rule 14 `[R-ACCURATE]` matter and it is a live input defect in a keeper year.
 
