@@ -446,6 +446,37 @@ def _system_hourly_price(yd: "C.YearData") -> np.ndarray:
     return p.mean(axis=0)
 
 
+def _marginal_emission_rates(yd: "C.YearData") -> dict[str, "float | None"]:
+    """Return the year's marginal emission rates (tCO2/MWh) at three weightings.
+
+    The emissions dual (``DispatchResult.marginal_emission_rate``) is a
+    zone-hour array; these are the scalars a horizon row can carry. The
+    VRE-weighted pair is the one a marginal-abatement-cost reading needs --
+    a wind or solar project displaces whatever is on the margin *in its own
+    generating hours*, which is not the load-weighted average and not a
+    fossil-fleet average. ``None`` everywhere the dual was not measured (a
+    year restored from a cache written before it was wired), never ``0.0``.
+    """
+    from market_sim.results.emissions import weighted_marginal_rate
+
+    mer = getattr(yd.result, "marginal_emission_rate", None)
+    if mer is None:
+        return {
+            "mer_load_weighted": None,
+            "mer_wind_weighted": None,
+            "mer_solar_weighted": None,
+        }
+    return {
+        "mer_load_weighted": weighted_marginal_rate(mer, yd.demand),
+        "mer_wind_weighted": weighted_marginal_rate(
+            mer, getattr(yd.result, "wind_dispatched", None)
+        ),
+        "mer_solar_weighted": weighted_marginal_rate(
+            mer, getattr(yd.result, "solar_dispatched", None)
+        ),
+    }
+
+
 def _capacity_by_fuel(yd: "C.YearData") -> dict[str, float]:
     ctx = yd.context
     out: dict[str, float] = {}
@@ -637,6 +668,15 @@ def extract_trajectory(run: "C.Run") -> list[dict]:
                 # key exactly as it treats a `None` value — not measured.
                 "clean_region_duals": clean_duals,
                 "co2_cap_price": co2_cap_price,
+                # Marginal emission rates (tCO2/MWh) on the same additive,
+                # None-not-zero contract. ``mer_wind_weighted`` /
+                # ``mer_solar_weighted`` are the denominators of a new-build
+                # MAC: pair them with the entry ledger's ``lcoe_per_mwh`` and
+                # ``energy_revenue_per_mw_yr`` for the same year.
+                **{
+                    k: (round(v, 6) if v is not None else None)
+                    for k, v in _marginal_emission_rates(yd).items()
+                },
                 "thermal_mw": round(thermal, 1),
                 "firm_clean_mw": round(firm_clean, 1),
                 "vre_mw": round(vre, 1),

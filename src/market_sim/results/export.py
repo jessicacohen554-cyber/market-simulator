@@ -35,6 +35,7 @@ from market_sim.results.emissions import (
     compute_nox,
     compute_so2,
     import_co2_tons,
+    weighted_marginal_rate,
 )
 
 logger = logging.getLogger(__name__)
@@ -234,6 +235,19 @@ def _summarize_year(result, context, config=None) -> dict:
         else 0.0
     )
 
+    # Marginal emission rate (tCO2/MWh) -- the emissions dual, reported at the
+    # three weightings a reader actually asks for. The VRE-shape-weighted pair
+    # is the DENOMINATOR of a marginal abatement cost for new wind / solar:
+    # divide a project's (cost per delivered MWh - capture price) by the rate
+    # its OWN output shape earns, not by a fleet or fossil average. Reported
+    # only; nothing here is scored, and ``None`` where it was not measured
+    # (a cached year solved before the dual was wired, or a resource with no
+    # generation) rather than 0.0, which would read as "displaces nothing".
+    mer = getattr(result, "marginal_emission_rate", None)
+    mer_wind = weighted_marginal_rate(mer, result.wind_dispatched)
+    mer_solar = weighted_marginal_rate(mer, result.solar_dispatched)
+    mer_mean = float(np.asarray(mer, dtype=float).mean()) if mer is not None else None
+
     curtailed_mwh = float(
         compute_curtailment(context.wind_potential_mwh, result.wind_dispatched.sum())
         + compute_curtailment(
@@ -305,6 +319,15 @@ def _summarize_year(result, context, config=None) -> dict:
         "storage_cycles": round(storage_cycles, 2),
         "clean_share": round(clean_share, 4),
         "negative_price_hours": round(negative_price_hours, 2),
+        "marginal_emission_rate_mean_t_per_mwh": (
+            round(mer_mean, 6) if mer_mean is not None else None
+        ),
+        "marginal_emission_rate_wind_weighted_t_per_mwh": (
+            round(mer_wind, 6) if mer_wind is not None else None
+        ),
+        "marginal_emission_rate_solar_weighted_t_per_mwh": (
+            round(mer_solar, 6) if mer_solar is not None else None
+        ),
     }
 
 

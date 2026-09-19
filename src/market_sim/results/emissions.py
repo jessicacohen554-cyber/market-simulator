@@ -467,3 +467,45 @@ def import_co2_tons(
         dtype=float,
     )
     return float((np.maximum(gen_mwh, 0.0) * rates).sum())
+
+
+def weighted_marginal_rate(
+    marginal_rate: "np.ndarray | None", weight: "np.ndarray | None"
+) -> float | None:
+    """Return a weighted mean of the marginal emission rate, in tCO2/MWh.
+
+    The marginal emission rate (``DispatchResult.marginal_emission_rate``,
+    shape ``(n_zones, T)``) is the CO2 consequence of a marginal MWh in each
+    zone-hour. WHICH mean of it you want depends on the question, because the
+    rate is not flat across the year:
+
+    * weighted by **load** — what an average MWh of consumption drives;
+    * weighted by a **resource's own output shape** — what a marginal MWh from
+      *that* resource displaces. This is the denominator of a marginal
+      abatement cost: a solar project earns the rate in the hours it actually
+      generates, which in a solar-heavy zone are the hours the rate is lowest.
+
+    Weighting by the resource's shape is the reason a wind MAC and a solar MAC
+    differ in the same market even at the same $/MWh cost gap.
+
+    Args:
+        marginal_rate: ``(n_zones, T)`` tCO2/MWh, or ``None``.
+        weight: ``(n_zones, T)`` non-negative weights (MWh of load, or of the
+            resource's generation), or ``None``.
+
+    Returns:
+        The weighted mean, or ``None`` when either input is absent, their
+        shapes disagree, or the weights sum to zero (a resource that never
+        generated has no rate to report — ``None``, never ``0.0``, which would
+        read as "displaces nothing").
+    """
+    if marginal_rate is None or weight is None:
+        return None
+    rate = np.asarray(marginal_rate, dtype=float)
+    w = np.asarray(weight, dtype=float)
+    if rate.shape != w.shape:
+        return None
+    total = float(w.sum())
+    if not total > 0.0:
+        return None
+    return float((rate * w).sum() / total)
