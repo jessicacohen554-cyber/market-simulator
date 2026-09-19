@@ -1,0 +1,170 @@
+{
+  "2022": {
+    "CT_PEAKER": {
+      "plant_hours": 192720,
+      "ident_pair": "committed(1.35) - econlo(1.0)",
+      "energy_usd_per_mwh_at_band_1": 124.2967758178711,
+      "fixed_usd_per_mwh": -1.2734183073043823,
+      "offer_at_lo_band": 123.02334594726562,
+      "fixed_share": -0.010351029224693775,
+      "fixed_median": 3.5116729736328125,
+      "negative_fixed_share_of_rows": 0.4828144458281445
+    },
+    "ST_GAS": {
+      "plant_hours": 96360,
+      "ident_pair": "econhi(1.13) - committed(1.05)",
+      "energy_usd_per_mwh_at_band_1": -52.702945709228516,
+      "fixed_usd_per_mwh": 158.7086181640625,
+      "offer_at_lo_band": 103.37052154541016,
+      "fixed_share": 1.535337209701538,
+      "fixed_median": 136.63125610351562,
+      "negative_fixed_share_of_rows": 0.09389788293897883
+    },
+    "CC_REGULAR": {
+      "plant_hours": 140160,
+      "ident_pair": "econc05(1.0) - committed(0.9)",
+      "energy_usd_per_mwh_at_band_1": 28.316505432128906,
+      "fixed_usd_per_mwh": 35.73275375366211,
+      "offer_at_lo_band": 61.21761703491211,
+      "fixed_share": 0.5837005376815796,
+      "fixed_median": 19.767791748046875,
+      "negative_fixed_share_of_rows": 0.13972602739726028
+    },
+    "CC_CHP": {
+      "plant_hours": 61320,
+      "ident_pair": "econc05(1.24) - committed(0.9)",
+      "energy_usd_per_mwh_at_band_1": 41.896724700927734,
+      "fixed_usd_per_mwh": 25.13052749633789,
+      "offer_at_lo_band": 62.837581634521484,
+      "fixed_share": 0.39992833137512207,
+      "fixed_median": 15.624637603759766,
+      "negative_fixed_share_of_rows": 0.041487279843444226
+    }
+  },
+  "2023": {
+    "CT_PEAKER": {
+      "plant_hours": 192720,
+      "ident_pair": "committed(1.35) - econlo(1.0)",
+      "energy_usd_per_mwh_at_band_1": 74.85897827148438,
+      "fixed_usd_per_mwh": -11.976292610168457,
+      "offer_at_lo_band": 62.882686614990234,
+      "fixed_share": -0.19045452773571014,
+      "fixed_median": -15.95589828491211,
+      "negative_fixed_share_of_rows": 0.7525529265255293
+    },
+    "ST_GAS": {
+      "plant_hours": 96360,
+      "ident_pair": "econhi(1.13) - committed(1.05)",
+      "energy_usd_per_mwh_at_band_1": -17.345888137817383,
+      "fixed_usd_per_mwh": 61.334232330322266,
+      "offer_at_lo_band": 43.121055603027344,
+      "fixed_share": 1.4223731756210327,
+      "fixed_median": 52.85636520385742,
+      "negative_fixed_share_of_rows": 0.03188044831880448
+    },
+    "CC_REGULAR": {
+      "plant_hours": 140160,
+      "ident_pair": "econc05(1.0) - committed(0.9)",
+      "energy_usd_per_mwh_at_band_1": -5.825339317321777,
+      "fixed_usd_per_mwh": 33.16769027709961,
+      "offer_at_lo_band": 27.92488670349121,
+      "fixed_share": 1.1877466440200806,
+      "fixed_median": 18.972518920898438,
+      "negative_fixed_share_of_rows": 0.003595890410958904
+    },
+    "CC_CHP": {
+      "plant_hours": 61320,
+      "ident_pair": "econc05(1.24) - committed(0.9)",
+      "energy_usd_per_mwh_at_band_1": 9.767853736877441,
+      "fixed_usd_per_mwh": 18.834585189819336,
+      "offer_at_lo_band": 27.625654220581055,
+      "fixed_share": 0.6817787885665894,
+      "fixed_median": 11.05347728729248,
+      "negative_fixed_share_of_rows": 0.0
+    }
+  },
+  "2024": {
+    "CT_PEAKER": {
+      "plant_hours": 192720,
+      "ident_pair": "committed(1.35) - econlo(1.0)",
+      "energy_usd_per_mwh_at_band_1": 74.64946746826172,
+      "fixed_usd_per_mwh": -4.662175178527832,
+      "offer_at_lo_band": 69.98728942871094,
+      "fixed_share": -0.06661459803581238,
+      "fixed_median": -7.595930099487305,
+      "negative_fixed_share_of_rows": 0.6282689912826899
+    },
+    "ST_GAS": {
+      "plant_hours": 96360,
+      "ident_pair": "econhi(1.13) - committed(1.05)",
+      "energy_usd_per_mwh_at_band_1": -17.141626358032227,
+      "fixed_usd_per_mwh": 62.61863708496094,
+      "offer_at_lo_band": 44.61993408203125,
+      "fixed_share": 1.4033781290054321,
+      "fixed_median": 40.449981689453125,
+      "negative_fixed_share_of_rows": 0.00821917808219178
+    },
+    "CC_REGULAR": {
+      "plant_hours": 148920,
+      "ident_pair": "econc05(1.0) - committed(0.9)",
+      "energy_usd_per_mwh_at_band_1": -2.7169649600982666,
+      "fixed_usd_per_mwh": 30.865812301635742,
+      "offer_at_lo_band": 28.42054557800293,
+      "fixed_share": 1.0860387086868286,
+      "fixed_median": 17.589282989501953,
+      "negative_fixed_share_of_rows": 0.0
+    },
+    "CC_CHP": {
+      "plant_hours": 61320,
+      "ident_pair": "econc05(1.24) - committed(0.9)",
+      "energy_usd_per_mwh_at_band_1": 12.880887985229492,
+      "fixed_usd_per_mwh": 17.134004592895508,
+      "offer_at_lo_band": 28.726802825927734,
+      "fixed_share": 0.5964466333389282,
+      "fixed_median": 13.718119621276855,
+      "negative_fixed_share_of_rows": 0.0
+    }
+  },
+  "2025": {
+    "CT_PEAKER": {
+      "plant_hours": 192720,
+      "ident_pair": "committed(1.35) - econlo(1.0)",
+      "energy_usd_per_mwh_at_band_1": 96.48241424560547,
+      "fixed_usd_per_mwh": 4.302771091461182,
+      "offer_at_lo_band": 100.78518676757812,
+      "fixed_share": 0.04269249364733696,
+      "fixed_median": -0.7560501098632812,
+      "negative_fixed_share_of_rows": 0.5145703611457036
+    },
+    "ST_GAS": {
+      "plant_hours": 96360,
+      "ident_pair": "econhi(1.13) - committed(1.05)",
+      "energy_usd_per_mwh_at_band_1": -21.306367874145508,
+      "fixed_usd_per_mwh": 90.64972686767578,
+      "offer_at_lo_band": 68.27803802490234,
+      "fixed_share": 1.3276556730270386,
+      "fixed_median": 52.19746017456055,
+      "negative_fixed_share_of_rows": 0.1726027397260274
+    },
+    "CC_REGULAR": {
+      "plant_hours": 148920,
+      "ident_pair": "econc05(1.0) - committed(0.9)",
+      "energy_usd_per_mwh_at_band_1": 26.21572494506836,
+      "fixed_usd_per_mwh": 17.1900634765625,
+      "offer_at_lo_band": 40.784210205078125,
+      "fixed_share": 0.4214881956577301,
+      "fixed_median": 13.209156036376953,
+      "negative_fixed_share_of_rows": 0.0781627719580983
+    },
+    "CC_CHP": {
+      "plant_hours": 61320,
+      "ident_pair": "econc05(1.24) - committed(0.9)",
+      "energy_usd_per_mwh_at_band_1": 27.309350967407227,
+      "fixed_usd_per_mwh": 15.493307113647461,
+      "offer_at_lo_band": 40.071720123291016,
+      "fixed_share": 0.38663944602012634,
+      "fixed_median": 13.500114440917969,
+      "negative_fixed_share_of_rows": 0.0
+    }
+  }
+}

@@ -4485,6 +4485,7 @@ def solve_and_persist(
     caiso_st_gas_peak_measured: bool = False,
     caiso_ct_peaker_committed_measured: bool = False,
     nyiso_ct_peaker_bands_measured: bool = False,
+    nyiso_ct_peaker_committed_measured: bool = False,
     nyiso_st_gas_econ_bands_deleaked: bool = False,
     caiso_offer_surface_conditional: bool = False,
     nearby_fuel_price_zone_donor_guard: bool = False,
@@ -4849,6 +4850,7 @@ def solve_and_persist(
             caiso_st_gas_peak_measured=caiso_st_gas_peak_measured,
             caiso_ct_peaker_committed_measured=caiso_ct_peaker_committed_measured,
             nyiso_ct_peaker_bands_measured=nyiso_ct_peaker_bands_measured,
+            nyiso_ct_peaker_committed_measured=nyiso_ct_peaker_committed_measured,
             nyiso_st_gas_econ_bands_deleaked=nyiso_st_gas_econ_bands_deleaked,
             caiso_offer_surface_conditional=caiso_offer_surface_conditional,
             nearby_fuel_price_zone_donor_guard=nearby_fuel_price_zone_donor_guard,
@@ -6444,6 +6446,7 @@ def solve_and_persist(
             caiso_st_gas_peak_measured=caiso_st_gas_peak_measured,
             caiso_ct_peaker_committed_measured=caiso_ct_peaker_committed_measured,
             nyiso_ct_peaker_bands_measured=nyiso_ct_peaker_bands_measured,
+            nyiso_ct_peaker_committed_measured=nyiso_ct_peaker_committed_measured,
             nyiso_st_gas_econ_bands_deleaked=nyiso_st_gas_econ_bands_deleaked,
             caiso_offer_surface_conditional=caiso_offer_surface_conditional,
             nearby_fuel_price_zone_donor_guard=nearby_fuel_price_zone_donor_guard,
@@ -7419,6 +7422,7 @@ def solve_and_persist(
         "caiso_st_gas_peak_measured": caiso_st_gas_peak_measured,
         "caiso_ct_peaker_committed_measured": caiso_ct_peaker_committed_measured,
         "nyiso_ct_peaker_bands_measured": nyiso_ct_peaker_bands_measured,
+        "nyiso_ct_peaker_committed_measured": nyiso_ct_peaker_committed_measured,
         "nyiso_st_gas_econ_bands_deleaked": nyiso_st_gas_econ_bands_deleaked,
         "caiso_offer_surface_conditional": caiso_offer_surface_conditional,
         "nearby_fuel_price_zone_donor_guard": nearby_fuel_price_zone_donor_guard,
@@ -9669,6 +9673,7 @@ def run_replay_bundle(
     mustrun_chp_btm_holdout: bool | None = None,
     caiso_ct_peaker_committed_measured: bool | None = None,
     nyiso_ct_peaker_bands_measured: bool | None = None,
+    nyiso_ct_peaker_committed_measured: bool | None = None,
     nyiso_st_gas_econ_bands_deleaked: bool | None = None,
     gas_offer_margin: bool | None = None,
     nearby_fuel_price_zone_donor_guard: bool | None = None,
@@ -9825,6 +9830,10 @@ def run_replay_bundle(
         )
     if nyiso_ct_peaker_bands_measured is not None:
         kwargs["nyiso_ct_peaker_bands_measured"] = nyiso_ct_peaker_bands_measured
+    if nyiso_ct_peaker_committed_measured is not None:
+        kwargs["nyiso_ct_peaker_committed_measured"] = (
+            nyiso_ct_peaker_committed_measured
+        )
     if nyiso_st_gas_econ_bands_deleaked is not None:
         kwargs["nyiso_st_gas_econ_bands_deleaked"] = nyiso_st_gas_econ_bands_deleaked
     if gas_offer_margin is not None:
@@ -11984,6 +11993,37 @@ def main() -> None:
         "(crossing indicator -2.75/-2.40/-2.74 %%), which is the hazard, not "
         "the argument; this is NEVER a C3a lever. Non-NYISO, or a band missing "
         "any of the three phys_* keys, is a hard error.",
+    )
+    parser.add_argument(
+        "--nyiso-ct-peaker-committed-measured",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="STRUCTURAL-INTEGRITY REPAIR (rules 14/19/21/25, nyiso-241): the "
+        "COMMITTED-ONLY limb of the repair above -- the mechanism-matrix cell "
+        "`ct_peaker_committed_measured` (U), which the caiso-241 cross-ISO "
+        "census recorded as 'an ASK FOR THE NYISO LANE, never an arm from "
+        "here'. Grounds NYISO CT_PEAKER's `committed` 1.35 on the class's OWN "
+        "registered phys_committed 0.843 (avg_committed_p50, "
+        "nyiso_campd_marginal_hr_summary.csv, n=70) and touches nothing else: "
+        "`econ_low`/`econ_high` stay at the registered neutral 1.0 and `peak` "
+        "at the $1,000-offer-cap wall 4.0. Zero new numbers, zero free "
+        "parameters, no DOF entry. THE DEFECT is a citation ring, not a "
+        "residual: 1.35 reads 'NYISO/CAISO-grounded' here, 'NYISO-grounded' in "
+        "CAISO and 'NYISO/CAISO-grounded' in NEISO, and no ISO cites a "
+        "measurement; 1.35/0.843 = 1.60 is the largest such ratio in the "
+        "model. SECOND GROUND (rule 19): tranche_startup_amortization is ARMED "
+        "on the NYISO keeper, so the _committed rows already pay a real start "
+        "recovery of $11.97/$16.48/$15.78/$13.22 per MWh in 2022/23/24/25 and "
+        "the 1.35 'start hurdle' charges the same phenomenon twice. SIZED "
+        "BEFORE PROPOSED and reported against itself: 346.7 MW of the class's "
+        "3,034.0 MW (11.4%%), 22 LP rows move with max|d| EXACTLY $0.00 "
+        "elsewhere, and a GENEROUS upper bound against the keeper's own prices "
+        "reaches only 16-41%% of metered CT_PEAKER energy in 2023-2025 -- a "
+        "grounding repair, NOT the fix for the CT_PEAKER merit collapse. "
+        "MUTUALLY EXCLUSIVE with --nyiso-ct-peaker-bands-measured (rule 19); "
+        "arming both is a hard error, as is arming it on any other ISO or on a "
+        "band carrying no phys_committed. MUST NEVER be proposed as a C1 or "
+        "C3a lever.",
     )
     parser.add_argument(
         "--nearby-fuel-price-zone-donor-guard",
@@ -14464,6 +14504,9 @@ def main() -> None:
                 else None
             ),
             nyiso_ct_peaker_bands_measured=args.nyiso_ct_peaker_bands_measured,
+            nyiso_ct_peaker_committed_measured=(
+                args.nyiso_ct_peaker_committed_measured
+            ),
             nyiso_st_gas_econ_bands_deleaked=args.nyiso_st_gas_econ_bands_deleaked,
             caiso_ct_peaker_committed_measured=(
                 args.caiso_ct_peaker_committed_measured
@@ -14904,6 +14947,7 @@ def main() -> None:
         caiso_st_gas_peak_measured=args.caiso_st_gas_peak_measured,
         caiso_ct_peaker_committed_measured=args.caiso_ct_peaker_committed_measured,
         nyiso_ct_peaker_bands_measured=args.nyiso_ct_peaker_bands_measured,
+        nyiso_ct_peaker_committed_measured=args.nyiso_ct_peaker_committed_measured,
         nyiso_st_gas_econ_bands_deleaked=args.nyiso_st_gas_econ_bands_deleaked,
         caiso_offer_surface_conditional=args.caiso_offer_surface_conditional,
         nearby_fuel_price_zone_donor_guard=args.nearby_fuel_price_zone_donor_guard,

@@ -1301,6 +1301,7 @@ def backcast_config(
     caiso_st_gas_peak_measured: bool = False,
     caiso_ct_peaker_committed_measured: bool = False,
     nyiso_ct_peaker_bands_measured: bool = False,
+    nyiso_ct_peaker_committed_measured: bool = False,
     nyiso_st_gas_econ_bands_deleaked: bool = False,
     caiso_offer_surface_conditional: bool = False,
     nearby_fuel_price_zone_donor_guard: bool = False,
@@ -2555,6 +2556,52 @@ def backcast_config(
                         "econ_high": float(_nyct["phys_econ_high"]),
                     }
                 },
+            ),
+        )
+    # nyiso-241: the COMMITTED-ONLY limb of the same NYISO repair — the matrix
+    # cell `ct_peaker_committed_measured` (`U`), which the caiso-241 census
+    # recorded as "an ASK FOR THE NYISO LANE, never an arm from here". It
+    # replaces `committed` 1.35 with the class's OWN `phys_committed` 0.843 and
+    # leaves `econ_low`/`econ_high` at the registered neutral 1.0 and `peak` at
+    # the $1,000-offer-cap wall 4.0. ZERO literals and ZERO values to pick, so
+    # rule 21 [R-DOF] is satisfied by construction.
+    #
+    # It is an ALTERNATIVE to `nyiso_ct_peaker_bands_measured` above, never a
+    # companion: that field sets the same `committed` to the same 0.843 and
+    # moves the `econ*` bands too, so arming both would be two mechanisms for
+    # one phenomenon with the wider one silently winning (rule 19
+    # [R-ONE-MECH]). The pair is refused rather than ordered, so a recipe that
+    # names both fails loudly instead of quietly resolving to the wider arm.
+    if nyiso_ct_peaker_committed_measured and nyiso_ct_peaker_bands_measured:
+        raise ValueError(
+            "nyiso_ct_peaker_committed_measured and nyiso_ct_peaker_bands_measured "
+            "are ALTERNATIVES for the same CT_PEAKER `committed` band, not a "
+            "stack (rule 19 [R-ONE-MECH]): the three-band arm already sets "
+            "`committed` to the same measured phys_committed. Arm exactly one"
+        )
+    if nyiso_ct_peaker_committed_measured:
+        if iso.upper() != "NYISO":
+            raise ValueError(
+                "nyiso_ct_peaker_committed_measured is NYISO-scoped "
+                f"(rule 25 [R-ISO-SCOPE]) and was armed for {iso.upper()}; "
+                "CAISO (0.991, n=75) and NEISO (0.985, n=18) carry the same "
+                "uncited 1.35 committed band and the same defect, but each lane "
+                "grounds its OWN band on its OWN measured avg_committed_p50 -- "
+                "no value crosses an ISO boundary"
+            )
+        _nyctc = dict(config.offer_curve_by_group.get("CT_PEAKER") or {})
+        if "phys_committed" not in _nyctc:
+            raise ValueError(
+                "nyiso_ct_peaker_committed_measured is armed but the resolved "
+                "NYISO CT_PEAKER band carries no `phys_committed` measurement to "
+                "ground on; it must never fall back to the fitted value "
+                "(rule 25 [R-ISO-SCOPE])"
+            )
+        config = config.with_overrides(
+            nyiso_ct_peaker_committed_measured=True,
+            offer_curve_by_group=_deep_merge_offer_curve(
+                config.offer_curve_by_group,
+                {"CT_PEAKER": {"committed": float(_nyctc["phys_committed"])}},
             ),
         )
     # nyiso-232: the THIRD limb of the SAME rule-25 [R-ISO-SCOPE] de-leak, on

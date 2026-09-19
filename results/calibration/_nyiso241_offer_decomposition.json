@@ -1,0 +1,158 @@
+{
+  "2022": {
+    "gas_mean_usd_mmbtu": 7.110191780821918,
+    "CT_PEAKER": {
+      "rows": 136,
+      "cap_mw": 2720.93798828125,
+      "slope_capwt_mmbtu_per_mwh": 5.995433296387613,
+      "intercept_capwt_usd_per_mwh": 105.30330728430948,
+      "mean_offer_capwt_usd_per_mwh": 147.93197631835938,
+      "fixed_share_of_offer": 0.711836006690601,
+      "r2_median": 0.8441324064344937
+    },
+    "ST_GAS": {
+      "rows": 44,
+      "cap_mw": 8087.76318359375,
+      "slope_capwt_mmbtu_per_mwh": 7.240339811792523,
+      "intercept_capwt_usd_per_mwh": 91.32789483598064,
+      "mean_offer_capwt_usd_per_mwh": 142.80809020996094,
+      "fixed_share_of_offer": 0.6395148531270708,
+      "r2_median": 0.8352047932356653
+    },
+    "CC_REGULAR": {
+      "rows": 130,
+      "cap_mw": 7142.9306640625,
+      "slope_capwt_mmbtu_per_mwh": 6.139218064068739,
+      "intercept_capwt_usd_per_mwh": 35.86555498096491,
+      "mean_offer_capwt_usd_per_mwh": 79.51657104492188,
+      "fixed_share_of_offer": 0.45104504016783015,
+      "r2_median": 0.8352042449874941
+    },
+    "CC_CHP": {
+      "rows": 108,
+      "cap_mw": 3549.434814453125,
+      "slope_capwt_mmbtu_per_mwh": 6.835659647936901,
+      "intercept_capwt_usd_per_mwh": 30.892782347178755,
+      "mean_offer_capwt_usd_per_mwh": 79.4956283569336,
+      "fixed_share_of_offer": 0.3886098265488368,
+      "r2_median": 0.8396562228031501
+    }
+  },
+  "2023": {
+    "gas_mean_usd_mmbtu": 1.9321917808219178,
+    "CT_PEAKER": {
+      "rows": 136,
+      "cap_mw": 2720.93798828125,
+      "slope_capwt_mmbtu_per_mwh": 6.3001761017572635,
+      "intercept_capwt_usd_per_mwh": 60.036952316188824,
+      "mean_offer_capwt_usd_per_mwh": 72.21009826660156,
+      "fixed_share_of_offer": 0.8314204489035707,
+      "r2_median": 0.8697011652152571
+    },
+    "ST_GAS": {
+      "rows": 44,
+      "cap_mw": 8145.384765625,
+      "slope_capwt_mmbtu_per_mwh": 7.645080954765285,
+      "intercept_capwt_usd_per_mwh": 42.26202406629508,
+      "mean_offer_capwt_usd_per_mwh": 57.033790588378906,
+      "fixed_share_of_offer": 0.7409997412114199,
+      "r2_median": 0.8140605753987313
+    },
+    "CC_REGULAR": {
+      "rows": 130,
+      "cap_mw": 7146.404296875,
+      "slope_capwt_mmbtu_per_mwh": 8.656878973790976,
+      "intercept_capwt_usd_per_mwh": 21.155126081067372,
+      "mean_offer_capwt_usd_per_mwh": 37.881874084472656,
+      "fixed_share_of_offer": 0.5584498283768546,
+      "r2_median": 0.8140603293925228
+    },
+    "CC_CHP": {
+      "rows": 108,
+      "cap_mw": 3551.607666015625,
+      "slope_capwt_mmbtu_per_mwh": 8.893840892926818,
+      "intercept_capwt_usd_per_mwh": 17.460736787622647,
+      "mean_offer_capwt_usd_per_mwh": 34.64534378051758,
+      "fixed_share_of_offer": 0.5039850924337341,
+      "r2_median": 0.8177207285462176
+    }
+  },
+  "2024": {
+    "gas_mean_usd_mmbtu": 2.2064657534246574,
+    "CT_PEAKER": {
+      "rows": 138,
+      "cap_mw": 2349.834228515625,
+      "slope_capwt_mmbtu_per_mwh": 7.20493950827189,
+      "intercept_capwt_usd_per_mwh": 62.95347894822467,
+      "mean_offer_capwt_usd_per_mwh": 78.85093688964844,
+      "fixed_share_of_offer": 0.7983859346697149,
+      "r2_median": 0.84285169938489
+    },
+    "ST_GAS": {
+      "rows": 44,
+      "cap_mw": 8153.7080078125,
+      "slope_capwt_mmbtu_per_mwh": 8.291375487327368,
+      "intercept_capwt_usd_per_mwh": 38.898055718961324,
+      "mean_offer_capwt_usd_per_mwh": 57.192691802978516,
+      "fixed_share_of_offer": 0.6801228355007338,
+      "r2_median": 0.8592641860782739
+    },
+    "CC_REGULAR": {
+      "rows": 137,
+      "cap_mw": 7157.01953125,
+      "slope_capwt_mmbtu_per_mwh": 7.086999582856747,
+      "intercept_capwt_usd_per_mwh": 21.293519345658265,
+      "mean_offer_capwt_usd_per_mwh": 36.93074035644531,
+      "fixed_share_of_offer": 0.5765798123768734,
+      "r2_median": 0.8592629791692843
+    },
+    "CC_CHP": {
+      "rows": 107,
+      "cap_mw": 3546.796142578125,
+      "slope_capwt_mmbtu_per_mwh": 7.828069296490542,
+      "intercept_capwt_usd_per_mwh": 17.80394382724037,
+      "mean_offer_capwt_usd_per_mwh": 35.07630920410156,
+      "fixed_share_of_offer": 0.5075774570135934,
+      "r2_median": 0.8598060574139806
+    }
+  },
+  "2025": {
+    "gas_mean_usd_mmbtu": 4.669205479452056,
+    "CT_PEAKER": {
+      "rows": 138,
+      "cap_mw": 2349.834228515625,
+      "slope_capwt_mmbtu_per_mwh": 2.830385917904868,
+      "intercept_capwt_usd_per_mwh": 102.79312296155855,
+      "mean_offer_capwt_usd_per_mwh": 116.0087661743164,
+      "fixed_share_of_offer": 0.8860806502079348,
+      "r2_median": 0.910552190330324
+    },
+    "ST_GAS": {
+      "rows": 44,
+      "cap_mw": 8052.04296875,
+      "slope_capwt_mmbtu_per_mwh": 2.9190821464012964,
+      "intercept_capwt_usd_per_mwh": 79.68718064606759,
+      "mean_offer_capwt_usd_per_mwh": 93.31697845458984,
+      "fixed_share_of_offer": 0.8539408579848647,
+      "r2_median": 0.563674953672249
+    },
+    "CC_REGULAR": {
+      "rows": 137,
+      "cap_mw": 7081.7490234375,
+      "slope_capwt_mmbtu_per_mwh": 3.1867775837773817,
+      "intercept_capwt_usd_per_mwh": 36.842248995682134,
+      "mean_offer_capwt_usd_per_mwh": 51.72197341918945,
+      "fixed_share_of_offer": 0.7123132889205119,
+      "r2_median": 0.563676132368323
+    },
+    "CC_CHP": {
+      "rows": 107,
+      "cap_mw": 3525.852294921875,
+      "slope_capwt_mmbtu_per_mwh": 3.4363567332273663,
+      "intercept_capwt_usd_per_mwh": 31.546340092903037,
+      "mean_offer_capwt_usd_per_mwh": 47.59139633178711,
+      "fixed_share_of_offer": 0.6628580483954554,
+      "r2_median": 0.6061488823395682
+    }
+  }
+}

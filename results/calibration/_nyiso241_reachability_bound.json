@@ -1,0 +1,518 @@
+{
+  "2022": {
+    "bound": {
+      "actual_twh": 2.829,
+      "model_twh": 2.5020084381103516,
+      "curve": {
+        "1.00": {
+          "energy_twh_upper_bound": 2.507124185562134,
+          "row_hours_clearing": 192838,
+          "share_of_actual": 0.8862227591241193
+        },
+        "0.90": {
+          "energy_twh_upper_bound": 4.594008445739746,
+          "row_hours_clearing": 295031,
+          "share_of_actual": 1.6238983548037278
+        },
+        "0.80": {
+          "energy_twh_upper_bound": 6.591139793395996,
+          "row_hours_clearing": 401277,
+          "share_of_actual": 2.3298479297970998
+        },
+        "0.70": {
+          "energy_twh_upper_bound": 9.779635429382324,
+          "row_hours_clearing": 548065,
+          "share_of_actual": 3.456923092747375
+        },
+        "0.60": {
+          "energy_twh_upper_bound": 13.452433586120605,
+          "row_hours_clearing": 666805,
+          "share_of_actual": 4.755190380389044
+        },
+        "0.50": {
+          "energy_twh_upper_bound": 16.825387954711914,
+          "row_hours_clearing": 767523,
+          "share_of_actual": 5.947468347370772
+        },
+        "0.40": {
+          "energy_twh_upper_bound": 19.57708740234375,
+          "row_hours_clearing": 858463,
+          "share_of_actual": 6.920144009312035
+        },
+        "0.25": {
+          "energy_twh_upper_bound": 21.185110092163086,
+          "row_hours_clearing": 999523,
+          "share_of_actual": 7.488550757215654
+        },
+        "0.00": {
+          "energy_twh_upper_bound": 22.399015426635742,
+          "row_hours_clearing": 1186236,
+          "share_of_actual": 7.917644194639711
+        }
+      },
+      "offer_scale_needed": 0.9,
+      "reachable_at_any_offer": true
+    },
+    "fuel_by_class_zone": {
+      "CC_CHP": {
+        "Capital_Hudson": {
+          "cap_mw": 974.0587768554688,
+          "econ_offer_mean": 81.08867645263672
+        },
+        "NYC": {
+          "cap_mw": 1177.9801025390625,
+          "econ_offer_mean": 78.1578369140625
+        },
+        "Upstate_West": {
+          "cap_mw": 1397.395751953125,
+          "econ_offer_mean": 60.400699615478516
+        }
+      },
+      "CC_REGULAR": {
+        "Capital_Hudson": {
+          "cap_mw": 3753.85009765625,
+          "econ_offer_mean": 70.28384399414062
+        },
+        "Long_Island": {
+          "cap_mw": 705.8973999023438,
+          "econ_offer_mean": 78.15699005126953
+        },
+        "NYC": {
+          "cap_mw": 2015.7882080078125,
+          "econ_offer_mean": 55.59870910644531
+        },
+        "Upstate_West": {
+          "cap_mw": 667.3939208984375,
+          "econ_offer_mean": 59.60432815551758
+        }
+      },
+      "CT_PEAKER": {
+        "Capital_Hudson": {
+          "cap_mw": 77.3958969116211,
+          "econ_offer_mean": 173.90606689453125
+        },
+        "Long_Island": {
+          "cap_mw": 732.3147583007812,
+          "econ_offer_mean": 102.19901275634766
+        },
+        "Lower_Hudson": {
+          "cap_mw": 2.6813759803771973,
+          "econ_offer_mean": 93.44783020019531
+        },
+        "NYC": {
+          "cap_mw": 1870.7039794921875,
+          "econ_offer_mean": 105.85417175292969
+        },
+        "Upstate_West": {
+          "cap_mw": 37.84199905395508,
+          "econ_offer_mean": 76.95800018310547
+        }
+      },
+      "ST_GAS": {
+        "Capital_Hudson": {
+          "cap_mw": 2570.839599609375,
+          "econ_offer_mean": 104.82806396484375
+        },
+        "Long_Island": {
+          "cap_mw": 2151.815673828125,
+          "econ_offer_mean": 108.4084701538086
+        },
+        "NYC": {
+          "cap_mw": 3228.1806640625,
+          "econ_offer_mean": 92.12762451171875
+        },
+        "Upstate_West": {
+          "cap_mw": 136.9270477294922,
+          "econ_offer_mean": 66.77613067626953
+        }
+      }
+    }
+  },
+  "2023": {
+    "bound": {
+      "actual_twh": 2.114,
+      "model_twh": 0.26158538460731506,
+      "curve": {
+        "1.00": {
+          "energy_twh_upper_bound": 0.263544499874115,
+          "row_hours_clearing": 27504,
+          "share_of_actual": 0.12466627240970435
+        },
+        "0.90": {
+          "energy_twh_upper_bound": 0.6888828873634338,
+          "row_hours_clearing": 60401,
+          "share_of_actual": 0.3258670233507256
+        },
+        "0.80": {
+          "energy_twh_upper_bound": 1.3454554080963135,
+          "row_hours_clearing": 117069,
+          "share_of_actual": 0.6364500511335447
+        },
+        "0.70": {
+          "energy_twh_upper_bound": 2.819399833679199,
+          "row_hours_clearing": 238122,
+          "share_of_actual": 1.333680148381835
+        },
+        "0.60": {
+          "energy_twh_upper_bound": 6.845550060272217,
+          "row_hours_clearing": 486057,
+          "share_of_actual": 3.2381977579338774
+        },
+        "0.50": {
+          "energy_twh_upper_bound": 11.327580451965332,
+          "row_hours_clearing": 670119,
+          "share_of_actual": 5.358363506133081
+        },
+        "0.40": {
+          "energy_twh_upper_bound": 15.753779411315918,
+          "row_hours_clearing": 817715,
+          "share_of_actual": 7.452118926828723
+        },
+        "0.25": {
+          "energy_twh_upper_bound": 19.60232162475586,
+          "row_hours_clearing": 1024252,
+          "share_of_actual": 9.272621392978174
+        },
+        "0.00": {
+          "energy_twh_upper_bound": 20.61380386352539,
+          "row_hours_clearing": 1188816,
+          "share_of_actual": 9.751089812452882
+        }
+      },
+      "offer_scale_needed": 0.7,
+      "reachable_at_any_offer": true
+    },
+    "fuel_by_class_zone": {
+      "CC_CHP": {
+        "Capital_Hudson": {
+          "cap_mw": 974.0587768554688,
+          "econ_offer_mean": 35.832515716552734
+        },
+        "NYC": {
+          "cap_mw": 1177.9801025390625,
+          "econ_offer_mean": 28.175294876098633
+        },
+        "Upstate_West": {
+          "cap_mw": 1399.568359375,
+          "econ_offer_mean": 25.37065887451172
+        }
+      },
+      "CC_REGULAR": {
+        "Capital_Hudson": {
+          "cap_mw": 3753.85009765625,
+          "econ_offer_mean": 31.732328414916992
+        },
+        "Long_Island": {
+          "cap_mw": 705.8973999023438,
+          "econ_offer_mean": 35.20423889160156
+        },
+        "NYC": {
+          "cap_mw": 2015.7882080078125,
+          "econ_offer_mean": 20.948484420776367
+        },
+        "Upstate_West": {
+          "cap_mw": 670.867919921875,
+          "econ_offer_mean": 25.532955169677734
+        }
+      },
+      "CT_PEAKER": {
+        "Capital_Hudson": {
+          "cap_mw": 77.3958969116211,
+          "econ_offer_mean": 80.58634185791016
+        },
+        "Long_Island": {
+          "cap_mw": 732.3147583007812,
+          "econ_offer_mean": 52.4922981262207
+        },
+        "Lower_Hudson": {
+          "cap_mw": 2.6813759803771973,
+          "econ_offer_mean": 47.0859260559082
+        },
+        "NYC": {
+          "cap_mw": 1870.7039794921875,
+          "econ_offer_mean": 55.892662048339844
+        },
+        "Upstate_West": {
+          "cap_mw": 37.84199905395508,
+          "econ_offer_mean": 37.26494216918945
+        }
+      },
+      "ST_GAS": {
+        "Capital_Hudson": {
+          "cap_mw": 2636.784423828125,
+          "econ_offer_mean": 47.19408416748047
+        },
+        "Long_Island": {
+          "cap_mw": 2151.815673828125,
+          "econ_offer_mean": 48.51130294799805
+        },
+        "NYC": {
+          "cap_mw": 3228.1806640625,
+          "econ_offer_mean": 34.52091979980469
+        },
+        "Upstate_West": {
+          "cap_mw": 128.604248046875,
+          "econ_offer_mean": 30.117483139038086
+        }
+      }
+    }
+  },
+  "2024": {
+    "bound": {
+      "actual_twh": 1.911,
+      "model_twh": 0.3370794951915741,
+      "curve": {
+        "1.00": {
+          "energy_twh_upper_bound": 0.3400037884712219,
+          "row_hours_clearing": 43166,
+          "share_of_actual": 0.1779193032293155
+        },
+        "0.90": {
+          "energy_twh_upper_bound": 0.7220025062561035,
+          "row_hours_clearing": 88213,
+          "share_of_actual": 0.37781397501627606
+        },
+        "0.80": {
+          "energy_twh_upper_bound": 1.5645519495010376,
+          "row_hours_clearing": 175281,
+          "share_of_actual": 0.8187085031402603
+        },
+        "0.70": {
+          "energy_twh_upper_bound": 3.2149455547332764,
+          "row_hours_clearing": 303854,
+          "share_of_actual": 1.682336763335048
+        },
+        "0.60": {
+          "energy_twh_upper_bound": 6.324060440063477,
+          "row_hours_clearing": 494106,
+          "share_of_actual": 3.309293793858439
+        },
+        "0.50": {
+          "energy_twh_upper_bound": 10.280633926391602,
+          "row_hours_clearing": 685778,
+          "share_of_actual": 5.3797142471960235
+        },
+        "0.40": {
+          "energy_twh_upper_bound": 14.219584465026855,
+          "row_hours_clearing": 844842,
+          "share_of_actual": 7.440912854540479
+        },
+        "0.25": {
+          "energy_twh_upper_bound": 18.44478416442871,
+          "row_hours_clearing": 1071254,
+          "share_of_actual": 9.651901708230618
+        },
+        "0.00": {
+          "energy_twh_upper_bound": 19.324003219604492,
+          "row_hours_clearing": 1208880,
+          "share_of_actual": 10.11198493961512
+        }
+      },
+      "offer_scale_needed": 0.7,
+      "reachable_at_any_offer": true
+    },
+    "fuel_by_class_zone": {
+      "CC_CHP": {
+        "Capital_Hudson": {
+          "cap_mw": 974.0587768554688,
+          "econ_offer_mean": 34.82649230957031
+        },
+        "NYC": {
+          "cap_mw": 1173.168701171875,
+          "econ_offer_mean": 33.528499603271484
+        },
+        "Upstate_West": {
+          "cap_mw": 1399.568359375,
+          "econ_offer_mean": 28.006282806396484
+        }
+      },
+      "CC_REGULAR": {
+        "Capital_Hudson": {
+          "cap_mw": 3753.85009765625,
+          "econ_offer_mean": 30.55943489074707
+        },
+        "Long_Island": {
+          "cap_mw": 705.8973999023438,
+          "econ_offer_mean": 34.768287658691406
+        },
+        "NYC": {
+          "cap_mw": 2026.4031982421875,
+          "econ_offer_mean": 27.515893936157227
+        },
+        "Upstate_West": {
+          "cap_mw": 670.867919921875,
+          "econ_offer_mean": 28.121891021728516
+        }
+      },
+      "CT_PEAKER": {
+        "Capital_Hudson": {
+          "cap_mw": 80.74761962890625,
+          "econ_offer_mean": 69.06385803222656
+        },
+        "Long_Island": {
+          "cap_mw": 732.3147583007812,
+          "econ_offer_mean": 58.75083923339844
+        },
+        "Lower_Hudson": {
+          "cap_mw": 2.6813759803771973,
+          "econ_offer_mean": 45.10325241088867
+        },
+        "NYC": {
+          "cap_mw": 1496.2484130859375,
+          "econ_offer_mean": 64.11219787597656
+        },
+        "Upstate_West": {
+          "cap_mw": 37.84199905395508,
+          "econ_offer_mean": 40.120914459228516
+        }
+      },
+      "ST_GAS": {
+        "Capital_Hudson": {
+          "cap_mw": 2636.784423828125,
+          "econ_offer_mean": 46.17429733276367
+        },
+        "Long_Island": {
+          "cap_mw": 2151.815673828125,
+          "econ_offer_mean": 47.251834869384766
+        },
+        "NYC": {
+          "cap_mw": 3228.1806640625,
+          "econ_offer_mean": 39.86879348754883
+        },
+        "Upstate_West": {
+          "cap_mw": 136.9270477294922,
+          "econ_offer_mean": 33.10685729980469
+        }
+      }
+    }
+  },
+  "2025": {
+    "bound": {
+      "actual_twh": 2.812,
+      "model_twh": 0.8966168165206909,
+      "curve": {
+        "1.00": {
+          "energy_twh_upper_bound": 0.901462733745575,
+          "row_hours_clearing": 128579,
+          "share_of_actual": 0.32057707458946477
+        },
+        "0.90": {
+          "energy_twh_upper_bound": 1.8543020486831665,
+          "row_hours_clearing": 197317,
+          "share_of_actual": 0.6594246261319938
+        },
+        "0.80": {
+          "energy_twh_upper_bound": 3.1220059394836426,
+          "row_hours_clearing": 275337,
+          "share_of_actual": 1.1102439329600438
+        },
+        "0.70": {
+          "energy_twh_upper_bound": 4.8028178215026855,
+          "row_hours_clearing": 393542,
+          "share_of_actual": 1.707972198258423
+        },
+        "0.60": {
+          "energy_twh_upper_bound": 7.6957502365112305,
+          "row_hours_clearing": 555549,
+          "share_of_actual": 2.7367532846768245
+        },
+        "0.50": {
+          "energy_twh_upper_bound": 11.35145378112793,
+          "row_hours_clearing": 726505,
+          "share_of_actual": 4.0367901070867465
+        },
+        "0.40": {
+          "energy_twh_upper_bound": 14.808111190795898,
+          "row_hours_clearing": 869592,
+          "share_of_actual": 5.2660423864850285
+        },
+        "0.25": {
+          "energy_twh_upper_bound": 18.256359100341797,
+          "row_hours_clearing": 1037494,
+          "share_of_actual": 6.492304089737481
+        },
+        "0.00": {
+          "energy_twh_upper_bound": 19.300748825073242,
+          "row_hours_clearing": 1208880,
+          "share_of_actual": 6.863708686014667
+        }
+      },
+      "offer_scale_needed": 0.8,
+      "reachable_at_any_offer": true
+    },
+    "fuel_by_class_zone": {
+      "CC_CHP": {
+        "Capital_Hudson": {
+          "cap_mw": 974.0587768554688,
+          "econ_offer_mean": 55.34245681762695
+        },
+        "NYC": {
+          "cap_mw": 1173.168701171875,
+          "econ_offer_mean": 50.14370346069336
+        },
+        "Upstate_West": {
+          "cap_mw": 1378.624755859375,
+          "econ_offer_mean": 31.7988338470459
+        }
+      },
+      "CC_REGULAR": {
+        "Capital_Hudson": {
+          "cap_mw": 3753.85009765625,
+          "econ_offer_mean": 48.450279235839844
+        },
+        "Long_Island": {
+          "cap_mw": 705.8973999023438,
+          "econ_offer_mean": 54.60565185546875
+        },
+        "NYC": {
+          "cap_mw": 2015.7882080078125,
+          "econ_offer_mean": 40.668853759765625
+        },
+        "Upstate_West": {
+          "cap_mw": 606.2129516601562,
+          "econ_offer_mean": 33.54183578491211
+        }
+      },
+      "CT_PEAKER": {
+        "Capital_Hudson": {
+          "cap_mw": 80.74761962890625,
+          "econ_offer_mean": 106.48002624511719
+        },
+        "Long_Island": {
+          "cap_mw": 732.3147583007812,
+          "econ_offer_mean": 86.40907287597656
+        },
+        "Lower_Hudson": {
+          "cap_mw": 2.6813759803771973,
+          "econ_offer_mean": 69.75194549560547
+        },
+        "NYC": {
+          "cap_mw": 1496.2484130859375,
+          "econ_offer_mean": 90.77163696289062
+        },
+        "Upstate_West": {
+          "cap_mw": 37.84199905395508,
+          "econ_offer_mean": 47.8213005065918
+        }
+      },
+      "ST_GAS": {
+        "Capital_Hudson": {
+          "cap_mw": 2569.4658203125,
+          "econ_offer_mean": 72.6762924194336
+        },
+        "Long_Island": {
+          "cap_mw": 2151.815673828125,
+          "econ_offer_mean": 74.03751373291016
+        },
+        "NYC": {
+          "cap_mw": 3214.4423828125,
+          "econ_offer_mean": 60.7342643737793
+        },
+        "Upstate_West": {
+          "cap_mw": 116.31929779052734,
+          "econ_offer_mean": 38.43354415893555
+        }
+      }
+    }
+  }
+}

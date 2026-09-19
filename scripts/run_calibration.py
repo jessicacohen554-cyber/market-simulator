@@ -606,6 +606,7 @@ def run_year(
     caiso_st_gas_peak_measured: bool = False,
     caiso_ct_peaker_committed_measured: bool = False,
     nyiso_ct_peaker_bands_measured: bool = False,
+    nyiso_ct_peaker_committed_measured: bool = False,
     nyiso_st_gas_econ_bands_deleaked: bool = False,
     caiso_offer_surface_conditional: bool = False,
     nearby_fuel_price_zone_donor_guard: bool = False,
@@ -977,6 +978,7 @@ def run_year(
         caiso_st_gas_peak_measured=caiso_st_gas_peak_measured,
         caiso_ct_peaker_committed_measured=caiso_ct_peaker_committed_measured,
         nyiso_ct_peaker_bands_measured=nyiso_ct_peaker_bands_measured,
+        nyiso_ct_peaker_committed_measured=nyiso_ct_peaker_committed_measured,
         nyiso_st_gas_econ_bands_deleaked=nyiso_st_gas_econ_bands_deleaked,
         caiso_offer_surface_conditional=caiso_offer_surface_conditional,
         nearby_fuel_price_zone_donor_guard=nearby_fuel_price_zone_donor_guard,
@@ -2072,6 +2074,26 @@ def run_year(
                 "channel alone). Pass it as the named run_year kwarg, via "
                 "--nyiso-ct-peaker-bands-measured, or via replay_keeper --set "
                 "(which routes both channels). A silent no-op here would "
+                "advertise a mechanism the LP never solved (rule 24)."
+            )
+    # nyiso-241: the identical fail-loud guard for the COMMITTED-ONLY limb, for
+    # the identical reason (rule 24 [R-REGISTRY]) — a run that arms it through
+    # the generic ``prb_overrides`` channel alone would record the flag while
+    # the LP solved the fitted 1.35.
+    if getattr(config, "nyiso_ct_peaker_committed_measured", False):
+        _ny_ctc = (config.offer_curve_by_group or {}).get("CT_PEAKER") or {}
+        if "phys_committed" in _ny_ctc and (
+            abs(float(_ny_ctc.get("committed", 0.0)) - float(_ny_ctc["phys_committed"]))
+            > 1e-9
+        ):
+            raise ValueError(
+                "nyiso_ct_peaker_committed_measured is True on the resolved "
+                "config but the `committed` band still carries the fitted "
+                "multiplier — the flag reached ScenarioConfig AFTER its "
+                "backcast_config consumer ran (the generic prb_overrides "
+                "channel alone). Pass it as the named run_year kwarg, via "
+                "--nyiso-ct-peaker-committed-measured, or via replay_keeper "
+                "--set (which routes both channels). A silent no-op here would "
                 "advertise a mechanism the LP never solved (rule 24)."
             )
     # nyiso-232: the identical guard for the ST_GAS econ de-leak, for the

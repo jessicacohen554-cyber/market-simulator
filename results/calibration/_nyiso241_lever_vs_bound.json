@@ -1,0 +1,128 @@
+{
+ "three_band": {
+  "2022": {
+   "actual_twh": 2.829,
+   "arm_name": "three_band",
+   "arm": {
+    "committed": 0.843,
+    "econ_low": 0.661,
+    "econ_high": 0.658
+   },
+   "committed_band_markup_usd_mwh": 11.972843496465293,
+   "econ_band_markup_usd_mwh": 5.468602472669938,
+   "committed_rows_moved": 22,
+   "committed_mean_offer_ctl": 157.28472900390625,
+   "committed_mean_offer_frozen": 110.79234653322197,
+   "committed_offer_scale": 0.7044062525006505,
+   "class_offer_scale_capwt": 0.787643297724662,
+   "bound_control": {
+    "energy_twh_upper_bound": 2.507124185562134,
+    "row_hours_clearing": 192838,
+    "share_of_actual": 0.8862227591241193
+   },
+   "bound_arm_frozen_markup": {
+    "energy_twh_upper_bound": 8.506524085998535,
+    "row_hours_clearing": 519291,
+    "share_of_actual": 3.0069014089779196
+   },
+   "bound_arm_relaxed_markup": {
+    "energy_twh_upper_bound": 8.708184242248535,
+    "row_hours_clearing": 533650,
+    "share_of_actual": 3.078184603127796
+   }
+  },
+  "2023": {
+   "actual_twh": 2.114,
+   "arm_name": "three_band",
+   "arm": {
+    "committed": 0.843,
+    "econ_low": 0.661,
+    "econ_high": 0.658
+   },
+   "committed_band_markup_usd_mwh": 16.4772631062989,
+   "econ_band_markup_usd_mwh": 5.743288068459216,
+   "committed_rows_moved": 22,
+   "committed_mean_offer_ctl": 83.96978759765625,
+   "committed_mean_offer_frozen": 68.06149736627346,
+   "committed_offer_scale": 0.810547451809598,
+   "class_offer_scale_capwt": 0.8582415958593695,
+   "bound_control": {
+    "energy_twh_upper_bound": 0.263544499874115,
+    "row_hours_clearing": 27504,
+    "share_of_actual": 0.12466627240970435
+   },
+   "bound_arm_frozen_markup": {
+    "energy_twh_upper_bound": 1.120906949043274,
+    "row_hours_clearing": 104815,
+    "share_of_actual": 0.530230344864368
+   },
+   "bound_arm_relaxed_markup": {
+    "energy_twh_upper_bound": 1.330302119255066,
+    "row_hours_clearing": 118224,
+    "share_of_actual": 0.6292819864025856
+   }
+  },
+  "2024": {
+   "actual_twh": 1.911,
+   "arm_name": "three_band",
+   "arm": {
+    "committed": 0.843,
+    "econ_low": 0.661,
+    "econ_high": 0.658
+   },
+   "committed_band_markup_usd_mwh": 15.7755102921166,
+   "econ_band_markup_usd_mwh": 5.973283606857962,
+   "committed_rows_moved": 22,
+   "committed_mean_offer_ctl": 89.0611572265625,
+   "committed_mean_offer_frozen": 74.30731894517064,
+   "committed_offer_scale": 0.8343403708099189,
+   "class_offer_scale_capwt": 0.8749902869182454,
+   "bound_control": {
+    "energy_twh_upper_bound": 0.3400037884712219,
+    "row_hours_clearing": 43166,
+    "share_of_actual": 0.1779193032293155
+   },
+   "bound_arm_frozen_markup": {
+    "energy_twh_upper_bound": 1.0656025409698486,
+    "row_hours_clearing": 138087,
+    "share_of_actual": 0.5576151444112237
+   },
+   "bound_arm_relaxed_markup": {
+    "energy_twh_upper_bound": 1.2666456699371338,
+    "row_hours_clearing": 151533,
+    "share_of_actual": 0.6628182469582071
+   }
+  },
+  "2025": {
+   "actual_twh": 2.812,
+   "arm_name": "three_band",
+   "arm": {
+    "committed": 0.843,
+    "econ_low": 0.661,
+    "econ_high": 0.658
+   },
+   "committed_band_markup_usd_mwh": 13.2156171681025,
+   "econ_band_markup_usd_mwh": 5.97909275647554,
+   "committed_rows_moved": 22,
+   "committed_mean_offer_ctl": 126.05024719238281,
+   "committed_mean_offer_frozen": 97.72474742340579,
+   "committed_offer_scale": 0.7752840601276605,
+   "class_offer_scale_capwt": 0.8365804770667101,
+   "bound_control": {
+    "energy_twh_upper_bound": 0.901462733745575,
+    "row_hours_clearing": 128579,
+    "share_of_actual": 0.32057707458946477
+   },
+   "bound_arm_frozen_markup": {
+    "energy_twh_upper_bound": 2.986311435699463,
+    "row_hours_clearing": 283499,
+    "share_of_actual": 1.0619884195232798
+   },
+   "bound_arm_relaxed_markup": {
+    "energy_twh_upper_bound": 3.1219325065612793,
+    "row_hours_clearing": 293792,
+    "share_of_actual": 1.1102178188340255
+   }
+  }
+ }
+}
