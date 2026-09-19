@@ -15,6 +15,7 @@
 3. **A NEW defect, previously unnamed: PJM's keeper 2020 does not run the keeper's own seam representation.** `PJM_SEAM_LADDER_BY_YEAR` covers 2019, 2021, 2022, 2023, 2024, 2025 — **2020 is absent**, and so is `firm_export_floor_by_year`, so 2020 falls through to the *forecast* gas-elastic track. Both source inputs for 2020 are on disk. This is the identical defect the lane already fixed for 2022 at pjm-160, in the same channel, left behind.
 4. **EIA-930's own accounting identity does not close for PJM in 2019, 2020 and 2025** (`D + TI − NG` = **+9.85 / +8.56 / −14.76 TWh**; ≤0.19 TWh in 2021–2024). Most of the apparent 2020 "generation overshoot" is this, not the model.
 5. **Two corrections to the state I was given** (§6): the model's internal energy sink is **not** storage round-trip loss — storage is only 28–41 % of it, the rest is the measured zonal loss surface; and the PJM touchpoint's **C2 is a PASS**, not a FAIL.
+5b. **Q3 needed no new work.** `RESULT-pjm-d4-3-da-virtual-net-2026-09-10.md` §4 had already measured the virtual net on all six years and established that the layer's ≈0 anchor is a property of 2023–2025 rather than of its construction. §3 records that finding and adds only corroboration on the current keeper; nothing there is claimed as new.
 6. **The 2020 demand repair is incomplete.** A **192,229 MW** hour survives the spike screen — 20–30 % above every clean year's maximum in the very file the model reads, at 1 p.m. on a day whose own 5 p.m. reads lower, and internally inconsistent by −56,665 MW against its own row.
 
 ---
@@ -146,7 +147,17 @@ The registry's own comment, written at pjm-160 about 2022, states the consequenc
 
 > *"outside the years listed here PJM's seam runs the FORECAST track … so the already-spent 2022 touchpoint did NOT run the keeper's own seam representation, in the channel carrying PJM's largest single-signed volume error."*
 
-pjm-160 extended the ladder to 2019 / 2021 / 2022 on 2026-08-07 and **skipped 2020**. There is no data reason: `derive_pjm_seam_ladders.py` runs the frozen formula over `PJM_<year>_import_export_act_sch_interchange.csv` and `actual_lmp_hourly_PJM.parquet` `da`, and **both cover 2020** (verified on disk: `PJM_2020_import_export_act_sch_interchange.csv` present; the LMP parquet carries 2018–2025).
+pjm-160 extended the ladder to 2019 / 2021 / 2022 on 2026-08-07 and **skipped 2020** — which was
+correct at the time and has since gone stale. pjm-173 (2026-09-08) recorded the invariant explicitly:
+*"PJM_SEAM_LADDER_BY_YEAR covers {2019, 2021, 2022, 2023, 2024, 2025} = EVERY year PJM solves, so
+F-A is inert in all of them."* **That was true when written** — the then-keeper
+`pjm_debugb_inputclock_A` (pjm-162) solved 2023–2025 and the touchpoint span reached back only to
+2021, so 2020 was not a PJM year. **2020 entered PJM's solved span with the `pjm_d4_4_TP`
+touchpoint, and nothing re-checked the invariant.** So this is not a second oversight but a
+*stale invariant*: a covering claim that was verified once and silently falsified by a later span
+extension. It is also the reason a rule-19 inertness argument on this mechanism must be re-checked
+whenever an ISO's year set grows — which is exactly what rule 35 `[R-PROMOTE]` (b)/(c) now require
+of the year set itself. There is no data reason: `derive_pjm_seam_ladders.py` runs the frozen formula over `PJM_<year>_import_export_act_sch_interchange.csv` and `actual_lmp_hourly_PJM.parquet` `da`, and **both cover 2020** (verified on disk: `PJM_2020_import_export_act_sch_interchange.csv` present; the LMP parquet carries 2018–2025).
 
 Filling it is a **rule 23 `[R-FROZEN-DERIVE]` re-derivation** — the source data already extends, the formula is frozen, zero parameters are introduced, and the 2019/2021–2025 entries must come back byte-identical (the same verification pjm-160 performed).
 
@@ -171,21 +182,53 @@ Also measured and set aside rather than absorbed: the per-seam envelope cap bind
 | **NET** | **−1.883** | **−9.971** | **−12.138** | **+1.987** | **+2.416** | **−2.415** |
 | gross volume | 21.682 | 20.377 | 29.976 | 28.877 | 34.193 | 36.038 |
 
-**The INC/DEC pair is NOT volume-balanced by construction, and it is not supposed to be.** `data/market_sim/data/virtual_bids.py` renders PJM's measured hourly submitted INC/DEC curves as a **single per-hour net curve** `net(λ) = Σ_{DEC ≥ λ} MW − Σ_{INC ≤ λ} MW`, monotone non-increasing with a crossing price `λ0`. Below `λ0` the layer holds net virtual **demand** (DEC withdrawal rungs); above it, net virtual **supply** (INC rungs). Clearing is endogenous on both sides — the dual finds where the model's own stack crosses `load + net(λ)`. So the annual net is *the integral of a measured curve evaluated at the model's own hourly prices*, and its sign is a **price** outcome: a model that prices systematically below `λ0` holds net virtual demand.
+**Q3 IS ALREADY ADJUDICATED, and not by me.** `docs/RESULT-pjm-d4-3-da-virtual-net-2026-09-10.md` §4
+measured exactly this question on all six years and reached a stronger result than the charter's
+framing assumes. Recording it here rather than re-deriving it (rule 28 `[R-MECH-MATRIX]` (a),
+DO-NOT-REDO), because the PJM matrix cell `da_virtual_bids` already carries it:
 
-So the net is measured conduct in origin, but the realized annual value is a model output — and it is **outside the band the design claims.** The module's own admissibility statement is that the whole curve cleared **at actual DA prices** nets to ≈ 0: **−0.6 / −0.9 / +1.3 TWh for 2023/24/25**. Against that:
+* The pair is **not** volume-balanced by construction and is not meant to be. `data/virtual_bids.py`
+  renders PJM's measured hourly submitted INC/DEC curves as **one per-hour net curve**
+  `net(λ) = Σ_{DEC ≥ λ} MW − Σ_{INC ≤ λ} MW`, monotone non-increasing with a crossing price `λ0`.
+  Below `λ0` the layer holds net virtual **demand**; above it, net virtual **supply**. Clearing is
+  endogenous on both sides. So the annual net is the integral of a measured curve evaluated at the
+  model's own hourly prices, and its sign is a **price** outcome.
+* pjm-d4-3's decisive finding: the module's ≈0 admissibility anchor **is a property of 2023–2025 and
+  not of the construction.** Recomputed from the module's own loader against measured PJM RTO hourly
+  DA LMP, `net @ actual DA` is **+16.537 / +16.812 / +12.248 TWh** of net virtual *demand* in
+  2020/2021/2022 against −0.755 / −1.620 / +0.204 in 2023/2024/2025. **In the holdout years there is
+  no price at which this curve nets to ~0.**
+* The cause is a real change in PJM's book, not in the model: gross INC nearly doubles
+  51.4 → 103.5 TWh 2021 → 2025 while gross DEC grows 1.5×, so the **DEC/INC gross ratio falls
+  1.69 → 1.28**. The peak side is not the defect (net virtual demand over the model's own top-100
+  load hours is the designed ~7–11 GW in *every* year); the **off-peak supply side is thinner** in
+  the holdout span, so the annual net fails to cancel there.
+* Disposition: the root cause is the architecture question (the LP carries ONE price series, gated as
+  RT, while the curve needs a DA price) **already escalated to the owner** at pjm-159, inside PJM's
+  owner-declared-closed price-formation frontier (pjm-142). Not a lever. pjm-158 already solved the
+  single-delta `pjm_da_virtual_bids=false` arm across 2023–2025 with both arms registered.
 
-| year | model net | invariant @ actual DA | model − invariant |
-|---|---|---|---|
-| 2023 | +1.987 | −0.6 | **+2.59** |
-| 2024 | +2.416 | −0.9 | **+3.32** |
-| 2025 | −2.415 | +1.3 | **−3.72** |
-| 2021 | −9.971 | (not published) | — |
-| 2022 | −12.138 | (not published) | — |
+**All this session adds is corroboration on the CURRENT keeper**, which pjm-d4-3 could not use (it
+measured on the superseded `pjm-d4-2` pair). Realized net position on `pjm_d4_4_A` / `pjm_d4_4_TP`,
+sign-converted to pjm-d4-3's convention (positive = net phantom **demand**):
 
-**2021 and 2022 are 8–10× the ±1.3 TWh band the design cites**, and −12.14 TWh is 1.5 % of PJM's served load entering as extra demand the physical fleet must generate. pjm-158 already established that *"the DA virtual layer's admissibility invariant is defined at a price this LP does not produce"* and closed that question; this is not a re-litigation of it (rule 28 `[R-MECH-MATRIX]` (a)). What is **new** is the magnitude in the pre-2023 years, which was not on record, and its interaction with §4: the years where the virtual net is most negative (2021, 2022) are exactly the years CC_REGULAR is most over (+26.2, +22.5 TWh). The layer is a candidate contributor to the pre-2023 CC over-run, which no prior finding names.
+| TWh | 2020 | 2021 | 2022 | 2023 | 2024 | 2025 |
+|---|---|---|---|---|---|---|
+| VIRTUAL_INC (net supply, + generation) | +9.900 | +5.203 | +8.919 | +15.432 | +18.305 | +16.812 |
+| VIRTUAL_DEC (net demand, − generation) | −11.783 | −15.174 | −21.057 | −13.445 | −15.889 | −19.226 |
+| net phantom demand (this keeper) | **+1.883** | **+9.971** | **+12.138** | −1.987 | −2.416 | **+2.415** |
+| net phantom demand (pjm-d4-3, `pjm-d4-2`) | +2.414 | +10.525 | +13.013 | −1.338 | −1.713 | +2.870 |
+| gross volume \|INC\|+\|DEC\| | 21.682 | 20.377 | 29.976 | 28.877 | 34.193 | 36.038 |
 
-**Not a defect I am asserting, and not chartered.** The honest statement is that the sign and magnitude follow from the model's own price sitting below `λ0`, which is the same over/under-pricing object as §2.4 — and that a −12 TWh annual net deserves a look from the lane that owns the layer.
+Same sign in all six years, magnitudes within 0.5–0.9 TWh — the differences are the keeper change,
+so **the d4-4 promotion did not move this object** and pjm-d4-3's numbers remain the ones to cite.
+
+**What is genuinely new here is only the cross-reference**, and it is worth one line: the years where
+the net phantom demand is largest (2021 +9.97, 2022 +12.14) are exactly the years CC_REGULAR is most
+over (§4.2: +26.2, +22.5 TWh) *and* the years the under-export is worst (§2.1: −13.5, −9.1). pjm-d4-3
+already priced that channel at ~0.7–1.0 TWh of CC per TWh of net virtual, which would put ~7–12 TWh
+of the pre-2023 CC over-run on this layer. **I am asserting no new attribution** — the bound is
+pjm-d4-3's and it is already recorded against the matrix cell.
 
 ---
 
@@ -376,8 +419,8 @@ There is a second, independent obstacle: **the benchmark is not settled per ISO.
 | 1 | Add **2020** to `PJM_SEAM_LADDER_BY_YEAR` via `derive_pjm_seam_ladders.py` | rule 23 `[R-FROZEN-DERIVE]` (source data already covers it); rule 14 — a keeper year must run the keeper's mechanism | **probably WORSE** (§2.6). Not a residual argument. |
 | 2 | Measure the **gross export / gross import split** per seam from `hourly/network_<year>.parquet` | closes Q2; no LP beyond the replays already running | diagnostic only |
 | 3 | Strengthen the **demand spike screen** using the extract's own `D + TI − NG` identity | rule 14 (§5.2); two artifact hours survive today | removes ~0.3 TWh of phantom 2020 demand |
-| 4 | The **pre-2023 CC_REGULAR / under-export / virtual-net** triple | §4.2 + §2 + §3 land on the same years | unknown; needs (2) first |
+| 4 | The **pre-2023 CC_REGULAR / under-export / virtual-net** triple | §4.2 + §2 + §3 land on the same years; the virtual leg is pjm-d4-3's, already escalated at pjm-159 | unknown; needs (2) first |
 | 5 | The **pumped-storage benchmark seam** (§4.3) | 923 books PS net-negative; the model reports discharge | accounting only |
 | 6 | Interchange volume as a **reported-only** stream | §7 | none by construction |
 
-**Not re-litigated** (rule 28 `[R-MECH-MATRIX]` (a)): the 2022 price miss is the 18-hour Winter Storm Elliott scarcity tail with no admissible lever (`docs/FINDING-pjm-h3b-2022-miss-is-the-elliott-tail-2026-09-13.md`); the Dominion CT zonal-congestion route is closed by measurement at pjm-137; pjm-158 closed the virtual layer's invariant-price question.
+**Not re-litigated** (rule 28 `[R-MECH-MATRIX]` (a)): the 2022 price miss is the 18-hour Winter Storm Elliott scarcity tail with no admissible lever (`docs/FINDING-pjm-h3b-2022-miss-is-the-elliott-tail-2026-09-13.md`); the Dominion CT zonal-congestion route is closed by measurement at pjm-137; pjm-158 closed the virtual layer's invariant-price question, and pjm-d4-3 §4 owns the six-year virtual-net measurement — §3 here is corroboration on a newer keeper, not a new result.
