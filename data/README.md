@@ -21,6 +21,8 @@ data/
 │   └── ...
 ├── clean/          # curated, schema-validated Parquet (DERIVED — disposable)
 │   └── <datatype>/[<iso>/][<market>/]<datatype>[_<year>].parquet
+├── exports/        # hand-off CSV cuts of a raw archive (DERIVED — not inputs)
+│   └── <family>/   each carries a README naming its source + regen command
 └── dictionary/     # the data contract
     ├── schema/<datatype>.schema.yaml         one canonical schema per datatype
     └── data-dictionary.md                    overview + ISO coverage matrix
