@@ -46,15 +46,57 @@ grounds that the ladder's gross ceiling at the model's own price (37.340 TWh) si
 UNDER-PREDICTED** — I wrote "toward roughly −4 TWh or worse" and the realized figure is −13.282.
 Recorded as a miss on my own forecast, not smoothed over.
 
-## 3. G-DRIFT form 4 is now falsified WITH A NUMBER — and this is why the control was not optional
+## 3. The control was not optional — and the +1.581 TWh gap is NOT all "HEAD drift"
 
 The CONTROL at HEAD exports **40.391 TWh** where the committed keeper recorded **38.810** — a
-**+1.581 TWh HEAD drift on 2020 with no mechanism change at all**. That is the empirical
-quantification pjm-h10 owed and could not produce (its shards never survived to a scored number).
+**+1.581 TWh gap on 2020 with no mechanism change at all**. Had this lane differenced the arm
+against the *committed keeper* instead of against a control solved the same way at the same HEAD, it
+would have charged all **+1.581 TWh** of that to C-1. Rule 29 `[R-SCREEN]` (b)'s form-4 test earned
+its control here in the most concrete way available.
 
-Had this lane differenced the arm against the *committed keeper* instead of against a control solved
-at the same HEAD, it would have attributed **+1.581 TWh of pure HEAD drift to C-1**. Rule 29
-`[R-SCREEN]` (b)'s form-4 test earned its control here in the most concrete way available.
+**CORRECTION, made the same day and before anyone relied on it.** An earlier draft of this section
+called the +1.581 TWh "HEAD drift", full stop. That attribution is **wrong, or at best incomplete**,
+and rule 36 `[R-YEAR-ISOLATION]` (owner ruling 2026-09-19, miso-262 — landed in `CLAUDE.md` while
+this lane's shards were solving) is why. The gap conflates **two** causes and this lane cannot
+separate them:
+
+* **(a) genuine code drift** since the keeper's `git_sha` `f09eddbe` — the four LIVE hunks the
+  PRECOMMIT §2.2 audit names; and
+* **(b) the year-isolation artifact rule 36 was written out of.** The committed keeper was solved
+  through the **CLI** as a **multi-year span**, where `resolve_xyear_warmstart_default` and
+  `resolve_p1_basis_seed_default` flip both warm-start knobs **ON**. Rule 36(f) states the
+  consequence plainly: *"Every ISO's keeper was solved through the CLI with both knobs ON, so every
+  keeper carries some of this artifact and its registered numbers will move when it is next
+  re-solved."* On MISO the same artifact moved a year by up to **24.18 TWh** of class dispatch, so
+  1.581 TWh is well inside its demonstrated range.
+
+**This lane's own bundles are on the CLEAN side of that line, and it is verifiable rather than
+asserted.** Every shard ran `scripts/replay_keeper.py`, which (i) calls `solve_and_persist`
+**directly, not through the CLI gate** (its own comment, line 46), so neither `resolve_*_default`
+ever executes, and (ii) **explicitly pins** `DETERMINISM_ENV = {"MARKET_SIM_WARMSTART_XYEAR": "0"}`
+(line 48). `pipeline/solve.py`'s same-year seed then cannot arm either, because `_p1_seed` requires
+`_xwarm`. **So both knobs were OFF in all twelve shards** — and each shard solved exactly **one
+year** in its **own container**, which is rule 36(a) verbatim. These bundles were rule-36 compliant
+by construction, before rule 36 existed.
+
+**What follows for the promotion, and it cuts in this lane's favour — so it is stated carefully.**
+The arm-vs-control *difference* in §1 is unaffected either way: both legs ran identically, so the
+artifact cancels. What rule 36 changes is the standing of the **keeper** as a comparison basis — the
+committed 38.810 TWh is a warm-started span number and the 40.391 TWh control is an isolated one,
+and they are therefore **not like-for-like**. Any later lane quoting "+1.581 TWh of HEAD drift" from
+this document would be quoting a number with two fathers. The honest statement is: *the control
+differs from the committed keeper by +1.581 TWh, from a mixture of code drift and the year-isolation
+artifact, in unknown proportion.* Separating them would need a span re-solve at HEAD with the knobs
+on, which this lane has not spent and does not need.
+
+**One further consequence for rule 32 `[R-SHARD]`, recorded because this lane argued the other
+way.** Earlier in this session I told the owner that the per-year fan-out they instructed was a rule
+32(b) violation being taken as an owner override. **Rule 36(a) now codifies the opposite**: *"This is
+the one place rule 32 `[R-SHARD]` (b)'s ban on per-year fan-out does NOT apply … A registrable
+backcast run is therefore one shard per year, composed."* The owner's instruction was the rule
+arriving early, not an exception to it, and the reasoning rule 36(a) gives is exactly the one that
+made it work here — rule 34 `[R-SHARD-PROMOTABLE]` (a) made every shard push its FULL bundle
+including `dispatch/<y>_P1.parquet`, so the legs compose.
 
 ## 4. THE STRIKING ONE: the mechanism reproduces its own ex-ante prediction to 0.16 TWh
 
