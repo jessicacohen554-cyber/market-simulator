@@ -2443,7 +2443,7 @@ results/calibration/soco53c_control/
 #   git checkout b66fd8a49c8895163f6757080c0f0be52ffd6973 -- results/calibration/ercot_mer20260919_2022
 #   git checkout 9ab2461485a9feeb4a9cf191c2216056955e54c6 -- results/calibration/ercot_mer20260919_2024
 #   git checkout a6429ae94eef82079f349a2a75b93a7f257778b5 -- results/calibration/ercot_mer20260919_2025
-#   (2023: claude/ercot-mer-2023-v2, sha recorded in the RESULT doc when it lands)
+#   git checkout 78422a377d62b73f30cbf98914c215f54ad33c58 -- results/calibration/ercot_mer20260919_2023
 # NOTE (rule 31, pjm-h8 correction): check_registry_payload_parity.py sweeps the
 # FILESYSTEM, so these gitignored dirs turn that gate RED *locally* while CI stays
 # green. That is expected — do NOT "fix" it by deleting a result.
