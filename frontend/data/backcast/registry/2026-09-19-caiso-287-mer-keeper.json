@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-19-caiso-287-mer-keeper",
+  "label": "caiso 287 mer keeper",
+  "date": "2026-09-19",
+  "shorthand": "caiso-287-mer-keeper",
+  "definition": "caiso-287 instrumented replay 2023: P0 dispatch MW + P0 duals",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-09-19-caiso-287-mer-keeper.js",
+  "bundle": "results/calibration/caiso287_mer_span"
+}

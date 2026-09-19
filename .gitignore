@@ -2593,8 +2593,33 @@ results/calibration/nwpp42_mer_composite/
 # caiso-287: per-year instrumented + MER control shard bundles. Pushed by each
 # shard to its OWN branch (rule 34 [R-SHARD-PROMOTABLE] (a)) and kept out of
 # main from the parent's tree (rule 32(d)); never `rm` (rule 31 [R-RETAIN]).
-# Recover by FULL immutable SHA, never branch name (rule 33(d)):
-#   git checkout d8e7b39c1e4d17e3c5c53780987b24ac80e8ee2d -- results/calibration/caiso287_instr_2024
+#
+# WHAT IS ALREADY ON MAIN AND NEEDS NO RECOVERY: the promoted keeper
+# caiso287_mer_span and its 2022 touchpoint caiso287_instr_2022 are COMMITTED
+# (registered 2026-09-19), INCLUDING their hourly/p0_dispatch_<year>.parquet
+# and hourly/p0_prices_<year>.parquet. So the arrays the screen split was
+# measured from are on main; only the per-year dispatch/ and floors/ are not
+# (the standard slim-bundle rule above).
+#
+# RECOVERY, BY FULL IMMUTABLE SHA, NEVER BRANCH NAME (rule 33(d)). Branch
+# deletion is REFUSED for this session's credential (HTTP 403, rule 33(f)(5)),
+# so these branches are left for the environment's own auto-disposal; while the
+# branch survives the sha is fetchable, and once it is gone the sha becomes
+# unreachable and eventually GC'd.
+#   git checkout bb3034214d1d3da70d0db8d8435540f82387222d -- results/calibration/caiso287_instr_2022
+#   git checkout 8ce50d15cbd3ffd789978ec8c2389666c8a62439 -- results/calibration/caiso287_instr_2023
+#   git checkout b0e56a2ea90541c0ef3b8c840aa16c65cdff85d6 -- results/calibration/caiso287_instr_2025
+#   git checkout ba322129dfdf46669a9d7f776f3b38027a8ec528 -- results/calibration/caiso_mer_2022_2026-09-19
+#   git checkout cf45350227029d923f94cc1f8cea8c18bb034aa4 -- results/calibration/caiso_mer_2023
+#   git checkout 2f818efb8e5a21490114e03689896441348959df -- results/calibration/caiso_mer_2024
+#
+# DEAD PIN, RECORDED HONESTLY (rule 33(f)(4)): the 2024 instrumented bundle came
+# from claude/caiso-287-probe-2024 at d8e7b39c1e4d17e3c5c53780987b24ac80e8ee2d,
+# and THAT BRANCH WAS AUTO-DELETED WITHOUT MERGING. The sha resolves only in a
+# clone that already fetched it; from a fresh clone it does not. Recovery there
+# is a RE-SOLVE (~23 min, 8.28 GiB peak on CAISO 2024), not a checkout -- but
+# its P0 arrays are on main inside caiso287_mer_span, and every number this lane
+# cites from it is in results/calibration/_caiso287_*_2024.json.
 results/calibration/caiso287_instr_*/
 results/calibration/caiso_mer_*/
 
@@ -2693,3 +2718,9 @@ results/calibration/miso263_coalcap_20[0-9][0-9]/
 # predate this block. A future r3 must likewise pin to a sha before it, or use a
 # bundle name outside this glob.
 results/calibration/pjm_h11_*/
+# caiso-287: the 2022 leg became the REGISTERED touchpoint at the 2026-09-19 MER
+# promotion, so it must reach main (rule 15 [R-DASHBOARD]) — un-ignore the dir
+# only. The slim-bundle rules above (dispatch/, floors/, root *.parquet,
+# unit_hourly, network) still match the files inside and still apply, so this
+# commits the slim set every keeper commits, not the 50 MB working bundle.
+!results/calibration/caiso287_instr_2022/
