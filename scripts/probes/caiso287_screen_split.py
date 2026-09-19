@@ -249,7 +249,8 @@ def main(bundle: Path, out_path: Path) -> None:
     fz = np.load(bundle / "floors" / f"{YEAR}_P1.npz", allow_pickle=False)
     if [str(u) for u in fz["unit_ids"]] != uid:
         raise SystemExit("G-R1 FAIL: floors unit ids are not the fleet's")
-    min_gen = fz["min_gen"].astype(float)
+    min_gen_raw = fz["min_gen"]  # float32 as stored — the precision it can hold
+    min_gen = min_gen_raw.astype(float)
     ra_hours = fz["mechanism"] == MECH_RA_MUSTOFFER
 
     startup_lead = cc_startup_lead_hours(generators, fa, "CAISO")
@@ -275,8 +276,23 @@ def main(bundle: Path, out_path: Path) -> None:
     # ---- G-R2: the keeper configuration reproduces the committed floor ------
     keeper = floors["M_both"]
     on_ra = ra_hours
-    exact = bool(np.array_equal(keeper[on_ra], min_gen[on_ra]))
+    # The PRECOMMIT wrote this leg as a float64 equality. The committed floors
+    # sidecar stores ``min_gen`` as **float32**, so that form cannot pass even
+    # on a bit-exact reproduction — the gate was mis-specified, and both forms
+    # are therefore reported rather than the convenient one:
+    #   * ``as_written``  — float64 detector output vs the float32 store.
+    #   * ``at_artifact_precision`` — float32(detector output) vs the store,
+    #     i.e. exact to the precision the artifact can actually hold.
+    # The second is the one that carries meaning here; the first is retained so
+    # the pre-registered wording is not quietly rewritten after the fact.
+    exact_as_written = bool(np.array_equal(keeper[on_ra], min_gen[on_ra]))
     max_abs = float(np.max(np.abs(keeper[on_ra] - min_gen[on_ra]))) if on_ra.any() else 0.0
+    keeper32 = keeper.astype(np.float32)
+    stored32 = min_gen_raw[on_ra]
+    exact = bool(np.array_equal(keeper32[on_ra], stored32))
+    n_mismatch = int(np.sum(keeper32[on_ra] != stored32))
+    rel = np.abs(keeper[on_ra] - min_gen[on_ra]) / np.maximum(np.abs(keeper[on_ra]), 1e-9)
+    max_rel = float(rel.max()) if on_ra.any() else 0.0
     # Off the RA-attributed hours another mechanism wrote the winning value, so
     # the detector's own floor may only be LOWER, never higher
     # (``_bridge_floored_fleet`` composes by maximum and tags the mechanism
@@ -317,7 +333,7 @@ def main(bundle: Path, out_path: Path) -> None:
         verdict = "SPLIT"
 
     rec = {
-        "bundle": str(bundle.relative_to(REPO)),
+        "bundle": str(bundle.resolve()).replace(f"{REPO}/", ""),
         "year": YEAR,
         "git_sha_of_bundle": meta.get("git_sha"),
         "posture_reasserted": posture,
@@ -330,8 +346,21 @@ def main(bundle: Path, out_path: Path) -> None:
         "gates": {
             "G_R1": "PASS",
             "G_R2": "PASS" if g_r2 else "FAIL",
-            "G_R2_exact_on_ra_hours": exact,
+            "G_R2_exact_at_artifact_precision": exact,
+            "G_R2_mismatching_ra_gen_hours": n_mismatch,
+            "G_R2_ra_gen_hours": int(on_ra.sum()),
+            "G_R2_exact_AS_WRITTEN_float64_vs_float32_store": exact_as_written,
             "G_R2_max_abs_diff_on_ra_hours_mw": max_abs,
+            "G_R2_max_rel_diff_vs_float32_eps": {
+                "max_rel": max_rel,
+                "float32_eps": float(np.finfo(np.float32).eps),
+            },
+            "G_R2_note": (
+                "The PRECOMMIT wrote this as a float64 equality; the store is "
+                "float32, so that form cannot pass even on a bit-exact "
+                "reproduction. Both are reported. The artifact-precision form "
+                "is the one with meaning."
+            ),
             "G_R2_gen_hours_exceeding_elsewhere": n_exceed,
             "G_R2_absorption_rows_excluded": n_absorb_rows,
             "G_R3": "PASS" if g_r3 else "FAIL",
