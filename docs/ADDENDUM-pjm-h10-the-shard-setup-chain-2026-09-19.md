@@ -17,7 +17,7 @@ they were environment setup, and **two of the four were caused by an instruction
 |---|---|---|
 | 1 | `session_01GVm2g4rPYhEHZT6kRmiB3S` | ended its turn after preflight, mid-solve; later resumed into env setup; archived |
 | 2 | `session_01WiG8kSC7zZRG9R6xb85HJp` | began regenerating the clean tree (**correctly**), ended its turn; archived |
-| 3 | `session_01FKXs8PaaohGkVSsYJTp6gK` | solve **died at 59 s on missing `data/clean`** — which my prompt had forbidden it to rebuild |
+| 3 | `session_01FKXs8PaaohGkVSsYJTp6gK` | solve **died at 59 s on missing `data/clean`** — which my prompt had forbidden it to rebuild — and separately reported an **OOM at 23.4 / 24 GiB**. It then stopped and asked for authorization, correctly. |
 | 4 | `session_01HSskC9q1YEKBMcv9RydYHr` | cleared every blocker itself, **OOM-killed in the 2020 P0->P1 seam**, and pushed a finding instead of a bundle — a SUCCESS by the rule's own definition (`claude/pjm-h10-mer-tp2`, `0bcb1a3c6265cdb253e5447b08288e4aa030bdf7`) |
 | 5 | `session_013WuzZpNy1yBLDuXVVN8AcT` | relaunched with the clean-tree step required; **yielded mid-rebuild and stalled** — no bundle |
 | 6 | `session_01DG8713GuWS33fC7aJybGoW` | same; got as far as the DA-virtuals fetch and **yielded mid-fetch** — no bundle |
@@ -98,6 +98,16 @@ rather than the full regeneration:
 Neither "silently no-ops" — both hard-raise, which is the correct behaviour and is why the failure is
 legible at all.
 
+### MEASURED: the full regeneration is ~42 minutes, so prefer the narrow curates
+Run in this parent container for the record: `scripts/regenerate_clean.py` over all datatypes took
+**~42 minutes**, wrote **1.6 GB**, and completed **57 of 58** datatypes (1 failed, non-fatal — the
+script is per-datatype and independent). That is a real slice of a 120-minute shard budget, and it is
+why the TP shard's approach is the better pattern: it ran **only the two narrow per-datatype curate
+scripts the runtime log itself named** (`curate_transfer_interface_limits.py --isos PJM`,
+`curate_ramp_capability.py --isos PJM`), taking seconds rather than tens of minutes. **Recommended
+recipe: let the runner hard-raise, read which datatype it names, and curate that one** — reserve the
+full regeneration for a container that will be reused.
+
 ### (f) Dependencies: `uv sync --no-dev` is the better route
 The shard's container shipped **no Python dependencies at all** (`numpy` absent). `uv sync --no-dev`
 installed the `uv.lock` pins, and they **match the source bundle's recorded environment exactly** —
@@ -167,6 +177,7 @@ oom-kill:constraint=CONSTRAINT_MEMCG, task=python
 total-vm:31045096kB  anon-rss:13949260kB
 ```
 
+* **Container ceilings VARY between shards and must be read, never assumed**: this shard's binding cgroup was **13.36 GiB**, while shard 3's own report named **24 GiB** (it reported an OOM at 23.4/24). Rule 32(c)(8)'s instruction to read the binding cgroup rather than `free` is therefore doing real work — but the *value* it quotes is this environment's, not a constant.
 * **13,949,260 kB = 13.30 GiB against a 13.36 GiB ceiling** — the *identical* 13.30 GiB figure rule
   32(c)(8) already records for the miso-252/253 incident. PJM per-plant across 8 zones needs
   **>13.3 GiB anon in the P0→P1 seam alone**.

@@ -5901,3 +5901,55 @@ Relaunched as `session_01FKXs8PaaohGkVSsYJTp6gK` (branch `claude/pjm-h10-mer-a2`
 `session_01HSskC9q1YEKBMcv9RydYHr` (branch `claude/pjm-h10-mer-tp2`, 2020–2022) with that instruction
 added. **A metrics difference in these replays is EXPECTED, not a regression** (the four LIVE hunks),
 and neither may re-register or overwrite the keeper.
+
+### pjm-h10 CODA — 2026-09-19 — the shard outcome: NO MER BUNDLE, an OOM finding, and a setup-chain defect
+
+**Six shards across three generations produced no MER bundle.** All are archived (rule 33
+`[R-SHARD-ARCHIVE]` (e)); none was left alive. Record:
+`docs/ADDENDUM-pjm-h10-the-shard-setup-chain-2026-09-19.md` and the shard's own
+`docs/FINDING-pjm-h10-shard-mer-tp-oom-2026-09-19.md` (rescued onto the lane branch from the
+**immutable SHA `0bcb1a3c6265cdb253e5447b08288e4aa030bdf7`**, rule 33(d)).
+
+**Generation 2's TP shard was a SUCCESS by the rule's own definition** — it cleared every setup
+blocker itself, was **OOM-killed in the 2020 P0→P1 seam**, and pushed a finding instead of a bundle.
+Its numbers: `oom-kill constraint=CONSTRAINT_MEMCG`, **anon-rss 13,949,260 kB = 13.30 GiB against a
+13.36 GiB ceiling** — the identical figure rule 32(c)(8) records for miso-252/253 — after 2020 P0 had
+completed (`Solve 574.607 s`, 382,243 simplex iterations). **THE RUNNER'S SWAP MITIGATION WAS INERT**:
+a 5.0 GiB swapfile was active with `/proc/swaps` **Used = 0** at the kill, and preflight had already
+printed *"ceiling+swap 18.4 GiB is below the 24 GiB target; a per-plant ISO-year LP (MISO, PJM) may be
+OOM-killed here"* — then ran anyway. Rule 32(c)(8) rests on the premise that provisioning a swapfile
+is what makes a per-plant PJM/MISO year fit; **on this container it was not**, and the addendum puts
+to the owner that preflight should REFUSE rather than warn. Ceilings also **vary between containers**
+(13.36 GiB here, 24 GiB on another shard), so the value must be read, never assumed.
+
+**THE MER ATTRIBUTION IS CONFOUNDED AND STAYS OPEN — do not cite this as evidence against the
+emissions dual.** The dual cannot be toggled at this HEAD without a code edit the shard was forbidden
+to make, and the container was flagged under-provisioned before the dual was reached. The OOM is
+equally consistent with PJM per-plant simply not fitting a 13.36 GiB cgroup with or without it.
+
+**A SETUP-CHAIN DEFECT, and part of it was this session's own prompt.** Rule 32 `[R-SHARD]` (c)(2)
+documents ONE setup step (the `DATA PROFILE`). A PJM per-plant replay needs **six**: hydrate; install
+deps (`uv sync --no-dev` is better than pip — `uv.lock`'s pins match the source bundle's recorded
+environment exactly); the `transfer-interface-limits` clean partition (`pjm_measured_interface_limits`);
+the `ramp-capability` clean partition (`measured_ramp_capability`); the `data/clean` tree generally;
+and a re-fetch of the **licensing-gitignored** `pjm-da-virtuals` corpus that `pjm_da_virtual_bids=True`
+reads and that is in no clone, ever. **Generation 2's prompt FORBADE `regenerate_clean.py`**, which
+turned a setup step into two dead containers — my error, recorded as such. Measured here: the full
+`regenerate_clean.py` is **~42 min / 1.6 GB / 57 of 58 datatypes**, so the TP shard's pattern is
+better — let the runner hard-raise, read the datatype it names, curate that one.
+
+**ANSWERED, and it closes an open question the addendum raised: DataMiner2 DOES still serve
+`hrl_da_incs_decs` for 2020–2022** (36 files, 15 MB, 577 s with `--years 2020 2021 2022`). The PJM
+holdout touchpoint's inputs ARE re-obtainable from a cold container. Also: `build_pjm_da_virtual_units`
+has **no fallback and no year gate**, so the committed touchpoint's own container demonstrably held
+those parquets.
+
+**ONE prediction from the PRECOMMIT was CONFIRMED before the kill**: the 2020 build logged
+`year table 2020`, i.e. 2020 now draws its **own** PJM midcurve offer table instead of the pooled
+2023–2025 fallback — exactly the LIVE hunk the zero-LP G-DRIFT audit named. No scored number survived
+to quantify it, so **G-DRIFT form 4 remains FALSIFIED-but-unquantified** and the control replay is
+still owed.
+
+**STILL OWED:** the marginal-emission-rate series for PJM, and the empirical check on the G-DRIFT
+verdict. Cost to reproduce: one shard per span on a container whose **binding cgroup** exceeds
+~13.36 GiB (or with usable swap charged to that cgroup), plus ~10 min of curate + fetch before any LP.
