@@ -14,7 +14,7 @@ LP      : SIX shards, ONE YEAR EACH, one container each (rule 36
           [R-YEAR-ISOLATION] (a); owner instruction this session: "launch a
           single shard for each year of the solve bc warm start has been proven
           to no longer be neutral and therefore shouldn't be used for backcast").
-PIN     : <PINNED_SHA>
+PIN     : dd61092ced3ea42267c70f1a73194b513a26ac11
 ```
 
 ---
@@ -174,3 +174,25 @@ branches, and this container is ephemeral.
 
 **"A shard that stops with a clear report is a SUCCESS; a shard that repairs
 infrastructure is a FAILURE."**
+
+---
+
+## 8. LAUNCH RECORD (appended after §5's shards were created)
+
+All six pinned to `dd61092ced3ea42267c70f1a73194b513a26ac11` — the immutable SHA of
+this doc's own commit, never a branch name (rule 32 `[R-SHARD]` (c)(1)). Each shard's
+first hard stop is `git checkout -B <its branch> <sha>` followed by a `git rev-parse
+HEAD` equality check, which also defends against the repo's SessionStart hook
+fast-forwarding a shard's clone to `origin/main`.
+
+| year | shard session id |
+|---|---|
+| 2020 | `session_01Spi6irRnh9QgTA2FPYfC5A` |
+| 2021 | `session_017qE2ktN2s8Q9rdjvBNLauK` |
+| 2022 | `session_015rusZCPu5sRsCp5cSFkbVu` |
+| 2023 | `session_016juHkDtLDXij718vFACDxS` |
+| 2024 | `session_01BaLT1xLKY8LukVrkK9Uxx4` |
+| 2025 | `session_01Tzwv9sZPUXyvWjhoy483SD` |
+
+Tagged `neiso-112-mer` so the parent can sweep and archive them (rule 33
+`[R-SHARD-ARCHIVE]` (e)) once their bytes are fetched and verified.
