@@ -3212,3 +3212,121 @@ the committed `spp43_holdout_span` `hourly/` sidecars, and now SPP's cheapest op
 card R-be's within-day grain on plant 3008, which needs a genuinely new idea rather than a new
 solve; and the coal↔gas crossover, **fully data-blocked** pending a new dataset (rail-performance
 or delivery-reliability) — an owner data-procurement decision, not a modelling lane.
+
+## spp-47 — 2026-09-18
+
+**SPP's four rubric failures on the 2019–2022 rung, adjudicated at ZERO LP.** Base
+`8f0d41df`. Keeper `2026-09-16-spp-42-commitment-feasibility` and rung
+`2026-09-16-spp-43-outage-intake` **both UNCHANGED**. No LP, no bundle, no shard, no
+registration, no cell armed. Record: `docs/handoffs/RESULT-spp-47-four-failures-2026-09-18.md`.
+
+**THE BRIEF'S CENTRAL HYPOTHESIS IS REFUTED.** "2020's COAL_PRB shortfall is the single thread
+tying three of the four criteria together" is false. C3a/C3b-2020 is not a coal-volume defect:
+the model is too expensive in **10 of 12 months** (mean overshoot +$5.05),
+`corr(monthly price error, model monthly coal) = −0.292` (other years −0.491 / −0.237 / +0.063),
+and the model's cheapest month is **$16.46 against the market's $9.65**. It captures **44 %** of
+2020's real monthly price variation (sd 1.97 vs 4.52) and its **floor gap (+$6.81) exceeds its
+mean error (+$3.83)**. The object is a **price FLOOR** — no price-setter below coal SRMC — and
+it is the same object in all three failing years (2021 84 %, 2022 68 % of real dispersion).
+This is the **floor half of SPP-64's ceiling finding**, and SPP-64 already supplies the
+mechanism: `spp_curtailment_ceiling` holds wind at its CF **bound**, a bounded unit is never
+marginal, the model's minimum price is exactly −26.000 in every year/zone, and nothing sits
+between that and coal SRMC. **Wind long +8.2 to +10.9 TWh every year and the floor being too
+high are the same defect from two sides**; successor **R-bc** addresses both. Corroboration
+only — no cell moved, no new queue entry.
+
+**STALE-BENCHMARK TRIAGE DISCHARGED (7/7 parts STALE, all `unresolvable: unknown builder
+state`).** The flag is provenance; the numbers were measured. `--rebuild-benchmark` is zero-LP
+and the shared inputs are content-addressed, so reproduction is exact rather than approximate.
+**THE KEEPER (2023–2025) REPRODUCES BYTE-EXACTLY — 8 of 8 shared inputs to the same content
+hash, `eia923-7da41467dba7` included. SPP's CALIBRATED headline was never at risk.** The rung
+moves in **exactly three class-years**: 2020 `COAL_PRB` **−1.2092 TWh**, 2021/2022 `ST_GAS`
++0.2591 / +0.2527. Resolved to two plants, pointing **opposite ways** — plant **6193** is a
+genuine repair (new COAL_PRB+ST_GAS = **5,140,010 MWh** against CAMPD's **5,140,010**, an exact
+meter reconciliation; the committed value under-counted ST_GAS by 259,133 MWh), plant **127** is
+a **regression**.
+
+**ROOT CAUSE, and it is a confined zero-DOF INPUT defect (rule 14 `[R-ACCURATE]`).** Plant 127
+is **Oklaunion**, `ba_code SWPP`, 720 MW sub-bituminous. It is in the LP fleet in **2019**
+(`COAL_SPP-North_p127_*`, 650.0 MW) and **absent 2020–2022** — yet it ran **May–Sep 2020,
+1,209.2 GWh metered** (92.5/222.6/288.9/334.9/270.2 GWh). EIA's own vintages pin it:
+`vintage_2019` operable **OP** with *planned* retirement **9/2020**; `vintage_2020`
+retired-and-canceled **RE**, retirement **9/2020**. Under `eia860_vintage_tracks_solve_year`,
+`load_retired_within_window` returns empty for a native vintage on the stated assumption that
+"the operable fleet already has them" — **true for a plant retiring after the vintage year,
+FALSE for one retiring during it**, because that vintage's year-end operable snapshot has
+already moved it to the retired sheet. The plant and its nine operating months vanish. The COD
+ramp that would zero it correctly after September already exists; the **injection gate** is what
+is wrong. **Footprint confinement, measured over every SPP mid-vintage-year retiree
+2019–2022: 2019 0.0 GWh, 2020 1,209.2 GWh (Oklaunion alone), 2021 0.0 GWh, 2022 47.8 GWh
+(Ponca, already SPP-45-inert).** Every other such retiree is either carried (GREC 165, 540 MW,
+2,615.4 GWh — the machinery working) or has zero metered energy. **11.1 % of the failing
+−10.85 TWh row, and it does not close C1** (best case −9.64, still FAIL).
+
+**DO NOT REBUILD SPP'S BENCHMARK YET.** The rebuild is one-sided: it fixes 6193 **and deletes
+Oklaunion's 1.209 TWh of real metered coal from the 2020 ACTUAL**, shrinking a failing criterion
+by 11 % by removing data rather than dispatching it — "rescaling an input so the model's output
+lands on the actuals" (rule 13 `[R-MEASURED]`) and "burying the error back inside an inaccurate
+input" (rule 14). Governed order is **fleet repair first, benchmark second**; after the fleet
+carries Oklaunion the benchmark question is moot, since the builder keys on the fleet map.
+
+**C1 IS TWO OBJECTS, NEITHER 2020-SPECIFIC.** *Object A* — COAL_PRB and CC_REGULAR are an
+antisymmetric pair (`r = −0.971`) whose split error is **monotonic in the gas price**
+(`r = +0.885`, OLS **+4.081 TWh per $/MMBtu**, zero-crossing **$3.93/MMBtu**): SPP coal SRMC is
+near-fixed (~$16/MWh, coal $1.46–1.82/MMBtu) while gas SRMC swings ~$14 → ~$45, and the model
+follows the swing all the way. **A LEVEL miss, not duration** — hours-on ~8,760 in model and
+actual every year; 2020's gap is 98 %+ mean-output-when-on (−1,863.6 MW) against −43 hours.
+*Object B* — **ST_GAS short 4.6–4.9 TWh in EVERY year**, gas-price-independent: SPP-63's routed
+successor **R-ba** (gas steam offered above CT_PEAKER despite a better heat rate, 10.543 vs
+10.974), corroborated here on a second year set. **C4-2022 is their arithmetic consequence and
+is 80.8 % BIAS** (bias/scale/shape 80.8/1.1/18.1; 2021 64.5/0.6/34.8; 2019–2020 shape-dominated
+at 87.6 %/75.9 %) — 21.3 TWh of missing gas, a 32 % level shortfall with near-perfect timing,
+and a clean regime change at 2021 where the gas price crosses Object A's $3.93 zero-crossing.
+
+**TWO HYPOTHESES KILLED SO THEY ARE NOT RE-SPENT.** (i) Fuel-price data is **not** Object A's
+cause. Gas is already rich — `gas_plant_monthly_fuel_pricing` **and**
+`f923_gas_price_plausibility_screen` are both armed in `scenario_config` (**not** in
+`calibration_flags`, which is why the flat annual `gas_prices` scalar misreads as the whole
+story); SPP-46's routed **R-1 is built and armed**. And SPP's **coal** frame is clean: of
+**1,100** SPP coal plant-months 2019–2022, **0** at ≤ $0.00, **0** at ≤ $0.30, **0** at ≥ $6.00,
+24/26 plants covered, quantity-weighted 1.535/1.457/1.503/**1.822** $/MMBtu rising correctly
+into 2022 — **the gas seam's garbage problem has no coal analogue in SPP**, so the missing coal
+plausibility screen costs this ISO nothing. (ii) **2022's slack is immaterial**: 563.6284 MWh in
+**4 zone-hours**, all SPP-South, two consecutive-hour pairs (h3350–3351, h6326–6327) at
+19.4–22.5 GW demand — **0.0002 %** of load, against exactly 0.0000 MWh in 2019/2020/2021. Real
+scarcity hours, touching only the auto-caveated C3c.
+
+**METHOD NOTES (two of this lane's own probes were wrong and were discarded).** A hand-rolled
+reconstruction of `_benchmark_eia923_frame` disagreed with the committed part on classes the
+clean test says are stable (2019 CC_CHP +0.87 TWh) because it reproduced neither the bundle's
+`btm_backfill_year`/`mustrun_chp_btm_holdout` settings nor `classFull`'s EIA-930-sourced
+classes; and a census scoring "unmapped" plants off the shared `campd` frame returned **581 TWh**
+for a ~250 TWh ISO because that frame is **state**-scoped, not ISO-scoped. Only
+`--rebuild-benchmark` on the bundle itself carries the bundle's own settings. **SPP-45 trap (a)
+mattered**: matching both unit-id conventions is what showed Oklaunion present in 2019 — a
+`^127_` prefix test reports it absent there and destroys the central contrast. Trap (b) was
+never reached (no in-process path swap).
+
+**RULES.** 1 — nothing selected on a residual; Object A is reported as a **measurement with no
+lever proposed**, and §9 records why the rule-1 carve-out cannot reach it (the required
+correction **changes sign** between 2020 and 2022, against condition (b)'s one-config-every-year).
+13/14 — the §2.2 ordering ruling. 15 — no completed run, dashboard unchanged and correct.
+21/24 — zero free parameters, `offer_curve_by_group` untouched. 25 — the retiree-injection seam
+is **cross-ISO** (`data/fleet/eia860.py`), so it is deliberately **not** built by this lane; it
+needs its own charter. 28 — **no cell moves and none is owed**: no mechanism tested. 29 — zero-LP
+phase 0 only; a measured-input repair takes no screen (SPP-38/42/43/45 precedent). 30(c) — a
+held-out rung reports and cannot decertify; SPP stays **CALIBRATED**. 31 — nothing deleted,
+nothing stranded, promotion question asked in RESULT §8. 32/33/34 — no shard launched.
+
+**PARITY GATE: the same two pre-existing REDs, no new ones** — `caiso279_ablate_dswcouple_span`
+and `soco15_spp_arm`. Neither pruned (rule 31 reserves `soco15_spp_arm` for the owner).
+
+**STILL OPEN, ranked:** **S-1** mid-vintage-year retiree injection (new, owed; rule 14, zero
+DOF, cross-ISO charter needed); **S-2** R-bc, curtailment as an LP constraint whose dual reaches
+the zonal price — the **only** object addressing C3b's floor half; **S-3** R-ba, the
+ST_GAS/CT_PEAKER merit-order inversion; **S-4** the coal↔CC elasticity (Object A) — largest
+single C1 residual, **no structural successor found**, and explicitly **not** closeable by the
+authorized offer-curve channel. Card R-be's within-day grain on plant 3008 is unchanged and
+still needs a new idea rather than a new solve. The coal↔gas **supply** lane (deliverability
+markup, stockpile inventory) remains data-blocked per SPP-44 and is untouched here — Object A is
+a different object, about relative merit-order elasticity, not coal supply.
