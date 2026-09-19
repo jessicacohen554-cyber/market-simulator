@@ -290,6 +290,46 @@ def build_kwargs(meta: dict) -> dict:
                 kwargs.setdefault("prb_overrides", {})
                 kwargs["prb_overrides"]["coal_plant_monthly_pricing"] = False
             continue
+        if key == "ercot_ep_gas_basis_receipts_fallback":
+            # Not a direct kwarg either: the calibration CLI arms it through the
+            # generic prb_overrides ScenarioConfig channel
+            # (``run_calibration_full.py`` ~line 14247,
+            # ``True if args.ercot_ep_gas_basis_receipts_fallback else None``),
+            # and the consumer reads it straight off the effective config
+            # (``data/fuel/basis/ercot.py`` ~line 830, ``getattr(config, ...)``),
+            # so prb_overrides IS the faithful route — the same one this very
+            # bundle's sibling key ``ercot_ep_gas_basis_corroborated`` already
+            # travels in, under ``coal_prb_sigmoid_overrides``.
+            #
+            # It reaches meta.json's TOP LEVEL instead because the ercot-265
+            # promotion (``c79e89ef``) stamped it there as a provenance record
+            # of the False -> True arming; ``solve_and_persist``'s meta literal
+            # has never emitted this key, so nothing else could have. That stamp
+            # made the ERCOT keeper UNREPLAYABLE ON EVERY YEAR — the key sits in
+            # the base recipe and ``build_kwargs`` runs once, before the year
+            # loop — and all five ERCOT MER shards stopped here on 2026-09-19
+            # (docs/handoffs/FINDING-ercot-mer-replay-blocked-2026-09-19.md).
+            #
+            # Routed PER-KEY and deliberately NOT as a blanket "any
+            # ScenarioConfig field falls through to prb_overrides": the unmapped
+            # hard stop below is the miso-50..53 lossy-reconstruction guard, and
+            # widening it wholesale would silently admit every future stray key.
+            # This mirrors the ``coal_plant_monthly_pricing`` precedent above.
+            #
+            # Only a True is written, matching the CLI's ``... else None``: the
+            # ScenarioConfig default is already False, so a recorded False needs
+            # no override and must not fabricate one.
+            #
+            # DEFENSIVE COPY, not setdefault-and-mutate: ``prb_overrides`` is
+            # bound straight off ``meta["coal_prb_sigmoid_overrides"]``, so
+            # writing through it would mutate the caller's parsed meta.json and
+            # contaminate every later reconstruction from the same dict (the
+            # same trap ``apply_config_overlay`` already guards against, and one
+            # this very patch fell into first time out).
+            if v:
+                kwargs["prb_overrides"] = dict(kwargs.get("prb_overrides") or {})
+                kwargs["prb_overrides"]["ercot_ep_gas_basis_receipts_fallback"] = True
+            continue
         if key in params:
             if isinstance(v, dict) and v:
                 v = _strip_rule26_from_override_dict(k, v, meta)
