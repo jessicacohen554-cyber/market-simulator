@@ -14473,3 +14473,108 @@ Records: `docs/handoffs/PRECOMMIT-ercot-mer-keeper-resolve-2026-09-19.md` (+ Ame
 `docs/handoffs/RESULT-ercot-mer-keeper-resolve-2026-09-19.md`,
 `docs/handoffs/FINDING-ercot-mer-replay-blocked-2026-09-19.md`,
 `docs/handoffs/HANDOFF-ercot-mer-promotion-blocked-2026-09-19.md`.
+
+## ercot-268 — 2026-09-19
+
+**THE DRIFT IS BISECTED AND THE GATE IS CLOSED. The cause is `9398000db` (merged `a0bcb04f93`,
+PR #6123) — "SOCO-15: resolve the COD ramp at the LP unit's own grain". HEAD IS CORRECT; NO
+RE-SOLVE IS OWED.** Zero LP, no shard launched, nothing armed, nothing registered, nothing
+deleted. Keeper `2026-09-19-ercot266-mer-five-year` **untouched** and already on the repaired
+construction (it solved at `5926ca52`), so its published numbers are the correct ones and every
+scored criterion stands. Record: `docs/handoffs/FINDING-ercot268-drift-bisect-2026-09-19.md`.
+
+**Method.** Binary search on the `availability` hash over the **157 code-touching first-parent
+commits** in `0ebfc2da0..5926ca52`, seven probes, two new `fleet_only` instruments
+(`scripts/probes/_ercot268_drift_bisect.py`, `_ercot268_input_at_sha.py`,
+`_ercot268_bisect_driver.py`, `_ercot268_cod_unit_delta.py`) that rebuild the keeper's own
+recipe from a sparse worktree at each sha over ONE shared `data/` tree. Index 72 GOOD, index 73
+BAD; **only two distinct hashes appear anywhere in the window**, and the same search on 2025
+lands on the same commit.
+
+**THE HANDOFF'S TWO READINGS ARE BOTH REFUTED, by measurement rather than argument.** (1) It is
+**not** a plant→class mapping change: `unit_id → plant_group` is **bit-identical at both shas in
+all five years, zero units re-classed**; the class-energy swaps are the LP re-dispatching around
+a changed availability envelope. (2) `760012f7` is **exonerated**, not merely unconfirmed — it
+is an ancestor of the probed GOOD index 72, and ERCOT carries
+`eia860_vintage_tracks_solve_year = False` under which it is a no-op by its own construction.
+Same for `eaa9d6f1`, `ee40acd2`, `26f8508b8` and `6b82b833f`.
+
+**What moves: `availability` and `min_gen`, nothing else.** Every other LP-visible fleet array
+and every state array (demand, wind/solar CF and capacity, storage, fuel prices) is bit-identical
+end to end.
+
+| year | availability Δ | Δ% | classes that move |
+|---|---:|---:|---|
+| 2021 | −85,197.1 | −0.585 % | CC_CHP −1.818 %, CT_CHP −3.869 %, CT_PEAKER −0.115 % |
+| 2022 | −66,554.4 | −0.427 % | CC_CHP −1.890 %, CT_CHP −3.876 %, CT_PEAKER +0.341 % |
+| 2023 | −40,275.2 | −0.250 % | CT_CHP −3.883 %, CT_PEAKER +0.144 % |
+| 2024 | −39,379.7 | −0.246 % | CT_CHP −1.319 %, CT_PEAKER −0.471 % |
+| 2025 | **0.0 exactly** | 0.000 % | *(none)* |
+
+**2025 IS THE PROOF.** It is the one year the ercot-mer re-solve reproduced byte-exactly on all
+61,320 zone-hours, and it is the one year this commit moves by nothing: measured on the raw
+`(2310, 8760)` float64 arrays, 753,360 cells differ by a **max of 4.44e-16 — one ULP — with the
+array sum changing by exactly 0.0**, the arithmetic signature of multiplying by a computed
+fraction that equals 1 only to rounding. A cause that did not also predict the null would not be
+the cause.
+
+**WHY IT IS A REPAIR (rule 14 `[R-ACCURATE]`, and the residual is cited second, not first).**
+`effective_cod` let the plant-collapsed **capacity-weighted mean COD** win a generator's online
+date; `generator_online_mask` gives a raw unit its own EIA-860 Operating Year/Month and gives a
+CAMPD bin — which is what every ERCOT LP thermal unit is — the nameplate-weighted monthly
+**online-capacity fraction** of its own constituents. In 2023 exactly **46 of 2,323 LP units
+move, at three multi-vintage Houston plants**, each checkable against the published operable
+sheet: **57504 TECO CHP-1** (GTG2 50 MW does not exist until 2024-05, previously carried online
+through all of 2023 → flat −3,943.5/tranche); **65373 Brotman** (six units 2023-05, two 2023-10
+→ delta confined to **months 5–9**); **65372 Mark One** (six units running from 2022-11 that the
+plant mean held offline → **+579.1**, an INCREASE). A correction that runs in both directions on
+each plant's own vintages is not something a fitted derate can do. Corroboration only: C3a moved
+toward actual in three of the four affected years (2023 −6.5 % → −0.9 %, 2024 −0.3 % → +0.1 %,
+2022 −8.1 % → −7.7 %) and slightly away in 2021 (+5.6 % → +6.0 %) — had it moved the other way
+the verdict would be the same and rule 14 would open a root-cause investigation instead.
+
+**TWO DEFECTS FOUND ON THE WAY IN, neither this lane's to fix, both stated rather than buried.**
+
+1. **The superseded keeper's recorded solve sha is FALSE.** All four `run_config*.json` in
+   `ercot265_receipts_five_year` record `git.sha 6bc43501`, `dirty false`, **and**
+   `ercot_ep_gas_basis_receipts_fallback true` — a field with **zero occurrences anywhere in
+   `src/` or `scripts/` at that sha**, introduced by `0ebfc2da0` (2026-09-09 20:23 UTC), which
+   is **not an ancestor of `6bc43501`** (04:09 UTC). The blobs say what happened: of 38 files,
+   **24 are byte-identical to `ercot261_five_year_keeper`** and the 14 that differ are the six
+   2021 sidecars plus every metadata file. ercot-265 re-solved 2021 alone, carried the
+   incumbent's 2022–2025 sidecars forward, and rewrote all four run_configs while keeping the
+   incumbent's `git_sha`. Effect is harmless (the fallback is inert outside 2021, confirmed
+   independently by the 2025 byte-exact reproduction) but the **record is false**, and the
+   handoff's "~25 commits in `6bc43501..HEAD`" window therefore began before the keeper existed.
+   The general fix — a composition must not inherit another run's `git_state()` — belongs with
+   `run_calibration_full`'s bundle composition.
+2. **`SOLVE_EPOCHS` is empty, and this is the first measured case that needed it.** SOCO-15
+   moved every region's results **by design** (*"every registered keeper's cache key is
+   byte-identical (gate G8) and results move — that is the point"*). `data/cod_ramp.py` and
+   `data/fleet/arrays.py` sit outside `solve_surface.SURFACE_MODULES` and cannot join it (those
+   seven are stdlib-only by construction), so the epoch ledger its own docstring introduces for
+   *"the code-level changes a value hash cannot see"* is the only net — and it has never been
+   used. That is why four ISO-years of drift had to be found by a price residual ten days later
+   instead of by a changed cache key on the day.
+
+**CROSS-ISO, AND IT IS LIVE.** SOCO-15 is a shared seam, not a SOCO one. Against its merge
+(2026-09-13 18:11 UTC), **PJM's `2026-09-11-pjm-d4-4-gasoutage` (+ its holdout touchpoint) and
+CAISO's `2026-09-12-caiso-275-gascoupling` (+ `-2022`) were solved BEFORE it** and carry the
+superseded construction; every other ISO's keeper is after. Rule 29 `[R-SCREEN]` (b) form 4 is
+therefore **suspect for PJM and CAISO** exactly as it was for ERCOT. The size is **unmeasured
+there and not assumed** — both are EIA-860 per-plant fleets, exposed through the unit-date limb
+rather than ERCOT's bin-fraction limb — and this lane's probes run on any ISO's keeper for the
+cost of two rebuilds. **No ISO's keeper is invalidated by this.**
+
+**Rule 23 `[R-MECH-MATRIX]`:** `docs/codebase-site/data/mechanism-matrix/ERCOT.js` re-stamped —
+the open drift gate is **closed** and its two now-falsified claims corrected in place. **No cell
+moves and no row is added**: SOCO-15 adds no `ScenarioConfig` field and no gate, so duty (c) does
+not reach it. The verdict-suspicion warning stands with an exact boundary: an ERCOT cell
+differenced against a control **solved before 2026-09-13** (not "pre-2026-09-19") was
+differenced against a superseded availability envelope.
+
+**Left open, inherited and untouched:** the MER dual's memory headroom on per-plant MISO/PJM,
+2024's −7.7000 tCO2/MWh MER minimum, and `tzdata` missing from the runtime deps (hit again here;
+`uv pip install tzdata` was required).
+
+**Next shorthand: ercot-269** (ercot-199 and ercot-257 remain unclaimed).

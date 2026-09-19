@@ -1,6 +1,6 @@
-"""ercot-267: WHICH ERCOT units did the SOCO-15 COD-ramp regrain move, and WHEN?
+"""ercot-268: WHICH ERCOT units did the SOCO-15 COD-ramp regrain move, and WHEN?
 
-The bisect (``_ercot267_bisect_driver.py``) named the commit; this says whether
+The bisect (``_ercot268_bisect_driver.py``) named the commit; this says whether
 its effect has the SHAPE the repair claims. A COD regrain should move capacity
 in the months around a unit's real commercial-operation date and nowhere else —
 a concentrated, calendar-anchored change. A flat, all-year change of the same
@@ -12,7 +12,7 @@ MONTHLY profile of the delta. Zero LP.
 
 Usage::
 
-    PYTHONPATH=.:src uv run python scripts/probes/_ercot267_cod_unit_delta.py \\
+    PYTHONPATH=.:src uv run python scripts/probes/_ercot268_cod_unit_delta.py \\
         --pre 6d8dd509b2 --post a0bcb04f93 --year 2023 --meta <control meta>
 """
 
@@ -67,7 +67,7 @@ print("@@JSON@@" + json.dumps({
 
 def arm(sha_: str, year: int, meta_path: str) -> dict:
     """One fleet rebuild at ``sha_`` in a throw-away sparse worktree."""
-    with tempfile.TemporaryDirectory(prefix="ercot267_unit_") as tmp:
+    with tempfile.TemporaryDirectory(prefix="ercot268_unit_") as tmp:
         wt = Path(tmp) / "tree"
         subprocess.run(
             ["git", "worktree", "add", "--detach", "--no-checkout", str(wt), sha_],

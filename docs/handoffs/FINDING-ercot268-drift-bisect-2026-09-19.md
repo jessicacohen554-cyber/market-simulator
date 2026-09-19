@@ -1,6 +1,6 @@
 # FINDING — the ERCOT engine drift is **SOCO-15's COD-ramp regrain** (`9398000db`, merged `a0bcb04f93`, PR #6123). **HEAD IS CORRECT. NOTHING IS OWED.**
 
-**Session:** ercot-267 (parent/orchestrator), 2026-09-19. Branch
+**Session:** ercot-268 (parent/orchestrator), 2026-09-19. Branch
 `claude/ercot-engine-drift-bisect-2z2z1a`.
 **Predecessor:** `docs/handoffs/RESULT-ercot-mer-keeper-resolve-2026-09-19.md` — the run that
 found the drift and correctly stopped at "report and stop" (its sealed prediction P4).
@@ -70,7 +70,7 @@ blast radius on the other eight regions' committed keepers was not carried to th
 
 Four instruments, each narrower than the last, all in the parent:
 
-1. **`scripts/probes/_ercot267_drift_bisect.py`** — two `run_year(fleet_only=True)` rebuilds
+1. **`scripts/probes/_ercot268_drift_bisect.py`** — two `run_year(fleet_only=True)` rebuilds
    per year of the keeper's own recipe, `market_sim` imported from a sparse worktree at each
    sha, `data/` shared by symlink so both arms read identical bytes off disk and any difference
    must come from code. Differenced by sha256 over the raw bytes of every LP-visible fleet
@@ -80,12 +80,12 @@ Four instruments, each narrower than the last, all in the parent:
    `_caiso255_gdrift_identity.py`, with the ERCOT three-config partition overlay applied per
    year (`replay_keeper.config_partition_overlay`) — without it a rebuild solves the forward
    config on a carve-out year, the ercot-259 defect.
-2. **`scripts/probes/_ercot267_input_at_sha.py`** — the same measurement at ONE sha, cached by
+2. **`scripts/probes/_ercot268_input_at_sha.py`** — the same measurement at ONE sha, cached by
    `(sha, year)`, with per-class attribution.
-3. **`scripts/probes/_ercot267_bisect_driver.py`** — binary search on the `availability` hash
+3. **`scripts/probes/_ercot268_bisect_driver.py`** — binary search on the `availability` hash
    over the 157 first-parent commits in `0ebfc2da0..5926ca52` that touch `src/` or `scripts/`
    (the only commits that CAN move a rebuild, since `data/` is shared). **Seven probes.**
-4. **`scripts/probes/_ercot267_cod_unit_delta.py`** — the found commit's effect resolved to the
+4. **`scripts/probes/_ercot268_cod_unit_delta.py`** — the found commit's effect resolved to the
    individual LP unit and the calendar month, which is what turns "a number moved" into "these
    three plants, in these months, for this reason" (§4).
 
@@ -390,17 +390,17 @@ o["coal_prb_sigmoid_overrides"]["ercot_ep_gas_basis_receipts_fallback"] = o.pop(
     "ercot_ep_gas_basis_receipts_fallback")
 json.dump(o, open("/tmp/control_meta.json", "w"), indent=1, sort_keys=True)
 PY
-PYTHONPATH=.:src uv run python scripts/probes/_ercot267_drift_bisect.py \
+PYTHONPATH=.:src uv run python scripts/probes/_ercot268_drift_bisect.py \
     --keeper-sha 0ebfc2da0 --head-sha 5926ca52 --meta /tmp/control_meta.json
-PYTHONPATH=.:src uv run python scripts/probes/_ercot267_bisect_driver.py \
+PYTHONPATH=.:src uv run python scripts/probes/_ercot268_bisect_driver.py \
     --good 0ebfc2da0 --bad 5926ca52 --year 2023 --meta /tmp/control_meta.json
-PYTHONPATH=.:src uv run python scripts/probes/_ercot267_cod_unit_delta.py \
+PYTHONPATH=.:src uv run python scripts/probes/_ercot268_cod_unit_delta.py \
     --pre 6d8dd509b2 --post a0bcb04f93 --year 2023 --meta /tmp/control_meta.json
 ```
 
-`_ercot267_bisect_driver.py` caches every rebuild by `(sha, year)`, so re-running it or
+`_ercot268_bisect_driver.py` caches every rebuild by `(sha, year)`, so re-running it or
 re-pointing it at another year costs only the probes it has not already made. Run it on `--year
-2025` to reproduce the null, and `_ercot267_cod_unit_delta.py --year 2025` to see zero of 2,310
+2025` to reproduce the null, and `_ercot268_cod_unit_delta.py --year 2025` to see zero of 2,310
 units move.
 
 The superseded keeper's `meta.json` is recoverable at

@@ -1,8 +1,8 @@
-"""ercot-267: binary-search the commit that moved the ERCOT keeper's LP inputs.
+"""ercot-268: binary-search the commit that moved the ERCOT keeper's LP inputs.
 
-``_ercot267_drift_bisect.py`` established WHAT moved (``availability`` and
+``_ercot268_drift_bisect.py`` established WHAT moved (``availability`` and
 ``min_gen``, in all five years, with the plant->class map bit-identical). This
-finds WHICH COMMIT, by bisecting :func:`_ercot267_input_at_sha.measure` over the
+finds WHICH COMMIT, by bisecting :func:`_ercot268_input_at_sha.measure` over the
 first-parent commits that touch ``src/`` or ``scripts/`` -- the only commits that
 CAN move a fleet rebuild, since ``data/`` is shared by symlink across every arm.
 
@@ -11,7 +11,7 @@ rebuild is ~90 s and results are cached, so a 157-commit window costs ~8 probes.
 
 Usage::
 
-    PYTHONPATH=.:src uv run python scripts/probes/_ercot267_bisect_driver.py \\
+    PYTHONPATH=.:src uv run python scripts/probes/_ercot268_bisect_driver.py \\
         --good 0ebfc2da0 --bad 5926ca52 --year 2023 --meta <control meta>
 """
 
@@ -23,7 +23,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from _ercot267_input_at_sha import measure  # noqa: E402
+from _ercot268_input_at_sha import measure  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[2]
 
@@ -56,7 +56,7 @@ def main() -> None:
     ap.add_argument("--meta", required=True)
     ap.add_argument("--field", default="availability")
     ap.add_argument(
-        "--cache", type=Path, default=Path("/tmp/_ercot267_input_cache.json")
+        "--cache", type=Path, default=Path("/tmp/_ercot268_input_cache.json")
     )
     a = ap.parse_args()
 

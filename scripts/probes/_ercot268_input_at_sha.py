@@ -1,6 +1,6 @@
-"""ercot-267: the ERCOT keeper's LP inputs at ONE sha — the bisect's measuring stick.
+"""ercot-268: the ERCOT keeper's LP inputs at ONE sha — the bisect's measuring stick.
 
-``_ercot267_drift_bisect.py`` differences two shas and found ``availability`` and
+``_ercot268_drift_bisect.py`` differences two shas and found ``availability`` and
 ``min_gen`` moving in all five years while the plant->class map is bit-identical.
 Bisecting *which commit* moved them needs the same measurement at an arbitrary
 sha, cheaply and repeatably, so this is that measurement factored out: one
@@ -13,7 +13,7 @@ binary search already visited costs nothing.
 
 Usage::
 
-    PYTHONPATH=.:src uv run python scripts/probes/_ercot267_input_at_sha.py \\
+    PYTHONPATH=.:src uv run python scripts/probes/_ercot268_input_at_sha.py \\
         --sha 760012f7a --year 2023 --meta /path/to/control_meta.json
 """
 
@@ -29,7 +29,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
 BUNDLE = REPO / "results/calibration/ercot_mer20260919_five_year"
-DEFAULT_CACHE = Path("/tmp/_ercot267_input_cache.json")
+DEFAULT_CACHE = Path("/tmp/_ercot268_input_cache.json")
 
 CHILD = r"""
 import contextlib, hashlib, io, json, sys
@@ -99,7 +99,7 @@ def measure(sha_: str, year: int, meta_path: str, cache_path: Path) -> dict:
     if key in cache:
         return cache[key]
 
-    with tempfile.TemporaryDirectory(prefix="ercot267_sha_") as tmp:
+    with tempfile.TemporaryDirectory(prefix="ercot268_sha_") as tmp:
         wt = Path(tmp) / "tree"
         subprocess.run(
             ["git", "worktree", "add", "--detach", "--no-checkout", str(wt), full],

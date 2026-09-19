@@ -1,4 +1,4 @@
-"""ercot-267 DRIFT BISECT (ZERO LP): where did the ERCOT keeper's re-solve move?
+"""ercot-268 DRIFT BISECT (ZERO LP): where did the ERCOT keeper's re-solve move?
 
 The ercot-mer session re-solved the ERCOT keeper's own recipe at HEAD and did
 not reproduce it (``docs/handoffs/RESULT-ercot-mer-keeper-resolve-2026-09-19.md``):
@@ -38,8 +38,8 @@ the ``fleet_only`` exit is invisible here, which is itself informative -- an
 
 Usage::
 
-    PYTHONPATH=.:src uv run python scripts/probes/_ercot267_drift_bisect.py
-    PYTHONPATH=.:src uv run python scripts/probes/_ercot267_drift_bisect.py \\
+    PYTHONPATH=.:src uv run python scripts/probes/_ercot268_drift_bisect.py
+    PYTHONPATH=.:src uv run python scripts/probes/_ercot268_drift_bisect.py \\
         --years 2021 2025 --head-sha 760012f7 --out /tmp/arm.json
 """
 
@@ -55,7 +55,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
 BUNDLE = REPO / "results/calibration/ercot_mer20260919_five_year"
-DEFAULT_OUT = REPO / "results/calibration/_ercot267_drift_bisect.json"
+DEFAULT_OUT = REPO / "results/calibration/_ercot268_drift_bisect.json"
 YEARS = (2021, 2022, 2023, 2024, 2025)
 T = 8760
 
@@ -290,11 +290,11 @@ def main() -> None:
     )
     years = tuple(a.years)
     print(
-        f"ercot-267 drift bisect: {keeper_sha} -> {head_sha[:12]}  years={years}",
+        f"ercot-268 drift bisect: {keeper_sha} -> {head_sha[:12]}  years={years}",
         flush=True,
     )
 
-    with tempfile.TemporaryDirectory(prefix="ercot267_") as tmp:
+    with tempfile.TemporaryDirectory(prefix="ercot268_") as tmp:
         trees: dict[str, Path] = {}
         made: list[Path] = []
         for label, sha_ in (("keeper", keeper_sha), ("head", head_sha)):
@@ -364,7 +364,7 @@ def main() -> None:
         per_year[y] = row
 
     res = {
-        "session": "ercot-267",
+        "session": "ercot-268",
         "what": (
             "Every LP INPUT the ERCOT keeper's recipe builds, measured at the "
             "keeper sha and at a treatment sha on one shared data tree, plus the "
