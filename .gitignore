@@ -2531,9 +2531,29 @@ results/calibration/miso262_mer_*/
 # FILESYSTEM and report them unmapped (rule 31's 2026-09-16 correction). That
 # RED is expected and is NOT to be "fixed" by deleting a protected result; CI,
 # which checks out only what is committed, stays green.
+#
+# SUPERSEDED BY RULE 36 [R-YEAR-ISOLATION] (owner ruling 2026-09-19, miso-262),
+# which landed WHILE the v2 and mer spans were solving. Both were ONE
+# `--year 2023 2024 2025` invocation pinned to 9961a6a5, which predates the
+# knob flip, so both carried MARKET_SIM_WARMSTART_XYEAR / _P1_BASIS_SEED ON.
+# Under rule 36 their 2024 and 2025 years are cross-contaminated (MISO measured
+# up to 24.18 TWh of class movement in a later span year); their 2023 is the
+# first year of its leg and is clean. Both were interrupted in 2023 and neither
+# pushed a bundle. Replaced by the per-year shards below.
 results/calibration/nwpp42_measured_coal_hr/
 results/calibration/nwpp42_measured_coal_hr_v2/
 results/calibration/nwpp_mer_2026-09-19/
+#
+# The rule-36 per-year legs: ONE shard, ONE container, ONE --year each, composed
+# by the parent into a registrable run. Recovery shas land in FINDING-nwpp-42.
+results/calibration/nwpp42_coalhr_2023/
+results/calibration/nwpp42_coalhr_2024/
+results/calibration/nwpp42_coalhr_2025/
+results/calibration/nwpp42_mer_2023/
+results/calibration/nwpp42_mer_2024/
+results/calibration/nwpp42_mer_2025/
+results/calibration/nwpp42_span_composite/
+results/calibration/nwpp42_mer_composite/
 # caiso-287: per-year instrumented + MER control shard bundles. Pushed by each
 # shard to its OWN branch (rule 34 [R-SHARD-PROMOTABLE] (a)) and kept out of
 # main from the parent's tree (rule 32(d)); never `rm` (rule 31 [R-RETAIN]).
