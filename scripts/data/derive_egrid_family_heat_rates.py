@@ -36,6 +36,45 @@ on-disk vintage's family value is written to a companion ``_vintages.csv``
 for the record; none is applied and no pooling rule is chosen from them
 (PREREG-nyiso184 §5 F9).
 
+THE BOUNDARY-IDENTITY GUARD (soco-53c, 2026-09-19). The paragraph above
+makes a checkable CLAIM — that the family rate lands on the plant rate's own
+boundary — and the construction can now CHECK it instead of asserting it.
+Because ``PLHTRT`` is the same ratio over the union of the families, a
+decomposition on that boundary must RECOMPOSE to it:
+
+    Σ_families HTIAN ÷ Σ_families GENNTAN  ==  PLHTRT
+
+A plant that fails this identity is flagged ``boundary_mismatch`` and NOT
+applied, whatever its individual family rates look like. Measured over every
+covered plant in the three ISOs that have an artifact, the test partitions
+them with three orders of magnitude to spare (soco-53c PRECOMMIT §1.3):
+**twenty plants recompose at ratio 1.000** and **six do not, at ratio
+2.80–8.40**. The six that fail are cogeneration plants, and the reason is
+eGRID's own published convention: ``PLHTRT``'s numerator is STEAM-CREDITED at
+a CHP plant (the useful thermal output's heat input is netted out), while the
+unit sheet's ``HTIAN`` is raw fuel. So a family rate there charges the host's
+process steam to the electric output — at Pensacola Florida Plant (10416) the
+families recompose to 22.537 against a published 5.568. That is rule 14
+``[R-ACCURATE]``'s misalignment exception exactly: accurate data on a
+different boundary than our representation, which used literally makes
+results LESS reflective of reality, so it is refused rather than applied. The
+model already owns the CHP boundary through its own chain
+(``_correct_chp_steam_credit_hr``, ``measured_chp_heat_rates``), and
+``_apply_simple_cycle_hr_floor`` carves CHP out on the identical ground.
+
+The guard REPLACES no existing check and stacks on none (rule 19
+``[R-ONE-MECH]``): ``out_of_window`` is a per-FAMILY physical-plausibility
+test, this is a per-PLANT boundary test, and a plant failing it has every one
+of its rows flagged — if the decomposition does not recompose, no family of
+it is on the plant rate's boundary. The window guard alone was NOT
+sufficient, which is why this exists: at four of the six failing plants the
+steam half exceeds the window and is caught, while the turbine half lands
+INSIDE 3,000–30,000 Btu/kWh and was applied. It is a consumer-invisible
+change — the artifact schema is unchanged and
+``eia860.egrid_family_heat_rates_for`` already reads only ``flag == "ok"`` —
+so no solve-path file moves and an ISO whose committed artifact is not
+re-derived is byte-identical.
+
 Output: ``data/raw/_processed-legacy/egrid_family_heat_rates_<ISO>.csv`` (+
 ``_vintages.csv``). Consumed by
 ``market_sim.data.fleet.eia860._apply_egrid_family_heat_rates`` under
@@ -80,6 +119,17 @@ APPLIED_VINTAGE: int = 2023
 #: Minimum live families for a plant to be covered (a single-family plant's
 #: plant rate is already its family rate).
 MIN_LIVE_FAMILIES: int = 2
+
+#: Relative tolerance on the boundary-identity check (soco-53c) — the
+#: allowance for ``PLHTRT`` being PUBLISHED ROUNDED, nothing else. It is not a
+#: tuned threshold and cannot be one: measured over all 26 covered plants in
+#: the three ISOs carrying an artifact, the passing side sits at ratio 1.0000
+#: (max observed deviation 5e-6, Jack Watson 2049) and the failing side starts
+#: at 2.800 (Torrance Refining 50624), so EVERY value in (0.001, 1.8) produces
+#: the identical partition — three orders of magnitude of margin, and no
+#: result can select it. Declared ex ante in PRECOMMIT-soco-53c §1.3 and never
+#: swept (rules 21 ``[R-DOF]`` / 24 ``[R-REGISTRY]``).
+BOUNDARY_IDENTITY_TOL: float = 0.005
 
 SOURCE = (
     "eGRID UNT<yy>.HTIAN summed over the family's PRMVR codes / GEN<yy>.GENNTAN "
@@ -158,7 +208,8 @@ def family_heat_rates(vintage: int, plants: dict[int, str], iso: str) -> pd.Data
     """The R1 construction for one vintage over ``plants``.
 
     Returns one row per (covered plant, live family) in :data:`COLUMNS`,
-    every family rate flagged ``ok`` or ``out_of_window``.
+    every family rate flagged ``ok``, ``out_of_window`` or
+    ``boundary_mismatch``. Only ``ok`` rows are read by the consumer.
     """
     plnt, unt, gen = _sheets(vintage)
     lo, hi = EGRID_HR_WINDOW_BTU_KWH
@@ -202,10 +253,30 @@ def family_heat_rates(vintage: int, plants: dict[int, str], iso: str) -> pd.Data
             live[fam] = (htian, genntan, int(h["count"]), int(n["count"]))
         if len(live) < MIN_LIVE_FAMILIES:
             continue
+        phr = plant_hr.get(pid)
+        # BOUNDARY IDENTITY (soco-53c): a decomposition of PLHTRT must
+        # recompose to PLHTRT, because PLHTRT is that same ratio over the
+        # union of the families. Where it does not, the family sums are on a
+        # different boundary from the number they would replace — at a CHP
+        # plant, eGRID steam-credits PLHTIAN and does not steam-credit the
+        # unit sheet's HTIAN — and the rows are written but NOT applied (rule
+        # 14 [R-ACCURATE]'s misalignment exception). PER PLANT, not per
+        # family: if the decomposition does not recompose, no family of it is
+        # on the plant rate's boundary. FAIL-CLOSED on a plant with no
+        # published PLHTRT, since the identity is then unverifiable — inert
+        # today (every covered plant in all three ISOs publishes one).
+        recomposed = sum(v[0] for v in live.values()) / sum(v[1] for v in live.values())
+        boundary_ok = (
+            phr is not None
+            and phr > 0.0
+            and abs(recomposed / phr - 1.0) <= BOUNDARY_IDENTITY_TOL
+        )
         for fam, (htian, genntan, n_units, n_gens) in live.items():
             hr = htian / genntan
-            flag = "ok" if lo <= hr * 1000.0 <= hi else "out_of_window"
-            phr = plant_hr.get(pid)
+            if not boundary_ok:
+                flag = "boundary_mismatch"
+            else:
+                flag = "ok" if lo <= hr * 1000.0 <= hi else "out_of_window"
             rows.append(
                 {
                     "plant_id": pid,

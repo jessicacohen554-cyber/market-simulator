@@ -171,5 +171,95 @@ class TestCommittedArtifact(unittest.TestCase):
         self.assertTrue((df.groupby("plant_id")["family"].nunique() >= 2).all())
 
 
+class TestBoundaryIdentityGuard(unittest.TestCase):
+    """soco-53c: an APPLIED decomposition must recompose to its own PLHTRT.
+
+    The derive's central claim is that a family rate replaces the plant blend
+    "on the identical net-annual boundary". Because ``PLHTRT`` is the same
+    ratio over the union of the families, that claim is an identity, and a
+    plant failing it is flagged ``boundary_mismatch`` and never applied.
+    """
+
+    def _artifacts(self):
+        from market_sim.config.paths import PROCESSED_DIR
+
+        for p in sorted(PROCESSED_DIR.glob("egrid_family_heat_rates_*.csv")):
+            if p.name.endswith("_vintages.csv"):
+                continue
+            yield p.name, pd.read_csv(p)
+
+    #: Plants whose COMMITTED artifact predates the boundary guard and still
+    #: applies a mismatched decomposition. Each entry is ANOTHER ISO's input,
+    #: which this lane must not re-derive (rule 25 ``[R-ISO-SCOPE]``), so it is
+    #: named and ROUTED rather than silently repaired or silently tolerated:
+    #: CAISO 50624 Torrance Refining is a refinery cogen whose families
+    #: recompose to 15.717 against a published 5.613 (ratio 2.800), and its two
+    #: applied rows (ST 3.412 / GT 16.201) sit in the CAISO keeper
+    #: ``2026-09-12-caiso-275-gascoupling``. Routed to the CAISO desk by
+    #: ``docs/handoffs/FINDING-soco-53c-2026-09-19.md``. The set is asserted
+    #: TIGHT below, so re-deriving CAISO fails this test until the entry is
+    #: deleted — it cannot rot into a permanent carve-out.
+    KNOWN_UNGUARDED_APPLIED: dict[str, set[int]] = {
+        "egrid_family_heat_rates_CAISO.csv": {50624},
+    }
+
+    def test_every_applied_plant_recomposes_to_its_plant_rate(self):
+        from scripts.data.derive_egrid_family_heat_rates import (
+            BOUNDARY_IDENTITY_TOL,
+        )
+
+        checked = 0
+        seen_exceptions: dict[str, set[int]] = {}
+        for name, df in self._artifacts():
+            for pid in sorted(set(df.loc[df["flag"] == "ok", "plant_id"])):
+                # The identity is over EVERY live family of the plant, so
+                # re-read them all rather than only the applied rows.
+                fam = df[df["plant_id"] == pid]
+                recomposed = fam["htian_mmbtu"].sum() / fam["genntan_mwh"].sum()
+                plant = float(fam["plant_plhtrt_mmbtu_mwh"].iloc[0])
+                if abs(recomposed / plant - 1.0) > BOUNDARY_IDENTITY_TOL:
+                    seen_exceptions.setdefault(name, set()).add(int(pid))
+                    continue
+                self.assertAlmostEqual(
+                    recomposed / plant,
+                    1.0,
+                    delta=BOUNDARY_IDENTITY_TOL,
+                    msg=f"{name} plant {pid} is APPLIED but does not recompose "
+                    f"to its own PLHTRT ({recomposed:.4f} vs {plant:.4f}) — a "
+                    "family rate on a different boundary from the blend it "
+                    "replaces (rule 14 [R-ACCURATE] misalignment).",
+                )
+                checked += 1
+        self.assertGreater(checked, 0, "no applied plants found to check")
+        self.assertEqual(
+            seen_exceptions,
+            {k: v for k, v in self.KNOWN_UNGUARDED_APPLIED.items() if v},
+            "the set of committed-but-unguarded plants moved. A NEW entry is a "
+            "regression — re-derive that ISO's artifact. A MISSING entry means "
+            "that ISO has re-derived, so delete it from KNOWN_UNGUARDED_APPLIED.",
+        )
+
+    def test_soco_cogen_plants_are_refused(self):
+        """The four SOCO paper-mill cogens are written but never applied.
+
+        eGRID steam-credits ``PLHTIAN`` at a CHP plant and does not
+        steam-credit the unit sheet's ``HTIAN``, so the family sums charge the
+        host's process steam to the electric output — Pensacola Florida Plant
+        recomposes to 22.54 against a published 5.568. The pre-existing
+        ``out_of_window`` guard caught only the steam halves; the turbine
+        halves landed inside the window and were applied.
+        """
+        from market_sim.config.paths import PROCESSED_DIR
+
+        df = pd.read_csv(PROCESSED_DIR / "egrid_family_heat_rates_SOCO.csv")
+        cogens = {10361, 10416, 54004, 54096, 54802}
+        refused = df[df["plant_id"].isin(cogens)]
+        self.assertEqual(len(refused), 10)
+        self.assertEqual(set(refused["flag"]), {"boundary_mismatch"})
+        # The four genuinely multi-technology plants are still applied.
+        applied = set(df.loc[df["flag"] == "ok", "plant_id"])
+        self.assertEqual(applied, {3, 10, 2049, 6073})
+
+
 if __name__ == "__main__":
     unittest.main()
