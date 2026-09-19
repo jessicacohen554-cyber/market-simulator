@@ -14360,3 +14360,104 @@ ephemeral container, and this session launched no shards of its own.
 Evidence: `docs/RESULT-miso261-promotion-and-attribution-2026-09-17.md`,
 `docs/FINDING-miso261-bench-fuel-attribution-2026-09-17.md`,
 `docs/RESULT-miso260-seam-ladder-screen-2026-09-16.md` (+ addenda A/B).
+
+* Next number: **miso-262**.
+
+## miso-262 — 2026-09-19 — **THE SEAM IS A PRICE TRANSDUCER, NOT A VOLUME DEFECT. The 2020 COAL_BIT rung routes to the price residual, and rule 1's authorised coal-offer channel CANNOT close it because the price bias flips sign across the span.** Keeper unchanged, `2026-09-16-miso-260-seam-ladder`
+
+**ZERO LP. NO SHARD LAUNCHED. NO MECHANISM TESTED. NO PARAMETER TUNED. NO CELL VERDICT
+MOVED.** Keeper verified present on `main` before any work (the miso-261 §6 item 3 duty).
+
+**THE FINDING, in one number.** Across all six span years the armed seam ladder's annual
+net-import error against the measured EIA-930 per-seam flow is an almost pure linear
+function of the model's OWN price bias: **r = +0.9572, slope 0.4618 TWh per +1 pp of bias
+vs the measured MISO hub RT, intercept −0.125 TWh** (vs DA: +0.9556 / 0.5151 / +1.044).
+Pairs: 2020 (+18.16 %, +6.496 TWh) · 2021 (+3.28 %, +0.325) · 2022 (−17.27 %, −9.560) ·
+2023 (+7.50 %, +4.108) · 2024 (+4.04 %, +3.382) · 2025 (−1.11 %, +1.242). **At zero price
+bias the seam's volume error is zero**, which is a price-indexed supply curve behaving
+exactly as designed — so the charter's phase-0 hypothesis is **confirmed as the CHANNEL
+and refuted as the CAUSE**. Reported against interest: six points, 2022 is high-leverage
+(leave-one-out slope 0.298), residuals drift −1.76 → +1.88 TWh monotonically, and the
+correlation does not fix the direction of causation; the load-bearing claim is only the
+weaker one the intercept supports.
+
+**WHAT IT DOES TO COAL, from MEASURED CEMS hourly** (decoded from the committed bench
+part's own per-plant `campd` blob, so the plant set and class map are the bench's). 2020
+by decile of model load: BIT deficit **−418 MW at the bottom → −1,734 MW at the top**,
+while the import error runs **−1,055 → +1,395 MW**; 2023's same endpoints are BIT
+**−190 → +10 MW** with the import error **+473 → −1,600 MW**. `corr(BIT deficit, import
+error)` −0.489 (2020) / −0.407 (2023). **PRB's error flips sign within the day in BOTH
+years** (+1,175 → −1,094 MW in 2020), so the intra-coal mis-ordering miso-261 measured in
+the 2023/2025 OFFER stack is visible in the 2020 DISPATCH. miso-261 §4 is **not**
+contradicted — it measured `mc` quantiles and correctly found no merit separation in
+2020's offers; what is falsified is only the stronger reading that 2020 has no split
+object at all.
+
+**THE GATING BASIS CORRECTS THE 2020 FRAMING.** `RESULT-miso260`'s "coal +7.75 → −2.83"
+is the EIA-930 `fuelRows` basis, which `FINDING-miso261` ruled is not the C1 gating basis.
+On `classFull`, **2020 coal3 is −12.71 TWh** (BIT −10.29, PRB −3.33, LIG +0.92): both coal
+classes are short, and the seam's +6.50 TWh of excess imports covers about half of it.
+**Surfaced and unscored: 2025 `COAL_PRB` reads −11.23 TWh**, outside the ±8 TWh band, with
+2025 coal3 the span's largest deficit at −16.31 — invisible in the verdict only because
+every 2025 coal class is SKIPPED on the preliminary EIA-923 vintage. **When that vintage
+finalises MISO gains a sixth failing C1 cell unless something moves.**
+
+**TWO CAUSES KILLED CHEAPLY.** (a) The load basis is clean — model annual demand
+reproduces MISO's measured EIA-930 adjusted demand to **−0.263 / −0.000 / −0.003 / +0.001
+/ −0.293 / −0.003 %**. (b) The ladder does **not** set the bulk price it transduces: a seam
+band is the marginal offer in only **12.6 / 9.3 / 12.4 / 6.8 / 6.3 / 4.6 %** of internal
+zone-hours. I expected (b) to be the answer and it is not.
+
+**WHERE THE RESIDUAL ACTUALLY LIVES, reported not fixed.** The model's price distribution
+is compressed in every year — too high through the bulk, too low in the tail (2020 p10
+$20.67 vs RT $14.58; p50 $26.74 vs $19.86; p99 $36.99 vs $77.63). The tail half is C3c,
+ledgered. **The bulk half is not ledgered**, is present in all six years, and is what the
+seam converts into volume — it sits behind C3a 2020 (+16.3 %) and C3a 2022 (−14.6 %), two
+of the five failing rungs, and through the transducer behind part of a third.
+
+**THE CHARTER'S OWN NAMED LEVER IS REFUSED ON STRUCTURE, AT ZERO LP.** A COAL_BIT
+offer-band cut *would* reach 2020 (through the price → import channel, the right way
+round — the charter expected it would not). It still **cannot be armed**: rule 1
+`[R-STRUCT]`'s authorised price-tuning carve-out binds on condition (b), ONE config across
+EVERY scored year, and the price bias is **+18.2 % in 2020 and −17.3 % in 2022**. One
+year-invariant multiplier that closes 2020 deepens 2022 and its −9.56 TWh seam
+under-import. No multiplier was tried and no criterion was consulted to choose one.
+
+**THE HOUR-OF-DAY INVERSION IS A REDO AND IS SAID TO BE ONE.** miso-123 measured it at
+per-seam grain on 2023-2025 (model cleared flow vs measured at −0.638/−0.753/−0.852) and
+closed the whole class; `import_shape_lever` is `G`, and price / ceiling / floor are all
+spent. miso-262 extends the measurement to 2020-2022 at aggregate grain (hourly r
+0.20→0.53; ordering-only mismatch a near-constant 3.2-4.6 TWh in EVERY year) and adds the
+VOLUME half — both halves point away from the seam. **miso-123's re-open condition (a
+SCHEDULING representation of the firm/JOA base that can RAISE overnight flow, identified
+on something other than the measured net interchange) is unchanged and still unmet; nothing
+here licenses re-opening it.**
+
+**TWO CHARTER ITEMS ADJUDICATED IN PASSING.** (1) **ST_GAS — "check the floor before the
+offer":** checked. `st_gas_mustrun_per_plant` forces 21.9/26.3/22.3/14.4/15.5/17.7 % of
+class energy (the charter's 31.9 % does not reproduce on this keeper's artifact) while the
+class is SHORT in 5 of 6 years, so the floor is not what limits its volume and at 26.3 % it
+is already near rule 18's 30 % merchant cap. **The floor is not the lever.** (2) **West
+Riverside (EIA 64020):** not acted on; narrowed by one grep — the plant is already
+crosswalked at `data/raw/reference/miso_gas_variable_transport.csv:108` as
+`CC_REGULAR, MISO-East, 684.2 MW`. That table is derived from EIA-923 prints, **not** from
+the model fleet, so it is NOT evidence about the loader; what it gives the intake lane free
+is the zone, class and nameplate.
+
+**TWO CHARTER MECHANICS CORRECTED.** (1) The keeper does **not** commit
+`hourly/network_*.parquet` or `unit_hourly_*.parquet` — both are gitignored (`.gitignore`
+672-675), so the per-seam MODEL flow does not exist outside a solve and miso-261's per-unit
+`mc` quantiles are not reproducible at HEAD. (2) **Both miso-260 shard branches are GONE
+from `origin`** (`git ls-remote origin | grep miso260` → nothing), so the recovery SHAs in
+`RESULT-miso261` §1/§7 are **dead** and the per-year leg bundles are no longer retrievable
+without a re-solve. miso-261 left them deliberately under rule 33(f)(3); the environment
+took them anyway.
+
+**Rule 28 duty:** no mechanism tested, so no verdict moves. Evidence appended to
+`seam_neighbour_hourly_ladder` (stays **K**) and `import_shape_lever` (stays **G**) in
+MISO's own shard, this session.
+
+Records: `docs/FINDING-miso262-the-seam-is-a-price-transducer-2026-09-19.md`, probe
+`scripts/probes/_miso262_seam_price_transducer.py` (sections A-F reproduce every number).
+
+* Next number: **miso-263**.
