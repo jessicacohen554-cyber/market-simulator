@@ -355,3 +355,66 @@ horizontal scroll at 390 px, and the pending invariants still hold in the empty 
 
 The pre-existing `shared.css:395` mobile-nav finding (3.2:1, all 23 pages) is still **named and
 left** — it is not this page's.
+
+---
+
+## 9. REFRESH — what has actually landed, 2026-09-19 (rebased onto `142b10bc`)
+
+Fifty commits arrived on `main` since this branch's base, several of them emissions-dual work.
+Re-scanned **all 68 committed `system_<year>.parquet` sidecars** for the column:
+
+| Bundle | Years with the dual | Is it that grid's designated keeper? | Usable on this page (2023–2025)? |
+|---|---|---|---|
+| `soco53d_campaign` | **2023, 2024, 2025** | **yes** (`2026-09-19-soco53d-campaign-commitment`) | **YES** |
+| `spp48_arm_span` | 2019, 2020, 2021, 2022 | no (SPP's keeper is `spp42_span_a`) | no — wrong years *and* not the keeper |
+
+**So the score is 1 of 9, not the 3 or 4 the commit titles suggest.** Two of those titles are
+misleading if read quickly and are worth writing down:
+
+- `58007ba2` — *"nyiso-240 MER control … NYISO gets its emissions dual"*. NYISO's keeper was
+  re-promoted to `nyiso240_benchfix_span`, and **that bundle does not carry the column.** The MER
+  control arm was a separate solve that is not the registered keeper.
+- `d8183961` / `9d344f71` — *"MER delivered for all 5 years"* for ERCOT, then
+  *"promotion prepared; **blocked at the registration step**"*. `7ec23b54` then explicitly
+  **kept the ercot-mer per-year shard bundles out of `main`**. ERCOT's numbers exist on shard
+  disk; nothing on `main` can be read by a build script.
+
+Consequence for this page: the build script in §2 can produce exactly **one real grid-year set
+today — SOCO 2023/24/25**. ERCOT unblocks as soon as its registration lands; NYISO needs its MER
+arm folded into the registered keeper rather than kept beside it.
+
+The mock's default preview state is now **`['SOCO']`**, not three arbitrary grids, so the layout
+being reviewed is the layout that will actually ship. The banner says so in one line.
+
+## 10. Palette change — solar yellow, wind lime green (owner request)
+
+Applied, with one thing worth knowing before anyone "brightens it up":
+
+**Bright lime and bright yellow are not distinguishable under red–green colour blindness.** They
+are adjacent hues at similar lightness, and no amount of hue nudging fixes it — the obvious pair
+(`#84CC16` / `#EAB308`) measures **ΔE 2.9 under protanopia**, and even its *normal-vision* score is
+14.8, below the floor. A 77-pair search over the dark surface returned only combinations that had
+stopped being lime and yellow at all.
+
+The separation is therefore carried by **lightness**, which is why one of the pair is deep in each
+mode:
+
+| | wind (lime) | solar (yellow) | CVD ΔE | normal ΔE | contrast |
+|---|---|---|---|---|---|
+| light | `#4D7C0F` | `#CA8A04` | **9.5 PASS** | 19.9 PASS | 5.0:1 / 2.9:1 |
+| dark | `#65A30D` | `#FACC15` | **16.7 PASS** | 24.3 PASS | 5.1:1 / 10.2:1 |
+
+Two deviations, both deliberate and both the lesser evil:
+
+- **Light mode, contrast WARN on the yellow (2.9:1).** The skill calls this non-dismissable but
+  dischargeable by a relief channel — and the chart already ships both it names: every bar carries
+  a visible value label, and there is a table view. The alternative (`#B8860B`, 3.25:1) drops CVD
+  separation to 7.4, into the floor band. A CVD WARN is worse than a contrast WARN, because CVD is
+  what actually makes two series indistinguishable.
+- **Dark mode, lightness-band FAIL on the yellow (L 0.861 vs a 0.67 ceiling).** That band is
+  calibrated to a lighter dark surface than this page's navy; the *surface-aware* contrast check
+  passes at 10.2:1. Pulling the yellow into the band means both marks go dark and CVD collapses
+  to 4.2 — unreadable for a red–green colourblind reader. Taken knowingly.
+
+Contrast re-audited over every text node in all three data states after the change: **clean on this
+page**; the pre-existing `shared.css:395` mobile-nav finding is still named and left.

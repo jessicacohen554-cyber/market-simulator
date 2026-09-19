@@ -21,14 +21,17 @@
 
   // Mock-only: which grids pretend to have landed. Default `partial`, because
   // results arrive one grid at a time and that is the page's normal condition.
-  var SYNTH_STATES = { empty: [], partial: ['ERCOT', 'MISO', 'CAISO'], full: ISOS.slice() };
+  // `partial` mirrors reality as of 2026-09-19: exactly one grid (SOCO) has the
+  // underlying hourly measurement for 2023-2025. It is the default for that
+  // reason — the page's normal condition is 'almost everything is pending'.
+  var SYNTH_STATES = { empty: [], partial: ['SOCO'], full: ISOS.slice() };
 
   var DATA = window.MAC_SYNTHETIC || { cells: {}, lcoe: {}, shape: {} };
 
   // imports: 'counted' charges imported power the average rate of the grid it
   // came from; 'zero' leaves it at zero. 'counted' is the default — it is the
   // more accurate of the two.
-  var state = { year: 2024, tech: 'wind', iso: 'ERCOT', synth: 'partial', shape: false, imports: 'counted' };
+  var state = { year: 2024, tech: 'wind', iso: 'SOCO', synth: 'partial', shape: false, imports: 'counted' };
   var tables = { range: false, dur: false, wf: false };
 
   // ---------------------------------------------------------------------------
@@ -247,7 +250,7 @@
         g2.appendChild(svgEl('rect', {
           x: Math.min(x(a), x(b)), y: cy - barH / 2,
           width: Math.max(Math.abs(x(b) - x(a)), 3), height: barH, rx: 4,
-          fill: col, opacity: 0.30
+          fill: col, opacity: 0.42
         }));
         // filled end = with credits; open end = without. Shape, not just color,
         // so the pair reads without relying on hue.

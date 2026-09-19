@@ -16,15 +16,28 @@
        light/dark rhythm, so both modes are exercised in production.
 
        Colors cleared dataviz scripts/validate_palette.js before being used:
-         wind/solar pair light  #2A78D6 #EB6834            ALL PASS
-         wind/solar pair dark   #4589D6 #D4753E            ALL PASS
+         wind/solar light  #4D7C0F lime / #CA8A04 yellow
+             CVD PASS (ΔE 9.5 protan) · normal PASS (19.9) · lime 5.0:1
+             contrast WARN on the yellow (2.9:1) — discharged by the relief the
+             skill names: every bar carries a visible value label AND a table view.
+         wind/solar dark   #65A30D lime / #FACC15 yellow
+             CVD PASS (ΔE 16.7) · normal PASS (24.3) · 5.1:1 and 10.2:1
+             lightness-band deviation on the yellow, taken deliberately — the
+             band is calibrated to a lighter dark surface than this navy, the
+             surface-aware contrast check passes at 10:1, and the alternative
+             (both bright) collapses to ΔE 4.2 under protanopia, which a
+             red-green colourblind reader cannot read at all.
+         NOTE: bright lime + bright yellow are NOT separable under red-green
+         colour blindness — adjacent hues at similar lightness. The separation
+         here is carried by LIGHTNESS, which is why one of the pair is deep in
+         each mode. Do not "brighten them up" without re-running the validator.
          sequential light  #6FB9E0 #3E9ACB #1B82B4 #0E5E88 #08405E  ALL PASS
          sequential dark   #BDE6F8 #82CAEB #4AA6D4 #2E7B9C #31586F  ALL PASS
        ====================================================================== */
 
     .mac-scope {
-      --mac-wind:     #2A78D6;
-      --mac-solar:    #EB6834;
+      --mac-wind:     #4D7C0F;   /* lime  — 5.0:1 on white */
+      --mac-solar:    #CA8A04;   /* yellow — 2.9:1, relief = labels + table */
       --mac-accent:   #0E5E88;
       --mac-context:  #94A3B8;
       --mac-warm:     #C2410C;
@@ -43,8 +56,8 @@
       --mac-border:    var(--border-light);
     }
     .section-dark .mac-scope {
-      --mac-wind:     #4589D6;
-      --mac-solar:    #D4753E;
+      --mac-wind:     #65A30D;   /* lime  — 5.1:1 on navy */
+      --mac-solar:    #FACC15;   /* yellow — 10.2:1 on navy */
       --mac-accent:   #82CAEB;
       --mac-context:  #94A3B8;
       --mac-warm:     #FDBA74;
@@ -237,11 +250,12 @@
   <span class="synth-banner__tag">SYNTHETIC DATA</span>
   <span class="synth-banner__text">
     <b>Every number on this page is a placeholder</b>, seeded at realistic magnitudes so the layout
-    can be reviewed. Nothing here is a result. Do not cite it.
+    can be reviewed. Nothing here is a result. Do not cite it. <b>One grid (SOCO) now has the
+    underlying measurement for 2023–2025</b>; the rest are still being produced.
   </span>
   <span class="synth-banner__states" role="group" aria-label="Preview how the page looks as results arrive">
     <button type="button" data-state="empty">none ready</button>
-    <button type="button" data-state="partial" aria-pressed="true">3 ready</button>
+    <button type="button" data-state="partial" aria-pressed="true">1 ready</button>
     <button type="button" data-state="full">all ready</button>
   </span>
 </div>
