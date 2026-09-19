@@ -1,6 +1,6 @@
 {
  "schema": "legitimacy-diagnostics/v1",
- "bundle": "/home/user/market-simulator/results/calibration/nyiso239_bench_span",
+ "bundle": "/home/user/market-simulator/results/calibration/nyiso240_benchfix_span",
  "iso": "NYISO",
  "years": [
   2022,
@@ -2164,31 +2164,31 @@
    "passed": true,
    "rows": [
     {
-     "bundle": "nyiso239_bench_span",
+     "bundle": "nyiso240_benchfix_span",
      "check": "ct_deployment_overlay",
      "value": false,
      "verdict": "pass"
     },
     {
-     "bundle": "nyiso239_bench_span",
+     "bundle": "nyiso240_benchfix_span",
      "check": "reliability_deployment_overlay",
      "value": false,
      "verdict": "pass"
     },
     {
-     "bundle": "nyiso239_bench_span",
+     "bundle": "nyiso240_benchfix_span",
      "check": "ct_mustrun_per_plant",
      "value": false,
      "verdict": "pass"
     },
     {
-     "bundle": "nyiso239_bench_span",
+     "bundle": "nyiso240_benchfix_span",
      "check": "ordc_reliability_deployment_mw",
      "value": null,
      "verdict": "pass"
     },
     {
-     "bundle": "nyiso239_bench_span",
+     "bundle": "nyiso240_benchfix_span",
      "check": "caiso_gas_commitment_floor",
      "value": false,
      "verdict": "pass"

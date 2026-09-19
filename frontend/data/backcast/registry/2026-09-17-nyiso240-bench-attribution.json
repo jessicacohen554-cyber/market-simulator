@@ -1,0 +1,17 @@
+{
+ "id": "2026-09-17-nyiso240-bench-attribution",
+ "label": "NYISO keeper \u2014 bench attribution repairs (nyiso-240)",
+ "date": "2026-09-17",
+ "shorthand": "nyiso240-bench-attribution",
+ "definition": "NYISO's designated keeper, promoted 2026-09-19 (session nyiso-240) on the owner's ruling. ZERO LP: the dispatch is bit-for-bit the superseded keeper's (2026-09-17-nyiso239-bench-oil-basis) -- its four per-year shard bundles were re-fetched by full SHA, re-composed and re-rendered with --rebuild-benchmark, so no solve was re-entered and solve_surface.fingerprint stays bd2b4657f9b5df7e. The run date is the solve's date for that reason. ZERO ScenarioConfig fields move; the DOF ledger (14 entries) and authorized_price_tuning=NONE carry over byte-identical. WHAT CHANGED IS THE BENCHMARK, on rule 14 [R-ACCURATE] and never the residual: two boundary repairs in the shared bench path, both after the annual-floor CAMPD backfill and neither changing which plants it reaches. (R1) EIA-923 drops months a respondent withheld, and EIA's own published ANNUAL is the sum of the months filed -- so a withheld month is missing from the annual class benchmark, not just its shape. The existing guard gates on a 50 GWh ANNUAL floor and cannot see it: ten good months hide two missing ones. Bethlehem Energy Center (2539), a 750 MW CC, filed no Feb and no Nov 2022 while CAMPD meters 596.0 GWh there (+0.880 TWh to CC_REGULAR 2022). Census: 67 plant-years across nine BAs. (R2) EIA-923 books MWh under the fuel BURNED, routing 100% of DFO/RFO/JF/KER/WO/PC to the `oil` class, while the LP keeps a dual-fuel unit dispatching in its own class -- the model's entire oil-fuel fleet in 2022 is 11.1 GWh against an `oil` benchmark of 1,843.7 GWh. 1.668 TWh moved. DETERMINATION UNCHANGED at CALIBRATED (grade 7, fails 0, C3c the lone ledgered caveat), zero C1 status flips; the gain is MARGIN -- 2022 CC_REGULAR share +2.95 -> +1.93 pp of a +-3.0 pp band, headroom 0.05 -> 1.07 pp. Rule 25 discharged before landing: every ISO's keeper re-scored, zero of the eight determinations flip. NOT CLOSED, reported at full magnitude: R2 moves 2022/2025 ST_GAS away from its actual, and +2.26 TWh of the 2022 CC_REGULAR over-run is real. Successor: the CT_PEAKER merit collapse from 2023. Record: docs/FINDING-nyiso240-c1-margin-bench-attribution-2026-09-19.md.",
+ "years": [
+  2022,
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "NYISO",
+ "file": "frontend/data/backcast/runs/2026-09-17-nyiso240-bench-attribution.js",
+ "bundle": "results/calibration/nyiso240_benchfix_span",
+ "market_story": "New York's downstate combined cycles looked like they were burning too much gas in February and November. They were not. Two separate accounting boundaries were mis-drawing the picture: a 750 MW plant simply did not file two months to EIA, and the federal survey books a dual-fuel plant's oil-fired hours under 'oil' rather than under the plant itself -- while the market, and the model, just see a combined cycle running. Fixing both leaves the model's dispatch untouched and its measured error a fifth smaller on the tightest test."
+}

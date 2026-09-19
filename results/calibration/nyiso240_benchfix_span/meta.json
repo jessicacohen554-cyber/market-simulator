@@ -383,7 +383,7 @@
   "shared_inputs": {
     "campd": "../_shared/NYISO/campd-7ea5a0beeb85.parquet",
     "capacity_deliverability": "../_shared/NYISO/capacity_deliverability-a315d4a5cd46.parquet",
-    "eia923": "../_shared/NYISO/eia923-a79aebd4f4d3.parquet",
+    "eia923": "../_shared/NYISO/eia923-18923f3b9623.parquet",
     "eia930": "../_shared/NYISO/eia930-12e2ee328d0a.parquet",
     "unit_outages": "../_shared/NYISO/unit_outages-c88468b270d6.parquet",
     "unit_outages_e923": "../_shared/NYISO/unit_outages_e923-c801b5e6811e.parquet",

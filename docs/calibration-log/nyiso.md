@@ -14645,3 +14645,79 @@ against a flat ~2.1–2.8 actual) with capacity intact, and the displaced energy
 Recommended lever: `ct_peaker_committed_measured` (cell **U**, NYISO's own 0.843 vs the transferred
 1.35). `nyiso_ct_peaker_bands_measured` stays **R** and was not re-tested. Rule 31: nothing new to
 retain or delete. Rule 33: no shards launched.
+
+## nyiso-240 (promotion) — 2026-09-19
+
+**KEEPER → `2026-09-17-nyiso240-bench-attribution`** (bundle `results/calibration/nyiso240_benchfix_span`),
+all four registered years 2022-2025, superseding `2026-09-17-nyiso239-bench-oil-basis` (pruned this
+session, rule 35 `[R-PROMOTE]` (a)). Owner ruling, verbatim: *"Is this a recommended keeper candidate?
+If so plz promote. If structural integrity improves but gates regress that may still be a keeper.."*
+Record: `docs/RESULT-nyiso240-bench-attribution-promotion-2026-09-19.md`.
+
+**ZERO LP, and the dispatch is bit-for-bit the superseded keeper's.** nyiso-239's four per-year shard
+bundles were re-fetched by full SHA (`5802986a` / `0f03dd49` / `ce299f37` / `9859790c` — all still
+resolving), re-composed and re-rendered with `--rebuild-benchmark`. `solve_surface.fingerprint`
+`bd2b4657f9b5df7e` unchanged; zero `ScenarioConfig` fields move; the 14-entry DOF ledger and
+`authorized_price_tuning` NONE carry over byte-identical. nyiso-239 §7's ~18 min four-shard re-solve
+assumption is **falsified** — a bench-construction repair needs no solve if the shard SHAs were recorded.
+
+**Two benchmark boundary repairs landed in the shared bench path, on rule 14 `[R-ACCURATE]`.**
+**R1** `_backfill_eia923_missing_months`: EIA-923 drops months a respondent withheld and EIA's own
+published *annual* is the sum of the months filed, so the withheld block is absent from the annual class
+benchmark; `_backfill_eia923_with_campd` gates on a 50 GWh **annual** floor and cannot see it. Bethlehem
+Energy Center (2539) filed no Feb and no Nov 2022; +0.880 TWh, against a phase-0 prediction of 879.6 GWh.
+**R2** `_reattribute_dual_fuel_oil`: 1.668 TWh moved from the `oil` class into the classes the units
+dispatch in, matching the prediction exactly.
+
+**DETERMINATION UNCHANGED — `CALIBRATED`, grade 7, fails 0, C3c the lone ledgered caveat, zero C1 status
+flips.** The gain is margin: 2022 `CC_REGULAR` **+2.95 → +1.93 pp** of a ±3.0 pp band (headroom 0.05 →
+1.07 pp); 2023 `ST_GAS` +2.85 → +2.70; 2024 `CC_REGULAR` +2.46 → +2.44. **Rule 25 discharged before
+landing**: every ISO's keeper re-scored, 42 C1 rows move ≥ 0.05 pp, **zero change status, zero of the
+eight determinations flip**.
+
+**Reported at full magnitude**: R2 moves 2022 `ST_GAS` −0.61 → −1.17 pp and 2025 `ST_GAS` −2.74 → −3.15 pp
+(SKIPPED/ungated); +2.26 TWh of the 2022 `CC_REGULAR` over-run is real. D-4 reads False before **and**
+after on an identical row set — pre-existing, not a regression. G2 hydro stays a ledgered OPEN
+ROOT-CAUSE ISSUE (rule 21), not a caveat.
+
+**Successor**: the `CT_PEAKER` merit collapse from 2023 (model 2.43 → 0.25 / 0.30 / 0.77 TWh against a
+flat ~2.1-2.8 actual, capacity intact), which plausibly owns both remaining tight rows. Recommended
+lever `ct_peaker_committed_measured` (**U**). `nyiso_ct_peaker_bands_measured` stays **R**, not re-tested.
+Rule 31: the four retrieved nyiso-239 legs stay on disk, gitignored, never `rm`'d. Rule 33: no shards.
+
+## nyiso-240 (MER control) — 2026-09-19
+
+**G-DRIFT FORM 4 CONFIRMED EMPIRICALLY, AT BYTE IDENTITY.** The keeper's dispatch was solved at
+`3edb8ad8`; the solve path has moved 14 files / +3,176 lines since. Replayed at HEAD
+(`1fdcc69c`), **`dispatch/<yr>_P1.parquet` is byte-identical by sha256 in all four years**, as is
+`unit_hourly`; `class_hourly` deviates by **0.000e+00** on every class and every hour; `system`
+prices are identical. The only differences anywhere are ADDED COLUMNS. Record:
+`docs/RESULT-nyiso240-bench-attribution-promotion-2026-09-19.md` **Addendum A**.
+
+**Why a control was owed despite the arm being promoted**: the promotion was zero-LP, so the keeper's
+bundle is nyiso-239's 2026-09-17 dispatch and predates the emissions dual (`2ec09663`, 2026-09-18).
+The owner's skip-clause assumes the arm carries the column; it does not.
+
+**Per-year fan-out on the OWNER'S EXPLICIT INSTRUCTION, and rule-32(b)-legal**: 32(b) bans fanning
+out a run that must recombine FOR REGISTRATION and names the diagnostic carve-out this never-
+registered control sits in. Four legs, one per year, ~15 min wall instead of ~45.
+
+**Marginal emission rate** (per zone-hour, tCO2/MWh, load-weighted mean): 2022 **0.4508**, 2023
+**0.4753**, 2024 **0.5219**, 2025 **0.5310**; zero-share falls 10.92 % → 1.27 %; zero NaN. The level
+is a gas CC at the margin and sits far above NYISO's average grid intensity, which is what a
+marginal rate should do in a nuclear+hydro-diluted system.
+
+**Retrievability** (rule 34(d), verified 17 files per leg BEFORE archiving; branch names die, SHAs
+do not): 2022 `93eb1aa918c039a01d6e5ba6265eedd7f69fdb03`, 2023 `24a75c15f0b08ccb51c59107f1f36163a02a5fef`,
+2024 `0573d6382a2526cb482d544567c967767f50556e`, 2025 `5633d28698ee5bd07a2afccab63e02d2d8b70382`;
+composed at `results/calibration/nyiso_mer_2026-09-19`. **OPEN for the owner**: the control is
+unregistered by instruction, so these live only on shard branches — a marginal-abatement page needing
+them durably needs a registration or allowlist decision (RESULT §A.3).
+
+**SEPARATE FINDING, wants an owner**: `legitimacy_diagnostics.py` is **not reproducible** on its
+measured columns — nine rows (seven D-1, two D-4 plant 2500) wobble at the 3rd decimal, and re-running
+it on the IDENTICAL bundle twice reproduces exactly the same nine wobbles. Not drift. No verdict moves
+today, but C8 and rule 20's conditional-pass path both read this gating artifact (RESULT §A.6).
+
+Nothing registered, no dashboard id minted, keeper unchanged. Rule 31: nothing deleted; the legs and
+the composed span are gitignored, not removed. Rule 33: all five shards archived after verification.
