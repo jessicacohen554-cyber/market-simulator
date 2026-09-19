@@ -2310,6 +2310,15 @@ def fleet_to_bins(
     # retiree channel and leg-2 re-carries are deliberately NOT routed (they
     # keep today's timing; PREREG-miso191 §1 frozen scope).
     _ppx_cohort = bool(getattr(config, "partial_plant_exit_carry", False))
+    # SPP-48: the SAME routing for the mid-vintage-year whole-plant exit
+    # channel's units. A plant that retired DURING a year-matched native
+    # vintage is injected carrying its own EIA-860 retirement month, and
+    # without a date-scoped bin that month is discarded here exactly as
+    # miso-191 measured for the partial-exit units — Oklaunion (plant 127,
+    # retirement 9/2020) came back online in all twelve months of 2020, three
+    # of them after it had retired. One mechanism, two memberships (rule 19
+    # [R-ONE-MECH]); each stays behind its OWN flag, so neither arms the other.
+    _mvx_cohort = bool(getattr(config, "mid_vintage_exit_carry", False))
     agg: dict[tuple, dict] = {}
     for g in generators:
         if g.plant_group not in BIN_GROUP_TO_FUEL:
@@ -2320,10 +2329,9 @@ def fleet_to_bins(
         _ry: int | None = None
         _rm: int | None = None
         if (
-            _ppx_cohort
-            and getattr(g, "partial_exit_unit", False)
-            and g.retirement_year is not None
-        ):
+            (_ppx_cohort and getattr(g, "partial_exit_unit", False))
+            or (_mvx_cohort and getattr(g, "mid_vintage_exit_unit", False))
+        ) and g.retirement_year is not None:
             _ry = int(g.retirement_year)
             _rm = int(g.retirement_month) if g.retirement_month is not None else 12
             key: tuple = (code, g.plant_group, _ry, _rm)

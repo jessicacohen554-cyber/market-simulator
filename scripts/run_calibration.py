@@ -3735,6 +3735,12 @@ def run_year(
             # their own actual retirement months. Default-off; byte-inert
             # while off.
             partial_plant_exit_carry=getattr(config, "partial_plant_exit_carry", False),
+            # SPP-48 mid-vintage-year whole-plant exit carry: inject the
+            # plants a year-matched native vintage drops from BOTH sheets
+            # because they retired DURING that year (Oklaunion 127, ret
+            # 9/2020, 1,209.2 GWh metered). Default-off; byte-inert while
+            # off, and inert wherever the whole-plant retiree parquet exists.
+            mid_vintage_exit_carry=getattr(config, "mid_vintage_exit_carry", False),
         )
         if config.mode == "backcast"
         else []

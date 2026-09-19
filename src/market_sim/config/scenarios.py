@@ -441,6 +441,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # off path is byte-inert). Registered IN THE SAME COMMIT as the field
     # (the nyiso-119 / caiso-186 discipline).
     "partial_plant_exit_carry",
+    # SPP-48 mid-vintage-year whole-plant exit carry (GATED default-off; the
+    # two backcast consumers thread it via getattr into
+    # data/fleet/eia860.py::load_retired_within_window, and the helper returns
+    # None wherever the whole-plant retiree parquet exists, so the off path is
+    # byte-inert). Registered IN THE SAME COMMIT as the field (the
+    # nyiso-119 / caiso-186 discipline).
+    "mid_vintage_exit_carry",
     # caiso-186 published seasonal capability basis for combined cycles (GATED
     # default-off; every consumer reads it via getattr, and it additionally
     # requires cc_nameplate_summer_derate, so the off path is byte-inert).
@@ -1988,6 +1995,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by miso-190 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "partial_plant_exit_carry": "False",
+    # Added by SPP-48 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
+    "mid_vintage_exit_carry": "False",
     # Added by caiso-186 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "cc_winter_capability_basis": "False",
@@ -3030,6 +3040,7 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     # false. Reasoned exclusion, not an oversight.
     "retiree_vintage_status_scope": "EIA-860 vintage generator status",
     "partial_plant_exit_carry": "EIA-860 actual retirement + vintage status",
+    "mid_vintage_exit_carry": "EIA-860 actual retirement month (native vintage)",
     "unit_partial_outage_windows": "measured unit-grain partial-derate plateaus",
     "unit_outage_maxgen_events": "measured declared-event unit derates",
     "ercot_thermal_dam_availability": "measured ERCOT 60-Day DAM awards",
@@ -14864,6 +14875,59 @@ class ScenarioConfig:
     # re-carries and announced operable retirements are NOT cohort-routed
     # (frozen scope, PREREG-miso191 §1).
     partial_plant_exit_carry: bool = False
+
+    # MID-VINTAGE-YEAR whole-plant exit carry (SPP-48; GATED default-off,
+    # backcast-only, armed for SPP alone through iso_configs._spp_config's
+    # default_scenario_overrides). Rule 14 [R-ACCURATE] is its whole basis, and
+    # the residual is not.
+    #
+    # THE DEFECT IT REPAIRS. Under eia860_vintage_tracks_solve_year the active
+    # EIA-860 directory is vintage_<solve year>/, which ships no whole-plant
+    # retiree parquet, so load_retired_within_window returns an empty list --
+    # on the stated assumption that "the operable fleet already has them".
+    # That holds for a plant retiring AFTER the vintage year. It is FALSE for
+    # one retiring DURING it: the vintage's operable sheet is a YEAR-END
+    # snapshot which has already moved that plant onto the Retired-and-Canceled
+    # sheet. The plant is then in NEITHER sheet the channel reads and is
+    # dropped from the fleet entirely, losing its real operating months.
+    # Measured (SPP-47 2026-09-18, reproduced independently by SPP-48): SPP's
+    # Oklaunion, plant 127 -- 720 MW nameplate / 650 MW summer sub-bituminous
+    # coal, ba_code SWPP, EIA retirement 9/2020 -- is in the 2019 LP fleet as
+    # COAL_SPP-North_p127_* and ABSENT from 2020, 2021 and 2022, against 1,209.2
+    # GWh of CAMPD-metered generation over May-September 2020. That is 11.1 % of
+    # the failing 2020 C1 COAL_PRB row, which it does NOT close (best case
+    # -10.85 -> -9.64 TWh, still a FAIL) -- stated so it is not over-bought.
+    #
+    # THE MECHANISM. No new machinery: the rows carry their own actual
+    # retirement in planned_retirement_*, which cod_ramp.effective_cod already
+    # prefers over the plant-collapsed date, so the existing COD ramp holds each
+    # plant online through its real retirement month and zeros it after. What
+    # was wrong is the INJECTION GATE, not the ramp (rule 19 [R-ONE-MECH]: one
+    # channel, one oracle -- the rows join the same frames list and are scoped
+    # by the same retiree_vintage_status_scope oracle).
+    #
+    # ZERO FREE PARAMETERS (rules 21 [R-DOF] / 24 [R-REGISTRY]): the month is
+    # EIA's own published field and the membership is a set difference over
+    # EIA's own two sheets -- no threshold, no window, no fitted scalar.
+    # Rule 13 [R-MEASURED]: the identical construction regenerates for a forward
+    # year from the then-current EIA-860 and responds to a changed fleet, so it
+    # is a reproducible physical input and not a measured outcome fed back.
+    #
+    # BLAST RADIUS, measured at zero LP over all 227 committed run_config
+    # records (scripts/probes/_spp48_midvintage_blast_radius.py). The defect
+    # needs a BACKCAST whose active directory is a native vintage, and the only
+    # route to that is this flag's parent, eia860_vintage_tracks_solve_year:
+    # SPP is the ONLY region that arms it (every other region's backcast reads
+    # the canonical snapshot, whose retiree parquet carries all 17 MISO / 12 PJM
+    # / 2 NEISO / 2 SPP mid-vintage-year retirees already), and every explicit
+    # eia860_vintage_year pin in the program belongs to a mode="forecast"
+    # hindcast, which never reaches this backcast-only channel. Inside SPP the
+    # live footprint is TWO plant-years -- Oklaunion 2020 (1,209.2 GWh) and
+    # Ponca 2022 (47.8 GWh, proven zero-reach by SPP-45) -- and it CANNOT move
+    # SPP's 2023-2025 keeper: vintage_2023/ and vintage_2024/ ship no
+    # Retired-and-Canceled sheet at all, and 2025 has no vintage directory, so
+    # the channel is inert by construction in all three scored years.
+    mid_vintage_exit_carry: bool = False
 
     # PUBLISHED seasonal capability basis for combined cycles
     # (cc_winter_capability_basis, off by default; caiso-186). Acts ONLY

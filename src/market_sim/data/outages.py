@@ -628,7 +628,10 @@ _ST_CAPACITY_BASIS_GROUPS: tuple[str, ...] = ("ST_GAS", "ST_CHP")
 
 
 def _iso_plant_unit_capacity(
-    iso: str, cc_steam_part_reclass: bool = False
+    iso: str,
+    cc_steam_part_reclass: bool = False,
+    retiree_year: int | None = None,
+    mid_vintage_exit_carry: bool = False,
 ) -> dict[tuple[int, str], dict[str, float]]:
     """Vintage-keyed shim over :func:`_iso_plant_unit_capacity_cached`.
 
@@ -638,14 +641,28 @@ def _iso_plant_unit_capacity(
     """
     from market_sim.config.paths import active_eia860_dir
 
+    if not mid_vintage_exit_carry:
+        # SPP-48: original arity while off, so the lru_cache key tuple is
+        # unchanged and the off path is cache- and byte-identical.
+        return _iso_plant_unit_capacity_cached(
+            str(active_eia860_dir()), iso, cc_steam_part_reclass
+        )
     return _iso_plant_unit_capacity_cached(
-        str(active_eia860_dir()), iso, cc_steam_part_reclass
+        str(active_eia860_dir()),
+        iso,
+        cc_steam_part_reclass,
+        retiree_year,
+        mid_vintage_exit_carry,
     )
 
 
 @lru_cache(maxsize=None)
 def _iso_plant_unit_capacity_cached(
-    eia860_dir: str, iso: str, cc_steam_part_reclass: bool = False
+    eia860_dir: str,
+    iso: str,
+    cc_steam_part_reclass: bool = False,
+    retiree_year: int | None = None,
+    mid_vintage_exit_carry: bool = False,
 ) -> dict[tuple[int, str], dict[str, float]]:
     """Return ``{(plant_code, plant_group): {normalised_gen_id: pmax_mw}}``.
 
@@ -671,7 +688,12 @@ def _iso_plant_unit_capacity_cached(
     iso_config = get_iso_config(iso)
     fleet = load_fleet_from_csv(
         iso, iso_config, cc_steam_part_reclass=cc_steam_part_reclass
-    ) + load_retired_within_window(iso, iso_config)
+    ) + load_retired_within_window(
+        iso,
+        iso_config,
+        year=retiree_year if mid_vintage_exit_carry else None,
+        mid_vintage_exit_carry=mid_vintage_exit_carry,
+    )
     out: dict[tuple[int, str], dict[str, float]] = {}
     for g in fleet:
         code = int(g.plant_code)
@@ -692,6 +714,8 @@ def _st_basis_pairmap(
     cap: dict[tuple[int, str], float],
     iso: str,
     cc_steam_part_reclass: bool,
+    retiree_year: int | None = None,
+    mid_vintage_exit_carry: bool = False,
 ) -> dict[tuple[int, str, str], float]:
     """Return ``{(plant, group, extract_unit_id): fleet pmax_mw}`` for ALIGNED bins.
 
@@ -742,7 +766,13 @@ def _st_basis_pairmap(
     UNIT-SET mismatch and by the whole-plant ``eia923_netzero`` synthetic rows,
     both separate open defects this flag deliberately does not touch.
     """
-    roster = _iso_plant_unit_capacity(iso, cc_steam_part_reclass)  # vintage-keyed
+    roster = (  # vintage-keyed
+        _iso_plant_unit_capacity(
+            iso, cc_steam_part_reclass, retiree_year, mid_vintage_exit_carry
+        )
+        if mid_vintage_exit_carry
+        else _iso_plant_unit_capacity(iso, cc_steam_part_reclass)
+    )
     # Every extract unit id that ever appears in each steam bin.
     bin_units: dict[tuple[int, str], set[str]] = {}
     for r in df.itertuples(index=False):
@@ -796,6 +826,8 @@ def _iso_plant_capacity(
     iso: str,
     cc_steam_part_reclass: bool = False,
     cc_nameplate_basis: bool = False,
+    retiree_year: int | None = None,
+    mid_vintage_exit_carry: bool = False,
 ) -> dict[tuple[int, str], float]:
     """Vintage-keyed shim over :func:`_iso_plant_capacity_cached`.
 
@@ -812,8 +844,18 @@ def _iso_plant_capacity(
     """
     from market_sim.config.paths import active_eia860_dir
 
+    if not mid_vintage_exit_carry:
+        # SPP-48: original arity while off — see _iso_plant_unit_capacity.
+        return _iso_plant_capacity_cached(
+            str(active_eia860_dir()), iso, cc_steam_part_reclass, cc_nameplate_basis
+        )
     return _iso_plant_capacity_cached(
-        str(active_eia860_dir()), iso, cc_steam_part_reclass, cc_nameplate_basis
+        str(active_eia860_dir()),
+        iso,
+        cc_steam_part_reclass,
+        cc_nameplate_basis,
+        retiree_year,
+        mid_vintage_exit_carry,
     )
 
 
@@ -823,6 +865,8 @@ def _iso_plant_capacity_cached(
     iso: str,
     cc_steam_part_reclass: bool = False,
     cc_nameplate_basis: bool = False,
+    retiree_year: int | None = None,
+    mid_vintage_exit_carry: bool = False,
 ) -> dict[tuple[int, str], float]:
     """Return ``{(plant_code, plant_group): nameplate_mw}`` for a non-ERCOT ISO.
 
@@ -880,7 +924,12 @@ def _iso_plant_capacity_cached(
     # leaving the injected retiree (e.g. Mystic) un-capped.
     fleet = load_fleet_from_csv(
         iso, iso_config, cc_steam_part_reclass=cc_steam_part_reclass
-    ) + load_retired_within_window(iso, iso_config)
+    ) + load_retired_within_window(
+        iso,
+        iso_config,
+        year=retiree_year if mid_vintage_exit_carry else None,
+        mid_vintage_exit_carry=mid_vintage_exit_carry,
+    )
     cap: dict[tuple[int, str], float] = {}
     for g in fleet:
         code = int(g.plant_code)
@@ -923,6 +972,7 @@ def unit_outage_derate_factors(
     per_unit_clip: bool = False,
     extract_basis_share: bool = False,
     hour_grain: bool = False,
+    mid_vintage_exit_carry: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return ``{(plant_code, plant_group): (hours,) availability multiplier}``.
 
@@ -974,6 +1024,7 @@ def unit_outage_derate_factors(
         st_capacity_basis=st_capacity_basis,
         per_unit_clip=per_unit_clip,
         extract_basis=basis,
+        mid_vintage_exit_carry=mid_vintage_exit_carry,
     )
 
 
@@ -1083,6 +1134,7 @@ def _unit_outage_factors_from_events(
     st_capacity_basis: bool = False,
     per_unit_clip: bool = False,
     extract_basis: dict[tuple[int, str], tuple[bool, float]] | None = None,
+    mid_vintage_exit_carry: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Accumulate unit-outage event rows into per-bin availability factors.
 
@@ -1183,7 +1235,17 @@ def _unit_outage_factors_from_events(
         }
         target_fn = _unit_outage_target
     else:
-        cap = _iso_plant_capacity(iso, cc_steam_part_reclass, cc_nameplate_basis)
+        cap = (
+            _iso_plant_capacity(
+                iso,
+                cc_steam_part_reclass,
+                cc_nameplate_basis,
+                int(year),
+                mid_vintage_exit_carry,
+            )
+            if mid_vintage_exit_carry
+            else _iso_plant_capacity(iso, cc_steam_part_reclass, cc_nameplate_basis)
+        )
         # rule 19 [R-ONE-MECH]: the per-plant _FLEET_GROUP_OVERRIDE enumeration
         # is DISARMED on the per-unit-crosswalk path, where the file already
         # carries each unit's own bin (nyiso-177).
@@ -1195,11 +1257,16 @@ def _unit_outage_factors_from_events(
     # a different basis with no per-unit fleet roster to align onto. Built AFTER
     # target_fn so it shares whichever routing this call is using — including the
     # nyiso-177 per-unit-crosswalk path.
-    st_pairmap: dict[tuple[int, str, str], float] = (
-        _st_basis_pairmap(df, cap, iso, cc_steam_part_reclass)
-        if (st_capacity_basis and iso != "ERCOT")
-        else {}
-    )
+    st_pairmap: dict[tuple[int, str, str], float] = {}
+    if st_capacity_basis and iso != "ERCOT":
+        st_pairmap = (
+            # SPP-48: original arity while off, so the off path is unchanged.
+            _st_basis_pairmap(
+                df, cap, iso, cc_steam_part_reclass, int(year), mid_vintage_exit_carry
+            )
+            if mid_vintage_exit_carry
+            else _st_basis_pairmap(df, cap, iso, cc_steam_part_reclass)
+        )
     has_derate = "derate_factor" in df.columns
     # Checked once per frame: an extract re-derived with --hour-grain states the
     # detected window in hours, otherwise the day-granular reconstruction stands
@@ -1311,6 +1378,7 @@ def unit_outage_short_derate_factors(
     per_unit_clip: bool = False,
     extract_basis_share: bool = False,
     gas_scope: bool = False,
+    mid_vintage_exit_carry: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return short-window (< 5-day) unit-outage availability multipliers.
 
@@ -1370,6 +1438,7 @@ def unit_outage_short_derate_factors(
         st_capacity_basis=st_capacity_basis,
         per_unit_clip=per_unit_clip,
         extract_basis=basis,
+        mid_vintage_exit_carry=mid_vintage_exit_carry,
     )
 
 
@@ -1577,6 +1646,7 @@ def unit_outage_maxgen_derate_factors(
     cc_steam_part_reclass: bool = False,
     cc_nameplate_basis: bool = False,
     mixed_gas_routing: bool = False,
+    mid_vintage_exit_carry: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return declared-event-window revealed-derate availability multipliers.
 
@@ -1607,7 +1677,17 @@ def unit_outage_maxgen_derate_factors(
     if not csv_path.exists():
         return {}
     df = pd.read_csv(csv_path)
-    cap = _iso_plant_capacity(iso, cc_steam_part_reclass, cc_nameplate_basis)
+    cap = (
+        _iso_plant_capacity(
+            iso,
+            cc_steam_part_reclass,
+            cc_nameplate_basis,
+            int(year),
+            mid_vintage_exit_carry,
+        )
+        if mid_vintage_exit_carry
+        else _iso_plant_capacity(iso, cc_steam_part_reclass, cc_nameplate_basis)
+    )
     sums: dict[tuple[int, str], np.ndarray] = {}
     for r in df.itertuples(index=False):
         code = int(r.facility_id)
