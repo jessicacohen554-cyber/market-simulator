@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-09-17-nyiso239-bench-oil-basis",
+  "run_id": "2026-09-17-nyiso240-bench-attribution",
   "iso": "NYISO",
-  "label": "nyiso239 bench oil basis",
+  "label": "nyiso240 bench attribution",
   "target_years": [
     2022,
     2023,
@@ -87,10 +87,10 @@
     "co2": {
       "label": "C5a CO2 vs eGRID (REPORTED-ONLY, v2.9 \u2014 see the CRITERIA note)",
       "years": {
-        "2022": "+0.0%",
-        "2023": "+2.6%",
-        "2024": "+1.0%",
-        "2025": "+4.3%"
+        "2022": "-4.1%",
+        "2023": "+2.1%",
+        "2024": "+0.7%",
+        "2025": "+2.1%"
       }
     },
     "diurnal_amplitude": {

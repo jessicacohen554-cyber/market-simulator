@@ -14645,3 +14645,42 @@ against a flat ~2.1–2.8 actual) with capacity intact, and the displaced energy
 Recommended lever: `ct_peaker_committed_measured` (cell **U**, NYISO's own 0.843 vs the transferred
 1.35). `nyiso_ct_peaker_bands_measured` stays **R** and was not re-tested. Rule 31: nothing new to
 retain or delete. Rule 33: no shards launched.
+
+## nyiso-240 (promotion) — 2026-09-19
+
+**KEEPER → `2026-09-17-nyiso240-bench-attribution`** (bundle `results/calibration/nyiso240_benchfix_span`),
+all four registered years 2022-2025, superseding `2026-09-17-nyiso239-bench-oil-basis` (pruned this
+session, rule 35 `[R-PROMOTE]` (a)). Owner ruling, verbatim: *"Is this a recommended keeper candidate?
+If so plz promote. If structural integrity improves but gates regress that may still be a keeper.."*
+Record: `docs/RESULT-nyiso240-bench-attribution-promotion-2026-09-19.md`.
+
+**ZERO LP, and the dispatch is bit-for-bit the superseded keeper's.** nyiso-239's four per-year shard
+bundles were re-fetched by full SHA (`5802986a` / `0f03dd49` / `ce299f37` / `9859790c` — all still
+resolving), re-composed and re-rendered with `--rebuild-benchmark`. `solve_surface.fingerprint`
+`bd2b4657f9b5df7e` unchanged; zero `ScenarioConfig` fields move; the 14-entry DOF ledger and
+`authorized_price_tuning` NONE carry over byte-identical. nyiso-239 §7's ~18 min four-shard re-solve
+assumption is **falsified** — a bench-construction repair needs no solve if the shard SHAs were recorded.
+
+**Two benchmark boundary repairs landed in the shared bench path, on rule 14 `[R-ACCURATE]`.**
+**R1** `_backfill_eia923_missing_months`: EIA-923 drops months a respondent withheld and EIA's own
+published *annual* is the sum of the months filed, so the withheld block is absent from the annual class
+benchmark; `_backfill_eia923_with_campd` gates on a 50 GWh **annual** floor and cannot see it. Bethlehem
+Energy Center (2539) filed no Feb and no Nov 2022; +0.880 TWh, against a phase-0 prediction of 879.6 GWh.
+**R2** `_reattribute_dual_fuel_oil`: 1.668 TWh moved from the `oil` class into the classes the units
+dispatch in, matching the prediction exactly.
+
+**DETERMINATION UNCHANGED — `CALIBRATED`, grade 7, fails 0, C3c the lone ledgered caveat, zero C1 status
+flips.** The gain is margin: 2022 `CC_REGULAR` **+2.95 → +1.93 pp** of a ±3.0 pp band (headroom 0.05 →
+1.07 pp); 2023 `ST_GAS` +2.85 → +2.70; 2024 `CC_REGULAR` +2.46 → +2.44. **Rule 25 discharged before
+landing**: every ISO's keeper re-scored, 42 C1 rows move ≥ 0.05 pp, **zero change status, zero of the
+eight determinations flip**.
+
+**Reported at full magnitude**: R2 moves 2022 `ST_GAS` −0.61 → −1.17 pp and 2025 `ST_GAS` −2.74 → −3.15 pp
+(SKIPPED/ungated); +2.26 TWh of the 2022 `CC_REGULAR` over-run is real. D-4 reads False before **and**
+after on an identical row set — pre-existing, not a regression. G2 hydro stays a ledgered OPEN
+ROOT-CAUSE ISSUE (rule 21), not a caveat.
+
+**Successor**: the `CT_PEAKER` merit collapse from 2023 (model 2.43 → 0.25 / 0.30 / 0.77 TWh against a
+flat ~2.1-2.8 actual, capacity intact), which plausibly owns both remaining tight rows. Recommended
+lever `ct_peaker_committed_measured` (**U**). `nyiso_ct_peaker_bands_measured` stays **R**, not re-tested.
+Rule 31: the four retrieved nyiso-239 legs stay on disk, gitignored, never `rm`'d. Rule 33: no shards.
