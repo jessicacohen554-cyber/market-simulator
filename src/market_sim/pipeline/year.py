@@ -51,6 +51,7 @@ from market_sim.pipeline.commitment import (
     build_miso_coal_night_floor_p1_prep,
     build_nyiso_gas_bridge_p1_prep,
     build_pjm_reserve_p1_prep,
+    build_soco_gas_st_campaign_p1_prep,
     build_spp_gas_bridge_p1_prep,
 )
 from market_sim.pipeline.kwargs import (
@@ -351,6 +352,18 @@ def run_year_solve(
     spp_bridge_prep = build_spp_gas_bridge_p1_prep(
         config, iso, fleet, fleet_arrays, mc_base
     )
+    # P1-native SOCO gas-steam CAMPAIGN commitment floor (SOCO-53d): the SOCO
+    # leg of the same family, and the only one whose object is a multi-WEEK
+    # campaign rather than an overnight or midday gap. SOCO's gas boilers
+    # synchronize 5.0-9.7 times a year and stay on 64-92 % of all hours while
+    # the model cycles the same plants 10-349 times a year; the measured
+    # minimum-run extension and the online-hours LSL state floor are armed, the
+    # restart legs are not (SOCO's boilers do not two-shift — gas_commitment_
+    # bridge is `R` for this ISO). None for every non-SOCO / gate-off run
+    # (byte-identical).
+    soco_campaign_prep = build_soco_gas_st_campaign_p1_prep(
+        config, iso, fleet, fleet_arrays
+    )
     # P1-native MISO regulated-coal night floor (miso-113): committed-state
     # floor on the regulated PRB/subbituminous fleet at each plant's OWN
     # measured within-run night level, net of its _mustrun band (rule 19), on
@@ -391,6 +404,7 @@ def run_year_solve(
             or ercot_bridge_prep
             or nyiso_bridge_prep
             or spp_bridge_prep
+            or soco_campaign_prep
             or miso_night_floor_prep
             or pjm_fleet_prep
         ),

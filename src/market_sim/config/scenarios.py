@@ -852,6 +852,15 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # four measured constants live in constants.py (no sub-fields).
     # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
     "spp_gas_commitment_bridge",
+    # SOCO gas-steam campaign commitment floor (SOCO-53d): the ONE SOCO gate
+    # flag, inert at its default (off — the P1 prep hook returns None), so it
+    # is dropped from the hash at its declared False and every pre-existing key
+    # of all seven ISOs is byte-stable; an armed run enters the key as a
+    # distinct scenario. Its level and horizon are per-plant MEASURED artifact
+    # rows (data/raw/_processed-legacy/campd_gas_st_campaign_params_SOCO.csv),
+    # not fields, so there are no sub-fields. Registered IN THE SAME COMMIT as
+    # the field (the nyiso-119 discipline).
+    "soco_gas_st_campaign_commitment",
     # Measured CHP behind-the-meter electric share (nyiso-147): inert at its
     # default (off — the measured artifact is not read), so it is dropped
     # from the hash at default and every pre-existing cache key is
@@ -2164,6 +2173,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # SPP-44: the SPP gas commitment bridge gate, registered IN THE SAME
     # COMMIT as the field at its shipping default (off).
     "spp_gas_commitment_bridge": "False",
+    # SOCO-53d: the SOCO gas-steam campaign commitment gate, registered IN THE
+    # SAME COMMIT as the field at its shipping default (off).
+    "soco_gas_st_campaign_commitment": "False",
     "nyiso_chp_btm_measured": "False",
     "cc_reserve_duty_split": "False",
     "chp_layup_duty_split": "False",
@@ -8112,6 +8124,86 @@ class ScenarioConfig:
     # physics; window = self-windowing on the model's own run pattern (no
     # clock hour); forward story = regenerates from any year's own P0.
     spp_gas_commitment_bridge: bool = False
+    # SOCO GAS-STEAM CAMPAIGN COMMITMENT FLOOR (default off, SOCO-gated — lane
+    # SOCO-53d, PRECOMMIT-soco-53d-2026-09-19). THE ONE FIELD this lane adds:
+    # its level and horizon are per-plant MEASURED rows of a committed derive
+    # artifact, not scalars, so there is nothing else to tune (rule 21
+    # [R-DOF]: zero free parameters).
+    #
+    # THE OBJECT. SOCO's keeper misallocates 2023 CT_PEAKER +10.09 TWh against
+    # ST_GAS -7.36 TWh, and SOCO-53 established by measurement that this is NOT
+    # a cost defect the offer curve can reach (every offer_curve_by_group band
+    # is the identity 1.0, so each SOCO class is a single flat price block).
+    # What is missing is COMMITMENT STATE. Measured at plant grain on SOCO's
+    # own CAMPD boiler record (2023-2025, boiler unitTypes paired to the
+    # plant's own model gas_st rows by capacity rank), SOCO's gas boilers run
+    # 5.0-9.7 CAMPAIGNS a year and are SYNCHRONIZED 64-92 % of all hours;
+    # the model gives them min_run_hours = min_down_hours = 0 and cycles the
+    # same plants 10-349 times a year in blocks of 2-11 h median. The model is
+    # operating SOCO's steam boilers as if they were peaking turbines, and the
+    # energy a synchronized boiler's minimum-load block would carry is bought
+    # from combustion turbines instead.
+    #
+    # WHY THIS IS NOT THE GAP BRIDGE, which is refused for SOCO. SOCO-53
+    # recorded gas_commitment_bridge `R` on SOCO's own conduct: of 386 boiler
+    # downtime gaps, 68.7 % exceed 72 h and account for 98.6 % of all
+    # gap-hours, and only 150 unit-hours across three years fall inside the 8 h
+    # ST_GAS min-down. SOCO's boilers do not two-shift, so the restart-bar and
+    # restart-economics legs are inert BY MEASUREMENT and are deliberately NOT
+    # armed here (startup_bridge stays off). This gate arms the OTHER two legs
+    # of the same ISO-neutral detector — the measured minimum-RUN extension and
+    # the online-hours LSL state floor — whose object is the committed STATE
+    # rather than the restart decision. That is a different leg, not a re-test
+    # of an adjudicated cell (rule 28(a) [R-MECH-MATRIX]).
+    #
+    # WHY startup_aware IS REFUSED HERE. The commitment-real run screen
+    # (nyiso-200) keeps only runs whose own energy margin against the LMP
+    # repays the unit's published startup cost. That is a MERCHANT screen: it
+    # asks whether an individual unit's offer would have recovered its start in
+    # a market. SOCO is a vertically-integrated cost-based balancing authority
+    # with no LMP, no offers and no market (owner card S5; gate G17), so its
+    # boilers are committed against total system production cost, not against
+    # an individual unit's margin. Importing the screen would assert a market
+    # design SOCO does not have — the same ground on which
+    # tranche_startup_amortization is recorded `G` for this ISO (rule 1
+    # [R-STRUCT]). It is refused ex ante, not swept.
+    #
+    # WHY THE CT LEG IS REFUSED. NYISO arms a CT min-run leg
+    # (nyiso_gas_bridge_ct); SOCO does not, on SOCO's own evidence. The model
+    # already reproduces SOCO's CT run SHAPE (model p50 3-16 h against a
+    # measured 8-9 h); what it gets wrong is the NUMBER of starts (100-349
+    # against a measured 57-60) and the resulting capacity factor. A min-run
+    # floor would make CT run MORE, which is the wrong direction.
+    #
+    # LEVEL, HORIZON and MEMBERSHIP are all per-plant MEASURED statistics from
+    # scripts/data/derive_campd_gas_st_campaign_params.py ->
+    # data/raw/_processed-legacy/campd_gas_st_campaign_params_<ISO>.csv, read
+    # through data.gas_st_campaign (rules 13/23/25 — SOCO's own plants only,
+    # nothing inherited from NYISO's 0.239 or SPP's 0.090). Level =
+    # PLANT-basis minimum stable load (the basis a floor multiplied by plant
+    # pmax requires — caiso-135); horizon = the p25 of the plant's own
+    # campaign-length distribution (the LOW order statistic, because an
+    # observed run bounds a min-run CONSTRAINT from above — the nyiso-90 /
+    # SPP-44 convention). MEMBERSHIP is the plant's own measured synchronized
+    # share against the derive's ex-ante 0.50 gate: a plant synchronized less
+    # than half the year is standby iron, and flooring it would bind in hours
+    # its own driver evidence says it is offline (rule 17 [R-FLOOR-WINDOW]).
+    # On SOCO the population separates by an order of magnitude (Barry 0.063
+    # against 0.639 / 0.752 / 0.843 / 0.920), so every gate value in
+    # (0.07, 0.63) gives the identical partition in all three years.
+    #
+    # D-2 id MECH_SOCO_GAS_ST_CAMPAIGN (25); D-4 window (0, 24) by driver,
+    # declared in scripts/legitimacy_diagnostics.py. Rule 19 [R-ONE-MECH]:
+    # SOCO's gas and coal classes carry NO other floor, bridge, drag or
+    # posture (keeper D-2: 0.0 % forced on CC_REGULAR / ST_GAS / CT_PEAKER /
+    # COAL), so this stacks on nothing and replaces nothing. Rule 17: driver =
+    # campaign-commitment physics; window = self-windowing on the model's own
+    # P0 run pattern (no clock hour anywhere in it); forward story =
+    # regenerates from any year's own P0 plus an artifact that re-derives only
+    # on a CAMPD vintage change. Registered in _CACHE_KEY_OPTIONAL_FIELDS at
+    # its declared False so every committed key is unmoved; an armed run keys
+    # distinctly.
+    soco_gas_st_campaign_commitment: bool = False
     # Measured NYISO CHP behind-the-meter electric share (nyiso-147). The
     # chp_steam_following LP carve sizes a CHP plant's grid capacity as
     # nameplate x (1 - BTM share) with the share from the sector-keyed
@@ -21118,6 +21210,9 @@ TIER_TAGS: dict[str, int] = {
     # SPP-44: the SPP leg of the gas commitment bridge — a structural gate
     # flag (its measured constants are constants.py entries, not fields).
     "spp_gas_commitment_bridge": 1,
+    # SOCO-53d: the SOCO gas-steam campaign commitment floor — a structural
+    # gate flag (its level/horizon are measured artifact rows, not fields).
+    "soco_gas_st_campaign_commitment": 1,
     "nyiso_chp_btm_measured": 1,
     "nyiso_gas_bridge_cc_min_run_hours": 2,
     "nyiso_gas_bridge_st_min_run_hours": 2,

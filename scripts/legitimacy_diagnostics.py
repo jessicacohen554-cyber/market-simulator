@@ -100,6 +100,7 @@ from market_sim.data.floor_mechanisms import (  # noqa: E402
     MECH_GAS_COMMITMENT_BRIDGE,
     MECH_MISO_COAL_NIGHT_FLOOR,
     MECH_NYISO_GAS_COMMITMENT_BRIDGE,
+    MECH_SOCO_GAS_ST_CAMPAIGN,
     MECH_SPP_GAS_COMMITMENT_BRIDGE,
     MECH_HYDRO_MIN_FLOW,
     MECH_HYDRO_ROR_FLAT,
@@ -558,6 +559,39 @@ D4_WINDOWS: dict[tuple[int, str | None], tuple[int, int]] = {
     #   CAMPD vintage change (rules 13/23).
     (MECH_SPP_GAS_COMMITMENT_BRIDGE, "CC_REGULAR"): (0, 24),
     (MECH_SPP_GAS_COMMITMENT_BRIDGE, "ST_GAS"): (0, 24),
+    # soco_gas_st_campaign_commitment (SOCO-53d, MECH_SOCO_GAS_ST_CAMPAIGN —
+    # pipeline.commitment.build_soco_gas_st_campaign_p1_prep): the SOCO leg of
+    # the same P1-native committed-state family, on SOCO's gas-STEAM fleet
+    # alone. ST_GAS is a MATERIAL class for SOCO (>= 2 % of load), so under
+    # rule 20 [R-FORCED-BUDGET] this row is the escalation path a forced share
+    # above the 30 % cap would be scored on — it must exist. Rule-17
+    # declaration (PRECOMMIT-soco-53d-2026-09-19 §4):
+    # * WINDOW — self-windowing by construction, ALL 24 hours by driver, and
+    #   here the driver evidence is unusually direct. Only two legs of the
+    #   detector are armed: the measured minimum-RUN extension and the
+    #   online-hours LSL state floor. Both are anchored to the model's OWN P0
+    #   run pattern — the floor exists in the hours of a P0-detected run, or in
+    #   the hours following a P0 run-start that lie inside the plant's own
+    #   measured minimum campaign. There is no clock hour anywhere in the
+    #   mechanism, so no hour of day is declared off, and it can never START a
+    #   plant: it can only refuse to let one sink below its minimum stable load
+    #   inside a campaign the model itself began. The restart legs are NOT
+    #   armed (startup_bridge off), so no gap is ever bridged.
+    # * DRIVER — campaign-commitment physics, and its evidence is the plant's
+    #   OWN meter: SOCO's gas boilers are synchronized 63.9-92.0 % of all hours
+    #   with 5.0-9.7 campaigns a year (CAMPD 2023-2025, plant grain,
+    #   campd_gas_st_campaign_params_SOCO.csv), against 10-349 model starts of
+    #   2-11 h median. MEMBERSHIP is that same statistic: a plant synchronized
+    #   less than half the year is standby iron and is never floored, which is
+    #   what keeps this mechanism out of the failure mode rule 17 exists to
+    #   catch. Measured at the arm, every plant-year's floored share lands at
+    #   or below that plant's own synchronized share.
+    # * FORWARD STORY — regenerates in any forecast year from the model's own
+    #   P0 run pattern plus a per-plant artifact that re-derives only on a
+    #   CAMPD vintage change (rules 13/23). No measured generation enters the
+    #   detector; the meter sets the LEVEL and the POPULATION, never the
+    #   placement.
+    (MECH_SOCO_GAS_ST_CAMPAIGN, "ST_GAS"): (0, 24),
     # miso_coal_night_floor (miso-113, MECH_MISO_COAL_NIGHT_FLOOR —
     # pipeline.commitment.build_miso_coal_night_floor_p1_prep): the P1-native
     # within-run NIGHT floor on MISO's regulated PRB/subbituminous coal fleet,
