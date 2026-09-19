@@ -180,21 +180,87 @@ cgroup 4.74–4.84 GiB against the 13.34 GiB ceiling — no shard came near the
 20-minute stop or needed swap. All six archived after their bytes were fetched,
 checked out and verified (rule 33 (a)/(e)).
 
-## 7. WHAT IS OPEN — THE PROMOTION QUESTION (rule 31 [R-RETAIN])
+## 7. PROMOTED — the owner ruled, and the promotion is executed (rule 35 [R-PROMOTE])
 
-**Nothing was registered and the keeper was not re-designated.** The six bundles
-are per-year and would have to be composed into one span bundle before
-registration (rule 32 (d)); that composition is **zero-LP** but needs a NEISO
-analogue of `scripts/probes/_miso260_compose_span.py`, which is hardcoded to
-MISO's partition fields.
+*(This section replaces the open promotion question §7 originally carried. The
+owner ruled the same session, verbatim: "Promote when they land". They had
+landed.)*
 
-The case for promoting the composed span as NEISO's keeper is that it is a
-**strict superset at identical numbers**: same recipe, same prices to 1e-14,
-same annual energy, plus the MER column and the network / unit-hourly /
-dispatch sidecars the incumbent lacks. It covers exactly the incumbent's year
-set 2020–2025, so rule 35 [R-PROMOTE] (c) is satisfied. The case against is that
-it is not needed for the abatement page — the MER data is usable from these
-bundles as they stand — and a promotion re-keys the ISO's registered set.
+**NEISO's keeper is now `2026-09-19-neiso112-mer-year-isolated`**, bundle
+`results/calibration/neiso112_mer_span`, composed at zero LP from the six
+per-year legs by `scripts/probes/_neiso112_compose_span.py`.
 
-**That is the owner's call, not this session's.** Until it is made, nothing is
-deleted.
+**DETERMINATION: CALIBRATED** — criterion for criterion identical to the
+superseded keeper: C1 fuelmix, C2 sysvol, C3a price_mean, C3b price_shape, C4
+dispatch_corr, C6 governance, C8 forced_share all PASS; C3c the same lone
+ledgered caveat; grade summary 8 scored / target 7 / commercial 0 / ledgered 1
+/ **0 fails**, rubric v3.8, all six years scorable and none data-blocked.
+
+Executed in this session, in the order rule 35 fixes:
+
+1. **Year set enumerated BEFORE the delete** (rule 35 (b), because the delete
+   destroys the evidence): the union over every NEISO sidecar was
+   **[2020, 2021, 2022, 2023, 2024, 2025]** — one registered run, the outgoing
+   keeper, with no run folded to it. The incoming keeper covers that union
+   exactly, so rule 35 (c) is satisfied and no year drops off the ISO's report.
+2. **Promote, verify, THEN delete** (rule 35 (e)): the new run was registered
+   with `--no-prune`, `audit_keepers.py --iso NEISO` was run to confirm the
+   incoming three stores resolve, and only then was the outgoing keeper's
+   sidecar + payload + bundle dir removed together by
+   `prune_iso_runs.py --iso NEISO --force-uncite`. `--force-uncite` is rule 35
+   (d)'s **intended** route, not a safety override: the only citation blocking
+   it was this session's own `keeper_history` line in
+   `calibration-complete.json`, which rule 35 (d) says stays as history.
+3. **Post-state clean**: `audit_keepers.py --iso NEISO` **PASS, 0 failures and
+   0 warnings** (E13's superseded-run invariant included);
+   `build_status.py --check --iso NEISO` in sync at `NEISO:CALIBRATED`;
+   `check_mechanism_matrix.py` green on every gate, with the NEISO shard and
+   the §5.6 prose header re-stamped to the new keeper (rule 27 duty (b)).
+4. **Per-ISO lane isolation held**: only NEISO's shard, status part, registry
+   entries and matrix shard were touched.
+
+### 7.1 Two things found on the way, recorded rather than smoothed over
+
+* **A bug in this session's own composer, caught by the audit.** The first
+  composite copied leg-2020's `run_config.json` as the bundle's base config,
+  so `calibration_flags.years` read `[2020]` against a six-year `meta.json` —
+  `audit_keepers` E3 flagged it as bundle metadata disagreeing with itself.
+  Fixed **at the source** (the composer now restamps the base config to the
+  composed span; the per-year `run_config_<y>.json` still carry each year's
+  own truth) and in the bundle. The MISO analogue has the same shape and is
+  left to the MISO lane (rule 25).
+* **The EIA-923 benchmark moved under us, and it changed nothing scored.**
+  Rebuilding the composite's benchmark in place reproduced the superseded
+  keeper's `campd` and `eia930` artifacts to the **identical content hash**
+  (`campd-1782e1223554`, `eia930-a79ecddc812c`), confirming the benchmark is
+  the pure function of `(year, iso)` it claims to be — but `eia923` hashed
+  differently (`f55df779267d` vs `c06a87821698`) at an identical
+  `btm_backfill_year`, i.e. a source-data vintage change in the three days
+  since the incumbent solved. **No scored criterion moved**, which is why this
+  is a note rather than a finding; it is recorded so nobody later reads the
+  hash difference as a model change.
+
+### 7.2 One pre-existing gate RED that is NOT this lane's
+
+`check_registry_payload_parity.py` is RED, on eight unmapped bundle dirs. Six
+are this session's own **gitignored** per-year bundles, which the gate sees
+only because it walks the FILESYSTEM — exactly the local-only RED rule 31
+`[R-RETAIN]` names, and never to be "fixed" by deleting a result rule 31
+protects. The other two — `results/calibration/caiso279_ablate_dswcouple_span`
+and `results/calibration/soco15_spp_arm` — are **tracked on `origin/main` with
+34 files each**, so they are a pre-existing CI red owned by the CAISO and SOCO
+lanes. Not touched here (rule 25 `[R-ISO-SCOPE]`, per-ISO lane isolation);
+named so those lanes can see it.
+
+### 7.3 Retention after the promotion
+
+The six per-year bundles stay on disk, gitignored, with their recovery SHAs in
+`.gitignore` and in §5 above; their shard branches are **not deleted**, since
+rule 33 `[R-SHARD-ARCHIVE]` (f)(3) keeps a branch carrying a registerable
+bundle until the owner has ruled — and although the ruling has now come, the
+branches remain the durable copy of the per-year legs behind a composed
+keeper, which is worth keeping while the composition is one day old. The
+`.gitignore` pattern is deliberately year-scoped
+(`neiso112_mer_20[0-9][0-9]/`): the first draft used `neiso112_mer_*`, which
+also swallowed the composed span and would have silently kept the **keeper's**
+slim set out of `main`.

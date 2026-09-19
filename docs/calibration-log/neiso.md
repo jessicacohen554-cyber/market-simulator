@@ -3437,3 +3437,105 @@ too — the index-vs-delivered question is answered and `gas_electric_power_mont
 adjudicated `I`; do not re-open either without new evidence (rule 28 DO-NOT-REDO). The live objects
 are unchanged: C3c (frontier, needs its own charter) and the diurnal amplitude gap.
 **OPEN FOR THE OWNER: whether to promote `2026-09-09-neiso-107-retiree-window` as the keeper.**
+
+## 2026-09-19 — neiso-112: the marginal emission rate for all six years, solved one-year-per-shard, and promoted
+
+**KEEPER → `2026-09-19-neiso112-mer-year-isolated`** (bundle
+`results/calibration/neiso112_mer_span`), superseding
+`2026-09-16-neiso110-dualfuel-derate-scope` on the owner ruling of 2026-09-19
+("Promote when they land"). **DETERMINATION CALIBRATED**, criterion for criterion
+identical to the superseded keeper: 8 scored, **0 fails**, the same lone ledgered
+C3c, grade 7 / 0 / 1, rubric v3.8, all six years scorable.
+
+**WHY THERE WAS A SOLVE AT ALL.** `marginal_emission_rate` — the emissions dual,
+dCO2/d(demand) at the solve's own optimal basis — landed in `fba0ecd7`, after the
+incumbent's `git_sha c0916408`. It is an LP dual, so no committed sidecar carried it
+and none could be post-processed into it. The marginal-abatement page
+(`docs/codebase-site/marginal-abatement.html`) had NEISO among the eight grids
+reporting pending.
+
+**NO MECHANISM WAS TESTED AND NO CELL VERDICT MOVES (rule 28d).** The recipe is the
+incumbent's, reconstructed by `replay_keeper.py` from its own `meta.json`: zero
+`ScenarioConfig` choices changed, zero free parameters added, DOF ledger carried
+byte-identical, the `authorized_price_tuning` scalar neither re-sized nor re-swept.
+
+**WHAT WAS NEW: THE STRUCTURE OF THE SOLVE.** On the owner's instruction the same day
+— *"launch a single shard for each year of the solve bc warm start has been proven to
+no longer be neutral and therefore shouldn't be used for backcast"* — each of the six
+years was solved **alone, in its own shard container** (rule 36
+`[R-YEAR-ISOLATION]`), then composed at zero LP by the new
+`scripts/probes/_neiso112_compose_span.py`. That composer refuses to write a span
+unless every leg's `scenario_config` is identical outside the two year-scoped fields;
+measured at composition: **856 fields, only `gas_price_override` and `weather_year`
+varying**, one shared solve-surface fingerprint `9d35c270c69e9eee` — the same the
+incumbent recorded.
+
+**THE RESULT THAT MATTERS BEYOND THIS LANE: the MISO year-grouping defect does NOT
+reproduce in NEISO.** The six year-isolated solves reproduce the incumbent's single
+six-year invocation with prices **bit-identical** (max |Δprice| 1.42e-14 to 5.68e-14
+$/MWh; **0 of 262,800** zone-hour cells past $0.01/MWh), demand identical at
+0.00e+00, and annual class energy identical to <5e-7 TWh. Rule 36 (f) records that
+artifact's size as *unmeasured outside MISO*; for NEISO it is now **measured at nil**
+in price and annual energy, where MISO's 2022 moved 24.18 TWh and 43,160 of 70,080
+price cells (~$500 M of objective). The mechanism is the MER distribution itself —
+see below.
+
+**REPORTED AT FULL MAGNITUDE, NOT ROUNDED AWAY.** At the hourly grain **1.19–1.55 %**
+of class-hours (1,460–1,897 of 122,640) differ by >0.1 MW, the largest single
+class-hour by **402.6–587.5 MW**, among CC_REGULAR / hydro / oil / CT_PEAKER /
+CC_CHP — alternate-optimum reshuffling of a degenerate LP at an unchanged objective
+and unchanged prices, the same signature and magnitude **neiso-107 already recorded
+and root-caused against this keeper** (426.95 / 371.44 / 442.34 MW). A limitation
+carried rather than implied away: the MER is a *basis-dependent* dual, so in those
+~1.3 % of tied hours the reported value is one of several valid one-sided
+derivatives, and with no incumbent MER to difference against **the size of that
+ambiguity is unmeasured**.
+
+**THE DELIVERABLE.** 43,800 zone-hours per year, **zero nulls**, all six years, in the
+committed `hourly/system_<year>.parquet`:
+
+| year | load-wtd | p10 | median | p90 | max | wind-wtd | solar-wtd |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| 2020 | 0.5182 | 0.363 | 0.574 | 0.649 | 1.000 | 0.5144 | 0.5285 |
+| 2021 | 0.4967 | 0.348 | 0.461 | 0.653 | 1.000 | 0.4848 | 0.5004 |
+| 2022 | 0.4893 | 0.343 | 0.454 | 0.668 | 1.000 | 0.4849 | 0.4882 |
+| 2023 | 0.5417 | 0.368 | 0.580 | 0.673 | 1.168 | 0.5285 | 0.5371 |
+| 2024 | 0.5588 | 0.379 | 0.581 | 0.675 | 1.319 | 0.5476 | 0.5630 |
+| 2025 | 0.5296 | 0.360 | 0.575 | 0.671 | 1.568 | 0.5157 | 0.5253 |
+
+tCO2/MWh. **This is a gas-on-the-margin ISO and the photographic negative of MISO's
+coal margin**: p90 **0.65–0.68** against MISO's 0.94–1.02, and **0.00–0.01 %** of
+zone-hours with a non-emitting unit marginal against MISO's 13–23 %. With no coal
+tranche to swap into there is no second vertex to land on, which is *why* the
+year-grouping artifact is absent here. Wind's avoided rate sits **below** the
+load-weighted mean in all six years (−0.4 % to −2.4 %; it blows in lower-margin
+hours) and solar's at or just above it in five of six — both gaps small because the
+marginal fuel barely changes, which is the real market fact an ISO-NE abatement
+calculation starts from.
+
+**TWO THINGS FOUND ON THE WAY, recorded rather than smoothed over.** (1) A bug in
+this session's own composer — it copied leg-2020's `run_config.json` as the base
+config, so `calibration_flags.years` read `[2020]` against a six-year `meta.json`;
+`audit_keepers` E3 caught it and it is fixed **at the source**. The MISO analogue has
+the same shape and is left to the MISO lane (rule 25). (2) Rebuilding the benchmark
+reproduced the incumbent's `campd` and `eia930` artifacts to the **identical content
+hash**, but `eia923` hashed differently at an identical `btm_backfill_year` — a
+source-data vintage change in the intervening three days. **No scored criterion
+moved**; noted so the hash difference is never later read as a model change.
+
+**NOT THIS LANE'S, but named so the owning lanes see it:**
+`check_registry_payload_parity.py` is RED on
+`results/calibration/caiso279_ablate_dswcouple_span` and
+`results/calibration/soco15_spp_arm`, both **tracked on `origin/main` with 34 files
+each** — a pre-existing CI red for the CAISO and SOCO lanes, untouched here.
+
+**COST AND RETENTION.** Six containers, ~3–4 min of LP each, peak cgroup 4.74–4.84
+GiB against the 13.34 GiB ceiling; no shard neared the 20-minute stop or needed swap.
+All six archived after their bytes were fetched, checked out and verified (rule 33
+(a)/(e)); their branches are kept as the durable copy of the per-year legs, with full
+recovery SHAs in `.gitignore` and in
+`docs/RESULT-neiso112-mer-year-isolated-2026-09-19.md` §5.
+
+**OPEN GATES CARRIED, UNCHANGED:** C3c (ledgered; frontier), the neiso-109 winter-oil
+root-cause issue, and the neiso-111 reserve-supply scoping finding. **Next shorthand:
+`neiso-113`.**
