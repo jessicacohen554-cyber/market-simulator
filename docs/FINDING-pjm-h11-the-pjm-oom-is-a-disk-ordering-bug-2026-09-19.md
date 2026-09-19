@@ -160,13 +160,50 @@ ordering.
 CCR shard (pjm-h10 ADDENDUM §3), so the prompt is the only channel and it is already spent. The
 remedy is applied on relaunch.
 
-**What this does not settle:** the MER dual (`model/lp/model.py::_marginal_emission_rate`, new at
-HEAD, **ungated and unconditional**, running a second HiGHS `run()` in the post-solve window —
-PRECOMMIT §2.2 LIVE-4 and Q3) is still a candidate *contributor* to the peak, and it is still
-confounded. This finding says the container was under-provisioned by ~6.9 GiB of swap, which is
-sufficient on its own to explain the kill; it does not measure the dual's own cost, and nobody
-should read it as clearing the dual. The two questions are separable and only the first is answered
-here.
+---
+
+## 5b. UPDATE, ~25 MINUTES LATER — THE LIVE SHARDS CONFIRM §3 AND DE-CONFOUND Q3
+
+Both halves of §3 are now **measured on this lane's own containers**, not inferred:
+
+**(i) The disk bound is real and it is biting every shard.** CTL 2022 reports *"5 GiB swap
+provisioned (18.4 target)"* and CTL 2024 *"~5 GiB swap"* — **5 GiB, not the 10 GiB MISO's working
+shard got**, and a `ceiling+swap` of **18.4 GiB**, reproducing pjm-h10's number exactly. §3's
+arithmetic predicted this before any shard reported it.
+
+**(ii) The LP itself FITS. What does not fit is the post-solve window.** **CTL 2020 COMPLETED** on a
+13.36 GiB ceiling with a 13.36 GiB peak — so a PJM per-plant year is survivable here even
+under-provisioned. **CTL 2021 was OOM-killed, and its own report localises the kill:**
+
+> *"PJM control 2021 solve failed on OOM during post-solve `marginal_emission_rate` extraction; no
+> bundle written; container ceiling 13.36 GiB insufficient"* — recommending *"re-launch with larger
+> container ceiling (>18.36 GiB) OR escalate code fix to ungated `h.run()` at `model.py:1660`."*
+
+**The solve finished and the process died afterwards, inside the MER dual.** That is the phase
+localisation pjm-h10 could not get, and it changes Q3's status: the dual is no longer merely a
+*candidate* contributor, it is where the kill lands when the kill happens.
+
+**Stated carefully, because I primed this shard.** Its prompt told it the dual was new, ungated, and
+in the window a previous shard died in, so its *attribution* is not independent. What is independent
+is the **phase**, which it read from its own log: solve complete, then killed in MER extraction.
+Treat the phase as evidence and the blame as corroboration.
+
+**So the two explanations are not rivals — they compose, and the order matters:**
+the LP fits at 13.36 GiB; the MER dual then demands more on top of a completed solve; and the
+under-provisioned 5 GiB swap removes the headroom that would have absorbed it. That predicts the
+observed split — CTL 2020 finishes, CTL 2021 dies — because how far the dual pushes past the ceiling
+varies by year, and 18.4 GiB of ceiling+swap sits right at the boundary. It also says **both**
+remedies work and they are independent: restore the swap (§4, free), or gate the dual (Q3, a code
+change and the owner's call).
+
+**Action taken:** CTL 2021 relaunched as `session_01553U34CaoGg7uKj6JgBCHn` with §4's fix — the
+**only** change is `sudo python3 scripts/prepare_solve_container.py` moved to STEP 0, before
+hydration. It is instructed to report `cat /proc/swaps` **after** the solve, because *swap actually
+USED* — not merely present — is the one number that would settle whether a bigger swapfile is
+sufficient on its own. The dead shard is archived (rule 33); it wrote no bundle and no branch, so
+its `post_turn_summary`, quoted above, is the whole of its record.
+
+**Status at this update: 11 of 12 shards alive, 1 dead and relaunched.**
 
 ---
 
