@@ -239,6 +239,21 @@ accept or decline.
 **Nothing is at risk while this takes time**: both bundles are on the remote by immutable SHA (§6)
 and nothing has been deleted.
 
+**`audit_keepers --iso NYISO` reads FAIL with 2 × E13, and that is the EXPECTED transient state of
+an undecided promotion, not a defect to paper over.** E13 enforces rule 35 `[R-PROMOTE]` (f)'s
+post-promotion invariant — every registered run for an ISO is either its keeper or stamped to it —
+and both new runs are registered, neither is the keeper, and neither is a held-out rung to stamp.
+That is exactly what rule 15 `[R-DASHBOARD]` requires in the meantime (*"a rejected probe still
+registers the moment it finishes"*) combined with rule 35(a)'s timing (*pruned at the PROMOTION
+that supersedes it*). It clears the moment the owner rules, either way:
+
+* **promote arm A** → it becomes the keeper, and `prune_iso_runs.py --iso NYISO --force-uncite`
+  removes arm B and the superseded `2026-09-17-nyiso240-bench-attribution` three stores;
+* **keep the incumbent** → `prune_iso_runs.py --iso NYISO --force-uncite` removes both arms.
+
+Every other `audit_keepers` family (holdout, marker, status, E1) passes, and the keeper's own
+re-score is unchanged at **CALIBRATED**.
+
 ---
 
 ## 8. THE SUCCESSOR OBJECT, RE-AIMED AGAIN
