@@ -1,16 +1,99 @@
 {
-  "id": "2026-09-19-spp-48-midvintage-exit",
-  "label": "spp 48 midvintage exit",
-  "date": "2026-09-19",
-  "shorthand": "spp-48-midvintage-exit",
-  "definition": "SPP-48 arm: mid-vintage-year whole-plant exit carry (ScenarioConfig.mid_vintage_exit_carry). Single delta against the committed 2019-2022 rung 2026-09-16-spp-43-outage-intake. Re-injects plants a year-matched native EIA-860 vintage drops from BOTH sheets because they retired DURING that year (Oklaunion, plant 127, EIA retirement 9/2020, 1209.2 GWh metered May-September). Rule 14 [R-ACCURATE] input repair, zero free parameters.",
-  "years": [
-    2019,
-    2020,
-    2021,
-    2022
+ "id": "2026-09-19-spp-48-midvintage-exit",
+ "label": "spp 48 midvintage exit",
+ "date": "2026-09-19",
+ "shorthand": "spp-48-midvintage-exit",
+ "definition": "SPP-48 arm: mid-vintage-year whole-plant exit carry (ScenarioConfig.mid_vintage_exit_carry). Single delta against the committed 2019-2022 rung 2026-09-16-spp-43-outage-intake. Re-injects plants a year-matched native EIA-860 vintage drops from BOTH sheets because they retired DURING that year (Oklaunion, plant 127, EIA retirement 9/2020, 1209.2 GWh metered May-September). Rule 14 [R-ACCURATE] input repair, zero free parameters.",
+ "years": [
+  2019,
+  2020,
+  2021,
+  2022
+ ],
+ "iso": "SPP",
+ "file": "frontend/data/backcast/runs/2026-09-19-spp-48-midvintage-exit.js",
+ "bundle": "results/calibration/spp48_arm_span",
+ "holdout": {
+  "tier": "validation",
+  "year": 2022,
+  "keeper": "2026-09-16-spp-42-commitment-feasibility",
+  "keeperDetermination": "CALIBRATED",
+  "keeperYears": [
+   2023,
+   2024,
+   2025
   ],
-  "iso": "SPP",
-  "file": "frontend/data/backcast/runs/2026-09-19-spp-48-midvintage-exit.js",
-  "bundle": "results/calibration/spp48_arm_span"
+  "holdoutDetermination": "NOT-YET",
+  "criteria": [
+   {
+    "key": "dispatch_corr",
+    "label": "C4 fleet hourly dispatch correlation",
+    "tier": "supporting",
+    "inSample": "PASS",
+    "holdout": "FAIL",
+    "verdict": "degraded"
+   },
+   {
+    "key": "fuelmix",
+    "label": "C1 fuel-mix by class (grid-delivered)",
+    "tier": "load-bearing",
+    "inSample": "PASS",
+    "holdout": "FAIL",
+    "verdict": "degraded"
+   },
+   {
+    "key": "price_mean",
+    "label": "C3a mean LMP",
+    "tier": "load-bearing",
+    "inSample": "PASS",
+    "holdout": "FAIL",
+    "verdict": "degraded"
+   },
+   {
+    "key": "price_shape",
+    "label": "C3b price duration/shape",
+    "tier": "load-bearing",
+    "inSample": "PASS",
+    "holdout": "FAIL",
+    "verdict": "degraded"
+   },
+   {
+    "key": "price_tail",
+    "label": "C3c price tail / scarcity (RT hourly)",
+    "tier": "supporting",
+    "inSample": "CAVEAT",
+    "holdout": "CAVEAT",
+    "verdict": "carried"
+   },
+   {
+    "key": "forced_share",
+    "label": "C8 forced-energy share (D-2)",
+    "tier": "protective",
+    "inSample": "PASS",
+    "holdout": "PASS",
+    "verdict": "held"
+   },
+   {
+    "key": "governance",
+    "label": "C6 governance gate",
+    "tier": "protective",
+    "inSample": "PASS",
+    "holdout": "PASS",
+    "verdict": "held"
+   },
+   {
+    "key": "sysvol",
+    "label": "C2 system volume (gas/coal families)",
+    "tier": "load-bearing",
+    "inSample": "PASS",
+    "holdout": "PASS",
+    "verdict": "held"
+   }
+  ],
+  "nDegraded": 4,
+  "nCarried": 1,
+  "tierCaveat": "REPORTED, NEVER GATING (rule 30 [R-TOUCHPOINT-FOLD] (c)). SPP's calibration determination is keeper 12's 2023-2025 verdict and nothing else; these four years can neither certify nor decertify it. They are also NOT a certified out-of-sample skill number: [R-HOLDOUT] and its three-tier train/validation/locked-test regime were REMOVED 2026-09-09, so no year in this program is protected from being iterated against and there is no certified out-of-sample number anywhere in it (rule 22 coda). What these years ARE is model-SELECTION evidence: keeper 12's recipe, fixed on 2023-2025, applied here with EXACTLY ONE --set (mid_vintage_exit_carry=true) and no other delta \u2014 offer_curve_by_group byte-identical, no band, class or value moved, no threshold re-cut.",
+  "envelopeCaveat": "SPP-48 (2026-09-19) \u2014 WHAT THIS RUN CHANGED IS THE FLEET, NOT THE AVAILABILITY ENVELOPE'S DERIVATION, and the delta against 2026-09-16-spp-43-outage-intake is like-for-like on every other axis. Its predecessor's four years already carried the 2019-2022 CAMPD unit-outage intake; this run consumes the BYTE-IDENTICAL extracts (rule 23 [R-FROZEN-DERIVE]: nothing re-derived, thermal_tranches_SPP.csv and campd-unit-outages-short-SPP.csv untouched) and the SAME benchmark frame (eia923-cda580e2f71c), verified to carry plant 127 at 1,209,201 MWh and a 2020 COAL_PRB actual of 67.0581 TWh \u2014 so NO part of the movement below is a changed denominator. THE OBJECT: under eia860_vintage_tracks_solve_year a plant that retired DURING its own year-matched EIA-860 vintage was dropped from the fleet entirely, because that vintage's operable sheet is a YEAR-END snapshot which has already moved it to the Retired-and-Canceled sheet, and load_retired_within_window returns [] there on the stated assumption that 'the operable fleet already has them'. Measured: Oklaunion (plant 127, 650 MW summer coal, ba_code SWPP, EIA retirement 9/2020) in the 2019 LP fleet and ABSENT from 2020-2022, against 1,209.2 GWh metered May-September 2020. ONE FALSE ASSUMPTION, THREE SEAMS \u2014 the injection gate, fleet_to_bins discarding the unit's own retirement (the miso-191 defect, same exit-cohort router reused), and the outage derate DENOMINATOR silently skipping the plant's own measured stops. Fixing only the first put the plant online in ALL TWELVE MONTHS of 2020, three of them after it retired; all three together give MAY-SEPTEMBER ONLY, 3,096 h / 1,936.3 GWh available, on an envelope covering the metered generation in every month and ZERO in every zero-metered month (implied monthly CF 0.511/0.490/0.616/0.714/0.744). WHAT MOVED, REPORTED AT FULL MAGNITUDE: every criterion that moves IMPROVES and none degrades \u2014 C1 2020 COAL_PRB -10.85 -> -10.01 TWh (share -4.0 -> -3.7pp, STILL FAIL), C3a 2020 +24.0 -> +23.4 %, C3b 2020 NRMSE 0.319 -> 0.316, reported-only C5a CO2 2020 +17.5 -> +16.4 %; C1 2022, C3b 2021/2022 and C4 2022 UNCHANGED; C2/C6/C8 hold PASS; determination NOT-YET both sides on the SAME failing set {C1, C3a, C3b, C4}. AT CLASS GRAIN INSIDE C1, WHERE THE BANDED ROWS DO NOT SHOW IT, TWO CLASSES DEGRADE: 2020 ST_GAS -5.3599 -> -5.5365 TWh and COAL_LIGNITE -2.6650 -> -2.7235, while CT_PEAKER +6.7508 -> +6.3680 and CC_REGULAR +3.9269 -> +3.7332 improve \u2014 the injected plant delivered 0.8355 of its 1.2092 TWh (69 %) and displaced peakers and gas rather than replacing coal. Energy conserved to 0.001 TWh on 262.64 TWh; 2020 load-weighted price 20.4872 -> 20.3776 $/MWh with max 40.78 -> 36.59; 2022 slack 563.6284 -> 501.3472 MWh; 2019/2021 unchanged; dump 0.0000 everywhere. 2021 is BYTE-IDENTICAL by construction (no mid-vintage-year retiree). THE KEEPER'S OWN YEARS CANNOT MOVE: vintage_2023/ and vintage_2024/ ship NO Retired-and-Canceled sheet and 2025 has no vintage directory, so the channel is inert in all three scored years \u2014 verified byte-identical on all 14 FleetArrays LP inputs. ZERO free parameters (rules 21/24): one boolean whose membership is a set difference over EIA's own two published sheets and whose timing is EIA's own published retirement month. Rule 14 [R-ACCURATE] is the basis and the residual is NOT. FILED, NOT FOLDED IN: the BENCHMARK drops the same plant by a DIFFERENT defect this repair does not fix (_iso_plant_ids -> build_zone_lookup is eGRID-2023-based, supplemented forward-only from the canonical 2025ER plant file, and does not follow the vintage flag \u2014 830 plants with 127 absent under EVERY vintage). A HEAD benchmark rebuild would move the 2020 COAL_PRB ACTUAL 67.0581 -> 65.8489 TWh, 'improving' the failing row 11.1 % by DELETING 1,209,201 MWh of real metered generation. Refused under rules 13 [R-MEASURED] / 14 and routed as the successor; this run is unaffected and that was checked rather than assumed. It also REFUTES SPP-47 \u00a72.2, which predicted the benchmark question would become moot once the fleet carried the plant.",
+  "caveats_authored_by": "SPP-48 (2026-09-19). scripts/stamp_touchpoint_holdout.py's hardcoded defaults are NEISO-specific and [R-HOLDOUT]-era: they assert a CAMPD availability-envelope PARITY story that is not this run's object, and state that 'the touch-once locked test (2019 / H1-2026) is NOT spent here' when 2019 IS one of this bundle's four years and the touch-once regime no longer exists. Both fields have ZERO consumers \u2014 the Run Explorer panels that rendered them were DELETED by the rule 30 [R-TOUCHPOINT-FOLD] (a) amendment of 2026-09-06 \u2014 so this corrects inert-but-false committed prose, not a render path. The stamper defect is REPORTED, not patched: it is shared infrastructure other ISOs' stamped runs carry, and repairing it is not this lane's object (rule 25 [R-ISO-SCOPE]). A RE-STAMP RESETS THESE FIELDS \u2014 re-apply after any re-registration."
+ }
 }
