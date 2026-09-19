@@ -2478,3 +2478,16 @@ results/calibration/nyiso_mer_2026-09-19_2025/
 # ercot_mer20260919_five_year is the REGISTERED KEEPER bundle since 2026-09-19 and is
 # committed slim, like every keeper (rule 15 [R-DASHBOARD]).
 results/calibration/ercot_mer20260919_20*/
+# miso-262: the per-year MER control replays the parent FETCHES from its shard
+# branches to verify and compose. Each bundle's durable home is its own shard
+# branch (rule 34 [R-SHARD-PROMOTABLE] (a)), where it was pushed in full:
+#   claude/miso262-mer-2020  232631ac446026b64de4dccb16272b2556ebc7a9
+#   claude/miso262-mer-2022  ad015dd4b3f6fff02ef5f4723c9aabe136792bd2
+#   claude/miso262-mer-2024  a19fffd19e0adb084d8e13c771b7d9aaa81aca27
+# Recover any of them with:
+#   git checkout <sha> -- results/calibration/miso262_mer_<year>
+# They are ignored HERE, not deleted (rule 31 [R-RETAIN]): a per-year shard dir
+# must stay out of `main` — the composite is what would ever be registered, and
+# an unregistered per-year dir left committed is the Class-E parity RED that
+# rule 29 [R-SCREEN] (c) forbids (rule 32 [R-SHARD] (d)).
+results/calibration/miso262_mer_*/
