@@ -121,6 +121,29 @@ def _campd_unit_outages_absent(iso: str) -> bool:
     return not unit_outage_csv_for_iso(iso).exists()
 
 
+def _coal_fuel_inventory_absent(iso: str) -> bool:
+    """Return whether the coal fuel-inventory budget's CLEAN partitions are missing.
+
+    The mechanism needs BOTH halves — ``coal-stocks`` for the opening stock and
+    ``coal-receipts`` for the prior-years delivery rate — and
+    :func:`market_sim.data.coal_fuel_inventory.build_coal_fuel_budget` returns
+    ``None`` if either resolves empty, which appends ZERO rows and leaves the
+    LP identical to an unarmed run. Either half missing is therefore the
+    degraded state.
+
+    There is no ISO for which arming this without the partitions is correct:
+    ``scripts/run_calibration.py`` already refuses the flag outside MISO (rule
+    25 ``[R-ISO-SCOPE]``) and outside backcast mode, so an empty read here is
+    never a legitimate ISO-level no-op the way ERCOT's absent locational RA
+    construct is. The ``iso`` argument is accepted for the registry's uniform
+    signature and deliberately unused — these are national EIA-923 partitions.
+    """
+    from market_sim.data.coal_receipts import load_coal_receipts
+    from market_sim.data.coal_stocks import load_coal_stocks
+
+    return load_coal_stocks().empty or load_coal_receipts().empty
+
+
 def _historic_outages_armed(config) -> bool:
     """Return whether the run asked for the measured CAMPD outage overlay.
 
@@ -207,6 +230,35 @@ _PARTITION_REQUIREMENTS: tuple[PartitionRequirement, ...] = (
         # Declared: an absent extract degrades to the statistical availability
         # the model uses when no measured overlay is supplied.
         fallback="statistical availability (no measured outage overlay)",
+    ),
+    PartitionRequirement(
+        flag="coal_fuel_inventory",
+        datatype="coal-stocks + coal-receipts",
+        location="data/clean/coal-stocks/ and data/clean/coal-receipts/",
+        build_command=(
+            "PYTHONPATH=. python scripts/data/curate_coal_stocks.py && "
+            "PYTHONPATH=. python scripts/data/curate_coal_receipts.py"
+        ),
+        absent=_coal_fuel_inventory_absent,
+        # NO fallback, the hydro_ror_split severity class: an absent partition
+        # makes build_coal_fuel_budget return None, which appends ZERO budget
+        # rows and leaves coal with floors and no ceiling at all — the exact
+        # state the mechanism was built to remove. Fatal in every mode.
+        #
+        # miso-263 is the incident this entry exists to prevent, and it is
+        # caiso-157 again one mechanism over. The MISO keeper
+        # 2026-09-19-miso-262-cold-year was composed from six per-year shard
+        # bundles solved in fresh containers that had hydrated data/raw but
+        # never run the two curate scripts above. Each leg recorded
+        # `coal_fuel_inventory: true` in its run_config, logged the loader's
+        # own "NOT APPLIED" warning, and solved with no coal budget. The
+        # resulting dispatch VIOLATES the cap its own config declares in 7/12
+        # months of 2022 (+33.17 TWh of coal above the most any feasible
+        # dispatch could deliver under the row), 4/12 of 2021 and 3/12 of
+        # 2025 — the three years, and only those three, that the superseded
+        # warm keeper had bound in. That +34.7 TWh of freed coal was read as
+        # a better optimum and promoted (docs/RESULT-miso263-*).
+        fallback=None,
     ),
 )
 
