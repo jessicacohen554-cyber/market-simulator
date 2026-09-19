@@ -2503,4 +2503,7 @@ results/calibration/miso262_mer_*/
 # IF IT IS PROMOTED, the registering commit appends a NEGATION for the
 # committable slim set (rule 34 [R-SHARD-PROMOTABLE] (a)'s pattern) rather than
 # using `git add -f`, which the auto-mode classifier refuses.
-results/calibration/miso262_cold_span/
+# PROMOTED 2026-09-19 to MISO's designated keeper, so the committable SLIM set is
+# tracked and the blanket ignore is REMOVED: the generic results/calibration rules
+# above already hold back dispatch/, floors/, root *.parquet, unit_hourly_* and
+# network_*, which is exactly the slim keeper set.
