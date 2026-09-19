@@ -786,3 +786,112 @@ The realised P1 penalty against NWPP-40 remains **non-uniform** (0.99× / ~1.9×
 platform's LP throughput**, with no mechanism attached — the lane withdrew one such explanation
 already (§A4.1) and is not offering another. Real per-pass seconds and iteration counts come from
 the shard's own log at the end; they have never appeared in an interim status.
+
+---
+
+# ADDENDUM 9 (2026-09-19) — the promotion runbook, and the rule-35(b) year set recorded BEFORE any prune
+
+Written while 2025 P1 runs, so the sequence is not improvised at the end of a 20-hour wait. Every
+tool below was verified present and every flag read off its own `--help` at HEAD — nothing here is
+an invented interface. **All of it is zero-LP parent work** (rule 32 `[R-SHARD]` (a), (d)).
+
+## A9.1 The year set, enumerated before the delete (rule 35 `[R-PROMOTE]` (b))
+
+`frontend/data/backcast/registry/*.json` carries **exactly one** NWPP run:
+
+| id | years | bundle |
+|---|---|---|
+| `2026-09-16-nwpp-1-cascade` | **2023, 2024, 2025** | `results/calibration/nwpp40_span_A` |
+
+So the union of NWPP's registered years is **{2023, 2024, 2025}** — no held-out year, nothing folded
+under a `holdout.keeper` stamp, nothing outside the training span. Rule 35(c) ("the incoming keeper
+must cover that union") is therefore satisfied **by construction**: `nwpp41_span_A` is solving
+exactly those three years in one invocation (rule 16 `[R-ALLYEARS]`). There is no year to leave
+outstanding and no ladder to rebuild.
+
+**This is a FIRST-keeper promotion, not a supersession.** `frontend/data/backcast/keepers/` holds
+shards for ERCOT, PJM, CAISO, NYISO, NEISO, MISO, SPP, SOCO — **no `NWPP.json`**. Consequences:
+
+- Rule 35(a)/(e) have **no outgoing keeper's three stores** to remove. What rule 15
+  `[R-DASHBOARD]`'s keeper-only retention does reach is the non-keeper run
+  `2026-09-16-nwpp-1-cascade`, which the promotion supersedes and which is therefore pruned **in the
+  promoting session** (rule 35(a) tightening rule 15's "next registration" timing).
+- NWPP-40 is the rule-29(b) **control**, so every number the lane will ever cite from it is already
+  in this doc (§5, §A8.3) and in `FINDING-nwpp-40-2026-09-16.md` §7. The prune costs no evidence.
+- `keepers/index.json` does not list NWPP. Its own note limits edits to "when an ISO is
+  added/removed from the model, never by a keeper promotion" — and an ISO acquiring its *first*
+  keeper is the ADDED case, not a promotion edit. The entry is added on that reading, said out loud
+  here rather than left for a reviewer to infer.
+
+## A9.2 The sequence, in order, with the gates in their required places
+
+**Gate 0 — retrievability, before anything is archived (rules 33(a), 34(d)).**
+`git ls-tree -r --name-only <shard sha> -- results/calibration/nwpp41_span_A` must show
+`dispatch/{2023,2024,2025}_P1.parquet` **and** bundle-root `system.parquet`, `meta.json`,
+`run_config.json`. Fewer files = evidence push, not the bundle: keep waiting. Then fetch, check out
+the bundle into the parent tree, and verify the config signature. Only then archive the shard, and
+record its **full 40-char sha** in the RESULT, never the branch name (rule 33(d)).
+
+**Gate 1 — acceptance test, all three years.** From each `hourly/class_hourly_<year>.parquet`,
+grouped by `klass`: **no bare `COAL` row**, and `COAL_BIT` + `COAL_PRB` + `COAL_WC` itemized.
+Already passed on 2023 and 2024 (§A8.2). 2025 is the only leg outstanding.
+
+**Then, in this order:**
+
+1. `scripts/run_calibration_full.py … --rebuild-benchmark` on the bundle (the byte-reproduction
+   anchor of §103 applies: on an untouched bundle it reproduces the committed benchmark).
+2. `scripts/legitimacy_diagnostics.py` → `legitimacy_diagnostics.json` (D1/D2/D4 rows + gates; rule
+   20 `[R-DOF]` and rule 20's C8 leg are scored from this file alone).
+3. The attestation, carrying the **DOF ledger** (rule 21 `[R-DOF]`). `coal_prb_proxy_own_iso` is
+   **not** a free parameter — it selects which ISO's measured F923 delivered PRB prices the proxy
+   pools, so its identification source is measured data, not a residual. Say that in the ledger
+   rather than leaving it to be assumed. No `authorized_price_tuning` block is owed: this lane
+   touched no `offer_curve_by_group` band multiplier.
+4. Score: `scripts/calibration_verdict.py`.
+5. Register: `python3 scripts/dashboard_add_run.py --label "<label>" --bundle
+   results/calibration/nwpp41_span_A` (rule 15). It prints `RUN_ID=<id>`. Its default top-15-per-ISO
+   sweep is a **no-op** here (2 NWPP runs) and is superseded anyway by rule 15's keeper-only
+   retention, which §A9.3 executes explicitly.
+   *Note for whoever reads that script next:* its docstring still cites the rule-22 registration
+   marker gate `enforce_registration_marker_gate`, which **no longer exists in code** — removed with
+   `[R-HOLDOUT]`. Stale docstring, not a live gate; it will not block this registration. Docs-vs-code
+   drift, routed to `/sync-docs`, not repaired here.
+6. `scripts/build_manifest.py` (optional — `file://` preview only; the Pages deploy is the real
+   writer).
+
+## A9.3 Promotion, then verify, then delete — never the other way (rule 35(e))
+
+1. Write `frontend/data/backcast/keepers/NWPP.json` with the new id; add `"NWPP"` to
+   `keepers/index.json` `isos` on the §A9.1 reading.
+2. `scripts/build_status.py --iso NWPP` — NWPP only, never another ISO's files
+   (`keepers/README.md`).
+3. **`scripts/audit_keepers.py --iso NWPP` HERE — between the promotion and the prune** (rule 35(e)
+   E1: the incoming keeper's three stores must resolve *before* anything is removed). E13 is the
+   invariant that every registered NWPP run is the keeper or stamped to it.
+4. Re-key NWPP's `calibration-complete.json` entry to the new keeper (it survives `[R-HOLDOUT]`'s
+   removal as the keeper designation and the forecast program's gate-(a) input).
+5. Matrix (rule 28 `[R-MECH-MATRIX]` (b)): `coal_prb_proxy_own_iso` NWPP cell `O` → **`K`** with the
+   keeper id as its citation, in `docs/codebase-site/data/mechanism-matrix/NWPP.js` **only**; re-stamp
+   that shard's keeper+gates header; re-stamp the §5.9 prose header of
+   `docs/mechanism-testing-matrix.md`. The MISO/PJM/SPP cells stay `O` — the same defect reaches them
+   and this lane does **not** fix another ISO's (rules 25 `[R-ISO-SCOPE]`, 28(d)).
+6. **Only now** `scripts/prune_iso_runs.py --iso NWPP`, removing `2026-09-16-nwpp-1-cascade`'s three
+   stores together. It blocks on governance mentions, so `--force-uncite` is the **intended** route
+   (rule 35(d)) — the superseded id stays wherever the FINDING/RESULT records cite it as history.
+7. `scripts/check_registry_payload_parity.py`. Expect the rule-31 local RED described in rule 31's
+   correction if any gitignored bundle sits in this tree: read its unmapped-dir list and confirm every
+   entry is one of the lane's own before treating the gate as green — **never** "fix" it by deleting a
+   result.
+
+## A9.4 What the FINDING must say, including what it must NOT claim
+
+Against §A1.3's pre-registered expectations: **C1 5 FAIL → 0** (predicted; confirmed zero-LP in
+§1–§2 and on two solved years in §A8.2), **C4 still FAIL** (predicted; routed to the desk, not
+attempted). If C4 passes, that is reported **as a surprise to be explained, never as this lane's
+achievement** — the lane changed no dispatch mechanism, and rule 1 `[R-STRUCT]` forbids reading a
+residual move as a result. The four report-only items (CO2 coverage, the −7 to −10 TWh energy-balance
+construction, the NWPP-SNV VOLL hours, the Chief Joseph coupling dual) are **carried unchanged, not
+absorbed**. Also recorded: real per-pass seconds and iteration counts from the shard's log, the
+realised span ratio, the non-uniform P1 penalty as an observation with no mechanism attached (§A8.4),
+the cross-attempt determinism check (§A8.2), and that the shard's interim ratio arithmetic was
+unreliable (correct at 08:06Z, wrong at 06:35Z).
