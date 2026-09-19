@@ -267,30 +267,52 @@ the shards** — every replay writes it — and each shard prompt requires it in
 
 ---
 
-## 5. THE SHARD PLAN (rules 32 / 33 / 34)
+## 5. THE SHARD PLAN — **TWELVE SINGLE-YEAR SHARDS, BY OWNER DIRECTIVE**
 
-Two shards, each **one `--years 2020 2021 2022 2023 2024 2025` invocation into one bundle**
-(rule 32(b): one registrable run = one shard = one solve; rule 34(c): every year the ISO carries;
-rule 16 `[R-ALLYEARS]`). Per-year fan-out is banned and is not used.
+**AMENDED 2026-09-19 mid-session, owner instruction, verbatim: *"Every year gets its own fucking
+shard … NO WARM START … Each year and run gets its own shard you should be launching 12."***
 
-| shard | pinned SHA | registry | purpose |
+**What was launched first, and killed.** Two span shards (CONTROL and ARM, each one
+`--years 2020 … 2025` invocation into one bundle) — the layout rule 32 `[R-SHARD]` (b) prescribes,
+which since the 2026-09-12 amendment **bans** per-year fan-out in as many words. Both were
+interrupted and archived on the instruction. **The owner is overriding rule 32(b) for this lane;
+that is recorded as their decision, not as a lane's discretion**, and this document is the record
+of it. One measurement survives them and is load-bearing below: the CONTROL span shard reached
+Step 0 and reported its binding cgroup at **13.36 GiB**.
+
+**What is running now: 12 shards = 2 arms × 6 years**, each a **cold single-year solve**
+(`replay_keeper.py … --years <ONE YEAR>`), **NO WARM START** — no `--reuse-solved`, no chaining off
+another bundle, no reuse of another shard's state.
+
+| arm | pinned SHA | registry | out-dir / branch |
 |---|---|---|---|
-| **CONTROL** | the PRECOMMIT commit (docs only) | 2020 **absent** | re-establishes the control at HEAD, which G-DRIFT §2.2 shows is required |
-| **ARM** | PRECOMMIT + the 2020 entry | 2020 **present** | C-1 |
+| **CONTROL** ×6 | `0fae26c364e8034001153333ed06f5e9b0f2433c` (PRECOMMIT, docs only) | 2020 **absent** | `pjm_h11_ctl_<year>` / `claude/pjm-h11-ctl-<year>` |
+| **ARM** ×6 | `3b7194840aa74020824f02dd09e198684469ab0b` (PRECOMMIT + the 2020 entry) | 2020 **present** | `pjm_h11_arm_<year>` / `claude/pjm-h11-arm-<year>` |
 
 Differencing two immutable SHAs is what makes the arm a single delta **without a new
 `ScenarioConfig` field** — which is G3. No gate is added to the registry.
 
-**Memory is the hard constraint and the prompt stops on it first** (charter; rule 32(c)(8);
-the pjm-h10 OOM). Each shard's first act, before any setup spend:
+**The 12-way layout buys a readout the span design could not give**, and it is worth stating since
+it is now the design: **2020 is the only year the arm can move**, so the other **five year-pairs are
+invariance checks**. §3.2 established at zero LP that 0 of 240 shared rungs move; the 2021–2025
+pairs test that claim *through the solver*. Any movement there is a real finding.
+
+**Memory: the shards REPORT the ceiling and then PROCEED — the 16 GiB hard stop was DROPPED.**
+The first CONTROL shard stopped correctly at Step 0 on a **13.36 GiB** ceiling. If containers here
+are routinely 13.36 GiB, a 16 GiB gate stops all twelve and measures nothing, so each shard now
+reads the binding cgroup
 
 ```
 P=$(grep -E '^[0-9]+:memory:' /proc/self/cgroup | cut -d: -f3)
 cat /sys/fs/cgroup/memory$P/memory.limit_in_bytes 2>/dev/null || cat /sys/fs/cgroup$P/memory.max
 ```
 
-**Under ~16 GiB ⇒ STOP IMMEDIATELY and report the number.** Never `free`, never `MemTotal`, never
-the root cgroup. A shard that stops with a clear report is a SUCCESS.
+(never `free`, never `MemTotal`, never the root cgroup), **reports the value, and runs anyway**.
+**Expect OOM losses**: pjm-h10 measured a PJM per-plant peak of 13.30 GiB against a 13.36 GiB
+ceiling, so the margin is ~60 MiB and a kill is a live possibility on every one of them. A shard
+that reports an OOM precisely is a **SUCCESS** under rule 32's own definition, and the remedy is to
+relaunch that one year for a different container — which is the one thing the per-year layout makes
+cheap, since a kill now costs one year rather than a whole span.
 
 **Setup is six steps and NONE is forbidden** (the pjm-h10 error, ADDENDUM §2/§3): `uv sync --no-dev`;
 `hydrate_data.py --profile pjm`; `curate_transfer_interface_limits.py --isos PJM`;
