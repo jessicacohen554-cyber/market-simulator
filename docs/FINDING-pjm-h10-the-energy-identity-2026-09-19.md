@@ -133,9 +133,32 @@ The direction is consistent with pjm-h3b's finding that PJM's model body is **+1
 
 ### 2.5 What is left, and where it has to be measured
 
-The ladder admits 44.0–49.9 TWh of **gross** export at the model's own price after the per-seam cap is applied (`min(cap, ladder)`), against a measured **gross** 44.8–54.7 TWh. So gross export is short by roughly 4–5 TWh, while the **net** position is short by 9–13.5. Arithmetically the remainder must be on the **import side** of the same seam — the model importing more than the measured record.
+Both legs are material, and the split is **not** uniform. Taking `min(per-seam p90 cap, ladder at the
+model's own price)` as the model's admissible **gross** export and PJM's tie file as measured gross:
 
-That is the failure mode `interchange/spec.py`'s own comment warns about in as many words — *"phantom imports that displace CC_REGULAR dispatch, the C1 FAIL"* — and it is consistent with §4's finding that CC_REGULAR is **+22 to +26 TWh over** in exactly the pre-2023 years where the under-export is worst.
+| TWh | measured gross export | min(cap, ladder) | **gross-export short** | **net short** | **implied import-side excess** |
+|---|---|---|---|---|---|
+| 2021 | 47.440 | 37.982 | **9.458** | 13.542 | 4.083 |
+| 2022 | 44.756 | 38.478 | **6.278** | 9.108 | 2.830 |
+| 2023 | 54.653 | 49.947 | 4.706 | 9.104 | **4.398** |
+| 2024 | 48.446 | 44.012 | 4.434 | 10.548 | **6.114** |
+| 2025 | 48.165 | 44.277 | 3.888 | 8.546 | **4.658** |
+
+(2020 is omitted: it runs no ladder, so `min(cap, ladder)` is not the comparable object there.)
+
+So the defect is **two legs of comparable size**, not one: a gross-export shortfall of 3.9–9.5 TWh and
+an implied import-side excess of 2.8–6.1 TWh. Their balance **shifts across the span** — export-dominated
+in 2021/2022 (9.5 and 6.3 against 4.1 and 2.8), import-dominated by 2024 (4.4 against 6.1). Anyone
+chartering a lever here must pick the leg, and the leg depends on the year.
+
+The import leg is the failure mode `interchange/spec.py`'s own comment warns about in as many words —
+*"phantom imports that displace CC_REGULAR dispatch, the C1 FAIL"* — and it is consistent with §4's
+finding that CC_REGULAR is **+22 to +26 TWh over** in exactly the pre-2023 years.
+
+**Read the import column as an INFERENCE, not a measurement.** It is a residual of two quantities
+measured on different objects (a per-seam gross ceiling from the envelope and ladder; a system net
+position from the `import` pseudo-unit), so it inherits both their errors, and the ladder leg in
+particular is a free-flow ceiling that ignores the internal network and the net-position cut.
 
 **It cannot be confirmed from committed artifacts**, because the committed slim bundle carries only the NET `import` pseudo-unit class, and the per-link/per-seam gross flows live in `hourly/network_<year>.parquet`, which the keeper bundle does **not** commit. This session's two control replays produce it. **The gross export / gross import split is the single measurement that closes Q2, and it is one parquet away — no re-solve beyond the replays already running.**
 
@@ -417,7 +440,7 @@ There is a second, independent obstacle: **the benchmark is not settled per ISO.
 | # | candidate | basis | expected on the residual |
 |---|---|---|---|
 | 1 | Add **2020** to `PJM_SEAM_LADDER_BY_YEAR` via `derive_pjm_seam_ladders.py` | rule 23 `[R-FROZEN-DERIVE]` (source data already covers it); rule 14 — a keeper year must run the keeper's mechanism | **probably WORSE** (§2.6). Not a residual argument. |
-| 2 | Measure the **gross export / gross import split** per seam from `hourly/network_<year>.parquet` | closes Q2; no LP beyond the replays already running | diagnostic only |
+| 2 | Measure the **gross export / gross import split** per seam from `hourly/network_<year>.parquet` | closes Q2 by replacing §2.5's inference with a measurement; picks WHICH leg a lever should target, which differs by year | diagnostic only |
 | 3 | Strengthen the **demand spike screen** using the extract's own `D + TI − NG` identity | rule 14 (§5.2); two artifact hours survive today | removes ~0.3 TWh of phantom 2020 demand |
 | 4 | The **pre-2023 CC_REGULAR / under-export / virtual-net** triple | §4.2 + §2 + §3 land on the same years; the virtual leg is pjm-d4-3's, already escalated at pjm-159 | unknown; needs (2) first |
 | 5 | The **pumped-storage benchmark seam** (§4.3) | 923 books PS net-negative; the model reports discharge | accounting only |

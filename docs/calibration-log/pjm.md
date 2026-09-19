@@ -5789,10 +5789,15 @@ The measured export envelope is **never binding — 0 hours at ≥95 % of the sy
 median export 22–36 % of cap; and the whole hourly distribution is shifted down (2023 p50 4,477 →
 3,393 MW, p95 8,542 → 6,489), which is a price signature, not a limit. The ladder-at-model-price vs
 ladder-at-measured-DA gap is **2.583–7.841 TWh** — real, consistent with pjm-h3b's +1.5 % over-priced
-body, but not the 9–13.5 to be explained. The remainder is arithmetically on the seam's **IMPORT**
-side (gross export short ~4–5 TWh, net short 9–13.5), which is `spec.py`'s own named failure mode
-("phantom imports that displace CC_REGULAR"). **It needs `hourly/network_<year>.parquet`, which the
-keeper bundle does not commit** — one parquet, no re-solve beyond the replays.
+body, but not the 9–13.5 to be explained. The defect splits into **TWO legs of comparable size**, and their
+balance shifts across the span: taking `min(per-seam p90 cap, ladder @ model price)` as admissible
+gross export against PJM's measured gross, the **gross-export shortfall** is 9.458/6.278/4.706/4.434/
+3.888 TWh (2021-2025) and the **implied import-side excess** is 4.083/2.830/4.398/6.114/4.658 —
+export-dominated in 2021/2022, **import**-dominated by 2024. The import leg is `spec.py`'s own named
+failure mode ("phantom imports that displace CC_REGULAR"). **The import column is an INFERENCE, not a
+measurement** (a residual of two quantities measured on different objects); the measured split needs
+`hourly/network_<year>.parquet`, which the keeper bundle does not commit — one parquet, no re-solve
+beyond the replays. A lever here must pick the leg, and the leg depends on the year.
 
 **NEW: PJM's keeper 2020 runs NEITHER measured seam mechanism.** `PJM_SEAM_LADDER_BY_YEAR` covers
 2019, 2021, 2022, 2023, 2024, 2025 — **2020 is absent** — and `firm_export_floor_by_year` covers only
