@@ -1,0 +1,228 @@
+{
+ "session": "nyiso-247",
+ "precommit": "40316764",
+ "years": {
+  "2022": {
+   "GA_rows_armed": 329,
+   "GA_armed_pmax_mw": 14943.7,
+   "GA_max_abs_slope_err_mmbtu_per_mwh": 0.0,
+   "GA_max_abs_mc_move_on_unarmed_usd": 0.0,
+   "GA_keeper_slope_over_base_is_phys": 7.7475,
+   "GA_arm_slope_over_base_is_mult": 9.5758,
+   "GE_annual_mean_removed_term_usd_per_mwh_by_zone": {
+    "Upstate_West": 0.0026,
+    "Capital_Hudson": 0.3952,
+    "Lower_Hudson": -0.0,
+    "Long_Island": 1.2216,
+    "NYC": -4.3599
+   },
+   "GE_annual_mean_removed_term_usd_per_mwh_iso": -1.4869,
+   "GF_armed_rows_by_class_band": {
+    "CC_CHP:econc00": 14,
+    "CC_CHP:econc01": 14,
+    "CC_CHP:econc02": 14,
+    "CC_CHP:econc03": 14,
+    "CC_CHP:econc04": 14,
+    "CC_CHP:econc05": 14,
+    "CC_REGULAR:econc00": 16,
+    "CC_REGULAR:econc01": 16,
+    "CC_REGULAR:econc02": 16,
+    "CC_REGULAR:econc03": 16,
+    "CC_REGULAR:econc04": 16,
+    "CC_REGULAR:econc05": 16,
+    "CT_PEAKER:committed": 2,
+    "CT_PEAKER:econhi": 43,
+    "CT_PEAKER:econlo": 44,
+    "CT_PEAKER:peak": 27,
+    "ST_GAS:econhi": 11,
+    "ST_GAS:econlo": 11,
+    "ST_GAS:peak": 11
+   },
+   "GF_armed_pmax_by_class": {
+    "CC_CHP": 2152.0,
+    "CC_REGULAR": 3056.6,
+    "CT_PEAKER": 2707.3,
+    "ST_GAS": 7027.7
+   }
+  },
+  "2023": {
+   "GA_rows_armed": 329,
+   "GA_armed_pmax_mw": 14943.7,
+   "GA_max_abs_slope_err_mmbtu_per_mwh": 0.0,
+   "GA_max_abs_mc_move_on_unarmed_usd": 0.0,
+   "GA_keeper_slope_over_base_is_phys": 7.7475,
+   "GA_arm_slope_over_base_is_mult": 9.5758,
+   "GE_annual_mean_removed_term_usd_per_mwh_by_zone": {
+    "Upstate_West": 0.0215,
+    "Capital_Hudson": 0.2768,
+    "Lower_Hudson": 0.0,
+    "Long_Island": -0.0722,
+    "NYC": -4.9298
+   },
+   "GE_annual_mean_removed_term_usd_per_mwh_iso": -2.0058,
+   "GF_armed_rows_by_class_band": {
+    "CC_CHP:econc00": 14,
+    "CC_CHP:econc01": 14,
+    "CC_CHP:econc02": 14,
+    "CC_CHP:econc03": 14,
+    "CC_CHP:econc04": 14,
+    "CC_CHP:econc05": 14,
+    "CC_REGULAR:econc00": 16,
+    "CC_REGULAR:econc01": 16,
+    "CC_REGULAR:econc02": 16,
+    "CC_REGULAR:econc03": 16,
+    "CC_REGULAR:econc04": 16,
+    "CC_REGULAR:econc05": 16,
+    "CT_PEAKER:committed": 2,
+    "CT_PEAKER:econhi": 43,
+    "CT_PEAKER:econlo": 44,
+    "CT_PEAKER:peak": 27,
+    "ST_GAS:econhi": 11,
+    "ST_GAS:econlo": 11,
+    "ST_GAS:peak": 11
+   },
+   "GF_armed_pmax_by_class": {
+    "CC_CHP": 2152.0,
+    "CC_REGULAR": 3056.6,
+    "CT_PEAKER": 2707.3,
+    "ST_GAS": 7027.7
+   }
+  },
+  "2024": {
+   "GA_rows_armed": 337,
+   "GA_armed_pmax_mw": 14953.4,
+   "GA_max_abs_slope_err_mmbtu_per_mwh": 0.0,
+   "GA_max_abs_mc_move_on_unarmed_usd": 0.0,
+   "GA_keeper_slope_over_base_is_phys": 7.7738,
+   "GA_arm_slope_over_base_is_mult": 9.6158,
+   "GE_annual_mean_removed_term_usd_per_mwh_by_zone": {
+    "Upstate_West": 0.0038,
+    "Capital_Hudson": 0.0746,
+    "Lower_Hudson": -0.0,
+    "Long_Island": -2.0157,
+    "NYC": -5.7275
+   },
+   "GE_annual_mean_removed_term_usd_per_mwh_iso": -2.7724,
+   "GF_armed_rows_by_class_band": {
+    "CC_CHP:econc00": 14,
+    "CC_CHP:econc01": 14,
+    "CC_CHP:econc02": 14,
+    "CC_CHP:econc03": 14,
+    "CC_CHP:econc04": 14,
+    "CC_CHP:econc05": 14,
+    "CC_REGULAR:econc00": 17,
+    "CC_REGULAR:econc01": 17,
+    "CC_REGULAR:econc02": 17,
+    "CC_REGULAR:econc03": 17,
+    "CC_REGULAR:econc04": 17,
+    "CC_REGULAR:econc05": 17,
+    "CT_PEAKER:committed": 2,
+    "CT_PEAKER:econhi": 44,
+    "CT_PEAKER:econlo": 45,
+    "CT_PEAKER:peak": 27,
+    "ST_GAS:econhi": 11,
+    "ST_GAS:econlo": 11,
+    "ST_GAS:peak": 11
+   },
+   "GF_armed_pmax_by_class": {
+    "CC_CHP": 2152.0,
+    "CC_REGULAR": 3062.6,
+    "CT_PEAKER": 2711.0,
+    "ST_GAS": 7027.7
+   }
+  },
+  "2025": {
+   "GA_rows_armed": 337,
+   "GA_armed_pmax_mw": 14953.4,
+   "GA_max_abs_slope_err_mmbtu_per_mwh": 0.0,
+   "GA_max_abs_mc_move_on_unarmed_usd": 0.0,
+   "GA_keeper_slope_over_base_is_phys": 7.7737,
+   "GA_arm_slope_over_base_is_mult": 9.6158,
+   "GE_annual_mean_removed_term_usd_per_mwh_by_zone": {
+    "Upstate_West": 0.0476,
+    "Capital_Hudson": 1.7434,
+    "Lower_Hudson": -0.0,
+    "Long_Island": 0.6356,
+    "NYC": -5.3573
+   },
+   "GE_annual_mean_removed_term_usd_per_mwh_iso": -1.5946,
+   "GF_armed_rows_by_class_band": {
+    "CC_CHP:econc00": 14,
+    "CC_CHP:econc01": 14,
+    "CC_CHP:econc02": 14,
+    "CC_CHP:econc03": 14,
+    "CC_CHP:econc04": 14,
+    "CC_CHP:econc05": 14,
+    "CC_REGULAR:econc00": 17,
+    "CC_REGULAR:econc01": 17,
+    "CC_REGULAR:econc02": 17,
+    "CC_REGULAR:econc03": 17,
+    "CC_REGULAR:econc04": 17,
+    "CC_REGULAR:econc05": 17,
+    "CT_PEAKER:committed": 2,
+    "CT_PEAKER:econhi": 44,
+    "CT_PEAKER:econlo": 45,
+    "CT_PEAKER:peak": 27,
+    "ST_GAS:econhi": 11,
+    "ST_GAS:econlo": 11,
+    "ST_GAS:peak": 11
+   },
+   "GF_armed_pmax_by_class": {
+    "CC_CHP": 2152.0,
+    "CC_REGULAR": 3062.6,
+    "CT_PEAKER": 2711.0,
+    "ST_GAS": 7027.7
+   }
+  }
+ },
+ "GB": {
+  "keeper_arm_book_by_rank": {
+   "p10": [
+    -8.4273,
+    -3.0892,
+    -16.4739
+   ],
+   "p25": [
+    -3.2325,
+    -0.6075,
+    -0.6902
+   ],
+   "p50": [
+    -0.8485,
+    0.4094,
+    2.0352
+   ],
+   "p75": [
+    0.553,
+    2.0182,
+    11.9281
+   ],
+   "p90": [
+    2.8072,
+    5.4709,
+    27.8803
+   ],
+   "p95": [
+    4.2432,
+    9.0831,
+    39.7139
+   ],
+   "p99": [
+    11.8388,
+    23.9533,
+    96.7097
+   ]
+  },
+  "S1_direction_pass": true,
+  "S2_no_overshoot_above_p50_pass": true,
+  "S2_max_positive_excursion_above_p50": -1.6258,
+  "S2_first_overshoot_rank": null,
+  "S3_rank_mean_abs_dev_keeper": 12.1646,
+  "S3_rank_mean_abs_dev_arm": 11.9268,
+  "S3_net_closure_pass": true,
+  "reported_below_p50_mean_abs_dev": {
+   "keeper": 6.9868,
+   "arm": 9.006
+  }
+ }
+}
