@@ -3570,3 +3570,82 @@ Mechanism-matrix SPP cell `benchmark_membership_vintage_union` **O → K**.
 HEAD (the keeper's own years — flagged by `dashboard_add_run` and `build_status` on every run),
 and **PJM carries 8.8 TWh missing from its 2025 ACTUAL** through the separate
 `_EIA860_SUPPLEMENT_ISOS` gap.
+
+## spp-50 — 2026-09-20 — Object A re-measured on the corrected bench, and demoted (ZERO LP)
+
+**Base `e5f966fd` (`origin/main`; the handoff's conditional base did not apply — `dc800903` IS an
+ancestor). Keeper `2026-09-16-spp-42-commitment-feasibility` UNCHANGED. Rung
+`2026-09-19-spp-49-benchmark-membership` UNCHANGED. No LP, no shard, no bundle, no registration,
+no matrix cell letter moved, nothing deleted.** Record:
+`docs/handoffs/RESULT-spp-50-coal-cc-elasticity-2026-09-20.md`; probe
+`scripts/probes/_spp50_curtailment_headroom_census.py` (legs `elasticity`/`floor`/`headroom`/`census`).
+
+**THE ELASTICITY SURVIVES IN SIGN AND COLLAPSES AS A COEFFICIENT.** Re-fit on the committed
+corrected bench (payload `gmModel` vs bench `classFull`, gas = SPP's own EIA-923 annual
+volume-weighted delivered price), SPP-47's own 2019–2022 window reads `r = +0.911` but slope
+**+2.209 TWh/$** — **half** the +4.081 it read on the uncorrected actual. Keeper years alone:
+**+9.942**. All seven registered years: **+1.660**, `r = +0.731`. **The coal↔CC pair does not
+close**: antisymmetry `r = −0.967` over seven years but mean pair SUM **−3.365 TWh**, negative in
+6 of 7 years, and in 2023/2024 BOTH legs are short — which a swap cannot produce.
+
+**WHAT IT ACTUALLY DECOMPOSES INTO.** Mean wind excess **+10.1444 TWh** against mean fossil miss
+**−9.9895 TWh** over the seven registered years — they cancel to **+0.1549 TWh, 1.5 % of either**.
+SPP's entire C1 fossil shortfall is, arithmetically, its wind excess. And the wind INPUT is not
+the defect: it reconciles exactly to the codebase's own constant —
+`_spp_wind_reference_curtailment_rate` **0.0965013** → gross-up **×1.106808**, against an observed
+delivered/actual ratio of **1.1068** in 2019 and 1.1015–1.1065 elsewhere. The bound is the measured
+UNCURTAILED POTENTIAL and rules 13/14 say it stays. **The defect is that nothing spends it**:
+`renewables.py` states the precondition *"The LP then curtails endogenously"* and the LP curtails
+**0.00–0.48 %** against the 9.65 % it grossed up — **with
+`vre_curtailment_oversupply_allocation` ALREADY ARMED in both `spp42_span_a` and
+`spp49_benchmembership_span`.** The allocation repair landed and the headroom is still unspent.
+
+**NOT NEW FOR 2023–2025 AND NOT PRESENTED AS SUCH** — SPP-51b/51c/58 measured
+`0.261/0.223/0.174 %` and the `vre_reference_rate_curtailment_grossup` / `spp_curtailment_ceiling`
+rows already name it. What this lane adds: **the 2019–2022 rung, never measured before** (2019
+curtails **literally nothing**, −0.00 %); the **arithmetic identity** that demotes Object A;
+**independent reproduction at a different keeper**; and the armed-water-fill observation above.
+
+**THE DISPATCH CONSEQUENCE, at hour grain.** The model drives SPP's whole PRB coal fleet to exactly
+**0.0 MW for 149–293 h/yr in six of seven years** — must-run band included — at a mean price of
+**−$22.53…−$25.37** with wind at **84–88 % of its annual max** and net load at a quarter of its own
+year p10. **SPP's real PRB fleet never falls below 8.1–17.5 % of its own annual max in any year**
+(scale-free basis: MW ÷ that side's own annual max, so the CAMPD-gross vs EIA-923-net wedge cannot
+be doing the work). The model sits below the real fleet's own p1 floor for **652–1,130 h/yr**,
+0.62–1.25 TWh — **sign-stable in all seven years, including the three where the annual C1 row reads
+coal LONG.** The 2020→2022 swing is **entirely** in the price-responsive bands (`committed`
++15.4410, `econlo` +7.0530, `econhi` +5.7865 TWh) with `mustrun` **flat at +0.1197** — a
+merit-order question, not a commitment one.
+
+**CROSS-ISO CENSUS (rule 25 — informs where to look; NO verdict transfers).** SPP is the only ISO
+with a double-digit wind excess: **1.1042 (sd 0.0020, 7 yrs)** against CAISO 1.0105, ERCOT 1.0014,
+NYISO 0.9960 and NEISO/NWPP/PJM ≈1.0000 (`delivered_pinned`, no headroom to leave unspent — their
+fossil misses are unrelated objects). **MISO reads 1.05147 in all six years with sd 0.0000** —
+exactly its own gross-up factor (rate 0.048947), LP curtailment **0.00 %**, +4.640 TWh/yr.
+**Reported, not acted on: MISO's lane's call.**
+
+**TWO PROBE-SIDE ARTIFACTS, named so they are not refiled as defects — both mine, neither the
+model's.** (a) **Leap years**: the model's calendar is a flat 8760 h against EIA-930's 8784 in 2020
+and 2024; compared index-for-index the hourly wind `r` reads 0.4262/0.5046 and dropping Feb 29
+restores 0.9325/0.9350. (b) **A corrupt EIA-930 hour in 2023** (a **keeper** year): the raw SWPP
+`WND` series carries one **3,589,445 MWh** hour against a ~35 GW fleet, which alone drove a naive
+2023 `r` of 0.1172. The bench builder already screens it — raw 106.639 TWh minus that hour is
+103.050, the committed bench value 103.0490 — so the probe adopts the benchmark's own screen. Any
+future probe reading `SWPP_fueltype.parquet` directly must screen it too.
+
+**SUCCESSORS, RE-RANKED.** **S-1 `R-bc`** — curtailment as an LP constraint whose **dual** reaches
+the zonal price — is promoted to first: it is the arithmetic source of the whole C1 fossil
+shortfall, the only object that also reaches C3b's floor half and the coal-floor collapse above,
+and its target is a published zero-DOF number already in the repo. **NOT another ceiling on the CF
+upper bound**: wind is bid at `−ira_ptc_wind = −$26.000` as a bounded decision variable, so **a
+unit held at its bound is never marginal** — lowering the bound moves the bound and never gives the
+LP a reason to spill, which is why SPP-63's screen failed and why repeating it would repeat a known
+failure. **S-2 `R-ba`** (ST_GAS short −3.94…−8.66 TWh in every year and **worsening** across
+2023–2025) is gas-price-independent and `R-bc` will not close it. **S-3 Object A** should be
+re-measured AFTER `R-bc` lands, not chartered ahead of it; rule 1's offer-curve carve-out still
+cannot reach it, and now for **two** reasons — the correction changes sign between 2020 and 2022
+**and** its magnitude moves 4.5× between windows.
+
+**Still open, unchanged by this lane:** SPP's 2023–2025 bench parts read STALE at HEAD (keeper
+years; a promotion-level act needing its own PRECOMMIT), and PJM's 8.8 TWh missing from its 2025
+ACTUAL through the `_EIA860_SUPPLEMENT_ISOS` gap.
