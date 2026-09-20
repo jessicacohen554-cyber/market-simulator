@@ -6367,3 +6367,47 @@ promotion on the structural merits** with G5's failure disclosed; the keeper
 {2020…2025} is covered exactly by the incoming pair (rule 35(b)/(c)). Six shards archived after
 fetch + checkout + verify (rule 33(a)); shard branches are transport and are cut when this PR
 merges, so any leg not on `main` costs a re-solve, not a checkout.
+
+## pjm-h14 — 2026-09-20
+
+**PROMOTED.** `2026-09-20-pjm-h13-meritalloc-span` → **`2026-09-20-pjm-h14-coalmustrun-span`**
+(2023–2025, CALIBRATED, 8/8 PASS, zero caveats) + folded touchpoint
+`2026-09-20-pjm-h14-coalmustrun-touchpoint` (2020–2022, NOT-YET). Owner's standing rule: *"If
+structural integrity improves but gates regress that may still be a keeper."*
+
+Sole config delta **`coal_mustrun_requires_measured_row` False → True**, **zero free parameters** —
+the arm *withdraws* an assertion with no measurement behind it rather than asserting a level.
+**Zero criterion flips** in either span, re-scored at HEAD. `audit_keepers --iso PJM` 0/0.
+
+**The defect (rule 17 + rule 14, measured at zero LP, never off a residual).** A coal plant absent
+from the CAMPD thermal-tranche artifact falls through **two unmeasured defaults that compound**: a
+45 %-of-nameplate must-run tranche from a constant whose own comment calls its population
+*"rarely-online units with no reliable observed floor"*, and a **force-all (1.0)** synchronization
+window because the online%-scaled rule-17 window also defaults to 1.0 with no measured share. The
+plants with the least evidence carried the strongest and widest floor. PJM 2020: **36 uncovered coal
+plants / 15,774.7 MW asserting 58.04 TWh of must-run against 22.97 TWh of TOTAL metered output**;
+Bruce Mansfield 2,490 MW asserting **9.82 TWh against 0.00 metered**. Not closeable by re-deriving —
+the artifact's window is 2023–2025 (byte-equal key set on a frozen re-run) over a **year-blind**
+EIA-860 fleet, so six per-year re-derives gained **zero rows**.
+
+**Second deliverable, diagnostic-only:** `(MECH_COAL_MUSTRUN, None): (0, 24)` in `D4_WINDOWS` — the
+coal synchronization floor carried **no D-4 entry in any ISO** and was the one commitment floor the
+rule-17 diagnostic could not see. It exposed 5 genuine conduct failures on **covered** plants
+(1040, 7213 ×3, 1384) that were invisible before.
+
+**Gates:** G1/G2/G4 PASS — G2 **exactly** (zero uncovered plants floored on the arm, all six years).
+**G3 and G5 FAIL, and both are this lane's scoping errors, disclosed and NOT amended**: G3's five
+residual failures are all on covered plants the arm does not touch; G5's 2020 breach (0.0092 vs
+0.005) is ~70 % a denominator move.
+
+**Reported at full magnitude, declared reported-only ex ante:** C1 COAL_BIT improves every year
+(2020 +28.128 → +25.422, 2023 +2.090 → +0.650) and **CC_REGULAR gets worse every year**
+(2020 +0.265 → +2.634). The pre-solve footprint over-predicted the dispatch response **~10×** — the
+arm removes a floor, not a cheap band.
+
+**Traps recorded:** `prune_iso_runs.py` does **not** honor a `holdout.keeper` stamp (pass `--keep`,
+or a promotion deletes its own touchpoint); `_slug` caps run ids at 4 words, so two labels sharing a
+prefix silently overwrite each other.
+
+Record: `docs/RESULT-pjm-h14-2026-09-20.md`, charter
+`docs/handoffs/PRECOMMIT-pjm-h14-2026-09-20.md`.
