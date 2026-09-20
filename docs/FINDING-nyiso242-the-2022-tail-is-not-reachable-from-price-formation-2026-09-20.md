@@ -238,9 +238,17 @@ no admissible lever for its largest object, and saying so is the finding.
    utilisation, **899 MW** idle sub-gate, 1,124.7 MW staged in $200–300, and worth **$3.28/MWh**
    on a year whose C3a sits 0.35 pp inside its band. It is a *different and smaller* object from
    2022's winter, and it is the only one the named successor could actually reach.
-2. **`cc_winter_capability_basis` is `U` with no evidence string at all** (`NYISO.js:132`) — the
+2. ~~**`cc_winter_capability_basis` is `U` with no evidence string at all** (`NYISO.js:132`) — the
    one genuinely untested cell in this family. Note the likely direction is *against* the object
-   (CC output rises in cold air), which is a reason to measure it, not to skip it.
+   (CC output rises in cold air), which is a reason to measure it, not to skip it.~~
+   **CLOSED THE SAME DAY — the owner selected it, it was measured, and the cell is now `G`.**
+   See `docs/RESULT-nyiso242-cc-winter-refused-and-the-intake-charter-2026-09-20.md` §1.
+   **This item's own parenthetical guess was wrong and is corrected by the measurement**: the
+   basis swap is two-directional and mostly *removes* off-summer capability (`winter/nameplate`
+   median **0.9677**, 25 of 40 plants below 1.0), so its direction is mostly *favourable* to the
+   object — it simply does not reach, at **263.6 MW of 12,648 MW (5.6 % of the ~4.7 GW
+   required)**, and it is independently inadmissible on the rule 19 `[R-ONE-MECH]` WEFOR /
+   rating-headroom double count, which bites on **20 of 40** NYISO CC plants.
 3. The ledgered items this session leaves exactly as it found them: the **G2 hydro loss**
    (−55.2 / −25.5 GWh, 2022/2023) remains an **OPEN ROOT-CAUSE ISSUE**, not a caveat;
    `legitimacy_diagnostics.py` remains non-reproducible on nine measured columns and **nobody
