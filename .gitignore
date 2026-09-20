@@ -3037,3 +3037,24 @@ results/calibration/spp66_netwin_*/
 results/calibration/soco55_keeper_fat/
 results/calibration/soco55_composer_validation/
 results/calibration/soco55_arm_20[0-9][0-9]/
+
+# soco-56 per-year SHARD LEGS + the recovered control layer. Rule 32 [R-SHARD] (d):
+# per-year shard bundle dirs are KEPT OUT of `main` — the parent fetches them,
+# composes, and commits only the composite. Rule 31 [R-RETAIN]: nothing is deleted;
+# .gitignore is what discharges the delete-before-merge duty, never `rm`.
+# Each leg's FULL 16-file bundle (incl. dispatch/<y>_P1.parquet and the bundle-root
+# system.parquet) is pushed on its own shard branch under rule 34 (a).
+# PROVENANCE BY IMMUTABLE SHA, NOT A RECOVERY ROUTE (rule 33(d): a shard branch is
+# transport and is cut when this lane's PR merges; cost any leg recovery as a RE-SOLVE):
+#   soco56_arm_2023  <sha recorded in the RESULT doc>
+#   soco56_arm_2024  <sha recorded in the RESULT doc>
+#   soco56_arm_2025  <sha recorded in the RESULT doc>
+# soco55_arm_<year>   the CONTROL's per-plant legs, recovered at zero LP from the
+#                     SOCO-55 leg SHAs (95f81a8cc91d0de9c7350c8049c902b17ccc9877 /
+#                     ef1d35bcd3997ed4b17fe241816ac004fc271a71 /
+#                     a16b676b0de852df49f6c5d40d5df64990e3a37d) and verified
+#                     byte-identical to the committed keeper on all twelve sidecars.
+# soco55_keeper_fat3  the same legs assembled into one dir so the rule-17 floor probe
+#                     can read the control's floors/ layer. Derived, disposable.
+results/calibration/soco56_arm_20[0-9][0-9]/
+results/calibration/soco55_keeper_fat3/
