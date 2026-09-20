@@ -3116,3 +3116,9 @@ results/calibration/nyiso247_fuelinv_2022/
 results/calibration/nyiso247_fuelinv_2023/
 results/calibration/nyiso247_fuelinv_2024/
 results/calibration/nyiso247_fuelinv_2025/
+
+# caiso-293 phase-0 probe artifacts (zero-LP measurements over committed
+# bundles; every number they carry is reproduced in
+# docs/PRECOMMIT-caiso293-chp-steam-duty-window-2026-09-20.md — rule 29
+# [R-SCREEN] (c): the doc is the record, the JSON never reaches main).
+results/calibration/_caiso293_*.json
