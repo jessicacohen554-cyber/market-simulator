@@ -12,6 +12,15 @@ refuses rather than guesses when an input is missing.
       energy capture price   = sum(price x tech_shape) / sum(tech_shape)
       MER_tech               = sum(MER   x tech_shape) / sum(tech_shape)
 
+BOTH SIDES OF THAT SUBTRACTION ARE IN CONSTANT ``REAL_DOLLAR_BASE_YEAR`` (2026)
+DOLLARS. The cost is, by construction — ATB capex/FOM are 2026$. The price is
+NOT as it leaves the solve: a backcast year's delivered fuel prices are that
+year's F923 actuals with no deflator on the path, and fuel sets the marginal
+unit's cost, so the LP settles in year-of nominal dollars. The price is
+therefore escalated to the base year before anything is differenced (see
+``price_basis``). Skipping that step understated the revenue side by 6.8 % in
+2023, 4.5 % in 2024 and 2.2 % in 2025, all of which inflated the cost per tonne.
+
 ``MER`` is the EMISSIONS DUAL (``DispatchResult.marginal_emission_rate``) -- the
 CO2 response of the whole system to one more MWh in that zone-hour, not the
 emission rate of whichever unit's marginal cost equals the price.
@@ -137,8 +146,10 @@ def build_year(iso: str, year: int, bundle: str, run_id: str) -> dict:
 
     sys.path.insert(0, str(REPO / "src"))
     from market_sim.config.constants import (
+        INFLATION_RATE,
         NEW_ENTRY_COSTS,
         PPA_COST_RECOVERY_YR,
+        REAL_DOLLAR_BASE_YEAR,
         REGIONAL_RENEWABLE_CF,
     )
     from market_sim.model.capacity_evolution.new_entry import compute_lcoe
@@ -170,6 +181,30 @@ def build_year(iso: str, year: int, bundle: str, run_id: str) -> dict:
     price_iso = (price * demand).sum(axis=0) / safe
     mer_iso = (mer * demand).sum(axis=0) / safe
 
+    # ONE DOLLAR BASIS ON BOTH SIDES OF THE SUBTRACTION.
+    #
+    # The MAC differences a COST against a PRICE, so they have to be in the
+    # same dollars, and they were not:
+    #
+    #   * the cost is levelized from ATB capex/FOM, which are constant 2026$ --
+    #     constants.REAL_DOLLAR_BASE_YEAR, the model's stated house convention;
+    #   * the price comes out of a BACKCAST solve, whose delivered fuel prices
+    #     are that year's F923 actuals fed in with NO deflator anywhere in the
+    #     path (verified: neither data/eia923.py nor data/fuel/plant_prices.py
+    #     touches INFLATION_RATE). Fuel sets the marginal cost of the unit that
+    #     sets the price, so the LP price is year-of nominal dollars.
+    #
+    # Subtracting 2023 dollars from 2026 dollars understated the revenue side
+    # by 6.8 % and made abatement look dearer than it is. Escalate the price to
+    # the model's base year, which is a unit conversion, not an assumption.
+    #
+    # NOT EXACT, and worth saying so: VOM and startup costs DO come from the
+    # 2026$ constants, so the LP price is really a mixture and this over-
+    # escalates that component. VOM runs $2-5/MWh against prices of $25-65, so
+    # the error is a few cents per MWh -- two orders below the mixing it fixes.
+    price_basis = float((1.0 + INFLATION_RATE) ** (REAL_DOLLAR_BASE_YEAR - year))
+    price_iso = price_iso * price_basis
+
     # UNSERVED-ENERGY HOURS ARE NOT PRICED HOURS. Where the LP cannot serve all
     # demand it clears at the value-of-lost-load PENALTY -- a parameter chosen to
     # make shortage unattractive, not a price any market settles at. Measured in
@@ -193,6 +228,7 @@ def build_year(iso: str, year: int, bundle: str, run_id: str) -> dict:
         if col in sdf.columns:
             o = sdf[sdf.zone == sdf.zone.iloc[0]].sort_values("hour")[col]
             overlay = overlay + o.to_numpy(dtype=float)[:T]
+    overlay = overlay * price_basis  # same basis as the price it rides on
 
     cdf = pd.read_parquet(clsf)
     cdf = cdf[cdf["pass"] == "P1"]
@@ -284,6 +320,9 @@ def build_year(iso: str, year: int, bundle: str, run_id: str) -> dict:
             ),
             "recovery_period_yr": PPA_COST_RECOVERY_YR,
             "capture_price": round(capture, 2),
+            # What the solve itself settled, before the basis conversion, so
+            # the published number stays traceable back to the run.
+            "capture_price_as_solved": round(capture / price_basis, 2),
             "mer_tech": round(mer_tech, 4),
             "mer_tech_with_imports": round(mer_imp, 4),
             "import_marginal_share": round(imp_share, 4),
@@ -336,8 +375,17 @@ def build_year(iso: str, year: int, bundle: str, run_id: str) -> dict:
             # false provenance claim for it (NWPP, first seen 2026-09-20).
             "capacity_factor": _cf_basis_sentence(scalars),
             "capex_basis": "NREL ATB 2024 Moderate @2026, national",
-            "dollars": "constant 2026 $; ppa_equivalent_* restates the same "
-            "cost as the flat nominal price a contract would quote",
+            "dollars": f"everything on this page is constant {REAL_DOLLAR_BASE_YEAR} $, "
+            "cost AND price alike; ppa_equivalent_* restates the cost as the "
+            "flat nominal price a contract would quote, and is reported for "
+            "comparison only — it is never used in a cost per tonne",
+            "price_escalated_by": round(price_basis, 4),
+            "price_escalation_note": (
+                f"the {year} solve settles in {year} dollars (its delivered fuel "
+                f"prices are that year's actuals, undeflated), so prices are "
+                f"restated in {REAL_DOLLAR_BASE_YEAR} dollars to match the build "
+                f"cost at {INFLATION_RATE:.1%}/yr"
+            ),
             "nominal_discount_rate": cfg.nominal_discount_rate,
         },
         "scalars": scalars,
