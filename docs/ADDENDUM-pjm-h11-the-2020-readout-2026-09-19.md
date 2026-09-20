@@ -1,9 +1,47 @@
 # ADDENDUM — pjm-h11: the 2020 readout. C-1 measured, and the ex-ante prediction's MECHANISM lands within 0.16 TWh (2026-09-19)
 
 **Session:** pjm-h11 (orchestrator, **zero LP minutes** — rule 32 `[R-SHARD]` (a); the solves ran in
-per-year shards). **Partial result**: 2020 is the only year the arm can move and both its legs have
-landed, so it is reported now. The five invariance years (ARM 2021–2025) are still solving and the
-verdict is **not final** until they report.
+per-year shards, one year per container, which is rule 36 `[R-YEAR-ISOLATION]` (a)).
+
+**STATUS: ALL TWELVE LEGS HAVE LANDED — 2 arms × 6 years.** This document was first written as a
+partial result while the invariance years were still solving; they have since reported and the
+invariance check is recorded in §0 below.
+
+### 0. Invariance — the arm is a clean single-year delta, confirmed through the solver
+
+The arm adds **one key** to `PJM_SEAM_LADDER_BY_YEAR` (2020) and changes nothing else, so every
+other year must be untouched. The PRECOMMIT established that at zero LP (0 of 240 shared rungs
+move); these are the solved bundles, differenced class-by-class on the P1 hourlies:
+
+| year | max \|Δ\| TWh | Σ\|Δ\| TWh | classes moved | verdict |
+|---|---|---|---|---|
+| 2021 | 0.000000 | 0.000000 | 0 | IDENTICAL |
+| 2022 | 0.000000 | 0.000000 | 0 | IDENTICAL |
+| 2023 | 0.000000 | 0.000000 | 0 | IDENTICAL |
+| 2024 | 0.000000 | 0.000000 | 0 | IDENTICAL |
+| 2025 | 0.000000 | 0.000000 | 0 | IDENTICAL |
+
+**Exact, in all five years.** The promotion blocker this was gating is cleared: whatever C-1 does,
+it does it to 2020 alone.
+
+**Bundle provenance** — every leg verified by config signature before use (ARM bundles carry the
+2020 ladder key with MISO export `(66.93, 57.12, 36.2, 25.46, 20.05, 15.95, 11.93, 8.68)`; CONTROL
+bundles carry no 2020 key), recovery by full immutable sha:
+
+| year | CONTROL | ARM |
+|---|---|---|
+| 2020 | `f3bf920ddfa9d4bd86be1c71b2984647b89d0681` | `bc7617af9b94b8f2997152ab4888c54e88690263` |
+| 2021 | `e24901cb6dacd2ec6daaeafe86e7a6e4b0252c55` | `aebecf818d97d1534697b2eb9f76844f3a90b855` |
+| 2022 | `50b217e854cad8068a6e4763e11a969aa4753958` | `9bd16d405e3bb5350a9592bb1245c1dabfcddeb2` |
+| 2023 | `3510c19c16d9913d3920ea29c3c6c0f4c7736d16` | `e301cb5fa58af76b03d3297c6f4321829b09af88` |
+| 2024 | `9e4d5b31598149a1526ccfce02d7916a99e5ea97` | `5fd266b64f50f19fa56e2876623803364a018bf6` |
+| 2025 | `53a7e81dafdd512ab0a80af031e94b5615dd1565` | `efe30d52a72c460efbf619d13ebf946127ed1475` |
+
+All carry 17 files except **ARM 2022 (15)**, which is missing `floors/2022_P1.npz` and
+`hourly/unit_hourly_2022.parquet` — the SPP-48 directory-grain `.gitignore` trap on
+`results/calibration/*/floors/`, which a `/**` negation cannot re-include. Neither is
+registration-critical: `dispatch/2022_P1.parquet`, `hourly/network_2022.parquet`,
+`hourly/class_hourly_2022.parquet` and `system.parquet` are all present.
 
 **Bundles** (17 files each, verified by config signature before use):
 `pjm_h11_ctl_2020` @ `f3bf920ddfa9d4bd86be1c71b2984647b89d0681` (control sha `0fae26c3`, no 2020
@@ -209,3 +247,55 @@ improves, zero parameters were added, and what regresses is unscored.
 
 Rule 31 `[R-RETAIN]`: nothing is deleted, and the promotion question goes to the owner with these
 numbers rather than being pre-empted either way.
+
+---
+
+## 7. C-2 MEASURED — and it REFUTES the import leg of FINDING pjm-h10 §2.5
+
+§2.5 could only infer the gross export / gross import split, and said so plainly: *"Read the import
+column as an INFERENCE, not a measurement… it inherits both their errors."* That caution was
+correct. All twelve bundles now carry `hourly/network_<year>.parquet`, so the split is measured.
+
+**Both sides computed on the SAME basis — system net position by hour** (model: the five
+`PJM_external>PJM_<zone>` link rows summed per hour; measured: PJM's settlement tie file summed per
+hour over its tie lines). TWh:
+
+| year | model gross exp | measured gross exp | model gross imp | measured gross imp | export short |
+|---|---|---|---|---|---|
+| 2020 (control) | 40.391 | 41.626 | **0.000** | **0.000** | −1.235 |
+| 2021 | 25.510 | 37.825 | 0.007 | 0.011 | **−12.315** |
+| 2022 | 22.878 | 31.909 | 0.019 | 0.135 | **−9.031** |
+| 2023 | 30.862 | 40.090 | 0.002 | 0.116 | **−9.228** |
+| 2024 | 22.277 | 33.133 | 0.048 | 0.308 | **−10.856** |
+| 2025 | 24.379 | 33.527 | 0.019 | 0.603 | **−9.148** |
+
+**THE RESULT: the shortfall is ~100 % EXPORT-SIDE. There is no import-side excess.** Measured PJM is
+a near-pure net exporter — its system-level gross import is **0.000–0.603 TWh** across six years —
+and **the model reproduces that structure exactly** (0.000–0.048 TWh). §2.5's inferred
+*"implied import-side excess of 4.083 / 2.830 / 4.398 / 6.114 / 4.658 TWh"* is **refuted**: on the
+like-for-like basis the model does not over-import at all.
+
+**This retires a named suspect.** `interchange/spec.py`'s own comment warns of *"phantom imports that
+displace CC_REGULAR dispatch, the C1 FAIL"*, and §2.5 read its import column as evidence for it.
+Measured, **PJM's system-level phantom imports are ~zero in every year.** Whatever drives PJM's
+CC_REGULAR over-run, it is not phantom imports at the system boundary. §2.5's other half stands and
+is now the whole of it: the model under-exports, by 9.0–12.3 TWh.
+
+**An error of mine, caught inside this analysis and recorded rather than silently dropped.** My first
+pass computed the model's gross legs **per link** (preserving inter-border counterflow, which gave
+"gross import 16–34 TWh") and compared them against a **system-net** measured number. That is
+apples-to-oranges and produced a spurious +13 to +18 TWh "over-import". The two bases must match; on
+the matched basis the import leg vanishes. The per-link counterflow is real — §2.7 describes it as
+wheel-through — but it is *internal to an hour* and cancels at the boundary the measured file reports.
+
+**What C-1 did to the 2020 seam, mechanically.** Per-link (counterflow preserved), ARM − CONTROL:
+gross export **56.631 → 47.801 (−8.829)**, gross import **16.240 → 19.458 (+3.218)**, net
+**40.391 → 28.344 (−12.047)**. Every border moves in the import direction, and the **ATSI** border
+flips sign outright, −0.598 → +4.797 (a +5.395 TWh swing). So the ladder does not merely throttle
+export: it re-prices the borders relative to each other and turns one of them around. On the
+system-net basis that all resolves to a pure 12.047 TWh reduction in net export, away from measured.
+
+**Consequence for the lane.** The export leg is the whole defect and C-1 makes it larger on 2020
+while leaving 2021–2025 untouched. That does not change the promotion case stated in §6 — C-1's
+basis is rules 14/23 and the improvement it buys is on C1's classes — but it sharpens what the next
+lane should chase: **a PJM export-volume defect, on a seam whose import side is already correct.**
