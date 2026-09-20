@@ -1,0 +1,142 @@
+{
+  "G3_corpus": {
+    "G3a_monotone": {
+      "populated_cells": 12,
+      "monotone_cells": 0,
+      "fraction": 0.0,
+      "bar": 0.8,
+      "verdict": "FAIL"
+    },
+    "G3b_driver": {
+      "per_year": {
+        "2022": {
+          "loosest_state_bin_delta": 0.025,
+          "tightest_state_bin_delta": 0.025,
+          "rises": false,
+          "weights_mw": [
+            56214417.0,
+            7437148.2,
+            5195523.2,
+            2258090.3
+          ]
+        },
+        "2023": {
+          "loosest_state_bin_delta": 0.075,
+          "tightest_state_bin_delta": 1.625,
+          "rises": true,
+          "weights_mw": [
+            52238458.8,
+            6988932.9,
+            4832376.5,
+            2064061.0
+          ]
+        },
+        "2024": {
+          "loosest_state_bin_delta": 0.375,
+          "tightest_state_bin_delta": 1.625,
+          "rises": true,
+          "weights_mw": [
+            51564244.5,
+            6955074.2,
+            4841418.8,
+            2068558.7
+          ]
+        },
+        "2025": {
+          "loosest_state_bin_delta": 0.075,
+          "tightest_state_bin_delta": 0.625,
+          "rises": true,
+          "weights_mw": [
+            50443132.1,
+            6786227.2,
+            4704755.5,
+            2022717.5
+          ]
+        }
+      },
+      "years_rising": 3,
+      "bar": 3,
+      "verdict": "PASS"
+    },
+    "G3c_contamination_reported_not_gated": {
+      "DAM-2022": {
+        "single_block_unit_hour_share": 0.4322,
+        "single_block_capacity_share": 0.1266,
+        "flat_curve_capacity_share": 0.1266
+      },
+      "DAM-2023": {
+        "single_block_unit_hour_share": 0.4062,
+        "single_block_capacity_share": 0.1083,
+        "flat_curve_capacity_share": 0.1083
+      },
+      "DAM-2024": {
+        "single_block_unit_hour_share": 0.3382,
+        "single_block_capacity_share": 0.0914,
+        "flat_curve_capacity_share": 0.0914
+      },
+      "DAM-2025": {
+        "single_block_unit_hour_share": 0.3508,
+        "single_block_capacity_share": 0.0974,
+        "flat_curve_capacity_share": 0.0974
+      }
+    },
+    "gas_bin_edges_usd_per_mmbtu": [
+      3.0711,
+      5.0953
+    ],
+    "ladder_top_position_by_state_pooled": [
+      [
+        0.425,
+        1.525,
+        1.625,
+        1.625
+      ],
+      [
+        0.075,
+        0.475,
+        1.025,
+        1.275
+      ],
+      [
+        0.025,
+        0.025,
+        0.025,
+        0.025
+      ]
+    ]
+  },
+  "years": {
+    "2022": {
+      "year": 2022,
+      "G4_not_inert": {
+        "repriced_rows": 298,
+        "moved_capacity_mw_median_missed_hour": 8247.5,
+        "median_move_usd_per_mwh": -1.32,
+        "bar_mw": 500.0,
+        "bar_usd": 1.0,
+        "verdict": "PASS"
+      },
+      "G5_c1c2_exposure": {
+        "thermal_twh_from_keeper": 66.061,
+        "repriced_share_of_thermal_capacity": 0.6157,
+        "median_move_usd_per_mwh_all_hours": -3.38,
+        "p95_move_usd_per_mwh_all_hours": 6.719,
+        "share_of_row_hours_moved_down": 0.7266
+      },
+      "REPORTED_differenced_withdrawal_gates_nothing": {
+        "150": {
+          "model_now": 3610.7,
+          "model_with_surface": 4533.9,
+          "market": 7674.5,
+          "move_mw": 923.2
+        },
+        "200": {
+          "model_now": 1213.1,
+          "model_with_surface": 1891.7,
+          "market": 6202.5,
+          "move_mw": 678.6
+        }
+      }
+    }
+  }
+}
