@@ -309,3 +309,24 @@ keeper's by construction and the only difference is the two booleans. SPP is a 2
   the RESULT before this session ends.
 * **`[R-HOLDOUT]` is removed:** no year is protected, so every number here is model-**SELECTION**
   evidence and none of it is a certified out-of-sample skill claim.
+
+---
+
+## 9. CORRECTION to §8, recorded before any result was read
+
+§8 states that `coal_sync_srmc_tranche` and `coal_mustrun_online_pmin` are "absent from the matrix
+in every one of the nine shards" and that this lane owes two new base rows. **That is wrong, and
+the error was mine.** Both are registered — as **SUB-SCALARS inside the `coal_mustrun_per_plant`
+family row's `def`** (`docs/codebase-site/data/mechanism-matrix.js:1753-1754`), which is the
+repo's documented rule 28(c) convention from the xiso-3 census for a field that SIZES or SPLITS
+another row's own tranche. My grep matched only top-level `id:` keys and so missed them.
+
+**Consequence: this lane owes NO new base row and NO nine-shard cell fan-out.** It owes exactly
+what rule 28(b) requires — an update to **SPP's own cell of `coal_mustrun_per_plant`**, which
+currently reads `U` ("SPP-21 shard seed, no verdict minted"). Nothing else about §4–§7 changes;
+no prediction, gate or magnitude is affected, and no solve had run when this was written.
+
+Also recorded, since it is the DO-NOT-REDO check this correction makes readable: the family's
+sub-scalars are `K` at MISO (`coal_mustrun_online_pmin`, keeper `2026-08-04-miso-127-onlinepmin`)
+and armed on PJM's keeper. Rule 28(d): **neither transfers.** SPP enters as `U` and derives its
+band from its own `thermal_tranches_SPP.csv` CAMPD conduct, which is what §4 does.
