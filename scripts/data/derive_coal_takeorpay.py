@@ -52,7 +52,11 @@ from market_sim.config.paths import RAW_DATA_DIR  # noqa: E402
 
 from market_sim.config.iso_configs import get_iso_config  # noqa: E402
 from market_sim.data.fleet import load_fleet_from_csv  # noqa: E402
-from scripts.data.process_f923_fuel_costs import _find_zips, _load_receipts  # noqa: E402
+from scripts.data.process_f923_fuel_costs import (  # noqa: E402
+    _RENAME,
+    _find_zips,
+    _load_receipts,
+)
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger("derive_coal_takeorpay")
@@ -65,8 +69,69 @@ _CONTRACT_CODES: frozenset[str] = frozenset({"C", "NC", "T"})
 _SPOT_CODES: frozenset[str] = frozenset({"S"})
 
 
+#: The committed EIA-923 Page-5 receipts corpus (``fetch_eia923_coal_receipts.py``),
+#: one ``coal_receipts_<year>.csv`` per release year. It carries the SAME Page-5
+#: columns the ``f923_*.zip`` releases do, ``Purchase Type`` included, and it is
+#: TRACKED — the zips are not committed to the repo (see ``_takeorpay_table``).
+#: That is the whole reason this source exists: an ISO whose table has never been
+#: derived can be derived from what is already in the tree, with no re-fetch.
+#: Discovered by lane NWPP-43 (2026-09-20), which found ``coal_takeorpay_NWPP.csv``
+#: absent while the file exists for all seven other ISOs — so
+#: ``coal_takeorpay_from_data`` and ``coal_committed_takeorpay_regulated`` were
+#: silently INERT for NWPP (``campd_tranche_fuel_frac`` needs the plant in
+#: ``takeorpay_by_plant``). The NWPP-41 defect class: an underived artifact making
+#: a real mechanism do nothing.
+_RECEIPTS_CORPUS = "coal-receipts"
+
+
+def _load_receipts_corpus(raw_dir: Path, years: list[int] | None) -> list[pd.DataFrame]:
+    """Return Page-5 receipt frames from the committed coal-receipts corpus.
+
+    Column-for-column equivalent to :func:`_load_receipts` over a ``f923_*.zip``:
+    the same ``_RENAME`` map is applied, so every downstream column name
+    (``plant_id`` / ``quantity`` / ``fuel_group`` / ``purchase_type``) is
+    identical and :func:`_takeorpay_table` cannot tell the two sources apart.
+    The corpus is coal-only by construction (the fetch filters
+    ``FUEL_GROUP == "Coal"``), which is a subset of what this deriver keeps
+    anyway.
+
+    Args:
+        raw_dir: The ``data/raw`` root holding ``coal-receipts/``.
+        years: Restrict to these release years; ``None`` takes every year present.
+
+    Returns:
+        One frame per matching release year, renamed to the canonical columns.
+    """
+    corpus = raw_dir / _RECEIPTS_CORPUS
+    paths = sorted(corpus.glob("coal_receipts_*.csv"))
+    if not paths:
+        raise SystemExit(
+            f"No coal_receipts_*.csv found in {corpus} — fetch the corpus with "
+            "scripts/data/fetch_eia923_coal_receipts.py, or drop "
+            "--from-receipts-corpus to read the f923_*.zip releases instead."
+        )
+    frames = []
+    for path in paths:
+        m = re.search(r"(\d{4})", path.stem)
+        yr = int(m.group(1)) if m else 0
+        if years is not None and yr not in years:
+            continue
+        raw = pd.read_csv(path)
+        keep = [c for c in _RENAME if c in raw.columns]
+        frames.append(raw[keep].rename(columns=_RENAME))
+    if not frames:
+        raise SystemExit(
+            f"coal-receipts corpus holds no release year in {years} (found "
+            f"{[p.stem for p in paths]})."
+        )
+    return frames
+
+
 def _takeorpay_table(
-    iso: str, years: list[int] | None, raw_dir: Path | None = None
+    iso: str,
+    years: list[int] | None,
+    raw_dir: Path | None = None,
+    from_receipts_corpus: bool = False,
 ) -> pd.DataFrame:
     """Return ``[plant_code, contract_share, spot_share, total_tons, n_receipts,
     source, breakdown]`` — one row per coal plant in ``iso`` with coal receipts.
@@ -89,12 +154,18 @@ def _takeorpay_table(
     # pre-W1 inputs/raw-data root no longer exists). The zips are immutable
     # EIA downloads (https://www.eia.gov/electricity/data/eia923/), not
     # committed to the repo — re-download the cited vintages to re-derive.
-    for zip_path in _find_zips(raw_dir if raw_dir is not None else RAW_DATA_DIR):
-        m = re.search(r"f923[_-]?(\d{4})", zip_path.stem)
-        yr = int(m.group(1)) if m else 0
-        if years is not None and yr not in years:
-            continue
-        rframes.append(_load_receipts(zip_path))
+    _root = raw_dir if raw_dir is not None else RAW_DATA_DIR
+    if from_receipts_corpus:
+        # Same Page 5, same columns, same construction — a committed source
+        # instead of an uncommitted one (see _load_receipts_corpus).
+        rframes.extend(_load_receipts_corpus(_root, years))
+    else:
+        for zip_path in _find_zips(_root):
+            m = re.search(r"f923[_-]?(\d{4})", zip_path.stem)
+            yr = int(m.group(1)) if m else 0
+            if years is not None and yr not in years:
+                continue
+            rframes.append(_load_receipts(zip_path))
 
     receipts = pd.concat(rframes, ignore_index=True)
     if "purchase_type" not in receipts.columns:
@@ -189,10 +260,24 @@ def main() -> None:
         default=None,
         help="Directory holding the f923_*.zip releases (default: data/raw).",
     )
+    parser.add_argument(
+        "--from-receipts-corpus",
+        action="store_true",
+        help=(
+            "Read the COMMITTED data/raw/coal-receipts/ corpus instead of the "
+            "uncommitted f923_*.zip releases. Same Page 5, same columns, same "
+            "construction — use it when the zips are not on disk."
+        ),
+    )
     args = parser.parse_args()
 
     raw_dir = Path(args.raw_dir) if args.raw_dir else None
-    table = _takeorpay_table(args.iso.upper(), args.year, raw_dir=raw_dir)
+    table = _takeorpay_table(
+        args.iso.upper(),
+        args.year,
+        raw_dir=raw_dir,
+        from_receipts_corpus=args.from_receipts_corpus,
+    )
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     out_path = out_dir / f"coal_takeorpay_{args.iso.upper()}.csv"
