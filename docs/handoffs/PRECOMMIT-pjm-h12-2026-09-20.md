@@ -145,3 +145,31 @@ as the next lever in PJM's queue. `mustrun_layup_window_mask` likewise stays `U`
 Carried open and untouched, as the charter instructed: **Q1** (three truncated ladder rungs), **Q3**
 (the MER dual is ungated), **Q4** (the three-year default pair, D-1 §5), **Q5/Q6** (the seam hourly
 bar and the quantile-indexed ladder, D-2 §6), and the proposed rule 32(c)(8) addendum.
+
+---
+
+## 8. ADDENDUM — shards launched (2026-09-20, pinned SHA `65ab6205c40a3d5703f084bf747f2b132eee5c28`)
+
+Six shards, one year each (rule 36 `[R-YEAR-ISOLATION]` (a)), each solving ARM + CONTROL at the
+pinned SHA because §5's LIVE hunk voids form 4. Parent session
+`session_01WbCsWznBof14T4nGCR2z3V` — **the parent ran ZERO LP** (rule 32 `[R-SHARD]` (a)).
+
+| year | source bundle | shard session | branch | out-dirs |
+|---|---|---|---|---|
+| 2020 | `pjm_h11_touchpoint_span` | `session_01X6W7jxFh92pyN3jZT5mgY7` | `claude/pjm-h12-clip-2020` | `pjm_h12_{ctl,clip}_2020` |
+| 2021 | `pjm_h11_touchpoint_span` | `session_01DbUWV5WBmdHnEnuBgsXte3` | `claude/pjm-h12-clip-2021` | `pjm_h12_{ctl,clip}_2021` |
+| 2022 | `pjm_h11_touchpoint_span` | `session_01X9cxuDGSnZDRpnqwmiWWg5` | `claude/pjm-h12-clip-2022` | `pjm_h12_{ctl,clip}_2022` |
+| 2023 | `pjm_h11_keeper_span` | `session_01Uy7EKjSNH1FX8qesERBYaJ` | `claude/pjm-h12-clip-2023` | `pjm_h12_{ctl,clip}_2023` |
+| 2024 | `pjm_h11_keeper_span` | `session_01WAaxKmKyrwbeQx87mLavLY` | `claude/pjm-h12-clip-2024` | `pjm_h12_{ctl,clip}_2024` |
+| 2025 | `pjm_h11_keeper_span` | `session_01484AyepkaXi63KGoGkmkKR` | `claude/pjm-h12-clip-2025` | `pjm_h12_{ctl,clip}_2025` |
+
+**Arming route — no code change was needed.** `replay_keeper.py --set
+mustrun_commitment_feasibility_clip=true` applies the override on top of the keeper's committed
+recipe through the generic channel, which is exactly the single-delta A/B the driver documents. The
+field has no CLI flag and is not in `run_year`'s signature; that is why `--set` is the route, and it
+is why nothing under `src/` or `scripts/` is touched by this lane.
+
+**Retrievability (rule 34 `[R-SHARD-PROMOTABLE]` (d)/(e)):** every shard pushes BOTH full bundles to
+its own branch including `dispatch/<year>_P1.parquet`, so a promotion costs zero re-solves. The
+parent verifies `git ls-tree -r <sha> -- <bundle>` returns > 0 files before archiving anything
+(rule 33 `[R-SHARD-ARCHIVE]` (a)), and records recovery by FULL SHA, never branch name.
