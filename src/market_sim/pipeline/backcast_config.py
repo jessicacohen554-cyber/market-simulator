@@ -1813,7 +1813,8 @@ def backcast_config(
         #   and each is its OWN lane's to move on its own market's data
         #   (rule 28(d)). Backcast only -- NWPP has no forecast lane yet
         #   (card N9), so no forecast posture is armed here.
-        coal_takeorpay_from_data=(iso.upper() == "MISO"),  # MISO's coal
+        coal_takeorpay_from_data=(iso.upper() in ("MISO", "NWPP")),  # MISO's
+        #   coal
         #   take-or-pay depth is sized from measured contract shares (consumed
         #   by campd_tranche_fuel_frac on the CAMPD limb). Replace the uniform
         #   assumed 100%-sunk first tranche with each plant's MEASURED EIA-923
@@ -1825,6 +1826,52 @@ def backcast_config(
         #   are not the LMP/seam lever. Only the few spot-heavy plants (e.g.
         #   1167 S:100%, 6213 S:47%) bid their first tranche fuller. ERCOT and
         #   the CAMPD-binned ISOs are untouched (flag off).
+        #   NWPP-44: NWPP joins on its OWN market's measured data (rule 25
+        #   [R-ISO-SCOPE] — nothing is transferred from MISO; the table is
+        #   coal_takeorpay_NWPP.csv, derived by nwpp-43 from the committed
+        #   data/raw/coal-receipts/ corpus by the identical quantity-weighted
+        #   EIA-923 Schedule-5 construction the other seven ISOs' tables use).
+        #   13 of 17 NWPP coal plants classify; the fleet is 94% contract on
+        #   tonnage (10 plants at 100%), with North Valmy 0.5611, Hardin 0.7612
+        #   and TS Power 0.9047 the spot-heavy counter-examples that keep the
+        #   arm TWO-SIDED — their must-run band gets DEARER, not cheaper. Until
+        #   nwpp-43 derived the table this flag was provably inert for NWPP
+        #   (campd_tranche_fuel_frac requires takeorpay_by_plant to carry the
+        #   plant), the NWPP-41 defect class exactly: an underived artifact
+        #   making a real mechanism silently do nothing.
+        coal_committed_takeorpay_regulated=(iso.upper() == "NWPP"),  # NWPP-44.
+        #   The committed-band limb of the same measured contract: a plant whose
+        #   EIA-860 Regulatory Status is RE (rate-regulated) passes
+        #   ``1 - contract_share`` on its CAMPD-observed committed band as well
+        #   as its must-run band, because a cost-of-service utility does not
+        #   offer its rate-based, contracted mine-mouth coal on SRMC against gas
+        #   — it self-commits. Scoped by OWNERSHIP, never by coal rank: owner
+        #   ruling 2026-09-20 (PRECOMMIT-nwpp-43 §7) took Option B, ALL
+        #   regulated coal, so ``coal_prb_committed_dispatchable`` is NOT armed
+        #   here — NWPP's own measured conduct does not discriminate between
+        #   ranks (p25->median CF spread ~9-20 pts in BOTH: BIT Hunter 9.5,
+        #   Huntington 15.5, North Valmy 7.1; PRB Colstrip 8.7, Wyodak 9.6,
+        #   Hardin 14.0, Naughton 39.5), and choosing the rank carve-out that
+        #   makes the gate pass is the fitted-mechanism selection rule 1
+        #   [R-STRUCT] forbids. Structural driver: COAL_BIT, the deficit class,
+        #   is 81.7% regulated (2,998 of 3,668 MW) against 44.3% for PRB and
+        #   63.7% for NWPP coal overall — the deficit is concentrated in the
+        #   most-regulated class, a structural signature rather than a residual
+        #   pattern. ZERO free parameters (rules 21 [R-DOF] / 24 [R-REGISTRY]):
+        #   the discount is the plant's own measured EIA-923 Schedule-5 share
+        #   and the scope is a published EIA-860 boolean; both regenerate for a
+        #   forward year (rule 13 [R-MEASURED]). Requires
+        #   coal_takeorpay_from_data above. Answering the contested prior art
+        #   ``coal_committed_takeorpay_sunk_fixed`` (miso-96: a take-or-pay
+        #   contract is an obligation over an accounting period, not a per-hour
+        #   price): that argument is about CONTRACT ACCOUNTING, and this limb's
+        #   driver is REGULATORY CONDUCT — a rate-regulated operator's offer is
+        #   not a marginal-cost offer at all, so the committed band's price is
+        #   not claiming the fuel is free, it is claiming the unit is
+        #   self-committed. The two are different physical claims about
+        #   different objects, and the arm is not a subsidy in either direction
+        #   (the spot-heavy plants' must-run band RISES). NWPP has no forecast
+        #   lane yet (card N9), so no forecast posture is armed here.
         coal_prb_passthrough_sigmoid=coal_prb_passthrough_sigmoid,  # gas-keyed
         #   PRB passthrough when set; else the flat coal_prb_passthrough.
         coal_mustrun_per_plant=coal_mustrun_per_plant,  # per-plant CAMPD coal
