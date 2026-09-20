@@ -27,6 +27,14 @@ counting them, into exactly three buckets:
     ``measured_coal_heat_rates None -> True``; the control legs must show none.
 
 Run: ``python3 scripts/probes/_nwpp42_leg_check.py <bundle-dir> <year> arm|ctl``
+
+NOTE (2026-09-20, after the NWPP-42 promotion): ``KEEPER`` below still points at
+``results/calibration/nwpp41_span_A``, which was PRUNED from the working tree at
+that promotion under rule 15's keeper-only retention (git history is the record;
+recover with ``git checkout 1fb4b6b5c680ca5ae0ef9375eb11b7cbbb08d64d --
+results/calibration/nwpp41_span_A``). The probe is kept as this lane's record of
+how each leg was checked, not as standing tooling; a successor re-points
+``KEEPER`` at its own control before running it.
 """
 
 from __future__ import annotations

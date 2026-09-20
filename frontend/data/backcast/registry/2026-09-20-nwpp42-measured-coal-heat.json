@@ -1,0 +1,15 @@
+{
+ "id": "2026-09-20-nwpp42-measured-coal-heat",
+ "label": "nwpp42 measured coal heat",
+ "date": "2026-09-20",
+ "shorthand": "nwpp42-measured-coal-heat",
+ "definition": "NWPP-42. The NWPP-41 keeper's frozen recipe plus EXACTLY ONE armed field, measured_coal_heat_rates=True: NWPP coal is priced on each plant's OWN CAMPD-metered steady-state heat rate (12 plants, 98.2 % of COAL capacity) instead of eGRID's annual plant average PLHTIAN/PLNGENAN, which is HIGH at every covered plant (cap-weighted 11.868 -> 11.066 MMBtu/MWh, -6.8 %; Hunter 1.215x, Colstrip 1.023x). Rule 14 [R-ACCURATE], not the residual: zero free parameters (DOF 3/3, unchanged), no band, no adder, never swept. Composed from THREE single-year shards under rule 36 [R-YEAR-ISOLATION] and differenced against a PAIRED per-year control on the NWPP-41 recipe. Gates vs that control: C1 PASS->PASS (18/18), C2 PASS->PASS, C4 FAIL->FAIL, C6 PASS->PASS, C8 PASS->PASS; nothing regresses. C4 coal r 0.539/0.547/0.502 -> 0.570/0.559/0.524, NRMSE 0.301/0.397/0.432 -> 0.292/0.387/0.408 (2023 crosses inside the 0.30 gate); coal volume 39.61/27.01/27.21 -> 41.55/27.39/28.32 TWh vs 42.27/38.30/42.26 actual. Determination NOT-YET on {dispatch_corr} alone; NWPP is PRICE UNSCORED (rubric v3.8). Also measures rule 36(f) for NWPP: the year-isolation artifact is 0.000 TWh of annual class volume and negligible on every scored criterion, though it reallocates up to 818 MW hourly between hydro and CC_REGULAR.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "NWPP",
+ "file": "frontend/data/backcast/runs/2026-09-20-nwpp42-measured-coal-heat.js",
+ "bundle": "results/calibration/nwpp42_coalhr_span"
+}

@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-19T13:04:13",
+  "timestamp": "2026-09-20T00:21:28",
   "iso": "NWPP",
   "years": [
     2023,
@@ -13,9 +13,7 @@
   "commitment": false,
   "commitment_screen_coal": true,
   "gas_prices": {
-    "2023": 2.54,
-    "2024": 2.19,
-    "2025": 3.52
+    "2023": 2.54
   },
   "coal_lignite_mustrun": null,
   "coal_prb_mustrun": null,
@@ -160,6 +158,7 @@
   "caiso_st_gas_peak_measured": false,
   "caiso_ct_peaker_committed_measured": false,
   "nyiso_ct_peaker_bands_measured": false,
+  "nyiso_ct_peaker_committed_measured": false,
   "nyiso_st_gas_econ_bands_deleaked": false,
   "caiso_offer_surface_conditional": false,
   "nearby_fuel_price_zone_donor_guard": false,
@@ -267,6 +266,7 @@
   "reliability_floor_overrides": null,
   "nyiso_gas_commitment_bridge": null,
   "spp_gas_commitment_bridge": null,
+  "soco_gas_st_campaign_commitment": null,
   "miso_coal_night_floor": null,
   "nyiso_gas_bridge_cc_min_load_frac": null,
   "nyiso_gas_bridge_st_min_load_frac": null,
@@ -285,6 +285,8 @@
   "chp_layup_duty_curve": null,
   "egrid_identity_heat_rates": null,
   "measured_ct_heat_rates": null,
+  "measured_coal_heat_rates": true,
+  "measured_st_heat_rates": null,
   "egrid_family_heat_rates": null,
   "egrid_steam_collapse_heat_rates": null,
   "nyiso_gas_bridge_cc_min_run_hours": null,
@@ -327,7 +329,7 @@
   "btm_backfill_year": null,
   "shared_inputs": {
     "eia930": "../_shared/NWPP/eia930-e539ed483b64.parquet",
-    "eia923": "../_shared/NWPP/eia923-138560324fca.parquet",
+    "eia923": "../_shared/NWPP/eia923-84bb6ac40d29.parquet",
     "campd": "../_shared/NWPP/campd-a5fde7813755.parquet",
     "unit_outages": "../_shared/NWPP/unit_outages-bde6b4666962.parquet",
     "unit_outages_short": "../_shared/NWPP/unit_outages_short-7bf36f8e0ce6.parquet",
@@ -335,8 +337,8 @@
     "unit_outages_e923": "../_shared/NWPP/unit_outages_e923-ffbc2ebbbef7.parquet",
     "unit_outages_layup": "../_shared/NWPP/unit_outages_layup-75441d347875.parquet"
   },
-  "git_sha": "f932a881",
-  "basis_sha": "f932a8816f2e0d2f2641708e914375f7058b440e",
+  "git_sha": "b68673a9",
+  "basis_sha": "b68673a99926a554d0a9e165f5bd06b890572c02",
   "highspy_version": "1.14.0",
   "environment": {
     "python_version": "3.11.15",
@@ -356,5 +358,16 @@
       ]
     ],
     "market_sim_data_root": ""
+  },
+  "composed_from": {
+    "nwpp42_coalhr_2023": [
+      2023
+    ],
+    "nwpp42_coalhr_2024": [
+      2024
+    ],
+    "nwpp42_coalhr_2025": [
+      2025
+    ]
   }
 }
