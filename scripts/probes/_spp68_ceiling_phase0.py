@@ -512,6 +512,65 @@ def leg_price(state: dict[int, dict]) -> None:
     )
 
 
+def leg_f(state: dict[int, dict]) -> None:
+    """F -- does the ceiling remove the RIGHT energy, or only the right AMOUNT?
+
+    Measured AFTER the PRECOMMIT was pushed and BEFORE any arm landed, so it cannot have
+    been fitted to a result; it is a diagnostic, not one of the pre-registered predictions
+    and not a gate.
+
+    Two quantities, both binned on the model net-load decile the ceiling ITSELF keys on
+    (d0 = lowest net load = the oversupply hours):
+
+    * ``excess(t) = model wind(t) - delivered_930(t)`` -- where the model's phantom wind
+      actually is;
+    * ``removal(t) = potential(t) x depth x share(t)`` -- where the ceiling takes it from.
+
+    A mechanism that removes the right energy puts these in the same hours.
+    """
+    from market_sim.data.curtailment_share import net_load_decile
+
+    print(
+        "\n## F -- DOES THE CEILING REMOVE THE RIGHT ENERGY, OR ONLY THE RIGHT AMOUNT?"
+    )
+    print(
+        f"\n{'year':6s}{'corr(excess,removal)':>22s}{'excess in d0':>14s}"
+        f"{'removal in d0':>15s}{'concentration ratio':>21s}{'mean ceiling':>14s}"
+        f"{'min ceiling':>13s}"
+    )
+    for y in YEARS:
+        s = state[y]
+        pot = s["potential"]
+        solar = class_hourly(y, "solar")[: len(pot)]
+        dec = net_load_decile(s["demand"] - pot - solar)
+        excess = s["model"] - s["delivered"]
+        removal = pot * DEPTH_DEFAULT * s["share"]
+        ceil = np.clip(1.0 - DEPTH_DEFAULT * s["share"], 0.0, 1.0)
+        e0 = excess[dec == 0].sum() / excess.sum()
+        r0 = removal[dec == 0].sum() / removal.sum()
+        print(
+            f"{y:<6d}{float(np.corrcoef(excess, removal)[0, 1]):22.4f}"
+            f"{100 * e0:13.2f}%{100 * r0:14.2f}%{r0 / e0:20.3f}x"
+            f"{ceil.mean():14.4f}{ceil.min():13.4f}"
+        )
+    print(
+        "\n   THE CEILING IS ABOUT HALF AS CONCENTRATED AS THE EXCESS IT TARGETS. The\n"
+        "   model's phantom wind sits 41.9-52.2 % in the lowest net-load decile; the\n"
+        "   ceiling puts only 21.5-24.0 % of its removal there. So it over-removes in the\n"
+        "   mid and high net-load hours -- where the model's wind was already about right\n"
+        "   -- and under-removes in the oversupply hours where the excess actually is.\n"
+        "   That is a SHAPE criticism independent of the level, and it is the mechanical\n"
+        "   reason to expect a price-shape cost: energy is taken out of hours that were\n"
+        "   not long.\n\n"
+        "   The ceiling itself is broad and shallow -- mean multiplier 0.914-0.917, deepest\n"
+        "   cut 0.712 -- and the clip at 0 NEVER binds (depth x max share = 0.288137 < 1),\n"
+        "   so no hour is ever zeroed. Real congestion curtailment is the opposite shape:\n"
+        "   specific resources to zero in specific hours behind a binding constraint. The\n"
+        "   ceiling reproduces the annual VOLUME of curtailment and a modest tilt toward\n"
+        "   the right hours; it does not reproduce its CONCENTRATION."
+    )
+
+
 def leg_e() -> None:
     """E (item 4) -- rule 25 [R-ISO-SCOPE]: default-off byte-identity, two ways."""
     print("\n## E (ITEM 4) -- CROSS-ISO BYTE-IDENTITY, BY CONSTRUCTION AND BY CENSUS")
@@ -596,6 +655,7 @@ def main() -> None:
     leg_sens(state)
     leg_d(state, frac_head)
     leg_price(state)
+    leg_f(state)
     leg_e()
     print()
 
