@@ -229,12 +229,24 @@ shard branches are **NOT merged** (verified: `git merge-base --is-ancestor` answ
 ancestor* for all six against `origin/main`) and are **deliberately not deleted** — they hold the
 only copy of the per-plant dispatch layer a re-registration needs and of the control legs
 entirely, so rule 33(f)(2) does not permit deleting them and 33(f)(4) forbids orphaning the
-recovery lines that cite them. **LEG-REF RESCUE (rule 33(f)(4)):** the environment deleted
-three of the six original shard branches once this lane's PR merged, and their commits are not on
-`main`, so all six were re-pushed UNCHANGED under durable, PR-free refs
-`claude/nwpp-42-leg-{arm,mer}-{2023,2024,2025}`. The SHAs did not move, so every recovery line
-still resolves after `git fetch origin claude/nwpp-42-leg-<arm|mer>-<year>`. Nothing was deleted
-(rule 31 `[R-RETAIN]`).
+recovery lines that cite them. **LEG BRANCHES RETIRED (owner instruction, 2026-09-20):** *"No it shouldn't preserve the branches
+in the repo. If something needs to be kept it should be done by the main branch and pushed to main.
+There is no reason to clutter my repo with old branches."* All nine `claude/nwpp-42-*` leg refs are RETIRED, and
+**deletion was attempted and refused** — `git push origin --delete` returns HTTP 403 for every one,
+because this session's credential may create and update refs but not delete them and the GitHub
+MCP exposes no deletion tool (rule 33(f)(5), which says to say so rather than claim a cleanup that
+did not happen). **They need the owner to remove them.** Retired means nothing may depend on them:
+the SHAs in `.gitignore` and the FINDING are now a **provenance record, not a recovery
+route** (rule 33(f)(4) — say so plainly rather than keep a command that fails), and recovery is
+**re-solve only, ~45–90 min of LP per leg**. That costs nothing `main` lacks: rule 31 `[R-RETAIN]`
+trigger (i) is satisfied because the owner ruled on promotion, the FINDING carries every number the
+lane cites from any leg, the keeper bundle + sidecar + run payload are committed, and the per-plant
+D-1/D-2/D-4 diagnostics fall back to that registered payload when `dispatch/<year>_P1.parquet` is
+absent. The control legs were never eligible for `main` at all (rule 29(c) forbids a control bundle
+reaching it; rule 15 forbids a second registered NWPP run). **The lesson, because it bit twice in
+one session:** an unmerged shard branch is NOT durable here — the environment deleted three of them
+when the PARENT's PR merged, then the lane branch on its own merge. A lane that needs bytes to
+survive lands them on `main` inside the registered keeper bundle before its own PR merges.
 
 **THE GATES, arm minus the paired control. NOTHING REGRESSES.** C1 PASS→PASS (18/18 all, 14/14
 free), C2 PASS→PASS, C4 FAIL→FAIL, C6 PASS→PASS, C8 PASS→PASS (0.0 % forced everywhere),
@@ -259,8 +271,7 @@ shows that the benchmark itself moved between the two registrations (rebuilt `ei
 differently) and that the movement is immaterial.
 
 **PRE-REGISTERED PREDICTIONS, SCORED INCLUDING THE NEAR-MISS.** Coal rises materially without
-closing the gap — held. `r` improves without reaching 0.70 — held in both halves. 2023 is the risk
-year and may push a C1 row out of band — **did not happen**, C1 stays 18/18. Zero movement outside
+closing the gap — held. `r` improves without reaching 0.70 — held in both halves. 2023 is the risk year and may push a C1 row out of band — **not at the gate, but the magnitude moved**: C1 stays 18/18 and the one row that degrades is exactly the predicted one, 2023 COAL_BIT +0.390 → **+2.193 TWh** (+0.330 → +0.996 pp) against a ±8 TWh / ±3 pp band. Net over all nine C1 coal rows: five improve, three unchanged, one degrades. The table also sharpens what is NOT closed — the coal deficit is overwhelmingly a **COAL_BIT** deficit in 2024/2025 (model 7.48 / 6.94 TWh against actuals 12.83 / 18.21, roughly half) and the arm moves those rows by 0.031 / 0.232 TWh, so a heat-rate correction does not reach it. Zero movement outside
 coal — held. DOF unchanged at 3/3 — held. **The kill condition** (a 2025 coal move below 0.5 TWh ⇒
 inert) **did not fire** (2025 moved +1.110 TWh), **but 2024 moved only +0.382 TWh, below that
 line**; had 2024 been the pre-registered kill year this arm would have read inert. Named rather

@@ -138,26 +138,51 @@ including `dispatch/<year>_P1.parquet`:**
 | ctl 2024 | `924fafa6e1883ec9b54a8d418d518d4a0208926b` |
 | ctl 2025 | `637f71d021fb46f32b0e8f9f49bde73108207722` |
 
-**Leg-ref rescue (rule 33(f)(4)), 2026-09-20.** After this lane's own PR merged, the environment
-deleted three of the six original shard branches — `arm-2023`, `arm-2024` and `mer-2025` — whose
-commits are **not** ancestors of `main`, so their recovery lines briefly pointed at commits
-reachable from nothing but the parent's fetched refs. All six commits were re-pushed **unchanged**
-under durable refs that carry no open PR and are therefore not auto-deleted:
-`claude/nwpp-42-leg-{arm,mer}-{2023,2024,2025}`. The SHAs are unchanged, so every recovery line in
-this document and in `.gitignore` still resolves after
-`git fetch origin claude/nwpp-42-leg-<arm|mer>-<year>`. Nothing was deleted to do this (rule 31
-`[R-RETAIN]`); the three refs that still existed were mirrored, not moved.
+**Leg branches RETIRED 2026-09-20, by owner instruction** — *"No it shouldn't preserve the
+branches in the repo. If something needs to be kept it should be done by the main branch and pushed
+to main. There is no reason to clutter my repo with old branches."*
 
-**Retrievability, stated honestly (rule 34(e)).** The six shard branches are **NOT merged** —
-`git merge-base --is-ancestor <sha> origin/main` answers *not an ancestor* for all six (verified
-2026-09-20). Each sha is reachable only from its own ref `claude/nwpp-42-{arm,mer}-<year>`, and
-those refs hold the **only** copy of the per-plant `dispatch/<year>_P1.parquet` layer a
-re-registration needs, plus the control legs in their entirety. The promotion itself cost **zero
-re-solves** because the parent fetched and composed all six before archiving the shards. **The
-branches are deliberately NOT deleted**: rule 33(f)(2) permits deleting a shard branch only when
-it carries no bundle the lane may still need, and 33(f)(4) forbids leaving a recovery line pinned
-to a sha that no longer resolves. If those refs are ever lost, recovery is a re-solve at roughly
-3 × 45–90 min of LP per leg family.
+**Deletion was attempted and refused.** `git push origin --delete` returns **HTTP 403** for all
+nine `claude/nwpp-42-*` refs: this session's credential can create and update refs but not delete
+them, and the GitHub MCP server exposes `create_branch` with no counterpart. That is exactly the
+failure rule 33(f)(5) documents, and (f)(5) says to **say so and leave the branch** rather than
+report a cleanup that did not happen. **The nine refs are still listed and need the owner to remove
+them** (GitHub → Branches → delete, or `git push origin --delete <branch>` from a credential that
+may delete refs).
+
+**The SHA table above is a provenance record, not a recovery route** (rule 33(f)(4)). The legs are
+**retired**: nothing may depend on them, and recovery is **re-solve only, ~45–90 min of LP per
+leg**, whether or not a ref happens to still resolve today.
+
+Retiring them costs nothing `main` does not already carry:
+
+- **Rule 31 `[R-RETAIN]` trigger (i) is satisfied** — the owner *ruled* on promotion, so a spent
+  bundle may be removed and "git history plus the RESULT doc remain the record". **This document is
+  that record**, and it carries every number this lane will ever cite from any of the six legs.
+- **The keeper is on `main`**: `results/calibration/nwpp42_coalhr_span` in its slim `hourly/` shape
+  (rule 15), its registry sidecar, and its run payload. The per-plant D-1/D-2/D-4 diagnostics fall
+  back to the **registered payload** when `dispatch/<year>_P1.parquet` is absent, and that payload
+  is committed — so nothing on the dashboard or in the scorer depends on the deleted refs.
+- **The control legs were never eligible for `main`.** Rule 29(c) forbids a control bundle reaching
+  `main`, and rule 15's keeper-only retention forbids a second registered NWPP run. Committing them
+  was never an option; §5's numbers are where they live, by design.
+- **The three arm legs' `dispatch/` layer would have added ~45 MB** to a repo whose tip is already
+  4.13 GiB packed and which has needed two history rewrites. `.gitignore` ignores
+  `results/calibration/*/dispatch/` repo-wide for exactly that reason.
+
+**The lesson, recorded because it bit twice in this one session.** An unmerged shard branch is
+**not durable** here: the environment deleted `claude/nwpp-42-{arm-2023,arm-2024,mer-2025}` when the
+**parent's** PR merged, not only branches that were themselves merged, and then deleted the lane
+branch on its own merge. A lane that needs bytes to survive must land them on `main` **inside the
+registered keeper bundle** before its own PR merges — not park them on a side ref. That is the
+standing guidance for NWPP-43 and for rule 34(a) generally.
+
+**Retrievability, stated honestly (rule 34(e)).** The promotion itself cost **zero re-solves** —
+the parent fetched, verified and composed all six legs before archiving the shards (rules 33(a) /
+34(d)), and the composed keeper bundle is on `main`. The leg bundles are **retired** per the owner
+instruction above and are pending deletion (refused to this session, HTTP 403), so re-obtaining a
+leg should be costed as a re-solve at ~45–90 min of LP. Nothing in the registered run, the
+dashboard or the scorer depends on them.
 
 **The signature check that nearly condemned a clean leg.** A naive `scenario_config` diff of a
 single-year leg against the three-year keeper reports differences that are not mechanism changes:
@@ -245,6 +270,34 @@ three years (monthly budgets bind); the footprint total moves 0.000 / −0.001 /
 displaced classes are CC_REGULAR (−1.900 / −0.105 / −0.846 TWh), CT_PEAKER and ST_GAS — the arm's
 intended effect, not reach.
 
+
+### 6.1 Every C1 coal row at full magnitude — including the one that degrades
+
+The PRECOMMIT named **2023 as the risk year**. C1 stays 18/18, but a row that passes can still move
+the wrong way, so the magnitudes are here rather than absorbed. Band is
+±min(max(2.0 % ISO-load, 3 % actual-gen), 8 TWh) **and** ±3 pp share.
+
+| year | row | actual TWh | control Δ | arm Δ | |
+|---|---|---|---|---|---|
+| 2023 | COAL_BIT | 14.594 | +0.390 (+0.330 pp) | **+2.193 (+0.996 pp)** | **degrades — the predicted row** |
+| 2023 | COAL_PRB | 25.242 | −1.038 | **−0.904** | improves |
+| 2023 | COAL_WC | 0.560 | −0.135 | −0.136 | flat |
+| 2024 | COAL_BIT | 12.832 | −5.381 | −5.350 | improves |
+| 2024 | COAL_PRB | 21.030 | −1.707 | **−1.356** | improves |
+| 2024 | COAL_WC | 0.575 | −0.342 | −0.342 | flat |
+| 2025 | COAL_BIT | 18.210 | −11.500 | −11.268 | improves · SKIPPED |
+| 2025 | COAL_PRB | 23.635 | −3.203 | **−2.325** | improves · SKIPPED |
+| 2025 | COAL_WC | 0.226 | −0.160 | −0.161 | flat · SKIPPED |
+
+Every row is inside its band; 2025's three rows are SKIPPED on the preliminary EIA-923 vintage and
+gate neither way. Net: the arm **improves five coal rows, leaves three unchanged and degrades one**
+— 2023 COAL_BIT, by 1.803 TWh / 0.666 pp, against a ±8 TWh / ±3 pp band.
+
+**This table also sharpens §8 rather than softening it.** The coal deficit is overwhelmingly a
+**COAL_BIT** deficit in 2024 and 2025 — model 7.48 and 6.94 TWh against actuals of 12.83 and
+18.21, roughly half — and the arm moves those two rows by **0.031 and 0.232 TWh**. A heat-rate
+correction does not reach it. Whatever closes C4 has to close that.
+
 ---
 
 ## 7. Pre-registered predictions, scored honestly
@@ -253,7 +306,7 @@ intended effect, not reach.
 |---|---|---|
 | 1 | Coal volume rises materially, does **not** close the gap | **HELD** (+1.936 / +0.382 / +1.110; deficit still 0.7 / 10.9 / 13.9 TWh) |
 | 2 | `r` improves; **not** predicted to reach 0.70 | **HELD in both halves** |
-| 3 | 2023 is the **risk year**, may push a C1 row out of band | **DID NOT HAPPEN** — C1 stays 18/18 despite 2023 carrying the largest move |
+| 3 | 2023 is the **risk year**, may push a C1 row out of band | **NOT AT THE GATE, BUT THE MAGNITUDE MOVED** — C1 stays 18/18, and the one row that degrades is exactly the predicted one: 2023 COAL_BIT +0.390 → **+2.193 TWh** (+0.330 → +0.996 pp), inside a ±8 TWh / ±3 pp band but 1.803 TWh worse (§6.1) |
 | 4 | Zero movement outside coal | **HELD as intended** (hydro exactly flat; total within 0.002 TWh) |
 | 5 | DOF unchanged at 3/3 | **HELD** |
 
