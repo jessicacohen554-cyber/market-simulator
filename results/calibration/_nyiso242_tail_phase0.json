@@ -1,0 +1,349 @@
+{
+  "bundle": "results/calibration/nyiso241_ctcommitted_span",
+  "years": {
+    "2022": {
+      "year": 2022,
+      "threshold": 300.0,
+      "actual_tail_hours": 101,
+      "model_tail_hours": 7,
+      "hit": 1,
+      "missed": 100,
+      "invented": 6,
+      "missed_by_month": {
+        "1": 28,
+        "2": 8,
+        "3": 2,
+        "5": 1,
+        "6": 3,
+        "7": 6,
+        "8": 14,
+        "9": 1,
+        "11": 3,
+        "12": 34
+      },
+      "missed_by_hour_of_day": {
+        "0": 2,
+        "1": 4,
+        "2": 3,
+        "3": 1,
+        "4": 2,
+        "5": 1,
+        "6": 6,
+        "7": 3,
+        "8": 8,
+        "9": 2,
+        "10": 1,
+        "11": 2,
+        "12": 5,
+        "13": 2,
+        "14": 3,
+        "15": 3,
+        "16": 9,
+        "17": 17,
+        "18": 12,
+        "19": 3,
+        "20": 2,
+        "21": 3,
+        "22": 1,
+        "23": 5
+      },
+      "missed_actual_price": {
+        "min": 300.5318298339844,
+        "median": 373.97808837890625,
+        "max": 2943.948486328125,
+        "mean": 540.318115234375
+      },
+      "missed_model_price": {
+        "max_dual_median": 151.7592598615567,
+        "max_dual_max": 293.0296342584043,
+        "lw_median": 138.77040666802566
+      },
+      "missed_max_zone": {
+        "Long_Island": 88,
+        "NYC": 12
+      },
+      "missed_model_state": {
+        "hours_any_slack": 0,
+        "hours_any_dump": 0,
+        "hours_any_reserve_shortfall": 2,
+        "hours_reserve_price_gt0": 9,
+        "reserve_price_median": 0.0,
+        "reserve_price_max": 50.0
+      },
+      "missed_model_dual_bands": {
+        "<=50": 0,
+        "50-100": 14,
+        "100-200": 58,
+        "200-300": 28
+      },
+      "missed_load": {
+        "year_peak_mw": 30505.0,
+        "median_load_pct_of_peak": 66.64972955253238,
+        "hours_above_90pct_peak": 16,
+        "hours_above_95pct_peak": 8
+      },
+      "reserve_family_year": {
+        "hours_with_any_shortfall": 20,
+        "total_shortfall_mwh": 11499.208984375,
+        "by_family": {
+          "east_10min_total": {
+            "hours": 4,
+            "short_mw": 594.155517578125,
+            "max_dual": 159.45777893066406
+          },
+          "nyc_10min_total": {
+            "hours": 20,
+            "short_mw": 4618.0595703125,
+            "max_dual": 25.0
+          },
+          "nyc_30min_total": {
+            "hours": 16,
+            "short_mw": 4236.5791015625,
+            "max_dual": 25.0
+          },
+          "seny_30min_total": {
+            "hours": 5,
+            "short_mw": 2050.413818359375,
+            "max_dual": 125.0
+          }
+        }
+      }
+    },
+    "2023": {
+      "year": 2023,
+      "threshold": 300.0,
+      "actual_tail_hours": 10,
+      "model_tail_hours": 0,
+      "hit": 0,
+      "missed": 10,
+      "invented": 0,
+      "missed_by_month": {
+        "1": 1,
+        "2": 1,
+        "6": 1,
+        "8": 1,
+        "9": 5,
+        "10": 1
+      },
+      "missed_by_hour_of_day": {
+        "6": 1,
+        "8": 1,
+        "15": 2,
+        "16": 4,
+        "17": 1,
+        "23": 1
+      },
+      "missed_actual_price": {
+        "min": 302.43011474609375,
+        "median": 386.33685302734375,
+        "max": 1174.8782958984375,
+        "mean": 504.6752014160156
+      },
+      "missed_model_price": {
+        "max_dual_median": 85.05038170404325,
+        "max_dual_max": 171.61116283471205,
+        "lw_median": 72.02498482763346
+      },
+      "missed_max_zone": {
+        "Long_Island": 10
+      },
+      "missed_model_state": {
+        "hours_any_slack": 0,
+        "hours_any_dump": 0,
+        "hours_any_reserve_shortfall": 4,
+        "hours_reserve_price_gt0": 5,
+        "reserve_price_median": 1.7000739464967296,
+        "reserve_price_max": 50.88596671609099
+      },
+      "missed_model_dual_bands": {
+        "<=50": 4,
+        "50-100": 1,
+        "100-200": 5,
+        "200-300": 0
+      },
+      "missed_load": {
+        "year_peak_mw": 30206.0,
+        "median_load_pct_of_peak": 83.88399655697543,
+        "hours_above_90pct_peak": 5,
+        "hours_above_95pct_peak": 4
+      },
+      "reserve_family_year": {
+        "hours_with_any_shortfall": 13,
+        "total_shortfall_mwh": 4581.3330078125,
+        "by_family": {
+          "nyc_10min_total": {
+            "hours": 13,
+            "short_mw": 3182.169677734375,
+            "max_dual": 25.0
+          },
+          "nyc_30min_total": {
+            "hours": 7,
+            "short_mw": 1399.162841796875,
+            "max_dual": 25.0
+          }
+        }
+      }
+    },
+    "2024": {
+      "year": 2024,
+      "threshold": 300.0,
+      "actual_tail_hours": 13,
+      "model_tail_hours": 0,
+      "hit": 0,
+      "missed": 13,
+      "invented": 0,
+      "missed_by_month": {
+        "4": 2,
+        "6": 1,
+        "7": 8,
+        "9": 1,
+        "12": 1
+      },
+      "missed_by_hour_of_day": {
+        "6": 1,
+        "7": 1,
+        "14": 1,
+        "15": 1,
+        "16": 4,
+        "17": 3,
+        "18": 1,
+        "19": 1
+      },
+      "missed_actual_price": {
+        "min": 312.3526611328125,
+        "median": 415.95037841796875,
+        "max": 1064.3828125,
+        "mean": 516.7142333984375
+      },
+      "missed_model_price": {
+        "max_dual_median": 58.237976019049,
+        "max_dual_max": 82.96691359988934,
+        "lw_median": 56.25682472614477
+      },
+      "missed_max_zone": {
+        "Long_Island": 13
+      },
+      "missed_model_state": {
+        "hours_any_slack": 0,
+        "hours_any_dump": 0,
+        "hours_any_reserve_shortfall": 0,
+        "hours_reserve_price_gt0": 0,
+        "reserve_price_median": 0.0,
+        "reserve_price_max": 0.0
+      },
+      "missed_model_dual_bands": {
+        "<=50": 4,
+        "50-100": 9,
+        "100-200": 0,
+        "200-300": 0
+      },
+      "missed_load": {
+        "year_peak_mw": 28990.0,
+        "median_load_pct_of_peak": 94.41186616074508,
+        "hours_above_90pct_peak": 8,
+        "hours_above_95pct_peak": 5
+      },
+      "reserve_family_year": {
+        "hours_with_any_shortfall": 5,
+        "total_shortfall_mwh": 1821.7939453125,
+        "by_family": {
+          "nyc_10min_total": {
+            "hours": 5,
+            "short_mw": 1033.48876953125,
+            "max_dual": 25.0
+          },
+          "nyc_30min_total": {
+            "hours": 4,
+            "short_mw": 788.3052978515625,
+            "max_dual": 25.0
+          }
+        }
+      }
+    },
+    "2025": {
+      "year": 2025,
+      "threshold": 300.0,
+      "actual_tail_hours": 42,
+      "model_tail_hours": 3,
+      "hit": 3,
+      "missed": 39,
+      "invented": 0,
+      "missed_by_month": {
+        "1": 5,
+        "2": 1,
+        "6": 15,
+        "7": 14,
+        "8": 2,
+        "10": 2
+      },
+      "missed_by_hour_of_day": {
+        "7": 1,
+        "8": 2,
+        "13": 1,
+        "14": 4,
+        "15": 4,
+        "16": 8,
+        "17": 9,
+        "18": 7,
+        "19": 2,
+        "20": 1
+      },
+      "missed_actual_price": {
+        "min": 301.538330078125,
+        "median": 583.594482421875,
+        "max": 1843.43408203125,
+        "mean": 609.4080810546875
+      },
+      "missed_model_price": {
+        "max_dual_median": 158.87171279828004,
+        "max_dual_max": 299.56180945814594,
+        "lw_median": 154.0465542699154
+      },
+      "missed_max_zone": {
+        "Long_Island": 38,
+        "NYC": 1
+      },
+      "missed_model_state": {
+        "hours_any_slack": 0,
+        "hours_any_dump": 0,
+        "hours_any_reserve_shortfall": 19,
+        "hours_reserve_price_gt0": 20,
+        "reserve_price_median": 3.6670356099371304,
+        "reserve_price_max": 94.80767391897973
+      },
+      "missed_model_dual_bands": {
+        "<=50": 0,
+        "50-100": 5,
+        "100-200": 21,
+        "200-300": 13
+      },
+      "missed_load": {
+        "year_peak_mw": 31857.0,
+        "median_load_pct_of_peak": 91.19188875286436,
+        "hours_above_90pct_peak": 22,
+        "hours_above_95pct_peak": 6
+      },
+      "reserve_family_year": {
+        "hours_with_any_shortfall": 28,
+        "total_shortfall_mwh": 13076.3857421875,
+        "by_family": {
+          "nyc_10min_total": {
+            "hours": 28,
+            "short_mw": 8103.53125,
+            "max_dual": 25.0
+          },
+          "nyc_30min_total": {
+            "hours": 14,
+            "short_mw": 3671.722900390625,
+            "max_dual": 25.0
+          },
+          "seny_30min_total": {
+            "hours": 6,
+            "short_mw": 1301.13134765625,
+            "max_dual": 40.0
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "year": 2022,
+  "rebuild_check": {
+    "hours": 8760,
+    "max_abs_delta_vs_committed_hub": 5.640843528453843e-05,
+    "mean_abs_delta": 1.5982599195749209e-06,
+    "committed_gt300": 101,
+    "rebuilt_gt300": 101
+  },
+  "missed_hours": 100,
+  "actual_zone_median_in_missed": {
+    "Upstate_West": 337.48427380952387,
+    "Capital_Hudson": 425.7179166666666,
+    "Lower_Hudson": 406.3802777777778,
+    "NYC": 411.7733333333333,
+    "Long_Island": 418.2725641025641
+  },
+  "model_zone_median_in_missed": {
+    "Upstate_West": 87.60054583073314,
+    "Capital_Hudson": 145.72891311872306,
+    "Lower_Hudson": 148.98241160793003,
+    "NYC": 150.76979066352203,
+    "Long_Island": 151.7592598615567
+  },
+  "actual_upstate_over_300_in_missed": 70,
+  "actual_all5_over_300_in_missed": 70,
+  "actual_only_downstate_over_300": 30,
+  "median_gap_actual_minus_model": {
+    "Upstate_West": 250.76791671836511,
+    "Capital_Hudson": 285.3670323862169,
+    "Lower_Hudson": 265.84540354783144,
+    "NYC": 268.14886610981796,
+    "Long_Island": 269.2921092612858
+  },
+  "model_mean5_median_in_missed": 144.6703142211228,
+  "actual_hub11_median_in_missed": 373.978106060606,
+  "load_pct_of_peak_median": 66.64972955253238,
+  "winter_JanFebDec": {
+    "hours": 70,
+    "actual_hub11_median": 383.31923160173164,
+    "model_mean5_median": 143.3431939027578,
+    "model_max_median": 155.68642990201175,
+    "load_pct_of_peak_median": 65.1778396984101,
+    "actual_upstate_median": 355.90825000000007,
+    "model_upstate_median": 83.80742389215648,
+    "actual_LI_median": 408.23398809523803,
+    "model_LI_median": 155.68642990201175
+  },
+  "summer_JunJulAug": {
+    "hours": 23,
+    "actual_hub11_median": 359.3384848484848,
+    "model_mean5_median": 167.42441113906887,
+    "model_max_median": 174.22434744074226,
+    "load_pct_of_peak_median": 92.25372889690213,
+    "actual_upstate_median": 313.7626666666667,
+    "model_upstate_median": 150.09504595372914,
+    "actual_LI_median": 500.62583333333333,
+    "model_LI_median": 174.22434744074226
+  }
+}
