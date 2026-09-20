@@ -80,8 +80,16 @@ def _leg_year(leg: Path) -> int:
     return int(years[0])
 
 
+#: The FOUR price-tuning bands rule 1 ``[R-STRUCT]``'s carve-out names. The other
+#: ``offer_curve_by_group`` keys — ``econ_low_share``, ``pct_peaking`` — are
+#: STRUCTURAL shares the carve-out explicitly EXCLUDES, they are not 1.0 on any
+#: ISO, and they arrive verbatim from the ISO-agnostic ``GENERIC_BASE_OFFER_CURVE``.
+#: Checking them for the identity would be a category error.
+PRICE_TUNING_BANDS = ("committed", "econ_low", "econ_high", "peak")
+
+
 def _assert_bands_identity(leg: Path, sc: dict) -> None:
-    """Gate G17: every offer_curve_by_group band stays at the identity 1.0.
+    """Gate G17: every price-tuning band stays at the identity 1.0.
 
     SOCO has no price benchmark, so the rule-1 authorized price-tuning channel
     is unreachable here rather than merely unused. A non-1.0 band on any leg is
@@ -89,11 +97,11 @@ def _assert_bands_identity(leg: Path, sc: dict) -> None:
     """
     bands = sc.get("offer_curve_by_group") or {}
     off = {
-        f"{grp}.{band}": val
+        f"{grp}.{band}": row[band]
         for grp, row in bands.items()
         if isinstance(row, dict)
-        for band, val in row.items()
-        if isinstance(val, (int, float)) and float(val) != 1.0
+        for band in PRICE_TUNING_BANDS
+        if band in row and float(row[band]) != 1.0
     }
     if off:
         raise SystemExit(f"{leg.name}: offer_curve_by_group bands off identity: {off}")
