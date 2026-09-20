@@ -364,9 +364,9 @@ The synthetic fixture and its banner are **deleted**. The page reads
 `frontend/data/mac/manifest.js`, a generated index over committed per-grid-year sidecars built by
 `scripts/build_mac_sidecar.py` (zero LP).
 
-**Coverage: 5 of 9 grids × 3 years = 15 grid-years.** ERCOT, MISO, NEISO, NYISO, SOCO.
-CAISO, NWPP, PJM and SPP keepers still carry no emissions dual. SPP's `spp49_benchmembership_span`
-has it for 2019–2022, which are not this page's years.
+**Coverage: 6 of 9 grids × 3 years = 18 grid-years** (refreshed 2026-09-20 onto `5aea4d03`).
+CAISO, ERCOT, MISO, NEISO, NYISO, SOCO. NWPP, PJM and SPP keepers still carry no emissions dual;
+SPP's `spp49_benchmembership_span` has it for 2019–2022, which are not this page's years.
 
 ### Defects the real data exposed
 
@@ -413,6 +413,7 @@ properly is a one-line sidecar addition on the solve path: commit the run's own 
 
 | Grid | 2023 wind | 2023 solar | 2024 wind | 2024 solar | 2025 wind | 2025 solar |
 |---|---|---|---|---|---|---|
+| CAISO | −61.1 / −33.3 | 22.5 / 50.6 | −5.5 / 18.2 | 64.2 / 97.7 | −9.0 / 16.0 | 71.3 / 107.8 |
 | ERCOT | −8.8 / 14.8 | −41.0 / −18.1 | 12.5 / 36.1 | 25.2 / 48.4 | 3.2 / 29.3 | 26.2 / 53.2 |
 | MISO | −1.6 / 22.1 | 9.3 / 32.1 | 2.3 / 27.4 | 16.5 / 40.1 | −15.0 / 8.9 | 0.4 / 23.9 |
 | NEISO | −10.0 / 15.8 | 13.9 / 39.8 | −21.4 / 3.5 | 9.8 / 34.5 | −83.2 / −56.8 | −29.6 / −3.1 |
@@ -429,6 +430,22 @@ question for that grid's lane, not this page's.
 The repo's own published ladder (`import_tranche_ef` / `CARB_UNSPECIFIED_IMPORT_EF` — the factors
 the solved run books its reported-only import CO₂ at), scoped to hours the LP's *own* import
 pseudo-units are serving. A grid with no import node gets exactly 0.0 by construction.
+
+**CAISO is where this matters, and it arrived with the 2026-09-20 refresh.** 22.2 / 26.1 / 31.8 %
+of its hours read zero, and **19.8 / 25.1 / 30.9 % of them are import-marginal** — so almost the
+whole zero-rate tail there is emissions happening across the border, not clean power. The
+correction moves CAISO 2025 solar from **$92.2 to $71.3/tCO₂** (−23 %) and 2024 solar from $77.0
+to $64.2. Every other grid moves by a few per cent or not at all.
+
+**A known conservatism in the CAISO factor, stated rather than buried.** The rate used is the
+**unweighted mean over all ten published CAISO import tranches, 0.1348 tCO₂/MWh** — and seven of
+those ten are zero-emission must-take tranches (PNW hydro, mid-C, the DSW clean blocks). A tranche
+that is genuinely must-take is not the thing that responds at the margin, so the marginal import is
+more likely one of the three dispatchable tranches, whose mean is **0.4493**. Using that instead
+would roughly triple the correction and cut CAISO solar further. The committed sidecars do not say
+*which* tranche is marginal in a given hour, so the uniform mean is the no-extra-assumption choice
+— and it errs toward **overstating** abatement cost, which is the safer direction for a page about
+how cheap abatement is. Resolving it needs per-tranche hourly dispatch, which is not committed.
 
 ### Files
 
