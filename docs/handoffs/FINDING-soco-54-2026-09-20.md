@@ -425,6 +425,59 @@ keeper is untouched either way.
 
 ---
 
+---
+
+## 12. PROMOTED — OWNER RULING, 2026-09-20 (executed in this session)
+
+**Owner:** *"Is this a recommended keeper candidate? If so plz promote. If structural integrity
+improves but gates regress that may still be a keeper."* It was recommended (§11), so it is promoted.
+**SOCO's keeper is now `2026-09-20-soco54-marginal-gas-basis`.**
+
+**Both halves of the owner's standing rule are engaged here, in opposite directions, and that is
+stated rather than smoothed:** structural integrity improves **and** the gates improve on the
+**committed** bench (C1 13/14 → **14/14**); on a **freshly rebuilt** bench the headline **regresses**
+to `NOT-YET` on a *different* row (2024 `CC_REGULAR`). The rule reaches this case either way, and the
+promotion rests on rule 1 `[R-STRUCT]` — a contract multiplier that reprices 2.3× in two years with
+no physical cause was setting SOCO's merit order, and it no longer is.
+
+**Rule 35 `[R-PROMOTE]` executed in order:**
+1. **(b) Year union enumerated BEFORE any delete** — `{2023, 2024, 2025}` over all three SOCO
+   sidecars. **(c)** The incoming keeper covers all three in its own bundle; **no year is lost**.
+2. **(e) Promote → verify → delete.** The keeper shard was re-keyed, `build_status.py --iso SOCO`
+   rebuilt (`SOCO:PHYSICALLY-CALIBRATED (PRICE UNSCORED)`), and `audit_keepers` **E1 verified clean on
+   the incoming run** before anything was removed.
+3. **(a) The outgoing keeper's three stores pruned** — `prune_iso_runs.py --iso SOCO --keep
+   2026-09-20-soco53g-prb-own-iso --force-uncite` removed `registry/2026-09-20-soco53f-measured-coal-hr.json`,
+   `runs/<id>.js` and `results/calibration/soco53f_coal_hr` together. `--force-uncite` is the
+   **intended** route (rule 35(d)): the citation it dangles is this promotion's own
+   `keeper_at_promotion_soco54` provenance field, which rule 35(d) says stays as history. **The bundle
+   is recoverable from git history at `e7c57737145fb763bd623580de3f4bb8bce7f860`** (17 files).
+4. **`calibration-complete.json` needed no re-key** — SOCO has never had an entry there; its keeper
+   shard is the designation. **None was invented.**
+5. **Rule 28 re-stamp** — the SOCO matrix shard's `keeper` and `gates`, the §5.8 prose header, and the
+   `gas_plant_monthly_pricing` cell **`O` → `K`**. `check_mechanism_matrix --base origin/main` green on
+   all seven checks including the keeper-stamp and prose-header ties.
+
+**`2026-09-20-soco53g-prb-own-iso` WAS NOT SWEPT UP.** It is a separate candidate the owner has **not**
+ruled on, it was explicitly `--keep`-listed through the prune, and **`audit_keepers` E13 still fires
+for it** — correctly. Rule 31 `[R-RETAIN]` forbids deleting it and rule 30(a) forbids stamping it to a
+keeper it is not a rung of. **It needs its own ruling.**
+
+**A gate limitation found during the promotion, and ROUTED rather than worked around.**
+`audit_keepers` E5 initially failed the new sidecar: `_DET_TOKENS` is
+`("CALIBRATED-WITH-CAVEATS", "NOT-YET", "CALIBRATED")` and has **no `PHYSICALLY-CALIBRATED` entry**, so
+for a rubric-v3.8 price-unscored ISO *every* accurate determination sentence mis-fires — naming the
+live verdict matches the bare `CALIBRATED` substring, and naming the superseded one matches `NOT-YET`.
+**A price-unscored ISO therefore cannot state its determination in a sidecar `definition` at all.** The
+definition was rewritten as a **recipe description carrying no determination token** (the convention
+the outgoing keeper's sidecar also followed), with the determination left where it belongs — in
+`metrics.json`, the status page, the keeper-shard note and this document. **E5 now passes.** Adding the
+`PHYSICALLY-CALIBRATED (PRICE UNSCORED)` family to `_DET_TOKENS` is the scoring desk's, not a lane's.
+
+**Post-promotion state:** `audit_keepers --iso SOCO` = **1 failure (E13 on the unruled 53g) + 1 warning
+(E11, a bundle pruned two promotions ago)**, both re-raised not cleared; `holdout`, `marker` and
+`status` all pass; `check_mechanism_matrix` green.
+
 ## Log entry
 
 ## soco-54 — 2026-09-20 — SOCO's gas steam was priced out of its own merit order by a contract multiplier, and removing it closes C1

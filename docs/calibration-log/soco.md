@@ -1000,3 +1000,20 @@ pass `--note`.**
 leg dirs, 0 tracked on HEAD); `check_cache_key_registration` and `check_bench_freshness` RED at HEAD,
 not this lane's. **Nothing was deleted.** All three shards archived. **Promotion question put to the
 owner.**
+
+**PROMOTED 2026-09-20, same session, on the owner's ruling** (*"If so plz promote"*). SOCO's keeper is
+now `2026-09-20-soco54-marginal-gas-basis`. Rule 35 `[R-PROMOTE]` in order: year union `{2023,2024,2025}`
+enumerated **before** any delete and fully covered by the incoming bundle; keeper shard re-keyed and
+`build_status.py --iso SOCO` rebuilt; **E1 verified clean on the incoming run**; then the outgoing
+`2026-09-20-soco53f-measured-coal-hr`'s three stores pruned via `--force-uncite` (the intended route —
+the dangled citation is this promotion's own provenance field), bundle recoverable at
+`e7c57737145fb763bd623580de3f4bb8bce7f860`. `calibration-complete.json` needed no re-key — SOCO has
+never had an entry and none was invented. Matrix re-stamped: shard keeper + gates, §5.8 header, and
+`gas_plant_monthly_pricing` **O → K**. **`2026-09-20-soco53g-prb-own-iso` was `--keep`-listed and NOT
+swept up — it is still unruled, E13 still fires for it, and it needs its own ruling.**
+**Gate limitation routed:** `audit_keepers` E5's `_DET_TOKENS` has no `PHYSICALLY-CALIBRATED` entry, so
+a price-unscored ISO cannot state its determination in a sidecar definition at all — naming the live
+verdict matches the bare `CALIBRATED` substring and naming the superseded one matches `NOT-YET`. The
+definition is recipe-only, as the outgoing keeper's also was; extending `_DET_TOKENS` is the scoring
+desk's.
+
