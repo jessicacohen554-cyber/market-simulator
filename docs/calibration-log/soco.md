@@ -1017,3 +1017,168 @@ verdict matches the bare `CALIBRATED` substring and naming the superseded one ma
 definition is recipe-only, as the outgoing keeper's also was; extending `_DET_TOKENS` is the scoring
 desk's.
 
+## soco-55 — 2026-09-20
+
+TWO results; the first is a DATA decision this desk owed and it outranked the lever.
+
+(1) THE BENCH. check_bench_freshness was RED for SOCO ALONE repo-wide -- 44 parts
+checked, 3 STALE (a hard ::error) against 41 warning-level engine drift on every
+other ISO. Rebuilt at HEAD (zero LP, 37 s) and the incumbent keeper
+2026-09-20-soco54-marginal-gas-basis re-scored on it: 2024 CC_REGULAR crosses
++7.417 -> +7.505 TWh against a +/-7.47 band, on a -0.088 TWh change in that row's
+benchmark ACTUAL, so C1 reads 13/14 and SOCO'S PUBLISHED HEADLINE MOVES OFF ITS
+CEILING TO NOT-YET. PRECOMMIT-soco-54 P4 pre-registered exactly that row at 81 %
+of its margin. NO DISPATCH MOVED: every keeper hourly sidecar is byte-identical to
+the day it was solved and its 297 KB run payload re-renders byte-identical -- only
+the benchmark moved, and the ceiling reading had rested on a bench that could not
+be reproduced from the builder at HEAD. check_bench_freshness now reads 0 STALE.
+The keeper's per-plant layer, believed lost with the SOCO-54 shard branches, was
+RECOVERED AT ZERO LP: the refs are gone but the objects are still on the remote,
+and git fetch origin <40-char-sha> retrieved all three legs; composed, they
+reproduce the committed keeper's twelve hourly sidecars BYTE-FOR-BYTE.
+
+(2) THE LEVER. Run 2026-09-20-soco55-peryear-gas-basis (bundle
+results/calibration/soco55_peryear_basis), a registered CANDIDATE the owner has NOT
+ruled on; the keeper is unchanged and nothing was pruned. ONE delta:
+gas_basis_differential_measured_by_year = true. GAS_BASIS_DIFFERENTIAL['SOCO'] =
+0.64 is the 2024 value applied to every year and its own comment calls it a
+"forward-year / fallback value only", but SOCO-54 promoted that fallback onto
+SOCO's PRIMARY backcast gas path -- so 2023 carried +0.15 $/MMBtu (~+$1.65/MWh) on
+every SOCO gas unit. SOCO-54 declared the imprecision against itself and ROUTED the
+repair; this lane took it on the source-data citation (rule 23), re-deriving at HEAD
+and reproducing SOCO-20's committed comment exactly: +0.4931 / +0.6395 / +0.6540,
+registered at the 2dp every other GAS_BASIS_DIFFERENTIAL row carries -- a convention
+fixed BEFORE the solve, whose declared consequence is that 2024 is byte-identical.
+
+THE RESULT IS AGAINST THE LANE AND THE INPUT IS KEPT ANYWAY. The 2023 residual gets
+LARGER: CT_PEAKER 10.668 -> 11.413 TWh (actual 4.503; share +2.56 -> +2.87pp of a
++/-3.00pp cap, headroom collapsing 0.44 -> 0.13pp), COAL_PRB 21.722 -> 20.443
+(22.151), CC_REGULAR 112.126 -> 112.312 (107.960); only ST_GAS improves, 3.986 ->
+4.293 (10.442). Every row still PASSES, C1 stays 13/14 with the SAME single failing
+row, determination NOT-YET -- which PRECOMMIT-soco-55 P7 pre-registered verbatim.
+Rule 14 [R-ACCURATE] is the governing text: a worse fit after an accurate input is a
+DISCOVERED BUG, not a reason to revert to an estimate that was silently compensating.
+
+WHAT IT LOCALIZES, the lane's real product: 95 % of the 1.279 TWh coal displacement
+is ONE PLANT -- 6002 James H Miller Jr, 15.838 -> 14.626 against a 15.701 actual --
+and about half the energy it sheds lands on merchant turbines already far above their
+actuals (55409 Calhoun +0.115 vs 0.026; 55061 Tenaska Georgia +0.111 vs 0.238; 7709
+Dahlberg +0.109 vs 0.243) while the other half lands correctly on 2049 Jack Watson
+(+0.147 toward 3.270, partially repairing SOCO-54's routed miss) and 728 Yates
+(+0.087 toward 2.239). THE NAMED SUCCESSOR IS THE CT_PEAKER / COAL_PRB MERIT ORDER,
+NOT THE GAS BASIS.
+
+GOVERNANCE. ZERO free parameters (n_residual unchanged at 1); ONE new default-off
+ScenarioConfig gate, registered in _CACHE_KEY_OPTIONAL_FIELDS at "False" in the same
+commit as the field so NO pre-existing cache key moves; declared in
+solve_surface_declared at its live hash (SOCO 182 -> 183 rows, moved_rows {}); the
+SCALAR machine-verified UNTOUCHED at 0.64, because this lane GATES it rather than
+editing it. Rule 19 at two grains before the solve: the six GAS classes move on
+fuel_prices AND mc_base, every other class at max |delta| EXACTLY 0.000000000000 in
+all three years, and 2024 is 0.000000000000 at BOTH grains -- confirmed byte-identical
+on all eight 2024 artifacts including dispatch/2024_P1.parquet and floors/2024_P1.npz.
+Rule 25: the measured table carries a SOCO row AND NOTHING ELSE, machine-verified.
+ALL FOURTEEN pre-registered predictions HELD; the declared #1 risk (2023 CT_PEAKER
+crossing to FAIL) materialised SHORT of a flip and is reported at full magnitude.
+C2/C4/C6/C8 PASS, C3a/b/c UNSCORABLE, 0 ledgered and 0 protective caveats, rule 17
+holds in all fifteen plant-years, D-1 carries the same three COAL_BIT failures as the
+keeper. Three shards, one year each (rule 36), pinned to 2a790121, 2.60-2.65 GiB peak
+and 107-118 s each; all three ARCHIVED after fetch + checkout + verify.
+
+REPORTED, NOT TAKEN: other ISOs DO carry constant-multiplier contract families.
+Measured zero-LP with SOCO-54's own method (largest set of reporting plants whose
+monthly delivered-price ratio series is flat at CV <= 0.001), 2023/2024/2025: SPP
+6/63, 50/60, 50/54 -- on a keeper that ARMS gas_plant_monthly_fuel_pricing; ERCOT
+9/20, 10/23, 26/26; SOCO 7/24, 8/25, 8/26; MISO 7/102, 7/98, 6/100; PJM 6/26, 6/25,
+6/23; NWPP 3/28, 4/29, 3/26; NYISO and CAISO NONE in any year; NEISO void at 1
+reporting plant. Rules 25 / 28(d): no other ISO's cell is filled and no verdict
+transfers.
+
+GATES. check_bench_freshness 0 STALE (cleared by this lane). check_mechanism_matrix
+--base origin/main PASS, "1 new field(s) all registered". audit_keepers --iso SOCO:
+E13 fires for the SEVENTH consecutive lane on 2026-09-20-soco53g-prb-own-iso, an
+unruled candidate -- RE-RAISED, NOT CLEARED, and the owner is asked for a ruling;
+E11 expected; S1 went stale on the bench rebuild and WAS repaired.
+check_registry_payload_parity RED LOCALLY / GREEN IN CI on this session's own
+gitignored bundles, all verified check-ignore-clean with 0 tracked files -- no result
+deleted. check_cache_key_registration still RED at HEAD for PPA_COST_RECOVERY_YR and
+REGIONAL_RENEWABLE_CF; this lane declared its OWN name only. tests/unit/config +
+tests/regression/test_persisted_identity.py fail 11 at origin/main and 11 with this
+change, measured both ways in a clean worktree: ZERO new failures.
+
+PROMOTION IS OPEN AND IS THE OWNER'S (rule 31). Recommendation: PROMOTE, on rules 1
+and 14 and explicitly NOT on the residual, which got worse. Cost from the current
+state: ZERO re-solves. Record: docs/handoffs/PRECOMMIT-soco-55-2026-09-20.md,
+docs/handoffs/FINDING-soco-55-2026-09-20.md.
+
+## soco-55 PROMOTION — 2026-09-20
+
+OWNER RULED, verbatim: "Is this a recommended keeper candidate? If so plz promote.
+If structural integrity improves but gates regress that may still be a keeper."
+
+SOCO's KEEPER IS NOW 2026-09-20-soco55-peryear-gas-basis (bundle
+results/calibration/soco55_peryear_basis, 17 committed slim files). Rule 35
+[R-PROMOTE] executed in the promoting session, in order: (b) the year union
+{2023,2024,2025} enumerated over all three registered SOCO sidecars BEFORE any
+delete; (c) the incoming keeper covers that union in ONE composed span, so the
+promotion SHRINKS NOTHING; (e) the new designation written and audit_keepers
+re-run -- resolving the incoming keeper's three stores -- BEFORE prune_iso_runs
+touched anything; (a) the outgoing keeper 2026-09-20-soco54-marginal-gas-basis
+then had its THREE STORES deleted together via prune_iso_runs.py --iso SOCO
+--force-uncite (registry sidecar, runs/<id>.js, results/calibration/
+soco54_marginal_gas), recoverable from git history at the SOCO-55 branch point.
+
+2026-09-20-soco53g-prb-own-iso was DELIBERATELY NOT PRUNED (passed to --keep).
+The ruling names the recommended candidate, which was this lane's; it does not
+dispose of soco53g. Rule 31 [R-RETAIN] forbids deleting it and rule 30(a) forbids
+stamping it, so audit_keepers E13 still fires ONCE -- down from twice -- and is
+RE-RAISED, not cleared. The lane's recommendation stands: decline it, and let the
+next promoting session prune it.
+
+ON THE OWNER'S STANDARD, STATED PRECISELY BECAUSE THIS CASE IS NOT THE ONE IT
+ANTICIPATES: the ruling contemplates structural gain paid for by a gate
+regression. HERE THE GATES DO NOT MOVE AT ALL -- determination NOT-YET, C1 13/14,
+C2/C4/C6/C8 PASS, C3a/b/c UNSCORABLE, 0 ledgered and 0 protective caveats,
+grade_summary identical on both sides of the A/B -- and the single failing row is
+2024 CC_REGULAR, in a year this keeper's delta is PROVABLY INERT in. What
+regresses is the 2023 RESIDUAL (CT_PEAKER +6.165 -> +6.910 TWh against actual,
+COAL_PRB -0.429 -> -1.708, CC_REGULAR +4.166 -> +4.352; only ST_GAS improves), and
+rule 14 [R-ACCURATE] is why it is kept rather than reverted: a worse fit after an
+ACCURATE input is a DISCOVERED BUG. The promotion buys STRUCTURE and a NAMED
+SUCCESSOR OBJECT -- the CT_PEAKER / COAL_PRB merit order at 6002 James H Miller Jr
+-- not a gate.
+
+REBASED ONTO origin/main (27 upstream commits) BEFORE PROMOTING, and the numbers
+re-verified across them: both runs re-score to their committed metrics.json
+byte-for-byte, same determination, same single failing row. Two conflicts, both
+mechanical -- 66 mechanism-matrix.js hunks differing ONLY in stale line-number
+anchors (verified programmatically 66/66; this lane's new base row sat outside
+every conflict region), and one additive tail collision in
+_CACHE_KEY_OPTIONAL_FIELDS where SPP-66 and xiso-8 appended to the same HOUSE-3
+slot, resolved by KEEPING BOTH SIDES.
+
+CORRECTION FORCED BY THE REBASE, stated rather than left to be discovered: the
+shards were solved at pinned SHA 2a7901215f5f8d78835cf3e314caffe06d8c656b, which
+the rebase makes no longer an ancestor of this branch. The pin remains an accurate
+record of what the shards cloned -- provenance, not a durability claim -- but a
+reader should not expect to find it in the branch history. Nothing about the
+solves changed.
+
+RE-STAMPED IN THE PROMOTING SESSION (rule 28 [R-MECH-MATRIX]): the SOCO matrix
+shard's keeper + gates line and the §5.8 prose header, both of which the matrix
+gate turned RED on the promotion and both now GREEN. status/SOCO.js rebuilt
+(SOCO:NOT-YET). calibration-complete.json carries NO SOCO entry -- confirmed, not
+assumed -- so nothing to re-key there.
+
+POST-PROMOTION GATES: check_mechanism_matrix --base origin/main GREEN including
+keeper stamps and §5.x prose headers; check_bench_freshness 0 STALE;
+audit_keepers holdout/marker/status all pass with the one expected E13 and the
+expected E11. check_registry_payload_parity RED LOCALLY on eight of this session's
+own gitignored working bundles (all verified check-ignore-clean, 0 tracked files)
+plus results/calibration/nwpp44_takeorpay_2025 -- which is NWPP-44's, already on
+origin/main at ee276d87, touched by none of this lane's commits, and REPORTED not
+touched (rule 25 [R-ISO-SCOPE]).
+
+DO NOT CITE PHYSICALLY-CALIBRATED (PRICE UNSCORED) FOR ANY SOCO RUN GOING FORWARD:
+the bench that produced that reading was stale and was rebuilt this session.
+Record: docs/handoffs/FINDING-soco-55-2026-09-20.md §12.

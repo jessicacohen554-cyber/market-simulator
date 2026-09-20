@@ -12,6 +12,7 @@
     "coal_prb_passthrough_sigmoid": true,
     "coal_prb_passthrough_tiered": true,
     "coal_prb_sigmoid_overrides": {
+      "gas_basis_differential_measured_by_year": true,
       "gas_plant_monthly_fuel_pricing": false,
       "measured_coal_heat_rates": true
     },
@@ -28,7 +29,7 @@
       "2024": 2.19,
       "2025": 3.52
     },
-    "git_sha": "d85e0c47",
+    "git_sha": "2a790121",
     "hours": 8760,
     "iso": "SOCO",
     "nyiso_dynamic_reserve_requirements": null,
@@ -51,9 +52,9 @@
     ]
   },
   "composed_from": [
-    "soco54_arm_2023",
-    "soco54_arm_2024",
-    "soco54_arm_2025"
+    "soco55_arm_2023",
+    "soco55_arm_2024",
+    "soco55_arm_2025"
   ],
   "environment": {
     "cache_key_path_roots": [
@@ -75,47 +76,47 @@
     "python_version": "3.11.15"
   },
   "git": {
-    "basis_sha": "d85e0c47567b0ae8258a99920d512fd3fe8fe1df",
-    "branch": "HEAD",
+    "basis_sha": "2a7901215f5f8d78835cf3e314caffe06d8c656b",
+    "branch": "claude/soco55-arm-2023",
     "changed_files": [],
     "diffstat": "",
     "dirty": false,
-    "sha": "d85e0c47"
+    "sha": "2a790121"
   },
-  "model_changes_note": "BTM-basis re-solve: byte-faithful replay of the committed keeper config from meta.json, adding btm.parquet (behind-the-meter CHP held out of the LP) so the benchmark scores on the grid-delivered basis.",
+  "model_changes_note": "SOCO-55 ARM 2023: gas_basis_differential_measured_by_year=true (the year's OWN measured EIA-923 delivered-gas basis +0.49 replaces the year-invariant 0.64 scalar), year-isolated (rule 36)",
   "per_leg_provenance": {
     "2023": {
       "git": {
-        "basis_sha": "d85e0c47567b0ae8258a99920d512fd3fe8fe1df",
-        "branch": "HEAD",
+        "basis_sha": "2a7901215f5f8d78835cf3e314caffe06d8c656b",
+        "branch": "claude/soco55-arm-2023",
         "changed_files": [],
         "diffstat": "",
         "dirty": false,
-        "sha": "d85e0c47"
+        "sha": "2a790121"
       },
-      "timestamp": "2026-09-20T03:24:51"
+      "timestamp": "2026-09-20T04:30:11"
     },
     "2024": {
       "git": {
-        "basis_sha": "d85e0c47567b0ae8258a99920d512fd3fe8fe1df",
-        "branch": "HEAD",
+        "basis_sha": "2a7901215f5f8d78835cf3e314caffe06d8c656b",
+        "branch": "claude/soco55-arm-2024",
         "changed_files": [],
         "diffstat": "",
         "dirty": false,
-        "sha": "d85e0c47"
+        "sha": "2a790121"
       },
-      "timestamp": "2026-09-20T03:26:23"
+      "timestamp": "2026-09-20T04:30:34"
     },
     "2025": {
       "git": {
-        "basis_sha": "d85e0c47567b0ae8258a99920d512fd3fe8fe1df",
-        "branch": "HEAD",
+        "basis_sha": "2a7901215f5f8d78835cf3e314caffe06d8c656b",
+        "branch": "claude/soco55-arm-2025",
         "changed_files": [],
         "diffstat": "",
         "dirty": false,
-        "sha": "d85e0c47"
+        "sha": "2a790121"
       },
-      "timestamp": "2026-09-20T03:26:03"
+      "timestamp": "2026-09-20T04:31:03"
     }
   },
   "resolved_inputs": {
@@ -605,6 +606,7 @@
     "forecast_fossil_retirement_economic": true,
     "forecast_xyear_warmstart": true,
     "fossil_announced_exits_enabled": true,
+    "gas_basis_differential_measured_by_year": true,
     "gas_daily_shape": false,
     "gas_electric_power_monthly_level": false,
     "gas_hh_monthly_shape": false,
@@ -1148,12 +1150,12 @@
   },
   "solve_surface": {
     "epochs": [],
-    "fingerprint": "60895cac1f7c8879",
-    "git_sha": "d85e0c47",
+    "fingerprint": "36087ac69210fdb2",
+    "git_sha": "2a790121",
     "iso": "SOCO",
     "moved": {},
-    "rows": 182,
+    "rows": 183,
     "schema": 1
   },
-  "timestamp": "2026-09-20T03:24:51"
+  "timestamp": "2026-09-20T04:30:11"
 }

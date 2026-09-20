@@ -3012,3 +3012,28 @@ results/calibration/pjm_h13_meritalloc_2025/
 #   git checkout c5948456 -- results/calibration/spp66_netwin_2024
 #   git checkout 8cc56931 -- results/calibration/spp66_netwin_2025
 results/calibration/spp66_netwin_*/
+# ---------------------------------------------------------------------------
+# SOCO-55 (2026-09-20) working bundles. Rule 31 [R-RETAIN]: these are IGNORED,
+# never deleted — .gitignore is what discharges rule 29 [R-SCREEN] (c), `rm`
+# never does. Expect `check_registry_payload_parity.py` to read RED LOCALLY on
+# them while CI stays green (it walks the FILESYSTEM at :437, which rule 31's
+# 2026-09-16 correction documents); do NOT "fix" that by deleting a result.
+#
+#   soco55_keeper_fat        the incumbent keeper's per-plant layer, RECOVERED
+#                            at ZERO LP from the three SOCO-54 leg SHAs below
+#                            and verified byte-identical on all twelve committed
+#                            hourly sidecars. Its fat files were copied into
+#                            results/calibration/soco54_marginal_gas/ (also
+#                            ignored there) so the keeper could be re-rendered
+#                            and re-scored on the rebuilt bench.
+#   soco55_arm_<year>        this lane's per-year arm legs (rule 36
+#                            [R-YEAR-ISOLATION] (a)), composed by the parent.
+#
+# NOTE ON RECOVERY, measured by this lane and correcting rule 33(d)'s pessimism:
+# the SOCO-54 shard BRANCHES are gone, but their OBJECTS are still on the remote
+# and `git fetch origin <40-char-sha>` retrieves them. The retention window is
+# undocumented and unguaranteed, so rule 33(f) still stands — land what must
+# survive on `main` — but TRY the SHA fetch before costing a re-solve.
+results/calibration/soco55_keeper_fat/
+results/calibration/soco55_composer_validation/
+results/calibration/soco55_arm_20[0-9][0-9]/

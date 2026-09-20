@@ -586,4 +586,5 @@ DECLARED: dict[str, str | dict[str, str]] = {
     # the TOTAL EAST cutset envelope is dropped at its as-committed value so
     # every pre-existing key stays valid, and a later re-derive re-keys NYISO.
     "NYISO_CUTSET_TTC_ENVELOPE_BY_MONTH": "5774ef6d32b9d91b",
+    "GAS_BASIS_DIFFERENTIAL_MEASURED_BY_YEAR": {"SOCO": "f8cc22e122024b9c"},
 }

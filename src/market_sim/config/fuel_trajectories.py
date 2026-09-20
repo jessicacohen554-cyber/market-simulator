@@ -412,6 +412,68 @@ GAS_BASIS_DIFFERENTIAL: dict[str, float] = {
     "SOCO": 0.64,
 }
 
+# Per-YEAR MEASURED delivered-gas basis ($/MMBtu), by ISO — the same
+# construction as :data:`GAS_BASIS_DIFFERENTIAL` above, keyed by the year whose
+# receipts it was measured on instead of collapsed to one "2024 avg" scalar.
+# Consulted ONLY when ``ScenarioConfig.gas_basis_differential_measured_by_year``
+# is armed AND the (iso, year) pair has a row here; every other ISO, and every
+# year outside a row (a forecast year, a year whose receipts are not yet
+# filed), falls through to the scalar above unchanged.
+#
+# WHY IT EXISTS (rule 14 [R-ACCURATE], rule 23 [R-FROZEN-DERIVE]). The scalar
+# is ONE year's value applied to every year, and it is documented in its own
+# comment as a "forward-year / fallback value only". Lane SOCO-54 (2026-09-20)
+# turned ``gas_plant_monthly_fuel_pricing`` OFF for SOCO, which promoted that
+# declared FALLBACK onto SOCO's PRIMARY backcast gas-pricing path: since then
+# ``resolve_annual_gas_price`` returns ``gas_price_override + 0.64`` for every
+# SOCO gas unit in every year, so 2023 carries a +0.15 $/MMBtu error
+# (~+$1.65/MWh at ~11 MMBtu/MWh) on the whole gas block. SOCO-54's own
+# ADDENDUM declared that imprecision at full magnitude and ROUTED the repair
+# rather than taking it, because taking it after seeing that lane's result
+# would have been selecting a parameter on the outcome. This table is that
+# routed repair, taken as its own single-delta change on the SOURCE-DATA
+# citation below and never on a residual.
+#
+# DERIVATION — re-run at HEAD by lane SOCO-55 (2026-09-20) and reproducing
+# SOCO-20's committed numbers exactly. Quantity-weighted EIA-923 Schedule-2
+# delivered natural-gas cost to the SOCO balancing authority's own gas plants
+# (``data/raw/_processed-legacy/eia923_monthly_fuel_costs.parquet``, plants
+# taken from the run's own EIA-860 SOCO fleet), MINUS the Henry Hub annual mean
+# (``data/raw/gas-prices/henry_hub_monthly.csv``):
+#
+#   year  plants  quantity (MMBtu)  q-wt delivered   Henry Hub   basis
+#   2023      26       646,487,128          3.0288      2.5357  +0.4931
+#   2024      27       650,711,973          2.8320      2.1925  +0.6395
+#   2025      27       641,283,196          4.1829      3.5289  +0.6540
+#
+# PRECISION IS THE FAMILY CONVENTION, FIXED BEFORE THE SOLVE AND NOT
+# SELECTABLE BY A RESULT (rule 1 [R-STRUCT]): every row of
+# ``GAS_BASIS_DIFFERENTIAL`` is 2dp, and SOCO-20's comment publishes this
+# derivation's own output at 2dp. A rule-23 re-derivation reproduces the SAME
+# construction at the SAME precision and changes only the year it is keyed by.
+# The 4dp values are recorded above for the record. A consequence, declared
+# here rather than discovered later: at 2dp the 2024 value is UNCHANGED
+# (0.6395 -> 0.64 -> 0.64), so an armed 2024 solve is predicted byte-identical
+# to an unarmed one.
+#
+# ZERO FREE PARAMETERS (rules 21 [R-DOF] / 24 [R-REGISTRY]). Each value is a
+# measurement of committed source data, not a fitted quantity; the DOF ledger
+# carries them with that identification source. Rule 13 [R-MEASURED]: the same
+# quantity is producible for a forward year from that year's own receipts and
+# responds to changed conditions, and where no receipts exist the scalar
+# forward basis is used unchanged — so this is a measured INPUT, never an
+# outcome fed back.
+#
+# Rule 25 [R-ISO-SCOPE]: SOCO's derivation is SOCO's. No other ISO has a row
+# here, and a peer lane that wants one derives it from its OWN receipts.
+GAS_BASIS_DIFFERENTIAL_MEASURED_BY_YEAR: dict[str, dict[int, float]] = {
+    "SOCO": {
+        2023: 0.49,
+        2024: 0.64,
+        2025: 0.65,
+    },
+}
+
 # CAISO citygate -> burner-tip transport adder ($/MMBtu). The CAISO gas-hub
 # overlay (gas_hub_basis_overlay) reprices each gas unit at the measured SoCal /
 # PG&E Citygate spot (EIA N3050CA3 - Henry Hub, data/raw/gas_basis_by_iso_month.csv).

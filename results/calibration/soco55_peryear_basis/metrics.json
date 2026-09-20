@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-09-20-soco54-marginal-gas-basis",
+  "run_id": "2026-09-20-soco55-peryear-gas-basis",
   "iso": "SOCO",
-  "label": "soco54 marginal gas basis",
+  "label": "soco55 peryear gas basis",
   "target_years": [
     2023,
     2024,
@@ -19,16 +19,17 @@
     2025
   ],
   "rubric_version": 3.8,
-  "determination": "PHYSICALLY-CALIBRATED (PRICE UNSCORED)",
+  "determination": "NOT-YET",
   "reasons": [
-    "PRICE UNSCORED \u2014 no actual_lmp.json block exists for SOCO, so C3a mean LMP, C3b price duration/shape and C3c price tail / scarcity (RT hourly) are NOT SCORED in any year (2023, 2024, 2025); this determination is scored on C1/C2/C4/C6/C8 ONLY and certifies NO price level, shape or tail (owner ruling card S2, 2026-09-13; rubric v3.8). It is not a CALIBRATED reading. Model system load-weighted mean LMP, MODEL-ONLY and UNVERIFIED \u2014 no measured reference exists to compare against: 2023: $34.04/MWh, 2024: $30.15/MWh, 2025: $197.25/MWh."
+    "undocumented out-of-tolerance (FAIL) criteria: fuelmix",
+    "PRICE UNSCORED \u2014 no actual_lmp.json block exists for SOCO, so C3a mean LMP, C3b price duration/shape and C3c price tail / scarcity (RT hourly) are NOT SCORED in any year (2023, 2024, 2025); this determination is scored on C1/C2/C4/C6/C8 ONLY and certifies NO price level, shape or tail (owner ruling card S2, 2026-09-13; rubric v3.8). It is not a CALIBRATED reading. Model system load-weighted mean LMP, MODEL-ONLY and UNVERIFIED \u2014 no measured reference exists to compare against: 2023: $32.78/MWh, 2024: $30.15/MWh, 2025: $197.33/MWh."
   ],
   "notes": [],
   "criteria": {
     "fuelmix": {
       "label": "C1 fuel-mix by class (grid-delivered)",
       "tier": "load-bearing",
-      "status": "PASS"
+      "status": "FAIL"
     },
     "sysvol": {
       "label": "C2 system volume (gas/coal families)",
@@ -77,18 +78,18 @@
   },
   "grade_summary": {
     "scored": 5,
-    "target_grade": 5,
+    "target_grade": 4,
     "commercial_grade": 0,
     "ledgered": 0,
-    "fails": 0
+    "fails": 1
   },
   "reported": {
     "co2": {
       "label": "C5a CO2 vs eGRID (REPORTED-ONLY, v2.9 \u2014 see the CRITERIA note)",
       "years": {
-        "2023": "-5.6%",
+        "2023": "-7.0%",
         "2024": "-10.7%",
-        "2025": "+4.0%"
+        "2025": "+3.5%"
       }
     },
     "diurnal_amplitude": {
@@ -116,14 +117,14 @@
       "ST_CHP"
     ],
     "all": {
-      "pass": 14,
+      "pass": 13,
       "total": 14
     },
     "free": {
-      "pass": 10,
+      "pass": 9,
       "total": 10
     },
-    "headline": "C1 all 14/14 \u00b7 free 10/10"
+    "headline": "C1 all 13/14 \u00b7 free 9/10"
   },
   "price_unscored": {
     "basis": "no actual_lmp.json block for SOCO",
@@ -140,9 +141,9 @@
       "forced_share"
     ],
     "model_mean_lmp_by_year": {
-      "2023": 34.04,
+      "2023": 32.78,
       "2024": 30.15,
-      "2025": 197.25
+      "2025": 197.33
     }
   }
 }

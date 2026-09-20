@@ -1895,6 +1895,17 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # distinct key. SHARED field -- very end, per HOUSE-3. Registered IN THE
     # SAME COMMIT as the field.
     "gas_flow_date_year_start_package",
+    # Per-YEAR MEASURED delivered-gas basis (SOCO-55, default off): dropped
+    # from the hash at its default so every pre-existing cached run -- every
+    # ISO's keepers included -- keeps its key. The arm is byte-identical off
+    # by construction (``resolve_annual_gas_price`` takes the same
+    # ``GAS_BASIS_DIFFERENTIAL`` scalar branch it always took); an armed run
+    # prices its gas on the year's OWN measured basis and so earns a distinct
+    # key. ISO-agnostic name, per-ISO measured table -- the
+    # hydro_budget_period_by_instrument shape. SHARED field -- very end, per
+    # HOUSE-3. Registered IN THE SAME COMMIT as the field (the nyiso-119
+    # discipline).
+    "gas_basis_differential_measured_by_year",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -1951,6 +1962,7 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
 # keeping parallel per-ISO lanes on different lines. Leave legacy entries
 # where they are.
 _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
+    "gas_basis_differential_measured_by_year": "False",
     "hydro_budget_period_by_instrument": "False",
     "start_year": "None",
     "storage_measured_base_fleet": "True",
@@ -16784,6 +16796,31 @@ class ScenarioConfig:
     # North-zone neighbours). Set True to restore per-plant gas costs where
     # EIA-923 reports them. Does not affect coal (see above) or oil.
     gas_plant_monthly_fuel_pricing: bool = False
+
+    # Per-YEAR MEASURED delivered-gas basis (lane SOCO-55, 2026-09-20). When
+    # True, ``resolve_annual_gas_price`` takes the ISO's basis differential
+    # from ``GAS_BASIS_DIFFERENTIAL_MEASURED_BY_YEAR[iso][year]`` — the same
+    # EIA-923-minus-Henry-Hub construction as the scalar
+    # ``GAS_BASIS_DIFFERENTIAL[iso]``, measured on the receipts of the year it
+    # prices — INSTEAD of that scalar. It REPLACES the scalar, never stacks on
+    # it (rule 19 [R-ONE-MECH]), and falls through to the scalar unchanged for
+    # any (iso, year) with no measured row — so every ISO but SOCO, and every
+    # forecast year, is inert by construction.
+    #
+    # WHY IT IS A GATE AND NOT A SILENT RE-DERIVATION: the scalar is the
+    # declared "forward-year / fallback" value that SOCO-54 promoted onto
+    # SOCO's PRIMARY backcast gas-pricing path when it turned
+    # ``gas_plant_monthly_fuel_pricing`` off, so correcting it moves a
+    # registered keeper's numbers. A gate makes that an auditable single-delta
+    # A/B against the incumbent keeper (rule 29 [R-SCREEN] form 4) instead of
+    # a constant edit that re-keys a keeper with no control.
+    #
+    # ZERO FREE PARAMETERS: the values are measurements of committed source
+    # data, cited at the table. Rule 13 [R-MEASURED]: the same quantity is
+    # producible for a forward year from that year's own receipts and responds
+    # to changed conditions; where receipts do not exist the forward scalar is
+    # used unchanged, so the forecast methodology is untouched.
+    gas_basis_differential_measured_by_year: bool = False
 
     # Tier 3 (calibration) — "nearby plant" fuel-cost fallback. When True, a
     # coal/oil generator with no EIA-923 delivered cost of its own for a
