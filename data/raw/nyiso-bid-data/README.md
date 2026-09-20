@@ -78,12 +78,39 @@ Payload **gitignored** (corpus-conversion class,
 not a git pin:
 
     python3 scripts/data/fetch_nyiso_bid_data.py --years 2022 2023 2024 2025
-    python3 scripts/data/fetch_nyiso_bid_data.py --checksums   # verify
+    python3 scripts/data/fetch_nyiso_bid_data.py --verify      # recovery check
 
 The source is public and unauthenticated, so re-fetch is reliable; NYISO's MIS
 archive reaches back to 1999 and has no stated retention cutoff.
+
+**The recovery route has been EXERCISED, not just asserted** (session nyiso-248,
+2026-09-20). The corpus was re-fetched from scratch into an empty container and
+**all 48 archives came back byte-identical to the `SHA256SUMS.txt` written at
+the original 2026-09-20 intake** — 0 missing, 0 extra, 0 hash mismatches, and
+the regenerated record is byte-identical to the committed one. Upstream is
+stable and the corpus-conversion class works as designed for this source.
+
+**Use `--verify`, not `--checksums`, to check a recovery.** `--checksums`
+**REWRITES** the identity record; only `--verify` compares against it. Until
+nyiso-248 this README advertised `--checksums   # verify`, which was the
+opposite of what the flag did. Two guards now exist because this bit:
+`--verify` (read-only comparison, non-zero exit on drift) and a refusal in
+`write_checksums` to **shrink** the record — a partial fetch such as
+`--years 2022 --months 1` previously truncated the 48-entry record to one entry
+and silently destroyed the only committed statement of what the bytes were.
+Override with `--force-checksums` only when the corpus scope really did shrink.
 
 ## Consumers
 
 * `scripts/probes/nyiso243_offered_availability.py` — the nyiso-243 kill test
   (`docs/PRECOMMIT-nyiso243-outage-intake-kill-test-2026-09-20.md` §3).
+* `scripts/data/derive_nyiso_offer_surface.py` /
+  `scripts/data/derive_nyiso_offer_level_dispersion.py` — the offer book and the
+  conditional level-dispersion vector
+  (`data/raw/_validation-source/nyiso_offer_level_dispersion.json`).
+* `scripts/probes/nyiso248_book_daily_regrain.py` — re-measures that vector on a
+  **daily** gas series. The derive divides the bid's bottom block by
+  `_gas_series`, which nyiso-248 measured to be a **12-value monthly step**, and
+  bins its scarcity window on the same array — so that one flat series enters the
+  book as both the implied-heat-rate **denominator** and the **conditioner**.
+  See `docs/FINDING-nyiso248-the-daily-citygate-is-already-armed-2026-09-20.md`.

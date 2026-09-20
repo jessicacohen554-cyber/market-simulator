@@ -276,3 +276,142 @@ This is why a hardcoded bundle id is a latent break in any probe that outlives o
 
 **Shards launched: none. Bundles produced: none. Rule 31 `[R-RETAIN]` has nothing to protect in this
 session, and no promotion question is owed** — the keeper is unchanged and no candidate was solved.
+
+---
+
+# ADDENDUM — the intake was run, and the successor's object is SUBSTANTIALLY SMALLER AND TAIL-CONFINED
+
+*Added 2026-09-20 in the same session, on the owner instruction **"Start intake"** given to §7 item 2.
+Still **ZERO LP, ZERO SHARDS**. The keeper is still untouched.*
+
+## A1. THE INTAKE — the recovery route is now EXERCISED, not asserted
+
+The P-27 genbids corpus is a **converted corpus**: payload gitignored, and the committed record is
+the README, `genbids/SHA256SUMS.txt` and `scripts/data/fetch_nyiso_bid_data.py`, with **re-fetch**
+(not a git pin) as the recovery route. It was re-fetched from scratch into this empty container.
+
+| | |
+|---|---|
+| archives fetched | **48 / 48**, 0 failed (2022-2025 monthly) |
+| size | ~180 MB, `data/raw/nyiso-bid-data/genbids/` (gitignored, `.gitignore:2899`) |
+| **integrity vs the tracked 2026-09-20 record** | **all 48 byte-identical** — 0 missing, 0 extra, **0 hash mismatches** |
+| regenerated `SHA256SUMS.txt` | byte-identical to the committed one (`git status` clean) |
+
+**Upstream is stable and the corpus-conversion class works as designed for this source.** That is
+worth recording, because the class's whole premise is that re-fetch substitutes for retention, and
+until now that premise was untested for this corpus.
+
+### A1.1 Two guards added, because the intake tripped the trap they close
+
+`--checksums` **REWRITES** the identity record — it does not verify — while the README advertised
+`--checksums   # verify`, the opposite of what the flag does. A single-month connectivity probe
+(`--years 2022 --months 1`) duly **truncated the 48-entry tracked record to ONE entry**, silently
+destroying the only committed statement of what the bytes were for a corpus whose payload is
+gitignored. Recovered from a pre-fetch snapshot, and both holes closed:
+
+* **`--verify`** — read-only comparison against the record, prints every missing / extra /
+  mismatched archive, non-zero exit on drift. This is the recovery check.
+* **`write_checksums` refuses to SHRINK the record** unless `--force-checksums`. Verified by
+  withholding one archive: the rewrite is refused **by name** and the 48-entry record survives.
+
+## A2. G-5 — THE 2×2 DECOMPOSITION, AND WHY IT HAD TO BE 2×2
+
+§5 reported only the **conditioner** channel. Reading `year_unit_rows` closely shows the monthly
+step enters the book measurement in **TWO** places:
+
+```
+CONDITIONER   state_windows()   : gas_bin >= 2 selects an hour in one of the ~1.2 dearest MONTHS
+DENOMINATOR   year_unit_rows()  : m = bottom / gas[hour]  — the implied offer heat rate itself
+```
+
+**The denominator channel has a predictable sign, and it pushes the SAME way as the reported
+finding.** Inside one month a flat denominator inflates `m` on the dear days and deflates it on the
+cheap days, manufacturing a positive tight-minus-ordinary delta from a unit whose *true* implied
+heat rate is constant. A synthetic unit bidding exactly `10 MMBtu/MWh × G_daily` — no conduct, no
+markup, no scarcity behaviour — measures **+44.1 MMBtu/MWh** under a flat denominator and **exactly
+0.000** under the daily one. *(A sign check only. The measured corpus effect is far smaller; the toy
+bounds nothing.)*
+
+`scripts/probes/nyiso248_book_daily_regrain.py` therefore swaps the gas array in **each role
+independently**, running the family's own estimator — `year_unit_rows`, `per_unit_delta`,
+`weighted_quantiles`, the frozen 199-point `QUANTILE_GRID`, the registered `NETLOAD_PCTS` ladder —
+because re-implementing the population rules would itself be a tuning channel (the derive's own
+docstring forbids it).
+
+### A2.1 ARM A IS THE REPRODUCTION CHECK, AND IT IS EXACT
+
+**Arm A reproduces the committed `nyiso_offer_level_dispersion.json` vector with max abs error
+`0.0`.** Nothing below could be read without that.
+
+### A2.2 The result
+
+Pooled gen-windows, MMBtu/MWh, tight minus ordinary:
+
+| arm | conditioner | denominator | n | p10 | p25 | **p50** | **p75** | **p90** | p99 |
+|---|---|---|---:|---:|---:|---:|---:|---:|---:|
+| **A** *(= committed)* | monthly | monthly | 1184 | −16.474 | −0.690 | **+2.035** | **+11.928** | **+27.880** | +96.710 |
+| **B** | **daily** | monthly | 1214 | −9.047 | −0.243 | +1.295 | +10.804 | +28.662 | +73.083 |
+| **C** | monthly | **daily** | 1184 | −16.990 | −1.520 | +1.333 | +8.451 | +23.207 | +68.027 |
+| **D** *(corrected)* | **daily** | **daily** | 1214 | −17.053 | −2.225 | **−0.123** | **+4.685** | **+21.974** | +88.716 |
+
+**Change, committed → corrected:** p50 **−2.158**, p75 **−7.243**, p90 **−5.906**.
+
+### A2.3 What it establishes — and what it does not
+
+* **THE MEDIAN RISE DOES NOT SURVIVE.** nyiso-246's headline `+2.035` at p50 becomes **−0.123** —
+  statistically indistinguishable from zero and, if anything, slightly negative. The broad
+  "median-and-up rise" the successor was framed around is **substantially an artifact of measuring
+  a daily market against a monthly denominator and a monthly window.**
+* **THE UPPER TAIL SURVIVES, and it is still large.** p75 **+4.685** and p90 **+21.974** remain
+  strongly positive. The object is **real, smaller, and confined to the upper tail** — a materially
+  different design brief from the one nyiso-246 handed forward.
+* **BOTH CHANNELS CARRY ROUGHLY HALF, and they are near-additive at the centre.** Conditioner alone
+  (B) 2.035 → 1.295; denominator alone (C) 2.035 → 1.333; together (D) → −0.123. Neither channel
+  can be dismissed as the small one.
+* **n rises 1184 → 1214** in the daily-conditioner arms: the daily tight window covers more distinct
+  hours, so more gens appear in **both** windows. Expected, and reported rather than filtered.
+
+## A3. WHAT THIS DOES TO THE nyiso-247 KEEPER — it STRENGTHENS it at the median, and the direction is stated plainly
+
+nyiso-247's case was: *the market's implied offer heat rate RISES with gas (+2.035 at p50), the
+armed model's FALLS, and the disarm moves the model's to ZERO.* Under the corrected measurement the
+**book's own median response is ≈ 0 (−0.123)** — which is **exactly where the disarm puts the
+model.**
+
+So the correction does **not** undercut the promotion; at the centre it **closes the gap the
+RESULT reported as still open**. nyiso-247 §5 item 1 reads *"the disarm closes the SIGN and no
+more — the book's conditional response is positive, the arm's is zero."* On the corrected
+measurement, **at the median there is no remaining gap to close.**
+
+**Stated against itself, because a favourable reading must not be the only one offered:** this is a
+re-measurement of the *target*, not a re-solve, and it moves the target toward the model rather than
+the model toward the target. It also leaves p75/p90 open, so the disarm is **not** vindicated at the
+tail — the model is flat there and the market still rises by **+4.685 / +21.974**. And none of this
+was pre-registered against a gate: it is a measurement correction found after the fact, reported at
+full magnitude in both directions.
+
+## A4. THE REVISED BRIEF FOR THE SUCCESSOR
+
+1. **Design for the UPPER TAIL, not a median rise.** The object is p75+ and is worth
+   **+4.685 / +21.974 MMBtu/MWh** at p75 / p90, not `25.845` broad. Any form anchored on a
+   median-level dispersion is anchored on a number that does not survive correction.
+2. **Re-derive `nyiso_offer_level_dispersion.json` itself before using it.** The committed artifact
+   is arm A. `nyiso248_book_daily_regrain.py --year …` produces arm D from the same estimator; the
+   derive should take the gas array as a parameter rather than reaching for
+   `gas_series_by_year()` in two places.
+3. **`_hub_overlay_series`' missing daily branch is now load-bearing for the EVIDENCE path too**,
+   not just the coal sigmoids — every consumer of `_gas_series` inherits a monthly plateau where the
+   LP uses a daily series. It remains a **cross-ISO / owner-court** item under rule 25 `[R-ISO-SCOPE]`
+   (§4), but its blast radius is larger than §4 stated: it reaches the offer-book derivation, not
+   only the 1,487 MW coal fleet.
+4. **Unchanged from §7:** D-4 reads `passed=False` in every year while C8 passes, and the G2 hydro
+   loss still needs a new candidate.
+
+## A5. ADDENDUM ARTIFACTS
+
+| path | what |
+|---|---|
+| `scripts/probes/nyiso248_book_daily_regrain.py` → `_nyiso248_book_daily_regrain.json` | **G-5**, the 2×2 decomposition + the arm-A reproduction check |
+| `scripts/data/fetch_nyiso_bid_data.py` | `--verify`, the shrink guard, optional `--years` |
+| `data/raw/nyiso-bid-data/README.md` | the exercised recovery record and the `--verify` / `--checksums` distinction |
+| `data/raw/nyiso-bid-data/genbids/` | 48 archives, **gitignored**, verified byte-identical — **on local disk only; this container is ephemeral** |
