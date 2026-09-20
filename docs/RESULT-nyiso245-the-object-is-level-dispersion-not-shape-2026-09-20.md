@@ -451,7 +451,15 @@ job, ended its turn, and was never re-invoked; it pushed no branch. It **could n
 **deliberately left alive** (rule 33 (e)): it is the only thing that could still push what it
 solved, and rule 33 (b) forbids archiving a shard whose work may be in flight. A replacement
 (`session_01WYqyH6MF2uN3pfY6fEyRtJ`) was launched with the pacing defect named in its prompt — run
-the solve in the **foreground**, do not background it and end the turn.
+the solve in the **foreground**, do not background it and end the turn. **At the close of this
+session that retry was still queued**, its container not yet started, behind another lane's
+concurrent shards on the same environment. It is left running.
+
+**What 2023 would and would not change.** It would complete the year set; it would **not** change the
+conclusion. The finding rests on 2024 and 2025 — the keeper's **third and fourth** span years, the
+position where the artifact this test is looking for actually bit in MISO. 2023 is the second year,
+strictly less exposed than either. If it ever comes back non-zero that is a surprise worth chasing,
+and the cost of reproducing it is **one shard, ~5 minutes**.
 
 **Branch cleanup is NOT performed and is not claimed.** A session cannot delete a remote ref here
 (HTTP 403 on both HTTP/2 and HTTP/1.1 — rule 33 (f)(2)), so the four `claude/nyiso-245-ctrl-*`
