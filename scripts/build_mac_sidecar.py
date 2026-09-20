@@ -6,7 +6,9 @@ refuses rather than guesses when an input is missing.
 
     MAC ($/tCO2) = (cost per delivered MWh - energy capture price) / MER_tech
 
-      cost per delivered MWh = compute_lcoe(tech, year, config)   [national base CF]
+      cost per delivered MWh = compute_lcoe(tech, year, config,
+                                            cf_override=<this grid's measured CF>,
+                                            life_override=PPA_COST_RECOVERY_YR)
       energy capture price   = sum(price x tech_shape) / sum(tech_shape)
       MER_tech               = sum(MER   x tech_shape) / sum(tech_shape)
 
@@ -103,7 +105,11 @@ def build_year(iso: str, year: int, bundle: str, run_id: str) -> dict:
     import pandas as pd
 
     sys.path.insert(0, str(REPO / "src"))
-    from market_sim.config.constants import NEW_ENTRY_COSTS
+    from market_sim.config.constants import (
+        NEW_ENTRY_COSTS,
+        PPA_COST_RECOVERY_YR,
+        REGIONAL_RENEWABLE_CF,
+    )
     from market_sim.model.capacity_evolution.new_entry import compute_lcoe
     from market_sim.config.scenarios import ScenarioConfig
 
@@ -183,34 +189,41 @@ def build_year(iso: str, year: int, bundle: str, run_id: str) -> dict:
 
     cfg = load_config(bundle, year, ScenarioConfig)
 
-    # NO LOCAL CAPACITY-FACTOR ADJUSTMENT. The cost per delivered MWh is the
-    # NATIONAL levelized cost at the national base capacity factor, full stop.
+    # THE COST BASIS IS REGIONAL AND CONTRACT-LENGTH.
     #
-    # The obvious refinement -- rescale by cf_base / cf_expected so a windy grid
-    # spreads its annual cost over more megawatt-hours -- needs a local expected
-    # capacity factor, and THAT NUMBER IS NOT RECOVERABLE from what a run
-    # commits. Both available denominators were tried and both are misaligned
-    # with the class_hourly dispatch that forms the numerator:
+    # Two corrections, both on the DENOMINATOR side of the levelized cost, and
+    # neither of them tuned against anything this page reports:
     #
-    #   * EIA-860 operable capacity counts behind-the-meter solar the LP never
-    #     dispatches (it is netted into load). NYISO solar came out at an
-    #     expected CF of 0.022 and NEISO 0.049, against a real regional ~0.14.
-    #   * The model's own renewable object cannot be rebuilt either: a slim
-    #     bundle commits one run_config.json, not the per-year config the solve
-    #     used, so load_renewable_profiles returns a different fleet. It put
-    #     MISO 2025 solar at 7,000 MW while that year dispatches 29.75 TWh of
-    #     solar -- 2.7x more energy than that capacity can physically produce.
-    #     "Delivered exceeds potential" is proof the two objects are not the
-    #     same fleet, so neither ratio can be trusted.
+    #   * CAPACITY FACTOR is this grid's own measured new-build number
+    #     (REGIONAL_RENEWABLE_CF, eGRID 2022-24, COD >= 2018) instead of ATB's
+    #     single national base_cf. Resource quality is the largest single driver
+    #     of what abatement costs in a place -- PJM solar yields 0.204 against
+    #     the 0.270 national figure, a 32 % understatement of cost per delivered
+    #     MWh, while MISO wind at 0.399 against 0.380 runs the other way.
     #
-    # Publishing a cost built on either would have put NYISO solar at
-    # $1,040/tCO2. The page already discloses that build cost and base capacity
-    # factor are national; this makes the arithmetic match that disclosure
-    # instead of quietly contradicting it. Differences between grids therefore
-    # come from CAPTURE PRICE and EMISSION RATE only -- both fully derivable
-    # from the committed hourly sidecars. Closing this properly needs the solve
-    # to commit its own per-tech capacity, which is a one-line sidecar addition
-    # on the solve path.
+    #     An earlier version of this script REFUSED the adjustment, on the
+    #     finding that a local CF "is not recoverable from what a run commits".
+    #     That finding was about the wrong denominators -- EIA-860 operable
+    #     capacity (which counts behind-the-meter solar the LP never dispatches)
+    #     and a slim bundle's rebuilt renewable object (a different fleet from
+    #     the one that solved). It does not apply to eGRID, which is neither:
+    #     it is measured plant output over measured plant nameplate, published
+    #     annually, and it never has to agree with the model's fleet because it
+    #     prices a HYPOTHETICAL NEW PROJECT, not the installed base.
+    #
+    #   * COST RECOVERY runs over PPA_COST_RECOVERY_YR (20), the contracted
+    #     offtake term a merchant project actually recovers capital over, not
+    #     the 30-year book life the LP's entry screen uses. Same discount rate,
+    #     same capex, ~15 % higher annual charge.
+    #
+    # Both flow through compute_lcoe's own overrides, so the IRA layering is the
+    # screen's (ITC discounts capex before annualization; the PTC is levelized
+    # over min(statutory window, recovery period) after) -- and the wind PTC is
+    # worth MORE per MWh on a 20-year basis than a 30-year one, which is part of
+    # why wind moves less than solar under these corrections.
+    #
+    # The ATB national / book-life number is still reported per tech, as
+    # lcoe_atb_basis_*, so the page can show what changed and why.
 
     scalars = {}
     for tech in TECHS:
@@ -225,18 +238,41 @@ def build_year(iso: str, year: int, bundle: str, run_id: str) -> dict:
         imp_share = float(shape[import_marginal].sum() / w)
         mer_imp = mer_tech + imp_share * import_ef
 
+        cf_base = float(NEW_ENTRY_COSTS[tech]["base_cf"])
+        cf_local = REGIONAL_RENEWABLE_CF.get(tech, {}).get(iso)
+        cf_used = float(cf_local) if cf_local is not None else cf_base
+        nom_factor = nominal_levelization_factor(cfg, PPA_COST_RECOVERY_YR)
+
         row = {
-            "cf_base": float(NEW_ENTRY_COSTS[tech]["base_cf"]),
+            "cf_base": cf_base,
+            "cf_expected": round(cf_used, 4),
+            "cf_source": (
+                "measured on this grid (eGRID 2022-24, new-build cohort)"
+                if cf_local is not None
+                else "national ATB figure — this grid has no measured new-build fleet"
+            ),
+            "recovery_period_yr": PPA_COST_RECOVERY_YR,
             "capture_price": round(capture, 2),
             "mer_tech": round(mer_tech, 4),
             "mer_tech_with_imports": round(mer_imp, 4),
             "import_marginal_share": round(imp_share, 4),
         }
         for tag, credits in (("post_ira", True), ("pre_ira", False)):
-            lcoe = lcoe_for(compute_lcoe, tech, year, cfg, credits)
-            cost = lcoe
-            row[f"lcoe_{tag}"] = round(lcoe, 2)
+            cost = lcoe_for(
+                compute_lcoe, tech, year, cfg, credits, cf_used, PPA_COST_RECOVERY_YR
+            )
+            row[f"lcoe_{tag}"] = round(cost, 2)
             row[f"cost_per_delivered_mwh_{tag}"] = round(cost, 2)
+            # The same cost as a FLAT NOMINAL price, which is how a PPA is
+            # quoted. Everything above is in constant 2026 dollars; comparing
+            # that directly to a contract price understates it by this factor.
+            row[f"ppa_equivalent_{tag}"] = round(cost * nom_factor, 2)
+            # What this tech used to read here: ATB's national CF over book
+            # life. Kept so the page can show the correction, never used in a
+            # MAC.
+            row[f"lcoe_atb_basis_{tag}"] = round(
+                lcoe_for(compute_lcoe, tech, year, cfg, credits, cf_base, None), 2
+            )
             row[f"mac_{tag}"] = round((cost - capture) / mer_tech, 1)
             row[f"mac_{tag}_with_imports"] = round((cost - capture) / mer_imp, 1)
         scalars[tech] = row
@@ -261,6 +297,15 @@ def build_year(iso: str, year: int, bundle: str, run_id: str) -> dict:
         "status": "ready",
         "source_run": run_id,
         "pass": "P1",
+        "cost_basis": {
+            "recovery_period_yr": PPA_COST_RECOVERY_YR,
+            "capacity_factor": "measured on this grid (eGRID 2022-24, projects "
+            "built 2018 or later), net of curtailment",
+            "capex_basis": "NREL ATB 2024 Moderate @2026, national",
+            "dollars": "constant 2026 $; ppa_equivalent_* restates the same "
+            "cost as the flat nominal price a contract would quote",
+            "nominal_discount_rate": cfg.nominal_discount_rate,
+        },
         "scalars": scalars,
         "system": {
             "mer_load_weighted": round(
@@ -292,7 +337,41 @@ def month_edges(year: int) -> "list[int]":
     return out
 
 
-def lcoe_for(compute_lcoe, tech: str, year: int, cfg, credits: bool) -> float:
+def nominal_levelization_factor(cfg, life: int) -> float:
+    """Return the constant-dollar -> flat-nominal price conversion factor.
+
+    Every cost on this page is levelized in CONSTANT 2026 dollars, because that
+    is the basis ATB's capex carries and the basis the LP's entry screen uses.
+    A power-purchase agreement is quoted as a FLAT NOMINAL price for the whole
+    term, which is a different object: the same present value spread over a
+    schedule that does not escalate. Converting is exact given the two rates the
+    config already carries --
+
+        level-nominal / constant-real = CRF(nominal, life) / CRF(real, life)
+
+    -- and at the default 8 % nominal / 2.2 % inflation over 20 years it is
+    about 1.20. Reporting only the real number invites a reader to compare it
+    against a quoted PPA and conclude the model is 20 % cheap when it is not.
+    """
+    from market_sim.config.constants import INFLATION_RATE
+    from market_sim.model.capacity_evolution.new_entry import (
+        _capital_recovery_factor as crf,
+    )
+
+    nominal = cfg.nominal_discount_rate
+    real = (1.0 + nominal) / (1.0 + INFLATION_RATE) - 1.0
+    return float(crf(nominal, life) / crf(real, life))
+
+
+def lcoe_for(
+    compute_lcoe,
+    tech: str,
+    year: int,
+    cfg,
+    credits: bool,
+    cf: float | None = None,
+    life: int | None = None,
+) -> float:
     """LCOE with the IRA credits on or off.
 
     Credits are stripped at the layer ``compute_lcoe`` applies them, by moving
@@ -303,10 +382,11 @@ def lcoe_for(compute_lcoe, tech: str, year: int, cfg, credits: bool) -> float:
     """
     import dataclasses
 
+    kw = {"cf_override": cf, "life_override": life}
     if credits:
-        return float(compute_lcoe(tech, year, cfg))
+        return float(compute_lcoe(tech, year, cfg, **kw))
     off = dataclasses.replace(cfg, ira_wind_solar_last_year=year - 1)
-    return float(compute_lcoe(tech, year, off))
+    return float(compute_lcoe(tech, year, off, **kw))
 
 
 def load_config(bundle: str, year: int, ScenarioConfig):
@@ -342,12 +422,14 @@ def import_emission_factor(iso: str) -> "tuple[float, str]":
         return 0.0, "this grid has no modelled import link"
     efs = list(IMPORT_TRANCHE_EF.get(iso, {}).values())
     if efs:
-        return float(
-            sum(efs) / len(efs)
-        ), "the average of the published rates for the regions it imports from"
-    return float(
-        CARB_UNSPECIFIED_IMPORT_EF
-    ), "the published default rate for power of unspecified origin"
+        return (
+            float(sum(efs) / len(efs)),
+            "the average of the published rates for the regions it imports from",
+        )
+    return (
+        float(CARB_UNSPECIFIED_IMPORT_EF),
+        "the published default rate for power of unspecified origin",
+    )
 
 
 # ---------------------------------------------------------------------------

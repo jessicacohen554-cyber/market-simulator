@@ -4092,6 +4092,68 @@ NEW_ENTRY_COSTS: dict[str, dict[str, float]] = {
     },
 }
 
+# Measured NEW-BUILD capacity factor by (technology, ISO) — the output a plant
+# built on THAT grid actually delivers, against NEW_ENTRY_COSTS[tech]["base_cf"]
+# which is ONE national ATB number for every grid (wind 0.38, solar 0.27).
+#
+# DERIVED by scripts/data/derive_regional_renewable_cf.py from EPA eGRID
+# 2022-2024 (data/raw/fleet-egrid), generator level: operating nameplate, the
+# generator's own WND/SUN primary fuel, commercial-operation year >= 2018 (the
+# new-build cohort, not the installed base), online before the reported year,
+# capacity-weighted and pooled across the three vintages. Asserted against the
+# derivation by tests/test_regional_renewable_cf.py (rule 23 [R-FROZEN-DERIVE]:
+# re-derive ONLY when a new eGRID vintage lands, and cite the data change).
+#
+# CFACT is net generation / (nameplate x 8760), so these are NET OF CURTAILMENT
+# — deliberately, because the consumer divides an annual cost by DELIVERED MWh
+# and a curtailed MWh is neither sold nor abating.
+#
+# CONSUMER: the marginal-abatement reporting surface only
+# (scripts/build_mac_sidecar.py, via compute_lcoe's cf_override). NOT a solve
+# input — the LP's own new-entry screen still costs candidates at the national
+# base_cf, so no dispatch, no cache key and no keeper moves because this table
+# exists. A grid absent for a technology (SOCO wind — no measured fleet) falls
+# back to the national base_cf at the consumer.
+REGIONAL_RENEWABLE_CF: dict[str, dict[str, float]] = {
+    "solar": {
+        "CAISO": 0.2709,
+        "ERCOT": 0.2409,
+        "MISO": 0.2113,
+        "NEISO": 0.1755,
+        "NYISO": 0.1684,
+        "PJM": 0.2041,
+        "SOCO": 0.2443,
+        "SPP": 0.2266,
+    },
+    "wind": {
+        "CAISO": 0.3714,
+        "ERCOT": 0.3582,
+        "MISO": 0.3988,
+        "NEISO": 0.2896,
+        "NYISO": 0.2840,
+        "PJM": 0.3493,
+        "SPP": 0.4126,
+    },
+}
+
+# Capital-recovery period for the marginal-abatement cost basis, years.
+#
+# NEW_ENTRY_COSTS[tech]["lifetime_yr"] is 30 — ATB's own capital-recovery
+# convention and a fair reading of PHYSICAL life. It is NOT the period over
+# which a merchant wind or solar project recovers its capital: that is the
+# contracted offtake term, and utility-scale wind/solar PPAs are written at
+# 15-25 years (Berkeley Lab, "Utility-Scale Solar" and "Land-Based Wind Market
+# Report", both reporting a ~20-yr central term; Lazard LCOE+ v18.0 levelizes
+# wind and solar over 20 years on the same reasoning). Recovering capital over
+# 30 years understates the annual charge a project must actually clear by
+# roughly 15 %.
+#
+# SCOPE: the reporting surface ONLY. The LP's new-entry screen keeps the
+# 30-year book life, so this constant changes no dispatch, no build decision
+# and no cache key. Changing lifetime_yr itself is a solve-affecting mechanism
+# change and needs its own PRECOMMIT + A/B under rule 29 [R-SCREEN].
+PPA_COST_RECOVERY_YR: int = 20
+
 # Per-tech capex + learning-rate multipliers for the PB-1 tech-cost
 # uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile,
 # docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to
