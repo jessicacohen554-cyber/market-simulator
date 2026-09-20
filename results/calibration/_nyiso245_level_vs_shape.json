@@ -1,0 +1,77 @@
+{
+  "year": 2022,
+  "note": "DESCRIPTIVE. Not a gate; the PRECOMMIT's six gates were decided before this ran and nothing here flips one (rule 1 [R-STRUCT]). Every statistic is a WITHIN-UNIT difference over gens present in BOTH windows, so fleet scope and composition cancel exactly.",
+  "hours": {
+    "missed": 70,
+    "ordinary": 2090
+  },
+  "leg_a_market_p27": {
+    "n_gens_in_both_windows": 328,
+    "capacity_mw": 36048.1,
+    "within_unit_delta_bottom_usd_per_mwh": {
+      "cap_weighted_median": 26.66,
+      "p25": 0.0,
+      "p75": 137.065
+    },
+    "level_bottom_usd_per_mwh": {
+      "ordinary_cap_weighted_median": 97.2,
+      "missed_cap_weighted_median": 164.0
+    },
+    "within_unit_delta_top_usd_per_mwh": {
+      "cap_weighted_median": 27.0,
+      "p25": 0.0,
+      "p75": 148.962
+    },
+    "level_top_usd_per_mwh": {
+      "ordinary_cap_weighted_median": 143.0,
+      "missed_cap_weighted_median": 232.21
+    },
+    "within_unit_delta_rise_usd_per_mwh": {
+      "cap_weighted_median": 0.125,
+      "p25": 0.0,
+      "p75": 0.0
+    },
+    "level_rise_usd_per_mwh": {
+      "ordinary_cap_weighted_median": 24.76,
+      "missed_cap_weighted_median": 34.3
+    },
+    "multi_block_only": {
+      "n_gens": 203,
+      "capacity_mw": 31546.8,
+      "within_unit_delta_bottom_usd_per_mwh": {
+        "cap_weighted_median": 19.01,
+        "p75": 112.05,
+        "p90": 231.585
+      },
+      "within_unit_delta_top_usd_per_mwh": {
+        "cap_weighted_median": 15.93,
+        "p75": 144.425,
+        "p90": 231.585
+      },
+      "within_unit_delta_rise_usd_per_mwh": {
+        "cap_weighted_median": 1.03,
+        "p75": 1.01,
+        "p90": 33.521
+      }
+    }
+  },
+  "leg_b_model_keeper": {
+    "n_plants": 306,
+    "capacity_mw": 38250.4,
+    "within_unit_delta_bottom_usd_per_mwh": {
+      "cap_weighted_median": 39.999,
+      "p25": 0.0,
+      "p75": 44.359
+    },
+    "within_unit_delta_top_usd_per_mwh": {
+      "cap_weighted_median": 68.428,
+      "p25": 0.0,
+      "p75": 61.598
+    },
+    "within_unit_delta_rise_usd_per_mwh": {
+      "cap_weighted_median": 11.341,
+      "p25": 0.0,
+      "p75": 0.199
+    }
+  }
+}

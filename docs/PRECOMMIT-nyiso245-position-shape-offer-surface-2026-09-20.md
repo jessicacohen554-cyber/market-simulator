@@ -1,7 +1,10 @@
 # PRECOMMIT — nyiso-245: the MAPPING gate. A POSITION-CONDITIONED, SHAPE-ONLY measured offer surface for NYISO, and the six gates it must clear before a shard is spent
 
 **Session** nyiso-245 (ORCHESTRATOR — rule 32 `[R-SHARD]` (a); **zero LP in this container**).
-**Date** 2026-09-20. **Base** `origin/main` at `5c0bec8b`.
+**Date** 2026-09-20. **Base** `origin/main` at `5c0bec8b`, **rebased mid-session onto `e8b80102`** at the owner's
+instruction. This file was committed at **`398f0437`** before any gated number was computed; the
+rebase moved that commit to **`5cbf4fef`** with its content unchanged, and **every gate below was
+fixed at the pre-rebase commit**. Both ids are recorded so the ordering stays auditable.
 **Keeper** `2026-09-19-nyiso241-ct-committed-measured`, bundle
 `results/calibration/nyiso241_ctcommitted_span`, years {2022, 2023, 2024, 2025}. **UNCHANGED at
 the time of writing.** ISO tier (2023–2025, rule 30 `[R-TOUCHPOINT-FOLD]` (c)) = **CALIBRATED**,

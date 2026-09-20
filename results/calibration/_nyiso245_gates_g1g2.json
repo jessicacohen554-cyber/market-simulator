@@ -1,0 +1,80 @@
+{
+  "year": 2022,
+  "G1_reach": {
+    "year": 2022,
+    "hours": 70,
+    "object_mw": 4715.7,
+    "bar": 0.5,
+    "per_class": {
+      "CC_CHP": {
+        "idle_below_gate_mw": 1128.6,
+        "on_tagged_rows_mw": 846.3,
+        "on_nonbase_rows_mw": 1093.4
+      },
+      "CC_REGULAR": {
+        "idle_below_gate_mw": 911.7,
+        "on_tagged_rows_mw": 197.1,
+        "on_nonbase_rows_mw": 672.7
+      },
+      "CT_CHP": {
+        "idle_below_gate_mw": 50.3,
+        "on_tagged_rows_mw": 0.0,
+        "on_nonbase_rows_mw": 13.1
+      },
+      "CT_PEAKER": {
+        "idle_below_gate_mw": 1208.2,
+        "on_tagged_rows_mw": 997.1,
+        "on_nonbase_rows_mw": 997.1
+      },
+      "ST_CHP": {
+        "idle_below_gate_mw": 5.1,
+        "on_tagged_rows_mw": 0.0,
+        "on_nonbase_rows_mw": 3.6
+      },
+      "ST_GAS": {
+        "idle_below_gate_mw": 2079.9,
+        "on_tagged_rows_mw": 1661.8,
+        "on_nonbase_rows_mw": 1661.8
+      }
+    },
+    "total_idle_below_gate_mw": 5383.8,
+    "total_on_tagged_rows_mw": 3702.3,
+    "total_on_nonbase_rows_mw": 4441.7,
+    "reach_incumbent_tag_gate": 0.7851,
+    "reach_plant_structural_gate": 0.9419,
+    "verdict": "PASS",
+    "row_gate_taken": "incumbent_tag",
+    "n_rows_tagged": 298,
+    "n_rows_total": 715
+  },
+  "G2_rule19": {
+    "incumbent_usd_per_mwh_in_missed_winter_hours": {
+      "hours": 70,
+      "median": -9.9835,
+      "p05": -389.7381,
+      "p95": 2.7773,
+      "share_of_row_hours_negative": 0.8832,
+      "capacity_weighted_mean_usd_per_mwh": -51.7525
+    },
+    "armed_nonbase_writers": {
+      "gas_offer_net_revenue_margin": true,
+      "gas_offer_margin_zonal_anchor": true,
+      "gas_offer_margin_zonal_anchor_vintage": true,
+      "nyiso_st_gas_econ_bands_deleaked": true,
+      "nyiso_ct_peaker_committed_measured": true
+    },
+    "unenumerated_armed_offer_fields": [],
+    "name_matched_but_adjudicated_not_a_rung_writer": {
+      "nyiso_zonal_loss_surface": "model/interchange/nyiso.py + spec.py:3844 \u2014 splits internal CHAIN LINKS to carry marginal transmission-loss physics. It writes transmission structure, never a generator offer row, so it cannot collide with an assignment onto mc[row]."
+    },
+    "n_tagged_rows": 298,
+    "n_tagged_rows_that_are_also_base": 0,
+    "incumbent_usd_per_mwh_on_tagged_rows": {
+      "median": 0.0058,
+      "p05": -39.671,
+      "p95": 21.0837
+    },
+    "max_surviving_incumbent_contribution_on_tagged_row": 0.0,
+    "verdict": "PASS"
+  }
+}

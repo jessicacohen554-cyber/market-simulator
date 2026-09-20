@@ -1,0 +1,560 @@
+{
+ "_provenance": {
+  "session": "nyiso-245",
+  "precommit": "docs/PRECOMMIT-nyiso245-position-shape-offer-surface-2026-09-20.md",
+  "precommit_sha": "5cbf4fef",
+  "precommit_sha_prerebase": "398f0437",
+  "object": "within-unit own-curve price RISE (Delta = price_j - price_1), SHAPE ONLY",
+  "source": "NYISO MIS P-27 masked SUBMITTED generator bid data (YYYYMM01biddata_genbids_csv.zip), full-year 2022-2025, DAM; cleared awards never read (rule 13)",
+  "pooling": "2022-2025 POOLED; never per-year",
+  "estimator": "capacity-weighted median, weights = step MW width",
+  "delta_resolution_usd_per_mwh": 0.05,
+  "position_bins": [
+   0.0,
+   0.2,
+   0.4,
+   0.6,
+   0.8,
+   0.9,
+   1.0
+  ],
+  "netload_pcts": [
+   0.8,
+   0.9,
+   0.97
+  ],
+  "gas_quantiles": [
+   0.3333333333333333,
+   0.6666666666666666
+  ],
+  "netload_source": "EIA-930 NYIS Demand - NG:WND - NG:SUN, per year",
+  "netload_percentile_basis": "WITHIN each year's own distribution",
+  "gas_source": "keeper's own resolved _gas_series (cached), per year",
+  "gas_bin_edges_usd_per_mmbtu": [
+   3.0711,
+   5.0953
+  ]
+ },
+ "ladder_axes": [
+  "gas_bin",
+  "state_bin",
+  "position_bin",
+  "[pos_mid, delta_usd_per_mwh, weight_mw]"
+ ],
+ "markets": {
+  "DAM": {
+   "ladder": [
+    [
+     [
+      [
+       0.1,
+       0.025,
+       192066.5
+      ],
+      [
+       0.3,
+       0.575,
+       9639566.6
+      ],
+      [
+       0.5,
+       0.575,
+       24654244.9
+      ],
+      [
+       0.7,
+       2.575,
+       32769836.1
+      ],
+      [
+       0.85,
+       1.225,
+       21826959.6
+      ],
+      [
+       0.95,
+       0.425,
+       68217355.8
+      ]
+     ],
+     [
+      [
+       0.1,
+       0.025,
+       19572.4
+      ],
+      [
+       0.3,
+       0.675,
+       1159909.1
+      ],
+      [
+       0.5,
+       0.825,
+       2849163.1
+      ],
+      [
+       0.7,
+       3.225,
+       3724522.8
+      ],
+      [
+       0.85,
+       1.875,
+       2664755.6
+      ],
+      [
+       0.95,
+       1.525,
+       7361496.6
+      ]
+     ],
+     [
+      [
+       0.1,
+       0.025,
+       18832.8
+      ],
+      [
+       0.3,
+       0.675,
+       1132305.0
+      ],
+      [
+       0.5,
+       0.775,
+       2875286.5
+      ],
+      [
+       0.7,
+       3.625,
+       3626870.4
+      ],
+      [
+       0.85,
+       2.025,
+       2670561.0
+      ],
+      [
+       0.95,
+       1.625,
+       7132806.2
+      ]
+     ],
+     [
+      [
+       0.1,
+       0.025,
+       6869.4
+      ],
+      [
+       0.3,
+       0.775,
+       425187.9
+      ],
+      [
+       0.5,
+       1.025,
+       1124697.8
+      ],
+      [
+       0.7,
+       5.025,
+       1368901.7
+      ],
+      [
+       0.85,
+       2.025,
+       1010147.7
+      ],
+      [
+       0.95,
+       1.625,
+       2653295.4
+      ]
+     ]
+    ],
+    [
+     [
+      [
+       0.1,
+       0.025,
+       169902.7
+      ],
+      [
+       0.3,
+       0.725,
+       8822352.7
+      ],
+      [
+       0.5,
+       0.975,
+       21784256.4
+      ],
+      [
+       0.7,
+       2.675,
+       32053812.2
+      ],
+      [
+       0.85,
+       2.025,
+       19699546.2
+      ],
+      [
+       0.95,
+       0.075,
+       64570521.4
+      ]
+     ],
+     [
+      [
+       0.1,
+       0.025,
+       18344.2
+      ],
+      [
+       0.3,
+       0.875,
+       1045912.4
+      ],
+      [
+       0.5,
+       0.875,
+       2720659.0
+      ],
+      [
+       0.7,
+       3.425,
+       3980113.1
+      ],
+      [
+       0.85,
+       2.975,
+       2410998.0
+      ],
+      [
+       0.95,
+       0.475,
+       7425513.3
+      ]
+     ],
+     [
+      [
+       0.1,
+       0.025,
+       14227.3
+      ],
+      [
+       0.3,
+       0.825,
+       886315.6
+      ],
+      [
+       0.5,
+       1.025,
+       2171873.9
+      ],
+      [
+       0.7,
+       3.275,
+       3149109.6
+      ],
+      [
+       0.85,
+       2.575,
+       2015811.0
+      ],
+      [
+       0.95,
+       1.025,
+       5664324.5
+      ]
+     ],
+     [
+      [
+       0.1,
+       0.025,
+       8413.8
+      ],
+      [
+       0.3,
+       0.875,
+       548179.2
+      ],
+      [
+       0.5,
+       0.975,
+       1468209.2
+      ],
+      [
+       0.7,
+       4.075,
+       1976219.0
+      ],
+      [
+       0.85,
+       2.475,
+       1289763.8
+      ],
+      [
+       0.95,
+       1.275,
+       3502041.8
+      ]
+     ]
+    ],
+    [
+     [
+      [
+       0.1,
+       0.025,
+       152177.2
+      ],
+      [
+       0.3,
+       1.075,
+       11189393.5
+      ],
+      [
+       0.5,
+       1.775,
+       24842045.9
+      ],
+      [
+       0.7,
+       4.875,
+       35908917.3
+      ],
+      [
+       0.85,
+       4.125,
+       22686822.9
+      ],
+      [
+       0.95,
+       0.025,
+       77672375.2
+      ]
+     ],
+     [
+      [
+       0.1,
+       0.025,
+       24976.3
+      ],
+      [
+       0.3,
+       1.125,
+       2125155.1
+      ],
+      [
+       0.5,
+       2.375,
+       4273800.8
+      ],
+      [
+       0.7,
+       5.575,
+       6590336.1
+      ],
+      [
+       0.85,
+       5.025,
+       4147568.0
+      ],
+      [
+       0.95,
+       0.025,
+       13380372.6
+      ]
+     ],
+     [
+      [
+       0.1,
+       0.025,
+       10415.2
+      ],
+      [
+       0.3,
+       0.775,
+       1199698.2
+      ],
+      [
+       0.5,
+       3.225,
+       2192336.2
+      ],
+      [
+       0.7,
+       6.675,
+       3080860.6
+      ],
+      [
+       0.85,
+       5.025,
+       2091194.7
+      ],
+      [
+       0.95,
+       0.025,
+       6776943.3
+      ]
+     ],
+     [
+      [
+       0.1,
+       0.025,
+       2854.1
+      ],
+      [
+       0.3,
+       0.025,
+       474422.8
+      ],
+      [
+       0.5,
+       4.275,
+       710071.6
+      ],
+      [
+       0.7,
+       7.275,
+       924955.4
+      ],
+      [
+       0.85,
+       5.025,
+       663879.2
+      ],
+      [
+       0.95,
+       0.025,
+       2258090.3
+      ]
+     ]
+    ]
+   ]
+  }
+ },
+ "census": {
+  "DAM-2022": {
+   "rows_in": 2476984,
+   "rows_kept": 5287666,
+   "months_present": 12,
+   "dropped_uol_nonpositive": 10002,
+   "dropped_fully_self_scheduled": 121912,
+   "dropped_hour_out_of_year": 0,
+   "dropped_nonincreasing_mw": 10801,
+   "dropped_position_out_of_range_or_zero_width": 1278318,
+   "contamination": {
+    "single_block_unit_hour_share": 0.4322,
+    "single_block_capacity_share": 0.1266,
+    "flat_curve_capacity_share": 0.1266
+   }
+  },
+  "DAM-2023": {
+   "rows_in": 2287351,
+   "rows_kept": 5223279,
+   "months_present": 12,
+   "dropped_uol_nonpositive": 11636,
+   "dropped_fully_self_scheduled": 130974,
+   "dropped_hour_out_of_year": 0,
+   "dropped_nonincreasing_mw": 14884,
+   "dropped_position_out_of_range_or_zero_width": 1157219,
+   "contamination": {
+    "single_block_unit_hour_share": 0.4062,
+    "single_block_capacity_share": 0.1083,
+    "flat_curve_capacity_share": 0.1083
+   }
+  },
+  "DAM-2024": {
+   "rows_in": 2316066,
+   "rows_kept": 5156955,
+   "months_present": 12,
+   "dropped_uol_nonpositive": 16257,
+   "dropped_fully_self_scheduled": 127953,
+   "dropped_hour_out_of_year": 6344,
+   "dropped_nonincreasing_mw": 36716,
+   "dropped_position_out_of_range_or_zero_width": 1391164,
+   "contamination": {
+    "single_block_unit_hour_share": 0.3382,
+    "single_block_capacity_share": 0.0914,
+    "flat_curve_capacity_share": 0.0914
+   }
+  },
+  "DAM-2025": {
+   "rows_in": 2250804,
+   "rows_kept": 5052162,
+   "months_present": 12,
+   "dropped_uol_nonpositive": 12561,
+   "dropped_fully_self_scheduled": 126657,
+   "dropped_hour_out_of_year": 0,
+   "dropped_nonincreasing_mw": 24973,
+   "dropped_position_out_of_range_or_zero_width": 1263283,
+   "contamination": {
+    "single_block_unit_hour_share": 0.3508,
+    "single_block_capacity_share": 0.0974,
+    "flat_curve_capacity_share": 0.0974
+   }
+  }
+ },
+ "per_year_top_position": {
+  "2022": {
+   "delta_by_state_bin_top_position": [
+    0.025,
+    0.025,
+    0.025,
+    0.025
+   ],
+   "weight_by_state_bin_top_position_mw": [
+    56214417.0,
+    7437148.2,
+    5195523.2,
+    2258090.3
+   ]
+  },
+  "2023": {
+   "delta_by_state_bin_top_position": [
+    0.075,
+    0.925,
+    1.625,
+    1.625
+   ],
+   "weight_by_state_bin_top_position_mw": [
+    52238458.8,
+    6988932.9,
+    4832376.5,
+    2064061.0
+   ]
+  },
+  "2024": {
+   "delta_by_state_bin_top_position": [
+    0.375,
+    1.025,
+    1.625,
+    1.625
+   ],
+   "weight_by_state_bin_top_position_mw": [
+    51564244.5,
+    6955074.2,
+    4841418.8,
+    2068558.7
+   ]
+  },
+  "2025": {
+   "delta_by_state_bin_top_position": [
+    0.075,
+    0.575,
+    0.625,
+    0.625
+   ],
+   "weight_by_state_bin_top_position_mw": [
+    50443132.1,
+    6786227.2,
+    4704755.5,
+    2022717.5
+   ]
+  }
+ }
+}
