@@ -110,8 +110,18 @@ def resolve_hydro_period_hours(iso, dispatch_fleet, hydro_gen_idx, config):
     return periods
 
 
-def resolve_hydro_cascade(iso, year, dispatch_fleet, hydro_gen_idx, config):
-    """Return the hydraulic-cascade LP spec for this ISO-year, or ``UNSET``.
+def resolve_hydro_cascade(
+    iso, year, dispatch_fleet, hydro_gen_idx, config, hydro_monthly_energy=None
+):
+    """Return the hydro water-balance LP spec for this ISO-year, or ``UNSET``.
+
+    Serves the TWO mutually exclusive members of one row family — the
+    hydraulic-cascade coupling (``config.hydro_cascade_coupling``, NWPP-36) and
+    the per-plant forebay-storage bound (``config.hydro_pondage_bound``,
+    hydro-1) — because they build the SAME rows: the cascade is the pondage
+    bound with upstream links, and the pondage bound is the cascade with none.
+    Rule 19 ``[R-ONE-MECH]`` is enforced here rather than documented: arming
+    both raises, so a run can never stack two water balances on one plant.
 
     ONE resolver for BOTH orchestrators (``runner.py`` and
     ``scripts/run_calibration.py``), the :func:`resolve_hydro_period_hours`
@@ -135,31 +145,81 @@ def resolve_hydro_cascade(iso, year, dispatch_fleet, hydro_gen_idx, config):
         year: Solve year.
         dispatch_fleet: This year's LP-ready generator list.
         hydro_gen_idx: Indices of the hydro generators within ``dispatch_fleet``.
-        config: Scenario config carrying the gating flag.
+        config: Scenario config carrying the two gating flags.
+        hydro_monthly_energy: ``(n_hydro, 12)`` MWh budget aligned to
+            ``hydro_gen_idx``. Required by the pondage member (its inflow is
+            the plant's own budget); unused by the cascade member, which reads
+            its own measured artifact. ``None`` leaves the pondage member
+            INERT with a warning rather than guessing an inflow.
 
     Returns:
         A :class:`~market_sim.model.lp.hydro_cascade.HydroCascadeSpec` with
         fleet-level generator indices, or ``UNSET``.
+
+    Raises:
+        ValueError: When both members are armed (rule 19 — one water balance
+            per plant, never two).
     """
     from market_sim.pipeline.spec import UNSET
 
-    if not getattr(config, "hydro_cascade_coupling", False):
+    cascade_on = bool(getattr(config, "hydro_cascade_coupling", False))
+    pondage_on = bool(getattr(config, "hydro_pondage_bound", False))
+    if cascade_on and pondage_on:
+        raise ValueError(
+            "hydro_cascade_coupling and hydro_pondage_bound are the SAME row "
+            "family (one hourly water balance per plant) and are mutually "
+            "exclusive — arming both would stack two balances on every coupled "
+            "plant (rule 19 [R-ONE-MECH]). The cascade already bounds its "
+            "coupled plants' pondage through its own measured band."
+        )
+    if not (cascade_on or pondage_on):
         return UNSET
     if hydro_gen_idx is None or not len(hydro_gen_idx):
         return UNSET
     from dataclasses import replace
 
-    from market_sim.data.hydro import load_hydro_cascade
+    from market_sim.data.hydro import load_hydro_cascade, load_hydro_pondage
 
     hidx = np.asarray(hydro_gen_idx, dtype=int)
     codes = [int(getattr(dispatch_fleet[i], "plant_code", 0)) for i in hidx]
-    spec = load_hydro_cascade(iso, int(year), codes, hours=int(config.hours))
+    if pondage_on:
+        if hydro_monthly_energy is None:
+            logger.warning(
+                "%s %d: hydro_pondage_bound armed but no monthly energy budget "
+                "reached the resolver — the mechanism is INERT (the LP is "
+                "unchanged). This is a wiring defect, not a data gap.",
+                iso,
+                year,
+            )
+            return UNSET
+        # A plant the run-of-river split has already fixed flat carries no
+        # pondage row: its dispatch is determined, so a storage bound on it is
+        # redundant by construction (rule 19).
+        flat = np.array(
+            [
+                getattr(dispatch_fleet[i], "hydro_ror_flat_monthly_mw", None)
+                is not None
+                for i in hidx
+            ],
+            dtype=bool,
+        )
+        spec = load_hydro_pondage(
+            iso,
+            codes,
+            np.asarray(hydro_monthly_energy, dtype=float),
+            hours=int(config.hours),
+            ror_flat_rows=flat,
+        )
+    else:
+        spec = load_hydro_cascade(iso, int(year), codes, hours=int(config.hours))
+    member = "pondage bound" if pondage_on else "cascade coupling"
     if spec is None:
         logger.info(
-            "%s %d: hydro cascade coupling armed but INERT — no coupled plant "
-            "resolves onto this year's LP hydro fleet",
+            "%s %d: hydro %s armed but INERT — no plant carries a binding "
+            "water-balance row on this year's LP hydro fleet",
             iso,
             year,
+            member,
         )
         return UNSET
     up = np.asarray(spec.link_up_gen_idx, dtype=int)
@@ -169,10 +229,11 @@ def resolve_hydro_cascade(iso, year, dispatch_fleet, hydro_gen_idx, config):
         link_up_gen_idx=np.where(up >= 0, hidx[np.maximum(up, 0)], -1),
     )
     logger.info(
-        "%s %d: hydro cascade coupling — %d coupled plants %s, %d links, tau by "
-        "link %s h",
+        "%s %d: hydro %s — %d plants carrying a water-balance row %s, %d "
+        "links, tau by link %s h",
         iso,
         year,
+        member,
         spec.n_coupled,
         spec.plant_codes.tolist(),
         spec.n_links,

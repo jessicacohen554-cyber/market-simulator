@@ -12474,6 +12474,86 @@ def main() -> None:
         "Added by lane NWPP-40 (2026-09-16): NWPP-36 built the field with no "
         "CLI surface, and the first NWPP keeper arms it (plan §8 W4).",
     )
+    # --- The three pre-existing hydro gates, given a CLI surface (hydro-1) ---
+    # RULE 24 [R-REGISTRY] GAP CLOSED. hydro_dispatch_envelope (caiso-72),
+    # hydro_min_flow_floor (caiso-124) and hydro_ror_split (caiso-126) are
+    # solve-affecting ScenarioConfig gates that keepers carry ARMED (the NYISO
+    # keeper 2026-09-20-nyiso247-fuel-invariance-disarm records
+    # hydro_dispatch_envelope=True and hydro_min_flow_floor=True in its
+    # run_config.json scenario_config) and that this CLI had NO flag for, so a
+    # lane could not state the posture it was solving and a kwargs replay from
+    # meta.json could not carry it. These three tri-state flags ride the same
+    # generic prb_overrides channel as --hydro-cascade-coupling, so the value
+    # reaches BOTH run_year's config and recorded_cfg and is therefore
+    # replayable from run_config.json / meta.json. All default None (unset =
+    # keep the recipe / per-ISO value), so no existing run moves.
+    parser.add_argument(
+        "--hydro-dispatch-envelope",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Arm ScenarioConfig.hydro_dispatch_envelope (caiso-72 STEP-2): "
+        "cap the conventional-hydro fleet's hourly dispatch at the measured "
+        "per-(month x hour-of-day) percentile of the ISO's EIA-930 NG:WAT — "
+        "the head/flow/scheduling deliverability ceiling nameplate pmax "
+        "ignores. REFUSE for a BA in constants.EIA930_PS_FOLDED_INTO_WAT "
+        "(MISO, PJM), whose NG:WAT folds pumped-storage discharge and so "
+        "measures a different population than the LP's conventional-only "
+        "hydro units (rule 14 [R-ACCURATE]); the level pin already refuses "
+        "there and this reader does not, which is a known gap. Tri-state.",
+    )
+    parser.add_argument(
+        "--hydro-min-flow-floor",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Arm ScenarioConfig.hydro_min_flow_floor (caiso-124): hold each "
+        "conventional-hydro plant at a MONTH-CONSTANT minimum-generation "
+        "floor, its pro-rata share of the fleet's measured monthly Q95 "
+        "sustained level. The LOWER half of the two-sided measured capability "
+        "envelope. Same EIA-930 NG:WAT PS-fold caveat as "
+        "--hydro-dispatch-envelope. Tri-state.",
+    )
+    parser.add_argument(
+        "--hydro-ror-split",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Arm ScenarioConfig.hydro_ror_split (caiso-126): plants the "
+        "EXTERNAL ORNL-EHA hydro-plant-modes classifier marks run-of-river / "
+        "canal-conduit dispatch FLAT at their own measured monthly water "
+        "(min_gen == availability cap == budget[g,m]/hours[m]); reservoir-"
+        "class plants keep the full shaping machinery. This is the FLOOR half "
+        "of the hydro family — it is what stops the budget LP parking a "
+        "run-of-river plant at 0 MW, which it has no reservoir to do. "
+        "Complementary to --hydro-pondage-bound, which bounds concentration "
+        "and imposes no floor; a RoR-flat plant carries no pondage row. "
+        "Requires the per-ISO clean partition (scripts/data/"
+        "curate_hydro_plant_modes.py); an ISO with none is armed-but-INERT "
+        "with a byte-identical LP and a warning. Tri-state.",
+    )
+    parser.add_argument(
+        "--hydro-pondage-bound",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Arm ScenarioConfig.hydro_pondage_bound (hydro-1, 2026-09-20): "
+        "bound each conventional-hydro plant's WITHIN-MONTH energy "
+        "reallocation by its own MEASURED usable forebay storage — one hourly "
+        "water-balance row per plant in MWh, P + Spill + V(t) - V(t-1) = "
+        "inflow(t) with 0 <= V <= B, assembled by the SAME link-free "
+        "model/lp/hydro_cascade.py builder the cascade uses. B is "
+        "data/raw/<iso>-hydro/<iso>_hydro_pondage.csv (USACE NID volume x NID "
+        "head at efficiency 1.0, an upper bound); inflow is the plant's own "
+        "monthly budget over the month's hours, so no new energy datum "
+        "enters. It bounds CONCENTRATION and imposes NO floor (spill is "
+        "unbounded, so every row is feasible at P=0) — the trough is "
+        "--hydro-ror-split / --hydro-min-flow-floor's half. MUTUALLY "
+        "EXCLUSIVE with --hydro-cascade-coupling (same row family; the "
+        "resolver raises on both). An ISO with no artifact, or whose every "
+        "plant holds a whole month, is armed-but-INERT with a byte-identical "
+        "LP. Tri-state: unset (default) keeps the recipe / per-ISO value, "
+        "--no- forces it off. Rides the generic prb_overrides ScenarioConfig "
+        "channel so run_config.json and meta.json record it (rule 24 "
+        "[R-REGISTRY]); the field is on _CACHE_KEY_OPTIONAL_FIELDS, so an "
+        "unset flag moves no cache key.",
+    )
     parser.add_argument(
         "--hydro-budget-period-by-instrument",
         action="store_true",
@@ -15000,6 +15080,16 @@ def main() -> None:
             # reach run_year's config AND recorded_cfg, so the arming is
             # replayable from meta.json / run_config.json (rule 24).
             "hydro_cascade_coupling": args.hydro_cascade_coupling,
+            # Measured per-plant forebay-storage bound (hydro-1). Same
+            # tri-state channel and same replayability contract as the
+            # cascade flag above (rule 24).
+            "hydro_pondage_bound": args.hydro_pondage_bound,
+            # The three pre-existing hydro gates, given a CLI surface by
+            # hydro-1 (rule 24 gap — see the parser block). Same tri-state
+            # channel: None keeps the recipe / per-ISO value untouched.
+            "hydro_dispatch_envelope": args.hydro_dispatch_envelope,
+            "hydro_min_flow_floor": args.hydro_min_flow_floor,
+            "hydro_ror_split": args.hydro_ror_split,
             # Per-plant CC demonstrated-capacity reconciliation (mode=cap
             # bounds a plant AT its CAMPD sustained peak — the EIA-860
             # CA-row block-summer double-count fix). Per-ISO table; never

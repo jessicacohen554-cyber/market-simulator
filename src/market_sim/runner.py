@@ -3591,7 +3591,12 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 # dispatch-kwargs key set is unchanged. Same shared resolver as
                 # scripts/run_calibration.py.
                 hydro_cascade=resolve_hydro_cascade(
-                    iso, year, dispatch_fleet, hydro_gen_idx, config
+                    iso,
+                    year,
+                    dispatch_fleet,
+                    hydro_gen_idx,
+                    config,
+                    hydro_monthly_energy=hydro_monthly_energy,
                 ),
                 T=config.hours,
             )

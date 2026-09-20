@@ -1923,6 +1923,17 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # no sub-fields. SHARED field -- very end, per HOUSE-3. Registered IN THE
     # SAME COMMIT as the field (the nyiso-119 discipline).
     "chp_steam_duty_window",
+    # Measured per-plant FOREBAY-STORAGE bound on within-month hydro
+    # reallocation (hydro-1, default off): dropped from the hash at its default
+    # so every pre-existing cached run -- every ISO's keepers included -- keeps
+    # its key. The arm is byte-identical off by construction (the shared
+    # resolver returns UNSET, so the dispatch-kwargs key set is unchanged and
+    # no row or column is built); an armed run carries real per-plant-hour
+    # storage-balance rows and so earns a distinct key. ISO-agnostic name,
+    # per-ISO measured artifact -- the hydro_cascade_coupling shape. SHARED
+    # field -- very end, per HOUSE-3. Registered IN THE SAME COMMIT as the
+    # field (the nyiso-119 discipline).
+    "hydro_pondage_bound",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -2603,6 +2614,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by caiso-293 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "chp_steam_duty_window": "False",
+    # Added by hydro-1 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "hydro_pondage_bound": "False",
 }
 
 
@@ -3217,6 +3231,17 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
         "published governing instruments (1950 Niagara Treaty + INBC 1993 Directive; "
         "IJC 2016 Order + Plan 2014 + peaking/ponding directive) and measured NID pondage"
     ),
+    # NOTE (hydro-1): ``hydro_pondage_bound`` is deliberately NOT a member.
+    # Its measured input is a dam's VOLUME and HEAD — static physical
+    # attributes of a structure, not a year's published record — and the
+    # inflow it pairs them with is the same monthly budget the forecast path
+    # already builds from a normal-water-year climatology. It therefore passes
+    # rule 13's forward test ("could this quantity be produced for a forward
+    # year from forward drivers, and would it respond to changed conditions?")
+    # in both halves: the storage regenerates unchanged and the inflow scales
+    # with the water year. Same class as ``hydro_cascade_coupling``, which is
+    # likewise absent. ``hydro_dispatch_envelope`` IS a member, correctly —
+    # that one is a per-year measured percentile of realised output.
     "caiso_offer_surface_measured": "measured CAISO peak-rung offer repricing",
     "caiso_offer_surface_measured_ungrounded": (
         "measured CAISO bands for the un-grounded CHP/ST_GAS classes"
@@ -3943,6 +3968,54 @@ class ScenarioConfig:
     #   that plant UNCOUPLED on its own monthly budget -- never a substituted
     #   value. Registered on _CACHE_KEY_OPTIONAL_FIELDS (+ the defaults ledger)
     #   in the same commit, so no existing keeper's cache_key moves (gate G8).
+    hydro_pondage_bound: bool = False  # GATED default off (hydro-1,
+    # 2026-09-20). Bound each conventional-hydro plant's WITHIN-MONTH energy
+    # reallocation by its own MEASURED usable forebay storage: one water-
+    # balance row per (plant, hour) in MWh, P + Spill + V(t) - V(t-1) =
+    # inflow(t) with 0 <= V <= B (data.hydro.load_hydro_pondage, assembled by
+    # the existing link-free model/lp/hydro_cascade.py builder — no new LP
+    # code). B is data/raw/<iso>-hydro/<iso>_hydro_pondage.csv, derived by
+    # scripts/data/build_hydro_pondage.py from USACE NID volume x NID head at
+    # turbine efficiency 1.0; inflow is the plant's OWN monthly budget over the
+    # month's hours, i.e. an array the LP already carries.
+    #   THE DEFECT IT ADDRESSES. The hydro budget row conserves energy over a
+    #   MONTH and bounds nothing inside it, so a plant banks ~730 h of water at
+    #   zero cost and lands it on the peak; the row's dual — the water value —
+    #   is ONE number identical on day 1 and day 28, so every within-month
+    #   price difference is pure arbitrage with no offsetting cost. Measured
+    #   consequence: the PJM keeper concentrates 28.0/29.7/31.3 % of each
+    #   month's hydro into the month's top-decile load hours (2023/24/25) and
+    #   6.3/7.0/7.8 % onto its single peak DAY, against 3.3 % for a flat fleet;
+    #   the NYISO keeper over-swings within-month daily energy at 1.20-1.34x
+    #   the actual's amplitude.
+    #   DRIVER (rule 17a): the forebay. nyiso-219 measured it — 72.01 % of
+    #   NYISO's hydro MW cannot hold ONE DAY of its own full output, 98.31 %
+    #   cannot hold a month, and Robert Moses Niagara (51.9 % of fleet MW)
+    #   holds hours. The model's freedom exceeds the fleet's physics by one to
+    #   three orders of magnitude.
+    #   WINDOW (rule 17b): every hour. This is not a floor and pins no shape —
+    #   it binds only where the LP would move more energy between hours than
+    #   the forebay can hold, and it is a strict RESTRICTION of the feasible
+    #   set, so its failure mode is over-constraint, never over-freedom.
+    #   FORWARD STORY (rule 17c): a dam's volume and head are physical and
+    #   static (re-derived only on a new NID vintage, rule 23); the inflow is
+    #   the same monthly budget every path already supplies, so the bound
+    #   scales with the water year automatically.
+    #   DOF: ZERO. No threshold, no percentile, no efficiency — NID's own
+    #   volume and head, and the plant's own budget. The one registry entry
+    #   (constants.HYDRO_PONDAGE_EXTRA_NID_BY_PLANT) is a LINKAGE, not a value.
+    #   RULE 19 [R-ONE-MECH]: this family bounds CONCENTRATION and imposes no
+    #   floor (spill is unbounded, so every row is feasible at P=0); the
+    #   trough is hydro_ror_split / hydro_min_flow_floor's half, and the two
+    #   are complementary, never stacked — a RoR-flat plant carries no pondage
+    #   row because its dispatch is already determined. RECONCILED with
+    #   hydro_cascade_coupling, which is the SAME row family with links: the
+    #   two are mutually exclusive and the resolver refuses both at once.
+    #   Supersedes hydro_budget_period_by_instrument (R at nyiso-238) as the
+    #   within-month object: a partitioned PERIOD still permits a full
+    #   period's banking and a 2x concentration at the period seam, while a
+    #   forebay bound is a sliding constraint with the plant's own physical
+    #   tolerance. Never armed together.
     hydro_min_flow_floor: bool = False  # GATED default off (caiso-124). The
     # LOWER half of the same measured two-sided hydro capability envelope
     # hydro_dispatch_envelope caps from above: hold each conventional-hydro
