@@ -3061,3 +3061,20 @@ results/calibration/soco55_keeper_fat3/
 
 # nwpp-44: leg bundles stay out of main (rule 29(c) via .gitignore, rule 31 keeps them on disk)
 results/calibration/nwpp44_takeorpay_*/
+# SPP-67 per-year shard legs (rule 32(d) [R-SHARD]: per-year dirs are kept OUT
+# of main; the COMPOSITE spp67_yearown_span / _rung is what gets registered).
+# NOT deleted (rule 31 [R-RETAIN]) — they stay on this session's disk until the
+# owner rules on promotion. Provenance only, NOT a recovery route (rule 33(d)):
+#   git checkout f7e75594 -- results/calibration/spp67_yearown_2019
+#   git checkout c9e5a904 -- results/calibration/spp67_yearown_2020
+#   git checkout a3d373b4 -- results/calibration/spp67_yearown_2022
+#   git checkout fa204f2b -- results/calibration/spp67_yearown_2023
+#   git checkout db66ee64 -- results/calibration/spp67_yearown_2024
+#   git checkout 231da148 -- results/calibration/spp67_yearown_2025
+results/calibration/spp67_yearown_2019/
+results/calibration/spp67_yearown_2020/
+results/calibration/spp67_yearown_2021/
+results/calibration/spp67_yearown_2022/
+results/calibration/spp67_yearown_2023/
+results/calibration/spp67_yearown_2024/
+results/calibration/spp67_yearown_2025/
