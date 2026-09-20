@@ -1,0 +1,138 @@
+{
+ "gate": "G-4",
+ "ladder": [
+  0.8,
+  0.9,
+  0.97
+ ],
+ "years": {
+  "2022": {
+   "monthly_step": {
+    "gas_distinct": 12,
+    "tight_hours": 45,
+    "ordinary_hours": 5578,
+    "tight_winter_share": 1.0,
+    "tight_distinct_days": 15,
+    "tight_distinct_months": 2
+   },
+   "fleet_daily": {
+    "gas_distinct": 351,
+    "tight_hours": 138,
+    "ordinary_hours": 5973,
+    "tight_winter_share": 0.2101,
+    "tight_distinct_days": 17,
+    "tight_distinct_months": 4,
+    "jaccard_vs_monthly": 0.1806,
+    "retained_share_of_monthly_tight": 0.6222,
+    "new_hours_not_in_monthly_tight": 110
+   },
+   "hub_daily": {
+    "gas_distinct": 342,
+    "tight_hours": 138,
+    "ordinary_hours": 5955,
+    "tight_winter_share": 0.2101,
+    "tight_distinct_days": 17,
+    "tight_distinct_months": 4,
+    "jaccard_vs_monthly": 0.1806,
+    "retained_share_of_monthly_tight": 0.6222,
+    "new_hours_not_in_monthly_tight": 110
+   }
+  },
+  "2023": {
+   "monthly_step": {
+    "gas_distinct": 12,
+    "tight_hours": 18,
+    "ordinary_hours": 5174,
+    "tight_winter_share": 1.0,
+    "tight_distinct_days": 5,
+    "tight_distinct_months": 2
+   },
+   "fleet_daily": {
+    "gas_distinct": 329,
+    "tight_hours": 22,
+    "ordinary_hours": 5594,
+    "tight_winter_share": 1.0,
+    "tight_distinct_days": 7,
+    "tight_distinct_months": 3,
+    "jaccard_vs_monthly": 0.8182,
+    "retained_share_of_monthly_tight": 1.0,
+    "new_hours_not_in_monthly_tight": 4
+   },
+   "hub_daily": {
+    "gas_distinct": 315,
+    "tight_hours": 22,
+    "ordinary_hours": 5605,
+    "tight_winter_share": 1.0,
+    "tight_distinct_days": 7,
+    "tight_distinct_months": 3,
+    "jaccard_vs_monthly": 0.8182,
+    "retained_share_of_monthly_tight": 1.0,
+    "new_hours_not_in_monthly_tight": 4
+   }
+  },
+  "2024": {
+   "monthly_step": {
+    "gas_distinct": 12,
+    "tight_hours": 68,
+    "ordinary_hours": 5181,
+    "tight_winter_share": 1.0,
+    "tight_distinct_days": 16,
+    "tight_distinct_months": 2
+   },
+   "fleet_daily": {
+    "gas_distinct": 323,
+    "tight_hours": 61,
+    "ordinary_hours": 5741,
+    "tight_winter_share": 1.0,
+    "tight_distinct_days": 12,
+    "tight_distinct_months": 2,
+    "jaccard_vs_monthly": 0.8971,
+    "retained_share_of_monthly_tight": 0.8971,
+    "new_hours_not_in_monthly_tight": 0
+   },
+   "hub_daily": {
+    "gas_distinct": 308,
+    "tight_hours": 61,
+    "ordinary_hours": 5741,
+    "tight_winter_share": 1.0,
+    "tight_distinct_days": 12,
+    "tight_distinct_months": 2,
+    "jaccard_vs_monthly": 0.8971,
+    "retained_share_of_monthly_tight": 0.8971,
+    "new_hours_not_in_monthly_tight": 0
+   }
+  },
+  "2025": {
+   "monthly_step": {
+    "gas_distinct": 12,
+    "tight_hours": 129,
+    "ordinary_hours": 5460,
+    "tight_winter_share": 1.0,
+    "tight_distinct_days": 25,
+    "tight_distinct_months": 2
+   },
+   "fleet_daily": {
+    "gas_distinct": 346,
+    "tight_hours": 105,
+    "ordinary_hours": 5737,
+    "tight_winter_share": 1.0,
+    "tight_distinct_days": 17,
+    "tight_distinct_months": 3,
+    "jaccard_vs_monthly": 0.6835,
+    "retained_share_of_monthly_tight": 0.7364,
+    "new_hours_not_in_monthly_tight": 10
+   },
+   "hub_daily": {
+    "gas_distinct": 330,
+    "tight_hours": 108,
+    "ordinary_hours": 5753,
+    "tight_winter_share": 1.0,
+    "tight_distinct_days": 18,
+    "tight_distinct_months": 3,
+    "jaccard_vs_monthly": 0.705,
+    "retained_share_of_monthly_tight": 0.7597,
+    "new_hours_not_in_monthly_tight": 10
+   }
+  }
+ }
+}

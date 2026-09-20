@@ -40,7 +40,30 @@ import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parents[2]
-BUNDLE = REPO / "results" / "calibration" / "nyiso241_ctcommitted_span"
+
+
+def _designated_keeper_bundle(iso: str = "NYISO") -> Path:
+    """Resolve the ISO's CURRENT designated keeper bundle from the keeper shard.
+
+    A hardcoded bundle id dies at the next promotion: rule 35 ``[R-PROMOTE]``
+    (a) deletes the outgoing keeper's bundle dir in the promoting session, so a
+    probe pinned to ``nyiso241_ctcommitted_span`` raised ``FileNotFoundError``
+    the moment nyiso-247 promoted. Resolve keeper shard -> registry sidecar ->
+    ``bundle`` instead, so the probe follows the designation automatically.
+    ``NYISO_KEEPER_BUNDLE`` overrides for an explicit A/B against a non-keeper.
+    """
+    import os
+
+    override = os.environ.get("NYISO_KEEPER_BUNDLE")
+    if override:
+        return REPO / override if not Path(override).is_absolute() else Path(override)
+    shard = REPO / "frontend" / "data" / "backcast" / "keepers" / f"{iso}.json"
+    keeper_id = json.loads(shard.read_text())["keeper"]
+    sidecar = REPO / "frontend" / "data" / "backcast" / "registry" / f"{keeper_id}.json"
+    return REPO / json.loads(sidecar.read_text())["bundle"]
+
+
+BUNDLE = _designated_keeper_bundle()
 HUB = REPO / "data" / "raw" / "_validation-source" / "actual_lmp_hourly_NYISO.parquet"
 THRESHOLD = 300.0
 BANDS = ((0, 50), (50, 100), (100, 200), (200, 300), (300, 500), (500, float("inf")))
