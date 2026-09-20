@@ -138,8 +138,16 @@ including `dispatch/<year>_P1.parquet`:**
 | ctl 2024 | `924fafa6e1883ec9b54a8d418d518d4a0208926b` |
 | ctl 2025 | `637f71d021fb46f32b0e8f9f49bde73108207722` |
 
-All six are reachable from `main` (each shard branch merged), so **a promotion costs zero
-re-solves** (rule 34(e)).
+**Retrievability, stated honestly (rule 34(e)).** The six shard branches are **NOT merged** —
+`git merge-base --is-ancestor <sha> origin/main` answers *not an ancestor* for all six (verified
+2026-09-20). Each sha is reachable only from its own ref `claude/nwpp-42-{arm,mer}-<year>`, and
+those refs hold the **only** copy of the per-plant `dispatch/<year>_P1.parquet` layer a
+re-registration needs, plus the control legs in their entirety. The promotion itself cost **zero
+re-solves** because the parent fetched and composed all six before archiving the shards. **The
+branches are deliberately NOT deleted**: rule 33(f)(2) permits deleting a shard branch only when
+it carries no bundle the lane may still need, and 33(f)(4) forbids leaving a recovery line pinned
+to a sha that no longer resolves. If those refs are ever lost, recovery is a re-solve at roughly
+3 × 45–90 min of LP per leg family.
 
 **The signature check that nearly condemned a clean leg.** A naive `scenario_config` diff of a
 single-year leg against the three-year keeper reports differences that are not mechanism changes:

@@ -224,7 +224,12 @@ control) pinned to `b68673a99926a554d0a9e165f5bd06b890572c02`, composed by
 spent — which rule 29(b) normally forbids — because rule 36(e) **withdrew** the knobs' neutrality
 claims, so form 4 against the committed keeper could not be relied on for C4, the criterion at
 issue. Leg recovery by full SHA is in the FINDING and in `.gitignore`; every shard pushed its FULL
-bundle including `dispatch/<year>_P1.parquet`, so a promotion cost **zero re-solves**.
+bundle including `dispatch/<year>_P1.parquet`, so the promotion cost **zero re-solves**. The six
+shard branches are **NOT merged** (verified: `git merge-base --is-ancestor` answers *not an
+ancestor* for all six against `origin/main`) and are **deliberately not deleted** — they hold the
+only copy of the per-plant dispatch layer a re-registration needs and of the control legs
+entirely, so rule 33(f)(2) does not permit deleting them and 33(f)(4) forbids orphaning the
+recovery lines that cite them.
 
 **THE GATES, arm minus the paired control. NOTHING REGRESSES.** C1 PASS→PASS (18/18 all, 14/14
 free), C2 PASS→PASS, C4 FAIL→FAIL, C6 PASS→PASS, C8 PASS→PASS (0.0 % forced everywhere),
