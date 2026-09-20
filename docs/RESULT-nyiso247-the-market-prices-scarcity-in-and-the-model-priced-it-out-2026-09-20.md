@@ -275,3 +275,47 @@ to do, so E13 stays red and is reported rather than cleared.**
 *(Also reported: E11 warns the former keeper `2026-09-17-nyiso240-bench-attribution` has no
 resolvable bundle on disk, so its lineage diff has no baseline. Pre-existing, from that promotion's
 own prune — not this session's.)*
+
+---
+
+## 10. PROMOTED — the owner ruled, and rule 35 was executed in this session
+
+**Owner ruling, 2026-09-20, verbatim:** *"Is this a recommended keeper candidate? If so plz
+promote. If structural integrity improves but gates regress that may still be a keeper."* — given in
+reply to §7's explicit recommendation. **§7 is now closed.**
+
+**NYISO keeper `2026-09-19-nyiso241-ct-committed-measured` → `2026-09-20-nyiso247-fuel-invariance-disarm`.**
+
+Rule 35 `[R-PROMOTE]`, in order and in this session:
+
+| clause | done |
+|---|---|
+| **(b)** enumerate the year union BEFORE the delete | `{2022, 2023, 2024, 2025}` — §7, recorded before anything was pruned |
+| **(c)** incoming keeper covers that union | **exactly**; no stamped companion needed, no year lost |
+| **(e)** promote → **verify** → delete | re-keyed `keepers/NYISO.json` + `calibration-complete.json`, ran `audit_keepers` (E1/E13) to confirm the incoming three stores resolve, **then** pruned |
+| **(a)/(d)** delete the outgoing keeper's three stores | `prune_iso_runs.py --iso NYISO --force-uncite` — sidecar, payload and bundle dir together; the superseded id stays cited in the governance narrative, git history is the record for the bytes |
+
+**Final state:** `build_status.py --iso NYISO` → **NYISO:CALIBRATED**. `audit_keepers --iso NYISO`
+→ **0 failures**, one warning (E11 lineage-not-computable, the expected post-prune state, identical
+to the previous promotion's). `check_mechanism_matrix` → integrity OK, keeper stamps match.
+The matrix cell `gas_offer_net_revenue_margin` is re-stamped **K → R** for NYISO — and the cell
+states what is *not* rejected: the **margin form** survives, since the markup keeps its full
+strength and only its fuel basis moves.
+
+**E11's silent-de-arm guard** is answered with a literal field-by-field declaration in the keeper
+shard (`dearm_declaration_2026_09_20`): `gas_offer_net_revenue_margin`,
+`gas_offer_margin_zonal_anchor`, `gas_offer_margin_zonal_anchor_vintage`, `gas_offer_margin_anchor`
+(3.9046 → None), `gas_offer_margin_anchor_by_zone` (→ None) and the `coal_prb_sigmoid_overrides`
+bag. The last two are **resolved values, not gates** — `run_calibration.py` writes them only inside
+`if gas_offer_margin:`, so `None` is the correct record of what the LP priced against (rule 24).
+**No anchor was re-identified**; nyiso-167's per-year re-anchor remains DO-NOT-REDO.
+
+**Rebased onto `origin/main` at `14a11a9a`.** One conflict, in `calibration-complete.json`, between
+this promotion's NYISO re-key and lane SPP-67's same-day SPP re-key — resolved by taking main's
+file and re-applying **only** the NYISO edits, so `SPP.keeper = 2026-09-20-spp-67-yearown-rate` and
+its `rekeyed_spp67` note are preserved intact. Every gate re-run green after the rebase.
+
+**Shards:** all four archived (rule 33 `[R-SHARD-ARCHIVE]` (a)/(e)) after fetch + checkout +
+verify; none left alive. Their own reported numbers match this parent's independently
+(73.294 / 31.60 / 38.225 / 60.43 $/MWh). **Nothing was deleted that rule 31 protects**: the four
+per-year legs remain on local disk, gitignored, with their SHAs recorded as provenance.
