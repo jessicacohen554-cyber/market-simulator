@@ -1329,6 +1329,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # armed run reprices the survey-NA months and hashes distinctly. Registered
     # WITH the field, in the same commit (the nyiso-119 discipline).
     "caiso_citygate_spot_coverage",
+    # caiso-288: the EIA publication-blackout bridge (default off = the
+    # constant-extension exactly as before, byte-identical); an armed run
+    # rebuilds the Nov/Dec blackout interiors and hashes distinctly. Registered
+    # WITH the field, in the same commit (the nyiso-119 discipline).
+    "caiso_citygate_blackout_bridge",
     # caiso-269 late-evening clean import tranche (default off), registered
     # RETROACTIVELY: the field's own merge missed this tuple entirely, so it
     # entered the digest at its own default and orphaned EVERY on-disk cache
@@ -2314,6 +2319,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by caiso-246 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "caiso_citygate_spot_coverage": "False",
+    # Added by caiso-288 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "caiso_citygate_blackout_bridge": "False",
     # caiso-269's field, registered RETROACTIVELY (its own merge missed the
     # _CACHE_KEY_OPTIONAL_FIELDS registration entirely, orphaning every
     # on-disk cache key), so the registration and this ledger entry land
@@ -3065,6 +3073,7 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     "caiso_citygate_spot_level": "measured CA daily citygate spot series",
     "caiso_citygate_flow_date": "flow-date placement of that measured series",
     "caiso_citygate_spot_coverage": "own-print month coverage of that measured series",
+    "caiso_citygate_blackout_bridge": "measured Henry Hub daily spot + the two bracketing measured citygate prints, across EIA's publication blackouts",
     "dual_fuel_oil_daily_parity": "measured daily oil prints for the parity cap",
     # --- measured availability / outage records ---
     "caiso_dam_outages": "CAISO's published DAM outage record for the year",
@@ -9015,6 +9024,48 @@ class ScenarioConfig:
     # spot-level leg it extends (_BACKCAST_ONLY_OVERLAY_FIELDS). Requires
     # gas_hub_basis_overlay + caiso_citygate_spot_level. Default off
     # (byte-identical); CAISO-only.
+    caiso_citygate_blackout_bridge: bool = False  # Rebuild the EIA
+    # PUBLICATION-BLACKOUT interiors of the measured CA Composite daily citygate
+    # series from measured data instead of constant-extending the last print
+    # (caiso-288; PRECOMMIT-caiso288-citygate-blackout-bridge-2026-09-20.md).
+    # THE DEFECT: EIA publishes no Natural Gas Weekly Update in Thanksgiving
+    # week or in the two weeks spanning Christmas/New Year, so the daily series
+    # carries an 8-19 day hole in November and December of EVERY year
+    # (2018-2026: 35 such gaps). _flow_date_staircase forward-fills the last
+    # print across them, which is correct for the 1-4 day trading packages that
+    # make up 1,767 of the series' 1,805 gaps — a real trade priced those flow
+    # days — and an extrapolation across a blackout, where no trade priced them.
+    # It bites hardest exactly when the last print is extreme: in Dec-2022 the
+    # held value is $53.59/MMBtu, the single highest print of the year, applied
+    # to 10 of December's 31 days while the measured record says the western gas
+    # crisis was collapsing through them (SoCal citygate weekly $48.74 on 12-21
+    # -> $20.18 on 01-04; Henry Hub daily -51% from 12-23 to 12-30; the next
+    # citygate print, 2023-01-05, is $16.55).
+    # WHEN ON, a gap of >= _GAS_BLACKOUT_MIN_GAP_DAYS (6; the series' own
+    # trade-gap histogram is EMPTY at 6 and 7, so any threshold in [6,7] selects
+    # the identical 35 gaps and the value is not selectable against a result) is
+    # rebuilt by data.fuel.hubs._basis_bridge_blackouts: the measured Henry Hub
+    # daily spot inside the gap plus the basis at the two bracketing MEASURED
+    # citygate prints, interpolated between them. A December blackout is
+    # bracketed against the NEXT January's first print, so the bridge reads the
+    # full multi-year dated map. Every 1-4 day package still staircases.
+    # IDENTIFICATION IS ON THE GAS DATA, NEVER ON A PRICE RESIDUAL (rule 1
+    # [R-STRUCT]): over a synthetic holdout of 33,216 withheld MEASURED citygate
+    # days this construction beats both constant-extension and straight-line
+    # interpolation on MAE, bias and RMSE at every gap length (0.481 / +0.017 /
+    # 1.787 against 0.716 / +0.039 / 2.376 and 0.519 / +0.033 / 1.873), and on
+    # spike-opening blackouts it cuts a systematic +0.879 $/MMBtu high bias to
+    # +0.170. ZERO new scalars beyond that histogram-identified gap threshold
+    # (rules 5/21); every input is measured and the identical construction
+    # regenerates for a forward year from forward curves (rule 13
+    # [R-MEASURED]); it REPLACES the constant extension on those days rather
+    # than stacking on it (rule 19 [R-ONE-MECH]); rule 14 [R-ACCURATE] is the
+    # whole case. It is NOT one-directional — Nov-2022 rises +$0.84/MMBtu while
+    # Dec-2022 falls -$3.73 — which is the signature of a construction rather
+    # than a fit. Default off (byte-identical); CAISO-only (rule 25
+    # [R-ISO-SCOPE]: the same blackout exists in the MISO/NEISO/NYISO daily
+    # series and is left for those lanes to test on their own evidence).
+    # Requires caiso_citygate_flow_date; inert without daily prints.
     caiso_dsw_surplus_clean: bool = False  # Carry the MEASURED surplus-hour
     # WEIM clean import depth on the south (Palo Verde / Path-46) corridor
     # (caiso-87; FINDING-caiso82 §3 "measured clean DEPTH" lane;
@@ -21686,6 +21737,7 @@ TIER_TAGS: dict[str, int] = {
     "nearby_fuel_price_zone_donor_guard": 3,
     "fleet_state_from_eia860": 3,
     "caiso_citygate_spot_coverage": 3,
+    "caiso_citygate_blackout_bridge": 3,
     "class_aware_fuel_price_fallback": 3,
     "plant_level_fleet": 3,
     "gas_offer_curve": 3,
