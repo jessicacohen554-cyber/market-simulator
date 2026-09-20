@@ -6183,3 +6183,65 @@ started here.
 **Carried open, not silently resolved:** Q1 (three truncated ladder rungs), Q3 (the MER dual is
 ungated), the proposed rule 32(c)(8) addendum. **Pre-existing RED not this lane's:**
 `results/calibration/caiso279_ablate_dswcouple_span`.
+
+### pjm-h12 card D-2 — the export seam gap is ONE defect, and the chartered successor is dead at zero LP
+
+**Doc:** `docs/ADDENDUM-pjm-h12-the-seam-is-a-variance-compression-2026-09-20.md` · **Probe:**
+`scripts/probes/pjm_h12_seam_qq_phase0.py`. Still ZERO LP, ZERO shards — every number is from the
+keeper pair's committed `hourly/system_<year>.parquet` sidecars plus
+`_validation-source/actual_lmp_hourly_PJM.parquet` and `eia-930-interchange/`.
+
+**Both limbs of C-2 have ONE cause: the model's price distribution is VARIANCE-COMPRESSED against
+measured DA.** Model ÷ measured at matched quantiles runs ~1.5 at p1 down to ~0.7 at p99, crossing
+1.0 near the median, monotone in all six years — too high in the low tail (p10 ratio 1.18–1.40), too
+low in the high tail (p99 0.63–0.89), median right (p50 0.998–1.187, which is why C3a passes). The
+ladder's rungs ARE quantiles of measured DA, so clearing them against a compressed distribution
+under-clears both ends at once. **That derives the sign of the export shortfall from first
+principles** (PJM exports when cheap; the model's cheap hours aren't cheap enough), with no fitting.
+
+**The import limb is UNREACHABLE, not under-modelled.** `qq_import` = `quantile(da, 1-exceed)`, so a
+never-exceeded depth prices at the year's measured MAXIMUM. The model's hourly price reaches that
+ceiling in **7 hours of 52,560 (0.013 %)** and in **2022/2023/2024/2025 never once**. That
+mechanically explains pjm-h11's C-2 reading (model gross import 0.000–0.048 TWh vs measured
+0.000–0.603).
+
+**The re-anchoring repair is real and large on VOLUME.** Driving the derivation's own `offline_score`
+law with three price series: span volume error **P9 +0.100 / ASIS +37.368 / ARM +0.060 TWh**,
+duration RMSE **121.1 / 358.1 / 118.6**. Reproduces pjm-174's 2021/2022 numbers to the milli-TWh and
+extends them to six years. *Scope limit stated: this is the derivation's offline law — the live LP
+also applies per-border envelopes and its own price feedback, so +37.368 is direction and scale, not
+the LP's seam error (pjm-h11 measured 9.0–12.3 TWh/yr live).*
+
+**AND THE CHARTERED SUCCESSOR IS DEAD, killed at zero LP.** The charter required a successor to
+"demonstrate the hourly claim". It cannot: **fed the exact price it was derived from, the ladder's
+own hourly r is 0.052** — the ceiling is already zero. The ARM improves hourly r in 4 of 5 seams and
+its mean (0.0547) even exceeds P9's (0.0522), but at an absolute 0.05 that is noise and is not
+quoted as a win. Structural, not a tuning shortfall: `qq_*` match exceedance FREQUENCIES, so a step
+ladder calibrated on duration statistics pins the flow DISTRIBUTION by construction and says nothing
+about which hour gets which block. **This retrospectively explains why
+`seam_neighbour_hourly_ladder`'s hourly claim was contradicted by its solve — it was never
+achievable.**
+
+**The signal is not in the input.** Measured hourly seam flow vs measured hourly PJM DA price: |r|
+0.00–0.33 with **signs that flip between years and seams** (NYISO −0.3663 in 2020 → +0.2213 in 2022;
+Carolinas +0.0324 in 2021 → −0.3321 in 2022). PJM's hourly interchange is not in reality a function
+of PJM's own hourly price — it is the neighbour's price, bilateral schedules and transmission
+outages. MISO is the one partial exception (0.15–0.31, sign-stable). **No re-anchoring, hourly ladder
+or quantile map can recover a signal the input does not carry.**
+
+**Cell `seam_neighbour_hourly_ladder` stays `O` and was NOT re-tested; no matrix cell edited** (rule
+28(b) triggers on testing a mechanism — this is a diagnostic on committed artifacts, nothing wired
+into a solve). No successor built, no shards launched: phase 0 killed an arm before an LP was spent,
+which is what rule 29 `[R-SCREEN]` clause (0) survives as practice to do.
+
+**New owner questions.** **Q5 — withdraw the hourly bar from this mechanism family?** It tests a
+duration-curve device for hourly skill its input cannot carry, so keeping it guarantees every future
+seam successor fails for a reason unrelated to its merit; the proposal is to judge seam anchoring on
+volume + duration RMSE and route hourly interchange to a different input (neighbour price /
+scheduled bilaterals) as its own card. **Q6 — build a quantile-indexed ladder?** The ARM series is a
+DIAGNOSTIC and is **not** admissible as a mechanism (mapping onto the measured DA marginal at runtime
+has no forward analogue → fails rule 13 `[R-MEASURED]`). The admissible form stores each rung's
+QUANTILE and evaluates it against the model's own within-year distribution — no measured price level,
+regenerates forward, removes the censoring automatically. That is a new `ScenarioConfig` field (rule
+28(c): matrix row in the same PR) and a PRECOMMIT-plus-six-shards task, not started here because Q5
+decides what it would be gated on.
