@@ -6111,3 +6111,75 @@ pjm-h8 on 2026-09-16.
 `docs/ADDENDUM-pjm-h11-the-2020-readout-2026-09-19.md`,
 `docs/handoffs/PRECOMMIT-pjm-h11-2026-09-19.md`,
 `docs/FINDING-pjm-h11-the-pjm-oom-is-a-disk-ordering-bug-2026-09-19.md`.
+
+## pjm-h12 — 2026-09-20
+
+**ZERO LP, ZERO SHARDS.** Card D-1 (root-cause the offer-midcurve rebuild) is answered entirely from
+git and the keeper's committed sidecars — which is the outcome the charter predicted for the branch
+it landed on. Keeper `2026-09-19-pjm-h11-c1seam-span` untouched; nothing registered, nothing pruned.
+**Doc:** `docs/FINDING-pjm-h12-the-midcurve-rebuild-is-a-clean-rederivation-2026-09-20.md`.
+
+**D-1a → branch (i): the rebuild is a LEGITIMATE, cited rule 23 `[R-FROZEN-DERIVE]` re-derivation,
+and the table STAYS.** Verified three ways rather than taken from the commit message: (V1) the
+artifact's own `_provenance` corroborates the corpus claim — `n_month_files_parsed` 36 → 72, 12-of-12
+month coverage in each added year; (V2) **the derive script is blob-identical** at the old table's
+commit, the rebuild commit and HEAD (`1e7ba58ab4bd1145d62c9041bec4fb8e280f11ea`), so *"the derive ran
+unmodified"* is verified, not asserted; (V3) zero new `ScenarioConfig` fields, zero scalars. Rule 14
+`[R-ACCURATE]` independently required it — the old table priced 2020/2021/2022 from `pooled`, a
+capacity-weighted blend **of 2023–2025**, i.e. years that had not happened yet.
+
+**So COAL_BIT's +8.26 TWh is a genuine response to a better input, and its mechanism is measured:**
+the rebuild made PJM coal cheaper in exactly the three years that moved. LONG_RUN mean implied-HR
+multiplier, own-year minus the `pooled` it replaces: **−0.298 / −1.993 / −0.164** (2020/2021/2022)
+against **+0.000 / +0.002 / +0.000** (2023/2024/2025). 2021 is the event — the committed rung
+s = 0.45 falls 8.025/7.725/7.825/7.775 → 6.125/5.425/5.325/5.525, ~30 % cheaper, ~$10/MWh at 2021
+delivered gas. **2022 is not monotone with the others** (cheaper at the bottom of the curve, dearer
+at the top); a successor modelling this as a uniform coal discount will mis-predict it.
+
+**Training-year restatement: 129 of 432 cells, but 73 of them are `CT_FAST`, which the solve never
+reads** (`pjm_offer_midcurve_segments = ['LONG_RUN','CC_LIKE']`). In the armed segments the largest
+training-year move is 0.10 (LONG_RUN) / 0.15 (CC_LIKE), and LONG_RUN's means are ~0 — consistent with
+the keeper passing C1 18/18 on the training years.
+
+**Two h9c assertions that do not survive checking** (neither damages the keeper; both live for the
+next lane). (a) *"a 2020-2022 mask never contributes to a 2023-2025 unit's median physics"* is FALSE
+as written — `_unit_physics` medians over **every** parsed file, so segment membership is pooled
+across years and the added years can re-segment a surviving key. The falsifier is **2025 = exactly 0
+cells moved in all three segments** while 2023/2024 move; a disjoint-key story predicts zero
+everywhere. (b) **The OLD table was stale against its own landed derive script** — it lacks
+`conditioning`/`season_of_month`, which blob `1e7ba58a` emits unconditionally, and both landed in the
+same commit. h9c was the first run of the landed script, so part of the 2023/2024 restatement is that
+staleness being cured; the 129 cells are an **upper bound** on the data-addition effect, not a
+measurement of it.
+
+**D-1b → there is nothing to un-stack (rule 19 `[R-ONE-MECH]`).** From the keeper's committed
+`legitimacy_diagnostics.json`, no re-solve: every mechanism forcing COAL, summed
+(`coal_mustrun` + `reliability_floor` + `chp_steam`), is **4.538 / 4.679 / 1.440 TWh** =
+**4.00 % / 4.14 % / 0.99 %** of class energy against a 30 % budget. D-4 does read `passed: false`,
+but its failures are `st_netload_drag` (plant 3138) and `cc_mustrun_per_plant` × CC_REGULAR (2393,
+7153) — **no coal mechanism appears in any D-4 failure row.** **PJM coal over-generates
+economically, not by forcing**: removing every coal floor could not close a +16.90-to-+25.16 TWh
+six-year C1 error. The target is the coal **offer level** / merit position against gas, and a new
+floor here would be a mechanism aimed at a residual forcing does not produce — refused under rule 1
+`[R-STRUCT]`.
+
+**Latent reproducibility trap, found in passing and NOT fixed.** The committed surface depends on six
+years of corpus, but `fetch_pjm_energy_offers.py` and `derive_pjm_offer_midcurve.py` **both** still
+default to `--years 2023 2024 2025`. A bare run of the documented pipeline regenerates the old
+three-year table and silently reverts the rule-14 repair, with no error and no script diff; the
+corpus payload is gitignored (DataMiner2 redistribution restriction), so the defaults *are* the
+contract. Left for the owner (Q4): the derive script is rule-23 frozen and the pair must move
+together — fixing only the fetch default gives the worse state of a six-year corpus read three years
+deep. The corpus README is corrected (documentation only, plus two stale `scripts/` → `scripts/data/`
+paths).
+
+**Card D-2 (export seam) not advanced.** `seam_neighbour_hourly_ladder` stays `O`; the charter bars
+re-running that arm as-is and a successor must demonstrate the hourly claim the last one failed.
+pjm-174 already holds the design: the defect is Q-Q **anchoring**, and quantile-mapping the model
+price onto the measured DA marginal with hourly ranking untouched returns the measured volume exactly
+(31.732 / 37.805 TWh) through the **unchanged** ladder. That is a PRECOMMIT-and-six-shards task, not
+started here.
+
+**Carried open, not silently resolved:** Q1 (three truncated ladder rungs), Q3 (the MER dual is
+ungated), the proposed rule 32(c)(8) addendum. **Pre-existing RED not this lane's:**
+`results/calibration/caiso279_ablate_dswcouple_span`.

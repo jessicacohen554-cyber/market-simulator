@@ -6,9 +6,23 @@ as up to twenty MW/price breakpoints in parallel wide columns
 (`mw1`/`bid1` … `mw20`/`bid20`) plus cost parameters
 (`no_load_cost`, `avg_ecomin`, `avg_ecomax`, etc.).
 
-**This directory's contents are gitignored** (see `.gitignore`) — the 3-year
-corpus (2023–2025) is ≈1–2 GB compressed at ~29,000 rows/day × 365 days, far
-past what's practical to commit. Only this README is tracked.
+**This directory's contents are gitignored** (see `.gitignore`) — the corpus is
+≈1–2 GB compressed at ~29,000 rows/day × 365 days over three years, far past
+what's practical to commit. Only this README is tracked.
+
+**THE LIVE CORPUS IS SIX YEARS, 2020–2025 (72 month-files), NOT three.** It was
+extended from 36 files (2023–2025) by session pjm-h9c on 2026-09-16 as a rule 23
+`[R-FROZEN-DERIVE]` source-data change (commit `73a68234`), and
+`data/raw/_validation-source/pjm_offer_midcurve_condbinned.json` — the committed
+surface the PJM keeper solves on — now declares `n_month_files_parsed: 72` with
+12-of-12 month coverage in every one of those years. Re-fetching fewer years
+regenerates a three-year surface that prices 2020/2021/2022 from a blend of
+2023–2025, which is the estimate rule 14 `[R-ACCURATE]` says to replace with the
+publisher's own data. **Both `fetch_pjm_energy_offers.py` and
+`derive_pjm_offer_midcurve.py` still default to `--years 2023 2024 2025`, so pass
+the six years explicitly** (see below) until that default pair is moved —
+`docs/FINDING-pjm-h12-the-midcurve-rebuild-is-a-clean-rederivation-2026-09-20.md`
+§5 records why this lane did not move it and §2 verifies the re-derivation.
 
 **Source:** PJM DataMiner2 REST API, `https://api.pjm.com/api/v1`
 (`energy_market_offers` feed). See `docs/data-licensing.md` §4 — PJM
@@ -19,10 +33,13 @@ because of size.
 **Regeneration:**
 
 ```bash
-python scripts/fetch_pjm_energy_offers.py               # 2023–2025, all months
-python scripts/fetch_pjm_energy_offers.py --years 2024
-python scripts/fetch_pjm_energy_offers.py --years 2023 2024 --months 1 2 3
-python scripts/fetch_pjm_energy_offers.py --force        # re-download existing files
+# THE LIVE CORPUS — what the committed mid-curve surface was derived from:
+python scripts/data/fetch_pjm_energy_offers.py --years 2020 2021 2022 2023 2024 2025
+
+python scripts/data/fetch_pjm_energy_offers.py           # DEFAULT = 2023–2025 ONLY (see note above)
+python scripts/data/fetch_pjm_energy_offers.py --years 2024
+python scripts/data/fetch_pjm_energy_offers.py --years 2023 2024 --months 1 2 3
+python scripts/data/fetch_pjm_energy_offers.py --force   # re-download existing files
 ```
 
 Auth uses the public `Ocp-Apim-Subscription-Key` published in DataMiner2's
@@ -34,7 +51,7 @@ rate-limit details.
 **Curate into the clean tree:**
 
 ```bash
-python scripts/curate_energy_offers.py
+python scripts/data/curate_energy_offers.py
 ```
 
 Reads the monthly wide-format parquets here and writes one clean long-format
