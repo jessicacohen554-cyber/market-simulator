@@ -210,6 +210,17 @@ any leg recovery is costed as a **re-solve** (~5 min/year).
 `check_registry_payload_parity.py` is RED locally on exactly those seven gitignored dirs and nothing
 else — trap (l), expected, and green in CI, which checks out only what is committed.
 
+**Two defects in my own shard prompt, reported because the shards caught them and I did not.**
+(1) Hard stop 1 named `offer_curve_overrides` as a `scenario_config` field; it is not — the field is
+`offer_curve_by_group`, and `offer_curve_overrides` is the `calibration_flags` key. Two shards
+flagged it and verified the right field instead of stopping, which was the correct call; the parent
+independently confirmed SHA-256 `090abd793b5fa5a7` byte-identical on both composites, so nothing
+rests on the shards' judgement here. (2) The prompt told shards to commit only their own bundle
+path, which left each shard's `_shared/<ISO>/` captures on its container; the parent recovered them
+with `--rebuild-benchmark` (zero LP), which also reconciled them to keeper 13's own capture hashes.
+A successor's prompt should name `offer_curve_by_group` and should say explicitly that
+`_shared/SPP/**` is tracked (trap (m)) and may be committed.
+
 One shard (the first 2021) stopped mid-solve with its container unreachable and no message tool
 available to nudge it; 2021 was re-solved in a fresh shard (`claude/spp67-2021b`) at the same pin.
 
