@@ -1,0 +1,86 @@
+{
+ "gate": "G-5",
+ "session": "nyiso-249",
+ "years": {
+  "2022": {
+   "n_missed": 91,
+   "class_hourly_has_zone": false,
+   "iso_wide": {
+    "avail_thermal_mw_mean": 15266.6,
+    "avail_sub300_mw_mean": 13828.2
+   },
+   "Long_Island": {
+    "n_thermal_rows": 92,
+    "nameplate_mw": 3939.0,
+    "avail_thermal_mw_mean": 2600.8,
+    "avail_sub300_mw_mean": 2217.5
+   },
+   "NYC": {
+    "n_thermal_rows": 149,
+    "nameplate_mw": 9530.7,
+    "avail_thermal_mw_mean": 6519.6,
+    "avail_sub300_mw_mean": 5888.8
+   }
+  },
+  "2023": {
+   "n_missed": 10,
+   "class_hourly_has_zone": false,
+   "iso_wide": {
+    "avail_thermal_mw_mean": 16999.4,
+    "avail_sub300_mw_mean": 16965.6
+   },
+   "Long_Island": {
+    "n_thermal_rows": 92,
+    "nameplate_mw": 3939.0,
+    "avail_thermal_mw_mean": 2893.4,
+    "avail_sub300_mw_mean": 2889.8
+   },
+   "NYC": {
+    "n_thermal_rows": 149,
+    "nameplate_mw": 9530.7,
+    "avail_thermal_mw_mean": 7316.4,
+    "avail_sub300_mw_mean": 7287.8
+   }
+  },
+  "2024": {
+   "n_missed": 13,
+   "class_hourly_has_zone": false,
+   "iso_wide": {
+    "avail_thermal_mw_mean": 17039.9,
+    "avail_sub300_mw_mean": 17013.9
+   },
+   "Long_Island": {
+    "n_thermal_rows": 92,
+    "nameplate_mw": 3939.0,
+    "avail_thermal_mw_mean": 2917.9,
+    "avail_sub300_mw_mean": 2916.5
+   },
+   "NYC": {
+    "n_thermal_rows": 155,
+    "nameplate_mw": 9536.7,
+    "avail_thermal_mw_mean": 7062.5,
+    "avail_sub300_mw_mean": 7038.7
+   }
+  },
+  "2025": {
+   "n_missed": 39,
+   "class_hourly_has_zone": false,
+   "iso_wide": {
+    "avail_thermal_mw_mean": 17566.7,
+    "avail_sub300_mw_mean": 17196.7
+   },
+   "Long_Island": {
+    "n_thermal_rows": 92,
+    "nameplate_mw": 3939.0,
+    "avail_thermal_mw_mean": 3249.1,
+    "avail_sub300_mw_mean": 3155.6
+   },
+   "NYC": {
+    "n_thermal_rows": 155,
+    "nameplate_mw": 9536.7,
+    "avail_thermal_mw_mean": 7130.3,
+    "avail_sub300_mw_mean": 6959.6
+   }
+  }
+ }
+}

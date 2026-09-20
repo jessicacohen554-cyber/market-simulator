@@ -1,0 +1,20 @@
+{
+ "gate": "G-DRIFT-M",
+ "session": "nyiso-249",
+ "years": {
+  "2023": {
+   "n_generators": 712,
+   "n_with_chp_grid_pmin_mw_gt0": 14,
+   "min_chp_on_frac": 1.0,
+   "max_chp_on_frac": 1.0,
+   "checks": {
+    "chp_steam_duty_window_is_False": true,
+    "coal_mustrun_requires_measured_row_is_False": true,
+    "vre_reference_rate_year_own_is_False": true,
+    "every_gen_chp_on_frac_is_1.0": true
+   },
+   "passed": true
+  }
+ },
+ "form4_valid": true
+}

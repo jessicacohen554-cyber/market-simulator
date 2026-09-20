@@ -1,0 +1,90 @@
+{
+ "2022": {
+  "LI_demand_mean_in_missed": 3032.4,
+  "LI_demand_max_in_missed": 5178.1,
+  "LI_price_p50": 158.25,
+  "LI_price_max": 298.81,
+  "NYC_demand_mean_in_missed": 6812.4,
+  "band_share_pct": {
+   "": 52.36,
+   "committed": 18.25,
+   "econ": 0.67,
+   "econc00": 2.71,
+   "econc01": 2.66,
+   "econc02": 2.59,
+   "econc03": 2.52,
+   "econc04": 2.49,
+   "econc05": 2.46,
+   "econhi": 5.75,
+   "econlo": 5.93,
+   "mustrun": 0.4,
+   "peak": 1.22
+  }
+ },
+ "2023": {
+  "LI_demand_mean_in_missed": 3786.4,
+  "LI_demand_max_in_missed": 5053.9,
+  "LI_price_p50": 87.15,
+  "LI_price_max": 195.93,
+  "NYC_demand_mean_in_missed": 8215.8,
+  "band_share_pct": {
+   "": 43.76,
+   "committed": 19.0,
+   "econ": 0.36,
+   "econc00": 2.79,
+   "econc01": 2.76,
+   "econc02": 2.75,
+   "econc03": 2.7,
+   "econc04": 2.69,
+   "econc05": 2.65,
+   "econhi": 8.32,
+   "econlo": 8.44,
+   "mustrun": 0.0,
+   "peak": 3.78
+  }
+ },
+ "2024": {
+  "LI_demand_mean_in_missed": 3832.5,
+  "LI_demand_max_in_missed": 4870.4,
+  "LI_price_p50": 63.12,
+  "LI_price_max": 89.49,
+  "NYC_demand_mean_in_missed": 8250.9,
+  "band_share_pct": {
+   "": 43.62,
+   "committed": 19.51,
+   "econ": 0.49,
+   "econc00": 2.74,
+   "econc01": 2.74,
+   "econc02": 2.74,
+   "econc03": 2.74,
+   "econc04": 2.74,
+   "econc05": 2.74,
+   "econhi": 8.57,
+   "econlo": 8.86,
+   "mustrun": 0.0,
+   "peak": 2.49
+  }
+ },
+ "2025": {
+  "LI_demand_mean_in_missed": 4470.3,
+  "LI_demand_max_in_missed": 5488.6,
+  "LI_price_p50": 173.91,
+  "LI_price_max": 278.7,
+  "NYC_demand_mean_in_missed": 9264.3,
+  "band_share_pct": {
+   "": 41.55,
+   "committed": 18.63,
+   "econ": 0.45,
+   "econc00": 2.47,
+   "econc01": 2.47,
+   "econc02": 2.47,
+   "econc03": 2.47,
+   "econc04": 2.47,
+   "econc05": 2.46,
+   "econhi": 9.77,
+   "econlo": 9.98,
+   "mustrun": 0.0,
+   "peak": 4.79
+  }
+ }
+}

@@ -1,0 +1,74 @@
+{
+ "gate": "G-3",
+ "session": "nyiso-249",
+ "coverage_bar": 0.25,
+ "min_years_at_bar": 2,
+ "years": {
+  "2022": {
+   "n_actual_gt300": 101,
+   "n_missed": 91,
+   "n_tight": 138,
+   "tight_months": [
+    1,
+    2,
+    7,
+    8
+   ],
+   "n_missed_inside_tight": 2,
+   "coverage_of_missed": 0.022,
+   "meets_coverage_bar": false,
+   "n_tight_with_actual_below_300": 136,
+   "exposure_share_of_tight": 0.9855,
+   "tight_hours_with_actual_tail": 2
+  },
+  "2023": {
+   "n_actual_gt300": 10,
+   "n_missed": 10,
+   "n_tight": 22,
+   "tight_months": [
+    1,
+    2,
+    12
+   ],
+   "n_missed_inside_tight": 0,
+   "coverage_of_missed": 0.0,
+   "meets_coverage_bar": false,
+   "n_tight_with_actual_below_300": 22,
+   "exposure_share_of_tight": 1.0,
+   "tight_hours_with_actual_tail": 0
+  },
+  "2024": {
+   "n_actual_gt300": 13,
+   "n_missed": 13,
+   "n_tight": 61,
+   "tight_months": [
+    1,
+    12
+   ],
+   "n_missed_inside_tight": 0,
+   "coverage_of_missed": 0.0,
+   "meets_coverage_bar": false,
+   "n_tight_with_actual_below_300": 61,
+   "exposure_share_of_tight": 1.0,
+   "tight_hours_with_actual_tail": 0
+  },
+  "2025": {
+   "n_actual_gt300": 42,
+   "n_missed": 39,
+   "n_tight": 108,
+   "tight_months": [
+    1,
+    2,
+    12
+   ],
+   "n_missed_inside_tight": 5,
+   "coverage_of_missed": 0.1282,
+   "meets_coverage_bar": false,
+   "n_tight_with_actual_below_300": 103,
+   "exposure_share_of_tight": 0.9537,
+   "tight_hours_with_actual_tail": 5
+  }
+ },
+ "years_meeting_bar": 0,
+ "form_is_a_c3c_route": false
+}
