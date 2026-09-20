@@ -358,15 +358,15 @@ left** — it is not this page's.
 
 ---
 
-## 9. REAL DATA — coverage and the three defects it exposed (rebased onto `199f5090`)
+## 9. REAL DATA — coverage and the defects it exposed (current at `67807400`, 2026-09-20)
 
 The synthetic fixture and its banner are **deleted**. The page reads
 `frontend/data/mac/manifest.js`, a generated index over committed per-grid-year sidecars built by
 `scripts/build_mac_sidecar.py` (zero LP).
 
-**Coverage: 6 of 9 grids × 3 years = 18 grid-years** (refreshed 2026-09-20 onto `5aea4d03`).
-CAISO, ERCOT, MISO, NEISO, NYISO, SOCO. NWPP, PJM and SPP keepers still carry no emissions dual;
-SPP's `spp49_benchmembership_span` has it for 2019–2022, which are not this page's years.
+**Coverage: 7 of 9 grids × 3 years = 21 grid-years** (refreshed 2026-09-20 onto `67807400`).
+CAISO, ERCOT, MISO, NEISO, NYISO, PJM, SOCO. Only NWPP and SPP keepers still carry no emissions
+dual; SPP's `spp49_benchmembership_span` has it for 2019–2022, which are not this page's years.
 
 ### Defects the real data exposed
 
@@ -385,40 +385,48 @@ clamps outliers to the edge and **prints how many it did that to**.
 **3. A measured grid can still have no fleet.** SOCO has no wind at all. Not pending, not a
 number — a third UI state, which crashed three code paths before it was handled.
 
-### THE LOCAL CAPACITY FACTOR IS NOT RECOVERABLE — and the cost is now national
+### THE LOCAL CAPACITY FACTOR — REFUSED HERE, THEN SOLVED ELSEWHERE (superseded 2026-09-20)
 
-This is the substantive methodology change, and it was forced by evidence rather than chosen.
+**This section previously concluded that a local expected capacity factor was "not recoverable",
+so the cost had to stay national. That conclusion is SUPERSEDED — the current page localizes.**
+The refusal is kept on the record because the two dead ends behind it are still true and a later
+lane should not re-walk them:
 
-The intended formula scaled cost by `cf_base / cf_expected`, so a windy grid would spread its
-annual cost over more megawatt-hours. **Both available denominators are misaligned with the
-`class_hourly` dispatch that forms the numerator, and each was caught by its own absurd output:**
-
-| Denominator | What broke |
+| Denominator tried here | Why it failed |
 |---|---|
-| EIA-860 operable capacity | Counts behind-the-meter solar the LP never dispatches (it is netted into load). **NYISO solar expected CF 0.022, NEISO 0.049**, against a real regional ≈ 0.14 — inflating cost ≈ sixfold and putting **NYISO solar at $1,040/tCO₂**. |
-| The model's own renewable object | Cannot be rebuilt: a slim bundle commits one `run_config.json`, not the per-year config the solve used, so `load_renewable_profiles` returns a different fleet. It put **MISO 2025 solar at 7,000 MW while that year dispatches 29.75 TWh** — 2.7× more energy than that capacity can physically produce. **Delivered exceeding potential is proof the two objects are not the same fleet**, so neither ratio can be trusted. It also broke SOCO outright (no EIA-930 coverage). |
+| EIA-860 operable capacity | Counts behind-the-meter solar the LP never dispatches (it is netted into load). NYISO solar read 0.022 and NEISO 0.049 against a real regional ≈ 0.14, putting **NYISO solar at $1,040/tCO₂**. |
+| The model's own renewable object | A slim bundle commits one `run_config.json`, not the per-year config the solve used, so `load_renewable_profiles` returns a different fleet. It put **MISO 2025 solar at 7,000 MW while that year dispatches 29.75 TWh** — delivered exceeding potential, which is proof the two objects are not the same fleet. |
 
-**So the adjustment is dropped and the cost per delivered MWh is the national levelized cost at
-the national base capacity factor.** Differences between grids now come from **capture price and
-emission rate only** — both fully derivable from the committed hourly sidecars.
+**What was wrong was the SCOPE of the refusal, not the two findings.** Both objections are about
+reconciling against *the model's own fleet*; neither reaches a denominator that never has to agree
+with it. A separate session (`3fc20b97`, 2026-09-20) supplied one — `REGIONAL_RENEWABLE_CF`, derived
+from **EPA eGRID 2022–24 at generator level**: measured output over measured nameplate, restricted
+to the post-2018 new-build cohort, capacity-weighted and pooled over three vintages. It prices a
+hypothetical new project, so agreement with the model's fleet is simply not a requirement. PJM
+solar reads 0.204 against the 0.270 national figure; NYISO solar 0.168.
 
-**The cost of that, stated on the page and not buried:** local resource quality is no longer in
-the number, which **flatters grids with poor wind or sun**. A panel in the northeast really does
-produce less than one in Texas and this page does not charge it for that. Caveat 1 on the page now
-says exactly this, and the cost stack no longer draws a weather step (a `+$0.00` bar would imply
-the adjustment was made and happened to be nil — the opposite of what is true). **Closing it
-properly is a one-line sidecar addition on the solve path: commit the run's own per-tech capacity.**
+That session also moved cost recovery to `PPA_COST_RECOVERY_YR` (20 years, the term contracts are
+actually written at) from the 30-year book life, and added `ppa_equivalent_*` and
+`lcoe_atb_basis_*` to every sidecar so the correction stays visible. Both flow through new
+`cf_override` / `life_override` arguments on `compute_lcoe` rather than a second copy of the
+arithmetic (rule 19 `[R-ONE-MECH]`). Reporting only — no dispatch, build decision, cache key or
+keeper moves.
+
+**The lesson worth keeping:** "not recoverable" was right about the sources it tested and wrong as
+a general claim. Naming the sources tested is what made it cheap for the next lane to find the one
+that had not been.
 
 ### Results — with credits / without, imports counted ($/tCO₂)
 
 | Grid | 2023 wind | 2023 solar | 2024 wind | 2024 solar | 2025 wind | 2025 solar |
 |---|---|---|---|---|---|---|
-| CAISO | −61.1 / −33.3 | 22.5 / 50.6 | −5.5 / 18.2 | 64.2 / 97.7 | −9.0 / 16.0 | 71.3 / 107.8 |
-| ERCOT | −8.8 / 14.8 | −41.0 / −18.1 | 12.5 / 36.1 | 25.2 / 48.4 | 3.2 / 29.3 | 26.2 / 53.2 |
-| MISO | −1.6 / 22.1 | 9.3 / 32.1 | 2.3 / 27.4 | 16.5 / 40.1 | −15.0 / 8.9 | 0.4 / 23.9 |
-| NEISO | −10.0 / 15.8 | 13.9 / 39.8 | −21.4 / 3.5 | 9.8 / 34.5 | −83.2 / −56.8 | −29.6 / −3.1 |
-| NYISO | 4.1 / 33.5 | 23.1 / 52.0 | −9.3 / 18.3 | 10.4 / 38.3 | −48.3 / −22.6 | −23.9 / 2.8 |
-| SOCO | no wind fleet | 14.9 / 36.8 | no wind fleet | 20.2 / 43.1 | no wind fleet | −1.8 / 20.2 |
+| CAISO | −42.9 / 8.8 | 47.8 / 111.5 | 13.2 / 66.5 | 88.6 / 149.9 | 11.2 / 68.7 | 98.0 / 165.1 |
+| ERCOT | 4.7 / 33.3 | −20.0 / 11.1 | 26.0 / 54.6 | 46.4 / 77.9 | 18.1 / 49.7 | 50.9 / 87.4 |
+| MISO | 2.1 / 31.6 | 45.6 / 83.2 | 6.1 / 36.6 | 51.2 / 87.8 | −12.6 / 17.9 | 36.0 / 75.0 |
+| NEISO | 29.9 / 61.1 | 75.4 / 123.6 | 17.1 / 47.2 | 68.5 / 114.4 | −42.3 / −10.3 | 33.3 / 82.6 |
+| NYISO | 52.6 / 88.2 | 98.4 / 154.5 | 36.2 / 69.6 | 83.0 / 137.1 | −6.0 / 25.1 | 45.6 / 97.4 |
+| PJM | 25.8 / 61.0 | 70.3 / 115.0 | 26.3 / 61.3 | 71.9 / 117.5 | 1.0 / 36.5 | 53.1 / 101.8 |
+| SOCO | no wind fleet | 33.8 / 63.1 | no wind fleet | 39.9 / 70.5 | no wind fleet | 17.1 / 46.5 |
 
 Negatives mean the project earns more than it costs, so abatement pays for itself. They track the
 capture price mechanically: NEISO 2025 has a **$70.71/MWh** load-weighted price and **$74.73** wind
@@ -454,8 +462,17 @@ how cheap abatement is. Resolving it needs per-tranche hourly dispatch, which is
 **stdlib-only** (verified with site-packages stripped from `sys.path`). **Edited:** one line in the
 existing `deploy-pages.yml` — no new workflow.
 
+### Keeper churn is measured on every refresh, not assumed
+
+Keepers move under this page, so each refresh rebuilds the whole set and diffs it. The 2026-09-20
+third refresh picked up **PJM** (new, 3 grid-years) and **MISO's** promotion from
+`miso262_cold_span` to `miso263_coalcap_span`. Measured: **4 values moved, all MISO, all ≤ $3.0/tCO₂**
+(2023 solar 42.6 → 45.6, 2025 solar 34.8 → 36.0, 2025 wind −11.3 → −12.6, 2023 wind 2.0 → 2.1);
+every other grid-year byte-identical. The rebuild is zero-LP, so the check is nearly free.
+
 ### Still open
 
-The local capacity factor above is the one real gap, and it now understates cost in poor-resource
-grids. The load-weighted zonal collapse of §1(b) is unchanged and remains the other structural
-approximation.
+The local capacity factor is **closed** (above). The **load-weighted zonal collapse** of §1(b) is
+unchanged and is now the main structural approximation left: the rate and price are per zone while
+the technology shape is ISO-wide, and closing it exactly needs a per-zone VRE sidecar written at
+solve time. The **CAISO import factor** conservatism recorded above is the other open item.
