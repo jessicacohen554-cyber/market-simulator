@@ -1,15 +1,15 @@
 {
-  "id": "2026-09-20-pjm-h14-coal-must",
-  "label": "pjm h14 coal must",
+  "id": "2026-09-20-pjm-h14-coalmustrun-span",
+  "label": "pjm h14 coalmustrun span",
   "date": "2026-09-20",
-  "shorthand": "pjm-h14-coal-must",
+  "shorthand": "pjm-h14-coalmustrun-span",
   "definition": "pjm-h14 ARM: coal_mustrun_requires_measured_row \u2014 a coal plant with no measured CAMPD thermal-tranche row carries no must-run tranche (and hence no synchronization floor); that capacity falls to the economic band. Zero free parameters. Charter: docs/handoffs/PRECOMMIT-pjm-h14-2026-09-20.md",
   "years": [
-    2020,
-    2021,
-    2022
+    2023,
+    2024,
+    2025
   ],
   "iso": "PJM",
-  "file": "frontend/data/backcast/runs/2026-09-20-pjm-h14-coal-must.js",
-  "bundle": "results/calibration/pjm_h14_coalmustrun_touchpoint"
+  "file": "frontend/data/backcast/runs/2026-09-20-pjm-h14-coalmustrun-span.js",
+  "bundle": "results/calibration/pjm_h14_coalmustrun_span"
 }

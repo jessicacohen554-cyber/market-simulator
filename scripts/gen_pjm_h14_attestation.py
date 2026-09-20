@@ -16,8 +16,13 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-INCUMBENT = (
-    ROOT / "results/calibration/pjm_h13_meritalloc_span/calibration_attestation.json"
+#: DOF ledger source. The incumbent keeper is the origin, but rule 35
+#: ``[R-PROMOTE]`` (a) deletes its bundle in the promoting session, so once this
+#: lane's own span carries the ledger that copy is the live one (identical bytes,
+#: and it survives the prune). First existing path wins.
+LEDGER_SOURCES = (
+    ROOT / "results/calibration/pjm_h14_coalmustrun_span/calibration_attestation.json",
+    ROOT / "results/calibration/pjm_h13_meritalloc_span/calibration_attestation.json",
 )
 
 ATTESTED_BY = (
@@ -95,7 +100,13 @@ def main() -> None:
     ap.add_argument("--bundle", required=True, type=Path)
     args = ap.parse_args()
 
-    inc = json.loads(INCUMBENT.read_text())
+    src = next((q for q in LEDGER_SOURCES if q.exists()), None)
+    if src is None:
+        raise SystemExit(
+            "no DOF ledger source found; expected one of: "
+            + ", ".join(str(q) for q in LEDGER_SOURCES)
+        )
+    inc = json.loads(src.read_text())
     att = {
         "schema": "calibration-attestation/v1",
         "governance": {

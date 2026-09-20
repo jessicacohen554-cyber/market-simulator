@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-09-20-pjm-h14-coal-must",
+  "run_id": "2026-09-20-pjm-h14-coalmustrun-span",
   "iso": "PJM",
-  "label": "pjm h14 coal must",
+  "label": "pjm h14 coalmustrun span",
   "target_years": [
     2023,
     2024,
