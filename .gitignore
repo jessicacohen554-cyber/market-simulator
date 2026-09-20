@@ -654,6 +654,25 @@ frontend/data/mac/manifest.js
 #    both the flat (results/calibration/<name>/) and ISO-scoped
 #    (results/calibration/<ISO>/<name>/) bundle layouts.
 # -----------------------------------------------------------------------------
+# caiso-288 (2026-09-20) per-year SHARD LEGS. Rule 32 [R-SHARD] (d): per-year
+# shard bundle dirs are KEPT OUT OF `main` — the parent fetches them, composes,
+# and commits only the composite (here `caiso288_gasfix_span`, the registered
+# keeper). An unregistered per-year dir left committed is the exact Class-E
+# parity RED rule 29 [R-SCREEN] (c) forbids. Ignored rather than deleted, per
+# rule 31 [R-RETAIN]: ".gitignore is what discharges the delete-before-merge
+# duty, not `rm`". Nothing is lost — each leg's FULL bundle (incl.
+# dispatch/<year>_P1.parquet) is pushed on its own shard branch under rule 34
+# [R-SHARD-PROMOTABLE] (a), recoverable at ZERO LP by immutable SHA:
+#   git checkout 8c19a3aeddad -- results/calibration/caiso288_gasfix_2023
+#   git checkout 9bf1e0bad0ec -- results/calibration/caiso288_gasfix_2024
+#   git checkout 887bb239e27e -- results/calibration/caiso288_gasfix_2025
+# (2022 leg: aac324c4b211dd33e028e3a0bd1ba50e2e44d7f7 — its bundle IS registered,
+#  as the stamped rung 2026-09-20-caiso-288-citygate-2022, so it is not ignored.)
+# Full recovery table: docs/RESULT-caiso288-the-prints-were-published-2026-09-20.md §7.
+results/calibration/caiso288_gasfix_2023/
+results/calibration/caiso288_gasfix_2024/
+results/calibration/caiso288_gasfix_2025/
+
 results/calibration/*/model_changes.diff
 results/calibration/*/dispatch/
 results/calibration/*/*.parquet
