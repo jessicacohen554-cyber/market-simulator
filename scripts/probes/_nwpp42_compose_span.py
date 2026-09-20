@@ -173,6 +173,22 @@ def compose(legs: dict[str, list[int]], out: Path) -> None:
     meta = json.loads((CAL / base / "meta.json").read_text())
     meta["years"] = all_years
     meta["composed_from"] = {n: sorted(y) for n, y in legs.items()}
+    # meta.json's gas_prices must cover the SPAN, not just the base leg's one
+    # year. It is copied wholesale from the first leg above, so without this the
+    # composite claims `years: [2023, 2024, 2025]` while carrying a single year's
+    # Henry Hub price — an internally inconsistent bundle.
+    #
+    # This is not cosmetic: it makes the composite UNREUSABLE.
+    # ``run_calibration_full.plan_reuse_solved`` reads ``prior_meta["gas_prices"]``
+    # and refuses every year "not in prior_gas", so `--reuse-solved` declines the
+    # whole span and falls back to a fresh ~90 min/year solve. Found by the
+    # nwpp-44 reuse shard, which correctly STOPPED rather than re-solve.
+    # The same defect is latent in every span composed before this fix (the
+    # nwpp-42 keeper's own meta.json carries `gas_prices: {"2023": 2.54}` against
+    # `years: [2023, 2024, 2025]`), so those bundles cannot be reused from either
+    # until they are recomposed.
+    if gas:
+        meta["gas_prices"] = {k: gas[k] for k in sorted(gas)}
     (out / "meta.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
 
     n = sum(1 for p in out.rglob("*") if p.is_file())
