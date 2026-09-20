@@ -247,5 +247,57 @@ zero-LP feasibility pass before any shard, exactly as this session did.
   is untouched.
 
 **Artefacts.** `scripts/probes/nyiso242_cc_winter_capability.py` → `_nyiso242_cc_winter.json`;
-`scripts/probes/nyiso242_coldhour_identification.py` → `_nyiso242_coldhour_identification.json`.
-Both re-runnable against the committed keeper at zero LP.
+`scripts/probes/nyiso242_coldhour_identification.py` → `_nyiso242_coldhour_identification.json`;
+`scripts/probes/nyiso242_reserve_ceiling_bound.py` → `_nyiso242_reserve_ceiling_bound.json` (§4).
+All re-runnable against the committed keeper at zero LP.
+
+---
+
+## 4. ADDENDUM — THIS SESSION'S OWN RECOMMENDATION IS WITHDRAWN: the reserve channel is short in EVERY window
+
+The predecessor finding §6 and this session's reports named the **2025 summer cluster** as *"the
+one place price formation has room"* and *"the only one the named successor could actually
+reach"*. **That is wrong, and it is wrong by the largest margin of any window. Withdrawn.**
+
+**The error was conflating two different questions.** The recommendation rested on a
+*reachability* measure — 2025's summer missed hours carry only **899 MW** of idle sub-gate
+capacity at **94.9 %** fleet utilisation, so the LP sits near the top of its own stack. That is
+true, and on its own it says only that the LP *could* clear higher. It says nothing about whether
+the top of the stack is anywhere near the price the market actually made.
+
+**The bound that settles it.** `score_price_tail` scores the SETTLEMENT price — energy LMP plus
+the published reserve overlay (G-20a) — so the reserve channel is capped by what NYISO's reserve
+market ever pays. nyiso-115 measured exactly that on NYISO's **own posted zonal DA ancillary-service
+prices**, by differencing the nested regions (NYCA ⊃ East ⊃ SENY ⊃ NYC): **NYC never exceeds
+$25.00** in 26,301 hours and stacks to **$50.00** with its 10-minute pair; **SENY caps at exactly
+$40**, never its modelled $500; **East's isolated adder maxes at $27/$36/$46**, never approaching
+its modelled $775; **Long Island shows no material adder in any hour of any year**. The largest
+stack any NYISO zone can collect is therefore **$136/MWh**.
+
+Granting the model that entire stack in **every** missed hour — a deliberate over-grant, the
+measured maximum applied universally:
+
+| year · window | n | energy dual | + reserve as modelled | **+ measured ceiling** | actual | **still short** |
+|---|---:|---:|---:|---:|---:|---:|
+| 2022 winter | 70 | 155.7 | 155.7 | 291.7 | 383.3 | **91.6** |
+| 2022 summer | 23 | 174.2 | 174.2 | 310.2 | 359.3 | **49.1** |
+| 2023 all | 10 | 85.1 | 86.8 | 221.1 | 386.3 | **165.3** |
+| 2024 all | 13 | 58.2 | 58.2 | 194.2 | 416.0 | **221.7** |
+| **2025 summer** | 31 | 158.9 | 183.9 | 294.9 | **598.1** | **303.2** |
+
+**Short in every window of every year, by $49 to $636** — and the window this session
+recommended is the second-worst of the twelve. Its actual median is **$598/MWh**; the model's
+offer stack in those hours carries **47.7 MW above $300 and 1.9 MW above $500**. There is no
+supply up there to be priced.
+
+**What this changes.** The predecessor finding's foreclosure was argued for 2022's winter cluster
+on idle sub-gate capacity. This generalises it: **the reserve/RCPF channel cannot close the tail
+in ANY window, in ANY year**, and the argument no longer depends on idle capacity at all — it
+rests on NYISO's own AS market never paying more than $136. Better curves, step functions in
+place of ramps, or a steeper ORDC are all bounded by the same measurement. The successor named in
+`RESULT-nyiso241` §8 is foreclosed in full, not in part.
+
+*(A step-curve extension from NYC to SENY/East was considered here and is refused on the same
+nyiso-115 evidence before it was built: the measured market never reaches those regions'
+published penalties, so the model's $500/$775 ceilings are already too HIGH, not too low. Rule
+28(a) — not re-tested.)*
