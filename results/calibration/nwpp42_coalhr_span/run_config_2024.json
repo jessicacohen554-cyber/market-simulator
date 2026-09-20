@@ -1,21 +1,19 @@
 {
-  "timestamp": "2026-09-19T13:04:13",
+  "timestamp": "2026-09-20T00:07:27",
   "git": {
-    "sha": "f932a881",
-    "basis_sha": "f932a8816f2e0d2f2641708e914375f7058b440e",
-    "branch": "claude/nwpp-41-span-a2",
+    "sha": "b68673a9",
+    "basis_sha": "b68673a99926a554d0a9e165f5bd06b890572c02",
+    "branch": "claude/nwpp-42-arm-2024",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "nwpp-41 attempt 2: NWPP-40's recipe plus the ISO-SCOPED measured PRB delivered-cost proxy (coal_prb_proxy_own_iso, armed for NWPP in backcast_config) and NWPP's own derived coal ranks (coal_supply_NWPP.csv). Closes the C1 coal-taxonomy seam: the model dispatched all 17 coal plants as the bare COAL class the benchmark has no row for. Rules 14/25: Colstrip, Hardin and TS Power file no EIA-923 delivered cost and now take NWPP's OWN four PRB reporters' quantity-weighted cost (2.463/2.134/2.066 dollars per MMBtu) instead of ERCOT's Texas-pooled 1.818/1.760/1.622. Cascade coupling ARMED, 2025 hydro backfilled from 2024, every offer band 1.0, authorized_price_tuning NONE, price UNSCORED. Attempt 1 was killed by a platform restart in 2025 P1.",
+  "model_changes_note": "",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "NWPP",
     "years": [
-      2023,
-      2024,
-      2025
+      2024
     ],
     "hours": 8760,
     "passes": [
@@ -24,9 +22,7 @@
     "commitment": false,
     "commitment_screen_coal": true,
     "gas_prices": {
-      "2023": 2.54,
-      "2024": 2.19,
-      "2025": 3.52
+      "2024": 2.19
     },
     "outage_source": "historic",
     "coal_lignite_mustrun": null,
@@ -57,10 +53,10 @@
     "nyiso_dynamic_reserve_requirements": null,
     "nyiso_hydro_reserve_eligible": null,
     "nyiso_scr_edrp_reserve_eligible": null,
-    "git_sha": "f932a881"
+    "git_sha": "b68673a9"
   },
   "scenario_config": {
-    "weather_year": 2023,
+    "weather_year": 2024,
     "iso": "NWPP",
     "mode": "backcast",
     "voll": 5000.0,
@@ -244,6 +240,8 @@
     "use_plant_emission_rates_v2": true,
     "plant_emission_rates_v2_path": "/home/user/market-simulator/data/raw/_processed-legacy/plant_emission_rates_v2.parquet",
     "measured_ct_heat_rates": false,
+    "measured_coal_heat_rates": true,
+    "measured_st_heat_rates": false,
     "measured_chp_heat_rates": false,
     "egrid_identity_heat_rates": false,
     "egrid_family_heat_rates": false,
@@ -395,6 +393,7 @@
     "nyiso_gas_bridge_online_hours": false,
     "nyiso_gas_bridge_state_floor_min_run": false,
     "spp_gas_commitment_bridge": false,
+    "soco_gas_st_campaign_commitment": false,
     "nyiso_chp_btm_measured": false,
     "nyiso_spin_reserve_online": false,
     "nyiso_synchronised_reserve": false,
@@ -712,6 +711,7 @@
     "caiso_st_gas_peak_measured": false,
     "caiso_ct_peaker_committed_measured": false,
     "nyiso_ct_peaker_bands_measured": false,
+    "nyiso_ct_peaker_committed_measured": false,
     "nyiso_st_gas_econ_bands_deleaked": false,
     "caiso_offer_surface_conditional": false,
     "caiso_offer_surface_binned_path": null,
@@ -767,6 +767,7 @@
     "campd_outage_merit_order_guard": false,
     "retiree_vintage_status_scope": false,
     "partial_plant_exit_carry": false,
+    "mid_vintage_exit_carry": false,
     "cc_winter_capability_basis": false,
     "coal_nameplate_summer_derate": false,
     "gt_ambient_derate": false,
@@ -1020,7 +1021,7 @@
     "unit_outage_maxgen_events": false,
     "maxgen_emergency_tier_pricing": false,
     "forecast_xyear_warmstart": true,
-    "gas_price_override": 2.54,
+    "gas_price_override": 2.19,
     "ercot_offer_hrmult_ep_rebasis": false,
     "ercot_offer_hrmult_ep_rebasis_bands": null,
     "ercot_capability_reconciliation": false,
@@ -1059,7 +1060,7 @@
     "rows": 180,
     "moved": {},
     "epochs": [],
-    "git_sha": "f932a881"
+    "git_sha": "b68673a9"
   },
   "environment": {
     "python_version": "3.11.15",
