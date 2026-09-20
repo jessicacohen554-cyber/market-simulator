@@ -280,24 +280,43 @@ The other 14 changed files in the G-DRIFT window are classified INERT for a NYIS
 NWPP, the caiso-288/289 citygate work); and a forecast-only path
 (`3fc20b97`, `model/capacity_evolution/new_entry.py`, which a `mode="backcast"` run never enters).
 
-### 6.1 What 2022 measures — and what it deliberately does NOT
+### 6.1 THE RESULT: NYISO DOES NOT CARRY THE WARM-START ARTIFACT. THREE YEARS, EXACTLY ZERO.
 
-**NYISO 2022, replayed at HEAD with year isolation and both knobs OFF, reproduces the committed
-keeper EXACTLY.**
+Each year replayed at HEAD in its own container with both knobs OFF, against the committed keeper:
 
-| statistic | result |
-|---|---|
-| max \|Δ class TWh\| over 12 classes | **0.0000** |
-| zonal price cells moved (P1, internal zones) | **0 of 43,800** |
-| mean zonal price | 76.159 → **76.159** $/MWh |
-| hours with max zonal dual > $300 (the C3c statistic) | 7 → **7** |
+| year | max \|Δ class TWh\| | zonal price cells moved | mean price | hours max-dual > $300 | shard wall time |
+|---|---:|---:|---|---:|---:|
+| **2022** | **0.0000** | **0 of 43,800** | 76.159 → 76.159 | 7 → 7 | 251 s |
+| 2023 | *outstanding — see §8* | | | | |
+| **2024** | **0.0000** | **0 of 43,800** | 37.223 → 37.223 | 0 → 0 | 328 s |
+| **2025** | **0.0000** | **0 of 43,800** | 57.908 → 57.908 | 3 → 3 | 311 s |
 
-**This is one year and it is the LEAST informative one.** In the MISO incident that produced rule 36
-the **first year of each solve leg reproduced** (max \|Δ class TWh\| 0.0048 and 0.1440) and the
-divergence appeared in the **later** years (7.1586 / 24.1796 / 4.0034). 2022 is the first year of
-NYISO's span, so an exact reproduction here is what the defect itself predicts. **2023, 2024 and
-2025 are the years that decide whether NYISO carries it**, and until they land nothing about NYISO's
-exposure is established — see §8 for their status.
+**Not one class-energy figure and not one price cell moves, in any of the three years measured.**
+
+**Why this is a real test and not a vacuous one.** The committed keeper was solved as a **single
+four-year span with both knobs ON**, so 2024 and 2025 were its **third and fourth** years — exactly
+the position where MISO's defect bit hardest. In the MISO incident the **first** year of each leg
+reproduced (max \|Δ class TWh\| 0.0048, 0.1440) and the later years diverged by **7.1586 / 24.1796
+/ 4.0034 TWh**, with 43,160 of 70,080 price cells moving in 2022. NYISO's deep-in-span years move
+**nothing**. 2022 alone would have proved little — it is a first year — which is why it is reported
+here with 2024 and 2025 rather than on its own.
+
+**Two consequences, stated rather than left implied.**
+
+1. **Rule 36 `[R-YEAR-ISOLATION]` (f)'s open exposure is CLOSED for NYISO.** That clause says every
+   keeper carries some of this artifact and *"its size is unmeasured outside MISO"*, with NYISO
+   bounded only at "small or absent" by a single 2025 replay. It is now **measured at exactly zero
+   on three of four years, including both deep-in-span years.** NYISO's registered numbers will
+   **not** move when it is next re-solved.
+2. **The G-DRIFT `LIVE` hunk turns out to be INERT for NYISO — measured, not assumed.** Commit
+   `cb1e60b7` was correctly classified LIVE on the code, and that classification is what earned
+   these shards. Having spent them, the committed keeper **is** a valid form-4 control after all, so
+   a successor arming anything on NYISO may difference against it directly and need not re-spend
+   this.
+
+**There is nothing to promote from these shards.** The control bundles are numerically identical to
+the keeper, so no new keeper is warranted, nothing is registered, and rule 29 `[R-SCREEN]` (c) keeps
+them out of `main` — which is also the correct outcome, not a shortfall.
 
 ### 6.2 Object (2) — the stale `legitimacy_diagnostics.json` — ANSWERED FOR NYISO, AND IT IS A NO-OP
 
@@ -322,7 +341,7 @@ re-running against an **identical** bundle. This comparison is against a **fresh
 is evidence the wobble is not systematic here — but it is 2022 only and it does not close that open
 item.
 
-**Status and the retrievability statement (rule 34 `[R-SHARD-PROMOTABLE]` (e)): see §8.**
+**Shard status and the retrievability statement (rule 34 `[R-SHARD-PROMOTABLE]` (e)): §8.1.**
 
 ---
 
@@ -376,3 +395,33 @@ unowned and unclaimed here.
 | `scripts/probes/nyiso245_surface_effect.py` → `_nyiso245_surface_effect.json` | G3, G4, G5 |
 | `scripts/probes/nyiso245_level_vs_shape.py` → `_nyiso245_level_vs_shape.json` | §5.2, the diagnostic |
 | `scripts/probes/_nyiso245_fleet_cache.py` | the zero-LP fleet/gas cache (gitignored output) |
+| `docs/codebase-site/data/mechanism-matrix/NYISO.js` | the `measured_offer_surface` cell, rewritten |
+
+## 8.1 SHARDS — status, retrievability, and what was archived (rules 33 / 34)
+
+| shard | branch | commit | bundle | state |
+|---|---|---|---|---|
+| ctrl 2022 | `claude/nyiso-245-ctrl-2022` | `8978503b` | 17 files incl. `dispatch/2022_P1.parquet` | verified, **archived** |
+| ctrl 2023 | — | — | — | **first attempt STALLED**; retry launched, see below |
+| ctrl 2024 | `claude/nyiso-245-ctrl-2024` | `f62b5078` | 17 files incl. `dispatch/2024_P1.parquet` | verified, **archived** |
+| ctrl 2025 | `claude/nyiso-245-ctrl-2025` | `7ba690f6` | 17 files incl. `dispatch/2025_P1.parquet` | verified, **archived** |
+
+**Retrievability (rule 34 (e)), stated plainly.** These are **control** bundles, which rule 29
+`[R-SCREEN]` (c) forbids reaching `main`, and they are numerically identical to the committed
+keeper — **so there is nothing to land and nothing to promote.** Every number cited from them is in
+§6 of this document, which is what rule 31 `[R-RETAIN]` means by "the RESULT doc remains the
+record". The shard branches are **transport, not storage** (rule 33 (f)): they will be cut when this
+lane's PR merges, and the SHAs above are **provenance, not a recovery route** — reproducing any leg
+costs a **re-solve of ~5 minutes**.
+
+**The stalled 2023 shard** (`session_016CaVUEYRmW4qpNNoWPnxg9`) launched its solve as a background
+job, ended its turn, and was never re-invoked; it pushed no branch. It **could not be messaged** —
+`SendMessage` cannot reach a `create_session` child, exactly as the handoff records. It is
+**deliberately left alive** (rule 33 (e)): it is the only thing that could still push what it
+solved, and rule 33 (b) forbids archiving a shard whose work may be in flight. A replacement
+(`session_01WYqyH6MF2uN3pfY6fEyRtJ`) was launched with the pacing defect named in its prompt — run
+the solve in the **foreground**, do not background it and end the turn.
+
+**Branch cleanup is NOT performed and is not claimed.** A session cannot delete a remote ref here
+(HTTP 403 on both HTTP/2 and HTTP/1.1 — rule 33 (f)(2)), so the four `claude/nyiso-245-ctrl-*`
+branches are the owner's to clear if they outlive this lane's PR.
