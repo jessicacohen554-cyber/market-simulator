@@ -259,8 +259,7 @@ shows that the benchmark itself moved between the two registrations (rebuilt `ei
 differently) and that the movement is immaterial.
 
 **PRE-REGISTERED PREDICTIONS, SCORED INCLUDING THE NEAR-MISS.** Coal rises materially without
-closing the gap — held. `r` improves without reaching 0.70 — held in both halves. 2023 is the risk
-year and may push a C1 row out of band — **did not happen**, C1 stays 18/18. Zero movement outside
+closing the gap — held. `r` improves without reaching 0.70 — held in both halves. 2023 is the risk year and may push a C1 row out of band — **not at the gate, but the magnitude moved**: C1 stays 18/18 and the one row that degrades is exactly the predicted one, 2023 COAL_BIT +0.390 → **+2.193 TWh** (+0.330 → +0.996 pp) against a ±8 TWh / ±3 pp band. Net over all nine C1 coal rows: five improve, three unchanged, one degrades. The table also sharpens what is NOT closed — the coal deficit is overwhelmingly a **COAL_BIT** deficit in 2024/2025 (model 7.48 / 6.94 TWh against actuals 12.83 / 18.21, roughly half) and the arm moves those rows by 0.031 / 0.232 TWh, so a heat-rate correction does not reach it. Zero movement outside
 coal — held. DOF unchanged at 3/3 — held. **The kill condition** (a 2025 coal move below 0.5 TWh ⇒
 inert) **did not fire** (2025 moved +1.110 TWh), **but 2024 moved only +0.382 TWh, below that
 line**; had 2024 been the pre-registered kill year this arm would have read inert. Named rather

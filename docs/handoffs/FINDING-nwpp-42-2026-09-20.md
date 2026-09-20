@@ -245,6 +245,34 @@ three years (monthly budgets bind); the footprint total moves 0.000 / −0.001 /
 displaced classes are CC_REGULAR (−1.900 / −0.105 / −0.846 TWh), CT_PEAKER and ST_GAS — the arm's
 intended effect, not reach.
 
+
+### 6.1 Every C1 coal row at full magnitude — including the one that degrades
+
+The PRECOMMIT named **2023 as the risk year**. C1 stays 18/18, but a row that passes can still move
+the wrong way, so the magnitudes are here rather than absorbed. Band is
+±min(max(2.0 % ISO-load, 3 % actual-gen), 8 TWh) **and** ±3 pp share.
+
+| year | row | actual TWh | control Δ | arm Δ | |
+|---|---|---|---|---|---|
+| 2023 | COAL_BIT | 14.594 | +0.390 (+0.330 pp) | **+2.193 (+0.996 pp)** | **degrades — the predicted row** |
+| 2023 | COAL_PRB | 25.242 | −1.038 | **−0.904** | improves |
+| 2023 | COAL_WC | 0.560 | −0.135 | −0.136 | flat |
+| 2024 | COAL_BIT | 12.832 | −5.381 | −5.350 | improves |
+| 2024 | COAL_PRB | 21.030 | −1.707 | **−1.356** | improves |
+| 2024 | COAL_WC | 0.575 | −0.342 | −0.342 | flat |
+| 2025 | COAL_BIT | 18.210 | −11.500 | −11.268 | improves · SKIPPED |
+| 2025 | COAL_PRB | 23.635 | −3.203 | **−2.325** | improves · SKIPPED |
+| 2025 | COAL_WC | 0.226 | −0.160 | −0.161 | flat · SKIPPED |
+
+Every row is inside its band; 2025's three rows are SKIPPED on the preliminary EIA-923 vintage and
+gate neither way. Net: the arm **improves five coal rows, leaves three unchanged and degrades one**
+— 2023 COAL_BIT, by 1.803 TWh / 0.666 pp, against a ±8 TWh / ±3 pp band.
+
+**This table also sharpens §8 rather than softening it.** The coal deficit is overwhelmingly a
+**COAL_BIT** deficit in 2024 and 2025 — model 7.48 and 6.94 TWh against actuals of 12.83 and
+18.21, roughly half — and the arm moves those two rows by **0.031 and 0.232 TWh**. A heat-rate
+correction does not reach it. Whatever closes C4 has to close that.
+
 ---
 
 ## 7. Pre-registered predictions, scored honestly
@@ -253,7 +281,7 @@ intended effect, not reach.
 |---|---|---|
 | 1 | Coal volume rises materially, does **not** close the gap | **HELD** (+1.936 / +0.382 / +1.110; deficit still 0.7 / 10.9 / 13.9 TWh) |
 | 2 | `r` improves; **not** predicted to reach 0.70 | **HELD in both halves** |
-| 3 | 2023 is the **risk year**, may push a C1 row out of band | **DID NOT HAPPEN** — C1 stays 18/18 despite 2023 carrying the largest move |
+| 3 | 2023 is the **risk year**, may push a C1 row out of band | **NOT AT THE GATE, BUT THE MAGNITUDE MOVED** — C1 stays 18/18, and the one row that degrades is exactly the predicted one: 2023 COAL_BIT +0.390 → **+2.193 TWh** (+0.330 → +0.996 pp), inside a ±8 TWh / ±3 pp band but 1.803 TWh worse (§6.1) |
 | 4 | Zero movement outside coal | **HELD as intended** (hydro exactly flat; total within 0.002 TWh) |
 | 5 | DOF unchanged at 3/3 | **HELD** |
 
