@@ -402,6 +402,67 @@ this document.
 
 ---
 
+## 12. CODA — THE OWNER RULED, AND THE PROMOTION WAS EXECUTED IN THIS SESSION
+
+**Written after §§1–11, which were composed while the promotion was still open. Those sections are
+left as they stood; this coda records what changed rather than rewriting the record.**
+
+The owner ruled, verbatim: *"Is this a recommended keeper candidate? If so plz promote. If
+structural integrity improves but gates regress that may still be a keeper."*
+
+**SOCO's keeper is now `2026-09-20-soco55-peryear-gas-basis`.** Rule 35 `[R-PROMOTE]` was executed
+in this session, in order:
+
+- **(b)** the year union `{2023, 2024, 2025}` was enumerated over all three registered SOCO sidecars
+  **before** anything was deleted;
+- **(c)** the incoming keeper covers that union in one composed span — **the promotion shrinks nothing**;
+- **(e)** the new designation was written and `audit_keepers` re-run, resolving the incoming keeper's
+  three stores, **before** `prune_iso_runs` touched anything;
+- **(a)** the outgoing keeper's **three stores** were then deleted together — registry sidecar,
+  `runs/<id>.js` payload and `results/calibration/soco54_marginal_gas`. Its bundle is recoverable from
+  git history at this branch point.
+
+**`2026-09-20-soco53g-prb-own-iso` was deliberately NOT pruned** (passed to `--keep`). The ruling names
+*the recommended candidate*, which is this lane's; it does not dispose of soco53g. Rule 31
+`[R-RETAIN]` forbids deleting it and rule 30 `[R-TOUCHPOINT-FOLD]` (a) forbids inventing a stamp, so
+**E13 still fires once — down from twice — and is RE-RAISED, not cleared.** §11's recommendation
+stands: decline it, and let the next promoting session prune it.
+
+**ON THE OWNER'S STANDARD, STATED PRECISELY, BECAUSE THIS CASE IS NOT THE ONE IT ANTICIPATES.** The
+ruling contemplates structural gain paid for by a gate regression. **Here the gates do not move at
+all**: determination `NOT-YET`, C1 13/14, C2/C4/C6/C8 PASS, 0 ledgered and 0 protective caveats,
+`grade_summary` identical on both sides — and the single failing row is 2024 `CC_REGULAR`, in a year
+this keeper's delta is **provably inert** in. What regresses is the **2023 residual** (§4.1), and rule
+14 `[R-ACCURATE]` is the reason it is kept rather than reverted. The promotion buys **structure and a
+named successor object** (§5), not a gate.
+
+**Rebased onto `origin/main` before promoting** (27 upstream commits), and the numbers were
+re-verified across them: both runs re-scored to their committed `metrics.json` byte-for-byte, same
+determination, same single failing row. Two conflicts, both mechanical — 66 `mechanism-matrix.js`
+hunks differing **only** in stale line-number anchors (verified programmatically, 66/66; this lane's
+new base row sat outside every conflict region), and one additive tail collision in
+`_CACHE_KEY_OPTIONAL_FIELDS` where SPP-66 and xiso-8 appended to the same HOUSE-3 slot, resolved by
+**keeping both sides**, which is what that convention prescribes.
+
+**One correction to §10 that the rebase forces, stated rather than left to be discovered.** The
+shards were solved at pinned SHA `2a7901215f5f8d78835cf3e314caffe06d8c656b`, and the rebase means that
+commit is **no longer an ancestor of this branch**. The pin is still an accurate record of what the
+shards cloned — it is provenance, exactly as §10 says — but a reader should not expect to find it in
+the branch's history. Nothing about the solves changed.
+
+**A parity RED that is NOT this lane's, reported not touched:**
+`results/calibration/nwpp44_takeorpay_2025` is a committed, unregistered bundle that arrived with the
+upstream commits (NWPP-44, `ee276d87`); none of this lane's commits touch it. Rule 25 `[R-ISO-SCOPE]`
+— it is that lane's to resolve.
+
+**Post-promotion gates:** `check_mechanism_matrix --base origin/main` GREEN including keeper stamps
+and §5.x prose headers (the shard's `keeper` + `gates` line and the §5.8 header were re-stamped in
+this session per rule 28); `check_bench_freshness` **0 STALE**; `audit_keepers` holdout / marker /
+status all pass, with the one expected E13 and the expected E11. `calibration-complete.json` carries
+**no SOCO entry**, confirmed rather than assumed, so there was nothing to re-key there.
+
+---
+
 ## Log entry
 
 ```

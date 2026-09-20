@@ -1110,3 +1110,75 @@ PROMOTION IS OPEN AND IS THE OWNER'S (rule 31). Recommendation: PROMOTE, on rule
 and 14 and explicitly NOT on the residual, which got worse. Cost from the current
 state: ZERO re-solves. Record: docs/handoffs/PRECOMMIT-soco-55-2026-09-20.md,
 docs/handoffs/FINDING-soco-55-2026-09-20.md.
+
+## soco-55 PROMOTION — 2026-09-20
+
+OWNER RULED, verbatim: "Is this a recommended keeper candidate? If so plz promote.
+If structural integrity improves but gates regress that may still be a keeper."
+
+SOCO's KEEPER IS NOW 2026-09-20-soco55-peryear-gas-basis (bundle
+results/calibration/soco55_peryear_basis, 17 committed slim files). Rule 35
+[R-PROMOTE] executed in the promoting session, in order: (b) the year union
+{2023,2024,2025} enumerated over all three registered SOCO sidecars BEFORE any
+delete; (c) the incoming keeper covers that union in ONE composed span, so the
+promotion SHRINKS NOTHING; (e) the new designation written and audit_keepers
+re-run -- resolving the incoming keeper's three stores -- BEFORE prune_iso_runs
+touched anything; (a) the outgoing keeper 2026-09-20-soco54-marginal-gas-basis
+then had its THREE STORES deleted together via prune_iso_runs.py --iso SOCO
+--force-uncite (registry sidecar, runs/<id>.js, results/calibration/
+soco54_marginal_gas), recoverable from git history at the SOCO-55 branch point.
+
+2026-09-20-soco53g-prb-own-iso was DELIBERATELY NOT PRUNED (passed to --keep).
+The ruling names the recommended candidate, which was this lane's; it does not
+dispose of soco53g. Rule 31 [R-RETAIN] forbids deleting it and rule 30(a) forbids
+stamping it, so audit_keepers E13 still fires ONCE -- down from twice -- and is
+RE-RAISED, not cleared. The lane's recommendation stands: decline it, and let the
+next promoting session prune it.
+
+ON THE OWNER'S STANDARD, STATED PRECISELY BECAUSE THIS CASE IS NOT THE ONE IT
+ANTICIPATES: the ruling contemplates structural gain paid for by a gate
+regression. HERE THE GATES DO NOT MOVE AT ALL -- determination NOT-YET, C1 13/14,
+C2/C4/C6/C8 PASS, C3a/b/c UNSCORABLE, 0 ledgered and 0 protective caveats,
+grade_summary identical on both sides of the A/B -- and the single failing row is
+2024 CC_REGULAR, in a year this keeper's delta is PROVABLY INERT in. What
+regresses is the 2023 RESIDUAL (CT_PEAKER +6.165 -> +6.910 TWh against actual,
+COAL_PRB -0.429 -> -1.708, CC_REGULAR +4.166 -> +4.352; only ST_GAS improves), and
+rule 14 [R-ACCURATE] is why it is kept rather than reverted: a worse fit after an
+ACCURATE input is a DISCOVERED BUG. The promotion buys STRUCTURE and a NAMED
+SUCCESSOR OBJECT -- the CT_PEAKER / COAL_PRB merit order at 6002 James H Miller Jr
+-- not a gate.
+
+REBASED ONTO origin/main (27 upstream commits) BEFORE PROMOTING, and the numbers
+re-verified across them: both runs re-score to their committed metrics.json
+byte-for-byte, same determination, same single failing row. Two conflicts, both
+mechanical -- 66 mechanism-matrix.js hunks differing ONLY in stale line-number
+anchors (verified programmatically 66/66; this lane's new base row sat outside
+every conflict region), and one additive tail collision in
+_CACHE_KEY_OPTIONAL_FIELDS where SPP-66 and xiso-8 appended to the same HOUSE-3
+slot, resolved by KEEPING BOTH SIDES.
+
+CORRECTION FORCED BY THE REBASE, stated rather than left to be discovered: the
+shards were solved at pinned SHA 2a7901215f5f8d78835cf3e314caffe06d8c656b, which
+the rebase makes no longer an ancestor of this branch. The pin remains an accurate
+record of what the shards cloned -- provenance, not a durability claim -- but a
+reader should not expect to find it in the branch history. Nothing about the
+solves changed.
+
+RE-STAMPED IN THE PROMOTING SESSION (rule 28 [R-MECH-MATRIX]): the SOCO matrix
+shard's keeper + gates line and the §5.8 prose header, both of which the matrix
+gate turned RED on the promotion and both now GREEN. status/SOCO.js rebuilt
+(SOCO:NOT-YET). calibration-complete.json carries NO SOCO entry -- confirmed, not
+assumed -- so nothing to re-key there.
+
+POST-PROMOTION GATES: check_mechanism_matrix --base origin/main GREEN including
+keeper stamps and §5.x prose headers; check_bench_freshness 0 STALE;
+audit_keepers holdout/marker/status all pass with the one expected E13 and the
+expected E11. check_registry_payload_parity RED LOCALLY on eight of this session's
+own gitignored working bundles (all verified check-ignore-clean, 0 tracked files)
+plus results/calibration/nwpp44_takeorpay_2025 -- which is NWPP-44's, already on
+origin/main at ee276d87, touched by none of this lane's commits, and REPORTED not
+touched (rule 25 [R-ISO-SCOPE]).
+
+DO NOT CITE PHYSICALLY-CALIBRATED (PRICE UNSCORED) FOR ANY SOCO RUN GOING FORWARD:
+the bench that produced that reading was stale and was rebuilt this session.
+Record: docs/handoffs/FINDING-soco-55-2026-09-20.md §12.

@@ -18119,8 +18119,11 @@ and **ERCOT 9/20, 10/23, 26/26** for 2023/2024/2025, against SOCO's 7/24, 8/25, 
 NEISO is void at 1 reporting plant. SPP's keeper arms `gas_plant_monthly_fuel_pricing`. Rules 25 /
 28(d): **no other ISO's cell is filled and no verdict transfers** — each lane owns its own receipts.
 Run `2026-09-20-soco55-peryear-gas-basis`, bundle `results/calibration/soco55_peryear_basis`;
-**PROMOTION IS THE OWNER'S AND IS OPEN** (rule 31 `[R-RETAIN]`); the keeper is unchanged and nothing
-was pruned. Evidence: `docs/handoffs/PRECOMMIT-soco-55-2026-09-20.md`,
+**PROMOTED 2026-09-20 ON THE OWNER'S RULING — SOCO's keeper is now
+`2026-09-20-soco55-peryear-gas-basis`.** The outgoing keeper
+`2026-09-20-soco54-marginal-gas-basis` had its three stores pruned in the promoting session per
+rule 35 `[R-PROMOTE]` (a); its bundle is recoverable from git history at the SOCO-55 branch point.
+Evidence: `docs/handoffs/PRECOMMIT-soco-55-2026-09-20.md`,
 `docs/handoffs/FINDING-soco-55-2026-09-20.md`.
 
 **LANE SOCO-54 (2026-09-20) — THE CT/ST MISALLOCATION IS AN OFFER-STACK DEFECT, NOT ABSENT
