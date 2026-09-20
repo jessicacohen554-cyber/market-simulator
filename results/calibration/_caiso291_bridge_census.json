@@ -1,0 +1,534 @@
+[
+  {
+    "year": 2022,
+    "status": "OK",
+    "join": {
+      "sidecar_rows": 1713,
+      "fleet_rows": 1867,
+      "bridge_scope_rows_unmapped": 0,
+      "unmapped_examples": [],
+      "pmax_violations": 630751,
+      "worst_pmax_excess_mw": 1167.4021068319646,
+      "pmax_violation_rows": 226,
+      "pmax_violation_examples": [
+        {
+          "unit_id": "CC_REGULAR_NP15_p260_econc01",
+          "pmax": 193.856,
+          "p0_max": 193.856,
+          "avail_min": 0.5924792710874693
+        },
+        {
+          "unit_id": "CC_REGULAR_NP15_p260_econc02",
+          "pmax": 193.856,
+          "p0_max": 193.856,
+          "avail_min": 0.0
+        },
+        {
+          "unit_id": "CC_REGULAR_NP15_p260_econc03",
+          "pmax": 193.856,
+          "p0_max": 193.856,
+          "avail_min": 0.0
+        },
+        {
+          "unit_id": "CC_REGULAR_NP15_p260_econc04",
+          "pmax": 193.856,
+          "p0_max": 136.573367427397,
+          "avail_min": 0.0
+        },
+        {
+          "unit_id": "CC_REGULAR_LA_BASIN_p358_committed",
+          "pmax": 180.40319999999997,
+          "p0_max": 180.40319999999997,
+          "avail_min": 0.0
+        },
+        {
+          "unit_id": "CC_REGULAR_LA_BASIN_p358_econc01",
+          "pmax": 139.6224,
+          "p0_max": 139.6224,
+          "avail_min": 0.0
+        }
+      ]
+    },
+    "posture": {
+      "min_load_frac": 0.26,
+      "startup_bridge": true,
+      "bridge_decommit": true,
+      "startup_aware": true,
+      "startup_trajectory": true,
+      "da_horizon_hours": 24,
+      "econ_min_down_hours": 4.0
+    },
+    "all_hours": {
+      "gaps_total": 8354,
+      "gaps_physical": 721,
+      "gaps_not_econ_eligible": 4670,
+      "gaps_da_cap": 450,
+      "gaps_restart_fail": 575,
+      "gaps_candidate": 1938,
+      "units_scoped": 74,
+      "units_econ_eligible": 30,
+      "units_no_params": 1068,
+      "units_lt2_runs": 0,
+      "units_no_runs": 2,
+      "runs_detected": 24006,
+      "runs_kept": 8426
+    },
+    "belly_gaps": {
+      "gaps_total": 2880,
+      "gaps_physical": 189,
+      "gaps_not_econ_eligible": 1211,
+      "gaps_da_cap": 347,
+      "gaps_restart_fail": 447,
+      "gaps_candidate": 686
+    },
+    "belly_floor_mwh_by_disposition": {
+      "physical": 114312.5532,
+      "da_cap": 1547252.0432000011,
+      "restart_fail": 527862.7458000005,
+      "candidate": 616090.4276999999,
+      "not_econ_eligible": 581827.2081999999
+    },
+    "belly_gap_len_hours": {
+      "n": 2880,
+      "p50": 19.0,
+      "p90": 327.0,
+      "max": 3140,
+      "frac_gt_da_horizon": 0.32916666666666666
+    },
+    "shipped_screen": {
+      "runs_detected": 24006,
+      "runs_kept": 8426,
+      "runs_dropped": 15580,
+      "drop_rate": 0.649004415562776,
+      "replay_reproduces": true
+    },
+    "floored_rows": 28,
+    "belly_mean_floor_mw": 917.2572529825204,
+    "belly_hours": 876,
+    "belly_net_load_mw_mean": 5889.603202450827,
+    "counterfactual_screen_off": {
+      "belly_gaps": {
+        "gaps_total": 7742,
+        "gaps_physical": 251,
+        "gaps_not_econ_eligible": 4653,
+        "gaps_da_cap": 173,
+        "gaps_restart_fail": 1609,
+        "gaps_candidate": 1056
+      },
+      "belly_gap_len_hours": {
+        "n": 7742,
+        "p50": 20.0,
+        "p90": 47.0,
+        "max": 1942,
+        "frac_gt_da_horizon": 0.13420304830793076
+      },
+      "belly_floor_mwh_by_disposition": {
+        "physical": 141710.18119999993,
+        "da_cap": 504576.92490000016,
+        "restart_fail": 1431815.4746000047,
+        "candidate": 854872.0030999999,
+        "not_econ_eligible": 669404.8133999965
+      },
+      "runs_kept": 24006
+    }
+  },
+  {
+    "year": 2023,
+    "status": "OK",
+    "join": {
+      "sidecar_rows": 1711,
+      "fleet_rows": 1865,
+      "bridge_scope_rows_unmapped": 0,
+      "unmapped_examples": [],
+      "pmax_violations": 623728,
+      "worst_pmax_excess_mw": 1069.8928653292612,
+      "pmax_violation_rows": 218,
+      "pmax_violation_examples": [
+        {
+          "unit_id": "CC_REGULAR_NP15_p260_committed",
+          "pmax": 234.864,
+          "p0_max": 234.864,
+          "avail_min": 0.7349007697065993
+        },
+        {
+          "unit_id": "CC_REGULAR_NP15_p260_econc00",
+          "pmax": 193.856,
+          "p0_max": 193.856,
+          "avail_min": 0.0
+        },
+        {
+          "unit_id": "CC_REGULAR_NP15_p260_econc01",
+          "pmax": 193.856,
+          "p0_max": 193.856,
+          "avail_min": 0.0
+        },
+        {
+          "unit_id": "CC_REGULAR_NP15_p260_econc02",
+          "pmax": 193.856,
+          "p0_max": 193.856,
+          "avail_min": 0.0
+        },
+        {
+          "unit_id": "CC_REGULAR_NP15_p260_econc03",
+          "pmax": 193.856,
+          "p0_max": 193.856,
+          "avail_min": 0.0
+        },
+        {
+          "unit_id": "CC_REGULAR_NP15_p260_econc04",
+          "pmax": 193.856,
+          "p0_max": 121.40324727217285,
+          "avail_min": 0.0
+        }
+      ]
+    },
+    "posture": {
+      "min_load_frac": 0.26,
+      "startup_bridge": true,
+      "bridge_decommit": true,
+      "startup_aware": true,
+      "startup_trajectory": true,
+      "da_horizon_hours": 24,
+      "econ_min_down_hours": 4.0
+    },
+    "all_hours": {
+      "gaps_total": 4450,
+      "gaps_physical": 427,
+      "gaps_not_econ_eligible": 2367,
+      "gaps_da_cap": 315,
+      "gaps_restart_fail": 262,
+      "gaps_candidate": 1079,
+      "units_scoped": 74,
+      "units_econ_eligible": 30,
+      "units_no_params": 1068,
+      "units_lt2_runs": 0,
+      "units_no_runs": 2,
+      "runs_detected": 19088,
+      "runs_kept": 4522
+    },
+    "belly_gaps": {
+      "gaps_total": 1821,
+      "gaps_physical": 139,
+      "gaps_not_econ_eligible": 760,
+      "gaps_da_cap": 274,
+      "gaps_restart_fail": 256,
+      "gaps_candidate": 392
+    },
+    "belly_floor_mwh_by_disposition": {
+      "physical": 72806.83280000002,
+      "da_cap": 2184335.8962999987,
+      "restart_fail": 275841.4189999999,
+      "candidate": 261243.8102999998,
+      "not_econ_eligible": 526142.4671000002
+    },
+    "belly_gap_len_hours": {
+      "n": 1821,
+      "p50": 12.0,
+      "p90": 328.0,
+      "max": 3540,
+      "frac_gt_da_horizon": 0.3223503569467326
+    },
+    "shipped_screen": {
+      "runs_detected": 19088,
+      "runs_kept": 4522,
+      "runs_dropped": 14566,
+      "drop_rate": 0.7630972338642079,
+      "replay_reproduces": true
+    },
+    "floored_rows": 28,
+    "belly_mean_floor_mw": 446.5973009187183,
+    "belly_hours": 876,
+    "belly_net_load_mw_mean": 4577.211462078913,
+    "counterfactual_screen_off": {
+      "belly_gaps": {
+        "gaps_total": 7197,
+        "gaps_physical": 283,
+        "gaps_not_econ_eligible": 4272,
+        "gaps_da_cap": 219,
+        "gaps_restart_fail": 1504,
+        "gaps_candidate": 919
+      },
+      "belly_gap_len_hours": {
+        "n": 7197,
+        "p50": 15.0,
+        "p90": 47.0,
+        "max": 3540,
+        "frac_gt_da_horizon": 0.13575100736417953
+      },
+      "belly_floor_mwh_by_disposition": {
+        "physical": 145521.64080000002,
+        "da_cap": 807911.7259999994,
+        "restart_fail": 1272463.871200002,
+        "candidate": 627317.0857,
+        "not_econ_eligible": 593435.9615999976
+      },
+      "runs_kept": 19088
+    }
+  },
+  {
+    "year": 2024,
+    "status": "OK",
+    "join": {
+      "sidecar_rows": 1705,
+      "fleet_rows": 1859,
+      "bridge_scope_rows_unmapped": 0,
+      "unmapped_examples": [],
+      "pmax_violations": 646108,
+      "worst_pmax_excess_mw": 1767.2589834565827,
+      "pmax_violation_rows": 219,
+      "pmax_violation_examples": [
+        {
+          "unit_id": "CC_REGULAR_NP15_p260_committed",
+          "pmax": 234.864,
+          "p0_max": 234.864,
+          "avail_min": 0.7177826349706975
+        },
+        {
+          "unit_id": "CC_REGULAR_NP15_p260_econc00",
+          "pmax": 193.856,
+          "p0_max": 193.856,
+          "avail_min": 0.0
+        },
+        {
+          "unit_id": "CC_REGULAR_NP15_p260_econc01",
+          "pmax": 193.856,
+          "p0_max": 193.856,
+          "avail_min": 0.0
+        },
+        {
+          "unit_id": "CC_REGULAR_NP15_p260_econc02",
+          "pmax": 193.856,
+          "p0_max": 193.856,
+          "avail_min": 0.0
+        },
+        {
+          "unit_id": "CC_REGULAR_NP15_p260_econc03",
+          "pmax": 193.856,
+          "p0_max": 193.856,
+          "avail_min": 0.0
+        },
+        {
+          "unit_id": "CC_REGULAR_NP15_p260_econc04",
+          "pmax": 193.856,
+          "p0_max": 131.58580059205656,
+          "avail_min": 0.0
+        }
+      ]
+    },
+    "posture": {
+      "min_load_frac": 0.26,
+      "startup_bridge": true,
+      "bridge_decommit": true,
+      "startup_aware": true,
+      "startup_trajectory": true,
+      "da_horizon_hours": 24,
+      "econ_min_down_hours": 4.0
+    },
+    "all_hours": {
+      "gaps_total": 2390,
+      "gaps_physical": 296,
+      "gaps_not_econ_eligible": 1160,
+      "gaps_da_cap": 312,
+      "gaps_restart_fail": 3,
+      "gaps_candidate": 619,
+      "units_scoped": 74,
+      "units_econ_eligible": 30,
+      "units_no_params": 1074,
+      "units_lt2_runs": 1,
+      "units_no_runs": 2,
+      "runs_detected": 22455,
+      "runs_kept": 2462
+    },
+    "belly_gaps": {
+      "gaps_total": 557,
+      "gaps_physical": 49,
+      "gaps_not_econ_eligible": 192,
+      "gaps_da_cap": 232,
+      "gaps_restart_fail": 1,
+      "gaps_candidate": 83
+    },
+    "belly_floor_mwh_by_disposition": {
+      "physical": 23434.871599999995,
+      "da_cap": 2894412.0589000015,
+      "restart_fail": 1303.3088000000002,
+      "candidate": 57112.58879999999,
+      "not_econ_eligible": 610006.1912
+    },
+    "belly_gap_len_hours": {
+      "n": 557,
+      "p50": 149.0,
+      "p90": 3575.2000000000035,
+      "max": 5533,
+      "frac_gt_da_horizon": 0.7324955116696589
+    },
+    "shipped_screen": {
+      "runs_detected": 22455,
+      "runs_kept": 2462,
+      "runs_dropped": 19993,
+      "drop_rate": 0.8903584947673124,
+      "replay_reproduces": true
+    },
+    "floored_rows": 28,
+    "belly_mean_floor_mw": 102.42189610423543,
+    "belly_hours": 876,
+    "belly_net_load_mw_mean": 1890.417133635778,
+    "counterfactual_screen_off": {
+      "belly_gaps": {
+        "gaps_total": 6972,
+        "gaps_physical": 142,
+        "gaps_not_econ_eligible": 4093,
+        "gaps_da_cap": 264,
+        "gaps_restart_fail": 1478,
+        "gaps_candidate": 995
+      },
+      "belly_gap_len_hours": {
+        "n": 6972,
+        "p50": 15.0,
+        "p90": 70.0,
+        "max": 2522,
+        "frac_gt_da_horizon": 0.2395295467584624
+      },
+      "belly_floor_mwh_by_disposition": {
+        "physical": 74703.53119999997,
+        "da_cap": 916644.5673999998,
+        "restart_fail": 1344458.4659000062,
+        "candidate": 646370.6506999996,
+        "not_econ_eligible": 665728.3967999971
+      },
+      "runs_kept": 22455
+    }
+  },
+  {
+    "year": 2025,
+    "status": "OK",
+    "join": {
+      "sidecar_rows": 1710,
+      "fleet_rows": 1864,
+      "bridge_scope_rows_unmapped": 0,
+      "unmapped_examples": [],
+      "pmax_violations": 626654,
+      "worst_pmax_excess_mw": 1884.7276287973266,
+      "pmax_violation_rows": 215,
+      "pmax_violation_examples": [
+        {
+          "unit_id": "CC_REGULAR_NP15_p260_committed",
+          "pmax": 234.864,
+          "p0_max": 234.864,
+          "avail_min": 0.7604074388523758
+        },
+        {
+          "unit_id": "CC_REGULAR_NP15_p260_econc00",
+          "pmax": 193.856,
+          "p0_max": 193.856,
+          "avail_min": 0.0
+        },
+        {
+          "unit_id": "CC_REGULAR_NP15_p260_econc01",
+          "pmax": 193.856,
+          "p0_max": 193.856,
+          "avail_min": 0.0
+        },
+        {
+          "unit_id": "CC_REGULAR_NP15_p260_econc02",
+          "pmax": 193.856,
+          "p0_max": 193.856,
+          "avail_min": 0.0
+        },
+        {
+          "unit_id": "CC_REGULAR_NP15_p260_econc03",
+          "pmax": 193.856,
+          "p0_max": 193.856,
+          "avail_min": 0.0
+        },
+        {
+          "unit_id": "CC_REGULAR_NP15_p260_econc04",
+          "pmax": 193.856,
+          "p0_max": 121.30782874353781,
+          "avail_min": 0.0
+        }
+      ]
+    },
+    "posture": {
+      "min_load_frac": 0.26,
+      "startup_bridge": true,
+      "bridge_decommit": true,
+      "startup_aware": true,
+      "startup_trajectory": true,
+      "da_horizon_hours": 24,
+      "econ_min_down_hours": 4.0
+    },
+    "all_hours": {
+      "gaps_total": 1267,
+      "gaps_physical": 185,
+      "gaps_not_econ_eligible": 108,
+      "gaps_da_cap": 375,
+      "gaps_restart_fail": 60,
+      "gaps_candidate": 539,
+      "units_scoped": 74,
+      "units_econ_eligible": 30,
+      "units_no_params": 1080,
+      "units_lt2_runs": 10,
+      "units_no_runs": 21,
+      "runs_detected": 18760,
+      "runs_kept": 1320
+    },
+    "belly_gaps": {
+      "gaps_total": 767,
+      "gaps_physical": 50,
+      "gaps_not_econ_eligible": 70,
+      "gaps_da_cap": 322,
+      "gaps_restart_fail": 58,
+      "gaps_candidate": 267
+    },
+    "belly_floor_mwh_by_disposition": {
+      "physical": 23616.087999999992,
+      "da_cap": 2643428.4416,
+      "restart_fail": 49455.90079999999,
+      "candidate": 159737.01959999997,
+      "not_econ_eligible": 269005.80660000007
+    },
+    "belly_gap_len_hours": {
+      "n": 767,
+      "p50": 15.0,
+      "p90": 848.4,
+      "max": 5362,
+      "frac_gt_da_horizon": 0.48370273794002605
+    },
+    "shipped_screen": {
+      "runs_detected": 18760,
+      "runs_kept": 1320,
+      "runs_dropped": 17440,
+      "drop_rate": 0.929637526652452,
+      "replay_reproduces": true
+    },
+    "floored_rows": 25,
+    "belly_mean_floor_mw": 241.72157304098394,
+    "belly_hours": 876,
+    "belly_net_load_mw_mean": -596.2164311211294,
+    "counterfactual_screen_off": {
+      "belly_gaps": {
+        "gaps_total": 7167,
+        "gaps_physical": 105,
+        "gaps_not_econ_eligible": 3585,
+        "gaps_da_cap": 270,
+        "gaps_restart_fail": 1484,
+        "gaps_candidate": 1723
+      },
+      "belly_gap_len_hours": {
+        "n": 7167,
+        "p50": 13.0,
+        "p90": 100.0,
+        "max": 2443,
+        "frac_gt_da_horizon": 0.23245430445095577
+      },
+      "belly_floor_mwh_by_disposition": {
+        "physical": 44678.25719999999,
+        "da_cap": 694704.7814999993,
+        "restart_fail": 1165563.7291000003,
+        "candidate": 1035645.1216000018,
+        "not_econ_eligible": 661034.2947999988
+      },
+      "runs_kept": 18760
+    }
+  }
+]
