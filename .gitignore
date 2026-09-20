@@ -3133,3 +3133,22 @@ results/calibration/_caiso293_*.json
 #   git checkout d3a81a9c6cf86e51d74c0883985c6e84073373cf -- results/calibration/pjm_h14_coalmustrun_2024
 #   git checkout cb6bdb52b3d546a1e024572cbc4090551d65aac2 -- results/calibration/pjm_h14_coalmustrun_2025
 results/calibration/pjm_h14_coalmustrun_20*/
+
+# SPP-68 (2026-09-20) per-year SHARD LEGS. Rule 32 [R-SHARD] (d): per-year shard
+# bundle dirs are KEPT OUT OF `main` — the parent fetches them, composes, and
+# commits only the composite. An unregistered per-year dir left committed is the
+# exact Class-E parity RED rule 29 [R-SCREEN] (c) forbids. Ignored rather than
+# deleted, per rule 31 [R-RETAIN]: ".gitignore is what discharges the
+# delete-before-merge duty, not `rm`". Nothing is lost while the shard branch
+# lives — each leg's FULL bundle (incl. dispatch/<year>_P1.parquet) was pushed
+# on its own branch under rule 34 [R-SHARD-PROMOTABLE] (a). Provenance by
+# immutable SHA (rule 33(d)) is recorded in the RESULT doc; per rule 33(f)(1) a
+# shard branch is TRANSPORT, not storage, so any leg not landed on `main` inside
+# the registered composite is costed as a RE-SOLVE, never as a recovery.
+results/calibration/spp68_ceiling_2019/
+results/calibration/spp68_ceiling_2020/
+results/calibration/spp68_ceiling_2021/
+results/calibration/spp68_ceiling_2022/
+results/calibration/spp68_ceiling_2023/
+results/calibration/spp68_ceiling_2024/
+results/calibration/spp68_ceiling_2025/

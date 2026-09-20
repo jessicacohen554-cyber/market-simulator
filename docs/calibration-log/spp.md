@@ -3816,3 +3816,93 @@ Records: `docs/handoffs/PRECOMMIT-spp-67-year-own-rate-2026-09-20.md`,
 `docs/handoffs/RESULT-spp-67-year-own-rate-2026-09-20.md`,
 `scripts/probes/_spp67_wind_decomposition.py`, `scripts/gen_spp67_attestation.py`,
 `tests/unit/data/test_spp67_year_own_curtailment_rate.py`.
+
+## spp-68 — 2026-09-20 — THE CURTAILMENT CEILING IS REJECTED ON ALL SEVEN YEARS (card R-bc, cell O → R)
+
+**Base `14a11a9a`; PRECOMMIT pushed at `05b2231d` BEFORE any solve. KEEPER UNCHANGED at
+`2026-09-20-spp-67-yearown-rate`.** Both arm composites REGISTERED under rule 15 and both read
+**NOT-YET**: `2026-09-20-spp-68-ceiling-span` (2023-2025, FAILs {price_mean, price_shape,
+price_tail}) and `2026-09-20-spp-68-rung-ceiling` (2019-2022, FAILs {fuelmix, price_mean,
+price_shape}). LP: **SEVEN shards, ONE PER YEAR 2019-2025** (rules 32 / 34(c) / 36), each pushing
+its full bundle; **the parent ran none**. Control is keeper 14's COMMITTED bundle (rule 29(b) form
+4 — G-DRIFT found ONE changed file on the audited solve path, a NYISO artifact SPP does not have).
+Records: `docs/handoffs/PRECOMMIT-spp-68-curtailment-ceiling-retest-2026-09-20.md`,
+`docs/handoffs/RESULT-spp-68-curtailment-ceiling-retest-2026-09-20.md`; probes
+`scripts/probes/_spp68_{ceiling_phase0,arm_vs_control,compose_span}.py`;
+`scripts/gen_spp68_attestation.py`.
+
+**THE BRIEF'S FRAMING WAS CORRECTED BEFORE ANYTHING WAS SPENT.** The lane brief said the ceiling's
+control was keeper 5 and that it had never had a fair one. **Lane SPP-63 had already run a solved,
+pre-registered five-gate screen** (2026-09-10, 2025, shard `92b59c73`) and **two gates failed** —
+slack 0 → 211.208 MWh, and C3b 0.167 → 0.253, a load-bearing PASS → FAIL. The re-test still stood
+up, on a nameable change rather than on staleness: keeper 13 doubled negative-price hours and
+keeper 14 re-based the gross-up on each year's own rate — both touching exactly what killed SPP-63.
+
+**THREE OF FOUR PRE-REGISTERED KILL LIMBS TRIPPED.** **K-1** — 2019's arm wind lands **6.4311 TWh
+BELOW** the EIA-930 bench (limit 2.00): the depth is **pooled** (0.288137, ≈9.65 % basis) while
+keeper 14's gross-up is sized by each year's **own** rate, and 2019's is **1.591 %**, so removal ÷
+that year's headroom is **614.8 %** against 92.1-112.6 % elsewhere. A rule 19 `[R-ONE-MECH]`
+finding; both consistent repairs (per-year depth, re-cut pooled depth) are refused by rule 1
+conditions (b) and (c) and **neither was attempted**. **K-2** — C3b worsens in all seven years and
+flips PASS → FAIL in **all three keeper years** (0.168→0.250, 0.156→0.242, 0.157→0.265); C3a flips
+in 2025 (+1.3 %→+10.7 %) and 2021 (+2.7 %→+11.6 %). **K-3** — hours at the wind offer floor go to
+**ZERO** in all six years that had any (169/494/483/334/346/293 → 0) against a market carrying
+936-1172, and the minimum price moves from exactly −26.000 to **+13.8…+19.7**. **K-4 HOLDS AND
+IMPROVES** and is reported rather than buried: slack **falls** in all three years that carry any
+(2022 −52.7, 2024 −18.2, 2025 −5.2 MWh), no new slack hour appears anywhere, so **SPP-63's G-4
+failure does not reproduce on keeper 14**.
+
+**WHAT IT BUYS, AT FULL MAGNITUDE — it is large and real and is not why this is R.** Wind excess
++1.25/+8.60/+8.95/+9.98/+8.93/+12.14/+11.53 → **−6.43/−0.32/−0.24/−0.39/−1.20/+1.01/+0.07 TWh**;
+**six of seven years land within 1.21 TWh of actual.** Thermal absorbs it one-for-one (Σ ÷ |Δwind|
+0.997-1.000), split by gas price: COAL_PRB takes 0.742 of it at $6.45 gas (2022), CC_REGULAR 0.575
+at $2.03 (2020).
+
+**THE CHANNEL, settled by a natural experiment already in the committed data.** Four prior
+diagnoses agreed (SPP-64 §3, SPP-47, SPP-50 §6, SPP-51): wind is a BOUNDED variable bid at a flat
+−ira_ptc_wind, so it is the only negative price-setter and a unit held AT its bound is never
+marginal. **2019 proves it without a solve**: headroom 1.2453 TWh against 8.8-12.9 elsewhere, and
+it ALREADY carries zero negative hours and a minimum price of **+4.500**. The model's
+negative-price regime IS the gross-up headroom being spilled — so no depth could have fixed it, and
+the price rise tracks the **negative hours removed**, not the TWh.
+
+**AND IT REMOVES THE RIGHT AMOUNT FROM THE WRONG HOURS** (measured after the PRECOMMIT, before any
+arm landed): the model's excess sits **41.9-52.2 %** in the lowest net-load decile, the ceiling puts
+only **21.5-24.0 %** of its removal there (ratio 0.28-0.52×, corr 0.60-0.70). It is broad and
+shallow — mean multiplier 0.914-0.917, deepest cut 0.712, clip never binds. Real congestion
+curtailment has the opposite shape.
+
+**PHASE 0 PREDICTED THE SOLVE TO WITHIN 0.0004-0.0638 TWh IN EVERY YEAR (P-1, 7/7).** P-5 hit 6/6,
+P-3 6/7, P-4 5/7 with direction right 7/7. **P-2 was WRONG, 2/7**: the lane flagged that keeper 13's
+coal floor might tilt absorption to gas and then still wrote one band across all years — the split
+is gas-price conditioned and a constant band could not have caught it. **P-3's miss is 2019**, where
+the lane sized the price effect off TWh removed rather than negative hours removed.
+
+**Footprint confined as claimed**: nuclear and biomass move **exactly 0.0000 TWh** in every year;
+largest non-thermal drift anywhere is solar +0.0457 TWh (2025), ≤ 0.4 % of the mechanism's own
+effect. `offer_curve_by_group` byte-identical (SHA-256 `090abd793b5fa5a7`); zero new free
+parameters; default-off byte-identity proven by construction and by census (46 run configs, 0 arm
+it in any ISO).
+
+**Rule 28**: SPP's `spp_curtailment_ceiling` cell **O → R**, with what R does and does not
+foreclose stated in the cell — it forecloses re-arming THIS flag and re-cutting THIS depth, nothing
+else; and SPP-51 §3 already killed the per-hour wind cap ROW at zero LP, so the only live successors
+are a finer SPP topology carrying the real export constraints, or something else. **Rule 31**: the
+promotion question was put to the owner explicitly and was OPEN at close; both composites are on
+`main`, so a promotion would cost **zero re-solves**.
+
+**SECOND DELIVERABLE, taken independently: the `[R-HOLDOUT]` footprint sweep**
+(`docs/handoffs/FINDING-spp-68-deleted-rule-footprint-sweep-2026-09-20.md`). Five live instances;
+the largest is a **hard gate**, not a stale comment — `run_capacity_hindcast.py:364` still raises
+`SystemExit("rule-22 holdout policy refuses this window")` for any hindcast solve year outside
+{2021, 2023-2025}, refusing by `holdout_policy.tier_for_year`, while that module's own docstring
+asserts the hindcast helpers are "untouched by the removal". Also `runner.HINDCAST_BRIDGE_YEARS`,
+`emission_rates.QUARANTINED_RATE_BASIS_YEARS` (drops measured CEMS rows),
+`hydro._HYDRO_QUARANTINED_YEARS`, and `renewables._MISO_REFERENCE_RATE_YEARS` (MISO's lane's call,
+rule 25). **Nothing edited**; all filed as cards. SPP's own `_SPP_REFERENCE_RATE_YEARS` is examined
+and **CLEARED**: 2020/2021 do still read the narrowed mean, but widening it swaps one estimate for
+another in years SPP never published — which rule 14 does not reach, unlike SPP-67's repair, which
+swapped an estimate for that year's own measurement.
+
+**Trap recorded**: `build_dof_ledger.py <bundle>` **WRITES** unless `--check` is passed; running it
+bare against the committed keeper rewrote its attestation (reverted immediately, keeper clean).
