@@ -2891,3 +2891,6 @@ data/raw/nyiso-bid-data/genbids/*
 # recorded further up this file by lane soco-53f.
 results/calibration/soco53g_arm_20[0-9][0-9]/
 results/calibration/soco53g_keeper_20[0-9][0-9]/
+
+!results/calibration/spp66_netwin_2025/
+!results/calibration/spp66_netwin_2025/**
