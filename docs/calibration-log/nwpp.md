@@ -182,3 +182,102 @@ Records: `docs/handoffs/FINDING-nwpp-41-2026-09-19.md`,
 `1fb4b6b5c680ca5ae0ef9375eb11b7cbbb08d64d`.
 
 ---
+
+## nwpp-42 — 2026-09-20
+
+**PROMOTED. NWPP's keeper is now `2026-09-20-nwpp42-measured-coal-heat`** (bundle
+`results/calibration/nwpp42_coalhr_span`), superseding lane NWPP-41, whose three stores were pruned
+in this session per rule 35 `[R-PROMOTE]` (a) after the year union `{2023, 2024, 2025}` was
+enumerated first (35(b)) and `audit_keepers.py --iso NWPP` passed clean between promotion and prune
+(35(e)). Determination **`NOT-YET`** (rubric v3.8, PRICE UNSCORED), unchanged, on `{dispatch_corr}`
+alone. Acted on the owner's standing ruling — *"If structural integrity improves but gates regress
+that may still be a keeper"* — which this run satisfies on its easier limb: structural integrity
+improves **and no gate regresses**.
+
+**THE ARM: `measured_coal_heat_rates=True`, one field on NWPP-41's frozen recipe.** NWPP takes the
+legacy aggregate-fleet path (absent from `CAMPD_BINNING_ISOS`, owner ruling N8), which prices coal
+on **eGRID's ANNUAL PLANT AVERAGE** `PLHTIAN / PLNGENAN` — an average over every hour the plant ran,
+starts and deep part load included. Measured against the plants' own CAMPD-metered steady-state
+rates, that estimate is **HIGH at every one of the 12 covered plants** (7,956.4 of 8,104.4 MW =
+98.2 % of COAL capacity), cap-weighted **11.868 → 11.066 MMBtu/MWh (−6.8 %)**, and the error is
+**not uniform**: Hunter 13.3303 → 10.9688 (1.2153×), North Valmy 1.1537×, Hardin 1.1078×, Wyodak
+1.0880× against Colstrip 1.0228× and Jim Bridger 1.0085×. **Rule 14 `[R-ACCURATE]` is the basis,
+never the residual.** The structural signature is the tell: the correction is near-zero exactly at
+the plants the model already dispatches correctly (Colstrip, measured diurnal peak/trough 1.07,
+model 1.00) and largest where it is not (Hunter, measured 1.62, model 1.00) — no single multiplier
+stands in for that. Table `data/raw/_processed-legacy/campd_coal_heat_rates_NWPP.csv`, md5
+`8dd65f9e73352bcd73ef4f4ea11f35fd`, by the new `scripts/data/derive_campd_coal_heat_rates.py`, NET
+basis via the *same* `parasitic_load_factors.parquet` the benchmark's net actual uses. Two declared
+departures from the nyiso-89 CT deriver, both on physics, both fixed ex ante: `opTime >= 0.99`
+steady-state screen (a coal unit's normal range includes part load) and `primaryFuelInfo` rather
+than `unitType` (at Jim Bridger, Naughton and North Valmy the coal and gas-converted units are both
+boilers). **Zero free parameters** — DOF 3 entries / 3 residual, identical to NWPP-40/41.
+Class-gated to COAL, so it cannot reach a gas unit at a plant that has both (Jim Bridger 8066 has
+COAL and ST_GAS rows under one `plant_code`); guarded by
+`tests/unit/data/test_measured_coal_heat_rates.py`.
+
+**RULE 36 `[R-YEAR-ISOLATION]` LANDED MID-LANE**, interrupting two span solves that carried the
+now-default-off warm-start knobs. Relaunched as **six single-year shards** (three arm, three
+control) pinned to `b68673a99926a554d0a9e165f5bd06b890572c02`, composed by
+`scripts/probes/_nwpp42_compose_span.py` after it verified all **855** non-year-carried
+`scenario_config` fields agree and each leg's gas price matches its own flags. A control solve was
+spent — which rule 29(b) normally forbids — because rule 36(e) **withdrew** the knobs' neutrality
+claims, so form 4 against the committed keeper could not be relied on for C4, the criterion at
+issue. Leg recovery by full SHA is in the FINDING and in `.gitignore`; every shard pushed its FULL
+bundle including `dispatch/<year>_P1.parquet`, so a promotion cost **zero re-solves**.
+
+**THE GATES, arm minus the paired control. NOTHING REGRESSES.** C1 PASS→PASS (18/18 all, 14/14
+free), C2 PASS→PASS, C4 FAIL→FAIL, C6 PASS→PASS, C8 PASS→PASS (0.0 % forced everywhere),
+determination unchanged. C4 coal `r` **0.539 / 0.547 / 0.502 → 0.570 / 0.559 / 0.524** and NRMSE
+**0.301 / 0.397 / 0.432 → 0.292 / 0.387 / 0.408** — 2023's NRMSE crosses **inside** the 0.30 gate,
+leaving that year failing on the correlation floor alone. C4 gas passes all three years in both
+legs. Coal volume **39.613 / 27.008 / 27.207 → 41.549 / 27.390 / 28.317 TWh** against a measured
+42.27 / 38.30 / 42.26. C2's 2025 coal row −29.3 % → −26.4 % (SKIPPED on the preliminary EIA-923
+vintage). Reported-only C5a CO2 −16.0 / −23.8 / −21.5 % → −14.4 / −23.5 / −20.6 %. Hydro **exactly
+flat** all three years; footprint total within 0.002 TWh.
+
+**SECOND DELIVERABLE — NWPP's own measurement of the rule-36 artifact, which 36(f) records as
+UNMEASURED outside MISO.** The split is clean: **annual class volume moves 0.000 TWh for every
+class in every year** (coal included) while the **hourly** allocation moves up to **765.2 / 817.1 /
+817.9 MW** (Σ|Δ| 1.516 / 0.915 / 0.698 TWh), concentrated in **hydro and CC_REGULAR** — the
+flexible resources whose monthly budgets bind the annual total while leaving within-year placement
+free. On the scored criteria the artifact is negligible: the control reproduces NWPP-41's C4 coal
+`r` to 0.001, its NRMSE exactly, and its C2 2025 coal row exactly. **MISO measured up to 24.18 TWh
+of ANNUAL movement; NWPP measures 0.000** — the two are not comparable and neither generalises.
+Practically: **form 4 against the committed keeper is reliable for NWPP.** The same comparison also
+shows that the benchmark itself moved between the two registrations (rebuilt `eia923` hashes
+differently) and that the movement is immaterial.
+
+**PRE-REGISTERED PREDICTIONS, SCORED INCLUDING THE NEAR-MISS.** Coal rises materially without
+closing the gap — held. `r` improves without reaching 0.70 — held in both halves. 2023 is the risk
+year and may push a C1 row out of band — **did not happen**, C1 stays 18/18. Zero movement outside
+coal — held. DOF unchanged at 3/3 — held. **The kill condition** (a 2025 coal move below 0.5 TWh ⇒
+inert) **did not fire** (2025 moved +1.110 TWh), **but 2024 moved only +0.382 TWh, below that
+line**; had 2024 been the pre-registered kill year this arm would have read inert. Named rather
+than glossed, and carried on the keeper's own determination basis.
+
+**CARRIED, ABSORBED NOWHERE.** C4 coal still FAILs against the 0.70 floor — the named driver is the
+**bimodal coal offer stack**, whose structural successor is per-plant CAMPD binning, **blocked on
+`bin_assignments_NWPP.csv` being absent for every legacy-bin ISO** (the PRECOMMIT's fork (b), taken
+deliberately and for that reason). Coal volume still materially short (2025: 28.32 vs 42.26 TWh).
+Energy balance −10.02 TWh in 2025 vs a ±3.0 tol. Chief Joseph's pond-balance dual constant at
+−325.17 $/kcfs·h for 5,808 hours of 2025 with pond = 0 and spill = 0 — untouched, still the first
+cascade-specific question for a successor. C5a CO2 a reported-only FAIL in all three years. Every
+NWPP-40 / NWPP-41 disclosure inherited verbatim.
+
+**CROSS-ISO, DELIBERATELY NOT FIXED.** The eGRID annual-average heat rate is the **default for every
+legacy-bin ISO**, so the same defect is present wherever `use_campd_bins` is inert — but **nothing
+is transferred** (rules 25 `[R-ISO-SCOPE]` / 28(d)): every other ISO's cell stays `U` and each lane
+must derive its own table from its own market's CAMPD record.
+
+**PRE-EXISTING, NOT THIS LANE'S.** `results/calibration/caiso279_ablate_dswcouple_span` carries 34
+TRACKED files and is a genuine `check_registry_payload_parity.py` RED belonging to the CAISO lane.
+22 failures in `tests/scoring` are pre-existing on `main` (confirmed identical with this lane's
+changes stashed) and belong to the golden-manifest / forecast-parity lanes.
+
+Records: `docs/handoffs/PRECOMMIT-nwpp-42-2026-09-19.md`,
+`docs/handoffs/FINDING-nwpp-42-2026-09-20.md`, `scripts/gen_nwpp42_attestation.py`,
+`scripts/data/derive_campd_coal_heat_rates.py`, `scripts/probes/_nwpp42_compose_span.py`,
+`scripts/probes/_nwpp42_leg_check.py`.
+
+---

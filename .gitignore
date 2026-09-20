@@ -2600,15 +2600,34 @@ results/calibration/nwpp42_measured_coal_hr_v2/
 results/calibration/nwpp_mer_2026-09-19/
 #
 # The rule-36 per-year legs: ONE shard, ONE container, ONE --year each, composed
-# by the parent into a registrable run. Recovery shas land in FINDING-nwpp-42.
+# by the parent into a registrable run (rule 32(d) keeps the per-year dirs out of
+# main; the COMPOSITE is what is registered). Each shard pushed its FULL bundle
+# including dispatch/<year>_P1.parquet per rule 34 [R-SHARD-PROMOTABLE] (a), so
+# every leg is recoverable by FULL immutable SHA (rule 33(d)):
+#   git checkout 319bcd45af22d565e9d3f669186e8957bd6359a3 -- results/calibration/nwpp42_coalhr_2023
+#   git checkout 914d14920b42246691358d144765a21f1bd2a9df -- results/calibration/nwpp42_coalhr_2024
+#   git checkout a7cdbe591044f519c9f0fd47e87158dace231205 -- results/calibration/nwpp42_coalhr_2025
+#   git checkout 5cd3b862d3612fa87322e439c271b5c4d2507316 -- results/calibration/nwpp42_mer_2023
+#   git checkout 924fafa6e1883ec9b54a8d418d518d4a0208926b -- results/calibration/nwpp42_mer_2024
+#   git checkout 637f71d021fb46f32b0e8f9f49bde73108207722 -- results/calibration/nwpp42_mer_2025
+# (All six are reachable from main at this commit — each shard branch was merged.)
 results/calibration/nwpp42_coalhr_2023/
 results/calibration/nwpp42_coalhr_2024/
 results/calibration/nwpp42_coalhr_2025/
 results/calibration/nwpp42_mer_2023/
 results/calibration/nwpp42_mer_2024/
 results/calibration/nwpp42_mer_2025/
-results/calibration/nwpp42_span_composite/
-results/calibration/nwpp42_mer_composite/
+#
+# nwpp42_mer_span is the composed CONTROL — NWPP-41's own recipe re-solved under
+# rule-36 year isolation. Rule 29 [R-SCREEN] (c): a control bundle is never
+# registered and never reaches main, so it is ignored here rather than deleted
+# (rule 31 [R-RETAIN]; `rm` is never required). Every number this lane cites
+# from it is in docs/handoffs/FINDING-nwpp-42-2026-09-20.md, and it recomposes
+# for free from the three mer legs above with
+# scripts/probes/_nwpp42_compose_span.py. The ARM composite
+# results/calibration/nwpp42_coalhr_span/ is deliberately NOT ignored: it is the
+# registered run and its slim keeper file set is committed.
+results/calibration/nwpp42_mer_span/
 # caiso-287: per-year instrumented + MER control shard bundles. Pushed by each
 # shard to its OWN branch (rule 34 [R-SHARD-PROMOTABLE] (a)) and kept out of
 # main from the parent's tree (rule 32(d)); never `rm` (rule 31 [R-RETAIN]).
