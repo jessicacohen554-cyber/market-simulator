@@ -18050,7 +18050,72 @@ desk or this section. And no holdout-year (2019–2022) SPP solve exists in the
 queue at any rung: rule 22's `complete` marker is an explicit owner act and SPP
 holds none.
 
-### 5.8 SOCO — **KEEPER 2026-09-20 (lane SOCO-53f, owner-ruled promotion): `2026-09-20-soco53f-measured-coal-hr` (bundle `results/calibration/soco53f_coal_hr`), all three registered years 2023–2025, solved ONE SHARD PER YEAR under rule 36 `[R-YEAR-ISOLATION]` and composed at zero LP — DETERMINATION NOT-YET (rubric v3.8, PRICE UNSCORED).** SOCO publishes no price: `actual_lmp.json` carries no SOCO block and MUST NOT gain one, so C3a/C3b/C3c are **UNSCORABLE, not failed**, the run is scored on C1/C2/C4/C6/C8 only, and the ceiling is `PHYSICALLY-CALIBRATED (PRICE UNSCORED)` — SOCO can **never** read `CALIBRATED` (gate G17). C1 FAIL on **one row of fourteen** (2023 `CT_PEAKER` +9.73 TWh / +4.0pp); C2/C4/C6/C8 all PASS; 0 ledgered and 0 protective caveats; C1 all **13/14**, free **9/10**; DOF unchanged at 3 entries / 1 residual with **zero free parameters and zero `ScenarioConfig` fields added** — the mechanism is nwpp-42's, and it was a STRICT NO-OP for SOCO until this lane derived SOCO's artifact. **THE MEASUREMENT REVERSED THE SIGN OF THE PREMISE THAT COMMISSIONED THE LANE, before the solve**: `FINDING-soco-53e` §7.1 routed it on the reading that E C Gaston's coal boiler, left on the blended ST family rate 11.5505, is *'roughly 0.5 MMBtu/MWh too CHEAP'*; its own meter reads **11.0505 — 0.5000 too DEAR**, the magnitude right to four decimals with the sign inverted, because eGRID's `PLHTIAN / PLNGENAN` is an **ANNUAL average** that folds startup fuel, shutdown tails and offline bank fuel into the offer and therefore sits ABOVE both machines' operating rates rather than between them. **ALL SIX PLANTS GET CHEAPER** — Barry −1.8711, Daniel −0.9687, Scherer −0.8690, Gaston −0.5000, Bowen −0.4040, Miller −0.1022 — capacity-weighted **11.5267 → 10.8926, −5.5 %**, across **100 % of an 11.5 GW fleet**, five times the capacity the gas-steam sibling touched. **THE GATES DO NOT MOVE AND EIGHT OF THE TEN GATED NON-CHP ROWS IMPROVE**: 2023 `CT_PEAKER` +9.82 → +9.73 TWh, 2024 `CT_PEAKER` +6.38 → +5.81, 2024 `COAL_BIT` −1.15 → −0.55, 2023 `COAL_PRB` −2.33 → −2.13, 2024 `COAL_PRB` −3.57 → −3.44, `CC_REGULAR` +2.63 → +2.60 and +5.12 → +5.03; **two worsen, both `ST_GAS`** (2023 −6.88 → −6.93, 2024 −5.21 → −5.28), and **no row changes status on either the committed or the HEAD-rebuilt bench**. The PRECOMMIT registered the 2023 `ST_GAS` row as a **coin flip in BOTH directions** (displacement bound 0.369 TWh against a 0.288 TWh margin) and it survived, margin 0.288 → 0.250. **2023 `CT_PEAKER` stays FAILED, so SOCO's headline defect is NOT fixed** — 2023's displaced class is 64 % `ST_GAS` and only 9 % `CT_PEAKER`, which the PRECOMMIT declared before the solve. Rule 19 established mechanically at two grains (16 of 393 built-fleet rows and 25 of 327 LP rows move, all `COAL`, with `ST_GAS` — repriced by SOCO-53e one day earlier and sharing plant codes 3 and 26 with this population — byte-identical at max |Δ| exactly 0.000000000000). The owed rule 17 `[R-FLOOR-WINDOW]` re-measurement **holds in all twelve plant-years and every binding share FALLS OR HOLDS**, Barry still carrying zero floored hours. **Eleven of twelve ex-ante predictions held.** **TWO GOVERNANCE QUESTIONS CLOSED BY MEASUREMENT**, as by-products of the control this lane had to solve: the OUTGOING keeper's four `audit_keepers` E14 warnings are **COSMETIC** — a dedicated shard re-solved its recipe on the off-pin dependency set and the result is **BIT-IDENTICAL** (0 of 131,400 class-hourly cells, 0 of 26,280 price cells), closing what `FINDING-soco-53e` §10.3 left merely bounded; and rule 36's *'unmeasured outside MISO'* year-grouping cost is **MEASURED at SOCO and is ZERO** — the year-isolated control reproduced the outgoing keeper's annual class generation to **exactly 0.000000 MWh on all 45 class-years** and its scored C1 rows reproduced that keeper's registered numbers exactly. **This keeper carries neither defect**: pinned dependencies, year-isolated. Reported against the keeper: prediction **P9 was FALSIFIED** — the marginal emission rate was predicted to RISE and **fell** in all three years (0.6263 → 0.6255, 0.6090 → 0.5921, 0.6369 → 0.6161), because cheaper coal runs INFRAMARGINALLY and hands the margin to a combined cycle rather than taking it from a peaker; D-1 trades a verdict in 2024 (`COAL_BIT` FAIL → pass, `COAL_PRB` pass → FAIL, neither gating since no COAL class is forced); the committed COAL parasitic default 0.93 does **not** reproduce SOCO's own meter (0.866–0.928 on the four single-fuel sites) and is used anyway because it is the same factor the benchmark's net actual is built with, so the applied rates are biased LOW by 1.5–5.9 % and the cheapening is if anything UNDERSTATED; the arm adds +1.5632 TWh to a 2025 coal excess whose cause is SOCO-53b's hydro input hole; and SOCO's committed bench is STALE against the builder at HEAD (nyiso-240's EIA-923 repair adds +2.616 TWh) and was deliberately not rebuilt, so this keeper is scored on the same bench as its control — both verdicts were computed and agree. **ROUTED AND LARGER THAN THIS LEVER**: `coal_prb_proxy_own_iso` (SOCO-53g) — SOCO's three PRB plants, 55 % of its coal capacity, are priced off the ERCOT-only reporter pool at 1.8228/1.7520/1.6147 $/MMBtu against their own 2.6711/2.4982/2.4610, about $9.7/MWh against this lane's $2.95, and in the OPPOSITE direction. Evidence: `docs/handoffs/FINDING-soco-53f-2026-09-20.md`. PRIOR HEADER: keeper `2026-09-19-soco53e-measured-st-gas` (lane SOCO-53e, the per-unit gas-steam meter); before that keeper `2026-09-19-soco53d-campaign-commitment` (lane SOCO-53d, the multi-week-campaign commitment floor); before that `2026-09-19-soco53c-egrid-family-hr`; before that `2026-09-17-soco53-measured-ct-hr`; before that `2026-09-16-soco-1-baseline` (lane SOCO-40, the first SOCO keeper); column SEEDED 2026-09-13 at lane SOCO-21, the eighth matrix shard
+### 5.8 SOCO — **KEEPER 2026-09-20 (lane SOCO-54, owner-ruled promotion): `2026-09-20-soco54-marginal-gas-basis` (bundle `results/calibration/soco54_marginal_gas`), all three registered years 2023–2025, solved ONE SHARD PER YEAR under rule 36 `[R-YEAR-ISOLATION]` and composed at zero LP — DETERMINATION IS BENCH-DEPENDENT: `PHYSICALLY-CALIBRATED (PRICE UNSCORED)` on the COMMITTED bench (C1 14/14), `NOT-YET` on a freshly rebuilt one (C1 13/14, 2024 `CC_REGULAR`). 2023 `CT_PEAKER` closes on BOTH.**
+
+**LANE SOCO-54 (2026-09-20) — THE CT/ST MISALLOCATION IS AN OFFER-STACK DEFECT, NOT ABSENT
+COMMITMENT PHYSICS, AND `gas_plant_monthly_pricing` OFF CLOSES SOCO'S ONLY C1 FAILURE.** Run
+`2026-09-20-soco54-marginal-gas-basis` (bundle `results/calibration/soco54_marginal_gas`) is a
+registered **CANDIDATE the owner has not ruled on** — **PROMOTION IS OPEN AND IS THE OWNER'S**
+(rule 31 `[R-RETAIN]`); the keeper is unchanged at `2026-09-20-soco53f-measured-coal-hr` and
+**nothing was pruned**. Full 2023–2025 span, one shard per year (rule 36
+`[R-YEAR-ISOLATION]` (a)), composed at zero LP; G-DRIFT found five changed solve-path files since
+the keeper basis `04f7f849` and classified **every hunk INERT** with its reason verified
+mechanically, so form 4 stood and **no control solve was spent**.
+
+**THE ARM IS A FIELD TURNED OFF.** `gas_plant_monthly_fuel_pricing` predates this lane by years and
+ships `bool = False`; SOCO inherited it ON. Returning SOCO to the shipped default wrote **no
+`ScenarioConfig` field** and added **no free parameter** (DOF 3 entries / 1 residual, unchanged).
+
+**IT CORRECTS THIS SECTION'S OWN DIAGNOSIS.** SOCO-53 closed the cost side with *"the model already
+over-separates `CT_PEAKER` from `ST_GAS` by +1.983 MMBtu/MWh against a measured +0.713 … so no
+cost-side lever can close it"* — **derived from HEAT RATES alone, and true there**. The separation
+that binds is **FUEL PRICE**. Three commitment levers were **refused EX ANTE on measurement rather
+than solved**: the in-merit-but-not-dispatched `ST_GAS` headroom is **0.0727 TWh against a −6.935
+TWh gap (one percent)**; the campaign floor already holds SOCO's boilers online **659–7,234 h/yr**
+**pinned at a median 6–14 % of capacity** because they are out of merit in **65–93 %** of those
+hours (Yates 2023: online 659 h, in-merit in **7.3 %**); and a start cost — the
+`tranche_startup_amortization` `G`-cell's own named successor — amortizes to **≈$1.28/MWh** against
+a **$17.44/MWh** merit-order distance, because the model's turbines run at **62–74 % CF in blocks up
+to 760 h** and do not two-shift. `gas_commitment_bridge`'s `R` and `tranche_startup_amortization`'s
+`G` are **untouched**.
+
+**THE OBJECT, MEASURED BEFORE THE SOLVE.** A dispatch offer is a MARGINAL cost; the EIA-923
+Schedule-2 print is an AVERAGE DELIVERED CONTRACT cost. **Eight SOCO plants file a monthly
+delivered-price series that is ONE common shape × a plant-constant multiplier in ALL THREE YEARS at
+ratio CV ≤ 0.00081**, and **the multipliers reprice**: Yates goes **1.8279 → 1.1669 → 0.7959**
+against Hartwell, and Hartwell goes from the family's cheapest member in 2023 to its dearest in
+2025, on machines whose heat rates do not move. Hartwell's 2023 print sits **below Henry Hub in 11 of
+12 months**, which no *delivered* gas can be, and the model burned **4×–160×** the gas these plants
+procured at the price the procurement established. Rule 14 `[R-ACCURATE]`'s misalignment clause
+governs and the fall-back is **measured-to-measured** — realized Henry Hub plus SOCO's own EIA-923
+delivered basis (`GAS_BASIS_DIFFERENTIAL["SOCO"] = 0.64`, SOCO-20).
+
+**RESULT, AND BOTH BENCHES ARE REPORTED BECAUSE THEY DISAGREE ON ONE ROW.** On the **committed**
+bench the arm reads **`PHYSICALLY-CALIBRATED (PRICE UNSCORED)`** with **C1 all 14/14 · free 10/10**
+— **SOCO's ceiling, reached for the first time** — against the keeper's `NOT-YET` / 13/14. On the
+**fresh** bench (carrying nyiso-240's EIA-923 repair) both read `NOT-YET` / 13/14, but the failing
+row **moves** from 2023 `CT_PEAKER` to 2024 `CC_REGULAR`. **On BOTH benches 2023 `CT_PEAKER` — the
+defect this lane was commissioned on — CLOSES**: 14.261 → 10.668 TWh against a 4.534 actual, share
++4.05pp → **+2.55pp** against a ±3.00pp cap. **The committed-bench pass rests on 2024 `CC_REGULAR` at
++7.417 TWh of ±7.47 — 0.05 TWh of margin — which `PRECOMMIT-soco-54` P4 PRE-REGISTERED as this arm's
+stated risk at 81 % of its margin.** At plant grain: Hartwell 1.728 → 0.111 (actual 0.207), Hawk Road
+2.209 → 0.228 (0.569), Doyle 1.038 → 0.072 (0.054), McIntosh 0.682 → 0.053 (0.017), Greene County
+0.574 → 1.196 (1.314).
+
+**REPORTED AGAINST THE LANE:** 55061 Tenaska Georgia is made **worse** (1.412 → 2.690 against a 0.237
+actual); 2049 Jack Watson moves the **wrong way** (2.355 → 1.256 against 3.270), as ADDENDUM 2's
+table predicted; 728 Yates improves 13× and still sits at **36 %** of its actual; and **two of this
+lane's own pre-registered predictions are FALSIFIED** — P1's band was too tight (−2.45 predicted,
+**−3.592** delivered) and P8's coal band was too tight (<1.0 predicted, **+1.481 TWh** `COAL_PRB`).
+C2/C4/C6/C8 PASS on both sides, C3a/b/c UNSCORABLE, **0 ledgered and 0 protective caveats**. D-1 goes
+**3 failures → 2** (clears 2024 `COAL_PRB` and 2025 `CT_PEAKER`, adds 2025 `COAL_BIT`). Rule 19
+`[R-ONE-MECH]` established at two grains before the solve: the six GAS classes move on `fuel_prices`
+AND `mc_base`, **every other class at max |Δ| exactly 0.000000000000** in all three years, and the
+COAL print path is carried forward untouched. Rules 25 / 28(d): the reasoning is MISO-224's and the
+**derivation is SOCO's own**; `miso_gas_marginal_commodity_pricing` is MISO-scoped by hard error, is
+**not** armed, and the cross-ISO cost convention stays in owner court. Evidence:
+`docs/handoffs/PRECOMMIT-soco-54-2026-09-20.md`, its three addenda, and
+`docs/handoffs/FINDING-soco-54-2026-09-20.md`.
 
 **LANE SOCO-53g (2026-09-20) — `coal_prb_proxy_own_iso` ADJUDICATED `I` BY A FULL SOLVE, AND THE KEEPER IS UNCHANGED.** Run `2026-09-20-soco53g-prb-own-iso` (bundle `results/calibration/soco53g_prb_own`) is registered as a **CANDIDATE the owner has not ruled on**, not a keeper; SOCO's keeper remains `2026-09-20-soco53f-measured-coal-hr` and the lane's own recommendation is **not to promote**. The arm moves **nothing scored or reported in any year**: 2023 and 2024 are **byte-identical** to the keeper (same `sha256` on `floors/`, `dispatch/<y>_P1.parquet`, `system.parquet` and `unit_hourly`), 2025 differs in **4 of 657,000** class-hour cells — a 2.2 MW tie swap at *identical* marginal costs that nets to exactly 0.0 MWh — annual class generation is **0.000000 TWh** apart on all 45 class-years, and all **21 C1 rows** reproduce the keeper's exactly on both benches. The mechanism fires and is then erased: `apply_coal_supply_pricing` writes the ERCOT-pool proxy onto SOCO's 15 PRB tranche rows and `apply_plant_monthly_fuel_prices` overwrites **8,760/8,760** cells on every one of them with each plant's own filed EIA-923 monthly cost. **This UPHOLDS NWPP-41's zero-LP `I` verdict and CORRECTS ITS GRAIN**: NWPP-41's *"nothing to arm unless a SOCO PRB plant stops reporting"* is falsified, because 6073 Daniel keeps reporting and still skips **January 2025**, the one plant-month where the fallback survives (744 h, +7.7512 $/MWh on four tranches — and no MW follows, since Daniel's armed `mc` of 27.37 sits ~29 below the January mean price of 56.29). **Recorded against the lane:** it read this already-adjudicated cell only *after* launching its shards, which rule 28(a) forbids. Record: `docs/handoffs/FINDING-soco-53g-2026-09-20.md`.
 

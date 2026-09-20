@@ -12,6 +12,7 @@
     "coal_prb_passthrough_sigmoid": true,
     "coal_prb_passthrough_tiered": true,
     "coal_prb_sigmoid_overrides": {
+      "gas_plant_monthly_fuel_pricing": false,
       "measured_coal_heat_rates": true
     },
     "commitment": false,
@@ -27,7 +28,7 @@
       "2024": 2.19,
       "2025": 3.52
     },
-    "git_sha": "04f7f849",
+    "git_sha": "d85e0c47",
     "hours": 8760,
     "iso": "SOCO",
     "nyiso_dynamic_reserve_requirements": null,
@@ -50,9 +51,9 @@
     ]
   },
   "composed_from": [
-    "soco53f_arm_2023",
-    "soco53f_arm_2024",
-    "soco53f_arm_2025"
+    "soco54_arm_2023",
+    "soco54_arm_2024",
+    "soco54_arm_2025"
   ],
   "environment": {
     "cache_key_path_roots": [
@@ -74,47 +75,47 @@
     "python_version": "3.11.15"
   },
   "git": {
-    "basis_sha": "04f7f849cddac88fe6991fafcc4ed08f6df83e85",
+    "basis_sha": "d85e0c47567b0ae8258a99920d512fd3fe8fe1df",
     "branch": "HEAD",
     "changed_files": [],
     "diffstat": "",
     "dirty": false,
-    "sha": "04f7f849"
+    "sha": "d85e0c47"
   },
-  "model_changes_note": "SOCO-53f ARM 2023: keeper recipe + measured_coal_heat_rates, year-isolated (rule 36)",
+  "model_changes_note": "BTM-basis re-solve: byte-faithful replay of the committed keeper config from meta.json, adding btm.parquet (behind-the-meter CHP held out of the LP) so the benchmark scores on the grid-delivered basis.",
   "per_leg_provenance": {
     "2023": {
       "git": {
-        "basis_sha": "04f7f849cddac88fe6991fafcc4ed08f6df83e85",
+        "basis_sha": "d85e0c47567b0ae8258a99920d512fd3fe8fe1df",
         "branch": "HEAD",
         "changed_files": [],
         "diffstat": "",
         "dirty": false,
-        "sha": "04f7f849"
+        "sha": "d85e0c47"
       },
-      "timestamp": "2026-09-20T00:43:47"
+      "timestamp": "2026-09-20T03:24:51"
     },
     "2024": {
       "git": {
-        "basis_sha": "04f7f849cddac88fe6991fafcc4ed08f6df83e85",
+        "basis_sha": "d85e0c47567b0ae8258a99920d512fd3fe8fe1df",
         "branch": "HEAD",
         "changed_files": [],
         "diffstat": "",
         "dirty": false,
-        "sha": "04f7f849"
+        "sha": "d85e0c47"
       },
-      "timestamp": "2026-09-20T01:40:15"
+      "timestamp": "2026-09-20T03:26:23"
     },
     "2025": {
       "git": {
-        "basis_sha": "04f7f849cddac88fe6991fafcc4ed08f6df83e85",
+        "basis_sha": "d85e0c47567b0ae8258a99920d512fd3fe8fe1df",
         "branch": "HEAD",
         "changed_files": [],
         "diffstat": "",
         "dirty": false,
-        "sha": "04f7f849"
+        "sha": "d85e0c47"
       },
-      "timestamp": "2026-09-20T01:40:35"
+      "timestamp": "2026-09-20T03:26:03"
     }
   },
   "resolved_inputs": {
@@ -158,6 +159,7 @@
     "caiso_adaptive_half_life_days": 30.0,
     "caiso_asymmetric_path_ratings": false,
     "caiso_charge_allocation_schedule": false,
+    "caiso_citygate_blackout_bridge": false,
     "caiso_citygate_flow_date": false,
     "caiso_citygate_spot_coverage": false,
     "caiso_citygate_spot_level": false,
@@ -568,7 +570,7 @@
     "ercot_zonal_gas_basis": false,
     "ercot_zonal_spread_ep_referenced": false,
     "exit_rate_limits": false,
-    "f923_gas_price_plausibility_screen": true,
+    "f923_gas_price_plausibility_screen": false,
     "federal_ces_acp_usd_per_mwh": null,
     "federal_ces_ccs_capture_fraction": 0.95,
     "federal_ces_ci_benchmark_t_per_mwh": 0.82,
@@ -616,7 +618,7 @@
     "gas_offer_margin_zonal_anchor": false,
     "gas_offer_margin_zonal_anchor_vintage": false,
     "gas_offer_net_revenue_margin": false,
-    "gas_plant_monthly_fuel_pricing": true,
+    "gas_plant_monthly_fuel_pricing": false,
     "gas_price_factor": 1.0,
     "gas_price_override": 2.54,
     "gas_price_path": "mid",
@@ -1146,12 +1148,12 @@
   },
   "solve_surface": {
     "epochs": [],
-    "fingerprint": "f4d250dfebdf2c96",
-    "git_sha": "04f7f849",
+    "fingerprint": "60895cac1f7c8879",
+    "git_sha": "d85e0c47",
     "iso": "SOCO",
     "moved": {},
-    "rows": 180,
+    "rows": 182,
     "schema": 1
   },
-  "timestamp": "2026-09-20T00:43:47"
+  "timestamp": "2026-09-20T03:24:51"
 }

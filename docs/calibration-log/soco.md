@@ -935,3 +935,85 @@ The solve confirmed the zero-LP prediction and exceeded it. 2023 and 2024 are by
 The offer does move and no MW follows. 2,976 unit-hours of Victor J Daniel Jr's four coal tranches carry +7.7512 $/MWh — mean equal to min equal to max — across all 744 January-2025 hours, the one plant-month where SOCO has no measured price of its own, because Daniel filed no January receipt and the nearby-plant fallback did not reach it. Daniel's armed mc of 27.37 $/MWh is still about 29 below the January mean system price of 56.29, so it stays deeply inframarginal. Prediction P3 is falsified in substance: I predicted the lift would displace 0.000–0.141 TWh of COAL_PRB and it displaced exactly 0.000000, because I never checked where those rows sat relative to the price. That check was one join away in the committed bundle and I read both files in the same session for other purposes. It is the same class of error 53f's P9 made — reasoning about a machine's cost without asking where the cost sits relative to the price that clears — and it is now two lanes running. Seven of eight predictions held, including byte-identity in both gated years.
 
 Recorded against the lane, and it leads the write-up: the matrix cell was ALREADY adjudicated I by NWPP-41 on 2026-09-17, and this lane read it only after launching its shards, which rule 28(a) and the SessionStart hook both forbid. 53f routed the lane without checking it either, so the miss is two lanes deep. What makes the work admissible rather than a redo is that it produced new evidence and that evidence corrects the cell: NWPP-41 censused at the plant-YEAR grain and concluded "nothing to arm unless a SOCO PRB plant stops reporting", and that sentence is falsified — all three SOCO plants do file every year, and Daniel still skips one month. The grain that matters is the plant-MONTH, and even that is an upper bound, since Scherer also missed a month and the nearby fallback covered it. Re-censused cross-ISO at the plant-month grain and routed, never adjudicated (rules 25/28(d)): MISO 38 PRB plants and 484 missing plant-months, SPP 29 and 216, NWPP 9 and 180, ERCOT 7 and 181, PJM 2 and 72, SOCO 3 and 2 — so the docstring's "MISO (12), PJM (2), SPP (3–5)" understates the populations badly, and only 2 of the 7 hand-curated COAL_PLANT_SUPPLY plants file anything at all. The recommendation to the owner is NOT to promote this run, on the ground that the standing "structure improves, gates regress" rule does not reach it — the gates do not regress and structural integrity does not measurably improve — but to arm the mechanism as a declared posture in backcast_config.py beside NWPP if it is wanted, for which this run is already the complete three-year A/B evidence. Three per-year shards under rule 36, each pushing a full 16-file bundle, composed at zero LP with no re-solves; every leg recoverable by immutable SHA and recorded in .gitignore, so a promotion costs nothing. All three shards archived. Record: `docs/handoffs/FINDING-soco-53g-2026-09-20.md`.
+
+## soco-54 — 2026-09-20 — SOCO's gas steam was priced out of its own merit order by a contract multiplier, and removing it closes C1
+
+**Keeper UNCHANGED** at `2026-09-20-soco53f-measured-coal-hr`; nothing pruned. Registered
+`2026-09-20-soco54-marginal-gas-basis` (bundle `results/calibration/soco54_marginal_gas`) as a
+**candidate; promotion is OPEN and is the owner's** (rule 31 `[R-RETAIN]`). Full 2023–2025 span, one
+shard per year (rule 36), composed at zero LP; G-DRIFT all-INERT so form 4 stood and **no control
+solve was spent**.
+
+**The arm is one field turned OFF** — `gas_plant_monthly_fuel_pricing` back to its own shipped
+default. **Zero new fields, zero free parameters**, DOF 3 entries / 1 residual unchanged.
+
+**RULE 28(a) FIRST.** `gas_commitment_bridge` (`R`), `tranche_startup_amortization` (`G`),
+`coal_prb_proxy_own_iso` (`I`) all left untouched; the arm sits on a `U` cell.
+
+**THE ROUTED LEVER WAS REFUSED EX ANTE ON MEASUREMENT.** The campaign floor already holds SOCO's
+boilers online 659–7,234 h/yr **pinned at a median 6–14 % of capacity**, out of merit in 65–93 % of
+those hours (Yates 2023: online 659 h, in-merit in 7.3 %). In-merit-but-off `ST_GAS` headroom is
+**0.0727 TWh against a −6.935 TWh gap**. A start cost amortizes to ≈$1.28/MWh against a $17.44/MWh
+distance, on turbines running 62–74 % CF in blocks up to 760 h.
+
+**THIS CORRECTS THE 53/53c/53e/53f DIAGNOSIS.** "No cost-side lever can close it" was derived from
+**heat rates alone** and holds there. The separation that binds is **FUEL PRICE**: eight SOCO plants
+file one common monthly shape × a plant-constant multiplier in **all three years** at CV ≤ 0.00081,
+and the multipliers **reprice** — Yates 1.8279 → 1.1669 → 0.7959 against Hartwell, whose own 2023
+print sits below Henry Hub in 11 of 12 months. The model burned **4×–160×** the gas these plants
+procured. Rule 14's misalignment clause governs; the fall-back is **measured-to-measured** (realized
+Henry Hub + SOCO's own EIA-923 basis, SOCO-20).
+
+**RESULT — BOTH BENCHES, BECAUSE THEY DISAGREE ON ONE ROW.** Committed: arm
+**`PHYSICALLY-CALIBRATED (PRICE UNSCORED)`**, C1 **14/14 · free 10/10** — SOCO's ceiling, first time
+— vs keeper `NOT-YET` / 13/14. Fresh: both `NOT-YET` / 13/14, failing row **moves** from 2023
+`CT_PEAKER` to 2024 `CC_REGULAR`. **On both benches 2023 `CT_PEAKER` CLOSES**: 14.261 → 10.668 TWh
+(actual 4.534), +4.05pp → **+2.55pp** against ±3.00pp. **The ceiling rests on 0.05 TWh** — 2024
+`CC_REGULAR` at +7.417 of ±7.47, which PRECOMMIT P4 pre-registered as this arm's risk at 81 % of its
+margin. C2/C4/C6/C8 PASS; C3a/b/c UNSCORABLE; 0 ledgered, 0 protective.
+
+**Plant grain 2023:** Hartwell 1.728 → 0.111 (0.207), Hawk Road 2.209 → 0.228 (0.569), Doyle 1.038 →
+0.072 (0.054), McIntosh 0.682 → 0.053 (0.017), Greene Co 0.574 → 1.196 (1.314). **Against the lane:**
+Tenaska Georgia 1.412 → **2.690** (0.237) is made worse; Jack Watson 2.355 → 1.256 (3.270) moves the
+wrong way; Yates still at 36 % of actual. **Rule 17 holds in all fifteen plant-years** and Yates's
+commitment goes from **11× under to 1.7× under**. D-1 **3 failures → 2**.
+
+**THREE OF TWELVE PREDICTIONS FALSIFIED** and §6 leads with them: P1's band too tight (−2.45 vs
+**−3.592**), P8's coal band too tight (<1.0 vs **+1.481** `COAL_PRB`), P12's forced-share direction
+wrong (it **rises**, 0.0855 → 0.1375, C8 still passing wide). All three are second-order
+consequences of one modelling error — cheaper gas steam changes the P0 pattern the floor is detected
+from.
+
+**Post-registration audit (`calibration-keeper-auditor --iso SOCO`) caught a published-text defect
+and it was MINE.** My shard prompts omitted `--note`, so `replay_keeper` fell back to its default
+`model_changes_note` ("BTM-basis re-solve … adding btm.parquet") and `dashboard_add_run` copied it
+verbatim into the registry sidecar's `definition` — describing a different mechanism entirely. Baked
+into all three legs at solve time; 53f's shards passed `--note` and its sidecar is correct. The
+sidecar was rewritten from the attestation's machine-verified governance block, with two clauses of
+the auditor's draft tightened first (its "coal … unchanged at max |Δ| 0.000000000000" is a
+marginal-COST statement that reads as a dispatch claim — 2023 `COAL_PRB` moves +1.481 TWh — and the
+determination shift is bench-dependent and must not be asserted bare). **Every shard prompt should
+pass `--note`.**
+
+**Gates:** matrix PASS; `audit_keepers` **E13 × 2** (two unruled candidates — 53g's and this one,
+**re-raised not cleared**) + E11 (pruned predecessor); parity RED **locally only** (six gitignored
+leg dirs, 0 tracked on HEAD); `check_cache_key_registration` and `check_bench_freshness` RED at HEAD,
+not this lane's. **Nothing was deleted.** All three shards archived. **Promotion question put to the
+owner.**
+
+**PROMOTED 2026-09-20, same session, on the owner's ruling** (*"If so plz promote"*). SOCO's keeper is
+now `2026-09-20-soco54-marginal-gas-basis`. Rule 35 `[R-PROMOTE]` in order: year union `{2023,2024,2025}`
+enumerated **before** any delete and fully covered by the incoming bundle; keeper shard re-keyed and
+`build_status.py --iso SOCO` rebuilt; **E1 verified clean on the incoming run**; then the outgoing
+`2026-09-20-soco53f-measured-coal-hr`'s three stores pruned via `--force-uncite` (the intended route —
+the dangled citation is this promotion's own provenance field), bundle recoverable at
+`e7c57737145fb763bd623580de3f4bb8bce7f860`. `calibration-complete.json` needed no re-key — SOCO has
+never had an entry and none was invented. Matrix re-stamped: shard keeper + gates, §5.8 header, and
+`gas_plant_monthly_pricing` **O → K**. **`2026-09-20-soco53g-prb-own-iso` was `--keep`-listed and NOT
+swept up — it is still unruled, E13 still fires for it, and it needs its own ruling.**
+**Gate limitation routed:** `audit_keepers` E5's `_DET_TOKENS` has no `PHYSICALLY-CALIBRATED` entry, so
+a price-unscored ISO cannot state its determination in a sidecar definition at all — naming the live
+verdict matches the bare `CALIBRATED` substring and naming the superseded one matches `NOT-YET`. The
+definition is recipe-only, as the outgoing keeper's also was; extending `_DET_TOKENS` is the scoring
+desk's.
+
