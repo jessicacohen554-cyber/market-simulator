@@ -132,11 +132,32 @@ _CHP_PMIN_PCTILE: int = 2
 #   steam_level_cf = (on-hour frequency over available hours)
 #                    x (p50 available-CF conditional on online)
 #
-# which reproduces the measured loading-when-on baseload directly. The
-# statistic still self-targets with no threshold parameter: outage hours drop
-# out of the sample (avail_cap = 0), a rarely-online cycler's on-frequency
-# collapses its level toward 0, and a genuinely flat steam host keeps its
-# online level. The p2 floor above only captures the never-below minimum.
+# which reproduces the measured loading-when-on baseload directly.
+#
+# **THE SELF-TARGETING CLAIM THAT STOOD HERE IS FALSE AND IS CORRECTED IN
+# PLACE (caiso-293, 2026-09-20).** It read: *"The statistic still self-targets
+# with no threshold parameter: outage hours drop out of the sample
+# (avail_cap = 0), a rarely-online cycler's on-frequency collapses its level
+# toward 0, and a genuinely flat steam host keeps its online level."* The
+# first and last clauses are true. The middle one is not, because the level
+# is only half the floor: the CONSUMER (fleet/arrays.py) holds whatever level
+# this emits in ALL 8760 HOURS, so a level that collapses "toward 0" is still
+# a 24/7 floor. Measured on the CAISO keeper, five of the thirteen metered
+# floored plants were forced to deliver MORE energy than their own meter
+# recorded for the whole year (Kingsburg 5.16x, McKittrick 2.22x, Badger Creek
+# 1.84x, Gilroy 1.56x, King City 1.01x, 2025).
+#
+# NOTHING HERE CHANGES, and deliberately (rule 23 [R-FROZEN-DERIVE] is not
+# engaged): the repair is consumer-side and needs no re-derivation, because
+# ``on_freq == steam_level_cf / median_cf`` is an exact identity over two
+# columns this script ALREADY emits at the same percentile over the same
+# sample. See fleet.campd_bins.thermal_tranche_chp_steam_duty, which recovers
+# both factors, and ScenarioConfig.chp_steam_duty_window, which uses the
+# on-frequency to size a window instead of to dilute a level — the treatment
+# the ``online_frac`` column comment below already prescribes for every OTHER
+# per-plant must-run floor ("it sizes the committed window").
+#
+# The p2 floor above only captures the never-below minimum.
 # Consumed by ScenarioConfig.chp_steam_floor_p25 (field name kept for run-config
 # lineage; the level source is this statistic since WP-3).
 _CHP_STEAM_LEVEL_ON_PCTILE: int = 50
@@ -989,7 +1010,18 @@ def main() -> None:
             # its own gate (st_gas_mustrun_per_plant — the VLR/self-commitment
             # trace of the Entergy South steam fleet). Same CEMS quantity,
             # same estimator; only the consumer differs. CHP groups stay
-            # blank — their floor is the steam host (rule 19).
+            # blank — their floor is the steam host (rule 19). *(That premise
+            # is true of a genuinely flat steam host and FALSE of a cycling
+            # cogen carrying a legacy QF designation: caiso-293 measured
+            # hour-of-day on-frequency max/min of 12.4-35.0 on the seven CAISO
+            # CHP plants the keeper's D-4 fails on, against 1.00-1.04 on the
+            # three flat hosts. The blank column costs nothing, because the
+            # SAME fraction is recoverable exactly as
+            # ``steam_level_cf / median_cf`` — both emitted below at the same
+            # percentile over the same sample — which is what
+            # ``ScenarioConfig.chp_steam_duty_window`` consumes. Left blank
+            # deliberately so no committed artifact byte moves, rule 23
+            # [R-FROZEN-DERIVE].)*
             "online_frac": (
                 round(
                     min(

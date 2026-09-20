@@ -1912,6 +1912,17 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # HOUSE-3. Registered IN THE SAME COMMIT as the field (the nyiso-119
     # discipline).
     "gas_basis_differential_measured_by_year",
+    # CHP steam-floor DUTY WINDOW (caiso-293, default off): dropped from the
+    # hash at its default so every pre-existing cached run -- every ISO's
+    # keepers included -- keeps its key. Byte-identical off by construction
+    # (every unit keeps ``chp_grid_pmin_on_frac = 1.0``, which is the
+    # pre-existing all-hours assignment verbatim); an armed run confines the
+    # CHP steam floor to its measured duty window and so earns a distinct key.
+    # It carries NO scalar of its own -- the two factors are an exact identity
+    # over already-committed artifact columns (rule 21 [R-DOF]) -- so there are
+    # no sub-fields. SHARED field -- very end, per HOUSE-3. Registered IN THE
+    # SAME COMMIT as the field (the nyiso-119 discipline).
+    "chp_steam_duty_window",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -2589,6 +2600,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "commitment_floor_window_netload": "False",
     "gas_flow_date_year_start_package": "False",
+    # Added by caiso-293 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "chp_steam_duty_window": "False",
 }
 
 
@@ -16382,9 +16396,19 @@ class ScenarioConfig:
     # thermal demand (EIA-860 CHP designation; CEMS/EIA-923 conduct is the
     # measurement); (b) window = ALL 24 hours BY MEASUREMENT — the CAISO
     # CC_CHP steam fleet runs flat 0.65-0.76 GW net across every hour-of-day
-    # (May-2023 CEMS signature, hod max/min 1.16), and the statistic itself
-    # enforces the window (a cycler's on-frequency or delivered energy
-    # collapses its level — no threshold parameter); (c) forward story = CHP
+    # (May-2023 CEMS signature, hod max/min 1.16). *(THE CLAUSE THAT FOLLOWED
+    # — "and the statistic itself enforces the window (a cycler's
+    # on-frequency or delivered energy collapses its level — no threshold
+    # parameter)" — IS FALSE AND IS CORRECTED IN PLACE, caiso-293 2026-09-20.
+    # The hod evidence holds for the three genuinely flat CAISO steam hosts
+    # (hod max/min 1.00-1.04) and is FALSIFIED for the seven the keeper's D-4
+    # fails on, whose own hod max/min is 12.4-35.0 with a peak at h16-h20 —
+    # the evening net-load ramp, not a steam host — and whose median run is
+    # 4-11 h. The statistic does NOT enforce a window: it dilutes the LEVEL
+    # and leaves the HOURS at 8760, which is a different object. Five metered
+    # floored plants are thereby forced above their own whole-year meter. See
+    # chp_steam_duty_window below, which is the repair, and
+    # fleet.thermal_tranche_chp_steam_duty.)* (c) forward story = CHP
     # host steam contracts persist, the level regenerates from any multi-year
     # CAMPD/EIA-923 window and responds to changed host conditions (a
     # shrinking host shrinks the measured level; a retired host exits the
@@ -16397,6 +16421,70 @@ class ScenarioConfig:
     # pmax x availability), and the LP keeps upward freedom above the floor.
     # Off by default; byte-identical when off.
     chp_steam_floor_p25: bool = False
+
+    # CHP steam-floor DUTY WINDOW (caiso-293, 2026-09-20) — the on-frequency
+    # sizes a WINDOW instead of diluting the LEVEL. It repairs a rule 17
+    # [R-FLOOR-WINDOW] violation in the field directly above, not a residual.
+    #
+    # THE DEFECT. derive_thermal_tranches builds
+    # ``steam_level_cf = on_freq x p50(loading-when-on)`` and multiplies the
+    # on-frequency IN; ``fleet/arrays.py`` then applies that product as a flat
+    # never-below floor across all 8760 hours. The two objects coincide only
+    # when ``on_freq ~ 1``. For a plant online 2-13 % of hours the product
+    # turns a cycler into a 24/7 trickle — annual energy approximately
+    # conserved, hourly conduct entirely wrong. Measured on the CAISO keeper
+    # (docs/PRECOMMIT-caiso293-chp-steam-duty-window-2026-09-20.md §1): the
+    # mechanism is 1,261.879 MW forcing 7.99-9.22 TWh/yr over 41 plants, and
+    # FIVE of the thirteen metered floored plants are forced to deliver MORE
+    # energy than their own meter recorded for the whole year (Kingsburg
+    # 5.16x, McKittrick 2.22x, Badger Creek 1.84x, Gilroy 1.56x, King City
+    # 1.01x, 2025). Rule 17 names exactly this: a floor binding in hours its
+    # own driver evidence says the class is offline is a bug by definition.
+    # Two candidate causes were FALSIFIED before this one was adopted —
+    # membership (all seven D-4-failing plants are EIA-860 Status OP,
+    # CHP = Y, IPP CHP, topping) and the level source (all seven carry
+    # ``chp_pmin_cf = 0.0``, so the swap creates the whole floor; so do the
+    # three flat hosts, so disarming it deletes 715 MW of correct floor).
+    #
+    # WHEN TRUE, for a plant the artifact gives both factors for
+    # (fleet.thermal_tranche_chp_steam_duty), ``pmin_cf`` becomes the
+    # UNDILUTED ``median_cf`` (the p50 loading-conditional-on-online) and the
+    # plant's ``on_frac`` is stamped on its tranches as
+    # ``chp_grid_pmin_on_frac``; ``fleet/arrays.py`` then holds the floor only
+    # in the top ``on_frac x live-hours`` by the SHARED commitment-floor window
+    # series — the identical construction ``coal_sync_online_frac`` and
+    # ``cc_mustrun_online_frac`` already use, and the one the deriver's own
+    # ``online_frac`` comment prescribes ("it sizes the committed window").
+    # The CHP steam floor is the only per-plant must-run floor in the repo
+    # that departed from it. Annual forced energy is CONSERVED by construction
+    # (``on_frac x L x H == L x on_frac x H``); only the hours move.
+    #
+    # ZERO NEW FREE PARAMETERS (rule 21 [R-DOF]) and ZERO DERIVE CHANGE (rule
+    # 23 [R-FROZEN-DERIVE] is not engaged — nothing is re-identified and no
+    # committed byte moves): ``on_frac == steam_level_cf / median_cf`` is an
+    # EXACT IDENTITY over two already-committed columns taken at the same
+    # percentile over the same sample. No threshold, no cut, no scalar.
+    # Rule 19 [R-ONE-MECH]: no new floor, no membership change, no second
+    # level source — the existing floor's hour-eligibility is set by the same
+    # statistic family that sets its level. Rule 13 [R-MEASURED]: pooled
+    # multi-year CEMS, forward-valid (NOT backcast-only), and the window is
+    # placed by the model's own load series, never by the plant's measured
+    # on-hours — no outcome is pinned. Rule 25 [R-ISO-SCOPE]: the artifact is
+    # per-ISO; no number crosses a boundary.
+    #
+    # SELF-SCOPING: the ``eia923_cf`` lens carries no ``median_cf`` (0 of 73
+    # rows on CAISO), so CEMS-invisible cogens keep the pooled-mean
+    # construction automatically — never fail a mechanism for a missing meter.
+    # Window driver ADJUDICATED ex ante at zero LP (PRECOMMIT §3): gross load
+    # (mean lift 5.29 on the cyclers, 0.999 on the flat-host controls) beats
+    # net load (4.55) and the plants' own leave-one-year-out duty surface
+    # (3.69), so this arms no second gate. Stated at the gate: it is predicted
+    # to take D-4's chp_steam failures from 28 to 20, NOT to clear them — the
+    # named residual is window-size vintage (mustrun_online_frac_per_year),
+    # left as the identified successor. Off by default; byte-identical when
+    # off (every unit keeps ``chp_grid_pmin_on_frac = 1.0``, the all-hours
+    # path).
+    chp_steam_duty_window: bool = False
 
     # Measured ERCOT GTC transfer limits (backcast/calibration overlay). When
     # True in backcast mode, the export-direction capability of the transfer
@@ -22028,6 +22116,11 @@ TIER_TAGS: dict[str, int] = {
     "chp_btm_floor_pct": 3,
     "chp_export_floor_measured": 3,
     "chp_steam_floor_p25": 3,
+    # Structural gate (1), not a parameter -- the WINDOW it installs is sized
+    # by an exact identity over two frozen measured artifact columns
+    # (steam_level_cf / median_cf), so the flag carries no free number of its
+    # own (rule 21 [R-DOF]); the miso_coal_night_floor criterion exactly.
+    "chp_steam_duty_window": 1,
     "ercot_gtc_limits_measured": 3,
     "pjm_measured_interface_limits": 3,
     "pjm_east_interface_cut": 3,

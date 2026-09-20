@@ -1863,8 +1863,27 @@ def thermal_tranche_chp_steam_level(
       (b); these plants never enter the CAMPD sample, so no CEMS percentile
       can reach them).
 
-    Both self-target with no threshold parameter (a cycler's on-frequency or
-    delivered energy collapses its level). Consumed by the CHP grid
+    **THE "SELF-TARGETING" CLAIM THAT STOOD HERE IS FALSE, AND IS CORRECTED
+    RATHER THAN DELETED** (caiso-293, 2026-09-20). It read: *"Both self-target
+    with no threshold parameter (a cycler's on-frequency or delivered energy
+    collapses its level)."* Measured on the CAISO keeper, every clause fails.
+    (a) *Toward* zero is not *to* zero: McKittrick's level collapses to 4.9 %
+    of nameplate, and 4.9 % of nameplate held for all 8760 h is 12.8 GWh
+    against 5.8 GWh metered. Five of the thirteen metered floored plants are
+    forced above their own whole-year meter (Kingsburg 5.16x, McKittrick
+    2.22x, Badger Creek 1.84x, Gilroy 1.56x, King City 1.01x, 2025). (b) The
+    companion claim that cyclers "keep only their p2/923-CF never-below base"
+    is vacuous here: ALL SEVEN of the D-4-failing CAISO cyclers carry
+    ``chp_pmin_cf = 0.0``, so this swap does not supersede a smaller floor —
+    it CREATES the entire floor. (c) So do the three genuinely flat steam
+    hosts, which is why disarming the swap is not a repair: it would delete
+    the 715 MW class-C floor WP-3 armed it to create.
+    The defect is the SEMANTICS, not the level source: this is an
+    energy-equivalent annual average and ``fleet/arrays.py`` applies it as an
+    every-hour never-below floor. See
+    :func:`thermal_tranche_chp_steam_duty`, which recovers the two factors and
+    is the repair's consumer under ``config.chp_steam_duty_window``.
+    Consumed by the CHP grid
     steam-floor level swap when ``config.chp_steam_floor_p25`` is armed (field
     name kept for run-config lineage; same formula
     ``pmin_cf x (1 - btm_share)`` and the same MECH_CHP_STEAM attribution as
@@ -1896,6 +1915,79 @@ def thermal_tranche_chp_steam_level(
         if not (level == level):
             continue  # NaN guard (blank cell — no measured level)
         out[(int(r.plant_code), str(r.plant_group))] = max(0.0, level)
+    return out
+
+
+def thermal_tranche_chp_steam_duty(
+    iso: str, per_unit: bool = False, merit_guard: bool = False
+) -> dict[tuple[int, str], tuple[float, float]]:
+    """Return ``{(plant_code, group): (on_frac, level_on_cf)}`` for CHP cogens.
+
+    The two FACTORS behind :func:`thermal_tranche_chp_steam_level`'s single
+    ``steam_level_cf`` number, recovered exactly from the artifact's own
+    committed columns — **no derive re-run and no new statistic** (rule 23
+    ``[R-FROZEN-DERIVE]`` is not engaged: nothing is re-identified and no
+    committed byte moves).
+
+    ``derive_thermal_tranches.py`` builds both from the SAME sample at the
+    SAME percentile (``_CHP_STEAM_LEVEL_ON_PCTILE = 50``)::
+
+        median_cf      = 100 x p50(on_cat)
+        steam_level_cf = 100 x on_freq x p50(on_cat)
+
+    so ``on_frac == steam_level_cf / median_cf`` is an identity, not an
+    estimate. Verified on the committed CAISO artifact: ``online_hours /
+    on_frac`` reconstructs the deriver's own 3-year CAMPD sample (26,264-26,950
+    against 26,304 h) for 9 of its 13 ``ok`` rows.
+
+    WHY THE FACTORS ARE NEEDED SEPARATELY (caiso-293, rule 17
+    ``[R-FLOOR-WINDOW]``). ``steam_level_cf`` is an ENERGY-EQUIVALENT ANNUAL
+    AVERAGE, and ``fleet/arrays.py`` applies it as an EVERY-HOUR never-below
+    floor. Those coincide only when ``on_freq ~ 1``. For a plant online 2-13 %
+    of hours the product turns a cycler into a 24/7 trickle: annual energy
+    approximately right, hourly conduct entirely wrong. Measured on the CAISO
+    keeper, five of the thirteen metered floored plants were forced to deliver
+    MORE energy than their own meter recorded for the whole year (Kingsburg
+    5.16x, McKittrick 2.22x, Badger Creek 1.84x, Gilroy 1.56x, King City
+    1.01x, 2025). Under ``config.chp_steam_duty_window`` the on-frequency
+    instead sizes a WINDOW that ``level_on_cf`` fills — which is what every
+    OTHER per-plant must-run floor in this repo already does with its own
+    ``online_frac`` (see that column's comment in the deriver:
+    *"it sizes the committed window"*).
+
+    SELF-SCOPING TO THE METERED LENS, by arithmetic rather than by a written
+    exclusion: the ``eia923_cf`` rows (CEMS-invisible cogens) carry no
+    ``median_cf`` at all — 0 of 73 populated on CAISO — so the identity is
+    undefined there and they are simply absent from this map. Their caller
+    keeps the pooled-mean construction, which is the same principle
+    ``legitimacy_diagnostics``'s conduct rider states: never fail a mechanism
+    for a missing meter.
+
+    Returns:
+        ``{(plant_code, group): (on_frac, level_on_cf)}`` for ``status == "ok"``
+        rows carrying both columns with ``median_cf > 0``; ``on_frac`` is
+        clipped into ``[0, 1]``. Empty when the ISO has no artifact or it
+        predates either column.
+    """
+    path = thermal_tranche_csv_for_iso(iso, per_unit, merit_guard)
+    if not path.exists():
+        return {}
+    df = pd.read_csv(path)
+    if "steam_level_cf" not in df.columns or "median_cf" not in df.columns:
+        return {}
+    out: dict[tuple[int, str], tuple[float, float]] = {}
+    for r in df.itertuples(index=False):
+        if str(getattr(r, "status", "ok")) != "ok":
+            continue  # the eia923_cf lens carries no median_cf (see docstring)
+        try:
+            level = float(getattr(r, "steam_level_cf", float("nan")))
+            level_on = float(getattr(r, "median_cf", float("nan")))
+        except (TypeError, ValueError):
+            continue
+        if not (level == level) or not (level_on == level_on) or level_on <= 0.0:
+            continue  # NaN guard / no online-hours level to divide by
+        on_frac = min(1.0, max(0.0, level / level_on))
+        out[(int(r.plant_code), str(r.plant_group))] = (on_frac, max(0.0, level_on))
     return out
 
 

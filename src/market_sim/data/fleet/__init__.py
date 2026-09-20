@@ -272,6 +272,21 @@ class Generator(BaseModel):
     chp_grid_pmin_mw: float = 0.0  # grid-delivered steam-following floor (MW)
     #                                 forced on flat via FleetArrays.min_gen for
     #                                 CC_CHP cogens (config.chp_steam_following).
+    chp_grid_pmin_on_frac: float = 1.0  # measured share of AVAILABLE hours the
+    #                                 plant has a unit online (CEMS; the exact
+    #                                 identity steam_level_cf / median_cf over
+    #                                 the thermal-tranche artifact's own two
+    #                                 committed columns). 1.0 — the default and
+    #                                 the value every unit carries unless
+    #                                 config.chp_steam_duty_window is armed —
+    #                                 holds the floor all 8760 h, which is the
+    #                                 pre-caiso-293 behaviour exactly. Below 1.0
+    #                                 the floor is confined to the top
+    #                                 on_frac x live-hours by the SHARED
+    #                                 commitment-floor window series, the same
+    #                                 construction coal_sync_online_frac and
+    #                                 cc_mustrun_online_frac already use (rule
+    #                                 17 [R-FLOOR-WINDOW]; caiso-293).
     coal_sync_pmin_mw: float = 0.0  # coal synchronization floor (MW) forced on
     #                                 flat via FleetArrays.min_gen for the
     #                                 _mustrun / _sync min-load tranches under
