@@ -37,11 +37,19 @@ Solve semantics (unchanged, statement-for-statement):
   ``unit_ids`` → identity column map, ``alien=True`` so HiGHS repairs the few
   statuses the bridge's raised bounds make inconsistent). An adaptive
   re-solve pass (C-1b ``reuse_p0_from``) is seeded from the PREVIOUS pass's
-  P1 basis when that pass exported one, else from the P0 basis. Armed only
-  inside the cross-year gate (``_xwarm``) and only on the backcast callers
-  (``xyear_warmstart is None``): under the goldens/replay pin
-  (``MARKET_SIM_WARMSTART_XYEAR=0``) and on the forecast path nothing is
-  exported or applied and the tree is byte-identical. Measured ERCOT forward
+  P1 basis when that pass exported one, else from the P0 basis. Armed on the
+  backcast callers only (``xyear_warmstart is None``), by its OWN env var —
+  it is NOT nested inside the cross-year gate (PERF-C S1, 2026-09-20: the two
+  knobs were flipped off together by rule 36 on *cross-year* evidence, and
+  un-nesting lets the same-year seed be defaulted ON while the cross-year one
+  stays OFF). The goldens/replay determinism env therefore pins
+  ``MARKET_SIM_P1_BASIS_SEED=0`` explicitly beside
+  ``MARKET_SIM_WARMSTART_XYEAR=0`` (``scripts/capture_keeper_goldens.py``,
+  ``scripts/replay_keeper.py``) — with both pinned, and on the forecast path,
+  nothing is exported or applied and the tree is byte-identical. A seeded P1
+  that does not reach ``Optimal`` discards the basis and re-solves that model
+  cold (the optimality guard), so a bad alien basis can cost iterations but
+  never an answer. Measured ERCOT forward
   2025: ``solve_p1`` 287.1 → 139.3 s, simplex iterations 273,893 → 78,856,
   objective and total generation identical (memo §3).
 
@@ -106,6 +114,14 @@ logger = logging.getLogger(__name__)
 # drain seam. Diagnostics only: nothing here is read by a solve.
 _PASS_TIMING_LOG: "deque[dict]" = deque(maxlen=256)
 
+# The HiGHS model-status string that means "this is the optimum" —
+# ``highspy.Highs().modelStatusToString(HighsModelStatus.kOptimal)``, which is
+# what ``DispatchModel.solve`` stores in ``DispatchResult.status``. Compared
+# as a string rather than the enum because that is the only form the result
+# carries, and a test double that returns a plain object still answers it.
+# Read ONLY by the same-year P1 basis seed's optimality guard (PERF-C S1).
+_OPTIMAL_MODEL_STATUS = "Optimal"
+
 
 def reset_pass_timing_log() -> None:
     """Drop any accumulated per-pass timings (call before a year's solves)."""
@@ -121,9 +137,10 @@ def take_pass_timing_log() -> "list[dict]":
         the P0 model plus, on the cold-P1 route, the second model),
         ``solve_p0_s`` / ``solve_p1_s`` (that pass's two ``h.run()`` seconds;
         ``solve_p0_s`` is 0 for a pass that reused a previous P0), ``p0_reused``
-        (charter C-1b) and ``parts`` (that pass's ``markup_parts``). Identical
-        to the same-named fields of the :class:`EnergySolveResult` the call
-        returned.
+        (charter C-1b), ``p1_seeded`` / ``p1_seed_fallback`` (the same-year P1
+        basis seed and its optimality guard) and ``parts`` (that pass's
+        ``markup_parts``). Identical to the same-named fields of the
+        :class:`EnergySolveResult` the call returned.
     """
     out = list(_PASS_TIMING_LOG)
     _PASS_TIMING_LOG.clear()
@@ -180,12 +197,21 @@ class EnergySolveResult:
         p0_reused: Whether this pass skipped its own P0 build + solve and
             reused ``reuse_p0_from.r0`` (C-1b). ``r0`` is then the SAME object
             the previous pass returned.
-        p1_seeded: Whether this pass's cold-rebuilt P1 model was handed a
-            starting basis (the same-year P1 basis seed, wallclock item B)
-            before its first solve. ``False`` on every warm-P1 route, under
-            the goldens/replay pin, on the forecast path, and whenever the
-            seed was unavailable (no exportable basis / a horizon mismatch
-            declined by ``apply_cross_year_basis``).
+        p1_seeded: Whether the P1 this result REPORTS was solved from a
+            starting basis (the same-year P1 basis seed, wallclock item B).
+            ``False`` on every warm-P1 route, under the goldens/replay pin, on
+            the forecast path, whenever the seed was unavailable (no
+            exportable basis / a horizon mismatch declined by
+            ``apply_cross_year_basis``), and — since PERF-C S1 — whenever the
+            optimality guard discarded the basis, because the reported P1 is
+            then the unseeded cold re-solve. Read it with
+            ``p1_seed_fallback`` to tell "never seeded" from "seeded and
+            rolled back".
+        p1_seed_fallback: ``None`` unless the optimality guard fired; then the
+            model status (or exception repr) the seeded solve returned before
+            its basis was discarded and the P1 re-solved cold. A non-``None``
+            value means the seed WASTED an ``h.run()`` on this pass — it never
+            means the reported P1 is anything but the unseeded answer.
         p1_basis: The cold-rebuilt P1 model's optimal basis (a
             ``CrossYearBasis`` of ``int8`` status vectors, ~tens of MB on a
             plant-level ISO), exported ONLY when the caller passed
@@ -207,6 +233,7 @@ class EnergySolveResult:
     p1_cold: bool = False
     p0_reused: bool = False
     p1_seeded: bool = False
+    p1_seed_fallback: Optional[str] = None
     p1_basis: Optional[object] = None
 
 
@@ -458,20 +485,41 @@ def run_energy_solve(
         _xwarm = _warm and bool(xyear_warmstart)
     # Same-year P1 basis seed gate (wallclock item B; owner memo
     # docs/handoffs/p1-basis-seed-decision-memo-2026-09.md §6, signed (A)).
-    # Three conditions, all required: (1) ``_xwarm`` — the seed sits INSIDE
-    # the cross-year gate, so the goldens/replay pin MARKET_SIM_WARMSTART_XYEAR=0
-    # (and ``--no-xyear-warmstart``) implies seed OFF with no second knob to
-    # remember; (2) ``xyear_warmstart is None`` — the backcast callers only.
+    #
+    # UN-NESTED FROM THE CROSS-YEAR GATE, PERF-C S1 2026-09-20
+    # (docs/handoffs/FINDING-perfc-s1-p1-seed-2026-09-20.md). This condition
+    # used to lead with ``_xwarm``, which made the SAME-year seed a slave of
+    # the CROSS-year knob: when rule 36 [R-YEAR-ISOLATION] (owner ruling
+    # 2026-09-19, miso-262) defaulted ``MARKET_SIM_WARMSTART_XYEAR`` OFF on
+    # cross-year evidence, this seed went dark with it even though no
+    # cross-year state is involved — the basis it installs is THIS year's own
+    # P0 basis, exported and applied inside one ``run_energy_solve`` call.
+    # The two are now independently gateable; the DEFAULT is unchanged and
+    # still OFF (``resolve_p1_basis_seed_default``), and flipping it is the
+    # owner's call, not this gate's.
+    #
+    # Three conditions, all required: (1) ``_warm`` — the intra-year warm
+    # start must be on, because the seed's source is the live P0
+    # ``DispatchModel`` and ``MARKET_SIM_WARMSTART=0`` builds none (the
+    # ``model is not None`` guard at the export below already enforces this;
+    # naming it here makes the gate self-documenting and cannot change the
+    # route); (2) ``xyear_warmstart is None`` — the backcast callers only.
     # The forecast passes an explicit bool (``ScenarioConfig.
     # forecast_xyear_warmstart``, D-9/D-10) and is left COLD here by design,
     # so no forecast bundle's cache key, resume reproducibility (the D-10
     # defect class) or trajectory is touched by an env var; (3) the env var
     # itself, global default OFF — ``resolve_p1_basis_seed_default`` in
-    # scripts/run_calibration.py flips it ON for a fresh calibration solve
-    # (``--no-p1-basis-seed`` to opt out), exactly the P-2 shape, so the
-    # direct ``solve_and_persist`` callers (replay, goldens) stay OFF.
+    # scripts/run_calibration.py resolves it for a fresh calibration solve
+    # (``--no-p1-basis-seed`` to force OFF), so the direct
+    # ``solve_and_persist`` callers (replay, goldens) stay OFF.
+    #
+    # WHAT THE UN-NESTING COSTS, stated rather than hidden: ``XYEAR=0`` no
+    # longer IMPLIES seed OFF, so the determinism env of the goldens
+    # (``scripts/capture_keeper_goldens.py``) and of ``scripts/replay_keeper.py``
+    # now pins ``MARKET_SIM_P1_BASIS_SEED=0`` explicitly. Nothing else read
+    # the implication.
     _p1_seed = (
-        _xwarm
+        _warm
         and xyear_warmstart is None
         and os.environ.get("MARKET_SIM_P1_BASIS_SEED", "0") != "0"
     )
@@ -694,6 +742,11 @@ def run_energy_solve(
     # Cold path: merged over the P1 kwargs at the call below.
     _p1_seeded = False
     _p1_basis = None
+    # Provenance of the seed's own optimality guard (PERF-C S1): ``None`` on
+    # every route that did not seed or whose seeded solve reached ``Optimal``;
+    # the offending model status (or exception repr) when the basis was
+    # discarded and the P1 re-solved cold.
+    _p1_seed_fallback: "str | None" = None
     if _warm_p1 or _inplace_floored:
         if model is None:
             # Unreachable by construction: reuse is admitted only when the
@@ -727,12 +780,20 @@ def run_energy_solve(
         # timing reads are: the tests' capturing double implements ``solve``
         # and nothing else, and a missing export degrades to an unseeded
         # cold P1, never an error.
+        # Two independent consumers of the one P0 export (PERF-C S1): the
+        # cross-year holder, which only ``_xwarm`` may write, and the
+        # same-year seed, which only ``_p1_seed`` may take. Either arms the
+        # export; neither arms the other's write. Before the un-nesting
+        # ``_p1_seed`` implied ``_xwarm``, so one leading ``_xwarm`` covered
+        # both — it no longer does, and a seed-only pass must NOT write the
+        # cross-year holder (that would be exactly the cross-year state rule
+        # 36 [R-YEAR-ISOLATION] removed).
         _seed_basis = None
-        if model is not None and _xwarm and (xyear_cache is not None or _p1_seed):
+        if model is not None and (_p1_seed or (_xwarm and xyear_cache is not None)):
             _export = getattr(model, "export_cross_year_basis", None)
             basis = _export() if _export is not None else None
             if basis is not None:
-                if xyear_cache is not None:
+                if _xwarm and xyear_cache is not None:
                     xyear_cache[:] = [basis]
                 if _p1_seed:
                     _seed_basis = basis
@@ -766,18 +827,61 @@ def run_energy_solve(
             _p1_model = DispatchModel(p1_fleet_arrays, demand, **p1_dispatch_kwargs)
             _apply = getattr(_p1_model, "apply_cross_year_basis", None)
             _p1_seeded = bool(_apply(_seed_basis)) if _apply is not None else False
-            p1 = _p1_model.solve(mc=mc_bid)
+            # --- OPTIMALITY GUARD on the seeded solve (PERF-C S1) ----------
+            # An alien basis is a STARTING POINT, and HiGHS is documented to
+            # repair one; but "documented" is not "measured on every LP this
+            # model builds", and rule 36 [R-YEAR-ISOLATION] (e) is the record
+            # of a basis-neutrality claim that did not hold. So the seeded
+            # answer is CHECKED rather than trusted: unless the seeded run
+            # reports ``Optimal``, the basis is discarded and the same LP is
+            # re-solved from nothing, which is byte-for-byte the answer an
+            # unseeded pass would have produced. The seed can therefore cost
+            # a wasted ``h.run()``, never an answer.
+            # Scope: only a pass that was actually seeded can be rescued this
+            # way. When ``_p1_seeded`` is False nothing was installed, so a
+            # non-Optimal status or a raise is this LP's own and propagates
+            # exactly as before — the unseeded route is untouched.
+            try:
+                p1 = _p1_model.solve(mc=mc_bid)
+                _p1_status = str(getattr(p1, "status", "") or "")
+                _seed_failure = (
+                    None if _p1_status == _OPTIMAL_MODEL_STATUS else _p1_status
+                )
+            except Exception as exc:  # noqa: BLE001 - re-raised when unseeded
+                if not _p1_seeded:
+                    raise
+                # ``DispatchModel.solve`` raises on an infeasible primal
+                # solution, which a corrupt starting basis can also produce.
+                # A genuinely infeasible LP raises again on the cold
+                # re-solve below, so nothing is masked — only retried.
+                p1 = None
+                _seed_failure = f"{type(exc).__name__}: {exc}"
+            if _p1_seeded and _seed_failure is not None:
+                logger.warning(
+                    "P1 basis seed: seeded solve did not reach %r (got %s) — "
+                    "discarding the basis and re-solving the P1 model COLD; "
+                    "the reported P1 is the unseeded solve",
+                    _OPTIMAL_MODEL_STATUS,
+                    _seed_failure,
+                )
+                _p1_seed_fallback = _seed_failure
+                _p1_seeded = False
+                _p1_model = None
+                p1 = solve_dispatch(
+                    p1_fleet_arrays, demand, mc=mc_bid, **p1_dispatch_kwargs
+                )
             if export_p1_basis and _p1_seeded:
                 _export = getattr(_p1_model, "export_cross_year_basis", None)
                 _p1_basis = _export() if _export is not None else None
             _p1_model = None
             logger.info(
-                "P1 basis seed: %s (source=%s, export_p1_basis=%s)",
+                "P1 basis seed: %s (source=%s, export_p1_basis=%s, fallback=%s)",
                 "APPLIED" if _p1_seeded else "declined by the model",
                 "previous pass P1"
                 if (_reuse_p0 and getattr(reuse_p0_from, "p1_basis", None) is not None)
                 else "P0",
                 bool(export_p1_basis),
+                _p1_seed_fallback or "none",
             )
         else:
             p1 = solve_dispatch(
@@ -870,8 +974,11 @@ def run_energy_solve(
         "seam": _t4 - _t3,
         # The P1 pass minus ``h.run()`` and minus its own build: same
         # cost-vector + marshalling work as ``p0_post``, plus (cold path only,
-        # cross-year gate armed) the pre-rebuild P0 basis export, and (seeded
-        # cold path) the basis apply + the optional P1 basis export.
+        # either the cross-year gate or the same-year seed armed) the
+        # pre-rebuild P0 basis export, and (seeded cold path) the basis apply,
+        # the optional P1 basis export and — when the optimality guard fires —
+        # the discarded seeded ``h.run()`` (``solve_p1_s`` reports the cold
+        # re-solve, which is the P1 this result carries).
         "p1_post": (_t5 - _t4) - _solve_p1_s - _build_p1_s,
         # Cross-year basis export (``getBasis``) + the disposable NPZ persist.
         "tail": _t6 - _t5,
@@ -884,6 +991,7 @@ def run_energy_solve(
             "solve_p1_s": _solve_p1_s,
             "p0_reused": _reuse_p0,
             "p1_seeded": _p1_seeded,
+            "p1_seed_fallback": _p1_seed_fallback,
             "parts": markup_parts,
         }
     )
@@ -901,6 +1009,7 @@ def run_energy_solve(
         p1_cold=_p1_cold,
         p0_reused=_reuse_p0,
         p1_seeded=_p1_seeded,
+        p1_seed_fallback=_p1_seed_fallback,
         p1_basis=_p1_basis,
     )
 

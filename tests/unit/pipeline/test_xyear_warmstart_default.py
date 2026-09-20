@@ -12,12 +12,18 @@ wired").
 The same-year P1 basis seed (``MARKET_SIM_P1_BASIS_SEED``, wallclock desk item
 B; owner memo ``docs/handoffs/p1-basis-seed-decision-memo-2026-09.md`` §6) is
 the switch family's third member and is pinned here too: the sibling resolver's
-precedence, the seed firing only INSIDE the cross-year gate (so the
-goldens/replay pin ``MARKET_SIM_WARMSTART_XYEAR=0`` keeps it off), never on the
-forecast path (an explicit ``xyear_warmstart`` bool), the adaptive-pass leg
-(``export_p1_basis`` → ``reuse_p0_from.p1_basis``), the CLI flag on both
-calibration parsers, and the ``getattr``-tolerant contract on the capturing
-test double.
+precedence, the seed firing on its OWN env var INDEPENDENT of the cross-year
+gate (PERF-C S1, 2026-09-20 — ``docs/handoffs/FINDING-perfc-s1-p1-seed-2026-09-20.md``),
+never on the forecast path (an explicit ``xyear_warmstart`` bool), the
+adaptive-pass leg (``export_p1_basis`` → ``reuse_p0_from.p1_basis``), the
+optimality guard that discards a seeded basis whose solve did not reach
+``Optimal``, the CLI flag on both calibration parsers, and the
+``getattr``-tolerant contract on the capturing test double.
+
+Both resolvers default **OFF** (rule 36 ``[R-YEAR-ISOLATION]``, owner ruling
+2026-09-19, miso-262). Un-nesting the seed did not change that default — it
+made the two knobs independently settable, which is the decision the owner now
+has in front of them.
 """
 
 from __future__ import annotations
@@ -37,14 +43,17 @@ REPO = REPO_ROOT
 
 
 class TestResolveDefault:
-    """Precedence: --no-xyear-warmstart > explicit env var > default ON."""
+    """Precedence: --no-xyear-warmstart > explicit env var > default OFF."""
 
-    def test_default_on_when_unset(self, monkeypatch):
+    def test_default_off_when_unset(self, monkeypatch):
+        """Rule 36 [R-YEAR-ISOLATION] (owner ruling 2026-09-19, miso-262)
+        flipped this default ON -> OFF; the assertion had not been updated
+        with it and was red at HEAD (found by PERF-C S1)."""
         monkeypatch.delenv("MARKET_SIM_WARMSTART_XYEAR", raising=False)
-        assert resolve_xyear_warmstart_default(disable=False) is True
+        assert resolve_xyear_warmstart_default(disable=False) is False
         import os
 
-        assert os.environ["MARKET_SIM_WARMSTART_XYEAR"] == "1"
+        assert os.environ["MARKET_SIM_WARMSTART_XYEAR"] == "0"
 
     def test_flag_forces_off_over_default(self, monkeypatch):
         monkeypatch.delenv("MARKET_SIM_WARMSTART_XYEAR", raising=False)
@@ -193,12 +202,19 @@ class TestForecastStaysColdOnly:
 
 
 class TestResolveP1BasisSeedDefault:
-    """Precedence: --no-p1-basis-seed > explicit env var > default ON."""
+    """Precedence: --no-p1-basis-seed > explicit env var > default OFF.
 
-    def test_default_on_when_unset(self, monkeypatch):
+    PERF-C S1 un-nested the seed from the cross-year gate in ``pipeline.solve``
+    and left this resolver's default exactly where rule 36 put it: OFF. The
+    owner decides whether to flip it; this shard does not.
+    """
+
+    def test_default_off_when_unset(self, monkeypatch):
+        """Rule 36 flipped this default ON -> OFF; the assertion had not been
+        updated with it and was red at HEAD (found by PERF-C S1)."""
         monkeypatch.delenv("MARKET_SIM_P1_BASIS_SEED", raising=False)
-        assert resolve_p1_basis_seed_default(disable=False) is True
-        assert os.environ["MARKET_SIM_P1_BASIS_SEED"] == "1"
+        assert resolve_p1_basis_seed_default(disable=False) is False
+        assert os.environ["MARKET_SIM_P1_BASIS_SEED"] == "0"
 
     def test_flag_forces_off_over_default(self, monkeypatch):
         monkeypatch.delenv("MARKET_SIM_P1_BASIS_SEED", raising=False)
@@ -282,25 +298,79 @@ class TestP1BasisSeedGate:
         assert np.array_equal(on.p1.prices, off.p1.prices)
         assert on.p1.objective_value == off.p1.objective_value
 
-    def test_seed_inert_under_the_goldens_pin(self, monkeypatch, tmp_path):
-        """MARKET_SIM_WARMSTART_XYEAR=0 (goldens/replay pin) → no seed, even
-        with the seed env var ON — one gate, no second knob."""
+    def test_seed_fires_with_the_cross_year_gate_off(self, monkeypatch, tmp_path):
+        """PERF-C S1: XYEAR=0 + SEED=1 → the seed FIRES.
+
+        This test formerly asserted the opposite (``test_seed_inert_under_the_
+        goldens_pin``): the seed used to be armed inside ``_xwarm``, so
+        ``MARKET_SIM_WARMSTART_XYEAR=0`` implied it off. Un-nesting is the
+        whole change, and the invariant that replaces the old one is that
+        **no cross-year state leaks** — the holder must stay empty, because a
+        seed-only pass has nothing to hand the next year (rule 36
+        ``[R-YEAR-ISOLATION]``). The P1 it clears is still the unseeded P1.
+        """
         _isolate_basis_cache(monkeypatch, tmp_path)
         monkeypatch.setenv("MARKET_SIM_WARMSTART", "1")
+        monkeypatch.setenv("MARKET_SIM_WARMSTART_XYEAR", "0")
+        from market_sim.pipeline.solve import run_energy_solve
+
+        gens, fa, demand, mc_base, dk, cfg, prep = _cold_route_inputs()
+        monkeypatch.setenv("MARKET_SIM_P1_BASIS_SEED", "0")
+        off = run_energy_solve(
+            gens, fa, demand, mc_base, dk, cfg, xyear_cache=[], p1_fleet_prep=prep
+        )
+        monkeypatch.setenv("MARKET_SIM_P1_BASIS_SEED", "1")
+        cache: list = []
+        on = run_energy_solve(
+            gens, fa, demand, mc_base, dk, cfg, xyear_cache=cache, p1_fleet_prep=prep
+        )
+        assert on.p1_cold is True
+        assert on.p1_seeded is True
+        assert on.p1_seed_fallback is None
+        assert on.p1_basis is None  # no export unless asked for
+        # The cross-year holder is NOT written: the seed took the P0 export,
+        # the holder did not, because ``_xwarm`` is off.
+        assert cache == []
+        assert on.p1.status == "Optimal"
+        assert np.array_equal(on.p1.dispatch, off.p1.dispatch)
+        assert np.array_equal(on.p1.prices, off.p1.prices)
+        assert on.p1.objective_value == off.p1.objective_value
+
+    def test_seed_does_not_fire_with_its_env_off(self, monkeypatch, tmp_path):
+        """The env var is the gate now, in BOTH cross-year postures: SEED=0
+        never seeds, whatever ``MARKET_SIM_WARMSTART_XYEAR`` says."""
+        _isolate_basis_cache(monkeypatch, tmp_path)
+        monkeypatch.setenv("MARKET_SIM_WARMSTART", "1")
+        monkeypatch.setenv("MARKET_SIM_P1_BASIS_SEED", "0")
+        from market_sim.pipeline.solve import run_energy_solve
+
+        for xyear in ("0", "1"):
+            monkeypatch.setenv("MARKET_SIM_WARMSTART_XYEAR", xyear)
+            gens, fa, demand, mc_base, dk, cfg, prep = _cold_route_inputs()
+            got = run_energy_solve(
+                gens, fa, demand, mc_base, dk, cfg, xyear_cache=[], p1_fleet_prep=prep
+            )
+            assert got.p1_cold is True, xyear
+            assert got.p1_seeded is False, xyear
+            assert got.p1_seed_fallback is None, xyear
+            assert got.p1_basis is None, xyear
+
+    def test_seed_needs_the_intra_year_warm_start(self, monkeypatch, tmp_path):
+        """MARKET_SIM_WARMSTART=0 builds no live P0 model, so there is no
+        same-year basis to seed from — the seed is inert however armed."""
+        _isolate_basis_cache(monkeypatch, tmp_path)
+        monkeypatch.setenv("MARKET_SIM_WARMSTART", "0")
         monkeypatch.setenv("MARKET_SIM_WARMSTART_XYEAR", "0")
         monkeypatch.setenv("MARKET_SIM_P1_BASIS_SEED", "1")
         from market_sim.pipeline.solve import run_energy_solve
 
         gens, fa, demand, mc_base, dk, cfg, prep = _cold_route_inputs()
-        cache: list = []
         got = run_energy_solve(
-            gens, fa, demand, mc_base, dk, cfg, xyear_cache=cache, p1_fleet_prep=prep
+            gens, fa, demand, mc_base, dk, cfg, xyear_cache=[], p1_fleet_prep=prep
         )
         assert got.p1_cold is True
         assert got.p1_seeded is False
-        assert got.p1_basis is None
-        # Under the pin the holder is never written either.
-        assert cache == []
+        assert got.p1_seed_fallback is None
 
     def test_seed_inert_on_the_forecast_gate_argument(self, monkeypatch, tmp_path):
         """An explicit ``xyear_warmstart`` bool (the forecast caller) keeps the
@@ -475,4 +545,159 @@ class TestP1BasisSeedGate:
         assert got.p1_cold is True
         assert got.p1_seeded is False
         assert got.p1_basis is None
+        assert got.p1.status == "Optimal"
+
+
+def _seeded_model_reporting(status=None, raises=None, accept_basis=True):
+    """A ``DispatchModel`` stand-in whose SEEDED solve misreports.
+
+    Wraps the real model, so the LP, the basis apply and the export are all
+    genuine; the only fiction is what HiGHS is made to say about the run of a
+    model that was actually handed a basis — a ``DispatchResult.status`` other
+    than ``"Optimal"``, or the ``RuntimeError`` ``DispatchModel.solve`` raises
+    on an infeasible primal. That is the exact signal the optimality guard
+    keys on.
+
+    Scoping it to instances whose ``apply_cross_year_basis`` ran is what makes
+    the double usable at all: ``pipeline.solve`` builds the P0 model through
+    the same name, and a double that misreported unconditionally would fail
+    the P0 solve before the P1 the test is about is ever reached.
+
+    ``accept_basis=False`` additionally makes the apply DECLINE (what a real
+    horizon mismatch does), which is the guard's other scope boundary: nothing
+    was installed, so there is nothing to roll back.
+    """
+    import dataclasses
+
+    from market_sim.model.lp.model import DispatchModel as _Real
+
+    class _Reporting(_Real):
+        _seeded = False
+
+        def apply_cross_year_basis(self, prev):
+            got = super().apply_cross_year_basis(prev)
+            if not accept_basis:
+                return False
+            self._seeded = bool(got)
+            return got
+
+        def solve(self, *a, **kw):
+            got = super().solve(*a, **kw)
+            if not self._seeded:
+                return got
+            if raises is not None:
+                raise raises
+            return dataclasses.replace(got, status=status)
+
+    return _Reporting
+
+
+class TestP1SeedOptimalityGuard:
+    """A seeded P1 that does not reach ``Optimal`` is discarded and re-solved
+    COLD, so the reported P1 is always the unseeded answer (PERF-C S1)."""
+
+    def _armed(self, monkeypatch, tmp_path):
+        _isolate_basis_cache(monkeypatch, tmp_path)
+        monkeypatch.setenv("MARKET_SIM_WARMSTART", "1")
+        monkeypatch.setenv("MARKET_SIM_WARMSTART_XYEAR", "0")
+        monkeypatch.setenv("MARKET_SIM_P1_BASIS_SEED", "1")
+
+    def test_non_optimal_status_falls_back_to_a_cold_resolve(
+        self, monkeypatch, tmp_path, caplog
+    ):
+        import logging
+
+        self._armed(monkeypatch, tmp_path)
+        from market_sim.pipeline import solve as solve_mod
+
+        gens, fa, demand, mc_base, dk, cfg, prep = _cold_route_inputs()
+        # Baseline: the unseeded answer this LP has.
+        monkeypatch.setenv("MARKET_SIM_P1_BASIS_SEED", "0")
+        cold = solve_mod.run_energy_solve(
+            gens, fa, demand, mc_base, dk, cfg, xyear_cache=[], p1_fleet_prep=prep
+        )
+
+        monkeypatch.setenv("MARKET_SIM_P1_BASIS_SEED", "1")
+        monkeypatch.setattr(
+            solve_mod,
+            "DispatchModel",
+            _seeded_model_reporting(status="Iteration limit reached"),
+        )
+        solve_mod.reset_pass_timing_log()
+        with caplog.at_level(logging.WARNING, logger=solve_mod.logger.name):
+            got = solve_mod.run_energy_solve(
+                gens, fa, demand, mc_base, dk, cfg, xyear_cache=[], p1_fleet_prep=prep
+            )
+
+        # The guard fired: provenance records the offending status, and
+        # ``p1_seeded`` reports the P1 that is actually being returned.
+        assert got.p1_seed_fallback == "Iteration limit reached"
+        assert got.p1_seeded is False
+        assert got.p1_basis is None
+        assert any("discarding the basis" in r.getMessage() for r in caplog.records), [
+            r.getMessage() for r in caplog.records
+        ]
+        # ...and the answer is the unseeded one, through ``solve_dispatch``.
+        assert got.p1.status == "Optimal"
+        assert np.array_equal(got.p1.dispatch, cold.p1.dispatch)
+        assert np.array_equal(got.p1.prices, cold.p1.prices)
+        # Same provenance on the pass-timing log (no second channel).
+        (entry,) = solve_mod.take_pass_timing_log()
+        assert entry["p1_seeded"] is False
+        assert entry["p1_seed_fallback"] == "Iteration limit reached"
+
+    def test_a_raising_seeded_solve_also_falls_back(self, monkeypatch, tmp_path):
+        """``DispatchModel.solve`` raises on an infeasible primal, which a
+        corrupt alien basis can also produce — retried cold, never masked (a
+        genuinely infeasible LP raises again on the re-solve)."""
+        self._armed(monkeypatch, tmp_path)
+        from market_sim.pipeline import solve as solve_mod
+
+        gens, fa, demand, mc_base, dk, cfg, prep = _cold_route_inputs()
+        monkeypatch.setattr(
+            solve_mod,
+            "DispatchModel",
+            _seeded_model_reporting(raises=RuntimeError("no feasible primal")),
+        )
+        got = solve_mod.run_energy_solve(
+            gens, fa, demand, mc_base, dk, cfg, xyear_cache=[], p1_fleet_prep=prep
+        )
+        assert got.p1_seeded is False
+        assert got.p1_seed_fallback == "RuntimeError: no feasible primal"
+        assert got.p1.status == "Optimal"
+
+    def test_an_optimal_seeded_solve_records_no_fallback(self, monkeypatch, tmp_path):
+        """The guard is silent on the ordinary path — it must not cost a
+        second solve when the seeded run was fine."""
+        self._armed(monkeypatch, tmp_path)
+        from market_sim.pipeline import solve as solve_mod
+
+        gens, fa, demand, mc_base, dk, cfg, prep = _cold_route_inputs()
+        solve_mod.reset_pass_timing_log()
+        got = solve_mod.run_energy_solve(
+            gens, fa, demand, mc_base, dk, cfg, xyear_cache=[], p1_fleet_prep=prep
+        )
+        assert got.p1_seeded is True and got.p1_seed_fallback is None
+        (entry,) = solve_mod.take_pass_timing_log()
+        assert entry["p1_seed_fallback"] is None
+
+    def test_a_declined_basis_is_not_rolled_back(self, monkeypatch, tmp_path):
+        """Scope boundary: when ``apply_cross_year_basis`` DECLINES, no basis
+        was installed, so the guard must not fire and the P1 must not be
+        re-solved — the unseeded route is untouched by PERF-C S1."""
+        self._armed(monkeypatch, tmp_path)
+        from market_sim.pipeline import solve as solve_mod
+
+        gens, fa, demand, mc_base, dk, cfg, prep = _cold_route_inputs()
+        monkeypatch.setattr(
+            solve_mod,
+            "DispatchModel",
+            _seeded_model_reporting(
+                status="Iteration limit reached", accept_basis=False
+            ),
+        )
+        got = solve_mod.run_energy_solve(
+            gens, fa, demand, mc_base, dk, cfg, xyear_cache=[], p1_fleet_prep=prep
+        )
+        assert got.p1_seeded is False and got.p1_seed_fallback is None
         assert got.p1.status == "Optimal"

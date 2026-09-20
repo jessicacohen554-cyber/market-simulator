@@ -430,12 +430,34 @@ keys (which carry an explicit `true`). Measured both ways in
 
 ## Same-year P1 basis seed — the cold-rebuilt P1 seeded from the P0 basis (wallclock item B, 2026-09-06)
 
-**Decision: calibration-CLI default ON, `--no-p1-basis-seed` to opt out, env var
-`MARKET_SIM_P1_BASIS_SEED` honored; inert under the goldens/replay pin and on
-the forecast path.** Owner memo `docs/handoffs/p1-basis-seed-decision-memo-2026-09.md`
-(the B-0 bench that produced the number), signed **(A) FLIP** 2026-09-06 by chat
-instruction; evidence for the shipped surface in
+**Decision (2026-09-06): calibration-CLI default ON, `--no-p1-basis-seed` to opt
+out, env var `MARKET_SIM_P1_BASIS_SEED` honored; inert under the goldens/replay
+pin and on the forecast path.** Owner memo
+`docs/handoffs/p1-basis-seed-decision-memo-2026-09.md` (the B-0 bench that
+produced the number), signed **(A) FLIP** 2026-09-06 by chat instruction;
+evidence for the shipped surface in
 `docs/handoffs/wallclock-baseline-2026-07.md` §WALLCLOCK B.
+
+> **SUPERSEDED TWICE — read this box before the section.**
+>
+> **(1) 2026-09-19, rule 36 `[R-YEAR-ISOLATION]` (owner ruling, miso-262): the
+> default is now OFF.** `resolve_p1_basis_seed_default` returns `False` when
+> the env var is unset. The ruling's evidence is about state crossing a *year*
+> boundary (MISO's keeper reproduced the first year of each solve leg and
+> diverged by 7.16–24.18 TWh in the later ones), and both env knobs were
+> flipped together **because `pipeline/solve.py` armed the seed only inside the
+> cross-year gate** — not because the same-year seed was measured at fault.
+> Rule 36(e) withdrew the neutrality claims for both.
+>
+> **(2) 2026-09-20, PERF-C S1: the seed is no longer nested in the cross-year
+> gate.** `docs/handoffs/FINDING-perfc-s1-p1-seed-2026-09-20.md`. The two knobs
+> are now independently gateable, so the same-year seed can be defaulted ON
+> while the cross-year one stays OFF — **that is an owner decision and it has
+> not been taken; the default is still OFF.** PERF-C S1 changed the gate and
+> added an optimality guard; it produced no new timing evidence and ran no
+> solve to measure speed. **The "Gate" and "Class" paragraphs below are
+> amended in place; the measured tables are the 2026-09-06 numbers and stand
+> as history, under the caveat rule 36(e) attaches to them.**
 
 **What it is.** On the ISOs whose keeper carries a P1-native floor bridge —
 ERCOT (`ercot_gas_commitment_bridge`), NYISO (`nyiso_gas_commitment_bridge`),
@@ -468,20 +490,59 @@ pass seeds from it (else from the P0 basis the previous cold route left in the
 holder). The final iteration's export is one wasted `getBasis()` (the stop is
 known only after the solve) — accepted.
 
-**Gate.** Three conditions, all required, in `pipeline/solve.py::run_energy_solve`:
-`_xwarm` (the seed sits **inside** the cross-year gate, so
-`MARKET_SIM_WARMSTART_XYEAR=0` / `--no-xyear-warmstart` — the goldens, replay
-and merge-base-control pin — implies seed OFF with no second knob to remember);
-`xyear_warmstart is None` (the backcast callers only — the forecast passes an
-explicit bool and is left cold by design, so no forecast cache key, resume
-reproducibility or trajectory is touched, rule 24 `[R-REGISTRY]`); and the env
-var, global default OFF, which `resolve_p1_basis_seed_default`
-(`scripts/run_calibration.py`, the sibling of `resolve_xyear_warmstart_default`
-with the same precedence) sets ON for a fresh calibration solve only.
+**Gate (amended PERF-C S1, 2026-09-20).** Three conditions, all required, in
+`pipeline/solve.py::run_energy_solve`:
+
+1. `_warm` — the intra-year warm start (`MARKET_SIM_WARMSTART`) must be on,
+   because the seed's *source* is the live P0 `DispatchModel` and
+   `MARKET_SIM_WARMSTART=0` builds none. **This condition replaces `_xwarm`.**
+   The old text read "the seed sits **inside** the cross-year gate, so
+   `MARKET_SIM_WARMSTART_XYEAR=0` / `--no-xyear-warmstart` — the goldens,
+   replay and merge-base-control pin — implies seed OFF with no second knob to
+   remember", and that convenience is exactly what took the same-year seed down
+   with rule 36's cross-year ruling. **There is now a second knob, and the
+   places that relied on the implication pin it explicitly:** the
+   `DETERMINISM_ENV` of `scripts/capture_keeper_goldens.py` and of
+   `scripts/replay_keeper.py` both carry `MARKET_SIM_P1_BASIS_SEED=0` beside
+   `MARKET_SIM_WARMSTART_XYEAR=0`. Nothing else read the implication.
+2. `xyear_warmstart is None` — the backcast callers only. The forecast passes
+   an explicit bool and is left cold by design, so no forecast cache key,
+   resume reproducibility or trajectory is touched (rule 24 `[R-REGISTRY]`).
+   **Unchanged.**
+3. The env var itself, global default OFF, resolved by
+   `resolve_p1_basis_seed_default` (`scripts/run_calibration.py`, the sibling
+   of `resolve_xyear_warmstart_default` with the same precedence:
+   `--no-p1-basis-seed` > explicit env var > default). Since rule 36 that
+   default is **OFF**, so a fresh calibration solve no longer arms it either.
+
 `--report` / `--replay-bundle` / `--rebuild-benchmark` and the direct
 `solve_and_persist` callers (`capture_keeper_goldens.py`, `replay_keeper.py`)
 stay at the global default OFF. Inert wherever the P1 re-solves the live P0
 model (NEISO / PJM / MISO keepers, and any run with no floor hook).
+
+**No cross-year state, by construction and by test.** The seed exports *this*
+year's P0 basis and applies it to *this* year's P1, inside one
+`run_energy_solve` call. When `_p1_seed` is armed and `_xwarm` is not, the
+export runs but the cross-year holder is **not** written and the disposable
+NPZ basis cache is hard-off (`basis_cache_enabled()` still requires
+`MARKET_SIM_WARMSTART_XYEAR`), so nothing reaches the next year — which is the
+property rule 36 `[R-YEAR-ISOLATION]` is protecting. Pinned by
+`tests/unit/pipeline/test_xyear_warmstart_default.py::TestP1BasisSeedGate::test_seed_fires_with_the_cross_year_gate_off`.
+
+**Optimality guard (PERF-C S1).** An alien basis is a starting point, and HiGHS
+is documented to repair one — but rule 36(e) is the record of a
+basis-neutrality claim that did not survive measurement, so the seeded answer
+is checked rather than trusted. If the seeded `h.run()` does not report
+`Optimal` (or `DispatchModel.solve` raises, which it does on an infeasible
+primal), a WARNING names the status, the basis is discarded, and the same LP is
+re-solved **cold** through `solve_dispatch` — byte-for-byte the answer an
+unseeded pass produces. The seed can therefore cost a wasted `h.run()`, never
+an answer. Provenance rides the existing channel: `EnergySolveResult.p1_seeded`
+reports the P1 that is *actually returned* (so it is `False` after a rollback),
+and the sibling `p1_seed_fallback` carries the offending status; both appear on
+the pass-timing log entry. A genuinely infeasible LP raises again on the cold
+re-solve, so nothing is masked. Scope: only a pass that was actually seeded can
+roll back — a declined apply or an unseeded route is untouched.
 
 **Class.** WARM-START CLASS, not byte-identical — the memo's §4 standard, the
 one every shipped warm start was promoted on: objective and total generation

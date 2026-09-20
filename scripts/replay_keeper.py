@@ -45,7 +45,16 @@ sys.path.insert(0, str(REPO / "src"))
 # the cold-solved committed bundle and break the D-13 bench-repro byte-identity
 # gate. ``solve_and_persist`` is called directly here (not via the CLI
 # ``main()``), so it never sees the calibration CLI's default-ON gate.
-DETERMINISM_ENV = {"MARKET_SIM_WARMSTART_XYEAR": "0"}
+# ``MARKET_SIM_P1_BASIS_SEED`` is pinned beside it since PERF-C S1
+# (2026-09-20): the same-year P1 basis seed used to be armed INSIDE the
+# cross-year gate, so the line above implied it off. ``pipeline.solve`` now
+# gates it on its own env var, and the seed is the same warm-start class — it
+# reshuffles marginal ties on the cold-rebuilt P1 a floor bridge routes to —
+# so a byte-faithful replay must pin it explicitly or inherit it by accident.
+DETERMINISM_ENV = {
+    "MARKET_SIM_WARMSTART_XYEAR": "0",
+    "MARKET_SIM_P1_BASIS_SEED": "0",
+}
 
 from scripts import run_calibration_full as rcf  # noqa: E402
 
