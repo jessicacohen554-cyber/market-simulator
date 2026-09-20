@@ -349,7 +349,7 @@ def _disclosures(art: dict) -> dict:
             "full magnitude. The first item is the worst thing that can be said about "
             "this lane — the arm moves the lane's OWN TARGET ROW the wrong way and "
             "cannot close it, which the PRECOMMIT quantified before the solve — and "
-            "it leads for that reason."
+            "it leads for that reason. THE SECOND names a NEW FAILING CRITERION this lane introduced and did not predict."
         ),
         "1_THE_ARM_CANNOT_CLOSE_THE_TARGET_ROW_AND_MOVES_IT_THE_WRONG_WAY": (
             "THIS IS THE HEADLINE AND IT IS AGAINST THE LANE. SOCO-57 was chartered at "
@@ -370,7 +370,39 @@ def _disclosures(art: dict) -> dict:
             "42 %-efficiency rate is not modelling that machine, whatever its class "
             "total reads."
         ),
-        "2_IT_REPAIRS_ONE_TAIL_AND_PROVABLY_LEAVES_THE_OTHER_ALONE": (
+        "2_IT_ADDS_A_NEW_FAILING_CRITERION_C4_AND_THE_LANE_DID_NOT_PREDICT_IT": (
+            "THE SECOND THING AGAINST THIS LANE, AND IT IS A PREDICTION THIS LANE GOT "
+            "WRONG. C4 fleet hourly dispatch correlation goes PASS -> FAIL on ONE row: "
+            "2024 coal, NRMSE 0.296 -> 0.309 against a <= 0.30 gate, with r essentially "
+            "unchanged (0.832 -> 0.829). grade_summary target_grade therefore drops 4 "
+            "-> 3 and fails 1 -> 2. PRECOMMIT-soco-57 §5 P13 pre-registered 'C2 / C4 / "
+            "C6 PASS' and IS FALSIFIED; P4 pre-registered 2024 COAL_PRB worsening by "
+            "< 0.45 TWh and IS ALSO FALSIFIED (it moved -0.638). Both are reported as "
+            "misses rather than re-read as successes. "
+            "THE ROOT OF THE MISS IS NAMED: the lane's ex-ante thinnest-row analysis "
+            "(the handoff's check D) enumerated only C1 rows, and named 2024 COAL_PRB "
+            "and 2023 ST_GAS. THE ACTUAL THINNEST ROW ON THE WHOLE RUN WAS C4 2024 "
+            "COAL, PASSING BY 0.004 OF NRMSE, and this lane never looked at it. A "
+            "successor's check D must enumerate EVERY scored criterion's margin, not "
+            "C1's. "
+            "WHAT THE NUMBER IS AND IS NOT. It is one row of one criterion in one year, "
+            "crossing a gate the control held by 0.004; the same criterion's coal rows "
+            "IMPROVE in the other two years (2023 r 0.867 -> 0.882; 2025 NRMSE 0.170 -> "
+            "0.167), so two of three years get better and one crosses a hairline. It is "
+            "NOT dismissed on that basis: C4 fails, it is a supporting-tier criterion "
+            "with no standing-rule relief (rule 22 [R-C3C] covers C3c only), and it "
+            "costs a grade point. "
+            "ITS MECHANISM IS UNDERSTOOD AND IT IS A REAL COST. Repricing three CC "
+            "plants cheaper displaces coal -- 2024 COAL_PRB -0.638 TWh -- from a class "
+            "that was ALREADY 5.143 TWh SHORT of its actual, so the arm takes energy "
+            "from a short class and gives it to a long one, and perturbs coal's hourly "
+            "shape doing it. Under rule 14 [R-ACCURATE] that is the DISCOVERED BUG "
+            "signal, not a reason to revert: SOCO's coal is under-dispatched for a "
+            "reason this lane has not found, and the CC heat-rate error was partially "
+            "masking it. THE NAMED SUCCESSOR IS SOCO'S COAL UNDER-DISPATCH, not this "
+            "input."
+        ),
+        "3_IT_REPAIRS_ONE_TAIL_AND_PROVABLY_LEAVES_THE_OTHER_ALONE": (
             "This is the lane's positive claim and its limit in one sentence. The "
             "correction is largest at exactly the three plants the model most "
             "UNDER-dispatches, in rank order — Lowman +1.801 MMBtu/MWh at a 2024 "
@@ -386,7 +418,7 @@ def _disclosures(art: dict) -> dict:
             "plants. A lever that repaired both tails would be a curve fit; this one "
             "repairs one and is silent on the other, which is ROUTED, not closed."
         ),
-        "3_TWO_PLANTS_ARE_REFUSED_AND_THE_MEASUREMENT_DOES_NOT_REACH_THEM": (
+        "4_TWO_PLANTS_ARE_REFUSED_AND_THE_MEASUREMENT_DOES_NOT_REACH_THEM": (
             "STATED AT THE GATE RATHER THAN LEFT TO BE DISCOVERED. At McWilliams (533) "
             "and Wansley U9 (7946) CAMPD meters the combustion turbines but NOT the "
             "unfired steam generator, so heatInput/grossLoad reads 10.78 and 10.94 "
@@ -398,7 +430,7 @@ def _disclosures(art: dict) -> dict:
             "to this model and no claim is made about them. They are not repaired; "
             "they are merely not corrupted."
         ),
-        "4_THE_SPREAD_TEST_AS_POSED_FAILED_AND_THE_LANE_SAYS_SO": (
+        "5_THE_SPREAD_TEST_AS_POSED_FAILED_AND_THE_LANE_SAYS_SO": (
             "The handoff routed this lane on the hypothesis that the model's CC "
             "heat-rate SPREAD would be flatter than the measured spread. IT IS NOT: "
             "model 1.381 against measured 1.403 MMBtu/MWh, essentially identical, and "
@@ -408,7 +440,7 @@ def _disclosures(art: dict) -> dict:
             "that where it sits is what makes it a mechanism. Recorded because a "
             "successor reading the handoff would otherwise expect the spread result."
         ),
-        "5_SOCO_HAS_NO_PRICE_BENCHMARK_AND_GAINS_NONE": (
+        "6_SOCO_HAS_NO_PRICE_BENCHMARK_AND_GAINS_NONE": (
             "GATE G17 stands absolutely. data/raw/_validation-source/actual_lmp.json "
             "carries NO SOCO block and MUST NOT GAIN ONE. C3a mean LMP, C3b price "
             "duration/shape and C3c price tail are UNSCORABLE — not failed — in every "
@@ -421,13 +453,13 @@ def _disclosures(art: dict) -> dict:
             "unused: every offer_curve_by_group band is exactly 1.0, and "
             "authorized_price_tuning is DECLARED NONE."
         ),
-        "6_NO_YEAR_IN_THIS_RUN_IS_AN_OUT_OF_SAMPLE_SKILL_CLAIM": (
+        "7_NO_YEAR_IN_THIS_RUN_IS_AN_OUT_OF_SAMPLE_SKILL_CLAIM": (
             "Rule 22 [R-C3C]'s coda: [R-HOLDOUT] was removed 2026-09-09, so no year is "
             "protected from being iterated against and there is no certified "
             "out-of-sample number anywhere in this program. 2023-2025 are model-"
             "SELECTION evidence. Nothing here is quoted as forecast skill."
         ),
-        "7_A_WIRING_DEFECT_WAS_FOUND_IN_LANE_AND_A_SUCCESSOR_MUST_KNOW_IT": (
+        "8_A_WIRING_DEFECT_WAS_FOUND_IN_LANE_AND_A_SUCCESSOR_MUST_KNOW_IT": (
             "scripts/run_calibration.py's fleet_to_bins call site passed the other "
             "three measured-heat-rate flags but not the new one, so this lane's FIRST "
             "rule-19 run read all four grains at EXACTLY zero — an arm that looked "

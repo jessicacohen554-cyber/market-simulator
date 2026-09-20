@@ -3152,3 +3152,19 @@ results/calibration/spp68_ceiling_2022/
 results/calibration/spp68_ceiling_2023/
 results/calibration/spp68_ceiling_2024/
 results/calibration/spp68_ceiling_2025/
+
+# SOCO-57 per-year leg bundles (rule 36 [R-YEAR-ISOLATION] (a): one shard per year).
+# The composed arm, results/calibration/soco57_measured_cc_hr, IS committed.
+# Gitignored, NOT deleted (rule 31 [R-RETAIN]): .gitignore discharges rule 29
+# [R-SCREEN] (c), `rm` never does. Recover a leg with:
+#   git fetch origin <sha> && git checkout <sha> -- results/calibration/soco57_arm_<year>
+#   soco57_arm_2023  6bca406c8541e83b21ea375cd29a14aafeec4461
+#   soco57_arm_2024  9b19cb932cffa707acd84146ead91eb6d31e4e0d
+#   soco57_arm_2025  400e12ece7edf325c451554b2c0c8c6b6b8fa64b
+# Those SHAs are PROVENANCE, not a recovery route (rule 33 [R-SHARD-ARCHIVE] (d)):
+# the shard branches are cut when this lane's PR merges. Cost any leg recovery as
+# a RE-SOLVE. Re-compose at zero LP with:
+#   python3 scripts/probes/soco57_compose_span.py --expect-cc-hr true \
+#     --legs results/calibration/soco57_arm_{2023,2024,2025} \
+#     --out  results/calibration/soco57_measured_cc_hr
+results/calibration/soco57_arm_20[0-9][0-9]/
