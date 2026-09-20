@@ -3000,3 +3000,15 @@ results/calibration/pjm_h13_meritalloc_2022/
 results/calibration/pjm_h13_meritalloc_2023/
 results/calibration/pjm_h13_meritalloc_2024/
 results/calibration/pjm_h13_meritalloc_2025/
+
+# SPP-66 R-bd arm bundles (REJECTED candidate, rule 29 [R-SCREEN] (c) — kept OUT of main,
+# NOT deleted, rule 31 [R-RETAIN]). Numbers live in docs/handoffs/RESULT-spp-66-rbd-2026-09-20.md.
+# Leg provenance (rule 33(d), provenance NOT a recovery route — cost any recovery as a re-solve):
+#   git checkout d048eacc -- results/calibration/spp66_netwin_2019   (branch claude/spp66-netwin-2019)
+#   git checkout 88d35b0f -- results/calibration/spp66_netwin_2020
+#   git checkout e75a1f25 -- results/calibration/spp66_netwin_2021
+#   git checkout 56b464b1 -- results/calibration/spp66_netwin_2022
+#   git checkout fa08afbe -- results/calibration/spp66_netwin_2023
+#   git checkout c5948456 -- results/calibration/spp66_netwin_2024
+#   git checkout 8cc56931 -- results/calibration/spp66_netwin_2025
+results/calibration/spp66_netwin_*/
