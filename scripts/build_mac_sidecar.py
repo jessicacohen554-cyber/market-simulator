@@ -99,6 +99,37 @@ def has_dual(bundle: str, year: int) -> bool:
 # ---------------------------------------------------------------------------
 # the computation
 # ---------------------------------------------------------------------------
+def _cf_basis_sentence(scalars: dict) -> str:
+    """Describe where the capacity factors in ``scalars`` actually came from.
+
+    Reads the per-tech ``cf_source`` rather than restating an assumption, so a
+    grid with no measured new-build cohort is never described as measured.
+    """
+    measured, national = [], []
+    for tech, row in sorted(scalars.items()):
+        if row.get("unavailable"):
+            continue
+        bucket = (
+            measured
+            if str(row.get("cf_source", "")).startswith("measured")
+            else national
+        )
+        bucket.append(tech)
+    grid_txt = (
+        "measured on this grid (eGRID 2022-24, projects built 2018 or later), "
+        "net of curtailment"
+    )
+    national_txt = (
+        "the national ATB figure — this grid has no new-build cohort in eGRID "
+        "to measure one from"
+    )
+    if measured and not national:
+        return grid_txt
+    if national and not measured:
+        return national_txt
+    return f"{', '.join(measured)} {grid_txt}; {', '.join(national)} on {national_txt}"
+
+
 def build_year(iso: str, year: int, bundle: str, run_id: str) -> dict:
     """Return the sidecar payload for one grid-year, or raise with the reason."""
     import numpy as np
@@ -299,8 +330,11 @@ def build_year(iso: str, year: int, bundle: str, run_id: str) -> dict:
         "pass": "P1",
         "cost_basis": {
             "recovery_period_yr": PPA_COST_RECOVERY_YR,
-            "capacity_factor": "measured on this grid (eGRID 2022-24, projects "
-            "built 2018 or later), net of curtailment",
+            # Derived from what the techs ACTUALLY got, never asserted: a grid
+            # with no new-build cohort in eGRID falls back to the national ATB
+            # figure, and a blanket "measured on this grid" here would be a
+            # false provenance claim for it (NWPP, first seen 2026-09-20).
+            "capacity_factor": _cf_basis_sentence(scalars),
             "capex_basis": "NREL ATB 2024 Moderate @2026, national",
             "dollars": "constant 2026 $; ppa_equivalent_* restates the same "
             "cost as the flat nominal price a contract would quote",
