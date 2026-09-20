@@ -209,3 +209,55 @@ improves, zero parameters were added, and what regresses is unscored.
 
 Rule 31 `[R-RETAIN]`: nothing is deleted, and the promotion question goes to the owner with these
 numbers rather than being pre-empted either way.
+
+---
+
+## 7. C-2 MEASURED — and it REFUTES the import leg of FINDING pjm-h10 §2.5
+
+§2.5 could only infer the gross export / gross import split, and said so plainly: *"Read the import
+column as an INFERENCE, not a measurement… it inherits both their errors."* That caution was
+correct. All twelve bundles now carry `hourly/network_<year>.parquet`, so the split is measured.
+
+**Both sides computed on the SAME basis — system net position by hour** (model: the five
+`PJM_external>PJM_<zone>` link rows summed per hour; measured: PJM's settlement tie file summed per
+hour over its tie lines). TWh:
+
+| year | model gross exp | measured gross exp | model gross imp | measured gross imp | export short |
+|---|---|---|---|---|---|
+| 2020 (control) | 40.391 | 41.626 | **0.000** | **0.000** | −1.235 |
+| 2021 | 25.510 | 37.825 | 0.007 | 0.011 | **−12.315** |
+| 2022 | 22.878 | 31.909 | 0.019 | 0.135 | **−9.031** |
+| 2023 | 30.862 | 40.090 | 0.002 | 0.116 | **−9.228** |
+| 2024 | 22.277 | 33.133 | 0.048 | 0.308 | **−10.856** |
+| 2025 | 24.379 | 33.527 | 0.019 | 0.603 | **−9.148** |
+
+**THE RESULT: the shortfall is ~100 % EXPORT-SIDE. There is no import-side excess.** Measured PJM is
+a near-pure net exporter — its system-level gross import is **0.000–0.603 TWh** across six years —
+and **the model reproduces that structure exactly** (0.000–0.048 TWh). §2.5's inferred
+*"implied import-side excess of 4.083 / 2.830 / 4.398 / 6.114 / 4.658 TWh"* is **refuted**: on the
+like-for-like basis the model does not over-import at all.
+
+**This retires a named suspect.** `interchange/spec.py`'s own comment warns of *"phantom imports that
+displace CC_REGULAR dispatch, the C1 FAIL"*, and §2.5 read its import column as evidence for it.
+Measured, **PJM's system-level phantom imports are ~zero in every year.** Whatever drives PJM's
+CC_REGULAR over-run, it is not phantom imports at the system boundary. §2.5's other half stands and
+is now the whole of it: the model under-exports, by 9.0–12.3 TWh.
+
+**An error of mine, caught inside this analysis and recorded rather than silently dropped.** My first
+pass computed the model's gross legs **per link** (preserving inter-border counterflow, which gave
+"gross import 16–34 TWh") and compared them against a **system-net** measured number. That is
+apples-to-oranges and produced a spurious +13 to +18 TWh "over-import". The two bases must match; on
+the matched basis the import leg vanishes. The per-link counterflow is real — §2.7 describes it as
+wheel-through — but it is *internal to an hour* and cancels at the boundary the measured file reports.
+
+**What C-1 did to the 2020 seam, mechanically.** Per-link (counterflow preserved), ARM − CONTROL:
+gross export **56.631 → 47.801 (−8.829)**, gross import **16.240 → 19.458 (+3.218)**, net
+**40.391 → 28.344 (−12.047)**. Every border moves in the import direction, and the **ATSI** border
+flips sign outright, −0.598 → +4.797 (a +5.395 TWh swing). So the ladder does not merely throttle
+export: it re-prices the borders relative to each other and turns one of them around. On the
+system-net basis that all resolves to a pure 12.047 TWh reduction in net export, away from measured.
+
+**Consequence for the lane.** The export leg is the whole defect and C-1 makes it larger on 2020
+while leaving 2021–2025 untouched. That does not change the promotion case stated in §6 — C-1's
+basis is rules 14/23 and the improvement it buys is on C1's classes — but it sharpens what the next
+lane should chase: **a PJM export-volume defect, on a seam whose import side is already correct.**
