@@ -3102,3 +3102,17 @@ results/calibration/spp67_yearown_2022/
 results/calibration/spp67_yearown_2023/
 results/calibration/spp67_yearown_2024/
 results/calibration/spp67_yearown_2025/
+# nyiso-247 per-year ARM LEGS (rule 32 [R-SHARD] (d) / rule 29 [R-SCREEN] (c)):
+# the COMPOSITE results/calibration/nyiso247_fuelinv_span is what gets registered
+# and committed; an unregistered per-year dir left on main is the Class-E parity
+# RED rule 29(c) forbids. Ignored, NEVER deleted (rule 31 [R-RETAIN]).
+# PROVENANCE by immutable SHA (rule 33 [R-SHARD-ARCHIVE] (d)) — which commit
+# produced which leg. A shard branch is TRANSPORT, not storage: these refs are cut
+# when this lane's PR merges, so any leg not landed inside the composite on main
+# costs a RE-SOLVE, never a checkout.
+#   git checkout c73bc867b819cc060e4aa69e16b5918ce0f8e87c -- results/calibration/nyiso247_fuelinv_2022
+#   git checkout aca29192c80e4a5544242dbc3c1f69d21512e670 -- results/calibration/nyiso247_fuelinv_2023
+results/calibration/nyiso247_fuelinv_2022/
+results/calibration/nyiso247_fuelinv_2023/
+results/calibration/nyiso247_fuelinv_2024/
+results/calibration/nyiso247_fuelinv_2025/
