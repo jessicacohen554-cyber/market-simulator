@@ -1,0 +1,128 @@
+{
+  "measured_region_maxima": {
+    "nyc_10min_plus_30min": 50.0,
+    "seny": 40.0,
+    "east": 46.0,
+    "long_island": 0.0
+  },
+  "ceiling_stack_usd_mwh": 136.0,
+  "source": "nyiso-115, NYISO's own posted zonal DA AS prices; spec.py:504-524",
+  "years": {
+    "2022": {
+      "all_missed": {
+        "hours": 100,
+        "energy_dual_median": 151.8,
+        "plus_reserve_as_modelled": 151.8,
+        "plus_measured_ceiling": 287.8,
+        "actual_median": 374.0,
+        "still_short_usd_mwh": 86.2,
+        "ceiling_closes_gap": false
+      },
+      "winter": {
+        "hours": 70,
+        "energy_dual_median": 155.7,
+        "plus_reserve_as_modelled": 155.7,
+        "plus_measured_ceiling": 291.7,
+        "actual_median": 383.3,
+        "still_short_usd_mwh": 91.6,
+        "ceiling_closes_gap": false
+      },
+      "summer": {
+        "hours": 23,
+        "energy_dual_median": 174.2,
+        "plus_reserve_as_modelled": 174.2,
+        "plus_measured_ceiling": 310.2,
+        "actual_median": 359.3,
+        "still_short_usd_mwh": 49.1,
+        "ceiling_closes_gap": false
+      }
+    },
+    "2023": {
+      "all_missed": {
+        "hours": 10,
+        "energy_dual_median": 85.1,
+        "plus_reserve_as_modelled": 86.8,
+        "plus_measured_ceiling": 221.1,
+        "actual_median": 386.3,
+        "still_short_usd_mwh": 165.3,
+        "ceiling_closes_gap": false
+      },
+      "winter": {
+        "hours": 2,
+        "energy_dual_median": 52.6,
+        "plus_reserve_as_modelled": 52.6,
+        "plus_measured_ceiling": 188.6,
+        "actual_median": 824.4,
+        "still_short_usd_mwh": 635.8,
+        "ceiling_closes_gap": false
+      },
+      "summer": {
+        "hours": 2,
+        "energy_dual_median": 40.5,
+        "plus_reserve_as_modelled": 40.5,
+        "plus_measured_ceiling": 176.5,
+        "actual_median": 325.0,
+        "still_short_usd_mwh": 148.4,
+        "ceiling_closes_gap": false
+      }
+    },
+    "2024": {
+      "all_missed": {
+        "hours": 13,
+        "energy_dual_median": 58.2,
+        "plus_reserve_as_modelled": 58.2,
+        "plus_measured_ceiling": 194.2,
+        "actual_median": 416.0,
+        "still_short_usd_mwh": 221.7,
+        "ceiling_closes_gap": false
+      },
+      "winter": {
+        "hours": 1,
+        "energy_dual_median": 46.3,
+        "plus_reserve_as_modelled": 46.3,
+        "plus_measured_ceiling": 182.3,
+        "actual_median": 416.0,
+        "still_short_usd_mwh": 233.7,
+        "ceiling_closes_gap": false
+      },
+      "summer": {
+        "hours": 9,
+        "energy_dual_median": 59.9,
+        "plus_reserve_as_modelled": 59.9,
+        "plus_measured_ceiling": 195.9,
+        "actual_median": 465.5,
+        "still_short_usd_mwh": 269.6,
+        "ceiling_closes_gap": false
+      }
+    },
+    "2025": {
+      "all_missed": {
+        "hours": 39,
+        "energy_dual_median": 158.9,
+        "plus_reserve_as_modelled": 181.2,
+        "plus_measured_ceiling": 294.9,
+        "actual_median": 583.6,
+        "still_short_usd_mwh": 288.7,
+        "ceiling_closes_gap": false
+      },
+      "winter": {
+        "hours": 6,
+        "energy_dual_median": 176.9,
+        "plus_reserve_as_modelled": 176.9,
+        "plus_measured_ceiling": 312.9,
+        "actual_median": 367.6,
+        "still_short_usd_mwh": 54.7,
+        "ceiling_closes_gap": false
+      },
+      "summer": {
+        "hours": 31,
+        "energy_dual_median": 158.9,
+        "plus_reserve_as_modelled": 183.9,
+        "plus_measured_ceiling": 294.9,
+        "actual_median": 598.1,
+        "still_short_usd_mwh": 303.2,
+        "ceiling_closes_gap": false
+      }
+    }
+  }
+}
