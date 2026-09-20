@@ -14772,3 +14772,57 @@ P-27 columns that are **100 % null** for all four reserve products, so its 866 /
 `tests/scoring` re-measured on this session's clean checkout: **22 failed / 1,553 passed /
 18 skipped** — the handoff's unowned baseline, reproduced and still unowned. This session wrote
 no solve-path code and adds zero.
+
+## nyiso-245 — 2026-09-20
+
+**ORCHESTRATOR, zero LP in the parent** (rule 32 `[R-SHARD]` (a)). Base `origin/main` `5c0bec8b`,
+**rebased mid-session onto `e8b80102`** at the owner's instruction. PRECOMMIT
+`docs/PRECOMMIT-nyiso245-position-shape-offer-surface-2026-09-20.md` committed at **`398f0437`**
+(`5cbf4fef` post-rebase, content unchanged) before any gated number. RESULT
+`docs/RESULT-nyiso245-the-object-is-level-dispersion-not-shape-2026-09-20.md`.
+**Keeper UNCHANGED** (`2026-09-19-nyiso241-ct-committed-measured`); NYISO still **CALIBRATED** on
+its ISO tier with C3c the lone ledgered caveat. Nothing registered, nothing promoted.
+
+**1. The shape-only offer surface is REFUSED, and nyiso-244's re-open condition is SPENT.** Both of
+its limbs were satisfied — the econ/midcurve form exists (`miso_offer_surface_measured`, a
+within-unit price RISE on a within-unit position coordinate) and it **needs no cohort by
+construction**, which is that condition's second branch. Reach clears decisively at **78.5 %**
+(3,702.3 of 4,715.7 MW) against the 50 % bar carried over unchanged, because
+`gas_offer_net_revenue_margin` is **LIVE on NYISO's ECON bands** — 298 of 715 rows carry the tag and
+they are econ-dominated, which nyiso-244's peak-only scope could not see. Rule 19 clears (five armed
+non-base writers, zero tagged rows also base, an assignment form). **G3a refuses it**: the measured
+Δ ladder is non-monotone in **12 of 12** populated cells against an 80 % bar, and its largest value
+anywhere is **$7.28/MWh**. A corpus-shape test on the derived artifact — not a residual (rule 1).
+
+**2. The refusal locates the object: it is cross-unit DISPERSION of the conditional LEVEL.**
+Within-unit differences over gens present in both windows (so the ~9.4 GW scope gap cancels), missed
+minus ordinary winter 2022, cap-weighted median $/MWh — market curve BOTTOM **+26.66** / within-unit
+RISE **+0.12**; multi-block only (every price taker excluded) **+19.01** / **+1.03**; model **+40.00**
+/ **+11.34**. **The market does not steepen and the model already steepens 11× more than it does**, so
+a shape-only form is blind to the object by construction. What the market does is disperse: level
+response +$19 median, **+$112.05 p75, +$231.59 p90**, against a model that moves nearly every unit by
+the same ~$40 and none by more. Successor class: `miso_offer_spread_anchored` /
+`miso_offer_level_dispersion`, entering NYISO as **`U`** under rule 28(d).
+
+**3. NYISO does NOT carry the rule 36 `[R-YEAR-ISOLATION]` (f) warm-start artifact.** Four control
+shards (one year each) replayed the keeper's recipe at HEAD with both knobs OFF. **2022, 2024 and
+2025: max |Δ class TWh| = 0.0000 and 0 of 43,800 zonal price cells moved, in every one.** Not
+vacuous — the keeper was solved as ONE four-year span with both knobs ON, so 2024/2025 were its
+third and fourth years, the position where MISO's defect bit hardest (7.16 / 24.18 / 4.00 TWh).
+**Rule 36(f)'s "unmeasured outside MISO" exposure is CLOSED for NYISO**, and the G-DRIFT `LIVE` hunk
+`cb1e60b7` is thereby **INERT for NYISO, measured rather than assumed** — the committed keeper IS a
+valid form-4 control and a successor need not re-spend this. 2023 outstanding (first shard stalled,
+retry launched; ~5 min to reproduce).
+
+**4. The stale `legitimacy_diagnostics.json` (the handoff's object 2) is regenerated and is a
+NO-OP for NYISO.** Rebuilt through the current scorer from the control bundle and compared
+row-for-row against the keeper's committed artifact (2022): **zero numeric moves** across
+D1/D2/D4/D5/D9/D10, identical row sets, identical `passed` verdicts, identical thresholds. The only
+structural change is the new `dispatch_source` stamp. No determination moves. *Not claimed*: this
+does not close nyiso-240 §A.6's nine-row reproducibility wobble, which was measured on an identical
+bundle rather than a fresh solve.
+
+**Rule 26 `[R-DELETE]`.** The `ScenarioConfig` fields and the `apply_nyiso_offer_surface` applier
+written for the refused form were **REVERTED, not committed default-off** — a refused mechanism that
+still parses is a re-armable answer key. `scenarios.py` and `offer_curves.py` are byte-identical to
+`origin/main`. The derive, its artifact and the probes stay as the measurement record.
