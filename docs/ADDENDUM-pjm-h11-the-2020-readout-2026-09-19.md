@@ -43,11 +43,6 @@ All carry 17 files except **ARM 2022 (15)**, which is missing `floors/2022_P1.np
 registration-critical: `dispatch/2022_P1.parquet`, `hourly/network_2022.parquet`,
 `hourly/class_hourly_2022.parquet` and `system.parquet` are all present.
 
-**Bundles** (17 files each, verified by config signature before use):
-`pjm_h11_ctl_2020` @ `f3bf920ddfa9d4bd86be1c71b2984647b89d0681` (control sha `0fae26c3`, no 2020
-ladder key) · `pjm_h11_arm_2020` @ `bc7617af9b94b8f2997152ab4888c54e88690263` (arm sha `3b719484`,
-2020 ladder key present).
-
 ---
 
 ## 1. The measured delta, ARM − CONTROL, 2020 (TWh)
@@ -299,3 +294,56 @@ system-net basis that all resolves to a pure 12.047 TWh reduction in net export,
 while leaving 2021–2025 untouched. That does not change the promotion case stated in §6 — C-1's
 basis is rules 14/23 and the improvement it buys is on C1's classes — but it sharpens what the next
 lane should chase: **a PJM export-volume defect, on a seam whose import side is already correct.**
+
+---
+
+## 8. C1 ON THE RUBRIC'S OWN BAND — and why this lane STOPPED SHORT of promoting
+
+`calibration_verdict.py` scores C1 per class on a volume band of
+`min(max(2 % load, 3 % actual gen), 8 TWh)`. For PJM (~800 TWh load) the **8 TWh cap binds on every
+class**, so C1-2020 is a clean per-class ±8 TWh test. Computed against the FINDING pjm-h10 §4.2
+EIA-923 baseline, carried onto each bundle by its own per-class delta:
+
+| class | registered keeper | CONTROL @ HEAD | ARM @ HEAD |
+|---|---|---|---|
+| **COAL_BIT** | **+16.90 FAIL** | **+25.16 FAIL** | **+22.27 FAIL** |
+| CC_REGULAR | +7.50 ok | +4.32 ok | **+0.35 ok** |
+| CT_PEAKER | +0.80 | −0.48 | −2.68 |
+| ST_GAS | +1.60 | +1.07 | +0.06 |
+| others (wind, nuclear, solar, COAL_PRB, CT_CHP, ST_CHP, OTHER, COAL_WC, biomass, hydro) | | unchanged or ≤0.15 | |
+| **classes out of band** | **1** | **1** | **1** |
+| **sum \|error\|** | **48.2** | **52.37** | **47.05** |
+
+**The arm is unambiguously better than its own control**: COAL_BIT −2.89, CC_REGULAR −3.97 to a
+near-exact +0.35, total absolute error −5.32 TWh. That is the C-1 effect, cleanly isolated.
+
+**But the control is not what is registered, and that is the finding.** The offer-midcurve HEAD
+drift (§3) degrades C1-2020 **on its own, with no mechanism change**: COAL_BIT **+16.90 → +25.16**,
+a **+8.26 TWh** deterioration on the single class that fails C1. C-1 recovers **2.89** of that,
+leaving **+22.27** — still **5.37 TWh worse than the registered keeper** on the failing class.
+
+So "is C-1 an improvement" has three different answers depending on the comparison, and they do not
+agree:
+
+| comparison | verdict |
+|---|---|
+| ARM vs its own CONTROL (same code) | **improvement**, clearly |
+| ARM vs the REGISTERED keeper, total \|error\| | **marginal improvement** (47.05 vs 48.2) |
+| ARM vs the REGISTERED keeper, **on the failing class** | **REGRESSION** (+22.27 vs +16.90) |
+
+**This lane therefore did not self-promote**, despite holding an owner instruction to promote on an
+improvement. Registering this arm would put a run on the dashboard whose **failing criterion reads
+worse than the keeper it replaces**, for a cause C-1 did not create and only partly offsets. That is
+a materially different thing from what "promote if it is an improvement" is naturally read to mean,
+and rule 31 `[R-RETAIN]` puts the decision with the owner rather than with the session's own reading.
+The bundles are retained and the question is asked with these numbers.
+
+**THE REAL FINDING HERE IS NOT C-1.** It is that **a committed input rebuild silently cost PJM
+8.26 TWh on C1-2020's failing class** — larger than anything C-1 does, invisible until a control was
+solved at HEAD, and already latent in `main` for every PJM lane that re-solves from now on. The
+offer-midcurve table is the named object (§3). **That is the defect the next lane should chase**,
+and it is a bigger one than the seam.
+
+*(All figures parent-computed from the committed class hourlies plus the §4.2 baseline. No
+`metrics.json` exists in a single-year replay bundle, so no scorer-emitted C1 record has been
+produced for these runs; the band and its cap are read from `calibration_verdict.py` itself.)*
