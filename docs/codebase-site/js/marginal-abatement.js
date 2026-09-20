@@ -540,7 +540,12 @@
 
     var s = scalars(state.iso, state.year, state.tech);
     if (!s) {
-      host.innerHTML = '<p class="mac-fig__sub" style="margin:8px 0 0">' + state.iso + ' is pending.</p>';
+      // Grid-level pending and "this grid has no fleet of this technology" are
+      // different facts, and this chart is the one place they collide: SOCO is
+      // fully measured and still has no wind to cost.
+      var why = unavailableReason(state.iso, state.year, state.tech);
+      host.innerHTML = '<p class="mac-fig__sub" style="margin:8px 0 0">' +
+        (why ? 'No cost to break down: ' + esc(why) + '.' : state.iso + ' is pending.') + '</p>';
       document.getElementById('wfTable').innerHTML = '';
       legend('wfLegend', false);
       return;
@@ -724,6 +729,27 @@
            : 'Those hours are currently counted as <b>zero emissions</b>, which flatters the ' +
              'numbers below — switch “Imported power” to <i>Counted</i> above.'))
       : (state.iso + ' imports very little, so the import setting barely moves its numbers.'));
+    // Most grids are charged for how much power wind and solar ACTUALLY produce
+    // there. A grid with too few recently-built projects to measure that falls
+    // back to a nationwide average, and a reader comparing it to the others has
+    // to be told — the number is otherwise presented as if it were local.
+    var nat = nationalCfTechs(c);
+    if (nat.length) {
+      el.innerHTML += ' <b>One caution specific to ' + state.iso + ':</b> every other grid is ' +
+        'charged for how much power ' +
+        (nat.length > 1 ? 'wind and solar actually produce' : techLabel(nat[0]) + ' actually produces') +
+        ' there, but ' + state.iso + ' has too few recently-built projects to measure that, so ' +
+        (nat.length > 1 ? 'they are' : 'it is') + ' charged a nationwide average instead. ' +
+        'Its cost is less tied to its own weather than the others are.';
+    }
+  }
+
+  /** Techs on this grid-year whose capacity factor fell back to the national figure. */
+  function nationalCfTechs(c) {
+    return ['wind', 'solar'].filter(function (t) {
+      var s = c.scalars[t];
+      return s && !s.unavailable && s.cf_source && s.cf_source.indexOf('national') === 0;
+    });
   }
 
   function init() {

@@ -358,15 +358,18 @@ left** — it is not this page's.
 
 ---
 
-## 9. REAL DATA — coverage and the defects it exposed (current at `67807400`, 2026-09-20)
+## 9. REAL DATA — coverage and the defects it exposed (current at `d7d1e0a2`, 2026-09-20)
 
 The synthetic fixture and its banner are **deleted**. The page reads
 `frontend/data/mac/manifest.js`, a generated index over committed per-grid-year sidecars built by
 `scripts/build_mac_sidecar.py` (zero LP).
 
-**Coverage: 7 of 9 grids × 3 years = 21 grid-years** (refreshed 2026-09-20 onto `67807400`).
-CAISO, ERCOT, MISO, NEISO, NYISO, PJM, SOCO. Only NWPP and SPP keepers still carry no emissions
-dual; SPP's `spp49_benchmembership_span` has it for 2019–2022, which are not this page's years.
+**Coverage: ALL 9 grids × 3 years = 27 grid-years** (refreshed 2026-09-20 onto `d7d1e0a2`).
+CAISO, ERCOT, MISO, NEISO, NWPP, NYISO, PJM, SOCO, SPP. The last two pending grids landed in the
+same batch of 44 commits: **NWPP** promoted `nwpp42-measured-coal-heat` and **SPP** promoted
+`spp-51-coal-sync`, both of which solve past the emissions dual. **Nothing on this page is
+pending any more** — but the PENDING render path is kept, not deleted: a keeper promotion can
+re-open a hole at any time, and the page has to survive that without showing a zero.
 
 ### Defects the real data exposed
 
@@ -420,13 +423,15 @@ that had not been.
 
 | Grid | 2023 wind | 2023 solar | 2024 wind | 2024 solar | 2025 wind | 2025 solar |
 |---|---|---|---|---|---|---|
-| CAISO | −42.9 / 8.8 | 47.8 / 111.5 | 13.2 / 66.5 | 88.6 / 149.9 | 11.2 / 68.7 | 98.0 / 165.1 |
-| ERCOT | 4.7 / 33.3 | −20.0 / 11.1 | 26.0 / 54.6 | 46.4 / 77.9 | 18.1 / 49.7 | 50.9 / 87.4 |
-| MISO | 2.1 / 31.6 | 45.6 / 83.2 | 6.1 / 36.6 | 51.2 / 87.8 | −12.6 / 17.9 | 36.0 / 75.0 |
-| NEISO | 29.9 / 61.1 | 75.4 / 123.6 | 17.1 / 47.2 | 68.5 / 114.4 | −42.3 / −10.3 | 33.3 / 82.6 |
-| NYISO | 52.6 / 88.2 | 98.4 / 154.5 | 36.2 / 69.6 | 83.0 / 137.1 | −6.0 / 25.1 | 45.6 / 97.4 |
+| CAISO | -44.9 / 7.7 | 49.4 / 115.3 | 14.1 / 66.8 | 88.6 / 149.3 | 11.4 / 68.7 | 99.0 / 166.6 |
+| ERCOT | 4.7 / 33.3 | -20.0 / 11.1 | 26.0 / 54.6 | 46.4 / 77.9 | 18.1 / 49.7 | 50.9 / 87.4 |
+| MISO | 2.1 / 31.6 | 45.6 / 83.2 | 6.1 / 36.6 | 51.2 / 87.8 | -12.6 / 17.9 | 36.0 / 75.0 |
+| NEISO | 29.9 / 61.1 | 75.4 / 123.6 | 17.1 / 47.2 | 68.5 / 114.4 | -42.3 / -10.3 | 33.3 / 82.6 |
+| NWPP | -19.6 / 8.6 | 18.0 / 46.0 | 18.4 / 50.8 | 47.0 / 78.5 | 9.6 / 37.0 | 38.3 / 69.8 |
+| NYISO | 52.6 / 88.2 | 98.4 / 154.5 | 36.2 / 69.6 | 83.0 / 137.1 | -6.0 / 25.1 | 45.6 / 97.4 |
 | PJM | 25.8 / 61.0 | 70.3 / 115.0 | 26.3 / 61.3 | 71.9 / 117.5 | 1.0 / 36.5 | 53.1 / 101.8 |
-| SOCO | no wind fleet | 33.8 / 63.1 | no wind fleet | 39.9 / 70.5 | no wind fleet | 17.1 / 46.5 |
+| SOCO | no wind fleet | 33.9 / 63.3 | no wind fleet | 41.1 / 72.6 | no wind fleet | 18.3 / 48.6 |
+| SPP | 19.6 / 44.5 | 39.0 / 66.3 | 19.1 / 44.2 | 38.9 / 65.3 | 13.1 / 37.7 | 36.5 / 64.9 |
 
 Negatives mean the project earns more than it costs, so abatement pays for itself. They track the
 capture price mechanically: NEISO 2025 has a **$70.71/MWh** load-weighted price and **$74.73** wind
@@ -464,15 +469,55 @@ existing `deploy-pages.yml` — no new workflow.
 
 ### Keeper churn is measured on every refresh, not assumed
 
-Keepers move under this page, so each refresh rebuilds the whole set and diffs it. The 2026-09-20
-third refresh picked up **PJM** (new, 3 grid-years) and **MISO's** promotion from
-`miso262_cold_span` to `miso263_coalcap_span`. Measured: **4 values moved, all MISO, all ≤ $3.0/tCO₂**
-(2023 solar 42.6 → 45.6, 2025 solar 34.8 → 36.0, 2025 wind −11.3 → −12.6, 2023 wind 2.0 → 2.1);
-every other grid-year byte-identical. The rebuild is zero-LP, so the check is nearly free.
+Keepers move under this page, so each refresh rebuilds the whole set and diffs it. The rebuild is
+zero-LP, so the check is nearly free.
+
+Third refresh: picked up **PJM** (new) and **MISO's** promotion from `miso262_cold_span` to
+`miso263_coalcap_span` — 4 values moved, all MISO, all ≤ $3.0/tCO₂.
+
+Fourth refresh (this one, 44 commits): **6 new grid-years** (NWPP, SPP) and **6 moved** on two
+promotions — CAISO `caiso-287-mer-keeper` → `caiso-288-citygate-recovery` and SOCO
+`soco53e-measured-st-gas` → `soco53f-measured-coal-hr`. Largest move **$3.8/tCO₂** (CAISO 2023
+solar without credits, 111.5 → 115.3); the other 15 grid-years byte-identical. Both promotions
+move the capture price and the rate in the direction their own FINDINGs describe, so nothing here
+needed adjudicating.
+
+### NWPP has no measured capacity factor, and saying otherwise was a live defect
+
+NWPP is the first grid with **no new-build cohort in eGRID**, so `REGIONAL_RENEWABLE_CF` has no row
+for it and both technologies fall back to the national ATB figure. That fallback was already
+correct in the per-tech `cf_source`; what was wrong was `cost_basis.capacity_factor`, a **hardcoded
+string** asserting *"measured on this grid"* for every sidecar. NWPP would have shipped carrying a
+false provenance claim about its own cost.
+
+Fixed at the source rather than papered over on the page: `_cf_basis_sentence()` now derives that
+line from what the techs actually got, and handles the mixed case (some measured, some not) that no
+grid has hit yet. The page then **says it where a reader will act on it** — the per-grid intro
+carries a plain-language caution naming NWPP, because a reader comparing NWPP's $18.4 to SPP's
+$19.1 is otherwise comparing a national resource assumption against a measured one without being
+told. This is rule 14 `[R-ACCURATE]` in its ordinary form: the estimate stays because the measured
+value genuinely does not exist for this grid, and the misalignment is documented in place.
+
+Two smaller render defects fell out of the same two grids. SOCO's wind cost-stack read
+*"SOCO is pending"* — that chart is **tech-specific** while the other two empty states are
+grid-level, so a measured grid with no wind fleet was being reported as unmeasured; it now reads
+*"No cost to break down: the grid dispatched no wind in 2024."* And the new NWPP caution had a
+singular/plural agreement bug in its two-technology branch.
 
 ### Still open
 
-The local capacity factor is **closed** (above). The **load-weighted zonal collapse** of §1(b) is
-unchanged and is now the main structural approximation left: the rate and price are per zone while
-the technology shape is ISO-wide, and closing it exactly needs a per-zone VRE sidecar written at
-solve time. The **CAISO import factor** conservatism recorded above is the other open item.
+The local capacity factor is **closed** for 8 of 9 grids (above); **NWPP is open by absence** —
+it reopens the moment eGRID carries a new-build cohort there, and needs no code change when it
+does, only a re-derive of `REGIONAL_RENEWABLE_CF`.
+
+The **load-weighted zonal collapse** of §1(b) is unchanged and is now the main structural
+approximation left: the rate and price are per zone while the technology shape is ISO-wide, and
+closing it exactly needs a per-zone VRE sidecar written at solve time. NWPP and SPP both make this
+worse in principle rather than better — NWPP spans a very large geography and SPP's wind is
+concentrated in its west — so the item is more load-bearing at 9 grids than it was at 7.
+
+The **CAISO import factor** conservatism recorded above is the other open item.
+
+With every grid now measured, the page's remaining risk is no longer coverage but **churn**: nine
+keepers move under it independently, so the refresh-and-diff discipline above is what keeps it
+honest, and it is cheap enough to run on every rebase.
