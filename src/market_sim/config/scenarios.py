@@ -1845,6 +1845,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # and so earns a distinct key. SHARED field -- very end, per HOUSE-3.
     # Registered IN THE SAME COMMIT as the field.
     "vre_curtailment_oversupply_allocation",
+    # SPP-67: the year-own curtailment rate. Default-off/inert, so every
+    # pre-existing cached run -- every ISO's keepers included -- keeps its key;
+    # an armed SPP run builds its renewable bound from a different measured
+    # rate and so earns a distinct key. SHARED field -- very end, per HOUSE-3.
+    # Registered IN THE SAME COMMIT as the field.
+    "vre_reference_rate_year_own",
     # SPP-58: the SPP wind curtailment ceiling and its level coefficient. Both
     # default-off/inert, so every pre-existing cached run -- every ISO's keepers
     # included -- keeps its key; an armed run hands the LP a genuinely different
@@ -2562,6 +2568,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # SPP-51c: the oversupply water-fill curtailment allocation, registered at
     # its shipped default (the flat per-hour gross-up).
     "vre_curtailment_oversupply_allocation": "False",
+    # SPP-67: the year-own curtailment rate, registered at its shipped default
+    # (the 2023-2025 training-window mean).
+    "vre_reference_rate_year_own": "False",
     # SPP-58: the SPP wind curtailment ceiling, registered at its shipped
     # defaults (ceiling off; depth carried at its derived value so an armed run
     # that leaves the depth alone still keys on the flag alone).
@@ -16928,6 +16937,70 @@ class ScenarioConfig:
     # Default off so every existing keeper replays byte-identical.
     # Pre-registered: docs/handoffs/PRECOMMIT-spp-51c-2026-09-09.md.
     vre_curtailment_oversupply_allocation: bool = False
+
+    # SPP-67 -- WHICH MEASURED RATE the uncurtailed-potential gross-up is built
+    # from (GATED, default off, ISO-AGNOSTIC). Orthogonal to the two fields
+    # around it: ``vre_curtailment_oversupply_allocation`` decides WHERE the
+    # curtailment energy lands and ``spp_curtailment_ceiling`` decides how much
+    # of it binds, while this decides HOW MUCH ENERGY THERE IS. It moves ONE
+    # object at ONE seam (``data.renewables._curtailment_rate_for_year``, read
+    # by BOTH uncurtailed constructions), so it can never half-apply (rule 19
+    # [R-ONE-MECH]).
+    #
+    # THE DEFECT. ``_SPP_REFERENCE_RATE_YEARS`` is frozen at {2023, 2024, 2025}
+    # and its own comment gives the entire reason: "the structural rate must
+    # never read a validation or locked-test year (SPP's table also carries
+    # 2019 and 2022 rows, both holdout years, and both are excluded here by
+    # construction rather than by discipline)". Rule 22 [R-HOLDOUT] -- the rule
+    # that made a year "holdout" -- was REMOVED by owner instruction on
+    # 2026-09-09 (CLAUDE.md rule 22 coda: "Any year may now be solved, scored
+    # and registered with no authorization"). The exclusion is therefore
+    # residue of a deleted rule, and it is still suppressing measurements that
+    # sit in the same committed table, from the same SPP MMU ASOM source
+    # documents, on the same average-MW basis.
+    #
+    # HOW WRONG THE ESTIMATE IS, MEASURED (SPP-67 phase 0, zero LP): SPP's own
+    # published 2019 wind curtailment rate is 1.591 % against the 9.650 %
+    # training-window mean the reference path applies to that year -- a factor
+    # of 6.1, worth 6.98 TWh of phantom wind potential, which is 85 % of 2019's
+    # entire +8.23 TWh wind excess. Rule 14 [R-ACCURATE] is the whole basis:
+    # the accurate datum exists, is committed, and is being passed over for an
+    # estimate. Rule 14's misalignment exception cannot apply -- the published
+    # rate is SPP's own footprint on SPP's own annual basis, which is exactly
+    # the boundary the gross-up applies to.
+    #
+    # WHY IT IS NOT A FITTED LEVER (rule 1 [R-STRUCT]): on the keeper's own
+    # 2023-2025 span the training mean is already within 1.3 % of each year's
+    # own rate, and arming this moves TWO of those three years ADVERSELY
+    # (+1.20 TWh in 2024, +0.33 in 2025) against one favourable (-1.39 in
+    # 2023). A single widened cross-year mean over all five published years was
+    # available, moves every year favourably, and is REFUSED here for exactly
+    # that reason: it is less accurate than each year's own measurement in
+    # every year, and it is the arm that looks better.
+    #
+    # Rule 21 [R-DOF]: ZERO new free parameters -- no constant is introduced,
+    # no window is chosen, and the rate is the ratio of two published
+    # measurements the table already carries.
+    # Rule 13 [R-MEASURED]: forward-native by construction. A forecast year has
+    # no published rate, so the provider returns None and the reference-rate
+    # path -- unchanged, and still THE forecast methodology -- serves it. This
+    # reader can only ever fire in a year the ISO has already published, on the
+    # same footing as an F923 delivered fuel price or a CAMPD outage window. It
+    # is also strictly CLOSER to the construction ``_forecast_uncurtailed_cf``
+    # names as its own reference -- the CAISO HSL parquet, built from the
+    # year's OWN measured curtailment -- than the cross-year mean it replaces.
+    # Rule 23 [R-FROZEN-DERIVE]: nothing is re-derived. The committed
+    # 2023-2025 rows and the reference-rate constant 0.09650131886270663 are
+    # UNCHANGED and test-pinned; the 2019-2022 delivered rows added alongside
+    # are a COVERAGE extension computed by the identical SPP-32 construction,
+    # which reproduces the committed rows exactly.
+    # Rule 25 [R-ISO-SCOPE]: no per-ISO number is transferred. The registry
+    # ``_YEAR_OWN_RATE_PROVIDERS`` carries SPP wind alone; every other ISO-fuel
+    # has no entry and is untouched even when the flag is armed.
+    # Default off, so all seven pre-existing keepers replay byte-identical and
+    # keep their cache keys.
+    # Pre-registered: docs/handoffs/PRECOMMIT-spp-67-year-own-rate-2026-09-20.md.
+    vre_reference_rate_year_own: bool = False
 
     # caiso-243 — repair form (c), the ROOT CAUSE of defect D1: the CAMPD-bin
     # / plant_level_fleet path (``fleet/assembly.py::bins_to_fleet``) never

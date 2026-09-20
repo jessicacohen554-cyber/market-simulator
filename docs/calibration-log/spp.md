@@ -3766,3 +3766,53 @@ relaunched and completed. Recovery by immutable SHA: `claude/spp51-2019` `f2d462
 `-2020` `762e90ddec7bb9097d7a45e5fcc5102deee82a06`, `-2021` `3d039cbfc160e1a9a3083df4b2f3d6f8c7990820`,
 `-2022` `c54547cae01ab358feafb8d1687d8e72ef43762c`, `-2023` `bffc45f93de50c13aafeb89312e602035cf86b4f`,
 `-2024` `395ce757ad14ab59bb0862d0a04abea888810ab2`, `-2025` `d3afa88d54acba652100bbad8ea6fffc9e8773c3`.
+
+## spp-67 — 2026-09-20
+
+**FOURTEENTH SPP KEEPER: `2026-09-20-spp-67-yearown-rate`** (+ rung
+`2026-09-20-spp-67-rung-yearown`, stamped to it). Promoted in-session by owner ruling, verbatim:
+*"Is this a recommended keeper candidate? If so plz promote. If structural integrity improves but
+gates regress that may still be a keeper."* Keeper 13 (`2026-09-20-spp-51-coal-sync`) and its rung
+pruned in this session (rule 35 `[R-PROMOTE]`, `--force-uncite` per 35(d); year union enumerated
+BEFORE the prune per 35(b) = {2019…2025}, covered exactly — SPP's registered year set is unchanged
+at seven).
+
+**ONE new gate: `vre_reference_rate_year_own`**, armed via `--set` on keeper 13's recipe. Zero other
+config differences, zero new free parameters (DOF ledger 5 entries / 3 residual, the same five names,
+machine-checked `--check`), `offer_curve_by_group` byte-identical (SHA-256 `090abd793b5fa5a7`).
+
+**The defect is residue of a deleted rule.** `_SPP_REFERENCE_RATE_YEARS` is frozen at
+`{2023,2024,2025}` and its own comment says why: *"the structural rate must never read a validation
+or locked-test year (SPP's table also carries 2019 and 2022 rows, both holdout years)"*. Rule 22
+`[R-HOLDOUT]` was **removed 2026-09-09**. SPP's own published 2019 wind curtailment rate is
+**1.591 %** against the **9.650 %** applied — a factor of **6.1**, worth 6.98 TWh. Basis is rule 14
+`[R-ACCURATE]`, never the residual.
+
+**Phase 0 (zero LP) decomposed the wind excess exactly:** CAPACITY 0.0000 TWh, SHAPE 0.0000 TWh on
+energy, **CF LEVEL +8.23…+11.80 TWh = 100 % of the residual** less the 0.00–1.17 TWh the LP
+re-curtails; sum closes to the bench payload's 2-dp rounding in all seven years. **The lane's
+chartered hypothesis was FALSIFIED on the keeper's own span** (the mean is within 1.3 % of each
+2023–2025 year's own rate).
+
+**Measured (rule 29(b) form 4, no control solve):** Δwind −6.9825 / +0.0000 / +0.0000 / −0.3231 /
+−1.2548 / **+1.0920** / **+0.2963** TWh for 2019…2025; thermal absorbs it one-for-one (≤ 0.014 TWh).
+2019's wind excess **+8.231 → +1.248 TWh (−85 %)**, coal miss **−11.272 → −7.626 (32 %)**.
+
+**Gates do NOT improve and that is the honest headline:** the span is score-identical to keeper 13's
+(CALIBRATED, grade 7/8, 0 FAILS, 1 ledgered C3c, C1 16/16 · 12/12) and the rung stays NOT-YET with
+the identical failing set. **Two of three keeper years move adversely**, and a widened five-year mean
+that moves every year favourably was available and **refused** (rule 1).
+
+**Proven clean by measurement:** 2020 and 2021 — the two years SPP never published — reproduce their
+control **byte-for-byte** (max hourly |Δprice| 0.0000), which doubles as the G-DRIFT validation.
+
+**Open, absorbed nowhere:** 97 % of the benefit is 2019 alone (the keeper span nets +0.13 TWh worse);
+2019's GAS row overshoots +2.441 → +5.766 TWh; 2020/2021 untouched (no published MW, and
+interpolating is a free parameter — refused); **R-bc is not closed** — this changes how much headroom
+exists, never whether the LP spends it; R-ba, R-be and C3c untouched. **MISO carries the identical
+`[R-HOLDOUT]` residue** in `_MISO_REFERENCE_RATE_YEARS` — reported, not acted on (rule 25).
+
+Records: `docs/handoffs/PRECOMMIT-spp-67-year-own-rate-2026-09-20.md`,
+`docs/handoffs/RESULT-spp-67-year-own-rate-2026-09-20.md`,
+`scripts/probes/_spp67_wind_decomposition.py`, `scripts/gen_spp67_attestation.py`,
+`tests/unit/data/test_spp67_year_own_curtailment_rate.py`.
