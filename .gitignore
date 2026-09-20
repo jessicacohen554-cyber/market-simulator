@@ -2838,3 +2838,27 @@ results/calibration/soco53f_arm_20[0-9][0-9]/
 results/calibration/soco53f_ctl_20[0-9][0-9]/
 results/calibration/soco53f_dep_20[0-9][0-9]/
 results/calibration/soco53f_ctl_span/
+# SPP-51 PER-YEAR shard legs (rule 32 [R-SHARD] (d): the COMPOSITE is what gets
+# registered; the per-year dirs are kept OUT of main). They stay on local disk
+# (rule 31 [R-RETAIN]) and are recoverable from the shard branch SHAs recorded in
+# docs/calibration-log/spp.md and the SPP-51 RESULT.
+results/calibration/spp51_arm_*/
+results/calibration/spp51_control_*/
+
+# SPP-51 COMPOSITES — the two REGISTERED bundles (keeper 13 + its rung).
+# Rule 34 [R-SHARD-PROMOTABLE] (a): a registrable bundle carries dispatch/<y>_P1.parquet
+# and the bundle-root system.parquet, both of which render_calibration_html.build_payload reads.
+!results/calibration/spp51_syncfloor_span/
+!results/calibration/spp51_syncfloor_span/**
+!results/calibration/spp51_syncfloor_span/dispatch/
+!results/calibration/spp51_syncfloor_span/dispatch/**
+!results/calibration/spp51_syncfloor_span/floors/
+!results/calibration/spp51_syncfloor_span/floors/**
+!results/calibration/spp51_syncfloor_span/hourly/**
+!results/calibration/spp51_syncfloor_rung/
+!results/calibration/spp51_syncfloor_rung/**
+!results/calibration/spp51_syncfloor_rung/dispatch/
+!results/calibration/spp51_syncfloor_rung/dispatch/**
+!results/calibration/spp51_syncfloor_rung/floors/
+!results/calibration/spp51_syncfloor_rung/floors/**
+!results/calibration/spp51_syncfloor_rung/hourly/**

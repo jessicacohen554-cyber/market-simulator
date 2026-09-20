@@ -3649,3 +3649,120 @@ cannot reach it, and now for **two** reasons — the correction changes sign bet
 **Still open, unchanged by this lane:** SPP's 2023–2025 bench parts read STALE at HEAD (keeper
 years; a promotion-level act needing its own PRECOMMIT), and PJM's 8.8 TWh missing from its 2025
 ACTUAL through the `_EIA860_SUPPLEMENT_ISOS` gap.
+
+## spp-51 — 2026-09-20 — R-bc killed at phase 0; the thermal min-load floor PROMOTED as keeper 13
+
+**Base `608cb21f`. PROMOTED BY OWNER RULING in-session, verbatim: "Promote then Archive your stale
+shards and give me a handoff prompt."** Incoming keeper **`2026-09-20-spp-51-coal-sync`**
+(`spp51_syncfloor_span`, 2023–2025, **CALIBRATED**, one ledgered C3c caveat) with
+**`2026-09-20-spp-51-syncfloor-rung`** (`spp51_syncfloor_rung`, 2019–2022, NOT-YET) stamped to it.
+Keeper 12 (`2026-09-16-spp-42-commitment-feasibility`) and the SPP-49 rung pruned. **The lane
+RECOMMENDED promotion and did NOT act until the ruling** (rule 31 `[R-RETAIN]`). LP: **7 shards ×
+2 legs (control + arm), one shard per year 2019–2025** (rules 32 `[R-SHARD]` / 36
+`[R-YEAR-ISOLATION]`); the parent ran none. Record:
+`docs/handoffs/RESULT-spp-51-coal-sync-floor-2026-09-20.md`; PRECOMMIT + window ADDENDUM pushed
+BEFORE any solve (`f80de3e1`, `0a7f5c06`); probes `scripts/probes/_spp51_*.py`; composition
+`_spp51_compose_span.py`; attestation `scripts/gen_spp51_attestation.py`.
+
+**`R-bc` AS CHARTERED IS DEAD, AND NO LP WAS SPENT PROVING IT.** A per-hour wind constraint row
+`W[z,t] <= K[z,t]` defines the IDENTICAL feasible region as lowering the bound, so its dual never
+enters the energy-balance price: it is the SPP-63 ceiling renamed. The only wind-side row whose dual
+DOES reach lambda is a cross-hour energy budget, which fails rule 13 `[R-MEASURED]`'s forward test
+(it forces 9.65 % curtailment whatever the net load does) and moves the price the WRONG way.
+
+**THE CHARTER'S PRICE PREMISE WAS INVERTED BY MEASUREMENT.** The model has **3–6× too FEW**
+negative-price hours, not too many: 2025 model 176 vs **1,018** actual RT (2024: 225 vs 1,172).
+Hour-matched, inside the market's OWN negative hours the model prices **+$9.74..+$16.88**. The
+SPP-63 ceiling took 167 → **0**, away from the market. The defect is sharper than "coal goes to
+zero": the model's oversupply regime is **too narrow and too deep** (41–290 h/yr of total collapse
+to exactly −26.000) where the market's is **broad and shallow** (~1,000 h, coal holding 8.1–17.5 %
+of its own max).
+
+**THE OBJECT IS SPP'S MISSING THERMAL MIN-LOAD FLOOR** — which SPP-51c had already root-caused
+("the binding limb is R-2, the thermal-commitment floor") — armed through two EXISTING, measured,
+default-off gates, `coal_mustrun_online_pmin` + `coal_sync_srmc_tranche`, whose own flag help reads
+*"so coal holds at its measured synchronization floor instead of price-following to zero"*. **ZERO
+new fields, ZERO new free parameters** (machine-confirmed: `build_dof_ledger.py --iso SPP` emits
+**5 entries / 3 residual**, the same five names as keeper 12's), **ZERO code changed, SPP-only**, and
+`offer_curve_by_group` **byte-identical** (SHA-256 `090abd79…`) so the rule-1 authorized channel was
+not touched. Rule 19 `[R-ONE-MECH]`: SPP's **FIRST** commitment floor — the control bundles carry no
+`coal_mustrun` D-2 row at all — and **12 of 24 SPP coal plants carried NO min-load band**
+(`mustrun_pct` = 0.0) while CAMPD says every one holds 7.9–60.0 % of nameplate when synchronized;
+band 2,855.2 → 4,090.3 MW. Rule 23: `thermal_tranches_SPP.csv` is READ, never regenerated.
+
+**WHAT IT BUYS, arm vs its OWN same-HEAD control, seven years:** **C3a |error| better in 6 of 7**
+(2022 −0.9 % → −4.4 % the lone regression); **C3b better in 6 of 7** (2025 **0.196 → 0.159**, off
+the edge of its 0.20 band; 2021 0.213 → 0.245 the regression); **negative-price hours roughly
+DOUBLE** (+129 to +268); **slack FALLS** wherever non-zero (2024 1,295.7 → 802.8 MWh); dump stays
+**0.000**; and **the zero-coal collapse is ELIMINATED, 41–290 h/yr → 0 in EVERY year**. **No
+criterion flips status in either direction, in any year.**
+
+**WHAT IT COSTS, on the record rather than buried.** It closes only **4.4 %** of the −8.400 TWh
+fossil miss. **The coal comes from GAS, not from wind**: mean coal **+2.205 TWh** against mean wind
+**−0.350 TWh** — 84 % of the gain is displaced gas, and SPP's +10.144 TWh wind excess moves **3.4 %**
+(exactly 0.000 in 2019), so the `vre_reference_rate_curtailment_grossup` object stays **OPEN**.
+`ST_GAS` gets WORSE in all seven years, and summed |C1 error| RISES in 2021/2022/2025 — exactly the
+three years COAL_PRB was already LONG. Under rule 1 `[R-STRUCT]` none of this is disqualifying and
+the mechanism was chartered on the fleet fact, not the residual; it is promoted on that ground.
+
+**THE REPAIR IS INCOMPLETE AND IS REPORTED AS SUCH**: the arm's coal minimum reaches **0.15–2.53 %**
+of its own annual max against the real fleet's **8.1–17.5 %**. It removes the IMPOSSIBLE state
+without reproducing the OBSERVED one. Successor **R-bd**: the floor's top-k window is ranked on
+system **LOAD** (`fleet/arrays.py:2884-2903`; no SPP plant reaches the 0.99 `_COAL_SYNC_FORCE_ALL`
+override, so the aggregate floor is 0.840 GW in the lowest-load decile and **0.000 GW** at the
+bottom); the physically right driver is **NET** load, which regenerates forward. NOT done here —
+that function is shared and PJM/MISO runs arm this family (rule 25 `[R-ISO-SCOPE]`).
+
+**C8 / rule 20:** D-2 `coal_mustrun` forced share **4.41–17.69 %** against the 30 % merchant cap;
+D-2's `passed` verdict is IDENTICAL in control and arm in every year (2022 fails in BOTH —
+pre-existing). Class under budget, so no `D4_WINDOWS` entry is owed.
+
+**TWO OF THIS LANE'S OWN PREDICTIONS WERE WRONG AND ARE SCORED AS SUCH.** P-1 understated the coal
+gain by **2.6×** (+0.849 predicted, +2.205 measured, outside the stated range in every year). And
+the window ADDENDUM **revised a CORRECT prediction into an incorrect one** — it argued more negative
+hours was "now doubtful, possibly ~0 change" and that the zero-coal hours would "largely REMAIN";
+they doubled and went to zero. The error was conflating **load** rank with **net-load** rank: SPP's
+oversupply hours are low-NET-load, and most are ordinary MID-load hours sitting well inside the
+window. The addendum's measurement was right; its inference was not. What survives is the LEVEL
+finding, which is R-bd.
+
+**FREE RESULT, AND SPP OWED IT: THE RULE 36(f) CONTAMINATION IN SPP IS ZERO.** control
+(year-isolated, HEAD) − keeper (committed, multi-year, warm-start ON) is **0.0000 TWh** in 2019–2022
+and **±0.0028 TWh** in 2023–2025, a pure `COAL_PRB ↔ COAL_LIGNITE` reclassification summing to
+0.0000. This simultaneously bounds **HEAD drift** — 8,701 changed lines across 62 solve-path files
+move SPP's backcast by nothing — so rule 29(b) form 4 **would** have been valid and SPP's keeper
+needed no re-solve on rule 36's account. The seven control legs bought certainty unobtainable at
+zero LP given that drift, plus the measurement rule 36(f) flags as UNMEASURED; recorded as
+unnecessary in hindsight rather than quietly dropped.
+
+**Census reproduction (phase-0 item 1):** all four legs of
+`_spp50_curtailment_headroom_census.py` reproduce EXACTLY on SPP at this base. ONE number moved and
+it is not SPP's — leg D's MISO row (mean fossil −16.566 → **−18.157**), traced to MISO promoting
+`2026-09-19-miso-263-coal-ceiling` between the two bases. Another ISO's lane doing its job (rule 25:
+reported, not acted on).
+
+**PROMOTION MECHANICS (rule 35 `[R-PROMOTE]`), in the prescribed order.** (b) Year union
+**2019–2025** enumerated BEFORE any prune. (e) Incoming keeper registered and verified present,
+`audit_keepers --iso SPP` run between promotion and prune. (a) Keeper 12 and the SPP-49 rung pruned
+via `prune_iso_runs.py --iso SPP --force-uncite` — the **intended** route per 35(d), since both were
+"protected" only by deliberate HISTORICAL citations in `calibration-complete.json` and
+`keepers/SPP.json` which 35(d) says the delete must not rewrite. `audit_keepers --iso SPP` then
+**0 failures / 0 warnings**. Rule 28: SPP's `coal_mustrun_per_plant` cell **U → K**, and the SPP
+keeper/gates stamp plus the §5.7 prose header re-stamped in this session.
+
+**TWO PLUMBING DEFECTS HIT AND FIXED IN-SESSION, recorded so the next lane does not rediscover
+them.** (1) `dashboard_add_run.py --label "... rung"` slugs to the SAME id as the span (the 4-word
+cap drops "rung"), so the rung's registration **silently overwrote the keeper's sidecar and
+payload** — the documented `pjm-97` collision class. Re-registered as `spp-51 syncfloor rung`.
+(2) A composed bundle carries no `calibration_attestation.json` (replay_keeper does not propagate
+it) and no `shared_inputs` the parent can resolve; C6 scored **UNATTESTED** and `build_payload`
+raised on a `None` path. Both fixed at zero LP by `run_calibration_full.py --rebuild-benchmark`
+followed by `gen_spp51_attestation.py`.
+
+**Shards (rule 33 `[R-SHARD-ARCHIVE]`):** all EIGHT archived after the parent fetched, checked out
+and verified every bundle (config signature + `dispatch/<year>_P1.parquet` present via
+`git ls-tree`, rule 34(d)). One 2020 shard stalled idle between its legs and never pushed; it was
+relaunched and completed. Recovery by immutable SHA: `claude/spp51-2019` `f2d4626ffed6866b5e92aaacbaed1b8235d02a34`,
+`-2020` `762e90ddec7bb9097d7a45e5fcc5102deee82a06`, `-2021` `3d039cbfc160e1a9a3083df4b2f3d6f8c7990820`,
+`-2022` `c54547cae01ab358feafb8d1687d8e72ef43762c`, `-2023` `bffc45f93de50c13aafeb89312e602035cf86b4f`,
+`-2024` `395ce757ad14ab59bb0862d0a04abea888810ab2`, `-2025` `d3afa88d54acba652100bbad8ea6fffc9e8773c3`.

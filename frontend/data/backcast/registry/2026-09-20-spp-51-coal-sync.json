@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-20-spp-51-coal-sync",
+  "label": "spp 51 coal sync",
+  "date": "2026-09-20",
+  "shorthand": "spp-51-coal-sync",
+  "definition": "SPP-51 ARM: coal measured online-Pmin synchronization floor",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "SPP",
+  "file": "frontend/data/backcast/runs/2026-09-20-spp-51-coal-sync.js",
+  "bundle": "results/calibration/spp51_syncfloor_span"
+}
