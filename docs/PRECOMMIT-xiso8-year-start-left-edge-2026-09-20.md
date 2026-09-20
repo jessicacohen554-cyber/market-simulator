@@ -244,3 +244,62 @@ Stated before the solve so it cannot be written to fit the result:
 A gate that *fails to improve* is **not** on this list. The repair's warrant is rule 14, and
 caiso-288's own ruling stands: structural integrity may improve while gates regress and the run can
 still be a keeper.
+
+---
+
+## 9. ADDENDUM — REBASED ONTO `471d8006`, AND WHY THE IN-FLIGHT LEGS STILL COMPOSE
+
+The lane was rebased onto `origin/main` **after** the four shards had been
+launched, so the legs are solving at `e7091f56869d8eb190f9fb8f58e25c72aa97d405`
+(the pre-rebase pin) while the lane's HEAD is now `1df89075`. That is a second
+G-DRIFT question — *not* the one §4 answered — and it is audited here rather
+than assumed.
+
+**Rebase mechanics.** Two conflicts, both pure additive collisions, both
+resolved by keeping **both** sides:
+
+* `scenarios.py` — SPP-66 landed `commitment_floor_window_netload` at the same
+  "shared fields at the very end" insertion point (HOUSE-3) that this lane used
+  for `gas_flow_date_year_start_package`, in both `_CACHE_KEY_OPTIONAL_FIELDS`
+  and `_CACHE_KEY_OPTIONAL_FIELD_DEFAULTS`. Both fields are registered.
+* `mechanism-matrix.js` — 65 blocks, **every one of which differs from main's
+  only in digits** (verified programmatically by stripping `\d+` from both sides
+  and comparing: 0 blocks differed by anything else). These are `--fix-anchors`
+  line-number drift, nothing more, so main's side was taken and the anchors
+  recomputed against the rebased `scenarios.py`. This lane's own matrix row sat
+  **outside** every conflict block and merged clean.
+
+**G-DRIFT, `e7091f56` → `1df89075`, on the backcast path.** Five files changed;
+every hunk classifies **INERT for a CAISO `mode="backcast"` run**:
+
+| file | change | classification |
+|---|---|---|
+| `data/fleet/arrays.py` | SPP-66 hoists the four floor sites' `sys_load` into one `_window_shape` | **INERT** — at `commitment_floor_window_netload=False` the resolver falls through to `load_shape` and evaluates the *identical* expression. Checked for the one way a hoist can change semantics: `load_shape` is never reassigned or mutated between the four sites. |
+| `runner.py`, `scripts/run_calibration.py` | build `_floor_netload_shape` | **INERT** — built only inside `if getattr(config, "commitment_floor_window_netload", False)`, else `None`, which is the fallback. |
+| `pipeline/backcast_config.py` | NWPP-44's `coal_takeorpay_from_data` / `coal_committed_takeorpay_regulated` | **INERT** — ISO-gated to `MISO`/`NWPP`. Verified by call: CAISO gets `False`/`False`, MISO `True`/`False`, NWPP `True`/`True`. Another ISO's branch, exactly the class rule 29 `[R-SCREEN]` (b) names. |
+| `config/scenarios.py` | SPP-66's + NWPP-44's field declarations and registries | **INERT** — all default-off or ISO-gated. |
+
+**The mechanical confirmation, which is stronger than the reading.** The CAISO
+cache keys are **byte-identical across the rebase** — backcast default
+`c831d560bf965030`, armed `a8e3a7ced83ee791`, forecast default
+`a0df8107e52d825f`. Since capx D79 the cache key *carries the per-ISO
+solve-surface fingerprint*, so an unmoved key means the CAISO-projected surface
+did not move either (206 rows, digest `9a4b0222f52cef03`). **The legs solved at
+`e7091f56` are therefore valid against `1df89075` and compose without a
+re-solve.**
+
+**Re-verified after the rebase:** the mechanism reproduces its footprint
+unchanged (3/3/2/2 days at +1.43 / −8.35 / −0.47 / −0.22 $/MMBtu); the 17
+xiso-8 + blackout-bridge cases pass; the matrix diff gate reads *"1 new field(s)
+all registered"*; and the suite carries the **same 6 pre-existing failures as
+clean main** (2,786 passed — up from 2,780 because main itself added tests).
+Every band in §5 is computed from the keeper's committed hourlies and is
+unaffected by the rebase.
+
+**One pre-existing gate failure is NOT this lane's** and is recorded so it is not
+mistaken for one: `scripts/check_cache_key_registration.py` reports
+`PPA_COST_RECOVERY_YR` and `REGIONAL_RENEWABLE_CF` as solve-surface names with no
+`DECLARED` entry. Reproduced on clean `origin/main` before any edit of this
+lane's; it arrived with the `build_mac_sidecar` reporting constants. Left for the
+owning lane rather than silently fixed from here, since the remedy writes a
+shared declaration file a parallel lane may also be touching.
