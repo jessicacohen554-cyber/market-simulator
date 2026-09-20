@@ -2754,6 +2754,28 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             if outage_overlay == config.historic_outage_overlay
             else config.with_overrides(historic_outage_overlay=outage_overlay)
         )
+        # NET-load window series for the commitment floors
+        # (config.commitment_floor_window_netload, SPP-66, owner ruling "Shared
+        # gate" 2026-09-20). Built ONLY when the gate is armed, so an unarmed
+        # run performs exactly the array work it did before and every committed
+        # bundle in every ISO is byte-identical; unarmed, the floor composer
+        # receives None and keeps its system-load window.
+        #
+        # Same construction as the six existing net-load sites in this file --
+        # demand less AVAILABLE wind/solar -- so no new scalar is introduced
+        # (rules 21 [R-DOF] / 24 [R-REGISTRY]). It is the MODEL's own
+        # capacity x CF, never measured VRE output, so it regenerates for a
+        # forecast year off the evolved fleet (rule 13 [R-MEASURED]).
+        # ``solar_cf``, not ``year_solar_cf``: the latter is first assigned well
+        # below this point, and three of the six existing sites likewise read
+        # the un-derated series.
+        _floor_netload_shape = None
+        if getattr(config, "commitment_floor_window_netload", False):
+            _floor_netload_shape = (
+                year_base_demand.sum(axis=0)
+                - (np.asarray(wind_cap, dtype=float)[:, None] * wind_cf).sum(axis=0)
+                - (np.asarray(solar_cap, dtype=float)[:, None] * solar_cf).sum(axis=0)
+            )
         fleet_arrays = generators_to_fleet_arrays(
             dispatch_fleet,
             zone_names,
@@ -2761,6 +2783,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             iso=iso,
             config=fleet_config,
             load_shape=year_base_demand.sum(axis=0),
+            netload_shape=_floor_netload_shape,
             year=year,
         )
         # Replace flat offshore-wind availability with a derived hourly
