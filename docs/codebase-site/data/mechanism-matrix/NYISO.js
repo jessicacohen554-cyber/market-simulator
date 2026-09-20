@@ -165,14 +165,14 @@ window.MECH_MATRIX_SHARDS.NYISO = {
     f923_gas_price_plausibility_screen: { cell: "I", ev: "SPP-49 (2026-09-08) \u2014 LANDED repo-wide, default ON; measured INERT on the NYISO keeper (zero LP, nyiso-213 rebuilt on both trees): 5 of 101 gas plants own-report, 60 / 60 / 59 plant-months, EVERY ONE in band \u2014 0 fuel rows moved in all three years. Seam 2: 2 CT_PEAKER rows / 3.7 MW at one small simple-cycle plant (2024\u201325; 0 in 2023). Key moves by design (an armed backcast); inputs byte-identical on the F923 seam." },
     caiso_citygate_blackout_bridge: { cell: "U", ev: "caiso-288 introduced this CAISO-scoped field (2026-09-20). The SAME EIA publication blackout exists in this ISO own daily gas series (the NGWU holiday skip is nationwide), but rule 25 [R-ISO-SCOPE] forbids carrying a verdict across ISOs: this cell enters UNTESTED and its lane derives its own evidence. Byte-identical here today -- the flag is read only at data/fuel/hubs.py::_caiso_hub_daily_gas_prices." },
     caiso_citygate_spot_coverage: { cell: ".", ev: "n/a — the flag extends the CAISO-only caiso_citygate_spot_level leg; NYISO's daily leg is gas_hub_basis_daily (Transco Z6 NY)." },
-    measured_offer_surface: { cell: "G", ev: "nyiso-115 (ex-ante transfer adjudication, 0 solves; scripts/probes/_nyiso115_transfer_queue_adjudication.py -> results/calibration/nyiso115_transfer_queue_adjudication.json)" },
+    measured_offer_surface: { cell: "U", ev: "G -> U 2026-09-20 (nyiso-243, 0 solves): RE-OPENED ON THE REFUSAL'S OWN STATED CONDITION. nyiso-115 refused this cell verbatim 'Re-openable only by a NEW NYISO offer-data source, which is what new evidence would mean for this cell under rule 28a', on the premise 'There is no offer or bid artifact for NYISO anywhere under data/raw/'. That premise is superseded: NYISO MIS P-27 masked generator bid data (submitted 12-block curves, monthly archive back to 1999) is intaken at data/raw/nyiso-bid-data, 2022-2025, scripts/data/fetch_nyiso_bid_data.py. Measured and admissible-looking: in the 70 missed winter hours of 2022 the fleet offered 4,986 MW above $300 vs 1,953 MW in ordinary winter hours, rising monotonically with the DAY-AHEAD price (3,833 -> 4,561 -> 9,328 -> 10,183 MW across DA > $100/150/200/300) -- a forward-reproducible conditioning driver, rule 13. U NOT K: nothing armed, nothing screened, no solve. Open blocker before any build: the corpus is MASKED (no class/fuel/zone), and rule 19 reconciliation against the armed gas_offer_net_revenue_margin is owed FIRST. docs/RESULT-nyiso243-the-tail-is-not-an-availability-object-2026-09-20.md sections 4-6" },
     miso_offer_level_dispersion: { cell: ".", ev: "MISO-only adjudication of a MISO-corpus identification (the masked *_co conduct book). Each ISO's across-unit offer-level object is its own identification from its own disclosure corpus (rule 25) — this market's offer-conduct candidates live on its own offer-surface family rows; a dispersion-form candidate here would enter as its own cell with its own derive." },
     miso_offer_spread_anchored: { cell: ".", ev: "MISO-only graft of a MISO-corpus identification (the committed miso-179 BOOK-ELIG vector + the miso-180 H*-crossing anchor). Rule 25: the verdict never transfers; a spread-graft candidate in this ISO enters as its own cell with its own identification from its own disclosure corpus." },
     pjm_midcurve_belt: { cell: "." },
     coal_passthrough_sigmoids: { cell: "K" },
     coal_econ_bound: { cell: "." },
     coal_offer_net_revenue_margin: { cell: "." },
-    cc_committed_offer_margin: { cell: "G", ev: "nyiso-115 (ex-ante transfer adjudication, 0 solves; scripts/probes/_nyiso115_transfer_queue_adjudication.py -> results/calibration/nyiso115_transfer_queue_adjudication.json)" },
+    cc_committed_offer_margin: { cell: "G", ev: "nyiso-115 (ex-ante transfer adjudication, 0 solves; scripts/probes/_nyiso115_transfer_queue_adjudication.py -> results/calibration/nyiso115_transfer_queue_adjudication.json). STAYS G, annotated 2026-09-20 (nyiso-243): the refusal has two legs and only one is superseded. NYISO offer data now EXISTS (P-27, data/raw/nyiso-bid-data) -- but this mechanism needs a PER-CLASS, PER-UNIT curve bottom and P-27 is masked with no class, fuel or zone, so the identification leg still fails. Honestly still refused, not merely stale. Contrast measured_offer_surface, which needs a distribution rather than a unit and is therefore re-opened to U" },
     coal_peak_offer_margin: { cell: "." },
     coal_perplant_offer_level: { cell: "." },
     coal_offer_level_rebasis: { cell: "." },
@@ -966,3 +966,16 @@ window.MECH_MATRIX_SHARDS.NYISO = {
  * docs/handoffs/FINDING-capx-d56r-nyiso-redeclaration-2026-09-05.md.
  */
 /* 2026-09-16 nyiso-237: hydro_budget_period_by_instrument U -> R (G2 kill root-caused to the 2022-23 Upstate_West <= $0 fabrication; repair hypothesis refuted on the EIA-930 meter; RESULT-nyiso237-hydro-negative-price-phase0-2026-09-16.md). keeper: field re-stamped 2026-09-13-nyiso-232-st-gas -> 2026-09-14-nyiso-235-gas-repair (the gates: stamp already carried nyiso-235). Keeper UNCHANGED, zero LP. */
+/* 2026-09-20 nyiso-243: measured_offer_surface G -> U, re-opened on the
+ * refusal's OWN stated condition (nyiso-115: "Re-openable only by a NEW NYISO
+ * offer-data source"). NYISO MIS P-27 masked generator bid data intaken
+ * (data/raw/nyiso-bid-data, 2022-2025, 48 archives), which supersedes that
+ * refusal's premise "no offer or bid artifact for NYISO anywhere under
+ * data/raw/". cc_committed_offer_margin STAYS G, annotated: it needs a
+ * per-unit curve bottom and P-27 is masked. NO MECHANISM WAS TESTED and no
+ * verdict cell moves on a test -- what was tested is a data source's
+ * identification power, and its pre-registered kill test REFUSED the
+ * availability hypothesis it was intaken for (the fleet offered MORE capacity
+ * in the extreme-price hours, not less). Keeper UNCHANGED, zero LP, no shard.
+ * Records: docs/PRECOMMIT-nyiso243-outage-intake-kill-test-2026-09-20.md,
+ * docs/RESULT-nyiso243-the-tail-is-not-an-availability-object-2026-09-20.md. */
