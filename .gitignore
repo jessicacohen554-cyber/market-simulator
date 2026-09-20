@@ -2961,3 +2961,22 @@ results/calibration/soco54_arm_20[0-9][0-9]/
 
 # nyiso-245: zero-LP fleet-array cache (rule 31 [R-RETAIN]: gitignored, never rm'd)
 results/calibration/_nyiso245_cache/
+
+# xiso-8 (2026-09-20) per-year SHARD LEGS. Rule 32 [R-SHARD] (d): per-year shard
+# bundle dirs are KEPT OUT OF `main` — the parent fetches them, composes, and
+# commits only the composite (`xiso8_leftedge_span`). An unregistered per-year
+# dir left committed is the exact Class-E parity RED rule 29 [R-SCREEN] (c)
+# forbids. Ignored rather than deleted, per rule 31 [R-RETAIN]: ".gitignore is
+# what discharges the delete-before-merge duty, not `rm`".
+# Each leg's FULL bundle (incl. dispatch/<year>_P1.parquet) was pushed on its own
+# shard branch under rule 34 [R-SHARD-PROMOTABLE] (a). Provenance by immutable
+# SHA — NOT a recovery route (rule 33 [R-SHARD-ARCHIVE] (d): a shard branch is
+# transport and is cut when this lane's PR merges; cost any leg recovery as a
+# RE-SOLVE):
+#   2022 fcd389610f31662f3042ddd4da91aa200ff399d3
+#   2023 054570b8e3c41987f2364bff3f83481fb5975b95
+#   2024 8117470282ef6a2ab55ed667d1e425368bc9a20b
+results/calibration/xiso8_leftedge_2022/
+results/calibration/xiso8_leftedge_2023/
+results/calibration/xiso8_leftedge_2024/
+results/calibration/xiso8_leftedge_2025/
