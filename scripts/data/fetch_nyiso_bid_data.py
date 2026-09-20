@@ -60,7 +60,8 @@ Usage::
 
     python3 scripts/data/fetch_nyiso_bid_data.py --years 2022 2025
     python3 scripts/data/fetch_nyiso_bid_data.py --years 2022 --months 1 2 12
-    python3 scripts/data/fetch_nyiso_bid_data.py --years 2022 --checksums
+    python3 scripts/data/fetch_nyiso_bid_data.py --verify      # recovery check
+    python3 scripts/data/fetch_nyiso_bid_data.py --checksums   # REWRITES the record
 """
 
 from __future__ import annotations
@@ -135,13 +136,81 @@ def fetch_month(year: int, month: int, *, force: bool = False) -> Path | None:
     return dest
 
 
-def write_checksums(directory: Path = GENBIDS_DIR) -> Path:
-    """Write ``SHA256SUMS.txt`` over the corpus — the tracked identity record."""
-    lines = []
-    for path in sorted(directory.glob("*.zip")):
-        digest = hashlib.sha256(path.read_bytes()).hexdigest()
-        lines.append(f"{digest}  {path.name}")
+def _digests(directory: Path) -> dict[str, str]:
+    """SHA256 of every archive on disk, keyed by file name."""
+    return {
+        path.name: hashlib.sha256(path.read_bytes()).hexdigest()
+        for path in sorted(directory.glob("*.zip"))
+    }
+
+
+def _read_record(directory: Path) -> dict[str, str]:
+    """The tracked identity record, keyed by file name; empty if absent."""
+    record = directory / "SHA256SUMS.txt"
+    if not record.exists():
+        return {}
+    out: dict[str, str] = {}
+    for line in record.read_text().splitlines():
+        parts = line.split()
+        if len(parts) == 2:
+            out[parts[1]] = parts[0]
+    return out
+
+
+def verify_checksums(directory: Path = GENBIDS_DIR) -> bool:
+    """Compare the archives on disk against the tracked record. No writes.
+
+    This is what a RECOVERY wants: the corpus payload is gitignored
+    (corpus-conversion class), so ``SHA256SUMS.txt`` is the only committed
+    statement of what the bytes were, and a re-fetch is only trustworthy if it
+    reproduces it. Prints every discrepancy and returns True iff the on-disk
+    corpus matches the record exactly.
+    """
+    record = _read_record(directory)
+    if not record:
+        print("SHA256SUMS.txt: absent — nothing to verify against")
+        return False
+    disk = _digests(directory)
+    missing = sorted(set(record) - set(disk))
+    extra = sorted(set(disk) - set(record))
+    mismatched = sorted(k for k in set(record) & set(disk) if record[k] != disk[k])
+    for name in missing:
+        print(f"  {name}: MISSING from disk")
+    for name in extra:
+        print(f"  {name}: on disk but NOT in the record")
+    for name in mismatched:
+        print(f"  {name}: HASH MISMATCH (upstream bytes changed)")
+    ok = not (missing or extra or mismatched)
+    print(
+        f"verify: {len(record)} recorded, {len(disk)} on disk — "
+        + ("all byte-identical" if ok else "DRIFT — see above")
+    )
+    return ok
+
+
+def write_checksums(directory: Path = GENBIDS_DIR, *, force: bool = False) -> Path:
+    """Write ``SHA256SUMS.txt`` over the corpus — the tracked identity record.
+
+    **Refuses to shrink the record unless ``force``.** The record is TRACKED
+    while the payload is gitignored, so it is the corpus's only committed
+    identity. A partial fetch (``--years 2022 --months 1``) would otherwise
+    silently truncate a 48-entry record to one entry and destroy the thing a
+    later recovery must verify against — measured in session nyiso-248, which
+    hit exactly this on a single-month connectivity probe.
+    """
+    disk = _digests(directory)
+    existing = _read_record(directory)
+    dropped = sorted(set(existing) - set(disk))
     out = directory / "SHA256SUMS.txt"
+    if dropped and not force:
+        print(
+            f"SHA256SUMS.txt: NOT REWRITTEN — {len(dropped)} recorded archive(s) "
+            f"are absent from disk (first: {dropped[0]}). Refusing to shrink the "
+            f"tracked identity record; fetch them, or pass --force-checksums if "
+            f"the corpus scope really did shrink."
+        )
+        return out
+    lines = [f"{digest}  {name}" for name, digest in disk.items()]
     out.write_text("\n".join(lines) + ("\n" if lines else ""))
     print(f"SHA256SUMS.txt: {len(lines)} entries")
     return out
@@ -149,7 +218,7 @@ def write_checksums(directory: Path = GENBIDS_DIR) -> Path:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--years", type=int, nargs="+", required=True)
+    parser.add_argument("--years", type=int, nargs="+")
     parser.add_argument(
         "--months",
         type=int,
@@ -165,11 +234,28 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Only (re)write SHA256SUMS.txt over what is already on disk.",
     )
+    parser.add_argument(
+        "--verify",
+        action="store_true",
+        help="Compare the corpus on disk against the tracked SHA256SUMS.txt "
+        "and report any drift. Writes nothing; this is the recovery check.",
+    )
+    parser.add_argument(
+        "--force-checksums",
+        action="store_true",
+        help="Allow --checksums to SHRINK the tracked identity record.",
+    )
     args = parser.parse_args(argv)
 
+    if args.verify:
+        return 0 if verify_checksums() else 1
+
     if args.checksums:
-        write_checksums()
+        write_checksums(force=args.force_checksums)
         return 0
+
+    if not args.years:
+        parser.error("--years is required unless --verify or --checksums is given")
 
     ok = 0
     failed: list[str] = []
