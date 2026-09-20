@@ -25,6 +25,11 @@ marginal cost over 72 hours in 2023**, through a code path shared with MISO. The
 is now **inert in 2022 and 2023** and reaches only the two Thanksgiving weeks caiso-288's G-DUP
 guard deliberately refuses.
 
+> **Read §7 before acting on any of this.** §§1–6 are the finding as measured. The owner ruled
+> the same day, and two of the three rulings are already executed in this session: the flag's two
+> channels are **separated** (so the confound below is fixed — the underlying left-edge *defect*
+> is not, and is now its own cross-ISO object), and the `caiso279` bundle is **pruned**.
+
 ---
 
 ## 1. G-FILL re-run: the construction still wins, on 3,382 more withheld days
@@ -129,13 +134,20 @@ way. That is an **outcome, not the reason**, and it is not why this is being rep
 reason is that the construction contradicts the repo's own stated flow-date semantics. Per rule
 1 `[R-STRUCT]` the direction of the residual is not evidence either way.
 
-### Why this lane did not fix it
+### Two different repairs, and only one of them is this lane's
 
-`_flow_date_staircase` is **shared**: `data/fuel/basis/miso.py` builds both the MISO citygate
-and the Chicago daily series through it, and `scripts/data/derive_miso_gas_variable_transport.py`
-calls it too. Correcting the left edge is therefore a **cross-ISO, solve-affecting** change that
-would move MISO's keeper as well as CAISO's. A CAISO lane does not get to make that call
-unilaterally — it is routed, not taken. **Nothing in this session changes solve behaviour.**
+**The CONFOUND and the DEFECT are separate problems**, and conflating them is how a CAISO
+mechanism ends up buying a shared convention change:
+
+* **The confound** — that *one flag moves two things* — is a rule 19 `[R-ONE-MECH]` violation
+  local to the bridge's own branch. **Fixed in this session** under the owner's ruling; see §7(2).
+  Byte-identical everywhere, because no committed run arms the flag.
+* **The defect** — that *the left edge is built from a look-ahead print* — is live on the
+  **unbridged** path that every run actually takes. `_flow_date_staircase` is **shared**:
+  `data/fuel/basis/miso.py` builds both the MISO citygate and the Chicago daily series through
+  it, and `scripts/data/derive_miso_gas_variable_transport.py` calls it too. Correcting it is a
+  **cross-ISO, solve-affecting** change that moves MISO's keeper as well as CAISO's, so a CAISO
+  lane does not take it in passing. **Opened as its own object** by the owner's ruling; see §7(1).
 
 ## 5. A seventh pre-existing test failure, now repaired
 
@@ -156,32 +168,99 @@ pass.
 
 ## 6. What changed on disk
 
-Documentation, tests and one probe. **No solve-affecting line**, no `ScenarioConfig` default, no
-constant, no threshold, no offer-curve multiplier; the DOF ledger is untouched at 9/6 and no
-registered run's score moves.
+Two commits. The first is **documentation, tests and one probe — no solve-affecting line at
+all**. The second carries the owner's rulings (§7): the channel separation, which is
+**byte-identical in every committed run because none arms the flag**, and the caiso279 prune.
+No `ScenarioConfig` default, constant, threshold or offer-curve multiplier moves in either; the
+DOF ledger is untouched at 9/6 and **no registered run's score changes**.
 
 * `scripts/probes/caiso288_blackout_census.py` — G-CENSUS now prints the histogram its docstring
-  always promised; G-FOOT289 added; JSON sidecar emitted.
+  always promised; G-FOOT289 added; JSON sidecar emitted; explicit re-merge warning on column (B).
 * `src/market_sim/data/fuel/hubs.py` — histogram block, `_basis_bridge_blackouts` G-FILL figures
-  and `_flow_date_staircase`'s false byte-identity claim, all restated with provenance.
+  and `_flow_date_staircase`'s false byte-identity claim, all restated with provenance; **and the
+  bridged branch narrowed to blackout interiors only** (§7(2)).
 * `src/market_sim/config/scenarios.py` — the field comment's stale 35-gap / 33,216-day / Dec-2022
-  evidence restated, and the confound named at the gate.
-* `tests/iso/caiso/test_caiso288_blackout_bridge.py` — §5.
-* `docs/codebase-site/data/mechanism-matrix/CAISO.js` — cell `O` → `I` (rule 28 `[R-MECH-MATRIX]`
-  duty b).
+  evidence restated; the confound named at the gate and then marked resolved, with the re-screen
+  left open.
+* `tests/iso/caiso/test_caiso288_blackout_bridge.py` — §5, plus the separation guards. 5 → 8 cases.
+* `docs/codebase-site/data/mechanism-matrix.js` + `.../mechanism-matrix/CAISO.js` — base row and
+  CAISO cell restated (rule 28 `[R-MECH-MATRIX]` duty b); cell stays `O`, because the mechanism
+  has still never been adjudicated by a solve. Matrix anchors re-fixed after the `scenarios.py`
+  comment shifted 76 of them by 27 lines.
+* `results/calibration/caiso279_ablate_dswcouple_span/` — **deleted**, 34 files (§7(3)).
 
-## 7. OPEN — for the owner
+## 7. OWNER RULINGS, 2026-09-20 — and what this session did with them
 
-1. **The left-edge repair (§4).** Cross-ISO and solve-affecting: CAISO **and** MISO. Worth
-   −$62.12/MWh of CC marginal cost over 72 h of 2023 on the CAISO side alone; MISO's exposure is
-   unmeasured. Route it as its own object, or leave it documented and inert?
-2. **`caiso_citygate_blackout_bridge` (§3).** Post-repair it is worth ~11 days each in 2024/2025
-   and nothing in 2022/2023. Recommendation: **do not arm it for CAISO price work** until the
-   §4 confound is separated out — otherwise arming a CAISO mechanism silently buys a shared
-   convention change. The construction itself is sound (§1) and the field can stay default-off
-   on main at no cost.
-3. **Still unruled from caiso-286/287/288:** `results/calibration/caiso279_ablate_dswcouple_span`
-   is a CAISO parity RED on main (34 committed files, unmapped to any sidecar). One
-   `prune_iso_runs.py` call. Four sessions have now asked.
-4. **Still unruled:** the `caiso_ra_bridge_startup_aware` 42–60 % drop-rate admissibility
-   question (caiso-287 §5) — a rules 1/13 question, not a lane's to decide.
+All three were put to the owner at the end of this session and all three were ruled the same
+day. Two are **executed here**; one is opened for a successor.
+
+### (1) The left-edge repair → **OPEN IT AS ITS OWN CROSS-ISO OBJECT**
+
+Not taken by this lane, as the ruling directs. What the successor inherits, already measured:
+
+* **The defect.** `_flow_date_staircase` back-fills each year's opening flow days from that
+  year's **first January trade**, when the repo's own flow-date convention (trade on T prices
+  flow on T+1; Friday's trade covers the holiday-extended package) says the **previous
+  December's last trade** priced them. 2023-01-01..03 currently burn **$23.66/MMBtu** (the
+  2023-01-03 trade, which had not happened and prices 01-04's flow) instead of **$15.31** (the
+  2022-12-30 trade).
+* **The size, CAISO side.** +$10.64/MWh of CC marginal cost over 72 h in 2022; **−$62.12/MWh
+  over 72 h in 2023**; −$3.50 and −$1.64 in 2024/2025. Per-year table in §4.
+* **The scope.** Cross-ISO. `data/fuel/basis/miso.py` builds the MISO citygate **and** the
+  Chicago daily series through the same function, and
+  `scripts/data/derive_miso_gas_variable_transport.py` calls it. **MISO's exposure is
+  unmeasured** — measuring it is the successor's first zero-LP step, and the harness to do it
+  with is G-FOOT289's decomposition, pointed at MISO's dated map.
+* **The shape it needs.** A `ScenarioConfig` gate (rule 24 `[R-REGISTRY]`), so existing keepers
+  keep their cache keys and the repair can be screened A/B. Rule 34
+  `[R-SHARD-PROMOTABLE]` (c): CAISO carries 2022–2025 and MISO 2020–2025, so a full arm is
+  **ten** one-year shards (rule 36 `[R-YEAR-ISOLATION]`), each pushing its whole bundle.
+* **The basis, stated so it cannot drift.** Rule 14 `[R-ACCURATE]`, on the source convention.
+  The 2023 residual is +3.796 % (model high) and this pushes gas down at the start of 2023 —
+  **that is an outcome, not the reason**, and rule 1 `[R-STRUCT]` makes the direction of the
+  residual evidence for nothing.
+
+### (2) `caiso_citygate_blackout_bridge` → **SEPARATE THE CHANNELS, THEN RE-SCREEN**
+
+**The separation is DONE, in this session.** `_flow_date_staircase`'s bridged branch no longer
+reindexes onto the multi-year series wholesale; it contributes **only this year's
+blackout-interior days**, and every other day — the left edge included — is built exactly as
+the unbridged branch builds it (rule 19 `[R-ONE-MECH]`: one mechanism per flag).
+
+* **Byte-identical everywhere.** Zero committed runs arm the flag (`grep` over
+  `results/**/run_config.json` returns 0), so no registered score moves and no cache key changes.
+* **Measured after the change:** G-FOOT289's left-edge column is now **zero in every year**,
+  2018–2026, and the bridge column is **unchanged** (2022: 0, 2023: 0, 2024: 11, 2025: 11).
+* **Guarded**, so it cannot silently re-merge: `test_the_flag_moves_blackout_interiors_and_
+  nothing_else` asserts every day the flag moves, in every year, is a blackout interior; and
+  `test_separation_left_2022_and_2023_untouched` pins the headline no-op. The probe prints an
+  explicit regression warning if column (B) is ever non-zero again.
+* **The re-screen is NOT done and is the open half.** The flag's remaining footprint is 11 days
+  each in 2024/2025 and nothing in 2022/2023, so a screen would be measuring a small effect in
+  two years — worth stating in its PRECOMMIT before anyone spends four shards on it.
+
+### (3) `caiso279_ablate_dswcouple_span` → **PRUNE IT**
+
+**Done, in this session.** Removed via `git rm -r` — 34 tracked files, 272 MB.
+`prune_iso_runs.py` could not reach it: that script prunes *registered* runs by sidecar, and this
+bundle is **unmapped**, which is precisely what the parity gate flagged; the gate's own stated
+remedy for an unmapped dead bundle is `git rm -r`, with the PRECOMMIT/FINDING record carrying its
+numbers and git history carrying the bytes (rules 15 `[R-DASHBOARD]`, 29 `[R-SCREEN]` (c)).
+Checked before deleting: no citation in `keepers/*.json`, `calibration-complete.json`,
+`results/regression-goldens/*/manifest.json` or `KEEP_REQUIRED_UNMAPPED_BUNDLES` — only
+`docs/` FINDING/RESULT records, which rule 35 `[R-PROMOTE]` (d) says are the audit trail and are
+not touched. Rule 31 `[R-RETAIN]` trigger (i) is satisfied: the owner ruled.
+**CAISO unmapped bundle dirs: 1 → 0.** The SPP dirs the gate also lists are the SPP lane's and
+were not touched (per-ISO scope).
+
+## 8. Still open, and NOT this session's to decide
+
+* **`caiso_ra_bridge_startup_aware`'s 42–60 % drop rate** (caiso-287 §5): its anchor test prices
+  runs off the model's own P0 duals, the circularity `scenarios.py:12824` already refused for
+  ERCOT. A rules 1 `[R-STRUCT]` / 13 `[R-MEASURED]` admissibility question. Unruled; nothing here
+  arms or disarms it.
+* **The p0_* sidecars** are gone from the CAISO keeper (caiso-288 §5). The next keeper re-solve
+  should pass `--persist-p0-dispatch` — write-only and byte-identical.
+* **caiso-275's unrepaired physical miss** (belly gas deficit, reversed seam direction) stands. A
+  volume/structure object, not a price lever: caiso-288 phase 0 measured the belly carrying only
+  **3.6 %** of the 2022 price gap.

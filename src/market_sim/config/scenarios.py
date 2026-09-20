@@ -9086,13 +9086,23 @@ class ScenarioConfig:
     #      move 11 days each (+$1.47 / +$2.91 of CC marginal cost) — the two
     #      Thanksgiving weeks the caiso-288 G-DUP guard refuses. Nineteen of the
     #      21 remaining blackouts are 2018-2020.
-    # AND IT IS CONFOUNDED: the same flag silently switches the year-start
-    # left-edge convention in _flow_date_staircase (see that function's
-    # docstring), a channel that is NOT this mechanism and fires with no
-    # blackout near. In 2022 and 2023 that channel is the flag's ENTIRE effect
-    # (+$10.64 and -$62.12/MWh of CC marginal cost, 72 h each). Arming this
-    # field as it stands therefore buys a cross-ISO convention change under a
-    # CAISO mechanism's name; the two need separating first.
+    # IT WAS ALSO CONFOUNDED, AND IS NOT ANY MORE. The same flag used to
+    # silently switch the year-start left-edge convention in
+    # _flow_date_staircase (see that function's docstring) — a channel that is
+    # NOT this mechanism and fired with no blackout near, and which in 2022 and
+    # 2023 was the flag's ENTIRE effect (+$10.64 and -$62.12/MWh of CC marginal
+    # cost, 72 h each). OWNER RULING 2026-09-20: separate the channels, then
+    # re-screen. Executed by caiso-289 — the bridged branch now contributes only
+    # blackout-interior days, so arming this field buys this mechanism and
+    # nothing else. Byte-identical everywhere (zero committed runs arm it);
+    # guarded by test_the_flag_moves_blackout_interiors_and_nothing_else and by
+    # G-FOOT289's left-edge column, which must read ZERO.
+    # THE LEFT-EDGE DEFECT ITSELF IS STILL LIVE on the unbridged path every run
+    # takes, and is a SEPARATE cross-ISO object by the same ruling (the function
+    # is shared with MISO): 2023-01-01..03 flow was priced by the 2022-12-30
+    # trade at $15.31 and the model burns $23.66 there.
+    # RE-SCREEN STATUS: not yet screened post-separation. Its remaining
+    # footprint is 11 days each in 2024/2025 and nothing in 2022/2023.
     caiso_dsw_surplus_clean: bool = False  # Carry the MEASURED surplus-hour
     # WEIM clean import depth on the south (Palo Verde / Path-46) corridor
     # (caiso-87; FINDING-caiso82 §3 "measured clean DEPTH" lane;

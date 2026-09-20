@@ -189,34 +189,56 @@ def test_december_2022_is_measured_not_bridged() -> None:
     assert (delta[delta.index.month == 11] == 0.0).all()
 
 
-def test_the_flag_also_switches_the_year_start_left_edge() -> None:
-    """caiso-289: arming the bridge changes a SECOND thing that is not the
-    bridge — the year-start left-edge convention — and in 2022/2023 that second
-    channel is its ENTIRE effect.
+def test_the_flag_moves_blackout_interiors_and_nothing_else() -> None:
+    """caiso-289 (owner ruling 2026-09-20): THE CHANNELS ARE SEPARATED — the
+    flag must move blackout interiors and NOT the year-start left edge.
 
+    Arming the bridge used to change a SECOND thing that is not the bridge.
     Unbridged, flow days before a year's first print ``.bfill()`` from that
-    year's first JANUARY trade; bridged, they ``.ffill()`` from the previous
-    DECEMBER's last trade, because the reindex spans all years. This test pins
-    the confound so it cannot be silently "fixed" as a bridge regression: the
-    days that move in 2022 and 2023 are OUTSIDE every blackout interior.
+    year's first JANUARY trade; the old bridged branch reindexed straight onto
+    the multi-year series, so they ``.ffill()`` from the previous DECEMBER's
+    last trade instead. That fired with no blackout near and was the flag's
+    ENTIRE effect in 2022 (+$10.64/MWh of CC marginal cost) and 2023
+    (−$62.12/MWh), 72 h each.
+
+    Every day the flag moves must now be a blackout interior day, in EVERY
+    year. A failure here means the two channels have been re-merged — which is
+    a regression in this function, not a finding about the bridge. (The
+    left-edge defect is real and is repaired as its own cross-ISO object; see
+    docs/FINDING-caiso289-the-bridge-flag-carries-two-mechanisms-2026-09-20.md.)
     """
     dated = _caiso_citygate_daily_dated(None)
     hh = _committed_hh()
     interior = _blackout_interior_days(dated)
+    checked = 0
+    for year in sorted(dated):
+        off = _flow_date_staircase(dated[year], year)
+        on = _flow_date_staircase(dated[year], year, dated, hh)
+        if off is None or on is None:
+            continue
+        idx = pd.date_range(f"{year}-01-01", f"{year}-12-31", freq="D")
+        idx = idx[~((idx.month == 2) & (idx.day == 29))]
+        moved = set(idx[~np.isclose(on - off, 0.0, atol=1e-12)])
+        assert not (moved - interior), (
+            f"{year}: the flag moved {sorted(d.date() for d in moved - interior)}, "
+            "which are not blackout interiors — the left-edge channel is back"
+        )
+        checked += 1
+    assert checked, "no year was checked"
+
+
+def test_separation_left_2022_and_2023_untouched() -> None:
+    """The separation's headline: with no blackout left in either year, arming
+    the flag is a complete no-op in 2022 and 2023."""
+    dated = _caiso_citygate_daily_dated(None)
+    hh = _committed_hh()
     for year in (2022, 2023):
         if year not in dated:
             pytest.skip(f"no committed {year} citygate prints")
         off = _flow_date_staircase(dated[year], year)
         on = _flow_date_staircase(dated[year], year, dated, hh)
         assert off is not None and on is not None
-        idx = pd.date_range(f"{year}-01-01", f"{year}-12-31", freq="D")
-        idx = idx[~((idx.month == 2) & (idx.day == 29))]
-        moved = idx[~np.isclose(on - off, 0.0, atol=1e-12)]
-        assert len(moved), f"{year} should move at the left edge"
-        # Not one of them is a blackout interior day: this is not the bridge.
-        assert not (set(moved) & interior)
-        # And they are all at the very start of the year.
-        assert (moved.month == 1).all() and (moved.day <= 5).all()
+        assert np.array_equal(off, on)
 
 
 def test_bridge_is_inert_in_2022_and_2023_over_the_repaired_series() -> None:

@@ -285,8 +285,19 @@ for y in sorted(ca):
     print(f"  {y:>5} | {ta} | {tb}")
     AUDIT["footprint_by_year"][str(y)] = {"bridge_interiors": ra, "left_edge": rb}
 
-print("\n  (A) is the mechanism. (B) is a convention change the flag carries "
-      "silently.\n  In 2022 and 2023 the flag's ENTIRE effect is (B) — (A) is zero days.")
+print("\n  (A) is the mechanism. (B) is the year-start left-edge convention, "
+      "which is NOT the mechanism.")
+if any(v["left_edge"] for v in AUDIT["footprint_by_year"].values()):
+    print("  (B) IS NON-ZERO: the flag is carrying two mechanisms. In 2022 and 2023 "
+          "(B) is\n  its ENTIRE effect (+$10.64 and -$62.12/MWh of CC marginal cost, "
+          "72 h each).")
+else:
+    print("  (B) is ZERO in every year — THE CHANNELS ARE SEPARATED "
+          "(caiso-289, owner ruling\n  2026-09-20). The flag now does only (A). "
+          "Before the separation it also moved\n  3 days of 2022 (+$10.64/MWh of CC "
+          "marginal cost) and 3 of 2023 (-$62.12/MWh),\n  with no blackout anywhere "
+          "near them. If (B) is ever non-zero again, the two\n  channels have been "
+          "re-merged — that is a regression, not a bridge finding.")
 
 OUT.parent.mkdir(parents=True, exist_ok=True)
 OUT.write_text(json.dumps(AUDIT, indent=1) + "\n")
