@@ -42,6 +42,49 @@ from NWPP's own CAMPD record with zero free parameters. The question dissolves:
 **Zero free parameters, and none were needed**: the shares are the committed artifact's
 own measured values. Derived, not chosen.
 
+### 1.1 "BINNING" IS VESTIGIAL VOCABULARY — nothing on NWPP's path is aggregated
+
+Raised by the owner, 2026-09-20: *"Wait why are we doing any binning? Each thermal
+plant is its own bin."* Correct, and it is why the charter's framing misled three
+lanes. **Three different things wear the word "bin" and only ONE aggregates:**
+
+| call | what it actually does | NWPP coal LP units |
+|---|---|---|
+| `aggregate_fleet(n_bins=None)` | the **only** real binning — group by `(fuel, efficiency_bin, zone)` | **9** |
+| `aggregate_fleet(n_bins=0 \| "unit")` | explicitly **no** aggregation, one LP unit per physical generator | **30** |
+| `fleet_to_bins` → `bins_to_fleet` | one row per `(plant, group)`, then **SPLIT into ≤5 offer tranches** | **76** |
+
+So the "CAMPD per-plant binning" path **tranches; it does not bin.** It makes the LP
+**2.5× wider** (30 → 76 coal columns), not narrower. A "bin" there is just *one
+plant's offer-curve row* — the unit of the rising offer curve, never a bucket of
+pooled plants. "Give NWPP per-plant binning" therefore reads as a granularity
+upgrade when NWPP already had per-plant granularity **and** the tranche split.
+
+**Where real binning DOES still survive for NWPP: the forecast path.** `runner.py`
+**never reads `plant_level_fleet`** — that field is consulted in exactly two places
+on any solve path, both in `scripts/run_calibration.py` (3855, 3918), the backcast.
+So a forecast NWPP run reaches `aggregate_fleet(n_bins=config.heat_rate_bin_count)`
+with the default `None` and **collapses coal to the 9 heat-rate-bin units**. That is
+the real content of owner ruling N8 / gate G21, and it is latent only because NWPP
+has no forecast lane (card N9). The original justification for aggregating at all
+was LP width (200+ columns → ~36); measured here, the per-plant tranche fleet is
+**641 LP units** and fits with room to spare, so that justification no longer holds
+for this ISO.
+
+### 1.2 A FOURTH record error: the attestations say the tranche artifact is not read
+
+`gen_nwpp42_attestation.py:455` states `use_campd_bins` *"reads True in the config
+and is INERT … so the fleet takes the legacy aggregate_fleet path with
+plant_level_fleet=True"*, and the NWPP-40 / NWPP-41 versions add *"thermal_tranches_
+NWPP.csv is not read."* **Both are false.** The artifact is read, it is a **gate
+condition** (`thermal_tranche_overrides(iso)` at `run_calibration.py:3856`), and its
+per-plant `committed_pct` / `mustrun_pct` are what set the keeper's coal tranche
+shares — Hunter's 22.3 % in the CSV is the 303.9 MW of 1,363 MW must-run in the
+fleet. Those attestations **understate what the keeper depends on**: a regeneration
+of `thermal_tranches_NWPP.csv` would move the keeper, which the attestation says it
+cannot. Recorded here rather than rewritten in place — another lane's attestation is
+not this lane's to edit.
+
 ---
 
 ## 2. (b) Owner ruling N8 / gate G21 — NO REVISION IS NEEDED, because it is already inert here
