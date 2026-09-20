@@ -233,6 +233,7 @@ window.MECH_MATRIX_SHARDS.PJM = {
     solar_deliverability: { cell: "." },
     vre_avg_cf_level: { cell: "." },
     vre_curtailment_oversupply_allocation: { cell: ".", ev: "n/a: PJM is not in _UNCURTAILED_FALLBACK_ISOS — its backcast wind/solar keep the delivered EIA-930 PJM hourly profile (delivered_pinned), so there is no reference-rate gross-up for this mechanism to re-allocate. Row minted SPP-51c (2026-09-09), rule 28(c)." },
+    vre_reference_rate_year_own: { cell: ".", ev: "n/a: PJM is not in _UNCURTAILED_FALLBACK_ISOS -- its backcast wind/solar keep the delivered EIA-930 profile, no rate is formed, and this gate cannot fire here." },
     spp_curtailment_ceiling: { cell: ".", ev: "n/a for this ISO at HEAD -- spp_curtailment_ceiling gates on iso == 'SPP' in every consumer (data.renewables, scripts/run_calibration.py, runner.py) and its share table is SPP's own RTBM binding-constraint derive, so there is no object here to arm. Not a verdict; rule 25 [R-ISO-SCOPE] means a verdict in SPP would never fill this cell either. Row minted SPP-58 (2026-09-10) per rule 28(c)." },
     vre_reference_rate_curtailment_grossup: { cell: ".", ev: "n/a: PJM is not in _UNCURTAILED_FALLBACK_ISOS; backcast wind/solar keep the delivered EIA-930 PJM hourly profile (delivered_pinned). Row minted miso-206 (rule 28c)." },
     vre_market_generator_basis: { cell: "." },

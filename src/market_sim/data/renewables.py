@@ -887,20 +887,36 @@ def _spp_wind_reference_curtailment_rate() -> tuple[float, int] | None:
     Returns ``None`` when the table is missing, unreadable, or carries no
     training-year row with both legs present.
     """
-    if not _SPP_WIND_CURTAILMENT_ANNUAL.exists():
+    rates = _spp_wind_annual_rates()
+    window = {y: r for y, r in rates.items() if y in _SPP_REFERENCE_RATE_YEARS}
+    if not window:
         return None
+    return sum(window.values()) / len(window), max(window)
+
+
+def _spp_wind_annual_rates() -> dict[int, float]:
+    """Return ``{year: curtailed / (delivered + curtailed)}`` for every paired year.
+
+    The single parser behind BOTH SPP rate readers — the training-window mean
+    (:func:`_spp_wind_reference_curtailment_rate`) and the per-year lookup
+    (:func:`_spp_wind_year_own_curtailment_rate`) — so the two can never form
+    the rate on different conventions. A year appears only when the table
+    carries BOTH average-MW legs for it with a non-negative value.
+    """
+    if not _SPP_WIND_CURTAILMENT_ANNUAL.exists():
+        return {}
     try:
         table = pd.read_csv(_SPP_WIND_CURTAILMENT_ANNUAL)
     except (OSError, ValueError):
-        return None
+        return {}
     if not {"year", "metric", "value"} <= set(table.columns):
-        return None
+        return {}
     legs: dict[int, dict[str, float]] = {}
     _pos = {name: i for i, name in enumerate(table.columns)}
     _i_year, _i_metric, _i_value = _pos["year"], _pos["metric"], _pos["value"]
     for row in table.itertuples(index=False, name=None):
         year = _as_int(row[_i_year])
-        if year is None or year not in _SPP_REFERENCE_RATE_YEARS:
+        if year is None:
             continue
         metric = str(row[_i_metric]).strip()
         if metric not in (_SPP_CURTAILED_METRIC, _SPP_DELIVERED_METRIC):
@@ -909,8 +925,7 @@ def _spp_wind_reference_curtailment_rate() -> tuple[float, int] | None:
         if value is None or value < 0.0:
             continue
         legs.setdefault(year, {})[metric] = value
-    rates: list[float] = []
-    latest_year = 0
+    rates: dict[int, float] = {}
     for year, leg in legs.items():
         curtailed = leg.get(_SPP_CURTAILED_METRIC)
         delivered = leg.get(_SPP_DELIVERED_METRIC)
@@ -919,11 +934,53 @@ def _spp_wind_reference_curtailment_rate() -> tuple[float, int] | None:
         potential = delivered + curtailed
         if potential <= 0.0:
             continue
-        rates.append(curtailed / potential)
-        latest_year = max(latest_year, year)
-    if not rates:
-        return None
-    return sum(rates) / len(rates), latest_year
+        rates[year] = curtailed / potential
+    return rates
+
+
+def _spp_wind_year_own_curtailment_rate(year: int) -> tuple[float, int] | None:
+    """Return ``(rate, year)`` — SPP's OWN published wind curtailment rate for ``year``.
+
+    The ``vre_reference_rate_year_own`` leg (SPP-67). Identical construction and
+    identical source rows to :func:`_spp_wind_reference_curtailment_rate` — the
+    shared parser :func:`_spp_wind_annual_rates` — except the window is the ONE
+    year being solved instead of :data:`_SPP_REFERENCE_RATE_YEARS`.
+
+    **Why this exists.** ``_SPP_REFERENCE_RATE_YEARS`` is restricted to
+    2023-2025 for one stated reason and one only: *"the structural rate must
+    never read a validation or locked-test year (SPP's table also carries 2019
+    and 2022 rows, both holdout years)"*. Rule 22 ``[R-HOLDOUT]`` — the rule
+    that made a year "holdout" — was **REMOVED** by owner instruction on
+    2026-09-09 (CLAUDE.md rule 22 coda), so the exclusion now rests on nothing.
+    The excluded rows are SPP MMU ASOM figures already committed in the same
+    table, from the same source documents, on the same average-MW basis; rule 14
+    ``[R-ACCURATE]`` says to prefer them over an estimate standing in for them.
+
+    **How wrong the estimate is, measured** (SPP-67 phase 0): SPP's own
+    published 2019 rate is 1.59 %, against the 9.65 % training-window mean the
+    reference path applies to it — a factor of 6.1, worth 6.98 TWh of phantom
+    wind potential in that year alone. For 2023/2024/2025 the mean is within
+    1.3 % of each year's own rate, so this reader barely moves the keeper's own
+    span — and moves TWO of its three years ADVERSELY, which is the signature of
+    a measured operand rather than a fitted one (rule 1 ``[R-STRUCT]``).
+
+    **Zero free parameters** (rule 21 ``[R-DOF]``): no constant is introduced, no
+    value is chosen, and the rate is a ratio of two published measurements.
+    **Forward-native** (rule 13 ``[R-MEASURED]``): a forecast year has no
+    published rate, so it falls straight back to the reference-rate path, which
+    remains THE forecast construction — this reader can only ever fire in a year
+    SPP has already published, exactly as an F923 delivered fuel price or a
+    CAMPD outage window can. It is also strictly CLOSER to the construction
+    :func:`_forecast_uncurtailed_cf` names as its own reference (the CAISO HSL
+    parquet, built from the year's OWN measured curtailment) than the
+    cross-year mean it replaces.
+
+    Returns ``None`` when SPP published no rate for ``year`` — 2020 and 2021,
+    where the ASOM prints only the 2019 and 2022 endpoints of the span — so
+    those years keep the reference-rate path untouched.
+    """
+    rate = _spp_wind_annual_rates().get(int(year))
+    return None if rate is None else (rate, int(year))
 
 
 # Per-(ISO, fuel) providers of a measured ANNUAL reference curtailment rate, for
@@ -942,6 +999,50 @@ _ANNUAL_REFERENCE_RATE_PROVIDERS: dict[
 ] = {
     ("SPP", "wind"): _spp_wind_reference_curtailment_rate,
 }
+
+
+# Per-(ISO, fuel) providers of the SOLVE YEAR'S OWN published curtailment rate,
+# consulted ONLY under ``vre_reference_rate_year_own`` (SPP-67) and ONLY before
+# the reference-rate path, which is otherwise untouched. A registry rather than
+# a branch, for the same rule-24 ``[R-REGISTRY]`` reason as its neighbour above:
+# a new ISO registers a callable, and an ISO with no entry — or a year its ISO
+# never published — falls through to the reference rate with no behaviour change.
+_YEAR_OWN_RATE_PROVIDERS: dict[
+    tuple[str, str], Callable[[int], tuple[float, int] | None]
+] = {
+    ("SPP", "wind"): _spp_wind_year_own_curtailment_rate,
+}
+
+
+def _curtailment_rate_for_year(
+    iso: str,
+    fuel: str,
+    year: int,
+    year_own: bool,
+) -> tuple[float, int] | None:
+    """Return the curtailment rate the gross-up should use for ``(iso, fuel, year)``.
+
+    The SINGLE seam both uncurtailed-potential constructions
+    (:func:`_forecast_uncurtailed_cf`, :func:`_oversupply_uncurtailed_cf`) read
+    their rate through, so ``vre_reference_rate_year_own`` moves ONE object and
+    can never half-apply (rule 19 ``[R-ONE-MECH]``).
+
+    With ``year_own`` False — the dataclass default, and every run before
+    SPP-67 — this is EXACTLY :func:`_reference_curtailment_rate`, so every
+    existing keeper replays byte-identical. With it True the year's OWN
+    published rate is preferred where the ISO published one
+    (:data:`_YEAR_OWN_RATE_PROVIDERS`), and every other ISO-fuel-year is
+    unchanged. See :func:`_spp_wind_year_own_curtailment_rate` for why the
+    year-own rate is the more accurate input (rule 14 ``[R-ACCURATE]``) and why
+    it is forward-native (rule 13 ``[R-MEASURED]``).
+    """
+    if year_own:
+        provider = _YEAR_OWN_RATE_PROVIDERS.get((iso, fuel))
+        if provider is not None:
+            own = provider(int(year))
+            if own is not None:
+                return own
+    return _reference_curtailment_rate(iso, fuel)
 
 
 def _reference_curtailment_rate(iso: str, fuel: str) -> tuple[float, int] | None:
@@ -995,6 +1096,7 @@ def _forecast_uncurtailed_cf(
     year: int,
     fuel: str,
     monthly_capacity: np.ndarray,
+    year_own_rate: bool = False,
 ) -> np.ndarray | None:
     """Return an uncurtailed CF profile for a no-HSL backcast year, or ``None``.
 
@@ -1027,7 +1129,7 @@ def _forecast_uncurtailed_cf(
     delivered_cf = _eia_hourly_cf_profile(iso, year, fuel, monthly_capacity)
     if delivered_cf is None:
         return None
-    rate_info = _reference_curtailment_rate(iso, fuel)
+    rate_info = _curtailment_rate_for_year(iso, fuel, year, year_own_rate)
     if rate_info is None:
         return None
     rate, _ = rate_info
@@ -1094,6 +1196,7 @@ def _oversupply_uncurtailed_cf(
     fuel: str,
     monthly_capacity: np.ndarray,
     iso_config: ISOConfig,
+    year_own_rate: bool = False,
 ) -> np.ndarray | None:
     """Return an OVERSUPPLY-allocated uncurtailed CF profile, or ``None``.
 
@@ -1130,7 +1233,7 @@ def _oversupply_uncurtailed_cf(
     array, a clock-length mismatch, or capped headroom too small to hold the
     annual energy.
     """
-    rate_info = _reference_curtailment_rate(iso, fuel)
+    rate_info = _curtailment_rate_for_year(iso, fuel, year, year_own_rate)
     if rate_info is None:
         return None
     rate, _ = rate_info
@@ -2988,19 +3091,32 @@ def load_renewable_profiles(
                     # two can never both be live in one solve, whatever a recipe
                     # asks for. The ceiling itself is applied downstream, on the
                     # CF upper bound (data.curtailment_share).
+                    #
+                    # SPP-67: ``vre_reference_rate_year_own`` chooses WHICH
+                    # measured rate the gross-up is built from -- the solve
+                    # year's own published rate where the ISO published one,
+                    # else the reference rate exactly as before. It is
+                    # ORTHOGONAL to the allocation question above (that decides
+                    # WHERE the energy lands; this decides HOW MUCH there is),
+                    # so it is threaded into both constructions rather than
+                    # branching beside them, and default-off it is a no-op in
+                    # every ISO (rule 25 [R-ISO-SCOPE]).
                     measured_cf = None
                     _spp_ceiling = iso == "SPP" and getattr(
                         config, "spp_curtailment_ceiling", False
                     )
+                    _year_own = getattr(config, "vre_reference_rate_year_own", False)
                     if (
                         getattr(config, "vre_curtailment_oversupply_allocation", False)
                         and not _spp_ceiling
                     ):
                         measured_cf = _oversupply_uncurtailed_cf(
-                            iso, year, fuel, monthly, iso_config
+                            iso, year, fuel, monthly, iso_config, _year_own
                         )
                     if measured_cf is None:
-                        measured_cf = _forecast_uncurtailed_cf(iso, year, fuel, monthly)
+                        measured_cf = _forecast_uncurtailed_cf(
+                            iso, year, fuel, monthly, _year_own
+                        )
                 if measured_cf is None:
                     # Every other ISO (and the high-curtailment ISOs when no
                     # reference rate exists) keeps the delivered EIA-930 profile.
