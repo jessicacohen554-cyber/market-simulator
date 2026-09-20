@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-20-pjm-h13-meritalloc-touchpoint",
+  "label": "pjm h13 meritalloc touchpoint",
+  "date": "2026-09-20",
+  "shorthand": "pjm-h13-meritalloc-touchpoint",
+  "definition": "pjm-h13 ARM: netload_drag_merit_allocation on the PJM keeper recipe, 2020",
+  "years": [
+    2020,
+    2021,
+    2022
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-09-20-pjm-h13-meritalloc-touchpoint.js",
+  "bundle": "results/calibration/pjm_h13_meritalloc_touchpoint"
+}

@@ -6297,3 +6297,73 @@ would register stays until the owner rules). `.gitignore` keeps them out of `mai
 full-SHA recovery lines. **Nothing was `rm`'d.** Cell `mustrun_commitment_feasibility_clip` **U → R**
 in PJM's matrix shard (rule 28(b)); rules 25/28(d) — PJM's cell only, SPP-42's identification
 untouched.
+
+## pjm-h13 — 2026-09-20 — the ST_GAS net-load drag is an ALLOCATION defect; the merit swap takes D-4 drag failures 12 → 5 and the determination holds at CALIBRATED
+
+**Record:** `docs/RESULT-pjm-h13-the-drag-is-an-allocation-defect-2026-09-20.md`.
+**Charter:** `docs/handoffs/PRECOMMIT-pjm-h13-2026-09-20.md` + `ADDENDUM-pjm-h13-presolve` +
+`ADDENDUM2-pjm-h13-g2-disambiguation`, all pushed **before any arm result existed**.
+**Method:** six shards, **one year each** (rule 36 `[R-YEAR-ISOLATION]`), ARM-ONLY at pinned SHA
+`ed3f5efd`, **zero LP in the parent** (rule 32(a)); composed at zero LP by
+`pjm_h11_compose_span.py` with `legitimacy_diagnostics.json` **regenerated over each composite**.
+
+**NO CONTROL SOLVES — six solves, not twelve.** G-DRIFT over `65ab6205..HEAD` classified every hunk
+INERT for PJM (`constants.py` NWPP rows only; `scenarios.py` **zero executable lines**; `hubs.py`
+one hunk inside the `caiso_citygate_blackout_bridge` branch, flag absent on both PJM bundles), so
+form 4 held. **pjm-h12's correction #1 was right** and it halved this lane's LP.
+
+**The queued lever was adjudicated at ZERO LP and NOT taken.** The missing PJM lay-up census was
+built from the **frozen** nyiso-140 criterion (separation textbook: 10 plants at 18/18 zero cells,
+nearest non-qualifier at 14/18) and is committed. It selects 2393 Gilbert and 10751 Camden from the
+keeper's D-4 failures and **independently declines** 7153, 10308 and 59220 (cyclers and a workhorse,
+P(on) 0.39–0.59). But its footprint is **0.027 TWh over six years** — 24 % of the D-4 failure ROWS,
+**0.6 % of the failing ENERGY**. Correct and sub-marginal; cell stays `U`, re-stamped with the
+measurement, arming it later is a one-flag change. Measuring it is what localised the real mass.
+
+**Delta:** `netload_drag_merit_allocation` (ercot-259) **False → True** on the keeper's own recipe
+via `replay_keeper.py --set` — **zero code change, zero scalars, zero free parameters** (frozen
+tranche capacities, the fleet's own bid heat rates), DOF ledger carried verbatim, rule 19 clean,
+**forward-native**.
+
+**The defect, from the incumbent keeper's own committed diagnostics, never a residual:** the
+pro-rata drag floors **exactly four plants** of an 8.95 GW ST_GAS fleet; **3131 Shawville** and
+**3138 New Castle** read a measured median of **exactly 0.000 MW** over their own binding hours,
+while **3148 Martins Creek (1700 MW)** and **3149 Montour (1504 MW)** — the two largest, in no D-4
+skip list — carry **no floor at all**. 0.92 GW floored dark, 3.2 GW unfloored: the error runs both
+ways. This is the defect **pjm-177 recorded and did not take**.
+
+**Measured, six years, composed vs composed.** D-4 `st_netload_drag` FAIL **12 → 5** with **no
+increase in any year** (3→1, 2→2, 2→1, 1→0, 2→0, 2→1); `cc_mustrun_per_plant` **unchanged in all six
+years** (33→33), so nothing is traded away. **In 24 of 24 per-plant-year rows the share of floored
+hours whose meter reads zero FALLS**, and the median over those hours **rises in 19, never falls**.
+Pre-solve mandate identical to **0.0000 TWh** every year, verified before the solve.
+
+**Scored:** span 2023–2025 **CALIBRATED**, all eight criteria PASS, zero caveats, basis *"all
+criteria pass, governance attested"*. Touchpoint 2020–2022 **NOT-YET**, criterion-for-criterion
+identical to the incumbent's touchpoint. Max |Δ class TWh| 0.69–0.96/yr.
+
+**Reported at full magnitude.** (a) **G5 FAILED AS WRITTEN** — `ct_netload_drag`'s D-2 share moves
++0.031…+0.082 against a 0.005 bar, because **one flag governs both limbs** (`floors.py:570` /
+`:646`) and the gate scoped "other mechanism" by D-2 id rather than by FAMILY. A charter-scoping
+error by this lane, **disclosed and deliberately NOT amended** after the numbers landed; outside the
+drag family the largest move is **0.0007**. (b) T1 tripped — delivered forced energy rises (st
++12.0…+111.5 %, ct +21.9…+44.3 %); the mandate is unchanged, and **14 of 17 gaining plant-years PASS
+D-4**. (c) **3138 New Castle is the named residual defect** — still FAILS 2020–2022 and gains floor,
+the registered heat-rate-proxy weakness. (d) 3131 still fails 2021/2025; Martins Creek and Montour
+stay unfloored. (e) The defect is **invisible to every gate** (ST_GAS immaterial, C8 skips it even
+where the drag forces 30.8 % of the class), so the card is judgeable only on rules 17/1.
+(f) **This lane's own ex-ante prediction about 3138 was WRONG**, in the mechanism's favour.
+
+**METHOD NOTE a successor must not rediscover: per-year leg diagnostics are NOT comparable to a
+composed span.** D-4's `ct_only` vintage guard borrows flags across **sibling years in the bundle**
+— the control span's 2021 extended to 11 plants, a single-year leg to 8 — so 2393 and 7153 read as
+phantom new `cc_mustrun` failures on the legs and vanish on the composite. Always compose and
+regenerate the diagnostics over the composite before scoring anything.
+
+**PROMOTION IS OPEN (rule 31 `[R-RETAIN]`).** Both composites are registered
+(`2026-09-20-pjm-h13-meritalloc-span` / `-touchpoint`) and committed. This lane **recommends
+promotion on the structural merits** with G5's failure disclosed; the keeper
+`2026-09-19-pjm-h11-c1seam-span` **stands untouched** until the owner rules. PJM's year union
+{2020…2025} is covered exactly by the incoming pair (rule 35(b)/(c)). Six shards archived after
+fetch + checkout + verify (rule 33(a)); shard branches are transport and are cut when this PR
+merges, so any leg not on `main` costs a re-solve, not a checkout.

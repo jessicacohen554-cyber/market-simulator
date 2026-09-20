@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-20-pjm-h13-meritalloc-span",
+  "label": "pjm h13 meritalloc span",
+  "date": "2026-09-20",
+  "shorthand": "pjm-h13-meritalloc-span",
+  "definition": "pjm-h13 ARM: netload_drag_merit_allocation on the PJM keeper recipe, 2023",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-09-20-pjm-h13-meritalloc-span.js",
+  "bundle": "results/calibration/pjm_h13_meritalloc_span"
+}

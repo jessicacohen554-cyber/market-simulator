@@ -2994,4 +2994,9 @@ results/calibration/xiso8_leftedge_2025/
 #   git checkout 5de25972c8f5f310f01c4533672059ddf039b55b -- results/calibration/pjm_h13_meritalloc_2021
 #   git checkout fbcb8722fecc251cd94ab6f721bed6f3e800b935 -- results/calibration/pjm_h13_meritalloc_2023
 #   git checkout 03770897717e1ff825610fac66eadd5244dae99c -- results/calibration/pjm_h13_meritalloc_2024
-results/calibration/pjm_h13_meritalloc_*/
+results/calibration/pjm_h13_meritalloc_2020/
+results/calibration/pjm_h13_meritalloc_2021/
+results/calibration/pjm_h13_meritalloc_2022/
+results/calibration/pjm_h13_meritalloc_2023/
+results/calibration/pjm_h13_meritalloc_2024/
+results/calibration/pjm_h13_meritalloc_2025/
