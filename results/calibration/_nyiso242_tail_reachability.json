@@ -1,0 +1,298 @@
+{
+  "bundle": "results/calibration/nyiso241_ctcommitted_span",
+  "threshold": 300.0,
+  "years": {
+    "2022": {
+      "year": 2022,
+      "windows": {
+        "all_missed": {
+          "hours": 100,
+          "available_by_band_mw": {
+            "0-50": 234.2,
+            "50-100": 5496.0,
+            "100-200": 5593.3,
+            "200-300": 439.7,
+            "300-500": 731.8,
+            "500+": 80.8
+          },
+          "available_thermal_mw": 14606.0,
+          "dispatched_thermal_mw": 8954.9,
+          "utilisation_pct": 61.3,
+          "available_below_gate_mw": 13387.0,
+          "idle_below_gate_mw": 4432.1,
+          "idle_below_gate_pct_of_available": 30.3
+        },
+        "winter_missed": {
+          "hours": 70,
+          "available_by_band_mw": {
+            "0-50": 451.5,
+            "50-100": 2706.9,
+            "100-200": 4650.8,
+            "200-300": 1655.8,
+            "300-500": 687.1,
+            "500+": 107.0
+          },
+          "available_thermal_mw": 14596.1,
+          "dispatched_thermal_mw": 8526.4,
+          "utilisation_pct": 58.4,
+          "available_below_gate_mw": 13242.1,
+          "idle_below_gate_mw": 4715.7,
+          "idle_below_gate_pct_of_available": 32.3
+        },
+        "summer_missed": {
+          "hours": 23,
+          "available_by_band_mw": {
+            "0-50": 234.2,
+            "50-100": 9251.8,
+            "100-200": 8796.6,
+            "200-300": 81.9,
+            "300-500": 1202.7,
+            "500+": 51.5
+          },
+          "available_thermal_mw": 19618.9,
+          "dispatched_thermal_mw": 16632.0,
+          "utilisation_pct": 84.8,
+          "available_below_gate_mw": 18364.6,
+          "idle_below_gate_mw": 1732.7,
+          "idle_below_gate_pct_of_available": 8.8
+        },
+        "all_8760": {
+          "hours": 8760,
+          "available_by_band_mw": {
+            "0-50": 1067.0,
+            "50-100": 7817.7,
+            "100-200": 2524.3,
+            "200-300": 75.2,
+            "300-500": 389.3,
+            "500+": 51.5
+          },
+          "available_thermal_mw": 13008.3,
+          "dispatched_thermal_mw": 7082.8,
+          "utilisation_pct": 54.4,
+          "available_below_gate_mw": 12588.0,
+          "idle_below_gate_mw": 5505.3,
+          "idle_below_gate_pct_of_available": 42.3
+        }
+      }
+    },
+    "2023": {
+      "year": 2023,
+      "windows": {
+        "all_missed": {
+          "hours": 10,
+          "available_by_band_mw": {
+            "0-50": 12327.7,
+            "50-100": 5220.9,
+            "100-200": 1109.8,
+            "200-300": 16.1,
+            "300-500": 1.9,
+            "500+": 0.0
+          },
+          "available_thermal_mw": 18108.9,
+          "dispatched_thermal_mw": 14027.9,
+          "utilisation_pct": 77.5,
+          "available_below_gate_mw": 18106.9,
+          "idle_below_gate_mw": 4079.0,
+          "idle_below_gate_pct_of_available": 22.5
+        },
+        "winter_missed": {
+          "hours": 2,
+          "available_by_band_mw": {
+            "0-50": 8485.7,
+            "50-100": 6520.4,
+            "100-200": 832.6,
+            "200-300": 77.7,
+            "300-500": 2.1,
+            "500+": 0.0
+          },
+          "available_thermal_mw": 15918.5,
+          "dispatched_thermal_mw": 9122.5,
+          "utilisation_pct": 57.3,
+          "available_below_gate_mw": 15916.4,
+          "idle_below_gate_mw": 6793.8,
+          "idle_below_gate_pct_of_available": 42.7
+        },
+        "summer_missed": {
+          "hours": 2,
+          "available_by_band_mw": {
+            "0-50": 13555.5,
+            "50-100": 1097.3,
+            "100-200": 747.8,
+            "200-300": 16.1,
+            "300-500": 1.9,
+            "500+": 0.0
+          },
+          "available_thermal_mw": 15418.7,
+          "dispatched_thermal_mw": 10456.1,
+          "utilisation_pct": 67.8,
+          "available_below_gate_mw": 15416.8,
+          "idle_below_gate_mw": 4960.6,
+          "idle_below_gate_pct_of_available": 32.2
+        },
+        "all_8760": {
+          "hours": 8760,
+          "available_by_band_mw": {
+            "0-50": 10913.1,
+            "50-100": 1565.2,
+            "100-200": 565.8,
+            "200-300": 16.6,
+            "300-500": 2.0,
+            "500+": 0.0
+          },
+          "available_thermal_mw": 13793.6,
+          "dispatched_thermal_mw": 6728.4,
+          "utilisation_pct": 48.8,
+          "available_below_gate_mw": 13743.2,
+          "idle_below_gate_mw": 7014.8,
+          "idle_below_gate_pct_of_available": 50.9
+        }
+      }
+    },
+    "2024": {
+      "year": 2024,
+      "windows": {
+        "all_missed": {
+          "hours": 13,
+          "available_by_band_mw": {
+            "0-50": 15350.2,
+            "50-100": 1489.5,
+            "100-200": 1145.6,
+            "200-300": 47.7,
+            "300-500": 1.9,
+            "500+": 0.0
+          },
+          "available_thermal_mw": 18505.7,
+          "dispatched_thermal_mw": 15444.5,
+          "utilisation_pct": 83.5,
+          "available_below_gate_mw": 18503.8,
+          "idle_below_gate_mw": 3059.2,
+          "idle_below_gate_pct_of_available": 16.5
+        },
+        "winter_missed": {
+          "hours": 1,
+          "available_by_band_mw": {
+            "0-50": 11106.7,
+            "50-100": 2674.0,
+            "100-200": 602.6,
+            "200-300": 53.4,
+            "300-500": 2.1,
+            "500+": 0.0
+          },
+          "available_thermal_mw": 14438.8,
+          "dispatched_thermal_mw": 10248.1,
+          "utilisation_pct": 71.0,
+          "available_below_gate_mw": 14436.7,
+          "idle_below_gate_mw": 4188.6,
+          "idle_below_gate_pct_of_available": 29.0
+        },
+        "summer_missed": {
+          "hours": 9,
+          "available_by_band_mw": {
+            "0-50": 15383.2,
+            "50-100": 2282.6,
+            "100-200": 1256.7,
+            "200-300": 47.7,
+            "300-500": 1.9,
+            "500+": 0.0
+          },
+          "available_thermal_mw": 19284.6,
+          "dispatched_thermal_mw": 16294.1,
+          "utilisation_pct": 84.5,
+          "available_below_gate_mw": 19282.7,
+          "idle_below_gate_mw": 2988.6,
+          "idle_below_gate_pct_of_available": 15.5
+        },
+        "all_8760": {
+          "hours": 8760,
+          "available_by_band_mw": {
+            "0-50": 10845.3,
+            "50-100": 1328.8,
+            "100-200": 465.5,
+            "200-300": 33.3,
+            "300-500": 2.0,
+            "500+": 0.0
+          },
+          "available_thermal_mw": 13138.1,
+          "dispatched_thermal_mw": 7423.1,
+          "utilisation_pct": 56.5,
+          "available_below_gate_mw": 13133.0,
+          "idle_below_gate_mw": 5709.9,
+          "idle_below_gate_pct_of_available": 43.5
+        }
+      }
+    },
+    "2025": {
+      "year": 2025,
+      "windows": {
+        "all_missed": {
+          "hours": 39,
+          "available_by_band_mw": {
+            "0-50": 7861.8,
+            "50-100": 7041.9,
+            "100-200": 842.2,
+            "200-300": 1124.7,
+            "300-500": 47.7,
+            "500+": 1.9
+          },
+          "available_thermal_mw": 18507.4,
+          "dispatched_thermal_mw": 17330.8,
+          "utilisation_pct": 93.6,
+          "available_below_gate_mw": 18405.0,
+          "idle_below_gate_mw": 1074.2,
+          "idle_below_gate_pct_of_available": 5.8
+        },
+        "winter_missed": {
+          "hours": 6,
+          "available_by_band_mw": {
+            "0-50": 0.0,
+            "50-100": 1277.2,
+            "100-200": 9300.3,
+            "200-300": 1688.7,
+            "300-500": 862.3,
+            "500+": 55.5
+          },
+          "available_thermal_mw": 14727.2,
+          "dispatched_thermal_mw": 11033.5,
+          "utilisation_pct": 74.9,
+          "available_below_gate_mw": 13613.9,
+          "idle_below_gate_mw": 2580.4,
+          "idle_below_gate_pct_of_available": 17.5
+        },
+        "summer_missed": {
+          "hours": 31,
+          "available_by_band_mw": {
+            "0-50": 8800.9,
+            "50-100": 8738.2,
+            "100-200": 824.9,
+            "200-300": 1124.7,
+            "300-500": 47.7,
+            "500+": 1.9
+          },
+          "available_thermal_mw": 18507.4,
+          "dispatched_thermal_mw": 17559.2,
+          "utilisation_pct": 94.9,
+          "available_below_gate_mw": 18457.9,
+          "idle_below_gate_mw": 898.7,
+          "idle_below_gate_pct_of_available": 4.9
+        },
+        "all_8760": {
+          "hours": 8760,
+          "available_by_band_mw": {
+            "0-50": 7390.1,
+            "50-100": 4055.7,
+            "100-200": 802.7,
+            "200-300": 371.8,
+            "300-500": 51.2,
+            "500+": 2.0
+          },
+          "available_thermal_mw": 12952.2,
+          "dispatched_thermal_mw": 7687.1,
+          "utilisation_pct": 59.3,
+          "available_below_gate_mw": 12830.0,
+          "idle_below_gate_mw": 5143.0,
+          "idle_below_gate_pct_of_available": 39.7
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "year": 2022,
+  "bundle": "results/calibration/nyiso241_ctcommitted_span",
+  "windows": {
+    "all_missed": {
+      "hours": 100,
+      "CC_REGULAR": 11.836,
+      "CC_CHP": 10.841,
+      "CT_PEAKER": 11.979,
+      "CT_CHP": 11.09,
+      "ST_GAS": 11.885,
+      "ST_CHP": 10.805,
+      "measured_tz6_median": 12.02,
+      "measured_tz6_max": 35.61,
+      "model_over_measured_CC": 0.985
+    },
+    "winter": {
+      "hours": 70,
+      "CC_REGULAR": 14.347,
+      "CC_CHP": 13.352,
+      "CT_PEAKER": 15.792,
+      "CT_CHP": 13.6,
+      "ST_GAS": 14.396,
+      "ST_CHP": 13.316,
+      "measured_tz6_median": 19.64,
+      "measured_tz6_max": 35.61,
+      "model_over_measured_CC": 0.73
+    },
+    "summer": {
+      "hours": 23,
+      "CC_REGULAR": 8.726,
+      "CC_CHP": 7.732,
+      "CT_PEAKER": 10.01,
+      "CT_CHP": 7.98,
+      "ST_GAS": 8.776,
+      "ST_CHP": 7.696,
+      "measured_tz6_median": 7.9,
+      "measured_tz6_max": 8.92,
+      "model_over_measured_CC": 1.105
+    },
+    "all_8760": {
+      "hours": 8760,
+      "CC_REGULAR": 7.5,
+      "CC_CHP": 6.505,
+      "CT_PEAKER": 8.374,
+      "CT_CHP": 6.754,
+      "ST_GAS": 7.549,
+      "ST_CHP": 6.469,
+      "measured_tz6_median": 6.3,
+      "measured_tz6_max": 35.61,
+      "model_over_measured_CC": 1.19
+    }
+  },
+  "capacity_weighted_heat_rate": {
+    "CC_REGULAR": 8.607,
+    "ST_GAS": 16.817,
+    "CT_PEAKER": 15.189
+  },
+  "winter_fuel_gap": {
+    "delta_usd_per_mmbtu": 5.293,
+    "worth_usd_per_mwh_at_CC_hr": 45.56,
+    "worth_usd_per_mwh_at_ST_hr": 89.01
+  }
+}
