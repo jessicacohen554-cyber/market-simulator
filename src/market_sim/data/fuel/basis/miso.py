@@ -128,7 +128,10 @@ def _miso_chicago_hub_zones(year: int, path: Path | None = None) -> set[str]:
 
 
 def miso_chicago_daily_shape_factors(
-    year: int, hours: int, path: Path | None = None
+    year: int,
+    hours: int,
+    path: Path | None = None,
+    year_start_package: bool = False,
 ) -> np.ndarray:
     """Return ``(hours,)`` within-month Chicago Citygate daily gas-price shape.
 
@@ -154,10 +157,22 @@ def miso_chicago_daily_shape_factors(
     Returns all-ones for a year with no Chicago quotes (the caller stays inert).
     """
     factors = np.ones(hours, dtype=float)
-    dated = _pkg_ns()._miso_citygate_daily_dated(path).get(year, {})
+    _all = _pkg_ns()._miso_citygate_daily_dated(path)
+    dated = _all.get(year, {})
     if not dated:
         return factors
-    flow = _flow_date_staircase(dated, year)  # 365-day flow-date staircase
+    # ``year_start_package`` (xiso-8, config.gas_flow_date_year_start_package):
+    # price the year's OPENING flow days with the prior December trade that
+    # covered them rather than back-filling from the first January trade. Off by
+    # default and byte-identical off (no seed is built). NOTE the channel this
+    # reaches: the factors below renormalize to mean EXACTLY 1.0 within every
+    # month, so this can never move January's gas LEVEL -- only its within-month
+    # shape. MISO's measured exposure is 0.0293 % of the annual mean in its worst
+    # year and only 2021/2022 are package boundaries at all; see
+    # PRECOMMIT-xiso8-year-start-left-edge-2026-09-20.md §2.3.
+    flow = _flow_date_staircase(  # 365-day flow-date staircase
+        dated, year, prior_year_dated=_all.get(year - 1) if year_start_package else None
+    )
     if flow is None:
         return factors
     hour = 0
@@ -235,7 +250,12 @@ def apply_miso_winter_citygate_daily(
     if config.iso.upper() != "MISO":
         return
     T = fuel_prices.shape[1]
-    chicago = miso_chicago_daily_shape_factors(year, T, citygate_path)
+    chicago = miso_chicago_daily_shape_factors(
+        year,
+        T,
+        citygate_path,
+        year_start_package=getattr(config, "gas_flow_date_year_start_package", False),
+    )
     if not np.any(chicago != 1.0):
         return  # no Chicago daily quotes this year: inert (R4)
     national = (
@@ -498,8 +518,15 @@ def apply_miso_gas_marginal_commodity(
         )
     T = fuel_prices.shape[1]
     hubs = _pkg_ns()
+    _chi_all = hubs._miso_citygate_daily_dated(citygate_path)
     chicago_daily = _flow_date_staircase(
-        hubs._miso_citygate_daily_dated(citygate_path).get(year, {}), year
+        _chi_all.get(year, {}),
+        year,
+        prior_year_dated=(
+            _chi_all.get(year - 1)
+            if getattr(config, "gas_flow_date_year_start_package", False)
+            else None
+        ),
     )
     henry_daily = hubs._trade_date_staircase(
         hubs._henry_hub_daily_dated(henry_hub_path).get(year, {}), year
