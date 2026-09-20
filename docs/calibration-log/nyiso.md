@@ -14729,3 +14729,46 @@ today, but C8 and rule 20's conditional-pass path both read this gating artifact
 
 Nothing registered, no dashboard id minted, keeper unchanged. Rule 31: nothing deleted; the legs and
 the composed span are gitignored, not removed. Rule 33: all five shards archived after verification.
+
+## nyiso-244 — 2026-09-20
+
+**ZERO LP, ZERO SHARDS, keeper `2026-09-19-nyiso241-ct-committed-measured` UNCHANGED, nothing
+armed or registered.** Executes the `RESULT-nyiso243` §6 design pass on `measured_offer_surface`.
+Gates fixed in `docs/PRECOMMIT-nyiso244-measured-offer-surface-design-2026-09-20.md` at
+`2e5097a5` **before any conditioned number**. Record:
+`docs/RESULT-nyiso244-the-object-is-in-the-body-not-the-top-2026-09-20.md`.
+
+**REFUSED AT THE GATE, and the refusal is the useful part.** The shared conditional-surface
+kernel prices **peak rungs only**. In the 70 missed winter hours of 2022 the idle sub-$300
+capacity — the only capacity whose offer can move the energy dual (nyiso-242 phase 0D) — sits
+**74.5 % on ECON rungs (3,839.3 MW)** against **14.5 % on peak (745.7 MW)**: **15.8 %** of the
+4,715.7 MW object against a pre-registered 50 % bar, and **0.1 % (6.1 MW)** on the CT family
+P-27's masking can identify. The model's peak rungs are not idle below the gate **because they
+are already offered above it** (`CT_PEAKER` peak 4.000, `ST_GAS` 4.200) — it is missing a
+**body**, not a wall.
+
+**Both nyiso-243 blockers discharged.** Rule 19 `[R-ONE-MECH]` **CLEARS**:
+`gas_offer_net_revenue_margin` is **provably inert on every CC peak rung**
+(`phys_peak == peak == 2.250` → markup exactly **0.0**), and where live (`CT_PEAKER` 3.000,
+`ST_GAS` 3.200) it prices `(m − phys)` at the anchor while a surface prices `(M − m)` at fuel —
+disjoint increments, **overlap 0 by construction**. Masking **FAILS its own validation**:
+NYISO's own 10-Min Non-Synch product selects 51 gens / 2,374.0 MW against a model CT family of
+58 plants / 3,404.7 MW — V1 scope PASSES at 0.043, V2 MW 0.303 > 0.25 and V3 sorted-capacity
+fingerprint **1.328** > 0.25 FAIL. No fleet-wide substitute taken (rule 1). Rule 13
+conditioning now holds on **3 of 4** keeper years, not the 2 nyiso-243 measured.
+
+**THE SUCCESSOR IS LOCATED AND MEASURED COHORT-FREE.** A class-free **system offer curve**,
+differenced missed-vs-ordinary winter so the two fleets' constant ~9.4 GW level gap cancels,
+puts the object at **+4,989 MW at $200** and **+4,064 MW at $150** — a **5.8 % match** to the
+4,715.7 MW object — and only **+907 MW above $300**. The market lifts **6,203 MW** out of
+sub-$200 when the event arrives; the model lifts **1,213 MW**. `measured_offer_surface`
+**`U` → `G`** with a two-limb re-open condition (an econ/midcurve form — reach measured at
+74.5 % — **and** a validated cohort or a form needing none).
+
+**Correction to the record**: `nyiso243_offered_availability.py` Leg 3 reads AS offers from
+P-27 columns that are **100 % null** for all four reserve products, so its 866 / 794 MW are
+**regulation only**. Leg 3 was a diagnostic, never a gate; **no nyiso-243 verdict moves**.
+
+`tests/scoring` re-measured on this session's clean checkout: **22 failed / 1,553 passed /
+18 skipped** — the handoff's unowned baseline, reproduced and still unowned. This session wrote
+no solve-path code and adds zero.
