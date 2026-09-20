@@ -2610,6 +2610,22 @@ results/calibration/nwpp_mer_2026-09-19/
 #   git checkout 5cd3b862d3612fa87322e439c271b5c4d2507316 -- results/calibration/nwpp42_mer_2023
 #   git checkout 924fafa6e1883ec9b54a8d418d518d4a0208926b -- results/calibration/nwpp42_mer_2024
 #   git checkout 637f71d021fb46f32b0e8f9f49bde73108207722 -- results/calibration/nwpp42_mer_2025
+#
+# LEG-REF RESCUE, 2026-09-20 (rule 33 [R-SHARD-ARCHIVE] (f)(4)). Three of the six
+# original shard branches -- claude/nwpp-42-{arm-2023,arm-2024,mer-2025} -- were
+# DELETED BY THE ENVIRONMENT after the lane's own PR merged, and their commits are
+# NOT ancestors of main, so the recovery lines above briefly pointed at commits
+# reachable from nothing but this container's fetched refs. All six commits were
+# re-pushed unchanged under durable refs that carry no open PR and so are not
+# auto-deleted:
+#     claude/nwpp-42-leg-arm-2023   claude/nwpp-42-leg-mer-2023
+#     claude/nwpp-42-leg-arm-2024   claude/nwpp-42-leg-mer-2024
+#     claude/nwpp-42-leg-arm-2025   claude/nwpp-42-leg-mer-2025
+# The SHAs are unchanged, so every `git checkout <sha> -- <path>` line above still
+# resolves once the matching leg ref is fetched:
+#     git fetch origin claude/nwpp-42-leg-<arm|mer>-<year>
+# Nothing was deleted to do this (rule 31 [R-RETAIN]); the original refs that still
+# exist were mirrored rather than moved.
 # THE BRANCHES ARE NOT MERGED, AND THAT IS DELIBERATE (rule 33(f)(3)): each sha
 # is reachable ONLY from its own ref `claude/nwpp-42-{arm,mer}-<year>`, verified
 # 2026-09-20 with `git merge-base --is-ancestor <sha> origin/main` — all six
