@@ -318,13 +318,27 @@ cleared.** It clears when the owner rules, not before.
    file changed, `meta.json`; all 34 other outputs byte-identical**). **A future shard prompt should
    either carry the `_shared/<ISO>` negation or state that the parent will rebuild it** — and
    `dashboard_add_run` deserves a real error message here.
-5. **`derive_parasitic_load.py` has never been run for SOCO** — coal meter 0.866–0.928 against the
+5. **A SECOND SHARD-PROMPT GAP, found by the keeper auditor after registration: the legs carried no
+   `--note`.** `replay_keeper` then fell back to its default `model_changes_note` — *"BTM-basis
+   re-solve … adding btm.parquet"* — which describes a different mechanism entirely, and
+   `dashboard_add_run` copied it verbatim into the registry sidecar's published `definition`. All
+   three legs carry the wrong note, so it was baked in at solve time, not introduced by composition.
+   SOCO-53f's shards **did** pass `--note` (*"SOCO-53f ARM 2023: keeper recipe +
+   measured_coal_heat_rates, year-isolated (rule 36)"*) and its sidecar is correct. **Every shard
+   prompt should pass `--note`**, and the auditor should keep being run after registration —
+   here it caught published text that was wrong about what the run did. The sidecar was rewritten
+   from the attestation's machine-verified `governance` block and the verdict output; two clauses in
+   the auditor's own draft were tightened before committing, because *"coal … unchanged at max |Δ|
+   0.000000000000"* is a marginal-COST statement that reads as a dispatch claim (2023 `COAL_PRB`
+   moves +1.481 TWh), and the determination shift is **bench-dependent** and must not be asserted
+   bare. The bundle's own `run_config.json` note is left as solved — run-artifact history.
+6. **`derive_parasitic_load.py` has never been run for SOCO** — coal meter 0.866–0.928 against the
    committed 0.93 default, so every SOCO coal heat rate is biased LOW by 1.5–5.9 %. Cross-ISO intake
    (544 plants, 7 ISOs); reported, not taken.
-6. **SOCO-53b, the 2025 hydro hole** — 0.327 TWh modelled against 6.012 measured. Untouched here
+7. **SOCO-53b, the 2025 hydro hole** — 0.327 TWh modelled against 6.012 measured. Untouched here
    (hydro byte-identical in all three years).
-7. **Barry unit 4** — a 362 MW COAL model row CAMPD files as Pipeline Natural Gas.
-8. **The cross-ISO formula-family question.** Five other keepers arm
+8. **Barry unit 4** — a 362 MW COAL model row CAMPD files as Pipeline Natural Gas.
+9. **The cross-ISO formula-family question.** Five other keepers arm
    `gas_plant_monthly_fuel_pricing`. Whether their footprints carry constant-multiplier families is
    **their** lanes' question on **their** receipts (rules 25 / 28(d)). The one-line test: pivot
    `load_monthly_fuel_costs()` to `plant_id × month`, divide by a **fixed** reference row, report the

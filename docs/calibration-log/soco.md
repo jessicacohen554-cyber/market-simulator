@@ -984,6 +984,17 @@ wrong (it **rises**, 0.0855 → 0.1375, C8 still passing wide). All three are se
 consequences of one modelling error — cheaper gas steam changes the P0 pattern the floor is detected
 from.
 
+**Post-registration audit (`calibration-keeper-auditor --iso SOCO`) caught a published-text defect
+and it was MINE.** My shard prompts omitted `--note`, so `replay_keeper` fell back to its default
+`model_changes_note` ("BTM-basis re-solve … adding btm.parquet") and `dashboard_add_run` copied it
+verbatim into the registry sidecar's `definition` — describing a different mechanism entirely. Baked
+into all three legs at solve time; 53f's shards passed `--note` and its sidecar is correct. The
+sidecar was rewritten from the attestation's machine-verified governance block, with two clauses of
+the auditor's draft tightened first (its "coal … unchanged at max |Δ| 0.000000000000" is a
+marginal-COST statement that reads as a dispatch claim — 2023 `COAL_PRB` moves +1.481 TWh — and the
+determination shift is bench-dependent and must not be asserted bare). **Every shard prompt should
+pass `--note`.**
+
 **Gates:** matrix PASS; `audit_keepers` **E13 × 2** (two unruled candidates — 53g's and this one,
 **re-raised not cleared**) + E11 (pruned predecessor); parity RED **locally only** (six gitignored
 leg dirs, 0 tracked on HEAD); `check_cache_key_registration` and `check_bench_freshness` RED at HEAD,
