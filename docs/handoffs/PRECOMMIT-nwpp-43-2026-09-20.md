@@ -253,3 +253,28 @@ or by an independent measurement, before any LP is spent.
 - The cross-ISO PRB-proxy defect open in MISO / PJM / SPP — not this lane's.
 - `results/calibration/caiso279_ablate_dswcouple_span` remains a pre-existing
   `check_registry_payload_parity` RED with 34 TRACKED files — CAISO's, not this lane's.
+
+---
+
+## 9. What this lane LANDED (all of it inert; zero LP spent)
+
+| # | deliverable | why it is safe to land now |
+|---|---|---|
+| 1 | `scripts/probes/_nwpp43_binning_phase0.py` | the measurement in §3, re-runnable. |
+| 2 | `use_campd_bins` NWPP cell **U → I** + the §5.9 correction | rule 28(b): the session that tests a mechanism updates its own ISO's cell. Only NWPP's shard is touched (rule 25). `check_mechanism_matrix.py` green. |
+| 3 | `data/raw/_processed-legacy/coal_takeorpay_NWPP.csv` (13 plants) | **PROVEN INERT**: with both consumer gates off in the keeper (`coal_takeorpay_from_data`; `coal_sync_srmc_tranche` + `coal_mustrun_online_pmin`), rebuilding the keeper's fleet with the table present vs absent gives **max \|Δ `mc_base`\| = 0.000000000000** in 2023, 2024 and 2025. |
+| 4 | `derive_coal_takeorpay.py --from-receipts-corpus` | **opt-in, default off**, so every other ISO's derive path and committed table are byte-identical (rule 23 `[R-FROZEN-DERIVE]`). Same `_RENAME` map, same quantity-weighted construction — it reproduces this lane's independent computation exactly. |
+| 5 | `tests/unit/data/test_coal_takeorpay_receipts_corpus.py` | 8 tests, green; pins column equivalence, the year filter, both hard-error paths, opt-in-ness, and the measured NWPP shares. |
+
+**Nothing here arms a mechanism.** No `ScenarioConfig` field changed, no default
+flipped, no keeper touched. The backcast keeper re-solves byte-identically.
+
+**What a successor still needs before any LP:** the §7 scoping ruling, then
+(i) arm `coal_takeorpay_from_data` for NWPP in `backcast_config` (the
+`iso.upper() == "MISO"` idiom already there), and (ii) **plumb
+`coal_committed_takeorpay_regulated`, which `backcast_config` does not currently
+pass at all**. Then rule 36 `[R-YEAR-ISOLATION]`: one shard per year, 2023 / 2024 /
+2025, composed by the parent with `scripts/probes/_nwpp42_compose_span.py`, each
+shard pushing its FULL bundle including `dispatch/<year>_P1.parquet`
+(rule 34(a)), against the committed keeper differenced at rule 29(b) form 4 —
+which NWPP-42 measured to be reliable for this ISO.
