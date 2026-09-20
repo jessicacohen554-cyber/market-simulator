@@ -1182,3 +1182,106 @@ touched (rule 25 [R-ISO-SCOPE]).
 DO NOT CITE PHYSICALLY-CALIBRATED (PRICE UNSCORED) FOR ANY SOCO RUN GOING FORWARD:
 the bench that produced that reading was stale and was rebuilt this session.
 Record: docs/handoffs/FINDING-soco-55-2026-09-20.md §12.
+
+## soco-56 — 2026-09-20
+
+THE HANDOFF'S LEAD LEVER IS REFUSED ON MEASUREMENT, EX ANTE. 2024 CC_REGULAR is
+NOT marginal energy: 112.028 of 112.414 TWh -- 99.66 % -- is produced AT FULL
+AVAILABILITY, 86.1 % of its unit-hours are at cap, and the whole class holds
+5.268 TWh of idle headroom all year. In ZERO of 8,760 hours is the cheapest idle
+COAL_PRB or ST_GAS unit cheaper than the marginal RUNNING CC (mean gaps +7.04 and
++8.15 $/MWh), and the fleet-median CC mc sits $7.00/MWh BELOW the clearing price.
+Closing the 9.46 TWh the C1 rows ask for needs ~$5/MWh of merit-order movement
+against 8.616 TWh of in-reach coal+steam headroom, while the same $5 band holds
+20.594 TWh of CT_PEAKER headroom on a class already 1.9x its actual. Three more
+levers refused ON SIGN and recorded so no successor spends a solve: the handoff's
+own parasitic-load item, coal_takeorpay_from_data (makes coal MORE expensive) and
+coal_fuel_inventory (a coal CEILING) -- all the wrong way for a COAL_PRB already
+4.1 TWh short.
+
+THE DEFECT FOUND INSTEAD IS A DATA DEFECT TRACED TO PRIMARY SOURCES.
+data/raw/campd-unit-outages-SOCO.csv routes Barry (plant 3) units 1, 2 and 4 to
+CC_REGULAR through the deriver's plant-level fac_group short-circuit. CAMPD files
+all three as unitType "Tangentially-fired" -- BOILERS, never "Combined cycle" --
+and EIA-860 files 1 and 2 as Natural Gas Steam Turbine, 4 as Conventional Steam
+Coal. They are mostly idle (17.01 / 10.08 / 152.02 GWh in 519 / 303 / 1,539 h of
+2024) and that idleness is charged as a 20.3 pp forced outage on Barry's
+COMBINED-CYCLE block for 342 / 353 / 298 days of 366. THE CONSEQUENCE IS PHYSICAL:
+the model's availability ceiling sits BELOW the plant's own measured CAMPD output
+in 8,548 of 8,760 hours of 2024, by up to 1,513 MW and 5.080 TWh (2023: 5.031,
+2025: 4.598); availability p50 1,028 MW against a measured output p50 of 1,624 MW;
+full capacity reached in 144 hours where every peer CC reaches it in 1,800-2,160.
+SAME DEFECT AS pjm-75 (Chesterfield) AND miso-200 (Ninemile Point), both already
+adjudicated. It also resolves the standing "Barry unit 4 is a COAL model row CAMPD
+files as Pipeline Natural Gas" item IN FAVOUR OF CAMPD -- the unit measurably
+burns gas; EIA-860's BIT is stale.
+
+THE LEVER -- campd_per_unit_attribution, cell U -> O. SOCO's own -perunit-
+companion derived in-lane from SOCO's own CAMPD + EIA-860 (rules 25 / 28(d): NYISO's
+verdict transfers to nothing). It re-routes 3 unit rows / 48 window rows of 1,119,
+ALL at facility 3, machine-verified in gen_soco56_attestation._verify_extracts.
+SCOPE, BECAUSE THE BASE ROW SAYS "ONE GATE OVER BOTH ARTIFACTS": ONLY THE OUTAGE
+HALF FIRES -- thermal_tranche_csv_for_iso("SOCO", per_unit=True) returns the
+INCUMBENT thermal_tranches_SOCO.csv, no -perunit- tranche companion existing, which
+is exactly why rule 19 at three grains reads fuel_prices and mc_base at global
+max |delta| EXACTLY 0.000000000000 in all three years while availability moves
+exactly 2 of 128 (plant, group) keys, both plant 3. A SUCCESSOR THAT DERIVES THAT
+TRANCHE COMPANION ARMS THE OTHER HALF SILENTLY UNDER THIS SAME FLAG.
+
+THE RESULT IS AGAINST THE LANE AND THE INPUT IS KEPT ANYWAY. The gates DO NOT MOVE
+-- NOT-YET, C1 13/14 all / 9/10 free, C2/C4/C6/C8 PASS, C3a/b/c UNSCORABLE, 0
+ledgered and 0 protective, grade_summary identical on both sides -- and the single
+failing row, 2024 CC_REGULAR, goes +7.505 -> +10.178 TWh of a +/-7.466 band and
++2.81 -> +3.88 pp of a +/-3.00 pp cap: it now fails BOTH legs where the keeper
+failed one. PRECOMMIT-soco-56 P1 and P2 pre-registered exactly that from a zero-LP
+greedy re-stack, with a +1.5 to +4.5 TWh band the measured +2.673 lands inside.
+FIFTEEN OF FIFTEEN pre-registered predictions HELD. Rules 1 [R-STRUCT] and 14
+[R-ACCURATE] govern: a model that cannot reproduce a 1.8 GW plant's measured output
+in 97.6 % of a year is not modelling that plant, whatever the class total reads.
+
+WHAT IT BUYS IS PHYSICS. Barry's CC availability 8.323 -> 13.352 TWh against a
+measured 13.361 (0.07 %) in 2024 and 8.091 -> 12.606 against 12.566 (0.32 %) in
+2025 -- and DELIBERATELY NOT in 2023, where unit 8's 345-day commissioning outage
+is a genuine CC outage the crosswalk correctly leaves in place (4.471 vs 7.303).
+That asymmetry is the mechanism's signature; a lever that repaired all three years
+to their actuals would be a fit. 2025's VOLL slack falls 8,930.2 -> 7,907.2 MWh, and
+the keeper's thinnest row -- 2023 CT_PEAKER at 0.13 pp of headroom -- gets 3.7x
+safer (2.87 -> 2.52 pp).
+
+COSTS, AT FULL MAGNITUDE. The three re-routed units (709.9 MW) land on Barry's
+146.5 MW ST_GAS bin whose EIA-860 basis (306.2 MW) is smaller, so that bin's
+availability clips to ~0.02 -- a NEW over-derate, bounded by measurement at
+<= 0.0023 / 0.0000 / 0.0071 TWh (in merit 18 / 3 / 88 h of 8,760) and costing no
+forced energy (plant 3's rule-17 share is 0.000 on both sides, margin 0.0632). The
+correct repair is unit_outage_extract_basis_share or unit_outage_st_capacity_basis
+and is ROUTED, NOT STACKED (rule 19). D-1 gains ONE failure -- 2024 COAL_PRB
+cv_ratio 0.532 -> 0.463 of a 0.50 gate -- against six D-1 metrics that improve;
+D-1 is REPORTED, not gated. Rule 17 holds in all fifteen plant-years; C8 ST_GAS
+share 0.129 / 0.131 / 0.147 against the 0.30 cap. ZERO free parameters: DOF 6
+entries / 1 residual, unchanged; the field was already in
+_CACHE_KEY_OPTIONAL_FIELDS at "False" so no pre-existing key moves and
+moved_rows("SOCO") == {}.
+
+THE NAMED SUCCESSOR, AND AN INFERENCE THIS LANE TESTED AND REFUTED. Barry's
+spurious derate was SILENTLY COMPENSATING for a real merchant-CC over-dispatch: the
+2024 CC per-plant ratio spans 0.49x (Barry) to 2.45x (Tenaska Lindsay Hill), and
+every plant above 1.35x runs at 0.97-1.00 of its model availability while its
+measured CF is 0.22-0.59. THE OWNERSHIP READING DOES NOT HOLD -- on EIA-860 Utility
+Name, Southern-affiliated CC is 79.602 vs 80.851 TWh (0.985x) against non-Southern
+32.814 vs 29.397 (1.116x), but Southern-affiliated CT_PEAKER is 2.219x against
+non-Southern 1.705x, i.e. the tilt runs the OTHER way in the class SOCO-55 read it
+in. So the successor's object is PER-PLANT CC ALLOCATION -- heat rate, offer
+surface, availability -- not a merchant/utility partition. It also matters for the
+FORECAST: a forecast year carries NO CAMPD outage overlay, so the compensation is
+not there and the backcast's flattering CC number is a backcast-only artifact.
+
+KEEPER UNCHANGED at 2026-09-20-soco55-peryear-gas-basis; nothing pruned. The run
+2026-09-20-soco56-perunit-outage is registered as a CANDIDATE and ITS PROMOTION IS
+OPEN AND THE OWNER'S (rule 31 [R-RETAIN]); the lane's recommendation is TO PROMOTE,
+on structure and not on the residual. A SECOND RULING IS ASKED FOR:
+2026-09-20-soco53g-prb-own-iso has now fired audit_keepers E13 for the NINTH
+consecutive lane; the standing recommendation is to DECLINE it so the next
+promoting session may prune it. Records:
+docs/handoffs/PRECOMMIT-soco-56-2026-09-20.md,
+docs/handoffs/FINDING-soco-56-2026-09-20.md, scripts/gen_soco56_attestation.py,
+scripts/probes/soco56_compose_span.py.

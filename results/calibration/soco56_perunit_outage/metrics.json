@@ -1,0 +1,149 @@
+{
+  "run_id": "2026-09-20-soco56-perunit-outage",
+  "iso": "SOCO",
+  "label": "soco56 perunit outage",
+  "target_years": [
+    2023,
+    2024,
+    2025
+  ],
+  "scorable_years": [
+    2023,
+    2024,
+    2025
+  ],
+  "data_blocked_years": [],
+  "price_reference_blocked_years": [
+    2023,
+    2024,
+    2025
+  ],
+  "rubric_version": 3.8,
+  "determination": "NOT-YET",
+  "reasons": [
+    "undocumented out-of-tolerance (FAIL) criteria: fuelmix",
+    "PRICE UNSCORED \u2014 no actual_lmp.json block exists for SOCO, so C3a mean LMP, C3b price duration/shape and C3c price tail / scarcity (RT hourly) are NOT SCORED in any year (2023, 2024, 2025); this determination is scored on C1/C2/C4/C6/C8 ONLY and certifies NO price level, shape or tail (owner ruling card S2, 2026-09-13; rubric v3.8). It is not a CALIBRATED reading. Model system load-weighted mean LMP, MODEL-ONLY and UNVERIFIED \u2014 no measured reference exists to compare against: 2023: $32.48/MWh, 2024: $29.81/MWh, 2025: $137.65/MWh."
+  ],
+  "notes": [],
+  "criteria": {
+    "fuelmix": {
+      "label": "C1 fuel-mix by class (grid-delivered)",
+      "tier": "load-bearing",
+      "status": "FAIL"
+    },
+    "sysvol": {
+      "label": "C2 system volume (gas/coal families)",
+      "tier": "load-bearing",
+      "status": "PASS"
+    },
+    "price_mean": {
+      "label": "C3a mean LMP",
+      "tier": "load-bearing",
+      "status": "SKIPPED"
+    },
+    "price_shape": {
+      "label": "C3b price duration/shape",
+      "tier": "load-bearing",
+      "status": "SKIPPED"
+    },
+    "price_tail": {
+      "label": "C3c price tail / scarcity (RT hourly)",
+      "tier": "supporting",
+      "status": "SKIPPED"
+    },
+    "dispatch_corr": {
+      "label": "C4 fleet hourly dispatch correlation",
+      "tier": "supporting",
+      "status": "PASS"
+    },
+    "governance": {
+      "label": "C6 governance gate",
+      "tier": "protective",
+      "status": "PASS"
+    },
+    "forced_share": {
+      "label": "C8 forced-energy share (D-2)",
+      "tier": "protective",
+      "status": "PASS"
+    }
+  },
+  "caveats": {
+    "protective": [],
+    "ledgered": [],
+    "commercial_band": [],
+    "budget": {
+      "protective_max": 0,
+      "ledgered_max": 1
+    }
+  },
+  "grade_summary": {
+    "scored": 5,
+    "target_grade": 4,
+    "commercial_grade": 0,
+    "ledgered": 0,
+    "fails": 1
+  },
+  "reported": {
+    "co2": {
+      "label": "C5a CO2 vs eGRID (REPORTED-ONLY, v2.9 \u2014 see the CRITERIA note)",
+      "years": {
+        "2023": "-7.5%",
+        "2024": "-11.8%",
+        "2025": "+2.7%"
+      }
+    },
+    "diurnal_amplitude": {
+      "label": "D-A diurnal price amplitude, hour-of-day (REPORTED-ONLY, BAND-FREE, v3.5 \u2014 no external comparable exists to band it; see the note)",
+      "years": {
+        "2023": "no committed measured hod profile",
+        "2024": "no committed measured hod profile",
+        "2025": "no committed measured hod profile"
+      }
+    }
+  },
+  "free_class_score": {
+    "iso": "SOCO",
+    "pinned_classes": [
+      "CC_CHP",
+      "CT_CHP",
+      "ST_CHP",
+      "hydro",
+      "nuclear",
+      "solar",
+      "wind"
+    ],
+    "excluded_from_free": [
+      "CC_CHP",
+      "ST_CHP"
+    ],
+    "all": {
+      "pass": 13,
+      "total": 14
+    },
+    "free": {
+      "pass": 9,
+      "total": 10
+    },
+    "headline": "C1 all 13/14 \u00b7 free 9/10"
+  },
+  "price_unscored": {
+    "basis": "no actual_lmp.json block for SOCO",
+    "criteria_unscored": [
+      "price_mean",
+      "price_shape",
+      "price_tail"
+    ],
+    "scored_on": [
+      "fuelmix",
+      "sysvol",
+      "dispatch_corr",
+      "governance",
+      "forced_share"
+    ],
+    "model_mean_lmp_by_year": {
+      "2023": 32.48,
+      "2024": 29.81,
+      "2025": 137.65
+    }
+  }
+}

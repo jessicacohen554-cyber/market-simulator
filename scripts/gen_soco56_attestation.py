@@ -117,8 +117,11 @@ def _verify_extracts() -> dict:
             if (str(f), str(u)) in moved_keys
         )
     )
-    return {"extract_rows": int(len(a)), "unit_rows_rerouted": len(moved),
-            "window_rows_rerouted": n_rows_moved}
+    return {
+        "extract_rows": int(len(a)),
+        "unit_rows_rerouted": len(moved),
+        "window_rows_rerouted": n_rows_moved,
+    }
 
 
 def _verify(sc: dict) -> None:
@@ -207,7 +210,9 @@ def _verify(sc: dict) -> None:
         )
     for name in KEEPER_RECIPE:
         if not sc.get(name):
-            raise SystemExit(f"{name} is not armed — the keeper's recipe is not carried")
+            raise SystemExit(
+                f"{name} is not armed — the keeper's recipe is not carried"
+            )
 
 
 def _retag(att: dict, sc: dict, extracts: dict) -> None:

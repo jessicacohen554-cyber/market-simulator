@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-20-soco56-perunit-outage",
+  "label": "soco56 perunit outage",
+  "date": "2026-09-20",
+  "shorthand": "soco56-perunit-outage",
+  "definition": "SOCO-56 ARM 2023: campd_per_unit_attribution=true \u2014 the CAMPD per-unit crosswalk replaces the deriver's plant-level fac_group short-circuit, so Barry (plant 3) units 1/2/4 (measurably Tangentially-fired boilers) stop charging their idleness as a forced outage on Barry's combined-cycle block. Year-isolated (rule 36).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "SOCO",
+  "file": "frontend/data/backcast/runs/2026-09-20-soco56-perunit-outage.js",
+  "bundle": "results/calibration/soco56_perunit_outage"
+}
