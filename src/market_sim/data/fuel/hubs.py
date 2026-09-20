@@ -1066,11 +1066,62 @@ def _basis_bridge_blackouts(
     return out
 
 
+def _year_start_package_seed(
+    prior_year_dated: dict[int, dict[int, float]] | None,
+    year: int,
+    first_flow: "pd.Timestamp",
+) -> "tuple[pd.Timestamp, float] | None":
+    """The previous December trade that priced ``year``'s opening flow days.
+
+    Returns ``(flow_stamp, $/MMBtu)`` for the prior year's LAST trade, placed on
+    its own flow day (trade + 1), or ``None`` when this object does not reach the
+    year boundary.
+
+    **THE SCOPE LIMIT IS THE WHOLE OF THE DESIGN** (xiso-8, 2026-09-20). The
+    flow-date convention licenses carrying a print forward across a TRADING
+    PACKAGE — Friday's trade covers the holiday-extended weekend — and it
+    licenses nothing across an EIA PUBLICATION BLACKOUT, where no trade priced
+    the missing days at all. So the seed is returned only when the gap from the
+    prior trade's flow day to ``first_flow`` is ``< _GAS_BLACKOUT_MIN_GAP_DAYS``.
+    A longer gap is :func:`_basis_bridge_blackouts`' territory and is left to it
+    (rule 19 ``[R-ONE-MECH]``: the two are DISJOINT by construction — the bridge
+    fills only gaps >= 6 days, this only gaps < 6).
+
+    Measured, and this is why the limit exists rather than being a precaution:
+    MISO's 2023 year boundary sits inside a **15-day** blackout whose last print
+    is the Winter Storm Elliott spike of **$17.69/MMBtu** (2022-12-21), against
+    $3.38 at the next measurement. Constant-extending that across New Year would
+    be a far worse construction than the back-fill it replaces. Per-ISO,
+    per-year census: ``scripts/probes/xiso8_left_edge_census.py`` ->
+    ``results/calibration/_xiso8_left_edge_census.json``.
+
+    No new threshold is introduced: ``_GAS_BLACKOUT_MIN_GAP_DAYS`` is reused at
+    the value caiso-289 §2 identified (the gap histogram is empty at 6 and 7, so
+    6, 7 and 8 select the identical gaps — the value is not selectable against
+    any result; rules 5 ``[R-NO-MAGIC]``, 1 ``[R-STRUCT]``).
+    """
+    if not prior_year_dated:
+        return None
+    prior = sorted(
+        (pd.Timestamp(year=year - 1, month=m, day=d) + pd.Timedelta(days=1), v)
+        for m, days in prior_year_dated.items()
+        for d, v in days.items()
+    )
+    prior = [(t, v) for t, v in prior if t < first_flow]
+    if not prior:
+        return None
+    ts, val = prior[-1]
+    if (first_flow - ts).days >= _GAS_BLACKOUT_MIN_GAP_DAYS:
+        return None  # a publication blackout, not a package
+    return ts, float(val)
+
+
 def _flow_date_staircase(
     dated_year: dict[int, dict[int, float]],
     year: int,
     bridge_all_years: dict[int, dict[int, dict[int, float]]] | None = None,
     bridge_hh: "pd.Series | None" = None,
+    prior_year_dated: dict[int, dict[int, float]] | None = None,
 ) -> np.ndarray | None:
     """365-day flow-date staircase ($/MMBtu) from trade-day citygate prints.
 
@@ -1148,6 +1199,18 @@ def _flow_date_staircase(
     if not stamps:
         return None
     idx = pd.date_range(f"{year}-01-01", f"{year}-12-31", freq="D")
+    # THE YEAR-START LEFT EDGE (xiso-8, config.gas_flow_date_year_start_package).
+    # Seed the series with the prior December trade that actually priced this
+    # year's opening flow days, BEFORE either branch builds its index, so the
+    # existing ``.ffill()`` carries it across the edge and the ``.bfill()``
+    # below has nothing left to reach. ``first_flow`` is read off ``stamps`` as
+    # it stands, so the seed cannot move the gap test that admits it. The seed
+    # is a measured print like any other, so it wins a tie against a bridged
+    # interior day -- and cannot collide with one anyway, the two being disjoint
+    # by construction (see :func:`_year_start_package_seed`).
+    seed = _year_start_package_seed(prior_year_dated, year, min(stamps))
+    if seed is not None:
+        stamps[seed[0]] = seed[1]
     if bridge_all_years and bridge_hh is not None and not bridge_hh.empty:
         # Bracket this year's blackouts against the neighbouring years' prints
         # (a Dec blackout's right anchor is the next January's first print),
@@ -1308,7 +1371,17 @@ def _caiso_hub_daily_gas_prices(
     )
     if monthly is None:
         return None
-    citygate_dated = _pkg_ns()._caiso_citygate_daily_dated(citygate_path).get(year, {})
+    _citygate_all = _pkg_ns()._caiso_citygate_daily_dated(citygate_path)
+    citygate_dated = _citygate_all.get(year, {})
+    # xiso-8: the prior year's map, so the year's OPENING flow days can be
+    # priced by the December trade that actually covered them instead of being
+    # back-filled from the first January trade. Passed only when the gate is on,
+    # so the default path builds no seed and is byte-identical.
+    prior_dated = (
+        _citygate_all.get(year - 1)
+        if getattr(config, "gas_flow_date_year_start_package", False)
+        else None
+    )
     # caiso-90 (caiso_citygate_flow_date): the prints are a next-day-delivery
     # index, so place them on their FLOW days (trade + 1, weekend packages
     # forward-filled) instead of their trade days. Built once for the year so
@@ -1342,7 +1415,9 @@ def _caiso_hub_daily_gas_prices(
             }
         ).sort_index()
     flow_series = (
-        _flow_date_staircase(citygate_dated, year, bridge_all, bridge_hh)
+        _flow_date_staircase(
+            citygate_dated, year, bridge_all, bridge_hh, prior_year_dated=prior_dated
+        )
         if getattr(config, "caiso_citygate_flow_date", False) and citygate_dated
         else None
     )

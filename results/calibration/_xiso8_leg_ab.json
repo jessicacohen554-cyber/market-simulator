@@ -1,0 +1,76 @@
+{
+ "2024": {
+  "keeper_mean_usd_mwh": 37.2006,
+  "arm_mean_usd_mwh": 37.1872,
+  "delta_pct": -0.03596,
+  "band": [
+   0.0,
+   -0.045
+  ],
+  "attribution_pct": {
+   "edge_load_zones": -0.02734,
+   "nonedge_load_zones": -0.00862,
+   "zero_load_import_nodes": 0.0
+  },
+  "price_cells_differing": 8421,
+  "primal_max_abs_class_TWh": 0.0249,
+  "primal_total_TWh_delta": -0.0006,
+  "shard_sha": "8117470282ef6a2ab55ed667d1e425368bc9a20b",
+  "inside_band": true,
+  "pct_of_limb": 79.9
+ },
+ "2022": {
+  "keeper_mean_usd_mwh": 90.2789,
+  "arm_mean_usd_mwh": 90.3278,
+  "delta_pct": 0.05418,
+  "band": [
+   0.0,
+   0.087
+  ],
+  "attribution_pct": {
+   "edge_load_zones": 0.05134,
+   "nonedge_load_zones": 0.00283,
+   "zero_load_import_nodes": 0.0
+  },
+  "price_cells_differing": 3683,
+  "shard_sha": "fcd389610f31662f3042ddd4da91aa200ff399d3",
+  "inside_band": true,
+  "pct_of_limb": 62.3
+ },
+ "2023": {
+  "keeper_mean_usd_mwh": 56.2261,
+  "arm_mean_usd_mwh": 55.7767,
+  "delta_pct": -0.79936,
+  "band": [
+   0.0,
+   -0.879
+  ],
+  "attribution_pct": {
+   "edge_load_zones": -0.79142,
+   "nonedge_load_zones": -0.00794,
+   "zero_load_import_nodes": 0.0
+  },
+  "price_cells_differing": 1028,
+  "shard_sha": "054570b8e3c41987f2364bff3f83481fb5975b95",
+  "inside_band": true,
+  "pct_of_limb": 90.9
+ },
+ "2025": {
+  "keeper_mean_usd_mwh": 36.9754,
+  "arm_mean_usd_mwh": 36.9715,
+  "delta_pct": -0.01041,
+  "band": [
+   0.0,
+   -0.022
+  ],
+  "inside_band": true,
+  "pct_of_limb": 47.3,
+  "attribution_pct": {
+   "edge_load_zones": -0.00827,
+   "nonedge_load_zones": -0.00215,
+   "zero_load_import_nodes": 0.0
+  },
+  "price_cells_differing": 1499,
+  "shard_sha": "9ad71bf179794d14a995f539dca898d82953e62a"
+ }
+}

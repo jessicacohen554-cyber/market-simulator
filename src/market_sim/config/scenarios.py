@@ -1887,6 +1887,14 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # and so earns a distinct key. SHARED field -- very end, per HOUSE-3.
     # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
     "commitment_floor_window_netload",
+    # Year-start left-edge flow-date convention (xiso-8, default off): dropped
+    # from the hash at its default so every pre-existing cached run -- every
+    # ISO's keepers included -- keeps its key. The arm is byte-identical off by
+    # construction (the callers pass prior_year_dated=None, so the seed is never
+    # built); an armed run reprices the year's opening flow days and so earns a
+    # distinct key. SHARED field -- very end, per HOUSE-3. Registered IN THE
+    # SAME COMMIT as the field.
+    "gas_flow_date_year_start_package",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -2559,6 +2567,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by SPP-66 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "commitment_floor_window_netload": "False",
+    "gas_flow_date_year_start_package": "False",
 }
 
 
@@ -3085,6 +3094,7 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     "miso_gas_variable_transport": "measured per-plant variable transport over that hub (EIA-923 receipts, frozen derive)",
     "caiso_citygate_spot_level": "measured CA daily citygate spot series",
     "caiso_citygate_flow_date": "flow-date placement of that measured series",
+    "gas_flow_date_year_start_package": "the prior December trade that priced that measured series' year-opening flow days",
     "caiso_citygate_spot_coverage": "own-print month coverage of that measured series",
     "caiso_citygate_blackout_bridge": "measured Henry Hub daily spot + the two bracketing measured citygate prints, across EIA's publication blackouts",
     "dual_fuel_oil_daily_parity": "measured daily oil prints for the parity cap",
@@ -9116,6 +9126,54 @@ class ScenarioConfig:
     # trade at $15.31 and the model burns $23.66 there.
     # RE-SCREEN STATUS: not yet screened post-separation. Its remaining
     # footprint is 11 days each in 2024/2025 and nothing in 2022/2023.
+    gas_flow_date_year_start_package: bool = False  # Price a year's OPENING
+    # flow days with the previous December trade that actually covered them,
+    # instead of back-filling them from the year's first January trade
+    # (xiso-8, 2026-09-20; owner ruling of that date opening caiso-289 §7(1)'s
+    # left-edge defect as its own cross-ISO object;
+    # PRECOMMIT-xiso8-year-start-left-edge-2026-09-20.md).
+    # THE DEFECT. data.fuel.hubs._flow_date_staircase places each trade-day
+    # print on its gas FLOW day (trade + 1; Friday's trade covers the
+    # holiday-extended weekend package), forward-fills the non-trading gaps,
+    # then .bfill()s the remainder. The only days .bfill() can reach are the
+    # year's opening flow days, and on the function's OWN documented convention
+    # those were priced by the PREVIOUS DECEMBER's last trade. The back-fill
+    # instead hands them the year's FIRST JANUARY trade — one that had not
+    # happened yet and that prices a LATER flow day. Measured on CAISO: flow
+    # 2023-01-01..03 was priced by the 2022-12-30 trade at $15.31 and the model
+    # burns $23.66 there, worth -$62.12/MWh of CC marginal cost over 72 h.
+    # WHEN ON, _year_start_package_seed seeds the series with that prior
+    # December trade before either branch builds its index, so the existing
+    # ffill carries it across the edge and the bfill has nothing left to reach.
+    # SCOPED TO TRADING PACKAGES ONLY, and that limit is the whole design: the
+    # seed applies only when the year-boundary gap is < _GAS_BLACKOUT_MIN_GAP_
+    # DAYS (6). A longer gap is an EIA PUBLICATION BLACKOUT, which is
+    # caiso_citygate_blackout_bridge's territory — the two are DISJOINT by
+    # construction (rule 19 [R-ONE-MECH]: the bridge fills only gaps >= 6, this
+    # only gaps < 6). Measured reason, not a precaution: MISO's 2023 boundary
+    # sits inside a 15-day blackout whose last print is the Winter Storm Elliott
+    # spike of $17.69/MMBtu against $3.38 at the next measurement, so an
+    # unscoped ffill would be far worse than the back-fill it replaces.
+    # ZERO new scalars and ZERO free parameters (rules 5 [R-NO-MAGIC], 21
+    # [R-DOF]) — the threshold is caiso-289 §2's existing histogram-identified
+    # value, reused, not re-derived. Rule 14 [R-ACCURATE] on the SOURCE
+    # CONVENTION is the whole case; the direction of any residual is evidence
+    # for nothing (rule 1 [R-STRUCT]). Rule 13 [R-MEASURED]: the identical
+    # construction regenerates for a forward year from forward prints.
+    # SHARED FIELD, default off, so every existing config in every ISO keeps its
+    # cache key. Per-ISO, per-year exposure census (zero LP):
+    # scripts/probes/xiso8_left_edge_census.py ->
+    # results/calibration/_xiso8_left_edge_census.json. CAISO arms it (all four
+    # scored years are package boundaries; 2023 is worth -0.879% of the annual
+    # mean at full pass-through). MISO is MEASURED AND NOT ARMED: only 2021 and
+    # 2022 are package boundaries there, its keeper reaches the staircase solely
+    # through miso_chicago_daily_shape_factors — whose factors renormalize to
+    # mean exactly 1.0 within every month, so the January LEVEL cannot move —
+    # and its worst-year exposure is 0.0293% of the annual mean. A MISO lane can
+    # arm it on its own cadence with no re-derivation.
+    # Rule 23 [R-FROZEN-DERIVE]: scripts/data/derive_miso_gas_variable_
+    # transport.py also calls this function and is left at the default, so the
+    # frozen derive is not silently re-derived. Inert without daily prints.
     caiso_dsw_surplus_clean: bool = False  # Carry the MEASURED surplus-hour
     # WEIM clean import depth on the south (Palo Verde / Path-46) corridor
     # (caiso-87; FINDING-caiso82 §3 "measured clean DEPTH" lane;
@@ -21833,6 +21891,7 @@ TIER_TAGS: dict[str, int] = {
     "fleet_state_from_eia860": 3,
     "caiso_citygate_spot_coverage": 3,
     "caiso_citygate_blackout_bridge": 3,
+    "gas_flow_date_year_start_package": 3,
     "class_aware_fuel_price_fallback": 3,
     "plant_level_fleet": 3,
     "gas_offer_curve": 3,

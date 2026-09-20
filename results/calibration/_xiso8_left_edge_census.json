@@ -1,0 +1,318 @@
+{
+ "gates": {
+  "G-LE-CENSUS": {
+   "CAISO": [
+    {
+     "year": 2018,
+     "days": 2,
+     "prior_print": null
+    },
+    {
+     "year": 2019,
+     "days": 3,
+     "gap_days": 15,
+     "gap_class": "BLACKOUT",
+     "edge_days": [
+      "2019-01-01",
+      "2019-01-02",
+      "2019-01-03"
+     ],
+     "used_trade_day": "2019-01-03",
+     "used_usd": 3.91,
+     "correct_trade_day": "2018-12-19",
+     "correct_usd": 3.89,
+     "delta_usd_mmbtu": -0.02,
+     "delta_cc_mc_usd_mwh": -0.149
+    },
+    {
+     "year": 2020,
+     "days": 2,
+     "gap_days": 15,
+     "gap_class": "BLACKOUT",
+     "edge_days": [
+      "2020-01-01",
+      "2020-01-02"
+     ],
+     "used_trade_day": "2020-01-02",
+     "used_usd": 3.53,
+     "correct_trade_day": "2019-12-18",
+     "correct_usd": 3.53,
+     "delta_usd_mmbtu": 0.0,
+     "delta_cc_mc_usd_mwh": 0.0
+    },
+    {
+     "year": 2021,
+     "days": 4,
+     "gap_days": 4,
+     "gap_class": "package",
+     "edge_days": [
+      "2021-01-01",
+      "2021-01-02",
+      "2021-01-03",
+      "2021-01-04"
+     ],
+     "used_trade_day": "2021-01-04",
+     "used_usd": 3.0,
+     "correct_trade_day": "2020-12-31",
+     "correct_usd": 3.19,
+     "delta_usd_mmbtu": 0.19,
+     "delta_cc_mc_usd_mwh": 1.414
+    },
+    {
+     "year": 2022,
+     "days": 3,
+     "gap_days": 4,
+     "gap_class": "package",
+     "edge_days": [
+      "2022-01-01",
+      "2022-01-02",
+      "2022-01-03"
+     ],
+     "used_trade_day": "2022-01-03",
+     "used_usd": 5.66,
+     "correct_trade_day": "2021-12-30",
+     "correct_usd": 7.09,
+     "delta_usd_mmbtu": 1.43,
+     "delta_cc_mc_usd_mwh": 10.639
+    },
+    {
+     "year": 2023,
+     "days": 3,
+     "gap_days": 4,
+     "gap_class": "package",
+     "edge_days": [
+      "2023-01-01",
+      "2023-01-02",
+      "2023-01-03"
+     ],
+     "used_trade_day": "2023-01-03",
+     "used_usd": 23.66,
+     "correct_trade_day": "2022-12-30",
+     "correct_usd": 15.31,
+     "delta_usd_mmbtu": -8.35,
+     "delta_cc_mc_usd_mwh": -62.124
+    },
+    {
+     "year": 2024,
+     "days": 2,
+     "gap_days": 4,
+     "gap_class": "package",
+     "edge_days": [
+      "2024-01-01",
+      "2024-01-02"
+     ],
+     "used_trade_day": "2024-01-02",
+     "used_usd": 3.45,
+     "correct_trade_day": "2023-12-29",
+     "correct_usd": 2.98,
+     "delta_usd_mmbtu": -0.47,
+     "delta_cc_mc_usd_mwh": -3.497
+    },
+    {
+     "year": 2025,
+     "days": 2,
+     "gap_days": 2,
+     "gap_class": "package",
+     "edge_days": [
+      "2025-01-01",
+      "2025-01-02"
+     ],
+     "used_trade_day": "2025-01-02",
+     "used_usd": 3.12,
+     "correct_trade_day": "2024-12-31",
+     "correct_usd": 2.9,
+     "delta_usd_mmbtu": -0.22,
+     "delta_cc_mc_usd_mwh": -1.637
+    },
+    {
+     "year": 2026,
+     "days": 5,
+     "gap_days": 5,
+     "gap_class": "package",
+     "edge_days": [
+      "2026-01-01",
+      "2026-01-02",
+      "2026-01-03",
+      "2026-01-04",
+      "2026-01-05"
+     ],
+     "used_trade_day": "2026-01-05",
+     "used_usd": 2.18,
+     "correct_trade_day": "2025-12-31",
+     "correct_usd": 2.72,
+     "delta_usd_mmbtu": 0.54,
+     "delta_cc_mc_usd_mwh": 4.018
+    }
+   ],
+   "MISO": [
+    {
+     "year": 2018,
+     "days": 2,
+     "prior_print": null
+    },
+    {
+     "year": 2019,
+     "days": 3,
+     "gap_days": 15,
+     "gap_class": "BLACKOUT",
+     "edge_days": [
+      "2019-01-01",
+      "2019-01-02",
+      "2019-01-03"
+     ],
+     "used_trade_day": "2019-01-03",
+     "used_usd": 2.51,
+     "correct_trade_day": "2018-12-19",
+     "correct_usd": 3.31,
+     "delta_usd_mmbtu": 0.8,
+     "delta_cc_mc_usd_mwh": 5.96
+    },
+    {
+     "year": 2020,
+     "days": 2,
+     "gap_days": 15,
+     "gap_class": "BLACKOUT",
+     "edge_days": [
+      "2020-01-01",
+      "2020-01-02"
+     ],
+     "used_trade_day": "2020-01-02",
+     "used_usd": 1.94,
+     "correct_trade_day": "2019-12-18",
+     "correct_usd": 2.12,
+     "delta_usd_mmbtu": 0.18,
+     "delta_cc_mc_usd_mwh": 1.341
+    },
+    {
+     "year": 2021,
+     "days": 4,
+     "gap_days": 4,
+     "gap_class": "package",
+     "edge_days": [
+      "2021-01-01",
+      "2021-01-02",
+      "2021-01-03",
+      "2021-01-04"
+     ],
+     "used_trade_day": "2021-01-04",
+     "used_usd": 2.49,
+     "correct_trade_day": "2020-12-31",
+     "correct_usd": 2.31,
+     "delta_usd_mmbtu": -0.18,
+     "delta_cc_mc_usd_mwh": -1.341
+    },
+    {
+     "year": 2022,
+     "days": 3,
+     "gap_days": 4,
+     "gap_class": "package",
+     "edge_days": [
+      "2022-01-01",
+      "2022-01-02",
+      "2022-01-03"
+     ],
+     "used_trade_day": "2022-01-03",
+     "used_usd": 3.47,
+     "correct_trade_day": "2021-12-30",
+     "correct_usd": 3.67,
+     "delta_usd_mmbtu": 0.2,
+     "delta_cc_mc_usd_mwh": 1.49
+    },
+    {
+     "year": 2023,
+     "days": 5,
+     "gap_days": 15,
+     "gap_class": "BLACKOUT",
+     "edge_days": [
+      "2023-01-01",
+      "2023-01-02",
+      "2023-01-03",
+      "2023-01-04",
+      "2023-01-05"
+     ],
+     "used_trade_day": "2023-01-05",
+     "used_usd": 3.38,
+     "correct_trade_day": "2022-12-21",
+     "correct_usd": 17.69,
+     "delta_usd_mmbtu": 14.31,
+     "delta_cc_mc_usd_mwh": 106.61
+    },
+    {
+     "year": 2024,
+     "days": 4,
+     "gap_days": 15,
+     "gap_class": "BLACKOUT",
+     "edge_days": [
+      "2024-01-01",
+      "2024-01-02",
+      "2024-01-03",
+      "2024-01-04"
+     ],
+     "used_trade_day": "2024-01-04",
+     "used_usd": 2.58,
+     "correct_trade_day": "2023-12-20",
+     "correct_usd": 2.16,
+     "delta_usd_mmbtu": -0.42,
+     "delta_cc_mc_usd_mwh": -3.129
+    },
+    {
+     "year": 2025,
+     "days": 2,
+     "gap_days": 15,
+     "gap_class": "BLACKOUT",
+     "edge_days": [
+      "2025-01-01",
+      "2025-01-02"
+     ],
+     "used_trade_day": "2025-01-02",
+     "used_usd": 3.33,
+     "correct_trade_day": "2024-12-18",
+     "correct_usd": 2.85,
+     "delta_usd_mmbtu": -0.48,
+     "delta_cc_mc_usd_mwh": -3.576
+    },
+    {
+     "year": 2026,
+     "days": 5,
+     "gap_days": 19,
+     "gap_class": "BLACKOUT",
+     "edge_days": [
+      "2026-01-01",
+      "2026-01-02",
+      "2026-01-03",
+      "2026-01-04",
+      "2026-01-05"
+     ],
+     "used_trade_day": "2026-01-05",
+     "used_usd": 2.59,
+     "correct_trade_day": "2025-12-17",
+     "correct_usd": 3.35,
+     "delta_usd_mmbtu": 0.76,
+     "delta_cc_mc_usd_mwh": 5.662
+    }
+   ]
+  },
+  "G-MISO-SHAPE": [
+   {
+    "year": 2021,
+    "edge_days": 4,
+    "jan_mean_before": 2.5532,
+    "jan_mean_after": 2.53,
+    "max_abs_factor_change": 0.06219,
+    "rms_factor_change": 0.02394,
+    "edge_factor_change": -0.06219,
+    "edge_delta_mc_at_4usd": -1.853
+   },
+   {
+    "year": 2022,
+    "edge_days": 3,
+    "jan_mean_before": 4.1494,
+    "jan_mean_after": 4.1687,
+    "max_abs_factor_change": 0.04409,
+    "rms_factor_change": 0.01444,
+    "edge_factor_change": 0.04409,
+    "edge_delta_mc_at_4usd": 1.314
+   }
+  ]
+ }
+}
