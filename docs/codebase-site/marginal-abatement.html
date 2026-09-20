@@ -321,8 +321,8 @@
         Everything here is dollars per megawatt-hour. Start with what the project costs to build and
         run, take off the tax credit, then subtract what the power sells for on this grid. What's
         left is the extra cost of the clean megawatt-hour — divide that by the CO<sub>2</sub> it
-        avoids and you get the headline. The build cost is a national figure, the same on every
-        grid (see the caveats below).
+        avoids and you get the headline. The build cost is charged over a 20-year contract term, at
+        the output a new project actually delivers on this grid (see the caveats below).
       </p>
       <div id="wfChart"></div>
       <div class="mac-legend" id="wfLegend">
@@ -348,14 +348,14 @@
   <div class="mac-caveats">
 
     <div class="mac-caveat">
-      <h4>Build costs and output are national, not local</h4>
-      <p>Every grid is charged the same price for a turbine or a panel <b>and credited the same
-      output</b>. So the differences you see come from two things only: what the power
-      <b>sells</b> for, and how dirty the electricity it <b>displaces</b> is. <b>Local resource
-      quality is not in here.</b> That flatters grids with poor wind or sun — a panel in the
-      northeast really produces less than one in Texas, and this page does not charge it for
-      that. The local figure was left out rather than guessed, because it cannot be recovered
-      from what each run publishes.</p>
+      <h4>Equipment costs the same everywhere; output doesn't</h4>
+      <p>Every grid is charged the same price for a turbine or a panel — that part is a national
+      figure. What each grid is <b>credited</b> is its own: the output a project built there since
+      2018 actually delivers, measured from EPA plant records. A panel in New York yields about
+      0.17 against 0.24 in Texas, so the same panel costs about 40&nbsp;% more per megawatt-hour
+      delivered there, and this page now charges it for that. The measurement is net of
+      curtailment, so a grid that throws clean power away is charged for the megawatt-hours it
+      loses.</p>
     </div>
 
     <div class="mac-caveat">
@@ -401,13 +401,13 @@
   <div class="mac-formula">cost per tonne  =  ( cost to deliver a MWh  −  price that MWh earns )  ÷  CO₂ avoided per MWh</div>
 
   <p class="mac-sub" style="margin-top:14px">
-    <b>The first number is national.</b> It is the levelized cost of building and running the
-    project at a national-average output, not at what this particular grid's weather would
-    deliver. Adjusting it would need each grid's own expected capacity factor, and that number is
-    not published in a form that can be checked against the generation this page reads — the two
-    available versions disagree with each other by up to sixfold, and one of them implies grids
-    producing more power than their own equipment could. Rather than pick one, it is left out, and
-    the limitation is stated here and in the caveats above.
+    <b>The first number is local, and it is in today's dollars.</b> It is the levelized cost of
+    building and running the project, spread over the output it delivers <em>on this grid</em> and
+    recovered over a 20-year contract term — the length real wind and solar offtake agreements run,
+    not the 30-year book life used elsewhere in the model. It is quoted in constant 2026 dollars.
+    A power-purchase agreement is quoted differently: one flat price held for the whole term. The
+    same cost restated that way is about 20&nbsp;% higher, and each grid's page reports both, so a
+    number here can be compared against a real contract without a hidden adjustment.
   </p>
 
   <p class="mac-sub">

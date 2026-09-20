@@ -549,14 +549,15 @@
 
     var credit = s.lcoe_post_ira - s.lcoe_pre_ira;
     var net = s.cost_per_delivered_mwh_post_ira - s.capture_price;
-    // No local-weather step: the cost is the national figure, because a local
-    // expected capacity factor cannot be recovered from what a run publishes.
-    // A zero-width "+$0.00" bar here would imply the adjustment was made and
-    // happened to be nil, which is the opposite of what is true.
+    // Local resource quality is NOT a step in this waterfall — it is already
+    // inside every dollar figure here, because it sets the megawatt-hours the
+    // build cost is divided by rather than adding or removing a cost. The
+    // sub-heading and the caveats say so; a bar would misrepresent it as an
+    // adjustment applied on top.
     var steps = [
       { k: 'Cost to build and run it', v: s.lcoe_pre_ira, type: 'start' },
       { k: 'Less the tax credit', v: credit, type: 'delta' },
-      { k: 'Cost per MWh (national)', v: s.lcoe_post_ira, type: 'sub' },
+      { k: 'Cost per MWh delivered here', v: s.lcoe_post_ira, type: 'sub' },
       { k: 'Less what the power sells for', v: -s.capture_price, type: 'delta' },
       { k: 'Extra cost of the clean MWh', v: net, type: 'total' }
     ];

@@ -482,7 +482,9 @@ def _capital_recovery_factor(rate: float, lifetime_yr: float) -> float:
     return rate * growth / (growth - 1.0)
 
 
-def wind_ptc_levelized_per_mwh(config: ScenarioConfig) -> float:
+def wind_ptc_levelized_per_mwh(
+    config: ScenarioConfig, life_override: float | None = None
+) -> float:
     """Return the §45 wind PTC levelized over the plant's book life, in $/MWh.
 
     The statutory credit runs ``min(config.ira_ptc_credit_window_years, book
@@ -507,13 +509,17 @@ def wind_ptc_levelized_per_mwh(config: ScenarioConfig) -> float:
     Args:
         config: Scenario config supplying the PTC rate, the credit window,
             the wind cost record (book life) and the discount rate.
+        life_override: Cost-recovery period, yr, in place of the tech's book
+            life. REPORTING-ONLY (see :func:`compute_lcoe`); ``None`` — the
+            default every solve-path caller takes — reproduces the book-life
+            levelization byte-for-byte.
 
     Returns:
         The levelized §45 credit in $/MWh of plant output.
     """
     costs = resolve_new_entry_costs(config)["wind"]
     rate = resolve_real_discount_rate(config, "wind")
-    life = float(costs["lifetime_yr"])
+    life = float(life_override if life_override is not None else costs["lifetime_yr"])
     window = config.ira_ptc_credit_window_years
     window_years = life if window is None else min(float(window), life)
     factor = _capital_recovery_factor(rate, life) / _capital_recovery_factor(
@@ -527,6 +533,8 @@ def compute_lcoe(
     year: int,
     config: ScenarioConfig,
     cumulative_gw: float | None = None,
+    cf_override: float | None = None,
+    life_override: float | None = None,
 ) -> float:
     """Return the levelized cost of energy for a candidate technology.
 
@@ -548,9 +556,28 @@ def compute_lcoe(
             tech-cost lever (``tech_cost_path``/``tech_cost_percentile``).
         cumulative_gw: Cumulative global deployment, GW. When ``None`` no
             learning adjustment is applied.
+        cf_override: Expected capacity factor in place of the tech's national
+            ``base_cf``. REPORTING-ONLY (see below).
+        life_override: Cost-recovery period, yr, in place of the tech's book
+            life — it drives BOTH the capital-recovery factor and the wind
+            PTC's levelization window, because they are the same period by
+            construction. REPORTING-ONLY (see below).
 
     Returns:
         The IRA-adjusted LCOE in $/MWh.
+
+    Note:
+        ``cf_override``/``life_override`` exist for the MARGINAL-ABATEMENT
+        REPORTING surface (``scripts/build_mac_sidecar.py``), which prices a
+        project on its own grid's measured output over a contract-length
+        recovery period rather than at ATB's national CF over book life. They
+        are NOT a solve-path channel: no ``ScenarioConfig`` field reaches them,
+        every capacity-evolution caller leaves both ``None``, and at ``None``
+        this function is byte-identical to its pre-override form. Keeping them
+        here rather than re-deriving the arithmetic in the reporting script is
+        rule 19 ``[R-ONE-MECH]``: ONE LCOE construction, so the credit layering
+        (ITC before annualization, PTC levelized after) cannot drift between
+        the screen that builds plants and the page that prices their abatement.
     """
     costs = resolve_new_entry_costs(config)[tech_type]
     capex_per_kw = costs["capex_per_kw"]
@@ -567,12 +594,13 @@ def compute_lcoe(
         if year <= config.ira_wind_solar_last_year:
             capex_per_kw *= 1.0 - config.ira_itc_solar
 
-    crf = _capital_recovery_factor(
-        resolve_real_discount_rate(config, tech_type), costs["lifetime_yr"]
-    )
+    life = life_override if life_override is not None else costs["lifetime_yr"]
+    cf = cf_override if cf_override is not None else costs["base_cf"]
+
+    crf = _capital_recovery_factor(resolve_real_discount_rate(config, tech_type), life)
     annual_cost_per_kw = capex_per_kw * crf + costs["fom_per_kw_yr"]
     # Annual generation per kW of capacity, expressed in MWh.
-    annual_mwh_per_kw = HOURS_PER_YEAR * costs["base_cf"] / 1000.0
+    annual_mwh_per_kw = HOURS_PER_YEAR * cf / 1000.0
     lcoe = annual_cost_per_kw / annual_mwh_per_kw
 
     # Wind PTC: a per-MWh production credit, correctly subtracted post-hoc —
@@ -580,7 +608,7 @@ def compute_lcoe(
     # plant's whole life (FFR-4C, D-13; see wind_ptc_levelized_per_mwh).
     if tech_type == "wind":
         if year <= config.ira_wind_solar_last_year:
-            lcoe -= wind_ptc_levelized_per_mwh(config)
+            lcoe -= wind_ptc_levelized_per_mwh(config, life_override=life_override)
 
     return lcoe
 
