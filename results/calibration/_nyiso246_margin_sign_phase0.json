@@ -1,0 +1,130 @@
+{
+  "session": "nyiso-246",
+  "term": "markup_hr x (anchor - fuel)",
+  "years": {
+    "2022": {
+      "affected_tranches": 369,
+      "anchor_usd_per_mmbtu_distinct": [
+        5.5865,
+        6.8765,
+        8.6565
+      ],
+      "ordinary": {
+        "cap_weighted_mean_usd_per_mwh": 0.577,
+        "mean_gas_usd_per_mmbtu": 7.6395,
+        "p25": -1.318,
+        "p5": -9.244,
+        "p50": 0.202,
+        "p75": 1.786,
+        "p95": 13.298,
+        "share_of_row_hours_negative": 0.5643
+      },
+      "tagged_markup_gt0": 327,
+      "tagged_pmax_mw": 14923.6,
+      "tagged_share_of_affected_mw": 0.8885,
+      "tight": {
+        "cap_weighted_mean_usd_per_mwh": -27.069,
+        "mean_gas_usd_per_mmbtu": 12.6704,
+        "p25": -13.783,
+        "p5": -161.761,
+        "p50": -7.655,
+        "p75": -4.514,
+        "p95": -1.579,
+        "share_of_row_hours_negative": 1.0
+      }
+    },
+    "2023": {
+      "affected_tranches": 369,
+      "anchor_usd_per_mmbtu_distinct": [
+        1.877,
+        1.997,
+        3.337
+      ],
+      "ordinary": {
+        "cap_weighted_mean_usd_per_mwh": -1.941,
+        "mean_gas_usd_per_mmbtu": 3.0207,
+        "p25": -1.922,
+        "p5": -8.975,
+        "p50": -0.414,
+        "p75": 0.504,
+        "p95": 3.04,
+        "share_of_row_hours_negative": 0.6874
+      },
+      "tagged_markup_gt0": 327,
+      "tagged_pmax_mw": 14923.6,
+      "tagged_share_of_affected_mw": 0.8885,
+      "tight": {
+        "cap_weighted_mean_usd_per_mwh": -12.553,
+        "mean_gas_usd_per_mmbtu": 4.9517,
+        "p25": -6.55,
+        "p5": -69.566,
+        "p50": -3.292,
+        "p75": -2.113,
+        "p95": -0.709,
+        "share_of_row_hours_negative": 1.0
+      }
+    },
+    "2024": {
+      "affected_tranches": 375,
+      "anchor_usd_per_mmbtu_distinct": [
+        1.752,
+        2.112,
+        2.822
+      ],
+      "ordinary": {
+        "cap_weighted_mean_usd_per_mwh": 0.927,
+        "mean_gas_usd_per_mmbtu": 2.2926,
+        "p25": -0.36,
+        "p5": -1.797,
+        "p50": 0.008,
+        "p75": 0.931,
+        "p95": 13.82,
+        "share_of_row_hours_negative": 0.5791
+      },
+      "tagged_markup_gt0": 335,
+      "tagged_pmax_mw": 14933.4,
+      "tagged_share_of_affected_mw": 0.8886,
+      "tight": {
+        "cap_weighted_mean_usd_per_mwh": -15.466,
+        "mean_gas_usd_per_mmbtu": 5.2769,
+        "p25": -8.278,
+        "p5": -109.535,
+        "p50": -4.594,
+        "p75": -2.563,
+        "p95": -0.852,
+        "share_of_row_hours_negative": 1.0
+      }
+    },
+    "2025": {
+      "affected_tranches": 375,
+      "anchor_usd_per_mmbtu_distinct": [
+        2.3827,
+        4.0827,
+        5.4627
+      ],
+      "ordinary": {
+        "cap_weighted_mean_usd_per_mwh": 4.038,
+        "mean_gas_usd_per_mmbtu": 4.0066,
+        "p25": -0.042,
+        "p5": -2.262,
+        "p50": 1.19,
+        "p75": 3.009,
+        "p95": 31.917,
+        "share_of_row_hours_negative": 0.391
+      },
+      "tagged_markup_gt0": 335,
+      "tagged_pmax_mw": 14933.4,
+      "tagged_share_of_affected_mw": 0.8886,
+      "tight": {
+        "cap_weighted_mean_usd_per_mwh": -40.372,
+        "mean_gas_usd_per_mmbtu": 12.0916,
+        "p25": -21.167,
+        "p5": -300.697,
+        "p50": -14.141,
+        "p75": -5.577,
+        "p95": -1.798,
+        "share_of_row_hours_negative": 1.0
+      }
+    }
+  }
+}
