@@ -163,7 +163,50 @@ _HR_MAX_NET: float = 27.0
 _HSL_PCTILE: float = 90.0
 
 
-def target_plant_codes(iso: str) -> dict[int, float]:
+def provenance_fleet(
+    iso: str,
+    egrid_family_heat_rates: bool = False,
+    measured_ct_heat_rates: bool = False,
+    measured_st_heat_rates: bool = False,
+) -> list:
+    """Return the ISO's model fleet under a stated PROVENANCE recipe.
+
+    The three flags move ``heat_rate`` on rows this artifact REPORTS against
+    (``model_heat_rate_egrid`` — what the swap replaces) and nothing that is
+    applied: the measured rate comes from CAMPD alone, and plant membership
+    ranks on ``pmax_mw``, which no heat-rate flag touches. They exist because
+    an ISO whose keeper already carries one of them (SOCO carries all three)
+    would otherwise have its artifact report a delta against a fleet nobody
+    solves — the loader defaults — and a reader could not tell what
+    ``model_heat_rate_egrid`` meant. The gas-steam sibling
+    (:mod:`scripts.data.derive_campd_gas_st_heat_rates`, soco-53e) takes the
+    first two for the same reason; ``measured_st_heat_rates`` is added here
+    because it exists now and a coal site's gas boilers share its plant code.
+
+    Neither ``measured_ct_heat_rates`` nor ``measured_st_heat_rates`` can
+    reach a :data:`TARGET_CLASS` row at all — each is gated on its own group —
+    so on this artifact's own population only ``egrid_family_heat_rates`` can
+    move a reported number.
+
+    Args:
+        iso: ISO identifier, e.g. ``"NWPP"``.
+        egrid_family_heat_rates: Arm ``ScenarioConfig.egrid_family_heat_rates``.
+        measured_ct_heat_rates: Arm ``ScenarioConfig.measured_ct_heat_rates``.
+        measured_st_heat_rates: Arm ``ScenarioConfig.measured_st_heat_rates``.
+
+    Returns:
+        The loaded generator list.
+    """
+    return load_fleet_from_csv(
+        iso,
+        get_iso_config(iso),
+        egrid_family_heat_rates=egrid_family_heat_rates,
+        measured_ct_heat_rates=measured_ct_heat_rates,
+        measured_st_heat_rates=measured_st_heat_rates,
+    )
+
+
+def target_plant_codes(iso: str, fleet: list | None = None) -> dict[int, float]:
     """Return ``{plant_code: COAL capacity MW}`` from the ISO's model fleet.
 
     A plant qualifies on having ANY :data:`TARGET_CLASS` generator, so a site
@@ -172,11 +215,13 @@ def target_plant_codes(iso: str) -> dict[int, float]:
 
     Args:
         iso: ISO identifier, e.g. ``"NWPP"``.
+        fleet: An already-loaded fleet (see :func:`provenance_fleet`). ``None``
+            loads the ISO's loader-default fleet, the pre-soco-53f behaviour.
 
     Returns:
         Mapping of plant code to the class capacity the model carries there.
     """
-    fleet = load_fleet_from_csv(iso, get_iso_config(iso))
+    fleet = load_fleet_from_csv(iso, get_iso_config(iso)) if fleet is None else fleet
     caps: dict[int, float] = {}
     for gen in fleet:
         if gen.plant_group != TARGET_CLASS:
@@ -187,14 +232,19 @@ def target_plant_codes(iso: str) -> dict[int, float]:
     return caps
 
 
-def model_heat_rates(iso: str) -> dict[int, float]:
+def model_heat_rates(iso: str, fleet: list | None = None) -> dict[int, float]:
     """Return the ISO's CURRENT capacity-weighted eGRID heat rate per plant.
 
     Written to the artifact alongside the measured rate so the table records
     what it replaces and by how much — the provenance a later reader needs to
     judge the swap without re-running anything.
+
+    Args:
+        iso: ISO identifier.
+        fleet: An already-loaded fleet (see :func:`provenance_fleet`). ``None``
+            loads the ISO's loader-default fleet, the pre-soco-53f behaviour.
     """
-    fleet = load_fleet_from_csv(iso, get_iso_config(iso))
+    fleet = load_fleet_from_csv(iso, get_iso_config(iso)) if fleet is None else fleet
     num: dict[int, float] = {}
     den: dict[int, float] = {}
     for gen in fleet:
@@ -431,18 +481,74 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="ALSO write the per-unit table alongside the plant summary",
     )
+    parser.add_argument(
+        "--egrid-family-heat-rates",
+        action="store_true",
+        help=(
+            "Load the PROVENANCE fleet with ScenarioConfig."
+            "egrid_family_heat_rates armed. PROVENANCE ONLY: it moves "
+            "model_heat_rate_egrid and nothing that is applied"
+        ),
+    )
+    parser.add_argument(
+        "--measured-ct-heat-rates",
+        action="store_true",
+        help=(
+            "Load the PROVENANCE fleet with ScenarioConfig."
+            "measured_ct_heat_rates armed. PROVENANCE ONLY (and it cannot "
+            "reach a COAL row at all)"
+        ),
+    )
+    parser.add_argument(
+        "--measured-st-heat-rates",
+        action="store_true",
+        help=(
+            "Load the PROVENANCE fleet with ScenarioConfig."
+            "measured_st_heat_rates armed. PROVENANCE ONLY (and it cannot "
+            "reach a COAL row at all)"
+        ),
+    )
     args = parser.parse_args(argv)
     iso = args.iso.upper()
 
-    caps = target_plant_codes(iso)
+    fleet = provenance_fleet(
+        iso,
+        egrid_family_heat_rates=args.egrid_family_heat_rates,
+        measured_ct_heat_rates=args.measured_ct_heat_rates,
+        measured_st_heat_rates=args.measured_st_heat_rates,
+    )
+    caps = target_plant_codes(iso, fleet)
     if not caps:
         raise SystemExit(f"{iso}: model fleet has no {TARGET_CLASS} plants")
+    # The provenance recipe must not move the POPULATION — only the reported
+    # rate. Asserted rather than assumed: a silent membership change would move
+    # an APPLIED number (the gas-steam sibling's guard, soco-53e section 1.3).
+    plain_caps = target_plant_codes(iso)
+    if plain_caps != caps:
+        raise SystemExit(f"{iso}: the provenance recipe moved the plant population")
     units = unit_operating_heat_rates(iso, args.years, set(caps))
     if units.empty:
         raise SystemExit(f"{iso}: no unit cleared the steady-state screen")
     table = plant_table(
-        units, iso, args.years, caps, model_heat_rates(iso), parasitic_factors()
+        units,
+        iso,
+        args.years,
+        caps,
+        model_heat_rates(iso, fleet),
+        parasitic_factors(),
     )
+    # Record WHICH fleet recipe the provenance columns were read under, so a
+    # later reader can tell what "model_heat_rate_egrid" means without guessing.
+    recipe = [
+        name
+        for name, on in (
+            ("egrid_family_heat_rates", args.egrid_family_heat_rates),
+            ("measured_ct_heat_rates", args.measured_ct_heat_rates),
+            ("measured_st_heat_rates", args.measured_st_heat_rates),
+        )
+        if on
+    ]
+    table["model_recipe"] = "+".join(recipe) if recipe else "loader_defaults"
 
     out_path = (
         Path(args.out)
