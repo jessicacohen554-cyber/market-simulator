@@ -3083,8 +3083,36 @@ results/calibration/soco55_arm_20[0-9][0-9]/
 results/calibration/soco56_arm_20[0-9][0-9]/
 results/calibration/soco55_keeper_fat3/
 
-# nwpp-44: leg bundles stay out of main (rule 29(c) via .gitignore, rule 31 keeps them on disk)
-results/calibration/nwpp44_takeorpay_*/
+# nwpp-44 (lane NWPP-44, the measured take-or-pay / regulated committed band).
+#
+# The three PER-YEAR LEGS and the intermediate composite stay OUT OF MAIN (rule 29
+# [R-SCREEN] (c) is discharged by .gitignore, never by `rm` — rule 31 [R-RETAIN]
+# keeps them on local disk). The REGISTERED KEEPER bundle
+# results/calibration/nwpp44_takeorpay_reg is deliberately NOT ignored: rule 15
+# [R-DASHBOARD] requires a keeper's slim files + hourly/ sidecars on main, and rule
+# 33(f)(4)(ii) requires the registered bundle to land there before the lane's PR
+# merges. Its dispatch/ and root parquets remain ignored by the repo-wide rules.
+#
+# Leg provenance (rule 33(d): full SHAs are PROVENANCE, not a durability claim —
+# these branches are cut when a parent PR merges, so cost any un-landed leg as a
+# ~90 min re-solve, and 2024 nearer 3 h because its warm-started P1 ran 11,600 s):
+#   git checkout 9ac338cefa041800d9ccfe6f208e205ffe1115fd -- results/calibration/nwpp44_takeorpay_2023
+#   git checkout 6f3aa99cfe160db46822d3d54105007a3552ee86 -- results/calibration/nwpp44_takeorpay_2024
+#   git checkout 063fe56cc2a6fd7cf9d8492f11a4268d97bcde45 -- results/calibration/nwpp44_takeorpay_2025
+#   git checkout 4789d1c9a2c9f4aa0d2e4757e22cc2db2e997434 -- results/calibration/nwpp44_takeorpay_reg
+#
+# nwpp44_takeorpay_2025_WAVE1_INVALID is the DISCARDED wave-1 leg, kept as the
+# evidence behind ADDENDUM-nwpp-44-hydro-backfill-2026-09-20.md (its CLI omitted
+# --hydro-backfill-year 2024, which zeroed 255 of NWPP's 280 hydro plants and cost
+# 38.1 TWh of hydro). It must NEVER be composed or registered, and rule 31 forbids
+# deleting it. It is a KNOWN LOCAL parity-gate RED — the gate sweeps the filesystem
+# while CI sweeps the index (rule 31's 2026-09-16 correction) — and that RED is
+# expected, not a defect to fix by deletion.
+results/calibration/nwpp44_takeorpay_2023/
+results/calibration/nwpp44_takeorpay_2024/
+results/calibration/nwpp44_takeorpay_2025/
+results/calibration/nwpp44_takeorpay_2025_WAVE1_INVALID/
+results/calibration/nwpp44_takeorpay_span/
 # SPP-67 per-year shard legs (rule 32(d) [R-SHARD]: per-year dirs are kept OUT
 # of main; the COMPOSITE spp67_yearown_span / _rung is what gets registered).
 # NOT deleted (rule 31 [R-RETAIN]) — they stay on this session's disk until the
