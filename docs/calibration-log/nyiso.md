@@ -14546,6 +14546,14 @@ construction; and NYISO publishes no 60-Day-DAM equivalent and has no offer corp
 chosen **only** against the gates — rule 1 `[R-STRUCT]` condition (c). Disposition `G`, not `R`.
 **Re-open condition:** a published NYISO unit-level energy-offer book, or any measured NYISO conduct
 series identifying the markup's fuel-elasticity directly.
+*(ANNOTATED 2026-09-20, nyiso-243 — "has no offer corpus" is now **false**: NYISO MIS P-27 masked
+generator bid data is intaken at `data/raw/nyiso-bid-data` (2022-2025). **The `G` STANDS**, because
+this re-open condition asks for a **unit-level** book and P-27 is masked — no unit, class, fuel or
+zone — so it cannot identify a per-class markup's fuel-elasticity. "NYISO publishes no 60-Day-DAM
+equivalent" also stands as written: what NYISO withholds is the *unit identity*, not the offer data,
+which is why the nyiso-87 gas-bridge CAMPD reconstruction is untouched. The cell that DOES re-open on
+this corpus is `measured_offer_surface` (`G` -> `U`), which needs a distribution rather than a unit:
+`docs/RESULT-nyiso243-the-tail-is-not-an-availability-object-2026-09-20.md`.)*
 
 **Object B — RE-MEASURED CORRECTLY FOR THE FIRST TIME.** nyiso-235's dead end was a wrong-file problem:
 the actual hourly RT LMP series is committed at
