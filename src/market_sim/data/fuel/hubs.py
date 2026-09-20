@@ -937,8 +937,109 @@ def _nyiso_hub_daily_gas_prices(
     return out
 
 
+# Minimum trade-day gap (calendar days between consecutive prints) that marks a
+# PUBLICATION BLACKOUT rather than a legitimate trading package. Identified from
+# the committed ca_composite series' own trade-gap histogram (2018-2026, 1,805
+# gaps; scripts/probes/caiso288_blackout_census.py, rule 5 [R-NO-MAGIC]):
+#
+#     gap 1 d: 1401   gap 2 d:    2   gap 3 d:  312   gap 4 d:   52
+#     gap 5 d:    3   gap 8 d:   17   gap 9 d:    1   gap 12 d:   9
+#     gap 15 d:   7   gap 19 d:   1
+#
+# Gaps of 1-4 days ARE the market's trading packages (consecutive weekdays; the
+# Friday trade that covers the Sat-Mon weekend package; its holiday-extended
+# Sat-Tue form), and the staircase is the correct representation of them: a real
+# trade priced those flow days. Gaps of >=8 days are weeks in which EIA published
+# no Natural Gas Weekly Update at all (Thanksgiving, and the two weeks spanning
+# Christmas/New Year, every year) - NO trade priced those days, so holding the
+# last print across them is an extrapolation, not a measurement.
+#
+# The histogram is EMPTY at 6 and 7, so any threshold in [6, 7] selects exactly
+# the same 35 gaps and the value is NOT selectable against any result. 6 is taken
+# as the lower edge of that empty region. The three 5-day gaps (2018-08-31,
+# 2023-04-06, 2023-06-30 - holiday weeks EIA published with a short table) stay
+# on the staircase, which is the conservative side of the split.
+_GAS_BLACKOUT_MIN_GAP_DAYS = 6
+
+
+def _basis_bridge_blackouts(
+    flow: "pd.Series",
+    hh_daily: "pd.Series",
+    min_gap_days: int = _GAS_BLACKOUT_MIN_GAP_DAYS,
+) -> "pd.Series":
+    """Replace constant-extension across publication blackouts with an
+    HH-basis interpolation, leaving every legitimate trading package alone.
+
+    ``flow`` is a date-indexed series of measured citygate prints already placed
+    on their flow days (gaps NOT yet filled); ``hh_daily`` is the measured Henry
+    Hub daily spot, whose publication calendar has no blackout (it is a
+    market-data feed, not a weekly EIA narrative). For each pair of consecutive
+    measured prints separated by ``>= min_gap_days`` calendar days, the interior
+    days are built as
+
+        ``citygate[d] = hh_staircase[d] + basis_L + w(d) * (basis_R - basis_L)``
+
+    where ``basis_X = citygate[X] - hh_staircase[X]`` at the two bracketing
+    MEASURED prints and ``w`` ramps linearly from 0 to 1 across the gap. Shorter
+    gaps are untouched, so the caller's own ``ffill`` still staircases them.
+
+    This is the construction the repo already uses for a hub-month level
+    (:func:`iso_hub_monthly_gas_prices` = measured HH + measured basis) and for
+    the within-month daily shape (:func:`gas_daily_shape_factors`), applied to
+    the one place the daily series has no measurement of its own.
+
+    WHY THIS CONSTRUCTION AND NOT CONSTANT-EXTENSION OR A STRAIGHT LINE, decided
+    on the GAS DATA and never on a price residual (rule 1 [R-STRUCT]): over a
+    synthetic holdout of 33,216 withheld MEASURED citygate days (every fully
+    measured window of 8 / 12 / 15 / 19 days in the committed series,
+    ``scripts/probes/caiso288_blackout_census.py`` G-FILL), reconstruction error
+    against the withheld truth is
+
+        hold-last (current)  MAE 0.716  bias +0.039  RMSE 2.376
+        linear interpolation MAE 0.519  bias +0.033  RMSE 1.873
+        HH-basis (this)      MAE 0.481  bias +0.017  RMSE 1.787
+
+    and this construction wins on MAE, bias and RMSE at EVERY gap length. On the
+    cases that matter - a left anchor in the series' top decile, i.e. a blackout
+    that opens on a spike - hold-last carries a systematic **+0.879 $/MMBtu high
+    bias** (MAE 2.923) against this construction's +0.170 (MAE 1.681). The
+    defect hold-last has is therefore not merely noise: it is a one-sided
+    over-statement of gas exactly when the last print is extreme.
+
+    Rule 13 [R-MEASURED]: every input here is measured (both bracketing
+    citygate prints, the HH daily series inside the gap) and the identical
+    construction regenerates for a forward year from forward curves, so it is
+    admissible outside the backcast. Nothing is tuned to any residual.
+    """
+    if flow.empty or hh_daily.empty:
+        return flow
+    cal = pd.date_range(flow.index.min(), flow.index.max(), freq="D")
+    hs = hh_daily.reindex(hh_daily.index.union(cal)).sort_index().ffill().bfill()
+    out = flow.reindex(flow.index.union(cal)).sort_index()
+    known = out.dropna()
+    for left, right in zip(known.index, known.index[1:]):
+        span = (right - left).days
+        if span < min_gap_days:
+            continue  # a real trading package - the staircase is correct
+        inner = pd.date_range(
+            left + pd.Timedelta(days=1), right - pd.Timedelta(days=1), freq="D"
+        )
+        if not len(inner):
+            continue
+        basis_l = float(known[left]) - float(hs[left])
+        basis_r = float(known[right]) - float(hs[right])
+        w = np.array([(d - left).days / span for d in inner], dtype=float)
+        out.loc[inner] = (
+            hs.reindex(inner).to_numpy(dtype=float) + basis_l + w * (basis_r - basis_l)
+        )
+    return out
+
+
 def _flow_date_staircase(
-    dated_year: dict[int, dict[int, float]], year: int
+    dated_year: dict[int, dict[int, float]],
+    year: int,
+    bridge_all_years: dict[int, dict[int, dict[int, float]]] | None = None,
+    bridge_hh: "pd.Series | None" = None,
 ) -> np.ndarray | None:
     """365-day flow-date staircase ($/MMBtu) from trade-day citygate prints.
 
@@ -954,6 +1055,19 @@ def _flow_date_staircase(
     Dec-31 print flows into the NEXT year and is dropped (within-year
     construction, the year-start edge is documented as back-filled). Returns
     ``None`` when the year has no prints.
+
+    ``bridge_all_years`` / ``bridge_hh`` (caiso-288,
+    ``config.caiso_citygate_blackout_bridge``): when BOTH are given, a gap of
+    ``>= _GAS_BLACKOUT_MIN_GAP_DAYS`` calendar days between consecutive measured
+    prints is an EIA **publication blackout** rather than a trading package, and
+    its interior is built by :func:`_basis_bridge_blackouts` instead of being
+    constant-extended. ``bridge_all_years`` is the FULL multi-year dated map
+    (not just ``year``'s), because a December blackout's right-hand measured
+    anchor is the following January's first print — the one case the within-year
+    construction above cannot bracket. Every legitimate 1-4 day package still
+    staircases, and the returned array is byte-identical to the unbridged one in
+    any year whose gaps are all packages. Off by default; the caller passes
+    ``None`` and nothing changes.
     """
     stamps = {
         pd.Timestamp(year=year, month=m, day=d) + pd.Timedelta(days=1): v
@@ -963,8 +1077,23 @@ def _flow_date_staircase(
     if not stamps:
         return None
     idx = pd.date_range(f"{year}-01-01", f"{year}-12-31", freq="D")
-    s = pd.Series(stamps).sort_index()
-    s = s.reindex(idx.union(s.index)).sort_index().ffill().bfill().reindex(idx)
+    if bridge_all_years and bridge_hh is not None and not bridge_hh.empty:
+        # Bracket this year's blackouts against the neighbouring years' prints
+        # (a Dec blackout's right anchor is the next January's first print),
+        # then keep only this year's calendar.
+        flow_all = pd.Series(
+            {
+                pd.Timestamp(year=y, month=m, day=d) + pd.Timedelta(days=1): v
+                for y, months in sorted(bridge_all_years.items())
+                for m, days in sorted(months.items())
+                for d, v in sorted(days.items())
+            }
+        ).sort_index()
+        bridged = _pkg_ns()._basis_bridge_blackouts(flow_all, bridge_hh)
+        s = bridged.reindex(idx.union(bridged.index)).sort_index()
+    else:
+        s = pd.Series(stamps).sort_index().reindex(idx.union(pd.Index(stamps)))
+    s = s.sort_index().ffill().bfill().reindex(idx)
     s = s[~((s.index.month == 2) & (s.index.day == 29))]
     return s.to_numpy(dtype=float)
 
@@ -1087,8 +1216,34 @@ def _caiso_hub_daily_gas_prices(
     # a month-end print correctly flows into the next covered month; month
     # coverage below is unchanged (a month reprices only where the survey
     # basis row AND its own prints exist).
+    # caiso-288 (caiso_citygate_blackout_bridge): EIA publishes no Natural Gas
+    # Weekly Update in Thanksgiving week or the two weeks spanning Christmas /
+    # New Year, so the daily series carries a 8-19 day hole in Nov and Dec of
+    # EVERY year. The staircase's constant-extension fills that hole with the
+    # last print before it, which in Dec-2022 is $53.59/MMBtu - the single
+    # highest print of the year, held across 10 of December's 31 days while the
+    # measured record (SoCal citygate weekly $48.74 -> $20.18; Henry Hub daily
+    # -51%) says the western gas crisis was collapsing through exactly those
+    # days. Armed, the blackout interiors are rebuilt from the measured HH daily
+    # series and the two bracketing measured citygate prints instead
+    # (:func:`_basis_bridge_blackouts`, which carries the identification).
+    # Rule 14 [R-ACCURATE]: this replaces an extrapolation with a measured
+    # reconciliation; rule 19 [R-ONE-MECH]: it REPLACES the constant extension
+    # on those days rather than stacking on it, and touches no other day.
+    bridge_all = bridge_hh = None
+    if getattr(config, "caiso_citygate_blackout_bridge", False):
+        bridge_all = _pkg_ns()._caiso_citygate_daily_dated(citygate_path)
+        hh_dated = _pkg_ns()._henry_hub_daily_dated(henry_hub_path)
+        bridge_hh = pd.Series(
+            {
+                pd.Timestamp(year=y, month=m, day=d): v
+                for y, months in sorted(hh_dated.items())
+                for m, days in sorted(months.items())
+                for d, v in sorted(days.items())
+            }
+        ).sort_index()
     flow_series = (
-        _flow_date_staircase(citygate_dated, year)
+        _flow_date_staircase(citygate_dated, year, bridge_all, bridge_hh)
         if getattr(config, "caiso_citygate_flow_date", False) and citygate_dated
         else None
     )

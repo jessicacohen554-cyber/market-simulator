@@ -183,6 +183,7 @@ from .hubs import (
     _caiso_citygate_daily_dated as _caiso_citygate_daily_dated,
     _caiso_hub_daily_gas_prices as _caiso_hub_daily_gas_prices,
     _clean_algonquin_daily as _clean_algonquin_daily,
+    _basis_bridge_blackouts as _basis_bridge_blackouts,
     _clean_caiso_citygate_daily as _clean_caiso_citygate_daily,
     _clean_fuel_price_daily as _clean_fuel_price_daily,
     _clean_fuel_price_daily_dated as _clean_fuel_price_daily_dated,
