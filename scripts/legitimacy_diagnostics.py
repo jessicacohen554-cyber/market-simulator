@@ -1730,11 +1730,23 @@ D5_REGISTRY: tuple[MechanismSpec, ...] = (
         "caiso_ra_mustoffer",
         "caiso_ra_mustoffer",
         "both",
-        False,
+        True,
         backcast_symbols=("caiso_ra_mustoffer_min_gen",),
         forecast_symbols=("caiso_ra_mustoffer_min_gen",),
-        note="RA must-offer is market design (mode-independent); the known "
-        "w2-caiso-ra-p2 wiring gap makes it backcast-only in practice",
+        note="RA must-offer is market design (mode-independent) and rule-13 "
+        "admissible in BOTH modes — the bridge is detected from the model's "
+        "own base-cost P0 run pattern against the physical CC_COMMITMENT_PARAMS "
+        "min-down time, so no measured outcome enters. The parity difference "
+        "is the known w2-caiso-ra-p2 WIRING GAP: caiso_ra_mustoffer_min_gen is "
+        "called from scripts/run_calibration.py and never from runner.py, so "
+        "the mechanism is backcast-only in practice though not by intent. "
+        "DECLARED 2026-09-20 (caiso-294) in "
+        "docs/backcast-measured-data-audit-2026-06.md — same posture as the "
+        "reliability_floor row above: the gap is reported and sanctioned by "
+        "the declaration, NOT claimed harmless. Closing it is a forecast-path "
+        "model change (docs/audit-wiring-iso-gaps/prompt-pack/w2-caiso-ra-p2.md) "
+        "needing its own PRECOMMIT and an owner ruling; it is deliberately not "
+        "bundled into the declaration",
     ),
     MechanismSpec(
         "nyiso_synchronised_reserve",

@@ -590,15 +590,47 @@ class TestD5:
     }
 
     def test_wiring_gap_fails(self):
-        """RA must-offer built only in the calibration script → violation."""
+        """An UNDECLARED mode="both" mechanism wired in one entry → violation.
+
+        Retargeted 2026-09-20 (caiso-294) from ``caiso_ra_mustoffer``, which was
+        this test's subject until its parity difference was declared in
+        ``docs/backcast-measured-data-audit-2026-06.md`` (see
+        :meth:`test_caiso_ra_mustoffer_is_declared` below). The GUARD is what
+        mattered and it is kept, not deleted (rule 26 ``[R-DELETE]``): it now
+        rides ``gas_st_netload_drag``, which is still ``declared=False`` and
+        still ``mode="both"``, so a future wiring gap in an undeclared
+        mode-independent mechanism is caught exactly as before.
+        """
+        cfg = {**self.CFG, "caiso_ra_mustoffer": False, "gas_st_netload_drag": True}
+        res = run_d5(
+            cfg,
+            "CAISO",
+            backcast_entry_src="... apply_gas_st_netload_drag_floor(...)",
+            forecast_entry_src="... no such call ...",
+        )
+        assert not res.passed
+        assert "gas_st_netload_drag" in res.failures[0]
+
+    def test_caiso_ra_mustoffer_is_declared(self):
+        """The w2-caiso-ra-p2 gap is REPORTED, not a failure (caiso-294).
+
+        The bridge is market design and rule-13 admissible in both modes (it
+        reads the model's own P0 run pattern against the physical min-down
+        time), so the difference is a forecast WIRING gap rather than an
+        undeclared overlay. Declaring it keeps the row visible with
+        ``verdict == "declared"`` — the same posture ``reliability_floor``
+        carries — instead of hiding it.
+        """
         res = run_d5(
             self.CFG,
             "CAISO",
             backcast_entry_src="... caiso_ra_mustoffer_min_gen(...)",
             forecast_entry_src="... no such call ...",
         )
-        assert not res.passed
-        assert "caiso_ra_mustoffer" in res.failures[0]
+        assert res.passed
+        rows = [r for r in res.rows if r["mechanism"] == "caiso_ra_mustoffer"]
+        assert rows and rows[0]["verdict"] == "declared"
+        assert rows[0]["difference"] == "backcast-only"
 
     def test_wired_both_modes_passes(self):
         src = "... caiso_ra_mustoffer_min_gen(...)"

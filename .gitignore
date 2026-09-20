@@ -3122,6 +3122,10 @@ results/calibration/nyiso247_fuelinv_2025/
 # docs/PRECOMMIT-caiso293-chp-steam-duty-window-2026-09-20.md — rule 29
 # [R-SCREEN] (c): the doc is the record, the JSON never reaches main).
 results/calibration/_caiso293_*.json
+# caiso-294 phase-0 probe artifacts, same class and same discipline: zero-LP
+# measurements over committed bundles, every number reproduced in
+# docs/PRECOMMIT-caiso294-chp-steam-level-2026-09-20.md and its RESULT.
+results/calibration/_caiso294_*.json
 # pjm-h14 per-year ARM legs (rule 32(d): the COMPOSITE is what is registered; the legs
 # stay out of main). Recovery by FULL sha (rule 33(d)) — PROVENANCE ONLY, not a durability
 # claim: these shard branches are cut when this PR merges, so cost any leg recovery as a
