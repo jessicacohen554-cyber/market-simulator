@@ -382,3 +382,186 @@ unmetered-steam plants**, by a different route, and had been flagging them all a
   `git fetch origin <40-char-sha>` on the SOCO-56 leg SHAs returned 16 files each, and **all twelve
   committed hourly sidecars verified byte-identical** to the registered keeper. *The retention window
   is still undocumented, so this is not a durability claim (rule 33(d)).*
+
+---
+
+## 11. THE PROMOTION — EXECUTED IN THIS SESSION ON THE OWNER'S RULING
+
+The owner ruled, verbatim: *"Is this a recommended keeper candidate? If so plz promote. If structural
+integrity improves but gates regress that may still be a keeper."*
+
+**This lane recommended it, on rules 1 `[R-STRUCT]` and 14 `[R-ACCURATE]` and never on the residual,
+and SOCO's keeper is now `2026-09-20-soco57-measured-cc-heat`.** It is the ruling's **hardest limb so
+far**: SOCO-55's gates did not move at all, SOCO-56's moved one row's magnitude, and **this one adds a
+NEW FAILING CRITERION**. The case for it, stated plainly:
+
+- **The input's correctness is not a judgement call.** eGRID's own `PLHTRT` for Lowman is
+  8104.7973 Btu/kWh on a `PLNGENAN` denominator of 1,341,342 MWh — a capacity factor of **0.240** — and
+  the plant runs at **0.763 / 0.775** with a meter reading 6.30 net stable to ±0.03.
+- **CC_REGULAR was the last unmeasured thermal class.** CT, ST_GAS and COAL are already keepers on the
+  identical construction. Keeping a known-wrong CC rate *because it scores better* is precisely what
+  rule 14 forbids: *"Do not bury the error back inside an inaccurate input."*
+- **What it buys is measurable and large**: per-plant misallocation −42.7 % in 2024.
+- **Zero free parameters**, no key moves, no ISO transferred.
+
+**Against it, at full magnitude**: the target row worsens on both legs, C4 gains a failing row against
+a gate the control held by 0.004, `target_grade` drops 4 → 3, and **two of this lane's sixteen
+predictions were falsified**.
+
+Rule 35 `[R-PROMOTE]` was executed **in order**: **(b)** the year union `{2023, 2024, 2025}` was
+enumerated over all three SOCO sidecars *before* anything was deleted; **(c)** the incoming keeper
+covers it in one composed span, so the promotion **shrinks nothing**; **(e)** the designation was
+written, `build_status --iso SOCO` rebuilt and `audit_keepers` re-run *before* `prune_iso_runs` touched
+anything; **(a)** the outgoing keeper's three stores were then removed together via `--force-uncite`,
+which rule 35(d) names as the **intended** route — the guard fired on this lane's own
+promotion-history citation, and looking at it is what the rule asks for.
+
+**E11 DECLARED, NOT SUPPRESSED.** `meta.composed_from` renames `['soco56_arm_*'] → ['soco57_arm_*']`.
+It is neither a de-arm nor a solve-affecting field — it is the provenance list of the per-year shard
+bundles rule 36 `[R-YEAR-ISOLATION]` (a) *requires* be re-solved per year, so it cannot carry across a
+promotion and necessarily renames at **every** sharded keeper. Declared in `promotion_note_soco57`.
+
+**`2026-09-20-soco53g-prb-own-iso` was deliberately NOT pruned** (passed to `--keep`). The ruling names
+*the recommended candidate*, which is this lane's; it does not dispose of `soco53g`. Rule 31
+`[R-RETAIN]` forbids deleting it and rule 30 (a) forbids inventing a stamp, so **`audit_keepers` E13
+still fires once, by design, for the TENTH consecutive lane, and is RE-RAISED**. The standing
+recommendation across SOCO-55, SOCO-56 and this lane is to **DECLINE it**, which would let the next
+promoting session prune it and clear a ten-lane-old gate failure.
+
+---
+
+## Log entry
+
+```
+## soco-57 — 2026-09-20
+
+THE HANDOFF'S SPREAD HYPOTHESIS IS REFUTED AS POSED, AND THE REAL OBJECT IS
+NARROWER. The model's CC heat-rate spread is 1.381 MMBtu/MWh against a measured
+1.403 -- essentially identical -- and the capacity-weighted level barely moves
+(7.217 -> 7.040). The error is CONCENTRATED, and where it sits is the finding:
+the three plants the model prices too dear are, IN RANK ORDER, the three it most
+under-dispatches (56 Lowman +1.801 at a 2024 dispatch ratio of 0.602, 3 Barry
++0.770 at 0.729, 6073 Daniel +0.701 at 0.843), while every other applied plant
+sits inside +/-0.24.
+
+THE DEFECT IS TRACED END-TO-END TO PRIMARY SOURCES. Charles R Lowman (plant 56)
+carries EIA-860 Operating Year 2023 on BOTH its generators (LEC1 CT 459.0 MW,
+LEC2 CA 273.7 MW), so eGRID's 2023 vintage -- the model's own heat-rate source
+-- is its COMMISSIONING-year average. eGRID's PLHTRT is 8104.7973 Btu/kWh,
+byte-exact to the value the model carried, on a PLNGENAN denominator of
+1,341,342 MWh = A CAPACITY FACTOR OF 0.240 (EIA-923 confirms 2023 = 1.341 TWh),
+while the plant runs at CF 0.763 / 0.775 and its own meter reads 6.35 / 6.30 /
+6.29 net, stable to +/-0.03. THE MODEL PRICED A 76 %-CF MACHINE ON A HEAT RATE
+MEASURED IN A 24 %-CF YEAR -- 8.105 (42 % HHV, an F-class number) against a
+metered 6.30 (~54 %, what a new H-class machine does): $5.10/MWh on a new
+machine. That is the coal deriver's own stated defect ("its LEVEL moves with the
+plant's capacity factor in the vintage year") in its sharpest possible form.
+
+THE LEVER -- measured_cc_heat_rates, a NEW default-off ScenarioConfig field
+added in the same PR with its derive (scripts/data/derive_campd_cc_heat_rates.py)
+and SOCO's own artifact (campd_cc_heat_rates_SOCO.csv, sha256[:16]
+b26588d9512a6519, 18 plants measured / 16 APPLIED = 17,540.1 of 18,652.9 MW =
+94.0 %, 1,164,652 steady hours). It retires the LAST thermal class in the
+footprint still priced off an unmeasured annual average; CT, ST_GAS and COAL took
+their own CAMPD meters at SOCO-53, SOCO-53e and SOCO-53f. Rules 25 / 28(d): every
+peer ISO's cell is seeded U with nothing transferred, and the field is a STRICT
+NO-OP for an ISO without its own artifact.
+
+THE BOUNDARY GUARD IS THIS DERIVER'S OWN ADDITION AND HAS NO SIBLING ANALOGUE.
+heatInput/grossLoad is a plant's COMBINED-CYCLE rate only if CAMPD's gross load
+includes the steam turbine; at some sites the CTs report and the unfired steam
+generator does not, so the ratio is the COMBUSTION-TURBINE rate, ~1.5x too high.
+The guard is an identity test against an independent source -- pooled CAMPD CC
+gross over the SAME year's EIA-923 CC net, read through the benchmark's own
+_eia923_frame -- and it refuses 533 McWilliams (0.719) and 7946 Wansley U9
+(0.675) against sixteen plants reading 1.014..1.116. Two clusters separated by a
+factor of 1.4 with NOTHING between 0.72 and 1.01, so the band [0.90, 1.25] sits
+inside an EMPTY gap and no value in [0.75, 1.00] changes the partition: fixed on
+physics ex ante, never swept. TWO INDEPENDENT CORROBORATIONS surfaced: the median
+boundary ratio over the applied plants is 1.0263 against the CC class parasitic
+default's implied 1/0.975 = 1.0256 (0.06 %), and the repo's OWN benchmark CT-only
+CEMS flag names the same two plants at 1.39x and 1.44x -- the reciprocals of
+their measured ratios. It had been flagging them all along.
+
+RULE 19 MACHINE-VERIFIED AT FOUR GRAINS, all three years, BEFORE the solve:
+fuel_prices, pmax and availability at global max |delta| EXACTLY 0.000000000000
+with ZERO rows moved, while mc_base and heat_rate move 59 of 327 rows (59 of 290
+in 2025), ALL CC_REGULAR, at exactly the 16 applied plants, with the two
+boundary-refused plants ABSENT ON EVERY GRAIN.
+
+WHAT IT BUYS IS ALLOCATION, AND THAT IS THE WHOLE CASE. Per-plant CC
+misallocation Sum|model - actual| falls 13.796 -> 11.316 TWh in 2023 (-18.0 %)
+and 19.331 -> 11.081 in 2024 (-42.7 %). Barry lands at 1.013 of its own measured
+output (from 0.729) and Lowman at 0.970 (from 0.602); Tenaska Lindsay Hill
+improves 2.506 -> 2.060 WITHOUT its heat rate changing at all, purely out-competed
+by correctly-priced plants. The model had been getting the class total LESS wrong
+by being wrong at the plants in opposite directions.
+
+WHAT IT COSTS, AT FULL MAGNITUDE AND NOT IN A FOOTNOTE. (1) The lane's own target
+row gets WORSE: 2024 CC_REGULAR +10.18 -> +11.05 TWh of a +/-7.47 band and +3.9 ->
++4.2 pp of a +/-3.00 pp cap, failing both legs worse than the outgoing keeper did;
+PRECOMMIT-soco-57 §4 said so in those words before the solve, from a zero-LP greedy
+re-stack. (2) A NEW CRITERION FAILS: C4 fleet hourly dispatch correlation goes PASS
+-> FAIL on 2024 coal, NRMSE 0.296 -> 0.309 against a <= 0.30 gate the outgoing
+keeper held by 0.004, r essentially unchanged (0.832 -> 0.829), so grade_summary
+goes 5 scored / 4 target / 1 fail -> 5 / 3 / 2. Two of three coal years IMPROVE
+(2023 r 0.867 -> 0.882; 2025 NRMSE 0.170 -> 0.167) and one crosses a hairline. Its
+mechanism is understood and is a real cost: cheaper CC displaces 0.638 TWh of 2024
+COAL_PRB from a class ALREADY 5.14 TWh SHORT, so the arm takes energy from a short
+class and gives it to a long one. Under rule 14 that is the DISCOVERED-BUG signal,
+not a licence to revert -- SOCO'S COAL UNDER-DISPATCH IS THE NAMED SUCCESSOR, not
+this input.
+
+THE PREDICTION RECORD IS 13 CONFIRMED / 1 PARTIAL / 2 FALSIFIED, reported as
+misses rather than re-read as successes. P4 (2024 COAL_PRB worsening by < 0.45 TWh)
+is falsified on magnitude at -0.638; P13 (C2/C4/C6 PASS) is falsified outright by
+the C4 failure; P8's direction holds at all three repriced plants but Lowman (0.970)
+and Barry (1.013) land ABOVE their predicted bands. All three misses share ONE root
+cause: the zero-LP greedy re-stack can only displace above-floor MW hour-by-hour and
+cannot model the LP re-committing units, so it systematically UNDERSTATED the
+movement. A successor using that bound should widen its bands by roughly 2x in the
+direction of the correction. THE THINNEST-ROW MISS IS NAMED: the lane's ex-ante
+check-D enumerated C1 rows only and named 2024 COAL_PRB and 2023 ST_GAS, while the
+run's ACTUAL thinnest row was C4 2024 coal at 0.004 of NRMSE margin, which this lane
+never looked at. A successor's check D must enumerate EVERY scored criterion's margin.
+
+LEGITIMACY IMPROVES ELSEWHERE. D-1 failing rows fall 3 -> 2 (2025 COAL_BIT repaired;
+2023 COAL_BIT and 2024 COAL_PRB inherited). D-2 / D-4 / D-5 / D-9 / D-10 PASS both
+sides. Rule 17 holds in ALL FIFTEEN plant-years, positive margin everywhere, plant 3
+at 0.000 forced share with a 0.0632 margin. C8 ST_GAS forced share 0.1296 / 0.1304 /
+0.1473 against the 0.30 merchant cap. ZERO free parameters: DOF 6 entries / 1
+residual, unchanged; the field was registered in _CACHE_KEY_OPTIONAL_FIELDS at
+"False" in the same commit, so no pre-existing key moves, explicit-False reproduces
+the default key, and moved_rows("SOCO") == {}.
+
+A WIRING DEFECT WAS FOUND IN LANE AND A SUCCESSOR MUST KNOW IT. This lane's FIRST
+rule-19 run read all four grains at EXACTLY zero -- not an inert mechanism but an arm
+that never armed: scripts/run_calibration.py's fleet_to_bins call site passes the
+other three measured-heat-rate flags and was missing the fourth. It was diagnosed by
+toggling a KNOWN-armed flag (measured_coal_heat_rates=false) through the same channel,
+which moved 24 rows and proved the channel sound. A FIFTH SIBLING MUST PATCH FOUR CALL
+SITES, NOT THREE. The lasting guard is soco57_compose_span.assert_delta, which reads
+the RESOLVED scenario_config rather than the prb_overrides bag -- "max|delta| == 0" is
+indistinguishable from "inert" unless something asserts the resolved value.
+
+PROMOTED. SOCO's keeper is now 2026-09-20-soco57-measured-cc-heat (bundle
+results/calibration/soco57_measured_cc_hr, three per-year shards composed at zero LP
+under rule 36), on the owner ruling "Is this a recommended keeper candidate? If so plz
+promote. If structural integrity improves but gates regress that may still be a
+keeper." IT IS THAT RULING'S HARDEST LIMB SO FAR -- SOCO-55's gates did not move,
+SOCO-56's moved one row's magnitude, and this one ADDS A NEW FAILING CRITERION. Rule 35
+executed in order: the year union {2023,2024,2025} enumerated over all three sidecars
+BEFORE any delete, the incoming keeper covering it in one composed span so the promotion
+SHRINKS NOTHING, audit_keepers run BEFORE prune_iso_runs, and the outgoing
+2026-09-20-soco56-perunit-outage's three stores then removed via --force-uncite (the
+guard fired on this lane's own promotion-history citation, which is what rule 35(d) asks
+an operator to look at). E11 DECLARED, not suppressed: meta.composed_from necessarily
+renames at every sharded keeper because rule 36 requires per-year re-solves.
+2026-09-20-soco53g-prb-own-iso is KEPT (rule 31) and unstamped (rule 30(a)), so
+audit_keepers E13 fires once by design and is RE-RAISED FOR THE TENTH CONSECUTIVE LANE;
+the standing recommendation across SOCO-55/56/57 is to DECLINE it so the next promoting
+session may prune it. Records: docs/handoffs/PRECOMMIT-soco-57-2026-09-20.md,
+docs/handoffs/FINDING-soco-57-2026-09-20.md, scripts/gen_soco57_attestation.py,
+scripts/probes/soco57_compose_span.py, scripts/data/derive_campd_cc_heat_rates.py,
+scripts/probes/_soco57_phase0.py, scripts/probes/_soco57_rule19.py.
+```
