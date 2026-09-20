@@ -2866,30 +2866,26 @@ def _compose_min_gen_floors(
                 if gen.fuel_type == "nuclear":
                     min_gen[g_idx, :] = availability[g_idx, :] * pmax[g_idx]
                     min_gen_mech[g_idx, min_gen[g_idx, :] > 0.0] = MECH_NUCLEAR
-        # CHP grid-delivered steam-following floor: the cogen's steady export
-        # is forced on flat all year (the dispatchable surplus rides above it
-        # via the load-following tranches).
-        for g_idx, gen in enumerate(generators):
-            pmin_mw = getattr(gen, "chp_grid_pmin_mw", 0.0)
-            if pmin_mw > 0.0:
-                min_gen[g_idx, :] = pmin_mw
-                min_gen_mech[g_idx, :] = MECH_CHP_STEAM
         # THE SHARED COMMITMENT-FLOOR WINDOW SERIES, resolved ONCE
         # (config.commitment_floor_window_netload, SPP-66, owner ruling
-        # "Shared gate" 2026-09-20; default off). Four floors below shape
-        # themselves on this one series -- coal synchronization, the per-plant
+        # "Shared gate" 2026-09-20; default off). FIVE floors below shape
+        # themselves on this one series -- the CHP steam duty window
+        # (caiso-293, immediately below), coal synchronization, the per-plant
         # CC/ST_GAS committed floor, the ST_GAS p25 level swap and the
-        # CT_PEAKER reliability must-run. Three rank hours by it (top-k carries
+        # CT_PEAKER reliability must-run. Four rank hours by it (top-k carries
         # the floor, plus _commitment_day_order's day grain); the CT floor
         # builds per-month max(load - median, 0) placement weights from it. It
-        # is resolved here, once, so all four are windowed on the SAME driver
+        # is resolved here, once, so all five are windowed on the SAME driver
         # (rule 19 [R-ONE-MECH]) -- gating one floor while its neighbour kept
         # the other driver is the defect this replaced, not a narrower version
         # of the fix.
         #
         # OFF (the default) this is the IDENTICAL expression each of the four
-        # sites evaluated inline before, so every committed bundle in every ISO
-        # is byte-identical. ON, it swaps in net load, whose external driver
+        # PRE-EXISTING sites evaluated inline before, so every committed bundle
+        # in every ISO is byte-identical. (caiso-293 moved this resolution
+        # ABOVE the CHP steam block, which now reads it as the fifth consumer;
+        # the move changes no value -- the series depends only on config,
+        # netload_shape, load_shape and hours, none of which any floor writes.) ON, it swaps in net load, whose external driver
         # evidence is the ScenarioConfig field's own comment: a cycler runs in
         # the high-NET-load hours, not the high-gross-load ones (rule 17
         # [R-FLOOR-WINDOW] (a)). A None/short netload_shape falls through to
@@ -2912,6 +2908,63 @@ def _compose_min_gen_floors(
             if _window_src is not None and len(_window_src) == hours
             else None
         )
+        # CHP grid-delivered steam-following floor. The cogen's steady export is
+        # forced on; ``chp_grid_pmin_on_frac`` says in WHICH hours.
+        #
+        # 1.0 -- the default, and what every unit carries unless
+        # ``config.chp_steam_duty_window`` is armed -- is the flat all-year
+        # assignment this block has always made, so an unarmed run is
+        # byte-identical. Below 1.0 (the DUTY WINDOW, caiso-293) the floor is
+        # held only in the top ``on_frac x live-hours`` by the SHARED window
+        # series resolved directly above -- the same construction the coal
+        # synchronization and per-plant CC/ST_GAS committed floors below
+        # already use, and the one the deriver's own ``online_frac`` comment
+        # prescribes ("it sizes the committed window").
+        #
+        # WHY (rule 17 [R-FLOOR-WINDOW]). ``steam_level_cf`` is
+        # ``on_freq x p50(loading-when-on)`` -- an ENERGY-EQUIVALENT ANNUAL
+        # AVERAGE -- and holding it in all 8760 hours turns a cycler into a
+        # 24/7 trickle: annual energy approximately conserved, hourly conduct
+        # entirely wrong. Measured on the CAISO keeper, five of the thirteen
+        # metered floored plants were forced to deliver MORE energy than their
+        # own meter recorded for the whole year, and the seven the keeper's D-4
+        # fails on have an hour-of-day on-frequency max/min of 12.4-35.0 (the
+        # evening ramp) against 1.00-1.04 for the three genuinely flat steam
+        # hosts the all-hours window's own evidence cites.
+        #
+        # LIVE HOURS, not all hours, is the denominator: the deriver takes the
+        # on-frequency over AVAILABLE hours, and ``min_gen`` is clipped to
+        # ``pmax x availability`` below, so sizing over ``availability > 0``
+        # makes the realised window exactly ``on_frac`` of the plant's live
+        # time. (This is a deliberate difference from ``coal_sync_online_frac``
+        # above, whose own derivation takes its fraction over all hours.)
+        _chp_any_windowed = any(
+            float(getattr(g, "chp_grid_pmin_on_frac", 1.0)) < 1.0
+            and getattr(g, "chp_grid_pmin_mw", 0.0) > 0.0
+            for g in generators
+        )
+        _chp_rank_key = _window_shape if _chp_any_windowed else None
+        for g_idx, gen in enumerate(generators):
+            pmin_mw = getattr(gen, "chp_grid_pmin_mw", 0.0)
+            if pmin_mw <= 0.0:
+                continue
+            frac = float(getattr(gen, "chp_grid_pmin_on_frac", 1.0))
+            if frac >= 1.0 or _chp_rank_key is None:
+                min_gen[g_idx, :] = pmin_mw
+                min_gen_mech[g_idx, :] = MECH_CHP_STEAM
+                continue
+            live = np.flatnonzero(availability[g_idx, :] > 0.0)
+            if live.size == 0:
+                continue
+            k = int(round(frac * live.size))
+            if k <= 0:
+                continue
+            # Top-k LIVE hours by the shared driver. ``kind="stable"`` matches
+            # the sibling floors, so a tie resolves to the earlier hour rather
+            # than arbitrarily.
+            hrs = live[np.argsort(-_chp_rank_key[live], kind="stable")[:k]]
+            min_gen[g_idx, hrs] = pmin_mw
+            min_gen_mech[g_idx, hrs] = MECH_CHP_STEAM
         # Coal synchronization floor (rebuild step 3a,
         # config.coal_sync_srmc_tranche): the _mustrun (contracted, fuel-free)
         # and _sync (spot, SRMC) coal min-load tranches are held on at the

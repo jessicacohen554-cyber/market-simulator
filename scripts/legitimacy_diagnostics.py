@@ -311,12 +311,32 @@ D4_WINDOWS: dict[tuple[int, str | None], tuple[int, int]] = {
     # demand is around-the-clock (CAISO CC_CHP steam fleet: CEMS net flat
     # 0.65-0.76 GW across every hour-of-day, May-2023, hod max/min 1.16;
     # the ERCOT industrial-cogen conduct the original CHP_PMIN_CF_BY_PLANT
-    # p2 floors were derived from is the same shape). Under the level
-    # swap the statistic additionally enforces the window per plant: a
+    # p2 floors were derived from is the same shape).
+    #
+    # **THE SECOND HALF OF THIS JUSTIFICATION WAS FALSE AND IS CORRECTED IN
+    # PLACE, NOT DELETED (caiso-293, 2026-09-20).** It claimed: *"Under the
+    # level swap the statistic additionally enforces the window per plant: a
     # rarely-online cogen's on-frequency (or delivered energy) collapses its
-    # level toward 0 and it carries no operating-level floor (cyclers keep
-    # only their p2/923-CF never-below base). D2-exempt structural must-run;
-    # row exists for the rule-12/17 declaration, not for a C8 escalation path.
+    # level toward 0 and it carries no operating-level floor (cyclers keep only
+    # their p2/923-CF never-below base)."* This diagnostic's OWN per-unit
+    # conduct rider falsified it on the CAISO keeper: 28 failing rows, 7
+    # plants, all four years, every one of them a plant whose ``chp_pmin_cf``
+    # is 0.0 — so the swap CREATED the whole floor rather than superseding a
+    # smaller one — and whose hour-of-day on-frequency max/min is 12.4-35.0
+    # (the evening ramp) against 1.00-1.04 for the three flat steam hosts the
+    # first half cites. The statistic dilutes the LEVEL and leaves the HOURS at
+    # 8760; those are different objects, and five metered floored plants were
+    # thereby forced above their own whole-year meter.
+    #
+    # THE WINDOW STAYS (0, 24) ANYWAY, and deliberately. The repair
+    # (``ScenarioConfig.chp_steam_duty_window``) confines the floor to a
+    # per-plant TOP-K-BY-SYSTEM-LOAD window, which is a LOAD RANK and not an
+    # hour-of-day band — D-4's window test cannot express it in either
+    # direction, so narrowing this tuple would mis-score the repair as surely
+    # as it mis-scored the defect. **The test that actually binds this
+    # mechanism is the per-unit conduct rider below, not this row**, which is
+    # why the defect surfaced there. D2-exempt structural must-run; row exists
+    # for the rule-12/17 declaration, not for a C8 escalation path.
     (MECH_CHP_STEAM, None): (0, 24),
     # coal_min_config (MECH_COAL_MIN_CONFIG — the coal MINIMUM ONLINE
     # CONFIGURATION floor, config.ercot_coal_min_config_floor, ercot128): the

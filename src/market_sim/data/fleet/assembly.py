@@ -85,6 +85,7 @@ from market_sim.data.fleet.campd_bins import (
     load_plant_tranche_config,
     oil_primary_bin_plants,
     oil_primary_ct_plants_from_eia860,
+    thermal_tranche_chp_steam_duty,
     thermal_tranche_chp_steam_level,
     thermal_tranche_peaking,
 )
@@ -870,6 +871,9 @@ def bins_to_fleet(
         # hardcoded ERCOT CAMPD map behind it; plants with neither export
         # surplus only.
         chp_pmin_mw = 0.0
+        # 1.0 == hold the floor in every hour, the pre-caiso-293 behaviour
+        # and the value every unit keeps unless chp_steam_duty_window arms.
+        chp_duty_on_frac = 1.0
         pmin_cf = None
         if chp_following:
             pmin_cf = chp_pmin_cf(
@@ -899,6 +903,30 @@ def bins_to_fleet(
                 ).get((plant_code, group))
                 if _level is not None and _level > (pmin_cf or 0.0):
                     pmin_cf = _level
+                    # DUTY WINDOW (chp_steam_duty_window, caiso-293): the level
+                    # above is on_freq x p50(loading-when-on) — an ENERGY
+                    # AVERAGE — and arrays.py holds it in all 8760 hours, which
+                    # is only the same object when on_freq ~ 1. Armed, the
+                    # UNDILUTED level is used and the on-frequency is carried
+                    # to arrays.py to size the window instead (the
+                    # coal_sync_online_frac / cc_mustrun_online_frac
+                    # construction). The two factors are an exact identity over
+                    # the artifact's own committed columns, so this swaps no
+                    # statistic and adds no parameter (rule 21 [R-DOF]);
+                    # CEMS-invisible cogens carry no median_cf and are absent
+                    # from the map, keeping the pooled-mean level they have
+                    # today. Same MECH_CHP_STEAM attribution — the ONE floor's
+                    # hour-eligibility, not a second floor (rule 19).
+                    if getattr(config, "chp_steam_duty_window", False):
+                        _duty = thermal_tranche_chp_steam_duty(
+                            getattr(config, "iso", "ERCOT") or "ERCOT",
+                            bool(getattr(config, "campd_per_unit_attribution", False)),
+                            bool(
+                                getattr(config, "campd_outage_merit_order_guard", False)
+                            ),
+                        ).get((plant_code, group))
+                        if _duty is not None and _duty[1] > 0.0:
+                            chp_duty_on_frac, pmin_cf = _duty[0], _duty[1]
             # Measured steam-following level (chp_export_floor_measured): the
             # plant's EIA-923 class CF for the solved year supersedes the
             # pooled CAMPD p2 minimum — the host-driven operating level the
@@ -1483,6 +1511,11 @@ def bins_to_fleet(
                     plant_code=plant_code,
                     state=_plant_states.get(plant_code, ""),
                     chp_grid_pmin_mw=chp_floor_by_suffix.get(suffix, 0.0),
+                    chp_grid_pmin_on_frac=(
+                        chp_duty_on_frac
+                        if chp_floor_by_suffix.get(suffix, 0.0) > 0.0
+                        else 1.0
+                    ),
                     coal_sync_pmin_mw=sync_floor,
                     coal_sync_online_frac=(
                         sync_online_frac if sync_floor > 0.0 else 1.0
