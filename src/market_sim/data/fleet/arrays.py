@@ -2669,6 +2669,43 @@ def _compose_min_gen_floors(
             _yr,
             len(_per_year_frac),
         )
+    # PER-YEAR WINDOW VINTAGE for the COAL SYNCHRONIZATION floor
+    # (config.coal_sync_online_frac_per_year, pjm-h15). The same defect on a
+    # separate seam: ``assembly.py`` stamps ``coal_sync_online_frac`` from the
+    # SAME pooled ``online_frac`` column, and the coal block below applies it as
+    # a single solve year's window. Its own gate, because coal is its own
+    # mechanism id (``MECH_COAL_MUSTRUN``) carrying its own D-4 conduct
+    # evidence — the gas gate above says so in terms (rule 19 [R-ONE-MECH]).
+    #
+    # BACKCAST ONLY (rule 13 [R-MEASURED]), like the gas sibling: a forecast
+    # year keeps the pooled multi-year fraction, which is the estimator's own
+    # forward form. MEMBERSHIP IS NOT TOUCHED — a plant reaches this block only
+    # by carrying ``coal_sync_pmin_mw > 0``, decided in assembly from the
+    # POOLED artifact exactly as today — and a plant with no own-year row keeps
+    # its pooled fraction, so the arm can never remove a floor for want of a
+    # measurement. The one deliberate consequence is the same as the gas
+    # sibling's: an own-year fraction of zero means the plant's own meter says
+    # it never synchronized that year, so it carries no floor that year.
+    _coal_per_year_frac: dict[int, float] = {}
+    if (
+        config is not None
+        and getattr(config, "coal_sync_online_frac_per_year", False)
+        and getattr(config, "mode", "forecast") == "backcast"
+        and _yr is not None
+    ):
+        _coal_by_year = _pkg_ns().thermal_tranche_online_frac_by_year(_iso or "ERCOT")
+        _coal_per_year_frac = {
+            pc: frac
+            for (pc, grp, yr), frac in _coal_by_year.items()
+            if yr == int(_yr) and grp == "COAL"
+        }
+        logger.info(
+            "coal_sync_online_frac_per_year ARMED (%s %s): %d per-year coal "
+            "synchronization fraction(s) replace the pooled window vintage",
+            _iso or "ERCOT",
+            _yr,
+            len(_coal_per_year_frac),
+        )
     # WHOLE-OPERATING-DAY COMMITMENT GRAIN for both per-plant must-run seams
     # (config.mustrun_window_commitment_grain, spp-27). The floor asserts a
     # COMMITMENT — a day-ahead, whole-operating-day decision — but the engine
@@ -2995,6 +3032,18 @@ def _compose_min_gen_floors(
                 if pmin_mw <= 0.0:
                     continue
                 frac = float(getattr(gen, "coal_sync_online_frac", 1.0))
+                # Per-year window vintage
+                # (config.coal_sync_online_frac_per_year, pjm-h15): membership
+                # and the floor LEVEL stay on the pooled artifact stamped in
+                # assembly; only the WINDOW it sizes becomes the SOLVE YEAR's
+                # own measured synchronization share. Empty dict (unarmed, a
+                # forecast year, or an ISO with no companion artifact) leaves
+                # the pooled fraction and the block byte-identical.
+                frac = _coal_per_year_frac.get(
+                    int(getattr(gen, "plant_code", 0) or 0), frac
+                )
+                if frac <= 0.0:
+                    continue  # measured dark all year
                 if frac >= _COAL_SYNC_FORCE_ALL or load_rank is None:
                     raised = min_gen[g_idx, :] < pmin_mw
                     np.maximum(min_gen[g_idx, :], pmin_mw, out=min_gen[g_idx, :])

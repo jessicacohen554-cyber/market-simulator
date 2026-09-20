@@ -2739,6 +2739,134 @@ class TestStGasP25LevelFloor(unittest.TestCase):
         np.testing.assert_allclose(fa_lsl.min_gen[1, window], 50.0)
 
 
+class TestCoalSyncOnlineFracPerYear(unittest.TestCase):
+    """Per-YEAR COAL synchronization window (``coal_sync_online_frac_per_year``).
+
+    pjm-h15 — the coal sibling of :class:`TestMustrunOnlineFracPerYear`, on its
+    own gate because coal is its own mechanism id (``MECH_COAL_MUSTRUN``) with
+    its own D-4 conduct evidence (rule 19 ``[R-ONE-MECH]``). PJM's committed
+    ``thermal_tranches_PJM.csv`` is derived on 2023-2025 and its pooled
+    ``online_frac`` is applied as EVERY solve year's window: plant 50888 reads
+    pooled 0.684 against an own-year 0.013 in 2020 — floored in 68 % of a year
+    whose own meter says it synchronized in 1.3 % of it (rule 17
+    ``[R-FLOOR-WINDOW]``).
+
+    Same four properties as the gas sibling: default-off byte-inertness, the
+    per-year window sizing the floor, the backcast-only mode gate (rule 13),
+    and membership staying on the pooled artifact (an unmeasured plant-year
+    keeps its pooled fraction, so the arm never removes a floor for want of a
+    measurement).
+    """
+
+    _HOURS = 48
+    _PLANT = 9903
+
+    def _gens(self):
+        g = Generator(
+            unit_id="coal_0",
+            name="Cycler",
+            zone="North",
+            fuel_type="coal",
+            pmax_mw=300.0,
+            heat_rate=10.0,
+            plant_group="COAL",
+            plant_code=self._PLANT,
+        )
+        g.coal_sync_pmin_mw = 100.0
+        g.coal_sync_online_frac = 0.5
+        return [g]
+
+    def _fa(self, *, per_year=False, mode="backcast", by_year=None):
+        cfg = ScenarioConfig(
+            mode=mode,
+            weather_year=2024,
+            coal_sync_online_frac_per_year=per_year,
+        )
+        load = np.arange(self._HOURS, dtype=float) + 1.0  # top-frac == last k h
+        with unittest.mock.patch(
+            "market_sim.data.fleet.thermal_tranche_online_frac_by_year",
+            return_value=(
+                by_year if by_year is not None else {(self._PLANT, "COAL", 2024): 0.25}
+            ),
+        ):
+            return generators_to_fleet_arrays(
+                self._gens(),
+                ["North"],
+                hours=self._HOURS,
+                iso="PJM",
+                config=cfg,
+                load_shape=load,
+            )
+
+    def test_default_off_is_byte_inert(self):
+        """Flag off: the pooled window sizes the floor, unchanged."""
+        fa = self._fa(per_year=False)
+        self.assertEqual(int((fa.min_gen[0] > 0).sum()), 24)  # 0.5 x 48 h
+
+    def test_per_year_window_sizes_the_floor(self):
+        """Armed: the SOLVE YEAR's own fraction sizes the window."""
+        fa = self._fa(per_year=True)
+        self.assertEqual(int((fa.min_gen[0] > 0).sum()), 12)  # 0.25 x 48 h
+        np.testing.assert_allclose(fa.min_gen[0, :36], 0.0)  # top-load hours
+
+    def test_unmeasured_plant_year_keeps_the_pooled_fraction(self):
+        """No own-year row: the floor is untouched (never removed for want of
+        a measurement)."""
+        fa = self._fa(per_year=True, by_year={})
+        self.assertEqual(int((fa.min_gen[0] > 0).sum()), 24)
+
+    def test_measured_dark_year_carries_no_floor(self):
+        """An own-year fraction of ZERO means the meter says the plant never
+        synchronized — the one deliberate membership consequence."""
+        fa = self._fa(per_year=True, by_year={(self._PLANT, "COAL", 2024): 0.0})
+        self.assertEqual(int((fa.min_gen[0] > 0).sum()), 0)
+
+    def test_gas_rows_never_reach_the_coal_seam(self):
+        """The gather filters on group: a same-coded ST_GAS row is ignored."""
+        fa = self._fa(per_year=True, by_year={(self._PLANT, "ST_GAS", 2024): 0.25})
+        self.assertEqual(int((fa.min_gen[0] > 0).sum()), 24)  # pooled kept
+
+    def test_backcast_only_mode_gate(self):
+        """Forecast mode keeps the pooled window (rule 13 — no same-year meter).
+
+        The ScenarioConfig guard refuses the flag outright in forecast mode, so
+        the engine gate is only reachable when a caller bypasses construction;
+        assert both halves.
+        """
+        with self.assertRaises(ValueError):
+            ScenarioConfig(
+                mode="forecast", iso="PJM", coal_sync_online_frac_per_year=True
+            )
+        cfg = ScenarioConfig(
+            mode="backcast",
+            weather_year=2024,
+            coal_sync_online_frac_per_year=True,
+        )
+        cfg.mode = "forecast"  # post-construction: bypasses the config guard
+        load = np.arange(self._HOURS, dtype=float) + 1.0
+        with unittest.mock.patch(
+            "market_sim.data.fleet.thermal_tranche_online_frac_by_year",
+            return_value={(self._PLANT, "COAL", 2024): 0.25},
+        ):
+            fa = generators_to_fleet_arrays(
+                self._gens(),
+                ["North"],
+                hours=self._HOURS,
+                iso="PJM",
+                config=cfg,
+                load_shape=load,
+            )
+        self.assertEqual(int((fa.min_gen[0] > 0).sum()), 24)  # pooled window
+
+    def test_cache_key_dropped_at_default_and_distinct_when_armed(self):
+        """nyiso-119 discipline: the default key is unmoved, armed is distinct."""
+        off = ScenarioConfig(iso="PJM", mode="backcast")
+        on = ScenarioConfig(
+            iso="PJM", mode="backcast", coal_sync_online_frac_per_year=True
+        )
+        self.assertNotEqual(off.cache_key(), on.cache_key())
+
+
 class TestMustrunOnlineFracPerYear(unittest.TestCase):
     """Per-YEAR must-run commitment window (``mustrun_online_frac_per_year``).
 
