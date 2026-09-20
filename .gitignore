@@ -3058,3 +3058,6 @@ results/calibration/soco55_arm_20[0-9][0-9]/
 #                     can read the control's floors/ layer. Derived, disposable.
 results/calibration/soco56_arm_20[0-9][0-9]/
 results/calibration/soco55_keeper_fat3/
+
+# nwpp-44: leg bundles stay out of main (rule 29(c) via .gitignore, rule 31 keeps them on disk)
+results/calibration/nwpp44_takeorpay_*/
