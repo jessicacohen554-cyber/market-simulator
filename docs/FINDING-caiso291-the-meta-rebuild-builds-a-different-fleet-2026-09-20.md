@@ -14,12 +14,11 @@ lane instruction's §1 describes a promotion that has not landed.
 ## 1. The answer in one paragraph
 
 `scripts/legitimacy_diagnostics.py::_rebuild_fleet_arrays` reconstructs a bundle's fleet by
-filtering `meta.json` through `run_year()`'s signature. **64 non-default fields of the CAISO
-keeper's own recipe reach neither** — `meta.json` records only `run_year` kwargs, and these are
-`ScenarioConfig` fields. The rebuild silently substitutes the dataclass default for every one,
-**15 of them fleet-shaping**, and builds a **1,859-row fleet where the solve had 1,705**. Two of
-the 64 (`historic_outage_overlay`, `correlated_forced_outage`) are `False` in the recipe and
-`True` by default, so the rebuild also applies outage overlays the keeper disabled. Separately,
+filtering `meta.json` through `run_year()`'s signature. 64 non-default fields of the CAISO keeper's
+recipe reach neither — `meta.json` records only `run_year` kwargs, and these are `ScenarioConfig`
+fields. **34 of the 64 are nonetheless recovered**, because CAISO's `ISOConfig`
+`default_scenario_overrides` re-apply them inside `run_year`. **28 are genuinely lost**, 7 of them
+fleet-shaping, and the rebuild builds a **1,859-row fleet where the solve had 1,705**. Separately,
 and independently useful: the artifact caiso-286 named as the blocker for splitting its open
 270.3 MW — **P0 dispatch MW** — was landed for all four years by xiso-8, and its fleet is
 **identical in unit_id order** to caiso-285's instrumented bundle, so that successor now costs
@@ -36,17 +35,26 @@ recovered from `203124e310f7be4f806ad968d6cf5755f96bbc00` (the SHA caiso-286 rec
 |---|--:|
 | `scenario_config` fields in the keeper recipe | 860 |
 | unreachable by `meta.json` + `run_year()` | 569 |
-| …of those, **NON-DEFAULT in this keeper** | **64** |
-| …of those 64, **fleet-shaping** | **15** |
+| …of those, non-default in this keeper | 64 |
+| …of those 64, **recovered via CAISO's `ISOConfig` defaults** | **34** |
+| …of those 64, **GENUINELY LOST in the rebuilt config** | **28** |
+| …of those 28, fleet-shaping | **7** |
 | solve fleet rows | **1,705** |
 | rebuilt fleet rows | **1,859** |
 
-The 15 fleet-shaping ones are why the row count moves — `plant_level_fleet`, `use_campd_bins`,
-`cc_committed_per_plant`, `cc_peaking_per_plant`, `cc_duct_peaking`, `cc_outage_derate_from_top`,
-`cc_capacity_reconcile_path`, `chp_steam_floor_p25`, `chp_steam_following`,
-`measured_chp_heat_rates`, `caiso_ps_plant_params`, `gas_plant_monthly_fuel_pricing`,
-`correlated_forced_outage`, `historic_outage_overlay`, `capacity_screen_peak_measured_hindcast`.
-All True-in-recipe / False-by-default, except the last three, which invert.
+The 7 fleet-shaping losses are what move the row count — `chp_steam_floor_p25`,
+`measured_chp_heat_rates`, `caiso_ps_plant_params`, `caiso_storage_shape_anchor`,
+`hydro_budget_nameplate_aware`, `hydro_dispatch_envelope`, `hydro_min_flow_floor` — all
+True-in-recipe / False-by-default, and all CHP / pumped-storage / hydro treatment, which matches
+the measured row delta (the extra rows are un-binned CHP and PS units). Among the 28 is
+`gas_flow_date_year_start_package`, **the incoming keeper's own arm**.
+
+**CORRECTION, made before this doc was relied on.** An earlier revision of this section, and the
+commit that first carried it, said all **64** were lost and named `historic_outage_overlay` /
+`correlated_forced_outage` as flipped on by the rebuild. **Both claims are wrong**: 34 of the 64
+are recovered through `ISOConfig`, and those two outage fields are among the recovered, so the
+rebuild does **not** re-enable them. The measured availability mismatch below is therefore
+**observed and not yet attributed** — it is not the outage flags.
 
 **What it costs, bounded rather than asserted** (rebuilt vs real `pmax`, joined by unit_id):
 
@@ -58,6 +66,12 @@ All True-in-recipe / False-by-default, except the last three, which invert.
 
 So the damage is **real but class-dependent**: the CC fleet that carries the belly object rebuilds
 **exactly**, while 104 rows — CHP and raw per-plant units the rebuild fails to bin — do not.
+
+The census behind these counts is
+`results/calibration/_caiso291_rebuild_reachability.json`; the recovered/lost split is reproduced
+by comparing the rebuilt `state["config"]` field-by-field against `run_config.json`, normalising
+list-vs-tuple and dict ordering and excluding the two per-year identity fields (`weather_year`,
+`gas_price_override`) that a composite bundle carries at one leg's value.
 
 **Liveness, stated honestly.** This bundle's committed `legitimacy_diagnostics.json` is **sound**:
 its `dispatch_source` is the real `dispatch/<y>_P1.parquet`, and its D-2 rows carry
@@ -77,10 +91,39 @@ against the recipe's 0.8728 TWh and nearly reported a 5.08× overstatement. **No
 that comparison** — `load_or_rebuild_floors` never calls the detector. The number is real and the
 inference was wrong.
 
-**Not repaired here.** The fix is one line in intent — read `run_config.json`'s `scenario_config`,
-which every bundle already commits and which *is* the authoritative recipe, rather than
-`meta.json` — but it re-scores D-1/D-2/D-4 for **every ISO**, and a gate can flip. That is an
-owner call, not a lane call (§5).
+**ATTEMPTED AND FALSIFIED — do not redo it this way (rule 28 (a)).** The obvious fix is to read
+`run_config.json`'s `scenario_config`, which every bundle commits and which *is* the authoritative
+recipe, rather than `meta.json`. I built it: an optional `scenario_config_overrides` on `run_year`,
+applied at the same seam the zero-forcing ablation uses (after every per-ISO default and
+`with_overrides`, before the first fleet load), with the four per-year identity fields
+(`weather_year`, `gas_price_override`, `hours`, `iso`) excluded, wired into `_rebuild_fleet_arrays`.
+
+**It makes the reconstruction worse, so it was reverted rather than shipped:**
+
+| | fleet rows |
+|---|--:|
+| real solve (caiso-285 `floors/2024_P1.npz`) | **1,705** |
+| rebuild, `meta.json` only (HEAD) | 1,859 |
+| rebuild, + full committed recipe | **1,905** |
+
+So the divergence is **not** the meta-vs-`run_config` recipe gap alone, and re-applying the
+committed `scenario_config` on top of a config that `backcast_config()` already derived is **not
+idempotent** — some fields are derived or normalised during construction and force-setting them
+after the fact lands somewhere neither path reaches.
+
+**What that narrows it to, and it is good news for whoever picks it up.**
+`run_calibration_full.py:6433` calls **the same `run_year`** the rebuild calls — there is no
+separate solve-side fleet builder. The entire difference is therefore in the *arguments replayed*,
+which makes it a faithfully-fixable problem rather than a structural one. The successor is to
+bisect which replayed fields move the row count (the 7 fleet-shaping losses are the obvious first
+cut: `chp_steam_floor_p25`, `measured_chp_heat_rates`, `caiso_ps_plant_params`,
+`caiso_storage_shape_anchor`, `hydro_budget_nameplate_aware`, `hydro_dispatch_envelope`,
+`hydro_min_flow_floor`) and to establish what `meta.json` would have to record for the kwarg set
+to round-trip. Budget it as zero-LP but several fleet rebuilds at ~90 s each.
+
+**And it stays an owner call regardless of who fixes it**, because any repair re-scores
+D-1/D-2/D-4 for **every ISO**, and a gate can flip. Only CAISO can be measured today — no other
+ISO's bundle is on disk under keeper-only retention.
 
 ---
 
