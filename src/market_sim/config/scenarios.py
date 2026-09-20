@@ -9031,9 +9031,10 @@ class ScenarioConfig:
     # THE DEFECT: EIA publishes no Natural Gas Weekly Update in Thanksgiving
     # week or in the two weeks spanning Christmas/New Year, so the daily series
     # carries an 8-19 day hole in November and December of EVERY year
-    # (2018-2026: 35 such gaps). _flow_date_staircase forward-fills the last
+    # (2018-2026: 21 such gaps, after caiso-289's restatement below).
+    # _flow_date_staircase forward-fills the last
     # print across them, which is correct for the 1-4 day trading packages that
-    # make up 1,767 of the series' 1,805 gaps — a real trade priced those flow
+    # make up 1,860 of the series' 1,890 gaps — a real trade priced those flow
     # days — and an extrapolation across a blackout, where no trade priced them.
     # It bites hardest exactly when the last print is extreme: in Dec-2022 the
     # held value is $53.59/MMBtu, the single highest print of the year, applied
@@ -9043,29 +9044,55 @@ class ScenarioConfig:
     # citygate print, 2023-01-05, is $16.55).
     # WHEN ON, a gap of >= _GAS_BLACKOUT_MIN_GAP_DAYS (6; the series' own
     # trade-gap histogram is EMPTY at 6 and 7, so any threshold in [6,7] selects
-    # the identical 35 gaps and the value is not selectable against a result) is
+    # the identical 21 gaps and the value is not selectable against a result) is
     # rebuilt by data.fuel.hubs._basis_bridge_blackouts: the measured Henry Hub
     # daily spot inside the gap plus the basis at the two bracketing MEASURED
     # citygate prints, interpolated between them. A December blackout is
     # bracketed against the NEXT January's first print, so the bridge reads the
     # full multi-year dated map. Every 1-4 day package still staircases.
     # IDENTIFICATION IS ON THE GAS DATA, NEVER ON A PRICE RESIDUAL (rule 1
-    # [R-STRUCT]): over a synthetic holdout of 33,216 withheld MEASURED citygate
+    # [R-STRUCT]): over a synthetic holdout of 36,598 withheld MEASURED citygate
     # days this construction beats both constant-extension and straight-line
-    # interpolation on MAE, bias and RMSE at every gap length (0.481 / +0.017 /
-    # 1.787 against 0.716 / +0.039 / 2.376 and 0.519 / +0.033 / 1.873), and on
-    # spike-opening blackouts it cuts a systematic +0.879 $/MMBtu high bias to
-    # +0.170. ZERO new scalars beyond that histogram-identified gap threshold
+    # interpolation on MAE, bias and RMSE at every gap length (0.531 / +0.019 /
+    # 1.898 against 0.796 / +0.040 / 2.596 and 0.574 / +0.034 / 1.999), and on
+    # spike-opening blackouts it cuts a systematic +0.907 $/MMBtu high bias to
+    # +0.221. ZERO new scalars beyond that histogram-identified gap threshold
     # (rules 5/21); every input is measured and the identical construction
     # regenerates for a forward year from forward curves (rule 13
     # [R-MEASURED]); it REPLACES the constant extension on those days rather
     # than stacking on it (rule 19 [R-ONE-MECH]); rule 14 [R-ACCURATE] is the
-    # whole case. It is NOT one-directional — Nov-2022 rises +$0.84/MMBtu while
-    # Dec-2022 falls -$3.73 — which is the signature of a construction rather
-    # than a fit. Default off (byte-identical); CAISO-only (rule 25
+    # whole case. Default off; CAISO-only (rule 25
     # [R-ISO-SCOPE]: the same blackout exists in the MISO/NEISO/NYISO daily
     # series and is left for those lanes to test on their own evidence).
     # Requires caiso_citygate_flow_date; inert without daily prints.
+    # ---------------------------------------------------------------------
+    # RESTATED 2026-09-20 BY caiso-289, AND THE FOOTPRINT IS NOT WHAT IT WAS
+    # (rule 23 [R-FROZEN-DERIVE], cited to caiso-288's +85 recovered prints and
+    # to no residual; FINDING-caiso289-the-bridge-flag-carries-two-mechanisms-
+    # 2026-09-20.md; results/calibration/_caiso289_postrepair_audit.json).
+    # The holdout above grows 33,216 -> 36,598 withheld days and THE RANKING IS
+    # UNCHANGED — the figures quoted are the re-measured ones. Reported against
+    # this construction: on p95|e| it is now marginally behind linear interp
+    # (1.517 vs 1.508) while still ahead on MAE, bias and RMSE.
+    # TWO THINGS NO LONGER HOLD, both because the prints were recovered:
+    #  (1) THE Dec-2022 CASE ABOVE IS SPENT. Those days are MEASURED now
+    #      ($32.16 / $36.93 / $26.78 / $20.86 / $15.00 / $15.31), so the bridge
+    #      does not touch December 2022 and the "NOT one-directional, Nov-2022
+    #      +$0.84 / Dec-2022 -$3.73" evidence — measured on the unrepaired
+    #      series — describes a footprint the armed flag would never have. The
+    #      motivating defect was real; caiso-288 closed it by RECOVERY instead.
+    #  (2) ARMED OVER THE REPAIRED SERIES THIS FLAG IS NEARLY INERT IN THE
+    #      SCORED YEARS: 2022 and 2023 move ZERO blackout days, and 2024/2025
+    #      move 11 days each (+$1.47 / +$2.91 of CC marginal cost) — the two
+    #      Thanksgiving weeks the caiso-288 G-DUP guard refuses. Nineteen of the
+    #      21 remaining blackouts are 2018-2020.
+    # AND IT IS CONFOUNDED: the same flag silently switches the year-start
+    # left-edge convention in _flow_date_staircase (see that function's
+    # docstring), a channel that is NOT this mechanism and fires with no
+    # blackout near. In 2022 and 2023 that channel is the flag's ENTIRE effect
+    # (+$10.64 and -$62.12/MWh of CC marginal cost, 72 h each). Arming this
+    # field as it stands therefore buys a cross-ISO convention change under a
+    # CAISO mechanism's name; the two need separating first.
     caiso_dsw_surplus_clean: bool = False  # Carry the MEASURED surplus-hour
     # WEIM clean import depth on the south (Palo Verde / Path-46) corridor
     # (caiso-87; FINDING-caiso82 §3 "measured clean DEPTH" lane;

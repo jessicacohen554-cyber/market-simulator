@@ -939,12 +939,11 @@ def _nyiso_hub_daily_gas_prices(
 
 # Minimum trade-day gap (calendar days between consecutive prints) that marks a
 # PUBLICATION BLACKOUT rather than a legitimate trading package. Identified from
-# the committed ca_composite series' own trade-gap histogram (2018-2026, 1,805
+# the committed ca_composite series' own trade-gap histogram (2018-2026, 1,890
 # gaps; scripts/probes/caiso288_blackout_census.py, rule 5 [R-NO-MAGIC]):
 #
-#     gap 1 d: 1401   gap 2 d:    2   gap 3 d:  312   gap 4 d:   52
-#     gap 5 d:    3   gap 8 d:   17   gap 9 d:    1   gap 12 d:   9
-#     gap 15 d:   7   gap 19 d:   1
+#     gap 1 d: 1472   gap 2 d:    6   gap 3 d:  325   gap 4 d:   57
+#     gap 5 d:    9   gap 8 d:   13   gap 12 d:    5   gap 15 d:   3
 #
 # Gaps of 1-4 days ARE the market's trading packages (consecutive weekdays; the
 # Friday trade that covers the Sat-Mon weekend package; its holiday-extended
@@ -954,11 +953,24 @@ def _nyiso_hub_daily_gas_prices(
 # Christmas/New Year, every year) - NO trade priced those days, so holding the
 # last print across them is an extrapolation, not a measurement.
 #
-# The histogram is EMPTY at 6 and 7, so any threshold in [6, 7] selects exactly
-# the same 35 gaps and the value is NOT selectable against any result. 6 is taken
-# as the lower edge of that empty region. The three 5-day gaps (2018-08-31,
-# 2023-04-06, 2023-06-30 - holiday weeks EIA published with a short table) stay
-# on the staircase, which is the conservative side of the split.
+# The histogram is EMPTY at 6 and 7, so any threshold in [6, 7] - and in fact 8
+# as well, the next occupied bin - selects exactly the same 21 gaps, and the
+# value is NOT selectable against any result. 6 is taken as the lower edge of
+# that empty region. The nine 5-day gaps (holiday weeks EIA published with a
+# short table) stay on the staircase, the conservative side of the split.
+#
+# RESTATED 2026-09-20 by caiso-289 (rule 23 [R-FROZEN-DERIVE] re-derivation,
+# cited to a SOURCE-DATA change and never to a residual): caiso-288 recovered 85
+# published prints the fetcher had been discarding (1,806 -> 1,891 rows;
+# docs/RESULT-caiso288-the-prints-were-published-2026-09-20.md), so the
+# histogram above is NOT the one this threshold was first read off. The VERDICT
+# is unchanged - 6 still sits in an empty region and still cannot be selected
+# against any result - but 14 of the 35 blackouts turned out to be measurements
+# all along and are now prints, leaving 21. NINETEEN of those 21 are 2018-2020;
+# the only two in any scored CAISO year are the Thanksgiving weeks of 2024 and
+# 2025, which the caiso-288 G-DUP guard deliberately refuses. Audit:
+# results/calibration/_caiso289_postrepair_audit.json,
+# docs/FINDING-caiso289-the-bridge-flag-carries-two-mechanisms-2026-09-20.md.
 _GAS_BLACKOUT_MIN_GAP_DAYS = 6
 
 
@@ -990,21 +1002,38 @@ def _basis_bridge_blackouts(
 
     WHY THIS CONSTRUCTION AND NOT CONSTANT-EXTENSION OR A STRAIGHT LINE, decided
     on the GAS DATA and never on a price residual (rule 1 [R-STRUCT]): over a
-    synthetic holdout of 33,216 withheld MEASURED citygate days (every fully
+    synthetic holdout of 36,598 withheld MEASURED citygate days (every fully
     measured window of 8 / 12 / 15 / 19 days in the committed series,
     ``scripts/probes/caiso288_blackout_census.py`` G-FILL), reconstruction error
     against the withheld truth is
 
-        hold-last (current)  MAE 0.716  bias +0.039  RMSE 2.376
-        linear interpolation MAE 0.519  bias +0.033  RMSE 1.873
-        HH-basis (this)      MAE 0.481  bias +0.017  RMSE 1.787
+        hold-last (current)  MAE 0.796  bias +0.040  RMSE 2.596
+        linear interpolation MAE 0.574  bias +0.034  RMSE 1.999
+        HH-basis (this)      MAE 0.531  bias +0.019  RMSE 1.898
 
     and this construction wins on MAE, bias and RMSE at EVERY gap length. On the
     cases that matter - a left anchor in the series' top decile, i.e. a blackout
-    that opens on a spike - hold-last carries a systematic **+0.879 $/MMBtu high
-    bias** (MAE 2.923) against this construction's +0.170 (MAE 1.681). The
+    that opens on a spike - hold-last carries a systematic **+0.907 $/MMBtu high
+    bias** (MAE 3.376) against this construction's +0.221 (MAE 1.997). The
     defect hold-last has is therefore not merely noise: it is a one-sided
     over-statement of gas exactly when the last print is extreme.
+
+    RE-MEASURED 2026-09-20 by caiso-289 on the REPAIRED series (rule 23
+    [R-FROZEN-DERIVE], cited to caiso-288's +85 recovered prints and to no
+    residual). The holdout grows 33,216 -> 36,598 withheld days and the RANKING
+    IS UNCHANGED at every gap length, pooled, and on the spike case; the figures
+    above are the re-measured ones. Reported against this construction: on
+    ``p95|e|`` it is now marginally BEHIND linear interpolation (1.517 vs
+    1.508) while still ahead on MAE, bias and RMSE - i.e. it wins on the body
+    and the bias and ties on the far tail.
+
+    CAUTION - THIS FUNCTION IS NOT THE WHOLE OF WHAT THE FLAG DOES. Arming
+    ``caiso_citygate_blackout_bridge`` also switches the year-start left-edge
+    convention in :func:`_flow_date_staircase` (see its ``bridge_all_years``
+    note), which is a SEPARATE channel that fires whether or not any blackout is
+    near. Over the repaired series that second channel is the flag's ENTIRE
+    effect in 2022 and 2023. Do not read a per-year delta as this construction's
+    footprint without decomposing it (G-FOOT289 in the census probe).
 
     Rule 13 [R-MEASURED]: every input here is measured (both bracketing
     citygate prints, the HH daily series inside the gap) and the identical
@@ -1065,9 +1094,36 @@ def _flow_date_staircase(
     (not just ``year``'s), because a December blackout's right-hand measured
     anchor is the following January's first print — the one case the within-year
     construction above cannot bracket. Every legitimate 1-4 day package still
-    staircases, and the returned array is byte-identical to the unbridged one in
-    any year whose gaps are all packages. Off by default; the caller passes
-    ``None`` and nothing changes.
+    staircases. Off by default; the caller passes ``None`` and nothing changes.
+
+    **THE BRIDGE ARGUMENTS CARRY A SECOND, SEPARATE CHANGE — THE YEAR-START LEFT
+    EDGE** (caiso-289, 2026-09-20). This docstring used to claim the returned
+    array "is byte-identical to the unbridged one in any year whose gaps are all
+    packages", and that is FALSE: over the repaired series, 2022 and 2023 carry
+    no blackout at all and still move three days each. The reason is the branch
+    below, not :func:`_basis_bridge_blackouts`. Unbridged, ``stamps`` holds only
+    ``year``'s prints, so flow days before the year's first print are filled by
+    ``.bfill()`` — they take the year's FIRST JANUARY TRADE. Bridged, the
+    reindex is over the FULL multi-year series (it must be, to bracket a
+    December blackout), so those same days ``.ffill()`` from the PREVIOUS
+    DECEMBER's last trade instead. That switch fires in every year with a
+    January gap, blackout or no blackout.
+
+    It is not a wash. Flow day 2023-01-01 is priced by the **2022-12-30 trade at
+    $15.31** (Friday's trade covers the holiday-extended New Year package); the
+    unbridged branch instead assigns it the **2023-01-03 trade at $23.66**, a
+    trade that had not happened yet and that prices 2023-01-04's flow. So the
+    left edge is the accurate construction and the back-fill is the artifact —
+    **+$10.64/MWh of CC marginal cost over 72 h in 2022 and −$62.12/MWh over
+    72 h in 2023**. Both channels are measured per year, separately, by
+    G-FOOT289 in ``scripts/probes/caiso288_blackout_census.py``.
+
+    THIS IS NOT REPAIRED HERE, deliberately: ``_flow_date_staircase`` is shared
+    with MISO (``data/fuel/basis/miso.py`` builds both the MISO citygate and the
+    Chicago daily series through it), so correcting the left edge is a
+    cross-ISO, solve-affecting change and is routed rather than taken by a CAISO
+    lane. See
+    ``docs/FINDING-caiso289-the-bridge-flag-carries-two-mechanisms-2026-09-20.md``.
     """
     stamps = {
         pd.Timestamp(year=year, month=m, day=d) + pd.Timedelta(days=1): v
