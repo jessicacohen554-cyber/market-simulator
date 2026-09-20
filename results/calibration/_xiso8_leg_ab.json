@@ -54,5 +54,23 @@
   "shard_sha": "054570b8e3c41987f2364bff3f83481fb5975b95",
   "inside_band": true,
   "pct_of_limb": 90.9
+ },
+ "2025": {
+  "keeper_mean_usd_mwh": 36.9754,
+  "arm_mean_usd_mwh": 36.9715,
+  "delta_pct": -0.01041,
+  "band": [
+   0.0,
+   -0.022
+  ],
+  "inside_band": true,
+  "pct_of_limb": 47.3,
+  "attribution_pct": {
+   "edge_load_zones": -0.00827,
+   "nonedge_load_zones": -0.00215,
+   "zero_load_import_nodes": 0.0
+  },
+  "price_cells_differing": 1499,
+  "shard_sha": "9ad71bf179794d14a995f539dca898d82953e62a"
  }
 }

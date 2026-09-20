@@ -1,0 +1,16 @@
+{
+  "id": "2026-09-20-caiso-290-leftedge",
+  "label": "caiso 290 leftedge",
+  "date": "2026-09-20",
+  "shorthand": "caiso-290-leftedge",
+  "definition": "xiso-8: year-start left-edge package seed, single-flag delta on the caiso-288 keeper recipe",
+  "years": [
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-09-20-caiso-290-leftedge.js",
+  "bundle": "results/calibration/xiso8_leftedge_span"
+}
