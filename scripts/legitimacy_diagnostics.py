@@ -208,6 +208,23 @@ D2_REL_TOL: float = 0.02
 PLANT_CLASS_VOTE_CAPACITY: str = "capacity"
 PLANT_CLASS_VOTE_ROW_COUNT: str = "row_count_fallback"
 _plant_class_vote_basis: dict[int, str] = {}
+# Which DISPATCH SOURCE produced each year's per-plant rows (nyiso-242),
+# recorded into the committed artifact for exactly the reason the vote basis
+# above is: the substitution must never be silent. The two sources are NOT
+# interchangeable — ``dispatch/<year>_<pass>.parquet`` carries every model
+# plant, while the dashboard run payload carries only plants with a CEMS meter
+# — and the parquet is gitignored, so it is absent from every committed bundle
+# and a re-run from a clean checkout silently takes the payload path.
+#
+# MEASURED (nyiso-242, NYISO keeper `nyiso241_ctcommitted_span`): re-running
+# the suite against the bundle WITH its `dispatch/` layer restored reproduces
+# the committed artifact on every gating numeric (18 differing leaves of 1,851,
+# ZERO of them a gating value); re-running WITHOUT it moves 1,416 leaves and
+# 148 gating numerics. The script itself is byte-deterministic — two
+# back-to-back runs are sha256-identical — so what was recorded in
+# docs/RESULT-nyiso240-bench-attribution-promotion-2026-09-19.md §A.6 as a
+# "3rd-decimal non-reproducibility" is this substitution, not nondeterminism.
+_dispatch_source_basis: dict[int, str] = {}
 # G-06: tolerance for the --keepers D-2 recompute-vs-committed staleness check,
 # on the per-class GATED forced SHARE (rule-20 units). The keeper recompute is a
 # LOWER-BOUND reconstruction, NOT a bit-faithful replay: it decodes dispatch from
@@ -2468,21 +2485,78 @@ def load_payload_total_load_mwh(
 ) -> float | None:
     """Total system load (~ served energy) for a payload year, in MWh.
 
-    Sum of the per-fuel annual model generation ``fuelRows[*].m`` (TWh),
-    including the signed net-interchange row — the model's served-energy
-    balance, i.e. total load. This is the materiality denominator for the D-2
-    force-gate (``PROTECTIVE_MIN_LOAD_FRAC``). Returns ``None`` when the
-    payload carries no ``fuelRows`` (older bundles / no sidecar), which leaves
+    Sum of the payload's per-zone demand (``lmp[<zone>].d``, TWh) — the SAME
+    quantity, from the same field, that ``calibration_verdict._total_load``
+    uses for the C8 materiality denominator it computes independently, so the
+    quarantine gate and the rubric scorer draw one line rather than two.
+    Returns ``None`` when the payload carries no ``lmp`` block, which leaves
     the guard disabled so no breach is hidden by a missing denominator.
+
+    **CORRECTED nyiso-242.** This summed ``fuelRows[*].m`` instead, described
+    as "the model's served-energy balance, i.e. total load". It is neither,
+    and it was wrong by ~2.25x: ``fuelRows`` carries only gas / coal / nuclear
+    / wind / solar / interchange, so it **omits hydro** — 26.2 TWh of NYISO's
+    152.7 TWh in 2022, the single largest omission — and biomass and storage,
+    **and it SUBTRACTS the signed net-interchange row** when a net importer's
+    imports are part of the load it serves. Measured on the NYISO keeper's own
+    payload, 2022: ``fuelRows`` gives 67.92 TWh against a true 152.68 TWh
+    (gas 63.5 + coal 0.67 + nuclear 26.75 + wind 4.7 + solar 0.11 **− 27.81**
+    interchange). Understating the denominator INFLATES every class's load
+    share, so the rule-20 ``PROTECTIVE_MIN_LOAD_FRAC`` floor bound at roughly
+    half its intended level and gated classes rule 20 says are "reported by
+    the D-1/D-2 diagnostics but never gated". The replacement reproduces
+    ``calibration_verdict._total_load`` exactly (NYISO 2022: 152.682 TWh from
+    both, and from the bundle's own ``hourly/system_2022.parquet`` demand).
     """
     txt = (repo_root / sidecar["file"]).read_text()
     try:
         run = ba.decode_run_js(txt)
     except ValueError:
         return None
-    rows = run.get("years", {}).get(str(year), {}).get("fuelRows") or []
-    total_twh = sum((row.get("m") or 0.0) for row in rows)
+    lmp = run.get("years", {}).get(str(year), {}).get("lmp") or {}
+    total_twh = sum(float(z.get("d", 0.0) or 0.0) for z in lmp.values())
     return total_twh * 1e6 if total_twh > 0.0 else None
+
+
+def load_bundle_total_load_mwh(bundle: Path, year: int) -> float | None:
+    """Total system load (MWh) from the bundle's OWN committed sidecar.
+
+    ``hourly/system_<year>.parquet`` (a rule-15 keeper sidecar, so present in
+    every committed bundle) carries per-zone hourly ``demand``; summing the
+    final pass over the internal zones is the same served-energy total
+    :func:`load_payload_total_load_mwh` reads from the registered payload.
+
+    **Why this exists (nyiso-242).** The payload route needs a registry
+    sidecar, and the artifact is written **at solve time — before the run is
+    registered** — so ``sidecar`` is ``None`` and the materiality denominator
+    was simply missing. Measured across every committed bundle: **285 of 315
+    D-2 summary rows (90 %) carry ``load_share: null``**, which disables the
+    rule-20 materiality guard in the artifact and leaves ``immaterial`` False
+    on classes far below the floor. NEISO's keeper publishes five D-2 FAILURES
+    on classes at 0.08-0.80 % of load in consequence. (No determination moved:
+    ``calibration_verdict`` computes its own share from its own ``_total_load``
+    and correctly SKIPs them — an undocumented redundancy that is the only
+    reason this was latent rather than live.)
+
+    Returns ``None`` when the sidecar is absent or carries no demand, leaving
+    the guard disabled exactly as before — never a silent substitution.
+    """
+    import pandas as pd
+
+    path = bundle / "hourly" / f"system_{year}.parquet"
+    if not path.exists():
+        return None
+    df = pd.read_parquet(path, columns=["pass", "zone", "demand"])
+    if "pass" in df.columns and len(df):
+        # The final pass is the one every other diagnostic scores on.
+        for label in ("P2", "P1"):
+            if (df["pass"] == label).any():
+                df = df[df["pass"] == label]
+                break
+    # External/import proxy nodes carry no native load.
+    df = df[~df["zone"].astype(str).str.contains("external", case=False, na=False)]
+    total = float(df["demand"].sum())
+    return total if total > 0.0 else None
 
 
 def load_dispatch_parquet(bundle: Path, year: int):
@@ -3103,6 +3177,13 @@ def build_json_report(
             for y in years
             if int(y) in _plant_class_vote_basis
         },
+        # nyiso-242: which dispatch source produced each year's per-plant rows.
+        # Absent years built no per-plant matrices. See _dispatch_source_basis.
+        "dispatch_source": {
+            str(y): _dispatch_source_basis[int(y)]
+            for y in years
+            if int(y) in _dispatch_source_basis
+        },
         "diagnostics": diagnostics,
         "gates": {
             "d1_min_profile_r": D1_MIN_PROFILE_R,
@@ -3251,6 +3332,7 @@ def diagnose_bundle(
                         range(8760), fill_value=0.0
                     ).to_numpy(dtype=float)
             dispatch_source = f"dispatch/{year}_{pass_label}.parquet"
+            _dispatch_source_basis[int(year)] = dispatch_source
             logger.info(
                 "%s %s: model dispatch from dispatch/%s_%s.parquet (%d plants)",
                 iso,
@@ -3263,6 +3345,7 @@ def diagnose_bundle(
             model_plants = load_payload_plants(repo_root, sidecar, year, bench)
             model_plants_plant = aggregate_model_plants(model_plants)
             dispatch_source = f"run payload {sidecar['file']}"
+            _dispatch_source_basis[int(year)] = dispatch_source
             logger.info(
                 "%s %s: model dispatch from run payload %s (%d plants)",
                 iso,
@@ -3378,11 +3461,17 @@ def diagnose_bundle(
                 d2.notes.append(plant_note)
                 d4.notes.append(plant_note)
             if "D2" in only:
+                # Prefer the registered payload (the scorer's own basis); fall
+                # back to the bundle's own committed system sidecar so the
+                # rule-20 materiality guard is populated at SOLVE TIME too,
+                # when no registry sidecar exists yet (nyiso-242).
                 total_load_mwh = (
                     load_payload_total_load_mwh(repo_root, sidecar, year)
                     if sidecar is not None
                     else None
                 )
+                if not total_load_mwh:
+                    total_load_mwh = load_bundle_total_load_mwh(bundle, year)
                 # Actual (CAMPD) annual MWh per class over the SAME plant set as
                 # the model denominator — feeds the max(model, actual)
                 # materiality guard so a forcing floor can't push a class under

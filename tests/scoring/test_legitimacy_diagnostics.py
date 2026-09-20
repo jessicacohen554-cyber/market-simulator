@@ -2154,3 +2154,172 @@ class TestFloorClassAttribution:
         assert all(r["verdict"] == "FAIL" for r in conduct)
         # No window/conduct row exists under the majority label.
         assert not any("ST_GAS" in r["floor"] for r in res.rows)
+
+
+class TestMaterialityDenominator:
+    """nyiso-242: the D-2 materiality denominator, and the two defects it had.
+
+    Rule 20 ``[R-FORCED-BUDGET]`` gates a class only when its annual energy is
+    >= 2 % of total ISO load. The denominator that decides that was wrong twice
+    over, and both halves are pinned here because each one silently over-gates
+    (a class rule 20 says is "reported ... but never gated" was being failed).
+    """
+
+    def test_payload_total_load_uses_zone_demand_not_fuelrows(self, tmp_path):
+        """The denominator is served load, not a partial generation sum.
+
+        ``fuelRows`` carries gas/coal/nuclear/wind/solar/interchange only: it
+        OMITS hydro (26.2 of NYISO's 152.7 TWh in 2022) and SUBTRACTS the
+        signed net-interchange row when a net importer's imports are part of
+        the load it serves. The fixture reproduces exactly that shape, so the
+        old construction would return 67.92 TWh against a true 152.68.
+        """
+        import scripts.legitimacy_diagnostics as L
+
+        run = {
+            "years": {
+                "2022": {
+                    "fuelRows": [
+                        {"k": "gas", "m": 63.5},
+                        {"k": "coal", "m": 0.67},
+                        {"k": "nuclear", "m": 26.75},
+                        {"k": "wind", "m": 4.7},
+                        {"k": "solar", "m": 0.11},
+                        {"k": "interchange", "m": -27.81},
+                    ],
+                    # hydro is absent from fuelRows by construction
+                    "lmp": {
+                        "Upstate_West": {"d": 60.0},
+                        "NYC": {"d": 52.68},
+                        "Long_Island": {"d": 40.0},
+                    },
+                }
+            }
+        }
+        import base64
+        import gzip as _gzip
+
+        sidecar = {"file": "runs/fixture.js"}
+        (tmp_path / "runs").mkdir()
+        blob = base64.b64encode(_gzip.compress(json.dumps(run).encode())).decode()
+        (tmp_path / "runs" / "fixture.js").write_text(
+            f'window.BC.runGz["fixture"]="{blob}";'
+        )
+
+        got = L.load_payload_total_load_mwh(tmp_path, sidecar, 2022)
+        assert got == pytest.approx(152.68e6, rel=1e-9)
+        # The superseded construction, kept explicit so the regression is named.
+        fuelrows_sum = sum(r["m"] for r in run["years"]["2022"]["fuelRows"])
+        assert fuelrows_sum == pytest.approx(67.92, rel=1e-6)
+        assert got > fuelrows_sum * 1e6 * 2.0  # ~2.25x on this ISO-year
+
+    def test_bundle_total_load_falls_back_to_committed_system_sidecar(self, tmp_path):
+        """Solve time has no registry sidecar, so the bundle must supply it.
+
+        The artifact is written BEFORE the run is registered, which left
+        ``load_share`` null in 285 of 315 committed D-2 rows (90 %) and
+        disabled the rule-20 guard in every one of them.
+        """
+        pd = pytest.importorskip("pandas")
+        import scripts.legitimacy_diagnostics as L
+
+        hourly = tmp_path / "hourly"
+        hourly.mkdir()
+        pd.DataFrame(
+            {
+                "pass": ["P1"] * 4 + ["P0"] * 2,
+                "zone": ["A", "B", "A", "NYISO_external", "A", "B"],
+                "demand": [10.0, 20.0, 30.0, 999.0, 7.0, 7.0],
+            }
+        ).to_parquet(hourly / "system_2022.parquet")
+
+        # Final pass only (P1 over P0), external proxy nodes excluded.
+        assert L.load_bundle_total_load_mwh(tmp_path, 2022) == pytest.approx(60.0)
+        # Absent sidecar -> None, never a silent substitution.
+        assert L.load_bundle_total_load_mwh(tmp_path, 2099) is None
+
+    def test_dispatch_source_is_recorded_so_substitution_is_never_silent(self):
+        """The artifact must name which dispatch source produced its rows.
+
+        ``dispatch/<year>_<pass>.parquet`` is gitignored, so a re-run from a
+        clean checkout silently takes the CEMS-only payload path: measured on
+        the NYISO keeper, that moves 148 gating numerics. The stamp is what
+        makes the two artifacts distinguishable rather than reading as drift.
+        """
+        import scripts.legitimacy_diagnostics as L
+
+        saved = dict(L._dispatch_source_basis)
+        try:
+            L._dispatch_source_basis.clear()
+            L._dispatch_source_basis[2022] = "dispatch/2022_P1.parquet"
+            L._dispatch_source_basis[2023] = "run payload runs/x.js"
+            art = L.build_json_report(
+                [], bundle="/tmp/b", iso="NYISO", years=[2022, 2023, 2024]
+            )
+        finally:
+            L._dispatch_source_basis.clear()
+            L._dispatch_source_basis.update(saved)
+
+        assert art["dispatch_source"] == {
+            "2022": "dispatch/2022_P1.parquet",
+            "2023": "run payload runs/x.js",
+        }, "both sources must be distinguishable in the committed artifact"
+        # A year that built no per-plant matrices is absent, not mislabelled.
+        assert "2024" not in art["dispatch_source"]
+
+
+class TestScorerDoesNotTrustArtifactMateriality:
+    """nyiso-242: the redundancy that kept a wrong artifact from being a wrong verdict.
+
+    ``calibration_verdict`` computes C8 materiality itself (``_class_load_share``
+    over its own ``_total_load``) and must NEVER fall back to the artifact's
+    ``load_share`` / ``immaterial`` / D-2 ``passed``. That independence is the
+    only reason 285 of 315 committed D-2 rows carrying ``load_share: null`` —
+    and NEISO's five D-2 failures on classes at 0.08-0.80 % of ISO load — did
+    not become wrong determinations.
+
+    It was undocumented and untested. A future refactor that "simplified" the
+    scorer to trust the artifact would convert a latent defect into silently
+    wrong verdicts, so it is pinned here as a property of the scorer.
+    """
+
+    def test_verdict_source_never_reads_the_artifact_materiality_fields(self):
+        import ast
+        import pathlib
+
+        src = pathlib.Path("scripts/calibration_verdict.py").read_text()
+        tree = ast.parse(src)
+
+        banned = {"load_share", "immaterial"}
+        # Only a real READ counts — a subscript or a ``.get(...)``. The scorer
+        # legitimately mentions both words in its own message text (e.g.
+        # "<class> immaterial (0.2% of ISO load ...)"), and that is not a read.
+        reads: list[str] = []
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Subscript):
+                s = node.slice
+                if isinstance(s, ast.Constant) and s.value in banned:
+                    reads.append(f"subscript line {node.lineno}")
+            elif isinstance(node, ast.Call):
+                fn = node.func
+                if (
+                    isinstance(fn, ast.Attribute)
+                    and fn.attr == "get"
+                    and node.args
+                    and isinstance(node.args[0], ast.Constant)
+                    and node.args[0].value in banned
+                ):
+                    reads.append(f".get() line {node.lineno}")
+        assert reads == [], (
+            "calibration_verdict must compute C8 materiality itself, never read "
+            f"it from the legitimacy artifact; found: {reads}"
+        )
+
+    def test_verdict_computes_its_own_total_load_from_zone_demand(self):
+        """The scorer's denominator is served load, and it is the correct one."""
+        import scripts.calibration_verdict as V
+
+        ypay = {"lmp": {"A": {"d": 100.0}, "B": {"d": 52.68}}}
+        assert V._total_load(ypay, a_gen=999.0) == pytest.approx(152.68)
+        # No zone block -> falls back to actual generation, never to 0.
+        assert V._total_load({}, a_gen=123.0) == pytest.approx(123.0)
