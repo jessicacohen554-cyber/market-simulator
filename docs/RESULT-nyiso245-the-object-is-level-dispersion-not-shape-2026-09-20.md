@@ -311,26 +311,25 @@ The other 14 changed files in the G-DRIFT window are classified INERT for a NYIS
 NWPP, the caiso-288/289 citygate work); and a forecast-only path
 (`3fc20b97`, `model/capacity_evolution/new_entry.py`, which a `mode="backcast"` run never enters).
 
-### 6.1 THE RESULT: NYISO DOES NOT CARRY THE WARM-START ARTIFACT. THREE YEARS, EXACTLY ZERO.
+### 6.1 THE RESULT: NYISO DOES NOT CARRY THE WARM-START ARTIFACT. ALL FOUR YEARS, EXACTLY ZERO.
 
 Each year replayed at HEAD in its own container with both knobs OFF, against the committed keeper:
 
 | year | max \|Δ class TWh\| | zonal price cells moved | mean price | hours max-dual > $300 | shard wall time |
 |---|---:|---:|---|---:|---:|
 | **2022** | **0.0000** | **0 of 43,800** | 76.159 → 76.159 | 7 → 7 | 251 s |
-| 2023 | *outstanding — see §8* | | | | |
+| **2023** | **0.0000** | **0 of 43,800** | 32.150 → 32.150 | 0 → 0 | (retry) |
 | **2024** | **0.0000** | **0 of 43,800** | 37.223 → 37.223 | 0 → 0 | 328 s |
 | **2025** | **0.0000** | **0 of 43,800** | 57.908 → 57.908 | 3 → 3 | 311 s |
 
-**Not one class-energy figure and not one price cell moves, in any of the three years measured.**
+**Not one class-energy figure and not one price cell moves, in any of the four years. The set is complete.**
 
 **Why this is a real test and not a vacuous one.** The committed keeper was solved as a **single
 four-year span with both knobs ON**, so 2024 and 2025 were its **third and fourth** years — exactly
 the position where MISO's defect bit hardest. In the MISO incident the **first** year of each leg
 reproduced (max \|Δ class TWh\| 0.0048, 0.1440) and the later years diverged by **7.1586 / 24.1796
 / 4.0034 TWh**, with 43,160 of 70,080 price cells moving in 2022. NYISO's deep-in-span years move
-**nothing**. 2022 alone would have proved little — it is a first year — which is why it is reported
-here with 2024 and 2025 rather than on its own.
+**nothing**. 2022 alone would have proved little — it is a first year — which is why the whole span was solved.
 
 **Two consequences, stated rather than left implied.**
 
@@ -433,7 +432,7 @@ unowned and unclaimed here.
 | shard | branch | commit | bundle | state |
 |---|---|---|---|---|
 | ctrl 2022 | `claude/nyiso-245-ctrl-2022` | `8978503b` | 17 files incl. `dispatch/2022_P1.parquet` | verified, **archived** |
-| ctrl 2023 | — | — | — | **first attempt STALLED**; retry launched, see below |
+| ctrl 2023 | `claude/nyiso-245-ctrl-2023` | `fec22733` | 17 files incl. `dispatch/2023_P1.parquet` | verified, **archived** (2nd attempt) |
 | ctrl 2024 | `claude/nyiso-245-ctrl-2024` | `f62b5078` | 17 files incl. `dispatch/2024_P1.parquet` | verified, **archived** |
 | ctrl 2025 | `claude/nyiso-245-ctrl-2025` | `7ba690f6` | 17 files incl. `dispatch/2025_P1.parquet` | verified, **archived** |
 
@@ -445,21 +444,12 @@ record". The shard branches are **transport, not storage** (rule 33 (f)): they w
 lane's PR merges, and the SHAs above are **provenance, not a recovery route** — reproducing any leg
 costs a **re-solve of ~5 minutes**.
 
-**The stalled 2023 shard** (`session_016CaVUEYRmW4qpNNoWPnxg9`) launched its solve as a background
-job, ended its turn, and was never re-invoked; it pushed no branch. It **could not be messaged** —
-`SendMessage` cannot reach a `create_session` child, exactly as the handoff records. It is
-**deliberately left alive** (rule 33 (e)): it is the only thing that could still push what it
-solved, and rule 33 (b) forbids archiving a shard whose work may be in flight. A replacement
-(`session_01WYqyH6MF2uN3pfY6fEyRtJ`) was launched with the pacing defect named in its prompt — run
-the solve in the **foreground**, do not background it and end the turn. **At the close of this
-session that retry was still queued**, its container not yet started, behind another lane's
-concurrent shards on the same environment. It is left running.
-
-**What 2023 would and would not change.** It would complete the year set; it would **not** change the
-conclusion. The finding rests on 2024 and 2025 — the keeper's **third and fourth** span years, the
-position where the artifact this test is looking for actually bit in MISO. 2023 is the second year,
-strictly less exposed than either. If it ever comes back non-zero that is a surprise worth chasing,
-and the cost of reproducing it is **one shard, ~5 minutes**.
+**The 2023 shard took two attempts.** The first (`session_016CaVUEYRmW4qpNNoWPnxg9`) launched its
+solve as a background job, ended its turn, was never re-invoked and pushed nothing; it could not be
+messaged (`SendMessage` cannot reach a `create_session` child, exactly as the handoff records). The
+replacement (`session_01WYqyH6MF2uN3pfY6fEyRtJ`) was given the pacing defect by name — run the solve
+in the **foreground** — and it completed and pushed `fec22733`. **Both are now archived.** The
+lesson for a successor's shard prompt: say "foreground, do not background and end your turn."
 
 **Branch cleanup is NOT performed and is not claimed.** A session cannot delete a remote ref here
 (HTTP 403 on both HTTP/2 and HTTP/1.1 — rule 33 (f)(2)), so the four `claude/nyiso-245-ctrl-*`

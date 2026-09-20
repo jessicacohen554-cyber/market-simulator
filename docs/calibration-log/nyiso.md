@@ -14805,14 +14805,16 @@ the same ~$40 and none by more. Successor class: `miso_offer_spread_anchored` /
 `miso_offer_level_dispersion`, entering NYISO as **`U`** under rule 28(d).
 
 **3. NYISO does NOT carry the rule 36 `[R-YEAR-ISOLATION]` (f) warm-start artifact.** Four control
-shards (one year each) replayed the keeper's recipe at HEAD with both knobs OFF. **2022, 2024 and
-2025: max |Δ class TWh| = 0.0000 and 0 of 43,800 zonal price cells moved, in every one.** Not
+shards (one year each) replayed the keeper's recipe at HEAD with both knobs OFF. **All four
+years — 2022, 2023, 2024, 2025: max |Δ class TWh| = 0.0000 and 0 of 43,800 zonal price cells moved,
+in every one.** Not
 vacuous — the keeper was solved as ONE four-year span with both knobs ON, so 2024/2025 were its
 third and fourth years, the position where MISO's defect bit hardest (7.16 / 24.18 / 4.00 TWh).
 **Rule 36(f)'s "unmeasured outside MISO" exposure is CLOSED for NYISO**, and the G-DRIFT `LIVE` hunk
 `cb1e60b7` is thereby **INERT for NYISO, measured rather than assumed** — the committed keeper IS a
-valid form-4 control and a successor need not re-spend this. 2023 outstanding (first shard stalled,
-retry launched; ~5 min to reproduce).
+valid form-4 control and a successor need not re-spend this. (The 2023 shard took two attempts: the
+first backgrounded its solve and stalled unreachable; the replacement was told to run it in the
+foreground and completed.)
 
 **4. The stale `legitimacy_diagnostics.json` (the handoff's object 2) is regenerated and is a
 NO-OP for NYISO.** Rebuilt through the current scorer from the control bundle and compared
