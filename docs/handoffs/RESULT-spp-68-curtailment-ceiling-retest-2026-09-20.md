@@ -324,3 +324,33 @@ LP. The seven gitignored leg bundles die with this container, and nothing depend
 * Trap (i) reproduced: a composed bundle's `calibration_flags.years` stays at the FIRST leg's year
   and must be patched. `shared_inputs` was **absent in keeper 14 too**, so that half of the trap
   did not apply here — worth knowing before hunting for it.
+
+## 12. A REAL GOVERNANCE SEAM, HIT AND NOT FORCED: `audit_keepers` E13 vs rule 31
+
+`scripts/audit_keepers.py --iso SPP` now reports **2 FAILURES** — E13 on both arm runs: *"registered
+for SPP but not the keeper and stamped to no keeper."* **This is left failing deliberately, and it
+is a true statement about a transient state rather than a defect to paper over.**
+
+**The seam.** Rule 15 `[R-DASHBOARD]` requires *every* completed run to be registered in the session
+that produced it, **"keeper *or* rejected probe"**. Rule 35 `[R-PROMOTE]` (f)'s E13 invariant
+requires every registered run to be the keeper or stamped to it. Between a non-keeper arm being
+registered and the owner ruling on it, both cannot hold. E13's docstring scopes itself to *"after a
+promotion"* and its message assumes *"a superseded run left behind a promotion"* — neither describes
+a run whose promotion question is still **open**, and the check cannot distinguish the two states.
+
+**Both exits E13 offers are wrong here, which is why neither was taken.**
+
+* **Prune** would delete a solved result before the owner has ruled — forbidden outright by rule 31
+  `[R-RETAIN]`, which is explicit that it **outranks** rule 35 on exactly this point (*"the outgoing
+  keeper is deletable because the owner has ruled on promotion — that ruling is trigger (i)"*).
+* **Stamp to keeper 14** would be a misrepresentation. Rule 30 `[R-TOUCHPOINT-FOLD]` (a)'s stamp
+  means *"the keeper's frozen recipe replayed on a held-out year — same config, different year."*
+  This arm is a **different config on the same years**. Stamping it would render the rejected
+  ceiling arm's 2023-2025 numbers as ordinary year columns inside **keeper 14's own report** — the
+  precise confusion rule 30 exists to prevent.
+
+**It resolves either way the moment the owner rules**, with no further action owed by this lane:
+promote → the arm becomes the keeper and E13 clears by itself; decline → the next promoting session
+prunes both under rule 35(a) and E13 clears. **Recorded here so the next lane that registers a
+non-keeper arm does not mistake this FAIL for its own error, or "fix" it by deleting a result rule
+31 protects.**
