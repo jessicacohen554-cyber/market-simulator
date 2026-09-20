@@ -35,6 +35,37 @@ def _load_derive_module():
     return mod
 
 
+def test_every_region_is_a_registered_footprint() -> None:
+    """No row keys a region the model does not actually have a fleet for.
+
+    The derive script maps BA codes through ``fleet.models.ISO_TO_BA_CODES``
+    rather than a table of its own, so a region appearing here that the
+    registry does not know would mean the two have drifted apart — which is
+    the failure mode rule 24 ``[R-REGISTRY]`` exists to catch.
+    """
+    from market_sim.data.fleet.models import ISO_TO_BA_CODES
+
+    for tech, by_iso in REGIONAL_RENEWABLE_CF.items():
+        unknown = set(by_iso) - set(ISO_TO_BA_CODES)
+        assert not unknown, f"{tech}: regions absent from the BA registry: {unknown}"
+
+
+def test_pool_regions_are_present() -> None:
+    """A multi-BA pool must aggregate, not fall through to the national CF.
+
+    NWPP is seventeen balancing authorities. A BA-name-keyed mapping silently
+    drops it, and the consumer then charges it ATB's national figure while the
+    page reports the fallback honestly — correct, but strictly worse than the
+    measured number the data supports.
+    """
+    from market_sim.data.fleet.models import ISO_TO_BA_CODES
+
+    pools = [iso for iso, bas in ISO_TO_BA_CODES.items() if len(bas) > 1]
+    assert pools, "expected at least one multi-BA pool region in the registry"
+    for iso in pools:
+        assert iso in REGIONAL_RENEWABLE_CF["solar"], f"{iso}: no measured solar CF"
+
+
 def test_table_shape_and_plausible_range() -> None:
     """Every entry is a real capacity factor for a technology we cost."""
     assert set(REGIONAL_RENEWABLE_CF) <= set(NEW_ENTRY_COSTS)

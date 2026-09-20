@@ -66,19 +66,22 @@ VINTAGE_YEARS: dict[int, str] = {
 # turbine/module generation a project financed today actually resembles.
 MIN_COD = 2018
 
-# eGRID balancing-authority code -> this model's ISO name. Codes the model has
-# no ISO for are dropped; an ISO with no measured fleet for a technology simply
-# gets no entry and the consumer falls back to the national ATB base CF.
-BA_TO_ISO: dict[str, str] = {
-    "ERCO": "ERCOT",
-    "PJM": "PJM",
-    "MISO": "MISO",
-    "ISNE": "NEISO",
-    "NYIS": "NYISO",
-    "CISO": "CAISO",
-    "SWPP": "SPP",
-    "SOCO": "SOCO",
-}
+# The BA -> region mapping is NOT redeclared here. It is read from the model's
+# own footprint registry, ``fleet.models.ISO_TO_BA_CODES`` (rule 24
+# ``[R-REGISTRY]``: one registry, no second copy that can drift out of step
+# with the fleet the solve actually builds). That registry is what makes NWPP
+# work: it is a POOL OF SEVENTEEN BALANCING AUTHORITIES rather than a BA, and
+# a hand-written one-BA-per-region table could only ever drop it or reduce it
+# to an arbitrary seventeenth of its fleet.
+#
+# ``ISO_NERC_REGION_ADMISSION`` rides along for the same reason. The eGRID BA
+# code is respondent-entered and occasionally wrong across an interconnect
+# seam, so NWPP admits a plant only when its NERC region is WECC; the 1:1
+# regions carry no predicate and admit on the BA code alone, exactly as the
+# solve path does.
+#
+# A region with no measured fleet for a technology simply gets no entry, and
+# the consumer falls back to the national ATB base CF.
 
 FUEL_TO_TECH: dict[str, str] = {"WND": "wind", "SUN": "solar"}
 
@@ -87,10 +90,29 @@ FUEL_TO_TECH: dict[str, str] = {"WND": "wind", "SUN": "solar"}
 MIN_COHORT_MW = 100.0
 
 
+def ba_to_iso() -> "tuple[dict[str, str], dict[str, str]]":
+    """Return ``(BA code -> region, region -> required NERC region)``.
+
+    Both come straight from the model's footprint registry; see the note above
+    the constants for why this is read rather than redeclared.
+    """
+    sys.path.insert(0, str(REPO / "src"))
+    from market_sim.data.fleet.models import (
+        ISO_NERC_REGION_ADMISSION,
+        ISO_TO_BA_CODES,
+    )
+
+    return (
+        {ba: iso for iso, bas in ISO_TO_BA_CODES.items() for ba in bas},
+        dict(ISO_NERC_REGION_ADMISSION),
+    )
+
+
 def load_cohort():
     """Return the pooled new-build wind/solar generator cohort as a DataFrame."""
     import pandas as pd
 
+    ba_map, nerc_required = ba_to_iso()
     frames = []
     for year, fname in VINTAGE_YEARS.items():
         path = EGRID_DIR / fname
@@ -99,7 +121,10 @@ def load_cohort():
         suffix = str(year)[2:]
         gen = pd.read_excel(path, sheet_name=f"GEN{suffix}", header=1)
         plant = pd.read_excel(
-            path, sheet_name=f"PLNT{suffix}", header=1, usecols=["ORISPL", "BACODE"]
+            path,
+            sheet_name=f"PLNT{suffix}",
+            header=1,
+            usecols=["ORISPL", "BACODE", "NERC"],
         )
         gen = gen.merge(plant.drop_duplicates("ORISPL"), on="ORISPL", how="left")
         gen = gen[
@@ -110,7 +135,14 @@ def load_cohort():
             & (gen["GENYRONL"] >= MIN_COD)
             & gen["FUELG1"].isin(FUEL_TO_TECH)
         ].copy()
-        gen["iso"] = gen["BACODE"].map(BA_TO_ISO)
+        gen["iso"] = gen["BACODE"].map(ba_map)
+        # Footprint admission: where the registry names a required NERC region
+        # for a pool, a row carrying a member BA code but the wrong NERC region
+        # is a respondent mis-file across an interconnect seam, not a plant in
+        # that pool. Regions with no declared predicate are untouched.
+        for iso, nerc in nerc_required.items():
+            wrong = (gen["iso"] == iso) & (gen["NERC"] != nerc)
+            gen.loc[wrong, "iso"] = None
         gen["tech"] = gen["FUELG1"].map(FUEL_TO_TECH)
         gen["vintage"] = year
         frames.append(
