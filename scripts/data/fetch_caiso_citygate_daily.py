@@ -109,26 +109,46 @@ def _resolve_year(month: int, page_year: int, page_month: int) -> int:
 
 
 def parse_spot_table(html: str, page_year: int, page_month: int) -> list[dict]:
-    """Return ``[{date, ca_comp, henry_hub}]`` for one weekly page, or ``[]``.
+    """Return ``[{date, ca_comp, henry_hub, week}]`` for one weekly page, or ``[]``.
 
-    Locates the active (non-commented) "Spot Prices ($/MMBtu)" table inside the
-    ``tabs-prices-2`` block, reads the five daily column dates from the header,
-    and the Henry Hub + "Cal. Comp. Avg" rows. Robust to the page's
-    whitespace/``<br />`` noise inside each cell and to the header's date
-    separator varying between a hyphen (``6-Jan``) and a space/line-break
-    (``5 Jan``) on the first column of some pages.
+    Reads **every** active (non-commented) "Spot Prices ($/MMBtu)" table inside
+    the ``tabs-prices-2`` block — not just the first — takes the five daily
+    column dates from each table's header, and the Henry Hub + "Cal. Comp. Avg"
+    rows. Robust to the page's whitespace/``<br />`` noise inside each cell and
+    to the header's date separator varying between a hyphen (``6-Jan``) and a
+    space/line-break (``5 Jan``) on the first column of some pages.
+
+    **Why more than one table (caiso-288).** EIA issues no Natural Gas Weekly
+    Update during the Thanksgiving and Christmas/New Year weeks (and a handful
+    of June/July weeks); when it resumes, the catch-up page carries the skipped
+    weeks as *additional live tables*. This function previously took
+    ``re.search`` — the FIRST table only — and silently discarded them, so the
+    committed series had no CA-composite print for 2022-12-22..30, the tail of
+    the western gas crisis: the model forward-filled the 2022-12-21 print of
+    $53.59/MMBtu across ten flow days while the measured spot fell to $15.00.
+    The same defect was found and repaired in the sibling NYISO fetcher at
+    nyiso-234b (``fetch_transco_daily_spot.py``, 2026-09-14); this is the CAISO
+    half of it. Each row carries its table's ``week`` key so ``main`` can gate
+    duplicate value-vectors (see there).
     """
     idx = html.find('id="tabs-prices-2"')
     if idx < 0:
         return []
     # Window is generous: some weeks leave a stale commented-out "Table option 1"
-    # template (with old dates) ahead of the active table, pushing it down-page.
-    seg = html[idx : idx + 24000]
+    # template (with old dates) ahead of the active table, pushing it down-page,
+    # and a catch-up page carries THREE live tables rather than one (caiso-288).
+    seg = html[idx : idx + 60000]
     seg = re.sub(r"<!--.*?-->", "", seg, flags=re.S)  # drop the commented template(s)
-    m = re.search(r"<table.*?</table>", seg, flags=re.S)
-    if not m:
+    rows: list[dict] = []
+    for m in re.finditer(r"<table.*?</table>", seg, flags=re.S):
+        rows += _parse_one_table(m.group(0), page_year, page_month)
+    return rows
+
+
+def _parse_one_table(table: str, page_year: int, page_month: int) -> list[dict]:
+    """Rows for ONE live spot-price table. See :func:`parse_spot_table`."""
+    if "Cal. Comp" not in table:
         return []
-    table = m.group(0)
 
     # Column dates from the header: "Thu, 6-Jan" or "Thu, 5 Jan" (both seen).
     head = table[: table.find("</thead>") + 8] if "</thead>" in table else table
@@ -173,8 +193,16 @@ def parse_spot_table(html: str, page_year: int, page_month: int) -> list[dict]:
         h = hh[i] if i < len(hh) else None
         if c is None:
             continue
-        rows.append({"date": date, "ca_comp": c, "henry_hub": h})
+        rows.append({"date": date, "ca_comp": c, "henry_hub": h, "week": dates[0]})
     return rows
+
+
+def _week_vectors(rows: list[dict]) -> dict[str, tuple[float, ...]]:
+    """``{week_key: (ca_comp, ...)}`` for one page's tables — the G-DUP key."""
+    out: dict[str, list[float]] = {}
+    for r in rows:
+        out.setdefault(r["week"], []).append(round(float(r["ca_comp"]), 4))
+    return {k: tuple(v) for k, v in out.items()}
 
 
 def main() -> None:
@@ -193,6 +221,8 @@ def main() -> None:
     print(f"archive: {len(pages)} weekly pages {args.start_year}..{args.end_year + 1}")
 
     by_date: dict[str, dict] = {}
+    seen_vectors: dict[tuple[float, ...], str] = {}
+    refused: set[str] = set()
     fetched = failed = 0
     for y, m, d in pages:
         url = PAGE_TMPL.format(y=y, m=m, d=d)
@@ -205,6 +235,26 @@ def main() -> None:
         rows = parse_spot_table(html, y, m)
         if not rows:
             print(f"  {y}-{m:02d}-{d:02d}: no spot table parsed", file=sys.stderr)
+        for wk, vec in _week_vectors(rows).items():
+            # G-DUP (caiso-288): EIA has re-served a PREVIOUS YEAR's catch-up
+            # table verbatim — the 2025-12-04 page carries 2024's Thanksgiving
+            # week (3.60/3.36/3.52/3.18/3.45) under 2025 dates. A value vector
+            # that exactly reproduces another week's is not a measurement, and
+            # the two cannot be told apart from this source, so BOTH are
+            # refused. A silent stale table is worse than a gap: a gap is
+            # visible, a stale print is not. (Same posture as the nyiso-234b
+            # misalignment guard.)
+            prior = seen_vectors.get(vec)
+            if prior is not None and prior != wk:
+                print(
+                    f"  {y}-{m:02d}-{d:02d}: DUPLICATE value-vector, week {wk} "
+                    f"repeats week {prior} verbatim — BOTH weeks refused",
+                    file=sys.stderr,
+                )
+                refused.add(wk)
+                refused.add(prior)
+            else:
+                seen_vectors[vec] = wk
         for r in rows:
             yr = int(r["date"][:4])
             if args.start_year <= yr <= args.end_year:
@@ -212,6 +262,15 @@ def main() -> None:
         fetched += 1
         time.sleep(args.sleep)
 
+    dropped = [k for k, r in by_date.items() if r.get("week") in refused]
+    for k in dropped:
+        del by_date[k]
+    if dropped:
+        print(
+            f"G-DUP refused {len(dropped)} row(s) from {len(refused)} week(s): "
+            f"{', '.join(sorted(dropped))}",
+            file=sys.stderr,
+        )
     out_rows = [by_date[k] for k in sorted(by_date)]
     args.out.parent.mkdir(parents=True, exist_ok=True)
     with args.out.open("w", newline="") as fh:

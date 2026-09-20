@@ -1,0 +1,109 @@
+{
+ "run": "caiso-288 phase 0",
+ "keeper": "2026-09-19-caiso-287-mer-keeper",
+ "bundle_2022": "caiso287_instr_2022",
+ "load_zones": [
+  "LA_BASIN",
+  "NP15",
+  "SDGE",
+  "SP15_rest",
+  "ZP26"
+ ],
+ "c3a_2022": {
+  "model": 94.0744,
+  "bench_rt_lw": 84.49,
+  "bench_da_lw": 92.14,
+  "pct_vs_rt": 11.344,
+  "pct_vs_da": 2.099,
+  "gap_model_weighted": 10.3153
+ },
+ "gap_share_by_netload_decile": {
+  "d0": 3.624,
+  "d1": 15.771,
+  "d2": 17.38,
+  "d3": 15.382,
+  "d4": 14.294,
+  "d5": 11.096,
+  "d6": 9.588,
+  "d7": 9.815,
+  "d8": 7.056,
+  "d9": -4.006
+ },
+ "gap_share_belly_d0": 3.624,
+ "gap_share_shoulder_d1_d4": 62.826,
+ "gap_share_by_month": {
+  "m01": 8.846,
+  "m02": 7.919,
+  "m03": 3.173,
+  "m04": 6.901,
+  "m05": 6.264,
+  "m06": 4.032,
+  "m07": 7.53,
+  "m08": 6.98,
+  "m09": 3.583,
+  "m10": 4.315,
+  "m11": 2.02,
+  "m12": 38.437
+ },
+ "gap_share_dec23_31": 47.107,
+ "c3a_2022_jan_nov_only_pct": 9.899,
+ "fossil_marginal_share_december": 89.651,
+ "gas_footprint": {
+  "2022": {
+   "hours_moved": 648,
+   "ctrl_mean": 9.9709,
+   "arm_mean": 9.4058,
+   "mean_delta": -0.5651,
+   "max_pos": 3.46,
+   "max_neg": -38.59
+  },
+  "2023": {
+   "hours_moved": 624,
+   "ctrl_mean": 5.6957,
+   "arm_mean": 5.7284,
+   "mean_delta": 0.0327,
+   "max_pos": 7.11,
+   "max_neg": -1.92
+  },
+  "2024": {
+   "hours_moved": 792,
+   "ctrl_mean": 3.0101,
+   "arm_mean": 2.9533,
+   "mean_delta": -0.0568,
+   "max_pos": 0.02,
+   "max_neg": -2.25
+  },
+  "2025": {
+   "hours_moved": 672,
+   "ctrl_mean": 3.4614,
+   "arm_mean": 3.4473,
+   "mean_delta": -0.0141,
+   "max_pos": 0.49,
+   "max_neg": -0.58
+  }
+ },
+ "band": {
+  "cc_heat_rate_mmbtu_per_mwh": 7.44,
+  "lower_model": 94.0744,
+  "lower_c3a_pct": 11.344,
+  "upper_model": 90.2869,
+  "upper_c3a_pct": 6.861,
+  "width_usd_per_mwh": -3.7875,
+  "gas_down": {
+   "hours": 384,
+   "pct_of_load": 3.94,
+   "mean_dgas_usd_mmbtu": -14.301,
+   "mean_dmc_usd_mwh": -106.401,
+   "fossil_marginal_pct": 80.47,
+   "observed_model_minus_rt": 129.633
+  },
+  "gas_up": {
+   "hours": 264,
+   "pct_of_load": 2.679,
+   "mean_dgas_usd_mmbtu": 2.051,
+   "mean_dmc_usd_mwh": 15.259,
+   "fossil_marginal_pct": 73.11,
+   "observed_model_minus_rt": 2.299
+  }
+ }
+}

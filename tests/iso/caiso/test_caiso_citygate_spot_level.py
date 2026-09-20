@@ -75,12 +75,22 @@ class TestCaisoCitygateSpotLevel(unittest.TestCase):
                     )
 
     def test_jan_2023_levelled_at_daily_spot(self) -> None:
-        """Jan-2023 covered gas prices sit at the daily-spot mean (~$16.6), not $28."""
+        """Jan-2023 covered gas prices sit at the daily-spot mean (~$17.3), not $28."""
         cfg = self._cfg(spot_level=True)
         spot = fuel._caiso_hub_daily_gas_prices(cfg, 2023, spot_level=True)
         jan = _month_mean(spot, 0) + CAISO_CITYGATE_TRANSPORT_ADDER
         # Measured CA Composite daily-spot Jan-2023 mean + $0.46 transport.
-        self.assertAlmostEqual(jan, 16.58, delta=0.30)
+        # caiso-288 (2026-09-20): 16.58 -> 17.33, a SOURCE-COVERAGE re-derivation
+        # under rule 23 [R-FROZEN-DERIVE] and NOT a residual (the C3a residual is
+        # a 2022 object and this constant is 2023). The committed daily series
+        # had no print before 2023-01-05, because EIA publishes no Weekly Update
+        # over the New Year and carries the skipped weeks as EXTRA LIVE TABLES on
+        # the catch-up page, which fetch_caiso_citygate_daily's re.search
+        # discarded. Jan 1-4 were therefore back-filled from the Jan-5 print
+        # ($16.55); they now carry their own measured prints (Jan-3 $23.66,
+        # Jan-4 $18.37), which are higher, so the month mean RISES. The repair
+        # moves this constant AGAINST the direction a fit would want.
+        self.assertAlmostEqual(jan, 17.33, delta=0.30)
         # Far below the survey level the keeper prices Jan at (~$28/MMBtu).
         survey = fuel.iso_hub_monthly_gas_prices(cfg, 2023)
         self.assertLess(jan, float(survey[0]) - 8.0)
