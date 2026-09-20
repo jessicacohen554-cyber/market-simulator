@@ -2931,3 +2931,30 @@ results/calibration/miso264_anchor_20[0-9][0-9]/
 #   (same shas carry the paired pjm_h12_ctl_<year> control bundles)
 results/calibration/pjm_h12_clip_*/
 results/calibration/pjm_h12_ctl_*/
+
+# SOCO-54 (2026-09-20) per-year arm legs, rule 36 [R-YEAR-ISOLATION] (a): one
+# shard per year, composed in the parent at zero LP. Each shard pushed its FULL
+# 16-file bundle (rule 34 [R-SHARD-PROMOTABLE] (a)) including
+# dispatch/<year>_P1.parquet and the bundle-root system.parquet; the PARENT keeps
+# the per-year dirs out of `main` (rule 32 [R-SHARD] (d)) and commits only the
+# composite. They stay ON LOCAL DISK, not deleted — rule 31 [R-RETAIN]: .gitignore
+# discharges the delete-before-merge duty, `rm` never does.
+# The composed arm, results/calibration/soco54_marginal_gas, IS committed.
+#
+# Recovery is by IMMUTABLE SHA (rule 33 [R-SHARD-ARCHIVE] (d)); the explicit
+# `git fetch origin <sha>` FIRST is REQUIRED — the shard branches are auto-deleted
+# when this lane's PR merges (rule 33(f)(1)), so these SHAs are PROVENANCE, not a
+# durability claim: cost any leg recovery as a RE-SOLVE.
+#   git fetch origin <sha> && git checkout <sha> -- results/calibration/soco54_arm_<year>
+#   soco54_arm_2023  0ccc7271232fc6bd1fdaf98a4b7e6080c97e3afd
+#   soco54_arm_2024  a4cf3a5f29e822ff8239752974fb1ddbf73d72d0
+#   soco54_arm_2025  50e747ca4cd11008d831f1679f9a5bde638e482b
+# Re-compose at zero LP with
+#   scripts/probes/soco54_compose_span.py --expect-print false
+# NOTE for a successor: the shards could not push results/calibration/_shared/SOCO/
+# (gitignored, and a sibling of their own out-dir), so the parent regenerated it
+# with `run_calibration_full.py --rebuild-benchmark <composite>` — ZERO LP, 11 s,
+# and exactly one file changed (meta.json; all 34 parquet/json outputs
+# byte-identical). Every arm leg's shared-input hashes are BYTE-IDENTICAL to the
+# keeper's own leg for the same year, which is the A/B integrity proof.
+results/calibration/soco54_arm_20[0-9][0-9]/
