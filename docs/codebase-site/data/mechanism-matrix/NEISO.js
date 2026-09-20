@@ -99,6 +99,7 @@ window.MECH_MATRIX_SHARDS.NEISO = {
     mustrun_plant_exclusions: { cell: "U", ev: "row added with the field 2026-08-19 (miso-170, rule 28c); never armed here. Entering as U per rule 28(d) — the MISO identification transfers nothing; this ISO must identify any laid-up unit from its OWN CAMPD conduct before arming" },
     mustrun_commitment_feasibility_clip: { cell: "U", ev: "ROW SEEDED 2026-09-14 (spp-42) with the field, per rule 28(c) — U: UNTESTED on this ISO. The gate is default off, so this ISO's keeper is byte-identical and nothing here is adjudicated. Rules 25 [R-ISO-SCOPE] / 28(d): SPP's measurement fills no other ISO's cell — a transfer candidate enters as U and the target lane derives its own evidence from its own market. The mechanism carries NO per-ISO number to transfer (zero free parameters, zero artifacts); what does NOT transfer is whether this ISO's per-plant must-run floor actually survives a dated outage as a sub-minimum-load assertion, which is a property of that ISO's own fleet, outage extract and committed levels and has to be measured there. Cheap first step on any ISO arming cc_mustrun_per_plant or st_gas_mustrun_per_plant: a fleet_only rebuild of its keeper's recipe, comparing each floored plant-group's hourly floor against its own sum of cc_mustrun_pmin_mw — zero LP." },
     coal_mustrun_per_plant: { cell: "K" },
+    coal_mustrun_requires_measured_row: { cell: "U" },
     coal_takeorpay_committed: { cell: "." },
     coal_prb_committed_dispatchable: { cell: "." },
     coal_prb_committed_split: { cell: "." },

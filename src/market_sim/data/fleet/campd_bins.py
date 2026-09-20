@@ -2478,9 +2478,40 @@ def fleet_to_bins(
             if _ratio is not None and _ratio > 0.0:
                 cap = cap / _ratio
         d_mr, d_mc, d_peak = _DEFAULT_TRANCHE_PCT_BY_GROUP.get(group, (0.0, 30.0, 8.0))
+        _measured_row = (code, group) in overrides
         committed, mustrun = overrides.get((code, group), (d_mc, d_mr))
         pct_mc = committed
         pct_mr = mustrun if group == "COAL" else d_mr
+        # COAL MUST-RUN REQUIRES A MEASURED ROW (config.coal_mustrun_requires_
+        # measured_row, pjm-h14). Rule 17 [R-FLOOR-WINDOW]: a min-gen floor owes
+        # (a) an external driver, (b) the hours it may bind, (c) a forward story.
+        # A coal plant ABSENT from the ISO's CAMPD thermal-tranche artifact has
+        # none of the three, and TWO unmeasured defaults then compound on it:
+        # :data:`_DEFAULT_TRANCHE_PCT_BY_GROUP` hands it a 45 %-of-nameplate
+        # must-run tranche (its own comment calls the fallback population
+        # "rarely-online units with no reliable observed floor"), and
+        # ``assembly.py``'s ``coal_sync_online_frac(...).get(code, 1.0)`` then
+        # holds that tranche in ALL 8760 hours because the online%-scaled
+        # window also defaults to force-all when there is no measured share.
+        # The plants with the LEAST evidence therefore carry the STRONGEST and
+        # WIDEST floor — the opposite of both defaults' stated intent.
+        #
+        # Armed, an unmeasured coal plant carries NO must-run tranche; that
+        # capacity falls to the economic band, so the plant keeps every MW and
+        # the LP decides it on price. Removing the synchronization floor is a
+        # CONSEQUENCE, not a second mechanism (rule 19 [R-ONE-MECH]):
+        # ``assembly.py`` sets ``coal_sync_pmin_mw`` from the ``mustrun``/
+        # ``sync`` tranche capacity, so a zero must-run leaves nothing to floor.
+        # ZERO free parameters (rule 21 [R-DOF]) — the arm asserts no level, it
+        # withdraws an assertion that has no measurement behind it. Gated
+        # default off, so every other ISO's keeper is byte-identical
+        # (rule 25 [R-ISO-SCOPE]).
+        if (
+            group == "COAL"
+            and not _measured_row
+            and getattr(config, "coal_mustrun_requires_measured_row", False)
+        ):
+            pct_mr = 0.0
         pct_peak = peaking.get((code, group), d_peak)
         # Keep the split feasible: clip committed + peaking to leave room for an
         # economic band above the must-run floor.
