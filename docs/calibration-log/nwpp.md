@@ -229,7 +229,12 @@ shard branches are **NOT merged** (verified: `git merge-base --is-ancestor` answ
 ancestor* for all six against `origin/main`) and are **deliberately not deleted** — they hold the
 only copy of the per-plant dispatch layer a re-registration needs and of the control legs
 entirely, so rule 33(f)(2) does not permit deleting them and 33(f)(4) forbids orphaning the
-recovery lines that cite them.
+recovery lines that cite them. **LEG-REF RESCUE (rule 33(f)(4)):** the environment deleted
+three of the six original shard branches once this lane's PR merged, and their commits are not on
+`main`, so all six were re-pushed UNCHANGED under durable, PR-free refs
+`claude/nwpp-42-leg-{arm,mer}-{2023,2024,2025}`. The SHAs did not move, so every recovery line
+still resolves after `git fetch origin claude/nwpp-42-leg-<arm|mer>-<year>`. Nothing was deleted
+(rule 31 `[R-RETAIN]`).
 
 **THE GATES, arm minus the paired control. NOTHING REGRESSES.** C1 PASS→PASS (18/18 all, 14/14
 free), C2 PASS→PASS, C4 FAIL→FAIL, C6 PASS→PASS, C8 PASS→PASS (0.0 % forced everywhere),

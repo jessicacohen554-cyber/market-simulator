@@ -138,6 +138,16 @@ including `dispatch/<year>_P1.parquet`:**
 | ctl 2024 | `924fafa6e1883ec9b54a8d418d518d4a0208926b` |
 | ctl 2025 | `637f71d021fb46f32b0e8f9f49bde73108207722` |
 
+**Leg-ref rescue (rule 33(f)(4)), 2026-09-20.** After this lane's own PR merged, the environment
+deleted three of the six original shard branches — `arm-2023`, `arm-2024` and `mer-2025` — whose
+commits are **not** ancestors of `main`, so their recovery lines briefly pointed at commits
+reachable from nothing but the parent's fetched refs. All six commits were re-pushed **unchanged**
+under durable refs that carry no open PR and are therefore not auto-deleted:
+`claude/nwpp-42-leg-{arm,mer}-{2023,2024,2025}`. The SHAs are unchanged, so every recovery line in
+this document and in `.gitignore` still resolves after
+`git fetch origin claude/nwpp-42-leg-<arm|mer>-<year>`. Nothing was deleted to do this (rule 31
+`[R-RETAIN]`); the three refs that still existed were mirrored, not moved.
+
 **Retrievability, stated honestly (rule 34(e)).** The six shard branches are **NOT merged** —
 `git merge-base --is-ancestor <sha> origin/main` answers *not an ancestor* for all six (verified
 2026-09-20). Each sha is reachable only from its own ref `claude/nwpp-42-{arm,mer}-<year>`, and
