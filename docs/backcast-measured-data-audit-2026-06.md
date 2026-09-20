@@ -338,3 +338,53 @@ probe `scripts/probes/nyiso104_central_east_ttc_classification.py`.
 environment** (see the `DATA NEEDED` note in `data/raw/NYISO/README.md`); the
 committed tables are the derived artifact. Re-fetch from NYISO's MIS before
 re-running the derive script.
+
+---
+
+## `caiso_ra_mustoffer` — market design with a forecast **wiring gap**, declared (2026-09-20)
+
+**Declared parity difference** (caiso-294). Like the `nyiso_central_east_measured_ttc`
+entry above, this closes a **registry gap rather than admitting a new input** — but the
+class is different and the distinction is the whole point of the entry: this is **not a
+measured overlay at all**. It is a market-design commitment mechanism that is
+**mode-independent by intent**, and the only reason D-5 sees a backcast/forecast
+difference is that the forecast entry point never calls it.
+
+**What D-5 was reporting.** `D5_REGISTRY`'s `caiso_ra_mustoffer` row declares
+`mode="both"` with `caiso_ra_mustoffer_min_gen` required in both entry scripts. Measured
+at this writing: the symbol appears **twice in `scripts/run_calibration.py` and zero times
+in `src/market_sim/runner.py`**, so `active_b=True`, `active_f=False`, and with
+`declared=False` the row read `FAIL` — the **single** D-5 failure on the CAISO keeper
+`2026-09-20-caiso-290-leftedge`. The gate was reporting a true fact about the code and
+scoring it as an undeclared overlay, which it is not.
+
+**Why it is admissible in a backcast under rule 13 `[R-MEASURED]`.** The bridge floors a
+gas CC/CT that the model's **own base-cost P0 run pattern** shows idling across a midday
+gap shorter than its **physical** minimum-down time (or, under `caiso_ra_startup_bridge`,
+uneconomic to cycle by the standard restart inequality priced at the model's **own** P0
+dual). Both operands — the P0 pattern and `CC_COMMITMENT_PARAMS` min-down — are produced
+by the model from forward drivers and respond to changed conditions. **No measured
+outcome enters**: nothing is pinned to observed CEMS generation, no offset is tuned to a
+residual, and the P1 LP dispatches freely above the floor. It passes the admissibility
+test at the top of this document in both modes; it simply is not *reachable* in one of
+them.
+
+**What the declaration costs, stated rather than hidden.** While the gap stands, a CAISO
+**forecast** year carries no RA must-offer commitment while every CAISO **backcast** year
+does — so the two modes do not run the same mechanism set, and a CAISO forecast's belly
+commitment is structurally thinner than the backcast that validated it. The declaration
+records that difference and sanctions D-5's treatment of it; it does **not** claim the
+difference is harmless. This is the same posture the `reliability_floor` row above already
+carries ("a wiring gap in the forecast entry is reported but sanctioned by the
+declaration").
+
+**The named closure, not absorbed.** Wire `caiso_ra_mustoffer_min_gen` into `runner.py`'s
+P0→P1 seam (`docs/audit-wiring-iso-gaps/prompt-pack/w2-caiso-ra-p2.md`; fix plan
+`docs/audit-wiring-iso-gaps/fix-plan.md`). That is a **forecast-path model change** — it
+arms an extra `min_gen` bridge in every CAISO forecast and hindcast year and moves every
+CAISO forecast result — so it needs its own PRECOMMIT, its own gates and an owner ruling.
+It is deliberately **not** bundled into this declaration, which is docs + one registry
+boolean and changes no solve.
+
+Registry row: `scripts/legitimacy_diagnostics.py::D5_REGISTRY`, `declared=True`,
+`mode="both"`. Record: `docs/RESULT-caiso294-*.md`.
