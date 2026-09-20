@@ -306,6 +306,27 @@ identically (1 HEAD-only meta keys); scenario_config 856 matched, 0 drifted`, on
 AFTER alike. Container: cgroup ceiling 13.36 GiB + 6 GiB swap; `memory peak:
 cgroup_peak_rss_gib=8.12` on both arms.
 
+### Two manifest details, recorded rather than left for a reader to trip over
+
+The committed `manifest.json` of each arm (hashes only — the 223 MB bundles are ignored by
+`.gitignore:646`, `/results/regression-goldens/*/*/`) carries a `provenance.env` block, and
+the two differ in exactly one key:
+
+| arm | `provenance.env` |
+|---|---|
+| before | `MARKET_SIM_HIGHS_THREADS=1, MARKET_SIM_WARMSTART=1, MARKET_SIM_WARMSTART_XYEAR=0` |
+| after | the same **plus `MARKET_SIM_P1_BASIS_SEED=0`** |
+
+That difference is not noise: it is the `DETERMINISM_ENV` pin of §2 landing, recorded by the
+capture script itself.
+
+**`provenance.git_dirty` is `True` on BOTH arms, including BEFORE, and that is honest rather
+than alarming.** The manifest is stamped when the capture *writes* it — at the end of the run
+— by which time this shard's edits were on disk. The BEFORE arm's **solve** nonetheless ran
+pre-edit code, and the argument for that is the import ordering in §4, not the dirty flag.
+Stated plainly: the flag cannot attest the BEFORE arm, so do not read it as if it could.
+Both arms record `git_sha 2a87343f`, the pinned HEAD.
+
 ### Tests
 
 | command | result |
