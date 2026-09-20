@@ -75,6 +75,12 @@ MUST_AGREE = (
     "miso_south_seam_split",
     "miso_import_sil_measured_envelope",
     "use_campd_bins",
+    # miso-264: the gas-offer margin's IDENTIFICATION-POINT INDEX. The resolved
+    # anchor `gas_offer_margin_anchor` is deliberately NOT here — under the
+    # vintage gate it is a per-year measured value and differing IS the
+    # mechanism — but the GATE itself must agree across every leg, or a leg
+    # whose `--set` silently no-opped would compose in as if it had armed.
+    "gas_offer_margin_anchor_vintage",
 )
 
 #: Fields the DATA forces to differ, with the value each leg must carry. Stated
