@@ -2755,3 +2755,26 @@ results/calibration/pjm_h11_ctl_*/
 # unit_hourly, network) still match the files inside and still apply, so this
 # commits the slim set every keeper commits, not the 50 MB working bundle.
 !results/calibration/caiso287_instr_2022/
+
+# soco-53f (2026-09-20): the seven per-year shard legs and the two composed
+# spans. Rule 29 [R-SCREEN] (c) governs what reaches `main`, and rule 31
+# [R-RETAIN] says `.gitignore` — never `rm` — is what discharges it, so these
+# stay on local disk and out of the repository. The REGISTERED deliverable is
+# the composed arm, results/calibration/soco53f_coal_hr, which IS committed.
+# Every leg is recoverable in full by IMMUTABLE SHA (rule 33 [R-SHARD-ARCHIVE]
+# (d) — never by branch name), each a 16-file bundle including
+# dispatch/<year>_P1.parquet and the bundle-root system.parquet:
+#   git fetch origin <sha> && git checkout <sha> -- results/calibration/<dir>
+#   soco53f_ctl_2023  b06f88080900f3bb4473f9d9fb725dd127795d08
+#   soco53f_ctl_2024  1dbf2200481d80e7c47c3523f09aa394e25a8089
+#   soco53f_ctl_2025  f96f600729736854588f56bb2baf73fde6ec9f0b
+#   soco53f_arm_2023  0f061987f1877f62339df72174c74fbf0e8b89da
+#   soco53f_arm_2024  34d7131e98f6be0bdb463428f7c8bdb781a56b2e
+#   soco53f_arm_2025  381ca2fc8b4827246f2e99f7f980157c84447fee
+#   soco53f_dep_2023  8071d457408e25b3f5113c4983d7ffe950b436c5
+# The two spans are re-composed at zero LP from those legs with
+# scripts/probes/soco53f_compose_span.py.
+results/calibration/soco53f_arm_20[0-9][0-9]/
+results/calibration/soco53f_ctl_20[0-9][0-9]/
+results/calibration/soco53f_dep_20[0-9][0-9]/
+results/calibration/soco53f_ctl_span/
