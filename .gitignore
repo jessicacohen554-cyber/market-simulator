@@ -2719,7 +2719,17 @@ results/calibration/miso263_coalcap_20[0-9][0-9]/
 # The live shards are unaffected — they are pinned to 0fae26c3 / 3b719484, which
 # predate this block. A future r3 must likewise pin to a sha before it, or use a
 # bundle name outside this glob.
-results/calibration/pjm_h11_*/
+#
+# NARROWED 2026-09-20 at the promotion, and narrowed rather than negated for the
+# reason the NOTE above gives: `results/calibration/pjm_h11_*/` also swallowed the
+# two COMPOSED spans, which rule 15 [R-DASHBOARD] requires to reach main, and a
+# `!<dir>/**` negation under a directory-grain exclude cannot pull them back. So
+# the exclude now names the per-year LEGS only. The composed dirs
+# pjm_h11_{keeper,touchpoint}_span fall outside it and commit their slim set, the
+# same set every PJM keeper commits (the dispatch/, floors/, root *.parquet,
+# unit_hourly and network rules above still match inside them).
+results/calibration/pjm_h11_arm_*/
+results/calibration/pjm_h11_ctl_*/
 # caiso-287: the 2022 leg became the REGISTERED touchpoint at the 2026-09-19 MER
 # promotion, so it must reach main (rule 15 [R-DASHBOARD]) — un-ignore the dir
 # only. The slim-bundle rules above (dispatch/, floors/, root *.parquet,

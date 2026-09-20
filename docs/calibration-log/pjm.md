@@ -6042,3 +6042,72 @@ is verified **absent** from both committed bundles' sidecar sets. It rides the s
 **without a new `ScenarioConfig` field**. Both prompts carry the memory gate first (STOP below
 16 GiB, binding cgroup only), the full six-step setup with **nothing on a forbidden list**, the
 in-turn poll loop, and the rule-34(a) `.gitignore`-negation + plain-`git add` bundle push.
+
+## pjm-h11 (promotion) — 2026-09-20
+
+**KEEPER PROMOTED: `2026-09-11-pjm-d4-4-gasoutage` → `2026-09-19-pjm-h11-c1seam-span`**
+(+ folded touchpoint `2026-09-19-pjm-h11-c1seam-touchpoint`, 2020–2022, rule 30 `[R-TOUCHPOINT-FOLD]`
+(a)). Owner ruling 2026-09-20, verbatim: *"Promote anyway"* — given after this lane declined to
+self-promote and put the three-way "is it an improvement" table to the owner.
+
+**Delta:** card **C-1** — the 2020 key added to
+`src/market_sim/model/interchange/spec.py::PJM_SEAM_LADDER_BY_YEAR`. A rule 23 `[R-FROZEN-DERIVE]`
+re-derivation of the already-armed measured seam ladder on one more year: **zero `ScenarioConfig`
+fields, zero scalars, zero free parameters**, DOF ledger carried verbatim at 19 entries / 6 residual.
+Until this run PJM's 2020 had no ladder row and fell through to the **forecast gas-elastic** seam
+track while 2021–2025 ran the measured one — the stale-invariant defect pjm-h10 §2.6 recorded, now
+closed. Basis is rule 14 `[R-ACCURATE]`, never the residual.
+
+**Method — the first PJM keeper solved under rule 36 `[R-YEAR-ISOLATION]`.** Twelve solves (six ARM
+years, six same-HEAD CONTROL years), **one year per shard container**, both cross-year warm-start
+knobs off, **zero LP minutes in the parent** (rule 32(a)); composed at zero LP by
+`scripts/probes/pjm_h11_compose_span.py`, which asserts the PJM keeper posture on every leg. All
+twelve legs carry solve-surface fingerprint `905116f13849914f` at HEAD `3b719484`.
+
+**Scored:** training half **CALIBRATED**, empty determination basis, zero caveats, all eight criteria
+PASS (C1 18/18 all · 14/14 free). Touchpoint **NOT-YET**, exactly as the incumbent's touchpoint read;
+rule 30(c) — a held-out year never downgrades the ISO.
+
+**Scope proven through the solver:** arm-vs-control 2021–2025 `max |Δ class TWh| = 0.000000`, zero
+classes moved. C-1 touches 2020 alone.
+
+**Reported at full magnitude.** CC_REGULAR **+7.50 → +0.35 TWh**, total class |error| **48.2 → 47.05**.
+COAL_BIT **+16.90 → +22.27 TWh — WORSE**, and **the cause is not C-1**: a CONTROL at the same HEAD
+with no C-1 reads **+25.16**, so the rebuilt committed input
+`data/raw/_validation-source/pjm_offer_midcurve_condbinned.json` carries **+8.26 TWh** on its own and
+C-1 recovers 2.89. That drift lands on PJM whenever it next re-solves, armed or not — **it is the
+next lane's target**. C-1's own 2020 effect is likewise adverse and was **predicted in the PRECOMMIT
+before the solve**: net export 40.391 → 28.344 TWh against 41.626 measured, fossil −10.574 TWh.
+
+**C-2 measured, and it refutes a prior finding:** PJM's seam shortfall is **~100 % export-side**
+(model gross import 0.000–0.048 TWh vs measured 0.000–0.603 across six years). pjm-h10 §2.5's
+inferred import-side excess does not exist; the "phantom imports displace CC_REGULAR" suspect is
+retired at the system boundary.
+
+**Open, disclosed, untouched — owner question Q1:** 3 of 480 existing ladder rungs (2023
+Carolinas.import b2, 2024 Carolinas.export b2, 2025 LGEE.import b3) sit one cent below the frozen
+formula's output. Pre-existing hand-transcription truncations: they reproduce with no 2020 in the
+frame, and the unrounded values sit 0.07–0.28 cents from any rounding boundary. **None of the 240
+rungs shared with the scored years moves** when 2020 is added. Repairing them would be a
+solve-affecting change with no data change to cite (rule 23), so they are left alone.
+
+**Promotion hygiene (rule 35 `[R-PROMOTE]`).** Year union enumerated BEFORE the delete (35(b)): PJM
+is {2020, 2021, 2022, 2023, 2024, 2025}; the incoming pair covers it exactly (35(c)). Order was
+promote → `audit_keepers.py` (E1/M1 clean) → prune (35(e)). `prune_iso_runs.py --iso PJM
+--force-uncite` removed the outgoing keeper's three stores and its touchpoint's —
+`2026-09-11-pjm-d4-4-gasoutage` (`pjm_d4_4_A`) and `2026-09-11-pjm-holdout-gasoutage-touchpoint`
+(`pjm_d4_4_TP`) — PJM only. `audit_keepers --iso PJM` finishes **0 failures / 0 warnings**.
+Mechanism-matrix PJM shard re-stamped and the `reference_price_interface` cell updated (rule 28(b));
+the cell **stays K** — what moved is its coverage, not its verdict.
+
+**Pre-existing RED not this lane's and not touched:**
+`check_registry_payload_parity.py` flags `results/calibration/caiso279_ablate_dswcouple_span` as a
+tracked, unmapped bundle on `origin/main` — a CAISO-lane item; rule 35(a) scopes pruning per-ISO.
+The twelve `pjm_h11_{arm,ctl}_<year>` legs also flag **locally only**: they are gitignored, so CI
+(which checks out only what is committed) stays green — the rule 31 `[R-RETAIN]` clause corrected by
+pjm-h8 on 2026-09-16.
+
+**Docs:** `docs/RESULT-pjm-h11-c1-seam-ladder-2026-09-20.md`,
+`docs/ADDENDUM-pjm-h11-the-2020-readout-2026-09-19.md`,
+`docs/handoffs/PRECOMMIT-pjm-h11-2026-09-19.md`,
+`docs/FINDING-pjm-h11-the-pjm-oom-is-a-disk-ordering-bug-2026-09-19.md`.

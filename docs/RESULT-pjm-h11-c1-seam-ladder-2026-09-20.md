@@ -3,7 +3,13 @@
 **Session:** pjm-h11 · **Branch:** `claude/pjm-h11-calibration-tuning-mwod34` · **ZERO LP MINUTES
 IN THE PARENT** (rule 32 `[R-SHARD]` (a)) — every solve ran in a per-year shard, one year per
 container, which is rule 36 `[R-YEAR-ISOLATION]` (a).
-**Keeper UNCHANGED:** `2026-09-11-pjm-d4-4-gasoutage`. **Nothing registered. Nothing pruned.**
+**KEEPER PROMOTED 2026-09-20** on the owner ruling *"Promote anyway"*:
+`2026-09-11-pjm-d4-4-gasoutage` → **`2026-09-19-pjm-h11-c1seam-span`** (CALIBRATED, 2023–2025, empty
+determination basis, zero caveats), with `2026-09-19-pjm-h11-c1seam-touchpoint` (2020–2022) stamped
+and folded to it under rule 30 `[R-TOUCHPOINT-FOLD]` (a). The outgoing keeper's three stores and its
+touchpoint's were pruned in this same session per rule 35 `[R-PROMOTE]`. **§4 below is the question
+as it was put to the owner and is left standing as written; §4b records the ruling and what was
+executed.**
 **PRECOMMIT:** `docs/handoffs/PRECOMMIT-pjm-h11-2026-09-19.md` ·
 **Measurements:** `docs/ADDENDUM-pjm-h11-the-2020-readout-2026-09-19.md` ·
 **Infra finding:** `docs/FINDING-pjm-h11-the-pjm-oom-is-a-disk-ordering-bug-2026-09-19.md`
@@ -29,8 +35,9 @@ container, which is rule 36 `[R-YEAR-ISOLATION]` (a).
 5. **C-2 measured, refuting a prior finding.** The PJM seam shortfall is **~100 % export-side**.
    pjm-h10 §2.5's inferred "import-side excess" does not exist, and the "phantom imports displace
    CC_REGULAR" suspect is retired at the system boundary.
-6. **The promotion question is UNRESOLVED and sits with the owner** (§4), because "is it an
-   improvement" has three non-agreeing answers.
+6. **The promotion question was put to the owner** (§4) because "is it an improvement" has three
+   non-agreeing answers. **The owner ruled: promote** (§4b). Route 2 was executed — registered,
+   promoted, and the drift named rather than absorbed.
 
 ## 2. What was measured
 
@@ -92,6 +99,42 @@ in the ADDENDUM §0), so any of the three routes below costs zero re-solves:
 3. **Hold C-1 and chase the drift first** — treat +8.26 TWh from a table rebuild as the larger
    defect and fix it before registering anything.
 
+## 4b. THE RULING, AND WHAT WAS EXECUTED (2026-09-20)
+
+**Owner, verbatim: "Promote anyway."** Route 2 of §4 — promote *and name the drift*. What that means
+in practice, stated plainly so nobody later reads the dashboard as a clean win:
+
+**PJM's only out-of-band C1 class now reads worse than the keeper it replaced** (+22.27 vs +16.90
+TWh, summed over all six years). The owner promoted knowing that. The cause is a rebuilt committed
+input, not C-1, and the attribution is measured rather than argued: a control solved at the **same
+HEAD with no C-1** reads +25.16. On the scored training years taken individually, C1 passes 18/18
+(14/14 free) — the +22.27 is a six-year sum, and it is the *holdout* years that carry it.
+
+Executed in this session, in rule 35 `[R-PROMOTE]` order:
+
+| step | result |
+|---|---|
+| Benchmark parquets rebuilt on both composed bundles (zero LP) | `--rebuild-benchmark`, shared-input frames regenerated |
+| `calibration_attestation.json` written on both (C6) | carried forward from the outgoing keeper, `attested_by` / `note` / `delta_vs_incumbent` rewritten for this lane |
+| `dashboard_add_run.py` × 2 | `2026-09-19-pjm-h11-c1seam-span` **CALIBRATED** · `2026-09-19-pjm-h11-c1seam-touchpoint` **NOT-YET** (same shape as the outgoing pair) |
+| `stamp_touchpoint_holdout.py` | touchpoint folded to the keeper (rule 30(a)) |
+| keeper shard + `build_status.py --iso PJM` | `[PJM:CALIBRATED]` |
+| `calibration-complete.json` re-keyed + determination re-verified | D-5(b) / `audit_keepers` M1 |
+| `audit_keepers.py --iso PJM` **before** the prune | E1 clean; E13 flagged the two superseded runs, which is the prune duty |
+| `prune_iso_runs.py --iso PJM --force-uncite` | removed `2026-09-11-pjm-d4-4-gasoutage` (`pjm_d4_4_A`) and `2026-09-11-pjm-holdout-gasoutage-touchpoint` (`pjm_d4_4_TP`) — PJM only |
+| `audit_keepers.py --iso PJM` after | **0 failures / 0 warnings** |
+| mechanism matrix | PJM shard re-stamped; `reference_price_interface` cell updated — **stays K**, coverage moved, verdict did not |
+
+**Year set did not shrink** (rule 35(c)): enumerated before the delete as {2020, 2021, 2022, 2023,
+2024, 2025}; the incoming pair covers it exactly.
+
+**One pre-existing parity RED is left alone and named:**
+`results/calibration/caiso279_ablate_dswcouple_span` is tracked-and-unmapped on `origin/main` — a
+CAISO-lane item, and rule 35(a) scopes a promoting lane to its own ISO. The twelve
+`pjm_h11_{arm,ctl}_<year>` legs also show in that gate's unmapped list **locally only**; they are
+gitignored, so CI stays green. That is the rule 31 `[R-RETAIN]` behaviour pjm-h8 corrected into the
+rule on 2026-09-16, not a new defect — and none of them is deleted.
+
 ## 5. Open items for the owner
 
 * **Q1 — three truncated ladder rungs.** 2023 Carolinas.import b2, 2024 Carolinas.export b2, 2025
@@ -127,8 +170,14 @@ in the ADDENDUM §0), so any of the three routes below costs zero re-solves:
 ## 7. Ledger
 
 **Armed:** one key in `PJM_SEAM_LADDER_BY_YEAR` (2020). **No `ScenarioConfig` field, no default
-flipped, no scalar, no run registered, no keeper touched, no ISO pruned, no mechanism-matrix verdict
-moved.** Rule 31: nothing deleted. All 24 shard sessions archived (rule 33(e)); none left alive.
-Every figure here is **parent-computed from committed class hourlies** — no `metrics.json` exists in
-a single-year replay bundle, so **no scorer-emitted verdict has been produced for these runs**, and
-the C1 band is read from `calibration_verdict.py` itself.
+flipped, no scalar, no mechanism-matrix verdict moved** (the `reference_price_interface` cell stays
+`K`; its coverage moved). **Two runs registered, the keeper promoted, PJM's superseded pair pruned**
+— all per §4b, on the owner's ruling. Rule 31: the twelve per-year leg bundles are **retained**, not
+deleted. All 24 shard sessions archived (rule 33(e)); none left alive.
+
+*Superseded by §4b: this section originally read "no run registered, no keeper touched, no ISO
+pruned", which was true when the lane stopped short of promoting and is no longer true.* The §1–§3
+figures remain **parent-computed from committed class hourlies** — they predate any `metrics.json`,
+because a single-year replay bundle carries none, and the C1 band is read from
+`calibration_verdict.py` itself. The **scorer-emitted** verdicts now exist and are the registered
+ones: CALIBRATED (training) and NOT-YET (touchpoint).
