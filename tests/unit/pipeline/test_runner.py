@@ -543,8 +543,23 @@ def _trace_fleet_build(iso: str, *, historic_overlay: bool = True) -> dict:
         return []
 
     def fake_fleet_arrays(
-        _dispatch_fleet, _zone_names, *, hours, iso, config, load_shape, year=None
+        _dispatch_fleet,
+        _zone_names,
+        *,
+        hours,
+        iso,
+        config,
+        load_shape,
+        year=None,
+        **_kw,
     ):
+        # ``**_kw`` so this fake tolerates OPTIONAL kwargs the real builder
+        # gains later (SPP-66 added ``netload_shape``). This helper exists to
+        # observe the outage overlay and the binning path, NOT to pin the
+        # fleet-build call surface — without the catch-all it fails with a
+        # TypeError on every such addition, which reads like a runner
+        # regression and is not one. Matches ``fake_demand``/``fake_renewables``
+        # above, which already take ``**_kw``.
         rec["overlay"] = config.historic_outage_overlay
         raise _StopAfterFleetArrays
 

@@ -2536,6 +2536,12 @@ def _compose_min_gen_floors(
     rd_deploy_floor: dict[int, np.ndarray],
     rd_deploy_frac: float,
     rd_deploy_plants: set[int],
+    # TRAILING and DEFAULTED on purpose: this helper has positional callers
+    # (tests/unit/data/test_mustrun_commitment_feasibility_clip.py passes all
+    # 21 arguments by position). A new parameter inserted mid-signature
+    # silently re-binds every argument after it, so the window series goes at
+    # the end and ``None`` keeps the historical system-load behaviour.
+    netload_shape: np.ndarray | None = None,
 ) -> tuple[np.ndarray | None, np.ndarray | None]:
     """Compose the hard minimum-generation floors (min_gen / mechanism ids).
 
@@ -2544,6 +2550,14 @@ def _compose_min_gen_floors(
     and the CT/reliability deployment overlays, clipped to available
     capacity. Pure array helper extracted verbatim from
     ``generators_to_fleet_arrays`` (fleet-package split sub-task (a)).
+
+    ``load_shape`` and ``netload_shape`` are the two candidate WINDOW series:
+    four of these floors shape themselves on one shared series, resolved once
+    into ``_window_shape`` below and selected by
+    ``config.commitment_floor_window_netload`` (default off -> ``load_shape``,
+    i.e. the historical behaviour). ``netload_shape`` may be ``None`` or the
+    wrong length, in which case the resolver falls back to ``load_shape`` so a
+    plumbing gap can never silently drop a floor.
 
     Returns:
         ``(min_gen, min_gen_mechanism)`` — both ``None`` when no floor
@@ -2860,6 +2874,44 @@ def _compose_min_gen_floors(
             if pmin_mw > 0.0:
                 min_gen[g_idx, :] = pmin_mw
                 min_gen_mech[g_idx, :] = MECH_CHP_STEAM
+        # THE SHARED COMMITMENT-FLOOR WINDOW SERIES, resolved ONCE
+        # (config.commitment_floor_window_netload, SPP-66, owner ruling
+        # "Shared gate" 2026-09-20; default off). Four floors below shape
+        # themselves on this one series -- coal synchronization, the per-plant
+        # CC/ST_GAS committed floor, the ST_GAS p25 level swap and the
+        # CT_PEAKER reliability must-run. Three rank hours by it (top-k carries
+        # the floor, plus _commitment_day_order's day grain); the CT floor
+        # builds per-month max(load - median, 0) placement weights from it. It
+        # is resolved here, once, so all four are windowed on the SAME driver
+        # (rule 19 [R-ONE-MECH]) -- gating one floor while its neighbour kept
+        # the other driver is the defect this replaced, not a narrower version
+        # of the fix.
+        #
+        # OFF (the default) this is the IDENTICAL expression each of the four
+        # sites evaluated inline before, so every committed bundle in every ISO
+        # is byte-identical. ON, it swaps in net load, whose external driver
+        # evidence is the ScenarioConfig field's own comment: a cycler runs in
+        # the high-NET-load hours, not the high-gross-load ones (rule 17
+        # [R-FLOOR-WINDOW] (a)). A None/short netload_shape falls through to
+        # load_shape rather than dropping the window, so an armed run can never
+        # silently lose its floors to a plumbing gap.
+        _use_netload = (
+            bool(getattr(config, "commitment_floor_window_netload", False))
+            if config is not None
+            else False
+        )
+        _window_src = (
+            netload_shape
+            if _use_netload
+            and netload_shape is not None
+            and len(netload_shape) == hours
+            else load_shape
+        )
+        _window_shape = (
+            np.asarray(_window_src, dtype=float)
+            if _window_src is not None and len(_window_src) == hours
+            else None
+        )
         # Coal synchronization floor (rebuild step 3a,
         # config.coal_sync_srmc_tranche): the _mustrun (contracted, fuel-free)
         # and _sync (spot, SRMC) coal min-load tranches are held on at the
@@ -2868,18 +2920,19 @@ def _compose_min_gen_floors(
         # full fix): a plant synchronized ~all year (online_frac >=
         # _COAL_SYNC_FORCE_ALL, the supercriticals) is held every hour; a
         # two-shifting cycler is held only in the top-online_frac fraction of
-        # hours by *system load* — mirroring the CT must-run load-shaping, so the
-        # floor lands where the cycler actually runs (the load peaks) and relaxes
-        # in the cheap overnight hours it would real-world shut for. The floor is
+        # hours by the SHARED window series resolved above — mirroring the CT
+        # must-run load-shaping, so the floor lands where the cycler actually
+        # runs and relaxes in the cheap hours it would real-world shut for.
+        # That series is *system load* by default; under
+        # config.commitment_floor_window_netload it is NET load, because in a
+        # high-VRE ISO the hours a cycler runs are the high-NET-load hours and
+        # not the gross-load peaks (SPP-66: measured SPP coal correlates +0.948
+        # with net load against +0.716 with system load). The floor is
         # the tranche capacity; min_gen is clipped to pmax*availability below, so
         # an outage hour relaxes it. np.maximum composes with any floor already
         # placed.
         if coal_sync_any:
-            sys_load = (
-                np.asarray(load_shape, dtype=float)
-                if load_shape is not None and len(load_shape) == hours
-                else None
-            )
+            sys_load = _window_shape
             # Hours ranked peak-load first; the top-k carry a cycler's floor.
             load_rank = (
                 np.argsort(-sys_load, kind="stable") if sys_load is not None else None
@@ -3009,11 +3062,7 @@ def _compose_min_gen_floors(
         # stacking). The ST_GAS leg stamps its own mechanism id so D-2/D-4
         # attribution stays per-leg.
         if cc_mustrun_any:
-            sys_load = (
-                np.asarray(load_shape, dtype=float)
-                if load_shape is not None and len(load_shape) == hours
-                else None
-            )
+            sys_load = _window_shape
             load_rank = (
                 np.argsort(-sys_load, kind="stable") if sys_load is not None else None
             )
@@ -3115,11 +3164,7 @@ def _compose_min_gen_floors(
         # output; it stays below available capacity, so the floor never pins the
         # plant. See the ScenarioConfig field for the rule-12/13 grounding.
         if st_gas_p25_tranches:
-            sys_load = (
-                np.asarray(load_shape, dtype=float)
-                if load_shape is not None and len(load_shape) == hours
-                else None
-            )
+            sys_load = _window_shape
             load_rank = (
                 np.argsort(-sys_load, kind="stable") if sys_load is not None else None
             )
@@ -3195,11 +3240,7 @@ def _compose_min_gen_floors(
         # the observed energy fits under the cap.
         if ct_floor_plants:
             month_idx = _hour_to_month_index(hours)
-            sys_load = (
-                np.asarray(load_shape, dtype=float)
-                if load_shape is not None and len(load_shape) == hours
-                else None
-            )
+            sys_load = _window_shape
             ct_tranches: dict[int, list[int]] = {}
             for g_idx, gen in enumerate(generators):
                 if (
@@ -3482,6 +3523,7 @@ def generators_to_fleet_arrays(
     iso: str | None = None,
     config: ScenarioConfig | None = None,
     load_shape: np.ndarray | None = None,
+    netload_shape: np.ndarray | None = None,
     ct_campd_shape: dict[int, np.ndarray] | None = None,
     year: int | None = None,
 ) -> FleetArrays:
@@ -3496,6 +3538,13 @@ def generators_to_fleet_arrays(
     tranches (see :func:`bins_to_fleet` / :func:`campd_tranche_fuel_frac`),
     each with ``pmin_mw = 0``, so coal's baseload behavior emerges from
     tranche economics rather than a hard minimum.
+
+    ``netload_shape`` is the optional NET-load series (demand less available
+    wind/solar) the commitment-floor window ranks on when
+    ``config.commitment_floor_window_netload`` is set; it is forwarded
+    unchanged to :func:`_compose_min_gen_floors`, which owns the selection.
+    Leaving it ``None`` keeps the historical system-load window and is what
+    every caller that does not build VRE arrays should pass.
     """
     # capx D88 [R-ONE-MECH rule 19 / R-DOF rule 21]: ``unit_id`` IS a key, so
     # assert it here -- the ONE seam every LP fleet passes through -- rather than
@@ -3667,6 +3716,7 @@ def generators_to_fleet_arrays(
         rd_deploy_floor,
         rd_deploy_frac,
         rd_deploy_plants,
+        netload_shape=netload_shape,
     )
 
     # Ancillary-service reserve withholding (backcast). Capacity the market

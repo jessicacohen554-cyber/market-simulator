@@ -1877,6 +1877,16 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # hydro_budget_period_by_instrument shape. SHARED field -- very end, per
     # HOUSE-3. Registered IN THE SAME COMMIT as the field.
     "hydro_cascade_coupling",
+    # SPP-66 (owner ruling "Shared gate", 2026-09-20): rank the commitment-floor
+    # WINDOW on NET load instead of system load (default off). Dropped from the
+    # hash at its default so every pre-existing cached run -- every ISO's
+    # keepers included -- keeps its key. The arm is byte-identical off by
+    # construction (the runner passes ``netload_shape=None`` and the floor
+    # composer's window resolver falls through to ``load_shape``, the identical
+    # expression it evaluates today); an armed run ranks a different hour set
+    # and so earns a distinct key. SHARED field -- very end, per HOUSE-3.
+    # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
+    "commitment_floor_window_netload",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -2546,6 +2556,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by NWPP-36 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "hydro_cascade_coupling": "False",
+    # Added by SPP-66 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "commitment_floor_window_netload": "False",
 }
 
 
@@ -11376,6 +11389,50 @@ class ScenarioConfig:
     # unchanged). See docs/multi-iso/pjm-coal-operations-firstprinciples-2026-06.md
     # (Thread D, layer 2) and docs/multi-iso/pjm-reserve-ordc.md.
     coal_sync_srmc_tranche: bool = False
+
+    # Commitment-floor WINDOW ranked on NET load instead of system load
+    # (SPP-66, owner ruling "Shared gate" 2026-09-20; default off, so every
+    # existing keeper in every ISO is byte-identical). THE SHARED WINDOW, NOT A
+    # PER-FLOOR KNOB (rule 19 [R-ONE-MECH]): four commitment floors in
+    # ``data/fleet/arrays.py::_compose_min_gen_floors`` each shape themselves on
+    # the same ``sys_load`` series -- the coal synchronization floor
+    # (``coal_sync_srmc_tranche``), the per-plant CC/ST_GAS committed floor
+    # (``cc_mustrun_per_plant`` / ``st_gas_mustrun_per_plant``), the ST_GAS p25
+    # level swap (``st_gas_mustrun_p25_level``) and the CT_PEAKER reliability
+    # must-run (``ct_mustrun_per_plant``). Three rank hours by it (top-k carries
+    # the floor, plus ``_commitment_day_order``'s day grain); the fourth builds
+    # per-month ``max(load - median, 0)`` placement weights from it. This gate
+    # replaces that ONE series at its single resolution point, so all four move
+    # together and no floor is windowed on a different driver than its
+    # neighbour.
+    #
+    # WHY (rule 17 [R-FLOOR-WINDOW] (a) -- the window's external driver, from
+    # the class's own measured behaviour, never from a residual). The shipped
+    # code ranks on system load and states the premise in its own comment: "so
+    # the floor lands where the cycler actually runs (the load peaks)". That
+    # premise fails in a high-VRE ISO, where the hours a cycler runs are the
+    # high NET-load hours. Measured on EIA-930 SWPP actuals (SPP-66 phase 0),
+    # SPP coal correlates with NET load at +0.9484/+0.9479/+0.9319 in
+    # 2023/2024/2025 and with SYSTEM load at only +0.7158/+0.6605/+0.6129; SPP
+    # gas is +0.9627/+0.9644/+0.9530 against +0.7369/+0.7289/+0.6640. In the
+    # hours the shipped window RELEASES the floor but a net-load ranking would
+    # HOLD it, the real coal fleet runs 8,807-12,524 MW; in the hours it HOLDS
+    # but net-ranking would release, only 5,417-9,227 MW -- a +3.3 to +3.9 GW
+    # gap in all three years at every k tested, with 26-30 % of the top-k hour
+    # SET differing between the two rankings.
+    #
+    # ZERO FREE PARAMETERS (rules 21 [R-DOF] / 24 [R-REGISTRY]): the net-load
+    # series is the repo's own existing construction,
+    # ``demand - (wind_cap x wind_cf) - (solar_cap x solar_cf)``, already
+    # present verbatim at six ``runner.py`` sites. No scalar, no threshold, no
+    # per-ISO number (rule 25 [R-ISO-SCOPE]: one shared seam, armed per ISO).
+    #
+    # RULE 13 [R-MEASURED] FORWARD TEST -- PASSES. Net load is built from the
+    # MODEL's own VRE capacity x CF, so it regenerates for any forecast year off
+    # the evolved fleet and responds to changed conditions. It is NOT built from
+    # measured VRE output, which would import realized curtailment and be
+    # inadmissible; do not "improve" it that way.
+    commitment_floor_window_netload: bool = False
 
     # Marginal-coal measured-SRMC offer bound. The gas-keyed passthrough
     # sigmoids exist to model take-or-pay / stay-online BID discounting of
@@ -21428,6 +21485,7 @@ TIER_TAGS: dict[str, int] = {
     "neiso_oil_burn_budget": 1,
     "neiso_winter_fuel_inventory": 1,
     "coal_fuel_inventory": 1,
+    "commitment_floor_window_netload": 1,
     "neiso_winter_fuel_start_fill_bbl": 1,
     "neiso_net_icr_requirement": 1,
     "pjm_accreditation_design_vintage": 1,

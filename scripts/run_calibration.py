@@ -543,6 +543,7 @@ def run_year(
     coal_takeorpay_from_data: bool = False,
     coal_mustrun_online_pmin: bool = False,
     coal_sync_srmc_tranche: bool = False,
+    commitment_floor_window_netload: bool = False,
     ct_intermediate_split: bool = False,
     ct_intermediate_cf_threshold: float | None = None,
     cc_intermediate_split: bool = False,
@@ -1187,6 +1188,15 @@ def run_year(
         # coal holds synchronized at min-load while dispatchable tranches above
         # price-follow.
         config = config.with_overrides(coal_sync_srmc_tranche=True)
+    if commitment_floor_window_netload:
+        # Rank the SHARED commitment-floor window on NET load rather than
+        # system load (SPP-66, owner ruling "Shared gate" 2026-09-20). One
+        # series feeds all four floors that shape themselves on it -- coal
+        # synchronization, the per-plant CC/ST_GAS committed floor, the ST_GAS
+        # p25 level swap and the CT_PEAKER reliability must-run -- so they are
+        # never windowed on different drivers (rule 19 [R-ONE-MECH]). Default
+        # off, so every existing bundle keeps its key and its floors.
+        config = config.with_overrides(commitment_floor_window_netload=True)
     if ct_intermediate_split:
         # Route the measured intermediate-duty CT cohort
         # (fleet.ct_intermediate_plants) to the flatter CT_INTERMEDIATE offer
@@ -3986,6 +3996,29 @@ def run_year(
                 ct_campd_shape = _campd.plant_hourly_net(
                     _cdf, {}, config.weather_year, hours=config.hours
                 )
+    # NET-load window series for the commitment floors
+    # (config.commitment_floor_window_netload, SPP-66, owner ruling "Shared
+    # gate" 2026-09-20). THIS is the seam every calibration run and every
+    # fleet_only reconstruction takes -- runner.py has its own, separate
+    # build, and BOTH are wired, because a gate armed on only one of them is
+    # inert in exactly the lane that would use it (measured: the first wiring
+    # of this mechanism touched runner.py alone and the armed arm reproduced
+    # the control's floors cell-for-cell).
+    #
+    # Built ONLY when the gate is armed, so an unarmed run does exactly the
+    # array work it did before and every committed bundle is byte-identical.
+    # Same construction as runner.py's six existing net-load sites -- demand
+    # less AVAILABLE wind/solar -- so no new scalar enters (rules 21 [R-DOF] /
+    # 24 [R-REGISTRY]), and it is the MODEL's own capacity x CF rather than
+    # measured VRE output, so it regenerates for a forecast year off the
+    # evolved fleet (rule 13 [R-MEASURED]).
+    _floor_netload_shape = None
+    if getattr(config, "commitment_floor_window_netload", False):
+        _floor_netload_shape = (
+            demand.sum(axis=0)
+            - (np.asarray(wind_cap, dtype=float)[:, None] * wind_cf).sum(axis=0)
+            - (np.asarray(solar_cap, dtype=float)[:, None] * solar_cf).sum(axis=0)
+        )
     fleet_arrays = generators_to_fleet_arrays(
         fleet,
         zone_names,
@@ -3993,6 +4026,7 @@ def run_year(
         iso=iso,
         config=config,
         load_shape=demand.sum(axis=0),
+        netload_shape=_floor_netload_shape,
         ct_campd_shape=ct_campd_shape,
         year=config.weather_year,
     )
