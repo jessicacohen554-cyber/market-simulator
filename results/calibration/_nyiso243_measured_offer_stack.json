@@ -1,0 +1,423 @@
+{
+  "note": "DESCRIPTIVE. Not a gate, nothing selected on it. The session's gate is the kill test of PRECOMMIT-nyiso243 section 3, which FAILED.",
+  "price_points": [
+    100.0,
+    300.0,
+    500.0,
+    1000.0
+  ],
+  "years": {
+    "2022": {
+      "bid_curve_formats": {
+        "DAM": {
+          "CURVE": 2476984
+        },
+        "HAM": {
+          "CURVE": 2175686
+        }
+      },
+      "DAM": {
+        "ordinary_winter": {
+          "hours": 1080,
+          "rt_median": 46.08,
+          "offered_above_100_mw": 9843.9,
+          "offered_above_300_mw": 1953.2,
+          "offered_above_500_mw": 813.3,
+          "offered_above_1000_mw": 0.0
+        },
+        "missed_winter": {
+          "hours": 70,
+          "rt_median": 383.32,
+          "offered_above_100_mw": 21560.5,
+          "offered_above_300_mw": 4986.2,
+          "offered_above_500_mw": 1235.1,
+          "offered_above_1000_mw": 0.0
+        },
+        "ordinary_summer": {
+          "hours": 1104,
+          "rt_median": 59.53,
+          "offered_above_100_mw": 12447.0,
+          "offered_above_300_mw": 3942.4,
+          "offered_above_500_mw": 1145.6,
+          "offered_above_1000_mw": 0.0
+        },
+        "missed_summer": {
+          "hours": 23,
+          "rt_median": 359.34,
+          "offered_above_100_mw": 14435.8,
+          "offered_above_300_mw": 3717.5,
+          "offered_above_500_mw": 1007.8,
+          "offered_above_1000_mw": 0.0
+        },
+        "ordinary_all": {
+          "hours": 4380,
+          "rt_median": 42.8,
+          "offered_above_100_mw": 6916.3,
+          "offered_above_300_mw": 2233.1,
+          "offered_above_500_mw": 1101.4,
+          "offered_above_1000_mw": 0.0
+        },
+        "missed_all": {
+          "hours": 100,
+          "rt_median": 373.98,
+          "offered_above_100_mw": 20300.8,
+          "offered_above_300_mw": 3827.8,
+          "offered_above_500_mw": 1055.3,
+          "offered_above_1000_mw": 0.0
+        },
+        "da_gt_100": {
+          "hours": 1550,
+          "rt_median": 120.31,
+          "offered_above_100_mw": 17182.4,
+          "offered_above_300_mw": 3833.1,
+          "offered_above_500_mw": 1010.1,
+          "offered_above_1000_mw": 0.0
+        },
+        "da_gt_150": {
+          "hours": 465,
+          "rt_median": 160.05,
+          "offered_above_100_mw": 21254.5,
+          "offered_above_300_mw": 4561.0,
+          "offered_above_500_mw": 993.3,
+          "offered_above_1000_mw": 0.0
+        },
+        "da_gt_200": {
+          "hours": 114,
+          "rt_median": 176.12,
+          "offered_above_100_mw": 21708.7,
+          "offered_above_300_mw": 9328.4,
+          "offered_above_500_mw": 2675.4,
+          "offered_above_1000_mw": 0.0
+        },
+        "da_gt_300": {
+          "hours": 10,
+          "rt_median": 277.59,
+          "offered_above_100_mw": 22471.6,
+          "offered_above_300_mw": 10182.6,
+          "offered_above_500_mw": 3625.5,
+          "offered_above_1000_mw": 472.6
+        },
+        "rt_gt300_da_anticipated": {
+          "hours": 4,
+          "rt_median": 347.17,
+          "offered_above_100_mw": 22471.6,
+          "offered_above_300_mw": 10111.9,
+          "offered_above_500_mw": 3232.5,
+          "offered_above_1000_mw": 472.6
+        },
+        "rt_gt300_da_surprise": {
+          "hours": 97,
+          "rt_median": 374.54,
+          "offered_above_100_mw": 20190.5,
+          "offered_above_300_mw": 3787.2,
+          "offered_above_500_mw": 1029.6,
+          "offered_above_1000_mw": 0.0
+        }
+      },
+      "HAM": {
+        "ordinary_winter": {
+          "hours": 1080,
+          "rt_median": 46.08,
+          "offered_above_100_mw": 4132.9,
+          "offered_above_300_mw": 1377.6,
+          "offered_above_500_mw": 314.8,
+          "offered_above_1000_mw": 34.5
+        },
+        "missed_winter": {
+          "hours": 70,
+          "rt_median": 383.32,
+          "offered_above_100_mw": 11170.3,
+          "offered_above_300_mw": 3129.1,
+          "offered_above_500_mw": 867.6,
+          "offered_above_1000_mw": 36.4
+        },
+        "ordinary_summer": {
+          "hours": 1104,
+          "rt_median": 59.53,
+          "offered_above_100_mw": 5198.6,
+          "offered_above_300_mw": 1746.8,
+          "offered_above_500_mw": 657.2,
+          "offered_above_1000_mw": 35.5
+        },
+        "missed_summer": {
+          "hours": 23,
+          "rt_median": 359.34,
+          "offered_above_100_mw": 9492.3,
+          "offered_above_300_mw": 1899.3,
+          "offered_above_500_mw": 572.0,
+          "offered_above_1000_mw": 35.0
+        },
+        "ordinary_all": {
+          "hours": 4380,
+          "rt_median": 42.8,
+          "offered_above_100_mw": 3400.4,
+          "offered_above_300_mw": 1512.7,
+          "offered_above_500_mw": 644.8,
+          "offered_above_1000_mw": 35.0
+        },
+        "missed_all": {
+          "hours": 100,
+          "rt_median": 373.98,
+          "offered_above_100_mw": 9960.0,
+          "offered_above_300_mw": 2855.4,
+          "offered_above_500_mw": 610.0,
+          "offered_above_1000_mw": 35.0
+        },
+        "da_gt_100": {
+          "hours": 1550,
+          "rt_median": 120.31,
+          "offered_above_100_mw": 8404.2,
+          "offered_above_300_mw": 2193.9,
+          "offered_above_500_mw": 508.4,
+          "offered_above_1000_mw": 35.0
+        },
+        "da_gt_150": {
+          "hours": 465,
+          "rt_median": 160.05,
+          "offered_above_100_mw": 10462.3,
+          "offered_above_300_mw": 2836.1,
+          "offered_above_500_mw": 406.4,
+          "offered_above_1000_mw": 36.4
+        },
+        "da_gt_200": {
+          "hours": 114,
+          "rt_median": 176.12,
+          "offered_above_100_mw": 12234.8,
+          "offered_above_300_mw": 3862.9,
+          "offered_above_500_mw": 992.8,
+          "offered_above_1000_mw": 28.8
+        },
+        "da_gt_300": {
+          "hours": 10,
+          "rt_median": 277.59,
+          "offered_above_100_mw": 13677.9,
+          "offered_above_300_mw": 4695.6,
+          "offered_above_500_mw": 1462.9,
+          "offered_above_1000_mw": 13.0
+        },
+        "rt_gt300_da_anticipated": {
+          "hours": 4,
+          "rt_median": 347.17,
+          "offered_above_100_mw": 13703.3,
+          "offered_above_300_mw": 4765.4,
+          "offered_above_500_mw": 1411.3,
+          "offered_above_1000_mw": 13.0
+        },
+        "rt_gt300_da_surprise": {
+          "hours": 97,
+          "rt_median": 374.54,
+          "offered_above_100_mw": 9775.3,
+          "offered_above_300_mw": 2823.6,
+          "offered_above_500_mw": 585.7,
+          "offered_above_1000_mw": 35.0
+        }
+      }
+    },
+    "2025": {
+      "bid_curve_formats": {
+        "DAM": {
+          "CURVE": 2250804
+        },
+        "HAM": {
+          "CURVE": 2065711
+        }
+      },
+      "DAM": {
+        "ordinary_winter": {
+          "hours": 1080,
+          "rt_median": 64.83,
+          "offered_above_100_mw": 13483.8,
+          "offered_above_300_mw": 1229.5,
+          "offered_above_500_mw": 949.8,
+          "offered_above_1000_mw": 0.0
+        },
+        "missed_winter": {
+          "hours": 6,
+          "rt_median": 367.6,
+          "offered_above_100_mw": 19144.0,
+          "offered_above_300_mw": 4163.3,
+          "offered_above_500_mw": 2204.1,
+          "offered_above_1000_mw": 394.2
+        },
+        "ordinary_summer": {
+          "hours": 1104,
+          "rt_median": 29.71,
+          "offered_above_100_mw": 5407.9,
+          "offered_above_300_mw": 1061.8,
+          "offered_above_500_mw": 952.6,
+          "offered_above_1000_mw": 0.0
+        },
+        "missed_summer": {
+          "hours": 31,
+          "rt_median": 598.1,
+          "offered_above_100_mw": 6263.1,
+          "offered_above_300_mw": 740.0,
+          "offered_above_500_mw": 624.9,
+          "offered_above_1000_mw": 0.0
+        },
+        "ordinary_all": {
+          "hours": 4379,
+          "rt_median": 32.83,
+          "offered_above_100_mw": 5069.7,
+          "offered_above_300_mw": 1000.5,
+          "offered_above_500_mw": 906.2,
+          "offered_above_1000_mw": 0.0
+        },
+        "missed_all": {
+          "hours": 39,
+          "rt_median": 583.59,
+          "offered_above_100_mw": 6294.6,
+          "offered_above_300_mw": 750.2,
+          "offered_above_500_mw": 640.2,
+          "offered_above_1000_mw": 0.0
+        },
+        "da_gt_100": {
+          "hours": 1181,
+          "rt_median": 121.66,
+          "offered_above_100_mw": 17138.2,
+          "offered_above_300_mw": 1804.7,
+          "offered_above_500_mw": 911.8,
+          "offered_above_1000_mw": 0.0
+        },
+        "da_gt_150": {
+          "hours": 345,
+          "rt_median": 158.66,
+          "offered_above_100_mw": 18053.3,
+          "offered_above_300_mw": 2280.7,
+          "offered_above_500_mw": 912.7,
+          "offered_above_1000_mw": 0.0
+        },
+        "da_gt_200": {
+          "hours": 123,
+          "rt_median": 195.2,
+          "offered_above_100_mw": 18419.9,
+          "offered_above_300_mw": 5185.0,
+          "offered_above_500_mw": 2552.8,
+          "offered_above_1000_mw": 363.6
+        },
+        "da_gt_300": {
+          "hours": 12,
+          "rt_median": 457.84,
+          "offered_above_100_mw": 12116.9,
+          "offered_above_300_mw": 2964.9,
+          "offered_above_500_mw": 1931.3,
+          "offered_above_1000_mw": 386.0
+        },
+        "rt_gt300_da_anticipated": {
+          "hours": 7,
+          "rt_median": 608.99,
+          "offered_above_100_mw": 6553.2,
+          "offered_above_300_mw": 742.2,
+          "offered_above_500_mw": 592.2,
+          "offered_above_1000_mw": 0.0
+        },
+        "rt_gt300_da_surprise": {
+          "hours": 35,
+          "rt_median": 583.59,
+          "offered_above_100_mw": 6306.2,
+          "offered_above_300_mw": 750.2,
+          "offered_above_500_mw": 640.2,
+          "offered_above_1000_mw": 0.0
+        }
+      },
+      "HAM": {
+        "ordinary_winter": {
+          "hours": 1080,
+          "rt_median": 64.83,
+          "offered_above_100_mw": 4907.3,
+          "offered_above_300_mw": 604.3,
+          "offered_above_500_mw": 485.0,
+          "offered_above_1000_mw": 26.1
+        },
+        "missed_winter": {
+          "hours": 6,
+          "rt_median": 367.6,
+          "offered_above_100_mw": 12492.7,
+          "offered_above_300_mw": 2225.3,
+          "offered_above_500_mw": 850.5,
+          "offered_above_1000_mw": 27.1
+        },
+        "ordinary_summer": {
+          "hours": 1104,
+          "rt_median": 29.71,
+          "offered_above_100_mw": 2640.7,
+          "offered_above_300_mw": 581.5,
+          "offered_above_500_mw": 477.1,
+          "offered_above_1000_mw": 27.7
+        },
+        "missed_summer": {
+          "hours": 31,
+          "rt_median": 598.1,
+          "offered_above_100_mw": 4330.6,
+          "offered_above_300_mw": 423.6,
+          "offered_above_500_mw": 336.6,
+          "offered_above_1000_mw": 27.7
+        },
+        "ordinary_all": {
+          "hours": 4379,
+          "rt_median": 32.83,
+          "offered_above_100_mw": 2346.9,
+          "offered_above_300_mw": 506.0,
+          "offered_above_500_mw": 424.9,
+          "offered_above_1000_mw": 27.7
+        },
+        "missed_all": {
+          "hours": 39,
+          "rt_median": 583.59,
+          "offered_above_100_mw": 4364.5,
+          "offered_above_300_mw": 432.3,
+          "offered_above_500_mw": 337.5,
+          "offered_above_1000_mw": 27.7
+        },
+        "da_gt_100": {
+          "hours": 1181,
+          "rt_median": 121.66,
+          "offered_above_100_mw": 7148.1,
+          "offered_above_300_mw": 1039.4,
+          "offered_above_500_mw": 503.4,
+          "offered_above_1000_mw": 26.1
+        },
+        "da_gt_150": {
+          "hours": 345,
+          "rt_median": 158.66,
+          "offered_above_100_mw": 9422.8,
+          "offered_above_300_mw": 1417.9,
+          "offered_above_500_mw": 512.5,
+          "offered_above_1000_mw": 27.1
+        },
+        "da_gt_200": {
+          "hours": 123,
+          "rt_median": 195.2,
+          "offered_above_100_mw": 14096.1,
+          "offered_above_300_mw": 1942.0,
+          "offered_above_500_mw": 903.3,
+          "offered_above_1000_mw": 27.7
+        },
+        "da_gt_300": {
+          "hours": 12,
+          "rt_median": 457.84,
+          "offered_above_100_mw": 9633.9,
+          "offered_above_300_mw": 1437.0,
+          "offered_above_500_mw": 631.2,
+          "offered_above_1000_mw": 27.7
+        },
+        "rt_gt300_da_anticipated": {
+          "hours": 7,
+          "rt_median": 608.99,
+          "offered_above_100_mw": 4597.0,
+          "offered_above_300_mw": 523.9,
+          "offered_above_500_mw": 356.4,
+          "offered_above_1000_mw": 27.1
+        },
+        "rt_gt300_da_surprise": {
+          "hours": 35,
+          "rt_median": 583.59,
+          "offered_above_100_mw": 4330.6,
+          "offered_above_300_mw": 420.0,
+          "offered_above_500_mw": 336.5,
+          "offered_above_1000_mw": 27.7
+        }
+      }
+    }
+  }
+}

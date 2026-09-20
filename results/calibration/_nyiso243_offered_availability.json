@@ -1,0 +1,728 @@
+{
+  "precommit": "docs/PRECOMMIT-nyiso243-outage-intake-kill-test-2026-09-20.md",
+  "source": "NYISO MIS P-27 masked generator bid data (Upper Oper Limit)",
+  "gate_mw": 1000.0,
+  "object_mw": 4716.0,
+  "years": {
+    "2022": {
+      "source_check": {
+        "jan_span": [
+          "2022-01-01 05:00:00",
+          "2022-01-31 04:00:00"
+        ],
+        "jul_span": [
+          "2022-07-01 04:00:00",
+          "2022-08-01 03:00:00"
+        ],
+        "utc_consistent": true,
+        "hours_covered": 8736,
+        "gens_max": 316
+      },
+      "leg1": {
+        "windows": {
+          "ordinary_winter": {
+            "hours": 1080,
+            "rt_median": 46.08,
+            "da_median": 56.8,
+            "dam_uol_mw": 31928.0,
+            "ham_uol_mw": 22474.0,
+            "dam_gens": 290.0,
+            "ham_gens": 244.0
+          },
+          "missed_winter": {
+            "hours": 70,
+            "rt_median": 383.32,
+            "da_median": 170.37,
+            "dam_uol_mw": 32709.2,
+            "ham_uol_mw": 24682.5,
+            "dam_gens": 290.0,
+            "ham_gens": 247.0
+          },
+          "ordinary_summer": {
+            "hours": 1104,
+            "rt_median": 59.53,
+            "da_median": 62.08,
+            "dam_uol_mw": 31853.5,
+            "ham_uol_mw": 23074.3,
+            "dam_gens": 305.0,
+            "ham_gens": 265.0
+          },
+          "missed_summer": {
+            "hours": 23,
+            "rt_median": 359.34,
+            "da_median": 165.79,
+            "dam_uol_mw": 32709.2,
+            "ham_uol_mw": 31406.9,
+            "dam_gens": 310.0,
+            "ham_gens": 304.0
+          },
+          "ordinary_all": {
+            "hours": 4380,
+            "rt_median": 42.8,
+            "da_median": 47.61,
+            "dam_uol_mw": 28641.4,
+            "ham_uol_mw": 21327.6,
+            "dam_gens": 273.0,
+            "ham_gens": 238.0
+          },
+          "missed_all": {
+            "hours": 100,
+            "rt_median": 373.98,
+            "da_median": 165.75,
+            "dam_uol_mw": 32629.3,
+            "ham_uol_mw": 25517.1,
+            "dam_gens": 290.0,
+            "ham_gens": 250.0
+          },
+          "da_gt_100": {
+            "hours": 1550,
+            "rt_median": 120.31,
+            "da_median": 128.49,
+            "dam_uol_mw": 32374.8,
+            "ham_uol_mw": 25086.4,
+            "dam_gens": 296.0,
+            "ham_gens": 259.0
+          },
+          "da_gt_150": {
+            "hours": 465,
+            "rt_median": 160.05,
+            "da_median": 178.69,
+            "dam_uol_mw": 32719.9,
+            "ham_uol_mw": 25662.5,
+            "dam_gens": 290.0,
+            "ham_gens": 250.0
+          },
+          "da_gt_200": {
+            "hours": 114,
+            "rt_median": 176.12,
+            "da_median": 236.91,
+            "dam_uol_mw": 32662.0,
+            "ham_uol_mw": 26379.5,
+            "dam_gens": 286.0,
+            "ham_gens": 247.0
+          },
+          "da_gt_300": {
+            "hours": 10,
+            "rt_median": 277.59,
+            "da_median": 329.26,
+            "dam_uol_mw": 31979.0,
+            "ham_uol_mw": 27192.0,
+            "dam_gens": 277.5,
+            "ham_gens": 250.5
+          },
+          "rt_gt300_da_anticipated": {
+            "hours": 4,
+            "rt_median": 347.17,
+            "da_median": 361.39,
+            "dam_uol_mw": 31979.0,
+            "ham_uol_mw": 28169.2,
+            "dam_gens": 277.5,
+            "ham_gens": 259.0
+          },
+          "rt_gt300_da_surprise": {
+            "hours": 97,
+            "rt_median": 374.54,
+            "da_median": 162.91,
+            "dam_uol_mw": 32704.7,
+            "ham_uol_mw": 25337.2,
+            "dam_gens": 290.0,
+            "ham_gens": 250.0
+          }
+        },
+        "deficit_vs_baseline_mw": {
+          "missed_winter": {
+            "dam": -781.2,
+            "ham": -2208.5
+          },
+          "missed_summer": {
+            "dam": -855.7,
+            "ham": -8332.6
+          },
+          "missed_all": {
+            "dam": -3987.9,
+            "ham": -4189.5
+          },
+          "rt_gt300_da_anticipated": {
+            "dam": -3337.6,
+            "ham": -6841.6
+          },
+          "rt_gt300_da_surprise": {
+            "dam": -4063.3,
+            "ham": -4009.6
+          },
+          "da_gt_100": {
+            "dam": -3733.4,
+            "ham": -3758.8
+          },
+          "da_gt_150": {
+            "dam": -4078.5,
+            "ham": -4334.9
+          },
+          "da_gt_200": {
+            "dam": -4020.6,
+            "ham": -5051.9
+          },
+          "da_gt_300": {
+            "dam": -3337.6,
+            "ham": -5864.4
+          }
+        },
+        "gate": {
+          "dam": {
+            "ladder_deficit_mw": [
+              -3733.4,
+              -4078.5,
+              -4020.6,
+              -3337.6
+            ],
+            "ladder_monotone_nondecreasing": false,
+            "winter_missed_deficit_mw": -781.2,
+            "magnitude_ge_1000mw": false,
+            "PASS": false
+          },
+          "ham": {
+            "ladder_deficit_mw": [
+              -3758.8,
+              -4334.9,
+              -5051.9,
+              -5864.4
+            ],
+            "ladder_monotone_nondecreasing": false,
+            "winter_missed_deficit_mw": -2208.5,
+            "magnitude_ge_1000mw": false,
+            "PASS": false
+          }
+        },
+        "PASS": false
+      },
+      "leg3": {
+        "missed_winter": {
+          "dam": {
+            "uol_mw": 32709.2,
+            "as_offered_mw": 865.6
+          },
+          "ham": {
+            "uol_mw": 24682.5,
+            "as_offered_mw": 764.2
+          }
+        },
+        "missed_summer": {
+          "dam": {
+            "uol_mw": 32709.2,
+            "as_offered_mw": 1033.5
+          },
+          "ham": {
+            "uol_mw": 31406.9,
+            "as_offered_mw": 1099.5
+          }
+        },
+        "missed_all": {
+          "dam": {
+            "uol_mw": 32629.3,
+            "as_offered_mw": 886.8
+          },
+          "ham": {
+            "uol_mw": 25517.1,
+            "as_offered_mw": 800.0
+          }
+        },
+        "ordinary_all": {
+          "dam": {
+            "uol_mw": 28641.4,
+            "as_offered_mw": 793.5
+          },
+          "ham": {
+            "uol_mw": 21327.6,
+            "as_offered_mw": 665.1
+          }
+        }
+      },
+      "leg2": {
+        "windows": {
+          "ordinary_winter": {
+            "believed_mw": 24309.3,
+            "believed_all_in_mw": 32113.7,
+            "dam_offered_mw": 31928.0,
+            "dam_gap_mw": -7618.7,
+            "ham_offered_mw": 22474.0,
+            "ham_gap_mw": 1835.3
+          },
+          "missed_winter": {
+            "believed_mw": 25208.7,
+            "believed_all_in_mw": 33013.1,
+            "dam_offered_mw": 32709.2,
+            "dam_gap_mw": -7500.5,
+            "ham_offered_mw": 24682.5,
+            "ham_gap_mw": 526.2
+          },
+          "ordinary_summer": {
+            "believed_mw": 24797.4,
+            "believed_all_in_mw": 33077.2,
+            "dam_offered_mw": 31853.5,
+            "dam_gap_mw": -7056.1,
+            "ham_offered_mw": 23074.3,
+            "ham_gap_mw": 1723.1
+          },
+          "missed_summer": {
+            "believed_mw": 30026.5,
+            "believed_all_in_mw": 38306.3,
+            "dam_offered_mw": 32709.2,
+            "dam_gap_mw": -2682.7,
+            "ham_offered_mw": 31406.9,
+            "ham_gap_mw": -1380.4
+          },
+          "ordinary_all": {
+            "believed_mw": 22824.7,
+            "believed_all_in_mw": 30698.9,
+            "dam_offered_mw": 28641.4,
+            "dam_gap_mw": -5816.7,
+            "ham_offered_mw": 21327.6,
+            "ham_gap_mw": 1497.1
+          },
+          "missed_all": {
+            "believed_mw": 25218.5,
+            "believed_all_in_mw": 33022.9,
+            "dam_offered_mw": 32629.3,
+            "dam_gap_mw": -7410.8,
+            "ham_offered_mw": 25517.1,
+            "ham_gap_mw": -298.6
+          },
+          "da_gt_100": {
+            "believed_mw": 25299.7,
+            "believed_all_in_mw": 33182.0,
+            "dam_offered_mw": 32374.8,
+            "dam_gap_mw": -7075.1,
+            "ham_offered_mw": 25086.4,
+            "ham_gap_mw": 213.3
+          },
+          "da_gt_150": {
+            "believed_mw": 25377.6,
+            "believed_all_in_mw": 33182.0,
+            "dam_offered_mw": 32719.9,
+            "dam_gap_mw": -7342.3,
+            "ham_offered_mw": 25662.5,
+            "ham_gap_mw": -284.9
+          },
+          "da_gt_200": {
+            "believed_mw": 25208.7,
+            "believed_all_in_mw": 33013.1,
+            "dam_offered_mw": 32662.0,
+            "dam_gap_mw": -7453.3,
+            "ham_offered_mw": 26379.5,
+            "ham_gap_mw": -1170.8
+          },
+          "da_gt_300": {
+            "believed_mw": 24861.8,
+            "believed_all_in_mw": 32666.2,
+            "dam_offered_mw": 31979.0,
+            "dam_gap_mw": -7117.2,
+            "ham_offered_mw": 27192.0,
+            "ham_gap_mw": -2330.1
+          },
+          "rt_gt300_da_anticipated": {
+            "believed_mw": 24861.8,
+            "believed_all_in_mw": 32666.2,
+            "dam_offered_mw": 31979.0,
+            "dam_gap_mw": -7117.2,
+            "ham_offered_mw": 28169.2,
+            "ham_gap_mw": -3307.4
+          },
+          "rt_gt300_da_surprise": {
+            "believed_mw": 25228.4,
+            "believed_all_in_mw": 33032.8,
+            "dam_offered_mw": 32704.7,
+            "dam_gap_mw": -7476.3,
+            "ham_offered_mw": 25337.2,
+            "ham_gap_mw": -108.8
+          }
+        },
+        "believed_composition_mw_median": {
+          "(unclassed)": 13787.0,
+          "CC_CHP": 2763.7,
+          "CC_REGULAR": 5510.5,
+          "COAL": 0.0,
+          "CT_CHP": 325.7,
+          "CT_PEAKER": 2536.0,
+          "ST_CHP": 160.9,
+          "ST_GAS": 1974.9,
+          "hydro": 4654.8,
+          "EXCLUDED_external_and_DR": 8279.8
+        },
+        "excess_gap_vs_ordinary_mw": {
+          "missed_winter": {
+            "dam": 118.2,
+            "ham": -1309.1
+          },
+          "missed_summer": {
+            "dam": 4373.4,
+            "ham": -3103.5
+          }
+        },
+        "object_mw": 4716.0,
+        "winter_excess_gap_mw": 118.2,
+        "winter_excess_gap_pct_of_object": 2.5,
+        "PASS": false
+      }
+    },
+    "2025": {
+      "source_check": {
+        "jan_span": [
+          "2025-01-01 05:00:00",
+          "2025-02-01 04:00:00"
+        ],
+        "jul_span": [
+          "2025-07-01 04:00:00",
+          "2025-08-01 03:00:00"
+        ],
+        "utc_consistent": true,
+        "hours_covered": 8760,
+        "gens_max": 289
+      },
+      "leg1": {
+        "windows": {
+          "ordinary_winter": {
+            "hours": 1080,
+            "rt_median": 64.83,
+            "da_median": 72.16,
+            "dam_uol_mw": 30915.0,
+            "ham_uol_mw": 24694.2,
+            "dam_gens": 266.0,
+            "ham_gens": 238.0
+          },
+          "missed_winter": {
+            "hours": 6,
+            "rt_median": 367.6,
+            "da_median": 249.98,
+            "dam_uol_mw": 29780.7,
+            "ham_uol_mw": 27388.3,
+            "dam_gens": 260.5,
+            "ham_gens": 253.0
+          },
+          "ordinary_summer": {
+            "hours": 1104,
+            "rt_median": 29.71,
+            "da_median": 33.61,
+            "dam_uol_mw": 30177.3,
+            "ham_uol_mw": 25164.0,
+            "dam_gens": 273.0,
+            "ham_gens": 247.0
+          },
+          "missed_summer": {
+            "hours": 31,
+            "rt_median": 598.1,
+            "da_median": 225.95,
+            "dam_uol_mw": 32073.5,
+            "ham_uol_mw": 34176.1,
+            "dam_gens": 279.0,
+            "ham_gens": 290.0
+          },
+          "ordinary_all": {
+            "hours": 4379,
+            "rt_median": 32.83,
+            "da_median": 36.25,
+            "dam_uol_mw": 28497.6,
+            "ham_uol_mw": 22704.9,
+            "dam_gens": 261.0,
+            "ham_gens": 229.0
+          },
+          "missed_all": {
+            "hours": 39,
+            "rt_median": 583.59,
+            "da_median": 213.64,
+            "dam_uol_mw": 32051.9,
+            "ham_uol_mw": 33631.0,
+            "dam_gens": 277.0,
+            "ham_gens": 289.0
+          },
+          "da_gt_100": {
+            "hours": 1181,
+            "rt_median": 121.66,
+            "da_median": 129.19,
+            "dam_uol_mw": 30801.4,
+            "ham_uol_mw": 25674.6,
+            "dam_gens": 262.0,
+            "ham_gens": 244.0
+          },
+          "da_gt_150": {
+            "hours": 345,
+            "rt_median": 158.66,
+            "da_median": 178.59,
+            "dam_uol_mw": 31069.6,
+            "ham_uol_mw": 27487.5,
+            "dam_gens": 262.0,
+            "ham_gens": 251.0
+          },
+          "da_gt_200": {
+            "hours": 123,
+            "rt_median": 195.2,
+            "da_median": 235.63,
+            "dam_uol_mw": 31069.6,
+            "ham_uol_mw": 28991.2,
+            "dam_gens": 268.0,
+            "ham_gens": 257.0
+          },
+          "da_gt_300": {
+            "hours": 12,
+            "rt_median": 457.84,
+            "da_median": 321.02,
+            "dam_uol_mw": 31648.2,
+            "ham_uol_mw": 32611.3,
+            "dam_gens": 270.0,
+            "ham_gens": 275.5
+          },
+          "rt_gt300_da_anticipated": {
+            "hours": 7,
+            "rt_median": 608.99,
+            "da_median": 326.05,
+            "dam_uol_mw": 32010.0,
+            "ham_uol_mw": 34176.1,
+            "dam_gens": 277.0,
+            "ham_gens": 289.0
+          },
+          "rt_gt300_da_surprise": {
+            "hours": 35,
+            "rt_median": 583.59,
+            "da_median": 209.75,
+            "dam_uol_mw": 31710.1,
+            "ham_uol_mw": 33631.0,
+            "dam_gens": 277.0,
+            "ham_gens": 289.0
+          }
+        },
+        "deficit_vs_baseline_mw": {
+          "missed_winter": {
+            "dam": 1134.3,
+            "ham": -2694.1
+          },
+          "missed_summer": {
+            "dam": -1896.2,
+            "ham": -9012.1
+          },
+          "missed_all": {
+            "dam": -3554.3,
+            "ham": -10926.1
+          },
+          "rt_gt300_da_anticipated": {
+            "dam": -3512.4,
+            "ham": -11471.2
+          },
+          "rt_gt300_da_surprise": {
+            "dam": -3212.5,
+            "ham": -10926.1
+          },
+          "da_gt_100": {
+            "dam": -2303.8,
+            "ham": -2969.7
+          },
+          "da_gt_150": {
+            "dam": -2572.0,
+            "ham": -4782.6
+          },
+          "da_gt_200": {
+            "dam": -2572.0,
+            "ham": -6286.3
+          },
+          "da_gt_300": {
+            "dam": -3150.6,
+            "ham": -9906.4
+          }
+        },
+        "gate": {
+          "dam": {
+            "ladder_deficit_mw": [
+              -2303.8,
+              -2572.0,
+              -2572.0,
+              -3150.6
+            ],
+            "ladder_monotone_nondecreasing": false,
+            "winter_missed_deficit_mw": 1134.3,
+            "magnitude_ge_1000mw": true,
+            "PASS": false
+          },
+          "ham": {
+            "ladder_deficit_mw": [
+              -2969.7,
+              -4782.6,
+              -6286.3,
+              -9906.4
+            ],
+            "ladder_monotone_nondecreasing": false,
+            "winter_missed_deficit_mw": -2694.1,
+            "magnitude_ge_1000mw": false,
+            "PASS": false
+          }
+        },
+        "PASS": false
+      },
+      "leg3": {
+        "missed_winter": {
+          "dam": {
+            "uol_mw": 29780.7,
+            "as_offered_mw": 862.5
+          },
+          "ham": {
+            "uol_mw": 27388.3,
+            "as_offered_mw": 764.0
+          }
+        },
+        "missed_summer": {
+          "dam": {
+            "uol_mw": 32073.5,
+            "as_offered_mw": 1088.5
+          },
+          "ham": {
+            "uol_mw": 34176.1,
+            "as_offered_mw": 1079.2
+          }
+        },
+        "missed_all": {
+          "dam": {
+            "uol_mw": 32051.9,
+            "as_offered_mw": 1053.5
+          },
+          "ham": {
+            "uol_mw": 33631.0,
+            "as_offered_mw": 1024.2
+          }
+        },
+        "ordinary_all": {
+          "dam": {
+            "uol_mw": 28497.6,
+            "as_offered_mw": 785.0
+          },
+          "ham": {
+            "uol_mw": 22704.9,
+            "as_offered_mw": 744.8
+          }
+        }
+      },
+      "leg2": {
+        "windows": {
+          "ordinary_winter": {
+            "believed_mw": 23807.6,
+            "believed_all_in_mw": 30909.8,
+            "dam_offered_mw": 30915.0,
+            "dam_gap_mw": -7107.4,
+            "ham_offered_mw": 24694.2,
+            "ham_gap_mw": -886.7
+          },
+          "missed_winter": {
+            "believed_mw": 25178.5,
+            "believed_all_in_mw": 32280.7,
+            "dam_offered_mw": 29780.7,
+            "dam_gap_mw": -4602.2,
+            "ham_offered_mw": 27388.3,
+            "ham_gap_mw": -2209.8
+          },
+          "ordinary_summer": {
+            "believed_mw": 25026.5,
+            "believed_all_in_mw": 32589.4,
+            "dam_offered_mw": 30177.3,
+            "dam_gap_mw": -5150.8,
+            "ham_offered_mw": 25164.0,
+            "ham_gap_mw": -137.5
+          },
+          "missed_summer": {
+            "believed_mw": 28836.6,
+            "believed_all_in_mw": 36399.5,
+            "dam_offered_mw": 32073.5,
+            "dam_gap_mw": -3236.9,
+            "ham_offered_mw": 34176.1,
+            "ham_gap_mw": -5339.5
+          },
+          "ordinary_all": {
+            "believed_mw": 22801.6,
+            "believed_all_in_mw": 30210.8,
+            "dam_offered_mw": 28497.6,
+            "dam_gap_mw": -5696.0,
+            "ham_offered_mw": 22704.9,
+            "ham_gap_mw": 96.7
+          },
+          "missed_all": {
+            "believed_mw": 28836.6,
+            "believed_all_in_mw": 36399.5,
+            "dam_offered_mw": 32051.9,
+            "dam_gap_mw": -3215.3,
+            "ham_offered_mw": 33631.0,
+            "ham_gap_mw": -4794.4
+          },
+          "da_gt_100": {
+            "believed_mw": 24150.3,
+            "believed_all_in_mw": 31252.5,
+            "dam_offered_mw": 30801.4,
+            "dam_gap_mw": -6651.1,
+            "ham_offered_mw": 25674.6,
+            "ham_gap_mw": -1524.3
+          },
+          "da_gt_150": {
+            "believed_mw": 25602.1,
+            "believed_all_in_mw": 32704.3,
+            "dam_offered_mw": 31069.6,
+            "dam_gap_mw": -5467.5,
+            "ham_offered_mw": 27487.5,
+            "ham_gap_mw": -1885.4
+          },
+          "da_gt_200": {
+            "believed_mw": 26040.3,
+            "believed_all_in_mw": 33142.5,
+            "dam_offered_mw": 31069.6,
+            "dam_gap_mw": -5029.3,
+            "ham_offered_mw": 28991.2,
+            "ham_gap_mw": -2950.9
+          },
+          "da_gt_300": {
+            "believed_mw": 27543.2,
+            "believed_all_in_mw": 34875.8,
+            "dam_offered_mw": 31648.2,
+            "dam_gap_mw": -4104.9,
+            "ham_offered_mw": 32611.3,
+            "ham_gap_mw": -5068.1
+          },
+          "rt_gt300_da_anticipated": {
+            "believed_mw": 28836.6,
+            "believed_all_in_mw": 36399.5,
+            "dam_offered_mw": 32010.0,
+            "dam_gap_mw": -3173.4,
+            "ham_offered_mw": 34176.1,
+            "ham_gap_mw": -5339.5
+          },
+          "rt_gt300_da_surprise": {
+            "believed_mw": 28836.6,
+            "believed_all_in_mw": 36399.5,
+            "dam_offered_mw": 31710.1,
+            "dam_gap_mw": -2873.5,
+            "ham_offered_mw": 33631.0,
+            "ham_gap_mw": -4794.4
+          }
+        },
+        "believed_composition_mw_median": {
+          "(unclassed)": 13078.8,
+          "CC_CHP": 2950.5,
+          "CC_REGULAR": 5035.3,
+          "COAL": 0.0,
+          "CT_CHP": 326.2,
+          "CT_PEAKER": 2200.3,
+          "ST_CHP": 283.7,
+          "ST_GAS": 2309.1,
+          "hydro": 4587.1,
+          "EXCLUDED_external_and_DR": 7562.9
+        },
+        "excess_gap_vs_ordinary_mw": {
+          "missed_winter": {
+            "dam": 2505.2,
+            "ham": -1323.1
+          },
+          "missed_summer": {
+            "dam": 1913.9,
+            "ham": -5202.0
+          }
+        },
+        "object_mw": 4716.0,
+        "winter_excess_gap_mw": 2505.2,
+        "winter_excess_gap_pct_of_object": 53.1,
+        "PASS": true
+      }
+    }
+  }
+}
