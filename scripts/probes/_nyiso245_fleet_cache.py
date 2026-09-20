@@ -22,7 +22,7 @@ CACHE = REPO / "results" / "calibration" / "_nyiso245_cache"
 HOURS = 8760
 
 
-def dump(year: int) -> Path:
+def dump(year: int) -> "tuple[Path, dict]":
     """Write one year's assembled fleet arrays to ``_nyiso245_cache/<year>.npz``."""
     from scripts.probes.nyiso242_tail_reachability import fleet_state
 
@@ -67,14 +67,55 @@ def dump(year: int) -> Path:
     np.savez_compressed(out, **payload)
     print(f"wrote {out}  rows={len(payload['unit_ids'])}  gens={len(gens)}")
     print("  state keys:", sorted(st.keys()))
+    return out, st
+
+
+def dump_gas(year: int, st: dict | None = None) -> Path:
+    """Write the keeper's own resolved delivered-gas series to ``gas_<year>.npy``.
+
+    The gas pass :func:`derive_nyiso_offer_surface.gas_series_by_year` names.
+    It resolves ``_gas_series`` from the keeper's OWN reconstructed config (the
+    one the fleet-only rebuild built), so the derive and the solve-side applier
+    bin on ONE gas object and never on two independently built ones
+    (rule 19 ``[R-ONE-MECH]`` in spirit).
+    """
+    from market_sim.data.fuel.trajectories import _gas_series
+
+    if st is None:
+        from scripts.probes.nyiso242_tail_reachability import fleet_state
+
+        st = fleet_state(year)
+    cfg = None
+    for key in ("config", "scenario", "scenario_config", "cfg"):
+        if isinstance(st, dict) and st.get(key) is not None:
+            cfg = st[key]
+            break
+    if cfg is None:
+        raise SystemExit(
+            "no ScenarioConfig in the fleet-only state; keys: "
+            + ", ".join(sorted(st)) if isinstance(st, dict) else str(type(st))
+        )
+    series = np.asarray(_gas_series(cfg, year, HOURS), dtype=float)
+    CACHE.mkdir(parents=True, exist_ok=True)
+    out = CACHE / f"gas_{year}.npy"
+    np.save(out, series)
+    print(
+        f"wrote {out}  min={series.min():.4f} max={series.max():.4f} "
+        f"mean={series.mean():.4f}"
+    )
     return out
 
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--year", type=int, nargs="+", default=[2022])
-    for y in ap.parse_args().year:
-        dump(y)
+    ap.add_argument("--gas-only", action="store_true")
+    args = ap.parse_args()
+    for y in args.year:
+        st = None
+        if not args.gas_only:
+            _, st = dump(y)
+        dump_gas(y, st)
 
 
 if __name__ == "__main__":  # pragma: no cover - CLI
