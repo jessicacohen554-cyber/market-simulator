@@ -2915,3 +2915,19 @@ results/calibration/soco53g_keeper_20[0-9][0-9]/
 # the composed `miso264_anchor_span`, which is the registrable run and MUST
 # commit its slim set (rule 15 [R-DASHBOARD]).
 results/calibration/miso264_anchor_20[0-9][0-9]/
+# pjm-h12 card D-3 (the CC commitment-feasibility clip A/B). Per-year ARM and
+# CONTROL bundles are solved and PUSHED BY THEIR OWN SHARD to that shard's own
+# branch (rule 34 [R-SHARD-PROMOTABLE] (a)), so they are fully retrievable; the
+# PARENT keeps them out of `main` (rule 32 [R-SHARD] (d) — an unregistered
+# per-year dir left committed is the Class-E parity RED rule 29 [R-SCREEN] (c)
+# forbids). Named at directory grain like the pjm_h11 pair above, so the
+# composed span dirs would fall outside it.
+# RULE 31 [R-RETAIN]: this .gitignore entry is what discharges delete-before-merge.
+# NOTHING here is ever `rm`'d — the bundles stay recoverable by FULL SHA:
+#   git checkout f80efbe73a017a0827a4442c575b78ae928f9c0b -- results/calibration/pjm_h12_clip_2021
+#   git checkout d6f1d89d5d93d2768e44b062861e774a68417169 -- results/calibration/pjm_h12_clip_2023
+#   git checkout 4975e114dc185a70ec3ff3f653ad8b7c1480e3d5 -- results/calibration/pjm_h12_clip_2024
+#   git checkout 1b7484d31e42856abb5f1d01b90a1bfdfc516d87 -- results/calibration/pjm_h12_clip_2025
+#   (same shas carry the paired pjm_h12_ctl_<year> control bundles)
+results/calibration/pjm_h12_clip_*/
+results/calibration/pjm_h12_ctl_*/
