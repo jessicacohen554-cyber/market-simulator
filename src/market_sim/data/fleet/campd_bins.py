@@ -315,6 +315,58 @@ def measured_coal_heat_rates(iso: str) -> dict[int, float]:
 
 
 @lru_cache(maxsize=8)
+def measured_cc_heat_rates(iso: str) -> dict[int, float]:
+    """Return ``{plant_code: measured operating heat rate}`` for CC_REGULAR.
+
+    Reads the committed CAMPD-measured artifact
+    (``scripts/data/derive_campd_cc_heat_rates.py`` →
+    ``data/raw/_processed-legacy/campd_cc_heat_rates_<ISO>.csv``): per-plant
+    MMBtu per **net** MWh over the plant's own steady-state operating hours,
+    pooled 2023-2025 over the CAMPD units whose ``unitType`` is a combined
+    cycle. It replaces the eGRID plant-average ANNUAL heat rate — or, at a
+    multi-family site, the eGRID prime-mover-FAMILY rate — that the fleet
+    loader otherwise gives a combined-cycle generator (CLAUDE.md rule 14
+    [R-ACCURATE]). With it, CC_REGULAR stops being the last thermal class
+    still priced off an unmeasured annual average.
+
+    The combined-cycle sibling of :func:`measured_ct_heat_rates`,
+    :func:`measured_coal_heat_rates` and :func:`measured_st_heat_rates`, on
+    the identical identification: a machine's operating heat rate is a
+    physical characteristic that regenerates for a forward year and responds
+    to changed conditions, so it is an INPUT under rule 13 [R-MEASURED], never
+    a measured outcome fed back to close a residual, and it carries zero free
+    parameters.
+
+    What it reaches that the mechanisms above it cannot: eGRID's level moves
+    with the plant's capacity factor in the vintage year, and for a combined
+    cycle that has a sharp form — a unit COMMISSIONED in the vintage year is
+    published at its commissioning-year average, carrying first-fire, tuning
+    and acceptance-test fuel against a part-year denominator. Measured on
+    SOCO: Lowman Energy Center (plant 56), whose CT and steam generator both
+    carry EIA-860 ``Operating Year`` 2023, is priced by eGRID's 2023 vintage
+    at 8.105 MMBtu/MWh (42 % HHV) while its own meter reads 6.30 net, stable
+    to ±0.03 across three years (≈54 %) — a $5.10/MWh error on a new machine.
+
+    Only ``flag == "ok"`` rows are returned. Alongside the physical band, the
+    derive applies a BOUNDARY GUARD: at some sites CAMPD meters the
+    combustion turbines but not the unfired steam generator, so
+    ``heatInput/grossLoad`` is the CT rate rather than the CC rate — roughly
+    1.5x too high. Those plants are flagged ``steam_not_metered`` and are not
+    applied. Empty dict when the ISO has no artifact, which leaves every plant
+    on its eGRID rate — never a silent hand number (rule 23 [R-FROZEN-DERIVE]).
+    """
+    path = PROCESSED_DIR / f"campd_cc_heat_rates_{iso.upper()}.csv"
+    if not path.exists():
+        return {}
+    df = pd.read_csv(path, usecols=["plant_code", "heat_rate", "flag"])
+    return {
+        int(r.plant_code): float(r.heat_rate)
+        for r in df.itertuples(index=False)
+        if str(r.flag) == "ok" and float(r.heat_rate) > 0.0
+    }
+
+
+@lru_cache(maxsize=8)
 def measured_st_heat_rates(iso: str) -> dict[int, float]:
     """Return ``{plant_code: measured operating heat rate}`` for an ISO's ST_GAS.
 

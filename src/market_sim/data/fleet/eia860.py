@@ -1145,6 +1145,7 @@ def _rows_to_generators(
     measured_ct_heat_rates: bool = False,
     measured_coal_heat_rates: bool = False,
     measured_st_heat_rates: bool = False,
+    measured_cc_heat_rates: bool = False,
     cc_steam_part_capacity: bool = False,
     cc_steam_part_reclass: bool = False,
     egrid_family_heat_rates: bool = False,
@@ -1261,6 +1262,17 @@ def _rows_to_generators(
     # in which case every row keeps its eGRID rate.
     st_heat_rates: dict[int, float] = (
         _pkg_ns().measured_st_heat_rates(iso) if measured_st_heat_rates else {}
+    )
+
+    # Measured COMBINED-CYCLE operating heat rates (config.measured_cc_heat_rates).
+    # The fourth sibling of the three resolutions above, on the same seam and
+    # the same class-scoped application: only a row that resolves to
+    # CC_REGULAR may take it, so a CC site's boilers and peakers keep the rate
+    # their own class assigns, and a cogenerating CC (CC_CHP) is excluded by
+    # construction. Empty when the flag is off or the ISO has no committed
+    # artifact, in which case every row keeps its eGRID rate.
+    cc_heat_rates: dict[int, float] = (
+        _pkg_ns().measured_cc_heat_rates(iso) if measured_cc_heat_rates else {}
     )
 
     # Combined-cycle steam parts to restore (config.cc_steam_part_capacity).
@@ -1457,6 +1469,24 @@ def _rows_to_generators(
             measured_st_hr = st_heat_rates.get(plant_code)
             if measured_st_hr is not None:
                 heat_rate = measured_st_hr
+
+        # The same rule-14 [R-ACCURATE] substitution for CC_REGULAR, the last
+        # thermal class still priced off an unmeasured annual average. eGRID's
+        # level moves with the plant's capacity factor in the vintage year,
+        # and for a combined cycle that has a sharp form: a unit COMMISSIONED
+        # in the vintage year is published at its commissioning-year average,
+        # carrying first-fire, tuning and acceptance-test fuel against a
+        # part-year denominator. Gated on ``group`` so only CC_REGULAR rows
+        # take it (rule 19 [R-ONE-MECH]: disjoint from the three branches
+        # above by construction — a row resolves to one group — and, like the
+        # ST_GAS branch, it REPLACES the prime-mover-family rate on the rows
+        # it covers rather than stacking, being the later assignment to the
+        # same field). CC_CHP is deliberately out of scope: no unfired-plant
+        # meter can speak for a cogenerator's host-steam boundary.
+        if cc_heat_rates and group == "CC_REGULAR":
+            measured_cc_hr = cc_heat_rates.get(plant_code)
+            if measured_cc_hr is not None:
+                heat_rate = measured_cc_hr
 
         record = {
             "plant_id": plant_id,
@@ -1748,6 +1778,7 @@ def _load_fleet_from_parquet(
     measured_ct_heat_rates: bool = False,
     measured_coal_heat_rates: bool = False,
     measured_st_heat_rates: bool = False,
+    measured_cc_heat_rates: bool = False,
     cc_steam_part_capacity: bool = False,
     cc_steam_part_reclass: bool = False,
     egrid_family_heat_rates: bool = False,
@@ -1804,6 +1835,7 @@ def _load_fleet_from_parquet(
         measured_ct_heat_rates=measured_ct_heat_rates,
         measured_coal_heat_rates=measured_coal_heat_rates,
         measured_st_heat_rates=measured_st_heat_rates,
+        measured_cc_heat_rates=measured_cc_heat_rates,
         cc_steam_part_capacity=cc_steam_part_capacity,
         cc_steam_part_reclass=cc_steam_part_reclass,
         egrid_family_heat_rates=egrid_family_heat_rates,
@@ -1887,6 +1919,7 @@ def _load_fleet_from_clean(
     measured_ct_heat_rates: bool = False,
     measured_coal_heat_rates: bool = False,
     measured_st_heat_rates: bool = False,
+    measured_cc_heat_rates: bool = False,
     cc_steam_part_capacity: bool = False,
     cc_steam_part_reclass: bool = False,
     egrid_family_heat_rates: bool = False,
@@ -1919,6 +1952,7 @@ def _load_fleet_from_clean(
         measured_ct_heat_rates=measured_ct_heat_rates,
         measured_coal_heat_rates=measured_coal_heat_rates,
         measured_st_heat_rates=measured_st_heat_rates,
+        measured_cc_heat_rates=measured_cc_heat_rates,
         cc_steam_part_capacity=cc_steam_part_capacity,
         cc_steam_part_reclass=cc_steam_part_reclass,
         egrid_family_heat_rates=egrid_family_heat_rates,
@@ -2157,6 +2191,7 @@ def load_fleet_from_csv(
     measured_ct_heat_rates: bool = False,
     measured_coal_heat_rates: bool = False,
     measured_st_heat_rates: bool = False,
+    measured_cc_heat_rates: bool = False,
     measured_chp_heat_rates: bool = False,
     egrid_identity_heat_rates: bool = False,
     apply_chp_steam_credit_correction: bool = True,
@@ -2296,6 +2331,7 @@ def load_fleet_from_csv(
             measured_ct_heat_rates=measured_ct_heat_rates,
             measured_coal_heat_rates=measured_coal_heat_rates,
             measured_st_heat_rates=measured_st_heat_rates,
+        measured_cc_heat_rates=measured_cc_heat_rates,
             cc_steam_part_capacity=cc_steam_part_capacity,
             cc_steam_part_reclass=cc_steam_part_reclass,
             egrid_family_heat_rates=egrid_family_heat_rates,
@@ -2320,6 +2356,7 @@ def load_fleet_from_csv(
             measured_ct_heat_rates=measured_ct_heat_rates,
             measured_coal_heat_rates=measured_coal_heat_rates,
             measured_st_heat_rates=measured_st_heat_rates,
+        measured_cc_heat_rates=measured_cc_heat_rates,
             cc_steam_part_capacity=cc_steam_part_capacity,
             cc_steam_part_reclass=cc_steam_part_reclass,
             egrid_family_heat_rates=egrid_family_heat_rates,
@@ -2342,6 +2379,7 @@ def load_fleet_from_csv(
             measured_ct_heat_rates=measured_ct_heat_rates,
             measured_coal_heat_rates=measured_coal_heat_rates,
             measured_st_heat_rates=measured_st_heat_rates,
+        measured_cc_heat_rates=measured_cc_heat_rates,
             cc_steam_part_capacity=cc_steam_part_capacity,
             cc_steam_part_reclass=cc_steam_part_reclass,
             egrid_family_heat_rates=egrid_family_heat_rates,

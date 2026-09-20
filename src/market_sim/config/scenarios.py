@@ -247,6 +247,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # so every pre-existing cached run keeps its key; an armed run carries a
     # different fleet cost and so gets a distinct key.
     "measured_st_heat_rates",
+    # Measured CC_REGULAR steady-state operating heat rates (soco-57, default
+    # off): the combined-cycle sibling of the three directly above, registered
+    # the same way and for the same reason -- dropped from the hash at its
+    # default so every pre-existing cached run keeps its key; an armed run
+    # carries a different fleet cost and so gets a distinct key.
+    "measured_cc_heat_rates",
     # Measured power-only CHP heat rates (miso-99, default off): dropped from
     # the hash at its default so every pre-existing cached run keeps its key;
     # an armed run carries a different fleet cost and so gets a distinct key.
@@ -2013,6 +2019,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "measured_ct_heat_rates": "False",
     "measured_coal_heat_rates": "False",
     "measured_st_heat_rates": "False",
+    "measured_cc_heat_rates": "False",
     "measured_chp_heat_rates": "False",
     "egrid_identity_heat_rates": "False",
     "egrid_family_heat_rates": "False",
@@ -5378,6 +5385,34 @@ class ScenarioConfig:
     # mixed steam site's coal boiler keeps the rate its own class assigns. See
     # docs/handoffs/PRECOMMIT-soco-53e-2026-09-19.md.
     measured_st_heat_rates: bool = False
+
+    # Measured CAMPD steady-state operating heat rates for CC_REGULAR
+    # (soco-57; default OFF, byte-identical off). The combined-cycle sibling
+    # of measured_ct_heat_rates / measured_coal_heat_rates /
+    # measured_st_heat_rates directly above, on the identical seam, and the
+    # one that retires the last thermal class still priced off an unmeasured
+    # annual average. eGRID's PLHTIAN/PLNGENAN folds startup fuel, shutdown
+    # tails and offline fuel into the offer, and its LEVEL moves with the
+    # plant's capacity factor in the vintage year -- which for a combined
+    # cycle has a sharp form: a unit COMMISSIONED in the vintage year is
+    # published at its commissioning-year average, carrying first-fire,
+    # tuning and acceptance-test fuel against a part-year denominator.
+    # Measured on SOCO, Lowman (plant 56), whose CT and steam generator both
+    # carry EIA-860 Operating Year 2023, is priced by eGRID's 2023 vintage at
+    # 8.105 MMBtu/MWh (42 % HHV) against its own meter's 6.30 net, stable to
+    # +/-0.03 across three years (~54 %) -- a $5.10/MWh error on a new
+    # machine. Rule 13 [R-MEASURED]: an operating heat rate is a physical
+    # characteristic that regenerates for a forward year and responds to
+    # changed conditions, so it is an INPUT, never a measured outcome; zero
+    # free parameters -- every applied number is sum(heatInput)/sum(grossLoad)
+    # over the plant's own hours. The derive additionally carries a BOUNDARY
+    # GUARD: at some sites CAMPD meters the combustion turbines but not the
+    # unfired steam generator, so the ratio is the CT rate rather than the CC
+    # rate (~1.5x too high); those plants are refused, not applied. Rule 25
+    # [R-ISO-SCOPE]: a per-ISO artifact, a strict no-op for an ISO with none.
+    # Applied per generator BY CLASS, and CC_CHP is deliberately out of scope.
+    # See docs/handoffs/PRECOMMIT-soco-57-2026-09-20.md.
+    measured_cc_heat_rates: bool = False
 
     # Measured POWER-ONLY heat rates for topping-cycle CHP (miso-99; default
     # OFF, byte-identical off). eGRID's ``PLHTRT`` is the number the model
