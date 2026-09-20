@@ -1,9 +1,47 @@
 # ADDENDUM — pjm-h11: the 2020 readout. C-1 measured, and the ex-ante prediction's MECHANISM lands within 0.16 TWh (2026-09-19)
 
 **Session:** pjm-h11 (orchestrator, **zero LP minutes** — rule 32 `[R-SHARD]` (a); the solves ran in
-per-year shards). **Partial result**: 2020 is the only year the arm can move and both its legs have
-landed, so it is reported now. The five invariance years (ARM 2021–2025) are still solving and the
-verdict is **not final** until they report.
+per-year shards, one year per container, which is rule 36 `[R-YEAR-ISOLATION]` (a)).
+
+**STATUS: ALL TWELVE LEGS HAVE LANDED — 2 arms × 6 years.** This document was first written as a
+partial result while the invariance years were still solving; they have since reported and the
+invariance check is recorded in §0 below.
+
+### 0. Invariance — the arm is a clean single-year delta, confirmed through the solver
+
+The arm adds **one key** to `PJM_SEAM_LADDER_BY_YEAR` (2020) and changes nothing else, so every
+other year must be untouched. The PRECOMMIT established that at zero LP (0 of 240 shared rungs
+move); these are the solved bundles, differenced class-by-class on the P1 hourlies:
+
+| year | max \|Δ\| TWh | Σ\|Δ\| TWh | classes moved | verdict |
+|---|---|---|---|---|
+| 2021 | 0.000000 | 0.000000 | 0 | IDENTICAL |
+| 2022 | 0.000000 | 0.000000 | 0 | IDENTICAL |
+| 2023 | 0.000000 | 0.000000 | 0 | IDENTICAL |
+| 2024 | 0.000000 | 0.000000 | 0 | IDENTICAL |
+| 2025 | 0.000000 | 0.000000 | 0 | IDENTICAL |
+
+**Exact, in all five years.** The promotion blocker this was gating is cleared: whatever C-1 does,
+it does it to 2020 alone.
+
+**Bundle provenance** — every leg verified by config signature before use (ARM bundles carry the
+2020 ladder key with MISO export `(66.93, 57.12, 36.2, 25.46, 20.05, 15.95, 11.93, 8.68)`; CONTROL
+bundles carry no 2020 key), recovery by full immutable sha:
+
+| year | CONTROL | ARM |
+|---|---|---|
+| 2020 | `f3bf920ddfa9d4bd86be1c71b2984647b89d0681` | `bc7617af9b94b8f2997152ab4888c54e88690263` |
+| 2021 | `e24901cb6dacd2ec6daaeafe86e7a6e4b0252c55` | `aebecf818d97d1534697b2eb9f76844f3a90b855` |
+| 2022 | `50b217e854cad8068a6e4763e11a969aa4753958` | `9bd16d405e3bb5350a9592bb1245c1dabfcddeb2` |
+| 2023 | `3510c19c16d9913d3920ea29c3c6c0f4c7736d16` | `e301cb5fa58af76b03d3297c6f4321829b09af88` |
+| 2024 | `9e4d5b31598149a1526ccfce02d7916a99e5ea97` | `5fd266b64f50f19fa56e2876623803364a018bf6` |
+| 2025 | `53a7e81dafdd512ab0a80af031e94b5615dd1565` | `efe30d52a72c460efbf619d13ebf946127ed1475` |
+
+All carry 17 files except **ARM 2022 (15)**, which is missing `floors/2022_P1.npz` and
+`hourly/unit_hourly_2022.parquet` — the SPP-48 directory-grain `.gitignore` trap on
+`results/calibration/*/floors/`, which a `/**` negation cannot re-include. Neither is
+registration-critical: `dispatch/2022_P1.parquet`, `hourly/network_2022.parquet`,
+`hourly/class_hourly_2022.parquet` and `system.parquet` are all present.
 
 **Bundles** (17 files each, verified by config signature before use):
 `pjm_h11_ctl_2020` @ `f3bf920ddfa9d4bd86be1c71b2984647b89d0681` (control sha `0fae26c3`, no 2020
