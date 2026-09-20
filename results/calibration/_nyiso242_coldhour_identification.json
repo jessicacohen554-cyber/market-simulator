@@ -1,0 +1,158 @@
+{
+  "year": 2022,
+  "threshold": 300.0,
+  "campd_plants_matched": 70,
+  "model_thermal_plants": 109,
+  "model_thermal_nameplate_mw": 25227.1,
+  "campd_p999_mw": 17048.4,
+  "extreme_price": {
+    "hours": 101,
+    "model_believed_available_mw_median": 14615.9,
+    "campd_observed_mw_median": 8940.0,
+    "campd_pct_of_own_p999": 52.4,
+    "actual_price_median": 373.41
+  },
+  "extreme_winter": {
+    "hours": 70,
+    "model_believed_available_mw_median": 14596.1,
+    "campd_observed_mw_median": 8542.0,
+    "campd_pct_of_own_p999": 50.1,
+    "actual_price_median": 383.32
+  },
+  "ordinary_price": {
+    "hours": 4380,
+    "model_believed_available_mw_median": 12392.2,
+    "campd_observed_mw_median": 5564.0,
+    "campd_pct_of_own_p999": 32.6,
+    "actual_price_median": 42.8
+  },
+  "all_hours": {
+    "hours": 8760,
+    "model_believed_available_mw_median": 13008.3,
+    "campd_observed_mw_median": 6507.0,
+    "campd_pct_of_own_p999": 38.2,
+    "actual_price_median": 58.53
+  },
+  "discriminator": {
+    "DA_gt_300": {
+      "hours": 10,
+      "rt_median": 277.6,
+      "da_median": 329.3,
+      "campd_pct_of_own_p999": 50.0
+    },
+    "DA_gt_200": {
+      "hours": 114,
+      "rt_median": 176.1,
+      "da_median": 236.9,
+      "campd_pct_of_own_p999": 50.9
+    },
+    "DA_gt_150": {
+      "hours": 465,
+      "rt_median": 160.1,
+      "da_median": 178.7,
+      "campd_pct_of_own_p999": 49.8
+    },
+    "DA_gt_100": {
+      "hours": 1550,
+      "rt_median": 120.3,
+      "da_median": 128.5,
+      "campd_pct_of_own_p999": 50.1
+    },
+    "RT_gt_300_DA_anticipated": {
+      "hours": 4,
+      "rt_median": 347.2,
+      "da_median": 361.4,
+      "campd_pct_of_own_p999": 51.5
+    },
+    "RT_gt_300_DA_surprise": {
+      "hours": 97,
+      "rt_median": 374.5,
+      "da_median": 162.9,
+      "campd_pct_of_own_p999": 52.4
+    },
+    "ordinary_price": {
+      "hours": 4380,
+      "rt_median": 42.8,
+      "da_median": 47.6,
+      "campd_pct_of_own_p999": 32.6
+    }
+  },
+  "winter_extreme_plant_attribution": {
+    "plants_compared": 55,
+    "plants_metering_zero_while_believed_available": 30,
+    "mw_believed_available_but_metering_zero": 2779.5,
+    "total_gap_mw": 4575.8,
+    "top_10_by_gap": [
+      {
+        "plant_code": 55243,
+        "model_believed_mw": 374.5,
+        "campd_observed_mw": 0.0,
+        "gap_mw": 374.5,
+        "zero_metered": true
+      },
+      {
+        "plant_code": 2539,
+        "model_believed_mw": 861.8,
+        "campd_observed_mw": 504.5,
+        "gap_mw": 357.3,
+        "zero_metered": false
+      },
+      {
+        "plant_code": 57185,
+        "model_believed_mw": 349.6,
+        "campd_observed_mw": 0.0,
+        "gap_mw": 349.6,
+        "zero_metered": true
+      },
+      {
+        "plant_code": 8006,
+        "model_believed_mw": 993.5,
+        "campd_observed_mw": 661.5,
+        "gap_mw": 332.0,
+        "zero_metered": false
+      },
+      {
+        "plant_code": 56259,
+        "model_believed_mw": 634.1,
+        "campd_observed_mw": 305.5,
+        "gap_mw": 328.6,
+        "zero_metered": false
+      },
+      {
+        "plant_code": 2490,
+        "model_believed_mw": 276.9,
+        "campd_observed_mw": 0.0,
+        "gap_mw": 276.9,
+        "zero_metered": true
+      },
+      {
+        "plant_code": 2494,
+        "model_believed_mw": 254.1,
+        "campd_observed_mw": 0.0,
+        "gap_mw": 254.1,
+        "zero_metered": true
+      },
+      {
+        "plant_code": 2500,
+        "model_believed_mw": 519.9,
+        "campd_observed_mw": 269.0,
+        "gap_mw": 250.9,
+        "zero_metered": false
+      },
+      {
+        "plant_code": 2511,
+        "model_believed_mw": 522.2,
+        "campd_observed_mw": 278.5,
+        "gap_mw": 243.7,
+        "zero_metered": false
+      },
+      {
+        "plant_code": 2499,
+        "model_believed_mw": 242.4,
+        "campd_observed_mw": 0.0,
+        "gap_mw": 242.4,
+        "zero_metered": true
+      }
+    ]
+  }
+}

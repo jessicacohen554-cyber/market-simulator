@@ -1,0 +1,305 @@
+{
+  "year": 2022,
+  "nyiso_cc_plants_in_fleet": 41,
+  "with_both_published_ratings": 40,
+  "A_reach_and_direction": {
+    "winter_over_nameplate_min": 0.7433,
+    "winter_over_nameplate_median": 0.9677,
+    "winter_over_nameplate_max": 1.0824,
+    "plants_below_1": 25,
+    "plants_at_or_above_1": 15,
+    "offsummer_mw_removed": 263.6,
+    "fleet_nameplate_mw": 12648.0
+  },
+  "B_admissibility": {
+    "wefor_residual": null,
+    "wefor_multiplier": 0.7,
+    "cc_nameplate_summer_derate": true,
+    "trigger_present": true,
+    "offsummer_headroom_frac_median": 0.0323,
+    "plants_with_headroom_below_5pct": 23,
+    "plants_with_negative_headroom": 14
+  },
+  "per_plant": [
+    {
+      "plant_code": 50292,
+      "nameplate": 179.6,
+      "net_summer": 128.99,
+      "winter": 133.5,
+      "winter_over_nameplate": 0.7433
+    },
+    {
+      "plant_code": 10617,
+      "nameplate": 107.8,
+      "net_summer": 79.8,
+      "winter": 90.4,
+      "winter_over_nameplate": 0.8386
+    },
+    {
+      "plant_code": 50978,
+      "nameplate": 122.6,
+      "net_summer": 93.0,
+      "winter": 105.0,
+      "winter_over_nameplate": 0.8564
+    },
+    {
+      "plant_code": 57185,
+      "nameplate": 1312.5,
+      "net_summer": 1016.1,
+      "winter": 1138.2,
+      "winter_over_nameplate": 0.8672
+    },
+    {
+      "plant_code": 54592,
+      "nameplate": 102.1,
+      "net_summer": 81.0,
+      "winter": 91.0,
+      "winter_over_nameplate": 0.8913
+    },
+    {
+      "plant_code": 54593,
+      "nameplate": 66.2,
+      "net_summer": 48.8,
+      "winter": 59.1,
+      "winter_over_nameplate": 0.8927
+    },
+    {
+      "plant_code": 54574,
+      "nameplate": 285.6,
+      "net_summer": 237.8,
+      "winter": 255.2,
+      "winter_over_nameplate": 0.8936
+    },
+    {
+      "plant_code": 7784,
+      "nameplate": 67.0,
+      "net_summer": 60.0,
+      "winter": 60.0,
+      "winter_over_nameplate": 0.8955
+    },
+    {
+      "plant_code": 50451,
+      "nameplate": 59.9,
+      "net_summer": 46.5,
+      "winter": 54.4,
+      "winter_over_nameplate": 0.9082
+    },
+    {
+      "plant_code": 54914,
+      "nameplate": 322.0,
+      "net_summer": 260.0,
+      "winter": 296.0,
+      "winter_over_nameplate": 0.9193
+    },
+    {
+      "plant_code": 50458,
+      "nameplate": 147.0,
+      "net_summer": 125.51,
+      "winter": 135.27,
+      "winter_over_nameplate": 0.9202
+    },
+    {
+      "plant_code": 54131,
+      "nameplate": 65.7,
+      "net_summer": 55.7,
+      "winter": 60.5,
+      "winter_over_nameplate": 0.9209
+    },
+    {
+      "plant_code": 10521,
+      "nameplate": 23.4,
+      "net_summer": 21.7,
+      "winter": 21.7,
+      "winter_over_nameplate": 0.9274
+    },
+    {
+      "plant_code": 54076,
+      "nameplate": 90.6,
+      "net_summer": 79.2,
+      "winter": 84.1,
+      "winter_over_nameplate": 0.9283
+    },
+    {
+      "plant_code": 56188,
+      "nameplate": 82.0,
+      "net_summer": 74.5,
+      "winter": 77.1,
+      "winter_over_nameplate": 0.9402
+    },
+    {
+      "plant_code": 7314,
+      "nameplate": 170.0,
+      "net_summer": 139.5,
+      "winter": 160.0,
+      "winter_over_nameplate": 0.9412
+    },
+    {
+      "plant_code": 57664,
+      "nameplate": 650.0,
+      "net_summer": 540.0,
+      "winter": 612.0,
+      "winter_over_nameplate": 0.9415
+    },
+    {
+      "plant_code": 54034,
+      "nameplate": 88.2,
+      "net_summer": 79.4,
+      "winter": 84.0,
+      "winter_over_nameplate": 0.9524
+    },
+    {
+      "plant_code": 56940,
+      "nameplate": 770.5,
+      "net_summer": 654.19,
+      "winter": 740.79,
+      "winter_over_nameplate": 0.9614
+    },
+    {
+      "plant_code": 10621,
+      "nameplate": 102.7,
+      "net_summer": 86.2,
+      "winter": 98.8,
+      "winter_over_nameplate": 0.962
+    },
+    {
+      "plant_code": 50368,
+      "nameplate": 37.5,
+      "net_summer": 30.9,
+      "winter": 36.5,
+      "winter_over_nameplate": 0.9733
+    },
+    {
+      "plant_code": 10725,
+      "nameplate": 446.0,
+      "net_summer": 353.0,
+      "winter": 435.7,
+      "winter_over_nameplate": 0.9769
+    },
+    {
+      "plant_code": 52168,
+      "nameplate": 41.8,
+      "net_summer": 40.6,
+      "winter": 41.2,
+      "winter_over_nameplate": 0.9856
+    },
+    {
+      "plant_code": 55405,
+      "nameplate": 1221.6,
+      "net_summer": 984.4,
+      "winter": 1213.2,
+      "winter_over_nameplate": 0.9931
+    },
+    {
+      "plant_code": 50744,
+      "nameplate": 64.2,
+      "net_summer": 54.8,
+      "winter": 64.1,
+      "winter_over_nameplate": 0.9984
+    },
+    {
+      "plant_code": 54808,
+      "nameplate": 11.0,
+      "net_summer": 11.0,
+      "winter": 11.0,
+      "winter_over_nameplate": 1.0
+    },
+    {
+      "plant_code": 50450,
+      "nameplate": 57.4,
+      "net_summer": 51.6,
+      "winter": 58.4,
+      "winter_over_nameplate": 1.0174
+    },
+    {
+      "plant_code": 50006,
+      "nameplate": 974.1,
+      "net_summer": 915.3,
+      "winter": 991.7,
+      "winter_over_nameplate": 1.0181
+    },
+    {
+      "plant_code": 2500,
+      "nameplate": 268.5,
+      "net_summer": 222.2,
+      "winter": 274.6,
+      "winter_over_nameplate": 1.0227
+    },
+    {
+      "plant_code": 56196,
+      "nameplate": 528.0,
+      "net_summer": 474.0,
+      "winter": 540.4,
+      "winter_over_nameplate": 1.0235
+    },
+    {
+      "plant_code": 54547,
+      "nameplate": 1157.8,
+      "net_summer": 996.4,
+      "winter": 1191.16,
+      "winter_over_nameplate": 1.0288
+    },
+    {
+      "plant_code": 56259,
+      "nameplate": 653.7,
+      "net_summer": 580.0,
+      "winter": 675.7,
+      "winter_over_nameplate": 1.0337
+    },
+    {
+      "plant_code": 2539,
+      "nameplate": 893.1,
+      "net_summer": 812.7,
+      "winter": 924.1,
+      "winter_over_nameplate": 1.0347
+    },
+    {
+      "plant_code": 54041,
+      "nameplate": 221.3,
+      "net_summer": 219.0,
+      "winter": 230.0,
+      "winter_over_nameplate": 1.0393
+    },
+    {
+      "plant_code": 54114,
+      "nameplate": 121.2,
+      "net_summer": 121.2,
+      "winter": 126.66,
+      "winter_over_nameplate": 1.045
+    },
+    {
+      "plant_code": 56234,
+      "nameplate": 348.9,
+      "net_summer": 317.3,
+      "winter": 365.2,
+      "winter_over_nameplate": 1.0467
+    },
+    {
+      "plant_code": 10620,
+      "nameplate": 62.9,
+      "net_summer": 61.1,
+      "winter": 66.5,
+      "winter_over_nameplate": 1.0572
+    },
+    {
+      "plant_code": 50449,
+      "nameplate": 56.6,
+      "net_summer": 52.3,
+      "winter": 59.9,
+      "winter_over_nameplate": 1.0583
+    },
+    {
+      "plant_code": 10190,
+      "nameplate": 72.0,
+      "net_summer": 67.0,
+      "winter": 77.3,
+      "winter_over_nameplate": 1.0736
+    },
+    {
+      "plant_code": 55375,
+      "nameplate": 595.0,
+      "net_summer": 558.0,
+      "winter": 644.0,
+      "winter_over_nameplate": 1.0824
+    }
+  ]
+}
