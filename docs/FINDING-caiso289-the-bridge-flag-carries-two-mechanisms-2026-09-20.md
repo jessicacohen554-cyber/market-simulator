@@ -25,6 +25,11 @@ marginal cost over 72 hours in 2023**, through a code path shared with MISO. The
 is now **inert in 2022 and 2023** and reaches only the two Thanksgiving weeks caiso-288's G-DUP
 guard deliberately refuses.
 
+> **Read §7 before acting on any of this.** §§1–6 are the finding as measured. The owner ruled
+> the same day, and two of the three rulings are already executed in this session: the flag's two
+> channels are **separated** (so the confound below is fixed — the underlying left-edge *defect*
+> is not, and is now its own cross-ISO object), and the `caiso279` bundle is **pruned**.
+
 ---
 
 ## 1. G-FILL re-run: the construction still wins, on 3,382 more withheld days
