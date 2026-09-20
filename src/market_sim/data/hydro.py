@@ -505,6 +505,178 @@ def load_hydro_cascade(
     )
 
 
+def load_hydro_pondage(
+    iso: str,
+    plant_codes: np.ndarray | list[int],
+    monthly_energy: np.ndarray,
+    hours: int = 8760,
+    ror_flat_rows: np.ndarray | None = None,
+) -> "HydroCascadeSpec | None":
+    """Return the ISO's per-plant FOREBAY-STORAGE rows, or ``None`` when none bind.
+
+    The LP object behind ``ScenarioConfig.hydro_pondage_bound`` (lane hydro-1).
+    It is a **link-free** :class:`~market_sim.model.lp.hydro_cascade.HydroCascadeSpec`
+    — one water-balance row per (plant, hour), no upstream terms — which the
+    existing cascade row builder assembles unchanged::
+
+        P_g(t) + Spill_g(t) + V_g(t) − V_g(t−1) = I_g(t),   0 ≤ V_g ≤ B_g
+
+    in MWh throughout (``η ≡ 1``, so the "flow" columns are energy and no water
+    unit or efficiency is assumed). ``I_g(t)`` is the plant's OWN measured
+    average inflow for the month, ``monthly_energy[g, m] / hours_in_month[m]``
+    — the same budget array the LP already carries, so no new energy datum
+    enters. ``B_g`` is the plant's measured usable storage in MWh from
+    ``data/raw/<iso>-hydro/<iso>_hydro_pondage.csv``
+    (``scripts/data/build_hydro_pondage.py``: NID volume × NID head, turbine
+    efficiency 1.0, a deliberate upper bound).
+
+    **THE DEFECT IT ADDRESSES.** The hydro budget row conserves energy over a
+    MONTH and bounds nothing inside it, so a plant may bank ~730 hours of water
+    at zero cost and land it on the peak — the dual of that row is one number
+    identical on day 1 and day 28, which makes any within-month price
+    difference pure arbitrage with no offsetting cost. nyiso-219 measured what
+    the fleet can physically hold: **72.01 % of NYISO's hydro MW cannot hold
+    one DAY of its own output** and 98.31 % cannot hold a month, with the
+    largest plant holding hours. This family is that measurement as a
+    constraint.
+
+    **THE INVARIANT** (rule 19 ``[R-ONE-MECH]``), inherited from the cascade
+    family and preserved exactly: **the row redistributes WHEN a plant's water
+    is turbined and never HOW MUCH per month.** Spill is unbounded above, so
+    every row is feasible at zero generation and no row can move a monthly
+    total; the EIA-923 monthly budget stays the sole energy-quantity mechanism.
+    It follows that this family imposes **no floor** — a plant may still sit at
+    0 MW and spill. The zero-hour defect is the other half of the family
+    (``hydro_ror_split`` / ``hydro_min_flow_floor``), and the two are
+    complementary rather than stacked: this one bounds concentration, those
+    bound the trough.
+
+    **Rows that cannot bind are not built.** A plant whose storage equals or
+    exceeds its largest monthly budget can absorb the whole month in its
+    forebay, so its row is mathematically redundant against the budget row
+    already present; it is dropped (and logged) rather than carried as 2 × T
+    dead columns. This is a redundancy proof, not a selection — the criterion
+    is arithmetic on the artifact and never looks at a result.
+
+    Args:
+        iso: ISO identifier, e.g. ``"NYISO"``.
+        plant_codes: EIA plant code of each hydro generator, in fleet order;
+            the returned ``coupled_gen_idx`` indexes INTO this sequence.
+        monthly_energy: ``(n_hydro, 12)`` MWh budget aligned to ``plant_codes``.
+        hours: Horizon length. Defaults to 8760.
+        ror_flat_rows: Optional ``(n_hydro,)`` boolean mask of plants the
+            run-of-river split has already fixed flat at their own water. Those
+            plants carry no pondage row — their dispatch is determined, so a
+            storage bound on them is redundant by construction (rule 19).
+
+    Returns:
+        A link-free :class:`HydroCascadeSpec` whose generator indices are local
+        to ``plant_codes``, or ``None`` when the ISO has no artifact or no
+        plant carries a binding bound — in which case the LP is unchanged.
+    """
+    from market_sim.config.paths import RAW_DATA_DIR
+    from market_sim.data.fleet import _hour_to_month_index
+    from market_sim.model.lp.hydro_cascade import HydroCascadeSpec
+
+    tag = str(iso).lower()
+    path = RAW_DATA_DIR / f"{tag}-hydro" / f"{tag}_hydro_pondage.csv"
+    if not path.exists():
+        logger.info(
+            "%s: no hydro pondage artifact at %s — hydro_pondage_bound is "
+            "INERT (the LP is unchanged)",
+            iso,
+            path,
+        )
+        return None
+    table = pd.read_csv(path)
+    storage = {
+        int(p): float(b)
+        for p, b in zip(table["plant_id"], table["storage_mwh"])
+        if float(b) > 0.0
+    }
+
+    codes = np.asarray(plant_codes, dtype=int)
+    energy = np.asarray(monthly_energy, dtype=float)
+    hpm = hours_per_month(hours).astype(float)
+    month_of_hour = np.asarray(_hour_to_month_index(hours), dtype=int)
+    flat = (
+        np.zeros(len(codes), dtype=bool)
+        if ror_flat_rows is None
+        else np.asarray(ror_flat_rows, dtype=bool)
+    )
+
+    # Per-plant hourly inflow in MWh: the plant's own monthly budget spread over
+    # the month's hours. Zero new data — this is the budget array the LP holds.
+    with np.errstate(divide="ignore", invalid="ignore"):
+        inflow_by_month = np.divide(
+            energy, hpm[np.newaxis, :], out=np.zeros_like(energy), where=hpm > 0.0
+        )  # (n_hydro, 12) MWh per hour
+
+    keep: list[int] = []
+    caps: list[float] = []
+    n_redundant = 0
+    n_unidentified = 0
+    for i, code in enumerate(codes):
+        if flat[i]:
+            continue
+        b = storage.get(int(code))
+        if b is None:
+            n_unidentified += 1
+            continue
+        if b >= energy[i].max():
+            # The forebay can hold the largest month entire, so the row adds
+            # nothing the monthly budget row does not already impose.
+            n_redundant += 1
+            continue
+        keep.append(i)
+        caps.append(b)
+    if not keep:
+        logger.info(
+            "%s: hydro pondage bound armed but INERT — %d plants have no "
+            "identified storage and %d hold a whole month (no binding row)",
+            iso,
+            n_unidentified,
+            n_redundant,
+        )
+        return None
+
+    idx = np.asarray(keep, dtype=int)
+    n_c = idx.size
+    side = inflow_by_month[idx][:, month_of_hour]  # (n_c, T) MWh/h
+    ones = np.ones((n_c, hours), dtype=float)
+    empty_l = np.zeros(0, dtype=int)
+    empty_lt = np.zeros((0, hours), dtype=float)
+    logger.info(
+        "%s: hydro pondage bound — %d/%d plants carry a storage row "
+        "(%.1f-%.1f MWh of forebay, %.2f-%.2f h of their own nameplate-hours); "
+        "%d hold a whole month (row redundant, dropped), %d have no identified "
+        "storage (left on the monthly budget), %d are RoR-flat already",
+        iso,
+        n_c,
+        len(codes),
+        min(caps),
+        max(caps),
+        min(caps) / max(side[np.argmin(caps)].max(), 1e-9),
+        max(caps) / max(side[np.argmax(caps)].max(), 1e-9),
+        n_redundant,
+        n_unidentified,
+        int(flat.sum()),
+    )
+    return HydroCascadeSpec(
+        coupled_gen_idx=idx,
+        eta_dn=ones,  # η ≡ 1: the balance is in MWh, no water unit assumed
+        pond_cap=np.asarray(caps, dtype=float),
+        side_inflow=side,
+        link_dn_local=empty_l,
+        link_up_gen_idx=empty_l,
+        link_up_local=empty_l,
+        link_tau=empty_l,
+        link_eta_up=empty_lt,
+        link_head_flow=empty_lt,
+        plant_codes=codes[idx],
+    )
+
+
 def resolve_hydro_year_multiplier(hydro_year: str) -> float:
     """Return the budget multiplier for a ``hydro_year`` scenario lever.
 

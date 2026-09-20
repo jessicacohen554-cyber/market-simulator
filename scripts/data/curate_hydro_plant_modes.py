@@ -19,13 +19,14 @@ Sources (both committed under ``data/raw``, immutable):
 Classification rules, in order (every rule categorical — no numeric
 threshold enters, so no free parameter; CLAUDE.md rules 13/24):
 
-1. ``eha_mode`` — EHA ``Mode`` present: Peaking / Intermediate Peaking ->
-   shapeable; Run-of-river / Canal/Conduit -> not shapeable. Hybrid national
-   labels (Run-of-river/Peaking, Run-of-river/Upstream Peaking,
-   Reregulating) -> not shapeable: EHA lists the plant's own hydraulic mode
-   first, and a reregulating/RoR powerhouse cannot chase price whatever its
-   upstream neighbours do. ``Unknown`` falls through to the completion.
-   (None of the hybrid labels occurs in CISO.)
+1. ``eha_mode`` — EHA ``Mode`` present: a label CONTAINING "Peaking" ->
+   shapeable (Peaking, Intermediate Peaking, and — since the hydro-1
+   HYBRID-LABEL REPAIR of 2026-09-20 — Run-of-river/Peaking and
+   Run-of-river/Upstream Peaking); Run-of-river, Canal/Conduit and
+   Reregulating -> not shapeable. ``Unknown`` falls through to the completion.
+   The repair is forced by nyiso-111's ex-ante measurement and is
+   BYTE-IDENTICAL FOR CAISO (zero hybrid-labelled CISO plants) — see
+   ``MODE_SHAPEABLE`` for the falsification and the per-ISO effect.
 2. ``hilarri_canal`` — Mode-NaN and any HILARRI ``prjct_type`` for the plant
    contains canal/conduit: not shapeable. A conduit plant generates on water
    delivered for another purpose (irrigation/municipal aqueduct flow) — the
@@ -53,9 +54,10 @@ Cresta). This skill check is against the EXTERNAL labels only — no model
 residual enters the rule choice, and per rule 21 the rule re-derives only
 when the EHA/HILARRI sources update.
 
-Scope: DEFAULT_ISOS registers CAISO only. The completion rule was reviewed
-against CAISO's labeled subset; another ISO's lane must run and review the
-same validation for its BA before adding itself.
+Scope: DEFAULT_ISOS registers CAISO, PJM and NYISO. Another ISO's lane must
+run and review the same validation for its BA before adding itself — the
+printed ``completion validation`` line IS that review, scored on the target
+BA's own labeled subset and never transferred (rule 25 ``[R-ISO-SCOPE]``).
 
 Usage:
   PYTHONPATH=.:src python scripts/data/curate_hydro_plant_modes.py [--iso CAISO]
@@ -80,25 +82,61 @@ from market_sim.data.fleet import ba_codes  # noqa: E402
 from scripts.lib import clean_io  # noqa: E402
 
 DATATYPE = "hydro-plant-modes"
-# CAISO only: the completion rule's validation (module docstring) was reviewed
-# on CAISO's labeled subset. Other ISOs opt in after their own review.
-DEFAULT_ISOS: tuple[str, ...] = ("CAISO",)
+# ISOs whose lane has run and reviewed the completion validation for its own
+# BA (module docstring). CAISO first (caiso-126); PJM and NYISO added by
+# hydro-1 (2026-09-20) alongside the HYBRID-LABEL REPAIR below.
+DEFAULT_ISOS: tuple[str, ...] = ("CAISO", "PJM", "NYISO")
 
 EHA_XLSX = "ornl-eha/ORNL_EHAHydroPlant_PublicFY2024.xlsx"
 HILARRI_CSV = "hilarri/HILARRI_v4.csv"
 
-# Rule 1: EHA Mode -> shapeable. Hybrids/reregulating are NOT shapeable (see
-# module docstring); "Unknown" is deliberately absent so it falls through to
-# the completion rules like NaN.
+# Rule 1: EHA Mode -> shapeable. "Unknown" is deliberately absent so it falls
+# through to the completion rules like NaN.
+#
+# HYBRID-LABEL REPAIR (hydro-1, 2026-09-20). The committed rule resolved every
+# hybrid label -- "Run-of-river/Peaking", "Run-of-river/Upstream Peaking",
+# "Reregulating" -- to NOT shapeable, on the argument that "EHA lists the
+# plant's own hydraulic mode first". nyiso-111 FALSIFIED that argument by
+# measurement on NYISO, ex ante and without a solve
+# (results/calibration/_nyiso111_hydro_ror_split_screen.json): under the
+# committed rule NYISO's shapeable set is 1,261.6 MW, while NYISO's OWN
+# measured fleet swings 1,195.0 / 1,291.6 / 1,593.1 MW on the mean diurnal
+# profile in 2023/24/25 and 1,496 / 1,495 / 1,929 MW on the MEDIAN day. A fleet
+# cannot swing more than its shapeable capacity, so the hybrid resolution is
+# wrong: those plants demonstrably shape. The repair applies the label as EHA
+# writes it -- a plant whose label CONTAINS "Peaking" peaks -- and the
+# run-of-river half of a hybrid label describes its INFLOW regime, which the
+# monthly energy budget already carries.
+#
+# Rule 25 [R-ISO-SCOPE]: no fitted number crosses an ISO boundary here. What
+# crosses is a categorical labelling rule, repaired against one ISO's measured
+# falsification and applied uniformly.
+#
+# BYTE-IDENTICAL FOR CAISO, verified from the source rather than asserted:
+# the EHA Operational sheet carries ZERO hybrid-labelled CISO plants
+# (196 CISO conventional-hydro rows, 0 hybrid, 0.0 MW), so CAISO's partition
+# is unchanged and its keeper cannot move. PJM moves 2 plants / 81.2 MW;
+# NYISO moves 23 plants / 2,639.8 MW, which is the falsification above.
 MODE_SHAPEABLE: dict[str, bool] = {
     "Peaking": True,
     "Intermediate Peaking": True,
-    "Run-of-river": False,
-    "Canal/Conduit": False,
-    "Run-of-river/Peaking": False,
-    "Run-of-river/Upstream Peaking": False,
+    "Run-of-river/Peaking": True,  # hybrid: peaks (nyiso-111 falsification)
+    "Run-of-river/Upstream Peaking": True,  # hybrid: peaks
+    "Run-of-river": False,  # unambiguous: output follows inflow
+    "Canal/Conduit": False,  # unambiguous: generates on delivered water
+    # UNCHANGED at False, and deliberately NOT swept up in the repair: a
+    # re-regulating powerhouse exists to ABSORB an upstream peaker's discharge
+    # and pass steady flow downstream. Its label carries no "Peaking", and
+    # smoothing is the opposite of shaping, so the committed resolution was
+    # right for this one. NYISO 3 plants / 17.0 MW, PJM 1 plant / 51.2 MW.
     "Reregulating": False,
 }
+
+# The repair as a one-line predicate, for the docstring and the tests: a plant
+# whose EHA label CONTAINS "Peaking" is shapeable; "Run-of-river",
+# "Canal/Conduit" and "Reregulating" are not. Kept as data above rather than a
+# regex so an unrecognised future label falls through to the completion rules
+# instead of being silently classified by a substring match.
 
 # Rule 3: Corps-district dam-owner markers (CESPK = Sacramento District etc.).
 CORPS_DAM_PATTERN = r"CESP|USACE|Corps"

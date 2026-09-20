@@ -2363,6 +2363,40 @@ HYDRO_BUDGET_PERIOD_HOURS_BY_PLANT: dict[str, dict[int, int]] = {
     },
 }
 
+# --- Plant -> NID impoundment cross-references HILARRI does not carry --------
+# Consumed by scripts/data/build_hydro_pondage.py, the derive behind
+# ScenarioConfig.hydro_pondage_bound. Each entry is a LINKAGE — "this
+# published impoundment belongs to this plant" — never a numeric parameter:
+# the volume and head come from NID itself, so no free parameter is added
+# (rules 5 [R-NO-MAGIC] / 21 [R-DOF]). Frozen under rule 23
+# [R-FROZEN-DERIVE]: an entry is added only when a linkage is established
+# from a published source, never because a residual moved.
+#
+# NYISO 2693 Robert Moses Niagara -> NY00689 (Lewiston Pump Generating Plant /
+#   Lewiston Reservoir Dike; NYPA; NID Max Storage 76,000 acre-ft; Hydraulic
+#   Height 119 ft; completed 1963, the same year as the Robert Moses
+#   powerhouse). HILARRI links plant 2693 only to NY16253, the 71-acre / 5,350
+#   acre-ft forebay at the powerhouse — which is why nyiso-219 measured
+#   Niagara's pondage at 0.244 h (about fifteen minutes) from a plant that
+#   supplies most of a fleet whose MEASURED mean diurnal swing is 1,195-1,593
+#   MW (nyiso-111). Those two facts cannot both describe the same machine, and
+#   the resolution is that the Niagara Project's shaping store is the LEWISTON
+#   RESERVOIR, not the forebay: NYPA lifts diverted Niagara River water into it
+#   overnight, when the 1950 treaty and the IJC diversion schedule allow more
+#   water to be taken than the load needs, and draws it back down on peak. The
+#   240 MW Lewiston pump-turbines (EIA plant 2692, prime mover PS, modelled
+#   separately as storage) cannot themselves account for the swing — the stored
+#   water returns to the forebay and is generated through the 2,429 MW Robert
+#   Moses conventional units, which is why the volume belongs to 2693. With it,
+#   Niagara holds ~3.8 h against a 730-hour LP budget period; without it,
+#   0.244 h, which the measured swing falsifies.
+#   Source: USACE National Inventory of Dams, dam NY00689 (national CSV export,
+#   vintage 2026-09-11). Cross-checked against the NYISO subset committed at
+#   data/raw/nid/, which carries NY16253 but not NY00689.
+HYDRO_PONDAGE_EXTRA_NID_BY_PLANT: dict[str, dict[int, tuple[str, ...]]] = {
+    "NYISO": {2693: ("NY00689",)},
+}
+
 # Hydro-year scenario lever: a multiplier on the normal-water-year hydro budget
 # selected by ScenarioConfig.hydro_year, the forecast wet/dry-water-year knob.
 # A wet or dry water year shifts annual conventional-hydro energy by roughly

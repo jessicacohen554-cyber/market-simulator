@@ -6075,7 +6075,14 @@ def run_year(
         # armed AND this ISO-year has a measured cascade artifact resolving
         # onto the fleet, so every other run's dispatch-kwargs key set -- and
         # therefore its LP -- is unchanged. Same shared resolver as runner.py.
-        hydro_cascade=resolve_hydro_cascade(iso, year, fleet, hydro_gen_idx, config),
+        hydro_cascade=resolve_hydro_cascade(
+            iso,
+            year,
+            fleet,
+            hydro_gen_idx,
+            config,
+            hydro_monthly_energy=hydro_monthly_energy,
+        ),
         oil_monthly_budget=oil_monthly_budget,
         oil_gen_idx=oil_budget_gen_idx,
         oil_month_index=oil_budget_month_index,
