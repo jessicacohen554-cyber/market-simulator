@@ -18050,7 +18050,78 @@ desk or this section. And no holdout-year (2019–2022) SPP solve exists in the
 queue at any rung: rule 22's `complete` marker is an explicit owner act and SPP
 holds none.
 
-### 5.8 SOCO — **KEEPER 2026-09-20 (lane SOCO-54, owner-ruled promotion): `2026-09-20-soco54-marginal-gas-basis` (bundle `results/calibration/soco54_marginal_gas`), all three registered years 2023–2025, solved ONE SHARD PER YEAR under rule 36 `[R-YEAR-ISOLATION]` and composed at zero LP — DETERMINATION IS BENCH-DEPENDENT: `PHYSICALLY-CALIBRATED (PRICE UNSCORED)` on the COMMITTED bench (C1 14/14), `NOT-YET` on a freshly rebuilt one (C1 13/14, 2024 `CC_REGULAR`). 2023 `CT_PEAKER` closes on BOTH.**
+### 5.8 SOCO — **KEEPER 2026-09-20 (lane SOCO-54, owner-ruled promotion): `2026-09-20-soco54-marginal-gas-basis` (bundle `results/calibration/soco54_marginal_gas`), all three registered years 2023–2025, solved ONE SHARD PER YEAR under rule 36 `[R-YEAR-ISOLATION]` and composed at zero LP — DETERMINATION `NOT-YET`, RE-ESTABLISHED BY LANE SOCO-55 (2026-09-20) ON A REBUILT BENCHMARK. The bench-dependence this header used to record is RESOLVED, not still open: SOCO's committed bench parts were STALE (`check_bench_freshness` RED for SOCO alone repo-wide), SOCO-55 rebuilt them at HEAD, and on the benchmark that reproduces from the builder at HEAD the keeper reads C1 **13/14** with 2024 `CC_REGULAR` at +7.505 TWh of ±7.47. 2023 `CT_PEAKER` closes on BOTH benches. No dispatch moved — every hourly sidecar is byte-identical to the day it was solved.**
+
+**LANE SOCO-55 (2026-09-20) — SOCO'S BENCHMARK WAS STALE AND THE KEEPER'S PUBLISHED HEADLINE WAS
+WRONG; AND THE YEAR-INVARIANT GAS BASIS IS REPAIRED, WHICH MAKES THE 2023 FIT WORSE AND IS KEPT
+ANYWAY.** Two results, the first of which is a DATA decision this desk owed rather than a lever.
+
+**(1) THE BENCH.** `check_bench_freshness` was **RED for SOCO ALONE** repo-wide — 44 parts checked,
+**3 STALE** (a hard `::error`) against 41 warning-level engine drift everywhere else. Rebuilt at HEAD
+(zero LP, 37 s) and the incumbent keeper re-scored on it: **2024 `CC_REGULAR` crosses +7.417 → +7.505
+TWh against a ±7.47 band**, on a **−0.088 TWh** change in that row's benchmark ACTUAL, so C1 reads
+**13/14** and SOCO's published headline moves off its ceiling. `PRECOMMIT-soco-54` §8 **P4
+pre-registered exactly this row at 81 % of its margin**. **No dispatch moved**: every keeper hourly
+sidecar is byte-identical to the day it was solved and its 297 KB run payload re-renders
+byte-identical — only the benchmark moved, and the ceiling reading had rested on a benchmark that
+could not be reproduced from the builder at HEAD. `check_bench_freshness` now reads **0 STALE**.
+**The keeper's per-plant layer, believed lost with the SOCO-54 shard branches, was recovered at ZERO
+LP**: the branch refs are gone but the objects are still on the remote, and `git fetch origin
+<40-char-sha>` retrieves them; composed, they reproduce the committed keeper's twelve hourly sidecars
+byte-for-byte and differ from its `meta.json` in exactly one key. Rule 33(d)'s "cost any leg recovery
+as a re-solve" is **too pessimistic** — try the SHA fetch first — though the retention window is
+undocumented, so rule 33(f) still stands.
+
+**(2) THE LEVER — `gas_basis_measured_by_year`, cell `O`.** `GAS_BASIS_DIFFERENTIAL["SOCO"] = 0.64`
+is the **2024** value applied to every year, and its own comment registers it as a *"forward-year /
+fallback value only"* — but SOCO-54 promoted that declared FALLBACK onto SOCO's **PRIMARY** backcast
+gas-pricing path, so 2023 carried **+0.15 $/MMBtu (≈ +$1.65/MWh)** on every SOCO gas unit. SOCO-54
+declared the imprecision against itself and ROUTED the repair; this lane took it, on the source-data
+citation (rule 23 `[R-FROZEN-DERIVE]`) and never on a residual. Re-derived at HEAD and reproducing
+SOCO-20's committed comment exactly: **+0.4931 / +0.6395 / +0.6540**, registered at the 2dp every
+other row carries — a convention fixed before the solve, whose declared consequence is that **2024 is
+byte-identical** (confirmed on all eight artifacts).
+
+**THE RESULT IS AGAINST THE LANE AND THE INPUT IS KEPT ANYWAY.** The 2023 residual gets **LARGER**:
+`CT_PEAKER` 10.668 → 11.413 TWh (actual 4.503; share +2.56 → **+2.87pp** of a ±3.00pp cap),
+`COAL_PRB` 21.722 → 20.443 (22.151), `CC_REGULAR` 112.126 → 112.312 (107.960); only `ST_GAS` improves,
+3.986 → 4.293 (10.442). Every row still PASSES, C1 stays 13/14 with the **same** single failing row,
+and the determination does not move — which `PRECOMMIT-soco-55` **P7 pre-registered verbatim**.
+**Rule 14 `[R-ACCURATE]` is the governing text**: a worse fit after an accurate input is a
+**discovered bug**, not a licence to revert to an estimate that was silently compensating.
+
+**WHAT IT LOCALIZES — the lane's real product.** **95 % of the 1.279 TWh of coal displacement is ONE
+PLANT**: 6002 James H Miller Jr, 15.838 → 14.626 TWh against a **15.701** actual (the keeper had it
+nearly exact at +0.137). About **half** the energy it sheds lands on merchant turbines already far
+above their actuals — 55409 Calhoun +0.115 (actual 0.026), 55061 Tenaska Georgia +0.111 (0.238),
+7709 Dahlberg +0.109 (0.243) — and the other half lands correctly on 2049 Jack Watson (+0.147 toward
+3.270, partially repairing SOCO-54's routed miss) and 728 Yates (+0.087 toward 2.239). **The named
+successor is the `CT_PEAKER` / `COAL_PRB` MERIT ORDER, not the gas basis.**
+
+**GOVERNANCE.** ZERO free parameters (`n_residual` unchanged at 1); ONE new default-off
+`ScenarioConfig` gate, registered in `_CACHE_KEY_OPTIONAL_FIELDS` at `"False"` in the same commit as
+the field so **no pre-existing cache key moves**; declared in `solve_surface_declared` at its live
+hash (SOCO 182 → 183 rows, `moved_rows == {}`); the **scalar is machine-verified untouched at 0.64**,
+because this lane GATES it rather than editing it. Rule 19 `[R-ONE-MECH]` at two grains before the
+solve: the six GAS classes move, every other class at max |Δ| **exactly 0.000000000000**, and 2024 is
+0.000000000000 at both. Rule 25 `[R-ISO-SCOPE]`: the measured table carries a **SOCO row and nothing
+else**, machine-verified, so every peer ISO and every forecast year falls through to the scalar
+unchanged. **All fourteen pre-registered predictions HELD**; the lane's declared #1 risk (2023
+`CT_PEAKER` crossing to FAIL) **materialised short of a flip** and is reported at full magnitude — its
+share headroom collapses from 0.44pp to **0.13pp**. C2/C4/C6/C8 PASS, C3a/b/c UNSCORABLE, 0 ledgered
+and 0 protective caveats, rule 17 `[R-FLOOR-WINDOW]` holds in all fifteen plant-years.
+
+**REPORTED, NOT TAKEN — the cross-ISO question SOCO-54 routed.** Measured here at zero LP with
+SOCO-54's own method (largest set of plants whose monthly delivered-price ratio series is flat at
+CV ≤ 0.001), OTHER ISOs **do** carry constant-multiplier contract families: **SPP 6/63, 50/60, 50/54**
+and **ERCOT 9/20, 10/23, 26/26** for 2023/2024/2025, against SOCO's 7/24, 8/25, 8/26; MISO 7/102,
+7/98, 6/100; PJM 6/26, 6/25, 6/23; NWPP 3/28, 4/29, 3/26; **NYISO and CAISO carry NONE** in any year;
+NEISO is void at 1 reporting plant. SPP's keeper arms `gas_plant_monthly_fuel_pricing`. Rules 25 /
+28(d): **no other ISO's cell is filled and no verdict transfers** — each lane owns its own receipts.
+Run `2026-09-20-soco55-peryear-gas-basis`, bundle `results/calibration/soco55_peryear_basis`;
+**PROMOTION IS THE OWNER'S AND IS OPEN** (rule 31 `[R-RETAIN]`); the keeper is unchanged and nothing
+was pruned. Evidence: `docs/handoffs/PRECOMMIT-soco-55-2026-09-20.md`,
+`docs/handoffs/FINDING-soco-55-2026-09-20.md`.
 
 **LANE SOCO-54 (2026-09-20) — THE CT/ST MISALLOCATION IS AN OFFER-STACK DEFECT, NOT ABSENT
 COMMITMENT PHYSICS, AND `gas_plant_monthly_pricing` OFF CLOSES SOCO'S ONLY C1 FAILURE.** Run
