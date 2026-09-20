@@ -45,10 +45,14 @@ the tree. NYISO still reads `CALIBRATED` on its ISO tier, with C3c the lone ledg
 >    **The market does not steepen within units, and the model already steepens 11× more than it
 >    does.** There is no conditional SHAPE object to transfer, which is why a shape-only form is
 >    blind to the object **by construction rather than by accident**.
-> 6. **WHAT THE MARKET ACTUALLY DOES IS DISPERSE.** Its level response is **+$19 at the median,
->    +$112.05 at p75 and +$231.59 at p90** — a fat right tail of units that reprice enormously. The
->    model moves nearly every unit by the same **~$40** (p75 +$44.36) and **none** by more. **The
->    object is the cross-unit DISPERSION of the conditional level response.**
+> 6. **WHAT THE MARKET ACTUALLY DOES IS DISPERSE, AND IT IS 8,774 MW OF IT.** Its level response is
+>    **+$19 at the median, +$112.05 at p75 and +$231.59 at p90**; **112 gens / 8,774 MW / 24.3 % of
+>    declared capacity reprice by more than $100/MWh** when the event arrives — **1.86× the object**.
+>    The model moves nearly every unit by the same **~$40** (p75 +$44.36) and **none** by more. Its
+>    MW-weighted mean move, $40 against the market's $54.66, is roughly right; **it is the
+>    distribution that is wrong**, and since the energy dual is set by the *marginal* unit it is the
+>    distribution that makes the price. **The object is the cross-unit DISPERSION of the conditional
+>    level response.**
 > 7. **NO ARM SHARD, DELIBERATELY** (rule 34 `[R-SHARD-PROMOTABLE]`). **Four CONTROL shards were
 >    spent and are a separate, independently owed deliverable** — see §6.
 
@@ -243,6 +247,33 @@ what G4 measured from the other side.
 +$112.05 at p75 and +$231.59 at p90**. The model's is **+$40 at the median and +$44.36 at p75** —
 nearly uniform, with no tail at all. The market's conditional response is concentrated in a minority
 of units that reprice by hundreds of dollars; the model moves everything by the same amount.
+
+### 5.3 THE DISPERSION, IN MW — because a percentile is not a reach argument
+
+A p90 says nothing about whether a mechanism could reach a 4,715.7 MW object. The same within-unit
+statistic, bucketed by how far each gen's **own curve bottom** moves, weighted by its declared UOL
+(328 gens present in both windows, 36,048 MW):
+
+| curve-bottom move | gens | MW | % of declared |
+|---|---:|---:|---:|
+| ≤ $1 (does not move) | 132 | 12,001 | 33.3 % |
+| $1–25 | 37 | 5,980 | 16.6 % |
+| $25–50 | 17 | 2,369 | 6.6 % |
+| $50–100 | 30 | 6,924 | 19.2 % |
+| **$100–200** | **70** | **7,543** | **20.9 %** |
+| **> $200** | **42** | **1,231** | **3.4 %** |
+
+**8,774 MW — 112 gens, 24.3 % of declared capacity — reprices by more than $100/MWh when the event
+arrives. That is 1.86× the object.** So the dispersion is not a thin tail: a mechanism addressing it
+has ample reach, which is what makes the successor worth a lane rather than a footnote.
+
+**And it says exactly what is wrong with the model.** The MW-weighted mean move across the whole
+market fleet is **$54.66/MWh** against the model's **~$40** — so the model's *average* conditional
+passthrough is roughly right. What it lacks is any mass above $100, where the market puts a quarter
+of its capacity. **The model has approximately the right mean and the wrong distribution** — and
+since the energy dual is set by the *marginal* unit, it is the upper part of that distribution, not
+its mean, that makes the price. A fleet that all moves ~$40 cannot clear far above its ordinary
+level however tight the hour; a fleet where 24 % of capacity moves $100–232 can.
 
 **So the object is the CROSS-UNIT DISPERSION of the conditional LEVEL response.** That is a
 different class of mechanism from anything NYISO has tested, and the repo already carries one for
