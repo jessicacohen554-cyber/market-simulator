@@ -3122,3 +3122,14 @@ results/calibration/nyiso247_fuelinv_2025/
 # docs/PRECOMMIT-caiso293-chp-steam-duty-window-2026-09-20.md — rule 29
 # [R-SCREEN] (c): the doc is the record, the JSON never reaches main).
 results/calibration/_caiso293_*.json
+# pjm-h14 per-year ARM legs (rule 32(d): the COMPOSITE is what is registered; the legs
+# stay out of main). Recovery by FULL sha (rule 33(d)) — PROVENANCE ONLY, not a durability
+# claim: these shard branches are cut when this PR merges, so cost any leg recovery as a
+# ~13-min RE-SOLVE, never a checkout (rule 33(f)(1)).
+#   git checkout 945a0a81fe8db92c102c8d7b085b64c1046fd51b -- results/calibration/pjm_h14_coalmustrun_2020
+#   git checkout 2e2c47c0197d35b8d7dd8c3e66bbc3a4cf63c7c4 -- results/calibration/pjm_h14_coalmustrun_2021
+#   git checkout 7e6919c56822d4e32da18cf2e03b9dc5f948d0c8 -- results/calibration/pjm_h14_coalmustrun_2022
+#   git checkout 89cfe8ea0abe95ab6389f9921c41e41140419836 -- results/calibration/pjm_h14_coalmustrun_2023
+#   git checkout d3a81a9c6cf86e51d74c0883985c6e84073373cf -- results/calibration/pjm_h14_coalmustrun_2024
+#   git checkout cb6bdb52b3d546a1e024572cbc4090551d65aac2 -- results/calibration/pjm_h14_coalmustrun_2025
+results/calibration/pjm_h14_coalmustrun_20*/
