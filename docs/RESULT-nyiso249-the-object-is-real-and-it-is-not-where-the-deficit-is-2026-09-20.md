@@ -274,3 +274,20 @@ register** — the keeper's dashboard entry is untouched and correct.
 **Shards launched: none. Bundles produced: none. LP spent: none.** Total cost: one fleet-cache
 rebuild (~4 min), one P-27 re-fetch (48 archives, **byte-identical** to the tracked record), and
 seven probes.
+
+---
+
+## 12. VERIFICATION AND GATE RECORD
+
+| check | result |
+|---|---|
+| **Derive integrity** — `build()` default path re-run to a scratch path | **BYTE-IDENTICAL** to the committed artifact, sha256 `1ad26b2f21e3654c5cb1f25f66c0715ebeff601299624b4dd85de05d95e2f1db` — the same digest nyiso-246 recorded. The gas-array parameterisation moves **zero committed bytes**. |
+| Derive self-test (T-1 recovery / T-2 level invariance / T-3 price taker) | PASS |
+| `check_mechanism_matrix.py --base origin/main` | **integrity OK**; keeper stamps and §5.x headers match every `keepers/<ISO>.json`; all three ratchets OK. The 112 anchor warnings are the **pre-existing shared-file drift from another lane** (rule 25 — not touched). |
+| `audit_keepers.py --iso NYISO` | **0 failures**, 1 warning (E11 lineage-not-computable, the expected post-prune state). **E13 does not fire** — nothing was registered. |
+| `check_registry_payload_parity.py` | **OK** — 14 runs checked, 50 bundle dirs swept, 0 unsynced. |
+| `ruff format --check` / `ruff check` on `scripts/data/derive_nyiso_offer_level_dispersion.py` | already formatted; all checks passed |
+| `pytest tests/scoring` | **21 failed / 1556 passed / 18 skipped** — the handoff's stated baseline (`test_audit_keepers_lineage`, `test_golden_manifest_provenance`), **unchanged and still unowned**. No `src/` file was touched this session. |
+| P-27 corpus re-fetch | 48 archives, `--verify` → **all byte-identical** to the tracked `SHA256SUMS.txt`. Upstream is stable; `--checksums` was **not** run (it rewrites the tracked record). |
+| Rule 33 `[R-SHARD-ARCHIVE]` (e) | **no shards launched**; `list_sessions` confirms zero child sessions carry this session's `parent_session_id`. Nothing to sweep, nothing left alive. |
+| Rule 31 `[R-RETAIN]` | **nothing deleted.** No bundle was produced, so no promotable artifact is at risk from this container's reclamation. |
