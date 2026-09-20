@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-20-nwpp-44-measured-take",
+  "label": "nwpp 44 measured take",
+  "date": "2026-09-20",
+  "shorthand": "nwpp-44-measured-take",
+  "definition": "NWPP-44. NWPP-42's frozen recipe plus EXACTLY TWO armed booleans, both over measured inputs with ZERO free parameters: coal_takeorpay_from_data (each coal plant's own measured EIA-923 Schedule-5 contracted share, in place of the uniform ASSUMED 100%-sunk first tranche) and coal_committed_takeorpay_regulated (the committed-band limb, scoped by the published EIA-860 Regulatory Status == RE). Scope fixed EX ANTE by owner ruling 2026-09-20 to Option B, ALL regulated coal, so coal_prb_committed_dispatchable is NOT armed \u2014 the harder option, chosen by ruling because selecting a rank carve-out on the residual is what rule 1 [R-STRUCT] forbids. Three year-isolated shards (rule 36) at ee276d87, composed, then regenerated via --reuse-solved at ZERO LP and verified byte-identical to the legs. GATES vs the NWPP-42 keeper: C1 PASS->FAIL, C2 PASS->PASS, C4 FAIL->FAIL, C6 PASS->PASS, C8 PASS->PASS; determination NOT-YET->NOT-YET. THE REGRESSION IS REAL AND PREDICTED: C1 fails on ONE row, 2023 CC_REGULAR -8.22 TWh / -2.3 pp (17/18 rows pass), named in PRECOMMIT \u00a76.2 before any solve as the row that absorbs coal's displacement. Promoted under rule 14 [R-ACCURATE] \u2014 a measured input that worsens the fit is a discovered bug elsewhere, not a reason to restore the estimate. WHAT IMPROVES: C4 coal r 0.570/0.559/0.524 -> 0.605/0.595/0.610 and NRMSE 0.292/0.387/0.408 -> 0.260/0.246/0.284 (NRMSE now inside the 0.30 gate in all three years; C4 still FAILS on the 0.70 r floor); coal volume error sum|err| 25.574 -> 10.866 TWh (-57%). The dispatch response is confined to the intended seam: 13 LP rows move, zero non-coal rows, and coal displaces gas one-for-one while hydro/nuclear/wind/solar are unchanged to 0.000 TWh. Pre-registered kill condition SURVIVED (2024 COAL_BIT +4.898 TWh, 12.381 against a 14.83 trigger and a 12.832 actual; all C1 coal rows in band). NWPP is PRICE UNSCORED (rubric v3.8): this run certifies no price level, shape or tail, and NOT-YET is a rubric determination, not a calibration.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NWPP",
+  "file": "frontend/data/backcast/runs/2026-09-20-nwpp-44-measured-take.js",
+  "bundle": "results/calibration/nwpp44_takeorpay_reg"
+}

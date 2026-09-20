@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-20T00:21:28",
+  "timestamp": "2026-09-20T19:41:41",
   "iso": "NWPP",
   "years": [
     2023,
@@ -13,7 +13,9 @@
   "commitment": false,
   "commitment_screen_coal": true,
   "gas_prices": {
-    "2023": 2.54
+    "2023": 2.54,
+    "2024": 2.19,
+    "2025": 3.52
   },
   "coal_lignite_mustrun": null,
   "coal_prb_mustrun": null,
@@ -337,19 +339,19 @@
     "unit_outages_e923": "../_shared/NWPP/unit_outages_e923-ffbc2ebbbef7.parquet",
     "unit_outages_layup": "../_shared/NWPP/unit_outages_layup-75441d347875.parquet"
   },
-  "git_sha": "b68673a9",
-  "basis_sha": "b68673a99926a554d0a9e165f5bd06b890572c02",
-  "highspy_version": "1.14.0",
+  "git_sha": "ee276d87",
+  "basis_sha": "ee276d873951f4a11b69d3350ac86692b642c006",
+  "highspy_version": "1.15.1",
   "environment": {
     "python_version": "3.11.15",
     "platform": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
     "packages": {
-      "highspy": "1.14.0",
+      "highspy": "1.15.1",
       "numpy": "2.4.6",
       "scipy": "1.17.1",
-      "pandas": "3.0.3",
-      "pyarrow": "24.0.0",
-      "pydantic": "2.13.4"
+      "pandas": "3.0.6",
+      "pyarrow": "25.0.1",
+      "pydantic": "2.13.5"
     },
     "cache_key_path_roots": [
       [
@@ -359,15 +361,40 @@
     ],
     "market_sim_data_root": ""
   },
-  "composed_from": {
-    "nwpp42_coalhr_2023": [
-      2023
-    ],
-    "nwpp42_coalhr_2024": [
-      2024
-    ],
-    "nwpp42_coalhr_2025": [
+  "reuse": {
+    "source_bundle": "results/calibration/nwpp44_takeorpay_span",
+    "requested_years": [
+      2023,
+      2024,
       2025
-    ]
+    ],
+    "reused_years": {
+      "2023": {
+        "passes": [
+          "P1"
+        ],
+        "cache_key": "a31147d74cf8620f",
+        "scenario_config_sha256": "9e456f399cb38e20"
+      },
+      "2024": {
+        "passes": [
+          "P1"
+        ],
+        "cache_key": "45f5b1dd60b98226",
+        "scenario_config_sha256": "302f9a13caaf39a4"
+      },
+      "2025": {
+        "passes": [
+          "P1"
+        ],
+        "cache_key": "a221b407f9724650",
+        "scenario_config_sha256": "ec762c25e7254c38"
+      }
+    },
+    "fresh_years": [],
+    "refusals": {},
+    "warning": "Reused years are byte-copies of a prior bundle's solve, NOT fresh evidence \u2014 keeper promotion still requires a full fresh solve of every year.",
+    "source_timestamp": "2026-09-20T06:19:17",
+    "source_git_sha": "ee276d87"
   }
 }

@@ -1,0 +1,185 @@
+{
+ "free_parameters": {
+  "schema": "dof-ledger/v1",
+  "seeded": "2026-07-04 S5 governance session \u2014 audit \u00a73 class-C table + W1d residual-identified/forecast-risk markers (docs/model-legitimacy-audit-2026-07.md; CLAUDE.md rule 20)",
+  "n_entries": 4,
+  "n_residual": 3,
+  "entries": [
+   {
+    "name": "offer_curve_by_group",
+    "where": "run_config.scenario_config.offer_curve_by_group",
+    "identification": "residual",
+    "lineage_solves": "unknown",
+    "value": {
+     "CC_REGULAR": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "CC_INTERMEDIATE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "CC_CHP": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "CT_CHP": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "CT_PEAKER": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "CT_INTERMEDIATE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "ST_GAS": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "ST_GAS_INTERMEDIATE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "COAL_LIGNITE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL_PRB": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL_BIT": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL_WC": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ]
+    },
+    "n_scalars": 72,
+    "source": "per-group HR-band multipliers \u2014 the rule-#1-sanctioned offer-curve tuning surface (audit C-8/C-11/C-13)",
+    "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "offer_curve_smoothing",
+    "where": "run_config.scenario_config.offer_curve_smoothing_*",
+    "identification": "residual",
+    "lineage_solves": "unknown",
+    "value": {
+     "offer_curve_smoothing_n": 6,
+     "offer_curve_smoothing_exp": 1.0
+    },
+    "n_scalars": 2,
+    "source": "econ-ramp shape of the offer curve (rule-#1 scope)",
+    "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "wefor_multiplier",
+    "where": "run_config.scenario_config.wefor_multiplier",
+    "identification": "residual",
+    "lineage_solves": "unknown",
+    "value": 0.7,
+    "source": "wind EFOR haircut (audit C-15) \u2014 the name admits residual identification; stated purpose is coal shoulder-month generation",
+    "root_cause": "audit C-15 open item: replace with a measured wind availability/curtailment input or delete; identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "coal_committed_takeorpay_regulated (regulated/self-committed coal committed-band take-or-pay pricing)",
+    "where": "fleet.campd_tranche_fuel_frac committed_takeorpay_regulated branch; scope = fleet.eia860_selfcommit_scope_plants (EIA-860 Regulatory Status RE UNION > 0.5 Schedule-4 cost-of-service ownership x utility Entity Type I/M/C/P/S/F); committed tranche passes (1 - contract_share) of measured EIA-923 Schedule-5 fuel, bounded below by any supply passthrough",
+    "identification": "measured-physical",
+    "lineage_solves": "unknown",
+    "n_scalars": 0,
+    "source": "MISO SOM Table 7 regulated-utility coal conduct split (regulated self-commit 56%/53% must-run 2023/2024 vs merchant 93%/74% offered economically; som-competitive-conduct/som_competitive_conduct.csv) + EIA-860 Regulatory Status RE set and Schedule-4 ownership x utility Entity Type (eia860_plant.parquet) + EIA-923 Schedule-5 take-or-pay shares (coal_takeorpay_MISO.csv) + CAMPD committed tranches (docs/handoffs/miso-coal-conduct-design-2026-07.md)",
+    "note": "replaces the rank-scoped coal_bit_committed_takeorpay (rule 19 reconcile \u2014 RE-BIT covered identically, NR-BIT merchants revert to the economic offers the SOM measures); re-derives only on a new EIA-860 vintage (RE UNION COS set), a new EIA-923 Schedule-5 vintage (shares), or a new SOM publication (conduct citation) \u2014 never a residual (rule 23)"
+   }
+  ]
+ },
+ "schema": "calibration-attestation/v1",
+ "lane": "NWPP-44",
+ "bundle": "nwpp44_takeorpay_reg",
+ "switches": {
+  "coal_takeorpay_from_data": {
+   "value": true,
+   "where": "ScenarioConfig.coal_takeorpay_from_data, set for NWPP in pipeline/backcast_config.py; consumed by data/fleet/assembly.campd_tranche_fuel_frac via takeorpay_by_plant",
+   "identification": "measured-physical",
+   "source": "data/raw/_processed-legacy/coal_takeorpay_NWPP.csv \u2014 each plant's own quantity-weighted EIA-923 Schedule-5 contracted share. 13 of 17 NWPP coal plants classify; the fleet is 94 % contract on tonnage (10 plants at 100 %), with North Valmy 0.5611, Hardin 0.7612 and TS Power 0.9047 the spot-heavy counter-examples."
+  },
+  "coal_committed_takeorpay_regulated": {
+   "value": true,
+   "where": "ScenarioConfig.coal_committed_takeorpay_regulated, set for NWPP in pipeline/backcast_config.py; scope from data/fleet/eia860.eia860_selfcommit_scope_plants()",
+   "identification": "measured-physical",
+   "source": "EIA-860 Regulatory Status == RE, read at the run's active vintage. Scoped by OWNERSHIP, never by coal rank (owner ruling 2026-09-20, Option B). Structural driver: COAL_BIT, the deficit class, is 81.7 % regulated (2,998 of 3,668 MW) against 44.3 % for PRB."
+  }
+ },
+ "governance": {
+  "levers_trace_to_measured_input": true,
+  "no_fit_to_price_residuals": true,
+  "no_pinning_to_actuals": true,
+  "outage_filter_exogenous_net_load": true,
+  "authorized_price_tuning": null,
+  "notes": "levers_trace_to_measured_input: both arms are booleans over published measured data \u2014 EIA-923 Schedule-5 tonnage and the EIA-860 Regulatory Status boolean. Neither is a magnitude and neither was swept. no_fit_to_price_residuals: NWPP is PRICE UNSCORED (rubric v3.8, owner card S2) \u2014 C3a/b/c are not scored in any year, this lane did not look at price, and no offer_curve_by_group band multiplier is touched, so the rule 1 [R-STRUCT] authorized-tuning channel is NOT used and authorized_price_tuning is declared NONE. no_pinning_to_actuals: no measured outcome enters the solve; the contract share and the regulatory boolean are INPUTS that regenerate for a forward year. outage_filter_exogenous_net_load: outage_source='historic', the CAMPD measured availability overlay, unchanged from NWPP-42."
+ },
+ "disclosures": {
+  "kill_condition_pre_registered_and_survived": "Pre-registered VERBATIM in PRECOMMIT-nwpp-44 \u00a77, carried unchanged from NWPP-43 \u00a76, and reported at full magnitude. INERT limb: 2024 COAL_BIT rising < 2.0 TWh would have made the verdict I. It rose +4.898 TWh (7.482 -> 12.381), so the limb did not fire. OVERSHOOT limb (a): 2024 COAL_BIT > 14.83 TWh would have made it R. It reads 12.381 against an actual 12.832 \u2014 0.451 UNDER, not over. OVERSHOOT limb (b): any C1 COAL row outside its band in any year would have made it R. All coal rows are inside; C1's single failing row is 2023 CC_REGULAR, a GAS row (see c1_regression_at_full_magnitude). The condition therefore does not fire in either direction. IT WAS NOT RELAXED: the PRECOMMIT's own zero-LP measurement said the overshoot limb was out of reach and the INERT limb was the live risk, and the condition was carried verbatim anyway rather than re-tuned once that was known.",
+  "c1_regression_at_full_magnitude": "THE COST OF THIS ARM, STATED AS A REGRESSION AND NOT SOFTENED. C1 fuel-mix goes PASS (keeper) -> FAIL (arm) on ONE row: 2023 CC_REGULAR, -8.22 TWh / -2.3 pp, volume out of band. C1 is LOAD-BEARING. The row is not a surprise: PRECOMMIT-nwpp-44 \u00a76.2 named CC_REGULAR before any solve as the row this arm could push out of band from the other side, because coal displacing gas is the mechanism's intended effect and CC_REGULAR is what absorbs it. 17 of 18 C1 rows pass. The arm is promoted, if it is promoted, WITH this regression on the record, under the owner's standing instruction that structural gains may justify gate regressions \u2014 not because the regression is small.",
+  "c4_the_lane_goal_improves_in_every_year": "C4 coal, the failure this lane was chartered to close, improves on BOTH metrics in ALL THREE years: r 0.570 -> 0.605 (2023), 0.559 -> 0.595 (2024), 0.524 -> 0.610 (2025); NRMSE 0.292 -> 0.260, 0.387 -> 0.246, 0.408 -> 0.284. NRMSE is now INSIDE the 0.30 gate in all three years, where the keeper cleared only 2023. C4 nonetheless still FAILS, because r remains below the 0.70 floor in every year. Reported as a FAIL, not as a near-miss.",
+  "coal_volume_error_falls_57_percent": "Coal total against actual (42.27 / 38.30 / 42.26 TWh): keeper -0.721 / -10.910 / -13.943, arm +2.028 / -1.587 / -7.251. Sum of absolute error 25.574 -> 10.866 TWh. 2024 and 2025 improve substantially; 2023 moves from 0.721 under to 2.028 OVER, which is the pre-registered cost.",
+  "dispatch_response_is_confined_to_the_intended_seam": "The offer delta moves 13 LP rows of 641-646 and ZERO non-coal rows, with |delta pmax| = 0.000000 MW, identical in all three years. In dispatch, coal displaces gas ONE-FOR-ONE (2025: coal +6.692 TWh against gas -6.694) while hydro, nuclear, wind, solar, biomass and OTHER are unchanged to 0.000 TWh and the system total is conserved to 0.003 TWh. The arm is TWO-SIDED and is not a subsidy: the spot-heavy plants' must-run band gets DEARER (North Valmy $4.50 -> $27.47/MWh on its measured 0.5611 share, leaving the money in 6,600 hours of 2024; TS Power $4.50 -> $8.99).",
+  "what_it_does_not_close": "Stated at the gate, not absorbed. This arm does NOT build the rising coal offer curve that NWPP-43 \u00a74.1 diagnosed as the C4 root cause. It ENLARGES the cheap block \u2014 _mustrun and _committed collapse to one price at every regulated contracted plant \u2014 and leaves the econlo/econhi/peak shelf where it was, within $0.51/MWh of itself. If C4 improves it is because coal's volume and its gas-price-independence improve, NOT because the stack started rising. That defect remains open and is not closed by this run. The miso-96 objection to discounting the committed band (a take-or-pay contract is an obligation over an accounting period, not a per-hour price) is ANSWERED in PRECOMMIT \u00a73 on the ground that this limb's driver is REGULATORY CONDUCT rather than contract accounting \u2014 but where miso-96 lands (the discounted committed band binds in all 8760 h with no window) is recorded there rather than claimed away.",
+  "solver_and_environment": "highspy 1.15.1 in the shard containers against 1.14.0 in the NWPP-42 keeper. Unpinnable from this lane and disclosed rather than glossed: the arm's effects are 1.5-6.7 TWh, far above any plausible solver-version noise, so it does not threaten the readings \u2014 but it is on the record. Separately, 2024's P1 ran 11,600 s against its own P0's 1,400 s (8.3x), in the year this arm flips the merit order hardest; that is a real observation about the warm-started P1 and is routed, not absorbed."
+ },
+ "exceptions": []
+}
