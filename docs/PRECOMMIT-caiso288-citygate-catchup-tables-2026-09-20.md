@@ -281,3 +281,88 @@ back-filled from the $16.55 Jan-5 print; they now carry their own measured print
 Jan-4 $18.37), which are **higher**. Updated in place with that provenance as a rule 23
 `[R-FROZEN-DERIVE]` source-coverage re-derivation — it is a 2023 constant and the residual under
 repair is a 2022 object, so it cannot be a fit either way.
+
+## 10. SHARD LEDGER — launched 2026-09-20, all pinned to `35adf93cfcde5020f484b0a1057c5ad9a9115434`
+
+Recorded here so recovery is by immutable SHA and session id, never by branch name (rule 33
+`[R-SHARD-ARCHIVE]` (d)).
+
+| arm | year | session | branch | replays | CSV sha256 (hard stop 2) |
+|---|--:|---|---|---|---|
+| gasfix | 2022 | `session_01S2ipYQrSSVgWRcqK17tbdA` | `claude/caiso-288-gasfix-2022` | `caiso287_instr_2022` | `301472621ed1f53d…` |
+| ctrl | 2022 | `session_019E9iMscoGuq8Yumqx3ho1g` | `claude/caiso-288-ctrl-2022` | `caiso287_instr_2022` | `925555422185ea1f…` |
+| gasfix | 2023 | `session_01LfUH99Zb2q4iTi3otyPLNu` | `claude/caiso-288-gasfix-2023` | `caiso287_mer_span` | `301472621ed1f53d…` |
+| ctrl | 2023 | `session_011TcvBAviY12FqtuoJzr37i` | `claude/caiso-288-ctrl-2023` | `caiso287_mer_span` | `925555422185ea1f…` |
+| gasfix | 2024 | `session_01GboWf4P9hsFyNCcbfhxeBN` | `claude/caiso-288-gasfix-2024` | `caiso287_mer_span` | `301472621ed1f53d…` |
+| ctrl | 2024 | `session_015BULUxuanZK1VEzY7pEPhJ` | `claude/caiso-288-ctrl-2024` | `caiso287_mer_span` | `925555422185ea1f…` |
+| gasfix | 2025 | `session_01TWg1SXar5RBXCYMmPFSS9P` | `claude/caiso-288-gasfix-2025` | `caiso287_mer_span` | `301472621ed1f53d…` |
+| ctrl | 2025 | `session_01CxCtguctnLb2ZQ2dJggiEm` | `claude/caiso-288-ctrl-2025` | `caiso287_mer_span` | `925555422185ea1f…` |
+
+The treatment arm carries the repaired CSV the pinned SHA commits (1,892 lines). The control
+arm restores the pre-repair CSV from `bcd83731` (1,807 lines) and commits **only** its bundle,
+leaving that restore unstaged — so the two arms differ in one data file and nothing else. Each
+shard pushes its **full** bundle including `dispatch/<year>_P1.parquet` (rule 34 (a)); the
+parent composes, scores, differences and registers at zero LP (rule 32 (a), (d)).
+
+## 11. INTERIM RESULT (2026-09-20 01:15) — 7 of 8 shards landed
+
+**G-CTRL PASSED, and it returned a stronger answer than the gate asked for.** The control arm
+reproduces the committed keeper **bit-identically on 2022** (94.074407 vs 94.074407, 0 price
+cells differing) and to ≤0.004 % on 2023–2025. **HEAD drift for a CAISO backcast is nil**, so
+the 2,062-line solve-path diff since `92b8e4db` is entirely inert — measured, not classified.
+Stated against this lane's own choice: rule 29 `[R-SCREEN]` (b) form 4 **would have been valid**,
+and the four control shards bought certainty that a G-DRIFT hunk audit would have bought free.
+
+**The A/B, 2023–2025** (C3a is PASS in every year, both arms; no gate flips):
+
+| year | control | treatment | Δ $/MWh | C3a control | C3a treatment |
+|---|--:|--:|--:|--:|--:|
+| 2023 | 55.8937 | 56.2261 | **+0.3324** | +3.182 % | +3.796 % |
+| 2024 | 37.5471 | 37.2006 | **−0.3465** | +8.361 % | +7.361 % |
+| 2025 | 37.0663 | 36.9754 | **−0.0909** | +7.688 % | +7.424 % |
+
+Each year's sign matches its own measured gas delta (§3: 2023 **+0.033**, 2024 −0.057, 2025
+−0.014 $/MMBtu). **2023 gets worse** — the §5 G-DIR gate firing exactly as pre-registered, for
+the pre-registered reason (Jan 1–4 2023 now carry their own higher measured prints instead of a
+back-fill). It is reported, not explained away.
+
+2022 — the year the lane exists for — is outstanding: its treatment shard hit a fleet-datatype
+cache rebuild and is still solving. Its control is in hand and is bit-identical to the keeper.
+
+## 12. A SECOND caiso-288 LANE FOUND THE SAME DEFECT, AND THE TWO REMEDIES ARE NOW SCORED
+
+Branch `claude/caiso-288-c3a-tuning-2jo6s1` (commit `aa4bb5b5`, 01:03 UTC) reaches the identical
+diagnosis independently — "EIA publishes no Natural Gas Weekly Update in Thanksgiving week or
+the two weeks spanning Christmas/New Year … `_flow_date_staircase` constant-extends the last
+print across it" — and remedies it with a new gated mechanism,
+`ScenarioConfig.caiso_citygate_blackout_bridge`, which **estimates** the blackout interior from
+the measured Henry Hub daily spot plus the basis at the two bracketing citygate prints.
+
+Its premise is that those days are unobserved: *"an extrapolation across a blackout, where no
+trade priced them."* **They were priced, and EIA published the prices** — on the catch-up page's
+extra live tables (§1). So the interior is recoverable, and the estimator is now **scorable
+against the truth**, which it was not before. `scripts/probes/caiso288_blackout_estimator_scoreboard.py`
+→ `results/calibration/_caiso288_blackout_scoreboard.json`, over all **14** recoverable
+blackouts / **85** days:
+
+| construction | MAE $/MMBtu | bias | implied CC marginal-cost bias |
+|---|--:|--:|--:|
+| keeper's constant-extension | 3.354 | +2.820 | **+$21.0/MWh** |
+| sibling lane's HH-basis bridge | 1.513 | +1.269 | **+$9.4/MWh** |
+| **caiso-288 recovered prints** | **0** | **0** | **$0** — they *are* the measurement |
+
+On the decisive Dec-2022 blackout: staircase MAE **29.96**, bridge **11.87**, recovered **0**.
+The bridge is a genuine improvement — it removes ~60 % of the error — but it keeps a systematic
+**high** bias precisely where the residual lives, and it is **beaten by the naive staircase in 4
+of the 14 gaps** (2021-11, 2023-12, 2024-06, 2025-12).
+
+**The two are complementary, and the order is not arbitrary: RECOVER FIRST, BRIDGE THE REMAINDER.**
+Days EIA published belong in the series as measured data (rule 14 `[R-ACCURATE]`); a bridge is
+the right tool only for what is left — the two G-DUP-refused weeks (§2) and any pre-2021 gap.
+Two consequences follow and are stated rather than left implicit:
+1. A bridge armed over the **unrepaired** series bridges 85 days that are not gaps at all.
+2. The sibling's holdout validation (33,216 withheld days) was measured on that unrepaired
+   series, so it needs re-running on the repaired one before its numbers carry.
+
+**This lane proposes no adjudication between them and arms nothing of the sibling's.** The
+scoreboard is evidence for whoever rules.
