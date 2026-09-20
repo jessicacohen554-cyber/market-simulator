@@ -50,6 +50,7 @@ if str(REPO) not in sys.path:
 CARRIED_REL = "results/calibration/miso263_coalcap_span/calibration_attestation.json"
 CARRIED_REFS = ("HEAD", "origin/main", "HEAD~1", "HEAD~2", "HEAD~3")
 
+
 def _carried_attestation() -> dict:
     """Return the last committed MISO attestation, from disk or from git."""
     src = REPO / CARRIED_REL

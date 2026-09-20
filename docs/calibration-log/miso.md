@@ -14677,3 +14677,99 @@ Records: `docs/RESULT-miso263-the-coal-ceiling-was-declared-but-never-enforced-2
 `scripts/probes/_miso263_coal_ceiling_phase0.py`.
 
 * Next number: **miso-264**.
+
+## miso-264 — 2026-09-20 — **THE GAS-OFFER MARGIN WAS IDENTIFIED AT A FROZEN 2023-2025 ANCHOR AND PRICED AGAINST IT IN EVERY YEAR — and the 2020 object is measured, by two independent instruments, NOT to be an offer object at all.** Keeper unchanged pending the owner's ruling; new run `2026-09-20-miso-264-anchor-vintage` registered
+
+**THE CHARTER'S QUESTION, ANSWERED AT ZERO PARENT LP.** What sets MISO's 2020 bulk price,
+class by class: **99.4 % of internal MWh match an offer row** at a $0.05 tolerance fixed
+before the first number, and **0.00 % of the unmatched lie outside the live stack** (every
+miss is an interior congestion blend). **CC econ owns the bottom half of the price
+distribution — 53.7 % of p00-p10, 33.7 % of p10-p50 — and coal econ the top half (53.8 % of
+p50-p90)**; the seam is 7.7 % of the cheapest decile and ~3 % overall, independently
+reproducing FINDING-miso262 §4's 12.6 % hour-count. The decile the model over-prices hardest
+(p10 $20.34 vs RT $14.58) is the one a GAS class sets 54 % of.
+
+**AND THE MISS IS IN NOBODY'S CURVE.** The implied-marginal-heat-rate gap against the same
+hours' RT is **+1.41 to +2.01 MMBtu/MWh in EVERY family, gas and coal alike**, across a
+five-fold spread in the non-fuel wedge ($1.83 CC committed to $6.83 CT econ). No class is
+the carrier, which re-derives FINDING-miso262 §6's refusal of the COAL_BIT band lever by a
+different instrument. **Disclosed against the reading:** the uniformity is partly arithmetic
+(Δ imHR = (mc − RT)/fuel with mc ≈ λ by construction); what survives that is the
+decomposition — a defect invariant to a five-fold difference in the wedge is not in the wedge.
+
+**THE DEFECT FOUND ON THE WAY.** `gas_offer_net_revenue_margin` adds
+`markup_hr × (anchor − fuel)` and its own identity says the offer reduces EXACTLY to the
+registered band multiplier at `fuel == anchor`. The keeper prices **all six years** at the
+frozen 2023-2025 window anchor **3.0492 $/MMBtu** while the solve year's own delivered-gas
+mean is **2.3294 / 4.0189 / 6.5881 / 3.0187 / 2.5580 / 3.8190** — **in 2022 the whole gas
+offer surface is identified 3.5389 $/MMBtu (54 %) BELOW the fuel its units burn**, the region
+the identity says nothing about. `gas_offer_margin_anchor_vintage` (pjm-169, BUILT,
+default-off, byte-identical off, cache-key registered at its declared False) evaluates the
+same frozen formula on the solve year. **On-queue by the matrix's own words** — MISO's cell
+read `U` with *"it is this lane's to adjudicate on its own market's data (rule 25)"*.
+**BASIS rule 14 [R-ACCURATE], never the residual**; the decision rule was fixed in the
+PRECOMMIT before any shard launched and says a worse gate does not retract the arm and a
+better gate does not validate it. **ZERO new fields, ZERO free parameters, DOF 43/2 carried,
+0 added**; rule 1's carve-out is NOT invoked (the `offer_curve_by_group` multipliers are
+byte-identical in every year).
+
+**THE PREDICTION WAS REGISTERED BEFORE THE SOLVE AND IS SCORED AGAINST.** Realised vs
+predicted load-weighted price move: **−0.403/−0.553 · +0.753/+1.251 · +3.446/+7.513 ·
+−0.031/−0.044 · −0.570/−0.839 · +1.047/+1.593** $/MWh — correct sign in all six, 46-73 % of
+first order, damped most where the offer move is largest. The per-row mc shift is constant in
+t to **5.7e-14** and touches ONLY gas tranches with `offer_markup_hr > 0`; coal, hydro,
+nuclear, storage, wind, solar and the seam bands are untouched in every year. Resolved
+anchors reproduce the pre-registered values to seven significant figures.
+
+**ONE PREDICTION WAS WRONG AND IS CORRECTED, NOT DROPPED.** The PRECOMMIT predicted C1 2022
+CC_REGULAR would DEEPEN to ~−13 TWh through the FINDING-miso262 seam transducer; it
+**IMPROVED +1.82 TWh**. The arm's mc shift is ~4.5× larger on CT than on CC (2022 cap-weighted
++18.976 CT econ / +94.722 CT peak vs +4.214 CC econ), so CT_PEAKER cedes −6.557 TWh to
+CC_REGULAR, CC_CHP and imports together. The seam took +3.382 TWh exactly as the transducer
+predicts; it was not the only thing moving.
+
+**GATES, same scorer, same COMMITTED bench, one session. TRAIN TIER 2023-2025 CALIBRATED on
+both**, C3c the lone ledgered caveat, full span NOT-YET on both with **identical grade
+summaries** (scored 8 / target 4 / ledgered 1 / fails 3). TOWARD: **C1 2022 CC_REGULAR −9.47 →
+PASS**, **C3a 2022 −14.6 % → PASS**, C3a 2020 +16.3 → +14.6 %. AWAY: **C1 2022 COAL_PRB +7.90 →
++8.13 TWh**, a new failure 0.13 TWh past a ±8.00 band on a cell already at 99 % of it; **C1
+2020 COAL_BIT DEEPENS −10.29 → −10.92**; C3b 2021 0.299 → 0.304. `audit_keepers` **E13 RED,
+which is the correct state for an undecided candidate**; E3 warning pre-existing; matrix /
+build_status / gate-a PASS; bench freshness 0 STALE; parity as charted (caiso279 + 13 spp51
+pre-existing, plus this lane's 6 gitignored per-year dirs); `pytest tests/scoring` **22/1547
+both ways with IDENTICAL failed NAME SETS, zero new**. `check_cache_key_registration` was
+**RED AT BASELINE** on two undeclared solve-surface names that are not MISO's.
+
+**THE BENCH MOVES AT REGISTRATION AND MY OWN PRECOMMIT WAS WRONG ABOUT IT.** Measured here:
+max |Δ actual class TWh| = **2.651100** (2024 CC_REGULAR actual 143.4737 → 146.1248; an oil →
+OTHER_FOSSIL reclass in every year) — **reproducing RESULT-miso263 §5.1 EXACTLY**. The
+PRECOMMIT said the magnitude "does not reproduce"; that rested on a hunk read of `e63f730a`
+which is a sound reason to doubt the ATTRIBUTION and no reason to doubt the MAGNITUDE I had
+not yet measured. Parts restored to origin/main, `_miso260_bench_parity` **0.000000**, both
+runs scored on the same bench. The CAUSE stays open and routed.
+
+**THE REAL FINDING, from the solve.** The arm improves 2020's price by −0.403 $/MWh **and
+deepens its coal deficit** (ST_GAS +1.23, CT_PEAKER +1.10, CC_REGULAR +0.89 against COAL_PRB
+−1.43, COAL_BIT −0.62, imports −0.66 TWh), because cheaper gas takes more off coal. **In 2020
+the price residual and the coal-volume residual demand OPPOSITE offer moves**, which can only
+be true if MISO's coal is held off by something that is NOT its offer. Same conclusion the
+zero-LP implied-HR table reached before any shard ran. **Two independent instruments, one
+verdict: the 2020 object is a QUANTITY / COMMITMENT object, not an offer-level one.** Named
+and routed; nothing here claims it.
+
+**PROMOTION OPEN AND I DO NOT HAVE A CONFIDENT RECOMMENDATION — saying so is the report.**
+Structurally right and gate-neutral: the defect is real and rule 14 says keep the accurate
+input; against it, the arm trades one failing C1 cell for another and deepens the charter's
+own named object. Six shards, one per year (rule 36), all archived; **every leg carries its
+FULL bundle incl. `dispatch/<y>_P1.parquet` at a full 40-char SHA in `.gitignore`, so a
+promotion costs ZERO re-solves**. Nothing deleted (rule 31).
+
+**Rule 28 duty:** `gas_offer_margin_anchor_vintage` **U → O** in MISO's shard with the
+evidence above — O because neither K nor R follows from a result that trades one C1 failure
+for another; a promotion makes it K, a decline makes it R.
+
+Records: `docs/RESULT-miso264-the-anchor-was-frozen-and-2020-is-not-an-offer-object-2026-09-20.md`,
+`docs/PRECOMMIT-miso264-gas-offer-margin-anchor-vintage-2026-09-20.md`, probes
+`scripts/probes/_miso264_bulk_price_setter_phase0.py`, `scripts/probes/_miso264_marginal_hr_2020.py`.
+
+* Next number: **miso-265**.

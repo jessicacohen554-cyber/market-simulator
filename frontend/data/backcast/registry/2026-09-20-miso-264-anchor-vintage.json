@@ -1,0 +1,18 @@
+{
+  "id": "2026-09-20-miso-264-anchor-vintage",
+  "label": "miso 264 anchor vintage",
+  "date": "2026-09-20",
+  "shorthand": "miso-264-anchor-vintage",
+  "definition": "miso-264 arm: gas_offer_margin_anchor_vintage (PRECOMMIT-miso264, rule 14)",
+  "years": [
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-09-20-miso-264-anchor-vintage.js",
+  "bundle": "results/calibration/miso264_anchor_span"
+}
