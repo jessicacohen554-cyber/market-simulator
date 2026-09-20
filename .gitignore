@@ -2862,3 +2862,15 @@ results/calibration/spp51_control_*/
 !results/calibration/spp51_syncfloor_rung/floors/
 !results/calibration/spp51_syncfloor_rung/floors/**
 !results/calibration/spp51_syncfloor_rung/hourly/**
+# NYISO masked generator bid data (MIS P-27) — the nyiso-243 availability
+# intake. 48 monthly archives 2022-2025, 172 MB; same corpus-conversion
+# posture as pjm-energy-offers / caiso-public-bids / miso-energy-offers
+# (docs/bloat-removal-plan-2026-08.md section 4). Public, unauthenticated,
+# no redistribution restriction; refetch with
+#   python3 scripts/data/fetch_nyiso_bid_data.py --years 2022 2023 2024 2025
+# Tracked record: README.md + genbids/SHA256SUMS.txt.
+data/raw/nyiso-bid-data/*
+!data/raw/nyiso-bid-data/README.md
+!data/raw/nyiso-bid-data/genbids/
+data/raw/nyiso-bid-data/genbids/*
+!data/raw/nyiso-bid-data/genbids/SHA256SUMS.txt
