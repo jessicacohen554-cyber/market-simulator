@@ -1,0 +1,641 @@
+{
+ "lane": "caiso-291",
+ "what": "ScenarioConfig fields the meta.json-driven fleet rebuild cannot reach",
+ "bundle": "results/calibration/xiso8_leftedge_span",
+ "rebuild_path": "scripts/legitimacy_diagnostics.py::_rebuild_fleet_arrays -> run_year(fleet_only=True), kwargs filtered from meta.json",
+ "counts": {
+  "scenario_config_fields": 860,
+  "unreachable": 569,
+  "unreachable_and_non_default": 64
+ },
+ "measured_consequence": {
+  "solve_fleet_rows": 1705,
+  "rebuilt_fleet_rows": 1859,
+  "source_of_truth": "results/calibration/caiso285_instr_2024/floors/2024_P1.npz (real solve-time fleet, recovered from 203124e310f7be4f806ad968d6cf5755f96bbc00)",
+  "cc_regular_rows_compared": 285,
+  "cc_regular_max_abs_pmax_delta_mw": 0.0,
+  "all_mapped_rows": 1641,
+  "rows_with_pmax_delta_gt_1e-6": 104,
+  "max_abs_pmax_delta_mw": 1803.325493,
+  "bridge_scope_rows_unmapped": 0
+ },
+ "non_default_and_unreachable": [
+  {
+   "field": "caiso_citygate_flow_date",
+   "recipe": true,
+   "default_used_by_rebuild": false,
+   "fleet_shaping": false
+  },
+  {
+   "field": "caiso_citygate_spot_level",
+   "recipe": true,
+   "default_used_by_rebuild": false,
+   "fleet_shaping": false
+  },
+  {
+   "field": "caiso_demand_clock_realign",
+   "recipe": true,
+   "default_used_by_rebuild": false,
+   "fleet_shaping": false
+  },
+  {
+   "field": "caiso_dsw_daytime_clean",
+   "recipe": true,
+   "default_used_by_rebuild": false,
+   "fleet_shaping": false
+  },
+  {
+   "field": "caiso_dsw_lateevening_clean",
+   "recipe": true,
+   "default_used_by_rebuild": false,
+   "fleet_shaping": false
+  },
+  {
+   "field": "caiso_dsw_overnight_clean",
+   "recipe": true,
+   "default_used_by_rebuild": false,
+   "fleet_shaping": false
+  },
+  {
+   "field": "caiso_dsw_surplus_clean",
+   "recipe": true,
+   "default_used_by_rebuild": false,
+   "fleet_shaping": false
+  },
+  {
+   "field": "caiso_firm_import_envelope_clip",
+   "recipe": true,
+   "default_used_by_rebuild": false,
+   "fleet_shaping": false
+  },
+  {
+   "field": "caiso_firm_import_selfsched_clip",
+   "recipe": true,
+   "default_used_by_rebuild": false,
+   "fleet_shaping": false
+  },
+  {
+   "field": "caiso_firm_import_selfschedule",
+   "recipe": true,
+   "default_used_by_rebuild": false,
+   "fleet_shaping": false
+  },
+  {
+   "field": "caiso_firm_import_shape",
+   "recipe": true,
+   "default_used_by_rebuild": false,
+   "fleet_shaping": false
+  },
+  {
+   "field": "caiso_offer_surface_netload_pcts",
+   "recipe": [
+    0.8,
+    0.9,
+    0.97
+   ],
+   "default_used_by_rebuild": [
+    0.8,
+    0.9,
+    0.97
+   ],
+   "fleet_shaping": false
+  },
+  {
+   "field": "caiso_ps_plant_params",
+   "recipe": true,
+   "default_used_by_rebuild": false,
+   "fleet_shaping": true
+  },
+  {
+   "field": "caiso_ra_bridge_startup_aware",
+   "recipe": true,
+   "default_used_by_rebuild": false,
+   "fleet_shaping": false
+  },
+  {
+   "field": "caiso_ra_startup_trajectory",
+   "recipe": true,
+   "default_used_by_rebuild": false,
+   "fleet_shaping": false
+  },
+  {
+   "field": "caiso_storage_shape_anchor",
+   "recipe": true,
+   "default_used_by_rebuild": false,
+   "fleet_shaping": false
+  },
+  {
+   "field": "caiso_supply_consistent_demand",
+   "recipe": true,
+   "default_used_by_rebuild": false,
+   "fleet_shaping": false
+  },
+  {
+   "field": "capacity_screen_peak_measured_hindcast",
+   "recipe": false,
+   "default_used_by_rebuild": true,
+   "fleet_shaping": true
+  },
+  {
+   "field": "cc_capacity_reconcile_path",
+   "recipe": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_CAISO.csv",
+   "default_used_by_rebuild": null,
+   "fleet_shaping": true
+  },
+  {
+   "field": "cc_committed_per_plant",
+   "recipe": true,
+   "default_used_by_rebuild": false,
+   "fleet_shaping": true
+  },
+  {
+   "field": "cc_duct_peaking",
+   "recipe": true,
+   "default_used_by_rebuild": false,
+   "fleet_shaping": true
+  },
+  {
+   "field": "cc_outage_derate_from_top",
+   "recipe": true,
+   "default_used_by_rebuild": false,
+   "fleet_shaping": true
+  },
+  {
+   "field": "cc_peaking_per_plant",
+   "recipe": true,
+   "default_used_by_rebuild": false,
+   "fleet_shaping": true
+  },
+  {
+   "field": "chp_steam_floor_p25",
+   "recipe": true,
+   "default_used_by_rebuild": false,
+   "fleet_shaping": true
+  },
+  {
+   "field": "chp_steam_following",
+   "recipe": true,
+   "default_used_by_rebuild": false,
+   "fleet_shaping": true
+  },
+  {
+   "field": "class_commitment_overrides",
+   "recipe": {},
+   "default_used_by_rebuild": null,
+   "fleet_shaping": false
+  },
+  {
+   "field": "correlated_forced_outage",
+   "recipe": false,
+   "default_used_by_rebuild": true,
+   "fleet_shaping": true
+  },
+  {
+   "field": "ct_drag_cap",
+   "recipe": 0.36,
+   "default_used_by_rebuild": 0.47,
+   "fleet_shaping": false
+  },
+  {
+   "field": "ct_drag_intercept",
+   "recipe": -0.1124,
+   "default_used_by_rebuild": -0.1427,
+   "fleet_shaping": false
+  },
+  {
+   "field": "ct_drag_slope_per_gw",
+   "recipe": 0.00901,
+   "default_used_by_rebuild": 0.00703,
+   "fleet_shaping": false
+  },
+  {
+   "field": "datacenter_load_path",
+   "recipe": "off",
+   "default_used_by_rebuild": "mid",
+   "fleet_shaping": false
+  },
+  {
+   "field": "dump_cost_full_offer_domain",
+   "recipe": true,
+   "default_used_by_rebuild": false,
+   "fleet_shaping": false
+  },
+  {
+   "field": "econ_split_by_group",
+   "recipe": {},
+   "default_used_by_rebuild": null,
+   "fleet_shaping": false
+  },
+  {
+   "field": "entry_lookahead_reprice",
+   "recipe": false,
+   "default_used_by_rebuild": true,
+   "fleet_shaping": false
+  },
+  {
+   "field": "ercot_offer_surface_netload_pcts",
+   "recipe": [
+    0.8,
+    0.9,
+    0.97
+   ],
+   "default_used_by_rebuild": [
+    0.8,
+    0.9,
+    0.97
+   ],
+   "fleet_shaping": false
+  },
+  {
+   "field": "federal_ces_eligible_fuels",
+   "recipe": [
+    "nuclear",
+    "wind",
+    "solar",
+    "hydro",
+    "geothermal",
+    "offshore_wind",
+    "gas_cc_ccs",
+    "hydrogen_ct",
+    "hydrogen_ccgt"
+   ],
+   "default_used_by_rebuild": null,
+   "fleet_shaping": false
+  },
+  {
+   "field": "gas_daily_shape",
+   "recipe": true,
+   "default_used_by_rebuild": false,
+   "fleet_shaping": false
+  },
+  {
+   "field": "gas_electric_power_monthly_level",
+   "recipe": true,
+   "default_used_by_rebuild": false,
+   "fleet_shaping": false
+  },
+  {
+   "field": "gas_flow_date_year_start_package",
+   "recipe": true,
+   "default_used_by_rebuild": false,
+   "fleet_shaping": false
+  },
+  {
+   "field": "gas_plant_monthly_fuel_pricing",
+   "recipe": true,
+   "default_used_by_rebuild": false,
+   "fleet_shaping": true
+  },
+  {
+   "field": "gas_price_override",
+   "recipe": 6.45,
+   "default_used_by_rebuild": null,
+   "fleet_shaping": false
+  },
+  {
+   "field": "gas_st_startup_spread",
+   "recipe": true,
+   "default_used_by_rebuild": false,
+   "fleet_shaping": false
+  },
+  {
+   "field": "gas_st_wefor_base_override",
+   "recipe": 0.1591,
+   "default_used_by_rebuild": null,
+   "fleet_shaping": false
+  },
+  {
+   "field": "historic_outage_overlay",
+   "recipe": false,
+   "default_used_by_rebuild": true,
+   "fleet_shaping": true
+  },
+  {
+   "field": "hydro_budget_nameplate_aware",
+   "recipe": true,
+   "default_used_by_rebuild": false,
+   "fleet_shaping": false
+  },
+  {
+   "field": "hydro_dispatch_envelope",
+   "recipe": true,
+   "default_used_by_rebuild": false,
+   "fleet_shaping": false
+  },
+  {
+   "field": "hydro_min_flow_floor",
+   "recipe": true,
+   "default_used_by_rebuild": false,
+   "fleet_shaping": false
+  },
+  {
+   "field": "measured_chp_heat_rates",
+   "recipe": true,
+   "default_used_by_rebuild": false,
+   "fleet_shaping": true
+  },
+  {
+   "field": "miso_offer_surface_netload_pcts",
+   "recipe": [
+    0.8,
+    0.9,
+    0.97
+   ],
+   "default_used_by_rebuild": [
+    0.8,
+    0.9,
+    0.97
+   ],
+   "fleet_shaping": false
+  },
+  {
+   "field": "miso_offer_surface_position_bins",
+   "recipe": [
+    0.0,
+    0.2,
+    0.4,
+    0.6,
+    0.8,
+    0.9,
+    1.0
+   ],
+   "default_used_by_rebuild": [
+    0.0,
+    0.2,
+    0.4,
+    0.6,
+    0.8,
+    0.9,
+    1.0
+   ],
+   "fleet_shaping": true
+  },
+  {
+   "field": "mode",
+   "recipe": "backcast",
+   "default_used_by_rebuild": "forecast",
+   "fleet_shaping": false
+  },
+  {
+   "field": "nearby_fuel_price_fallback",
+   "recipe": true,
+   "default_used_by_rebuild": false,
+   "fleet_shaping": false
+  },
+  {
+   "field": "neiso_offer_surface_netload_pcts",
+   "recipe": [
+    0.8,
+    0.9,
+    0.97
+   ],
+   "default_used_by_rebuild": [
+    0.8,
+    0.9,
+    0.97
+   ],
+   "fleet_shaping": false
+  },
+  {
+   "field": "offer_curve_by_group",
+   "recipe": {
+    "CC_CHP": {
+     "committed": 1.0,
+     "econ_high": 1.072,
+     "econ_low": 1.066,
+     "econ_low_share": 0.5,
+     "pct_peaking": 8.0,
+     "peak": 1.386,
+     "phys_committed": 1.028,
+     "phys_econ_high": 0.942,
+     "phys_econ_low": 0.88,
+     "phys_peak": 2.25
+    },
+    "CC_INTERMEDIATE": {
+     "committed": 0.92,
+     "econ_high": 1.08,
+     "econ_low": 0.95,
+     "econ_low_share": 0.5,
+     "pct_peaking": 8.0,
+     "peak": 2.25
+    },
+    "CC_REGULAR": {
+     "committed": 1.0,
+     "econ_high": 1.072,
+     "econ_low": 1.066,
+     "econ_low_share": 0.5,
+     "pct_peaking": 8.0,
+     "peak": 1.386,
+     "peak_ladder": [
+      [
+       0.2,
+       1.386
+      ],
+      [
+       0.2,
+       1.386
+      ],
+      [
+       0.2,
+       1.386
+      ],
+      [
+       0.2,
+       1.386
+      ],
+      [
+       0.2,
+       1.386
+      ]
+     ],
+     "phys_committed": 1.103,
+     "phys_econ_high": 0.968,
+     "phys_econ_low": 0.836,
+     "phys_peak": 2.25
+    },
+    "COAL": {
+     "committed": 0.9,
+     "econ_high": 1.1,
+     "econ_low": 0.95,
+     "econ_low_share": 0.55,
+     "peak": 1.45
+    },
+    "COAL_BIT": {
+     "committed": 0.9,
+     "econ_high": 1.1,
+     "econ_low": 0.95,
+     "econ_low_share": 0.55,
+     "peak": 1.45
+    },
+    "COAL_LIGNITE": {
+     "committed": 0.95,
+     "econ_high": 1.15,
+     "econ_low": 1.14,
+     "econ_low_share": 0.556,
+     "peak": 1.55
+    },
+    "COAL_PRB": {
+     "committed": 0.95,
+     "econ_high": 1.19,
+     "econ_low": 0.77,
+     "econ_low_share": 0.556,
+     "peak": 1.48
+    },
+    "COAL_WC": {
+     "committed": 0.85,
+     "econ_high": 1.02,
+     "econ_low": 0.9,
+     "econ_low_share": 0.55,
+     "peak": 1.2
+    },
+    "CT_CHP": {
+     "committed": 1.1,
+     "econ_high": 1.146,
+     "econ_low": 1.103,
+     "econ_low_share": 0.5,
+     "peak": 1.154,
+     "phys_committed": 1.073,
+     "phys_econ_high": 0.598,
+     "phys_econ_low": 0.594,
+     "phys_peak": 1.0
+    },
+    "CT_INTERMEDIATE": {
+     "committed": 1.0,
+     "econ_high": 1.2,
+     "econ_low": 1.0,
+     "econ_low_share": 0.5,
+     "pct_peaking": 5.0,
+     "peak": 3.0
+    },
+    "CT_PEAKER": {
+     "committed": 0.991,
+     "econ_high": 1.146,
+     "econ_low": 1.103,
+     "econ_low_share": 0.526,
+     "pct_peaking": 7.0,
+     "peak": 1.154,
+     "peak_ladder": [
+      [
+       0.2,
+       1.154
+      ],
+      [
+       0.2,
+       1.154
+      ],
+      [
+       0.2,
+       1.154
+      ],
+      [
+       0.2,
+       1.154
+      ],
+      [
+       0.2,
+       1.154
+      ]
+     ],
+     "phys_committed": 0.991,
+     "phys_econ_high": 0.71,
+     "phys_econ_low": 0.686,
+     "phys_peak": 1.0
+    },
+    "ST_GAS": {
+     "committed": 0.81,
+     "econ_high": 1.146,
+     "econ_low": 1.103,
+     "econ_low_share": 0.5,
+     "pct_peaking": 15.0,
+     "peak": 1.154,
+     "phys_committed": 1.683,
+     "phys_econ_high": 0.755,
+     "phys_econ_low": 0.725,
+     "phys_peak": 1.0
+    },
+    "ST_GAS_INTERMEDIATE": {
+     "committed": 1.0,
+     "econ_high": 1.15,
+     "econ_low": 1.0,
+     "econ_low_share": 0.5,
+     "pct_peaking": 6.0,
+     "peak": 2.2
+    }
+   },
+   "default_used_by_rebuild": null,
+   "fleet_shaping": false
+  },
+  {
+   "field": "offshore_wind_eligible_isos",
+   "recipe": [
+    "CAISO"
+   ],
+   "default_used_by_rebuild": null,
+   "fleet_shaping": false
+  },
+  {
+   "field": "pjm_offer_surface_netload_pcts",
+   "recipe": [
+    0.8,
+    0.9,
+    0.97
+   ],
+   "default_used_by_rebuild": [
+    0.8,
+    0.9,
+    0.97
+   ],
+   "fleet_shaping": false
+  },
+  {
+   "field": "plant_level_fleet",
+   "recipe": true,
+   "default_used_by_rebuild": false,
+   "fleet_shaping": true
+  },
+  {
+   "field": "rps_enabled",
+   "recipe": false,
+   "default_used_by_rebuild": true,
+   "fleet_shaping": false
+  },
+  {
+   "field": "scarcity_pricing_enabled",
+   "recipe": true,
+   "default_used_by_rebuild": false,
+   "fleet_shaping": false
+  },
+  {
+   "field": "storage_entry_availability_gate",
+   "recipe": false,
+   "default_used_by_rebuild": true,
+   "fleet_shaping": false
+  },
+  {
+   "field": "storage_entry_cost_normalized_rank",
+   "recipe": false,
+   "default_used_by_rebuild": true,
+   "fleet_shaping": false
+  },
+  {
+   "field": "weather_year",
+   "recipe": 2022,
+   "default_used_by_rebuild": 2024,
+   "fleet_shaping": false
+  },
+  {
+   "field": "wefor_residual",
+   "recipe": 0.0,
+   "default_used_by_rebuild": null,
+   "fleet_shaping": false
+  },
+  {
+   "field": "wefor_residual_groups",
+   "recipe": [
+    "CC_REGULAR"
+   ],
+   "default_used_by_rebuild": null,
+   "fleet_shaping": false
+  }
+ ]
+}
