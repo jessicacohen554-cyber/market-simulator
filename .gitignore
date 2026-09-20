@@ -3035,4 +3035,6 @@ results/calibration/spp66_netwin_*/
 # undocumented and unguaranteed, so rule 33(f) still stands — land what must
 # survive on `main` — but TRY the SHA fetch before costing a re-solve.
 results/calibration/soco55_keeper_fat/
+results/calibration/soco55_composer_validation/
+results/calibration/soco55_peryear_basis/
 results/calibration/soco55_arm_20[0-9][0-9]/
