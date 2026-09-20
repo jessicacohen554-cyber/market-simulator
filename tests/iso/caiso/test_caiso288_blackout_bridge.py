@@ -14,6 +14,20 @@ admissibility rests on:
      and reproduces those prints exactly at the endpoints.
   4. The gap threshold sits in the EMPTY region of the series' own trade-gap
      histogram, so any value in [6, 7] selects the identical set of gaps.
+
+caiso-289 (2026-09-20) added three more, after caiso-288 recovered the 85
+published prints the fetcher had been discarding
+(``docs/FINDING-caiso289-the-bridge-flag-carries-two-mechanisms-2026-09-20.md``):
+
+  5. The Dec-2022 blackout that MOTIVATED the mechanism is measured now, so the
+     bridge cannot touch it. This REPLACES the old
+     ``test_bridge_moves_december_2022_down_and_november_2022_up``, which
+     asserted a footprint the armed flag no longer has and failed on main.
+  6. Over the repaired series the bridge is INERT in 2022 and 2023 and reaches
+     only the two G-DUP-refused Thanksgiving weeks in 2024/2025.
+  7. The flag carries a SECOND, undeclared channel — the year-start left-edge
+     convention — which is its entire effect in 2022/2023. Pinned so it cannot
+     be mistaken for a bridge regression and silently "fixed".
 """
 
 from __future__ import annotations
@@ -116,16 +130,11 @@ def test_threshold_sits_in_an_empty_region_of_the_gap_histogram() -> None:
     assert sum(g >= 8 for g in gaps) > 0
 
 
-def test_bridge_moves_december_2022_down_and_november_2022_up() -> None:
-    """The mechanism is NOT one-directional — the signature of a construction
-    rather than a fit. Measured on the committed series."""
-    dated = _caiso_citygate_daily_dated(None)
-    if 2022 not in dated:
-        pytest.skip("no committed 2022 citygate prints")
+def _committed_hh() -> pd.Series:
     hh_dated = pytest.importorskip("market_sim.data.fuel.hubs")._henry_hub_daily_dated(
         None
     )
-    hh = pd.Series(
+    return pd.Series(
         {
             pd.Timestamp(year=y, month=m, day=d): v
             for y, months in hh_dated.items()
@@ -133,11 +142,103 @@ def test_bridge_moves_december_2022_down_and_november_2022_up() -> None:
             for d, v in dd.items()
         }
     ).sort_index()
+
+
+def _blackout_interior_days(dated: dict) -> set[pd.Timestamp]:
+    """Flow days strictly inside a >= threshold gap — the bridge's real reach."""
+    flow = pd.Series(
+        {
+            pd.Timestamp(year=y, month=m, day=d) + pd.Timedelta(days=1): v
+            for y, months in sorted(dated.items())
+            for m, dd in sorted(months.items())
+            for d, v in sorted(dd.items())
+        }
+    ).sort_index()
+    out: set[pd.Timestamp] = set()
+    for a, b in zip(flow.index, flow.index[1:]):
+        if (b - a).days >= _GAS_BLACKOUT_MIN_GAP_DAYS:
+            out.update(
+                pd.date_range(a + pd.Timedelta(days=1), b - pd.Timedelta(days=1))
+            )
+    return out
+
+
+def test_december_2022_is_measured_not_bridged() -> None:
+    """caiso-289: the Dec-2022 blackout that MOTIVATED this mechanism no longer
+    exists — caiso-288 recovered its prints, so the bridge cannot touch it.
+
+    This test replaces ``test_bridge_moves_december_2022_down_and_november_2022
+    _up``, which asserted a December fall of >$1/MMBtu and a November rise. Both
+    were measured on the UNREPAIRED series and both are now 0.0 by construction:
+    the days are measurements. Restoring that assertion would be re-pinning the
+    bridge to a footprint it does not have (see
+    docs/FINDING-caiso289-the-bridge-flag-carries-two-mechanisms-2026-09-20.md).
+    """
+    dated = _caiso_citygate_daily_dated(None)
+    if 2022 not in dated:
+        pytest.skip("no committed 2022 citygate prints")
     off = _flow_date_staircase(dated[2022], 2022)
-    on = _flow_date_staircase(dated[2022], 2022, dated, hh)
+    on = _flow_date_staircase(dated[2022], 2022, dated, _committed_hh())
     assert off is not None and on is not None
     idx = pd.date_range("2022-01-01", "2022-12-31", freq="D")
     idx = idx[~((idx.month == 2) & (idx.day == 29))]
     delta = pd.Series(on - off, index=idx)
-    assert delta[delta.index.month == 12].mean() < -1.0  # December falls
-    assert delta[delta.index.month == 11].mean() > +0.1  # November rises
+    # The prints EIA published across 2022-12-21 -> 2023-01-05 are committed, so
+    # November and December 2022 carry no blackout interior at all.
+    assert (delta[delta.index.month == 12] == 0.0).all()
+    assert (delta[delta.index.month == 11] == 0.0).all()
+
+
+def test_the_flag_also_switches_the_year_start_left_edge() -> None:
+    """caiso-289: arming the bridge changes a SECOND thing that is not the
+    bridge — the year-start left-edge convention — and in 2022/2023 that second
+    channel is its ENTIRE effect.
+
+    Unbridged, flow days before a year's first print ``.bfill()`` from that
+    year's first JANUARY trade; bridged, they ``.ffill()`` from the previous
+    DECEMBER's last trade, because the reindex spans all years. This test pins
+    the confound so it cannot be silently "fixed" as a bridge regression: the
+    days that move in 2022 and 2023 are OUTSIDE every blackout interior.
+    """
+    dated = _caiso_citygate_daily_dated(None)
+    hh = _committed_hh()
+    interior = _blackout_interior_days(dated)
+    for year in (2022, 2023):
+        if year not in dated:
+            pytest.skip(f"no committed {year} citygate prints")
+        off = _flow_date_staircase(dated[year], year)
+        on = _flow_date_staircase(dated[year], year, dated, hh)
+        assert off is not None and on is not None
+        idx = pd.date_range(f"{year}-01-01", f"{year}-12-31", freq="D")
+        idx = idx[~((idx.month == 2) & (idx.day == 29))]
+        moved = idx[~np.isclose(on - off, 0.0, atol=1e-12)]
+        assert len(moved), f"{year} should move at the left edge"
+        # Not one of them is a blackout interior day: this is not the bridge.
+        assert not (set(moved) & interior)
+        # And they are all at the very start of the year.
+        assert (moved.month == 1).all() and (moved.day <= 5).all()
+
+
+def test_bridge_is_inert_in_2022_and_2023_over_the_repaired_series() -> None:
+    """caiso-289 G-FOOT289: the mechanism's own reach in the scored years.
+
+    Post-repair the bridge touches ZERO days in 2022 and 2023, and only the two
+    G-DUP-refused Thanksgiving weeks in 2024/2025. Anything else means the
+    committed citygate series moved and the audit must be re-run.
+    """
+    dated = _caiso_citygate_daily_dated(None)
+    hh = _committed_hh()
+    interior = _blackout_interior_days(dated)
+    expected = {2022: 0, 2023: 0, 2024: 11, 2025: 11}
+    for year, n_expected in expected.items():
+        if year not in dated:
+            pytest.skip(f"no committed {year} citygate prints")
+        off = _flow_date_staircase(dated[year], year)
+        on = _flow_date_staircase(dated[year], year, dated, hh)
+        assert off is not None and on is not None
+        idx = pd.date_range(f"{year}-01-01", f"{year}-12-31", freq="D")
+        idx = idx[~((idx.month == 2) & (idx.day == 29))]
+        moved = idx[~np.isclose(on - off, 0.0, atol=1e-12)]
+        assert len(set(moved) & interior) == n_expected, (
+            f"{year}: bridge-interior days moved != {n_expected}"
+        )
