@@ -54,11 +54,53 @@ against the *committed keeper* instead of against a control solved the same way 
 would have charged all **+1.581 TWh** of that to C-1. Rule 29 `[R-SCREEN]` (b)'s form-4 test earned
 its control here in the most concrete way available.
 
-**CORRECTION, made the same day and before anyone relied on it.** An earlier draft of this section
-called the +1.581 TWh "HEAD drift", full stop. That attribution is **wrong, or at best incomplete**,
-and rule 36 `[R-YEAR-ISOLATION]` (owner ruling 2026-09-19, miso-262 — landed in `CLAUDE.md` while
-this lane's shards were solving) is why. The gap conflates **two** causes and this lane cannot
-separate them:
+**THE ATTRIBUTION, SETTLED BY MEASUREMENT — and I got here via a wrong turn, recorded rather than
+quietly tidied.** I first called this "HEAD drift", full stop. When rule 36 `[R-YEAR-ISOLATION]`
+landed mid-session I revised that to "code drift and the year-isolation artifact in unknown
+proportion, and this lane cannot separate them." **That revision was over-cautious: the lane
+CAN separate them, from bundles it already had.** Measuring the control against the committed
+keeper on every year at once:
+
+| year | keeper | control @ HEAD | drift | position in its solve span |
+|---|---|---|---|---|
+| 2020 | 38.810 | 40.391 | **+1.580** | 1st of TP |
+| 2021 | 24.273 | 25.510 | **+1.236** | 2nd of TP |
+| 2022 | 22.667 | 22.878 | **+0.211** | 3rd of TP |
+| 2023 | 30.870 | 30.862 | −0.008 | 1st of A |
+| 2024 | 22.277 | 22.277 | **−0.000** | 2nd of A |
+| 2025 | 24.379 | 24.379 | **−0.000** | 3rd of A |
+
+**Two signatures are being told apart, and they point opposite ways.**
+
+* **The year-isolation artifact would grow with position inside a span** — miso-262's own evidence
+  is that the solve "reproduced the FIRST year of each solve leg and diverged in the later ones."
+  Observed here: within `pjm_d4_4_TP` the drift **shrinks** with position (1.580 → 1.236 → 0.211),
+  and within `pjm_d4_4_A` it is ~0 at **every** position. **2024 and 2025 — the two most
+  warm-start-exposed years in the whole PJM keeper — are drift 0.000.** That is the opposite of the
+  artifact's signature, and it bounds the year-isolation effect for PJM at **≈0 on net export**.
+* **The offer-midcurve rebuild matches exactly.** PRECOMMIT §2.2 measured that LIVE hunk's own
+  per-year footprint *before any solve*: material on 2020/2021/2022 (CC_LIKE −11.0 / −7.6 / +11.9 %,
+  LONG_RUN −3.2 / −23.9 / −2.6 %) and negligible on 2023/2024/2025 (≤0.2 %, **2025 byte-identical**).
+  The realized drift is material on exactly those three years and **exactly 0.000 on 2024 and
+  2025** — including the byte-identical year the zero-LP analysis singled out.
+
+**So the +1.580 TWh on 2020 IS code drift**, and specifically the rebuilt
+`pjm_offer_midcurve_condbinned.json`. G-DRIFT form 4 is falsified per-year with numbers, and the
+rule-36 artifact is ruled out for PJM by measurement rather than by assumption. **Rule 36(f)'s
+warning still holds in general** — every ISO's keeper was CLI-solved with the knobs on — it simply
+does not bite PJM's interchange here, and PJM's lane now has the measurement to say so instead of
+inheriting MISO's 24 TWh figure as a worry.
+
+*(Retained for the record, since it was published and someone may have read it: the intermediate
+"cannot be separated" reading, and why it was wrong — I had the six control bundles in hand and had
+not yet differenced them against the keeper year-by-year. The lesson is the cheap one: measure the
+pattern before conceding an attribution is unrecoverable.)*
+
+**What the earlier reading got right and still stands:** this lane's own bundles are rule-36 clean
+by construction, for the reasons below, and the arm-vs-control delta in §1 is unaffected by any of
+this because both legs ran identically.
+
+The two causes it named were:
 
 * **(a) genuine code drift** since the keeper's `git_sha` `f09eddbe` — the four LIVE hunks the
   PRECOMMIT §2.2 audit names; and
@@ -79,15 +121,18 @@ ever executes, and (ii) **explicitly pins** `DETERMINISM_ENV = {"MARKET_SIM_WARM
 year** in its **own container**, which is rule 36(a) verbatim. These bundles were rule-36 compliant
 by construction, before rule 36 existed.
 
-**What follows for the promotion, and it cuts in this lane's favour — so it is stated carefully.**
-The arm-vs-control *difference* in §1 is unaffected either way: both legs ran identically, so the
-artifact cancels. What rule 36 changes is the standing of the **keeper** as a comparison basis — the
-committed 38.810 TWh is a warm-started span number and the 40.391 TWh control is an isolated one,
-and they are therefore **not like-for-like**. Any later lane quoting "+1.581 TWh of HEAD drift" from
-this document would be quoting a number with two fathers. The honest statement is: *the control
-differs from the committed keeper by +1.581 TWh, from a mixture of code drift and the year-isolation
-artifact, in unknown proportion.* Separating them would need a span re-solve at HEAD with the knobs
-on, which this lane has not spent and does not need.
+**What follows for the promotion.** The arm-vs-control *difference* in §1 is unaffected by any of
+this: both legs ran identically, so anything common to them cancels. And per the measurement above,
+the keeper **is** a usable comparison basis for PJM after all — the year-isolation artifact is ≈0 on
+its interchange, so the committed 38.810 and the isolated 40.391 differ by code drift, which is a
+known and attributed quantity rather than a confound. **A later lane may quote "+1.580 TWh on 2020,
+attributable to the rebuilt offer-midcurve table" from this document; it may not quote the earlier
+"unknown proportion" framing, which this section supersedes.**
+
+Two things this does *not* license. It does not generalise past PJM: rule 36(f)'s warning stands for
+every other ISO until each measures its own pattern the same way. And it does not clear the
+year-isolation artifact on quantities other than net export — this table is interchange only, and a
+class-level or price-level check could still find movement the `import` row integrates away.
 
 **One further consequence for rule 32 `[R-SHARD]`, recorded because this lane argued the other
 way.** Earlier in this session I told the owner that the per-year fan-out they instructed was a rule
