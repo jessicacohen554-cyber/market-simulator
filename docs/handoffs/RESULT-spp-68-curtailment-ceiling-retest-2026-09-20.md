@@ -255,6 +255,23 @@ not inside the registered composites must be costed as a RE-SOLVE (≈3-6 min pe
 | 2024 | `claude/spp68-ceiling-2024` | `84944f0d61854231420dd6c53b4e9fbfecdde30b` |
 | 2025 | `claude/spp68-ceiling-2025` | `5dd51f4f9590e7931a30d238b02e886e926a04e0` |
 
+**The rule-33(d) hazard reproduced, and it is why the column above says "provenance only".** Two
+shards force-pushed their branches AFTER the parent had already fetched and verified their bundles
+— their own final reports name `1ec595e` (2020) and `2ba2431d` (2021), not the SHAs above. The
+bytes this lane measured, composed, scored and registered are the ones at the SHAs in the table;
+the branches have since moved. This is exactly the nyiso-229 behaviour rule 33(d) records, it cost
+nothing here because the fetch-verify-then-archive order was followed, and it is one more reason a
+shard branch is never a recovery route.
+
+**All seven shards are ARCHIVED** (rule 33 `[R-SHARD-ARCHIVE]`), each after the parent had fetched,
+checked out and verified its bundle (config signature on all six/seven fields + `git ls-tree`
+returning 16 files). None was left alive. Solve cost, reported: **178-256 s per year**, peak
+5.36 GiB — every leg far inside rule 32(b)'s 20-minute ceiling.
+
+**No shard branch deletion was attempted** (rule 33(f)(5): the credential returns HTTP 403 on a ref
+delete). The seven `claude/spp68-ceiling-<year>` refs are the owner's to clear if they want them
+gone; the environment cuts them on its own when this lane's PR merges.
+
 **Everything a promotion needs is already on `main`** — the composites are registered, so a
 promotion is a keeper-shard edit plus `build_status.py`, with **zero re-solves**.
 
