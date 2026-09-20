@@ -2874,3 +2874,20 @@ data/raw/nyiso-bid-data/*
 !data/raw/nyiso-bid-data/genbids/
 data/raw/nyiso-bid-data/genbids/*
 !data/raw/nyiso-bid-data/genbids/SHA256SUMS.txt
+
+# soco-53g (2026-09-20): the three per-year ARM shard legs and the composed span.
+# Kept OUT of main (rule 32(d) [R-SHARD] — the parent registers the composite, not
+# the legs) and NEVER `rm`'d (rule 31 [R-RETAIN] — the owner's promotion ruling is
+# the only trigger). `.gitignore` is what discharges rule 29(c), not deletion.
+# The composed arm, results/calibration/soco53g_prb_own, IS committed.
+# Recover a leg by IMMUTABLE SHA (rule 33(d)) — the explicit fetch is REQUIRED,
+# the shard branches are auto-deleted:
+#   git fetch origin <sha> && git checkout <sha> -- results/calibration/soco53g_arm_<year>
+#   soco53g_arm_2023  bce798aba680a79f1e06320ed8382575e07c63f3
+#   soco53g_arm_2024  050c7baddb73b52b46f9b15086027eeba2b7a69f
+#   soco53g_arm_2025  52e999c71b6eb44699fb833672479a1083a5966e
+# Re-compose at zero LP with scripts/probes/soco53g_compose_span.py --expect-proxy true.
+# The KEEPER's own legs (soco53f_arm_<year>) recover the same way; their SHAs are
+# recorded further up this file by lane soco-53f.
+results/calibration/soco53g_arm_20[0-9][0-9]/
+results/calibration/soco53g_keeper_20[0-9][0-9]/
