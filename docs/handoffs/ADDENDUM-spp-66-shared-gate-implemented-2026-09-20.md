@@ -77,12 +77,47 @@ likewise passes `netload_shape=None` deliberately.
 - **Floors, gate OFF: cell-for-cell identical to clean `main`.** A `fleet_only` rebuild of SPP keeper
   13's own 2023 recipe differs from the committed `floors/2023_P1.npz` in **272 of 9,706,080** cells
   (max 357.679535 MW, +44 MWh of 46,556,188 = +0.0001 %) — and the **identical** 272 cells and
-  identical 357.679535 MW maximum appear on **clean `origin/main`**, so that drift is pre-existing
-  between the keeper's pin `f80de3e1` and HEAD and **none of it is this change**.
+  identical 357.679535 MW maximum appear on **clean `origin/main`**, so **none of it is this
+  change**.
+  **CORRECTION (§3a below): those 272 cells are NOT pin-to-pin code drift.** This bullet first
+  attributed them to "pre-existing drift between the keeper's pin `f80de3e1` and HEAD", and the
+  G-DRIFT measurement falsifies that: `min_gen` rebuilds **byte-identically at both pins**. They are
+  a *rebuild-versus-solve-time* artifact — what `fleet_only` reconstructs differs very slightly from
+  what the solve wrote — and they are present at `f80de3e1` too. The number is unchanged; the cause
+  named for it was wrong.
 - **Solve-surface fingerprint: nothing moved.** `solve_surface_register.py --diff origin/main` →
   *"307 -> 307 names; 0 value(s) moved, 0 added, 0 removed — NO VALUE MOVED."*
 - **Matrix CI gate passes**, including the `--base origin/main` diff gate that checks new-field
   registration.
+
+### 3a. G-DRIFT, by measurement rather than by hunk audit (rule 29(b))
+
+Before spending seven shards the lane owed proof that keeper 13's committed bundle is still a valid
+control at the arm's pin — `origin/main` had moved **128 files** past the keeper's `f80de3e1`, and
+rule 29(b) is explicit that *"a 'files changed, therefore void' heuristic with no audit behind it is
+not a reason to spend an LP."*
+
+Rather than classify hunks, the lane **measured the thing the hunks could affect**: it rebuilt keeper
+13's own 2023 recipe (`run_year(fleet_only=True)`, zero LP) at **both** pins — `f80de3e1` and the arm
+pin `17a8a14c` — and diffed every LP input array.
+
+| array | shape | result |
+|---|---|---|
+| `mc_base` | 1108 × 8760 | **INERT** (0 cells) |
+| `availability` | 1108 × 8760 | **INERT** |
+| `min_gen` | 1108 × 8760 | **INERT** |
+| `demand` | 2 × 8760 | **INERT** |
+| `pmax` / `pmin` / `heat_rate` / `vom` / `emission_rate` | 1108 | **INERT** |
+| `unit_ids` / `plant_group` | 1108 | identical |
+
+**Every LP input is byte-identical across the two pins. Form 4 is valid, the keeper's committed
+bundle IS the control, and NO control solve is earned** — so each shard solves the arm only, one leg,
+and the seven shards cost seven year-solves rather than fourteen. This is the sense in which rule
+29(b) calls G-DRIFT *stronger* than a control solve: a control solve would have shown two numbers
+differing, whereas this shows that **nothing the LP reads moved at all**.
+
+It also supplies the correction folded into §3 above: since `min_gen` is inert pin-to-pin, the 272
+differing floor cells cannot be code drift.
 
 **A pre-existing red on `main`, reported and NOT absorbed:**
 `tests/regression/test_persisted_identity.py::test_solve_surface_fingerprint_is_pinned` fails for
@@ -117,9 +152,29 @@ there — PJM is called out as the only other ISO whose committed bundles arm
 drifted from the `scenarios.py` insertion were repaired with the tool's own
 `--fix-anchors` (digits only).
 
-## 6. What is NOT done, and what it would cost
+## 6. The seven shards — LAUNCHED
 
-**No solve.** Arming for SPP is
+**LAUNCHED 2026-09-20** — seven shards, one per year, all pinned to
+`17a8a14c7e10fe6f9e0db7101a587c54d4fc11a8` (the arm tree, NOT `origin/main`'s tip, which had already
+moved 128 files past it and would have handed the shards a tree nobody tested). Each solves the
+**arm only** — §3a's G-DRIFT result is what makes that legitimate. The two config families are
+solved from their **own** bundles, which is trap (n): `mid_vintage_exit_carry` is `False` on the
+span and `True` on the rung, and each shard hard-stops on its own expected value.
+
+| year | family | bundle replayed | out-dir | branch | session |
+|---|---|---|---|---|---|
+| 2019 | rung | spp51_syncfloor_rung | spp66_netwin_2019 | claude/spp66-netwin-2019 | session_019zQYcECx8e4DAGocKV77iQ |
+| 2020 | rung | spp51_syncfloor_rung | spp66_netwin_2020 | claude/spp66-netwin-2020 | session_011X4U3prhUtJuEmm4bCSGFc |
+| 2021 | rung | spp51_syncfloor_rung | spp66_netwin_2021 | claude/spp66-netwin-2021 | session_01BMiDnTEUcFdDWdBG6cr62S |
+| 2022 | rung | spp51_syncfloor_rung | spp66_netwin_2022 | claude/spp66-netwin-2022 | session_017kpRFgqqEBFzFoSbUWECWd |
+| 2023 | span | spp51_syncfloor_span | spp66_netwin_2023 | claude/spp66-netwin-2023 | session_01AYLq7hu4ciZVKthctkxKv8 |
+| 2024 | span | spp51_syncfloor_span | spp66_netwin_2024 | claude/spp66-netwin-2024 | session_01BuruTx4CAJL7KzAAbZkPsd |
+| 2025 | span | spp51_syncfloor_span | spp66_netwin_2025 | claude/spp66-netwin-2025 | session_01UJAgwAKPbcaiwUV8bv97dr |
+
+They compose **separately** — span and rung — and the rung is stamped to the keeper only after the
+keeper's payload renders (rule 30 `[R-TOUCHPOINT-FOLD]` (a), trap (i)).
+
+**Previous arming instructions, retained for reference.** Arming for SPP is
 `replay_keeper.py <keeper bundle> --years <y> --out-dir … --set commitment_floor_window_netload=true`
 (the generic `prb_overrides` channel; a `run_year` kwarg also exists for `fleet_only` rebuilds).
 Execution shape is unchanged from PRECOMMIT §5: **seven shards, one per year 2019-2025** (rules 32 /
