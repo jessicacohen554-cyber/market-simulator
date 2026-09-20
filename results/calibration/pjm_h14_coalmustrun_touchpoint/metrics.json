@@ -1,0 +1,127 @@
+{
+  "run_id": "2026-09-20-pjm-h14-coalmustrun-touchpoint",
+  "iso": "PJM",
+  "label": "pjm h14 coalmustrun touchpoint",
+  "target_years": [
+    2020,
+    2021,
+    2022
+  ],
+  "scorable_years": [
+    2020,
+    2021,
+    2022
+  ],
+  "data_blocked_years": [],
+  "price_reference_blocked_years": [],
+  "rubric_version": 3.8,
+  "determination": "NOT-YET",
+  "reasons": [
+    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, price_mean, price_shape"
+  ],
+  "notes": [],
+  "criteria": {
+    "fuelmix": {
+      "label": "C1 fuel-mix by class (grid-delivered)",
+      "tier": "load-bearing",
+      "status": "FAIL"
+    },
+    "sysvol": {
+      "label": "C2 system volume (gas/coal families)",
+      "tier": "load-bearing",
+      "status": "PASS"
+    },
+    "price_mean": {
+      "label": "C3a mean LMP",
+      "tier": "load-bearing",
+      "status": "FAIL"
+    },
+    "price_shape": {
+      "label": "C3b price duration/shape",
+      "tier": "load-bearing",
+      "status": "FAIL"
+    },
+    "price_tail": {
+      "label": "C3c price tail / scarcity (RT hourly)",
+      "tier": "supporting",
+      "status": "CAVEAT",
+      "caveat_kind": "ledgered"
+    },
+    "dispatch_corr": {
+      "label": "C4 fleet hourly dispatch correlation",
+      "tier": "supporting",
+      "status": "PASS"
+    },
+    "governance": {
+      "label": "C6 governance gate",
+      "tier": "protective",
+      "status": "PASS"
+    },
+    "forced_share": {
+      "label": "C8 forced-energy share (D-2)",
+      "tier": "protective",
+      "status": "SKIPPED"
+    }
+  },
+  "caveats": {
+    "protective": [],
+    "ledgered": [
+      "C3c price tail / scarcity (RT hourly)"
+    ],
+    "commercial_band": [],
+    "budget": {
+      "protective_max": 0,
+      "ledgered_max": 1
+    }
+  },
+  "grade_summary": {
+    "scored": 7,
+    "target_grade": 3,
+    "commercial_grade": 0,
+    "ledgered": 1,
+    "fails": 3
+  },
+  "reported": {
+    "co2": {
+      "label": "C5a CO2 vs eGRID (REPORTED-ONLY, v2.9 \u2014 see the CRITERIA note)",
+      "years": {
+        "2020": "+8.7%",
+        "2021": "+7.9%",
+        "2022": "+5.8%"
+      }
+    },
+    "diurnal_amplitude": {
+      "label": "D-A diurnal price amplitude, hour-of-day (REPORTED-ONLY, BAND-FREE, v3.5 \u2014 no external comparable exists to band it; see the note)",
+      "years": {
+        "2020": "amplitude 91.4% of measured (hod range $11.31 vs $12.37); peak h15 vs h17, trough h02 vs h02 \u2014 phase OFF; hod r +0.849; 365 complete days",
+        "2021": "amplitude 41.8% of measured (hod range $10.63 vs $25.42); peak h16 vs h17, trough h02 vs h02 \u2014 phase OK; hod r +0.950; 365 complete days",
+        "2022": "amplitude 37.2% of measured (hod range $17.24 vs $46.40); peak h16 vs h17, trough h02 vs h01 \u2014 phase OK; hod r +0.967; 365 complete days"
+      }
+    }
+  },
+  "free_class_score": {
+    "iso": "PJM",
+    "pinned_classes": [
+      "CC_CHP",
+      "CT_CHP",
+      "ST_CHP",
+      "hydro",
+      "nuclear",
+      "solar",
+      "wind"
+    ],
+    "excluded_from_free": [
+      "CC_CHP",
+      "ST_CHP"
+    ],
+    "all": {
+      "pass": 24,
+      "total": 28
+    },
+    "free": {
+      "pass": 18,
+      "total": 22
+    },
+    "headline": "C1 all 24/28 \u00b7 free 18/22"
+  }
+}

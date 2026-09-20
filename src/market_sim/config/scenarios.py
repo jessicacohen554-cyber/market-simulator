@@ -11469,6 +11469,54 @@ class ScenarioConfig:
     # (Thread D, layer 2) and docs/multi-iso/pjm-reserve-ordc.md.
     coal_sync_srmc_tranche: bool = False
 
+    # COAL MUST-RUN REQUIRES A MEASURED ROW (pjm-h14). GATED, default False, so
+    # every committed keeper in every ISO is byte-identical unarmed
+    # (rule 25 [R-ISO-SCOPE]).
+    #
+    # THE DEFECT. A coal plant's must-run tranche and its synchronization
+    # window both come from the ISO's CAMPD thermal-tranche artifact
+    # (``data/raw/_processed-legacy/thermal_tranches_<ISO>.csv``). A plant the
+    # artifact does not carry falls through TWO independent unmeasured
+    # defaults, and they COMPOUND:
+    #   * ``campd_bins._DEFAULT_TRANCHE_PCT_BY_GROUP["COAL"]`` gives it a
+    #     45 %-of-nameplate must-run tranche — while that constant's own
+    #     comment describes its population as "rarely-online units with no
+    #     reliable observed floor";
+    #   * ``assembly.py``'s ``coal_sync_online_frac(...).get(code, 1.0)`` then
+    #     holds that tranche in ALL 8760 hours, because the online%-scaled
+    #     window (``arrays.py::_compose_min_gen_floors``, the rule-17 window
+    #     that correctly relaxes a measured cycler's floor to its top-load
+    #     hours) ALSO defaults to force-all when no measured share exists.
+    # So the plants with the LEAST evidence carry the STRONGEST and WIDEST
+    # floor. That is rule 17 [R-FLOOR-WINDOW] failed on all three clauses: no
+    # external driver, no hours-it-may-bind justification, no forward story.
+    #
+    # WHY THE POPULATION IS NOT MARGINAL. The committed PJM artifact is derived
+    # on 2023-2025 (identified at pjm-h14 by re-running that window against the
+    # frozen deriver and recovering a byte-equal key set), and its plant
+    # universe is ``load_fleet_from_csv(iso, cfg)`` — a YEAR-BLIND, current-
+    # vintage EIA-860 fleet. Every coal plant that ceased operating before that
+    # vintage is therefore absent from the artifact in EVERY derive year (a
+    # per-year re-derive gains ZERO rows, measured), while the backcast fleet
+    # for 2020-2022 still contains them. Measured on PJM's benchmarked COAL_BIT
+    # fleet: 18 plants / 14.5 GW uncovered in 2020, 16 / 12.7 GW in 2021,
+    # 14 / 9.7 GW in 2022, falling to 4 / 1.0 GW by 2025.
+    #
+    # THE ARM. An unmeasured coal plant carries NO must-run tranche; that
+    # capacity falls to the economic band, so the plant keeps every MW and the
+    # LP decides it on price. The synchronization floor goes with it as a
+    # CONSEQUENCE, not a second mechanism (rule 19 [R-ONE-MECH]):
+    # ``assembly.py`` sizes ``coal_sync_pmin_mw`` from the ``mustrun``/``sync``
+    # tranche capacity, so a zero must-run leaves nothing to floor.
+    #
+    # ZERO FREE PARAMETERS (rule 21 [R-DOF]). The arm asserts no level and
+    # introduces no scalar: it WITHDRAWS an assertion that has no measurement
+    # behind it. Rule 13 [R-MEASURED]: forward-native and NOT a backcast
+    # overlay — in a forecast year the artifact's coverage is the same
+    # question, and a plant absent from it is a plant with no observed
+    # commitment conduct, exactly as here.
+    coal_mustrun_requires_measured_row: bool = False
+
     # Commitment-floor WINDOW ranked on NET load instead of system load
     # (SPP-66, owner ruling "Shared gate" 2026-09-20; default off, so every
     # existing keeper in every ISO is byte-identical). THE SHARED WINDOW, NOT A

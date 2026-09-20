@@ -94,6 +94,7 @@ from market_sim.data.floor_mechanisms import (  # noqa: E402
     MECH_CC_MUSTRUN_PER_PLANT,
     MECH_CHP_STEAM,
     MECH_COAL_MIN_CONFIG,
+    MECH_COAL_MUSTRUN,
     MECH_CT_NETLOAD_DRAG,
     MECH_ERCOT_RUC_COMMITMENT,
     MECH_FIRM_IMPORT,
@@ -330,6 +331,34 @@ D4_WINDOWS: dict[tuple[int, str | None], tuple[int, int]] = {
     # [R-FLOOR-WINDOW] forward story: the level re-derives from the next EIA-860
     # vintage with no model input (scripts/data/derive_eia860_coal_min_config.py).
     (MECH_COAL_MIN_CONFIG, None): (0, 24),
+    # coal_mustrun (MECH_COAL_MUSTRUN — the coal SYNCHRONIZATION floor,
+    # config.coal_sync_srmc_tranche, arrays.py::_compose_min_gen_floors step
+    # 3a): the driver-justified window is ALL 24 hours BY DRIVER, and the row
+    # exists so the CONDUCT leg can see the floor at all. The driver is the
+    # plant's own CEMS-measured synchronization Pmin plus its measured online
+    # SHARE (thermal_tranches_<ISO>.csv mustrun_online_pct / online_frac): the
+    # floor is already hour-of-day-blind and instead load-ranked — a plant
+    # measured synchronized all year is held every hour, a measured cycler
+    # only in its top online_frac fraction of hours by system (or net) load.
+    # So there is no hour-of-day the driver says it is off, and (0, 24) is the
+    # faithful declaration; what D-4 then scores on this floor is entirely its
+    # per-plant CONDUCT leg, i.e. whether the plant's own meter reads zero
+    # across the hours the floor asserts it must be online.
+    #
+    # ADDED 2026-09-20 (pjm-h14). Until now MECH_COAL_MUSTRUN carried NO
+    # D4_WINDOWS entry, so D-4 emitted no coal rows in any ISO and the coal
+    # synchronization floor was the one commitment floor the rule-17 diagnostic
+    # could not see. That is exactly the state rule 20 [R-FORCED-BUDGET]
+    # describes ("its mechanism needs a cited D4_WINDOWS entry ... and that
+    # bundle re-generated so the D-4 row exists"). This is a DIAGNOSTIC-ONLY
+    # addition: it touches no solve path, changes no dispatch and moves no
+    # scored band by construction — coal's D-2 forced share (0.4-3.7 % of
+    # class energy in PJM) sits far below rule 20's 30 % budget, so the
+    # over-budget escalation that reads D-4 never engages and no criterion can
+    # move. Existing keepers re-score in place; new coal rows appear the next
+    # time any bundle's diagnostics are regenerated, and a FAIL there is a
+    # REPORTED rule-17 finding on that keeper, not a determination change.
+    (MECH_COAL_MUSTRUN, None): (0, 24),
     # ercot_ruc_commitment (ercot-227 F3, MECH_ERCOT_RUC_COMMITMENT —
     # pipeline.commitment.wrap_ercot_ruc_floor_prep): BY-CONSTRUCTION 24 h
     # window. The floor is the measured NP3-965 ONRUC instruction-state LSL
