@@ -6245,3 +6245,55 @@ QUANTILE and evaluates it against the model's own within-year distribution — n
 regenerates forward, removes the censoring automatically. That is a new `ScenarioConfig` field (rule
 28(c): matrix row in the same PR) and a PRECOMMIT-plus-six-shards task, not started here because Q5
 decides what it would be gated on.
+
+### pjm-h12 card D-3 — the commitment-feasibility clip is REJECTED for PJM (cell U -> R)
+
+**Doc:** `docs/RESULT-pjm-h12-d3-the-clip-is-not-the-rule17-repair-2026-09-20.md`. 12 solves across
+6 shards (one year each, rule 36 `[R-YEAR-ISOLATION]`, ARM+CONTROL at pinned SHA `65ab6205`);
+**ZERO LP in the parent** (rule 32(a)). **NOT PROMOTED** — keeper
+`2026-09-19-pjm-h11-c1seam-span` untouched, nothing registered, nothing pruned.
+
+**The arm fires and is not inert:** 65–66 of 69 floored plant-groups infeasible, 106.7k–114.3k
+infeasible plant-hours, ~7–8.5 TWh of commitment floor released per year. **G1 PASS** every year,
+**G2 PASS** (the 2025 leg reproduced its own offline census to **0.02 %**).
+
+**It is refused because G6 — the gate written to test its own justification — FAILS (2024: 8 → 9).**
+The charter called it "promotable on rule 17 `[R-FLOOR-WINDOW]` alone" because PJM's keeper D-4 fails
+on `cc_mustrun_per_plant`. **The populations are DISJOINT.** In 2023 the D-4 `cc_mustrun_per_plant`
+failure set is **byte-identical across legs** — 2393, 7153, 10308, 10751, 59220 — so the arm repairs
+**none** of them, and fires instead on already-passing plants (3797, 56807). The clip tests
+**feasibility** (available capacity < asserted commitment, an outage-derate question); D-4 tests
+**conduct** (floored while the meter reads zero). Different plants. **That conflation was this
+lane's own error in the PRECOMMIT**, and nothing measurable before the solve would have exposed it —
+the census counted plant-hours, never *which* plants.
+
+**The causal chain is refuted 0/6.** G4 (decile-1 price falls) fails in **every** year, same sign
+(+0.0032 to +0.0416 $/MWh); G5 (net export rises) likewise. **G3 PASSES 6/6** (CC_REGULAR falls
+0.1612–0.7731 TWh) but that is only **2–11 % of the released floor** — the LP re-dispatches the freed
+capacity economically and COAL_BIT / CT_PEAKER / COAL_PRB absorb it (2024: +0.0744 / +0.0817 /
++0.0053 against CC −0.2868), so the trough gets **dearer**, not cheaper. G7 PASS in 2024 (all
+mechanisms < 0.5 %); 2021 flagged `reliability_floor` +27.44 %, year-specific.
+
+**Reported, not buried:** 2022 is a genuine counter-example — D-4 `cc_mustrun_per_plant` **6 → 4**.
+The arm helps in one year of six; the bar is no increase in any year.
+
+**By-product — the G-DRIFT LIVE hunk is ~nil.** `data/fuel/hubs.py::_basis_bridge_blackouts` was
+classified LIVE in the PRECOMMIT (ungated, moves delivered citygate gas, the denominator of PJM's
+offer surface), and that is what earned twelve control solves. Measured: the 2022 control reproduces
+the committed keeper with **0 of 78,840 price cells moved**. The conservative call cost six extra
+solves and bought certainty — stated plainly, **form 4 would have been valid**. A successor may treat
+that hunk as INERT for PJM on this evidence.
+
+**The underlying rule-17 defect is REAL and UNREPAIRED.** Plants 2393, 7153, 10308, 10751, 59220
+still fail D-4 on `cc_mustrun_per_plant` in both legs in every year. The successor is a
+**conduct**-based membership correction (`mustrun_plant_exclusions`, cell `U`), which first needs a
+PJM lay-up census — `data/raw/_processed-legacy/campd_bridge_layup_exclusions_PJM.csv` does not
+exist (only MISO and NYISO are built), so that is a data-intake step.
+
+**Retention (rules 31/33/34):** all 12 bundles pushed to their shard branches with
+`dispatch/<year>_P1.parquet`; every shard fetched, checked out and verified before archiving; all six
+sessions archived; **branches left in place** (rule 33(f)(3) — a branch carrying a bundle a promotion
+would register stays until the owner rules). `.gitignore` keeps them out of `main` and carries the
+full-SHA recovery lines. **Nothing was `rm`'d.** Cell `mustrun_commitment_feasibility_clip` **U → R**
+in PJM's matrix shard (rule 28(b)); rules 25/28(d) — PJM's cell only, SPP-42's identification
+untouched.
