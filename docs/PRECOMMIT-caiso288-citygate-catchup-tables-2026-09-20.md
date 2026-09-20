@@ -281,3 +281,25 @@ back-filled from the $16.55 Jan-5 print; they now carry their own measured print
 Jan-4 $18.37), which are **higher**. Updated in place with that provenance as a rule 23
 `[R-FROZEN-DERIVE]` source-coverage re-derivation — it is a 2023 constant and the residual under
 repair is a 2022 object, so it cannot be a fit either way.
+
+## 10. SHARD LEDGER — launched 2026-09-20, all pinned to `35adf93cfcde5020f484b0a1057c5ad9a9115434`
+
+Recorded here so recovery is by immutable SHA and session id, never by branch name (rule 33
+`[R-SHARD-ARCHIVE]` (d)).
+
+| arm | year | session | branch | replays | CSV sha256 (hard stop 2) |
+|---|--:|---|---|---|---|
+| gasfix | 2022 | `session_01S2ipYQrSSVgWRcqK17tbdA` | `claude/caiso-288-gasfix-2022` | `caiso287_instr_2022` | `301472621ed1f53d…` |
+| ctrl | 2022 | `session_019E9iMscoGuq8Yumqx3ho1g` | `claude/caiso-288-ctrl-2022` | `caiso287_instr_2022` | `925555422185ea1f…` |
+| gasfix | 2023 | `session_01LfUH99Zb2q4iTi3otyPLNu` | `claude/caiso-288-gasfix-2023` | `caiso287_mer_span` | `301472621ed1f53d…` |
+| ctrl | 2023 | `session_011TcvBAviY12FqtuoJzr37i` | `claude/caiso-288-ctrl-2023` | `caiso287_mer_span` | `925555422185ea1f…` |
+| gasfix | 2024 | `session_01GboWf4P9hsFyNCcbfhxeBN` | `claude/caiso-288-gasfix-2024` | `caiso287_mer_span` | `301472621ed1f53d…` |
+| ctrl | 2024 | `session_015BULUxuanZK1VEzY7pEPhJ` | `claude/caiso-288-ctrl-2024` | `caiso287_mer_span` | `925555422185ea1f…` |
+| gasfix | 2025 | `session_01TWg1SXar5RBXCYMmPFSS9P` | `claude/caiso-288-gasfix-2025` | `caiso287_mer_span` | `301472621ed1f53d…` |
+| ctrl | 2025 | `session_01CxCtguctnLb2ZQ2dJggiEm` | `claude/caiso-288-ctrl-2025` | `caiso287_mer_span` | `925555422185ea1f…` |
+
+The treatment arm carries the repaired CSV the pinned SHA commits (1,892 lines). The control
+arm restores the pre-repair CSV from `bcd83731` (1,807 lines) and commits **only** its bundle,
+leaving that restore unstaged — so the two arms differ in one data file and nothing else. Each
+shard pushes its **full** bundle including `dispatch/<year>_P1.parquet` (rule 34 (a)); the
+parent composes, scores, differences and registers at zero LP (rule 32 (a), (d)).
