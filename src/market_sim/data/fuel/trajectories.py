@@ -17,6 +17,7 @@ from market_sim.config.constants import (
     COAL_PRICE_BASE,
     COAL_PRICE_TRAJECTORIES,
     GAS_BASIS_DIFFERENTIAL,
+    GAS_BASIS_DIFFERENTIAL_MEASURED_BY_YEAR,
     GAS_MONTHLY_SEASONALITY,
     HENRY_HUB_TRAJECTORIES,
     HOURS_PER_YEAR,
@@ -127,6 +128,22 @@ def resolve_annual_gas_price(config: ScenarioConfig, year: int) -> float:
         The delivered annual gas price in $/MMBtu.
     """
     basis = GAS_BASIS_DIFFERENTIAL.get(config.iso, 0.0)
+    # Per-YEAR MEASURED basis (lane SOCO-55, 2026-09-20;
+    # ``gas_basis_differential_measured_by_year``). The scalar above is ONE
+    # year's measurement applied to every year, and its own comment registers
+    # it as a "forward-year / fallback value only" — but SOCO-54 promoted it
+    # onto SOCO's PRIMARY backcast gas-pricing path by turning
+    # ``gas_plant_monthly_fuel_pricing`` off, so in a SOCO backcast 2023 was
+    # carrying a measured +0.15 $/MMBtu error on every gas unit. When armed,
+    # the year's OWN measured basis REPLACES the scalar (rule 19
+    # [R-ONE-MECH] — one basis, never a scalar plus an adjustment). A year
+    # with no measured row (a forecast year, or any ISO but the ones with a
+    # table entry) falls through to the scalar unchanged, so the forward path
+    # and every unarmed ISO are inert by construction (rules 13 / 25).
+    if getattr(config, "gas_basis_differential_measured_by_year", False):
+        _measured = GAS_BASIS_DIFFERENTIAL_MEASURED_BY_YEAR.get(config.iso)
+        if _measured is not None and int(year) in _measured:
+            basis = _measured[int(year)]
     if config.gas_price_override is not None:
         return config.gas_price_override + basis
 
