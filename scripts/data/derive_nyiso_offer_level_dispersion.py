@@ -90,8 +90,21 @@ OUT_DEFAULT = (
 # --------------------------------------------------------------------------- #
 # The two states (PRECOMMIT section 1.1) -- INPUT-SIDE ONLY.
 # --------------------------------------------------------------------------- #
-def state_windows() -> tuple[dict[int, np.ndarray], dict[int, np.ndarray], dict]:
+def state_windows(
+    gas: dict[int, np.ndarray] | None = None,
+) -> tuple[dict[int, np.ndarray], dict[int, np.ndarray], dict]:
     """Return per-year boolean ``(tight, ordinary)`` hour masks plus metadata.
+
+    ``gas`` is the per-year delivered-gas array the CONDITIONER bins on. It is a
+    PARAMETER rather than a reach into :func:`gas_series_by_year` because that
+    function returns the keeper's ``_gas_series``, which nyiso-248 G-1/G-3
+    measured to be a **pure 12-value monthly step** while the array the LP prices
+    gas on is DAILY. Under the monthly step ``gas_bin >= 2`` selects *an hour in
+    one of the year's ~1.2 dearest MONTHS*, not a dear DAY, and the same flat
+    array was also the implied-heat-rate DENOMINATOR in :func:`year_unit_rows` --
+    two independent channels, each carrying about half of the reported effect
+    (nyiso-248 section A2). Passing the array explicitly is what lets a caller
+    move BOTH roles together; ``None`` preserves the committed artifact exactly.
 
     Both coordinates are binned on the registered cross-ISO percentile ladder
     ``NETLOAD_PCTS = (0.80, 0.90, 0.97)`` **within each year's own
@@ -104,7 +117,8 @@ def state_windows() -> tuple[dict[int, np.ndarray], dict[int, np.ndarray], dict]
     ORDINARY  = gas_bin == 0 AND load_bin == 0   (both below the year's p80)
     """
     nl = net_load_by_year()
-    gas = gas_series_by_year()
+    if gas is None:
+        gas = gas_series_by_year()
     tight: dict[int, np.ndarray] = {}
     ordinary: dict[int, np.ndarray] = {}
     meta: dict = {"per_year": {}}
@@ -238,10 +252,24 @@ def per_unit_delta(
     return pd.DataFrame(out)
 
 
-def build(out_path: Path = OUT_DEFAULT) -> dict:
-    """Derive the pooled vector plus the per-year stationarity sub-vectors."""
-    tight, ordinary, state_meta = state_windows()
-    gas = gas_series_by_year()
+def build(
+    out_path: Path = OUT_DEFAULT,
+    gas: dict[int, np.ndarray] | None = None,
+    gas_label: str | None = None,
+) -> dict:
+    """Derive the pooled vector plus the per-year stationarity sub-vectors.
+
+    ``gas`` enters BOTH roles -- the :func:`state_windows` conditioner and the
+    :func:`year_unit_rows` implied-heat-rate denominator -- from this one place,
+    so the two can never again be resolved independently (nyiso-248 section A2:
+    they were, and each channel carried about half of a finding that did not
+    survive their joint correction). ``None`` reproduces the committed artifact.
+    """
+    if gas is None:
+        gas = gas_series_by_year()
+    tight, ordinary, state_meta = state_windows(gas)
+    if gas_label is not None:
+        state_meta["gas_source"] = gas_label
 
     per_year: dict[int, pd.DataFrame] = {}
     for year in YEARS:
@@ -370,11 +398,34 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--self-test", action="store_true")
     ap.add_argument("--out", type=Path, default=OUT_DEFAULT)
+    ap.add_argument(
+        "--gas",
+        choices=("monthly", "daily"),
+        default="monthly",
+        help=(
+            "which delivered-gas array fills BOTH roles. 'monthly' is the "
+            "keeper's _gas_series and reproduces the committed artifact; "
+            "'daily' is the array the LP actually prices gas on "
+            "(iso_hub_daily_gas_prices, monthly-filled where uncovered), the "
+            "nyiso-248 G-5 corrected coordinate."
+        ),
+    )
     args = ap.parse_args()
     if args.self_test:
         self_test()
         return
-    art = build(args.out)
+    if args.gas == "daily":
+        from scripts.probes.nyiso248_book_daily_regrain import daily_gas
+
+        art = build(
+            args.out,
+            {y: daily_gas(y) for y in YEARS},
+            "iso_hub_daily_gas_prices on the keeper's own resolved config, "
+            "monthly-filled where no basis row covers a month (nyiso-248 G-5 "
+            "corrected coordinate), per year",
+        )
+    else:
+        art = build(args.out)
     grid = np.asarray(art["quantile_grid"])
     for name in ("pooled", "pooled_multiblock_only"):
         v = np.asarray(art[name]["quantiles_mmbtu_per_mwh"])
