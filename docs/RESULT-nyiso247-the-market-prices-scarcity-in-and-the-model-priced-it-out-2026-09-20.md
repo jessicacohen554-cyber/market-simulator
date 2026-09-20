@@ -246,3 +246,32 @@ untouched, and the NYISO cell stays `K` with this session's refutation recorded 
 | `scripts/probes/nyiso247_compose_span.py` | the composer + this lane's delta assertion |
 | `scripts/gen_nyiso247_attestation.py` | the arm's C6 attestation |
 | `results/calibration/nyiso247_fuelinv_span` · run `2026-09-20-nyiso247-fuel-invariance-disarm` | the registered arm |
+
+## 9. TWO GATES THAT READ RED, AND NEITHER IS TO BE "FIXED"
+
+**`check_registry_payload_parity.py` is RED locally and GREEN in CI, by design.** Its bundle sweep
+is a **filesystem** walk (`check_registry_payload_parity.py:437`), so the four gitignored per-year
+legs turn it red in this working tree while CI, which checks out only what is committed, never sees
+them — exactly the behaviour rule 31 `[R-RETAIN]`'s 2026-09-16 correction records, together with its
+instruction: *a lane running the gate locally over its own bundles should expect that RED and must
+not "fix" it by deleting a result rule 31 protects.* The unmapped list was read and every entry
+confirmed: four are this lane's own gitignored legs (`git check-ignore` verified on each), and the
+fifth, `results/calibration/nwpp44_takeorpay_2025`, is **another lane's committed bundle** — RED at
+`d4cc9724` before this session started, NWPP's to clear under per-ISO scope, and protected by rule 31
+here. The registered composite is tracked (25 files); nothing of this lane's reaches `main` that
+should not.
+
+**`audit_keepers.py --iso NYISO` fails E13, and that failure IS the open promotion decision.**
+E13 requires every registered NYISO run to be the designated keeper or stamped to it. This arm is
+neither — **because the owner has not ruled yet**. The check is written for *"a superseded run left
+behind a promotion"* and cannot distinguish that from *a candidate registered before one*, which is
+the state rule 15 `[R-DASHBOARD]` positively **requires** ("an arm that solves is registered in this
+session, keeper or not") and which the nyiso-241 RESULT's own option 2 names ("leave arm A
+registered as an adjudicated candidate"). **It resolves either way the moment §7 is answered:**
+promote → the arm becomes the keeper and the incumbent is pruned, E13 passes; decline → the arm is
+pruned as a superseded candidate, E13 passes. Pruning it now would destroy a result the owner has
+not ruled on (rule 31); promoting it now would take the owner's decision. **Neither is this lane's
+to do, so E13 stays red and is reported rather than cleared.**
+*(Also reported: E11 warns the former keeper `2026-09-17-nyiso240-bench-attribution` has no
+resolvable bundle on disk, so its lineage diff has no baseline. Pre-existing, from that promotion's
+own prune — not this session's.)*
