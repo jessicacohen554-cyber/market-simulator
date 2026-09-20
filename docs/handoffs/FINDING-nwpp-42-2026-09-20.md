@@ -138,26 +138,51 @@ including `dispatch/<year>_P1.parquet`:**
 | ctl 2024 | `924fafa6e1883ec9b54a8d418d518d4a0208926b` |
 | ctl 2025 | `637f71d021fb46f32b0e8f9f49bde73108207722` |
 
-**Leg-ref rescue (rule 33(f)(4)), 2026-09-20.** After this lane's own PR merged, the environment
-deleted three of the six original shard branches — `arm-2023`, `arm-2024` and `mer-2025` — whose
-commits are **not** ancestors of `main`, so their recovery lines briefly pointed at commits
-reachable from nothing but the parent's fetched refs. All six commits were re-pushed **unchanged**
-under durable refs that carry no open PR and are therefore not auto-deleted:
-`claude/nwpp-42-leg-{arm,mer}-{2023,2024,2025}`. The SHAs are unchanged, so every recovery line in
-this document and in `.gitignore` still resolves after
-`git fetch origin claude/nwpp-42-leg-<arm|mer>-<year>`. Nothing was deleted to do this (rule 31
-`[R-RETAIN]`); the three refs that still existed were mirrored, not moved.
+**Leg branches RETIRED 2026-09-20, by owner instruction** — *"No it shouldn't preserve the
+branches in the repo. If something needs to be kept it should be done by the main branch and pushed
+to main. There is no reason to clutter my repo with old branches."*
 
-**Retrievability, stated honestly (rule 34(e)).** The six shard branches are **NOT merged** —
-`git merge-base --is-ancestor <sha> origin/main` answers *not an ancestor* for all six (verified
-2026-09-20). Each sha is reachable only from its own ref `claude/nwpp-42-{arm,mer}-<year>`, and
-those refs hold the **only** copy of the per-plant `dispatch/<year>_P1.parquet` layer a
-re-registration needs, plus the control legs in their entirety. The promotion itself cost **zero
-re-solves** because the parent fetched and composed all six before archiving the shards. **The
-branches are deliberately NOT deleted**: rule 33(f)(2) permits deleting a shard branch only when
-it carries no bundle the lane may still need, and 33(f)(4) forbids leaving a recovery line pinned
-to a sha that no longer resolves. If those refs are ever lost, recovery is a re-solve at roughly
-3 × 45–90 min of LP per leg family.
+**Deletion was attempted and refused.** `git push origin --delete` returns **HTTP 403** for all
+nine `claude/nwpp-42-*` refs: this session's credential can create and update refs but not delete
+them, and the GitHub MCP server exposes `create_branch` with no counterpart. That is exactly the
+failure rule 33(f)(5) documents, and (f)(5) says to **say so and leave the branch** rather than
+report a cleanup that did not happen. **The nine refs are still listed and need the owner to remove
+them** (GitHub → Branches → delete, or `git push origin --delete <branch>` from a credential that
+may delete refs).
+
+**The SHA table above is a provenance record, not a recovery route** (rule 33(f)(4)). The legs are
+**retired**: nothing may depend on them, and recovery is **re-solve only, ~45–90 min of LP per
+leg**, whether or not a ref happens to still resolve today.
+
+Retiring them costs nothing `main` does not already carry:
+
+- **Rule 31 `[R-RETAIN]` trigger (i) is satisfied** — the owner *ruled* on promotion, so a spent
+  bundle may be removed and "git history plus the RESULT doc remain the record". **This document is
+  that record**, and it carries every number this lane will ever cite from any of the six legs.
+- **The keeper is on `main`**: `results/calibration/nwpp42_coalhr_span` in its slim `hourly/` shape
+  (rule 15), its registry sidecar, and its run payload. The per-plant D-1/D-2/D-4 diagnostics fall
+  back to the **registered payload** when `dispatch/<year>_P1.parquet` is absent, and that payload
+  is committed — so nothing on the dashboard or in the scorer depends on the deleted refs.
+- **The control legs were never eligible for `main`.** Rule 29(c) forbids a control bundle reaching
+  `main`, and rule 15's keeper-only retention forbids a second registered NWPP run. Committing them
+  was never an option; §5's numbers are where they live, by design.
+- **The three arm legs' `dispatch/` layer would have added ~45 MB** to a repo whose tip is already
+  4.13 GiB packed and which has needed two history rewrites. `.gitignore` ignores
+  `results/calibration/*/dispatch/` repo-wide for exactly that reason.
+
+**The lesson, recorded because it bit twice in this one session.** An unmerged shard branch is
+**not durable** here: the environment deleted `claude/nwpp-42-{arm-2023,arm-2024,mer-2025}` when the
+**parent's** PR merged, not only branches that were themselves merged, and then deleted the lane
+branch on its own merge. A lane that needs bytes to survive must land them on `main` **inside the
+registered keeper bundle** before its own PR merges — not park them on a side ref. That is the
+standing guidance for NWPP-43 and for rule 34(a) generally.
+
+**Retrievability, stated honestly (rule 34(e)).** The promotion itself cost **zero re-solves** —
+the parent fetched, verified and composed all six legs before archiving the shards (rules 33(a) /
+34(d)), and the composed keeper bundle is on `main`. The leg bundles are **retired** per the owner
+instruction above and are pending deletion (refused to this session, HTTP 403), so re-obtaining a
+leg should be costed as a re-solve at ~45–90 min of LP. Nothing in the registered run, the
+dashboard or the scorer depends on them.
 
 **The signature check that nearly condemned a clean leg.** A naive `scenario_config` diff of a
 single-year leg against the three-year keeper reports differences that are not mechanism changes:
