@@ -1027,13 +1027,15 @@ def _basis_bridge_blackouts(
     1.508) while still ahead on MAE, bias and RMSE - i.e. it wins on the body
     and the bias and ties on the far tail.
 
-    CAUTION - THIS FUNCTION IS NOT THE WHOLE OF WHAT THE FLAG DOES. Arming
-    ``caiso_citygate_blackout_bridge`` also switches the year-start left-edge
-    convention in :func:`_flow_date_staircase` (see its ``bridge_all_years``
-    note), which is a SEPARATE channel that fires whether or not any blackout is
-    near. Over the repaired series that second channel is the flag's ENTIRE
-    effect in 2022 and 2023. Do not read a per-year delta as this construction's
-    footprint without decomposing it (G-FOOT289 in the census probe).
+    THIS FUNCTION IS NOW THE WHOLE OF WHAT THE FLAG DOES, and it was not always.
+    Until caiso-289 (2026-09-20) arming ``caiso_citygate_blackout_bridge`` also
+    switched the year-start left-edge convention in :func:`_flow_date_staircase`
+    — a SEPARATE channel that fired whether or not any blackout was near, and
+    which over the repaired series was the flag's ENTIRE effect in 2022 and
+    2023. The owner ruled the channels separated; that branch now contributes
+    only blackout-interior days, and G-FOOT289 in the census probe pins the
+    left-edge column at zero. A non-zero (B) column there means the two have
+    been re-merged.
 
     Rule 13 [R-MEASURED]: every input here is measured (both bracketing
     citygate prints, the HH daily series inside the gap) and the identical
@@ -1096,33 +1098,46 @@ def _flow_date_staircase(
     construction above cannot bracket. Every legitimate 1-4 day package still
     staircases. Off by default; the caller passes ``None`` and nothing changes.
 
-    **THE BRIDGE ARGUMENTS CARRY A SECOND, SEPARATE CHANGE — THE YEAR-START LEFT
-    EDGE** (caiso-289, 2026-09-20). This docstring used to claim the returned
-    array "is byte-identical to the unbridged one in any year whose gaps are all
-    packages", and that is FALSE: over the repaired series, 2022 and 2023 carry
-    no blackout at all and still move three days each. The reason is the branch
-    below, not :func:`_basis_bridge_blackouts`. Unbridged, ``stamps`` holds only
-    ``year``'s prints, so flow days before the year's first print are filled by
-    ``.bfill()`` — they take the year's FIRST JANUARY TRADE. Bridged, the
-    reindex is over the FULL multi-year series (it must be, to bracket a
-    December blackout), so those same days ``.ffill()`` from the PREVIOUS
-    DECEMBER's last trade instead. That switch fires in every year with a
-    January gap, blackout or no blackout.
+    **THE BRIDGE ARGUMENTS USED TO CARRY A SECOND, SEPARATE CHANGE — THE
+    YEAR-START LEFT EDGE. THEY NO LONGER DO** (caiso-289, 2026-09-20; owner
+    ruling of that date, "separate the channels"). This docstring used to claim
+    the returned array "is byte-identical to the unbridged one in any year whose
+    gaps are all packages", and that was FALSE: over the repaired series, 2022
+    and 2023 carry no blackout at all and still moved three days each. The cause
+    was the branch below, not :func:`_basis_bridge_blackouts`. Unbridged,
+    ``stamps`` holds only ``year``'s prints, so flow days before the year's
+    first print are filled by ``.bfill()`` — they take the year's FIRST JANUARY
+    TRADE. The old bridged branch reindexed straight onto the FULL multi-year
+    series (it must span years, to bracket a December blackout), so those same
+    days ``.ffill()``-ed from the PREVIOUS DECEMBER's last trade instead. That
+    switch fired in every year with a January gap, blackout or no blackout.
 
-    It is not a wash. Flow day 2023-01-01 is priced by the **2022-12-30 trade at
-    $15.31** (Friday's trade covers the holiday-extended New Year package); the
-    unbridged branch instead assigns it the **2023-01-03 trade at $23.66**, a
-    trade that had not happened yet and that prices 2023-01-04's flow. So the
-    left edge is the accurate construction and the back-fill is the artifact —
-    **+$10.64/MWh of CC marginal cost over 72 h in 2022 and −$62.12/MWh over
-    72 h in 2023**. Both channels are measured per year, separately, by
-    G-FOOT289 in ``scripts/probes/caiso288_blackout_census.py``.
+    The branch below now contributes ONLY this year's blackout-interior days, so
+    the claim above is true again and is pinned by
+    ``tests/iso/caiso/test_caiso288_blackout_bridge.py``
+    (``test_the_flag_moves_blackout_interiors_and_nothing_else``). The flag was
+    default-off in every committed run, so the separation is byte-identical
+    everywhere.
 
-    THIS IS NOT REPAIRED HERE, deliberately: ``_flow_date_staircase`` is shared
+    **THE LEFT-EDGE DEFECT ITSELF IS REAL AND IS STILL LIVE — separating the
+    channels fixed the CONFOUND, not the defect.** The back-fill is the
+    artifact, on this function's own documented flow-date convention: flow day
+    2023-01-01 is priced by the **2022-12-30 trade at $15.31** (Friday's trade
+    covers the holiday-extended New Year package), and the unbridged path — the
+    one every run actually takes — assigns it the **2023-01-03 trade at
+    $23.66**, a trade that had not happened yet and that prices 2023-01-04's
+    flow. Measured at **+$10.64/MWh of CC marginal cost over 72 h in 2022 and
+    −$62.12/MWh over 72 h in 2023** when it rode the bridge flag; it is now
+    simply the standing behaviour of both branches. G-FOOT289 in
+    ``scripts/probes/caiso288_blackout_census.py`` measures both channels per
+    year and its column (B) must read zero while they stay separated.
+
+    IT IS NOT REPAIRED HERE, deliberately: ``_flow_date_staircase`` is shared
     with MISO (``data/fuel/basis/miso.py`` builds both the MISO citygate and the
     Chicago daily series through it), so correcting the left edge is a
-    cross-ISO, solve-affecting change and is routed rather than taken by a CAISO
-    lane. See
+    cross-ISO, solve-affecting change that moves two ISOs' keepers. The owner
+    ruled 2026-09-20 that it is opened as **its own cross-ISO object**, not
+    taken by a CAISO lane in passing. See
     ``docs/FINDING-caiso289-the-bridge-flag-carries-two-mechanisms-2026-09-20.md``.
     """
     stamps = {
@@ -1146,7 +1161,35 @@ def _flow_date_staircase(
             }
         ).sort_index()
         bridged = _pkg_ns()._basis_bridge_blackouts(flow_all, bridge_hh)
-        s = bridged.reindex(idx.union(bridged.index)).sort_index()
+        # THE CHANNELS ARE SEPARATED (caiso-289, owner ruling 2026-09-20).
+        # Reindexing straight onto the multi-year ``bridged`` also changed the
+        # year-start LEFT EDGE — days before this year's first print would
+        # ``.ffill()`` from the previous December instead of ``.bfill()`` from
+        # this year's first January trade — which is a convention change, not
+        # this mechanism, and was the flag's ENTIRE effect in 2022 and 2023
+        # (rule 19 [R-ONE-MECH]: one mechanism per flag). So the bridge now
+        # contributes ONLY the blackout-interior days that fall in this year;
+        # every other day, the left edge included, is built exactly as the
+        # unbridged branch builds it. The left-edge defect itself is real and
+        # is being repaired as its own cross-ISO object (the function is shared
+        # with MISO) — see
+        # docs/FINDING-caiso289-the-bridge-flag-carries-two-mechanisms-2026-09-20.md.
+        interior: list[pd.Timestamp] = []
+        measured = flow_all.dropna().index
+        for left, right in zip(measured, measured[1:]):
+            if (right - left).days < _GAS_BLACKOUT_MIN_GAP_DAYS:
+                continue
+            interior.extend(
+                pd.date_range(
+                    left + pd.Timedelta(days=1), right - pd.Timedelta(days=1), freq="D"
+                )
+            )
+        in_year = pd.DatetimeIndex(interior).intersection(idx)
+        s = pd.Series(stamps).sort_index()
+        if len(in_year):
+            s = pd.concat([s, bridged.reindex(in_year)]).sort_index()
+            s = s[~s.index.duplicated(keep="first")]  # a measured print wins
+        s = s.reindex(idx.union(s.index))
     else:
         s = pd.Series(stamps).sort_index().reindex(idx.union(pd.Index(stamps)))
     s = s.sort_index().ffill().bfill().reindex(idx)

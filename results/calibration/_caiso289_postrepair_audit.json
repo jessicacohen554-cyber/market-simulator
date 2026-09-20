@@ -447,43 +447,15 @@
   },
   "2021": {
    "bridge_interiors": null,
-   "left_edge": {
-    "days": 4,
-    "mean_usd_mmbtu": 0.19,
-    "mean_mc_usd_mwh": 1.414,
-    "days_list": [
-     "2021-01-01",
-     "2021-01-02",
-     "2021-01-03",
-     "2021-01-04"
-    ]
-   }
+   "left_edge": null
   },
   "2022": {
    "bridge_interiors": null,
-   "left_edge": {
-    "days": 3,
-    "mean_usd_mmbtu": 1.43,
-    "mean_mc_usd_mwh": 10.639,
-    "days_list": [
-     "2022-01-01",
-     "2022-01-02",
-     "2022-01-03"
-    ]
-   }
+   "left_edge": null
   },
   "2023": {
    "bridge_interiors": null,
-   "left_edge": {
-    "days": 3,
-    "mean_usd_mmbtu": -8.35,
-    "mean_mc_usd_mwh": -62.124,
-    "days_list": [
-     "2023-01-01",
-     "2023-01-02",
-     "2023-01-03"
-    ]
-   }
+   "left_edge": null
   },
   "2024": {
    "bridge_interiors": {
@@ -504,15 +476,7 @@
      "2024-12-02"
     ]
    },
-   "left_edge": {
-    "days": 2,
-    "mean_usd_mmbtu": -0.47,
-    "mean_mc_usd_mwh": -3.497,
-    "days_list": [
-     "2024-01-01",
-     "2024-01-02"
-    ]
-   }
+   "left_edge": null
   },
   "2025": {
    "bridge_interiors": {
@@ -533,30 +497,11 @@
      "2025-12-01"
     ]
    },
-   "left_edge": {
-    "days": 2,
-    "mean_usd_mmbtu": -0.22,
-    "mean_mc_usd_mwh": -1.637,
-    "days_list": [
-     "2025-01-01",
-     "2025-01-02"
-    ]
-   }
+   "left_edge": null
   },
   "2026": {
    "bridge_interiors": null,
-   "left_edge": {
-    "days": 5,
-    "mean_usd_mmbtu": 0.54,
-    "mean_mc_usd_mwh": 4.018,
-    "days_list": [
-     "2026-01-01",
-     "2026-01-02",
-     "2026-01-03",
-     "2026-01-04",
-     "2026-01-05"
-    ]
-   }
+   "left_edge": null
   }
  }
 }
