@@ -1302,6 +1302,89 @@ class TestMechanismThreading:
             if meta_key in REBUILD_META_RENAMES and kwarg in params:
                 assert REBUILD_META_RENAMES[meta_key] == kwarg
 
+    def test_rebuild_splats_derived_run_year_inputs(self, tmp_path, monkeypatch):
+        """caiso-292: the floors rebuild must carry the inputs the bundle NEVER
+        records — replay_keeper.DERIVED_RUN_YEAR_INPUTS, recovered from the
+        bundle's own class_hourly sidecar.
+
+        ``meta.json`` records ``solve_and_persist``'s kwargs; it cannot record
+        what ``solve_and_persist`` DERIVES from its own locals, so no mapping
+        of meta keys ever reaches ``inject_biomass_mustrun``. Omitting it made
+        the rebuild carry phantom biomass LP rows the scored solve had dropped
+        (caiso-248) — measured on the CAISO keeper as 1,905 rebuilt rows
+        against the solve's 1,705, a strict superset of exactly 200 biomass
+        rows, so the rebuilt fleet was not row-aligned with the bundle's own
+        per-unit artifacts and rule 19 [R-FORCED-BUDGET]'s "keepers re-score in
+        place" did not hold for CAISO.
+        """
+        import scripts.legitimacy_diagnostics as ld
+        import scripts.replay_keeper as rk
+        import scripts.run_calibration as rc
+
+        captured = {}
+
+        def fake_run_year(
+            year,
+            iso,
+            hours,
+            gas_price,
+            ttc_overrides,
+            coal_drop_pof=False,
+            inject_biomass_mustrun=False,
+            fleet_only=False,
+            **_,
+        ):
+            captured.update(
+                coal_drop_pof=coal_drop_pof,
+                inject_biomass_mustrun=inject_biomass_mustrun,
+            )
+            return {"fleet_arrays": "sentinel"}
+
+        monkeypatch.setattr(rc, "run_year", fake_run_year)
+        monkeypatch.setattr(
+            rk,
+            "derived_run_year_inputs",
+            lambda bundle, year: {"inject_biomass_mustrun": True},
+        )
+
+        bundle = tmp_path / "bundle"
+        bundle.mkdir()
+        # A recorded meta key the rebuild DOES reach, plus the same derived key
+        # recorded WRONG — the solve-side value must win either way.
+        (bundle / "meta.json").write_text(
+            json.dumps(
+                {
+                    "hours": 8760,
+                    "gas_prices": {"2024": 2.19},
+                    "coal_drop_pof": True,
+                    "inject_biomass_mustrun": False,
+                }
+            )
+        )
+
+        assert ld._rebuild_fleet_arrays(bundle, "CAISO", 2024) == "sentinel"
+        assert captured["coal_drop_pof"] is True, "recorded meta key must survive"
+        assert captured["inject_biomass_mustrun"] is True, (
+            "the derived solve-side input must reach run_year and must win "
+            "over any same-named recorded key"
+        )
+
+    def test_derived_run_year_inputs_are_all_run_year_kwargs(self):
+        """Every name in DERIVED_RUN_YEAR_INPUTS must be a run_year parameter.
+
+        The splat is unconditional, so a name added to that tuple that run_year
+        does not accept is a TypeError at rebuild time rather than a silent
+        drop — this asserts it at import time instead.
+        """
+        from inspect import signature
+
+        from scripts.replay_keeper import DERIVED_RUN_YEAR_INPUTS
+        from scripts.run_calibration import run_year
+
+        params = signature(run_year).parameters
+        for name in DERIVED_RUN_YEAR_INPUTS:
+            assert name in params, f"{name} is not a run_year kwarg"
+
 
 class TestD2ClassTotalInvariant:
     """G-06 / #1488: the gated per-class D-2 summary must be identical whether

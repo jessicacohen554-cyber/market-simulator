@@ -2816,6 +2816,30 @@ results/calibration/pjm_h11_ctl_*/
 # commits the slim set every keeper commits, not the 50 MB working bundle.
 !results/calibration/caiso287_instr_2022/
 
+# caiso-292 (2026-09-20): THAT NEGATION IS NOW STALE, so the exclusion is
+# restored below it (last matching rule wins). It was written because the 2022
+# leg was the REGISTERED touchpoint of the 2026-09-19 MER promotion and so had
+# to reach `main` under rule 15 [R-DASHBOARD]. That run was PRUNED at the
+# xiso-8 promotion: CAISO carries exactly one registered run
+# (2026-09-20-caiso-290-leftedge), `git ls-tree -r origin/main` returns ZERO
+# files under this path, and nothing in frontend/data/backcast/,
+# results/regression-goldens/ or check_registry_payload_parity
+# .KEEP_REQUIRED_UNMAPPED_BUNDLES names it. So the negation no longer lets a
+# registered bundle through -- it only leaves a 59 MB RECOVERY CHECKOUT exposed
+# to `git add`, which would put a superseded run back on `main` against rule
+# 15's keeper-only retention.
+#
+# caiso-292 recovered this bundle read-only to validate its screen-split
+# harness (G-V1: this lane's probe == caiso-287's own probe at the same HEAD,
+# 0.000e+00 MW). Rule 31 [R-RETAIN] says `.gitignore` -- never `rm` -- is what
+# keeps such a result off `main`, so it stays on local disk and out of the
+# repository. Recover it again by FULL IMMUTABLE SHA (rule 33 [R-SHARD-ARCHIVE]
+# (d)), never by branch name:
+#   git archive bb3034214d1d3da70d0db8d8435540f82387222d results/calibration/caiso287_instr_2022 | tar -x -C .
+# (`git archive | tar -x` rather than `git checkout <sha> -- <path>`, which
+# STAGES what it writes and can silently revert whatever landed on main since.)
+results/calibration/caiso287_instr_2022/
+
 # soco-53f (2026-09-20): the seven per-year shard legs and the two composed
 # spans. Rule 29 [R-SCREEN] (c) governs what reaches `main`, and rule 31
 # [R-RETAIN] says `.gitignore` — never `rm` — is what discharges it, so these

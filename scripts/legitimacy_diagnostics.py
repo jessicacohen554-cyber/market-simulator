@@ -2598,9 +2598,17 @@ def _rebuild_fleet_arrays(bundle: Path, iso: str, year: int):
     bundle's OWN ``meta.json`` flags and stops. Shared by the floor rebuild and
     by :func:`_backfill_pmax`, so both read the identical recipe — a backfilled
     ``pmax`` and a rebuilt floor can never come from different fleets.
+
+    The recipe is ``meta.json`` **plus**
+    :data:`scripts.replay_keeper.DERIVED_RUN_YEAR_INPUTS` — the ``run_year``
+    inputs ``solve_and_persist`` derives from its own locals, which the bundle
+    therefore never records and which no amount of ``meta.json`` reading can
+    recover. See the ``derived`` comment below for why omitting them rebuilt a
+    different fleet than the one being scored.
     """
     import inspect
 
+    from scripts.replay_keeper import derived_run_year_inputs
     from scripts.run_calibration import run_year
 
     meta = json.loads((bundle / "meta.json").read_text())
@@ -2623,7 +2631,41 @@ def _rebuild_fleet_arrays(bundle: Path, iso: str, year: int):
             kwargs[k2] = v
         else:
             dropped.append(k)
-    logger.info("fleet rebuild: %d flags passed, dropped %s", len(kwargs), dropped)
+    # caiso-292: ``meta.json`` is NOT the whole recipe. ``solve_and_persist``
+    # derives some ``run_year`` inputs from its own locals, so they are
+    # invisible to the loop above however many keys it maps — the gap
+    # ``replay_keeper.DERIVED_RUN_YEAR_INPUTS`` names and
+    # ``derived_run_year_inputs`` closes by reading the bundle's OWN committed
+    # ``hourly/class_hourly_<year>.parquet``. Today that is
+    # ``inject_biomass_mustrun``, which ``run_year`` forwards as
+    # ``drop_biomass_units``: the solve REMOVES the raw biomass LP units
+    # because the same energy is injected as a measured EIA-923 must-run
+    # profile, and a rebuild that omits the flag carries phantom biomass rows
+    # the scored solve never had (caiso-248, which invalidated caiso-247's
+    # DOM_OTHER attribution). Measured on the CAISO keeper
+    # (``xiso8_leftedge_span`` 2024): 1,905 rebuilt rows against the solve's
+    # 1,705 — a strict SUPERSET of exactly 200 biomass rows, so the rebuilt
+    # fleet was not row-aligned with the bundle's own per-unit artifacts; with
+    # the splat it reproduces the solve fleet unit-for-unit IN ORDER, with
+    # ``pmax`` exact to 0.000000000 MW on all 1,705 rows. ``replay_keeper`` has
+    # stated this duty since caiso-248 ("every fleet-only rebuild should splat
+    # this") and ``scripts/lib/bundle_fleet.reconstruct_bundle_fleet``
+    # discharges it for the probe lane — THIS rebuild, the one rule 19
+    # ``[R-FORCED-BUDGET]``'s "keepers re-score in place" promise runs through,
+    # did not. Applied AFTER ``kwargs`` so the solve-side value always wins.
+    # Raises ``FileNotFoundError`` when the sidecar is absent rather than
+    # assuming ``False``: every registered bundle carries it, and a silent
+    # ``False`` is the defect (:func:`_backfill_pmax` catches the failure and
+    # records its documented row-count fallback, so the degradation is never
+    # silent there either).
+    derived = derived_run_year_inputs(bundle, year)
+    kwargs.update(derived)
+    logger.info(
+        "fleet rebuild: %d flags passed (incl. derived %s), dropped %s",
+        len(kwargs),
+        derived,
+        dropped,
+    )
     gas_prices = meta.get("gas_prices", {})
     gas_price = float(gas_prices.get(str(year), gas_prices.get(year, 0.0)))
     state = run_year(

@@ -1,0 +1,342 @@
+{
+  "lane": "caiso-292",
+  "precommit": "docs/PRECOMMIT-caiso292-screen-split-on-the-live-keeper-2026-09-20.md",
+  "keeper_id": "2026-09-20-caiso-290-leftedge",
+  "keeper_bundle": "results/calibration/xiso8_leftedge_span",
+  "G_V": {
+    "G_V1": "PASS",
+    "G_V1_note": "GATE. This probe's arithmetic == caiso-287's own probe, run at the SAME HEAD on the same bundle.",
+    "G_V1_max_abs_delta_mw": 0.0,
+    "G_V1_belly_sha_matches_reference": true,
+    "G_V1_reference_verdict": "(A) GAP-MERGING DOMINANT",
+    "G_V1_reproduced_verdict": "(A) GAP-MERGING DOMINANT",
+    "G_V2": "SUPERSEDED \u2014 see G_DRIFT interval A",
+    "G_V2_note": "REPORTED, NOT GATED. caiso-287's published numbers were measured before the CAISO citygate series gained 85 recovered prints and before the left-edge channel was separated; both are the KEEPER's own lineage, so the published split is superseded by construction \u2014 which is the reason this lane re-measures it.",
+    "G_V2_max_abs_delta_vs_published_mw": 25.41629161532444,
+    "G_V2_per_metric_delta_mw": {
+      "M_both": -25.41629161532444,
+      "M_sa": -24.579716272858718,
+      "M_dc": -6.827762533245277,
+      "M_none": -6.8277625332455045
+    },
+    "published": {
+      "M_both": 986.835300311422,
+      "M_sa": 1017.6232887907122,
+      "M_dc": 1103.9436084834715,
+      "M_none": 1106.5347026136103
+    },
+    "reproduced_at_head": {
+      "M_both": 961.4190086960975,
+      "M_sa": 993.0435725178535,
+      "M_dc": 1097.1158459502262,
+      "M_none": 1099.7069400803648
+    },
+    "published_verdict": "(A) GAP-MERGING DOMINANT",
+    "G_R2_on_caiso287_bundle_at_head": "FAIL",
+    "G_R2_note": "REPORTED. G-R2 differences the detector's armed floor against the floor that bundle's SOLVE wrote; once the solve path's inputs move (G_DRIFT interval A) it must fail, and its failing is evidence OF the supersession rather than of a harness defect.",
+    "bundle": "results/calibration/caiso287_instr_2022",
+    "recovered_from_sha": "bb3034214d1d3da70d0db8d8435540f82387222d"
+  },
+  "G_DRIFT": {
+    "interval_A_caiso287_bundle_92b8e4db__to__keeper_solve_e7091f56": {
+      "verdict": "LIVE \u2014 caiso-287's published numbers are SUPERSEDED, not drifted",
+      "live_hunks": [
+        "35adf93c caiso-288: recover the CA-composite citygate prints EIA published and the scraper dropped \u2014 data/raw/gas-prices/caiso_citygate_daily.csv. A rule 14 [R-ACCURATE] input improvement that moves CAISO mc_base in every year, and mc_base feeds BOTH screens (the run-anchor margin and the gap hold cost).",
+        "75e57fd9 caiso-289: separate the bridge flag's two channels. MEASURED here on caiso-287's own 2022 bundle: forcing gas_flow_date_year_start_package ON moves M_both 961.419 -> 949.459, i.e. -11.960 mean-belly-MW."
+      ],
+      "inert_hunks": [
+        "aa4bb5b5 caiso-288 caiso_citygate_blackout_bridge \u2014 gated, default off, byte-identical off; the keeper records it False.",
+        "e63f730a spp-49 benchmark membership \u2014 gated, default off.",
+        "49a8f17b NWPP capacity factor \u2014 another ISO's branch.",
+        "3fc20b97 marginal abatement term \u2014 forecast-side pricing."
+      ]
+    },
+    "interval_B_keeper_solve_e7091f56__to__HEAD": {
+      "verdict": "ALL HUNKS INERT for CAISO \u2014 the keeper measurement below is on the keeper's own construction",
+      "inert_hunks": [
+        "17a8a14c SPP-66 commitment_floor_window_netload \u2014 a default-off gate absent from the keeper's recipe; arrays.py states, and the diff shows, that OFF the four floor sites evaluate the IDENTICAL expression they did inline before, and backcast_config/run_calibration build the net-load series only when armed.",
+        "d891efa2 soco-55 gas_basis_differential_measured_by_year \u2014 a default-off gate whose table carries ONE entry, {'SOCO': ...}.",
+        "17943d2c nwpp-44 coal take-or-pay / regulated committed band \u2014 predicated on iso.upper() in ('MISO','NWPP').",
+        "61d46e5e nyiso-245 / ea017a9b nyiso-246 \u2014 NYISO reference artifacts and NYISO-gated offer surface."
+      ]
+    }
+  },
+  "caiso285_frozen_2024_belly_sha16": "c5948fb0d43620a1",
+  "years": {
+    "2022": {
+      "bundle": "results/calibration/xiso8_leftedge_span",
+      "belly_source": "results/calibration/xiso8_leftedge_span",
+      "year": 2022,
+      "git_sha_of_bundle": "e7091f56",
+      "posture_reasserted": {
+        "caiso_ra_mustoffer": true,
+        "caiso_ra_startup_bridge": true,
+        "caiso_ra_bridge_decommit": true,
+        "caiso_ra_bridge_startup_aware": true,
+        "caiso_ra_startup_trajectory": true,
+        "caiso_ra_min_load_frac": 0.26,
+        "caiso_ra_mustoffer_quantity_gate": false,
+        "caiso_ra_bridge_curtailment_release": false,
+        "negative_renewable_offers": true,
+        "renewable_keep_running_value": 20.0
+      },
+      "fleet_rows": 1713,
+      "cc_regular_rows": 285,
+      "zone_index_map": {
+        "0": "NP15",
+        "1": "ZP26",
+        "2": "LA_BASIN",
+        "3": "SDGE",
+        "4": "SP15_rest",
+        "5": "WECC_PNW",
+        "6": "WECC_DSW"
+      },
+      "surplus_floor_value": -20.0,
+      "belly_hours": 876,
+      "belly_sha256_16": "4c76d2c5b81c9333",
+      "M_mean_belly_mw": {
+        "M_both": 991.8163517594871,
+        "M_sa": 1022.7084260511102,
+        "M_dc": 1111.2187973109974,
+        "M_none": 1113.809891441136
+      },
+      "removals_mean_belly_mw": {
+        "R_SA_startup_aware_solo": 91.10146539002574,
+        "R_DC_decommit_solo": 2.591094130138572,
+        "R_total_joint": 121.99353968164883,
+        "dominance_bar_70pct": 85.39547777715417
+      },
+      "VERDICT": "(A) GAP-MERGING DOMINANT",
+      "G_A_availability_envelope": {
+        "verdict": "PASS",
+        "cells_p0_exceeding_pmax_x_availability": 0,
+        "rows": 0,
+        "worst_excess_mw": 2.2737367544323206e-13
+      },
+      "screen_census": {
+        "runs_detected": 24006,
+        "runs_kept": 11866,
+        "runs_dropped": 12140,
+        "drop_rate_pct": 50.5707
+      },
+      "G_R2": {
+        "verdict": "NOT AVAILABLE",
+        "reason": "the designated keeper is a SLIM bundle and commits no floors/<year>_P1.npz, so there is no committed floor array to difference the reproduction against. Declared ex ante in PRECOMMIT-caiso292 section 4; the reproduction claim is carried by G-V on caiso287_instr_2022 instead."
+      },
+      "G_D": {
+        "verdict": "FAIL",
+        "caiso291_published_pct": 64.9,
+        "reproduced_pct": 50.5707,
+        "attribution": "caiso-291's census is SUPERSEDED, not contradicted. It ran on its own meta-only rebuild, which for 2024 built 1,859 rows against the solve's 1,705 (its artifact's join.fleet_rows) and flagged 646,108 p0 > pmax x availability cells it could not attribute. runs_detected -- which reads pmax and the committed P0 only -- is IDENTICAL between the two censuses in all four years, so the divergence is entirely in runs_KEPT, i.e. in the anchor test's base_mc, and base_mc came from that rebuild. The sanctioned rebuild here reproduces the keeper's committed p0_dispatch unit ids identically IN ORDER and returns G-A = 0 violating cells, so these are the rates on the keeper's own fleet."
+      }
+    },
+    "2023": {
+      "bundle": "results/calibration/xiso8_leftedge_span",
+      "belly_source": "results/calibration/xiso8_leftedge_span",
+      "year": 2023,
+      "git_sha_of_bundle": "e7091f56",
+      "posture_reasserted": {
+        "caiso_ra_mustoffer": true,
+        "caiso_ra_startup_bridge": true,
+        "caiso_ra_bridge_decommit": true,
+        "caiso_ra_bridge_startup_aware": true,
+        "caiso_ra_startup_trajectory": true,
+        "caiso_ra_min_load_frac": 0.26,
+        "caiso_ra_mustoffer_quantity_gate": false,
+        "caiso_ra_bridge_curtailment_release": false,
+        "negative_renewable_offers": true,
+        "renewable_keep_running_value": 20.0
+      },
+      "fleet_rows": 1711,
+      "cc_regular_rows": 285,
+      "zone_index_map": {
+        "0": "NP15",
+        "1": "ZP26",
+        "2": "LA_BASIN",
+        "3": "SDGE",
+        "4": "SP15_rest",
+        "5": "WECC_PNW",
+        "6": "WECC_DSW"
+      },
+      "surplus_floor_value": -20.0,
+      "belly_hours": 876,
+      "belly_sha256_16": "f6198c77ffa35607",
+      "M_mean_belly_mw": {
+        "M_both": 816.4314365340792,
+        "M_sa": 908.5840092066255,
+        "M_dc": 1205.2974548185464,
+        "M_none": 1207.5824417920303
+      },
+      "removals_mean_belly_mw": {
+        "R_SA_startup_aware_solo": 298.99843258540477,
+        "R_DC_decommit_solo": 2.2849869734839103,
+        "R_total_joint": 391.15100525795106,
+        "dominance_bar_70pct": 273.8057036805657
+      },
+      "VERDICT": "(A) GAP-MERGING DOMINANT",
+      "G_A_availability_envelope": {
+        "verdict": "PASS",
+        "cells_p0_exceeding_pmax_x_availability": 0,
+        "rows": 0,
+        "worst_excess_mw": 2.2737367544323206e-13
+      },
+      "screen_census": {
+        "runs_detected": 19088,
+        "runs_kept": 8317,
+        "runs_dropped": 10771,
+        "drop_rate_pct": 56.4281
+      },
+      "G_R2": {
+        "verdict": "NOT AVAILABLE",
+        "reason": "the designated keeper is a SLIM bundle and commits no floors/<year>_P1.npz, so there is no committed floor array to difference the reproduction against. Declared ex ante in PRECOMMIT-caiso292 section 4; the reproduction claim is carried by G-V on caiso287_instr_2022 instead."
+      },
+      "G_D": {
+        "verdict": "FAIL",
+        "caiso291_published_pct": 76.3,
+        "reproduced_pct": 56.4281,
+        "attribution": "caiso-291's census is SUPERSEDED, not contradicted. It ran on its own meta-only rebuild, which for 2024 built 1,859 rows against the solve's 1,705 (its artifact's join.fleet_rows) and flagged 646,108 p0 > pmax x availability cells it could not attribute. runs_detected -- which reads pmax and the committed P0 only -- is IDENTICAL between the two censuses in all four years, so the divergence is entirely in runs_KEPT, i.e. in the anchor test's base_mc, and base_mc came from that rebuild. The sanctioned rebuild here reproduces the keeper's committed p0_dispatch unit ids identically IN ORDER and returns G-A = 0 violating cells, so these are the rates on the keeper's own fleet."
+      }
+    },
+    "2024": {
+      "bundle": "results/calibration/xiso8_leftedge_span",
+      "belly_source": "results/calibration/xiso8_leftedge_span",
+      "year": 2024,
+      "git_sha_of_bundle": "e7091f56",
+      "posture_reasserted": {
+        "caiso_ra_mustoffer": true,
+        "caiso_ra_startup_bridge": true,
+        "caiso_ra_bridge_decommit": true,
+        "caiso_ra_bridge_startup_aware": true,
+        "caiso_ra_startup_trajectory": true,
+        "caiso_ra_min_load_frac": 0.26,
+        "caiso_ra_mustoffer_quantity_gate": false,
+        "caiso_ra_bridge_curtailment_release": false,
+        "negative_renewable_offers": true,
+        "renewable_keep_running_value": 20.0
+      },
+      "fleet_rows": 1705,
+      "cc_regular_rows": 285,
+      "zone_index_map": {
+        "0": "NP15",
+        "1": "ZP26",
+        "2": "LA_BASIN",
+        "3": "SDGE",
+        "4": "SP15_rest",
+        "5": "WECC_PNW",
+        "6": "WECC_DSW"
+      },
+      "surplus_floor_value": -20.0,
+      "belly_hours": 876,
+      "belly_sha256_16": "c5948fb0d43620a1",
+      "M_mean_belly_mw": {
+        "M_both": 671.4864553390485,
+        "M_sa": 791.2404415276261,
+        "M_dc": 1217.2806723147985,
+        "M_none": 1218.4373086685187
+      },
+      "removals_mean_belly_mw": {
+        "R_SA_startup_aware_solo": 427.19686714089255,
+        "R_DC_decommit_solo": 1.1566363537201596,
+        "R_total_joint": 546.9508533294702,
+        "dominance_bar_70pct": 382.8655973306291
+      },
+      "VERDICT": "(A) GAP-MERGING DOMINANT",
+      "G_A_availability_envelope": {
+        "verdict": "PASS",
+        "cells_p0_exceeding_pmax_x_availability": 0,
+        "rows": 0,
+        "worst_excess_mw": 2.2737367544323206e-13
+      },
+      "screen_census": {
+        "runs_detected": 22455,
+        "runs_kept": 6480,
+        "runs_dropped": 15975,
+        "drop_rate_pct": 71.1423
+      },
+      "G_R2": {
+        "verdict": "NOT AVAILABLE",
+        "reason": "the designated keeper is a SLIM bundle and commits no floors/<year>_P1.npz, so there is no committed floor array to difference the reproduction against. Declared ex ante in PRECOMMIT-caiso292 section 4; the reproduction claim is carried by G-V on caiso287_instr_2022 instead."
+      },
+      "G_D": {
+        "verdict": "FAIL",
+        "caiso291_published_pct": 89.0,
+        "reproduced_pct": 71.1423,
+        "attribution": "caiso-291's census is SUPERSEDED, not contradicted. It ran on its own meta-only rebuild, which for 2024 built 1,859 rows against the solve's 1,705 (its artifact's join.fleet_rows) and flagged 646,108 p0 > pmax x availability cells it could not attribute. runs_detected -- which reads pmax and the committed P0 only -- is IDENTICAL between the two censuses in all four years, so the divergence is entirely in runs_KEPT, i.e. in the anchor test's base_mc, and base_mc came from that rebuild. The sanctioned rebuild here reproduces the keeper's committed p0_dispatch unit ids identically IN ORDER and returns G-A = 0 violating cells, so these are the rates on the keeper's own fleet."
+      }
+    },
+    "2025": {
+      "bundle": "results/calibration/xiso8_leftedge_span",
+      "belly_source": "results/calibration/xiso8_leftedge_span",
+      "year": 2025,
+      "git_sha_of_bundle": "e7091f56",
+      "posture_reasserted": {
+        "caiso_ra_mustoffer": true,
+        "caiso_ra_startup_bridge": true,
+        "caiso_ra_bridge_decommit": true,
+        "caiso_ra_bridge_startup_aware": true,
+        "caiso_ra_startup_trajectory": true,
+        "caiso_ra_min_load_frac": 0.26,
+        "caiso_ra_mustoffer_quantity_gate": false,
+        "caiso_ra_bridge_curtailment_release": false,
+        "negative_renewable_offers": true,
+        "renewable_keep_running_value": 20.0
+      },
+      "fleet_rows": 1710,
+      "cc_regular_rows": 285,
+      "zone_index_map": {
+        "0": "NP15",
+        "1": "ZP26",
+        "2": "LA_BASIN",
+        "3": "SDGE",
+        "4": "SP15_rest",
+        "5": "WECC_PNW",
+        "6": "WECC_DSW"
+      },
+      "surplus_floor_value": -20.0,
+      "belly_hours": 876,
+      "belly_sha256_16": "b0b7d285bf4e66e8",
+      "M_mean_belly_mw": {
+        "M_both": 781.744899278433,
+        "M_sa": 909.1612522477743,
+        "M_dc": 1490.445181049459,
+        "M_none": 1492.728002177116
+      },
+      "removals_mean_belly_mw": {
+        "R_SA_startup_aware_solo": 583.5667499293417,
+        "R_DC_decommit_solo": 2.2828211276569164,
+        "R_total_joint": 710.983102898683,
+        "dominance_bar_70pct": 497.6881720290781
+      },
+      "VERDICT": "(A) GAP-MERGING DOMINANT",
+      "G_A_availability_envelope": {
+        "verdict": "PASS",
+        "cells_p0_exceeding_pmax_x_availability": 0,
+        "rows": 0,
+        "worst_excess_mw": 2.2737367544323206e-13
+      },
+      "screen_census": {
+        "runs_detected": 18760,
+        "runs_kept": 5261,
+        "runs_dropped": 13499,
+        "drop_rate_pct": 71.9563
+      },
+      "G_R2": {
+        "verdict": "NOT AVAILABLE",
+        "reason": "the designated keeper is a SLIM bundle and commits no floors/<year>_P1.npz, so there is no committed floor array to difference the reproduction against. Declared ex ante in PRECOMMIT-caiso292 section 4; the reproduction claim is carried by G-V on caiso287_instr_2022 instead."
+      },
+      "G_D": {
+        "verdict": "FAIL",
+        "caiso291_published_pct": 93.0,
+        "reproduced_pct": 71.9563,
+        "attribution": "caiso-291's census is SUPERSEDED, not contradicted. It ran on its own meta-only rebuild, which for 2024 built 1,859 rows against the solve's 1,705 (its artifact's join.fleet_rows) and flagged 646,108 p0 > pmax x availability cells it could not attribute. runs_detected -- which reads pmax and the committed P0 only -- is IDENTICAL between the two censuses in all four years, so the divergence is entirely in runs_KEPT, i.e. in the anchor test's base_mc, and base_mc came from that rebuild. The sanctioned rebuild here reproduces the keeper's committed p0_dispatch unit ids identically IN ORDER and returns G-A = 0 violating cells, so these are the rates on the keeper's own fleet."
+      }
+    }
+  },
+  "VERDICTS": {
+    "2022": "(A) GAP-MERGING DOMINANT",
+    "2023": "(A) GAP-MERGING DOMINANT",
+    "2024": "(A) GAP-MERGING DOMINANT",
+    "2025": "(A) GAP-MERGING DOMINANT"
+  },
+  "UNANIMOUS": true
+}
