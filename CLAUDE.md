@@ -580,53 +580,69 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
       Nothing about it licenses removing a result the owner has not ruled on. Conversely, archiving
       is **not** a substitute for pulling the bytes: an archived shard cannot push, so (a)'s order is
       the whole of the safety here.
-    - **(d) RECORD RECOVERY BY IMMUTABLE SHA, NEVER BY BRANCH NAME.** Shards rebase and force-push
-      even when the prompt forbids it — measured in nyiso-229, where four of nine did, moving
-      `arm-2023` to `651de9a3` and `arm-2025` to `3d76ad76` after the parent had already fetched
-      them. A branch name is a moving target and branches here are deleted within minutes; the
-      `git checkout <sha> -- <path>` line in the `.gitignore` comment or the RESULT doc is what makes
-      a promotion cost zero re-solves, so it carries a **full SHA**. This is rule 32(c)(1)'s pinning
-      discipline applied to the return trip.
+    - **(d) RECORD A LEG BY IMMUTABLE SHA, NEVER BY BRANCH NAME — AS PROVENANCE, NOT AS A DURABILITY
+      CLAIM.** Shards rebase and force-push even when the prompt forbids it — measured in nyiso-229,
+      where four of nine did, moving `arm-2023` to `651de9a3` and `arm-2025` to `3d76ad76` after the
+      parent had already fetched them. A branch name is a moving target, so the
+      `git checkout <sha> -- <path>` line in the `.gitignore` comment or the RESULT doc carries a
+      **full SHA**: rule 32(c)(1)'s pinning discipline applied to the return trip. *(AMENDED
+      2026-09-20 — this clause used to say that line "is what makes a promotion cost zero re-solves",
+      and that is FALSE, measured. A shard-branch SHA is not durable: see (f). What makes a promotion
+      cost zero re-solves is the PARENT fetching, composing and landing the keeper bundle on `main`
+      before its own PR merges. The SHA line records **which commit produced which leg** so a later
+      reader can attribute a number; a lane must never plan recovery around it, and a RESULT doc must
+      never present it as a recovery route that will still work. Cost any leg recovery as a
+      **re-solve**.)*
     - **(e) SWEEP BEFORE THE SESSION ENDS.** A session that launched shards lists them
       (`list_sessions`, filtering on its own `parent_session_id`) as part of wrapping up, archives
       every one that is idle or complete, and **names in its final report any it deliberately left
       alive and why** — a still-solving leg is a legitimate reason, a forgotten one is not.
-    - **(f) DELETE THE SHARD BRANCH TOO — BUT ONLY ONCE THE BYTES ARE SOMEWHERE THAT IS NOT THAT
-      BRANCH, AND NEVER WHILE A PROMOTION IS UNDECIDED.** *(Owner instruction 2026-09-12: "Should
-      also delete shard branches once data is recovered".)* A finished shard branch is litter and
-      goes. But deletion here is **not** the same act as archiving: archiving releases a container
-      and destroys nothing, while **deleting a branch makes its commits unreachable and eventually
-      garbage-collected** — so a shard branch is frequently the ONLY durable copy of a bundle, the
-      parent's own checkout living on a container that is reclaimed. Deleting it while the owner has
-      not ruled on promotion is the ercot-255 incident one layer over, and rule 31 `[R-RETAIN]`
-      forbids it in exactly those words. The order is therefore fixed, and each step is a
-      precondition for the next:
-      1. **RESCUE ANY UNIQUE RECORD.** A shard's own FINDING / blocker doc exists nowhere else —
-        commit it onto the parent's branch first. (Docs the shard merely inherited from `main` need
-        no rescue; check which is which rather than assuming.)
-      2. **THEN DELETE, IF AND ONLY IF the branch carries no bundle the lane may still need.** A
-        branch holding only docs, or only a failed attempt, goes immediately. A branch holding a
-        **screen** bundle may go once the PRECOMMIT/RESULT doc carries every number the lane will
-        ever cite from it — which rule 29 `[R-SCREEN]` (c) already requires, and which is what makes
-        a screen bundle disposable where a candidate bundle is not.
-      3. **A BRANCH CARRYING A BUNDLE A PROMOTION WOULD REGISTER STAYS UNTIL THE OWNER HAS RULED.**
-        Registration needs the per-plant layer, not just the summary numbers, so deleting these is
-        deleting a result — rule 31, no exceptions, and the promotion question gets asked rather
-        than pre-empted by a cleanup. Once the owner rules, promoted or declined, the branch goes.
-      4. **RE-PIN NOTHING TO A DELETED SHA.** Clause (d)'s recovery line must name a commit that
-        still resolves; when a branch is deleted, the recovery route in the doc changes from "check
-        out this sha" to "re-solve, cost stated", and the doc is updated to say so honestly instead
-        of keeping a command that will fail.
-      5. **A SESSION MAY NOT BE ABLE TO DELETE AT ALL, and that is not a transport flake to retry
-        around.** Measured 2026-09-12: `git push origin --delete <branch>` returns **HTTP 403** here
-        — the session's credential can create and update refs but not delete them — and the GitHub
-        MCP server exposes no branch-deletion tool (`create_branch` exists, no counterpart). The
-        symptom is misleading: git reports `send-pack: unexpected disconnect` and then
+    - **(f) A SHARD BRANCH IS TRANSPORT, NOT STORAGE. WHAT MUST SURVIVE LANDS ON `main`, INSIDE THE
+      REGISTERED KEEPER BUNDLE, BEFORE THE LANE'S PR MERGES. NEVER PRESERVE A SHARD BRANCH, NEVER
+      MIRROR ONE TO A SIDE REF, AND NEVER PLAN RECOVERY AROUND EITHER.** *(Owner instruction
+      2026-09-20, verbatim: "No it shouldn't preserve the branches in the repo. If something needs to
+      be kept it should be done by the main branch and pushed to main. There is no reason to clutter
+      my repo with old branches." This clause REPLACES the five-step ordered-delete procedure that
+      stood here, and the replacement is not a preference: **both of that procedure's load-bearing
+      premises were falsified by measurement in one session**, nwpp-42, 2026-09-20. Genealogy:
+      `docs/governance/rule-history.md` §22.)*
+      1. **THE PREMISE THAT A SHARD BRANCH IS "FREQUENTLY THE ONLY DURABLE COPY" IS FALSE.** The
+        environment deletes an unmerged shard branch when the **PARENT's** PR merges — not only
+        branches that were themselves merged. Measured: `claude/nwpp-42-{arm-2023,arm-2024,mer-2025}`
+        vanished on the lane PR's merge, and `git merge-base --is-ancestor` confirmed none of their
+        commits was an ancestor of `main`. A shard branch is not storage; it is the wire the bytes
+        travel on, and it is cut on a schedule the lane does not control.
+      2. **AND A SESSION CANNOT DELETE A REF ANYWAY, so the whole delete procedure was
+        unperformable.** `git push origin --delete` returns **HTTP 403**: the credential may create
+        and update refs but not delete them, and the GitHub MCP exposes `create_branch` with no
+        counterpart. The symptom misleads — git prints `send-pack: unexpected disconnect` then
         `Everything up-to-date`, which reads like the HTTP/2 flake the Git & Pushing section says to
-        retry on HTTP/1.1 — it is not, and on HTTP/1.1 the underlying 403 becomes visible. So a
-        session does steps 1–3, and if deletion is refused it **says so and leaves the branch**
-        rather than reporting a cleanup it did not perform. The normal disposal route stays what it
-        always was: a merged shard branch is auto-deleted by the environment.
+        retry on HTTP/1.1; it is not, and on HTTP/1.1 the 403 is visible. Re-measured 2026-09-20 over
+        nine refs: nine 403s.
+      3. **SO: UNDURABLE *AND* UN-REMOVABLE — THE WORST OF BOTH, AND THE REASON SIDE REFS ARE BANNED
+        OUTRIGHT.** A lane that notices (1) and "fixes" it by force-pushing leg SHAs onto PR-free
+        refs has made it worse: it cannot delete them afterwards, so it has permanently cluttered the
+        repo with branches nobody can clear — which is exactly the instruction above. nwpp-42 did
+        this and had to retract it. **Do not mirror, do not park, do not preserve.**
+      4. **WHAT A LANE ACTUALLY OWES.** (i) **Rescue any unique record**: a shard's own FINDING /
+        blocker doc exists nowhere else — commit it onto the parent's branch (docs it merely
+        inherited from `main` need no rescue; check which is which). (ii) **Land what must survive on
+        `main`**: the registered keeper bundle in its rule-15 shape, its registry sidecar and its run
+        payload, committed before the lane's PR merges. (iii) **Everything else is disposable by
+        design** — screen and control bundles were never eligible for `main` (rule 29 `[R-SCREEN]`
+        (c) forbids a control bundle reaching it; rule 15's keeper-only retention forbids a second
+        registered run for the ISO), so their numbers live in the PRECOMMIT / RESULT doc, which is
+        what rule 31 `[R-RETAIN]` means by "git history plus the RESULT doc remain the record".
+      5. **DO NOT ATTEMPT THE DELETION, AND NEVER REPORT A CLEANUP YOU DID NOT PERFORM.** Per (2) it
+        will fail. Leave the branch, say in the final report that the leftover refs need the owner to
+        remove them, and name them. A merged shard branch is auto-deleted by the environment; an
+        unmerged one is the owner's to clear.
+      6. **RULE 31 `[R-RETAIN]` IS UNTOUCHED AND STILL OUTRANKS THIS CLAUSE.** Nothing here licenses
+        destroying a result the owner has not ruled on — and nothing here needs to, because the fix
+        is *landing* bytes on `main`, never *deleting* them. Where the old clause 3 said a branch
+        carrying a promotable bundle "stays until the owner has ruled", the duty it was protecting is
+        now discharged earlier and better by (4)(ii): the parent fetches and composes **before** it
+        archives (clause (a)), so the promotable artifact is on `main` rather than hostage to a ref.
 
 1. `[R-SHARD-PROMOTABLE]` **A SOLVE THAT COULD EVER BE PROMOTED MUST PUSH ITS BUNDLE. NEVER LAUNCH
     A SHARD WHOSE RESULT CANNOT BACK A PROMOTION, AND SOLVE EVERY YEAR THE KEEPER CARRIES — ALL OF
@@ -675,16 +691,24 @@ comments and docs; the ordinals are never renumbered, so both remain valid.
       ISO's registered years from `frontend/data/backcast/registry/*.json` and launch one shard for
       **each**, against that year's own committed control. For MISO at this writing that is SIX years
       (2020-2025), not three. A year deliberately left out is named in the PRECOMMIT with its reason.
-    - **(d) THE PARENT VERIFIES RETRIEVABILITY BEFORE IT ARCHIVES ANYTHING.** Rule 33
+    - **(d) THE PARENT VERIFIES RETRIEVABILITY BEFORE IT ARCHIVES ANYTHING — AND RETRIEVABILITY
+      MEANS THE BYTES ARE IN THE PARENT'S HANDS, NOT THAT A REF EXISTS.** Rule 33
       `[R-SHARD-ARCHIVE]` (a) already requires fetch + checkout + verify before archiving; this rule
       adds the check that makes it possible — `git ls-tree -r <shard sha> -- <bundle path>` must
       return **more than zero files**. Zero means the bytes exist only on a container, and the
       correct report is that the run is **not promotable without a re-solve**, stated at the time,
-      with the cost — not discovered later when the owner asks for the promotion.
+      with the cost — not discovered later when the owner asks for the promotion. *(AMENDED
+      2026-09-20: a passing `ls-tree` is necessary and **not sufficient**. The shard branch it reads
+      is transport and is cut when the lane's own PR merges (rule 33(f)(1)), so the parent must go on
+      to fetch, compose, and land what must survive on `main` — rule 33(f)(4)(ii). "The ref resolved
+      when I checked" is not retrievability.)*
     - **(e) STATE THE RETRIEVABILITY IN THE RESULT.** Every RESULT doc for a sharded solve says, in
       one line, where each bundle is and what a promotion would cost from that state. "On ephemeral
       shard disk, ~N min to re-solve" is an acceptable sentence only if (a) was impossible for a
-      stated reason; it is never the default outcome.
+      stated reason; it is never the default outcome. *(AMENDED 2026-09-20: the sentence names where
+      the bytes are **on `main`**, since that is the only place they persist. A RESULT doc must NOT
+      present a shard-branch SHA as the recovery route — see rule 33(d): those SHAs are provenance,
+      and any leg not landed on `main` is costed as a re-solve.)*
 
 1. `[R-PROMOTE]` **A PROMOTION IS NOT DONE UNTIL THE OUTGOING KEEPER'S FILES ARE GONE — AND THE
     INCOMING KEEPER CARRIES EVERY YEAR THE ISO HAS ALREADY RUN, HELD-OUT YEARS INCLUDED.** *(Owner

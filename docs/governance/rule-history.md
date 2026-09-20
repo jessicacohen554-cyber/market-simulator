@@ -1412,10 +1412,88 @@ oversight to be rediscovered.
 **None.** No scorer path, rubric, gate, marker, keeper or determination is touched; the removal
 is a spending rule, not a scoring rule. Every registered run re-scores byte-identically.
 
-## 22. Changes to this file
+## 22. Rule 33 `[R-SHARD-ARCHIVE]` (d)/(f) — a shard branch is TRANSPORT, not STORAGE (owner, 2026-09-20)
+
+**Owner instruction, verbatim:**
+
+> "No it shouldn't preserve the branches in the repo. If something needs to be kept it should be
+> done by the main branch and pushed to main. There is no reason to clutter my repo with old
+> branches."
+
+### What was removed
+
+Clause (f)'s five-step ordered-delete procedure, entire: "rescue, then delete iff no bundle is still
+needed, **a branch carrying a promotable bundle STAYS until the owner has ruled**, re-pin nothing to
+a deleted SHA, and if deletion is refused say so". With it goes the premise the whole thing rested
+on — *"a shard branch is frequently the ONLY durable copy of a bundle"* — and clause (d)'s claim that
+the `git checkout <sha> -- <path>` line *"is what makes a promotion cost zero re-solves"*.
+
+### Why: both load-bearing premises were falsified by measurement, in one session
+
+Lane nwpp-42, 2026-09-20, in the course of an ordinary promotion:
+
+1. **A shard branch is not durable.** The environment deletes an unmerged shard branch when the
+   **PARENT's** PR merges, not only branches that were themselves merged.
+   `claude/nwpp-42-{arm-2023,arm-2024,mer-2025}` vanished on the lane PR's merge; `git merge-base
+   --is-ancestor` confirmed none of their commits was an ancestor of `main`. Two of the three held an
+   arm leg's per-plant `dispatch/<year>_P1.parquet`; the third held the entire 2025 year-isolation
+   control.
+2. **A session cannot delete a ref.** `git push origin --delete` returns **HTTP 403** — the
+   credential may create and update refs but not delete them, and the GitHub MCP exposes
+   `create_branch` with no counterpart. Re-measured over nine refs: nine 403s. (Clause (f)(5) had
+   recorded this on 2026-09-12; what 2026-09-20 adds is that it makes the *whole* procedure
+   unperformable, not just its last step.)
+
+So the rule directed lanes to rely on a store that disappears on someone else's merge, and to
+discharge that reliance with an operation the session cannot perform.
+
+### The trap the old rule set, and the lane that walked into it
+
+nwpp-42 hit (1) mid-promotion and "fixed" it the way the old clause implied — force-pushing all six
+leg SHAs onto PR-free refs `claude/nwpp-42-leg-*` so they would survive the next merge. That is
+strictly worse: per (2) those refs can never be removed by a session, so the repair *permanently*
+cluttered the repo with nine branches nobody in-session can clear — which is what the owner's
+instruction names. The lane retracted it the same session. **The new clause bans side refs by name**
+so the next lane does not rediscover this.
+
+### What replaced it
+
+**A shard branch is the wire, not the warehouse.** What must survive lands on `main`, inside the
+registered keeper bundle, before the lane's own PR merges: the rule-15 bundle shape, its registry
+sidecar, its run payload. A shard's unique FINDING / blocker doc is still rescued onto the parent's
+branch. Everything else is disposable *by design* — a screen or control bundle was never eligible
+for `main` (rule 29 `[R-SCREEN]` (c) forbids a control bundle reaching it; rule 15's keeper-only
+retention forbids a second registered run for the ISO), which is exactly why rule 31 `[R-RETAIN]`
+says "git history plus the RESULT doc remain the record". A session does not attempt the deletion,
+does not mirror, and **never reports a cleanup it did not perform** — it names the leftover refs for
+the owner to clear.
+
+### What was deliberately KEPT
+
+- **Rule 31 `[R-RETAIN]` is untouched and still outranks this clause.** Nothing here licenses
+  destroying an undecided result, and nothing needs to: the fix is *landing* bytes, never deleting
+  them. The duty old clause 3 protected ("stays until the owner has ruled") is discharged earlier and
+  better by landing the promotable artifact on `main` rather than leaving it hostage to a ref.
+- **Rule 34 `[R-SHARD-PROMOTABLE]` (a) is untouched.** "The bundle is pushed, always" is the
+  transport mechanism and fixed a real loss (miso-255); removing it would strand bundles on shard
+  containers again. What changed is only what happens *after* the parent has the bytes.
+- **Clause (d)'s full-SHA discipline survives as PROVENANCE** — it records which commit produced
+  which leg, so a later reader can attribute a number. It is no longer a recovery route, and a RESULT
+  doc must not present it as one.
+- Clauses (a), (b), (c), (e) of rule 33 are unchanged.
+
+### Scored effect: none
+
+Presentation and process only. No scorer path, no `ScenarioConfig` field, no cache key, no keeper and
+no determination moves; every registered run re-scores byte-identically. Rule 34 (d)/(e) gained
+amendment notes pointing at (f)(1) — a passing `git ls-tree` is necessary but not sufficient, and a
+RESULT doc names where the bytes are **on `main`**.
+
+## 23. Changes to this file
 
 | date | change |
 |---|---|
+| 2026-09-20 | Added §22: **rule 33 `[R-SHARD-ARCHIVE]` (d)/(f) — a shard branch is TRANSPORT, not STORAGE** (owner instruction, verbatim in §22). The five-step ordered-delete procedure is removed, along with both premises it rested on, each falsified by measurement in lane nwpp-42 on one day: (1) the environment deletes an unmerged shard branch when the **PARENT's** PR merges — `claude/nwpp-42-{arm-2023,arm-2024,mer-2025}` vanished on the lane PR's merge with none of their commits an ancestor of `main`, two holding an arm leg's per-plant dispatch layer and one the entire 2025 control; and (2) a session cannot delete a ref at all (HTTP 403 over nine refs, no MCP counterpart to `create_branch`), so the procedure was unperformable end to end. The lane's own "fix" — mirroring leg SHAs to PR-free refs — was strictly worse and is now banned by name, since those refs can never be cleared in-session. Replacement: what must survive lands on `main` inside the registered keeper bundle before the lane's PR merges; a shard's unique FINDING doc is still rescued; screen and control bundles stay disposable by design (rule 29(c) / rule 15 forbid them reaching `main` anyway). KEPT: rule 31 `[R-RETAIN]` untouched and still outranking; rule 34(a) "the bundle is pushed, always" untouched as the transport mechanism; clause (d)'s full-SHA discipline demoted from recovery route to **provenance**; rule 33 (a)/(b)/(c)/(e) unchanged. Rule 34 (d)/(e) annotated — a passing `git ls-tree` is necessary, not sufficient. Nothing scored moves. "Changes to this file" renumbered §22 → §23 (no external reference cited §22). |
 | 2026-09-16 | Added §21: **rule 29 `[R-SCREEN]`'s SCREEN-YEAR REGIME REMOVED** (owner instruction, verbatim in §21) — a new config goes straight to the full span; the one-year screen solve, the footprint-named screen year, the span's conditionality and the structural STOP gate are all gone as requirements. The ordinal and ID do **not** move (the §18 `[R-HOLDOUT]` discipline), because `[R-SCREEN]` is cited by name in `check_registry_payload_parity.py`, `keepers/README.md` and rules 15/31/32(b)/34(b): clause (b) (`G-DRIFT`, no control solves) and clause (c) (delete before merge) survive verbatim, and clause (0) survives as practice rather than gate. §19's *"a single-year shard is still correct for a rule-29 SCREEN"* carve-out is spent — a single-year shard is now one leg of rule 34 (c)'s per-year fan-out, pushing its full bundle. Rules 1/16/34 untouched. The trade is recorded rather than hidden: the screen saved ~2 of every 3 years on a dead arm (pjm-h6/h7/h8 each spent one), and dead arms are now paid for in full. Nothing scored moves. "Changes to this file" renumbered §21 → §22 (no external reference cited §21). |
 | 2026-09-12 | Added §20: **rule 35 `[R-PROMOTE]` is NEW** (owner instruction, verbatim in §20) — a keeper promotion DELETES the prior keeper's three stores in the promoting session, and the incoming keeper must carry every year the ISO has already run, held-out years included. This gives an owner and a deadline to a duty rule 15 `[R-DASHBOARD]` has required since 2026-09-05 but deferred to "the next registration": measured 2026-09-12, 47 registered runs against 7 keepers (33 superseded), 92 bundle dirs / 579 MB, and the parity gate RED on 5 of them. The two halves are one rule because the registry is the only mechanical record of which years an ISO has run, so deleting before enumerating can silently retire a held-out rung — quietly, since rule 30(a) renders a dangling stamp as unstamped. Rule 15's timing text edited in the same commit; rules 29/31/34 untouched (rule 31 outranks: the owner's promotion ruling IS its trigger (i)). Enforced by `audit_keepers` **E13** + `tests/scoring/test_audit_keepers_orphan_runs.py`, closing a structural blind spot — E1 sees the keeper's own stores, E12 the shard's live pointers, neither the ISO's registered SET. "Changes to this file" renumbered §20 → §21 (no external reference cited §20). |
 | 2026-09-12 | Added §19: rule 32 `[R-SHARD]` (b) amended by owner instruction (verbatim in §19) — **the slim per-year fan-out is BANNED**; a run that will be REGISTERED is solved by ONE shard in ONE `--years <all>` invocation into ONE bundle, and that shard attests, registers and pushes. The old clause actively directed per-year sharding and that is what caused the incident: SPP-36 spent three per-year shards, could not reassemble them, and re-solved the whole span — four solves for one run. Measured cause: registration needs the bundle-root `system.parquet` and the per-plant `dispatch/*.parquet`, both gitignored, and without them D-1/D-2/D-4 return **zero rows and pass VACUOUSLY** (D-4 flipped False→True against 71 rows / 12 failures); `--reuse-solved` gates on the same two files. A second defect it exposed: differencing a single-year arm against a span-solved control is a construction mismatch that produced a false slack finding (1,295.7 / 240.6 MWh added), corrected to **slack unchanged in every year** by the span-vs-span A/B. The 20-minute ceiling survives as a STOP rule, not a split rule; subdivision stays available for diagnostics, and a single-year shard stays correct for a rule-29 `[R-SCREEN]` screen. "Changes to this file" renumbered §19 → §20 (no external reference cited §19). |
