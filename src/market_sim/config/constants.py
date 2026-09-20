@@ -4104,6 +4104,16 @@ NEW_ENTRY_COSTS: dict[str, dict[str, float]] = {
 # derivation by tests/test_regional_renewable_cf.py (rule 23 [R-FROZEN-DERIVE]:
 # re-derive ONLY when a new eGRID vintage lands, and cite the data change).
 #
+# Rows are keyed by REGION, not by balancing authority, and the BA -> region
+# mapping is the model's own fleet.models.ISO_TO_BA_CODES with its
+# ISO_NERC_REGION_ADMISSION predicate (rule 24 [R-REGISTRY] — the derive script
+# reads that registry rather than keeping a second copy). NWPP is why that
+# matters: it is a pool of SEVENTEEN balancing authorities, so its 2.96 GW of
+# wind (7 BAs) and 3.05 GW of solar (10 BAs) only aggregate correctly through
+# the registry. The per-BA spread inside it is real and wide — NEVP solar 0.304
+# against PGE 0.172 — which is the argument for pooling the footprint the model
+# actually dispatches rather than picking a representative BA.
+#
 # CFACT is net generation / (nameplate x 8760), so these are NET OF CURTAILMENT
 # — deliberately, because the consumer divides an annual cost by DELIVERED MWh
 # and a curtailed MWh is neither sold nor abating.
@@ -4120,6 +4130,7 @@ REGIONAL_RENEWABLE_CF: dict[str, dict[str, float]] = {
         "ERCOT": 0.2409,
         "MISO": 0.2113,
         "NEISO": 0.1755,
+        "NWPP": 0.2753,
         "NYISO": 0.1684,
         "PJM": 0.2041,
         "SOCO": 0.2443,
@@ -4130,11 +4141,13 @@ REGIONAL_RENEWABLE_CF: dict[str, dict[str, float]] = {
         "ERCOT": 0.3582,
         "MISO": 0.3988,
         "NEISO": 0.2896,
+        "NWPP": 0.3517,
         "NYISO": 0.2840,
         "PJM": 0.3493,
         "SPP": 0.4126,
     },
 }
+
 
 # Capital-recovery period for the marginal-abatement cost basis, years.
 #
