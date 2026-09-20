@@ -1,0 +1,16 @@
+{
+  "id": "2026-09-20-nyiso247-fuel-invariance-disarm",
+  "label": "nyiso247 fuel invariance disarm",
+  "date": "2026-09-20",
+  "shorthand": "nyiso247-fuel-invariance-disarm",
+  "definition": "nyiso-247 arm: gas_offer_net_revenue_margin DISARMED (the fuel-invariance limb); single delta off the nyiso241 keeper; PRECOMMIT docs/PRECOMMIT-nyiso247-fuel-invariance-limb-2026-09-20.md",
+  "years": [
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-09-20-nyiso247-fuel-invariance-disarm.js",
+  "bundle": "results/calibration/nyiso247_fuelinv_span"
+}
