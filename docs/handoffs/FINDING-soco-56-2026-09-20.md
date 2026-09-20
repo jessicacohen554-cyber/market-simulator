@@ -550,3 +550,63 @@ docs/handoffs/PRECOMMIT-soco-56-2026-09-20.md,
 docs/handoffs/FINDING-soco-56-2026-09-20.md, scripts/gen_soco56_attestation.py,
 scripts/probes/soco56_compose_span.py.
 ```
+
+---
+
+## 12. CODA — THE OWNER RULED, AND THE PROMOTION WAS EXECUTED IN THIS SESSION
+
+**Written after §§1–11, which were composed while the promotion was still open. Those sections are
+left as they stood; this coda records what changed rather than rewriting the record.**
+
+The owner ruled, verbatim: *"Is this a recommended keeper candidate? If so plz promote. If structural
+integrity improves but gates regress that may still be a keeper."*
+
+**SOCO's keeper is now `2026-09-20-soco56-perunit-outage`.** Unlike SOCO-55 — whose coda had to record
+that the ruling's second sentence did *not* describe its case, because its gates did not move at all —
+**this promotion IS the ruling's harder limb, exactly**: structural integrity improves and a gate row
+**regresses**, from +7.505 to +10.178 TWh on 2024 `CC_REGULAR`, which now fails both legs where the
+outgoing keeper failed one. That regression was pre-registered in `PRECOMMIT-soco-56` §4 P1/P2 before
+the solve and is the declared price of the repair.
+
+Rule 35 `[R-PROMOTE]` was executed in this session, **in order**:
+
+- **(b)** the year union `{2023, 2024, 2025}` was enumerated over **all three** SOCO sidecars —
+  `soco53g`, `soco55`, `soco56` — **before** anything was deleted;
+- **(c)** the incoming keeper covers that union in one composed span, so **the promotion shrinks
+  nothing**;
+- **(e)** the new designation was written, `build_status.py --iso SOCO` rebuilt, and `audit_keepers`
+  re-run to resolve the incoming keeper's three stores, **before** `prune_iso_runs` touched anything;
+- **(a)** the outgoing keeper's **three stores** were then deleted together — registry sidecar,
+  `runs/<id>.js` payload and `results/calibration/soco55_peryear_basis` — via `--force-uncite`, which
+  rule 35(d) names as the **intended** route here rather than a safety override. Its bundle is
+  recoverable from git history at this branch point.
+
+**`2026-09-20-soco53g-prb-own-iso` was deliberately NOT pruned** (passed to `--keep`). The ruling names
+*the recommended candidate*, which is this lane's; it does not dispose of `soco53g`. Rule 31
+`[R-RETAIN]` forbids deleting it and rule 30 `[R-TOUCHPOINT-FOLD]` (a) forbids inventing a stamp, so
+**E13 still fires once — down from two — and is RE-RAISED, not cleared.** §11's recommendation stands:
+decline it, and let the next promoting session prune it.
+
+**ONE GATE FINDING SURFACED BY THE PROMOTION AND DECLARED RATHER THAN SUPPRESSED.** `audit_keepers`
+**E11** — the silent-de-arm guard — flagged `meta.composed_from` moving
+`['soco55_arm_*'] → ['soco56_arm_*']` as an undeclared keeper-recipe change. It is neither a de-arm nor
+a solve-affecting field: it is the provenance list of the per-year shard bundles the parent composed,
+which rule 36 `[R-YEAR-ISOLATION]` (a) **requires** be re-solved per year, so it cannot carry across a
+promotion and necessarily renames at **every** sharded keeper. It is declared in the shard's
+`promotion_note_soco56` and E11 now passes. *A successor promoting a sharded keeper on any ISO will
+hit the same guard and owes the same declaration.*
+
+**G-DRIFT re-run against the refreshed `origin/main`** (rule 29(b) form 4): the only solve-path change
+since this lane's pin is SPP-67's `vre_reference_rate_year_own` — a new `ScenarioConfig` field shipping
+**default `False`**, registered in `_CACHE_KEY_OPTIONAL_FIELDS` at `"False"` **in the same commit**, and
+gating code (`_spp_wind_annual_rates`, `_spp_wind_year_own_curtailment_rate`) that is **SPP-only** and
+reads an SPP wind-curtailment artifact. **INERT for SOCO** on two independent grounds — another ISO's
+branch, and a default-off flag absent from this keeper's recipe — and SOCO dispatches **0.000 TWh of
+wind in every year**. Form 4 holds and the A/B stands.
+
+**Post-promotion gates:** `check_mechanism_matrix --base origin/main` GREEN, keeper stamps matching
+every shard, with the SOCO shard's `keeper` + `gates` and the §5.8 header re-stamped and the
+`campd_per_unit_attribution` cell moved **`O` → `K`** in this session (rule 28); `build_status --iso
+SOCO` rebuilt and in sync; `audit_keepers` holdout / marker / status all pass with the **one** expected
+E13. `calibration-complete.json` carries **no SOCO entry**, confirmed rather than assumed, so there was
+nothing to re-key there.

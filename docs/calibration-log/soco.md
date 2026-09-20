@@ -1285,3 +1285,51 @@ promoting session may prune it. Records:
 docs/handoffs/PRECOMMIT-soco-56-2026-09-20.md,
 docs/handoffs/FINDING-soco-56-2026-09-20.md, scripts/gen_soco56_attestation.py,
 scripts/probes/soco56_compose_span.py.
+
+## soco-56 PROMOTION — 2026-09-20
+
+OWNER RULED ("Is this a recommended keeper candidate? If so plz promote. If
+structural integrity improves but gates regress that may still be a keeper").
+SOCO'S KEEPER IS NOW 2026-09-20-soco56-perunit-outage. Unlike SOCO-55, whose coda
+had to record that the ruling's second sentence did NOT describe its case, THIS
+PROMOTION IS THE RULING'S HARDER LIMB EXACTLY: structure improves and a gate row
+REGRESSES -- 2024 CC_REGULAR +7.505 -> +10.178 TWh of a +/-7.466 band and +2.81 ->
++3.88 pp of a +/-3.00 pp cap, failing BOTH legs where the outgoing keeper failed
+one. PRECOMMIT-soco-56 P1/P2 pre-registered that before the solve.
+
+Rule 35 [R-PROMOTE] executed IN ORDER: (b) the year union {2023, 2024, 2025} was
+enumerated over ALL THREE SOCO sidecars BEFORE anything was deleted; (c) the
+incoming keeper covers it in one composed span, so the promotion SHRINKS NOTHING;
+(e) the designation was written, build_status rebuilt and audit_keepers re-run to
+resolve the incoming keeper's three stores BEFORE prune_iso_runs touched anything;
+(a) the outgoing keeper's three stores were then deleted together via
+--force-uncite, which rule 35(d) names as the INTENDED route here. Its bundle is
+recoverable from git history at this branch point.
+
+2026-09-20-soco53g-prb-own-iso was deliberately NOT pruned (--keep). The ruling
+names THE RECOMMENDED CANDIDATE, which is this lane's, and does not dispose of
+soco53g; rule 31 forbids deleting it and rule 30(a) forbids stamping it, so E13
+fires ONCE -- down from two -- and is RE-RAISED. The standing recommendation is to
+DECLINE it so the next promoting session may prune it.
+
+audit_keepers E11 (the silent-de-arm guard) flagged meta.composed_from moving
+['soco55_arm_*'] -> ['soco56_arm_*']. NOT a de-arm and not solve-affecting: it is
+the provenance list of the per-year shard bundles rule 36 [R-YEAR-ISOLATION] (a)
+REQUIRES be re-solved per year, so it cannot carry across a promotion and renames
+at every sharded keeper. Declared in promotion_note_soco56; E11 now passes. A
+successor promoting a sharded keeper on ANY ISO will hit the same guard and owes
+the same declaration.
+
+G-DRIFT re-run against the refreshed origin/main: the only solve-path change since
+this lane's pin is SPP-67's vre_reference_rate_year_own -- default False,
+registered in _CACHE_KEY_OPTIONAL_FIELDS at "False" in the same commit, gating
+SPP-only wind-curtailment code. INERT for SOCO on two grounds (another ISO's
+branch; a default-off flag absent from the recipe), and SOCO dispatches 0.000 TWh
+of wind in every year. Form 4 holds.
+
+Post-promotion: check_mechanism_matrix GREEN with keeper stamps matching every
+shard (SOCO shard keeper + gates and the §5.8 header re-stamped, cell
+campd_per_unit_attribution O -> K); build_status --iso SOCO in sync;
+audit_keepers holdout/marker/status all pass with the one expected E13.
+calibration-complete.json carries NO SOCO entry, confirmed not assumed.
+Record: docs/handoffs/FINDING-soco-56-2026-09-20.md §12.
