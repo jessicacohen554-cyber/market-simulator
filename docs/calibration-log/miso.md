@@ -14597,4 +14597,83 @@ is the same provenance defect class this session documented in the predecessor.
 
 Records: `docs/RESULT-miso262-mer-control-and-the-year-grouping-defect-2026-09-19.md`.
 
-* Next number: **miso-263**.
+* Next number: **miso-264**.
+
+## miso-263 — 2026-09-19 — **THE COAL CEILING WAS DECLARED IN EVERY RUN CONFIG AND NEVER ENFORCED. Repaired across all six years; miso-262's "year-grouping defect" is FALSIFIED.** Keeper unchanged pending the owner's ruling; new run `2026-09-19-miso-263-coal-ceiling` registered
+
+**THE FINDING, proved from committed bytes at ZERO parent LP.** `coal_fuel_inventory: true`
+appears in all six of the keeper's per-year run_configs and the row was never built. Its LP
+constraint caps coal energy INPUT per month, so the most coal ENERGY any feasible dispatch can
+deliver in a month is the efficiency-ordered greedy fill of that budget against each unit's
+`pmax x availability` — a bound holding for every feasible dispatch whatever the class mix or
+offers. The keeper's own committed `class_hourly` EXCEEDS it in **7/12 months of 2022
+(+33.17 TWh), 4/12 of 2021 (+8.83) and 3/12 of 2025 (+4.92)**, and 0/12 of 2020/2023/2024. The
+superseded WARM keeper exceeds it in **0/12 months of every year**, sitting 0.8-1.2 % under the
+bound in exactly the months the cold run sails past.
+
+**CAUSE, reproduced rather than inferred.** `build_coal_fuel_budget` resolves through the
+DERIVED, gitignored partitions `data/clean/{coal-stocks,coal-receipts}`, which
+`hydrate_data.py` does not build; absent, it returns None, appends ZERO rows, logs a warning
+and the solve proceeds. This session's own container hit that state on the first attempt, and
+`meta.composed_from` names six `miso262_mer_*` bundles solved in fresh shard containers that
+never ran `regenerate_clean.py`.
+
+**THE REPAIR.** Six shards, one year each (rule 36 [R-YEAR-ISOLATION]), the keeper's OWN recipe
+with the partitions present — zero ScenarioConfig deltas, zero free parameters, 43 DOF entries
+carried and 0 added. Every year: **0/12 violations**, and max |d class TWh| vs the WARM keeper
+**1.6e-5** (2020/21/22) and **0.000000** (2023/24/25). 2022 coal 265.72 -> **231.04 TWh**. Every
+year landed at or under a ceiling REGISTERED BEFORE ANY SHARD REPORTED (commit `891f892c`).
+
+**miso-262 §3 IS FALSIFIED.** A cold, year-isolated solve now reproduces the warm, span-grouped
+keeper essentially exactly, so the warm-start channel it hypothesised and never tested measures
+**NULL**. All six of its divergences are the coal cap — including 2023's 0.144 TWh, which it
+called "still unexplained either way" (the cap binding lightly in Jul/Aug). Its
+position-in-leg story predicted 2024 would diverge; 2024 is the cleanest year AND violates
+0/12. **miso-262c's "~$500M better optimum" argument inverts**: relaxing a binding constraint
+always improves the objective. **Rule 36 is NOT reverted** — its architectural argument is
+untouched; only the measurement cited for it was something else.
+
+**A SECOND DEFECT, found mid-flight.** `replay_keeper.py` builds its recipe from the span-wide
+`meta.json` and has NO per-year dimension, so replaying MISO's data-partitioned composite
+solved the train-tier years on the VALIDATION leg's reserve config
+(`miso_measured_reserve_requirements` / `miso_reserve_online_gated`). Exposure is exactly those
+two fields (gas and weather_year are unaffected — `bundle_gas_price` falls back to the per-year
+Henry Hub actual). First-wave 2024/2025 discarded and re-solved with `--set` restoring the
+keeper's own declared values; 2020-2022 unaffected; the composer's `check_recipes` partition
+guard would have ABORTED. The first-wave 2025 shard flagged it itself and was right, and
+narrower than the truth; its claim was verified against artifacts, not accepted on report.
+
+**THE FIX.** `coal_fuel_inventory` is now a `PartitionRequirement` in
+`market_sim.data.input_completeness` — the caiso-157 guard, `hydro_ror_split` severity class
+(no fallback, fatal in every mode) — which its own registry documents as "ADDITIVE by design"
+and which was never extended when miso-259 introduced the mechanism. No field, no threshold,
+zero cache-key movement.
+
+**THE BENCH MOVES AT HEAD AND THIS RUN WAS DELIBERATELY NOT SCORED ON IT.** `--rebuild-benchmark`
+at HEAD moves the ACTUAL side by up to **2.651 TWh** (oil -> OTHER_FOSSIL), traced to
+`e63f730a` (spp-49), which edits `run_calibration_full.py`. Scoring a candidate against a moved
+actual is the miso-257 defect, so the bench parts were restored to origin/main and parity reads
+**0.000000**; against the committed bench the numbers reproduce the warm keeper's published
+figures exactly. **Routed to spp-49's owner, not absorbed.**
+
+**SCORED COMPARISON (same scorer, same bench, same session).** Failing criteria **4 -> 3**,
+failing C1 cells **5 -> 2**; C1 2021 CC_REGULAR / 2022 COAL_PRB / 2022 COAL_BIT FAIL -> PASS;
+C1 2022 CC_REGULAR -28.20 -> **-9.47**; C3a 2022 -23.3% -> **-14.6%**; C3b 2022 FAIL -> PASS;
+C4 **FAIL -> PASS**. **TRAIN TIER 2023-2025 CALIBRATED** in both, C3c the lone ledgered caveat.
+**Against it:** C1 2020 COAL_BIT stays -10.29, C3a 2020 stays +16.3%, C3b 2021 stays 0.299, the
+full span still reads NOT-YET on those validation rungs, and the 2020 object miso-262 routed to
+the price residual is untouched.
+
+**PROMOTION RECOMMENDED AND THE QUESTION IS OPEN (rule 31).** The owner's standard was "if
+structural integrity improves but gates regress that may still be a keeper"; this run does not
+need that allowance — it improves BOTH. `audit_keepers` **E13 is RED until the decision is made
+either way**, which is the correct state for a candidate. Nine shard sessions archived; the two
+superseded first-wave branches could NOT be deleted (HTTP 403, rule 33(f)(5)) and are left, said
+plainly. Every leg is retrievable at a full SHA in `.gitignore` — a promotion costs ZERO
+re-solves.
+
+Records: `docs/RESULT-miso263-the-coal-ceiling-was-declared-but-never-enforced-2026-09-19.md`,
+`docs/PRECOMMIT-miso263-coal-ceiling-not-enforced-2026-09-19.md`, two ADDENDA, probe
+`scripts/probes/_miso263_coal_ceiling_phase0.py`.
+
+* Next number: **miso-264**.
