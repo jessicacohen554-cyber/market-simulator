@@ -1,0 +1,353 @@
+{
+  "precommit": "docs/PRECOMMIT-nyiso244-measured-offer-surface-design-2026-09-20.md",
+  "precommit_sha": "2e5097a5",
+  "bundle": "results/calibration/nyiso241_ctcommitted_span",
+  "G1_rule19": {
+    "armed_peak_writers": {
+      "gas_offer_net_revenue_margin": true,
+      "gas_offer_margin_zonal_anchor": true,
+      "gas_offer_margin_zonal_anchor_vintage": true,
+      "nyiso_ct_peaker_committed_measured": true,
+      "nyiso_st_gas_econ_bands_deleaked": true
+    },
+    "per_class": {
+      "CC_REGULAR": {
+        "peak_mult_m": 2.25,
+        "phys_peak": 2.25,
+        "gonrm_registered_markup_hr": 0.0,
+        "gonrm_inert_on_peak": true
+      },
+      "CC_INTERMEDIATE": {
+        "peak_mult_m": 2.25,
+        "phys_peak": null,
+        "gonrm_registered_markup_hr": null,
+        "gonrm_inert_on_peak": true
+      },
+      "CC_CHP": {
+        "peak_mult_m": 2.25,
+        "phys_peak": 2.25,
+        "gonrm_registered_markup_hr": 0.0,
+        "gonrm_inert_on_peak": true
+      },
+      "CT_CHP": {
+        "peak_mult_m": 1.0,
+        "phys_peak": null,
+        "gonrm_registered_markup_hr": null,
+        "gonrm_inert_on_peak": true
+      },
+      "CT_PEAKER": {
+        "peak_mult_m": 4.0,
+        "phys_peak": 1.0,
+        "gonrm_registered_markup_hr": 3.0,
+        "gonrm_inert_on_peak": false,
+        "gonrm_markup_usd_per_hr_unit_by_zone": {
+          "Upstate_West": 16.7595,
+          "Capital_Hudson": 25.9695,
+          "Lower_Hudson": 25.9695,
+          "NYC": 20.6295,
+          "Long_Island": 25.9695
+        }
+      },
+      "CT_INTERMEDIATE": {
+        "peak_mult_m": 3.0,
+        "phys_peak": null,
+        "gonrm_registered_markup_hr": null,
+        "gonrm_inert_on_peak": true
+      },
+      "ST_GAS": {
+        "peak_mult_m": 4.2,
+        "phys_peak": 1.0,
+        "gonrm_registered_markup_hr": 3.2,
+        "gonrm_inert_on_peak": false,
+        "gonrm_markup_usd_per_hr_unit_by_zone": {
+          "Upstate_West": 17.8768,
+          "Capital_Hudson": 27.7008,
+          "Lower_Hudson": 27.7008,
+          "NYC": 22.0048,
+          "Long_Island": 27.7008
+        }
+      },
+      "ST_GAS_INTERMEDIATE": {
+        "peak_mult_m": 2.2,
+        "phys_peak": null,
+        "gonrm_registered_markup_hr": null,
+        "gonrm_inert_on_peak": true
+      },
+      "COAL_LIGNITE": {
+        "peak_mult_m": 1.55,
+        "phys_peak": null,
+        "gonrm_registered_markup_hr": null,
+        "gonrm_inert_on_peak": true
+      },
+      "COAL_PRB": {
+        "peak_mult_m": 1.48,
+        "phys_peak": null,
+        "gonrm_registered_markup_hr": null,
+        "gonrm_inert_on_peak": true
+      },
+      "COAL_BIT": {
+        "peak_mult_m": 1.45,
+        "phys_peak": null,
+        "gonrm_registered_markup_hr": null,
+        "gonrm_inert_on_peak": true
+      },
+      "COAL_WC": {
+        "peak_mult_m": 1.2,
+        "phys_peak": null,
+        "gonrm_registered_markup_hr": null,
+        "gonrm_inert_on_peak": true
+      },
+      "COAL": {
+        "peak_mult_m": 1.45,
+        "phys_peak": null,
+        "gonrm_registered_markup_hr": null,
+        "gonrm_inert_on_peak": true
+      }
+    },
+    "decomposition": {
+      "note": "A peak rung's offer decomposes into three DISJOINT increments: phys*HR*fuel(t) (physical burn), (m-phys)*HR*anchor (the REGISTERED markup, which gas_offer_net_revenue_margin reprices to fuel-invariant), and (M-m)*HR*fuel(t) (the MEASURED scarcity increment a conditional surface would add). No MW is priced twice: GONRM never touches (M-m) and the surface never touches (m-phys). Overlap is 0 BY CONSTRUCTION, not by tolerance.",
+      "surface_increment": "(M - m) * HR_base * fuel(t)",
+      "gonrm_increment": "(m - phys) * HR_base * anchor",
+      "overlap": 0.0,
+      "declared_construction_limit": "The shared kernel prices the scarcity increment (M-m) MULTIPLICATIVELY, i.e. it tracks the hour's fuel. GONRM's own grounding argues real bidders express scarcity in $ terms, so a fuel-invariant form of the SAME measured increment is a legitimate successor question. Declared, not resolved here."
+    }
+  },
+  "G3_reach": {
+    "year": 2022,
+    "window": "winter_missed",
+    "hours": 70,
+    "object_mw": 4715.7,
+    "by_class": {
+      "CC_CHP": {
+        "available_mw": 2993.6,
+        "dispatched_mw": 1551.3,
+        "idle_mw": 1269.2,
+        "idle_below_gate_mw": 1128.6,
+        "idle_below_gate_on_peak_rungs_mw": 223.6,
+        "idle_below_gate_by_rung_family_mw": {
+          "mustrun": 0.0,
+          "sync": 0.0,
+          "committed": 12.2,
+          "econ": 849.0,
+          "peak": 223.6,
+          "other": 0.0
+        }
+      },
+      "CC_REGULAR": {
+        "available_mw": 4877.5,
+        "dispatched_mw": 3530.6,
+        "idle_mw": 954.5,
+        "idle_below_gate_mw": 911.7,
+        "idle_below_gate_on_peak_rungs_mw": 512.4,
+        "idle_below_gate_by_rung_family_mw": {
+          "mustrun": 0.0,
+          "sync": 0.0,
+          "committed": 89.0,
+          "econ": 197.1,
+          "peak": 512.4,
+          "other": 0.0
+        }
+      },
+      "CT_CHP": {
+        "available_mw": 343.9,
+        "dispatched_mw": 293.5,
+        "idle_mw": 50.3,
+        "idle_below_gate_mw": 50.3,
+        "idle_below_gate_on_peak_rungs_mw": 3.5,
+        "idle_below_gate_by_rung_family_mw": {
+          "mustrun": 0.0,
+          "sync": 0.0,
+          "committed": 37.3,
+          "econ": 9.6,
+          "peak": 3.5,
+          "other": 0.0
+        }
+      },
+      "CT_PEAKER": {
+        "available_mw": 2708.4,
+        "dispatched_mw": 553.2,
+        "idle_mw": 2157.7,
+        "idle_below_gate_mw": 1208.2,
+        "idle_below_gate_on_peak_rungs_mw": 2.6,
+        "idle_below_gate_by_rung_family_mw": {
+          "mustrun": 0.0,
+          "sync": 0.0,
+          "committed": 107.2,
+          "econ": 1128.1,
+          "peak": 2.6,
+          "other": 0.0
+        }
+      },
+      "ST_CHP": {
+        "available_mw": 295.7,
+        "dispatched_mw": 282.8,
+        "idle_mw": 5.1,
+        "idle_below_gate_mw": 5.1,
+        "idle_below_gate_on_peak_rungs_mw": 3.6,
+        "idle_below_gate_by_rung_family_mw": {
+          "mustrun": 0.0,
+          "sync": 0.0,
+          "committed": 2.0,
+          "econ": 0.0,
+          "peak": 3.6,
+          "other": 0.0
+        }
+      },
+      "ST_GAS": {
+        "available_mw": 3338.1,
+        "dispatched_mw": 332.9,
+        "idle_mw": 2837.4,
+        "idle_below_gate_mw": 2079.9,
+        "idle_below_gate_on_peak_rungs_mw": 0.0,
+        "idle_below_gate_by_rung_family_mw": {
+          "mustrun": 0.0,
+          "sync": 0.0,
+          "committed": 320.8,
+          "econ": 1655.5,
+          "peak": 0.0,
+          "other": 0.0
+        }
+      }
+    },
+    "total_idle_mw": 7274.1,
+    "total_idle_below_gate_mw": 5383.8,
+    "total_idle_below_gate_on_peak_rungs_mw": 745.8,
+    "ct_family_idle_below_gate_on_peak_rungs_mw": 6.1,
+    "G3_all_class_peak_reach_frac": 0.1581,
+    "G3_ct_family_peak_reach_frac": 0.0013,
+    "G3_bar": 0.5,
+    "PASS_all_class_peak": false,
+    "PASS_ct_family_peak": false
+  },
+  "G2_cohort": {
+    "year": 2022,
+    "selector": {
+      "definition": "a masked gen carrying a 10-Min Non-Synchronized Reserve OFFER in >= 50% of its DAM offered hours. NYISO's own product definition: offline to full output within 10 minutes.",
+      "presence_bar": 0.5
+    },
+    "p27": {
+      "gens": 333,
+      "installed_mw": 39899.6
+    },
+    "model": {
+      "internal_plants": 306,
+      "internal_mw": 38250.4,
+      "ct_family_plants": 58,
+      "ct_family_mw": 3404.7
+    },
+    "cohort": {
+      "gens": 51,
+      "mw": 2374.0,
+      "uol_max_p50": 46.1,
+      "mingen_frac_p50": 0.0,
+      "on_dispatch_rate_p50": 1.0
+    },
+    "model_ct_unit_mw_p50": 6.5,
+    "V1_scope": {
+      "value": 0.0431,
+      "tol": 0.15,
+      "PASS": true
+    },
+    "V2_size": {
+      "mw_rel": 0.3027,
+      "n_rel": 0.1207,
+      "mw_tol": 0.25,
+      "n_tol": 0.3,
+      "PASS": false
+    },
+    "V3_fingerprint": {
+      "median_rel_gap": 1.3283,
+      "tol": 0.25,
+      "PASS": false
+    }
+  },
+  "G4_conditioning": {
+    "ladder": [
+      100.0,
+      150.0,
+      200.0,
+      300.0
+    ],
+    "min_years": 3,
+    "years": {
+      "2022": {
+        "da_gt_100": {
+          "hours": 1526,
+          "offered_above_300_mw": 3833.1
+        },
+        "da_gt_150": {
+          "hours": 443,
+          "offered_above_300_mw": 4561.0
+        },
+        "da_gt_200": {
+          "hours": 105,
+          "offered_above_300_mw": 9328.4
+        },
+        "da_gt_300": {
+          "hours": 10,
+          "offered_above_300_mw": 10182.6
+        },
+        "monotone": true
+      },
+      "2023": {
+        "da_gt_100": {
+          "hours": 68,
+          "offered_above_300_mw": 5213.4
+        },
+        "da_gt_150": {
+          "hours": 43,
+          "offered_above_300_mw": 9482.9
+        },
+        "da_gt_200": {
+          "hours": 25,
+          "offered_above_300_mw": 9492.3
+        },
+        "da_gt_300": {
+          "hours": 1,
+          "offered_above_300_mw": 9889.4
+        },
+        "monotone": true
+      },
+      "2024": {
+        "da_gt_100": {
+          "hours": 284,
+          "offered_above_300_mw": 2831.8
+        },
+        "da_gt_150": {
+          "hours": 51,
+          "offered_above_300_mw": 3646.2
+        },
+        "da_gt_200": {
+          "hours": 7,
+          "offered_above_300_mw": 3646.2
+        },
+        "da_gt_300": {
+          "hours": 0,
+          "offered_above_300_mw": NaN
+        },
+        "monotone": true
+      },
+      "2025": {
+        "da_gt_100": {
+          "hours": 1181,
+          "offered_above_300_mw": 1804.7
+        },
+        "da_gt_150": {
+          "hours": 345,
+          "offered_above_300_mw": 2280.7
+        },
+        "da_gt_200": {
+          "hours": 123,
+          "offered_above_300_mw": 5185.0
+        },
+        "da_gt_300": {
+          "hours": 12,
+          "offered_above_300_mw": 2964.9
+        },
+        "monotone": false
+      }
+    },
+    "monotone_years": 3,
+    "PASS": true
+  }
+}
