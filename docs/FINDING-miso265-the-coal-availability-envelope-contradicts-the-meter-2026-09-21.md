@@ -167,17 +167,50 @@ stacked on it. `unit_outage_derate_factors` returns a factor that is *itself*
 exactly 0.0000 for 8,112 h at Schahfer (mean 0.0559), 7,536 h at Dallman, 4,224 h
 at South Oak Creek, 1,224 h at Sherburne.
 
-And the mechanism is the accumulator's own documented failure mode. It derates by
-`unit_capacity_mw / plant_capacity_mw` and **"concurrent units sum, clipped at
-full derate"** — so when a plant's unit windows overlap and the shares are taken
-against a denominator the LP's own fleet does not share, the sum runs past 1.0 and
-the plant is zeroed outright. The code states the arithmetic in the abstract:
+The accumulator derates by `unit_capacity_mw / plant_capacity_mw` and
+**"concurrent units sum, clipped at full derate"**, so a plant whose unit windows
+overlap enough for the shares to run past 1.0 is zeroed outright. That is the
+shape of the defect. Which plants it selects is measured in §3.2 rather than
+assumed, because the obvious candidate is not the answer.
 
-> the numerator is the dark unit's capacity while `cap[tgt]` already excludes it,
-> a double-count that can **sum to 1.23 of the modeled OP half and clip it to 0.0**
+### 3.2 WHAT SEPARATES THE ZEROED PLANTS IS WINDOW MASS, NOT THE CAPACITY BASIS
 
-At Schahfer the extract's `plant_capacity_mw` is **2,009 MW** against the LP's
-**1,625 MW** of coal — a ratio of **1.236**.
+The natural culprit is the denominator: the extract's `plant_capacity_mw` is
+2,009 MW at Schahfer against the LP's 1,625 MW of coal, a ratio of **1.236**, and
+the accumulator's own docstring describes exactly that failure — *"sum to 1.23 of
+the modeled OP half and clip it to 0.0"*. Set the 33 contradicted plants beside
+the 12 clean ones and **that is not what distinguishes them**:
+
+| statistic (median) | contradicted (33) | clean (12) |
+|---|---:|---:|
+| extract `plant_capacity_mw` / LP coal MW | **1.095** | **1.063** |
+| summed `unit_pct_of_plant` over the year's windows | **400.0** | **180.2** |
+
+The capacity ratio is a real and systematic ~6–10 % inflation of every share, and
+it is **present in both groups almost equally**. The discriminator is **window
+mass** — more than double at the median, on a median window count of 7.0 against
+4.5 — and at the extreme it is not close: George Neal North 1,200.0, Baldwin
+949.6, Louisa 900.0, Sioux 750.0, Lansing 700.0.
+
+**It is a median separator, not a clean rule, and the exception says why.** Monroe
+(MI) carries window mass 400.2 over 16 windows and is nonetheless clean — it also
+carries 3,066 MW of LP coal, so the same window mass spreads over a much larger
+base and never reaches the clip. Window mass *relative to plant size* is the
+operative quantity; the medians above understate rather than overstate the effect.
+
+So the selection rule is: **a plant whose units are detected into many separate
+windows accumulates enough concurrent share, on shares already inflated ~7 % by
+the basis mismatch, to clip to a full-plant outage.** Many windows per unit is the
+signature of a *cycling* unit — one repeatedly shut for ≥ 5 days and restarted —
+which is why the heavily-cycled 2020–2022 coal fleet carries the worst of this and
+why it survives into the train tier at a smaller magnitude.
+
+**Stated precisely, because two readings are easy to confuse:** this is not the
+merit-order guard's "economic lay-up" class (§3.1 shows the guard does not select
+these windows). It is the detector's window *count* interacting with a summation
+that has no per-plant cap below 100 %. Naming which of the two — the summation or
+the basis — to repair is the successor's call, and §4 establishes that none of the
+four existing levers does either.
 
 ### 3.1 I FIRST ATTRIBUTED THIS TO ECONOMIC IDLENESS. THAT WAS WRONG.
 
@@ -295,11 +328,14 @@ guaranteed to close C1 2020 on its own.
 
 1. **THE REPAIR IS NOT YET IDENTIFIED, AND THAT IS THE HONEST STATE.** §4 refutes
    every candidate this repo already carries. What the successor inherits is a
-   precisely-located defect (the concurrent-share sum clipping at full derate, on
-   a denominator the LP's fleet does not share) and four levers it now knows not
-   to spend. The next step is a zero-LP reconciliation of the extract's
-   `plant_capacity_mw` against the LP's own per-bin capacity at the 33
-   contradicted plants — **not** a solve.
+   precisely-located defect — the concurrent-share summation clipping at full
+   derate, selecting plants by **window mass** (§3.2) — and four levers it now
+   knows not to spend. The two live repair directions, both zero-LP to design and
+   neither yet tried, are (a) cap a plant's accumulated share strictly below 1.0
+   unless its units are *simultaneously* flagged by a union rather than a sum, and
+   (b) put numerator and denominator on the LP's own per-bin capacity. **Neither
+   should be chosen on the residual** (rule 1 `[R-STRUCT]`); the test is which one
+   the extract's own construction says is correct.
 2. **`COAL_LIGNITE` 2025 has NEGATIVE annual headroom** (ceiling 5.75 against an
    actual 6.13) and 2022 is −0.04. A class whose whole-year ceiling is below its
    whole-year meter cannot be fixed by any dispatch lever at all.
