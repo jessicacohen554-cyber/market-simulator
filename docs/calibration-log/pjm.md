@@ -6368,6 +6368,56 @@ promotion on the structural merits** with G5's failure disclosed; the keeper
 fetch + checkout + verify (rule 33(a)); shard branches are transport and are cut when this PR
 merges, so any leg not on `main` costs a re-solve, not a checkout.
 
+## pjm-h15 — 2026-09-21
+
+**KEEPER UNCHANGED; the promotion question is OPEN and the owner's** (rule 31 `[R-RETAIN]`,
+`docs/RESULT-pjm-h15-2026-09-21.md` §8). New runs registered:
+`2026-09-20-pjm-h15-coalwindow-span` (2023–2025, **CALIBRATED, 8/8 PASS, zero caveats**) +
+`2026-09-20-pjm-h15-coalwindow-touchpoint` (2020–2022, NOT-YET), stamped to the span under rule 30(a).
+Sole config delta **`coal_sync_online_frac_per_year` False → True**, **zero free parameters**, DOF
+ledger carried verbatim at 19/6. **ZERO criterion flips in either span** — the same four C1 rows, the
+same two C3a years, the same two C3b years, the same ledgered C3c.
+
+**The defect (rule 17 `[R-FLOOR-WINDOW]` + rule 14 `[R-ACCURATE]`, measured at zero LP, never off a
+residual).** pjm-h14 repaired the UNCOVERED coal cohort; the COVERED 29 plants still carried ONE
+pooled `online_frac` — derived on **2023–2025**, re-established by re-running that window through the
+FROZEN deriver and reproducing the committed column on **168 of 168 rows, 0 mismatched** — applied as
+EVERY solve year's commitment window. Plant **50888 is floored across 68.4 % of 2020 by a fraction
+measured three years later, in a year whose own meter says it synchronized in 1.3 % of the hours**;
+3118 reads pooled 0.520 vs own-year 0.951 (2020), 3136 0.413 vs 0.944 (2021), 7213 Clover 0.314 vs
+0.102 (2023). Rule 23 is NOT engaged: `thermal_tranches_PJM.csv` is not regenerated and xiso-5's
+refusal stands.
+
+**Gates: G1, G3, G5 PASS — G2 and G4 FAIL, and both failures are this lane's, disclosed and NOT
+amended.** G5 is exact and is the strongest statement here: on a zero-LP `fleet_only` build in all six
+years, `pmax_mw` and `coal_sync_pmin_mw` move by **0.000e+00** and the ONLY mechanism id whose floor
+array moves is `MECH_COAL_MUSTRUN`. G3 cuts the one reachable conduct failure (7213/2023) **0.3656 →
+0.1123 TWh (−69 %)** and total conduct-FAIL energy **0.5574 → 0.3165**. G2's breaches are all in
+2020–2022 and none in 2023–2025 (where arm and control agree to four decimals); the 2020–2022 control
+is this lane's own regeneration over a bundle with **no `dispatch/`**, reading `chp_steam × CT_CHP` at
+0.0145–0.0290 against a committed family of 0.19–0.38 — **the control is the broken side**. G4 adds one
+row, 7213/2022, 0.0008 TWh over 30 binding hours, on which the arm actually CUT floored energy 80 %.
+
+**THE GENERALIZABLE LESSON, extending pjm-h14 correction #6:** a bar on another mechanism's D-2 forced
+energy is a **displacement** test, not a **stacking** test — in absolute TWh just as much as in share.
+Only the floor-ARRAY comparison separates them. A successor should gate scope on the array.
+
+**Reported at full magnitude, declared reported-only ex ante:** C1 COAL_BIT worsens in five of six
+years (2020 +25.422 → +25.704, 2021 +19.486 → +19.615) and **improves in 2023** (+0.650 → +0.527),
+while CC_REGULAR improves in five of six. The adverse direction in 2020–2022 was **predicted in the
+charter before the solve** and is rule 14's own diagnosis — the pooled window was silently
+compensating. The dispatch response is **~20× smaller** than the asserted-floor footprint: the arm
+moves a FLOOR, not a cheap BAND.
+
+**Traps recorded:** a composed bundle inherits its FIRST LEG's single-year `shared_inputs`
+(registration dies in `build_payload`) — `--rebuild-benchmark` after composition is mandatory; a
+composed bundle does not inherit `calibration_attestation.json` either, so C6 reads UNATTESTED; a
+shard bundle is not self-contained (`_shared/<ISO>/` is untracked for PJM); and **19 `cache_key` pin
+tests already fail at `origin/main`**, failure set byte-identical with and without this change.
+
+Record: `docs/RESULT-pjm-h15-2026-09-21.md`, charter
+`docs/handoffs/PRECOMMIT-pjm-h15-2026-09-20.md`.
+
 ## pjm-h14 — 2026-09-20
 
 **PROMOTED.** `2026-09-20-pjm-h13-meritalloc-span` → **`2026-09-20-pjm-h14-coalmustrun-span`**
