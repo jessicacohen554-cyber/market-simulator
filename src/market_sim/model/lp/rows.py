@@ -1593,11 +1593,42 @@ def build_constraints(
     # Byte-identical result; see _vstack_csr_free. Names are ``del``'d after
     # append so the list is the sole owner and the incremental free can happen.
     blocks: list[sp.csr_matrix | None] = []
+    # The two bound VECTORS are collected the same way and for the same reason
+    # (PERF-C S2): each optional row family used to do
+    # ``row_lower = np.concatenate([row_lower, block_lower])``, which re-copies
+    # the whole accumulated vector once per family — ~20 successive copies of a
+    # vector that reaches 1.03 M entries on a plant-level MISO year, i.e.
+    # quadratic work for a linear result. Collect the per-block pieces in row
+    # order and join each list ONCE at the return, exactly as ``blocks`` is
+    # joined once by ``_vstack_csr_free``. Same pieces, same order, same
+    # dtype (float64 throughout, as the pairwise chain also produced), so the
+    # assembled vectors are bit-identical — and no LP row, coefficient or
+    # bound changes.
+    lower_parts: list[np.ndarray] = []
+    upper_parts: list[np.ndarray] = []
+    # Running row count, kept in step with ``lower_parts`` so the offsets that
+    # used to read ``row_lower.size`` mid-assembly (the interface, LCR and
+    # hydro-cascade blocks' start rows) still read the same number.
+    n_rows_built = 0
+
+    def _add_bounds(lo, hi) -> None:
+        """Append one row block's ``(lower, upper)`` bounds in row order.
+
+        ``np.asarray(..., dtype=float)`` reproduces the promotion the pairwise
+        ``np.concatenate`` chain performed against the float64 accumulator,
+        and is a no-op (no copy) for the float64 arrays every builder returns.
+        """
+        nonlocal n_rows_built
+        lo_a = np.asarray(lo, dtype=float)
+        hi_a = np.asarray(hi, dtype=float)
+        lower_parts.append(lo_a)
+        upper_parts.append(hi_a)
+        n_rows_built += lo_a.size
+
     if n_storage == 0:
         blocks.append(energy_balance)
         del energy_balance
-        row_lower = eb_rhs.copy()
-        row_upper = eb_rhs.copy()
+        _add_bounds(eb_rhs, eb_rhs)
     else:
         eta_c = np.broadcast_to(
             np.asarray(1.0 if eta_chg is None else eta_chg, dtype=float),
@@ -1672,8 +1703,9 @@ def build_constraints(
         blocks.append(energy_balance)
         blocks.append(soc_block)
         del energy_balance, soc_block
-        row_lower = np.concatenate([eb_rhs, np.zeros(T * n_storage)])
-        row_upper = row_lower.copy()
+        _add_bounds(eb_rhs, eb_rhs)
+        _soc_rhs = np.zeros(T * n_storage)
+        _add_bounds(_soc_rhs, _soc_rhs)
 
     # Optional daily SOC cycling cap: pin each storage unit's day-start SOC to
     # its hour-0 level so every day is energy-neutral, bounding the single-LP
@@ -1688,8 +1720,7 @@ def build_constraints(
             zeros = np.zeros(cycle_block.shape[0])
             blocks.append(cycle_block)
             del cycle_block
-            row_lower = np.concatenate([row_lower, zeros])
-            row_upper = np.concatenate([row_upper, zeros])
+            _add_bounds(zeros, zeros)
 
     # Optional per-day DA charge-allocation floors (caiso_charge_allocation_
     # schedule, M1 — the owner-granted caiso-103 belly ask executed
@@ -1718,8 +1749,7 @@ def build_constraints(
             n_alloc = alloc_block.shape[0]
             blocks.append(alloc_block)
             del alloc_block
-            row_lower = np.concatenate([row_lower, np.zeros(n_alloc)])
-            row_upper = np.concatenate([row_upper, np.full(n_alloc, np.inf)])
+            _add_bounds(np.zeros(n_alloc), np.full(n_alloc, np.inf))
 
     # Optional storage discharge-tranche decomposition rows (ERCOT
     # ercot_storage_rt_offer_surface): Dis[s,t] = Σ_k DisT[a,k,t] per armed
@@ -1734,8 +1764,7 @@ def build_constraints(
             n_tr = tranche_block.shape[0]
             blocks.append(tranche_block)
             del tranche_block
-            row_lower = np.concatenate([row_lower, np.zeros(n_tr)])
-            row_upper = np.concatenate([row_upper, np.zeros(n_tr)])
+            _add_bounds(np.zeros(n_tr), np.zeros(n_tr))
 
     # Optional aggregate interface limits: one row per group per hour capping
     # the signed sum of a set of links' flows at the interface's *simultaneous*
@@ -1754,12 +1783,11 @@ def build_constraints(
             # sliced back out per group (the network sidecar's interface
             # duals). Reporting only — the block, its bounds and its
             # coefficients are exactly what was built above.
-            iface_row_offset = row_lower.size
+            iface_row_offset = n_rows_built
             n_iface_groups = len(interface_groups)
             blocks.append(iface_block)
             del iface_block
-            row_lower = np.concatenate([row_lower, iface_lower])
-            row_upper = np.concatenate([row_upper, iface_upper])
+            _add_bounds(iface_lower, iface_upper)
 
     # Optional plant-group hourly ramp-envelope rows (config.ramp_limits,
     # GATED default off): CAMPD-measured two-sided trajectory bounds per
@@ -1780,8 +1808,7 @@ def build_constraints(
             )
             blocks.append(ramp_block)
             del ramp_block
-            row_lower = np.concatenate([row_lower, ramp_lower])
-            row_upper = np.concatenate([row_upper, ramp_upper])
+            _add_bounds(ramp_lower, ramp_upper)
 
     # Optional local-capacity (LCR-area) minimum-generation rows
     # (config.local_capacity_constraints, GATED default off): one >= row per
@@ -1795,12 +1822,11 @@ def build_constraints(
             layout, local_capacity_specs
         )
         if lcr_block.shape[0]:
-            lcr_row_offset = row_lower.size
+            lcr_row_offset = n_rows_built
             n_lcr_areas = len(local_capacity_specs)
             blocks.append(lcr_block)
             del lcr_block
-            row_lower = np.concatenate([row_lower, lcr_lower])
-            row_upper = np.concatenate([row_upper, lcr_upper])
+            _add_bounds(lcr_lower, lcr_upper)
 
     # Optional hydro hourly deliverability-envelope rows
     # (config.hydro_dispatch_envelope, GATED default off): one <= row per
@@ -1819,8 +1845,7 @@ def build_constraints(
             )
             blocks.append(env_block)
             del env_block
-            row_lower = np.concatenate([row_lower, env_lower])
-            row_upper = np.concatenate([row_upper, env_upper])
+            _add_bounds(env_lower, env_upper)
 
     # Optional hydro monthly energy budgets: one two-sided row per hydro
     # generator and month. Appended before the RPS row so the RPS dual stays
@@ -1889,8 +1914,7 @@ def build_constraints(
                 )
                 blocks.append(hydro_block)
                 del hydro_block
-                row_lower = np.concatenate([row_lower, hydro_lower])
-                row_upper = np.concatenate([row_upper, hydro_upper])
+                _add_bounds(hydro_lower, hydro_upper)
 
     # Optional hydraulic-cascade water-balance rows (NWPP-36, owner ruling
     # N3; config.hydro_cascade_coupling): one EQUALITY per coupled downstream
@@ -1912,13 +1936,12 @@ def build_constraints(
         if cas_block.shape[0]:
             if row_offsets is not None:
                 row_offsets["hydro_cascade"] = (
-                    int(row_lower.size),
+                    int(n_rows_built),
                     int(cas_block.shape[0]),
                 )
             blocks.append(cas_block)
             del cas_block
-            row_lower = np.concatenate([row_lower, cas_lower])
-            row_upper = np.concatenate([row_upper, cas_upper])
+            _add_bounds(cas_lower, cas_upper)
 
     # Optional oil-burn monthly inventory budget: one row per oil-capable
     # generator and month. When the budget binds, the shadow price is the
@@ -1938,8 +1961,7 @@ def build_constraints(
             )
             blocks.append(oil_block)
             del oil_block
-            row_lower = np.concatenate([row_lower, oil_lower])
-            row_upper = np.concatenate([row_upper, oil_upper])
+            _add_bounds(oil_lower, oil_upper)
 
     # Optional coal fuel-inventory monthly budget: one pooled fleet row per
     # month, capping coal energy INPUT (heat_rate * P, MMBtu) at the opening
@@ -1967,8 +1989,7 @@ def build_constraints(
             )
             blocks.append(coal_block)
             del coal_block
-            row_lower = np.concatenate([row_lower, coal_lower])
-            row_upper = np.concatenate([row_upper, coal_upper])
+            _add_bounds(coal_lower, coal_upper)
 
     # Optional priced import-node monthly net-throughput band: one row per month
     # pinning the node's net interchange (import tranches minus export sinks) to
@@ -1991,8 +2012,7 @@ def build_constraints(
             )
             blocks.append(node_block)
             del node_block
-            row_lower = np.concatenate([row_lower, node_lower])
-            row_upper = np.concatenate([row_upper, node_upper])
+            _add_bounds(node_lower, node_upper)
 
     # Optional STANDALONE energy-only commitment-posture rows (ERCOT
     # ercot_commitment_posture): headroom + min-load + startup on the posture
@@ -2011,8 +2031,7 @@ def build_constraints(
         )
         blocks.append(pos_block)
         del pos_block
-        row_lower = np.concatenate([row_lower, pos_lower])
-        row_upper = np.concatenate([row_upper, pos_upper])
+        _add_bounds(pos_lower, pos_upper)
 
     # Optional emissions mass-cap rows: one inequality per active power-sector
     # cap, bounding in-region fossil emissions. Appended after the import-node
@@ -2026,8 +2045,7 @@ def build_constraints(
             cap_rhs = np.asarray(mass_cap_rhs, dtype=float).reshape(-1)
             blocks.append(cap_block)
             del cap_block
-            row_lower = np.concatenate([row_lower, np.full(coeffs.shape[0], -np.inf)])
-            row_upper = np.concatenate([row_upper, cap_rhs])
+            _add_bounds(np.full(coeffs.shape[0], -np.inf), cap_rhs)
 
     # Optional RPS inequality family, one of two mutually-exclusive grains:
     #  * K per-compliance-region rows (rps_region_zone_mask — FFR-7B Arm 2,
@@ -2057,8 +2075,7 @@ def build_constraints(
         k_regions = region_block.shape[0]
         blocks.append(region_block)
         del region_block
-        row_lower = np.concatenate([row_lower, region_rhs])
-        row_upper = np.concatenate([row_upper, np.full(k_regions, np.inf)])
+        _add_bounds(region_rhs, np.full(k_regions, np.inf))
     elif rps_target is not None and rps_target > 0.0:
         rps_row, rhs = _build_rps_row(
             layout,
@@ -2068,8 +2085,7 @@ def build_constraints(
         )
         blocks.append(rps_row)
         del rps_row
-        row_lower = np.concatenate([row_lower, [rhs]])
-        row_upper = np.concatenate([row_upper, [np.inf]])
+        _add_bounds([rhs], [np.inf])
 
     # Optional clean/carbon-free tier family (FFR-7B Arm 3, FFR-6B E-2; the
     # federal CES target row, SCN-WS2a): a SECOND independent row family on
@@ -2123,8 +2139,7 @@ def build_constraints(
         )
         blocks.append(clean_block)
         del clean_block
-        row_lower = np.concatenate([row_lower, clean_rhs])
-        row_upper = np.concatenate([row_upper, np.full(k_clean, np.inf)])
+        _add_bounds(clean_rhs, np.full(k_clean, np.inf))
 
     # Optional energy+reserve co-optimization rows (shared headroom + reserve
     # balance). Appended last so the reserve-balance dual is recoverable by row
@@ -2163,12 +2178,11 @@ def build_constraints(
             )
             blocks.append(res_block)
             del res_block
-            row_lower = np.concatenate([row_lower, res_lower])
-            row_upper = np.concatenate([row_upper, res_upper])
+            _add_bounds(res_lower, res_upper)
             return (
                 _vstack_csr_free(blocks, layout.total_columns),
-                row_lower,
-                row_upper,
+                np.concatenate(lower_parts),
+                np.concatenate(upper_parts),
                 lcr_row_offset,
                 n_lcr_areas,
                 iface_row_offset,
@@ -2201,13 +2215,12 @@ def build_constraints(
         )
         blocks.append(res_block)
         del res_block
-        row_lower = np.concatenate([row_lower, res_lower])
-        row_upper = np.concatenate([row_upper, res_upper])
+        _add_bounds(res_lower, res_upper)
 
     return (
         _vstack_csr_free(blocks, layout.total_columns),
-        row_lower,
-        row_upper,
+        np.concatenate(lower_parts),
+        np.concatenate(upper_parts),
         lcr_row_offset,
         n_lcr_areas,
         iface_row_offset,

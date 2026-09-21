@@ -557,9 +557,21 @@ def run_energy_solve(
             "and it applies to P1 alone — P0 build + solve skipped"
         )
     elif _warm:
-        r0 = model.solve(mc=mc_base)
+        # ``full_extract=False``: P0 is a commitment-discovery pass, never a
+        # reported one. Its result is read for the primal blocks, ``prices``,
+        # ``objective_value``, ``status`` and the two timings and for nothing
+        # else (the enumeration is
+        # ``docs/handoffs/FINDING-perfc-s2-p0-slim-2026-09-20.md`` §1: the
+        # markup/bridge detectors here and in ``pipeline.commitment``, the
+        # ``p1_*_prep`` hooks, the opt-in ``hourly/p0_{commitment,dispatch}_``
+        # sidecars and the O7 harness). Skipping the diagnostic extraction
+        # changes no LP row, coefficient, bound or objective entry — only
+        # which post-solve blocks are marshalled out of HiGHS (PERF-C S2).
+        r0 = model.solve(mc=mc_base, full_extract=False)
     else:
-        r0 = solve_dispatch(fleet_arrays, demand, mc=mc_base, **dispatch_kwargs)
+        r0 = solve_dispatch(
+            fleet_arrays, demand, mc=mc_base, full_extract=False, **dispatch_kwargs
+        )
     _t2 = time.perf_counter()
     # P1: solve with bid MC = base MC + monthly startup amortization, so
     # clearing prices reflect CC/CT cycling costs.
