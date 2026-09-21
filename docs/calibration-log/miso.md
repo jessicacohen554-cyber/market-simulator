@@ -14772,4 +14772,88 @@ Records: `docs/RESULT-miso264-the-anchor-was-frozen-and-2020-is-not-an-offer-obj
 `docs/PRECOMMIT-miso264-gas-offer-margin-anchor-vintage-2026-09-20.md`, probes
 `scripts/probes/_miso264_bulk_price_setter_phase0.py`, `scripts/probes/_miso264_marginal_hr_2020.py`.
 
-* Next number: **miso-265**.
+## miso-265 — 2026-09-21 — **MISO'S COAL AVAILABILITY ENVELOPE IS INFEASIBLE AGAINST ITS OWN METER, in every year of the span, by 20-32 TWh — and FOUR candidate repairs are refuted at ZERO LP.** Keeper `2026-09-20-miso-264-anchor-vintage` UNCHANGED; no solve, no registration
+
+**LP SPENT: ZERO.** No shard launched. Everything below is measured on committed
+artifacts plus no-LP fleet reconstructions.
+
+**THE CHARTER WAS FIVE SESSIONS STALE** — it opened against keeper
+`2026-09-16-miso-259-coal-fuel` and a miss list led by C1 2021/2022 CC_REGULAR,
+C3a 2022 and C3b 2020, **all four of which now PASS**. Live on the current keeper:
+C1 2020 COAL_BIT **-10.92**, C1 2022 COAL_PRB **+8.13**, C3a 2020 **+14.6 %**,
+C3b 2021 **0.304**; C3c 2022 ledgered. Train tier 2023-2025 **CALIBRATED**,
+re-verified before any work and untouched by it.
+
+**THE OBJECT `RESULT-miso264` §7 ROUTED HERE IS ANSWERED, AND IT IS AN INPUT
+CONTRADICTION.** The LP bounds coal by `pmax * availability`; set that ceiling
+beside the CAMPD meter the bench already commits for the same plant-hour and the
+meter is above it by **25.414 / 32.427 / 28.939 / 22.337 / 20.243 / 26.097 TWh**
+(2020-2025), 142,058 plant-hours in 2020 alone — **the CALIBRATED train tier
+included**. Its unarguable subset: **5.318 TWh metered in 24,100 plant-hours at
+`availability == 0`**, across 33 plants. Sherburne County generates in **all
+1,224** hours the model calls it fully out, peaking at **1,602 MW**.
+
+**THE INSTRUMENT IS VALIDATED, NOT ASSERTED.** The keeper's OWN dispatch never
+exceeds the ceiling (0 of 52 coal plants breach by more than one uint8 decode
+step; worst apparent excess 11.61 MW against a 32.93 MW step), so the bound is
+real. Basis checked too: the committed series is **net**, not gross.
+
+**THE CAUSE, AFTER THREE REFINEMENTS EACH OVERTURNING THE LAST ON MEASUREMENT.**
+(1) Economic idleness — **WITHDRAWN**: the merit-order guard reclassifies **0 of
+16** R M Schahfer 2020 windows as lay-up. (2) The capacity-basis mismatch —
+**NOT the discriminator**: extract `plant_capacity_mw` / LP coal MW is 1.095
+median at the 33 contradicted plants against 1.063 at the 12 clean ones. (3) What
+does separate them is **WINDOW MASS**: summed `unit_pct_of_plant` 400.0 vs 180.2,
+window count 7.0 vs 4.5 — many detected windows per unit on a cycled plant,
+summing past the accumulator's full-derate clip. Reported as a median separator
+and not a clean rule (Monroe (MI) carries 400.2 over 16 windows and is clean, on
+3,066 MW of LP coal).
+
+**FOUR CANDIDATE REPAIRS, ALL TESTED AT ZERO LP, ALL REFUTED** — the most useful
+line here for a successor, because it retires them before anyone spends the twelve
+shard-years two of them would cost as separate rungs. On the rebuilt factors and
+the same committed meter: incumbent **23,849** contradicted plant-hours / 5.184
+TWh; `+unit_outage_fleet_status_scope`, `+unit_outage_extract_basis_share` and
+`+both` all **byte-identical**; `+campd_outage_merit_order_guard` **24,193 /
+5.234 — slightly WORSE**. The flags are live, not dead switches (they move 4 / 37
+/ 16 of 126-138 bins at max |delta| 1.000); they land on other bins.
+
+**DATA LANDED (rule 23 `[R-FROZEN-DERIVE]`, deriver's own committed constants,
+nothing tuned).** MISO had NEITHER companion extract, so arming either flag would
+have silently fallen back to the incumbent and read as a null result. Derived and
+committed: `campd-unit-outages-perunit-MISO.csv` (10,905 windows) and
+`campd-unit-outages-perunitmerit-MISO.csv` (9,165 + 1,740 reclassified to the
+layup companion).
+
+**REPORTED AGAINST INTEREST.** The defect is **systemic, not 2020-specific**, and
+the train tier carries it at 20-26 TWh/yr while reading CALIBRATED — so the repair
+is a live **G-NOFLIP risk on a CALIBRATED tier**, said before it is attempted. And
+2020's class-level headroom is only +12.01 TWh against a -10.92 miss, so even a
+perfect availability repair is not arithmetically guaranteed to close C1 2020.
+**No gate is claimed in either direction** (rule 1 `[R-STRUCT]`); the case is rule
+14 `[R-ACCURATE]` and rule 13 `[R-MEASURED]`.
+
+**ALSO CORRECTED, because they are cited elsewhere:** `OTHER_FOSSIL` is **-0.43 to
++0.69** on the scored basis, not the +/-9 TWh "miss" repeated since
+`RESULT-miso259` §1 — that figure crosses `class_hourly` (upstream of
+`apply_other_fossil_scoring`) with the bench (downstream), the same miso-127
+crossing this log already records. Four errors of my own are stated in the
+finding's §6 rather than buried.
+
+**GATES AT HEAD:** matrix integrity OK · `build_status --iso MISO --check` in sync
+· `audit_keepers --iso MISO` 0 failures (1 pre-existing warning) ·
+`check_cache_key_registration` ok, no new field · `check_bench_freshness` 6 parts,
+**0 STALE** · `check_gate_a_provenance --iso MISO` OK ·
+`check_registry_payload_parity` **OK, 0 REDs** (the charter's 2 are gone from
+`main`) · `node --check` PASS · `pytest tests/scoring` **22 failed / 1556 passed
+at HEAD and at `origin/main` `1bbe9f17`, IDENTICAL FAILED NAME SETS, zero new,
+zero fixed** (measured, not inherited).
+
+**Rule 28 duty:** `campd_outage_merit_order_guard` stays **U** in MISO's shard —
+no LP was spent and it is not inert in general — with the zero-LP evidence, the
+withdrawn economic-idleness reading and the newly derived extracts recorded.
+
+Records: `docs/FINDING-miso265-the-coal-availability-envelope-contradicts-the-meter-2026-09-21.md`;
+probes `scripts/probes/_miso265_{coal_bit_2020_phase0,coal_availability_ceiling,ceiling_vs_meter_hourly,ceiling_selfcheck,hard_zero_hours,derate_variant_sizing,zero_discriminator}.py`.
+
+* Next number: **miso-266**.
