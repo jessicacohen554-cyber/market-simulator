@@ -15,6 +15,7 @@
       "campd_per_unit_attribution": true,
       "gas_basis_differential_measured_by_year": true,
       "gas_plant_monthly_fuel_pricing": false,
+      "measured_cc_heat_rates": true,
       "measured_coal_heat_rates": true
     },
     "commitment": false,
@@ -30,7 +31,7 @@
       "2024": 2.19,
       "2025": 3.52
     },
-    "git_sha": "3b1fc39a",
+    "git_sha": "77515414",
     "hours": 8760,
     "iso": "SOCO",
     "nyiso_dynamic_reserve_requirements": null,
@@ -53,9 +54,9 @@
     ]
   },
   "composed_from": [
-    "soco56_arm_2023",
-    "soco56_arm_2024",
-    "soco56_arm_2025"
+    "soco57_arm_2023",
+    "soco57_arm_2024",
+    "soco57_arm_2025"
   ],
   "environment": {
     "cache_key_path_roots": [
@@ -77,47 +78,47 @@
     "python_version": "3.11.15"
   },
   "git": {
-    "basis_sha": "3b1fc39a0005f4543c7feb8fbd5b2d242981f538",
-    "branch": "claude/soco56-arm-2023",
+    "basis_sha": "7751541416ce0f5199ada9fcb508c6038de23ba1",
+    "branch": "HEAD",
     "changed_files": [],
     "diffstat": "",
     "dirty": false,
-    "sha": "3b1fc39a"
+    "sha": "77515414"
   },
-  "model_changes_note": "SOCO-56 ARM 2023: campd_per_unit_attribution=true \u2014 the CAMPD per-unit crosswalk replaces the deriver's plant-level fac_group short-circuit, so Barry (plant 3) units 1/2/4 (measurably Tangentially-fired boilers) stop charging their idleness as a forced outage on Barry's combined-cycle block. Year-isolated (rule 36).",
+  "model_changes_note": "SOCO-57 ARM 2023: measured_cc_heat_rates=true on the soco56 keeper recipe, year-isolated (rule 36)",
   "per_leg_provenance": {
     "2023": {
       "git": {
-        "basis_sha": "3b1fc39a0005f4543c7feb8fbd5b2d242981f538",
-        "branch": "claude/soco56-arm-2023",
+        "basis_sha": "7751541416ce0f5199ada9fcb508c6038de23ba1",
+        "branch": "HEAD",
         "changed_files": [],
         "diffstat": "",
         "dirty": false,
-        "sha": "3b1fc39a"
+        "sha": "77515414"
       },
-      "timestamp": "2026-09-20T06:36:26"
+      "timestamp": "2026-09-20T19:42:04"
     },
     "2024": {
       "git": {
-        "basis_sha": "3b1fc39a0005f4543c7feb8fbd5b2d242981f538",
-        "branch": "claude/soco56-arm-2024",
+        "basis_sha": "7751541416ce0f5199ada9fcb508c6038de23ba1",
+        "branch": "HEAD",
         "changed_files": [],
         "diffstat": "",
         "dirty": false,
-        "sha": "3b1fc39a"
+        "sha": "77515414"
       },
-      "timestamp": "2026-09-20T06:36:35"
+      "timestamp": "2026-09-20T19:42:07"
     },
     "2025": {
       "git": {
-        "basis_sha": "3b1fc39a0005f4543c7feb8fbd5b2d242981f538",
-        "branch": "claude/soco56-arm-2025",
+        "basis_sha": "7751541416ce0f5199ada9fcb508c6038de23ba1",
+        "branch": "HEAD",
         "changed_files": [],
         "diffstat": "",
         "dirty": false,
-        "sha": "3b1fc39a"
+        "sha": "77515414"
       },
-      "timestamp": "2026-09-20T06:37:22"
+      "timestamp": "2026-09-20T19:43:17"
     }
   },
   "resolved_inputs": {
@@ -323,6 +324,7 @@
     "coal_lignite_passthrough_sigmoid": false,
     "coal_mustrun_online_pmin": false,
     "coal_mustrun_per_plant": true,
+    "coal_mustrun_requires_measured_row": false,
     "coal_nameplate_summer_derate": false,
     "coal_offer_margin_anchor": null,
     "coal_offer_margin_level": null,
@@ -688,6 +690,7 @@
     "mass_cap_tons": null,
     "mass_cap_tons_by_year": null,
     "maxgen_emergency_tier_pricing": false,
+    "measured_cc_heat_rates": true,
     "measured_chp_heat_rates": false,
     "measured_coal_heat_rates": true,
     "measured_ct_heat_rates": true,
@@ -1145,6 +1148,7 @@
     "voluntary_wtp_ceiling_usd_per_mwh": null,
     "vre_curtailment_oversupply_allocation": false,
     "vre_procurement_additions_enabled": false,
+    "vre_reference_rate_year_own": false,
     "weather_year": 2023,
     "wefor_multiplier": 0.7,
     "wefor_residual": null,
@@ -1154,11 +1158,11 @@
   "solve_surface": {
     "epochs": [],
     "fingerprint": "36087ac69210fdb2",
-    "git_sha": "3b1fc39a",
+    "git_sha": "77515414",
     "iso": "SOCO",
     "moved": {},
     "rows": 183,
     "schema": 1
   },
-  "timestamp": "2026-09-20T06:36:26"
+  "timestamp": "2026-09-20T19:42:04"
 }

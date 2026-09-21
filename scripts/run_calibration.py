@@ -3886,6 +3886,7 @@ def run_year(
                 measured_ct_heat_rates=config.measured_ct_heat_rates,
                 measured_coal_heat_rates=config.measured_coal_heat_rates,
                 measured_st_heat_rates=config.measured_st_heat_rates,
+                measured_cc_heat_rates=config.measured_cc_heat_rates,
                 measured_chp_heat_rates=config.measured_chp_heat_rates,
                 cc_steam_part_capacity=config.cc_steam_part_capacity,
                 cc_steam_part_reclass=config.cc_steam_part_reclass,

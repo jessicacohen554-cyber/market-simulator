@@ -1,7 +1,7 @@
 {
   "as_reserve_formula": false,
   "as_reserve_withholding": false,
-  "basis_sha": "3b1fc39a0005f4543c7feb8fbd5b2d242981f538",
+  "basis_sha": "7751541416ce0f5199ada9fcb508c6038de23ba1",
   "battery_dispatch_adder": 0.0,
   "btm_backfill_year": null,
   "caiso_asymmetric_path_ratings": null,
@@ -73,6 +73,7 @@
     "campd_per_unit_attribution": true,
     "gas_basis_differential_measured_by_year": true,
     "gas_plant_monthly_fuel_pricing": false,
+    "measured_cc_heat_rates": true,
     "measured_coal_heat_rates": true
   },
   "coal_sync_srmc_tranche": false,
@@ -80,9 +81,9 @@
   "commitment_screen_coal": true,
   "committed_band_measured_basis": null,
   "composed_from": [
-    "soco56_arm_2023",
-    "soco56_arm_2024",
-    "soco56_arm_2025"
+    "soco57_arm_2023",
+    "soco57_arm_2024",
+    "soco57_arm_2025"
   ],
   "ct_drag_overrides": {},
   "ct_intermediate_cf_threshold": null,
@@ -193,7 +194,7 @@
   },
   "gas_st_drag_overrides": {},
   "gas_st_netload_drag": false,
-  "git_sha": "3b1fc39a",
+  "git_sha": "77515414",
   "highspy_version": "1.14.0",
   "hours": 8760,
   "hydro_backfill_year": null,
@@ -352,7 +353,7 @@
   "temp_derate_mean_anchored": false,
   "temp_derate_slope_ct_chp": null,
   "temp_derate_slope_st_chp": null,
-  "timestamp": "2026-09-20T06:36:26",
+  "timestamp": "2026-09-20T19:42:04",
   "tranche_startup_amortization": false,
   "tranche_startup_conditional_runs": false,
   "tranche_startup_measured_runs": false,
