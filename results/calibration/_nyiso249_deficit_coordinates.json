@@ -1,0 +1,182 @@
+{
+ "gate": "G-4",
+ "session": "nyiso-249",
+ "years": {
+  "2022": {
+   "n_missed": 91,
+   "missed_month_counts": {
+    "1": 28,
+    "2": 8,
+    "3": 2,
+    "5": 1,
+    "6": 3,
+    "7": 6,
+    "8": 14,
+    "9": 1,
+    "11": 3,
+    "12": 25
+   },
+   "missed_hour_of_day_counts": {
+    "0": 2,
+    "1": 4,
+    "2": 3,
+    "3": 1,
+    "4": 2,
+    "5": 1,
+    "6": 6,
+    "7": 3,
+    "8": 8,
+    "9": 2,
+    "10": 1,
+    "11": 2,
+    "12": 5,
+    "13": 2,
+    "14": 3,
+    "15": 3,
+    "16": 9,
+    "17": 15,
+    "18": 10,
+    "19": 2,
+    "20": 1,
+    "21": 2,
+    "23": 4
+   },
+   "gas_pct": {
+    "missed_p50": 0.8959,
+    "missed_mean": 0.7838,
+    "missed_share_above_p90": 0.4725
+   },
+   "load_pct": {
+    "missed_p50": 0.8064,
+    "missed_mean": 0.8019,
+    "missed_share_above_p90": 0.2857
+   },
+   "model_max_price_in_missed": {
+    "p50": 158.25,
+    "p90": 286.46,
+    "max": 298.81
+   },
+   "model_max_zone_counts": {
+    "Long_Island": 77,
+    "NYC": 14
+   }
+  },
+  "2023": {
+   "n_missed": 10,
+   "missed_month_counts": {
+    "1": 1,
+    "2": 1,
+    "6": 1,
+    "8": 1,
+    "9": 5,
+    "10": 1
+   },
+   "missed_hour_of_day_counts": {
+    "6": 1,
+    "8": 1,
+    "15": 2,
+    "16": 4,
+    "17": 1,
+    "23": 1
+   },
+   "gas_pct": {
+    "missed_p50": 0.8521,
+    "missed_mean": 0.6781,
+    "missed_share_above_p90": 0.1
+   },
+   "load_pct": {
+    "missed_p50": 0.9699,
+    "missed_mean": 0.8786,
+    "missed_share_above_p90": 0.7
+   },
+   "model_max_price_in_missed": {
+    "p50": 87.15,
+    "p90": 180.44,
+    "max": 195.93
+   },
+   "model_max_zone_counts": {
+    "Long_Island": 10
+   }
+  },
+  "2024": {
+   "n_missed": 13,
+   "missed_month_counts": {
+    "4": 2,
+    "6": 1,
+    "7": 8,
+    "9": 1,
+    "12": 1
+   },
+   "missed_hour_of_day_counts": {
+    "6": 1,
+    "7": 1,
+    "14": 1,
+    "15": 1,
+    "16": 4,
+    "17": 3,
+    "18": 1,
+    "19": 1
+   },
+   "gas_pct": {
+    "missed_p50": 0.6603,
+    "missed_mean": 0.64,
+    "missed_share_above_p90": 0.0
+   },
+   "load_pct": {
+    "missed_p50": 0.9921,
+    "missed_mean": 0.8703,
+    "missed_share_above_p90": 0.6923
+   },
+   "model_max_price_in_missed": {
+    "p50": 63.12,
+    "p90": 82.18,
+    "max": 89.49
+   },
+   "model_max_zone_counts": {
+    "Long_Island": 13
+   }
+  },
+  "2025": {
+   "n_missed": 39,
+   "missed_month_counts": {
+    "1": 5,
+    "2": 1,
+    "6": 15,
+    "7": 14,
+    "8": 2,
+    "10": 2
+   },
+   "missed_hour_of_day_counts": {
+    "7": 1,
+    "8": 2,
+    "13": 1,
+    "14": 4,
+    "15": 4,
+    "16": 8,
+    "17": 9,
+    "18": 7,
+    "19": 2,
+    "20": 1
+   },
+   "gas_pct": {
+    "missed_p50": 0.5918,
+    "missed_mean": 0.6218,
+    "missed_share_above_p90": 0.1538
+   },
+   "load_pct": {
+    "missed_p50": 0.9954,
+    "missed_mean": 0.9646,
+    "missed_share_above_p90": 0.9231
+   },
+   "model_max_price_in_missed": {
+    "p50": 173.91,
+    "p90": 243.28,
+    "max": 278.7
+   },
+   "model_max_zone_counts": {
+    "Long_Island": 36,
+    "NYC": 3
+   }
+  }
+ }
+}
