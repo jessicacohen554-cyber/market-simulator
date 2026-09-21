@@ -1,0 +1,32 @@
+{
+ "what": "pjm-h15 phase 0, part 2 \u2014 the CT_FAST shelf against PJM's OWN offers. ZERO LP.",
+ "years": {
+  "2023": {
+   "n_ct_rows_priced": 797,
+   "ct_mw_priced": 22828.673440000002,
+   "market_top1pct_mean_lmp": 123.09756417707963,
+   "tight_hours_mc_base_capwtd": 50.25495376640058,
+   "tight_hours_measured_capwtd": 78.85310886903105,
+   "tight_hours_upper_bound_lift_capwtd": 33.20445737771071,
+   "share_of_ct_mwh_where_measured_exceeds_mc_base": 0.8988161285037108
+  },
+  "2024": {
+   "n_ct_rows_priced": 804,
+   "ct_mw_priced": 22835.67344,
+   "market_top1pct_mean_lmp": 169.8407681205056,
+   "tight_hours_mc_base_capwtd": 55.546792499220146,
+   "tight_hours_measured_capwtd": 91.08192941712264,
+   "tight_hours_upper_bound_lift_capwtd": 39.60115665269636,
+   "share_of_ct_mwh_where_measured_exceeds_mc_base": 0.9059574097606911
+  },
+  "2025": {
+   "n_ct_rows_priced": 803,
+   "ct_mw_priced": 22834.99344,
+   "market_top1pct_mean_lmp": 317.6212043762207,
+   "tight_hours_mc_base_capwtd": 67.60568445074365,
+   "tight_hours_measured_capwtd": 119.74095987561086,
+   "tight_hours_upper_bound_lift_capwtd": 56.48237425986695,
+   "share_of_ct_mwh_where_measured_exceeds_mc_base": 0.9175463030362304
+  }
+ }
+}
