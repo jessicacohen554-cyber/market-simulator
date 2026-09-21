@@ -1,0 +1,700 @@
+{
+ "G1": {
+  "passed": true,
+  "rows": [
+   {
+    "year": 2020,
+    "control": 0.9986,
+    "arm": 0.8642,
+    "d": -0.1344,
+    "fires": true
+   },
+   {
+    "year": 2021,
+    "control": 0.5217,
+    "arm": 0.5599,
+    "d": 0.0382,
+    "fires": true
+   },
+   {
+    "year": 2022,
+    "control": 0.4558,
+    "arm": 0.6111,
+    "d": 0.1553,
+    "fires": true
+   },
+   {
+    "year": 2023,
+    "control": 2.992,
+    "arm": 2.3978,
+    "d": -0.5942,
+    "fires": true
+   },
+   {
+    "year": 2024,
+    "control": 3.2765,
+    "arm": 3.253,
+    "d": -0.0235,
+    "fires": true
+   },
+   {
+    "year": 2025,
+    "control": 1.1014,
+    "arm": 1.4111,
+    "d": 0.3097,
+    "fires": true
+   }
+  ]
+ },
+ "G2": {
+  "passed": false,
+  "bar_twh": 0.05,
+  "rows": [
+   {
+    "year": 2020,
+    "mechanism": "cc_mustrun_per_plant",
+    "cls": "CC_REGULAR",
+    "control": 10.3693,
+    "arm": 10.4001,
+    "d": 0.0308,
+    "breach": false
+   },
+   {
+    "year": 2020,
+    "mechanism": "chp_steam",
+    "cls": "CC_CHP",
+    "control": null,
+    "arm": 0.6988,
+    "d": null,
+    "breach": true
+   },
+   {
+    "year": 2020,
+    "mechanism": "chp_steam",
+    "cls": "COAL",
+    "control": 0.1086,
+    "arm": 0.1125,
+    "d": 0.0039,
+    "breach": false
+   },
+   {
+    "year": 2020,
+    "mechanism": "chp_steam",
+    "cls": "CT_CHP",
+    "control": 0.0145,
+    "arm": 0.2884,
+    "d": 0.2739,
+    "breach": true
+   },
+   {
+    "year": 2020,
+    "mechanism": "chp_steam",
+    "cls": "ST_CHP",
+    "control": null,
+    "arm": 0.0166,
+    "d": null,
+    "breach": true
+   },
+   {
+    "year": 2020,
+    "mechanism": "ct_netload_drag",
+    "cls": "CT_PEAKER",
+    "control": 3.5265,
+    "arm": 3.3443,
+    "d": -0.1822,
+    "breach": true
+   },
+   {
+    "year": 2020,
+    "mechanism": "nuclear_mustrun",
+    "cls": "",
+    "control": 256.433,
+    "arm": 256.433,
+    "d": 0.0,
+    "breach": false
+   },
+   {
+    "year": 2020,
+    "mechanism": "nuclear_mustrun",
+    "cls": "hydro",
+    "control": 15.7538,
+    "arm": 15.754,
+    "d": 0.0002,
+    "breach": false
+   },
+   {
+    "year": 2020,
+    "mechanism": "reliability_floor",
+    "cls": "CC_REGULAR",
+    "control": 0.0105,
+    "arm": 0.0105,
+    "d": 0.0,
+    "breach": false
+   },
+   {
+    "year": 2020,
+    "mechanism": "reliability_floor",
+    "cls": "COAL",
+    "control": 0.1599,
+    "arm": 0.2026,
+    "d": 0.0427,
+    "breach": false
+   },
+   {
+    "year": 2020,
+    "mechanism": "st_netload_drag",
+    "cls": "ST_GAS",
+    "control": 2.2484,
+    "arm": 2.2228,
+    "d": -0.0256,
+    "breach": false
+   },
+   {
+    "year": 2021,
+    "mechanism": "cc_mustrun_per_plant",
+    "cls": "CC_REGULAR",
+    "control": 10.493,
+    "arm": 10.7764,
+    "d": 0.2834,
+    "breach": true
+   },
+   {
+    "year": 2021,
+    "mechanism": "chp_steam",
+    "cls": "CC_CHP",
+    "control": null,
+    "arm": 0.6643,
+    "d": null,
+    "breach": true
+   },
+   {
+    "year": 2021,
+    "mechanism": "chp_steam",
+    "cls": "COAL",
+    "control": 0.0021,
+    "arm": 0.0022,
+    "d": 0.0001,
+    "breach": false
+   },
+   {
+    "year": 2021,
+    "mechanism": "chp_steam",
+    "cls": "CT_CHP",
+    "control": 0.0188,
+    "arm": 0.3549,
+    "d": 0.3361,
+    "breach": true
+   },
+   {
+    "year": 2021,
+    "mechanism": "chp_steam",
+    "cls": "ST_CHP",
+    "control": null,
+    "arm": 0.0348,
+    "d": null,
+    "breach": true
+   },
+   {
+    "year": 2021,
+    "mechanism": "ct_netload_drag",
+    "cls": "CT_PEAKER",
+    "control": 4.3246,
+    "arm": 4.2218,
+    "d": -0.1028,
+    "breach": true
+   },
+   {
+    "year": 2021,
+    "mechanism": "nuclear_mustrun",
+    "cls": "",
+    "control": 256.433,
+    "arm": 256.433,
+    "d": 0.0,
+    "breach": false
+   },
+   {
+    "year": 2021,
+    "mechanism": "nuclear_mustrun",
+    "cls": "hydro",
+    "control": 15.7538,
+    "arm": 15.754,
+    "d": 0.0002,
+    "breach": false
+   },
+   {
+    "year": 2021,
+    "mechanism": "reliability_floor",
+    "cls": "CC_REGULAR",
+    "control": 0.0808,
+    "arm": 0.0829,
+    "d": 0.0021,
+    "breach": false
+   },
+   {
+    "year": 2021,
+    "mechanism": "reliability_floor",
+    "cls": "COAL",
+    "control": 0.0247,
+    "arm": 0.0321,
+    "d": 0.0074,
+    "breach": false
+   },
+   {
+    "year": 2021,
+    "mechanism": "st_netload_drag",
+    "cls": "ST_GAS",
+    "control": 2.1553,
+    "arm": 2.1317,
+    "d": -0.0236,
+    "breach": false
+   },
+   {
+    "year": 2022,
+    "mechanism": "cc_mustrun_per_plant",
+    "cls": "CC_REGULAR",
+    "control": 8.4981,
+    "arm": 8.5198,
+    "d": 0.0217,
+    "breach": false
+   },
+   {
+    "year": 2022,
+    "mechanism": "chp_steam",
+    "cls": "CC_CHP",
+    "control": null,
+    "arm": 1.1002,
+    "d": null,
+    "breach": true
+   },
+   {
+    "year": 2022,
+    "mechanism": "chp_steam",
+    "cls": "COAL",
+    "control": null,
+    "arm": 0.0019,
+    "d": null,
+    "breach": true
+   },
+   {
+    "year": 2022,
+    "mechanism": "chp_steam",
+    "cls": "CT_CHP",
+    "control": 0.029,
+    "arm": 0.3646,
+    "d": 0.3356,
+    "breach": true
+   },
+   {
+    "year": 2022,
+    "mechanism": "chp_steam",
+    "cls": "ST_CHP",
+    "control": null,
+    "arm": 0.036,
+    "d": null,
+    "breach": true
+   },
+   {
+    "year": 2022,
+    "mechanism": "ct_netload_drag",
+    "cls": "CT_PEAKER",
+    "control": 4.4626,
+    "arm": 4.3304,
+    "d": -0.1322,
+    "breach": true
+   },
+   {
+    "year": 2022,
+    "mechanism": "nuclear_mustrun",
+    "cls": "",
+    "control": 272.1868,
+    "arm": 272.1868,
+    "d": 0.0,
+    "breach": false
+   },
+   {
+    "year": 2022,
+    "mechanism": "reliability_floor",
+    "cls": "CC_REGULAR",
+    "control": 0.0496,
+    "arm": 0.0501,
+    "d": 0.0005,
+    "breach": false
+   },
+   {
+    "year": 2022,
+    "mechanism": "reliability_floor",
+    "cls": "COAL",
+    "control": 0.0748,
+    "arm": 0.0889,
+    "d": 0.0141,
+    "breach": false
+   },
+   {
+    "year": 2022,
+    "mechanism": "st_netload_drag",
+    "cls": "ST_GAS",
+    "control": 1.6073,
+    "arm": 1.5644,
+    "d": -0.0429,
+    "breach": false
+   },
+   {
+    "year": 2023,
+    "mechanism": "cc_mustrun_per_plant",
+    "cls": "CC_REGULAR",
+    "control": 22.5842,
+    "arm": 22.5652,
+    "d": -0.019,
+    "breach": false
+   },
+   {
+    "year": 2023,
+    "mechanism": "chp_steam",
+    "cls": "CC_CHP",
+    "control": 0.9407,
+    "arm": 0.9406,
+    "d": -0.0001,
+    "breach": false
+   },
+   {
+    "year": 2023,
+    "mechanism": "chp_steam",
+    "cls": "COAL",
+    "control": 0.0278,
+    "arm": 0.0278,
+    "d": 0.0,
+    "breach": false
+   },
+   {
+    "year": 2023,
+    "mechanism": "chp_steam",
+    "cls": "CT_CHP",
+    "control": 0.2009,
+    "arm": 0.2008,
+    "d": -0.0001,
+    "breach": false
+   },
+   {
+    "year": 2023,
+    "mechanism": "chp_steam",
+    "cls": "ST_CHP",
+    "control": 0.0629,
+    "arm": 0.0629,
+    "d": 0.0,
+    "breach": false
+   },
+   {
+    "year": 2023,
+    "mechanism": "ct_netload_drag",
+    "cls": "CT_PEAKER",
+    "control": 2.596,
+    "arm": 2.5956,
+    "d": -0.0004,
+    "breach": false
+   },
+   {
+    "year": 2023,
+    "mechanism": "nuclear_mustrun",
+    "cls": "",
+    "control": 272.0222,
+    "arm": 272.0222,
+    "d": 0.0,
+    "breach": false
+   },
+   {
+    "year": 2023,
+    "mechanism": "reliability_floor",
+    "cls": "CC_REGULAR",
+    "control": 0.006,
+    "arm": 0.0053,
+    "d": -0.0007,
+    "breach": false
+   },
+   {
+    "year": 2023,
+    "mechanism": "reliability_floor",
+    "cls": "COAL",
+    "control": 0.1978,
+    "arm": 0.2024,
+    "d": 0.0046,
+    "breach": false
+   },
+   {
+    "year": 2023,
+    "mechanism": "st_netload_drag",
+    "cls": "ST_GAS",
+    "control": 1.6621,
+    "arm": 1.662,
+    "d": -0.0001,
+    "breach": false
+   },
+   {
+    "year": 2024,
+    "mechanism": "cc_mustrun_per_plant",
+    "cls": "CC_REGULAR",
+    "control": 12.471,
+    "arm": 12.4756,
+    "d": 0.0046,
+    "breach": false
+   },
+   {
+    "year": 2024,
+    "mechanism": "chp_steam",
+    "cls": "CC_CHP",
+    "control": 0.844,
+    "arm": 0.8442,
+    "d": 0.0002,
+    "breach": false
+   },
+   {
+    "year": 2024,
+    "mechanism": "chp_steam",
+    "cls": "COAL",
+    "control": 0.049,
+    "arm": 0.0491,
+    "d": 0.0001,
+    "breach": false
+   },
+   {
+    "year": 2024,
+    "mechanism": "chp_steam",
+    "cls": "CT_CHP",
+    "control": 0.192,
+    "arm": 0.1922,
+    "d": 0.0002,
+    "breach": false
+   },
+   {
+    "year": 2024,
+    "mechanism": "chp_steam",
+    "cls": "ST_CHP",
+    "control": 0.0238,
+    "arm": 0.0239,
+    "d": 0.0001,
+    "breach": false
+   },
+   {
+    "year": 2024,
+    "mechanism": "ct_netload_drag",
+    "cls": "CT_PEAKER",
+    "control": 3.3506,
+    "arm": 3.351,
+    "d": 0.0004,
+    "breach": false
+   },
+   {
+    "year": 2024,
+    "mechanism": "nuclear_mustrun",
+    "cls": "",
+    "control": 270.5943,
+    "arm": 270.5943,
+    "d": 0.0,
+    "breach": false
+   },
+   {
+    "year": 2024,
+    "mechanism": "reliability_floor",
+    "cls": "CC_CHP",
+    "control": 0.0012,
+    "arm": 0.0012,
+    "d": 0.0,
+    "breach": false
+   },
+   {
+    "year": 2024,
+    "mechanism": "reliability_floor",
+    "cls": "CC_REGULAR",
+    "control": 0.0082,
+    "arm": 0.0082,
+    "d": 0.0,
+    "breach": false
+   },
+   {
+    "year": 2024,
+    "mechanism": "reliability_floor",
+    "cls": "COAL",
+    "control": 0.3803,
+    "arm": 0.3743,
+    "d": -0.006,
+    "breach": false
+   },
+   {
+    "year": 2024,
+    "mechanism": "st_netload_drag",
+    "cls": "ST_GAS",
+    "control": 1.7684,
+    "arm": 1.7681,
+    "d": -0.0003,
+    "breach": false
+   },
+   {
+    "year": 2025,
+    "mechanism": "cc_mustrun_per_plant",
+    "cls": "CC_REGULAR",
+    "control": 10.0837,
+    "arm": 10.0964,
+    "d": 0.0127,
+    "breach": false
+   },
+   {
+    "year": 2025,
+    "mechanism": "chp_steam",
+    "cls": "CC_CHP",
+    "control": 1.0561,
+    "arm": 1.0629,
+    "d": 0.0068,
+    "breach": false
+   },
+   {
+    "year": 2025,
+    "mechanism": "chp_steam",
+    "cls": "COAL",
+    "control": 0.0008,
+    "arm": 0.0008,
+    "d": 0.0,
+    "breach": false
+   },
+   {
+    "year": 2025,
+    "mechanism": "chp_steam",
+    "cls": "CT_CHP",
+    "control": 0.3825,
+    "arm": 0.3826,
+    "d": 0.0001,
+    "breach": false
+   },
+   {
+    "year": 2025,
+    "mechanism": "chp_steam",
+    "cls": "ST_CHP",
+    "control": 0.0197,
+    "arm": 0.0197,
+    "d": 0.0,
+    "breach": false
+   },
+   {
+    "year": 2025,
+    "mechanism": "ct_netload_drag",
+    "cls": "CT_PEAKER",
+    "control": 4.4214,
+    "arm": 4.4219,
+    "d": 0.0005,
+    "breach": false
+   },
+   {
+    "year": 2025,
+    "mechanism": "nuclear_mustrun",
+    "cls": "",
+    "control": 269.3312,
+    "arm": 269.3312,
+    "d": 0.0,
+    "breach": false
+   },
+   {
+    "year": 2025,
+    "mechanism": "reliability_floor",
+    "cls": "CC_CHP",
+    "control": 0.0021,
+    "arm": 0.0021,
+    "d": 0.0,
+    "breach": false
+   },
+   {
+    "year": 2025,
+    "mechanism": "reliability_floor",
+    "cls": "CC_REGULAR",
+    "control": 0.0349,
+    "arm": 0.0349,
+    "d": 0.0,
+    "breach": false
+   },
+   {
+    "year": 2025,
+    "mechanism": "reliability_floor",
+    "cls": "COAL",
+    "control": 0.0533,
+    "arm": 0.0515,
+    "d": -0.0018,
+    "breach": false
+   },
+   {
+    "year": 2025,
+    "mechanism": "st_netload_drag",
+    "cls": "ST_GAS",
+    "control": 1.8189,
+    "arm": 1.8192,
+    "d": 0.0003,
+    "breach": false
+   }
+  ]
+ },
+ "G3": {
+  "passed": true,
+  "a_passed": true,
+  "b_passed": true,
+  "arm_fail_total_twh": 0.3165,
+  "rows": [
+   {
+    "year": 2020,
+    "plant": "1040",
+    "pooled": 0.093,
+    "own": 0.102,
+    "reachable": false,
+    "control_floored_twh": 0.0015,
+    "arm_floored_twh": 0.0018,
+    "arm_verdict": "pass",
+    "cleared": true,
+    "halved": false,
+    "gate_ok": true
+   },
+   {
+    "year": 2021,
+    "plant": "7213",
+    "pooled": 0.314,
+    "own": 0.305,
+    "reachable": false,
+    "control_floored_twh": 0.0003,
+    "arm_floored_twh": 0.0003,
+    "arm_verdict": "FAIL",
+    "cleared": false,
+    "halved": false,
+    "gate_ok": true
+   },
+   {
+    "year": 2023,
+    "plant": "1384",
+    "pooled": 0.318,
+    "own": 0.337,
+    "reachable": false,
+    "control_floored_twh": 0.19,
+    "arm_floored_twh": 0.2031,
+    "arm_verdict": "FAIL",
+    "cleared": false,
+    "halved": false,
+    "gate_ok": true
+   },
+   {
+    "year": 2023,
+    "plant": "7213",
+    "pooled": 0.314,
+    "own": 0.102,
+    "reachable": true,
+    "control_floored_twh": 0.3656,
+    "arm_floored_twh": 0.1123,
+    "arm_verdict": "FAIL",
+    "cleared": false,
+    "halved": true,
+    "gate_ok": true
+   }
+  ]
+ },
+ "G4": {
+  "passed": false,
+  "new_failures": [
+   {
+    "year": 2022,
+    "plant": "7213"
+   }
+  ]
+ }
+}

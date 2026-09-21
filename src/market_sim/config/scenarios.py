@@ -1420,6 +1420,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "mustrun_online_frac_per_year",
     "st_gas_mustrun_p25_measured_level",
     "st_gas_mustrun_oom_level",
+    # pjm-h15's coal sibling of mustrun_online_frac_per_year (GATED default
+    # off). Registered IN THE SAME COMMIT as the field (the nyiso-119
+    # discipline): an unregistered default-off field moves the GLOBAL default
+    # key, which is the regression miso-173 had to repair above.
+    "coal_sync_online_frac_per_year",
     # miso-173 measured lay-up window mask for the per-plant must-run floors
     # (GATED default off): dropped from the hash at its default — the off path
     # never reads the lay-up extract at all, so it is byte-identical by
@@ -2443,6 +2448,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "mustrun_online_frac_per_year": "False",
     "st_gas_mustrun_p25_measured_level": "False",
     "st_gas_mustrun_oom_level": "False",
+    # Added by pjm-h15 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "coal_sync_online_frac_per_year": "False",
     # Added by miso-173 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "mustrun_layup_window_mask": "False",
@@ -3213,6 +3221,7 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     "st_gas_mustrun_per_plant": "measured per-plant ST-gas operating floors",
     "st_gas_mustrun_p25_level": "measured per-plant ST-gas p25 operating level",
     "mustrun_online_frac_per_year": "measured per-YEAR must-run commitment window",
+    "coal_sync_online_frac_per_year": ("measured per-YEAR coal synchronization window"),
     "st_gas_mustrun_p25_measured_level": "measured p25 level in MW (no CF basis)",
     "st_gas_mustrun_oom_level": "measured level over out-of-merit hours only",
     "mustrun_layup_window_mask": "measured lay-up windows mask the must-run floor",
@@ -14549,6 +14558,57 @@ class ScenarioConfig:
     # Off by default (every existing keeper byte-identical); the artifact is
     # per-ISO by construction, so the mechanism self-scopes (rule 25).
     mustrun_online_frac_per_year: bool = False
+
+    # The SAME window-vintage correction, for the COAL SYNCHRONIZATION floor —
+    # pjm-h15. A SEPARATE GATE, not a widening of the field above, because the
+    # two seams are separate mechanism ids carrying separate conduct evidence:
+    # the gas seams are ``MECH_CC_MUSTRUN_PER_PLANT`` /
+    # ``MECH_ST_GAS_MUSTRUN_PER_PLANT`` and read ``cc_mustrun_online_frac``,
+    # while coal is ``MECH_COAL_MUSTRUN`` and reads ``coal_sync_online_frac``
+    # (stamped in ``assembly.py`` from the same pooled artifact column). The
+    # field above says so in terms — "the COAL synchronization floor
+    # (coal_sync_online_frac) and the CT_PEAKER floors keep the hour grain —
+    # they are separate mechanism ids whose own conduct evidence this gate does
+    # not carry". Rule 19 [R-ONE-MECH]: one phenomenon, one gate PER SEAM, and
+    # neither reads the other; rule 28 [R-MECH-MATRIX]: its own row, its own
+    # per-ISO verdict.
+    #
+    # THE DEFECT, measured on PJM at zero LP (pjm-h15 phase 0,
+    # results/calibration/_pjm_h15_coalwindow_phase0.json). PJM's committed
+    # ``thermal_tranches_PJM.csv`` publishes ONE ``online_frac`` per coal plant,
+    # derived on 2023-2025 — identified by re-running that window through the
+    # FROZEN deriver and reproducing the committed column EXACTLY (168 rows
+    # exact, 0 mismatched, ``--verify-pooled``). The runtime applies it as EVERY
+    # solve year's commitment window, so 2020-2022 are windowed on a share
+    # measured in years those plants had not yet reached, and each in-window
+    # year carries the other two years' average. Measured gaps, own-year minus
+    # pooled: plant 3118 0.520 -> 0.951 (2020), 3136 0.413 -> 0.906 (2020),
+    # 6004 0.319 -> 0.943 (2022) and -> 0.157 (2025), 50888 0.684 -> 0.013
+    # (2020) — a plant floored in 68 % of the year by an artifact measured
+    # three years later, whose own meter says it synchronized in 1.3 % of it.
+    # Rule 17 [R-FLOOR-WINDOW] in both directions, exactly as the gas sibling.
+    #
+    # When True, a coal plant's synchronization window is sized by the SOLVE
+    # YEAR's own measured fraction from
+    # ``thermal_tranches_online_frac_by_year_<ISO>.csv`` instead of the pooled
+    # column. A plant with no own-year row KEEPS the pooled fraction, so the
+    # arm can never remove a floor for want of a measurement.
+    #
+    # Rule 21 [R-DOF]: ZERO free parameters. No threshold, no share, no
+    # multiplier — the value is the same measured count ratio at a finer grain.
+    # Rule 23 [R-FROZEN-DERIVE]: the frozen deriver is IMPORTED, not touched,
+    # and ``thermal_tranches_<ISO>.csv`` is NOT regenerated; the companion
+    # artifact is additive and its pooled sum reproduces the committed column.
+    # Rule 13 [R-MEASURED]: BACKCAST ONLY (registered in
+    # _BACKCAST_ONLY_OVERLAY_FIELDS, exactly as the gas sibling is) — the solve
+    # year's own meter has no forward analogue, and a
+    # forecast year keeps the pooled multi-year fraction, which is the same
+    # estimator's own forward form. Rule 19: the window is REPLACED, never
+    # stacked; tranche SIZE, level, membership and the pmax*availability clip
+    # are untouched, and no second floor is placed.
+    # Off by default: every existing keeper in every ISO is byte-identical, and
+    # the artifact is per-ISO, so the mechanism self-scopes (rule 25).
+    coal_sync_online_frac_per_year: bool = False
 
     # WINDOW-GRAIN correction for BOTH per-plant must-run floors
     # (cc_mustrun_per_plant / st_gas_mustrun_per_plant, the p25 level swap

@@ -1,0 +1,86 @@
+[
+ {
+  "year": 2020,
+  "generators": 3077,
+  "coal_sync_units": 40,
+  "max_abs_d_pmax_mw": 0.0,
+  "max_abs_d_coal_sync_pmin_mw": 0.0,
+  "min_gen_cells_moved": 28675,
+  "min_gen_max_abs_d_mw": 639.67,
+  "moved_mech_ids": [
+   3
+  ],
+  "coal_mech_id": 3,
+  "only_coal_mech_moved": true
+ },
+ {
+  "year": 2021,
+  "generators": 3072,
+  "coal_sync_units": 40,
+  "max_abs_d_pmax_mw": 0.0,
+  "max_abs_d_coal_sync_pmin_mw": 0.0,
+  "min_gen_cells_moved": 30387,
+  "min_gen_max_abs_d_mw": 639.67,
+  "moved_mech_ids": [
+   3
+  ],
+  "coal_mech_id": 3,
+  "only_coal_mech_moved": true
+ },
+ {
+  "year": 2022,
+  "generators": 3072,
+  "coal_sync_units": 40,
+  "max_abs_d_pmax_mw": 0.0,
+  "max_abs_d_coal_sync_pmin_mw": 0.0,
+  "min_gen_cells_moved": 29836,
+  "min_gen_max_abs_d_mw": 639.67,
+  "moved_mech_ids": [
+   3
+  ],
+  "coal_mech_id": 3,
+  "only_coal_mech_moved": true
+ },
+ {
+  "year": 2023,
+  "generators": 3074,
+  "coal_sync_units": 40,
+  "max_abs_d_pmax_mw": 0.0,
+  "max_abs_d_coal_sync_pmin_mw": 0.0,
+  "min_gen_cells_moved": 15610,
+  "min_gen_max_abs_d_mw": 639.67,
+  "moved_mech_ids": [
+   3
+  ],
+  "coal_mech_id": 3,
+  "only_coal_mech_moved": true
+ },
+ {
+  "year": 2024,
+  "generators": 3080,
+  "coal_sync_units": 40,
+  "max_abs_d_pmax_mw": 0.0,
+  "max_abs_d_coal_sync_pmin_mw": 0.0,
+  "min_gen_cells_moved": 8202,
+  "min_gen_max_abs_d_mw": 639.67,
+  "moved_mech_ids": [
+   3
+  ],
+  "coal_mech_id": 3,
+  "only_coal_mech_moved": true
+ },
+ {
+  "year": 2025,
+  "generators": 3081,
+  "coal_sync_units": 41,
+  "max_abs_d_pmax_mw": 0.0,
+  "max_abs_d_coal_sync_pmin_mw": 0.0,
+  "min_gen_cells_moved": 14951,
+  "min_gen_max_abs_d_mw": 639.67,
+  "moved_mech_ids": [
+   3
+  ],
+  "coal_mech_id": 3,
+  "only_coal_mech_moved": true
+ }
+]
