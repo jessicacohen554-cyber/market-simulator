@@ -162,6 +162,40 @@ _CHP_PMIN_PCTILE: int = 2
 # lineage; the level source is this statistic since WP-3).
 _CHP_STEAM_LEVEL_ON_PCTILE: int = 50
 
+# Percentile of the ONLINE-hours available-CF distribution taken as a CHP
+# cogen's NEVER-BELOW-WHEN-ONLINE steam level (``chp_pmin_on_cf``) — the
+# operand ``ScenarioConfig.chp_steam_duty_window`` needs, and the one the
+# committed artifact did not carry (caiso-294).
+#
+# IT IS NOT A NEW NUMBER. It is ``_CHP_PMIN_PCTILE`` — this file's existing
+# never-below convention, the p2 that matches how ERCOT's CHP_PMIN_CF_BY_PLANT
+# values were derived — applied to the RIGHT SAMPLE. ``chp_pmin_cf`` takes p2
+# over ``all_cat``, which mixes offline zeros in, so it reads exactly 0.0 for
+# every CAISO cogen that ever stops (all ten of the plants caiso-293's D-4
+# fails on, and all three of the genuinely flat hosts too); that degeneracy is
+# what WP-3 armed the ``steam_level_cf`` swap to escape. This column changes
+# THE SAMPLE AND NOTHING ELSE, so the DOF ledger gains zero free parameters
+# (rule 21 [R-DOF]).
+#
+# WHY THE LEVEL HAD TO MOVE AT ALL (caiso-293's diagnosis, caiso-294's arm B).
+# ``steam_level_cf`` is ``on_freq x p50(on)`` — an ENERGY-EQUIVALENT ANNUAL
+# AVERAGE — and ``fleet/arrays.py`` holds it as an every-hour floor. Confining
+# its hours WITHOUT undiluting it applies the on-frequency twice and deletes
+# 80.4-83.8 %/yr of the floor (measured, caiso-294 §2); using the undiluted
+# ``median_cf`` instead saturates, because the p50 of a plant's total output
+# when online is its COMMERCIAL output, not its steam obligation, and runs
+# 5-14x the capacity of the tranches carrying it (caiso-293 §2.2). The floor a
+# steam host imposes is a never-below level, which is this column.
+#
+# DECLARED EX ANTE, NEVER SWEPT (rule 1 [R-STRUCT]): the percentile was fixed
+# in docs/PRECOMMIT-caiso294-chp-steam-level-2026-09-20.md §3 and pushed before
+# the statistic was computed. ``p25_cf`` — which would have needed no derive
+# change at all — was refused there for the same reason caiso-293 refused it:
+# the only argument for it is that it lands between p2 and p50, i.e. that it
+# clears G-4, and selecting a statistic because it makes a criterion pass is
+# the fitted-mechanism selection rule 1 forbids.
+_CHP_STEAM_FLOOR_ON_PCTILE: int = _CHP_PMIN_PCTILE
+
 # EIA-923 Page 1 "EIA Sector Number" -> the BTM sector class the model's
 # chp_btm_pct uses. Cogen sectors map directly (3 = NAICS-22 / merchant cogen,
 # 5 = commercial cogen, 7 = industrial cogen); non-cogen sectors land on the
@@ -1056,6 +1090,14 @@ def main() -> None:
         if group in _CHP_GROUPS:
             row["chp_pmin_cf"] = round(
                 100.0 * float(np.percentile(all_cat, _CHP_PMIN_PCTILE)), 1
+            )
+            # NEVER-BELOW-WHEN-ONLINE level (caiso-294): the SAME percentile as
+            # chp_pmin_cf above, over the ONLINE sample instead of the
+            # all-hours one. Declared ex ante in
+            # docs/PRECOMMIT-caiso294-chp-steam-level-2026-09-20.md §3, before
+            # it was computed, and NOT swept — see _CHP_STEAM_FLOOR_ON_PCTILE.
+            row["chp_pmin_on_cf"] = round(
+                100.0 * float(np.percentile(on_cat, _CHP_STEAM_FLOOR_ON_PCTILE)), 1
             )
             row["chp_sector"] = chp_sectors.get(code, "")
             # Steam-host operating level (see _CHP_STEAM_LEVEL_ON_PCTILE):
