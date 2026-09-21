@@ -11,10 +11,13 @@ ANSWER  : it is neither a commitment object nor an offer object. It is an INPUT
           could not have produced what CAMPD metered it producing — 25.4 TWh across
           142,058 plant-hours in 2020, and 20-32 TWh in EVERY year 2020-2025, the
           CALIBRATED train tier included.
-CAUSE   : the CAMPD outage detector books ECONOMIC IDLENESS as UNAVAILABILITY. This
-          repo already has the repair and already names it — the merit-order guard's
-          economic-lay-up reclassification — and MISO runs with it OFF and without the
-          extract it needs.
+CAUSE   : the unit-outage derate sums CONCURRENT unit windows and clips at FULL
+          derate, so plants are zeroed outright in hours they demonstrably ran —
+          5.318 TWh across 24,100 plant-hours at availability == 0 in 2020 alone.
+          NOT the economic-idleness story I first proposed; §3.1 withdraws it.
+REPAIRS : FOUR candidates tested at ZERO LP and ALL FOUR REFUTED (§4), including
+          both repairs the accumulator's own docstring names for this pathology.
+          That retires them before anyone spends 12 shard-years arming them.
 ```
 
 ---
@@ -128,63 +131,122 @@ are `_b64` uint8 percent-of-capacity, so a breach smaller than one step is codec
 noise; requiring a full step **shrinks** the 2020 figure only from 25.438 to
 25.414 TWh, which is the measure of how little of this is decode error.
 
-## 3. THE CAUSE, FROM THE EXTRACT ITSELF
+**The two sides are on the same basis, checked rather than assumed.** The obvious
+way this finding could be an artifact is a gross-vs-net mismatch — CAMPD's native
+`grossLoad` carries auxiliary load a net capability does not, and at ~5 % of MISO
+coal that alone would be ~10 TWh. It is not the case: the committed series is
+**net**, by the bench builder's own statement (`render_calibration_html.py:1072`,
+*"reconstructing CAMPD annual GROSS from the committed NET series"*), which is the
+same net basis `FINDING-miso261` §2 uses and the correct one to set against
+`pmax * availability`.
 
-The windows driving the derate are visible in
-`data/raw/campd-unit-outages-MISO.csv`. R M Schahfer's 2020 rows:
+## 3. THE MECHANISM — a FULL-PLANT derate, not an economics story
 
-| unit | window | days |
-|---|---|---:|
-| 14 | 2020-02-02 → 2020-06-29 | 147.6 |
-| 14 | 2020-07-16 → 2020-12-31 | 168.5 |
-| 15 | 2020-07-16 → 2020-12-01 | 137.6 |
-| 17 | 2020-02-29 → 2020-05-08 | 68.8 |
-| 18 | 2020-10-10 → 2020-12-12 | 63.6 |
+**The sharpest form of the contradiction removes every remaining argument.** Ask
+only for the hours in which the model says a plant is **100 % unavailable** and
+the meter says it ran (`scripts/probes/_miso265_hard_zero_hours.py`). MISO 2020:
 
-Sixteen windows, covering essentially the whole year across the four units. These
-are not forced or planned outages. **They are a coal station standing idle in the
-cheapest gas year in the span** — the detector is a sustained-zero-output detector,
-and in 2020 sustained zero output at a Midwestern coal plant is overwhelmingly
-economics, not unavailability.
+> **5.318 TWh metered across 24,100 plant-hours at `availability == 0`, over 33
+> plants.** Of the 109,392 coal plant-hours the overlay drives to a hard zero,
+> **22.0 % are contradicted by the plant's own committed meter.**
 
-Booking that as unavailability is a **rule 19 `[R-ONE-MECH]` double-count**: the LP
-already declines an uneconomic unit on its own merit order, and the derate then
-removes the same unit again, as capacity. It is also the exact thing rule 13
-`[R-MEASURED]` forbids — *didn't run* fed back as *couldn't run*.
+| plant | LP MW | hours at avail=0 | contradicted | TWh | peak MW |
+|---|---:|---:|---:|---:|---:|
+| R M Schahfer | 1,625 | 8,112 | 8,019 | 2.167 | 754 |
+| South Oak Creek | 1,112 | 4,224 | 3,368 | 0.832 | 597 |
+| Dallman | 492 | 7,536 | 4,779 | 0.530 | 306 |
+| Sherburne County | 2,238 | 1,224 | **1,224** | 0.454 | **1,602** |
+| Marion | 290 | 5,808 | 3,408 | 0.305 | 248 |
 
-**This repo already knows all of this and already built the repair.** From
-`market_sim.data.outages.unit_layup_csv_for_iso`, in the code today:
+Sherburne County is the cleanest single statement available: in **every one** of
+the 1,224 hours the model calls it entirely out, it was generating — up to
+**1,602 MW**.
 
-> windows the merit-order guard RECLASSIFIED as economic lay-up … **These windows
-> deliberately stay OUT of the availability envelope (an economically idle unit is
-> available; the LP declines it on its own economics)**
+**The outage overlay alone is the whole driver**, not the statistical WEFOR
+stacked on it. `unit_outage_derate_factors` returns a factor that is *itself*
+exactly 0.0000 for 8,112 h at Schahfer (mean 0.0559), 7,536 h at Dallman, 4,224 h
+at South Oak Creek, 1,224 h at Sherburne.
 
-and MISO's own keeper `2026-08-20-miso-173-layup-mask` defends the same line from
-the other side — *"feeding them back as unavailability would re-arm the 23-46 %
-phantom-outage bias the guard removes."* MISO arms the **mask** and not the
-**guard**.
+And the mechanism is the accumulator's own documented failure mode. It derates by
+`unit_capacity_mw / plant_capacity_mw` and **"concurrent units sum, clipped at
+full derate"** — so when a plant's unit windows overlap and the shares are taken
+against a denominator the LP's own fleet does not share, the sum runs past 1.0 and
+the plant is zeroed outright. The code states the arithmetic in the abstract:
 
-## 4. WHAT IS ACTUALLY OFF, AND WHAT IT WOULD TAKE
+> the numerator is the dark unit's capacity while `cap[tgt]` already excludes it,
+> a double-count that can **sum to 1.23 of the modeled OP half and clip it to 0.0**
 
-`campd_outage_merit_order_guard` is **`None` (off)** in the keeper's `meta.json`.
-MISO's matrix cell reads **`U` — untested** (row added by nyiso-177, rule 28(c)),
-with its own instruction for a lane taking it up: *"arms `campd_per_unit_attribution`
-first and adds the guard as its second, separately-adjudicated rung."* Neither is a
-`R`/`I`/`G` cell, so this is **on-queue and not a DO-NOT-REDO**.
+At Schahfer the extract's `plant_capacity_mw` is **2,009 MW** against the LP's
+**1,625 MW** of coal — a ratio of **1.236**.
 
-The operational blocker is data, not code: MISO has **neither**
-`campd-unit-outages-perunit-MISO.csv` **nor** `campd-unit-outages-perunitmerit-MISO.csv`.
-The loader falls back to the incumbent extract when a companion is absent, so
-arming the flags today would be **silently inert** — a trap worth naming, because
-a lane that armed them and saw no movement would draw exactly the wrong conclusion.
+### 3.1 I FIRST ATTRIBUTED THIS TO ECONOMIC IDLENESS. THAT WAS WRONG.
+
+Schahfer's sixteen 2020 windows (unit 14 out 2/02–6/29 and 7/16–12/31, unit 15
+out 7/16–12/01, …) cover essentially the whole year, and the obvious reading is a
+coal station standing idle in the cheapest gas year of the span — *didn't run* fed
+back as *couldn't run*, which rule 13 `[R-MEASURED]` forbids and which this repo's
+merit-order guard exists to strip out.
+
+**The measurement refuses that reading.** The guard reclassifies **0 of
+Schahfer's 16 windows** as economic lay-up; all 16 survive as genuine outages. So
+whatever the guard's merit test sees, it does not see these as economics, and the
+zeroing is a **derate-arithmetic** defect rather than an economics one. The
+economic-idleness story is withdrawn; the arithmetic one is what the numbers
+support.
+
+## 4. FOUR CANDIDATE REPAIRS, ALL TESTED AT ZERO LP, ALL REFUTED
+
+The accumulator's docstring names two gated repairs for precisely this
+numerator/denominator pathology, and the matrix names a third route. All were
+sized directly on the rebuilt factors and the same committed meter
+(`scripts/probes/_miso265_derate_variant_sizing.py`), MISO 2020:
+
+| variant | plant-h at avail=0 | contradicted h | metered TWh | plants |
+|---|---:|---:|---:|---:|
+| **incumbent (keeper)** | 103,704 | 23,849 | 5.184 | 33 |
+| `+unit_outage_fleet_status_scope` | 103,704 | 23,849 | 5.184 | 33 |
+| `+unit_outage_extract_basis_share` | 103,704 | 23,849 | 5.184 | 33 |
+| `+both` | 103,704 | 23,849 | 5.184 | 33 |
+| `+campd_outage_merit_order_guard` | 125,880 | **24,193** | **5.234** | 37 |
+
+**Not one of them reduces the contradiction, and the merit-order guard makes it
+slightly worse.** That is the single most useful line in this document for a
+successor: it retires four candidate levers **before** anyone spends the twelve
+shard-years that arming two of them as separately-adjudicated rungs would cost.
+
+**The flags are live, not silently ignored** — checked, because three identical
+rows is exactly what a dead switch looks like. Against the incumbent they move
+**4 / 37 / 16 of 126–138 bins** with max |Δ| of 1.000 / 0.536 / 1.000. They are
+doing real work; it simply lands on other bins than MISO's contradicted coal.
+
+Two operational notes the successor needs:
+
+* **MISO's companion extracts did not exist and now do.** This session derived
+  them with the deriver's own committed constants and nothing tuned (rule 23
+  `[R-FROZEN-DERIVE]`): `campd-unit-outages-perunit-MISO.csv` (10,905 windows) and
+  `campd-unit-outages-perunitmerit-MISO.csv` (9,165 windows + 1,740 reclassified
+  to `campd-unit-outages-layup-perunitmerit-MISO.csv`). Before this the loader
+  would have **fallen back to the incumbent extract** and both flags would have
+  been silently inert — a trap worth naming, since a lane that armed them and saw
+  nothing move would have drawn exactly the wrong conclusion.
+* **`unit_outage_fleet_status_scope` and `unit_outage_extract_basis_share` are not
+  reachable from `run_year` at all.** They are `ScenarioConfig` fields
+  (`scenarios.py:15187`, `:15405`) with no kwarg plumbing, so
+  `replay_keeper`'s binding guard rejects them outright — *"meta.json keys not
+  bound to solve_and_persist kwargs"*. They cannot be A/B'd through a bundle
+  reconstruction today. Given they are measured inert here that is not this
+  lane's problem to fix, but it is a rule 24 `[R-REGISTRY]` gap: a registered
+  tunable the runner cannot reach.
 
 ## 5. WHAT THIS PROVES AND WHAT IT DOES NOT
 
 **Proved.** (a) Two measured inputs the keeper carries are mutually infeasible, at
 20–32 TWh/yr in all six years. (b) The contradiction is not a dispatch or offer
-residual — the ceiling is a validated hard bound. (c) The conflation of economic
-idleness with unavailability is visible in the extract's own windows. (d) The
-repair exists in this codebase, is documented in it, and is off for MISO.
+residual — the ceiling is a validated hard bound. (c) Its sharpest subset needs no
+interpretation at all: 5.318 TWh metered in hours the model calls the plant
+**entirely** unavailable. (d) The unit-outage derate alone produces it, by summing
+concurrent unit windows and clipping at full derate. (e) Four existing candidate
+repairs do not touch it.
 
 **NOT proved, and not claimed.** That arming the guard closes C1 2020 COAL_BIT, or
 C3a 2020, or moves any gate in any direction. Rule 1 `[R-STRUCT]`: this is a
@@ -223,12 +285,21 @@ guaranteed to close C1 2020 on its own.
    right to fail: 1 MW is far inside a 33 MW quantization step. The threshold is
    now the measured codec step, and the finding is reported at the tighter number
    it produces.
+5. **I proposed the wrong cause and then refuted it myself** — §3.1. The
+   economic-idleness reading was the natural one from the extract's windows, it
+   was wrong, and the guard's own reclassification is what says so. The correction
+   matters beyond bookkeeping: acting on the first reading would have cost twelve
+   shard-years for a lever measured here to be inert.
 
 ## 7. ROUTED, NOT ABSORBED
 
-1. **The arm is specified and NOT taken here** — §4. Two rungs, `campd_per_unit_attribution`
-   then `campd_outage_merit_order_guard`, each needing its own derived MISO extract
-   and each a six-year span under rules 34(c)/36.
+1. **THE REPAIR IS NOT YET IDENTIFIED, AND THAT IS THE HONEST STATE.** §4 refutes
+   every candidate this repo already carries. What the successor inherits is a
+   precisely-located defect (the concurrent-share sum clipping at full derate, on
+   a denominator the LP's fleet does not share) and four levers it now knows not
+   to spend. The next step is a zero-LP reconciliation of the extract's
+   `plant_capacity_mw` against the LP's own per-bin capacity at the 33
+   contradicted plants — **not** a solve.
 2. **`COAL_LIGNITE` 2025 has NEGATIVE annual headroom** (ceiling 5.75 against an
    actual 6.13) and 2022 is −0.04. A class whose whole-year ceiling is below its
    whole-year meter cannot be fixed by any dispatch lever at all.
