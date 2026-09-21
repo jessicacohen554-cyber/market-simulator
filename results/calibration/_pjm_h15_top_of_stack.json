@@ -1,0 +1,413 @@
+{
+ "what": "pjm-h15 phase 0 \u2014 is PJM's price gap a TOP-OF-CURVE defect? ZERO LP.",
+ "years": {
+  "2023": {
+   "bundle": "pjm_h14_coalmustrun_span",
+   "gas_mean": 3.2024383561643837,
+   "market_top1pct_mean_lmp": 123.09756417707963,
+   "A_peak_rung_model_vs_measured": {
+    "CC_REGULAR": {
+     "mw": 3944.885519761499,
+     "model_implied_gas_hr": 34.51946862766898,
+     "measured_implied_gas_hr": 11.043157774441422,
+     "measured_over_model": 0.31991100134113337
+    },
+    "CT_PEAKER": {
+     "mw": 2413.780499999999,
+     "model_implied_gas_hr": 38.50286720352661,
+     "measured_implied_gas_hr": 31.949875030061786,
+     "measured_over_model": 0.8298050859738411
+    },
+    "ST_GAS": {
+     "mw": 1728.8249999999996,
+     "model_implied_gas_hr": 17.875501264128342,
+     "measured_implied_gas_hr": 10.614840896273481,
+     "measured_over_model": 0.5938206005766569
+    }
+   },
+   "C_headroom_market_top1pct": {
+    "CC_CHP": {
+     "available_mw": 1348.873843697842,
+     "dispatched_mw": 1159.0709228515625,
+     "idle_mw": 189.80292084627945,
+     "utilisation": 0.8592878631807789,
+     "sidecar_classes": [
+      "CC_CHP"
+     ]
+    },
+    "CC_REGULAR": {
+     "available_mw": 47798.74561347768,
+     "dispatched_mw": 44752.1640625,
+     "idle_mw": 3046.5815509776803,
+     "utilisation": 0.936262311659521,
+     "sidecar_classes": [
+      "CC_REGULAR"
+     ]
+    },
+    "COAL": {
+     "available_mw": 22619.095511012947,
+     "dispatched_mw": 18657.498046875,
+     "idle_mw": 3961.597464137947,
+     "utilisation": 0.8248560618965026,
+     "sidecar_classes": [
+      "COAL_BIT",
+      "COAL_PRB",
+      "COAL_WC"
+     ]
+    },
+    "CT_CHP": {
+     "available_mw": 266.5899074848748,
+     "dispatched_mw": 249.4618682861328,
+     "idle_mw": 17.128039198741988,
+     "utilisation": 0.9357513592306049,
+     "sidecar_classes": [
+      "CT_CHP"
+     ]
+    },
+    "CT_PEAKER": {
+     "available_mw": 21411.656969234347,
+     "dispatched_mw": 7821.4736328125,
+     "idle_mw": 13590.183336421847,
+     "utilisation": 0.36529044174633,
+     "sidecar_classes": [
+      "CT_PEAKER"
+     ]
+    },
+    "ST_GAS": {
+     "available_mw": 7074.423913893835,
+     "dispatched_mw": 4448.2919921875,
+     "idle_mw": 2626.1319217063347,
+     "utilisation": 0.6287850496845778,
+     "sidecar_classes": [
+      "ST_GAS"
+     ]
+    },
+    "default": {
+     "available_mw": 3961.7036682615635,
+     "dispatched_mw": 0.25670453906059265,
+     "idle_mw": 3961.446963722503,
+     "utilisation": 6.47965018477107e-05,
+     "sidecar_classes": [
+      "oil"
+     ]
+    }
+   },
+   "C_total": {
+    "available_mw": 104481.08942706307,
+    "dispatched_mw": 77088.21723005176,
+    "idle_mw": 27392.872197011333
+   },
+   "B_peak_band_dispatch_mw": {
+    "CC_CHP": {
+     "max_h": 35.84286880493164,
+     "mean_h": 6.441895008087158
+    },
+    "CC_REGULAR": {
+     "max_h": 0.0,
+     "mean_h": 0.0
+    },
+    "COAL_BIT": {
+     "max_h": 535.5874633789062,
+     "mean_h": 46.95912551879883
+    },
+    "COAL_PRB": {
+     "max_h": 51.40999984741211,
+     "mean_h": 0.6775518655776978
+    },
+    "COAL_WC": {
+     "max_h": 23.994308471679688,
+     "mean_h": 2.1891074180603027
+    },
+    "CT_CHP": {
+     "max_h": 10.69906234741211,
+     "mean_h": 3.116424798965454
+    },
+    "CT_PEAKER": {
+     "max_h": 854.822509765625,
+     "mean_h": 7.310118198394775
+    },
+    "ST_CHP": {
+     "max_h": 17.181072235107422,
+     "mean_h": 9.821878433227539
+    },
+    "ST_GAS": {
+     "max_h": 995.2200927734375,
+     "mean_h": 27.58121109008789
+    }
+   },
+   "build_s": 16.7
+  },
+  "2024": {
+   "bundle": "pjm_h14_coalmustrun_span",
+   "gas_mean": 2.916219178082192,
+   "market_top1pct_mean_lmp": 169.8407681205056,
+   "A_peak_rung_model_vs_measured": {
+    "CC_REGULAR": {
+     "mw": 3944.885519761499,
+     "model_implied_gas_hr": 37.504630559155345,
+     "measured_implied_gas_hr": 13.579446327894592,
+     "measured_over_model": 0.3620738592925476
+    },
+    "CT_PEAKER": {
+     "mw": 2415.1805,
+     "model_implied_gas_hr": 42.66696412335661,
+     "measured_implied_gas_hr": 35.52247578390104,
+     "measured_over_model": 0.8325522219298337
+    },
+    "ST_GAS": {
+     "mw": 1730.5799999999997,
+     "model_implied_gas_hr": 19.622229491640248,
+     "measured_implied_gas_hr": 10.761590996949,
+     "measured_over_model": 0.5484387491000353
+    }
+   },
+   "C_headroom_market_top1pct": {
+    "CC_CHP": {
+     "available_mw": 1328.8962576043136,
+     "dispatched_mw": 1212.1455078125,
+     "idle_mw": 116.75074979181363,
+     "utilisation": 0.9121445717649265,
+     "sidecar_classes": [
+      "CC_CHP"
+     ]
+    },
+    "CC_REGULAR": {
+     "available_mw": 46746.60180915707,
+     "dispatched_mw": 44588.484375,
+     "idle_mw": 2158.117434157073,
+     "utilisation": 0.953833704469737,
+     "sidecar_classes": [
+      "CC_REGULAR"
+     ]
+    },
+    "COAL": {
+     "available_mw": 21969.537806033903,
+     "dispatched_mw": 19911.306640625,
+     "idle_mw": 2058.2311654089026,
+     "utilisation": 0.9063143165058478,
+     "sidecar_classes": [
+      "COAL_BIT",
+      "COAL_PRB",
+      "COAL_WC"
+     ]
+    },
+    "CT_CHP": {
+     "available_mw": 268.0870817383879,
+     "dispatched_mw": 253.39292907714844,
+     "idle_mw": 14.694152661239457,
+     "utilisation": 0.9451888820380435,
+     "sidecar_classes": [
+      "CT_CHP"
+     ]
+    },
+    "CT_PEAKER": {
+     "available_mw": 21544.197325141162,
+     "dispatched_mw": 11286.9296875,
+     "idle_mw": 10257.267637641162,
+     "utilisation": 0.5238965052705228,
+     "sidecar_classes": [
+      "CT_PEAKER"
+     ]
+    },
+    "ST_GAS": {
+     "available_mw": 5877.781303400558,
+     "dispatched_mw": 4253.62646484375,
+     "idle_mw": 1624.1548385568076,
+     "utilisation": 0.7236789266696326,
+     "sidecar_classes": [
+      "ST_GAS"
+     ]
+    },
+    "default": {
+     "available_mw": 3980.468863636363,
+     "dispatched_mw": 13.31943130493164,
+     "idle_mw": 3967.1494323314314,
+     "utilisation": 0.0033461965816669282,
+     "sidecar_classes": [
+      "oil"
+     ]
+    }
+   },
+   "C_total": {
+    "available_mw": 101715.57044671175,
+    "dispatched_mw": 81519.20503616333,
+    "idle_mw": 20196.36541054843
+   },
+   "B_peak_band_dispatch_mw": {
+    "CC_CHP": {
+     "max_h": 35.84286880493164,
+     "mean_h": 10.6368989944458
+    },
+    "CC_REGULAR": {
+     "max_h": 0.0,
+     "mean_h": 0.0
+    },
+    "COAL_BIT": {
+     "max_h": 589.5698852539062,
+     "mean_h": 69.45845031738281
+    },
+    "COAL_PRB": {
+     "max_h": 51.40999984741211,
+     "mean_h": 1.2401492595672607
+    },
+    "COAL_WC": {
+     "max_h": 24.368162155151367,
+     "mean_h": 3.183908700942993
+    },
+    "CT_CHP": {
+     "max_h": 10.231704711914062,
+     "mean_h": 3.2695555686950684
+    },
+    "CT_PEAKER": {
+     "max_h": 935.8860473632812,
+     "mean_h": 5.681746959686279
+    },
+    "ST_CHP": {
+     "max_h": 17.181072235107422,
+     "mean_h": 10.90327262878418
+    },
+    "ST_GAS": {
+     "max_h": 977.3470458984375,
+     "mean_h": 46.43511199951172
+    }
+   },
+   "build_s": 14.2
+  },
+  "2025": {
+   "bundle": "pjm_h14_coalmustrun_span",
+   "gas_mean": 4.209232876712329,
+   "market_top1pct_mean_lmp": 317.6212043762207,
+   "A_peak_rung_model_vs_measured": {
+    "CC_REGULAR": {
+     "mw": 3944.885519761499,
+     "model_implied_gas_hr": 30.339289897270156,
+     "measured_implied_gas_hr": 11.729229737400152,
+     "measured_over_model": 0.3866019863060643
+    },
+    "CT_PEAKER": {
+     "mw": 2414.500499999999,
+     "model_implied_gas_hr": 34.00875111751432,
+     "measured_implied_gas_hr": 32.52681396214249,
+     "measured_over_model": 0.956424828708025
+    },
+    "ST_GAS": {
+     "mw": 1730.5799999999997,
+     "model_implied_gas_hr": 17.325279977141513,
+     "measured_implied_gas_hr": 8.195974023159867,
+     "measured_over_model": 0.4730644488269975
+    }
+   },
+   "C_headroom_market_top1pct": {
+    "CC_CHP": {
+     "available_mw": 1371.1223402634678,
+     "dispatched_mw": 1193.325439453125,
+     "idle_mw": 177.79690081034278,
+     "utilisation": 0.8703274714521986,
+     "sidecar_classes": [
+      "CC_CHP"
+     ]
+    },
+    "CC_REGULAR": {
+     "available_mw": 50111.58659743909,
+     "dispatched_mw": 47882.94140625,
+     "idle_mw": 2228.645191189091,
+     "utilisation": 0.9555263494430452,
+     "sidecar_classes": [
+      "CC_REGULAR"
+     ]
+    },
+    "COAL": {
+     "available_mw": 26015.234465817604,
+     "dispatched_mw": 25614.533203125,
+     "idle_mw": 400.70126269260436,
+     "utilisation": 0.9845974379658542,
+     "sidecar_classes": [
+      "COAL_BIT",
+      "COAL_PRB",
+      "COAL_WC"
+     ]
+    },
+    "CT_CHP": {
+     "available_mw": 271.7368358104,
+     "dispatched_mw": 255.81407165527344,
+     "idle_mw": 15.922764155126572,
+     "utilisation": 0.9414037331094985,
+     "sidecar_classes": [
+      "CT_CHP"
+     ]
+    },
+    "CT_PEAKER": {
+     "available_mw": 21702.123268245152,
+     "dispatched_mw": 14287.5771484375,
+     "idle_mw": 7414.546119807652,
+     "utilisation": 0.6583492763283343,
+     "sidecar_classes": [
+      "CT_PEAKER"
+     ]
+    },
+    "ST_GAS": {
+     "available_mw": 7405.808941722371,
+     "dispatched_mw": 4976.4638671875,
+     "idle_mw": 2429.345074534871,
+     "utilisation": 0.6719676278915889,
+     "sidecar_classes": [
+      "ST_GAS"
+     ]
+    },
+    "default": {
+     "available_mw": 3981.9599999999996,
+     "dispatched_mw": 233.18002319335938,
+     "idle_mw": 3748.77997680664,
+     "utilisation": 0.05855910737259023,
+     "sidecar_classes": [
+      "oil"
+     ]
+    }
+   },
+   "C_total": {
+    "available_mw": 110859.57244929808,
+    "dispatched_mw": 94443.83515930176,
+    "idle_mw": 16415.737289996327
+   },
+   "B_peak_band_dispatch_mw": {
+    "CC_CHP": {
+     "max_h": 35.84286880493164,
+     "mean_h": 10.561208724975586
+    },
+    "CC_REGULAR": {
+     "max_h": 0.0,
+     "mean_h": 0.0
+    },
+    "COAL_BIT": {
+     "max_h": 562.7843017578125,
+     "mean_h": 183.28753662109375
+    },
+    "COAL_PRB": {
+     "max_h": 51.40999984741211,
+     "mean_h": 3.9265472888946533
+    },
+    "COAL_WC": {
+     "max_h": 17.634599685668945,
+     "mean_h": 7.6470818519592285
+    },
+    "CT_CHP": {
+     "max_h": 10.69906234741211,
+     "mean_h": 2.4094293117523193
+    },
+    "CT_PEAKER": {
+     "max_h": 975.6597290039062,
+     "mean_h": 8.048773765563965
+    },
+    "ST_CHP": {
+     "max_h": 17.181072235107422,
+     "mean_h": 11.821096420288086
+    },
+    "ST_GAS": {
+     "max_h": 993.3345336914062,
+     "mean_h": 59.73846435546875
+    }
+   },
+   "build_s": 14.6
+  }
+ }
+}
