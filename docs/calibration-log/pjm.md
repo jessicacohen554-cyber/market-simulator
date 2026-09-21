@@ -6370,8 +6370,11 @@ merges, so any leg not on `main` costs a re-solve, not a checkout.
 
 ## pjm-h15 — 2026-09-21
 
-**KEEPER UNCHANGED; the promotion question is OPEN and the owner's** (rule 31 `[R-RETAIN]`,
-`docs/RESULT-pjm-h15-2026-09-21.md` §8). New runs registered:
+**PROMOTED.** `2026-09-20-pjm-h14-coalmustrun-span` → **`2026-09-20-pjm-h15-coalwindow-span`**
+on the owner's ruling 2026-09-21 (*"If structural integrity improves but gates regress that may
+still be a keeper"*). The superseded pair was pruned in this session per rule 35 `[R-PROMOTE]`
+(a) — `--keep` on the incoming touchpoint, `--force-uncite` for the `keeper_history` citation —
+and `audit_keepers --iso PJM` reads **0 failures, 0 warnings** after. Registered:
 `2026-09-20-pjm-h15-coalwindow-span` (2023–2025, **CALIBRATED, 8/8 PASS, zero caveats**) +
 `2026-09-20-pjm-h15-coalwindow-touchpoint` (2020–2022, NOT-YET), stamped to the span under rule 30(a).
 Sole config delta **`coal_sync_online_frac_per_year` False → True**, **zero free parameters**, DOF
