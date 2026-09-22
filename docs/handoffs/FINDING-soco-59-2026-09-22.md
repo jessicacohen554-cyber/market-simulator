@@ -154,7 +154,10 @@ none is scored, and one (`ST_GAS`) gets worse.
 4. **D79 fingerprint gap** — a first-time per-ISO row in a by-ISO registry table enters no cache key,
    so SOCO's forecast hydro climatology (7.089 → 7.571 TWh/yr) moved with no key move. No SOCO forecast
    result exists today; flagged for whoever owns `solve_surface`.
-5. Inherited, untouched: boundary-refused CC plants 533 / 7946; the tranche half of
+5. **SOCO hydro-4's two registered probes** (`2026-09-22-soco-h4-hydro-min`, `-hydro-ror`) solved 2025 on backfill-only
+   (6.33 TWh) as a stand-in for this repair; their own RESULT §4.1 says their 2025 legs should re-solve on it before any
+   promotion. This lane's repair is the one they name.
+6. Inherited, untouched: boundary-refused CC plants 533 / 7946; the tranche half of
    `campd_per_unit_attribution`; `derive_parasitic_load.py` for SOCO coal/steam; the
    `tranche_startup_amortization` governance boundary (SOCO-58 §6) — no owner ruling seen, not re-litigated.
 
@@ -174,7 +177,7 @@ none is scored, and one (`ST_GAS`) gets worse.
 - Gate noise, machine-verified: `check_registry_payload_parity` RED **locally only** on six unmapped dirs,
   all this lane's (three recovered control legs, three arm legs), all gitignored with 0 tracked files;
   `audit_keepers` E11 (expected) and E13 × 2 (`soco53g`, now the **twelfth** lane; and this candidate,
-  until the owner rules); 30 unit-test failures in `tests/unit/{data,config}`, identical set on `main`.
+  until the owner rules — plus hydro-4's two probes once `main` is merged); 30 unit-test failures in `tests/unit/{data,config}`, identical set on `main`.
 
 ## 9. THE PROMOTION QUESTION (rule 31)
 
