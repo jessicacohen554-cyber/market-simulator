@@ -3316,3 +3316,7 @@ results/calibration/spp71_20*_arm/
 results/calibration/pjm_h16_arm_20*/
 results/calibration/pjm_h16_ctl_20*/
 results/calibration/pjm_h16_ctl_touchpoint/
+
+# hydro-2 per-year arm legs: kept OUT of main (rule 32(d)); composite is what registers.
+# Provenance only (rule 33(d)): 2024 e0e9b7cd78b21c49f6b3418cd16c6f804ec07845
+results/calibration/hydro2_pjm_ror_20*/
