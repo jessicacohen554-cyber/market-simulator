@@ -13,6 +13,7 @@
     "coal_prb_passthrough_tiered": true,
     "coal_prb_sigmoid_overrides": {
       "campd_per_unit_attribution": true,
+      "coal_warm_committed": true,
       "gas_basis_differential_measured_by_year": true,
       "gas_plant_monthly_fuel_pricing": false,
       "measured_cc_heat_rates": true,
@@ -31,7 +32,7 @@
       "2024": 2.19,
       "2025": 3.52
     },
-    "git_sha": "77515414",
+    "git_sha": "f10ed9b9",
     "hours": 8760,
     "iso": "SOCO",
     "nyiso_dynamic_reserve_requirements": null,
@@ -54,9 +55,9 @@
     ]
   },
   "composed_from": [
-    "soco57_arm_2023",
-    "soco57_arm_2024",
-    "soco57_arm_2025"
+    "soco58_arm_2023",
+    "soco58_arm_2024",
+    "soco58_arm_2025"
   ],
   "environment": {
     "cache_key_path_roots": [
@@ -78,47 +79,47 @@
     "python_version": "3.11.15"
   },
   "git": {
-    "basis_sha": "7751541416ce0f5199ada9fcb508c6038de23ba1",
+    "basis_sha": "f10ed9b93f4366fa279918d46fca3c8f9cc38029",
     "branch": "HEAD",
     "changed_files": [],
     "diffstat": "",
     "dirty": false,
-    "sha": "77515414"
+    "sha": "f10ed9b9"
   },
-  "model_changes_note": "SOCO-57 ARM 2023: measured_cc_heat_rates=true on the soco56 keeper recipe, year-isolated (rule 36)",
+  "model_changes_note": "SOCO-58 ARM 2023: coal_warm_committed=true (warm-boiler committed-band exemption; removes the $100/MW cold-start markup from the six coal _committed tranches whose mustrun tranche holds the boiler online in 100.0% of hours), year-isolated (rule 36)",
   "per_leg_provenance": {
     "2023": {
       "git": {
-        "basis_sha": "7751541416ce0f5199ada9fcb508c6038de23ba1",
+        "basis_sha": "f10ed9b93f4366fa279918d46fca3c8f9cc38029",
         "branch": "HEAD",
         "changed_files": [],
         "diffstat": "",
         "dirty": false,
-        "sha": "77515414"
+        "sha": "f10ed9b9"
       },
-      "timestamp": "2026-09-20T19:42:04"
+      "timestamp": "2026-09-22T13:52:38"
     },
     "2024": {
       "git": {
-        "basis_sha": "7751541416ce0f5199ada9fcb508c6038de23ba1",
+        "basis_sha": "f10ed9b93f4366fa279918d46fca3c8f9cc38029",
         "branch": "HEAD",
         "changed_files": [],
         "diffstat": "",
         "dirty": false,
-        "sha": "77515414"
+        "sha": "f10ed9b9"
       },
-      "timestamp": "2026-09-20T19:42:07"
+      "timestamp": "2026-09-22T13:54:41"
     },
     "2025": {
       "git": {
-        "basis_sha": "7751541416ce0f5199ada9fcb508c6038de23ba1",
+        "basis_sha": "f10ed9b93f4366fa279918d46fca3c8f9cc38029",
         "branch": "HEAD",
         "changed_files": [],
         "diffstat": "",
         "dirty": false,
-        "sha": "77515414"
+        "sha": "f10ed9b9"
       },
-      "timestamp": "2026-09-20T19:43:17"
+      "timestamp": "2026-09-22T13:56:31"
     }
   },
   "resolved_inputs": {
@@ -297,6 +298,7 @@
     "chp_layup_duty_curve": false,
     "chp_layup_duty_split": false,
     "chp_startup_covered": false,
+    "chp_steam_duty_window": false,
     "chp_steam_floor_p25": false,
     "chp_steam_following": true,
     "class_aware_fuel_price_fallback": false,
@@ -363,9 +365,10 @@
     "coal_sub_passthrough_gas_slope": null,
     "coal_sub_passthrough_sigmoid": false,
     "coal_supply_repricing": true,
+    "coal_sync_online_frac_per_year": false,
     "coal_sync_srmc_tranche": false,
     "coal_takeorpay_from_data": false,
-    "coal_warm_committed": false,
+    "coal_warm_committed": true,
     "coal_waste_passthrough_ceil": null,
     "coal_waste_passthrough_floor": null,
     "coal_waste_passthrough_gas_mid": null,
@@ -660,6 +663,7 @@
     "hydro_cascade_coupling": false,
     "hydro_dispatch_envelope": false,
     "hydro_min_flow_floor": false,
+    "hydro_pondage_bound": false,
     "hydro_ror_split": false,
     "hydro_year": "normal",
     "interchange_shape_export_pct": 90.0,
@@ -1158,11 +1162,11 @@
   "solve_surface": {
     "epochs": [],
     "fingerprint": "36087ac69210fdb2",
-    "git_sha": "77515414",
+    "git_sha": "f10ed9b9",
     "iso": "SOCO",
     "moved": {},
     "rows": 183,
     "schema": 1
   },
-  "timestamp": "2026-09-20T19:42:04"
+  "timestamp": "2026-09-22T13:52:38"
 }
