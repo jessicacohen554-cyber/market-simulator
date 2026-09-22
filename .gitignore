@@ -3319,3 +3319,10 @@ results/calibration/pjm_h16_ctl_touchpoint/
 
 # SOCO hydro-4 per-(arm,year) shard legs: kept out of main (rule 29(c)/31), never rm-ed.
 results/calibration/soco_h4_*_20[0-9][0-9]/
+
+# NWPP-47 per-year arm legs (rule 32(d): kept out of main; rule 31: kept on local disk).
+# Provenance only (rule 33(d)) — shard-branch SHAs are not a recovery route:
+#   2024 9b4904546242c740407f4e37f67b6bec65ab8a3e  2025 6e375b43c1f4ccf1cf602d77c78f56e4e0d92aaf
+results/calibration/nwpp47_gridwind_2023/
+results/calibration/nwpp47_gridwind_2024/
+results/calibration/nwpp47_gridwind_2025/
