@@ -2165,14 +2165,6 @@ def _parasitic_factor_map() -> dict[int, float]:
     return campd.pooled_factor_map(pd.read_parquet(path))
 
 
-# Per-process memo for :func:`_fleet_group_by_code` (PERF-C S2). The value
-# tuple's first slot holds a STRONG reference to the ``iso_config`` the key's
-# ``id()`` was taken from, so that object cannot be collected and have its
-# address reused by a different config while the entry is live — the one way an
-# identity key can go wrong.
-_FLEET_GROUP_BY_CODE_MEMO: "dict[tuple[str, int, int | None], tuple[object, dict[int, str]]]" = {}
-
-
 def _fleet_group_by_code(
     iso: str, iso_config, year: int | None = None
 ) -> dict[int, str]:
@@ -2184,30 +2176,15 @@ def _fleet_group_by_code(
     variants), so it matches the dispatch frame's classes. ``year`` selects that
     vintage's EIA-860 CHP designation, so the benchmark backfill buckets a plant
     CHP-vs-merchant the same way the year's dispatch fleet does.
-
-    Memoized per process on ``(iso, id(iso_config), year)`` — the full argument
-    tuple, so a different ISO, config object or vintage never serves a hit. The
-    mapping is a pure derivation of the EIA-860 fleet those three select, and
-    the underlying ``load_fleet_from_csv`` is itself uncached, so a repeat call
-    re-reads and re-assembles the whole per-plant fleet to keep two fields.
-    A **fresh dict** is returned on every call, hit or miss, so a caller that
-    mutates the result cannot reach the memo or a later year — the function
-    stays observably identical to the un-memoized one.
     """
     from market_sim.data.fleet import load_fleet_from_csv
-
-    key = (iso, id(iso_config), year)
-    hit = _FLEET_GROUP_BY_CODE_MEMO.get(key)
-    if hit is not None:
-        return dict(hit[1])
 
     out: dict[int, str] = {}
     for g in load_fleet_from_csv(iso, iso_config, year=year):
         code = int(g.plant_code)
         if code > 0 and g.plant_group:
             out[code] = g.plant_group
-    _FLEET_GROUP_BY_CODE_MEMO[key] = (iso_config, out)
-    return dict(out)
+    return out
 
 
 def _campd_hourly_frame(
