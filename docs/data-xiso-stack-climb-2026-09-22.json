@@ -1,0 +1,6088 @@
+{
+ "what": "xiso stack-climb attribution \u2014 44 ISO-year measurement appendix",
+ "precommit": "docs/PRECOMMIT-xiso-stack-climb-attribution-2026-09-22.md",
+ "result": "docs/RESULT-xiso-stack-climb-attribution-2026-09-22.md",
+ "probes": [
+  "scripts/probes/_xiso_stack_climb_phase0.py",
+  "scripts/probes/_xiso_stack_climb_verdict.py",
+  "scripts/probes/_xiso_reserve_leg.py"
+ ],
+ "verdict": {
+  "threshold_pct": 10.0,
+  "per_iso": {
+   "CAISO": {
+    "median_idle_pct": 51.60492719677782,
+    "years": 4,
+    "shows": true,
+    "priced": true
+   },
+   "ERCOT": {
+    "median_idle_pct": 15.688814772848788,
+    "years": 5,
+    "shows": true,
+    "priced": true
+   },
+   "MISO": {
+    "median_idle_pct": 33.2731314141825,
+    "years": 6,
+    "shows": true,
+    "priced": true
+   },
+   "NEISO": {
+    "median_idle_pct": 49.18073414532087,
+    "years": 6,
+    "shows": true,
+    "priced": true
+   },
+   "NWPP": {
+    "median_idle_pct": 34.19968958409997,
+    "years": 3,
+    "shows": true,
+    "priced": false
+   },
+   "NYISO": {
+    "median_idle_pct": 39.524689781588,
+    "years": 4,
+    "shows": true,
+    "priced": true
+   },
+   "PJM": {
+    "median_idle_pct": 22.432327660201754,
+    "years": 6,
+    "shows": true,
+    "priced": true
+   },
+   "SOCO": {
+    "median_idle_pct": 15.510964933087932,
+    "years": 3,
+    "shows": true,
+    "priced": false
+   },
+   "SPP": {
+    "median_idle_pct": 31.21969184616666,
+    "years": 7,
+    "shows": true,
+    "priced": true
+   }
+  },
+  "primary": {
+   "shows": 9,
+   "of": 9,
+   "bar": 6,
+   "result": "UNIVERSAL"
+  },
+  "robustness": {
+   "shows": 7,
+   "of": 7,
+   "bar": 5,
+   "result": "UNIVERSAL"
+  },
+  "verdict": "UNIVERSAL",
+  "unreconciled": []
+ },
+ "reserve_leg": {
+  "CAISO_2022": {
+   "reserve_sidecar": false
+  },
+  "CAISO_2023": {
+   "reserve_sidecar": false
+  },
+  "CAISO_2024": {
+   "reserve_sidecar": false
+  },
+  "CAISO_2025": {
+   "reserve_sidecar": false
+  },
+  "ERCOT_2021": {
+   "reserve_sidecar": true,
+   "max_family_mw": 5505.09375,
+   "sum_families_mw": 11010.1884765625,
+   "idle_net_sum_pct": 8.87636932476757,
+   "families": [
+    "ECRS",
+    "NonSpin",
+    "RRS_withheld",
+    "RegUp_withheld",
+    "ercot_ordc_total"
+   ]
+  },
+  "ERCOT_2022": {
+   "reserve_sidecar": true,
+   "max_family_mw": 6060.68701171875,
+   "sum_families_mw": 12121.3740234375,
+   "idle_net_sum_pct": 0.0,
+   "families": [
+    "ECRS",
+    "NonSpin",
+    "RRS_withheld",
+    "RegUp_withheld",
+    "ercot_ordc_total"
+   ]
+  },
+  "ERCOT_2023": {
+   "reserve_sidecar": true,
+   "max_family_mw": 4133.14111328125,
+   "sum_families_mw": 8266.28125,
+   "idle_net_sum_pct": 0.0,
+   "families": [
+    "ECRS_withheld",
+    "NonSpin",
+    "RRS_withheld",
+    "RegUp_withheld",
+    "ercot_ordc_total"
+   ]
+  },
+  "ERCOT_2024": {
+   "reserve_sidecar": true,
+   "max_family_mw": 5123.87255859375,
+   "sum_families_mw": 11188.1962890625,
+   "idle_net_sum_pct": 0.0,
+   "families": [
+    "ECRS_released",
+    "ECRS_withheld",
+    "NonSpin",
+    "RRS_withheld",
+    "RegUp_withheld",
+    "ercot_ordc_total"
+   ]
+  },
+  "ERCOT_2025": {
+   "reserve_sidecar": true,
+   "max_family_mw": 7071.1328125,
+   "sum_families_mw": 16544.64453125,
+   "idle_net_sum_pct": 0.0,
+   "families": [
+    "ECRS",
+    "NonSpin",
+    "RRS_released",
+    "RRS_withheld",
+    "RegUp_released",
+    "RegUp_withheld",
+    "ercot_ordc_total"
+   ]
+  },
+  "MISO_2020": {
+   "reserve_sidecar": true,
+   "max_family_mw": 5155.18798828125,
+   "sum_families_mw": 10310.3759765625,
+   "idle_net_sum_pct": 27.818564019305416,
+   "families": [
+    "miso_rbdc",
+    "miso_subregional_or_midwest",
+    "miso_zonal_or_miso_south"
+   ]
+  },
+  "MISO_2021": {
+   "reserve_sidecar": true,
+   "max_family_mw": 5148.92333984375,
+   "sum_families_mw": 10297.8466796875,
+   "idle_net_sum_pct": 23.858073647332425,
+   "families": [
+    "miso_rbdc",
+    "miso_subregional_or_midwest",
+    "miso_zonal_or_miso_south"
+   ]
+  },
+  "MISO_2022": {
+   "reserve_sidecar": true,
+   "max_family_mw": 5142.66015625,
+   "sum_families_mw": 10285.3203125,
+   "idle_net_sum_pct": 22.427899088511435,
+   "families": [
+    "miso_rbdc",
+    "miso_subregional_or_midwest",
+    "miso_zonal_or_miso_south"
+   ]
+  },
+  "MISO_2023": {
+   "reserve_sidecar": true,
+   "max_family_mw": 2523.177490234375,
+   "sum_families_mw": 6474.87060546875,
+   "idle_net_sum_pct": 24.46557485603689,
+   "families": [
+    "miso_rbdc",
+    "miso_rbdc_regspin",
+    "miso_subregional_or_midwest",
+    "miso_zonal_or_miso_south"
+   ]
+  },
+  "MISO_2024": {
+   "reserve_sidecar": true,
+   "max_family_mw": 2610.900634765625,
+   "sum_families_mw": 6728.9453125,
+   "idle_net_sum_pct": 17.61145662920404,
+   "families": [
+    "miso_rbdc",
+    "miso_rbdc_regspin",
+    "miso_subregional_or_midwest",
+    "miso_zonal_or_miso_south"
+   ]
+  },
+  "MISO_2025": {
+   "reserve_sidecar": true,
+   "max_family_mw": 2664.510009765625,
+   "sum_families_mw": 7009.57666015625,
+   "idle_net_sum_pct": 11.013999899431498,
+   "families": [
+    "miso_rbdc",
+    "miso_rbdc_regspin",
+    "miso_subregional_or_midwest",
+    "miso_zonal_or_miso_south"
+   ]
+  },
+  "NEISO_2020": {
+   "reserve_sidecar": true,
+   "max_family_mw": 1800.0,
+   "sum_families_mw": 4200.0,
+   "idle_net_sum_pct": 26.85231621044464,
+   "families": [
+    "ne_10min_spin",
+    "ne_10min_total",
+    "ne_30min_total"
+   ]
+  },
+  "NEISO_2021": {
+   "reserve_sidecar": true,
+   "max_family_mw": 1800.0,
+   "sum_families_mw": 4200.0,
+   "idle_net_sum_pct": 24.630991195639417,
+   "families": [
+    "ne_10min_spin",
+    "ne_10min_total",
+    "ne_30min_total"
+   ]
+  },
+  "NEISO_2022": {
+   "reserve_sidecar": true,
+   "max_family_mw": 1800.0,
+   "sum_families_mw": 4200.0,
+   "idle_net_sum_pct": 25.202421908495307,
+   "families": [
+    "ne_10min_spin",
+    "ne_10min_total",
+    "ne_30min_total"
+   ]
+  },
+  "NEISO_2023": {
+   "reserve_sidecar": true,
+   "max_family_mw": 1800.0,
+   "sum_families_mw": 4200.0,
+   "idle_net_sum_pct": 21.878127995476024,
+   "families": [
+    "ne_10min_spin",
+    "ne_10min_total",
+    "ne_30min_total"
+   ]
+  },
+  "NEISO_2024": {
+   "reserve_sidecar": true,
+   "max_family_mw": 1800.0,
+   "sum_families_mw": 4200.0,
+   "idle_net_sum_pct": 24.365038165278747,
+   "families": [
+    "ne_10min_spin",
+    "ne_10min_total",
+    "ne_30min_total"
+   ]
+  },
+  "NEISO_2025": {
+   "reserve_sidecar": true,
+   "max_family_mw": 1800.0,
+   "sum_families_mw": 4200.0,
+   "idle_net_sum_pct": 21.17822999185379,
+   "families": [
+    "ne_10min_spin",
+    "ne_10min_total",
+    "ne_30min_total"
+   ]
+  },
+  "NWPP_2023": {
+   "reserve_sidecar": false
+  },
+  "NWPP_2024": {
+   "reserve_sidecar": false
+  },
+  "NWPP_2025": {
+   "reserve_sidecar": false
+  },
+  "NYISO_2022": {
+   "reserve_sidecar": true,
+   "max_family_mw": 2620.0,
+   "sum_families_mw": 11626.150390625,
+   "idle_net_sum_pct": 0.0,
+   "families": [
+    "east_10min_total",
+    "li_10min_total",
+    "li_30min_total",
+    "nyc_10min_total",
+    "nyc_30min_total",
+    "nyca_10min_spin",
+    "nyca_10min_total",
+    "nyca_30min_total",
+    "seny_30min_total"
+   ]
+  },
+  "NYISO_2023": {
+   "reserve_sidecar": true,
+   "max_family_mw": 2620.0,
+   "sum_families_mw": 11683.58984375,
+   "idle_net_sum_pct": 0.0,
+   "families": [
+    "east_10min_total",
+    "li_10min_total",
+    "li_30min_total",
+    "nyc_10min_total",
+    "nyc_30min_total",
+    "nyca_10min_spin",
+    "nyca_10min_total",
+    "nyca_30min_total",
+    "seny_30min_total"
+   ]
+  },
+  "NYISO_2024": {
+   "reserve_sidecar": true,
+   "max_family_mw": 2620.0,
+   "sum_families_mw": 12077.8681640625,
+   "idle_net_sum_pct": 0.0,
+   "families": [
+    "east_10min_total",
+    "li_10min_total",
+    "li_30min_total",
+    "nyc_10min_total",
+    "nyc_30min_total",
+    "nyca_10min_spin",
+    "nyca_10min_total",
+    "nyca_30min_total",
+    "seny_30min_total"
+   ]
+  },
+  "NYISO_2025": {
+   "reserve_sidecar": true,
+   "max_family_mw": 2620.0,
+   "sum_families_mw": 11453.51953125,
+   "idle_net_sum_pct": 0.0,
+   "families": [
+    "east_10min_total",
+    "li_10min_total",
+    "li_30min_total",
+    "nyc_10min_total",
+    "nyc_30min_total",
+    "nyca_10min_spin",
+    "nyca_10min_total",
+    "nyca_30min_total",
+    "seny_30min_total"
+   ]
+  },
+  "PJM_2020": {
+   "reserve_sidecar": true,
+   "max_family_mw": 2764.271728515625,
+   "sum_families_mw": 5487.89111328125,
+   "idle_net_sum_pct": 19.78492074618054,
+   "families": [
+    "pjm_primary",
+    "pjm_primary_mad"
+   ]
+  },
+  "PJM_2021": {
+   "reserve_sidecar": true,
+   "max_family_mw": 2698.7021484375,
+   "sum_families_mw": 5393.2353515625,
+   "idle_net_sum_pct": 21.68099726836971,
+   "families": [
+    "pjm_primary",
+    "pjm_primary_mad"
+   ]
+  },
+  "PJM_2022": {
+   "reserve_sidecar": true,
+   "max_family_mw": 2785.11083984375,
+   "sum_families_mw": 5570.19580078125,
+   "idle_net_sum_pct": 12.10870530614477,
+   "families": [
+    "pjm_primary",
+    "pjm_primary_mad"
+   ]
+  },
+  "PJM_2023": {
+   "reserve_sidecar": true,
+   "max_family_mw": 3369.224365234375,
+   "sum_families_mw": 6185.0185546875,
+   "idle_net_sum_pct": 20.28027705506231,
+   "families": [
+    "pjm_primary",
+    "pjm_primary_mad"
+   ]
+  },
+  "PJM_2024": {
+   "reserve_sidecar": true,
+   "max_family_mw": 3653.855224609375,
+   "sum_families_mw": 6552.63330078125,
+   "idle_net_sum_pct": 13.396852340688506,
+   "families": [
+    "pjm_primary",
+    "pjm_primary_mad"
+   ]
+  },
+  "PJM_2025": {
+   "reserve_sidecar": true,
+   "max_family_mw": 3718.963134765625,
+   "sum_families_mw": 6629.84375,
+   "idle_net_sum_pct": 8.816248955603385,
+   "families": [
+    "pjm_primary",
+    "pjm_primary_mad"
+   ]
+  },
+  "SOCO_2023": {
+   "reserve_sidecar": false
+  },
+  "SOCO_2024": {
+   "reserve_sidecar": false
+  },
+  "SOCO_2025": {
+   "reserve_sidecar": false
+  },
+  "SPP_2019": {
+   "reserve_sidecar": false
+  },
+  "SPP_2020": {
+   "reserve_sidecar": false
+  },
+  "SPP_2021": {
+   "reserve_sidecar": false
+  },
+  "SPP_2022": {
+   "reserve_sidecar": false
+  },
+  "SPP_2023": {
+   "reserve_sidecar": false
+  },
+  "SPP_2024": {
+   "reserve_sidecar": false
+  },
+  "SPP_2025": {
+   "reserve_sidecar": false
+  }
+ },
+ "iso_years": [
+  {
+   "iso": "CAISO",
+   "year": 2022,
+   "bundle": "results/calibration/xiso8_leftedge_span",
+   "hours": 8760,
+   "window_hours": 88,
+   "window_basis": "market RT",
+   "declared_simplifications": {},
+   "reconciled": true,
+   "gates": {
+    "G1_fleet_class_not_in_sidecar": [],
+    "G2_sidecar_classes_uncovered_mw": {
+     "OTHER": 1188.1871337890625,
+     "biomass": 535.9827270507812,
+     "hydro": 2577.95361328125,
+     "import": 5831.3603515625,
+     "nuclear": 2203.44921875,
+     "solar": 1553.510498046875,
+     "wind": 967.0692749023438
+    },
+    "G3_dispatch_exceeds_available": []
+   },
+   "thermal_top1pct": {
+    "available_mw": 25092.615770956465,
+    "dispatched_mw": 13533.050407409668,
+    "idle_mw": 11559.565363546797,
+    "idle_pct": 46.067598009955006,
+    "above_clearing_mw": 11387.295265697672,
+    "above_clearing_pct": 45.38106098479353
+   },
+   "per_class": {
+    "CC_CHP": {
+     "available_mw": 1418.188693201052,
+     "dispatched_mw": 1164.9927978515625,
+     "idle_mw": 253.19589534948955,
+     "utilisation": 0.8214652982615517
+    },
+    "CC_REGULAR": {
+     "available_mw": 12858.775385492992,
+     "dispatched_mw": 10042.4033203125,
+     "idle_mw": 2816.3720651804924,
+     "utilisation": 0.7809766497393006
+    },
+    "COAL": {
+     "available_mw": 12.966887727272727,
+     "dispatched_mw": 12.966888427734375,
+     "idle_mw": -7.004616477956915e-07,
+     "utilisation": 1.0000000540192575
+    },
+    "CT_CHP": {
+     "available_mw": 867.2627655073677,
+     "dispatched_mw": 259.1377868652344,
+     "idle_mw": 608.1249786421333,
+     "utilisation": 0.2987996224115918
+    },
+    "CT_PEAKER": {
+     "available_mw": 6328.475154186207,
+     "dispatched_mw": 1235.1434326171875,
+     "idle_mw": 5093.3317215690195,
+     "utilisation": 0.19517236024860674
+    },
+    "ST_GAS": {
+     "available_mw": 3481.2168848415763,
+     "dispatched_mw": 721.25732421875,
+     "idle_mw": 2759.9595606228263,
+     "utilisation": 0.20718540328795776
+    },
+    "oil": {
+     "available_mw": 125.73000000000002,
+     "dispatched_mw": 97.14885711669922,
+     "idle_mw": 28.5811428833008,
+     "utilisation": 0.7726784149900517
+    }
+   },
+   "prices": {
+    "model_clearing": 388.5107563464205,
+    "market_rt": 635.7558572942561,
+    "highest_available_offer": 1046.4575208617446,
+    "model_clearing_annual_mean": 86.1765937897596,
+    "market_rt_annual_mean": 79.07221404842745
+   },
+   "peak_band_dispatch_mw": {
+    "CC_CHP": {
+     "max_h": 106.19558715820312,
+     "mean_h": 4.410684585571289
+    },
+    "CC_REGULAR": {
+     "max_h": 108.15316772460938,
+     "mean_h": 0.40114346146583557
+    },
+    "COAL": {
+     "max_h": 0.9700000286102295,
+     "mean_h": 0.7774461507797241
+    },
+    "CT_CHP": {
+     "max_h": 74.0483627319336,
+     "mean_h": 1.298789381980896
+    },
+    "CT_PEAKER": {
+     "max_h": 79.72731018066406,
+     "mean_h": 1.3734217882156372
+    },
+    "ST_GAS": {
+     "max_h": 580.8054809570312,
+     "mean_h": 3.0205023288726807
+    }
+   },
+   "build_s": 12.8
+  },
+  {
+   "iso": "CAISO",
+   "year": 2023,
+   "bundle": "results/calibration/xiso8_leftedge_span",
+   "hours": 8760,
+   "window_hours": 88,
+   "window_basis": "market RT",
+   "declared_simplifications": {},
+   "reconciled": true,
+   "gates": {
+    "G1_fleet_class_not_in_sidecar": [],
+    "G2_sidecar_classes_uncovered_mw": {
+     "OTHER": 1116.567138671875,
+     "biomass": 496.7973937988281,
+     "hydro": 2580.863525390625,
+     "import": 5894.32568359375,
+     "nuclear": 2160.306640625,
+     "solar": 1475.2000732421875,
+     "wind": 1505.86376953125
+    },
+    "G3_dispatch_exceeds_available": []
+   },
+   "thermal_top1pct": {
+    "available_mw": 24443.06046793584,
+    "dispatched_mw": 10134.170691490173,
+    "idle_mw": 14308.889776445667,
+    "idle_pct": 58.53968162135803,
+    "above_clearing_mw": 14316.057364745533,
+    "above_clearing_pct": 58.56900523371528
+   },
+   "per_class": {
+    "CC_CHP": {
+     "available_mw": 1369.671815975016,
+     "dispatched_mw": 1109.9312744140625,
+     "idle_mw": 259.7405415609535,
+     "utilisation": 0.8103629361928176
+    },
+    "CC_REGULAR": {
+     "available_mw": 12218.013871274952,
+     "dispatched_mw": 8032.84423828125,
+     "idle_mw": 4185.169632993702,
+     "utilisation": 0.6574590864695934
+    },
+    "COAL": {
+     "available_mw": 12.876302727272728,
+     "dispatched_mw": 12.829833030700684,
+     "idle_mw": 0.04646969657204458,
+     "utilisation": 0.9963910683403226
+    },
+    "CT_CHP": {
+     "available_mw": 880.3989481457411,
+     "dispatched_mw": 180.8556365966797,
+     "idle_mw": 699.5433115490614,
+     "utilisation": 0.2054246395654949
+    },
+    "CT_PEAKER": {
+     "available_mw": 6407.913761257058,
+     "dispatched_mw": 671.904052734375,
+     "idle_mw": 5736.009708522683,
+     "utilisation": 0.10485535195507466
+    },
+    "ST_GAS": {
+     "available_mw": 3434.387586737621,
+     "dispatched_mw": 125.80565643310547,
+     "idle_mw": 3308.5819303045155,
+     "utilisation": 0.036631176084761664
+    },
+    "oil": {
+     "available_mw": 119.79818181818183,
+     "dispatched_mw": 0.0,
+     "idle_mw": 119.79818181818183,
+     "utilisation": 0.0
+    }
+   },
+   "prices": {
+    "model_clearing": 131.55930322648516,
+    "market_rt": 252.67767386002973,
+    "highest_available_offer": 478.99602268295547,
+    "model_clearing_annual_mean": 53.91081668983213,
+    "market_rt_annual_mean": 52.26926449900355
+   },
+   "peak_band_dispatch_mw": {
+    "CC_CHP": {
+     "max_h": 104.79087829589844,
+     "mean_h": 6.817164421081543
+    },
+    "CC_REGULAR": {
+     "max_h": 134.37557983398438,
+     "mean_h": 0.5516497492790222
+    },
+    "COAL": {
+     "max_h": 0.9700000286102295,
+     "mean_h": 0.5666517019271851
+    },
+    "CT_CHP": {
+     "max_h": 64.91229248046875,
+     "mean_h": 0.6341738104820251
+    },
+    "CT_PEAKER": {
+     "max_h": 70.17223358154297,
+     "mean_h": 0.6840764284133911
+    },
+    "ST_GAS": {
+     "max_h": 41.52947235107422,
+     "mean_h": 0.04145337641239166
+    }
+   },
+   "build_s": 11.0
+  },
+  {
+   "iso": "CAISO",
+   "year": 2024,
+   "bundle": "results/calibration/xiso8_leftedge_span",
+   "hours": 8760,
+   "window_hours": 88,
+   "window_basis": "market RT",
+   "declared_simplifications": {},
+   "reconciled": true,
+   "gates": {
+    "G1_fleet_class_not_in_sidecar": [],
+    "G2_sidecar_classes_uncovered_mw": {
+     "OTHER": 1020.9791259765625,
+     "biomass": 502.9790344238281,
+     "hydro": 2434.965087890625,
+     "import": 2824.866943359375,
+     "nuclear": 2222.5048828125,
+     "solar": 1812.97509765625,
+     "wind": 1412.6654052734375
+    },
+    "G3_dispatch_exceeds_available": []
+   },
+   "thermal_top1pct": {
+    "available_mw": 24128.129173912483,
+    "dispatched_mw": 10778.135391235352,
+    "idle_mw": 13349.993782677131,
+    "idle_pct": 55.329585176090845,
+    "above_clearing_mw": 13381.768813523267,
+    "above_clearing_pct": 55.461278067060995
+   },
+   "per_class": {
+    "CC_CHP": {
+     "available_mw": 1293.419690012669,
+     "dispatched_mw": 966.1691284179688,
+     "idle_mw": 327.25056159470023,
+     "utilisation": 0.7469881090247708
+    },
+    "CC_REGULAR": {
+     "available_mw": 12976.54153352348,
+     "dispatched_mw": 9092.255859375,
+     "idle_mw": 3884.2856741484793,
+     "utilisation": 0.7006686516500679
+    },
+    "COAL": {
+     "available_mw": 12.784921363636364,
+     "dispatched_mw": 12.512134552001953,
+     "idle_mw": 0.2727868116344112,
+     "utilisation": 0.9786633954268746
+    },
+    "CT_CHP": {
+     "available_mw": 888.9279567196428,
+     "dispatched_mw": 166.88523864746094,
+     "idle_mw": 722.0427180721819,
+     "utilisation": 0.1877376421631596
+    },
+    "CT_PEAKER": {
+     "available_mw": 6479.58684501875,
+     "dispatched_mw": 492.4042053222656,
+     "idle_mw": 5987.182639696484,
+     "utilisation": 0.07599314849847355
+    },
+    "ST_GAS": {
+     "available_mw": 2369.1382272743062,
+     "dispatched_mw": 47.9088249206543,
+     "idle_mw": 2321.229402353652,
+     "utilisation": 0.02022204714318143
+    },
+    "oil": {
+     "available_mw": 107.73000000000002,
+     "dispatched_mw": 0.0,
+     "idle_mw": 107.73000000000002,
+     "utilisation": 0.0
+    }
+   },
+   "prices": {
+    "model_clearing": 141.3233180971908,
+    "market_rt": 213.3872510736639,
+    "highest_available_offer": 521.4682086289133,
+    "model_clearing_annual_mean": 35.499435455838714,
+    "market_rt_annual_mean": 32.98273395550497
+   },
+   "peak_band_dispatch_mw": {
+    "CC_CHP": {
+     "max_h": 105.73374938964844,
+     "mean_h": 8.699016571044922
+    },
+    "CC_REGULAR": {
+     "max_h": 150.10060119628906,
+     "mean_h": 1.0761040449142456
+    },
+    "COAL": {
+     "max_h": 0.9420639872550964,
+     "mean_h": 0.16967268288135529
+    },
+    "CT_CHP": {
+     "max_h": 65.86380767822266,
+     "mean_h": 0.568307638168335
+    },
+    "CT_PEAKER": {
+     "max_h": 69.57279205322266,
+     "mean_h": 0.7251662611961365
+    },
+    "ST_GAS": {
+     "max_h": 187.17044067382812,
+     "mean_h": 0.15762877464294434
+    }
+   },
+   "build_s": 11.0
+  },
+  {
+   "iso": "CAISO",
+   "year": 2025,
+   "bundle": "results/calibration/xiso8_leftedge_span",
+   "hours": 8760,
+   "window_hours": 88,
+   "window_basis": "market RT",
+   "declared_simplifications": {},
+   "reconciled": true,
+   "gates": {
+    "G1_fleet_class_not_in_sidecar": [],
+    "G2_sidecar_classes_uncovered_mw": {
+     "OTHER": 699.4603881835938,
+     "biomass": 376.5562744140625,
+     "hydro": 2853.23193359375,
+     "import": 4200.52001953125,
+     "nuclear": 2102.110107421875,
+     "solar": 2680.71923828125,
+     "wind": 1770.7264404296875
+    },
+    "G3_dispatch_exceeds_available": []
+   },
+   "thermal_top1pct": {
+    "available_mw": 20833.510247272246,
+    "dispatched_mw": 10858.369453430176,
+    "idle_mw": 9975.14079384207,
+    "idle_pct": 47.88026921746481,
+    "above_clearing_mw": 9545.96280623295,
+    "above_clearing_pct": 45.820232370504215
+   },
+   "per_class": {
+    "CC_CHP": {
+     "available_mw": 1116.207802701061,
+     "dispatched_mw": 951.7999877929688,
+     "idle_mw": 164.40781490809218,
+     "utilisation": 0.8527085955587758
+    },
+    "CC_REGULAR": {
+     "available_mw": 10216.672342427557,
+     "dispatched_mw": 8706.74609375,
+     "idle_mw": 1509.926248677557,
+     "utilisation": 0.8522095846798208
+    },
+    "COAL": {
+     "available_mw": 13.03813431818182,
+     "dispatched_mw": 12.6845703125,
+     "idle_mw": 0.3535640056818199,
+     "utilisation": 0.9728823160543169
+    },
+    "CT_CHP": {
+     "available_mw": 844.4332758863961,
+     "dispatched_mw": 153.21852111816406,
+     "idle_mw": 691.2147547682321,
+     "utilisation": 0.18144538531754517
+    },
+    "CT_PEAKER": {
+     "available_mw": 6224.032134490449,
+     "dispatched_mw": 1002.413330078125,
+     "idle_mw": 5221.618804412324,
+     "utilisation": 0.16105529476997005
+    },
+    "ST_GAS": {
+     "available_mw": 2310.138602903149,
+     "dispatched_mw": 31.50695037841797,
+     "idle_mw": 2278.631652524731,
+     "utilisation": 0.013638554127801341
+    },
+    "oil": {
+     "available_mw": 108.98795454545457,
+     "dispatched_mw": 0.0,
+     "idle_mw": 108.98795454545457,
+     "utilisation": 0.0
+    }
+   },
+   "prices": {
+    "model_clearing": 53.39673767758079,
+    "market_rt": 112.3796988400546,
+    "highest_available_offer": 267.30316033,
+    "model_clearing_annual_mean": 35.502129927739425,
+    "market_rt_annual_mean": 33.63468079561714
+   },
+   "peak_band_dispatch_mw": {
+    "CC_CHP": {
+     "max_h": 104.78204345703125,
+     "mean_h": 2.804814577102661
+    },
+    "CC_REGULAR": {
+     "max_h": 118.75457763671875,
+     "mean_h": 0.13632521033287048
+    },
+    "COAL": {
+     "max_h": 0.961463987827301,
+     "mean_h": 0.3388158977031708
+    },
+    "CT_CHP": {
+     "max_h": 31.272296905517578,
+     "mean_h": 0.0929499939084053
+    },
+    "CT_PEAKER": {
+     "max_h": 48.26711654663086,
+     "mean_h": 0.19862224161624908
+    },
+    "ST_GAS": {
+     "max_h": 30.898584365844727,
+     "mean_h": 0.007054471410810947
+    }
+   },
+   "build_s": 10.4
+  },
+  {
+   "iso": "ERCOT",
+   "year": 2021,
+   "bundle": "results/calibration/ercot_mer20260919_five_year",
+   "hours": 8760,
+   "window_hours": 88,
+   "window_basis": "market RT",
+   "declared_simplifications": {},
+   "reconciled": true,
+   "gates": {
+    "G1_fleet_class_not_in_sidecar": [],
+    "G2_sidecar_classes_uncovered_mw": {
+     "OTHER": 126.71961212158203,
+     "biomass": 17.344833374023438,
+     "hydro": 82.73298645019531,
+     "nuclear": 4485.57470703125,
+     "solar": 690.1015014648438,
+     "wind": 4243.52294921875
+    },
+    "G3_dispatch_exceeds_available": []
+   },
+   "thermal_top1pct": {
+    "available_mw": 53711.07681620767,
+    "dispatched_mw": 37933.29479312897,
+    "idle_mw": 15777.782023078704,
+    "idle_pct": 29.37528524529163,
+    "above_clearing_mw": 0.0,
+    "above_clearing_pct": 0.0
+   },
+   "per_class": {
+    "CC_CHP": {
+     "available_mw": 4785.315213581819,
+     "dispatched_mw": 3622.251708984375,
+     "idle_mw": 1163.063504597444,
+     "utilisation": 0.756951537634051
+    },
+    "CC_REGULAR": {
+     "available_mw": 25660.236942063846,
+     "dispatched_mw": 19178.5625,
+     "idle_mw": 6481.674442063846,
+     "utilisation": 0.7474039520095512
+    },
+    "COAL_LIGNITE": {
+     "available_mw": 2330.963636363637,
+     "dispatched_mw": 2229.1826171875,
+     "idle_mw": 101.78101917613685,
+     "utilisation": 0.9563352179380551
+    },
+    "COAL_PRB": {
+     "available_mw": 8646.023252345993,
+     "dispatched_mw": 8265.2744140625,
+     "idle_mw": 380.74883828349266,
+     "utilisation": 0.9559625475006465
+    },
+    "CT_CHP": {
+     "available_mw": 868.9549480000004,
+     "dispatched_mw": 604.3866577148438,
+     "idle_mw": 264.56829028515665,
+     "utilisation": 0.6955327880989792
+    },
+    "CT_PEAKER": {
+     "available_mw": 3590.4268586840376,
+     "dispatched_mw": 1791.2127685546875,
+     "idle_mw": 1799.21409012935,
+     "utilisation": 0.4988857422961688
+    },
+    "ST_CHP": {
+     "available_mw": 8.125055,
+     "dispatched_mw": 8.125054359436035,
+     "idle_mw": 6.405639645379324e-07,
+     "utilisation": 0.9999999211618918
+    },
+    "ST_GAS": {
+     "available_mw": 7215.690910168345,
+     "dispatched_mw": 1628.9591064453125,
+     "idle_mw": 5586.7318037230325,
+     "utilisation": 0.22575233982788603
+    },
+    "oil": {
+     "available_mw": 605.34,
+     "dispatched_mw": 605.3399658203125,
+     "idle_mw": 3.4179687531832315e-05,
+     "utilisation": 0.9999999435363803
+    }
+   },
+   "prices": {
+    "model_clearing": 8504.909781010276,
+    "market_rt": 8982.349609375,
+    "highest_available_offer": 4170.736870820732,
+    "model_clearing_annual_mean": 161.9119351916796,
+    "market_rt_annual_mean": 148.1886284232988
+   },
+   "peak_band_dispatch_mw": {
+    "CC_CHP": {
+     "max_h": 32.436668395996094,
+     "mean_h": 0.0037075825966894627
+    },
+    "CC_REGULAR": {
+     "max_h": 71.81932830810547,
+     "mean_h": 0.03051641397178173
+    },
+    "COAL_LIGNITE": {
+     "max_h": 127.72999572753906,
+     "mean_h": 12.612604141235352
+    },
+    "COAL_PRB": {
+     "max_h": 550.50537109375,
+     "mean_h": 46.695396423339844
+    },
+    "CT_CHP": {
+     "max_h": 59.37885284423828,
+     "mean_h": 0.007499986793845892
+    },
+    "CT_PEAKER": {
+     "max_h": 4.703185558319092,
+     "mean_h": 0.0003363938012626022
+    },
+    "ST_GAS": {
+     "max_h": 146.04605102539062,
+     "mean_h": 1.789576530456543
+    }
+   },
+   "build_s": 27.4
+  },
+  {
+   "iso": "ERCOT",
+   "year": 2022,
+   "bundle": "results/calibration/ercot_mer20260919_five_year",
+   "hours": 8760,
+   "window_hours": 88,
+   "window_basis": "market RT",
+   "declared_simplifications": {},
+   "reconciled": true,
+   "gates": {
+    "G1_fleet_class_not_in_sidecar": [],
+    "G2_sidecar_classes_uncovered_mw": {
+     "OTHER": 294.8618469238281,
+     "biomass": 80.73922729492188,
+     "hydro": 415.2470703125,
+     "nuclear": 4727.93896484375,
+     "solar": 5223.98046875,
+     "wind": 7444.4013671875
+    },
+    "G3_dispatch_exceeds_available": []
+   },
+   "thermal_top1pct": {
+    "available_mw": 58441.41649612716,
+    "dispatched_mw": 50177.12832736969,
+    "idle_mw": 8264.28816875747,
+    "idle_pct": 14.141149657632157,
+    "above_clearing_mw": 2921.767248929246,
+    "above_clearing_pct": 4.999480546681937
+   },
+   "per_class": {
+    "CC_CHP": {
+     "available_mw": 4511.0434506806205,
+     "dispatched_mw": 3466.012451171875,
+     "idle_mw": 1045.0309995087455,
+     "utilisation": 0.7683394072936557
+    },
+    "CC_REGULAR": {
+     "available_mw": 26581.110133743798,
+     "dispatched_mw": 23576.595703125,
+     "idle_mw": 3004.5144306187976,
+     "utilisation": 0.886968060570026
+    },
+    "COAL_LIGNITE": {
+     "available_mw": 2229.5781270587304,
+     "dispatched_mw": 2219.6259765625,
+     "idle_mw": 9.952150496230388,
+     "utilisation": 0.9955363077994673
+    },
+    "COAL_PRB": {
+     "available_mw": 8442.056355726289,
+     "dispatched_mw": 8307.6669921875,
+     "idle_mw": 134.38936353878853,
+     "utilisation": 0.984080968205379
+    },
+    "CT_CHP": {
+     "available_mw": 807.7153028349375,
+     "dispatched_mw": 657.9138793945312,
+     "idle_mw": 149.8014234404062,
+     "utilisation": 0.8145368511471434
+    },
+    "CT_PEAKER": {
+     "available_mw": 5274.695881941604,
+     "dispatched_mw": 3589.983642578125,
+     "idle_mw": 1684.712239363479,
+     "utilisation": 0.6806048581622984
+    },
+    "ST_CHP": {
+     "available_mw": 8.150879658348186,
+     "dispatched_mw": 8.150879859924316,
+     "idle_mw": -2.0157613001003938e-07,
+     "utilisation": 1.0000000247305982
+    },
+    "ST_GAS": {
+     "available_mw": 9981.726364482844,
+     "dispatched_mw": 8123.49169921875,
+     "idle_mw": 1858.2346652640936,
+     "utilisation": 0.8138363447954157
+    },
+    "oil": {
+     "available_mw": 605.34,
+     "dispatched_mw": 227.68710327148438,
+     "idle_mw": 377.65289672851566,
+     "utilisation": 0.37613094008571113
+    }
+   },
+   "prices": {
+    "model_clearing": 614.7373690118989,
+    "market_rt": 1237.1840907010164,
+    "highest_available_offer": 2797.560000000001,
+    "model_clearing_annual_mean": 61.64504527238394,
+    "market_rt_annual_mean": 62.30336301143278
+   },
+   "peak_band_dispatch_mw": {
+    "CC_CHP": {
+     "max_h": 0.0,
+     "mean_h": 0.0
+    },
+    "CC_REGULAR": {
+     "max_h": 0.0,
+     "mean_h": 0.0
+    },
+    "COAL_LIGNITE": {
+     "max_h": 127.72999572753906,
+     "mean_h": 8.97792911529541
+    },
+    "COAL_PRB": {
+     "max_h": 528.6002197265625,
+     "mean_h": 34.262535095214844
+    },
+    "CT_CHP": {
+     "max_h": 0.0,
+     "mean_h": 0.0
+    },
+    "CT_PEAKER": {
+     "max_h": 0.0,
+     "mean_h": 0.0
+    },
+    "ST_GAS": {
+     "max_h": 138.2925567626953,
+     "mean_h": 1.241150975227356
+    }
+   },
+   "build_s": 17.3
+  },
+  {
+   "iso": "ERCOT",
+   "year": 2023,
+   "bundle": "results/calibration/ercot_mer20260919_five_year",
+   "hours": 8760,
+   "window_hours": 88,
+   "window_basis": "market RT",
+   "declared_simplifications": {},
+   "reconciled": true,
+   "gates": {
+    "G1_fleet_class_not_in_sidecar": [],
+    "G2_sidecar_classes_uncovered_mw": {
+     "OTHER": 274.3885498046875,
+     "biomass": 82.87035369873047,
+     "hydro": 408.8920593261719,
+     "nuclear": 4847.77099609375,
+     "solar": 7065.837890625,
+     "wind": 7579.88720703125
+    },
+    "G3_dispatch_exceeds_available": []
+   },
+   "thermal_top1pct": {
+    "available_mw": 62829.4554179626,
+    "dispatched_mw": 57545.67257118225,
+    "idle_mw": 5283.782846780348,
+    "idle_pct": 8.409722496607449,
+    "above_clearing_mw": 672.7222775335612,
+    "above_clearing_pct": 1.0707116161653591
+   },
+   "per_class": {
+    "CC_CHP": {
+     "available_mw": 4817.0021443415235,
+     "dispatched_mw": 4027.669677734375,
+     "idle_mw": 789.3324666071485,
+     "utilisation": 0.8361361604261754
+    },
+    "CC_REGULAR": {
+     "available_mw": 28328.359924259094,
+     "dispatched_mw": 26030.560546875,
+     "idle_mw": 2297.7993773840935,
+     "utilisation": 0.9188869605043261
+    },
+    "COAL_LIGNITE": {
+     "available_mw": 2460.7602943949037,
+     "dispatched_mw": 2455.098388671875,
+     "idle_mw": 5.661905723028667,
+     "utilisation": 0.9976991234229822
+    },
+    "COAL_PRB": {
+     "available_mw": 9409.785693217073,
+     "dispatched_mw": 9358.7666015625,
+     "idle_mw": 51.01909165457255,
+     "utilisation": 0.9945780814443682
+    },
+    "CT_CHP": {
+     "available_mw": 786.1212993542781,
+     "dispatched_mw": 743.99658203125,
+     "idle_mw": 42.12471732302811,
+     "utilisation": 0.9464144816358119
+    },
+    "CT_PEAKER": {
+     "available_mw": 6540.867482539362,
+     "dispatched_mw": 5620.47607421875,
+     "idle_mw": 920.3914083206118,
+     "utilisation": 0.8592860334233086
+    },
+    "ST_CHP": {
+     "available_mw": 8.210902581699346,
+     "dispatched_mw": 8.210901260375977,
+     "idle_mw": 1.3213233689413073e-06,
+     "utilisation": 0.9999998390769643
+    },
+    "ST_GAS": {
+     "available_mw": 9873.00767727468,
+     "dispatched_mw": 8765.6416015625,
+     "idle_mw": 1107.3660757121797,
+     "utilisation": 0.8878390342731047
+    },
+    "oil": {
+     "available_mw": 605.34,
+     "dispatched_mw": 535.252197265625,
+     "idle_mw": 70.08780273437503,
+     "utilisation": 0.8842174600482786
+    }
+   },
+   "prices": {
+    "model_clearing": 1594.8341614451076,
+    "market_rt": 1882.3900188099253,
+    "highest_available_offer": 2797.560000000001,
+    "model_clearing_annual_mean": 50.098383240378126,
+    "market_rt_annual_mean": 48.35683607275578
+   },
+   "peak_band_dispatch_mw": {
+    "CC_CHP": {
+     "max_h": 191.2522735595703,
+     "mean_h": 0.6660102009773254
+    },
+    "CC_REGULAR": {
+     "max_h": 327.4951171875,
+     "mean_h": 0.34121042490005493
+    },
+    "COAL_LIGNITE": {
+     "max_h": 126.77896118164062,
+     "mean_h": 4.172695636749268
+    },
+    "COAL_PRB": {
+     "max_h": 523.1237182617188,
+     "mean_h": 15.9088716506958
+    },
+    "CT_CHP": {
+     "max_h": 80.95667266845703,
+     "mean_h": 0.6083688139915466
+    },
+    "CT_PEAKER": {
+     "max_h": 79.03248596191406,
+     "mean_h": 0.008939330466091633
+    },
+    "ST_GAS": {
+     "max_h": 282.7047424316406,
+     "mean_h": 4.184020519256592
+    }
+   },
+   "build_s": 16.7
+  },
+  {
+   "iso": "ERCOT",
+   "year": 2024,
+   "bundle": "results/calibration/ercot_mer20260919_five_year",
+   "hours": 8760,
+   "window_hours": 88,
+   "window_basis": "market RT",
+   "declared_simplifications": {},
+   "reconciled": true,
+   "gates": {
+    "G1_fleet_class_not_in_sidecar": [],
+    "G2_sidecar_classes_uncovered_mw": {
+     "OTHER": 193.89218139648438,
+     "biomass": 37.08688735961914,
+     "hydro": 318.2834167480469,
+     "nuclear": 4071.04052734375,
+     "solar": 3030.52099609375,
+     "wind": 7138.068359375
+    },
+    "G3_dispatch_exceeds_available": []
+   },
+   "thermal_top1pct": {
+    "available_mw": 53434.83124973677,
+    "dispatched_mw": 45051.53955078125,
+    "idle_mw": 8383.291698955523,
+    "idle_pct": 15.688814772848788,
+    "above_clearing_mw": 4801.484214817413,
+    "above_clearing_pct": 8.985682377056381
+   },
+   "per_class": {
+    "CC_CHP": {
+     "available_mw": 4768.260322150075,
+     "dispatched_mw": 3986.622802734375,
+     "idle_mw": 781.6375194156999,
+     "utilisation": 0.8360749064423462
+    },
+    "CC_REGULAR": {
+     "available_mw": 23739.98977163318,
+     "dispatched_mw": 21142.021484375,
+     "idle_mw": 2597.9682872581798,
+     "utilisation": 0.8905657368748119
+    },
+    "COAL_LIGNITE": {
+     "available_mw": 1980.827529041875,
+     "dispatched_mw": 1938.96240234375,
+     "idle_mw": 41.865126698125096,
+     "utilisation": 0.9788648299337928
+    },
+    "COAL_PRB": {
+     "available_mw": 7515.03863757749,
+     "dispatched_mw": 7017.1591796875,
+     "idle_mw": 497.8794578899897,
+     "utilisation": 0.9337489157540135
+    },
+    "CT_CHP": {
+     "available_mw": 824.4873745382503,
+     "dispatched_mw": 772.1914672851562,
+     "idle_mw": 52.295907253094015,
+     "utilisation": 0.9365716093804565
+    },
+    "CT_PEAKER": {
+     "available_mw": 6416.211117848722,
+     "dispatched_mw": 3799.047607421875,
+     "idle_mw": 2617.163510426847,
+     "utilisation": 0.5921014034051376
+    },
+    "ST_CHP": {
+     "available_mw": 8.05445121212121,
+     "dispatched_mw": 8.054450988769531,
+     "idle_mw": 2.2335167848552828e-07,
+     "utilisation": 0.9999999722697832
+    },
+    "ST_GAS": {
+     "available_mw": 7576.622045735061,
+     "dispatched_mw": 6310.85107421875,
+     "idle_mw": 1265.770971516311,
+     "utilisation": 0.8329372952912673
+    },
+    "oil": {
+     "available_mw": 605.34,
+     "dispatched_mw": 76.62908172607422,
+     "idle_mw": 528.7109182739258,
+     "utilisation": 0.12658849857282553
+    }
+   },
+   "prices": {
+    "model_clearing": 313.42447291641037,
+    "market_rt": 437.2225565476851,
+    "highest_available_offer": 2797.560000000001,
+    "model_clearing_annual_mean": 29.230929659894215,
+    "market_rt_annual_mean": 26.824970883495794
+   },
+   "peak_band_dispatch_mw": {
+    "CC_CHP": {
+     "max_h": 218.1248779296875,
+     "mean_h": 3.3886446952819824
+    },
+    "CC_REGULAR": {
+     "max_h": 440.05633544921875,
+     "mean_h": 2.584703207015991
+    },
+    "COAL_LIGNITE": {
+     "max_h": 127.72999572753906,
+     "mean_h": 15.039027214050293
+    },
+    "COAL_PRB": {
+     "max_h": 563.2659912109375,
+     "mean_h": 56.49850845336914
+    },
+    "CT_CHP": {
+     "max_h": 91.4910888671875,
+     "mean_h": 38.906070709228516
+    },
+    "CT_PEAKER": {
+     "max_h": 76.25469970703125,
+     "mean_h": 0.028507765382528305
+    },
+    "ST_GAS": {
+     "max_h": 382.7035217285156,
+     "mean_h": 2.1797420978546143
+    }
+   },
+   "build_s": 19.6
+  },
+  {
+   "iso": "ERCOT",
+   "year": 2025,
+   "bundle": "results/calibration/ercot_mer20260919_five_year",
+   "hours": 8760,
+   "window_hours": 88,
+   "window_basis": "market RT",
+   "declared_simplifications": {},
+   "reconciled": true,
+   "gates": {
+    "G1_fleet_class_not_in_sidecar": [],
+    "G2_sidecar_classes_uncovered_mw": {
+     "OTHER": 99.15442657470703,
+     "biomass": 28.534412384033203,
+     "hydro": 5.454545497894287,
+     "nuclear": 4739.38916015625,
+     "solar": 2452.43505859375,
+     "wind": 7423.4921875
+    },
+    "G3_dispatch_exceeds_available": []
+   },
+   "thermal_top1pct": {
+    "available_mw": 53195.0192986062,
+    "dispatched_mw": 43460.45578241348,
+    "idle_mw": 9734.56351619272,
+    "idle_pct": 18.29976498654599,
+    "above_clearing_mw": 6392.793618320144,
+    "above_clearing_pct": 12.017654477075537
+   },
+   "per_class": {
+    "CC_CHP": {
+     "available_mw": 4768.976682006393,
+     "dispatched_mw": 3828.527099609375,
+     "idle_mw": 940.4495823970183,
+     "utilisation": 0.8027984523502945
+    },
+    "CC_REGULAR": {
+     "available_mw": 24147.344421378624,
+     "dispatched_mw": 21525.767578125,
+     "idle_mw": 2621.5768432536242,
+     "utilisation": 0.8914341553461823
+    },
+    "COAL_LIGNITE": {
+     "available_mw": 2001.7023361768252,
+     "dispatched_mw": 1959.82421875,
+     "idle_mw": 41.878117426825156,
+     "utilisation": 0.9790787487879887
+    },
+    "COAL_PRB": {
+     "available_mw": 6582.971943221657,
+     "dispatched_mw": 6144.53466796875,
+     "idle_mw": 438.43727525290706,
+     "utilisation": 0.9333982767913273
+    },
+    "CT_CHP": {
+     "available_mw": 839.3848801433229,
+     "dispatched_mw": 773.310302734375,
+     "idle_mw": 66.0745774089479,
+     "utilisation": 0.9212821448515182
+    },
+    "CT_PEAKER": {
+     "available_mw": 6817.4592954240325,
+     "dispatched_mw": 3678.39306640625,
+     "idle_mw": 3139.0662290177825,
+     "utilisation": 0.5395548263669481
+    },
+    "ST_CHP": {
+     "available_mw": 8.0468927124183,
+     "dispatched_mw": 8.046892166137695,
+     "idle_mw": 5.462806047518143e-07,
+     "utilisation": 0.999999932112851
+    },
+    "ST_GAS": {
+     "available_mw": 7425.052847542932,
+     "dispatched_mw": 5536.7470703125,
+     "idle_mw": 1888.3057772304319,
+     "utilisation": 0.7456845336992716
+    },
+    "oil": {
+     "available_mw": 604.08,
+     "dispatched_mw": 5.304886341094971,
+     "idle_mw": 598.7751136589051,
+     "utilisation": 0.008781761258599806
+    }
+   },
+   "prices": {
+    "model_clearing": 77.51065787699139,
+    "market_rt": 237.55772694674405,
+    "highest_available_offer": 2797.560000000001,
+    "model_clearing_annual_mean": 32.8606957257283,
+    "market_rt_annual_mean": 32.49063669411853
+   },
+   "peak_band_dispatch_mw": {
+    "CC_CHP": {
+     "max_h": 184.9142608642578,
+     "mean_h": 1.5806913375854492
+    },
+    "CC_REGULAR": {
+     "max_h": 415.10589599609375,
+     "mean_h": 0.8777090311050415
+    },
+    "COAL_LIGNITE": {
+     "max_h": 127.72999572753906,
+     "mean_h": 9.850598335266113
+    },
+    "COAL_PRB": {
+     "max_h": 521.3068237304688,
+     "mean_h": 35.79667663574219
+    },
+    "CT_CHP": {
+     "max_h": 91.31118774414062,
+     "mean_h": 41.002140045166016
+    },
+    "CT_PEAKER": {
+     "max_h": 0.0,
+     "mean_h": 0.0
+    },
+    "ST_GAS": {
+     "max_h": 226.8563690185547,
+     "mean_h": 0.5861741304397583
+    }
+   },
+   "build_s": 18.4
+  },
+  {
+   "iso": "MISO",
+   "year": 2020,
+   "bundle": "results/calibration/miso264_anchor_span",
+   "hours": 8760,
+   "window_hours": 88,
+   "window_basis": "market RT",
+   "declared_simplifications": {},
+   "reconciled": true,
+   "gates": {
+    "G1_fleet_class_not_in_sidecar": [],
+    "G2_sidecar_classes_uncovered_mw": {
+     "OTHER": 1330.1995849609375,
+     "biomass": 980.5532836914062,
+     "hydro": 1770.85791015625,
+     "import": 7587.626953125,
+     "nuclear": 11140.5869140625,
+     "solar": 131.63636779785156,
+     "wind": 7522.177734375
+    },
+    "G3_dispatch_exceeds_available": []
+   },
+   "thermal_top1pct": {
+    "available_mw": 80538.46495107404,
+    "dispatched_mw": 47823.44454193115,
+    "idle_mw": 32715.02040914289,
+    "idle_pct": 40.62036745922187,
+    "above_clearing_mw": 33742.39243628369,
+    "above_clearing_pct": 41.89599647420858
+   },
+   "per_class": {
+    "CC_CHP": {
+     "available_mw": 3532.8588365180344,
+     "dispatched_mw": 2844.9814453125,
+     "idle_mw": 687.8773912055344,
+     "utilisation": 0.8052915717732151
+    },
+    "CC_REGULAR": {
+     "available_mw": 16661.860711938658,
+     "dispatched_mw": 14467.3974609375,
+     "idle_mw": 2194.463251001158,
+     "utilisation": 0.8682942266208739
+    },
+    "COAL": {
+     "available_mw": 43.351149988636365,
+     "dispatched_mw": 31.403099060058594,
+     "idle_mw": 11.948050928577771,
+     "utilisation": 0.7243890662252394
+    },
+    "COAL_BIT": {
+     "available_mw": 9066.059182921572,
+     "dispatched_mw": 6864.40771484375,
+     "idle_mw": 2201.651468077822,
+     "utilisation": 0.7571545228576004
+    },
+    "COAL_LIGNITE": {
+     "available_mw": 1632.5971022727272,
+     "dispatched_mw": 1119.887939453125,
+     "idle_mw": 512.7091628196022,
+     "utilisation": 0.6859548739209059
+    },
+    "COAL_PRB": {
+     "available_mw": 20555.62015371076,
+     "dispatched_mw": 15593.5537109375,
+     "idle_mw": 4962.066442773259,
+     "utilisation": 0.7586029316718284
+    },
+    "CT_CHP": {
+     "available_mw": 778.0407989101788,
+     "dispatched_mw": 632.1963500976562,
+     "idle_mw": 145.8444488125225,
+     "utilisation": 0.8125490989459544
+    },
+    "CT_PEAKER": {
+     "available_mw": 17923.705721105474,
+     "dispatched_mw": 2771.017822265625,
+     "idle_mw": 15152.68789883985,
+     "utilisation": 0.15460072070937336
+    },
+    "ST_CHP": {
+     "available_mw": 450.5728620809851,
+     "dispatched_mw": 374.4420166015625,
+     "idle_mw": 76.13084547942259,
+     "utilisation": 0.8310354398003247
+    },
+    "ST_GAS": {
+     "available_mw": 6695.474567990649,
+     "dispatched_mw": 3124.156982421875,
+     "idle_mw": 3571.317585568774,
+     "utilisation": 0.46660725101663
+    },
+    "oil": {
+     "available_mw": 3198.323863636362,
+     "dispatched_mw": 0.0,
+     "idle_mw": 3198.323863636362,
+     "utilisation": 0.0
+    }
+   },
+   "prices": {
+    "model_clearing": 27.967195366740796,
+    "market_rt": 116.62409114837646,
+    "highest_available_offer": 422.33343350822304,
+    "model_clearing_annual_mean": 25.963605993562606,
+    "market_rt_annual_mean": 22.308260269568528
+   },
+   "peak_band_dispatch_mw": {
+    "CC_CHP": {
+     "max_h": 0.7411007881164551,
+     "mean_h": 0.031188180670142174
+    },
+    "CC_REGULAR": {
+     "max_h": 159.80247497558594,
+     "mean_h": 1.6754961013793945
+    },
+    "COAL": {
+     "max_h": 0.6608160138130188,
+     "mean_h": 0.0035599807742983103
+    },
+    "COAL_BIT": {
+     "max_h": 169.6305694580078,
+     "mean_h": 4.395973205566406
+    },
+    "COAL_LIGNITE": {
+     "max_h": 12.968640327453613,
+     "mean_h": 0.3117527365684509
+    },
+    "COAL_PRB": {
+     "max_h": 337.8490905761719,
+     "mean_h": 32.985633850097656
+    },
+    "CT_CHP": {
+     "max_h": 23.043529510498047,
+     "mean_h": 14.652745246887207
+    },
+    "CT_PEAKER": {
+     "max_h": 0.0,
+     "mean_h": 0.0
+    },
+    "ST_CHP": {
+     "max_h": 59.89873123168945,
+     "mean_h": 32.213661193847656
+    },
+    "ST_GAS": {
+     "max_h": 643.240966796875,
+     "mean_h": 158.78492736816406
+    }
+   },
+   "build_s": 25.4
+  },
+  {
+   "iso": "MISO",
+   "year": 2021,
+   "bundle": "results/calibration/miso264_anchor_span",
+   "hours": 8760,
+   "window_hours": 88,
+   "window_basis": "market RT",
+   "declared_simplifications": {},
+   "reconciled": true,
+   "gates": {
+    "G1_fleet_class_not_in_sidecar": [],
+    "G2_sidecar_classes_uncovered_mw": {
+     "OTHER": 1491.5255126953125,
+     "biomass": 942.8500366210938,
+     "hydro": 1871.12841796875,
+     "import": 5142.17236328125,
+     "nuclear": 10596.33203125,
+     "solar": 241.9545440673828,
+     "wind": 7642.4501953125
+    },
+    "G3_dispatch_exceeds_available": []
+   },
+   "thermal_top1pct": {
+    "available_mw": 84354.5287632402,
+    "dispatched_mw": 53931.31648635864,
+    "idle_mw": 30423.21227688156,
+    "idle_pct": 36.065890857230784,
+    "above_clearing_mw": 31299.636269958803,
+    "above_clearing_pct": 37.10486766846652
+   },
+   "per_class": {
+    "CC_CHP": {
+     "available_mw": 3479.274894609038,
+     "dispatched_mw": 2050.2958984375,
+     "idle_mw": 1428.9789961715378,
+     "utilisation": 0.5892882742936842
+    },
+    "CC_REGULAR": {
+     "available_mw": 17974.423448681828,
+     "dispatched_mw": 12190.041015625,
+     "idle_mw": 5784.382433056828,
+     "utilisation": 0.678188151649391
+    },
+    "COAL": {
+     "available_mw": 41.30825749999999,
+     "dispatched_mw": 40.0887336730957,
+     "idle_mw": 1.219523826904286,
+     "utilisation": 0.9704774807578295
+    },
+    "COAL_BIT": {
+     "available_mw": 9752.293804308225,
+     "dispatched_mw": 9216.4267578125,
+     "idle_mw": 535.8670464957249,
+     "utilisation": 0.9450522044096952
+    },
+    "COAL_LIGNITE": {
+     "available_mw": 1510.8789090909088,
+     "dispatched_mw": 1295.0770263671875,
+     "idle_mw": 215.8018827237213,
+     "utilisation": 0.8571679825396672
+    },
+    "COAL_PRB": {
+     "available_mw": 22431.893132052854,
+     "dispatched_mw": 21540.568359375,
+     "idle_mw": 891.3247726778536,
+     "utilisation": 0.9602652898072057
+    },
+    "CT_CHP": {
+     "available_mw": 797.8642395428974,
+     "dispatched_mw": 611.0135498046875,
+     "idle_mw": 186.8506897382099,
+     "utilisation": 0.7658114244532903
+    },
+    "CT_PEAKER": {
+     "available_mw": 18275.69187839314,
+     "dispatched_mw": 3776.499267578125,
+     "idle_mw": 14499.192610815015,
+     "utilisation": 0.20664056347125107
+    },
+    "ST_CHP": {
+     "available_mw": 472.94106778319195,
+     "dispatched_mw": 334.3227233886719,
+     "idle_mw": 138.61834439452008,
+     "utilisation": 0.7069014432511364
+    },
+    "ST_GAS": {
+     "available_mw": 6432.185154005411,
+     "dispatched_mw": 2502.093505859375,
+     "idle_mw": 3930.0916481460363,
+     "utilisation": 0.38899587713225053
+    },
+    "oil": {
+     "available_mw": 3185.7739772727264,
+     "dispatched_mw": 374.8896484375,
+     "idle_mw": 2810.8843288352264,
+     "utilisation": 0.11767616005151599
+    }
+   },
+   "prices": {
+    "model_clearing": 95.38546457815829,
+    "market_rt": 230.79045538468793,
+    "highest_available_offer": 1646.474583976723,
+    "model_clearing_annual_mean": 41.46247873186924,
+    "market_rt_annual_mean": 39.458300056271334
+   },
+   "peak_band_dispatch_mw": {
+    "CC_CHP": {
+     "max_h": 83.48226928710938,
+     "mean_h": 1.9522114992141724
+    },
+    "CC_REGULAR": {
+     "max_h": 445.5765686035156,
+     "mean_h": 16.923547744750977
+    },
+    "COAL": {
+     "max_h": 0.6594039797782898,
+     "mean_h": 0.12649013102054596
+    },
+    "COAL_BIT": {
+     "max_h": 242.86538696289062,
+     "mean_h": 42.841365814208984
+    },
+    "COAL_LIGNITE": {
+     "max_h": 30.533979415893555,
+     "mean_h": 5.732219696044922
+    },
+    "COAL_PRB": {
+     "max_h": 536.1228637695312,
+     "mean_h": 125.51602172851562
+    },
+    "CT_CHP": {
+     "max_h": 22.785018920898438,
+     "mean_h": 13.330744743347168
+    },
+    "CT_PEAKER": {
+     "max_h": 131.6299285888672,
+     "mean_h": 1.4083199501037598
+    },
+    "ST_CHP": {
+     "max_h": 64.23668670654297,
+     "mean_h": 38.33536148071289
+    },
+    "ST_GAS": {
+     "max_h": 607.4844360351562,
+     "mean_h": 82.3414077758789
+    }
+   },
+   "build_s": 16.9
+  },
+  {
+   "iso": "MISO",
+   "year": 2022,
+   "bundle": "results/calibration/miso264_anchor_span",
+   "hours": 8760,
+   "window_hours": 88,
+   "window_basis": "market RT",
+   "declared_simplifications": {},
+   "reconciled": true,
+   "gates": {
+    "G1_fleet_class_not_in_sidecar": [],
+    "G2_sidecar_classes_uncovered_mw": {
+     "OTHER": 1394.79833984375,
+     "biomass": 998.1610717773438,
+     "hydro": 1849.9122314453125,
+     "import": 4669.302734375,
+     "nuclear": 10321.7255859375,
+     "solar": 1015.8408813476562,
+     "wind": 9335.525390625
+    },
+    "G3_dispatch_exceeds_available": []
+   },
+   "thermal_top1pct": {
+    "available_mw": 89959.45495673915,
+    "dispatched_mw": 59498.1188659668,
+    "idle_mw": 30461.336090772355,
+    "idle_pct": 33.86118346917619,
+    "above_clearing_mw": 28401.95822417083,
+    "above_clearing_pct": 31.571954540886367
+   },
+   "per_class": {
+    "CC_CHP": {
+     "available_mw": 3410.6012836397817,
+     "dispatched_mw": 2534.876708984375,
+     "idle_mw": 875.7245746554067,
+     "utilisation": 0.7432345496214566
+    },
+    "CC_REGULAR": {
+     "available_mw": 21586.364529636772,
+     "dispatched_mw": 18436.794921875,
+     "idle_mw": 3149.569607761772,
+     "utilisation": 0.8540944862004158
+    },
+    "COAL": {
+     "available_mw": 45.88080279545454,
+     "dispatched_mw": 38.57501220703125,
+     "idle_mw": 7.305790588423292,
+     "utilisation": 0.8407658510032199
+    },
+    "COAL_BIT": {
+     "available_mw": 10255.012543492096,
+     "dispatched_mw": 8310.1865234375,
+     "idle_mw": 1944.8260200545956,
+     "utilisation": 0.8103536186029537
+    },
+    "COAL_LIGNITE": {
+     "available_mw": 765.4146761363637,
+     "dispatched_mw": 679.6890869140625,
+     "idle_mw": 85.72558922230121,
+     "utilisation": 0.8880011163948095
+    },
+    "COAL_PRB": {
+     "available_mw": 24907.939179580924,
+     "dispatched_mw": 20969.30078125,
+     "idle_mw": 3938.6383983309242,
+     "utilisation": 0.8418721689524701
+    },
+    "CT_CHP": {
+     "available_mw": 800.7530033191669,
+     "dispatched_mw": 659.7964477539062,
+     "idle_mw": 140.9565555652606,
+     "utilisation": 0.8239699945164268
+    },
+    "CT_PEAKER": {
+     "available_mw": 18369.12426009536,
+     "dispatched_mw": 4852.701171875,
+     "idle_mw": 13516.42308822036,
+     "utilisation": 0.2641770561929776
+    },
+    "ST_CHP": {
+     "available_mw": 477.95917934925586,
+     "dispatched_mw": 404.4914245605469,
+     "idle_mw": 73.46775478870899,
+     "utilisation": 0.8462886414510633
+    },
+    "ST_GAS": {
+     "available_mw": 6161.955271421254,
+     "dispatched_mw": 2611.706787109375,
+     "idle_mw": 3550.248484311879,
+     "utilisation": 0.4238438404806832
+    },
+    "oil": {
+     "available_mw": 3178.4502272727273,
+     "dispatched_mw": 0.0,
+     "idle_mw": 3178.4502272727273,
+     "utilisation": 0.0
+    }
+   },
+   "prices": {
+    "model_clearing": 78.69195448925471,
+    "market_rt": 352.48352120139384,
+    "highest_available_offer": 1165.3903216995154,
+    "model_clearing_annual_mean": 61.03888106451162,
+    "market_rt_annual_mean": 69.86933328017356
+   },
+   "peak_band_dispatch_mw": {
+    "CC_CHP": {
+     "max_h": 0.7380977869033813,
+     "mean_h": 0.015610435977578163
+    },
+    "CC_REGULAR": {
+     "max_h": 271.9533996582031,
+     "mean_h": 5.325046062469482
+    },
+    "COAL": {
+     "max_h": 0.6579920053482056,
+     "mean_h": 0.17415714263916016
+    },
+    "COAL_BIT": {
+     "max_h": 190.3513946533203,
+     "mean_h": 52.995643615722656
+    },
+    "COAL_LIGNITE": {
+     "max_h": 18.315448760986328,
+     "mean_h": 4.7324113845825195
+    },
+    "COAL_PRB": {
+     "max_h": 500.11279296875,
+     "mean_h": 136.3106689453125
+    },
+    "CT_CHP": {
+     "max_h": 23.591815948486328,
+     "mean_h": 14.029071807861328
+    },
+    "CT_PEAKER": {
+     "max_h": 0.0,
+     "mean_h": 0.0
+    },
+    "ST_CHP": {
+     "max_h": 77.50375366210938,
+     "mean_h": 45.65388107299805
+    },
+    "ST_GAS": {
+     "max_h": 593.2599487304688,
+     "mean_h": 105.79548645019531
+    }
+   },
+   "build_s": 17.2
+  },
+  {
+   "iso": "MISO",
+   "year": 2023,
+   "bundle": "results/calibration/miso264_anchor_span",
+   "hours": 8760,
+   "window_hours": 88,
+   "window_basis": "market RT",
+   "declared_simplifications": {},
+   "reconciled": true,
+   "gates": {
+    "G1_fleet_class_not_in_sidecar": [],
+    "G2_sidecar_classes_uncovered_mw": {
+     "OTHER": 1189.3631591796875,
+     "biomass": 924.409423828125,
+     "hydro": 1652.0296630859375,
+     "import": 3926.9013671875,
+     "nuclear": 9826.2958984375,
+     "solar": 1102.57958984375,
+     "wind": 8688.001953125
+    },
+    "G3_dispatch_exceeds_available": []
+   },
+   "thermal_top1pct": {
+    "available_mw": 78774.46387414035,
+    "dispatched_mw": 53026.96784210205,
+    "idle_mw": 25747.496032038296,
+    "idle_pct": 32.68507935918881,
+    "above_clearing_mw": 24870.024243820375,
+    "above_clearing_pct": 31.571175506260186
+   },
+   "per_class": {
+    "CC_CHP": {
+     "available_mw": 3362.5516001381106,
+     "dispatched_mw": 2629.978759765625,
+     "idle_mw": 732.5728403724856,
+     "utilisation": 0.7821378145268026
+    },
+    "CC_REGULAR": {
+     "available_mw": 20359.89952482412,
+     "dispatched_mw": 17471.20703125,
+     "idle_mw": 2888.692493574119,
+     "utilisation": 0.8581185290206351
+    },
+    "COAL": {
+     "available_mw": 19.877366727272722,
+     "dispatched_mw": 19.43668556213379,
+     "idle_mw": 0.4406811651389333,
+     "utilisation": 0.9778300027772644
+    },
+    "COAL_BIT": {
+     "available_mw": 8485.326582206153,
+     "dispatched_mw": 6670.91845703125,
+     "idle_mw": 1814.408125174903,
+     "utilisation": 0.7861710910479578
+    },
+    "COAL_LIGNITE": {
+     "available_mw": 834.3488809808612,
+     "dispatched_mw": 780.6732788085938,
+     "idle_mw": 53.67560217226742,
+     "utilisation": 0.9356676764410994
+    },
+    "COAL_PRB": {
+     "available_mw": 17728.38237846581,
+     "dispatched_mw": 16003.51171875,
+     "idle_mw": 1724.8706597158089,
+     "utilisation": 0.9027056940169024
+    },
+    "CT_CHP": {
+     "available_mw": 784.6585189404021,
+     "dispatched_mw": 669.3845825195312,
+     "idle_mw": 115.27393642087088,
+     "utilisation": 0.8530903142725882
+    },
+    "CT_PEAKER": {
+     "available_mw": 18147.684957463873,
+     "dispatched_mw": 4835.98388671875,
+     "idle_mw": 13311.701070745123,
+     "utilisation": 0.26647938280027184
+    },
+    "ST_CHP": {
+     "available_mw": 471.0081255515715,
+     "dispatched_mw": 358.8182373046875,
+     "idle_mw": 112.18988824688398,
+     "utilisation": 0.761809017380529
+    },
+    "ST_GAS": {
+     "available_mw": 5461.272757023996,
+     "dispatched_mw": 3560.220947265625,
+     "idle_mw": 1901.0518097583708,
+     "utilisation": 0.6519031562169569
+    },
+    "oil": {
+     "available_mw": 3119.4531818181804,
+     "dispatched_mw": 26.834257125854492,
+     "idle_mw": 3092.618924692326,
+     "utilisation": 0.008602231084043416
+    }
+   },
+   "prices": {
+    "model_clearing": 44.457222071921024,
+    "market_rt": 195.75090954520485,
+    "highest_available_offer": 579.7306780754941,
+    "model_clearing_annual_mean": 34.14384198368398,
+    "market_rt_annual_mean": 31.78876141875846
+   },
+   "peak_band_dispatch_mw": {
+    "CC_CHP": {
+     "max_h": 159.3876495361328,
+     "mean_h": 0.19719445705413818
+    },
+    "CC_REGULAR": {
+     "max_h": 1657.4844970703125,
+     "mean_h": 4.110344409942627
+    },
+    "COAL_BIT": {
+     "max_h": 220.36619567871094,
+     "mean_h": 11.907382011413574
+    },
+    "COAL_LIGNITE": {
+     "max_h": 21.02212142944336,
+     "mean_h": 1.5795578956604004
+    },
+    "COAL_PRB": {
+     "max_h": 550.659912109375,
+     "mean_h": 68.9803466796875
+    },
+    "CT_CHP": {
+     "max_h": 21.9364013671875,
+     "mean_h": 13.996344566345215
+    },
+    "CT_PEAKER": {
+     "max_h": 600.0509033203125,
+     "mean_h": 0.19410987198352814
+    },
+    "ST_CHP": {
+     "max_h": 72.84476470947266,
+     "mean_h": 30.121135711669922
+    },
+    "ST_GAS": {
+     "max_h": 854.6889038085938,
+     "mean_h": 175.2727508544922
+    }
+   },
+   "build_s": 18.1
+  },
+  {
+   "iso": "MISO",
+   "year": 2024,
+   "bundle": "results/calibration/miso264_anchor_span",
+   "hours": 8760,
+   "window_hours": 88,
+   "window_basis": "market RT",
+   "declared_simplifications": {},
+   "reconciled": true,
+   "gates": {
+    "G1_fleet_class_not_in_sidecar": [],
+    "G2_sidecar_classes_uncovered_mw": {
+     "OTHER": 999.367919921875,
+     "biomass": 824.3692016601562,
+     "hydro": 2033.4141845703125,
+     "import": 2139.0087890625,
+     "nuclear": 10414.232421875,
+     "solar": 1922.0567626953125,
+     "wind": 8058.18603515625
+    },
+    "G3_dispatch_exceeds_available": []
+   },
+   "thermal_top1pct": {
+    "available_mw": 80473.9364985412,
+    "dispatched_mw": 59572.358761787415,
+    "idle_mw": 20901.57773675378,
+    "idle_pct": 25.97310215728378,
+    "above_clearing_mw": 19451.834390052773,
+    "above_clearing_pct": 24.171595471044704
+   },
+   "per_class": {
+    "CC_CHP": {
+     "available_mw": 3179.802492344478,
+     "dispatched_mw": 2810.7412109375,
+     "idle_mw": 369.0612814069782,
+     "utilisation": 0.8839357845980967
+    },
+    "CC_REGULAR": {
+     "available_mw": 21370.118860452178,
+     "dispatched_mw": 19420.44921875,
+     "idle_mw": 1949.6696417021776,
+     "utilisation": 0.9087665513498728
+    },
+    "COAL": {
+     "available_mw": 16.006072727272727,
+     "dispatched_mw": 15.852200508117676,
+     "idle_mw": 0.15387221915505123,
+     "utilisation": 0.9903866350117935
+    },
+    "COAL_BIT": {
+     "available_mw": 8336.729139740499,
+     "dispatched_mw": 7006.77294921875,
+     "idle_mw": 1329.9561905217488,
+     "utilisation": 0.8404702649889442
+    },
+    "COAL_LIGNITE": {
+     "available_mw": 790.5515852272728,
+     "dispatched_mw": 710.482666015625,
+     "idle_mw": 80.06891921164777,
+     "utilisation": 0.8987176539673511
+    },
+    "COAL_PRB": {
+     "available_mw": 18732.110958223962,
+     "dispatched_mw": 16773.451171875,
+     "idle_mw": 1958.6597863489624,
+     "utilisation": 0.8954383843488258
+    },
+    "CT_CHP": {
+     "available_mw": 778.1253101478231,
+     "dispatched_mw": 715.20849609375,
+     "idle_mw": 62.91681405407314,
+     "utilisation": 0.91914308243987
+    },
+    "CT_PEAKER": {
+     "available_mw": 18068.06162582929,
+     "dispatched_mw": 7865.8154296875,
+     "idle_mw": 10202.24619614179,
+     "utilisation": 0.43534362415738515
+    },
+    "ST_CHP": {
+     "available_mw": 476.4896526877537,
+     "dispatched_mw": 403.6208190917969,
+     "idle_mw": 72.8688335959568,
+     "utilisation": 0.847071529916919
+    },
+    "ST_GAS": {
+     "available_mw": 5633.457960251591,
+     "dispatched_mw": 3780.96240234375,
+     "idle_mw": 1852.4955579078414,
+     "utilisation": 0.6711619096159708
+    },
+    "oil": {
+     "available_mw": 3092.48284090909,
+     "dispatched_mw": 69.002197265625,
+     "idle_mw": 3023.480643643465,
+     "utilisation": 0.02231287959073706
+    }
+   },
+   "prices": {
+    "model_clearing": 71.29882321239675,
+    "market_rt": 244.26363546198064,
+    "highest_available_offer": 536.839449332896,
+    "model_clearing_annual_mean": 31.487693616616756,
+    "market_rt_annual_mean": 30.796458880024957
+   },
+   "peak_band_dispatch_mw": {
+    "CC_CHP": {
+     "max_h": 137.06747436523438,
+     "mean_h": 0.21979911625385284
+    },
+    "CC_REGULAR": {
+     "max_h": 1937.9619140625,
+     "mean_h": 26.583480834960938
+    },
+    "COAL_BIT": {
+     "max_h": 207.3059539794922,
+     "mean_h": 9.285367012023926
+    },
+    "COAL_LIGNITE": {
+     "max_h": 20.977739334106445,
+     "mean_h": 0.610858678817749
+    },
+    "COAL_PRB": {
+     "max_h": 445.6504211425781,
+     "mean_h": 46.88385009765625
+    },
+    "CT_CHP": {
+     "max_h": 24.071489334106445,
+     "mean_h": 16.808393478393555
+    },
+    "CT_PEAKER": {
+     "max_h": 366.72406005859375,
+     "mean_h": 0.2788594365119934
+    },
+    "ST_CHP": {
+     "max_h": 72.792236328125,
+     "mean_h": 37.378814697265625
+    },
+    "ST_GAS": {
+     "max_h": 703.3551025390625,
+     "mean_h": 168.2820281982422
+    }
+   },
+   "build_s": 16.4
+  },
+  {
+   "iso": "MISO",
+   "year": 2025,
+   "bundle": "results/calibration/miso264_anchor_span",
+   "hours": 8760,
+   "window_hours": 88,
+   "window_basis": "market RT",
+   "declared_simplifications": {},
+   "reconciled": true,
+   "gates": {
+    "G1_fleet_class_not_in_sidecar": [],
+    "G2_sidecar_classes_uncovered_mw": {
+     "OTHER": 732.7479858398438,
+     "biomass": 343.5179138183594,
+     "hydro": 2079.472900390625,
+     "import": 1992.155517578125,
+     "nuclear": 10609.4697265625,
+     "solar": 3190.2158203125,
+     "wind": 9017.4931640625
+    },
+    "G3_dispatch_exceeds_available": []
+   },
+   "thermal_top1pct": {
+    "available_mw": 80134.25969767301,
+    "dispatched_mw": 64298.69575500488,
+    "idle_mw": 15835.56394266813,
+    "idle_pct": 19.761290617036764,
+    "above_clearing_mw": 15094.248423916695,
+    "above_clearing_pct": 18.83619875052644
+   },
+   "per_class": {
+    "CC_CHP": {
+     "available_mw": 3070.1863015825525,
+     "dispatched_mw": 2737.0732421875,
+     "idle_mw": 333.11305939505246,
+     "utilisation": 0.8915007016924847
+    },
+    "CC_REGULAR": {
+     "available_mw": 20008.3301704074,
+     "dispatched_mw": 18450.796875,
+     "idle_mw": 1557.5332954074001,
+     "utilisation": 0.9221557580196765
+    },
+    "COAL_BIT": {
+     "available_mw": 8212.401956753876,
+     "dispatched_mw": 7935.1357421875,
+     "idle_mw": 277.2662145663762,
+     "utilisation": 0.966238109626581
+    },
+    "COAL_LIGNITE": {
+     "available_mw": 746.7294829213184,
+     "dispatched_mw": 734.5961303710938,
+     "idle_mw": 12.133352550224686,
+     "utilisation": 0.9837513412450822
+    },
+    "COAL_PRB": {
+     "available_mw": 19771.236922783308,
+     "dispatched_mw": 19412.33203125,
+     "idle_mw": 358.9048915333078,
+     "utilisation": 0.9818471199887486
+    },
+    "CT_CHP": {
+     "available_mw": 769.5568256238687,
+     "dispatched_mw": 716.3794555664062,
+     "idle_mw": 53.17737005746244,
+     "utilisation": 0.9308987091182612
+    },
+    "CT_PEAKER": {
+     "available_mw": 18080.275508316216,
+     "dispatched_mw": 9335.4853515625,
+     "idle_mw": 8744.790156753716,
+     "utilisation": 0.5163353482787663
+    },
+    "ST_CHP": {
+     "available_mw": 393.799223696527,
+     "dispatched_mw": 341.55865478515625,
+     "idle_mw": 52.24056891137076,
+     "utilisation": 0.8673421231738414
+    },
+    "ST_GAS": {
+     "available_mw": 6084.217623769777,
+     "dispatched_mw": 4493.73388671875,
+     "idle_mw": 1590.4837370510268,
+     "utilisation": 0.7385886180603836
+    },
+    "oil": {
+     "available_mw": 2997.525681818181,
+     "dispatched_mw": 141.60438537597656,
+     "idle_mw": 2855.9212964422045,
+     "utilisation": 0.04724042440566678
+    }
+   },
+   "prices": {
+    "model_clearing": 100.28822690145981,
+    "market_rt": 411.3419316031716,
+    "highest_available_offer": 528.4784727472405,
+    "model_clearing_annual_mean": 43.34408845644022,
+    "market_rt_annual_mean": 42.8502979726603
+   },
+   "peak_band_dispatch_mw": {
+    "CC_CHP": {
+     "max_h": 113.36724090576172,
+     "mean_h": 0.3488883078098297
+    },
+    "CC_REGULAR": {
+     "max_h": 1691.0203857421875,
+     "mean_h": 10.364569664001465
+    },
+    "COAL_BIT": {
+     "max_h": 196.6143798828125,
+     "mean_h": 32.07542037963867
+    },
+    "COAL_LIGNITE": {
+     "max_h": 20.933359146118164,
+     "mean_h": 3.4504551887512207
+    },
+    "COAL_PRB": {
+     "max_h": 470.6959533691406,
+     "mean_h": 122.0403823852539
+    },
+    "CT_CHP": {
+     "max_h": 23.185894012451172,
+     "mean_h": 16.871917724609375
+    },
+    "CT_PEAKER": {
+     "max_h": 331.7882385253906,
+     "mean_h": 0.23018109798431396
+    },
+    "ST_CHP": {
+     "max_h": 69.43545532226562,
+     "mean_h": 32.029842376708984
+    },
+    "ST_GAS": {
+     "max_h": 743.3280639648438,
+     "mean_h": 116.14315795898438
+    }
+   },
+   "build_s": 15.2
+  },
+  {
+   "iso": "NEISO",
+   "year": 2020,
+   "bundle": "results/calibration/neiso112_mer_span",
+   "hours": 8760,
+   "window_hours": 88,
+   "window_basis": "market RT",
+   "declared_simplifications": {},
+   "reconciled": true,
+   "gates": {
+    "G1_fleet_class_not_in_sidecar": [],
+    "G2_sidecar_classes_uncovered_mw": {
+     "OTHER": 368.7756042480469,
+     "biomass": 449.1617126464844,
+     "hydro": 1707.84375,
+     "nuclear": 3086.9091796875,
+     "solar": 25.977272033691406,
+     "wind": 331.1704406738281
+    },
+    "G3_dispatch_exceeds_available": []
+   },
+   "thermal_top1pct": {
+    "available_mw": 16504.942179247108,
+    "dispatched_mw": 7872.982914924622,
+    "idle_mw": 8631.959264322486,
+    "idle_pct": 52.299239649419015,
+    "above_clearing_mw": 7427.714490489533,
+    "above_clearing_pct": 45.00297189667803
+   },
+   "per_class": {
+    "CC_CHP": {
+     "available_mw": 474.33310882676284,
+     "dispatched_mw": 235.86973571777344,
+     "idle_mw": 238.4633731089894,
+     "utilisation": 0.49726601691622246
+    },
+    "CC_REGULAR": {
+     "available_mw": 9492.64910944043,
+     "dispatched_mw": 7168.16259765625,
+     "idle_mw": 2324.48651178418,
+     "utilisation": 0.7551277325238451
+    },
+    "COAL_BIT": {
+     "available_mw": 97.55789090072727,
+     "dispatched_mw": 52.063255310058594,
+     "idle_mw": 45.49463559066868,
+     "utilisation": 0.5336652404984544
+    },
+    "CT_CHP": {
+     "available_mw": 50.474455991902936,
+     "dispatched_mw": 42.82089614868164,
+     "idle_mw": 7.653559843221295,
+     "utilisation": 0.8483676605756965
+    },
+    "CT_PEAKER": {
+     "available_mw": 978.4205305947663,
+     "dispatched_mw": 239.39024353027344,
+     "idle_mw": 739.0302870644929,
+     "utilisation": 0.24467009434557951
+    },
+    "ST_CHP": {
+     "available_mw": 28.97592187649303,
+     "dispatched_mw": 23.304033279418945,
+     "idle_mw": 5.6718885970740835,
+     "utilisation": 0.804255111493952
+    },
+    "ST_GAS": {
+     "available_mw": 143.27116161602385,
+     "dispatched_mw": 101.34575653076172,
+     "idle_mw": 41.92540508526213,
+     "utilisation": 0.7073702438622995
+    },
+    "oil": {
+     "available_mw": 5239.260000000001,
+     "dispatched_mw": 10.026396751403809,
+     "idle_mw": 5229.233603248597,
+     "utilisation": 0.0019137047505571028
+    }
+   },
+   "prices": {
+    "model_clearing": 55.63559896961498,
+    "market_rt": 115.04977217587557,
+    "highest_available_offer": 508.09004231468424,
+    "model_clearing_annual_mean": 25.90925307112912,
+    "market_rt_annual_mean": 23.39297716320858
+   },
+   "peak_band_dispatch_mw": {
+    "CC_CHP": {
+     "max_h": 5.663325786590576,
+     "mean_h": 0.007017074152827263
+    },
+    "CC_REGULAR": {
+     "max_h": 635.7556762695312,
+     "mean_h": 1.118762493133545
+    },
+    "COAL_BIT": {
+     "max_h": 2.045233726501465,
+     "mean_h": 0.0395825169980526
+    },
+    "CT_CHP": {
+     "max_h": 1.8470375537872314,
+     "mean_h": 1.6817556619644165
+    },
+    "CT_PEAKER": {
+     "max_h": 0.0,
+     "mean_h": 0.0
+    },
+    "ST_CHP": {
+     "max_h": 1.5378960371017456,
+     "mean_h": 1.4415698051452637
+    },
+    "ST_GAS": {
+     "max_h": 22.681503295898438,
+     "mean_h": 3.722069501876831
+    }
+   },
+   "build_s": 7.5
+  },
+  {
+   "iso": "NEISO",
+   "year": 2021,
+   "bundle": "results/calibration/neiso112_mer_span",
+   "hours": 8760,
+   "window_hours": 88,
+   "window_basis": "market RT",
+   "declared_simplifications": {},
+   "reconciled": true,
+   "gates": {
+    "G1_fleet_class_not_in_sidecar": [],
+    "G2_sidecar_classes_uncovered_mw": {
+     "OTHER": 364.6883544921875,
+     "biomass": 460.09893798828125,
+     "hydro": 1610.275390625,
+     "nuclear": 3263.6416015625,
+     "solar": 52.272727966308594,
+     "wind": 293.0454406738281
+    },
+    "G3_dispatch_exceeds_available": []
+   },
+   "thermal_top1pct": {
+    "available_mw": 17100.71678772373,
+    "dispatched_mw": 8688.640741348267,
+    "idle_mw": 8412.076046375463,
+    "idle_pct": 49.19136519712629,
+    "above_clearing_mw": 7479.974055245484,
+    "above_clearing_pct": 43.74070483767798
+   },
+   "per_class": {
+    "CC_CHP": {
+     "available_mw": 442.12652622047335,
+     "dispatched_mw": 169.96559143066406,
+     "idle_mw": 272.1609347898093,
+     "utilisation": 0.38442749156812195
+    },
+    "CC_REGULAR": {
+     "available_mw": 10373.345360806883,
+     "dispatched_mw": 7762.8701171875,
+     "idle_mw": 2610.475243619383,
+     "utilisation": 0.7483477940026544
+    },
+    "COAL_BIT": {
+     "available_mw": 98.02880977090909,
+     "dispatched_mw": 88.2271728515625,
+     "idle_mw": 9.801636919346592,
+     "utilisation": 0.900012690735991
+    },
+    "CT_CHP": {
+     "available_mw": 56.86536549470671,
+     "dispatched_mw": 49.087032318115234,
+     "idle_mw": 7.778333176591474,
+     "utilisation": 0.8632149268905074
+    },
+    "CT_PEAKER": {
+     "available_mw": 968.9223643843902,
+     "dispatched_mw": 423.01739501953125,
+     "idle_mw": 545.904969364859,
+     "utilisation": 0.43658543818244666
+    },
+    "ST_CHP": {
+     "available_mw": 28.87930311890519,
+     "dispatched_mw": 22.646360397338867,
+     "idle_mw": 6.2329427215663245,
+     "utilisation": 0.7841726756389054
+    },
+    "ST_GAS": {
+     "available_mw": 144.55780792746052,
+     "dispatched_mw": 91.95596313476562,
+     "idle_mw": 52.60184479269489,
+     "utilisation": 0.636118964815165
+    },
+    "oil": {
+     "available_mw": 4987.991250000001,
+     "dispatched_mw": 80.87110900878906,
+     "idle_mw": 4907.120140991212,
+     "utilisation": 0.01621316176302215
+    }
+   },
+   "prices": {
+    "model_clearing": 97.022369336587,
+    "market_rt": 185.0734095139937,
+    "highest_available_offer": 548.6711525675,
+    "model_clearing_annual_mean": 48.4133453597065,
+    "market_rt_annual_mean": 44.84200343014141
+   },
+   "peak_band_dispatch_mw": {
+    "CC_REGULAR": {
+     "max_h": 650.299072265625,
+     "mean_h": 2.933976650238037
+    },
+    "COAL_BIT": {
+     "max_h": 2.0522987842559814,
+     "mean_h": 0.3323860466480255
+    },
+    "CT_CHP": {
+     "max_h": 3.5453524589538574,
+     "mean_h": 2.8253276348114014
+    },
+    "CT_PEAKER": {
+     "max_h": 58.426551818847656,
+     "mean_h": 0.14818669855594635
+    },
+    "ST_CHP": {
+     "max_h": 1.5392342805862427,
+     "mean_h": 1.437981367111206
+    },
+    "ST_GAS": {
+     "max_h": 22.40674591064453,
+     "mean_h": 1.7028675079345703
+    }
+   },
+   "build_s": 5.7
+  },
+  {
+   "iso": "NEISO",
+   "year": 2022,
+   "bundle": "results/calibration/neiso112_mer_span",
+   "hours": 8760,
+   "window_hours": 88,
+   "window_basis": "market RT",
+   "declared_simplifications": {},
+   "reconciled": true,
+   "gates": {
+    "G1_fleet_class_not_in_sidecar": [],
+    "G2_sidecar_classes_uncovered_mw": {
+     "OTHER": 394.47344970703125,
+     "biomass": 412.5536193847656,
+     "hydro": 1640.18701171875,
+     "nuclear": 3287.359375,
+     "solar": 85.40908813476562,
+     "wind": 554.0
+    },
+    "G3_dispatch_exceeds_available": []
+   },
+   "thermal_top1pct": {
+    "available_mw": 16019.691124174726,
+    "dispatched_mw": 7782.3409786224365,
+    "idle_mw": 8237.35014555229,
+    "idle_pct": 51.420155867559814,
+    "above_clearing_mw": 7287.6586093543065,
+    "above_clearing_pct": 45.49187966774696
+   },
+   "per_class": {
+    "CC_CHP": {
+     "available_mw": 445.68718674296014,
+     "dispatched_mw": 118.55042266845703,
+     "idle_mw": 327.1367640745031,
+     "utilisation": 0.26599468460112646
+    },
+    "CC_REGULAR": {
+     "available_mw": 9606.275891822965,
+     "dispatched_mw": 6993.46533203125,
+     "idle_mw": 2612.8105597917147,
+     "utilisation": 0.7280100437240423
+    },
+    "COAL_BIT": {
+     "available_mw": 97.04667151636365,
+     "dispatched_mw": 93.2118911743164,
+     "idle_mw": 3.834780342047239,
+     "utilisation": 0.9604851945756776
+    },
+    "CT_CHP": {
+     "available_mw": 62.16503924960764,
+     "dispatched_mw": 52.283592224121094,
+     "idle_mw": 9.881447025486544,
+     "utilisation": 0.841044948338082
+    },
+    "CT_PEAKER": {
+     "available_mw": 954.7484913115004,
+     "dispatched_mw": 413.2508850097656,
+     "idle_mw": 541.4976063017348,
+     "utilisation": 0.4328374318163092
+    },
+    "ST_CHP": {
+     "available_mw": 27.942045489379726,
+     "dispatched_mw": 20.698305130004883,
+     "idle_mw": 7.2437403593748435,
+     "utilisation": 0.7407584078936504
+    },
+    "ST_GAS": {
+     "available_mw": 89.34670713286012,
+     "dispatched_mw": 46.12760925292969,
+     "idle_mw": 43.21909787993043,
+     "utilisation": 0.5162765448572953
+    },
+    "oil": {
+     "available_mw": 4736.479090909091,
+     "dispatched_mw": 44.7529411315918,
+     "idle_mw": 4691.726149777499,
+     "utilisation": 0.009448567231614696
+    }
+   },
+   "prices": {
+    "model_clearing": 135.8983497471454,
+    "market_rt": 414.3827282298695,
+    "highest_available_offer": 846.8894902489573,
+    "model_clearing_annual_mean": 85.62812924274974,
+    "market_rt_annual_mean": 84.9154486443031
+   },
+   "peak_band_dispatch_mw": {
+    "CC_REGULAR": {
+     "max_h": 679.2655029296875,
+     "mean_h": 1.9147380590438843
+    },
+    "COAL_BIT": {
+     "max_h": 2.0952000617980957,
+     "mean_h": 1.244317889213562
+    },
+    "CT_CHP": {
+     "max_h": 3.5453524589538574,
+     "mean_h": 3.219358444213867
+    },
+    "CT_PEAKER": {
+     "max_h": 43.28542709350586,
+     "mean_h": 0.019765034317970276
+    },
+    "ST_CHP": {
+     "max_h": 1.5403296947479248,
+     "mean_h": 1.439490795135498
+    },
+    "ST_GAS": {
+     "max_h": 12.584242820739746,
+     "mean_h": 0.18079543113708496
+    }
+   },
+   "build_s": 5.7
+  },
+  {
+   "iso": "NEISO",
+   "year": 2023,
+   "bundle": "results/calibration/neiso112_mer_span",
+   "hours": 8760,
+   "window_hours": 88,
+   "window_basis": "market RT",
+   "declared_simplifications": {},
+   "reconciled": true,
+   "gates": {
+    "G1_fleet_class_not_in_sidecar": [],
+    "G2_sidecar_classes_uncovered_mw": {
+     "OTHER": 392.193359375,
+     "biomass": 366.777099609375,
+     "hydro": 1650.5015869140625,
+     "nuclear": 2946.277587890625,
+     "solar": 69.82954406738281,
+     "wind": 339.7272644042969
+    },
+    "G3_dispatch_exceeds_available": []
+   },
+   "thermal_top1pct": {
+    "available_mw": 15977.155328693538,
+    "dispatched_mw": 8281.652835845947,
+    "idle_mw": 7695.5024928475905,
+    "idle_pct": 48.16566112383697,
+    "above_clearing_mw": 6843.365452961405,
+    "above_clearing_pct": 42.83218953671518
+   },
+   "per_class": {
+    "CC_CHP": {
+     "available_mw": 290.73056434045424,
+     "dispatched_mw": 112.91557312011719,
+     "idle_mw": 177.81499122033705,
+     "utilisation": 0.38838562906612617
+    },
+    "CC_REGULAR": {
+     "available_mw": 9780.15868005511,
+     "dispatched_mw": 7585.19970703125,
+     "idle_mw": 2194.9589730238604,
+     "utilisation": 0.7755702085386316
+    },
+    "COAL_BIT": {
+     "available_mw": 97.43622342218181,
+     "dispatched_mw": 77.35971069335938,
+     "idle_mw": 20.076512728822436,
+     "utilisation": 0.7939522692517255
+    },
+    "CT_CHP": {
+     "available_mw": 61.62733258669525,
+     "dispatched_mw": 53.30226135253906,
+     "idle_mw": 8.32507123415619,
+     "utilisation": 0.8649126794114484
+    },
+    "CT_PEAKER": {
+     "available_mw": 939.458098688754,
+     "dispatched_mw": 356.2515869140625,
+     "idle_mw": 583.2065117746915,
+     "utilisation": 0.379209660772843
+    },
+    "ST_CHP": {
+     "available_mw": 19.47485537354293,
+     "dispatched_mw": 19.474855422973633,
+     "idle_mw": -4.943070308627284e-08,
+     "utilisation": 1.0000000025381808
+    },
+    "ST_GAS": {
+     "available_mw": 113.63684695407284,
+     "dispatched_mw": 70.67082214355469,
+     "idle_mw": 42.96602481051815,
+     "utilisation": 0.6219005897982792
+    },
+    "oil": {
+     "available_mw": 4674.632727272727,
+     "dispatched_mw": 6.47831916809082,
+     "idle_mw": 4668.154408104636,
+     "utilisation": 0.0013858455938784307
+    }
+   },
+   "prices": {
+    "model_clearing": 88.71650408126051,
+    "market_rt": 267.06500018726695,
+    "highest_available_offer": 583.7266231415471,
+    "model_clearing_annual_mean": 36.86269457030903,
+    "market_rt_annual_mean": 35.70153195687047
+   },
+   "peak_band_dispatch_mw": {
+    "CC_REGULAR": {
+     "max_h": 695.9061889648438,
+     "mean_h": 23.320816040039062
+    },
+    "COAL_BIT": {
+     "max_h": 2.0435073375701904,
+     "mean_h": 0.14404043555259705
+    },
+    "CT_CHP": {
+     "max_h": 3.543588399887085,
+     "mean_h": 3.2120070457458496
+    },
+    "CT_PEAKER": {
+     "max_h": 55.07805633544922,
+     "mean_h": 0.04256062209606171
+    },
+    "ST_CHP": {
+     "max_h": 1.5441839694976807,
+     "mean_h": 1.4447946548461914
+    },
+    "ST_GAS": {
+     "max_h": 13.564677238464355,
+     "mean_h": 1.1374378204345703
+    }
+   },
+   "build_s": 6.1
+  },
+  {
+   "iso": "NEISO",
+   "year": 2024,
+   "bundle": "results/calibration/neiso112_mer_span",
+   "hours": 8760,
+   "window_hours": 88,
+   "window_basis": "market RT",
+   "declared_simplifications": {},
+   "reconciled": true,
+   "gates": {
+    "G1_fleet_class_not_in_sidecar": [],
+    "G2_sidecar_classes_uncovered_mw": {
+     "OTHER": 396.8597717285156,
+     "biomass": 395.9190673828125,
+     "hydro": 1353.7845458984375,
+     "nuclear": 2926.033447265625,
+     "solar": 68.51136016845703,
+     "wind": 321.875
+    },
+    "G3_dispatch_exceeds_available": []
+   },
+   "thermal_top1pct": {
+    "available_mw": 16932.0258267857,
+    "dispatched_mw": 8606.53127193451,
+    "idle_mw": 8325.49455485119,
+    "idle_pct": 49.17010309351545,
+    "above_clearing_mw": 7560.025382875628,
+    "above_clearing_pct": 44.64926678127321
+   },
+   "per_class": {
+    "CC_CHP": {
+     "available_mw": 298.4030213959239,
+     "dispatched_mw": 116.35857391357422,
+     "idle_mw": 182.04444748234965,
+     "utilisation": 0.3899376533429552
+    },
+    "CC_REGULAR": {
+     "available_mw": 10795.439463972403,
+     "dispatched_mw": 7891.9345703125,
+     "idle_mw": 2903.5048936599032,
+     "utilisation": 0.7310433814806925
+    },
+    "COAL_BIT": {
+     "available_mw": 97.80168591818182,
+     "dispatched_mw": 68.22648620605469,
+     "idle_mw": 29.57519971212713,
+     "utilisation": 0.6976003078631086
+    },
+    "CT_CHP": {
+     "available_mw": 66.05063193320838,
+     "dispatched_mw": 56.39485168457031,
+     "idle_mw": 9.655780248638067,
+     "utilisation": 0.8538124471178085
+    },
+    "CT_PEAKER": {
+     "available_mw": 1009.3133829378884,
+     "dispatched_mw": 409.3543701171875,
+     "idle_mw": 599.9590128207009,
+     "utilisation": 0.40557707550220656
+    },
+    "ST_CHP": {
+     "available_mw": 21.161361642259056,
+     "dispatched_mw": 20.65593147277832,
+     "idle_mw": 0.5054301694807357,
+     "utilisation": 0.976115423098701
+    },
+    "ST_GAS": {
+     "available_mw": 66.9062789858347,
+     "dispatched_mw": 35.37948226928711,
+     "idle_mw": 31.526796716547594,
+     "utilisation": 0.5287916591023931
+    },
+    "oil": {
+     "available_mw": 4576.949999999999,
+     "dispatched_mw": 8.227005958557129,
+     "idle_mw": 4568.722994041442,
+     "utilisation": 0.0017974865267387956
+    }
+   },
+   "prices": {
+    "model_clearing": 92.53566790532075,
+    "market_rt": 260.5236375982111,
+    "highest_available_offer": 556.8691978927274,
+    "model_clearing_annual_mean": 42.14901507785631,
+    "market_rt_annual_mean": 39.535871018326446
+   },
+   "peak_band_dispatch_mw": {
+    "CC_REGULAR": {
+     "max_h": 605.512451171875,
+     "mean_h": 24.293006896972656
+    },
+    "COAL_BIT": {
+     "max_h": 2.0251448154449463,
+     "mean_h": 0.1352430135011673
+    },
+    "CT_CHP": {
+     "max_h": 3.5453524589538574,
+     "mean_h": 3.224987745285034
+    },
+    "CT_PEAKER": {
+     "max_h": 49.788150787353516,
+     "mean_h": 0.00568357901647687
+    },
+    "ST_CHP": {
+     "max_h": 1.5390201807022095,
+     "mean_h": 1.4415525197982788
+    },
+    "ST_GAS": {
+     "max_h": 10.629419326782227,
+     "mean_h": 0.32441219687461853
+    }
+   },
+   "build_s": 6.0
+  },
+  {
+   "iso": "NEISO",
+   "year": 2025,
+   "bundle": "results/calibration/neiso112_mer_span",
+   "hours": 8760,
+   "window_hours": 88,
+   "window_basis": "market RT",
+   "declared_simplifications": {},
+   "reconciled": true,
+   "gates": {
+    "G1_fleet_class_not_in_sidecar": [],
+    "G2_sidecar_classes_uncovered_mw": {
+     "OTHER": 327.0985412597656,
+     "biomass": 324.6036376953125,
+     "hydro": 1299.4891357421875,
+     "nuclear": 3353.5810546875,
+     "solar": 84.88636016845703,
+     "wind": 462.4772644042969
+    },
+    "G3_dispatch_exceeds_available": []
+   },
+   "thermal_top1pct": {
+    "available_mw": 17232.245316736677,
+    "dispatched_mw": 9382.76077079773,
+    "idle_mw": 7849.484545938947,
+    "idle_pct": 45.55114206919513,
+    "above_clearing_mw": 7076.480295421357,
+    "above_clearing_pct": 41.06534096603409
+   },
+   "per_class": {
+    "CC_CHP": {
+     "available_mw": 289.3882779084524,
+     "dispatched_mw": 87.97090911865234,
+     "idle_mw": 201.41736878980004,
+     "utilisation": 0.3039891931852258
+    },
+    "CC_REGULAR": {
+     "available_mw": 11104.89563141256,
+     "dispatched_mw": 8375.3203125,
+     "idle_mw": 2729.5753189125608,
+     "utilisation": 0.7542007228603413
+    },
+    "COAL_BIT": {
+     "available_mw": 96.67918310727273,
+     "dispatched_mw": 93.37238311767578,
+     "idle_mw": 3.3067999895969535,
+     "utilisation": 0.9657961529740294
+    },
+    "CT_CHP": {
+     "available_mw": 65.7462622043847,
+     "dispatched_mw": 55.11448669433594,
+     "idle_mw": 10.631775510048769,
+     "utilisation": 0.8382907993005309
+    },
+    "CT_PEAKER": {
+     "available_mw": 1019.4979782336118,
+     "dispatched_mw": 520.1001586914062,
+     "idle_mw": 499.3978195422055,
+     "utilisation": 0.5101532026503229
+    },
+    "ST_CHP": {
+     "available_mw": 13.397915258819948,
+     "dispatched_mw": 12.690662384033203,
+     "idle_mw": 0.7072528747867448,
+     "utilisation": 0.9472117220385347
+    },
+    "ST_GAS": {
+     "available_mw": 65.69006861157352,
+     "dispatched_mw": 28.191064834594727,
+     "idle_mw": 37.499003776978796,
+     "utilisation": 0.4291526166807492
+    },
+    "oil": {
+     "available_mw": 4576.949999999999,
+     "dispatched_mw": 210.00079345703125,
+     "idle_mw": 4366.949206542968,
+     "utilisation": 0.045882256405910336
+    }
+   },
+   "prices": {
+    "model_clearing": 168.78089711142627,
+    "market_rt": 317.5056818181818,
+    "highest_available_offer": 558.496619303,
+    "model_clearing_annual_mean": 68.53852670607834,
+    "market_rt_annual_mean": 65.88346122987399
+   },
+   "peak_band_dispatch_mw": {
+    "CC_REGULAR": {
+     "max_h": 601.151611328125,
+     "mean_h": 12.847254753112793
+    },
+    "COAL_BIT": {
+     "max_h": 2.0692195892333984,
+     "mean_h": 0.4477527141571045
+    },
+    "CT_CHP": {
+     "max_h": 3.5453524589538574,
+     "mean_h": 3.2248916625976562
+    },
+    "CT_PEAKER": {
+     "max_h": 59.0305290222168,
+     "mean_h": 0.14169523119926453
+    },
+    "ST_CHP": {
+     "max_h": 0.49277329444885254,
+     "mean_h": 0.4631839394569397
+    },
+    "ST_GAS": {
+     "max_h": 10.226801872253418,
+     "mean_h": 0.2883668541908264
+    }
+   },
+   "build_s": 6.2
+  },
+  {
+   "iso": "NWPP",
+   "year": 2023,
+   "bundle": "results/calibration/nwpp44_takeorpay_reg",
+   "hours": 8760,
+   "window_hours": 88,
+   "window_basis": "model load (declared substitution, PRECOMMIT \u00a72.1)",
+   "declared_simplifications": {},
+   "reconciled": true,
+   "gates": {
+    "G1_fleet_class_not_in_sidecar": [],
+    "G2_sidecar_classes_uncovered_mw": {
+     "OTHER": 532.9761352539062,
+     "biomass": 326.2210693359375,
+     "hydro": 17604.86328125,
+     "nuclear": 1120.3936767578125,
+     "solar": 2883.6591796875,
+     "wind": 4719.0
+    },
+    "G3_dispatch_exceeds_available": []
+   },
+   "thermal_top1pct": {
+    "available_mw": 22851.75729994388,
+    "dispatched_mw": 16078.553223848343,
+    "idle_mw": 6773.204076095539,
+    "idle_pct": 29.639751495663628,
+    "above_clearing_mw": 6259.917353504635,
+    "above_clearing_pct": 27.39359284863404
+   },
+   "per_class": {
+    "CC_CHP": {
+     "available_mw": 958.8956013,
+     "dispatched_mw": 958.8955688476562,
+     "idle_mw": 3.245234370297112e-05,
+     "utilisation": 0.9999999661565413
+    },
+    "CC_REGULAR": {
+     "available_mw": 9550.614612477273,
+     "dispatched_mw": 8267.6015625,
+     "idle_mw": 1283.013049977273,
+     "utilisation": 0.8656617294240836
+    },
+    "COAL_BIT": {
+     "available_mw": 3587.0600000000004,
+     "dispatched_mw": 2378.78662109375,
+     "idle_mw": 1208.2733789062504,
+     "utilisation": 0.6631577450875508
+    },
+    "COAL_PRB": {
+     "available_mw": 4108.65655681818,
+     "dispatched_mw": 3315.20166015625,
+     "idle_mw": 793.4548966619304,
+     "utilisation": 0.8068821558362628
+    },
+    "COAL_WC": {
+     "available_mw": 86.33000000000003,
+     "dispatched_mw": 66.05699920654297,
+     "idle_mw": 20.273000793457058,
+     "utilisation": 0.7651685301348656
+    },
+    "CT_CHP": {
+     "available_mw": 95.13876557206959,
+     "dispatched_mw": 72.6733169555664,
+     "idle_mw": 22.46544861650318,
+     "utilisation": 0.7638665113908258
+    },
+    "CT_PEAKER": {
+     "available_mw": 2464.765458925,
+     "dispatched_mw": 794.5179443359375,
+     "idle_mw": 1670.2475145890626,
+     "utilisation": 0.32235032402736774
+    },
+    "ST_CHP": {
+     "available_mw": 4.378686669535713,
+     "dispatched_mw": 4.378686428070068,
+     "idle_mw": 2.4146564481242194e-07,
+     "utilisation": 0.9999999448543221
+    },
+    "ST_GAS": {
+     "available_mw": 1930.217618181818,
+     "dispatched_mw": 219.33631896972656,
+     "idle_mw": 1710.8812992120913,
+     "utilisation": 0.1136329483803655
+    },
+    "oil": {
+     "available_mw": 65.70000000000002,
+     "dispatched_mw": 1.1045453548431396,
+     "idle_mw": 64.59545464515688,
+     "utilisation": 0.016811953650580507
+    }
+   },
+   "prices": {
+    "model_clearing": 73.83792574666712,
+    "market_rt": null,
+    "highest_available_offer": 295.11183170427705,
+    "model_clearing_annual_mean": 46.15289419895315,
+    "market_rt_annual_mean": null
+   },
+   "peak_band_dispatch_mw": {
+    "CC_CHP": {
+     "max_h": 16.804988861083984,
+     "mean_h": 11.342182159423828
+    },
+    "CC_REGULAR": {
+     "max_h": 922.35888671875,
+     "mean_h": 643.9426879882812
+    },
+    "COAL_BIT": {
+     "max_h": 65.528564453125,
+     "mean_h": 31.963327407836914
+    },
+    "COAL_PRB": {
+     "max_h": 76.47774505615234,
+     "mean_h": 42.908329010009766
+    },
+    "COAL_WC": {
+     "max_h": 1.5770800113677979,
+     "mean_h": 0.6931317448616028
+    },
+    "CT_CHP": {
+     "max_h": 0.0,
+     "mean_h": 0.0
+    },
+    "CT_PEAKER": {
+     "max_h": 94.62577056884766,
+     "mean_h": 21.994781494140625
+    },
+    "ST_GAS": {
+     "max_h": 80.78237915039062,
+     "mean_h": 2.143899440765381
+    }
+   },
+   "build_s": 6.5
+  },
+  {
+   "iso": "NWPP",
+   "year": 2024,
+   "bundle": "results/calibration/nwpp44_takeorpay_reg",
+   "hours": 8760,
+   "window_hours": 88,
+   "window_basis": "model load (declared substitution, PRECOMMIT \u00a72.1)",
+   "declared_simplifications": {},
+   "reconciled": true,
+   "gates": {
+    "G1_fleet_class_not_in_sidecar": [],
+    "G2_sidecar_classes_uncovered_mw": {
+     "OTHER": 527.6475219726562,
+     "biomass": 283.8437194824219,
+     "hydro": 18867.0078125,
+     "nuclear": 1118.3009033203125,
+     "solar": 3947.386474609375,
+     "wind": 4222.89794921875
+    },
+    "G3_dispatch_exceeds_available": []
+   },
+   "thermal_top1pct": {
+    "available_mw": 23128.394632350177,
+    "dispatched_mw": 15218.555462300777,
+    "idle_mw": 7909.839170049399,
+    "idle_pct": 34.19968958409997,
+    "above_clearing_mw": 7642.7266935940315,
+    "above_clearing_pct": 33.044778139957835
+   },
+   "per_class": {
+    "CC_CHP": {
+     "available_mw": 1061.6081186454546,
+     "dispatched_mw": 964.934326171875,
+     "idle_mw": 96.67379247357962,
+     "utilisation": 0.908936460850611
+    },
+    "CC_REGULAR": {
+     "available_mw": 9443.536862931818,
+     "dispatched_mw": 8071.310546875,
+     "idle_mw": 1372.2263160568182,
+     "utilisation": 0.8546914851952195
+    },
+    "COAL_BIT": {
+     "available_mw": 3518.5295,
+     "dispatched_mw": 1498.72509765625,
+     "idle_mw": 2019.80440234375,
+     "utilisation": 0.42595211938858263
+    },
+    "COAL_PRB": {
+     "available_mw": 3938.2154318181815,
+     "dispatched_mw": 3134.972412109375,
+     "idle_mw": 803.2430197088065,
+     "utilisation": 0.7960388318985465
+    },
+    "COAL_WC": {
+     "available_mw": 86.33000000000003,
+     "dispatched_mw": 16.924297332763672,
+     "idle_mw": 69.40570266723635,
+     "utilisation": 0.1960419012251091
+    },
+    "CT_CHP": {
+     "available_mw": 99.33293108745337,
+     "dispatched_mw": 72.7908935546875,
+     "idle_mw": 26.542037532765875,
+     "utilisation": 0.7327971978457166
+    },
+    "CT_PEAKER": {
+     "available_mw": 2948.4473511977267,
+     "dispatched_mw": 1110.92626953125,
+     "idle_mw": 1837.5210816664767,
+     "utilisation": 0.37678348540969075
+    },
+    "ST_CHP": {
+     "available_mw": 4.378686669535713,
+     "dispatched_mw": 4.378686428070068,
+     "idle_mw": 2.4146564481242194e-07,
+     "utilisation": 0.9999999448543221
+    },
+    "ST_GAS": {
+     "available_mw": 1962.3157500000002,
+     "dispatched_mw": 342.6111145019531,
+     "idle_mw": 1619.704635498047,
+     "utilisation": 0.1745953037893892
+    },
+    "oil": {
+     "available_mw": 65.70000000000002,
+     "dispatched_mw": 0.9818181395530701,
+     "idle_mw": 64.71818186044695,
+     "utilisation": 0.014943959506135005
+    }
+   },
+   "prices": {
+    "model_clearing": 57.927799855693415,
+    "market_rt": null,
+    "highest_available_offer": 307.505965909091,
+    "model_clearing_annual_mean": 26.66871603766932,
+    "market_rt_annual_mean": null
+   },
+   "peak_band_dispatch_mw": {
+    "CC_CHP": {
+     "max_h": 16.804988861083984,
+     "mean_h": 12.801475524902344
+    },
+    "CC_REGULAR": {
+     "max_h": 922.1109619140625,
+     "mean_h": 631.3604125976562
+    },
+    "COAL_BIT": {
+     "max_h": 28.511478424072266,
+     "mean_h": 3.249706506729126
+    },
+    "COAL_PRB": {
+     "max_h": 72.60769653320312,
+     "mean_h": 25.550390243530273
+    },
+    "COAL_WC": {
+     "max_h": 0.9894000291824341,
+     "mean_h": 0.16581451892852783
+    },
+    "CT_CHP": {
+     "max_h": 1.9520974159240723,
+     "mean_h": 0.0031606380362063646
+    },
+    "CT_PEAKER": {
+     "max_h": 132.5970001220703,
+     "mean_h": 33.756431579589844
+    },
+    "ST_GAS": {
+     "max_h": 261.7184143066406,
+     "mean_h": 3.9264791011810303
+    }
+   },
+   "build_s": 5.2
+  },
+  {
+   "iso": "NWPP",
+   "year": 2025,
+   "bundle": "results/calibration/nwpp44_takeorpay_reg",
+   "hours": 8760,
+   "window_hours": 88,
+   "window_basis": "model load (declared substitution, PRECOMMIT \u00a72.1)",
+   "declared_simplifications": {},
+   "reconciled": true,
+   "gates": {
+    "G1_fleet_class_not_in_sidecar": [],
+    "G2_sidecar_classes_uncovered_mw": {
+     "OTHER": 440.2307434082031,
+     "biomass": 229.16871643066406,
+     "hydro": 17245.548828125,
+     "nuclear": 1049.3719482421875,
+     "solar": 4319.306640625,
+     "wind": 6221.056640625
+    },
+    "G3_dispatch_exceeds_available": []
+   },
+   "thermal_top1pct": {
+    "available_mw": 22220.14040016924,
+    "dispatched_mw": 14160.711154222488,
+    "idle_mw": 8059.429245946751,
+    "idle_pct": 36.27082953033621,
+    "above_clearing_mw": 8487.631644900603,
+    "above_clearing_pct": 38.19792085938376
+   },
+   "per_class": {
+    "CC_CHP": {
+     "available_mw": 1000.4825330499999,
+     "dispatched_mw": 811.5751342773438,
+     "idle_mw": 188.90739877265617,
+     "utilisation": 0.8111837113270068
+    },
+    "CC_REGULAR": {
+     "available_mw": 9445.748166511363,
+     "dispatched_mw": 7684.1767578125,
+     "idle_mw": 1761.5714086988628,
+     "utilisation": 0.8135064181634358
+    },
+    "COAL_BIT": {
+     "available_mw": 3041.168181818182,
+     "dispatched_mw": 1130.19580078125,
+     "idle_mw": 1910.972381036932,
+     "utilisation": 0.37163212726550204
+    },
+    "COAL_PRB": {
+     "available_mw": 3835.8231,
+     "dispatched_mw": 3111.4140625,
+     "idle_mw": 724.4090375000001,
+     "utilisation": 0.8111463905882417
+    },
+    "COAL_WC": {
+     "available_mw": 43.23756818181819,
+     "dispatched_mw": 3.380488634109497,
+     "idle_mw": 39.85707954770869,
+     "utilisation": 0.07818406021111578
+    },
+    "CT_CHP": {
+     "available_mw": 100.94587570844463,
+     "dispatched_mw": 74.45590209960938,
+     "idle_mw": 26.489973608835257,
+     "utilisation": 0.7375824081674767
+    },
+    "CT_PEAKER": {
+     "available_mw": 2999.4718862630675,
+     "dispatched_mw": 1259.4310302734375,
+     "idle_mw": 1740.04085598963,
+     "utilisation": 0.41988425897284093
+    },
+    "ST_GAS": {
+     "available_mw": 1687.3789977272727,
+     "dispatched_mw": 86.08197784423828,
+     "idle_mw": 1601.2970198830344,
+     "utilisation": 0.05101520047374177
+    },
+    "oil": {
+     "available_mw": 65.88409090909092,
+     "dispatched_mw": 0.0,
+     "idle_mw": 65.88409090909092,
+     "utilisation": 0.0
+    }
+   },
+   "prices": {
+    "model_clearing": 28.797659608844466,
+    "market_rt": null,
+    "highest_available_offer": 299.9579774832407,
+    "model_clearing_annual_mean": 28.92844505984386,
+    "market_rt_annual_mean": null
+   },
+   "peak_band_dispatch_mw": {
+    "CC_CHP": {
+     "max_h": 16.804988861083984,
+     "mean_h": 10.24381160736084
+    },
+    "CC_REGULAR": {
+     "max_h": 933.9635009765625,
+     "mean_h": 652.9878540039062
+    },
+    "COAL_BIT": {
+     "max_h": 20.519760131835938,
+     "mean_h": 2.4911742210388184
+    },
+    "COAL_PRB": {
+     "max_h": 67.73292541503906,
+     "mean_h": 33.006126403808594
+    },
+    "COAL_WC": {
+     "max_h": 0.9894000291824341,
+     "mean_h": 0.145697221159935
+    },
+    "CT_CHP": {
+     "max_h": 2.380127429962158,
+     "mean_h": 0.003764432156458497
+    },
+    "CT_PEAKER": {
+     "max_h": 147.73318481445312,
+     "mean_h": 58.039337158203125
+    },
+    "ST_GAS": {
+     "max_h": 215.2208251953125,
+     "mean_h": 3.093780994415283
+    }
+   },
+   "build_s": 5.1
+  },
+  {
+   "iso": "NYISO",
+   "year": 2022,
+   "bundle": "results/calibration/nyiso247_fuelinv_span",
+   "hours": 8760,
+   "window_hours": 88,
+   "window_basis": "market RT",
+   "declared_simplifications": {},
+   "reconciled": true,
+   "gates": {
+    "G1_fleet_class_not_in_sidecar": [],
+    "G2_sidecar_classes_uncovered_mw": {
+     "OTHER": 245.3949737548828,
+     "biomass": 127.95079803466797,
+     "hydro": 3753.6376953125,
+     "import": 3307.4384765625,
+     "nuclear": 3242.117431640625,
+     "solar": 16.088518142700195,
+     "wind": 642.6363525390625
+    },
+    "G3_dispatch_exceeds_available": []
+   },
+   "thermal_top1pct": {
+    "available_mw": 17889.732515840773,
+    "dispatched_mw": 10253.690643310547,
+    "idle_mw": 7636.041872530226,
+    "idle_pct": 42.68393541249854,
+    "above_clearing_mw": 9130.753585205663,
+    "above_clearing_pct": 51.039072703410625
+   },
+   "per_class": {
+    "CC_CHP": {
+     "available_mw": 2870.5321903217537,
+     "dispatched_mw": 2053.159423828125,
+     "idle_mw": 817.3727664936287,
+     "utilisation": 0.7152539277387409
+    },
+    "CC_REGULAR": {
+     "available_mw": 5096.366174769689,
+     "dispatched_mw": 4339.86767578125,
+     "idle_mw": 756.4984989884388,
+     "utilisation": 0.8515611961452857
+    },
+    "COAL_PRB": {
+     "available_mw": 178.00545454545457,
+     "dispatched_mw": 160.71788024902344,
+     "idle_mw": 17.28757429643113,
+     "utilisation": 0.9028817721312205
+    },
+    "CT_CHP": {
+     "available_mw": 333.8590010554381,
+     "dispatched_mw": 307.4579162597656,
+     "idle_mw": 26.40108479567249,
+     "utilisation": 0.9209214527324111
+    },
+    "CT_PEAKER": {
+     "available_mw": 2641.008800678985,
+     "dispatched_mw": 988.036376953125,
+     "idle_mw": 1652.9724237258602,
+     "utilisation": 0.3741132466878216
+    },
+    "ST_CHP": {
+     "available_mw": 275.49813759779113,
+     "dispatched_mw": 268.4294738769531,
+     "idle_mw": 7.068663720838003,
+     "utilisation": 0.9743422449876674
+    },
+    "ST_GAS": {
+     "available_mw": 3845.656393235294,
+     "dispatched_mw": 2076.215087890625,
+     "idle_mw": 1769.4413053446692,
+     "utilisation": 0.5398857504645483
+    },
+    "oil": {
+     "available_mw": 2648.8063636363645,
+     "dispatched_mw": 59.80680847167969,
+     "idle_mw": 2588.999555164685,
+     "utilisation": 0.022578777102292606
+    }
+   },
+   "prices": {
+    "model_clearing": 152.6346488104164,
+    "market_rt": 572.8973451094193,
+    "highest_available_offer": 1618.5543710024465,
+    "model_clearing_annual_mean": 68.68761251293607,
+    "market_rt_annual_mean": 74.74287466311564
+   },
+   "peak_band_dispatch_mw": {
+    "CC_CHP": {
+     "max_h": 376.7591247558594,
+     "mean_h": 2.741293430328369
+    },
+    "CC_REGULAR": {
+     "max_h": 730.2102661132812,
+     "mean_h": 18.22524070739746
+    },
+    "COAL_BIT": {
+     "max_h": 0.0,
+     "mean_h": 0.0
+    },
+    "COAL_PRB": {
+     "max_h": 9.214400291442871,
+     "mean_h": 0.6189001798629761
+    },
+    "CT_CHP": {
+     "max_h": 23.538625717163086,
+     "mean_h": 16.087251663208008
+    },
+    "CT_PEAKER": {
+     "max_h": 0.49606600403785706,
+     "mean_h": 0.00022651415201835334
+    },
+    "ST_CHP": {
+     "max_h": 44.25231170654297,
+     "mean_h": 23.53655242919922
+    },
+    "ST_GAS": {
+     "max_h": 488.3031921386719,
+     "mean_h": 53.62188720703125
+    }
+   },
+   "build_s": 7.9
+  },
+  {
+   "iso": "NYISO",
+   "year": 2023,
+   "bundle": "results/calibration/nyiso247_fuelinv_span",
+   "hours": 8760,
+   "window_hours": 88,
+   "window_basis": "market RT",
+   "declared_simplifications": {},
+   "reconciled": true,
+   "gates": {
+    "G1_fleet_class_not_in_sidecar": [],
+    "G2_sidecar_classes_uncovered_mw": {
+     "OTHER": 232.37857055664062,
+     "biomass": 99.80799102783203,
+     "hydro": 3809.94775390625,
+     "import": 3147.582275390625,
+     "nuclear": 2997.721923828125,
+     "solar": 47.73126220703125,
+     "wind": 496.18182373046875
+    },
+    "G3_dispatch_exceeds_available": []
+   },
+   "thermal_top1pct": {
+    "available_mw": 19044.36281697481,
+    "dispatched_mw": 11047.509698212147,
+    "idle_mw": 7996.853118762665,
+    "idle_pct": 41.99065726491427,
+    "above_clearing_mw": 8938.409078779727,
+    "above_clearing_pct": 46.93467124461972
+   },
+   "per_class": {
+    "CC_CHP": {
+     "available_mw": 2799.771118995206,
+     "dispatched_mw": 2389.8212890625,
+     "idle_mw": 409.94982993270605,
+     "utilisation": 0.8535773773965385
+    },
+    "CC_REGULAR": {
+     "available_mw": 5486.021661607257,
+     "dispatched_mw": 4683.91455078125,
+     "idle_mw": 802.1071108260066,
+     "utilisation": 0.8537907503283516
+    },
+    "CT_CHP": {
+     "available_mw": 329.02704208996005,
+     "dispatched_mw": 275.6438293457031,
+     "idle_mw": 53.38321274425692,
+     "utilisation": 0.8377543304490417
+    },
+    "CT_PEAKER": {
+     "available_mw": 2455.8310964974416,
+     "dispatched_mw": 512.563720703125,
+     "idle_mw": 1943.2673757943166,
+     "utilisation": 0.20871293690928266
+    },
+    "ST_CHP": {
+     "available_mw": 231.5745124507238,
+     "dispatched_mw": 226.01966857910156,
+     "idle_mw": 5.554843871622239,
+     "utilisation": 0.9760127148154776
+    },
+    "ST_GAS": {
+     "available_mw": 5170.256476243315,
+     "dispatched_mw": 2959.362548828125,
+     "idle_mw": 2210.89392741519,
+     "utilisation": 0.5723821559773732
+    },
+    "oil": {
+     "available_mw": 2571.88090909091,
+     "dispatched_mw": 0.18409091234207153,
+     "idle_mw": 2571.696818178568,
+     "utilisation": 7.157831907821217e-05
+    }
+   },
+   "prices": {
+    "model_clearing": 58.197866441003406,
+    "market_rt": 216.59509199315852,
+    "highest_available_offer": 522.6589929402261,
+    "model_clearing_annual_mean": 30.476545119574403,
+    "market_rt_annual_mean": 30.28345132769515
+   },
+   "peak_band_dispatch_mw": {
+    "CC_CHP": {
+     "max_h": 393.7383728027344,
+     "mean_h": 7.924348831176758
+    },
+    "CC_REGULAR": {
+     "max_h": 1004.9346923828125,
+     "mean_h": 27.89523696899414
+    },
+    "COAL_BIT": {
+     "max_h": 0.0,
+     "mean_h": 0.0
+    },
+    "COAL_PRB": {
+     "max_h": 0.0,
+     "mean_h": 0.0
+    },
+    "CT_CHP": {
+     "max_h": 22.29155731201172,
+     "mean_h": 6.00538969039917
+    },
+    "CT_PEAKER": {
+     "max_h": 30.66465187072754,
+     "mean_h": 0.024636080488562584
+    },
+    "ST_CHP": {
+     "max_h": 44.25231170654297,
+     "mean_h": 11.39877986907959
+    },
+    "ST_GAS": {
+     "max_h": 436.80914306640625,
+     "mean_h": 79.62201690673828
+    }
+   },
+   "build_s": 6.5
+  },
+  {
+   "iso": "NYISO",
+   "year": 2024,
+   "bundle": "results/calibration/nyiso247_fuelinv_span",
+   "hours": 8760,
+   "window_hours": 88,
+   "window_basis": "market RT",
+   "declared_simplifications": {},
+   "reconciled": true,
+   "gates": {
+    "G1_fleet_class_not_in_sidecar": [],
+    "G2_sidecar_classes_uncovered_mw": {
+     "OTHER": 258.3719787597656,
+     "biomass": 89.77484130859375,
+     "hydro": 3783.45947265625,
+     "import": 2993.43603515625,
+     "nuclear": 3226.8935546875,
+     "solar": 86.44104766845703,
+     "wind": 483.7954406738281
+    },
+    "G3_dispatch_exceeds_available": []
+   },
+   "thermal_top1pct": {
+    "available_mw": 17697.999634172047,
+    "dispatched_mw": 11139.34709739685,
+    "idle_mw": 6558.6525367751965,
+    "idle_pct": 37.058722298261735,
+    "above_clearing_mw": 6703.704837995831,
+    "above_clearing_pct": 37.87831945171947
+   },
+   "per_class": {
+    "CC_CHP": {
+     "available_mw": 3016.548485147018,
+     "dispatched_mw": 2720.434814453125,
+     "idle_mw": 296.1136706938928,
+     "utilisation": 0.9018369264900242
+    },
+    "CC_REGULAR": {
+     "available_mw": 5019.071644342344,
+     "dispatched_mw": 4429.447265625,
+     "idle_mw": 589.6243787173444,
+     "utilisation": 0.8825232193324063
+    },
+    "CT_CHP": {
+     "available_mw": 332.6624033487265,
+     "dispatched_mw": 305.74920654296875,
+     "idle_mw": 26.913196805757764,
+     "utilisation": 0.9190975699843515
+    },
+    "CT_PEAKER": {
+     "available_mw": 2272.209805703472,
+     "dispatched_mw": 420.81756591796875,
+     "idle_mw": 1851.392239785503,
+     "utilisation": 0.18520189678861299
+    },
+    "ST_CHP": {
+     "available_mw": 278.00213350259054,
+     "dispatched_mw": 273.6937561035156,
+     "idle_mw": 4.308377399074914,
+     "utilisation": 0.9845023585078538
+    },
+    "ST_GAS": {
+     "available_mw": 4212.932207582442,
+     "dispatched_mw": 2980.953125,
+     "idle_mw": 1231.979082582442,
+     "utilisation": 0.707572061006554
+    },
+    "oil": {
+     "available_mw": 2566.572954545455,
+     "dispatched_mw": 8.251363754272461,
+     "idle_mw": 2558.3215907911826,
+     "utilisation": 0.003214934428284659
+    }
+   },
+   "prices": {
+    "model_clearing": 74.93833477324905,
+    "market_rt": 228.56675720214844,
+    "highest_available_offer": 629.4505574282653,
+    "model_clearing_annual_mean": 36.87594792927317,
+    "market_rt_annual_mean": 35.970391853351025
+   },
+   "peak_band_dispatch_mw": {
+    "CC_CHP": {
+     "max_h": 381.993896484375,
+     "mean_h": 32.331695556640625
+    },
+    "CC_REGULAR": {
+     "max_h": 829.5728759765625,
+     "mean_h": 25.59579849243164
+    },
+    "COAL_BIT": {
+     "max_h": 0.0,
+     "mean_h": 0.0
+    },
+    "COAL_PRB": {
+     "max_h": 0.0,
+     "mean_h": 0.0
+    },
+    "CT_CHP": {
+     "max_h": 23.538625717163086,
+     "mean_h": 5.400644302368164
+    },
+    "CT_PEAKER": {
+     "max_h": 28.25859260559082,
+     "mean_h": 0.006506666541099548
+    },
+    "ST_CHP": {
+     "max_h": 44.25231170654297,
+     "mean_h": 10.031161308288574
+    },
+    "ST_GAS": {
+     "max_h": 429.8776550292969,
+     "mean_h": 66.5828628540039
+    }
+   },
+   "build_s": 6.5
+  },
+  {
+   "iso": "NYISO",
+   "year": 2025,
+   "bundle": "results/calibration/nyiso247_fuelinv_span",
+   "hours": 8760,
+   "window_hours": 88,
+   "window_basis": "market RT",
+   "declared_simplifications": {},
+   "reconciled": true,
+   "gates": {
+    "G1_fleet_class_not_in_sidecar": [],
+    "G2_sidecar_classes_uncovered_mw": {
+     "OTHER": 219.42933654785156,
+     "biomass": 76.70685577392578,
+     "hydro": 3695.6982421875,
+     "import": 2946.448486328125,
+     "nuclear": 3260.6748046875,
+     "solar": 237.29443359375,
+     "wind": 650.9232788085938
+    },
+    "G3_dispatch_exceeds_available": []
+   },
+   "thermal_top1pct": {
+    "available_mw": 18770.75447717501,
+    "dispatched_mw": 13662.10729598999,
+    "idle_mw": 5108.647181185021,
+    "idle_pct": 27.21599276894846,
+    "above_clearing_mw": 5325.980450712111,
+    "above_clearing_pct": 28.37382193234924
+   },
+   "per_class": {
+    "CC_CHP": {
+     "available_mw": 3090.0960757401463,
+     "dispatched_mw": 2919.105224609375,
+     "idle_mw": 170.99085113077126,
+     "utilisation": 0.9446648754797
+    },
+    "CC_REGULAR": {
+     "available_mw": 5223.975405338969,
+     "dispatched_mw": 4907.6630859375,
+     "idle_mw": 316.3123194014688,
+     "utilisation": 0.9394498834971172
+    },
+    "CT_CHP": {
+     "available_mw": 325.45333435336073,
+     "dispatched_mw": 321.578369140625,
+     "idle_mw": 3.874965212735731,
+     "utilisation": 0.9880936380005605
+    },
+    "CT_PEAKER": {
+     "available_mw": 2218.504926796259,
+     "dispatched_mw": 1014.8213500976562,
+     "idle_mw": 1203.6835766986028,
+     "utilisation": 0.4574347966687452
+    },
+    "ST_CHP": {
+     "available_mw": 240.33728939369246,
+     "dispatched_mw": 239.87319946289062,
+     "idle_mw": 0.46408993080183336,
+     "utilisation": 0.9980690057211987
+    },
+    "ST_GAS": {
+     "available_mw": 5143.765854643494,
+     "dispatched_mw": 4222.49365234375,
+     "idle_mw": 921.2722022997441,
+     "utilisation": 0.8208953851450931
+    },
+    "oil": {
+     "available_mw": 2528.621590909091,
+     "dispatched_mw": 36.57241439819336,
+     "idle_mw": 2492.0491765108977,
+     "utilisation": 0.014463379783546351
+    }
+   },
+   "prices": {
+    "model_clearing": 146.99087545826788,
+    "market_rt": 446.49117400429463,
+    "highest_available_offer": 917.4724416856079,
+    "model_clearing_annual_mean": 57.14022658566465,
+    "market_rt_annual_mean": 60.719330023418664
+   },
+   "peak_band_dispatch_mw": {
+    "CC_CHP": {
+     "max_h": 407.7451171875,
+     "mean_h": 129.9381866455078
+    },
+    "CC_REGULAR": {
+     "max_h": 884.3732299804688,
+     "mean_h": 127.01606750488281
+    },
+    "COAL_BIT": {
+     "max_h": 0.0,
+     "mean_h": 0.0
+    },
+    "COAL_PRB": {
+     "max_h": 0.0,
+     "mean_h": 0.0
+    },
+    "CT_CHP": {
+     "max_h": 23.538625717163086,
+     "mean_h": 11.535768508911133
+    },
+    "CT_PEAKER": {
+     "max_h": 32.55512619018555,
+     "mean_h": 0.6709532141685486
+    },
+    "ST_CHP": {
+     "max_h": 44.25231170654297,
+     "mean_h": 19.36687469482422
+    },
+    "ST_GAS": {
+     "max_h": 1099.18994140625,
+     "mean_h": 67.37885284423828
+    }
+   },
+   "build_s": 6.6
+  },
+  {
+   "iso": "PJM",
+   "year": 2020,
+   "bundle": "results/calibration/pjm_h15_coalwindow_touchpoint",
+   "hours": 8760,
+   "window_hours": 88,
+   "window_basis": "market RT",
+   "declared_simplifications": {
+    "pjm_da_virtual_bids": "data/raw/pjm-da-virtuals/ is gitignored under PJM DataMiner2's non-member redistribution restriction (its README; docs/data-licensing.md \u00a74) \u2014 re-fetch only, never hydratable. Same line as the pjm-h15 probe."
+   },
+   "reconciled": true,
+   "gates": {
+    "G1_fleet_class_not_in_sidecar": [],
+    "G2_sidecar_classes_uncovered_mw": {
+     "OTHER": 884.9799194335938,
+     "VIRTUAL_DEC": -4300.28076171875,
+     "VIRTUAL_INC": 217.59046936035156,
+     "biomass": 679.2986450195312,
+     "hydro": 2439.3935546875,
+     "import": -3367.185302734375,
+     "nuclear": 31337.19921875,
+     "solar": 661.852294921875,
+     "wind": 1875.9432373046875
+    },
+    "G3_dispatch_exceeds_available": []
+   },
+   "thermal_top1pct": {
+    "available_mw": 104537.35522706,
+    "dispatched_mw": 78366.83123195171,
+    "idle_mw": 26170.52399510829,
+    "idle_pct": 25.03461460093829,
+    "above_clearing_mw": 23269.269821260958,
+    "above_clearing_pct": 22.259286903441378
+   },
+   "per_class": {
+    "CC_CHP": {
+     "available_mw": 1245.759218347033,
+     "dispatched_mw": 1087.2911376953125,
+     "idle_mw": 158.46808065172058,
+     "utilisation": 0.872793973090572
+    },
+    "CC_REGULAR": {
+     "available_mw": 43046.8500256841,
+     "dispatched_mw": 39887.58984375,
+     "idle_mw": 3159.2601819341,
+     "utilisation": 0.9266087952997928
+    },
+    "COAL_BIT": {
+     "available_mw": 25283.613077089456,
+     "dispatched_mw": 23974.6015625,
+     "idle_mw": 1309.011514589456,
+     "utilisation": 0.948226880762718
+    },
+    "COAL_PRB": {
+     "available_mw": 1281.2087226988635,
+     "dispatched_mw": 1183.4652099609375,
+     "idle_mw": 97.74351273792604,
+     "utilisation": 0.9237099225081534
+    },
+    "COAL_WC": {
+     "available_mw": 663.6030068181818,
+     "dispatched_mw": 588.4688110351562,
+     "idle_mw": 75.13419578302558,
+     "utilisation": 0.8867783976096248
+    },
+    "CT_CHP": {
+     "available_mw": 260.26017987809286,
+     "dispatched_mw": 238.42747497558594,
+     "idle_mw": 21.83270490250692,
+     "utilisation": 0.9161120041001529
+    },
+    "CT_PEAKER": {
+     "available_mw": 21224.328531373394,
+     "dispatched_mw": 7406.43603515625,
+     "idle_mw": 13817.892496217144,
+     "utilisation": 0.3489597338360174
+    },
+    "ST_CHP": {
+     "available_mw": 132.41639619178534,
+     "dispatched_mw": 130.46249389648438,
+     "idle_mw": 1.9539022953009635,
+     "utilisation": 0.9852442571200093
+    },
+    "ST_GAS": {
+     "available_mw": 7448.593041456532,
+     "dispatched_mw": 3869.82275390625,
+     "idle_mw": 3578.770287550282,
+     "utilisation": 0.5195374122828339
+    },
+    "oil": {
+     "available_mw": 3950.723027522562,
+     "dispatched_mw": 0.2659090757369995,
+     "idle_mw": 3950.457118446825,
+     "utilisation": 6.730643324894052e-05
+    }
+   },
+   "prices": {
+    "model_clearing": 32.885688716680164,
+    "market_rt": 90.32224707169966,
+    "highest_available_offer": 520.38036,
+    "model_clearing_annual_mean": 23.910123977170596,
+    "market_rt_annual_mean": 20.237425524985085
+   },
+   "peak_band_dispatch_mw": {
+    "CC_CHP": {
+     "max_h": 31.638397216796875,
+     "mean_h": 4.900664806365967
+    },
+    "CC_REGULAR": {
+     "max_h": 0.0,
+     "mean_h": 0.0
+    },
+    "COAL_BIT": {
+     "max_h": 679.4873657226562,
+     "mean_h": 193.18959045410156
+    },
+    "COAL_PRB": {
+     "max_h": 61.30400085449219,
+     "mean_h": 1.766136884689331
+    },
+    "COAL_WC": {
+     "max_h": 20.494300842285156,
+     "mean_h": 1.572000503540039
+    },
+    "CT_CHP": {
+     "max_h": 9.592001914978027,
+     "mean_h": 1.5926486253738403
+    },
+    "CT_PEAKER": {
+     "max_h": 1849.703125,
+     "mean_h": 2.363598346710205
+    },
+    "ST_CHP": {
+     "max_h": 17.181072235107422,
+     "mean_h": 11.608223915100098
+    },
+    "ST_GAS": {
+     "max_h": 1442.5404052734375,
+     "mean_h": 31.245162963867188
+    }
+   },
+   "build_s": 40.1
+  },
+  {
+   "iso": "PJM",
+   "year": 2021,
+   "bundle": "results/calibration/pjm_h15_coalwindow_touchpoint",
+   "hours": 8760,
+   "window_hours": 88,
+   "window_basis": "market RT",
+   "declared_simplifications": {
+    "pjm_da_virtual_bids": "data/raw/pjm-da-virtuals/ is gitignored under PJM DataMiner2's non-member redistribution restriction (its README; docs/data-licensing.md \u00a74) \u2014 re-fetch only, never hydratable. Same line as the pjm-h15 probe."
+   },
+   "reconciled": true,
+   "gates": {
+    "G1_fleet_class_not_in_sidecar": [],
+    "G2_sidecar_classes_uncovered_mw": {
+     "OTHER": 853.2562255859375,
+     "VIRTUAL_DEC": -4614.06298828125,
+     "VIRTUAL_INC": 72.0976791381836,
+     "biomass": 672.981201171875,
+     "hydro": 2626.358642578125,
+     "import": -2221.633056640625,
+     "nuclear": 31149.83203125,
+     "solar": 693.7841186523438,
+     "wind": 2127.375
+    },
+    "G3_dispatch_exceeds_available": []
+   },
+   "thermal_top1pct": {
+    "available_mw": 99564.02738279593,
+    "dispatched_mw": 72584.31797409058,
+    "idle_mw": 26979.709408705356,
+    "idle_pct": 27.097848608489784,
+    "above_clearing_mw": 26124.049791878744,
+    "above_clearing_pct": 26.238442215117573
+   },
+   "per_class": {
+    "CC_CHP": {
+     "available_mw": 1254.0776279085421,
+     "dispatched_mw": 1125.3262939453125,
+     "idle_mw": 128.75133396322963,
+     "utilisation": 0.8973338403477051
+    },
+    "CC_REGULAR": {
+     "available_mw": 41384.14599564336,
+     "dispatched_mw": 37918.796875,
+     "idle_mw": 3465.349120643361,
+     "utilisation": 0.916263848455199
+    },
+    "COAL_BIT": {
+     "available_mw": 22268.476165330907,
+     "dispatched_mw": 21694.908203125,
+     "idle_mw": 573.567962205907,
+     "utilisation": 0.9742430529171602
+    },
+    "COAL_PRB": {
+     "available_mw": 1365.22049443133,
+     "dispatched_mw": 1295.40576171875,
+     "idle_mw": 69.81473271258005,
+     "utilisation": 0.9488619362239645
+    },
+    "COAL_WC": {
+     "available_mw": 785.1143971590908,
+     "dispatched_mw": 767.4174194335938,
+     "idle_mw": 17.69697772549705,
+     "utilisation": 0.9774593641518574
+    },
+    "CT_CHP": {
+     "available_mw": 268.8070623961287,
+     "dispatched_mw": 224.87425231933594,
+     "idle_mw": 43.93281007679275,
+     "utilisation": 0.8365637804112045
+    },
+    "CT_PEAKER": {
+     "available_mw": 21445.11299459333,
+     "dispatched_mw": 6607.2001953125,
+     "idle_mw": 14837.912799280832,
+     "utilisation": 0.3080981758864262
+    },
+    "ST_CHP": {
+     "available_mw": 131.58598111251385,
+     "dispatched_mw": 129.799560546875,
+     "idle_mw": 1.7864205656388492,
+     "utilisation": 0.9864239294297517
+    },
+    "ST_GAS": {
+     "available_mw": 6696.4941582398715,
+     "dispatched_mw": 2781.9638671875,
+     "idle_mw": 3914.5302910523715,
+     "utilisation": 0.41543586859765447
+    },
+    "oil": {
+     "available_mw": 3964.9925059808606,
+     "dispatched_mw": 38.625545501708984,
+     "idle_mw": 3926.3669604791517,
+     "utilisation": 0.009741644011544932
+    }
+   },
+   "prices": {
+    "model_clearing": 69.68011308903375,
+    "market_rt": 189.21094773032448,
+    "highest_available_offer": 636.949795892731,
+    "model_clearing_annual_mean": 37.21527750343382,
+    "market_rt_annual_mean": 37.142326363580956
+   },
+   "peak_band_dispatch_mw": {
+    "CC_CHP": {
+     "max_h": 31.638397216796875,
+     "mean_h": 2.816671133041382
+    },
+    "CC_REGULAR": {
+     "max_h": 0.0,
+     "mean_h": 0.0
+    },
+    "COAL_BIT": {
+     "max_h": 724.3994140625,
+     "mean_h": 277.2261047363281
+    },
+    "COAL_PRB": {
+     "max_h": 61.30400085449219,
+     "mean_h": 4.652076721191406
+    },
+    "COAL_WC": {
+     "max_h": 23.795162200927734,
+     "mean_h": 5.898568630218506
+    },
+    "CT_CHP": {
+     "max_h": 10.69906234741211,
+     "mean_h": 1.4108747243881226
+    },
+    "CT_PEAKER": {
+     "max_h": 720.2182006835938,
+     "mean_h": 4.653304100036621
+    },
+    "ST_CHP": {
+     "max_h": 17.181072235107422,
+     "mean_h": 10.988089561462402
+    },
+    "ST_GAS": {
+     "max_h": 1095.59228515625,
+     "mean_h": 21.141490936279297
+    }
+   },
+   "build_s": 36.8
+  },
+  {
+   "iso": "PJM",
+   "year": 2022,
+   "bundle": "results/calibration/pjm_h15_coalwindow_touchpoint",
+   "hours": 8760,
+   "window_hours": 88,
+   "window_basis": "market RT",
+   "declared_simplifications": {
+    "pjm_da_virtual_bids": "data/raw/pjm-da-virtuals/ is gitignored under PJM DataMiner2's non-member redistribution restriction (its README; docs/data-licensing.md \u00a74) \u2014 re-fetch only, never hydratable. Same line as the pjm-h15 probe."
+   },
+   "reconciled": true,
+   "gates": {
+    "G1_fleet_class_not_in_sidecar": [],
+    "G2_sidecar_classes_uncovered_mw": {
+     "OTHER": 801.2062377929688,
+     "VIRTUAL_DEC": -6743.8779296875,
+     "VIRTUAL_INC": 58.192928314208984,
+     "biomass": 680.195068359375,
+     "hydro": 3011.692138671875,
+     "import": -927.0014038085938,
+     "nuclear": 31632.6640625,
+     "solar": 1317.852294921875,
+     "wind": 4186.76123046875
+    },
+    "G3_dispatch_exceeds_available": []
+   },
+   "thermal_top1pct": {
+    "available_mw": 107502.64590890628,
+    "dispatched_mw": 88915.27151870728,
+    "idle_mw": 18587.37439019901,
+    "idle_pct": 17.290155263666026,
+    "above_clearing_mw": 18513.13724929343,
+    "above_clearing_pct": 17.221099157857726
+   },
+   "per_class": {
+    "CC_CHP": {
+     "available_mw": 1288.634605718963,
+     "dispatched_mw": 1163.2032470703125,
+     "idle_mw": 125.43135864865053,
+     "utilisation": 0.9026633631504338
+    },
+    "CC_REGULAR": {
+     "available_mw": 44368.6686178513,
+     "dispatched_mw": 42423.06640625,
+     "idle_mw": 1945.6022116012973,
+     "utilisation": 0.9561491865271228
+    },
+    "COAL_BIT": {
+     "available_mw": 25983.593255765198,
+     "dispatched_mw": 25790.533203125,
+     "idle_mw": 193.06005264019768,
+     "utilisation": 0.9925699247698406
+    },
+    "COAL_PRB": {
+     "available_mw": 2255.0160847985876,
+     "dispatched_mw": 2239.38427734375,
+     "idle_mw": 15.631807454837599,
+     "utilisation": 0.99306798405554
+    },
+    "COAL_WC": {
+     "available_mw": 837.4729420454546,
+     "dispatched_mw": 832.3696899414062,
+     "idle_mw": 5.103252104048352,
+     "utilisation": 0.9939063677787797
+    },
+    "CT_CHP": {
+     "available_mw": 272.92576258877193,
+     "dispatched_mw": 249.4140167236328,
+     "idle_mw": 23.51174586513912,
+     "utilisation": 0.9138529626440388
+    },
+    "CT_PEAKER": {
+     "available_mw": 21789.483904373526,
+     "dispatched_mw": 12257.23828125,
+     "idle_mw": 9532.245623123526,
+     "utilisation": 0.5625299954346216
+    },
+    "ST_CHP": {
+     "available_mw": 142.43023458013033,
+     "dispatched_mw": 141.01016235351562,
+     "idle_mw": 1.4200722266147068,
+     "utilisation": 0.9900296995873037
+    },
+    "ST_GAS": {
+     "available_mw": 6612.368663730872,
+     "dispatched_mw": 3765.8203125,
+     "idle_mw": 2846.548351230872,
+     "utilisation": 0.5695115478294015
+    },
+    "oil": {
+     "available_mw": 3952.051837453482,
+     "dispatched_mw": 53.2319221496582,
+     "idle_mw": 3898.819915303824,
+     "utilisation": 0.013469439253094
+    }
+   },
+   "prices": {
+    "model_clearing": 120.79959387321142,
+    "market_rt": 679.0037033774636,
+    "highest_available_offer": 699.6448354504973,
+    "model_clearing_annual_mean": 64.02594461193763,
+    "market_rt_annual_mean": 68.79193146101552
+   },
+   "peak_band_dispatch_mw": {
+    "CC_CHP": {
+     "max_h": 35.84286880493164,
+     "mean_h": 3.912107229232788
+    },
+    "CC_REGULAR": {
+     "max_h": 0.0,
+     "mean_h": 0.0
+    },
+    "COAL_BIT": {
+     "max_h": 640.879638671875,
+     "mean_h": 153.37942504882812
+    },
+    "COAL_PRB": {
+     "max_h": 60.35599899291992,
+     "mean_h": 3.6949992179870605
+    },
+    "COAL_WC": {
+     "max_h": 24.75090789794922,
+     "mean_h": 3.669631242752075
+    },
+    "CT_CHP": {
+     "max_h": 10.69906234741211,
+     "mean_h": 1.6635900735855103
+    },
+    "CT_PEAKER": {
+     "max_h": 674.7486572265625,
+     "mean_h": 0.29231441020965576
+    },
+    "ST_CHP": {
+     "max_h": 17.181072235107422,
+     "mean_h": 12.602835655212402
+    },
+    "ST_GAS": {
+     "max_h": 1127.36572265625,
+     "mean_h": 21.185466766357422
+    }
+   },
+   "build_s": 37.7
+  },
+  {
+   "iso": "PJM",
+   "year": 2023,
+   "bundle": "results/calibration/pjm_h15_coalwindow_span",
+   "hours": 8760,
+   "window_hours": 88,
+   "window_basis": "market RT",
+   "declared_simplifications": {
+    "pjm_da_virtual_bids": "data/raw/pjm-da-virtuals/ is gitignored under PJM DataMiner2's non-member redistribution restriction (its README; docs/data-licensing.md \u00a74) \u2014 re-fetch only, never hydratable. Same line as the pjm-h15 probe."
+   },
+   "reconciled": true,
+   "gates": {
+    "G1_fleet_class_not_in_sidecar": [],
+    "G2_sidecar_classes_uncovered_mw": {
+     "OTHER": 845.5985717773438,
+     "VIRTUAL_DEC": -5889.61767578125,
+     "VIRTUAL_INC": 323.48004150390625,
+     "biomass": 588.1954956054688,
+     "hydro": 2569.52978515625,
+     "import": -2210.93115234375,
+     "nuclear": 31314.57421875,
+     "solar": 1422.75,
+     "wind": 2824.5341796875
+    },
+    "G3_dispatch_exceeds_available": []
+   },
+   "thermal_top1pct": {
+    "available_mw": 104625.67147775339,
+    "dispatched_mw": 77222.2768766582,
+    "idle_mw": 27403.39460109519,
+    "idle_pct": 26.191845857755848,
+    "above_clearing_mw": 25353.3864058072,
+    "above_clearing_pct": 24.23247186633168
+   },
+   "per_class": {
+    "CC_CHP": {
+     "available_mw": 1348.873843697842,
+     "dispatched_mw": 1159.0965576171875,
+     "idle_mw": 189.77728608065445,
+     "utilisation": 0.8593068677494751
+    },
+    "CC_REGULAR": {
+     "available_mw": 47798.74561347768,
+     "dispatched_mw": 44754.5390625,
+     "idle_mw": 3044.2065509776803,
+     "utilisation": 0.9363119991559086
+    },
+    "COAL_BIT": {
+     "available_mw": 20713.94993308376,
+     "dispatched_mw": 16935.169921875,
+     "idle_mw": 3778.7800112087607,
+     "utilisation": 0.8175731802280068
+    },
+    "COAL_PRB": {
+     "available_mw": 1056.402923096591,
+     "dispatched_mw": 953.7517700195312,
+     "idle_mw": 102.65115307705969,
+     "utilisation": 0.9028295446436644
+    },
+    "COAL_WC": {
+     "available_mw": 848.7426548325958,
+     "dispatched_mw": 766.466064453125,
+     "idle_mw": 82.2765903794708,
+     "utilisation": 0.9030606157107788
+    },
+    "CT_CHP": {
+     "available_mw": 266.5899074848748,
+     "dispatched_mw": 249.4511260986328,
+     "idle_mw": 17.138781386241988,
+     "utilisation": 0.9357110644287449
+    },
+    "CT_PEAKER": {
+     "available_mw": 21411.656969234347,
+     "dispatched_mw": 7820.2060546875,
+     "idle_mw": 13591.450914546847,
+     "utilisation": 0.36523124137118756
+    },
+    "ST_CHP": {
+     "available_mw": 144.5820506903319,
+     "dispatched_mw": 134.57252502441406,
+     "idle_mw": 10.009525665917835,
+     "utilisation": 0.9307692371347229
+    },
+    "ST_GAS": {
+     "available_mw": 7074.423913893835,
+     "dispatched_mw": 4448.76708984375,
+     "idle_mw": 2625.6568240500847,
+     "utilisation": 0.628852206765074
+    },
+    "oil": {
+     "available_mw": 3961.7036682615635,
+     "dispatched_mw": 0.25670453906059265,
+     "idle_mw": 3961.446963722503,
+     "utilisation": 6.47965018477107e-05
+    }
+   },
+   "prices": {
+    "model_clearing": 39.23244233265098,
+    "market_rt": 123.09756417707963,
+    "highest_available_offer": 583.3112440722125,
+    "model_clearing_annual_mean": 29.1581456926933,
+    "market_rt_annual_mean": 28.439189922006708
+   },
+   "peak_band_dispatch_mw": {
+    "CC_CHP": {
+     "max_h": 35.84286880493164,
+     "mean_h": 6.404512405395508
+    },
+    "CC_REGULAR": {
+     "max_h": 0.0,
+     "mean_h": 0.0
+    },
+    "COAL_BIT": {
+     "max_h": 535.5874633789062,
+     "mean_h": 46.99644088745117
+    },
+    "COAL_PRB": {
+     "max_h": 51.40999984741211,
+     "mean_h": 0.6775518655776978
+    },
+    "COAL_WC": {
+     "max_h": 23.994308471679688,
+     "mean_h": 2.1900808811187744
+    },
+    "CT_CHP": {
+     "max_h": 10.69906234741211,
+     "mean_h": 3.118474245071411
+    },
+    "CT_PEAKER": {
+     "max_h": 854.822509765625,
+     "mean_h": 7.306154727935791
+    },
+    "ST_CHP": {
+     "max_h": 17.181072235107422,
+     "mean_h": 9.821968078613281
+    },
+    "ST_GAS": {
+     "max_h": 995.2200927734375,
+     "mean_h": 27.581430435180664
+    }
+   },
+   "build_s": 24.2
+  },
+  {
+   "iso": "PJM",
+   "year": 2024,
+   "bundle": "results/calibration/pjm_h15_coalwindow_span",
+   "hours": 8760,
+   "window_hours": 88,
+   "window_basis": "market RT",
+   "declared_simplifications": {
+    "pjm_da_virtual_bids": "data/raw/pjm-da-virtuals/ is gitignored under PJM DataMiner2's non-member redistribution restriction (its README; docs/data-licensing.md \u00a74) \u2014 re-fetch only, never hydratable. Same line as the pjm-h15 probe."
+   },
+   "reconciled": true,
+   "gates": {
+    "G1_fleet_class_not_in_sidecar": [],
+    "G2_sidecar_classes_uncovered_mw": {
+     "OTHER": 835.0017700195312,
+     "VIRTUAL_DEC": -6121.07470703125,
+     "VIRTUAL_INC": 309.16912841796875,
+     "biomass": 603.9873046875,
+     "hydro": 2599.0439453125,
+     "import": -859.696044921875,
+     "nuclear": 31407.443359375,
+     "solar": 2538.988525390625,
+     "wind": 2749.7197265625
+    },
+    "G3_dispatch_exceeds_available": []
+   },
+   "thermal_top1pct": {
+    "available_mw": 101856.6986534794,
+    "dispatched_mw": 81658.47383499146,
+    "idle_mw": 20198.224818487943,
+    "idle_pct": 19.830040719465217,
+    "above_clearing_mw": 17830.15130301957,
+    "above_clearing_pct": 17.505133720933234
+   },
+   "per_class": {
+    "CC_CHP": {
+     "available_mw": 1328.8962576043136,
+     "dispatched_mw": 1212.0924072265625,
+     "idle_mw": 116.80385037775113,
+     "utilisation": 0.9121046133515938
+    },
+    "CC_REGULAR": {
+     "available_mw": 46746.60180915707,
+     "dispatched_mw": 44588.38671875,
+     "idle_mw": 2158.215090407073,
+     "utilisation": 0.9538316154141432
+    },
+    "COAL_BIT": {
+     "available_mw": 19636.216597219653,
+     "dispatched_mw": 17713.185546875,
+     "idle_mw": 1923.0310503446526,
+     "utilisation": 0.9020671298453217
+    },
+    "COAL_PRB": {
+     "available_mw": 1565.4192110869712,
+     "dispatched_mw": 1450.02392578125,
+     "idle_mw": 115.39528530572125,
+     "utilisation": 0.9262847392644461
+    },
+    "COAL_WC": {
+     "available_mw": 767.9019977272728,
+     "dispatched_mw": 748.6384887695312,
+     "idle_mw": 19.26350895774158,
+     "utilisation": 0.9749141049056326
+    },
+    "CT_CHP": {
+     "available_mw": 268.0870817383879,
+     "dispatched_mw": 253.39292907714844,
+     "idle_mw": 14.694152661239457,
+     "utilisation": 0.9451888820380435
+    },
+    "CT_PEAKER": {
+     "available_mw": 21544.197325141162,
+     "dispatched_mw": 11285.0478515625,
+     "idle_mw": 10259.149473578662,
+     "utilisation": 0.5238091575773551
+    },
+    "ST_CHP": {
+     "available_mw": 141.1282067676455,
+     "dispatched_mw": 140.71514892578125,
+     "idle_mw": 0.41305784186425853,
+     "utilisation": 0.9970731730295113
+    },
+    "ST_GAS": {
+     "available_mw": 5877.781303400558,
+     "dispatched_mw": 4253.67138671875,
+     "idle_mw": 1624.1099166818076,
+     "utilisation": 0.7236865693280919
+    },
+    "oil": {
+     "available_mw": 3980.468863636363,
+     "dispatched_mw": 13.31943130493164,
+     "idle_mw": 3967.1494323314314,
+     "utilisation": 0.0033461965816669282
+    }
+   },
+   "prices": {
+    "model_clearing": 54.944002470191805,
+    "market_rt": 169.8407681205056,
+    "highest_available_offer": 559.3834109048836,
+    "model_clearing_annual_mean": 29.154516369338577,
+    "market_rt_annual_mean": 29.531908043286844
+   },
+   "peak_band_dispatch_mw": {
+    "CC_CHP": {
+     "max_h": 35.84286880493164,
+     "mean_h": 10.62593936920166
+    },
+    "CC_REGULAR": {
+     "max_h": 0.0,
+     "mean_h": 0.0
+    },
+    "COAL_BIT": {
+     "max_h": 589.5698852539062,
+     "mean_h": 69.4370346069336
+    },
+    "COAL_PRB": {
+     "max_h": 51.40999984741211,
+     "mean_h": 1.2401492595672607
+    },
+    "COAL_WC": {
+     "max_h": 24.368162155151367,
+     "mean_h": 3.1838014125823975
+    },
+    "CT_CHP": {
+     "max_h": 10.231704711914062,
+     "mean_h": 3.268096923828125
+    },
+    "CT_PEAKER": {
+     "max_h": 935.8860473632812,
+     "mean_h": 5.6808085441589355
+    },
+    "ST_CHP": {
+     "max_h": 17.181072235107422,
+     "mean_h": 10.90494441986084
+    },
+    "ST_GAS": {
+     "max_h": 977.3470458984375,
+     "mean_h": 46.416744232177734
+    }
+   },
+   "build_s": 24.0
+  },
+  {
+   "iso": "PJM",
+   "year": 2025,
+   "bundle": "results/calibration/pjm_h15_coalwindow_span",
+   "hours": 8760,
+   "window_hours": 88,
+   "window_basis": "market RT",
+   "declared_simplifications": {
+    "pjm_da_virtual_bids": "data/raw/pjm-da-virtuals/ is gitignored under PJM DataMiner2's non-member redistribution restriction (its README; docs/data-licensing.md \u00a74) \u2014 re-fetch only, never hydratable. Same line as the pjm-h15 probe."
+   },
+   "reconciled": true,
+   "gates": {
+    "G1_fleet_class_not_in_sidecar": [],
+    "G2_sidecar_classes_uncovered_mw": {
+     "OTHER": 541.6981201171875,
+     "VIRTUAL_DEC": -6212.78173828125,
+     "VIRTUAL_INC": 183.4353485107422,
+     "biomass": 254.5563507080078,
+     "hydro": 2825.04150390625,
+     "import": -1423.75732421875,
+     "nuclear": 31804.912109375,
+     "solar": 3547.019287109375,
+     "wind": 2227.727294921875
+    },
+    "G3_dispatch_exceeds_available": []
+   },
+   "thermal_top1pct": {
+    "available_mw": 110972.12211301278,
+    "dispatched_mw": 94558.69980621338,
+    "idle_mw": 16413.422306799403,
+    "idle_pct": 14.79058162921689,
+    "above_clearing_mw": 14615.08346784336,
+    "above_clearing_pct": 13.170049548984492
+   },
+   "per_class": {
+    "CC_CHP": {
+     "available_mw": 1371.1223402634678,
+     "dispatched_mw": 1192.92919921875,
+     "idle_mw": 178.19314104471778,
+     "utilisation": 0.8700384817517618
+    },
+    "CC_REGULAR": {
+     "available_mw": 50111.58659743909,
+     "dispatched_mw": 47882.38671875,
+     "idle_mw": 2229.199878689091,
+     "utilisation": 0.9555152803961906
+    },
+    "COAL_BIT": {
+     "available_mw": 23468.571473782602,
+     "dispatched_mw": 23079.45703125,
+     "idle_mw": 389.11444253260197,
+     "utilisation": 0.9834197644723586
+    },
+    "COAL_PRB": {
+     "available_mw": 1837.1537874895453,
+     "dispatched_mw": 1829.4222412109375,
+     "idle_mw": 7.731546278607766,
+     "utilisation": 0.9957915628341747
+    },
+    "COAL_WC": {
+     "available_mw": 709.5092045454544,
+     "dispatched_mw": 709.085693359375,
+     "idle_mw": 0.423511186079395,
+     "utilisation": 0.9994030927528971
+    },
+    "CT_CHP": {
+     "available_mw": 271.7368358104,
+     "dispatched_mw": 255.81407165527344,
+     "idle_mw": 15.922764155126572,
+     "utilisation": 0.9414037331094985
+    },
+    "CT_PEAKER": {
+     "available_mw": 21702.123268245152,
+     "dispatched_mw": 14287.8876953125,
+     "idle_mw": 7414.235572932652,
+     "utilisation": 0.6583635858440974
+    },
+    "ST_CHP": {
+     "available_mw": 112.549663714703,
+     "dispatched_mw": 112.3227767944336,
+     "idle_mw": 0.2268869202694077,
+     "utilisation": 0.997984117297369
+    },
+    "ST_GAS": {
+     "available_mw": 7405.808941722371,
+     "dispatched_mw": 4976.21435546875,
+     "idle_mw": 2429.594586253621,
+     "utilisation": 0.6719339365392041
+    },
+    "oil": {
+     "available_mw": 3981.9599999999996,
+     "dispatched_mw": 233.18002319335938,
+     "idle_mw": 3748.77997680664,
+     "utilisation": 0.05855910737259023
+    }
+   },
+   "prices": {
+    "model_clearing": 112.6399307870642,
+    "market_rt": 317.6212043762207,
+    "highest_available_offer": 520.6304041727634,
+    "model_clearing_annual_mean": 40.66709979015294,
+    "market_rt_annual_mean": 42.88774169359577
+   },
+   "peak_band_dispatch_mw": {
+    "CC_CHP": {
+     "max_h": 35.84286880493164,
+     "mean_h": 10.542208671569824
+    },
+    "CC_REGULAR": {
+     "max_h": 0.0,
+     "mean_h": 0.0
+    },
+    "COAL_BIT": {
+     "max_h": 562.7843017578125,
+     "mean_h": 183.07174682617188
+    },
+    "COAL_PRB": {
+     "max_h": 51.40999984741211,
+     "mean_h": 3.9265472888946533
+    },
+    "COAL_WC": {
+     "max_h": 17.634599685668945,
+     "mean_h": 7.644462585449219
+    },
+    "CT_CHP": {
+     "max_h": 10.69906234741211,
+     "mean_h": 2.4070239067077637
+    },
+    "CT_PEAKER": {
+     "max_h": 975.6597290039062,
+     "mean_h": 8.048773765563965
+    },
+    "ST_CHP": {
+     "max_h": 17.181072235107422,
+     "mean_h": 11.81682014465332
+    },
+    "ST_GAS": {
+     "max_h": 993.3345336914062,
+     "mean_h": 59.667701721191406
+    }
+   },
+   "build_s": 20.7
+  },
+  {
+   "iso": "SOCO",
+   "year": 2023,
+   "bundle": "results/calibration/soco57_measured_cc_hr",
+   "hours": 8760,
+   "window_hours": 88,
+   "window_basis": "model load (declared substitution, PRECOMMIT \u00a72.1)",
+   "declared_simplifications": {},
+   "reconciled": true,
+   "gates": {
+    "G1_fleet_class_not_in_sidecar": [],
+    "G2_sidecar_classes_uncovered_mw": {
+     "OTHER": 12.037633895874023,
+     "biomass": 1047.0711669921875,
+     "hydro": 3139.39208984375,
+     "nuclear": 6447.43017578125,
+     "solar": 2715.511474609375
+    },
+    "G3_dispatch_exceeds_available": []
+   },
+   "thermal_top1pct": {
+    "available_mw": 36607.097911411525,
+    "dispatched_mw": 30928.98379135132,
+    "idle_mw": 5678.114120060207,
+    "idle_pct": 15.510964933087932,
+    "above_clearing_mw": 5129.495182052557,
+    "above_clearing_pct": 14.012296725803932
+   },
+   "per_class": {
+    "CC_CHP": {
+     "available_mw": 381.8812402829454,
+     "dispatched_mw": 381.8812255859375,
+     "idle_mw": 1.4697007884478808e-05,
+     "utilisation": 0.9999999615141926
+    },
+    "CC_REGULAR": {
+     "available_mw": 13713.331294116262,
+     "dispatched_mw": 13713.33203125,
+     "idle_mw": -0.0007371337378572207,
+     "utilisation": 1.000000053753076
+    },
+    "COAL_BIT": {
+     "available_mw": 4638.196090909091,
+     "dispatched_mw": 2567.297607421875,
+     "idle_mw": 2070.8984834872163,
+     "utilisation": 0.5535120889894679
+    },
+    "COAL_PRB": {
+     "available_mw": 6007.473443181818,
+     "dispatched_mw": 4195.3427734375,
+     "idle_mw": 1812.1306697443179,
+     "utilisation": 0.698353944152513
+    },
+    "CT_CHP": {
+     "available_mw": 124.2420520775,
+     "dispatched_mw": 124.24205780029297,
+     "idle_mw": -5.722792963069878e-06,
+     "utilisation": 1.0000000460616423
+    },
+    "CT_PEAKER": {
+     "available_mw": 7882.912996875,
+     "dispatched_mw": 7167.52490234375,
+     "idle_mw": 715.3880945312503,
+     "utilisation": 0.9092482569812899
+    },
+    "ST_CHP": {
+     "available_mw": 55.538236128,
+     "dispatched_mw": 55.53824234008789,
+     "idle_mw": -6.212087889423401e-06,
+     "utilisation": 1.000000111852452
+    },
+    "ST_GAS": {
+     "available_mw": 2794.172557840909,
+     "dispatched_mw": 2723.824951171875,
+     "idle_mw": 70.34760666903412,
+     "utilisation": 0.974823456600192
+    },
+    "oil": {
+     "available_mw": 1009.3500000000003,
+     "dispatched_mw": 0.0,
+     "idle_mw": 1009.3500000000003,
+     "utilisation": 0.0
+    }
+   },
+   "prices": {
+    "model_clearing": 42.668601809725146,
+    "market_rt": null,
+    "highest_available_offer": 595.2378146654381,
+    "model_clearing_annual_mean": 31.578813146852507,
+    "market_rt_annual_mean": null
+   },
+   "peak_band_dispatch_mw": {
+    "CC_REGULAR": {
+     "max_h": 894.880126953125,
+     "mean_h": 728.6434326171875
+    },
+    "COAL_BIT": {
+     "max_h": 77.37899017333984,
+     "mean_h": 0.0235904511064291
+    },
+    "COAL_PRB": {
+     "max_h": 123.41310119628906,
+     "mean_h": 33.654075622558594
+    },
+    "CT_CHP": {
+     "max_h": 8.966650009155273,
+     "mean_h": 8.461602210998535
+    },
+    "CT_PEAKER": {
+     "max_h": 551.5375366210938,
+     "mean_h": 90.43302917480469
+    },
+    "ST_GAS": {
+     "max_h": 430.1661682128906,
+     "mean_h": 58.6123046875
+    }
+   },
+   "build_s": 4.0
+  },
+  {
+   "iso": "SOCO",
+   "year": 2024,
+   "bundle": "results/calibration/soco57_measured_cc_hr",
+   "hours": 8760,
+   "window_hours": 88,
+   "window_basis": "model load (declared substitution, PRECOMMIT \u00a72.1)",
+   "declared_simplifications": {},
+   "reconciled": true,
+   "gates": {
+    "G1_fleet_class_not_in_sidecar": [],
+    "G2_sidecar_classes_uncovered_mw": {
+     "OTHER": 30.58551597595215,
+     "biomass": 1088.96435546875,
+     "hydro": 2894.364501953125,
+     "nuclear": 7788.48291015625,
+     "solar": 3082.511474609375
+    },
+    "G3_dispatch_exceeds_available": []
+   },
+   "thermal_top1pct": {
+    "available_mw": 37667.96126983714,
+    "dispatched_mw": 29962.86227798462,
+    "idle_mw": 7705.098991852523,
+    "idle_pct": 20.455311973633226,
+    "above_clearing_mw": 7006.647946761364,
+    "above_clearing_pct": 18.601080893570902
+   },
+   "per_class": {
+    "CC_CHP": {
+     "available_mw": 359.37597903938183,
+     "dispatched_mw": 359.3759460449219,
+     "idle_mw": 3.2994459957080835e-05,
+     "utilisation": 0.999999908189579
+    },
+    "CC_REGULAR": {
+     "available_mw": 15712.279501704546,
+     "dispatched_mw": 15712.2802734375,
+     "idle_mw": -0.0007717329535807949,
+     "utilisation": 1.0000000491165495
+    },
+    "COAL_BIT": {
+     "available_mw": 4228.284090909092,
+     "dispatched_mw": 2605.54638671875,
+     "idle_mw": 1622.737704190342,
+     "utilisation": 0.6162183833202539
+    },
+    "COAL_PRB": {
+     "available_mw": 5638.689681818183,
+     "dispatched_mw": 3642.005615234375,
+     "idle_mw": 1996.684066583808,
+     "utilisation": 0.6458957347800027
+    },
+    "CT_CHP": {
+     "available_mw": 124.88401797397728,
+     "dispatched_mw": 123.69180297851562,
+     "idle_mw": 1.1922149954616543,
+     "utilisation": 0.990453422184814
+    },
+    "CT_PEAKER": {
+     "available_mw": 7919.083190198863,
+     "dispatched_mw": 4959.919921875,
+     "idle_mw": 2959.163268323863,
+     "utilisation": 0.6263250180290689
+    },
+    "ST_CHP": {
+     "available_mw": 55.43441842036364,
+     "dispatched_mw": 55.43442153930664,
+     "idle_mw": -3.118942998980856e-06,
+     "utilisation": 1.000000056263655
+    },
+    "ST_GAS": {
+     "available_mw": 2620.580389772728,
+     "dispatched_mw": 2504.60791015625,
+     "idle_mw": 115.97247961647781,
+     "utilisation": 0.9557454981846462
+    },
+    "oil": {
+     "available_mw": 1009.3500000000003,
+     "dispatched_mw": 0.0,
+     "idle_mw": 1009.3500000000003,
+     "utilisation": 0.0
+    }
+   },
+   "prices": {
+    "model_clearing": 34.870770167955556,
+    "market_rt": null,
+    "highest_available_offer": 557.2927714206355,
+    "model_clearing_annual_mean": 28.3783225799083,
+    "market_rt_annual_mean": null
+   },
+   "peak_band_dispatch_mw": {
+    "CC_REGULAR": {
+     "max_h": 951.6162719726562,
+     "mean_h": 771.080078125
+    },
+    "COAL_BIT": {
+     "max_h": 21.69890022277832,
+     "mean_h": 2.8620493412017822
+    },
+    "COAL_PRB": {
+     "max_h": 112.72578430175781,
+     "mean_h": 28.016672134399414
+    },
+    "CT_CHP": {
+     "max_h": 8.966650009155273,
+     "mean_h": 8.461602210998535
+    },
+    "CT_PEAKER": {
+     "max_h": 498.66925048828125,
+     "mean_h": 68.27906036376953
+    },
+    "ST_GAS": {
+     "max_h": 408.1845703125,
+     "mean_h": 45.78165054321289
+    }
+   },
+   "build_s": 4.3
+  },
+  {
+   "iso": "SOCO",
+   "year": 2025,
+   "bundle": "results/calibration/soco57_measured_cc_hr",
+   "hours": 8760,
+   "window_hours": 88,
+   "window_basis": "model load (declared substitution, PRECOMMIT \u00a72.1)",
+   "declared_simplifications": {},
+   "reconciled": true,
+   "gates": {
+    "G1_fleet_class_not_in_sidecar": [],
+    "G2_sidecar_classes_uncovered_mw": {
+     "OTHER": 5.326471328735352,
+     "biomass": 487.85888671875,
+     "hydro": 277.2969055175781,
+     "nuclear": 7885.34521484375,
+     "solar": 2080.6591796875
+    },
+    "G3_dispatch_exceeds_available": []
+   },
+   "thermal_top1pct": {
+    "available_mw": 36909.41786966764,
+    "dispatched_mw": 34843.09904098511,
+    "idle_mw": 2066.3188286825316,
+    "idle_pct": 5.598351174161009,
+    "above_clearing_mw": 1820.9403572940341,
+    "above_clearing_pct": 4.933538544888546
+   },
+   "per_class": {
+    "CC_CHP": {
+     "available_mw": 385.8482468750001,
+     "dispatched_mw": 385.8481750488281,
+     "idle_mw": 7.18261719612201e-05,
+     "utilisation": 0.9999998138486502
+    },
+    "CC_REGULAR": {
+     "available_mw": 15057.745189772728,
+     "dispatched_mw": 15057.74609375,
+     "idle_mw": -0.0009039772721735062,
+     "utilisation": 1.0000000600340397
+    },
+    "COAL_BIT": {
+     "available_mw": 3952.4881136363633,
+     "dispatched_mw": 3854.178955078125,
+     "idle_mw": 98.30915855823832,
+     "utilisation": 0.9751272728135311
+    },
+    "COAL_PRB": {
+     "available_mw": 5716.248411363637,
+     "dispatched_mw": 5716.2490234375,
+     "idle_mw": -0.0006120738626123057,
+     "utilisation": 1.0000001070761484
+    },
+    "CT_CHP": {
+     "available_mw": 125.36549239633524,
+     "dispatched_mw": 125.2549819946289,
+     "idle_mw": 0.11051040170633541,
+     "utilisation": 0.9991184942555248
+    },
+    "CT_PEAKER": {
+     "available_mw": 7946.210835191761,
+     "dispatched_mw": 6867.712890625,
+     "idle_mw": 1078.4979445667614,
+     "utilisation": 0.864275191416975
+    },
+    "ST_CHP": {
+     "available_mw": 28.16042509090909,
+     "dispatched_mw": 28.160419464111328,
+     "idle_mw": 5.62679776194841e-06,
+     "utilisation": 0.9999998001877548
+    },
+    "ST_GAS": {
+     "available_mw": 2688.001155340909,
+     "dispatched_mw": 2650.43505859375,
+     "idle_mw": 37.56609674715901,
+     "utilisation": 0.9860245235860419
+    },
+    "oil": {
+     "available_mw": 1009.3500000000003,
+     "dispatched_mw": 157.51344299316406,
+     "idle_mw": 851.8365570068362,
+     "utilisation": 0.1560543349612761
+    }
+   },
+   "prices": {
+    "model_clearing": 4329.705966789995,
+    "market_rt": null,
+    "highest_available_offer": 525.993641272321,
+    "model_clearing_annual_mean": 97.88116345620423,
+    "market_rt_annual_mean": null
+   },
+   "peak_band_dispatch_mw": {
+    "CC_REGULAR": {
+     "max_h": 929.1923828125,
+     "mean_h": 699.1273193359375
+    },
+    "COAL_BIT": {
+     "max_h": 83.77890014648438,
+     "mean_h": 22.754671096801758
+    },
+    "COAL_PRB": {
+     "max_h": 123.41310119628906,
+     "mean_h": 67.55654907226562
+    },
+    "CT_CHP": {
+     "max_h": 8.966650009155273,
+     "mean_h": 8.461602210998535
+    },
+    "CT_PEAKER": {
+     "max_h": 598.8244018554688,
+     "mean_h": 83.28197479248047
+    },
+    "ST_GAS": {
+     "max_h": 430.1661682128906,
+     "mean_h": 53.67308807373047
+    }
+   },
+   "build_s": 3.9
+  },
+  {
+   "iso": "SPP",
+   "year": 2019,
+   "bundle": "results/calibration/spp67_yearown_rung",
+   "hours": 8760,
+   "window_hours": 88,
+   "window_basis": "market RT",
+   "declared_simplifications": {},
+   "reconciled": true,
+   "gates": {
+    "G1_fleet_class_not_in_sidecar": [],
+    "G2_sidecar_classes_uncovered_mw": {
+     "OTHER": 79.33470916748047,
+     "biomass": 159.7155303955078,
+     "hydro": 2581.31005859375,
+     "nuclear": 1797.2706298828125,
+     "solar": 84.13636016845703,
+     "wind": 5848.068359375
+    },
+    "G3_dispatch_exceeds_available": []
+   },
+   "thermal_top1pct": {
+    "available_mw": 34710.294563925956,
+    "dispatched_mw": 23250.894255638123,
+    "idle_mw": 11459.400308287833,
+    "idle_pct": 33.014413885722156,
+    "above_clearing_mw": 9894.818237941778,
+    "above_clearing_pct": 28.506869106853845
+   },
+   "per_class": {
+    "CC_CHP": {
+     "available_mw": 236.81967265635774,
+     "dispatched_mw": 226.2930145263672,
+     "idle_mw": 10.526658129990551,
+     "utilisation": 0.9555499000065527
+    },
+    "CC_REGULAR": {
+     "available_mw": 6740.660630576724,
+     "dispatched_mw": 6299.150390625,
+     "idle_mw": 441.51023995172363,
+     "utilisation": 0.9345004497112699
+    },
+    "COAL": {
+     "available_mw": 4.458872727272728,
+     "dispatched_mw": 4.4588727951049805,
+     "idle_mw": -6.78322527036812e-08,
+     "utilisation": 1.0000000152128703
+    },
+    "COAL_LIGNITE": {
+     "available_mw": 1601.7538230099997,
+     "dispatched_mw": 1346.1319580078125,
+     "idle_mw": 255.62186500218718,
+     "utilisation": 0.8404112658699168
+    },
+    "COAL_PRB": {
+     "available_mw": 12900.37533566678,
+     "dispatched_mw": 10325.765625,
+     "idle_mw": 2574.6097106667803,
+     "utilisation": 0.8004236587172363
+    },
+    "CT_CHP": {
+     "available_mw": 186.4119193389788,
+     "dispatched_mw": 91.39786529541016,
+     "idle_mw": 95.01405404356865,
+     "utilisation": 0.4903005431171419
+    },
+    "CT_PEAKER": {
+     "available_mw": 8602.38446840338,
+     "dispatched_mw": 3392.479736328125,
+     "idle_mw": 5209.904732075254,
+     "utilisation": 0.3943650448069053
+    },
+    "ST_CHP": {
+     "available_mw": 107.20320938514557,
+     "dispatched_mw": 38.349971771240234,
+     "idle_mw": 68.85323761390534,
+     "utilisation": 0.3577315641126145
+    },
+    "ST_GAS": {
+     "available_mw": 2798.013450343137,
+     "dispatched_mw": 1526.8668212890625,
+     "idle_mw": 1271.1466290540743,
+     "utilisation": 0.5456967410581296
+    },
+    "oil": {
+     "available_mw": 1532.213181818182,
+     "dispatched_mw": 0.0,
+     "idle_mw": 1532.213181818182,
+     "utilisation": 0.0
+    }
+   },
+   "prices": {
+    "model_clearing": 25.713624518402785,
+    "market_rt": 248.83753143657339,
+    "highest_available_offer": 217.23783848497888,
+    "model_clearing_annual_mean": 22.191601339813687,
+    "market_rt_annual_mean": 20.846494146938884
+   },
+   "peak_band_dispatch_mw": {
+    "CC_CHP": {
+     "max_h": 48.36426544189453,
+     "mean_h": 42.40654754638672
+    },
+    "CC_REGULAR": {
+     "max_h": 799.7994384765625,
+     "mean_h": 581.2454833984375
+    },
+    "COAL_LIGNITE": {
+     "max_h": 43.475399017333984,
+     "mean_h": 22.620336532592773
+    },
+    "COAL_PRB": {
+     "max_h": 347.75665283203125,
+     "mean_h": 164.33221435546875
+    },
+    "CT_CHP": {
+     "max_h": 20.05388069152832,
+     "mean_h": 2.0577821731567383
+    },
+    "CT_PEAKER": {
+     "max_h": 580.725341796875,
+     "mean_h": 115.8206787109375
+    },
+    "ST_CHP": {
+     "max_h": 20.603418350219727,
+     "mean_h": 0.24991053342819214
+    },
+    "ST_GAS": {
+     "max_h": 972.1912231445312,
+     "mean_h": 86.56145477294922
+    }
+   },
+   "build_s": 8.7
+  },
+  {
+   "iso": "SPP",
+   "year": 2020,
+   "bundle": "results/calibration/spp67_yearown_rung",
+   "hours": 8760,
+   "window_hours": 88,
+   "window_basis": "market RT",
+   "declared_simplifications": {},
+   "reconciled": true,
+   "gates": {
+    "G1_fleet_class_not_in_sidecar": [],
+    "G2_sidecar_classes_uncovered_mw": {
+     "OTHER": 63.133243560791016,
+     "biomass": 153.09986877441406,
+     "hydro": 2226.751708984375,
+     "nuclear": 1663.7891845703125,
+     "solar": 91.86363983154297,
+     "wind": 6636.9091796875
+    },
+    "G3_dispatch_exceeds_available": []
+   },
+   "thermal_top1pct": {
+    "available_mw": 32689.940303832114,
+    "dispatched_mw": 20642.874628543854,
+    "idle_mw": 12047.06567528826,
+    "idle_pct": 36.85251659476426,
+    "above_clearing_mw": 10512.76710111645,
+    "above_clearing_pct": 32.159028139565244
+   },
+   "per_class": {
+    "CC_CHP": {
+     "available_mw": 187.3836729254308,
+     "dispatched_mw": 166.88311767578125,
+     "idle_mw": 20.50055524964955,
+     "utilisation": 0.8905958297775083
+    },
+    "CC_REGULAR": {
+     "available_mw": 6563.384735448603,
+     "dispatched_mw": 5818.138671875,
+     "idle_mw": 745.2460635736034,
+     "utilisation": 0.886454002985905
+    },
+    "COAL": {
+     "available_mw": 4.440545454545456,
+     "dispatched_mw": 4.293272495269775,
+     "idle_mw": 0.1472729592756803,
+     "utilisation": 0.9668344889646546
+    },
+    "COAL_LIGNITE": {
+     "available_mw": 1382.0229414226044,
+     "dispatched_mw": 1054.930419921875,
+     "idle_mw": 327.0925215007294,
+     "utilisation": 0.7633233778564976
+    },
+    "COAL_PRB": {
+     "available_mw": 10886.730113730418,
+     "dispatched_mw": 8541.6396484375,
+     "idle_mw": 2345.0904652929185,
+     "utilisation": 0.7845918433914997
+    },
+    "CT_CHP": {
+     "available_mw": 179.13439363736487,
+     "dispatched_mw": 80.35545349121094,
+     "idle_mw": 98.77894014615393,
+     "utilisation": 0.44857635577163635
+    },
+    "CT_PEAKER": {
+     "available_mw": 8639.562728460565,
+     "dispatched_mw": 3184.91796875,
+     "idle_mw": 5454.644759710565,
+     "utilisation": 0.3686434219938238
+    },
+    "ST_CHP": {
+     "available_mw": 106.31121623743316,
+     "dispatched_mw": 28.428478240966797,
+     "idle_mw": 77.88273799646636,
+     "utilisation": 0.26740808022998486
+    },
+    "ST_GAS": {
+     "available_mw": 3200.1126837878783,
+     "dispatched_mw": 1763.28759765625,
+     "idle_mw": 1436.8250861316283,
+     "utilisation": 0.5510079712471558
+    },
+    "oil": {
+     "available_mw": 1540.857272727273,
+     "dispatched_mw": 0.0,
+     "idle_mw": 1540.857272727273,
+     "utilisation": 0.0
+    }
+   },
+   "prices": {
+    "model_clearing": 22.91563828593881,
+    "market_rt": 173.19286823272705,
+    "highest_available_offer": 214.52471590909093,
+    "model_clearing_annual_mean": 19.19411062921442,
+    "market_rt_annual_mean": 16.51527230492509
+   },
+   "peak_band_dispatch_mw": {
+    "CC_CHP": {
+     "max_h": 42.89483642578125,
+     "mean_h": 30.964818954467773
+    },
+    "CC_REGULAR": {
+     "max_h": 816.4782104492188,
+     "mean_h": 575.1294555664062
+    },
+    "COAL_LIGNITE": {
+     "max_h": 33.73659896850586,
+     "mean_h": 16.975997924804688
+    },
+    "COAL_PRB": {
+     "max_h": 347.3356628417969,
+     "mean_h": 129.35629272460938
+    },
+    "CT_CHP": {
+     "max_h": 19.877164840698242,
+     "mean_h": 1.913072109222412
+    },
+    "CT_PEAKER": {
+     "max_h": 577.6260986328125,
+     "mean_h": 128.167236328125
+    },
+    "ST_CHP": {
+     "max_h": 20.589120864868164,
+     "mean_h": 0.2622433006763458
+    },
+    "ST_GAS": {
+     "max_h": 847.624267578125,
+     "mean_h": 121.1434326171875
+    }
+   },
+   "build_s": 9.5
+  },
+  {
+   "iso": "SPP",
+   "year": 2021,
+   "bundle": "results/calibration/spp67_yearown_rung",
+   "hours": 8760,
+   "window_hours": 88,
+   "window_basis": "market RT",
+   "declared_simplifications": {},
+   "reconciled": true,
+   "gates": {
+    "G1_fleet_class_not_in_sidecar": [],
+    "G2_sidecar_classes_uncovered_mw": {
+     "OTHER": 63.996150970458984,
+     "biomass": 108.3057861328125,
+     "hydro": 2174.491943359375,
+     "nuclear": 1908.9815673828125,
+     "solar": 42.1363639831543,
+     "wind": 4202.7783203125
+    },
+    "G3_dispatch_exceeds_available": []
+   },
+   "thermal_top1pct": {
+    "available_mw": 37393.447833236314,
+    "dispatched_mw": 25734.408127307892,
+    "idle_mw": 11659.039705928422,
+    "idle_pct": 31.179365320695435,
+    "above_clearing_mw": 11721.710424097297,
+    "above_clearing_pct": 31.34696344764101
+   },
+   "per_class": {
+    "CC_CHP": {
+     "available_mw": 64.01773401033869,
+     "dispatched_mw": 38.48640441894531,
+     "idle_mw": 25.531329591393373,
+     "utilisation": 0.6011834847626732
+    },
+    "CC_REGULAR": {
+     "available_mw": 6647.511997468434,
+     "dispatched_mw": 4725.07373046875,
+     "idle_mw": 1922.438266999684,
+     "utilisation": 0.7108033399967079
+    },
+    "COAL": {
+     "available_mw": 4.380981818181819,
+     "dispatched_mw": 4.380981922149658,
+     "idle_mw": -1.0396783878263705e-07,
+     "utilisation": 1.0000000237316298
+    },
+    "COAL_LIGNITE": {
+     "available_mw": 1360.0192678104545,
+     "dispatched_mw": 1342.592529296875,
+     "idle_mw": 17.426738513579494,
+     "utilisation": 0.9871864032179225
+    },
+    "COAL_PRB": {
+     "available_mw": 14643.868577726382,
+     "dispatched_mw": 14595.9384765625,
+     "idle_mw": 47.93010116388177,
+     "utilisation": 0.9967269508798526
+    },
+    "CT_CHP": {
+     "available_mw": 193.24175291428483,
+     "dispatched_mw": 91.9661636352539,
+     "idle_mw": 101.27558927903092,
+     "utilisation": 0.4759124891402058
+    },
+    "CT_PEAKER": {
+     "available_mw": 8996.193710740492,
+     "dispatched_mw": 1806.281982421875,
+     "idle_mw": 7189.911728318617,
+     "utilisation": 0.2007829133631669
+    },
+    "ST_CHP": {
+     "available_mw": 111.62073672367914,
+     "dispatched_mw": 65.20189666748047,
+     "idle_mw": 46.418840056198675,
+     "utilisation": 0.5841378455411017
+    },
+    "ST_GAS": {
+     "available_mw": 3650.5473922058814,
+     "dispatched_mw": 1937.1270751953125,
+     "idle_mw": 1713.4203170105689,
+     "utilisation": 0.5306401662751139
+    },
+    "oil": {
+     "available_mw": 1722.0456818181824,
+     "dispatched_mw": 1127.35888671875,
+     "idle_mw": 594.6867950994324,
+     "utilisation": 0.6546625903259744
+    }
+   },
+   "prices": {
+    "model_clearing": 188.0082548068234,
+    "market_rt": 1268.152551130815,
+    "highest_available_offer": 826.5905781323071,
+    "model_clearing_annual_mean": 36.3679829921806,
+    "market_rt_annual_mean": 37.36222364070461
+   },
+   "peak_band_dispatch_mw": {
+    "CC_CHP": {
+     "max_h": 42.89483642578125,
+     "mean_h": 14.318735122680664
+    },
+    "CC_REGULAR": {
+     "max_h": 805.1441040039062,
+     "mean_h": 305.5393981933594
+    },
+    "COAL_LIGNITE": {
+     "max_h": 42.99039840698242,
+     "mean_h": 18.42875862121582
+    },
+    "COAL_PRB": {
+     "max_h": 356.1529541015625,
+     "mean_h": 194.0244903564453
+    },
+    "CT_CHP": {
+     "max_h": 18.873666763305664,
+     "mean_h": 0.3691657781600952
+    },
+    "CT_PEAKER": {
+     "max_h": 535.3997192382812,
+     "mean_h": 71.48838806152344
+    },
+    "ST_CHP": {
+     "max_h": 21.161039352416992,
+     "mean_h": 0.5916668176651001
+    },
+    "ST_GAS": {
+     "max_h": 750.3281860351562,
+     "mean_h": 43.82756042480469
+    }
+   },
+   "build_s": 7.5
+  },
+  {
+   "iso": "SPP",
+   "year": 2022,
+   "bundle": "results/calibration/spp67_yearown_rung",
+   "hours": 8760,
+   "window_hours": 88,
+   "window_basis": "market RT",
+   "declared_simplifications": {},
+   "reconciled": true,
+   "gates": {
+    "G1_fleet_class_not_in_sidecar": [],
+    "G2_sidecar_classes_uncovered_mw": {
+     "OTHER": 55.978172302246094,
+     "biomass": 143.0599822998047,
+     "hydro": 2472.31494140625,
+     "nuclear": 1791.7730712890625,
+     "solar": 102.43181610107422,
+     "wind": 6941.0439453125
+    },
+    "G3_dispatch_exceeds_available": []
+   },
+   "thermal_top1pct": {
+    "available_mw": 35819.96700587214,
+    "dispatched_mw": 25626.25956916809,
+    "idle_mw": 10193.707436704048,
+    "idle_pct": 28.45817092749679,
+    "above_clearing_mw": 9969.569380731467,
+    "above_clearing_pct": 27.832435968176934
+   },
+   "per_class": {
+    "CC_CHP": {
+     "available_mw": 215.99000586886507,
+     "dispatched_mw": 181.23484802246094,
+     "idle_mw": 34.75515784640413,
+     "utilisation": 0.839089046242699
+    },
+    "CC_REGULAR": {
+     "available_mw": 7170.1959272352215,
+     "dispatched_mw": 6121.49267578125,
+     "idle_mw": 1048.7032514539715,
+     "utilisation": 0.853741339553835
+    },
+    "COAL_LIGNITE": {
+     "available_mw": 1802.4544132727276,
+     "dispatched_mw": 1757.9705810546875,
+     "idle_mw": 44.48383221804011,
+     "utilisation": 0.9753204120501053
+    },
+    "COAL_PRB": {
+     "available_mw": 12508.31635787167,
+     "dispatched_mw": 12432.3662109375,
+     "idle_mw": 75.95014693417033,
+     "utilisation": 0.9939280279806504
+    },
+    "CT_CHP": {
+     "available_mw": 178.6467407913178,
+     "dispatched_mw": 71.05742645263672,
+     "idle_mw": 107.58931433868108,
+     "utilisation": 0.3977538360783244
+    },
+    "CT_PEAKER": {
+     "available_mw": 8739.801386943462,
+     "dispatched_mw": 3064.127197265625,
+     "idle_mw": 5675.674189677837,
+     "utilisation": 0.3505946029669709
+    },
+    "ST_CHP": {
+     "available_mw": 112.43901371061793,
+     "dispatched_mw": 11.629892349243164,
+     "idle_mw": 100.80912136137476,
+     "utilisation": 0.10343289188906253
+    },
+    "ST_GAS": {
+     "available_mw": 3562.8758874509804,
+     "dispatched_mw": 1986.3807373046875,
+     "idle_mw": 1576.4951501462929,
+     "utilisation": 0.5575217324580513
+    },
+    "oil": {
+     "available_mw": 1529.2472727272727,
+     "dispatched_mw": 0.0,
+     "idle_mw": 1529.2472727272727,
+     "utilisation": 0.0
+    }
+   },
+   "prices": {
+    "model_clearing": 63.354325439451465,
+    "market_rt": 348.06959741765803,
+    "highest_available_offer": 471.32517202930944,
+    "model_clearing_annual_mean": 39.77293056928604,
+    "market_rt_annual_mean": 44.09238771014553
+   },
+   "peak_band_dispatch_mw": {
+    "CC_CHP": {
+     "max_h": 42.89483642578125,
+     "mean_h": 17.450748443603516
+    },
+    "CC_REGULAR": {
+     "max_h": 601.659423828125,
+     "mean_h": 270.44384765625
+    },
+    "COAL_LIGNITE": {
+     "max_h": 42.99039840698242,
+     "mean_h": 27.07349395751953
+    },
+    "COAL_PRB": {
+     "max_h": 356.1898193359375,
+     "mean_h": 193.27392578125
+    },
+    "CT_CHP": {
+     "max_h": 18.55755615234375,
+     "mean_h": 0.1865205615758896
+    },
+    "CT_PEAKER": {
+     "max_h": 582.2161254882812,
+     "mean_h": 69.6884994506836
+    },
+    "ST_CHP": {
+     "max_h": 19.632720947265625,
+     "mean_h": 0.02912731282413006
+    },
+    "ST_GAS": {
+     "max_h": 1029.92041015625,
+     "mean_h": 40.37752914428711
+    }
+   },
+   "build_s": 7.9
+  },
+  {
+   "iso": "SPP",
+   "year": 2023,
+   "bundle": "results/calibration/spp67_yearown_span",
+   "hours": 8760,
+   "window_hours": 88,
+   "window_basis": "market RT",
+   "declared_simplifications": {},
+   "reconciled": true,
+   "gates": {
+    "G1_fleet_class_not_in_sidecar": [],
+    "G2_sidecar_classes_uncovered_mw": {
+     "OTHER": 57.72116470336914,
+     "biomass": 125.16792297363281,
+     "hydro": 2037.9552001953125,
+     "nuclear": 1933.70556640625,
+     "solar": 113.01136016845703,
+     "wind": 7903.36083984375
+    },
+    "G3_dispatch_exceeds_available": []
+   },
+   "thermal_top1pct": {
+    "available_mw": 34180.180720823206,
+    "dispatched_mw": 23509.233627319336,
+    "idle_mw": 10670.94709350387,
+    "idle_pct": 31.21969184616666,
+    "above_clearing_mw": 9615.998501546701,
+    "above_clearing_pct": 28.133258217936966
+   },
+   "per_class": {
+    "CC_CHP": {
+     "available_mw": 219.7801715005348,
+     "dispatched_mw": 219.78018188476562,
+     "idle_mw": -1.0384230819227014e-05,
+     "utilisation": 1.0000000472482606
+    },
+    "CC_REGULAR": {
+     "available_mw": 7474.222197381908,
+     "dispatched_mw": 6461.7001953125,
+     "idle_mw": 1012.5220020694078,
+     "utilisation": 0.8645314555373966
+    },
+    "COAL_LIGNITE": {
+     "available_mw": 1102.757806054091,
+     "dispatched_mw": 1021.8017578125,
+     "idle_mw": 80.9560482415909,
+     "utilisation": 0.9265876443611227
+    },
+    "COAL_PRB": {
+     "available_mw": 10563.13554879133,
+     "dispatched_mw": 9351.77734375,
+     "idle_mw": 1211.3582050413297,
+     "utilisation": 0.8853220997263509
+    },
+    "CT_CHP": {
+     "available_mw": 184.73012481080323,
+     "dispatched_mw": 158.39788818359375,
+     "idle_mw": 26.332236627209483,
+     "utilisation": 0.857455644258464
+    },
+    "CT_PEAKER": {
+     "available_mw": 8873.574636036996,
+     "dispatched_mw": 3800.129150390625,
+     "idle_mw": 5073.445485646371,
+     "utilisation": 0.42825234544798857
+    },
+    "ST_CHP": {
+     "available_mw": 110.64128863167913,
+     "dispatched_mw": 71.32850646972656,
+     "idle_mw": 39.31278216195257,
+     "utilisation": 0.6446825353523908
+    },
+    "ST_GAS": {
+     "available_mw": 4043.7292885249553,
+     "dispatched_mw": 2424.318603515625,
+     "idle_mw": 1619.4106850093303,
+     "utilisation": 0.5995254455819301
+    },
+    "oil": {
+     "available_mw": 1607.609659090909,
+     "dispatched_mw": 0.0,
+     "idle_mw": 1607.609659090909,
+     "utilisation": 0.0
+    }
+   },
+   "prices": {
+    "model_clearing": 32.42390927494725,
+    "market_rt": 232.89067251032048,
+    "highest_available_offer": 627.0037928193858,
+    "model_clearing_annual_mean": 24.330795610171656,
+    "market_rt_annual_mean": 23.47322845290024
+   },
+   "peak_band_dispatch_mw": {
+    "CC_CHP": {
+     "max_h": 42.89483642578125,
+     "mean_h": 34.632232666015625
+    },
+    "CC_REGULAR": {
+     "max_h": 809.5205078125,
+     "mean_h": 490.93487548828125
+    },
+    "COAL_LIGNITE": {
+     "max_h": 30.263999938964844,
+     "mean_h": 16.99871253967285
+    },
+    "COAL_PRB": {
+     "max_h": 344.2394104003906,
+     "mean_h": 144.18234252929688
+    },
+    "CT_CHP": {
+     "max_h": 19.425559997558594,
+     "mean_h": 14.19274616241455
+    },
+    "CT_PEAKER": {
+     "max_h": 544.393798828125,
+     "mean_h": 132.59803771972656
+    },
+    "ST_CHP": {
+     "max_h": 21.161039352416992,
+     "mean_h": 1.9679580926895142
+    },
+    "ST_GAS": {
+     "max_h": 1233.9371337890625,
+     "mean_h": 119.5137939453125
+    }
+   },
+   "build_s": 10.6
+  },
+  {
+   "iso": "SPP",
+   "year": 2024,
+   "bundle": "results/calibration/spp67_yearown_span",
+   "hours": 8760,
+   "window_hours": 88,
+   "window_basis": "market RT",
+   "declared_simplifications": {},
+   "reconciled": true,
+   "gates": {
+    "G1_fleet_class_not_in_sidecar": [],
+    "G2_sidecar_classes_uncovered_mw": {
+     "OTHER": 70.60311889648438,
+     "biomass": 132.4516143798828,
+     "hydro": 2476.5048828125,
+     "nuclear": 1765.93212890625,
+     "solar": 249.30361938476562,
+     "wind": 8516.53515625
+    },
+    "G3_dispatch_exceeds_available": []
+   },
+   "thermal_top1pct": {
+    "available_mw": 35922.09477175262,
+    "dispatched_mw": 27134.52160835266,
+    "idle_mw": 8787.57316339996,
+    "idle_pct": 24.462863926048318,
+    "above_clearing_mw": 7955.787180752066,
+    "above_clearing_pct": 22.147336427073036
+   },
+   "per_class": {
+    "CC_CHP": {
+     "available_mw": 239.92424361485445,
+     "dispatched_mw": 238.01113891601562,
+     "idle_mw": 1.913104698838822,
+     "utilisation": 0.9920262134829947
+    },
+    "CC_REGULAR": {
+     "available_mw": 7185.6296657872845,
+     "dispatched_mw": 6640.29248046875,
+     "idle_mw": 545.3371853185345,
+     "utilisation": 0.9241072514612002
+    },
+    "COAL_LIGNITE": {
+     "available_mw": 1146.2396583459092,
+     "dispatched_mw": 1038.47607421875,
+     "idle_mw": 107.76358412715922,
+     "utilisation": 0.9059851198285458
+    },
+    "COAL_PRB": {
+     "available_mw": 11480.331237054223,
+     "dispatched_mw": 10355.986328125,
+     "idle_mw": 1124.3449089292226,
+     "utilisation": 0.9020633738075208
+    },
+    "CT_CHP": {
+     "available_mw": 184.46383587945715,
+     "dispatched_mw": 159.31105041503906,
+     "idle_mw": 25.152785464418088,
+     "utilisation": 0.8636438121082181
+    },
+    "CT_PEAKER": {
+     "available_mw": 9021.647059556799,
+     "dispatched_mw": 5100.46337890625,
+     "idle_mw": 3921.183680650549,
+     "utilisation": 0.5653583370348361
+    },
+    "ST_CHP": {
+     "available_mw": 113.98159538218896,
+     "dispatched_mw": 74.131103515625,
+     "idle_mw": 39.85049186656396,
+     "utilisation": 0.6503778374662836
+    },
+    "ST_GAS": {
+     "available_mw": 4961.334112495543,
+     "dispatched_mw": 3510.99853515625,
+     "idle_mw": 1450.3355773392932,
+     "utilisation": 0.7076722622476685
+    },
+    "oil": {
+     "available_mw": 1588.5433636363634,
+     "dispatched_mw": 16.851518630981445,
+     "idle_mw": 1571.691845005382,
+     "utilisation": 0.010608157773172982
+    }
+   },
+   "prices": {
+    "model_clearing": 76.93655355594161,
+    "market_rt": 262.60230393843216,
+    "highest_available_offer": 538.7921840168303,
+    "model_clearing_annual_mean": 23.994681181354803,
+    "market_rt_annual_mean": 23.31346264336165
+   },
+   "peak_band_dispatch_mw": {
+    "CC_CHP": {
+     "max_h": 42.89483642578125,
+     "mean_h": 34.99528884887695
+    },
+    "CC_REGULAR": {
+     "max_h": 810.3983154296875,
+     "mean_h": 469.21173095703125
+    },
+    "COAL_LIGNITE": {
+     "max_h": 30.263999938964844,
+     "mean_h": 14.859587669372559
+    },
+    "COAL_PRB": {
+     "max_h": 314.0972595214844,
+     "mean_h": 129.44415283203125
+    },
+    "CT_CHP": {
+     "max_h": 19.93999671936035,
+     "mean_h": 14.448344230651855
+    },
+    "CT_PEAKER": {
+     "max_h": 599.2920532226562,
+     "mean_h": 150.9712677001953
+    },
+    "ST_CHP": {
+     "max_h": 21.159610748291016,
+     "mean_h": 3.804671049118042
+    },
+    "ST_GAS": {
+     "max_h": 1206.72119140625,
+     "mean_h": 171.1247100830078
+    }
+   },
+   "build_s": 9.5
+  },
+  {
+   "iso": "SPP",
+   "year": 2025,
+   "bundle": "results/calibration/spp67_yearown_span",
+   "hours": 8760,
+   "window_hours": 88,
+   "window_basis": "market RT",
+   "declared_simplifications": {},
+   "reconciled": true,
+   "gates": {
+    "G1_fleet_class_not_in_sidecar": [],
+    "G2_sidecar_classes_uncovered_mw": {
+     "OTHER": 53.64692306518555,
+     "biomass": 109.87364959716797,
+     "hydro": 2139.27880859375,
+     "nuclear": 1802.8468017578125,
+     "solar": 386.06817626953125,
+     "wind": 8643.73046875
+    },
+    "G3_dispatch_exceeds_available": []
+   },
+   "thermal_top1pct": {
+    "available_mw": 34250.90330802732,
+    "dispatched_mw": 23540.452503204346,
+    "idle_mw": 10710.450804822976,
+    "idle_pct": 31.270564482638875,
+    "above_clearing_mw": 10125.04396917814,
+    "above_clearing_pct": 29.561392521887594
+   },
+   "per_class": {
+    "CC_CHP": {
+     "available_mw": 241.59786335068335,
+     "dispatched_mw": 237.73973083496094,
+     "idle_mw": 3.858132515722417,
+     "utilisation": 0.9840307672335568
+    },
+    "CC_REGULAR": {
+     "available_mw": 6633.14522790159,
+     "dispatched_mw": 5622.55078125,
+     "idle_mw": 1010.5944466515903,
+     "utilisation": 0.8476447579647982
+    },
+    "COAL_LIGNITE": {
+     "available_mw": 1089.7241285909092,
+     "dispatched_mw": 988.9916381835938,
+     "idle_mw": 100.73249040731548,
+     "utilisation": 0.9075614756391879
+    },
+    "COAL_PRB": {
+     "available_mw": 11329.084345937348,
+     "dispatched_mw": 10819.146484375,
+     "idle_mw": 509.9378615623482,
+     "utilisation": 0.954988607552806
+    },
+    "CT_CHP": {
+     "available_mw": 184.15834166442735,
+     "dispatched_mw": 143.4577178955078,
+     "idle_mw": 40.70062376891954,
+     "utilisation": 0.7789911475034671
+    },
+    "CT_PEAKER": {
+     "available_mw": 9489.495725516468,
+     "dispatched_mw": 3562.141357421875,
+     "idle_mw": 5927.354368094593,
+     "utilisation": 0.37537730775762634
+    },
+    "ST_CHP": {
+     "available_mw": 100.22980658550209,
+     "dispatched_mw": 45.0392951965332,
+     "idle_mw": 55.190511388968886,
+     "utilisation": 0.4493602924207178
+    },
+    "ST_GAS": {
+     "available_mw": 3594.288777571301,
+     "dispatched_mw": 2121.385498046875,
+     "idle_mw": 1472.9032795244261,
+     "utilisation": 0.5902100886507838
+    },
+    "oil": {
+     "available_mw": 1589.1790909090903,
+     "dispatched_mw": 0.0,
+     "idle_mw": 1589.1790909090903,
+     "utilisation": 0.0
+    }
+   },
+   "prices": {
+    "model_clearing": 37.11573778261516,
+    "market_rt": 336.828349720348,
+    "highest_available_offer": 499.78369664068,
+    "model_clearing_annual_mean": 28.09624099961145,
+    "market_rt_annual_mean": 27.1112001878519
+   },
+   "peak_band_dispatch_mw": {
+    "CC_CHP": {
+     "max_h": 42.89483642578125,
+     "mean_h": 35.7150764465332
+    },
+    "CC_REGULAR": {
+     "max_h": 775.5105590820312,
+     "mean_h": 402.9661865234375
+    },
+    "COAL_LIGNITE": {
+     "max_h": 30.263999938964844,
+     "mean_h": 15.391582489013672
+    },
+    "COAL_PRB": {
+     "max_h": 339.9520263671875,
+     "mean_h": 178.10365295410156
+    },
+    "CT_CHP": {
+     "max_h": 20.06435203552246,
+     "mean_h": 13.294671058654785
+    },
+    "CT_PEAKER": {
+     "max_h": 642.8213500976562,
+     "mean_h": 119.67475128173828
+    },
+    "ST_CHP": {
+     "max_h": 18.673187255859375,
+     "mean_h": 0.7352644205093384
+    },
+    "ST_GAS": {
+     "max_h": 1225.707763671875,
+     "mean_h": 145.45660400390625
+    }
+   },
+   "build_s": 7.5
+  }
+ ]
+}

@@ -278,6 +278,34 @@ closure path, mechanism by mechanism.
    `thermal_tranches_<ISO>.csv` is provenance-orphaned (miso-95); the forecast
    board's gate-(a) keeper names are stale vs HEAD.
 
+7. **The LP does not climb its own stack — measured in 9 ISOs of 9 (xiso,
+   2026-09-22).** In the market's top-1 % hours the median ISO leaves **22–52 %**
+   of its *availability-aware* thermal fleet idle, and in seven of nine that idle
+   block is **almost entirely capacity offered ABOVE the clearing price**. The
+   composition is the same everywhere: CC (74–100 %) and coal (49–99 %) are
+   loaded, while **CT_PEAKER runs at 13–46 % and oil at 1–5 %** — in the
+   highest-priced hours of the year. **This sharpens pattern 1 rather than
+   competing with it**, and it closes the door pattern 1 left open: pattern 1
+   concluded the *reserve-tier* route was shut and "the live candidates are
+   offer/DA-depth-side", but the offer side has now been refused at both ends it
+   was tried on exactly this evidence (PJM `measured_offer_surface` = **R**, SPP
+   in both admissible forms), because **adding extent above a price that never
+   reaches it is inert by construction**. The live object is the clearing point's
+   *reach* — reserve, commitment, or demand — not the curve's height.
+   **ERCOT is the positive control and the sole exception**: its idle block sits
+   *below* the clearing price and nets to 0.0 % once reserve holding is removed,
+   and ERCOT is the ISO that most fully co-optimizes reserves into the energy
+   dual. The four ISOs holding **zero** reserve in-LP (`energy_reserve_coopt` off:
+   CAISO, NWPP, SOCO, SPP) include three of the four highest idle shares in the
+   program. **Do not read the PJM `peak`-band inertness as model-class** — PJM's
+   `CC_REGULAR` peak band is 0.000 MW in all 52,560 h, but that band clears in
+   every other ISO (108–1,938 MW). Evidence:
+   `docs/RESULT-xiso-stack-climb-attribution-2026-09-22.md` (pre-registration:
+   `docs/PRECOMMIT-xiso-stack-climb-attribution-2026-09-22.md`); probes
+   `scripts/probes/_xiso_stack_climb_phase0.py`, `_xiso_stack_climb_verdict.py`,
+   `_xiso_reserve_leg.py`. **ZERO cells moved in any shard** — a measurement, not
+   a mechanism test.
+
 ## 5. Per-ISO lever queues (untested candidates → failing gates)
 
 Ranked; each entry names the gate it targets and the identification that must
