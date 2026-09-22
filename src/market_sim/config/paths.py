@@ -416,6 +416,14 @@ FRONTEND_BACKCAST_DIR: Path = DATA_ROOT / "frontend" / "data" / "backcast"
 # stale carbon-priced statmode inputs) lands as a new versioned file.
 STRUCTURAL_PRIOR_ARTIFACT_DIR: Path = ENSEMBLE_DIR / "structural-prior"
 
+# Disposable content-addressed cold-solve cache (PERF-C S6,
+# ``model/lp/p0_cache.py``): one NPZ per LP-content key, bucketed by structural
+# digest, gitignored. Anchored here for the same reason as
+# STRUCTURAL_PRIOR_ARTIFACT_DIR — a single DATA_ROOT override relocates it with
+# everything else. Deletable at any time; the next solve of the same LP
+# recaptures it.
+P0_CACHE_DIR: Path = RESULTS_ROOT / "p0-cache"
+
 # ---------------------------------------------------------------------------
 # ERCOT 60-Day DAM Disclosure extracts live in TWO raw directories under two
 # filename conventions, and every consumer needs both:

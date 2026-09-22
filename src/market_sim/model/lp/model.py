@@ -22,6 +22,7 @@ from market_sim.model.lp.bounds import build_variable_bounds
 from market_sim.model.lp.costs import build_cost_vector
 from market_sim.model.lp.layout import VariableLayout
 from market_sim.model.lp.rows import build_constraints
+from market_sim.model.lp import p0_cache
 
 if TYPE_CHECKING:  # quoted annotations only; runtime imports stay lazy (cycle break)
     from market_sim.model.lp import CrossYearBasis, DispatchResult
@@ -686,6 +687,61 @@ class DispatchModel:
         )
         _rss("after addRows")
 
+        # Content-addressed cold-solve cache (PERF-C S6, lp/p0_cache.py): digest
+        # the LP exactly as HiGHS just received it. Taken HERE — after the
+        # kHighsInf substitution and the addCols/addRows handoff, while the
+        # seven buffers are all still alive and before ``starts``/``indices``/
+        # ``values`` go out of scope — so the digest is the bytes HiGHS holds,
+        # not a reconstruction of them. Hashed through the buffer protocol, so
+        # it allocates nothing at the build peak. The digest is the ONLY thing
+        # kept; nothing else about this build is retained for the cache.
+        #
+        # It describes the model AS BUILT. ``lp/inplace_floor.py`` may mutate
+        # column bounds between P0 and P1 on the live model, which would make
+        # this digest stale for that second solve — so ``solve`` serves and
+        # writes the cache on the FIRST solve only (see the gate there). That is
+        # the one way a content-addressed key could lie, and it is closed by
+        # construction rather than by care.
+        self._lp_structure_digest: str | None = None
+        self._p0_cache_digest_s: float = 0.0
+        if p0_cache.p0_cache_enabled():
+            _dig_t0 = time.perf_counter()
+            try:
+                self._lp_structure_digest = p0_cache.structure_digest(
+                    starts=starts,
+                    indices=indices,
+                    values=values,
+                    col_lower=col_lower,
+                    col_upper=col_upper,
+                    row_lower=row_lower,
+                    row_upper=row_upper,
+                    total_columns=layout.total_columns,
+                    n_rows=n_rows_A,
+                    T=T,
+                    unit_ids=fleet.unit_ids,
+                )
+            except Exception:  # pragma: no cover - a cache never fails a build
+                logger.warning("p0-cache: structure digest unavailable", exc_info=True)
+                self._lp_structure_digest = None
+            self._p0_cache_digest_s = time.perf_counter() - _dig_t0
+            logger.info(
+                "p0-cache: structure digest %s in %.3fs",
+                (self._lp_structure_digest or "unavailable")[:16],
+                self._p0_cache_digest_s,
+            )
+        # Whether a caller installed a starting basis before the first solve
+        # (``apply_cross_year_basis``: the cross-year warm start, the same-year
+        # P1 seed). Such a route has chosen its own starting point and is
+        # warm-start-class; the cache stays out of it in BOTH directions, so it
+        # neither serves a cold answer into a warm route nor writes a warm
+        # route's vertex out as if it were the cold one.
+        self._basis_preinstalled = False
+        #: Provenance of the last solve, read by ``pipeline.solve``: the solve
+        #: key and whether it was served from the cache. ``None`` when the cache
+        #: was not consulted.
+        self.p0_cache_key: str | None = None
+        self.p0_cache_hit: bool = False
+
         self._h = h
         self.fleet = fleet
         self.layout = layout
@@ -1058,6 +1114,20 @@ class DispatchModel:
         The first call solves cold; subsequent calls change only the objective
         coefficients and warm-start from the prior optimal basis.
 
+        The first call is additionally served by the content-addressed
+        cold-solve cache (``model/lp/p0_cache.py``, PERF-C S6) when
+        ``MARKET_SIM_P0_CACHE`` is armed — **default OFF** —
+        ``MARKET_SIM_HIGHS_THREADS`` is pinned to 1 and no caller installed a
+        starting basis. A HIT installs the stored optimal basis for this exact
+        LP and runs the ordinary ``h.run()``, which verifies optimality in 0
+        iterations and reproduces this pass's objective exactly. It does NOT
+        reproduce the internal state a *searched* solve leaves behind, so on the
+        route where P1 re-solves this same live model it moves P1's simplex
+        path — warm-start class, measured over six NEISO years
+        (``docs/handoffs/FINDING-perfc-s6-p0-cache-2026-09-22.md``). That is why
+        it is off by default and why arming it is a declarable choice.
+        ``p0_cache_key`` / ``p0_cache_hit`` carry the provenance.
+
         Args:
             mc: Marginal cost array of shape ``(n_gen, T)``. When ``None`` it is
                 assembled from ``fuel_prices``, ``carbon_price``, ``nox_price``
@@ -1153,6 +1223,88 @@ class DispatchModel:
             self._all_cols = np.arange(layout.total_columns, dtype=np.int32)
         h.changeColsCost(layout.total_columns, self._all_cols, cost)
 
+        # --- Content-addressed cold-solve cache (PERF-C S6) ------------------
+        # The key is the LP: this model's structure digest, the cost vector just
+        # installed, and the solver settings. Computed HERE because ``cost`` is
+        # released a few lines below, and because at this point HiGHS holds
+        # exactly the problem the key names.
+        #
+        # THE GATE, and why each clause is load-bearing:
+        #   * ``_lp_structure_digest is not None`` — the digest was taken and the
+        #     switch + thread pin were on at build time;
+        #   * ``p0_cache_enabled()`` — re-read, so the switch can be flipped off
+        #     between build and solve and be obeyed;
+        #   * ``_n_solves == 0`` — first solve only. ``lp/inplace_floor.py``
+        #     mutates column bounds on a live model between P0 and P1, which
+        #     would make the build-time digest stale for that second solve;
+        #   * ``not _basis_preinstalled`` — the caller has not chosen a starting
+        #     point. A pre-installed basis means a warm-start-class route (the
+        #     cross-year warm start, the same-year P1 seed), and the cache stays
+        #     out of it in both directions so no route's vertex moves.
+        # The clauses are symmetric between read and write: the cache replaces a
+        # COLD first solve with the answer a cold first solve produced, and
+        # nothing else.
+        _cache_ok = (
+            self._lp_structure_digest is not None
+            and self._n_solves == 0
+            and not self._basis_preinstalled
+            and p0_cache.p0_cache_enabled()
+        )
+        self.p0_cache_key = None
+        self.p0_cache_hit = False
+        _cached = None
+        if _cache_ok:
+            try:
+                self.p0_cache_key = p0_cache.solve_key(
+                    self._lp_structure_digest, cost, self._highs_option_signature()
+                )
+                _cached = p0_cache.load(
+                    self._lp_structure_digest,
+                    self.p0_cache_key,
+                    n_cols=layout.total_columns,
+                    n_rows=self._n_rows,
+                )
+            except Exception:  # pragma: no cover - a cache never fails a solve
+                logger.warning("p0-cache: lookup failed", exc_info=True)
+                self.p0_cache_key = None
+                _cached = None
+        if _cached is not None:
+            # A HIT installs the stored OPTIMAL basis and then runs the ordinary
+            # ``h.run()`` below. HiGHS verifies optimality from an optimal basis
+            # in ~0 iterations, so the extraction, ``_marginal_emission_rate``,
+            # the warm P1 on this same live model and the basis export all take
+            # the ordinary code path from the ordinary post-solve state — there
+            # is no special-case route to keep in step with the normal one.
+            # ``alien`` stays False: this basis is not a remap of a different
+            # LP, it is this LP's own answer.
+            basis = highspy.HighsBasis()
+            basis.col_status = [
+                _BASIS_STATUS_OBJS[s] for s in _cached.col_status.tolist()
+            ]
+            basis.row_status = [
+                _BASIS_STATUS_OBJS[s] for s in _cached.row_status.tolist()
+            ]
+            h.setBasis(basis)
+            del basis
+            self.p0_cache_hit = True
+            logger.info(
+                "p0-cache: HIT %s (cold solve spent %d simplex iterations, "
+                "objective %.4f) — replaying from the stored basis",
+                self.p0_cache_key[:16],
+                _cached.simplex_iterations,
+                _cached.objective,
+            )
+        elif self.p0_cache_key is not None:
+            logger.info(
+                "p0-cache: MISS %s — solving cold and storing the result",
+                self.p0_cache_key[:16],
+            )
+        if self._n_solves == 0:
+            # Route-independent provenance for ``pipeline.solve``: the cold P0
+            # route builds its model inside ``solve_dispatch`` and returns only
+            # a ``DispatchResult``, so there is no object to read it off.
+            p0_cache.record_solve(self.p0_cache_key, self.p0_cache_hit)
+
         # Drop the two largest Python-side transients before the solve. HiGHS
         # has already COPIED the cost vector into its own colCost_ by the time
         # changeColsCost returns, and neither name is read again anywhere after
@@ -1209,7 +1361,11 @@ class DispatchModel:
             _iters, _obj = -1, float("nan")
         logger.info(
             f"Matrix build: {self.build_time:.3f}s, "
-            f"Solve: {solve_time:.3f}s ({'warm' if warm else 'cold'}, "
+            f"Solve: {solve_time:.3f}s ({'warm' if warm else 'cold'}"
+            # A cache HIT is neither: the LP is replayed from its own stored
+            # optimal basis, so ``h.run()`` verifies rather than searches. Named
+            # here so the iteration count beside it reads unambiguously.
+            f"{', p0-cache replay' if self.p0_cache_hit else ''}, "
             f"simplex iterations {_iters}, objective {_obj:.4f})"
         )
 
@@ -1570,6 +1726,30 @@ class DispatchModel:
         # skip is left to a lane holding a warm-start-class mandate.
         marginal_emission_rate = self._marginal_emission_rate(n_zones, T)
 
+        # --- Content-addressed cold-solve cache: the WRITE half (PERF-C S6) ---
+        # Placed here, at the end of the pass, rather than beside ``h.run()``,
+        # for one measured reason: ``getBasis`` boxes one Python object per
+        # column and row (21.8 M on an ERCOT keeper year), and the window
+        # immediately after ``run()`` is the one that owns the year-solve peak
+        # (miso-253: 13.30 GiB against a 13.344 GiB ceiling). This is the same
+        # window ``export_cross_year_basis`` already runs in on the cross-year
+        # path. The basis is provably the same one: ``_marginal_emission_rate``
+        # runs with ``simplex_iteration_limit`` 0 — no pivot can occur — and
+        # restores the basis it saved, so nothing between ``run()`` and here can
+        # have moved it.
+        #
+        # Written only on a MISS of a solve the gate already admitted (first
+        # solve, no pre-installed basis, thread pin on), and only when this pass
+        # reached the optimum — a cache may only ever hand back an answer, never
+        # a partial state.
+        if self.p0_cache_key is not None and not self.p0_cache_hit:
+            # ``_iters`` is the count read immediately after ``h.run()``, passed
+            # in rather than re-read: ``_marginal_emission_rate`` has since run
+            # its own deliberate zero-iteration ``run()``, which resets
+            # ``HighsInfo.simplex_iteration_count`` to 0. Re-reading it here
+            # would record every cold solve as having spent no iterations.
+            self._store_p0_cache_entry(status, objective_value, _iters)
+
         return DispatchResult(
             dispatch=dispatch,
             wind_dispatched=wind_dispatched,
@@ -1625,6 +1805,93 @@ class DispatchModel:
             hydro_cascade_water_value=cascade_water_value,
             hydro_cascade_plant_codes=cascade_plant_codes,
         )
+
+    def _highs_option_signature(self) -> str:
+        """Return the solver-settings string mixed into the cold-solve key.
+
+        Everything that can change WHICH optimal vertex a deterministic HiGHS
+        returns for a fixed LP, other than the LP itself: the library version
+        (and its git hash — two builds of 1.14.0 are not assumed identical), the
+        thread pin both as HiGHS reports it and as the environment sets it, and
+        the four options this model or its environment touches
+        (``presolve``, ``simplex_scale_strategy``, ``simplex_strategy``,
+        ``solver``) plus ``random_seed``. Read back OUT of HiGHS rather than
+        reconstructed from the code that set them, so an option set anywhere
+        else in the process is still in the key.
+
+        Returns:
+            A stable ``name=value|...`` signature.
+        """
+        h = self._h
+        parts: list[str] = []
+        try:
+            parts.append(f"highspy={h.version()}")
+        except Exception:  # pragma: no cover - version is always available
+            parts.append("highspy=?")
+        try:
+            parts.append(f"githash={h.githash()}")
+        except Exception:  # pragma: no cover
+            parts.append("githash=?")
+        for name in (
+            "presolve",
+            "simplex_scale_strategy",
+            "simplex_strategy",
+            "solver",
+            "threads",
+            "random_seed",
+        ):
+            try:
+                _, value = h.getOptionValue(name)
+            except Exception:  # pragma: no cover
+                value = "?"
+            parts.append(f"{name}={value}")
+        parts.append(f"threads_env={os.environ.get(p0_cache.ENV_THREADS, '')}")
+        return "|".join(parts)
+
+    def _store_p0_cache_entry(
+        self, status: str, objective_value: float, simplex_iterations: int
+    ) -> None:
+        """Write this pass's optimal basis to the content-addressed cache.
+
+        A no-op unless the pass reached the optimum: a cache may hand back an
+        answer, never a partial state. Every failure is swallowed — the cache is
+        a performance optimization and never a correctness dependency, so
+        nothing here may fail a solve that has already succeeded.
+
+        Args:
+            status: ``modelStatusToString`` of this pass's terminal status.
+            objective_value: The objective this pass reported (provenance; the
+                replay recomputes it).
+            simplex_iterations: The count read immediately after ``h.run()``.
+                Passed in, never re-read here — see the call site.
+        """
+        try:
+            optimal = self._h.modelStatusToString(highspy.HighsModelStatus.kOptimal)
+            if str(status) != str(optimal):
+                logger.info(
+                    "p0-cache: not storing %s — status %r is not %r",
+                    self.p0_cache_key[:16],
+                    status,
+                    optimal,
+                )
+                return
+            basis = self._h.getBasis()
+            entry = p0_cache.CachedSolve(
+                col_status=np.asarray(basis.col_status, dtype=np.int8),
+                row_status=np.asarray(basis.row_status, dtype=np.int8),
+                objective=float(objective_value),
+                simplex_iterations=int(simplex_iterations),
+            )
+            del basis
+            path = p0_cache.store(self._lp_structure_digest, self.p0_cache_key, entry)
+            if path is not None:
+                logger.info(
+                    "p0-cache: stored %s (%.1f MB)",
+                    self.p0_cache_key[:16],
+                    path.stat().st_size / 1e6,
+                )
+        except Exception:  # pragma: no cover - a cache never fails a solve
+            logger.warning("p0-cache: store failed", exc_info=True)
 
     def _marginal_emission_rate(self, n_zones: int, T: int) -> "np.ndarray | None":
         """Return ``(n_zones, T)`` dCO2/d(demand) at the solve's optimal basis.
@@ -1809,6 +2076,12 @@ class DispatchModel:
         basis.row_status = [_BASIS_STATUS_OBJS[s] for s in row_status]
         basis.alien = True
         self._h.setBasis(basis)
+        # This model's first solve now starts from a caller-chosen point, which
+        # is warm-start class. The content-addressed cold-solve cache is gated
+        # OFF for it in both directions (PERF-C S6): it must not serve the cold
+        # vertex into a route that asked for a warm one, and it must not record
+        # a warm route's vertex as the cold answer.
+        self._basis_preinstalled = True
         return True
 
 
