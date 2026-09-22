@@ -647,8 +647,37 @@ def apply_ct_netload_drag_floor(
     )
 
 
+def _drag_lp_bin_capacity(
+    config: ScenarioConfig,
+    iso: str,
+    generators: list[Generator],
+    fleet_arrays: FleetArrays,
+) -> tuple[tuple[tuple[int, str], float], ...] | None:
+    """The dispatched bins' own capacity for the drag lay-up shares, or ``None``.
+
+    Gate for ``ScenarioConfig.unit_outage_dispatched_bin_denominator``
+    (miso-266). Built off the very ``generators`` / ``pmax`` the drag floors
+    clip against, so the lay-up share stays on the same basis as the outage
+    share it is additive with. ``None`` while off (and always for ERCOT, whose
+    branch caps on its own CAMPD bin sheet), which leaves the loader's
+    incumbent denominator and the off path byte-inert.
+    """
+    if not getattr(config, "unit_outage_dispatched_bin_denominator", False):
+        return None
+    if (iso or "ERCOT").upper() == "ERCOT":
+        return None
+    # Local import for the same fleet -> data cycle reason as the loader below.
+    from market_sim.data.outages import lp_bin_capacity_index
+
+    return lp_bin_capacity_index(generators, np.asarray(fleet_arrays.pmax, dtype=float))
+
+
 def _resolve_drag_layup_shares(
-    config: ScenarioConfig, iso: str, year: int, hours: int
+    config: ScenarioConfig,
+    iso: str,
+    year: int,
+    hours: int,
+    lp_bin_capacity: tuple[tuple[tuple[int, str], float], ...] | None = None,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Measured economic-lay-up shares for the net-load drag floors, or ``{}``.
 
@@ -694,6 +723,9 @@ def _resolve_drag_layup_shares(
         st_capacity_basis=getattr(config, "unit_outage_st_capacity_basis", False),
         per_unit_clip=getattr(config, "unit_outage_per_unit_clip", False),
         extract_basis_share=getattr(config, "unit_outage_extract_basis_share", False),
+        # miso-266: the dispatched bin's own capacity as the denominator, for
+        # the same additivity contract every basis argument here mirrors.
+        lp_bin_capacity=lp_bin_capacity,
     )
     logger.info(
         "netload_drag_layup_window_mask ARMED (%s %d): %d plant-tranche lay-up "
@@ -751,7 +783,13 @@ def apply_netload_drag_floors(
         - (wind_cap[:, None] * wind_cf).sum(axis=0)
     )
     layup_removed = _resolve_drag_layup_shares(
-        config, iso, year, int(fleet_arrays.availability.shape[1])
+        config,
+        iso,
+        year,
+        int(fleet_arrays.availability.shape[1]),
+        # miso-266: built off the very generators/pmax the drag floors clip
+        # against, so the lay-up share and the outage share stay additive.
+        lp_bin_capacity=_drag_lp_bin_capacity(config, iso, generators, fleet_arrays),
     )
     if apply_gas_st_netload_drag_floor(
         fleet_arrays, generators, net_load, config, layup_removed

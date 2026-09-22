@@ -48,20 +48,35 @@ from scripts.probes._miso265_coal_availability_ceiling import (  # noqa: E402
     load_bench,
 )
 
-#: The keeper's own outage-overlay posture, read from its ``meta.json`` and held
-#: fixed in every variant so each row is a SINGLE delta off the incumbent.
+#: The keeper's own outage-overlay posture, read from its per-year
+#: ``run_config_<year>.json`` and held fixed in every variant so each row is a
+#: SINGLE delta off the incumbent.
+#:
+#: CORRECTION (miso-266): this dict omitted ``fleet_status_scope=True``, which
+#: the MISO keeper's ``run_config_2020.json`` carries, so miso-265's "incumbent"
+#: row was one flag off the keeper's real posture. It changes no number here —
+#: that session's own ``+fleet_status_scope`` row is byte-identical to its
+#: incumbent, which is exactly the measurement saying the flag is inert on this
+#: object — but the base is the keeper's, so it is corrected rather than left.
 BASE_KWARGS = dict(
     st_capacity_basis=True,
     mixed_gas_routing=True,
     per_unit_clip=True,
+    fleet_status_scope=True,
 )
 
-VARIANTS: dict[str, dict] = {
+#: Variants keyed on a callable when they need the LP fleet itself. A plain dict
+#: is passed straight through as kwargs; a callable receives the LP bin roster
+#: (:func:`market_sim.data.outages.lp_bin_capacity_index`) and returns kwargs.
+VARIANTS: dict[str, dict | object] = {
     "incumbent (keeper)": {},
-    "+fleet_status_scope": {"fleet_status_scope": True},
+    "-fleet_status_scope": {"fleet_status_scope": False},
     "+extract_basis_share": {"extract_basis_share": True},
-    "+both": {"fleet_status_scope": True, "extract_basis_share": True},
     "+merit_order_guard": {"per_unit_crosswalk": True, "merit_order_guard": True},
+    # miso-266: the DISPATCHED-bin denominator. The candidate this probe exists
+    # to size, chosen on the extract's/LP's own construction (the denominator
+    # must be the capacity the multiplier is applied to), never on the residual.
+    "+dispatched_bin_denom": lambda roster: {"lp_bin_capacity": roster},
 }
 
 
@@ -83,6 +98,11 @@ def main() -> int:
     from market_sim.data.fleet import FUEL_TYPE_MAP
 
     is_coal = np.asarray(fa.fuel_type_idx) == FUEL_TYPE_MAP["coal"]
+    # The LP's OWN per-bin capacity, off the very generators/pmax the overlay is
+    # applied to — the miso-266 candidate's denominator.
+    from market_sim.data.outages import lp_bin_capacity_index
+
+    roster = lp_bin_capacity_index(state["fleet"], pmax)
     # The overlay is keyed (plant_code, plant_group); collect each coal plant's
     # key and its LP capacity once, so every variant is scored on one fleet.
     plant_keys: dict[str, tuple[int, str]] = {}
@@ -110,10 +130,11 @@ def main() -> int:
     hdr = f"{'variant':24} {'avail==0 h':>11} {'contradicted h':>15} {'metered TWh':>12} {'plants':>7}"
     print(hdr)
     print("-" * len(hdr))
-    for name, extra in VARIANTS.items():
+    for name, spec in VARIANTS.items():
+        extra = spec(roster) if callable(spec) else spec
         try:
             fac = unit_outage_derate_factors(
-                args.year, iso=args.iso, **BASE_KWARGS, **extra
+                args.year, iso=args.iso, **{**BASE_KWARGS, **extra}
             )
         except Exception as exc:  # pragma: no cover - a variant may be unbuildable
             print(f"{name:24} ERROR: {exc}")

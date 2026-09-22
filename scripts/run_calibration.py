@@ -739,6 +739,7 @@ def run_year(
     unit_outage_mixed_gas_routing: bool | None = None,
     unit_outage_st_capacity_basis: bool | None = None,
     unit_outage_per_unit_clip: bool | None = None,
+    unit_outage_dispatched_bin_denominator: bool | None = None,
     unit_outage_short_windows_gas: bool | None = None,
     unit_outage_window_hour_grain: bool | None = None,
     campd_per_unit_attribution: bool | None = None,
@@ -1698,6 +1699,15 @@ def run_year(
         # records it), so an override missing here would solve the control twice.
         config = config.with_overrides(
             unit_outage_per_unit_clip=unit_outage_per_unit_clip
+        )
+    if unit_outage_dispatched_bin_denominator is not None:
+        # miso-266: the DISPATCHED-bin derate denominator. THIS is the SOLVE
+        # path for the flag (run_calibration_full's _recorded_config only
+        # records it), so an override missing here would solve the ARM as the
+        # CONTROL — the miso-265 trap, where two registered outage tunables
+        # turned out to have no run_year plumbing at all (rule 24 [R-REGISTRY]).
+        config = config.with_overrides(
+            unit_outage_dispatched_bin_denominator=unit_outage_dispatched_bin_denominator
         )
     if unit_outage_window_hour_grain is not None:
         # nyiso-229: the DETECTED-HOUR outage window grain. THIS is the SOLVE

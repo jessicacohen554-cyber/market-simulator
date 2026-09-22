@@ -43,6 +43,7 @@ import calendar
 import logging
 import os
 import re
+from collections.abc import Sequence
 from functools import lru_cache, partial
 from pathlib import Path
 
@@ -956,6 +957,74 @@ def _iso_plant_capacity_cached(
     return cap
 
 
+def lp_bin_capacity_index(
+    generators: Sequence[object],
+    pmax: np.ndarray | None = None,
+) -> tuple[tuple[tuple[int, str], float], ...]:
+    """Return the DISPATCHED fleet's own ``(plant_code, plant_group) -> MW`` roster.
+
+    ``ScenarioConfig.unit_outage_dispatched_bin_denominator`` (miso-266). The
+    derate denominator this builds is the capacity the derate multiplier is
+    ACTUALLY applied to — summed off the very ``generators`` / ``pmax`` the
+    overlay then multiplies — rather than :func:`_iso_plant_capacity`'s
+    independently-rebuilt map.
+
+    **Why a second construction of the denominator was always a defect.**
+    :func:`_iso_plant_capacity`'s own docstring states the invariant: *"this
+    denominator has to be THE SAME capacity the derate multiplier is applied to
+    in the LP ... reading the denominator off an un-armed fleet while the LP
+    holds an armed one would remove the wrong absolute MW"*. It states it about
+    one FLAG (``cc_steam_part_reclass``) and patches a second channel by hand
+    (``mid_vintage_exit_carry``, SPP-48's Oklaunion case). The invariant is
+    general, and the map cannot honour it by reconstruction: it is built from
+    ``load_fleet_from_csv`` + ``load_retired_within_window`` alone and is
+    therefore blind to every other way the dispatched fleet differs from that
+    pair — above all the EXIT-COHORT bins :func:`~market_sim.data.fleet.
+    assembly` synthesizes with an ``_r{yyyy}{mm}`` tag (miso-191), which carry
+    real dispatched capacity under the SAME ``(plant_code, plant_group)`` key
+    the overlay is looked up by and appear in no fleet the map loads.
+
+    The arithmetic that follows is an identity, not a preference. The
+    accumulator removes ``share = sum_u ucap_u / denom`` and the LP applies
+    ``1 - share`` to ``cap_LP``, so the MW actually removed is
+    ``share x cap_LP``; that equals the MW that went out iff
+    ``denom == cap_LP``. Measured on the MISO keeper's own 2020 fleet
+    (``scripts/probes/_miso266_denominator_vs_lp.py``): ten COAL bins carry
+    ``denom / cap_LP`` between 0.414 and 0.814 — R M Schahfer 722.0 MW against
+    the LP's 1,625.0 — so one 432 MW unit out removes 60 % of the plant instead
+    of 27 %, and three concurrent units remove 242 % and clip a running plant to
+    zero (FINDING-miso265 §3: 5.318 TWh metered at ``availability == 0``).
+
+    **Zero free parameters** (rule 21 ``[R-DOF]``) — every MW is the fleet's own
+    ``pmax``. **Rule 13 ``[R-MEASURED]`` forward-regenerable**: a forecast fleet
+    has ``pmax`` exactly as a backcast one does, and the roster responds to
+    changed conditions because the fleet does. **Year-correct by construction**:
+    the map is read off the year's own fleet, so a cohort that has retired out
+    of a later year leaves the denominator on its own.
+
+    Args:
+        generators: The LP's generator objects, in fleet-array row order.
+        pmax: Row-aligned ``pmax`` MW. Defaults to each generator's own
+            ``pmax_mw``, which is what the fleet arrays are built from.
+
+    Returns:
+        A SORTED tuple of ``((plant_code, plant_group), mw)`` pairs — hashable,
+        so it crosses the loaders' ``lru_cache`` boundary and keys the cache on
+        the fleet it was built from.
+    """
+    acc: dict[tuple[int, str], float] = {}
+    for i, gen in enumerate(generators):
+        code = int(getattr(gen, "plant_code", 0) or 0)
+        group = str(getattr(gen, "plant_group", "") or "")
+        if code <= 0 or not group:
+            continue
+        mw = float(pmax[i]) if pmax is not None else float(getattr(gen, "pmax_mw", 0.0))
+        if not mw > 0.0:
+            continue
+        acc[(code, group)] = acc.get((code, group), 0.0) + mw
+    return tuple(sorted(acc.items()))
+
+
 @lru_cache(maxsize=None)
 def unit_outage_derate_factors(
     year: int,
@@ -973,6 +1042,7 @@ def unit_outage_derate_factors(
     extract_basis_share: bool = False,
     hour_grain: bool = False,
     mid_vintage_exit_carry: bool = False,
+    lp_bin_capacity: tuple[tuple[tuple[int, str], float], ...] | None = None,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return ``{(plant_code, plant_group): (hours,) availability multiplier}``.
 
@@ -1025,6 +1095,7 @@ def unit_outage_derate_factors(
         per_unit_clip=per_unit_clip,
         extract_basis=basis,
         mid_vintage_exit_carry=mid_vintage_exit_carry,
+        lp_bin_capacity=lp_bin_capacity,
     )
 
 
@@ -1135,6 +1206,7 @@ def _unit_outage_factors_from_events(
     per_unit_clip: bool = False,
     extract_basis: dict[tuple[int, str], tuple[bool, float]] | None = None,
     mid_vintage_exit_carry: bool = False,
+    lp_bin_capacity: tuple[tuple[tuple[int, str], float], ...] | None = None,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Accumulate unit-outage event rows into per-bin availability factors.
 
@@ -1215,7 +1287,43 @@ def _unit_outage_factors_from_events(
     keeps ``cap[bin]``. Mutually exclusive with ``cc_nameplate_basis``, which
     acts on the same CC bins' share (two constructions of one share never
     stack).
+    ``lp_bin_capacity`` (GATED default-off; miso-266,
+    ``ScenarioConfig.unit_outage_dispatched_bin_denominator``): REPLACE the
+    reconstructed ``cap`` map with the DISPATCHED fleet's own per-bin capacity
+    (:func:`lp_bin_capacity_index`), which is the capacity this factor is then
+    applied to. One map for the roster and for the divide, because they are the
+    same object: a bin the LP does not dispatch has nothing to derate, and a bin
+    it does dispatch must be derated against what it dispatches. That closes the
+    two halves of one defect at once —
+
+    * the DENOMINATOR, where the reconstructed map is blind to the exit-cohort
+      bins ``fleet.assembly`` synthesizes under the SAME ``(plant_code,
+      plant_group)`` key the overlay is looked up by (miso-191's
+      ``_r{yyyy}{mm}`` tag). Measured on the MISO 2020 keeper fleet: ten COAL
+      bins at ``cap / cap_LP`` of 0.414-0.814, which over-remove by up to 2.4x
+      and clip running plants to zero (FINDING-miso265 §3);
+    * MEMBERSHIP, where a bin the LP dispatches but the reconstructed map lacks
+      is SKIPPED and rides un-derated through its own measured outage — the
+      pathology SPP-48 patched for one channel by hand
+      (``mid_vintage_exit_carry``'s Oklaunion 127).
+
+    Non-ERCOT only, like every sibling basis flag (the ERCOT branch caps on its
+    own CAMPD bin sheet and routes split facilities). Mutually exclusive with
+    ``cc_nameplate_basis`` and ``extract_basis``: all three set the denominator,
+    and two constructions of one denominator never stack (rule 19
+    ``[R-ONE-MECH]``) — ``cc_nameplate_basis`` in particular reconstructs the
+    very ``fleet_to_bins`` raise that is ALREADY inside the ``pmax`` this flag
+    reads, so stacking them would double-apply it.
     """
+    if lp_bin_capacity is not None and (
+        cc_nameplate_basis or extract_basis is not None
+    ):
+        raise ValueError(
+            "unit_outage_dispatched_bin_denominator is mutually exclusive with "
+            "unit_outage_lp_capacity_basis and unit_outage_extract_basis_share "
+            "(rule 19 [R-ONE-MECH]): all three set the derate denominator — arm "
+            "exactly one construction"
+        )
     if extract_basis is not None and cc_nameplate_basis:
         raise ValueError(
             "unit_outage_extract_basis_share is mutually exclusive with "
@@ -1249,6 +1357,13 @@ def _unit_outage_factors_from_events(
         # rule 19 [R-ONE-MECH]: the per-plant _FLEET_GROUP_OVERRIDE enumeration
         # is DISARMED on the per-unit-crosswalk path, where the file already
         # carries each unit's own bin (nyiso-177).
+        if lp_bin_capacity is not None:
+            # miso-266: the DISPATCHED fleet's own roster REPLACES the
+            # reconstructed map — for membership and for the divide alike, since
+            # they are one object (see the docstring). Built from the very
+            # generators/pmax this factor is applied to, so `denom == cap_LP`
+            # holds by construction rather than by reconstruction.
+            cap = dict(lp_bin_capacity)
         target_fn = partial(
             _generic_unit_outage_target, per_unit_crosswalk=per_unit_crosswalk
         )
@@ -1379,6 +1494,7 @@ def unit_outage_short_derate_factors(
     extract_basis_share: bool = False,
     gas_scope: bool = False,
     mid_vintage_exit_carry: bool = False,
+    lp_bin_capacity: tuple[tuple[tuple[int, str], float], ...] | None = None,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return short-window (< 5-day) unit-outage availability multipliers.
 
@@ -1439,6 +1555,7 @@ def unit_outage_short_derate_factors(
         per_unit_clip=per_unit_clip,
         extract_basis=basis,
         mid_vintage_exit_carry=mid_vintage_exit_carry,
+        lp_bin_capacity=lp_bin_capacity,
     )
 
 
@@ -1472,6 +1589,7 @@ def unit_layup_removed_fractions(
     st_capacity_basis: bool = False,
     per_unit_clip: bool = False,
     extract_basis_share: bool = False,
+    lp_bin_capacity: tuple[tuple[tuple[int, str], float], ...] | None = None,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return ``{(plant_code, plant_group): (hours,) laid-up capacity fraction}``.
 
@@ -1527,6 +1645,7 @@ def unit_layup_removed_fractions(
             if (extract_basis_share and iso != "ERCOT")
             else None
         ),
+        lp_bin_capacity=lp_bin_capacity,
     )
     # The accumulator returns availability multipliers (1 - removed share);
     # this loader's contract is the REMOVED (laid-up) share itself.
@@ -1563,6 +1682,7 @@ def unit_partial_outage_derate_factors(
     st_capacity_basis: bool = False,
     per_unit_clip: bool = False,
     extract_basis_share: bool = False,
+    lp_bin_capacity: tuple[tuple[tuple[int, str], float], ...] | None = None,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return unit-grain partial-derate plateau availability multipliers.
 
@@ -1608,6 +1728,7 @@ def unit_partial_outage_derate_factors(
             if (extract_basis_share and iso != "ERCOT")
             else None
         ),
+        lp_bin_capacity=lp_bin_capacity,
     )
 
 
@@ -1647,6 +1768,7 @@ def unit_outage_maxgen_derate_factors(
     cc_nameplate_basis: bool = False,
     mixed_gas_routing: bool = False,
     mid_vintage_exit_carry: bool = False,
+    lp_bin_capacity: tuple[tuple[tuple[int, str], float], ...] | None = None,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return declared-event-window revealed-derate availability multipliers.
 
@@ -1677,8 +1799,22 @@ def unit_outage_maxgen_derate_factors(
     if not csv_path.exists():
         return {}
     df = pd.read_csv(csv_path)
+    if lp_bin_capacity is not None and cc_nameplate_basis:
+        raise ValueError(
+            "unit_outage_dispatched_bin_denominator is mutually exclusive with "
+            "unit_outage_lp_capacity_basis (rule 19 [R-ONE-MECH]): both set the "
+            "derate denominator — arm exactly one construction"
+        )
     cap = (
-        _iso_plant_capacity(
+        # miso-266: the DISPATCHED fleet's own per-bin roster REPLACES the
+        # reconstructed map, for membership and for the divide alike. This
+        # layer shares the std layer's `derate_mw / cap[bin]` arithmetic and
+        # the same (plant_code, plant_group) key, so it carries the same
+        # denominator defect and must move with it (rule 19 [R-ONE-MECH]).
+        # Non-ERCOT only, matching the accumulator's own scoping.
+        dict(lp_bin_capacity)
+        if (lp_bin_capacity is not None and iso != "ERCOT")
+        else _iso_plant_capacity(
             iso,
             cc_steam_part_reclass,
             cc_nameplate_basis,
