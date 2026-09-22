@@ -48,6 +48,7 @@ window.MECH_MATRIX_SHARDS.PJM = {
     ercot_ruc_commitment_floor: { cell: "." },
     ercot_as_held_requirement: { cell: "." },
     ercot_as_held_location: { cell: "." },
+    nwpp_grid_carried_wind_served: { cell: "." },
     ercot_tie_zonal_interchange: { cell: "." },
     ercot_offer_swcap_clip: { cell: "." },
     ercot_offer_surface_cleared_share_rt_room: { cell: "." },

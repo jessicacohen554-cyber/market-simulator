@@ -39,6 +39,7 @@ _DEMAND_AFFECTING_FIELDS: tuple[str, ...] = (
     "td_loss_factor",
     "caiso_supply_consistent_demand",
     "caiso_demand_clock_realign",
+    "nwpp_grid_carried_wind_served",
 )
 
 _THREADING_SITE = "scripts/run_calibration_full.py"

@@ -3046,6 +3046,9 @@ def run_year(
                 config, "caiso_supply_consistent_demand", False
             ),
             ercot_tie_zonal_interchange=config.ercot_tie_zonal_interchange,
+            nwpp_grid_carried_wind_served=getattr(
+                config, "nwpp_grid_carried_wind_served", False
+            ),
         )
     wind_cf, wind_cap, solar_cf, solar_cap = load_renewable_profiles(
         iso, year, iso_config, config
