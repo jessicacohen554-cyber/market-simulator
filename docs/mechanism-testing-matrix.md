@@ -18497,6 +18497,40 @@ scored on C1/C2/C4/C6/C8 that names its own basis and may never read
 > **$0.51/MWh**), so COAL_BIT is one flat shelf that flips wholesale on the gas price. **No LP was
 > spent on the chartered arm and none should be.**
 
+> **CORRECTION #2, NWPP-45 (2026-09-22), zero LP.** Two claims about the keeper's C1 failure,
+> carried in `keepers/NWPP.json`, in this section's §5.9 stamp and in `PRECOMMIT-nwpp-44` §6.1, are
+> **wrong, and correcting them changes what the defect is.**
+> **(a) The C1 volume band is ±8.00 TWh, not ±5.41 / ±5.55 / ±5.77.** `_fuelmix_vol_band` is
+> `min(max(2 % ISO-load, 3 % actual-gen), 8 TWh)` and **the 8 TWh cap binds** for NWPP in every
+> year. 2023 `CC_REGULAR` reads 47.996 against 56.215, so the **miss is 0.219 TWh — 2.7 % of the
+> band**, not 8.22 TWh of model error; the share leg (−2.32 pp against ±3.0 pp) is inside. 2024
+> `CC_REGULAR` **passes** at −6.323 and every 2025 row is SKIPPED on the preliminary EIA-923
+> vintage. NWPP-44's RESULT §1c.3 caught its own formula contradicting the keeper's `metrics.json`
+> and correctly refused to score on it; the wrong band nevertheless reached three permanent records.
+> **(b) It is not a `CC_REGULAR` defect at all.** The shortfall is **uniform across every load
+> quintile** (−1.6 to −2.7 TWh each; ≈ −900 to −1,400 MW in every hour of 2023), the class carries
+> **~30 TWh of unused envelope** (78.347 TWh availability-weighted against 47.996 dispatched), and
+> **every zone is short of nearly every family in every year with none over-generating**. It is a
+> **system energy-requirement gap** of −9.645 / −12.144 / −9.107 TWh which the marginal class
+> absorbs because every non-thermal class is separately pinned to a measured budget (non-thermal is
+> within 0.056 / 0.057 TWh of actual in 2023 / 2024). The identity closes to **0.049 / 0.059 /
+> 0.107 TWh** in all three years: the LP's demand is EIA-930 pool `Net generation (Adj)` **less
+> GRID's Desert-Southwest interchange legs** (7.115 / 9.774 / 10.131 TWh), while C1 scores against
+> the **EIA-923 plant basis** — and the two sources disagree by **21.3 TWh over an identical plant
+> set** (all 881 footprint plants carry a `BACODE` in `NWPP_BAS`; zero pool-BA plants are missing),
+> the largest terms being **GRID +12.856** and **BPAT −15.169**, the signature of generation-only
+> balancing authorities.
+> **The obvious fix is refuted before any LP.** Applying the construction's own stated principle
+> literally — subtract GRID's out-of-footprint **generation** (12.856 TWh) rather than its Southwest
+> **legs** — lowers demand by a further **5.741 TWh** and makes C1 **worse**. Zeroing the
+> subtraction is the over-ask it exists to prevent.
+> **Nothing was armed and no mechanism was selected.** The remedy is a demand-construction change
+> worth 9–12 TWh/yr; rule 1 `[R-STRUCT]` forbids this lane picking it, because the residual is
+> exactly what would be moving. It is put to the owner as a scope question in
+> `docs/handoffs/FINDING-nwpp-45-2026-09-22.md` §8, with the three framings and the LP cost of
+> validating any of them. **NWPP-45 spent zero LP and left nothing on ephemeral disk.**
+> Probes: `scripts/probes/_nwpp45_ccregular_phase0.py`, `scripts/probes/_nwpp45_demand_basis.py`.
+
 
 **Status.** NWPP is being added by the NWPP ADDITION PROGRAM
 (`docs/multi-iso/nwpp-addition-plan-2026-09.md`, director lane `NWPP-DESK`,
