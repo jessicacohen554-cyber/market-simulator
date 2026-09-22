@@ -2,7 +2,7 @@
 
 **Lane:** CROSS-ISO — C3c (price tail / scarcity) common-cause attribution
 **Date:** 2026-09-22 · **Session:** `lp-stack-climb-attribution`
-**Cost:** ZERO LP. 41 `fleet_only` rebuilds (~15 s each) + committed sidecars. No shard launched.
+**Cost:** ZERO LP. 44 `fleet_only` rebuilds (~15-60 s each) + committed sidecars. No shard launched.
 **Rules:** 32 `[R-SHARD]` (a) (the parent never solves), 29 `[R-SCREEN]` clause 0 (zero-LP phase 0),
 1 `[R-STRUCT]` (attribution, not tuning — nothing armed, nothing swept, no keeper moves),
 28 `[R-MECH-MATRIX]` (a) DO-NOT-REDO, 25 `[R-ISO-SCOPE]` (a measurement in one ISO fills no cell
@@ -43,7 +43,7 @@ and each lane owns its own.
 ## 2. Population — declared in full
 
 Each ISO's designated keeper (`frontend/data/backcast/keepers/<ISO>.json`) plus every run stamped
-to it (rule 30 `[R-TOUCHPOINT-FOLD]` (a)). **41 ISO-years, 9 ISOs**, read from committed artifacts
+to it (rule 30 `[R-TOUCHPOINT-FOLD]` (a)). **44 ISO-years, 9 ISOs**, read from committed artifacts
 only. No LIVE lane's branch is touched.
 
 | ISO | keeper | bundle(s) | years |
@@ -57,6 +57,11 @@ only. No LIVE lane's branch is touched.
 | PJM | `2026-09-20-pjm-h15-coalwindow-span` | `…_span` + folded `…_touchpoint` | 2020–2025 (6) |
 | SOCO | `2026-09-20-soco57-measured-cc-heat` | `soco57_measured_cc_hr` | 2023–2025 (3) |
 | SPP | `2026-09-20-spp-67-yearown-rate` | `spp67_yearown_span` + folded `…_rung` | 2019–2025 (7) |
+
+> **CORRECTION (same session, before any number was read).** The first push of this file totalled
+> the table as "41 ISO-years"; it sums to **44** (4+5+6+6+3+4+6+3+7). The arithmetic was wrong,
+> not the population — the table above is unchanged and is what defines the set. Corrected here
+> rather than silently, and the RESULT reports 44.
 
 **The PJM keeper moved under the brief.** The task cites `pjm-h17` and the h14 keeper; the file on
 disk is `FINDING-pjm-h15-…` and PJM's designated keeper is now `…-pjm-h15-coalwindow-span`. This
