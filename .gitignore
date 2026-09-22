@@ -3301,3 +3301,18 @@ results/calibration/nwpp46_hydroenv_2025/
 # composes them and commits only the two composites, which are negated below.
 results/calibration/spp71_20*_ctl/
 results/calibration/spp71_20*_arm/
+# pjm-h16 (2026-09-22): the per-year shard legs and the CONTROL composites.
+# Rule 32 [R-SHARD] (d) keeps per-year leg dirs out of `main` — the COMPOSITE is
+# what gets registered — and rule 29 [R-SCREEN] (c) keeps a control bundle out of
+# it too. Rule 31 [R-RETAIN] is why these are GITIGNORED and not `rm`'d: the owner
+# has ruled on promotion, but the legs stay on local disk until this session ends
+# so nothing that might still be wanted is destroyed. Recovery, if ever needed, is
+# a ~13-19 min re-solve per leg (rule 33(d): the shard-branch SHAs below are
+# PROVENANCE, not a recovery route).
+#   arm legs      claude/pjm-h16-arm-{2020..2025} @ 17d4900b 4813ec38 17377467
+#                 db92a02b 2abac64d e4fe9e85
+#   control legs  claude/pjm-h16-ctl-{2020,2021,2022,2024,2025} @ eb66e6dd
+#                 a1fe8f50 c4c89372 3f825b36 56666a65
+results/calibration/pjm_h16_arm_20*/
+results/calibration/pjm_h16_ctl_20*/
+results/calibration/pjm_h16_ctl_touchpoint/
