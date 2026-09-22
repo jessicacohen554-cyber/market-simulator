@@ -678,6 +678,50 @@ results/calibration/caiso288_gasfix_2023/
 results/calibration/caiso288_gasfix_2024/
 results/calibration/caiso288_gasfix_2025/
 
+# -----------------------------------------------------------------------------
+# hydro-1 (2026-09-22) per-year ARM LEGS, three arms x their keeper year sets.
+# Same rule 32 [R-SHARD] (d) posture as the caiso-288 block above: per-year arm
+# bundles are KEPT OUT OF `main`, and ignored rather than deleted per rule 31
+# [R-RETAIN] — ".gitignore is what discharges the delete-before-merge duty, not
+# `rm`". NONE of these is a registered run: arm A/B are promotion CANDIDATES
+# whose lanes (hydro-2 / hydro-3) must first close their outstanding year, and
+# arm C is REFUTED, so committing any of them would be the Class-E parity RED
+# rule 29 [R-SCREEN] (c) forbids.
+#
+# Every number these bundles support is in docs/RESULT-hydro-1-2026-09-22.md —
+# that doc is the record, exactly as rule 31 intends. The SHAs below are
+# PROVENANCE (which commit produced which leg), NOT a durability claim: a shard
+# branch is transport and is cut when the lane's PR merges (rule 33
+# [R-SHARD-ARCHIVE] (d)/(f)). Cost any leg not landed on `main` as a RE-SOLVE —
+# NYISO is ~3.5 min of LP per year, PJM longer.
+#
+#   arm A2 hydro_ror_split, PJM vs pjm_h15_coalwindow_span   (cell O, candidate)
+#     git checkout c6549ea720c4 -- results/calibration/hydro1_pjm_ror2_2024
+#     git checkout 404b9276c670 -- results/calibration/hydro1_pjm_ror2_2025
+#   arm B  hydro_ror_split, NYISO vs nyiso247_fuelinv_span   (cell O, candidate)
+#     git checkout d09eb5868fce -- results/calibration/hydro1_nyiso_ror_2022
+#     git checkout 7dba706d6253 -- results/calibration/hydro1_nyiso_ror_2023
+#     git checkout 1caea62bb36c -- results/calibration/hydro1_nyiso_ror_2024
+#     git checkout 136bea23f813 -- results/calibration/hydro1_nyiso_ror_2025
+#   arm C  hydro_pondage_bound, NYISO                        (cell R, REFUTED)
+#     git checkout 238194935888 -- results/calibration/hydro1_nyiso_pond_2022
+#     git checkout ee044e642ff9 -- results/calibration/hydro1_nyiso_pond_2023
+#     git checkout 0b95a6d5fdf2 -- results/calibration/hydro1_nyiso_pond_2024
+#     git checkout 2537e6bac109 -- results/calibration/hydro1_nyiso_pond_2025
+#   (hydro1_pjm_ror_2025 @ 693f5e9bc309 is the SUPERSEDED h13-control leg,
+#    kept only because rule 31 forbids deleting it before the owner rules.)
+results/calibration/hydro1_pjm_ror2_2024/
+results/calibration/hydro1_pjm_ror2_2025/
+results/calibration/hydro1_pjm_ror_2025/
+results/calibration/hydro1_nyiso_ror_2022/
+results/calibration/hydro1_nyiso_ror_2023/
+results/calibration/hydro1_nyiso_ror_2024/
+results/calibration/hydro1_nyiso_ror_2025/
+results/calibration/hydro1_nyiso_pond_2022/
+results/calibration/hydro1_nyiso_pond_2023/
+results/calibration/hydro1_nyiso_pond_2024/
+results/calibration/hydro1_nyiso_pond_2025/
+
 results/calibration/*/model_changes.diff
 results/calibration/*/dispatch/
 results/calibration/*/*.parquet
