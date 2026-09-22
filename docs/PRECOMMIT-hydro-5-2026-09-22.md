@@ -295,3 +295,22 @@ and the `results/calibration/_shared/<ISO>/` captures its `meta.json` references
 branch, by `.gitignore` negation and plain `git add`. The parent fetches, verifies
 (`git ls-tree` > 0 files), composes per ISO-arm, and lands anything that must survive on `main`
 before this lane's PR merges (rule 33(f)).
+
+---
+
+## 8. Launch record (appended after the shards were created)
+
+All 26 pinned to `fda9ece3d854d747a263f3078285df96fb4f0fe1` — the immutable SHA of this doc's §6
+commit, never a branch name (rule 32(c)(1)). Each shard's first hard stop is
+`git checkout -B <branch> <sha>` plus a `git rev-parse HEAD` equality check. Tagged `hydro-5`.
+
+| arm | year | shard session |
+|---|---|---|
+| MISO R | 2020 / 2021 / 2022 | `session_015ZHZrwByh5tySh87ScQUd4` / `session_01XXMuec63Lygqz2ZPjBy6D3` / `session_013VvkUFSevkEx5FHXCykPFs` |
+| MISO R | 2023 / 2024 / 2025 | `session_01LRPokY4JT5Ask3cqTgH9X8` / `session_01XtumZgmZwL1xio9UcNJsxD` / `session_01AD8GpEL8TjuCqYy43HgDcF` |
+| NEISO R | 2020 / 2021 / 2022 | `session_01WiXYvanuoTKK1AXJEvAZBr` / `session_01XhG2YeFa28hNzFLFuBY7LN` / `session_014ZCg8bXiZMXYZ1M9Ff8erj` |
+| NEISO R | 2023 / 2024 / 2025 | `session_01AzppXjm6VLg7wzQZDitUsd` / `session_01Tc7arkP7jaw1ab8LqiCVUy` / `session_01477XKWsBFiJ7XAWs9B2vgY` |
+| SPP F | 2019 / 2020 / 2021 / 2022 | `session_01YKiZJNzjKcNzqWbJ5jyA9x` / `session_019wVwBMTaPAPPxUStUo2PG6` / `session_01KCGddptxmbP4h8JyAFdNgh` / `session_01P2dDrzLiYVAV61ciSAa1wX` |
+| SPP F | 2023 / 2024 / 2025 | `session_01QEM51ri388qFfJzojZRWdp` / `session_01GEzFXRV6e7w1cVcuww8tez` / `session_01JxbDxQMkWeA6HGUm4ecM9h` |
+| SPP R | 2019 / 2020 / 2021 / 2022 | `session_01TMP8S6tujwvYJAVU22c28y` / `session_01N6MBNWos9hSKMXQNDFCRty` / `session_012sHURXNN8athHEdip5svE5` / `session_01MGpJfyL3eYLPVGDSu8kC8B` |
+| SPP R | 2023 / 2024 / 2025 | `session_01CagEzL8abhAbw9H9yknc3E` / `session_01XuxaPrVp9cA6vd4Ws3QgFU` / `session_01BSopVi1JLUz3HygnpcpbTQ` |
