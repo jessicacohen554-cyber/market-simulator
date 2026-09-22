@@ -1853,7 +1853,34 @@ def _nwpp_grid_external_legs(
     return total
 
 
-def nwpp_net_interchange(year: int) -> np.ndarray | None:
+def _nwpp_grid_pool_carried_wind(year: int) -> np.ndarray:
+    """Return GRID's ``NG: WND`` (MW) on the NWPP pool clock — wind the pool's supply CARRIES.
+
+    NWPP's wind supply is the pool frame's ``NG: WND`` (the seventeen members
+    summed, GRID included), and so is the C1 benchmark's wind actual, so
+    GRID's wind is a footprint resource in the model on both sides. It is
+    also exactly what GRID ships out on its PNM leg: over every hour of
+    2023-2025 the ``GRID -> PNM`` series equals GRID's ``NG: WND`` to within
+    2 MW (Σ 2.073 / 2.179 / 2.002 TWh, lane NWPP-47 — FINDING-nwpp-47 §2).
+    Read from the SAME screened member frame the pool sums
+    (:func:`~market_sim.data.eia930.frames._pool_member_frames`), so the
+    array is byte-aligned with what the renewable supply carries; hours the
+    member lacks read 0.0. Zeros when the pool cannot be assembled.
+    """
+    from market_sim.data.eia930.frames import _pool_member_frames
+
+    members = _pool_member_frames("NWPP", year)
+    if members is None or _NWPP_SPLIT_BA not in members:
+        return np.zeros(HOURS_PER_YEAR, dtype=float)
+    frame = members[_NWPP_SPLIT_BA]
+    if "NG: WND" not in frame.columns:
+        return np.zeros(HOURS_PER_YEAR, dtype=float)
+    return frame["NG: WND"].fillna(0.0).to_numpy(dtype=float)
+
+
+def nwpp_net_interchange(
+    year: int, *, grid_carried_wind_served: bool = False
+) -> np.ndarray | None:
     """Return the NWPP footprint's hourly net export (MW, export-positive), or ``None``.
 
     The served measured-interchange schedule of owner ruling N4 (NWPP desk
@@ -1900,6 +1927,19 @@ def nwpp_net_interchange(year: int) -> np.ndarray | None:
     +16.3 / +15.7 / −4.0 TWh against partners) while its CAISO-facing leg
     mirrors CISO's own book to −0.001 / +0.057 / +0.022 TWh. Pinned by
     ``tests/unit/data/test_nwpp_served_interchange_trap.py``.
+    ``grid_carried_wind_served`` (``ScenarioConfig.nwpp_grid_carried_wind_served``,
+    GATED default off; lane NWPP-47, ``docs/handoffs/FINDING-nwpp-47-2026-09-22.md``):
+    the subtraction above removes fact 3's Southwest legs on the premise that
+    they carry resources the fleet does not own. Plant-level evidence splits
+    them: the SRP / WALC legs carry Desert-Southwest gas (not in the fleet,
+    correctly removed), but the PNM leg IS GRID's wind to the MW
+    (:func:`_nwpp_grid_pool_carried_wind`) — and that wind is carried in the
+    model's supply from the pool frame. Subtracting its export while
+    supplying its generation removes the energy from the requirement twice,
+    under-asking the thermal fleet by 2.07 / 2.18 / 2.00 TWh. When armed the
+    carried wind is added back, so the requirement serves the export of every
+    resource the supply carries. Zero free parameters: one measured series,
+    already in the pool frame. Off, the return is byte-identical.
     ``None`` when the pool frame for ``year`` is unavailable.
     """
     frame = _eia_hourly_frame_filled("NWPP", year)
@@ -1909,6 +1949,8 @@ def nwpp_net_interchange(year: int) -> np.ndarray | None:
     if np.isnan(position).any() or position.shape[0] != HOURS_PER_YEAR:
         return None
     grid_sw = _nwpp_grid_external_legs(year, pd.DatetimeIndex(frame["UTC time"]))
+    if grid_carried_wind_served:
+        grid_sw = grid_sw - _nwpp_grid_pool_carried_wind(year)
     return position - grid_sw
 
 

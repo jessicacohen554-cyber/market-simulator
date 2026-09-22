@@ -1223,6 +1223,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # hashes distinctly. Registered IN THE SAME COMMIT as the field (the
     # nyiso-119 discipline).
     "ercot_tie_zonal_interchange",
+    # NWPP-47 GRID carried-wind leg (GATED default off): dropped from the
+    # hash at its default so every pre-existing cache key stays byte-stable
+    # (the off path returns the NWPP-20 served schedule unchanged —
+    # byte-identical by construction); an armed run serves the export leg of
+    # the wind the pool supply carries, a different demand array, and hashes
+    # distinctly. Registered IN THE SAME COMMIT as the field.
+    "nwpp_grid_carried_wind_served",
     # ercot-236 SWCAP offer clip (GATED default off): dropped from the hash
     # at its default so every pre-existing cache key stays byte-stable (the
     # off path never enters the clip block — byte-identical by construction);
@@ -2361,6 +2368,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by ercot-231 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "ercot_tie_zonal_interchange": "False",
+    "nwpp_grid_carried_wind_served": "False",
     # Added by ercot-236 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "ercot_offer_swcap_clip": "False",
@@ -19130,6 +19138,21 @@ class ScenarioConfig:
     # Data-keyed: falls back to the load-share spread when the by-neighbor
     # extract is absent for the year. PRECOMMIT-ercot231 §2 N1a.
     ercot_tie_zonal_interchange: bool = False
+    # NWPP-47 GRID carried-wind leg (GATED default off, NWPP-only,
+    # backcast-measured, ZERO fitted scalars). The NWPP served interchange
+    # (envelopes.nwpp_net_interchange, owner ruling N4) removes GRID's
+    # PNM / SRP / WALC legs as Desert-Southwest resources the fleet does not
+    # own. The PNM leg equals GRID's own EIA-930 NG: WND to within 2 MW in
+    # every hour of 2023-2025 (2.073 / 2.179 / 2.002 TWh) — and that wind is
+    # CARRIED in the model's supply (the pool frame's NG: WND, GRID included),
+    # so the construction removes it from the requirement while still
+    # supplying it: the thermal fleet is under-asked by the same energy.
+    # Armed, the carried wind's export leg is served (added back); the SRP /
+    # WALC gas legs stay removed. Rule 14 [R-ACCURATE] boundary
+    # reconciliation of a measured input to the pool's own renewable
+    # definition, never a level rescale; regenerates for any year the
+    # EIA-930 pool frame exists. FINDING-nwpp-47-2026-09-22.md.
+    nwpp_grid_carried_wind_served: bool = False
     # caiso-205 ADAPTIVE-EXPECTATION storage offer, the CAISO leg of the
     # ercot-221 family (owner order caiso-205 branch 1 over the caiso-204
     # recorded Phase-0 G-BOOT FAIL — the ercot-188/213/215/221 pattern:
@@ -22388,6 +22411,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_adaptive_event_release": 1,
     "ercot_adaptive_fixed_point": 1,
     "ercot_tie_zonal_interchange": 1,
+    "nwpp_grid_carried_wind_served": 1,
     "ercot_offer_swcap_clip": 1,
     "caiso_storage_adaptive_expectation": 1,
     "caiso_adaptive_half_life_days": 2,
