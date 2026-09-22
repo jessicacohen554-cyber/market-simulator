@@ -458,21 +458,50 @@ is exact rather than inferred:
   `bundle_input_path` → `require_bundle_input` at three read sites in
   `render_calibration_html.build_payload` (9 insertions, 4 deletions).
 
-**The change is AST-visible but numerically inert.** `require_bundle_input`
-raises a named error where the old call let a `None` path reach pandas; where
-the file exists it reads the identical parquet. It cannot move a payload number
-— and `payload_fingerprint()` hashes the AST, so it moved the fingerprint
-anyway. The parts' recorded aggregate `64b6829fb757` is then absent from
+**The change is AST-visible and numerically inert, and that is PROVEN from the
+source rather than argued.** `require_bundle_input` is, in full:
+
+```python
+path = bundle_input_path(run_dir, name)
+if path is None:
+    raise MissingBundleInput(run_dir, name, shared_input_ref(run_dir, name))
+return path
+```
+
+It is `bundle_input_path` plus a raise on the `None` branch. A payload only gets
+built at all when the frames resolve, and on that branch the two functions return
+the **identical path** and `read_parquet` reads the **identical bytes**. The
+change can only convert a bare `TypeError` into a named error on the failure
+path. **The rendered payload is byte-identical by construction** — and
+`payload_fingerprint()` hashes the AST, so it moved the fingerprint anyway. The parts' recorded aggregate `64b6829fb757` is then absent from
 `PAYLOAD_FINGERPRINT_BY_BUILDER`, the resolver fails closed
 (*"unresolvable: unknown builder state"*), and every part reads STALE.
 
-**So this is a FALSE STALE, and the obvious one-line remedy does not clear it.**
-Adding `64b6829fb757` to `PAYLOAD_FINGERPRINT_BY_BUILDER` records the payload
-state that emitted those parts truthfully, but that state's payload fingerprint
-is *by construction* not HEAD's, so the gate still reports the parts as not
-reproducing. Clearing it properly needs either a regeneration of all 31 parts
-under HEAD's builder, or a fingerprint that can express "AST moved, numbers did
-not" — which the current design deliberately cannot.
+**So this is a CERTAIN false STALE — and the obvious one-line remedy does not
+clear it.** The fingerprints, measured at this HEAD:
+
+| | |
+|---|---|
+| HEAD aggregate | `fb56b7e445d9` |
+| HEAD payload | `5b4b05dce3f3` |
+| aggregate the 31 parts carry | `64b6829fb757` (absent from the table) |
+| payload of the state that emitted them | `643eac24b565` |
+
+`PAYLOAD_FINGERPRINT_BY_BUILDER` already holds two entries, and **both are
+exactly this case** — its own comments say *"the same three blobs HEAD carries,
+hence the same payload fingerprint"*, and both map to `643eac24b565`. Adding
+`"64b6829fb757": "643eac24b565"` would record the parts' provenance truthfully
+and still leave them STALE, because `7fd12b91` moved HEAD's payload fingerprint
+off `643eac24b565`. The table resolves provenance; it cannot assert equality
+that no longer holds.
+
+**The remedy is therefore a RE-STAMP, not a regeneration** — the "Y-8 method"
+`bench_stamp.py`'s own header cites, where the parts are re-rendered so they
+carry HEAD's aggregate. It is zero-LP (the frames are pure functions of
+`(ISO, year, reference data)` and regenerate from committed data, which is the
+very property `7fd12b91` itself relies on). What it needs is a lane willing to
+do it across six ISOs and verify the re-rendered bytes are unchanged — which,
+given the proof above, they must be.
 
 **ESCALATED, NOT ABSORBED** (rule 14 `[R-ACCURATE]`, and the charter's
 *"BEFORE REGISTERING: diff bench parts against HEAD, confirm ZERO movement"*).
