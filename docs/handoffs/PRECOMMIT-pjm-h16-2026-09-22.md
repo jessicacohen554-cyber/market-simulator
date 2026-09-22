@@ -9,6 +9,26 @@ Bundles `results/calibration/pjm_h15_coalwindow_{span,touchpoint}`, solved at `6
 
 **EVERY GATE IN §5 IS FIXED BEFORE ANY SOLVE AND IS NEVER RE-READ ONCE A NUMBER LANDS.**
 
+> **REBASE NOTE (added after the twelve shards launched; NO GATE MOVES AND NO NUMBER IS
+> AMENDED).** This charter was pushed at **`c25d7e500238a953c241271ed91f7c01835f41b5`** and all
+> twelve shards — six arm, six control — are pinned to that immutable SHA. The lane branch was
+> afterwards rebased onto `origin/main` at the owner's instruction, which cleanly replayed the one
+> commit and moved nothing in it. The **solve basis is unchanged**: both arms of the A/B run at
+> `c25d7e50`, so the comparison stays single-variable. Re-verified after the rebase: the
+> PJM-backcast default cache key is still **`c8a2ffdeca6546a6`, byte-identical to the new
+> `origin/main`**, and the armed key is still **`63f2f85f710b9ca7`**.
+>
+> One thing the rebase brought in is worth naming because it touches **this card's own seam**:
+> **SPP-71's `coal_sync_ensemble_level`** (`6edc996d`, merged after this charter was pushed) is a
+> THIRD placement rule for the same coal synchronization floor — it removes the window entirely and
+> holds `pmin × online_frac` in every hour. That lane wired the rule 19 `[R-ONE-MECH]` exclusion
+> itself and names this card in its own code comment: *"the three placements are ALTERNATIVES,
+> never stacked — when this is on, the per-generator branch below short-circuits before the
+> force-all branch, the load_rank branch AND the pjm-h16 day-grain window, which asks a DIFFERENT
+> question of the same floor."* It is default-off, absent from PJM's recipe, and **absent from the
+> pinned SHA altogether**, so it is inert for every number in this lane. Whether it or this card is
+> the better placement for PJM coal is a question neither lane has evidence for, and neither claims.
+
 ---
 
 ## 0. The chartered lever, and the queue check (rule 28(a))
