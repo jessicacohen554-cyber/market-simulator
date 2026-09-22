@@ -3297,3 +3297,7 @@ results/calibration/miso266_arm_span/
 results/calibration/nwpp46_hydroenv_2023/
 results/calibration/nwpp46_hydroenv_2024/
 results/calibration/nwpp46_hydroenv_2025/
+# SPP-71 per-year shard bundles: kept OUT of main (rule 32(d)) -- the parent
+# composes them and commits only the two composites, which are negated below.
+results/calibration/spp71_20*_ctl/
+results/calibration/spp71_20*_arm/
