@@ -54,7 +54,8 @@ Cresta). This skill check is against the EXTERNAL labels only — no model
 residual enters the rule choice, and per rule 21 the rule re-derives only
 when the EHA/HILARRI sources update.
 
-Scope: DEFAULT_ISOS registers CAISO, PJM and NYISO. Another ISO's lane must
+Scope: DEFAULT_ISOS registers CAISO, PJM, NYISO, SPP, NEISO and MISO (the
+last three reviewed by hydro-5 — see the constant). Another ISO's lane must
 run and review the same validation for its BA before adding itself — the
 printed ``completion validation`` line IS that review, scored on the target
 BA's own labeled subset and never transferred (rule 25 ``[R-ISO-SCOPE]``).
@@ -85,7 +86,24 @@ DATATYPE = "hydro-plant-modes"
 # ISOs whose lane has run and reviewed the completion validation for its own
 # BA (module docstring). CAISO first (caiso-126); PJM and NYISO added by
 # hydro-1 (2026-09-20) alongside the HYBRID-LABEL REPAIR below.
-DEFAULT_ISOS: tuple[str, ...] = ("CAISO", "PJM", "NYISO")
+#
+# SPP, NEISO and MISO added by hydro-5 (2026-09-22), each reviewed on its OWN
+# BA's labelled subset (rule 25; docs/PRECOMMIT-hydro-5-2026-09-22.md §2):
+#   SPP   (SWPP) 12/16 plants, 92.3 % of labelled MW.
+#   NEISO (ISNE) 77/125 plants, 66.1 % of labelled MW.
+#   MISO  (MISO) 65/135 plants, 62.5 % of labelled MW.
+# The NEISO / MISO aggregates are below CAISO's 84 %, and the review is why
+# they are admitted anyway: the misses are ONE-SIDED. Labelled Run-of-river
+# plants the completion calls shapeable (an inventoried reservoir behind a
+# small diversion or navigation dam) are 317.9 MW / 37 plants at NEISO and
+# 586.3 MW / 62 plants at MISO; the reverse error is 68.0 / 54.5 MW. So a
+# completion "not shapeable" verdict is right on 81.8 % (NEISO) / 84.3 %
+# (MISO) / 89.6 % (SPP) of the MW it covers, and the completion UNDER-applies
+# the flat treatment rather than over-applying it. The CESP-only Corps
+# pattern does not fire on SPP/MISO's SWPA-marketed Corps peaking projects
+# (Keystone, Blakely Mountain, Degray), which is the correct outcome there —
+# rule 3's release-taker premise is a Sacramento-District fact, not a Corps one.
+DEFAULT_ISOS: tuple[str, ...] = ("CAISO", "PJM", "NYISO", "SPP", "NEISO", "MISO")
 
 EHA_XLSX = "ornl-eha/ORNL_EHAHydroPlant_PublicFY2024.xlsx"
 HILARRI_CSV = "hilarri/HILARRI_v4.csv"
