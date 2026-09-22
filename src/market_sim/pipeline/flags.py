@@ -186,6 +186,21 @@ _COAL_FLAGS: tuple[FlagSpec, ...] = (
         config_field="coal_sync_srmc_tranche",
     ),
     FlagSpec(
+        cli=("--coal-sync-ensemble-level",),
+        dest="coal_sync_ensemble_level",
+        kind="bool_opt",
+        default=False,
+        help="Place the coal synchronization floor as pmin x online_frac in "
+        "EVERY hour (the continuous-relaxation image of the measured "
+        "commitment) instead of the full pmin on the top online_frac "
+        "fraction of hours by the window series. Same measured annual "
+        "synchronized MWh; REPLACES the window, never stacks on it. "
+        "Requires --coal-sync-srmc-tranche.",
+        family="coal",
+        solve_param="coal_sync_ensemble_level",
+        config_field="coal_sync_ensemble_level",
+    ),
+    FlagSpec(
         cli=("--coal-bit-sigmoid",),
         dest="coal_bit_sigmoid",
         kind="bool_opt",

@@ -1945,6 +1945,16 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # field -- very end, per HOUSE-3. Registered IN THE SAME COMMIT as the
     # field (the nyiso-119 discipline).
     "hydro_pondage_bound",
+    # ENSEMBLE placement for the coal synchronization floor (SPP-71, default
+    # off): dropped from the hash at its default so every pre-existing cached
+    # run -- every ISO's keepers included -- keeps its key. The arm is
+    # byte-identical off by construction (``_compose_min_gen_floors`` reads the
+    # flag inside the existing ``coal_sync_any`` block and takes the historical
+    # branch when it is False, so no array, row or column changes); an armed run
+    # places the same measured Pmin on a different hour set and so earns a
+    # distinct key. SHARED field -- very end, per HOUSE-3. Registered IN THE
+    # SAME COMMIT as the field (the nyiso-119 discipline).
+    "coal_sync_ensemble_level",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -2632,6 +2642,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by hydro-1 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "hydro_pondage_bound": "False",
+    # Added by SPP-71 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "coal_sync_ensemble_level": "False",
 }
 
 
@@ -11599,6 +11612,64 @@ class ScenarioConfig:
     # unchanged). See docs/multi-iso/pjm-coal-operations-firstprinciples-2026-06.md
     # (Thread D, layer 2) and docs/multi-iso/pjm-reserve-ordc.md.
     coal_sync_srmc_tranche: bool = False
+
+    # ENSEMBLE PLACEMENT for the coal synchronization floor (SPP-71, card R-bc).
+    # GATED, default False, so every committed run config in every ISO is
+    # byte-identical unarmed (rule 25 [R-ISO-SCOPE]). Requires
+    # ``coal_sync_srmc_tranche``; it REPLACES that floor's placement rule and is
+    # never stacked on it (rule 19 [R-ONE-MECH]).
+    #
+    # THE DEFECT IT REPAIRS IS A CONSTRUCTION ERROR, NOT A LEVEL ERROR.
+    # ``online_frac`` is a MEASURED MARGINAL PROBABILITY — the CAMPD share of
+    # hours the plant is synchronized. ``arrays.py::_compose_min_gen_floors``
+    # step 3a spends it as a DEGENERATE distribution: the floor is the full
+    # measured Pmin on the top ``round(frac x 8760)`` hours by the shared window
+    # series and EXACTLY ZERO everywhere else, i.e. it asserts
+    # P(synchronized | top-k load hour) = 1 and P(synchronized | else) = 0.
+    # That placement is false on the unit's own physics — a coal unit's min-down
+    # is 12-48 h and its start cost five figures, so its online hours are
+    # multi-day RUNS that span load troughs; it cannot shut for a six-hour
+    # overnight trough and restart. The measured consequence in SPP: the armed
+    # floor's coal minimum reaches 0.15-2.53 % of the class's own annual max
+    # against a real SPP PRB fleet at 8.1-17.5 % (RESULT-spp-51), because no SPP
+    # coal plant reaches ``_COAL_SYNC_FORCE_ALL`` (fleet max online_frac 0.9870)
+    # so the bottom-hour floor is 0.0 MW. Re-RANKING that window was tried and
+    # refused (``commitment_floor_window_netload``, SPP-66, wrong way in six of
+    # seven years), and its own verdict names this successor: "target the floor's
+    # LEVEL or COVERAGE at the bottom, not re-rank its window".
+    #
+    # WHAT IT DOES. ``floor_p(t) = coal_sync_pmin_mw_p x online_frac_p`` in EVERY
+    # hour, still clipped downstream to ``pmax x availability`` (an outage hour
+    # relaxes it exactly as before) and still composed with np.maximum. This is
+    # the CONTINUOUS-RELAXATION image of the same measured commitment, not an
+    # approximation of convenience: this is a pure-LP dispatch model with no
+    # integrality (CLAUDE.md, "Pure LP -- no MIP") and a plant is already a set
+    # of continuous tranches, so E[floor] = pmin x P(synchronized) is what a
+    # Bernoulli commitment variable relaxes to. It spends the IDENTICAL measured
+    # annual synchronized MWh (pmin x frac x 8760 either way) -- only the
+    # placement moves -- and it subsumes the ``frac >= _COAL_SYNC_FORCE_ALL``
+    # short-circuit continuously (at frac ~ 1 it returns the full Pmin every
+    # hour, which is what that branch does discretely).
+    #
+    # ZERO new free parameters and ZERO new data (rules 21 [R-DOF] / 24
+    # [R-REGISTRY]): it reads the same two measured columns the armed floor
+    # already reads, ``mustrun_online_pct`` and ``online_frac`` from
+    # ``data/raw/_processed-legacy/thermal_tranches_<ISO>.csv``. Rule 17
+    # [R-FLOOR-WINDOW]: (a) driver = the plant's CEMS-measured synchronization
+    # Pmin and its measured online share; (b) hours it may bind = all 24, which
+    # is ALREADY the declaration this floor carries in the rule-17 diagnostic
+    # (``scripts/legitimacy_diagnostics.py``, ``(MECH_COAL_MUSTRUN, None):
+    # (0, 24)`` -- "the driver-justified window is ALL 24 hours BY DRIVER ...
+    # there is no hour-of-day the driver says it is off"), and the CLASS is never
+    # measured offline; (c) forward story = the artifact re-derives from the next
+    # CAMPD vintage with no model input, and a fleet that cycles more measures a
+    # lower online_frac and carries a lower floor. Rule 18 [R-PHYSICS]:
+    # eligibility is the measured per-plant ``coal_sync_pmin_mw > 0``, never a
+    # class tuple. Identification (SPP, zero free parameters): sum(pmin x frac) =
+    # 3,324.5 MW lands at 0.69-1.40x the measured EIA-930 SWPP COL p01 across
+    # 2019-2025, median 1.045. Record:
+    # docs/handoffs/PRECOMMIT-spp-71-ensemble-sync-floor-2026-09-22.md.
+    coal_sync_ensemble_level: bool = False
 
     # COAL MUST-RUN REQUIRES A MEASURED ROW (pjm-h14). GATED, default False, so
     # every committed keeper in every ISO is byte-identical unarmed
