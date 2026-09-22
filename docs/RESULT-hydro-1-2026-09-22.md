@@ -1,4 +1,4 @@
-# RESULT — hydro-1: hydro dispatch physics, PJM + NYISO (in progress, 2026-09-22)
+# RESULT — hydro-1: hydro dispatch physics, PJM + NYISO (2026-09-22)
 
 Companion to `docs/PRECOMMIT-hydro-1-2026-09-20.md`, which carries the phase-0 census, the
 mechanism design and the pre-registered gates. **This doc carries every number the lane will
@@ -119,3 +119,86 @@ period's banking and a 2× concentration at the period seam).
    foresight is worth anything; it does not remove it.
 5. **Head loss, licence ramp limits and reserve-headroom opportunity cost** are three further
    real sources of a rising hydro offer that none of these arms represents.
+
+
+---
+
+# ADDENDUM — all 11 shards returned; verdicts, and a cross-ISO census
+
+## A. Arm A (`hydro_ror_split`, PJM) — LARGE WIN, G2 exact, 2 of 3 years
+
+Against the CURRENT keeper `pjm_h15_coalwindow_span`:
+
+| | 2024 ctl | 2024 arm | 2025 ctl | 2025 arm |
+|---|---:|---:|---:|---:|
+| annual hydro TWh | 8.8608 | **8.8608** | 8.4636 | **8.4636** |
+| hours at 0 MW | 1,867 | **0** | 1,868 | **0** |
+| hourly p05 (MW) | 0.0 | **281.0** | 0.0 | **282.8** |
+| hourly p95 (MW) | 3,202.0 | **2,263.8** | 3,214.3 | **2,267.3** |
+| top-decile water share | 0.2972 | **0.2079** | 0.3131 | **0.2164** |
+| within-month daily SD ratio | 1.000 | **0.5070** | 1.000 | **0.4981** |
+
+Zero-hours eliminated, within-month banking **halved**, annual energy unchanged to four decimals.
+Arm live at 52 of 72-73 plants (57.9 % of budget).
+
+**2023 is missing and it is a repo data gap, not a model defect**: `data/raw/pjm-da-virtuals`
+carries only `README.md` (its payload is an untracked corpus at tip) while the keeper arms
+`pjm_da_virtual_bids=true`, so the leg cannot solve until that corpus is re-fetched. Rule 35(c)
+needs the full year set, so **PJM is not promoted on 2 of 3.**
+
+## B. Arm B (`hydro_ror_split`, NYISO) — correct but small, all 4 years
+
+12 of 12 comparisons on p05 / p95 / top-decile move toward the measured actual; 2025 adds a
+within-month daily SD ratio of 0.8648. G2 clean except 2022 (−0.123 %, the nameplate clip —
+see §2). Small by construction: the repaired flat class is 7.3 % of NYISO hydro energy.
+
+## C. Arm C (`hydro_pondage_bound`, NYISO) — **REFUTED as armed, in all four years**
+
+Pre-registered gate: within-month daily-energy SD ratio (arm ÷ control) **below 1.0**.
+Measured **1.0289 / 1.1091 / 1.0870 / 1.0665** — the mechanism **amplified** the banking it was
+built to bound. G2 also breached in 2022 (+0.117 %).
+
+**Root cause, and it is §5.1's disclosed limitation firing exactly as written.** Rule 19 forces
+the arm to carry two deltas — pondage ON, `hydro_budget_period_by_instrument` OFF — because both
+bound within-month reallocation. Disarming the period **removes a binding constraint** (Niagara
+24 h, St. Lawrence 168 h), and the forebay bound is too **loose** to replace it: `B` is NID
+**gross** impoundment volume at efficiency 1.0, a deliberate upper bound. Net freedom rose.
+The arm was live, not inert — 129-136 of 147-158 plants carried a binding row.
+
+**Re-opening this is a DATA question, not a tuning one:** `B` from each project's **licensed
+operating range** (the FERC-licence half of nyiso-219 Q1, which NID could not serve). **Do not
+re-arm on the gross-volume artifact, and do not scale `B` by a factor chosen to make the gate
+pass** — that is the fitted-mechanism selection rule 1 refuses.
+
+## D. The defect is SYSTEM-WIDE, and the census says which mechanism fixes it
+
+Every registered keeper's own committed sidecars, zero LP. `0-hrs` = hours the class sits below
+1 MW; `topdec` = share of each month's hydro energy in that month's top-decile load hours
+(a flat fleet is 0.10).
+
+| ISO | worst year | hydro TWh | 0-hrs | % of year | p05 MW | topdec | `min_flow_floor` |
+|---|---|---:|---:|---:|---:|---:|---|
+| ERCOT | 2025 | 0.017 | 6,992 | 79.8 | 0.0 | 0.147 | False |
+| SOCO | 2025 | 0.327 | 4,562 | 52.1 | 0.0 | **0.641** | False |
+| SPP | 2022 | 8.207 | 3,198 | 36.5 | 0.0 | 0.212 | False |
+| PJM | 2022 | 8.969 | 1,966 | 22.4 | 0.0 | 0.286 | False |
+| NEISO | 2025 | 5.106 | 1,908 | 21.8 | 0.0 | 0.288 | False |
+| MISO | 2022 | 9.244 | 565 | 6.4 | 0.0 | 0.191 | False |
+| **CAISO** | 2024 | 22.538 | **0** | 0.0 | **774.7** | 0.124 | **True** |
+| **NYISO** | 2024 | 26.739 | **0** | 0.0 | **1,858.7** | 0.125 | **True** |
+| NWPP | 2024 | 107.879 | 0 | 0.0 | 6,899.6 | 0.132 | False |
+
+**Every ISO whose keeper leaves `hydro_min_flow_floor` off parks hydro at exactly zero for part
+of the year; both ISOs that arm it never do.** NWPP is the one clean exception without the
+floor — a 107 TWh reservoir system whose economics never want zero. That is as clean a
+mechanism-attribution signal as this program gets, and it is ISO-generic.
+
+SOCO is the most extreme on shape: **0.64 of each month's hydro lands in the top decile of load
+hours**, against 0.10 for a flat fleet and 0.12-0.13 for the three clean systems.
+
+**Which lever per ISO is NOT a free choice.** `hydro_min_flow_floor` and
+`hydro_dispatch_envelope` both read EIA-930 `NG: WAT`, which folds pumped storage for **MISO and
+PJM** (`EIA930_PS_FOLDED_INTO_WAT`) and for **NEISO before 2025** (`EIA930_PS_SPLIT_COMPLETE_FROM`).
+Those ISO-years must use `hydro_ror_split`, whose input (the ORNL-EHA label) carries no PS
+contamination. ERCOT's fleet is 0.02-0.53 TWh — the defect is severe in percentage terms and
+immaterial in energy, so it is reported, not prioritised.
