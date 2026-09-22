@@ -55,6 +55,45 @@ LINEAGE = {
     "CAISO": ">=52 solves (audit §5.1 + caiso-51/52)",
 }
 
+# PER-ISO identification source for the ``coal_warm_committed`` warm-boiler
+# exemption (rule 25 ``[R-ISO-SCOPE]`` / rule 28 (d)): each ISO that arms the
+# gate cites the measurement made on ITS OWN market. A verdict transfers to no
+# other ISO, so there is deliberately no cross-ISO fallback text that reads as
+# evidence — the default says only that the arming ISO owes its own.
+_COAL_WARM_COMMITTED_SOURCE = {
+    "MISO": (
+        "dispatch forensics on the miso-58 2023 replay (on/off LMP crossings: "
+        "COAL_PRB committed $34.6 vs ~$26 static F923 SRMC, COAL_BIT $43.8 vs "
+        "~$29-31, mustrun bands online 84-98% of the same hours) + MISO IMM "
+        "measured conduct (som-competitive-conduct: offers AT cost, system "
+        "price-cost markup +3.0%/-2.5% — self-committed units recover start "
+        "costs outside the energy offer)"
+    ),
+    "SOCO": (
+        "SOCO's own committed-keeper hourlies (lane SOCO-58 phase 0, zero LP, "
+        "on 2026-09-20-soco57-measured-cc-heat): the warm-boiler predicate is "
+        "measured at 100.0% in ALL EIGHTEEN coal plant-years 2023-2025 — in "
+        "every hour in which a plant's _committed tranche carries capacity, "
+        "that plant's _mustrun tranche is generating at load fraction 1.00, so "
+        "the boiler is never dark when the committed band could be dispatched. "
+        "The markup it removes is measured at EXACTLY $100.00/MWh on four of "
+        "six plants in 2024 (the startup/max(avg_run,1.0) floor, i.e. ZERO P0 "
+        "runs) and is anti-correlated with the year's need for coal (implied "
+        "P0 run length 1.0 h in 2024 vs 769 h at plant 6002 in 2025), so its "
+        "year-to-year variation is a P0 feedback artifact and not a physical "
+        "driver. Scope verified exact: 6 of 6 coal tranches carrying a startup "
+        "cost are exempted, 0 coal tranches carrying one are missed, and 0 "
+        "non-coal tranches are touched"
+    ),
+}
+_COAL_WARM_COMMITTED_SOURCE_DEFAULT = (
+    "NOT IDENTIFIED FOR THIS ISO — rule 25 [R-ISO-SCOPE] requires the arming "
+    "ISO to cite its own market's measurement of the warm-boiler predicate "
+    "(mustrun tranche online in the hours the committed tranche is available) "
+    "and of the markup being removed; add it to "
+    "build_dof_ledger._COAL_WARM_COMMITTED_SOURCE"
+)
+
 _HOLDOUT_ROOT_CAUSE = (
     "identified in-sample only (2023-2025); no held-out validation exists — "
     "open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 "
@@ -1400,6 +1439,14 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
         # boiler online — committed-band dispatch is a hot-unit output ramp,
         # not a cold start. No parameter; the boolean gates on the plant's
         # own CAMPD-derived must-run floor (must_run_pct > 0).
+        #
+        # The identification SOURCE is PER-ISO (rule 25 ``[R-ISO-SCOPE]`` /
+        # rule 28 (d)): a verdict transfers to no other ISO, so an ISO that
+        # arms this gate must cite its OWN market's measurement. The entry
+        # previously carried MISO's dispatch forensics verbatim for every
+        # ISO, which would have published MISO's evidence as SOCO's
+        # identification source the moment a second ISO armed it (found in
+        # lane SOCO-58 phase 0, before any solve).
         out.append(
             _entry(
                 "coal_warm_committed (warm-boiler committed-band exemption)",
@@ -1409,13 +1456,9 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 "measured-physical",
                 iso,
                 n_scalars=0,
-                source="dispatch forensics on the miso-58 2023 replay "
-                "(on/off LMP crossings: COAL_PRB committed $34.6 vs ~$26 "
-                "static F923 SRMC, COAL_BIT $43.8 vs ~$29-31, mustrun bands "
-                "online 84-98% of the same hours) + MISO IMM measured "
-                "conduct (som-competitive-conduct: offers AT cost, system "
-                "price-cost markup +3.0%/-2.5% — self-committed units "
-                "recover start costs outside the energy offer)",
+                source=_COAL_WARM_COMMITTED_SOURCE.get(
+                    iso, _COAL_WARM_COMMITTED_SOURCE_DEFAULT
+                ),
                 root_cause="removes a fabricated cold-start premium, adds "
                 "no tunable; reverts only if the fleet's measured must-run "
                 "floors disappear (rule 23: rides the thermal-tranche "
