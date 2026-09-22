@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-09-20-soco57-measured-cc-heat",
+  "run_id": "2026-09-22-soco58-warm-committed",
   "iso": "SOCO",
-  "label": "soco57 measured cc heat",
+  "label": "soco58 warm committed",
   "target_years": [
     2023,
     2024,
@@ -21,8 +21,8 @@
   "rubric_version": 3.8,
   "determination": "NOT-YET",
   "reasons": [
-    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, dispatch_corr",
-    "PRICE UNSCORED \u2014 no actual_lmp.json block exists for SOCO, so C3a mean LMP, C3b price duration/shape and C3c price tail / scarcity (RT hourly) are NOT SCORED in any year (2023, 2024, 2025); this determination is scored on C1/C2/C4/C6/C8 ONLY and certifies NO price level, shape or tail (owner ruling card S2, 2026-09-13; rubric v3.8). It is not a CALIBRATED reading. Model system load-weighted mean LMP, MODEL-ONLY and UNVERIFIED \u2014 no measured reference exists to compare against: 2023: $32.25/MWh, 2024: $29.04/MWh, 2025: $136.87/MWh."
+    "undocumented out-of-tolerance (FAIL) criteria: fuelmix",
+    "PRICE UNSCORED \u2014 no actual_lmp.json block exists for SOCO, so C3a mean LMP, C3b price duration/shape and C3c price tail / scarcity (RT hourly) are NOT SCORED in any year (2023, 2024, 2025); this determination is scored on C1/C2/C4/C6/C8 ONLY and certifies NO price level, shape or tail (owner ruling card S2, 2026-09-13; rubric v3.8). It is not a CALIBRATED reading. Model system load-weighted mean LMP, MODEL-ONLY and UNVERIFIED \u2014 no measured reference exists to compare against: 2023: $31.66/MWh, 2024: $28.24/MWh, 2025: $136.18/MWh."
   ],
   "notes": [],
   "criteria": {
@@ -54,7 +54,7 @@
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
       "tier": "supporting",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "governance": {
       "label": "C6 governance gate",
@@ -78,18 +78,18 @@
   },
   "grade_summary": {
     "scored": 5,
-    "target_grade": 3,
+    "target_grade": 4,
     "commercial_grade": 0,
     "ledgered": 0,
-    "fails": 2
+    "fails": 1
   },
   "reported": {
     "co2": {
       "label": "C5a CO2 vs eGRID (REPORTED-ONLY, v2.9 \u2014 see the CRITERIA note)",
       "years": {
-        "2023": "-7.7%",
-        "2024": "-12.3%",
-        "2025": "+2.3%"
+        "2023": "-6.7%",
+        "2024": "-10.8%",
+        "2025": "+3.3%"
       }
     },
     "diurnal_amplitude": {
@@ -141,9 +141,9 @@
       "forced_share"
     ],
     "model_mean_lmp_by_year": {
-      "2023": 32.25,
-      "2024": 29.04,
-      "2025": 136.87
+      "2023": 31.66,
+      "2024": 28.24,
+      "2025": 136.18
     }
   }
 }
