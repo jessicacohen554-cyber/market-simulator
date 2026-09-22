@@ -20,7 +20,7 @@ from pathlib import Path
 import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
-from scripts.lib.bundle_io import bundle_input_path  # noqa: E402
+from scripts.lib.bundle_io import require_bundle_input  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[2] / "results" / "calibration"
 CLASSES = [
@@ -37,7 +37,7 @@ GUARD_PLANTS = {6146: "Martin Lake", 298: "Limestone"}
 
 def class_table(run: str) -> pd.DataFrame:
     d = ROOT / run
-    e923 = pd.read_parquet(bundle_input_path(d, "eia923"))
+    e923 = pd.read_parquet(require_bundle_input(d, "eia923"))
     btm = pd.read_parquet(d / "btm.parquet")
     rows = []
     for f in sorted((d / "dispatch").glob("*_P1.parquet")):
