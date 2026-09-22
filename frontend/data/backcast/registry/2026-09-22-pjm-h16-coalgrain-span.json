@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-22-pjm-h16-coalgrain-span",
+  "label": "pjm h16 coalgrain span",
+  "date": "2026-09-22",
+  "shorthand": "pjm-h16-coalgrain-span",
+  "definition": "pjm-h16 ARM 2023: coal_sync_window_commitment_grain on the PJM keeper recipe",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-09-22-pjm-h16-coalgrain-span.js",
+  "bundle": "results/calibration/pjm_h16_coalgrain_span"
+}

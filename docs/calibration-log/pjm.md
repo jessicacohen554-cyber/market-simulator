@@ -6368,6 +6368,85 @@ promotion on the structural merits** with G5's failure disclosed; the keeper
 fetch + checkout + verify (rule 33(a)); shard branches are transport and are cut when this PR
 merges, so any leg not on `main` costs a re-solve, not a checkout.
 
+## pjm-h16 — 2026-09-22
+
+**PROMOTED.** `2026-09-20-pjm-h15-coalwindow-span` → **`2026-09-22-pjm-h16-coalgrain-span`**
+on the owner's standing ruling (*"If structural integrity improves but gates regress that may still
+be a keeper"*). The superseded pair was pruned in this session per rule 35 `[R-PROMOTE]` (a) —
+`--keep` on the incoming touchpoint (pjm-h14 correction #1: the script does not honour a
+`holdout.keeper` stamp), `--force-uncite` for the `keeper_history` citation — and
+`audit_keepers --iso PJM` reads **0 failures, 0 warnings** after. Registered:
+`2026-09-22-pjm-h16-coalgrain-span` (2023–2025, **CALIBRATED, 8/8 PASS, zero caveats, empty basis**)
++ `2026-09-22-pjm-h16-coalgrain-touchpoint` (2020–2022, NOT-YET), stamped to the span under rule
+30(a). Sole config delta **`coal_sync_window_commitment_grain` False → True**, **zero free
+parameters**, DOF ledger carried verbatim. **ZERO criterion flips in either span** — the touchpoint
+carries the identical `fuelmix` / `price_mean` / `price_shape` FAILs and the identical ledgered
+`price_tail` CAVEAT.
+
+**The defect (rule 17 `[R-FLOOR-WINDOW]` + rule 18 `[R-PHYSICS]`, measured at zero LP on PJM's own
+CAMPD record, never off a residual).** pjm-h15 repaired the window's VINTAGE and named PLACEMENT as
+the half it could not reach. `arrays.py::_compose_min_gen_floors` places the coal synchronization
+floor in `load_rank[:k]` — the top *k* **individual hours** by the window series — so the floor
+carries the diurnal shape of LOAD, while a coal plant's synchronization is a whole-operating-day
+decision. Over 29 covered plants × 6 years (173 plant-years, **152 reachable**): the plant's own
+ONLINE hour-of-day peak-to-mean is **1.0001–1.3097** (median **1.0091**, ≤ 1.10 on 143 of 152) and
+its overnight/afternoon on-share ratio **0.788–1.027** (median **0.9968**, inside [0.9, 1.1] on 145
+of 152) — **when a PJM coal unit is synchronized it runs through the overnight trough** — against an
+incumbent window whose own peak-to-mean is **1.0132–4.8608** (median 1.3011) and which is **MORE
+PEAKED THAN THE PLANT ON 152 OF 152**. Rule 18: that window implies **3,963 / 4,354 / 4,689 / 5,517
+/ 4,992 / 4,356 starts a year against the fleet's metered 238 / 290 / 303 / 302 / 302 / 334** —
+13.0×–18.3×, with **253 implied starts on 1,299 MW plant 6264 in 2024 against 4 measured**. The
+sharp test, actuals only: in the hours the incumbent HOLDS and a day window RELEASES the real plants
+average 267.9 MW and are online 52.17 %, against **297.2 MW and 67.13 %** in the reverse set —
++29.4 MW and +15.0 points, in all six years.
+
+**Gates: G1, G2, G5 PASS — G3 and G4 FAIL, and both are this lane's own bars, disclosed and NOT
+amended.** G2 is exact and is the strongest statement: on a zero-LP `fleet_only` build in all six
+years `pmax_mw` and `coal_sync_pmin_mw` move by **0.000e+00** and the ONLY mechanism id whose floor
+array moves is `MECH_COAL_MUSTRUN`. G1 fires in all six years (+0.290 / +0.032 / +0.050 / +0.424 /
++0.337 / +0.130 TWh) but **monotone positive**, a weaker not-a-level-channel statement than
+pjm-h15's both-directions result — that claim rests here on the HOURS evidence (asserted coal
+floor-hours move 0.000 / +0.018 / +0.033 / −0.025 / −0.046 / +0.019 %, rounding UP in 70 and DOWN in
+73 of 152 plant-years), not on the solver. **G3 fails on 2020 alone at 2.05× against a 2.0× bar**
+(2021–2025 read 1.68 / 1.74 / 1.66 / 1.69 / 1.54× against a control of 16.87 / 14.88 / 14.28 / 16.47
+/ 14.99 / 12.48×). **G4 fails on both limbs**: the chartered reachable set {1384/2023, 7213/2023}
+moves 0.3154 → 0.3105 TWh (**−1.6 %**, not the halving the bar demanded) and neither clears — 1384
+improved its zero-share 0.5507 → 0.5006 without crossing 0.5 — and six-year conduct-FAIL energy goes
+0.3165 → 0.3192. **The card does not close the rule-17 defect it was aimed at.**
+
+**THE HEAD-DRIFT MEASUREMENT — six control years came back EXACTLY ZERO, and that is a deliverable.**
+The charter spent six same-HEAD CONTROL years although G-DRIFT classified every hunk INERT, because
+the byte evidence behind the two PERF-C hunks is **cross-ISO** (a byte gate on the NEISO keeper, not
+PJM) and because pjm-h15's G2 failed on a dispatch-less control regeneration. Measured at the cell
+level over `6de36475 → c25d7e50`: **max |ΔMW| = 0.000000e+00, 0 of 166,440 class-hour cells moved,
+in all five years solved on both sides.** G-DRIFT form 4 now rests on a PJM measurement rather than a
+NEISO inference, and the dispatch-backed control **retires pjm-h15's G2 failure as the instrument
+defect that lane disclosed it to be** (arm and control agree to four decimals on every non-coal
+mechanism in 2020–2022 too: `chp_steam` 0.0166 / 0.0349 / 0.0360 both sides).
+
+**Reported at full magnitude, declared reported-only ex ante:** C1 COAL_BIT rises **+0.019 to
++0.036 TWh** and CC_REGULAR falls **−0.015 to −0.042 TWh** in every year — the direction the charter
+PREDICTED BEFORE THE SOLVE, at **~10× smaller magnitude than it predicted**, and three orders of
+magnitude inside the standing +25.7 (2020) / +19.6 (2021) TWh error, so no criterion band can move.
+The dispatch response is **~20× smaller than the asserted-floor footprint** (+1.04 to +2.82 %) —
+the arm moves a FLOOR, not a cheap BAND. **Against it:** plant **7213/2022**'s floored exposure grows
+**10×** (0.0008 → 0.0082 TWh, 30 → 184 binding hours) while its zero-share improves 0.900 → 0.663.
+
+**Rule 19 `[R-ONE-MECH]`:** its OWN gate, not a widening of `mustrun_window_commitment_grain` —
+widening the shared field would have moved SPP's designated keeper, which arms it and has coal, with
+no SPP lane measuring anything. SPP-71's `coal_sync_ensemble_level`, a THIRD placement rule for the
+same floor merged after this charter was pushed, is mutually exclusive by construction and absent
+from the pinned SHA.
+
+**Traps recorded:** all three pjm-h15 composition corrections reproduced (`--rebuild-benchmark` is
+what materialises `results/calibration/_shared/PJM/`; a composed bundle inherits no attestation; a
+shard bundle is not self-contained). **New:** two concurrent `legitimacy_diagnostics.py` runs on one
+bundle will race on `--json-out`; and a `fleet_only` A/B probe running beside two diagnostics jobs
+will OOM this container (cgroup ceiling **14.35 GB** — read the nested cgroup, never `free`).
+
+Record: `docs/RESULT-pjm-h16-2026-09-22.md`, charter
+`docs/handoffs/PRECOMMIT-pjm-h16-2026-09-22.md`.
+
 ## pjm-h15 — 2026-09-21
 
 **PROMOTED.** `2026-09-20-pjm-h14-coalmustrun-span` → **`2026-09-20-pjm-h15-coalwindow-span`**
