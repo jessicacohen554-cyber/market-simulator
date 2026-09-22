@@ -55,6 +55,7 @@ from market_sim.data.outages import (
     retiree_availability_caps,
     shared_unit_hours,
     unit_outage_active_units,
+    lp_bin_capacity_index,
     unit_outage_derate_factors,
     unit_outage_maxgen_derate_factors,
     unit_outage_short_derate_factors,
@@ -1170,6 +1171,24 @@ def _apply_outage_overlays(
         # ERCOT-only overlays further down in this block (noncampd availability
         # caps, retiree CEMS cap) gate on this; other ISOs skip them.
         is_ercot = _iso == "ERCOT" or _iso is None
+        # miso-266 (ScenarioConfig.unit_outage_dispatched_bin_denominator,
+        # GATED default-off): the derate DENOMINATOR, summed off the very
+        # generators/pmax every factor below is then multiplied into — the
+        # capacity the multiplier is applied to, which is the invariant
+        # _iso_plant_capacity's own docstring states and cannot honour by
+        # reconstruction (it is blind to the exit-cohort bins fleet/assembly.py
+        # synthesizes under the same key). Built ONCE and shared by every layer,
+        # because one denominator is one mechanism (rule 19 [R-ONE-MECH]).
+        # ``None`` while off, so every loader takes its incumbent argument and
+        # the off path is byte-inert.
+        _lp_bins = (
+            lp_bin_capacity_index(generators, pmax)
+            if (
+                getattr(config, "unit_outage_dispatched_bin_denominator", False)
+                and not is_ercot
+            )
+            else None
+        )
         # Unit-level outage derate (backcast): partial availability cut per
         # unit outage >= 5 days, sized by the unit's share of its plant's
         # capacity (CTs excluded; ERCOT split plants routed to the right asset
@@ -1232,6 +1251,8 @@ def _apply_outage_overlays(
             hour_grain=bool(getattr(config, "campd_per_unit_attribution", False))
             and bool(getattr(config, "campd_outage_merit_order_guard", False))
             and bool(getattr(config, "unit_outage_window_hour_grain", False)),
+            # miso-266: the dispatched bin's own capacity as the denominator.
+            lp_bin_capacity=_lp_bins,
         )
         # DAM-first outage precedence (backcast overlay, gated per ISO). Where an
         # ISO publishes its own availability instrument, use it IN PLACE OF the
@@ -1385,6 +1406,10 @@ def _apply_outage_overlays(
                 # outage rows route to an absent (plant_code, plant_group) and
                 # are silently skipped. Byte-inert while off.
                 mid_vintage_exit_carry=getattr(config, "mid_vintage_exit_carry", False),
+                # miso-266: the dispatched bin's own capacity as the
+                # denominator — the same repair, on the same shared
+                # accumulator, for the sub-5-day window family.
+                lp_bin_capacity=_lp_bins,
             )
             if sfac:
                 applied_s = 0
@@ -1434,6 +1459,9 @@ def _apply_outage_overlays(
                 fleet_status_scope=getattr(
                     config, "unit_outage_fleet_status_scope", False
                 ),
+                # miso-266: the dispatched bin's own capacity as the
+                # denominator (same shared accumulator).
+                lp_bin_capacity=_lp_bins,
             )
             if ppfac:
                 applied_pp = 0
@@ -1494,6 +1522,14 @@ def _apply_outage_overlays(
                 mixed_gas_routing=getattr(
                     config, "unit_outage_mixed_gas_routing", False
                 ),
+                # miso-266: the dispatched bin's own capacity as the
+                # denominator. This layer keeps its own accumulator loop but
+                # divides by the SAME cap[bin] on the SAME key, so it carries
+                # the identical defect and must move with the others (rule 19
+                # [R-ONE-MECH]). Unlike st_capacity_basis above, this flag acts
+                # on the DENOMINATOR, never on the measured derate_mw
+                # numerator, so the objection recorded there does not apply.
+                lp_bin_capacity=_lp_bins,
             )
             if mgfac:
                 applied_mg = 0
@@ -2795,6 +2831,22 @@ def _compose_min_gen_floors(
             per_unit_clip=getattr(config, "unit_outage_per_unit_clip", False),
             extract_basis_share=getattr(
                 config, "unit_outage_extract_basis_share", False
+            ),
+            # miso-266: the dispatched bin's own capacity as the denominator.
+            # It moves with the outage overlay by NECESSITY, not by choice —
+            # unit_layup_removed_fractions' contract is that "a lay-up share and
+            # an outage share for the same plant sit on the same basis and are
+            # additive", and putting one on the dispatched denominator and the
+            # other on the reconstructed one would break exactly that invariant
+            # (rule 19 [R-ONE-MECH], the same reasoning st_capacity_basis and
+            # per_unit_clip are threaded here under).
+            lp_bin_capacity=(
+                lp_bin_capacity_index(generators, pmax)
+                if (
+                    getattr(config, "unit_outage_dispatched_bin_denominator", False)
+                    and (_iso or "ERCOT") != "ERCOT"
+                )
+                else None
             ),
         )
         logger.info(

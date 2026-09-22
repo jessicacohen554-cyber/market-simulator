@@ -416,6 +416,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # SAME COMMIT as the field (the nyiso-119 / caiso-186 discipline), so the
     # pinned default key never moves.
     "unit_outage_extract_basis_share",
+    # miso-266 DISPATCHED-bin derate denominator (GATED default-off; every
+    # consumer reads it via
+    # ``getattr(config, "unit_outage_dispatched_bin_denominator", False)`` in
+    # data/fleet/arrays.py and data/fleet/floors.py, so the off path is
+    # byte-inert). Registered IN THE SAME COMMIT as the field (the nyiso-119 /
+    # caiso-186 discipline), so the pinned default key never moves.
+    "unit_outage_dispatched_bin_denominator",
     # nyiso-229 unit-outage window at its DETECTED HOUR grain (GATED
     # default-off; selects the ``-perunitmerithour-`` extract, so the off path
     # is byte-inert -- it reads the same committed file it always did).
@@ -2096,6 +2103,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by nyiso-196 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "unit_outage_extract_basis_share": "False",
+    # Added by miso-266 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
+    "unit_outage_dispatched_bin_denominator": "False",
     # Added by nyiso-229 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "unit_outage_window_hour_grain": "False",
@@ -3195,6 +3205,15 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     "mid_vintage_exit_carry": "EIA-860 actual retirement month (native vintage)",
     "unit_partial_outage_windows": "measured unit-grain partial-derate plateaus",
     "unit_outage_maxgen_events": "measured declared-event unit derates",
+    # miso-266's unit_outage_dispatched_bin_denominator is DELIBERATELY ABSENT,
+    # on exactly the miso-200 reasoning above, and the absence is the claim.
+    # It adds no year-keyed published record: it replaces the derate
+    # DENOMINATOR with the LP fleet's own per-bin pmax — a quantity a forecast
+    # year has exactly as a backcast year does, and one that responds to a
+    # changed fleet because it IS the fleet. The overlays it corrects already
+    # carry the backcast gate (outage_source == "historic"), so it is inert in
+    # forecast mode regardless; listing it here would ASSERT a
+    # non-regenerability that is false. Reasoned exclusion, not an oversight.
     "ercot_thermal_dam_availability": "measured ERCOT 60-Day DAM awards",
     "ercot_thermal_dam_availability_hourly": "measured 60-Day DAM awards (hourly)",
     "ercot_thermal_dam_availability_plant": "measured 60-Day DAM awards (per plant)",
@@ -15496,6 +15515,97 @@ class ScenarioConfig:
     # docs/FINDING-nyiso196-cc-outage-share-basis-2026-09-05.md,
     # results/calibration/PREREG-nyiso196-cc-outage-share-basis-screen.md.
     unit_outage_extract_basis_share: bool = False
+
+    # DERATE DENOMINATOR = THE DISPATCHED BIN'S OWN CAPACITY (miso-266, GATED
+    # default-off). The outage accumulator removes a share
+    # ``sum_u unit_capacity_mw / denom`` and the LP applies ``1 - share`` to the
+    # bin's ``pmax``, so the MW actually removed is ``share x cap_LP``. That
+    # equals the MW that went out IFF ``denom == cap_LP``. It is an identity,
+    # and data/outages.py::_iso_plant_capacity's own docstring already states it
+    # as the invariant -- "this denominator has to be THE SAME capacity the
+    # derate multiplier is applied to in the LP ... reading the denominator off
+    # an un-armed fleet while the LP holds an armed one would remove the wrong
+    # absolute MW".
+    #
+    # IT CANNOT HONOUR THAT INVARIANT BY RECONSTRUCTION. The map is built from
+    # load_fleet_from_csv + load_retired_within_window and is blind to every
+    # other way the dispatched fleet differs from that pair -- above all the
+    # EXIT-COHORT bins fleet/assembly.py synthesizes with an ``_r{yyyy}{mm}``
+    # tag (miso-191), which carry real dispatched capacity under the SAME
+    # (plant_code, plant_group) key the overlay is looked up by and appear in no
+    # fleet the map loads. SPP-48 hit the same class of defect through the
+    # whole-plant-exit channel and patched THAT channel by hand
+    # (mid_vintage_exit_carry, "the derate DENOMINATOR must carry them too");
+    # this flag closes the general case instead of enumerating channels.
+    #
+    # MEASURED, MISO 2020, on the keeper's own reconstructed fleet, ZERO LP
+    # (scripts/probes/_miso266_denominator_vs_lp.py): ten COAL bins carry
+    # denom / cap_LP between 0.414 and 0.814 -- R M Schahfer 722.0 MW against
+    # the LP's 1,625.0 (its four 2020 coal units survive in the LP through the
+    # r202110 exit cohort and in the denominator not at all), Dallman 209.3 vs
+    # 492.3, Marion 120.0 vs 290.0, South Oak Creek 616.0 vs 1,112.0, Sherburne
+    # County 1,556.0 vs 2,238.0. One 432 MW Schahfer unit out therefore removes
+    # 60 % of the plant instead of 27 %, and three concurrent units remove
+    # 242 % and clip a RUNNING plant to zero.
+    # The consequence is FINDING-miso265's object: 5.318 TWh metered across
+    # 24,100 plant-hours at availability == 0, and 20-32 TWh/yr of meter above
+    # the model's own hard ceiling in every year 2020-2025. Decomposed at
+    # scripts/probes/_miso266_excess_decomposition.py: 20,516 of the 23,849
+    # contradicted hours are hours in which NOT every unit at the plant is
+    # flagged -- i.e. basis excess, not a genuine full-plant outage.
+    #
+    # WHY THIS SIDE AND NOT A UNION OF WINDOWS. Under per_unit_clip (TRUE in
+    # MISO's keeper) each unit's removed MW is already capped at its own
+    # capacity, so at any hour the sum IS the per-unit union
+    # ``sum_{u flagged} ucap_u / denom`` exactly. The only remaining arithmetic
+    # source of a share above 1.0 is therefore the basis -- which is why
+    # FINDING-miso265 §7's repair direction (a) is closed by construction
+    # rather than by test, and (b) is the live one.
+    #
+    # SCOPE. One map for membership AND for the divide, because they are the
+    # same object: a bin the LP does not dispatch has nothing to derate, and a
+    # bin it does dispatch must be derated against what it dispatches (that
+    # second half is the SPP-48 Oklaunion pathology, generalized).
+    #
+    # THE CHP BINS ARE EXCLUDED, ON CONSTRUCTION AND NOT ON ANY RESIDUAL
+    # (outages._DISPATCHED_DENOM_EXCLUDED_GROUPS = CC_CHP / CT_CHP / ST_CHP).
+    # There cap_LP is a DELIBERATE CARVE-OUT -- the grid-facing residual after
+    # the behind-the-meter host steam is held out (fleet/assembly.py's
+    # grid_cap) -- not the plant's dispatchable capacity, so the identity above
+    # does not apply. And the incumbent denominator is right there: if a CHP
+    # unit's output splits host/grid like its plant's, the share of the GRID bin
+    # its outage removes is ucap*grid_frac / (nameplate*grid_frac) =
+    # ucap/nameplate, which is what the accumulator already divides by;
+    # substituting cap_LP would over-remove by 1/grid_frac. Measured over the
+    # bins that actually carry routed extract rows (MISO 2020, zero LP,
+    # scripts/probes/_miso266_routed_bin_exposure.py): EVERY CC_CHP bin (16/16)
+    # and EVERY ST_CHP bin (27/27) sits above 1.02, quantized on 1.538 = 1/0.65
+    # and 3.333 = 1/0.30 -- the grid shares themselves -- to a maximum of 10.0
+    # at ST_CHP 1393, whose LP bin is the `committed` tranche alone (42.5 MW
+    # against a 424.7 MW plant). Two phenomena present as denom != cap_LP and
+    # rule 19 [R-ONE-MECH] says one mechanism addresses one of them; the CHP
+    # denominator question is ROUTED, not absorbed -- it needs its own
+    # identification of how a host/grid split moves under an outage, which no
+    # measurement in this repo yet supplies. Threaded,
+    # like st_capacity_basis and per_unit_clip, into the std >= 5-day, short and
+    # partial layers AND the lay-up loader (the additivity contract) -- AND,
+    # unlike them, into the declared-event MAXGEN layer, which divides by the
+    # same cap[bin] on the same key and so carries the identical defect
+    # (rule 19 [R-ONE-MECH]). Non-ERCOT only (the ERCOT branch caps on its own
+    # CAMPD bin sheet and routes split facilities). Mutually exclusive with
+    # unit_outage_lp_capacity_basis and unit_outage_extract_basis_share: all
+    # three set the denominator, and unit_outage_lp_capacity_basis in
+    # particular RECONSTRUCTS the fleet_to_bins raise that is already inside the
+    # pmax this flag reads (the loaders raise).
+    #
+    # ZERO free parameters (rule 21 [R-DOF]) -- every MW is the fleet's own
+    # pmax. Rule 13 [R-MEASURED] forward-regenerable: a forecast fleet has pmax
+    # exactly as a backcast one does, and the roster responds to changed
+    # conditions because the fleet does; year-correct by construction, since it
+    # is read off the year's own fleet. Rule 14 [R-ACCURATE]: this is chosen on
+    # the construction, never on the residual, and a worse residual would not
+    # retract it. Byte-inert while off.
+    unit_outage_dispatched_bin_denominator: bool = False
 
     # UNIT-OUTAGE WINDOW AT ITS DETECTED HOUR GRAIN (nyiso-229, GATED
     # default-off). The CAMPD unit-outage detector has always worked in HOURS

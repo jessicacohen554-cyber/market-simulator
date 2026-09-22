@@ -14856,4 +14856,115 @@ withdrawn economic-idleness reading and the newly derived extracts recorded.
 Records: `docs/FINDING-miso265-the-coal-availability-envelope-contradicts-the-meter-2026-09-21.md`;
 probes `scripts/probes/_miso265_{coal_bit_2020_phase0,coal_availability_ceiling,ceiling_vs_meter_hourly,ceiling_selfcheck,hard_zero_hours,derate_variant_sizing,zero_discriminator}.py`.
 
-* Next number: **miso-266**.
+* Next number: **miso-267**.
+
+## miso-266 — 2026-09-22
+
+**THE DERATE DENOMINATOR IS NOT THE CAPACITY THE DERATE IS APPLIED TO.** Phase 0
+zero LP; keeper `2026-09-20-miso-264-anchor-vintage` verified on `main` first and
+UNCHANGED by it. FINDING-miso265 routed two repair directions, to be chosen on
+construction and never on the residual (rule 1 `[R-STRUCT]`). Both are settled.
+
+**DIRECTION (a) IS CLOSED BY CONSTRUCTION.** Under `unit_outage_per_unit_clip` —
+armed in this keeper — each unit's removed MW is already capped at its own
+capacity, so at any hour the sum IS the per-unit union exactly and there is no
+further union to take. The only remaining arithmetic source of a share above 1.0
+is the BASIS. Measured, not asserted: **20,516 of the 23,849 contradicted 2020
+hours (86.0 %) occur while NOT every unit at the plant is flagged**
+(`_miso266_excess_decomposition.py`).
+
+**THE CAUSE IS NOT THE "WINDOW MASS" FINDING-miso265 §3.2 NAMED** — that is a
+correlate, and this entry corrects it. The derate denominator is a SECOND,
+YEAR-INDEPENDENT reconstruction of a capacity the LP already holds.
+`outages._iso_plant_capacity` returns **50,365.4 MW of MISO COAL in EVERY year
+2020-2025, to the tenth of a MW**, while the LP's own coal falls 54,238.1 →
+53,391.6 as the fleet retires; and at the contradicted plants `denom/cap_LP` is
+**0.414** (Marion) / **0.425** (Dallman) / **0.444** (R M Schahfer, 722.0 against
+the LP's 1,625.0) / 0.554 (South Oak Creek) / 0.695 (Sherburne County) — exactly
+FINDING-miso265 §3's hard-zero table, in order. The missing MW are the miso-191
+EXIT-COHORT bins (`_r{yyyy}{mm}`), which carry real dispatched capacity under the
+same `(plant_code, plant_group)` key the overlay is looked up by and appear in no
+fleet the map loads. One 432 MW Schahfer unit out therefore removes 60 % of the
+plant instead of 27 %, and three concurrent units remove 242 % and clip a running
+plant to zero. Four further COAL bins (538.0 MW) are absent from the map entirely
+and ride un-derated through their own measured outages — the SPP-48 Oklaunion
+pathology, which `mid_vintage_exit_carry` patched for one channel by hand.
+
+**MECHANISM LANDED:** `ScenarioConfig.unit_outage_dispatched_bin_denominator`,
+GATED default OFF, zero free parameters (rule 21 `[R-DOF]`), cache-key registered
+at its `False` drop value in the same commit as the field.
+`outages.lp_bin_capacity_index` sums the LP fleet's own `pmax` per bin off the
+very generators/pmax the overlay is applied to; the accumulator uses that map for
+BOTH membership and the divide. Threaded into every layer that divides by
+`cap[bin]` (rule 19 `[R-ONE-MECH]`): std ≥5-day, short, partial, the lay-up
+loader (the additivity contract) AND maxgen — which `per_unit_clip` and
+`st_capacity_basis` exclude on numerator/window-grain grounds this flag does not
+share. Non-ERCOT only; mutually exclusive with `unit_outage_lp_capacity_basis`
+and `unit_outage_extract_basis_share` (the loaders raise). Fully plumbed through
+`run_year` / `solve_and_persist` / meta / `--set` / CLI, which is the rule 24
+`[R-REGISTRY]` gap FINDING-miso265 §4 escalated and this field does not repeat.
+26 unit tests on a synthetic fleet and extract.
+
+**THE CHP BINS ARE EXCLUDED, ON CONSTRUCTION AND BEFORE ANY SHARD RETURNED A
+NUMBER.** A zero-LP census over EVERY model bin and EVERY armed layer
+(`_miso266_denominator_blast_radius.py`, `_miso266_routed_bin_exposure.py`) found
+a second, systematic exposure the coal-scoped instrument could not see: over the
+bins that carry routed extract rows, **EVERY CC_CHP bin (16 of 16) and EVERY
+ST_CHP bin (27 of 27)** sits above 1.02, quantized on **1.538 = 1/0.65** and
+**3.333 = 1/0.30** — the grid shares themselves — to a maximum of **10.0** at
+ST_CHP 1393, whose LP bin is the `committed` tranche alone (42.5 MW against a
+424.7 MW plant). There `cap_LP` is a DELIBERATE CARVE-OUT — `assembly.py`'s
+`grid_cap` holds the behind-the-meter host steam out of the LP — not the plant's
+dispatchable capacity, **so the identity does not apply and the incumbent
+denominator is the correct one**: a unit whose output splits host/grid like its
+plant's removes `ucap·grid_frac / (nameplate·grid_frac) = ucap/nameplate` of the
+GRID bin, which is exactly what the accumulator already divides by; substituting
+`cap_LP` would over-remove by `1/grid_frac`, **up to 10×**. Two phenomena present
+as `denom != cap_LP` and rule 19 `[R-ONE-MECH]` says one mechanism addresses one
+of them. The CHP denominator question is **ROUTED, not absorbed** — it needs its
+own identification of how a host/grid split moves under an outage, which no
+measurement in this repo supplies. The coal object is byte-identical before and
+after the exclusion, as it must be.
+
+**ZERO-LP SIZING, before any solve.** Hard-zero contradicted hours **23,849 →
+3,234 (-86.4 %)**, contradicted energy 5.184 → 0.922 TWh, against the four
+candidates FINDING-miso265 §4 refuted (0 % / 0 % / 0 % / worse). On the full
+ceiling object, all six years: **155.457 → 131.318 TWh, -24.139 (-15.5 %)**,
+fading 25.5 % (2020) → 3.1 % (2025) as the exit cohorts leave — the mechanism's
+own signature. The control column reproduces FINDING-miso265 §2.2 to the
+milli-TWh in every year, which validates the instrument against the predecessor's
+before anything is claimed from it.
+
+**STATED AGAINST IT, in the PRECOMMIT and not after:** **84.5 % of the
+contradiction SURVIVES** (the level-short and wrong-hours shapes, plus the ~7 %
+nameplate numerator `st_capacity_basis` refuses at exactly these bins because the
+fleet roster is missing the very units this defect is about — and the numerator
+CANNOT be put on the LP's per-unit capacity at a per-plant-binned ISO, which has
+tranches and no units); C1 2022 COAL_PRB is +8.13 TWh LONG and predicted to
+DEEPEN; C1 2020 is not promised (+12.01 TWh of headroom against a -10.92 miss);
+and **the CALIBRATED 2023-2025 train tier is a live G-NOFLIP risk**.
+
+**G-DRIFT: form 4 is VOID.** The rule 36 `[R-YEAR-ISOLATION]` warm-start default
+flip is LIVE for MISO by this repo's own measurement (7.16-24.18 TWh on
+2021/2022/2025), so the committed keeper cannot be the control. **Six shards, one
+per year, each solving BOTH legs** — control and arm — at one pinned SHA in one
+container. That closes the drift question completely rather than partially, and
+the control legs also discharge MISO's outstanding rule-36 re-solve debt.
+
+**GATES AT HEAD:** `check_cache_key_registration --base origin/main` **1 new
+field, registered** · matrix integrity OK, 1 new field registered (anchors
+re-fixed) · `check_registry_payload_parity` **OK, 0 REDs** · `audit_keepers --iso
+MISO` 0 failures (1 pre-existing warning) · `build_status --iso MISO --check` in
+sync · `check_gate_a_provenance --iso MISO` OK · `check_bench_freshness --iso
+MISO` 6 parts, **0 STALE** · `node --check` PASS on all ten matrix files ·
+`pytest tests/scoring` **22 failed / 1556 passed, 19 unique FAILED names —
+IDENTICAL to the charter's baseline name set, zero new** · ruff clean.
+
+**Rule 28 duty:** `unit_outage_dispatched_bin_denominator` row added to
+`mechanism-matrix.js` WITH the field, MISO's cell **O** (open, A/B in flight), and
+a `U` cell with the zero-LP transfer question in all eight other ISO shards. No
+number crosses an ISO boundary (rule 25 `[R-ISO-SCOPE]`).
+
+Records: `docs/PRECOMMIT-miso266-dispatched-bin-denominator-2026-09-22.md`;
+probes `scripts/probes/_miso266_{excess_decomposition,denominator_vs_lp,repair_ceiling_ab,compose_span}.py`;
+test `tests/unit/data/test_unit_outage_dispatched_bin_denominator.py`.
