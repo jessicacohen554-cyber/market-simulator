@@ -3222,9 +3222,9 @@ results/calibration/pjm_h15_coalwindow_20*/
 # Recover a leg by its IMMUTABLE SHA (rule 33 [R-SHARD-ARCHIVE] (d) —
 # provenance, NOT a durability claim; cost any recovery as a re-solve):
 #   git fetch origin <sha> && git checkout <sha> -- results/calibration/soco58_arm_<year>
-#   soco58_arm_2023  <sha recorded in the RESULT doc>
-#   soco58_arm_2024  <sha recorded in the RESULT doc>
-#   soco58_arm_2025  <sha recorded in the RESULT doc>
+#   soco58_arm_2023  6ad08eed8ea3289ad76301831a90b35cb81a4f9a
+#   soco58_arm_2024  605be037f0caf0bd71a22ffe57bcdbc6182e7e46
+#   soco58_arm_2025  74a1802e6492b34f13818e3a63decabdb0a423fe
 # soco57_arm_<year>  the CONTROL's per-plant legs, recovered at zero LP from the
 #                    SOCO-57 leg SHAs (.gitignore above); all twelve committed
 #                    hourly sidecars verified byte-identical to the keeper.
