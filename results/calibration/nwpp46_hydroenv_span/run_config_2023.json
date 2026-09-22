@@ -1,21 +1,19 @@
 {
-  "timestamp": "2026-09-20T19:41:41",
+  "timestamp": "2026-09-22T16:30:38",
   "git": {
-    "sha": "ee276d87",
-    "basis_sha": "ee276d873951f4a11b69d3350ac86692b642c006",
-    "branch": "claude/nwpp-44-reuse-v3",
+    "sha": "87201a18",
+    "basis_sha": "87201a18bae068f0accbf0e17d9e5fa3911f4ac3",
+    "branch": "claude/nwpp-46-arm-2023",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "",
+  "model_changes_note": "nwpp-46: two-sided measured hydro capability envelope (ceiling caiso-72 + floor caiso-124) on NWPP's own EIA-930 NG:WAT",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "NWPP",
     "years": [
-      2023,
-      2024,
-      2025
+      2023
     ],
     "hours": 8760,
     "passes": [
@@ -24,9 +22,7 @@
     "commitment": false,
     "commitment_screen_coal": true,
     "gas_prices": {
-      "2023": 2.54,
-      "2024": 2.19,
-      "2025": 3.52
+      "2023": 2.54
     },
     "outage_source": "historic",
     "coal_lignite_mustrun": null,
@@ -40,7 +36,9 @@
     "coal_drop_pof": true,
     "coal_prb_passthrough_tiered": true,
     "coal_prb_sigmoid_overrides": {
-      "hydro_cascade_coupling": true
+      "hydro_cascade_coupling": true,
+      "hydro_dispatch_envelope": true,
+      "hydro_min_flow_floor": true
     },
     "coal_bit_passthrough_sigmoid": false,
     "coal_bit_sigmoid_overrides": {},
@@ -57,7 +55,7 @@
     "nyiso_dynamic_reserve_requirements": null,
     "nyiso_hydro_reserve_eligible": null,
     "nyiso_scr_edrp_reserve_eligible": null,
-    "git_sha": "ee276d87"
+    "git_sha": "87201a18"
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -107,10 +105,11 @@
     "storage_measured_base_fleet": true,
     "retirement_aggressiveness": "mid",
     "hydro_year": "normal",
-    "hydro_dispatch_envelope": false,
+    "hydro_dispatch_envelope": true,
     "hydro_budget_period_by_instrument": false,
     "hydro_cascade_coupling": true,
-    "hydro_min_flow_floor": false,
+    "hydro_pondage_bound": false,
+    "hydro_min_flow_floor": true,
     "hydro_ror_split": false,
     "hydro_budget_nameplate_aware": false,
     "eac_price_nuclear": 0.0,
@@ -246,6 +245,7 @@
     "measured_ct_heat_rates": false,
     "measured_coal_heat_rates": true,
     "measured_st_heat_rates": false,
+    "measured_cc_heat_rates": false,
     "measured_chp_heat_rates": false,
     "egrid_identity_heat_rates": false,
     "egrid_family_heat_rates": false,
@@ -436,6 +436,7 @@
     "caiso_citygate_flow_date": false,
     "caiso_citygate_spot_coverage": false,
     "caiso_citygate_blackout_bridge": false,
+    "gas_flow_date_year_start_package": false,
     "caiso_dsw_surplus_clean": false,
     "caiso_dsw_overnight_clean": false,
     "caiso_dsw_daytime_clean": false,
@@ -578,6 +579,9 @@
     "nyiso_solar_market_generator_basis": false,
     "gas_st_wefor_base_override": null,
     "coal_sync_srmc_tranche": false,
+    "coal_sync_ensemble_level": false,
+    "coal_mustrun_requires_measured_row": false,
+    "commitment_floor_window_netload": false,
     "coal_econ_srmc_bound": false,
     "coal_econ_marginal_hr_bound": false,
     "committed_band_measured_basis": false,
@@ -744,6 +748,8 @@
     "st_gas_mustrun_per_plant": false,
     "st_gas_mustrun_p25_level": false,
     "mustrun_online_frac_per_year": false,
+    "coal_sync_online_frac_per_year": false,
+    "coal_sync_window_commitment_grain": false,
     "mustrun_window_commitment_grain": false,
     "st_gas_mustrun_p25_measured_level": false,
     "st_gas_mustrun_oom_level": false,
@@ -767,6 +773,7 @@
     "unit_outage_st_capacity_basis": false,
     "unit_outage_per_unit_clip": false,
     "unit_outage_extract_basis_share": false,
+    "unit_outage_dispatched_bin_denominator": false,
     "unit_outage_window_hour_grain": false,
     "campd_per_unit_attribution": false,
     "campd_outage_merit_order_guard": false,
@@ -940,6 +947,7 @@
     "chp_btm_floor_pct": 40.0,
     "chp_export_floor_measured": false,
     "chp_steam_floor_p25": false,
+    "chp_steam_duty_window": false,
     "ercot_gtc_limits_measured": false,
     "pjm_measured_interface_limits": false,
     "pjm_east_interface_cut": false,
@@ -960,11 +968,13 @@
     "coal_supply_repricing": true,
     "coal_plant_monthly_pricing": true,
     "gas_plant_monthly_fuel_pricing": true,
+    "gas_basis_differential_measured_by_year": false,
     "nearby_fuel_price_fallback": true,
     "nearby_fuel_price_min_state_plants": 2,
     "nearby_fuel_price_zone_donor_guard": false,
     "f923_gas_price_plausibility_screen": true,
     "vre_curtailment_oversupply_allocation": false,
+    "vre_reference_rate_year_own": false,
     "fleet_state_from_eia860": false,
     "class_aware_fuel_price_fallback": false,
     "plant_level_fleet": true,
@@ -1066,18 +1076,18 @@
     "rows": 182,
     "moved": {},
     "epochs": [],
-    "git_sha": "ee276d87"
+    "git_sha": "87201a18"
   },
   "environment": {
     "python_version": "3.11.15",
     "platform": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
     "packages": {
-      "highspy": "1.15.1",
+      "highspy": "1.14.0",
       "numpy": "2.4.6",
       "scipy": "1.17.1",
-      "pandas": "3.0.6",
-      "pyarrow": "25.0.1",
-      "pydantic": "2.13.5"
+      "pandas": "3.0.3",
+      "pyarrow": "24.0.0",
+      "pydantic": "2.13.4"
     },
     "cache_key_path_roots": [
       [
@@ -1114,41 +1124,5 @@
       "sha256": "486ef1dec8dfe11467252500c06cc266e9eb4883af2b259852b421b626d20205",
       "bytes": 5951
     }
-  },
-  "reuse": {
-    "source_bundle": "results/calibration/nwpp44_takeorpay_span",
-    "requested_years": [
-      2023,
-      2024,
-      2025
-    ],
-    "reused_years": {
-      "2023": {
-        "passes": [
-          "P1"
-        ],
-        "cache_key": "a31147d74cf8620f",
-        "scenario_config_sha256": "9e456f399cb38e20"
-      },
-      "2024": {
-        "passes": [
-          "P1"
-        ],
-        "cache_key": "45f5b1dd60b98226",
-        "scenario_config_sha256": "302f9a13caaf39a4"
-      },
-      "2025": {
-        "passes": [
-          "P1"
-        ],
-        "cache_key": "a221b407f9724650",
-        "scenario_config_sha256": "ec762c25e7254c38"
-      }
-    },
-    "fresh_years": [],
-    "refusals": {},
-    "warning": "Reused years are byte-copies of a prior bundle's solve, NOT fresh evidence \u2014 keeper promotion still requires a full fresh solve of every year.",
-    "source_timestamp": "2026-09-20T06:19:17",
-    "source_git_sha": "ee276d87"
   }
 }

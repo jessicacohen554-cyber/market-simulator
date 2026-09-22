@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-20T19:41:41",
+  "timestamp": "2026-09-22T16:30:38",
   "iso": "NWPP",
   "years": [
     2023,
@@ -51,7 +51,9 @@
   "st_gas_intermediate_cf_threshold": null,
   "coal_prb_passthrough_tiered": true,
   "coal_prb_sigmoid_overrides": {
-    "hydro_cascade_coupling": true
+    "hydro_cascade_coupling": true,
+    "hydro_dispatch_envelope": true,
+    "hydro_min_flow_floor": true
   },
   "coal_bit_passthrough_sigmoid": false,
   "coal_bit_sigmoid_overrides": {},
@@ -241,6 +243,7 @@
   "unit_outage_mixed_gas_routing": null,
   "unit_outage_st_capacity_basis": null,
   "unit_outage_per_unit_clip": null,
+  "unit_outage_dispatched_bin_denominator": null,
   "unit_outage_short_windows_gas": null,
   "unit_outage_window_hour_grain": null,
   "campd_per_unit_attribution": null,
@@ -339,19 +342,19 @@
     "unit_outages_e923": "../_shared/NWPP/unit_outages_e923-ffbc2ebbbef7.parquet",
     "unit_outages_layup": "../_shared/NWPP/unit_outages_layup-75441d347875.parquet"
   },
-  "git_sha": "ee276d87",
-  "basis_sha": "ee276d873951f4a11b69d3350ac86692b642c006",
-  "highspy_version": "1.15.1",
+  "git_sha": "87201a18",
+  "basis_sha": "87201a18bae068f0accbf0e17d9e5fa3911f4ac3",
+  "highspy_version": "1.14.0",
   "environment": {
     "python_version": "3.11.15",
     "platform": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
     "packages": {
-      "highspy": "1.15.1",
+      "highspy": "1.14.0",
       "numpy": "2.4.6",
       "scipy": "1.17.1",
-      "pandas": "3.0.6",
-      "pyarrow": "25.0.1",
-      "pydantic": "2.13.5"
+      "pandas": "3.0.3",
+      "pyarrow": "24.0.0",
+      "pydantic": "2.13.4"
     },
     "cache_key_path_roots": [
       [
@@ -361,40 +364,15 @@
     ],
     "market_sim_data_root": ""
   },
-  "reuse": {
-    "source_bundle": "results/calibration/nwpp44_takeorpay_span",
-    "requested_years": [
-      2023,
-      2024,
-      2025
+  "composed_from": {
+    "nwpp46_hydroenv_2023": [
+      2023
     ],
-    "reused_years": {
-      "2023": {
-        "passes": [
-          "P1"
-        ],
-        "cache_key": "a31147d74cf8620f",
-        "scenario_config_sha256": "9e456f399cb38e20"
-      },
-      "2024": {
-        "passes": [
-          "P1"
-        ],
-        "cache_key": "45f5b1dd60b98226",
-        "scenario_config_sha256": "302f9a13caaf39a4"
-      },
-      "2025": {
-        "passes": [
-          "P1"
-        ],
-        "cache_key": "a221b407f9724650",
-        "scenario_config_sha256": "ec762c25e7254c38"
-      }
-    },
-    "fresh_years": [],
-    "refusals": {},
-    "warning": "Reused years are byte-copies of a prior bundle's solve, NOT fresh evidence \u2014 keeper promotion still requires a full fresh solve of every year.",
-    "source_timestamp": "2026-09-20T06:19:17",
-    "source_git_sha": "ee276d87"
+    "nwpp46_hydroenv_2024": [
+      2024
+    ],
+    "nwpp46_hydroenv_2025": [
+      2025
+    ]
   }
 }

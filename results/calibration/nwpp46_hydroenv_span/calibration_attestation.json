@@ -1,0 +1,185 @@
+{
+  "free_parameters": {
+    "schema": "dof-ledger/v1",
+    "seeded": "2026-07-04 S5 governance session \u2014 audit \u00a73 class-C table + W1d residual-identified/forecast-risk markers (docs/model-legitimacy-audit-2026-07.md; CLAUDE.md rule 20)",
+    "n_entries": 4,
+    "n_residual": 3,
+    "entries": [
+      {
+        "name": "offer_curve_by_group",
+        "where": "run_config.scenario_config.offer_curve_by_group",
+        "identification": "residual",
+        "lineage_solves": "unknown",
+        "value": {
+          "CC_REGULAR": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "CC_INTERMEDIATE": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "CC_CHP": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "CT_CHP": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "peak"
+          ],
+          "CT_PEAKER": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "CT_INTERMEDIATE": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "ST_GAS": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "ST_GAS_INTERMEDIATE": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "COAL_LIGNITE": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "peak"
+          ],
+          "COAL_PRB": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "peak"
+          ],
+          "COAL_BIT": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "peak"
+          ],
+          "COAL_WC": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "peak"
+          ],
+          "COAL": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "peak"
+          ]
+        },
+        "n_scalars": 72,
+        "source": "per-group HR-band multipliers \u2014 the rule-#1-sanctioned offer-curve tuning surface (audit C-8/C-11/C-13)",
+        "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+      },
+      {
+        "name": "offer_curve_smoothing",
+        "where": "run_config.scenario_config.offer_curve_smoothing_*",
+        "identification": "residual",
+        "lineage_solves": "unknown",
+        "value": {
+          "offer_curve_smoothing_n": 6,
+          "offer_curve_smoothing_exp": 1.0
+        },
+        "n_scalars": 2,
+        "source": "econ-ramp shape of the offer curve (rule-#1 scope)",
+        "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+      },
+      {
+        "name": "wefor_multiplier",
+        "where": "run_config.scenario_config.wefor_multiplier",
+        "identification": "residual",
+        "lineage_solves": "unknown",
+        "value": 0.7,
+        "source": "wind EFOR haircut (audit C-15) \u2014 the name admits residual identification; stated purpose is coal shoulder-month generation",
+        "root_cause": "audit C-15 open item: replace with a measured wind availability/curtailment input or delete; identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+      },
+      {
+        "name": "coal_committed_takeorpay_regulated (regulated/self-committed coal committed-band take-or-pay pricing)",
+        "where": "fleet.campd_tranche_fuel_frac committed_takeorpay_regulated branch; scope = fleet.eia860_selfcommit_scope_plants (EIA-860 Regulatory Status RE UNION > 0.5 Schedule-4 cost-of-service ownership x utility Entity Type I/M/C/P/S/F); committed tranche passes (1 - contract_share) of measured EIA-923 Schedule-5 fuel, bounded below by any supply passthrough",
+        "identification": "measured-physical",
+        "lineage_solves": "unknown",
+        "n_scalars": 0,
+        "source": "MISO SOM Table 7 regulated-utility coal conduct split (regulated self-commit 56%/53% must-run 2023/2024 vs merchant 93%/74% offered economically; som-competitive-conduct/som_competitive_conduct.csv) + EIA-860 Regulatory Status RE set and Schedule-4 ownership x utility Entity Type (eia860_plant.parquet) + EIA-923 Schedule-5 take-or-pay shares (coal_takeorpay_MISO.csv) + CAMPD committed tranches (docs/handoffs/miso-coal-conduct-design-2026-07.md)",
+        "note": "replaces the rank-scoped coal_bit_committed_takeorpay (rule 19 reconcile \u2014 RE-BIT covered identically, NR-BIT merchants revert to the economic offers the SOM measures); re-derives only on a new EIA-860 vintage (RE UNION COS set), a new EIA-923 Schedule-5 vintage (shares), or a new SOM publication (conduct citation) \u2014 never a residual (rule 23)"
+      }
+    ]
+  },
+  "schema": "calibration-attestation/v1",
+  "lane": "NWPP-46",
+  "bundle": "nwpp46_hydroenv_span",
+  "switches": {
+    "hydro_dispatch_envelope": {
+      "value": true,
+      "where": "ScenarioConfig.hydro_dispatch_envelope, armed from the calibration CLI (--hydro-dispatch-envelope) through the generic prb_overrides channel; consumed by scripts/run_calibration.py via data.eia930.envelopes.measured_hydro_hourly_envelope -> the LP's hydro_envelope_mw row family",
+      "identification": "measured-physical",
+      "source": "NWPP's OWN EIA-930 hourly NG:WAT series, per (month x hour-of-day) p95 (constants.HYDRO_ENVELOPE_PERCENTILE = 95.0, the shared convention, not an NWPP number). Measured binding: 21.7 / 23.7 / 23.4 % of hours in 2023 / 2024 / 2025, 1.864 / 2.359 / 2.684 TWh above the ceiling, concentrated on the evening ramp (h16-h22, 29-47 % of those hours) \u2014 the perfect-foresight hoarding the energy-only budget cap permits."
+    },
+    "hydro_min_flow_floor": {
+      "value": true,
+      "where": "ScenarioConfig.hydro_min_flow_floor, armed from the calibration CLI (--hydro-min-flow-floor) through the same channel; consumed by data.eia930.envelopes.measured_hydro_min_flow_level -> data.hydro.allocate_min_flow_floor -> FleetArrays.min_gen, mechanism id MECH_HYDRO_MIN_FLOW",
+      "identification": "measured-physical",
+      "source": "The SAME EIA-930 NG:WAT series, per CALENDAR MONTH, at constants.HYDRO_MIN_FLOW_PERCENTILE = 100.0 - HYDRO_ENVELOPE_PERCENTILE = 5.0 \u2014 the exact mirror, so the floor adds ZERO free parameters on top of the ceiling. The bucket is the month ALONE, never (month x hour-of-day): a floor carrying the measured diurnal shape would pin dispatch to the measured outcome (rule 13), while a month-constant level is what a minimum-flow condition physically is and leaves the LP free to choose WHEN to generate above it. Measured binding: 10.4 / 12.9 / 14.0 % of hours, 0.866 / 1.185 / 1.526 TWh below the sustained level, concentrated in the midday solar belly and the overnight shoulder \u2014 DISJOINT from the ceiling's hours, which is the rule-19 evidence that the two are one reconciled family and not a stack."
+    }
+  },
+  "governance": {
+    "levers_trace_to_measured_input": true,
+    "no_fit_to_price_residuals": true,
+    "no_pinning_to_actuals": true,
+    "outage_filter_exogenous_net_load": true,
+    "authorized_price_tuning": null,
+    "notes": "levers_trace_to_measured_input: both halves are percentile statistics of NWPP's own published EIA-930 NG:WAT hourly series. Neither is a magnitude a lane chose; the single percentile is a shared constant and the floor's is its arithmetic mirror. Neither was swept \u2014 the arm was declared in PRECOMMIT-nwpp-46 \u00a75 with its predicted effect computed exactly in \u00a76 BEFORE the solve, and the kill condition in \u00a77 was coded and committed (scripts/probes/_nwpp46_gates.py) before the first leg landed. no_fit_to_price_residuals: NWPP is PRICE UNSCORED (rubric v3.8, owner card S2) \u2014 C3a/b/c are not scored in any year and no offer_curve_by_group band multiplier is touched, so the rule 1 [R-STRUCT] authorized-tuning channel is NOT used and authorized_price_tuning is declared NONE. The lane DID measure the model's own price formation (PRECOMMIT \u00a73: three of five zones carry 12 distinct prices per year), and that is evidence about the model, never a claim about NWPP's real prices and never a residual tuned against. no_pinning_to_actuals: the envelope is a CEILING the LP clears below and the floor is a month-constant LEVEL, so no measured outcome is pinned; hydro annual energy is unchanged to 0.000 TWh in every year, which is the direct evidence that this is a shape constraint and not a volume mechanism. Both regenerate for a forward year from the pooled HYDRO_CLIMATOLOGY_YEARS percentile and respond to the water year through the budget they are clipped against, so rule 13's forward test is met. outage_filter_exogenous_net_load: outage_source='historic', unchanged from NWPP-44."
+  },
+  "exceptions": [],
+  "disclosures": {
+    "kill_condition_pre_registered_and_survived": "Pre-registered in PRECOMMIT-nwpp-46 \u00a77 and CODED AND COMMITTED BEFORE THE FIRST LEG LANDED (scripts/probes/_nwpp46_gates.py, commit 9cd108d9), deliberately, so it could not be written to fit the numbers. INERT limb: the hydro amplitude ratio had to fall by >= 0.03 in EVERY year (2023 < 1.11, 2024 < 1.17, 2025 < 1.35). It reads 1.048 / 1.107 / 1.148 against a keeper 1.138 / 1.200 / 1.383 \u2014 the limb does not fire. OVERSHOOT (a): below 0.90 in any year would have made it R; the minimum is 1.048. OVERSHOOT (c): hydro annual energy moving > 5.0 TWh would have made it R; it moved 0.000 TWh in every year. OVERSHOOT (b), the C1 COAL rows, is scored on the registered run. The evaluator SELF-TESTS against the keeper, where it correctly reads I.",
+    "the_prediction_was_made_ex_ante_and_landed": "PRECOMMIT \u00a76a predicted the hydro amplitude ratio at 1.05 / 1.10 / 1.16 from a static clip of the keeper's own hourly hydro. The SOLVE returned 1.048 / 1.107 / 1.148 \u2014 within 0.002 / 0.007 / 0.012. \u00a76d predicted C4 r at 0.61-0.66 / 0.60-0.65 / 0.62-0.67 and NRMSE at 0.24-0.28 / 0.23-0.27 / 0.26-0.30; the solve returned r 0.658 / 0.617 / 0.637 and NRMSE 0.244 / 0.240 / 0.276, every one INSIDE the pre-registered band.",
+    "c4_improves_in_every_year_and_STILL_FAILS": "C4 coal improves on BOTH metrics in ALL THREE years: r 0.605 -> 0.658, 0.595 -> 0.617, 0.610 -> 0.637; NRMSE 0.260 -> 0.244, 0.246 -> 0.240, 0.284 -> 0.276. The mechanism's own signature moved as claimed: the coal diurnal amplitude ratio 0.100 -> 0.223, 0.052 -> 0.096, 0.037 -> 0.089, i.e. coal's peak-to-trough swing roughly DOUBLED in every year. C4 NONETHELESS STILL FAILS \u2014 r remains below the 0.70 floor in all three years, EXACTLY as PRECOMMIT \u00a76d predicted it would. It is reported as a FAIL, not a near-miss, and per rule 1 [R-STRUCT] C4 was never the reason to arm this: a head/flow deliverability ceiling and a licence minimum-flow release are real features of how this fleet operates.",
+    "the_intra_day_term_does_not_uniformly_improve": "REPORTED BECAUSE IT COMPLICATES THE STORY, not smoothed into it. The within-day correlation r_intra goes 0.218 -> 0.371 in 2023 (a large gain), but 0.376 -> 0.375 in 2024 (flat) and 0.425 -> 0.374 in 2025 (WORSE). So the amplitude roughly doubled in every year while the intra-day CORRELATION rose only in 2023; 2024/2025's r gain comes mostly from the daily-mean term (0.664 -> 0.679, 0.715 -> 0.732) and from amplitude. Getting the size of the swing right is not the same as getting its hour right, and this arm did the first more than the second. That is a real limit on what it closed.",
+    "hydro_energy_is_exactly_conserved": "Hydro annual energy: 106.872 / 107.879 / 113.077 TWh in BOTH the keeper and the arm, unchanged to 0.000 TWh. The budget row reallocated every clipped MWh into hours below the ceiling, which is the direct evidence that the two-sided envelope is a SHAPE constraint and not a volume mechanism \u2014 and it is why the released duty lands on the thermal classes as a re-shaping rather than as new energy.",
+    "what_it_does_not_close": "Stated at the gate. The model's price is still a near-monthly step function in the hydro-set zones, and the coal offer stack is still the IDENTITY (econlo == econhi == peak at every plant, because backcast_config merges _SPP_OFFER_CURVE for NWPP). PRECOMMIT \u00a72.1 measured the correct ladder from NWPP's own CAMPD \u2014 committed 0.821 / econ_low 0.932 / econ_high 1.004 / peak 1.029 \u2014 and this lane deliberately did NOT arm it, because \u00a73 shows it would be inert against a within-month-constant price. It is routed as a successor question for AFTER the price acquires intra-day variation, not dismissed. The NWPP-45 C1 demand-basis gap (-9.645 / -12.144 / -9.107 TWh) is an OPEN OWNER DECISION and was not touched.",
+    "composer_defect_found_and_fixed_en_route": "scripts/probes/_nwpp42_compose_span.py copied the BASE leg's meta.shared_inputs onto the composite, so a span assembled from year-isolated shards claimed years [2023,2024,2025] while pointing at SINGLE-YEAR benchmark frames \u2014 the exact sibling of the gas_prices defect nwpp-44 found, one field along, and it makes the composite unscorable. Caught by --restore-shared-inputs, which correctly REFUSED rather than re-pointing. Fixed in the composer (_respan_shared_inputs). Proven safe before adopting: the three-year frame is the exact row-wise UNION of the per-year leg frames (every year's slice byte-identical, all three names), and the re-spanned hashes land on the keeper's own three-year frames. No benchmark was re-based and --rebuild-benchmark was NOT used."
+  }
+}

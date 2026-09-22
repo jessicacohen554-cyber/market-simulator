@@ -189,10 +189,67 @@ def compose(legs: dict[str, list[int]], out: Path) -> None:
     # until they are recomposed.
     if gas:
         meta["gas_prices"] = {k: gas[k] for k in sorted(gas)}
+    # meta.json is written TWICE on purpose: _respan_shared_inputs rebuilds the
+    # benchmark frames through build_benchmark_frames(out), which reads the
+    # composite's OWN meta.json for the year set it must span, so the corrected
+    # `years` has to be on disk before it runs.
+    (out / "meta.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
+    _respan_shared_inputs(meta, out)
     (out / "meta.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
 
     n = sum(1 for p in out.rglob("*") if p.is_file())
     print(f"\ncomposed {out} — {n} files, years {all_years}")
+
+
+def _respan_shared_inputs(meta: dict, out: Path) -> None:
+    """Re-point the composite's YEAR-DEPENDENT benchmark frames at the SPAN.
+
+    The exact sibling of the ``gas_prices`` defect documented above, one field
+    along, and found the same way — by a restore that correctly refused.
+    ``meta["shared_inputs"]`` is copied wholesale from the BASE leg, and the
+    three :data:`bundle_io.SHARED_INPUT_NAMES` frames (``campd`` / ``eia930`` /
+    ``eia923``) are functions of the bundle's YEAR SET. A composite therefore
+    inherits a SINGLE-YEAR benchmark reference while claiming the whole span:
+    internally inconsistent, and it makes the composite unscorable and
+    unregistrable, because ``--restore-shared-inputs`` rebuilds the frames from
+    the composite's own (now three-year) meta recipe and correctly refuses to
+    adopt bytes that do not match the recorded hash. The ``unit_outages``
+    family is year-independent, matches across legs, and is left alone.
+
+    This is NOT ``--rebuild-benchmark``. Nothing scored is re-based: the span
+    frame is the exact row-wise UNION of the per-year leg frames (verified for
+    NWPP 2023-2025 over all three names — every year's slice byte-identical to
+    that year's leg frame), so each year is scored against the same bytes its
+    own leg was solved and scored against. What changes is only WHICH store
+    entry the composite names, and the value written here is the one a
+    whole-span solve would itself have recorded.
+
+    Zero LP: the frames are pure functions of ``(ISO, year, reference data)``.
+    """
+    recorded = meta.get("shared_inputs")
+    if not recorded:
+        return
+    from scripts.lib.bundle_io import SHARED_INPUT_NAMES
+    from scripts.run_calibration_full import build_benchmark_frames, write_shared_input
+
+    stale = [n for n in SHARED_INPUT_NAMES if n in recorded]
+    if not stale:
+        return
+    print(f"\nre-spanning the year-dependent benchmark frames {sorted(stale)}:")
+    iso, frames = build_benchmark_frames(out)
+    for name in sorted(stale):
+        if name not in frames:
+            raise SystemExit(
+                f"compose: meta records shared_inputs[{name!r}] but the span "
+                "rebuild produced no such frame — the legs' meta recipe and the "
+                "current builders disagree about what this bundle contains."
+            )
+        was = recorded[name]
+        ref = write_shared_input(frames[name], name, iso, out)
+        recorded[name] = ref
+        flag = "unchanged" if Path(was).name == Path(ref).name else "re-spanned"
+        print(f"  {name:<8} {flag:<11} {Path(was).name} -> {Path(ref).name}")
+    meta["shared_inputs"] = recorded
 
 
 def regenerate_diagnostics(out: Path, years: list[int]) -> int:

@@ -3288,3 +3288,12 @@ results/calibration/miso266_arm_*/
 # miso-266 composed spans (rule 31 [R-RETAIN] / rule 32(d)).
 results/calibration/miso266_ctl_span/
 results/calibration/miso266_arm_span/
+# nwpp-46 per-year shard legs: kept on local disk (rule 31 [R-RETAIN] — never deleted)
+# but OUT of main (rule 32(d) [R-SHARD] — only the composed span is registered).
+# Recover a leg by its immutable shard SHA (rule 33(d), provenance not durability):
+#   git checkout e86db671 -- results/calibration/nwpp46_hydroenv_2023
+#   git checkout 21cd753b -- results/calibration/nwpp46_hydroenv_2024
+#   git checkout 7c889d6d -- results/calibration/nwpp46_hydroenv_2025
+results/calibration/nwpp46_hydroenv_2023/
+results/calibration/nwpp46_hydroenv_2024/
+results/calibration/nwpp46_hydroenv_2025/
