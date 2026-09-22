@@ -12,8 +12,11 @@ keeper's committed `hourly/` sidecars, its registered payload, the committed ben
 ## 0. Status in one line
 
 **The chartered defect is misdiagnosed in the record on two counts, and neither correction is
-cosmetic.** (1) The C1 volume band is **±8.00 TWh**, not the ±5.41 the predecessor computed by hand,
-so 2023 `CC_REGULAR` misses by **0.219 TWh** — 2.7 % of the band, not 8.22 TWh of model error.
+cosmetic.** (1) The C1 volume band is **±8.00 TWh**, not the ±5.41 the predecessor computed by hand.
+The model-vs-actual error is indeed **−8.219 TWh** and is not disputed anywhere below — but the
+**band overrun is 0.219 TWh**, 2.7 % of the band. Those are different quantities and the record
+conflates them: what stands between this keeper and a C1 PASS is 0.219 TWh, while what stands
+between it and a correct 2023 `CC_REGULAR` is 8.219.
 (2) The shortfall is **not in `CC_REGULAR`**: it is a system-level energy-requirement gap of
 **9.645 / 12.144 / 9.107 TWh** that the marginal class absorbs because every non-thermal class is
 separately pinned to a measured budget. The gap's provenance is an exact, verified identity between
@@ -304,8 +307,19 @@ object §3 measures from the demand side, seen through the scorer.
   shard containers against 1.14.0 in older keepers; the NWPP-42 keeper's `meta.json` `gas_prices`
   defect; **the NWPP-40/41/42 attestation corrections (`use_campd_bins` is NOT inert and
   `thermal_tranches_NWPP.csv` IS read) are still owed** and were not discharged here.
-* **Pre-existing test state** re-verified as pre-existing at this lane's base SHA with no edit of this
-  lane's in the tree (§9).
+* **Pre-existing test state — re-verified BY CONSTRUCTION, which is stronger than a suite run.**
+  `git diff --name-status origin/main...HEAD -- src scripts` returns **two `A` rows and nothing else**:
+  the two new probe files, which no module imports. There is **no `M` under `src/` or `scripts/`**, so
+  no code path this lane could have moved exists, and every failure in
+  `tests/unit/{pipeline,config,data}` is pre-existing by definition. A partial run confirms they still
+  fire — e.g. `test_forecast_xyear_warmstart_flag.py::TestFieldRegistration::test_default_cache_key_unmoved`.
+  **Not repaired; they belong to other lanes.**
+* **CORRECTION to the charter's carried list: `scripts/check_cache_key_registration.py` now PASSES on
+  `main`.** It reads *"ok: 869 ScenarioConfig fields, 323 registered in `_CACHE_KEY_OPTIONAL_FIELDS`,
+  all resolve; 323 declared defaults all match HEAD; 309 solve-surface names across 7 module(s), all
+  declared"*, exit 0, at `e2609a8f`. The `PPA_COST_RECOVERY_YR` / `REGIONAL_RENEWABLE_CF` failure the
+  charter and `RESULT-nwpp-44` §7 both carry has been fixed by its own lane since. Carried forward as
+  an open item it is no longer, and a successor should stop re-reporting it.
 
 ---
 
