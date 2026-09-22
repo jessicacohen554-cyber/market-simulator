@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-22-soco59-hydro-split",
+  "label": "soco59 hydro split",
+  "date": "2026-09-22",
+  "shorthand": "soco59-hydro-split",
+  "definition": "SOCO-59 span, 2023-2025 (three per-year shards composed at zero LP, rule 36): the 2025 hydro input hole repaired on rule 14 alone, armed against the 2026-09-22-soco58-warm-committed keeper. hydro_backfill_year=2024 + hydro_eia930_monthly=true, with EIA930_PS_SPLIT_COMPLETE_FROM[SOCO]=2025 registered because SOCO's pre-split EIA-930 hydro column folds pumped-storage discharge (nameplate breach, diurnal swing and level tests on SOCO's own data). 2023 and 2024 refuse the pin and are byte-identical to the keeper; 2025 hydro 0.327 -> 5.920 TWh on 2025's own clean EIA-930 series, displacing CT_PEAKER -2.99, ST_GAS -1.22, coal -0.76 and CC_REGULAR -0.67 TWh and removing the 7.9 GWh of unserved energy the hole was causing. Every 2025 C1 row is SKIPPED on the preliminary EIA-923 vintage, so it buys no gate, and the dispatch of the sole failing row, 2024 CC_REGULAR, is untouched by construction. The same registry row also moves SOCO's 2023/2024 BENCHMARK hydro off the PS-folded series (8.447/7.080 -> 6.815/6.301 TWh), which shifts C1 share legs by at most 0.31 pp and changes no status (2024 CC_REGULAR +10.42 TWh / +3.84 pp, 2023 ST_GAS -2.90 pp). Determination NOT-YET, C1 13/14 all / 9/10 free, C2/C4/C6/C8 PASS, C3a/b/c unscorable, grade_summary 5/4/1, DOF 7 entries / 1 residual.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "SOCO",
+  "file": "frontend/data/backcast/runs/2026-09-22-soco59-hydro-split.js",
+  "bundle": "results/calibration/soco59_hydro_split"
+}
