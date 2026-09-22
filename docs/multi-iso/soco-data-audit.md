@@ -441,6 +441,8 @@ SOCO-40 must not discover mid-solve:
    Rocky Mountain) for every year and is the fallback anchor. That is a monthly, not hourly,
    constraint — state it rather than dressing it as an hourly benchmark.
 
+> **CORRECTION, SOCO-59 (2026-09-22).** "Not folded into hydro — not reported at all" holds for PS **pumping** only. The pre-split `NG: WAT` column folds PS **discharge**: it exceeds SOCO's 3,317.6 MW conventional nameplate in 6 / 29 / 6 h of 2021 / 2022 / 2023 (0 h after the split), and its diurnal swing (2.84–3.82×) matches post-split hydro + PS discharge (3.77×), not hydro alone (2.13×). SOCO is now split-listed (`EIA930_PS_SPLIT_COMPLETE_FROM['SOCO'] = 2025`); see `docs/handoffs/FINDING-soco-59-2026-09-22.md`.
+
 ### 3.4 GATE G19 — the timezone convention, closed by measurement
 
 **The evidence, not an assumption.** Over all 26,304 rows, `Local time` compared against
