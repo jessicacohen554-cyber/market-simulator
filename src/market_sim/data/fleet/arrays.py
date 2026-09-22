@@ -2727,9 +2727,35 @@ def _compose_min_gen_floors(
     # never stacked; SIZE (``online_frac``, pooled or per-year), level and
     # membership are untouched, and the coal/CT seams keep the hour grain
     # (separate mechanism ids, whose conduct evidence this gate does not
-    # carry).
+    # carry). The COAL seam has since acquired its OWN gate on its own
+    # evidence, ``config.coal_sync_window_commitment_grain`` (pjm-h16, the
+    # block immediately below); this flag still does not reach it.
     _day_grain = bool(
         config is not None and getattr(config, "mustrun_window_commitment_grain", False)
+    )
+    # WHOLE-OPERATING-DAY COMMITMENT GRAIN for the COAL synchronization seam
+    # (config.coal_sync_window_commitment_grain, pjm-h16). Its OWN gate, not a
+    # widening of the gas gate above: the coal floor is a separate mechanism id
+    # (``MECH_COAL_MUSTRUN``) with its own D-4 conduct evidence, the gas gate's
+    # own comment says so in terms, and widening the shared field would move
+    # SPP's designated keeper -- which arms it and has coal -- without SPP's
+    # lane measuring anything (rules 25 [R-ISO-SCOPE] / 28(d)).
+    # Measured on PJM's OWN coal meter (pjm-h16 phase 0, 152 reachable
+    # plant-years): the peak-to-mean of each plant's ONLINE hour-of-day profile
+    # is 1.0001-1.3097 (median 1.0091) and its overnight/afternoon on-share
+    # ratio 0.788-1.027 (median 0.9968) -- a synchronized PJM coal unit runs
+    # THROUGH the trough -- while the incumbent hour-ranked window's own
+    # peak-to-mean is 1.0132-4.8608 and is MORE PEAKED THAN THE PLANT ON 152 OF
+    # 152. Rule 18 [R-PHYSICS]: that window implies 3,963-5,517 starts a year
+    # against the fleet's metered 238-334 (13.0x-18.3x; 253 implied on 1,299 MW
+    # plant 6264 in 2024 against 4 measured), where the day grain implies
+    # 403-473. Rule 19: the window is REPLACED, never stacked -- size, level,
+    # membership and the pmax*availability clip are untouched, and a plant at
+    # ``_COAL_SYNC_FORCE_ALL`` has no window to place and is unreachable by
+    # construction.
+    _coal_day_grain = bool(
+        config is not None
+        and getattr(config, "coal_sync_window_commitment_grain", False)
     )
     # MEASURED LAY-UP WINDOW MASK for both per-plant must-run seams
     # (config.mustrun_layup_window_mask, miso-173). The merit-order guard's
@@ -3027,16 +3053,28 @@ def _compose_min_gen_floors(
             load_rank = (
                 np.argsort(-sys_load, kind="stable") if sys_load is not None else None
             )
+            # Whole-operating-day commitment grain
+            # (config.coal_sync_window_commitment_grain, pjm-h16) — see the
+            # gate block above. ``None`` when unarmed, so
+            # ``_mustrun_window_hours`` returns ``load_rank[:k]`` and the hour
+            # grain stands byte-identically.
+            coal_day_order = (
+                _commitment_day_order(sys_load, hours) if _coal_day_grain else None
+            )
             # ENSEMBLE PLACEMENT (config.coal_sync_ensemble_level, SPP-71 card
             # R-bc): REPLACES the top-k window above with the continuous-
             # relaxation image of the same measured commitment — pmin x frac in
             # EVERY hour instead of pmin on the top round(frac x 8760) hours and
             # zero elsewhere. Same measured annual synchronized MWh; only the
-            # placement moves. Rule 19 [R-ONE-MECH]: the two are alternatives,
-            # never stacked — when this is on, neither the force-all branch nor
-            # the load_rank branch below executes. The full rationale, the
-            # rule-17/18 window declaration and the SPP identification live on
-            # the ScenarioConfig field's citation block.
+            # placement moves. Rule 19 [R-ONE-MECH]: the three placements are
+            # ALTERNATIVES, never stacked — when this is on, the per-generator
+            # branch below short-circuits before the force-all branch, the
+            # load_rank branch AND the pjm-h16 day-grain window, which asks a
+            # DIFFERENT question of the same floor (that row re-grains the
+            # window from hours to whole operating days; this row removes the
+            # window). The full rationale, the rule-17/18 window declaration and
+            # the SPP identification live on the ScenarioConfig field's citation
+            # block.
             ensemble = bool(getattr(config, "coal_sync_ensemble_level", False))
             for g_idx, gen in enumerate(generators):
                 pmin_mw = getattr(gen, "coal_sync_pmin_mw", 0.0)
@@ -3072,7 +3110,9 @@ def _compose_min_gen_floors(
                     k = int(round(frac * hours))
                     if k <= 0:
                         continue
-                    hrs = load_rank[:k]
+                    hrs = _mustrun_window_hours(
+                        load_rank, coal_day_order, k, _coal_day_grain
+                    )
                     # Fancy indexing returns a copy, so out= cannot target it;
                     # compute the max then assign back via the fancy index.
                     raised = hrs[min_gen[g_idx, hrs] < pmin_mw]

@@ -1,10 +1,22 @@
-# pjm-h15 — the measured TOP of the offer curve is NOT PJM's slope defect; the CT_FAST shelf is
+# pjm-h17 — the measured TOP of the offer curve is NOT PJM's slope defect; the CT_FAST shelf is
 
 **Lane:** PJM — the offer-stack slope (C3c upstream, C3a cancellation)
-**Date:** 2026-09-21 · **Keeper:** `2026-09-20-pjm-h14-coalmustrun-span` (+ folded touchpoint `…-touchpoint`)
+**Date:** 2026-09-21, re-verified 2026-09-22 · **Keeper:** `2026-09-20-pjm-h15-coalwindow-span`
+(+ folded touchpoint `…-touchpoint`)
 **Cost:** ZERO LP. Three `fleet_only` builds (~15 s each) + committed sidecars. No shard launched.
 **Rules:** 29 `[R-SCREEN]` clause 0 (zero-LP phase 0), 32 `[R-SHARD]` (a) (the parent never solves),
 28 `[R-MECH-MATRIX]` (a) (never re-test an adjudicated cell without new evidence), 1 `[R-STRUCT]`.
+
+> **Re-verified 2026-09-22 against the keeper promotion.** Every measurement below was first taken
+> on `2026-09-20-pjm-h14-coalmustrun-span`, which the `pjm-h15-coalwindow` promotion superseded and
+> pruned (rule 35 `[R-PROMOTE]`). Re-run against the incoming keeper, **all three grounds and the
+> slope table reproduce to within ±2 MW / ±0.01** — the six-year ratio table is identical to the
+> digit, CC_REGULAR's peak band is still 0.000 MW in all 26 280 hours, and (A) is unchanged because
+> the promotion moved nothing this finding reads: `CC_REGULAR.peak = 5.0`, `CT_PEAKER.peak = 4.0`,
+> `ST_GAS.peak = 3.024`, `pjm_offer_midcurve_segments = ('LONG_RUN','CC_LIKE')`,
+> `pjm_offer_midcurve_peak_segments = None`, `pjm_ct_measured_max_reprice = False` in both recipes.
+> The probes are repointed at the current keeper. **Lane renamed h15 → h17**: `pjm-h15` was taken by
+> the coalwindow lane (`RESULT-pjm-h15-2026-09-21.md`) and `pjm-h16` is in flight.
 
 ---
 
@@ -26,8 +38,9 @@ at it already exists, is rule-19-constructed, and has **never been armed in any 
 
 ## 1. The lane's evidence reproduces — on the current keeper, and across all six years
 
-The prompt's ratios were computed on `2026-09-20-pjm-h13-meritalloc-span`, since superseded by
-`…-h14-coalmustrun-span`. **The promotion did not move them.** Model/market price ratio by
+The prompt's ratios were computed on `2026-09-20-pjm-h13-meritalloc-span`, since superseded twice —
+by `…-h14-coalmustrun-span`, then by the current `…-h15-coalwindow-span`. **Neither promotion moved
+them**, and the table below is the current keeper's. Model/market price ratio by
 percentile, load-weighted system dual vs PJM's hub RT series
 (`data/raw/_validation-source/actual_lmp_hourly_PJM.parquet`):
 
@@ -44,8 +57,7 @@ percentile, load-weighted system dual vs PJM's hub RT series
 artifact, reported rather than smoothed.
 
 The prompt's 2023/2024/2025 rows (1.13/0.82/0.54/0.44, 1.09/0.78/0.68/0.56, 1.08/0.80/0.60/0.53)
-reproduce to ±0.01. **The defect survived the h14 promotion and extends to every year PJM
-carries.** It is a genuine, stable, monotone slope deficit: the model is 8–24 % *high* at the
+reproduce to ±0.01. **The defect survived both promotions and extends to every year PJM carries.** It is a genuine, stable, monotone slope deficit: the model is 8–24 % *high* at the
 median and 31–56 % *low* at p99.
 
 ---
@@ -210,10 +222,10 @@ declined to launch would have been 6 shard containers × 6 years.
 
 | artifact | what | LP |
 |---|---|---|
-| `scripts/probes/_pjm_h15_top_of_stack.py` | grounds (A) / (B) / (C) — §2, §3, §4 | zero |
-| `results/calibration/_pjm_h15_top_of_stack.json` | its output | — |
-| `scripts/probes/_pjm_h15_ct_shelf.py` | the CT_FAST shelf census — §5 | zero |
-| `results/calibration/_pjm_h15_ct_shelf.json` | its output | — |
+| `scripts/probes/_pjm_h17_top_of_stack.py` | grounds (A) / (B) / (C) — §2, §3, §4 | zero |
+| `results/calibration/_pjm_h17_top_of_stack.json` | its output | — |
+| `scripts/probes/_pjm_h17_ct_shelf.py` | the CT_FAST shelf census — §5 | zero |
+| `results/calibration/_pjm_h17_ct_shelf.json` | its output | — |
 
 Both probes rebuild the keeper's own fleet with `fleet_only=True` (≈15 s per year) and read the
 measured surface through the mechanisms' own `_pjm_midcurve_context` /

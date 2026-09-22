@@ -1,8 +1,8 @@
-"""pjm-h15 phase 0, part 2 — the CT_FAST shelf against PJM's OWN offers. ZERO LP.
+"""pjm-h17 phase 0, part 2 — the CT_FAST shelf against PJM's OWN offers. ZERO LP.
 
 Rule 29 ``[R-SCREEN]`` clause 0, rule 32 ``[R-SHARD]`` (a): the parent runs no LP.
 
-Part 1 (``_pjm_h15_top_of_stack.py``) refuted the lane's proposed TOP-of-curve
+Part 1 (``_pjm_h17_top_of_stack.py``) refuted the lane's proposed TOP-of-curve
 lever on three grounds and located the idle block: in the market's top-1 %
 hours the keeper's CC is 93.6-95.6 % loaded and its coal 82.5-98.5 %, while
 **CT_PEAKER runs at 36.5 / 52.4 / 65.8 %** with 13.6 / 10.3 / 7.4 GW still
@@ -26,7 +26,7 @@ it. The number is a footprint, NEVER a predicted price effect.
 Nothing is swept and no parameter is constructed (rules 1 ``[R-STRUCT]`` /
 21 ``[R-DOF]``).
 
-Run: ``python3 scripts/probes/_pjm_h15_ct_shelf.py 2023 2024 2025``
+Run: ``python3 scripts/probes/_pjm_h17_ct_shelf.py 2023 2024 2025``
 """
 
 from __future__ import annotations
@@ -43,7 +43,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
 REPO = Path(__file__).resolve().parents[2]
-BUNDLE = REPO / "results/calibration/pjm_h14_coalmustrun_span"
+BUNDLE = REPO / "results/calibration/pjm_h15_coalwindow_span"
 
 
 def main() -> None:
@@ -125,7 +125,7 @@ def main() -> None:
             f"{r['tight_hours_upper_bound_lift_capwtd']:>9.1f}"
             f"{100 * r['share_of_ct_mwh_where_measured_exceeds_mc_base']:>10.0f}%"
         )
-    dest = REPO / "results/calibration/_pjm_h15_ct_shelf.json"
+    dest = REPO / "results/calibration/_pjm_h17_ct_shelf.json"
     dest.write_text(json.dumps(out, indent=1))
     print(f"wrote {dest}")
 

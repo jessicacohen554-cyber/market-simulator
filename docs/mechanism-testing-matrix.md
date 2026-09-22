@@ -278,6 +278,34 @@ closure path, mechanism by mechanism.
    `thermal_tranches_<ISO>.csv` is provenance-orphaned (miso-95); the forecast
    board's gate-(a) keeper names are stale vs HEAD.
 
+7. **The LP does not climb its own stack — measured in 9 ISOs of 9 (xiso,
+   2026-09-22).** In the market's top-1 % hours the median ISO leaves **22–52 %**
+   of its *availability-aware* thermal fleet idle, and in seven of nine that idle
+   block is **almost entirely capacity offered ABOVE the clearing price**. The
+   composition is the same everywhere: CC (74–100 %) and coal (49–99 %) are
+   loaded, while **CT_PEAKER runs at 13–46 % and oil at 1–5 %** — in the
+   highest-priced hours of the year. **This sharpens pattern 1 rather than
+   competing with it**, and it closes the door pattern 1 left open: pattern 1
+   concluded the *reserve-tier* route was shut and "the live candidates are
+   offer/DA-depth-side", but the offer side has now been refused at both ends it
+   was tried on exactly this evidence (PJM `measured_offer_surface` = **R**, SPP
+   in both admissible forms), because **adding extent above a price that never
+   reaches it is inert by construction**. The live object is the clearing point's
+   *reach* — reserve, commitment, or demand — not the curve's height.
+   **ERCOT is the positive control and the sole exception**: its idle block sits
+   *below* the clearing price and nets to 0.0 % once reserve holding is removed,
+   and ERCOT is the ISO that most fully co-optimizes reserves into the energy
+   dual. The four ISOs holding **zero** reserve in-LP (`energy_reserve_coopt` off:
+   CAISO, NWPP, SOCO, SPP) include three of the four highest idle shares in the
+   program. **Do not read the PJM `peak`-band inertness as model-class** — PJM's
+   `CC_REGULAR` peak band is 0.000 MW in all 52,560 h, but that band clears in
+   every other ISO (108–1,938 MW). Evidence:
+   `docs/RESULT-xiso-stack-climb-attribution-2026-09-22.md` (pre-registration:
+   `docs/PRECOMMIT-xiso-stack-climb-attribution-2026-09-22.md`); probes
+   `scripts/probes/_xiso_stack_climb_phase0.py`, `_xiso_stack_climb_verdict.py`,
+   `_xiso_reserve_leg.py`. **ZERO cells moved in any shard** — a measurement, not
+   a mechanism test.
+
 ## 5. Per-ISO lever queues (untested candidates → failing gates)
 
 Ranked; each entry names the gate it targets and the identification that must
@@ -18468,6 +18496,40 @@ scored on C1/C2/C4/C6/C8 that names its own basis and may never read
 > the coal stack has **no rising curve above must-run** (committed/econlo/econhi/peak within
 > **$0.51/MWh**), so COAL_BIT is one flat shelf that flips wholesale on the gas price. **No LP was
 > spent on the chartered arm and none should be.**
+
+> **CORRECTION #2, NWPP-45 (2026-09-22), zero LP.** Two claims about the keeper's C1 failure,
+> carried in `keepers/NWPP.json`, in this section's §5.9 stamp and in `PRECOMMIT-nwpp-44` §6.1, are
+> **wrong, and correcting them changes what the defect is.**
+> **(a) The C1 volume band is ±8.00 TWh, not ±5.41 / ±5.55 / ±5.77.** `_fuelmix_vol_band` is
+> `min(max(2 % ISO-load, 3 % actual-gen), 8 TWh)` and **the 8 TWh cap binds** for NWPP in every
+> year. 2023 `CC_REGULAR` reads 47.996 against 56.215, so the **miss is 0.219 TWh — 2.7 % of the
+> band**, not 8.22 TWh of model error; the share leg (−2.32 pp against ±3.0 pp) is inside. 2024
+> `CC_REGULAR` **passes** at −6.323 and every 2025 row is SKIPPED on the preliminary EIA-923
+> vintage. NWPP-44's RESULT §1c.3 caught its own formula contradicting the keeper's `metrics.json`
+> and correctly refused to score on it; the wrong band nevertheless reached three permanent records.
+> **(b) It is not a `CC_REGULAR` defect at all.** The shortfall is **uniform across every load
+> quintile** (−1.6 to −2.7 TWh each; ≈ −900 to −1,400 MW in every hour of 2023), the class carries
+> **~30 TWh of unused envelope** (78.347 TWh availability-weighted against 47.996 dispatched), and
+> **every zone is short of nearly every family in every year with none over-generating**. It is a
+> **system energy-requirement gap** of −9.645 / −12.144 / −9.107 TWh which the marginal class
+> absorbs because every non-thermal class is separately pinned to a measured budget (non-thermal is
+> within 0.056 / 0.057 TWh of actual in 2023 / 2024). The identity closes to **0.049 / 0.059 /
+> 0.107 TWh** in all three years: the LP's demand is EIA-930 pool `Net generation (Adj)` **less
+> GRID's Desert-Southwest interchange legs** (7.115 / 9.774 / 10.131 TWh), while C1 scores against
+> the **EIA-923 plant basis** — and the two sources disagree by **21.3 TWh over an identical plant
+> set** (all 881 footprint plants carry a `BACODE` in `NWPP_BAS`; zero pool-BA plants are missing),
+> the largest terms being **GRID +12.856** and **BPAT −15.169**, the signature of generation-only
+> balancing authorities.
+> **The obvious fix is refuted before any LP.** Applying the construction's own stated principle
+> literally — subtract GRID's out-of-footprint **generation** (12.856 TWh) rather than its Southwest
+> **legs** — lowers demand by a further **5.741 TWh** and makes C1 **worse**. Zeroing the
+> subtraction is the over-ask it exists to prevent.
+> **Nothing was armed and no mechanism was selected.** The remedy is a demand-construction change
+> worth 9–12 TWh/yr; rule 1 `[R-STRUCT]` forbids this lane picking it, because the residual is
+> exactly what would be moving. It is put to the owner as a scope question in
+> `docs/handoffs/FINDING-nwpp-45-2026-09-22.md` §8, with the three framings and the LP cost of
+> validating any of them. **NWPP-45 spent zero LP and left nothing on ephemeral disk.**
+> Probes: `scripts/probes/_nwpp45_ccregular_phase0.py`, `scripts/probes/_nwpp45_demand_basis.py`.
 
 
 **Status.** NWPP is being added by the NWPP ADDITION PROGRAM

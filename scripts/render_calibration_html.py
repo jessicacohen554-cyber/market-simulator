@@ -66,7 +66,7 @@ from scripts.data import derive_ordc_overlay as ordc  # noqa: E402
 
 from scripts.lib import bench_multiclass as bm  # noqa: E402
 from scripts.lib import benchmark_semantics as bs  # noqa: E402
-from scripts.lib.bundle_io import bundle_input_path  # noqa: E402
+from scripts.lib.bundle_io import require_bundle_input  # noqa: E402
 from scripts.calibration_verdict import TAIL_THRESHOLD  # noqa: E402  # rubric §5 per-ISO tail $
 from market_sim.config.plant_taxonomy import (  # noqa: E402
     LABELS,
@@ -1406,9 +1406,14 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
         # preliminary-923 year carries the latest complete vintage's block
         # (rule 16 keeps all years in one bundle, so it is always available).
         gas_cogen_by_year: dict[int, tuple[float, float]] = {}
-        e923_all = pd.read_parquet(bundle_input_path(bdir, "eia923"))
-        e930_all = pd.read_parquet(bundle_input_path(bdir, "eia930"))
-        campd_all = pd.read_parquet(bundle_input_path(bdir, "campd"))
+        # Strict: these three benchmark frames live in the GITIGNORED shared
+        # store beside the bundle, so a bundle that arrived by fetch or fresh
+        # checkout has the meta reference without the bytes. require_* names the
+        # bundle, the input and the zero-LP remedy instead of letting a None path
+        # reach pandas as a bare TypeError (CLAUDE.md rule 34 [R-SHARD-PROMOTABLE]).
+        e923_all = pd.read_parquet(require_bundle_input(bdir, "eia923"))
+        e930_all = pd.read_parquet(require_bundle_input(bdir, "eia930"))
+        campd_all = pd.read_parquet(require_bundle_input(bdir, "campd"))
         sys_all = pd.read_parquet(bdir / "system.parquet")
         # Per-storage-unit hourly charge/discharge (run_calibration_full
         # _storage_frame), present only when the bundle has a storage fleet.

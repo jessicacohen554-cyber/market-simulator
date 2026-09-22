@@ -1,4 +1,4 @@
-"""pjm-h15 phase 0 — is PJM's price gap a TOP-OF-CURVE defect? ZERO LP.
+"""pjm-h17 phase 0 — is PJM's price gap a TOP-OF-CURVE defect? ZERO LP.
 
 Rule 29 ``[R-SCREEN]`` clause 0, rule 32 ``[R-SHARD]`` (a): the parent runs no LP.
 
@@ -28,7 +28,7 @@ Nothing here is swept, nothing is proposed, and no parameter is constructed:
 every number is either a committed sidecar or the keeper's own fleet build
 (rule 1 ``[R-STRUCT]``, rule 21 ``[R-DOF]``).
 
-Run: ``python3 scripts/probes/_pjm_h15_top_of_stack.py 2023 2024 2025``
+Run: ``python3 scripts/probes/_pjm_h17_top_of_stack.py 2023 2024 2025``
 """
 
 from __future__ import annotations
@@ -45,15 +45,15 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 REPO = Path(__file__).resolve().parents[2]
 
-#: The h14 keeper is ONE recipe over 2023-2025 (span) plus a folded touchpoint
+#: The current keeper is ONE recipe over 2023-2025 (span) plus a folded touchpoint
 #: bundle over 2020-2022. Only the measured years are overlaid here.
 BUNDLE_FOR_YEAR = {
-    2020: "pjm_h14_coalmustrun_touchpoint",
-    2021: "pjm_h14_coalmustrun_touchpoint",
-    2022: "pjm_h14_coalmustrun_touchpoint",
-    2023: "pjm_h14_coalmustrun_span",
-    2024: "pjm_h14_coalmustrun_span",
-    2025: "pjm_h14_coalmustrun_span",
+    2020: "pjm_h15_coalwindow_touchpoint",
+    2021: "pjm_h15_coalwindow_touchpoint",
+    2022: "pjm_h15_coalwindow_touchpoint",
+    2023: "pjm_h15_coalwindow_span",
+    2024: "pjm_h15_coalwindow_span",
+    2025: "pjm_h15_coalwindow_span",
 }
 
 NONDISP = {
@@ -246,7 +246,7 @@ def main() -> None:
         out["years"][str(y)] = yr
         print(f"[{y}] built in {yr['build_s']}s", flush=True)
 
-    dest = REPO / "results/calibration/_pjm_h15_top_of_stack.json"
+    dest = REPO / "results/calibration/_pjm_h17_top_of_stack.json"
     dest.write_text(json.dumps(out, indent=1))
     print(f"wrote {dest}")
 

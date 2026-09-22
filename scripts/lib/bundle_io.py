@@ -281,6 +281,91 @@ def bundle_input_path(run_dir: Path, name: str) -> Path | None:
     return legacy if legacy.exists() else None
 
 
+class MissingBundleInput(FileNotFoundError):
+    """A bundle's shared-store input is recorded in ``meta.json`` but absent.
+
+    Carries the bundle, the input name and the reference ``meta.json`` records,
+    so a caller (and a traceback) names the bundle and the remedy rather than
+    surfacing the bare ``TypeError`` a ``None`` path raises inside pandas.
+    """
+
+    def __init__(self, run_dir: Path, name: str, ref: str | None) -> None:
+        self.run_dir = Path(run_dir)
+        self.name = name
+        self.ref = ref
+        if ref:
+            where = f"recorded at meta.json shared_inputs[{name!r}] = {ref!r}, but {(self.run_dir / ref)} does not exist"
+        else:
+            where = (
+                f"meta.json records no shared_inputs[{name!r}] and no legacy "
+                f"{self.run_dir / f'{name}.parquet'} exists"
+            )
+        super().__init__(
+            f"bundle {self.run_dir} is missing its {name!r} benchmark input: {where}.\n"
+            "The shared store (results/calibration/_shared/<ISO>/) is a GITIGNORED "
+            "SIBLING of the bundle dir, so a shard's `git add <its out-dir>` cannot "
+            "carry it (CLAUDE.md rule 34 [R-SHARD-PROMOTABLE] (a)) and a bundle that "
+            "arrives by fetch or fresh checkout has the reference without the bytes.\n"
+            "These frames are pure functions of (ISO, year, reference data), so they "
+            "regenerate at ZERO LP from the bundle's own meta recipe. Remedy:\n"
+            f"    python3 scripts/run_calibration_full.py --restore-shared-inputs {self.run_dir}\n"
+            "which rebuilds ONLY the missing entries and verifies each against the "
+            "content hash meta.json already records (a mismatch is a hard error, "
+            "never a silent benchmark swap)."
+        )
+
+
+def shared_input_ref(run_dir: Path, name: str) -> str | None:
+    """Return the ``meta.json`` shared-store reference for ``name``, or ``None``.
+
+    The reference is the bundle-relative store path recorded by
+    :func:`write_shared_input` (e.g. ``../_shared/NWPP/eia923-84bb6ac40d29.parquet``);
+    its ``-<hash>`` stem is the content hash of the frame the solve actually read,
+    which is what makes a regenerated frame verifiable.
+    """
+    meta_path = Path(run_dir) / "meta.json"
+    if not meta_path.exists():
+        return None
+    try:
+        return json.loads(meta_path.read_text()).get("shared_inputs", {}).get(name)
+    except (json.JSONDecodeError, OSError):
+        return None
+
+
+def missing_bundle_inputs(
+    run_dir: Path, names: tuple[str, ...] = SHARED_INPUT_NAMES
+) -> dict[str, str]:
+    """Return ``{name: recorded ref}`` for each of ``names`` whose bytes are absent.
+
+    A name is missing when :func:`bundle_input_path` cannot resolve it — i.e.
+    neither the shared-store reference nor a legacy in-bundle copy exists. Names
+    the bundle never recorded are skipped (they were not part of the solve), so
+    an empty result means every input the bundle claims is readable.
+    """
+    run_dir = Path(run_dir)
+    out: dict[str, str] = {}
+    for name in names:
+        ref = shared_input_ref(run_dir, name)
+        if ref and bundle_input_path(run_dir, name) is None:
+            out[name] = ref
+    return out
+
+
+def require_bundle_input(run_dir: Path, name: str) -> Path:
+    """Resolve a bundle input parquet, raising :class:`MissingBundleInput` if absent.
+
+    The strict counterpart of :func:`bundle_input_path`, for the call sites that
+    cannot proceed without the frame (the registration payload builder, the
+    calibration report, the session scorer). Use it instead of passing a possibly-
+    ``None`` :func:`bundle_input_path` result straight to ``pandas.read_parquet``,
+    which raises a ``TypeError`` naming neither the bundle nor the remedy.
+    """
+    path = bundle_input_path(run_dir, name)
+    if path is None:
+        raise MissingBundleInput(run_dir, name, shared_input_ref(run_dir, name))
+    return path
+
+
 def read_bundle_input(run_dir: Path, name: str) -> pd.DataFrame | None:
     """Read a bundle input parquet via :func:`bundle_input_path`, or ``None``."""
     import pandas as pd

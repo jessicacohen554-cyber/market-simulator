@@ -63,6 +63,21 @@ converge under caps), PAMI/`parallel`, `threads`, Dantzig, LEAN scaling.
 - The parent composes: reads each FINDING, verifies the branch, and puts the owner decisions
   (L1 default, L3 adoption) in its final report. Nothing here changes a keeper.
 
+## 2b. RESULT (2026-09-22) — what the shards returned, and what this branch carries
+
+| lever | shard verdict | on this branch? | record |
+|---|---|---|---|
+| L1 same-year P1 seed | **Landed.** Gate un-nested from `_xwarm`; optimality guard (non-Optimal or raising seeded solve → cold re-solve, provenance on `p1_seed_fallback`); default stays OFF. NEISO byte gate PASS (atol=rtol=0); 29 tests incl. two pre-existing rule-36 test failures repaired. | yes | `FINDING-perfc-s1-p1-seed-2026-09-20.md` |
+| L2 P0 slim extraction + bound-vector collapse | **Landed** (changes 1 and 3). NEISO byte gate PASS, 16/16 golden files hash-identical, all six cold P0 solves reproduce to the iteration. | yes | `FINDING-perfc-s2-p0-slim-2026-09-20.md` |
+| L2 skip MER re-pricing on P0 | **Refused on measurement.** Its closing `setBasis` is what P1's warm `run()` starts from on the live-model route; skipping it moved P1's vertex (NEISO: 78.9–130.5 GWh of marginal-tie reshuffle, same objective). Warm-start class, not byte-identical. | no | same |
+| L2 `_fleet_group_by_code` memo | **Dropped by the parent**: correct but hits zero times on the solve path (one call per year, distinct key each time). | no | same |
+| L3 HiGHS presolve | **Rejected.** ERCOT 2025: presolve removes 39–41 % of columns but costs 1,014–1,059 s per pass before simplex starts (the dependent-equations search burns its whole 1,000 s budget and removes 0 rows); each `h.run()` 1,432–1,455 s vs 335–364 s on record — **3.9× dearer**. The reduced LP's simplex (~400 s) was no faster than the full LP's, which also disposes of L6 (fixed-column pre-elimination): fewer columns do not buy simplex time here. Vertex moved on 5.7 % of zone-hours (confounded with the keeper's unknown 2026-09-19 warm-start state). | no code (`presolve off` stays) | `FINDING-perfc-s3-presolve-2026-09-20.md` |
+| L5 input-array disk memo | **Built, measured, declined by the parent.** Demand + renewable CF memoized byte-identically (28/28 arrays), but they cost 2.86 s of a 25 s rebuild — ~0.3 % of an ERCOT year — and the availability matrix and fleet load were left out on soundness grounds. 745 new lines for 3 s/yr fails rule 26's spirit. Branch `claude/perfc-s5-input-memo` holds the code if the owner disagrees. | doc only | `FINDING-perfc-s5-input-memo-2026-09-20.md` |
+
+Net: the only material lever that survives measurement is **L1**, and it is a default the owner
+must rule on (rule 36(d)'s "arms the second only inside the first's gate" is now false in code).
+The Python-side trims are byte-identical housekeeping. Presolve and column-slicing are closed.
+
 ## 3. Owner decisions this lane will surface
 
 1. **L1 default.** Rule 36(d) ruled the env knobs OFF "together because `solve.py` arms the second
