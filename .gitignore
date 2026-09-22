@@ -721,6 +721,13 @@ results/calibration/hydro1_nyiso_pond_2022/
 results/calibration/hydro1_nyiso_pond_2023/
 results/calibration/hydro1_nyiso_pond_2024/
 results/calibration/hydro1_nyiso_pond_2025/
+# hydro-5 (2026-09-22): the 26 per-year arm legs, kept on local disk and out
+# of main until the owner rules on promotion (rule 31 [R-RETAIN]); leg SHAs are
+# recorded in docs/RESULT-hydro-5-2026-09-22.md as provenance only (rule 33(d)).
+results/calibration/hydro5_spp_floor_20*/
+results/calibration/hydro5_spp_ror_20*/
+results/calibration/hydro5_neiso_ror_20*/
+results/calibration/hydro5_miso_ror_20*/
 
 results/calibration/*/model_changes.diff
 results/calibration/*/dispatch/
