@@ -49,7 +49,23 @@ only 2023–2025 would leave the touchpoint stamped to a pruned keeper, which ru
 Control = the committed keeper bundles (`pjm_h15_coalwindow_span`, `pjm_h15_coalwindow_touchpoint`),
 solved at `6de36475e9b89f980927fdf0fcfa196c627f2b6a`. No control solve unless a LIVE hunk is found.
 
-G-DRIFT_PLACEHOLDER
+**G-DRIFT, `6de36475` → HEAD `7c1fed78`: ALL INERT — form 4 valid.** 12 commits on the solve path, every hunk classified:
+
+| commit | what | verdict | reason |
+|---|---|---|---|
+| `188c30e42` | pjm-h15 coal-sync per-year window | INERT | same `git patch-id --stable` as `6de36475` — the keeper already carries it (`coal_sync_online_frac_per_year: true`) |
+| `cc5b886f5` | content-addressed P0 cold-solve cache | INERT | requires `MARKET_SIM_P0_CACHE` truthy (default off); shards must leave it unset |
+| `c1116c86b`, `4dfe9d298` | miso-266 outage-derate denominator | INERT | `unit_outage_dispatched_bin_denominator` default False, absent from keeper |
+| `6edc996d1` | SPP-71 coal-sync ensemble placement | INERT | `coal_sync_ensemble_level` default False, absent |
+| `c25d7e500` | pjm-h16 coal whole-operating-day grain | INERT | `coal_sync_window_commitment_grain` default False, absent; off-path returns the prior `load_rank[:k]` |
+| `bdd69194a` | soco-57 `measured_cc_heat_rates` | INERT | default False, absent; data file SOCO-only |
+| `da38d1086` | hydro-1 forebay bound, RoR hybrid-label repair | INERT for control | pondage resolver `UNSET` unless `hydro_pondage_bound`/`hydro_cascade_coupling`; the mode partition is read only under `hydro_ror_split` (`data/hydro.py:1769`) |
+| `e107949df` | PERF-C S2 row-bound collection; P0 slim extraction | INERT | same vectors/order/dtype; extraction skip is post-solve only |
+| `5cb658922` | PERF-C memo add/drop | INERT | pure derivation |
+| `d45d57f97` | P1 basis-seed un-nest | INERT | keeper legs ran seedless (x-year off); `replay_keeper` pins both env vars to 0 |
+| `7fd12b91e` | registration IO | INERT | post-solve |
+
+Five new `ScenarioConfig` fields, all default False and on `_CACHE_KEY_OPTIONAL_FIELDS` with drop value `"False"`; new CLI tri-states default `None` and are filtered. **The arm's one moving input is the HEAD classifier** (the hydro-1 repair adds 1–2 shapeable PJM plants vs hydro-1's pre-repair classifier — immaterial here since hydro-1's 2024/25 legs were also solved at a HEAD carrying it). Partition this session: 82 plants, 57 RoR-class; content hash (`hash_pandas_object`, sorted) `223845be42b5cfdf`. Each shard reports its own hash; a mismatch is a STOP.
 
 ## 6. Gates, declared before the solves (carried from hydro-1 §4)
 
