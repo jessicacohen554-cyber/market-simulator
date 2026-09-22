@@ -3,7 +3,7 @@
   "label": "soco58 warm committed",
   "date": "2026-09-22",
   "shorthand": "soco58-warm-committed",
-  "definition": "soco-58 span, 2023-2025: coal_warm_committed=true (warm-boiler committed-band exemption, removing the $100/MW cold-start markup the six coal _committed tranches carried despite their own must-run floor holding the boiler online in 100.0% of hours), armed against the 2026-09-20-soco57-measured-cc-heat keeper with every other field carried forward unchanged; solved year-isolated under rule 36 [R-YEAR-ISOLATION] and composed at zero LP. 2024 coal C4 fleet-hourly dispatch correlation flips FAIL->PASS (r 0.829->0.847, NRMSE 0.309->0.240), taking grade_summary from 5 scored/3 target/2 fails to 5/4/1. DETERMINATION NOT-YET (rubric v3.8, PRICE UNSCORED); the sole remaining failing C1 row is 2024 CC_REGULAR (+10.42 TWh / +4.0pp).",
+  "definition": "SOCO-58 ARM 2023: coal_warm_committed=true (warm-boiler committed-band exemption; removes the $100/MW cold-start markup from the six coal _committed tranches whose mustrun tranche holds the boiler online in 100.0% of hours), year-isolated (rule 36)",
   "years": [
     2023,
     2024,
