@@ -2,6 +2,7 @@
 
 import json
 import unittest
+import unittest.mock
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
@@ -232,3 +233,210 @@ class TestBundlePathHelpers(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestStrictBundleInputs(unittest.TestCase):
+    """The shard -> register seam: a recorded input whose bytes are absent.
+
+    The shared store is a GITIGNORED SIBLING of the bundle dir, so a shard's
+    ``git add <its out-dir>`` cannot carry it (CLAUDE.md rule 34
+    [R-SHARD-PROMOTABLE] (a)) and a fetched / composed / freshly-checked-out
+    bundle holds the ``meta.json`` reference without the file. Before this the
+    three registration-path reads passed the resulting ``None`` straight to
+    ``pandas.read_parquet``, whose ``TypeError`` names neither the bundle, the
+    input, nor the remedy.
+    """
+
+    def _bundle_with_missing_ref(self, root: Path) -> Path:
+        run = root / "results" / "calibration" / "nwpp_run"
+        run.mkdir(parents=True)
+        df = pd.DataFrame({"year": [2024], "plant_id": [1], "annual_mwh": [5.0]})
+        ref = write_shared_input(df, "eia923", "NWPP", run)
+        (run / "meta.json").write_text(
+            json.dumps(
+                {"iso": "NWPP", "years": [2024], "shared_inputs": {"eia923": ref}}
+            )
+        )
+        # Simulate the shard hand-off: the reference survives, the bytes do not.
+        (run / ref).resolve().unlink()
+        return run
+
+    def test_missing_recorded_input_raises_actionable_error(self):
+        with TemporaryDirectory() as t:
+            run = self._bundle_with_missing_ref(Path(t))
+            self.assertIsNone(bundle_input_path(run, "eia923"))
+            with self.assertRaises(bundle_io.MissingBundleInput) as ctx:
+                bundle_io.require_bundle_input(run, "eia923")
+            msg = str(ctx.exception)
+            # Names the bundle, the input, the recorded ref and the remedy.
+            self.assertIn("nwpp_run", msg)
+            self.assertIn("eia923", msg)
+            self.assertIn("--restore-shared-inputs", msg)
+            # And stays a FileNotFoundError, so existing handlers still catch it.
+            self.assertIsInstance(ctx.exception, FileNotFoundError)
+
+    def test_require_returns_path_when_present(self):
+        with TemporaryDirectory() as t:
+            run = Path(t) / "results" / "calibration" / "spp_run"
+            run.mkdir(parents=True)
+            df = pd.DataFrame({"a": [1, 2]})
+            ref = write_shared_input(df, "campd", "SPP", run)
+            (run / "meta.json").write_text(
+                json.dumps({"iso": "SPP", "shared_inputs": {"campd": ref}})
+            )
+            got = bundle_io.require_bundle_input(run, "campd")
+            self.assertTrue(got.exists())
+            self.assertEqual(got, (run / ref).resolve())
+
+    def test_missing_bundle_inputs_lists_only_absent_recorded_names(self):
+        with TemporaryDirectory() as t:
+            run = Path(t) / "results" / "calibration" / "miso_run"
+            run.mkdir(parents=True)
+            here = write_shared_input(pd.DataFrame({"a": [1]}), "campd", "MISO", run)
+            gone = write_shared_input(pd.DataFrame({"b": [2]}), "eia923", "MISO", run)
+            (run / "meta.json").write_text(
+                json.dumps(
+                    {"iso": "MISO", "shared_inputs": {"campd": here, "eia923": gone}}
+                )
+            )
+            (run / gone).resolve().unlink()
+            missing = bundle_io.missing_bundle_inputs(run)
+            # Only the absent one; a name the bundle never recorded is not invented.
+            self.assertEqual(set(missing), {"eia923"})
+            self.assertEqual(missing["eia923"], gone)
+
+    def test_unrecorded_name_is_not_reported_missing(self):
+        with TemporaryDirectory() as t:
+            run = Path(t) / "results" / "calibration" / "neiso_run"
+            run.mkdir(parents=True)
+            (run / "meta.json").write_text(
+                json.dumps({"iso": "NEISO", "shared_inputs": {}})
+            )
+            self.assertEqual(bundle_io.missing_bundle_inputs(run), {})
+            # But asking for it strictly still fails, and says it was never recorded.
+            with self.assertRaises(bundle_io.MissingBundleInput) as ctx:
+                bundle_io.require_bundle_input(run, "eia923")
+            self.assertIn("records no shared_inputs", str(ctx.exception))
+
+    def test_legacy_in_bundle_copy_still_satisfies_require(self):
+        """Pre-store bundles keep working — the fallback is unchanged."""
+        with TemporaryDirectory() as t:
+            run = Path(t) / "results" / "calibration" / "old_run"
+            run.mkdir(parents=True)
+            pd.DataFrame({"a": [1]}).to_parquet(run / "eia923.parquet", index=False)
+            self.assertEqual(
+                bundle_io.require_bundle_input(run, "eia923"), run / "eia923.parquet"
+            )
+
+
+class TestRestoreVerification(unittest.TestCase):
+    """``--restore-shared-inputs`` recovers bytes; it never re-bases a benchmark.
+
+    The store is content-addressed, so a regenerated frame lands at the recorded
+    reference IFF its bytes are what the solve read. That makes the recorded hash
+    a free integrity proof, and a mismatch a bench/model basis split rather than
+    something to adopt silently.
+    """
+
+    def test_regenerated_identical_frame_lands_on_the_recorded_ref(self):
+        with TemporaryDirectory() as t:
+            run = Path(t) / "results" / "calibration" / "run_a"
+            run.mkdir(parents=True)
+            df = pd.DataFrame(
+                {"year": [2024, 2024], "klass": ["COAL", "GAS"], "mwh": [1.0, 2.0]}
+            )
+            ref = write_shared_input(df, "eia923", "NWPP", run)
+            (run / ref).resolve().unlink()
+            # A faithful rebuild of the SAME data reproduces the SAME reference.
+            self.assertEqual(write_shared_input(df, "eia923", "NWPP", run), ref)
+
+    def test_drifted_frame_lands_on_a_different_ref(self):
+        """This inequality is what the restore path turns into a hard error."""
+        with TemporaryDirectory() as t:
+            run = Path(t) / "results" / "calibration" / "run_b"
+            run.mkdir(parents=True)
+            solved = pd.DataFrame({"year": [2024], "mwh": [1.0]})
+            ref = write_shared_input(solved, "eia923", "NWPP", run)
+            drifted = pd.DataFrame({"year": [2024], "mwh": [1.5]})
+            self.assertNotEqual(write_shared_input(drifted, "eia923", "NWPP", run), ref)
+            self.assertNotEqual(content_hash(solved), content_hash(drifted))
+
+
+class TestRestoreSharedInputsGuard(unittest.TestCase):
+    """``restore_shared_inputs`` refuses to adopt a drifted benchmark.
+
+    ``--rebuild-benchmark`` re-points ``meta.json`` at whatever it produces —
+    that is its purpose, adopting a benchmark-logic change. The RECOVERY path
+    must not: re-pointing a scored run's benchmark against a dispatch solved on
+    the old one is a bench/model basis split, which is the defect class the
+    miso-253 / spp-49 recoveries inside the builder each patched one instance of.
+    """
+
+    def _bundle(self, root: Path, frame: pd.DataFrame) -> tuple[Path, str]:
+        run = root / "results" / "calibration" / "guard_run"
+        run.mkdir(parents=True)
+        ref = write_shared_input(frame, "eia923", "NWPP", run)
+        (run / "meta.json").write_text(
+            json.dumps(
+                {"iso": "NWPP", "years": [2024], "shared_inputs": {"eia923": ref}},
+                indent=2,
+            )
+            + "\n"
+        )
+        (run / ref).resolve().unlink()  # the shard hand-off: ref without bytes
+        return run, ref
+
+    def test_matching_rebuild_restores_and_leaves_meta_untouched(self):
+        import scripts.run_calibration_full as rcf
+
+        solved = pd.DataFrame({"year": [2024], "klass": ["COAL"], "mwh": [7.0]})
+        with TemporaryDirectory() as t:
+            run, ref = self._bundle(Path(t), solved)
+            before = (run / "meta.json").read_bytes()
+            with unittest.mock.patch.object(
+                rcf, "build_benchmark_frames", return_value=("NWPP", {"eia923": solved})
+            ):
+                restored = rcf.restore_shared_inputs(run)
+            self.assertEqual(restored, {"eia923": ref})
+            self.assertTrue((run / ref).resolve().exists())
+            # A scored bundle's provenance file is byte-identical afterwards.
+            self.assertEqual((run / "meta.json").read_bytes(), before)
+
+    def test_drifted_rebuild_is_a_hard_error_and_re_points_nothing(self):
+        import scripts.run_calibration_full as rcf
+
+        solved = pd.DataFrame({"year": [2024], "klass": ["COAL"], "mwh": [7.0]})
+        drifted = pd.DataFrame({"year": [2024], "klass": ["COAL"], "mwh": [9.5]})
+        with TemporaryDirectory() as t:
+            run, ref = self._bundle(Path(t), solved)
+            before = (run / "meta.json").read_bytes()
+            with unittest.mock.patch.object(
+                rcf,
+                "build_benchmark_frames",
+                return_value=("NWPP", {"eia923": drifted}),
+            ):
+                with self.assertRaises(SystemExit) as ctx:
+                    rcf.restore_shared_inputs(run)
+            msg = str(ctx.exception)
+            self.assertIn("DIFFERENT BYTES", msg)
+            self.assertIn("--rebuild-benchmark", msg)
+            # meta.json is unchanged, and the bundle still reports the input missing
+            # rather than silently resolving to the drifted frame.
+            self.assertEqual((run / "meta.json").read_bytes(), before)
+            self.assertIsNone(bundle_input_path(run, "eia923"))
+
+    def test_complete_bundle_is_a_no_op(self):
+        import scripts.run_calibration_full as rcf
+
+        with TemporaryDirectory() as t:
+            run = Path(t) / "results" / "calibration" / "done_run"
+            run.mkdir(parents=True)
+            ref = write_shared_input(pd.DataFrame({"a": [1]}), "eia923", "NWPP", run)
+            (run / "meta.json").write_text(
+                json.dumps({"iso": "NWPP", "shared_inputs": {"eia923": ref}})
+            )
+            # No builder call at all — nothing is missing, so nothing is rebuilt.
+            with unittest.mock.patch.object(
+                rcf, "build_benchmark_frames", side_effect=AssertionError("rebuilt")
+            ):
+                self.assertEqual(rcf.restore_shared_inputs(run), {})
