@@ -87,6 +87,7 @@ import numpy as np
 from market_sim.config.constants import ERCOT_SWCAP_SHED_TIEBREAK_EPS
 from market_sim.model.commitment import compute_monthly_markup
 from market_sim.model.dispatch import DispatchModel, solve_dispatch
+from market_sim.model.lp import p0_cache
 from market_sim.model.lp.inplace_floor import (
     availability_feeds_rows,
     refloor_thermal_inplace,
@@ -212,6 +213,16 @@ class EnergySolveResult:
             its basis was discarded and the P1 re-solved cold. A non-``None``
             value means the seed WASTED an ``h.run()`` on this pass — it never
             means the reported P1 is anything but the unseeded answer.
+        p0_cache: Where this pass's P0 came from, as
+            ``{"key": <LP-content digest>, "hit": bool}`` — the
+            content-addressed cold-solve cache's provenance (PERF-C S6,
+            ``model/lp/p0_cache.py``). ``None`` when the cache was inert (the
+            switch off, ``MARKET_SIM_HIGHS_THREADS`` not pinned to 1, or a
+            caller-installed starting basis) and when the P0 was reused from a
+            previous pass. The key IS the LP, so it names the exact problem
+            solved; ``hit`` says whether the answer was replayed from disk
+            rather than recomputed — which is a statement about wall clock and
+            nothing else, since a hit returns the cold solve's own answer.
         p1_basis: The cold-rebuilt P1 model's optimal basis (a
             ``CrossYearBasis`` of ``int8`` status vectors, ~tens of MB on a
             plant-level ISO), exported ONLY when the caller passed
@@ -234,6 +245,7 @@ class EnergySolveResult:
     p0_reused: bool = False
     p1_seeded: bool = False
     p1_seed_fallback: Optional[str] = None
+    p0_cache: Optional[dict] = None
     p1_basis: Optional[object] = None
 
 
@@ -547,6 +559,10 @@ def run_energy_solve(
     if _xwarm and xyear_cache is not None and xyear_cache and model is not None:
         model.apply_cross_year_basis(xyear_cache[0])
     _t1 = time.perf_counter()
+    # Clear the content-addressed cold-solve cache's process-level provenance so
+    # what is read below belongs to THIS pass's P0 and not to an earlier one
+    # (PERF-C S6, model/lp/p0_cache.py). Diagnostic only.
+    p0_cache.reset_last_solve()
     # P0: solve with base MC to extract per-month run lengths — or reuse the
     # previous pass's (C-1b, see above): the identical LP was already solved.
     if _reuse_p0:
@@ -572,6 +588,14 @@ def run_energy_solve(
         r0 = solve_dispatch(
             fleet_arrays, demand, mc=mc_base, full_extract=False, **dispatch_kwargs
         )
+    # Where this pass's P0 came from: ``{"key": <LP digest>, "hit": bool}`` when
+    # the cache was consulted, ``None`` when it was inert (switch off, no thread
+    # pin, a pre-installed basis) or when the P0 was reused from a previous pass.
+    # The key IS the LP, so a bundle recording it says exactly which problem was
+    # solved — and a hit says the answer was replayed rather than recomputed.
+    _p0_cache_provenance = None if _reuse_p0 else p0_cache.last_solve()
+    if _p0_cache_provenance is not None and _p0_cache_provenance.get("key") is None:
+        _p0_cache_provenance = None
     _t2 = time.perf_counter()
     # P1: solve with bid MC = base MC + monthly startup amortization, so
     # clearing prices reflect CC/CT cycling costs.
@@ -1004,6 +1028,7 @@ def run_energy_solve(
             "p0_reused": _reuse_p0,
             "p1_seeded": _p1_seeded,
             "p1_seed_fallback": _p1_seed_fallback,
+            "p0_cache": _p0_cache_provenance,
             "parts": markup_parts,
         }
     )
@@ -1022,6 +1047,7 @@ def run_energy_solve(
         p0_reused=_reuse_p0,
         p1_seeded=_p1_seeded,
         p1_seed_fallback=_p1_seed_fallback,
+        p0_cache=_p0_cache_provenance,
         p1_basis=_p1_basis,
     )
 
