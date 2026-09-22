@@ -84,3 +84,26 @@ One shard per (arm, year), rule 36; pinned SHA = the commit carrying this file; 
 bundle incl. `dispatch/<y>_P1.parquet` via a `.gitignore` negation + plain `git add` (rule 34 (a)).
 Parent `.gitignore` carries `results/calibration/soco_h4_*_20[0-9][0-9]/` (rule 31: kept out of
 `main`, never `rm`'d).
+
+---
+
+## ADDENDUM A (before any 2025 solve) — owner ruling on 2025: "Repair + arms"
+
+2025 runs as three year-isolated shards, all carrying `hydro_backfill_year=2024` (SOCO-53b repair,
+routed via `replay_keeper.py --set` as a `solve_and_persist` kwarg):
+
+| leg | deltas vs keeper | role |
+|---|---|---|
+| `soco_h4_fix_2025` | `hydro_backfill_year=2024` | 2025 control for the arms (this IS an arm of its own: SOCO-53b) |
+| `soco_h4_mff_2025` | + `hydro_min_flow_floor=true` | ARM 1, diffed vs `fix_2025` |
+| `soco_h4_ror_2025` | + `hydro_ror_split=true` | ARM 2, diffed vs `fix_2025` |
+
+Each arm stays a single lever relative to its control. Instrument choice: `--hydro-backfill-year 2024`
+(EIA-923 plant census, 42 plants, 6.329 TWh, carrying 2024's monthly generation) over
+`--hydro-eia930-monthly` (5.926 TWh measured): the pin would need SOCO's PS time-split registered
+first (§2.2), which is out of scope. Stated misalignment: the backfilled level is **+6.8 %** over
+2025 measured `NG: WAT` (which is PS-clean in 2025) and carries 2024's monthly shape.
+
+Zero-LP G1 on the repaired budget: ARM 1 floor 213.4 MW-avg = 0.295 of energy; ARM 2 flat 250.1 MW-avg
+= 0.346, nameplate clip 211 MWh (0.003 %). **G2 for the 2025 arms is measured against `fix_2025`**;
+`fix_2025` vs keeper is reported (it moves annual hydro 0.327 → 6.329 TWh by design).
