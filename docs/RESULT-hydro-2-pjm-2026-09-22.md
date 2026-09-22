@@ -16,7 +16,7 @@ month's top-10 % load hours (a flat fleet is 0.10).
 |---|---|---:|---|---|---|---|---:|
 | 2020 | 10.0218 → 10.0218 | 0.0000 % | 1,634 → **0** | 0 → 470.9 | 3,317 → 2,446 | 0.274 → 0.193 | 0.510 |
 | 2021 | 10.3759 → 10.3759 | 0.0000 % | 1,116 → **0** | 0 → 633.7 | 3,304 → 2,416 | 0.254 → 0.186 | 0.496 |
-| 2022 | TOUCHPOINT_2022 |
+| 2022 | 8.9685 → 8.9685 | 0.0000 % | 1,965 → **0** | 0 → 464.5 | 3,292 → 2,360 | 0.289 → 0.201 | 0.476 |
 | 2023 | 8.9030 → 8.9030 | 0.0000 % | 1,010 → **0** | 0 → 380.7 | 3,106 → 2,249 | 0.281 → 0.198 | 0.487 |
 | 2024 | 8.8608 → 8.8608 | 0.0000 % | 1,867 → **0** | 0 → 281.0 | 3,202 → 2,264 | 0.297 → 0.211 | 0.513 |
 | 2025 | 8.4636 → 8.4636 | 0.0000 % | 1,867 → **0** | 0 → 282.8 | 3,214 → 2,267 | 0.315 → 0.218 | 0.499 |
@@ -45,7 +45,21 @@ Mechanism of the CT move: hydro no longer shaves the evening peak (p95 −940 MW
 it. That is the physically expected direction for removing a peaking hydro representation, and at
 +0.3 TWh against a 24–30 TWh class it is small. Per rule 1 it stays either way.
 
-**Touchpoint 2020–2022:** TOUCHPOINT_VERDICT
+**Touchpoint 2020–2022** (`2026-09-22-pjm-hydro2-ror-touchpoint`, stamped to the arm span): **NOT-YET —
+identical to the keeper touchpoint** (same C1 / C3a / C3b FAILs, same C3c CAVEAT), **zero status changes**.
+
+| record | keeper → arm | actual | reading |
+|---|---|---|---|
+| C1 CT_PEAKER 2020 / 2021 / 2022 TWh | 15.21 / 12.28 / 16.30 → 15.52 / 12.80 / 16.84 | 18.67 / 21.52 / 19.69 | toward actual all three |
+| C1 COAL_BIT 2020 / 2021 TWh (FAIL rows) | 157.19 / 176.23 → 156.96 / 175.83 | 131.46 / 156.60 | toward actual, still FAIL |
+| C1 CC_REGULAR 2022 (FAIL row) | 319.84 → 319.15 | 308.09 | toward actual, still FAIL |
+| C1 ST_GAS 2020–22 TWh | +0.13 / +0.24 / +0.16 | | away from actual (small) |
+| C3a mean LMP 2020 / 2021 / 2022 | 25.13 / 38.37 / 66.14 → 25.22 / 38.57 / 66.36 | 21.20 / 38.53 / 74.07 | 2020 away +0.09; 2021 ≈; 2022 toward |
+| C3b shape 2020 / 2022 (FAIL rows) | 0.208 / 0.245 → 0.212 / 0.242 | — | 2020 slightly worse, 2022 slightly better |
+| D-2 CT_PEAKER forced share | 0.217 / 0.341 / 0.266 → 0.209 / 0.321 / 0.254 | limit 0.15 | better every year (pre-existing FAIL, C8 still PASS via rule 20 grounding) |
+
+D-4 fail set is the keeper touchpoint's own (plant 3138 `st_netload_drag`, 7213 coal, a handful of
+`cc_mustrun_per_plant` rows), plus **one new trivial row** — plant 62926 / 2022, 0.0014 TWh over 3 h.
 
 ## 3. Disclosed
 
@@ -66,10 +80,25 @@ it. That is the physically expected direction for removing a peaking hydro repre
 ## 4. Retrievability (rule 34(e))
 
 Legs pushed full 17-file bundles; provenance SHAs (rule 33(d), not a recovery route):
-2020 `6ae86e4d`, 2021 `997b3af7`, 2022 SHA_2022, 2023 `f97de728`, 2024 `e0e9b7cd`, 2025 `985ad948`.
+2020 `6ae86e4d`, 2021 `997b3af7`, 2022 `213b06f9`, 2023 `f97de728`, 2024 `e0e9b7cd`, 2025 `985ad948`.
 The composites and their registrations are committed on this lane's branch and land on `main` with
 its PR. Any leg not on `main` costs a ~12 min re-solve.
 
 ## 5. Promotion — OWNER DECISION PENDING (rule 31)
 
-PROMOTION_SECTION
+**FOR.** A rule-17 structural repair with **zero free parameters**: a run-of-river plant has no
+reservoir, so its output is its inflow. The keeper parks PJM hydro at **0 MW for 1,010–1,965 hours
+every year**; the arm eliminates that in all six years with annual energy **unchanged to four
+decimals** (G2 exact) and within-month banking halved. No scored criterion changes status in either
+span; most material moves are toward actual (CT_PEAKER, coal, CC, D-2 peaker forcing). The owner's
+standing instruction — structural integrity can outweigh gate regression — is not even needed here.
+
+**AGAINST.** G1's MW limb fails (a mis-sized bar, §1). Small away-from-actual moves: C1 CT_PEAKER
+2024–25 (+0.3 TWh), ST_GAS 2020–22, C3a 2020 (+$0.09) and 2023 (+$0.07). No clean conventional-hydro
+hourly reference exists for PJM, so the shape improvement rests on physics, not a falsification test.
+
+**Retention.** All six legs and both composites are on disk here and the composites are committed on
+this branch. Nothing is pruned until the owner rules (rule 31). If promoted: re-key
+`keepers/PJM.json` + `calibration-complete.json`, `build_status.py --iso PJM`, `audit_keepers --iso PJM`,
+then `prune_iso_runs.py --iso PJM --keep 2026-09-22-pjm-hydro2-ror-touchpoint --force-uncite`
+(rule 35(e) order). Year union {2020…2025} is covered exactly.
