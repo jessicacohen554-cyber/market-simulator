@@ -191,14 +191,34 @@ FAIL → PASS** — the only status move anywhere.
 
 - It does **not** close C1. Wind moves ~2 % of its excess.
 - It does **not** reach C3c, and it does **not** produce congestion rent.
-- **SPP's remaining levers, in the order the evidence now supports:**
-  1. **The offer-curve family (SPP-70's sequenced repair) is now unblocked in principle** — this
-     card was the thing it was sequenced behind. But the prediction SPP-70 recorded for scoring
-     (*"the body falls, the 7 % discount stops being load-bearing"*) is **only weakly supported**:
-     the body fell $0.03–0.41, not the $0.69–2.45 the IDENTITY arm would need to offset. A
-     successor should re-measure before arming.
-  2. **R-ba** (the ST_GAS / CT_PEAKER inversion) is untouched and is still the most persistent C1
-     error (ST_GAS short 4.41–9.40 TWh in all seven years).
-  3. **R-be** (the −26.000 price floor is a clamp, not a distribution) is untouched.
+- **SPP's remaining levers, in the order the evidence now supports.**
+
+  > **CORRECTION, entered after this lane's solves and before its RESULT was final.** An earlier
+  > draft of this section read *"the offer-curve family is now unblocked in principle — this card
+  > was the thing it was sequenced behind."* **That is wrong, and a stronger cross-ISO result
+  > refutes it.** `docs/RESULT-xiso-stack-climb-attribution-2026-09-22.md` (merged to `main` at
+  > `919e674d` while this lane's shards were solving, zero LP, 44 `fleet_only` rebuilds) measures
+  > the same idle-thermal signature in **nine ISOs of nine** and concludes that **the offer-curve
+  > family is refused everywhere BY CONSTRUCTION**, because adding vertical extent above a
+  > clearing price that never reaches it is inert. SPP-70 §4 was not measuring an SPP quirk. The
+  > family is **closed**, not merely sequenced, and a successor must not re-open it on this
+  > lane's evidence.
+
+  1. **DEMAND — untested here and untested by anyone.** The xiso lane's own corrected ranking puts
+     it second only to commitment reach and notes it is *"cheap to measure at zero LP"*: whether
+     the model's own load is tight in the market's top-1 % hours has never been measured in any
+     ISO. For SPP this bears directly on the live rubric failures (§below).
+  2. **COMMITMENT REACH** — the xiso lane's new first-ranked lever: the idle capacity concentrates
+     in exactly the classes a no-MIP LP commits worst (CT 13–46 %, oil 1–5 %). SPP's fossil fleet
+     carries `min_down_hours = min_run_hours = startup_cost_per_mw = 0` on every unit.
+  3. **R-ba** (the ST_GAS / CT_PEAKER inversion) is untouched and is still the most persistent C1
+     error (ST_GAS short 4.41–9.40 TWh in all seven years) — but note C1 **PASSES**, so it is not
+     a rubric failure.
+  4. **R-be** (the −26.000 price floor is a clamp, not a distribution) is untouched.
+
+- **SPP's LIVE rubric failures are four rows, all on the rung:** C3a 2020 **+17.3 %** (band ±10 %),
+  C3b 2020 / 2021 / 2022 **0.267 / 0.243 / 0.208** (band 0.20). The span is clean. 2022 is 0.008
+  over its band. `SPP-69` §5 characterised 2020: the whole year's price lives in a **$13.35** band
+  and never exceeds **$36.21**, against an actual with **23 hours above $200**.
 - Every number here is model-**SELECTION** evidence. `[R-HOLDOUT]` was removed 2026-09-09, so no
   year is out-of-sample and none of this is a certified skill claim.
