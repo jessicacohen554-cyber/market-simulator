@@ -1,0 +1,197 @@
+{
+ "free_parameters": {
+  "schema": "dof-ledger/v1",
+  "seeded": "2026-07-04 S5 governance session \u2014 audit \u00a73 class-C table + W1d residual-identified/forecast-risk markers (docs/model-legitimacy-audit-2026-07.md; CLAUDE.md rule 20)",
+  "n_entries": 9,
+  "n_residual": 1,
+  "entries": [
+   {
+    "name": "offer_curve_by_group",
+    "where": "run_config.scenario_config.offer_curve_by_group",
+    "identification": "measured-physical",
+    "lineage_solves": "unknown",
+    "value": {
+     "CC_CHP": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "CC_INTERMEDIATE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "CC_REGULAR": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "COAL": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL_BIT": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL_LIGNITE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL_PRB": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL_WC": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "CT_CHP": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "CT_INTERMEDIATE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "CT_PEAKER": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "ST_GAS": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "ST_GAS_INTERMEDIATE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ]
+    },
+    "n_scalars": 72,
+    "source": "per-group HR-band multipliers \u2014 the rule-#1-sanctioned offer-curve tuning surface (audit C-8/C-11/C-13)",
+    "basis": "Price-tuning bands at the identity (distinct values {'committed': [1.0], 'econ_low': [1.0], 'econ_high': [1.0], 'peak': [1.0]}); overrides/deltas/smoothing null \u2014 machine-verified by gen_soco58_attestation._verify. SOCO has no price benchmark."
+   },
+   {
+    "name": "offer_curve_smoothing",
+    "where": "run_config.scenario_config.offer_curve_smoothing_*",
+    "identification": "measured-physical",
+    "lineage_solves": "unknown",
+    "value": {
+     "offer_curve_smoothing_n": 6,
+     "offer_curve_smoothing_exp": 1.0
+    },
+    "n_scalars": 2,
+    "source": "econ-ramp shape of the offer curve (rule-#1 scope)",
+    "basis": "Price-tuning bands at the identity (distinct values {'committed': [1.0], 'econ_low': [1.0], 'econ_high': [1.0], 'peak': [1.0]}); overrides/deltas/smoothing null \u2014 machine-verified by gen_soco58_attestation._verify. SOCO has no price benchmark."
+   },
+   {
+    "name": "wefor_multiplier",
+    "where": "run_config.scenario_config.wefor_multiplier",
+    "identification": "residual",
+    "lineage_solves": "unknown",
+    "value": 0.7,
+    "source": "wind EFOR haircut (audit C-15) \u2014 the name admits residual identification; stated purpose is coal shoulder-month generation",
+    "root_cause": "audit C-15 open item: replace with a measured wind availability/curtailment input or delete; identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "coal_warm_committed (warm-boiler committed-band exemption)",
+    "where": "model.commitment.compute_monthly_markup warm-boiler branch; gated per plant on must_run_pct > 0 (CAMPD thermal-tranche artifact)",
+    "identification": "measured-physical",
+    "lineage_solves": "unknown",
+    "n_scalars": 0,
+    "source": "SOCO's own committed-keeper hourlies (lane SOCO-58 phase 0, zero LP, on 2026-09-20-soco57-measured-cc-heat): the warm-boiler predicate is measured at 100.0% in ALL EIGHTEEN coal plant-years 2023-2025 \u2014 in every hour in which a plant's _committed tranche carries capacity, that plant's _mustrun tranche is generating at load fraction 1.00, so the boiler is never dark when the committed band could be dispatched. The markup it removes is measured at EXACTLY $100.00/MWh on four of six plants in 2024 (the startup/max(avg_run,1.0) floor, i.e. ZERO P0 runs) and is anti-correlated with the year's need for coal (implied P0 run length 1.0 h in 2024 vs 769 h at plant 6002 in 2025), so its year-to-year variation is a P0 feedback artifact and not a physical driver. Scope verified exact: 6 of 6 coal tranches carrying a startup cost are exempted, 0 coal tranches carrying one are missed, and 0 non-coal tranches are touched",
+    "note": "removes a fabricated cold-start premium, adds no tunable; reverts only if the fleet's measured must-run floors disappear (rule 23: rides the thermal-tranche artifact refresh)"
+   },
+   {
+    "name": "GAS_BASIS_DIFFERENTIAL_MEASURED_BY_YEAR['SOCO'][2023]",
+    "value": 0.49,
+    "identification": "measured-physical",
+    "basis": "INHERITED FROM SOCO-55 (EIA-923 Sch-2 delivered gas minus Henry Hub)."
+   },
+   {
+    "name": "GAS_BASIS_DIFFERENTIAL_MEASURED_BY_YEAR['SOCO'][2024]",
+    "value": 0.64,
+    "identification": "measured-physical",
+    "basis": "INHERITED FROM SOCO-55 (EIA-923 Sch-2 delivered gas minus Henry Hub)."
+   },
+   {
+    "name": "GAS_BASIS_DIFFERENTIAL_MEASURED_BY_YEAR['SOCO'][2025]",
+    "value": 0.65,
+    "identification": "measured-physical",
+    "basis": "INHERITED FROM SOCO-55 (EIA-923 Sch-2 delivered gas minus Henry Hub)."
+   },
+   {
+    "name": "hydro_min_flow_floor",
+    "value": true,
+    "identification": "measured-physical",
+    "n_scalars": 0,
+    "basis": "Boolean gate, n_scalars=0. The floor LEVEL is the measured monthly Q05 of SOCO's own EIA-930 NG: WAT for the solve year (eia930/envelopes.measured_hydro_min_flow_level, HYDRO_MIN_FLOW_PERCENTILE), allocated pro-rata by each plant's own EIA-923 monthly budget and clipped to it. Stated misalignment (rule 14): SOCO's NG: WAT folds pumped-storage discharge before 2024-07-15; measured in 2025, where both series exist, the fold moves the monthly Q05 by <= +11 MW. EIA-930 WAT is missing 2024-11-25..12-31, so December 2024 carries no floor (empty month -> 0)."
+   },
+   {
+    "name": "hydro_backfill_year",
+    "value": 2024,
+    "identification": "measured-physical",
+    "n_scalars": 0,
+    "basis": "SOCO-53b data repair, not a tuned value: the 2025 EIA-923 early release carries 5 of 42 SOCO hydro plants (0.328 TWh vs 5.926 TWh EIA-930 measured); backfilling from the 2024 final census restores 42 plants / 6.329 TWh (+6.8 % vs measured, 2024 monthly shape). Array-equal no-op on the 2023 and 2024 budgets (asserted by scripts/probes/soco_h4_compose_span.py)."
+   }
+  ]
+ },
+ "schema": "calibration-attestation/v1",
+ "exceptions": [],
+ "governance": {
+  "levers_trace_to_measured_input": true,
+  "no_fit_to_price_residuals": true,
+  "no_pinning_to_actuals": true,
+  "outage_filter_exogenous_net_load": true,
+  "attested_by": "SOCO hydro-4 (lane), PROBE arm 'mff'. Against keeper 2026-09-22-soco58-warm-committed, TWO things move, each machine-verified: (1) hydro_min_flow_floor=True with hydro_ror_split=False \u2014 one member of the hydro run-of-river-inflow family, never stacked (rule 19); (2) hydro_backfill_year=2024, the SOCO-53b repair of the 2025 EIA-923 early-release budget (5 of 42 plants), a measured array-equal no-op on 2023/2024 \u2014 so 2023/2024 are single-delta legs against the keeper and the 2025 arm is single-delta against a repair-only control leg (soco_h4_fix_2025, not registered: a control, rule 29(c)). Every inherited posture is asserted by gen_soco58_attestation._verify. RULE 13: no measured OUTCOME is fed back \u2014 the floor level is a measured physical availability quantity (the fleet's Q05 sustained release), the RoR partition a categorical plant attribute, and the flat level the plant's own monthly water; all regenerate forward. Neither mechanism may move a monthly total: annual hydro TWh moved 0.0000 % in every leg (G2). RULE 21/24: zero free parameters added; both gates are registered booleans. GATE G17: SOCO has no price benchmark; every offer_curve_by_group band is 1.0, AUTHORIZED PRICE TUNING IS DECLARED NONE (no authorized_price_tuning key, SOCO convention). Gates were pre-registered in docs/handoffs/PRECOMMIT-soco-hydro-4-2026-09-22.md before any solve; no criterion selects between the two arms (rule 1)."
+ },
+ "disclosures": {
+  "precommit": "docs/handoffs/PRECOMMIT-soco-hydro-4-2026-09-22.md",
+  "probe": true,
+  "eia930_wat_gap": "SOCO NG: WAT missing 2024-11-25..12-31 (1,343 h) and 121 h of 2025-01",
+  "ps_fold": "SOCO NG: WAT folds PS discharge before 2024-07-15; floor bias <= +11 MW"
+ }
+}
