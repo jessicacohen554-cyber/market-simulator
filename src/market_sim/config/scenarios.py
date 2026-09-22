@@ -1945,6 +1945,14 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # field -- very end, per HOUSE-3. Registered IN THE SAME COMMIT as the
     # field (the nyiso-119 discipline).
     "hydro_pondage_bound",
+    # pjm-h16: the whole-operating-day commitment grain for the COAL
+    # synchronization window (default off) -- the coal-seam sibling of
+    # mustrun_window_commitment_grain above. Dropped from the hash at its
+    # default so every pre-existing cached run -- every ISO's keepers included
+    # -- keeps its key; an armed run places the same-sized window on different
+    # hours and so earns a distinct key. SHARED field -- very end, per HOUSE-3.
+    # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
+    "coal_sync_window_commitment_grain",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -2451,6 +2459,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by pjm-h15 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "coal_sync_online_frac_per_year": "False",
+    # Added by pjm-h16 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "coal_sync_window_commitment_grain": "False",
     # Added by miso-173 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "mustrun_layup_window_mask": "False",
@@ -14610,6 +14621,84 @@ class ScenarioConfig:
     # the artifact is per-ISO, so the mechanism self-scopes (rule 25).
     coal_sync_online_frac_per_year: bool = False
 
+    # WINDOW-GRAIN correction for the COAL synchronization floor — pjm-h16.
+    # The coal-seam sibling of ``mustrun_window_commitment_grain`` (spp-27),
+    # which corrects the same defect at the two per-plant GAS seams and whose
+    # own comment states in terms why it stops short of here: "the COAL
+    # synchronization floor (coal_sync_online_frac) and the CT_PEAKER floors
+    # keep the hour grain — they are separate mechanism ids whose own conduct
+    # evidence this gate does not carry, and SPP's own ST_GAS census cannot
+    # speak for them (rule 25 [R-ISO-SCOPE])". So the coal seam gets its own
+    # gate carrying PJM coal's own evidence, exactly as
+    # ``coal_sync_online_frac_per_year`` is the coal sibling of
+    # ``mustrun_online_frac_per_year``. Rule 19 [R-ONE-MECH]: one phenomenon,
+    # one gate PER SEAM, and neither reads the other; rule 28 [R-MECH-MATRIX]:
+    # its own row, its own per-ISO verdict.
+    #
+    # A SEPARATE PHENOMENON from the two gates it sits beside:
+    # ``coal_sync_online_frac_per_year`` fixes the window's SIZE (which year's
+    # measured share sizes it) and ``commitment_floor_window_netload`` (SPP-66)
+    # fixes its DRIVER (which load series ranks the hours). This gate fixes
+    # WHICH HOURS the window occupies at that size, on that driver.
+    #
+    # THE DEFECT, measured on PJM's OWN coal meter at zero LP (pjm-h16 phase 0,
+    # scripts/probes/pjm_h16_coalgrain_phase0.py, 29 covered coal plants x 6
+    # years = 152 reachable plant-years). A coal plant's synchronization is a
+    # whole-operating-day decision; the engine places its floor by ranking
+    # INDIVIDUAL HOURS by the window series, so the floor inherits the diurnal
+    # shape of LOAD instead of the shape of COMMITMENT.
+    #  * Rule 17 [R-FLOOR-WINDOW] (a), DRIVER EVIDENCE from CAMPD and never
+    #    from a residual: the peak-to-mean of each plant's ONLINE hour-of-day
+    #    profile is 1.0001-1.3097 (median 1.0091; <= 1.10 on 143 of 152
+    #    plant-years) and its overnight(00-05)/afternoon(14-19) on-share ratio
+    #    is 0.788-1.027 (median 0.9968, inside [0.9, 1.1] on 145 of 152) —
+    #    when a PJM coal unit is synchronized it runs THROUGH the overnight
+    #    trough. Against that, the incumbent hour-ranked window's own
+    #    peak-to-mean over the same plant-years is 1.0132-4.8608 (median
+    #    1.3011), and it is MORE PEAKED THAN THE PLANT ON 152 OF 152. Clause
+    #    (b) fails in both directions: the floor binds at the daily peak and
+    #    is absent overnight on the SAME committed day.
+    #  * Rule 18 [R-PHYSICS]: the incumbent window implies 3,963 / 4,354 /
+    #    4,689 / 5,517 / 4,992 / 4,356 STARTS per year over 2020-2025 against
+    #    the fleet's own metered 238 / 290 / 303 / 302 / 302 / 334 — 13.0x to
+    #    18.3x, and 253 implied starts on 1,299 MW plant 6264 in 2024 against
+    #    4 measured. A 1,299 MW coal boiler cannot start 253 times a year.
+    #    The day grain implies 403-473, i.e. 1.31x-1.69x the meter.
+    #  * THE SHARP TEST, actuals only: in the hours the incumbent window HOLDS
+    #    the floor but a day window RELEASES it the real plants average
+    #    267.9 MW and are online 52.17 % of the time; in the hours a day
+    #    window HOLDS but the incumbent RELEASES they average 297.2 MW and are
+    #    online 67.13 % — +29.4 MW and +15.0 points, in all six years.
+    #
+    # When True the coal window becomes ``round(k/24)`` whole operating days
+    # off ``_commitment_day_order`` — the mechanical lift of the incumbent's
+    # OWN ranking to the commitment period: same series, same ordering
+    # statistic, one grain coarser, window peak-to-mean 1.000 by construction.
+    #
+    # Rule 21 [R-DOF]: ZERO free parameters. No threshold, share, multiplier or
+    # length — the grain is the operating day, which is the period a unit
+    # commitment is made for, and ``round(k/24)`` is arithmetic on the size the
+    # incumbent already chose. NOT A LEVEL CHANNEL, on the operand that cannot
+    # hide behind a moving denominator: the total asserted coal floor-HOURS
+    # move by 0.000 / +0.018 / +0.033 / -0.025 / -0.046 / +0.019 % across
+    # 2020-2025, and per plant-year the day rounding moves UP in 70 and DOWN
+    # in 73 of 152.
+    # Rule 13 [R-MEASURED]: forward-regenerable and MODE-BLIND — not registered
+    # in _BACKCAST_ONLY_OVERLAY_FIELDS, exactly like its gas sibling. The day
+    # ranking is computed from the model's OWN window series precisely as the
+    # hour ranking is, so a forecast year regenerates it from forward drivers;
+    # nothing measured enters the PLACEMENT.
+    # Rule 19 [R-ONE-MECH]: the window is REPLACED, never stacked. SIZE
+    # (``coal_sync_online_frac``, pooled or per-year), LEVEL
+    # (``coal_sync_pmin_mw``), MEMBERSHIP and the pmax*availability clip are
+    # untouched, and the two GAS seams and the CT_PEAKER floors keep whatever
+    # grain their own gates give them.
+    # SCOPE: a plant whose fraction reaches ``_COAL_SYNC_FORCE_ALL`` is floored
+    # in all 8,760 h and has no window to place, so it is untouched by
+    # construction (21 of 173 covered PJM coal plant-years).
+    # Off by default: every existing keeper in every ISO is byte-identical.
+    coal_sync_window_commitment_grain: bool = False
+
     # WINDOW-GRAIN correction for BOTH per-plant must-run floors
     # (cc_mustrun_per_plant / st_gas_mustrun_per_plant, the p25 level swap
     # included) — spp-27. A SEPARATE PHENOMENON from
@@ -14659,6 +14748,10 @@ class ScenarioConfig:
     # and the CT_PEAKER floors keep the hour grain — they are separate
     # mechanism ids whose own conduct evidence this gate does not carry, and
     # SPP's own ST_GAS census cannot speak for them (rule 25 [R-ISO-SCOPE]).
+    # The COAL seam has since acquired its own gate on its own PJM-measured
+    # evidence, ``coal_sync_window_commitment_grain`` (pjm-h16, declared
+    # immediately above); THIS flag still does not reach it, and arming one
+    # never arms the other.
     # Off by default: every existing keeper is byte-identical.
     mustrun_window_commitment_grain: bool = False
 
