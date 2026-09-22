@@ -27,13 +27,17 @@ Evidence: `FINDING-nwpp-47-2026-09-22.md`.
 Hourly Δ ranges from −8 to +498 MW, spread by load share. Everything else in the LP is byte-identical
 by construction.
 
-## 3. G-DRIFT (rule 29(b) form 4): keeper `87201a18` → base `336006c9`
+## 3. G-DRIFT (rule 29(b) form 4): keeper `87201a18` → base `c210ae8b`
 
 Solve-path diff:
 - `model/lp/model.py`, `model/lp/p0_cache.py`, `pipeline/solve.py`: the PERF-C S6 content-addressed
   P0 cache. It is env-gated by `MARKET_SIM_P0_CACHE`, **default off**, and the shards don't set it.
   **INERT.**
 - `config/paths.py`: one path constant. **INERT.**
+
+- Addendum, after rebasing onto `c210ae8b`: `config/constants.py` adds `"SOCO": 2025` to
+  `EIA930_PS_SPLIT_COMPLETE_FROM`. The dict is keyed by ISO and NWPP isn't a key (another ISO's
+  branch). **INERT.**
 
 Every hunk is INERT, so the keeper's committed bundle is the control and no control solve is spent.
 My branch adds the gated field; off, it is byte-identical (unit-tested).
