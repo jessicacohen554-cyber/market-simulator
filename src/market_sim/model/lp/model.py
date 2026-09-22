@@ -1051,6 +1051,7 @@ class DispatchModel:
         carbon_price: "np.ndarray | float" = 0,
         nox_price: "np.ndarray | float" = 0,
         so2_price: "np.ndarray | float" = 0,
+        full_extract: bool = True,
     ) -> "DispatchResult":
         """Install a marginal-cost vector and (re-)solve the LP.
 
@@ -1066,6 +1067,29 @@ class DispatchModel:
             carbon_price: Carbon price used when ``mc`` is ``None``.
             nox_price: NOx price used when ``mc`` is ``None``.
             so2_price: SO2 price used when ``mc`` is ``None``.
+            full_extract: When ``True`` (the default, and what every scored
+                pass uses) the result carries every diagnostic block this
+                method can produce. When ``False`` it carries exactly the
+                :class:`DispatchResult` REQUIRED fields — the primal blocks
+                (``dispatch`` / ``wind_dispatched`` / ``solar_dispatched`` /
+                ``slack`` / ``dump`` / storage / ``flows``), ``prices``,
+                ``objective_value``, ``status``, ``build_time`` and
+                ``solve_time`` — and every optional field is left at its
+                ``None`` default. That union is the measured consumer set of
+                the **P0** result (PERF-C S2,
+                ``docs/handoffs/FINDING-perfc-s2-p0-slim-2026-09-20.md`` §1):
+                the commitment-bridge detectors, the P1 prep hooks, the two
+                opt-in P0 sidecars and the O7 attribution harness read nothing
+                else from it. Skipping the rest avoids the whole-``col_dual``
+                conversion (~21.8 M columns on an ERCOT year), the
+                ``row_value`` conversion and the float32 ``gen_mc`` copy —
+                none of which changes a single LP row, coefficient, bound or
+                objective entry, nor touches HiGHS at all, so every value the
+                slim result DOES carry is bit-identical to the full one.
+                ``_marginal_emission_rate`` is deliberately NOT in the skip
+                set even though no P0 consumer reads it: it is
+                warm-start-class on the route where P1 re-solves the same live
+                model, measured. See the note at its call site.
 
         Returns:
             A populated :class:`DispatchResult`.
@@ -1156,7 +1180,12 @@ class DispatchModel:
         # ``mc`` may be a caller-owned array (the ``mc=`` argument); deleting the
         # local name only drops THIS reference and never mutates it, so a caller
         # reusing its own array across passes is unaffected.
-        gen_mc_f32 = np.asarray(mc, dtype=np.float32)
+        #
+        # Under ``full_extract=False`` the copy is skipped outright: ``gen_mc``
+        # is an optional diagnostic field no P0 consumer reads, so the float64
+        # original is simply released here instead of being half-width-copied
+        # first (PERF-C S2). Nothing else in this method reads ``mc``.
+        gen_mc_f32 = np.asarray(mc, dtype=np.float32) if full_extract else None
         del cost
         del mc
         # Same reasoning for the column-index vector: HiGHS has consumed it,
@@ -1223,7 +1252,7 @@ class DispatchModel:
         # would retain ~200 MB against a documented 14.4 GB year peak).
         flow_dual = None
         gen_reduced_cost = None
-        if n_links or layout.n_gen:
+        if full_extract and (n_links or layout.n_gen):
             col_dual = np.asarray(solution.col_dual, dtype=float)
             _cd_block = col_dual.reshape(T, layout.vars_per_hour)
             if n_links:
@@ -1241,7 +1270,7 @@ class DispatchModel:
         # row-activity vector (consumed by the per-family reserve sidecar
         # extraction below, where its role is documented).
         balance_activity = None
-        if self._coopt:
+        if full_extract and self._coopt:
             balance_activity = np.asarray(
                 solution.row_value[-(self._n_families * T) :], dtype=float
             ).reshape(T, self._n_families)
@@ -1287,7 +1316,7 @@ class DispatchModel:
         rps_shadow_price = None
         rps_region_duals = None
         clean_region_duals = None
-        if self._n_rps_rows:
+        if full_extract and self._n_rps_rows:
             rps_start = row_dual.size - (
                 self._n_reserve_rows + self._n_clean_rows + self._n_rps_rows
             )
@@ -1305,7 +1334,7 @@ class DispatchModel:
         # per-(fuel, zone) consumer mapping happens at the runner
         # (policy.clean_tiers.clean_credit_by_fuel), because it needs the
         # per-region qualifying sets the LP deliberately does not keep.
-        if self._n_clean_rows:
+        if full_extract and self._n_clean_rows:
             clean_start = row_dual.size - (self._n_reserve_rows + self._n_clean_rows)
             clean_region_duals = np.asarray(
                 row_dual[clean_start : clean_start + self._n_clean_rows],
@@ -1318,7 +1347,7 @@ class DispatchModel:
         # Recover them end-anchored past the reserve/clean/RPS tails. HiGHS min
         # problem, <= row → dual <= 0; the reported allowance price is -λ >= 0.
         co2_cap_price = None
-        if self._n_masscap_rows:
+        if full_extract and self._n_masscap_rows:
             start = row_dual.size - (
                 self._n_reserve_rows
                 + self._n_clean_rows
@@ -1335,7 +1364,7 @@ class DispatchModel:
         reserve_dispatch = reserve_price = reserve_price_by_family = None
         reserve_supply_cap_dual = None
         reserve_shortfall_by_family = reserve_held_by_family = None
-        if self._coopt:
+        if full_extract and self._coopt:
             reserve_dispatch = block[:, layout._reserve_off : layout._ordc_off].T
             if self._pergen:
                 # Aggregate the per-gen R columns to the zonal block shape
@@ -1427,7 +1456,7 @@ class DispatchModel:
         # variable), unlike the storage_reserve_mw min() attribution used when
         # storage is pooled in the shared headroom.
         storage_reserve_dispatch = None
-        if self._coopt and layout.n_storage_reserve > 0:
+        if full_extract and self._coopt and layout.n_storage_reserve > 0:
             sr0 = layout._storage_reserve_off
             sr = block[:, sr0 : sr0 + layout.n_storage_reserve].T  # (n_sr, T)
             storage_reserve_dispatch = sr.reshape(
@@ -1438,7 +1467,7 @@ class DispatchModel:
         # and the postured pools' own cleared reserve (pre-zone-aggregation R
         # columns) — the honesty-gate series (design note §A).
         posture_online = posture_startup = posture_reserve = None
-        if layout.n_posture > 0:
+        if full_extract and layout.n_posture > 0:
             u0 = layout._posture_u_off
             posture_online = block[:, u0 : u0 + layout.n_posture].T
             su0 = layout._posture_su_off
@@ -1455,7 +1484,7 @@ class DispatchModel:
         # (the BCR/CPM analogue). Reshaped to (n_areas, T), hour-major layout.
         lcr_dual = None
         lcr_gen_idx_out = None
-        if self._n_lcr_areas > 0 and self._lcr_row_offset >= 0:
+        if full_extract and self._n_lcr_areas > 0 and self._lcr_row_offset >= 0:
             n_a = self._n_lcr_areas
             off = self._lcr_row_offset
             lcr_dual = row_dual[off : off + n_a * T].reshape(T, n_a).T
@@ -1480,7 +1509,7 @@ class DispatchModel:
         # (``flow_dual`` itself was sliced out of col_dual in the up-front
         # marshalling block, before the primal column block was retained.)
         interface_dual = None
-        if self._n_iface_groups > 0 and self._iface_row_offset >= 0:
+        if full_extract and self._n_iface_groups > 0 and self._iface_row_offset >= 0:
             n_g = self._n_iface_groups
             off_i = self._iface_row_offset
             interface_dual = row_dual[off_i : off_i + n_g * T].reshape(T, n_g).T
@@ -1492,7 +1521,7 @@ class DispatchModel:
         # extraction; None off the arm.
         cascade_spill = cascade_storage = cascade_water_value = None
         cascade_plant_codes = None
-        if layout.n_cascade:
+        if full_extract and layout.n_cascade:
             n_c = layout.n_cascade // 2
             s0 = layout._cas_s_off
             v0 = layout._cas_v_off
@@ -1519,6 +1548,26 @@ class DispatchModel:
         # have to happen first.
         objective_value = h.getObjectiveValue()
         status = h.modelStatusToString(h.getModelStatus())
+        # DELIBERATELY NOT GATED ON ``full_extract`` — measured, PERF-C S2
+        # (``docs/handoffs/FINDING-perfc-s2-p0-slim-2026-09-20.md`` §2).
+        #
+        # Every consumer of this rate reads the P1 result (results.export,
+        # results.outputs, run_full_horizon), so skipping it on P0 looks free,
+        # and the computation is not cheap: a getBasis, 18 chunked
+        # changeColsCost over the whole objective, a setBasis, a
+        # zero-iteration h.run() and a second setBasis. It is nonetheless
+        # WARM-START-CLASS, not byte-neutral, on the route where P1 re-solves
+        # this same live model: the closing ``setBasis`` re-installs the basis
+        # and leaves HiGHS entering P1's warm ``run()`` from a re-installed
+        # basis rather than a live post-solve factorization, so removing it
+        # changes P1's simplex PATH. Measured over the NEISO keeper's six
+        # years: P1's objective was identical to every printed digit in all
+        # six, but its iteration count moved (e.g. 2020 63,420 -> 63,655) and
+        # the P1 dispatch reshuffled across marginal ties — 0.08-0.13 % of
+        # annual generation gross, +0.0000 GWh net, with ``system.price``
+        # moving only at 6.4e-16 relative. Same optimum, different vertex.
+        # A byte gate refuses that, so the call stays unconditional and the
+        # skip is left to a lane holding a warm-start-class mandate.
         marginal_emission_rate = self._marginal_emission_rate(n_zones, T)
 
         return DispatchResult(
@@ -1545,8 +1594,8 @@ class DispatchModel:
             posture_online_mw=posture_online,
             posture_startup_mw=posture_startup,
             posture_reserve_mw=posture_reserve,
-            posture_zone_idx=self.posture_zone_idx,
-            posture_fuel_idx=self.posture_fuel_idx,
+            posture_zone_idx=self.posture_zone_idx if full_extract else None,
+            posture_fuel_idx=self.posture_fuel_idx if full_extract else None,
             build_time=self.build_time,
             solve_time=solve_time,
             rps_shadow_price=rps_shadow_price,
@@ -1556,13 +1605,13 @@ class DispatchModel:
             lcr_dual=lcr_dual,
             lcr_gen_idx=lcr_gen_idx_out,
             interface_dual=interface_dual,
-            interface_link_idx=(self._iface_link_idx or None),
-            interface_signs=(self._iface_signs or None),
-            interface_cap_up=self._iface_cap_up,
-            interface_cap_dn=self._iface_cap_dn,
+            interface_link_idx=(self._iface_link_idx or None) if full_extract else None,
+            interface_signs=(self._iface_signs or None) if full_extract else None,
+            interface_cap_up=self._iface_cap_up if full_extract else None,
+            interface_cap_dn=self._iface_cap_dn if full_extract else None,
             flow_dual=flow_dual,
-            flow_cap_up=self._flow_cap_up,
-            flow_cap_dn=self._flow_cap_dn,
+            flow_cap_up=self._flow_cap_up if full_extract else None,
+            flow_cap_dn=self._flow_cap_dn if full_extract else None,
             # The offer array THIS solve installed — the LP's own marginal
             # cost, so a diagnostic never has to rebuild it from the fleet/fuel
             # path and can never disagree with what cleared. float32 for the

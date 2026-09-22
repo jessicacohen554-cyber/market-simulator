@@ -471,6 +471,7 @@ def solve_dispatch(
     dis_tranche_price: np.ndarray | None = None,
     hydro_cascade: "HydroCascadeSpec | None" = None,
     T: int | None = None,
+    full_extract: bool = True,
 ) -> DispatchResult:
     """Solve the linear economic-dispatch problem with HiGHS.
 
@@ -594,6 +595,12 @@ def solve_dispatch(
             budget is turbined, never how much. ``None`` (default) builds no
             rows and no columns — byte-identical LP.
         T: Number of hours. Inferred from ``demand`` when ``None``.
+        full_extract: Forwarded verbatim to :meth:`DispatchModel.solve`.
+            ``False`` returns the slim P0 result (the required
+            ``DispatchResult`` fields only); see that method's docstring for
+            the consumer union it is derived from. The LP built and solved is
+            identical either way — this selects only which post-solve
+            diagnostics are extracted.
 
     Returns:
         A populated ``DispatchResult``.
@@ -720,6 +727,7 @@ def solve_dispatch(
         carbon_price=carbon_price,
         nox_price=nox_price,
         so2_price=so2_price,
+        full_extract=full_extract,
     )
 
 

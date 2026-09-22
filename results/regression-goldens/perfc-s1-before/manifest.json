@@ -1,0 +1,123 @@
+{
+  "hash_scheme": "sha256-of-canonical-column-float64-bytes",
+  "keepers": {
+    "NEISO": {
+      "bundle": "results/calibration/neiso112_mer_span",
+      "content_hashes": {
+        "btm.parquet": "15bc7b755e74e9e8ee08b3ca50c66c4b968e858f00911f5254e3853fefef54d4",
+        "dispatch/2020_P1.parquet": "96a30333fcfd8503d07d95567e72c7a432da022a9b49d1662713e6fbf10770ec",
+        "dispatch/2020_P1_fleet.parquet": "864a476d852be3743f4b15d7e23725a31c2fa1390716dafe922b69e24fdac456",
+        "dispatch/2021_P1.parquet": "ecd10cbe15c77d81483e49a39d732962e79f4b04563915eb13f5a3e930a1f1b5",
+        "dispatch/2021_P1_fleet.parquet": "4b7447c978b177b96b9471d1c8dcc07c842bac110f017ca826457b87db2147e3",
+        "dispatch/2022_P1.parquet": "ff7d17d6405ef9ae076630c09cf507f9ffd3b26a95716d77c3de8f420c3ebb19",
+        "dispatch/2022_P1_fleet.parquet": "9a348021a345ba4dc5a911028a74626034183f12f8a9c6b6f517a9882e700e22",
+        "dispatch/2023_P1.parquet": "3010d58ccd0777b5fcb9590c118d3551f089709822a8de3e73bacd8918ef8a27",
+        "dispatch/2023_P1_fleet.parquet": "f5de129beae578f3e243f237ad19d4d5c30a2b92bf7e5642367b1d87e87bdb6c",
+        "dispatch/2024_P1.parquet": "8e9a4b7feda47bbea14f37322fcc7a846d277bd23968092f811ed11fcef60a84",
+        "dispatch/2024_P1_fleet.parquet": "246a2921d9a5f54c8d633bf54755c0b65b435f076753a9f375b32dc03251b672",
+        "dispatch/2025_P1.parquet": "56693088aee78ffeb0b39b74fce447e81293ab2bf0968c9398ae3a666bae28ce",
+        "dispatch/2025_P1_fleet.parquet": "cde044eb7e472e7f4f621b778431a0908b8b2e8ee73325094d36eb7adc6c6f5e",
+        "flows.parquet": "1ca6437e1666983a4fcb43056bcef425686ca98aee384d05abf20261698aa4da",
+        "storage.parquet": "7bbfbf33d11af1ddf21df799939e3ccd422442e9203adf144397db5c983c15ba",
+        "system.parquet": "1aa1972f1809e1436c2e85c01abcbed1c54bbdecae7a57eee4ec051ea0f784fd"
+      },
+      "defaulted_unrecorded_params": [
+        "ablation_of",
+        "coal_takeorpay_from_data",
+        "gt_ambient_derate",
+        "gt_ambient_derate_ref_c",
+        "gt_ambient_derate_slope_cc",
+        "gt_ambient_derate_slope_ct",
+        "miso_pjm_lmp_import_pricing",
+        "nyiso_ct_peaker_committed_measured",
+        "persist_p0_commitment",
+        "persist_p0_dispatch",
+        "plant_tranche_config",
+        "reuse_solved",
+        "zero_forcing_ablation"
+      ],
+      "dropped_dead_config_keys": {},
+      "fidelity": {
+        "meta_head_only": [
+          "nyiso_ct_peaker_committed_measured"
+        ],
+        "meta_keeper_only": [
+          "composed_from"
+        ],
+        "meta_matched": 308,
+        "scenario_config_drift": [],
+        "scenario_config_head_only": [
+          "benchmark_membership_vintage_union",
+          "caiso_citygate_blackout_bridge",
+          "commitment_floor_window_netload",
+          "gas_basis_differential_measured_by_year",
+          "gas_flow_date_year_start_package",
+          "nyiso_ct_peaker_committed_measured"
+        ],
+        "scenario_config_matched": 856
+      },
+      "hours": 8760,
+      "keeper_id": "2026-09-19-neiso112-mer-year-isolated",
+      "keeper_snapshot": {
+        "bundle": "results/calibration/neiso112_mer_span",
+        "date": "2026-09-19",
+        "definition": "neiso-112 span, 2020-2025: the 2026-09-16-neiso110-dualfuel-derate-scope recipe replayed UNCHANGED (replay_keeper.py from that keeper's own meta.json), but with every year solved ALONE in its own shard container under rule 36 [R-YEAR-ISOLATION], then composed at zero LP. Adds the per-zone-hour marginal emission rate -- the emissions dual, dCO2/d(demand) at the solve's own optimal basis -- which the incumbent predates and which no sidecar could be post-processed into. DETERMINATION CALIBRATED, criterion-for-criterion identical to the incumbent (8 scored, 0 fails, the same lone ledgered C3c). The year-isolated solves reproduce the incumbent's single six-year invocation with prices BIT-IDENTICAL (max |dPrice| 5.7e-14; 0 of 262,800 zone-hour cells past $0.01/MWh) and annual class energy identical to ~1e-9 of total, so the MISO year-grouping defect does not appear in NEISO. What does move is 1.2-1.6% of class-hours at an unchanged objective and unchanged prices: alternate-optimum reshuffling of a degenerate LP, the signature neiso-107 already root-caused against this keeper.",
+        "id": "2026-09-19-neiso112-mer-year-isolated",
+        "iso": "NEISO",
+        "label": "neiso112 mer year isolated",
+        "registered_years": [
+          2020,
+          2021,
+          2022,
+          2023,
+          2024,
+          2025
+        ],
+        "shorthand": "neiso112-mer-year-isolated",
+        "sidecar_at_capture": "present",
+        "years": [
+          2020,
+          2021,
+          2022,
+          2023,
+          2024,
+          2025
+        ]
+      },
+      "provenance": {
+        "basis_sha": "2a87343f8d7302ce84e66f45430a8d3b9e807d80",
+        "env": {
+          "MARKET_SIM_HIGHS_THREADS": "1",
+          "MARKET_SIM_WARMSTART": "1",
+          "MARKET_SIM_WARMSTART_XYEAR": "0"
+        },
+        "git_dirty": true,
+        "git_sha": "2a87343f",
+        "git_sha_full": "2a87343f8d7302ce84e66f45430a8d3b9e807d80",
+        "highspy_version": "unknown",
+        "recorded_at": "2026-09-20T18:49:52Z",
+        "source": "stamped-at-capture"
+      },
+      "recorded_flag_count": 300,
+      "registered_years": [
+        2020,
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ],
+      "years": [
+        2020,
+        2021,
+        2022,
+        2023,
+        2024,
+        2025
+      ]
+    }
+  },
+  "note": "Current-HEAD regression baselines (Stage-0). NOT byte-reproductions of the registered July-3 keeper bundles. Multi-GB bundles are gitignored; only this manifest is committed. Provenance (git sha, basis sha, env pins, timestamp) and the provenance run's identity are PER ENTRY under keepers.<ISO>.provenance / .keeper_snapshot \u2014 there is deliberately no shared top-level git_sha. An entry keyed <ISO>__<role> (e.g. ERCOT__forward) is a CONFIG-PARTITION member: the role is verbatim that ISO's keepers/<ISO>.json config_partition.configs[].role, the entry carries an extra 'partition' block naming the CONFIG it captured (schema v3: designated_years -> config_id, plus shard_run_id \u2014 a composed keeper's run id is shared by several roles and does not identify a config), and it is an ordinary entry in every other respect \u2014 additive, so the bare-ISO entries are untouched. check_golden_manifest.live_keeper resolves both key forms. A partitioned ISO's BARE entry is its forward config replayed on the forward role's designated span (owner ruling R-AW, 2026-09-05), with the run's registered span kept in registered_years; a capture key retired by ruling (check_golden_manifest.RETIRED_CAPTURE_KEYS) keeps its entries as historical capture records.",
+  "schema_version": 3,
+  "stage_tag": "perfc-s1-before"
+}

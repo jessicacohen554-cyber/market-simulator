@@ -10176,20 +10176,22 @@ def main() -> None:
     parser.add_argument(
         "--no-p1-basis-seed",
         action="store_true",
-        help="Disable the same-year P1 basis seed (MARKET_SIM_P1_BASIS_SEED). "
-        "It is ON by default for a fresh calibration solve — on the ISOs "
-        "whose keeper carries a P1-native floor bridge (ERCOT / NYISO gas "
-        "commitment bridges, CAISO RA must-offer) the P1 cold-rebuilds a "
-        "second model on the floored fleet, and the seed hands it the P0 "
-        "model's optimal basis instead of starting from nothing (ERCOT 2025 "
-        "P1 287 -> 139 s; warm-start class, marginal-tie only; see "
-        "docs/cross-year-warmstart.md 'Same-year P1 basis seed'). Inert "
-        "wherever the P1 re-solves the live P0 model, and hard-OFF under "
-        "--no-xyear-warmstart / MARKET_SIM_WARMSTART_XYEAR=0 (the goldens "
-        "pin) — the seed lives inside the cross-year gate. An explicit "
-        "MARKET_SIM_P1_BASIS_SEED env var is honored over the default; this "
-        "flag overrides both. No effect on --report / --replay-bundle / "
-        "--rebuild-benchmark (global default OFF).",
+        help="Force the same-year P1 basis seed OFF (MARKET_SIM_P1_BASIS_SEED). "
+        "It is OFF by default (rule 36 [R-YEAR-ISOLATION], owner ruling "
+        "2026-09-19) — on the ISOs whose keeper carries a P1-native floor "
+        "bridge (ERCOT / NYISO gas commitment bridges, CAISO RA must-offer) "
+        "the P1 cold-rebuilds a second model on the floored fleet, and the "
+        "seed hands it the P0 model's optimal basis instead of starting from "
+        "nothing (ERCOT 2025 P1 287 -> 139 s; warm-start class, marginal-tie "
+        "only; see docs/cross-year-warmstart.md 'Same-year P1 basis seed'). "
+        "Inert wherever the P1 re-solves the live P0 model. INDEPENDENT of "
+        "--no-xyear-warmstart since PERF-C S1 (2026-09-20): the seed carries "
+        "no cross-year state, so it is gated on its own env var and the "
+        "goldens/replay determinism env pins it to 0 explicitly. A seeded P1 "
+        "that does not reach Optimal discards the basis and re-solves cold. "
+        "An explicit MARKET_SIM_P1_BASIS_SEED env var is honored over the "
+        "default; this flag overrides both. No effect on --report / "
+        "--replay-bundle / --rebuild-benchmark (global default OFF).",
     )
     parser.add_argument(
         "--cf-band-width",
@@ -14937,11 +14939,13 @@ def main() -> None:
     # Forecast (runner.py) is unaffected (xyear_cache=None).
     _xwarm = resolve_xyear_warmstart_default(args.no_xyear_warmstart)
     logger.info("cross-year LP warm-start: %s", "ON" if _xwarm else "OFF")
-    # Same-year P1 basis seed (wallclock item B): default ON on the same
-    # fresh-solve path, --no-p1-basis-seed to opt out, explicit env var
-    # honored; the solve core arms it only inside the cross-year gate above.
+    # Same-year P1 basis seed (wallclock item B): default OFF (rule 36),
+    # --no-p1-basis-seed to force OFF, explicit env var honored. INDEPENDENT
+    # of the cross-year gate above since PERF-C S1 — the reported state is the
+    # resolver's own, not ``_p1_seed and _xwarm``, because the solve core no
+    # longer nests them.
     _p1_seed = resolve_p1_basis_seed_default(args.no_p1_basis_seed)
-    logger.info("P1 basis seed: %s", "ON" if (_p1_seed and _xwarm) else "OFF")
+    logger.info("P1 basis seed: %s", "ON" if _p1_seed else "OFF")
     # Coal family solve kwargs, generated from the same registry rows that
     # generated the parser above (rows riding the prb_overrides channel are
     # excluded there and keep their hand-written plumbing below). One encoding

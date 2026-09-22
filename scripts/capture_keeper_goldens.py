@@ -192,6 +192,13 @@ DETERMINISM_ENV = {
     "MARKET_SIM_HIGHS_THREADS": "1",
     "MARKET_SIM_WARMSTART": "1",
     "MARKET_SIM_WARMSTART_XYEAR": "0",
+    # Same-year P1 basis seed, pinned EXPLICITLY since PERF-C S1 (2026-09-20).
+    # It used to be armed inside the cross-year gate, so the line above
+    # implied it OFF; ``pipeline.solve`` now gates it on its own env var, and
+    # an implication that is no longer true is not a pin. A seeded P1 is
+    # warm-start class (marginal-tie reshuffle), which is exactly what a
+    # byte-identity golden may not carry.
+    "MARKET_SIM_P1_BASIS_SEED": "0",
 }
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
