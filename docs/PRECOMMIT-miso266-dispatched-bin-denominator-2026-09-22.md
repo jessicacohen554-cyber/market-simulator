@@ -425,3 +425,65 @@ land (rule 32 (d)).
   denominator whenever this flag is off. **Routed, not absorbed:** the general
   fix is to delete the reconstruction, which is a cross-ISO change no single
   lane should make on its own evidence.
+
+---
+
+## ADDENDUM (rebase onto `main` @ `861970be`) — EVERY ISO's COMMITTED BENCH READS STALE, AND IT IS NOT THIS LANE'S
+
+Rebasing this branch onto the current `main` flipped
+`check_bench_freshness --iso MISO` from **0 STALE / 6 with engine drift** to
+**6 STALE**. Measured across the repo at `861970be`, before any conclusion was
+drawn from it:
+
+| ISO | parts | STALE |
+|---|---:|---:|
+| MISO | 6 | **6** |
+| PJM | 6 | **6** |
+| NEISO | 6 | **6** |
+| ERCOT | 5 | **5** |
+| NYISO | 4 | **4** |
+| CAISO | 4 | **4** |
+
+**31 of 31 committed bench parts, in all six ISOs.** That is a repo-wide
+condition on `main`, not something this branch introduced — and the attribution
+is exact rather than inferred:
+
+* `bench_stamp.PAYLOAD_SOURCES` is three files —
+  `scripts/render_calibration_html.py`, `scripts/render_backcast.py`,
+  `scripts/lib/backcast_artifacts.py`. **This branch touches none of them**
+  (`git diff --name-only origin/main HEAD` over the four builder sources is
+  empty).
+* Exactly one commit since this branch's merge-base touches any of them:
+  **`7fd12b91`**, whose entire builder-source diff is
+  `bundle_input_path` → `require_bundle_input` at three read sites in
+  `render_calibration_html.build_payload` (9 insertions, 4 deletions).
+
+**The change is AST-visible but numerically inert.** `require_bundle_input`
+raises a named error where the old call let a `None` path reach pandas; where
+the file exists it reads the identical parquet. It cannot move a payload number
+— and `payload_fingerprint()` hashes the AST, so it moved the fingerprint
+anyway. The parts' recorded aggregate `64b6829fb757` is then absent from
+`PAYLOAD_FINGERPRINT_BY_BUILDER`, the resolver fails closed
+(*"unresolvable: unknown builder state"*), and every part reads STALE.
+
+**So this is a FALSE STALE, and the obvious one-line remedy does not clear it.**
+Adding `64b6829fb757` to `PAYLOAD_FINGERPRINT_BY_BUILDER` records the payload
+state that emitted those parts truthfully, but that state's payload fingerprint
+is *by construction* not HEAD's, so the gate still reports the parts as not
+reproducing. Clearing it properly needs either a regeneration of all 31 parts
+under HEAD's builder, or a fingerprint that can express "AST moved, numbers did
+not" — which the current design deliberately cannot.
+
+**ESCALATED, NOT ABSORBED** (rule 14 `[R-ACCURATE]`, and the charter's
+*"BEFORE REGISTERING: diff bench parts against HEAD, confirm ZERO movement"*).
+This lane does **not** regenerate MISO's bench parts: doing so would re-base the
+actuals of a running A/B mid-flight, and the condition is cross-ISO, so the
+repair belongs with `7fd12b91`'s owner rather than with a single ISO lane
+(rule 25 `[R-ISO-SCOPE]`).
+
+**WHAT IT DOES AND DOES NOT COST THIS A/B.** Both legs are scored against the
+**same committed bench**, so the bench cancels in the delta and every
+control-vs-arm number in the RESULT is unaffected. What is affected is the
+**absolute** C1 verdict of either leg, which is scored against parts the gate
+says it cannot show reproduce at HEAD. The RESULT will say so where it quotes
+an absolute C1 band, and will not quote one as certified.
