@@ -255,6 +255,36 @@ underneath.
 
 ---
 
+## 6b. The C2 PASS carries no information about the gas family — by design, not by defect
+
+A reader of the keeper's `metrics.json` sees `C2 system volume (gas/coal families): PASS` and could
+reasonably conclude NWPP's gas volume is fine. It is not, and C2 was never asked.
+
+| year | family | C2 status | model | actual | Δ TWh | Δ % |
+|---|---|---|---|---|---|---|
+| 2023 | **gas** | **PASS** | 58.25 | 71.78 | **−13.53** | **−18.8 %** |
+| 2023 | coal | PASS | 44.30 | 40.40 | +3.90 | +9.7 % |
+| 2024 | **gas** | **PASS** | 62.41 | 76.82 | **−14.41** | **−18.8 %** |
+| 2024 | coal | PASS | 36.71 | 34.44 | +2.27 | +6.6 % |
+| 2025 | gas | SKIPPED | 68.21 | 71.27 | −3.06 | −4.3 % |
+| 2025 | coal | SKIPPED | 35.01 | 42.26 | −7.25 | −17.2 % |
+
+`score_sysvol` hard-codes `"status": PASS` for a **fully-reported** family — *"fully-reported family:
+governed by C1 per-class"* — and delegates every verdict to C1's per-class band, so it cannot fail on
+its own and cannot fail twice for a row C1 already failed. The 2023 gas row even prints
+`magnitude: "C1 flags: CC_REGULAR"` beside its PASS. **This is the documented rubric v2.5 design
+(owner amendment 2026-07-13), not a bug**, and the reasons for retiring the old ±2.5 %-of-family
+percent band are good ones: it invented fails on mid-size families and masked real per-class misses
+that netted out.
+
+**Recorded because of what it means for reading this keeper**, not as a criticism of the rubric: the
+only year whose gas family is measured against a family-level percent band is 2025, the preliminary
+vintage, where it is **SKIPPED**. So no gate anywhere in NWPP's determination tests the gas family's
+volume, and a **−18.8 % family error in two consecutive years passes C2 silently**. That is the same
+object §3 measures from the demand side, seen through the scorer.
+
+---
+
 ## 7. Carried, absorbed nowhere
 
 * **C4 `dispatch_corr` still FAILS in all three years.** Re-scored on the committed artifacts: coal
