@@ -311,9 +311,11 @@ object §3 measures from the demand side, seen through the scorer.
   `git diff --name-status origin/main...HEAD -- src scripts` returns **two `A` rows and nothing else**:
   the two new probe files, which no module imports. There is **no `M` under `src/` or `scripts/`**, so
   no code path this lane could have moved exists, and every failure in
-  `tests/unit/{pipeline,config,data}` is pre-existing by definition. A partial run confirms they still
-  fire — e.g. `test_forecast_xyear_warmstart_flag.py::TestFieldRegistration::test_default_cache_key_unmoved`.
-  **Not repaired; they belong to other lanes.**
+  `tests/unit/{pipeline,config,data}` is pre-existing by definition. **An exact whole-suite census was
+  NOT obtained** and is not claimed: the run was stopped at **27 % with 17 failures**, the first being
+  `test_forecast_xyear_warmstart_flag.py::TestFieldRegistration::test_default_cache_key_unmoved`
+  (also reproduced on its own under `-x`). Extrapolated, that is consistent with the ~35 the charter
+  carries. **Not repaired; they belong to other lanes.**
 * **CORRECTION to the charter's carried list: `scripts/check_cache_key_registration.py` now PASSES on
   `main`.** It reads *"ok: 869 ScenarioConfig fields, 323 registered in `_CACHE_KEY_OPTIONAL_FIELDS`,
   all resolve; 323 declared defaults all match HEAD; 309 solve-surface names across 7 module(s), all
