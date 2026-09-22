@@ -15565,7 +15565,28 @@ class ScenarioConfig:
     # SCOPE. One map for membership AND for the divide, because they are the
     # same object: a bin the LP does not dispatch has nothing to derate, and a
     # bin it does dispatch must be derated against what it dispatches (that
-    # second half is the SPP-48 Oklaunion pathology, generalized). Threaded,
+    # second half is the SPP-48 Oklaunion pathology, generalized).
+    #
+    # THE CHP BINS ARE EXCLUDED, ON CONSTRUCTION AND NOT ON ANY RESIDUAL
+    # (outages._DISPATCHED_DENOM_EXCLUDED_GROUPS = CC_CHP / CT_CHP / ST_CHP).
+    # There cap_LP is a DELIBERATE CARVE-OUT -- the grid-facing residual after
+    # the behind-the-meter host steam is held out (fleet/assembly.py's
+    # grid_cap) -- not the plant's dispatchable capacity, so the identity above
+    # does not apply. And the incumbent denominator is right there: if a CHP
+    # unit's output splits host/grid like its plant's, the share of the GRID bin
+    # its outage removes is ucap*grid_frac / (nameplate*grid_frac) =
+    # ucap/nameplate, which is what the accumulator already divides by;
+    # substituting cap_LP would over-remove by 1/grid_frac. Measured over the
+    # bins that actually carry routed extract rows (MISO 2020, zero LP,
+    # scripts/probes/_miso266_routed_bin_exposure.py): EVERY CC_CHP bin (16/16)
+    # and EVERY ST_CHP bin (27/27) sits above 1.02, quantized on 1.538 = 1/0.65
+    # and 3.333 = 1/0.30 -- the grid shares themselves -- to a maximum of 10.0
+    # at ST_CHP 1393, whose LP bin is the `committed` tranche alone (42.5 MW
+    # against a 424.7 MW plant). Two phenomena present as denom != cap_LP and
+    # rule 19 [R-ONE-MECH] says one mechanism addresses one of them; the CHP
+    # denominator question is ROUTED, not absorbed -- it needs its own
+    # identification of how a host/grid split moves under an outage, which no
+    # measurement in this repo yet supplies. Threaded,
     # like st_capacity_basis and per_unit_clip, into the std >= 5-day, short and
     # partial layers AND the lay-up loader (the additivity contract) -- AND,
     # unlike them, into the declared-event MAXGEN layer, which divides by the

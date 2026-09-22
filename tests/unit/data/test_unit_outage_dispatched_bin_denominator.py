@@ -208,6 +208,92 @@ class TestMembership:
         assert _run(df, roster) == {}
 
 
+class TestChpExclusion:
+    """The CHP bins keep their incumbent nameplate denominator, on construction.
+
+    At a CHP bin ``cap_LP`` is a DELIBERATE CARVE-OUT — the grid-facing residual
+    after the behind-the-meter host steam is held out — not the plant's
+    dispatchable capacity, so the flag's identity does not apply and the
+    incumbent denominator is the correct one (if a unit's output splits
+    host/grid like its plant's, the share of the GRID bin its outage removes is
+    ``ucap x grid_frac / (nameplate x grid_frac) = ucap / nameplate``).
+    """
+
+    def test_a_chp_bin_is_the_identity(self, monkeypatch):
+        """Armed or not, a CHP bin's factor is byte-identical."""
+        _patch(monkeypatch, {(1073, "ST_CHP"): 111.7})
+        df = _events(
+            [
+                {
+                    **_SCHAHFER_WINDOW,
+                    "plant": 1073,
+                    "unit": "1",
+                    "cap": 40.0,
+                    "group": "ST_CHP",
+                }
+            ]
+        )
+        # The LP dispatches only the 72.6 MW grid share (ratio 1.538 = 1/0.65).
+        roster = lp_bin_capacity_index([_Gen(1073, "ST_CHP")], np.array([72.6]))
+        np.testing.assert_array_equal(
+            _run(df, None)[(1073, "ST_CHP")], _run(df, roster)[(1073, "ST_CHP")]
+        )
+
+    def test_the_excluded_set_is_exactly_the_three_chp_groups(self):
+        assert outages._DISPATCHED_DENOM_EXCLUDED_GROUPS == frozenset(
+            {"CC_CHP", "CT_CHP", "ST_CHP"}
+        )
+
+    def test_a_chp_bin_absent_from_the_reconstructed_map_is_still_skipped(
+        self, monkeypatch
+    ):
+        """The exclusion is total: membership at a CHP bin is unchanged too."""
+        _patch(monkeypatch, {})
+        df = _events(
+            [
+                {
+                    **_SCHAHFER_WINDOW,
+                    "plant": 1073,
+                    "unit": "1",
+                    "cap": 40.0,
+                    "group": "CC_CHP",
+                }
+            ]
+        )
+        roster = lp_bin_capacity_index([_Gen(1073, "CC_CHP")], np.array([72.6]))
+        assert _run(df, roster) == {}
+
+    def test_a_non_chp_bin_at_the_same_plant_still_moves(self, monkeypatch):
+        """The exclusion is per BIN, not per plant.
+
+        MISO plant 1073 carries BOTH an under-denominated COAL bin (43.6 MW of
+        LP against 29.3 MW of map) and an over-denominated ST_CHP bin. The flag
+        must reach the first and leave the second.
+        """
+        _patch(monkeypatch, {(1073, "COAL"): 29.3, (1073, "ST_CHP"): 111.7})
+        roster = lp_bin_capacity_index(
+            [_Gen(1073, "COAL"), _Gen(1073, "ST_CHP")], np.array([43.6, 72.6])
+        )
+        coal = _events([{**_SCHAHFER_WINDOW, "plant": 1073, "unit": "1", "cap": 14.0}])
+        off = _run(coal, None)[(1073, "COAL")]
+        on = _run(coal, roster)[(1073, "COAL")]
+        assert float(on.min()) > float(off.min())  # the COAL bin moved
+        chp = _events(
+            [
+                {
+                    **_SCHAHFER_WINDOW,
+                    "plant": 1073,
+                    "unit": "1",
+                    "cap": 40.0,
+                    "group": "ST_CHP",
+                }
+            ]
+        )
+        np.testing.assert_array_equal(
+            _run(chp, None)[(1073, "ST_CHP")], _run(chp, roster)[(1073, "ST_CHP")]
+        )
+
+
 class TestIdentityAndScope:
     def test_agreeing_maps_leave_the_factor_untouched(self, monkeypatch):
         """Where the two constructions agree the flag is the identity."""
@@ -230,7 +316,7 @@ class TestIdentityAndScope:
         assert tail, "the ERCOT branch moved; re-check this scoping assertion"
         ercot_branch, _, generic_branch = tail.partition("    else:")
         assert "lp_bin_capacity" not in ercot_branch
-        assert "cap = dict(lp_bin_capacity)" in generic_branch
+        assert "_dispatched_denominator(cap, lp_bin_capacity)" in generic_branch
 
     @pytest.mark.parametrize(
         "loader",

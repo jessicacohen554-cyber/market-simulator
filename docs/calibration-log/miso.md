@@ -14903,7 +14903,28 @@ share. Non-ERCOT only; mutually exclusive with `unit_outage_lp_capacity_basis`
 and `unit_outage_extract_basis_share` (the loaders raise). Fully plumbed through
 `run_year` / `solve_and_persist` / meta / `--set` / CLI, which is the rule 24
 `[R-REGISTRY]` gap FINDING-miso265 §4 escalated and this field does not repeat.
-22 unit tests on a synthetic fleet and extract.
+26 unit tests on a synthetic fleet and extract.
+
+**THE CHP BINS ARE EXCLUDED, ON CONSTRUCTION AND BEFORE ANY SHARD RETURNED A
+NUMBER.** A zero-LP census over EVERY model bin and EVERY armed layer
+(`_miso266_denominator_blast_radius.py`, `_miso266_routed_bin_exposure.py`) found
+a second, systematic exposure the coal-scoped instrument could not see: over the
+bins that carry routed extract rows, **EVERY CC_CHP bin (16 of 16) and EVERY
+ST_CHP bin (27 of 27)** sits above 1.02, quantized on **1.538 = 1/0.65** and
+**3.333 = 1/0.30** — the grid shares themselves — to a maximum of **10.0** at
+ST_CHP 1393, whose LP bin is the `committed` tranche alone (42.5 MW against a
+424.7 MW plant). There `cap_LP` is a DELIBERATE CARVE-OUT — `assembly.py`'s
+`grid_cap` holds the behind-the-meter host steam out of the LP — not the plant's
+dispatchable capacity, **so the identity does not apply and the incumbent
+denominator is the correct one**: a unit whose output splits host/grid like its
+plant's removes `ucap·grid_frac / (nameplate·grid_frac) = ucap/nameplate` of the
+GRID bin, which is exactly what the accumulator already divides by; substituting
+`cap_LP` would over-remove by `1/grid_frac`, **up to 10×**. Two phenomena present
+as `denom != cap_LP` and rule 19 `[R-ONE-MECH]` says one mechanism addresses one
+of them. The CHP denominator question is **ROUTED, not absorbed** — it needs its
+own identification of how a host/grid split moves under an outage, which no
+measurement in this repo supplies. The coal object is byte-identical before and
+after the exclusion, as it must be.
 
 **ZERO-LP SIZING, before any solve.** Hard-zero contradicted hours **23,849 →
 3,234 (-86.4 %)**, contradicted energy 5.184 → 0.922 TWh, against the four

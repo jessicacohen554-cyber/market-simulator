@@ -957,6 +957,77 @@ def _iso_plant_capacity_cached(
     return cap
 
 
+#: Plant groups EXCLUDED from ``unit_outage_dispatched_bin_denominator``
+#: (miso-266). At these bins the LP's capacity is a DELIBERATE CARVE-OUT of the
+#: plant rather than the plant's dispatchable capacity: a CHP bin's tranches
+#: carry only the GRID-FACING residual after the behind-the-meter host steam is
+#: held out (``fleet/assembly.py``'s ``grid_cap``), so ``cap_LP`` is a fraction
+#: of the plant by construction. Measured on the MISO keeper's own 2020 fleet
+#: (``scripts/probes/_miso266_routed_bin_exposure.py``): over the bins that
+#: actually carry routed extract rows, **every** CC_CHP bin (16 of 16) and
+#: **every** ST_CHP bin (27 of 27) has ``denom / cap_LP`` above 1.02, quantized
+#: on 1.538 = 1/0.65 and 3.333 = 1/0.30 — the grid shares themselves — up to
+#: 10.0 at ST_CHP 1393, whose LP bin is the ``committed`` tranche alone (42.5 MW
+#: against a 424.7 MW plant).
+#:
+#: **AND THE INCUMBENT DENOMINATOR IS RIGHT THERE.** If a CHP unit's output is
+#: split host/grid in the same proportion as its plant's, then the grid MW its
+#: outage removes is ``ucap x grid_frac``, and the share of the grid bin that is
+#: ``ucap x grid_frac / (nameplate x grid_frac) = ucap / nameplate`` — the
+#: plant-nameplate denominator the accumulator already uses. Substituting
+#: ``cap_LP`` would over-remove by ``1 / grid_frac``, i.e. by up to 10x.
+#:
+#: So this is TWO PHENOMENA that both present as ``denom != cap_LP``, and rule 19
+#: ``[R-ONE-MECH]`` says one mechanism addresses one of them. The flag's identity
+#: argument covers a bin whose ``cap_LP`` IS the plant's dispatchable capacity;
+#: it does not cover a bin whose ``cap_LP`` is a held-out share, and the scoping
+#: is decided on that construction — from a census taken BEFORE any solve, never
+#: from a residual (rule 1 ``[R-STRUCT]``). The CHP denominator question is
+#: ROUTED, not absorbed: it needs its own identification of how a host/grid split
+#: moves under an outage, which no measurement in this repo yet supplies.
+#:
+#: Mirrors ``fleet.campd_bins._CHP_GROUPS`` and
+#: ``model.reserves.spec._ERCOT_POSTURE_CHP_GROUPS``, which enumerate the same
+#: three groups for their own reasons.
+_DISPATCHED_DENOM_EXCLUDED_GROUPS: frozenset[str] = frozenset(
+    {"CC_CHP", "CT_CHP", "ST_CHP"}
+)
+
+
+def _dispatched_denominator(
+    reconstructed: dict[tuple[int, str], float],
+    lp_bin_capacity: tuple[tuple[tuple[int, str], float], ...],
+) -> dict[tuple[int, str], float]:
+    """Merge the dispatched roster over the reconstructed one, CHP bins excepted.
+
+    ``ScenarioConfig.unit_outage_dispatched_bin_denominator`` (miso-266). Every
+    group outside :data:`_DISPATCHED_DENOM_EXCLUDED_GROUPS` takes its membership
+    AND its denominator from the LP's own roster; the CHP groups keep the
+    reconstructed entry they have today, unchanged, so the flag is the identity
+    on them.
+
+    Args:
+        reconstructed: :func:`_iso_plant_capacity`'s map.
+        lp_bin_capacity: :func:`lp_bin_capacity_index`'s sorted roster.
+
+    Returns:
+        The merged ``{(plant_code, plant_group): MW}`` denominator.
+    """
+    merged = {
+        k: v
+        for k, v in reconstructed.items()
+        if k[1] in _DISPATCHED_DENOM_EXCLUDED_GROUPS
+    }
+    merged.update(
+        {
+            k: v
+            for k, v in lp_bin_capacity
+            if k[1] not in _DISPATCHED_DENOM_EXCLUDED_GROUPS
+        }
+    )
+    return merged
+
+
 def lp_bin_capacity_index(
     generators: Sequence[object],
     pmax: np.ndarray | None = None,
@@ -1291,10 +1362,14 @@ def _unit_outage_factors_from_events(
     ``ScenarioConfig.unit_outage_dispatched_bin_denominator``): REPLACE the
     reconstructed ``cap`` map with the DISPATCHED fleet's own per-bin capacity
     (:func:`lp_bin_capacity_index`), which is the capacity this factor is then
-    applied to. One map for the roster and for the divide, because they are the
-    same object: a bin the LP does not dispatch has nothing to derate, and a bin
-    it does dispatch must be derated against what it dispatches. That closes the
-    two halves of one defect at once —
+    applied to — **at every group except the CHP bins, whose ``cap_LP`` is a
+    held-out grid share rather than the plant's dispatchable capacity and whose
+    incumbent nameplate denominator is the correct one**
+    (:data:`_DISPATCHED_DENOM_EXCLUDED_GROUPS`; the merge is
+    :func:`_dispatched_denominator`). One map for the roster and for the divide,
+    because they are the same object: a bin the LP does not dispatch has nothing
+    to derate, and a bin it does dispatch must be derated against what it
+    dispatches. That closes the two halves of one defect at once —
 
     * the DENOMINATOR, where the reconstructed map is blind to the exit-cohort
       bins ``fleet.assembly`` synthesizes under the SAME ``(plant_code,
@@ -1363,7 +1438,14 @@ def _unit_outage_factors_from_events(
             # they are one object (see the docstring). Built from the very
             # generators/pmax this factor is applied to, so `denom == cap_LP`
             # holds by construction rather than by reconstruction.
-            cap = dict(lp_bin_capacity)
+            #
+            # EXCEPT at the CHP bins, where `cap_LP` is a held-out grid share
+            # rather than the plant's dispatchable capacity and the incumbent
+            # nameplate denominator is the correct one — see
+            # `_DISPATCHED_DENOM_EXCLUDED_GROUPS`. Those bins keep `cap[bin]`
+            # exactly, so the flag is the identity on them and a CHP bin absent
+            # from the roster is still skipped exactly as it is today.
+            cap = _dispatched_denominator(cap, lp_bin_capacity)
         target_fn = partial(
             _generic_unit_outage_target, per_unit_crosswalk=per_unit_crosswalk
         )
@@ -1806,15 +1888,7 @@ def unit_outage_maxgen_derate_factors(
             "derate denominator — arm exactly one construction"
         )
     cap = (
-        # miso-266: the DISPATCHED fleet's own per-bin roster REPLACES the
-        # reconstructed map, for membership and for the divide alike. This
-        # layer shares the std layer's `derate_mw / cap[bin]` arithmetic and
-        # the same (plant_code, plant_group) key, so it carries the same
-        # denominator defect and must move with it (rule 19 [R-ONE-MECH]).
-        # Non-ERCOT only, matching the accumulator's own scoping.
-        dict(lp_bin_capacity)
-        if (lp_bin_capacity is not None and iso != "ERCOT")
-        else _iso_plant_capacity(
+        _iso_plant_capacity(
             iso,
             cc_steam_part_reclass,
             cc_nameplate_basis,
@@ -1824,6 +1898,14 @@ def unit_outage_maxgen_derate_factors(
         if mid_vintage_exit_carry
         else _iso_plant_capacity(iso, cc_steam_part_reclass, cc_nameplate_basis)
     )
+    if lp_bin_capacity is not None and iso != "ERCOT":
+        # miso-266: the DISPATCHED fleet's own per-bin roster, CHP bins excepted
+        # (_DISPATCHED_DENOM_EXCLUDED_GROUPS). This layer keeps its own
+        # accumulator loop but divides by the same cap[bin] on the same key, so
+        # it carries the identical denominator defect and must move with the
+        # shared accumulator (rule 19 [R-ONE-MECH]). Non-ERCOT only, matching
+        # the accumulator's own scoping.
+        cap = _dispatched_denominator(cap, lp_bin_capacity)
     sums: dict[tuple[int, str], np.ndarray] = {}
     for r in df.itertuples(index=False):
         code = int(r.facility_id)

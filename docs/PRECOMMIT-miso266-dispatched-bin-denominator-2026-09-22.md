@@ -16,7 +16,10 @@ ANSWER  : direction (a) is CLOSED BY CONSTRUCTION — under per_unit_clip the su
           0.814x the dispatched capacity at exactly the contradicted plants.
 LANDED  : ScenarioConfig.unit_outage_dispatched_bin_denominator, GATED default
           OFF, zero free parameters, cache-key registered at its False drop
-          value, 22 unit tests, matrix row + a cell in all nine ISO shards.
+          value, 26 unit tests, matrix row + a cell in all nine ISO shards.
+SCOPED  : the CHP bins are EXCLUDED, on construction, after a zero-LP census over
+          every model bin found a SECOND phenomenon wearing the same surface —
+          see §2.1. Added before any shard returned a number.
 ```
 
 ---
@@ -76,14 +79,18 @@ plant to zero in 8,019 hours its own meter says it ran.
 
 ### 1.2 The signature that settles it: the denominator does not know what year it is
 
-| year | LP COAL total MW | denominator total MW | ratio | bins denom < LP by >2 % | bins LP dispatches that the map LACKS |
+| year | LP COAL total MW | denominator total MW | ratio | bins denom < LP by >2 % | bins denom > LP by >2 % |
 |---|---:|---:|---:|---:|---:|
-| 2020 | 54,238.1 | **50,365.4** | 0.9286 | 10 | 4 (538.0 MW) |
-| 2021 | 54,227.8 | **50,365.4** | 0.9288 | 10 | 4 |
-| 2022 | 54,065.1 | **50,365.4** | 0.9316 | 9 | 4 |
-| 2023 | 54,038.0 | **50,365.4** | 0.9320 | 9 | 4 |
-| 2024 | 53,945.7 | **50,365.4** | 0.9336 | 8 | 4 |
-| 2025 | 53,391.6 | **50,365.4** | 0.9433 | 7 | 4 |
+| 2020 | 54,238.1 | **50,365.4** | 0.9286 | 10 | 7 |
+| 2021 | 54,227.8 | **50,365.4** | 0.9288 | 10 | 7 |
+| 2022 | 54,065.1 | **50,365.4** | 0.9316 | 9 | 7 |
+| 2023 | 54,038.0 | **50,365.4** | 0.9320 | 9 | 7 |
+| 2024 | 53,945.7 | **50,365.4** | 0.9336 | 8 | 7 |
+| 2025 | 53,391.6 | **50,365.4** | 0.9433 | 7 | 7 |
+
+Plus, in 2020 (the year the blast radius was measured over every group,
+`scripts/probes/_miso266_denominator_blast_radius.py`), **10 COAL bins carrying
+2.557 GW of dispatched capacity are ABSENT from the reconstructed map entirely**.
 
 The denominator is **50,365.4 MW in every year, to the tenth of a MW**, while
 the fleet it is supposed to describe retires 846 MW of coal across the span.
@@ -125,8 +132,11 @@ the reconstructed one.
 * **One map for MEMBERSHIP and for the DIVIDE**, because they are the same
   object: a bin the LP does not dispatch has nothing to derate, and a bin it
   does dispatch must be derated against what it dispatches. The second half is
-  the SPP-48 Oklaunion pathology generalized — 4 MISO COAL bins (538.0 MW) ride
-  un-derated through their own measured outages today.
+  the SPP-48 Oklaunion pathology generalized. **10 MISO COAL bins (2.557 GW) are
+  absent from the reconstructed map entirely**; of those, **1 carries routed
+  extract rows in the armed layers today**, so the membership half is worth one
+  bin now and nine latent ones that would be silently skipped the moment they
+  acquired a window.
 * **Threaded into every layer that divides by `cap[bin]`** (rule 19
   `[R-ONE-MECH]`): std ≥5-day, short, partial, the lay-up loader (whose
   contract is that a lay-up share and an outage share are additive) **and
@@ -134,6 +144,8 @@ the reconstructed one.
   `cap[bin]` on the same key. MAXGEN is INCLUDED here although `per_unit_clip`
   and `st_capacity_basis` exclude it — their exclusions rest on properties of
   the numerator and of window grain; this flag touches neither.
+* **THE CHP BINS ARE EXCLUDED, ON CONSTRUCTION — see §2.1.** Everything above
+  describes a bin whose `cap_LP` IS the plant's dispatchable capacity.
 * **Non-ERCOT only**, like every sibling basis flag.
 * **Mutually exclusive** with `unit_outage_lp_capacity_basis` and
   `unit_outage_extract_basis_share` — all three set the denominator, and the
@@ -151,6 +163,62 @@ the reconstructed one.
   FINDING-miso265 §4 found two registered outage tunables with no `run_year`
   plumbing at all, which `replay_keeper`'s binding guard rejects outright — a
   rule 24 `[R-REGISTRY]` gap this field does not repeat.
+
+### 2.1 THE CHP BINS ARE EXCLUDED — the census found a second phenomenon, and it is not this one
+
+**This scoping was NOT in the mechanism as first written.** It was added after a
+zero-LP census over EVERY model bin and EVERY armed layer
+(`scripts/probes/_miso266_denominator_blast_radius.py`,
+`_miso266_routed_bin_exposure.py`) found a systematic exposure the coal-scoped
+instrument could not see — before any shard returned a number, so nothing here
+is residual-driven.
+
+Over the bins that actually **carry routed extract rows** (MISO 2020):
+
+| group | bins | LP GW | denom < LP by >2 % | denom > LP by >2 % | min | p50 | max |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| COAL | 55 | 48.13 | 10 | 4 | 0.414 | 1.000 | 2.222 |
+| CC_REGULAR | 41 | 26.78 | 15 | 8 | 0.505 | 1.000 | 1.936 |
+| CT_PEAKER *(maxgen only)* | 87 | 19.83 | 2 | 0 | 0.202 | 1.000 | 1.000 |
+| ST_GAS | 23 | 11.89 | 1 | 0 | 0.505 | 1.000 | 1.000 |
+| **CC_CHP** | 16 | 2.88 | 0 | **16 of 16** | 1.538 | **1.538** | 3.333 |
+| **CT_CHP** *(maxgen only)* | 4 | 0.33 | 0 | **4 of 4** | 1.538 | **3.333** | 3.333 |
+| **ST_CHP** | 27 | 0.41 | 0 | **27 of 27** | 1.250 | **3.333** | 7.013 |
+
+**Every CHP bin, without exception, sits above 1.0 — and the ratios are
+quantized on 1.538 = 1/0.65 and 3.333 = 1/0.30.** Those are grid shares, not
+noise. At ST_CHP 1073 the LP carries 72.6 MW against a 111.7 MW plant; at
+ST_CHP 1393 it carries the `committed` tranche alone, 42.5 MW against 424.7 MW,
+a ratio of exactly 10.0.
+
+**Because at a CHP bin `cap_LP` is a DELIBERATE CARVE-OUT, not the plant's
+dispatchable capacity.** `fleet/assembly.py`'s `grid_cap` holds the
+behind-the-meter host steam out of the LP, so the bin is a fraction of the plant
+by construction.
+
+**And the incumbent denominator is right there.** If a CHP unit's output splits
+host/grid in the same proportion as its plant's, the grid MW its outage removes
+is `ucap x grid_frac`, and the share of the **grid** bin that is
+
+```
+ucap x grid_frac / (nameplate x grid_frac)  =  ucap / nameplate
+```
+
+— the plant-nameplate denominator the accumulator already uses. Substituting
+`cap_LP` would over-remove by `1 / grid_frac`, i.e. **by up to 10x**.
+
+So `denom != cap_LP` is the surface of **two different phenomena**, and rule 19
+`[R-ONE-MECH]` says one mechanism addresses one of them. The flag now excludes
+`CC_CHP` / `CT_CHP` / `ST_CHP` (`outages._DISPATCHED_DENOM_EXCLUDED_GROUPS`),
+where it is the exact identity — same denominator, same membership, same factor.
+**The CHP denominator question is ROUTED, not absorbed**: answering it needs an
+identification of how a host/grid split moves under a unit outage, which no
+measurement in this repo supplies. Stating it is not the same as fixing it, and
+this session does not fix it.
+
+**The coal object is unmoved by the exclusion**, as it must be — no coal bin is
+in the excluded set, and the hard-zero sizing in §3.1 is byte-identical before
+and after.
 
 ## 3. THE SIZE, AT ZERO LP, BEFORE ANY SOLVE
 
