@@ -55,8 +55,11 @@ def measured(year: int) -> pd.DataFrame:
 def top_decile_share(gen: np.ndarray, load: np.ndarray, month: np.ndarray) -> float:
     """Share of each month's energy produced in that month's top-10 % load hours."""
     top = tot = 0.0
+    ok = np.isfinite(gen) & np.isfinite(load)
     for m in range(12):
-        sel = month == m
+        sel = (month == m) & ok
+        if not sel.any():
+            continue
         thr = np.quantile(load[sel], 0.9)
         top += gen[sel][load[sel] >= thr].sum()
         tot += gen[sel].sum()
@@ -92,10 +95,13 @@ def score(leg: Path, ctl: Path, arm: str, year: int) -> dict:
     out["twh_leg"], out["twh_ctl"] = float(h.sum() / 1e6), float(c.sum() / 1e6)
     out["g2_rel"] = float((h.sum() - c.sum()) / c.sum())
     out["g2_pass"] = bool(abs(out["g2_rel"]) < G2_TOL)
+    # EIA-930 SOCO WAT has gaps (2024-11-25..12-31, 1,343 h; 2025-01 121 h):
+    # measured statistics are over the reported hours only.
+    out["meas_missing_hours"] = int(np.isnan(wat).sum())
     for tag, s in (("leg", h[:n]), ("ctl", c[:n]), ("meas", wat)):
-        out[f"zero_{tag}"] = int((s < 1.0).sum())
-        out[f"p05_{tag}"] = float(np.quantile(s, 0.05))
-        out[f"p95_{tag}"] = float(np.quantile(s, 0.95))
+        out[f"zero_{tag}"] = int((s[np.isfinite(s)] < 1.0).sum())
+        out[f"p05_{tag}"] = float(np.nanquantile(s, 0.05))
+        out[f"p95_{tag}"] = float(np.nanquantile(s, 0.95))
         out[f"topdec_{tag}"] = float(top_decile_share(s, load, mon))
     lv = stamped_level(arm, year)
     if lv is not None:
