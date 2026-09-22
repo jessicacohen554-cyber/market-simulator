@@ -219,7 +219,50 @@ owner rules.
 
 ## 6. Control and G-DRIFT (rule 29(b))
 
-*(Filled below before any shard launches — see §6.1.)*
+No control solve. `git diff <keeper basis_sha> 7c1fed78 -- src/market_sim scripts/run_calibration.py
+scripts/run_calibration_full.py scripts/lib scripts/replay_keeper.py data/raw/_validation-source
+data/raw/reference`, every hunk classified (the pinned SHA below adds nothing under those paths:
+`7c1fed78..origin/main` is empty there, and this lane's own commits touch only `scripts/data/`,
+`scripts/probes/`, `docs/` and one results JSON).
+
+| keeper | basis SHA | files | verdict |
+|---|---|---:|---|
+| SPP `spp71_ensemble_{span,rung}` | `6edc996d` | 15 | **ALL INERT** |
+| NEISO `neiso112_mer_span` | `dd61092c` | 36 | **ALL INERT** |
+| MISO `miso264_anchor_span` | `23b5d44e` | 33 | **ALL INERT** |
+
+The union of hunks, by class:
+
+| hunk | verdict | reason |
+|---|---|---|
+| `model/lp/p0_cache.py` + gate in `model.py` | INERT | needs `MARKET_SIM_P0_CACHE` set; default off, no script sets it |
+| PERF-C S1/S2 — P0 `full_extract=False`, P1 seed un-nested, `rows.py::_add_bounds` concat once | INERT | replay pins `WARMSTART_XYEAR=0` / `P1_BASIS_SEED=0`; byte-gated on this very NEISO keeper, six years, atol = rtol = 0 (`FINDING-perfc-s1/s2`) |
+| `unit_outage_dispatched_bin_denominator` (outages, arrays, floors, CLI) | INERT | new field, default `False`, absent from every keeper |
+| coal-sync block: per-year fraction, day grain, `_window_shape` hoist, CHP duty window, `commitment_floor_window_netload` | INERT | flags off; SPP-71's ensemble branch short-circuits before the changed code and is itself not in the diff |
+| `measured_cc_heat_rates`, `coal_mustrun_requires_measured_row`, `nyiso_ct_peaker_committed_measured`, `benchmark_membership_vintage_union` | INERT | default `False`, absent from the recipes / NYISO-scoped |
+| `hydro_pondage_bound` + resolver | INERT | off in every keeper → `UNSET` as before |
+| fuel hubs / basis / trajectories (`_flow_date_staircase`, CAISO bridge, SOCO table) | INERT | flags off or other ISO; MISO reaches the staircase with `prior_year_dated=None`, identical output |
+| `backcast_config` NWPP take-or-pay / regulated band | INERT | NWPP-scoped; MISO's explicit `False` is overridden by its keeper's `True` before the only consumer |
+| SPP-67 curtailment provider in `renewables.py` | INERT | SPP-only provider, not in the SPP-71 range |
+| CLI flags, `scenarios.py` cache-key lists, registries, `bundle_io`, `session_score`, reporting | INERT | CLI-only (replay calls `solve_and_persist` directly), governance, or registration-only |
+| `new_entry.py`, marginal-abatement constants | INERT | forecast / reporting only |
+
+Static checks behind it: an AST diff of `ScenarioConfig` finds **zero changed defaults** on existing
+fields (15 / 12 / 2 new fields, all `= False`); all keeper `meta.json` files map onto HEAD's
+`solve_and_persist` with 0 unmapped keys (also verified by running `replay_keeper.build_kwargs`
+locally). **Form 4 is valid for all three: the committed keepers are the controls.**
+
+**Scoring drift, stated before any number.** (1) `scripts/legitimacy_diagnostics.py` changed
++224 lines in the NEISO/MISO ranges, so an arm's C8 / D-rows regenerated at HEAD are **not**
+comparable to the keeper's committed `legitimacy_diagnostics.json`; C8 is reported, and where it is
+compared, it is against a HEAD-regenerated control. (2) G4 scores arm and keeper against the
+**same committed bench parts** (`screen_collateral_gate.py` holds the bench fixed), never a
+rebuilt benchmark — the MISO frame-regeneration drift of `RESULT-miso266` §5.1 cannot enter.
+
+**Operational, from the audit.** SPP's rung (2019–22) and span (2023–25) are two recipes (the rung
+adds `mid_vintage_exit_carry`), so each year replays from its own bundle. MISO's recipe arms
+`coal_fuel_inventory`, whose `data/clean` partitions every MISO shard must build first (the
+completeness guard is fatal without them). `MARKET_SIM_P0_CACHE` stays unset.
 
 ---
 
