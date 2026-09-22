@@ -30,11 +30,11 @@ Union of `years` over every PJM sidecar in `frontend/data/backcast/registry/`:
 
 | registered run | years | role |
 |---|---|---|
-| `2026-09-20-pjm-h15-coalwindow-span` | 2023, 2024, 2025 | keeper |
-| `2026-09-20-pjm-h15-coalwindow-touchpoint` | 2020, 2021, 2022 | stamped to keeper |
+| `2026-09-22-pjm-h16-coalgrain-span` | 2023, 2024, 2025 | keeper (promoted by pjm-h16, `49c237e90`) |
+| `2026-09-22-pjm-h16-coalgrain-touchpoint` | 2020, 2021, 2022 | stamped to keeper |
 
 **Six years, not three.** Both runs carry the identical recipe (run_config diff: `years` and the
-per-year gas-price reference only; `hydro_ror_split=false`, `pjm_da_virtual_bids=true`,
+per-year gas-price reference only; `coal_sync_window_commitment_grain=true`, `hydro_ror_split=false`, `pjm_da_virtual_bids=true`,
 `hydro_min_flow_floor=false`, `hydro_dispatch_envelope=false` in both). A promotion that covered
 only 2023–2025 would leave the touchpoint stamped to a pruned keeper, which rule 35(c) forbids.
 
@@ -46,10 +46,11 @@ only 2023–2025 would leave the touchpoint stamped to a pruned keeper, which ru
 
 ## 5. Control and G-DRIFT (rule 29(b))
 
-Control = the committed keeper bundles (`pjm_h15_coalwindow_span`, `pjm_h15_coalwindow_touchpoint`),
-solved at `6de36475e9b89f980927fdf0fcfa196c627f2b6a`. No control solve unless a LIVE hunk is found.
+**Re-based 2026-09-22 onto the new keeper** (the owner promoted pjm-h16 while this lane was in phase 0; no shard had launched).
+Control = the committed keeper bundles (`pjm_h16_coalgrain_span`, `pjm_h16_coalgrain_touchpoint`),
+all six legs solved at `c25d7e500238a953c241271ed91f7c01835f41b5` (an ancestor of HEAD). No control solve unless a LIVE hunk is found.
 
-**G-DRIFT, `6de36475` → HEAD `7c1fed78`: ALL INERT — form 4 valid.** 12 commits on the solve path, every hunk classified:
+**G-DRIFT, `c25d7e50` → HEAD: ALL INERT — form 4 valid.** The solve-path commits in this window are a subset of the audited `6de36475` → `7c1fed78` set below, plus `3c5a8967b` (soco59: `EIA930_PS_SPLIT_COMPLETE_FROM` gains `"SOCO": 2025` — another ISO's entry, INERT for PJM). Independently, pjm-h16 spent six same-HEAD control legs and measured PJM drift bit-identical across `6de36475` → `c25d7e50` (`ffbd2426a`). Original audit table:
 
 | commit | what | verdict | reason |
 |---|---|---|---|
@@ -95,8 +96,8 @@ Six, one per year, pinned to this commit. Each: fetch its year's virtual bids �
 
 | year | control bundle |
 |---|---|
-| 2020, 2021, 2022 | `results/calibration/pjm_h15_coalwindow_touchpoint` |
-| 2023, 2024, 2025 | `results/calibration/pjm_h15_coalwindow_span` |
+| 2020, 2021, 2022 | `results/calibration/pjm_h16_coalgrain_touchpoint` |
+| 2023, 2024, 2025 | `results/calibration/pjm_h16_coalgrain_span` |
 
 **Retrievability (rule 34(e)):** the parent fetches every leg, composes, and lands the keeper
 bundle on `main` before this lane's PR merges (rule 33(f)(4)(ii)). Shard SHAs are provenance only.
