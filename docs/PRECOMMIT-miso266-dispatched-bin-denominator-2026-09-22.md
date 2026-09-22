@@ -458,21 +458,50 @@ is exact rather than inferred:
   `bundle_input_path` → `require_bundle_input` at three read sites in
   `render_calibration_html.build_payload` (9 insertions, 4 deletions).
 
-**The change is AST-visible but numerically inert.** `require_bundle_input`
-raises a named error where the old call let a `None` path reach pandas; where
-the file exists it reads the identical parquet. It cannot move a payload number
-— and `payload_fingerprint()` hashes the AST, so it moved the fingerprint
-anyway. The parts' recorded aggregate `64b6829fb757` is then absent from
+**The change is AST-visible and numerically inert, and that is PROVEN from the
+source rather than argued.** `require_bundle_input` is, in full:
+
+```python
+path = bundle_input_path(run_dir, name)
+if path is None:
+    raise MissingBundleInput(run_dir, name, shared_input_ref(run_dir, name))
+return path
+```
+
+It is `bundle_input_path` plus a raise on the `None` branch. A payload only gets
+built at all when the frames resolve, and on that branch the two functions return
+the **identical path** and `read_parquet` reads the **identical bytes**. The
+change can only convert a bare `TypeError` into a named error on the failure
+path. **The rendered payload is byte-identical by construction** — and
+`payload_fingerprint()` hashes the AST, so it moved the fingerprint anyway. The parts' recorded aggregate `64b6829fb757` is then absent from
 `PAYLOAD_FINGERPRINT_BY_BUILDER`, the resolver fails closed
 (*"unresolvable: unknown builder state"*), and every part reads STALE.
 
-**So this is a FALSE STALE, and the obvious one-line remedy does not clear it.**
-Adding `64b6829fb757` to `PAYLOAD_FINGERPRINT_BY_BUILDER` records the payload
-state that emitted those parts truthfully, but that state's payload fingerprint
-is *by construction* not HEAD's, so the gate still reports the parts as not
-reproducing. Clearing it properly needs either a regeneration of all 31 parts
-under HEAD's builder, or a fingerprint that can express "AST moved, numbers did
-not" — which the current design deliberately cannot.
+**So this is a CERTAIN false STALE — and the obvious one-line remedy does not
+clear it.** The fingerprints, measured at this HEAD:
+
+| | |
+|---|---|
+| HEAD aggregate | `fb56b7e445d9` |
+| HEAD payload | `5b4b05dce3f3` |
+| aggregate the 31 parts carry | `64b6829fb757` (absent from the table) |
+| payload of the state that emitted them | `643eac24b565` |
+
+`PAYLOAD_FINGERPRINT_BY_BUILDER` already holds two entries, and **both are
+exactly this case** — its own comments say *"the same three blobs HEAD carries,
+hence the same payload fingerprint"*, and both map to `643eac24b565`. Adding
+`"64b6829fb757": "643eac24b565"` would record the parts' provenance truthfully
+and still leave them STALE, because `7fd12b91` moved HEAD's payload fingerprint
+off `643eac24b565`. The table resolves provenance; it cannot assert equality
+that no longer holds.
+
+**The remedy is therefore a RE-STAMP, not a regeneration** — the "Y-8 method"
+`bench_stamp.py`'s own header cites, where the parts are re-rendered so they
+carry HEAD's aggregate. It is zero-LP (the frames are pure functions of
+`(ISO, year, reference data)` and regenerate from committed data, which is the
+very property `7fd12b91` itself relies on). What it needs is a lane willing to
+do it across six ISOs and verify the re-rendered bytes are unchanged — which,
+given the proof above, they must be.
 
 **ESCALATED, NOT ABSORBED** (rule 14 `[R-ACCURATE]`, and the charter's
 *"BEFORE REGISTERING: diff bench parts against HEAD, confirm ZERO movement"*).
@@ -487,3 +516,55 @@ control-vs-arm number in the RESULT is unaffected. What is affected is the
 **absolute** C1 verdict of either leg, which is scored against parts the gate
 says it cannot show reproduce at HEAD. The RESULT will say so where it quotes
 an absolute C1 band, and will not quote one as certified.
+
+---
+
+## CORRECTION TO §4 — MY G-DRIFT CALL WAS WRONG. FORM 4 WAS VALID ALL ALONG.
+
+§4 concluded that the committed keeper **could not** be the control, because rule
+36's warm-start default flip is LIVE and rule 36's own measurement showed MISO's
+keeper diverging by 7.16 / 24.18 / 4.00 TWh in 2021 / 2022 / 2025 on a
+year-isolated replay. On that basis this batch solved a CONTROL leg beside every
+arm leg — six extra solves, about half the batch.
+
+**The five landed control legs measure the drift at EXACTLY ZERO**, price mean to
+three decimals and every class to the milli-TWh:
+
+| year | keeper $/MWh | control $/MWh | drift |
+|---|---:|---:|---:|
+| 2020 | 25.356 | 25.356 | **+0.000** |
+| 2022 | 60.453 | 60.453 | **+0.000** |
+| 2023 | 33.909 | 33.909 | **+0.000** |
+| 2024 | 31.254 | 31.254 | **+0.000** |
+| 2025 | 42.984 | 42.984 | **+0.000** |
+
+**Why, and it was knowable before the spend.** Rule 36's measurement was taken
+against a keeper solved as MULTI-YEAR LEGS with the warm-start knobs ON. This
+keeper is not that. `miso264_anchor_span/meta.json` records
+
+```
+composed_from: {miso264_anchor_2020: [2020], … miso264_anchor_2025: [2025]}
+```
+
+— **six single-year bundles**, already year-isolated under rule 36, each at
+`git.sha 23b5d44e`. There was no cross-year basis in it to diverge from. I
+reasoned from rule 36's general statement about "every ISO's keeper" instead of
+reading this keeper's own provenance, which was one `meta.json` field away.
+
+**What the six control solves nevertheless bought**, stated so the spend is
+neither hidden nor inflated:
+
+1. **Form 4's validity is now MEASURED rather than argued** — which is precisely
+   what rule 29 `[R-SCREEN]` (b) says G-DRIFT is for, and a control solve is the
+   stronger instrument for it.
+2. **The 749-line solve-path drift between the keeper's `23b5d44e` and the shard
+   `927f68af` is measurably INERT on MISO** — PERF-C S1/S2, the `model/lp/rows.py`
+   and `pipeline/solve.py` changes included. Every control leg reproduces the
+   keeper byte-for-byte. That was an open question in §4 and is now closed.
+3. The A/B needs no argument about which years reproduce: each arm is differenced
+   against its own same-SHA, same-container control.
+
+**It was still an over-spend, and the lesson is specific**: a G-DRIFT audit reads
+the CODE, but "is the keeper a valid control" is also a question about the
+KEEPER, and the bundle's own `meta.json` answers it first. Check the artifact
+before auditing the diff.
