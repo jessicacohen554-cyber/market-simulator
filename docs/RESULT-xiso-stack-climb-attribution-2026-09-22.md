@@ -273,3 +273,52 @@ h15 probe.
 (`transfer-interface-limits`, `ramp-capability` per the brief, plus
 `capacity-deliverability`, `nyiso-interface-flows`, `nyiso-reserve-requirements`
 which the brief did not name and which blocked NYISO entirely).
+
+---
+
+## 10. CORRECTION to §7's candidate ranking (same session, before archive)
+
+**§7 ranks "(a) reserve reach" first on the strength of the idle shares. That
+ranking is wrong as a lever queue, and a successor acting on it would violate
+rule 28 `[R-MECH-MATRIX]` (a).** Checked after the fact against the shards:
+
+| ISO | `energy_reserve_coopt` cell | adjudication |
+|---|---|---|
+| CAISO | **I** (inert) | caiso-144, `FINDING-caiso144-coopt-dormancy-c3c-frontier-2026-07-30` §B/§C |
+| SPP | **I** (inert) | SPP-55, killed at the pre-solve half of its STOP gate — the row can bind in **no** measured shortage hour of any year |
+| SOCO | **·** (n/a) | vertically integrated BA: no AS market, no cleared product, `co_opt=False` by registration |
+| NWPP | **U** | untested — but NWPP is price-unscored, so it carries no C3c to close |
+
+So in three of the four ISOs §7 names, the reserve route is **already closed**,
+and in the fourth it cannot be scored. §7(a) is a correct reading of the
+*measurement* and a wrong reading of the *lever queue*; the measurement stands,
+the ranking does not. **Re-arming either `I` cell needs new evidence, not this
+finding** — and this lane supplies none for them.
+
+Two ISOs have moreover already given their tail a **positive** identification
+that this lane does not displace and a successor must not re-litigate:
+
+- **SPP** — the tail is the **RT/DA wedge**, a five-minute object (SPP-29: DA
+  cleared > $200 in 0/42, 14/59, 0/68 of RT tail hours; median wedge +$182 to
+  +$244 in tail hours), and separately congestion rent (SPP-64, R-bd). No hourly
+  lever reaches either.
+- **CAISO** — C3c is **two objects of opposite sign** (caiso-270): 2022 is a tail
+  *excess* that is the same object as C3a-2022, while 2023–2025 is the tail
+  *deficit* the ledgered caveat names.
+
+**The corrected ranking**, and the reason this lane's contribution is a
+*negative* result plus a *narrowing*:
+
+1. **(b) Commitment reach** — now first. The idle concentrates in exactly the
+   classes a no-MIP LP commits worst (CT 13–46 %, oil 1–5 %), which is the
+   supply-side fingerprint of §4 pattern 1's LP-vs-MIP ceiling.
+2. **(c) Demand** — still untested, and still untested *by anyone*: whether the
+   model's own load is tight in the market's top-1 % hours is not measured here
+   or anywhere, and it is cheap to measure at zero LP.
+3. **(a) Reserve** — **closed** where it was testable, per the table above.
+   ERCOT remains the positive control for the mechanism, not a lever.
+
+What survives unchanged from §7 is the half this lane actually established: **the
+offer-curve family is refused everywhere by construction**, because adding extent
+above a clearing price that never reaches it is inert. That is a negative result
+about a whole family, and it holds in 9 ISOs of 9.
