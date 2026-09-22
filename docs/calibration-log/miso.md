@@ -14965,6 +14965,56 @@ IDENTICAL to the charter's baseline name set, zero new** · ruff clean.
 a `U` cell with the zero-LP transfer question in all eight other ISO shards. No
 number crosses an ISO boundary (rule 25 `[R-ISO-SCOPE]`).
 
-Records: `docs/PRECOMMIT-miso266-dispatched-bin-denominator-2026-09-22.md`;
+**SOLVED — 12 LEGS, SIX YEARS x (control, arm).** Each pair in ONE container at
+ONE pinned SHA `927f68af`, one flag apart, config signatures verified on all
+twelve. COAL_BIT **+11.535** and COAL_PRB **+8.652** TWh over the span, coal UP in
+EVERY year, against CC_REGULAR −6.123 / import −4.074 / CT_PEAKER −3.699 / ST_GAS
+−2.959; price −0.246 to −0.731 $/MWh. C1 against the committed bench: **2020
+COAL_BIT −10.92 → −6.93**, 2021 −6.54 → −3.30, coal better in 5 of 6 years.
+**THE PRE-REGISTERED ADVERSE MOVE HAPPENED: C1 2022 COAL_PRB +8.13 → +10.52** on a
+class already long, exactly as the PRECOMMIT predicted; CT_PEAKER also worsens in
+4 of 6 years, unpredicted. Both reported, scope unchanged (rule 1 `[R-STRUCT]`).
+
+**THE CHP EXCLUSION IS PROVEN ON THE REAL FLEET**, not only in unit tests: all
+121 CHP bins byte-identical (max |Δ availability| exactly 0.000000) while COAL
+moves 28 bins, CC_REGULAR 24, ST_GAS 5 — by a check that FAILS if no in-scope bin
+moves, so it cannot pass vacuously.
+
+**G-DRIFT CORRECTION — MY FORM-4 CALL WAS WRONG, and the control legs proved it.**
+Worst per-class drift **0.000008 TWh** across six years against a stated 1e-4
+tolerance. This keeper's `meta.json` records `composed_from` as SIX SINGLE-YEAR
+bundles, already year-isolated, so rule 36's 7–24 TWh divergence — measured
+against a multi-year-leg keeper — never applied. Six control solves were an
+over-spend; what they bought is that form 4's validity is now MEASURED, and that
+the 749-line solve-path drift from `23b5d44e` to `927f68af` is INERT on MISO.
+
+**REGISTRATION IS BLOCKED, and the blocker is a finding.**
+`--restore-shared-inputs` refuses: the `campd` benchmark FRAME regenerates to
+different bytes than the solve read (`d5fd8457f1fe` → `d57af607eaf4`), so the
+builders moved between the shard SHA and HEAD. Forcing past it with
+`--rebuild-benchmark` would re-base MISO's committed actuals for EVERY registered
+run including the keeper — the NYISO incident `calibration_verdict.py` documents,
+and the opposite of the charter's "confirm ZERO movement" instruction. **NOT
+registered, NOT scored, NOT promoted; no gate table exists.** The recorded frame
+is unrecoverable (gitignored, lived only on the archived shard containers).
+
+**A CORRECTION TO THIS SESSION'S OWN EARLIER CLAIM:** I wrote that `7fd12b91` is
+byte-inert so "the actuals cannot have moved". That is proven for the PAYLOAD
+renderer (`require_bundle_input` is `bundle_input_path` plus a raise on the
+`None` branch) and I over-generalized it — the `campd` frame is a different
+object with a different builder and it demonstrably does move.
+
+**SHARD HYGIENE:** the first 2021 shard STALLED (idle 72 min mid-solve, no
+branch); archived and replaced. The replacement's prompt added one line the
+others lacked — *run each solve in the foreground, never end a turn mid-solve* —
+and it completed in 14m43s per leg. Carry that line forward. All six shards
+archived after their bytes were verified (rule 33 `[R-SHARD-ARCHIVE]` (a)).
+
+**PROMOTION QUESTION OPEN** (rule 31 `[R-RETAIN]`): bundles are on ephemeral
+local disk at a superseded SHA; a registerable keeper needs the §5 frame question
+resolved plus a re-solve at merged `main` (~1 h across parallel shards).
+
+Records: `docs/RESULT-miso266-dispatched-bin-denominator-2026-09-22.md`,
+`docs/PRECOMMIT-miso266-dispatched-bin-denominator-2026-09-22.md`;
 probes `scripts/probes/_miso266_{excess_decomposition,denominator_vs_lp,repair_ceiling_ab,compose_span}.py`;
 test `tests/unit/data/test_unit_outage_dispatched_bin_denominator.py`.
