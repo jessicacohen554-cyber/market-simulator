@@ -1,8 +1,8 @@
 {
- "what": "pjm-h15 phase 0 \u2014 is PJM's price gap a TOP-OF-CURVE defect? ZERO LP.",
+ "what": "pjm-h17 phase 0 \u2014 is PJM's price gap a TOP-OF-CURVE defect? ZERO LP.",
  "years": {
   "2023": {
-   "bundle": "pjm_h14_coalmustrun_span",
+   "bundle": "pjm_h15_coalwindow_span",
    "gas_mean": 3.2024383561643837,
    "market_top1pct_mean_lmp": 123.09756417707963,
    "A_peak_rung_model_vs_measured": {
@@ -28,27 +28,27 @@
    "C_headroom_market_top1pct": {
     "CC_CHP": {
      "available_mw": 1348.873843697842,
-     "dispatched_mw": 1159.0709228515625,
-     "idle_mw": 189.80292084627945,
-     "utilisation": 0.8592878631807789,
+     "dispatched_mw": 1159.0965576171875,
+     "idle_mw": 189.77728608065445,
+     "utilisation": 0.8593068677494751,
      "sidecar_classes": [
       "CC_CHP"
      ]
     },
     "CC_REGULAR": {
      "available_mw": 47798.74561347768,
-     "dispatched_mw": 44752.1640625,
-     "idle_mw": 3046.5815509776803,
-     "utilisation": 0.936262311659521,
+     "dispatched_mw": 44754.5390625,
+     "idle_mw": 3044.2065509776803,
+     "utilisation": 0.9363119991559086,
      "sidecar_classes": [
       "CC_REGULAR"
      ]
     },
     "COAL": {
      "available_mw": 22619.095511012947,
-     "dispatched_mw": 18657.498046875,
-     "idle_mw": 3961.597464137947,
-     "utilisation": 0.8248560618965026,
+     "dispatched_mw": 18655.388671875,
+     "idle_mw": 3963.706839137947,
+     "utilisation": 0.8247628055150097,
      "sidecar_classes": [
       "COAL_BIT",
       "COAL_PRB",
@@ -57,27 +57,27 @@
     },
     "CT_CHP": {
      "available_mw": 266.5899074848748,
-     "dispatched_mw": 249.4618682861328,
-     "idle_mw": 17.128039198741988,
-     "utilisation": 0.9357513592306049,
+     "dispatched_mw": 249.4511260986328,
+     "idle_mw": 17.138781386241988,
+     "utilisation": 0.9357110644287449,
      "sidecar_classes": [
       "CT_CHP"
      ]
     },
     "CT_PEAKER": {
      "available_mw": 21411.656969234347,
-     "dispatched_mw": 7821.4736328125,
-     "idle_mw": 13590.183336421847,
-     "utilisation": 0.36529044174633,
+     "dispatched_mw": 7820.2060546875,
+     "idle_mw": 13591.450914546847,
+     "utilisation": 0.36523124137118756,
      "sidecar_classes": [
       "CT_PEAKER"
      ]
     },
     "ST_GAS": {
      "available_mw": 7074.423913893835,
-     "dispatched_mw": 4448.2919921875,
-     "idle_mw": 2626.1319217063347,
-     "utilisation": 0.6287850496845778,
+     "dispatched_mw": 4448.76708984375,
+     "idle_mw": 2625.6568240500847,
+     "utilisation": 0.628852206765074,
      "sidecar_classes": [
       "ST_GAS"
      ]
@@ -94,13 +94,13 @@
    },
    "C_total": {
     "available_mw": 104481.08942706307,
-    "dispatched_mw": 77088.21723005176,
-    "idle_mw": 27392.872197011333
+    "dispatched_mw": 77087.70526716113,
+    "idle_mw": 27393.384159901958
    },
    "B_peak_band_dispatch_mw": {
     "CC_CHP": {
      "max_h": 35.84286880493164,
-     "mean_h": 6.441895008087158
+     "mean_h": 6.404512405395508
     },
     "CC_REGULAR": {
      "max_h": 0.0,
@@ -108,7 +108,7 @@
     },
     "COAL_BIT": {
      "max_h": 535.5874633789062,
-     "mean_h": 46.95912551879883
+     "mean_h": 46.99644088745117
     },
     "COAL_PRB": {
      "max_h": 51.40999984741211,
@@ -116,29 +116,29 @@
     },
     "COAL_WC": {
      "max_h": 23.994308471679688,
-     "mean_h": 2.1891074180603027
+     "mean_h": 2.1900808811187744
     },
     "CT_CHP": {
      "max_h": 10.69906234741211,
-     "mean_h": 3.116424798965454
+     "mean_h": 3.118474245071411
     },
     "CT_PEAKER": {
      "max_h": 854.822509765625,
-     "mean_h": 7.310118198394775
+     "mean_h": 7.306154727935791
     },
     "ST_CHP": {
      "max_h": 17.181072235107422,
-     "mean_h": 9.821878433227539
+     "mean_h": 9.821968078613281
     },
     "ST_GAS": {
      "max_h": 995.2200927734375,
-     "mean_h": 27.58121109008789
+     "mean_h": 27.581430435180664
     }
    },
-   "build_s": 16.7
+   "build_s": 41.6
   },
   "2024": {
-   "bundle": "pjm_h14_coalmustrun_span",
+   "bundle": "pjm_h15_coalwindow_span",
    "gas_mean": 2.916219178082192,
    "market_top1pct_mean_lmp": 169.8407681205056,
    "A_peak_rung_model_vs_measured": {
@@ -164,27 +164,27 @@
    "C_headroom_market_top1pct": {
     "CC_CHP": {
      "available_mw": 1328.8962576043136,
-     "dispatched_mw": 1212.1455078125,
-     "idle_mw": 116.75074979181363,
-     "utilisation": 0.9121445717649265,
+     "dispatched_mw": 1212.0924072265625,
+     "idle_mw": 116.80385037775113,
+     "utilisation": 0.9121046133515938,
      "sidecar_classes": [
       "CC_CHP"
      ]
     },
     "CC_REGULAR": {
      "available_mw": 46746.60180915707,
-     "dispatched_mw": 44588.484375,
-     "idle_mw": 2158.117434157073,
-     "utilisation": 0.953833704469737,
+     "dispatched_mw": 44588.38671875,
+     "idle_mw": 2158.215090407073,
+     "utilisation": 0.9538316154141432,
      "sidecar_classes": [
       "CC_REGULAR"
      ]
     },
     "COAL": {
      "available_mw": 21969.537806033903,
-     "dispatched_mw": 19911.306640625,
-     "idle_mw": 2058.2311654089026,
-     "utilisation": 0.9063143165058478,
+     "dispatched_mw": 19911.845703125,
+     "idle_mw": 2057.6921029089026,
+     "utilisation": 0.9063388533215405,
      "sidecar_classes": [
       "COAL_BIT",
       "COAL_PRB",
@@ -202,18 +202,18 @@
     },
     "CT_PEAKER": {
      "available_mw": 21544.197325141162,
-     "dispatched_mw": 11286.9296875,
-     "idle_mw": 10257.267637641162,
-     "utilisation": 0.5238965052705228,
+     "dispatched_mw": 11285.0478515625,
+     "idle_mw": 10259.149473578662,
+     "utilisation": 0.5238091575773551,
      "sidecar_classes": [
       "CT_PEAKER"
      ]
     },
     "ST_GAS": {
      "available_mw": 5877.781303400558,
-     "dispatched_mw": 4253.62646484375,
-     "idle_mw": 1624.1548385568076,
-     "utilisation": 0.7236789266696326,
+     "dispatched_mw": 4253.67138671875,
+     "idle_mw": 1624.1099166818076,
+     "utilisation": 0.7236865693280919,
      "sidecar_classes": [
       "ST_GAS"
      ]
@@ -230,13 +230,13 @@
    },
    "C_total": {
     "available_mw": 101715.57044671175,
-    "dispatched_mw": 81519.20503616333,
-    "idle_mw": 20196.36541054843
+    "dispatched_mw": 81517.75642776489,
+    "idle_mw": 20197.81401894687
    },
    "B_peak_band_dispatch_mw": {
     "CC_CHP": {
      "max_h": 35.84286880493164,
-     "mean_h": 10.6368989944458
+     "mean_h": 10.62593936920166
     },
     "CC_REGULAR": {
      "max_h": 0.0,
@@ -244,7 +244,7 @@
     },
     "COAL_BIT": {
      "max_h": 589.5698852539062,
-     "mean_h": 69.45845031738281
+     "mean_h": 69.4370346069336
     },
     "COAL_PRB": {
      "max_h": 51.40999984741211,
@@ -252,29 +252,29 @@
     },
     "COAL_WC": {
      "max_h": 24.368162155151367,
-     "mean_h": 3.183908700942993
+     "mean_h": 3.1838014125823975
     },
     "CT_CHP": {
      "max_h": 10.231704711914062,
-     "mean_h": 3.2695555686950684
+     "mean_h": 3.268096923828125
     },
     "CT_PEAKER": {
      "max_h": 935.8860473632812,
-     "mean_h": 5.681746959686279
+     "mean_h": 5.6808085441589355
     },
     "ST_CHP": {
      "max_h": 17.181072235107422,
-     "mean_h": 10.90327262878418
+     "mean_h": 10.90494441986084
     },
     "ST_GAS": {
      "max_h": 977.3470458984375,
-     "mean_h": 46.43511199951172
+     "mean_h": 46.416744232177734
     }
    },
-   "build_s": 14.2
+   "build_s": 26.4
   },
   "2025": {
-   "bundle": "pjm_h14_coalmustrun_span",
+   "bundle": "pjm_h15_coalwindow_span",
    "gas_mean": 4.209232876712329,
    "market_top1pct_mean_lmp": 317.6212043762207,
    "A_peak_rung_model_vs_measured": {
@@ -300,27 +300,27 @@
    "C_headroom_market_top1pct": {
     "CC_CHP": {
      "available_mw": 1371.1223402634678,
-     "dispatched_mw": 1193.325439453125,
-     "idle_mw": 177.79690081034278,
-     "utilisation": 0.8703274714521986,
+     "dispatched_mw": 1192.92919921875,
+     "idle_mw": 178.19314104471778,
+     "utilisation": 0.8700384817517618,
      "sidecar_classes": [
       "CC_CHP"
      ]
     },
     "CC_REGULAR": {
      "available_mw": 50111.58659743909,
-     "dispatched_mw": 47882.94140625,
-     "idle_mw": 2228.645191189091,
-     "utilisation": 0.9555263494430452,
+     "dispatched_mw": 47882.38671875,
+     "idle_mw": 2229.199878689091,
+     "utilisation": 0.9555152803961906,
      "sidecar_classes": [
       "CC_REGULAR"
      ]
     },
     "COAL": {
      "available_mw": 26015.234465817604,
-     "dispatched_mw": 25614.533203125,
-     "idle_mw": 400.70126269260436,
-     "utilisation": 0.9845974379658542,
+     "dispatched_mw": 25617.962890625,
+     "idle_mw": 397.27157519260436,
+     "utilisation": 0.9847292717767124,
      "sidecar_classes": [
       "COAL_BIT",
       "COAL_PRB",
@@ -338,18 +338,18 @@
     },
     "CT_PEAKER": {
      "available_mw": 21702.123268245152,
-     "dispatched_mw": 14287.5771484375,
-     "idle_mw": 7414.546119807652,
-     "utilisation": 0.6583492763283343,
+     "dispatched_mw": 14287.8876953125,
+     "idle_mw": 7414.235572932652,
+     "utilisation": 0.6583635858440974,
      "sidecar_classes": [
       "CT_PEAKER"
      ]
     },
     "ST_GAS": {
      "available_mw": 7405.808941722371,
-     "dispatched_mw": 4976.4638671875,
-     "idle_mw": 2429.345074534871,
-     "utilisation": 0.6719676278915889,
+     "dispatched_mw": 4976.21435546875,
+     "idle_mw": 2429.594586253621,
+     "utilisation": 0.6719339365392041,
      "sidecar_classes": [
       "ST_GAS"
      ]
@@ -366,13 +366,13 @@
    },
    "C_total": {
     "available_mw": 110859.57244929808,
-    "dispatched_mw": 94443.83515930176,
-    "idle_mw": 16415.737289996327
+    "dispatched_mw": 94446.37495422363,
+    "idle_mw": 16413.19749507445
    },
    "B_peak_band_dispatch_mw": {
     "CC_CHP": {
      "max_h": 35.84286880493164,
-     "mean_h": 10.561208724975586
+     "mean_h": 10.542208671569824
     },
     "CC_REGULAR": {
      "max_h": 0.0,
@@ -380,7 +380,7 @@
     },
     "COAL_BIT": {
      "max_h": 562.7843017578125,
-     "mean_h": 183.28753662109375
+     "mean_h": 183.07174682617188
     },
     "COAL_PRB": {
      "max_h": 51.40999984741211,
@@ -388,11 +388,11 @@
     },
     "COAL_WC": {
      "max_h": 17.634599685668945,
-     "mean_h": 7.6470818519592285
+     "mean_h": 7.644462585449219
     },
     "CT_CHP": {
      "max_h": 10.69906234741211,
-     "mean_h": 2.4094293117523193
+     "mean_h": 2.4070239067077637
     },
     "CT_PEAKER": {
      "max_h": 975.6597290039062,
@@ -400,14 +400,14 @@
     },
     "ST_CHP": {
      "max_h": 17.181072235107422,
-     "mean_h": 11.821096420288086
+     "mean_h": 11.81682014465332
     },
     "ST_GAS": {
      "max_h": 993.3345336914062,
-     "mean_h": 59.73846435546875
+     "mean_h": 59.667701721191406
     }
    },
-   "build_s": 14.6
+   "build_s": 23.5
   }
  }
 }
