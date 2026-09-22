@@ -102,7 +102,7 @@
 window.MECH_MATRIX_SHARDS = window.MECH_MATRIX_SHARDS || {};
 window.MECH_MATRIX_SHARDS.NWPP = {
   iso: "NWPP",
-  updated: "2026-09-20",
+  updated: "2026-09-22",
   keeper: "2026-09-20-nwpp-44-measured-take",
   gates: "NOT-YET (rubric v3.8, PRICE UNSCORED \u2014 no admissible NWPP price series, so C3a / C3b / C3c are NOT SCORED in any year). OPEN: C4 fleet hourly dispatch correlation FAILs on coal in all three years and is the SOLE failing criterion \u2014 r 0.570 / 0.559 / 0.524 against a 0.70 floor, NRMSE 0.292 / 0.387 / 0.408 against a 0.30 max, so 2023 now fails on the CORRELATION FLOOR ALONE (its NRMSE crossed inside the gate at this promotion). C4 gas PASSES all three years. PASSING: C1 (18/18 all, 14/14 free), C2, C6 (authorized_price_tuning NONE, verified from dispatch), C8 (0.0 % forced in every class, every year). MOVED AT THIS PROMOTION, differenced against a PAIRED per-year control on the NWPP-41 recipe (rule 36 [R-YEAR-ISOLATION] landed mid-lane, so form 4 against the committed predecessor could not be relied on for C4): C4 coal r 0.539 / 0.547 / 0.502 -> 0.570 / 0.559 / 0.524 and NRMSE 0.301 / 0.397 / 0.432 -> 0.292 / 0.387 / 0.408, coal volume 39.613 / 27.008 / 27.207 -> 41.549 / 27.390 / 28.317 TWh against a measured 42.27 / 38.30 / 42.26. NOTHING REGRESSED and the determination basis is unchanged at {dispatch_corr}. REPORTED-ONLY, not gating: C5a CO2 -14.4 / -23.5 / -20.6 % (from -16.0 / -23.8 / -21.5), 2025 coal volume -26.4 % (row SKIPPED on the preliminary EIA-923 vintage), energy balance -10.02 TWh vs a \u00b13.0 tol. THE RULE-36 ARTIFACT, MEASURED FOR NWPP (36(f) records it as unmeasured outside MISO): annual class volume moves 0.000 TWh for every class in every year and every scored criterion reproduces to 0.001, while the HOURLY allocation moves up to 818 MW (sum |delta| 1.516 / 0.915 / 0.698 TWh) between hydro and CC_REGULAR. MISO measured up to 24.18 TWh of ANNUAL movement; neither generalises. A KEEPER IS NOT A CALIBRATION: NWPP has no `complete` entry and no `frontier`, and this promotion created neither.",
   cells: {
@@ -459,6 +459,25 @@ window.MECH_MATRIX_SHARDS.NWPP = {
   },
 };
 /*
+ * xiso stack-climb attribution (2026-09-22, session lp-stack-climb-attribution): ZERO cells moved,
+ * keeper / gates UNTOUCHED. This was a cross-ISO MEASUREMENT, not a mechanism test - nothing was
+ * armed, swept or proposed - so under rule 28 [R-MECH-MATRIX] (b) there is no cell verdict to
+ * update and none is invented. Recorded because it constrains this ISO's lever queue.
+ * NWPP's OWN numbers (2023-2025, 3 ISO-years, all reconciled G1-G3 clean, ZERO LP - a
+ * fleet_only rebuild of this ISO's designated keeper plus its committed sidecars):
+ * availability-aware IDLE THERMAL in the top-1 % hours has a MEDIAN of 34.2 % of the available
+ * thermal fleet (per-year range 29.6-36.3 %), of which a median 33.0 pts is
+ * capacity offered ABOVE the clearing price. CT_PEAKER utilisation 37.6 %, oil 1.1 %,
+ * against CC_REGULAR 84.5 % - the loaded classes are CC and coal; the idle block is the
+ * peakers and oil. energy_reserve_coopt is OFF here, so apply_reserve_coopt returns None and NO reserve row enters this ISO's LP (verified in pipeline/kwargs.py) - nothing is withheld, so the gross figure IS the net figure.
+ * This ISO is PRICE-UNSCORED by owner registration (no actual_lmp_hourly series; C3c is never scored), so its window is the model's own LOAD top-1 % - a DECLARED substitution, a tightness window not a price window, which CANNOT speak to the price tail.
+ * BEARING ON THIS SHARD: this evidence does NOT indicate the offer-curve family for this ISO - the
+ * stack already carries extent above a clearing price that never reaches it - and rule 28(a)
+ * DO-NOT-REDO still governs every cell already adjudicated R/I/G; nothing here re-opens one.
+ * Cross-ISO verdict (9 of 9 ISOs over the pre-registered bar) and the successor charter:
+ * docs/RESULT-xiso-stack-climb-attribution-2026-09-22.md; pre-registration (every definition and the
+ * threshold fixed before measuring): docs/PRECOMMIT-xiso-stack-climb-attribution-2026-09-22.md.
+ *
  * NWPP-41 (2026-09-19): NWPP's FIRST KEEPER is promoted, so this shard carries its first
  * keeper / gates stamps. TWO cells move and no others: hydro_cascade_coupling O -> K (the
  * owner's promotion ruling arrived and the coupling rides armed in the keeper) and

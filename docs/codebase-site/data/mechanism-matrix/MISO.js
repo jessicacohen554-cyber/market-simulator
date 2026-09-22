@@ -21,7 +21,7 @@
 window.MECH_MATRIX_SHARDS = window.MECH_MATRIX_SHARDS || {};
 window.MECH_MATRIX_SHARDS.MISO = {
   iso: "MISO",
-  updated: "2026-09-21",
+  updated: "2026-09-22",
   keeper: "2026-09-20-miso-264-anchor-vintage",
   gates: "miso-264 (2026-09-20) -- PROMOTED on the owner's standing standard (\"If structural integrity improves but gates regress that may still be a keeper\"): structural integrity improves and the gates are NET-NEUTRAL. The single delta on 2026-09-19-miso-263-coal-ceiling is ONE PRE-EXISTING BOOLEAN FLIPPED ON, gas_offer_margin_anchor_vintage -- no new field, no new free parameter, DOF 43/2 carried. The superseded keeper priced ALL SIX YEARS at the frozen 2023-2025 gas-offer-margin anchor 3.0492 $/MMBtu while each solve year's own delivered-gas mean is 2.3294 / 4.0189 / 6.5881 / 3.0187 / 2.5580 / 3.8190; in 2022 that identified the whole gas offer surface 54 % BELOW the fuel its units burn, which is exactly where the mechanism's own identity says nothing. OPEN GATES ON THIS KEEPER, full span NOT-YET (rule 30(c): validation rungs never gate): C1 2020 COAL_BIT -10.92 TWh, C1 2022 COAL_PRB +8.13 TWh, C3a 2020 +14.6 %, C3b 2021 NRMSE 0.304. CLOSED BY THE PROMOTION: C1 2022 CC_REGULAR -9.47 -> PASS and C3a 2022 -14.6 % -> PASS. TRAIN TIER 2023-2025 CALIBRATED, C3c the lone ledgered caveat, grade summary byte-identical to the superseded keeper (scored 8 / target 4 / ledgered 1 / fails 3). THE SUCCESSOR'S NAMED OBJECT: the arm improves 2020's price AND deepens its coal deficit, so in 2020 the price residual and the coal-volume residual demand OPPOSITE offer moves -- MISO's coal is held off by something that is NOT its offer. A QUANTITY / COMMITMENT object, reached independently by a zero-LP implied-marginal-heat-rate census (+1.41 to +2.01 MMBtu/MWh in EVERY family, gas and coal alike). Record docs/RESULT-miso264-the-anchor-was-frozen-and-2020-is-not-an-offer-object-2026-09-20.md.",
   cells: {
@@ -377,6 +377,26 @@ window.MECH_MATRIX_SHARDS.MISO = {
     voluntary_clean_demand: { cell: ".", fc: "I", ev: "SCN-WS3b (2026-09-06): row + three fields landed for every ISO (rule 28c); MISO UNTESTED \u2014 a zero-LP build lane, nothing solved; SCN-WS3c runs the ERCOT probe and a verdict transfers to no other ISO (rule 25). Backcast lane '.' by construction (rule 13: the whole voluntary_* block is coerced to its defaults in backcast/hindcast). Cases VOL-MID / VOL-HI / CES-P20+VOL-HI / ALL-CLEAN expressible and HELD under S5. Evidence: docs/handoffs/FINDING-scn-ws3b-2026-09-06.md. SCN-WS5A-POLICY-MISO (2026-09-07, docs/handoffs/FINDING-scn-ws5a-policy-miso-2026-09-07.md) U -> I — MEASURED, LIVE ON THE DUAL, INERT ON EVERYTHING PHYSICAL. Runs miso-2026-2030-scn-campaign-policy-2026-09-06-{vol-mid,vol-hi,ces-p20-vol-hi,all-clean} at THE PIN bdfb3095. THE ERCOT KILL DOES NOT GENERALISE: MISO's vol-mid is slack 2026-28 (+42.58 / +24.70 / +6.65 TWh) and BINDS 2029 (-0.70 TWh) and 2030 (-6.07 TWh) — 0.6 % of G, the thinnest crossing in the campaign — because MISO's eligible fleet is 14.4 % of its load where ERCOT's is 33 %. G7 PASS 20/20 arm-years, EXACTLY as phase 0 pre-registered with no LP: dual -0.0 exactly wherever slack and the arm's OWN ceiling exactly where binding ($4.5000 vol-mid 2029-30; $7.0000 vol-hi / ces-p20-vol-hi 2028-30 and all-clean 2027-30). WHY I AND NOT O: the largest CO2 move either pure voluntary arm makes in any year is 0.0157 Mt (1.5x this campaign's measured LP degeneracy floor of 0.0105 Mt) and the largest price move 0.003 $/MWh; vol-mid and vol-hi differ by <= 0.0001 Mt despite volumes differing by up to 74 TWh, because BOTH ESCAPE; and every build, retirement, retrofit and capacity row is REF's in both arms and all five years. The row's deployment half cannot be reached here for the same structural reason NEISO found independently: its ceiling ($4.5 / $7.0) is below STATE_RPS_ACP[MISO] = 30.0, the footprint's LOWEST, so max(4.5, 30) = max(7.0, 30) = 30 in the screens' fold and no ceiling the memo's cited $2-7/MWh range can produce reaches a deployment decision anywhere in the footprint (routed beside card D-3c as a campaign-wide readability limit). G8 is VACUOUS on MISO — REF's curtailment_twh is 0.0000 in every leg-year, confirmed across all twelve legs with a report row — and must not read as a pass MISO never earned. BOTH NETTINGS REPORTED (ruling S11) on ces-p20-vol-hi and all-clean: on MISO they differ by ZERO MWh, ZERO MW and ZERO grams of CO2, and only in the compliance bill — $3.4 bn (2026) to $13.4 bn (2030) of extra ACP-priced escape on all-clean — which is the cleanest statement of card D-6's stakes the campaign can make. On ces-p20-vol-hi the voluntary row's own contribution is <= 0.031 Mt in every year (the arm minus pure ces-p20), so that arm is its PREMIUM half entire, falsifying this lane's P-15." },
   },
 };
+/*
+ * xiso stack-climb attribution (2026-09-22, session lp-stack-climb-attribution): ZERO cells moved,
+ * keeper / gates UNTOUCHED. This was a cross-ISO MEASUREMENT, not a mechanism test - nothing was
+ * armed, swept or proposed - so under rule 28 [R-MECH-MATRIX] (b) there is no cell verdict to
+ * update and none is invented. Recorded because it constrains this ISO's lever queue.
+ * MISO's OWN numbers (2020-2025, 6 ISO-years, all reconciled G1-G3 clean, ZERO LP - a
+ * fleet_only rebuild of this ISO's designated keeper plus its committed sidecars):
+ * availability-aware IDLE THERMAL in the top-1 % hours has a MEDIAN of 33.3 % of the available
+ * thermal fleet (per-year range 19.8-40.6 %), of which a median 31.6 pts is
+ * capacity offered ABOVE the clearing price. CT_PEAKER utilisation 30.7 %, oil 3.3 %,
+ * against CC_REGULAR 85.1 % - the loaded classes are CC and coal; the idle block is the
+ * peakers and oil. Net of reserve holding: 28.8 % on the max-family (lower) bound, 23.1 % on the hostile sum-of-nested-families (upper) bound.
+ * Window is this ISO's own actual RT top-1 %. Model clearing $28-$100 against market $117-$411; the highest AVAILABLE offer reaches $1646.
+ * BEARING ON THIS SHARD: this evidence does NOT indicate the offer-curve family for this ISO - the
+ * stack already carries extent above a clearing price that never reaches it - and rule 28(a)
+ * DO-NOT-REDO still governs every cell already adjudicated R/I/G; nothing here re-opens one.
+ * Cross-ISO verdict (9 of 9 ISOs over the pre-registered bar) and the successor charter:
+ * docs/RESULT-xiso-stack-climb-attribution-2026-09-22.md; pre-registration (every definition and the
+ * threshold fixed before measuring): docs/PRECOMMIT-xiso-stack-climb-attribution-2026-09-22.md.
+ */
 
 /* ── MISO column re-stamp log ────────────────────────────────────────────
  *
