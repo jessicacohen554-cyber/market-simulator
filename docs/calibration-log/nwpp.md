@@ -302,3 +302,72 @@ Records: `docs/handoffs/PRECOMMIT-nwpp-42-2026-09-19.md`,
 `scripts/probes/_nwpp42_leg_check.py`.
 
 ---
+
+## nwpp-46 — 2026-09-22 — C4 re-diagnosed; two-sided hydro envelope PROMOTED (KEEPER #4)
+
+**Keeper:** `2026-09-22-nwpp46-hydro-envelope` · bundle `results/calibration/nwpp46_hydroenv_span`
+**Owner ruling:** *"Is this a recommended keeper candidate? If so plz promote. If structural
+integrity improves but gates regress that may still be a keeper."* — promoted on the **easy
+limb**: no gate regresses and no C1 row changed status.
+
+**The main result is a re-diagnosis, not the arm.** The lane was chartered to close C4 coal on the
+coal offer stack's vertical extent. NWPP's own data falsified that premise twice, zero-LP:
+
+1. **The "$0.51/MWh shelf" is a fleet MIX artifact.** Per plant, `econlo == econhi == peak`
+   **exactly** at all 17 coal plants — `backcast_config.py:2372` merges `_SPP_OFFER_CURVE`, the
+   identity (1.0 on every band), for NWPP, while the generic `COAL_BIT` curve is itself sloped.
+2. **The correct ladder is 10.4 % and would be inert.** The shared WP-3 construction over 511,855
+   steady-state coal unit-hours of NWPP's own CEMS gives `marg` committed 0.821 / econ_low 0.932 /
+   econ_high 1.004 / peak 1.029 (econ_high/econ_low 1.077). And it could not bite:
+   **NWPP-INLAND / NW / OR each carry exactly TWELVE distinct P1 prices per YEAR** — one per month,
+   $0.00 mean within-day swing.
+
+**What C4 is: hydro over-flexibility.** Model hydro runs **114 / 120 / 138 %** of the real diurnal
+swing while coal runs 10 / 5 / 4 % and gas 65–69 % (solar and wind match at 1.00; hydro's mean
+level is right). On the additive h19−h11 ramp metric hydro's excess explains **69 / 87 / 102 %** of
+the coal+gas ramp deficit. Lever (C) closed for free: D-2 reads `COAL forced_twh = 0.0` and D-4
+carries no coal row — there is no coal floor.
+
+**The arm:** `hydro_dispatch_envelope` + `hydro_min_flow_floor` — one mechanism, two mirrored
+halves (`HYDRO_MIN_FLOW_PERCENTILE = 100 − HYDRO_ENVELOPE_PERCENTILE`), **zero new DOF** (ledger
+4/3 residual, unchanged since NWPP-40), **zero code change**, nothing transferred from CAISO.
+Ceiling binds h16–h22 (21.7/23.7/23.4 % of hours); floor binds the midday solar belly and overnight
+shoulder (10.4/12.9/14.0 %) — **disjoint hours**, the rule-19 evidence they are one family.
+
+**Result.** Gate profile identical to the predecessor (C1 FAIL, C2 PASS, C4 FAIL, C6 PASS, C8
+PASS, NOT-YET). C4 improves on both metrics in all three years and **still fails**: `r`
+0.605/0.595/0.610 → **0.658/0.617/0.637** against a 0.70 floor; NRMSE 0.260/0.246/0.284 →
+**0.244/0.240/0.276**. Coal's diurnal amplitude ratio 0.100/0.052/0.037 → **0.223/0.096/0.089**.
+
+**The pre-registered kill condition was coded and committed BEFORE the first leg landed**
+(`scripts/probes/_nwpp46_gates.py` at `9cd108d9`) and does not fire in either direction. The
+ex-ante hydro prediction (1.05/1.10/1.16) landed at **1.048/1.107/1.148**.
+
+**Reported, not absorbed.** One ex-ante prediction was **wrong**: 2023 `CC_REGULAR` was predicted to
+improve and moved **0.422 TWh further out** — hydro energy was exactly conserved (0.000 TWh), so
+there was no released volume to absorb. `r_intra` improves only in 2023 (0.218 → 0.371), is flat in
+2024 and **worse in 2025** (0.425 → 0.374): the arm fixed the *size* of the swing more than its
+*hour*. 2023 `COAL_BIT` profile `r` 0.756 → 0.723.
+
+**Infrastructure defect fixed, affecting every sharded lane.** `_nwpp42_compose_span.py` copied the
+base leg's `meta.shared_inputs` onto the composite, so a year-isolated span pointed at single-year
+benchmark frames — unscorable. Caught by `--restore-shared-inputs`, which correctly refused. Proven
+safe before adopting (the 3-year frame is the exact row-wise union of the leg frames); no benchmark
+re-based.
+
+**G-DRIFT form 4 established mechanically**: a worktree at the predecessor's `ee276d87` plus a diff
+of every LP input array — `mc` (646×8760), `pmax`, `pmin`, `heat_rate`, `vom`, `availability`,
+`demand`, `unit_ids` all bit-identical. No control solve.
+
+**Carried, absorbed nowhere.** The NWPP-45 C1 demand-basis gap (−9.645 / −12.144 / −9.107 TWh)
+remains an **OPEN OWNER DECISION** (`FINDING-nwpp-45` §8); the 2025 energy balance is still
+−10.02 TWh; C5a CO2 reported-only FAIL; Chief Joseph's pond dual; Jim Bridger absent from
+`thermal_tranches_NWPP.csv`; the NWPP-40/41/42 attestation corrections **still owed**. New:
+EIA-930 2025 NWPP hydro carries a **−44,969 MW hour** (does not affect the robust p95 ceiling).
+
+Records: `docs/handoffs/PRECOMMIT-nwpp-46-2026-09-22.md`,
+`docs/handoffs/RESULT-nwpp-46-2026-09-22.md`, `scripts/gen_nwpp46_attestation.py`,
+`scripts/probes/_nwpp46_{coal_stack,marginal_hr,hydro_envelope}_phase0.py`,
+`scripts/probes/_nwpp46_gates.py`.
+
+---
