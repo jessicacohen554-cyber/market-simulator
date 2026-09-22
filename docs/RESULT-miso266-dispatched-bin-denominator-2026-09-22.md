@@ -153,13 +153,64 @@ actual by ~4 TWh and flipped every registered NYISO run to NOT-YET. The charter'
 own instruction is *"BEFORE REGISTERING: diff bench parts against HEAD, confirm
 ZERO movement."* It does not confirm; it moves.
 
+### 5.1 AMENDED — there are TWO defects here, and one test separates them
+
+My first reading of §5 named a single cause ("the benchmark builders have
+changed"). Checking the artifact's provenance — which is the step I had already
+skipped once this session, in §4 — shows **two independent defects**, and the
+evidence I first cited could not tell them apart.
+
+**Defect A — the frames are PER-YEAR and the composer copies only the first
+year's reference.** Measured over the six control bundles:
+
+| input | distinct hashes across the six years |
+|---|---|
+| `eia930`, `eia923`, `campd` | **6 — one per year** |
+| the six `unit_outages*` frames | 1 — shared |
+
+The composer (inherited from `_miso260_compose_span.py`) writes the first leg's
+whole `shared_inputs` block into the composite's `meta.json`, so
+`miso266_ctl_span` claims **2020's** `campd-d5fd8457f1fe` as if it covered
+2020–2025. `--restore-shared-inputs` then rebuilt a six-year frame and compared
+it against a one-year hash. That comparison could never have matched, whatever
+the builders were doing. **This is a composer defect, it is inherited rather than
+introduced here, and another lane reports fixing the same object independently.**
+
+**Defect B — the builders really have drifted, and this is what proves it
+separately.** Running the same restore against the **single-year** 2020 control
+bundle, where the composer cannot be implicated at all:
+
+```
+'eia923' REGENERATED TO DIFFERENT BYTES than the solve read.
+  meta.json records : ../_shared/MISO/eia923-4b912c050da4.parquet
+  rebuild produced  : ../_shared/MISO/eia923-55e98d5c8712.parquet
+```
+
+One year, one frame, one recorded hash — and it still does not reproduce. So the
+benchmark builders **did** move between the shard SHA and HEAD, independently of
+Defect A.
+
+**Both defects block registration, and each would block it alone.** Defect A is a
+plumbing bug with a known fix; Defect B is the substantive one, and it is what
+makes `--rebuild-benchmark` a re-basing of MISO's committed actuals rather than a
+formality.
+
 **A CORRECTION TO MY OWN EARLIER CLAIM.** I wrote that `7fd12b91`'s change is
 byte-inert so "the actuals cannot have moved." That is proven for what it covers
 — `require_bundle_input` is `bundle_input_path` plus a raise on the `None`
 branch, so the payload renderer cannot move a number — and I **over-generalized
-it**. The `campd` FRAME is a different object with a different builder, and it
-demonstrably does move. The bench-STALE banner is still a false positive about
-the *payload* fingerprint; the frame drift is real and separate.
+it**. The benchmark FRAMES are a different object with a different builder, and §5.1
+Defect B shows they do move. The bench-STALE banner is still a false positive
+about the *payload* fingerprint; the frame drift is real and separate.
+
+**And a correction to the correction, stated because the sequence matters more
+than the conclusion.** I first read §5's `campd` mismatch as proving Defect B on
+its own. It did not — Defect A explains the same observation without any builder
+drift, and I only separated them by testing a single-year bundle. The conclusion
+survives; the reasoning that first reached it was not sound. **That is the same
+failure mode as §4: concluding from an artifact without checking its
+provenance.** Twice in one session is a pattern, and the cheap guard in both
+cases was the same — read the bundle's own `meta.json` first.
 
 The recorded `campd-d5fd8457f1fe.parquet` is **unrecoverable**: gitignored, and it
 existed only on the shard containers, now archived.
