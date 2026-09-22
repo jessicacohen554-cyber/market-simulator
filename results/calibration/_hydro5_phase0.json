@@ -1,0 +1,1313 @@
+{
+ "SPP 2019": {
+  "keeper_bundle": "spp71_ensemble_rung",
+  "keeper": {
+   "twh": 15.3229,
+   "hours_below_1mw": 1191,
+   "p05": 0.0,
+   "p50": 2043.8,
+   "p95": 3103.3,
+   "top_decile_share": 0.1495,
+   "daily_cv": 0.4567
+  },
+  "prediction": {
+   "plants": 24,
+   "nameplate_mw": 3105.2,
+   "budget_twh": 15.4207,
+   "infeasible_excess_twh": 0.09635,
+   "ror": {
+    "plants": 8,
+    "mw": 320.0,
+    "energy_share": 0.0936,
+    "flat_base_mw_min": 72.8,
+    "flat_base_mw_max": 222.4,
+    "flat_base_by_month": [
+     118.8,
+     118.1,
+     72.8,
+     123.3,
+     156.1,
+     184.3,
+     217.6,
+     222.4,
+     203.1,
+     197.9,
+     189.0,
+     169.7
+    ],
+    "clip_plant_months": 2,
+    "clip_removed_twh": 0.00102,
+    "clip_removed_pct_of_budget": 0.0066,
+    "unclassified_plants": 1,
+    "unclassified_mw": 1.7,
+    "unclassified_energy_share": 0.0001,
+    "shapeable_mw": 2785.2,
+    "loader_stamped_plants": 8,
+    "loader_stamped_twh": 1.4428
+   },
+   "floor": {
+    "level_mw_min": 406.0,
+    "level_mw_max": 1986.2,
+    "forced_share_of_budget": 0.7056
+   }
+  },
+  "measured_930_wat": {
+   "twh": 15.4207,
+   "hours_below_1mw": 0,
+   "p05": 681.0,
+   "p50": 1907.0,
+   "p95": 2488.0,
+   "top_decile_share": 0.1118,
+   "daily_cv": 0.0775,
+   "admissible_for_conventional": true
+  },
+  "measured_swing": {
+   "mean_diurnal_swing_mw": 558.6,
+   "median_daily_range_mw": 653.0,
+   "p95_daily_range_mw": 1153.6
+  },
+  "ror_base_vs_measured_p01": {
+   "months_base_above_p01": [],
+   "min_ratio_p01_over_base": 3.972
+  },
+  "g2_bound": {
+   "keeper_shortfall_twh": 0.09776,
+   "economic_spill_twh": 0.00141,
+   "max_upward_move_pct": 0.0092
+  }
+ },
+ "SPP 2020": {
+  "keeper_bundle": "spp71_ensemble_rung",
+  "keeper": {
+   "twh": 11.6119,
+   "hours_below_1mw": 2126,
+   "p05": 0.0,
+   "p50": 853.8,
+   "p95": 3101.8,
+   "top_decile_share": 0.1719,
+   "daily_cv": 0.5236
+  },
+  "prediction": {
+   "plants": 23,
+   "nameplate_mw": 3103.5,
+   "budget_twh": 11.6119,
+   "infeasible_excess_twh": 0.0,
+   "ror": {
+    "plants": 8,
+    "mw": 320.0,
+    "energy_share": 0.1206,
+    "flat_base_mw_min": 97.6,
+    "flat_base_mw_max": 188.4,
+    "flat_base_by_month": [
+     175.8,
+     175.8,
+     183.5,
+     179.9,
+     188.4,
+     177.9,
+     175.7,
+     166.1,
+     156.6,
+     128.8,
+     112.9,
+     97.6
+    ],
+    "clip_plant_months": 0,
+    "clip_removed_twh": 0.0,
+    "clip_removed_pct_of_budget": 0.0,
+    "unclassified_plants": 0,
+    "unclassified_mw": 0.0,
+    "unclassified_energy_share": 0.0,
+    "shapeable_mw": 2783.5,
+    "loader_stamped_plants": 8,
+    "loader_stamped_twh": 1.4
+   },
+   "floor": {
+    "level_mw_min": 310.0,
+    "level_mw_max": 1019.2,
+    "forced_share_of_budget": 0.5159
+   }
+  },
+  "measured_930_wat": {
+   "twh": 11.6119,
+   "hours_below_1mw": 0,
+   "p05": 493.0,
+   "p50": 1355.0,
+   "p95": 2057.0,
+   "top_decile_share": 0.1298,
+   "daily_cv": 0.0714,
+   "admissible_for_conventional": true
+  },
+  "measured_swing": {
+   "mean_diurnal_swing_mw": 969.3,
+   "median_daily_range_mw": 1099.0,
+   "p95_daily_range_mw": 1603.0
+  },
+  "ror_base_vs_measured_p01": {
+   "months_base_above_p01": [],
+   "min_ratio_p01_over_base": 2.466
+  },
+  "g2_bound": {
+   "keeper_shortfall_twh": -0.0,
+   "economic_spill_twh": -0.0,
+   "max_upward_move_pct": 0.0
+  }
+ },
+ "SPP 2021": {
+  "keeper_bundle": "spp71_ensemble_rung",
+  "keeper": {
+   "twh": 9.778,
+   "hours_below_1mw": 2873,
+   "p05": 0.0,
+   "p50": 478.5,
+   "p95": 3101.8,
+   "top_decile_share": 0.1596,
+   "daily_cv": 0.6828
+  },
+  "prediction": {
+   "plants": 23,
+   "nameplate_mw": 3103.5,
+   "budget_twh": 9.7791,
+   "infeasible_excess_twh": 0.0,
+   "ror": {
+    "plants": 8,
+    "mw": 320.0,
+    "energy_share": 0.1293,
+    "flat_base_mw_min": 82.1,
+    "flat_base_mw_max": 187.2,
+    "flat_base_by_month": [
+     122.6,
+     138.6,
+     130.1,
+     160.3,
+     173.1,
+     186.5,
+     187.2,
+     178.6,
+     144.4,
+     129.7,
+     99.0,
+     82.1
+    ],
+    "clip_plant_months": 0,
+    "clip_removed_twh": 0.0,
+    "clip_removed_pct_of_budget": 0.0,
+    "unclassified_plants": 0,
+    "unclassified_mw": 0.0,
+    "unclassified_energy_share": 0.0,
+    "shapeable_mw": 2783.5,
+    "loader_stamped_plants": 8,
+    "loader_stamped_twh": 1.2646
+   },
+   "floor": {
+    "level_mw_min": 212.0,
+    "level_mw_max": 588.6,
+    "forced_share_of_budget": 0.4184
+   }
+  },
+  "measured_930_wat": {
+   "twh": 9.7791,
+   "hours_below_1mw": 0,
+   "p05": 412.0,
+   "p50": 1111.0,
+   "p95": 1998.0,
+   "top_decile_share": 0.1324,
+   "daily_cv": 0.0925,
+   "admissible_for_conventional": true
+  },
+  "measured_swing": {
+   "mean_diurnal_swing_mw": 922.8,
+   "median_daily_range_mw": 1035.0,
+   "p95_daily_range_mw": 1682.8
+  },
+  "ror_base_vs_measured_p01": {
+   "months_base_above_p01": [],
+   "min_ratio_p01_over_base": 1.862
+  },
+  "g2_bound": {
+   "keeper_shortfall_twh": 0.00108,
+   "economic_spill_twh": 0.00108,
+   "max_upward_move_pct": 0.011
+  }
+ },
+ "SPP 2022": {
+  "keeper_bundle": "spp71_ensemble_rung",
+  "keeper": {
+   "twh": 8.2071,
+   "hours_below_1mw": 3209,
+   "p05": 0.0,
+   "p50": 452.3,
+   "p95": 3101.8,
+   "top_decile_share": 0.212,
+   "daily_cv": 0.7184
+  },
+  "prediction": {
+   "plants": 23,
+   "nameplate_mw": 3103.5,
+   "budget_twh": 8.2074,
+   "infeasible_excess_twh": 0.0,
+   "ror": {
+    "plants": 8,
+    "mw": 320.0,
+    "energy_share": 0.1338,
+    "flat_base_mw_min": 84.4,
+    "flat_base_mw_max": 162.0,
+    "flat_base_by_month": [
+     94.4,
+     92.5,
+     111.3,
+     148.5,
+     130.5,
+     146.0,
+     146.8,
+     162.0,
+     152.6,
+     122.4,
+     111.3,
+     84.4
+    ],
+    "clip_plant_months": 0,
+    "clip_removed_twh": 0.0,
+    "clip_removed_pct_of_budget": 0.0,
+    "unclassified_plants": 0,
+    "unclassified_mw": 0.0,
+    "unclassified_energy_share": 0.0,
+    "shapeable_mw": 2783.5,
+    "loader_stamped_plants": 8,
+    "loader_stamped_twh": 1.0981
+   },
+   "floor": {
+    "level_mw_min": 189.2,
+    "level_mw_max": 580.0,
+    "forced_share_of_budget": 0.3865
+   }
+  },
+  "measured_930_wat": {
+   "twh": 8.2074,
+   "hours_below_1mw": 0,
+   "p05": 302.0,
+   "p50": 928.5,
+   "p95": 1676.0,
+   "top_decile_share": 0.1316,
+   "daily_cv": 0.0985,
+   "admissible_for_conventional": true
+  },
+  "measured_swing": {
+   "mean_diurnal_swing_mw": 835.9,
+   "median_daily_range_mw": 968.0,
+   "p95_daily_range_mw": 1452.8
+  },
+  "ror_base_vs_measured_p01": {
+   "months_base_above_p01": [],
+   "min_ratio_p01_over_base": 1.63
+  },
+  "g2_bound": {
+   "keeper_shortfall_twh": 0.00029,
+   "economic_spill_twh": 0.00029,
+   "max_upward_move_pct": 0.0036
+  }
+ },
+ "SPP 2023": {
+  "keeper_bundle": "spp71_ensemble_span",
+  "keeper": {
+   "twh": 8.3441,
+   "hours_below_1mw": 2682,
+   "p05": 0.0,
+   "p50": 452.3,
+   "p95": 2964.8,
+   "top_decile_share": 0.1714,
+   "daily_cv": 0.6821
+  },
+  "prediction": {
+   "plants": 23,
+   "nameplate_mw": 3103.5,
+   "budget_twh": 8.3441,
+   "infeasible_excess_twh": 0.0,
+   "ror": {
+    "plants": 8,
+    "mw": 320.0,
+    "energy_share": 0.1409,
+    "flat_base_mw_min": 91.6,
+    "flat_base_mw_max": 178.5,
+    "flat_base_by_month": [
+     91.6,
+     93.1,
+     104.9,
+     98.9,
+     140.9,
+     168.0,
+     178.5,
+     174.6,
+     167.6,
+     166.3,
+     124.8,
+     98.6
+    ],
+    "clip_plant_months": 0,
+    "clip_removed_twh": 0.0,
+    "clip_removed_pct_of_budget": 0.0,
+    "unclassified_plants": 0,
+    "unclassified_mw": 0.0,
+    "unclassified_energy_share": 0.0,
+    "shapeable_mw": 2783.5,
+    "loader_stamped_plants": 8,
+    "loader_stamped_twh": 1.176
+   },
+   "floor": {
+    "level_mw_min": 169.1,
+    "level_mw_max": 807.9,
+    "forced_share_of_budget": 0.477
+   }
+  },
+  "measured_930_wat": {
+   "twh": 8.3441,
+   "hours_below_1mw": 0,
+   "p05": 304.0,
+   "p50": 946.0,
+   "p95": 1633.0,
+   "top_decile_share": 0.1292,
+   "daily_cv": 0.0962,
+   "admissible_for_conventional": true
+  },
+  "measured_swing": {
+   "mean_diurnal_swing_mw": 735.4,
+   "median_daily_range_mw": 868.0,
+   "p95_daily_range_mw": 1150.2
+  },
+  "ror_base_vs_measured_p01": {
+   "months_base_above_p01": [],
+   "min_ratio_p01_over_base": 1.602
+  },
+  "g2_bound": {
+   "keeper_shortfall_twh": 3e-05,
+   "economic_spill_twh": 3e-05,
+   "max_upward_move_pct": 0.0004
+  }
+ },
+ "SPP 2024": {
+  "keeper_bundle": "spp71_ensemble_span",
+  "keeper": {
+   "twh": 8.9667,
+   "hours_below_1mw": 2014,
+   "p05": 0.0,
+   "p50": 492.5,
+   "p95": 2956.3,
+   "top_decile_share": 0.171,
+   "daily_cv": 0.6713
+  },
+  "prediction": {
+   "plants": 22,
+   "nameplate_mw": 3078.0,
+   "budget_twh": 8.9731,
+   "infeasible_excess_twh": 0.00645,
+   "ror": {
+    "plants": 8,
+    "mw": 320.0,
+    "energy_share": 0.1401,
+    "flat_base_mw_min": 97.2,
+    "flat_base_mw_max": 191.2,
+    "flat_base_by_month": [
+     117.1,
+     130.6,
+     119.1,
+     134.3,
+     155.1,
+     191.2,
+     150.7,
+     170.2,
+     170.5,
+     147.7,
+     135.2,
+     97.2
+    ],
+    "clip_plant_months": 1,
+    "clip_removed_twh": 0.00308,
+    "clip_removed_pct_of_budget": 0.0343,
+    "unclassified_plants": 0,
+    "unclassified_mw": 0.0,
+    "unclassified_energy_share": 0.0,
+    "shapeable_mw": 2758.0,
+    "loader_stamped_plants": 8,
+    "loader_stamped_twh": 1.2543
+   },
+   "floor": {
+    "level_mw_min": 211.0,
+    "level_mw_max": 866.0,
+    "forced_share_of_budget": 0.461
+   }
+  },
+  "measured_930_wat": {
+   "twh": 8.9734,
+   "hours_below_1mw": 0,
+   "p05": 281.0,
+   "p50": 1028.0,
+   "p95": 1774.0,
+   "top_decile_share": 0.1234,
+   "daily_cv": 0.1603,
+   "admissible_for_conventional": true
+  },
+  "measured_swing": {
+   "mean_diurnal_swing_mw": 725.2,
+   "median_daily_range_mw": 847.0,
+   "p95_daily_range_mw": 1370.0
+  },
+  "ror_base_vs_measured_p01": {
+   "months_base_above_p01": [],
+   "min_ratio_p01_over_base": 1.601
+  },
+  "g2_bound": {
+   "keeper_shortfall_twh": 0.00645,
+   "economic_spill_twh": -0.0,
+   "max_upward_move_pct": 0.0
+  }
+ },
+ "SPP 2025": {
+  "keeper_bundle": "spp71_ensemble_span",
+  "keeper": {
+   "twh": 8.8183,
+   "hours_below_1mw": 2221,
+   "p05": 0.0,
+   "p50": 492.5,
+   "p95": 2969.3,
+   "top_decile_share": 0.1531,
+   "daily_cv": 0.7071
+  },
+  "prediction": {
+   "plants": 22,
+   "nameplate_mw": 3078.0,
+   "budget_twh": 8.8299,
+   "infeasible_excess_twh": 0.00618,
+   "ror": {
+    "plants": 8,
+    "mw": 320.0,
+    "energy_share": 0.1415,
+    "flat_base_mw_min": 107.0,
+    "flat_base_mw_max": 213.8,
+    "flat_base_by_month": [
+     111.2,
+     129.7,
+     131.8,
+     146.7,
+     171.2,
+     213.8,
+     203.4,
+     144.4,
+     129.7,
+     115.0,
+     107.1,
+     107.0
+    ],
+    "clip_plant_months": 0,
+    "clip_removed_twh": 0.0,
+    "clip_removed_pct_of_budget": 0.0,
+    "unclassified_plants": 0,
+    "unclassified_mw": 0.0,
+    "unclassified_energy_share": 0.0,
+    "shapeable_mw": 2758.0,
+    "loader_stamped_plants": 8,
+    "loader_stamped_twh": 1.2493
+   },
+   "floor": {
+    "level_mw_min": 235.0,
+    "level_mw_max": 661.6,
+    "forced_share_of_budget": 0.3944
+   }
+  },
+  "measured_930_wat": {
+   "twh": 8.8299,
+   "hours_below_1mw": 0,
+   "p05": 293.0,
+   "p50": 984.0,
+   "p95": 1817.0,
+   "top_decile_share": 0.1295,
+   "daily_cv": 0.1136,
+   "admissible_for_conventional": true
+  },
+  "measured_swing": {
+   "mean_diurnal_swing_mw": 867.1,
+   "median_daily_range_mw": 985.0,
+   "p95_daily_range_mw": 1538.2
+  },
+  "ror_base_vs_measured_p01": {
+   "months_base_above_p01": [],
+   "min_ratio_p01_over_base": 1.993
+  },
+  "g2_bound": {
+   "keeper_shortfall_twh": 0.01156,
+   "economic_spill_twh": 0.00538,
+   "max_upward_move_pct": 0.061
+  }
+ },
+ "NEISO 2020": {
+  "keeper_bundle": "neiso112_mer_span",
+  "keeper": {
+   "twh": 6.5825,
+   "hours_below_1mw": 1882,
+   "p05": 0.0,
+   "p50": 707.2,
+   "p95": 1883.0,
+   "top_decile_share": 0.3026,
+   "daily_cv": 0.7575
+  },
+  "prediction": {
+   "plants": 173,
+   "nameplate_mw": 1920.8,
+   "budget_twh": 6.6477,
+   "infeasible_excess_twh": 0.06518,
+   "ror": {
+    "plants": 113,
+    "mw": 795.2,
+    "energy_share": 0.4925,
+    "flat_base_mw_min": 77.8,
+    "flat_base_mw_max": 619.2,
+    "flat_base_by_month": [
+     499.6,
+     473.4,
+     569.4,
+     619.2,
+     558.0,
+     196.8,
+     241.9,
+     131.8,
+     77.8,
+     275.6,
+     334.7,
+     435.8
+    ],
+    "clip_plant_months": 35,
+    "clip_removed_twh": 0.05371,
+    "clip_removed_pct_of_budget": 0.808,
+    "unclassified_plants": 2,
+    "unclassified_mw": 8.1,
+    "unclassified_energy_share": 0.0063,
+    "shapeable_mw": 1125.6,
+    "loader_stamped_plants": 113,
+    "loader_stamped_twh": 3.2204
+   }
+  },
+  "measured_930_wat": {
+   "twh": 7.0566,
+   "hours_below_1mw": 9,
+   "p05": 208.0,
+   "p50": 782.0,
+   "p95": 1594.1,
+   "top_decile_share": 0.1618,
+   "daily_cv": 0.1681,
+   "admissible_for_conventional": false
+  },
+  "g2_bound": {
+   "keeper_shortfall_twh": 0.06516,
+   "economic_spill_twh": -2e-05,
+   "max_upward_move_pct": 0.0
+  }
+ },
+ "NEISO 2021": {
+  "keeper_bundle": "neiso112_mer_span",
+  "keeper": {
+   "twh": 6.2248,
+   "hours_below_1mw": 1293,
+   "p05": 0.0,
+   "p50": 437.7,
+   "p95": 1908.5,
+   "top_decile_share": 0.2521,
+   "daily_cv": 0.7418
+  },
+  "prediction": {
+   "plants": 170,
+   "nameplate_mw": 1914.5,
+   "budget_twh": 6.2316,
+   "infeasible_excess_twh": 0.00685,
+   "ror": {
+    "plants": 112,
+    "mw": 792.9,
+    "energy_share": 0.5183,
+    "flat_base_mw_min": 188.4,
+    "flat_base_mw_max": 547.9,
+    "flat_base_by_month": [
+     435.2,
+     312.2,
+     432.4,
+     547.9,
+     409.5,
+     188.4,
+     354.7,
+     251.5,
+     294.7,
+     307.2,
+     449.5,
+     431.9
+    ],
+    "clip_plant_months": 7,
+    "clip_removed_twh": 0.00294,
+    "clip_removed_pct_of_budget": 0.0472,
+    "unclassified_plants": 1,
+    "unclassified_mw": 6.5,
+    "unclassified_energy_share": 0.0076,
+    "shapeable_mw": 1121.6,
+    "loader_stamped_plants": 112,
+    "loader_stamped_twh": 3.2269
+   }
+  },
+  "measured_930_wat": {
+   "twh": 6.6442,
+   "hours_below_1mw": 1,
+   "p05": 290.0,
+   "p50": 688.0,
+   "p95": 1513.0,
+   "top_decile_share": 0.1631,
+   "daily_cv": 0.186,
+   "admissible_for_conventional": false
+  },
+  "g2_bound": {
+   "keeper_shortfall_twh": 0.00683,
+   "economic_spill_twh": -2e-05,
+   "max_upward_move_pct": 0.0
+  }
+ },
+ "NEISO 2022": {
+  "keeper_bundle": "neiso112_mer_span",
+  "keeper": {
+   "twh": 6.4784,
+   "hours_below_1mw": 1766,
+   "p05": 0.0,
+   "p50": 586.7,
+   "p95": 1876.9,
+   "top_decile_share": 0.2618,
+   "daily_cv": 0.8333
+  },
+  "prediction": {
+   "plants": 170,
+   "nameplate_mw": 1914.5,
+   "budget_twh": 6.5712,
+   "infeasible_excess_twh": 0.09279,
+   "ror": {
+    "plants": 112,
+    "mw": 792.9,
+    "energy_share": 0.4973,
+    "flat_base_mw_min": 122.8,
+    "flat_base_mw_max": 668.4,
+    "flat_base_by_month": [
+     337.6,
+     460.4,
+     593.0,
+     668.4,
+     510.2,
+     250.7,
+     137.8,
+     122.8,
+     231.1,
+     292.9,
+     335.7,
+     472.3
+    ],
+    "clip_plant_months": 47,
+    "clip_removed_twh": 0.05364,
+    "clip_removed_pct_of_budget": 0.8163,
+    "unclassified_plants": 1,
+    "unclassified_mw": 6.5,
+    "unclassified_energy_share": 0.0085,
+    "shapeable_mw": 1121.6,
+    "loader_stamped_plants": 112,
+    "loader_stamped_twh": 3.2144
+   }
+  },
+  "measured_930_wat": {
+   "twh": 7.1437,
+   "hours_below_1mw": 0,
+   "p05": 293.0,
+   "p50": 769.0,
+   "p95": 1635.0,
+   "top_decile_share": 0.174,
+   "daily_cv": 0.1733,
+   "admissible_for_conventional": false
+  },
+  "g2_bound": {
+   "keeper_shortfall_twh": 0.09281,
+   "economic_spill_twh": 2e-05,
+   "max_upward_move_pct": 0.0004
+  }
+ },
+ "NEISO 2023": {
+  "keeper_bundle": "neiso112_mer_span",
+  "keeper": {
+   "twh": 8.5173,
+   "hours_below_1mw": 0,
+   "p05": 57.5,
+   "p50": 1009.4,
+   "p95": 1835.5,
+   "top_decile_share": 0.1649,
+   "daily_cv": 0.4837
+  },
+  "prediction": {
+   "plants": 171,
+   "nameplate_mw": 1915.2,
+   "budget_twh": 8.5762,
+   "infeasible_excess_twh": 0.05886,
+   "ror": {
+    "plants": 112,
+    "mw": 792.9,
+    "energy_share": 0.4787,
+    "flat_base_mw_min": 373.0,
+    "flat_base_mw_max": 560.7,
+    "flat_base_by_month": [
+     560.7,
+     499.4,
+     491.2,
+     553.8,
+     437.6,
+     373.0,
+     508.8,
+     470.4,
+     392.5,
+     394.2,
+     441.1,
+     463.0
+    ],
+    "clip_plant_months": 54,
+    "clip_removed_twh": 0.028,
+    "clip_removed_pct_of_budget": 0.3265,
+    "unclassified_plants": 1,
+    "unclassified_mw": 6.5,
+    "unclassified_energy_share": 0.0081,
+    "shapeable_mw": 1122.3,
+    "loader_stamped_plants": 112,
+    "loader_stamped_twh": 4.0776
+   }
+  },
+  "measured_930_wat": {
+   "twh": 8.775,
+   "hours_below_1mw": 0,
+   "p05": 554.0,
+   "p50": 933.0,
+   "p95": 1788.0,
+   "top_decile_share": 0.1572,
+   "daily_cv": 0.1266,
+   "admissible_for_conventional": false
+  },
+  "g2_bound": {
+   "keeper_shortfall_twh": 0.05886,
+   "economic_spill_twh": -0.0,
+   "max_upward_move_pct": 0.0
+  }
+ },
+ "NEISO 2024": {
+  "keeper_bundle": "neiso112_mer_span",
+  "keeper": {
+   "twh": 6.6731,
+   "hours_below_1mw": 451,
+   "p05": 0.0,
+   "p50": 670.6,
+   "p95": 1803.2,
+   "top_decile_share": 0.2099,
+   "daily_cv": 0.6449
+  },
+  "prediction": {
+   "plants": 166,
+   "nameplate_mw": 1899.5,
+   "budget_twh": 6.7144,
+   "infeasible_excess_twh": 0.0413,
+   "ror": {
+    "plants": 109,
+    "mw": 781.5,
+    "energy_share": 0.4731,
+    "flat_base_mw_min": 146.5,
+    "flat_base_mw_max": 540.2,
+    "flat_base_by_month": [
+     481.0,
+     462.7,
+     524.6,
+     540.2,
+     469.0,
+     308.2,
+     333.7,
+     364.8,
+     171.5,
+     146.5,
+     171.9,
+     355.5
+    ],
+    "clip_plant_months": 33,
+    "clip_removed_twh": 0.01757,
+    "clip_removed_pct_of_budget": 0.2617,
+    "unclassified_plants": 1,
+    "unclassified_mw": 6.5,
+    "unclassified_energy_share": 0.0087,
+    "shapeable_mw": 1118.0,
+    "loader_stamped_plants": 109,
+    "loader_stamped_twh": 3.1593
+   }
+  },
+  "measured_930_wat": {
+   "twh": 7.3942,
+   "hours_below_1mw": 0,
+   "p05": 253.0,
+   "p50": 803.0,
+   "p95": 1789.0,
+   "top_decile_share": 0.1668,
+   "daily_cv": 0.1583,
+   "admissible_for_conventional": false
+  },
+  "g2_bound": {
+   "keeper_shortfall_twh": 0.04131,
+   "economic_spill_twh": 1e-05,
+   "max_upward_move_pct": 0.0002
+  }
+ },
+ "NEISO 2025": {
+  "keeper_bundle": "neiso112_mer_span",
+  "keeper": {
+   "twh": 5.1064,
+   "hours_below_1mw": 1908,
+   "p05": 0.0,
+   "p50": 253.8,
+   "p95": 1789.5,
+   "top_decile_share": 0.2881,
+   "daily_cv": 0.8659
+  },
+  "prediction": {
+   "plants": 166,
+   "nameplate_mw": 1899.5,
+   "budget_twh": 5.1207,
+   "infeasible_excess_twh": 0.01435,
+   "ror": {
+    "plants": 109,
+    "mw": 781.5,
+    "energy_share": 0.4745,
+    "flat_base_mw_min": 91.6,
+    "flat_base_mw_max": 515.9,
+    "flat_base_by_month": [
+     308.9,
+     233.2,
+     424.5,
+     456.0,
+     515.9,
+     384.1,
+     197.5,
+     121.2,
+     91.6,
+     115.8,
+     229.4,
+     237.9
+    ],
+    "clip_plant_months": 12,
+    "clip_removed_twh": 0.00754,
+    "clip_removed_pct_of_budget": 0.1472,
+    "unclassified_plants": 1,
+    "unclassified_mw": 6.5,
+    "unclassified_energy_share": 0.0089,
+    "shapeable_mw": 1118.0,
+    "loader_stamped_plants": 109,
+    "loader_stamped_twh": 2.4224
+   },
+   "floor": {
+    "level_mw_min": 163.2,
+    "level_mw_max": 883.0,
+    "forced_share_of_budget": 0.7035
+   }
+  },
+  "measured_930_wat": {
+   "twh": 5.1207,
+   "hours_below_1mw": 3,
+   "p05": 187.0,
+   "p50": 491.0,
+   "p95": 1141.0,
+   "top_decile_share": 0.1203,
+   "daily_cv": 0.1667,
+   "admissible_for_conventional": true
+  },
+  "measured_swing": {
+   "mean_diurnal_swing_mw": 220.8,
+   "median_daily_range_mw": 265.0,
+   "p95_daily_range_mw": 455.8
+  },
+  "ror_base_vs_measured_p01": {
+   "months_base_above_p01": [
+    6
+   ],
+   "min_ratio_p01_over_base": 0.94
+  },
+  "g2_bound": {
+   "keeper_shortfall_twh": 0.0143,
+   "economic_spill_twh": -5e-05,
+   "max_upward_move_pct": 0.0
+  }
+ },
+ "MISO 2020": {
+  "keeper_bundle": "miso264_anchor_span",
+  "keeper": {
+   "twh": 11.1198,
+   "hours_below_1mw": 62,
+   "p05": 59.7,
+   "p50": 1236.3,
+   "p95": 2377.8,
+   "top_decile_share": 0.1746,
+   "daily_cv": 0.4134
+  },
+  "prediction": {
+   "plants": 165,
+   "nameplate_mw": 2466.8,
+   "budget_twh": 11.4014,
+   "infeasible_excess_twh": 0.14549,
+   "ror": {
+    "plants": 100,
+    "mw": 1246.3,
+    "energy_share": 0.5534,
+    "flat_base_mw_min": 597.1,
+    "flat_base_mw_max": 858.9,
+    "flat_base_by_month": [
+     663.5,
+     849.4,
+     765.8,
+     847.0,
+     858.9,
+     697.2,
+     718.3,
+     603.0,
+     627.6,
+     612.1,
+     597.1,
+     620.2
+    ],
+    "clip_plant_months": 50,
+    "clip_removed_twh": 0.14293,
+    "clip_removed_pct_of_budget": 1.2537,
+    "unclassified_plants": 1,
+    "unclassified_mw": 0.1,
+    "unclassified_energy_share": 0.0,
+    "shapeable_mw": 1220.5,
+    "loader_stamped_plants": 100,
+    "loader_stamped_twh": 6.1668
+   }
+  },
+  "measured_930_wat": {
+   "twh": 11.6531,
+   "hours_below_1mw": 0,
+   "p05": 695.0,
+   "p50": 1136.0,
+   "p95": 2706.0,
+   "top_decile_share": 0.1514,
+   "daily_cv": 0.1122,
+   "admissible_for_conventional": false
+  },
+  "g2_bound": {
+   "keeper_shortfall_twh": 0.28159,
+   "economic_spill_twh": 0.1361,
+   "max_upward_move_pct": 1.224
+  }
+ },
+ "MISO 2021": {
+  "keeper_bundle": "miso264_anchor_span",
+  "keeper": {
+   "twh": 10.1386,
+   "hours_below_1mw": 480,
+   "p05": 0.0,
+   "p50": 1043.8,
+   "p95": 2419.8,
+   "top_decile_share": 0.1936,
+   "daily_cv": 0.5166
+  },
+  "prediction": {
+   "plants": 164,
+   "nameplate_mw": 2460.1,
+   "budget_twh": 10.1754,
+   "infeasible_excess_twh": 0.03677,
+   "ror": {
+    "plants": 100,
+    "mw": 1246.6,
+    "energy_share": 0.5746,
+    "flat_base_mw_min": 522.7,
+    "flat_base_mw_max": 812.6,
+    "flat_base_by_month": [
+     773.5,
+     624.6,
+     661.3,
+     652.5,
+     812.6,
+     791.9,
+     729.1,
+     637.2,
+     522.7,
+     537.0,
+     566.3,
+     641.9
+    ],
+    "clip_plant_months": 4,
+    "clip_removed_twh": 0.03677,
+    "clip_removed_pct_of_budget": 0.3614,
+    "unclassified_plants": 1,
+    "unclassified_mw": 0.1,
+    "unclassified_energy_share": 0.0,
+    "shapeable_mw": 1213.5,
+    "loader_stamped_plants": 100,
+    "loader_stamped_twh": 5.8097
+   }
+  },
+  "measured_930_wat": {
+   "twh": 10.4178,
+   "hours_below_1mw": 0,
+   "p05": 540.0,
+   "p50": 1068.0,
+   "p95": 2514.0,
+   "top_decile_share": 0.1589,
+   "daily_cv": 0.1438,
+   "admissible_for_conventional": false
+  },
+  "g2_bound": {
+   "keeper_shortfall_twh": 0.0368,
+   "economic_spill_twh": 3e-05,
+   "max_upward_move_pct": 0.0003
+  }
+ },
+ "MISO 2022": {
+  "keeper_bundle": "miso264_anchor_span",
+  "keeper": {
+   "twh": 9.2441,
+   "hours_below_1mw": 565,
+   "p05": 0.0,
+   "p50": 891.3,
+   "p95": 2411.0,
+   "top_decile_share": 0.1905,
+   "daily_cv": 0.5302
+  },
+  "prediction": {
+   "plants": 164,
+   "nameplate_mw": 2466.3,
+   "budget_twh": 9.2519,
+   "infeasible_excess_twh": 0.00775,
+   "ror": {
+    "plants": 101,
+    "mw": 1252.8,
+    "energy_share": 0.5901,
+    "flat_base_mw_min": 437.8,
+    "flat_base_mw_max": 781.1,
+    "flat_base_by_month": [
+     580.5,
+     585.9,
+     634.9,
+     757.8,
+     725.7,
+     781.1,
+     600.1,
+     574.5,
+     551.5,
+     437.8,
+     582.9,
+     657.8
+    ],
+    "clip_plant_months": 4,
+    "clip_removed_twh": 0.00773,
+    "clip_removed_pct_of_budget": 0.0836,
+    "unclassified_plants": 1,
+    "unclassified_mw": 0.1,
+    "unclassified_energy_share": 0.0,
+    "shapeable_mw": 1213.5,
+    "loader_stamped_plants": 101,
+    "loader_stamped_twh": 5.4518
+   }
+  },
+  "measured_930_wat": {
+   "twh": 10.5977,
+   "hours_below_1mw": 0,
+   "p05": 483.0,
+   "p50": 981.0,
+   "p95": 2815.1,
+   "top_decile_share": 0.1712,
+   "daily_cv": 0.1673,
+   "admissible_for_conventional": false
+  },
+  "g2_bound": {
+   "keeper_shortfall_twh": 0.00779,
+   "economic_spill_twh": 4e-05,
+   "max_upward_move_pct": 0.0004
+  }
+ },
+ "MISO 2023": {
+  "keeper_bundle": "miso264_anchor_span",
+  "keeper": {
+   "twh": 8.7748,
+   "hours_below_1mw": 295,
+   "p05": 4.7,
+   "p50": 813.3,
+   "p95": 2369.1,
+   "top_decile_share": 0.2002,
+   "daily_cv": 0.4918
+  },
+  "prediction": {
+   "plants": 163,
+   "nameplate_mw": 2464.9,
+   "budget_twh": 8.7894,
+   "infeasible_excess_twh": 0.01461,
+   "ror": {
+    "plants": 100,
+    "mw": 1251.4,
+    "energy_share": 0.5921,
+    "flat_base_mw_min": 343.4,
+    "flat_base_mw_max": 784.0,
+    "flat_base_by_month": [
+     663.1,
+     700.3,
+     719.3,
+     774.9,
+     784.0,
+     608.8,
+     537.1,
+     478.2,
+     343.4,
+     429.5,
+     518.3,
+     561.8
+    ],
+    "clip_plant_months": 12,
+    "clip_removed_twh": 0.0118,
+    "clip_removed_pct_of_budget": 0.1342,
+    "unclassified_plants": 1,
+    "unclassified_mw": 0.1,
+    "unclassified_energy_share": 0.0,
+    "shapeable_mw": 1213.5,
+    "loader_stamped_plants": 100,
+    "loader_stamped_twh": 5.1921
+   }
+  },
+  "measured_930_wat": {
+   "twh": 9.979,
+   "hours_below_1mw": 0,
+   "p05": 425.0,
+   "p50": 1018.0,
+   "p95": 2604.0,
+   "top_decile_share": 0.1629,
+   "daily_cv": 0.1392,
+   "admissible_for_conventional": false
+  },
+  "g2_bound": {
+   "keeper_shortfall_twh": 0.01457,
+   "economic_spill_twh": -4e-05,
+   "max_upward_move_pct": 0.0
+  }
+ },
+ "MISO 2024": {
+  "keeper_bundle": "miso264_anchor_span",
+  "keeper": {
+   "twh": 9.0289,
+   "hours_below_1mw": 188,
+   "p05": 3.6,
+   "p50": 902.5,
+   "p95": 2332.2,
+   "top_decile_share": 0.1969,
+   "daily_cv": 0.5253
+  },
+  "prediction": {
+   "plants": 160,
+   "nameplate_mw": 2371.5,
+   "budget_twh": 9.042,
+   "infeasible_excess_twh": 0.01309,
+   "ror": {
+    "plants": 98,
+    "mw": 1239.0,
+    "energy_share": 0.5915,
+    "flat_base_mw_min": 328.2,
+    "flat_base_mw_max": 772.4,
+    "flat_base_by_month": [
+     573.9,
+     769.8,
+     642.7,
+     695.2,
+     752.1,
+     772.4,
+     634.1,
+     574.5,
+     401.4,
+     328.2,
+     617.7,
+     565.7
+    ],
+    "clip_plant_months": 15,
+    "clip_removed_twh": 0.01184,
+    "clip_removed_pct_of_budget": 0.131,
+    "unclassified_plants": 1,
+    "unclassified_mw": 0.1,
+    "unclassified_energy_share": 0.0,
+    "shapeable_mw": 1132.5,
+    "loader_stamped_plants": 98,
+    "loader_stamped_twh": 5.3367
+   }
+  },
+  "measured_930_wat": {
+   "twh": 10.7386,
+   "hours_below_1mw": 0,
+   "p05": 371.0,
+   "p50": 1011.5,
+   "p95": 2921.2,
+   "top_decile_share": 0.1643,
+   "daily_cv": 0.1417,
+   "admissible_for_conventional": false
+  },
+  "g2_bound": {
+   "keeper_shortfall_twh": 0.01305,
+   "economic_spill_twh": -4e-05,
+   "max_upward_move_pct": 0.0
+  }
+ },
+ "MISO 2025": {
+  "keeper_bundle": "miso264_anchor_span",
+  "keeper": {
+   "twh": 9.064,
+   "hours_below_1mw": 252,
+   "p05": 3.6,
+   "p50": 905.2,
+   "p95": 2321.5,
+   "top_decile_share": 0.1972,
+   "daily_cv": 0.5343
+  },
+  "prediction": {
+   "plants": 160,
+   "nameplate_mw": 2371.7,
+   "budget_twh": 9.0772,
+   "infeasible_excess_twh": 0.0133,
+   "ror": {
+    "plants": 98,
+    "mw": 1239.2,
+    "energy_share": 0.5884,
+    "flat_base_mw_min": 331.0,
+    "flat_base_mw_max": 766.5,
+    "flat_base_by_month": [
+     573.5,
+     766.5,
+     652.4,
+     699.4,
+     749.0,
+     763.7,
+     636.6,
+     570.1,
+     400.3,
+     331.0,
+     610.9,
+     564.1
+    ],
+    "clip_plant_months": 13,
+    "clip_removed_twh": 0.01167,
+    "clip_removed_pct_of_budget": 0.1286,
+    "unclassified_plants": 1,
+    "unclassified_mw": 0.1,
+    "unclassified_energy_share": 0.0,
+    "shapeable_mw": 1132.5,
+    "loader_stamped_plants": 98,
+    "loader_stamped_twh": 5.3296
+   }
+  },
+  "measured_930_wat": {
+   "twh": 9.8763,
+   "hours_below_1mw": 0,
+   "p05": 481.0,
+   "p50": 1022.0,
+   "p95": 2376.1,
+   "top_decile_share": 0.1525,
+   "daily_cv": 0.1197,
+   "admissible_for_conventional": false
+  },
+  "g2_bound": {
+   "keeper_shortfall_twh": 0.01325,
+   "economic_spill_twh": -5e-05,
+   "max_upward_move_pct": 0.0
+  }
+ }
+}
