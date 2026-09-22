@@ -3113,6 +3113,21 @@ def _compose_min_gen_floors(
             coal_day_order = (
                 _commitment_day_order(sys_load, hours) if _coal_day_grain else None
             )
+            # ENSEMBLE PLACEMENT (config.coal_sync_ensemble_level, SPP-71 card
+            # R-bc): REPLACES the top-k window above with the continuous-
+            # relaxation image of the same measured commitment — pmin x frac in
+            # EVERY hour instead of pmin on the top round(frac x 8760) hours and
+            # zero elsewhere. Same measured annual synchronized MWh; only the
+            # placement moves. Rule 19 [R-ONE-MECH]: the three placements are
+            # ALTERNATIVES, never stacked — when this is on, the per-generator
+            # branch below short-circuits before the force-all branch, the
+            # load_rank branch AND the pjm-h16 day-grain window, which asks a
+            # DIFFERENT question of the same floor (that row re-grains the
+            # window from hours to whole operating days; this row removes the
+            # window). The full rationale, the rule-17/18 window declaration and
+            # the SPP identification live on the ScenarioConfig field's citation
+            # block.
+            ensemble = bool(getattr(config, "coal_sync_ensemble_level", False))
             for g_idx, gen in enumerate(generators):
                 pmin_mw = getattr(gen, "coal_sync_pmin_mw", 0.0)
                 if pmin_mw <= 0.0:
@@ -3130,6 +3145,15 @@ def _compose_min_gen_floors(
                 )
                 if frac <= 0.0:
                     continue  # measured dark all year
+                if ensemble:
+                    # E[floor] = pmin x P(synchronized). Clipped to
+                    # pmax x availability downstream exactly as the window form,
+                    # so an outage hour still relaxes it.
+                    level = pmin_mw * min(frac, 1.0)
+                    raised = min_gen[g_idx, :] < level
+                    np.maximum(min_gen[g_idx, :], level, out=min_gen[g_idx, :])
+                    min_gen_mech[g_idx, raised] = MECH_COAL_MUSTRUN
+                    continue
                 if frac >= _COAL_SYNC_FORCE_ALL or load_rank is None:
                     raised = min_gen[g_idx, :] < pmin_mw
                     np.maximum(min_gen[g_idx, :], pmin_mw, out=min_gen[g_idx, :])
