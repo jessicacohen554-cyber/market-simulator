@@ -15018,3 +15018,55 @@ Records: `docs/RESULT-miso266-dispatched-bin-denominator-2026-09-22.md`,
 `docs/PRECOMMIT-miso266-dispatched-bin-denominator-2026-09-22.md`;
 probes `scripts/probes/_miso266_{excess_decomposition,denominator_vs_lp,repair_ceiling_ab,compose_span}.py`;
 test `tests/unit/data/test_unit_outage_dispatched_bin_denominator.py`.
+
+## miso-266 (continued) — 2026-09-23 — REGISTERED, SCORED, PROMOTED, THEN WITHDRAWN
+
+**MISO's keeper is `2026-09-22-hydro-5-miso-ror`**, not this arm. The arm was
+registered, scored and promoted on the owner's standing standard; the promotion
+was **withdrawn the same day** because a sibling arm on the same `miso-264` base —
+hydro-5's `hydro_ror_split` — landed on `main` first. The two are siblings, not a
+chain, so promoting this one would have silently reverted `hydro_ror_split`. The
+registry sidecar, run payload and keeper-shard edits were dropped; the
+mechanism-matrix cell stays **`O`** (built, solved, scored, **not armed**).
+
+**THE SCORED GATE TABLE SURVIVES AND IS THE POINT.** Against `miso-264` on the
+SAME committed bench the two runs are criterion-for-criterion identical — C1 FAIL,
+C2 PASS, C3a FAIL, C3b FAIL, C3c CAVEAT (ledgered), C4 PASS, C6 PASS, C8 PASS;
+full span NOT-YET on both; D-10 free-class C1 identical at 38/40 all · 28/30 free;
+**train tier 2023–2025 CALIBRATED with zero fails on both**. An exact wash, so the
+mechanism costs nothing on the gates and stands on rule 1 `[R-STRUCT]` / rule 14
+`[R-ACCURATE]` alone. Which cells fail did move: out go C1 2020 COAL_BIT
+(−10.92 → −6.93) and 2021 COAL_BIT (−6.54 → −3.30); in come C1 2022 CC_REGULAR
+−8.74 and C3a 2022 −10.5 %, beside the **pre-registered** C1 2022 COAL_PRB
++8.13 → +10.52. CT_PEAKER worsens in four of six years, unpredicted.
+
+**THE BENCH WAS MEASURED AND THE MOVE REFUSED — BY TWO LANES INDEPENDENTLY.**
+The HEAD rebuild moves `classFull` by −0.24 to +2.65 TWh per class-year and
+regenerates **`classFull.oil` NEGATIVE** in 2022 (−0.0731) and 2025 (−0.0124). A
+measured actual cannot be negative, so all six parts were restored byte-for-byte
+and sha256-verified. hydro-5 reached the same call the same day (*"MISO's
+regenerated parts moved content (miso266 builder drift) and were NOT committed"*).
+44 committed parts across all nine ISOs are stamp-stale. Routed:
+`docs/FINDING-miso266-bench-regeneration-hazard-2026-09-23.md` → **miso-267 STEP 1**.
+
+**A correction to this lane's own §5.** `--rebuild-benchmark` does NOT touch the
+committed bench parts; it writes the gitignored shared store and re-points one
+bundle's `meta.json`. The re-base happens in `dashboard_add_run.py` — a separable
+step, which is the only reason the arm could be registered and scored without
+adopting a defective benchmark.
+
+**COST OF ARMING THIS FLAG LATER:** the arm bundle lacks `hydro_ror_split`, so it
+is stale against the current keeper and a promotion needs a **re-solve on the
+hydro-5 base** — six shards, ~15 min each. `miso266_{arm,ctl}_span` were on
+ephemeral session disk and did not survive (rule 33 `[R-SHARD-ARCHIVE]` (f): shard
+branches are transport, not storage).
+
+**UNREPAIRED, AND IT BITES THE NEXT LANE:** `_miso266_compose_span.py` writes leg
+1's whole `shared_inputs` block and its `calibration_flags.years` onto the
+composite. `eia930`/`eia923`/`campd` are **per-year** (6 distinct hashes); the six
+`unit_outages*` frames are shared (1). Symptoms: `--restore-shared-inputs` refuses,
+and `audit_keepers` E3 warns on the years mismatch — which `miso264_anchor_span`
+and `hydro5_miso_ror_span` both carry.
+
+Records: `docs/RESULT-miso266-dispatched-bin-denominator-2026-09-22.md` §8,
+`docs/FINDING-miso266-bench-regeneration-hazard-2026-09-23.md`.
