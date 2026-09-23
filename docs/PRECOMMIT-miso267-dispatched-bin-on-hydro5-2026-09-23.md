@@ -177,4 +177,22 @@ python scripts/probes/_miso267_shard_check.py --leg results/calibration/miso267_
 
 ## 8. Launch record
 
-(appended at launch)
+Launched 2026-09-23 06:17–06:19 UTC. All six pinned to
+`3ea64fa5110254df85b7a40cb6d4521414d08242` (this doc's commit, never a branch
+name); each shard's first hard stop is `git rev-parse HEAD` equality. Tagged
+`miso-267`, `shard`; auto-PR off. Setup order: preflight (swap) → `uv sync` →
+hydrate `miso` → coal stocks/receipts → hydro plant modes. The solve runs
+detached with an in-turn wait loop (a MISO year outlasts one tool call).
+
+| year | shard session | branch | out-dir |
+|---|---|---|---|
+| 2020 | `session_01XVE7iF3E4ySBsjWYmJ4pLQ` | `claude/miso267-dbd-2020` | `results/calibration/miso267_dbd_2020` |
+| 2021 | `session_017THg5cmGtD5hhJjmH9Lb2Y` | `claude/miso267-dbd-2021` | `results/calibration/miso267_dbd_2021` |
+| 2022 | `session_01FA3Fioye5y15govMh5y8D8` | `claude/miso267-dbd-2022` | `results/calibration/miso267_dbd_2022` |
+| 2023 | `session_01UxoUjrFz2fNvyzdRG4fnwr` | `claude/miso267-dbd-2023` | `results/calibration/miso267_dbd_2023` |
+| 2024 | `session_01Ag58zrSp8VjpHLofgikkhn` | `claude/miso267-dbd-2024` | `results/calibration/miso267_dbd_2024` |
+| 2025 | `session_01ChUrdvJvnqauCBTB5WWTwj` | `claude/miso267-dbd-2025` | `results/calibration/miso267_dbd_2025` |
+
+Each pushes its bundle (with `dispatch/<Y>_P1.parquet`) plus the
+`results/calibration/_shared/MISO/` captures its `meta.json` references, by
+`.gitignore` negation and a plain `git add`.
