@@ -17937,6 +17937,26 @@ cause of the rung's C3a 2020 / C3b 2020–2022 failures, and with demand (SPP-72
   `scuc_load_pocket_commitment`) stay `U`, but a successor proposing any of them for C3a/C3b
   must first beat this bound.
 
+**DO-NOT-REDO, added by SPP-74 (2026-09-23, THE BODY, ZERO LP —
+`docs/handoffs/RESULT-spp-74-price-body-2026-09-23.md`).** Measured on the hydro-5 rung
+(`2026-09-22-hydro-5-spp-rung`; C3a 2020 +15.5 %, C3b 0.257 / 0.234 / 0.208). **No body object is
+measured-and-admissible for the price rows; they stay an unidentified body-level error, routed.**
+- **2020 is one compressed distribution**: the model is +$1–2/h too dear in every RT hour-type
+  below the upper tercile. Removing the low side (RT ≤ $10) OR the ordinary hours alone passes
+  both 2020 rows, so neither is "the" object.
+- **Low side = thermal staying online**, not a wind offer: in 2020's 936 RT<0 hours measured SPP
+  ran +3.3 GW thermal / −3.7 GW wind vs the model (split 1.58 coal / 1.75 gas; 2022 1.12 / 2.45).
+  Above RT $10 wind matches within 0.7 GW. The coal half is the armed `coal_sync_ensemble_level`;
+  the gas half is SPP-44 / SPP-66's R cells — re-open only with a measured gas min-gen driver.
+- **Ordinary hours = LEVEL, not quantity or fuel**: stack mc at the MEASURED thermal quantity is
+  +$3.6–7.5 above RT; quantity term ≤ 0 in 11/12 months; model gas tracks EIA N3045 KS within
+  $0.1–0.7 (below it). No SPP-measured input names the gap. Do not re-derive gas seasonality for it.
+- **C3b 2022 = upper tercile** (model $63.8 vs RT $93.7, gas marginal at HR 8–9): the xiso-refused
+  offer-shape object. **C3b 2021 = Uri February** (0.234 → 0.071 without it).
+- **CT overrun is not the price owner** (2020 corr with month error −0.13; overrun sits Jan–Jun).
+- **Routed data defect**: N3045MO3 2022-01 = 152.45 $/Mcf poisons the SPP-49 screen's reference
+  (5,590 MW of SPP gas at $48–147/MMBtu in Jan 2022; moves no row). Shared seam, MISO exposed.
+
 **The queue (plan §4 W5, in issue order).**
 
 1. **SPP-51 — priced seams (cards P2 / P3).** **DONE 2026-09-07 (Fable):
