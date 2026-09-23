@@ -9,7 +9,7 @@ parameters.
 **PRECOMMIT** `docs/handoffs/PRECOMMIT-soco-59-2026-09-22.md`, pushed at
 `3c5a8967b7f060852c9e541d50f0bb1fa65ef011` before any LP; Addendum A (wrong) and Addendum B (post-hoc
 correction) appended to it.
-**Run** `2026-09-22-soco59-hydro-split` — registered as a **CANDIDATE**; the keeper is unchanged.
+**Run** `2026-09-22-soco59-hydro-split` — owner ruled *promote* 2026-09-23, but a concurrent SOCO hydro-4 promotion landed first; it stays a **registered candidate** (§10).
 
 ---
 
@@ -192,6 +192,12 @@ standing recommendation is to **decline** it so the next promoting session can p
 
 ---
 
+## 10. THE PROMOTION — RULED, THEN SUPERSEDED BY A CONCURRENT PROMOTION
+
+The owner ruled, verbatim: *"Is this a recommended keeper candidate? If so plz promote. If structural integrity improves but gates regress that may still be a keeper.."* This lane recommended it on rule 14 and executed the promotion on its branch. On rebasing onto `main` (2026-09-23), SOCO's keeper had meanwhile been re-designated by the SOCO hydro-4 lane to **`2026-09-22-soco-h4-hydro-ror`** (`hydro_ror_split`), which also pruned `soco58`. Two single-delta promotions off the same control cannot both be the keeper, and this lane does NOT overwrite another lane's designation: the rebase keeps `main`'s keeper, and `2026-09-22-soco59-hydro-split` remains registered as a candidate (audit_keepers E13 by design, rule 31).
+
+**The two deltas compose; neither is complete alone.** h4-ror's 2025 legs ran on backfill-only hydro (6.33 TWh, 2024's shape) as a stand-in for this lane's repair — its own RESULT §4.1 says they must re-solve on it — and it carries no `EIA930_PS_SPLIT_COMPLETE_FROM['SOCO']` guard in its recorded surface. The registry row is now on `main` via this branch regardless. **Next step: one combined span = h4-ror recipe + `hydro_backfill_year=2024` + `hydro_eia930_monthly=true`, three shards (~10 min each), promoted over h4-ror; then prune this candidate.** 2023/2024 of that span are predicted byte-identical to h4-ror's (the pin is refused there).
+
 ## Log entry
 
 ```
@@ -245,8 +251,9 @@ read through run_calibration_full must run each side in its own process.
 ROUTED: 2024 CC_REGULAR (no admissible input); ST_GAS fuel separation; the 2025
 coal overshoot (Barry 6.1x); a D79 fingerprint gap -- a first-time per-ISO row
 enters no cache key, so SOCO's forecast hydro climatology moved 7.089 -> 7.571
-TWh/yr with no key move (no SOCO forecast result exists). NOT PROMOTED: the
-promotion question is put to the owner (recommendation: promote, on rule 14).
+TWh/yr with no key move (no SOCO forecast result exists). OWNER RULED PROMOTE 2026-09-23, but the
+concurrent hydro-4 promotion (keeper 2026-09-22-soco-h4-hydro-ror) landed first; this run stays a
+candidate and the next step is a combined h4-ror + hydro-repair span.
 E13 for 2026-09-20-soco53g-prb-own-iso re-raised for the TWELFTH lane
 (recommendation: decline). Control per-plant layer recovered at zero LP for the
 fifth consecutive lane. Records: docs/handoffs/PRECOMMIT-soco-59-2026-09-22.md,
