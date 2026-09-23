@@ -84,7 +84,18 @@ Legs pushed full 17-file bundles; provenance SHAs (rule 33(d), not a recovery ro
 The composites and their registrations are committed on this lane's branch and land on `main` with
 its PR. Any leg not on `main` costs a ~12 min re-solve.
 
-## 5. Promotion — OWNER DECISION PENDING (rule 31)
+## 5. Promotion — RULED AND EXECUTED 2026-09-23
+
+**The owner ruled PROMOTE** (verbatim: *"Does it improve or is it more structurally sound if so yes"*,
+then *"Promote it"*). Executed in rule 35(e) order: (b) year union {2020…2025} enumerated before any
+delete; (c) covered exactly by the incoming pair (span 2023–25 + touchpoint 2020–22 stamped to it);
+`keepers/PJM.json` and `calibration-complete.json` re-keyed (h16 kept in `keeper_history`);
+`build_status.py --iso PJM` → **PJM:CALIBRATED**; `audit_keepers --iso PJM` run between promotion and
+prune (E13 pointing only at the outgoing pair); `prune_iso_runs.py --iso PJM --keep
+2026-09-22-pjm-hydro2-ror-touchpoint --force-uncite` removed the h16 pair; `audit_keepers --iso PJM`
+after: **0 failures, 0 warnings**. Matrix cell `O → K`, PJM shard and §5.3 header re-stamped.
+
+The case as put to the owner:
 
 **FOR.** A rule-17 structural repair with **zero free parameters**: a run-of-river plant has no
 reservoir, so its output is its inflow. The keeper parks PJM hydro at **0 MW for 1,010–1,965 hours
@@ -97,8 +108,5 @@ standing instruction — structural integrity can outweigh gate regression — i
 2024–25 (+0.3 TWh), ST_GAS 2020–22, C3a 2020 (+$0.09) and 2023 (+$0.07). No clean conventional-hydro
 hourly reference exists for PJM, so the shape improvement rests on physics, not a falsification test.
 
-**Retention.** All six legs and both composites are on disk here and the composites are committed on
-this branch. Nothing is pruned until the owner rules (rule 31). If promoted: re-key
-`keepers/PJM.json` + `calibration-complete.json`, `build_status.py --iso PJM`, `audit_keepers --iso PJM`,
-then `prune_iso_runs.py --iso PJM --keep 2026-09-22-pjm-hydro2-ror-touchpoint --force-uncite`
-(rule 35(e) order). Year union {2020…2025} is covered exactly.
+**Retention.** The six per-year legs stay gitignored on this container (rule 31); the registered
+composites are what reach `main`.
