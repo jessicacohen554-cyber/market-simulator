@@ -292,3 +292,125 @@ improve there, but CC_REGULAR 2025 and CT_PEAKER 2023/2025 get worse, and
 **I am not promoting anything, deleting anything, or re-basing the benchmark on
 my own judgement.** The bundles are on ephemeral disk and will not survive this
 container.
+
+---
+
+## 8. RESOLVED 2026-09-23 — REGISTERED AND SCORED, PROMOTED, THEN THE PROMOTION WITHDRAWN. §5 AND §7 ARE SUPERSEDED.
+
+The owner ruled on the §7 question, verbatim: *"Is this a recommended keeper
+candidate? If so plz promote. If structural integrity improves but gates regress
+that may still be a keeper."* That is rule 31 `[R-RETAIN]` trigger (i). The arm
+was registered, scored and promoted — **and the promotion was then withdrawn**,
+for a reason that had nothing to do with its merits. Both halves are recorded.
+
+### 8.1 §5's BLOCKER WAS REAL, ITS MECHANISM WAS WRONG, AND THAT IS WHY IT WAS SEPARABLE
+
+§5 said `--rebuild-benchmark` "would regenerate the committed
+`bench/MISO/*.json.gz` parts". **It does not.** `rebuild_benchmark()` writes only
+to the gitignored shared store `results/calibration/_shared/<ISO>/` and re-points
+that one bundle's `meta.json`; its trailing `report_run()` is a printer. The
+re-base happens one step later, in `dashboard_add_run.py` — *"newest run covering
+a year supplies it"*.
+
+That distinction is the whole difference between blocked and not blocked. Because
+the two steps are separable, the bench move could be **measured first and then
+refused**:
+
+1. `--rebuild-benchmark` on `miso266_arm_span` — resolves the frames, touches no
+   committed part.
+2. `_miso257_bench_gate.py` **dry run** — `classFull` moves −0.24 to +2.65 TWh per
+   class-year, and `classFull.oil` regenerates **NEGATIVE** in 2022 (−0.0731) and
+   2025 (−0.0124). A measured actual cannot be negative.
+3. `dashboard_add_run.py` → `RUN_ID=2026-09-22-miso-266-dispatched-bin`.
+4. All six bench parts **restored byte-for-byte**, verified by `sha256sum -c`.
+
+`hydro-5` independently reached the same conclusion the same day: *"MISO's
+regenerated parts moved content (miso266 builder drift) and were NOT committed."*
+Record and routing: `docs/FINDING-miso266-bench-regeneration-hazard-2026-09-23.md`
+— now **`miso-267` STEP 1**.
+
+**§5's second defect, for the record.** It also named `campd` as the blocker; that
+was §5.1's Defect A (the composer copying leg 2020's per-year ref onto a six-year
+composite), which `--rebuild-benchmark` cures outright. The frame that actually
+refused on the single-year test was `eia923`.
+
+### 8.2 §6's "NO GATE TABLE" IS NOW A GATE TABLE — AND IT IS AN EXACT WASH
+
+Scored through `calibration_verdict.py` against the same committed bench as
+`2026-09-20-miso-264-anchor-vintage`, the base both this arm and hydro-5's were
+built on:
+
+| criterion | miso-264 (base) | **miso-266 (arm)** |
+|---|---|---|
+| C1 fuel-mix | FAIL | **FAIL** |
+| C2 system volume | PASS | **PASS** |
+| C3a mean LMP | FAIL | **FAIL** |
+| C3b price shape | FAIL | **FAIL** |
+| C3c price tail | CAVEAT (ledgered) | **CAVEAT (ledgered)** |
+| C4 dispatch corr | PASS | **PASS** |
+| C6 governance | PASS | **PASS** |
+| C8 forced share | PASS | **PASS** |
+| **full span** | NOT-YET | **NOT-YET** |
+| **train tier 2023–2025** | CALIBRATED, zero fails | **CALIBRATED, zero fails** |
+| D-10 free-class C1 | 38/40 all · 28/30 free | **38/40 all · 28/30 free** |
+
+**Which cells fail did move**, reported in both directions:
+
+| | miso-264 | miso-266 |
+|---|---|---|
+| C1 2020 COAL_BIT | −10.92 **FAIL** | −6.93 (out of the set) |
+| C1 2021 COAL_BIT | −6.54 | −3.30 |
+| C1 2022 COAL_PRB | +8.13 **FAIL** | **+10.52 FAIL** (pre-registered) |
+| C1 2022 CC_REGULAR | (passing) | **−8.74 FAIL** (new) |
+| C3a 2020 | +14.6 % **FAIL** | +12.7 % **FAIL** |
+| C3a 2022 | (passing) | **−10.5 % FAIL** (new) |
+| C3b 2021 | NRMSE 0.304 **FAIL** | NRMSE 0.304 **FAIL** |
+
+An exact wash on the gates. The mechanism's case therefore rests entirely on
+rule 1 `[R-STRUCT]` — *"a run is a keeper because it is the most structurally
+faithful, not because it has the lowest MAE"* — and rule 14 `[R-ACCURATE]`.
+
+### 8.3 THE PROMOTION WAS WITHDRAWN, AND WHY
+
+While this was being written up, **a sibling arm on the same `miso-264` base
+landed on `main` first**: `hydro-5`'s `2026-09-22-hydro-5-miso-ror`
+(`hydro_ror_split`), promoted on the same owner instruction. The two arms are
+**siblings, not a chain** — each is `miso-264` plus one different flag — so
+promoting this one would have silently **reverted** `hydro_ror_split`.
+
+The promotion was withdrawn rather than overwrite another lane's work. MISO's
+keeper is `2026-09-22-hydro-5-miso-ror`. The registry sidecar, run payload and
+keeper-shard edits for `2026-09-22-miso-266-dispatched-bin` were dropped; the
+mechanism-matrix cell stays **`O`** (built, solved, scored, **not armed**), with
+the gate table above as its evidence.
+
+### 8.4 §7's COST ESTIMATE WAS WRONG THEN AND IS RIGHT AGAIN NOW
+
+§7 costed a registerable keeper at "twelve legs … about one hour". At the time
+that was wrong — **zero LP** was needed; the `927f68af` bundles registered and
+scored as they stood, and §7's premise was §5's wrong mechanism.
+
+**It is true again, for a different reason.** The arm bundle does not carry
+`hydro_ror_split`, so it is stale against the current keeper: arming this flag now
+needs a **re-solve on the hydro-5 base** — six shards, ~15 min each. The
+`miso266_arm_span` and `miso266_ctl_span` bundles were on ephemeral session disk
+and did not survive. Rule 33 `[R-SHARD-ARCHIVE]` (f): the shard branches are
+transport and are cut when this lane's PR merges; **cost any recovery as a
+re-solve.**
+
+### 8.5 WHAT IS STILL OPEN
+
+* **The successor object has MOVED**, from 2020 coal to a **2022 gas/coal
+  substitution**: the arm hands PRB capability back into a year where PRB was
+  already long and CC already short, so 2022 demands the opposite move from 2020.
+* **CT_PEAKER worsens in four of six years**, unpredicted. Reported, not absorbed.
+* **84.5 % of the ceiling contradiction survives**, unchanged from §6.
+* **MISO's bench parts are stamp-stale and the HEAD builder is defective** — two
+  lanes refused to adopt it on the same day. 44 parts across all nine ISOs are in
+  the same state. `miso-267` STEP 1.
+* **One composer defect, unrepaired on `main`.** `_miso266_compose_span.py` writes
+  leg 1's whole `shared_inputs` block and its `calibration_flags.years` onto the
+  composite; `eia930`/`eia923`/`campd` are **per-year** (6 distinct hashes) while
+  the six `unit_outages*` frames are shared (1). Symptoms: `--restore-shared-inputs`
+  refuses, and `audit_keepers` E3 warns on the years mismatch — which
+  `miso264_anchor_span` and `hydro5_miso_ror_span` both carry.
