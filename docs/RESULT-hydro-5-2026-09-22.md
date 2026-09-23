@@ -183,3 +183,40 @@ remote; a session cannot delete refs (rule 33(f)(2)) — they need the owner to 
    would make the bar mechanical rather than a lane's discipline.
 3. **Nameplate-clipped floor shares** (SPP F 2019 G1): the pro-rata allocator can assign a plant
    more floor than its nameplate; the excess is silently dropped rather than reallocated.
+
+---
+
+# ADDENDUM (2026-09-23) — PROMOTED on the owner's ruling
+
+Owner, verbatim: *"Is this a recommended keeper candidate? If so plz promote. If structural
+integrity improves but gates regress that may still be a keeper."* Executed, zero LP:
+
+| ISO | new keeper | bundle | determination | vs outgoing keeper, same benchmark |
+|---|---|---|---|---|
+| SPP | `2026-09-22-hydro-5-spp-floor` (2023–25) | `hydro5_spp_floor_span` | **CALIBRATED** | identical criteria |
+| SPP | rung `2026-09-22-hydro-5-spp-rung` (2019–22), stamped to it | `hydro5_spp_floor_rung` | NOT-YET | identical except C4 2022 gas (below) |
+| NEISO | `2026-09-22-hydro-5-neiso-ror` (2020–25) | `hydro5_neiso_ror_span` | **CALIBRATED** | identical criteria |
+| MISO | `2026-09-22-hydro-5-miso-ror` (2020–25) | `hydro5_miso_ror_span` | train tier CALIBRATED | same held-out failures minus 2022 C1 COAL_PRB (FAIL → PASS) |
+
+Composed by `scripts/probes/_hydro5_compose_span.py` (every leg re-verified keeper + one flag;
+benchmark frames re-spanned; MISO `config_partition_overrides` re-derived identical to the
+keeper's), attested by `scripts/gen_hydro5_attestation.py` (keeper governance and DOF ledger
+inherited verbatim, `offer_curve_by_group` byte-identical). Rule 35: year sets unchanged
+(SPP 2019–25, NEISO/MISO 2020–25); `audit_keepers` E1 clean before the prune; outgoing keepers
+pruned with `--force-uncite` (NEISO's bundle retained — a regression golden names it); final
+`audit_keepers --iso SPP NEISO MISO`: **PASS, 0 failures**.
+
+**Finding — SPP's committed benchmark was degraded on `main`, and this registration restores it.**
+SPP-71's composite recorded its first leg's single-year benchmark frames (the stale-reference
+defect nwpp-46 fixed in the nwpp composer), so its registration wrote `bench/SPP/{2020,2021,2022,
+2024,2025}.json.gz` with **zero plants carrying CAMPD hourly data**. The parts written here have
+bench content **identical, key for key, to the pre-SPP-71 parts** (`107be503^`) — a restoration,
+not a re-base. Consequence: on the restored benchmark the rung's C4 2022 gas becomes scorable and
+reads FAIL (r 0.958, NRMSE 0.321; the SPP RoR arm on the same keeper reads 0.325), where the
+outgoing rung read SKIPPED ("gas hourly fit absent"). That is not a demonstrated regression; the
+rung is a held-out rung and does not move the ISO (rule 30(c)).
+
+**Not committed:** regenerated MISO bench parts moved content in all six years (the builder drift
+of `RESULT-miso266` §5.1). They were reverted to `HEAD`, and every MISO number above is scored on
+the committed parts. NEISO's regenerated parts differed only in display metadata and were also
+left at `HEAD`.
