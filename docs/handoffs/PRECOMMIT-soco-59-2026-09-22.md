@@ -214,3 +214,43 @@ the registration moves no scored denominator.
 **P14 (added).** `--rebuild-benchmark` on the composite produces an `eia923` frame identical to the
 keeper's; 2025 benchmark hydro stays 6.012, so the arm's 2025 hydro lands ~0.09 TWh under it
 (5.926 modelled; unscored).
+
+---
+
+## ADDENDUM B — POST-HOC, written AFTER the legs landed and the run was registered. It CORRECTS Addendum A.
+
+**Addendum A is WRONG and is kept, not deleted, so the error is on the record.** Its A/B built the
+benchmark twice in ONE process, popping the SOCO row between calls. `_hydro_benchmark_is_923_only`
+is `@lru_cache`d (`run_calibration_full.py:2908`), so the second call returned the first call's
+answer — the A/B compared a cached result to itself. Found at registration, when the rebuilt bench
+parts differed from the keeper's committed ones in exactly one leaf per year. Re-run in a **fresh
+process** with the row removed before the first call:
+
+| year | benchmark `classFull/hydro`, row absent (keeper's committed part) | **row present (HEAD)** |
+|---|---|---|
+| 2023 | 8.4465 TWh (EIA-930 swap, PS-folded) | **6.815** (EIA-923 HY census) |
+| 2024 | 7.0798 | **6.3014** |
+| 2025 | 6.0123 | 6.0123 (unchanged — 2025 is a clean year) |
+
+**The registration therefore repairs BOTH ends of the same comparison** — the LP's hydro input and the
+benchmark's hydro actual — exactly as gov-hydro-seam-1 designed the one registry to do. This is the
+correct direction under rule 14 (the folded figure counted pumped-storage discharge the model carries
+as storage), but it was NOT predicted, and it moves scored denominators.
+
+**Decomposition, measured by scoring each run against each bench part:**
+
+| row | keeper, old bench | **arm, old bench** (dispatch effect) | arm, new bench (+ benchmark effect) |
+|---|---|---|---|
+| 2023 `ST_GAS` share | −2.87 pp | **−2.87** | **−2.90** (margin 0.13 → 0.10 pp) |
+| 2023 volume band | ±7.18 TWh | ±7.18 | ±7.13 (ST_GAS margin 0.32 → 0.27) |
+| 2023 `CC_REGULAR` share | +2.28 | +2.28 | +1.97 |
+| **2024 `CC_REGULAR`** | **+10.42 TWh / +3.97 pp** | **+10.42 / +3.97** | **+10.42 / +3.84** (volume margin −2.95 → −2.98) |
+| 2024 `ST_GAS` share | −2.56 | −2.56 | −2.57 |
+
+**The arm's dispatch moves no scored C1 row (all 14 identical to 0.01 pp).** Every movement in the last
+column is the benchmark repair, it changes no status, and — because the bench part is shared per
+ISO-year — it applies to any SOCO run displayed after this lands, the current keeper included.
+
+**Prediction scoring affected:** P14 is **FALSIFIED** (the `eia923` frame is not identical to the
+keeper's). P10 is **PARTIAL** (every status, the determination and `grade_summary` hold; the 2024
+`CC_REGULAR` share leg moves +3.97 → +3.84 pp on the benchmark side, not unchanged as predicted).

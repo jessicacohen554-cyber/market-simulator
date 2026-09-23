@@ -1,0 +1,192 @@
+{
+ "free_parameters": {
+  "schema": "dof-ledger/v1",
+  "seeded": "2026-07-04 S5 governance session \u2014 audit \u00a73 class-C table + W1d residual-identified/forecast-risk markers (docs/model-legitimacy-audit-2026-07.md; CLAUDE.md rule 20)",
+  "n_entries": 7,
+  "n_residual": 1,
+  "entries": [
+   {
+    "name": "offer_curve_by_group",
+    "where": "run_config.scenario_config.offer_curve_by_group",
+    "identification": "measured-physical",
+    "lineage_solves": "unknown",
+    "value": {
+     "CC_CHP": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "CC_INTERMEDIATE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "CC_REGULAR": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "COAL": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL_BIT": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL_LIGNITE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL_PRB": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL_WC": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "CT_CHP": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "CT_INTERMEDIATE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "CT_PEAKER": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "ST_GAS": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "ST_GAS_INTERMEDIATE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ]
+    },
+    "n_scalars": 72,
+    "source": "per-group HR-band multipliers \u2014 the rule-#1-sanctioned offer-curve tuning surface (audit C-8/C-11/C-13)",
+    "basis": "All four price-tuning bands (committed / econ_low / econ_high / peak) are at the identity 1.0 on all 13 groups \u2014 machine-verified by gen_soco58_attestation._verify, which raises otherwise: the distinct values per band are {'committed': [1.0], 'econ_low': [1.0], 'econ_high': [1.0], 'peak': [1.0]}. offer_curve_overrides and offer_curve_deltas are null. The two non-identity keys, econ_low_share and pct_peaking, are NOT the authorized channel \u2014 rule 1's carve-out excludes structural shares \u2014 and arrive verbatim from the ISO-agnostic GENERIC_BASE_OFFER_CURVE."
+   },
+   {
+    "name": "offer_curve_smoothing",
+    "where": "run_config.scenario_config.offer_curve_smoothing_*",
+    "identification": "measured-physical",
+    "lineage_solves": "unknown",
+    "value": {
+     "offer_curve_smoothing_n": 6,
+     "offer_curve_smoothing_exp": 1.0
+    },
+    "n_scalars": 2,
+    "source": "econ-ramp shape of the offer curve (rule-#1 scope)",
+    "basis": "Unset on this run \u2014 both offer_curve_smoothing and curve_smoothing are null (machine-verified). Nothing was tuned because nothing was set."
+   },
+   {
+    "name": "wefor_multiplier",
+    "where": "run_config.scenario_config.wefor_multiplier",
+    "identification": "residual",
+    "lineage_solves": "unknown",
+    "value": 0.7,
+    "source": "wind EFOR haircut (audit C-15) \u2014 the name admits residual identification; stated purpose is coal shoulder-month generation",
+    "root_cause": "audit C-15 open item: replace with a measured wind availability/curtailment input or delete; identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "coal_warm_committed (warm-boiler committed-band exemption)",
+    "where": "model.commitment.compute_monthly_markup warm-boiler branch; gated per plant on must_run_pct > 0 (CAMPD thermal-tranche artifact)",
+    "identification": "measured-physical",
+    "lineage_solves": "unknown",
+    "n_scalars": 0,
+    "source": "SOCO's own committed-keeper hourlies (lane SOCO-58 phase 0, zero LP, on 2026-09-20-soco57-measured-cc-heat): the warm-boiler predicate is measured at 100.0% in ALL EIGHTEEN coal plant-years 2023-2025 \u2014 in every hour in which a plant's _committed tranche carries capacity, that plant's _mustrun tranche is generating at load fraction 1.00, so the boiler is never dark when the committed band could be dispatched. The markup it removes is measured at EXACTLY $100.00/MWh on four of six plants in 2024 (the startup/max(avg_run,1.0) floor, i.e. ZERO P0 runs) and is anti-correlated with the year's need for coal (implied P0 run length 1.0 h in 2024 vs 769 h at plant 6002 in 2025), so its year-to-year variation is a P0 feedback artifact and not a physical driver. Scope verified exact: 6 of 6 coal tranches carrying a startup cost are exempted, 0 coal tranches carrying one are missed, and 0 non-coal tranches are touched",
+    "note": "removes a fabricated cold-start premium, adds no tunable; reverts only if the fleet's measured must-run floors disappear (rule 23: rides the thermal-tranche artifact refresh)"
+   },
+   {
+    "name": "GAS_BASIS_DIFFERENTIAL_MEASURED_BY_YEAR['SOCO'][2023]",
+    "value": 0.49,
+    "identification": "measured-physical",
+    "basis": "$+0.49/MMBtu. INHERITED FROM SOCO-55, not re-derived here. The quantity-weighted EIA-923 Schedule-2 delivered natural-gas cost to the run's own EIA-860 SOCO gas fleet in THIS year, minus the Henry Hub annual mean for THIS year. Sources, both committed: data/raw/_processed-legacy/eia923_monthly_fuel_costs.parquet and data/raw/gas-prices/henry_hub_monthly.csv. Listed rather than left to prose because rule 21 [R-DOF] asks for every free parameter with its identification source; tagged measured-physical, so n_residual is unchanged."
+   },
+   {
+    "name": "GAS_BASIS_DIFFERENTIAL_MEASURED_BY_YEAR['SOCO'][2024]",
+    "value": 0.64,
+    "identification": "measured-physical",
+    "basis": "$+0.64/MMBtu. INHERITED FROM SOCO-55, not re-derived here. The quantity-weighted EIA-923 Schedule-2 delivered natural-gas cost to the run's own EIA-860 SOCO gas fleet in THIS year, minus the Henry Hub annual mean for THIS year. Sources, both committed: data/raw/_processed-legacy/eia923_monthly_fuel_costs.parquet and data/raw/gas-prices/henry_hub_monthly.csv. Listed rather than left to prose because rule 21 [R-DOF] asks for every free parameter with its identification source; tagged measured-physical, so n_residual is unchanged."
+   },
+   {
+    "name": "GAS_BASIS_DIFFERENTIAL_MEASURED_BY_YEAR['SOCO'][2025]",
+    "value": 0.65,
+    "identification": "measured-physical",
+    "basis": "$+0.65/MMBtu. INHERITED FROM SOCO-55, not re-derived here. The quantity-weighted EIA-923 Schedule-2 delivered natural-gas cost to the run's own EIA-860 SOCO gas fleet in THIS year, minus the Henry Hub annual mean for THIS year. Sources, both committed: data/raw/_processed-legacy/eia923_monthly_fuel_costs.parquet and data/raw/gas-prices/henry_hub_monthly.csv. Listed rather than left to prose because rule 21 [R-DOF] asks for every free parameter with its identification source; tagged measured-physical, so n_residual is unchanged."
+   }
+  ],
+  "retag_note": "SOCO-58 re-tagged offer_curve_by_group and offer_curve_smoothing from the builder's default 'residual' to 'measured-physical', on the same machine-verified identities SOCO-40..57 used and re-verified here by execution, and CARRIED FORWARD SOCO-55's three measured per-year gas-basis entries unchanged. THIS LANE ADDS ONE ENTRY AND NO DEGREE OF FREEDOM. coal_warm_committed is a BOOLEAN GATE over a PHYSICAL PREDICATE: it removes the P1 startup-amortization markup from a CAMPD coal bin whose own must-run floor holds its boiler online. There is no value, threshold, year scope or class scope to choose \u2014 the scope is the predicate 'fuel_type == coal and must_run_pct > 0', and build_dof_ledger ships the entry measured-physical with n_scalars=0. The predicate is verified BY EXECUTION on this bundle's own committed hourlies: it holds at 100.0% across all 18 coal plant-years, at must-run load fraction 1.00, so the boiler is never dark when the exempted charge applies. The SCOPE is verified by execution too: the exemption covers 6 tranches (3464.0 MW), all _committed, with 0 coal tranches paying the markup but not exempted and 0 non-coal tranches touched \u2014 _verify_scope raises on any drift in either direction. WHAT IT REMOVES IS NOT THIS LANE'S PARAMETER EITHER: the $100/MW NREL coal cold start was already on the markup path, and the amortization that turns it into $100.00/MWh is startup / max(avg P0 run, 1.0 h), a quantity the P0 solve produces rather than one anybody chose. coal_warm_committed ships False and is ALREADY in the cache key (it is not in _CACHE_KEY_OPTIONAL_FIELDS), so arming it re-keys SOCO's configs only and no peer ISO's key moves. RULE 25 [R-ISO-SCOPE]: the entry's identification SOURCE is per-ISO and SOCO's cites SOCO's own measurement. build_dof_ledger.py previously hardcoded MISO's dispatch forensics for every ISO; that was found in this lane's phase 0 and repaired in the same PR, and _verify raises if SOCO's source is missing or cites MISO. n_residual is UNCHANGED at 1 (the inherited wefor_multiplier), which is the figure rule 21 [R-DOF] gates on. SOCO-59 ADDS NO ENTRY: the hydro energy budget is a measured input (EIA-923 HY census / EIA-930 hydro-ex-PS level) with no scalar of its own, and EIA930_PS_SPLIT_COMPLETE_FROM['SOCO']=2025 is a measured date."
+ },
+ "schema": "calibration-attestation/v1",
+ "exceptions": [],
+ "governance": {
+  "levers_trace_to_measured_input": true,
+  "no_fit_to_price_residuals": true,
+  "no_pinning_to_actuals": true,
+  "outage_filter_exogenous_net_load": true,
+  "attested_by": "SOCO-59 (lane). ONE mechanism moves against the incumbent keeper 2026-09-22-soco58-warm-committed: the conventional-hydro energy budget input. The run carries hydro_backfill_year=2024 and hydro_eia930_monthly=True (the NEISO / MISO keeper construction), with EIA930_PS_SPLIT_COMPLETE_FROM['SOCO']=2025 registered at the HEAD it solved on. Everything else is the keeper's recipe unchanged, machine-verified by re-running gen_soco58_attestation._verify and _verify_scope on this bundle (the warm-boiler predicate holds at 100.0% over 18 coal plant-years here too). THE CLAIM IS ABOUT AN INPUT, NOT THE RESIDUAL. The keeper's 2025 hydro budget was 0.3275 TWh because the preliminary EIA-923 vintage carries 5 of SOCO's 42 hydro plants; this run carries 5.9258 TWh, 2025's own measured EIA-930 hydro-ex-PS monthly series, with per-plant shares from the 2024 census. 2023 and 2024 are unchanged (6.815 / 6.3015 TWh, byte-identical to the control construction, verified by execution) because their EIA-930 column FOLDS PUMPED-STORAGE DISCHARGE and the registration refuses the pin there. THE FOLD IS MEASURED ON SOCO'S OWN DATA, recomputed here from the raw extract: the pre-split column exceeds the 3317.6 MW conventional nameplate in 6 h of 2023 against 0 h of 2025's clean column, and its diurnal swing is 3.82x against 2.13x. SOCO's pumped storage is endogenous (1,306.6 MW), so pinning a pre-split year would double-count its discharge. soco-data-audit \u00a73.3's 'never negative' reading excluded folded PUMPING only; NEISO's fold (neiso-72) was discharge-only too. RULE 13 [R-MEASURED]: a hydro energy budget is a water-availability input with a forward analogue (hydro_forecast_budget, mutually exclusive with the backcast pin in build_hydro_fleet). Nothing measured about thermal dispatch is fed back. RULE 19 [R-ONE-MECH]: keyed by unit_id, 2023 and 2024 move 0 of 327 units on fuel_prices / mc_base / pmax / availability / heat_rate; 2025 adds 37 hydro units and moves 0 of 290 shared keys. RULES 21 / 24 / 25: zero free parameters, zero new ScenarioConfig fields, the registry row is SOCO's own measurement and no other ISO's row moves; SOCO's cache key does not move either (a first-time per-ISO row has no frozen declaration). GATE G17 \u2014 SOCO HAS NO PRICE BENCHMARK AND GAINS NONE. Every offer_curve_by_group band is exactly 1.0; AUTHORIZED PRICE TUNING IS DECLARED NONE and no authorized_price_tuning key is written. WHAT THIS LANE DOES NOT CLAIM: it does not reach the run's only failing row (2024 CC_REGULAR), which it cannot touch by construction; every 2025 C1 row it improves is SKIPPED on the preliminary vintage, so it buys no gate; and the 2025 coal overshoot is mostly NOT a hydro artifact \u2014 the water displaces CT_PEAKER and CC first. IF THE ONLY ARGUMENT FOR THIS ARM WERE THAT A 2025 ROW IMPROVES, IT WOULD NOT BE TAKEN."
+ },
+ "disclosures": {
+  "note": "SOCO-59 determination basis. Items 1-7 are SOCO-58's, carried because the mechanisms they describe are inherited unchanged; items 8+ are this lane's. Two SOCO-58 statements are CORRECTED by item 9 and item 10.",
+  "1_THIS_ARM_IMPROVES_THE_FIT_WHICH_IS_A_REASON_FOR_MORE_SCRUTINY_NOT_LESS": "THE HEADLINE CAUTION, STATED AGAINST THE LANE. Rule 1 [R-STRUCT]'s discipline is usually exercised in one direction \u2014 keeping a structurally correct mechanism whose residual moved the wrong way. This lane runs the OTHER way: the arm is expected to flip the failing C4 2024 coal row to PASS. That is precisely the situation in which a fitted mechanism would be easiest to mistake for a real one. THE BAR IT CLEARS IS NOT THE RESIDUAL. (a) The cost being removed is FICTITIOUS, measured rather than argued: the warm-boiler predicate \u2014 in every hour a plant's _committed tranche carries capacity, that plant's _mustrun tranche is generating \u2014 holds at 100.0% across all 18 coal plant-years checked, at must-run load fraction 1.00. The boiler is NEVER dark when the charge applies. (b) The charge's MAGNITUDE is not a physical quantity either: it is $100/MW / max(avg P0 run length, 1.0 h), which SATURATES at exactly $100.00/MWh when a tranche has zero P0 runs and collapses to $0.13 when it has many. Inverting it gives implied P0 run lengths of 1.0 h at four plants in 2024 against 769.2 h at plant 6002 in 2025 \u2014 the markup is ANTI-CORRELATED with the year's need for coal, so its year-to-year variation is a P0 FEEDBACK ARTIFACT and not a driver. That is the mirror image of the v2 circularity model/commitment.py::_amortized's own docstring records being removed for fast starts; coal carries no fast_start_run_hours basis, so coal still runs on v2 \u2014 in the direction that self-REINFORCES. IF THE ONLY ARGUMENT FOR THIS ARM WERE THAT C4 2024 COAL FLIPS, IT WOULD NOT BE TAKEN.",
+  "2_IT_DEEPENS_AN_ALREADY_SHORT_CLASS_AND_MAY_COST_A_NEW_C1_ROW": "THE SECOND THING AGAINST THIS LANE, PRE-REGISTERED AS P4 BEFORE THE SOLVE. Coal correctly under-cutting SOCO's gas steam takes energy from ST_GAS, which is ALREADY -6.47 TWh short in 2023 and -5.75 in 2024. The 2023 ST_GAS row is the thinnest passing row on the whole run (0.71 TWh and 0.29 pp of margin) and it moves in the direction the arm pushes; PRECOMMIT-soco-58 \u00a77 P4 put the chance of it crossing to FAIL at ~40 % and refused to predict which way. ITS CAUSE IS SEPARATELY KNOWN AND IS NOT THIS ARM. SOCO-54 \u00a74 measured a $1.0-1.7/MMBtu delivered-fuel separation between SOCO's gas steam ($3.39-3.76/MMBtu) and its combustion turbines ($2.06-2.40) \u2014 the unmodelled within-footprint gas dispersion of SOCO-12 \u00a74, for which no free public daily index exists at SONAT or Transco/Dalton. Coal under-cutting an over-priced steam fleet does not create that defect; it exposes it, which is the SOCO-57 pattern exactly. It is ROUTED, not absorbed.",
+  "3_IT_MAKES_2025_COAL_WORSE_AND_2025_IS_UNGATED_WHICH_IS_NOT_A_DEFENCE": "2025 COAL_PRB is ALREADY +3.251 TWh OVER its actual, and this arm pushes it further over. Every 2025 C1 row is SKIPPED on the preliminary EIA-923 vintage and the C2 2025 coal family reads a SKIPPED +13.8 % diagnostic, so no gate registers the cost \u2014 THAT IS A FACT ABOUT THE VINTAGE, NOT AN ARGUMENT THAT THE COST IS ABSENT. It is reported here at full magnitude for that reason. ITS CAUSE IS MEASURED AND ROUTED: SOCO-53b's 2025 hydro input hole \u2014 0.327 TWh modelled against 6.012 measured \u2014 and coal is what backfills it. Correcting hydro would push 2025 coal DOWN by up to ~5.7 TWh, which is the direction that would absorb this arm's 2025 overshoot. It is NOT armed here: rule 19 [R-ONE-MECH] forbids two mechanisms on one phenomenon in one lane, and it is this lane's NAMED SUCCESSOR.",
+  "4_WHAT_THE_EXEMPTION_DOES_NOT_REACH": "The arm does NOT close the coal gap and does not claim to. Scherer (703) and Gaston (26) do not move even after the exemption, because their de-marked-up committed bids are $57.58 and $57.54 against a $28.27 median price \u2014 Scherer's delivered coal is $5.10/MMBtu against Miller's $2.10. That is a per-plant coal fuel-price question this lane does not touch. Barry (3) carries the fleet's largest per-plant coal OVER-run, 3.48x its own actual in 2024 and 5.67x in 2025, and the arm does not touch that either; its fleet row still follows a stale EIA-860 that files unit 4 as Conventional Steam Coal while CAMPD measures it burning Pipeline Natural Gas (SOCO-56 \u00a73 resolved the OUTAGE routing in favour of CAMPD; the FLEET row is untouched).",
+  "5_THE_SAME_ARITHMETIC_APPLIES_TO_CT_PEAKER_AND_IS_DELIBERATELY_NOT_TAKEN": "Ten CT_PEAKER plants carry a +$20.00/MWh committed markup on implied 1.0 h P0 runs \u2014 the identical saturation. It is NOT extended to them, for two independent reasons, and the one that binds is the physical one: a combustion turbine with no must-run floor GENUINELY DOES cold-start, so no warm-boiler argument exists for it. (The other, which is NOT the reason, is that CT_PEAKER is already +2.97 TWh over in 2024 so the direction would be wrong \u2014 recorded so the scoping reads as physics rather than convenience.)",
+  "6_THE_GOVERNANCE_READING_IS_SURFACED_NOT_SETTLED": "coal_warm_committed is not a matrix row: the base matrix registers it INSIDE the tranche_startup_amortization row's def, as a sub-scalar of that family (rule 28(c), xiso-3 census). SOCO's cell for that family is G \u2014 GOVERNANCE-REFUSED EX ANTE, NO REOPEN CONDITION (SOCO-53), on the ground that the mechanism puts start costs INTO A CLEARING PRICE and SOCO has none. THIS LANE'S READING, STATED SO IT CAN BE OVERRULED: the family's two class-scoped gates have OPPOSITE POLARITY. gas_st_startup_cost OFF means NO markup (SOCO's ST_GAS committed markup measures at exactly -0.000, confirming the family is genuinely off there). coal_warm_committed OFF means the markup IS APPLIED (SOCO's coal committed markup measures at +$100.00). So arming the exemption ENFORCES the G cell's own position rather than reopening it \u2014 and SOCO-53's note that 'with tranche_startup_amortization off the CT_PEAKER econ and peak tranches carry ZERO start cost' rested on a premise this lane's measurement corrects: the family is NOT off for SOCO's coal, it is ON BY DEFAULT, and no master gate turns it off. THE CELL IS NOT FLIPPED. tranche_startup_amortization stays G for SOCO; only its evidence text is extended. The boundary is genuinely ambiguous and is put to the owner in the RESULT rather than settled by this lane.",
+  "7_INHERITED_AND_UNTOUCHED": "Carried unchanged from SOCO-57 \u00a79: the over-dispatched CC tail (Tenaska Lindsay Hill 2.060x, Central Alabama 1.455x, Ratcliffe 1.431x, E B Harris 1.404x), on heat rates now MEASURED correct to within +/-$0.30/MWh, so heat rate is excluded as their cause and no admissible input names it; the two boundary-refused CC plants (533 McWilliams, 7946 Wansley U9), whose steam turbines CAMPD does not meter; the ST_GAS denominator (unit_outage_extract_basis_share), bounded at <= 0.0071 TWh; the tranche half of campd_per_unit_attribution, still a live landmine because the flag is ON for SOCO while thermal_tranche_csv_for_iso returns the INCUMBENT artifact; and derive_parasitic_load.py, never run for SOCO's coal or gas-steam classes. AND THE DEFINING CONSTRAINT, UNCHANGED: SOCO HAS NO PRICE BENCHMARK AND NEVER WILL. C3a / C3b / C3c are UNSCORABLE, not failed, in every year. This determination certifies NO price level, shape or tail.",
+  "8_THIS_ARM_BUYS_NO_GATE_AND_DOES_NOT_REACH_THE_FAILING_ROW": "The only failing criterion-row, 2024 CC_REGULAR (+10.42 TWh of a +/-7.47 band, +4.03 pp of +/-3.00), is untouched by construction: 2024's hydro budget is byte-identical. Every 2025 C1 row is SKIPPED. The arm is taken on rule 14 [R-ACCURATE] alone.",
+  "9_CORRECTION_THE_SCHERER_LEAD_WAS_A_NAME_SWAP": "SOCO-58's tables (and item 4 above) label plant 703 'Scherer' and 6257 'Bowen'. EIA-923, CAMPD and the model's own tranche table all say 703 = Bowen (100 % bituminous, $5.08/MMBtu delivered 2024) and 6257 = Scherer (100 % Wyoming PRB, $3.12). Class and price are correct at all six coal plants to <= $0.02/MMBtu; there is no coal-price repair.",
+  "10_CORRECTION_HYDRO_DOES_NOT_ABSORB_THE_2025_COAL_OVERSHOOT": "Item 3 above (SOCO-58) said correcting hydro 'would push 2025 coal DOWN by up to ~5.7 TWh'. That was the arithmetic ceiling; the merit order puts the water on CT_PEAKER and CC first. See the FINDING for the measured split.",
+  "11_BENCHMARK_HYDRO_ROW_FOLDS_PS_IN_2023_2024": "SOCO's C1 benchmark hydro row for 2023 / 2024 reads the PS-folded EIA-930 column (8.447 / 7.080 TWh). Hydro is not a scored free class, so no gate moves; it is a benchmark-side rule-14 defect ROUTED, not fixed here."
+ }
+}

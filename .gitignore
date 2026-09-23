@@ -3343,3 +3343,15 @@ results/calibration/nwpp47_gridwind_2025/
 # recovery route: 2022 4c6feeddec994d4e4b7a7cd7b6dfd2aff6d2d004, 2023 0d254a81a38558c105637257be429f495e04d21e,
 # 2024 cf52392c6ecdf1c68d0e6d3cf1da48f38f7d8783, 2025 d31fa3445cd89daa0e064aa7261130b137b99e0a.
 results/calibration/hydro3_nyiso_ror_20*/
+
+# ---------------------------------------------------------------------------
+# SOCO-59 (2026-09-22) — the 2025 hydro-hole repair + SOCO's EIA-930 PS split.
+# The composed arm, results/calibration/soco59_hydro_split, IS committed.
+# Its three per-year shard legs are NOT (rule 32 [R-SHARD] (d)); rule 31
+# [R-RETAIN]: gitignoring discharges that duty — never `rm`.
+# Leg SHAs (rule 33 [R-SHARD-ARCHIVE] (d) — provenance, NOT a durability
+# claim; cost any recovery as a re-solve):
+#   soco59_arm_2023  0ba91f581a2c3655a74a6686f371407098fe9595
+#   soco59_arm_2024  ca09c2772717ab5436e456077c414f3f5cd81db1
+#   soco59_arm_2025  52c8f3ce6fcc696fe544dcbc41473e463e609c55
+results/calibration/soco59_arm_20[0-9][0-9]/
