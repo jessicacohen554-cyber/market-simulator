@@ -3334,3 +3334,9 @@ results/calibration/soco_h4_*_20[0-9][0-9]/
 results/calibration/nwpp47_gridwind_2023/
 results/calibration/nwpp47_gridwind_2024/
 results/calibration/nwpp47_gridwind_2025/
+
+# hydro-3 (2026-09-22): per-year hydro_ror_split legs, composed into hydro3_nyiso_ror_span.
+# Kept out of main (rule 32(d)); NOT deleted (rule 31). Provenance only (rule 33(d)), not a
+# recovery route: 2022 4c6feeddec994d4e4b7a7cd7b6dfd2aff6d2d004, 2023 0d254a81a38558c105637257be429f495e04d21e,
+# 2024 cf52392c6ecdf1c68d0e6d3cf1da48f38f7d8783, 2025 d31fa3445cd89daa0e064aa7261130b137b99e0a.
+results/calibration/hydro3_nyiso_ror_20*/

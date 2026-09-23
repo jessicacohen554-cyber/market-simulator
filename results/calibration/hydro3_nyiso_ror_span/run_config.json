@@ -24,6 +24,7 @@
       "hydro_budget_period_by_instrument": true,
       "hydro_dispatch_envelope": true,
       "hydro_min_flow_floor": true,
+      "hydro_ror_split": true,
       "measured_chp_heat_rates": true,
       "measured_ct_heat_rates": true,
       "nuclear_unit_availability": true,
@@ -89,7 +90,7 @@
       "2024": 2.19,
       "2025": 3.52
     },
-    "git_sha": "42d75053",
+    "git_sha": "57e3c77f",
     "hours": 8760,
     "iso": "NYISO",
     "nyiso_dynamic_reserve_requirements": true,
@@ -113,10 +114,10 @@
     ]
   },
   "composed_from": [
-    "nyiso247_fuelinv_2022",
-    "nyiso247_fuelinv_2023",
-    "nyiso247_fuelinv_2024",
-    "nyiso247_fuelinv_2025"
+    "hydro3_nyiso_ror_2022",
+    "hydro3_nyiso_ror_2023",
+    "hydro3_nyiso_ror_2024",
+    "hydro3_nyiso_ror_2025"
   ],
   "environment": {
     "cache_key_path_roots": [
@@ -138,58 +139,58 @@
     "python_version": "3.11.15"
   },
   "git": {
-    "basis_sha": "42d750537532c95d335286b63bca881e8a01c76b",
-    "branch": "HEAD",
+    "basis_sha": "57e3c77fcc00164da5c869e732783fbd695bcdc9",
+    "branch": "claude/hydro3-nyiso-ror-2022",
     "changed_files": [],
     "diffstat": "",
     "dirty": false,
-    "sha": "42d75053"
+    "sha": "57e3c77f"
   },
-  "model_changes_note": "nyiso-247 arm: gas_offer_net_revenue_margin DISARMED (the fuel-invariance limb); single delta off the nyiso241 keeper; PRECOMMIT docs/PRECOMMIT-nyiso247-fuel-invariance-limb-2026-09-20.md",
+  "model_changes_note": "BTM-basis re-solve: byte-faithful replay of the committed keeper config from meta.json, adding btm.parquet (behind-the-meter CHP held out of the LP) so the benchmark scores on the grid-delivered basis.",
   "per_leg_provenance": {
     "2022": {
       "git": {
-        "basis_sha": "42d750537532c95d335286b63bca881e8a01c76b",
-        "branch": "HEAD",
+        "basis_sha": "57e3c77fcc00164da5c869e732783fbd695bcdc9",
+        "branch": "claude/hydro3-nyiso-ror-2022",
         "changed_files": [],
         "diffstat": "",
         "dirty": false,
-        "sha": "42d75053"
+        "sha": "57e3c77f"
       },
-      "timestamp": "2026-09-20T07:06:21"
+      "timestamp": "2026-09-22T21:28:13"
     },
     "2023": {
       "git": {
-        "basis_sha": "42d750537532c95d335286b63bca881e8a01c76b",
-        "branch": "HEAD",
+        "basis_sha": "57e3c77fcc00164da5c869e732783fbd695bcdc9",
+        "branch": "claude/hydro3-nyiso-ror-2023",
         "changed_files": [],
         "diffstat": "",
         "dirty": false,
-        "sha": "42d75053"
+        "sha": "57e3c77f"
       },
-      "timestamp": "2026-09-20T07:05:59"
+      "timestamp": "2026-09-22T21:27:42"
     },
     "2024": {
       "git": {
-        "basis_sha": "42d750537532c95d335286b63bca881e8a01c76b",
-        "branch": "HEAD",
+        "basis_sha": "57e3c77fcc00164da5c869e732783fbd695bcdc9",
+        "branch": "claude/hydro3-nyiso-ror-2024",
         "changed_files": [],
         "diffstat": "",
         "dirty": false,
-        "sha": "42d75053"
+        "sha": "57e3c77f"
       },
-      "timestamp": "2026-09-20T07:07:00"
+      "timestamp": "2026-09-22T21:29:37"
     },
     "2025": {
       "git": {
-        "basis_sha": "42d750537532c95d335286b63bca881e8a01c76b",
-        "branch": "HEAD",
+        "basis_sha": "57e3c77fcc00164da5c869e732783fbd695bcdc9",
+        "branch": "claude/hydro3-nyiso-ror-2025",
         "changed_files": [],
         "diffstat": "",
         "dirty": false,
-        "sha": "42d75053"
+        "sha": "57e3c77f"
       },
-      "timestamp": "2026-09-20T07:07:55"
+      "timestamp": "2026-09-22T22:10:22"
     }
   },
   "resolved_inputs": {
@@ -201,10 +202,10 @@
       "sha256": "ee778a87d3739341a7c578078b5e0194545f9231efbef2cd32d72e88e0aa21fa"
     },
     "hydro_plant_modes": {
-      "classified_plants": null,
-      "flag_armed": false,
-      "partition_present": false,
-      "shapeable_plants": null
+      "classified_plants": 164,
+      "flag_armed": true,
+      "partition_present": true,
+      "shapeable_plants": 70
     },
     "iso": "NYISO",
     "schema_version": 1,
@@ -379,6 +380,7 @@
     "chp_layup_duty_curve": true,
     "chp_layup_duty_split": false,
     "chp_startup_covered": false,
+    "chp_steam_duty_window": false,
     "chp_steam_floor_p25": false,
     "chp_steam_following": true,
     "class_aware_fuel_price_fallback": false,
@@ -406,6 +408,7 @@
     "coal_lignite_passthrough_sigmoid": false,
     "coal_mustrun_online_pmin": false,
     "coal_mustrun_per_plant": true,
+    "coal_mustrun_requires_measured_row": false,
     "coal_nameplate_summer_derate": false,
     "coal_offer_margin_anchor": null,
     "coal_offer_margin_level": null,
@@ -444,7 +447,10 @@
     "coal_sub_passthrough_gas_slope": null,
     "coal_sub_passthrough_sigmoid": false,
     "coal_supply_repricing": true,
+    "coal_sync_ensemble_level": false,
+    "coal_sync_online_frac_per_year": false,
     "coal_sync_srmc_tranche": false,
+    "coal_sync_window_commitment_grain": false,
     "coal_takeorpay_from_data": false,
     "coal_warm_committed": false,
     "coal_waste_passthrough_ceil": null,
@@ -741,7 +747,8 @@
     "hydro_cascade_coupling": false,
     "hydro_dispatch_envelope": true,
     "hydro_min_flow_floor": true,
-    "hydro_ror_split": false,
+    "hydro_pondage_bound": false,
+    "hydro_ror_split": true,
     "hydro_year": "normal",
     "interchange_shape_export_pct": 90.0,
     "interchange_shape_import_pct": 90.0,
@@ -771,6 +778,7 @@
     "mass_cap_tons": null,
     "mass_cap_tons_by_year": null,
     "maxgen_emergency_tier_pricing": false,
+    "measured_cc_heat_rates": false,
     "measured_chp_heat_rates": true,
     "measured_coal_heat_rates": false,
     "measured_ct_heat_rates": true,
@@ -1238,6 +1246,7 @@
     "tranche_startup_conditional_runs": false,
     "tranche_startup_measured_runs": true,
     "transmission_expansion_enabled": false,
+    "unit_outage_dispatched_bin_denominator": false,
     "unit_outage_extract_basis_share": true,
     "unit_outage_fleet_status_scope": false,
     "unit_outage_lp_capacity_basis": false,
@@ -1260,6 +1269,7 @@
     "voluntary_wtp_ceiling_usd_per_mwh": null,
     "vre_curtailment_oversupply_allocation": false,
     "vre_procurement_additions_enabled": false,
+    "vre_reference_rate_year_own": false,
     "weather_year": 2022,
     "wefor_multiplier": 0.7,
     "wefor_residual": null,
@@ -1268,12 +1278,12 @@
   },
   "solve_surface": {
     "epochs": [],
-    "fingerprint": "ff7cb0425d5773bc",
-    "git_sha": "42d75053",
+    "fingerprint": "211ef7751502c924",
+    "git_sha": "57e3c77f",
     "iso": "NYISO",
     "moved": {},
-    "rows": 212,
+    "rows": 213,
     "schema": 1
   },
-  "timestamp": "2026-09-20T07:06:21"
+  "timestamp": "2026-09-22T21:28:13"
 }
