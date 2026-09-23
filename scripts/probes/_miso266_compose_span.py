@@ -106,6 +106,9 @@ MUST_AGREE = (
     # (control and arm) each check this independently; the check is that the
     # SIX YEARS agree, not that they carry any particular value.
     "unit_outage_dispatched_bin_denominator",
+    # miso-267: the hydro-5 keeper's single delta. A leg re-solved on that keeper
+    # must carry it in every year, or the composite silently reverts it.
+    "hydro_ror_split",
 )
 
 #: Fields the DATA forces to differ, with the value each leg must carry. Stated
