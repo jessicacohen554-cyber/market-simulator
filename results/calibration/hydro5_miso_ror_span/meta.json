@@ -548,7 +548,7 @@
   "scarcity_price_overlay": null,
   "shared_inputs": {
     "campd": "../_shared/MISO/campd-d57af607eaf4.parquet",
-    "eia923": "../_shared/MISO/eia923-b68005c8ed19.parquet",
+    "eia923": "../_shared/MISO/eia923-df0d071d1ad9.parquet",
     "eia930": "../_shared/MISO/eia930-b0a483cf7eed.parquet",
     "hydro_plant_modes": "../_shared/MISO/hydro_plant_modes-299669af5d3d.parquet",
     "unit_outages": "../_shared/MISO/unit_outages-5b083f8b739a.parquet",
