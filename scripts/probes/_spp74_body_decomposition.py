@@ -294,3 +294,33 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
+
+def low_side_dispatch(y: int) -> dict:
+    """(a) follow-up: model vs EIA-930 coal / gas / wind MW inside each RT hour-type."""
+    lmp = pd.read_parquet(
+        RAW_DATA_DIR / "_validation-source/actual_lmp_hourly_SPP.parquet"
+    )
+    a = lmp[lmp["year"] == y].sort_values("hour")["rt"].to_numpy(float)
+    lab = hour_types(a)
+    p, _ = model_price_demand(y)
+    ft = pd.read_parquet(RAW_DATA_DIR / "SWPP_fueltype.parquet")
+    cm = model_class_mw(y)
+    coal = cm[[c for c in cm.columns if c.startswith("COAL")]].sum(axis=1).to_numpy()
+    gas = cm[[c for c in cm.columns if c.startswith(("CC_", "CT_", "ST_"))]].sum(axis=1)
+    out = {}
+    for k in TYPES:
+        h = lab == k
+        out[k] = {
+            "n": int(h.sum()),
+            "mod_price": float(p[h].mean()),
+            "rt": float(a[h].mean()),
+            "mod_le0_share": float((p[h] <= 0).mean()),
+            "coal_mod": float(coal[h].mean()),
+            "coal_930": float(fueltype(ft, "COL", y)[h].mean()),
+            "gas_mod": float(gas.to_numpy()[h].mean()),
+            "gas_930": float(fueltype(ft, "NG", y)[h].mean()),
+            "wind_mod": float(np.asarray(cm["wind"])[h].mean()),
+            "wind_930": float(fueltype(ft, "WND", y)[h].mean()),
+        }
+    return out
