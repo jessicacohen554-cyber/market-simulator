@@ -15070,3 +15070,40 @@ and `hydro5_miso_ror_span` both carry.
 
 Records: `docs/RESULT-miso266-dispatched-bin-denominator-2026-09-22.md` §8,
 `docs/FINDING-miso266-bench-regeneration-hazard-2026-09-23.md`.
+
+## miso-267 — 2026-09-23 — **THE BENCH DRIFT WAS TWO nyiso-240 REPAIRS, ONE OF THEM ONE-SIDED. Builder repaired; MISO's parts regenerated ONCE, 0 status flips. Then the dispatched-bin arm, re-solved on the hydro-5 keeper.** Keeper `2026-09-22-hydro-5-miso-ror` UNCHANGED pending the owner
+
+**STEP 1 (zero LP).** The whole miso-266 bench move is commit `03eed7e9c`
+(nyiso-240): R1 `_backfill_eia923_missing_months` and R2
+`_reattribute_dual_fuel_oil`. With both off, all six MISO parts reproduce
+byte-for-byte. R1 is a correction (EIA annual = Σ reported months in all 24
+withheld plant-years). R2 was a regression in three ways: it moved only
+POSITIVE oil rows (so the negative residue left behind drove `classFull.oil`
+negative), it booked coal-plant oil to a generic `COAL` class the scorer does
+not carry, and it ran after the CAMPD backfill (double counting CEMS). All three
+repaired in `run_calibration_full.py`, plus a pre-COD exclusion on R1's fills
+(found because the first regeneration flipped C1 2022 CC_REGULAR; disclosed both
+ways). MISO parts regenerated once; `check_bench_freshness` 6/0 STALE. Keeper
+re-scored: full span NOT-YET → NOT-YET, train tier CALIBRATED → CALIBRATED,
+**0 status flips**; C1 2020 COAL_BIT −10.67 → −10.76, C1 2022 COAL_PRB
++7.93 → +7.67, C1 2023 CC_REGULAR −6.97 → −7.40 (headroom 0.60 TWh), C1 2024
+CC_REGULAR +2.58 → −0.07. Census of all 13 registered runs (rule 25): no
+determination moves; PJM C8 COAL SKIPPED → PASS (PJM's refresh). No other ISO's
+parts touched. Four EIA-923 respondent errors (kWh booked as MWh) ROUTED, incl.
+MISO 2022 plant 7977 (−107,000 MWh), which keeps 2022 `oil` at −0.048 — carried as
+a strict xfail in the new sign test. Record:
+`docs/FINDING-miso267-the-oil-reattribution-was-one-sided-2026-09-23.md`.
+
+**STEP 2 (zero LP).** The 2020 coal shortfall and the 2020 price bias are TWO
+objects: hour-grain correlation 0.10 (BIT) / 0.14 (coal); the price error is a
+flat +$6–8 body across RT deciles 0–7 that CALIBRATED 2023 also carries; the coal
+deficit is a peak-hours ceiling shape (+0.40 TWh in load d0 → −4.00 in d9).
+Lever chosen on structure: `unit_outage_dispatched_bin_denominator` (identity
+`denom == cap_LP`, zero DOF, already owner-ruled promote on the miso-264 base and
+withdrawn only for the hydro-5 collision). Six single-year arm shards on the
+hydro-5 keeper; control = the committed keeper (G-DRIFT all INERT). Predictions
+and decision rule: `docs/PRECOMMIT-miso267-dispatched-bin-on-hydro5-2026-09-23.md`.
+
+Also: the composer defect in `_miso266_compose_span.py` is repaired (per-year
+`shared_inputs` rebuilt over the span, `calibration_flags.years` widened); MISO's
+forecast gate-(a) row re-keyed to the live keeper (a hydro-5 promoter miss).
