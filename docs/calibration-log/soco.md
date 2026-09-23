@@ -1345,3 +1345,14 @@ Lane recommends ARM 2 on driver grounds; owner ruling open. Routed: 2025 model d
 EIA-930 at peak (ARM 2's 2 scarcity hours); SOCO-53b owned by SOCO-59; stale PS-folded hydro actual in
 committed bench parts; D-2 blind to hydro floors. Matrix cells hydro_min_flow_floor / hydro_ror_split
 U -> O. Record: docs/handoffs/RESULT-soco-hydro-4-2026-09-22.md.
+
+## soco-hydro-4 promotion — 2026-09-23
+
+Owner ruling ("Is this a recommended keeper candidate? If so plz promote. If structural integrity
+improves but gates regress that may still be a keeper.") -> KEEPER 2026-09-22-soco-h4-hydro-ror
+(hydro_ror_split + 2025 hydro_backfill_year=2024). Year union before prune: 2023-2025 (all four SOCO
+sidecars); the incoming keeper covers it. audit_keepers E1 passed before the prune. Pruned via
+prune_iso_runs.py --force-uncite: 2026-09-22-soco58-warm-committed (outgoing) and
+2026-09-22-soco-h4-hydro-min (ARM 1, not promoted). 2026-09-20-soco53g-prb-own-iso deliberately kept
+(--keep), as in every prior SOCO promotion: its disposal awaits an owner ruling, so E13 fires for it
+alone. build_status --iso SOCO rebuilt; matrix shard re-stamped (hydro_ror_split O -> K).
