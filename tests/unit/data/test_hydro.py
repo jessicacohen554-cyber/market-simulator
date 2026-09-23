@@ -862,16 +862,19 @@ class TestPumpedStorageFoldedLevelGuard(unittest.TestCase):
         self.assertNotIn("NEISO", EIA930_PS_FOLDED_INTO_WAT)
         self.assertNotIn("NYISO", EIA930_PS_FOLDED_INTO_WAT)
 
-    def test_split_registry_is_neiso_only_and_disjoint_from_the_flat_one(self):
+    def test_split_registry_is_neiso_soco_and_disjoint_from_the_flat_one(self):
         # neiso-72: the TIME-SPLIT companion registry. NEISO's first wholly-
         # split calendar year is 2025 (first filed NG: PS hour 2024-11-07;
         # the seam year counts as folded — one source basis per year).
+        # SOCO-59: SOCO's is 2025 too (taxonomy cut-over 2024-07-15, filing
+        # continuous only from 2025-01-06; the pre-split column folds PS
+        # DISCHARGE — constants.py citation block).
         from market_sim.config.constants import (
             EIA930_PS_FOLDED_INTO_WAT,
             EIA930_PS_SPLIT_COMPLETE_FROM,
         )
 
-        self.assertEqual(EIA930_PS_SPLIT_COMPLETE_FROM, {"NEISO": 2025})
+        self.assertEqual(EIA930_PS_SPLIT_COMPLETE_FROM, {"NEISO": 2025, "SOCO": 2025})
         for iso in EIA930_PS_SPLIT_COMPLETE_FROM:
             self.assertNotIn(iso, EIA930_PS_FOLDED_INTO_WAT)
 
@@ -882,6 +885,10 @@ class TestPumpedStorageFoldedLevelGuard(unittest.TestCase):
             self.assertTrue(eia930_wat_level_folded("NEISO", year))
         for year in (2025, 2026):  # wholly-split years keep the pin
             self.assertFalse(eia930_wat_level_folded("NEISO", year))
+        # SOCO-59: same time split, same first wholly-split year.
+        for year in (2021, 2023, 2024):
+            self.assertTrue(eia930_wat_level_folded("SOCO", year))
+        self.assertFalse(eia930_wat_level_folded("SOCO", 2025))
         # Flat-registry BAs are folded in EVERY year; clean ISOs in none.
         self.assertTrue(eia930_wat_level_folded("MISO", 2025))
         self.assertTrue(eia930_wat_level_folded("PJM", 2030))
@@ -1141,12 +1148,11 @@ class TestPumpedStorageFoldedForecastLevel(unittest.TestCase):
         # storage is UNOBSERVABLE in EIA-930 for the footprint in every year
         # (nwpp-data-audit §4.5; EIA-860 carries 314.0 MW, one BPAT plant), so
         # no fold has been measured and it takes the default path.
-        # SOCO (registered 2026-09-14, SOCO-20) is unlisted for the OPPOSITE
-        # measured reason: its NG: WAT never goes negative before the 2024-07-15
-        # taxonomy cut-over (min +32 MW over 13,470 h), so pumped-storage
-        # charging was never folded into hydro — it was not reported at all
-        # (soco-data-audit §3.3). No fold exists to correct.
-        self.assertEqual(len(unlisted), 6)
+        # SOCO (registered 2026-09-14, SOCO-20) WAS unlisted on soco-data-audit
+        # §3.3's reading that its pre-split NG: WAT never goes negative; SOCO-59
+        # measured that this excludes folded PUMPING only — the column folds PS
+        # DISCHARGE — and split-listed it (constants.py citation block).
+        self.assertEqual(len(unlisted), 5)
         for iso in unlisted:
             base = climatological_monthly_hydro(iso)
             self.assertIsNotNone(base, f"{iso} has no EIA-930 climatology")

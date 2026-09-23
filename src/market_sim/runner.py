@@ -517,6 +517,7 @@ def _hindcast_measured_demand(
         include_interchange=not import_generators,
         strict_demand_profile=config.strict_demand_profile,
         ercot_tie_zonal_interchange=config.ercot_tie_zonal_interchange,
+        nwpp_grid_carried_wind_served=config.nwpp_grid_carried_wind_served,
     )
     if config.hours < demand.shape[1]:
         demand = demand[:, : config.hours]

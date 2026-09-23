@@ -371,3 +371,25 @@ Records: `docs/handoffs/PRECOMMIT-nwpp-46-2026-09-22.md`,
 `scripts/probes/_nwpp46_gates.py`.
 
 ---
+
+## nwpp-47 — 2026-09-22 — GRID carried-wind leg (FINDING-nwpp-45 §8, framing 1)
+
+Owner ruled framing 1 (plant-level attribution intake). **Zero-LP finding:** the GRID Desert-SW
+subtraction is mostly right. Its coal is Centralia (r 0.9998) and its NW gas is Hermiston, both fleet
+plants eGRID hosts elsewhere, so NWPP-45 §5's 12.856 TWh "refutation" is withdrawn. But the PNM leg
+**is** GRID's wind (≤ 2 MW every hour), which the pool supply also carries: a 2.07 / 2.17 / 2.00 TWh
+double removal. New gated field `nwpp_grid_carried_wind_served` (zero DOF).
+
+**Solve** (three shards, parent zero LP): run `2026-09-22-nwpp-47-grid-wind`. C1 FAIL → **PASS**
+(2023 CC_REGULAR −8.641 → −7.213, inside the pre-registered range); C4 still FAIL; determination
+NOT-YET on {dispatch_corr} only. No kill limb fired.
+
+**Not closed:** a −7.6 / −10.0 / −7.1 TWh system gap remains. EIA-930 books only 0.53–0.66 of the
+CEMS-measured PGE / BPAT / PACW gas; that is framing 2, an open owner decision. **Promotion unruled.**
+
+Records: `docs/handoffs/{FINDING,PRECOMMIT,RESULT}-nwpp-47-2026-09-22.md`,
+`scripts/probes/_nwpp47_{attribution,gates}.py`, `scripts/gen_nwpp47_attestation.py`.
+
+---
+
+**Promoted 2026-09-23 (owner ruling):** `2026-09-22-nwpp-47-grid-wind` is NWPP keeper #5; the NWPP-46 predecessor was pruned (rule 35).

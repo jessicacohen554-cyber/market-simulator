@@ -229,3 +229,19 @@ derive:
 (no holdout quarantine applies to 2018). `SHA256SUMS.txt` records the exact
 removed bytes; the fetcher's sibling-schema verification keeps a re-fetched
 file schema-identical, though parquet serialization may differ byte-wise.
+
+**42 states since 2026-09-22 (NWPP-47): + AZ**, landed for **2023–2025** as
+evidence for the NWPP plant-level EIA-930 attribution intake
+(`docs/handoffs/FINDING-nwpp-47-2026-09-22.md` §2): GRID's SRP / WALC export
+legs are regressed hourly on Desert-Southwest CEMS gas plants to establish they
+are resources the NWPP fleet does not own. AZ is not an NWPP footprint state
+and is absent from `campd.ISO_STATES`; no loader reads it.
+
+    python scripts/data/fetch_campd_unit_level.py --year <2023|2024|2025> \
+        --states AZ
+
+| file | rows | facilities | units | span |
+|---|---:|---:|---:|---|
+| `AZ_2023.parquet` | 788,400 | 25 | 90 | 2023-01-01 .. 2023-12-31 |
+| `AZ_2024.parquet` | 803,760 | 26 | 92 | 2024-01-01 .. 2024-12-31 |
+| `AZ_2025.parquet` | 819,168 | 26 | 96 | 2025-01-01 .. 2025-12-31 |

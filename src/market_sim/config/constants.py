@@ -2257,7 +2257,27 @@ EIA930_PS_FOLDED_INTO_WAT: frozenset[str] = frozenset({"MISO", "PJM"})
 # mid-series — re-run the probe pattern). Rule 23 [R-FROZEN-DERIVE].
 # Source: EIA-930 hourly per-BA extract (ISNE); EIA-923 monthly generation;
 # EIA-860.
-EIA930_PS_SPLIT_COMPLETE_FROM: dict[str, int] = {"NEISO": 2025}
+#
+# SOCO (SOCO-59, 2026-09-22, every number from SOCO's own data — rule 25;
+# probe scripts/probes/_soco59_phase0.py pssplit): EIA-930 publishes SOCO's
+# hydro as the combined "Hydropower and Pumped Storage" column until the
+# 2024-07-15 taxonomy cut-over, then files `NG: PS` for 24 hours and stops
+# until 2025-01-06 01:00 (soco-data-audit §3.3), continuous after — so 2025 is
+# the first wholly-split year. soco-data-audit §3.3 found the pre-split column
+# never goes negative (min +32 MW) and read that as PS "not reported at all";
+# that rules out folded PUMPING only. DISCHARGE is folded, measured three ways
+# (the neiso-72 tests, NEISO's fold was discharge-only too): (i) the pre-split
+# column exceeds SOCO's OWN 3,317.6 MW conventional-hydro EIA-860 nameplate
+# (summer 3,296.8) in 6 / 29 / 6 h of 2021 / 2022 / 2023 (max 3,873 MW) and in
+# 0 h of 2025's clean column; (ii) its diurnal swing (hourly-mean max/min)
+# runs 2.84 / 3.12 / 3.82x, matching 2025's clean hydro PLUS measured PS
+# discharge (3.77x), not 2025's clean hydro alone (2.13x); (iii) the 2023 gap
+# between the column (8.446 TWh) and the 42-plant EIA-923 HY census the LP
+# units carry (6.815) is 1.63 TWh, against 1.963 TWh of PS gross discharge
+# measured in 2025. SOCO's pumped storage is endogenous storage
+# (model/storage.py::load_eia860_pumped_storage, 1,306.6 MW), so a pre-split
+# pin would double-represent its discharge exactly as NEISO's did.
+EIA930_PS_SPLIT_COMPLETE_FROM: dict[str, int] = {"NEISO": 2025, "SOCO": 2025}
 
 # --- Hydro hourly deliverability envelope (caiso-72 STEP-2) ------------------
 # Percentile of the measured EIA-930 NG:WAT hourly output, per (month x

@@ -6543,3 +6543,15 @@ prefix silently overwrite each other.
 
 Record: `docs/RESULT-pjm-h14-2026-09-20.md`, charter
 `docs/handoffs/PRECOMMIT-pjm-h14-2026-09-20.md`.
+
+## hydro-2 — 2026-09-22/23 — `hydro_ror_split` PROMOTED
+
+Keeper `2026-09-22-pjm-h16-coalgrain-span` → **`2026-09-22-pjm-hydro2-ror-span`** (+ touchpoint
+`2026-09-22-pjm-hydro2-ror-touchpoint`, 2020–2022). Sole delta `hydro_ror_split=true`: PJM's 57
+run-of-river-class hydro plants run flat at their EIA-923 monthly budget. Hours at 0 MW hydro
+1,010–1,965 → 0 in all six years; annual hydro energy unchanged to four decimals; zero criterion
+status changes in either span (span CALIBRATED 8/8, touchpoint NOT-YET on the pre-existing C1/C3a/C3b
+FAILs). G1 MW limb fails on a nameplate-sized bar (disclosed, not amended). Six per-year shards at
+`152c546a`; 2023's former blocker (gitignored `pjm-da-virtuals` corpus) closed by per-shard re-fetch
+with `pjm_da_virtual_bids` left true. Owner ruling 2026-09-23: "Promote it". Record:
+`docs/RESULT-hydro-2-pjm-2026-09-22.md`.

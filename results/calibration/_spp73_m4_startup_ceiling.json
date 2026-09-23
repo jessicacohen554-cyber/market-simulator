@@ -1,0 +1,38 @@
+{
+ "2019": {
+  "rt_top_median": 209.9261474609375,
+  "max_bid_ceiling_top_median": 216.94171182676288,
+  "max_gas_bid_ceiling_top_median": 74.94738070661093,
+  "mc_base_max_gas_top_median": 41.377505000000006,
+  "top_hours_rt_above_fleet_ceiling": 41,
+  "top_hours_rt_above_gas_ceiling": 88,
+  "max_startup_per_mw": 100.0
+ },
+ "2020": {
+  "rt_top_median": 144.36395263671875,
+  "max_bid_ceiling_top_median": 211.3335,
+  "max_gas_bid_ceiling_top_median": 79.083925,
+  "mc_base_max_gas_top_median": 40.782770000000006,
+  "top_hours_rt_above_fleet_ceiling": 19,
+  "top_hours_rt_above_gas_ceiling": 88,
+  "max_startup_per_mw": 100.0
+ },
+ "2021": {
+  "rt_top_median": 1062.6184692382812,
+  "max_bid_ceiling_top_median": 952.9168294005814,
+  "max_gas_bid_ceiling_top_median": 952.9168294005814,
+  "mc_base_max_gas_top_median": 932.9168294005814,
+  "top_hours_rt_above_fleet_ceiling": 61,
+  "top_hours_rt_above_gas_ceiling": 61,
+  "max_startup_per_mw": 100.0
+ },
+ "2022": {
+  "rt_top_median": 279.6650085449219,
+  "max_bid_ceiling_top_median": 427.72040721649483,
+  "max_gas_bid_ceiling_top_median": 146.90662290195667,
+  "mc_base_max_gas_top_median": 126.90662290195667,
+  "top_hours_rt_above_fleet_ceiling": 22,
+  "top_hours_rt_above_gas_ceiling": 85,
+  "max_startup_per_mw": 100.0
+ }
+}

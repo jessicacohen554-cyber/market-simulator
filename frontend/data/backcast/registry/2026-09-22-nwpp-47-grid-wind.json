@@ -1,0 +1,16 @@
+{
+  "id": "2026-09-22-nwpp-47-grid-wind",
+  "label": "nwpp 47 grid wind",
+  "date": "2026-09-22",
+  "shorthand": "nwpp-47-grid-wind",
+  "definition": "nwpp-47: serve GRID's pool-carried wind leg",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NWPP",
+  "file": "frontend/data/backcast/runs/2026-09-22-nwpp-47-grid-wind.js",
+  "bundle": "results/calibration/nwpp47_gridwind_span",
+  "market_story": "The arm moves no mechanism of dispatch; it corrects what the footprint must serve. GRID (Gridforce) schedules a New Mexico wind farm whose output EIA-930 books in GRID and ships to PNM; the model's wind supply carries that wind from the pool series, so the export it feeds is real load on the footprint's supply. Serving it adds ~2 TWh/yr of requirement, which the marginal thermal units take exactly as the real Northwest system would at the margin: CC_REGULAR ~70-78% (the class setting the gas margin most hours), CT_PEAKER ~6-13% in peak hours, coal 3-16% where it has headroom. Hydro, wind, solar and nuclear do not move because their energy is fixed by water budgets and weather."
+}
