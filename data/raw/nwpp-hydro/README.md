@@ -152,3 +152,30 @@ CHJ→WEL, RRH→RIS, TDA→BON, LMN→IHR. Ten fail a gate: WEL→RRH (celerity
 RIS→WAN (per-year τ disagree), DWR→LWG (r 0.02), and seven on the 2 % side-inflow
 floor in spill-season months (downstream metered outflow 2–8 % below upstream, a
 spill-metering artefact at the federal lower-river projects).
+
+## NWPP-49 artifact — per-plant forebay storage (2026-09-23)
+
+`nwpp_hydro_pondage.csv` — the measured input behind `ScenarioConfig.hydro_pondage_bound`, built
+exactly as NYISO's and PJM's (`scripts/data/build_hydro_pondage.py --iso NWPP --nid-csv
+data/raw/nid/nid_nwpp_hydro_dams.csv`): USACE NID `Max Storage` × `Hydraulic Height` (else the
+labelled `NID Height` proxy) at turbine efficiency 1.0 — a deliberate UPPER bound — over each plant's
+distinct HILARRI-linked impoundments. One row per plant with identified storage; **no row means no
+bound** (never a substituted value). Zero fitted constants; no registry entry was added for NWPP.
+
+**Coverage on the keeper's LP hydro fleet (2024; 2023 within 0.2 GW):** 280 plants, 35,694.6 MW.
+
+| | plants | MW |
+|---|---:|---:|
+| NID storage identified (table rows; 161 of them are LP plants, 31,656 MW) | 168 | 31,746.8 |
+| UNSET — no HILARRI→NID link or no storage/head (stay on the monthly budget) | 119 | 4,038.2 |
+| … of which on the registered chains: McNary 990.5, Lower Granite 810.0, Ice Harbor 603.0, Selis Ksanka Qlispe 227.8, Oxbow 190.0, Box Canyon 90.0 | 6 | 2,911.0 |
+| … of which off-chain (largest: Upper Baker 104.8, Summer Falls 92.0, Cowlitz Falls 70.0, Long Lake 70.0) | 113 | 1,127.0 |
+| storage ≥ the plant's largest monthly budget (row redundant, dropped by the loader) | 72 | 12,416 |
+| storage < largest month (a row would be built) | 89 | 19,240 |
+
+Median storage is 156 nameplate-hours; 18.6 % of the identified MW holds < 24 h. **What NID cannot
+see:** the licensed operating band. On the Columbia mainstem the operated band NWPP-36 measured from
+CROHMS forebay elevations (`nwpp_hydro_cascade_links.csv` `pond_kcfsh`) is **5–40× smaller** than
+NID gross volume (e.g. The Dalles 2.6 vs 62 h of mean output). Which one a given plant should carry,
+and under what inflow, is the design question in
+`docs/handoffs/FINDING-nwpp-49-pondage-design-2026-09-23.md`.
