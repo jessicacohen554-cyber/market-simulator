@@ -57,3 +57,14 @@ def test_gas_foldin_deflation_legacy_regime():
     # No ``other`` series -> full model other+biomass for an allowlist BA, else 0.
     assert bs.gas_foldin_deflation({"OTHER": 5.0, "biomass": 2.0}, {}, "CAISO") == 7.0
     assert bs.gas_foldin_deflation({"OTHER": 5.0, "biomass": 2.0}, {}, "PJM") == 0.0
+
+
+def test_gas_foldin_deflation_refuted_ba_is_zero():
+    # SOCO-60: SOCO's EIA-930 gas cell is measured NOT to carry the fold (930 gas
+    # <= 923 gas classes in every year 2019-2024), so the deflation is 0 in both
+    # regimes; every other BA is unchanged.
+    assert bs.EIA930_GAS_FOLD_REFUTED == frozenset({"SOCO"})
+    cf, e930 = {"OTHER": -0.478, "biomass": 9.315}, {"other": 2.469}
+    assert bs.gas_foldin_deflation(cf, e930, "SOCO") == 0.0
+    assert bs.gas_foldin_deflation(cf, {}, "SOCO") == 0.0
+    assert abs(bs.gas_foldin_deflation(cf, e930, "MISO") - 6.368) < 1e-9

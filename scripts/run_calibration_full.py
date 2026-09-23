@@ -2282,6 +2282,35 @@ def _eia860_vintage_ba_plants(iso: str, year: int) -> frozenset[int]:
     return frozenset(int(p) for p in plants)
 
 
+@lru_cache(maxsize=8)
+def _eia860_current_ba_recoded(iso: str) -> frozenset[int]:
+    """Plants the CURRENT EIA-860 plant file codes to a BA other than ``iso``'s.
+
+    Read only for an ISO in ``ISO_MEMBERSHIP_DROPS_CURRENT_BA_RECODE`` (see that
+    constant for the measurement). A plant absent from the current file, or
+    carrying no BA code there, is NOT returned: only an explicit recode to
+    another balancing authority removes a plant from ``iso``'s membership.
+    """
+    from market_sim.config.paths import EIA_860_DIR
+    from market_sim.data.zone_assignment import _iso_ba_codes
+
+    path = EIA_860_DIR / "eia860_plant.parquet"
+    codes = set(_iso_ba_codes(iso))
+    if not codes or not path.exists():
+        return frozenset()
+    df = pd.read_parquet(path, columns=["Plant Code", "Balancing Authority Code"])
+    ba = df["Balancing Authority Code"].astype(str).str.strip()
+    other = df[(ba != "") & ~ba.isin(["nan", "None"]) & ~ba.isin(codes)]
+    ours = set(
+        pd.to_numeric(df[ba.isin(codes)]["Plant Code"], errors="coerce")
+        .dropna()
+        .astype(int)
+    )
+    plants = pd.to_numeric(other["Plant Code"], errors="coerce").dropna().astype(int)
+    # A plant with generator rows coded to BOTH this ISO and another stays in.
+    return frozenset(int(p) for p in plants if int(p) not in ours)
+
+
 @lru_cache(maxsize=128)
 def _iso_plant_ids(
     iso: str, year: int | None = None, vintage_union: bool = False
@@ -2298,11 +2327,22 @@ def _iso_plant_ids(
     year's own EIA-860 BA cohort via :func:`_eia860_vintage_ba_plants`. See
     that field's comment for the defect, the measurement and why the union is
     additive rather than a replacement (rules 13 / 14).
+
+    For an ISO in ``constants.ISO_MEMBERSHIP_DROPS_CURRENT_BA_RECODE`` the
+    plants the current EIA-860 file recodes to ANOTHER BA are then removed
+    (:func:`_eia860_current_ba_recoded`; SOCO-60, the former Gulf Power plants).
     """
+    from market_sim.config.constants import ISO_MEMBERSHIP_DROPS_CURRENT_BA_RECODE
+
     base = frozenset(build_zone_lookup(iso))
-    if not vintage_union or year is None:
-        return base
-    return base | _eia860_vintage_ba_plants(iso, int(year))
+    if vintage_union and year is not None:
+        base = base | _eia860_vintage_ba_plants(iso, int(year))
+    if ISO_MEMBERSHIP_DROPS_CURRENT_BA_RECODE.get(iso, False):
+        # SOCO-60: the one membership seam the benchmark frame, its class shares
+        # and the must-run injection all read (rule 19), so the three move
+        # together. Off for every other ISO: byte-identical.
+        base = base - _eia860_current_ba_recoded(iso)
+    return base
 
 
 def _eia923_frame(

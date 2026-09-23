@@ -2279,6 +2279,35 @@ EIA930_PS_FOLDED_INTO_WAT: frozenset[str] = frozenset({"MISO", "PJM"})
 # pin would double-represent its discharge exactly as NEISO's did.
 EIA930_PS_SPLIT_COMPLETE_FROM: dict[str, int] = {"NEISO": 2025, "SOCO": 2025}
 
+# --- ISO plant membership: drop plants the current EIA-860 recodes elsewhere --
+# ``run_calibration_full._iso_plant_ids`` is the single membership seam the
+# EIA-923 benchmark frame, its class shares and the must-run (biomass / OTHER)
+# injection all read. Its base is eGRID 2023 ``BACODE``. For an ISO listed
+# True here, plants that the CURRENT EIA-860 plant file codes to a DIFFERENT
+# balancing authority are removed from it (a plant absent from the current file,
+# or carrying no BA code, stays). Per-ISO (rule 25); zero free parameters — a
+# partition on one published field (rules 21 / 24).
+#
+# SOCO (lane SOCO-60, 2026-09-23; probe scripts/probes/_soco60b_phase0.py ba —
+# every number from SOCO's own data). eGRID 2023 and EIA-860 vintages
+# 2018-2023 code the former Gulf Power plants — Lansing Smith 643 (CC),
+# Gulf Clean Energy Center 641 (ST / CT), Pea Ridge 7715, Perdido 57502 and
+# three Gulf solar plants — to SOCO; EIA-860 vintage 2024 recodes all of them
+# to FPL. EIA-930's SOCO series has EXCLUDED them all along: 930 SOCO gas+coal
+# against SOCO's 923 fossil WITHOUT them reads 0.997 / 1.008 / 1.004 / 1.006 /
+# 1.002 / 0.981 in 2019-2024, and WITH them 0.962 / 0.971 / 0.968 / 0.973 /
+# 0.965 / 0.943 (they carry 6.06-6.85 TWh/yr). The model's own SOCO fleet
+# census is EIA-860 ``BA == "SOCO"`` at the current vintage (soco-data-audit §1
+# row 1) and carries none of them, and SOCO's demand is the EIA-930 SOCO series.
+# Left in, the benchmark scored 3.97 TWh (2024) of Lansing Smith as SOCO
+# CC_REGULAR, and the combined fossil reconcile then removed the surplus by
+# scaling EVERY SOCO fossil class down (x0.918 in 2024) — coal included, where
+# EIA-930 and EIA-923 agree to 0.7 %. Rule 14 [R-ACCURATE]'s misalignment case:
+# the real data is kept and reconciled to the model's boundary at plant grain.
+# Solve-affecting only through the injection (Perdido landfill gas,
+# 0.014 TWh/yr of biomass).
+ISO_MEMBERSHIP_DROPS_CURRENT_BA_RECODE: dict[str, bool] = {"SOCO": True}
+
 # --- Hydro hourly deliverability envelope (caiso-72 STEP-2) ------------------
 # Percentile of the measured EIA-930 NG:WAT hourly output, per (month x
 # hour-of-day) bucket, used as the hydro fleet's hourly dispatch ceiling when
