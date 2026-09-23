@@ -1,7 +1,7 @@
 {
   "as_reserve_formula": false,
   "as_reserve_withholding": false,
-  "basis_sha": "fda9ece3d854d747a263f3078285df96fb4f0fe1",
+  "basis_sha": "3ea64fa5110254df85b7a40cb6d4521414d08242",
   "battery_dispatch_adder": 0.0,
   "btm_backfill_year": null,
   "caiso_asymmetric_path_ratings": null,
@@ -243,6 +243,7 @@
     "temp_derate_mean_anchored": true,
     "temp_derate_slope_ct_chp": 0.00141,
     "temp_derate_slope_st_chp": 0.00141,
+    "unit_outage_dispatched_bin_denominator": true,
     "unit_outage_fleet_status_scope": true,
     "unit_outage_maxgen_events": true,
     "unit_outage_short_windows": true
@@ -252,22 +253,22 @@
   "commitment_screen_coal": true,
   "committed_band_measured_basis": null,
   "composed_from": {
-    "hydro5_miso_ror_2020": [
+    "miso267_dbd_2020": [
       2020
     ],
-    "hydro5_miso_ror_2021": [
+    "miso267_dbd_2021": [
       2021
     ],
-    "hydro5_miso_ror_2022": [
+    "miso267_dbd_2022": [
       2022
     ],
-    "hydro5_miso_ror_2023": [
+    "miso267_dbd_2023": [
       2023
     ],
-    "hydro5_miso_ror_2024": [
+    "miso267_dbd_2024": [
       2024
     ],
-    "hydro5_miso_ror_2025": [
+    "miso267_dbd_2025": [
       2025
     ]
   },
@@ -414,7 +415,7 @@
   },
   "gas_st_drag_overrides": {},
   "gas_st_netload_drag": false,
-  "git_sha": "fda9ece3",
+  "git_sha": "3ea64fa5",
   "highspy_version": "1.14.0",
   "hours": 8760,
   "hydro_backfill_year": 2024,
@@ -578,11 +579,11 @@
   "temp_derate_mean_anchored": true,
   "temp_derate_slope_ct_chp": 0.00141,
   "temp_derate_slope_st_chp": 0.00141,
-  "timestamp": "2026-09-22T21:03:26",
+  "timestamp": "2026-09-23T06:34:05",
   "tranche_startup_amortization": true,
   "tranche_startup_conditional_runs": true,
   "tranche_startup_measured_runs": true,
-  "unit_outage_dispatched_bin_denominator": null,
+  "unit_outage_dispatched_bin_denominator": true,
   "unit_outage_lp_capacity_basis": null,
   "unit_outage_mixed_gas_routing": true,
   "unit_outage_per_unit_clip": true,

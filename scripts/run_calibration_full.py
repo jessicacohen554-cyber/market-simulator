@@ -2545,6 +2545,13 @@ def _backfill_eia923_with_campd(
     incomplete-vintage case this fix targets) the residual is the full net, so the
     per-class split sums to the plant's CAMPD net (mass preserved). A single
     eligible class reduces to the old whole-net-to-mapped-class behavior.
+
+    Input contract (miso-267): ``e923`` has ALREADY been through
+    :func:`_reattribute_dual_fuel_oil`, so a modelled plant's oil-fired MWh sit
+    in its modelled classes when the firing test and ``reported_mass`` read
+    them. CEMS meters a unit's output whatever it burned; comparing it against
+    gas/coal rows stripped of the same unit's oil hours made an oil-heavy year
+    read as under-reporting and then booked those hours twice.
     """
     if campd_year is None or campd_year.empty:
         return e923
@@ -2634,6 +2641,41 @@ def _backfill_eia923_with_campd(
     return e923
 
 
+def _plant_first_cod() -> dict[int, tuple[int, int]]:
+    """``{plant_code: (year, month)}`` — the first month any unit was commercial.
+
+    The earliest ``(online_year, online_month)`` over the plant's operable units
+    in :func:`market_sim.data.cod_ramp.load_unit_cod_map` — the same EIA-860
+    vintage and the same unit records the fleet's COD ramp reads, so the
+    benchmark and the dispatch agree on when a plant exists.
+    """
+    from market_sim.data.cod_ramp import load_unit_cod_map
+
+    first: dict[int, tuple[int, int]] = {}
+    for (code, _fuel), units in load_unit_cod_map().items():
+        for _mw, oy, om in units:
+            k = (int(oy), int(om))
+            if int(code) not in first or k < first[int(code)]:
+                first[int(code)] = k
+    return first
+
+
+def _operating_window(cod: tuple[int, int] | None, year: int) -> np.ndarray:
+    """``(12,)`` bool — months of ``year`` on/after ``cod``; all True when unknown.
+
+    Inclusive of the COD month, exactly as
+    :func:`market_sim.data.cod_ramp.monthly_online_mask` brings a unit online.
+    """
+    if cod is None:
+        return np.ones(12, dtype=bool)
+    cod_year, cod_month = cod
+    if cod_year > year:
+        return np.zeros(12, dtype=bool)
+    if cod_year < year:
+        return np.ones(12, dtype=bool)
+    return np.arange(1, 13) >= cod_month
+
+
 def _eia923_missing_month_mask(
     generation: pd.DataFrame, year: int
 ) -> dict[int, np.ndarray]:
@@ -2694,12 +2736,28 @@ def _backfill_eia923_missing_months(
     Byte-identical fallback: no ``campd_year`` (ERCOT-style extracts without one, and
     every bundle predating the CAMPD frame) is a no-op, as is a plant CAMPD shows
     idle in the missing month.
+
+    **Only months inside the plant's operating window are filled** (miso-267,
+    ``docs/FINDING-miso267-the-oil-reattribution-was-one-sided-2026-09-23.md``).
+    A NEW plant's months before its first unit's EIA-860 commercial operation date
+    are blank in EIA-923 too, but they are not withheld: they are outside the
+    reporting boundary, and CEMS records the COMMISSIONING test energy there. That
+    energy is scheduled by the commissioning programme, not by merit order, and
+    the model fleet admits a unit only from its COD month
+    (:func:`market_sim.data.cod_ramp.monthly_online_mask`, inclusive) — so filling
+    it put energy into the class actual that the dispatch cannot produce by
+    construction: rule 14's different-boundary case. Measured in MISO: Blue Water
+    Energy Center (62192, COD 2022-06) Jan-May 2022, Delta Energy Park (63259,
+    2022-03) Jan-Feb 2022 and R D Morrow (6061, 2023-03) Jan-Feb 2023 — every
+    other MISO fill in 2020-2025 is a withheld month at a long-operating plant.
+    A plant with no EIA-860 unit record keeps the whole-year window.
     """
     if campd_year is None or campd_year.empty:
         return e923
     mask_by_plant = _eia923_missing_month_mask(generation, year)
     if not mask_by_plant:
         return e923
+    first_cod = _plant_first_cod()
     e923 = e923.copy()
     mcols = [f"m{i:02d}" for i in range(1, 13)]
     month1 = _hour_to_month(int(campd_year["hour"].max()) + 1)  # 1-based
@@ -2725,7 +2783,10 @@ def _backfill_eia923_missing_months(
         campd_mon = np.array(
             [float(net[months == m + 1].sum()) for m in range(12)], dtype=float
         )
-        gap = float(campd_mon[mask].sum())
+        # Withheld = blank AND inside the operating window; a pre-COD blank is
+        # commissioning energy outside the model's fleet boundary (docstring).
+        fill = mask & _operating_window(first_cod.get(pid), year)
+        gap = float(campd_mon[fill].sum())
         if gap <= 0.0:
             continue  # CAMPD says the plant was genuinely idle — nothing to repair
         shares = (class_shares or {}).get(pid) or {mapped: 1.0}
@@ -2742,7 +2803,7 @@ def _backfill_eia923_missing_months(
         for klass, share in shares.items():
             frac = share / wsum
             monthly = {
-                mcols[m]: float(campd_mon[m]) * ratio * frac if mask[m] else 0.0
+                mcols[m]: float(campd_mon[m]) * ratio * frac if fill[m] else 0.0
                 for m in range(12)
             }
             annual = float(sum(monthly.values()))
@@ -2811,6 +2872,24 @@ def _reattribute_dual_fuel_oil(
     uses), so Ravenswood's oil lands across its CC and ST blocks in their own
     proportion. Zero free parameters (rules 21 / 24); byte-identical for an ISO whose
     ``oil`` class is empty.
+
+    **A modelled plant's oil row moves WHATEVER ITS SIGN** (miso-267,
+    ``docs/FINDING-miso267-the-oil-reattribution-was-one-sided-2026-09-23.md``).
+    EIA-923 books NET generation, which is negative for an oil unit that drew
+    station service in a year it barely ran (an ignition-oil or black-start
+    row). This function first moved only ``annual > 0`` rows, so every modelled
+    plant's NEGATIVE oil row stayed behind in ``oil`` while its positive rows
+    left — a one-sided selection that drove a measured class below zero (MISO
+    ``oil`` 2022: raw EIA-923 **+0.3836** TWh -> **-0.0731**; SPP 2022: raw
+    -0.0038 -> -0.2482) and over-stated the receiving classes by the same
+    amount. The residual ``oil`` class is now exactly the non-fleet plants' rows,
+    both signs, which is what the paragraph above always said it was.
+
+    The generic ``COAL`` model group is booked to the plant's coal SUPPLY class
+    (:func:`_coal_supply_class`), exactly as :func:`_backfill_eia923_with_campd`
+    and :func:`_backfill_eia923_missing_months` book it; booking it to ``COAL``
+    itself created a class no other benchmark row carries and no C1 cell
+    scores (0.1-0.8 GWh/yr in MISO).
     """
     oil_rows = e923[e923["klass"] == "oil"]
     if oil_rows.empty:
@@ -2819,6 +2898,7 @@ def _reattribute_dual_fuel_oil(
     mcols = [f"m{i:02d}" for i in range(1, 13)]
     add: list[dict] = []
     moved_mwh = 0.0
+    moved_neg_mwh = 0.0
     moved_plants: set[int] = set()
 
     for idx, row in oil_rows.iterrows():
@@ -2826,14 +2906,15 @@ def _reattribute_dual_fuel_oil(
         group = group_by_code.get(pid)
         if not group:
             continue  # not in the model fleet -> genuinely `oil`, leave it
-        shares = (class_shares or {}).get(pid) or {group: 1.0}
+        mapped = _coal_supply_class(pid) if group == "COAL" else group
+        shares = (class_shares or {}).get(pid) or {mapped: 1.0}
         shares = {k: v for k, v in shares.items() if v > 0.0}
         if not shares:
             continue
         annual = float(row["annual_mwh"])
-        if annual <= 0.0:
-            continue
         monthly = {c: float(row[c]) for c in mcols}
+        if annual == 0.0 and not any(monthly.values()):
+            continue  # nothing to move
         wsum = sum(shares.values())
         for klass, share in shares.items():
             frac = share / wsum
@@ -2859,15 +2940,19 @@ def _reattribute_dual_fuel_oil(
         e923.at[idx, "annual_mwh"] = 0.0
         for c in mcols:
             e923.at[idx, c] = 0.0
-        moved_mwh += annual
+        if annual >= 0.0:
+            moved_mwh += annual
+        else:
+            moved_neg_mwh += annual
         moved_plants.add(pid)
     if moved_plants:
         logger.info(
             "EIA-923 dual-fuel oil re-attribution: %.3f TWh across %d modelled "
             "plant(s) moved from the `oil` class into the classes their units "
-            "dispatch in",
-            moved_mwh / _MWH_PER_TWH,
+            "dispatch in (%+.3f TWh of it from net-negative rows)",
+            (moved_mwh + moved_neg_mwh) / _MWH_PER_TWH,
             len(moved_plants),
+            moved_neg_mwh / _MWH_PER_TWH,
         )
     if add:
         e923 = pd.concat([e923, pd.DataFrame(add)], ignore_index=True)
@@ -3512,7 +3597,22 @@ def _benchmark_eia923_frame(
             iso, generation, year, benchmark_membership_vintage_union
         )
     )
-    e923 = _backfill_eia923_with_campd(
+    # Two boundary repairs (nyiso-240, rule 14 [R-ACCURATE]), both benchmark
+    # constructions: zero ScenarioConfig fields, zero free parameters, no
+    # mechanism-matrix row, and no solve path touched.
+    #   1. a dual-fuel plant's oil MWh, which EIA-923 books under the fuel burned
+    #      while the LP keeps the unit dispatching in its own class;
+    #   2. months EIA-923 withheld entirely — invisible to an annual-grain guard,
+    #      and absent from EIA's own published annual, not merely from its shape.
+    # ORDER (miso-267): the re-attribution runs FIRST, on the raw 923 frame,
+    # because both CAMPD repairs compare a CEMS meter — which measures a unit's
+    # output whatever fuel it burned — against the 923 class rows. Run after
+    # them, it booked the same oil-fired MWh twice wherever the annual backfill
+    # had rebuilt a class from CEMS (+5 to +30 GWh/yr in MISO 2020-2024, plant
+    # 1743 in 2020-2022 the largest), and it left the missing-month
+    # commensurability ratio (923 reported / CEMS reported) blind to the oil
+    # share of the reported months.
+    e923 = _reattribute_dual_fuel_oil(
         _eia923_frame(
             year,
             generation,
@@ -3520,19 +3620,16 @@ def _benchmark_eia923_frame(
             mustrun_chp_btm_holdout,
             benchmark_membership_vintage_union,
         ),
+        group_by_code,
+        class_shares=class_shares,
+    )
+    e923 = _backfill_eia923_with_campd(
+        e923,
         campd_year,
         group_by_code,
         year,
         class_shares=class_shares,
     )
-    # Two boundary repairs that run AFTER the annual-floor backfill and never
-    # change which plants it reaches (nyiso-240, rule 14 [R-ACCURATE]):
-    #   1. months EIA-923 withheld entirely — invisible to an annual-grain guard,
-    #      and absent from EIA's own published annual, not merely from its shape;
-    #   2. a dual-fuel plant's oil MWh, which EIA-923 books under the fuel burned
-    #      while the LP keeps the unit dispatching in its own class.
-    # Both are benchmark constructions: zero ScenarioConfig fields, zero free
-    # parameters, no mechanism-matrix row, and no solve path touched.
     e923 = _backfill_eia923_missing_months(
         e923,
         campd_year,
@@ -3541,7 +3638,6 @@ def _benchmark_eia923_frame(
         generation,
         class_shares=class_shares,
     )
-    e923 = _reattribute_dual_fuel_oil(e923, group_by_code, class_shares=class_shares)
     if btm_backfill_year is not None:
         e923 = _backfill_chp_eia923_from_donor(
             e923,

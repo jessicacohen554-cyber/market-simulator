@@ -3355,3 +3355,21 @@ results/calibration/hydro3_nyiso_ror_20*/
 #   soco59_arm_2024  ca09c2772717ab5436e456077c414f3f5cd81db1
 #   soco59_arm_2025  52c8f3ce6fcc696fe544dcbc41473e463e609c55
 results/calibration/soco59_arm_20[0-9][0-9]/
+
+# miso-267 PER-YEAR arm legs (keeper 2026-09-22-hydro-5-miso-ror +
+# unit_outage_dispatched_bin_denominator=true), one shard per year (rule 36).
+# Kept OUT of main (rule 32 [R-SHARD] (d)): the composite is what registers.
+# Provenance only, never a recovery route (rule 33 (d)/(f)) — the shard
+# branches are transport and are cut when this lane's PR merges:
+#   2020 b14d04407995df14db17ea63a6ac2e2eed81747c
+#   2021 856c2a0828d6632088178c593273e926bbd922d9
+#   2022 f70fac80af0dd06789cc6e1318051b2ecc23ccd9
+#   2023 2aa8a9c50da3a6de9a98b73b77336387cd8f24b8
+#   2024 80036e25f34b201af9dc6d1a6934c376ab088470
+#   2025 034dadb290009aa0ebf14629eb1d903c480bc1a5
+results/calibration/miso267_dbd_2020/
+results/calibration/miso267_dbd_2021/
+results/calibration/miso267_dbd_2022/
+results/calibration/miso267_dbd_2023/
+results/calibration/miso267_dbd_2024/
+results/calibration/miso267_dbd_2025/

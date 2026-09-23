@@ -15070,3 +15070,61 @@ and `hydro5_miso_ror_span` both carry.
 
 Records: `docs/RESULT-miso266-dispatched-bin-denominator-2026-09-22.md` §8,
 `docs/FINDING-miso266-bench-regeneration-hazard-2026-09-23.md`.
+
+## miso-267 — 2026-09-23 — **THE BENCH DRIFT WAS TWO nyiso-240 REPAIRS, ONE OF THEM ONE-SIDED. Builder repaired; MISO's parts regenerated ONCE, 0 status flips. Then the dispatched-bin arm, re-solved on the hydro-5 keeper.** Keeper `2026-09-22-hydro-5-miso-ror` UNCHANGED pending the owner
+
+**STEP 1 (zero LP).** The whole miso-266 bench move is commit `03eed7e9c`
+(nyiso-240): R1 `_backfill_eia923_missing_months` and R2
+`_reattribute_dual_fuel_oil`. With both off, all six MISO parts reproduce
+byte-for-byte. R1 is a correction (EIA annual = Σ reported months in all 24
+withheld plant-years). R2 was a regression in three ways: it moved only
+POSITIVE oil rows (so the negative residue left behind drove `classFull.oil`
+negative), it booked coal-plant oil to a generic `COAL` class the scorer does
+not carry, and it ran after the CAMPD backfill (double counting CEMS). All three
+repaired in `run_calibration_full.py`, plus a pre-COD exclusion on R1's fills
+(found because the first regeneration flipped C1 2022 CC_REGULAR; disclosed both
+ways). MISO parts regenerated once; `check_bench_freshness` 6/0 STALE. Keeper
+re-scored: full span NOT-YET → NOT-YET, train tier CALIBRATED → CALIBRATED,
+**0 status flips**; C1 2020 COAL_BIT −10.67 → −10.76, C1 2022 COAL_PRB
++7.93 → +7.67, C1 2023 CC_REGULAR −6.97 → −7.40 (headroom 0.60 TWh), C1 2024
+CC_REGULAR +2.58 → −0.07. Census of all 13 registered runs (rule 25): no
+determination moves; PJM C8 COAL SKIPPED → PASS (PJM's refresh). No other ISO's
+parts touched. Four EIA-923 respondent errors (kWh booked as MWh) ROUTED, incl.
+MISO 2022 plant 7977 (−107,000 MWh), which keeps 2022 `oil` at −0.048 — carried as
+a strict xfail in the new sign test. Record:
+`docs/FINDING-miso267-the-oil-reattribution-was-one-sided-2026-09-23.md`.
+
+**STEP 2 (zero LP).** The 2020 coal shortfall and the 2020 price bias are TWO
+objects: hour-grain correlation 0.10 (BIT) / 0.14 (coal); the price error is a
+flat +$6–8 body across RT deciles 0–7 that CALIBRATED 2023 also carries; the coal
+deficit is a peak-hours ceiling shape (+0.40 TWh in load d0 → −4.00 in d9).
+Lever chosen on structure: `unit_outage_dispatched_bin_denominator` (identity
+`denom == cap_LP`, zero DOF, already owner-ruled promote on the miso-264 base and
+withdrawn only for the hydro-5 collision). Six single-year arm shards on the
+hydro-5 keeper; control = the committed keeper (G-DRIFT all INERT). Predictions
+and decision rule: `docs/PRECOMMIT-miso267-dispatched-bin-on-hydro5-2026-09-23.md`.
+
+Also: the composer defect in `_miso266_compose_span.py` is repaired (per-year
+`shared_inputs` rebuilt over the span, `calibration_flags.years` widened); MISO's
+forecast gate-(a) row re-keyed to the live keeper (a hydro-5 promoter miss).
+
+## miso-267 (continued) — 2026-09-23 — **SOLVED AND SCORED: an exact gate wash on the hydro-5 keeper. 2020's coal miss closes, 2022 regresses, every determination is unchanged.** Keeper UNCHANGED pending the owner; run `2026-09-23-miso-267-dispatched-bin` registered
+
+Six single-year arm shards (keeper + `unit_outage_dispatched_bin_denominator=true`), pinned
+`3ea64fa5`, all verified keeper-plus-one-flag with identical resolved inputs, composed at zero
+LP (overlay identical to the keeper's), registered with **0 of 44 bench parts moving**.
+
+| | keeper | arm |
+|---|---|---|
+| full span | NOT-YET 8/4/1/3 | NOT-YET 8/4/1/3 |
+| train 2023–25 | CALIBRATED 8/7/1/0 | CALIBRATED 8/7/1/0 |
+| C1 2020 COAL_BIT | −10.76 FAIL | −6.79 PASS |
+| C1 2022 COAL_PRB / CC_REGULAR | +7.67 / −7.69 | **+10.04 / −8.99 FAIL** |
+| C3a 2020 / 2022 | +14.7 % FAIL / −9.5 % | +12.8 % FAIL / **−10.2 % FAIL** |
+| C3b 2021 | 0.307 FAIL | 0.307 FAIL |
+| D-10 free-class C1 | 39/40 | 38/40 |
+
+Every move was pre-registered. Mechanism: coal +20.3 TWh over the span, gas and imports
+down every year, price −0.29 to −0.82 $/MWh; CT_PEAKER / ST_GAS forced shares +1–3 pp.
+Promotion costs zero re-solves; E13 reads FAIL until the owner rules. Record:
+`docs/RESULT-miso267-dispatched-bin-on-hydro5-2026-09-23.md`.

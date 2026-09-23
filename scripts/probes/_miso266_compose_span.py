@@ -106,6 +106,9 @@ MUST_AGREE = (
     # (control and arm) each check this independently; the check is that the
     # SIX YEARS agree, not that they carry any particular value.
     "unit_outage_dispatched_bin_denominator",
+    # miso-267: the hydro-5 keeper's single delta. A leg re-solved on that keeper
+    # must carry it in every year, or the composite silently reverts it.
+    "hydro_ror_split",
 )
 
 #: Fields the DATA forces to differ, with the value each leg must carry. Stated
@@ -159,7 +162,9 @@ def check_recipes(legs: dict[str, list[int]]) -> None:
                 "partition; anything else means these are not one run."
             )
     print(f"  OK — {len(MUST_AGREE)} shared fields agree, surface fingerprint shared,")
-    print(f"       {len(PARTITIONED)} data-forced fields differ in the declared direction.")
+    print(
+        f"       {len(PARTITIONED)} data-forced fields differ in the declared direction."
+    )
 
 
 def compose(legs: dict[str, list[int]], out: Path) -> None:
@@ -209,20 +214,70 @@ def compose(legs: dict[str, list[int]], out: Path) -> None:
             print(f"  {fname}: {len(parts)} leg(s) concatenated")
 
     all_years = sorted(set(all_years))
-    base = next(iter(legs))
-    shutil.copy2(CAL / base / "run_config.json", out / "run_config.json")
+    base = min(legs, key=lambda n: min(legs[n]))
+    # miso-267: the base run_config echo is WIDENED to the span. Copied verbatim
+    # it recorded the first leg's `calibration_flags.years` ([2020]) for a
+    # six-year composite, which is what `audit_keepers` E3 warned on. The same
+    # repair nwpp-42 made (`39c79724`) and `_hydro5_compose_span.py` carries.
+    base_cfg = _leg_config(CAL / base)
+    flags = base_cfg.setdefault("calibration_flags", {})
+    flags["years"] = list(all_years)
+    gas: dict[str, float] = {}
+    for name in legs:
+        gas.update(
+            _leg_config(CAL / name).get("calibration_flags", {}).get("gas_prices") or {}
+        )
+    if gas:
+        flags["gas_prices"] = {k: gas[k] for k in sorted(gas)}
+    (out / "run_config.json").write_text(json.dumps(base_cfg, indent=2) + "\n")
     meta = json.loads((CAL / base / "meta.json").read_text())
     meta["years"] = all_years
     meta["composed_from"] = {n: sorted(y) for n, y in legs.items()}
+    if gas:
+        meta["gas_prices"] = {k: gas[k] for k in sorted(gas)}
+    (out / "meta.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
+    _respan_shared_inputs(meta, out)
     (out / "meta.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
 
     n = sum(1 for p in out.rglob("*") if p.is_file())
     print(f"\ncomposed {out} — {n} files, years {all_years}")
     print(
-        "  NOTE: run_config.json is the FIRST leg's and therefore records the "
-        "validation-tier reserve flags for the whole span. run_config_<y>.json "
-        "carries the truth; stamp_config_partition.py records it."
+        "  NOTE: run_config.json is the FIRST leg's (its `years` widened to the "
+        "span) and therefore records the validation-tier reserve flags for the "
+        "whole span. run_config_<y>.json carries the truth; "
+        "stamp_config_partition.py records it."
     )
+
+
+def _respan_shared_inputs(meta: dict, out: Path) -> None:
+    """Re-point the year-dependent benchmark frames at the whole span (miso-267).
+
+    ``eia930`` / ``eia923`` / ``campd`` are PER-YEAR frames (six distinct hashes
+    over six single-year legs); the ``unit_outages*`` frames are shared. Copying
+    the first leg's ``shared_inputs`` recorded 2020's one-year frames for a
+    six-year composite, so ``--restore-shared-inputs`` rebuilt a six-year frame,
+    compared it to a one-year hash and refused — whatever the builders were
+    doing (``RESULT-miso266`` §5.1, Defect A). The frames are rebuilt over the
+    composite's own ``meta.json`` recipe through the single builder and written
+    content-addressed, exactly as ``_hydro5_compose_span.py`` does.
+    """
+    recorded = meta.get("shared_inputs")
+    if not recorded:
+        return
+    from scripts.lib.bundle_io import SHARED_INPUT_NAMES
+    from scripts.run_calibration_full import build_benchmark_frames, write_shared_input
+
+    stale = [n for n in SHARED_INPUT_NAMES if n in recorded]
+    if not stale:
+        return
+    iso, built = build_benchmark_frames(out)
+    for name in sorted(stale):
+        if name not in built:
+            raise SystemExit(f"compose: span rebuild produced no {name!r} frame")
+        was = recorded[name]
+        recorded[name] = write_shared_input(built[name], name, iso, out)
+        print(f"  shared {name:<7} {Path(was).name} -> {Path(recorded[name]).name}")
+    meta["shared_inputs"] = recorded
 
 
 def regenerate_diagnostics(out: Path, years: list[int]) -> int:
@@ -230,10 +285,14 @@ def regenerate_diagnostics(out: Path, years: list[int]) -> int:
     cmd = [
         sys.executable,
         str(REPO / "scripts" / "legitimacy_diagnostics.py"),
-        "--bundle", str(out),
-        "--iso", "MISO",
-        "--years", *[str(y) for y in years],
-        "--json-out", str(out / "legitimacy_diagnostics.json"),
+        "--bundle",
+        str(out),
+        "--iso",
+        "MISO",
+        "--years",
+        *[str(y) for y in years],
+        "--json-out",
+        str(out / "legitimacy_diagnostics.json"),
     ]
     print("\nregenerating legitimacy_diagnostics.json over the composite:")
     print("  " + " ".join(cmd))
@@ -244,7 +303,9 @@ def regenerate_diagnostics(out: Path, years: list[int]) -> int:
     # the artifact exists and spans every year — check that, not the status.
     art = out / "legitimacy_diagnostics.json"
     if not art.is_file():
-        print(f"  NO ARTIFACT WRITTEN (exit {rc}) — C8 would score SKIPPED; do not register.")
+        print(
+            f"  NO ARTIFACT WRITTEN (exit {rc}) — C8 would score SKIPPED; do not register."
+        )
         return 1
     if rc != 0:
         print(f"  (exit {rc} — a failing diagnostic gate, not a missing artifact)")
@@ -259,8 +320,12 @@ def regenerate_diagnostics(out: Path, years: list[int]) -> int:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--leg", action="append", required=True,
-                    help="YEARS=bundle_name, e.g. 2020,2021,2022=miso260_seam_v")
+    ap.add_argument(
+        "--leg",
+        action="append",
+        required=True,
+        help="YEARS=bundle_name, e.g. 2020,2021,2022=miso260_seam_v",
+    )
     ap.add_argument("--out", required=True)
     ap.add_argument("--skip-diagnostics", action="store_true")
     args = ap.parse_args()
