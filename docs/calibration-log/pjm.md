@@ -6368,6 +6368,23 @@ promotion on the structural merits** with G5's failure disclosed; the keeper
 fetch + checkout + verify (rule 33(a)); shard branches are transport and are cut when this PR
 merges, so any leg not on `main` costs a re-solve, not a checkout.
 
+## pjm-h18 — 2026-09-23 — Lever B LOCALISED at zero LP: two events on one compression, no level knob
+
+**Zero LP, zero shards.** Keeper `2026-09-22-pjm-hydro2-ror-span` (the handoff's h16 keeper was
+superseded by hydro-2 the same day). Record: `docs/FINDING-pjm-h18-price-object-localised-2026-09-23.md`.
+
+- **Every year** runs too high in the bottom half of hours (+$2.6–4.8/MWh) and too low in the top
+  5 %; 2023–2025 pass C3a by **cancellation**. The sign flip lives in the **CT/ST-marginal hours**
+  (+0.27 in 2020 → −10.86 in 2022). CC-marginal hours are +16–20 % high in every year.
+- **2022 = Winter Storm Elliott.** Dec 23–26 carries −5.6 of −8.0 $/MWh; without it 2022 reads C3a
+  −3.5 %, C3b 0.114 (both PASS).
+- **2020 carries an input glitch.** Two EIA-930 demand hours (192 GW, 176 GW) shed 28 / 13 GW at
+  VOLL: +4.4 of the 18.6 C3a points and the **whole** C3b failure (0.208 → 0.152). A 2024
+  dropout hour (56 GW) sits in the training span. `_screen_demand_spikes` (2.5× median) misses all.
+- **Cards (owner picks, none launched):** A — demand-spike repair, zero DOF, rule 14 (expected: 2020
+  C3b FAIL→PASS, C3a still FAIL); B — accept Elliott as a one-event miss (recommended); C — Lever C
+  as the CC + CT **pair**, never one half alone.
+
 ## pjm-h16 — 2026-09-22
 
 **PROMOTED.** `2026-09-20-pjm-h15-coalwindow-span` → **`2026-09-22-pjm-h16-coalgrain-span`**

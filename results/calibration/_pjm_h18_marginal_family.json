@@ -1,0 +1,458 @@
+{
+ "2020": {
+  "gas_cc_capwtd": 2.075664532779163,
+  "coal_capwtd": 2.121479987998414,
+  "fam": {
+   "coal": {
+    "share": 0.191324200913242,
+    "share_bottom50": 0.22031963470319635,
+    "share_top50": 0.16232876712328767,
+    "err_contrib": 0.535655163927966,
+    "model_p": 21.331674005313552,
+    "actual_p": 18.321307067939376
+   },
+   "cc": {
+    "share": 0.6188356164383562,
+    "share_bottom50": 0.6591324200913242,
+    "share_top50": 0.5785388127853881,
+    "err_contrib": 2.224881967206599,
+    "model_p": 22.961043523900976,
+    "actual_p": 19.09330113733789
+   },
+   "ct": {
+    "share": 0.12089041095890411,
+    "share_bottom50": 0.08447488584474885,
+    "share_top50": 0.15730593607305937,
+    "err_contrib": 0.12890924892769617,
+    "model_p": 26.475857536127517,
+    "actual_p": 24.98846954259251
+   },
+   "st": {
+    "share": 0.06872146118721462,
+    "share_bottom50": 0.036073059360730596,
+    "share_top50": 0.10136986301369863,
+    "err_contrib": 0.1373434521700765,
+    "model_p": 29.4353158321952,
+    "actual_p": 27.47900501604616
+   },
+   "other": {
+    "share": 0.0,
+    "share_bottom50": 0.0,
+    "share_top50": 0.0,
+    "err_contrib": 0.0,
+    "model_p": null,
+    "actual_p": null
+   },
+   "none": {
+    "share": 0.00022831050228310502,
+    "share_bottom50": 0.0,
+    "share_top50": 0.00045662100456621003,
+    "err_contrib": 0.935609575742964,
+    "model_p": 1982.041263991852,
+    "actual_p": 31.700611114501953
+   }
+  },
+  "offer_levels": {
+   "CC_REGULAR|committed": 16.73,
+   "CC_REGULAR|econc00": 18.26,
+   "CC_REGULAR|econc02": 21.01,
+   "CC_REGULAR|econc05": 28.17,
+   "CC_REGULAR|peak": 103.22,
+   "COAL|mustrun": 4.5,
+   "COAL|sync": 25.87,
+   "COAL|committed": 13.16,
+   "COAL|econc00": 15.86,
+   "COAL|econc02": 18.03,
+   "COAL|econc05": 23.6,
+   "COAL|peak": 21.28,
+   "CT_PEAKER|committed": 27.81,
+   "CT_PEAKER|econc00": 32.57,
+   "CT_PEAKER|econc02": 33.92,
+   "CT_PEAKER|econc05": 37.39,
+   "CT_PEAKER|peak": 112.63,
+   "ST_GAS|committed": 30.83,
+   "ST_GAS|econ": 32.89,
+   "ST_GAS|peak": 59.65
+  }
+ },
+ "2021": {
+  "gas_cc_capwtd": 3.78611648211606,
+  "coal_capwtd": 2.1091841919482657,
+  "fam": {
+   "coal": {
+    "share": 0.10856164383561644,
+    "share_bottom50": 0.17465753424657535,
+    "share_top50": 0.04246575342465753,
+    "err_contrib": 0.38246207275274674,
+    "model_p": 29.261450926320936,
+    "actual_p": 25.643758502041628
+   },
+   "cc": {
+    "share": 0.6464611872146119,
+    "share_bottom50": 0.7230593607305936,
+    "share_top50": 0.5698630136986301,
+    "err_contrib": 0.7533476494144349,
+    "model_p": 34.54173878454436,
+    "actual_p": 33.22009325978951
+   },
+   "ct": {
+    "share": 0.14098173515981735,
+    "share_bottom50": 0.055251141552511415,
+    "share_top50": 0.2267123287671233,
+    "err_contrib": -0.8337928426637669,
+    "model_p": 49.34790160838401,
+    "actual_p": 54.61083105450217
+   },
+   "st": {
+    "share": 0.10399543378995434,
+    "share_bottom50": 0.047031963470319633,
+    "share_top50": 0.16095890410958905,
+    "err_contrib": -0.2963940054756189,
+    "model_p": 47.135854229600255,
+    "actual_p": 49.84610332275458
+   },
+   "other": {
+    "share": 0.0,
+    "share_bottom50": 0.0,
+    "share_top50": 0.0,
+    "err_contrib": 0.0,
+    "model_p": null,
+    "actual_p": null
+   },
+   "none": {
+    "share": 0.0,
+    "share_bottom50": 0.0,
+    "share_top50": 0.0,
+    "err_contrib": 0.0,
+    "model_p": null,
+    "actual_p": null
+   }
+  },
+  "offer_levels": {
+   "CC_REGULAR|committed": 28.81,
+   "CC_REGULAR|econc00": 29.38,
+   "CC_REGULAR|econc02": 32.6,
+   "CC_REGULAR|econc05": 40.56,
+   "CC_REGULAR|peak": 128.03,
+   "COAL|mustrun": 4.5,
+   "COAL|sync": 26.72,
+   "COAL|committed": 17.49,
+   "COAL|econc00": 21.38,
+   "COAL|econc02": 24.59,
+   "COAL|econc05": 32.83,
+   "COAL|peak": 29.53,
+   "CT_PEAKER|committed": 49.11,
+   "CT_PEAKER|econc00": 52.94,
+   "CT_PEAKER|econc02": 54.56,
+   "CT_PEAKER|econc05": 58.73,
+   "CT_PEAKER|peak": 144.16,
+   "ST_GAS|committed": 53.6,
+   "ST_GAS|econ": 55.86,
+   "ST_GAS|peak": 81.29
+  }
+ },
+ "2022": {
+  "gas_cc_capwtd": 6.630993111877283,
+  "coal_capwtd": 2.5736454867512566,
+  "fam": {
+   "coal": {
+    "share": 0.02728310502283105,
+    "share_bottom50": 0.047488584474885846,
+    "share_top50": 0.007077625570776256,
+    "err_contrib": 0.1557426943150236,
+    "model_p": 46.59333848205738,
+    "actual_p": 39.81118209790984
+   },
+   "cc": {
+    "share": 0.5624429223744293,
+    "share_bottom50": 0.7833333333333333,
+    "share_top50": 0.3415525114155251,
+    "err_contrib": 2.6919902520680856,
+    "model_p": 55.873634019479205,
+    "actual_p": 50.218883247931494
+   },
+   "ct": {
+    "share": 0.21860730593607305,
+    "share_bottom50": 0.06187214611872146,
+    "share_top50": 0.37534246575342467,
+    "err_contrib": -3.5607059338040643,
+    "model_p": 80.70891252130733,
+    "actual_p": 93.29129738869929
+   },
+   "st": {
+    "share": 0.19166666666666668,
+    "share_bottom50": 0.10730593607305935,
+    "share_top50": 0.276027397260274,
+    "err_contrib": -7.2963922905716085,
+    "model_p": 72.1287961612439,
+    "actual_p": 99.47657821035016
+   },
+   "other": {
+    "share": 0.0,
+    "share_bottom50": 0.0,
+    "share_top50": 0.0,
+    "err_contrib": 0.0,
+    "model_p": null,
+    "actual_p": null
+   },
+   "none": {
+    "share": 0.0,
+    "share_bottom50": 0.0,
+    "share_top50": 0.0,
+    "err_contrib": 0.0,
+    "model_p": null,
+    "actual_p": null
+   }
+  },
+  "offer_levels": {
+   "CC_REGULAR|committed": 48.47,
+   "CC_REGULAR|econc00": 48.89,
+   "CC_REGULAR|econc02": 53.14,
+   "CC_REGULAR|econc05": 63.09,
+   "CC_REGULAR|peak": 165.64,
+   "COAL|mustrun": 4.5,
+   "COAL|sync": 34.53,
+   "COAL|committed": 25.74,
+   "COAL|econc00": 31.04,
+   "COAL|econc02": 36.05,
+   "COAL|econc05": 48.92,
+   "COAL|peak": 44.52,
+   "CT_PEAKER|committed": 83.21,
+   "CT_PEAKER|econc00": 85.53,
+   "CT_PEAKER|econc02": 87.6,
+   "CT_PEAKER|econc05": 92.92,
+   "CT_PEAKER|peak": 193.22,
+   "ST_GAS|committed": 92.03,
+   "ST_GAS|econ": 105.81,
+   "ST_GAS|peak": 126.48
+  }
+ },
+ "2023": {
+  "gas_cc_capwtd": 2.656982412479602,
+  "coal_capwtd": 3.388719579215686,
+  "fam": {
+   "coal": {
+    "share": 0.27705479452054793,
+    "share_bottom50": 0.20410958904109588,
+    "share_top50": 0.35,
+    "err_contrib": -0.7295499575347917,
+    "model_p": 30.383597599211253,
+    "actual_p": 32.12383758240784
+   },
+   "cc": {
+    "share": 0.522945205479452,
+    "share_bottom50": 0.6865296803652968,
+    "share_top50": 0.3593607305936073,
+    "err_contrib": 1.8342998772888144,
+    "model_p": 27.635862691110695,
+    "actual_p": 23.79821181976491
+   },
+   "ct": {
+    "share": 0.0704337899543379,
+    "share_bottom50": 0.04817351598173516,
+    "share_top50": 0.09269406392694064,
+    "err_contrib": -0.3876380556685974,
+    "model_p": 32.11384283477336,
+    "actual_p": 35.76761557990187
+   },
+   "st": {
+    "share": 0.1295662100456621,
+    "share_bottom50": 0.06118721461187215,
+    "share_top50": 0.19794520547945205,
+    "err_contrib": -0.6589481603690548,
+    "model_p": 31.319461338872845,
+    "actual_p": 35.30794955518277
+   },
+   "other": {
+    "share": 0.0,
+    "share_bottom50": 0.0,
+    "share_top50": 0.0,
+    "err_contrib": 0.0,
+    "model_p": null,
+    "actual_p": null
+   },
+   "none": {
+    "share": 0.0,
+    "share_bottom50": 0.0,
+    "share_top50": 0.0,
+    "err_contrib": 0.0,
+    "model_p": null,
+    "actual_p": null
+   }
+  },
+  "offer_levels": {
+   "CC_REGULAR|committed": 20.9,
+   "CC_REGULAR|econc00": 21.46,
+   "CC_REGULAR|econc02": 24.44,
+   "CC_REGULAR|econc05": 32.31,
+   "CC_REGULAR|peak": 116.16,
+   "COAL|mustrun": 4.5,
+   "COAL|sync": 44.39,
+   "COAL|committed": 20.27,
+   "COAL|econc00": 25.89,
+   "COAL|econc02": 29.99,
+   "COAL|econc05": 40.55,
+   "COAL|peak": 35.01,
+   "CT_PEAKER|committed": 35.84,
+   "CT_PEAKER|econc00": 40.74,
+   "CT_PEAKER|econc02": 42.2,
+   "CT_PEAKER|econc05": 45.95,
+   "CT_PEAKER|peak": 124.16,
+   "ST_GAS|committed": 35.68,
+   "ST_GAS|econ": 39.1,
+   "ST_GAS|peak": 65.51
+  }
+ },
+ "2024": {
+  "gas_cc_capwtd": 2.496344643724073,
+  "coal_capwtd": 3.2145075391118225,
+  "fam": {
+   "coal": {
+    "share": 0.26894977168949774,
+    "share_bottom50": 0.24429223744292236,
+    "share_top50": 0.29360730593607304,
+    "err_contrib": -0.5352232781580784,
+    "model_p": 28.57625307588306,
+    "actual_p": 29.781870225719565
+   },
+   "cc": {
+    "share": 0.47191780821917806,
+    "share_bottom50": 0.6308219178082192,
+    "share_top50": 0.313013698630137,
+    "err_contrib": 1.8163012466966075,
+    "model_p": 26.889865338183533,
+    "actual_p": 22.762044183632344
+   },
+   "ct": {
+    "share": 0.12089041095890411,
+    "share_bottom50": 0.06004566210045662,
+    "share_top50": 0.1817351598173516,
+    "err_contrib": -1.4244293118703555,
+    "model_p": 35.63163151658276,
+    "actual_p": 44.50499312713306
+   },
+   "st": {
+    "share": 0.1382420091324201,
+    "share_bottom50": 0.06484018264840183,
+    "share_top50": 0.21164383561643835,
+    "err_contrib": -0.9990447792593469,
+    "model_p": 33.138428806977586,
+    "actual_p": 39.06222116484512
+   },
+   "other": {
+    "share": 0.0,
+    "share_bottom50": 0.0,
+    "share_top50": 0.0,
+    "err_contrib": 0.0,
+    "model_p": null,
+    "actual_p": null
+   },
+   "none": {
+    "share": 0.0,
+    "share_bottom50": 0.0,
+    "share_top50": 0.0,
+    "err_contrib": 0.0,
+    "model_p": null,
+    "actual_p": null
+   }
+  },
+  "offer_levels": {
+   "CC_REGULAR|committed": 19.59,
+   "CC_REGULAR|econc00": 20.86,
+   "CC_REGULAR|econc02": 23.88,
+   "CC_REGULAR|econc05": 31.51,
+   "CC_REGULAR|peak": 112.21,
+   "COAL|mustrun": 4.5,
+   "COAL|sync": 38.25,
+   "COAL|committed": 20.2,
+   "COAL|econc00": 25.53,
+   "COAL|econc02": 29.53,
+   "COAL|econc05": 39.82,
+   "COAL|peak": 34.68,
+   "CT_PEAKER|committed": 33.63,
+   "CT_PEAKER|econc00": 38.46,
+   "CT_PEAKER|econc02": 39.87,
+   "CT_PEAKER|econc05": 43.51,
+   "CT_PEAKER|peak": 120.85,
+   "ST_GAS|committed": 34.85,
+   "ST_GAS|econ": 39.11,
+   "ST_GAS|peak": 71.06
+  }
+ },
+ "2025": {
+  "gas_cc_capwtd": 3.744751210090546,
+  "coal_capwtd": 2.9587435177735437,
+  "fam": {
+   "coal": {
+    "share": 0.2808219178082192,
+    "share_bottom50": 0.32579908675799085,
+    "share_top50": 0.2358447488584475,
+    "err_contrib": 0.43682774259907065,
+    "model_p": 38.12244096368901,
+    "actual_p": 36.17640833142327
+   },
+   "cc": {
+    "share": 0.4397260273972603,
+    "share_bottom50": 0.5219178082191781,
+    "share_top50": 0.35753424657534244,
+    "err_contrib": 0.828177659612605,
+    "model_p": 37.63548328833188,
+    "actual_p": 35.513157702464056
+   },
+   "ct": {
+    "share": 0.15947488584474886,
+    "share_bottom50": 0.06894977168949772,
+    "share_top50": 0.25,
+    "err_contrib": -3.209934573666926,
+    "model_p": 49.60146836813464,
+    "actual_p": 65.73422308725891
+   },
+   "st": {
+    "share": 0.11997716894977169,
+    "share_bottom50": 0.08333333333333333,
+    "share_top50": 0.15662100456621006,
+    "err_contrib": -1.3592540472050278,
+    "model_p": 47.22475452926682,
+    "actual_p": 55.257145211993794
+   },
+   "other": {
+    "share": 0.0,
+    "share_bottom50": 0.0,
+    "share_top50": 0.0,
+    "err_contrib": 0.0,
+    "model_p": null,
+    "actual_p": null
+   },
+   "none": {
+    "share": 0.0,
+    "share_bottom50": 0.0,
+    "share_top50": 0.0,
+    "err_contrib": 0.0,
+    "model_p": null,
+    "actual_p": null
+   }
+  },
+  "offer_levels": {
+   "CC_REGULAR|committed": 27.75,
+   "CC_REGULAR|econc00": 30.37,
+   "CC_REGULAR|econc02": 33.95,
+   "CC_REGULAR|econc05": 43.23,
+   "CC_REGULAR|peak": 137.87,
+   "COAL|mustrun": 4.5,
+   "COAL|sync": 35.49,
+   "COAL|committed": 22.3,
+   "COAL|econc00": 28.63,
+   "COAL|econc02": 33.24,
+   "COAL|econc05": 45.09,
+   "COAL|peak": 39.05,
+   "CT_PEAKER|committed": 48.04,
+   "CT_PEAKER|econc00": 51.93,
+   "CT_PEAKER|econc02": 53.52,
+   "CT_PEAKER|econc05": 57.61,
+   "CT_PEAKER|peak": 142.05,
+   "ST_GAS|committed": 55.84,
+   "ST_GAS|econ": 63.96,
+   "ST_GAS|peak": 86.34
+  }
+ }
+}
