@@ -391,3 +391,5 @@ Records: `docs/handoffs/{FINDING,PRECOMMIT,RESULT}-nwpp-47-2026-09-22.md`,
 `scripts/probes/_nwpp47_{attribution,gates}.py`, `scripts/gen_nwpp47_attestation.py`.
 
 ---
+
+**Promoted 2026-09-23 (owner ruling):** `2026-09-22-nwpp-47-grid-wind` is NWPP keeper #5; the NWPP-46 predecessor was pruned (rule 35).
