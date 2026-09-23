@@ -15107,3 +15107,24 @@ and decision rule: `docs/PRECOMMIT-miso267-dispatched-bin-on-hydro5-2026-09-23.m
 Also: the composer defect in `_miso266_compose_span.py` is repaired (per-year
 `shared_inputs` rebuilt over the span, `calibration_flags.years` widened); MISO's
 forecast gate-(a) row re-keyed to the live keeper (a hydro-5 promoter miss).
+
+## miso-267 (continued) — 2026-09-23 — **SOLVED AND SCORED: an exact gate wash on the hydro-5 keeper. 2020's coal miss closes, 2022 regresses, every determination is unchanged.** Keeper UNCHANGED pending the owner; run `2026-09-23-miso-267-dispatched-bin` registered
+
+Six single-year arm shards (keeper + `unit_outage_dispatched_bin_denominator=true`), pinned
+`3ea64fa5`, all verified keeper-plus-one-flag with identical resolved inputs, composed at zero
+LP (overlay identical to the keeper's), registered with **0 of 44 bench parts moving**.
+
+| | keeper | arm |
+|---|---|---|
+| full span | NOT-YET 8/4/1/3 | NOT-YET 8/4/1/3 |
+| train 2023–25 | CALIBRATED 8/7/1/0 | CALIBRATED 8/7/1/0 |
+| C1 2020 COAL_BIT | −10.76 FAIL | −6.79 PASS |
+| C1 2022 COAL_PRB / CC_REGULAR | +7.67 / −7.69 | **+10.04 / −8.99 FAIL** |
+| C3a 2020 / 2022 | +14.7 % FAIL / −9.5 % | +12.8 % FAIL / **−10.2 % FAIL** |
+| C3b 2021 | 0.307 FAIL | 0.307 FAIL |
+| D-10 free-class C1 | 39/40 | 38/40 |
+
+Every move was pre-registered. Mechanism: coal +20.3 TWh over the span, gas and imports
+down every year, price −0.29 to −0.82 $/MWh; CT_PEAKER / ST_GAS forced shares +1–3 pp.
+Promotion costs zero re-solves; E13 reads FAIL until the owner rules. Record:
+`docs/RESULT-miso267-dispatched-bin-on-hydro5-2026-09-23.md`.
