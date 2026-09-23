@@ -1333,3 +1333,15 @@ campd_per_unit_attribution O -> K); build_status --iso SOCO in sync;
 audit_keepers holdout/marker/status all pass with the one expected E13.
 calibration-complete.json carries NO SOCO entry, confirmed not assumed.
 Record: docs/handoffs/FINDING-soco-56-2026-09-20.md §12.
+
+## soco-hydro-4 — 2026-09-22
+
+Hydro dispatch physics, two single-delta PROBE arms off keeper soco58_warm_committed, 7 year-isolated
+shards (2025 on a SOCO-53b backfill repair control). Registered 2026-09-22-soco-h4-hydro-min
+(hydro_min_flow_floor) and 2026-09-22-soco-h4-hydro-ror (hydro_ror_split); both NOT-YET on the keeper's
+own C1 row, no status flip anywhere. G1/G2 pass every leg (annual hydro 0.0000 %). Zero-MW hours -> 0
+under ARM 2 in all years; top-decile share closes 33-43 % of the gap to measured (ARM 1: 11-16 %).
+Lane recommends ARM 2 on driver grounds; owner ruling open. Routed: 2025 model demand +10 % over
+EIA-930 at peak (ARM 2's 2 scarcity hours); SOCO-53b owned by SOCO-59; stale PS-folded hydro actual in
+committed bench parts; D-2 blind to hydro floors. Matrix cells hydro_min_flow_floor / hydro_ror_split
+U -> O. Record: docs/handoffs/RESULT-soco-hydro-4-2026-09-22.md.

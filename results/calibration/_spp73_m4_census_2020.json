@@ -1,0 +1,115 @@
+{
+ "n_rows": 1149,
+ "n_thermal_rows": 1124,
+ "startup_cost_per_mw_gt0": 135,
+ "min_run_hours_gt0": 32,
+ "min_down_hours_gt0": 32,
+ "is_campd_bin_rows": 775,
+ "class_commitment_overrides": {},
+ "gas_st_startup_cost": false,
+ "rows_by_group": {
+  "": 349,
+  "COAL": 167,
+  "CC_REGULAR": 86,
+  "CT_PEAKER": 363,
+  "ST_GAS": 124,
+  "ST_CHP": 11,
+  "CT_CHP": 20,
+  "CC_CHP": 4
+ },
+ "breakdown": {
+  "coal|COAL|committed": {
+   "rows": 32,
+   "pmax_mw": 6272.976299999999,
+   "startup": [
+    100.0
+   ],
+   "min_run": [
+    36.0
+   ],
+   "min_down": [
+    16.0
+   ]
+  },
+  "gas_cc|CC_REGULAR|committed": {
+   "rows": 23,
+   "pmax_mw": 3445.9134999999997,
+   "startup": [
+    50.0
+   ],
+   "min_run": [
+    0.0
+   ],
+   "min_down": [
+    0.0
+   ]
+  },
+  "gas_st|ST_GAS|committed": {
+   "rows": 31,
+   "pmax_mw": 2029.6742000000002,
+   "startup": [
+    35.0
+   ],
+   "min_run": [
+    0.0
+   ],
+   "min_down": [
+    0.0
+   ]
+  },
+  "gas_ct|CT_PEAKER|committed": {
+   "rows": 36,
+   "pmax_mw": 1032.4617000000003,
+   "startup": [
+    20.0
+   ],
+   "min_run": [
+    0.0
+   ],
+   "min_down": [
+    0.0
+   ]
+  },
+  "gas_st|ST_CHP|committed": {
+   "rows": 6,
+   "pmax_mw": 30.641550000000002,
+   "startup": [
+    35.0
+   ],
+   "min_run": [
+    0.0
+   ],
+   "min_down": [
+    0.0
+   ]
+  },
+  "gas_ct|CT_CHP|committed": {
+   "rows": 6,
+   "pmax_mw": 90.76966500000002,
+   "startup": [
+    20.0
+   ],
+   "min_run": [
+    0.0
+   ],
+   "min_down": [
+    0.0
+   ]
+  },
+  "gas_cc|CC_CHP|committed": {
+   "rows": 1,
+   "pmax_mw": 134.73474,
+   "startup": [
+    50.0
+   ],
+   "min_run": [
+    0.0
+   ],
+   "min_down": [
+    0.0
+   ]
+  }
+ },
+ "markup_abs_max": 0.1488095238095238,
+ "markup_nonzero_rows": 98
+}

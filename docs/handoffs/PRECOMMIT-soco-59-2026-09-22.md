@@ -196,3 +196,21 @@ composition.
    7.080 TWh against the model's 6.815 / 6.301 EIA-923 HY). Unscored today (hydro is not a free C1
    class), so it moves no gate; it is a benchmark-side rule-14 defect routed, not fixed.
 4. The governance boundary on `tranche_startup_amortization` (SOCO-58 §6) — not ruled on, not re-litigated.
+
+---
+
+## ADDENDUM A — written after the shards launched, BEFORE any leg was fetched or read
+
+**§8 item 3 is WITHDRAWN as stale.** The benchmark reads the same registry
+(`run_calibration_full.py::_hydro_benchmark_is_923_only`, gov-hydro-seam-1), so this lane checked
+whether registering SOCO moves SOCO's benchmark — which could shift every C1 **share** leg, the
+0.13 pp 2023 `ST_GAS` margin included. Measured with `build_benchmark_frames` on the keeper bundle,
+registry row ON vs popped: **`eia923`, `eia930` and `campd` frames are all BYTE-IDENTICAL.** SOCO's
+benchmark hydro at HEAD is already the EIA-923 HY census — **6.815 / 6.301 TWh** in 2023 / 2024
+(44 rows each) and the EIA-930 swap **6.012** in 2025 (1 row) — not the folded 8.447 / 7.080 that
+SOCO-31/40's tables quote from an older benchmark. There is no benchmark-side defect to route, and
+the registration moves no scored denominator.
+
+**P14 (added).** `--rebuild-benchmark` on the composite produces an `eia923` frame identical to the
+keeper's; 2025 benchmark hydro stays 6.012, so the arm's 2025 hydro lands ~0.09 TWh under it
+(5.926 modelled; unscored).

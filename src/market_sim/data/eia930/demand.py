@@ -1014,6 +1014,7 @@ def load_demand(
     caiso_demand_clock_realign: bool = False,
     caiso_supply_consistent_demand: bool = False,
     ercot_tie_zonal_interchange: bool = False,
+    nwpp_grid_carried_wind_served: bool = False,
 ) -> np.ndarray:
     """Load hourly ISO demand and allocate it across zones.
 
@@ -1098,6 +1099,10 @@ def load_demand(
             N1a; see :func:`ercot_tie_zone_interchange`). System total
             unchanged by construction; falls back to the spread when the
             by-neighbor extract is absent for the year.
+        nwpp_grid_carried_wind_served: NWPP only — stop removing the GRID
+            export leg whose energy the pool's own wind supply carries
+            (NWPP-47; see :func:`~market_sim.data.eia930.envelopes.
+            nwpp_net_interchange`). Default ``False`` is byte-identical.
 
     Returns:
         A ``(n_zones, HOURS_PER_YEAR)`` array of zonal demand in MW, ordered
@@ -1187,7 +1192,12 @@ def load_demand(
         # (P9 / playbook §8.2; the priced node is the forward mechanism, used
         # under --priced-interchange where include_interchange is False). No
         # per-zone tie attribution yet, so the scalar is spread by load share.
-        measured_ix = _SCALAR_INTERCHANGE_ISOS[iso](year)
+        if iso == "NWPP" and nwpp_grid_carried_wind_served:
+            measured_ix = _SCALAR_INTERCHANGE_ISOS[iso](
+                year, grid_carried_wind_served=True
+            )
+        else:
+            measured_ix = _SCALAR_INTERCHANGE_ISOS[iso](year)
         if measured_ix is not None:
             interchange = measured_ix
             logger.info(

@@ -17771,7 +17771,7 @@ charter with a new measured identification** before a solve:
    criterion is an owner call. Evidence:
    `results/calibration/FINDING-neiso74-ps-cycling-price-shape-2026-08-01.md`.
 
-### 5.7 SPP — keeper `2026-09-20-spp-67-yearown-rate` (**FOURTEENTH SPP KEEPER, PROMOTED 2026-09-20 at lane SPP-67, BY OWNER RULING in-session**, verbatim: *"Is this a recommended keeper candidate? If so plz promote. If structural integrity improves but gates regress that may still be a keeper."* Keeper 13's recipe plus EXACTLY ONE new gate, `vre_reference_rate_year_own`, armed via `--set`. ZERO other config differences, ZERO new free parameters (DOF ledger 5 entries / 3 residual, the same five names as keeper 13, machine-checked `--check`), `offer_curve_by_group` byte-identical (SHA-256 `090abd79…`). Solved under rule 36 `[R-YEAR-ISOLATION]`: **seven shards, one per year 2019–2025**, all at pinned HEAD `40eeb43a`, each pushing its full bundle; the parent ran no LP and composed at zero cost. Rung `2026-09-20-spp-67-rung-yearown` (2019–2022, NOT-YET) stamped to it; SPP's registered year set is **seven** and is unchanged (the union was enumerated BEFORE the prune, rule 35 `[R-PROMOTE]` (b); `--force-uncite` per 35(d)).
+### 5.7 SPP — keeper `2026-09-22-spp-71-ensemble-syncfloor` (**FIFTEENTH SPP KEEPER, PROMOTED 2026-09-22 at lane SPP-71 by owner ruling**, rung `2026-09-22-spp-71-rung-ensemble` stamped to it; header re-stamped by SPP-73 — the text that follows describes its predecessor) — superseded keeper `2026-09-20-spp-67-yearown-rate` (**FOURTEENTH SPP KEEPER, PROMOTED 2026-09-20 at lane SPP-67, BY OWNER RULING in-session**, verbatim: *"Is this a recommended keeper candidate? If so plz promote. If structural integrity improves but gates regress that may still be a keeper."* Keeper 13's recipe plus EXACTLY ONE new gate, `vre_reference_rate_year_own`, armed via `--set`. ZERO other config differences, ZERO new free parameters (DOF ledger 5 entries / 3 residual, the same five names as keeper 13, machine-checked `--check`), `offer_curve_by_group` byte-identical (SHA-256 `090abd79…`). Solved under rule 36 `[R-YEAR-ISOLATION]`: **seven shards, one per year 2019–2025**, all at pinned HEAD `40eeb43a`, each pushing its full bundle; the parent ran no LP and composed at zero cost. Rung `2026-09-20-spp-67-rung-yearown` (2019–2022, NOT-YET) stamped to it; SPP's registered year set is **seven** and is unchanged (the union was enumerated BEFORE the prune, rule 35 `[R-PROMOTE]` (b); `--force-uncite` per 35(d)).
 
 **WHAT IT REPAIRS — and the basis is rule 14 `[R-ACCURATE]`, never the residual.** `_SPP_REFERENCE_RATE_YEARS` is frozen at `{2023,2024,2025}` and its own comment gives the entire reason: *"the structural rate must never read a validation or locked-test year (SPP's table also carries 2019 and 2022 rows, both holdout years, and both are excluded here by construction rather than by discipline)"*. **Rule 22 `[R-HOLDOUT]` was REMOVED by owner instruction 2026-09-09**, so the exclusion is residue of a deleted rule while still suppressing SPP MMU ASOM measurements in the SAME committed table, from the SAME source documents, on the SAME average-MW basis. SPP's own published 2019 wind curtailment rate is **1.591 %** against the **9.650 %** the model applied to that year — a factor of **6.1**.
 
@@ -17905,6 +17905,31 @@ lane, adjudicated separately below. Cite these by date.)*
 - **SPP's open C1 / C3a / C3b / C4 held-out failures therefore remain open with NO
   identified forward-admissible instrument.** After this lane the object is a data
   procurement decision, not a modelling one. Do not spend a span on either dead cell.
+
+**DO-NOT-REDO, added by SPP-73 (2026-09-22, xiso lever (b) COMMITMENT REACH, ZERO LP —
+`docs/handoffs/RESULT-spp-73-commitment-reach-2026-09-22.md`).** Commitment reach is **NOT** the
+cause of the rung's C3a 2020 / C3b 2020–2022 failures, and with demand (SPP-72) and reserve
+(SPP-55) already closed, **every hourly lever on the xiso ranking is exhausted for SPP.**
+- **The DA bound.** SPP's day-ahead SCUC (real start-up / min-run offers) priced the RT top-88
+  hours at a median $33.4 / $26.9 / $92.9 (2019 / 2020 / 2022) against RT $209.9 / $144.4 /
+  $279.7 and the model's $25.0 / $23.7 / $60.1: it closes **4.5 % / 2.6 % / 14.9 %** of the gap.
+  2021 (Uri) is the one year DA exceeds RT. No hourly commitment lever can beat the market's own
+  commitment solve, so the tail is sub-hourly (the SPP-29 RT/DA wedge).
+- **The quantity side already matches.** CAMPD SWPP-BA units vs `class_hourly`: CT output
+  rises into the top hours by ×1.47 measured vs ×1.32 model (2020); CC and ST_GAS match; real SPP
+  had a CT online in **100 %** of hours in every year, so the model's 95 % is not the defect.
+- **C3a 2020 is the BODY, not the tail**: non-top hours carry +$3.78 of the +$2.27 gap, the
+  top-88 −$1.51. A tail-raising lever moves it the wrong way.
+- **No published per-class SPP start-up cost exists** (`historical-offers` = energy price/MW
+  pairs only; MMU ASOM = fleet-average physical parameters). Correction: SPP's `_committed`
+  tranches DO carry generic start-up costs ($20/$35/$50/$100 per MW); only econ/peak tranches
+  are zero.
+- **Re-open only on** a published, per-class, forward-reproducible SPP commitment-cost source
+  AND a DA-bound share φ ≥ 0.5 in the failing years. The seven `U` cells on this lever
+  (`ct_peaker_committed_measured`, `gas_st_startup_spread`, `measured_ramp_capability`,
+  `ramp_envelopes`, `measured_ct_heat_rates`, `st_gas_committed_measured_bypass`,
+  `scuc_load_pocket_commitment`) stay `U`, but a successor proposing any of them for C3a/C3b
+  must first beat this bound.
 
 **The queue (plan §4 W5, in issue order).**
 
