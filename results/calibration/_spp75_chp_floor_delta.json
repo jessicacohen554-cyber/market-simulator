@@ -1,0 +1,558 @@
+{
+ "2019": {
+  "by_class": {
+   "CC_CHP": {
+    "pmax": 266.3,
+    "floor_ctl": 89.7,
+    "floor_arm": 244.5
+   },
+   "CT_CHP": {
+    "pmax": 213.4,
+    "floor_ctl": 70.3,
+    "floor_arm": 141.8
+   },
+   "ST_CHP": {
+    "pmax": 117.1,
+    "floor_ctl": 3.9,
+    "floor_arm": 19.2
+   }
+  },
+  "total_ctl": 163.93861052000003,
+  "total_arm": 405.49269487999993,
+  "plants": [
+   {
+    "plant": 2098,
+    "klass": "CT_CHP",
+    "pmax": 40.2,
+    "name": "?",
+    "floor_ctl": 0.0,
+    "floor_arm": 0.0
+   },
+   {
+    "plant": 2098,
+    "klass": "ST_CHP",
+    "pmax": 90.5,
+    "name": "Lake Road (MO)",
+    "floor_ctl": 0.0,
+    "floor_arm": 4.4
+   },
+   {
+    "plant": 7131,
+    "klass": "CT_CHP",
+    "pmax": 13.0,
+    "name": "?",
+    "floor_ctl": 0.0,
+    "floor_arm": 0.0
+   },
+   {
+    "plant": 7930,
+    "klass": "CT_CHP",
+    "pmax": 7.8,
+    "name": "Russell Energy Center",
+    "floor_ctl": 0.0,
+    "floor_arm": 0.1
+   },
+   {
+    "plant": 10362,
+    "klass": "ST_CHP",
+    "pmax": 20.3,
+    "name": "Georgia-Pacific Muskogee",
+    "floor_ctl": 3.1,
+    "floor_arm": 11.4
+   },
+   {
+    "plant": 50307,
+    "klass": "ST_CHP",
+    "pmax": 1.7,
+    "name": "?",
+    "floor_ctl": 0.0,
+    "floor_arm": 0.0
+   },
+   {
+    "plant": 52122,
+    "klass": "CT_CHP",
+    "pmax": 5.2,
+    "name": "Wasson CO2 Removal Plant",
+    "floor_ctl": 1.3,
+    "floor_arm": 4.5
+   },
+   {
+    "plant": 55064,
+    "klass": "CT_CHP",
+    "pmax": 145.9,
+    "name": "Black Hawk Station",
+    "floor_ctl": 68.7,
+    "floor_arm": 136.1
+   },
+   {
+    "plant": 55176,
+    "klass": "CC_CHP",
+    "pmax": 266.3,
+    "name": "Eastman Cogeneration Facility",
+    "floor_ctl": 89.7,
+    "floor_arm": 244.5
+   },
+   {
+    "plant": 58192,
+    "klass": "ST_CHP",
+    "pmax": 0.9,
+    "name": "Arkalon Ethanol LLC",
+    "floor_ctl": 0.0,
+    "floor_arm": 0.2
+   },
+   {
+    "plant": 58193,
+    "klass": "ST_CHP",
+    "pmax": 0.6,
+    "name": "Bonanza BioEnergy LLC",
+    "floor_ctl": 0.0,
+    "floor_arm": 0.2
+   },
+   {
+    "plant": 58205,
+    "klass": "ST_CHP",
+    "pmax": 3.1,
+    "name": "Grand Ave Plant",
+    "floor_ctl": 0.8,
+    "floor_arm": 3.0
+   },
+   {
+    "plant": 60536,
+    "klass": "CT_CHP",
+    "pmax": 1.3,
+    "name": "UA Central Utility Plant",
+    "floor_ctl": 0.2,
+    "floor_arm": 1.0
+   }
+  ]
+ },
+ "2020": {
+  "by_class": {
+   "CC_CHP": {
+    "pmax": 271.2,
+    "floor_ctl": 91.4,
+    "floor_arm": 248.9
+   },
+   "CT_CHP": {
+    "pmax": 204.4,
+    "floor_ctl": 70.4,
+    "floor_arm": 142.2
+   },
+   "ST_CHP": {
+    "pmax": 117.0,
+    "floor_ctl": 3.9,
+    "floor_arm": 19.2
+   }
+  },
+  "total_ctl": 165.71051552000003,
+  "total_arm": 410.4115198799999,
+  "plants": [
+   {
+    "plant": 2098,
+    "klass": "CT_CHP",
+    "pmax": 30.7,
+    "name": "?",
+    "floor_ctl": 0.0,
+    "floor_arm": 0.0
+   },
+   {
+    "plant": 2098,
+    "klass": "ST_CHP",
+    "pmax": 90.5,
+    "name": "Lake Road (MO)",
+    "floor_ctl": 0.0,
+    "floor_arm": 4.4
+   },
+   {
+    "plant": 7131,
+    "klass": "CT_CHP",
+    "pmax": 13.0,
+    "name": "?",
+    "floor_ctl": 0.0,
+    "floor_arm": 0.0
+   },
+   {
+    "plant": 7930,
+    "klass": "CT_CHP",
+    "pmax": 7.8,
+    "name": "Russell Energy Center",
+    "floor_ctl": 0.0,
+    "floor_arm": 0.1
+   },
+   {
+    "plant": 10362,
+    "klass": "ST_CHP",
+    "pmax": 20.3,
+    "name": "Georgia-Pacific Muskogee",
+    "floor_ctl": 3.1,
+    "floor_arm": 11.4
+   },
+   {
+    "plant": 50307,
+    "klass": "ST_CHP",
+    "pmax": 1.7,
+    "name": "?",
+    "floor_ctl": 0.0,
+    "floor_arm": 0.0
+   },
+   {
+    "plant": 52122,
+    "klass": "CT_CHP",
+    "pmax": 5.7,
+    "name": "Wasson CO2 Removal Plant",
+    "floor_ctl": 1.4,
+    "floor_arm": 5.0
+   },
+   {
+    "plant": 55064,
+    "klass": "CT_CHP",
+    "pmax": 145.9,
+    "name": "Black Hawk Station",
+    "floor_ctl": 68.7,
+    "floor_arm": 136.1
+   },
+   {
+    "plant": 55176,
+    "klass": "CC_CHP",
+    "pmax": 271.2,
+    "name": "Eastman Cogeneration Facility",
+    "floor_ctl": 91.4,
+    "floor_arm": 248.9
+   },
+   {
+    "plant": 58192,
+    "klass": "ST_CHP",
+    "pmax": 0.9,
+    "name": "Arkalon Ethanol LLC",
+    "floor_ctl": 0.0,
+    "floor_arm": 0.2
+   },
+   {
+    "plant": 58193,
+    "klass": "ST_CHP",
+    "pmax": 0.6,
+    "name": "Bonanza BioEnergy LLC",
+    "floor_ctl": 0.0,
+    "floor_arm": 0.2
+   },
+   {
+    "plant": 58205,
+    "klass": "ST_CHP",
+    "pmax": 3.1,
+    "name": "Grand Ave Plant",
+    "floor_ctl": 0.8,
+    "floor_arm": 3.0
+   },
+   {
+    "plant": 60536,
+    "klass": "CT_CHP",
+    "pmax": 1.3,
+    "name": "UA Central Utility Plant",
+    "floor_ctl": 0.2,
+    "floor_arm": 1.0
+   }
+  ]
+ },
+ "2021": {
+  "by_class": {
+   "CC_CHP": {
+    "pmax": 271.2,
+    "floor_ctl": 91.4,
+    "floor_arm": 248.9
+   },
+   "CT_CHP": {
+    "pmax": 208.3,
+    "floor_ctl": 71.4,
+    "floor_arm": 145.7
+   },
+   "ST_CHP": {
+    "pmax": 123.4,
+    "floor_ctl": 4.1,
+    "floor_arm": 19.9
+   }
+  },
+  "total_ctl": 166.85059124,
+  "total_arm": 414.51623288,
+  "plants": [
+   {
+    "plant": 2098,
+    "klass": "CT_CHP",
+    "pmax": 31.2,
+    "name": "?",
+    "floor_ctl": 0.0,
+    "floor_arm": 0.0
+   },
+   {
+    "plant": 2098,
+    "klass": "ST_CHP",
+    "pmax": 93.1,
+    "name": "Lake Road (MO)",
+    "floor_ctl": 0.0,
+    "floor_arm": 4.6
+   },
+   {
+    "plant": 7131,
+    "klass": "CT_CHP",
+    "pmax": 13.0,
+    "name": "?",
+    "floor_ctl": 0.0,
+    "floor_arm": 0.0
+   },
+   {
+    "plant": 7930,
+    "klass": "CT_CHP",
+    "pmax": 7.8,
+    "name": "Russell Energy Center",
+    "floor_ctl": 0.0,
+    "floor_arm": 0.1
+   },
+   {
+    "plant": 10362,
+    "klass": "ST_CHP",
+    "pmax": 20.3,
+    "name": "Georgia-Pacific Muskogee",
+    "floor_ctl": 3.1,
+    "floor_arm": 11.4
+   },
+   {
+    "plant": 50067,
+    "klass": "ST_CHP",
+    "pmax": 2.7,
+    "name": "?",
+    "floor_ctl": 0.0,
+    "floor_arm": 0.0
+   },
+   {
+    "plant": 50307,
+    "klass": "ST_CHP",
+    "pmax": 1.7,
+    "name": "?",
+    "floor_ctl": 0.0,
+    "floor_arm": 0.0
+   },
+   {
+    "plant": 52122,
+    "klass": "CT_CHP",
+    "pmax": 5.5,
+    "name": "Wasson CO2 Removal Plant",
+    "floor_ctl": 1.4,
+    "floor_arm": 4.8
+   },
+   {
+    "plant": 55064,
+    "klass": "CT_CHP",
+    "pmax": 145.9,
+    "name": "Black Hawk Station",
+    "floor_ctl": 68.7,
+    "floor_arm": 136.1
+   },
+   {
+    "plant": 55176,
+    "klass": "CC_CHP",
+    "pmax": 271.2,
+    "name": "Eastman Cogeneration Facility",
+    "floor_ctl": 91.4,
+    "floor_arm": 248.9
+   },
+   {
+    "plant": 58192,
+    "klass": "ST_CHP",
+    "pmax": 0.9,
+    "name": "Arkalon Ethanol LLC",
+    "floor_ctl": 0.0,
+    "floor_arm": 0.2
+   },
+   {
+    "plant": 58193,
+    "klass": "ST_CHP",
+    "pmax": 0.6,
+    "name": "Bonanza BioEnergy LLC",
+    "floor_ctl": 0.0,
+    "floor_arm": 0.2
+   },
+   {
+    "plant": 58205,
+    "klass": "ST_CHP",
+    "pmax": 3.1,
+    "name": "Grand Ave Plant",
+    "floor_ctl": 0.8,
+    "floor_arm": 3.0
+   },
+   {
+    "plant": 60536,
+    "klass": "CT_CHP",
+    "pmax": 1.3,
+    "name": "UA Central Utility Plant",
+    "floor_ctl": 0.2,
+    "floor_arm": 1.0
+   },
+   {
+    "plant": 65367,
+    "klass": "ST_CHP",
+    "pmax": 1.0,
+    "name": "POET Bioprocessing- Mitchell",
+    "floor_ctl": 0.1,
+    "floor_arm": 0.6
+   },
+   {
+    "plant": 65512,
+    "klass": "CT_CHP",
+    "pmax": 3.6,
+    "name": "Kansas Ethanol, LLC",
+    "floor_ctl": 1.1,
+    "floor_arm": 3.6
+   }
+  ]
+ },
+ "2022": {
+  "by_class": {
+   "CC_CHP": {
+    "pmax": 271.2,
+    "floor_ctl": 91.4,
+    "floor_arm": 248.9
+   },
+   "CT_CHP": {
+    "pmax": 204.5,
+    "floor_ctl": 70.0,
+    "floor_arm": 142.7
+   },
+   "ST_CHP": {
+    "pmax": 122.6,
+    "floor_ctl": 4.1,
+    "floor_arm": 19.9
+   }
+  },
+  "total_ctl": 165.42029624000003,
+  "total_arm": 411.51429788,
+  "plants": [
+   {
+    "plant": 2098,
+    "klass": "CT_CHP",
+    "pmax": 30.7,
+    "name": "?",
+    "floor_ctl": 0.0,
+    "floor_arm": 0.0
+   },
+   {
+    "plant": 2098,
+    "klass": "ST_CHP",
+    "pmax": 93.1,
+    "name": "Lake Road (MO)",
+    "floor_ctl": 0.0,
+    "floor_arm": 4.6
+   },
+   {
+    "plant": 7131,
+    "klass": "CT_CHP",
+    "pmax": 13.0,
+    "name": "?",
+    "floor_ctl": 0.0,
+    "floor_arm": 0.0
+   },
+   {
+    "plant": 7930,
+    "klass": "CT_CHP",
+    "pmax": 7.8,
+    "name": "Russell Energy Center",
+    "floor_ctl": 0.0,
+    "floor_arm": 0.1
+   },
+   {
+    "plant": 10362,
+    "klass": "ST_CHP",
+    "pmax": 20.3,
+    "name": "Georgia-Pacific Muskogee",
+    "floor_ctl": 3.1,
+    "floor_arm": 11.4
+   },
+   {
+    "plant": 50067,
+    "klass": "ST_CHP",
+    "pmax": 2.0,
+    "name": "?",
+    "floor_ctl": 0.0,
+    "floor_arm": 0.0
+   },
+   {
+    "plant": 50307,
+    "klass": "ST_CHP",
+    "pmax": 1.7,
+    "name": "?",
+    "floor_ctl": 0.0,
+    "floor_arm": 0.0
+   },
+   {
+    "plant": 52122,
+    "klass": "CT_CHP",
+    "pmax": 5.1,
+    "name": "Wasson CO2 Removal Plant",
+    "floor_ctl": 1.3,
+    "floor_arm": 4.4
+   },
+   {
+    "plant": 55064,
+    "klass": "CT_CHP",
+    "pmax": 143.1,
+    "name": "Black Hawk Station",
+    "floor_ctl": 67.4,
+    "floor_arm": 133.5
+   },
+   {
+    "plant": 55176,
+    "klass": "CC_CHP",
+    "pmax": 271.2,
+    "name": "Eastman Cogeneration Facility",
+    "floor_ctl": 91.4,
+    "floor_arm": 248.9
+   },
+   {
+    "plant": 58192,
+    "klass": "ST_CHP",
+    "pmax": 0.9,
+    "name": "Arkalon Ethanol LLC",
+    "floor_ctl": 0.0,
+    "floor_arm": 0.2
+   },
+   {
+    "plant": 58193,
+    "klass": "ST_CHP",
+    "pmax": 0.6,
+    "name": "Bonanza BioEnergy LLC",
+    "floor_ctl": 0.0,
+    "floor_arm": 0.2
+   },
+   {
+    "plant": 58205,
+    "klass": "ST_CHP",
+    "pmax": 3.1,
+    "name": "Grand Ave Plant",
+    "floor_ctl": 0.8,
+    "floor_arm": 3.0
+   },
+   {
+    "plant": 60536,
+    "klass": "CT_CHP",
+    "pmax": 1.3,
+    "name": "UA Central Utility Plant",
+    "floor_ctl": 0.2,
+    "floor_arm": 1.0
+   },
+   {
+    "plant": 65367,
+    "klass": "ST_CHP",
+    "pmax": 1.0,
+    "name": "POET Bioprocessing- Mitchell",
+    "floor_ctl": 0.1,
+    "floor_arm": 0.6
+   },
+   {
+    "plant": 65512,
+    "klass": "CT_CHP",
+    "pmax": 3.6,
+    "name": "Kansas Ethanol, LLC",
+    "floor_ctl": 1.1,
+    "floor_arm": 3.6
+   }
+  ]
+ }
+}
