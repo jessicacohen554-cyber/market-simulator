@@ -15128,3 +15128,12 @@ Every move was pre-registered. Mechanism: coal +20.3 TWh over the span, gas and 
 down every year, price −0.29 to −0.82 $/MWh; CT_PEAKER / ST_GAS forced shares +1–3 pp.
 Promotion costs zero re-solves; E13 reads FAIL until the owner rules. Record:
 `docs/RESULT-miso267-dispatched-bin-on-hydro5-2026-09-23.md`.
+
+## miso-267 (promotion) — 2026-09-23 — **KEEPER → `2026-09-23-miso-267-dispatched-bin`**, on the owner's ruling
+
+Owner: *"Is this a recommended keeper candidate? If so plz promote. If structural integrity
+improves but gates regress that may still be a keeper.."* Year set enumerated first (2020–2025,
+covered). Keeper shard, both partition tiers (bundle path corrected), gate-(a) row, matrix
+stamps (cell `O` → `K`) and §5.4 header re-keyed; status rebuilt (MISO **CALIBRATED**). The
+incoming stores were verified (audit E1) BEFORE `prune_iso_runs.py --iso MISO --force-uncite`
+removed `2026-09-22-hydro-5-miso-ror`. After: `audit_keepers` 0/0. Record: RESULT-miso267 §8.
