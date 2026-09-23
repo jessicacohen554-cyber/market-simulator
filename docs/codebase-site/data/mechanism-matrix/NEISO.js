@@ -48,6 +48,7 @@ window.MECH_MATRIX_SHARDS.NEISO = {
     ercot_ruc_commitment_floor: { cell: "." },
     ercot_as_held_requirement: { cell: "." },
     ercot_as_held_location: { cell: "." },
+    demand_balance_screen: { cell: "I", ev: "pjm-h19 phase 0 (zero LP): zero flagged hours in every ISNE year 2018-2025." },
     nwpp_grid_carried_wind_served: { cell: "." },
     ercot_tie_zonal_interchange: { cell: "." },
     ercot_offer_swcap_clip: { cell: "." },

@@ -48,6 +48,7 @@ window.MECH_MATRIX_SHARDS.PJM = {
     ercot_ruc_commitment_floor: { cell: "." },
     ercot_as_held_requirement: { cell: "." },
     ercot_as_held_location: { cell: "." },
+    demand_balance_screen: { cell: "O", ev: "pjm-h19 (2026-09-23): chartered, six per-year shards (PRECOMMIT-pjm-h19-demand-balance-screen-2026-09-23.md). Phase 0 flags exactly 2020 h5003/h5031/h5383 and 2024 h7787 in 2020-2025." },
     nwpp_grid_carried_wind_served: { cell: "." },
     ercot_tie_zonal_interchange: { cell: "." },
     ercot_offer_swcap_clip: { cell: "." },

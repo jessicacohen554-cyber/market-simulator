@@ -506,6 +506,113 @@ def _screen_demand_dropouts(
     return pd.Series(repaired).interpolate().bfill().ffill().to_numpy(dtype=float)
 
 
+# Tukey's "far out" fence multiplier (Tukey 1977, *Exploratory Data Analysis*,
+# §2C): a value beyond Q3 + 3·IQR of its own distribution is an extreme
+# outlier by the published convention. Used by :func:`_screen_demand_balance`
+# as the scale of an implausible hourly demand STEP, measured on each
+# BA-year's own ramp distribution — the conventional constant, never fitted
+# to the hours it flags (PRECOMMIT-pjm-h19, bar v2 declared before any flag
+# was measured).
+_TUKEY_FAR_OUT_IQR: float = 3.0
+
+# ISO -> single-BA EIA-930 frame whose balance identity corroborates the
+# demand reading. NWPP is absent on purpose: its pool frame DEFINES
+# ``Total interchange = Net generation - Demand``
+# (:func:`~market_sim.data.eia930.frames._pool_hourly_frame`), so the identity
+# cannot discriminate and the screen is inert there by construction.
+_BALANCE_SCREEN_BA: dict[str, str] = {
+    "ERCOT": "ERCO",
+    "CAISO": "CISO",
+    "NYISO": "NYIS",
+    "NEISO": "ISNE",
+    "MISO": "MISO",
+    "PJM": "PJM",
+    "SPP": "SWPP",
+    "SOCO": "SOCO",
+}
+
+
+def _screen_demand_balance(demand: np.ndarray, *, iso: str, year: int) -> np.ndarray:
+    """Repair isolated demand readings that break EIA-930's own balance identity.
+
+    The neighbour-relative twin of :func:`_screen_demand_spikes` (whose bar,
+    2.5x the annual median, only reaches sentinels) and
+    :func:`_screen_demand_dropouts` (exactly 0 MW only). EIA-930 reports, per
+    hour, ``Demand``, ``Net generation`` and ``Total interchange``; served
+    demand equals net generation minus net export, so ``S = NG - TI`` is an
+    independent measurement of the same load. An hour is flagged when BOTH:
+
+    1. **Isolated reversal** — the demand steps into and out of the hour have
+       opposite signs and each exceeds ``F = Q3 + 3·IQR`` of the BA-year's
+       own ``|ΔD|`` distribution (Tukey far-out fence, the published
+       convention :data:`_TUKEY_FAR_OUT_IQR`). Real load does not jump by an
+       extreme hourly ramp and straight back.
+    2. **The demand reading carries the departure** — its disagreement with
+       the balance identity, ``|D - S|``, is larger at the hour than at
+       either neighbour. A reading consistent with the reported generation
+       and interchange is left alone, so a generation-side glitch is never
+       "repaired" into demand, and a correct reading sandwiched between two
+       bad ones is never blamed for them (the CAISO 2019 h1068 false
+       positive that retired bar v2's neighbour-curvature test).
+
+    Flagged hours are interpolated from their neighbours, the repair every
+    sibling screen uses. ZERO fitted parameters (rule 14 [R-ACCURATE] source
+    repair). **Cannot reach** an artifact that EIA-930 propagated into ``NG``
+    or ``TI`` as well (``D == S`` in that hour — e.g. SWPP 2025 h4107,
+    SOCO 2025), nor multi-hour artifacts, nor any ISO whose frame is absent.
+
+    Provenance: pjm-h18 §5-A / PRECOMMIT-pjm-h19 — PJM 2020 h5003 (192.2 GW),
+    h5031 (176.1 GW), h5383 (138.6 GW) and 2024 h7787 (56.3 GW), each
+    departing ``S`` by 35–57 GW. Returns ``demand`` unchanged (same object)
+    when nothing is flagged or the ISO's frame is unavailable.
+    """
+    ba = _BALANCE_SCREEN_BA.get(iso)
+    if ba is None:
+        return demand
+    frame = (
+        _ercot_hourly_frame(year)
+        if iso == "ERCOT"
+        else _eia_hourly_frame_filled(ba, year)
+    )
+    if frame is None or len(frame) != demand.size:
+        return demand
+    supply = (frame["Net generation"] - frame["Total interchange"]).to_numpy(
+        dtype=float
+    )
+    steps = np.abs(np.diff(demand))
+    steps = steps[np.isfinite(steps)]
+    if steps.size == 0:
+        return demand
+    q1, q3 = np.percentile(steps, [25.0, 75.0])
+    fence = q3 + _TUKEY_FAR_OUT_IQR * (q3 - q1)
+    step_in = demand[1:-1] - demand[:-2]
+    step_out = demand[2:] - demand[1:-1]
+    reversal = (step_in * step_out < 0.0) & (
+        np.minimum(np.abs(step_in), np.abs(step_out)) > fence
+    )
+    gap = np.abs(demand - supply)
+    carried = np.isfinite(gap[1:-1] + gap[:-2] + gap[2:]) & (
+        gap[1:-1] > np.maximum(gap[:-2], gap[2:])
+    )
+    flagged = np.zeros(demand.size, dtype=bool)
+    flagged[1:-1] = reversal & carried
+    n_flag = int(flagged.sum())
+    if n_flag == 0:
+        return demand
+    logger.warning(
+        "%s %d: repairing %d demand hour(s) breaking the EIA-930 balance "
+        "identity (isolated reversal > %.0f MW Tukey far-out ramp): hours %s",
+        ba,
+        year,
+        n_flag,
+        fence,
+        np.flatnonzero(flagged).tolist(),
+    )
+    repaired = demand.copy()
+    repaired[flagged] = np.nan
+    return pd.Series(repaired).interpolate().bfill().ffill().to_numpy(dtype=float)
+
+
 def _load_neiso_hourly_demand(year: int) -> np.ndarray | None:
     """Return NEISO hourly metered demand (MW) for a year, or ``None``.
 
@@ -1015,6 +1122,7 @@ def load_demand(
     caiso_supply_consistent_demand: bool = False,
     ercot_tie_zonal_interchange: bool = False,
     nwpp_grid_carried_wind_served: bool = False,
+    demand_balance_screen: bool = False,
 ) -> np.ndarray:
     """Load hourly ISO demand and allocate it across zones.
 
@@ -1103,6 +1211,11 @@ def load_demand(
             export leg whose energy the pool's own wind supply carries
             (NWPP-47; see :func:`~market_sim.data.eia930.envelopes.
             nwpp_net_interchange`). Default ``False`` is byte-identical.
+        demand_balance_screen: repair isolated demand readings that break the
+            EIA-930 balance identity (pjm-h19; see
+            :func:`_screen_demand_balance`). Applied to the frame-sourced
+            series only, never to the demand-profiles fallback. Default
+            ``False`` is byte-identical.
 
     Returns:
         A ``(n_zones, HOURS_PER_YEAR)`` array of zonal demand in MW, ordered
@@ -1142,6 +1255,8 @@ def load_demand(
         clean_mw = _clean_system_demand(iso, year)
         if clean_mw is not None:
             raw_mw = clean_mw
+    if raw_mw is not None and demand_balance_screen:
+        raw_mw = _screen_demand_balance(raw_mw, iso=iso, year=year)
     if raw_mw is None:
         raw_mw = _demand_profile_clean(
             iso, year, strict=strict_demand_profile, data_dir=data_dir

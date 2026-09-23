@@ -48,6 +48,7 @@ window.MECH_MATRIX_SHARDS.NYISO = {
     ercot_ruc_commitment_floor: { cell: "." },
     ercot_as_held_requirement: { cell: "." },
     ercot_as_held_location: { cell: "." },
+    demand_balance_screen: { cell: "I", ev: "pjm-h19 phase 0 (zero LP): zero flagged hours 2018-2025 (the NYIS exactly-0 dropouts are demand_dropout_screen's and D == NG - TI there)." },
     nwpp_grid_carried_wind_served: { cell: "." },
     ercot_tie_zonal_interchange: { cell: "." },
     ercot_offer_swcap_clip: { cell: "." },
