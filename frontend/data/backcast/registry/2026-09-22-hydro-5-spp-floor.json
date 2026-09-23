@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-22-hydro-5-spp-floor",
+  "label": "hydro 5 spp floor",
+  "date": "2026-09-22",
+  "shorthand": "hydro-5-spp-floor",
+  "definition": "hydro-5: hydro_min_flow_floor on the SPP keeper, 2023 (rule 36 single-year)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "SPP",
+  "file": "frontend/data/backcast/runs/2026-09-22-hydro-5-spp-floor.js",
+  "bundle": "results/calibration/hydro5_spp_floor_span"
+}

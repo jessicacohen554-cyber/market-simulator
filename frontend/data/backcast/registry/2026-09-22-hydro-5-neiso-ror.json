@@ -1,0 +1,18 @@
+{
+  "id": "2026-09-22-hydro-5-neiso-ror",
+  "label": "hydro 5 neiso ror",
+  "date": "2026-09-22",
+  "shorthand": "hydro-5-neiso-ror",
+  "definition": "hydro-5: hydro_ror_split on the NEISO keeper, 2020 (rule 36 single-year)",
+  "years": [
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NEISO",
+  "file": "frontend/data/backcast/runs/2026-09-22-hydro-5-neiso-ror.js",
+  "bundle": "results/calibration/hydro5_neiso_ror_span"
+}
