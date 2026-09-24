@@ -1,0 +1,1481 @@
+{
+ "what": "pjm-h22 Card E phase 0 \u2014 per-zone predicted move of RGGI across six years. ZERO LP.",
+ "price": {
+  "2020": 7.07,
+  "2021": 10.44,
+  "2022": 14.84,
+  "2023": 14.87,
+  "2024": 22.83,
+  "2025": 24.35
+ },
+ "years": {
+  "2020": {
+   "CC_REGULAR": {
+    "AEP_Ohio": {
+     "keeper_err": 2.46,
+     "delta": 0.21,
+     "delta_lo": 0.11,
+     "delta_hi": 0.31,
+     "pred_err": 2.67
+    },
+    "ATSI": {
+     "keeper_err": -0.83,
+     "delta": 0.03,
+     "delta_lo": 0.01,
+     "delta_hi": 0.05,
+     "pred_err": -0.8
+    },
+    "Central_PA": {
+     "keeper_err": -0.18,
+     "delta": 0.34,
+     "delta_lo": 0.19,
+     "delta_hi": 0.5,
+     "pred_err": 0.16
+    },
+    "ComEd": {
+     "keeper_err": -1.66,
+     "delta": 0.29,
+     "delta_lo": 0.16,
+     "delta_hi": 0.41,
+     "pred_err": -1.37
+    },
+    "Dominion": {
+     "keeper_err": -10.51,
+     "delta": 0.52,
+     "delta_lo": 0.27,
+     "delta_hi": 0.77,
+     "pred_err": -9.98
+    },
+    "EMAAC": {
+     "keeper_err": 12.95,
+     "delta": -4.35,
+     "delta_lo": -5.46,
+     "delta_hi": -3.24,
+     "pred_err": 8.6
+    },
+    "SWMAAC": {
+     "keeper_err": -2.71,
+     "delta": -0.88,
+     "delta_lo": -1.29,
+     "delta_hi": -0.48,
+     "pred_err": -3.59
+    },
+    "West_APS": {
+     "keeper_err": 1.12,
+     "delta": 0.09,
+     "delta_lo": 0.06,
+     "delta_hi": 0.13,
+     "pred_err": 1.21
+    },
+    "_class": {
+     "keeper_err": 0.64,
+     "delta": -3.74,
+     "pred_err": -3.1,
+     "actual": 284.94
+    }
+   },
+   "COAL_BIT": {
+    "AEP_Ohio": {
+     "keeper_err": 15.1,
+     "delta": 0.64,
+     "delta_lo": 0.39,
+     "delta_hi": 0.88,
+     "pred_err": 15.74
+    },
+    "Dominion": {
+     "keeper_err": 0.63,
+     "delta": 0.04,
+     "delta_lo": 0.03,
+     "delta_hi": 0.04,
+     "pred_err": 0.67
+    },
+    "SWMAAC": {
+     "keeper_err": 0.98,
+     "delta": -0.81,
+     "delta_lo": -0.86,
+     "delta_hi": -0.75,
+     "pred_err": 0.17
+    },
+    "West_APS": {
+     "keeper_err": 2.54,
+     "delta": 0.31,
+     "delta_lo": 0.19,
+     "delta_hi": 0.42,
+     "pred_err": 2.85
+    },
+    "_class": {
+     "keeper_err": 19.25,
+     "delta": 0.17,
+     "pred_err": 19.43,
+     "actual": 137.3
+    }
+   },
+   "COAL_WC": {
+    "AEP_Ohio": {
+     "keeper_err": -0.05,
+     "delta": 0.0,
+     "delta_lo": 0.0,
+     "delta_hi": 0.0,
+     "pred_err": -0.05
+    },
+    "Central_PA": {
+     "keeper_err": -0.85,
+     "delta": 0.02,
+     "delta_lo": 0.0,
+     "delta_hi": 0.04,
+     "pred_err": -0.83
+    },
+    "West_APS": {
+     "keeper_err": -0.94,
+     "delta": 0.03,
+     "delta_lo": 0.01,
+     "delta_hi": 0.04,
+     "pred_err": -0.91
+    },
+    "_class": {
+     "keeper_err": -1.84,
+     "delta": 0.05,
+     "pred_err": -1.79,
+     "actual": 5.25
+    }
+   },
+   "CT_PEAKER": {
+    "AEP_Ohio": {
+     "keeper_err": -1.2,
+     "delta": 0.72,
+     "delta_lo": 0.58,
+     "delta_hi": 0.85,
+     "pred_err": -0.48
+    },
+    "ATSI": {
+     "keeper_err": -0.51,
+     "delta": 0.27,
+     "delta_lo": 0.2,
+     "delta_hi": 0.35,
+     "pred_err": -0.24
+    },
+    "Central_PA": {
+     "keeper_err": -0.12,
+     "delta": 0.03,
+     "delta_lo": 0.02,
+     "delta_hi": 0.05,
+     "pred_err": -0.09
+    },
+    "ComEd": {
+     "keeper_err": -0.37,
+     "delta": 0.27,
+     "delta_lo": 0.26,
+     "delta_hi": 0.28,
+     "pred_err": -0.1
+    },
+    "Dominion": {
+     "keeper_err": -0.89,
+     "delta": 0.19,
+     "delta_lo": 0.14,
+     "delta_hi": 0.23,
+     "pred_err": -0.7
+    },
+    "EMAAC": {
+     "keeper_err": 0.61,
+     "delta": -0.12,
+     "delta_lo": -0.2,
+     "delta_hi": -0.04,
+     "pred_err": 0.5
+    },
+    "SWMAAC": {
+     "keeper_err": -0.5,
+     "delta": -0.02,
+     "delta_lo": -0.03,
+     "delta_hi": -0.01,
+     "pred_err": -0.51
+    },
+    "West_APS": {
+     "keeper_err": -0.08,
+     "delta": 0.29,
+     "delta_lo": 0.2,
+     "delta_hi": 0.39,
+     "pred_err": 0.22
+    },
+    "_class": {
+     "keeper_err": -3.04,
+     "delta": 1.64,
+     "pred_err": -1.41,
+     "actual": 18.52
+    }
+   },
+   "ST_GAS": {
+    "AEP_Ohio": {
+     "keeper_err": -0.35,
+     "delta": 0.02,
+     "delta_lo": 0.02,
+     "delta_hi": 0.03,
+     "pred_err": -0.33
+    },
+    "Central_PA": {
+     "keeper_err": 0.75,
+     "delta": 0.36,
+     "delta_lo": 0.35,
+     "delta_hi": 0.37,
+     "pred_err": 1.11
+    },
+    "ComEd": {
+     "keeper_err": 0.03,
+     "delta": 0.0,
+     "delta_lo": 0.0,
+     "delta_hi": 0.0,
+     "pred_err": 0.03
+    },
+    "Dominion": {
+     "keeper_err": -0.22,
+     "delta": 0.0,
+     "delta_lo": 0.0,
+     "delta_hi": 0.0,
+     "pred_err": -0.21
+    },
+    "EMAAC": {
+     "keeper_err": 0.13,
+     "delta": -0.0,
+     "delta_lo": -0.01,
+     "delta_hi": -0.0,
+     "pred_err": 0.12
+    },
+    "SWMAAC": {
+     "keeper_err": -0.08,
+     "delta": -0.01,
+     "delta_lo": -0.01,
+     "delta_hi": -0.01,
+     "pred_err": -0.09
+    },
+    "West_APS": {
+     "keeper_err": -0.02,
+     "delta": 0.03,
+     "delta_lo": 0.03,
+     "delta_hi": 0.03,
+     "pred_err": 0.01
+    },
+    "_class": {
+     "keeper_err": 0.24,
+     "delta": 0.4,
+     "pred_err": 0.64,
+     "actual": 7.05
+    }
+   }
+  },
+  "2021": {
+   "CC_REGULAR": {
+    "AEP_Ohio": {
+     "keeper_err": 0.88,
+     "delta": 0.68,
+     "delta_lo": 0.48,
+     "delta_hi": 0.88,
+     "pred_err": 1.56
+    },
+    "ATSI": {
+     "keeper_err": -0.36,
+     "delta": 0.17,
+     "delta_lo": 0.12,
+     "delta_hi": 0.23,
+     "pred_err": -0.19
+    },
+    "Central_PA": {
+     "keeper_err": 0.72,
+     "delta": 1.67,
+     "delta_lo": 1.17,
+     "delta_hi": 2.18,
+     "pred_err": 2.4
+    },
+    "ComEd": {
+     "keeper_err": 0.14,
+     "delta": 1.1,
+     "delta_lo": 0.77,
+     "delta_hi": 1.43,
+     "pred_err": 1.24
+    },
+    "Dominion": {
+     "keeper_err": -4.36,
+     "delta": -1.57,
+     "delta_lo": -2.05,
+     "delta_hi": -1.1,
+     "pred_err": -5.93
+    },
+    "EMAAC": {
+     "keeper_err": 14.32,
+     "delta": -8.23,
+     "delta_lo": -10.7,
+     "delta_hi": -5.76,
+     "pred_err": 6.09
+    },
+    "SWMAAC": {
+     "keeper_err": -1.88,
+     "delta": -3.03,
+     "delta_lo": -3.93,
+     "delta_hi": -2.12,
+     "pred_err": -4.91
+    },
+    "West_APS": {
+     "keeper_err": 0.48,
+     "delta": 0.22,
+     "delta_lo": 0.15,
+     "delta_hi": 0.29,
+     "pred_err": 0.7
+    },
+    "_class": {
+     "keeper_err": 9.94,
+     "delta": -8.98,
+     "pred_err": 0.96,
+     "actual": 280.27
+    }
+   },
+   "COAL_BIT": {
+    "AEP_Ohio": {
+     "keeper_err": 14.99,
+     "delta": 1.81,
+     "delta_lo": 1.27,
+     "delta_hi": 2.36,
+     "pred_err": 16.8
+    },
+    "Dominion": {
+     "keeper_err": 0.8,
+     "delta": -0.13,
+     "delta_lo": -0.17,
+     "delta_hi": -0.09,
+     "pred_err": 0.67
+    },
+    "SWMAAC": {
+     "keeper_err": 1.8,
+     "delta": -0.75,
+     "delta_lo": -0.98,
+     "delta_hi": -0.53,
+     "pred_err": 1.05
+    },
+    "West_APS": {
+     "keeper_err": 3.5,
+     "delta": 1.0,
+     "delta_lo": 0.7,
+     "delta_hi": 1.3,
+     "pred_err": 4.5
+    },
+    "_class": {
+     "keeper_err": 21.08,
+     "delta": 1.93,
+     "pred_err": 23.02,
+     "actual": 154.22
+    }
+   },
+   "COAL_WC": {
+    "Central_PA": {
+     "keeper_err": -0.29,
+     "delta": 0.08,
+     "delta_lo": 0.06,
+     "delta_hi": 0.11,
+     "pred_err": -0.21
+    },
+    "West_APS": {
+     "keeper_err": 0.1,
+     "delta": 0.13,
+     "delta_lo": 0.09,
+     "delta_hi": 0.17,
+     "pred_err": 0.23
+    },
+    "_class": {
+     "keeper_err": -0.19,
+     "delta": 0.21,
+     "pred_err": 0.03,
+     "actual": 6.28
+    }
+   },
+   "CT_PEAKER": {
+    "AEP_Ohio": {
+     "keeper_err": -2.96,
+     "delta": 1.87,
+     "delta_lo": 1.31,
+     "delta_hi": 2.43,
+     "pred_err": -1.1
+    },
+    "ATSI": {
+     "keeper_err": -1.33,
+     "delta": 0.53,
+     "delta_lo": 0.37,
+     "delta_hi": 0.68,
+     "pred_err": -0.8
+    },
+    "Central_PA": {
+     "keeper_err": -0.12,
+     "delta": 0.07,
+     "delta_lo": 0.05,
+     "delta_hi": 0.1,
+     "pred_err": -0.05
+    },
+    "ComEd": {
+     "keeper_err": -1.61,
+     "delta": 0.42,
+     "delta_lo": 0.29,
+     "delta_hi": 0.55,
+     "pred_err": -1.19
+    },
+    "Dominion": {
+     "keeper_err": -1.17,
+     "delta": -0.05,
+     "delta_lo": -0.07,
+     "delta_hi": -0.04,
+     "pred_err": -1.22
+    },
+    "EMAAC": {
+     "keeper_err": 0.64,
+     "delta": -0.32,
+     "delta_lo": -0.42,
+     "delta_hi": -0.23,
+     "pred_err": 0.32
+    },
+    "SWMAAC": {
+     "keeper_err": -0.96,
+     "delta": -0.27,
+     "delta_lo": -0.35,
+     "delta_hi": -0.19,
+     "pred_err": -1.23
+    },
+    "West_APS": {
+     "keeper_err": -0.12,
+     "delta": 0.33,
+     "delta_lo": 0.23,
+     "delta_hi": 0.43,
+     "pred_err": 0.21
+    },
+    "_class": {
+     "keeper_err": -7.63,
+     "delta": 2.57,
+     "pred_err": -5.07,
+     "actual": 20.29
+    }
+   },
+   "ST_GAS": {
+    "AEP_Ohio": {
+     "keeper_err": -0.11,
+     "delta": 0.09,
+     "delta_lo": 0.06,
+     "delta_hi": 0.11,
+     "pred_err": -0.02
+    },
+    "Central_PA": {
+     "keeper_err": -0.54,
+     "delta": 0.64,
+     "delta_lo": 0.45,
+     "delta_hi": 0.83,
+     "pred_err": 0.1
+    },
+    "ComEd": {
+     "keeper_err": -0.09,
+     "delta": 0.03,
+     "delta_lo": 0.02,
+     "delta_hi": 0.04,
+     "pred_err": -0.06
+    },
+    "Dominion": {
+     "keeper_err": -0.1,
+     "delta": -0.0,
+     "delta_lo": -0.0,
+     "delta_hi": -0.0,
+     "pred_err": -0.1
+    },
+    "EMAAC": {
+     "keeper_err": -0.08,
+     "delta": 0.0,
+     "delta_lo": 0.0,
+     "delta_hi": 0.0,
+     "pred_err": -0.08
+    },
+    "SWMAAC": {
+     "keeper_err": 0.14,
+     "delta": -0.03,
+     "delta_lo": -0.04,
+     "delta_hi": -0.02,
+     "pred_err": 0.11
+    },
+    "West_APS": {
+     "keeper_err": 0.35,
+     "delta": 0.09,
+     "delta_lo": 0.06,
+     "delta_hi": 0.12,
+     "pred_err": 0.44
+    },
+    "_class": {
+     "keeper_err": -0.42,
+     "delta": 0.81,
+     "pred_err": 0.39,
+     "actual": 6.81
+    }
+   }
+  },
+  "2022": {
+   "CC_REGULAR": {
+    "AEP_Ohio": {
+     "keeper_err": 3.81,
+     "delta": 0.97,
+     "delta_lo": 0.68,
+     "delta_hi": 1.26,
+     "pred_err": 4.77
+    },
+    "ATSI": {
+     "keeper_err": 1.2,
+     "delta": 0.25,
+     "delta_lo": 0.17,
+     "delta_hi": 0.32,
+     "pred_err": 1.44
+    },
+    "Central_PA": {
+     "keeper_err": 4.58,
+     "delta": 2.38,
+     "delta_lo": 1.67,
+     "delta_hi": 3.09,
+     "pred_err": 6.96
+    },
+    "ComEd": {
+     "keeper_err": 3.16,
+     "delta": 1.56,
+     "delta_lo": 1.09,
+     "delta_hi": 2.03,
+     "pred_err": 4.72
+    },
+    "Dominion": {
+     "keeper_err": -1.66,
+     "delta": -2.24,
+     "delta_lo": -2.91,
+     "delta_hi": -1.57,
+     "pred_err": -3.9
+    },
+    "EMAAC": {
+     "keeper_err": 13.19,
+     "delta": -11.7,
+     "delta_lo": -15.21,
+     "delta_hi": -8.19,
+     "pred_err": 1.49
+    },
+    "SWMAAC": {
+     "keeper_err": -3.78,
+     "delta": -4.3,
+     "delta_lo": -5.59,
+     "delta_hi": -3.01,
+     "pred_err": -8.09
+    },
+    "West_APS": {
+     "keeper_err": -0.3,
+     "delta": 0.31,
+     "delta_lo": 0.22,
+     "delta_hi": 0.41,
+     "pred_err": 0.01
+    },
+    "_class": {
+     "keeper_err": 20.18,
+     "delta": -12.77,
+     "pred_err": 7.41,
+     "actual": 298.97
+    }
+   },
+   "COAL_BIT": {
+    "AEP_Ohio": {
+     "keeper_err": 6.54,
+     "delta": 2.58,
+     "delta_lo": 1.8,
+     "delta_hi": 3.35,
+     "pred_err": 9.12
+    },
+    "Dominion": {
+     "keeper_err": 0.54,
+     "delta": -0.18,
+     "delta_lo": -0.24,
+     "delta_hi": -0.13,
+     "pred_err": 0.36
+    },
+    "SWMAAC": {
+     "keeper_err": 1.32,
+     "delta": -1.07,
+     "delta_lo": -1.39,
+     "delta_hi": -0.75,
+     "pred_err": 0.25
+    },
+    "West_APS": {
+     "keeper_err": -1.36,
+     "delta": 1.42,
+     "delta_lo": 1.0,
+     "delta_hi": 1.85,
+     "pred_err": 0.06
+    },
+    "_class": {
+     "keeper_err": 7.04,
+     "delta": 2.75,
+     "pred_err": 9.79,
+     "actual": 136.25
+    }
+   },
+   "COAL_WC": {
+    "Central_PA": {
+     "keeper_err": -0.43,
+     "delta": 0.11,
+     "delta_lo": 0.08,
+     "delta_hi": 0.15,
+     "pred_err": -0.31
+    },
+    "West_APS": {
+     "keeper_err": -0.47,
+     "delta": 0.19,
+     "delta_lo": 0.13,
+     "delta_hi": 0.25,
+     "pred_err": -0.28
+    },
+    "_class": {
+     "keeper_err": -0.9,
+     "delta": 0.31,
+     "pred_err": -0.6,
+     "actual": 7.22
+    }
+   },
+   "CT_PEAKER": {
+    "AEP_Ohio": {
+     "keeper_err": -1.59,
+     "delta": 2.65,
+     "delta_lo": 1.86,
+     "delta_hi": 3.45,
+     "pred_err": 1.06
+    },
+    "ATSI": {
+     "keeper_err": -0.91,
+     "delta": 0.75,
+     "delta_lo": 0.52,
+     "delta_hi": 0.97,
+     "pred_err": -0.16
+    },
+    "Central_PA": {
+     "keeper_err": 0.07,
+     "delta": 0.1,
+     "delta_lo": 0.07,
+     "delta_hi": 0.14,
+     "pred_err": 0.18
+    },
+    "ComEd": {
+     "keeper_err": 2.59,
+     "delta": 0.6,
+     "delta_lo": 0.42,
+     "delta_hi": 0.78,
+     "pred_err": 3.18
+    },
+    "Dominion": {
+     "keeper_err": -1.81,
+     "delta": -0.08,
+     "delta_lo": -0.1,
+     "delta_hi": -0.05,
+     "pred_err": -1.88
+    },
+    "EMAAC": {
+     "keeper_err": 0.4,
+     "delta": -0.46,
+     "delta_lo": -0.59,
+     "delta_hi": -0.32,
+     "pred_err": -0.06
+    },
+    "SWMAAC": {
+     "keeper_err": -0.4,
+     "delta": -0.38,
+     "delta_lo": -0.5,
+     "delta_hi": -0.27,
+     "pred_err": -0.79
+    },
+    "West_APS": {
+     "keeper_err": -0.54,
+     "delta": 0.47,
+     "delta_lo": 0.33,
+     "delta_hi": 0.61,
+     "pred_err": -0.07
+    },
+    "_class": {
+     "keeper_err": -2.19,
+     "delta": 3.65,
+     "pred_err": 1.46,
+     "actual": 18.37
+    }
+   },
+   "ST_GAS": {
+    "AEP_Ohio": {
+     "keeper_err": -0.08,
+     "delta": 0.12,
+     "delta_lo": 0.08,
+     "delta_hi": 0.16,
+     "pred_err": 0.04
+    },
+    "Central_PA": {
+     "keeper_err": 0.97,
+     "delta": 0.91,
+     "delta_lo": 0.64,
+     "delta_hi": 1.18,
+     "pred_err": 1.88
+    },
+    "ComEd": {
+     "keeper_err": -0.15,
+     "delta": 0.05,
+     "delta_lo": 0.03,
+     "delta_hi": 0.06,
+     "pred_err": -0.1
+    },
+    "Dominion": {
+     "keeper_err": -0.0,
+     "delta": -0.0,
+     "delta_lo": -0.0,
+     "delta_hi": -0.0,
+     "pred_err": -0.0
+    },
+    "EMAAC": {
+     "keeper_err": -0.25,
+     "delta": 0.0,
+     "delta_lo": 0.0,
+     "delta_hi": 0.0,
+     "pred_err": -0.25
+    },
+    "SWMAAC": {
+     "keeper_err": -0.15,
+     "delta": -0.05,
+     "delta_lo": -0.06,
+     "delta_hi": -0.03,
+     "pred_err": -0.2
+    },
+    "West_APS": {
+     "keeper_err": 0.44,
+     "delta": 0.13,
+     "delta_lo": 0.09,
+     "delta_hi": 0.16,
+     "pred_err": 0.56
+    },
+    "_class": {
+     "keeper_err": 0.78,
+     "delta": 1.16,
+     "pred_err": 1.93,
+     "actual": 8.48
+    }
+   }
+  },
+  "2023": {
+   "CC_REGULAR": {
+    "AEP_Ohio": {
+     "keeper_err": 0.97,
+     "delta": 0.97,
+     "delta_lo": 0.97,
+     "delta_hi": 0.97,
+     "pred_err": 1.93
+    },
+    "ATSI": {
+     "keeper_err": -0.31,
+     "delta": 0.25,
+     "delta_lo": 0.25,
+     "delta_hi": 0.25,
+     "pred_err": -0.06
+    },
+    "Central_PA": {
+     "keeper_err": 3.3,
+     "delta": 2.38,
+     "delta_lo": 2.38,
+     "delta_hi": 2.38,
+     "pred_err": 5.69
+    },
+    "ComEd": {
+     "keeper_err": 2.81,
+     "delta": 1.57,
+     "delta_lo": 1.57,
+     "delta_hi": 1.57,
+     "pred_err": 4.37
+    },
+    "Dominion": {
+     "keeper_err": -13.74,
+     "delta": -2.24,
+     "delta_lo": -2.24,
+     "delta_hi": -2.24,
+     "pred_err": -15.98
+    },
+    "EMAAC": {
+     "keeper_err": 11.79,
+     "delta": -11.72,
+     "delta_lo": -11.72,
+     "delta_hi": -11.72,
+     "pred_err": 0.07
+    },
+    "SWMAAC": {
+     "keeper_err": -0.54,
+     "delta": -4.31,
+     "delta_lo": -4.31,
+     "delta_hi": -4.31,
+     "pred_err": -4.85
+    },
+    "West_APS": {
+     "keeper_err": -0.7,
+     "delta": 0.31,
+     "delta_lo": 0.31,
+     "delta_hi": 0.31,
+     "pred_err": -0.39
+    },
+    "_class": {
+     "keeper_err": 3.57,
+     "delta": -12.8,
+     "pred_err": -9.23,
+     "actual": 325.9
+    }
+   },
+   "COAL_BIT": {
+    "AEP_Ohio": {
+     "keeper_err": 2.39,
+     "delta": 2.58,
+     "delta_lo": 2.58,
+     "delta_hi": 2.58,
+     "pred_err": 4.97
+    },
+    "Dominion": {
+     "keeper_err": 0.59,
+     "delta": -0.18,
+     "delta_lo": -0.18,
+     "delta_hi": -0.18,
+     "pred_err": 0.41
+    },
+    "SWMAAC": {
+     "keeper_err": 0.55,
+     "delta": -1.07,
+     "delta_lo": -1.07,
+     "delta_hi": -1.07,
+     "pred_err": -0.52
+    },
+    "West_APS": {
+     "keeper_err": -2.52,
+     "delta": 1.43,
+     "delta_lo": 1.43,
+     "delta_hi": 1.43,
+     "pred_err": -1.1
+    },
+    "_class": {
+     "keeper_err": 1.01,
+     "delta": 2.75,
+     "pred_err": 3.77,
+     "actual": 102.86
+    }
+   },
+   "COAL_WC": {
+    "Central_PA": {
+     "keeper_err": -0.76,
+     "delta": 0.12,
+     "delta_lo": 0.12,
+     "delta_hi": 0.12,
+     "pred_err": -0.65
+    },
+    "West_APS": {
+     "keeper_err": -1.24,
+     "delta": 0.19,
+     "delta_lo": 0.19,
+     "delta_hi": 0.19,
+     "pred_err": -1.05
+    },
+    "_class": {
+     "keeper_err": -2.01,
+     "delta": 0.31,
+     "pred_err": -1.7,
+     "actual": 6.42
+    }
+   },
+   "CT_PEAKER": {
+    "AEP_Ohio": {
+     "keeper_err": -3.1,
+     "delta": 2.66,
+     "delta_lo": 2.66,
+     "delta_hi": 2.66,
+     "pred_err": -0.44
+    },
+    "ATSI": {
+     "keeper_err": -1.36,
+     "delta": 0.75,
+     "delta_lo": 0.75,
+     "delta_hi": 0.75,
+     "pred_err": -0.61
+    },
+    "Central_PA": {
+     "keeper_err": 0.32,
+     "delta": 0.1,
+     "delta_lo": 0.1,
+     "delta_hi": 0.1,
+     "pred_err": 0.42
+    },
+    "ComEd": {
+     "keeper_err": 1.54,
+     "delta": 0.6,
+     "delta_lo": 0.6,
+     "delta_hi": 0.6,
+     "pred_err": 2.14
+    },
+    "Dominion": {
+     "keeper_err": -2.19,
+     "delta": -0.08,
+     "delta_lo": -0.08,
+     "delta_hi": -0.08,
+     "pred_err": -2.27
+    },
+    "EMAAC": {
+     "keeper_err": 1.56,
+     "delta": -0.46,
+     "delta_lo": -0.46,
+     "delta_hi": -0.46,
+     "pred_err": 1.11
+    },
+    "SWMAAC": {
+     "keeper_err": -0.44,
+     "delta": -0.39,
+     "delta_lo": -0.39,
+     "delta_hi": -0.39,
+     "pred_err": -0.82
+    },
+    "West_APS": {
+     "keeper_err": 3.06,
+     "delta": 0.47,
+     "delta_lo": 0.47,
+     "delta_hi": 0.47,
+     "pred_err": 3.53
+    },
+    "_class": {
+     "keeper_err": -0.6,
+     "delta": 3.66,
+     "pred_err": 3.06,
+     "actual": 21.01
+    }
+   },
+   "ST_GAS": {
+    "AEP_Ohio": {
+     "keeper_err": -0.51,
+     "delta": 0.12,
+     "delta_lo": 0.12,
+     "delta_hi": 0.12,
+     "pred_err": -0.39
+    },
+    "Central_PA": {
+     "keeper_err": 3.34,
+     "delta": 0.91,
+     "delta_lo": 0.91,
+     "delta_hi": 0.91,
+     "pred_err": 4.25
+    },
+    "ComEd": {
+     "keeper_err": -0.2,
+     "delta": 0.05,
+     "delta_lo": 0.05,
+     "delta_hi": 0.05,
+     "pred_err": -0.15
+    },
+    "Dominion": {
+     "keeper_err": -0.07,
+     "delta": -0.0,
+     "delta_lo": -0.0,
+     "delta_hi": -0.0,
+     "pred_err": -0.07
+    },
+    "EMAAC": {
+     "keeper_err": 0.16,
+     "delta": 0.0,
+     "delta_lo": 0.0,
+     "delta_hi": 0.0,
+     "pred_err": 0.17
+    },
+    "SWMAAC": {
+     "keeper_err": -0.44,
+     "delta": -0.05,
+     "delta_lo": -0.05,
+     "delta_hi": -0.05,
+     "pred_err": -0.48
+    },
+    "West_APS": {
+     "keeper_err": -0.14,
+     "delta": 0.13,
+     "delta_lo": 0.13,
+     "delta_hi": 0.13,
+     "pred_err": -0.01
+    },
+    "_class": {
+     "keeper_err": 2.16,
+     "delta": 1.16,
+     "pred_err": 3.32,
+     "actual": 9.14
+    }
+   }
+  },
+  "2024": {
+   "CC_REGULAR": {
+    "AEP_Ohio": {
+     "keeper_err": -2.13,
+     "delta": 1.0,
+     "delta_lo": 1.0,
+     "delta_hi": 1.0,
+     "pred_err": -1.12
+    },
+    "ATSI": {
+     "keeper_err": 0.1,
+     "delta": 0.15,
+     "delta_lo": 0.15,
+     "delta_hi": 0.15,
+     "pred_err": 0.26
+    },
+    "Central_PA": {
+     "keeper_err": 0.87,
+     "delta": 1.61,
+     "delta_lo": 1.61,
+     "delta_hi": 1.61,
+     "pred_err": 2.48
+    },
+    "ComEd": {
+     "keeper_err": 2.84,
+     "delta": 1.33,
+     "delta_lo": 1.33,
+     "delta_hi": 1.33,
+     "pred_err": 4.18
+    },
+    "Dominion": {
+     "keeper_err": -12.33,
+     "delta": 2.5,
+     "delta_lo": 2.5,
+     "delta_hi": 2.5,
+     "pred_err": -9.83
+    },
+    "EMAAC": {
+     "keeper_err": 13.77,
+     "delta": -17.62,
+     "delta_lo": -17.62,
+     "delta_hi": -17.62,
+     "pred_err": -3.85
+    },
+    "SWMAAC": {
+     "keeper_err": -3.09,
+     "delta": -4.16,
+     "delta_lo": -4.16,
+     "delta_hi": -4.16,
+     "pred_err": -7.25
+    },
+    "West_APS": {
+     "keeper_err": 0.86,
+     "delta": 0.41,
+     "delta_lo": 0.41,
+     "delta_hi": 0.41,
+     "pred_err": 1.27
+    },
+    "_class": {
+     "keeper_err": 0.9,
+     "delta": -14.78,
+     "pred_err": -13.88,
+     "actual": 335.4
+    }
+   },
+   "COAL_BIT": {
+    "AEP_Ohio": {
+     "keeper_err": 0.16,
+     "delta": 2.85,
+     "delta_lo": 2.85,
+     "delta_hi": 2.85,
+     "pred_err": 3.01
+    },
+    "Dominion": {
+     "keeper_err": -0.31,
+     "delta": 0.1,
+     "delta_lo": 0.1,
+     "delta_hi": 0.1,
+     "pred_err": -0.21
+    },
+    "SWMAAC": {
+     "keeper_err": 1.23,
+     "delta": -2.78,
+     "delta_lo": -2.78,
+     "delta_hi": -2.78,
+     "pred_err": -1.55
+    },
+    "West_APS": {
+     "keeper_err": -2.08,
+     "delta": 1.36,
+     "delta_lo": 1.36,
+     "delta_hi": 1.36,
+     "pred_err": -0.72
+    },
+    "_class": {
+     "keeper_err": -1.0,
+     "delta": 1.53,
+     "pred_err": 0.52,
+     "actual": 104.56
+    }
+   },
+   "COAL_WC": {
+    "Central_PA": {
+     "keeper_err": -0.72,
+     "delta": 0.14,
+     "delta_lo": 0.14,
+     "delta_hi": 0.14,
+     "pred_err": -0.58
+    },
+    "West_APS": {
+     "keeper_err": -1.07,
+     "delta": 0.14,
+     "delta_lo": 0.14,
+     "delta_hi": 0.14,
+     "pred_err": -0.92
+    },
+    "_class": {
+     "keeper_err": -1.79,
+     "delta": 0.29,
+     "pred_err": -1.5,
+     "actual": 6.24
+    }
+   },
+   "CT_PEAKER": {
+    "AEP_Ohio": {
+     "keeper_err": -3.49,
+     "delta": 2.75,
+     "delta_lo": 2.75,
+     "delta_hi": 2.75,
+     "pred_err": -0.74
+    },
+    "ATSI": {
+     "keeper_err": -0.22,
+     "delta": 1.13,
+     "delta_lo": 1.13,
+     "delta_hi": 1.13,
+     "pred_err": 0.91
+    },
+    "Central_PA": {
+     "keeper_err": 0.55,
+     "delta": 0.15,
+     "delta_lo": 0.15,
+     "delta_hi": 0.15,
+     "pred_err": 0.7
+    },
+    "ComEd": {
+     "keeper_err": 3.83,
+     "delta": 0.85,
+     "delta_lo": 0.85,
+     "delta_hi": 0.85,
+     "pred_err": 4.68
+    },
+    "Dominion": {
+     "keeper_err": -2.51,
+     "delta": 0.45,
+     "delta_lo": 0.45,
+     "delta_hi": 0.45,
+     "pred_err": -2.06
+    },
+    "EMAAC": {
+     "keeper_err": 1.61,
+     "delta": -0.63,
+     "delta_lo": -0.63,
+     "delta_hi": -0.63,
+     "pred_err": 0.98
+    },
+    "SWMAAC": {
+     "keeper_err": -0.21,
+     "delta": -0.09,
+     "delta_lo": -0.09,
+     "delta_hi": -0.09,
+     "pred_err": -0.3
+    },
+    "West_APS": {
+     "keeper_err": 2.25,
+     "delta": 1.25,
+     "delta_lo": 1.25,
+     "delta_hi": 1.25,
+     "pred_err": 3.5
+    },
+    "_class": {
+     "keeper_err": 1.81,
+     "delta": 5.86,
+     "pred_err": 7.67,
+     "actual": 23.63
+    }
+   },
+   "ST_GAS": {
+    "AEP_Ohio": {
+     "keeper_err": -0.43,
+     "delta": 0.1,
+     "delta_lo": 0.1,
+     "delta_hi": 0.1,
+     "pred_err": -0.33
+    },
+    "Central_PA": {
+     "keeper_err": -0.54,
+     "delta": 1.12,
+     "delta_lo": 1.12,
+     "delta_hi": 1.12,
+     "pred_err": 0.59
+    },
+    "Dominion": {
+     "keeper_err": -0.15,
+     "delta": 0.0,
+     "delta_lo": 0.0,
+     "delta_hi": 0.0,
+     "pred_err": -0.15
+    },
+    "EMAAC": {
+     "keeper_err": 0.28,
+     "delta": -0.02,
+     "delta_lo": -0.02,
+     "delta_hi": -0.02,
+     "pred_err": 0.26
+    },
+    "SWMAAC": {
+     "keeper_err": -0.77,
+     "delta": -0.02,
+     "delta_lo": -0.02,
+     "delta_hi": -0.02,
+     "pred_err": -0.79
+    },
+    "West_APS": {
+     "keeper_err": -0.11,
+     "delta": 0.08,
+     "delta_lo": 0.08,
+     "delta_hi": 0.08,
+     "pred_err": -0.03
+    },
+    "_class": {
+     "keeper_err": -1.72,
+     "delta": 1.27,
+     "pred_err": -0.46,
+     "actual": 13.7
+    }
+   }
+  },
+  "2025": {
+   "CC_REGULAR": {
+    "AEP_Ohio": {
+     "keeper_err": 0.92,
+     "delta": 0.39,
+     "delta_lo": 0.39,
+     "delta_hi": 0.39,
+     "pred_err": 1.31
+    },
+    "ATSI": {
+     "keeper_err": 1.15,
+     "delta": 0.05,
+     "delta_lo": 0.05,
+     "delta_hi": 0.05,
+     "pred_err": 1.19
+    },
+    "Central_PA": {
+     "keeper_err": 2.34,
+     "delta": 0.65,
+     "delta_lo": 0.65,
+     "delta_hi": 0.65,
+     "pred_err": 2.99
+    },
+    "ComEd": {
+     "keeper_err": 4.2,
+     "delta": 0.56,
+     "delta_lo": 0.56,
+     "delta_hi": 0.56,
+     "pred_err": 4.76
+    },
+    "Dominion": {
+     "keeper_err": -4.03,
+     "delta": 0.94,
+     "delta_lo": 0.94,
+     "delta_hi": 0.94,
+     "pred_err": -3.09
+    },
+    "EMAAC": {
+     "keeper_err": 3.79,
+     "delta": -11.15,
+     "delta_lo": -11.15,
+     "delta_hi": -11.15,
+     "pred_err": -7.36
+    },
+    "SWMAAC": {
+     "keeper_err": -6.44,
+     "delta": -1.65,
+     "delta_lo": -1.65,
+     "delta_hi": -1.65,
+     "pred_err": -8.09
+    },
+    "West_APS": {
+     "keeper_err": 0.63,
+     "delta": 0.21,
+     "delta_lo": 0.21,
+     "delta_hi": 0.21,
+     "pred_err": 0.85
+    },
+    "_class": {
+     "keeper_err": 2.57,
+     "delta": -10.0,
+     "pred_err": -7.44,
+     "actual": 330.74
+    }
+   },
+   "COAL_BIT": {
+    "AEP_Ohio": {
+     "keeper_err": 4.61,
+     "delta": 1.35,
+     "delta_lo": 1.35,
+     "delta_hi": 1.35,
+     "pred_err": 5.96
+    },
+    "Dominion": {
+     "keeper_err": -0.99,
+     "delta": 0.15,
+     "delta_lo": 0.15,
+     "delta_hi": 0.15,
+     "pred_err": -0.83
+    },
+    "SWMAAC": {
+     "keeper_err": 1.65,
+     "delta": -2.59,
+     "delta_lo": -2.59,
+     "delta_hi": -2.59,
+     "pred_err": -0.95
+    },
+    "West_APS": {
+     "keeper_err": 3.95,
+     "delta": 0.66,
+     "delta_lo": 0.66,
+     "delta_hi": 0.66,
+     "pred_err": 4.61
+    },
+    "_class": {
+     "keeper_err": 9.22,
+     "delta": -0.43,
+     "pred_err": 8.79,
+     "actual": 123.84
+    }
+   },
+   "COAL_WC": {
+    "Central_PA": {
+     "keeper_err": -0.13,
+     "delta": 0.01,
+     "delta_lo": 0.01,
+     "delta_hi": 0.01,
+     "pred_err": -0.12
+    },
+    "West_APS": {
+     "keeper_err": -0.08,
+     "delta": 0.04,
+     "delta_lo": 0.04,
+     "delta_hi": 0.04,
+     "pred_err": -0.04
+    },
+    "_class": {
+     "keeper_err": -0.21,
+     "delta": 0.06,
+     "pred_err": -0.15,
+     "actual": 5.66
+    }
+   },
+   "CT_PEAKER": {
+    "AEP_Ohio": {
+     "keeper_err": 1.33,
+     "delta": 2.01,
+     "delta_lo": 2.01,
+     "delta_hi": 2.01,
+     "pred_err": 3.34
+    },
+    "ATSI": {
+     "keeper_err": 0.22,
+     "delta": 0.68,
+     "delta_lo": 0.68,
+     "delta_hi": 0.68,
+     "pred_err": 0.9
+    },
+    "Central_PA": {
+     "keeper_err": 0.42,
+     "delta": 0.07,
+     "delta_lo": 0.07,
+     "delta_hi": 0.07,
+     "pred_err": 0.49
+    },
+    "ComEd": {
+     "keeper_err": 4.33,
+     "delta": 0.95,
+     "delta_lo": 0.95,
+     "delta_hi": 0.95,
+     "pred_err": 5.28
+    },
+    "Dominion": {
+     "keeper_err": -2.11,
+     "delta": 0.8,
+     "delta_lo": 0.8,
+     "delta_hi": 0.8,
+     "pred_err": -1.31
+    },
+    "EMAAC": {
+     "keeper_err": -0.19,
+     "delta": -0.14,
+     "delta_lo": -0.14,
+     "delta_hi": -0.14,
+     "pred_err": -0.34
+    },
+    "SWMAAC": {
+     "keeper_err": -0.59,
+     "delta": -0.03,
+     "delta_lo": -0.03,
+     "delta_hi": -0.03,
+     "pred_err": -0.62
+    },
+    "West_APS": {
+     "keeper_err": 2.05,
+     "delta": 0.69,
+     "delta_lo": 0.69,
+     "delta_hi": 0.69,
+     "pred_err": 2.73
+    },
+    "_class": {
+     "keeper_err": 5.46,
+     "delta": 5.02,
+     "pred_err": 10.48,
+     "actual": 24.26
+    }
+   },
+   "ST_GAS": {
+    "AEP_Ohio": {
+     "keeper_err": -0.12,
+     "delta": 0.05,
+     "delta_lo": 0.05,
+     "delta_hi": 0.05,
+     "pred_err": -0.07
+    },
+    "Central_PA": {
+     "keeper_err": -0.29,
+     "delta": 1.28,
+     "delta_lo": 1.28,
+     "delta_hi": 1.28,
+     "pred_err": 1.0
+    },
+    "Dominion": {
+     "keeper_err": -0.19,
+     "delta": 0.01,
+     "delta_lo": 0.01,
+     "delta_hi": 0.01,
+     "pred_err": -0.18
+    },
+    "EMAAC": {
+     "keeper_err": -0.23,
+     "delta": -0.01,
+     "delta_lo": -0.01,
+     "delta_hi": -0.01,
+     "pred_err": -0.23
+    },
+    "SWMAAC": {
+     "keeper_err": -1.58,
+     "delta": -0.02,
+     "delta_lo": -0.02,
+     "delta_hi": -0.02,
+     "pred_err": -1.6
+    },
+    "West_APS": {
+     "keeper_err": 0.39,
+     "delta": 0.11,
+     "delta_lo": 0.11,
+     "delta_hi": 0.11,
+     "pred_err": 0.5
+    },
+    "_class": {
+     "keeper_err": -2.02,
+     "delta": 1.43,
+     "pred_err": -0.59,
+     "actual": 16.59
+    }
+   }
+  }
+ },
+ "emaac_cc_per_dollar": {
+  "2023": -0.788,
+  "2024": -0.772,
+  "2025": -0.458
+ }
+}

@@ -93,6 +93,26 @@ class TestMembership:
         assert res_2023.membership[dominion_idx] == pytest.approx(0.9881)
         assert res_2024.membership[dominion_idx] == 0.0
 
+    def test_pjm_membership_rows_cover_every_keeper_year(self):
+        # pjm-h22: NJ rejoined 2020; VA a member 2021-2023 only. The 2022 row
+        # used to fall back to the 2025 set, un-enrolling VA in a member year.
+        from market_sim.config.constants import (
+            PJM_RGGI_ZONE_SHARE,
+            RGGI_MEMBER_STATES_BY_YEAR,
+        )
+
+        assert "NJ" in RGGI_MEMBER_STATES_BY_YEAR[2020]
+        assert "VA" not in RGGI_MEMBER_STATES_BY_YEAR[2020]
+        assert "VA" in RGGI_MEMBER_STATES_BY_YEAR[2022]
+        dominion_idx = 5
+        for year, expected in [(2020, 0.0), (2021, 0.9893), (2022, 0.9894)]:
+            res = resolve_carbon_program(
+                ScenarioConfig(iso="PJM", mode="backcast"), year
+            )
+            assert res.membership[dominion_idx] == pytest.approx(expected)
+        for zone, shares in PJM_RGGI_ZONE_SHARE.items():
+            assert set(shares) == set(range(2020, 2026)), zone
+
 
 class TestNoProgram:
     def test_ercot_and_miso_have_no_program(self):
@@ -166,7 +186,15 @@ class TestPjmGatedAllowance:
         assert res.price_adder == 0.0
 
     @pytest.mark.parametrize(
-        "year,expected", [(2023, 14.87), (2024, 22.83), (2025, 24.35)]
+        "year,expected",
+        [
+            (2020, 7.07),
+            (2021, 10.44),
+            (2022, 14.84),
+            (2023, 14.87),
+            (2024, 22.83),
+            (2025, 24.35),
+        ],
     )
     def test_gate_arms_metric_converted_series(self, year, expected):
         res = resolve_carbon_program(
@@ -176,14 +204,47 @@ class TestPjmGatedAllowance:
         assert res.price_adder == pytest.approx(expected)
 
     def test_gate_off_series_year_outside_registry_stays_zero(self):
-        # 2021 is a solvable hindcast-seed year with a member-states row but
-        # no measured price registered — the gated lookup must return 0, not
-        # invent an anchor (rule 13: no guessing).
+        # 2019 has no registered PJM price (pjm-h22 landed 2020-2022 only) —
+        # the gated lookup must return 0, not invent an anchor (rule 13).
         res = resolve_carbon_program(
             ScenarioConfig(iso="PJM", mode="backcast", pjm_rggi_allowance_pricing=True),
-            2021,
+            2019,
         )
         assert res.price_adder == 0.0
+
+    def test_pjm_series_is_the_neiso_metric_series_and_recomputes_from_csv(self):
+        # pjm-h22: the PJM registry is the same RGGI auction means as NEISO's
+        # metric block, and each year re-derives from the committed auction CSV
+        # (four quarterly clearing prices, simple mean rounded to the cent,
+        # x 1.10231, rounded to the cent). Zero free parameters.
+        import csv
+
+        from market_sim.config import paths
+        from market_sim.config.fuel_trajectories import (
+            PJM_RGGI_ALLOWANCE_PRICE_PER_TONNE,
+            STATE_CARBON_PRICE_BY_ISO,
+        )
+
+        csv_path = (
+            paths.RAW_DIR
+            / "policy"
+            / "carbon-auction-results"
+            / "carbon-auction-results.csv"
+        )
+        by_year: dict[int, list[float]] = {}
+        with open(csv_path, newline="") as fh:
+            for row in csv.DictReader(fh):
+                if row["program"] == "RGGI":
+                    by_year.setdefault(int(row["year"]), []).append(
+                        float(row["clearing_price"])
+                    )
+        for year, value in PJM_RGGI_ALLOWANCE_PRICE_PER_TONNE.items():
+            assert value == STATE_CARBON_PRICE_BY_ISO["NEISO"][year]
+            prices = by_year[year]
+            assert len(prices) == 4
+            mean_short_ton = round(sum(prices) / 4, 2)
+            assert round(mean_short_ton * 1.10231, 2) == pytest.approx(value)
+        assert set(PJM_RGGI_ALLOWANCE_PRICE_PER_TONNE) == set(range(2020, 2026))
 
     def test_gate_is_backcast_only(self):
         # Forecast years stay on projected_price, which has no PJM anchor
