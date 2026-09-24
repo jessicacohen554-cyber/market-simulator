@@ -174,3 +174,19 @@ Owner's standing SOCO ruling: *"Is this a recommended keeper candidate? If so pl
 integrity improves but gates regress that may still be a keeper."* The run is recommended iff P1 holds,
 Lindsay Hill's 2024 output lands at or above its own measured output's neighbourhood (P2), and no scored
 status regresses. A move within the P3–P8 bands is not a reason either way (rule 1).
+
+---
+
+## ADDENDUM A — rebase onto `main` (written after the shards launched, BEFORE any leg was read)
+
+The shards are pinned to `1d7edc1b6ae5eaa3cfa83af7260e1d3560ff41e7`. For merge, this lane's commit was
+rebased onto `main` @ `ea0b5a8f` (now `4263d602`); the only conflict was matrix-row anchor digits,
+resolved by taking `main`'s file, re-inserting this lane's row and re-running `--fix-anchors`.
+G-DRIFT between the pinned SHA and the rebased head over the rule-29(b) paths: 8 files, all one lane's:
+
+| hunk | class | reason |
+|---|---|---|
+| miso-268 `coal_fuel_inventory_plant_grain` (scenarios field + cache key + TIER_TAGS; `data/coal_fuel_inventory.py`; `model/lp/{__init__,model,rows}.py` budget rows; `pipeline/spec.py`; `run_calibration.py` threading) | INERT | default-off `ScenarioConfig` flag, absent from the SOCO keeper's recipe; the LP rows are built only when a plant budget is passed |
+| `scripts/lib/forecast_parity_registry.py` | INERT | forecast-only |
+
+The legs solved at the pinned SHA are therefore valid for the rebased head. No prediction changes.
