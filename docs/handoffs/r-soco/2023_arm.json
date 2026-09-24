@@ -1,0 +1,135 @@
+{
+ "year": 2023,
+ "side": "arm",
+ "eia860_dir": "data/raw/eia-860/vintage_2023",
+ "config_flags": {
+  "eia860_vintage_tracks_solve_year": true,
+  "measured_chp_heat_rates": true,
+  "unit_outage_short_windows": true,
+  "unit_outage_short_windows_gas": true,
+  "unit_partial_outage_windows": true
+ },
+ "groups": {
+  "": {
+   "units": 141,
+   "mw": 9902.9,
+   "hr_capwt": 3.0368,
+   "class_table_mw": 1.9,
+   "avail_removed_twh": 11.3675
+  },
+  "CC_CHP": {
+   "units": 14,
+   "mw": 474.8,
+   "hr_capwt": 8.1156,
+   "class_table_mw": 0.0,
+   "avail_removed_twh": 1.9765
+  },
+  "CC_REGULAR": {
+   "units": 70,
+   "mw": 19291.7,
+   "hr_capwt": 7.0743,
+   "class_table_mw": 0.0,
+   "avail_removed_twh": 52.17
+  },
+  "COAL": {
+   "units": 28,
+   "mw": 11512.0,
+   "hr_capwt": 11.0891,
+   "class_table_mw": 0.0,
+   "avail_removed_twh": 44.0331
+  },
+  "CT_CHP": {
+   "units": 14,
+   "mw": 148.0,
+   "hr_capwt": 6.8446,
+   "class_table_mw": 0.0,
+   "avail_removed_twh": 0.1525
+  },
+  "CT_PEAKER": {
+   "units": 96,
+   "mw": 10823.5,
+   "hr_capwt": 11.3565,
+   "class_table_mw": 1043.7,
+   "avail_removed_twh": 14.2981
+  },
+  "ST_CHP": {
+   "units": 11,
+   "mw": 56.9,
+   "hr_capwt": 6.1878,
+   "class_table_mw": 0.0,
+   "avail_removed_twh": 0.048
+  },
+  "ST_GAS": {
+   "units": 28,
+   "mw": 4065.1,
+   "hr_capwt": 11.0452,
+   "class_table_mw": 0.0,
+   "avail_removed_twh": 15.4846
+  },
+  "hydro": {
+   "units": 42,
+   "mw": 3314.0,
+   "hr_capwt": 0.0,
+   "class_table_mw": 0.0,
+   "avail_removed_twh": 0.0
+  }
+ },
+ "class_table_units": [
+  [
+   "54290_BUG1",
+   "",
+   54290,
+   1.3,
+   13.5
+  ],
+  [
+   "63775_DG1",
+   "",
+   63775,
+   0.6,
+   13.5
+  ],
+  [
+   "CT_PEAKER_SOCO_GA_p7709_econlo",
+   "CT_PEAKER",
+   7709,
+   364.7,
+   10.5
+  ],
+  [
+   "CT_PEAKER_SOCO_GA_p7709_econhi",
+   "CT_PEAKER",
+   7709,
+   328.7,
+   10.5
+  ],
+  [
+   "CT_PEAKER_SOCO_GA_p7709_peak",
+   "CT_PEAKER",
+   7709,
+   52.2,
+   10.5
+  ],
+  [
+   "CT_PEAKER_SOCO_GA_p54538_econlo",
+   "CT_PEAKER",
+   54538,
+   145.8,
+   11.499999999999998
+  ],
+  [
+   "CT_PEAKER_SOCO_GA_p54538_econhi",
+   "CT_PEAKER",
+   54538,
+   131.4,
+   11.499999999999998
+  ],
+  [
+   "CT_PEAKER_SOCO_GA_p54538_peak",
+   "CT_PEAKER",
+   54538,
+   20.9,
+   11.499999999999998
+  ]
+ ]
+}
