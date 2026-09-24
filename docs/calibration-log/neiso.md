@@ -3539,3 +3539,11 @@ recovery SHAs in `.gitignore` and in
 **OPEN GATES CARRIED, UNCHANGED:** C3c (ledgered; frontier), the neiso-109 winter-oil
 root-cause issue, and the neiso-111 reserve-supply scoping finding. **Next shorthand:
 `neiso-113`.**
+
+## neiso-113 — 2026-09-24 — G-DRIFT + bench refresh (zero LP)
+
+G-DRIFT `fda9ece3..40f4ed7a`: every solve-path hunk INERT for NEISO; the only live change
+is benchmark-side (`ad42fe43`, EIA-923 dual-fuel oil re-attribution). NEISO bench parts
+regenerated (6 STALE → 0), keeper re-scored: **CALIBRATED unchanged, 0 status flips**,
+largest move C1 2022 ST_GAS actual 0.302 → 0.212 TWh. `docs/RESULT-neiso113-bench-refresh-2026-09-24.md`.
+**Next shorthand: `neiso-114`.**
