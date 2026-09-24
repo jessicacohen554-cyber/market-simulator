@@ -1,6 +1,6 @@
 # RESULT — SPP-78: SPP's measured CAMPD heat rates armed on all seven years
 
-**Recommendation: PROMOTE (rule 14), pending the owner's ruling.** All four pre-registered promotion
+**PROMOTED 2026-09-24 on the owner's ruling, verbatim: 'Promote'** (after 'Is it a keeper candidate?' was answered yes on rule-14 fidelity). New keeper `2026-09-24-spp78-hr-span`, rung `2026-09-24-spp78-hr-rung` stamped to it; `2026-09-22-hydro-5-spp-floor` / `-rung` pruned (rule 35). Originally: **Recommendation: PROMOTE (rule 14).** All four pre-registered promotion
 conditions hold. The span stays **CALIBRATED**. The rung stays **NOT-YET**: one rung row newly passes,
 one newly fails, and one moves further out of band as predicted.
 
@@ -176,3 +176,46 @@ meters replace class-default bin centres. Under rule 1 a gate regression is not 
 8. Re-key `calibration-complete.json`.
 9. Run the keeper auditor.
 10. Flip the three matrix cells O → K.
+
+## 9. Promotion executed (rule 35)
+
+1. Year union {2019–2025}, recorded in §8 before any deletion.
+2. Both composites registered: span **CALIBRATED**, rung **NOT-YET**. The attestation carries the SPP-78
+   provenance and an `spp78` block, and the 0.93 band is held.
+3. `keepers/SPP.json` points at `2026-09-24-spp78-hr-span`. The rung is stamped to it with
+   `stamp_touchpoint_holdout.py`.
+4. `audit_keepers --iso SPP` was run between promotion and prune. E1 passed; the only failures were the
+   two expected E13s for the outgoing runs.
+5. `prune_iso_runs.py --iso SPP --keep 2026-09-24-spp78-hr-rung --force-uncite` removed the hydro-5 floor
+   and rung, all three stores.
+6. `build_status --iso SPP` was re-run.
+7. The `calibration-complete.json` SPP entry was re-keyed.
+8. The three matrix cells went O → K and the SPP shard's keeper was restamped.
+9. After the prune, `audit_keepers --iso SPP` reported 0 failures.
+10. **Retrievability:** both keeper bundles (slim and hourly files, as the prior keeper committed) are on
+    `main` under `results/calibration/spp78_hr_{span,rung}/`. The new span/rung benchmark frames
+    `_shared/SPP/eia923-{3953c83ea5b8,8dd02ac893e4}` are committed with them.
+    - The per-year legs and controls remain gitignored. They are no longer needed now that the owner has
+      ruled (rule 31 trigger (i)), and they are not deleted.
+11. **Local parity gate:** `check_registry_payload_parity` reads RED locally, but only for those gitignored
+    leg and control dirs (the rule-31 correction's local-walk case); nothing else is flagged.
+
+## 10. F1 landed in parallel — what it means for this keeper
+
+`RESULT-f1-backcast-heatrate-vintage-2026-09-24.md` (PR #6572) merged to `main` during this lane.
+
+**What F1 did:**
+1. Repaired the vintage eGRID join. This is the defect §6.1 routed: year-matched eGRID in every ISO-year
+   2019–2025.
+2. Re-derived `campd_{cc,st,coal}_heat_rates_SPP.csv` as a pooled 2019–25 row plus per-year rows. The
+   loader now prefers the solve year's own row.
+3. Flipped `measured_{ct,coal,st,cc,chp}_heat_rates` and `eia860_vintage_tracks_solve_year` **default-on
+   for backcasts**.
+
+**Consequences:**
+- **This keeper was solved on the pre-F1 inputs at `1e6c50da`.** It used the 2023–25 pooled artifact
+  (sha256s in `_spp78_shard_check.py`), and its 2019–22 uncovered rows were on bin centres.
+- **Replaying it at post-F1 HEAD will not reproduce these numbers.** F1 says the same of every ISO's
+  keeper.
+- **The promotion's direction is unaffected.** It is exactly F1's new default, so the named successor is
+  a post-F1 re-solve of this recipe: seven per-year shards on defaults with no `--set`, about 15 min wall.
