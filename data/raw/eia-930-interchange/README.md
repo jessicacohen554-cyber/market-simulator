@@ -147,6 +147,26 @@ offsets of 5 h on 17,133 rows and 6 h on 9,161 — CDT/CST, i.e.
 Eastern; the BA reports on Central. Hence the `"SOCO": "America/Chicago"` key
 added to `fetch_eia930_hourly.BA_TIMEZONE` in the same commit.
 
+**2019-2022 merged 2026-09-24 (I-SOCO)** with the same producer and route:
+
+    python scripts/data/fetch_eia930_interchange.py --ba SOCO --source bulk \
+        --years 2019 2020 2021 2022 --merge
+
+575,687 rows now (2019-01-01 01:00 .. 2026-01-01 00:00). **Proof:** the same
+command for `--years 2023 2024 2025` into a scratch path reproduces the
+committed 236,736-row frame EXACTLY (`assert_frame_equal`, category set
+included), and after the merge every committed row is present unchanged.
+**A tenth DIBA, `AEC` (PowerSouth), appears 2019-01-01 .. 2021-09-01 and never
+after** — PowerSouth was folded into the SOCO BA on 2021-09-01, matching the
+EIA-860 vintages (its six plants are coded `AEC` in vintage 2019-2021 and
+`SOCO` from 2022). Sum of legs vs the BA `Total interchange`: 2020 / 2021 /
+2022 agree to 0.001 TWh (+4.772 / +6.429 / +3.923); **2019 does not** (+6.640
+vs -1.588) because EIA's 2019 Jan-Aug BA `Total interchange` is
+sign-inverted at source (`../eia-930-hourly/README.md`, SOCO 2019-2022).
+Note that `local_time` is hour-ENDING, so the merge adds the
+2023-01-01 00:00 row (2022's last hour) — a reader bucketing by
+`local_time.dt.year` without a -1 h shift would see 2023 move by that hour.
+
 **SOCO is a net EXPORTER in all three years — +10.155 / +10.832 / +13.038 TWh**
 (EIA sign convention: positive = SOCO exports to the DIBA), confirming the
 charter's measured 10.2 / 10.8 / 13.0. Per-counterparty net, TWh:
