@@ -1,0 +1,230 @@
+"""Write the miso-268 bundle's attestation — the per-coal-yard fuel budget (copied from gen_miso267_attestation.py).
+
+The composite needs a C6 attestation: ``replay_keeper --out-dir`` does not carry
+``calibration_attestation.json``, and an unattested C6 makes C3c FAIL outright
+instead of reclassifying to its ledgered CAVEAT under the rule-22 ``[R-C3C]``
+standing rule's guard (b). So this is generated AT the registration and never
+typed by hand.
+
+Pattern of ``gen_miso264_attestation.py``: the incumbent keeper's own committed
+attestation (``hydro5_miso_ror_span``) is carried, ``governance.attested_by`` is
+re-stamped with this run's narrative, and every ``price_tail`` / ``price_mean``
+exception magnitude is RE-MEASURED from this run's own scored records.
+
+RULE 21 ``[R-DOF]``: the ledger is carried VERBATIM with NO new entry, and is
+deliberately NOT rebuilt by ``scripts/build_dof_ledger.py``, which drops the
+hand-declared MISO entries. ``unit_outage_dispatched_bin_denominator`` is a
+registered boolean (miso-266) that replaces one reconstructed capacity with the
+capacity the LP already holds; it adds no free parameter. The rule-1 authorized
+price-tuning channel is asserted untouched: ``offer_curve_by_group`` must be
+byte-identical to the keeper's or this refuses to write.
+
+Usage::
+
+    PYTHONPATH=.:src python scripts/gen_miso267_attestation.py
+"""
+
+from __future__ import annotations
+
+import hashlib
+import json
+import subprocess
+import sys
+from pathlib import Path
+
+REPO = Path(__file__).resolve().parents[1]
+CAL = REPO / "results" / "calibration"
+BUNDLE = CAL / "miso268_yard_span"
+KEEPER = CAL / "miso267_dbd_span"
+RUN_ID = "2026-09-24-miso-268-coal-yard"
+KEEPER_ID = "2026-09-23-miso-268-dispatched-bin"
+FLAG = "coal_fuel_inventory_plant_grain"
+PRECOMMIT = "docs/PRECOMMIT-miso268-coal-yard-grain-2026-09-24.md"
+RESULT = "docs/RESULT-miso268-coal-yard-grain-2026-09-24.md"
+FINDING = "docs/FINDING-miso268-coal-yard-grain-and-the-open-objects-2026-09-24.md"
+PINNED = "49c898c7ef38d3bea8f2c06d4e51d0a1051649a7"
+#: The superseded keeper's bundle was pruned at this run's promotion (rule 35);
+#: its committed files are read back from the last main commit that carried them.
+KEEPER_REF = "376d21bfb6ec75a579061fcce23b1ddeeea56598"
+
+ATTESTED_BY = (
+    f"miso-268 (2026-09-24) -- keeper {KEEPER_ID}'s recipe replayed UNCHANGED via "
+    "scripts/replay_keeper.py, ONE YEAR PER SHARD (rule 36), with exactly one "
+    f"registered ScenarioConfig flag added: {FLAG}=true. Every leg verified "
+    "keeper-recipe-plus-one-flag (per-year overlay included), hydro-classifier "
+    "identical and per-yard rows built by scripts/probes/_miso268_shard_check.py; "
+    "the six legs re-checked by scripts/probes/_miso268_compose_span.py before "
+    "composition. Zero LP in the parent. "
+    f"Pre-registered in {PRECOMMIT} (pinned {PINNED[:8]}; shards relaunched at "
+    "bb31b95c after a shard-check-only fix, zero solve-path change); "
+    f"record {RESULT}. Promoted on the owner's ruling (2026-09-24): 'Is this a "
+    "recommended keeper candidate? If so plz promote. If structural integrity "
+    "improves but gates regress that may still be a keeper.'"
+)
+
+DISCLOSURES = (
+    "(a) Scored on the committed bench; registering this run left all 44 bench "
+    "parts sha256-identical.\n"
+    f"(b) Moves reported at full magnitude in {RESULT}; gates decide nothing "
+    "(PRECOMMIT section 5).\n"
+    "(c) NOT FIXED, routed: the C3a overnight price body, the coal trough surplus, "
+    f"C3b 2021 (February gas level) -- {FINDING}.\n"
+    "(d) INHERITED UNCHANGED: D-2 CT_PEAKER forced share over its 15 % cap every "
+    "year; C8 through rule 18's grounded route."
+)
+
+
+def _keeper_json(name: str) -> dict:
+    """Read one of the superseded keeper's committed files, from disk or git."""
+    path = KEEPER / name
+    if path.exists():
+        return json.loads(path.read_text())
+    got = subprocess.run(
+        ["git", "show", f"{KEEPER_REF}:{path.relative_to(REPO)}"],
+        capture_output=True,
+        text=True,
+        cwd=REPO,
+        check=False,
+    )
+    if got.returncode != 0:
+        raise SystemExit(f"{path} is not on disk and not at {KEEPER_REF[:8]}")
+    return json.loads(got.stdout)
+
+
+def _offer_sha(cfg: dict) -> str:
+    blob = json.dumps(
+        cfg["scenario_config"].get("offer_curve_by_group") or {}, sort_keys=True
+    )
+    return hashlib.sha256(blob.encode()).hexdigest()[:16]
+
+
+def _scored_criteria() -> dict:
+    # calibration_verdict exits 1 on NOT-YET, which is this bundle's state before
+    # its attestation exists; the JSON on stdout is complete either way.
+    proc = subprocess.run(
+        [
+            sys.executable,
+            str(REPO / "scripts/calibration_verdict.py"),
+            "--run-id",
+            RUN_ID,
+            "--json",
+        ],
+        capture_output=True,
+        text=True,
+        cwd=REPO,
+        check=False,
+    )
+    if not proc.stdout.strip():
+        raise SystemExit(
+            f"calibration_verdict produced no JSON:\n{proc.stderr[-2000:]}"
+        )
+    return json.loads(proc.stdout)["criteria"]
+
+
+def main() -> int:
+    """Write the attestation; refuse if the price-tuning channel moved."""
+    att = _keeper_json("calibration_attestation.json")
+    sha = _offer_sha(json.loads((BUNDLE / "run_config.json").read_text()))
+    ksha = _offer_sha(_keeper_json("run_config.json"))
+    if sha != ksha:
+        raise SystemExit(f"offer_curve_by_group {sha} != keeper {ksha}")
+    years = sorted(
+        int(p.stem.rsplit("_", 1)[1]) for p in BUNDLE.glob("run_config_*.json")
+    )
+    for y in years:
+        sc = json.loads((BUNDLE / f"run_config_{y}.json").read_text())[
+            "scenario_config"
+        ]
+        if sc.get(FLAG) is not True:
+            raise SystemExit(f"{y}: {FLAG} is not armed")
+
+    scored = _scored_criteria()
+    measured: dict[tuple[str, int], str] = {}
+    for crit in ("price_tail", "price_mean"):
+        for rec in scored.get(crit, {}).get("records", []):
+            if rec.get("key") or rec.get("year") is None:
+                continue
+            measured[(crit, int(rec["year"]))] = rec["magnitude"]
+    n_remeasured = 0
+    for exc in att["exceptions"]:
+        key = (str(exc.get("criterion")), int(exc.get("year", 0)))
+        if key in measured:
+            exc["magnitude"] = measured[key]
+            exc["magnitude_basis"] = (
+                "this run's own scored value (miso-268); the classification and "
+                "reason are the standing MISO adjudication carried forward"
+            )
+            n_remeasured += 1
+
+    fp = att["free_parameters"]
+    fp["carried_from"] = (
+        f"{KEEPER.relative_to(REPO)}/calibration_attestation.json -- carried VERBATIM "
+        f"with no new entry: {FLAG} is a registered boolean with zero free "
+        "parameters; it partitions an existing measured budget by coal yard (rules "
+        "21 [R-DOF] / 24 [R-REGISTRY])."
+    )
+    gov = att["governance"]
+    gov["attested_by_inherited"] = gov.get("attested_by")
+    gov["attested_by"] = ATTESTED_BY
+    apt = gov.get("authorized_price_tuning")
+    if isinstance(apt, dict):
+        apt["years_held"] = years
+        apt["years_held_basis"] = (
+            f"miso-268 (2026-09-23): this run's own solved years {years}. "
+            f"offer_curve_by_group SHA-256 {sha} is byte-identical to keeper "
+            f"{KEEPER_ID}'s; this lane passed only --set {FLAG}=true. No band, class "
+            "or value moved and nothing was swept (rule 1 condition (c))."
+        )
+    gov["mechanism_armed_inherited"] = gov.get("mechanism_armed")
+    gov["mechanism_armed"] = {
+        "field": FLAG,
+        "value": True,
+        "level": (
+            "NO LEVEL PARAMETER. One annual row per coal yard at its own Dec(Y-1) "
+            "stock + mean Y-2..Y-1 receipts"
+        ),
+        "free_parameters_added": 0,
+        "basis": (
+            "rule 14 [R-ACCURATE] / rule 1 [R-STRUCT]: the pooled budget let coal at "
+            "one yard fund burn at another; static yard-level excess on the keeper "
+            "2.64 / 11.76 / 19.01 / 2.33 / 0.49 / 9.38 TWh-equiv (2020-2025)"
+        ),
+        "one_mechanism": (
+            "rule 19 [R-ONE-MECH]: the plant grain of coal_fuel_inventory; the yard "
+            "budgets sum to the pooled annual identity; pooled monthly rows unchanged"
+        ),
+        "window": "the solve year (annual rows)",
+        "control": (
+            f"the committed keeper {KEEPER.relative_to(REPO)} (rule 29(b) form 4); "
+            f"G-DRIFT {PRECOMMIT} section 3 classified every solve-path hunk INERT"
+        ),
+        "prereg": f"{PRECOMMIT}, pushed at {PINNED} BEFORE any shard was launched",
+    }
+    att["disclosures"] = {"note": DISCLOSURES}
+    att["miso268"] = {
+        "result": RESULT,
+        "finding": FINDING,
+        "legs": {
+            "2020": "a177163310e16526768899ccf9a987247e01a6fd",
+            "2021": "ac4ea7d2000aee50521b9e1ae02b856cf15a5106",
+            "2022": "d1e73eec637ea6d2b2809fc8d68bd5a7bc9107c1",
+            "2023": "68e15a52335740c4f1cebcbef30a7418088067ac",
+            "2024": "1f04a2a95935e5bdcfdd77efa2b64de308378ce9",
+            "2025": "c2525bf29fb128e696dd3dbd150c7abef12353bf",
+        },
+    }
+    out = BUNDLE / "calibration_attestation.json"
+    out.write_text(json.dumps(att, indent=1) + "\n", encoding="utf-8")
+    print(f"wrote {out.relative_to(REPO)} years={years}")
+    print(
+        f"  exceptions carried: {len(att['exceptions'])}, re-measured: {n_remeasured}"
+    )
+    print(
+        f"  DOF ledger entries carried: {fp['n_entries']} "
+        f"({fp['n_residual']} residual-identified), 0 added"
+    )
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

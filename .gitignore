@@ -3426,3 +3426,8 @@ results/calibration/nwpp49_ror_20*/
 # pjm-h20 composites: build in progress; un-ignored in the registration commit
 results/calibration/pjm_h20_cardc_touchpoint/
 results/calibration/pjm_h20_cardc_span/
+# miso-268 per-year shard legs (kept on local disk, rule 31; composed into miso268_yard_span).
+# Leg SHAs (provenance, rule 33(d)): 2020 a177163310e16526768899ccf9a987247e01a6fd 2021 ac4ea7d2000aee50521b9e1ae02b856cf15a5106
+# 2022 d1e73eec637ea6d2b2809fc8d68bd5a7bc9107c1 2023 68e15a52335740c4f1cebcbef30a7418088067ac
+# 2024 1f04a2a95935e5bdcfdd77efa2b64de308378ce9 2025 c2525bf29fb128e696dd3dbd150c7abef12353bf
+results/calibration/miso268_yard_20[0-9][0-9]/
