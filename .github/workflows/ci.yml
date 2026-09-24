@@ -493,6 +493,11 @@ jobs:
           # main for every PR. The corpus is tracked, 18 files / 4.9 MiB, so
           # honoring the dependency costs nothing measurable against the
           # ~2.0 GiB materialized set.
+          #
+          # Y-30 (2026-09-24) added /shard-artifacts/ (36 tracked files,
+          # 7.1 MiB): test_cache_config_agreement's committed-corpus replay
+          # reads every tracked run_config.json, and the nyiso223 shard
+          # artifacts under that root raised FileNotFoundError outside the cone.
           sparse-checkout-cone-mode: false
           sparse-checkout: |
             /*
@@ -505,6 +510,7 @@ jobs:
             /docs/
             /frontend/
             /results/
+            /shard-artifacts/
             /scope2-lce-portfolio/
             /data/dictionary/
             /data/raw/*.csv

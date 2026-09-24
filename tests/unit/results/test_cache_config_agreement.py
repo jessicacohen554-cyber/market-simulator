@@ -329,6 +329,13 @@ class CommittedSharedKeyGroupsTest(unittest.TestCase):
         ).stdout.split()
         keyed = []
         for rel in paths:
+            # `git ls-files` lists the index, not the worktree: under a sparse
+            # checkout a tracked file outside the cone is absent on disk (the
+            # CI fast tier reddened on shard-artifacts/ this way, Y-30). A
+            # missing member is exactly a prune, which every assertion here is
+            # monotone under, so it is skipped rather than read.
+            if not (_ROOT / rel).is_file():
+                continue
             record = json.loads((_ROOT / rel).read_text())
             payload = record.get("scenario_config")
             if record.get("cache_key") and isinstance(payload, dict):
