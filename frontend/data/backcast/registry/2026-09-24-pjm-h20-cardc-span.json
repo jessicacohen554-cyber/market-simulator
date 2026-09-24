@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-24-pjm-h20-cardc-span",
+  "label": "pjm h20 cardc span",
+  "date": "2026-09-24",
+  "shorthand": "pjm-h20-cardc-span",
+  "definition": "pjm-h20 Card C pair, 2023",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-09-24-pjm-h20-cardc-span.js",
+  "bundle": "results/calibration/pjm_h20_cardc_span"
+}
