@@ -1,0 +1,48 @@
+{
+  "artifact": "campd-unit-outages-NEISO.csv",
+  "artifact_rows": 2974,
+  "derive_invocation": {
+    "fullstop_override_cf": 0.02,
+    "fullstop_override_days": 5,
+    "high_load_pctl": 0.85,
+    "iso": "NEISO",
+    "merit_order_guard": true,
+    "min_inmerit_hours": 24,
+    "min_outage_days": 5.0,
+    "mixed_gas_routing": false,
+    "no_inmerit_filter": false,
+    "partial_windows": false,
+    "per_unit_crosswalk": false,
+    "short_windows": false,
+    "years": [
+      2019,
+      2020,
+      2021,
+      2022,
+      2023,
+      2024,
+      2025
+    ]
+  },
+  "deriver": "scripts/data/derive_campd_unit_outages.py",
+  "observed_years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "sidecar_schema_version": 1,
+  "windows_by_start_year": {
+    "2019": 475,
+    "2020": 421,
+    "2021": 377,
+    "2022": 321,
+    "2023": 338,
+    "2024": 289,
+    "2025": 260
+  },
+  "r_neiso_note": "R-NEISO 2026-09-24: 2019-2025 rows are this invocation's output, row-for-row and in order (the committed file gained +18/+20/+4 windows in 2019/2020/2021 for Capitol District 50498, Pawtucket 54056 and West Springfield 1642, which joined the fleet/retiree set after the extract was derived \u2014 F2 FINDING \u00a73 item 5; 2022-2025 byte-identical). The file also carries 400 committed 2018 and 93 committed 2026 rows outside this invocation's years, left untouched. Rule 23: re-derivation cites the fleet/retiree membership data change."
+}

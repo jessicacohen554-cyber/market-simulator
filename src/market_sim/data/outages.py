@@ -1606,6 +1606,7 @@ def unit_outage_short_derate_factors(
     gas_scope: bool = False,
     mid_vintage_exit_carry: bool = False,
     lp_bin_capacity: tuple[tuple[tuple[int, str], float], ...] | None = None,
+    coal_scope: bool = True,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return short-window (< 5-day) unit-outage availability multipliers.
 
@@ -1630,15 +1631,24 @@ def unit_outage_short_derate_factors(
     counted twice (rule 19 ``[R-ONE-MECH]``). ``gas_scope`` widens a DISCARD; it
     stacks nothing on the coal scope. An ISO without the gas file gets the coal
     scope unchanged.
+
+    ``coal_scope`` (default ``True``, byte-inert) is ``False`` only when the gas
+    family is armed WITHOUT ``ScenarioConfig.unit_outage_short_windows`` (R-NEISO,
+    2026-09-24): the coal file is then not read and ``COAL`` is not in scope, so
+    an ISO whose coal sub-5-day family was rejected on its own evidence (NEISO,
+    neiso-69) can carry the disjoint gas family alone. The two families were
+    always disjoint by plant group; this only stops the gas one being reachable
+    solely through the coal gate.
     """
     iso = (iso or "ERCOT").upper()
     csv_path = unit_outage_short_csv_for_iso(iso)
+    have_coal = coal_scope and csv_path.exists()
     gas_path = unit_outage_short_gas_csv_for_iso(iso) if gas_scope else None
     have_gas = gas_path is not None and gas_path.exists()
-    if not csv_path.exists() and not have_gas:
+    if not have_coal and not have_gas:
         return {}
     frames: list[pd.DataFrame] = []
-    if csv_path.exists():
+    if have_coal:
         frames.append(pd.read_csv(csv_path))
     if have_gas:
         frames.append(pd.read_csv(gas_path))
@@ -1649,7 +1659,9 @@ def unit_outage_short_derate_factors(
     basis = (
         _extract_basis_index(df) if (extract_basis_share and iso != "ERCOT") else None
     )
-    scopes = {"COAL"} | (set(_SHORT_GAS_GROUPS) if gas_scope else set())
+    scopes = ({"COAL"} if coal_scope else set()) | (
+        set(_SHORT_GAS_GROUPS) if gas_scope else set()
+    )
     df = df[
         (df["duration_days"] < UNIT_OUTAGE_MIN_DAYS) & (df["plant_group"].isin(scopes))
     ]

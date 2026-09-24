@@ -1,0 +1,1566 @@
+{
+ "2019": {
+  "A": {
+   "eia860_dir": "eia-860",
+   "thermal_mw": 23488.5,
+   "class_table_mw": 188.4,
+   "bins_mw": 193.4,
+   "bins_plants": {
+    "57068": 187.6,
+    "57602": 2.5,
+    "64378": 1.5,
+    "10553": 1.0,
+    "68586": 0.8
+   },
+   "unavail_mw": 8128.9,
+   "by_group": {
+    "": {
+     "mw": 5823.4,
+     "hr_mw_wt": 13.417,
+     "unavail_mw": 713.2,
+     "class_table_mw": 188.4
+    },
+    "CC_CHP": {
+     "mw": 544.2,
+     "hr_mw_wt": 9.839,
+     "unavail_mw": 36.6,
+     "class_table_mw": 0.0
+    },
+    "CC_REGULAR": {
+     "mw": 15450.0,
+     "hr_mw_wt": 8.693,
+     "unavail_mw": 6958.2,
+     "class_table_mw": 0.0
+    },
+    "COAL": {
+     "mw": 108.0,
+     "hr_mw_wt": 14.204,
+     "unavail_mw": 9.6,
+     "class_table_mw": 0.0
+    },
+    "CT_CHP": {
+     "mw": 72.1,
+     "hr_mw_wt": 6.6894,
+     "unavail_mw": 20.9,
+     "class_table_mw": 0.0
+    },
+    "CT_PEAKER": {
+     "mw": 1279.5,
+     "hr_mw_wt": 12.6571,
+     "unavail_mw": 349.2,
+     "class_table_mw": 0.0
+    },
+    "ST_CHP": {
+     "mw": 32.5,
+     "hr_mw_wt": 6.1694,
+     "unavail_mw": 3.6,
+     "class_table_mw": 0.0
+    },
+    "ST_GAS": {
+     "mw": 178.9,
+     "hr_mw_wt": 10.265,
+     "unavail_mw": 37.7,
+     "class_table_mw": 0.0
+    }
+   },
+   "class_table_plants": {
+    "57068": [
+     187.6,
+     ""
+    ],
+    "68586": [
+     0.8,
+     ""
+    ]
+   }
+  },
+  "B": {
+   "eia860_dir": "vintage_2019",
+   "thermal_mw": 25325.6,
+   "class_table_mw": 194.0,
+   "bins_mw": 207.7,
+   "bins_plants": {
+    "57068": 194.0,
+    "57689": 6.0,
+    "1615": 5.7,
+    "1468": 2.0
+   },
+   "unavail_mw": 8777.4,
+   "by_group": {
+    "": {
+     "mw": 5430.2,
+     "hr_mw_wt": 12.5294,
+     "unavail_mw": 555.3,
+     "class_table_mw": 194.0
+    },
+    "CC_CHP": {
+     "mw": 562.9,
+     "hr_mw_wt": 10.0708,
+     "unavail_mw": 59.3,
+     "class_table_mw": 0.0
+    },
+    "CC_REGULAR": {
+     "mw": 15454.4,
+     "hr_mw_wt": 8.8993,
+     "unavail_mw": 7390.5,
+     "class_table_mw": 0.0
+    },
+    "COAL": {
+     "mw": 917.3,
+     "hr_mw_wt": 10.8505,
+     "unavail_mw": 82.2,
+     "class_table_mw": 0.0
+    },
+    "CT_CHP": {
+     "mw": 158.9,
+     "hr_mw_wt": 5.5933,
+     "unavail_mw": 20.0,
+     "class_table_mw": 0.0
+    },
+    "CT_PEAKER": {
+     "mw": 1482.0,
+     "hr_mw_wt": 11.5366,
+     "unavail_mw": 394.2,
+     "class_table_mw": 0.0
+    },
+    "ST_CHP": {
+     "mw": 24.6,
+     "hr_mw_wt": 5.9583,
+     "unavail_mw": 2.7,
+     "class_table_mw": 0.0
+    },
+    "ST_GAS": {
+     "mw": 1295.4,
+     "hr_mw_wt": 14.0831,
+     "unavail_mw": 273.2,
+     "class_table_mw": 0.0
+    }
+   },
+   "class_table_plants": {
+    "57068": [
+     194.0,
+     ""
+    ]
+   }
+  },
+  "B-nosg": {
+   "eia860_dir": "vintage_2019",
+   "thermal_mw": 25325.6,
+   "class_table_mw": 194.0,
+   "bins_mw": 207.7,
+   "bins_plants": {
+    "57068": 194.0,
+    "57689": 6.0,
+    "1615": 5.7,
+    "1468": 2.0
+   },
+   "unavail_mw": 8470.2,
+   "by_group": {
+    "": {
+     "mw": 5430.2,
+     "hr_mw_wt": 12.5294,
+     "unavail_mw": 555.3,
+     "class_table_mw": 194.0
+    },
+    "CC_CHP": {
+     "mw": 562.9,
+     "hr_mw_wt": 10.0708,
+     "unavail_mw": 54.9,
+     "class_table_mw": 0.0
+    },
+    "CC_REGULAR": {
+     "mw": 15454.4,
+     "hr_mw_wt": 8.8993,
+     "unavail_mw": 7087.7,
+     "class_table_mw": 0.0
+    },
+    "COAL": {
+     "mw": 917.3,
+     "hr_mw_wt": 10.8505,
+     "unavail_mw": 82.2,
+     "class_table_mw": 0.0
+    },
+    "CT_CHP": {
+     "mw": 158.9,
+     "hr_mw_wt": 5.5933,
+     "unavail_mw": 20.0,
+     "class_table_mw": 0.0
+    },
+    "CT_PEAKER": {
+     "mw": 1482.0,
+     "hr_mw_wt": 11.5366,
+     "unavail_mw": 394.2,
+     "class_table_mw": 0.0
+    },
+    "ST_CHP": {
+     "mw": 24.6,
+     "hr_mw_wt": 5.9583,
+     "unavail_mw": 2.7,
+     "class_table_mw": 0.0
+    },
+    "ST_GAS": {
+     "mw": 1295.4,
+     "hr_mw_wt": 14.0831,
+     "unavail_mw": 273.2,
+     "class_table_mw": 0.0
+    }
+   },
+   "class_table_plants": {
+    "57068": [
+     194.0,
+     ""
+    ]
+   }
+  }
+ },
+ "2020": {
+  "A": {
+   "eia860_dir": "eia-860",
+   "thermal_mw": 23488.5,
+   "class_table_mw": 188.4,
+   "bins_mw": 193.4,
+   "bins_plants": {
+    "57068": 187.6,
+    "57602": 2.5,
+    "64378": 1.5,
+    "10553": 1.0,
+    "68586": 0.8
+   },
+   "unavail_mw": 7479.0,
+   "by_group": {
+    "": {
+     "mw": 5823.4,
+     "hr_mw_wt": 13.417,
+     "unavail_mw": 584.1,
+     "class_table_mw": 188.4
+    },
+    "CC_CHP": {
+     "mw": 544.2,
+     "hr_mw_wt": 9.9193,
+     "unavail_mw": 63.5,
+     "class_table_mw": 0.0
+    },
+    "CC_REGULAR": {
+     "mw": 15450.0,
+     "hr_mw_wt": 8.693,
+     "unavail_mw": 6457.9,
+     "class_table_mw": 0.0
+    },
+    "COAL": {
+     "mw": 108.0,
+     "hr_mw_wt": 14.204,
+     "unavail_mw": 9.7,
+     "class_table_mw": 0.0
+    },
+    "CT_CHP": {
+     "mw": 71.5,
+     "hr_mw_wt": 6.6957,
+     "unavail_mw": 20.8,
+     "class_table_mw": 0.0
+    },
+    "CT_PEAKER": {
+     "mw": 1280.0,
+     "hr_mw_wt": 12.7372,
+     "unavail_mw": 301.2,
+     "class_table_mw": 0.0
+    },
+    "ST_CHP": {
+     "mw": 32.5,
+     "hr_mw_wt": 6.1694,
+     "unavail_mw": 3.6,
+     "class_table_mw": 0.0
+    },
+    "ST_GAS": {
+     "mw": 178.9,
+     "hr_mw_wt": 10.265,
+     "unavail_mw": 38.0,
+     "class_table_mw": 0.0
+    }
+   },
+   "class_table_plants": {
+    "57068": [
+     187.6,
+     ""
+    ],
+    "68586": [
+     0.8,
+     ""
+    ]
+   }
+  },
+  "B": {
+   "eia860_dir": "vintage_2020",
+   "thermal_mw": 25145.1,
+   "class_table_mw": 194.0,
+   "bins_mw": 203.3,
+   "bins_plants": {
+    "57068": 194.0,
+    "1615": 5.7,
+    "10029": 3.6
+   },
+   "unavail_mw": 8226.2,
+   "by_group": {
+    "": {
+     "mw": 5025.0,
+     "hr_mw_wt": 17.0409,
+     "unavail_mw": 507.6,
+     "class_table_mw": 194.0
+    },
+    "CC_CHP": {
+     "mw": 562.9,
+     "hr_mw_wt": 10.1286,
+     "unavail_mw": 81.4,
+     "class_table_mw": 0.0
+    },
+    "CC_REGULAR": {
+     "mw": 15725.5,
+     "hr_mw_wt": 8.9076,
+     "unavail_mw": 7001.1,
+     "class_table_mw": 0.0
+    },
+    "COAL": {
+     "mw": 791.5,
+     "hr_mw_wt": 10.755,
+     "unavail_mw": 71.5,
+     "class_table_mw": 0.0
+    },
+    "CT_CHP": {
+     "mw": 152.4,
+     "hr_mw_wt": 5.9575,
+     "unavail_mw": 19.0,
+     "class_table_mw": 0.0
+    },
+    "CT_PEAKER": {
+     "mw": 1482.3,
+     "hr_mw_wt": 15.0272,
+     "unavail_mw": 234.4,
+     "class_table_mw": 0.0
+    },
+    "ST_CHP": {
+     "mw": 23.1,
+     "hr_mw_wt": 6.1264,
+     "unavail_mw": 2.6,
+     "class_table_mw": 0.0
+    },
+    "ST_GAS": {
+     "mw": 1382.4,
+     "hr_mw_wt": 13.8326,
+     "unavail_mw": 308.6,
+     "class_table_mw": 0.0
+    }
+   },
+   "class_table_plants": {
+    "57068": [
+     194.0,
+     ""
+    ]
+   }
+  },
+  "B-nosg": {
+   "eia860_dir": "vintage_2020",
+   "thermal_mw": 25145.1,
+   "class_table_mw": 194.0,
+   "bins_mw": 203.3,
+   "bins_plants": {
+    "57068": 194.0,
+    "1615": 5.7,
+    "10029": 3.6
+   },
+   "unavail_mw": 7965.5,
+   "by_group": {
+    "": {
+     "mw": 5025.0,
+     "hr_mw_wt": 17.0409,
+     "unavail_mw": 507.6,
+     "class_table_mw": 194.0
+    },
+    "CC_CHP": {
+     "mw": 562.9,
+     "hr_mw_wt": 10.1286,
+     "unavail_mw": 81.4,
+     "class_table_mw": 0.0
+    },
+    "CC_REGULAR": {
+     "mw": 15725.5,
+     "hr_mw_wt": 8.9076,
+     "unavail_mw": 6740.3,
+     "class_table_mw": 0.0
+    },
+    "COAL": {
+     "mw": 791.5,
+     "hr_mw_wt": 10.755,
+     "unavail_mw": 71.5,
+     "class_table_mw": 0.0
+    },
+    "CT_CHP": {
+     "mw": 152.4,
+     "hr_mw_wt": 5.9575,
+     "unavail_mw": 19.0,
+     "class_table_mw": 0.0
+    },
+    "CT_PEAKER": {
+     "mw": 1482.3,
+     "hr_mw_wt": 15.0272,
+     "unavail_mw": 234.4,
+     "class_table_mw": 0.0
+    },
+    "ST_CHP": {
+     "mw": 23.1,
+     "hr_mw_wt": 6.1264,
+     "unavail_mw": 2.6,
+     "class_table_mw": 0.0
+    },
+    "ST_GAS": {
+     "mw": 1382.4,
+     "hr_mw_wt": 13.8326,
+     "unavail_mw": 308.6,
+     "class_table_mw": 0.0
+    }
+   },
+   "class_table_plants": {
+    "57068": [
+     194.0,
+     ""
+    ]
+   }
+  }
+ },
+ "2021": {
+  "A": {
+   "eia860_dir": "eia-860",
+   "thermal_mw": 23505.0,
+   "class_table_mw": 188.4,
+   "bins_mw": 193.4,
+   "bins_plants": {
+    "57068": 187.6,
+    "57602": 2.5,
+    "64378": 1.5,
+    "10553": 1.0,
+    "68586": 0.8
+   },
+   "unavail_mw": 7320.4,
+   "by_group": {
+    "": {
+     "mw": 5823.4,
+     "hr_mw_wt": 13.417,
+     "unavail_mw": 821.3,
+     "class_table_mw": 188.4
+    },
+    "CC_CHP": {
+     "mw": 490.2,
+     "hr_mw_wt": 9.9114,
+     "unavail_mw": 38.1,
+     "class_table_mw": 0.0
+    },
+    "CC_REGULAR": {
+     "mw": 15520.5,
+     "hr_mw_wt": 8.7054,
+     "unavail_mw": 6100.5,
+     "class_table_mw": 0.0
+    },
+    "COAL": {
+     "mw": 108.0,
+     "hr_mw_wt": 14.204,
+     "unavail_mw": 9.6,
+     "class_table_mw": 0.0
+    },
+    "CT_CHP": {
+     "mw": 71.5,
+     "hr_mw_wt": 6.6001,
+     "unavail_mw": 12.5,
+     "class_table_mw": 0.0
+    },
+    "CT_PEAKER": {
+     "mw": 1280.0,
+     "hr_mw_wt": 12.6944,
+     "unavail_mw": 297.0,
+     "class_table_mw": 0.0
+    },
+    "ST_CHP": {
+     "mw": 32.5,
+     "hr_mw_wt": 6.1694,
+     "unavail_mw": 3.6,
+     "class_table_mw": 0.0
+    },
+    "ST_GAS": {
+     "mw": 178.9,
+     "hr_mw_wt": 10.265,
+     "unavail_mw": 37.9,
+     "class_table_mw": 0.0
+    }
+   },
+   "class_table_plants": {
+    "57068": [
+     187.6,
+     ""
+    ],
+    "68586": [
+     0.8,
+     ""
+    ]
+   }
+  },
+  "B": {
+   "eia860_dir": "vintage_2021",
+   "thermal_mw": 25064.9,
+   "class_table_mw": 187.6,
+   "bins_mw": 792.4,
+   "bins_plants": {
+    "1588": 521.5,
+    "57068": 187.6,
+    "1682": 26.0,
+    "568": 16.6,
+    "1642": 13.8,
+    "54907": 6.6,
+    "10883": 6.0,
+    "1615": 5.7,
+    "6519": 4.0,
+    "10029": 3.6,
+    "10553": 1.0
+   },
+   "unavail_mw": 8321.6,
+   "by_group": {
+    "": {
+     "mw": 5009.8,
+     "hr_mw_wt": 15.8211,
+     "unavail_mw": 770.0,
+     "class_table_mw": 187.6
+    },
+    "CC_CHP": {
+     "mw": 490.2,
+     "hr_mw_wt": 9.5847,
+     "unavail_mw": 42.8,
+     "class_table_mw": 0.0
+    },
+    "CC_REGULAR": {
+     "mw": 15799.7,
+     "hr_mw_wt": 8.8724,
+     "unavail_mw": 6711.1,
+     "class_table_mw": 0.0
+    },
+    "COAL": {
+     "mw": 696.1,
+     "hr_mw_wt": 10.3076,
+     "unavail_mw": 181.9,
+     "class_table_mw": 0.0
+    },
+    "CT_CHP": {
+     "mw": 164.7,
+     "hr_mw_wt": 6.271,
+     "unavail_mw": 29.2,
+     "class_table_mw": 0.0
+    },
+    "CT_PEAKER": {
+     "mw": 1490.9,
+     "hr_mw_wt": 13.7446,
+     "unavail_mw": 240.9,
+     "class_table_mw": 0.0
+    },
+    "ST_CHP": {
+     "mw": 31.1,
+     "hr_mw_wt": 5.9734,
+     "unavail_mw": 3.5,
+     "class_table_mw": 0.0
+    },
+    "ST_GAS": {
+     "mw": 1382.4,
+     "hr_mw_wt": 9.8798,
+     "unavail_mw": 342.2,
+     "class_table_mw": 0.0
+    }
+   },
+   "class_table_plants": {
+    "57068": [
+     187.6,
+     ""
+    ]
+   }
+  },
+  "B-nosg": {
+   "eia860_dir": "vintage_2021",
+   "thermal_mw": 25064.9,
+   "class_table_mw": 187.6,
+   "bins_mw": 792.4,
+   "bins_plants": {
+    "1588": 521.5,
+    "57068": 187.6,
+    "1682": 26.0,
+    "568": 16.6,
+    "1642": 13.8,
+    "54907": 6.6,
+    "10883": 6.0,
+    "1615": 5.7,
+    "6519": 4.0,
+    "10029": 3.6,
+    "10553": 1.0
+   },
+   "unavail_mw": 7973.8,
+   "by_group": {
+    "": {
+     "mw": 5009.8,
+     "hr_mw_wt": 15.8211,
+     "unavail_mw": 770.0,
+     "class_table_mw": 187.6
+    },
+    "CC_CHP": {
+     "mw": 490.2,
+     "hr_mw_wt": 9.5847,
+     "unavail_mw": 38.1,
+     "class_table_mw": 0.0
+    },
+    "CC_REGULAR": {
+     "mw": 15799.7,
+     "hr_mw_wt": 8.8724,
+     "unavail_mw": 6368.0,
+     "class_table_mw": 0.0
+    },
+    "COAL": {
+     "mw": 696.1,
+     "hr_mw_wt": 10.3076,
+     "unavail_mw": 181.9,
+     "class_table_mw": 0.0
+    },
+    "CT_CHP": {
+     "mw": 164.7,
+     "hr_mw_wt": 6.271,
+     "unavail_mw": 29.2,
+     "class_table_mw": 0.0
+    },
+    "CT_PEAKER": {
+     "mw": 1490.9,
+     "hr_mw_wt": 13.7446,
+     "unavail_mw": 240.9,
+     "class_table_mw": 0.0
+    },
+    "ST_CHP": {
+     "mw": 31.1,
+     "hr_mw_wt": 5.9734,
+     "unavail_mw": 3.5,
+     "class_table_mw": 0.0
+    },
+    "ST_GAS": {
+     "mw": 1382.4,
+     "hr_mw_wt": 9.8798,
+     "unavail_mw": 342.2,
+     "class_table_mw": 0.0
+    }
+   },
+   "class_table_plants": {
+    "57068": [
+     187.6,
+     ""
+    ]
+   }
+  }
+ },
+ "2022": {
+  "A": {
+   "eia860_dir": "eia-860",
+   "thermal_mw": 23513.1,
+   "class_table_mw": 188.4,
+   "bins_mw": 195.3,
+   "bins_plants": {
+    "57068": 187.6,
+    "57602": 2.5,
+    "10491": 1.9,
+    "64378": 1.5,
+    "10553": 1.0,
+    "68586": 0.8
+   },
+   "unavail_mw": 7478.3,
+   "by_group": {
+    "": {
+     "mw": 5823.4,
+     "hr_mw_wt": 13.417,
+     "unavail_mw": 1076.9,
+     "class_table_mw": 188.4
+    },
+    "CC_CHP": {
+     "mw": 490.2,
+     "hr_mw_wt": 9.7743,
+     "unavail_mw": 46.7,
+     "class_table_mw": 0.0
+    },
+    "CC_REGULAR": {
+     "mw": 15520.5,
+     "hr_mw_wt": 8.7054,
+     "unavail_mw": 5931.3,
+     "class_table_mw": 0.0
+    },
+    "COAL": {
+     "mw": 108.0,
+     "hr_mw_wt": 14.204,
+     "unavail_mw": 9.6,
+     "class_table_mw": 0.0
+    },
+    "CT_CHP": {
+     "mw": 71.5,
+     "hr_mw_wt": 6.5806,
+     "unavail_mw": 9.2,
+     "class_table_mw": 0.0
+    },
+    "CT_PEAKER": {
+     "mw": 1276.9,
+     "hr_mw_wt": 12.7485,
+     "unavail_mw": 314.1,
+     "class_table_mw": 0.0
+    },
+    "ST_CHP": {
+     "mw": 31.2,
+     "hr_mw_wt": 5.9627,
+     "unavail_mw": 3.5,
+     "class_table_mw": 0.0
+    },
+    "ST_GAS": {
+     "mw": 191.4,
+     "hr_mw_wt": 10.155,
+     "unavail_mw": 86.9,
+     "class_table_mw": 0.0
+    }
+   },
+   "class_table_plants": {
+    "57068": [
+     187.6,
+     ""
+    ],
+    "68586": [
+     0.8,
+     ""
+    ]
+   }
+  },
+  "B": {
+   "eia860_dir": "vintage_2022",
+   "thermal_mw": 24896.2,
+   "class_table_mw": 187.6,
+   "bins_mw": 829.2,
+   "bins_plants": {
+    "1588": 521.5,
+    "57068": 187.6,
+    "1682": 26.0,
+    "1642": 17.1,
+    "568": 16.6,
+    "1643": 16.5,
+    "1631": 16.1,
+    "54907": 6.6,
+    "10883": 6.0,
+    "1615": 5.7,
+    "6519": 4.0,
+    "10029": 3.6,
+    "10491": 1.9
+   },
+   "unavail_mw": 8324.1,
+   "by_group": {
+    "": {
+     "mw": 5840.7,
+     "hr_mw_wt": 13.8649,
+     "unavail_mw": 1128.4,
+     "class_table_mw": 187.6
+    },
+    "CC_CHP": {
+     "mw": 490.2,
+     "hr_mw_wt": 9.6701,
+     "unavail_mw": 49.0,
+     "class_table_mw": 0.0
+    },
+    "CC_REGULAR": {
+     "mw": 15675.2,
+     "hr_mw_wt": 8.8609,
+     "unavail_mw": 6401.1,
+     "class_table_mw": 0.0
+    },
+    "COAL": {
+     "mw": 696.1,
+     "hr_mw_wt": 10.4445,
+     "unavail_mw": 296.6,
+     "class_table_mw": 0.0
+    },
+    "CT_CHP": {
+     "mw": 163.0,
+     "hr_mw_wt": 5.8244,
+     "unavail_mw": 26.8,
+     "class_table_mw": 0.0
+    },
+    "CT_PEAKER": {
+     "mw": 1529.6,
+     "hr_mw_wt": 12.7993,
+     "unavail_mw": 287.3,
+     "class_table_mw": 0.0
+    },
+    "ST_CHP": {
+     "mw": 31.1,
+     "hr_mw_wt": 5.9673,
+     "unavail_mw": 3.5,
+     "class_table_mw": 0.0
+    },
+    "ST_GAS": {
+     "mw": 470.3,
+     "hr_mw_wt": 10.1072,
+     "unavail_mw": 131.4,
+     "class_table_mw": 0.0
+    }
+   },
+   "class_table_plants": {
+    "57068": [
+     187.6,
+     ""
+    ]
+   }
+  },
+  "B-nosg": {
+   "eia860_dir": "vintage_2022",
+   "thermal_mw": 24896.2,
+   "class_table_mw": 187.6,
+   "bins_mw": 829.2,
+   "bins_plants": {
+    "1588": 521.5,
+    "57068": 187.6,
+    "1682": 26.0,
+    "1642": 17.1,
+    "568": 16.6,
+    "1643": 16.5,
+    "1631": 16.1,
+    "54907": 6.6,
+    "10883": 6.0,
+    "1615": 5.7,
+    "6519": 4.0,
+    "10029": 3.6,
+    "10491": 1.9
+   },
+   "unavail_mw": 7991.1,
+   "by_group": {
+    "": {
+     "mw": 5840.7,
+     "hr_mw_wt": 13.8649,
+     "unavail_mw": 1128.4,
+     "class_table_mw": 187.6
+    },
+    "CC_CHP": {
+     "mw": 490.2,
+     "hr_mw_wt": 9.6701,
+     "unavail_mw": 46.8,
+     "class_table_mw": 0.0
+    },
+    "CC_REGULAR": {
+     "mw": 15675.2,
+     "hr_mw_wt": 8.8609,
+     "unavail_mw": 6072.8,
+     "class_table_mw": 0.0
+    },
+    "COAL": {
+     "mw": 696.1,
+     "hr_mw_wt": 10.4445,
+     "unavail_mw": 296.6,
+     "class_table_mw": 0.0
+    },
+    "CT_CHP": {
+     "mw": 163.0,
+     "hr_mw_wt": 5.8244,
+     "unavail_mw": 26.8,
+     "class_table_mw": 0.0
+    },
+    "CT_PEAKER": {
+     "mw": 1529.6,
+     "hr_mw_wt": 12.7993,
+     "unavail_mw": 287.3,
+     "class_table_mw": 0.0
+    },
+    "ST_CHP": {
+     "mw": 31.1,
+     "hr_mw_wt": 5.9673,
+     "unavail_mw": 3.5,
+     "class_table_mw": 0.0
+    },
+    "ST_GAS": {
+     "mw": 470.3,
+     "hr_mw_wt": 10.1072,
+     "unavail_mw": 128.8,
+     "class_table_mw": 0.0
+    }
+   },
+   "class_table_plants": {
+    "57068": [
+     187.6,
+     ""
+    ]
+   }
+  }
+ },
+ "2023": {
+  "A": {
+   "eia860_dir": "eia-860",
+   "thermal_mw": 23682.1,
+   "class_table_mw": 188.4,
+   "bins_mw": 195.3,
+   "bins_plants": {
+    "57068": 187.6,
+    "57602": 2.5,
+    "10491": 1.9,
+    "64378": 1.5,
+    "10553": 1.0,
+    "68586": 0.8
+   },
+   "unavail_mw": 8214.4,
+   "by_group": {
+    "": {
+     "mw": 5823.4,
+     "hr_mw_wt": 13.417,
+     "unavail_mw": 1174.5,
+     "class_table_mw": 188.4
+    },
+    "CC_CHP": {
+     "mw": 320.6,
+     "hr_mw_wt": 9.933,
+     "unavail_mw": 23.8,
+     "class_table_mw": 0.0
+    },
+    "CC_REGULAR": {
+     "mw": 15781.4,
+     "hr_mw_wt": 8.7094,
+     "unavail_mw": 6474.7,
+     "class_table_mw": 0.0
+    },
+    "COAL": {
+     "mw": 108.0,
+     "hr_mw_wt": 14.204,
+     "unavail_mw": 9.5,
+     "class_table_mw": 0.0
+    },
+    "CT_CHP": {
+     "mw": 71.5,
+     "hr_mw_wt": 6.6304,
+     "unavail_mw": 9.3,
+     "class_table_mw": 0.0
+    },
+    "CT_PEAKER": {
+     "mw": 1276.9,
+     "hr_mw_wt": 12.7787,
+     "unavail_mw": 330.1,
+     "class_table_mw": 0.0
+    },
+    "ST_CHP": {
+     "mw": 22.6,
+     "hr_mw_wt": 6.0101,
+     "unavail_mw": 3.3,
+     "class_table_mw": 0.0
+    },
+    "ST_GAS": {
+     "mw": 277.7,
+     "hr_mw_wt": 8.3734,
+     "unavail_mw": 189.1,
+     "class_table_mw": 0.0
+    }
+   },
+   "class_table_plants": {
+    "57068": [
+     187.6,
+     ""
+    ],
+    "68586": [
+     0.8,
+     ""
+    ]
+   }
+  },
+  "B": {
+   "eia860_dir": "vintage_2023",
+   "thermal_mw": 23740.2,
+   "class_table_mw": 187.6,
+   "bins_mw": 189.1,
+   "bins_plants": {
+    "57068": 187.6,
+    "64378": 1.5
+   },
+   "unavail_mw": 7588.5,
+   "by_group": {
+    "": {
+     "mw": 5665.2,
+     "hr_mw_wt": 15.5288,
+     "unavail_mw": 641.9,
+     "class_table_mw": 187.6
+    },
+    "CC_CHP": {
+     "mw": 320.6,
+     "hr_mw_wt": 9.933,
+     "unavail_mw": 25.4,
+     "class_table_mw": 0.0
+    },
+    "CC_REGULAR": {
+     "mw": 15581.1,
+     "hr_mw_wt": 8.8415,
+     "unavail_mw": 6529.1,
+     "class_table_mw": 0.0
+    },
+    "COAL": {
+     "mw": 438.5,
+     "hr_mw_wt": 10.7024,
+     "unavail_mw": 38.6,
+     "class_table_mw": 0.0
+    },
+    "CT_CHP": {
+     "mw": 71.5,
+     "hr_mw_wt": 6.6253,
+     "unavail_mw": 9.3,
+     "class_table_mw": 0.0
+    },
+    "CT_PEAKER": {
+     "mw": 1121.4,
+     "hr_mw_wt": 13.1484,
+     "unavail_mw": 183.1,
+     "class_table_mw": 0.0
+    },
+    "ST_CHP": {
+     "mw": 21.6,
+     "hr_mw_wt": 5.9774,
+     "unavail_mw": 2.4,
+     "class_table_mw": 0.0
+    },
+    "ST_GAS": {
+     "mw": 520.3,
+     "hr_mw_wt": 7.9521,
+     "unavail_mw": 158.8,
+     "class_table_mw": 0.0
+    }
+   },
+   "class_table_plants": {
+    "57068": [
+     187.6,
+     ""
+    ]
+   }
+  },
+  "B-nosg": {
+   "eia860_dir": "vintage_2023",
+   "thermal_mw": 23740.2,
+   "class_table_mw": 187.6,
+   "bins_mw": 189.1,
+   "bins_plants": {
+    "57068": 187.6,
+    "64378": 1.5
+   },
+   "unavail_mw": 7319.8,
+   "by_group": {
+    "": {
+     "mw": 5665.2,
+     "hr_mw_wt": 15.5288,
+     "unavail_mw": 641.9,
+     "class_table_mw": 187.6
+    },
+    "CC_CHP": {
+     "mw": 320.6,
+     "hr_mw_wt": 9.933,
+     "unavail_mw": 23.9,
+     "class_table_mw": 0.0
+    },
+    "CC_REGULAR": {
+     "mw": 15581.1,
+     "hr_mw_wt": 8.8415,
+     "unavail_mw": 6261.9,
+     "class_table_mw": 0.0
+    },
+    "COAL": {
+     "mw": 438.5,
+     "hr_mw_wt": 10.7024,
+     "unavail_mw": 38.6,
+     "class_table_mw": 0.0
+    },
+    "CT_CHP": {
+     "mw": 71.5,
+     "hr_mw_wt": 6.6253,
+     "unavail_mw": 9.3,
+     "class_table_mw": 0.0
+    },
+    "CT_PEAKER": {
+     "mw": 1121.4,
+     "hr_mw_wt": 13.1484,
+     "unavail_mw": 183.1,
+     "class_table_mw": 0.0
+    },
+    "ST_CHP": {
+     "mw": 21.6,
+     "hr_mw_wt": 5.9774,
+     "unavail_mw": 2.4,
+     "class_table_mw": 0.0
+    },
+    "ST_GAS": {
+     "mw": 520.3,
+     "hr_mw_wt": 7.9521,
+     "unavail_mw": 158.8,
+     "class_table_mw": 0.0
+    }
+   },
+   "class_table_plants": {
+    "57068": [
+     187.6,
+     ""
+    ]
+   }
+  }
+ },
+ "2024": {
+  "A": {
+   "eia860_dir": "eia-860",
+   "thermal_mw": 23671.8,
+   "class_table_mw": 188.4,
+   "bins_mw": 195.3,
+   "bins_plants": {
+    "57068": 187.6,
+    "57602": 2.5,
+    "10491": 1.9,
+    "64378": 1.5,
+    "10553": 1.0,
+    "68586": 0.8
+   },
+   "unavail_mw": 7511.5,
+   "by_group": {
+    "": {
+     "mw": 5823.4,
+     "hr_mw_wt": 13.417,
+     "unavail_mw": 1246.4,
+     "class_table_mw": 188.4
+    },
+    "CC_CHP": {
+     "mw": 320.6,
+     "hr_mw_wt": 9.9347,
+     "unavail_mw": 29.2,
+     "class_table_mw": 0.0
+    },
+    "CC_REGULAR": {
+     "mw": 15781.4,
+     "hr_mw_wt": 8.7094,
+     "unavail_mw": 5717.7,
+     "class_table_mw": 0.0
+    },
+    "COAL": {
+     "mw": 108.0,
+     "hr_mw_wt": 14.204,
+     "unavail_mw": 9.6,
+     "class_table_mw": 0.0
+    },
+    "CT_CHP": {
+     "mw": 74.5,
+     "hr_mw_wt": 6.7787,
+     "unavail_mw": 9.5,
+     "class_table_mw": 0.0
+    },
+    "CT_PEAKER": {
+     "mw": 1266.9,
+     "hr_mw_wt": 12.7934,
+     "unavail_mw": 287.0,
+     "class_table_mw": 0.0
+    },
+    "ST_CHP": {
+     "mw": 24.4,
+     "hr_mw_wt": 6.3068,
+     "unavail_mw": 3.6,
+     "class_table_mw": 0.0
+    },
+    "ST_GAS": {
+     "mw": 272.5,
+     "hr_mw_wt": 8.3805,
+     "unavail_mw": 208.4,
+     "class_table_mw": 0.0
+    }
+   },
+   "class_table_plants": {
+    "57068": [
+     187.6,
+     ""
+    ],
+    "68586": [
+     0.8,
+     ""
+    ]
+   }
+  },
+  "B": {
+   "eia860_dir": "vintage_2024",
+   "thermal_mw": 23247.3,
+   "class_table_mw": 188.4,
+   "bins_mw": 192.4,
+   "bins_plants": {
+    "57068": 187.6,
+    "57602": 2.5,
+    "64378": 1.5,
+    "68586": 0.8
+   },
+   "unavail_mw": 6788.8,
+   "by_group": {
+    "": {
+     "mw": 5099.9,
+     "hr_mw_wt": 13.8142,
+     "unavail_mw": 510.0,
+     "class_table_mw": 188.4
+    },
+    "CC_CHP": {
+     "mw": 320.6,
+     "hr_mw_wt": 9.9347,
+     "unavail_mw": 31.0,
+     "class_table_mw": 0.0
+    },
+    "CC_REGULAR": {
+     "mw": 15242.0,
+     "hr_mw_wt": 8.6663,
+     "unavail_mw": 5797.2,
+     "class_table_mw": 0.0
+    },
+    "COAL": {
+     "mw": 438.5,
+     "hr_mw_wt": 14.6157,
+     "unavail_mw": 38.9,
+     "class_table_mw": 0.0
+    },
+    "CT_CHP": {
+     "mw": 74.5,
+     "hr_mw_wt": 6.7787,
+     "unavail_mw": 9.5,
+     "class_table_mw": 0.0
+    },
+    "CT_PEAKER": {
+     "mw": 1213.2,
+     "hr_mw_wt": 12.8259,
+     "unavail_mw": 221.0,
+     "class_table_mw": 0.0
+    },
+    "ST_CHP": {
+     "mw": 23.4,
+     "hr_mw_wt": 6.3077,
+     "unavail_mw": 2.6,
+     "class_table_mw": 0.0
+    },
+    "ST_GAS": {
+     "mw": 835.1,
+     "hr_mw_wt": 10.8571,
+     "unavail_mw": 178.5,
+     "class_table_mw": 0.0
+    }
+   },
+   "class_table_plants": {
+    "57068": [
+     187.6,
+     ""
+    ],
+    "68586": [
+     0.8,
+     ""
+    ]
+   }
+  },
+  "B-nosg": {
+   "eia860_dir": "vintage_2024",
+   "thermal_mw": 23247.3,
+   "class_table_mw": 188.4,
+   "bins_mw": 192.4,
+   "bins_plants": {
+    "57068": 187.6,
+    "57602": 2.5,
+    "64378": 1.5,
+    "68586": 0.8
+   },
+   "unavail_mw": 6502.6,
+   "by_group": {
+    "": {
+     "mw": 5099.9,
+     "hr_mw_wt": 13.8142,
+     "unavail_mw": 510.0,
+     "class_table_mw": 188.4
+    },
+    "CC_CHP": {
+     "mw": 320.6,
+     "hr_mw_wt": 9.9347,
+     "unavail_mw": 29.3,
+     "class_table_mw": 0.0
+    },
+    "CC_REGULAR": {
+     "mw": 15242.0,
+     "hr_mw_wt": 8.6663,
+     "unavail_mw": 5513.0,
+     "class_table_mw": 0.0
+    },
+    "COAL": {
+     "mw": 438.5,
+     "hr_mw_wt": 14.6157,
+     "unavail_mw": 38.9,
+     "class_table_mw": 0.0
+    },
+    "CT_CHP": {
+     "mw": 74.5,
+     "hr_mw_wt": 6.7787,
+     "unavail_mw": 9.5,
+     "class_table_mw": 0.0
+    },
+    "CT_PEAKER": {
+     "mw": 1213.2,
+     "hr_mw_wt": 12.8259,
+     "unavail_mw": 221.0,
+     "class_table_mw": 0.0
+    },
+    "ST_CHP": {
+     "mw": 23.4,
+     "hr_mw_wt": 6.3077,
+     "unavail_mw": 2.6,
+     "class_table_mw": 0.0
+    },
+    "ST_GAS": {
+     "mw": 835.1,
+     "hr_mw_wt": 10.8571,
+     "unavail_mw": 178.1,
+     "class_table_mw": 0.0
+    }
+   },
+   "class_table_plants": {
+    "57068": [
+     187.6,
+     ""
+    ],
+    "68586": [
+     0.8,
+     ""
+    ]
+   }
+  }
+ },
+ "2025": {
+  "A": {
+   "eia860_dir": "eia-860",
+   "thermal_mw": 23672.9,
+   "class_table_mw": 188.4,
+   "bins_mw": 195.3,
+   "bins_plants": {
+    "57068": 187.6,
+    "57602": 2.5,
+    "10491": 1.9,
+    "64378": 1.5,
+    "10553": 1.0,
+    "68586": 0.8
+   },
+   "unavail_mw": 7134.1,
+   "by_group": {
+    "": {
+     "mw": 5823.4,
+     "hr_mw_wt": 13.417,
+     "unavail_mw": 1246.4,
+     "class_table_mw": 188.4
+    },
+    "CC_CHP": {
+     "mw": 320.6,
+     "hr_mw_wt": 9.9347,
+     "unavail_mw": 36.6,
+     "class_table_mw": 0.0
+    },
+    "CC_REGULAR": {
+     "mw": 15781.4,
+     "hr_mw_wt": 8.7094,
+     "unavail_mw": 5351.2,
+     "class_table_mw": 0.0
+    },
+    "COAL": {
+     "mw": 108.0,
+     "hr_mw_wt": 14.204,
+     "unavail_mw": 9.6,
+     "class_table_mw": 0.0
+    },
+    "CT_CHP": {
+     "mw": 74.5,
+     "hr_mw_wt": 6.7787,
+     "unavail_mw": 9.5,
+     "class_table_mw": 0.0
+    },
+    "CT_PEAKER": {
+     "mw": 1268.1,
+     "hr_mw_wt": 12.6908,
+     "unavail_mw": 260.7,
+     "class_table_mw": 0.0
+    },
+    "ST_CHP": {
+     "mw": 24.4,
+     "hr_mw_wt": 6.3068,
+     "unavail_mw": 11.2,
+     "class_table_mw": 0.0
+    },
+    "ST_GAS": {
+     "mw": 272.5,
+     "hr_mw_wt": 8.3805,
+     "unavail_mw": 208.7,
+     "class_table_mw": 0.0
+    }
+   },
+   "class_table_plants": {
+    "57068": [
+     187.6,
+     ""
+    ],
+    "68586": [
+     0.8,
+     ""
+    ]
+   }
+  },
+  "B": {
+   "eia860_dir": "eia-860",
+   "thermal_mw": 24196.5,
+   "class_table_mw": 188.4,
+   "bins_mw": 264.0,
+   "bins_plants": {
+    "57068": 187.6,
+    "1682": 26.0,
+    "568": 16.6,
+    "54907": 6.6,
+    "10883": 6.0,
+    "1615": 5.7,
+    "6519": 4.0,
+    "10029": 3.6,
+    "57602": 2.5,
+    "10491": 1.9,
+    "64378": 1.5,
+    "10553": 1.0,
+    "68586": 0.8,
+    "59717": 0.2
+   },
+   "unavail_mw": 7927.6,
+   "by_group": {
+    "": {
+     "mw": 5881.9,
+     "hr_mw_wt": 13.4178,
+     "unavail_mw": 1304.9,
+     "class_table_mw": 188.4
+    },
+    "CC_CHP": {
+     "mw": 320.6,
+     "hr_mw_wt": 9.9347,
+     "unavail_mw": 36.6,
+     "class_table_mw": 0.0
+    },
+    "CC_REGULAR": {
+     "mw": 15859.5,
+     "hr_mw_wt": 8.8581,
+     "unavail_mw": 5772.5,
+     "class_table_mw": 0.0
+    },
+    "COAL": {
+     "mw": 461.0,
+     "hr_mw_wt": 12.4362,
+     "unavail_mw": 289.8,
+     "class_table_mw": 0.0
+    },
+    "CT_CHP": {
+     "mw": 81.2,
+     "hr_mw_wt": 7.1655,
+     "unavail_mw": 16.1,
+     "class_table_mw": 0.0
+    },
+    "CT_PEAKER": {
+     "mw": 1271.6,
+     "hr_mw_wt": 12.686,
+     "unavail_mw": 262.8,
+     "class_table_mw": 0.0
+    },
+    "ST_CHP": {
+     "mw": 24.4,
+     "hr_mw_wt": 6.3068,
+     "unavail_mw": 11.2,
+     "class_table_mw": 0.0
+    },
+    "ST_GAS": {
+     "mw": 296.3,
+     "hr_mw_wt": 8.3966,
+     "unavail_mw": 233.6,
+     "class_table_mw": 0.0
+    }
+   },
+   "class_table_plants": {
+    "57068": [
+     187.6,
+     ""
+    ],
+    "68586": [
+     0.8,
+     ""
+    ]
+   }
+  },
+  "B-nosg": {
+   "eia860_dir": "eia-860",
+   "thermal_mw": 24196.5,
+   "class_table_mw": 188.4,
+   "bins_mw": 264.0,
+   "bins_plants": {
+    "57068": 187.6,
+    "1682": 26.0,
+    "568": 16.6,
+    "54907": 6.6,
+    "10883": 6.0,
+    "1615": 5.7,
+    "6519": 4.0,
+    "10029": 3.6,
+    "57602": 2.5,
+    "10491": 1.9,
+    "64378": 1.5,
+    "10553": 1.0,
+    "68586": 0.8,
+    "59717": 0.2
+   },
+   "unavail_mw": 7583.4,
+   "by_group": {
+    "": {
+     "mw": 5881.9,
+     "hr_mw_wt": 13.4178,
+     "unavail_mw": 1304.9,
+     "class_table_mw": 188.4
+    },
+    "CC_CHP": {
+     "mw": 320.6,
+     "hr_mw_wt": 9.9347,
+     "unavail_mw": 36.6,
+     "class_table_mw": 0.0
+    },
+    "CC_REGULAR": {
+     "mw": 15859.5,
+     "hr_mw_wt": 8.8581,
+     "unavail_mw": 5429.3,
+     "class_table_mw": 0.0
+    },
+    "COAL": {
+     "mw": 461.0,
+     "hr_mw_wt": 12.4362,
+     "unavail_mw": 289.8,
+     "class_table_mw": 0.0
+    },
+    "CT_CHP": {
+     "mw": 81.2,
+     "hr_mw_wt": 7.1655,
+     "unavail_mw": 16.1,
+     "class_table_mw": 0.0
+    },
+    "CT_PEAKER": {
+     "mw": 1271.6,
+     "hr_mw_wt": 12.686,
+     "unavail_mw": 262.8,
+     "class_table_mw": 0.0
+    },
+    "ST_CHP": {
+     "mw": 24.4,
+     "hr_mw_wt": 6.3068,
+     "unavail_mw": 11.2,
+     "class_table_mw": 0.0
+    },
+    "ST_GAS": {
+     "mw": 296.3,
+     "hr_mw_wt": 8.3966,
+     "unavail_mw": 232.5,
+     "class_table_mw": 0.0
+    }
+   },
+   "class_table_plants": {
+    "57068": [
+     187.6,
+     ""
+    ],
+    "68586": [
+     0.8,
+     ""
+    ]
+   }
+  }
+ }
+}

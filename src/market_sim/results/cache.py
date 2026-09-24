@@ -76,6 +76,17 @@ human-read:
 
 Cache-epoch ledger (same-key invalidations)
 -------------------------------------------
+**Epoch 2026-09-24 — R-NEISO: the gas sub-5-day outage scope
+(``unit_outage_short_windows_gas``) is armable WITHOUT the coal scope
+(``unit_outage_short_windows``).** Before, the gas flag was read only inside the
+coal gate, so ``gas=True, coal=False`` solved exactly as both off. It now reads
+the gas file alone. A same-key behaviour change for that ONE flag state only;
+every other state is byte-identical (``coal_scope`` defaults ``True``). No
+committed ``run_config*.json`` carries that state (checked 2026-09-24 over every
+``results/calibration/*/run_config*.json``), so nothing cached or registered is
+invalidated. **PROSE-ONLY** (no ``SolveEpoch``): there is nothing to re-key.
+Record: ``docs/handoffs/r-neiso/PRECOMMIT-r-neiso-2026-09-24.md``.
+
 **Epoch 2026-09-24 — F1 (owner instruction 2026-09-24): vintage-matched eGRID
 heat rates in every EIA-860 table, and per-year measured heat-rate artifacts
 for every ISO. A SAME-KEY INVALIDATION for every config whose key the
