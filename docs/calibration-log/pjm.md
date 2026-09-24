@@ -6643,3 +6643,14 @@ so EMAAC roughly doubles (2020 +12.9 → +25.2). Killed at zero LP: heat rate (0
 capacity/derate, floor count, seams. EMAAC candidate: RGGI (per-zone read of pjm-146: −11.7/−17.6/−11.1
 TWh EMAAC CC); Dominion stays closed (pjm-137). Stopped before PRECOMMIT: RGGI lacks 2020–22 inputs.
 Owner decisions listed in the FINDING §6.
+
+## R-PJM — 2026-09-24 — 2019–2025 re-solved on corrected backcast inputs
+
+Run `2026-09-24-pjm-r-pjm-corrected` (bundle `results/calibration/rpjm_inputs_span`), audit §5.3.7. Incumbent
+recipe + F1 defaults (`eia860_vintage_tracks_solve_year`, measured coal/ST/CC heat rates on; CT/CHP already
+on), offers unchanged, one shard per year at `8e2993a9`. 2023–25 CALIBRATED (zero status changes vs the
+incumbent re-scored on the same rebuilt benchmark); 2019–22 NOT-YET. 2021 coal registry 48,993 MW; coal
+still runs to its rail (all-coal +23.7 TWh, COAL_BIT +21.89 vs +19.23, CC_REGULAR C1 PASS → FAIL −11.65) —
+the pjm-168 offer-ordering finding re-earned on clean inputs. Partial-derate not armed (0 windows at HEAD);
+F2 std/short-coal re-derive measured, not installed (owner decision). Promotion question OPEN.
+Record: `docs/RESULT-r-pjm-corrected-inputs-2019-2025-2026-09-24.md`.

@@ -83,6 +83,16 @@ def check_recipes(legs: dict[str, list[int]]) -> None:
         # Fields absent from the incumbent's echo are judged by value.
         new = {x: v for x, v in new.items() if x not in EXPECTED_DELTA}
         diff_core = {x: v for x, v in diff.items() if x not in EXPECTED_DELTA}
+        # The incumbent's run_config.json echoes its FIRST year only, so the two
+        # year-keyed fields are checked against the leg's own year instead.
+        if diff_core.get("weather_year", (None, year))[1] == year:
+            diff_core.pop("weather_year", None)
+        gas = json.loads((_incumbent(year) / "meta.json").read_text()).get("gas_prices")
+        if "gas_price_override" in diff_core and (
+            str(year) not in (gas or {})
+            or diff_core["gas_price_override"][1] == gas[str(year)]
+        ):
+            diff_core.pop("gas_price_override")
         if diff_core or new:
             raise SystemExit(f"ABORT: {name} diff={diff_core} non-default new={new}")
         off = [x for x in MUST_BE_TRUE if a.get(x) is not True]
