@@ -69,6 +69,9 @@ COAL_EXPECTED_SOLVE_PARAMS = {
     "coal_drop_pof",
     "coal_mustrun_online_pmin",
     "coal_sync_srmc_tranche",
+    # SPP-71 coal-sync ensemble placement, registered in the coal family by
+    # b0d7f1d8 (PR #6468, 2026-09-22) — a new flag, not a migrated literal.
+    "coal_sync_ensemble_level",
     "coal_bit_sigmoid",
     "coal_econ_srmc_bound",
     "coal_econ_marginal_hr_bound",

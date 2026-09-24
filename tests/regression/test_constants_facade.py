@@ -36,6 +36,9 @@ MOVED_SURFACE: dict[str, tuple[str, ...]] = {
         "COAL_SIGMOID_SLOPE_MAX",
         "COAL_SIGMOID_SLOPE_MIN",
         "GAS_BASIS_DIFFERENTIAL",
+        # SOCO measured per-year basis, added to fuel_trajectories AND re-exported
+        # by constants.py in b0d7f1d8 (PR #6468); only this inventory lagged.
+        "GAS_BASIS_DIFFERENTIAL_MEASURED_BY_YEAR",
         "GAS_MONTHLY_SEASONALITY",
         "HENRY_HUB_TRAJECTORIES",
         "LIGNITE_PRICE_2023_25",
