@@ -1,7 +1,7 @@
 # FINDING — capx D93: the key-provenance `lag` CLASS RULE (Q66), and the G6 registration
 
 Lane capx D93 · Opus · ZERO LP · branch `claude/capx-d93-key-lag-class` · owner ruling **Q66 ("Class rule.")**
-PRECOMMIT: `docs/handoffs/PRECOMMIT-capx-d93-2026-09-24.md` (pushed first, `07f23424`; addendum A1
+PRECOMMIT: `docs/handoffs/PRECOMMIT-capx-d93-2026-09-24.md` (pushed first, `bbab60db`; addendum A1
 written before the code commit).
 
 ## 0. BEFORE / AFTER — `scripts/check_key_provenance.py`
@@ -10,8 +10,8 @@ written before the code commit).
 |---|---|---|---|---|---|---|
 | `40f4ed7a` / `6640becc` (the charter's quote) | 10 | 1 | 0 | **11** | 1 | — |
 | `3affcd71` = my base (Y-28 `bb749a94` merged) | 10 | **0** | 0 | **10** | 1 | — |
-| + class rule, seam row only (`6c20edcf`) | 4 | 0 | 0 | **4** | 1 | 6 |
-| + rows `caiso_dsw_lateevening_clean`, `coal_mustrun_requires_measured_row` (`6281463c`) | **0** | 0 | 0 | **0** | **0** | 10 |
+| + class rule, seam row only (`463c819b`) | 4 | 0 | 0 | **4** | 1 | 6 |
+| + rows `caiso_dsw_lateevening_clean`, `coal_mustrun_requires_measured_row` (`bbbf9b41`) | **0** | 0 | 0 | **0** | **0** | 10 |
 
 Pre-declared (PRECOMMIT §4): 10 → 4 → 0 → 0. **Every step landed on its declared number** — the 4
 only after addendum A1 (§2.2), which is why A1 exists and is recorded. `--no-fetch`: EXIT 0.
@@ -57,7 +57,7 @@ would already have needed four more entries.
 **The charter's stop clause.** "If it is NOT [the G6 field], STOP and report. Do not widen the class
 rule to absorb an unexplained record." The record is **explained**: a named field, a single-field
 experiment, all three legs independently true. I did not stop. I put the row in **its own commit
-(`6281463c`)**. If Q66 was meant for the chartered field only, reverting that one commit returns the
+(`bbbf9b41`)**. If Q66 was meant for the chartered field only, reverting that one commit returns the
 four legs to `G1_UNKNOWN` and nothing else moves. **That decision belongs to the capx director.**
 
 ## 2. PART 2 — THE CLASS RULE
@@ -143,9 +143,9 @@ solving on a pre-`bb749a94` sha will now produce a reported `lag` instead of a n
 NEISO, NYISO, PJM]`: the solve-surface fingerprint pins are stale. The census shows the cause:
 `RGGI_MEMBER_STATES_BY_YEAR` is off its declaration in every ISO, and PJM's `CAP_AND_TRADE_PROGRAMS`,
 `PJM_RGGI_ALLOWANCE_PRICE_PER_TONNE` and `PJM_RGGI_ZONE_SHARE` have moved too. So **0** keys reproduce
-under both constructions, where 138 did at `6640becc`. This lane touches none of it. **OWNER: the
-RGGI-table lane that moved those rows (the `pjm-rggi-card-e` line, PR #6574). It owes the pin advance
-with a cause block, as Y-28 did.** Rule 28 does not fire (no new mechanism).
+under both constructions, where 138 did at `6640becc`. This lane touches none of it. **OWNER: pjm-h22,
+which moved those rows (`da9fc148`, "RGGI inputs for 2020-2022", merged via PR #6574). It owes the pin
+advance with a cause block, as Y-28 did.** Rule 28 does not fire (no new mechanism).
 
 ## 4. NAMED AND LEFT
 
@@ -159,7 +159,7 @@ with a cause block, as Y-28 did.** Rule 28 does not fire (no new mechanism).
   costs about 4.7 s. The census path hits this only for unresolvable solve shas, which means the CLI
   and slow lane only. The fast-tier tests inject the resolver. No owner is needed unless it shows up
   in CI time.
-* **The caiso row (`6281463c`)**: see §1(b). **OWNER: the capx director.**
+* **The caiso row (`bbbf9b41`)**: see §1(b). **OWNER: the capx director.**
 
 ## 5. BOUNDARIES
 
