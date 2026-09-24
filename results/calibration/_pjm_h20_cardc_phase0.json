@@ -1,0 +1,359 @@
+{
+ "what": "pjm-h20 phase 0 \u2014 Card C: locate the CC-marginal overshoot and size the CT shelf. ZERO LP.",
+ "years": {
+  "2020": {
+   "n_hours": 8760,
+   "cc_marginal_share": 0.6190639269406393,
+   "cc_marginal_band_mix": {
+    "committed": 0.09183108980269224,
+    "econc00": 0.11524986170016596,
+    "econc01": 0.11783145860224968,
+    "econc02": 0.13811543426147888,
+    "econc03": 0.17259819288216854,
+    "econc04": 0.1963857643370828,
+    "econc05": 0.1679881984141619
+   },
+   "cc_marginal_reachable_share": 0.9081689101973077,
+   "cc_reach_lw": {
+    "model_price": 23.591682643258423,
+    "actual_price": 20.025823851897616,
+    "keeper_band_bid_ex_amort": 23.6065443645817,
+    "level_band_bid_ex_amort": 17.80389288920119,
+    "static_delta_level_minus_keeper": -5.802651475380511
+   },
+   "cc_all_lw": {
+    "model_price": 23.385759572687903,
+    "actual_price": 19.666756629559476,
+    "overshoot_pct": 18.91009795452851
+   },
+   "cc_econ_census": {
+    "mw": 28743.92051663588,
+    "fitted_above_measured_mwh_share": 0.9338404531173444,
+    "capwtd_fitted": 22.326303258054885,
+    "capwtd_measured": 15.49751634629637,
+    "capwtd_keeper_floor_bid": 22.361393407714544
+   },
+   "ct_census": {
+    "rows": 797,
+    "mw": 22831.07344,
+    "capwtd_mc_base": 42.70618539213634,
+    "capwtd_target": 37.41986721447227,
+    "ub_lift_capwtd": 5.937141636251197,
+    "target_gt_mcbase_mwh_share": 0.6321798777243366
+   },
+   "ct_marginal_lw": {
+    "share": 0.120662100456621,
+    "model_price": 27.863656547595355,
+    "actual_price": 26.87751084751141
+   },
+   "err_contrib": {
+    "coal": 0.5368225813810827,
+    "cc": 2.2251936930504383,
+    "ct": 0.13370245707959816,
+    "st": 0.1291898489460186,
+    "other": 0.0
+   },
+   "c3a_pct": 14.232427865510772,
+   "static_cc_delta_by_region": {
+    "bottom50": -1.2553441789822224,
+    "p50_p95": -1.7871027245383722,
+    "top5": -0.13500485830406045
+   }
+  },
+  "2021": {
+   "n_hours": 8760,
+   "cc_marginal_share": 0.6464611872146119,
+   "cc_marginal_band_mix": {
+    "committed": 0.09323680028253575,
+    "econc00": 0.103831891223733,
+    "econc01": 0.15045029136500088,
+    "econc02": 0.10595090941197245,
+    "econc03": 0.1619283065512979,
+    "econc04": 0.17375949143563482,
+    "econc05": 0.21084230972982518
+   },
+   "cc_marginal_reachable_share": 0.9067631997174642,
+   "cc_reach_lw": {
+    "model_price": 35.700686716925794,
+    "actual_price": 34.71440823446027,
+    "keeper_band_bid_ex_amort": 35.856463809122026,
+    "level_band_bid_ex_amort": 30.181695948883057,
+    "static_delta_level_minus_keeper": -5.674767860238972
+   },
+   "cc_all_lw": {
+    "model_price": 35.070646942146425,
+    "actual_price": 33.850108995896164,
+    "overshoot_pct": 3.6057134894255225
+   },
+   "cc_econ_census": {
+    "mw": 28662.47409663588,
+    "fitted_above_measured_mwh_share": 0.9124204470660416,
+    "capwtd_fitted": 33.924522402707936,
+    "capwtd_measured": 26.874321940865173,
+    "capwtd_keeper_floor_bid": 34.1239913996662
+   },
+   "ct_census": {
+    "rows": 790,
+    "mw": 22821.67344,
+    "capwtd_mc_base": 64.60412750868352,
+    "capwtd_target": 64.26600488900316,
+    "ub_lift_capwtd": 10.080509682925241,
+    "target_gt_mcbase_mwh_share": 0.6771989913935269
+   },
+   "ct_marginal_lw": {
+    "share": 0.14098173515981735,
+    "model_price": 50.42140478086631,
+    "actual_price": 55.615918880438905
+   },
+   "err_contrib": {
+    "coal": 0.38246207275274674,
+    "cc": 0.7533476494144349,
+    "ct": -0.8337928426637669,
+    "st": -0.2963940054756189,
+    "other": 0.0
+   },
+   "c3a_pct": 0.014581577325117223,
+   "static_cc_delta_by_region": {
+    "bottom50": -1.5222574533929147,
+    "p50_p95": -1.5231226961572133,
+    "top5": -0.16054344786245794
+   }
+  },
+  "2022": {
+   "n_hours": 8760,
+   "cc_marginal_share": 0.5624429223744293,
+   "cc_marginal_band_mix": {
+    "committed": 0.07956159935051756,
+    "econc00": 0.09518977065151207,
+    "econc01": 0.11609498680738786,
+    "econc02": 0.15892023543738584,
+    "econc03": 0.18733509234828497,
+    "econc04": 0.15607874974629593,
+    "econc05": 0.20681956565861578
+   },
+   "cc_marginal_reachable_share": 0.9204384006494825,
+   "cc_reach_lw": {
+    "model_price": 56.381915689245425,
+    "actual_price": 51.5404154260207,
+    "keeper_band_bid_ex_amort": 57.76121958942189,
+    "level_band_bid_ex_amort": 50.82192545270638,
+    "static_delta_level_minus_keeper": -6.939294136715505
+   },
+   "cc_all_lw": {
+    "model_price": 56.2188439735536,
+    "actual_price": 51.10234547294482,
+    "overshoot_pct": 10.012257663041337
+   },
+   "cc_econ_census": {
+    "mw": 28662.47409663588,
+    "fitted_above_measured_mwh_share": 0.6391926921588836,
+    "capwtd_fitted": 55.11305839024831,
+    "capwtd_measured": 48.93609781380548,
+    "capwtd_keeper_floor_bid": 57.27285107438224
+   },
+   "ct_census": {
+    "rows": 790,
+    "mw": 22821.67344,
+    "capwtd_mc_base": 99.52680965694378,
+    "capwtd_target": 138.42487440182865,
+    "ub_lift_capwtd": 45.99231456932167,
+    "target_gt_mcbase_mwh_share": 0.8533077279667953
+   },
+   "ct_marginal_lw": {
+    "share": 0.21860730593607305,
+    "model_price": 82.44258765142963,
+    "actual_price": 96.65561426338878
+   },
+   "err_contrib": {
+    "coal": 0.1557426943150236,
+    "cc": 2.6919902520680856,
+    "ct": -3.5607059338040643,
+    "st": -7.2963922905716085,
+    "other": 0.0
+   },
+   "c3a_pct": -10.769190974680825,
+   "static_cc_delta_by_region": {
+    "bottom50": -2.373770454188232,
+    "p50_p95": -0.9623225565459357,
+    "top5": -0.03219720798988272
+   }
+  },
+  "2023": {
+   "n_hours": 8760,
+   "cc_marginal_share": 0.522945205479452,
+   "cc_marginal_band_mix": {
+    "committed": 0.07050862257149094,
+    "econc00": 0.12180746561886051,
+    "econc01": 0.08600742196027068,
+    "econc02": 0.13839772975332898,
+    "econc03": 0.16830386378519974,
+    "econc04": 0.22047587862912027,
+    "econc05": 0.1944990176817289
+   },
+   "cc_marginal_reachable_share": 0.9294913774285091,
+   "cc_reach_lw": {
+    "model_price": 28.000748668398504,
+    "actual_price": 24.392263565705605,
+    "keeper_band_bid_ex_amort": 28.502894739798258,
+    "level_band_bid_ex_amort": 22.63897565942618,
+    "static_delta_level_minus_keeper": -5.863919080372076
+   },
+   "cc_all_lw": {
+    "model_price": 27.970019713848515,
+    "actual_price": 24.248011427853875,
+    "overshoot_pct": 15.349746502177666
+   },
+   "cc_econ_census": {
+    "mw": 28662.47409663588,
+    "fitted_above_measured_mwh_share": 0.8169733106344241,
+    "capwtd_fitted": 25.814063381584965,
+    "capwtd_measured": 19.507075595014747,
+    "capwtd_keeper_floor_bid": 26.260173295959135
+   },
+   "ct_census": {
+    "rows": 797,
+    "mw": 22828.673440000002,
+    "capwtd_mc_base": 51.355840101524755,
+    "capwtd_target": 86.16319926430671,
+    "ub_lift_capwtd": 39.211670918762714,
+    "target_gt_mcbase_mwh_share": 0.9117804859909081
+   },
+   "ct_marginal_lw": {
+    "share": 0.0704337899543379,
+    "model_price": 33.47626635929016,
+    "actual_price": 38.45762812620232
+   },
+   "err_contrib": {
+    "coal": -0.7295499575347917,
+    "cc": 1.8342998772888144,
+    "ct": -0.3876380556685974,
+    "st": -0.6589481603690548,
+    "other": 0.0
+   },
+   "c3a_pct": 0.19577741731853848,
+   "static_cc_delta_by_region": {
+    "bottom50": -1.660005878807925,
+    "p50_p95": -0.9881317607012701,
+    "top5": -0.0456549319749282
+   }
+  },
+  "2024": {
+   "n_hours": 8760,
+   "cc_marginal_share": 0.4720319634703196,
+   "cc_marginal_band_mix": {
+    "committed": 0.07642079806529625,
+    "econc00": 0.0962515114873035,
+    "econc01": 0.06892382103990327,
+    "econc02": 0.16541717049576785,
+    "econc03": 0.18355501813784764,
+    "econc04": 0.1818621523579202,
+    "econc05": 0.22756952841596131
+   },
+   "cc_marginal_reachable_share": 0.9235792019347038,
+   "cc_reach_lw": {
+    "model_price": 27.13718783130422,
+    "actual_price": 23.43300028931548,
+    "keeper_band_bid_ex_amort": 28.019237926365083,
+    "level_band_bid_ex_amort": 23.149664049689637,
+    "static_delta_level_minus_keeper": -4.869573876675442
+   },
+   "cc_all_lw": {
+    "model_price": 27.462447429916605,
+    "actual_price": 23.366008739445334,
+    "overshoot_pct": 17.531614988895672
+   },
+   "cc_econ_census": {
+    "mw": 28662.47409663588,
+    "fitted_above_measured_mwh_share": 0.8210596845552576,
+    "capwtd_fitted": 25.200735705351217,
+    "capwtd_measured": 19.571935855359243,
+    "capwtd_keeper_floor_bid": 25.81909052938455
+   },
+   "ct_census": {
+    "rows": 804,
+    "mw": 22835.67344,
+    "capwtd_mc_base": 48.88501292129445,
+    "capwtd_target": 79.2707432022242,
+    "ub_lift_capwtd": 34.68271046896014,
+    "target_gt_mcbase_mwh_share": 0.9059552664712324
+   },
+   "ct_marginal_lw": {
+    "share": 0.12077625570776256,
+    "model_price": 37.742624801226135,
+    "actual_price": 48.223222899305085
+   },
+   "err_contrib": {
+    "coal": -0.5320972215774219,
+    "cc": 1.8145552615936442,
+    "ct": -1.4250348818335623,
+    "st": -0.9990071454992177,
+    "other": 0.0
+   },
+   "c3a_pct": -3.6180659596434737,
+   "static_cc_delta_by_region": {
+    "bottom50": -1.300745298552394,
+    "p50_p95": -0.6842407833153629,
+    "top5": -0.013780106443370712
+   }
+  },
+  "2025": {
+   "n_hours": 8760,
+   "cc_marginal_share": 0.4397260273972603,
+   "cc_marginal_band_mix": {
+    "committed": 0.11033229491173416,
+    "econc00": 0.11033229491173416,
+    "econc01": 0.11137071651090343,
+    "econc02": 0.1658878504672897,
+    "econc03": 0.17964693665628245,
+    "econc04": 0.1240913811007269,
+    "econc05": 0.19833852544132918
+   },
+   "cc_marginal_reachable_share": 0.8896677050882659,
+   "cc_reach_lw": {
+    "model_price": 39.267561902528314,
+    "actual_price": 37.39214727925534,
+    "keeper_band_bid_ex_amort": 40.03439309306703,
+    "level_band_bid_ex_amort": 33.09842954945503,
+    "static_delta_level_minus_keeper": -6.935963543612004
+   },
+   "cc_all_lw": {
+    "model_price": 38.84326623160889,
+    "actual_price": 36.86665283615014,
+    "overshoot_pct": 5.3615211672282514
+   },
+   "cc_econ_census": {
+    "mw": 28662.47409663588,
+    "fitted_above_measured_mwh_share": 0.7454925192736622,
+    "capwtd_fitted": 35.71495839718123,
+    "capwtd_measured": 27.249912182236848,
+    "capwtd_keeper_floor_bid": 36.710841000996595
+   },
+   "ct_census": {
+    "rows": 803,
+    "mw": 22834.99344,
+    "capwtd_mc_base": 63.38709941524649,
+    "capwtd_target": 127.51869364935527,
+    "ub_lift_capwtd": 67.20118228085998,
+    "target_gt_mcbase_mwh_share": 0.9368858768863858
+   },
+   "ct_marginal_lw": {
+    "share": 0.15947488584474886,
+    "model_price": 53.22098867213567,
+    "actual_price": 71.70340343100797
+   },
+   "err_contrib": {
+    "coal": 0.43682774259907065,
+    "cc": 0.828177659612605,
+    "ct": -3.209934573666926,
+    "st": -1.3592540472050278,
+    "other": 0.0
+   },
+   "c3a_pct": -7.168136618543542,
+   "static_cc_delta_by_region": {
+    "bottom50": -1.2602865790143647,
+    "p50_p95": -1.289656411244694,
+    "top5": -0.04988382204520804
+   }
+  }
+ }
+}
