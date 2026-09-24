@@ -204,3 +204,23 @@ auto-PR off. Each pushes its bundle (with `dispatch/<Y>_P1.parquet`) plus the
 | 2023 | `session_01RUkATQseefLk1mKTuWSvt2` | `claude/rmiso-2023` | `results/calibration/rmiso_2023` |
 | 2024 | `session_01QSTednV5x2UFSUJMmSqk5c` | `claude/rmiso-2024` | `results/calibration/rmiso_2024` |
 | 2025 | `session_01NkXi5Wuz5kCzJqYvXHUxoe` | `claude/rmiso-2025` | `results/calibration/rmiso_2025` |
+
+## 8. Retrieval and relaunch (appended; §1–§7 unchanged)
+
+* **Retrieved and verified in the parent** (recipe / vintage / pinned inputs / classifier PASS;
+  `ls-tree` > 0 incl. `dispatch/<Y>_P1.parquet`), shards archived: 2019 `1e2c5317`, 2021 `89f3d7d0`,
+  2025 `af0b1a23`.
+* **Stranded, relaunched 20:17–20:18 UTC** at the same pin: 2020, 2023, 2024. Their shards started
+  the solve under `nohup … &` and ended the turn; nothing re-invoked them, and after 25–55 idle
+  minutes they had pushed nothing (bytes never retrievable, rule 34(d)). Archived. The relaunch
+  prompt differs only in the wait discipline (harness-tracked background + in-turn wait) and the
+  branch name `claude/rmiso-<Y>-b`; recipe, pin and checks are identical. Cost: three MISO years of
+  LP (~25–45 min wall each, in parallel).
+
+| year | relaunch session | branch |
+|---|---|---|
+| 2020 | `session_017UR4c5eXTCQffqNKN8WHr4` | `claude/rmiso-2020-b` |
+| 2023 | `session_01LaxCvv7Qm6ywAuMADLFpLy` | `claude/rmiso-2023-b` |
+| 2024 | `session_01Pd1oeu1tqT6WE67XryYtqk` | `claude/rmiso-2024-b` |
+
+2022 (`session_01FSntQEmqV27LX5p6cHVYMn`) was still actively solving (P0 25.5 min) and was left alive.
