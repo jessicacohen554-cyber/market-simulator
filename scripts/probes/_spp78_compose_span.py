@@ -165,16 +165,53 @@ def compose(legs: dict[str, list[int]], out: Path) -> None:
             pd.concat(parts, ignore_index=True).to_parquet(out / fname, index=False)
             print(f"  {fname}: {len(parts)} leg(s) concatenated")
 
+    # Span widening, gas re-span and shared-input re-span: ported verbatim from
+    # _hydro5_compose_span.py (the keeper's own composer; the nwpp-42 stale-benchmark fix).
     all_years = sorted(set(all_years))
     base = min(legs, key=lambda n: min(legs[n]))
-    shutil.copy2(CAL / base / "run_config.json", out / "run_config.json")
+    base_cfg = _leg_config(CAL / base)
+    flags = base_cfg.setdefault("calibration_flags", {})
+    flags["years"] = list(all_years)
+    gas: dict[str, float] = {}
+    for name in legs:
+        gas.update(
+            _leg_config(CAL / name).get("calibration_flags", {}).get("gas_prices") or {}
+        )
+    if gas:
+        flags["gas_prices"] = {k: gas[k] for k in sorted(gas)}
+    (out / "run_config.json").write_text(json.dumps(base_cfg, indent=2) + "\n")
     meta = json.loads((CAL / base / "meta.json").read_text())
     meta["years"] = all_years
     meta["composed_from"] = {n: sorted(y) for n, y in legs.items()}
+    if gas:
+        meta["gas_prices"] = {k: gas[k] for k in sorted(gas)}
+    (out / "meta.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
+    _respan_shared_inputs(meta, out)
     (out / "meta.json").write_text(json.dumps(meta, indent=2), encoding="utf-8")
 
     n = sum(1 for p in out.rglob("*") if p.is_file())
     print(f"\ncomposed {out} — {n} files, years {all_years}")
+
+
+def _respan_shared_inputs(meta: dict, out: Path) -> None:
+    """Re-point the year-dependent benchmark frames at the span (nwpp-42 fix)."""
+    recorded = meta.get("shared_inputs")
+    if not recorded:
+        return
+    from scripts.lib.bundle_io import SHARED_INPUT_NAMES
+    from scripts.run_calibration_full import build_benchmark_frames, write_shared_input
+
+    stale = [n for n in SHARED_INPUT_NAMES if n in recorded]
+    if not stale:
+        return
+    iso, built = build_benchmark_frames(out)
+    for name in sorted(stale):
+        if name not in built:
+            raise SystemExit(f"compose: span rebuild produced no {name!r} frame")
+        was = recorded[name]
+        recorded[name] = write_shared_input(built[name], name, iso, out)
+        print(f"  shared {name:<7} {Path(was).name} -> {Path(recorded[name]).name}")
+    meta["shared_inputs"] = recorded
 
 
 def regenerate_diagnostics(out: Path, years: list[int]) -> int:
