@@ -3471,3 +3471,4 @@ results/calibration/rspp_20*/
 # (rule 31). Each shard appends its own negation on its own branch (rule 34(a)). The composite
 # results/calibration/rmiso_span is what gets registered.
 results/calibration/rmiso_20*/**
+results/calibration/rmiso_b_20*/**

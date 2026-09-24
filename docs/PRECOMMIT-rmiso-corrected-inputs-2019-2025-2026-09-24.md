@@ -258,3 +258,18 @@ determinism check; any difference is reported). The shard check runs with
 CC_REGULAR −10.38 TWh, C3a +10.0 %) is NOT addressed by arm B (0 MW there). Its zero-LP
 localization is a vintage CC-membership change (vintage_2023 carries −488 MW raw gas_cc vs the
 canonical snapshot: Magnolia Power −679, Edwardsport −481, Cottonwood +565). It is reported and routed.
+
+### 9.1 Arm-B launch record
+
+Launched 2026-09-24 21:17–21:19 UTC, pinned to `bef12b510b62c1cc17286058d0371e3f8c7a3996`
+(§9's commit), tagged `r-miso`, `shard`, `arm-b`, with harness-tracked background + in-turn wait.
+
+| year | session | branch |
+|---|---|---|
+| 2019 | `session_01UBJBquEWi86TezhLXFAoay` | `claude/rmiso-b-2019` |
+| 2020 | `session_01J2HDHirerWmAhNCdJgdQur` | `claude/rmiso-b-2020` |
+| 2021 | `session_017DXvFWHD7pz77GyGsdfALX` | `claude/rmiso-b-2021` |
+| 2022 | `session_01E1Hn9oTLfZKQawoEb9SSsj` | `claude/rmiso-b-2022` |
+| 2023 | `session_01KZQnHGpHqb2gQcSZicHBap` | `claude/rmiso-b-2023` |
+| 2024 | `session_01AsS8NUo1GzU5cpLncbLj2Z` | `claude/rmiso-b-2024` |
+| 2025 | `session_01Voo1AajRGrQuFREL39KHZ6` | `claude/rmiso-b-2025` |
