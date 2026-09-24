@@ -952,12 +952,14 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "(issue #1344 / Ask B3)."
         ),
         "reconciles": (
-            "Hand-transcription of the dated LRR PDFs (Wayback-bounded "
-            "versions v2020/v2021/v2026) under "
+            "Hand-transcription of the dated LRR PDFs (versions "
+            "v2016/v2019/v2020/v2021/v2026, bounded by nyiso.com document "
+            "versions and Wayback snapshots, with sourced `effective_start` "
+            "dates where a version changes mid-year) under "
             "`data/raw/NYISO-AS/requirements/`; see that README for the "
-            "effective-date caveats. Feeds the gated hourly "
-            "`ReserveFamily.requirement` channel; not yet consumed by any "
-            "keeper."
+            "effective-date sources. Feeds the gated hourly "
+            "`ReserveFamily.requirement` channel "
+            "(`nyiso_dynamic_reserve_requirements`)."
         ),
     },
     "nyiso-operating-events": {

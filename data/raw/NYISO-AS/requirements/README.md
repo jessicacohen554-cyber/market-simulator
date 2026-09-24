@@ -19,6 +19,8 @@ hand-transcribed CSV of every printed cell (source of the
 
 | file | evidence window | key values |
 |---|---|---|
+| `lrr_nyiso_v1.1_20160817.pdf` | nyiso.com doc version 1.1, created 2016-08-17 → in force until 2019-06-26 | no NYC region; SENY 30-min flat 1,300 MW (TSA → 0); NYCA/EAST/LI as v2020 |
+| `lrr_nyiso_v1.2_20190624.pdf` | nyiso.com doc version 1.2, created 2019-06-24 → in force 2019-06-26 … | NYC region added 500/1,000 (no TSA footnote); every value identical to v1.3 |
 | `lrr_wayback_20201029.pdf` | in force 2020-10-29 (Wayback) | SENY 30-min flat 1,300 MW; NYC 500/1,000; TSA zeroes SENY only |
 | `lrr_wayback_20211204.pdf` | 2021-12-04 → ≥2026-02-14 (Wayback, byte-identical snapshots) | SENY 30-min hourly steps 1,300/1,550/1,800; NYC 500/1,000; TSA zeroes NYC 10T/30T + SENY 30T |
 | `lrr_retrieved_20260710.pdf` | retrieved 2026-07-10 | NYC raised to 625/1,250; SENY steps unchanged |
@@ -28,10 +30,37 @@ Wayback snapshots: `web.archive.org/web/20201029110250` and `20211204105606`
 of the same document path (see the CSV's `source_doc` column). Regenerate the
 PDFs with `python scripts/fetch_nyiso_lrr_pdfs.py` (md5-verified).
 
+**Version history (2026-09-24, session I-NYISO).** nyiso.com serves the
+posting's own Liferay version history (`…/Locational-Reserves-Requirements.pdf?version=N`):
+v1.1 (PDF CreationDate 2016-08-17), v1.2 (2019-06-24), v1.3 (2020-08-06 —
+byte-identical to `lrr_wayback_20201029.pdf`), v1.4 (2021-06-17 — byte-identical
+to `lrr_wayback_20211204.pdf`), v2.0/v2.1 (2026-05-13 — byte-identical to
+`lrr_retrieved_20260710.pdf`) and v3.0 (2026-09-09, **not yet transcribed** —
+2026 only, outside the 2019-2025 backcast span). v1.1 and v1.2 are the new
+sources behind transcription versions `v2016` / `v2019`.
+
+**Sourced effective dates** (`effective_start` / `effective_source` columns —
+what the hourly derive switches versions on):
+- `v2019` **2019-06-26** — the NYC locational reserve region was activated in
+  the DAM and RT markets on Wednesday 2019-06-26 (S&P Global, 2019-06-24,
+  republished on nyiso.com: "plans to activate Wednesday a new locational
+  reserve region for New York City"). Before it the posting has no NYC region,
+  so NYC 10/30-min requirements are 0 MW for 2019-01-01..2019-06-25.
+- `v2020` **2020-08-06** — v1.3 CreationDate. Every requirement value is
+  identical to v1.2 (wording-only revision), so this boundary moves no number.
+- `v2021` **2021-06-17** — FERC docket ER21-625 ("SENY reserve enhancements"):
+  -001 noticed 2021-06-08, -002 delayed to 2021-06-10, **-003 (filed
+  2021-06-08, 86 FR 2021-12370) delayed to 2021-06-17**, the last notice in
+  the docket; the v1.4 posting is created the same day (2021-06-17 12:41 ET).
+  This supersedes the earlier "plausibly 2021-07-13" guess, which was the
+  unrelated ORDC compliance date. v1.4 also introduces the NYC TSA-zeroing
+  footnotes; they are dated with the same version.
+
 Effective-date caveats (bounds, not pinned dates):
-- The SENY hourly-step regime appears between 2020-10-29 and 2021-12-04 —
-  plausibly with the July 2021 operating-reserve procurement enhancements
-  (FERC accepted 2021-06-23, effective 2021-07-13), **unverified**.
+- *(Resolved 2026-09-24 — see above.)* The SENY hourly-step regime appears
+  between 2020-10-29 and 2021-12-04 — plausibly with the July 2021
+  operating-reserve procurement enhancements (FERC accepted 2021-06-23,
+  effective 2021-07-13), **unverified**.
 - The NYC 625/1,250 MW raise appears between 2026-02-14 and 2026-07-10 —
   plausibly the 2026-05-01 capability year, **unverified**. Training years
   2023–2025 are fully inside the v2021 regime either way.
@@ -121,4 +150,7 @@ This is a documented LOWER BOUND on the as-enforced requirement in non-TSA
 hours: the condition-varying RTD/RTC increments (forecast-uncertainty
 adders, largest-single-contingency changes) are the still-open B1 data
 request. Rule 24: re-derive only when the source data above updates —
-never against a residual. Training years 2023-2025 only are committed.
+never against a residual. Years 2019-2025 are committed (2019-2021 added 2026-09-24; 2022-2025
+re-derived byte-identically by the version-stitching derive). 2019 and 2021
+each switch LRR version mid-year at the sourced `effective_start` above; a
+year whose boundary is unsourced is refused by the derive.

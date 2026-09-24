@@ -5,6 +5,14 @@ transcription (see ``data/raw/NYISO-AS/requirements/README.md``) and the 2020
 State-of-the-Market report behind the 2018 rows of
 ``nyiso-som-hub-fuel-annual``:
 
+* ``lrr_nyiso_v1.1_20160817.pdf`` / ``lrr_nyiso_v1.2_20190624.pdf`` — the
+  pre-2020 versions from nyiso.com's own document-version history
+  (``?version=1.1`` / ``?version=1.2`` of the same Liferay document; a
+  version number is immutable, md5-verified). Intaken 2026-09-24 for the
+  2019-2021 backcast years. The history also serves v1.3 (byte-identical to
+  ``lrr_wayback_20201029.pdf``), v1.4 (= ``lrr_wayback_20211204.pdf``) and
+  v2.0/v2.1 (= ``lrr_retrieved_20260710.pdf``), which corroborates the
+  transcription's version chain.
 * ``lrr_wayback_20201029.pdf`` / ``lrr_wayback_20211204.pdf`` — immutable
   Wayback Machine snapshots (md5-verified; a mismatch is an error).
 * ``lrr_retrieved_20260710.pdf`` — the live nyiso.com posting as retrieved
@@ -42,6 +50,18 @@ _NYISO_DOC = "https://www.nyiso.com/documents"
 
 # (destination, URL, md5, strict) — md5s recorded at the 2026-07-10 intake.
 DOCS: tuple[tuple[Path, str, str, bool], ...] = (
+    (
+        LRR_DIR / "lrr_nyiso_v1.1_20160817.pdf",
+        f"{_NYISO_DOC}/20142/3694424/Locational-Reserves-Requirements.pdf?version=1.1",
+        "6af6bb9ba632702e9c6b939d637b8c00",
+        True,
+    ),
+    (
+        LRR_DIR / "lrr_nyiso_v1.2_20190624.pdf",
+        f"{_NYISO_DOC}/20142/3694424/Locational-Reserves-Requirements.pdf?version=1.2",
+        "53485df78303b94cae4285fe44e112f2",
+        True,
+    ),
     (
         LRR_DIR / "lrr_wayback_20201029.pdf",
         f"{_WAYBACK}/20201029110250if_/https://www.nyiso.com/documents/20142/"

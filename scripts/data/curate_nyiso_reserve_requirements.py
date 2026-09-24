@@ -163,6 +163,16 @@ def build_requirements_frame(raw_root: Path) -> pd.DataFrame:
     df["evidence_start"] = pd.to_datetime(df["evidence_start"])
     df["evidence_end"] = pd.to_datetime(df["evidence_end"])
     df["notes"] = df["notes"].where(df["notes"].notna(), None)
+    # Sourced in-force dates (schema v2). A transcription without them is
+    # still valid — every version then falls back to its evidence_start.
+    if "effective_start" not in df.columns:
+        df["effective_start"] = pd.NaT
+    if "effective_source" not in df.columns:
+        df["effective_source"] = None
+    df["effective_start"] = pd.to_datetime(df["effective_start"])
+    df["effective_source"] = df["effective_source"].where(
+        df["effective_source"].notna(), None
+    )
     return df
 
 
