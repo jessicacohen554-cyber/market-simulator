@@ -1903,6 +1903,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # SHARED field -- very end, per HOUSE-3. Registered IN THE SAME COMMIT as
     # the field (the nyiso-119 discipline).
     "coal_fuel_inventory",
+    # miso-268: the per-coal-yard ANNUAL grain of coal_fuel_inventory (default
+    # off). Dropped from the hash at its default so every pre-existing cached
+    # run keeps its key; an armed run adds real per-yard rows and so earns a
+    # distinct key. SHARED field -- very end, per HOUSE-3. Registered IN THE
+    # SAME COMMIT as the field (the nyiso-119 discipline).
+    "coal_fuel_inventory_plant_grain",
     # Columbia mainstem / lower Snake hydraulic-cascade coupling (NWPP-36,
     # owner ruling N3, default off): dropped from the hash at its default so
     # every pre-existing cached run -- every ISO's keepers included -- keeps
@@ -2666,6 +2672,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by miso-259 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "coal_fuel_inventory": "False",
+    # Added by miso-268 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "coal_fuel_inventory_plant_grain": "False",
     # Added by NWPP-36 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "hydro_cascade_coupling": "False",
@@ -7617,6 +7626,23 @@ class ScenarioConfig:
     # stock across months — a stated limitation, not a defect. Backcast-only,
     # MISO-gated at the call site, default off (byte-identical).
     # See data/coal_fuel_inventory.py:build_coal_fuel_budget.
+    coal_fuel_inventory_plant_grain: bool = False  # miso-268: the per-coal-YARD
+    # annual grain of coal_fuel_inventory. The pooled rows sum every yard's
+    # stock and receipts into one fleet pile, so the LP can burn coal at a yard
+    # that never held it against tons sitting at another (measured on the
+    # miso-267 keeper: 10.5 / 11.4 TWh-equiv of yard-level excess in 2021 /
+    # 2022 against 1.1-2.4 in 2020 / 2023, zero LP). One ANNUAL row per yard
+    # (a plant, or a shared-storage entity pooled with the plants it serves via
+    # coal-shared-storage-crosswalk.csv) caps sum HR*P at (Dec(Y-1) stock +
+    # mean Y-2..Y-1 receipts) x the yard's own prior-years heat content. SAME
+    # measured inputs and rule-13 forward story as the pooled budget; only the
+    # partition changes, and summed over yards it equals the pooled annual
+    # identity, so it is a refinement, not a second mechanism (rule 19). The
+    # pooled MONTHLY rows are untouched (timing limb); no month grain is added at
+    # the yard. A yard with no curated record gets no row (never substituted).
+    # ZERO free parameters. Requires coal_fuel_inventory (raises otherwise);
+    # inherits its MISO gate and backcast-only guard. Default off, byte-identical.
+    # See data/coal_fuel_inventory.py:build_coal_plant_budget.
     nyiso_local_selfsupply: bool = False  # NYISO Long Island (zone K) local
     # self-supply floor: zone K is cable-islanded (NYC->LI 1,650 MW + ~1.2 GW
     # external ties) and carries NYISO locational-minimum-installed-capacity
@@ -22273,6 +22299,7 @@ TIER_TAGS: dict[str, int] = {
     "neiso_oil_burn_budget": 1,
     "neiso_winter_fuel_inventory": 1,
     "coal_fuel_inventory": 1,
+    "coal_fuel_inventory_plant_grain": 1,
     "commitment_floor_window_netload": 1,
     "neiso_winter_fuel_start_fill_bbl": 1,
     "neiso_net_icr_requirement": 1,

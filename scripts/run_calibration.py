@@ -6001,6 +6001,56 @@ def run_year(
                 _coal_prov.monthly_budget_mmbtu / 1e6,
             )
 
+    # miso-268 per-coal-yard ANNUAL budget rows (coal_fuel_inventory_plant_grain,
+    # default off). The pooled rows above treat every yard's stock and receipts
+    # as one fleet pile; these cap each yard's annual coal energy input at its OWN
+    # Dec(Y-1) stock plus prior-years receipts. Same measured inputs and rule-13
+    # admissibility as the pooled budget; only the partition changes. UNSET when
+    # off, so an unarmed run's dispatch-kwargs key set and LP are unchanged.
+    coal_plant_budget = UNSET
+    coal_plant_gen_idx = UNSET
+    coal_plant_month_index = UNSET
+    coal_plant_gen_hour_coeff = UNSET
+    coal_plant_group_index = UNSET
+    if getattr(config, "coal_fuel_inventory_plant_grain", False):
+        if not getattr(config, "coal_fuel_inventory", False):
+            raise ValueError(
+                "coal_fuel_inventory_plant_grain is the plant grain OF "
+                "coal_fuel_inventory and is inert without it: arm both, or "
+                "neither (rule 19 [R-ONE-MECH])."
+            )
+        from market_sim.data.coal_fuel_inventory import build_coal_plant_budget
+
+        _cp = build_coal_plant_budget(fleet_arrays, year, hours=config.hours)
+        if _cp is None:
+            logger.warning(
+                "coal per-yard budget (%s %d): NOT APPLIED — no yard carries a "
+                "curated stock or receipt record. Never sized on a substitute.",
+                iso,
+                year,
+            )
+        else:
+            (
+                coal_plant_gen_idx,
+                coal_plant_budget,
+                coal_plant_month_index,
+                coal_plant_gen_hour_coeff,
+                coal_plant_group_index,
+                _cp_prov,
+            ) = _cp
+            logger.info(
+                "coal per-yard budget (%s %d): %d yards, %d coal gens rowed "
+                "(%d unrowed: no curated record), annual %.1f TWh-equiv "
+                "@HR10.661 (rate from %s)",
+                iso,
+                year,
+                _cp_prov.n_entities,
+                _cp_prov.n_generators,
+                _cp_prov.n_unrowed_generators,
+                _cp_prov.annual_budget_mmbtu / 10.661 / 1e6,
+                "+".join(str(y) for y in _cp_prov.rate_source_years),
+            )
+
     # Base dispatch kwargs + priced import-node band: the shared pipeline
     # assembly (orchestrator-unification Stage 2) — the same key set the
     # inline dict carried, byte-identical values. The backcast-only keys
@@ -6108,6 +6158,11 @@ def run_year(
         coal_month_index=coal_budget_month_index,
         coal_gen_hour_coeff=coal_budget_gen_hour_coeff,
         coal_group_index=coal_budget_group_index,
+        coal_plant_budget=coal_plant_budget,
+        coal_plant_gen_idx=coal_plant_gen_idx,
+        coal_plant_month_index=coal_plant_month_index,
+        coal_plant_gen_hour_coeff=coal_plant_gen_hour_coeff,
+        coal_plant_group_index=coal_plant_group_index,
         T=config.hours,
     )
     dispatch_kwargs = build_base_dispatch_kwargs(
