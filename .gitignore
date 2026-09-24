@@ -3432,6 +3432,9 @@ results/calibration/pjm_h20_cardc_span/
 # 2024 1f04a2a95935e5bdcfdd77efa2b64de308378ce9 2025 c2525bf29fb128e696dd3dbd150c7abef12353bf
 results/calibration/miso268_yard_20[0-9][0-9]/
 
+# SPP-78 (2026-09-24): per-year shard legs + composites, held on local disk pending the owner's
+# promotion ruling (rule 31 [R-RETAIN]); legs pushed on claude/spp78-<year> (provenance SHAs in the RESULT doc).
+results/calibration/spp78_*/
 # storage-dispatch-actuals source downloads (CAISO Outlook CSVs + DESR xlsx, ~177 MB):
 # re-fetch with scripts/data/build_storage_dispatch_actuals.py; identity in SHA256SUMS.txt
 data/raw/storage-dispatch-actuals/_source/
