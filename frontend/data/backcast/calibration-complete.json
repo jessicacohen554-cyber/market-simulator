@@ -139,7 +139,8 @@
    "keeper_history": [
     "2026-09-16-neiso110-dualfuel-derate-scope (superseded 2026-09-19 by neiso-112: same recipe, year-isolated per rule 36 [R-YEAR-ISOLATION], plus the marginal emission rate; determination and every criterion unchanged, prices bit-identical)"
    ],
-   "rekeyed_hydro5": "2026-09-23 (hydro-5): keeper re-keyed 2026-09-19-neiso112-mer-year-isolated -> 2026-09-22-hydro-5-neiso-ror on the owner's promotion ruling; determination re-verified by scripts/calibration_verdict.py on committed artifacts (span CALIBRATED, same criteria as the predecessor). Record: docs/RESULT-hydro-5-2026-09-22.md"
+   "rekeyed_hydro5": "2026-09-23 (hydro-5): keeper re-keyed 2026-09-19-neiso112-mer-year-isolated -> 2026-09-22-hydro-5-neiso-ror on the owner's promotion ruling; determination re-verified by scripts/calibration_verdict.py on committed artifacts (span CALIBRATED, same criteria as the predecessor). Record: docs/RESULT-hydro-5-2026-09-22.md",
+   "rekeyed_spp78": "2026-09-24 (SPP-78): keeper re-keyed 2026-09-22-hydro-5-spp-floor -> 2026-09-24-spp78-hr-span (measured_cc/st/coal_heat_rates armed) on the owner's promotion ruling, verbatim: 'Promote'; determination re-verified by scripts/calibration_verdict.py --run-id 2026-09-24-spp78-hr-span: CALIBRATED (lone ledgered C3c, non-downgrading)."
   },
   "PJM": {
    "declared": "2026-07-31",
@@ -378,7 +379,7 @@
   },
   "SPP": {
    "declared": "2026-09-13",
-   "keeper": "2026-09-22-hydro-5-spp-floor",
+   "keeper": "2026-09-24-spp78-hr-span",
    "by": "OWNER RULING in session spp-40, 2026-09-13, verbatim: 'Complete then run' -- given in reply to this session's status, which reported that `complete` had no technical blocker, that docs/handoffs/PLAN-spp-31-complete-frontier-2026-09-12.md had recommended DECLARE on 2026-09-12 and gone unactioned, and that `frontier` was NOT close (18 of 175 matrix cells adjudicated, 10 %, against a lowest-declared bar of 43 %). The ruling is read as `complete` ALONE: the same message ordered the 2019-2022 holdout solve ('then run'), and this session explicitly recommended AGAINST `frontier` and did not ask for it. SPP's keeper shard carries NO `frontier` block and this declaration does not create one -- that remains a separate owner act on a separate evidentiary bar.",
    "determination": "CALIBRATED on 2026-09-20-spp-51-coal-sync (2023-2025), with a single ledgered C3c caveat (rule 22 [R-C3C]) -- the same determination and the same lone blemish as the superseded keeper. RE-KEYED 2026-09-20 by lane SPP-51's promotion, on the owner's in-session ruling 'Promote then Archive your stale shards and give me a handoff prompt.' The prior keeper (2026-09-16-spp-42-commitment-feasibility) is the HISTORY of how this one came to be and its id is retained here deliberately (rule 35 [R-PROMOTE] (d): the delete touches the three stores, never the governance narrative). The 2019-2022 rung is 2026-09-20-spp-51-syncfloor-rung (NOT-YET), stamped to this keeper; rule 30(c) -- a held-out year reports and never decertifies the ISO. This entry AUTHORIZES NOTHING; it is a designation.",
    "tier_authorized": "NOTHING. [R-HOLDOUT] was REMOVED 2026-09-09 by owner instruction, so this marker AUTHORIZES NO YEAR AND GATES NOTHING -- see this file's own top-level `note`. It does the two jobs that were never authorization: it names SPP's current designated keeper (kept truthful by audit_keepers M1, which requires a promotion to re-key it) and it feeds the forecast program's gate (a). Read the `keeper` field as a designation, never as a permission.",

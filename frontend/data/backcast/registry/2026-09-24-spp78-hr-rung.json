@@ -1,9 +1,9 @@
 {
- "id": "2026-09-22-hydro-5-spp-rung",
- "label": "hydro 5 spp rung",
- "date": "2026-09-22",
- "shorthand": "hydro-5-spp-rung",
- "definition": "hydro-5: hydro_min_flow_floor on the SPP keeper, 2019 (rule 36 single-year)",
+ "id": "2026-09-24-spp78-hr-rung",
+ "label": "spp78 hr rung",
+ "date": "2026-09-24",
+ "shorthand": "spp78-hr-rung",
+ "definition": "SPP-78 rung: the same measured-heat-rate recipe as the span keeper (measured_cc/st/coal_heat_rates=true) replayed on 2019-2022 against the prior rung's (2026-09-22-hydro-5-spp-rung) control -- the larger rule-14 [R-ACCURATE] gain here, since this EIA-860 vintage carries no eGRID heat rate and the measured rates replace HEAT_RATE_BINS bin centres. Determination: NOT-YET, unchanged. C1 2022 CC_REGULAR -8.14 TWh / COAL_PRB +9.83 TWh out of band, C3a 2020 +17.1%, C3b 2020/2021 NRMSE 0.264/0.217, C4 2022 gas NRMSE 0.325; C3b 2022 moved FAIL->PASS (0.197). Stamped to the span keeper (rule 30 [R-TOUCHPOINT-FOLD]); reported, not gating the ISO's CALIBRATED headline (rule 30(c)).",
  "years": [
   2019,
   2020,
@@ -11,12 +11,12 @@
   2022
  ],
  "iso": "SPP",
- "file": "frontend/data/backcast/runs/2026-09-22-hydro-5-spp-rung.js",
- "bundle": "results/calibration/hydro5_spp_floor_rung",
+ "file": "frontend/data/backcast/runs/2026-09-24-spp78-hr-rung.js",
+ "bundle": "results/calibration/spp78_hr_rung",
  "holdout": {
   "tier": "validation",
   "year": 2022,
-  "keeper": "2026-09-22-hydro-5-spp-floor",
+  "keeper": "2026-09-24-spp78-hr-span",
   "keeperDetermination": "CALIBRATED",
   "keeperYears": [
    2023,

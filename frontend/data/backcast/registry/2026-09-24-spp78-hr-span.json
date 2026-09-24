@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-24-spp78-hr-span",
+  "label": "spp78 hr span",
+  "date": "2026-09-24",
+  "shorthand": "spp78-hr-span",
+  "definition": "SPP-78: replays the prior keeper (2026-09-22-hydro-5-spp-floor) recipe unchanged across all years, adding three pre-existing ScenarioConfig flags -- measured_cc_heat_rates / measured_st_heat_rates / measured_coal_heat_rates -- fed by SPP's existing CAMPD-derived heat-rate CSVs at their default 2023-2025 window (rule 14 [R-ACCURATE]). Span 2023-2025: CALIBRATED, unchanged determination, with the sole ledgered C3c caveat (RT >$200 hours 0/8/1 vs actual 42/59/68, non-downgrading). Zero new free parameters; controls solved at the same SHA reproduce the prior keeper's class TWh exactly.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "SPP",
+  "file": "frontend/data/backcast/runs/2026-09-24-spp78-hr-span.js",
+  "bundle": "results/calibration/spp78_hr_span"
+}
