@@ -3394,3 +3394,22 @@ results/calibration/pjm_h19_dbs_20[0-9][0-9]/
 # span is committed. Leg SHAs are recorded in FINDING-soco-60 (provenance only).
 results/calibration/soco60_arm_20[0-9][0-9]/
 results/calibration/soco60_armB_20[0-9][0-9]/
+
+# SPP-75 (2026-09-24): per-year control/arm legs + composites, kept local pending the owner's
+# promotion ruling (rules 29(c)/31). Leg provenance (rule 33(d), not a recovery route):
+# 2019 29a206aa43f55b671b5bc021949180d3babafa21  2020 a97be806649ce91f2b2d7751f08d5be346aae40e
+# 2021 98db111dcd99444babc5a242ee49d9fd761293c5  2022 381a9fe8937bdabe8b28612a9e7cba612ee46cdb
+# 2023 89bc112cb86dbe96f7ff32e4c8d9a9ca3d7fdce4  2024 83095fbec969c7522d7aeedd32ed0b5f9545886d
+# 2025 ee05728f3dd9d2463aefaf52d289459875bcb49b
+results/calibration/spp75_*/
+# SPP-75: eia923 benchmark frames restored (hash-verified) for the unregistered spp75_* legs only;
+# regenerable at zero LP via run_calibration_full.py --restore-shared-inputs. Commit them only with a promotion.
+results/calibration/_shared/SPP/eia923-000d11f64b4e.parquet
+results/calibration/_shared/SPP/eia923-1c5d7dafa097.parquet
+results/calibration/_shared/SPP/eia923-2afe466f56d5.parquet
+results/calibration/_shared/SPP/eia923-3953c83ea5b8.parquet
+results/calibration/_shared/SPP/eia923-8dd02ac893e4.parquet
+results/calibration/_shared/SPP/eia923-919c193d6f8d.parquet
+results/calibration/_shared/SPP/eia923-9b1e375afedc.parquet
+results/calibration/_shared/SPP/eia923-a6c17fafb327.parquet
+results/calibration/_shared/SPP/eia923-c11b7680b559.parquet

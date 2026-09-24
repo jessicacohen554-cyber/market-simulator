@@ -162,3 +162,112 @@ disk. **Routed, not built.**
 0 LP minutes. No shards, no bundles, nothing to archive or retain. Everything reproduces from
 `main` with the three probes. **If chartered:** the CHP arm is seven shards (rule 36, 2019–2025),
 each solving control and arm, with the existing flag `chp_steam_floor_p25=true` as the single delta.
+
+---
+
+## 9. THE CHP ARM — SOLVED (owner charter 2026-09-24, "Yes charter the CHP fix")
+
+Seven shards, one per year, pinned to `79dcc45a`, each solving its own control and arm (PRECOMMIT §5).
+All seven self-checks PASS: control = keeper recipe, arm = control + `chp_steam_floor_p25` only.
+**Every control reproduces its keeper exactly** (max |Δ class TWh| 0.0000). Leg commits (provenance only,
+rule 33(d)): 2019 `29a206aa…`, 2020 `a97be806…`, 2021 `98db111d…`, 2022 `381a9fe8…`, 2023 `89bc112c…`,
+2024 `83095fbe…`, 2025 `ee05728f…` (full SHAs in `.gitignore` comment). Shards archived.
+
+### 9.1 Arm − control
+
+| year | CHP TWh | CHP MW in RT≤0 h | wind MW in RT≤0 h | CC_REGULAR TWh | COAL_PRB TWh | mean price $/MWh | model hours ≤ $0 |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| 2019 | +0.83 | +144 | −6 | −0.26 | −0.37 | −0.05 | +3 |
+| 2020 | +0.99 | +177 | −51 | −0.32 | −0.31 | −0.23 | +44 |
+| 2021 | +1.32 | +170 | −74 | −0.52 | −0.37 | −0.44 | +27 |
+| 2022 | +1.33 | +193 | −78 | −0.55 | −0.40 | −0.44 | +39 |
+| 2023 | +0.25 | +95 | −51 | −0.06 | −0.09 | −0.14 | +30 |
+| 2024 | +0.22 | +81 | −47 | −0.06 | −0.03 | −0.12 | +21 |
+| 2025 | +0.28 | +112 | −55 | −0.03 | −0.14 | −0.14 | +28 |
+
+The added CHP mostly displaces **CC_REGULAR and coal, not wind**. In most RT≤0 hours the model's
+price is still positive, so thermal is marginal there, not wind. 2023–2025 move less because the
+control's CHP already ran near the new floor on economics (control ≈ 386–405 MW mean).
+
+### 9.2 Scored rows (control → arm)
+
+| row | 2019 | 2020 | 2021 | 2022 | 2023 | 2024 | 2025 |
+|---|---|---|---|---|---|---|---|
+| C3a (scorer basis) | +1.64 → +1.59 $ | **+15.5 → +14.2 %, FAIL** | +0.71 → +0.27 $ | −2.15 → −2.60 $ | −0.25 → −0.39 $ | −0.63 → −0.74 $ | unchanged status |
+| C3b (SPP-74 instrument) | 0.125 → 0.123 | **0.256 → 0.242, FAIL** | **0.238 → 0.252, FAIL** | **0.209 → 0.211, FAIL** | ↓ 0.003 | ↓ 0.000 | ↓ 0.002 |
+| C1 COAL_PRB 2022 | | | | **+9.60 → +9.20 TWh, FAIL** (band ±8.00) | | | |
+| C1 CC_REGULAR 2022 | | | | **−7.55 → −8.09 TWh: PASS → FAIL** | | | |
+| C4 gas NRMSE | 0.141 → 0.143 | 0.213 → 0.213 | 0.289 → 0.278 | **0.321 → 0.311, FAIL** | 0.183 → 0.180 | 0.215 → 0.213 | 0.245 → 0.241 |
+
+G-4 (`screen_collateral_gate.py`, arm and control both scored against the registered keeper/rung):
+**0 status flips in 2019–2021 and 2023–2025**. **One flip, 2022 C1 CC_REGULAR PASS → FAIL.** It is a
+rung year, so under rule 30(c) it cannot decertify SPP. Its cause is §9.1's displacement: the
+floor pushes CC_REGULAR further below an actual it already under-ran. G-4 also shows ST_GAS 2022
+forced share PASS → FAIL **on the control too**. That is instrument drift: the registered rung
+passes that row as "grounded above budget", which the screen instrument cannot evaluate. It is
+not an arm effect.
+
+The C3b rows for 2023–2025 are direction only. For those years the scorer's actual is load-weighted
+on a basis my instrument does not reproduce (the scorer puts keeper C3b at 0.166 / 0.158 / 0.152).
+
+### 9.3 Predictions (PRECOMMIT §5), scored
+
+| # | prediction | outcome |
+|---|---|---|
+| Q1 | CHP +1.0–2.2 TWh | **2 / 7** (2021, 2022). 2019–2020 slightly low; 2023–2025 low because control CHP already ran near the floor |
+| Q2 | CHP in RT≤0 h +180–250 MW | **1 / 7** (2022); 81–177 elsewhere |
+| Q3 | wind falls by 60–100 % of Q2 | **0 / 7, wrong mechanism** (4–58 %). Thermal, not wind, is marginal in most of those hours |
+| Q4 | price falls by < $0.30 | **5 / 7**; falls in all seven; 2021/2022 fall $0.44 |
+| Q5 | C3a 2020 down < 1 pp, stays FAIL | **half**: stays FAIL; moved 1.37 pp |
+| Q6 | no status flips 2023–2025 | **HIT**. Unpredicted: the 2022 CC_REGULAR flip |
+| Q7 | control reproduces keeper < 0.05 TWh | **HIT** (0.0000, all seven) |
+
+### 9.4 Structural gate
+
+- **K-1 over-forcing (pre-registered): PASS in every gated year.**
+  - Arm CHP in RT≤0 hours: 354 / 335 / 302 / 341 MW, vs measured 437 / 453 / 431 / 424.
+  - Annual mean arm CHP: 385 / 375 / 331 / 344 / 414 / 427 MW, vs EIA-923 522 / 551 / 520 / 538 / 595 / 615.
+  - 2025 (402 vs a partial 532) is reported, not gated.
+- **D-4 unit conduct (not pre-registered; found in the regenerated diagnostics): FAIL at one plant,
+  every year.**
+  - The plant is **Lake Road (MO), 2098, ST_CHP**. Its artifact `steam_level_cf` is 4.9 % against
+    `chp_pmin_cf` 0.0, so the swap creates a 4.6 MW floor where none existed. Its own CAMPD meter
+    is at zero **78–97 %** of hours.
+  - This is exactly the caiso-293 rule-17 defect: `on_freq × p50(loading)` (0.246 × 19.9 %) held
+    as a 24/7 trickle.
+  - Energy is tiny (0.02–0.04 TWh/yr), but rule 17 treats a floor binding while its driver says the
+    plant is offline as a bug by definition, whatever its size.
+  - Eastman (55176) and Black Hawk (55064), the two plants the arm was built for, **pass**.
+  - The existing repair, `chp_steam_duty_window`, would hold 18.5 MW only in Lake Road's top-25 %
+    load hours. It likely still fails there, because the plant's meter reads zero in more hours
+    than that window leaves out. Not solved.
+- D-2/C8: the CHP classes are exempt by construction (`d2_exempt_classes`). No other D-row changes
+  verdict.
+
+### 9.5 Recommendation (the owner decides; rule 31)
+
+**Do not promote as solved.** It does what it was built for:
+- The two metered steam hosts reach 90–97 % of their measured output.
+- No gated over-forcing.
+- Every price row moves the right way in 2020.
+- C4 gas 2022 improves.
+
+But it introduces a new rule-17 failure at Lake Road, and a new C1 flip (2022 CC_REGULAR, rung
+only). The clean form is the same swap **scoped away from cyclers**. Nothing on `main` offers that
+without either the duty window (probably insufficient at Lake Road) or a new eligibility
+condition (a new field, zero-DOF if keyed on the artifact's own `status == ok` and
+`on_frac ≥ 0.9`). Both are successor work.
+
+Rule 1 permits promotion anyway on structure, since the two target hosts are the object and
+Lake Road's floor is 4.6 MW. If the owner chooses that, the Lake Road D-4 FAIL must be carried as
+a named defect.
+
+### 9.6 Retrievability (rule 34(e))
+
+- **Composed bundles:** `results/calibration/spp75_chp_rung` (2019–2022) and `spp75_chp_span`
+  (2023–2025) exist **on this session's local disk only**. So do all 14 per-year legs, gitignored,
+  not deleted (rule 31).
+- **Shard branches:** transport, and will be cut when this lane's PR merges (rule 33(f)).
+- **Promotion cost:**
+  - While this session is alive: zero LP (register, promote, audit, prune).
+  - After it ends: seven shards of ~10–25 min each, run in parallel.
