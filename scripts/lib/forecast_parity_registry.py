@@ -564,6 +564,20 @@ DECLARATIONS: tuple[ParityDeclaration, ...] = (
         evidence=("src/market_sim/pipeline/backcast_config.py",),
     ),
     ParityDeclaration(
+        fields=("gas_offer_margin_anchor_vintage",),
+        disposition=GAP,
+        why="moves the gas net-revenue margin's identification point from the "
+        "frozen 2023-2025 window anchor onto the SOLVE YEAR's own mean "
+        "delivered-gas series (pjm-169 F4; armed in the MISO keeper since "
+        "miso-264). Forward-derivable — the forecast year's own gas "
+        "trajectory mean is the same quantity — yet the forecast "
+        "orchestrator's apply_gas_offer_margin reads the frozen "
+        "config.gas_offer_margin_anchor, so a forecast on the keeper config "
+        "prices the margin at the window anchor in every year",
+        finding="docs/FINDING-miso268-coal-yard-grain-and-the-open-objects-2026-09-24.md",
+        evidence=(_BACKCAST_ORCH, "src/market_sim/runner.py"),
+    ),
+    ParityDeclaration(
         fields=("neiso_winter_fuel_inventory",),
         disposition=GAP,
         why="its own call site calls it the 'forward-derivable capacity/"

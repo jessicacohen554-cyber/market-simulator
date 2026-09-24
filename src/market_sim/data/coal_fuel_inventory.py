@@ -279,3 +279,189 @@ def build_coal_fuel_budget(
         n_generators=int(gen_idx.size),
     )
     return gen_idx, budget_mmbtu, month_index, coeff, group_index, provenance
+
+
+@dataclass(frozen=True)
+class CoalPlantBudget:
+    """Provenance for one year's per-coal-yard annual budget rows.
+
+    Attributes:
+        n_entities: Coal yards that carry a row (a plant, or a shared-storage
+            entity pooled with every modelled plant it serves).
+        n_generators: Coal generators the rows constrain.
+        n_unrowed_generators: Coal generators at yards with NO curated stock or
+            receipt record in the source window — left unconstrained, never
+            sized on a substitute.
+        annual_budget_mmbtu: Sum of the per-yard budgets.
+        rate_source_years: The prior years the delivery rates averaged.
+    """
+
+    n_entities: int
+    n_generators: int
+    n_unrowed_generators: int
+    annual_budget_mmbtu: float
+    rate_source_years: tuple[int, ...]
+
+
+def coal_yard_groups(
+    fleet: FleetArrays, reference_dir: Path | None = None
+) -> dict[int, set[int]]:
+    """Group the fleet's coal plants into the physical coal yards they draw on.
+
+    Returns ``{yard key: EIA ids whose stocks and receipts fund that yard}``.
+    A plant is its own yard unless a shared-storage entity in the crosswalk
+    serves it, in which case every modelled plant that entity serves, and the
+    entity itself, form ONE yard (union over overlapping entities). The key is
+    the smallest modelled plant code in the yard. Coal at one yard cannot fuel
+    a unit at another; coal in a shared yard can fuel any unit it serves.
+    """
+    gen_idx = coal_gen_idx(fleet)
+    codes = np.asarray(fleet.plant_code)
+    plants = sorted({int(codes[g]) for g in gen_idx})
+    parent = {p: p for p in plants}
+
+    def find(p: int) -> int:
+        while parent[p] != p:
+            parent[p] = parent[parent[p]]
+            p = parent[p]
+        return p
+
+    storage_of: dict[int, set[int]] = {}
+    for sid, served in _shared_storage_map(reference_dir).items():
+        members = sorted(served & set(plants))
+        if not members:
+            continue
+        for p in members[1:]:
+            ra, rb = find(members[0]), find(p)
+            if ra != rb:
+                parent[max(ra, rb)] = min(ra, rb)
+        storage_of.setdefault(members[0], set()).add(int(sid))
+    yards: dict[int, set[int]] = {}
+    for p in plants:
+        yards.setdefault(find(p), set()).add(p)
+    for anchor, sids in storage_of.items():
+        yards[find(anchor)].update(sids)
+    return yards
+
+
+def build_coal_plant_budget(
+    fleet: FleetArrays,
+    year: int,
+    *,
+    hours: int | None = None,
+    n_rate_years: int = 2,
+    reference_dir: Path | None = None,
+) -> (
+    tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, CoalPlantBudget]
+    | None
+):
+    """Build the per-coal-yard ANNUAL fuel budget rows for ``year`` (miso-268).
+
+    The plant grain of :func:`build_coal_fuel_budget`'s annual identity. The
+    pooled rows sum every yard's stock and receipts into one fleet pile, so the
+    LP may burn coal at a yard that never held it against tons sitting at
+    another — which no rail car makes true. One row per yard enforces::
+
+        sum_{g at yard y, t in year} HR[g] * P[g, t]
+            <= (Dec(Y-1) stock_y + prior-years receipts rate_y) * mmbtu_per_ton_y
+
+    Same measured inputs, same rule-13 admissibility and same forward story as
+    the pooled budget (every sizing quantity predates ``year``); only the
+    partition changes. The pooled MONTHLY rows are untouched and remain the
+    timing limb — these rows add no month grain, so the no-carry limitation is
+    not extended to the yard level. Summed over yards the annual budgets equal
+    the pooled annual budget for the covered footprint, so this is a refinement
+    of one identity, never a second mechanism (rule 19 ``[R-ONE-MECH]``).
+
+    A yard with no stock AND no receipt record in the source window (Dec of
+    ``Y-1`` and the ``n_rate_years`` prior years) gets NO row: a missing input
+    is never substituted. A yard that files and reports zero gets a zero budget,
+    because that is what it reported. Heat content is the yard's own
+    quantity-weighted prior-years value, else the covered fleet's.
+
+    Returns:
+        ``(gen_idx, budget (n_yards, 1), month_index zeros (T,), coeff,
+        group_index, provenance)`` for :func:`_build_oil_budget_rows`, or
+        ``None`` when no yard carries a row.
+    """
+    from market_sim.data.coal_receipts import load_coal_receipts
+    from market_sim.data.coal_stocks import load_coal_stocks
+
+    gen_idx = coal_gen_idx(fleet)
+    if gen_idx.size == 0:
+        return None
+    yards = coal_yard_groups(fleet, reference_dir=reference_dir)
+    source = [year - k for k in range(1, int(n_rate_years) + 1)]
+    stocks = load_coal_stocks([year - 1])
+    receipts = load_coal_receipts(source)
+    if stocks.empty and receipts.empty:
+        return None
+    dec = (
+        stocks[stocks["month"] == 12].groupby("plant_id")["ending_stock_tons"].sum()
+        if not stocks.empty
+        else None
+    )
+    stock_filers = (
+        set(int(p) for p in stocks["plant_id"]) if not stocks.empty else set()
+    )
+    if not receipts.empty:
+        rc = receipts.assign(
+            _mmbtu=receipts["quantity_tons"] * receipts["heat_content_mmbtu_per_ton"]
+        )
+        rtons = rc.groupby("plant_id")["quantity_tons"].sum()
+        rmmbtu = rc.groupby("plant_id")["_mmbtu"].sum()
+        n_src = max(int(rc["year"].nunique()), 1)
+        src_years = tuple(sorted(int(y) for y in rc["year"].unique()))
+    else:
+        rtons = rmmbtu = None
+        n_src, src_years = 1, ()
+
+    def _get(s, ids):
+        return float(sum(s.get(i, 0.0) for i in ids)) if s is not None else 0.0
+
+    rowed: list[tuple[int, float, float, float]] = []
+    for key, ids in yards.items():
+        filed = bool(ids & stock_filers) or (
+            rtons is not None and any(i in rtons.index for i in ids)
+        )
+        if not filed:
+            continue
+        rowed.append((key, _get(dec, ids), _get(rtons, ids) / n_src, _get(rmmbtu, ids)))
+    if not rowed:
+        return None
+    fleet_tons = sum(r[2] for r in rowed) * n_src
+    fleet_mmbtu = sum(r[3] for r in rowed)
+    fleet_hc = fleet_mmbtu / fleet_tons if fleet_tons > 0 else float("nan")
+
+    codes = np.asarray(fleet.plant_code)
+    yard_of_plant = {p: key for key, ids in yards.items() for p in ids}
+    key_pos = {key: i for i, (key, *_rest) in enumerate(rowed)}
+    budget = np.zeros((len(rowed), 1), dtype=float)
+    for i, (_key, stock, rate, mmbtu) in enumerate(rowed):
+        tons_src = rate * n_src
+        hc = mmbtu / tons_src if tons_src > 0 else fleet_hc
+        if not np.isfinite(hc) or hc <= 0.0:
+            return None
+        budget[i, 0] = (stock + rate) * hc
+    pos = np.array(
+        [key_pos.get(yard_of_plant.get(int(codes[g]), -1), -1) for g in gen_idx],
+        dtype=int,
+    )
+    keep = pos >= 0
+    if not keep.any():
+        return None
+    g_rows = gen_idx[keep]
+    hr = np.asarray(fleet.heat_rate, dtype=float)[g_rows]
+    coeff = np.where(hr > 0, hr, 10.0)
+    if hours is None:
+        avail = getattr(fleet, "availability", None)
+        hours = int(avail.shape[1]) if avail is not None and avail.ndim == 2 else 8760
+    month_index = np.zeros(int(hours), dtype=int)
+    prov = CoalPlantBudget(
+        n_entities=len(rowed),
+        n_generators=int(keep.sum()),
+        n_unrowed_generators=int((~keep).sum()),
+        annual_budget_mmbtu=float(budget.sum()),
+        rate_source_years=src_years,
+    )
+    return g_rows, budget, month_index, coeff, pos[keep], prov

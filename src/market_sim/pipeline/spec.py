@@ -155,6 +155,12 @@ class DispatchSpec:
     coal_month_index: Any = UNSET
     coal_gen_hour_coeff: Any = UNSET
     coal_group_index: Any = UNSET
+    # miso-268 per-coal-yard ANNUAL budget rows (coal_fuel_inventory_plant_grain).
+    coal_plant_budget: Any = UNSET
+    coal_plant_gen_idx: Any = UNSET
+    coal_plant_month_index: Any = UNSET
+    coal_plant_gen_hour_coeff: Any = UNSET
+    coal_plant_group_index: Any = UNSET
     # Measured storage-AS SOC sustain floor (CAISO battery reservation,
     # caiso_storage_as_reservation) — (n_storage, T) SOC lower bound. UNSET
     # (flag off / other ISOs) omits the key, leaving the 0 lower bound.

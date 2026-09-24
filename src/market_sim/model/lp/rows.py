@@ -1313,6 +1313,11 @@ def build_constraints(
     coal_month_index: np.ndarray | None = None,
     coal_gen_hour_coeff: np.ndarray | None = None,
     coal_group_index: np.ndarray | None = None,
+    coal_plant_budget: np.ndarray | None = None,
+    coal_plant_gen_idx: np.ndarray | None = None,
+    coal_plant_month_index: np.ndarray | None = None,
+    coal_plant_gen_hour_coeff: np.ndarray | None = None,
+    coal_plant_group_index: np.ndarray | None = None,
     storage_daily_cycle_hours: int | None = None,
     storage_alloc_batt_idx: np.ndarray | None = None,
     storage_alloc_share: np.ndarray | None = None,
@@ -1990,6 +1995,29 @@ def build_constraints(
             blocks.append(coal_block)
             del coal_block
             _add_bounds(coal_lower, coal_upper)
+
+    # Optional per-coal-yard ANNUAL budget rows (miso-268,
+    # coal_fuel_inventory_plant_grain): the pooled rows above let coal at one
+    # yard fund burn at another; these cap each yard's annual coal energy INPUT
+    # at its OWN opening stock plus prior-years receipts. Same builder, one
+    # "month" spanning the year, its own kwarg family so it never overwrites the
+    # pooled monthly rows, which stay the timing limb (rule 19 [R-ONE-MECH]).
+    if coal_plant_budget is not None and coal_plant_gen_idx is not None:
+        cp_idx = np.asarray(coal_plant_gen_idx, dtype=int)
+        if coal_plant_month_index is None:
+            coal_plant_month_index = np.zeros(T, dtype=int)
+        if cp_idx.size:
+            cp_block, cp_lower, cp_upper = _build_oil_budget_rows(
+                layout,
+                cp_idx,
+                coal_plant_budget,
+                coal_plant_month_index,
+                gen_hour_coeff=coal_plant_gen_hour_coeff,
+                group_index=coal_plant_group_index,
+            )
+            blocks.append(cp_block)
+            del cp_block
+            _add_bounds(cp_lower, cp_upper)
 
     # Optional priced import-node monthly net-throughput band: one row per month
     # pinning the node's net interchange (import tranches minus export sinks) to
