@@ -3467,3 +3467,7 @@ results/calibration/_shared/SPP/eia930-c3bec7e7b952.parquet
 # R-SPP (2026-09-24): per-year legs rspp_<year> stay out of main (rule 32(d)); the composite rspp_span is
 # the promoted keeper (owner ruling 2026-09-25) and commits in its slim keeper shape (rule 31 [R-RETAIN]); legs pushed on claude/rspp-<year> (provenance SHAs in the RESULT doc).
 results/calibration/rspp_20*/
+# R-MISO (2026-09-24) per-year shard legs: kept OUT of main (rule 32(d) / 29(c)), never rm-ed
+# (rule 31). Each shard appends its own negation on its own branch (rule 34(a)). The composite
+# results/calibration/rmiso_span is what gets registered.
+results/calibration/rmiso_20*/**

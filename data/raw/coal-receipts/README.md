@@ -71,6 +71,7 @@ carries heat content and delivered cost as quantity-weighted means.
 
 | year | plant-level coal receipts |
 |---|---|
+| 2017 | **yes** (Final Revision vintage) — landed 2026-09-24 by R-MISO so the 2019 budget's delivery rate averages its full Y-2..Y-1 window (2017 + 2018) |
 | 2018–2024 | **yes** (Final Revision vintage) |
 | 2025 | **no** — awaiting the EIA-923 2025 Final Revision, same gap the `coal-stocks` README records |
 

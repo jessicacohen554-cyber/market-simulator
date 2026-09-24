@@ -215,11 +215,31 @@ def load_registry_model_clock(iso: str) -> pd.DataFrame:
 def da_hub_path(iso: str, year: int) -> Path:
     """Return the year's gzip DA hub LMP record path (may not exist).
 
-    Only the gzip yearly files (2023-2025) are readable here; the 2022 /
-    2026 ``_p<NN>.csv`` chunk sets are a different staging format
-    (``data/raw/lmp-data/MISO/README.md``) and are NOT a certificate source.
+    2023-2025 ship as one gzip yearly file. Other years ship as ``_p<NN>.csv``
+    ~7-day chunks (``data/raw/lmp-data/MISO/README.md``) carrying the SAME
+    verbatim columns (``date,node,type,value,he01..he24``); see
+    :func:`da_hub_paths`, which reads either layout.
     """
     return RAW_DATA_DIR / "lmp-data" / iso / f"{iso.lower()}_hub_lmp_{year}_da.csv.gz"
+
+
+def da_hub_paths(iso: str, year: int) -> list[Path]:
+    """Return the staged DA hub LMP file(s) for ``year``: the gzip, else the chunks.
+
+    R-MISO (2026-09-24, AUDIT-backcast-inputs-860-heatrate-outage §5.3.3;
+    FINDING-f2-campd-outage-coverage §2 "Maxgen ... spans 2023-2025 only ->
+    R-MISO"): the chunk layout is the same verbatim hub rows the gzip carries
+    (``derive_miso_hub_lmp._staged_paths`` reads both), so it is as much a
+    certificate source as the gzip. The former gzip-only reader dropped the
+    registry's 2021 (Uri) and 2022 declarations as "uncertifiable" on the
+    stated ground that they sat outside the 2023-2025 training span — a ground
+    that lapsed with ``[R-HOLDOUT]``'s removal (2026-09-09) while the MISO
+    keeper solves both years. Prefers the gzip when both exist.
+    """
+    gz = da_hub_path(iso, year)
+    if gz.exists():
+        return [gz]
+    return sorted(gz.parent.glob(f"{iso.lower()}_hub_lmp_{year}_da_p??.csv"))
 
 
 def da_hub_long_to_wide(df: pd.DataFrame) -> pd.DataFrame:
@@ -243,10 +263,12 @@ def da_hub_long_to_wide(df: pd.DataFrame) -> pd.DataFrame:
 def load_da_hub_wide(iso: str, year: int) -> pd.DataFrame:
     """Return the year's DA hub LMP as a wide ``ts x hub`` frame (MODEL clock).
 
-    Reads the committed ``miso_hub_lmp_<year>_da.csv.gz`` record and places it
-    through :func:`da_hub_long_to_wide`.
+    Reads the committed record (gzip yearly file or ``_p<NN>`` chunks,
+    :func:`da_hub_paths`) and places it through :func:`da_hub_long_to_wide`.
     """
-    return da_hub_long_to_wide(pd.read_csv(da_hub_path(iso, year)))
+    return da_hub_long_to_wide(
+        pd.concat([pd.read_csv(p) for p in da_hub_paths(iso, year)], ignore_index=True)
+    )
 
 
 def certificate_hours(
@@ -439,7 +461,7 @@ def main() -> None:
     # all once those rows existed, so the committed extract had gone
     # unreproducible).
     years_all = sorted(int(y) for y in ev["start_model"].dt.year.unique())
-    years = [y for y in years_all if da_hub_path(iso, y).exists()]
+    years = [y for y in years_all if da_hub_paths(iso, y)]
     skipped = sorted(set(years_all) - set(years))
     if skipped:
         print(

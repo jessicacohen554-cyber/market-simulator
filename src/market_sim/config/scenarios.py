@@ -22166,22 +22166,28 @@ COAL_SIGMOID_DEFAULTS: dict[tuple[str, str], dict[str, float]] = {
     #              resolves no spread → baseline 2.5 (annual data can't resolve
     #              its sharpness — rule-23 granularity caveat).
     # Provenance artifact: data/raw/_processed-legacy/coal_sigmoid_params.csv.
+    # RE-DERIVED 2026-09-24 (R-MISO, rule 23): the ONLY input that moved is the
+    # model fleet's coal heat rate ``hr_coal`` (PRB 10.60 -> 10.62, BIT
+    # 10.75 -> 10.42 MMBtu/MWh), because F1 (#6572, AUDIT-backcast-inputs-860-
+    # heatrate-outage-2026-09-24 §5.1) re-joined the canonical EIA-860 snapshot
+    # to eGRID 2024 (was eGRID 2023). f.o.b., PPI, gas trough unchanged. Pre-F1
+    # values: BIT 0.532 / 4.115 / 1.092; PRB 0.687 / 3.187; follower 0.598.
     ("MISO", "bituminous"): {
-        "floor": 0.532,
+        "floor": 0.549,
         "ceil": 1.0,
-        "gas_mid": 4.115,
-        "gas_slope": 1.092,
+        "gas_mid": 3.989,
+        "gas_slope": 1.126,
     },
     ("MISO", "prb"): {
-        "floor": 0.687,
+        "floor": 0.686,
         "ceil": 1.0,
-        "gas_mid": 3.187,
+        "gas_mid": 3.192,
         "gas_slope": 2.5,
     },
     ("MISO", "prb_follower"): {
-        "floor": 0.598,
+        "floor": 0.597,
         "ceil": 1.0,
-        "gas_mid": 3.187,
+        "gas_mid": 3.192,
         "gas_slope": 2.5,
     },
     ("PJM", "bituminous"): {

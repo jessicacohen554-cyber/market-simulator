@@ -1,3 +1,4 @@
+2389feed43446ba49c5d52747ef8f10da95c1111ab9e220894258831e7b9e671  f923_2017.zip::Schedules_2_3_4_5  https://www.eia.gov/electricity/data/eia923/archive/xls/f923_2017.zip
 1d873be87a085d44d48c495e4563f6aa6de7e96466c31798e197e84dce467724  f923_2018.zip::Schedules_2_3_4_5  https://www.eia.gov/electricity/data/eia923/archive/xls/f923_2018.zip
 8a7144dd5389335c11b07760e7ad53482ebb5097a418c2ef01bbedc914e17075  f923_2019.zip::Schedules_2_3_4_5  https://www.eia.gov/electricity/data/eia923/archive/xls/f923_2019.zip
 0e5afa8f0c38124017b01688a8a7e0583a0d04785b90c65c848f70dbaf102e44  f923_2020.zip::Schedules_2_3_4_5  https://www.eia.gov/electricity/data/eia923/archive/xls/f923_2020.zip
