@@ -245,3 +245,81 @@ and is absent from `campd.ISO_STATES`; no loader reads it.
 | `AZ_2023.parquet` | 788,400 | 25 | 90 | 2023-01-01 .. 2023-12-31 |
 | `AZ_2024.parquet` | 803,760 | 26 | 92 | 2024-01-01 .. 2024-12-31 |
 | `AZ_2025.parquet` | 819,168 | 26 | 96 | 2025-01-01 .. 2025-12-31 |
+
+**48 states since 2026-09-24 (F2, `docs/handoffs/FINDING-f2-campd-outage-coverage-2026-09-24.md`):
++ CO FL, and 2019–2022 back-filled for AL GA ID OR UT WA WY** — 42 files, 141 MB. Charter:
+`docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md` §5.2 (owner instruction
+2026-09-24: granular CAMPD outage data for every ISO and every backcast year 2019–2025). The list
+was **derived, not copied from the audit**: every `campd.ISO_STATES` state × 2019–2025 with no
+extract on disk. Against each ISO's fleet (`load_fleet_from_csv` + `load_retired_within_window`,
+qualifying + CT classes, plant state from EIA-860) every fleet plant sits in a listed state except
+ERCOT's Tenaska Kiamichi (EIA 55501, 1,224 MW CC_REGULAR on ERCOT's bin sheet, CEMS under OK — the
+OK extracts already exist; the gap is ERCOT's TX-only state scope, recorded in the FINDING and not
+changed here) and MISO's MT peakers (Glendive / Miles City / Lewis & Clark, 117 MW, all CT_PEAKER,
+which the outage overlay skips). **AZ is not back-filled**: no ISO's fleet has a plant there (it was
+landed 2023–2025 only as NWPP-47 attribution evidence). **CO is landed although no ISO fleet has a
+CO combustion unit** — it completes SPP's listed scope so the "listed state-year present" invariant
+holds; it is inert (the per-ISO fleet filter admits nothing from it). FL carries SOCO's three
+panhandle fleet plants (Pensacola 10416, International Paper Pensacola 50250, Springhill 56522),
+none of which files CEMS rows in 2019–2025 — so FL, too, adds no SOCO window.
+
+    python scripts/data/fetch_campd_unit_level.py --year <2019|2020|2021> \
+        --states AL GA ID OR UT WA WY CO FL
+    python scripts/data/fetch_campd_unit_level.py --year 2022 \
+        --states AL GA ID OR UT WA WY CO FL --holdout-intake F2
+    python scripts/data/fetch_campd_unit_level.py --year <2023|2024|2025> --states CO FL
+
+(`--holdout-intake` is still demanded by the fetcher's 2022 gate, a leftover of the removed
+`[R-HOLDOUT]` rule; the value records the lane, it authorizes nothing.) One HTTP 429 (DEMO_KEY rate
+limit) on the first CO/FL 2019 request; retried once, clean. Every file passed the fetcher's
+sibling-schema assertion and is confined to its own year:
+
+| file | rows | facilities | units | span |
+|---|---:|---:|---:|---|
+| `AL_2019.parquet` | 836,544 | 30 | 100 | 2019-01-01 .. 2019-12-31 |
+| `AL_2020.parquet` | 825,696 | 29 | 97 | 2020-01-01 .. 2020-12-31 |
+| `AL_2021.parquet` | 797,232 | 28 | 94 | 2021-01-01 .. 2021-12-31 |
+| `AL_2022.parquet` | 759,936 | 24 | 88 | 2022-01-01 .. 2022-12-31 |
+| `GA_2019.parquet` | 1,241,640 | 34 | 143 | 2019-01-01 .. 2019-12-31 |
+| `GA_2020.parquet` | 1,209,984 | 33 | 138 | 2020-01-01 .. 2020-12-31 |
+| `GA_2021.parquet` | 1,200,120 | 33 | 137 | 2021-01-01 .. 2021-12-31 |
+| `GA_2022.parquet` | 1,184,736 | 33 | 136 | 2022-01-01 .. 2022-12-31 |
+| `ID_2019.parquet` | 70,080 | 5 | 8 | 2019-01-01 .. 2019-12-31 |
+| `ID_2020.parquet` | 70,272 | 5 | 8 | 2020-01-01 .. 2020-12-31 |
+| `ID_2021.parquet` | 70,080 | 5 | 8 | 2021-01-01 .. 2021-12-31 |
+| `ID_2022.parquet` | 70,080 | 5 | 8 | 2022-01-01 .. 2022-12-31 |
+| `OR_2019.parquet` | 131,400 | 8 | 15 | 2019-01-01 .. 2019-12-31 |
+| `OR_2020.parquet` | 131,760 | 8 | 15 | 2020-01-01 .. 2020-12-31 |
+| `OR_2021.parquet` | 131,400 | 8 | 15 | 2021-01-01 .. 2021-12-31 |
+| `OR_2022.parquet` | 122,640 | 7 | 14 | 2022-01-01 .. 2022-12-31 |
+| `UT_2019.parquet` | 254,040 | 11 | 29 | 2019-01-01 .. 2019-12-31 |
+| `UT_2020.parquet` | 254,736 | 11 | 29 | 2020-01-01 .. 2020-12-31 |
+| `UT_2021.parquet` | 254,040 | 11 | 29 | 2021-01-01 .. 2021-12-31 |
+| `UT_2022.parquet` | 254,040 | 11 | 29 | 2022-01-01 .. 2022-12-31 |
+| `WA_2019.parquet` | 157,680 | 11 | 18 | 2019-01-01 .. 2019-12-31 |
+| `WA_2020.parquet` | 158,112 | 11 | 18 | 2020-01-01 .. 2020-12-31 |
+| `WA_2021.parquet` | 151,080 | 11 | 18 | 2021-01-01 .. 2021-12-31 |
+| `WA_2022.parquet` | 148,920 | 11 | 17 | 2022-01-01 .. 2022-12-31 |
+| `WY_2019.parquet` | 219,000 | 12 | 25 | 2019-01-01 .. 2019-12-31 |
+| `WY_2020.parquet` | 219,600 | 12 | 25 | 2020-01-01 .. 2020-12-31 |
+| `WY_2021.parquet` | 219,000 | 12 | 25 | 2021-01-01 .. 2021-12-31 |
+| `WY_2022.parquet` | 219,000 | 12 | 25 | 2022-01-01 .. 2022-12-31 |
+| `CO_2019.parquet` | 621,960 | 24 | 71 | 2019-01-01 .. 2019-12-31 |
+| `CO_2020.parquet` | 601,632 | 23 | 70 | 2020-01-01 .. 2020-12-31 |
+| `CO_2021.parquet` | 586,920 | 22 | 67 | 2021-01-01 .. 2021-12-31 |
+| `CO_2022.parquet` | 582,504 | 22 | 67 | 2022-01-01 .. 2022-12-31 |
+| `CO_2023.parquet` | 600,240 | 22 | 70 | 2023-01-01 .. 2023-12-31 |
+| `CO_2024.parquet` | 614,880 | 22 | 70 | 2024-01-01 .. 2024-12-31 |
+| `CO_2025.parquet` | 626,448 | 23 | 76 | 2025-01-01 .. 2025-12-31 |
+| `FL_2019.parquet` | 1,793,592 | 57 | 205 | 2019-01-01 .. 2019-12-31 |
+| `FL_2020.parquet` | 1,791,888 | 56 | 205 | 2020-01-01 .. 2020-12-31 |
+| `FL_2021.parquet` | 1,782,696 | 56 | 209 | 2021-01-01 .. 2021-12-31 |
+| `FL_2022.parquet` | 1,817,760 | 55 | 208 | 2022-01-01 .. 2022-12-31 |
+| `FL_2023.parquet` | 1,835,184 | 55 | 210 | 2023-01-01 .. 2023-12-31 |
+| `FL_2024.parquet` | 1,820,472 | 55 | 208 | 2024-01-01 .. 2024-12-31 |
+| `FL_2025.parquet` | 1,795,800 | 53 | 205 | 2025-01-01 .. 2025-12-31 |
+
+With this landing **every `ISO_STATES` state has an extract for every year 2019–2025.** No
+`SHA256SUMS.txt` rows are added, on the SOCO-11 / NWPP-11 precedent (that file's scope is the
+gitignored 2018 vintage; tracked files carry git's own blob hashes). CO / FL 2026 (Q1) and the
+2018 vintage are not landed.
