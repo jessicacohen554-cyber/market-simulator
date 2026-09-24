@@ -2739,9 +2739,13 @@ def _mid_vintage_exit_rows(
     Returns ``None`` when the whole-plant retiree parquet IS present — the
     canonical snapshot's case, where that channel already carries these plants
     (all 17 MISO / 12 PJM / 2 SPP mid-vintage-year retirees measured 2026-09-19)
-    and injecting again would double-count — or when any source parquet is
-    absent (``vintage_2023``/``vintage_2024`` ship no Retired-and-Canceled
-    sheet, so the channel self-neutralizes there by construction).
+    and injecting again would double-count — or when the operable or plant
+    parquet is absent. ``vintage_2023``/``vintage_2024`` ship no
+    Retired-and-Canceled sheet; there the same membership is read from the
+    canonical whole-plant retiree parquet by
+    :func:`_mid_vintage_exit_rows_from_window` (R-NEISO, 2026-09-24 — the
+    channel used to self-neutralize there, dropping e.g. NEISO's Mystic from
+    its 2024 fleet).
 
     Zero free parameters (rule 21 ``[R-DOF]``): the retirement month is EIA's
     own published field and the membership is a set difference over EIA's own
@@ -2755,6 +2759,8 @@ def _mid_vintage_exit_rows(
     ret_path = data_dir / _RETIRED_CANCELED_PARQUET_NAME
     op_path = data_dir / EIA_860_PARQUET_NAME
     plant_path = data_dir / _PLANT_PARQUET_NAME
+    if op_path.exists() and plant_path.exists() and not ret_path.exists():
+        return _mid_vintage_exit_rows_from_window(op_path, codes, year)
     if not (ret_path.exists() and op_path.exists() and plant_path.exists()):
         return None
 
@@ -2802,6 +2808,57 @@ def _mid_vintage_exit_rows(
     df = df.copy()
     # The unit operated during the solved year; OP keeps it through
     # _rows_to_generators' status filter — the COD ramp owns the exit.
+    df["status"] = "OP"
+    return df
+
+
+def _mid_vintage_exit_rows_from_window(
+    op_path: Path, codes: tuple[str, ...], year: int
+) -> "pd.DataFrame | None":
+    """Mid-vintage-year whole-plant exits for a vintage with no retired sheet.
+
+    R-NEISO (2026-09-24). ``vintage_2023`` / ``vintage_2024`` ship no
+    Retired-and-Canceled sheet, so :func:`_mid_vintage_exit_rows` used to
+    self-neutralize there — and under ``eia860_vintage_tracks_solve_year`` a
+    plant that retired DURING 2023 or 2024 then vanished from that year's
+    fleet with its real operating months (NEISO: Mystic 1588, ~1.4 GW of CC
+    plus its steam part, retired 2024-05 per EIA; measured in
+    ``docs/handoffs/r-neiso/PRECOMMIT-r-neiso-2026-09-24.md`` §5).
+
+    The same membership is read from the canonical snapshot's whole-plant
+    retiree parquet instead — EIA's own later record of the same retirements,
+    in the canonical fleet schema, carrying each unit's actual
+    ``planned_retirement_{year,month}`` and its F1 eGRID heat rate:
+
+    * ``planned_retirement_year == year`` (retired during the solved year);
+    * inside the region's balancing authorities;
+    * and whose PLANT is absent from the vintage's own operable snapshot.
+
+    Identical selection rule to the retired-sheet path, so the two can never
+    disagree on what a mid-vintage exit is; only the source of the rows
+    differs. Zero free parameters (rule 21); the construction regenerates for
+    any year from the then-current EIA-860 (rule 13). Returns ``None`` when the
+    canonical retiree parquet is absent.
+    """
+    win_path = _pkg_ns().EIA_860_DIR / EIA_860_RETIRED_WINDOW_PARQUET_NAME
+    if not win_path.exists():
+        return None
+    df = pd.read_parquet(win_path)
+    df["plant_id"] = pd.to_numeric(df["plant_id"], errors="coerce")
+    df = df[df["plant_id"].notna()].copy()
+    df["plant_id"] = df["plant_id"].astype("int64")
+    if codes:
+        df = df[df["balancing_authority_code"].astype(str).str.strip().isin(codes)]
+    df["planned_retirement_year"] = pd.to_numeric(
+        df["planned_retirement_year"], errors="coerce"
+    )
+    df = df[df["planned_retirement_year"] == int(year)]
+    op = pd.read_parquet(op_path, columns=["plant_id"])
+    op_ids = set(pd.to_numeric(op["plant_id"], errors="coerce").dropna().astype(int))
+    df = df[~df["plant_id"].isin(op_ids)]
+    if df.empty:
+        return df
+    df = df.copy()
     df["status"] = "OP"
     return df
 

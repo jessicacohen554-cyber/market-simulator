@@ -1380,7 +1380,16 @@ def _apply_outage_overlays(
         # smoothly. Windows are < 5 days by construction (disjoint from the
         # overlay above) and pass the derive script's identification guards
         # (coal-only, baseload CF >= 0.55, revealed-availability filter).
-        if getattr(config, "unit_outage_short_windows", False):
+        # R-NEISO (2026-09-24): the GAS scope (unit_outage_short_windows_gas)
+        # is armable on its own. It used to be reachable only inside the coal
+        # gate, so an ISO whose coal sub-5-day family was REJECTED on its own
+        # evidence (NEISO, neiso-69) could not carry the disjoint gas family
+        # without re-arming the rejected one. coal_scope keeps the coal file
+        # out when only the gas flag is set; with the coal flag set the call
+        # is byte-identical to before.
+        _short_coal = getattr(config, "unit_outage_short_windows", False)
+        _short_gas = getattr(config, "unit_outage_short_windows_gas", False)
+        if _short_coal or _short_gas:
             sfac = unit_outage_short_derate_factors(
                 config.weather_year,
                 hours,
@@ -1416,6 +1425,7 @@ def _apply_outage_overlays(
                 # denominator — the same repair, on the same shared
                 # accumulator, for the sub-5-day window family.
                 lp_bin_capacity=_lp_bins,
+                coal_scope=_short_coal,
             )
             if sfac:
                 applied_s = 0
@@ -1426,10 +1436,12 @@ def _apply_outage_overlays(
                         applied_s += 1
                 logger.info(
                     "short unit-outage derate (%s %d): %d plant-tranches "
-                    "derated (< 5-day baseload-coal windows)",
+                    "derated (< 5-day windows; coal %s, gas %s)",
                     _iso or "ERCOT",
                     config.weather_year,
                     applied_s,
+                    "on" if _short_coal else "off",
+                    "on" if _short_gas else "off",
                 )
         # Unit-grain partial-derate plateaus (gated,
         # config.unit_partial_outage_windows): the second window shape of the

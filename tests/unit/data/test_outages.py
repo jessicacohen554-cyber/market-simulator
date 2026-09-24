@@ -1434,7 +1434,7 @@ class ShortGasUnitOutageDerateTest(unittest.TestCase):
             "total_units_at_plant": 2,
         }
 
-    def _factors(self, coal: Path, gas: Path, *, gas_scope: bool):
+    def _factors(self, coal: Path, gas: Path, *, gas_scope: bool, coal_scope=True):
         from unittest.mock import patch
 
         from market_sim.data import outages
@@ -1447,7 +1447,7 @@ class ShortGasUnitOutageDerateTest(unittest.TestCase):
             ),
         ):
             return outages.unit_outage_short_derate_factors(
-                2025, iso="MISO", gas_scope=gas_scope
+                2025, iso="MISO", gas_scope=gas_scope, coal_scope=coal_scope
             )
 
     def _gas_bin(self):
@@ -1531,6 +1531,29 @@ class ShortGasUnitOutageDerateTest(unittest.TestCase):
         # The coal row DOES enter (both files feed one accumulator and COAL is
         # always in scope) — what must not happen is the >= 5-day gas row.
         self.assertNotIn((code, group), factors)
+
+    def test_gas_scope_armable_without_the_coal_scope(self):
+        """R-NEISO: the gas family alone reads no coal row, from either file."""
+        code, group, mw = self._gas_bin()
+        coal_row = self._row(
+            self.COAL_PLANT,
+            self.COAL_MW,
+            1259.6,
+            "COAL",
+            "2025-07-28",
+            "2025-07-29",
+            2.0,
+        )
+        gas_row = self._row(code, mw / 2.0, mw, group, "2025-07-28", "2025-07-29", 2.0)
+        with tempfile.TemporaryDirectory() as td:
+            # A COAL row in the gas file too: coal_scope=False drops it by scope.
+            coal, gas = self._paths(td, [coal_row], [gas_row, coal_row])
+            gas_only = self._factors(coal, gas, gas_scope=True, coal_scope=False)
+            both = self._factors(coal, gas, gas_scope=True)
+            neither = self._factors(coal, gas, gas_scope=False, coal_scope=False)
+        self.assertEqual(set(gas_only), {(code, group)})
+        np.testing.assert_array_equal(gas_only[(code, group)], both[(code, group)])
+        self.assertEqual(neither, {})
 
     def test_missing_gas_file_leaves_the_coal_scope_unchanged(self):
         with tempfile.TemporaryDirectory() as td:
