@@ -6617,3 +6617,13 @@ Record: `docs/RESULT-pjm-h20-card-c-2026-09-24.md`.
 Owner confirmed the pjm-h20 recommendation. `prune_iso_runs.py --iso PJM --keep 2026-09-23-pjm-h19-dbs-touchpoint
 --force-uncite` removed `2026-09-24-pjm-h20-cardc-{span,touchpoint}` (sidecar, payload, bundle). `audit_keepers --iso PJM`:
 0 failures. Keeper unchanged: `2026-09-23-pjm-h19-dbs-span` + folded touchpoint. Next: Card D phase 0 (CC volume defect).
+
+### pjm-h21 Card D phase 0 — the CC volume defect is locational (zero LP, no solve)
+
+`docs/FINDING-pjm-h21-card-d-cc-volume-is-locational-2026-09-24.md`. The keeper's CC class total nets
+two zonal errors: EMAAC CC +3.8..+14.3 TWh over, Dominion −1.7..−13.7 under. The level form collapses
+every CC econ rung to one curve (Henry Hub + one PJM basis), erasing plant gas/heat-rate differences,
+so EMAAC roughly doubles (2020 +12.9 → +25.2). Killed at zero LP: heat rate (0.99–1.01 per CF third),
+capacity/derate, floor count, seams. EMAAC candidate: RGGI (per-zone read of pjm-146: −11.7/−17.6/−11.1
+TWh EMAAC CC); Dominion stays closed (pjm-137). Stopped before PRECOMMIT: RGGI lacks 2020–22 inputs.
+Owner decisions listed in the FINDING §6.
