@@ -1,8 +1,9 @@
 # Canonical schema: NYISO published locational reserve requirements
 #
 # Hand-transcription of every printed cell of NYISO's "Locational Reserve
-# Requirements" posting across its dated versions (Wayback-snapshot bounded;
-# see data/raw/NYISO-AS/requirements/README.md). One row per
+# Requirements" posting across its dated versions (Wayback-snapshot and
+# nyiso.com Liferay document-version bounded, with sourced effective dates
+# where a version changes mid-year; see data/raw/NYISO-AS/requirements/README.md). One row per
 # (version, region, product, period) requirement value, including the SENY
 # 30-minute hourly step shape (HB0-5 1,300 / HB6 1,550 / HB7-21 1,800 /
 # HB22 1,550 / HB23 1,300 MW) and the per-version Thunderstorm-Alert
@@ -14,7 +15,7 @@
 # Curated by scripts/data/curate_nyiso_reserve_requirements.py from
 #   data/raw/NYISO-AS/requirements/nyiso_locational_reserve_requirements.csv
 datatype: nyiso-reserve-requirements
-schema_version: 1
+schema_version: 2
 title: NYISO published locational reserve requirements (dated versions)
 description: >-
   NYISO's published operating-reserve requirements by product x region for
@@ -35,9 +36,9 @@ columns:
     unit: none
     nullable: false
     description: >-
-      Dated document version (v2020, v2021, v2026). Effective windows are
-      Wayback-evidence bounds, not tariff effective dates — see evidence
-      columns and the raw README caveats.
+      Dated document version (v2016, v2019, v2020, v2021, v2026). The
+      evidence columns are document-existence bounds; the in-force date the
+      hourly derive switches on is effective_start where it is sourced.
   - name: region
     dtype: string
     unit: none
@@ -104,3 +105,17 @@ columns:
     unit: none
     nullable: true
     description: Transcription notes (footnote provenance, unverified effective-date bounds).
+  - name: effective_start
+    dtype: datetime64[ns]
+    unit: date
+    nullable: true
+    description: >-
+      Sourced date the version's requirements took effect in the market
+      (start of that operating day). Null when no effective date has been
+      sourced — the hourly derive then refuses any year in which the version
+      would begin mid-year.
+  - name: effective_source
+    dtype: string
+    unit: none
+    nullable: true
+    description: Citation for effective_start (FERC docket, NYISO notice, document version metadata).

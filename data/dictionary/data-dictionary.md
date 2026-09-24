@@ -1373,15 +1373,17 @@ flags (issue #1344 / Ask B3). Schema:
 [`schema/nyiso-reserve-requirements.schema.yaml`](schema/nyiso-reserve-requirements.schema.yaml).
 
 - **Keys:** `iso`, `version`, `region`, `product`, `period_label`, `hb_start`
-- **Reconciles:** Hand-transcription of the dated LRR PDFs (Wayback-bounded
-  versions v2020/v2021/v2026) under `data/raw/NYISO-AS/requirements/`; see that
-  README for the effective-date caveats. Feeds the gated hourly
-  `ReserveFamily.requirement` channel; not yet consumed by any keeper.
+- **Reconciles:** Hand-transcription of the dated LRR PDFs (versions
+  v2016/v2019/v2020/v2021/v2026, bounded by nyiso.com document versions and
+  Wayback snapshots, with sourced `effective_start` dates where a version
+  changes mid-year) under `data/raw/NYISO-AS/requirements/`; see that README
+  for the effective-date sources. Feeds the gated hourly
+  `ReserveFamily.requirement` channel (`nyiso_dynamic_reserve_requirements`).
 
 | column | dtype | unit | nullable | description |
 |---|---|---|---|---|
 | `iso` | `string` | `none` | no | ISO identifier (NYISO). |
-| `version` | `string` | `none` | no | Dated document version (v2020, v2021, v2026). Effective windows are Wayback-evidence bounds, not tariff effective dates — see evidence columns and the raw README caveats. |
+| `version` | `string` | `none` | no | Dated document version (v2016, v2019, v2020, v2021, v2026). The evidence columns are document-existence bounds; the in-force date the hourly derive switches on is effective_start where it is sourced. |
 | `region` | `string` | `none` | no | Reserve region (NYCA, EAST, SENY, NYC, LI). |
 | `zones` | `string` | `none` | no | NYISO load zones the region spans, as printed (e.g. G-K). |
 | `product` | `string` | `none` | no | Reserve product (spin_10, total_10, total_30). |
@@ -1394,6 +1396,8 @@ flags (issue #1344 / Ask B3). Schema:
 | `evidence_end` | `datetime64[ns]` | `date` | yes | Latest bound before the next version is evidenced; null for the current version. |
 | `source_doc` | `string` | `none` | no | PDF filename under data/raw/NYISO-AS/requirements/locational-reserve-requirements/. |
 | `notes` | `string` | `none` | yes | Transcription notes (footnote provenance, unverified effective-date bounds). |
+| `effective_start` | `datetime64[ns]` | `date` | yes | Sourced date the version's requirements took effect in the market (start of that operating day). Null when no effective date has been sourced — the hourly derive then refuses any year in which the version would begin mid-year. |
+| `effective_source` | `string` | `none` | yes | Citation for effective_start (FERC docket, NYISO notice, document version metadata). |
 
 ## nyiso-operating-events
 

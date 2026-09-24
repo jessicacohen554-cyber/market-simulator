@@ -1,7 +1,8 @@
 """Tests for the hourly reserve-requirement derive (Ask B reconstruction).
 
-Exercises the pure construction functions on synthetic frames — version
-selection, the TSA start/end state machine (duplicate starts, end-without-
+Exercises the pure construction functions on synthetic frames — regime
+selection (single covering version, sourced mid-year boundaries, refusal of
+unsourced ones), the TSA start/end state machine (duplicate starts, end-without-
 start, start-of-day continuation, cross-midnight windows), the hourly step
 base, time-weighted TSA zeroing, the non-leap 8760 clock — and one
 end-to-end check: a derived synthetic year loads through
@@ -24,7 +25,7 @@ from scripts.data.derive_nyiso_reserve_requirements_hourly import (
     build_tsa_windows,
     derive_year,
     hourly_clock,
-    select_version,
+    select_regimes,
     tsa_fraction,
 )
 
@@ -78,15 +79,89 @@ def _events(rows: list[tuple]) -> pd.DataFrame:
     )
 
 
-class TestVersionSelection(unittest.TestCase):
+def _two_regime_schedule(effective: str | None) -> pd.DataFrame:
+    """v2016 (no NYC region, flat SENY) -> v2019 (NYC added) with an optional
+    sourced effective date on the incoming version."""
+    rows = [
+        ("v2016", "SENY", "total_30", "all", 0, 23, 1300.0, True),
+        ("v2016", "NYCA", "total_30", "all", 0, 23, 2620.0, False),
+        ("v2019", "SENY", "total_30", "all", 0, 23, 1300.0, True),
+        ("v2019", "NYCA", "total_30", "all", 0, 23, 2620.0, False),
+        ("v2019", "NYC", "total_10", "all", 0, 23, 500.0, False),
+    ]
+    df = pd.DataFrame(
+        rows,
+        columns=[
+            "version",
+            "region",
+            "product",
+            "period_label",
+            "hb_start",
+            "hb_end",
+            "requirement_mw",
+            "tsa_reduced_to_zero",
+        ],
+    )
+    first = df["version"] == "v2016"
+    df["evidence_start"] = np.where(
+        first, pd.Timestamp("2016-08-17"), pd.Timestamp("2019-06-24")
+    )
+    df["evidence_end"] = np.where(first, pd.Timestamp("2019-06-24"), pd.NaT)
+    df["effective_start"] = pd.NaT
+    if effective is not None:
+        df.loc[~first, "effective_start"] = pd.Timestamp(effective)
+    return df
+
+
+class TestRegimeSelection(unittest.TestCase):
     def test_covering_version_selected(self) -> None:
-        rows = select_version(_schedule(), 2024)
+        regimes = select_regimes(_schedule(), 2024)
+        self.assertEqual(len(regimes), 1)
+        start, end, rows = regimes[0]
         self.assertEqual(set(rows["version"]), {"v2021"})
+        self.assertEqual(
+            (start, end), (pd.Timestamp("2024-01-01"), pd.Timestamp("2025-01-01"))
+        )
+
+    def test_unsourced_mid_year_boundary_raises(self) -> None:
+        # 2021 straddles the v2020 -> v2021 evidence boundary and neither
+        # version carries a sourced effective_start.
+        with self.assertRaises(ValueError):
+            select_regimes(_schedule(), 2021)
+        with self.assertRaises(ValueError):
+            select_regimes(_two_regime_schedule(None), 2019)
 
     def test_uncovered_year_raises(self) -> None:
-        # 2021 straddles the v2020 -> v2021 evidence boundary.
         with self.assertRaises(ValueError):
-            select_version(_schedule(), 2021)
+            select_regimes(_schedule(), 2019)  # before any version exists
+
+    def test_sourced_boundary_splits_the_year(self) -> None:
+        regimes = select_regimes(_two_regime_schedule("2019-06-26"), 2019)
+        self.assertEqual(
+            [(s, e, set(r["version"])) for s, e, r in regimes],
+            [
+                (pd.Timestamp("2019-01-01"), pd.Timestamp("2019-06-26"), {"v2016"}),
+                (pd.Timestamp("2019-06-26"), pd.Timestamp("2020-01-01"), {"v2019"}),
+            ],
+        )
+
+    def test_piecewise_derive_zero_before_region_exists(self) -> None:
+        frame, log = derive_year(
+            _two_regime_schedule("2019-06-26"),
+            _events([("2019-07-10 14:00", "start"), ("2019-07-10 15:00", "end")]),
+            2019,
+        )
+        nyc = frame[(frame["region"] == "NYC") & (frame["product"] == "10min_total")]
+        ts = pd.to_datetime(nyc["Time Stamp"])
+        self.assertTrue((nyc.loc[ts < "2019-06-26", "requirement_mw"] == 0.0).all())
+        self.assertTrue((nyc.loc[ts >= "2019-06-26", "requirement_mw"] == 500.0).all())
+        self.assertEqual(len(nyc), 8760)
+        self.assertTrue(any("not published in v2016" in line for line in log))
+        seny = frame[(frame["region"] == "SENY")].set_index("Time Stamp")[
+            "requirement_mw"
+        ]
+        self.assertEqual(seny["2019-07-10 14:00:00"], 0.0)  # TSA-zeroed
+        self.assertEqual(seny["2019-07-10 15:00:00"], 1300.0)
 
 
 class TestTsaWindows(unittest.TestCase):
