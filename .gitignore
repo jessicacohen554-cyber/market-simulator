@@ -3460,3 +3460,7 @@ results/calibration/r_ercot_ctl_20*/
 # R-SPP (2026-09-24): per-year legs rspp_<year> + composite rspp_span, on local disk pending the owner's
 # promotion ruling (rule 31 [R-RETAIN]); legs pushed on claude/rspp-<year> (provenance SHAs in the RESULT doc).
 results/calibration/rspp_*/
+# R-SPP shared benchmark frames referenced by rspp_span (local until the promotion ruling, rule 31)
+results/calibration/_shared/SPP/campd-0f52f59638f0.parquet
+results/calibration/_shared/SPP/eia923-d4ff957f221a.parquet
+results/calibration/_shared/SPP/eia930-c3bec7e7b952.parquet
