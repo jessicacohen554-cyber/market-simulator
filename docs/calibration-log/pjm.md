@@ -6611,3 +6611,9 @@ did, so the fitted `econ_high` was hiding a CC volume defect (cf. pjm-h2b CC onl
 locate that defect at zero LP (CC online hours/CF vs CEMS by plant) before any CC offer change. Do not
 re-arm the CT max-seam until pjm-123's tight-bin ranking is resolved.
 Record: `docs/RESULT-pjm-h20-card-c-2026-09-24.md`.
+
+## pjm-h21 — 2026-09-24 — owner ruling on pjm-h20: NOT PROMOTED
+
+Owner confirmed the pjm-h20 recommendation. `prune_iso_runs.py --iso PJM --keep 2026-09-23-pjm-h19-dbs-touchpoint
+--force-uncite` removed `2026-09-24-pjm-h20-cardc-{span,touchpoint}` (sidecar, payload, bundle). `audit_keepers --iso PJM`:
+0 failures. Keeper unchanged: `2026-09-23-pjm-h19-dbs-span` + folded touchpoint. Next: Card D phase 0 (CC volume defect).
