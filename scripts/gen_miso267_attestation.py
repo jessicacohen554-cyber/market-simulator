@@ -43,6 +43,9 @@ PRECOMMIT = "docs/PRECOMMIT-miso267-dispatched-bin-on-hydro5-2026-09-23.md"
 RESULT = "docs/RESULT-miso267-dispatched-bin-on-hydro5-2026-09-23.md"
 FINDING = "docs/FINDING-miso267-the-oil-reattribution-was-one-sided-2026-09-23.md"
 PINNED = "3ea64fa5110254df85b7a40cb6d4521414d08242"
+#: The superseded keeper's bundle was pruned at this run's promotion (rule 35);
+#: its committed files are read back from the last main commit that carried them.
+KEEPER_REF = "0d6cc47301143d9466892f32b8b6d2501b202e3f"
 
 ATTESTED_BY = (
     f"miso-267 (2026-09-23) -- keeper {KEEPER_ID}'s recipe replayed UNCHANGED via "
@@ -54,7 +57,9 @@ ATTESTED_BY = (
     "re-checked by scripts/probes/_miso266_compose_span.py (12 must-agree fields, "
     "one solve-surface fingerprint) before composition. Zero LP in the parent. "
     f"Pre-registered in {PRECOMMIT} (pinned {PINNED[:8]}) before any shard "
-    f"launched; record {RESULT}. NOT promoted: the promotion is the owner's (rule 31)."
+    f"launched; record {RESULT}. Promoted on the owner's ruling (2026-09-23): "
+    "'Is this a recommended keeper candidate? If so plz promote. If structural "
+    "integrity improves but gates regress that may still be a keeper.'"
 )
 
 DISCLOSURES = (
@@ -80,9 +85,27 @@ DISCLOSURES = (
 )
 
 
-def _offer_sha(bundle: Path) -> str:
-    cfg = json.loads((bundle / "run_config.json").read_text())["scenario_config"]
-    blob = json.dumps(cfg.get("offer_curve_by_group") or {}, sort_keys=True)
+def _keeper_json(name: str) -> dict:
+    """Read one of the superseded keeper's committed files, from disk or git."""
+    path = KEEPER / name
+    if path.exists():
+        return json.loads(path.read_text())
+    got = subprocess.run(
+        ["git", "show", f"{KEEPER_REF}:{path.relative_to(REPO)}"],
+        capture_output=True,
+        text=True,
+        cwd=REPO,
+        check=False,
+    )
+    if got.returncode != 0:
+        raise SystemExit(f"{path} is not on disk and not at {KEEPER_REF[:8]}")
+    return json.loads(got.stdout)
+
+
+def _offer_sha(cfg: dict) -> str:
+    blob = json.dumps(
+        cfg["scenario_config"].get("offer_curve_by_group") or {}, sort_keys=True
+    )
     return hashlib.sha256(blob.encode()).hexdigest()[:16]
 
 
@@ -111,8 +134,9 @@ def _scored_criteria() -> dict:
 
 def main() -> int:
     """Write the attestation; refuse if the price-tuning channel moved."""
-    att = json.loads((KEEPER / "calibration_attestation.json").read_text())
-    sha, ksha = _offer_sha(BUNDLE), _offer_sha(KEEPER)
+    att = _keeper_json("calibration_attestation.json")
+    sha = _offer_sha(json.loads((BUNDLE / "run_config.json").read_text()))
+    ksha = _offer_sha(_keeper_json("run_config.json"))
     if sha != ksha:
         raise SystemExit(f"offer_curve_by_group {sha} != keeper {ksha}")
     years = sorted(

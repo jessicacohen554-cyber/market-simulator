@@ -166,3 +166,36 @@ withdrawn only because of the hydro-5 collision.
 
 If declined, prune `2026-09-23-miso-267-dispatched-bin` to clear E13. The keeper then keeps
 the frozen 50,365.4 MW coal denominator knowingly.
+
+## 8. PROMOTED 2026-09-23, on the owner's ruling
+
+Owner, verbatim: *"Is this a recommended keeper candidate? If so plz promote. If structural
+integrity improves but gates regress that may still be a keeper.."* The session had recommended
+promotion (§7), so rule 31 trigger (i) applies. Executed in the order rule 35 fixes:
+
+1. **Year set before any deletion (rule 35 (b)).** MISO's registered sidecars were the keeper
+   `2026-09-22-hydro-5-miso-ror` (2020–2025) and this run (2020–2025); none was stamped to the
+   keeper. The union is **{2020, 2021, 2022, 2023, 2024, 2025}**, and the incoming keeper
+   covers all six (rule 35 (c)).
+2. **Promote.**
+   * `keepers/MISO.json` → `2026-09-23-miso-267-dispatched-bin`. Both `config_partition`
+     tiers are re-keyed, and the bundle path is corrected. It had still named
+     `miso264_anchor_span`, stale since the hydro-5 promotion.
+   * The forecast gate-(a) row is re-keyed in the same change (R-T).
+   * The matrix keeper and gates stamps are updated, the cell goes `O` → `K`, and the §5.4
+     header is replaced.
+   * `status/MISO.js` is rebuilt: **MISO CALIBRATED**.
+   * The attestation is re-stamped with the ruling. The generator now reads the pruned
+     keeper's files from git and reproduces the attestation byte-identically.
+3. **Verify (rule 35 (e)).** `audit_keepers --iso MISO` resolved the incoming keeper's three
+   stores (E1) before anything was deleted.
+4. **Delete (rule 35 (a)).** `prune_iso_runs.py --iso MISO --force-uncite` removed the
+   outgoing keeper's sidecar, payload and bundle. It is cited only as history in the keeper
+   shard (rule 35 (d)), and git history holds its bytes.
+5. **After.** `audit_keepers` passes 0/0 (E13 clear). Matrix, gate-(a), bench freshness,
+   cache-key and `stamp_config_partition --check` are all green.
+
+**Where the bytes are:** the keeper's registered file set, sidecar and payload are committed
+(merged to `main` in PR #6514; the promotion edits ride this branch). The six per-year legs are
+fully contained in the composite, so nothing needs them; their SHAs stay in `.gitignore` as
+provenance.
