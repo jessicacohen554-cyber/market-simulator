@@ -15162,3 +15162,21 @@ Keeper `2026-09-24-miso-268-coal-yard` unchanged. Nothing solved, registered or 
   level is the band-multiplier channel, the owner's.
 * **Escalated:** storm-month gas convention; whether the marginal ruling covers thin
   extreme-event prints. Oct–Nov 2021 (32 % of the C3b SSE) left for a successor.
+
+## miso-270 (2026-09-24) — Oct–Nov 2021 localized at zero LP; no ruling, no solve
+
+Keeper `2026-09-24-miso-268-coal-yard` unchanged. No owner ruling on miso-269 D1/D2 → Task C only.
+Record `docs/FINDING-miso270-octnov2021-localized-2026-09-24.md`; probe
+`scripts/probes/_miso270_octnov2021_phase0.py`. F2 (`cf7e068a`) is outage data and leaves miso-269
+§1/§2 unchanged.
+
+* **Oct/Nov 2021:** model 48.2/47.5 vs bench 59.8/67.0 $/MWh (27.3 % of the C3b SSE). The gap is
+  daytime and in the five northern zones.
+* **Volumes:** coal +1.19/+1.22 TWh over CAMPD (under it Jan–Aug); imports +0.74/+0.87 over EIA-930
+  net; CT_PEAKER −0.97/−0.86, ST_GAS −0.82/−0.79, CC_REGULAR −2.0/−1.9. Gas sets price, but at CC
+  cost ($45–49). No north congestion (Nov actual Indiana − West = $23.5).
+* **Ruled out:** gas price, reserves/scarcity (all duals 0), the coal outage overlay, and the coal
+  budget (the flat 1/12 rows bind Jun–Sep and are loose Oct–Nov). The SOC-carry would not bind in fall
+  (≥ 16.6 TWh-equiv headroom).
+* **Routed:** a cited minimum-operating-stock source; a per-seam split of the fall imports; north
+  congestion.
