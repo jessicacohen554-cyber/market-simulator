@@ -6592,3 +6592,22 @@ charter `docs/PRECOMMIT-pjm-h19-demand-balance-screen-2026-09-23.md`.
 **PROMOTED 2026-09-24** (owner: *"Promote"*). Keeper `2026-09-22-pjm-hydro2-ror-span` →
 **`2026-09-23-pjm-h19-dbs-span`** (+ touchpoint `2026-09-23-pjm-h19-dbs-touchpoint`). Rule-35 order;
 determination re-verified CALIBRATED; hydro-2 pair pruned; `audit_keepers --iso PJM` 0/0.
+
+## pjm-h20 — 2026-09-24 — Card C (CC level form + CT max-seam): price fixed, volume broken; NOT recommended for promotion
+
+**Six shards, one per year, pinned `9f8e95df`; zero LP in the parent.** Arm = keeper
+`2026-09-23-pjm-h19-dbs-span` + `pjm_offer_midcurve_level_segments=["CC_LIKE"]` +
+`pjm_ct_measured_max_reprice=true`. Registered `--no-prune`: `2026-09-24-pjm-h20-cardc-span` (**NOT-YET**,
+C1) + `…-touchpoint` (NOT-YET, C1/C3b). Keeper unchanged; owner ruling pending.
+
+**Phase 0 located the CC half:** fitted CC econ rungs sit $4.9–6.9/MWh above PJM's own offer in
+CC-marginal hours, every year. **Solved:** the bottom-half price error falls $1.0–1.5 every year; touchpoint
+C3a FAIL → PASS (2020 +14.5 % → +4.1 %); C3b improves in 2020 and 2023–25; COAL_BIT 2020/21 FAIL → PASS.
+**But** CC_REGULAR over-dispatches by 19–43 TWh (FAIL in 5 of 6 years), CT_PEAKER falls 24–58 % (FAIL in
+every scored year), and CT D-2 forced share rises to 0.42–0.59.
+
+**Reading (rule 14):** priced on PJM's own level, the model's CC fleet runs 8–15 % more than PJM's CCs
+did, so the fitted `econ_high` was hiding a CC volume defect (cf. pjm-h2b CC online +7.7 pp). Next card:
+locate that defect at zero LP (CC online hours/CF vs CEMS by plant) before any CC offer change. Do not
+re-arm the CT max-seam until pjm-123's tight-bin ranking is resolved.
+Record: `docs/RESULT-pjm-h20-card-c-2026-09-24.md`.
