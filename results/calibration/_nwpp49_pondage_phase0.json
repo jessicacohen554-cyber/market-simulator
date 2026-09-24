@@ -238,6 +238,41 @@
    "coal_r_intra_if_coal_takes_all": 0.577
   }
  },
+ "ror_split_chain_exempt": {
+  "2023": {
+   "n_plants_flat": 153,
+   "mw_flat": 2373.5,
+   "hydro_intra_sd_keeper": 2154.4,
+   "hydro_intra_sd_arm": 1998.2,
+   "hydro_twh_delta": -0.01,
+   "coal_r_keeper": 0.659,
+   "coal_r_intra_keeper": 0.374,
+   "coal_r_if_coal_takes_all": 0.682,
+   "coal_r_intra_if_coal_takes_all": 0.523
+  },
+  "2024": {
+   "n_plants_flat": 154,
+   "mw_flat": 2373.1,
+   "hydro_intra_sd_keeper": 2215.6,
+   "hydro_intra_sd_arm": 2045.5,
+   "hydro_twh_delta": -0.012,
+   "coal_r_keeper": 0.617,
+   "coal_r_intra_keeper": 0.396,
+   "coal_r_if_coal_takes_all": 0.682,
+   "coal_r_intra_if_coal_takes_all": 0.658
+  },
+  "2025": {
+   "n_plants_flat": 154,
+   "mw_flat": 2373.1,
+   "hydro_intra_sd_keeper": 2236.3,
+   "hydro_intra_sd_arm": 2069.1,
+   "hydro_twh_delta": -0.013,
+   "coal_r_keeper": 0.638,
+   "coal_r_intra_keeper": 0.365,
+   "coal_r_if_coal_takes_all": 0.7,
+   "coal_r_intra_if_coal_takes_all": 0.572
+  }
+ },
  "measured_admissibility": [
   {
    "station": "BON",

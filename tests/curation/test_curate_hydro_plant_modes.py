@@ -47,16 +47,16 @@ def _write_hilarri(path, rows: list[dict]) -> None:
 class TestCurateHydroPlantModes(RawFixtureTestCase):
     """Rule-by-rule classification through the clean_io contract."""
 
-    def _curate(self, eha_rows, hilarri_rows) -> pd.DataFrame:
+    def _curate(self, eha_rows, hilarri_rows, iso: str = "CAISO") -> pd.DataFrame:
         _write_eha(
             self.raw_dir / "ornl-eha" / "ORNL_EHAHydroPlant_PublicFY2024.xlsx",
             eha_rows,
         )
         _write_hilarri(self.raw_dir / "hilarri" / "HILARRI_v4.csv", hilarri_rows)
-        paths = curate(raw_root=self.raw_dir, isos=["CAISO"])
+        paths = curate(raw_root=self.raw_dir, isos=[iso])
         self.assertEqual(len(paths), 1)
         clean_io.validate_clean(paths[0])
-        return clean_io.read_clean("hydro-plant-modes", iso="CAISO")
+        return clean_io.read_clean("hydro-plant-modes", iso=iso)
 
     def test_single_labeled_plant(self) -> None:
         """Trivial case: one EHA-labeled peaking plant -> shapeable."""
@@ -137,3 +137,38 @@ class TestCurateHydroPlantModes(RawFixtureTestCase):
             [{"eha_ptid": "hc1"}],
         )
         self.assertEqual(df["plant_id"].tolist(), [1])
+
+    def test_regulated_chain_overrides_ror_label(self) -> None:
+        """Rule 0: a registered chain plant is shapeable despite an RoR label.
+
+        An off-chain RoR plant in the same ISO stays flat, and an ISO with no
+        chain registry is classified by rules 1-5 alone (the CAISO tests above).
+        """
+        chain = self.raw_dir / "nwpp-hydro" / "nwpp_hydro_chain.csv"
+        chain.parent.mkdir(parents=True, exist_ok=True)
+        pd.DataFrame({"plant_id": [1], "plant_name": ["John Day"]}).to_csv(
+            chain, index=False
+        )
+        df = self._curate(
+            [
+                {
+                    "EHA_PtID": "hc1",
+                    "EIA_PtID": 1.0,
+                    "Mode": "Run-of-river",
+                    "BACode": "BPAT",
+                },
+                {
+                    "EHA_PtID": "hc2",
+                    "EIA_PtID": 2.0,
+                    "Mode": "Run-of-river",
+                    "BACode": "BPAT",
+                },
+            ],
+            [{"eha_ptid": "hc1"}, {"eha_ptid": "hc2"}],
+            iso="NWPP",
+        )
+        by_id = df.set_index("plant_id")
+        self.assertTrue(by_id.loc[1, "shapeable"])
+        self.assertEqual(by_id.loc[1, "method"], "regulated_chain")
+        self.assertFalse(by_id.loc[2, "shapeable"])
+        self.assertEqual(by_id.loc[2, "method"], "eha_mode")
