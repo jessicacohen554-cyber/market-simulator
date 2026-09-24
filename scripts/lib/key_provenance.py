@@ -21,7 +21,11 @@ set or a different solve environment:
 ``lag``
     a field registered in ``_CACHE_KEY_OPTIONAL_FIELDS`` AFTER the bundle
     solved: the solving code hashed it, today's rule drops it. Reproduced by
-    UN-dropping that one field.
+    UN-dropping that one field. Since capx D93 (owner ruling Q66, "Class
+    rule.") an UNLISTED record of this shape is exempted from ``G1_UNKNOWN`` by
+    one committed row per REGISTRATION — :func:`lag_class_verdict` over
+    ``docs/governance/key-provenance-lag-registrations.json`` — never by a new
+    per-record exception entry.
 ``pre-ledger-flip``
     a field whose live default flipped BEFORE the 2026-09-01 (b′-1)
     re-baseline (the R-A storage-entry pair, PR #4442, 2026-08-31). The
@@ -620,8 +624,239 @@ def unregistered_schema_drift(record: dict, baseline: set[str] | None = None) ->
     return out
 
 
+# --------------------------------------------------------------------------- #
+# The Q66 ``lag`` CLASS RULE (capx D93)
+# --------------------------------------------------------------------------- #
+#: One row per cache-key REGISTRATION: ``{field, registration_sha}``. A record
+#: solved on code that predates a registration hashed the field; today's rule
+#: drops it. capx D92 §2 showed that set can never be counted once and listed —
+#: rule 32 ``[R-SHARD]`` (c)(1) pins shards to a SHA and forbids a rebase, so
+#: pre-registration code keeps minting such records for hours after the merge.
+#: Owner ruling Q66 ("Class rule.") replaces N hand-listed records with one row
+#: per registration. Full statement: ``docs/handoffs/PRECOMMIT-capx-d93-2026-09-24.md`` §2.
+LAG_REGISTRATIONS_PATH = (
+    _REPO / "docs" / "governance" / "key-provenance-lag-registrations.json"
+)
+
+
+def load_lag_registrations(path: Path | None = None) -> list[dict]:
+    """Read the class-rule table. Returns its ``rows`` (``field``, ``registration_sha``)."""
+    return json.loads((path or LAG_REGISTRATIONS_PATH).read_text())["rows"]
+
+
+def _git_read(*args: str) -> subprocess.CompletedProcess:
+    """Run a read-side git command that must never lazily fetch an object."""
+    import os
+
+    return subprocess.run(
+        ["git", *args],
+        cwd=_REPO,
+        capture_output=True,
+        text=True,
+        env={**os.environ, "GIT_NO_LAZY_FETCH": "1"},
+    )
+
+
+def _resolve_commit(sha: str | None) -> str | None:
+    """Full SHA of ``sha`` if that commit is present in this clone, else None."""
+    if not sha:
+        return None
+    out = _git_read("rev-parse", "--verify", "--quiet", f"{sha}^{{commit}}")
+    return out.stdout.strip() if out.returncode == 0 and out.stdout.strip() else None
+
+
+def _commit_time(sha: str) -> int | None:
+    out = _git_read("show", "-s", "--format=%ct", sha)
+    try:
+        return int(out.stdout.strip())
+    except ValueError:
+        return None
+
+
+def git_is_ancestor(reg_sha: str, solve_sha: str) -> bool | None:
+    """Is ``reg_sha`` an ancestor of ``solve_sha``? ``None`` when undeterminable.
+
+    ``True`` is always sound (the registration was found in the solve's
+    history). ``False`` is trusted only when that history is COMPLETE back past
+    the registration: a shallow boundary reachable from the solve commit and no
+    older than the registration could hide it, and then the answer is ``None``.
+    """
+    reg, solve = _resolve_commit(reg_sha), _resolve_commit(solve_sha)
+    if reg is None or solve is None:
+        return None
+    rc = _git_read("merge-base", "--is-ancestor", reg, solve).returncode
+    if rc == 0:
+        return True
+    if rc != 1:
+        return None
+    shallow_file = _git_read("rev-parse", "--git-path", "shallow").stdout.strip()
+    shallow_path = _REPO / shallow_file if shallow_file else None
+    if shallow_path is None or not shallow_path.exists():
+        return False
+    boundaries = set(shallow_path.read_text().split())
+    reachable = set(_git_read("rev-list", solve).stdout.split()) & boundaries
+    reg_time = _commit_time(reg)
+    if reg_time is None:
+        return None
+    for b in reachable:
+        t = _commit_time(b)
+        if t is None or t >= reg_time:
+            return None
+    return False
+
+
+def _fetch_history(reg_sha: str, solve_sha: str) -> None:
+    """Fetch the commits (no blobs) the ancestry question needs, best effort."""
+    reg = _resolve_commit(reg_sha)
+    since = None
+    if reg is not None:
+        t = _commit_time(reg)
+        if t is not None:
+            since = str(t - 7 * 86400)
+    targets = [s for s in (reg_sha, solve_sha) if s and len(s) == 40]
+    if not targets:
+        return
+    cmd = ["git", "fetch", "--quiet", "--filter=blob:none"]
+    if since:
+        cmd.append(f"--shallow-since={since}")
+    subprocess.run(
+        [*cmd, "origin", *targets], cwd=_REPO, capture_output=True, text=True
+    )
+
+
+#: Where a registration lives. A dirty solve tree whose recorded changed-file
+#: list does not touch it cannot have carried an uncommitted registration.
+_REGISTRATION_FILE = "src/market_sim/config/scenarios.py"
+
+
+def _tree_matches_commit(row: dict) -> bool:
+    """Does the solve sha speak for the solved tree, as far as a registration goes?
+
+    Clean: yes. Dirty with a recorded ``changed_files`` list that excludes
+    :data:`_REGISTRATION_FILE`: yes (capx D93 PRECOMMIT addendum A1 — measured on
+    ``scn-ws5b-neiso/CES-T80``, dirty only in its own FINDING doc). Dirty with
+    no list, or with the registration file in it: no.
+    """
+    if row.get("git_dirty") is not True:
+        return True
+    changed = row.get("git_changed_files")
+    return isinstance(changed, list) and _REGISTRATION_FILE not in changed
+
+
+def lag_class_verdict(
+    row: dict,
+    registrations: list[dict],
+    *,
+    ancestry=git_is_ancestor,
+    resolve=None,
+    fetch: bool = False,
+) -> dict | None:
+    """Apply the Q66 class rule to one NON-reproducing census row.
+
+    Returns ``None`` when no registration row matches the payload leg, else a
+    verdict dict whose ``status`` is one of:
+
+    ``lag``
+        all three legs hold — the payload carries the field at its frozen drop
+        value; the registration is NOT an ancestor of the record's solve sha;
+        and ``head_key(payload, undrop=(field,))`` is the recorded literal.
+        REPORTED, never a failure.
+    ``no_reproduce``
+        the payload and sha legs hold but the undrop does NOT reproduce — a
+        real defect wearing the lag signature. A failure.
+    ``unverified``
+        payload and reproduction legs hold but ancestry cannot be decided in
+        this clone. The caller decides, exactly as for ``G3_UNVERIFIED``.
+
+    The payload leg is "CARRIES the field at its drop value", not the charter's
+    "lacks": undrop is a no-op on an absent field, so a record lacking it could
+    never be a mismatch the undrop repairs (PRECOMMIT §2 leg 1). The sha leg's
+    DECLARED fallbacks: no sha, or a dirty tree that may carry
+    ``scenarios.py`` (:func:`_tree_matches_commit`), fails the leg — never a
+    timestamp inference, because D92 §2 measured pinned shards solving on
+    pre-registration code hours after the merge.
+
+    ``ancestry(reg_sha, solve_sha) -> bool | None`` and ``resolve(sha) ->
+    str | None`` are injectable so the both-direction tests need no real
+    commits.
+    """
+    payload = row.get("scenario_config")
+    want = row.get("recorded_cache_key")
+    if not isinstance(payload, dict) or not want:
+        return None
+    drop_at = {n: _jsonable(v) for n, v in cache_key_drop_defaults().items()}
+    candidates = [
+        r
+        for r in registrations
+        if r["field"] in payload
+        and r["field"] in drop_at
+        and payload[r["field"]] == drop_at[r["field"]]
+    ]
+    if not candidates:
+        return None
+    unverified = None
+    signature = None
+    for reg in candidates:
+        field, reg_sha = reg["field"], reg["registration_sha"]
+        # The exact solve commit first; the origin-durable basis when the
+        # short sha a shard solved at is not in this clone.
+        shas = [s for s in (row.get("git_sha"), row.get("git_basis_sha")) if s]
+        if not shas or not _tree_matches_commit(row):
+            continue  # declared fallback: the sha leg fails
+        solve = next((s for s in shas if (resolve or _resolve_commit)(s)), shas[-1])
+        anc = ancestry(reg_sha, solve)
+        if anc is None and fetch:
+            _fetch_history(reg_sha, row.get("git_basis_sha") or solve)
+            anc = ancestry(reg_sha, solve)
+        if anc is True:
+            continue  # post-registration solve: the class does not apply
+        verdict = {
+            "field": field,
+            "registration_sha": reg_sha,
+            "solve_sha": solve,
+            "undrop_key": head_key(payload, undrop=(field,)),
+        }
+        reproduces = verdict["undrop_key"] == want
+        if anc is False and reproduces:
+            return {**verdict, "status": "lag"}
+        if anc is None and reproduces:
+            unverified = unverified or {**verdict, "status": "unverified"}
+        elif anc is False:
+            signature = signature or {**verdict, "status": "no_reproduce"}
+    return unverified or signature
+
+
+def lag_classifications(
+    record: dict,
+    exceptions: dict,
+    registrations: list[dict] | None = None,
+    *,
+    ancestry=git_is_ancestor,
+    resolve=None,
+    fetch: bool = False,
+) -> dict[str, dict]:
+    """``{run_config: verdict}`` for every UNLISTED mismatch the class rule touches."""
+    if registrations is None:
+        registrations = load_lag_registrations()
+    listed = {e["run_config"] for e in exceptions["entries"]}
+    out = {}
+    for row in record["rows"]:
+        if row["reproduces_recorded_key"] is not False or row["run_config"] in listed:
+            continue
+        verdict = lag_class_verdict(
+            row, registrations, ancestry=ancestry, resolve=resolve, fetch=fetch
+        )
+        if verdict is not None:
+            out[row["run_config"]] = verdict
+    return out
+
+
 def check_exceptions(
-    record: dict, exceptions: dict, *, fetch: bool = True
+    record: dict,
+    exceptions: dict,
+    *,
+    fetch: bool = True,
+    lag: dict[str, dict] | None = None,
 ) -> list[dict]:
     """Return the gate failures, empty when the record and the list agree.
 
@@ -657,6 +892,14 @@ def check_exceptions(
         added after a bundle solved is never IN that bundle's payload. Remedy:
         register the field, never append it to the baseline.
 
+    ``G1_LAG_NO_REPRODUCE`` / ``G1_LAG_UNVERIFIED``
+        the Q66 class rule (capx D93, :func:`lag_class_verdict`) exempts an
+        UNLISTED mismatch from ``G1_UNKNOWN`` only when all three of its legs
+        hold. Payload and sha legs holding without exact reproduction is
+        ``G1_LAG_NO_REPRODUCE`` (a real defect); reproduction without decidable
+        ancestry is ``G1_LAG_UNVERIFIED`` (the ``G3_UNVERIFIED`` analogue).
+        ``lag`` pre-computes :func:`lag_classifications`; ``None`` computes it.
+
     G1, G2, G4, G5 and G6 are pure arithmetic over committed bytes and never touch
     the network. Only a ``vintage_sha`` recipe (G3) needs a blob; when it cannot
     be reached the failure is reported as ``G3_UNVERIFIED`` so an offline runner
@@ -667,9 +910,44 @@ def check_exceptions(
     rows = {r["run_config"]: r for r in record["rows"]}
     listed = {e["run_config"]: e for e in exceptions["entries"]}
     failures: list[dict] = []
+    if lag is None:
+        lag = lag_classifications(record, exceptions, fetch=fetch)
 
     for path, row in rows.items():
         if row["reproduces_recorded_key"] is False and path not in listed:
+            verdict = lag.get(path) or {}
+            if verdict.get("status") == "lag":
+                continue  # Q66 class rule: REPORTED by the caller, not a failure
+            if verdict.get("status") in ("no_reproduce", "unverified"):
+                gate = (
+                    "G1_LAG_NO_REPRODUCE"
+                    if verdict["status"] == "no_reproduce"
+                    else "G1_LAG_UNVERIFIED"
+                )
+                why = (
+                    "the payload and solve-sha legs of the Q66 lag class hold "
+                    f"for {verdict['field']!r} (registered at "
+                    f"{verdict['registration_sha'][:8]}, not in solve "
+                    f"{verdict['solve_sha'][:10]}), but undrop reproduces "
+                    f"{verdict['undrop_key']!r}, not the recorded literal — a "
+                    "real defect wearing the lag signature. Stop and report it."
+                    if verdict["status"] == "no_reproduce"
+                    else f"undrop of {verdict['field']!r} reproduces the recorded "
+                    "literal, but whether its registration "
+                    f"{verdict['registration_sha'][:8]} is an ancestor of solve "
+                    f"{verdict['solve_sha'][:10]} cannot be decided in this clone "
+                    "(commit absent, or history shallow past the registration)."
+                )
+                failures.append(
+                    {
+                        "gate": gate,
+                        "run_config": path,
+                        "recorded_cache_key": row["recorded_cache_key"],
+                        "detail": why,
+                        "lag_verdict": verdict,
+                    }
+                )
+                continue
             failures.append(
                 {
                     "gate": "G1_UNKNOWN",
@@ -811,6 +1089,13 @@ def census(*, keep_payloads: bool = True, fetch_vintages: bool = True) -> dict:
             "solved_at": record.get("timestamp"),
             "git_sha": sha,
             "git_dirty": git.get("dirty") if isinstance(git, dict) else None,
+            # The origin-durable anchor (pipeline/persist.py::basis_sha): the
+            # Q66 class rule's fallback when the short ``git.sha`` a shard
+            # solved at is not resolvable here (capx D93).
+            "git_basis_sha": git.get("basis_sha") if isinstance(git, dict) else None,
+            "git_changed_files": git.get("changed_files")
+            if isinstance(git, dict)
+            else None,
             "recorded_cache_key": recorded,
             # BOTH constructions, always (D85-R repair 4).
             "key_at_declaration": key_decl,

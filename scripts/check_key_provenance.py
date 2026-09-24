@@ -48,8 +48,10 @@ Usage::
     uv run python scripts/check_key_provenance.py --no-fetch   # offline runner
 
 Exit 0 iff every mismatch is a listed exception whose recipe reproduces its
-recorded literal. ``--no-fetch`` downgrades an unreachable ``vintage`` blob
-from a failure to a warning (the clone is ``blob:none`` and shallow, so one
+recorded literal, or a Q66 class-rule ``lag`` (capx D93: one row per
+registration in ``docs/governance/key-provenance-lag-registrations.json``,
+each such record printed as a REPORTED ``LAG`` line, never silently). ``--no-fetch`` downgrades an unreachable ``vintage`` blob (and a class-rule
+ancestry this clone cannot decide) from a failure to a warning (the clone is ``blob:none`` and shallow, so one
 recipe needs a depth-1 fetch); every other gate still binds.
 """
 
@@ -66,6 +68,7 @@ from scripts.lib.key_provenance import (  # noqa: E402
     EXCEPTIONS_PATH,
     census,
     check_exceptions,
+    lag_classifications,
     load_exceptions,
     unregistered_schema_drift,
 )
@@ -91,11 +94,13 @@ def main(argv: list[str] | None = None) -> int:
 
     record = census()
     exceptions = load_exceptions(Path(args.exceptions))
-    failures = check_exceptions(record, exceptions, fetch=not args.no_fetch)
+    lag = lag_classifications(record, exceptions, fetch=not args.no_fetch)
+    failures = check_exceptions(record, exceptions, fetch=not args.no_fetch, lag=lag)
 
     listed = {e["run_config"] for e in exceptions["entries"]}
     mismatch = {r["run_config"] for r in record["mismatch_detail"]}
-    unknown = sorted(mismatch - listed)
+    classed = {p for p, v in lag.items() if v["status"] == "lag"}
+    unknown = sorted(mismatch - listed - classed)
 
     print(
         f"{record['configs_checked']} committed run configs at {record['head']}: "
@@ -104,9 +109,17 @@ def main(argv: list[str] | None = None) -> int:
         f"{record['instrument_mismatch']} mismatch"
     )
     print(
-        f"  {len(mismatch) - len(unknown)} KNOWN (listed exceptions), "
-        f"{len(unknown)} UNKNOWN"
+        f"  {len(mismatch & listed)} KNOWN (listed exceptions), "
+        f"{len(classed)} LAG (Q66 class rule), {len(unknown)} UNKNOWN"
     )
+    # Q66: a class-rule `lag` is REPORTED, never silent (capx D93).
+    for path in sorted(classed):
+        v = lag[path]
+        print(
+            f"    LAG (Q66 class rule): {path} <- undrop {v['field']}; "
+            f"registration {v['registration_sha'][:8]} not in solve "
+            f"{v['solve_sha'][:10]}; reproduces {v['undrop_key']}"
+        )
     print(
         f"  keys: {record['validated_under_both_constructions']} reproduce under "
         f"BOTH constructions, {record['validated_at_declaration_only']} only with "
@@ -157,7 +170,9 @@ def main(argv: list[str] | None = None) -> int:
                 f"  [{f['gate']}] {f['run_config']}\n      {f['detail']}",
                 file=sys.stderr,
             )
-        if args.no_fetch and all(f["gate"] == "G3_UNVERIFIED" for f in failures):
+        if args.no_fetch and all(
+            f["gate"] in ("G3_UNVERIFIED", "G1_LAG_UNVERIFIED") for f in failures
+        ):
             print(
                 "  (--no-fetch: unverifiable recipes only — treated as a warning)",
                 file=sys.stderr,
@@ -165,7 +180,8 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         return 1
     print(
-        "\nok: every mismatch is a known, cited, recipe-verified exception, and "
+        "\nok: every mismatch is a known, cited, recipe-verified exception or a "
+        "reported Q66 class-rule lag, and "
         "no unregistered ScenarioConfig field is off the G6 ratchet"
     )
     return 0

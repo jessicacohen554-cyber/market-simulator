@@ -153,3 +153,20 @@ since this lane edits no `scenarios.py` line. Measured values go in the FINDING.
 At `3affcd71` the census reads **0** keys reproducing under both constructions (188 at declaration
 only): `RGGI_MEMBER_STATES_BY_YEAR` has moved off declaration in **every** ISO, plus three PJM RGGI
 rows. That is D79's designed re-key, reported by the census and repaired nowhere; it gates nothing.
+
+---
+
+## ADDENDUM A1 — written after the first measurement, BEFORE the code commit (recorded, not silently folded in)
+
+The first implementation encoded §2's declared fallback (ii) literally ("`git.dirty: true` → the sha
+leg FAILS") and measured **5** failures with the seam row seeded, not the pre-declared **4**: the
+extra one was `scn-ws5b-neiso/CES-T80`, recorded `dirty: true` with
+`changed_files: ["docs/handoffs/FINDING-scn-ws5b-neiso-2026-09-08.md"]` — its own FINDING doc.
+
+Fallback (ii)'s stated reason was "the tree may carry an uncommitted registration", and a
+registration lives in exactly one file, `src/market_sim/config/scenarios.py`. **Refined leg (ii):** a
+dirty tree fails the sha leg iff its recorded `changed_files` is absent OR contains
+`src/market_sim/config/scenarios.py`. CES-T80's tree provably could not carry the registration, so
+it classifies `lag`; the count then measured **4**, as pre-declared. This is a correction of an
+over-broad fallback to its own stated rationale, not a widening to fit a result: the refined leg is
+pinned by a test in both directions (dirty-with-scenarios.py FAILS, dirty-docs-only holds).
