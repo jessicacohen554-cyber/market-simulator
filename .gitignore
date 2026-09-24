@@ -3440,3 +3440,12 @@ results/calibration/spp78_*/
 data/raw/storage-dispatch-actuals/_source/
 # pjm-h22 per-year shard legs: kept out of main (rules 29(c)/32(d)); composites are registered.
 results/calibration/pjm_h22_rggi_20[0-9][0-9]/
+
+# capx D94 (PRECOMMIT-capx-d94-2026-09-24.md §3): the two T1.6 rung shards push their FULL
+# out-dirs to their own branches (rule 34); on the parent tree only the slim bundle, the rung
+# metrics rows and the assembled battery reach main — the per-year cache payloads stay off it.
+/results/ff-t3-neiso-golden/d94/*/NEISO/*/*.parquet
+/results/ff-t3-neiso-golden/d94/*/NEISO/*/*.npz
+/results/ff-t3-neiso-golden/d94/*/NEISO/*/hourly/
+/results/ff-t3-neiso-golden/d94/*/NEISO/*/year_*_floor_retentions.json
+/results/ff-t3-neiso-golden/d94/*.log
