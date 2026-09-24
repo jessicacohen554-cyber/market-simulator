@@ -1993,6 +1993,18 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # hours and so earns a distinct key. SHARED field -- very end, per HOUSE-3.
     # Registered IN THE SAME COMMIT as the field (the nyiso-119 discipline).
     "coal_sync_window_commitment_grain",
+    # pjm-h14 (f7d6112ca, 2026-09-20): an unmeasured coal plant carries no
+    # must-run tranche (default off). REGISTERED RETROACTIVELY by Y-28
+    # (2026-09-24): the field merged WITHOUT this entry, so it entered every
+    # default config's hash and moved the pinned default key 547053bdfccd4264
+    # -> b91f98d9017002db (backcast f61891696e671969 -> 5c3581517d0a680d).
+    # Byte-identical off by construction: its sole consumer,
+    # ``data/fleet/campd_bins.py``, zeroes ``pct_mr`` only inside
+    # ``and getattr(config, "coal_mustrun_requires_measured_row", False)``, so
+    # at False no tranche, row or column changes. An armed run (the PJM
+    # keeper's True) is non-default and keeps its key unchanged. SHARED field
+    # -- very end, per HOUSE-3.
+    "coal_mustrun_requires_measured_row",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -2511,6 +2523,10 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by pjm-h16 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "coal_sync_window_commitment_grain": "False",
+    # Added RETROACTIVELY by Y-28 (2026-09-24) in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry; the default recorded is the field's
+    # original merge-time default (pjm-h14, f7d6112ca), unchanged.
+    "coal_mustrun_requires_measured_row": "False",
     # Added by miso-173 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "mustrun_layup_window_mask": "False",
