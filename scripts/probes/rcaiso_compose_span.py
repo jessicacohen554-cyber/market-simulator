@@ -249,9 +249,41 @@ def compose(legs: list[Path], out: Path) -> None:
             meta[k] = merged
     meta["composed_from"] = [l.name for l in legs]
     (out / "meta.json").write_text(json.dumps(meta, indent=2, sort_keys=True))
+    _respan_shared_inputs(meta, out)
+    (out / "meta.json").write_text(json.dumps(meta, indent=2, sort_keys=True))
     print(f"meta.json: years={meta['years']} composed_from={meta['composed_from']}")
     print(f"\nCOMPOSED -> {out}")
     print("metrics.json / legitimacy_diagnostics.json NOT copied -- regenerate in the parent.")
+
+
+def _respan_shared_inputs(meta: dict, out: Path) -> None:
+    """Re-point the year-dependent benchmark frames at the span.
+
+    Verbatim from ``scripts/probes/_hydro5_compose_span.py`` (the nwpp-42 fix): each
+    leg recorded a ONE-year eia923 / eia930 / campd frame, so the composite's
+    ``meta.json`` (leg 0's) would point at 2022 only. Rebuilt at zero LP from the
+    composite's own recipe.
+    """
+    import sys
+
+    sys.path.insert(0, str(ROOT))
+    recorded = meta.get("shared_inputs")
+    if not recorded:
+        return
+    from scripts.lib.bundle_io import SHARED_INPUT_NAMES
+    from scripts.run_calibration_full import build_benchmark_frames, write_shared_input
+
+    stale = [n for n in SHARED_INPUT_NAMES if n in recorded]
+    if not stale:
+        return
+    iso, built = build_benchmark_frames(out)
+    for name in sorted(stale):
+        if name not in built:
+            raise SystemExit(f"compose: span rebuild produced no {name!r} frame")
+        was = recorded[name]
+        recorded[name] = write_shared_input(built[name], name, iso, out)
+        print(f"  shared {name:<7} {Path(was).name} -> {Path(recorded[name]).name}")
+    meta["shared_inputs"] = recorded
 
 
 def main() -> None:

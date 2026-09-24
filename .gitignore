@@ -3440,3 +3440,11 @@ results/calibration/spp78_*/
 data/raw/storage-dispatch-actuals/_source/
 # pjm-h22 per-year shard legs: kept out of main (rules 29(c)/32(d)); composites are registered.
 results/calibration/pjm_h22_rggi_20[0-9][0-9]/
+# R-CAISO (2026-09-24) per-year shard legs: kept OUT of main (rule 32(d) / 29(c)),
+# NOT deleted (rule 31). The composite rcaiso_inputs_span is what registers.
+# Provenance (rule 33(d), not a recovery route): legs solved at pin 18bb99b1;
+# shard commits 2022 8a431a2d, 2023 4b7b7dce, 2024 65e6c12c, 2025 cbfc33cc.
+results/calibration/rcaiso_inputs_2022/
+results/calibration/rcaiso_inputs_2023/
+results/calibration/rcaiso_inputs_2024/
+results/calibration/rcaiso_inputs_2025/
