@@ -51,7 +51,17 @@ new `ScenarioConfig` field, no new threshold, no `authorized_price_tuning` block
 
 Thermal nameplate at an asset-class (`HEAT_RATE_BINS`) rate, keeper posture → arm posture:
 
-CENSUS_TABLE
+| year | keeper EIA-860 source | keeper class-table MW (share) | arm EIA-860 source | arm class-table MW (share) | arm thermal MW | arm MW-wtd HR CC / ST / CT |
+|---|---|---|---|---|---|---|
+| 2019 | canonical | 606.9 (2.04 %) | vintage_2019 | **41.0 (0.15 %)** | 28,040.8 | 7.585→7.548 / 15.595→12.271 / 10.165→10.198 |
+| 2020 | canonical | 612.3 (2.00 %) | vintage_2020 | **58.8 (0.20 %)** | 29,554.7 | 7.583→7.611 / 15.516→11.444 / 10.101→10.163 |
+| 2021 | canonical | 604.1 (2.02 %) | vintage_2021 | **81.8 (0.28 %)** | 29,658.5 | 7.532→7.585 / 15.516→12.537 / 10.047→10.035 |
+| 2022 | canonical | 606.7 (2.03 %) | vintage_2022 | **97.4 (0.33 %)** | 29,888.3 | 7.52→7.536 / 15.516→12.066 / 10.102→10.137 |
+| 2023 | canonical | 607.0 (2.03 %) | vintage_2023 | **97.4 (0.34 %)** | 29,020.4 | 7.537→7.61 / 15.516→12.108 / 10.081→10.16 |
+| 2024 | canonical | 655.0 (2.25 %) | vintage_2024 | **144.6 (0.50 %)** | 29,062.7 | 7.533→7.592 / 14.41→12.375 / 10.061→10.061 |
+| 2025 | canonical | 655.0 (2.26 %) | canonical | **145.0 (0.50 %)** | 28,993.1 | 7.533→7.564 / 14.316→11.728 / 10.098→10.098 |
+
+The keeper column is the keeper's flags on HEAD inputs (F1 moved the canonical eGRID join to eGRID 2024), so it isolates the arm's delta. **Residual class-table plants in the arm (absent from every eGRID vintage 2018–2024 AND from CAMPD — none files CEMS):** 55874 Panoche Peaker (gas_ct, 56.7 MW); 66638 Enchanted Rock Lodi (gas_ct, 48.0 MW); 65199 Keysight - Santa Rosa (gas_ct, 4.5 MW); 66146 Kaiser - LA (gas_ct, 4.5 MW); 66148 Kaiser - Woodland Hills (gas_ct, 3.1 MW); 59395 City of Tulare Water Facility (gas_ct, 2.8 MW); 66456 Anheuser Busch - Fairfield (gas_ct, 2.6 MW); 65361 CalTech - Pasadena Wilson Ave (gas_ct, 2.2 MW); 66142 Kaiser - Harbor City (gas_ct, 2.1 MW); 65210 Enloe Medical - Chico (gas_ct, 1.7 MW); 69191 GreenStruxure REP009, LLC (gas_ct, 1.4 MW); 66145 Life Technologies - Fremont (gas_ct, 1.3 MW); 66458 Redlands Community Hospital (gas_ct, 1.1 MW); 64756 EQX005.0 Toyama Fuel Cell (gas_ct, 1.1 MW); 66459 Taylor Farms - Schilling Place (gas_ct, 1.0 MW); 65191 University of San Diego (gas_ct, 1.0 MW); 65192 AT&T San Diego (gas_ct, 1.0 MW); 65193 CalTech - Pasadena (PPA) (gas_ct, 1.0 MW); 65196 SCC - San Jose (gas_ct, 1.0 MW); 65200 DirecTV - Los Angeles (gas_ct, 1.0 MW); 50610 Saint Johns Health Center (gas_ct, 1.0 MW); 65202 CalTech - Pasadena (gas_ct, 1.0 MW); 65203 Beckton Dickenson - San Jose (gas_ct, 1.0 MW); 65204 AT&T - Redwood City (gas_ct, 1.0 MW); 65205 AT&T - Gardena (gas_ct, 1.0 MW); 65206 AT&T - Hawthorne (gas_ct, 1.0 MW); 65208 AT&T - Hayward (gas_ct, 1.0 MW); 65211 Comcast - Universal City (gas_ct, 1.0 MW); 65360 AT&T - San Diego Trade Street (gas_ct, 1.0 MW); 66143 San Diego Community College (gas_ct, 1.0 MW). Largest: Panoche Peaker 55874 (Wellhead, no CEMS; distinct from Panoche Energy Center 56803, which is measured) and Enchanted Rock Lodi 66638 (2024+); the rest are ≤ 4.5 MW behind-the-meter fuel-cell / microturbine sites.
 
 **Defect found and fixed in phase 0 (rule 14).** `scripts/data/derive_campd_cc_heat_rates.py` filtered
 CEMS by raw `facilityId`, never routing through `campd.CAMPD_UNIT_PLANT_REMAP` (which the outage and
@@ -69,7 +79,14 @@ the same remap table and is routed to R-NYISO.
 
 Windows starting in the year / approx. MW-h overlapping the year, CAISO files:
 
-OUTAGE_TABLE
+| family (file) | 2019 | 2020 | 2021 | 2022 | 2023 | 2024 | 2025 |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| partial | 0 / 0.00 TWh | 0 / 0.00 TWh | 0 / 0.00 TWh | 0 / 0.00 TWh | 0 / 0.00 TWh | 0 / 0.00 TWh | 0 / 0.00 TWh |
+| short-coal | 0 / 0.00 TWh | 0 / 0.00 TWh | 0 / 0.00 TWh | 0 / 0.00 TWh | 0 / 0.00 TWh | 0 / 0.00 TWh | 0 / 0.00 TWh |
+| short-gas | 398 / 5.85 TWh | 320 / 5.03 TWh | 296 / 4.29 TWh | 404 / 5.58 TWh | 402 / 5.28 TWh | 361 / 5.65 TWh | 435 / 7.65 TWh |
+| std (armed) | 576 / 42.63 TWh | 555 / 40.37 TWh | 603 / 42.47 TWh | 496 / 35.86 TWh | 584 / 39.43 TWh | 499 / 46.75 TWh | 670 / 58.06 TWh |
+
+std is armed in the keeper already; short-gas is the NEW measured family (≈5–8 TWh·MW-h of capability removed per year, 1–5-day full stops, merit-order guarded); short-coal and partial are empty for CAISO (no baseload coal) and arm as no-ops.
 
 **Short-gas grain repair.** F2 derived `campd-unit-outages-shortgas-CAISO.csv` at DAY grain, while
 CAISO's std extract is HOUR grain (caiso-183: day-grain re-expansion asserts up to 23 h per edge the

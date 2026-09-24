@@ -1208,14 +1208,8 @@
   },
   "treatment": {
    "2019": {
-    "class_table_mw": 551.0,
+    "class_table_mw": 41.0,
     "class_table_plants": [
-     {
-      "fuel": "gas_cc",
-      "mw": 510.0,
-      "name": "El Segundo Energy Center LLC",
-      "plant_code": 57901
-     },
      {
       "fuel": "gas_ct",
       "mw": 40.0,
@@ -1229,7 +1223,7 @@
       "plant_code": 50610
      }
     ],
-    "class_table_share": 0.0196,
+    "class_table_share": 0.0015,
     "eia860_source": "vintage_2019",
     "mw_by_fuel": {
      "coal": 50.0,
@@ -1240,7 +1234,7 @@
     },
     "mw_weighted_hr_by_fuel": {
      "coal": 5.581,
-     "gas_cc": 7.482,
+     "gas_cc": 7.548,
      "gas_ct": 10.198,
      "gas_st": 12.271,
      "oil": 15.308
@@ -1248,14 +1242,8 @@
     "thermal_mw": 28040.8
    },
    "2020": {
-    "class_table_mw": 568.8,
+    "class_table_mw": 58.8,
     "class_table_plants": [
-     {
-      "fuel": "gas_cc",
-      "mw": 510.0,
-      "name": "El Segundo Energy Center LLC",
-      "plant_code": 57901
-     },
      {
       "fuel": "gas_ct",
       "mw": 56.7,
@@ -1275,7 +1263,7 @@
       "plant_code": 50610
      }
     ],
-    "class_table_share": 0.0192,
+    "class_table_share": 0.002,
     "eia860_source": "vintage_2020",
     "mw_by_fuel": {
      "coal": 50.0,
@@ -1286,7 +1274,7 @@
     },
     "mw_weighted_hr_by_fuel": {
      "coal": 5.553,
-     "gas_cc": 7.57,
+     "gas_cc": 7.611,
      "gas_ct": 10.163,
      "gas_st": 11.444,
      "oil": 14.05
@@ -1294,14 +1282,8 @@
     "thermal_mw": 29554.7
    },
    "2021": {
-    "class_table_mw": 591.8,
+    "class_table_mw": 81.8,
     "class_table_plants": [
-     {
-      "fuel": "gas_cc",
-      "mw": 510.0,
-      "name": "El Segundo Energy Center LLC",
-      "plant_code": 57901
-     },
      {
       "fuel": "gas_ct",
       "mw": 56.7,
@@ -1423,7 +1405,7 @@
       "plant_code": 65361
      }
     ],
-    "class_table_share": 0.02,
+    "class_table_share": 0.0028,
     "eia860_source": "vintage_2021",
     "mw_by_fuel": {
      "coal": 50.0,
@@ -1434,7 +1416,7 @@
     },
     "mw_weighted_hr_by_fuel": {
      "coal": 5.558,
-     "gas_cc": 7.528,
+     "gas_cc": 7.585,
      "gas_ct": 10.035,
      "gas_st": 12.537,
      "oil": 13.877
@@ -1442,14 +1424,8 @@
     "thermal_mw": 29658.5
    },
    "2022": {
-    "class_table_mw": 607.4,
+    "class_table_mw": 97.4,
     "class_table_plants": [
-     {
-      "fuel": "gas_cc",
-      "mw": 510.0,
-      "name": "El Segundo Energy Center LLC",
-      "plant_code": 57901
-     },
      {
       "fuel": "gas_ct",
       "mw": 56.7,
@@ -1613,7 +1589,7 @@
       "plant_code": 66459
      }
     ],
-    "class_table_share": 0.0203,
+    "class_table_share": 0.0033,
     "eia860_source": "vintage_2022",
     "mw_by_fuel": {
      "coal": 50.0,
@@ -1624,7 +1600,7 @@
     },
     "mw_weighted_hr_by_fuel": {
      "coal": 5.555,
-     "gas_cc": 7.478,
+     "gas_cc": 7.536,
      "gas_ct": 10.137,
      "gas_st": 12.066,
      "oil": 12.558
@@ -1632,14 +1608,8 @@
     "thermal_mw": 29888.3
    },
    "2023": {
-    "class_table_mw": 607.4,
+    "class_table_mw": 97.4,
     "class_table_plants": [
-     {
-      "fuel": "gas_cc",
-      "mw": 510.0,
-      "name": "El Segundo Energy Center LLC",
-      "plant_code": 57901
-     },
      {
       "fuel": "gas_ct",
       "mw": 56.7,
@@ -1803,7 +1773,7 @@
       "plant_code": 66459
      }
     ],
-    "class_table_share": 0.0209,
+    "class_table_share": 0.0034,
     "eia860_source": "vintage_2023",
     "mw_by_fuel": {
      "coal": 50.0,
@@ -1814,7 +1784,7 @@
     },
     "mw_weighted_hr_by_fuel": {
      "coal": 5.613,
-     "gas_cc": 7.544,
+     "gas_cc": 7.61,
      "gas_ct": 10.16,
      "gas_st": 12.108,
      "oil": 12.837
@@ -1822,14 +1792,8 @@
     "thermal_mw": 29020.4
    },
    "2024": {
-    "class_table_mw": 654.6,
+    "class_table_mw": 144.6,
     "class_table_plants": [
-     {
-      "fuel": "gas_cc",
-      "mw": 510.0,
-      "name": "El Segundo Energy Center LLC",
-      "plant_code": 57901
-     },
      {
       "fuel": "gas_ct",
       "mw": 56.7,
@@ -1987,7 +1951,7 @@
       "plant_code": 66459
      }
     ],
-    "class_table_share": 0.0225,
+    "class_table_share": 0.005,
     "eia860_source": "vintage_2024",
     "mw_by_fuel": {
      "coal": 50.0,
@@ -1998,7 +1962,7 @@
     },
     "mw_weighted_hr_by_fuel": {
      "coal": 5.577,
-     "gas_cc": 7.535,
+     "gas_cc": 7.592,
      "gas_ct": 10.061,
      "gas_st": 12.375,
      "oil": 15.808
@@ -2006,14 +1970,8 @@
     "thermal_mw": 29062.7
    },
    "2025": {
-    "class_table_mw": 655.0,
+    "class_table_mw": 145.0,
     "class_table_plants": [
-     {
-      "fuel": "gas_cc",
-      "mw": 510.0,
-      "name": "El Segundo Energy Center LLC",
-      "plant_code": 57901
-     },
      {
       "fuel": "gas_ct",
       "mw": 56.7,
@@ -2171,7 +2129,7 @@
       "plant_code": 66459
      }
     ],
-    "class_table_share": 0.0226,
+    "class_table_share": 0.005,
     "eia860_source": "canonical",
     "mw_by_fuel": {
      "coal": 50.0,
@@ -2182,7 +2140,7 @@
     },
     "mw_weighted_hr_by_fuel": {
      "coal": 5.577,
-     "gas_cc": 7.502,
+     "gas_cc": 7.564,
      "gas_ct": 10.098,
      "gas_st": 11.728,
      "oil": 15.665
