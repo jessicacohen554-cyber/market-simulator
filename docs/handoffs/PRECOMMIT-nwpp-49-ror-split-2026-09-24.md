@@ -87,3 +87,14 @@ forced base is unchanged. The proxy ignores this re-spread.
 * Each shard pushes its FULL bundle, including `dispatch/<y>_P1.parquet` (rule 34(a)). The parent
   composes, scores, registers and asks the promotion question (rule 31). Budget: ~60–100 min per
   shard.
+
+## Addendum (2026-09-24, after launch, before any leg was scored)
+
+* **Hard-stop 2's count was wrong for 2023, and the 2023 shard correctly stopped on it.** The solve
+  pins **157** plants flat in 2023, not 153–154. The four extra plants are tiny RoR plants with no
+  2023 EIA-923 series: Pilot Butte 674, Drop 2 6507, Drop 3 6508 and Newhalem 9842, about 8 MW in
+  total. They enter the 2023 fleet only through the keeper's `--hydro-backfill-year 2024`. My count
+  used the budget table's `loader_kept` flag, which predates the backfill. This is fleet composition,
+  not a classifier defect. 2024 and 2025 read 154, as pre-registered. The relaunched 2023 shard's
+  hard stop is 157.
+* No threshold, prediction or kill limb changed.
