@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-24-r-soco-corrected-inputs",
+  "label": "r soco corrected inputs",
+  "date": "2026-09-24",
+  "shorthand": "r-soco-corrected-inputs",
+  "definition": "R-SOCO 2023: soco61 keeper + F1/F2 corrected backcast inputs (year-matched EIA-860, plant heat rates incl. CHP, CAMPD short-coal/short-gas/partial windows); multipliers unchanged",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "SOCO",
+  "file": "frontend/data/backcast/runs/2026-09-24-r-soco-corrected-inputs.js",
+  "bundle": "results/calibration/rsoco_corrected_inputs_span"
+}
