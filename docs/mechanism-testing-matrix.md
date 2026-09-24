@@ -17939,6 +17939,17 @@ cause of the rung's C3a 2020 / C3b 2020–2022 failures, and with demand (SPP-72
   `scuc_load_pocket_commitment`) stay `U`, but a successor proposing any of them for C3a/C3b
   must first beat this bound.
 
+**DO-NOT-REDO, added by SPP-75 (2026-09-23, THE GAS LOW SIDE, ZERO LP —
+`docs/handoffs/RESULT-spp-75-gas-low-side-2026-09-23.md`).** SPP-74's gas half of the RT<0 thermal
+deficit (G = 1,757 / 2,453 MW, 2020 / 2022) attributed to CAMPD SWPP-BA units (coverage κ ≈ 1.00):
+- **77–83 % is utility/IPP non-CHP CC + ST_GAS** — part-loaded (0.41–0.44 of MID2 output), online
+  42–53 % of RT<0 hours: commitment, not must-run. No measured forward driver; `spp_gas_commitment_bridge`
+  / `commitment_floor_window_netload` R stand. Do not re-attribute it to CHP or to fleet membership.
+- **Missing / mis-zoned units: 0–1 %.** Closed.
+- **CHP: 11–17 %, flat, and admissible** via the EXISTING `chp_steam_floor_p25` level swap (SPP floor
+  165 → 410 MW; reach 14 % / 10 % of G). Cell `chp_steam_following` U → O, awaiting an owner charter
+  (seven shards). It will not pass C3a 2020 alone.
+
 **DO-NOT-REDO, added by SPP-74 (2026-09-23, THE BODY, ZERO LP —
 `docs/handoffs/RESULT-spp-74-price-body-2026-09-23.md`).** Measured on the hydro-5 rung
 (`2026-09-22-hydro-5-spp-rung`; C3a 2020 +15.5 %, C3b 0.257 / 0.234 / 0.208). **No body object is
