@@ -115,7 +115,32 @@ no, for three measured reasons:
 
 ## 5. G-DRIFT (rule 29(b)) — keeper pin `e7091f56` → HEAD
 
-GDRIFT
+The keeper's recorded `git_sha e7091f56` was a rebased lane commit and is not reachable from `main`; its
+solve-path tree is `cce686a7` (xiso-8's own commit on `main`, the PRECOMMIT-addendum/anchor commits that
+carried the pinned code). `git diff cce686a7 HEAD` over `src/market_sim`, `scripts/run_calibration*.py`,
+`scripts/lib`, `data/raw/_validation-source`, `data/raw/reference`: **43 files, 36 non-merge commits, every
+hunk classified** (read-only audit):
+
+* **LIVE-F1 (by design):** the six backcast default flips (`scenarios.py`), `data/egrid.py` year-matched
+  join, `fleet/eia860.py` (boundary repair per active vintage, per-year measured maps, CC swap, retiree /
+  mothball channels take measured swaps), `fleet/campd_bins.py::_measured_rate_map` (solve-year row, else
+  pooled), `assembly.py` / `run_calibration.py` threading, `data/chp.py` year argument. **Note: several of
+  these move CAISO even at the keeper's flag values** — the canonical snapshot was re-joined eGRID 2023 → 2024,
+  and the keeper's own armed `campd_ct` / `chp_power_only` CAISO artifacts were re-derived with per-year rows.
+  So the arm-vs-keeper delta is **the whole F1/F2 input correction**, not only the §1 `--set` flags.
+* **LIVE-F2 (by design):** the short/partial outage paths reached by §1's `--set`, reading the §3 files.
+* **INERT for CAISO:** 15 new `ScenarioConfig` fields (all default False, frozen "False", absent from the
+  recipe); p0_cache (`MARKET_SIM_P0_CACHE` unset, default off); P0 slim extraction and row-bound joining
+  (byte-identical, NEISO atol=0 gate, e107949d); P1 basis seed (default off, replay pins 0); SOCO/NYISO/NWPP/
+  SPP/PJM/MISO-only branches; gated coal/hydro/CHP/outage-denominator mechanisms; IO, CLI (`default=None`)
+  and cache-key bookkeeping.
+* **LIVE-OTHER: none.**
+* **Scoring-only (not the solve):** `run_calibration_full` EIA-923 benchmark construction (ad42fe43: oil
+  re-attribution two-sided and before the CAMPD backfill; missing-month fill limited to post-COD months). It
+  can move CAISO's C1 class actuals. The comparison in the RESULT therefore scores BOTH the keeper and the arm
+  on HEAD's benchmark, and states where a C1 cell moved because the benchmark moved.
+
+Form 4 is valid: the keeper's committed bundle is the control; no control solve is spent.
 
 ## 6. Shard plan (rule 32(c), 34(a), 36)
 
