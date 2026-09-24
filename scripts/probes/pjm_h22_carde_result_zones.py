@@ -23,7 +23,9 @@ sys.path.insert(0, str(REPO / "scripts/probes"))
 import pjm_h21_cardd_phase0 as P  # noqa: E402
 
 BENCH = REPO / "frontend/data/backcast/bench/PJM"
-GROUPS = ("CC_REGULAR", "COAL_BIT", "COAL_WC", "CT_PEAKER", "ST_GAS")
+# CC_REGULAR only: the arm unit_hourly plant_group labels do not match the bench
+# group keys for coal classes (a key mismatch, not a result); C1 scores those.
+GROUPS = ("CC_REGULAR",)
 FOCUS = ("EMAAC", "SWMAAC", "Dominion")
 
 
