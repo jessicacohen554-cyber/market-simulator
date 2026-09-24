@@ -1393,3 +1393,31 @@ input. Outgoing keeper 2026-09-23-soco60-boundary-span pruned (rule 35). E13 for
 Records: docs/handoffs/PRECOMMIT-soco-61-2026-09-24.md,
 docs/handoffs/FINDING-soco-61-2026-09-24.md, scripts/gen_soco61_attestation.py,
 scripts/probes/soco61_compose_span.py, scripts/probes/_soco61_phase0.py.
+
+## soco-62 — 2026-09-24
+
+THE 2023 CT_PEAKER / ST_GAS SPLIT IS BOILER COMMITMENT, AND NO ADMISSIBLE INPUT
+REACHES IT -- ZERO LP SPENT. Keeper 2026-09-24-soco61-dark-unit unchanged.
+
+Phase 0 on the keeper's own per-plant legs (recovered at zero LP from the
+SOCO-61 shard SHAs). 2023 CT+ST total is right (13.36 vs 13.62 TWh); the split
+is wrong. At the four campaign-duty plants the ST deficit (4.68 / 4.32 TWh in
+2023 / 2024) is 66 % / 79 % COMMITMENT HOURS (Watson 5,111 vs 8,451 synced h;
+Yates 4,607 vs 7,739; Gaston 2,453 vs 4,888) -- but a floor at the registered
+campaign level can add at most 0.61 / 0.82 TWh even at full measured sync. The
+LP never finds a committed boiler economic above its floor: CTs at 34.4-35.3
+$/MWh sit at or below boilers at 34.9-37.5, and the real separators (CT start
+costs, boiler incremental HR) are closed by tranche_startup_amortization G and
+the G5 identity bands. Lead 2: no SOCO start-cost input other than the G'd
+object. Lead 3: nothing 2023-specific -- excess spread over ~15 CT plants, none
+dark, zones never separate, nuclear matches; 2023 has 2,160 hours in the CT/ST
+price band vs 676 in 2024 (Vogtle 4). Side leads closed: CT loaded vs
+operating HR basis +1.13 % only; SOCO parasitic factors misaligned to a HR
+conversion (16/24 rows out of band). No lever taken, no shard, no registration.
+
+OWNER QUESTIONS: (1) may SOCO carry MEASURED incremental-HR phys_* bands while
+price bands stay 1.0 (the only admissible route to the split)? (2) decline
+2026-09-20-soco53g-prb-own-iso (E13)? Leftover refs for the owner:
+claude/soco61-arm-*, claude/soco60-arm-*, claude/soco60-armB-*.
+Records: docs/handoffs/FINDING-soco-62-2026-09-24.md,
+scripts/probes/_soco62_phase0.py.
