@@ -10,7 +10,7 @@ Charter: `docs/PRECOMMIT-pjm-h22-card-e-rggi-six-years-2026-09-24.md` (pushed be
 |---|---|---|
 | keeper `2026-09-23-pjm-h19-dbs-span` (re-scored on the same rebuilt bench) | 2023–25 | CALIBRATED |
 | **arm `2026-09-24-pjm-h22-rggi-span`** | 2023–25 | **NOT-YET** — one failure: C1 CC_REGULAR 2024 |
-| arm `2026-09-24-pjm-h22-rggi-touchpoint` | 2020–22 | _see §4_ |
+| arm `2026-09-24-pjm-h22-rggi-touchpoint` | 2020–22 | NOT-YET (keeper touchpoint also NOT-YET) |
 
 The failing row: CC_REGULAR 2024, model **322.0** vs actual **335.6** TWh (−13.6; band 8). The
 keeper passed at 336.3. Every other scored row passes.
@@ -38,9 +38,17 @@ keeper passed at 336.3. Every other scored row passes.
 | C3b NRMSE | 0.113 → 0.119 | 0.124 → **0.115** | 0.143 → **0.129** |
 | C3c tail count | 4 → 4 | 11 → 11 | 35 → 35 |
 
-## 4. Touchpoint 2020–22
+## 4. Touchpoint 2020–22, keeper → arm (same benchmark)
 
-_Pending the 2020 leg (relaunched shard)._
+| criterion | 2020 | 2021 | 2022 |
+|---|---|---|---|
+| C1 CC_REGULAR (actual 283.4 / 289.4 / 308.0) | 285.6 → 278.1 PASS | 290.2 → 282.4 PASS | 319.2 → 310.9 **FAIL → PASS** |
+| C1 COAL_BIT (131.5 / 156.6 / 141.1) | 157.0 → 160.7 FAIL | 175.8 → 179.0 FAIL | 143.8 → 146.2 PASS |
+| C1 CT_PEAKER (18.7 / 21.5 / 19.7) | 15.5 → 16.7 | 12.8 → 12.9 FAIL | 16.8 → 18.0 |
+| C3a mean $ (21.20 / 38.53 / 74.07) | 24.28 → 24.87 FAIL (+14.5 → +17.3 %) | 38.57 → 40.05 PASS | 66.36 → 67.98 **FAIL → PASS** (−10.4 → −8.2 %) |
+| C3b NRMSE | 0.155 → 0.182 PASS | 0.104 → 0.107 | 0.242 → 0.235 FAIL |
+
+Per-zone 2020: EMAAC CC +13.0 → +2.7, SWMAAC −2.7 → −4.6, Dominion −10.5 → −8.9 (VA not a member).
 
 ## 5. Predictions vs outcome (PRECOMMIT §3–4)
 
@@ -51,7 +59,7 @@ _Pending the 2020 leg (relaunched shard)._
 | EMAAC CC over-run shrinks every year; crosses to under in 2024–25 | HELD (−3.4 / −8.2 in 2024/25) |
 | SWMAAC CC falls every year | HELD |
 | Dominion worsens 2021–23 | HELD (−4.4 → −8.6, −1.7 → −4.6, −13.7 → −15.5) |
-| C1 CC: 2022 FAIL → PASS; 2023, 2024 PASS → FAIL | 2024 FAIL held; **2023 did not fail** (−7.6, inside 8); 2022 _pending touchpoint_ |
+| C1 CC: 2022 FAIL → PASS; 2023, 2024 PASS → FAIL | 2022 FAIL → PASS held; 2024 FAIL held; **2023 did not fail** (−7.6, inside 8) |
 | Span CALIBRATED → NOT-YET | HELD |
 | Class CC Δ 2022 −12.8 (phase 0) | Smaller: −8.2 (linear price scaling overstated 2022) |
 
@@ -73,7 +81,7 @@ not a new defect. Price improves in two of three training years.
 ## 8. Retrievability (rule 34(e))
 
 Span composite registered and committed on this lane's branch (slim keeper shape + payload). Per-year
-legs are gitignored in the parent. Provenance SHAs (rule 33(d)): 2021 `49270829`, 2022 `31804b43`,
+legs are gitignored in the parent. Provenance SHAs (rule 33(d)): 2020 `96708ab6`, 2021 `49270829`, 2022 `31804b43`,
 2023 `e2d0c4a0`, 2024 `a2dcb262`, 2025 `d8dd91f1`. A leg not on `main` costs a ~15 min re-solve.
 
 ## 9. G-DRIFT after the pin
@@ -81,3 +89,16 @@ legs are gitignored in the parent. Provenance SHAs (rule 33(d)): 2021 `49270829`
 `main` gained F1's backcast heat-rate vintage work (`eia860.py`, `campd_bins.py`, `egrid.py`,
 `runner.py`) after `d58121c3`. Arm and control were both solved without it, so the A/B stands. A
 future keeper re-solve at HEAD picks it up.
+
+## 10. Promotion — RULED and executed
+
+Owner, verbatim: *"Is this a recommended keeper candidate? If so plz promote. If structural integrity
+improves but gates regress that may still be a keeper.."* Recommended (§7) and **promoted** this session:
+`keepers/PJM.json` and `calibration-complete.json` re-keyed to `2026-09-24-pjm-h22-rggi-span`,
+`audit_keepers --iso PJM` E1 passed, the h19 pair pruned (`prune_iso_runs.py --iso PJM --keep
+2026-09-24-pjm-h22-rggi-touchpoint --force-uncite`), audit 0 failures / 0 warnings, `status/PJM.js`
+rebuilt. **PJM's headline moves CALIBRATED → NOT-YET** (C1 CC_REGULAR 2024). Year set unchanged: 2020–2025.
+
+**Next lane (named successor):** the Dominion CC under-run (−3 to −16 TWh), now uncancelled, and the 2020/21
+COAL_BIT over-run. `scripts/gen_pjm_h22_attestation.py` reads the pruned h19 attestation and is a record
+now, not re-runnable.
