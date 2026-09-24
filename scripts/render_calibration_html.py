@@ -67,6 +67,7 @@ from scripts.data import derive_ordc_overlay as ordc  # noqa: E402
 from scripts.lib import bench_multiclass as bm  # noqa: E402
 from scripts.lib import benchmark_semantics as bs  # noqa: E402
 from scripts.lib.bundle_io import require_bundle_input  # noqa: E402
+from scripts.lib.storage_compare import build_storage_compare  # noqa: E402
 from scripts.calibration_verdict import TAIL_THRESHOLD  # noqa: E402  # rubric §5 per-ISO tail $
 from market_sim.config.plant_taxonomy import (  # noqa: E402
     LABELS,
@@ -2461,6 +2462,16 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
                 "throughput_twh": model_storage if model_storage is not None else 0.0,
                 "monthly_net_gwh": model_storage_monthly,
             }
+            # Report-only model-vs-actual storage dispatch + SOC block for the
+            # Run Explorer storage panel (scripts/lib/storage_compare.py): the
+            # committed hourly/storage_<year> sidecar against the measured
+            # fleet series in data/raw/storage-dispatch-actuals. Absent (not
+            # null) when the ISO-year has no actual, so older runs are unchanged.
+            storage_cmp = build_storage_compare(
+                bdir, str(meta.get("iso", "ERCOT")), int(year)
+            )
+            if storage_cmp is not None:
+                run_years[int(year)]["storageCmp"] = storage_cmp
             # ---- ISO-wide hourly LMP delta (model - actual RT) ----
             # Feeds the Report-tab delta heatmap: where the model runs HOT
             # (model price > actual, orange) or COLD (model < actual, blue) for
