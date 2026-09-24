@@ -1126,13 +1126,121 @@ def _reconcile_cc_capacity(
 # invoked repeatedly per fleet build (the dispatch path plus every outage
 # overlay), and the CSV read + tranche arithmetic is pure w.r.t. its args, so
 # the frame is computed once per key and callers receive a defensive copy.
-_CAMPD_BINS_CACHE: dict[tuple[str, int | None, str | None], pd.DataFrame] = {}
+_CAMPD_BINS_CACHE: dict[tuple, pd.DataFrame] = {}
+
+
+#: Curated-bin ``Plant_Group`` -> the F1 measured heat-rate family that covers
+#: it (R-ERCOT, AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24 §5.3.2).
+#: The same class -> artifact routing the EIA-860 fleet loader applies
+#: (CT_PEAKER -> the CT derive, COAL -> coal, ST_GAS -> the paired-boiler ST
+#: derive, CC_REGULAR -> the CC derive, the three CHP classes -> the
+#: class-keyed power-only CHP derive), so the curated sheet reads the
+#: identical measured population the rest of the program reads.
+_BIN_GROUP_MEASURED_FAMILY: dict[str, str] = {
+    "CT_PEAKER": "measured_ct_heat_rates",
+    "COAL": "measured_coal_heat_rates",
+    "ST_GAS": "measured_st_heat_rates",
+    "CC_REGULAR": "measured_cc_heat_rates",
+    "CC_CHP": "measured_chp_heat_rates",
+    "CT_CHP": "measured_chp_heat_rates",
+    "ST_CHP": "measured_chp_heat_rates",
+}
+
+
+def resolve_bin_heat_rates(
+    detail: pd.DataFrame,
+    iso: str,
+    heat_rate_year: int,
+    measured_flags: dict[str, bool],
+    egrid_year_match: bool,
+) -> tuple[pd.Series, pd.Series]:
+    """Return a year-matched plant heat rate for every curated-bin row.
+
+    R-ERCOT (AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24 §5.3.2 (b)).
+    The curated sheet's ``Plant_Avg_HR_MMBtu_MWh`` is ONE snapshot for every
+    solve year — measured in the R-ERCOT PRECOMMIT as eGRID 2023 ``PLHTRT`` on
+    71 % of rows and a CAMPD gross-basis 2023-2024 annual rate on most of the
+    rest — so a 2019 solve dispatched on 2023 rates. This applies the F1
+    hierarchy the EIA-860 fleet loader already applies to every other ISO,
+    zero free parameters (rules 13 / 14 / 21):
+
+    1. the row's measured CAMPD artifact (the solve year's own ``ok`` row, else
+       the pooled 2019-2025 ``ok`` row — :func:`_measured_rate_map`), when that
+       family's flag is armed;
+    2. else, when ``egrid_year_match``, the plant's eGRID ``PLHTRT`` at the
+       solve year's vintage with the nearest-vintage fallback
+       (:func:`market_sim.data.egrid.resolve_plant_heat_rates`);
+    3. else the sheet's own value;
+    4. else NaN, which :func:`_fill_plant_hr` sends to ``BIN_GROUP_HR_DEFAULT``.
+
+    Args:
+        detail: The raw curated sheet (``Plant_Code``, ``Plant_Group``,
+            ``Plant_Avg_HR_MMBtu_MWh``).
+        iso: The ISO whose measured artifacts to read.
+        heat_rate_year: The solve year.
+        measured_flags: ``{measured_<family>_heat_rates: bool}``.
+        egrid_year_match: Arm step 2.
+
+    Returns:
+        ``(heat_rate, source)`` aligned to ``detail``; ``source`` is one of
+        ``measured`` / ``egrid`` / ``sheet`` / ``default``.
+    """
+    from market_sim.data.egrid import egrid_vintage_for_year, resolve_plant_heat_rates
+
+    loaders = {
+        "measured_ct_heat_rates": measured_ct_heat_rates,
+        "measured_coal_heat_rates": measured_coal_heat_rates,
+        "measured_st_heat_rates": measured_st_heat_rates,
+        "measured_cc_heat_rates": measured_cc_heat_rates,
+        "measured_chp_heat_rates": measured_chp_heat_rates,
+    }
+    maps = {
+        name: fn(iso, int(heat_rate_year))
+        for name, fn in loaders.items()
+        if measured_flags.get(name, False)
+    }
+    codes = detail["Plant_Code"].astype(int)
+    groups = detail["Plant_Group"].astype(str)
+    sheet = pd.to_numeric(detail["Plant_Avg_HR_MMBtu_MWh"], errors="coerce")
+    if egrid_year_match:
+        egrid_hr, _ = resolve_plant_heat_rates(
+            codes, egrid_vintage_for_year(int(heat_rate_year))
+        )
+    else:
+        egrid_hr = pd.Series(float("nan"), index=detail.index)
+    hr = pd.Series(float("nan"), index=detail.index, dtype=float)
+    src = pd.Series("default", index=detail.index, dtype=object)
+    for i in detail.index:
+        fam = _BIN_GROUP_MEASURED_FAMILY.get(groups[i])
+        m = maps.get(fam) if fam else None
+        if m:
+            key = (
+                (int(codes[i]), groups[i])
+                if fam == "measured_chp_heat_rates"
+                else int(codes[i])
+            )
+            v = m.get(key)
+            if v is not None and v > 0.0:
+                hr[i], src[i] = float(v), "measured"
+                continue
+        e = egrid_hr[i]
+        if e == e and e > 0.0:
+            hr[i], src[i] = float(e), "egrid"
+            continue
+        s = sheet[i]
+        if s == s and s > 0.0:
+            hr[i], src[i] = float(s), "sheet"
+    return hr, src
 
 
 def load_campd_bins(
     csv_path: str | Path,
     year: int | None = None,
     capacity_reconcile_path: str | Path | None = None,
+    heat_rate_year: int | None = None,
+    measured_flags: dict[str, bool] | None = None,
+    egrid_year_match: bool = False,
+    iso: str = "ERCOT",
 ) -> pd.DataFrame:
     """Load the CAMPD bin assignments, one row per plant.
 
@@ -1184,6 +1292,15 @@ def load_campd_bins(
 
     Args:
         csv_path: Path to ``custom-bin-assignments.csv``.
+        heat_rate_year: When given together with an armed ``measured_flags``
+            entry or ``egrid_year_match``, every row's base heat rate is
+            re-resolved for this solve year by :func:`resolve_bin_heat_rates`
+            (R-ERCOT, backcast only — the caller passes it only then). ``None``
+            (the default, every forecast / tooling caller) keeps the sheet
+            value, byte-identical to the pre-R-ERCOT loader.
+        measured_flags: ``{measured_<family>_heat_rates: bool}``.
+        egrid_year_match: Arm the year-matched eGRID step.
+        iso: The ISO whose measured artifacts to read.
 
     Returns:
         One row per plant with columns: the original bin key columns,
@@ -1195,16 +1312,37 @@ def load_campd_bins(
         ``plant_codes`` (a one-element list with the plant code),
         ``fuel``.
     """
+    flags = {k: bool(v) for k, v in (measured_flags or {}).items() if v}
+    rehr = heat_rate_year is not None and (bool(flags) or bool(egrid_year_match))
     cache_key = (
         str(csv_path),
         year,
         None if capacity_reconcile_path is None else str(capacity_reconcile_path),
+    ) + (
+        (int(heat_rate_year), tuple(sorted(flags)), bool(egrid_year_match), iso)
+        if rehr
+        else ()
     )
     cached = _CAMPD_BINS_CACHE.get(cache_key)
     if cached is not None:
         return cached.copy()
 
     detail = pd.read_csv(csv_path)
+    if rehr:
+        new_hr, hr_src = resolve_bin_heat_rates(
+            detail, iso, int(heat_rate_year), flags, bool(egrid_year_match)
+        )
+        mw = pd.to_numeric(detail["Nameplate_MW"], errors="coerce").fillna(0.0)
+        logger.info(
+            "R-ERCOT year-matched bin heat rates (%d): measured %.0f MW, "
+            "eGRID %.0f MW, sheet %.0f MW, class default %.0f MW",
+            int(heat_rate_year),
+            *(
+                float(mw[hr_src == k].sum())
+                for k in ("measured", "egrid", "sheet", "default")
+            ),
+        )
+        detail["Plant_Avg_HR_MMBtu_MWh"] = new_hr
     fuel_series = detail["Plant_Group"].map(BIN_GROUP_TO_FUEL)
     unmapped = detail[fuel_series.isna()]
     if not unmapped.empty:

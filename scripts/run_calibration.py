@@ -3893,6 +3893,21 @@ def run_year(
                 if config.cc_capacity_reconcile
                 else None
             ),
+            # R-ERCOT (AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24
+            # §5.3.2 (b)): the curated sheet is one heat-rate snapshot for
+            # every year; in a backcast re-resolve each row at THIS solve
+            # year through the F1 hierarchy (measured CAMPD year row ->
+            # pooled -> year-matched eGRID -> sheet). The five measured flags
+            # and the vintage flag are coerced off outside mode="backcast",
+            # so every forecast / hindcast bin frame is byte-identical.
+            heat_rate_year=(
+                year if getattr(config, "mode", "forecast") == "backcast" else None
+            ),
+            measured_flags=_measured_heat_rate_flags(config),
+            egrid_year_match=bool(
+                getattr(config, "eia860_vintage_tracks_solve_year", False)
+            ),
+            iso=iso,
         )
         if config.use_campd_bins and iso == "ERCOT"
         else None
