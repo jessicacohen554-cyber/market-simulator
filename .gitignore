@@ -3449,3 +3449,5 @@ results/calibration/pjm_h22_rggi_20[0-9][0-9]/
 /results/ff-t3-neiso-golden/d94/*/NEISO/*/hourly/
 /results/ff-t3-neiso-golden/d94/*/NEISO/*/year_*_floor_retentions.json
 /results/ff-t3-neiso-golden/d94/*.log
+
+!results/ff-t3-neiso-golden/d94/vre_short/**
