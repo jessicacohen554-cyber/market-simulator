@@ -3402,3 +3402,14 @@ results/calibration/soco60_armB_20[0-9][0-9]/
 # 2023 89bc112cb86dbe96f7ff32e4c8d9a9ca3d7fdce4  2024 83095fbec969c7522d7aeedd32ed0b5f9545886d
 # 2025 ee05728f3dd9d2463aefaf52d289459875bcb49b
 results/calibration/spp75_*/
+# SPP-75: eia923 benchmark frames restored (hash-verified) for the unregistered spp75_* legs only;
+# regenerable at zero LP via run_calibration_full.py --restore-shared-inputs. Commit them only with a promotion.
+results/calibration/_shared/SPP/eia923-000d11f64b4e.parquet
+results/calibration/_shared/SPP/eia923-1c5d7dafa097.parquet
+results/calibration/_shared/SPP/eia923-2afe466f56d5.parquet
+results/calibration/_shared/SPP/eia923-3953c83ea5b8.parquet
+results/calibration/_shared/SPP/eia923-8dd02ac893e4.parquet
+results/calibration/_shared/SPP/eia923-919c193d6f8d.parquet
+results/calibration/_shared/SPP/eia923-9b1e375afedc.parquet
+results/calibration/_shared/SPP/eia923-a6c17fafb327.parquet
+results/calibration/_shared/SPP/eia923-c11b7680b559.parquet
