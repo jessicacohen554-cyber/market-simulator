@@ -199,4 +199,16 @@ owner's (rule 31): nothing is promoted or pruned by this lane.
 
 ## 9. Launch record
 
-(appended after the shards are created)
+All seven pinned to **`c265c1c30ce0e51bffa5e0e5f5db76eafe54ae3e`** (this doc's first commit), created
+2026-09-24 17:58–18:00 UTC, tag `r-neiso`. First hard stop in each: `git checkout -B claude/rneiso-<Y> <sha>`
++ `git rev-parse HEAD` equality; no rebase / pull / merge.
+
+| year | shard session | branch / out-dir |
+|---|---|---|
+| 2019 | `session_01XsUDib96z253kbGH1C2JSi` | `claude/rneiso-2019` / `rneiso_2019` |
+| 2020 | `session_01FNuQqbLFifsLPbTLXuKjCG` | `claude/rneiso-2020` / `rneiso_2020` |
+| 2021 | `session_01Fm3gGxsL6k4dWbDSPZksNE` | `claude/rneiso-2021` / `rneiso_2021` |
+| 2022 | `session_0179ZMfFdxfwJ74YS2S5kkpN` | `claude/rneiso-2022` / `rneiso_2022` |
+| 2023 | `session_01Vpv11ZARtXNrh7vkRsmNLz` | `claude/rneiso-2023` / `rneiso_2023` |
+| 2024 | `session_01Nwioy6utrNLDqjWBbCM5Wb` | `claude/rneiso-2024` / `rneiso_2024` |
+| 2025 | `session_01HFxkUpJf4Vya9x5BGEkqKg` | `claude/rneiso-2025` / `rneiso_2025` |
