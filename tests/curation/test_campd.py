@@ -564,10 +564,22 @@ class TestMeritPanelStatePin(unittest.TestCase):
                     campd.merit_panel_states_for_iso(iso), campd.ISO_STATES[iso]
                 )
 
-    def test_caiso_is_the_only_pinned_iso(self):
-        # The caiso-199 landing pins CAISO alone; the same fleet-blindness at
+    def test_pinned_isos(self):
+        # caiso-199 pinned CAISO; F2 (2026-09-24) pinned SPP and SOCO when it
+        # landed CO / FL as detection coverage. The same fleet-blindness at
         # NYISO/PJM/MISO is each lane's own measurement (rule 25).
-        self.assertEqual(set(campd.ISO_MERIT_PANEL_STATES), {"CAISO"})
+        self.assertEqual(set(campd.ISO_MERIT_PANEL_STATES), {"CAISO", "SPP", "SOCO"})
+
+    def test_f2_pins_exclude_only_the_landed_detection_states(self):
+        # F2: the panel keeps the pre-landing scope exactly -- every detection
+        # state except the one F2 landed (CO for SPP, FL for SOCO).
+        for iso, landed in (("SPP", "CO"), ("SOCO", "FL")):
+            with self.subTest(iso=iso):
+                self.assertIn(landed, campd.states_for_iso(iso))
+                self.assertEqual(
+                    campd.merit_panel_states_for_iso(iso),
+                    tuple(s for s in campd.ISO_STATES[iso] if s != landed),
+                )
 
     def test_unknown_iso_resolves_empty(self):
         self.assertEqual(campd.merit_panel_states_for_iso("NOT_AN_ISO"), ())
