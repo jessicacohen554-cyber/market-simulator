@@ -630,6 +630,9 @@ def test_solve_surface_fingerprint_is_pinned(iso: str) -> None:
 #: registry value that changed while every reader still believes the pin.
 LEDGERED_SURFACE_MOVES_BY_ISO: dict[str, dict[str, str]] = {
     "ERCOT": {
+        "RGGI_MEMBER_STATES_BY_YEAR": (
+            "pjm-h22 2026-09-24: the 2020 and 2022 rows ADDED (NJ rejoined 2020; VA a member 2021-2023). Shared name, so every ISO re-keys; only PJM reads membership in any solve path armed today (per-generator mask, PJM-only; the mass-cap budget path has no 2020/2022 per-state budget, so it is None either way). No existing row moved, no committed number changes, cache miss only"
+        ),
         "NUCLEAR_MONTHLY_CF_BY_YEAR": (
             "ercot-253 2026-09-06: the 2021 row ADDED for the rule-22 "
             "validation ladder (no existing year's values moved) — see the "
@@ -637,6 +640,9 @@ LEDGERED_SURFACE_MOVES_BY_ISO: dict[str, dict[str, str]] = {
         ),
     },
     "CAISO": {
+        "RGGI_MEMBER_STATES_BY_YEAR": (
+            "pjm-h22 2026-09-24: the 2020 and 2022 rows ADDED (NJ rejoined 2020; VA a member 2021-2023). Shared name, so every ISO re-keys; only PJM reads membership in any solve path armed today (per-generator mask, PJM-only; the mass-cap budget path has no 2020/2022 per-state budget, so it is None either way). No existing row moved, no committed number changes, cache miss only"
+        ),
         "STATE_CARBON_PRICE_BY_ISO": (
             "caiso-262 2026-09-07: the 2022 row ADDED for the rule-22 "
             "validation touchpoint — $28.45/t, the four CA-Quebec joint "
@@ -650,6 +656,35 @@ LEDGERED_SURFACE_MOVES_BY_ISO: dict[str, dict[str, str]] = {
             "derive_nuclear_monthly_cf.py; the 2023-2025 rows re-derived in "
             "the same run came back byte-identical (no existing year's values "
             "moved) — see the cause block on PINNED_SURFACE_ROWS_BY_ISO"
+        ),
+    },
+    "MISO": {
+        "RGGI_MEMBER_STATES_BY_YEAR": (
+            "pjm-h22 2026-09-24: the 2020 and 2022 rows ADDED (NJ rejoined 2020; VA a member 2021-2023). Shared name, so every ISO re-keys; only PJM reads membership in any solve path armed today (per-generator mask, PJM-only; the mass-cap budget path has no 2020/2022 per-state budget, so it is None either way). No existing row moved, no committed number changes, cache miss only"
+        ),
+    },
+    "PJM": {
+        "RGGI_MEMBER_STATES_BY_YEAR": (
+            "pjm-h22 2026-09-24: the 2020 and 2022 rows ADDED (NJ rejoined 2020; VA a member 2021-2023). Shared name, so every ISO re-keys; only PJM reads membership in any solve path armed today (per-generator mask, PJM-only; the mass-cap budget path has no 2020/2022 per-state budget, so it is None either way). No existing row moved, no committed number changes, cache miss only"
+        ),
+        "PJM_RGGI_ALLOWANCE_PRICE_PER_TONNE": (
+            "pjm-h22 2026-09-24: 2020-2022 rows ADDED (7.07/10.44/14.84 $/t, the NEISO metric series, same recipe); read only under the default-off pjm_rggi_allowance_pricing gate"
+        ),
+        "PJM_RGGI_ZONE_SHARE": (
+            "pjm-h22 2026-09-24: 2020-2022 rows ADDED via derive_pjm_rggi_zone_share.py, which reproduces 2023-2025 exactly; synthetic-row fallback only"
+        ),
+        "CAP_AND_TRADE_PROGRAMS": (
+            "pjm-h22 2026-09-24: moves only because the PJM program embeds PJM_RGGI_ZONE_SHARE by value"
+        ),
+    },
+    "NYISO": {
+        "RGGI_MEMBER_STATES_BY_YEAR": (
+            "pjm-h22 2026-09-24: the 2020 and 2022 rows ADDED (NJ rejoined 2020; VA a member 2021-2023). Shared name, so every ISO re-keys; only PJM reads membership in any solve path armed today (per-generator mask, PJM-only; the mass-cap budget path has no 2020/2022 per-state budget, so it is None either way). No existing row moved, no committed number changes, cache miss only"
+        ),
+    },
+    "NEISO": {
+        "RGGI_MEMBER_STATES_BY_YEAR": (
+            "pjm-h22 2026-09-24: the 2020 and 2022 rows ADDED (NJ rejoined 2020; VA a member 2021-2023). Shared name, so every ISO re-keys; only PJM reads membership in any solve path armed today (per-generator mask, PJM-only; the mass-cap budget path has no 2020/2022 per-state budget, so it is None either way). No existing row moved, no committed number changes, cache miss only"
         ),
     },
 }

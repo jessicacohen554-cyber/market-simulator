@@ -1,0 +1,95 @@
+{
+ "predictions": [
+  {
+   "year": 2023,
+   "keeper_plant_twh": {
+    "6076": 10.2599,
+    "8066:COAL_PRB": 4.413,
+    "8066:ST_GAS": 0.0017,
+    "8224:COAL_BIT": 0.4919,
+    "8224:ST_GAS": 0.0244
+   },
+   "pricetaker_off_coal_twh": {
+    "8066": 4.434,
+    "8224": 0.551,
+    "6076": 10.844
+   },
+   "d_coal_twh_by_plant_pricetaker": {
+    "8066": 4.523,
+    "8224": 0.522,
+    "6076": -1.531
+   },
+   "st_gas_keeper_twh_removed": 0.026,
+   "coal_r_keeper": 0.66,
+   "coal_r_intra_keeper": 0.375,
+   "repaired": {
+    "d_coal_twh_lo": 0.629,
+    "d_coal_twh_hi": 5.045,
+    "coal_r_lo": 0.655,
+    "coal_r_intra_lo": 0.33,
+    "coal_r_hi": 0.662,
+    "coal_r_intra_hi": 0.395
+   },
+   "as_is": {
+    "d_coal_twh_lo": -0.903,
+    "d_coal_twh_hi": 3.513,
+    "coal_r_lo": 0.64,
+    "coal_r_intra_lo": 0.333,
+    "coal_r_hi": 0.651,
+    "coal_r_intra_hi": 0.395
+   }
+  },
+  {
+   "year": 2024,
+   "keeper_plant_twh": {
+    "6076": 8.9925,
+    "8066:COAL_PRB": 4.8848,
+    "8066:ST_GAS": 0.1822,
+    "8224:COAL_BIT": 0.6338,
+    "8224:ST_GAS": 0.0271
+   },
+   "pricetaker_off_coal_twh": {
+    "8066": 4.906,
+    "8224": 0.704,
+    "6076": 8.993
+   },
+   "d_coal_twh_by_plant_pricetaker": {
+    "8066": 0.0,
+    "8224": 0.667,
+    "6076": -2.585
+   },
+   "st_gas_keeper_twh_removed": 0.209,
+   "coal_r_keeper": 0.618,
+   "coal_r_intra_keeper": 0.404,
+   "repaired": {
+    "d_coal_twh_lo": 0.0,
+    "d_coal_twh_hi": 0.667,
+    "coal_r_lo": 0.618,
+    "coal_r_intra_lo": 0.404,
+    "coal_r_hi": 0.625,
+    "coal_r_intra_hi": 0.471
+   },
+   "as_is": {
+    "d_coal_twh_lo": -2.585,
+    "d_coal_twh_hi": -1.917,
+    "coal_r_lo": 0.58,
+    "coal_r_intra_lo": 0.422,
+    "coal_r_hi": 0.582,
+    "coal_r_intra_hi": 0.469
+   }
+  }
+ ],
+ "jb_measured_row_approx": [
+  {
+   "year": 2023,
+   "campd_gross_twh": 9.109,
+   "mustrun_pct_allhours_p5": 7.3,
+   "committed_pct_online_p5": 7.3,
+   "default_pct": {
+    "mustrun": 45.0,
+    "committed": 5.0,
+    "peaking": 2.0
+   }
+  }
+ ]
+}

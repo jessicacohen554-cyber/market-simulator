@@ -139,15 +139,55 @@ class CapAndTradeProgram:
 # below) so the adder path stays $0 regardless of membership, and the
 # mass-cap row only activates when a user explicitly sets
 # `mass_cap_enabled=True` (default off, rule 24).
+# 2020-2022 ADDED (pjm-h22, 2026-09-24): same script, same recipe, run over
+# 2020-2025 against the year-matched `vintage_2020..2022` EIA-860 tables; the
+# rerun reproduces the committed 2023-2025 values EXACTLY. Without these rows
+# `_zone_share_for_year` held 2023's Dominion 0.9881 into 2020, a year Virginia
+# was not a member.
 PJM_RGGI_ZONE_SHARE: dict[str, dict[int, float]] = {
-    "PJM_ComEd": {2023: 0.0, 2024: 0.0, 2025: 0.0},
-    "PJM_AEP_Ohio": {2023: 0.0, 2024: 0.0, 2025: 0.0},
-    "PJM_ATSI": {2023: 0.0, 2024: 0.0, 2025: 0.0},
-    "PJM_West_APS": {2023: 0.0108, 2024: 0.0, 2025: 0.0},
-    "PJM_Central_PA": {2023: 0.0, 2024: 0.0, 2025: 0.0},
-    "PJM_Dominion": {2023: 0.9881, 2024: 0.0, 2025: 0.0},
-    "PJM_EMAAC": {2023: 0.7327, 2024: 0.7252, 2025: 0.7221},
-    "PJM_SWMAAC": {2023: 0.9976, 2024: 0.9976, 2025: 0.9976},
+    "PJM_ComEd": {2020: 0.0, 2021: 0.0, 2022: 0.0, 2023: 0.0, 2024: 0.0, 2025: 0.0},
+    "PJM_AEP_Ohio": {2020: 0.0, 2021: 0.0, 2022: 0.0, 2023: 0.0, 2024: 0.0, 2025: 0.0},
+    "PJM_ATSI": {2020: 0.0, 2021: 0.0, 2022: 0.0, 2023: 0.0, 2024: 0.0, 2025: 0.0},
+    "PJM_West_APS": {
+        2020: 0.0107,
+        2021: 0.0102,
+        2022: 0.0102,
+        2023: 0.0108,
+        2024: 0.0,
+        2025: 0.0,
+    },
+    "PJM_Central_PA": {
+        2020: 0.0,
+        2021: 0.0,
+        2022: 0.0,
+        2023: 0.0,
+        2024: 0.0,
+        2025: 0.0,
+    },
+    "PJM_Dominion": {
+        2020: 0.0,
+        2021: 0.9893,
+        2022: 0.9894,
+        2023: 0.9881,
+        2024: 0.0,
+        2025: 0.0,
+    },
+    "PJM_EMAAC": {
+        2020: 0.7336,
+        2021: 0.7346,
+        2022: 0.7331,
+        2023: 0.7327,
+        2024: 0.7252,
+        2025: 0.7221,
+    },
+    "PJM_SWMAAC": {
+        2020: 0.998,
+        2021: 0.9979,
+        2022: 0.9976,
+        2023: 0.9976,
+        2024: 0.9976,
+        2025: 0.9976,
+    },
 }
 
 # ISO → cap-and-trade program. ERCOT and MISO have no program (no entry).
@@ -263,8 +303,20 @@ CARB_FLOOR_PRICE: dict[int, float] = {
 # Source: RGGI, Inc. participating-states list (rggi.org/program-overview-and-
 # design/elements); Virginia joined effective 2021-01-01 (9 VAC 5-140, Art. 8);
 # Virginia Clean Economy and Equity Act repeal, effective 2024-01-01.
+#
+# 2020 AND 2022 ADDED (pjm-h22, 2026-09-24): `[R-HOLDOUT]` — the rule-22
+# quarantine the 2022 omission above cites — was REMOVED 2026-09-09, and PJM's
+# keeper solves every year 2020-2025 (rules 16/34(c)), so the 2022 fallback to
+# the 2025 set un-enrolled Virginia in a year it was a member. Published legal
+# facts, no measured quantity: New Jersey rejoined effective 2020-01-01
+# (N.J.A.C. 7:27C, adopted 2019; RGGI, Inc. "New Jersey Rejoins RGGI",
+# 2020-01-01) and Virginia was a member 2021-2023 (sources above). 2020 is the
+# 2025 set exactly (NJ in, VA not yet), so the 2020 row is byte-neutral for
+# every consumer; the 2022 row adds VA.
 RGGI_MEMBER_STATES_BY_YEAR: dict[int, frozenset[str]] = {
+    2020: frozenset({"NY", "CT", "MA", "ME", "NH", "RI", "VT", "MD", "DE", "NJ"}),
     2021: frozenset({"NY", "CT", "MA", "ME", "NH", "RI", "VT", "MD", "DE", "NJ", "VA"}),
+    2022: frozenset({"NY", "CT", "MA", "ME", "NH", "RI", "VT", "MD", "DE", "NJ", "VA"}),
     2023: frozenset({"NY", "CT", "MA", "ME", "NH", "RI", "VT", "MD", "DE", "NJ", "VA"}),
     2024: frozenset({"NY", "CT", "MA", "ME", "NH", "RI", "VT", "MD", "DE", "NJ"}),
     2025: frozenset({"NY", "CT", "MA", "ME", "NH", "RI", "VT", "MD", "DE", "NJ"}),

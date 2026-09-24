@@ -1,0 +1,1128 @@
+facility_name,facility_id,unit_id,unit_capacity_mw,plant_capacity_mw,unit_pct_of_plant,plant_group,capacity_source,outage_start,outage_end,duration_days,peer_units_online,total_units_at_plant
+Danskammer Generating Station,2480,3,147.1,532.0,27.7,ST_GAS,eia_exact,2022-08-05,2022-08-08,3.5,3,4
+Danskammer Generating Station,2480,4,239.4,532.0,45.0,ST_GAS,eia_exact,2022-07-19,2022-07-21,2.4,3,4
+Danskammer Generating Station,2480,4,239.4,532.0,45.0,ST_GAS,eia_exact,2022-08-05,2022-08-08,3.5,3,4
+Arthur Kill,2490,20,349.0,903.0,38.6,ST_GAS,observed_peak,2019-12-18,2019-12-19,1.3,2,3
+Arthur Kill,2490,20,353.0,906.0,39.0,ST_GAS,observed_peak,2021-04-15,2021-04-19,4.8,2,3
+Arthur Kill,2490,20,353.0,906.0,39.0,ST_GAS,observed_peak,2021-12-18,2021-12-21,3.3,2,3
+Arthur Kill,2490,20,371.0,923.0,40.2,ST_GAS,observed_peak,2022-01-21,2022-01-24,3.3,2,3
+Arthur Kill,2490,20,371.0,923.0,40.2,ST_GAS,observed_peak,2022-04-27,2022-04-30,3.9,2,3
+Arthur Kill,2490,20,371.0,923.0,40.2,ST_GAS,observed_peak,2022-10-27,2022-10-31,4.8,2,3
+Arthur Kill,2490,20,371.0,923.0,40.2,ST_GAS,observed_peak,2022-12-24,2022-12-27,3.3,2,3
+Arthur Kill,2490,20,373.0,931.0,40.1,ST_GAS,observed_peak,2023-01-07,2023-01-10,3.8,2,3
+Arthur Kill,2490,20,373.0,931.0,40.1,ST_GAS,observed_peak,2023-08-12,2023-08-13,2.0,2,3
+Arthur Kill,2490,20,372.0,926.0,40.2,ST_GAS,observed_peak,2024-12-02,2024-12-03,1.3,2,3
+Arthur Kill,2490,20,372.0,926.0,40.2,ST_GAS,observed_peak,2024-12-19,2024-12-21,2.4,2,3
+Arthur Kill,2490,20,368.0,921.0,40.0,ST_GAS,observed_peak,2025-09-17,2025-09-19,2.7,2,3
+Arthur Kill,2490,20,368.0,921.0,40.0,ST_GAS,observed_peak,2025-09-24,2025-09-26,1.4,2,3
+Arthur Kill,2490,30,539.0,903.0,59.7,ST_GAS,observed_peak,2019-07-13,2019-07-17,4.3,2,3
+Arthur Kill,2490,30,539.0,903.0,59.7,ST_GAS,observed_peak,2019-08-02,2019-08-06,4.1,2,3
+Arthur Kill,2490,30,539.0,903.0,59.7,ST_GAS,observed_peak,2019-08-21,2019-08-22,1.8,2,3
+Arthur Kill,2490,30,538.0,906.0,59.4,ST_GAS,observed_peak,2021-07-01,2021-07-05,4.8,2,3
+Arthur Kill,2490,30,538.0,906.0,59.4,ST_GAS,observed_peak,2021-07-17,2021-07-21,4.1,2,3
+Arthur Kill,2490,30,538.0,906.0,59.4,ST_GAS,observed_peak,2021-08-23,2021-08-25,2.8,2,3
+Arthur Kill,2490,30,538.0,926.0,58.1,ST_GAS,observed_peak,2024-07-30,2024-07-31,1.3,2,3
+Arthur Kill,2490,CT0001,15.0,904.0,1.7,ST_GAS,observed_peak,2020-05-24,2020-05-29,4.8,2,3
+East River,2493,1,180.0,669.5,26.9,ST_CHP,eia_exact,2019-03-21,2019-03-25,3.5,3,4
+East River,2493,1,180.0,669.5,26.9,ST_CHP,eia_exact,2019-10-30,2019-11-01,2.1,3,4
+East River,2493,1,180.0,669.5,26.9,ST_CHP,eia_exact,2020-11-11,2020-11-13,2.3,3,4
+East River,2493,2,180.0,669.5,26.9,ST_CHP,eia_exact,2019-08-17,2019-08-19,2.1,3,4
+East River,2493,2,180.0,669.5,26.9,ST_CHP,eia_exact,2019-08-22,2019-08-23,1.0,3,4
+East River,2493,2,180.0,669.5,26.9,ST_CHP,eia_exact,2021-05-21,2021-05-23,2.9,3,4
+East River,2493,2,180.0,669.5,26.9,ST_CHP,eia_exact,2022-05-13,2022-05-16,2.5,3,4
+East River,2493,60,154.8,669.5,23.1,ST_CHP,optime_proxy_steam,2019-12-12,2019-12-15,3.0,3,4
+East River,2493,60,154.8,669.5,23.1,ST_CHP,optime_proxy_steam,2020-08-23,2020-08-25,1.9,3,4
+East River,2493,60,154.8,669.5,23.1,ST_CHP,optime_proxy_steam,2022-02-03,2022-02-06,2.1,3,4
+East River,2493,60,154.8,669.5,23.1,ST_CHP,optime_proxy_steam,2022-05-19,2022-05-23,4.4,3,4
+East River,2493,60,154.8,669.5,23.1,ST_CHP,optime_proxy_steam,2022-08-26,2022-08-28,2.8,3,4
+East River,2493,60,154.8,669.5,23.1,ST_CHP,optime_proxy_steam,2024-05-07,2024-05-08,1.6,3,4
+East River,2493,70,154.8,669.5,23.1,ST_CHP,optime_proxy_steam,2019-03-28,2019-03-31,3.0,3,4
+East River,2493,70,154.8,669.5,23.1,ST_CHP,optime_proxy_steam,2019-05-02,2019-05-03,1.1,3,4
+East River,2493,70,154.8,669.5,23.1,ST_CHP,optime_proxy_steam,2019-12-16,2019-12-18,1.6,3,4
+East River,2493,70,154.8,669.5,23.1,ST_CHP,optime_proxy_steam,2021-02-18,2021-02-20,2.2,3,4
+East River,2493,70,154.8,669.5,23.1,ST_CHP,optime_proxy_steam,2021-07-01,2021-07-04,3.8,3,4
+East River,2493,70,154.8,669.5,23.1,ST_CHP,optime_proxy_steam,2022-02-23,2022-02-26,3.1,3,4
+East River,2493,70,154.8,669.5,23.1,ST_CHP,optime_proxy_steam,2023-02-24,2023-02-26,1.2,3,4
+East River,2493,70,154.8,669.5,23.1,ST_CHP,optime_proxy_steam,2024-02-09,2024-02-13,4.2,3,4
+East River,2493,70,154.8,669.5,23.1,ST_CHP,optime_proxy_steam,2024-02-27,2024-03-02,4.2,3,4
+East River,2493,70,154.8,669.5,23.1,ST_CHP,optime_proxy_steam,2025-01-16,2025-01-19,3.5,3,4
+East River,2493,70,154.8,669.5,23.1,ST_CHP,optime_proxy_steam,2025-04-06,2025-04-08,2.0,3,4
+East River,2493,70,154.8,669.5,23.1,ST_CHP,optime_proxy_steam,2025-06-30,2025-07-05,4.9,3,4
+Ravenswood Generating Station,2500,10,389.0,2136.0,18.2,CC_REGULAR,observed_peak,2020-09-26,2020-09-28,2.1,6,21
+Ravenswood Generating Station,2500,10,384.0,2082.0,18.4,CC_REGULAR,observed_peak,2023-09-09,2023-09-11,2.2,4,7
+Ravenswood Generating Station,2500,20,392.0,2109.0,18.6,CC_REGULAR,observed_peak,2019-01-01,2019-01-04,3.3,6,21
+Ravenswood Generating Station,2500,20,392.0,2109.0,18.6,CC_REGULAR,observed_peak,2019-03-29,2019-04-02,3.8,6,21
+Ravenswood Generating Station,2500,20,392.0,2109.0,18.6,CC_REGULAR,observed_peak,2019-12-12,2019-12-16,4.2,6,21
+Ravenswood Generating Station,2500,20,391.0,2136.0,18.3,CC_REGULAR,observed_peak,2020-07-24,2020-07-27,3.0,6,21
+Ravenswood Generating Station,2500,20,391.0,2136.0,18.3,CC_REGULAR,observed_peak,2020-07-30,2020-08-03,4.0,6,21
+Ravenswood Generating Station,2500,20,391.0,2136.0,18.3,CC_REGULAR,observed_peak,2020-09-05,2020-09-09,4.1,6,21
+Ravenswood Generating Station,2500,20,393.0,2140.0,18.4,CC_REGULAR,observed_peak,2021-07-23,2021-07-27,4.3,6,14
+Ravenswood Generating Station,2500,20,379.0,2082.0,18.2,CC_REGULAR,observed_peak,2023-09-09,2023-09-10,1.5,4,7
+Ravenswood Generating Station,2500,20,394.0,2084.0,18.9,CC_REGULAR,observed_peak,2025-12-16,2025-12-18,2.8,3,4
+Ravenswood Generating Station,2500,30,1027.0,2084.0,49.3,CC_REGULAR,observed_peak,2025-01-21,2025-01-22,1.4,3,4
+Ravenswood Generating Station,2500,CT0001,8.0,2136.0,0.4,CC_REGULAR,observed_peak,2020-08-10,2020-08-11,1.0,6,21
+Ravenswood Generating Station,2500,CT0001,8.0,2136.0,0.4,CC_REGULAR,observed_peak,2020-08-11,2020-08-12,1.0,6,21
+Ravenswood Generating Station,2500,CT0001,8.0,2136.0,0.4,CC_REGULAR,observed_peak,2020-09-08,2020-09-10,1.7,6,21
+Ravenswood Generating Station,2500,CT0011,21.0,2109.0,1.0,CC_REGULAR,observed_peak,2019-07-17,2019-07-22,4.9,6,21
+Ravenswood Generating Station,2500,CT0011,21.0,2109.0,1.0,CC_REGULAR,observed_peak,2019-07-29,2019-07-31,1.8,6,21
+Ravenswood Generating Station,2500,CT0011,21.0,2109.0,1.0,CC_REGULAR,observed_peak,2019-07-31,2019-08-03,3.0,6,21
+Ravenswood Generating Station,2500,CT0011,21.0,2109.0,1.0,CC_REGULAR,observed_peak,2019-08-14,2019-08-18,3.9,6,21
+Ravenswood Generating Station,2500,CT0011,21.0,2109.0,1.0,CC_REGULAR,observed_peak,2019-08-19,2019-08-21,2.0,6,21
+Ravenswood Generating Station,2500,UCC001,285.0,2136.0,13.3,CC_REGULAR,observed_peak,2020-01-04,2020-01-08,4.4,6,21
+Ravenswood Generating Station,2500,UCC001,282.0,2140.0,13.2,CC_REGULAR,observed_peak,2021-01-28,2021-01-29,1.2,6,14
+Ravenswood Generating Station,2500,UCC001,282.0,2140.0,13.2,CC_REGULAR,observed_peak,2021-01-29,2021-02-02,3.7,6,14
+Ravenswood Generating Station,2500,UCC001,279.0,2084.0,13.4,CC_REGULAR,observed_peak,2024-10-16,2024-10-17,1.0,3,7
+E F Barrett,2511,10,41.8,548.8,7.6,ST_GAS,eia_exact,2019-01-24,2019-01-29,4.8,16,18
+E F Barrett,2511,10,41.8,548.8,7.6,ST_GAS,eia_exact,2019-03-01,2019-03-03,2.2,16,18
+E F Barrett,2511,10,41.8,539.8,7.7,ST_GAS,eia_exact,2020-02-27,2020-02-29,2.5,16,18
+E F Barrett,2511,10,41.8,548.8,7.6,ST_GAS,eia_exact,2022-04-05,2022-04-07,1.7,16,17
+E F Barrett,2511,10,41.8,548.8,7.6,ST_GAS,eia_exact,2022-06-29,2022-07-01,2.2,16,17
+E F Barrett,2511,10,41.8,529.8,7.9,ST_GAS,eia_exact,2023-01-06,2023-01-09,3.7,16,17
+E F Barrett,2511,10,41.8,529.8,7.9,ST_GAS,eia_exact,2023-01-21,2023-01-25,4.0,16,17
+E F Barrett,2511,10,41.8,529.8,7.9,ST_GAS,eia_exact,2023-03-07,2023-03-09,2.5,16,17
+E F Barrett,2511,10,41.8,546.8,7.6,ST_GAS,eia_exact,2024-10-23,2024-10-28,4.8,16,17
+E F Barrett,2511,20,195.0,539.8,36.1,ST_GAS,observed_peak,2020-05-28,2020-06-01,4.2,16,18
+E F Barrett,2511,20,195.0,539.8,36.1,ST_GAS,observed_peak,2020-10-30,2020-11-02,2.6,16,18
+E F Barrett,2511,20,204.0,550.8,37.0,ST_GAS,observed_peak,2021-01-28,2021-01-30,1.8,16,17
+E F Barrett,2511,20,204.0,550.8,37.0,ST_GAS,observed_peak,2021-05-20,2021-05-22,2.4,16,17
+E F Barrett,2511,20,204.0,550.8,37.0,ST_GAS,observed_peak,2021-06-10,2021-06-11,1.8,16,17
+E F Barrett,2511,20,192.0,548.8,35.0,ST_GAS,observed_peak,2022-03-05,2022-03-09,4.0,16,17
+E F Barrett,2511,20,192.0,548.8,35.0,ST_GAS,observed_peak,2022-08-07,2022-08-09,1.5,16,17
+E F Barrett,2511,20,192.0,548.8,35.0,ST_GAS,observed_peak,2022-08-25,2022-08-26,1.1,16,17
+E F Barrett,2511,20,192.0,548.8,35.0,ST_GAS,observed_peak,2022-08-26,2022-08-29,2.7,16,17
+E F Barrett,2511,20,192.0,548.8,35.0,ST_GAS,observed_peak,2022-08-30,2022-09-01,2.0,16,17
+E F Barrett,2511,20,192.0,548.8,35.0,ST_GAS,observed_peak,2022-10-14,2022-10-18,4.5,16,17
+Northport,2516,1,407.0,1582.0,25.7,ST_GAS,observed_peak,2021-09-21,2021-09-22,1.2,4,5
+Northport,2516,1,413.0,1585.0,26.1,ST_GAS,observed_peak,2022-07-02,2022-07-06,4.2,4,5
+Northport,2516,1,413.0,1585.0,26.1,ST_GAS,observed_peak,2022-08-27,2022-08-29,2.3,4,5
+Northport,2516,1,413.0,1585.0,26.1,ST_GAS,observed_peak,2022-12-15,2022-12-19,3.8,4,5
+Northport,2516,1,413.0,1585.0,26.1,ST_GAS,observed_peak,2022-12-21,2022-12-23,2.8,4,5
+Northport,2516,1,413.0,1574.0,26.2,ST_GAS,observed_peak,2024-08-29,2024-08-31,2.2,3,5
+Northport,2516,2,387.0,1585.0,24.4,ST_GAS,eia_exact,2022-06-01,2022-06-03,2.5,4,5
+Northport,2516,2,387.0,1588.0,24.4,ST_GAS,eia_exact,2023-07-08,2023-07-12,4.1,4,5
+Northport,2516,2,387.0,1574.0,24.6,ST_GAS,eia_exact,2024-08-26,2024-08-28,2.1,3,5
+Northport,2516,2,387.0,1569.0,24.7,ST_GAS,eia_exact,2025-05-07,2025-05-09,1.7,4,5
+Northport,2516,3,387.0,1586.0,24.4,ST_GAS,eia_exact,2020-03-03,2020-03-06,3.2,4,5
+Northport,2516,3,387.0,1582.0,24.5,ST_GAS,eia_exact,2021-07-17,2021-07-18,1.2,4,5
+Northport,2516,3,387.0,1585.0,24.4,ST_GAS,eia_exact,2022-01-18,2022-01-21,3.0,4,5
+Northport,2516,3,387.0,1585.0,24.4,ST_GAS,eia_exact,2022-05-13,2022-05-16,3.1,4,5
+Northport,2516,3,387.0,1585.0,24.4,ST_GAS,eia_exact,2022-08-22,2022-08-24,2.2,4,5
+Northport,2516,3,387.0,1588.0,24.4,ST_GAS,eia_exact,2023-02-05,2023-02-08,3.5,4,5
+Northport,2516,3,387.0,1588.0,24.4,ST_GAS,eia_exact,2023-04-01,2023-04-05,4.0,4,5
+Northport,2516,3,387.0,1569.0,24.7,ST_GAS,eia_exact,2025-05-08,2025-05-11,3.0,4,5
+Northport,2516,3,387.0,1569.0,24.7,ST_GAS,eia_exact,2025-09-20,2025-09-24,4.2,4,5
+Northport,2516,4,387.0,1586.0,24.4,ST_GAS,eia_exact,2020-12-16,2020-12-20,4.2,4,5
+Northport,2516,4,387.0,1582.0,24.5,ST_GAS,eia_exact,2021-05-20,2021-05-22,2.4,4,5
+Northport,2516,4,387.0,1585.0,24.4,ST_GAS,eia_exact,2022-06-08,2022-06-09,1.3,4,5
+Northport,2516,4,387.0,1585.0,24.4,ST_GAS,eia_exact,2022-06-23,2022-06-26,3.3,4,5
+Northport,2516,4,387.0,1588.0,24.4,ST_GAS,eia_exact,2023-07-14,2023-07-17,3.3,4,5
+Northport,2516,4,387.0,1588.0,24.4,ST_GAS,eia_exact,2023-10-24,2023-10-26,3.0,4,5
+Northport,2516,4,387.0,1574.0,24.6,ST_GAS,eia_exact,2024-06-13,2024-06-18,4.3,3,5
+Northport,2516,4,387.0,1574.0,24.6,ST_GAS,eia_exact,2024-09-15,2024-09-18,3.2,3,5
+Northport,2516,4,387.0,1574.0,24.6,ST_GAS,eia_exact,2024-09-20,2024-09-25,4.1,3,5
+Northport,2516,4,387.0,1574.0,24.6,ST_GAS,eia_exact,2024-12-15,2024-12-20,4.7,3,5
+Northport,2516,4,387.0,1569.0,24.7,ST_GAS,eia_exact,2025-09-06,2025-09-09,2.6,4,5
+Port Jefferson Energy Center,2517,3,188.0,491.0,38.3,ST_GAS,eia_exact,2020-09-28,2020-09-30,2.1,4,5
+Port Jefferson Energy Center,2517,3,188.0,488.0,38.5,ST_GAS,eia_exact,2021-09-16,2021-09-18,2.2,4,5
+Port Jefferson Energy Center,2517,4,188.0,489.0,38.4,ST_GAS,eia_exact,2019-01-26,2019-01-30,4.0,4,5
+Port Jefferson Energy Center,2517,4,188.0,489.0,38.4,ST_GAS,eia_exact,2019-07-04,2019-07-06,2.4,4,5
+Port Jefferson Energy Center,2517,4,188.0,491.0,38.3,ST_GAS,eia_exact,2020-06-06,2020-06-09,3.4,4,5
+Port Jefferson Energy Center,2517,4,188.0,488.0,38.5,ST_GAS,eia_exact,2022-07-02,2022-07-06,4.4,4,5
+Port Jefferson Energy Center,2517,4,188.0,484.0,38.8,ST_GAS,eia_exact,2023-10-18,2023-10-21,3.1,4,5
+Port Jefferson Energy Center,2517,4,188.0,470.0,40.0,ST_GAS,eia_exact,2024-08-01,2024-08-03,2.0,3,5
+Greenidge Generation LLC,2527,6,113.0,113.0,100.0,ST_GAS,observed_peak,2019-02-01,2019-02-05,4.0,0,1
+Greenidge Generation LLC,2527,6,114.0,114.0,100.0,ST_GAS,observed_peak,2020-01-29,2020-01-31,1.4,0,1
+Greenidge Generation LLC,2527,6,114.0,114.0,100.0,ST_GAS,observed_peak,2020-02-27,2020-02-28,1.5,0,1
+Greenidge Generation LLC,2527,6,114.0,114.0,100.0,ST_GAS,observed_peak,2020-10-25,2020-10-30,4.7,0,1
+Greenidge Generation LLC,2527,6,112.0,112.0,100.0,ST_GAS,observed_peak,2022-12-19,2022-12-21,2.8,0,1
+Greenidge Generation LLC,2527,6,113.0,113.0,100.0,ST_GAS,observed_peak,2023-01-09,2023-01-13,3.5,0,1
+Greenidge Generation LLC,2527,6,111.0,111.0,100.0,ST_GAS,observed_peak,2025-11-11,2025-11-13,2.1,0,1
+Bethlehem Energy Center (Albany),2539,10001,206.0,618.0,33.3,CC_REGULAR,observed_peak,2019-04-30,2019-05-03,2.2,2,3
+Bethlehem Energy Center (Albany),2539,10001,206.0,618.0,33.3,CC_REGULAR,observed_peak,2019-12-15,2019-12-17,2.2,2,3
+Bethlehem Energy Center (Albany),2539,10001,206.0,618.0,33.3,CC_REGULAR,observed_peak,2019-12-18,2019-12-21,3.2,2,3
+Bethlehem Energy Center (Albany),2539,10001,206.0,618.0,33.3,CC_REGULAR,observed_peak,2020-01-22,2020-01-24,2.2,2,3
+Bethlehem Energy Center (Albany),2539,10001,206.0,618.0,33.3,CC_REGULAR,observed_peak,2020-05-13,2020-05-16,2.7,2,3
+Bethlehem Energy Center (Albany),2539,10001,206.0,618.0,33.3,CC_REGULAR,observed_peak,2020-12-08,2020-12-10,2.2,2,3
+Bethlehem Energy Center (Albany),2539,10001,206.0,619.0,33.3,CC_REGULAR,observed_peak,2021-01-29,2021-02-01,3.3,2,3
+Bethlehem Energy Center (Albany),2539,10001,206.0,619.0,33.3,CC_REGULAR,observed_peak,2021-11-08,2021-11-10,2.1,2,3
+Bethlehem Energy Center (Albany),2539,10001,207.0,620.0,33.4,CC_REGULAR,observed_peak,2022-02-04,2022-02-05,1.5,2,3
+Bethlehem Energy Center (Albany),2539,10001,207.0,620.0,33.4,CC_REGULAR,observed_peak,2022-04-27,2022-04-29,1.4,2,3
+Bethlehem Energy Center (Albany),2539,10001,207.0,620.0,33.4,CC_REGULAR,observed_peak,2022-11-14,2022-11-17,3.4,2,3
+Bethlehem Energy Center (Albany),2539,10001,210.0,630.0,33.3,CC_REGULAR,observed_peak,2023-04-17,2023-04-20,3.2,2,3
+Bethlehem Energy Center (Albany),2539,10001,310.0,930.0,33.3,CC_REGULAR,observed_peak,2024-10-17,2024-10-18,1.0,2,3
+Bethlehem Energy Center (Albany),2539,10001,310.0,930.0,33.3,CC_REGULAR,observed_peak,2024-11-02,2024-11-06,4.8,2,3
+Bethlehem Energy Center (Albany),2539,10001,310.0,930.0,33.3,CC_REGULAR,observed_peak,2024-12-06,2024-12-09,3.0,2,3
+Bethlehem Energy Center (Albany),2539,10001,310.0,930.0,33.3,CC_REGULAR,observed_peak,2024-12-12,2024-12-17,4.8,2,3
+Bethlehem Energy Center (Albany),2539,10001,310.0,930.0,33.3,CC_REGULAR,observed_peak,2024-12-20,2024-12-21,1.1,2,3
+Bethlehem Energy Center (Albany),2539,10001,310.0,930.0,33.3,CC_REGULAR,observed_peak,2024-12-24,2024-12-25,1.5,2,3
+Bethlehem Energy Center (Albany),2539,10001,303.0,910.0,33.3,CC_REGULAR,observed_peak,2025-02-08,2025-02-12,4.5,2,3
+Bethlehem Energy Center (Albany),2539,10001,303.0,910.0,33.3,CC_REGULAR,observed_peak,2025-12-30,2025-12-31,2.0,2,3
+Bethlehem Energy Center (Albany),2539,10002,206.0,618.0,33.3,CC_REGULAR,observed_peak,2019-01-11,2019-01-16,4.4,2,3
+Bethlehem Energy Center (Albany),2539,10002,206.0,618.0,33.3,CC_REGULAR,observed_peak,2020-02-13,2020-02-15,1.7,2,3
+Bethlehem Energy Center (Albany),2539,10002,206.0,618.0,33.3,CC_REGULAR,observed_peak,2020-04-03,2020-04-06,3.5,2,3
+Bethlehem Energy Center (Albany),2539,10002,206.0,618.0,33.3,CC_REGULAR,observed_peak,2020-04-17,2020-04-21,4.5,2,3
+Bethlehem Energy Center (Albany),2539,10002,206.0,618.0,33.3,CC_REGULAR,observed_peak,2020-04-21,2020-04-25,3.2,2,3
+Bethlehem Energy Center (Albany),2539,10002,206.0,618.0,33.3,CC_REGULAR,observed_peak,2020-11-07,2020-11-11,3.5,2,3
+Bethlehem Energy Center (Albany),2539,10002,206.0,618.0,33.3,CC_REGULAR,observed_peak,2020-12-09,2020-12-11,2.2,2,3
+Bethlehem Energy Center (Albany),2539,10002,207.0,619.0,33.4,CC_REGULAR,observed_peak,2021-04-27,2021-04-30,3.1,2,3
+Bethlehem Energy Center (Albany),2539,10002,210.0,630.0,33.3,CC_REGULAR,observed_peak,2023-02-24,2023-02-26,2.0,2,3
+Bethlehem Energy Center (Albany),2539,10002,210.0,630.0,33.3,CC_REGULAR,observed_peak,2023-04-15,2023-04-17,1.7,2,3
+Bethlehem Energy Center (Albany),2539,10002,210.0,630.0,33.3,CC_REGULAR,observed_peak,2023-04-18,2023-04-20,1.8,2,3
+Bethlehem Energy Center (Albany),2539,10002,310.0,930.0,33.3,CC_REGULAR,observed_peak,2024-10-26,2024-10-30,4.5,2,3
+Bethlehem Energy Center (Albany),2539,10002,304.0,910.0,33.4,CC_REGULAR,observed_peak,2025-11-08,2025-11-11,3.1,2,3
+Bethlehem Energy Center (Albany),2539,10002,304.0,910.0,33.4,CC_REGULAR,observed_peak,2025-12-09,2025-12-13,4.0,2,3
+Bethlehem Energy Center (Albany),2539,10003,206.0,618.0,33.3,CC_REGULAR,observed_peak,2020-04-24,2020-04-29,4.2,2,3
+Bethlehem Energy Center (Albany),2539,10003,206.0,618.0,33.3,CC_REGULAR,observed_peak,2020-12-15,2020-12-17,2.5,2,3
+Bethlehem Energy Center (Albany),2539,10003,206.0,618.0,33.3,CC_REGULAR,observed_peak,2020-12-18,2020-12-19,1.1,2,3
+Bethlehem Energy Center (Albany),2539,10003,206.0,619.0,33.3,CC_REGULAR,observed_peak,2021-01-09,2021-01-12,3.2,2,3
+Bethlehem Energy Center (Albany),2539,10003,206.0,619.0,33.3,CC_REGULAR,observed_peak,2021-01-23,2021-01-27,4.3,2,3
+Bethlehem Energy Center (Albany),2539,10003,206.0,619.0,33.3,CC_REGULAR,observed_peak,2021-04-27,2021-04-30,3.1,2,3
+Bethlehem Energy Center (Albany),2539,10003,206.0,619.0,33.3,CC_REGULAR,observed_peak,2021-07-20,2021-07-21,1.2,2,3
+Bethlehem Energy Center (Albany),2539,10003,206.0,619.0,33.3,CC_REGULAR,observed_peak,2021-11-02,2021-11-04,2.8,2,3
+Bethlehem Energy Center (Albany),2539,10003,206.0,619.0,33.3,CC_REGULAR,observed_peak,2021-12-17,2021-12-22,4.2,2,3
+Bethlehem Energy Center (Albany),2539,10003,206.0,620.0,33.2,CC_REGULAR,observed_peak,2022-02-25,2022-02-26,1.2,2,3
+Bethlehem Energy Center (Albany),2539,10003,206.0,620.0,33.2,CC_REGULAR,observed_peak,2022-11-15,2022-11-16,1.9,2,3
+Bethlehem Energy Center (Albany),2539,10003,210.0,630.0,33.3,CC_REGULAR,observed_peak,2023-02-03,2023-02-07,3.7,2,3
+Bethlehem Energy Center (Albany),2539,10003,210.0,630.0,33.3,CC_REGULAR,observed_peak,2023-04-15,2023-04-17,1.7,2,3
+Bethlehem Energy Center (Albany),2539,10003,210.0,630.0,33.3,CC_REGULAR,observed_peak,2023-04-17,2023-04-21,3.5,2,3
+Bethlehem Energy Center (Albany),2539,10003,210.0,630.0,33.3,CC_REGULAR,observed_peak,2023-12-06,2023-12-10,3.5,2,3
+Bethlehem Energy Center (Albany),2539,10003,310.0,930.0,33.3,CC_REGULAR,observed_peak,2024-11-01,2024-11-04,3.9,2,3
+Bowline Generating Station,2625,1,621.0,1242.0,50.0,ST_GAS,eia_exact,2020-09-24,2020-09-28,4.2,1,2
+Bowline Generating Station,2625,1,621.0,1242.0,50.0,ST_GAS,eia_exact,2020-10-30,2020-11-04,4.2,1,2
+Bowline Generating Station,2625,1,621.0,1242.0,50.0,ST_GAS,eia_exact,2021-08-19,2021-08-23,3.6,1,2
+Bowline Generating Station,2625,1,621.0,1242.0,50.0,ST_GAS,eia_exact,2021-10-07,2021-10-08,1.2,1,2
+Bowline Generating Station,2625,1,621.0,1242.0,50.0,ST_GAS,eia_exact,2022-02-10,2022-02-15,4.4,1,2
+Bowline Generating Station,2625,1,621.0,1242.0,50.0,ST_GAS,eia_exact,2022-07-02,2022-07-05,3.4,1,2
+Bowline Generating Station,2625,1,621.0,1242.0,50.0,ST_GAS,eia_exact,2022-08-26,2022-08-30,4.2,1,2
+Bowline Generating Station,2625,1,621.0,1242.0,50.0,ST_GAS,eia_exact,2022-10-15,2022-10-19,4.2,1,2
+Bowline Generating Station,2625,1,621.0,1242.0,50.0,ST_GAS,eia_exact,2022-11-17,2022-11-21,3.2,1,2
+Bowline Generating Station,2625,1,621.0,1242.0,50.0,ST_GAS,eia_exact,2022-12-23,2022-12-24,1.7,1,2
+Bowline Generating Station,2625,1,621.0,1242.0,50.0,ST_GAS,eia_exact,2023-09-09,2023-09-12,2.5,1,2
+Bowline Generating Station,2625,1,621.0,1242.0,50.0,ST_GAS,eia_exact,2024-01-15,2024-01-17,2.3,1,2
+Bowline Generating Station,2625,1,621.0,1242.0,50.0,ST_GAS,eia_exact,2024-01-18,2024-01-19,1.2,1,2
+Bowline Generating Station,2625,1,621.0,1242.0,50.0,ST_GAS,eia_exact,2024-07-10,2024-07-11,1.2,1,2
+Bowline Generating Station,2625,1,621.0,1242.0,50.0,ST_GAS,eia_exact,2024-07-11,2024-07-16,4.9,1,2
+Bowline Generating Station,2625,1,621.0,1242.0,50.0,ST_GAS,eia_exact,2024-12-03,2024-12-06,3.2,1,2
+Bowline Generating Station,2625,1,621.0,1242.0,50.0,ST_GAS,eia_exact,2025-01-04,2025-01-08,3.9,1,2
+Bowline Generating Station,2625,2,621.0,1242.0,50.0,ST_GAS,eia_exact,2021-01-29,2021-02-02,3.8,1,2
+Bowline Generating Station,2625,2,621.0,1242.0,50.0,ST_GAS,eia_exact,2022-01-28,2022-02-01,4.1,1,2
+Bowline Generating Station,2625,2,621.0,1242.0,50.0,ST_GAS,eia_exact,2022-08-05,2022-08-08,2.3,1,2
+Bowline Generating Station,2625,2,621.0,1242.0,50.0,ST_GAS,eia_exact,2023-12-01,2023-12-05,4.1,1,2
+Bowline Generating Station,2625,2,621.0,1242.0,50.0,ST_GAS,eia_exact,2024-07-10,2024-07-14,4.3,1,2
+Bowline Generating Station,2625,2,621.0,1242.0,50.0,ST_GAS,eia_exact,2024-11-11,2024-11-13,1.6,1,2
+Bowline Generating Station,2625,2,621.0,1242.0,50.0,ST_GAS,eia_exact,2025-06-25,2025-06-29,4.1,1,2
+Bowline Generating Station,2625,2,621.0,1242.0,50.0,ST_GAS,eia_exact,2025-07-10,2025-07-14,4.3,1,2
+S A Carlson,2682,20,46.0,91.0,50.5,CC_REGULAR,observed_peak,2019-07-30,2019-07-31,1.5,2,3
+S A Carlson,2682,20,46.0,91.0,50.5,CC_REGULAR,observed_peak,2019-09-13,2019-09-17,3.5,2,3
+S A Carlson,2682,20,46.0,91.0,50.5,CC_REGULAR,observed_peak,2019-09-25,2019-09-30,4.5,2,3
+S A Carlson,2682,20,44.0,89.0,49.4,CC_REGULAR,observed_peak,2020-01-06,2020-01-08,1.9,2,3
+S A Carlson,2682,20,44.0,89.0,49.4,CC_REGULAR,observed_peak,2020-06-05,2020-06-09,3.5,2,3
+S A Carlson,2682,20,44.0,89.0,49.4,CC_REGULAR,observed_peak,2020-06-20,2020-06-22,1.6,2,3
+S A Carlson,2682,20,44.0,89.0,49.4,CC_REGULAR,observed_peak,2020-09-04,2020-09-09,4.4,2,3
+S A Carlson,2682,20,46.0,91.0,50.5,CC_REGULAR,observed_peak,2021-01-08,2021-01-11,2.8,2,3
+S A Carlson,2682,20,46.0,91.0,50.5,CC_REGULAR,observed_peak,2021-05-20,2021-05-25,4.7,2,3
+S A Carlson,2682,20,46.0,91.0,50.5,CC_REGULAR,observed_peak,2021-09-17,2021-09-20,2.5,2,3
+S A Carlson,2682,20,46.0,91.0,50.5,CC_REGULAR,observed_peak,2021-12-03,2021-12-08,4.6,2,3
+S A Carlson,2682,20,50.0,95.0,52.6,CC_REGULAR,observed_peak,2022-07-01,2022-07-05,3.5,2,3
+S A Carlson,2682,20,50.0,95.0,52.6,CC_REGULAR,observed_peak,2022-08-26,2022-08-29,2.7,2,3
+S A Carlson,2682,20,44.0,89.0,49.4,CC_REGULAR,observed_peak,2024-07-09,2024-07-13,3.7,2,3
+S A Carlson,2682,20,44.0,89.0,49.4,CC_REGULAR,observed_peak,2024-08-02,2024-08-05,2.5,2,3
+S A Carlson,2682,20,44.0,89.0,49.4,CC_REGULAR,observed_peak,2024-08-21,2024-08-26,4.7,2,3
+S A Carlson,2682,20,43.0,88.0,48.9,CC_REGULAR,observed_peak,2025-12-09,2025-12-12,2.5,2,3
+Roseton Generating LLC,8006,1,621.0,1242.0,50.0,ST_GAS,eia_exact,2021-06-03,2021-06-07,3.5,1,2
+Roseton Generating LLC,8006,1,621.0,1242.0,50.0,ST_GAS,eia_exact,2022-01-01,2022-01-04,3.2,1,2
+Roseton Generating LLC,8006,1,621.0,1242.0,50.0,ST_GAS,eia_exact,2022-01-12,2022-01-14,2.9,1,2
+Roseton Generating LLC,8006,1,621.0,1242.0,50.0,ST_GAS,eia_exact,2022-01-16,2022-01-20,4.0,1,2
+Roseton Generating LLC,8006,1,621.0,1242.0,50.0,ST_GAS,eia_exact,2022-07-12,2022-07-14,1.4,1,2
+Roseton Generating LLC,8006,1,621.0,1242.0,50.0,ST_GAS,eia_exact,2022-08-06,2022-08-09,3.2,1,2
+Roseton Generating LLC,8006,1,621.0,1242.0,50.0,ST_GAS,eia_exact,2022-08-24,2022-08-29,4.8,1,2
+Roseton Generating LLC,8006,1,621.0,1242.0,50.0,ST_GAS,eia_exact,2023-07-06,2023-07-11,4.5,1,2
+Roseton Generating LLC,8006,1,621.0,1242.0,50.0,ST_GAS,eia_exact,2023-07-13,2023-07-18,4.5,1,2
+Roseton Generating LLC,8006,1,621.0,1242.0,50.0,ST_GAS,eia_exact,2025-08-08,2025-08-12,3.4,1,2
+Roseton Generating LLC,8006,1,621.0,1242.0,50.0,ST_GAS,eia_exact,2025-12-09,2025-12-12,2.2,1,2
+Roseton Generating LLC,8006,2,621.0,1242.0,50.0,ST_GAS,eia_exact,2021-01-01,2021-01-05,4.2,1,2
+Roseton Generating LLC,8006,2,621.0,1242.0,50.0,ST_GAS,eia_exact,2021-06-08,2021-06-10,1.2,1,2
+Roseton Generating LLC,8006,2,621.0,1242.0,50.0,ST_GAS,eia_exact,2022-01-22,2022-01-26,3.2,1,2
+Roseton Generating LLC,8006,2,621.0,1242.0,50.0,ST_GAS,eia_exact,2022-01-28,2022-01-29,1.2,1,2
+Roseton Generating LLC,8006,2,621.0,1242.0,50.0,ST_GAS,eia_exact,2022-08-26,2022-08-29,2.4,1,2
+Roseton Generating LLC,8006,2,621.0,1242.0,50.0,ST_GAS,eia_exact,2023-04-17,2023-04-21,3.2,1,2
+Roseton Generating LLC,8006,2,621.0,1242.0,50.0,ST_GAS,eia_exact,2025-12-02,2025-12-04,2.0,1,2
+Astoria Generating Station,8906,32SH,378.0,1705.0,22.2,ST_GAS,observed_peak,2019-07-22,2019-07-25,3.9,5,8
+Astoria Generating Station,8906,32SH,380.0,1699.0,22.4,ST_GAS,observed_peak,2023-05-16,2023-05-20,4.8,5,6
+Astoria Generating Station,8906,32SH,382.0,1693.0,22.6,ST_GAS,observed_peak,2025-06-24,2025-06-26,1.5,5,6
+Astoria Generating Station,8906,51RH,387.0,1693.0,22.9,ST_GAS,observed_peak,2025-07-11,2025-07-14,3.6,5,6
+Astoria Generating Station,8906,52SH,388.0,1705.0,22.8,ST_GAS,observed_peak,2019-04-03,2019-04-07,4.0,5,8
+Astoria Generating Station,8906,52SH,390.0,1710.0,22.8,ST_GAS,observed_peak,2020-03-15,2020-03-19,4.2,5,8
+Astoria Generating Station,8906,52SH,390.0,1710.0,22.8,ST_GAS,observed_peak,2020-11-15,2020-11-18,2.3,5,8
+Astoria Generating Station,8906,52SH,390.0,1704.0,22.9,ST_GAS,observed_peak,2022-03-09,2022-03-13,4.6,5,6
+Astoria Generating Station,8906,52SH,387.0,1699.0,22.8,ST_GAS,observed_peak,2023-07-22,2023-07-25,4.0,5,6
+Astoria Generating Station,8906,52SH,387.0,1699.0,22.8,ST_GAS,observed_peak,2023-12-13,2023-12-16,3.2,5,6
+Astoria Generating Station,8906,52SH,387.0,1693.0,22.9,ST_GAS,observed_peak,2025-04-04,2025-04-07,3.8,5,6
+Astoria Generating Station,8906,52SH,387.0,1693.0,22.9,ST_GAS,observed_peak,2025-07-11,2025-07-14,3.6,5,6
+Astoria Generating Station,8906,CT0001,20.0,1705.0,1.2,ST_GAS,observed_peak,2019-07-17,2019-07-22,4.8,5,8
+Astoria Generating Station,8906,CT0001,20.0,1705.0,1.2,ST_GAS,observed_peak,2019-08-15,2019-08-19,4.1,5,8
+Astoria Generating Station,8906,CT0001,20.0,1705.0,1.2,ST_GAS,observed_peak,2019-08-19,2019-08-21,2.0,5,8
+Astoria Generating Station,8906,CT0001,20.0,1710.0,1.2,ST_GAS,observed_peak,2020-07-23,2020-07-28,4.8,5,8
+Astoria Generating Station,8906,CT0001,20.0,1710.0,1.2,ST_GAS,observed_peak,2020-08-11,2020-08-14,2.9,5,8
+Astoria Generating Station,8906,CT0001,17.0,1704.0,1.0,ST_GAS,observed_peak,2021-01-29,2021-02-01,2.9,5,6
+Astoria Generating Station,8906,CT0001,17.0,1704.0,1.0,ST_GAS,observed_peak,2021-07-07,2021-07-12,4.8,5,6
+Astoria Generating Station,8906,CT0001,17.0,1704.0,1.0,ST_GAS,observed_peak,2021-09-14,2021-09-15,1.0,5,6
+Astoria Generating Station,8906,CT0001,17.0,1704.0,1.0,ST_GAS,observed_peak,2021-10-04,2021-10-05,1.0,5,6
+Astoria Generating Station,8906,CT0001,15.0,1704.0,0.9,ST_GAS,observed_peak,2022-07-21,2022-07-24,3.0,5,6
+Astoria Generating Station,8906,CT0001,15.0,1689.0,0.9,ST_GAS,observed_peak,2024-07-15,2024-07-17,1.3,5,6
+Astoria Generating Station,8906,CT0001,15.0,1689.0,0.9,ST_GAS,observed_peak,2024-12-20,2024-12-24,4.0,5,6
+"RED-Rochester, LLC-Eastman Business Park",10025,4B,162.8,162.8,100.0,ST_CHP,optime_proxy,2024-10-24,2024-10-28,3.8,0,1
+"Castleton Power, LLC",10190,1,72.0,72.0,100.0,CC_REGULAR,eia_digits_cc,2019-01-20,2019-01-22,1.9,0,1
+"Castleton Power, LLC",10190,1,72.0,72.0,100.0,CC_REGULAR,eia_digits_cc,2019-01-30,2019-02-01,1.5,0,1
+"Castleton Power, LLC",10190,1,72.0,72.0,100.0,CC_REGULAR,eia_digits_cc,2019-03-01,2019-03-05,4.2,0,1
+"Castleton Power, LLC",10190,1,72.0,72.0,100.0,CC_REGULAR,eia_digits_cc,2019-03-18,2019-03-23,4.2,0,1
+"Castleton Power, LLC",10190,1,72.0,72.0,100.0,CC_REGULAR,eia_digits_cc,2019-06-28,2019-07-03,4.3,0,1
+"Castleton Power, LLC",10190,1,72.0,72.0,100.0,CC_REGULAR,eia_digits_cc,2019-08-13,2019-08-18,4.2,0,1
+"Castleton Power, LLC",10190,1,72.0,72.0,100.0,CC_REGULAR,eia_digits_cc,2019-12-13,2019-12-17,3.2,0,1
+"Castleton Power, LLC",10190,1,72.0,72.0,100.0,CC_REGULAR,eia_digits_cc,2020-07-22,2020-07-23,1.1,0,1
+"Castleton Power, LLC",10190,1,72.0,72.0,100.0,CC_REGULAR,eia_digits_cc,2020-08-25,2020-08-28,2.2,0,1
+"Castleton Power, LLC",10190,1,72.0,72.0,100.0,CC_REGULAR,eia_digits_cc,2020-12-10,2020-12-14,4.2,0,1
+"Castleton Power, LLC",10190,1,72.0,72.0,100.0,CC_REGULAR,eia_digits_cc,2021-01-29,2021-01-31,2.5,0,1
+"Castleton Power, LLC",10190,1,72.0,72.0,100.0,CC_REGULAR,eia_digits_cc,2021-03-17,2021-03-19,1.2,0,1
+"Castleton Power, LLC",10190,1,72.0,72.0,100.0,CC_REGULAR,eia_digits_cc,2021-04-12,2021-04-15,2.2,0,1
+"Castleton Power, LLC",10190,1,72.0,72.0,100.0,CC_REGULAR,eia_digits_cc,2021-06-03,2021-06-06,2.7,0,1
+"Castleton Power, LLC",10190,1,72.0,72.0,100.0,CC_REGULAR,eia_digits_cc,2021-07-16,2021-07-20,3.3,0,1
+"Castleton Power, LLC",10190,1,72.0,72.0,100.0,CC_REGULAR,eia_digits_cc,2021-09-17,2021-09-21,3.5,0,1
+"Castleton Power, LLC",10190,1,72.0,72.0,100.0,CC_REGULAR,eia_digits_cc,2022-01-10,2022-01-12,1.6,0,1
+"Castleton Power, LLC",10190,1,72.0,72.0,100.0,CC_REGULAR,eia_digits_cc,2022-01-14,2022-01-16,1.5,0,1
+"Castleton Power, LLC",10190,1,72.0,72.0,100.0,CC_REGULAR,eia_digits_cc,2022-01-20,2022-01-22,1.7,0,1
+"Castleton Power, LLC",10190,1,72.0,72.0,100.0,CC_REGULAR,eia_digits_cc,2022-04-04,2022-04-07,2.7,0,1
+"Castleton Power, LLC",10190,1,72.0,72.0,100.0,CC_REGULAR,eia_digits_cc,2022-08-27,2022-08-29,2.3,0,1
+"Castleton Power, LLC",10190,1,72.0,72.0,100.0,CC_REGULAR,eia_digits_cc,2022-09-19,2022-09-21,2.5,0,1
+"Castleton Power, LLC",10190,1,72.0,72.0,100.0,CC_REGULAR,eia_digits_cc,2023-03-11,2023-03-14,3.0,0,1
+"Castleton Power, LLC",10190,1,72.0,72.0,100.0,CC_REGULAR,eia_digits_cc,2023-04-14,2023-04-17,2.1,0,1
+"Castleton Power, LLC",10190,1,72.0,72.0,100.0,CC_REGULAR,eia_digits_cc,2023-07-04,2023-07-05,1.8,0,1
+"Castleton Power, LLC",10190,1,72.0,72.0,100.0,CC_REGULAR,eia_digits_cc,2023-10-22,2023-10-27,4.9,0,1
+"Castleton Power, LLC",10190,1,72.0,72.0,100.0,CC_REGULAR,eia_digits_cc,2023-12-01,2023-12-05,4.0,0,1
+"Castleton Power, LLC",10190,1,72.0,72.0,100.0,CC_REGULAR,eia_digits_cc,2024-01-01,2024-01-04,3.2,0,1
+"Castleton Power, LLC",10190,1,72.0,72.0,100.0,CC_REGULAR,eia_digits_cc,2024-01-20,2024-01-21,1.4,0,1
+"Castleton Power, LLC",10190,1,72.0,72.0,100.0,CC_REGULAR,eia_digits_cc,2024-02-01,2024-02-06,4.2,0,1
+"Castleton Power, LLC",10190,1,72.0,72.0,100.0,CC_REGULAR,eia_digits_cc,2024-10-17,2024-10-22,4.1,0,1
+"Castleton Power, LLC",10190,1,72.0,72.0,100.0,CC_REGULAR,eia_digits_cc,2024-12-17,2024-12-20,2.2,0,1
+"Castleton Power, LLC",10190,1,72.0,72.0,100.0,CC_REGULAR,eia_digits_cc,2024-12-22,2024-12-23,1.1,0,1
+"Castleton Power, LLC",10190,1,72.0,72.0,100.0,CC_REGULAR,eia_digits_cc,2025-01-22,2025-01-23,1.7,0,1
+"Castleton Power, LLC",10190,1,72.0,72.0,100.0,CC_REGULAR,eia_digits_cc,2025-09-18,2025-09-23,4.2,0,1
+"Castleton Power, LLC",10190,1,72.0,72.0,100.0,CC_REGULAR,eia_digits_cc,2025-12-02,2025-12-04,1.8,0,1
+"Beaver Falls, LLC",10617,1,107.8,107.8,100.0,CC_CHP,eia_digits_cc,2022-06-13,2022-06-15,1.5,0,1
+"Beaver Falls, LLC",10617,1,107.8,107.8,100.0,CC_CHP,eia_digits_cc,2024-06-18,2024-06-20,1.5,0,1
+Carthage Energy,10620,1,62.9,62.9,100.0,CC_REGULAR,eia_digits_cc,2019-07-16,2019-07-18,1.6,0,1
+Carthage Energy,10620,1,62.9,62.9,100.0,CC_REGULAR,eia_digits_cc,2022-08-04,2022-08-08,3.6,0,1
+Carthage Energy,10620,1,62.9,62.9,100.0,CC_REGULAR,eia_digits_cc,2023-07-26,2023-07-28,1.5,0,1
+Carthage Energy,10620,1,62.9,62.9,100.0,CC_REGULAR,eia_digits_cc,2024-06-18,2024-06-20,1.5,0,1
+Carthage Energy,10620,1,62.9,62.9,100.0,CC_REGULAR,eia_digits_cc,2025-07-24,2025-07-28,3.6,0,1
+"Syracuse, LLC",10621,1,102.7,102.7,100.0,CC_REGULAR,eia_digits_cc,2019-07-20,2019-07-25,4.2,0,1
+"Syracuse, LLC",10621,1,102.7,102.7,100.0,CC_REGULAR,eia_digits_cc,2020-03-11,2020-03-13,1.5,0,1
+"Syracuse, LLC",10621,1,102.7,102.7,100.0,CC_REGULAR,eia_digits_cc,2020-08-06,2020-08-11,4.8,0,1
+"Syracuse, LLC",10621,1,102.7,102.7,100.0,CC_REGULAR,eia_digits_cc,2021-06-24,2021-06-28,3.6,0,1
+"Syracuse, LLC",10621,1,102.7,102.7,100.0,CC_REGULAR,eia_digits_cc,2025-07-08,2025-07-11,2.4,0,1
+Selkirk Cogen Partners,10725,CTG101,142.0,430.0,33.0,CC_CHP,observed_peak,2020-07-22,2020-07-25,2.6,2,3
+Selkirk Cogen Partners,10725,CTG101,135.0,427.0,31.6,CC_CHP,observed_peak,2022-04-06,2022-04-10,3.8,2,3
+Selkirk Cogen Partners,10725,CTG101,135.0,427.0,31.6,CC_CHP,observed_peak,2022-11-16,2022-11-21,4.3,2,3
+Selkirk Cogen Partners,10725,CTG101,133.0,406.0,32.8,CC_CHP,observed_peak,2024-06-18,2024-06-20,2.0,2,3
+Selkirk Cogen Partners,10725,CTG101,133.0,406.0,32.8,CC_CHP,observed_peak,2024-07-11,2024-07-15,3.5,2,3
+Selkirk Cogen Partners,10725,CTG101,133.0,406.0,32.8,CC_CHP,observed_peak,2024-08-02,2024-08-05,2.5,2,3
+Selkirk Cogen Partners,10725,CTG101,142.0,429.0,33.1,CC_CHP,observed_peak,2025-06-21,2025-06-23,2.2,2,3
+Selkirk Cogen Partners,10725,CTG101,142.0,429.0,33.1,CC_CHP,observed_peak,2025-09-25,2025-09-27,1.7,2,3
+Selkirk Cogen Partners,10725,CTG201,144.0,430.0,33.5,CC_CHP,observed_peak,2020-07-02,2020-07-06,3.3,2,3
+Selkirk Cogen Partners,10725,CTG201,144.0,430.0,33.5,CC_CHP,observed_peak,2020-08-25,2020-08-28,2.4,2,3
+Selkirk Cogen Partners,10725,CTG201,148.0,439.0,33.7,CC_CHP,observed_peak,2021-06-08,2021-06-10,1.2,2,3
+Selkirk Cogen Partners,10725,CTG201,148.0,439.0,33.7,CC_CHP,observed_peak,2021-07-14,2021-07-16,1.3,2,3
+Selkirk Cogen Partners,10725,CTG201,148.0,439.0,33.7,CC_CHP,observed_peak,2021-07-17,2021-07-20,3.6,2,3
+Selkirk Cogen Partners,10725,CTG201,148.0,439.0,33.7,CC_CHP,observed_peak,2021-11-03,2021-11-08,4.2,2,3
+Selkirk Cogen Partners,10725,CTG201,146.0,427.0,34.2,CC_CHP,observed_peak,2022-03-10,2022-03-12,2.0,2,3
+Selkirk Cogen Partners,10725,CTG201,146.0,427.0,34.2,CC_CHP,observed_peak,2022-04-04,2022-04-09,4.6,2,3
+Selkirk Cogen Partners,10725,CTG201,146.0,427.0,34.2,CC_CHP,observed_peak,2022-05-14,2022-05-16,2.1,2,3
+Selkirk Cogen Partners,10725,CTG201,146.0,427.0,34.2,CC_CHP,observed_peak,2022-08-26,2022-08-29,2.4,2,3
+Selkirk Cogen Partners,10725,CTG201,145.0,430.0,33.7,CC_CHP,observed_peak,2023-10-25,2023-10-27,1.8,2,3
+Selkirk Cogen Partners,10725,CTG201,137.0,406.0,33.7,CC_CHP,observed_peak,2024-07-05,2024-07-08,2.4,2,3
+Selkirk Cogen Partners,10725,CTG201,145.0,429.0,33.8,CC_CHP,observed_peak,2025-06-21,2025-06-23,2.0,2,3
+Selkirk Cogen Partners,10725,CTG301,144.0,430.0,33.5,CC_CHP,observed_peak,2020-07-02,2020-07-06,3.4,2,3
+Selkirk Cogen Partners,10725,CTG301,144.0,430.0,33.5,CC_CHP,observed_peak,2020-08-25,2020-08-28,2.5,2,3
+Selkirk Cogen Partners,10725,CTG301,150.0,439.0,34.2,CC_CHP,observed_peak,2021-06-08,2021-06-10,1.3,2,3
+Selkirk Cogen Partners,10725,CTG301,150.0,439.0,34.2,CC_CHP,observed_peak,2021-07-14,2021-07-16,1.4,2,3
+Selkirk Cogen Partners,10725,CTG301,150.0,439.0,34.2,CC_CHP,observed_peak,2021-07-16,2021-07-20,3.7,2,3
+Selkirk Cogen Partners,10725,CTG301,150.0,439.0,34.2,CC_CHP,observed_peak,2021-11-03,2021-11-08,4.3,2,3
+Selkirk Cogen Partners,10725,CTG301,146.0,427.0,34.2,CC_CHP,observed_peak,2022-03-10,2022-03-12,2.1,2,3
+Selkirk Cogen Partners,10725,CTG301,146.0,427.0,34.2,CC_CHP,observed_peak,2022-04-04,2022-04-09,4.6,2,3
+Selkirk Cogen Partners,10725,CTG301,146.0,427.0,34.2,CC_CHP,observed_peak,2022-05-13,2022-05-16,2.2,2,3
+Selkirk Cogen Partners,10725,CTG301,146.0,427.0,34.2,CC_CHP,observed_peak,2022-08-26,2022-08-29,2.5,2,3
+Selkirk Cogen Partners,10725,CTG301,142.0,430.0,33.0,CC_CHP,observed_peak,2023-10-25,2023-10-27,1.9,2,3
+Selkirk Cogen Partners,10725,CTG301,136.0,406.0,33.5,CC_CHP,observed_peak,2024-07-05,2024-07-08,2.5,2,3
+Selkirk Cogen Partners,10725,CTG301,142.0,429.0,33.1,CC_CHP,observed_peak,2025-06-21,2025-06-23,2.1,2,3
+Selkirk Cogen Partners,10725,CTG301,142.0,429.0,33.1,CC_CHP,observed_peak,2025-07-07,2025-07-09,1.8,2,3
+Linden Cogeneration Facility,50006,004001,301.0,1267.0,23.8,CC_CHP,observed_peak,2019-05-27,2019-05-31,3.5,5,6
+Linden Cogeneration Facility,50006,004001,301.0,1267.0,23.8,CC_CHP,observed_peak,2019-09-08,2019-09-12,3.5,5,6
+Linden Cogeneration Facility,50006,004001,307.0,1259.0,24.4,CC_CHP,observed_peak,2020-10-26,2020-10-27,1.0,5,6
+Linden Cogeneration Facility,50006,004001,310.0,1275.0,24.3,CC_CHP,observed_peak,2023-03-25,2023-03-28,3.0,5,6
+Linden Cogeneration Facility,50006,004001,310.0,1275.0,24.3,CC_CHP,observed_peak,2023-05-02,2023-05-03,1.8,5,6
+Linden Cogeneration Facility,50006,004001,330.0,1272.0,25.9,CC_CHP,observed_peak,2024-10-16,2024-10-17,1.0,5,6
+Linden Cogeneration Facility,50006,005001,192.0,1271.0,15.1,CC_CHP,observed_peak,2022-12-04,2022-12-08,4.2,5,6
+Linden Cogeneration Facility,50006,005001,192.0,1271.0,15.1,CC_CHP,observed_peak,2022-12-23,2022-12-26,2.7,5,6
+Linden Cogeneration Facility,50006,005001,190.0,1272.0,14.9,CC_CHP,observed_peak,2024-04-03,2024-04-05,1.8,5,6
+Linden Cogeneration Facility,50006,005001,190.0,1240.0,15.3,CC_CHP,observed_peak,2025-05-15,2025-05-18,2.9,5,6
+Linden Cogeneration Facility,50006,006001,195.0,1267.0,15.4,CC_CHP,observed_peak,2019-09-29,2019-10-02,2.6,5,6
+Linden Cogeneration Facility,50006,006001,193.0,1271.0,15.2,CC_CHP,observed_peak,2022-12-08,2022-12-12,3.7,5,6
+Linden Cogeneration Facility,50006,006001,193.0,1271.0,15.2,CC_CHP,observed_peak,2022-12-16,2022-12-18,2.6,5,6
+Linden Cogeneration Facility,50006,006001,194.0,1275.0,15.2,CC_CHP,observed_peak,2023-12-05,2023-12-07,1.9,5,6
+Linden Cogeneration Facility,50006,006001,191.0,1272.0,15.0,CC_CHP,observed_peak,2024-03-31,2024-04-03,3.2,5,6
+Linden Cogeneration Facility,50006,007001,197.0,1267.0,15.5,CC_CHP,observed_peak,2019-10-06,2019-10-07,1.9,5,6
+Linden Cogeneration Facility,50006,007001,190.0,1271.0,14.9,CC_CHP,observed_peak,2022-05-12,2022-05-16,4.2,5,6
+Linden Cogeneration Facility,50006,007001,190.0,1271.0,14.9,CC_CHP,observed_peak,2022-11-13,2022-11-14,1.0,5,6
+Linden Cogeneration Facility,50006,007001,192.0,1275.0,15.1,CC_CHP,observed_peak,2023-04-17,2023-04-21,4.9,5,6
+Linden Cogeneration Facility,50006,007001,188.0,1272.0,14.8,CC_CHP,observed_peak,2024-05-19,2024-05-22,3.4,5,6
+Linden Cogeneration Facility,50006,007001,189.0,1240.0,15.2,CC_CHP,observed_peak,2025-04-06,2025-04-08,2.5,5,6
+Linden Cogeneration Facility,50006,008001,195.0,1271.0,15.3,CC_CHP,observed_peak,2022-12-13,2022-12-14,1.1,5,6
+Linden Cogeneration Facility,50006,008001,190.0,1240.0,15.3,CC_CHP,observed_peak,2025-02-11,2025-02-13,1.9,5,6
+Linden Cogeneration Facility,50006,009001,189.0,1271.0,14.9,CC_CHP,observed_peak,2022-12-14,2022-12-16,1.9,5,6
+Linden Cogeneration Facility,50006,009001,186.0,1272.0,14.6,CC_CHP,observed_peak,2024-02-20,2024-02-23,2.8,5,6
+Linden Cogeneration Facility,50006,009001,186.0,1272.0,14.6,CC_CHP,observed_peak,2024-02-23,2024-02-25,1.5,5,6
+Linden Cogeneration Facility,50006,009001,184.0,1240.0,14.8,CC_CHP,observed_peak,2025-02-11,2025-02-12,1.2,5,6
+Bethpage Energy Center,50292,GT1,47.5,194.2,24.5,CC_REGULAR,eia_digits_cc,2019-01-20,2019-01-23,3.5,3,4
+Bethpage Energy Center,50292,GT1,47.5,194.2,24.5,CC_REGULAR,eia_digits_cc,2019-01-29,2019-02-02,3.5,3,4
+Bethpage Energy Center,50292,GT1,47.5,194.2,24.5,CC_REGULAR,eia_digits_cc,2019-08-20,2019-08-24,4.4,3,4
+Bethpage Energy Center,50292,GT1,47.5,194.2,24.5,CC_REGULAR,eia_digits_cc,2019-10-24,2019-10-27,2.5,3,4
+Bethpage Energy Center,50292,GT1,47.5,194.2,24.5,CC_REGULAR,eia_digits_cc,2019-11-12,2019-11-14,1.5,3,4
+Bethpage Energy Center,50292,GT1,47.5,194.2,24.5,CC_REGULAR,eia_digits_cc,2020-02-06,2020-02-08,1.3,3,4
+Bethpage Energy Center,50292,GT1,47.5,194.2,24.5,CC_REGULAR,eia_digits_cc,2020-02-10,2020-02-14,3.5,3,4
+Bethpage Energy Center,50292,GT1,47.5,194.2,24.5,CC_REGULAR,eia_digits_cc,2020-02-28,2020-03-02,2.6,3,4
+Bethpage Energy Center,50292,GT1,47.5,194.2,24.5,CC_REGULAR,eia_digits_cc,2020-03-04,2020-03-08,3.7,3,4
+Bethpage Energy Center,50292,GT1,47.5,194.2,24.5,CC_REGULAR,eia_digits_cc,2020-03-11,2020-03-13,1.2,3,4
+Bethpage Energy Center,50292,GT1,47.5,194.2,24.5,CC_REGULAR,eia_digits_cc,2021-02-18,2021-02-19,1.3,3,4
+Bethpage Energy Center,50292,GT1,47.5,195.2,24.3,CC_REGULAR,eia_digits_cc,2023-07-23,2023-07-27,4.1,3,4
+Bethpage Energy Center,50292,GT1,47.5,195.2,24.3,CC_REGULAR,eia_digits_cc,2023-08-20,2023-08-22,2.3,3,4
+Bethpage Energy Center,50292,GT1,47.5,192.2,24.7,CC_REGULAR,eia_digits_cc,2024-03-26,2024-03-30,4.6,3,4
+Bethpage Energy Center,50292,GT1,47.5,192.2,24.7,CC_REGULAR,eia_digits_cc,2024-05-02,2024-05-05,3.3,3,4
+Bethpage Energy Center,50292,GT1,47.5,192.2,24.7,CC_REGULAR,eia_digits_cc,2025-01-06,2025-01-07,1.1,3,4
+Bethpage Energy Center,50292,GT1,47.5,192.2,24.7,CC_REGULAR,eia_digits_cc,2025-01-08,2025-01-10,2.4,3,4
+Bethpage Energy Center,50292,GT1,47.5,192.2,24.7,CC_REGULAR,eia_digits_cc,2025-04-07,2025-04-08,1.0,3,4
+Bethpage Energy Center,50292,GT1,47.5,192.2,24.7,CC_REGULAR,eia_digits_cc,2025-09-05,2025-09-06,1.7,3,4
+Bethpage Energy Center,50292,GT1,47.5,192.2,24.7,CC_REGULAR,eia_digits_cc,2025-10-28,2025-10-31,2.8,3,4
+Bethpage Energy Center,50292,GT2,47.5,194.2,24.5,CC_REGULAR,eia_digits_cc,2019-01-20,2019-01-23,3.5,3,4
+Bethpage Energy Center,50292,GT2,47.5,194.2,24.5,CC_REGULAR,eia_digits_cc,2019-01-30,2019-02-02,3.0,3,4
+Bethpage Energy Center,50292,GT2,47.5,194.2,24.5,CC_REGULAR,eia_digits_cc,2019-10-24,2019-10-27,2.6,3,4
+Bethpage Energy Center,50292,GT2,47.5,194.2,24.5,CC_REGULAR,eia_digits_cc,2019-11-12,2019-11-14,1.5,3,4
+Bethpage Energy Center,50292,GT2,47.5,194.2,24.5,CC_REGULAR,eia_digits_cc,2020-02-06,2020-02-08,1.3,3,4
+Bethpage Energy Center,50292,GT2,47.5,194.2,24.5,CC_REGULAR,eia_digits_cc,2020-02-11,2020-02-14,2.3,3,4
+Bethpage Energy Center,50292,GT2,47.5,194.2,24.5,CC_REGULAR,eia_digits_cc,2020-02-24,2020-02-26,1.6,3,4
+Bethpage Energy Center,50292,GT2,47.5,194.2,24.5,CC_REGULAR,eia_digits_cc,2020-02-28,2020-03-04,4.6,3,4
+Bethpage Energy Center,50292,GT2,47.5,194.2,24.5,CC_REGULAR,eia_digits_cc,2020-03-04,2020-03-08,3.7,3,4
+Bethpage Energy Center,50292,GT2,47.5,194.2,24.5,CC_REGULAR,eia_digits_cc,2020-03-11,2020-03-13,1.2,3,4
+Bethpage Energy Center,50292,GT2,47.5,194.2,24.5,CC_REGULAR,eia_digits_cc,2020-08-10,2020-08-11,1.0,3,4
+Bethpage Energy Center,50292,GT2,47.5,194.2,24.5,CC_REGULAR,eia_digits_cc,2020-12-14,2020-12-16,2.0,3,4
+Bethpage Energy Center,50292,GT2,47.5,194.2,24.5,CC_REGULAR,eia_digits_cc,2020-12-16,2020-12-19,2.8,3,4
+Bethpage Energy Center,50292,GT2,47.5,194.2,24.5,CC_REGULAR,eia_digits_cc,2021-12-05,2021-12-09,4.0,3,4
+Bethpage Energy Center,50292,GT2,47.5,194.2,24.5,CC_REGULAR,eia_digits_cc,2022-03-01,2022-03-04,3.6,2,4
+Bethpage Energy Center,50292,GT2,47.5,194.2,24.5,CC_REGULAR,eia_digits_cc,2022-05-14,2022-05-16,2.2,2,4
+Bethpage Energy Center,50292,GT2,47.5,194.2,24.5,CC_REGULAR,eia_digits_cc,2022-09-12,2022-09-13,1.7,2,4
+Bethpage Energy Center,50292,GT2,47.5,194.2,24.5,CC_REGULAR,eia_digits_cc,2022-12-24,2022-12-26,2.0,2,4
+Bethpage Energy Center,50292,GT2,47.5,195.2,24.3,CC_REGULAR,eia_digits_cc,2023-02-02,2023-02-05,2.5,3,4
+Bethpage Energy Center,50292,GT2,47.5,192.2,24.7,CC_REGULAR,eia_digits_cc,2024-08-25,2024-08-29,3.7,3,4
+Bethpage Energy Center,50292,GT2,47.5,192.2,24.7,CC_REGULAR,eia_digits_cc,2024-08-29,2024-09-01,2.8,3,4
+Bethpage Energy Center,50292,GT2,47.5,192.2,24.7,CC_REGULAR,eia_digits_cc,2024-09-17,2024-09-18,1.0,3,4
+Bethpage Energy Center,50292,GT2,47.5,192.2,24.7,CC_REGULAR,eia_digits_cc,2025-01-16,2025-01-17,1.0,3,4
+Bethpage Energy Center,50292,GT2,47.5,192.2,24.7,CC_REGULAR,eia_digits_cc,2025-02-04,2025-02-06,1.7,3,4
+Bethpage Energy Center,50292,GT2,47.5,192.2,24.7,CC_REGULAR,eia_digits_cc,2025-07-23,2025-07-25,1.6,3,4
+Bethpage Energy Center,50292,GT2,47.5,192.2,24.7,CC_REGULAR,eia_digits_cc,2025-09-04,2025-09-05,1.5,3,4
+Bethpage Energy Center,50292,GT3,16.2,194.2,8.3,CC_REGULAR,eia_digits,2019-03-07,2019-03-11,3.8,3,4
+Bethpage Energy Center,50292,GT3,16.2,194.2,8.3,CC_REGULAR,eia_digits,2019-09-09,2019-09-11,1.7,3,4
+Bethpage Energy Center,50292,GT3,16.2,194.2,8.3,CC_REGULAR,eia_digits,2019-10-23,2019-10-28,4.7,3,4
+Bethpage Energy Center,50292,GT3,16.2,194.2,8.3,CC_REGULAR,eia_digits,2019-11-09,2019-11-12,2.8,3,4
+Bethpage Energy Center,50292,GT3,16.2,194.2,8.3,CC_REGULAR,eia_digits,2019-11-14,2019-11-18,3.7,3,4
+Bethpage Energy Center,50292,GT3,16.2,194.2,8.3,CC_REGULAR,eia_digits,2019-12-03,2019-12-04,1.6,3,4
+Bethpage Energy Center,50292,GT3,16.2,194.2,8.3,CC_REGULAR,eia_digits,2020-01-08,2020-01-13,4.8,3,4
+Bethpage Energy Center,50292,GT3,16.2,194.2,8.3,CC_REGULAR,eia_digits,2020-02-10,2020-02-14,3.5,3,4
+Bethpage Energy Center,50292,GT3,16.2,194.2,8.3,CC_REGULAR,eia_digits,2020-05-07,2020-05-10,2.8,3,4
+Bethpage Energy Center,50292,GT3,16.2,194.2,8.3,CC_REGULAR,eia_digits,2020-06-05,2020-06-10,4.9,3,4
+Bethpage Energy Center,50292,GT3,16.2,194.2,8.3,CC_REGULAR,eia_digits,2022-01-29,2022-01-31,2.2,2,4
+Bethpage Energy Center,50292,GT3,16.2,194.2,8.3,CC_REGULAR,eia_digits,2022-03-01,2022-03-04,3.7,2,4
+Bethpage Energy Center,50292,GT3,16.2,194.2,8.3,CC_REGULAR,eia_digits,2022-07-23,2022-07-24,1.1,2,4
+Bethpage Energy Center,50292,GT3,16.2,194.2,8.3,CC_REGULAR,eia_digits,2022-10-03,2022-10-05,1.3,2,4
+Bethpage Energy Center,50292,GT3,16.2,194.2,8.3,CC_REGULAR,eia_digits,2022-10-05,2022-10-08,2.6,2,4
+Bethpage Energy Center,50292,GT3,16.2,194.2,8.3,CC_REGULAR,eia_digits,2022-12-24,2022-12-27,3.6,2,4
+Bethpage Energy Center,50292,GT3,16.2,195.2,8.3,CC_REGULAR,eia_digits,2023-03-28,2023-03-30,1.7,3,4
+Bethpage Energy Center,50292,GT3,16.2,195.2,8.3,CC_REGULAR,eia_digits,2023-04-25,2023-04-28,2.6,3,4
+Bethpage Energy Center,50292,GT3,16.2,195.2,8.3,CC_REGULAR,eia_digits,2023-10-02,2023-10-04,2.3,3,4
+Bethpage Energy Center,50292,GT3,16.2,192.2,8.4,CC_REGULAR,eia_digits,2024-05-01,2024-05-06,4.7,3,4
+Bethpage Energy Center,50292,GT3,16.2,192.2,8.4,CC_REGULAR,eia_digits,2024-05-06,2024-05-08,1.9,3,4
+Bethpage Energy Center,50292,GT3,16.2,192.2,8.4,CC_REGULAR,eia_digits,2024-08-28,2024-08-31,2.6,3,4
+Bethpage Energy Center,50292,GT3,16.2,192.2,8.4,CC_REGULAR,eia_digits,2024-10-22,2024-10-25,2.7,3,4
+Bethpage Energy Center,50292,GT3,16.2,192.2,8.4,CC_REGULAR,eia_digits,2024-12-22,2024-12-23,1.2,3,4
+Bethpage Energy Center,50292,GT3,16.2,192.2,8.4,CC_REGULAR,eia_digits,2025-01-20,2025-01-22,2.2,3,4
+Bethpage Energy Center,50292,GT3,16.2,192.2,8.4,CC_REGULAR,eia_digits,2025-03-26,2025-03-28,2.2,3,4
+Bethpage Energy Center,50292,GT3,16.2,192.2,8.4,CC_REGULAR,eia_digits,2025-05-06,2025-05-08,1.8,3,4
+Bethpage Energy Center,50292,GT3,16.2,192.2,8.4,CC_REGULAR,eia_digits,2025-05-13,2025-05-15,1.6,3,4
+Bethpage Energy Center,50292,GT3,16.2,192.2,8.4,CC_REGULAR,eia_digits,2025-11-10,2025-11-13,2.9,3,4
+Bethpage Energy Center,50292,GT4,83.0,194.2,42.7,CC_REGULAR,observed_peak,2019-01-12,2019-01-14,1.6,3,4
+Bethpage Energy Center,50292,GT4,83.0,194.2,42.7,CC_REGULAR,observed_peak,2019-01-19,2019-01-23,4.3,3,4
+Bethpage Energy Center,50292,GT4,83.0,194.2,42.7,CC_REGULAR,observed_peak,2019-03-01,2019-03-04,3.5,3,4
+Bethpage Energy Center,50292,GT4,83.0,194.2,42.7,CC_REGULAR,observed_peak,2021-02-18,2021-02-20,2.2,3,4
+Bethpage Energy Center,50292,GT4,83.0,194.2,42.7,CC_REGULAR,observed_peak,2021-04-15,2021-04-17,1.2,3,4
+Bethpage Energy Center,50292,GT4,83.0,194.2,42.7,CC_REGULAR,observed_peak,2021-04-19,2021-04-22,2.5,3,4
+Bethpage Energy Center,50292,GT4,83.0,194.2,42.7,CC_REGULAR,observed_peak,2021-05-20,2021-05-23,2.3,3,4
+Bethpage Energy Center,50292,GT4,83.0,194.2,42.7,CC_REGULAR,observed_peak,2021-12-03,2021-12-08,4.8,3,4
+Bethpage Energy Center,50292,GT4,83.0,194.2,42.7,CC_REGULAR,observed_peak,2022-01-01,2022-01-05,4.5,2,4
+Bethpage Energy Center,50292,GT4,83.0,194.2,42.7,CC_REGULAR,observed_peak,2022-02-28,2022-03-03,3.4,2,4
+Bethpage Energy Center,50292,GT4,83.0,194.2,42.7,CC_REGULAR,observed_peak,2022-06-08,2022-06-13,4.5,2,4
+Bethpage Energy Center,50292,GT4,83.0,194.2,42.7,CC_REGULAR,observed_peak,2022-06-13,2022-06-17,3.7,2,4
+Bethpage Energy Center,50292,GT4,83.0,194.2,42.7,CC_REGULAR,observed_peak,2022-12-06,2022-12-09,2.7,2,4
+Bethpage Energy Center,50292,GT4,83.0,194.2,42.7,CC_REGULAR,observed_peak,2022-12-24,2022-12-28,4.3,2,4
+Bethpage Energy Center,50292,GT4,84.0,195.2,43.0,CC_REGULAR,observed_peak,2023-01-14,2023-01-17,2.5,3,4
+Bethpage Energy Center,50292,GT4,84.0,195.2,43.0,CC_REGULAR,observed_peak,2023-09-28,2023-10-02,3.3,3,4
+Bethpage Energy Center,50292,GT4,84.0,195.2,43.0,CC_REGULAR,observed_peak,2023-10-04,2023-10-06,1.2,3,4
+Bethpage Energy Center,50292,GT4,84.0,195.2,43.0,CC_REGULAR,observed_peak,2023-10-25,2023-10-28,2.4,3,4
+Bethpage Energy Center,50292,GT4,84.0,195.2,43.0,CC_REGULAR,observed_peak,2023-11-08,2023-11-12,3.4,3,4
+Bethpage Energy Center,50292,GT4,84.0,195.2,43.0,CC_REGULAR,observed_peak,2023-12-07,2023-12-12,4.7,3,4
+Bethpage Energy Center,50292,GT4,81.0,192.2,42.1,CC_REGULAR,observed_peak,2024-01-20,2024-01-23,3.3,3,4
+Bethpage Energy Center,50292,GT4,81.0,192.2,42.1,CC_REGULAR,observed_peak,2024-06-14,2024-06-18,3.2,3,4
+Bethpage Energy Center,50292,GT4,81.0,192.2,42.1,CC_REGULAR,observed_peak,2025-02-15,2025-02-19,3.7,3,4
+Bethpage Energy Center,50292,GT4,81.0,192.2,42.1,CC_REGULAR,observed_peak,2025-02-20,2025-02-21,1.7,3,4
+Bethpage Energy Center,50292,GT4,81.0,192.2,42.1,CC_REGULAR,observed_peak,2025-05-09,2025-05-12,2.8,3,4
+Bethpage Energy Center,50292,GT4,81.0,192.2,42.1,CC_REGULAR,observed_peak,2025-05-13,2025-05-15,1.8,3,4
+Bethpage Energy Center,50292,GT4,81.0,192.2,42.1,CC_REGULAR,observed_peak,2025-10-05,2025-10-07,1.8,3,4
+Cornell University Ithaca Campus,50368,CT1,19.8,39.5,50.0,CC_CHP,optime_proxy,2019-05-28,2019-05-30,2.7,1,2
+Cornell University Ithaca Campus,50368,CT1,19.8,39.5,50.0,CC_CHP,optime_proxy,2019-08-01,2019-08-02,1.3,1,2
+Cornell University Ithaca Campus,50368,CT1,19.8,39.5,50.0,CC_CHP,optime_proxy,2021-05-03,2021-05-07,4.2,1,2
+Cornell University Ithaca Campus,50368,CT1,19.8,39.5,50.0,CC_CHP,optime_proxy,2021-08-06,2021-08-09,3.4,1,2
+Cornell University Ithaca Campus,50368,CT1,19.8,39.5,50.0,CC_CHP,optime_proxy,2021-09-15,2021-09-17,1.5,1,2
+Cornell University Ithaca Campus,50368,CT1,19.8,39.5,50.0,CC_CHP,optime_proxy,2021-09-17,2021-09-19,1.3,1,2
+Cornell University Ithaca Campus,50368,CT1,19.8,39.5,50.0,CC_CHP,optime_proxy,2022-06-21,2022-06-26,4.6,1,2
+Cornell University Ithaca Campus,50368,CT1,19.8,39.5,50.0,CC_CHP,optime_proxy,2022-08-27,2022-08-29,2.2,1,2
+Cornell University Ithaca Campus,50368,CT1,19.8,39.5,50.0,CC_CHP,optime_proxy,2023-05-29,2023-06-01,3.1,1,2
+Cornell University Ithaca Campus,50368,CT1,19.8,39.5,50.0,CC_CHP,optime_proxy,2024-05-27,2024-05-30,3.1,1,2
+Cornell University Ithaca Campus,50368,CT1,19.8,39.5,50.0,CC_CHP,optime_proxy,2025-07-14,2025-07-17,2.6,1,2
+Cornell University Ithaca Campus,50368,CT2,19.8,39.5,50.0,CC_CHP,optime_proxy,2019-07-30,2019-07-31,1.1,1,2
+Cornell University Ithaca Campus,50368,CT2,19.8,39.5,50.0,CC_CHP,optime_proxy,2020-07-06,2020-07-08,1.8,1,2
+Cornell University Ithaca Campus,50368,CT2,19.8,39.5,50.0,CC_CHP,optime_proxy,2023-05-05,2023-05-09,4.4,1,2
+Cornell University Ithaca Campus,50368,CT2,19.8,39.5,50.0,CC_CHP,optime_proxy,2023-05-29,2023-06-01,3.1,1,2
+Cornell University Ithaca Campus,50368,CT2,19.8,39.5,50.0,CC_CHP,optime_proxy,2023-07-29,2023-07-31,2.0,1,2
+Cornell University Ithaca Campus,50368,CT2,19.8,39.5,50.0,CC_CHP,optime_proxy,2024-05-27,2024-05-30,2.8,1,2
+Cornell University Ithaca Campus,50368,CT2,19.8,39.5,50.0,CC_CHP,optime_proxy,2024-06-17,2024-06-18,1.3,1,2
+Cornell University Ithaca Campus,50368,CT2,19.8,39.5,50.0,CC_CHP,optime_proxy,2025-05-08,2025-05-13,4.7,1,2
+Indeck-Silver Springs Energy Center,50449,1,56.6,56.6,100.0,CC_CHP,eia_digits_cc,2019-01-11,2019-01-14,2.2,0,1
+Indeck-Silver Springs Energy Center,50449,1,56.6,56.6,100.0,CC_CHP,eia_digits_cc,2019-01-14,2019-01-19,4.6,0,1
+Indeck-Silver Springs Energy Center,50449,1,56.6,56.6,100.0,CC_CHP,eia_digits_cc,2019-07-21,2019-07-26,4.4,0,1
+Indeck-Silver Springs Energy Center,50449,1,56.6,56.6,100.0,CC_CHP,eia_digits_cc,2019-09-03,2019-09-05,1.5,0,1
+Indeck-Silver Springs Energy Center,50449,1,56.6,56.6,100.0,CC_CHP,eia_digits_cc,2019-12-12,2019-12-17,4.6,0,1
+Indeck-Silver Springs Energy Center,50449,1,56.6,56.6,100.0,CC_CHP,eia_digits_cc,2020-06-05,2020-06-09,3.5,0,1
+Indeck-Silver Springs Energy Center,50449,1,56.6,56.6,100.0,CC_CHP,eia_digits_cc,2020-07-02,2020-07-06,3.3,0,1
+Indeck-Silver Springs Energy Center,50449,1,56.6,56.6,100.0,CC_CHP,eia_digits_cc,2020-08-06,2020-08-11,4.5,0,1
+Indeck-Silver Springs Energy Center,50449,1,56.6,56.6,100.0,CC_CHP,eia_digits_cc,2020-08-21,2020-08-24,2.3,0,1
+Indeck-Silver Springs Energy Center,50449,1,56.6,56.6,100.0,CC_CHP,eia_digits_cc,2020-09-23,2020-09-28,4.5,0,1
+Indeck-Silver Springs Energy Center,50449,1,56.6,56.6,100.0,CC_CHP,eia_digits_cc,2021-07-16,2021-07-19,2.5,0,1
+Indeck-Silver Springs Energy Center,50449,1,56.6,56.6,100.0,CC_CHP,eia_digits_cc,2022-07-01,2022-07-06,4.5,0,1
+Indeck-Silver Springs Energy Center,50449,1,56.6,56.6,100.0,CC_CHP,eia_digits_cc,2022-07-22,2022-07-26,3.5,0,1
+Indeck-Silver Springs Energy Center,50449,1,56.6,56.6,100.0,CC_CHP,eia_digits_cc,2022-08-05,2022-08-08,3.3,0,1
+Indeck-Silver Springs Energy Center,50449,1,56.6,56.6,100.0,CC_CHP,eia_digits_cc,2022-08-08,2022-08-10,1.5,0,1
+Indeck-Silver Springs Energy Center,50449,1,56.6,56.6,100.0,CC_CHP,eia_digits_cc,2022-11-10,2022-11-15,4.3,0,1
+Indeck-Silver Springs Energy Center,50449,1,56.6,56.6,100.0,CC_CHP,eia_digits_cc,2022-12-15,2022-12-18,2.6,0,1
+Indeck-Silver Springs Energy Center,50449,1,56.6,56.6,100.0,CC_CHP,eia_digits_cc,2023-01-26,2023-01-31,4.4,0,1
+Indeck-Silver Springs Energy Center,50449,1,56.6,56.6,100.0,CC_CHP,eia_digits_cc,2023-01-31,2023-02-03,2.6,0,1
+Indeck-Silver Springs Energy Center,50449,1,56.6,56.6,100.0,CC_CHP,eia_digits_cc,2023-04-13,2023-04-18,4.2,0,1
+Indeck-Silver Springs Energy Center,50449,1,56.6,56.6,100.0,CC_CHP,eia_digits_cc,2023-04-18,2023-04-22,3.7,0,1
+Indeck-Silver Springs Energy Center,50449,1,56.6,56.6,100.0,CC_CHP,eia_digits_cc,2023-06-30,2023-07-05,4.1,0,1
+Indeck-Silver Springs Energy Center,50449,1,56.6,56.6,100.0,CC_CHP,eia_digits_cc,2023-08-09,2023-08-14,4.5,0,1
+Indeck-Silver Springs Energy Center,50449,1,56.6,56.6,100.0,CC_CHP,eia_digits_cc,2023-08-16,2023-08-21,4.4,0,1
+Indeck-Silver Springs Energy Center,50449,1,56.6,56.6,100.0,CC_CHP,eia_digits_cc,2023-09-09,2023-09-11,2.5,0,1
+Indeck-Silver Springs Energy Center,50449,1,56.6,56.6,100.0,CC_CHP,eia_digits_cc,2025-05-12,2025-05-15,2.5,0,1
+Indeck-Silver Springs Energy Center,50449,1,56.6,56.6,100.0,CC_CHP,eia_digits_cc,2025-06-05,2025-06-09,3.5,0,1
+Indeck-Silver Springs Energy Center,50449,1,56.6,56.6,100.0,CC_CHP,eia_digits_cc,2025-07-09,2025-07-10,1.2,0,1
+Indeck-Silver Springs Energy Center,50449,1,56.6,56.6,100.0,CC_CHP,eia_digits_cc,2025-11-13,2025-11-17,3.7,0,1
+Indeck-Silver Springs Energy Center,50449,1,56.6,56.6,100.0,CC_CHP,eia_digits_cc,2025-12-26,2025-12-29,2.2,0,1
+Indeck-Oswego Energy Center,50450,1,57.4,57.4,100.0,CC_CHP,eia_digits_cc,2019-03-19,2019-03-22,2.7,0,1
+Indeck-Oswego Energy Center,50450,1,57.4,57.4,100.0,CC_CHP,eia_digits_cc,2019-06-28,2019-07-02,3.6,0,1
+Indeck-Oswego Energy Center,50450,1,57.4,57.4,100.0,CC_CHP,eia_digits_cc,2019-07-16,2019-07-18,1.4,0,1
+Indeck-Oswego Energy Center,50450,1,57.4,57.4,100.0,CC_CHP,eia_digits_cc,2020-07-02,2020-07-06,3.6,0,1
+Indeck-Oswego Energy Center,50450,1,57.4,57.4,100.0,CC_CHP,eia_digits_cc,2020-10-26,2020-10-28,1.4,0,1
+Indeck-Oswego Energy Center,50450,1,57.4,57.4,100.0,CC_CHP,eia_digits_cc,2020-10-28,2020-10-30,1.5,0,1
+Indeck-Oswego Energy Center,50450,1,57.4,57.4,100.0,CC_CHP,eia_digits_cc,2021-02-10,2021-02-15,4.6,0,1
+Indeck-Oswego Energy Center,50450,1,57.4,57.4,100.0,CC_CHP,eia_digits_cc,2021-02-15,2021-02-19,3.6,0,1
+Indeck-Oswego Energy Center,50450,1,57.4,57.4,100.0,CC_CHP,eia_digits_cc,2021-07-13,2021-07-15,1.5,0,1
+Indeck-Oswego Energy Center,50450,1,57.4,57.4,100.0,CC_CHP,eia_digits_cc,2021-07-16,2021-07-19,2.6,0,1
+Indeck-Oswego Energy Center,50450,1,57.4,57.4,100.0,CC_CHP,eia_digits_cc,2022-07-23,2022-07-26,2.6,0,1
+Indeck-Oswego Energy Center,50450,1,57.4,57.4,100.0,CC_CHP,eia_digits_cc,2022-08-05,2022-08-07,2.5,0,1
+Indeck-Oswego Energy Center,50450,1,57.4,57.4,100.0,CC_CHP,eia_digits_cc,2022-08-24,2022-08-29,4.6,0,1
+Indeck-Oswego Energy Center,50450,1,57.4,57.4,100.0,CC_CHP,eia_digits_cc,2023-08-09,2023-08-14,4.5,0,1
+Indeck-Oswego Energy Center,50450,1,57.4,57.4,100.0,CC_CHP,eia_digits_cc,2023-08-15,2023-08-17,1.5,0,1
+Indeck-Oswego Energy Center,50450,1,57.4,57.4,100.0,CC_CHP,eia_digits_cc,2024-01-01,2024-01-05,4.2,0,1
+Indeck-Oswego Energy Center,50450,1,57.4,57.4,100.0,CC_CHP,eia_digits_cc,2024-07-16,2024-07-17,1.4,0,1
+Indeck-Oswego Energy Center,50450,1,57.4,57.4,100.0,CC_CHP,eia_digits_cc,2025-01-17,2025-01-21,3.9,0,1
+Indeck-Oswego Energy Center,50450,1,57.4,57.4,100.0,CC_CHP,eia_digits_cc,2025-01-21,2025-01-23,1.5,0,1
+Indeck-Oswego Energy Center,50450,1,57.4,57.4,100.0,CC_CHP,eia_digits_cc,2025-10-23,2025-10-27,3.6,0,1
+Indeck-Oswego Energy Center,50450,1,57.4,57.4,100.0,CC_CHP,eia_digits_cc,2025-11-16,2025-11-20,4.5,0,1
+Indeck-Yerkes Energy Center,50451,1,59.9,59.9,100.0,CC_CHP,eia_digits_cc,2019-02-25,2019-02-27,1.6,0,1
+Indeck-Yerkes Energy Center,50451,1,59.9,59.9,100.0,CC_CHP,eia_digits_cc,2019-03-26,2019-03-28,1.8,0,1
+Indeck-Yerkes Energy Center,50451,1,59.9,59.9,100.0,CC_CHP,eia_digits_cc,2019-05-24,2019-05-28,3.9,0,1
+Indeck-Yerkes Energy Center,50451,1,59.9,59.9,100.0,CC_CHP,eia_digits_cc,2019-07-21,2019-07-26,4.5,0,1
+Indeck-Yerkes Energy Center,50451,1,59.9,59.9,100.0,CC_CHP,eia_digits_cc,2019-10-03,2019-10-08,4.9,0,1
+Indeck-Yerkes Energy Center,50451,1,59.9,59.9,100.0,CC_CHP,eia_digits_cc,2020-02-10,2020-02-12,2.0,0,1
+Indeck-Yerkes Energy Center,50451,1,59.9,59.9,100.0,CC_CHP,eia_digits_cc,2020-06-30,2020-07-05,4.6,0,1
+Indeck-Yerkes Energy Center,50451,1,59.9,59.9,100.0,CC_CHP,eia_digits_cc,2020-07-20,2020-07-22,1.5,0,1
+Indeck-Yerkes Energy Center,50451,1,59.9,59.9,100.0,CC_CHP,eia_digits_cc,2021-01-29,2021-01-31,1.8,0,1
+Indeck-Yerkes Energy Center,50451,1,59.9,59.9,100.0,CC_CHP,eia_digits_cc,2021-07-16,2021-07-20,3.5,0,1
+Indeck-Yerkes Energy Center,50451,1,59.9,59.9,100.0,CC_CHP,eia_digits_cc,2021-08-06,2021-08-08,1.9,0,1
+Indeck-Yerkes Energy Center,50451,1,59.9,59.9,100.0,CC_CHP,eia_digits_cc,2022-05-26,2022-05-31,4.8,0,1
+Indeck-Yerkes Energy Center,50451,1,59.9,59.9,100.0,CC_CHP,eia_digits_cc,2022-08-04,2022-08-08,3.6,0,1
+Indeck-Yerkes Energy Center,50451,1,59.9,59.9,100.0,CC_CHP,eia_digits_cc,2023-02-01,2023-02-03,1.7,0,1
+Indeck-Yerkes Energy Center,50451,1,59.9,59.9,100.0,CC_CHP,eia_digits_cc,2023-05-22,2023-05-24,1.5,0,1
+Indeck-Yerkes Energy Center,50451,1,59.9,59.9,100.0,CC_CHP,eia_digits_cc,2023-06-30,2023-07-04,3.6,0,1
+Indeck-Yerkes Energy Center,50451,1,59.9,59.9,100.0,CC_CHP,eia_digits_cc,2023-09-06,2023-09-08,1.9,0,1
+Indeck-Yerkes Energy Center,50451,1,59.9,59.9,100.0,CC_CHP,eia_digits_cc,2024-02-29,2024-03-04,3.8,0,1
+Indeck-Yerkes Energy Center,50451,1,59.9,59.9,100.0,CC_CHP,eia_digits_cc,2024-07-11,2024-07-14,2.6,0,1
+Indeck-Yerkes Energy Center,50451,1,59.9,59.9,100.0,CC_CHP,eia_digits_cc,2024-07-30,2024-08-01,1.5,0,1
+Indeck-Yerkes Energy Center,50451,1,59.9,59.9,100.0,CC_CHP,eia_digits_cc,2024-08-02,2024-08-05,2.5,0,1
+Indeck-Yerkes Energy Center,50451,1,59.9,59.9,100.0,CC_CHP,eia_digits_cc,2024-12-19,2024-12-21,2.5,0,1
+Indeck-Yerkes Energy Center,50451,1,59.9,59.9,100.0,CC_CHP,eia_digits_cc,2025-02-06,2025-02-10,3.5,0,1
+Indeck-Yerkes Energy Center,50451,1,59.9,59.9,100.0,CC_CHP,eia_digits_cc,2025-02-13,2025-02-17,4.9,0,1
+Indeck-Yerkes Energy Center,50451,1,59.9,59.9,100.0,CC_CHP,eia_digits_cc,2025-07-07,2025-07-11,3.5,0,1
+Indeck-Yerkes Energy Center,50451,1,59.9,59.9,100.0,CC_CHP,eia_digits_cc,2025-09-18,2025-09-23,4.5,0,1
+Indeck-Corinth Energy Center,50458,1,147.0,147.0,100.0,CC_CHP,eia_digits_cc,2020-01-01,2020-01-05,4.8,0,1
+Indeck-Corinth Energy Center,50458,1,147.0,147.0,100.0,CC_CHP,eia_digits_cc,2021-01-24,2021-01-28,4.1,0,1
+Indeck-Corinth Energy Center,50458,1,147.0,147.0,100.0,CC_CHP,eia_digits_cc,2021-01-29,2021-01-31,2.8,0,1
+Indeck-Corinth Energy Center,50458,1,147.0,147.0,100.0,CC_CHP,eia_digits_cc,2021-02-01,2021-02-03,1.8,0,1
+Indeck-Corinth Energy Center,50458,1,147.0,147.0,100.0,CC_CHP,eia_digits_cc,2021-03-05,2021-03-09,4.8,0,1
+Indeck-Corinth Energy Center,50458,1,147.0,147.0,100.0,CC_CHP,eia_digits_cc,2021-03-15,2021-03-16,1.1,0,1
+Indeck-Corinth Energy Center,50458,1,147.0,147.0,100.0,CC_CHP,eia_digits_cc,2021-04-01,2021-04-06,4.2,0,1
+Indeck-Corinth Energy Center,50458,1,147.0,147.0,100.0,CC_CHP,eia_digits_cc,2021-07-17,2021-07-19,1.8,0,1
+Indeck-Corinth Energy Center,50458,1,147.0,147.0,100.0,CC_CHP,eia_digits_cc,2021-10-03,2021-10-05,1.2,0,1
+Indeck-Corinth Energy Center,50458,1,147.0,147.0,100.0,CC_CHP,eia_digits_cc,2021-10-07,2021-10-11,3.4,0,1
+Indeck-Corinth Energy Center,50458,1,147.0,147.0,100.0,CC_CHP,eia_digits_cc,2021-10-14,2021-10-19,4.6,0,1
+Indeck-Corinth Energy Center,50458,1,147.0,147.0,100.0,CC_CHP,eia_digits_cc,2021-11-05,2021-11-06,1.8,0,1
+Indeck-Corinth Energy Center,50458,1,147.0,147.0,100.0,CC_CHP,eia_digits_cc,2021-11-18,2021-11-23,4.6,0,1
+Indeck-Corinth Energy Center,50458,1,147.0,147.0,100.0,CC_CHP,eia_digits_cc,2021-12-19,2021-12-21,2.9,0,1
+Indeck-Corinth Energy Center,50458,1,147.0,147.0,100.0,CC_CHP,eia_digits_cc,2022-05-27,2022-05-29,2.8,0,1
+Indeck-Corinth Energy Center,50458,1,147.0,147.0,100.0,CC_CHP,eia_digits_cc,2022-06-11,2022-06-14,3.1,0,1
+Indeck-Corinth Energy Center,50458,1,147.0,147.0,100.0,CC_CHP,eia_digits_cc,2022-10-07,2022-10-11,3.8,0,1
+Indeck-Corinth Energy Center,50458,1,147.0,147.0,100.0,CC_CHP,eia_digits_cc,2022-12-10,2022-12-12,2.5,0,1
+Indeck-Corinth Energy Center,50458,1,147.0,147.0,100.0,CC_CHP,eia_digits_cc,2022-12-21,2022-12-23,1.9,0,1
+Indeck-Corinth Energy Center,50458,1,147.0,147.0,100.0,CC_CHP,eia_digits_cc,2023-02-25,2023-03-01,4.0,0,1
+Indeck-Corinth Energy Center,50458,1,147.0,147.0,100.0,CC_CHP,eia_digits_cc,2023-05-03,2023-05-08,4.5,0,1
+Indeck-Corinth Energy Center,50458,1,147.0,147.0,100.0,CC_CHP,eia_digits_cc,2023-07-13,2023-07-15,2.2,0,1
+Indeck-Corinth Energy Center,50458,1,147.0,147.0,100.0,CC_CHP,eia_digits_cc,2023-08-17,2023-08-20,4.0,0,1
+Indeck-Corinth Energy Center,50458,1,147.0,147.0,100.0,CC_CHP,eia_digits_cc,2024-01-01,2024-01-04,3.9,0,1
+Indeck-Corinth Energy Center,50458,1,147.0,147.0,100.0,CC_CHP,eia_digits_cc,2024-08-03,2024-08-05,2.1,0,1
+Indeck-Corinth Energy Center,50458,1,147.0,147.0,100.0,CC_CHP,eia_digits_cc,2024-10-25,2024-10-28,3.0,0,1
+Indeck-Corinth Energy Center,50458,1,147.0,147.0,100.0,CC_CHP,eia_digits_cc,2024-12-10,2024-12-14,3.8,0,1
+Indeck-Corinth Energy Center,50458,1,147.0,147.0,100.0,CC_CHP,eia_digits_cc,2024-12-22,2024-12-23,1.4,0,1
+Indeck-Corinth Energy Center,50458,1,147.0,147.0,100.0,CC_CHP,eia_digits_cc,2024-12-24,2024-12-27,3.8,0,1
+Indeck-Corinth Energy Center,50458,1,147.0,147.0,100.0,CC_CHP,eia_digits_cc,2025-01-04,2025-01-07,3.1,0,1
+Indeck-Corinth Energy Center,50458,1,147.0,147.0,100.0,CC_CHP,eia_digits_cc,2025-01-19,2025-01-22,2.7,0,1
+Indeck-Corinth Energy Center,50458,1,147.0,147.0,100.0,CC_CHP,eia_digits_cc,2025-01-31,2025-02-05,4.4,0,1
+Indeck-Corinth Energy Center,50458,1,147.0,147.0,100.0,CC_CHP,eia_digits_cc,2025-02-20,2025-02-24,4.6,0,1
+Indeck-Corinth Energy Center,50458,1,147.0,147.0,100.0,CC_CHP,eia_digits_cc,2025-03-27,2025-03-31,3.7,0,1
+Indeck-Corinth Energy Center,50458,1,147.0,147.0,100.0,CC_CHP,eia_digits_cc,2025-04-22,2025-04-25,3.5,0,1
+Indeck-Corinth Energy Center,50458,1,147.0,147.0,100.0,CC_CHP,eia_digits_cc,2025-07-09,2025-07-10,1.6,0,1
+Indeck-Corinth Energy Center,50458,1,147.0,147.0,100.0,CC_CHP,eia_digits_cc,2025-09-04,2025-09-05,1.5,0,1
+Indeck-Corinth Energy Center,50458,1,147.0,147.0,100.0,CC_CHP,eia_digits_cc,2025-09-10,2025-09-15,4.5,0,1
+Indeck-Corinth Energy Center,50458,1,147.0,147.0,100.0,CC_CHP,eia_digits_cc,2025-12-29,2025-12-31,2.6,0,1
+Riverbay Corp. - Co-Op City,52168,00004,12.0,25.0,48.0,CC_CHP,observed_peak,2019-05-14,2019-05-15,1.2,1,4
+Riverbay Corp. - Co-Op City,52168,00004,13.0,26.0,50.0,CC_CHP,observed_peak,2020-07-29,2020-08-02,4.0,1,4
+Riverbay Corp. - Co-Op City,52168,00004,13.0,26.0,50.0,CC_CHP,observed_peak,2020-08-24,2020-08-28,4.0,1,4
+Rensselaer Cogen,54034,1GTDBS,88.2,88.2,100.0,CC_REGULAR,eia_digits_cc,2021-02-05,2021-02-10,4.2,0,1
+Rensselaer Cogen,54034,1GTDBS,88.2,88.2,100.0,CC_REGULAR,eia_digits_cc,2021-06-08,2021-06-10,1.2,0,1
+Rensselaer Cogen,54034,1GTDBS,88.2,88.2,100.0,CC_REGULAR,eia_digits_cc,2022-03-10,2022-03-12,2.1,0,1
+Rensselaer Cogen,54034,1GTDBS,88.2,88.2,100.0,CC_REGULAR,eia_digits_cc,2022-04-03,2022-04-07,3.6,0,1
+Rensselaer Cogen,54034,1GTDBS,88.2,88.2,100.0,CC_REGULAR,eia_digits_cc,2022-08-02,2022-08-05,2.5,0,1
+Rensselaer Cogen,54034,1GTDBS,88.2,88.2,100.0,CC_REGULAR,eia_digits_cc,2022-08-05,2022-08-08,2.2,0,1
+Rensselaer Cogen,54034,1GTDBS,88.2,88.2,100.0,CC_REGULAR,eia_digits_cc,2023-07-08,2023-07-12,4.3,0,1
+Rensselaer Cogen,54034,1GTDBS,88.2,88.2,100.0,CC_REGULAR,eia_digits_cc,2023-07-13,2023-07-17,3.4,0,1
+Rensselaer Cogen,54034,1GTDBS,88.2,88.2,100.0,CC_REGULAR,eia_digits_cc,2025-12-15,2025-12-20,4.8,0,1
+Rensselaer Cogen,54034,1GTDBS,88.2,88.2,100.0,CC_REGULAR,eia_digits_cc,2025-12-28,2025-12-31,3.6,0,1
+Indeck-Olean Energy Center,54076,1,90.6,90.6,100.0,CC_CHP,eia_digits_cc,2019-01-11,2019-01-14,2.2,0,1
+Indeck-Olean Energy Center,54076,1,90.6,90.6,100.0,CC_CHP,eia_digits_cc,2019-02-25,2019-02-27,1.6,0,1
+Indeck-Olean Energy Center,54076,1,90.6,90.6,100.0,CC_CHP,eia_digits_cc,2019-02-27,2019-03-01,1.3,0,1
+Indeck-Olean Energy Center,54076,1,90.6,90.6,100.0,CC_CHP,eia_digits_cc,2019-05-17,2019-05-21,3.2,0,1
+Indeck-Olean Energy Center,54076,1,90.6,90.6,100.0,CC_CHP,eia_digits_cc,2019-07-30,2019-08-01,1.5,0,1
+Indeck-Olean Energy Center,54076,1,90.6,90.6,100.0,CC_CHP,eia_digits_cc,2019-08-16,2019-08-19,2.5,0,1
+Indeck-Olean Energy Center,54076,1,90.6,90.6,100.0,CC_CHP,eia_digits_cc,2020-04-27,2020-05-01,3.5,0,1
+Indeck-Olean Energy Center,54076,1,90.6,90.6,100.0,CC_CHP,eia_digits_cc,2020-05-05,2020-05-08,2.2,0,1
+Indeck-Olean Energy Center,54076,1,90.6,90.6,100.0,CC_CHP,eia_digits_cc,2020-05-26,2020-05-28,1.3,0,1
+Indeck-Olean Energy Center,54076,1,90.6,90.6,100.0,CC_CHP,eia_digits_cc,2020-06-05,2020-06-09,3.5,0,1
+Indeck-Olean Energy Center,54076,1,90.6,90.6,100.0,CC_CHP,eia_digits_cc,2020-07-02,2020-07-06,3.5,0,1
+Indeck-Olean Energy Center,54076,1,90.6,90.6,100.0,CC_CHP,eia_digits_cc,2020-08-25,2020-08-28,2.5,0,1
+Indeck-Olean Energy Center,54076,1,90.6,90.6,100.0,CC_CHP,eia_digits_cc,2021-07-16,2021-07-20,3.4,0,1
+Indeck-Olean Energy Center,54076,1,90.6,90.6,100.0,CC_CHP,eia_digits_cc,2022-01-15,2022-01-17,2.3,0,1
+Indeck-Olean Energy Center,54076,1,90.6,90.6,100.0,CC_CHP,eia_digits_cc,2022-01-27,2022-01-28,1.0,0,1
+Indeck-Olean Energy Center,54076,1,90.6,90.6,100.0,CC_CHP,eia_digits_cc,2022-03-01,2022-03-03,1.7,0,1
+Indeck-Olean Energy Center,54076,1,90.6,90.6,100.0,CC_CHP,eia_digits_cc,2022-07-22,2022-07-27,4.5,0,1
+Indeck-Olean Energy Center,54076,1,90.6,90.6,100.0,CC_CHP,eia_digits_cc,2022-08-05,2022-08-07,2.4,0,1
+Indeck-Olean Energy Center,54076,1,90.6,90.6,100.0,CC_CHP,eia_digits_cc,2022-08-24,2022-08-29,4.5,0,1
+Indeck-Olean Energy Center,54076,1,90.6,90.6,100.0,CC_CHP,eia_digits_cc,2022-12-13,2022-12-16,2.3,0,1
+Indeck-Olean Energy Center,54076,1,90.6,90.6,100.0,CC_CHP,eia_digits_cc,2022-12-16,2022-12-21,4.2,0,1
+Indeck-Olean Energy Center,54076,1,90.6,90.6,100.0,CC_CHP,eia_digits_cc,2022-12-24,2022-12-25,1.0,0,1
+Indeck-Olean Energy Center,54076,1,90.6,90.6,100.0,CC_CHP,eia_digits_cc,2023-02-01,2023-02-03,2.0,0,1
+Indeck-Olean Energy Center,54076,1,90.6,90.6,100.0,CC_CHP,eia_digits_cc,2023-06-30,2023-07-05,4.2,0,1
+Indeck-Olean Energy Center,54076,1,90.6,90.6,100.0,CC_CHP,eia_digits_cc,2024-06-22,2024-06-26,4.4,0,1
+Indeck-Olean Energy Center,54076,1,90.6,90.6,100.0,CC_CHP,eia_digits_cc,2024-08-03,2024-08-05,2.4,0,1
+Indeck-Olean Energy Center,54076,1,90.6,90.6,100.0,CC_CHP,eia_digits_cc,2025-02-12,2025-02-14,2.1,0,1
+Indeck-Olean Energy Center,54076,1,90.6,90.6,100.0,CC_CHP,eia_digits_cc,2025-07-08,2025-07-09,1.1,0,1
+Indeck-Olean Energy Center,54076,1,90.6,90.6,100.0,CC_CHP,eia_digits_cc,2025-07-15,2025-07-16,1.4,0,1
+Indeck-Olean Energy Center,54076,1,90.6,90.6,100.0,CC_CHP,eia_digits_cc,2025-08-16,2025-08-18,1.5,0,1
+Indeck-Olean Energy Center,54076,1,90.6,90.6,100.0,CC_CHP,eia_digits_cc,2025-09-04,2025-09-08,4.5,0,1
+Indeck-Olean Energy Center,54076,1,90.6,90.6,100.0,CC_CHP,eia_digits_cc,2025-09-18,2025-09-23,4.5,0,1
+Ticonderoga Mill,54099,000044,42.1,42.1,100.0,ST_CHP,optime_proxy,2020-09-08,2020-09-12,3.5,0,1
+Ticonderoga Mill,54099,000044,42.1,42.1,100.0,ST_CHP,optime_proxy,2020-09-24,2020-09-26,1.6,0,1
+KIAC Cogeneration,54114,GT1,60.6,121.2,50.0,CC_CHP,eia_digits_cc,2019-01-28,2019-01-30,1.9,1,2
+KIAC Cogeneration,54114,GT1,60.6,121.2,50.0,CC_CHP,eia_digits_cc,2019-05-26,2019-05-29,2.4,1,2
+KIAC Cogeneration,54114,GT1,60.6,121.2,50.0,CC_CHP,eia_digits_cc,2019-05-30,2019-06-03,3.5,1,2
+KIAC Cogeneration,54114,GT1,60.6,121.2,50.0,CC_CHP,eia_digits_cc,2019-11-14,2019-11-18,3.5,1,2
+KIAC Cogeneration,54114,GT1,60.6,121.2,50.0,CC_CHP,eia_digits_cc,2020-09-24,2020-09-25,1.4,1,2
+KIAC Cogeneration,54114,GT1,60.6,121.2,50.0,CC_CHP,eia_digits_cc,2022-01-11,2022-01-12,1.0,1,2
+KIAC Cogeneration,54114,GT1,60.6,121.2,50.0,CC_CHP,eia_digits_cc,2022-01-15,2022-01-18,3.2,1,2
+KIAC Cogeneration,54114,GT1,60.6,121.2,50.0,CC_CHP,eia_digits_cc,2022-01-29,2022-01-31,1.7,1,2
+KIAC Cogeneration,54114,GT1,60.6,121.2,50.0,CC_CHP,eia_digits_cc,2022-03-10,2022-03-12,1.9,1,2
+KIAC Cogeneration,54114,GT1,60.6,121.2,50.0,CC_CHP,eia_digits_cc,2023-02-03,2023-02-04,1.0,1,2
+KIAC Cogeneration,54114,GT1,60.6,121.2,50.0,CC_CHP,eia_digits_cc,2023-08-18,2023-08-21,2.8,1,2
+KIAC Cogeneration,54114,GT1,60.6,121.2,50.0,CC_CHP,eia_digits_cc,2023-09-09,2023-09-12,2.2,1,2
+KIAC Cogeneration,54114,GT1,60.6,121.2,50.0,CC_CHP,eia_digits_cc,2024-04-04,2024-04-06,2.0,1,2
+KIAC Cogeneration,54114,GT1,60.6,121.2,50.0,CC_CHP,eia_digits_cc,2024-04-06,2024-04-11,4.9,1,2
+KIAC Cogeneration,54114,GT1,60.6,121.2,50.0,CC_CHP,eia_digits_cc,2024-10-27,2024-11-01,4.5,1,2
+KIAC Cogeneration,54114,GT1,60.6,121.2,50.0,CC_CHP,eia_digits_cc,2025-05-02,2025-05-04,1.8,1,2
+KIAC Cogeneration,54114,GT2,60.6,121.2,50.0,CC_CHP,eia_digits_cc,2019-01-20,2019-01-22,2.5,1,2
+KIAC Cogeneration,54114,GT2,60.6,121.2,50.0,CC_CHP,eia_digits_cc,2020-10-15,2020-10-19,3.5,1,2
+KIAC Cogeneration,54114,GT2,60.6,121.2,50.0,CC_CHP,eia_digits_cc,2020-10-27,2020-10-29,1.3,1,2
+KIAC Cogeneration,54114,GT2,60.6,121.2,50.0,CC_CHP,eia_digits_cc,2020-12-08,2020-12-09,1.0,1,2
+KIAC Cogeneration,54114,GT2,60.6,121.2,50.0,CC_CHP,eia_digits_cc,2020-12-09,2020-12-12,2.7,1,2
+KIAC Cogeneration,54114,GT2,60.6,121.2,50.0,CC_CHP,eia_digits_cc,2021-06-25,2021-06-28,2.4,1,2
+KIAC Cogeneration,54114,GT2,60.6,121.2,50.0,CC_CHP,eia_digits_cc,2021-09-17,2021-09-19,1.6,1,2
+KIAC Cogeneration,54114,GT2,60.6,121.2,50.0,CC_CHP,eia_digits_cc,2021-11-14,2021-11-16,2.0,1,2
+KIAC Cogeneration,54114,GT2,60.6,121.2,50.0,CC_CHP,eia_digits_cc,2022-05-20,2022-05-22,1.7,1,2
+KIAC Cogeneration,54114,GT2,60.6,121.2,50.0,CC_CHP,eia_digits_cc,2022-12-23,2022-12-24,1.7,1,2
+KIAC Cogeneration,54114,GT2,60.6,121.2,50.0,CC_CHP,eia_digits_cc,2022-12-26,2022-12-28,1.7,1,2
+KIAC Cogeneration,54114,GT2,60.6,121.2,50.0,CC_CHP,eia_digits_cc,2023-03-31,2023-04-01,1.5,1,2
+KIAC Cogeneration,54114,GT2,60.6,121.2,50.0,CC_CHP,eia_digits_cc,2025-01-18,2025-01-21,3.0,1,2
+KIAC Cogeneration,54114,GT2,60.6,121.2,50.0,CC_CHP,eia_digits_cc,2025-01-21,2025-01-22,1.5,1,2
+KIAC Cogeneration,54114,GT2,60.6,121.2,50.0,CC_CHP,eia_digits_cc,2025-04-12,2025-04-13,1.3,1,2
+KIAC Cogeneration,54114,GT2,60.6,121.2,50.0,CC_CHP,eia_digits_cc,2025-05-15,2025-05-17,1.4,1,2
+Independence,54547,1,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2019-05-17,2019-05-21,3.3,3,4
+Independence,54547,1,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2019-05-31,2019-06-04,4.1,3,4
+Independence,54547,1,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2020-02-26,2020-02-29,2.5,3,4
+Independence,54547,1,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2020-04-02,2020-04-06,3.2,3,4
+Independence,54547,1,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2020-09-23,2020-09-25,1.2,3,4
+Independence,54547,1,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2020-10-28,2020-10-28,1.0,3,4
+Independence,54547,1,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2020-11-13,2020-11-17,4.2,3,4
+Independence,54547,1,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2020-12-09,2020-12-10,1.2,3,4
+Independence,54547,1,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2021-01-29,2021-01-31,2.7,3,4
+Independence,54547,1,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2022-03-12,2022-03-17,4.9,3,4
+Independence,54547,1,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2022-09-18,2022-09-21,2.9,3,4
+Independence,54547,1,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2022-10-24,2022-10-26,1.6,3,4
+Independence,54547,1,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2022-12-08,2022-12-12,4.1,3,4
+Independence,54547,1,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2023-03-13,2023-03-15,1.8,3,4
+Independence,54547,1,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2023-10-05,2023-10-09,3.5,3,4
+Independence,54547,1,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2024-05-20,2024-05-22,1.2,3,4
+Independence,54547,1,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2024-11-09,2024-11-13,4.9,3,4
+Independence,54547,1,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2025-09-15,2025-09-17,2.1,3,4
+Independence,54547,1,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2025-09-21,2025-09-24,2.6,3,4
+Independence,54547,2,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2019-02-27,2019-03-01,2.1,3,4
+Independence,54547,2,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2019-04-20,2019-04-25,4.2,3,4
+Independence,54547,2,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2019-06-06,2019-06-08,1.5,3,4
+Independence,54547,2,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2019-09-10,2019-09-14,3.8,3,4
+Independence,54547,2,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2020-06-05,2020-06-09,3.2,3,4
+Independence,54547,2,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2020-10-28,2020-10-29,1.1,3,4
+Independence,54547,2,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2020-12-08,2020-12-10,1.2,3,4
+Independence,54547,2,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2021-01-29,2021-01-31,2.8,3,4
+Independence,54547,2,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2022-10-25,2022-10-27,1.7,3,4
+Independence,54547,2,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2023-02-27,2023-02-28,1.2,3,4
+Independence,54547,2,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2023-05-02,2023-05-05,2.2,3,4
+Independence,54547,2,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2024-05-19,2024-05-23,4.8,3,4
+Independence,54547,2,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2025-05-15,2025-05-20,4.5,3,4
+Independence,54547,2,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2025-09-15,2025-09-17,2.3,3,4
+Independence,54547,2,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2025-09-17,2025-09-20,2.5,3,4
+Independence,54547,2,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2025-10-05,2025-10-07,2.1,3,4
+Independence,54547,3,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2019-02-27,2019-03-01,1.1,3,4
+Independence,54547,3,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2020-04-02,2020-04-06,3.2,3,4
+Independence,54547,3,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2020-06-23,2020-06-26,2.9,3,4
+Independence,54547,3,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2020-11-09,2020-11-11,2.2,3,4
+Independence,54547,3,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2020-11-13,2020-11-17,4.0,3,4
+Independence,54547,3,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2021-01-29,2021-01-31,2.0,3,4
+Independence,54547,3,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2021-05-21,2021-05-23,1.4,3,4
+Independence,54547,3,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2024-05-24,2024-05-25,1.4,3,4
+Independence,54547,3,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2024-08-19,2024-08-21,2.5,3,4
+Independence,54547,3,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2025-05-11,2025-05-14,4.0,3,4
+Independence,54547,3,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2025-09-15,2025-09-19,4.1,3,4
+Independence,54547,3,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2025-09-19,2025-09-23,3.8,3,4
+Independence,54547,4,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2019-05-17,2019-05-22,4.1,3,4
+Independence,54547,4,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2020-02-29,2020-03-03,3.2,3,4
+Independence,54547,4,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2020-04-01,2020-04-06,4.1,3,4
+Independence,54547,4,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2020-05-06,2020-05-11,4.2,3,4
+Independence,54547,4,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2020-06-23,2020-06-26,3.0,3,4
+Independence,54547,4,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2020-09-03,2020-09-04,1.1,3,4
+Independence,54547,4,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2020-11-13,2020-11-17,4.3,3,4
+Independence,54547,4,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2020-12-08,2020-12-09,1.1,3,4
+Independence,54547,4,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2020-12-10,2020-12-15,4.5,3,4
+Independence,54547,4,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2021-01-29,2021-01-31,2.6,3,4
+Independence,54547,4,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2021-05-22,2021-05-26,3.4,3,4
+Independence,54547,4,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2021-06-02,2021-06-07,4.4,3,4
+Independence,54547,4,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2021-07-17,2021-07-18,1.2,3,4
+Independence,54547,4,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2021-09-15,2021-09-17,1.3,3,4
+Independence,54547,4,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2021-09-17,2021-09-20,2.3,3,4
+Independence,54547,4,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2021-11-05,2021-11-10,4.5,3,4
+Independence,54547,4,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2022-03-07,2022-03-10,2.2,3,4
+Independence,54547,4,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2022-03-10,2022-03-13,3.1,3,4
+Independence,54547,4,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2022-03-30,2022-04-03,4.2,3,4
+Independence,54547,4,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2022-04-05,2022-04-07,1.5,3,4
+Independence,54547,4,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2022-06-08,2022-06-10,1.2,3,4
+Independence,54547,4,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2022-06-10,2022-06-14,3.4,3,4
+Independence,54547,4,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2023-05-26,2023-05-31,4.6,3,4
+Independence,54547,4,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2024-05-17,2024-05-20,3.0,3,4
+Independence,54547,4,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2024-05-21,2024-05-23,1.6,3,4
+Independence,54547,4,289.4,1157.8,25.0,CC_CHP,eia_exact_cc,2025-05-11,2025-05-15,4.5,3,4
+"Saranac Power Partners, LP",54574,00001,158.0,309.0,51.1,CC_REGULAR,observed_peak,2019-03-08,2019-03-11,3.0,1,2
+"Saranac Power Partners, LP",54574,00001,156.0,291.0,53.6,CC_REGULAR,observed_peak,2020-01-13,2020-01-17,4.5,1,2
+"Saranac Power Partners, LP",54574,00001,156.0,291.0,53.6,CC_REGULAR,observed_peak,2020-01-17,2020-01-20,2.6,1,2
+"Saranac Power Partners, LP",54574,00001,156.0,291.0,53.6,CC_REGULAR,observed_peak,2020-01-20,2020-01-25,4.2,1,2
+"Saranac Power Partners, LP",54574,00001,156.0,291.0,53.6,CC_REGULAR,observed_peak,2020-03-11,2020-03-13,1.1,1,2
+"Saranac Power Partners, LP",54574,00001,156.0,301.0,51.8,CC_REGULAR,observed_peak,2021-01-25,2021-01-29,3.7,1,2
+"Saranac Power Partners, LP",54574,00001,156.0,301.0,51.8,CC_REGULAR,observed_peak,2021-01-29,2021-02-01,2.2,1,2
+"Saranac Power Partners, LP",54574,00001,136.0,268.0,50.7,CC_REGULAR,observed_peak,2022-01-14,2022-01-18,3.6,1,2
+"Saranac Power Partners, LP",54574,00001,136.0,268.0,50.7,CC_REGULAR,observed_peak,2022-01-18,2022-01-21,2.6,1,2
+"Saranac Power Partners, LP",54574,00001,136.0,268.0,50.7,CC_REGULAR,observed_peak,2022-02-27,2022-03-03,3.2,1,2
+"Saranac Power Partners, LP",54574,00001,136.0,268.0,50.7,CC_REGULAR,observed_peak,2022-04-04,2022-04-06,1.7,1,2
+"Saranac Power Partners, LP",54574,00001,136.0,268.0,50.7,CC_REGULAR,observed_peak,2022-11-17,2022-11-21,3.3,1,2
+"Saranac Power Partners, LP",54574,00001,152.0,293.0,51.9,CC_REGULAR,observed_peak,2023-02-24,2023-02-27,2.8,1,2
+"Saranac Power Partners, LP",54574,00001,149.0,286.0,52.1,CC_REGULAR,observed_peak,2024-03-20,2024-03-21,1.5,1,2
+"Saranac Power Partners, LP",54574,00001,149.0,286.0,52.1,CC_REGULAR,observed_peak,2024-04-03,2024-04-04,1.1,1,2
+"Saranac Power Partners, LP",54574,00001,149.0,286.0,52.1,CC_REGULAR,observed_peak,2024-04-08,2024-04-13,4.7,1,2
+"Saranac Power Partners, LP",54574,00001,149.0,286.0,52.1,CC_REGULAR,observed_peak,2024-06-13,2024-06-17,4.2,1,2
+"Saranac Power Partners, LP",54574,00001,149.0,286.0,52.1,CC_REGULAR,observed_peak,2024-08-15,2024-08-16,1.0,1,2
+"Saranac Power Partners, LP",54574,00001,149.0,286.0,52.1,CC_REGULAR,observed_peak,2024-08-18,2024-08-19,2.0,1,2
+"Saranac Power Partners, LP",54574,00001,149.0,286.0,52.1,CC_REGULAR,observed_peak,2024-08-24,2024-08-27,2.6,1,2
+"Saranac Power Partners, LP",54574,00001,149.0,286.0,52.1,CC_REGULAR,observed_peak,2024-10-09,2024-10-14,4.5,1,2
+"Saranac Power Partners, LP",54574,00001,149.0,286.0,52.1,CC_REGULAR,observed_peak,2024-10-18,2024-10-19,1.0,1,2
+"Saranac Power Partners, LP",54574,00001,141.0,301.0,46.8,CC_REGULAR,observed_peak,2025-10-24,2025-10-26,2.0,1,2
+"Saranac Power Partners, LP",54574,00001,141.0,301.0,46.8,CC_REGULAR,observed_peak,2025-12-05,2025-12-07,2.2,1,2
+"Saranac Power Partners, LP",54574,00001,141.0,301.0,46.8,CC_REGULAR,observed_peak,2025-12-08,2025-12-11,3.2,1,2
+"Saranac Power Partners, LP",54574,00001,141.0,301.0,46.8,CC_REGULAR,observed_peak,2025-12-27,2025-12-31,3.6,1,2
+"Saranac Power Partners, LP",54574,00002,132.0,268.0,49.3,CC_REGULAR,observed_peak,2022-12-22,2022-12-26,3.8,1,2
+"Saranac Power Partners, LP",54574,00002,141.0,293.0,48.1,CC_REGULAR,observed_peak,2023-09-08,2023-09-11,2.3,1,2
+"Saranac Power Partners, LP",54574,00002,137.0,286.0,47.9,CC_REGULAR,observed_peak,2024-09-13,2024-09-15,2.2,1,2
+"Saranac Power Partners, LP",54574,00002,137.0,286.0,47.9,CC_REGULAR,observed_peak,2024-10-24,2024-10-27,2.6,1,2
+"Saranac Power Partners, LP",54574,00002,137.0,286.0,47.9,CC_REGULAR,observed_peak,2024-10-30,2024-11-03,4.0,1,2
+"Saranac Power Partners, LP",54574,00002,160.0,301.0,53.2,CC_REGULAR,observed_peak,2025-02-17,2025-02-19,2.7,1,2
+"Saranac Power Partners, LP",54574,00002,160.0,301.0,53.2,CC_REGULAR,observed_peak,2025-09-13,2025-09-17,3.5,1,2
+"Saranac Power Partners, LP",54574,00002,160.0,301.0,53.2,CC_REGULAR,observed_peak,2025-09-18,2025-09-22,4.0,1,2
+"Saranac Power Partners, LP",54574,00002,160.0,301.0,53.2,CC_REGULAR,observed_peak,2025-11-15,2025-11-18,4.0,1,2
+Brooklyn Navy Yard Cogeneration,54914,1,120.0,241.0,49.8,CC_CHP,observed_peak,2021-06-08,2021-06-11,2.7,1,2
+Brooklyn Navy Yard Cogeneration,54914,2,120.0,240.0,50.0,CC_CHP,observed_peak,2022-01-07,2022-01-11,4.5,1,2
+Brooklyn Navy Yard Cogeneration,54914,2,120.0,240.0,50.0,CC_CHP,observed_peak,2022-10-11,2022-10-15,4.0,1,2
+Astoria Energy,55375,CT1,297.5,595.0,50.0,CC_REGULAR,eia_exact_cc,2021-03-07,2021-03-09,1.5,1,2
+Astoria Energy,55375,CT1,297.5,595.0,50.0,CC_REGULAR,eia_exact_cc,2022-01-15,2022-01-17,2.3,1,2
+Astoria Energy,55375,CT2,297.5,595.0,50.0,CC_REGULAR,eia_exact_cc,2019-06-28,2019-06-29,1.2,1,2
+Astoria Energy,55375,CT2,297.5,595.0,50.0,CC_REGULAR,eia_exact_cc,2019-11-13,2019-11-15,1.2,1,2
+Astoria Energy,55375,CT2,297.5,595.0,50.0,CC_REGULAR,eia_exact_cc,2020-02-14,2020-02-15,1.0,1,2
+Astoria Energy,55375,CT2,297.5,595.0,50.0,CC_REGULAR,eia_exact_cc,2021-03-07,2021-03-09,1.7,1,2
+Astoria Energy,55375,CT2,297.5,595.0,50.0,CC_REGULAR,eia_exact_cc,2022-06-13,2022-06-18,4.9,1,2
+Athens Generating Company,55405,1,390.0,1160.0,33.6,CC_REGULAR,observed_peak,2019-05-24,2019-05-28,4.1,2,3
+Athens Generating Company,55405,1,395.0,1156.0,34.2,CC_REGULAR,observed_peak,2020-03-12,2020-03-14,2.1,2,3
+Athens Generating Company,55405,1,395.0,1156.0,34.2,CC_REGULAR,observed_peak,2020-09-24,2020-09-27,3.2,2,3
+Athens Generating Company,55405,1,380.0,1139.0,33.4,CC_REGULAR,observed_peak,2023-05-10,2023-05-12,1.5,2,3
+Athens Generating Company,55405,1,380.0,1139.0,33.4,CC_REGULAR,observed_peak,2023-09-09,2023-09-13,3.2,2,3
+Athens Generating Company,55405,1,381.0,1133.0,33.6,CC_REGULAR,observed_peak,2025-05-09,2025-05-14,4.1,2,3
+Athens Generating Company,55405,2,378.0,1160.0,32.6,CC_REGULAR,observed_peak,2019-09-18,2019-09-23,4.5,2,3
+Athens Generating Company,55405,2,378.0,1160.0,32.6,CC_REGULAR,observed_peak,2019-11-11,2019-11-15,3.4,2,3
+Athens Generating Company,55405,2,374.0,1156.0,32.4,CC_REGULAR,observed_peak,2020-06-06,2020-06-10,4.1,2,3
+Athens Generating Company,55405,2,372.0,1141.0,32.6,CC_REGULAR,observed_peak,2021-05-22,2021-05-24,2.5,2,3
+Athens Generating Company,55405,2,372.0,1141.0,32.6,CC_REGULAR,observed_peak,2021-05-25,2021-05-27,1.5,2,3
+Athens Generating Company,55405,2,372.0,1141.0,32.6,CC_REGULAR,observed_peak,2021-06-25,2021-06-28,2.2,2,3
+Athens Generating Company,55405,2,379.0,1134.0,33.4,CC_REGULAR,observed_peak,2024-12-01,2024-12-05,4.2,2,3
+Athens Generating Company,55405,3,392.0,1160.0,33.8,CC_REGULAR,observed_peak,2019-06-23,2019-06-27,3.9,2,3
+Athens Generating Company,55405,3,392.0,1160.0,33.8,CC_REGULAR,observed_peak,2019-06-27,2019-07-02,4.8,2,3
+Athens Generating Company,55405,3,386.0,1142.0,33.8,CC_REGULAR,observed_peak,2022-03-27,2022-03-29,2.4,2,3
+Athens Generating Company,55405,3,386.0,1142.0,33.8,CC_REGULAR,observed_peak,2022-09-19,2022-09-21,1.9,2,3
+Athens Generating Company,55405,3,379.0,1139.0,33.3,CC_REGULAR,observed_peak,2023-11-29,2023-12-01,1.7,2,3
+Athens Generating Company,55405,3,378.0,1133.0,33.4,CC_REGULAR,observed_peak,2025-03-21,2025-03-24,2.4,2,3
+Athens Generating Company,55405,3,378.0,1133.0,33.4,CC_REGULAR,observed_peak,2025-06-03,2025-06-05,1.1,2,3
+Athens Generating Company,55405,3,378.0,1133.0,33.4,CC_REGULAR,observed_peak,2025-10-23,2025-10-24,1.2,2,3
+Athens Generating Company,55405,3,378.0,1133.0,33.4,CC_REGULAR,observed_peak,2025-12-14,2025-12-18,4.2,2,3
+Pinelawn Power,56188,00001,80.0,80.0,100.0,CC_REGULAR,observed_peak,2019-01-12,2019-01-15,3.7,0,1
+Pinelawn Power,56188,00001,80.0,80.0,100.0,CC_REGULAR,observed_peak,2019-01-15,2019-01-17,1.8,0,1
+Pinelawn Power,56188,00001,80.0,80.0,100.0,CC_REGULAR,observed_peak,2019-01-17,2019-01-21,3.7,0,1
+Pinelawn Power,56188,00001,80.0,80.0,100.0,CC_REGULAR,observed_peak,2019-01-21,2019-01-24,2.8,0,1
+Pinelawn Power,56188,00001,80.0,80.0,100.0,CC_REGULAR,observed_peak,2019-01-25,2019-01-30,4.3,0,1
+Pinelawn Power,56188,00001,80.0,80.0,100.0,CC_REGULAR,observed_peak,2019-02-09,2019-02-12,2.6,0,1
+Pinelawn Power,56188,00001,80.0,80.0,100.0,CC_REGULAR,observed_peak,2019-03-14,2019-03-19,4.7,0,1
+Pinelawn Power,56188,00001,80.0,80.0,100.0,CC_REGULAR,observed_peak,2019-04-18,2019-04-23,4.8,0,1
+Pinelawn Power,56188,00001,80.0,80.0,100.0,CC_REGULAR,observed_peak,2019-07-19,2019-07-20,1.0,0,1
+Pinelawn Power,56188,00001,80.0,80.0,100.0,CC_REGULAR,observed_peak,2019-11-16,2019-11-18,1.8,0,1
+Pinelawn Power,56188,00001,80.0,80.0,100.0,CC_REGULAR,observed_peak,2019-12-03,2019-12-04,1.7,0,1
+Pinelawn Power,56188,00001,80.0,80.0,100.0,CC_REGULAR,observed_peak,2020-02-28,2020-03-02,2.4,0,1
+Pinelawn Power,56188,00001,80.0,80.0,100.0,CC_REGULAR,observed_peak,2020-03-04,2020-03-07,2.8,0,1
+Pinelawn Power,56188,00001,80.0,80.0,100.0,CC_REGULAR,observed_peak,2020-03-14,2020-03-17,3.7,0,1
+Pinelawn Power,56188,00001,80.0,80.0,100.0,CC_REGULAR,observed_peak,2020-03-20,2020-03-24,3.7,0,1
+Pinelawn Power,56188,00001,80.0,80.0,100.0,CC_REGULAR,observed_peak,2020-04-27,2020-04-29,2.6,0,1
+Pinelawn Power,56188,00001,80.0,80.0,100.0,CC_REGULAR,observed_peak,2020-05-07,2020-05-09,1.8,0,1
+Pinelawn Power,56188,00001,80.0,80.0,100.0,CC_REGULAR,observed_peak,2020-05-26,2020-05-28,2.3,0,1
+Pinelawn Power,56188,00001,80.0,80.0,100.0,CC_REGULAR,observed_peak,2020-11-13,2020-11-17,4.5,0,1
+Pinelawn Power,56188,00001,81.0,81.0,100.0,CC_REGULAR,observed_peak,2021-04-20,2021-04-22,2.6,0,1
+Pinelawn Power,56188,00001,80.0,80.0,100.0,CC_REGULAR,observed_peak,2022-01-01,2022-01-04,3.4,0,1
+Pinelawn Power,56188,00001,80.0,80.0,100.0,CC_REGULAR,observed_peak,2022-04-23,2022-04-26,2.5,0,1
+Pinelawn Power,56188,00001,80.0,80.0,100.0,CC_REGULAR,observed_peak,2022-11-01,2022-11-04,2.3,0,1
+Pinelawn Power,56188,00001,81.0,81.0,100.0,CC_REGULAR,observed_peak,2023-01-13,2023-01-16,2.5,0,1
+Pinelawn Power,56188,00001,81.0,81.0,100.0,CC_REGULAR,observed_peak,2023-03-09,2023-03-13,3.3,0,1
+Pinelawn Power,56188,00001,81.0,81.0,100.0,CC_REGULAR,observed_peak,2023-03-25,2023-03-29,3.5,0,1
+Pinelawn Power,56188,00001,81.0,81.0,100.0,CC_REGULAR,observed_peak,2023-04-15,2023-04-18,2.6,0,1
+Pinelawn Power,56188,00001,81.0,81.0,100.0,CC_REGULAR,observed_peak,2023-04-18,2023-04-21,2.7,0,1
+Pinelawn Power,56188,00001,81.0,81.0,100.0,CC_REGULAR,observed_peak,2023-11-08,2023-11-12,3.8,0,1
+Pinelawn Power,56188,00001,81.0,81.0,100.0,CC_REGULAR,observed_peak,2023-11-30,2023-12-05,4.5,0,1
+Pinelawn Power,56188,00001,81.0,81.0,100.0,CC_REGULAR,observed_peak,2023-12-06,2023-12-08,1.2,0,1
+Pinelawn Power,56188,00001,81.0,81.0,100.0,CC_REGULAR,observed_peak,2023-12-20,2023-12-22,1.6,0,1
+Pinelawn Power,56188,00001,80.0,80.0,100.0,CC_REGULAR,observed_peak,2024-09-14,2024-09-16,1.6,0,1
+Pinelawn Power,56188,00001,80.0,80.0,100.0,CC_REGULAR,observed_peak,2024-11-14,2024-11-18,3.7,0,1
+Pinelawn Power,56188,00001,80.0,80.0,100.0,CC_REGULAR,observed_peak,2025-01-03,2025-01-07,3.6,0,1
+Pinelawn Power,56188,00001,80.0,80.0,100.0,CC_REGULAR,observed_peak,2025-04-09,2025-04-11,2.1,0,1
+Pinelawn Power,56188,00001,80.0,80.0,100.0,CC_REGULAR,observed_peak,2025-05-09,2025-05-12,3.2,0,1
+Pinelawn Power,56188,00001,80.0,80.0,100.0,CC_REGULAR,observed_peak,2025-07-05,2025-07-09,3.8,0,1
+Pinelawn Power,56188,00001,80.0,80.0,100.0,CC_REGULAR,observed_peak,2025-07-09,2025-07-14,4.4,0,1
+Poletti 500 MW CC,56196,CTG7A,318.0,638.0,49.8,CC_REGULAR,observed_peak,2019-03-25,2019-03-29,3.2,1,2
+Poletti 500 MW CC,56196,CTG7A,318.0,638.0,49.8,CC_REGULAR,observed_peak,2019-04-10,2019-04-11,1.7,1,2
+Poletti 500 MW CC,56196,CTG7A,285.0,565.0,50.4,CC_REGULAR,observed_peak,2020-01-19,2020-01-22,2.3,1,2
+Poletti 500 MW CC,56196,CTG7A,285.0,565.0,50.4,CC_REGULAR,observed_peak,2020-03-30,2020-04-03,3.2,1,2
+Poletti 500 MW CC,56196,CTG7A,285.0,565.0,50.4,CC_REGULAR,observed_peak,2020-05-05,2020-05-08,3.1,1,2
+Poletti 500 MW CC,56196,CTG7A,285.0,565.0,50.4,CC_REGULAR,observed_peak,2020-06-06,2020-06-09,3.1,1,2
+Poletti 500 MW CC,56196,CTG7A,285.0,565.0,50.4,CC_REGULAR,observed_peak,2020-10-18,2020-10-22,3.9,1,2
+Poletti 500 MW CC,56196,CTG7A,285.0,565.0,50.4,CC_REGULAR,observed_peak,2020-12-20,2020-12-21,1.8,1,2
+Poletti 500 MW CC,56196,CTG7A,284.0,568.0,50.0,CC_REGULAR,observed_peak,2021-02-08,2021-02-10,2.5,1,2
+Poletti 500 MW CC,56196,CTG7A,284.0,568.0,50.0,CC_REGULAR,observed_peak,2021-02-10,2021-02-14,4.1,1,2
+Poletti 500 MW CC,56196,CTG7A,350.0,700.0,50.0,CC_REGULAR,observed_peak,2022-01-27,2022-01-29,1.4,1,2
+Poletti 500 MW CC,56196,CTG7A,350.0,700.0,50.0,CC_REGULAR,observed_peak,2022-03-02,2022-03-05,2.9,1,2
+Poletti 500 MW CC,56196,CTG7A,350.0,700.0,50.0,CC_REGULAR,observed_peak,2022-05-01,2022-05-03,1.4,1,2
+Poletti 500 MW CC,56196,CTG7A,350.0,700.0,50.0,CC_REGULAR,observed_peak,2022-08-05,2022-08-09,3.6,1,2
+Poletti 500 MW CC,56196,CTG7A,350.0,657.0,53.3,CC_REGULAR,observed_peak,2023-01-09,2023-01-13,3.2,1,2
+Poletti 500 MW CC,56196,CTG7A,350.0,657.0,53.3,CC_REGULAR,observed_peak,2023-01-16,2023-01-19,2.2,1,2
+Poletti 500 MW CC,56196,CTG7A,350.0,700.0,50.0,CC_REGULAR,observed_peak,2024-02-14,2024-02-15,1.4,1,2
+Poletti 500 MW CC,56196,CTG7A,350.0,700.0,50.0,CC_REGULAR,observed_peak,2024-04-29,2024-04-30,1.1,1,2
+Poletti 500 MW CC,56196,CTG7A,350.0,700.0,50.0,CC_REGULAR,observed_peak,2024-12-21,2024-12-23,1.6,1,2
+Poletti 500 MW CC,56196,CTG7A,286.0,571.0,50.1,CC_REGULAR,observed_peak,2025-01-23,2025-01-26,2.7,1,2
+Poletti 500 MW CC,56196,CTG7B,320.0,638.0,50.2,CC_REGULAR,observed_peak,2019-01-22,2019-01-24,1.9,1,2
+Poletti 500 MW CC,56196,CTG7B,320.0,638.0,50.2,CC_REGULAR,observed_peak,2019-03-04,2019-03-06,1.5,1,2
+Poletti 500 MW CC,56196,CTG7B,320.0,638.0,50.2,CC_REGULAR,observed_peak,2019-04-10,2019-04-11,1.5,1,2
+Poletti 500 MW CC,56196,CTG7B,280.0,565.0,49.6,CC_REGULAR,observed_peak,2020-01-15,2020-01-18,2.5,1,2
+Poletti 500 MW CC,56196,CTG7B,280.0,565.0,49.6,CC_REGULAR,observed_peak,2020-06-06,2020-06-09,3.2,1,2
+Poletti 500 MW CC,56196,CTG7B,280.0,565.0,49.6,CC_REGULAR,observed_peak,2020-12-16,2020-12-18,2.5,1,2
+Poletti 500 MW CC,56196,CTG7B,284.0,568.0,50.0,CC_REGULAR,observed_peak,2021-02-12,2021-02-14,2.0,1,2
+Poletti 500 MW CC,56196,CTG7B,284.0,568.0,50.0,CC_REGULAR,observed_peak,2021-02-19,2021-02-20,1.2,1,2
+Poletti 500 MW CC,56196,CTG7B,350.0,700.0,50.0,CC_REGULAR,observed_peak,2022-02-12,2022-02-15,3.7,1,2
+Poletti 500 MW CC,56196,CTG7B,350.0,700.0,50.0,CC_REGULAR,observed_peak,2022-02-25,2022-02-28,3.9,1,2
+Poletti 500 MW CC,56196,CTG7B,350.0,700.0,50.0,CC_REGULAR,observed_peak,2022-11-12,2022-11-15,3.2,1,2
+Poletti 500 MW CC,56196,CTG7B,307.0,657.0,46.7,CC_REGULAR,observed_peak,2023-02-24,2023-02-28,4.0,1,2
+Poletti 500 MW CC,56196,CTG7B,307.0,657.0,46.7,CC_REGULAR,observed_peak,2023-11-28,2023-11-30,1.7,1,2
+Poletti 500 MW CC,56196,CTG7B,285.0,571.0,49.9,CC_REGULAR,observed_peak,2025-01-06,2025-01-08,1.6,1,2
+Poletti 500 MW CC,56196,CTG7B,285.0,571.0,49.9,CC_REGULAR,observed_peak,2025-02-10,2025-02-13,3.0,1,2
+Caithness Long Island Energy Center,56234,0001,373.0,373.0,100.0,CC_REGULAR,observed_peak,2019-04-10,2019-04-13,3.3,0,1
+Caithness Long Island Energy Center,56234,0001,373.0,373.0,100.0,CC_REGULAR,observed_peak,2020-07-01,2020-07-03,2.1,0,1
+Caithness Long Island Energy Center,56234,0001,373.0,373.0,100.0,CC_REGULAR,observed_peak,2020-10-26,2020-10-29,2.8,0,1
+Caithness Long Island Energy Center,56234,0001,369.0,369.0,100.0,CC_REGULAR,observed_peak,2022-01-29,2022-01-30,1.0,0,1
+Caithness Long Island Energy Center,56234,0001,371.0,371.0,100.0,CC_REGULAR,observed_peak,2025-08-11,2025-08-15,4.0,0,1
+"Empire Generating Co, LLC",56259,CT-1,327.0,654.0,50.0,CC_CHP,observed_peak,2019-01-14,2019-01-17,2.7,1,2
+"Empire Generating Co, LLC",56259,CT-1,327.0,654.0,50.0,CC_CHP,observed_peak,2019-01-18,2019-01-23,4.3,1,2
+"Empire Generating Co, LLC",56259,CT-1,327.0,654.0,50.0,CC_CHP,observed_peak,2019-01-29,2019-01-31,1.7,1,2
+"Empire Generating Co, LLC",56259,CT-1,327.0,654.0,50.0,CC_CHP,observed_peak,2019-02-01,2019-02-02,1.2,1,2
+"Empire Generating Co, LLC",56259,CT-1,327.0,654.0,50.0,CC_CHP,observed_peak,2019-02-27,2019-03-02,2.6,1,2
+"Empire Generating Co, LLC",56259,CT-1,327.0,654.0,50.0,CC_CHP,observed_peak,2019-12-17,2019-12-19,2.2,1,2
+"Empire Generating Co, LLC",56259,CT-1,324.0,648.0,50.0,CC_CHP,observed_peak,2020-04-16,2020-04-20,3.2,1,2
+"Empire Generating Co, LLC",56259,CT-1,324.0,648.0,50.0,CC_CHP,observed_peak,2020-04-23,2020-04-24,1.3,1,2
+"Empire Generating Co, LLC",56259,CT-1,324.0,648.0,50.0,CC_CHP,observed_peak,2020-06-01,2020-06-06,4.6,1,2
+"Empire Generating Co, LLC",56259,CT-1,324.0,648.0,50.0,CC_CHP,observed_peak,2020-10-26,2020-10-29,2.2,1,2
+"Empire Generating Co, LLC",56259,CT-1,324.0,648.0,50.0,CC_CHP,observed_peak,2020-10-29,2020-11-02,3.2,1,2
+"Empire Generating Co, LLC",56259,CT-1,324.0,648.0,50.0,CC_CHP,observed_peak,2020-11-03,2020-11-05,2.2,1,2
+"Empire Generating Co, LLC",56259,CT-1,326.0,652.0,50.0,CC_CHP,observed_peak,2021-06-10,2021-06-14,4.2,1,2
+"Empire Generating Co, LLC",56259,CT-1,326.0,652.0,50.0,CC_CHP,observed_peak,2021-11-30,2021-12-05,4.5,1,2
+"Empire Generating Co, LLC",56259,CT-1,339.0,668.0,50.7,CC_CHP,observed_peak,2022-01-17,2022-01-20,3.8,1,2
+"Empire Generating Co, LLC",56259,CT-1,339.0,668.0,50.7,CC_CHP,observed_peak,2022-02-13,2022-02-16,2.9,1,2
+"Empire Generating Co, LLC",56259,CT-1,339.0,668.0,50.7,CC_CHP,observed_peak,2022-02-25,2022-02-28,3.0,1,2
+"Empire Generating Co, LLC",56259,CT-1,339.0,668.0,50.7,CC_CHP,observed_peak,2022-03-02,2022-03-04,2.1,1,2
+"Empire Generating Co, LLC",56259,CT-1,326.0,652.0,50.0,CC_CHP,observed_peak,2024-11-14,2024-11-18,3.4,1,2
+"Empire Generating Co, LLC",56259,CT-1,328.0,653.0,50.2,CC_CHP,observed_peak,2025-02-12,2025-02-17,4.3,1,2
+"Empire Generating Co, LLC",56259,CT-1,328.0,653.0,50.2,CC_CHP,observed_peak,2025-05-07,2025-05-09,1.2,1,2
+"Empire Generating Co, LLC",56259,CT-1,328.0,653.0,50.2,CC_CHP,observed_peak,2025-07-08,2025-07-09,1.6,1,2
+"Empire Generating Co, LLC",56259,CT-1,328.0,653.0,50.2,CC_CHP,observed_peak,2025-12-05,2025-12-07,2.8,1,2
+"Empire Generating Co, LLC",56259,CT-1,328.0,653.0,50.2,CC_CHP,observed_peak,2025-12-13,2025-12-15,2.6,1,2
+"Empire Generating Co, LLC",56259,CT-2,327.0,654.0,50.0,CC_CHP,observed_peak,2019-01-18,2019-01-23,4.5,1,2
+"Empire Generating Co, LLC",56259,CT-2,327.0,654.0,50.0,CC_CHP,observed_peak,2019-01-30,2019-01-31,1.6,1,2
+"Empire Generating Co, LLC",56259,CT-2,327.0,654.0,50.0,CC_CHP,observed_peak,2019-10-01,2019-10-03,1.2,1,2
+"Empire Generating Co, LLC",56259,CT-2,327.0,654.0,50.0,CC_CHP,observed_peak,2019-12-04,2019-12-05,1.5,1,2
+"Empire Generating Co, LLC",56259,CT-2,327.0,654.0,50.0,CC_CHP,observed_peak,2019-12-18,2019-12-22,3.7,1,2
+"Empire Generating Co, LLC",56259,CT-2,324.0,648.0,50.0,CC_CHP,observed_peak,2020-01-17,2020-01-22,4.2,1,2
+"Empire Generating Co, LLC",56259,CT-2,324.0,648.0,50.0,CC_CHP,observed_peak,2020-04-18,2020-04-21,3.1,1,2
+"Empire Generating Co, LLC",56259,CT-2,324.0,648.0,50.0,CC_CHP,observed_peak,2020-06-02,2020-06-06,4.6,1,2
+"Empire Generating Co, LLC",56259,CT-2,324.0,648.0,50.0,CC_CHP,observed_peak,2020-10-29,2020-10-31,2.0,1,2
+"Empire Generating Co, LLC",56259,CT-2,326.0,652.0,50.0,CC_CHP,observed_peak,2021-06-10,2021-06-14,4.0,1,2
+"Empire Generating Co, LLC",56259,CT-2,326.0,652.0,50.0,CC_CHP,observed_peak,2021-11-30,2021-12-05,4.7,1,2
+"Empire Generating Co, LLC",56259,CT-2,326.0,652.0,50.0,CC_CHP,observed_peak,2021-12-08,2021-12-12,4.0,1,2
+"Empire Generating Co, LLC",56259,CT-2,326.0,652.0,50.0,CC_CHP,observed_peak,2021-12-17,2021-12-21,3.6,1,2
+"Empire Generating Co, LLC",56259,CT-2,329.0,668.0,49.3,CC_CHP,observed_peak,2022-01-11,2022-01-16,4.5,1,2
+"Empire Generating Co, LLC",56259,CT-2,329.0,668.0,49.3,CC_CHP,observed_peak,2022-01-17,2022-01-21,4.1,1,2
+"Empire Generating Co, LLC",56259,CT-2,329.0,668.0,49.3,CC_CHP,observed_peak,2022-02-13,2022-02-16,2.8,1,2
+"Empire Generating Co, LLC",56259,CT-2,329.0,668.0,49.3,CC_CHP,observed_peak,2022-02-25,2022-02-28,3.1,1,2
+"Empire Generating Co, LLC",56259,CT-2,366.0,695.0,52.7,CC_CHP,observed_peak,2023-05-06,2023-05-09,2.5,1,2
+"Empire Generating Co, LLC",56259,CT-2,366.0,695.0,52.7,CC_CHP,observed_peak,2023-05-11,2023-05-12,1.1,1,2
+"Empire Generating Co, LLC",56259,CT-2,366.0,695.0,52.7,CC_CHP,observed_peak,2023-10-26,2023-10-30,3.7,1,2
+"Empire Generating Co, LLC",56259,CT-2,366.0,695.0,52.7,CC_CHP,observed_peak,2023-11-29,2023-11-30,1.7,1,2
+"Empire Generating Co, LLC",56259,CT-2,366.0,695.0,52.7,CC_CHP,observed_peak,2023-12-05,2023-12-07,1.8,1,2
+"Empire Generating Co, LLC",56259,CT-2,326.0,652.0,50.0,CC_CHP,observed_peak,2024-01-17,2024-01-17,1.0,1,2
+"Empire Generating Co, LLC",56259,CT-2,326.0,652.0,50.0,CC_CHP,observed_peak,2024-01-19,2024-01-20,1.2,1,2
+"Empire Generating Co, LLC",56259,CT-2,326.0,652.0,50.0,CC_CHP,observed_peak,2024-02-16,2024-02-19,3.6,1,2
+"Empire Generating Co, LLC",56259,CT-2,326.0,652.0,50.0,CC_CHP,observed_peak,2024-10-29,2024-11-01,2.6,1,2
+"Empire Generating Co, LLC",56259,CT-2,325.0,653.0,49.8,CC_CHP,observed_peak,2025-01-23,2025-01-24,1.5,1,2
+"Empire Generating Co, LLC",56259,CT-2,325.0,653.0,49.8,CC_CHP,observed_peak,2025-05-08,2025-05-11,2.9,1,2
+"Empire Generating Co, LLC",56259,CT-2,325.0,653.0,49.8,CC_CHP,observed_peak,2025-12-05,2025-12-07,2.9,1,2
+"Empire Generating Co, LLC",56259,CT-2,325.0,653.0,49.8,CC_CHP,observed_peak,2025-12-09,2025-12-09,1.0,1,2
+"Empire Generating Co, LLC",56259,CT-2,325.0,653.0,49.8,CC_CHP,observed_peak,2025-12-13,2025-12-15,2.6,1,2
+Valley Energy Center,56940,1,385.2,770.5,50.0,CC_REGULAR,eia_digits_cc,2020-06-10,2020-06-12,2.1,1,2
+Valley Energy Center,56940,1,385.2,770.5,50.0,CC_REGULAR,eia_digits_cc,2020-12-17,2020-12-18,1.5,1,2
+Valley Energy Center,56940,1,385.2,770.5,50.0,CC_REGULAR,eia_digits_cc,2021-07-16,2021-07-19,3.1,1,2
+Valley Energy Center,56940,1,385.2,770.5,50.0,CC_REGULAR,eia_digits_cc,2021-11-16,2021-11-17,1.5,1,2
+Valley Energy Center,56940,1,385.2,770.5,50.0,CC_REGULAR,eia_digits_cc,2022-01-26,2022-01-30,4.5,1,2
+Valley Energy Center,56940,1,385.2,770.5,50.0,CC_REGULAR,eia_digits_cc,2022-11-18,2022-11-21,2.8,1,2
+Valley Energy Center,56940,1,385.2,770.5,50.0,CC_REGULAR,eia_digits_cc,2023-04-17,2023-04-19,2.0,1,2
+Valley Energy Center,56940,1,385.2,770.5,50.0,CC_REGULAR,eia_digits_cc,2024-03-04,2024-03-07,3.3,1,2
+Valley Energy Center,56940,2,385.2,770.5,50.0,CC_REGULAR,eia_digits_cc,2020-12-17,2020-12-19,2.3,1,2
+Valley Energy Center,56940,2,385.2,770.5,50.0,CC_REGULAR,eia_digits_cc,2021-07-16,2021-07-19,3.2,1,2
+Valley Energy Center,56940,2,385.2,770.5,50.0,CC_REGULAR,eia_digits_cc,2021-10-09,2021-10-12,3.8,1,2
+Valley Energy Center,56940,2,385.2,770.5,50.0,CC_REGULAR,eia_digits_cc,2021-11-16,2021-11-18,2.5,1,2
+Valley Energy Center,56940,2,385.2,770.5,50.0,CC_REGULAR,eia_digits_cc,2022-01-26,2022-01-30,4.2,1,2
+Valley Energy Center,56940,2,385.2,770.5,50.0,CC_REGULAR,eia_digits_cc,2022-10-05,2022-10-08,2.5,1,2
+Valley Energy Center,56940,2,385.2,770.5,50.0,CC_REGULAR,eia_digits_cc,2022-11-20,2022-11-22,1.5,1,2
+Valley Energy Center,56940,2,385.2,770.5,50.0,CC_REGULAR,eia_digits_cc,2023-02-22,2023-02-23,1.5,1,2
+Valley Energy Center,56940,2,385.2,770.5,50.0,CC_REGULAR,eia_digits_cc,2023-04-17,2023-04-19,2.6,1,2
+Valley Energy Center,56940,2,385.2,770.5,50.0,CC_REGULAR,eia_digits_cc,2024-12-03,2024-12-05,1.4,1,2
+Valley Energy Center,56940,2,385.2,770.5,50.0,CC_REGULAR,eia_digits_cc,2025-05-14,2025-05-16,1.8,1,2
+Cricket Valley Energy Center,57185,U001,174.2,522.6,33.3,CC_REGULAR,eia_exact,2020-02-27,2020-03-01,3.4,2,3
+Cricket Valley Energy Center,57185,U001,174.2,522.6,33.3,CC_REGULAR,eia_exact,2020-09-08,2020-09-10,2.1,2,3
+Cricket Valley Energy Center,57185,U001,174.2,522.6,33.3,CC_REGULAR,eia_exact,2020-09-26,2020-09-28,2.1,2,3
+Cricket Valley Energy Center,57185,U001,174.2,522.6,33.3,CC_REGULAR,eia_exact,2020-11-12,2020-11-14,1.8,2,3
+Cricket Valley Energy Center,57185,U001,174.2,522.6,33.3,CC_REGULAR,eia_exact,2021-02-05,2021-02-09,4.0,2,3
+Cricket Valley Energy Center,57185,U001,174.2,522.6,33.3,CC_REGULAR,eia_exact,2021-03-05,2021-03-09,4.6,2,3
+Cricket Valley Energy Center,57185,U001,174.2,522.6,33.3,CC_REGULAR,eia_exact,2021-05-03,2021-05-06,2.2,2,3
+Cricket Valley Energy Center,57185,U001,174.2,522.6,33.3,CC_REGULAR,eia_exact,2021-06-04,2021-06-06,1.6,2,3
+Cricket Valley Energy Center,57185,U001,174.2,522.6,33.3,CC_REGULAR,eia_exact,2021-12-07,2021-12-10,3.5,2,3
+Cricket Valley Energy Center,57185,U001,174.2,522.6,33.3,CC_REGULAR,eia_exact,2022-02-03,2022-02-08,4.5,2,3
+Cricket Valley Energy Center,57185,U001,174.2,522.6,33.3,CC_REGULAR,eia_exact,2022-03-03,2022-03-05,1.9,2,3
+Cricket Valley Energy Center,57185,U001,174.2,522.6,33.3,CC_REGULAR,eia_exact,2022-03-26,2022-03-30,4.0,2,3
+Cricket Valley Energy Center,57185,U001,174.2,522.6,33.3,CC_REGULAR,eia_exact,2022-05-18,2022-05-22,4.0,2,3
+Cricket Valley Energy Center,57185,U001,174.2,522.6,33.3,CC_REGULAR,eia_exact,2022-05-24,2022-05-28,3.6,2,3
+Cricket Valley Energy Center,57185,U001,174.2,522.6,33.3,CC_REGULAR,eia_exact,2023-01-14,2023-01-16,1.7,2,3
+Cricket Valley Energy Center,57185,U001,174.2,522.6,33.3,CC_REGULAR,eia_exact,2023-03-01,2023-03-03,1.6,2,3
+Cricket Valley Energy Center,57185,U001,174.2,522.6,33.3,CC_REGULAR,eia_exact,2023-05-12,2023-05-14,2.0,2,3
+Cricket Valley Energy Center,57185,U001,174.2,522.6,33.3,CC_REGULAR,eia_exact,2023-10-04,2023-10-05,1.5,2,3
+Cricket Valley Energy Center,57185,U001,174.2,522.6,33.3,CC_REGULAR,eia_exact,2023-11-30,2023-12-02,2.3,2,3
+Cricket Valley Energy Center,57185,U001,174.2,522.6,33.3,CC_REGULAR,eia_exact,2024-01-30,2024-01-31,1.5,2,3
+Cricket Valley Energy Center,57185,U001,174.2,522.6,33.3,CC_REGULAR,eia_exact,2024-07-08,2024-07-12,4.1,2,3
+Cricket Valley Energy Center,57185,U001,174.2,522.6,33.3,CC_REGULAR,eia_exact,2024-12-12,2024-12-15,2.8,2,3
+Cricket Valley Energy Center,57185,U001,174.2,522.6,33.3,CC_REGULAR,eia_exact,2025-03-01,2025-03-03,2.5,2,3
+Cricket Valley Energy Center,57185,U002,174.2,522.6,33.3,CC_REGULAR,eia_exact,2020-05-07,2020-05-09,2.2,2,3
+Cricket Valley Energy Center,57185,U002,174.2,522.6,33.3,CC_REGULAR,eia_exact,2020-05-10,2020-05-13,3.5,2,3
+Cricket Valley Energy Center,57185,U002,174.2,522.6,33.3,CC_REGULAR,eia_exact,2020-10-17,2020-10-21,4.6,2,3
+Cricket Valley Energy Center,57185,U002,174.2,522.6,33.3,CC_REGULAR,eia_exact,2020-10-27,2020-10-29,1.2,2,3
+Cricket Valley Energy Center,57185,U002,174.2,522.6,33.3,CC_REGULAR,eia_exact,2020-11-18,2020-11-21,2.8,2,3
+Cricket Valley Energy Center,57185,U002,174.2,522.6,33.3,CC_REGULAR,eia_exact,2020-12-10,2020-12-12,2.3,2,3
+Cricket Valley Energy Center,57185,U002,174.2,522.6,33.3,CC_REGULAR,eia_exact,2021-01-07,2021-01-09,1.7,2,3
+Cricket Valley Energy Center,57185,U002,174.2,522.6,33.3,CC_REGULAR,eia_exact,2021-01-09,2021-01-11,1.6,2,3
+Cricket Valley Energy Center,57185,U002,174.2,522.6,33.3,CC_REGULAR,eia_exact,2021-12-17,2021-12-22,4.5,2,3
+Cricket Valley Energy Center,57185,U002,174.2,522.6,33.3,CC_REGULAR,eia_exact,2022-02-12,2022-02-16,4.4,2,3
+Cricket Valley Energy Center,57185,U002,174.2,522.6,33.3,CC_REGULAR,eia_exact,2022-03-26,2022-03-29,2.4,2,3
+Cricket Valley Energy Center,57185,U002,174.2,522.6,33.3,CC_REGULAR,eia_exact,2022-05-25,2022-05-28,3.2,2,3
+Cricket Valley Energy Center,57185,U002,174.2,522.6,33.3,CC_REGULAR,eia_exact,2022-12-10,2022-12-14,4.0,2,3
+Cricket Valley Energy Center,57185,U002,174.2,522.6,33.3,CC_REGULAR,eia_exact,2023-01-31,2023-02-02,1.2,2,3
+Cricket Valley Energy Center,57185,U002,174.2,522.6,33.3,CC_REGULAR,eia_exact,2023-02-04,2023-02-07,3.0,2,3
+Cricket Valley Energy Center,57185,U002,174.2,522.6,33.3,CC_REGULAR,eia_exact,2023-02-23,2023-02-28,4.3,2,3
+Cricket Valley Energy Center,57185,U002,174.2,522.6,33.3,CC_REGULAR,eia_exact,2023-07-11,2023-07-13,2.5,2,3
+Cricket Valley Energy Center,57185,U002,174.2,522.6,33.3,CC_REGULAR,eia_exact,2023-12-28,2023-12-31,4.0,2,3
+Cricket Valley Energy Center,57185,U002,174.2,522.6,33.3,CC_REGULAR,eia_exact,2024-01-05,2024-01-09,3.8,2,3
+Cricket Valley Energy Center,57185,U002,174.2,522.6,33.3,CC_REGULAR,eia_exact,2024-03-19,2024-03-21,1.5,2,3
+Cricket Valley Energy Center,57185,U002,174.2,522.6,33.3,CC_REGULAR,eia_exact,2024-10-21,2024-10-25,4.6,2,3
+Cricket Valley Energy Center,57185,U002,174.2,522.6,33.3,CC_REGULAR,eia_exact,2024-12-02,2024-12-04,2.1,2,3
+Cricket Valley Energy Center,57185,U002,174.2,522.6,33.3,CC_REGULAR,eia_exact,2024-12-05,2024-12-08,2.5,2,3
+Cricket Valley Energy Center,57185,U002,174.2,522.6,33.3,CC_REGULAR,eia_exact,2024-12-12,2024-12-14,1.3,2,3
+Cricket Valley Energy Center,57185,U003,174.2,522.6,33.3,CC_REGULAR,eia_exact,2020-05-07,2020-05-09,2.5,2,3
+Cricket Valley Energy Center,57185,U003,174.2,522.6,33.3,CC_REGULAR,eia_exact,2020-05-26,2020-05-30,3.9,2,3
+Cricket Valley Energy Center,57185,U003,174.2,522.6,33.3,CC_REGULAR,eia_exact,2020-08-23,2020-08-26,2.8,2,3
+Cricket Valley Energy Center,57185,U003,174.2,522.6,33.3,CC_REGULAR,eia_exact,2020-09-02,2020-09-06,3.7,2,3
+Cricket Valley Energy Center,57185,U003,174.2,522.6,33.3,CC_REGULAR,eia_exact,2020-10-22,2020-10-27,4.3,2,3
+Cricket Valley Energy Center,57185,U003,174.2,522.6,33.3,CC_REGULAR,eia_exact,2021-01-04,2021-01-07,2.6,2,3
+Cricket Valley Energy Center,57185,U003,174.2,522.6,33.3,CC_REGULAR,eia_exact,2021-03-04,2021-03-08,4.2,2,3
+Cricket Valley Energy Center,57185,U003,174.2,522.6,33.3,CC_REGULAR,eia_exact,2022-02-11,2022-02-16,4.5,2,3
+Cricket Valley Energy Center,57185,U003,174.2,522.6,33.3,CC_REGULAR,eia_exact,2022-03-26,2022-03-30,4.0,2,3
+Cricket Valley Energy Center,57185,U003,174.2,522.6,33.3,CC_REGULAR,eia_exact,2022-05-18,2022-05-22,4.1,2,3
+Cricket Valley Energy Center,57185,U003,174.2,522.6,33.3,CC_REGULAR,eia_exact,2023-01-10,2023-01-12,2.0,2,3
+Cricket Valley Energy Center,57185,U003,174.2,522.6,33.3,CC_REGULAR,eia_exact,2023-01-13,2023-01-16,2.2,2,3
+Cricket Valley Energy Center,57185,U003,174.2,522.6,33.3,CC_REGULAR,eia_exact,2023-01-16,2023-01-18,1.5,2,3
+Cricket Valley Energy Center,57185,U003,174.2,522.6,33.3,CC_REGULAR,eia_exact,2023-02-04,2023-02-05,1.1,2,3
+Cricket Valley Energy Center,57185,U003,174.2,522.6,33.3,CC_REGULAR,eia_exact,2023-02-24,2023-02-28,4.0,2,3
+Cricket Valley Energy Center,57185,U003,174.2,522.6,33.3,CC_REGULAR,eia_exact,2023-11-13,2023-11-15,1.2,2,3
+Cricket Valley Energy Center,57185,U003,174.2,522.6,33.3,CC_REGULAR,eia_exact,2024-02-13,2024-02-16,3.5,2,3
+Cricket Valley Energy Center,57185,U003,174.2,522.6,33.3,CC_REGULAR,eia_exact,2024-02-22,2024-02-26,4.5,2,3
+Cricket Valley Energy Center,57185,U003,174.2,522.6,33.3,CC_REGULAR,eia_exact,2024-06-19,2024-06-21,2.1,2,3
+Astoria Energy II,57664,CT3,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2019-03-08,2019-03-10,2.2,1,2
+Astoria Energy II,57664,CT3,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2019-11-13,2019-11-17,4.5,1,2
+Astoria Energy II,57664,CT3,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2019-12-11,2019-12-13,1.3,1,2
+Astoria Energy II,57664,CT3,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2019-12-19,2019-12-21,2.7,1,2
+Astoria Energy II,57664,CT3,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2020-01-09,2020-01-10,1.1,1,2
+Astoria Energy II,57664,CT3,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2020-01-30,2020-01-31,1.1,1,2
+Astoria Energy II,57664,CT3,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2020-02-25,2020-02-27,1.3,1,2
+Astoria Energy II,57664,CT3,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2020-05-04,2020-05-08,3.3,1,2
+Astoria Energy II,57664,CT3,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2020-12-17,2020-12-19,2.4,1,2
+Astoria Energy II,57664,CT3,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2021-01-29,2021-02-01,3.4,1,2
+Astoria Energy II,57664,CT3,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2021-02-08,2021-02-09,1.5,1,2
+Astoria Energy II,57664,CT3,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2021-11-23,2021-11-26,2.3,1,2
+Astoria Energy II,57664,CT3,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2021-11-30,2021-12-01,1.0,1,2
+Astoria Energy II,57664,CT3,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2022-02-12,2022-02-14,1.9,1,2
+Astoria Energy II,57664,CT3,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2022-02-15,2022-02-16,1.9,1,2
+Astoria Energy II,57664,CT3,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2022-02-25,2022-02-27,1.8,1,2
+Astoria Energy II,57664,CT3,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2022-06-08,2022-06-10,1.2,1,2
+Astoria Energy II,57664,CT3,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2022-11-20,2022-11-21,1.3,1,2
+Astoria Energy II,57664,CT3,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2023-01-29,2023-01-31,1.9,1,2
+Astoria Energy II,57664,CT3,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2023-02-05,2023-02-07,1.9,1,2
+Astoria Energy II,57664,CT3,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2025-04-28,2025-05-02,3.9,1,2
+Astoria Energy II,57664,CT3,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2025-05-02,2025-05-04,2.0,1,2
+Astoria Energy II,57664,CT3,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2025-06-22,2025-06-24,1.6,1,2
+Astoria Energy II,57664,CT3,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2025-07-10,2025-07-14,4.4,1,2
+Astoria Energy II,57664,CT3,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2025-07-16,2025-07-20,3.8,1,2
+Astoria Energy II,57664,CT3,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2025-08-13,2025-08-18,4.9,1,2
+Astoria Energy II,57664,CT3,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2025-09-17,2025-09-19,2.1,1,2
+Astoria Energy II,57664,CT3,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2025-11-28,2025-12-03,4.8,1,2
+Astoria Energy II,57664,CT3,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2025-12-16,2025-12-17,1.5,1,2
+Astoria Energy II,57664,CT4,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2019-02-12,2019-02-13,1.1,1,2
+Astoria Energy II,57664,CT4,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2019-02-27,2019-03-01,1.9,1,2
+Astoria Energy II,57664,CT4,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2019-03-07,2019-03-08,1.8,1,2
+Astoria Energy II,57664,CT4,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2019-11-13,2019-11-16,3.0,1,2
+Astoria Energy II,57664,CT4,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2019-12-18,2019-12-22,3.5,1,2
+Astoria Energy II,57664,CT4,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2020-01-09,2020-01-10,1.2,1,2
+Astoria Energy II,57664,CT4,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2020-02-20,2020-02-22,2.2,1,2
+Astoria Energy II,57664,CT4,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2020-02-25,2020-02-27,1.2,1,2
+Astoria Energy II,57664,CT4,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2020-04-17,2020-04-21,3.1,1,2
+Astoria Energy II,57664,CT4,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2020-05-06,2020-05-07,1.1,1,2
+Astoria Energy II,57664,CT4,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2020-05-07,2020-05-10,3.0,1,2
+Astoria Energy II,57664,CT4,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2020-12-18,2020-12-21,3.4,1,2
+Astoria Energy II,57664,CT4,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2021-01-25,2021-01-26,1.6,1,2
+Astoria Energy II,57664,CT4,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2021-01-29,2021-01-31,2.5,1,2
+Astoria Energy II,57664,CT4,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2021-11-23,2021-11-26,3.0,1,2
+Astoria Energy II,57664,CT4,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2022-01-27,2022-01-29,1.7,1,2
+Astoria Energy II,57664,CT4,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2022-03-03,2022-03-05,2.6,1,2
+Astoria Energy II,57664,CT4,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2022-05-01,2022-05-03,1.9,1,2
+Astoria Energy II,57664,CT4,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2022-10-03,2022-10-04,1.2,1,2
+Astoria Energy II,57664,CT4,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2023-01-10,2023-01-12,2.8,1,2
+Astoria Energy II,57664,CT4,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2023-01-14,2023-01-16,2.5,1,2
+Astoria Energy II,57664,CT4,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2024-02-13,2024-02-16,2.8,1,2
+Astoria Energy II,57664,CT4,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2025-02-20,2025-02-22,1.6,1,2
+Astoria Energy II,57664,CT4,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2025-05-05,2025-05-09,3.9,1,2
+Astoria Energy II,57664,CT4,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2025-05-09,2025-05-12,3.4,1,2
+Astoria Energy II,57664,CT4,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2025-05-12,2025-05-14,1.7,1,2
+Astoria Energy II,57664,CT4,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2025-05-14,2025-05-15,1.3,1,2
+Astoria Energy II,57664,CT4,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2025-05-15,2025-05-17,1.4,1,2
+Astoria Energy II,57664,CT4,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2025-05-17,2025-05-20,3.0,1,2
+Astoria Energy II,57664,CT4,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2025-06-05,2025-06-09,3.9,1,2
+Astoria Energy II,57664,CT4,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2025-06-30,2025-07-02,2.0,1,2
+Astoria Energy II,57664,CT4,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2025-07-06,2025-07-10,3.8,1,2
+Astoria Energy II,57664,CT4,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2025-07-14,2025-07-16,1.5,1,2
+Astoria Energy II,57664,CT4,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2025-09-02,2025-09-04,2.0,1,2
+Astoria Energy II,57664,CT4,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2025-10-10,2025-10-15,4.9,1,2
+Astoria Energy II,57664,CT4,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2025-12-03,2025-12-05,2.0,1,2
+Astoria Energy II,57664,CT4,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2025-12-05,2025-12-08,3.0,1,2
+Astoria Energy II,57664,CT4,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2025-12-08,2025-12-10,1.8,1,2
+Astoria Energy II,57664,CT4,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2025-12-11,2025-12-13,2.0,1,2
+Astoria Energy II,57664,CT4,325.0,650.0,50.0,CC_REGULAR,eia_exact_cc,2025-12-14,2025-12-15,1.0,1,2

@@ -1,6 +1,6 @@
 {
   "artifact": "campd-partial-outages-SOCO.csv",
-  "artifact_rows": 12,
+  "artifact_rows": 56,
   "derive_invocation": {
     "fullstop_override_cf": 0.02,
     "fullstop_override_days": 5,
@@ -15,6 +15,10 @@
     "per_unit_crosswalk": false,
     "short_windows": false,
     "years": [
+      2019,
+      2020,
+      2021,
+      2022,
       2023,
       2024,
       2025
@@ -22,11 +26,19 @@
   },
   "deriver": "scripts/data/derive_campd_unit_outages.py",
   "observed_years": [
+    2019,
+    2020,
+    2021,
+    2022,
     2023,
     2025
   ],
   "sidecar_schema_version": 1,
   "windows_by_start_year": {
+    "2019": 7,
+    "2020": 3,
+    "2021": 10,
+    "2022": 24,
     "2023": 5,
     "2025": 7
   }

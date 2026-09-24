@@ -366,7 +366,7 @@
   "btm_backfill_year": null,
   "shared_inputs": {
     "eia930": "../_shared/NEISO/eia930-a79ecddc812c.parquet",
-    "eia923": "../_shared/NEISO/eia923-f55df779267d.parquet",
+    "eia923": "../_shared/NEISO/eia923-b40ccb9aeb97.parquet",
     "campd": "../_shared/NEISO/campd-1782e1223554.parquet",
     "unit_outages": "../_shared/NEISO/unit_outages-c6be5bbb89ab.parquet",
     "unit_outages_short": "../_shared/NEISO/unit_outages_short-849e1d0a5f28.parquet",

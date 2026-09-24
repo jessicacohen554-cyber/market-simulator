@@ -220,7 +220,10 @@ class FrozenHashDropTest(unittest.TestCase):
                 {**original, 2031: 0.4242} if isinstance(original, dict) else 0.4242
             )
             S.reset_caches()
-            self.assertEqual(list(S.moved_rows("MISO")), ["DEMAND_GROWTH_RATES"])
+            self.assertEqual(
+                sorted(set(S.moved_rows("MISO")) - set(baseline["MISO"])),
+                ["DEMAND_GROWTH_RATES"],
+            )
             # Measured as a DELTA against each ISO's own pre-edit state, not
             # against {}: an ISO may legitimately carry a ledgered move of its
             # own (see the regression ledger), and the claim here is that this

@@ -1,0 +1,47 @@
+{
+  "artifact": "campd-unit-outages-shortgas-CAISO.csv",
+  "artifact_rows": 2616,
+  "derive_invocation": {
+    "fullstop_override_cf": 0.02,
+    "fullstop_override_days": 5,
+    "high_load_pctl": 0.85,
+    "iso": "CAISO",
+    "merit_order_guard": true,
+    "min_inmerit_hours": 6,
+    "min_outage_days": 1.0,
+    "mixed_gas_routing": false,
+    "no_inmerit_filter": false,
+    "partial_windows": false,
+    "per_unit_crosswalk": false,
+    "short_windows": true,
+    "years": [
+      2019,
+      2020,
+      2021,
+      2022,
+      2023,
+      2024,
+      2025
+    ]
+  },
+  "deriver": "scripts/data/derive_campd_unit_outages.py",
+  "observed_years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "sidecar_schema_version": 1,
+  "windows_by_start_year": {
+    "2019": 398,
+    "2020": 320,
+    "2021": 296,
+    "2022": 404,
+    "2023": 402,
+    "2024": 361,
+    "2025": 435
+  }
+}

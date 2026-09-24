@@ -1519,6 +1519,17 @@
         <div id="cfDistChart" style="width:100%;height:260px"></div>
       </div>`;
 
+      // Storage dispatch vs actual — REPORT-ONLY, class-independent: it reads
+      // RUN(yr).storageCmp (scripts/lib/storage_compare.py) and is omitted for
+      // a year with no measured storage series. Not a calibration criterion.
+      if (RUN(yr).storageCmp) {
+        html += `<div class="bc-panel">
+          <h2>Storage Dispatch — Model vs Actual</h2>
+          <p class="panel-sub">${yr} — net output (discharge +, charging −) and state of charge. Report-only; not a calibration criterion.</p>
+          <div id="storageCmpSection"></div>
+        </div>`;
+      }
+
       el.innerHTML = html;
 
       // Wire plant selector
@@ -1537,7 +1548,158 @@
       }
 
       drawCfHeatmap(yr, grp);
+      drawStorageCmp(yr);
       drawCfDistribution(yr, grp);
+    }
+
+    /* ================================================================
+       STORAGE DISPATCH — MODEL VS ACTUAL (report-only)
+       RUN(yr).storageCmp carries, per year: hourly NET MW for model and
+       actual (int16, NaN = no observation), SOC as % of each series' own
+       annual max (int16 x10), month x hour mean grids (288 values, m*24+h),
+       and fit stats computed in Python. Colors: orange = discharging (or,
+       on a delta map, model MORE positive than actual), blue = charging.
+       ================================================================ */
+    function drawGridCanvas(cv, vals, nx, ny, idx, colorFn) {
+      const ctx = cv.getContext('2d');
+      const im = ctx.createImageData(nx, ny);
+      for (let x = 0; x < nx; x++) {
+        for (let y = 0; y < ny; y++) {
+          const c = colorFn(vals[idx(x, y)]);
+          const i = (y * nx + x) * 4;
+          im.data[i] = c[0]; im.data[i + 1] = c[1]; im.data[i + 2] = c[2]; im.data[i + 3] = 255;
+        }
+      }
+      ctx.putImageData(im, 0, 0);
+    }
+
+    function drawStorageCmp(yr) {
+      const sec = document.getElementById('storageCmpSection');
+      const S = RUN(yr).storageCmp;
+      if (!sec || !S) return;
+      const st_ = S.stats || {};
+      const mNet = decI16(S.net.m), aNet = S.net.a ? decI16(S.net.a) : null;
+      const mSoc = decI16(S.soc.m).map(v => v / 10), aSoc = S.soc.a ? decI16(S.soc.a).map(v => v / 10) : null;
+      const f = (v, d = 3) => v == null ? '—' : Number(v).toFixed(d);
+      const pair = (m, a, u, d = 2) => `${f(m, d)} / ${f(a, d)}${u}`;
+      const netCap = deltaCap([...mNet, ...(aNet || [])], 100, 100);
+      const netColor = v => lmpDeltaColorRGB(v, netCap);
+      const MON_AX = '<span>Jan</span><span>Jul</span><span>Dec</span>';
+
+      let h = `<p style="font-size:0.78rem;color:var(--text-muted);margin:0 0 8px">Actual: ${esc(S.src)} · model techs: <b>${esc((S.techs || []).join(', '))}</b></p>`;
+      if (S.note) h += `<p style="color:#9a6700;font-size:0.78rem;margin:0 0 10px">${esc(S.note)}</p>`;
+      h += `<div class="year-grid" style="margin-bottom:12px">
+        <div class="year-card"><div class="year-head"><span>Fit</span></div>
+          <div class="kpi-row"><span class="k">Hourly r (net MW)</span><span class="v ${st_.rNet != null ? rcls(st_.rNet) : ''}">${f(st_.rNet)}</span></div>
+          <div class="kpi-row"><span class="k">Avg-day r (month×hour)</span><span class="v ${st_.rDiur != null ? rcls(st_.rDiur) : ''}">${f(st_.rDiur)}</span></div>
+          <div class="kpi-row"><span class="k">SOC shape r</span><span class="v ${st_.rSoc != null ? rcls(st_.rSoc) : ''}">${f(st_.rSoc)}</span></div>
+          <div class="kpi-row"><span class="k">Best clock lag</span><span class="v">${st_.bestLag == null ? '—' : (st_.bestLag > 0 ? '+' : '') + st_.bestLag + ' h'}</span></div>
+        </div>
+        <div class="year-card"><div class="year-head"><span>Energy <span style="font-size:0.72rem;color:var(--text-muted)">(model / actual)</span></span></div>
+          <div class="kpi-row"><span class="k">Discharge</span><span class="v">${pair(st_.mDisTwh, st_.aDisTwh, ' TWh')}</span></div>
+          <div class="kpi-row"><span class="k">Charging</span><span class="v">${pair(st_.mChgTwh, st_.aChgTwh, ' TWh')}</span></div>
+          <div class="kpi-row"><span class="k">Peak discharge</span><span class="v">${pair(st_.mPeakDis, st_.aPeakDis, ' MW', 0)}</span></div>
+          <div class="kpi-row"><span class="k">Peak charging</span><span class="v">${pair(st_.mPeakChg, st_.aPeakChg, ' MW', 0)}</span></div>
+        </div>
+      </div>`;
+      h += `<p style="font-weight:700;font-size:0.82rem;margin:4px 0">Average day by month — net MW <span style="font-weight:400;color:var(--text-muted)">(month across, hour down; observed hours only)</span></p>
+        <div class="lmp-grid" id="stoDiurGrid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))"></div>
+        <p style="font-weight:700;font-size:0.82rem;margin:14px 0 4px">Hourly net dispatch <span style="font-weight:400;color:var(--text-muted)">(day across, hour down)</span></p>
+        <div id="stoHourly"></div>
+        <p style="font-weight:700;font-size:0.82rem;margin:14px 0 4px">State of charge — % of own annual max</p>
+        <div id="stoSoc"></div>`;
+      sec.innerHTML = h;
+
+      // ---- month x hour average-day grids (Actual | Model | Delta) --------
+      const dM = S.diur.m.map(v => v == null ? NaN : v);
+      const dA = S.diur.a ? S.diur.a.map(v => v == null ? NaN : v) : null;
+      const dCapD = deltaCap([...dM, ...(dA || [])], 100, 100);
+      const dDel = dA ? dM.map((v, i) => v - dA[i]) : null;
+      const dCapDel = dDel ? deltaCap(dDel, 50, 50) : 1;
+      const cells = [];
+      if (dA) cells.push(['Actual', dA, dCapD]);
+      cells.push(['Model', dM, dCapD]);
+      if (dDel) cells.push(['Model − Actual', dDel, dCapDel]);
+      const grid = document.getElementById('stoDiurGrid');
+      for (const [lab, arr, cap] of cells) {
+        const card = document.createElement('div');
+        card.className = 'year-card';
+        card.innerHTML = `<div class="year-head"><span>${lab}</span><span class="year-sub">±${cap.toLocaleString()} MW</span></div>`;
+        const cv = document.createElement('canvas');
+        cv.className = 'heat'; cv.width = 12; cv.height = 24;
+        card.appendChild(cv);
+        drawGridCanvas(cv, arr, 12, 24, (x, y) => x * 24 + y, v => lmpDeltaColorRGB(v, cap));
+        const ax = document.createElement('div');
+        ax.className = 'heat-axis'; ax.innerHTML = MON_AX;
+        card.appendChild(ax);
+        cv.addEventListener('mousemove', e => {
+          const r = cv.getBoundingClientRect();
+          const m = Math.floor((e.clientX - r.left) / r.width * 12);
+          const hr = Math.floor((e.clientY - r.top) / r.height * 24);
+          if (m < 0 || m > 11 || hr < 0 || hr > 23) { hideTip(); return; }
+          const i = m * 24 + hr, v = arr[i];
+          let t = `<b>${MONTHS[m]}, ${String(hr).padStart(2, '0')}:00</b><br>${lab}: ${isNaN(v) ? '—' : Math.round(v).toLocaleString() + ' MW'}`;
+          if (lab === 'Model − Actual' && dA) t += `<br>model ${Math.round(dM[i]).toLocaleString()} · actual ${Math.round(dA[i]).toLocaleString()} MW`;
+          showTip(t, e.clientX, e.clientY);
+        });
+        cv.addEventListener('mouseleave', hideTip);
+        grid.appendChild(card);
+      }
+
+      // ---- 365 x 24 hourly maps ------------------------------------------
+      const hourlyBox = document.getElementById('stoHourly');
+      const hDel = aNet ? mNet.map((v, i) => v - aNet[i]) : null;
+      const maps = [];
+      if (aNet) maps.push(['Actual', aNet, netColor, netCap]);
+      maps.push(['Model', mNet, netColor, netCap]);
+      if (hDel) { const c = deltaCap(hDel, 100, 100); maps.push(['Model − Actual', hDel, v => lmpDeltaColorRGB(v, c), c]); }
+      for (const [lab, arr, colorFn, cap] of maps) {
+        const wrap = document.createElement('div');
+        wrap.style.marginTop = '8px';
+        wrap.innerHTML = `<p style="font-size:0.78rem;font-weight:700;margin:0 0 3px">${lab} <span style="font-weight:400;color:var(--text-muted)">±${cap.toLocaleString()} MW</span></p>`;
+        const cv = document.createElement('canvas');
+        cv.className = 'heat'; cv.width = 365; cv.height = 24;
+        wrap.appendChild(cv);
+        drawGridCanvas(cv, arr, 365, 24, (x, y) => x * 24 + y, colorFn);
+        const ax = document.createElement('div');
+        ax.className = 'heat-axis'; ax.innerHTML = MON_AX;
+        wrap.appendChild(ax);
+        cv.addEventListener('mousemove', e => {
+          const r = cv.getBoundingClientRect();
+          const day = Math.floor((e.clientX - r.left) / r.width * 365);
+          const hr = Math.floor((e.clientY - r.top) / r.height * 24);
+          if (day < 0 || day > 364 || hr < 0 || hr > 23) { hideTip(); return; }
+          const i = day * 24 + hr;
+          const dt = new Date(yr, 0, 1); dt.setDate(day + 1);
+          const fm = v => (v == null || isNaN(v)) ? '—' : Math.round(v).toLocaleString() + ' MW';
+          showTip(`<b>${MONTHS[dt.getMonth()]} ${dt.getDate()}, ${String(hr).padStart(2, '0')}:00</b><br>model ${fm(mNet[i])} · actual ${fm(aNet ? aNet[i] : null)}`, e.clientX, e.clientY);
+        });
+        cv.addEventListener('mouseleave', hideTip);
+        hourlyBox.appendChild(wrap);
+      }
+      hourlyBox.insertAdjacentHTML('beforeend', `<div style="display:flex;align-items:center;gap:8px;margin-top:8px">
+        <span style="font-size:0.68rem;color:var(--text-muted)">charging / model lower</span><div class="delta-ramp"></div>
+        <span style="font-size:0.68rem;color:var(--text-muted)">discharging / model higher</span></div>`);
+
+      // ---- SOC maps (sequential, % of own annual max) --------------------
+      const socBox = document.getElementById('stoSoc');
+      const socMaps = [];
+      if (aSoc) socMaps.push(['Actual', aSoc]);
+      socMaps.push(['Model', mSoc]);
+      for (const [lab, arr] of socMaps) {
+        const wrap = document.createElement('div');
+        wrap.style.marginTop = '8px';
+        wrap.innerHTML = `<p style="font-size:0.78rem;font-weight:700;margin:0 0 3px">${lab}</p>`;
+        const cv = document.createElement('canvas');
+        cv.className = 'heat'; cv.width = 365; cv.height = 24;
+        wrap.appendChild(cv);
+        drawGridCanvas(cv, arr, 365, 24, (x, y) => x * 24 + y, v => isNaN(v) ? DELTA_NAN : cfColorRGB(v));
+        const ax = document.createElement('div');
+        ax.className = 'heat-axis'; ax.innerHTML = MON_AX;
+        wrap.appendChild(ax);
+        socBox.appendChild(wrap);
+      }
+      socBox.insertAdjacentHTML('beforeend', '<div style="display:flex;align-items:center;gap:8px;margin-top:8px"><span style="font-size:0.68rem;color:var(--text-muted)">0%</span><div class="color-ramp"></div><span style="font-size:0.68rem;color:var(--text-muted)">100% of annual max</span></div>');
     }
 
     /* drawPriceDuration() was DELETED here 2026-09-16 (session caiso-284,

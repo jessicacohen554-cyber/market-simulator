@@ -1,2 +1,5 @@
 facility_name,facility_id,unit_id,unit_capacity_mw,plant_capacity_mw,unit_pct_of_plant,plant_group,capacity_source,outage_start,outage_end,duration_days,peer_units_online,total_units_at_plant
+Merrimack,2364,1,113.6,497.2,22.8,COAL,eia_exact,2021-03-03,2021-03-04,1.4,3,4
+Merrimack,2364,1,113.6,497.2,22.8,COAL,eia_exact,2021-07-16,2021-07-20,3.5,3,4
+Merrimack,2364,2,345.6,497.2,69.5,COAL,eia_exact,2021-02-03,2021-02-07,4.8,3,4
 Merrimack,2364,2,345.6,498.2,69.4,COAL,eia_exact,2023-02-01,2023-02-03,2.0,3,4
