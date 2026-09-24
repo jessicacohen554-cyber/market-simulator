@@ -157,3 +157,12 @@ Launched 2026-09-24 04:31–04:33 UTC, all six pinned to
 | 2025 | `session_019NQqHwQyDR4a8xxXuaidCC` | `claude/miso268-yard-2025` | `results/calibration/miso268_yard_2025` |
 
 `main` refreshed at launch (`ea0b5a8f`): no solve-path change since the pin; G-DRIFT holds.
+
+## 7. Relaunch (appended; §1–§5 unchanged)
+
+All six first-wave shards failed or would fail HARD STOP 2's recipe check on a **parent-side
+check defect**: the keeper's recorded config predates `coal_fuel_inventory_plant_grain`, so the
+flag appears as a new non-default field rather than a diff. Fixed in `cf304817`
+(`scripts/probes/_miso268_shard_check.py` only; zero solve-path change vs `49c898c7`). The
+first-wave shards cannot be messaged from the parent and never pushed, so their bundles are not
+retrievable (rule 34(d)); they are archived and all six years relaunched at the new pin.

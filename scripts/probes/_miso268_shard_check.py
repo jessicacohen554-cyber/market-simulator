@@ -105,7 +105,13 @@ def main() -> int:
     ok = True
     print(f"recipe diff vs keeper: {diff}")
     print(f"fields new since keeper: {len(new_only)} (non-default: {bad_new})")
-    if diff != {FLAG: (False, True)} or bad_new:
+    # The flag was added AFTER the keeper solved, so the keeper's recorded
+    # config does not carry it: it appears as a NEW field, not as a diff.
+    flag_ok = diff == {FLAG: (False, True)} or (
+        diff == {} and new_only.get(FLAG) is True
+    )
+    bad_new = {key: v for key, v in bad_new.items() if key != FLAG}
+    if not flag_ok or bad_new:
         print("RECIPE CHECK: FAIL — the leg is not the keeper plus exactly one flag")
         ok = False
     else:
@@ -119,8 +125,11 @@ def main() -> int:
     else:
         print("CLASSIFIER CHECK: PASS")
 
-    rows = [ln for ln in Path(args.log).read_text(errors="replace").splitlines()
-            if "coal per-yard budget" in ln]
+    rows = [
+        ln
+        for ln in Path(args.log).read_text(errors="replace").splitlines()
+        if "coal per-yard budget" in ln
+    ]
     print(f"per-yard budget log lines: {rows[-1:] if rows else rows}")
     if not rows or any("NOT APPLIED" in ln for ln in rows):
         print("ROWS CHECK: FAIL — the per-yard rows were not built")
