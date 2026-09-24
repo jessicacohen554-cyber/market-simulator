@@ -6,7 +6,7 @@ shards pinned to `2d57aa2089d687d9251f229474f84601a3111059`). **Every number thi
 Arm = PJM keeper `2026-09-22-pjm-hydro2-ror-span` recipe **+ `demand_balance_screen=true`**, nothing else.
 Control = the committed keeper bundles (rule 29(b) form 4).
 Registered: **`2026-09-23-pjm-h19-dbs-span`** (2023–25) + **`2026-09-23-pjm-h19-dbs-touchpoint`**
-(2020–22, stamped to the arm span). **Promotion: UNRULED.**
+(2020–22, stamped to the arm span). **Promotion: RULED AND EXECUTED 2026-09-24 (§8).**
 
 ## 1. Verdict
 
@@ -110,3 +110,16 @@ for PJM, so the CAISO 2025 h5076 artifact stays in CAISO's keeper until that lan
 block to `2026-09-23-pjm-h19-dbs-span`; year union {2020…2025} is covered exactly by the pair;
 `build_status --iso PJM`; `audit_keepers --iso PJM`; then `prune_iso_runs.py --iso PJM --keep
 2026-09-23-pjm-h19-dbs-touchpoint --force-uncite` removes the hydro-2 pair; matrix cell `O → K`.
+
+## 8. Promotion — RULED AND EXECUTED 2026-09-24
+
+**The owner ruled PROMOTE** (verbatim: *"Promote"*). Executed in rule 35(e) order: (b) year union
+over every PJM sidecar = {2020…2025}, enumerated before any delete; (c) covered exactly by the
+incoming pair (span 2023–25 + touchpoint 2020–22 stamped to it); `keepers/PJM.json` and PJM's
+`calibration-complete.json` block re-keyed (hydro-2 added to `keeper_history`); determination
+re-verified with `calibration_verdict.py --run-id 2026-09-23-pjm-h19-dbs-span` → **CALIBRATED**;
+`build_status.py --iso PJM` → **PJM:CALIBRATED**; `audit_keepers --iso PJM` between promotion and
+prune (E13 on the outgoing pair only); `prune_iso_runs.py --iso PJM --keep
+2026-09-23-pjm-h19-dbs-touchpoint --force-uncite` removed the hydro-2 pair's three stores;
+`audit_keepers --iso PJM` after: **0 failures, 0 warnings**; `build_status --check` in sync. Matrix
+cell `O → K`, PJM shard keeper stamp and §5.3 header re-stamped.
