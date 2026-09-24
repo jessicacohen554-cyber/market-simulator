@@ -38,8 +38,9 @@ KEEPER = "2026-09-12-nyiso229-hourgrain-span"
 FORMER = "2026-09-09-nyiso-221-fuelvintage-span"
 
 
-def _write(registry: Path, run_id: str, iso: str, years: list[int],
-           stamp: str | None = None) -> None:
+def _write(
+    registry: Path, run_id: str, iso: str, years: list[int], stamp: str | None = None
+) -> None:
     """Write one registry sidecar with the fields E13 reads."""
     rec: dict = {"id": run_id, "iso": iso, "years": years}
     if stamp:

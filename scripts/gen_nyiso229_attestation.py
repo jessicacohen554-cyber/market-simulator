@@ -16,7 +16,6 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
 
 CAL = Path("results/calibration")
@@ -60,12 +59,11 @@ def main() -> None:
     # run_config and, in this arm, sits at exactly the LIVE DEFAULT — i.e. it is
     # present but unarmed. Classified by measurement (absent AND == default), not
     # by an allowlist, so an actually-armed new field would still fail the gate.
-    drift = [
+    schema_drift = [
         k
         for k in differing
-        if k not in a_sc or k in k_sc or a_sc.get(k) != getattr(live, k, object())
+        if k not in k_sc and a_sc.get(k) == getattr(live, k, object())
     ]
-    schema_drift = [k for k in differing if k not in k_sc and a_sc.get(k) == getattr(live, k, object())]
     moved = [k for k in differing if k not in schema_drift]
     assert moved == ["unit_outage_window_hour_grain"], f"G-DELTA: {moved}"
     assert a_sc["unit_outage_window_hour_grain"] is True
@@ -103,7 +101,9 @@ def main() -> None:
     for y in YEARS:
         a = _p1(ARM / "hourly" / f"system_{y}.parquet")
         k = _p1(KEEPER / "hourly" / f"system_{y}.parquet")
-        ag = a.groupby("hour").agg(d=("demand", "sum"), s=("slack", "sum"), u=("dump", "sum"))
+        ag = a.groupby("hour").agg(
+            d=("demand", "sum"), s=("slack", "sum"), u=("dump", "sum")
+        )
         kg = k.groupby("hour").agg(d=("demand", "sum"))
         at, kt = float(ag.d.sum() / 1e6), float(kg.d.sum() / 1e6)
         assert round(at, 4) == round(kt, 4), f"{y}: served {at} vs {kt}"

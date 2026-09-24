@@ -68,12 +68,15 @@ class TestSelector:
             "campd-unit-outages-perunitmerit-NYISO.csv",
             "campd-unit-outages-perunitmerithour-NYISO.csv",
         )
-        assert om.unit_outage_csv_for_iso(
-            "NYISO",
-            per_unit_crosswalk=True,
-            merit_order_guard=True,
-            hour_grain=True,
-        ).name == "campd-unit-outages-perunitmerithour-NYISO.csv"
+        assert (
+            om.unit_outage_csv_for_iso(
+                "NYISO",
+                per_unit_crosswalk=True,
+                merit_order_guard=True,
+                hour_grain=True,
+            ).name
+            == "campd-unit-outages-perunitmerithour-NYISO.csv"
+        )
 
     def test_off_keeps_the_day_grain_extract(self, tmp_path, monkeypatch):
         om = self._lay(
@@ -83,9 +86,12 @@ class TestSelector:
             "campd-unit-outages-perunitmerit-NYISO.csv",
             "campd-unit-outages-perunitmerithour-NYISO.csv",
         )
-        assert om.unit_outage_csv_for_iso(
-            "NYISO", per_unit_crosswalk=True, merit_order_guard=True
-        ).name == "campd-unit-outages-perunitmerit-NYISO.csv"
+        assert (
+            om.unit_outage_csv_for_iso(
+                "NYISO", per_unit_crosswalk=True, merit_order_guard=True
+            ).name
+            == "campd-unit-outages-perunitmerit-NYISO.csv"
+        )
 
     def test_falls_through_when_the_companion_is_absent(self, tmp_path, monkeypatch):
         """An ISO adopts the grain by deriving its own file and nothing else."""
@@ -95,12 +101,15 @@ class TestSelector:
             "campd-unit-outages-perunit-MISO.csv",
             "campd-unit-outages-perunitmerit-MISO.csv",
         )
-        assert om.unit_outage_csv_for_iso(
-            "MISO",
-            per_unit_crosswalk=True,
-            merit_order_guard=True,
-            hour_grain=True,
-        ).name == "campd-unit-outages-perunitmerit-MISO.csv"
+        assert (
+            om.unit_outage_csv_for_iso(
+                "MISO",
+                per_unit_crosswalk=True,
+                merit_order_guard=True,
+                hour_grain=True,
+            ).name
+            == "campd-unit-outages-perunitmerit-MISO.csv"
+        )
 
     @pytest.mark.parametrize(
         "kwargs,expected",
@@ -179,10 +188,18 @@ class TestWindowReconstruction:
         metered 7,249 MWh across hours 6-22). Under the detected grain they are
         disjoint and the running hours are available.
         """
-        first = self._row(outage_start="2022-05-22", outage_end="2022-05-31",
-                          outage_start_hour=23, outage_end_hour=5)
-        second = self._row(outage_start="2022-05-31", outage_end="2022-06-15",
-                           outage_start_hour=23, outage_end_hour=6)
+        first = self._row(
+            outage_start="2022-05-22",
+            outage_end="2022-05-31",
+            outage_start_hour=23,
+            outage_end_hour=5,
+        )
+        second = self._row(
+            outage_start="2022-05-31",
+            outage_end="2022-06-15",
+            outage_start_hour=23,
+            outage_end_hour=6,
+        )
 
         d1 = unit_outage_event_window(first, False)
         d2 = unit_outage_event_window(second, False)
