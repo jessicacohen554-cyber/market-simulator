@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-09-23-soco60-boundary-span",
+  "run_id": "2026-09-24-soco61-dark-unit",
   "iso": "SOCO",
-  "label": "soco60 boundary span",
+  "label": "soco61 dark unit",
   "target_years": [
     2023,
     2024,
@@ -21,7 +21,7 @@
   "rubric_version": 3.8,
   "determination": "PHYSICALLY-CALIBRATED (PRICE UNSCORED)",
   "reasons": [
-    "PRICE UNSCORED \u2014 no actual_lmp.json block exists for SOCO, so C3a mean LMP, C3b price duration/shape and C3c price tail / scarcity (RT hourly) are NOT SCORED in any year (2023, 2024, 2025); this determination is scored on C1/C2/C4/C6/C8 ONLY and certifies NO price level, shape or tail (owner ruling card S2, 2026-09-13; rubric v3.8). It is not a CALIBRATED reading. Model system load-weighted mean LMP, MODEL-ONLY and UNVERIFIED \u2014 no measured reference exists to compare against: 2023: $31.63/MWh, 2024: $28.36/MWh, 2025: $65.07/MWh."
+    "PRICE UNSCORED \u2014 no actual_lmp.json block exists for SOCO, so C3a mean LMP, C3b price duration/shape and C3c price tail / scarcity (RT hourly) are NOT SCORED in any year (2023, 2024, 2025); this determination is scored on C1/C2/C4/C6/C8 ONLY and certifies NO price level, shape or tail (owner ruling card S2, 2026-09-13; rubric v3.8). It is not a CALIBRATED reading. Model system load-weighted mean LMP, MODEL-ONLY and UNVERIFIED \u2014 no measured reference exists to compare against: 2023: $31.63/MWh, 2024: $28.65/MWh, 2025: $65.07/MWh."
   ],
   "notes": [],
   "criteria": {
@@ -87,7 +87,7 @@
       "label": "C5a CO2 vs eGRID (REPORTED-ONLY, v2.9 \u2014 see the CRITERIA note)",
       "years": {
         "2023": "-3.2%",
-        "2024": "-7.4%",
+        "2024": "-6.9%",
         "2025": "+2.5%"
       }
     },
@@ -141,7 +141,7 @@
     ],
     "model_mean_lmp_by_year": {
       "2023": 31.63,
-      "2024": 28.36,
+      "2024": 28.65,
       "2025": 65.07
     }
   }

@@ -1,7 +1,7 @@
 {
   "as_reserve_formula": false,
   "as_reserve_withholding": false,
-  "basis_sha": "eab5c585b4316c3de50bb82c724e30c47bf32202",
+  "basis_sha": "1d7edc1b6ae5eaa3cfa83af7260e1d3560ff41e7",
   "battery_dispatch_adder": 0.0,
   "btm_backfill_year": null,
   "caiso_asymmetric_path_ratings": null,
@@ -70,6 +70,7 @@
   "coal_prb_passthrough_sigmoid": true,
   "coal_prb_passthrough_tiered": true,
   "coal_prb_sigmoid_overrides": {
+    "campd_dark_unit_year_windows": true,
     "campd_per_unit_attribution": true,
     "coal_warm_committed": true,
     "gas_basis_differential_measured_by_year": true,
@@ -83,9 +84,9 @@
   "commitment_screen_coal": true,
   "committed_band_measured_basis": null,
   "composed_from": [
-    "soco60_armB_2023",
-    "soco60_armB_2024",
-    "soco60_armB_2025"
+    "soco61_arm_2023",
+    "soco61_arm_2024",
+    "soco61_arm_2025"
   ],
   "ct_drag_overrides": {},
   "ct_intermediate_cf_threshold": null,
@@ -111,11 +112,11 @@
     ],
     "market_sim_data_root": "",
     "packages": {
-      "highspy": "1.15.1",
+      "highspy": "1.14.0",
       "numpy": "2.4.6",
-      "pandas": "3.0.6",
-      "pyarrow": "25.0.1",
-      "pydantic": "2.13.5",
+      "pandas": "3.0.3",
+      "pyarrow": "24.0.0",
+      "pydantic": "2.13.4",
       "scipy": "1.17.1"
     },
     "platform": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
@@ -196,8 +197,8 @@
   },
   "gas_st_drag_overrides": {},
   "gas_st_netload_drag": false,
-  "git_sha": "eab5c585",
-  "highspy_version": "1.15.1",
+  "git_sha": "1d7edc1b",
+  "highspy_version": "1.14.0",
   "hours": 8760,
   "hydro_backfill_year": 2024,
   "hydro_budget_period_by_instrument": false,
@@ -356,7 +357,7 @@
   "temp_derate_mean_anchored": false,
   "temp_derate_slope_ct_chp": null,
   "temp_derate_slope_st_chp": null,
-  "timestamp": "2026-09-23T05:07:41",
+  "timestamp": "2026-09-24T04:39:03",
   "tranche_startup_amortization": false,
   "tranche_startup_conditional_runs": false,
   "tranche_startup_measured_runs": false,

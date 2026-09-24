@@ -2,7 +2,7 @@
  "free_parameters": {
   "schema": "dof-ledger/v1",
   "seeded": "2026-07-04 S5 governance session \u2014 audit \u00a73 class-C table + W1d residual-identified/forecast-risk markers (docs/model-legitimacy-audit-2026-07.md; CLAUDE.md rule 20)",
-  "n_entries": 12,
+  "n_entries": 13,
   "n_residual": 1,
   "entries": [
    {
@@ -197,6 +197,13 @@
     "identification": "measured-physical",
     "n_scalars": 0,
     "basis": "SOCO-59 repair; n_scalars=0. 2025's own EIA-930 hydro-ex-PS monthly level; refused in the PS-folded years 2023/2024 by EIA930_PS_SPLIT_COMPLETE_FROM."
+   },
+   {
+    "name": "campd_dark_unit_year_windows",
+    "value": true,
+    "identification": "measured-physical",
+    "n_scalars": 0,
+    "basis": "Categorical data-admissibility gate on the per-unit CAMPD outage extract: a unit whose own id files every hour of a year dark while producing in an adjacent year gets one full-year window. SOCO: one unit-year, Lindsay Hill CT3 2024."
    }
   ]
  },
@@ -207,14 +214,15 @@
   "no_fit_to_price_residuals": true,
   "no_pinning_to_actuals": true,
   "outage_filter_exogenous_net_load": true,
-  "attested_by": "SOCO-60 (lane). Against keeper 2026-09-22-soco-h4-hydro-ror, THREE things move, each machine-verified by execution in this script. (1) HYDRO, owner ruling 2026-09-23 ('merge the two recipes'): hydro_eia930_monthly=True with hydro_backfill_year=2024 and EIA930_PS_SPLIT_COMPLETE_FROM['SOCO']=2025 (SOCO-59's repair) on top of the keeper's hydro_ror_split \u2014 one pipeline, the RoR flat level read off the repinned budget (rule 19). Budgets: 2023/2024 byte-identical to the keeper's (6.815 / 6.3015 TWh; their EIA-930 column folds pumped-storage discharge and the pin is refused); 2025 6.329 -> 5.9258 TWh, 2025's own clean EIA-930 level. (2) B1 PLANT BOUNDARY: ISO_MEMBERSHIP_DROPS_CURRENT_BA_RECODE['SOCO'] drops 7 plants the current EIA-860 recodes to FPL (the former Gulf Power fleet) at the single membership seam the benchmark and the must-run injection both read. EIA-930 SOCO excludes them: 930/923 fossil after the drop reads 1.002 / 0.981 (2023/2024); the model's own fleet census (current EIA-860 BA == SOCO) and its demand (EIA-930 SOCO demand + metered net exports = 930 SOCO net generation) never carried them. Solve-affecting only via the injection (Perdido landfill gas, ~0.015 TWh/yr biomass); SOCO's cache key moves. (3) B2 GAS FOLD: EIA930_GAS_FOLD_REFUTED={'SOCO'} \u2014 930 SOCO gas 129.59 / 126.08 TWh vs 923 gas classes 130.23 / 129.54: no room for the 6-7 TWh of biomass the deflation assumed folded; benchmark-only. RULE 1 / CHECK F: B1 and B2 are benchmark repairs that flip the sole failing row; if that were their only argument they would not be taken. They rest on six years of EIA-930 SOCO accounting, and they make three rows WORSE (COAL_PRB, COAL_BIT, 2024 CT_PEAKER) \u2014 reported at full magnitude, not absorbed. RULE 13: nothing measured about dispatch is fed back; the membership is a published plant attribute and the fold test reads EIA-930's own gas cell. RULES 21/24/25: zero free parameters, two per-ISO registry rows, no other ISO moves. GATE G17: SOCO has no price benchmark; every offer_curve_by_group band is 1.0, AUTHORIZED PRICE TUNING IS DECLARED NONE (no authorized_price_tuning key, SOCO convention)."
+  "attested_by": "SOCO-61 (lane). Against keeper 2026-09-23-soco60-boundary-span, ONE input moves, machine-verified by execution in scripts/gen_soco61_attestation.py: campd_dark_unit_year_windows=True selects the -perunitdark- SOCO outage extract (sha256 3b3e5a0d2f0e4523), which is the keeper's -perunit- extract re-derived BYTE-IDENTICALLY plus ONE row -- Lindsay Hill (55271) CT3, 313.1 MW, a full-year 2024 window. Recomputed here from the raw CAMPD extract: CT3 files 8784 rows in 2024 with 0 operating hours, against 641.9 GWh in 2023 and 307.6 GWh in 2025; its peers CT1/CT2 ran 4313 / 3732 h in 2024. The per-unit detector skips a never-producing unit and the eia923_netzero hook is plant-grain, so the keeper carried a turbine that did not run as fully available all year. RULE 14: the model cannot dispatch it. RULE 13: CAMPD operating status is a physical availability record that regenerates for any filed year; nothing measured about dispatch is fed back. RULE 19: the SAME per-unit extract, one more window; 2023/2025 fleets byte-identical and 2024 moves availability on the four 55271 tranches only. RULES 21/24/25: every admission condition is categorical (n_scalars 0), one registered ScenarioConfig field, SOCO's own data. CHECK F: if the only argument for this arm were that the 2024 CC_REGULAR share margin widens, it would not be taken. GATE G17: SOCO has no price benchmark; every offer_curve_by_group band is 1.0, AUTHORIZED PRICE TUNING IS DECLARED NONE. INHERITED, re-verified on this bundle by gen_soco60b_attestation.py: SOCO-60 (lane). Against keeper 2026-09-22-soco-h4-hydro-ror, THREE things move, each machine-verified by execution in this script. (1) HYDRO, owner ruling 2026-09-23 ('merge the two recipes'): hydro_eia930_monthly=True with hydro_backfill_year=2024 and EIA930_PS_SPLIT_COMPLETE_FROM['SOCO']=2025 (SOCO-59's repair) on top of the keeper's hydro_ror_split \u2014 one pipeline, the RoR flat level read off the repinned budget (rule 19). Budgets: 2023/2024 byte-identical to the keeper's (6.815 / 6.3015 TWh; their EIA-930 column folds pumped-storage discharge and the pin is refused); 2025 6.329 -> 5.9258 TWh, 2025's own clean EIA-930 level. (2) B1 PLANT BOUNDARY: ISO_MEMBERSHIP_DROPS_CURRENT_BA_RECODE['SOCO'] drops 7 plants the current EIA-860 recodes to FPL (the former Gulf Power fleet) at the single membership seam the benchmark and the must-run injection both read. EIA-930 SOCO excludes them: 930/923 fossil after the drop reads 1.002 / 0.981 (2023/2024); the model's own fleet census (current EIA-860 BA == SOCO) and its demand (EIA-930 SOCO demand + metered net exports = 930 SOCO net generation) never carried them. Solve-affecting only via the injection (Perdido landfill gas, ~0.015 TWh/yr biomass); SOCO's cache key moves. (3) B2 GAS FOLD: EIA930_GAS_FOLD_REFUTED={'SOCO'} \u2014 930 SOCO gas 129.59 / 126.08 TWh vs 923 gas classes 130.23 / 129.54: no room for the 6-7 TWh of biomass the deflation assumed folded; benchmark-only. RULE 1 / CHECK F: B1 and B2 are benchmark repairs that flip the sole failing row; if that were their only argument they would not be taken. They rest on six years of EIA-930 SOCO accounting, and they make three rows WORSE (COAL_PRB, COAL_BIT, 2024 CT_PEAKER) \u2014 reported at full magnitude, not absorbed. RULE 13: nothing measured about dispatch is fed back; the membership is a published plant attribute and the fold test reads EIA-930's own gas cell. RULES 21/24/25: zero free parameters, two per-ISO registry rows, no other ISO moves. GATE G17: SOCO has no price benchmark; every offer_curve_by_group band is 1.0, AUTHORIZED PRICE TUNING IS DECLARED NONE (no authorized_price_tuning key, SOCO convention)."
  },
  "disclosures": {
-  "precommit": "docs/handoffs/PRECOMMIT-soco-60b-2026-09-23.md",
+  "precommit": "docs/handoffs/PRECOMMIT-soco-61-2026-09-24.md",
   "benchmark_repair_moves_every_soco_run": "B1/B2 change SOCO's shared bench parts, so every SOCO run's C1 reads move with this registration, not only this run's.",
   "rows_made_worse": "COAL_PRB, COAL_BIT and 2024 CT_PEAKER move away from their actuals on the repaired benchmark.",
   "ror_clip_2025": "5 RoR plant-months clipped to nameplate after the 2025 repin: 5.4 GWh.",
   "eia930_wat_gap": "SOCO NG: WAT missing 2024-11-25..12-31 (1,343 h).",
-  "d79_note": "ISO_MEMBERSHIP_DROPS_CURRENT_BA_RECODE declared at False so SOCO's key moves."
+  "d79_note": "ISO_MEMBERSHIP_DROPS_CURRENT_BA_RECODE declared at False so SOCO's key moves.",
+  "soco61_scope": "Outage-extract half only: no tranche companion is derived for the dark-unit windows. SOCO's other dark unit-years (Walton Discover 2B, Baconton CT1, four Walton Bainbridge oil CTs) are CT peakers the overlay excludes by convention."
  }
 }
