@@ -1,0 +1,9383 @@
+[
+ {
+  "year": 2019,
+  "pre": {
+   "eia860_source": "canonical (2025ER snapshot)",
+   "derived_inputs_from_year": 2023,
+   "gas_price": 2.57,
+   "n_units": 659,
+   "digest": "9ffd09e0f53f1e0385b5df1ec7335f2b81a0b41bc3b32986098ee532f2d6836b",
+   "thermal_mw": 27645.0,
+   "class_table_mw": 419.0,
+   "class_table_share_pct": 1.52,
+   "class_table_plants": [
+    {
+     "plant": 7408,
+     "name": "Payson econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 2.3
+    },
+    {
+     "plant": 7408,
+     "name": "Payson econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 2.5
+    },
+    {
+     "plant": 7767,
+     "name": "Bloomington Power Plant",
+     "klass": "oil",
+     "pmax": 9.0
+    },
+    {
+     "plant": 56223,
+     "name": "Alden Bailey Power Plant econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 4.3
+    },
+    {
+     "plant": 56223,
+     "name": "Alden Bailey Power Plant econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 4.8
+    },
+    {
+     "plant": 56223,
+     "name": "Alden Bailey Power Plant peak",
+     "klass": "CT_PEAKER",
+     "pmax": 0.7
+    },
+    {
+     "plant": 58266,
+     "name": "Port Westward Unit 2 econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 98.9
+    },
+    {
+     "plant": 58266,
+     "name": "Port Westward Unit 2 econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 109.8
+    },
+    {
+     "plant": 58266,
+     "name": "Port Westward Unit 2 peak",
+     "klass": "CT_PEAKER",
+     "pmax": 15.7
+    },
+    {
+     "plant": 67766,
+     "name": "Yellowstone County Generating Station econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 73.0
+    },
+    {
+     "plant": 67766,
+     "name": "Yellowstone County Generating Station econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 81.0
+    },
+    {
+     "plant": 67766,
+     "name": "Yellowstone County Generating Station peak",
+     "klass": "CT_PEAKER",
+     "pmax": 11.6
+    },
+    {
+     "plant": 69880,
+     "name": "University of Montana CHP",
+     "klass": "oil",
+     "pmax": 2.0
+    },
+    {
+     "plant": 69880,
+     "name": "University of Montana CHP econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 1.6
+    },
+    {
+     "plant": 69880,
+     "name": "University of Montana CHP econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 1.8
+    }
+   ],
+   "by_class": [
+    {
+     "klass": "CC_CHP",
+     "mw": 1217.6,
+     "avail_twh": 7.973,
+     "hr_cw": 7.2907
+    },
+    {
+     "klass": "CC_REGULAR",
+     "mw": 11751.1,
+     "avail_twh": 76.967,
+     "hr_cw": 7.3546
+    },
+    {
+     "klass": "COAL",
+     "mw": 8688.6,
+     "avail_twh": 61.521,
+     "hr_cw": 10.8648
+    },
+    {
+     "klass": "CT_CHP",
+     "mw": 118.5,
+     "avail_twh": 0.858,
+     "hr_cw": 7.1604
+    },
+    {
+     "klass": "CT_PEAKER",
+     "mw": 3646.5,
+     "avail_twh": 22.413,
+     "hr_cw": 8.9043
+    },
+    {
+     "klass": "ST_CHP",
+     "mw": 5.2,
+     "avail_twh": 0.037,
+     "hr_cw": 6.188
+    },
+    {
+     "klass": "ST_GAS",
+     "mw": 2142.5,
+     "avail_twh": 12.643,
+     "hr_cw": 12.0062
+    },
+    {
+     "klass": "hydro",
+     "mw": 35804.0,
+     "avail_twh": 300.805,
+     "hr_cw": 0.0
+    },
+    {
+     "klass": "nuclear",
+     "mw": 1151.0,
+     "avail_twh": 8.441,
+     "hr_cw": 0.0
+    },
+    {
+     "klass": "oil",
+     "mw": 75.0,
+     "avail_twh": 0.576,
+     "hr_cw": 11.2334
+    }
+   ]
+  },
+  "arm": {
+   "eia860_source": "vintage_2019",
+   "derived_inputs_from_year": 2023,
+   "gas_price": 2.57,
+   "n_units": 623,
+   "digest": "c7ee71d92dcabc1364da925f95b149fe7dacd9b42f2e10d3f747bc941ba422b6",
+   "thermal_mw": 27492.3,
+   "class_table_mw": 251.2,
+   "class_table_share_pct": 0.91,
+   "class_table_plants": [
+    {
+     "plant": 7408,
+     "name": "Payson econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 4.1
+    },
+    {
+     "plant": 7408,
+     "name": "Payson econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 4.5
+    },
+    {
+     "plant": 7408,
+     "name": "Payson peak",
+     "klass": "CT_PEAKER",
+     "pmax": 0.6
+    },
+    {
+     "plant": 58266,
+     "name": "Port Westward Unit 2 econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 98.9
+    },
+    {
+     "plant": 58266,
+     "name": "Port Westward Unit 2 econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 109.8
+    },
+    {
+     "plant": 58266,
+     "name": "Port Westward Unit 2 peak",
+     "klass": "CT_PEAKER",
+     "pmax": 15.7
+    },
+    {
+     "plant": 59660,
+     "name": "Washington City Electric Generation econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 2.6
+    },
+    {
+     "plant": 59660,
+     "name": "Washington City Electric Generation econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 2.9
+    },
+    {
+     "plant": 61508,
+     "name": "Provo Power Plant econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 5.3
+    },
+    {
+     "plant": 61508,
+     "name": "Provo Power Plant econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 5.9
+    },
+    {
+     "plant": 61508,
+     "name": "Provo Power Plant peak",
+     "klass": "CT_PEAKER",
+     "pmax": 0.8
+    }
+   ],
+   "by_class": [
+    {
+     "klass": "CC_CHP",
+     "mw": 1211.5,
+     "avail_twh": 7.947,
+     "hr_cw": 7.935
+    },
+    {
+     "klass": "CC_REGULAR",
+     "mw": 10897.5,
+     "avail_twh": 70.889,
+     "hr_cw": 7.3973
+    },
+    {
+     "klass": "COAL",
+     "mw": 11652.0,
+     "avail_twh": 77.254,
+     "hr_cw": 10.8748
+    },
+    {
+     "klass": "CT_CHP",
+     "mw": 77.0,
+     "avail_twh": 0.595,
+     "hr_cw": 7.6638
+    },
+    {
+     "klass": "CT_PEAKER",
+     "mw": 3007.3,
+     "avail_twh": 22.375,
+     "hr_cw": 10.8712
+    },
+    {
+     "klass": "ST_CHP",
+     "mw": 2.4,
+     "avail_twh": 0.019,
+     "hr_cw": 6.1893
+    },
+    {
+     "klass": "ST_GAS",
+     "mw": 571.5,
+     "avail_twh": 2.878,
+     "hr_cw": 12.6906
+    },
+    {
+     "klass": "hydro",
+     "mw": 35804.0,
+     "avail_twh": 300.956,
+     "hr_cw": 0.0
+    },
+    {
+     "klass": "nuclear",
+     "mw": 1163.0,
+     "avail_twh": 8.529,
+     "hr_cw": 0.0
+    },
+    {
+     "klass": "oil",
+     "mw": 73.0,
+     "avail_twh": 0.576,
+     "hr_cw": 11.5051
+    }
+   ]
+  },
+  "thermal_plant_moves": [
+   {
+    "plant": 55328,
+    "name": "Hermiston Power Partnership committed",
+    "mw_pre": 440.3,
+    "twh_pre": 3.165,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -440.3,
+    "d_twh": -3.165
+   },
+   {
+    "plant": 8066,
+    "name": "Jim Bridger committed",
+    "mw_pre": 286.78,
+    "twh_pre": 2.06,
+    "mw_arm": 106.15,
+    "twh_arm": 0.767,
+    "d_mw": -180.63,
+    "d_twh": -1.293
+   },
+   {
+    "plant": 8066,
+    "name": "Jim Bridger peak",
+    "mw_pre": 181.48,
+    "twh_pre": 1.299,
+    "mw_arm": 42.46,
+    "twh_arm": 0.307,
+    "d_mw": -139.02,
+    "d_twh": -0.993
+   },
+   {
+    "plant": 8066,
+    "name": "Jim Bridger econhi",
+    "mw_pre": 564.169,
+    "twh_pre": 4.093,
+    "mw_arm": 458.568,
+    "twh_arm": 3.313,
+    "d_mw": -105.601,
+    "d_twh": -0.78
+   },
+   {
+    "plant": 55328,
+    "name": "Hermiston Power Partnership econhi",
+    "mw_pre": 66.674,
+    "twh_pre": 0.479,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -66.674,
+    "d_twh": -0.479
+   },
+   {
+    "plant": 55328,
+    "name": "Hermiston Power Partnership econlo",
+    "mw_pre": 66.674,
+    "twh_pre": 0.479,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -66.674,
+    "d_twh": -0.479
+   },
+   {
+    "plant": 8224,
+    "name": "North Valmy econhi",
+    "mw_pre": 89.87,
+    "twh_pre": 0.569,
+    "mw_arm": 38.993,
+    "twh_arm": 0.118,
+    "d_mw": -50.876,
+    "d_twh": -0.451
+   },
+   {
+    "plant": 8224,
+    "name": "North Valmy econlo",
+    "mw_pre": 94.318,
+    "twh_pre": 0.585,
+    "mw_arm": 47.659,
+    "twh_arm": 0.144,
+    "d_mw": -46.66,
+    "d_twh": -0.441
+   },
+   {
+    "plant": 8066,
+    "name": "Jim Bridger econlo",
+    "mw_pre": 614.521,
+    "twh_pre": 4.468,
+    "mw_arm": 560.472,
+    "twh_arm": 4.049,
+    "d_mw": -54.049,
+    "d_twh": -0.419
+   },
+   {
+    "plant": 55322,
+    "name": "Chuck Lenzie Generating Station econlo",
+    "mw_pre": 420.417,
+    "twh_pre": 3.166,
+    "mw_arm": 367.38,
+    "twh_arm": 2.767,
+    "d_mw": -53.037,
+    "d_twh": -0.399
+   },
+   {
+    "plant": 55322,
+    "name": "Chuck Lenzie Generating Station econhi",
+    "mw_pre": 420.417,
+    "twh_pre": 3.166,
+    "mw_arm": 367.38,
+    "twh_arm": 2.767,
+    "d_mw": -53.037,
+    "d_twh": -0.399
+   },
+   {
+    "plant": 55328,
+    "name": "Hermiston Power Partnership peak",
+    "mw_pre": 55.352,
+    "twh_pre": 0.398,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -55.352,
+    "d_twh": -0.398
+   },
+   {
+    "plant": 55687,
+    "name": "Higgins Generating Station econhi",
+    "mw_pre": 212.66,
+    "twh_pre": 1.597,
+    "mw_arm": 160.6,
+    "twh_arm": 1.206,
+    "d_mw": -52.06,
+    "d_twh": -0.391
+   },
+   {
+    "plant": 55687,
+    "name": "Higgins Generating Station econlo",
+    "mw_pre": 212.66,
+    "twh_pre": 1.597,
+    "mw_arm": 160.6,
+    "twh_arm": 1.206,
+    "d_mw": -52.06,
+    "d_twh": -0.391
+   },
+   {
+    "plant": 56237,
+    "name": "Lake Side Power Plant econhi",
+    "mw_pre": 358.68,
+    "twh_pre": 2.523,
+    "mw_arm": 303.408,
+    "twh_arm": 2.134,
+    "d_mw": -55.272,
+    "d_twh": -0.389
+   },
+   {
+    "plant": 56237,
+    "name": "Lake Side Power Plant econlo",
+    "mw_pre": 358.68,
+    "twh_pre": 2.523,
+    "mw_arm": 303.408,
+    "twh_arm": 2.134,
+    "d_mw": -55.272,
+    "d_twh": -0.389
+   },
+   {
+    "plant": 8224,
+    "name": "North Valmy committed",
+    "mw_pre": 185.276,
+    "twh_pre": 0.933,
+    "mw_arm": 212.454,
+    "twh_arm": 0.642,
+    "d_mw": 27.178,
+    "d_twh": -0.291
+   },
+   {
+    "plant": 2336,
+    "name": "Tracy econhi",
+    "mw_pre": 283.158,
+    "twh_pre": 2.024,
+    "mw_arm": 243.205,
+    "twh_arm": 1.735,
+    "d_mw": -39.954,
+    "d_twh": -0.289
+   },
+   {
+    "plant": 2336,
+    "name": "Tracy econlo",
+    "mw_pre": 289.571,
+    "twh_pre": 2.072,
+    "mw_arm": 249.617,
+    "twh_arm": 1.783,
+    "d_mw": -39.953,
+    "d_twh": -0.289
+   },
+   {
+    "plant": 8224,
+    "name": "North Valmy peak",
+    "mw_pre": 43.46,
+    "twh_pre": 0.291,
+    "mw_arm": 10.44,
+    "twh_arm": 0.032,
+    "d_mw": -33.02,
+    "d_twh": -0.259
+   },
+   {
+    "plant": 55841,
+    "name": "Silverhawk econhi",
+    "mw_pre": 396.604,
+    "twh_pre": 1.099,
+    "mw_arm": 155.96,
+    "twh_arm": 0.853,
+    "d_mw": -240.644,
+    "d_twh": -0.246
+   },
+   {
+    "plant": 55841,
+    "name": "Silverhawk econlo",
+    "mw_pre": 418.076,
+    "twh_pre": 1.099,
+    "mw_arm": 155.96,
+    "twh_arm": 0.853,
+    "d_mw": -262.116,
+    "d_twh": -0.246
+   },
+   {
+    "plant": 56102,
+    "name": "Currant Creek econlo",
+    "mw_pre": 162.964,
+    "twh_pre": 1.303,
+    "mw_arm": 132.31,
+    "twh_arm": 1.058,
+    "d_mw": -30.654,
+    "d_twh": -0.245
+   },
+   {
+    "plant": 56102,
+    "name": "Currant Creek econhi",
+    "mw_pre": 162.964,
+    "twh_pre": 1.303,
+    "mw_arm": 132.31,
+    "twh_arm": 1.058,
+    "d_mw": -30.654,
+    "d_twh": -0.245
+   },
+   {
+    "plant": 54268,
+    "name": "HF Sinclair Puget Sound Refining committed",
+    "mw_pre": 28.836,
+    "twh_pre": 0.223,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -28.836,
+    "d_twh": -0.223
+   },
+   {
+    "plant": 56312,
+    "name": "Shute Creek Facility committed",
+    "mw_pre": 27.889,
+    "twh_pre": 0.216,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -27.889,
+    "d_twh": -0.216
+   },
+   {
+    "plant": 4158,
+    "name": "Dave Johnston committed",
+    "mw_pre": 359.835,
+    "twh_pre": 2.624,
+    "mw_arm": 359.835,
+    "twh_arm": 2.426,
+    "d_mw": 0.0,
+    "d_twh": -0.198
+   },
+   {
+    "plant": 4158,
+    "name": "Dave Johnston mustrun",
+    "mw_pre": 356.855,
+    "twh_pre": 2.602,
+    "mw_arm": 356.855,
+    "twh_arm": 2.406,
+    "d_mw": 0.0,
+    "d_twh": -0.196
+   },
+   {
+    "plant": 2336,
+    "name": "Tracy committed",
+    "mw_pre": 326.156,
+    "twh_pre": 2.32,
+    "mw_arm": 303.084,
+    "twh_arm": 2.153,
+    "d_mw": -23.072,
+    "d_twh": -0.167
+   },
+   {
+    "plant": 55179,
+    "name": "Rathdrum Power LLC peak",
+    "mw_pre": 63.0,
+    "twh_pre": 0.452,
+    "mw_arm": 43.896,
+    "twh_arm": 0.315,
+    "d_mw": -19.104,
+    "d_twh": -0.137
+   },
+   {
+    "plant": 56224,
+    "name": "TS Power Plant committed",
+    "mw_pre": 91.946,
+    "twh_pre": 0.677,
+    "mw_arm": 91.946,
+    "twh_arm": 0.546,
+    "d_mw": 0.0,
+    "d_twh": -0.131
+   },
+   {
+    "plant": 56224,
+    "name": "TS Power Plant mustrun",
+    "mw_pre": 91.946,
+    "twh_pre": 0.677,
+    "mw_arm": 91.946,
+    "twh_arm": 0.546,
+    "d_mw": 0.0,
+    "d_twh": -0.131
+   },
+   {
+    "plant": 8069,
+    "name": "Huntington econlo",
+    "mw_pre": 294.971,
+    "twh_pre": 2.169,
+    "mw_arm": 294.971,
+    "twh_arm": 2.05,
+    "d_mw": 0.0,
+    "d_twh": -0.119
+   },
+   {
+    "plant": 7999,
+    "name": "Grays Harbor Energy Facility peak",
+    "mw_pre": 99.96,
+    "twh_pre": 0.615,
+    "mw_arm": 80.936,
+    "twh_arm": 0.498,
+    "d_mw": -19.024,
+    "d_twh": -0.117
+   },
+   {
+    "plant": 55687,
+    "name": "Higgins Generating Station committed",
+    "mw_pre": 133.3,
+    "twh_pre": 1.001,
+    "mw_arm": 118.25,
+    "twh_arm": 0.888,
+    "d_mw": -15.05,
+    "d_twh": -0.113
+   },
+   {
+    "plant": 55482,
+    "name": "Goldendale Generating Station peak",
+    "mw_pre": 34.017,
+    "twh_pre": 0.239,
+    "mw_arm": 18.986,
+    "twh_arm": 0.134,
+    "d_mw": -15.031,
+    "d_twh": -0.106
+   },
+   {
+    "plant": 57915,
+    "name": "WE Soda Alkalai LLC mustrun",
+    "mw_pre": 12.375,
+    "twh_pre": 0.099,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -12.375,
+    "d_twh": -0.099
+   },
+   {
+    "plant": 55733,
+    "name": "Bennett Mountain committed",
+    "mw_pre": 114.96,
+    "twh_pre": 0.855,
+    "mw_arm": 101.844,
+    "twh_arm": 0.758,
+    "d_mw": -13.116,
+    "d_twh": -0.098
+   },
+   {
+    "plant": 8069,
+    "name": "Huntington econhi",
+    "mw_pre": 241.34,
+    "twh_pre": 1.775,
+    "mw_arm": 241.34,
+    "twh_arm": 1.677,
+    "d_mw": 0.0,
+    "d_twh": -0.097
+   },
+   {
+    "plant": 55841,
+    "name": "Silverhawk committed",
+    "mw_pre": 176.7,
+    "twh_pre": 0.967,
+    "mw_arm": 159.6,
+    "twh_arm": 0.873,
+    "d_mw": -17.1,
+    "d_twh": -0.094
+   },
+   {
+    "plant": 55322,
+    "name": "Chuck Lenzie Generating Station committed",
+    "mw_pre": 211.14,
+    "twh_pre": 1.59,
+    "mw_arm": 198.9,
+    "twh_arm": 1.498,
+    "d_mw": -12.24,
+    "d_twh": -0.092
+   },
+   {
+    "plant": 6165,
+    "name": "Hunter econlo",
+    "mw_pre": 400.313,
+    "twh_pre": 3.06,
+    "mw_arm": 400.313,
+    "twh_arm": 2.97,
+    "d_mw": 0.0,
+    "d_twh": -0.09
+   },
+   {
+    "plant": 6165,
+    "name": "Hunter econhi",
+    "mw_pre": 327.529,
+    "twh_pre": 2.503,
+    "mw_arm": 327.529,
+    "twh_arm": 2.43,
+    "d_mw": 0.0,
+    "d_twh": -0.074
+   },
+   {
+    "plant": 8069,
+    "name": "Huntington committed",
+    "mw_pre": 177.255,
+    "twh_pre": 1.303,
+    "mw_arm": 177.255,
+    "twh_arm": 1.232,
+    "d_mw": 0.0,
+    "d_twh": -0.072
+   },
+   {
+    "plant": 8069,
+    "name": "Huntington mustrun",
+    "mw_pre": 177.255,
+    "twh_pre": 1.303,
+    "mw_arm": 177.255,
+    "twh_arm": 1.232,
+    "d_mw": 0.0,
+    "d_twh": -0.072
+   },
+   {
+    "plant": 6101,
+    "name": "Wyodak committed",
+    "mw_pre": 161.02,
+    "twh_pre": 1.165,
+    "mw_arm": 161.02,
+    "twh_arm": 1.095,
+    "d_mw": 0.0,
+    "d_twh": -0.07
+   },
+   {
+    "plant": 6165,
+    "name": "Hunter mustrun",
+    "mw_pre": 303.949,
+    "twh_pre": 2.323,
+    "mw_arm": 303.949,
+    "twh_arm": 2.255,
+    "d_mw": 0.0,
+    "d_twh": -0.068
+   },
+   {
+    "plant": 6165,
+    "name": "Hunter committed",
+    "mw_pre": 303.949,
+    "twh_pre": 2.323,
+    "mw_arm": 303.949,
+    "twh_arm": 2.255,
+    "d_mw": 0.0,
+    "d_twh": -0.068
+   },
+   {
+    "plant": 57915,
+    "name": "WE Soda Alkalai LLC econlo",
+    "mw_pre": 7.26,
+    "twh_pre": 0.058,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -7.26,
+    "d_twh": -0.058
+   },
+   {
+    "plant": 7790,
+    "name": "Bonanza committed",
+    "mw_pre": 221.214,
+    "twh_pre": 1.771,
+    "mw_arm": 221.214,
+    "twh_arm": 1.717,
+    "d_mw": 0.0,
+    "d_twh": -0.054
+   },
+   {
+    "plant": 7790,
+    "name": "Bonanza mustrun",
+    "mw_pre": 221.214,
+    "twh_pre": 1.771,
+    "mw_arm": 221.214,
+    "twh_arm": 1.717,
+    "d_mw": 0.0,
+    "d_twh": -0.054
+   },
+   {
+    "plant": 7350,
+    "name": "Coyote Springs econlo",
+    "mw_pre": 79.365,
+    "twh_pre": 0.518,
+    "mw_arm": 71.825,
+    "twh_arm": 0.469,
+    "d_mw": -7.54,
+    "d_twh": -0.049
+   },
+   {
+    "plant": 7350,
+    "name": "Coyote Springs econhi",
+    "mw_pre": 79.365,
+    "twh_pre": 0.518,
+    "mw_arm": 71.825,
+    "twh_arm": 0.469,
+    "d_mw": -7.54,
+    "d_twh": -0.049
+   },
+   {
+    "plant": 57915,
+    "name": "WE Soda Alkalai LLC econhi",
+    "mw_pre": 5.94,
+    "twh_pre": 0.048,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -5.94,
+    "d_twh": -0.048
+   },
+   {
+    "plant": 7605,
+    "name": "River Road Gen Plant committed",
+    "mw_pre": 161.0,
+    "twh_pre": 1.046,
+    "mw_arm": 154.0,
+    "twh_arm": 1.001,
+    "d_mw": -7.0,
+    "d_twh": -0.045
+   },
+   {
+    "plant": 6101,
+    "name": "Wyodak econlo",
+    "mw_pre": 90.387,
+    "twh_pre": 0.654,
+    "mw_arm": 90.387,
+    "twh_arm": 0.615,
+    "d_mw": 0.0,
+    "d_twh": -0.039
+   },
+   {
+    "plant": 56223,
+    "name": "Alden Bailey Power Plant econlo",
+    "mw_pre": 4.794,
+    "twh_pre": 0.036,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -4.794,
+    "d_twh": -0.036
+   },
+   {
+    "plant": 56223,
+    "name": "Alden Bailey Power Plant econhi",
+    "mw_pre": 4.32,
+    "twh_pre": 0.032,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -4.32,
+    "d_twh": -0.032
+   },
+   {
+    "plant": 6101,
+    "name": "Wyodak econhi",
+    "mw_pre": 73.953,
+    "twh_pre": 0.535,
+    "mw_arm": 73.953,
+    "twh_arm": 0.503,
+    "d_mw": 0.0,
+    "d_twh": -0.032
+   },
+   {
+    "plant": 63423,
+    "name": "BYU Central Heating Plant committed",
+    "mw_pre": 4.2,
+    "twh_pre": 0.03,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -4.2,
+    "d_twh": -0.03
+   },
+   {
+    "plant": 56500,
+    "name": "Western 102 Power Plant econlo",
+    "mw_pre": 58.066,
+    "twh_pre": 0.432,
+    "mw_arm": 54.103,
+    "twh_arm": 0.403,
+    "d_mw": -3.962,
+    "d_twh": -0.029
+   },
+   {
+    "plant": 54268,
+    "name": "HF Sinclair Puget Sound Refining econhi",
+    "mw_pre": 3.582,
+    "twh_pre": 0.028,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -3.582,
+    "d_twh": -0.028
+   },
+   {
+    "plant": 54268,
+    "name": "HF Sinclair Puget Sound Refining econlo",
+    "mw_pre": 3.582,
+    "twh_pre": 0.028,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -3.582,
+    "d_twh": -0.028
+   },
+   {
+    "plant": 56500,
+    "name": "Western 102 Power Plant econhi",
+    "mw_pre": 52.325,
+    "twh_pre": 0.389,
+    "mw_arm": 48.755,
+    "twh_arm": 0.363,
+    "d_mw": -3.571,
+    "d_twh": -0.027
+   },
+   {
+    "plant": 55733,
+    "name": "Bennett Mountain econlo",
+    "mw_pre": 30.088,
+    "twh_pre": 0.224,
+    "mw_arm": 26.656,
+    "twh_arm": 0.198,
+    "d_mw": -3.433,
+    "d_twh": -0.026
+   },
+   {
+    "plant": 56224,
+    "name": "TS Power Plant econlo",
+    "mw_pre": 16.577,
+    "twh_pre": 0.122,
+    "mw_arm": 16.577,
+    "twh_arm": 0.098,
+    "d_mw": 0.0,
+    "d_twh": -0.024
+   },
+   {
+    "plant": 55733,
+    "name": "Bennett Mountain econhi",
+    "mw_pre": 27.114,
+    "twh_pre": 0.202,
+    "mw_arm": 24.02,
+    "twh_arm": 0.179,
+    "d_mw": -3.093,
+    "d_twh": -0.023
+   },
+   {
+    "plant": 56224,
+    "name": "TS Power Plant econhi",
+    "mw_pre": 13.563,
+    "twh_pre": 0.1,
+    "mw_arm": 13.563,
+    "twh_arm": 0.081,
+    "d_mw": 0.0,
+    "d_twh": -0.019
+   },
+   {
+    "plant": 10504,
+    "name": "Amalgamated Sugar Twin Falls committed",
+    "mw_pre": 2.782,
+    "twh_pre": 0.017,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -2.782,
+    "d_twh": -0.017
+   },
+   {
+    "plant": 55749,
+    "name": "Hardin Generator Project committed",
+    "mw_pre": 60.027,
+    "twh_pre": 0.098,
+    "mw_arm": 60.027,
+    "twh_arm": 0.084,
+    "d_mw": 0.0,
+    "d_twh": -0.015
+   },
+   {
+    "plant": 63423,
+    "name": "BYU Central Heating Plant econlo",
+    "mw_pre": 1.96,
+    "twh_pre": 0.014,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -1.96,
+    "d_twh": -0.014
+   },
+   {
+    "plant": 63423,
+    "name": "BYU Central Heating Plant econhi",
+    "mw_pre": 1.96,
+    "twh_pre": 0.014,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -1.96,
+    "d_twh": -0.014
+   },
+   {
+    "plant": 57028,
+    "name": "Langley Gulch Power Plant committed",
+    "mw_pre": 205.044,
+    "twh_pre": 1.037,
+    "mw_arm": 202.597,
+    "twh_arm": 1.025,
+    "d_mw": -2.447,
+    "d_twh": -0.012
+   },
+   {
+    "plant": 58382,
+    "name": "Threemile Digester committed",
+    "mw_pre": 1.44,
+    "twh_pre": 0.011,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -1.44,
+    "d_twh": -0.011
+   },
+   {
+    "plant": 57915,
+    "name": "WE Soda Alkalai LLC committed",
+    "mw_pre": 1.375,
+    "twh_pre": 0.011,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -1.375,
+    "d_twh": -0.011
+   },
+   {
+    "plant": 57028,
+    "name": "Langley Gulch Power Plant econlo",
+    "mw_pre": 41.858,
+    "twh_pre": 0.212,
+    "mw_arm": 39.71,
+    "twh_arm": 0.201,
+    "d_mw": -2.148,
+    "d_twh": -0.011
+   },
+   {
+    "plant": 55733,
+    "name": "Bennett Mountain peak",
+    "mw_pre": 12.958,
+    "twh_pre": 0.096,
+    "mw_arm": 11.48,
+    "twh_arm": 0.085,
+    "d_mw": -1.478,
+    "d_twh": -0.011
+   },
+   {
+    "plant": 57028,
+    "name": "Langley Gulch Power Plant econhi",
+    "mw_pre": 41.858,
+    "twh_pre": 0.212,
+    "mw_arm": 39.71,
+    "twh_arm": 0.201,
+    "d_mw": -2.148,
+    "d_twh": -0.011
+   },
+   {
+    "plant": 7605,
+    "name": "River Road Gen Plant econhi",
+    "mw_pre": 34.5,
+    "twh_pre": 0.224,
+    "mw_arm": 33.0,
+    "twh_arm": 0.214,
+    "d_mw": -1.5,
+    "d_twh": -0.01
+   },
+   {
+    "plant": 7605,
+    "name": "River Road Gen Plant econlo",
+    "mw_pre": 34.5,
+    "twh_pre": 0.224,
+    "mw_arm": 33.0,
+    "twh_arm": 0.214,
+    "d_mw": -1.5,
+    "d_twh": -0.01
+   },
+   {
+    "plant": 50951,
+    "name": "Sunnyside Cogen Associates committed",
+    "mw_pre": 35.7,
+    "twh_pre": 0.26,
+    "mw_arm": 35.7,
+    "twh_arm": 0.25,
+    "d_mw": 0.0,
+    "d_twh": -0.01
+   },
+   {
+    "plant": 56312,
+    "name": "Shute Creek Facility econhi",
+    "mw_pre": 1.131,
+    "twh_pre": 0.009,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -1.131,
+    "d_twh": -0.009
+   },
+   {
+    "plant": 56312,
+    "name": "Shute Creek Facility econlo",
+    "mw_pre": 1.131,
+    "twh_pre": 0.009,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -1.131,
+    "d_twh": -0.009
+   },
+   {
+    "plant": 4162,
+    "name": "Naughton peak",
+    "mw_pre": 44.19,
+    "twh_pre": 0.107,
+    "mw_arm": 13.74,
+    "twh_arm": 0.104,
+    "d_mw": -30.45,
+    "d_twh": -0.003
+   },
+   {
+    "plant": 67766,
+    "name": "Yellowstone County Generating Station econhi",
+    "mw_pre": 73.0,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -73.0,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 65380,
+    "name": "Solomon Generating Facility peak",
+    "mw_pre": 1.043,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -1.043,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 65380,
+    "name": "Solomon Generating Facility econlo",
+    "mw_pre": 7.289,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -7.289,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 65380,
+    "name": "Solomon Generating Facility econhi",
+    "mw_pre": 6.568,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -6.568,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 67766,
+    "name": "Yellowstone County Generating Station econlo",
+    "mw_pre": 81.008,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -81.008,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 67766,
+    "name": "Yellowstone County Generating Station peak",
+    "mw_pre": 11.592,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -11.592,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 69880,
+    "name": "University of Montana CHP",
+    "mw_pre": 2.0,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -2.0,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 69880,
+    "name": "University of Montana CHP econhi",
+    "mw_pre": 1.587,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -1.587,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 10215,
+    "name": "Snowbird Power Plant committed",
+    "mw_pre": 1.483,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -1.483,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 69880,
+    "name": "University of Montana CHP econlo",
+    "mw_pre": 1.761,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -1.761,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 7111,
+    "name": "Heber City econhi",
+    "mw_pre": 7.714,
+    "twh_pre": 0.037,
+    "mw_arm": 6.216,
+    "twh_arm": 0.046,
+    "d_mw": -1.499,
+    "d_twh": 0.009
+   },
+   {
+    "plant": 3665,
+    "name": "Bountiful City econhi",
+    "mw_pre": 10.8,
+    "twh_pre": 0.08,
+    "mw_arm": 11.99,
+    "twh_arm": 0.089,
+    "d_mw": 1.19,
+    "d_twh": 0.009
+   },
+   {
+    "plant": 57653,
+    "name": "Oregon State University Energy Center committed",
+    "mw_pre": 1.56,
+    "twh_pre": 0.012,
+    "mw_arm": 2.565,
+    "twh_arm": 0.021,
+    "d_mw": 1.005,
+    "d_twh": 0.009
+   },
+   {
+    "plant": 7111,
+    "name": "Heber City econlo",
+    "mw_pre": 8.561,
+    "twh_pre": 0.041,
+    "mw_arm": 6.897,
+    "twh_arm": 0.051,
+    "d_mw": -1.663,
+    "d_twh": 0.01
+   },
+   {
+    "plant": 7028,
+    "name": "Whitehead econhi",
+    "mw_pre": 3.416,
+    "twh_pre": 0.019,
+    "mw_arm": 3.752,
+    "twh_arm": 0.029,
+    "d_mw": 0.336,
+    "d_twh": 0.01
+   },
+   {
+    "plant": 7028,
+    "name": "Whitehead econlo",
+    "mw_pre": 3.416,
+    "twh_pre": 0.019,
+    "mw_arm": 3.752,
+    "twh_arm": 0.029,
+    "d_mw": 0.336,
+    "d_twh": 0.01
+   },
+   {
+    "plant": 3665,
+    "name": "Bountiful City econlo",
+    "mw_pre": 11.985,
+    "twh_pre": 0.089,
+    "mw_arm": 13.306,
+    "twh_arm": 0.099,
+    "d_mw": 1.321,
+    "d_twh": 0.01
+   },
+   {
+    "plant": 54950,
+    "name": "Univ of Oregon Central Power Station peak",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 1.638,
+    "twh_arm": 0.013,
+    "d_mw": 1.638,
+    "d_twh": 0.013
+   },
+   {
+    "plant": 7408,
+    "name": "Payson econhi",
+    "mw_pre": 2.292,
+    "twh_pre": 0.017,
+    "mw_arm": 4.056,
+    "twh_arm": 0.03,
+    "d_mw": 1.763,
+    "d_twh": 0.013
+   },
+   {
+    "plant": 7953,
+    "name": "Evander Andrews Power Complex peak",
+    "mw_pre": 15.914,
+    "twh_pre": 0.118,
+    "mw_arm": 17.598,
+    "twh_arm": 0.131,
+    "d_mw": 1.684,
+    "d_twh": 0.013
+   },
+   {
+    "plant": 10504,
+    "name": "Amalgamated Sugar Twin Falls econhi",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 1.836,
+    "twh_arm": 0.015,
+    "d_mw": 1.836,
+    "d_twh": 0.015
+   },
+   {
+    "plant": 7408,
+    "name": "Payson econlo",
+    "mw_pre": 2.544,
+    "twh_pre": 0.019,
+    "mw_arm": 4.5,
+    "twh_arm": 0.033,
+    "d_mw": 1.957,
+    "d_twh": 0.015
+   },
+   {
+    "plant": 57028,
+    "name": "Langley Gulch Power Plant peak",
+    "mw_pre": 14.559,
+    "twh_pre": 0.074,
+    "mw_arm": 17.682,
+    "twh_arm": 0.089,
+    "d_mw": 3.123,
+    "d_twh": 0.016
+   },
+   {
+    "plant": 57915,
+    "name": "Genesis Alkali committed",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 2.05,
+    "twh_arm": 0.016,
+    "d_mw": 2.05,
+    "d_twh": 0.016
+   },
+   {
+    "plant": 10504,
+    "name": "Amalgamated Sugar Twin Falls econlo",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 2.244,
+    "twh_arm": 0.018,
+    "d_mw": 2.244,
+    "d_twh": 0.018
+   },
+   {
+    "plant": 7028,
+    "name": "Whitehead committed",
+    "mw_pre": 7.32,
+    "twh_pre": 0.041,
+    "mw_arm": 8.04,
+    "twh_arm": 0.062,
+    "d_mw": 0.72,
+    "d_twh": 0.022
+   },
+   {
+    "plant": 7999,
+    "name": "Grays Harbor Energy Facility committed",
+    "mw_pre": 258.825,
+    "twh_pre": 1.592,
+    "mw_arm": 262.74,
+    "twh_arm": 1.616,
+    "d_mw": 3.915,
+    "d_twh": 0.024
+   },
+   {
+    "plant": 58191,
+    "name": "US Magnesium committed",
+    "mw_pre": 6.6,
+    "twh_pre": 0.051,
+    "mw_arm": 9.9,
+    "twh_arm": 0.077,
+    "d_mw": 3.3,
+    "d_twh": 0.026
+   },
+   {
+    "plant": 54268,
+    "name": "March Point Cogeneration econlo",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 3.582,
+    "twh_arm": 0.028,
+    "d_mw": 3.582,
+    "d_twh": 0.028
+   },
+   {
+    "plant": 54268,
+    "name": "March Point Cogeneration econhi",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 3.582,
+    "twh_arm": 0.028,
+    "d_mw": 3.582,
+    "d_twh": 0.028
+   },
+   {
+    "plant": 10504,
+    "name": "Amalgamated Sugar Twin Falls mustrun",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 3.825,
+    "twh_arm": 0.031,
+    "d_mw": 3.825,
+    "d_twh": 0.031
+   },
+   {
+    "plant": 54950,
+    "name": "Univ of Oregon Central Power Station committed",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 4.05,
+    "twh_arm": 0.033,
+    "d_mw": 4.05,
+    "d_twh": 0.033
+   },
+   {
+    "plant": 7953,
+    "name": "Evander Andrews Power Complex econhi",
+    "mw_pre": 54.742,
+    "twh_pre": 0.407,
+    "mw_arm": 60.535,
+    "twh_arm": 0.45,
+    "d_mw": 5.793,
+    "d_twh": 0.043
+   },
+   {
+    "plant": 7953,
+    "name": "Evander Andrews Power Complex econlo",
+    "mw_pre": 60.747,
+    "twh_pre": 0.452,
+    "mw_arm": 67.176,
+    "twh_arm": 0.5,
+    "d_mw": 6.429,
+    "d_twh": 0.048
+   },
+   {
+    "plant": 55482,
+    "name": "Goldendale Generating Station econhi",
+    "mw_pre": 22.546,
+    "twh_pre": 0.159,
+    "mw_arm": 30.062,
+    "twh_arm": 0.211,
+    "d_mw": 7.515,
+    "d_twh": 0.053
+   },
+   {
+    "plant": 55482,
+    "name": "Goldendale Generating Station econlo",
+    "mw_pre": 22.546,
+    "twh_pre": 0.159,
+    "mw_arm": 30.062,
+    "twh_arm": 0.211,
+    "d_mw": 7.515,
+    "d_twh": 0.053
+   },
+   {
+    "plant": 6076,
+    "name": "Colstrip peak",
+    "mw_pre": 29.6,
+    "twh_pre": 0.19,
+    "mw_arm": 41.88,
+    "twh_arm": 0.257,
+    "d_mw": 12.28,
+    "d_twh": 0.067
+   },
+   {
+    "plant": 3845,
+    "name": "Transalta Centralia Generation peak",
+    "mw_pre": 13.4,
+    "twh_pre": 0.083,
+    "mw_arm": 26.8,
+    "twh_arm": 0.151,
+    "d_mw": 13.4,
+    "d_twh": 0.068
+   },
+   {
+    "plant": 57915,
+    "name": "Genesis Alkali econhi",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 8.856,
+    "twh_arm": 0.071,
+    "d_mw": 8.856,
+    "d_twh": 0.071
+   },
+   {
+    "plant": 7999,
+    "name": "Grays Harbor Energy Facility econhi",
+    "mw_pre": 118.108,
+    "twh_pre": 0.726,
+    "mw_arm": 130.162,
+    "twh_arm": 0.801,
+    "d_mw": 12.054,
+    "d_twh": 0.074
+   },
+   {
+    "plant": 7999,
+    "name": "Grays Harbor Energy Facility econlo",
+    "mw_pre": 118.108,
+    "twh_pre": 0.726,
+    "mw_arm": 130.162,
+    "twh_arm": 0.801,
+    "d_mw": 12.054,
+    "d_twh": 0.074
+   },
+   {
+    "plant": 7953,
+    "name": "Evander Andrews Power Complex committed",
+    "mw_pre": 95.937,
+    "twh_pre": 0.714,
+    "mw_arm": 106.091,
+    "twh_arm": 0.789,
+    "d_mw": 10.153,
+    "d_twh": 0.076
+   },
+   {
+    "plant": 57915,
+    "name": "Genesis Alkali econlo",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 10.824,
+    "twh_arm": 0.087,
+    "d_mw": 10.824,
+    "d_twh": 0.087
+   },
+   {
+    "plant": 55179,
+    "name": "Rathdrum Power LLC econhi",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 15.252,
+    "twh_arm": 0.109,
+    "d_mw": 15.252,
+    "d_twh": 0.109
+   },
+   {
+    "plant": 55179,
+    "name": "Rathdrum Power LLC econlo",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 15.252,
+    "twh_arm": 0.109,
+    "d_mw": 15.252,
+    "d_twh": 0.109
+   },
+   {
+    "plant": 57915,
+    "name": "Genesis Alkali mustrun",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 18.45,
+    "twh_arm": 0.148,
+    "d_mw": 18.45,
+    "d_twh": 0.148
+   },
+   {
+    "plant": 55179,
+    "name": "Rathdrum Power LLC committed",
+    "mw_pre": 147.0,
+    "twh_pre": 1.055,
+    "mw_arm": 173.6,
+    "twh_arm": 1.245,
+    "d_mw": 26.6,
+    "d_twh": 0.191
+   },
+   {
+    "plant": 54268,
+    "name": "March Point Cogeneration committed",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 28.836,
+    "twh_arm": 0.223,
+    "d_mw": 28.836,
+    "d_twh": 0.223
+   },
+   {
+    "plant": 8224,
+    "name": "North Valmy mustrun",
+    "mw_pre": 109.076,
+    "twh_pre": 0.39,
+    "mw_arm": 212.454,
+    "twh_arm": 0.642,
+    "d_mw": 103.378,
+    "d_twh": 0.252
+   },
+   {
+    "plant": 55841,
+    "name": "Silverhawk peak",
+    "mw_pre": 72.62,
+    "twh_pre": 0.227,
+    "mw_arm": 88.48,
+    "twh_arm": 0.484,
+    "d_mw": 15.86,
+    "d_twh": 0.257
+   },
+   {
+    "plant": 4162,
+    "name": "Naughton econhi",
+    "mw_pre": 124.152,
+    "twh_pre": 0.542,
+    "mw_arm": 108.202,
+    "twh_arm": 0.822,
+    "d_mw": -15.95,
+    "d_twh": 0.28
+   },
+   {
+    "plant": 2336,
+    "name": "Tracy peak",
+    "mw_pre": 54.715,
+    "twh_pre": 0.378,
+    "mw_arm": 101.694,
+    "twh_arm": 0.718,
+    "d_mw": 46.979,
+    "d_twh": 0.34
+   },
+   {
+    "plant": 55322,
+    "name": "Chuck Lenzie Generating Station peak",
+    "mw_pre": 190.026,
+    "twh_pre": 1.431,
+    "mw_arm": 236.34,
+    "twh_arm": 1.78,
+    "d_mw": 46.314,
+    "d_twh": 0.349
+   },
+   {
+    "plant": 4162,
+    "name": "Naughton econlo",
+    "mw_pre": 136.648,
+    "twh_pre": 0.642,
+    "mw_arm": 132.248,
+    "twh_arm": 1.005,
+    "d_mw": -4.4,
+    "d_twh": 0.362
+   },
+   {
+    "plant": 55687,
+    "name": "Higgins Generating Station peak",
+    "mw_pre": 61.38,
+    "twh_pre": 0.461,
+    "mw_arm": 110.55,
+    "twh_arm": 0.83,
+    "d_mw": 49.17,
+    "d_twh": 0.369
+   },
+   {
+    "plant": 56102,
+    "name": "Currant Creek peak",
+    "mw_pre": 39.824,
+    "twh_pre": 0.318,
+    "mw_arm": 101.132,
+    "twh_arm": 0.808,
+    "d_mw": 61.308,
+    "d_twh": 0.49
+   },
+   {
+    "plant": 4162,
+    "name": "Naughton committed",
+    "mw_pre": 186.912,
+    "twh_pre": 1.004,
+    "mw_arm": 217.092,
+    "twh_arm": 1.649,
+    "d_mw": 30.18,
+    "d_twh": 0.646
+   },
+   {
+    "plant": 3845,
+    "name": "Transalta Centralia Generation econhi",
+    "mw_pre": 144.72,
+    "twh_pre": 0.901,
+    "mw_arm": 289.44,
+    "twh_arm": 1.635,
+    "d_mw": 144.72,
+    "d_twh": 0.735
+   },
+   {
+    "plant": 4162,
+    "name": "Naughton mustrun",
+    "mw_pre": 112.098,
+    "twh_pre": 0.898,
+    "mw_arm": 215.718,
+    "twh_arm": 1.639,
+    "d_mw": 103.62,
+    "d_twh": 0.741
+   },
+   {
+    "plant": 56237,
+    "name": "Lake Side Power Plant peak",
+    "mw_pre": 67.032,
+    "twh_pre": 0.472,
+    "mw_arm": 177.576,
+    "twh_arm": 1.249,
+    "d_mw": 110.544,
+    "d_twh": 0.778
+   },
+   {
+    "plant": 3845,
+    "name": "Transalta Centralia Generation econlo",
+    "mw_pre": 176.88,
+    "twh_pre": 1.101,
+    "mw_arm": 353.76,
+    "twh_arm": 1.999,
+    "d_mw": 176.88,
+    "d_twh": 0.898
+   },
+   {
+    "plant": 6076,
+    "name": "Colstrip committed",
+    "mw_pre": 708.92,
+    "twh_pre": 4.552,
+    "mw_arm": 1003.026,
+    "twh_arm": 6.157,
+    "d_mw": 294.106,
+    "d_twh": 1.605
+   },
+   {
+    "plant": 6076,
+    "name": "Colstrip mustrun",
+    "mw_pre": 741.48,
+    "twh_pre": 4.761,
+    "mw_arm": 1049.094,
+    "twh_arm": 6.44,
+    "d_mw": 307.614,
+    "d_twh": 1.679
+   },
+   {
+    "plant": 3845,
+    "name": "Transalta Centralia Generation committed",
+    "mw_pre": 334.33,
+    "twh_pre": 2.08,
+    "mw_arm": 668.66,
+    "twh_arm": 3.778,
+    "d_mw": 334.33,
+    "d_twh": 1.698
+   },
+   {
+    "plant": 8066,
+    "name": "Jim Bridger mustrun",
+    "mw_pre": 472.05,
+    "twh_pre": 3.518,
+    "mw_arm": 955.35,
+    "twh_arm": 6.903,
+    "d_mw": 483.3,
+    "d_twh": 3.385
+   }
+  ],
+  "outages": {
+   "std": {
+    "windows": 691,
+    "gwh": 38987.8,
+    "plants": 41
+   },
+   "short_coal": {
+    "windows": 112,
+    "gwh": 2792.0,
+    "plants": 13
+   },
+   "short_gas (NOT armed)": {
+    "windows": 1603,
+    "gwh": 9874.6,
+    "plants": 30
+   },
+   "partial": {
+    "windows": 32,
+    "gwh": 1792.6,
+    "plants": 9
+   }
+  }
+ },
+ {
+  "year": 2020,
+  "pre": {
+   "eia860_source": "canonical (2025ER snapshot)",
+   "derived_inputs_from_year": 2023,
+   "gas_price": 2.03,
+   "n_units": 660,
+   "digest": "2371fe983eda2887eedd6e75c1dc439c31ceba09b762e14fb0e2e1a0957d1c7d",
+   "thermal_mw": 27645.0,
+   "class_table_mw": 419.0,
+   "class_table_share_pct": 1.52,
+   "class_table_plants": [
+    {
+     "plant": 7408,
+     "name": "Payson econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 2.3
+    },
+    {
+     "plant": 7408,
+     "name": "Payson econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 2.5
+    },
+    {
+     "plant": 7767,
+     "name": "Bloomington Power Plant",
+     "klass": "oil",
+     "pmax": 9.0
+    },
+    {
+     "plant": 56223,
+     "name": "Alden Bailey Power Plant econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 4.3
+    },
+    {
+     "plant": 56223,
+     "name": "Alden Bailey Power Plant econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 4.8
+    },
+    {
+     "plant": 56223,
+     "name": "Alden Bailey Power Plant peak",
+     "klass": "CT_PEAKER",
+     "pmax": 0.7
+    },
+    {
+     "plant": 58266,
+     "name": "Port Westward Unit 2 econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 98.9
+    },
+    {
+     "plant": 58266,
+     "name": "Port Westward Unit 2 econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 109.8
+    },
+    {
+     "plant": 58266,
+     "name": "Port Westward Unit 2 peak",
+     "klass": "CT_PEAKER",
+     "pmax": 15.7
+    },
+    {
+     "plant": 67766,
+     "name": "Yellowstone County Generating Station econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 73.0
+    },
+    {
+     "plant": 67766,
+     "name": "Yellowstone County Generating Station econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 81.0
+    },
+    {
+     "plant": 67766,
+     "name": "Yellowstone County Generating Station peak",
+     "klass": "CT_PEAKER",
+     "pmax": 11.6
+    },
+    {
+     "plant": 69880,
+     "name": "University of Montana CHP",
+     "klass": "oil",
+     "pmax": 2.0
+    },
+    {
+     "plant": 69880,
+     "name": "University of Montana CHP econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 1.6
+    },
+    {
+     "plant": 69880,
+     "name": "University of Montana CHP econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 1.8
+    }
+   ],
+   "by_class": [
+    {
+     "klass": "CC_CHP",
+     "mw": 1217.6,
+     "avail_twh": 7.952,
+     "hr_cw": 7.2907
+    },
+    {
+     "klass": "CC_REGULAR",
+     "mw": 11751.1,
+     "avail_twh": 75.044,
+     "hr_cw": 7.3546
+    },
+    {
+     "klass": "COAL",
+     "mw": 8688.6,
+     "avail_twh": 56.409,
+     "hr_cw": 10.9071
+    },
+    {
+     "klass": "CT_CHP",
+     "mw": 118.5,
+     "avail_twh": 0.864,
+     "hr_cw": 7.1604
+    },
+    {
+     "klass": "CT_PEAKER",
+     "mw": 3646.5,
+     "avail_twh": 22.383,
+     "hr_cw": 8.9043
+    },
+    {
+     "klass": "ST_CHP",
+     "mw": 5.2,
+     "avail_twh": 0.037,
+     "hr_cw": 6.188
+    },
+    {
+     "klass": "ST_GAS",
+     "mw": 2142.5,
+     "avail_twh": 12.483,
+     "hr_cw": 12.0062
+    },
+    {
+     "klass": "hydro",
+     "mw": 35791.2,
+     "avail_twh": 301.267,
+     "hr_cw": 0.0
+    },
+    {
+     "klass": "nuclear",
+     "mw": 1151.0,
+     "avail_twh": 8.441,
+     "hr_cw": 0.0
+    },
+    {
+     "klass": "oil",
+     "mw": 75.0,
+     "avail_twh": 0.576,
+     "hr_cw": 11.2334
+    }
+   ]
+  },
+  "arm": {
+   "eia860_source": "vintage_2020",
+   "derived_inputs_from_year": 2023,
+   "gas_price": 2.03,
+   "n_units": 628,
+   "digest": "cccb1062c388554ac6c209f365a0c7e73a91fc234ea878722b0e6b60447f22cf",
+   "thermal_mw": 25565.1,
+   "class_table_mw": 248.2,
+   "class_table_share_pct": 0.97,
+   "class_table_plants": [
+    {
+     "plant": 7408,
+     "name": "Payson econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 4.1
+    },
+    {
+     "plant": 7408,
+     "name": "Payson econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 4.5
+    },
+    {
+     "plant": 7408,
+     "name": "Payson peak",
+     "klass": "CT_PEAKER",
+     "pmax": 0.6
+    },
+    {
+     "plant": 7767,
+     "name": "Bloomington Power Plant",
+     "klass": "oil",
+     "pmax": 9.0
+    },
+    {
+     "plant": 58266,
+     "name": "Port Westward Unit 2 econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 98.9
+    },
+    {
+     "plant": 58266,
+     "name": "Port Westward Unit 2 econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 109.8
+    },
+    {
+     "plant": 58266,
+     "name": "Port Westward Unit 2 peak",
+     "klass": "CT_PEAKER",
+     "pmax": 15.7
+    },
+    {
+     "plant": 59660,
+     "name": "Washington City Electric Generation econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 2.6
+    },
+    {
+     "plant": 59660,
+     "name": "Washington City Electric Generation econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 2.9
+    }
+   ],
+   "by_class": [
+    {
+     "klass": "CC_CHP",
+     "mw": 1226.6,
+     "avail_twh": 8.025,
+     "hr_cw": 7.9592
+    },
+    {
+     "klass": "CC_REGULAR",
+     "mw": 10897.5,
+     "avail_twh": 69.239,
+     "hr_cw": 7.3445
+    },
+    {
+     "klass": "COAL",
+     "mw": 9435.7,
+     "avail_twh": 58.418,
+     "hr_cw": 10.9085
+    },
+    {
+     "klass": "CT_CHP",
+     "mw": 112.7,
+     "avail_twh": 0.871,
+     "hr_cw": 8.8931
+    },
+    {
+     "klass": "CT_PEAKER",
+     "mw": 2997.5,
+     "avail_twh": 22.303,
+     "hr_cw": 11.0557
+    },
+    {
+     "klass": "ST_CHP",
+     "mw": 3.5,
+     "avail_twh": 0.028,
+     "hr_cw": 6.1612
+    },
+    {
+     "klass": "ST_GAS",
+     "mw": 818.5,
+     "avail_twh": 3.053,
+     "hr_cw": 12.6918
+    },
+    {
+     "klass": "hydro",
+     "mw": 35791.2,
+     "avail_twh": 301.418,
+     "hr_cw": 0.0
+    },
+    {
+     "klass": "nuclear",
+     "mw": 1151.0,
+     "avail_twh": 8.441,
+     "hr_cw": 0.0
+    },
+    {
+     "klass": "oil",
+     "mw": 73.0,
+     "avail_twh": 0.576,
+     "hr_cw": 11.1407
+    }
+   ]
+  },
+  "thermal_plant_moves": [
+   {
+    "plant": 55328,
+    "name": "Hermiston Power Partnership committed",
+    "mw_pre": 440.3,
+    "twh_pre": 3.014,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -440.3,
+    "d_twh": -3.014
+   },
+   {
+    "plant": 6106,
+    "name": "Boardman mustrun",
+    "mw_pre": 263.25,
+    "twh_pre": 1.766,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -263.25,
+    "d_twh": -1.766
+   },
+   {
+    "plant": 8066,
+    "name": "Jim Bridger committed",
+    "mw_pre": 286.78,
+    "twh_pre": 2.074,
+    "mw_arm": 105.95,
+    "twh_arm": 0.788,
+    "d_mw": -180.83,
+    "d_twh": -1.286
+   },
+   {
+    "plant": 6106,
+    "name": "Boardman econlo",
+    "mw_pre": 154.44,
+    "twh_pre": 1.036,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -154.44,
+    "d_twh": -1.036
+   },
+   {
+    "plant": 8066,
+    "name": "Jim Bridger peak",
+    "mw_pre": 181.48,
+    "twh_pre": 1.305,
+    "mw_arm": 42.38,
+    "twh_arm": 0.315,
+    "d_mw": -139.1,
+    "d_twh": -0.99
+   },
+   {
+    "plant": 6106,
+    "name": "Boardman econhi",
+    "mw_pre": 126.36,
+    "twh_pre": 0.848,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -126.36,
+    "d_twh": -0.848
+   },
+   {
+    "plant": 8066,
+    "name": "Jim Bridger econhi",
+    "mw_pre": 564.169,
+    "twh_pre": 4.154,
+    "mw_arm": 457.704,
+    "twh_arm": 3.406,
+    "d_mw": -106.465,
+    "d_twh": -0.748
+   },
+   {
+    "plant": 55328,
+    "name": "Hermiston Power Partnership econhi",
+    "mw_pre": 66.674,
+    "twh_pre": 0.456,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -66.674,
+    "d_twh": -0.456
+   },
+   {
+    "plant": 55328,
+    "name": "Hermiston Power Partnership econlo",
+    "mw_pre": 66.674,
+    "twh_pre": 0.456,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -66.674,
+    "d_twh": -0.456
+   },
+   {
+    "plant": 8224,
+    "name": "North Valmy econhi",
+    "mw_pre": 89.87,
+    "twh_pre": 0.565,
+    "mw_arm": 38.993,
+    "twh_arm": 0.132,
+    "d_mw": -50.876,
+    "d_twh": -0.433
+   },
+   {
+    "plant": 8224,
+    "name": "North Valmy econlo",
+    "mw_pre": 94.318,
+    "twh_pre": 0.58,
+    "mw_arm": 47.659,
+    "twh_arm": 0.161,
+    "d_mw": -46.66,
+    "d_twh": -0.419
+   },
+   {
+    "plant": 8066,
+    "name": "Jim Bridger econlo",
+    "mw_pre": 614.521,
+    "twh_pre": 4.543,
+    "mw_arm": 559.416,
+    "twh_arm": 4.163,
+    "d_mw": -55.105,
+    "d_twh": -0.381
+   },
+   {
+    "plant": 55328,
+    "name": "Hermiston Power Partnership peak",
+    "mw_pre": 55.352,
+    "twh_pre": 0.379,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -55.352,
+    "d_twh": -0.379
+   },
+   {
+    "plant": 56237,
+    "name": "Lake Side Power Plant econlo",
+    "mw_pre": 358.68,
+    "twh_pre": 2.461,
+    "mw_arm": 303.408,
+    "twh_arm": 2.082,
+    "d_mw": -55.272,
+    "d_twh": -0.379
+   },
+   {
+    "plant": 56237,
+    "name": "Lake Side Power Plant econhi",
+    "mw_pre": 358.68,
+    "twh_pre": 2.461,
+    "mw_arm": 303.408,
+    "twh_arm": 2.082,
+    "d_mw": -55.272,
+    "d_twh": -0.379
+   },
+   {
+    "plant": 55322,
+    "name": "Chuck Lenzie Generating Station econlo",
+    "mw_pre": 420.417,
+    "twh_pre": 2.933,
+    "mw_arm": 367.38,
+    "twh_arm": 2.563,
+    "d_mw": -53.037,
+    "d_twh": -0.37
+   },
+   {
+    "plant": 55322,
+    "name": "Chuck Lenzie Generating Station econhi",
+    "mw_pre": 420.417,
+    "twh_pre": 2.933,
+    "mw_arm": 367.38,
+    "twh_arm": 2.563,
+    "d_mw": -53.037,
+    "d_twh": -0.37
+   },
+   {
+    "plant": 55841,
+    "name": "Silverhawk econhi",
+    "mw_pre": 396.604,
+    "twh_pre": 1.495,
+    "mw_arm": 155.96,
+    "twh_arm": 1.16,
+    "d_mw": -240.644,
+    "d_twh": -0.334
+   },
+   {
+    "plant": 55841,
+    "name": "Silverhawk econlo",
+    "mw_pre": 418.076,
+    "twh_pre": 1.495,
+    "mw_arm": 155.96,
+    "twh_arm": 1.16,
+    "d_mw": -262.116,
+    "d_twh": -0.334
+   },
+   {
+    "plant": 2336,
+    "name": "Tracy econhi",
+    "mw_pre": 283.158,
+    "twh_pre": 2.104,
+    "mw_arm": 243.205,
+    "twh_arm": 1.799,
+    "d_mw": -39.954,
+    "d_twh": -0.305
+   },
+   {
+    "plant": 2336,
+    "name": "Tracy econlo",
+    "mw_pre": 289.571,
+    "twh_pre": 2.152,
+    "mw_arm": 249.617,
+    "twh_arm": 1.847,
+    "d_mw": -39.953,
+    "d_twh": -0.305
+   },
+   {
+    "plant": 55687,
+    "name": "Higgins Generating Station econhi",
+    "mw_pre": 212.66,
+    "twh_pre": 1.082,
+    "mw_arm": 160.6,
+    "twh_arm": 0.817,
+    "d_mw": -52.06,
+    "d_twh": -0.265
+   },
+   {
+    "plant": 55687,
+    "name": "Higgins Generating Station econlo",
+    "mw_pre": 212.66,
+    "twh_pre": 1.082,
+    "mw_arm": 160.6,
+    "twh_arm": 0.817,
+    "d_mw": -52.06,
+    "d_twh": -0.265
+   },
+   {
+    "plant": 8224,
+    "name": "North Valmy peak",
+    "mw_pre": 43.46,
+    "twh_pre": 0.289,
+    "mw_arm": 10.44,
+    "twh_arm": 0.035,
+    "d_mw": -33.02,
+    "d_twh": -0.254
+   },
+   {
+    "plant": 4158,
+    "name": "Dave Johnston committed",
+    "mw_pre": 359.835,
+    "twh_pre": 2.654,
+    "mw_arm": 359.835,
+    "twh_arm": 2.41,
+    "d_mw": 0.0,
+    "d_twh": -0.243
+   },
+   {
+    "plant": 4158,
+    "name": "Dave Johnston mustrun",
+    "mw_pre": 356.855,
+    "twh_pre": 2.632,
+    "mw_arm": 356.855,
+    "twh_arm": 2.39,
+    "d_mw": 0.0,
+    "d_twh": -0.241
+   },
+   {
+    "plant": 6076,
+    "name": "Colstrip mustrun",
+    "mw_pre": 741.48,
+    "twh_pre": 3.022,
+    "mw_arm": 741.48,
+    "twh_arm": 2.788,
+    "d_mw": 0.0,
+    "d_twh": -0.235
+   },
+   {
+    "plant": 6076,
+    "name": "Colstrip committed",
+    "mw_pre": 708.92,
+    "twh_pre": 2.89,
+    "mw_arm": 708.92,
+    "twh_arm": 2.665,
+    "d_mw": 0.0,
+    "d_twh": -0.224
+   },
+   {
+    "plant": 54268,
+    "name": "HF Sinclair Puget Sound Refining committed",
+    "mw_pre": 28.836,
+    "twh_pre": 0.223,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -28.836,
+    "d_twh": -0.223
+   },
+   {
+    "plant": 56102,
+    "name": "Currant Creek econlo",
+    "mw_pre": 162.964,
+    "twh_pre": 1.103,
+    "mw_arm": 132.31,
+    "twh_arm": 0.895,
+    "d_mw": -30.654,
+    "d_twh": -0.207
+   },
+   {
+    "plant": 56102,
+    "name": "Currant Creek econhi",
+    "mw_pre": 162.964,
+    "twh_pre": 1.103,
+    "mw_arm": 132.31,
+    "twh_arm": 0.895,
+    "d_mw": -30.654,
+    "d_twh": -0.207
+   },
+   {
+    "plant": 6106,
+    "name": "Boardman committed",
+    "mw_pre": 29.25,
+    "twh_pre": 0.196,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -29.25,
+    "d_twh": -0.196
+   },
+   {
+    "plant": 8224,
+    "name": "North Valmy committed",
+    "mw_pre": 185.276,
+    "twh_pre": 0.911,
+    "mw_arm": 212.454,
+    "twh_arm": 0.718,
+    "d_mw": 27.178,
+    "d_twh": -0.193
+   },
+   {
+    "plant": 2336,
+    "name": "Tracy committed",
+    "mw_pre": 326.156,
+    "twh_pre": 2.44,
+    "mw_arm": 303.084,
+    "twh_arm": 2.263,
+    "d_mw": -23.072,
+    "d_twh": -0.176
+   },
+   {
+    "plant": 56224,
+    "name": "TS Power Plant mustrun",
+    "mw_pre": 91.946,
+    "twh_pre": 0.705,
+    "mw_arm": 91.946,
+    "twh_arm": 0.547,
+    "d_mw": 0.0,
+    "d_twh": -0.158
+   },
+   {
+    "plant": 56224,
+    "name": "TS Power Plant committed",
+    "mw_pre": 91.946,
+    "twh_pre": 0.705,
+    "mw_arm": 91.946,
+    "twh_arm": 0.547,
+    "d_mw": 0.0,
+    "d_twh": -0.158
+   },
+   {
+    "plant": 55179,
+    "name": "Rathdrum Power LLC peak",
+    "mw_pre": 63.0,
+    "twh_pre": 0.444,
+    "mw_arm": 43.896,
+    "twh_arm": 0.31,
+    "d_mw": -19.104,
+    "d_twh": -0.135
+   },
+   {
+    "plant": 55841,
+    "name": "Silverhawk committed",
+    "mw_pre": 176.7,
+    "twh_pre": 1.315,
+    "mw_arm": 159.6,
+    "twh_arm": 1.188,
+    "d_mw": -17.1,
+    "d_twh": -0.127
+   },
+   {
+    "plant": 3845,
+    "name": "Transalta Centralia Generation committed",
+    "mw_pre": 334.33,
+    "twh_pre": 1.358,
+    "mw_arm": 334.33,
+    "twh_arm": 1.241,
+    "d_mw": 0.0,
+    "d_twh": -0.117
+   },
+   {
+    "plant": 8069,
+    "name": "Huntington econlo",
+    "mw_pre": 294.971,
+    "twh_pre": 2.362,
+    "mw_arm": 294.971,
+    "twh_arm": 2.256,
+    "d_mw": 0.0,
+    "d_twh": -0.106
+   },
+   {
+    "plant": 57915,
+    "name": "WE Soda Alkalai LLC mustrun",
+    "mw_pre": 12.375,
+    "twh_pre": 0.099,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -12.375,
+    "d_twh": -0.099
+   },
+   {
+    "plant": 55733,
+    "name": "Bennett Mountain committed",
+    "mw_pre": 114.96,
+    "twh_pre": 0.855,
+    "mw_arm": 101.844,
+    "twh_arm": 0.758,
+    "d_mw": -13.116,
+    "d_twh": -0.098
+   },
+   {
+    "plant": 7999,
+    "name": "Grays Harbor Energy Facility peak",
+    "mw_pre": 99.96,
+    "twh_pre": 0.486,
+    "mw_arm": 80.936,
+    "twh_arm": 0.394,
+    "d_mw": -19.024,
+    "d_twh": -0.093
+   },
+   {
+    "plant": 8069,
+    "name": "Huntington econhi",
+    "mw_pre": 241.34,
+    "twh_pre": 1.932,
+    "mw_arm": 241.34,
+    "twh_arm": 1.845,
+    "d_mw": 0.0,
+    "d_twh": -0.087
+   },
+   {
+    "plant": 6165,
+    "name": "Hunter econlo",
+    "mw_pre": 400.313,
+    "twh_pre": 2.999,
+    "mw_arm": 400.313,
+    "twh_arm": 2.914,
+    "d_mw": 0.0,
+    "d_twh": -0.085
+   },
+   {
+    "plant": 55322,
+    "name": "Chuck Lenzie Generating Station committed",
+    "mw_pre": 211.14,
+    "twh_pre": 1.473,
+    "mw_arm": 198.9,
+    "twh_arm": 1.388,
+    "d_mw": -12.24,
+    "d_twh": -0.085
+   },
+   {
+    "plant": 6106,
+    "name": "Boardman peak",
+    "mw_pre": 11.7,
+    "twh_pre": 0.079,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -11.7,
+    "d_twh": -0.079
+   },
+   {
+    "plant": 55687,
+    "name": "Higgins Generating Station committed",
+    "mw_pre": 133.3,
+    "twh_pre": 0.678,
+    "mw_arm": 118.25,
+    "twh_arm": 0.602,
+    "d_mw": -15.05,
+    "d_twh": -0.077
+   },
+   {
+    "plant": 4162,
+    "name": "Naughton mustrun",
+    "mw_pre": 112.098,
+    "twh_pre": 0.857,
+    "mw_arm": 112.098,
+    "twh_arm": 0.781,
+    "d_mw": 0.0,
+    "d_twh": -0.077
+   },
+   {
+    "plant": 4162,
+    "name": "Naughton committed",
+    "mw_pre": 186.912,
+    "twh_pre": 0.997,
+    "mw_arm": 186.912,
+    "twh_arm": 0.92,
+    "d_mw": 0.0,
+    "d_twh": -0.077
+   },
+   {
+    "plant": 6165,
+    "name": "Hunter econhi",
+    "mw_pre": 327.529,
+    "twh_pre": 2.454,
+    "mw_arm": 327.529,
+    "twh_arm": 2.384,
+    "d_mw": 0.0,
+    "d_twh": -0.07
+   },
+   {
+    "plant": 6101,
+    "name": "Wyodak committed",
+    "mw_pre": 161.02,
+    "twh_pre": 1.255,
+    "mw_arm": 161.02,
+    "twh_arm": 1.187,
+    "d_mw": 0.0,
+    "d_twh": -0.068
+   },
+   {
+    "plant": 6165,
+    "name": "Hunter mustrun",
+    "mw_pre": 303.949,
+    "twh_pre": 2.277,
+    "mw_arm": 303.949,
+    "twh_arm": 2.212,
+    "d_mw": 0.0,
+    "d_twh": -0.065
+   },
+   {
+    "plant": 6165,
+    "name": "Hunter committed",
+    "mw_pre": 303.949,
+    "twh_pre": 2.277,
+    "mw_arm": 303.949,
+    "twh_arm": 2.212,
+    "d_mw": 0.0,
+    "d_twh": -0.065
+   },
+   {
+    "plant": 8069,
+    "name": "Huntington mustrun",
+    "mw_pre": 177.255,
+    "twh_pre": 1.419,
+    "mw_arm": 177.255,
+    "twh_arm": 1.355,
+    "d_mw": 0.0,
+    "d_twh": -0.064
+   },
+   {
+    "plant": 8069,
+    "name": "Huntington committed",
+    "mw_pre": 177.255,
+    "twh_pre": 1.419,
+    "mw_arm": 177.255,
+    "twh_arm": 1.355,
+    "d_mw": 0.0,
+    "d_twh": -0.064
+   },
+   {
+    "plant": 3845,
+    "name": "Transalta Centralia Generation econlo",
+    "mw_pre": 176.88,
+    "twh_pre": 0.719,
+    "mw_arm": 176.88,
+    "twh_arm": 0.657,
+    "d_mw": 0.0,
+    "d_twh": -0.062
+   },
+   {
+    "plant": 57915,
+    "name": "WE Soda Alkalai LLC econlo",
+    "mw_pre": 7.26,
+    "twh_pre": 0.058,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -7.26,
+    "d_twh": -0.058
+   },
+   {
+    "plant": 3845,
+    "name": "Transalta Centralia Generation econhi",
+    "mw_pre": 144.72,
+    "twh_pre": 0.588,
+    "mw_arm": 144.72,
+    "twh_arm": 0.537,
+    "d_mw": 0.0,
+    "d_twh": -0.051
+   },
+   {
+    "plant": 57915,
+    "name": "WE Soda Alkalai LLC econhi",
+    "mw_pre": 5.94,
+    "twh_pre": 0.048,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -5.94,
+    "d_twh": -0.048
+   },
+   {
+    "plant": 4162,
+    "name": "Naughton econlo",
+    "mw_pre": 136.648,
+    "twh_pre": 0.649,
+    "mw_arm": 136.648,
+    "twh_arm": 0.602,
+    "d_mw": 0.0,
+    "d_twh": -0.047
+   },
+   {
+    "plant": 7605,
+    "name": "River Road Gen Plant committed",
+    "mw_pre": 161.0,
+    "twh_pre": 0.948,
+    "mw_arm": 154.0,
+    "twh_arm": 0.907,
+    "d_mw": -7.0,
+    "d_twh": -0.041
+   },
+   {
+    "plant": 4162,
+    "name": "Naughton econhi",
+    "mw_pre": 124.152,
+    "twh_pre": 0.553,
+    "mw_arm": 124.152,
+    "twh_arm": 0.515,
+    "d_mw": 0.0,
+    "d_twh": -0.039
+   },
+   {
+    "plant": 6101,
+    "name": "Wyodak econlo",
+    "mw_pre": 90.387,
+    "twh_pre": 0.705,
+    "mw_arm": 90.387,
+    "twh_arm": 0.667,
+    "d_mw": 0.0,
+    "d_twh": -0.038
+   },
+   {
+    "plant": 56223,
+    "name": "Alden Bailey Power Plant econlo",
+    "mw_pre": 4.794,
+    "twh_pre": 0.036,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -4.794,
+    "d_twh": -0.036
+   },
+   {
+    "plant": 56223,
+    "name": "Alden Bailey Power Plant econhi",
+    "mw_pre": 4.32,
+    "twh_pre": 0.032,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -4.32,
+    "d_twh": -0.032
+   },
+   {
+    "plant": 6101,
+    "name": "Wyodak econhi",
+    "mw_pre": 73.953,
+    "twh_pre": 0.576,
+    "mw_arm": 73.953,
+    "twh_arm": 0.545,
+    "d_mw": 0.0,
+    "d_twh": -0.031
+   },
+   {
+    "plant": 56500,
+    "name": "Western 102 Power Plant econlo",
+    "mw_pre": 58.066,
+    "twh_pre": 0.432,
+    "mw_arm": 54.103,
+    "twh_arm": 0.403,
+    "d_mw": -3.962,
+    "d_twh": -0.029
+   },
+   {
+    "plant": 54268,
+    "name": "HF Sinclair Puget Sound Refining econlo",
+    "mw_pre": 3.582,
+    "twh_pre": 0.028,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -3.582,
+    "d_twh": -0.028
+   },
+   {
+    "plant": 54268,
+    "name": "HF Sinclair Puget Sound Refining econhi",
+    "mw_pre": 3.582,
+    "twh_pre": 0.028,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -3.582,
+    "d_twh": -0.028
+   },
+   {
+    "plant": 56224,
+    "name": "TS Power Plant econlo",
+    "mw_pre": 16.577,
+    "twh_pre": 0.127,
+    "mw_arm": 16.577,
+    "twh_arm": 0.099,
+    "d_mw": 0.0,
+    "d_twh": -0.028
+   },
+   {
+    "plant": 56500,
+    "name": "Western 102 Power Plant econhi",
+    "mw_pre": 52.325,
+    "twh_pre": 0.389,
+    "mw_arm": 48.755,
+    "twh_arm": 0.363,
+    "d_mw": -3.571,
+    "d_twh": -0.027
+   },
+   {
+    "plant": 55733,
+    "name": "Bennett Mountain econlo",
+    "mw_pre": 30.088,
+    "twh_pre": 0.224,
+    "mw_arm": 26.656,
+    "twh_arm": 0.198,
+    "d_mw": -3.433,
+    "d_twh": -0.026
+   },
+   {
+    "plant": 55733,
+    "name": "Bennett Mountain econhi",
+    "mw_pre": 27.114,
+    "twh_pre": 0.202,
+    "mw_arm": 24.02,
+    "twh_arm": 0.179,
+    "d_mw": -3.093,
+    "d_twh": -0.023
+   },
+   {
+    "plant": 56224,
+    "name": "TS Power Plant econhi",
+    "mw_pre": 13.563,
+    "twh_pre": 0.104,
+    "mw_arm": 13.563,
+    "twh_arm": 0.081,
+    "d_mw": 0.0,
+    "d_twh": -0.023
+   },
+   {
+    "plant": 59281,
+    "name": "eBay - South Jordan econlo",
+    "mw_pre": 4.794,
+    "twh_pre": 0.021,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -4.794,
+    "d_twh": -0.021
+   },
+   {
+    "plant": 50951,
+    "name": "Sunnyside Cogen Associates committed",
+    "mw_pre": 35.7,
+    "twh_pre": 0.221,
+    "mw_arm": 35.7,
+    "twh_arm": 0.201,
+    "d_mw": 0.0,
+    "d_twh": -0.02
+   },
+   {
+    "plant": 59281,
+    "name": "eBay - South Jordan econhi",
+    "mw_pre": 4.32,
+    "twh_pre": 0.019,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -4.32,
+    "d_twh": -0.019
+   },
+   {
+    "plant": 7790,
+    "name": "Bonanza committed",
+    "mw_pre": 221.214,
+    "twh_pre": 1.738,
+    "mw_arm": 221.214,
+    "twh_arm": 1.72,
+    "d_mw": 0.0,
+    "d_twh": -0.019
+   },
+   {
+    "plant": 7790,
+    "name": "Bonanza mustrun",
+    "mw_pre": 221.214,
+    "twh_pre": 1.738,
+    "mw_arm": 221.214,
+    "twh_arm": 1.72,
+    "d_mw": 0.0,
+    "d_twh": -0.019
+   },
+   {
+    "plant": 57028,
+    "name": "Langley Gulch Power Plant committed",
+    "mw_pre": 205.044,
+    "twh_pre": 1.11,
+    "mw_arm": 202.597,
+    "twh_arm": 1.096,
+    "d_mw": -2.447,
+    "d_twh": -0.013
+   },
+   {
+    "plant": 57028,
+    "name": "Langley Gulch Power Plant econhi",
+    "mw_pre": 41.858,
+    "twh_pre": 0.227,
+    "mw_arm": 39.71,
+    "twh_arm": 0.215,
+    "d_mw": -2.148,
+    "d_twh": -0.012
+   },
+   {
+    "plant": 57028,
+    "name": "Langley Gulch Power Plant econlo",
+    "mw_pre": 41.858,
+    "twh_pre": 0.227,
+    "mw_arm": 39.71,
+    "twh_arm": 0.215,
+    "d_mw": -2.148,
+    "d_twh": -0.012
+   },
+   {
+    "plant": 55733,
+    "name": "Bennett Mountain peak",
+    "mw_pre": 12.958,
+    "twh_pre": 0.096,
+    "mw_arm": 11.48,
+    "twh_arm": 0.085,
+    "d_mw": -1.478,
+    "d_twh": -0.011
+   },
+   {
+    "plant": 58382,
+    "name": "Threemile Digester committed",
+    "mw_pre": 1.44,
+    "twh_pre": 0.011,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -1.44,
+    "d_twh": -0.011
+   },
+   {
+    "plant": 57915,
+    "name": "WE Soda Alkalai LLC committed",
+    "mw_pre": 1.375,
+    "twh_pre": 0.011,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -1.375,
+    "d_twh": -0.011
+   },
+   {
+    "plant": 4158,
+    "name": "Dave Johnston peak",
+    "mw_pre": 14.9,
+    "twh_pre": 0.11,
+    "mw_arm": 14.9,
+    "twh_arm": 0.1,
+    "d_mw": 0.0,
+    "d_twh": -0.01
+   },
+   {
+    "plant": 10504,
+    "name": "Amalgamated Sugar Twin Falls committed",
+    "mw_pre": 2.782,
+    "twh_pre": 0.017,
+    "mw_arm": 1.047,
+    "twh_arm": 0.008,
+    "d_mw": -1.735,
+    "d_twh": -0.009
+   },
+   {
+    "plant": 7605,
+    "name": "River Road Gen Plant econhi",
+    "mw_pre": 34.5,
+    "twh_pre": 0.203,
+    "mw_arm": 33.0,
+    "twh_arm": 0.194,
+    "d_mw": -1.5,
+    "d_twh": -0.009
+   },
+   {
+    "plant": 7605,
+    "name": "River Road Gen Plant econlo",
+    "mw_pre": 34.5,
+    "twh_pre": 0.203,
+    "mw_arm": 33.0,
+    "twh_arm": 0.194,
+    "d_mw": -1.5,
+    "d_twh": -0.009
+   },
+   {
+    "plant": 65380,
+    "name": "Solomon Generating Facility econlo",
+    "mw_pre": 7.289,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -7.289,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 65380,
+    "name": "Solomon Generating Facility econhi",
+    "mw_pre": 6.568,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -6.568,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 67766,
+    "name": "Yellowstone County Generating Station econhi",
+    "mw_pre": 73.0,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -73.0,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 65380,
+    "name": "Solomon Generating Facility peak",
+    "mw_pre": 1.043,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -1.043,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 10215,
+    "name": "Snowbird Power Plant committed",
+    "mw_pre": 1.483,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -1.483,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 67766,
+    "name": "Yellowstone County Generating Station econlo",
+    "mw_pre": 81.008,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -81.008,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 69880,
+    "name": "University of Montana CHP econhi",
+    "mw_pre": 1.587,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -1.587,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 69880,
+    "name": "University of Montana CHP",
+    "mw_pre": 2.0,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -2.0,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 67766,
+    "name": "Yellowstone County Generating Station peak",
+    "mw_pre": 11.592,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -11.592,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 69880,
+    "name": "University of Montana CHP econlo",
+    "mw_pre": 1.761,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -1.761,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 10504,
+    "name": "Amalgamated Sugar Twin Falls econhi",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 1.08,
+    "twh_arm": 0.009,
+    "d_mw": 1.08,
+    "d_twh": 0.009
+   },
+   {
+    "plant": 7111,
+    "name": "Heber City econhi",
+    "mw_pre": 7.714,
+    "twh_pre": 0.037,
+    "mw_arm": 6.216,
+    "twh_arm": 0.046,
+    "d_mw": -1.499,
+    "d_twh": 0.009
+   },
+   {
+    "plant": 57653,
+    "name": "Oregon State University Energy Center committed",
+    "mw_pre": 1.56,
+    "twh_pre": 0.012,
+    "mw_arm": 2.565,
+    "twh_arm": 0.021,
+    "d_mw": 1.005,
+    "d_twh": 0.009
+   },
+   {
+    "plant": 3665,
+    "name": "Bountiful City econhi",
+    "mw_pre": 10.8,
+    "twh_pre": 0.08,
+    "mw_arm": 11.99,
+    "twh_arm": 0.089,
+    "d_mw": 1.19,
+    "d_twh": 0.009
+   },
+   {
+    "plant": 7028,
+    "name": "Whitehead econlo",
+    "mw_pre": 3.416,
+    "twh_pre": 0.019,
+    "mw_arm": 3.752,
+    "twh_arm": 0.029,
+    "d_mw": 0.336,
+    "d_twh": 0.01
+   },
+   {
+    "plant": 3665,
+    "name": "Bountiful City econlo",
+    "mw_pre": 11.985,
+    "twh_pre": 0.089,
+    "mw_arm": 13.306,
+    "twh_arm": 0.099,
+    "d_mw": 1.321,
+    "d_twh": 0.01
+   },
+   {
+    "plant": 7111,
+    "name": "Heber City econlo",
+    "mw_pre": 8.561,
+    "twh_pre": 0.041,
+    "mw_arm": 6.897,
+    "twh_arm": 0.051,
+    "d_mw": -1.663,
+    "d_twh": 0.01
+   },
+   {
+    "plant": 7028,
+    "name": "Whitehead econhi",
+    "mw_pre": 3.416,
+    "twh_pre": 0.019,
+    "mw_arm": 3.752,
+    "twh_arm": 0.029,
+    "d_mw": 0.336,
+    "d_twh": 0.01
+   },
+   {
+    "plant": 10504,
+    "name": "Amalgamated Sugar Twin Falls econlo",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 1.32,
+    "twh_arm": 0.011,
+    "d_mw": 1.32,
+    "d_twh": 0.011
+   },
+   {
+    "plant": 57915,
+    "name": "Genesis Alkali committed",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 1.55,
+    "twh_arm": 0.012,
+    "d_mw": 1.55,
+    "d_twh": 0.012
+   },
+   {
+    "plant": 54950,
+    "name": "Univ of Oregon Central Power Station peak",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 1.638,
+    "twh_arm": 0.013,
+    "d_mw": 1.638,
+    "d_twh": 0.013
+   },
+   {
+    "plant": 7953,
+    "name": "Evander Andrews Power Complex peak",
+    "mw_pre": 15.914,
+    "twh_pre": 0.118,
+    "mw_arm": 17.598,
+    "twh_arm": 0.131,
+    "d_mw": 1.684,
+    "d_twh": 0.013
+   },
+   {
+    "plant": 7408,
+    "name": "Payson econhi",
+    "mw_pre": 2.292,
+    "twh_pre": 0.017,
+    "mw_arm": 4.056,
+    "twh_arm": 0.03,
+    "d_mw": 1.763,
+    "d_twh": 0.013
+   },
+   {
+    "plant": 7408,
+    "name": "Payson econlo",
+    "mw_pre": 2.544,
+    "twh_pre": 0.019,
+    "mw_arm": 4.5,
+    "twh_arm": 0.033,
+    "d_mw": 1.957,
+    "d_twh": 0.015
+   },
+   {
+    "plant": 57028,
+    "name": "Langley Gulch Power Plant peak",
+    "mw_pre": 14.559,
+    "twh_pre": 0.079,
+    "mw_arm": 17.682,
+    "twh_arm": 0.096,
+    "d_mw": 3.123,
+    "d_twh": 0.017
+   },
+   {
+    "plant": 10504,
+    "name": "Amalgamated Sugar Twin Falls mustrun",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 2.25,
+    "twh_arm": 0.018,
+    "d_mw": 2.25,
+    "d_twh": 0.018
+   },
+   {
+    "plant": 7999,
+    "name": "Grays Harbor Energy Facility committed",
+    "mw_pre": 258.825,
+    "twh_pre": 1.259,
+    "mw_arm": 262.74,
+    "twh_arm": 1.278,
+    "d_mw": 3.915,
+    "d_twh": 0.019
+   },
+   {
+    "plant": 7028,
+    "name": "Whitehead committed",
+    "mw_pre": 7.32,
+    "twh_pre": 0.041,
+    "mw_arm": 8.04,
+    "twh_arm": 0.062,
+    "d_mw": 0.72,
+    "d_twh": 0.022
+   },
+   {
+    "plant": 54268,
+    "name": "March Point Cogeneration econhi",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 3.582,
+    "twh_arm": 0.028,
+    "d_mw": 3.582,
+    "d_twh": 0.028
+   },
+   {
+    "plant": 54268,
+    "name": "March Point Cogeneration econlo",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 3.582,
+    "twh_arm": 0.028,
+    "d_mw": 3.582,
+    "d_twh": 0.028
+   },
+   {
+    "plant": 54950,
+    "name": "Univ of Oregon Central Power Station committed",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 4.05,
+    "twh_arm": 0.033,
+    "d_mw": 4.05,
+    "d_twh": 0.033
+   },
+   {
+    "plant": 7953,
+    "name": "Evander Andrews Power Complex econhi",
+    "mw_pre": 54.742,
+    "twh_pre": 0.407,
+    "mw_arm": 60.535,
+    "twh_arm": 0.45,
+    "d_mw": 5.793,
+    "d_twh": 0.043
+   },
+   {
+    "plant": 7953,
+    "name": "Evander Andrews Power Complex econlo",
+    "mw_pre": 60.747,
+    "twh_pre": 0.452,
+    "mw_arm": 67.176,
+    "twh_arm": 0.5,
+    "d_mw": 6.429,
+    "d_twh": 0.048
+   },
+   {
+    "plant": 57915,
+    "name": "Genesis Alkali econhi",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 6.696,
+    "twh_arm": 0.054,
+    "d_mw": 6.696,
+    "d_twh": 0.054
+   },
+   {
+    "plant": 7999,
+    "name": "Grays Harbor Energy Facility econhi",
+    "mw_pre": 118.108,
+    "twh_pre": 0.574,
+    "mw_arm": 130.162,
+    "twh_arm": 0.633,
+    "d_mw": 12.054,
+    "d_twh": 0.059
+   },
+   {
+    "plant": 7999,
+    "name": "Grays Harbor Energy Facility econlo",
+    "mw_pre": 118.108,
+    "twh_pre": 0.574,
+    "mw_arm": 130.162,
+    "twh_arm": 0.633,
+    "d_mw": 12.054,
+    "d_twh": 0.059
+   },
+   {
+    "plant": 57915,
+    "name": "Genesis Alkali econlo",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 8.184,
+    "twh_arm": 0.066,
+    "d_mw": 8.184,
+    "d_twh": 0.066
+   },
+   {
+    "plant": 7953,
+    "name": "Evander Andrews Power Complex committed",
+    "mw_pre": 95.937,
+    "twh_pre": 0.714,
+    "mw_arm": 106.091,
+    "twh_arm": 0.789,
+    "d_mw": 10.153,
+    "d_twh": 0.076
+   },
+   {
+    "plant": 55179,
+    "name": "Rathdrum Power LLC econlo",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 15.252,
+    "twh_arm": 0.108,
+    "d_mw": 15.252,
+    "d_twh": 0.108
+   },
+   {
+    "plant": 55179,
+    "name": "Rathdrum Power LLC econhi",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 15.252,
+    "twh_arm": 0.108,
+    "d_mw": 15.252,
+    "d_twh": 0.108
+   },
+   {
+    "plant": 57915,
+    "name": "Genesis Alkali mustrun",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 13.95,
+    "twh_arm": 0.112,
+    "d_mw": 13.95,
+    "d_twh": 0.112
+   },
+   {
+    "plant": 55179,
+    "name": "Rathdrum Power LLC committed",
+    "mw_pre": 147.0,
+    "twh_pre": 1.037,
+    "mw_arm": 173.6,
+    "twh_arm": 1.225,
+    "d_mw": 26.6,
+    "d_twh": 0.188
+   },
+   {
+    "plant": 54268,
+    "name": "March Point Cogeneration committed",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 28.836,
+    "twh_arm": 0.223,
+    "d_mw": 28.836,
+    "d_twh": 0.223
+   },
+   {
+    "plant": 55687,
+    "name": "Higgins Generating Station peak",
+    "mw_pre": 61.38,
+    "twh_pre": 0.312,
+    "mw_arm": 110.55,
+    "twh_arm": 0.563,
+    "d_mw": 49.17,
+    "d_twh": 0.25
+   },
+   {
+    "plant": 55322,
+    "name": "Chuck Lenzie Generating Station peak",
+    "mw_pre": 190.026,
+    "twh_pre": 1.326,
+    "mw_arm": 236.34,
+    "twh_arm": 1.649,
+    "d_mw": 46.314,
+    "d_twh": 0.323
+   },
+   {
+    "plant": 8224,
+    "name": "North Valmy mustrun",
+    "mw_pre": 109.076,
+    "twh_pre": 0.369,
+    "mw_arm": 212.454,
+    "twh_arm": 0.718,
+    "d_mw": 103.378,
+    "d_twh": 0.349
+   },
+   {
+    "plant": 55841,
+    "name": "Silverhawk peak",
+    "mw_pre": 72.62,
+    "twh_pre": 0.309,
+    "mw_arm": 88.48,
+    "twh_arm": 0.658,
+    "d_mw": 15.86,
+    "d_twh": 0.349
+   },
+   {
+    "plant": 2336,
+    "name": "Tracy peak",
+    "mw_pre": 54.715,
+    "twh_pre": 0.391,
+    "mw_arm": 101.694,
+    "twh_arm": 0.749,
+    "d_mw": 46.979,
+    "d_twh": 0.359
+   },
+   {
+    "plant": 56102,
+    "name": "Currant Creek peak",
+    "mw_pre": 39.824,
+    "twh_pre": 0.269,
+    "mw_arm": 101.132,
+    "twh_arm": 0.684,
+    "d_mw": 61.308,
+    "d_twh": 0.415
+   },
+   {
+    "plant": 56237,
+    "name": "Lake Side Power Plant peak",
+    "mw_pre": 67.032,
+    "twh_pre": 0.46,
+    "mw_arm": 177.576,
+    "twh_arm": 1.218,
+    "d_mw": 110.544,
+    "d_twh": 0.758
+   },
+   {
+    "plant": 8066,
+    "name": "Jim Bridger mustrun",
+    "mw_pre": 472.05,
+    "twh_pre": 3.646,
+    "mw_arm": 953.55,
+    "twh_arm": 7.096,
+    "d_mw": 481.5,
+    "d_twh": 3.45
+   }
+  ],
+  "outages": {
+   "std": {
+    "windows": 708,
+    "gwh": 48127.5,
+    "plants": 42
+   },
+   "short_coal": {
+    "windows": 86,
+    "gwh": 2071.4,
+    "plants": 12
+   },
+   "short_gas (NOT armed)": {
+    "windows": 1647,
+    "gwh": 9925.0,
+    "plants": 29
+   },
+   "partial": {
+    "windows": 31,
+    "gwh": 1572.1,
+    "plants": 7
+   }
+  }
+ },
+ {
+  "year": 2021,
+  "pre": {
+   "eia860_source": "canonical (2025ER snapshot)",
+   "derived_inputs_from_year": 2023,
+   "gas_price": 3.72,
+   "n_units": 659,
+   "digest": "3cf6758644cd2e51ad0b662d6acdf64b61b58690651df26e5c25bab54e5bf507",
+   "thermal_mw": 27648.6,
+   "class_table_mw": 424.1,
+   "class_table_share_pct": 1.53,
+   "class_table_plants": [
+    {
+     "plant": 7408,
+     "name": "Payson econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 2.3
+    },
+    {
+     "plant": 7408,
+     "name": "Payson econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 2.5
+    },
+    {
+     "plant": 7767,
+     "name": "Bloomington Power Plant",
+     "klass": "oil",
+     "pmax": 9.0
+    },
+    {
+     "plant": 10215,
+     "name": "Snowbird Power Plant econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 2.4
+    },
+    {
+     "plant": 10215,
+     "name": "Snowbird Power Plant econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 2.7
+    },
+    {
+     "plant": 56223,
+     "name": "Alden Bailey Power Plant econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 4.3
+    },
+    {
+     "plant": 56223,
+     "name": "Alden Bailey Power Plant econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 4.8
+    },
+    {
+     "plant": 56223,
+     "name": "Alden Bailey Power Plant peak",
+     "klass": "CT_PEAKER",
+     "pmax": 0.7
+    },
+    {
+     "plant": 58266,
+     "name": "Port Westward Unit 2 econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 98.9
+    },
+    {
+     "plant": 58266,
+     "name": "Port Westward Unit 2 econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 109.8
+    },
+    {
+     "plant": 58266,
+     "name": "Port Westward Unit 2 peak",
+     "klass": "CT_PEAKER",
+     "pmax": 15.7
+    },
+    {
+     "plant": 67766,
+     "name": "Yellowstone County Generating Station econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 73.0
+    },
+    {
+     "plant": 67766,
+     "name": "Yellowstone County Generating Station econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 81.0
+    },
+    {
+     "plant": 67766,
+     "name": "Yellowstone County Generating Station peak",
+     "klass": "CT_PEAKER",
+     "pmax": 11.6
+    },
+    {
+     "plant": 69880,
+     "name": "University of Montana CHP",
+     "klass": "oil",
+     "pmax": 2.0
+    },
+    {
+     "plant": 69880,
+     "name": "University of Montana CHP econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 1.6
+    },
+    {
+     "plant": 69880,
+     "name": "University of Montana CHP econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 1.8
+    }
+   ],
+   "by_class": [
+    {
+     "klass": "CC_CHP",
+     "mw": 1217.6,
+     "avail_twh": 8.451,
+     "hr_cw": 7.2907
+    },
+    {
+     "klass": "CC_REGULAR",
+     "mw": 11751.1,
+     "avail_twh": 79.583,
+     "hr_cw": 7.3546
+    },
+    {
+     "klass": "COAL",
+     "mw": 8688.6,
+     "avail_twh": 57.125,
+     "hr_cw": 10.8701
+    },
+    {
+     "klass": "CT_CHP",
+     "mw": 117.0,
+     "avail_twh": 0.864,
+     "hr_cw": 7.1531
+    },
+    {
+     "klass": "CT_PEAKER",
+     "mw": 3651.6,
+     "avail_twh": 22.334,
+     "hr_cw": 8.9044
+    },
+    {
+     "klass": "ST_CHP",
+     "mw": 5.2,
+     "avail_twh": 0.037,
+     "hr_cw": 6.188
+    },
+    {
+     "klass": "ST_GAS",
+     "mw": 2142.5,
+     "avail_twh": 11.994,
+     "hr_cw": 12.0062
+    },
+    {
+     "klass": "hydro",
+     "mw": 35755.2,
+     "avail_twh": 300.434,
+     "hr_cw": 0.0
+    },
+    {
+     "klass": "nuclear",
+     "mw": 1151.0,
+     "avail_twh": 8.441,
+     "hr_cw": 0.0
+    },
+    {
+     "klass": "oil",
+     "mw": 75.0,
+     "avail_twh": 0.576,
+     "hr_cw": 11.2334
+    }
+   ]
+  },
+  "arm": {
+   "eia860_source": "vintage_2021",
+   "derived_inputs_from_year": 2023,
+   "gas_price": 3.72,
+   "n_units": 631,
+   "digest": "cf069a13ee1368e1e91a28fc28c1b52420fc3b5549e8d0848e7f352175f994b8",
+   "thermal_mw": 26171.0,
+   "class_table_mw": 233.6,
+   "class_table_share_pct": 0.89,
+   "class_table_plants": [
+    {
+     "plant": 7408,
+     "name": "Payson econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 4.1
+    },
+    {
+     "plant": 7408,
+     "name": "Payson econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 4.5
+    },
+    {
+     "plant": 7408,
+     "name": "Payson peak",
+     "klass": "CT_PEAKER",
+     "pmax": 0.6
+    },
+    {
+     "plant": 58266,
+     "name": "Port Westward Unit 2 econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 98.9
+    },
+    {
+     "plant": 58266,
+     "name": "Port Westward Unit 2 econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 109.8
+    },
+    {
+     "plant": 58266,
+     "name": "Port Westward Unit 2 peak",
+     "klass": "CT_PEAKER",
+     "pmax": 15.7
+    }
+   ],
+   "by_class": [
+    {
+     "klass": "CC_CHP",
+     "mw": 1220.6,
+     "avail_twh": 8.475,
+     "hr_cw": 7.9443
+    },
+    {
+     "klass": "CC_REGULAR",
+     "mw": 11505.1,
+     "avail_twh": 77.874,
+     "hr_cw": 7.3055
+    },
+    {
+     "klass": "COAL",
+     "mw": 9435.7,
+     "avail_twh": 61.904,
+     "hr_cw": 10.8572
+    },
+    {
+     "klass": "CT_CHP",
+     "mw": 115.5,
+     "avail_twh": 0.893,
+     "hr_cw": 8.9895
+    },
+    {
+     "klass": "CT_PEAKER",
+     "mw": 2999.0,
+     "avail_twh": 22.314,
+     "hr_cw": 10.8673
+    },
+    {
+     "klass": "ST_CHP",
+     "mw": 3.5,
+     "avail_twh": 0.028,
+     "hr_cw": 6.1794
+    },
+    {
+     "klass": "ST_GAS",
+     "mw": 818.5,
+     "avail_twh": 2.565,
+     "hr_cw": 12.4476
+    },
+    {
+     "klass": "hydro",
+     "mw": 35755.2,
+     "avail_twh": 300.577,
+     "hr_cw": 0.0
+    },
+    {
+     "klass": "nuclear",
+     "mw": 1151.0,
+     "avail_twh": 8.441,
+     "hr_cw": 0.0
+    },
+    {
+     "klass": "oil",
+     "mw": 73.0,
+     "avail_twh": 0.576,
+     "hr_cw": 11.4167
+    }
+   ]
+  },
+  "thermal_plant_moves": [
+   {
+    "plant": 8066,
+    "name": "Jim Bridger committed",
+    "mw_pre": 286.78,
+    "twh_pre": 2.055,
+    "mw_arm": 105.95,
+    "twh_arm": 0.729,
+    "d_mw": -180.83,
+    "d_twh": -1.326
+   },
+   {
+    "plant": 8066,
+    "name": "Jim Bridger peak",
+    "mw_pre": 181.48,
+    "twh_pre": 1.298,
+    "mw_arm": 42.38,
+    "twh_arm": 0.292,
+    "d_mw": -139.1,
+    "d_twh": -1.006
+   },
+   {
+    "plant": 8066,
+    "name": "Jim Bridger econhi",
+    "mw_pre": 564.169,
+    "twh_pre": 4.073,
+    "mw_arm": 457.704,
+    "twh_arm": 3.149,
+    "d_mw": -106.465,
+    "d_twh": -0.924
+   },
+   {
+    "plant": 8066,
+    "name": "Jim Bridger econlo",
+    "mw_pre": 614.521,
+    "twh_pre": 4.444,
+    "mw_arm": 559.416,
+    "twh_arm": 3.849,
+    "d_mw": -55.105,
+    "d_twh": -0.595
+   },
+   {
+    "plant": 8224,
+    "name": "North Valmy econhi",
+    "mw_pre": 89.87,
+    "twh_pre": 0.579,
+    "mw_arm": 38.993,
+    "twh_arm": 0.149,
+    "d_mw": -50.876,
+    "d_twh": -0.429
+   },
+   {
+    "plant": 8224,
+    "name": "North Valmy econlo",
+    "mw_pre": 94.318,
+    "twh_pre": 0.597,
+    "mw_arm": 47.659,
+    "twh_arm": 0.182,
+    "d_mw": -46.66,
+    "d_twh": -0.414
+   },
+   {
+    "plant": 56237,
+    "name": "Lake Side Power Plant econhi",
+    "mw_pre": 358.68,
+    "twh_pre": 2.671,
+    "mw_arm": 303.408,
+    "twh_arm": 2.26,
+    "d_mw": -55.272,
+    "d_twh": -0.412
+   },
+   {
+    "plant": 56237,
+    "name": "Lake Side Power Plant econlo",
+    "mw_pre": 358.68,
+    "twh_pre": 2.671,
+    "mw_arm": 303.408,
+    "twh_arm": 2.26,
+    "d_mw": -55.272,
+    "d_twh": -0.412
+   },
+   {
+    "plant": 55687,
+    "name": "Higgins Generating Station econlo",
+    "mw_pre": 212.66,
+    "twh_pre": 1.655,
+    "mw_arm": 160.6,
+    "twh_arm": 1.25,
+    "d_mw": -52.06,
+    "d_twh": -0.405
+   },
+   {
+    "plant": 55687,
+    "name": "Higgins Generating Station econhi",
+    "mw_pre": 212.66,
+    "twh_pre": 1.655,
+    "mw_arm": 160.6,
+    "twh_arm": 1.25,
+    "d_mw": -52.06,
+    "d_twh": -0.405
+   },
+   {
+    "plant": 55322,
+    "name": "Chuck Lenzie Generating Station econlo",
+    "mw_pre": 420.417,
+    "twh_pre": 2.971,
+    "mw_arm": 367.38,
+    "twh_arm": 2.596,
+    "d_mw": -53.037,
+    "d_twh": -0.375
+   },
+   {
+    "plant": 55322,
+    "name": "Chuck Lenzie Generating Station econhi",
+    "mw_pre": 420.417,
+    "twh_pre": 2.971,
+    "mw_arm": 367.38,
+    "twh_arm": 2.596,
+    "d_mw": -53.037,
+    "d_twh": -0.375
+   },
+   {
+    "plant": 6076,
+    "name": "Colstrip mustrun",
+    "mw_pre": 741.48,
+    "twh_pre": 5.096,
+    "mw_arm": 741.48,
+    "twh_arm": 4.744,
+    "d_mw": 0.0,
+    "d_twh": -0.352
+   },
+   {
+    "plant": 6076,
+    "name": "Colstrip committed",
+    "mw_pre": 708.92,
+    "twh_pre": 4.872,
+    "mw_arm": 708.92,
+    "twh_arm": 4.536,
+    "d_mw": 0.0,
+    "d_twh": -0.336
+   },
+   {
+    "plant": 4158,
+    "name": "Dave Johnston committed",
+    "mw_pre": 359.835,
+    "twh_pre": 2.337,
+    "mw_arm": 359.835,
+    "twh_arm": 2.028,
+    "d_mw": 0.0,
+    "d_twh": -0.309
+   },
+   {
+    "plant": 4158,
+    "name": "Dave Johnston mustrun",
+    "mw_pre": 356.855,
+    "twh_pre": 2.318,
+    "mw_arm": 356.855,
+    "twh_arm": 2.011,
+    "d_mw": 0.0,
+    "d_twh": -0.307
+   },
+   {
+    "plant": 2336,
+    "name": "Tracy econlo",
+    "mw_pre": 289.571,
+    "twh_pre": 2.03,
+    "mw_arm": 249.617,
+    "twh_arm": 1.726,
+    "d_mw": -39.953,
+    "d_twh": -0.304
+   },
+   {
+    "plant": 2336,
+    "name": "Tracy econhi",
+    "mw_pre": 283.158,
+    "twh_pre": 1.982,
+    "mw_arm": 243.205,
+    "twh_arm": 1.678,
+    "d_mw": -39.954,
+    "d_twh": -0.304
+   },
+   {
+    "plant": 8224,
+    "name": "North Valmy peak",
+    "mw_pre": 43.46,
+    "twh_pre": 0.293,
+    "mw_arm": 10.44,
+    "twh_arm": 0.04,
+    "d_mw": -33.02,
+    "d_twh": -0.253
+   },
+   {
+    "plant": 55841,
+    "name": "Silverhawk econlo",
+    "mw_pre": 418.076,
+    "twh_pre": 1.083,
+    "mw_arm": 155.96,
+    "twh_arm": 0.841,
+    "d_mw": -262.116,
+    "d_twh": -0.242
+   },
+   {
+    "plant": 55841,
+    "name": "Silverhawk econhi",
+    "mw_pre": 396.604,
+    "twh_pre": 1.083,
+    "mw_arm": 155.96,
+    "twh_arm": 0.841,
+    "d_mw": -240.644,
+    "d_twh": -0.242
+   },
+   {
+    "plant": 54268,
+    "name": "HF Sinclair Puget Sound Refining committed",
+    "mw_pre": 28.836,
+    "twh_pre": 0.223,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -28.836,
+    "d_twh": -0.223
+   },
+   {
+    "plant": 56102,
+    "name": "Currant Creek econhi",
+    "mw_pre": 162.964,
+    "twh_pre": 1.159,
+    "mw_arm": 132.31,
+    "twh_arm": 0.941,
+    "d_mw": -30.654,
+    "d_twh": -0.218
+   },
+   {
+    "plant": 56102,
+    "name": "Currant Creek econlo",
+    "mw_pre": 162.964,
+    "twh_pre": 1.159,
+    "mw_arm": 132.31,
+    "twh_arm": 0.941,
+    "d_mw": -30.654,
+    "d_twh": -0.218
+   },
+   {
+    "plant": 2336,
+    "name": "Tracy committed",
+    "mw_pre": 326.156,
+    "twh_pre": 2.305,
+    "mw_arm": 303.084,
+    "twh_arm": 2.129,
+    "d_mw": -23.072,
+    "d_twh": -0.176
+   },
+   {
+    "plant": 8224,
+    "name": "North Valmy committed",
+    "mw_pre": 185.276,
+    "twh_pre": 0.986,
+    "mw_arm": 212.454,
+    "twh_arm": 0.813,
+    "d_mw": 27.178,
+    "d_twh": -0.172
+   },
+   {
+    "plant": 6101,
+    "name": "Wyodak committed",
+    "mw_pre": 161.02,
+    "twh_pre": 1.265,
+    "mw_arm": 161.02,
+    "twh_arm": 1.101,
+    "d_mw": 0.0,
+    "d_twh": -0.164
+   },
+   {
+    "plant": 55179,
+    "name": "Rathdrum Power LLC peak",
+    "mw_pre": 63.0,
+    "twh_pre": 0.471,
+    "mw_arm": 43.896,
+    "twh_arm": 0.328,
+    "d_mw": -19.104,
+    "d_twh": -0.143
+   },
+   {
+    "plant": 6165,
+    "name": "Hunter econlo",
+    "mw_pre": 400.313,
+    "twh_pre": 3.205,
+    "mw_arm": 400.313,
+    "twh_arm": 3.079,
+    "d_mw": 0.0,
+    "d_twh": -0.126
+   },
+   {
+    "plant": 55687,
+    "name": "Higgins Generating Station committed",
+    "mw_pre": 133.3,
+    "twh_pre": 1.038,
+    "mw_arm": 118.25,
+    "twh_arm": 0.92,
+    "d_mw": -15.05,
+    "d_twh": -0.117
+   },
+   {
+    "plant": 6165,
+    "name": "Hunter econhi",
+    "mw_pre": 327.529,
+    "twh_pre": 2.623,
+    "mw_arm": 327.529,
+    "twh_arm": 2.519,
+    "d_mw": 0.0,
+    "d_twh": -0.103
+   },
+   {
+    "plant": 57915,
+    "name": "WE Soda Alkalai LLC mustrun",
+    "mw_pre": 12.375,
+    "twh_pre": 0.099,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -12.375,
+    "d_twh": -0.099
+   },
+   {
+    "plant": 6165,
+    "name": "Hunter committed",
+    "mw_pre": 303.949,
+    "twh_pre": 2.434,
+    "mw_arm": 303.949,
+    "twh_arm": 2.338,
+    "d_mw": 0.0,
+    "d_twh": -0.096
+   },
+   {
+    "plant": 6165,
+    "name": "Hunter mustrun",
+    "mw_pre": 303.949,
+    "twh_pre": 2.434,
+    "mw_arm": 303.949,
+    "twh_arm": 2.338,
+    "d_mw": 0.0,
+    "d_twh": -0.096
+   },
+   {
+    "plant": 55733,
+    "name": "Bennett Mountain committed",
+    "mw_pre": 114.96,
+    "twh_pre": 0.855,
+    "mw_arm": 102.527,
+    "twh_arm": 0.763,
+    "d_mw": -12.432,
+    "d_twh": -0.093
+   },
+   {
+    "plant": 55841,
+    "name": "Silverhawk committed",
+    "mw_pre": 176.7,
+    "twh_pre": 0.953,
+    "mw_arm": 159.6,
+    "twh_arm": 0.86,
+    "d_mw": -17.1,
+    "d_twh": -0.092
+   },
+   {
+    "plant": 6101,
+    "name": "Wyodak econlo",
+    "mw_pre": 90.387,
+    "twh_pre": 0.71,
+    "mw_arm": 90.387,
+    "twh_arm": 0.618,
+    "d_mw": 0.0,
+    "d_twh": -0.092
+   },
+   {
+    "plant": 55322,
+    "name": "Chuck Lenzie Generating Station committed",
+    "mw_pre": 211.14,
+    "twh_pre": 1.492,
+    "mw_arm": 198.9,
+    "twh_arm": 1.406,
+    "d_mw": -12.24,
+    "d_twh": -0.086
+   },
+   {
+    "plant": 4162,
+    "name": "Naughton committed",
+    "mw_pre": 186.912,
+    "twh_pre": 1.02,
+    "mw_arm": 186.912,
+    "twh_arm": 0.943,
+    "d_mw": 0.0,
+    "d_twh": -0.077
+   },
+   {
+    "plant": 4162,
+    "name": "Naughton mustrun",
+    "mw_pre": 112.098,
+    "twh_pre": 0.782,
+    "mw_arm": 112.098,
+    "twh_arm": 0.705,
+    "d_mw": 0.0,
+    "d_twh": -0.076
+   },
+   {
+    "plant": 7790,
+    "name": "Bonanza committed",
+    "mw_pre": 221.214,
+    "twh_pre": 1.564,
+    "mw_arm": 221.214,
+    "twh_arm": 1.489,
+    "d_mw": 0.0,
+    "d_twh": -0.075
+   },
+   {
+    "plant": 6101,
+    "name": "Wyodak econhi",
+    "mw_pre": 73.953,
+    "twh_pre": 0.581,
+    "mw_arm": 73.953,
+    "twh_arm": 0.506,
+    "d_mw": 0.0,
+    "d_twh": -0.075
+   },
+   {
+    "plant": 7790,
+    "name": "Bonanza mustrun",
+    "mw_pre": 221.214,
+    "twh_pre": 1.564,
+    "mw_arm": 221.214,
+    "twh_arm": 1.489,
+    "d_mw": 0.0,
+    "d_twh": -0.075
+   },
+   {
+    "plant": 55749,
+    "name": "Hardin Generator Project committed",
+    "mw_pre": 60.027,
+    "twh_pre": 0.411,
+    "mw_arm": 60.027,
+    "twh_arm": 0.339,
+    "d_mw": 0.0,
+    "d_twh": -0.072
+   },
+   {
+    "plant": 55328,
+    "name": "Hermiston Power Partnership committed",
+    "mw_pre": 440.3,
+    "twh_pre": 3.245,
+    "mw_arm": 430.5,
+    "twh_arm": 3.173,
+    "d_mw": -9.8,
+    "d_twh": -0.072
+   },
+   {
+    "plant": 8069,
+    "name": "Huntington econlo",
+    "mw_pre": 294.971,
+    "twh_pre": 2.362,
+    "mw_arm": 294.971,
+    "twh_arm": 2.301,
+    "d_mw": 0.0,
+    "d_twh": -0.061
+   },
+   {
+    "plant": 57915,
+    "name": "WE Soda Alkalai LLC econlo",
+    "mw_pre": 7.26,
+    "twh_pre": 0.058,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -7.26,
+    "d_twh": -0.058
+   },
+   {
+    "plant": 55328,
+    "name": "Hermiston Power Partnership econhi",
+    "mw_pre": 66.674,
+    "twh_pre": 0.491,
+    "mw_arm": 59.04,
+    "twh_arm": 0.435,
+    "d_mw": -7.634,
+    "d_twh": -0.056
+   },
+   {
+    "plant": 55328,
+    "name": "Hermiston Power Partnership econlo",
+    "mw_pre": 66.674,
+    "twh_pre": 0.491,
+    "mw_arm": 59.04,
+    "twh_arm": 0.435,
+    "d_mw": -7.634,
+    "d_twh": -0.056
+   },
+   {
+    "plant": 3845,
+    "name": "Transalta Centralia Generation committed",
+    "mw_pre": 334.33,
+    "twh_pre": 1.681,
+    "mw_arm": 334.33,
+    "twh_arm": 1.628,
+    "d_mw": 0.0,
+    "d_twh": -0.052
+   },
+   {
+    "plant": 7605,
+    "name": "River Road Gen Plant committed",
+    "mw_pre": 161.0,
+    "twh_pre": 1.169,
+    "mw_arm": 154.0,
+    "twh_arm": 1.118,
+    "d_mw": -7.0,
+    "d_twh": -0.051
+   },
+   {
+    "plant": 8069,
+    "name": "Huntington econhi",
+    "mw_pre": 241.34,
+    "twh_pre": 1.932,
+    "mw_arm": 241.34,
+    "twh_arm": 1.882,
+    "d_mw": 0.0,
+    "d_twh": -0.05
+   },
+   {
+    "plant": 57915,
+    "name": "WE Soda Alkalai LLC econhi",
+    "mw_pre": 5.94,
+    "twh_pre": 0.048,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -5.94,
+    "d_twh": -0.048
+   },
+   {
+    "plant": 4162,
+    "name": "Naughton econlo",
+    "mw_pre": 136.648,
+    "twh_pre": 0.693,
+    "mw_arm": 136.648,
+    "twh_arm": 0.646,
+    "d_mw": 0.0,
+    "d_twh": -0.047
+   },
+   {
+    "plant": 56224,
+    "name": "TS Power Plant committed",
+    "mw_pre": 91.946,
+    "twh_pre": 0.638,
+    "mw_arm": 91.946,
+    "twh_arm": 0.6,
+    "d_mw": 0.0,
+    "d_twh": -0.038
+   },
+   {
+    "plant": 56224,
+    "name": "TS Power Plant mustrun",
+    "mw_pre": 91.946,
+    "twh_pre": 0.638,
+    "mw_arm": 91.946,
+    "twh_arm": 0.6,
+    "d_mw": 0.0,
+    "d_twh": -0.038
+   },
+   {
+    "plant": 4162,
+    "name": "Naughton econhi",
+    "mw_pre": 124.152,
+    "twh_pre": 0.606,
+    "mw_arm": 124.152,
+    "twh_arm": 0.568,
+    "d_mw": 0.0,
+    "d_twh": -0.038
+   },
+   {
+    "plant": 8069,
+    "name": "Huntington mustrun",
+    "mw_pre": 177.255,
+    "twh_pre": 1.419,
+    "mw_arm": 177.255,
+    "twh_arm": 1.382,
+    "d_mw": 0.0,
+    "d_twh": -0.037
+   },
+   {
+    "plant": 8069,
+    "name": "Huntington committed",
+    "mw_pre": 177.255,
+    "twh_pre": 1.419,
+    "mw_arm": 177.255,
+    "twh_arm": 1.382,
+    "d_mw": 0.0,
+    "d_twh": -0.037
+   },
+   {
+    "plant": 56223,
+    "name": "Alden Bailey Power Plant econlo",
+    "mw_pre": 4.794,
+    "twh_pre": 0.032,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -4.794,
+    "d_twh": -0.032
+   },
+   {
+    "plant": 55749,
+    "name": "Hardin Generator Project econlo",
+    "mw_pre": 24.658,
+    "twh_pre": 0.169,
+    "mw_arm": 24.658,
+    "twh_arm": 0.139,
+    "d_mw": 0.0,
+    "d_twh": -0.03
+   },
+   {
+    "plant": 56223,
+    "name": "Alden Bailey Power Plant econhi",
+    "mw_pre": 4.32,
+    "twh_pre": 0.029,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -4.32,
+    "d_twh": -0.029
+   },
+   {
+    "plant": 56500,
+    "name": "Western 102 Power Plant econlo",
+    "mw_pre": 58.066,
+    "twh_pre": 0.432,
+    "mw_arm": 54.103,
+    "twh_arm": 0.403,
+    "d_mw": -3.962,
+    "d_twh": -0.029
+   },
+   {
+    "plant": 3845,
+    "name": "Transalta Centralia Generation econlo",
+    "mw_pre": 176.88,
+    "twh_pre": 0.889,
+    "mw_arm": 176.88,
+    "twh_arm": 0.862,
+    "d_mw": 0.0,
+    "d_twh": -0.028
+   },
+   {
+    "plant": 54268,
+    "name": "HF Sinclair Puget Sound Refining econlo",
+    "mw_pre": 3.582,
+    "twh_pre": 0.028,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -3.582,
+    "d_twh": -0.028
+   },
+   {
+    "plant": 54268,
+    "name": "HF Sinclair Puget Sound Refining econhi",
+    "mw_pre": 3.582,
+    "twh_pre": 0.028,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -3.582,
+    "d_twh": -0.028
+   },
+   {
+    "plant": 56500,
+    "name": "Western 102 Power Plant econhi",
+    "mw_pre": 52.325,
+    "twh_pre": 0.389,
+    "mw_arm": 48.755,
+    "twh_arm": 0.363,
+    "d_mw": -3.571,
+    "d_twh": -0.027
+   },
+   {
+    "plant": 55733,
+    "name": "Bennett Mountain econlo",
+    "mw_pre": 30.088,
+    "twh_pre": 0.224,
+    "mw_arm": 26.834,
+    "twh_arm": 0.2,
+    "d_mw": -3.254,
+    "d_twh": -0.024
+   },
+   {
+    "plant": 55749,
+    "name": "Hardin Generator Project econhi",
+    "mw_pre": 20.175,
+    "twh_pre": 0.138,
+    "mw_arm": 20.175,
+    "twh_arm": 0.114,
+    "d_mw": 0.0,
+    "d_twh": -0.024
+   },
+   {
+    "plant": 3845,
+    "name": "Transalta Centralia Generation econhi",
+    "mw_pre": 144.72,
+    "twh_pre": 0.728,
+    "mw_arm": 144.72,
+    "twh_arm": 0.705,
+    "d_mw": 0.0,
+    "d_twh": -0.023
+   },
+   {
+    "plant": 55733,
+    "name": "Bennett Mountain econhi",
+    "mw_pre": 27.114,
+    "twh_pre": 0.202,
+    "mw_arm": 24.182,
+    "twh_arm": 0.18,
+    "d_mw": -2.932,
+    "d_twh": -0.022
+   },
+   {
+    "plant": 50951,
+    "name": "Sunnyside Cogen Associates committed",
+    "mw_pre": 35.7,
+    "twh_pre": 0.266,
+    "mw_arm": 35.7,
+    "twh_arm": 0.248,
+    "d_mw": 0.0,
+    "d_twh": -0.018
+   },
+   {
+    "plant": 6076,
+    "name": "Colstrip peak",
+    "mw_pre": 29.6,
+    "twh_pre": 0.203,
+    "mw_arm": 29.6,
+    "twh_arm": 0.189,
+    "d_mw": 0.0,
+    "d_twh": -0.014
+   },
+   {
+    "plant": 4158,
+    "name": "Dave Johnston peak",
+    "mw_pre": 14.9,
+    "twh_pre": 0.097,
+    "mw_arm": 14.9,
+    "twh_arm": 0.084,
+    "d_mw": 0.0,
+    "d_twh": -0.013
+   },
+   {
+    "plant": 7605,
+    "name": "River Road Gen Plant econlo",
+    "mw_pre": 34.5,
+    "twh_pre": 0.251,
+    "mw_arm": 33.0,
+    "twh_arm": 0.24,
+    "d_mw": -1.5,
+    "d_twh": -0.011
+   },
+   {
+    "plant": 7605,
+    "name": "River Road Gen Plant econhi",
+    "mw_pre": 34.5,
+    "twh_pre": 0.251,
+    "mw_arm": 33.0,
+    "twh_arm": 0.24,
+    "d_mw": -1.5,
+    "d_twh": -0.011
+   },
+   {
+    "plant": 57915,
+    "name": "WE Soda Alkalai LLC committed",
+    "mw_pre": 1.375,
+    "twh_pre": 0.011,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -1.375,
+    "d_twh": -0.011
+   },
+   {
+    "plant": 55733,
+    "name": "Bennett Mountain peak",
+    "mw_pre": 12.958,
+    "twh_pre": 0.096,
+    "mw_arm": 11.557,
+    "twh_arm": 0.086,
+    "d_mw": -1.401,
+    "d_twh": -0.01
+   },
+   {
+    "plant": 57028,
+    "name": "Langley Gulch Power Plant committed",
+    "mw_pre": 205.044,
+    "twh_pre": 1.412,
+    "mw_arm": 203.679,
+    "twh_arm": 1.402,
+    "d_mw": -1.366,
+    "d_twh": -0.009
+   },
+   {
+    "plant": 10504,
+    "name": "Amalgamated Sugar Twin Falls committed",
+    "mw_pre": 2.782,
+    "twh_pre": 0.017,
+    "mw_arm": 1.047,
+    "twh_arm": 0.008,
+    "d_mw": -1.735,
+    "d_twh": -0.009
+   },
+   {
+    "plant": 57028,
+    "name": "Langley Gulch Power Plant econhi",
+    "mw_pre": 41.858,
+    "twh_pre": 0.288,
+    "mw_arm": 40.676,
+    "twh_arm": 0.28,
+    "d_mw": -1.183,
+    "d_twh": -0.008
+   },
+   {
+    "plant": 57028,
+    "name": "Langley Gulch Power Plant econlo",
+    "mw_pre": 41.858,
+    "twh_pre": 0.288,
+    "mw_arm": 40.676,
+    "twh_arm": 0.28,
+    "d_mw": -1.183,
+    "d_twh": -0.008
+   },
+   {
+    "plant": 6106,
+    "name": "Boardman econhi",
+    "mw_pre": 126.36,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -126.36,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 6106,
+    "name": "Boardman econlo",
+    "mw_pre": 154.44,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -154.44,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 10215,
+    "name": "Snowbird Power Plant econhi",
+    "mw_pre": 2.425,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -2.425,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 10215,
+    "name": "Snowbird Power Plant econlo",
+    "mw_pre": 2.69,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -2.69,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 6106,
+    "name": "Boardman mustrun",
+    "mw_pre": 263.25,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -263.25,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 6106,
+    "name": "Boardman committed",
+    "mw_pre": 29.25,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -29.25,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 6106,
+    "name": "Boardman peak",
+    "mw_pre": 11.7,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -11.7,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 65380,
+    "name": "Solomon Generating Facility econhi",
+    "mw_pre": 6.568,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -6.568,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 65380,
+    "name": "Solomon Generating Facility econlo",
+    "mw_pre": 7.289,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -7.289,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 65380,
+    "name": "Solomon Generating Facility peak",
+    "mw_pre": 1.043,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -1.043,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 59281,
+    "name": "eBay - South Jordan econhi",
+    "mw_pre": 4.32,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -4.32,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 59281,
+    "name": "eBay - South Jordan econlo",
+    "mw_pre": 4.794,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -4.794,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 67766,
+    "name": "Yellowstone County Generating Station econlo",
+    "mw_pre": 81.008,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -81.008,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 67766,
+    "name": "Yellowstone County Generating Station econhi",
+    "mw_pre": 73.0,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -73.0,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 69880,
+    "name": "University of Montana CHP",
+    "mw_pre": 2.0,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -2.0,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 67766,
+    "name": "Yellowstone County Generating Station peak",
+    "mw_pre": 11.592,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -11.592,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 69880,
+    "name": "University of Montana CHP econlo",
+    "mw_pre": 1.761,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -1.761,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 69880,
+    "name": "University of Montana CHP econhi",
+    "mw_pre": 1.587,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -1.587,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 7111,
+    "name": "Heber City econhi",
+    "mw_pre": 7.714,
+    "twh_pre": 0.037,
+    "mw_arm": 5.907,
+    "twh_arm": 0.044,
+    "d_mw": -1.807,
+    "d_twh": 0.007
+   },
+   {
+    "plant": 7111,
+    "name": "Heber City econlo",
+    "mw_pre": 8.561,
+    "twh_pre": 0.041,
+    "mw_arm": 6.555,
+    "twh_arm": 0.049,
+    "d_mw": -2.006,
+    "d_twh": 0.008
+   },
+   {
+    "plant": 10504,
+    "name": "Amalgamated Sugar Twin Falls econhi",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 1.08,
+    "twh_arm": 0.009,
+    "d_mw": 1.08,
+    "d_twh": 0.009
+   },
+   {
+    "plant": 7028,
+    "name": "Whitehead econlo",
+    "mw_pre": 3.416,
+    "twh_pre": 0.019,
+    "mw_arm": 3.752,
+    "twh_arm": 0.029,
+    "d_mw": 0.336,
+    "d_twh": 0.01
+   },
+   {
+    "plant": 7028,
+    "name": "Whitehead econhi",
+    "mw_pre": 3.416,
+    "twh_pre": 0.019,
+    "mw_arm": 3.752,
+    "twh_arm": 0.029,
+    "d_mw": 0.336,
+    "d_twh": 0.01
+   },
+   {
+    "plant": 10504,
+    "name": "Amalgamated Sugar Twin Falls econlo",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 1.32,
+    "twh_arm": 0.011,
+    "d_mw": 1.32,
+    "d_twh": 0.011
+   },
+   {
+    "plant": 57915,
+    "name": "Genesis Alkali committed",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 1.55,
+    "twh_arm": 0.012,
+    "d_mw": 1.55,
+    "d_twh": 0.012
+   },
+   {
+    "plant": 57028,
+    "name": "Langley Gulch Power Plant peak",
+    "mw_pre": 14.559,
+    "twh_pre": 0.1,
+    "mw_arm": 16.27,
+    "twh_arm": 0.112,
+    "d_mw": 1.711,
+    "d_twh": 0.012
+   },
+   {
+    "plant": 7408,
+    "name": "Payson econhi",
+    "mw_pre": 2.292,
+    "twh_pre": 0.017,
+    "mw_arm": 4.056,
+    "twh_arm": 0.03,
+    "d_mw": 1.763,
+    "d_twh": 0.013
+   },
+   {
+    "plant": 7408,
+    "name": "Payson econlo",
+    "mw_pre": 2.544,
+    "twh_pre": 0.019,
+    "mw_arm": 4.5,
+    "twh_arm": 0.033,
+    "d_mw": 1.957,
+    "d_twh": 0.015
+   },
+   {
+    "plant": 7953,
+    "name": "Evander Andrews Power Complex peak",
+    "mw_pre": 15.914,
+    "twh_pre": 0.118,
+    "mw_arm": 17.864,
+    "twh_arm": 0.133,
+    "d_mw": 1.95,
+    "d_twh": 0.015
+   },
+   {
+    "plant": 10504,
+    "name": "Amalgamated Sugar Twin Falls mustrun",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 2.25,
+    "twh_arm": 0.018,
+    "d_mw": 2.25,
+    "d_twh": 0.018
+   },
+   {
+    "plant": 7028,
+    "name": "Whitehead committed",
+    "mw_pre": 7.32,
+    "twh_pre": 0.041,
+    "mw_arm": 8.04,
+    "twh_arm": 0.062,
+    "d_mw": 0.72,
+    "d_twh": 0.022
+   },
+   {
+    "plant": 54268,
+    "name": "Puget Sound Refinery econhi",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 3.582,
+    "twh_arm": 0.028,
+    "d_mw": 3.582,
+    "d_twh": 0.028
+   },
+   {
+    "plant": 54268,
+    "name": "Puget Sound Refinery econlo",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 3.582,
+    "twh_arm": 0.028,
+    "d_mw": 3.582,
+    "d_twh": 0.028
+   },
+   {
+    "plant": 7953,
+    "name": "Evander Andrews Power Complex econhi",
+    "mw_pre": 54.742,
+    "twh_pre": 0.407,
+    "mw_arm": 61.45,
+    "twh_arm": 0.457,
+    "d_mw": 6.708,
+    "d_twh": 0.05
+   },
+   {
+    "plant": 57915,
+    "name": "Genesis Alkali econhi",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 6.696,
+    "twh_arm": 0.054,
+    "d_mw": 6.696,
+    "d_twh": 0.054
+   },
+   {
+    "plant": 7953,
+    "name": "Evander Andrews Power Complex econlo",
+    "mw_pre": 60.747,
+    "twh_pre": 0.452,
+    "mw_arm": 68.191,
+    "twh_arm": 0.507,
+    "d_mw": 7.444,
+    "d_twh": 0.055
+   },
+   {
+    "plant": 57915,
+    "name": "Genesis Alkali econlo",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 8.184,
+    "twh_arm": 0.066,
+    "d_mw": 8.184,
+    "d_twh": 0.066
+   },
+   {
+    "plant": 55328,
+    "name": "Hermiston Power Partnership peak",
+    "mw_pre": 55.352,
+    "twh_pre": 0.408,
+    "mw_arm": 66.42,
+    "twh_arm": 0.49,
+    "d_mw": 11.068,
+    "d_twh": 0.082
+   },
+   {
+    "plant": 7953,
+    "name": "Evander Andrews Power Complex committed",
+    "mw_pre": 95.937,
+    "twh_pre": 0.714,
+    "mw_arm": 107.694,
+    "twh_arm": 0.801,
+    "d_mw": 11.757,
+    "d_twh": 0.087
+   },
+   {
+    "plant": 57915,
+    "name": "Genesis Alkali mustrun",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 13.95,
+    "twh_arm": 0.112,
+    "d_mw": 13.95,
+    "d_twh": 0.112
+   },
+   {
+    "plant": 55179,
+    "name": "Rathdrum Power LLC econlo",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 15.252,
+    "twh_arm": 0.114,
+    "d_mw": 15.252,
+    "d_twh": 0.114
+   },
+   {
+    "plant": 55179,
+    "name": "Rathdrum Power LLC econhi",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 15.252,
+    "twh_arm": 0.114,
+    "d_mw": 15.252,
+    "d_twh": 0.114
+   },
+   {
+    "plant": 55179,
+    "name": "Rathdrum Power LLC committed",
+    "mw_pre": 147.0,
+    "twh_pre": 1.098,
+    "mw_arm": 173.6,
+    "twh_arm": 1.297,
+    "d_mw": 26.6,
+    "d_twh": 0.199
+   },
+   {
+    "plant": 54268,
+    "name": "Puget Sound Refinery committed",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 28.836,
+    "twh_arm": 0.223,
+    "d_mw": 28.836,
+    "d_twh": 0.223
+   },
+   {
+    "plant": 55841,
+    "name": "Silverhawk peak",
+    "mw_pre": 72.62,
+    "twh_pre": 0.224,
+    "mw_arm": 88.48,
+    "twh_arm": 0.477,
+    "d_mw": 15.86,
+    "d_twh": 0.253
+   },
+   {
+    "plant": 55322,
+    "name": "Chuck Lenzie Generating Station peak",
+    "mw_pre": 190.026,
+    "twh_pre": 1.343,
+    "mw_arm": 236.34,
+    "twh_arm": 1.67,
+    "d_mw": 46.314,
+    "d_twh": 0.327
+   },
+   {
+    "plant": 2336,
+    "name": "Tracy peak",
+    "mw_pre": 54.715,
+    "twh_pre": 0.326,
+    "mw_arm": 101.694,
+    "twh_arm": 0.683,
+    "d_mw": 46.979,
+    "d_twh": 0.358
+   },
+   {
+    "plant": 8224,
+    "name": "North Valmy mustrun",
+    "mw_pre": 109.076,
+    "twh_pre": 0.443,
+    "mw_arm": 212.454,
+    "twh_arm": 0.813,
+    "d_mw": 103.378,
+    "d_twh": 0.37
+   },
+   {
+    "plant": 55687,
+    "name": "Higgins Generating Station peak",
+    "mw_pre": 61.38,
+    "twh_pre": 0.478,
+    "mw_arm": 110.55,
+    "twh_arm": 0.861,
+    "d_mw": 49.17,
+    "d_twh": 0.383
+   },
+   {
+    "plant": 56102,
+    "name": "Currant Creek peak",
+    "mw_pre": 39.824,
+    "twh_pre": 0.283,
+    "mw_arm": 101.132,
+    "twh_arm": 0.719,
+    "d_mw": 61.308,
+    "d_twh": 0.436
+   },
+   {
+    "plant": 56237,
+    "name": "Lake Side Power Plant peak",
+    "mw_pre": 67.032,
+    "twh_pre": 0.499,
+    "mw_arm": 177.576,
+    "twh_arm": 1.323,
+    "d_mw": 110.544,
+    "d_twh": 0.823
+   },
+   {
+    "plant": 8066,
+    "name": "Jim Bridger mustrun",
+    "mw_pre": 472.05,
+    "twh_pre": 3.477,
+    "mw_arm": 953.55,
+    "twh_arm": 6.561,
+    "d_mw": 481.5,
+    "d_twh": 3.084
+   }
+  ],
+  "outages": {
+   "std": {
+    "windows": 658,
+    "gwh": 34693.8,
+    "plants": 41
+   },
+   "short_coal": {
+    "windows": 104,
+    "gwh": 2503.7,
+    "plants": 12
+   },
+   "short_gas (NOT armed)": {
+    "windows": 1638,
+    "gwh": 8729.1,
+    "plants": 30
+   },
+   "partial": {
+    "windows": 43,
+    "gwh": 1739.6,
+    "plants": 9
+   }
+  }
+ },
+ {
+  "year": 2022,
+  "pre": {
+   "eia860_source": "canonical (2025ER snapshot)",
+   "derived_inputs_from_year": 2023,
+   "gas_price": 6.45,
+   "n_units": 657,
+   "digest": "e139d9ca592d9e32048fdc3c211e4b351089b473e9dfaac41e75e72ef917306d",
+   "thermal_mw": 27645.0,
+   "class_table_mw": 419.0,
+   "class_table_share_pct": 1.52,
+   "class_table_plants": [
+    {
+     "plant": 7408,
+     "name": "Payson econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 2.3
+    },
+    {
+     "plant": 7408,
+     "name": "Payson econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 2.5
+    },
+    {
+     "plant": 7767,
+     "name": "Bloomington Power Plant",
+     "klass": "oil",
+     "pmax": 9.0
+    },
+    {
+     "plant": 56223,
+     "name": "Alden Bailey Power Plant econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 4.3
+    },
+    {
+     "plant": 56223,
+     "name": "Alden Bailey Power Plant econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 4.8
+    },
+    {
+     "plant": 56223,
+     "name": "Alden Bailey Power Plant peak",
+     "klass": "CT_PEAKER",
+     "pmax": 0.7
+    },
+    {
+     "plant": 58266,
+     "name": "Port Westward Unit 2 econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 98.9
+    },
+    {
+     "plant": 58266,
+     "name": "Port Westward Unit 2 econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 109.8
+    },
+    {
+     "plant": 58266,
+     "name": "Port Westward Unit 2 peak",
+     "klass": "CT_PEAKER",
+     "pmax": 15.7
+    },
+    {
+     "plant": 67766,
+     "name": "Yellowstone County Generating Station econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 73.0
+    },
+    {
+     "plant": 67766,
+     "name": "Yellowstone County Generating Station econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 81.0
+    },
+    {
+     "plant": 67766,
+     "name": "Yellowstone County Generating Station peak",
+     "klass": "CT_PEAKER",
+     "pmax": 11.6
+    },
+    {
+     "plant": 69880,
+     "name": "University of Montana CHP",
+     "klass": "oil",
+     "pmax": 2.0
+    },
+    {
+     "plant": 69880,
+     "name": "University of Montana CHP econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 1.6
+    },
+    {
+     "plant": 69880,
+     "name": "University of Montana CHP econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 1.8
+    }
+   ],
+   "by_class": [
+    {
+     "klass": "CC_CHP",
+     "mw": 1217.6,
+     "avail_twh": 7.286,
+     "hr_cw": 7.2907
+    },
+    {
+     "klass": "CC_REGULAR",
+     "mw": 11751.1,
+     "avail_twh": 75.096,
+     "hr_cw": 7.3546
+    },
+    {
+     "klass": "COAL",
+     "mw": 8688.6,
+     "avail_twh": 55.581,
+     "hr_cw": 10.853
+    },
+    {
+     "klass": "CT_CHP",
+     "mw": 118.5,
+     "avail_twh": 0.866,
+     "hr_cw": 7.1604
+    },
+    {
+     "klass": "CT_PEAKER",
+     "mw": 3646.5,
+     "avail_twh": 22.334,
+     "hr_cw": 8.9043
+    },
+    {
+     "klass": "ST_CHP",
+     "mw": 5.2,
+     "avail_twh": 0.037,
+     "hr_cw": 6.188
+    },
+    {
+     "klass": "ST_GAS",
+     "mw": 2142.5,
+     "avail_twh": 12.856,
+     "hr_cw": 12.0062
+    },
+    {
+     "klass": "hydro",
+     "mw": 35749.2,
+     "avail_twh": 300.549,
+     "hr_cw": 0.0
+    },
+    {
+     "klass": "nuclear",
+     "mw": 1151.0,
+     "avail_twh": 8.441,
+     "hr_cw": 0.0
+    },
+    {
+     "klass": "oil",
+     "mw": 75.0,
+     "avail_twh": 0.576,
+     "hr_cw": 11.2334
+    }
+   ]
+  },
+  "arm": {
+   "eia860_source": "vintage_2022",
+   "derived_inputs_from_year": 2023,
+   "gas_price": 6.45,
+   "n_units": 628,
+   "digest": "3c88dbf4d684da034af9d134ea86520522f453b024f19426390a8aa20fb5d605",
+   "thermal_mw": 26528.0,
+   "class_table_mw": 233.6,
+   "class_table_share_pct": 0.88,
+   "class_table_plants": [
+    {
+     "plant": 7408,
+     "name": "Payson econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 4.1
+    },
+    {
+     "plant": 7408,
+     "name": "Payson econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 4.5
+    },
+    {
+     "plant": 7408,
+     "name": "Payson peak",
+     "klass": "CT_PEAKER",
+     "pmax": 0.6
+    },
+    {
+     "plant": 58266,
+     "name": "Port Westward Unit 2 econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 98.9
+    },
+    {
+     "plant": 58266,
+     "name": "Port Westward Unit 2 econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 109.8
+    },
+    {
+     "plant": 58266,
+     "name": "Port Westward Unit 2 peak",
+     "klass": "CT_PEAKER",
+     "pmax": 15.7
+    }
+   ],
+   "by_class": [
+    {
+     "klass": "CC_CHP",
+     "mw": 1220.6,
+     "avail_twh": 7.31,
+     "hr_cw": 7.9767
+    },
+    {
+     "klass": "CC_REGULAR",
+     "mw": 11780.3,
+     "avail_twh": 75.279,
+     "hr_cw": 7.3347
+    },
+    {
+     "klass": "COAL",
+     "mw": 9431.1,
+     "avail_twh": 60.959,
+     "hr_cw": 10.8635
+    },
+    {
+     "klass": "CT_CHP",
+     "mw": 114.0,
+     "avail_twh": 0.872,
+     "hr_cw": 9.0937
+    },
+    {
+     "klass": "CT_PEAKER",
+     "mw": 3086.5,
+     "avail_twh": 22.901,
+     "hr_cw": 10.6832
+    },
+    {
+     "klass": "ST_CHP",
+     "mw": 3.9,
+     "avail_twh": 0.031,
+     "hr_cw": 6.1856
+    },
+    {
+     "klass": "ST_GAS",
+     "mw": 818.5,
+     "avail_twh": 3.427,
+     "hr_cw": 12.3266
+    },
+    {
+     "klass": "hydro",
+     "mw": 35749.2,
+     "avail_twh": 300.549,
+     "hr_cw": 0.0
+    },
+    {
+     "klass": "nuclear",
+     "mw": 1151.0,
+     "avail_twh": 8.441,
+     "hr_cw": 0.0
+    },
+    {
+     "klass": "oil",
+     "mw": 73.0,
+     "avail_twh": 0.576,
+     "hr_cw": 11.5043
+    }
+   ]
+  },
+  "thermal_plant_moves": [
+   {
+    "plant": 8066,
+    "name": "Jim Bridger committed",
+    "mw_pre": 286.78,
+    "twh_pre": 2.034,
+    "mw_arm": 105.95,
+    "twh_arm": 0.696,
+    "d_mw": -180.83,
+    "d_twh": -1.337
+   },
+   {
+    "plant": 8066,
+    "name": "Jim Bridger peak",
+    "mw_pre": 181.48,
+    "twh_pre": 1.289,
+    "mw_arm": 42.38,
+    "twh_arm": 0.279,
+    "d_mw": -139.1,
+    "d_twh": -1.01
+   },
+   {
+    "plant": 8066,
+    "name": "Jim Bridger econhi",
+    "mw_pre": 564.169,
+    "twh_pre": 3.981,
+    "mw_arm": 457.704,
+    "twh_arm": 3.008,
+    "d_mw": -106.465,
+    "d_twh": -0.972
+   },
+   {
+    "plant": 8066,
+    "name": "Jim Bridger econlo",
+    "mw_pre": 614.521,
+    "twh_pre": 4.331,
+    "mw_arm": 559.416,
+    "twh_arm": 3.677,
+    "d_mw": -55.105,
+    "d_twh": -0.654
+   },
+   {
+    "plant": 56237,
+    "name": "Lake Side Power Plant econhi",
+    "mw_pre": 358.68,
+    "twh_pre": 2.8,
+    "mw_arm": 303.408,
+    "twh_arm": 2.368,
+    "d_mw": -55.272,
+    "d_twh": -0.431
+   },
+   {
+    "plant": 56237,
+    "name": "Lake Side Power Plant econlo",
+    "mw_pre": 358.68,
+    "twh_pre": 2.8,
+    "mw_arm": 303.408,
+    "twh_arm": 2.368,
+    "d_mw": -55.272,
+    "d_twh": -0.431
+   },
+   {
+    "plant": 8224,
+    "name": "North Valmy econhi",
+    "mw_pre": 89.87,
+    "twh_pre": 0.577,
+    "mw_arm": 38.993,
+    "twh_arm": 0.156,
+    "d_mw": -50.876,
+    "d_twh": -0.422
+   },
+   {
+    "plant": 8224,
+    "name": "North Valmy econlo",
+    "mw_pre": 94.318,
+    "twh_pre": 0.595,
+    "mw_arm": 47.659,
+    "twh_arm": 0.19,
+    "d_mw": -46.66,
+    "d_twh": -0.405
+   },
+   {
+    "plant": 8224,
+    "name": "North Valmy peak",
+    "mw_pre": 43.46,
+    "twh_pre": 0.293,
+    "mw_arm": 10.44,
+    "twh_arm": 0.042,
+    "d_mw": -33.02,
+    "d_twh": -0.251
+   },
+   {
+    "plant": 56102,
+    "name": "Currant Creek econlo",
+    "mw_pre": 162.964,
+    "twh_pre": 1.275,
+    "mw_arm": 132.31,
+    "twh_arm": 1.036,
+    "d_mw": -30.654,
+    "d_twh": -0.24
+   },
+   {
+    "plant": 56102,
+    "name": "Currant Creek econhi",
+    "mw_pre": 162.964,
+    "twh_pre": 1.275,
+    "mw_arm": 132.31,
+    "twh_arm": 1.036,
+    "d_mw": -30.654,
+    "d_twh": -0.24
+   },
+   {
+    "plant": 3845,
+    "name": "Transalta Centralia Generation committed",
+    "mw_pre": 334.33,
+    "twh_pre": 1.911,
+    "mw_arm": 334.33,
+    "twh_arm": 1.728,
+    "d_mw": 0.0,
+    "d_twh": -0.182
+   },
+   {
+    "plant": 6076,
+    "name": "Colstrip mustrun",
+    "mw_pre": 741.48,
+    "twh_pre": 5.403,
+    "mw_arm": 741.48,
+    "twh_arm": 5.225,
+    "d_mw": 0.0,
+    "d_twh": -0.179
+   },
+   {
+    "plant": 6076,
+    "name": "Colstrip committed",
+    "mw_pre": 708.92,
+    "twh_pre": 5.166,
+    "mw_arm": 708.92,
+    "twh_arm": 4.995,
+    "d_mw": 0.0,
+    "d_twh": -0.171
+   },
+   {
+    "plant": 55179,
+    "name": "Rathdrum Power LLC peak",
+    "mw_pre": 63.0,
+    "twh_pre": 0.438,
+    "mw_arm": 43.896,
+    "twh_arm": 0.305,
+    "d_mw": -19.104,
+    "d_twh": -0.133
+   },
+   {
+    "plant": 8224,
+    "name": "North Valmy committed",
+    "mw_pre": 185.276,
+    "twh_pre": 0.978,
+    "mw_arm": 212.454,
+    "twh_arm": 0.848,
+    "d_mw": 27.178,
+    "d_twh": -0.13
+   },
+   {
+    "plant": 8069,
+    "name": "Huntington econlo",
+    "mw_pre": 294.971,
+    "twh_pre": 2.228,
+    "mw_arm": 294.971,
+    "twh_arm": 2.113,
+    "d_mw": 0.0,
+    "d_twh": -0.115
+   },
+   {
+    "plant": 4158,
+    "name": "Dave Johnston committed",
+    "mw_pre": 359.835,
+    "twh_pre": 2.365,
+    "mw_arm": 359.835,
+    "twh_arm": 2.256,
+    "d_mw": 0.0,
+    "d_twh": -0.109
+   },
+   {
+    "plant": 4158,
+    "name": "Dave Johnston mustrun",
+    "mw_pre": 356.855,
+    "twh_pre": 2.345,
+    "mw_arm": 356.855,
+    "twh_arm": 2.237,
+    "d_mw": 0.0,
+    "d_twh": -0.108
+   },
+   {
+    "plant": 6165,
+    "name": "Hunter econlo",
+    "mw_pre": 400.313,
+    "twh_pre": 2.77,
+    "mw_arm": 400.313,
+    "twh_arm": 2.668,
+    "d_mw": 0.0,
+    "d_twh": -0.102
+   },
+   {
+    "plant": 57915,
+    "name": "WE Soda Alkalai LLC mustrun",
+    "mw_pre": 12.375,
+    "twh_pre": 0.099,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -12.375,
+    "d_twh": -0.099
+   },
+   {
+    "plant": 3845,
+    "name": "Transalta Centralia Generation econlo",
+    "mw_pre": 176.88,
+    "twh_pre": 1.011,
+    "mw_arm": 176.88,
+    "twh_arm": 0.914,
+    "d_mw": 0.0,
+    "d_twh": -0.097
+   },
+   {
+    "plant": 8069,
+    "name": "Huntington econhi",
+    "mw_pre": 241.34,
+    "twh_pre": 1.823,
+    "mw_arm": 241.34,
+    "twh_arm": 1.729,
+    "d_mw": 0.0,
+    "d_twh": -0.094
+   },
+   {
+    "plant": 6165,
+    "name": "Hunter econhi",
+    "mw_pre": 327.529,
+    "twh_pre": 2.266,
+    "mw_arm": 327.529,
+    "twh_arm": 2.183,
+    "d_mw": 0.0,
+    "d_twh": -0.083
+   },
+   {
+    "plant": 6101,
+    "name": "Wyodak committed",
+    "mw_pre": 161.02,
+    "twh_pre": 1.053,
+    "mw_arm": 161.02,
+    "twh_arm": 0.971,
+    "d_mw": 0.0,
+    "d_twh": -0.082
+   },
+   {
+    "plant": 3845,
+    "name": "Transalta Centralia Generation econhi",
+    "mw_pre": 144.72,
+    "twh_pre": 0.827,
+    "mw_arm": 144.72,
+    "twh_arm": 0.748,
+    "d_mw": 0.0,
+    "d_twh": -0.079
+   },
+   {
+    "plant": 57028,
+    "name": "Langley Gulch Power Plant peak",
+    "mw_pre": 14.559,
+    "twh_pre": 0.077,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -14.559,
+    "d_twh": -0.077
+   },
+   {
+    "plant": 6165,
+    "name": "Hunter mustrun",
+    "mw_pre": 303.949,
+    "twh_pre": 2.103,
+    "mw_arm": 303.949,
+    "twh_arm": 2.026,
+    "d_mw": 0.0,
+    "d_twh": -0.077
+   },
+   {
+    "plant": 6165,
+    "name": "Hunter committed",
+    "mw_pre": 303.949,
+    "twh_pre": 2.103,
+    "mw_arm": 303.949,
+    "twh_arm": 2.026,
+    "d_mw": 0.0,
+    "d_twh": -0.077
+   },
+   {
+    "plant": 8069,
+    "name": "Huntington mustrun",
+    "mw_pre": 177.255,
+    "twh_pre": 1.339,
+    "mw_arm": 177.255,
+    "twh_arm": 1.27,
+    "d_mw": 0.0,
+    "d_twh": -0.069
+   },
+   {
+    "plant": 4162,
+    "name": "Naughton committed",
+    "mw_pre": 186.912,
+    "twh_pre": 1.064,
+    "mw_arm": 186.912,
+    "twh_arm": 0.995,
+    "d_mw": 0.0,
+    "d_twh": -0.069
+   },
+   {
+    "plant": 8069,
+    "name": "Huntington committed",
+    "mw_pre": 177.255,
+    "twh_pre": 1.339,
+    "mw_arm": 177.255,
+    "twh_arm": 1.27,
+    "d_mw": 0.0,
+    "d_twh": -0.069
+   },
+   {
+    "plant": 4162,
+    "name": "Naughton mustrun",
+    "mw_pre": 112.098,
+    "twh_pre": 0.701,
+    "mw_arm": 112.098,
+    "twh_arm": 0.633,
+    "d_mw": 0.0,
+    "d_twh": -0.068
+   },
+   {
+    "plant": 55328,
+    "name": "Hermiston Power Partnership committed",
+    "mw_pre": 440.3,
+    "twh_pre": 3.02,
+    "mw_arm": 430.5,
+    "twh_arm": 2.953,
+    "d_mw": -9.8,
+    "d_twh": -0.067
+   },
+   {
+    "plant": 57915,
+    "name": "WE Soda Alkalai LLC econlo",
+    "mw_pre": 7.26,
+    "twh_pre": 0.058,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -7.26,
+    "d_twh": -0.058
+   },
+   {
+    "plant": 7790,
+    "name": "Bonanza mustrun",
+    "mw_pre": 221.214,
+    "twh_pre": 1.771,
+    "mw_arm": 221.214,
+    "twh_arm": 1.718,
+    "d_mw": 0.0,
+    "d_twh": -0.054
+   },
+   {
+    "plant": 7790,
+    "name": "Bonanza committed",
+    "mw_pre": 221.214,
+    "twh_pre": 1.771,
+    "mw_arm": 221.214,
+    "twh_arm": 1.718,
+    "d_mw": 0.0,
+    "d_twh": -0.054
+   },
+   {
+    "plant": 55328,
+    "name": "Hermiston Power Partnership econlo",
+    "mw_pre": 66.674,
+    "twh_pre": 0.457,
+    "mw_arm": 59.04,
+    "twh_arm": 0.405,
+    "d_mw": -7.634,
+    "d_twh": -0.052
+   },
+   {
+    "plant": 55328,
+    "name": "Hermiston Power Partnership econhi",
+    "mw_pre": 66.674,
+    "twh_pre": 0.457,
+    "mw_arm": 59.04,
+    "twh_arm": 0.405,
+    "d_mw": -7.634,
+    "d_twh": -0.052
+   },
+   {
+    "plant": 57915,
+    "name": "WE Soda Alkalai LLC econhi",
+    "mw_pre": 5.94,
+    "twh_pre": 0.048,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -5.94,
+    "d_twh": -0.048
+   },
+   {
+    "plant": 7605,
+    "name": "River Road Gen Plant committed",
+    "mw_pre": 161.0,
+    "twh_pre": 1.051,
+    "mw_arm": 154.0,
+    "twh_arm": 1.005,
+    "d_mw": -7.0,
+    "d_twh": -0.046
+   },
+   {
+    "plant": 6101,
+    "name": "Wyodak econlo",
+    "mw_pre": 90.387,
+    "twh_pre": 0.591,
+    "mw_arm": 90.387,
+    "twh_arm": 0.545,
+    "d_mw": 0.0,
+    "d_twh": -0.046
+   },
+   {
+    "plant": 4162,
+    "name": "Naughton econlo",
+    "mw_pre": 136.648,
+    "twh_pre": 0.758,
+    "mw_arm": 136.648,
+    "twh_arm": 0.716,
+    "d_mw": 0.0,
+    "d_twh": -0.042
+   },
+   {
+    "plant": 6101,
+    "name": "Wyodak econhi",
+    "mw_pre": 73.953,
+    "twh_pre": 0.484,
+    "mw_arm": 73.953,
+    "twh_arm": 0.446,
+    "d_mw": 0.0,
+    "d_twh": -0.038
+   },
+   {
+    "plant": 4162,
+    "name": "Naughton econhi",
+    "mw_pre": 124.152,
+    "twh_pre": 0.68,
+    "mw_arm": 124.152,
+    "twh_arm": 0.646,
+    "d_mw": 0.0,
+    "d_twh": -0.034
+   },
+   {
+    "plant": 56224,
+    "name": "TS Power Plant committed",
+    "mw_pre": 91.946,
+    "twh_pre": 0.645,
+    "mw_arm": 91.946,
+    "twh_arm": 0.612,
+    "d_mw": 0.0,
+    "d_twh": -0.032
+   },
+   {
+    "plant": 56224,
+    "name": "TS Power Plant mustrun",
+    "mw_pre": 91.946,
+    "twh_pre": 0.645,
+    "mw_arm": 91.946,
+    "twh_arm": 0.612,
+    "d_mw": 0.0,
+    "d_twh": -0.032
+   },
+   {
+    "plant": 55749,
+    "name": "Hardin Generator Project committed",
+    "mw_pre": 60.027,
+    "twh_pre": 0.366,
+    "mw_arm": 60.027,
+    "twh_arm": 0.337,
+    "d_mw": 0.0,
+    "d_twh": -0.03
+   },
+   {
+    "plant": 56500,
+    "name": "Western 102 Power Plant econlo",
+    "mw_pre": 58.066,
+    "twh_pre": 0.432,
+    "mw_arm": 54.103,
+    "twh_arm": 0.403,
+    "d_mw": -3.962,
+    "d_twh": -0.029
+   },
+   {
+    "plant": 56500,
+    "name": "Western 102 Power Plant econhi",
+    "mw_pre": 52.325,
+    "twh_pre": 0.389,
+    "mw_arm": 48.755,
+    "twh_arm": 0.363,
+    "d_mw": -3.571,
+    "d_twh": -0.027
+   },
+   {
+    "plant": 56163,
+    "name": "Kennecott Power Plant committed",
+    "mw_pre": 1.77,
+    "twh_pre": 0.014,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -1.77,
+    "d_twh": -0.014
+   },
+   {
+    "plant": 55749,
+    "name": "Hardin Generator Project econlo",
+    "mw_pre": 24.658,
+    "twh_pre": 0.15,
+    "mw_arm": 24.658,
+    "twh_arm": 0.138,
+    "d_mw": 0.0,
+    "d_twh": -0.012
+   },
+   {
+    "plant": 50951,
+    "name": "Sunnyside Cogen Associates committed",
+    "mw_pre": 35.7,
+    "twh_pre": 0.265,
+    "mw_arm": 35.7,
+    "twh_arm": 0.253,
+    "d_mw": 0.0,
+    "d_twh": -0.012
+   },
+   {
+    "plant": 57915,
+    "name": "WE Soda Alkalai LLC committed",
+    "mw_pre": 1.375,
+    "twh_pre": 0.011,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -1.375,
+    "d_twh": -0.011
+   },
+   {
+    "plant": 7605,
+    "name": "River Road Gen Plant econhi",
+    "mw_pre": 34.5,
+    "twh_pre": 0.225,
+    "mw_arm": 33.0,
+    "twh_arm": 0.215,
+    "d_mw": -1.5,
+    "d_twh": -0.01
+   },
+   {
+    "plant": 7605,
+    "name": "River Road Gen Plant econlo",
+    "mw_pre": 34.5,
+    "twh_pre": 0.225,
+    "mw_arm": 33.0,
+    "twh_arm": 0.215,
+    "d_mw": -1.5,
+    "d_twh": -0.01
+   },
+   {
+    "plant": 10504,
+    "name": "Amalgamated Sugar Twin Falls committed",
+    "mw_pre": 2.782,
+    "twh_pre": 0.017,
+    "mw_arm": 1.496,
+    "twh_arm": 0.012,
+    "d_mw": -1.286,
+    "d_twh": -0.005
+   },
+   {
+    "plant": 6106,
+    "name": "Boardman peak",
+    "mw_pre": 11.7,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -11.7,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 6106,
+    "name": "Boardman committed",
+    "mw_pre": 29.25,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -29.25,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 6106,
+    "name": "Boardman econhi",
+    "mw_pre": 126.36,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -126.36,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 6106,
+    "name": "Boardman mustrun",
+    "mw_pre": 263.25,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -263.25,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 6106,
+    "name": "Boardman econlo",
+    "mw_pre": 154.44,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -154.44,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 56223,
+    "name": "Alden Bailey Power Plant econhi",
+    "mw_pre": 4.32,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -4.32,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 55841,
+    "name": "Silverhawk peak",
+    "mw_pre": 72.62,
+    "twh_pre": 0.234,
+    "mw_arm": 41.54,
+    "twh_arm": 0.234,
+    "d_mw": -31.08,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 69880,
+    "name": "University of Montana CHP econhi",
+    "mw_pre": 1.587,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -1.587,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 69880,
+    "name": "University of Montana CHP",
+    "mw_pre": 2.0,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -2.0,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 56223,
+    "name": "Alden Bailey Power Plant econlo",
+    "mw_pre": 4.794,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -4.794,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 55841,
+    "name": "Silverhawk econlo",
+    "mw_pre": 418.076,
+    "twh_pre": 1.133,
+    "mw_arm": 200.88,
+    "twh_arm": 1.133,
+    "d_mw": -217.196,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 67766,
+    "name": "Yellowstone County Generating Station econhi",
+    "mw_pre": 73.0,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -73.0,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 59281,
+    "name": "eBay - South Jordan econlo",
+    "mw_pre": 4.794,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -4.794,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 59281,
+    "name": "eBay - South Jordan econhi",
+    "mw_pre": 4.32,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -4.32,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 69880,
+    "name": "University of Montana CHP econlo",
+    "mw_pre": 1.761,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -1.761,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 55841,
+    "name": "Silverhawk econhi",
+    "mw_pre": 396.604,
+    "twh_pre": 1.133,
+    "mw_arm": 200.88,
+    "twh_arm": 1.133,
+    "d_mw": -195.724,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 67766,
+    "name": "Yellowstone County Generating Station econlo",
+    "mw_pre": 81.008,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -81.008,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 67766,
+    "name": "Yellowstone County Generating Station peak",
+    "mw_pre": 11.592,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -11.592,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 7111,
+    "name": "Heber City econlo",
+    "mw_pre": 8.561,
+    "twh_pre": 0.046,
+    "mw_arm": 7.436,
+    "twh_arm": 0.051,
+    "d_mw": -1.125,
+    "d_twh": 0.005
+   },
+   {
+    "plant": 7111,
+    "name": "Heber City econhi",
+    "mw_pre": 7.714,
+    "twh_pre": 0.042,
+    "mw_arm": 6.7,
+    "twh_arm": 0.046,
+    "d_mw": -1.014,
+    "d_twh": 0.005
+   },
+   {
+    "plant": 55733,
+    "name": "Bennett Mountain peak",
+    "mw_pre": 12.958,
+    "twh_pre": 0.096,
+    "mw_arm": 14.273,
+    "twh_arm": 0.106,
+    "d_mw": 1.315,
+    "d_twh": 0.01
+   },
+   {
+    "plant": 7028,
+    "name": "Whitehead econlo",
+    "mw_pre": 3.416,
+    "twh_pre": 0.019,
+    "mw_arm": 3.752,
+    "twh_arm": 0.029,
+    "d_mw": 0.336,
+    "d_twh": 0.01
+   },
+   {
+    "plant": 7028,
+    "name": "Whitehead econhi",
+    "mw_pre": 3.416,
+    "twh_pre": 0.019,
+    "mw_arm": 3.752,
+    "twh_arm": 0.029,
+    "d_mw": 0.336,
+    "d_twh": 0.01
+   },
+   {
+    "plant": 57915,
+    "name": "Genesis Alkali committed",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 1.55,
+    "twh_arm": 0.012,
+    "d_mw": 1.55,
+    "d_twh": 0.012
+   },
+   {
+    "plant": 7408,
+    "name": "Payson econhi",
+    "mw_pre": 2.292,
+    "twh_pre": 0.017,
+    "mw_arm": 4.056,
+    "twh_arm": 0.03,
+    "d_mw": 1.763,
+    "d_twh": 0.013
+   },
+   {
+    "plant": 7408,
+    "name": "Payson econlo",
+    "mw_pre": 2.544,
+    "twh_pre": 0.019,
+    "mw_arm": 4.5,
+    "twh_arm": 0.033,
+    "d_mw": 1.957,
+    "d_twh": 0.015
+   },
+   {
+    "plant": 55733,
+    "name": "Bennett Mountain econhi",
+    "mw_pre": 27.114,
+    "twh_pre": 0.202,
+    "mw_arm": 29.864,
+    "twh_arm": 0.222,
+    "d_mw": 2.751,
+    "d_twh": 0.02
+   },
+   {
+    "plant": 7028,
+    "name": "Whitehead committed",
+    "mw_pre": 7.32,
+    "twh_pre": 0.041,
+    "mw_arm": 8.04,
+    "twh_arm": 0.062,
+    "d_mw": 0.72,
+    "d_twh": 0.022
+   },
+   {
+    "plant": 55733,
+    "name": "Bennett Mountain econlo",
+    "mw_pre": 30.088,
+    "twh_pre": 0.224,
+    "mw_arm": 33.141,
+    "twh_arm": 0.247,
+    "d_mw": 3.052,
+    "d_twh": 0.023
+   },
+   {
+    "plant": 7953,
+    "name": "Evander Andrews Power Complex peak",
+    "mw_pre": 15.914,
+    "twh_pre": 0.118,
+    "mw_arm": 20.104,
+    "twh_arm": 0.15,
+    "d_mw": 4.19,
+    "d_twh": 0.031
+   },
+   {
+    "plant": 57028,
+    "name": "Langley Gulch Power Plant econhi",
+    "mw_pre": 41.858,
+    "twh_pre": 0.221,
+    "mw_arm": 51.597,
+    "twh_arm": 0.272,
+    "d_mw": 9.739,
+    "d_twh": 0.051
+   },
+   {
+    "plant": 57028,
+    "name": "Langley Gulch Power Plant econlo",
+    "mw_pre": 41.858,
+    "twh_pre": 0.221,
+    "mw_arm": 51.597,
+    "twh_arm": 0.272,
+    "d_mw": 9.739,
+    "d_twh": 0.051
+   },
+   {
+    "plant": 57915,
+    "name": "Genesis Alkali econhi",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 6.696,
+    "twh_arm": 0.054,
+    "d_mw": 6.696,
+    "d_twh": 0.054
+   },
+   {
+    "plant": 57028,
+    "name": "Langley Gulch Power Plant committed",
+    "mw_pre": 205.044,
+    "twh_pre": 1.081,
+    "mw_arm": 215.306,
+    "twh_arm": 1.135,
+    "d_mw": 10.262,
+    "d_twh": 0.054
+   },
+   {
+    "plant": 57915,
+    "name": "Genesis Alkali econlo",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 8.184,
+    "twh_arm": 0.066,
+    "d_mw": 8.184,
+    "d_twh": 0.066
+   },
+   {
+    "plant": 55328,
+    "name": "Hermiston Power Partnership peak",
+    "mw_pre": 55.352,
+    "twh_pre": 0.38,
+    "mw_arm": 66.42,
+    "twh_arm": 0.456,
+    "d_mw": 11.068,
+    "d_twh": 0.076
+   },
+   {
+    "plant": 55733,
+    "name": "Bennett Mountain committed",
+    "mw_pre": 114.96,
+    "twh_pre": 0.855,
+    "mw_arm": 126.622,
+    "twh_arm": 0.942,
+    "d_mw": 11.662,
+    "d_twh": 0.087
+   },
+   {
+    "plant": 55179,
+    "name": "Rathdrum Power LLC econlo",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 15.252,
+    "twh_arm": 0.106,
+    "d_mw": 15.252,
+    "d_twh": 0.106
+   },
+   {
+    "plant": 55179,
+    "name": "Rathdrum Power LLC econhi",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 15.252,
+    "twh_arm": 0.106,
+    "d_mw": 15.252,
+    "d_twh": 0.106
+   },
+   {
+    "plant": 7953,
+    "name": "Evander Andrews Power Complex econhi",
+    "mw_pre": 54.742,
+    "twh_pre": 0.407,
+    "mw_arm": 69.155,
+    "twh_arm": 0.515,
+    "d_mw": 14.414,
+    "d_twh": 0.107
+   },
+   {
+    "plant": 57915,
+    "name": "Genesis Alkali mustrun",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 13.95,
+    "twh_arm": 0.112,
+    "d_mw": 13.95,
+    "d_twh": 0.112
+   },
+   {
+    "plant": 7953,
+    "name": "Evander Andrews Power Complex econlo",
+    "mw_pre": 60.747,
+    "twh_pre": 0.452,
+    "mw_arm": 76.742,
+    "twh_arm": 0.571,
+    "d_mw": 15.995,
+    "d_twh": 0.119
+   },
+   {
+    "plant": 55179,
+    "name": "Rathdrum Power LLC committed",
+    "mw_pre": 147.0,
+    "twh_pre": 1.022,
+    "mw_arm": 173.6,
+    "twh_arm": 1.207,
+    "d_mw": 26.6,
+    "d_twh": 0.185
+   },
+   {
+    "plant": 7953,
+    "name": "Evander Andrews Power Complex committed",
+    "mw_pre": 95.937,
+    "twh_pre": 0.714,
+    "mw_arm": 121.198,
+    "twh_arm": 0.902,
+    "d_mw": 25.261,
+    "d_twh": 0.188
+   },
+   {
+    "plant": 8224,
+    "name": "North Valmy mustrun",
+    "mw_pre": 109.076,
+    "twh_pre": 0.435,
+    "mw_arm": 212.454,
+    "twh_arm": 0.848,
+    "d_mw": 103.378,
+    "d_twh": 0.413
+   },
+   {
+    "plant": 56102,
+    "name": "Currant Creek peak",
+    "mw_pre": 39.824,
+    "twh_pre": 0.312,
+    "mw_arm": 101.132,
+    "twh_arm": 0.792,
+    "d_mw": 61.308,
+    "d_twh": 0.48
+   },
+   {
+    "plant": 56237,
+    "name": "Lake Side Power Plant peak",
+    "mw_pre": 67.032,
+    "twh_pre": 0.523,
+    "mw_arm": 177.576,
+    "twh_arm": 1.386,
+    "d_mw": 110.544,
+    "d_twh": 0.863
+   },
+   {
+    "plant": 8066,
+    "name": "Jim Bridger mustrun",
+    "mw_pre": 472.05,
+    "twh_pre": 3.285,
+    "mw_arm": 953.55,
+    "twh_arm": 6.268,
+    "d_mw": 481.5,
+    "d_twh": 2.983
+   }
+  ],
+  "outages": {
+   "std": {
+    "windows": 731,
+    "gwh": 41405.0,
+    "plants": 42
+   },
+   "short_coal": {
+    "windows": 95,
+    "gwh": 2359.7,
+    "plants": 12
+   },
+   "short_gas (NOT armed)": {
+    "windows": 1913,
+    "gwh": 10116.2,
+    "plants": 30
+   },
+   "partial": {
+    "windows": 18,
+    "gwh": 660.7,
+    "plants": 6
+   }
+  }
+ },
+ {
+  "year": 2023,
+  "pre": {
+   "eia860_source": "canonical (2025ER snapshot)",
+   "derived_inputs_from_year": 2023,
+   "gas_price": 2.54,
+   "n_units": 657,
+   "digest": "d45d5a8108c8d8acfb808ac8dfaf0ce4d20a594e88423aff93520da9395a67b3",
+   "thermal_mw": 27645.0,
+   "class_table_mw": 419.0,
+   "class_table_share_pct": 1.52,
+   "class_table_plants": [
+    {
+     "plant": 7408,
+     "name": "Payson econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 2.3
+    },
+    {
+     "plant": 7408,
+     "name": "Payson econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 2.5
+    },
+    {
+     "plant": 7767,
+     "name": "Bloomington Power Plant",
+     "klass": "oil",
+     "pmax": 9.0
+    },
+    {
+     "plant": 56223,
+     "name": "Alden Bailey Power Plant econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 4.3
+    },
+    {
+     "plant": 56223,
+     "name": "Alden Bailey Power Plant econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 4.8
+    },
+    {
+     "plant": 56223,
+     "name": "Alden Bailey Power Plant peak",
+     "klass": "CT_PEAKER",
+     "pmax": 0.7
+    },
+    {
+     "plant": 58266,
+     "name": "Port Westward Unit 2 econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 98.9
+    },
+    {
+     "plant": 58266,
+     "name": "Port Westward Unit 2 econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 109.8
+    },
+    {
+     "plant": 58266,
+     "name": "Port Westward Unit 2 peak",
+     "klass": "CT_PEAKER",
+     "pmax": 15.7
+    },
+    {
+     "plant": 67766,
+     "name": "Yellowstone County Generating Station econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 73.0
+    },
+    {
+     "plant": 67766,
+     "name": "Yellowstone County Generating Station econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 81.0
+    },
+    {
+     "plant": 67766,
+     "name": "Yellowstone County Generating Station peak",
+     "klass": "CT_PEAKER",
+     "pmax": 11.6
+    },
+    {
+     "plant": 69880,
+     "name": "University of Montana CHP",
+     "klass": "oil",
+     "pmax": 2.0
+    },
+    {
+     "plant": 69880,
+     "name": "University of Montana CHP econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 1.6
+    },
+    {
+     "plant": 69880,
+     "name": "University of Montana CHP econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 1.8
+    }
+   ],
+   "by_class": [
+    {
+     "klass": "CC_CHP",
+     "mw": 1217.6,
+     "avail_twh": 7.855,
+     "hr_cw": 7.2907
+    },
+    {
+     "klass": "CC_REGULAR",
+     "mw": 11751.1,
+     "avail_twh": 78.347,
+     "hr_cw": 7.3546
+    },
+    {
+     "klass": "COAL",
+     "mw": 8688.6,
+     "avail_twh": 55.973,
+     "hr_cw": 11.0497
+    },
+    {
+     "klass": "CT_CHP",
+     "mw": 118.5,
+     "avail_twh": 0.876,
+     "hr_cw": 7.1604
+    },
+    {
+     "klass": "CT_PEAKER",
+     "mw": 3646.5,
+     "avail_twh": 22.408,
+     "hr_cw": 8.9043
+    },
+    {
+     "klass": "ST_CHP",
+     "mw": 5.2,
+     "avail_twh": 0.037,
+     "hr_cw": 6.188
+    },
+    {
+     "klass": "ST_GAS",
+     "mw": 2142.5,
+     "avail_twh": 13.388,
+     "hr_cw": 12.0062
+    },
+    {
+     "klass": "hydro",
+     "mw": 35817.3,
+     "avail_twh": 300.686,
+     "hr_cw": 0.0
+    },
+    {
+     "klass": "nuclear",
+     "mw": 1151.0,
+     "avail_twh": 8.429,
+     "hr_cw": 0.0
+    },
+    {
+     "klass": "oil",
+     "mw": 75.0,
+     "avail_twh": 0.576,
+     "hr_cw": 11.2334
+    }
+   ]
+  },
+  "arm": {
+   "eia860_source": "vintage_2023",
+   "derived_inputs_from_year": 2023,
+   "gas_price": 2.54,
+   "n_units": 629,
+   "digest": "c4c4dbd6730af874f3ab64bc64177b91361e5b7184ec8dc717e971e4ea7cb1b2",
+   "thermal_mw": 26528.9,
+   "class_table_mw": 233.6,
+   "class_table_share_pct": 0.88,
+   "class_table_plants": [
+    {
+     "plant": 7408,
+     "name": "Payson econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 4.1
+    },
+    {
+     "plant": 7408,
+     "name": "Payson econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 4.5
+    },
+    {
+     "plant": 7408,
+     "name": "Payson peak",
+     "klass": "CT_PEAKER",
+     "pmax": 0.6
+    },
+    {
+     "plant": 58266,
+     "name": "Port Westward Unit 2 econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 98.9
+    },
+    {
+     "plant": 58266,
+     "name": "Port Westward Unit 2 econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 109.8
+    },
+    {
+     "plant": 58266,
+     "name": "Port Westward Unit 2 peak",
+     "klass": "CT_PEAKER",
+     "pmax": 15.7
+    }
+   ],
+   "by_class": [
+    {
+     "klass": "CC_CHP",
+     "mw": 1221.0,
+     "avail_twh": 7.883,
+     "hr_cw": 7.9017
+    },
+    {
+     "klass": "CC_REGULAR",
+     "mw": 11794.3,
+     "avail_twh": 78.643,
+     "hr_cw": 7.3165
+    },
+    {
+     "klass": "COAL",
+     "mw": 9427.6,
+     "avail_twh": 61.701,
+     "hr_cw": 11.0849
+    },
+    {
+     "klass": "CT_CHP",
+     "mw": 107.6,
+     "avail_twh": 0.832,
+     "hr_cw": 8.9452
+    },
+    {
+     "klass": "CT_PEAKER",
+     "mw": 3082.2,
+     "avail_twh": 22.933,
+     "hr_cw": 10.7595
+    },
+    {
+     "klass": "ST_CHP",
+     "mw": 4.6,
+     "avail_twh": 0.037,
+     "hr_cw": 6.1793
+    },
+    {
+     "klass": "ST_GAS",
+     "mw": 818.5,
+     "avail_twh": 3.958,
+     "hr_cw": 12.0083
+    },
+    {
+     "klass": "hydro",
+     "mw": 35817.3,
+     "avail_twh": 300.779,
+     "hr_cw": 0.0
+    },
+    {
+     "klass": "nuclear",
+     "mw": 1151.0,
+     "avail_twh": 8.429,
+     "hr_cw": 0.0
+    },
+    {
+     "klass": "oil",
+     "mw": 73.0,
+     "avail_twh": 0.576,
+     "hr_cw": 11.4958
+    }
+   ]
+  },
+  "thermal_plant_moves": [
+   {
+    "plant": 8066,
+    "name": "Jim Bridger committed",
+    "mw_pre": 286.78,
+    "twh_pre": 2.028,
+    "mw_arm": 105.95,
+    "twh_arm": 0.725,
+    "d_mw": -180.83,
+    "d_twh": -1.303
+   },
+   {
+    "plant": 8066,
+    "name": "Jim Bridger peak",
+    "mw_pre": 181.48,
+    "twh_pre": 1.287,
+    "mw_arm": 42.38,
+    "twh_arm": 0.29,
+    "d_mw": -139.1,
+    "d_twh": -0.997
+   },
+   {
+    "plant": 8066,
+    "name": "Jim Bridger econhi",
+    "mw_pre": 564.169,
+    "twh_pre": 3.954,
+    "mw_arm": 457.704,
+    "twh_arm": 3.13,
+    "d_mw": -106.465,
+    "d_twh": -0.824
+   },
+   {
+    "plant": 8066,
+    "name": "Jim Bridger econlo",
+    "mw_pre": 614.521,
+    "twh_pre": 4.298,
+    "mw_arm": 559.416,
+    "twh_arm": 3.825,
+    "d_mw": -55.105,
+    "d_twh": -0.473
+   },
+   {
+    "plant": 8224,
+    "name": "North Valmy econhi",
+    "mw_pre": 89.87,
+    "twh_pre": 0.577,
+    "mw_arm": 38.993,
+    "twh_arm": 0.154,
+    "d_mw": -50.876,
+    "d_twh": -0.423
+   },
+   {
+    "plant": 8224,
+    "name": "North Valmy econlo",
+    "mw_pre": 94.318,
+    "twh_pre": 0.594,
+    "mw_arm": 47.659,
+    "twh_arm": 0.188,
+    "d_mw": -46.66,
+    "d_twh": -0.406
+   },
+   {
+    "plant": 4158,
+    "name": "Dave Johnston committed",
+    "mw_pre": 359.835,
+    "twh_pre": 2.6,
+    "mw_arm": 359.835,
+    "twh_arm": 2.202,
+    "d_mw": 0.0,
+    "d_twh": -0.398
+   },
+   {
+    "plant": 4158,
+    "name": "Dave Johnston mustrun",
+    "mw_pre": 356.855,
+    "twh_pre": 2.578,
+    "mw_arm": 356.855,
+    "twh_arm": 2.184,
+    "d_mw": 0.0,
+    "d_twh": -0.395
+   },
+   {
+    "plant": 8224,
+    "name": "North Valmy peak",
+    "mw_pre": 43.46,
+    "twh_pre": 0.293,
+    "mw_arm": 10.44,
+    "twh_arm": 0.041,
+    "d_mw": -33.02,
+    "d_twh": -0.251
+   },
+   {
+    "plant": 3845,
+    "name": "Transalta Centralia Generation committed",
+    "mw_pre": 334.33,
+    "twh_pre": 2.259,
+    "mw_arm": 334.33,
+    "twh_arm": 2.02,
+    "d_mw": 0.0,
+    "d_twh": -0.239
+   },
+   {
+    "plant": 6076,
+    "name": "Colstrip mustrun",
+    "mw_pre": 741.48,
+    "twh_pre": 5.467,
+    "mw_arm": 741.48,
+    "twh_arm": 5.288,
+    "d_mw": 0.0,
+    "d_twh": -0.178
+   },
+   {
+    "plant": 6076,
+    "name": "Colstrip committed",
+    "mw_pre": 708.92,
+    "twh_pre": 5.227,
+    "mw_arm": 708.92,
+    "twh_arm": 5.056,
+    "d_mw": 0.0,
+    "d_twh": -0.171
+   },
+   {
+    "plant": 56224,
+    "name": "TS Power Plant committed",
+    "mw_pre": 91.946,
+    "twh_pre": 0.629,
+    "mw_arm": 91.946,
+    "twh_arm": 0.472,
+    "d_mw": 0.0,
+    "d_twh": -0.156
+   },
+   {
+    "plant": 56224,
+    "name": "TS Power Plant mustrun",
+    "mw_pre": 91.946,
+    "twh_pre": 0.629,
+    "mw_arm": 91.946,
+    "twh_arm": 0.472,
+    "d_mw": 0.0,
+    "d_twh": -0.156
+   },
+   {
+    "plant": 55179,
+    "name": "Rathdrum Power LLC peak",
+    "mw_pre": 63.0,
+    "twh_pre": 0.47,
+    "mw_arm": 43.896,
+    "twh_arm": 0.328,
+    "d_mw": -19.104,
+    "d_twh": -0.143
+   },
+   {
+    "plant": 8224,
+    "name": "North Valmy committed",
+    "mw_pre": 185.276,
+    "twh_pre": 0.973,
+    "mw_arm": 212.454,
+    "twh_arm": 0.839,
+    "d_mw": 27.178,
+    "d_twh": -0.134
+   },
+   {
+    "plant": 3845,
+    "name": "Transalta Centralia Generation econlo",
+    "mw_pre": 176.88,
+    "twh_pre": 1.195,
+    "mw_arm": 176.88,
+    "twh_arm": 1.069,
+    "d_mw": 0.0,
+    "d_twh": -0.126
+   },
+   {
+    "plant": 3845,
+    "name": "Transalta Centralia Generation econhi",
+    "mw_pre": 144.72,
+    "twh_pre": 0.978,
+    "mw_arm": 144.72,
+    "twh_arm": 0.874,
+    "d_mw": 0.0,
+    "d_twh": -0.103
+   },
+   {
+    "plant": 57915,
+    "name": "WE Soda Alkalai LLC mustrun",
+    "mw_pre": 12.375,
+    "twh_pre": 0.099,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -12.375,
+    "d_twh": -0.099
+   },
+   {
+    "plant": 57028,
+    "name": "Langley Gulch Power Plant peak",
+    "mw_pre": 14.559,
+    "twh_pre": 0.08,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -14.559,
+    "d_twh": -0.08
+   },
+   {
+    "plant": 4162,
+    "name": "Naughton mustrun",
+    "mw_pre": 112.098,
+    "twh_pre": 0.751,
+    "mw_arm": 112.098,
+    "twh_arm": 0.673,
+    "d_mw": 0.0,
+    "d_twh": -0.078
+   },
+   {
+    "plant": 4162,
+    "name": "Naughton committed",
+    "mw_pre": 186.912,
+    "twh_pre": 1.247,
+    "mw_arm": 186.912,
+    "twh_arm": 1.169,
+    "d_mw": 0.0,
+    "d_twh": -0.078
+   },
+   {
+    "plant": 6101,
+    "name": "Wyodak committed",
+    "mw_pre": 161.02,
+    "twh_pre": 1.163,
+    "mw_arm": 161.02,
+    "twh_arm": 1.098,
+    "d_mw": 0.0,
+    "d_twh": -0.065
+   },
+   {
+    "plant": 57915,
+    "name": "WE Soda Alkalai LLC econlo",
+    "mw_pre": 7.26,
+    "twh_pre": 0.058,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -7.26,
+    "d_twh": -0.058
+   },
+   {
+    "plant": 55749,
+    "name": "Hardin Generator Project committed",
+    "mw_pre": 60.027,
+    "twh_pre": 0.377,
+    "mw_arm": 60.027,
+    "twh_arm": 0.327,
+    "d_mw": 0.0,
+    "d_twh": -0.05
+   },
+   {
+    "plant": 7605,
+    "name": "River Road Gen Plant committed",
+    "mw_pre": 161.0,
+    "twh_pre": 1.125,
+    "mw_arm": 154.0,
+    "twh_arm": 1.076,
+    "d_mw": -7.0,
+    "d_twh": -0.049
+   },
+   {
+    "plant": 4162,
+    "name": "Naughton econlo",
+    "mw_pre": 136.648,
+    "twh_pre": 0.911,
+    "mw_arm": 136.648,
+    "twh_arm": 0.863,
+    "d_mw": 0.0,
+    "d_twh": -0.048
+   },
+   {
+    "plant": 57915,
+    "name": "WE Soda Alkalai LLC econhi",
+    "mw_pre": 5.94,
+    "twh_pre": 0.048,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -5.94,
+    "d_twh": -0.048
+   },
+   {
+    "plant": 4162,
+    "name": "Naughton econhi",
+    "mw_pre": 124.152,
+    "twh_pre": 0.827,
+    "mw_arm": 124.152,
+    "twh_arm": 0.788,
+    "d_mw": 0.0,
+    "d_twh": -0.039
+   },
+   {
+    "plant": 6101,
+    "name": "Wyodak econlo",
+    "mw_pre": 90.387,
+    "twh_pre": 0.653,
+    "mw_arm": 90.387,
+    "twh_arm": 0.616,
+    "d_mw": 0.0,
+    "d_twh": -0.037
+   },
+   {
+    "plant": 6101,
+    "name": "Wyodak econhi",
+    "mw_pre": 73.953,
+    "twh_pre": 0.534,
+    "mw_arm": 73.953,
+    "twh_arm": 0.504,
+    "d_mw": 0.0,
+    "d_twh": -0.03
+   },
+   {
+    "plant": 56224,
+    "name": "TS Power Plant econlo",
+    "mw_pre": 16.577,
+    "twh_pre": 0.113,
+    "mw_arm": 16.577,
+    "twh_arm": 0.085,
+    "d_mw": 0.0,
+    "d_twh": -0.028
+   },
+   {
+    "plant": 50951,
+    "name": "Sunnyside Cogen Associates committed",
+    "mw_pre": 35.7,
+    "twh_pre": 0.224,
+    "mw_arm": 35.7,
+    "twh_arm": 0.198,
+    "d_mw": 0.0,
+    "d_twh": -0.027
+   },
+   {
+    "plant": 7790,
+    "name": "Bonanza mustrun",
+    "mw_pre": 221.214,
+    "twh_pre": 1.71,
+    "mw_arm": 221.214,
+    "twh_arm": 1.684,
+    "d_mw": 0.0,
+    "d_twh": -0.026
+   },
+   {
+    "plant": 7790,
+    "name": "Bonanza committed",
+    "mw_pre": 221.214,
+    "twh_pre": 1.71,
+    "mw_arm": 221.214,
+    "twh_arm": 1.684,
+    "d_mw": 0.0,
+    "d_twh": -0.026
+   },
+   {
+    "plant": 56224,
+    "name": "TS Power Plant econhi",
+    "mw_pre": 13.563,
+    "twh_pre": 0.093,
+    "mw_arm": 13.563,
+    "twh_arm": 0.07,
+    "d_mw": 0.0,
+    "d_twh": -0.023
+   },
+   {
+    "plant": 55749,
+    "name": "Hardin Generator Project econlo",
+    "mw_pre": 24.658,
+    "twh_pre": 0.155,
+    "mw_arm": 24.658,
+    "twh_arm": 0.134,
+    "d_mw": 0.0,
+    "d_twh": -0.021
+   },
+   {
+    "plant": 56500,
+    "name": "Western 102 Power Plant econlo",
+    "mw_pre": 58.066,
+    "twh_pre": 0.432,
+    "mw_arm": 55.424,
+    "twh_arm": 0.412,
+    "d_mw": -2.642,
+    "d_twh": -0.02
+   },
+   {
+    "plant": 56500,
+    "name": "Western 102 Power Plant econhi",
+    "mw_pre": 52.325,
+    "twh_pre": 0.389,
+    "mw_arm": 49.945,
+    "twh_arm": 0.372,
+    "d_mw": -2.38,
+    "d_twh": -0.018
+   },
+   {
+    "plant": 55749,
+    "name": "Hardin Generator Project econhi",
+    "mw_pre": 20.175,
+    "twh_pre": 0.127,
+    "mw_arm": 20.175,
+    "twh_arm": 0.11,
+    "d_mw": 0.0,
+    "d_twh": -0.017
+   },
+   {
+    "plant": 4158,
+    "name": "Dave Johnston peak",
+    "mw_pre": 14.9,
+    "twh_pre": 0.108,
+    "mw_arm": 14.9,
+    "twh_arm": 0.091,
+    "d_mw": 0.0,
+    "d_twh": -0.016
+   },
+   {
+    "plant": 56163,
+    "name": "Kennecott Power Plant committed",
+    "mw_pre": 1.77,
+    "twh_pre": 0.014,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -1.77,
+    "d_twh": -0.014
+   },
+   {
+    "plant": 57915,
+    "name": "WE Soda Alkalai LLC committed",
+    "mw_pre": 1.375,
+    "twh_pre": 0.011,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -1.375,
+    "d_twh": -0.011
+   },
+   {
+    "plant": 7605,
+    "name": "River Road Gen Plant econlo",
+    "mw_pre": 34.5,
+    "twh_pre": 0.241,
+    "mw_arm": 33.0,
+    "twh_arm": 0.231,
+    "d_mw": -1.5,
+    "d_twh": -0.01
+   },
+   {
+    "plant": 7605,
+    "name": "River Road Gen Plant econhi",
+    "mw_pre": 34.5,
+    "twh_pre": 0.241,
+    "mw_arm": 33.0,
+    "twh_arm": 0.231,
+    "d_mw": -1.5,
+    "d_twh": -0.01
+   },
+   {
+    "plant": 7028,
+    "name": "Whitehead econlo",
+    "mw_pre": 3.416,
+    "twh_pre": 0.019,
+    "mw_arm": 2.366,
+    "twh_arm": 0.018,
+    "d_mw": -1.05,
+    "d_twh": -0.001
+   },
+   {
+    "plant": 7028,
+    "name": "Whitehead econhi",
+    "mw_pre": 3.416,
+    "twh_pre": 0.019,
+    "mw_arm": 2.366,
+    "twh_arm": 0.018,
+    "d_mw": -1.05,
+    "d_twh": -0.001
+   },
+   {
+    "plant": 7028,
+    "name": "Whitehead committed",
+    "mw_pre": 7.32,
+    "twh_pre": 0.041,
+    "mw_arm": 5.07,
+    "twh_arm": 0.039,
+    "d_mw": -2.25,
+    "d_twh": -0.001
+   },
+   {
+    "plant": 56223,
+    "name": "Alden Bailey Power Plant econlo",
+    "mw_pre": 4.794,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -4.794,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 55841,
+    "name": "Silverhawk econhi",
+    "mw_pre": 396.604,
+    "twh_pre": 1.461,
+    "mw_arm": 200.88,
+    "twh_arm": 1.461,
+    "d_mw": -195.724,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 67766,
+    "name": "Yellowstone County Generating Station econlo",
+    "mw_pre": 81.008,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -81.008,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 67766,
+    "name": "Yellowstone County Generating Station peak",
+    "mw_pre": 11.592,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -11.592,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 69880,
+    "name": "University of Montana CHP",
+    "mw_pre": 2.0,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -2.0,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 69880,
+    "name": "University of Montana CHP econhi",
+    "mw_pre": 1.587,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -1.587,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 69880,
+    "name": "University of Montana CHP econlo",
+    "mw_pre": 1.761,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -1.761,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 59281,
+    "name": "eBay - South Jordan econhi",
+    "mw_pre": 4.32,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -4.32,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 6106,
+    "name": "Boardman committed",
+    "mw_pre": 29.25,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -29.25,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 56223,
+    "name": "Alden Bailey Power Plant econhi",
+    "mw_pre": 4.32,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -4.32,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 55841,
+    "name": "Silverhawk econlo",
+    "mw_pre": 418.076,
+    "twh_pre": 1.461,
+    "mw_arm": 200.88,
+    "twh_arm": 1.461,
+    "d_mw": -217.196,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 55841,
+    "name": "Silverhawk peak",
+    "mw_pre": 72.62,
+    "twh_pre": 0.302,
+    "mw_arm": 41.54,
+    "twh_arm": 0.302,
+    "d_mw": -31.08,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 6106,
+    "name": "Boardman peak",
+    "mw_pre": 11.7,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -11.7,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 6106,
+    "name": "Boardman mustrun",
+    "mw_pre": 263.25,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -263.25,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 6106,
+    "name": "Boardman econlo",
+    "mw_pre": 154.44,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -154.44,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 6106,
+    "name": "Boardman econhi",
+    "mw_pre": 126.36,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -126.36,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 67766,
+    "name": "Yellowstone County Generating Station econhi",
+    "mw_pre": 73.0,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -73.0,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 59281,
+    "name": "eBay - South Jordan econlo",
+    "mw_pre": 4.794,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -4.794,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 57915,
+    "name": "Genesis Alkali committed",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 1.375,
+    "twh_arm": 0.011,
+    "d_mw": 1.375,
+    "d_twh": 0.011
+   },
+   {
+    "plant": 55733,
+    "name": "Bennett Mountain econhi",
+    "mw_pre": 27.114,
+    "twh_pre": 0.202,
+    "mw_arm": 28.576,
+    "twh_arm": 0.213,
+    "d_mw": 1.462,
+    "d_twh": 0.011
+   },
+   {
+    "plant": 55733,
+    "name": "Bennett Mountain econlo",
+    "mw_pre": 30.088,
+    "twh_pre": 0.224,
+    "mw_arm": 31.71,
+    "twh_arm": 0.236,
+    "d_mw": 1.622,
+    "d_twh": 0.012
+   },
+   {
+    "plant": 7408,
+    "name": "Payson econhi",
+    "mw_pre": 2.292,
+    "twh_pre": 0.017,
+    "mw_arm": 4.056,
+    "twh_arm": 0.03,
+    "d_mw": 1.763,
+    "d_twh": 0.013
+   },
+   {
+    "plant": 7408,
+    "name": "Payson econlo",
+    "mw_pre": 2.544,
+    "twh_pre": 0.019,
+    "mw_arm": 4.5,
+    "twh_arm": 0.033,
+    "d_mw": 1.957,
+    "d_twh": 0.015
+   },
+   {
+    "plant": 7953,
+    "name": "Evander Andrews Power Complex peak",
+    "mw_pre": 15.914,
+    "twh_pre": 0.118,
+    "mw_arm": 20.125,
+    "twh_arm": 0.15,
+    "d_mw": 4.211,
+    "d_twh": 0.031
+   },
+   {
+    "plant": 55733,
+    "name": "Bennett Mountain committed",
+    "mw_pre": 114.96,
+    "twh_pre": 0.855,
+    "mw_arm": 121.157,
+    "twh_arm": 0.901,
+    "d_mw": 6.198,
+    "d_twh": 0.046
+   },
+   {
+    "plant": 57915,
+    "name": "Genesis Alkali econhi",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 5.94,
+    "twh_arm": 0.048,
+    "d_mw": 5.94,
+    "d_twh": 0.048
+   },
+   {
+    "plant": 57028,
+    "name": "Langley Gulch Power Plant econlo",
+    "mw_pre": 41.858,
+    "twh_pre": 0.229,
+    "mw_arm": 51.597,
+    "twh_arm": 0.282,
+    "d_mw": 9.739,
+    "d_twh": 0.053
+   },
+   {
+    "plant": 57028,
+    "name": "Langley Gulch Power Plant econhi",
+    "mw_pre": 41.858,
+    "twh_pre": 0.229,
+    "mw_arm": 51.597,
+    "twh_arm": 0.282,
+    "d_mw": 9.739,
+    "d_twh": 0.053
+   },
+   {
+    "plant": 57028,
+    "name": "Langley Gulch Power Plant committed",
+    "mw_pre": 205.044,
+    "twh_pre": 1.121,
+    "mw_arm": 215.306,
+    "twh_arm": 1.177,
+    "d_mw": 10.262,
+    "d_twh": 0.056
+   },
+   {
+    "plant": 57915,
+    "name": "Genesis Alkali econlo",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 7.26,
+    "twh_arm": 0.058,
+    "d_mw": 7.26,
+    "d_twh": 0.058
+   },
+   {
+    "plant": 57915,
+    "name": "Genesis Alkali mustrun",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 12.375,
+    "twh_arm": 0.099,
+    "d_mw": 12.375,
+    "d_twh": 0.099
+   },
+   {
+    "plant": 7953,
+    "name": "Evander Andrews Power Complex econhi",
+    "mw_pre": 54.742,
+    "twh_pre": 0.407,
+    "mw_arm": 69.228,
+    "twh_arm": 0.515,
+    "d_mw": 14.486,
+    "d_twh": 0.108
+   },
+   {
+    "plant": 55179,
+    "name": "Rathdrum Power LLC econhi",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 15.252,
+    "twh_arm": 0.114,
+    "d_mw": 15.252,
+    "d_twh": 0.114
+   },
+   {
+    "plant": 55179,
+    "name": "Rathdrum Power LLC econlo",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 15.252,
+    "twh_arm": 0.114,
+    "d_mw": 15.252,
+    "d_twh": 0.114
+   },
+   {
+    "plant": 7953,
+    "name": "Evander Andrews Power Complex econlo",
+    "mw_pre": 60.747,
+    "twh_pre": 0.452,
+    "mw_arm": 76.822,
+    "twh_arm": 0.572,
+    "d_mw": 16.075,
+    "d_twh": 0.12
+   },
+   {
+    "plant": 7953,
+    "name": "Evander Andrews Power Complex committed",
+    "mw_pre": 95.937,
+    "twh_pre": 0.714,
+    "mw_arm": 121.325,
+    "twh_arm": 0.903,
+    "d_mw": 25.388,
+    "d_twh": 0.189
+   },
+   {
+    "plant": 55179,
+    "name": "Rathdrum Power LLC committed",
+    "mw_pre": 147.0,
+    "twh_pre": 1.097,
+    "mw_arm": 173.6,
+    "twh_arm": 1.295,
+    "d_mw": 26.6,
+    "d_twh": 0.198
+   },
+   {
+    "plant": 8224,
+    "name": "North Valmy mustrun",
+    "mw_pre": 109.076,
+    "twh_pre": 0.431,
+    "mw_arm": 212.454,
+    "twh_arm": 0.839,
+    "d_mw": 103.378,
+    "d_twh": 0.408
+   },
+   {
+    "plant": 8066,
+    "name": "Jim Bridger mustrun",
+    "mw_pre": 472.05,
+    "twh_pre": 3.228,
+    "mw_arm": 953.55,
+    "twh_arm": 6.521,
+    "d_mw": 481.5,
+    "d_twh": 3.293
+   }
+  ],
+  "outages": {
+   "std": {
+    "windows": 719,
+    "gwh": 38206.1,
+    "plants": 46
+   },
+   "short_coal": {
+    "windows": 70,
+    "gwh": 1214.9,
+    "plants": 7
+   },
+   "short_gas (NOT armed)": {
+    "windows": 1114,
+    "gwh": 6658.3,
+    "plants": 32
+   },
+   "partial": {
+    "windows": 52,
+    "gwh": 1396.4,
+    "plants": 6
+   }
+  }
+ },
+ {
+  "year": 2024,
+  "pre": {
+   "eia860_source": "canonical (2025ER snapshot)",
+   "derived_inputs_from_year": 2024,
+   "gas_price": 2.19,
+   "n_units": 652,
+   "digest": "d7b22d105348d1cf458d88543d1464600b46d0a7bbed476337b2f1e04d02671c",
+   "thermal_mw": 27645.0,
+   "class_table_mw": 419.0,
+   "class_table_share_pct": 1.52,
+   "class_table_plants": [
+    {
+     "plant": 7408,
+     "name": "Payson econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 2.3
+    },
+    {
+     "plant": 7408,
+     "name": "Payson econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 2.5
+    },
+    {
+     "plant": 7767,
+     "name": "Bloomington Power Plant",
+     "klass": "oil",
+     "pmax": 9.0
+    },
+    {
+     "plant": 56223,
+     "name": "Alden Bailey Power Plant econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 4.3
+    },
+    {
+     "plant": 56223,
+     "name": "Alden Bailey Power Plant econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 4.8
+    },
+    {
+     "plant": 56223,
+     "name": "Alden Bailey Power Plant peak",
+     "klass": "CT_PEAKER",
+     "pmax": 0.7
+    },
+    {
+     "plant": 58266,
+     "name": "Port Westward Unit 2 econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 98.9
+    },
+    {
+     "plant": 58266,
+     "name": "Port Westward Unit 2 econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 109.8
+    },
+    {
+     "plant": 58266,
+     "name": "Port Westward Unit 2 peak",
+     "klass": "CT_PEAKER",
+     "pmax": 15.7
+    },
+    {
+     "plant": 67766,
+     "name": "Yellowstone County Generating Station econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 73.0
+    },
+    {
+     "plant": 67766,
+     "name": "Yellowstone County Generating Station econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 81.0
+    },
+    {
+     "plant": 67766,
+     "name": "Yellowstone County Generating Station peak",
+     "klass": "CT_PEAKER",
+     "pmax": 11.6
+    },
+    {
+     "plant": 69880,
+     "name": "University of Montana CHP",
+     "klass": "oil",
+     "pmax": 2.0
+    },
+    {
+     "plant": 69880,
+     "name": "University of Montana CHP econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 1.6
+    },
+    {
+     "plant": 69880,
+     "name": "University of Montana CHP econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 1.8
+    }
+   ],
+   "by_class": [
+    {
+     "klass": "CC_CHP",
+     "mw": 1217.6,
+     "avail_twh": 8.446,
+     "hr_cw": 7.2907
+    },
+    {
+     "klass": "CC_REGULAR",
+     "mw": 11751.1,
+     "avail_twh": 75.607,
+     "hr_cw": 7.3546
+    },
+    {
+     "klass": "COAL",
+     "mw": 8688.6,
+     "avail_twh": 57.701,
+     "hr_cw": 11.1214
+    },
+    {
+     "klass": "CT_CHP",
+     "mw": 118.5,
+     "avail_twh": 0.898,
+     "hr_cw": 7.1604
+    },
+    {
+     "klass": "CT_PEAKER",
+     "mw": 3646.5,
+     "avail_twh": 24.685,
+     "hr_cw": 8.9043
+    },
+    {
+     "klass": "ST_CHP",
+     "mw": 5.2,
+     "avail_twh": 0.037,
+     "hr_cw": 6.188
+    },
+    {
+     "klass": "ST_GAS",
+     "mw": 2142.5,
+     "avail_twh": 12.001,
+     "hr_cw": 12.0062
+    },
+    {
+     "klass": "hydro",
+     "mw": 35694.6,
+     "avail_twh": 300.259,
+     "hr_cw": 0.0
+    },
+    {
+     "klass": "nuclear",
+     "mw": 1151.0,
+     "avail_twh": 9.931,
+     "hr_cw": 0.0
+    },
+    {
+     "klass": "oil",
+     "mw": 75.0,
+     "avail_twh": 0.576,
+     "hr_cw": 11.2334
+    }
+   ]
+  },
+  "arm": {
+   "eia860_source": "vintage_2024",
+   "derived_inputs_from_year": 2024,
+   "gas_price": 2.19,
+   "n_units": 652,
+   "digest": "3cbd34b3c079010c14006b217a54890c7ce43036b529134ae2830cda95cb63ac",
+   "thermal_mw": 27064.7,
+   "class_table_mw": 403.8,
+   "class_table_share_pct": 1.49,
+   "class_table_plants": [
+    {
+     "plant": 7408,
+     "name": "Payson econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 2.3
+    },
+    {
+     "plant": 7408,
+     "name": "Payson econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 2.5
+    },
+    {
+     "plant": 7767,
+     "name": "Bloomington Power Plant",
+     "klass": "oil",
+     "pmax": 9.0
+    },
+    {
+     "plant": 58266,
+     "name": "Port Westward Unit 2 econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 98.9
+    },
+    {
+     "plant": 58266,
+     "name": "Port Westward Unit 2 econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 109.8
+    },
+    {
+     "plant": 58266,
+     "name": "Port Westward Unit 2 peak",
+     "klass": "CT_PEAKER",
+     "pmax": 15.7
+    },
+    {
+     "plant": 67766,
+     "name": "Yellowstone County Generating Station econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 73.0
+    },
+    {
+     "plant": 67766,
+     "name": "Yellowstone County Generating Station econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 81.0
+    },
+    {
+     "plant": 67766,
+     "name": "Yellowstone County Generating Station peak",
+     "klass": "CT_PEAKER",
+     "pmax": 11.6
+    }
+   ],
+   "by_class": [
+    {
+     "klass": "CC_CHP",
+     "mw": 1221.0,
+     "avail_twh": 8.473,
+     "hr_cw": 7.8207
+    },
+    {
+     "klass": "CC_REGULAR",
+     "mw": 11753.2,
+     "avail_twh": 75.62,
+     "hr_cw": 7.337
+    },
+    {
+     "klass": "COAL",
+     "mw": 8357.6,
+     "avail_twh": 57.472,
+     "hr_cw": 11.1758
+    },
+    {
+     "klass": "CT_CHP",
+     "mw": 116.0,
+     "avail_twh": 0.879,
+     "hr_cw": 9.066
+    },
+    {
+     "klass": "CT_PEAKER",
+     "mw": 3645.3,
+     "avail_twh": 24.847,
+     "hr_cw": 10.7221
+    },
+    {
+     "klass": "ST_CHP",
+     "mw": 4.6,
+     "avail_twh": 0.037,
+     "hr_cw": 6.1847
+    },
+    {
+     "klass": "ST_GAS",
+     "mw": 1888.5,
+     "avail_twh": 10.192,
+     "hr_cw": 11.1907
+    },
+    {
+     "klass": "hydro",
+     "mw": 35694.6,
+     "avail_twh": 300.353,
+     "hr_cw": 0.0
+    },
+    {
+     "klass": "nuclear",
+     "mw": 1151.0,
+     "avail_twh": 9.931,
+     "hr_cw": 0.0
+    },
+    {
+     "klass": "oil",
+     "mw": 78.4,
+     "avail_twh": 0.618,
+     "hr_cw": 11.2805
+    }
+   ]
+  },
+  "thermal_plant_moves": [
+   {
+    "plant": 8224,
+    "name": "North Valmy econhi",
+    "mw_pre": 89.87,
+    "twh_pre": 0.64,
+    "mw_arm": 38.993,
+    "twh_arm": 0.278,
+    "d_mw": -50.876,
+    "d_twh": -0.362
+   },
+   {
+    "plant": 8224,
+    "name": "North Valmy econlo",
+    "mw_pre": 94.318,
+    "twh_pre": 0.672,
+    "mw_arm": 47.659,
+    "twh_arm": 0.34,
+    "d_mw": -46.66,
+    "d_twh": -0.332
+   },
+   {
+    "plant": 4158,
+    "name": "Dave Johnston committed",
+    "mw_pre": 359.835,
+    "twh_pre": 2.653,
+    "mw_arm": 359.835,
+    "twh_arm": 2.336,
+    "d_mw": 0.0,
+    "d_twh": -0.317
+   },
+   {
+    "plant": 4158,
+    "name": "Dave Johnston mustrun",
+    "mw_pre": 356.855,
+    "twh_pre": 2.631,
+    "mw_arm": 356.855,
+    "twh_arm": 2.317,
+    "d_mw": 0.0,
+    "d_twh": -0.314
+   },
+   {
+    "plant": 8224,
+    "name": "North Valmy peak",
+    "mw_pre": 43.46,
+    "twh_pre": 0.31,
+    "mw_arm": 10.44,
+    "twh_arm": 0.074,
+    "d_mw": -33.02,
+    "d_twh": -0.235
+   },
+   {
+    "plant": 3845,
+    "name": "Transalta Centralia Generation committed",
+    "mw_pre": 334.33,
+    "twh_pre": 1.734,
+    "mw_arm": 334.33,
+    "twh_arm": 1.599,
+    "d_mw": 0.0,
+    "d_twh": -0.135
+   },
+   {
+    "plant": 6101,
+    "name": "Wyodak committed",
+    "mw_pre": 161.02,
+    "twh_pre": 1.263,
+    "mw_arm": 161.02,
+    "twh_arm": 1.146,
+    "d_mw": 0.0,
+    "d_twh": -0.117
+   },
+   {
+    "plant": 56224,
+    "name": "TS Power Plant mustrun",
+    "mw_pre": 91.946,
+    "twh_pre": 0.652,
+    "mw_arm": 91.946,
+    "twh_arm": 0.543,
+    "d_mw": 0.0,
+    "d_twh": -0.109
+   },
+   {
+    "plant": 56224,
+    "name": "TS Power Plant committed",
+    "mw_pre": 91.946,
+    "twh_pre": 0.652,
+    "mw_arm": 91.946,
+    "twh_arm": 0.543,
+    "d_mw": 0.0,
+    "d_twh": -0.109
+   },
+   {
+    "plant": 4162,
+    "name": "Naughton committed",
+    "mw_pre": 186.912,
+    "twh_pre": 1.371,
+    "mw_arm": 186.912,
+    "twh_arm": 1.27,
+    "d_mw": 0.0,
+    "d_twh": -0.101
+   },
+   {
+    "plant": 4162,
+    "name": "Naughton mustrun",
+    "mw_pre": 112.098,
+    "twh_pre": 0.851,
+    "mw_arm": 112.098,
+    "twh_arm": 0.751,
+    "d_mw": 0.0,
+    "d_twh": -0.1
+   },
+   {
+    "plant": 57915,
+    "name": "WE Soda Alkalai LLC mustrun",
+    "mw_pre": 12.375,
+    "twh_pre": 0.099,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -12.375,
+    "d_twh": -0.099
+   },
+   {
+    "plant": 3845,
+    "name": "Transalta Centralia Generation econlo",
+    "mw_pre": 176.88,
+    "twh_pre": 0.918,
+    "mw_arm": 176.88,
+    "twh_arm": 0.846,
+    "d_mw": 0.0,
+    "d_twh": -0.072
+   },
+   {
+    "plant": 6101,
+    "name": "Wyodak econlo",
+    "mw_pre": 90.387,
+    "twh_pre": 0.709,
+    "mw_arm": 90.387,
+    "twh_arm": 0.643,
+    "d_mw": 0.0,
+    "d_twh": -0.066
+   },
+   {
+    "plant": 4162,
+    "name": "Naughton econlo",
+    "mw_pre": 136.648,
+    "twh_pre": 0.994,
+    "mw_arm": 136.648,
+    "twh_arm": 0.932,
+    "d_mw": 0.0,
+    "d_twh": -0.062
+   },
+   {
+    "plant": 6076,
+    "name": "Colstrip mustrun",
+    "mw_pre": 741.48,
+    "twh_pre": 4.559,
+    "mw_arm": 741.48,
+    "twh_arm": 4.498,
+    "d_mw": 0.0,
+    "d_twh": -0.061
+   },
+   {
+    "plant": 6076,
+    "name": "Colstrip committed",
+    "mw_pre": 708.92,
+    "twh_pre": 4.359,
+    "mw_arm": 708.92,
+    "twh_arm": 4.3,
+    "d_mw": 0.0,
+    "d_twh": -0.059
+   },
+   {
+    "plant": 3845,
+    "name": "Transalta Centralia Generation econhi",
+    "mw_pre": 144.72,
+    "twh_pre": 0.751,
+    "mw_arm": 144.72,
+    "twh_arm": 0.692,
+    "d_mw": 0.0,
+    "d_twh": -0.059
+   },
+   {
+    "plant": 57915,
+    "name": "WE Soda Alkalai LLC econlo",
+    "mw_pre": 7.26,
+    "twh_pre": 0.058,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -7.26,
+    "d_twh": -0.058
+   },
+   {
+    "plant": 6101,
+    "name": "Wyodak econhi",
+    "mw_pre": 73.953,
+    "twh_pre": 0.58,
+    "mw_arm": 73.953,
+    "twh_arm": 0.526,
+    "d_mw": 0.0,
+    "d_twh": -0.054
+   },
+   {
+    "plant": 55749,
+    "name": "Hardin Generator Project committed",
+    "mw_pre": 60.027,
+    "twh_pre": 0.371,
+    "mw_arm": 60.027,
+    "twh_arm": 0.319,
+    "d_mw": 0.0,
+    "d_twh": -0.052
+   },
+   {
+    "plant": 4162,
+    "name": "Naughton econhi",
+    "mw_pre": 124.152,
+    "twh_pre": 0.899,
+    "mw_arm": 124.152,
+    "twh_arm": 0.848,
+    "d_mw": 0.0,
+    "d_twh": -0.05
+   },
+   {
+    "plant": 57915,
+    "name": "WE Soda Alkalai LLC econhi",
+    "mw_pre": 5.94,
+    "twh_pre": 0.048,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -5.94,
+    "d_twh": -0.048
+   },
+   {
+    "plant": 55733,
+    "name": "Bennett Mountain committed",
+    "mw_pre": 114.96,
+    "twh_pre": 0.855,
+    "mw_arm": 108.52,
+    "twh_arm": 0.807,
+    "d_mw": -6.44,
+    "d_twh": -0.048
+   },
+   {
+    "plant": 7790,
+    "name": "Bonanza committed",
+    "mw_pre": 221.214,
+    "twh_pre": 1.771,
+    "mw_arm": 221.214,
+    "twh_arm": 1.742,
+    "d_mw": 0.0,
+    "d_twh": -0.03
+   },
+   {
+    "plant": 7790,
+    "name": "Bonanza mustrun",
+    "mw_pre": 221.214,
+    "twh_pre": 1.771,
+    "mw_arm": 221.214,
+    "twh_arm": 1.742,
+    "d_mw": 0.0,
+    "d_twh": -0.03
+   },
+   {
+    "plant": 55749,
+    "name": "Hardin Generator Project econlo",
+    "mw_pre": 24.658,
+    "twh_pre": 0.152,
+    "mw_arm": 24.658,
+    "twh_arm": 0.131,
+    "d_mw": 0.0,
+    "d_twh": -0.021
+   },
+   {
+    "plant": 56224,
+    "name": "TS Power Plant econlo",
+    "mw_pre": 16.577,
+    "twh_pre": 0.118,
+    "mw_arm": 16.577,
+    "twh_arm": 0.098,
+    "d_mw": 0.0,
+    "d_twh": -0.02
+   },
+   {
+    "plant": 55749,
+    "name": "Hardin Generator Project econhi",
+    "mw_pre": 20.175,
+    "twh_pre": 0.125,
+    "mw_arm": 20.175,
+    "twh_arm": 0.107,
+    "d_mw": 0.0,
+    "d_twh": -0.017
+   },
+   {
+    "plant": 56224,
+    "name": "TS Power Plant econhi",
+    "mw_pre": 13.563,
+    "twh_pre": 0.096,
+    "mw_arm": 13.563,
+    "twh_arm": 0.08,
+    "d_mw": 0.0,
+    "d_twh": -0.016
+   },
+   {
+    "plant": 55733,
+    "name": "Bennett Mountain econlo",
+    "mw_pre": 30.088,
+    "twh_pre": 0.224,
+    "mw_arm": 28.403,
+    "twh_arm": 0.211,
+    "d_mw": -1.685,
+    "d_twh": -0.013
+   },
+   {
+    "plant": 4158,
+    "name": "Dave Johnston peak",
+    "mw_pre": 14.9,
+    "twh_pre": 0.11,
+    "mw_arm": 14.9,
+    "twh_arm": 0.097,
+    "d_mw": 0.0,
+    "d_twh": -0.013
+   },
+   {
+    "plant": 57028,
+    "name": "Langley Gulch Power Plant peak",
+    "mw_pre": 14.559,
+    "twh_pre": 0.091,
+    "mw_arm": 12.523,
+    "twh_arm": 0.078,
+    "d_mw": -2.037,
+    "d_twh": -0.013
+   },
+   {
+    "plant": 50951,
+    "name": "Sunnyside Cogen Associates committed",
+    "mw_pre": 35.7,
+    "twh_pre": 0.244,
+    "mw_arm": 35.7,
+    "twh_arm": 0.232,
+    "d_mw": 0.0,
+    "d_twh": -0.012
+   },
+   {
+    "plant": 57915,
+    "name": "WE Soda Alkalai LLC committed",
+    "mw_pre": 1.375,
+    "twh_pre": 0.011,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -1.375,
+    "d_twh": -0.011
+   },
+   {
+    "plant": 55733,
+    "name": "Bennett Mountain econhi",
+    "mw_pre": 27.114,
+    "twh_pre": 0.202,
+    "mw_arm": 25.595,
+    "twh_arm": 0.19,
+    "d_mw": -1.519,
+    "d_twh": -0.011
+   },
+   {
+    "plant": 56500,
+    "name": "Western 102 Power Plant econlo",
+    "mw_pre": 58.066,
+    "twh_pre": 0.432,
+    "mw_arm": 56.745,
+    "twh_arm": 0.422,
+    "d_mw": -1.321,
+    "d_twh": -0.01
+   },
+   {
+    "plant": 56500,
+    "name": "Western 102 Power Plant econhi",
+    "mw_pre": 52.325,
+    "twh_pre": 0.389,
+    "mw_arm": 51.135,
+    "twh_arm": 0.38,
+    "d_mw": -1.19,
+    "d_twh": -0.009
+   },
+   {
+    "plant": 56223,
+    "name": "Alden Bailey Power Plant econhi",
+    "mw_pre": 4.32,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -4.32,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 69880,
+    "name": "University of Montana CHP econlo",
+    "mw_pre": 1.761,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -1.761,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 6106,
+    "name": "Boardman econlo",
+    "mw_pre": 154.44,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -154.44,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 6106,
+    "name": "Boardman econhi",
+    "mw_pre": 126.36,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -126.36,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 6106,
+    "name": "Boardman committed",
+    "mw_pre": 29.25,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -29.25,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 56223,
+    "name": "Alden Bailey Power Plant econlo",
+    "mw_pre": 4.794,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -4.794,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 69880,
+    "name": "University of Montana CHP econhi",
+    "mw_pre": 1.587,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -1.587,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 59281,
+    "name": "eBay - South Jordan econhi",
+    "mw_pre": 4.32,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -4.32,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 6106,
+    "name": "Boardman peak",
+    "mw_pre": 11.7,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -11.7,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 6106,
+    "name": "Boardman mustrun",
+    "mw_pre": 263.25,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -263.25,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 69880,
+    "name": "University of Montana CHP",
+    "mw_pre": 2.0,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -2.0,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 59281,
+    "name": "eBay - South Jordan econlo",
+    "mw_pre": 4.794,
+    "twh_pre": 0.0,
+    "mw_arm": 0.0,
+    "twh_arm": 0.0,
+    "d_mw": -4.794,
+    "d_twh": 0.0
+   },
+   {
+    "plant": 57028,
+    "name": "Langley Gulch Power Plant econhi",
+    "mw_pre": 41.858,
+    "twh_pre": 0.262,
+    "mw_arm": 43.218,
+    "twh_arm": 0.271,
+    "d_mw": 1.36,
+    "d_twh": 0.009
+   },
+   {
+    "plant": 57028,
+    "name": "Langley Gulch Power Plant committed",
+    "mw_pre": 205.044,
+    "twh_pre": 1.284,
+    "mw_arm": 206.471,
+    "twh_arm": 1.293,
+    "d_mw": 1.426,
+    "d_twh": 0.009
+   },
+   {
+    "plant": 57028,
+    "name": "Langley Gulch Power Plant econlo",
+    "mw_pre": 41.858,
+    "twh_pre": 0.262,
+    "mw_arm": 43.218,
+    "twh_arm": 0.271,
+    "d_mw": 1.36,
+    "d_twh": 0.009
+   },
+   {
+    "plant": 57915,
+    "name": "Genesis Alkali committed",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 1.375,
+    "twh_arm": 0.011,
+    "d_mw": 1.375,
+    "d_twh": 0.011
+   },
+   {
+    "plant": 7953,
+    "name": "Evander Andrews Power Complex peak",
+    "mw_pre": 15.914,
+    "twh_pre": 0.118,
+    "mw_arm": 18.355,
+    "twh_arm": 0.137,
+    "d_mw": 2.441,
+    "d_twh": 0.018
+   },
+   {
+    "plant": 57298,
+    "name": "Cedar Hills",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 5.4,
+    "twh_arm": 0.043,
+    "d_mw": 5.4,
+    "d_twh": 0.043
+   },
+   {
+    "plant": 57915,
+    "name": "Genesis Alkali econhi",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 5.94,
+    "twh_arm": 0.048,
+    "d_mw": 5.94,
+    "d_twh": 0.048
+   },
+   {
+    "plant": 57915,
+    "name": "Genesis Alkali econlo",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 7.26,
+    "twh_arm": 0.058,
+    "d_mw": 7.26,
+    "d_twh": 0.058
+   },
+   {
+    "plant": 7953,
+    "name": "Evander Andrews Power Complex econhi",
+    "mw_pre": 54.742,
+    "twh_pre": 0.407,
+    "mw_arm": 63.138,
+    "twh_arm": 0.47,
+    "d_mw": 8.396,
+    "d_twh": 0.062
+   },
+   {
+    "plant": 7953,
+    "name": "Evander Andrews Power Complex econlo",
+    "mw_pre": 60.747,
+    "twh_pre": 0.452,
+    "mw_arm": 70.065,
+    "twh_arm": 0.521,
+    "d_mw": 9.318,
+    "d_twh": 0.069
+   },
+   {
+    "plant": 57915,
+    "name": "Genesis Alkali mustrun",
+    "mw_pre": 0.0,
+    "twh_pre": 0.0,
+    "mw_arm": 12.375,
+    "twh_arm": 0.099,
+    "d_mw": 12.375,
+    "d_twh": 0.099
+   },
+   {
+    "plant": 7953,
+    "name": "Evander Andrews Power Complex committed",
+    "mw_pre": 95.937,
+    "twh_pre": 0.714,
+    "mw_arm": 110.653,
+    "twh_arm": 0.823,
+    "d_mw": 14.715,
+    "d_twh": 0.109
+   },
+   {
+    "plant": 8224,
+    "name": "North Valmy committed",
+    "mw_pre": 185.276,
+    "twh_pre": 1.32,
+    "mw_arm": 212.454,
+    "twh_arm": 1.515,
+    "d_mw": 27.178,
+    "d_twh": 0.194
+   },
+   {
+    "plant": 8224,
+    "name": "North Valmy mustrun",
+    "mw_pre": 109.076,
+    "twh_pre": 0.778,
+    "mw_arm": 212.454,
+    "twh_arm": 1.515,
+    "d_mw": 103.378,
+    "d_twh": 0.737
+   }
+  ],
+  "outages": {
+   "std": {
+    "windows": 790,
+    "gwh": 41029.2,
+    "plants": 44
+   },
+   "short_coal": {
+    "windows": 61,
+    "gwh": 1068.2,
+    "plants": 8
+   },
+   "short_gas (NOT armed)": {
+    "windows": 1053,
+    "gwh": 7253.2,
+    "plants": 32
+   },
+   "partial": {
+    "windows": 37,
+    "gwh": 1028.7,
+    "plants": 6
+   }
+  }
+ },
+ {
+  "year": 2025,
+  "pre": {
+   "eia860_source": "canonical (2025ER snapshot)",
+   "derived_inputs_from_year": 2025,
+   "gas_price": 3.52,
+   "n_units": 653,
+   "digest": "4fe9a8cc90b62372c44728500a561e86ee541a654637eba91ddcc7d812dff905",
+   "thermal_mw": 27643.7,
+   "class_table_mw": 417.7,
+   "class_table_share_pct": 1.51,
+   "class_table_plants": [
+    {
+     "plant": 7408,
+     "name": "Payson econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 2.3
+    },
+    {
+     "plant": 7408,
+     "name": "Payson econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 2.5
+    },
+    {
+     "plant": 7767,
+     "name": "Bloomington Power Plant",
+     "klass": "oil",
+     "pmax": 9.0
+    },
+    {
+     "plant": 56223,
+     "name": "Alden Bailey Power Plant econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 4.3
+    },
+    {
+     "plant": 56223,
+     "name": "Alden Bailey Power Plant econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 4.8
+    },
+    {
+     "plant": 56223,
+     "name": "Alden Bailey Power Plant peak",
+     "klass": "CT_PEAKER",
+     "pmax": 0.7
+    },
+    {
+     "plant": 58266,
+     "name": "Port Westward Unit 2 econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 98.9
+    },
+    {
+     "plant": 58266,
+     "name": "Port Westward Unit 2 econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 109.8
+    },
+    {
+     "plant": 58266,
+     "name": "Port Westward Unit 2 peak",
+     "klass": "CT_PEAKER",
+     "pmax": 15.7
+    },
+    {
+     "plant": 67766,
+     "name": "Yellowstone County Generating Station econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 73.0
+    },
+    {
+     "plant": 67766,
+     "name": "Yellowstone County Generating Station econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 81.0
+    },
+    {
+     "plant": 67766,
+     "name": "Yellowstone County Generating Station peak",
+     "klass": "CT_PEAKER",
+     "pmax": 11.6
+    },
+    {
+     "plant": 69880,
+     "name": "University of Montana CHP",
+     "klass": "oil",
+     "pmax": 2.0
+    },
+    {
+     "plant": 69880,
+     "name": "University of Montana CHP committed",
+     "klass": "CT_CHP",
+     "pmax": 1.1
+    },
+    {
+     "plant": 69880,
+     "name": "University of Montana CHP econhi",
+     "klass": "CT_CHP",
+     "pmax": 0.5
+    },
+    {
+     "plant": 69880,
+     "name": "University of Montana CHP econlo",
+     "klass": "CT_CHP",
+     "pmax": 0.5
+    }
+   ],
+   "by_class": [
+    {
+     "klass": "CC_CHP",
+     "mw": 1217.6,
+     "avail_twh": 7.258,
+     "hr_cw": 7.2907
+    },
+    {
+     "klass": "CC_REGULAR",
+     "mw": 11751.1,
+     "avail_twh": 73.405,
+     "hr_cw": 7.3546
+    },
+    {
+     "klass": "COAL",
+     "mw": 8688.6,
+     "avail_twh": 55.546,
+     "hr_cw": 10.9178
+    },
+    {
+     "klass": "CT_CHP",
+     "mw": 120.6,
+     "avail_twh": 0.917,
+     "hr_cw": 7.1923
+    },
+    {
+     "klass": "CT_PEAKER",
+     "mw": 3643.1,
+     "avail_twh": 26.96,
+     "hr_cw": 8.9042
+    },
+    {
+     "klass": "ST_CHP",
+     "mw": 5.2,
+     "avail_twh": 0.0,
+     "hr_cw": 6.188
+    },
+    {
+     "klass": "ST_GAS",
+     "mw": 2142.5,
+     "avail_twh": 10.333,
+     "hr_cw": 12.0062
+    },
+    {
+     "klass": "hydro",
+     "mw": 35694.6,
+     "avail_twh": 300.262,
+     "hr_cw": 0.0
+    },
+    {
+     "klass": "nuclear",
+     "mw": 1151.0,
+     "avail_twh": 7.73,
+     "hr_cw": 0.0
+    },
+    {
+     "klass": "oil",
+     "mw": 75.0,
+     "avail_twh": 0.577,
+     "hr_cw": 11.2334
+    }
+   ]
+  },
+  "arm": {
+   "eia860_source": "canonical (2025ER snapshot)",
+   "derived_inputs_from_year": 2025,
+   "gas_price": 3.52,
+   "n_units": 653,
+   "digest": "3e487411e8d8bb7b52bdccdc560a4177b1696e41fb9e1ac6ad3ca2f1569d8403",
+   "thermal_mw": 27643.7,
+   "class_table_mw": 417.7,
+   "class_table_share_pct": 1.51,
+   "class_table_plants": [
+    {
+     "plant": 7408,
+     "name": "Payson econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 2.3
+    },
+    {
+     "plant": 7408,
+     "name": "Payson econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 2.5
+    },
+    {
+     "plant": 7767,
+     "name": "Bloomington Power Plant",
+     "klass": "oil",
+     "pmax": 9.0
+    },
+    {
+     "plant": 56223,
+     "name": "Alden Bailey Power Plant econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 4.3
+    },
+    {
+     "plant": 56223,
+     "name": "Alden Bailey Power Plant econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 4.8
+    },
+    {
+     "plant": 56223,
+     "name": "Alden Bailey Power Plant peak",
+     "klass": "CT_PEAKER",
+     "pmax": 0.7
+    },
+    {
+     "plant": 58266,
+     "name": "Port Westward Unit 2 econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 98.9
+    },
+    {
+     "plant": 58266,
+     "name": "Port Westward Unit 2 econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 109.8
+    },
+    {
+     "plant": 58266,
+     "name": "Port Westward Unit 2 peak",
+     "klass": "CT_PEAKER",
+     "pmax": 15.7
+    },
+    {
+     "plant": 67766,
+     "name": "Yellowstone County Generating Station econhi",
+     "klass": "CT_PEAKER",
+     "pmax": 73.0
+    },
+    {
+     "plant": 67766,
+     "name": "Yellowstone County Generating Station econlo",
+     "klass": "CT_PEAKER",
+     "pmax": 81.0
+    },
+    {
+     "plant": 67766,
+     "name": "Yellowstone County Generating Station peak",
+     "klass": "CT_PEAKER",
+     "pmax": 11.6
+    },
+    {
+     "plant": 69880,
+     "name": "University of Montana CHP",
+     "klass": "oil",
+     "pmax": 2.0
+    },
+    {
+     "plant": 69880,
+     "name": "University of Montana CHP committed",
+     "klass": "CT_CHP",
+     "pmax": 1.1
+    },
+    {
+     "plant": 69880,
+     "name": "University of Montana CHP econhi",
+     "klass": "CT_CHP",
+     "pmax": 0.5
+    },
+    {
+     "plant": 69880,
+     "name": "University of Montana CHP econlo",
+     "klass": "CT_CHP",
+     "pmax": 0.5
+    }
+   ],
+   "by_class": [
+    {
+     "klass": "CC_CHP",
+     "mw": 1217.6,
+     "avail_twh": 7.258,
+     "hr_cw": 7.8323
+    },
+    {
+     "klass": "CC_REGULAR",
+     "mw": 11751.1,
+     "avail_twh": 73.405,
+     "hr_cw": 7.3515
+    },
+    {
+     "klass": "COAL",
+     "mw": 8688.6,
+     "avail_twh": 52.836,
+     "hr_cw": 10.9178
+    },
+    {
+     "klass": "CT_CHP",
+     "mw": 120.6,
+     "avail_twh": 0.917,
+     "hr_cw": 8.9157
+    },
+    {
+     "klass": "CT_PEAKER",
+     "mw": 3643.1,
+     "avail_twh": 26.96,
+     "hr_cw": 10.705
+    },
+    {
+     "klass": "ST_CHP",
+     "mw": 5.2,
+     "avail_twh": 0.0,
+     "hr_cw": 6.188
+    },
+    {
+     "klass": "ST_GAS",
+     "mw": 2142.5,
+     "avail_twh": 10.333,
+     "hr_cw": 11.4934
+    },
+    {
+     "klass": "hydro",
+     "mw": 35694.6,
+     "avail_twh": 300.262,
+     "hr_cw": 0.0
+    },
+    {
+     "klass": "nuclear",
+     "mw": 1151.0,
+     "avail_twh": 7.73,
+     "hr_cw": 0.0
+    },
+    {
+     "klass": "oil",
+     "mw": 75.0,
+     "avail_twh": 0.577,
+     "hr_cw": 11.2334
+    }
+   ]
+  },
+  "thermal_plant_moves": [
+   {
+    "plant": 8066,
+    "name": "Jim Bridger mustrun",
+    "mw_pre": 472.05,
+    "twh_pre": 3.189,
+    "mw_arm": 472.05,
+    "twh_arm": 3.004,
+    "d_mw": 0.0,
+    "d_twh": -0.185
+   },
+   {
+    "plant": 4158,
+    "name": "Dave Johnston committed",
+    "mw_pre": 359.835,
+    "twh_pre": 2.467,
+    "mw_arm": 359.835,
+    "twh_arm": 2.295,
+    "d_mw": 0.0,
+    "d_twh": -0.172
+   },
+   {
+    "plant": 6076,
+    "name": "Colstrip mustrun",
+    "mw_pre": 741.48,
+    "twh_pre": 4.725,
+    "mw_arm": 741.48,
+    "twh_arm": 4.553,
+    "d_mw": 0.0,
+    "d_twh": -0.172
+   },
+   {
+    "plant": 4158,
+    "name": "Dave Johnston mustrun",
+    "mw_pre": 356.855,
+    "twh_pre": 2.446,
+    "mw_arm": 356.855,
+    "twh_arm": 2.276,
+    "d_mw": 0.0,
+    "d_twh": -0.17
+   },
+   {
+    "plant": 6076,
+    "name": "Colstrip committed",
+    "mw_pre": 708.92,
+    "twh_pre": 4.518,
+    "mw_arm": 708.92,
+    "twh_arm": 4.353,
+    "d_mw": 0.0,
+    "d_twh": -0.164
+   },
+   {
+    "plant": 3845,
+    "name": "Transalta Centralia Generation committed",
+    "mw_pre": 334.33,
+    "twh_pre": 1.871,
+    "mw_arm": 334.33,
+    "twh_arm": 1.713,
+    "d_mw": 0.0,
+    "d_twh": -0.158
+   },
+   {
+    "plant": 6165,
+    "name": "Hunter econlo",
+    "mw_pre": 400.313,
+    "twh_pre": 3.181,
+    "mw_arm": 400.313,
+    "twh_arm": 3.03,
+    "d_mw": 0.0,
+    "d_twh": -0.151
+   },
+   {
+    "plant": 6165,
+    "name": "Hunter econhi",
+    "mw_pre": 327.529,
+    "twh_pre": 2.602,
+    "mw_arm": 327.529,
+    "twh_arm": 2.479,
+    "d_mw": 0.0,
+    "d_twh": -0.124
+   },
+   {
+    "plant": 6165,
+    "name": "Hunter committed",
+    "mw_pre": 303.949,
+    "twh_pre": 2.415,
+    "mw_arm": 303.949,
+    "twh_arm": 2.3,
+    "d_mw": 0.0,
+    "d_twh": -0.115
+   },
+   {
+    "plant": 6165,
+    "name": "Hunter mustrun",
+    "mw_pre": 303.949,
+    "twh_pre": 2.415,
+    "mw_arm": 303.949,
+    "twh_arm": 2.3,
+    "d_mw": 0.0,
+    "d_twh": -0.115
+   },
+   {
+    "plant": 8066,
+    "name": "Jim Bridger econlo",
+    "mw_pre": 614.521,
+    "twh_pre": 3.632,
+    "mw_arm": 614.521,
+    "twh_arm": 3.524,
+    "d_mw": 0.0,
+    "d_twh": -0.109
+   },
+   {
+    "plant": 8066,
+    "name": "Jim Bridger econhi",
+    "mw_pre": 564.169,
+    "twh_pre": 3.292,
+    "mw_arm": 564.169,
+    "twh_arm": 3.203,
+    "d_mw": 0.0,
+    "d_twh": -0.089
+   },
+   {
+    "plant": 6101,
+    "name": "Wyodak committed",
+    "mw_pre": 161.02,
+    "twh_pre": 1.22,
+    "mw_arm": 161.02,
+    "twh_arm": 1.133,
+    "d_mw": 0.0,
+    "d_twh": -0.086
+   },
+   {
+    "plant": 3845,
+    "name": "Transalta Centralia Generation econlo",
+    "mw_pre": 176.88,
+    "twh_pre": 0.99,
+    "mw_arm": 176.88,
+    "twh_arm": 0.906,
+    "d_mw": 0.0,
+    "d_twh": -0.084
+   },
+   {
+    "plant": 4162,
+    "name": "Naughton committed",
+    "mw_pre": 186.912,
+    "twh_pre": 1.129,
+    "mw_arm": 186.912,
+    "twh_arm": 1.053,
+    "d_mw": 0.0,
+    "d_twh": -0.077
+   },
+   {
+    "plant": 4162,
+    "name": "Naughton mustrun",
+    "mw_pre": 112.098,
+    "twh_pre": 0.841,
+    "mw_arm": 112.098,
+    "twh_arm": 0.765,
+    "d_mw": 0.0,
+    "d_twh": -0.076
+   },
+   {
+    "plant": 3845,
+    "name": "Transalta Centralia Generation econhi",
+    "mw_pre": 144.72,
+    "twh_pre": 0.81,
+    "mw_arm": 144.72,
+    "twh_arm": 0.742,
+    "d_mw": 0.0,
+    "d_twh": -0.068
+   },
+   {
+    "plant": 8069,
+    "name": "Huntington econlo",
+    "mw_pre": 294.971,
+    "twh_pre": 2.362,
+    "mw_arm": 294.971,
+    "twh_arm": 2.297,
+    "d_mw": 0.0,
+    "d_twh": -0.065
+   },
+   {
+    "plant": 8069,
+    "name": "Huntington econhi",
+    "mw_pre": 241.34,
+    "twh_pre": 1.932,
+    "mw_arm": 241.34,
+    "twh_arm": 1.879,
+    "d_mw": 0.0,
+    "d_twh": -0.053
+   },
+   {
+    "plant": 6101,
+    "name": "Wyodak econlo",
+    "mw_pre": 90.387,
+    "twh_pre": 0.685,
+    "mw_arm": 90.387,
+    "twh_arm": 0.636,
+    "d_mw": 0.0,
+    "d_twh": -0.048
+   },
+   {
+    "plant": 4162,
+    "name": "Naughton econlo",
+    "mw_pre": 136.648,
+    "twh_pre": 0.775,
+    "mw_arm": 136.648,
+    "twh_arm": 0.728,
+    "d_mw": 0.0,
+    "d_twh": -0.047
+   },
+   {
+    "plant": 6101,
+    "name": "Wyodak econhi",
+    "mw_pre": 73.953,
+    "twh_pre": 0.56,
+    "mw_arm": 73.953,
+    "twh_arm": 0.521,
+    "d_mw": 0.0,
+    "d_twh": -0.04
+   },
+   {
+    "plant": 8069,
+    "name": "Huntington mustrun",
+    "mw_pre": 177.255,
+    "twh_pre": 1.419,
+    "mw_arm": 177.255,
+    "twh_arm": 1.38,
+    "d_mw": 0.0,
+    "d_twh": -0.039
+   },
+   {
+    "plant": 8069,
+    "name": "Huntington committed",
+    "mw_pre": 177.255,
+    "twh_pre": 1.419,
+    "mw_arm": 177.255,
+    "twh_arm": 1.38,
+    "d_mw": 0.0,
+    "d_twh": -0.039
+   },
+   {
+    "plant": 4162,
+    "name": "Naughton econhi",
+    "mw_pre": 124.152,
+    "twh_pre": 0.681,
+    "mw_arm": 124.152,
+    "twh_arm": 0.643,
+    "d_mw": 0.0,
+    "d_twh": -0.038
+   },
+   {
+    "plant": 56224,
+    "name": "TS Power Plant committed",
+    "mw_pre": 91.946,
+    "twh_pre": 0.664,
+    "mw_arm": 91.946,
+    "twh_arm": 0.64,
+    "d_mw": 0.0,
+    "d_twh": -0.025
+   },
+   {
+    "plant": 56224,
+    "name": "TS Power Plant mustrun",
+    "mw_pre": 91.946,
+    "twh_pre": 0.664,
+    "mw_arm": 91.946,
+    "twh_arm": 0.64,
+    "d_mw": 0.0,
+    "d_twh": -0.025
+   },
+   {
+    "plant": 55749,
+    "name": "Hardin Generator Project committed",
+    "mw_pre": 60.027,
+    "twh_pre": 0.157,
+    "mw_arm": 60.027,
+    "twh_arm": 0.135,
+    "d_mw": 0.0,
+    "d_twh": -0.022
+   },
+   {
+    "plant": 8066,
+    "name": "Jim Bridger committed",
+    "mw_pre": 286.78,
+    "twh_pre": 1.577,
+    "mw_arm": 286.78,
+    "twh_arm": 1.556,
+    "d_mw": 0.0,
+    "d_twh": -0.021
+   },
+   {
+    "plant": 7790,
+    "name": "Bonanza committed",
+    "mw_pre": 221.214,
+    "twh_pre": 1.191,
+    "mw_arm": 221.214,
+    "twh_arm": 1.177,
+    "d_mw": 0.0,
+    "d_twh": -0.014
+   },
+   {
+    "plant": 50951,
+    "name": "Sunnyside Cogen Associates committed",
+    "mw_pre": 35.7,
+    "twh_pre": 0.169,
+    "mw_arm": 35.7,
+    "twh_arm": 0.155,
+    "d_mw": 0.0,
+    "d_twh": -0.014
+   },
+   {
+    "plant": 7790,
+    "name": "Bonanza mustrun",
+    "mw_pre": 221.214,
+    "twh_pre": 1.191,
+    "mw_arm": 221.214,
+    "twh_arm": 1.177,
+    "d_mw": 0.0,
+    "d_twh": -0.014
+   },
+   {
+    "plant": 6165,
+    "name": "Hunter peak",
+    "mw_pre": 27.26,
+    "twh_pre": 0.217,
+    "mw_arm": 27.26,
+    "twh_arm": 0.206,
+    "d_mw": 0.0,
+    "d_twh": -0.01
+   }
+  ],
+  "outages": {
+   "std": {
+    "windows": 761,
+    "gwh": 52591.4,
+    "plants": 53
+   },
+   "short_coal": {
+    "windows": 78,
+    "gwh": 1885.2,
+    "plants": 12
+   },
+   "short_gas (NOT armed)": {
+    "windows": 622,
+    "gwh": 5829.5,
+    "plants": 31
+   },
+   "partial": {
+    "windows": 22,
+    "gwh": 823.9,
+    "plants": 9
+   }
+  }
+ }
+]

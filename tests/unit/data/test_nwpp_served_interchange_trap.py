@@ -63,6 +63,11 @@ class TestBpatIdentity(unittest.TestCase):
         """PACW / PSEI / TPWR close to 0.000 MW in every hour of 2023-2025."""
         for ba in ("PACW", "PSEI", "TPWR"):
             frame = pd.read_parquet(EIA_HOURLY_DIR / f"{ba} hourly.parquet")
+            # The claim is scoped to 2023-2025; the extracts carry 2019-2022
+            # too since R-NWPP (2026-09-24), where EIA's TPWR triple does not
+            # close exactly (max 281 MW).
+            year = pd.to_datetime(frame["Local date"]).dt.year
+            frame = frame[year.between(2023, 2025)]
             residual = (
                 frame["Net generation (Adjusted)"]
                 - frame["Demand (Adjusted)"]
