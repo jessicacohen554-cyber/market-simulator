@@ -569,13 +569,51 @@ _DECLARED_BACKCAST_COERCION_REKEYS: dict[str, str] = {
 #   being served, no committed number changes, and no run is re-solved. The
 #   pins simply start telling the truth, which is what makes the guard able to
 #   catch the NEXT real move.
+#
+# 2026-09-24 ALL SIX ADVANCED (Y-28, audit program v42 §3) — THREE LANES'
+#   ADDITIONS WHOSE PIN ADVANCES NEVER LANDED. NO VALUE MOVED; NOTHING IS
+#   RE-SERVED.
+#   WHAT MOVED: `solve_surface_register.py --diff 15beb03c6` (the 2026-09-10
+#   commit that last wrote these literals) -> worktree: "304 -> 310 names;
+#   21 value(s) moved, 6 added, 0 removed", and every one of the 21 moved
+#   values reaches ONLY NWPP and/or SOCO (per-ISO totals ERCOT/CAISO/MISO/PJM/
+#   NYISO/NEISO 0) — neither ISO is pinned here. Of the six ADDED names, four
+#   reach the pinned ISOs, each DECLARED at its live hash, so it moves no key:
+#     * `PPA_COST_RECOVERY_YR`, `REGIONAL_RENEWABLE_CF` — unprojected (no ISO
+#       token), so +2 rows in all six. Added to constants.py by 3fc20b976
+#       (2026-09-20, "Price marginal abatement on regional output over a
+#       contract-length term") and declared by da38d1086 (hydro-1). Their only
+#       reader is `scripts/build_mac_sidecar.py` — post-processing, not a solve.
+#     * `NYISO_CUTSET_TTC_ENVELOPE_BY_MONTH` — NYISO only, added and declared
+#       by 5af5d6fbc (nyiso-224, 2026-09-10). Read by `pipeline/ttc.py` only
+#       under `nyiso_total_east_cutset_ttc` (default False).
+#     * `HYDRO_PONDAGE_EXTRA_NID_BY_PLANT` — NYISO only, added and declared by
+#       da38d1086 (hydro-1, 2026-09-20). Read only by
+#       `scripts/data/build_hydro_pondage.py`, feeding `hydro_pondage_bound`
+#       (default off).
+#   So ERCOT 229->231, CAISO 204->206, MISO 210->212, PJM 214->216, NEISO
+#   197->199 (+2 each) and NYISO 209->213 (+4). `moved_rows` is unchanged: `{}`
+#   for MISO/PJM/NYISO/NEISO and exactly the already-ledgered rows for ERCOT
+#   and CAISO (`test_no_unledgered_row_moved_off_its_declaration` passes).
+#   The other two added names (`GAS_BASIS_DIFFERENTIAL_MEASURED_BY_YEAR`,
+#   soco-55 d891efa2a; `ISO_MEMBERSHIP_DROPS_CURRENT_BA_RECODE`, soco60b
+#   f560408f6) project to SOCO/NWPP only and move no pinned row.
+#   WHAT IT COSTS: NOTHING through this surface. Additions declared at their
+#   live hash re-key nothing, so no keeper's cached bundle stops being served
+#   and no keeper bundle differs from a fresh solve BECAUSE OF A REGISTRY ROW.
+#   What the three landing lanes' mechanisms cost when armed is recorded by
+#   those lanes; every consumer above is script-only or gated default-off.
+#   Named here because the digests span every row, and three lanes landed
+#   rows without advancing the pin — the same defect the 2026-09-08 and
+#   2026-09-10 blocks name. Full record:
+#   docs/handoffs/FINDING-y28-cache-key-identity-2026-09-24.md.
 PINNED_SURFACE_ROWS_BY_ISO: dict[str, tuple[str, int]] = {
-    "ERCOT": ("5ab10cf3fa2f1447", 229),
-    "CAISO": ("cba92d202f32f9fd", 204),
-    "MISO": ("9f0845000dc8af6e", 210),
-    "PJM": ("905116f13849914f", 214),
-    "NYISO": ("1eefed492204fab7", 209),
-    "NEISO": ("9d35c270c69e9eee", 197),
+    "ERCOT": ("2cdbcd6c3ab52c81", 231),
+    "CAISO": ("0b6c20ac2fb77cee", 206),
+    "MISO": ("c3ff7c56ddbb573d", 212),
+    "PJM": ("5c08117448da7c28", 216),
+    "NYISO": ("211ef7751502c924", 213),
+    "NEISO": ("54e04ca0b469de51", 199),
 }
 
 
