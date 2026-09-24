@@ -1,0 +1,241 @@
+{
+ "what": "pjm-h21 phase 0, part 2 \u2014 WHERE the PJM CC_REGULAR surplus sits. ZERO LP.",
+ "zone_keeper_arm": {
+  "2020": {
+   "keeper": {
+    "AEP_Ohio": 2.46,
+    "ATSI": -0.832,
+    "Central_PA": -0.183,
+    "ComEd": -1.659,
+    "Dominion": -10.505,
+    "EMAAC": 12.95,
+    "SWMAAC": -2.707,
+    "West_APS": 1.116
+   },
+   "arm": {
+    "AEP_Ohio": 4.635,
+    "ATSI": 0.448,
+    "Central_PA": 4.572,
+    "ComEd": 1.805,
+    "Dominion": -1.524,
+    "EMAAC": 25.236,
+    "SWMAAC": 3.491,
+    "West_APS": 2.32
+   }
+  },
+  "2021": {
+   "keeper": {
+    "AEP_Ohio": 0.878,
+    "ATSI": -0.359,
+    "Central_PA": 0.722,
+    "ComEd": 0.138,
+    "Dominion": -4.356,
+    "EMAAC": 14.32,
+    "SWMAAC": -1.884,
+    "West_APS": 0.48
+   },
+   "arm": {
+    "AEP_Ohio": 4.089,
+    "ATSI": 0.856,
+    "Central_PA": 2.647,
+    "ComEd": 2.36,
+    "Dominion": 1.448,
+    "EMAAC": 24.419,
+    "SWMAAC": 3.288,
+    "West_APS": 1.269
+   }
+  },
+  "2022": {
+   "keeper": {
+    "AEP_Ohio": 3.806,
+    "ATSI": 1.198,
+    "Central_PA": 4.583,
+    "ComEd": 3.156,
+    "Dominion": -1.661,
+    "EMAAC": 13.189,
+    "SWMAAC": -3.784,
+    "West_APS": -0.305
+   },
+   "arm": {
+    "AEP_Ohio": 2.478,
+    "ATSI": 1.108,
+    "Central_PA": 3.916,
+    "ComEd": 3.635,
+    "Dominion": 2.698,
+    "EMAAC": 22.35,
+    "SWMAAC": 3.0,
+    "West_APS": 0.343
+   }
+  },
+  "2023": {
+   "keeper": {
+    "AEP_Ohio": 0.966,
+    "ATSI": -0.31,
+    "Central_PA": 3.305,
+    "ComEd": 2.806,
+    "Dominion": -13.742,
+    "EMAAC": 11.791,
+    "SWMAAC": -0.543,
+    "West_APS": -0.704
+   },
+   "arm": {
+    "AEP_Ohio": 1.075,
+    "ATSI": 0.271,
+    "Central_PA": 3.314,
+    "ComEd": 5.483,
+    "Dominion": 1.056,
+    "EMAAC": 16.048,
+    "SWMAAC": 3.96,
+    "West_APS": 0.898
+   }
+  },
+  "2024": {
+   "keeper": {
+    "AEP_Ohio": -2.125,
+    "ATSI": 0.103,
+    "Central_PA": 0.869,
+    "ComEd": 2.844,
+    "Dominion": -12.334,
+    "EMAAC": 13.772,
+    "SWMAAC": -3.093,
+    "West_APS": 0.859
+   },
+   "arm": {
+    "AEP_Ohio": -1.059,
+    "ATSI": 0.291,
+    "Central_PA": 0.53,
+    "ComEd": 4.976,
+    "Dominion": -2.451,
+    "EMAAC": 18.739,
+    "SWMAAC": 4.56,
+    "West_APS": 1.266
+   }
+  },
+  "2025": {
+   "keeper": {
+    "AEP_Ohio": 0.922,
+    "ATSI": 1.146,
+    "Central_PA": 2.341,
+    "ComEd": 4.201,
+    "Dominion": -4.027,
+    "EMAAC": 3.789,
+    "SWMAAC": -6.439,
+    "West_APS": 0.634
+   },
+   "arm": {
+    "AEP_Ohio": 0.065,
+    "ATSI": 0.986,
+    "Central_PA": 2.807,
+    "ComEd": 6.43,
+    "Dominion": -0.306,
+    "EMAAC": 16.355,
+    "SWMAAC": 4.618,
+    "West_APS": 1.281
+   }
+  }
+ },
+ "zone_pjm146": {
+  "2023": {
+   "control": {
+    "AEP_Ohio": 3.449,
+    "ATSI": 0.398,
+    "Central_PA": -1.272,
+    "ComEd": -0.47,
+    "Dominion": -12.945,
+    "EMAAC": 6.477,
+    "SWMAAC": 1.414,
+    "West_APS": -0.546
+   },
+   "rggi": {
+    "AEP_Ohio": 4.417,
+    "ATSI": 0.645,
+    "Central_PA": 1.112,
+    "ComEd": 1.096,
+    "Dominion": -15.186,
+    "EMAAC": -5.247,
+    "SWMAAC": -2.897,
+    "West_APS": -0.232
+   }
+  },
+  "2024": {
+   "control": {
+    "AEP_Ohio": -0.015,
+    "ATSI": 0.48,
+    "Central_PA": -0.547,
+    "ComEd": 1.096,
+    "Dominion": -10.314,
+    "EMAAC": 11.517,
+    "SWMAAC": -1.901,
+    "West_APS": 0.346
+   },
+   "rggi": {
+    "AEP_Ohio": 0.987,
+    "ATSI": 0.634,
+    "Central_PA": 1.06,
+    "ComEd": 2.43,
+    "Dominion": -7.815,
+    "EMAAC": -6.104,
+    "SWMAAC": -6.06,
+    "West_APS": 0.753
+   }
+  },
+  "2025": {
+   "control": {
+    "AEP_Ohio": 1.674,
+    "ATSI": 1.359,
+    "Central_PA": 3.281,
+    "ComEd": 4.254,
+    "Dominion": -2.865,
+    "EMAAC": 1.619,
+    "SWMAAC": -6.05,
+    "West_APS": 0.817
+   },
+   "rggi": {
+    "AEP_Ohio": 2.06,
+    "ATSI": 1.409,
+    "Central_PA": 3.927,
+    "ComEd": 4.813,
+    "Dominion": -1.924,
+    "EMAAC": -9.528,
+    "SWMAAC": -7.701,
+    "West_APS": 1.032
+   }
+  }
+ },
+ "hr_terciles": {
+  "2020": {
+   "highCF": {
+    "n_ok": 19,
+    "measured": 7.077235809534392,
+    "model": 7.082653655961773
+   },
+   "lowCF": {
+    "n_ok": 15,
+    "measured": 7.559275191866839,
+    "model": 7.489932811721319
+   },
+   "midCF": {
+    "n_ok": 20,
+    "measured": 7.099738275424805,
+    "model": 7.049111798123255
+   }
+  },
+  "2023": {
+   "highCF": {
+    "n_ok": 21,
+    "measured": 6.91741297383345,
+    "model": 6.881606253109145
+   },
+   "lowCF": {
+    "n_ok": 20,
+    "measured": 7.506143814369028,
+    "model": 7.602328173470653
+   },
+   "midCF": {
+    "n_ok": 21,
+    "measured": 7.07175172207844,
+    "model": 7.084194241489151
+   }
+  }
+ }
+}
