@@ -3479,3 +3479,11 @@ results/calibration/rpjm_inputs_20[0-9][0-9]/
 results/calibration/rsoco_2023/
 results/calibration/rsoco_2024/
 results/calibration/rsoco_2025/
+# R-NYISO (2026-09-24): per-year shard legs, kept on local disk (rule 31) and out of main (rule 32(d)).
+# Composite registered as results/calibration/rnyiso_span. Provenance only (rule 33(d)), NOT a recovery route:
+#   2022 ef5da7f882ca8a62c13446481e4b4c6dd6bb74be  2023 5fca472fa7799431a0cf7dbc10827d695172ebb9
+#   2024 0373fcf372f4d6882a51c653ba79abf9bd725e28  2025 d0c020463ee98d2bab3714d7ab6f879f8adfc473
+results/calibration/rnyiso_2022/
+results/calibration/rnyiso_2023/
+results/calibration/rnyiso_2024/
+results/calibration/rnyiso_2025/
