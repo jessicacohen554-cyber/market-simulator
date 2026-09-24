@@ -5764,6 +5764,17 @@ loss.
 
 ### 5.4 MISO — keeper `2026-09-24-miso-268-coal-yard` (**PROMOTED 2026-09-24, miso-268**, on the owner ruling *"Is this a recommended keeper candidate? If so plz promote"*; single delta on miso-267: `coal_fuel_inventory_plant_grain=true`, one annual coal-fuel row per coal yard at its own stock + prior receipts; C1 passes every year (2022 COAL_PRB +10.04 → −0.24, CC_REGULAR −8.99 → −3.66 TWh), C3a 2022 −8.4 % PASS; open: C3a 2020 +13.4 % (overnight price body), C3b 2021 0.309 (February); record `docs/RESULT-miso268-coal-yard-grain-2026-09-24.md`)
 
+> **QUEUE STAMP miso-270 (2026-09-24) — ZERO LP, NO SOLVE EARNED, keeper unchanged.** No owner
+> ruling on D1 (storm-month gas) or D2 (thin prints), so Task C only. **Oct–Nov 2021 localized**
+> (`FINDING-miso270-octnov2021-localized-2026-09-24.md`): a northern-zone, daytime merit-depth object.
+> The model serves coal +1.2 TWh/mo over CAMPD and imports +0.7–0.9 over EIA-930 net, so gas stops at
+> CCs ($45–49) where the real system cleared into steam/CT gas ($60–76). No north congestion either
+> (model spread ≤ 0.4 vs 23.5 $/MWh in Nov). **NOT** gas, reserves (all duals 0), the coal outage overlay,
+> or the coal budget (flat rows bind Jun–Sep, loose Oct–Nov). The miso-259 SOC-carry would not bind in
+> fall (≥ 16.6 TWh-equiv headroom on CAMPD's own path). **Next, none solve-ready:** a cited
+> minimum-operating-stock source (data ask); a per-seam split of the fall import excess; north
+> congestion (topology). F2 (`cf7e068a`) does not change miso-269 §1/§2.
+
 > **QUEUE STAMP miso-269 (2026-09-24) — ZERO LP, NO SOLVE EARNED, keeper unchanged.** Both
 > held-out objects measured on the current keeper (`FINDING-miso269-held-out-objects-no-admissible-lever-2026-09-24.md`).
 > (1) **C3b 2021:** the Feb gas array is wrong both ways — Chicago zones $0.73–1.01/MMBtu on
