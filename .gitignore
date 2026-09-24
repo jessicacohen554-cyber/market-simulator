@@ -3394,3 +3394,5 @@ results/calibration/pjm_h19_dbs_20[0-9][0-9]/
 # span is committed. Leg SHAs are recorded in FINDING-soco-60 (provenance only).
 results/calibration/soco60_arm_20[0-9][0-9]/
 results/calibration/soco60_armB_20[0-9][0-9]/
+
+!results/calibration/nwpp49_ror_2024/**
