@@ -7645,3 +7645,29 @@ your branch when done.
   false positive** if `main` advances between push and job (v31 coda `8e26a153`) —
   **if it fires on a file this lane did not shrink it is recorded and NOT "fixed" by
   a blind rebase; Y-13 repairs the guard.**
+- 2026-09-24 — **DIRECTOR REFRESH v42 (pin `40f4ed7a`) — the desk had been dark since
+  v41 (2026-09-07); three lanes chartered and dispatched.** Full record: board entry v42.
+  * **Closed while dark:** Y-26 (path filter, FIXED) and Y-27 (fast-tier timeout, cause
+    `key_provenance.classify` via `census()`, PR #5557). The fast tier now *concludes*
+    (11 m 54 s) — as `failure`, 86 failed / 2 errors.
+  * **Required set 2 of 7** on run `36017508801`. Load-bearing red: the **default cache key
+    moved** (`547053bdfccd4264` → `b91f98d9017002db`; culprit named by the pin test:
+    `coal_mustrun_requires_measured_row`, unregistered in `_CACHE_KEY_OPTIONAL_FIELDS`) and
+    **six ISO solve-surface pins moved** with no cause block. Every default-keyed cache is
+    orphaned until repaired.
+  * **Promotion debt** across nine keepers (NWPP and SOCO are new ISOs): gate-(a) cites
+    superseded keepers on 6 ISOs, SOCO E13 un-pruned run, ERCOT golden-manifest partition
+    tests on ercot248, FR-22 undeclared on three freshly armed flags (NYISO ×2, MISO ×1).
+  * **Chartered + dispatched:** **Y-28** cache-key & solve-surface identity; **Y-29**
+    keeper-promotion provenance debt (+ FR-22 declarations); **Y-30** mechanical reds
+    (ruff, refactor-guard script ref, import cycle, registry/facade/schema drift) with
+    route-don't-edit for data-drift tests.
+  * **Owner:** branch protection still `protected: false` (reading 31); the v41 sequencing
+    question is moot (the check now concludes). Recommended flip point: first
+    ancestor-of-`main` run at 7/7 after Y-28/29/30 land.
+  * **Structural gap recorded, not argued:** G2 ("final model state") is not reachable while
+    keepers move daily; stage-0 obligation is now 6 re-captures + 3 new keys (NWPP, SOCO, SPP),
+    uncharterable under R-AI until the desks go still. **Process recommendation:** a keeper
+    promotion owes its gate-(a) re-key, `calibration-complete.json` re-key and golden-manifest
+    partition in the same PR — Y-29 is asked to propose making `audit_keepers` / the
+    calibration-report skill check this at promotion time so the debt stops accruing.

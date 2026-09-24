@@ -1,5 +1,96 @@
 # Model Audit Program — Director Status Board (2026-08)
 
+> # 🔴 **SEVENTEEN DAYS DARK: THE REQUIRED SET IS 2 OF 7 — THE DEFAULT CACHE KEY HAS MOVED, SIX SOLVE-SURFACE PINS HAVE MOVED, AND EVERY KEEPER-PROVENANCE GATE IS RED ON PROMOTION DEBT** — DIRECTOR REFRESH **v42**, sitting **2026-09-24 ~15:30Z**, pin **`40f4ed7a`** (`main` tip, merge of PR #6550). Director branch `claude/vibrant-galileo-fatfnh`. **Three lanes chartered and dispatched: `Y-28` (cache-key + solve-surface identity), `Y-29` (keeper-promotion provenance debt), `Y-30` (mechanical reds).** 🔴 **READING 31: `main` still `protected: false`.**
+>
+> **Records + dispatch.** No solve, no scoring, no registration, no keeper shard, no
+> matrix shard, no scorer, no `src/` edit. **v42 is inserted ABOVE v41**, insertion-only;
+> nothing below is renumbered or rewritten.
+>
+> ## 1. What happened while the desk was dark (v41 2026-09-07 → v42 2026-09-24)
+>
+> - **Y-27 CLOSED BY ITS OWN FINDING** (`FINDING-y27-fast-tier-timeout-2026-09-07.md`):
+>   the timeout was `key_provenance.classify` via `census()` on a foreign checkout (PR #5557,
+>   not #5556). **The `cancelled` object is gone** — `Fast pytest tier` now runs **11 m 54 s**
+>   and *concludes*. It concludes **`failure`: 86 failed, 2 errors** (run `36017508801`, head
+>   `674b5cc6`, created 15:04:53Z). A check that reports red is the object v40 asked for; the
+>   count is the new problem.
+> - **Y-26 CLOSED** (`FINDING-y26-ci-path-filter-2026-09-06.md`, "FIXED in this PR").
+> - **The registered-ISO count is NINE, not seven.** `frontend/data/backcast/keepers/` holds
+>   **NWPP** and **SOCO** shards beside the seven. `CLAUDE.md` line 19 still reads "seven ISOs"
+>   — **owed to DOCS**, not fixed here.
+> - **Every one of the nine keepers moved** (CAISO caiso-290, ERCOT ercot266, MISO miso-268,
+>   NEISO hydro-5, NWPP nwpp-49, NYISO hydro3, PJM pjm-h19, SOCO soco61, SPP hydro-5) — **five
+>   of them on 2026-09-22..24.** The R-AI 48 h stillness clock is therefore unexpired on at
+>   least MISO, NWPP, SOCO and PJM at this sitting; **no capture lane is charterable**, same
+>   as v41, and for the same reason.
+>
+> ## 2. The flip set, read per job on run `36017508801` (head `674b5cc6`, the newest completed run)
+>
+> | required check | conclusion | first failing step | cause, reproduced LOCALLY at `40f4ed7a` unless marked |
+> |---|---|---|---|
+> | Rule-28 mechanism-matrix guard | 🟢 success | — | — |
+> | Cache-key registration guard | 🟢 success | — | — (blind to §3, as v37 found) |
+> | Ruff lint + format | 🔴 failure | `ruff check` | F401 + F841 in `scripts/gen_nyiso229_attestation.py`; **4 files** unformatted (that script, `src/market_sim/data/fleet/eia860.py`, two tests) |
+> | Structural refactor guards | 🔴 failure | script-reference lint | `scripts/run_calibration_full.py` references missing `scripts/test_recorded_config_gas_anchor_mirror.py` |
+> | Pinned default cache key | 🔴 failure | pytest | **10 failed** — see §3 |
+> | Keeper-integrity gates | 🔴 failure | `audit_keepers --check` | **SOCO E13**: `2026-09-20-soco53g-prb-own-iso` registered, neither keeper nor stamped (rule 35 prune not performed) · STALE BENCHMARK warnings on ERCOT/CAISO/NEISO parts |
+> | Fast test tier | 🔴 failure | pytest | **86 failed / 2 errors** in 11 m 54 s — ~40 are §3's key, the rest classified in §4 |
+>
+> **2 of 7 is not "one job red"; it is five independent defect classes landing in the same
+> fortnight with no desk reading them.** Non-set: FR-21 (`check_gate_a_provenance`) 🔴 and
+> FR-22 (`check_forecast_parity`) 🔴 — §4.
+>
+> ## 3. 🔴 THE LOAD-BEARING RED — THE DEFAULT CACHE KEY AND SIX SOLVE-SURFACE PINS HAVE MOVED
+>
+> This is not style debt. `ScenarioConfig().cache_key()` at this pin is **`b91f98d9017002db`**
+> against the pinned **`547053bdfccd4264`**; the backcast default is **`5c3581517d0a680d`** vs
+> **`f61891696e671969`**. The test names its own culprit, reproduced here:
+> **`coal_mustrun_requires_measured_row`** (`scenarios.py`, default `False`) — a solve-affecting
+> field that landed **without** a `_CACHE_KEY_OPTIONAL_FIELDS` entry, so it enters the digest at
+> its default. Dropping it restores `547053bd…`. **Every on-disk cache keyed on the default is
+> orphaned** until it is registered (rule 24 `[R-REGISTRY]`).
+>
+> Separately, `test_solve_surface_fingerprint_is_pinned` fails for **six ISOs** (CAISO 204→206
+> rows, ERCOT 229→231, MISO 210→212, NEISO 197→199, NYISO 209→213, PJM 214→216). A +2 row
+> step common to all six says **one registry change**, plus two more NYISO rows. The test's
+> own instruction is binding: **do NOT re-declare rows** in `solve_surface_declared.py`; name
+> them with `solve_surface_register.py --diff` and advance the pin **with a dated cause block**
+> — which rows, which ISOs, what it costs. Whether the key move is the same event as the
+> surface move is **not adjudicated here**; `Y-28` answers it.
+>
+> ## 4. The rest, classified (every line from the run-`36017508801` log; routed, not worked)
+>
+> | class | tests / gate | owner |
+> |---|---|---|
+> | **promotion debt** — keepers moved, identity-carrying records did not | gate-(a) FR-21: **6 ISOs** cite superseded keepers (CAISO, ERCOT, NEISO, NYISO, PJM, SPP) + SPP marker complete=True mismatch · `test_ff_readiness_battery` (CAISO marker) · `test_golden_manifest_provenance` ×8 (ERCOT partition resolves ercot248, live is ercot266) · SOCO E13 · `test_forecast_parity::test_all_seven_keepers_resolve` (now nine) · `test_calibration_verdict_price_unscored` (NWPP/SOCO sidecars) · `test_bench_stamp_payload` (aggregate `64b6829fb757` unresolved) | **`Y-29`** |
+> | **FR-22 new flags** — armed in a keeper with no forecast consumer and no registry declaration | `nyiso_ct_peaker_committed_measured`, `nyiso_st_gas_econ_bands_deleaked` (NYISO), `coal_fuel_inventory_plant_grain` (MISO, promoted today) | **`Y-29`** files the declarations/gaps; substance stays with the NYISO / MISO desks |
+> | **mechanical** | ruff · refactor-guard script ref · import cycle `model.lp <-> model.lp.model` · `test_flag_registry` (`coal_sync_ensemble_level`) · `test_constants_facade` (`GAS_BASIS_DIFFERENTIAL_MEASURED_BY_YEAR`) · `test_clean_io` + `test_data_dictionary_sync` (`coal-receipts`, `coal-stocks` schemas) · `test_data_profiles_tokens` (SOCO token) · `test_run_year_kwargs_recipe` (`caiso291_bridge_candidacy_census.py`) · `test_script_import_env_hygiene` (`MARKET_SIM_P1_BASIS_SEED`, rule 36 flip) · `test_audit_keepers_lineage` (`composed_from`, `model_changes_note`) · `test_emissions` vendored scope2 path · `test_cache_config_agreement` (`shard-artifacts/nyiso223/2022/run_config.json` missing) · `test_calibration_verdict` coverage 0.9677 | **`Y-30`** |
+> | **data/registry drift — ROUTE, do not "fix" the expectation** | `test_gas_offer_zonal_anchor_vintage` ×2 (NYISO Upstate_West 2.0039 vs registered 2.0346) · `test_caiso_st_gas_peak_measured` (1.154 vs 1.166) · `test_spp67_year_own_curtailment_rate` ×7 · `test_soco_zonal_gas_hub::test_no_applier_is_armed_for_soco` · `test_caiso_per_hub_intertie` (`WECC_DSW_DSW_lateevening_clean`) · `test_fleet::test_neiso_includes_mystic_cc` ('oil' vs 'gas_cc') | **`Y-30` classifies each as test-stale vs input-drifted; input drift is routed to the ISO desk with the measurement (rule 22 `[R-FROZEN-DERIVE]`: a frozen derive is never re-baselined to match a moved runtime)** |
+>
+> ## 5. 🟢 LANES CHARTERED AND DISPATCHED AT THIS SITTING
+>
+> | lane | scope | boundary |
+> |---|---|---|
+> | **`Y-28`** cache-key & solve-surface identity | §3 in full, and every downstream `*_cache_key_*` / `*_is_unmoved` / pinned-key test that heals or does not heal with it | **Never re-baseline a pin literal to silence it.** Register the culprit if byte-identical at default (verify the consumer is gated); advance surface pins only with a dated cause block. Opus/Fable (rule 27: `src/` + `config/`). |
+> | **`Y-29`** keeper-promotion provenance debt | §4 row 1 + FR-22 declarations | Records/registry only. **Never** alters a keeper designation, a verdict or a scorer threshold. SOCO E13 via `prune_iso_runs.py` only after confirming the run is not a rung the keeper needs (rule 35 (a)). Bench parts: if a PAYLOAD source moved, the parts are **genuinely stale** — route to the ISO desks, do **not** add a fingerprint entry. |
+> | **`Y-30`** mechanical reds | §4 rows 3–4 | Route-don't-edit for data drift; no `timeout-minutes` change; no test skipped, xfailed or deleted to get green. |
+>
+> The three touch disjoint files except `tests/regression/test_persisted_identity.py`, whose
+> **import-cycle** test belongs to `Y-30` (fix lives in `src/market_sim/model/lp/`, the test
+> file is not edited) and whose **pin** tests belong to `Y-28`.
+>
+> ## 6. OWED ELSEWHERE / TO THE OWNER
+>
+> | # | item | owed to |
+> |---|---|---|
+> | 1 | **Card 1 — branch protection**, still `protected: false` (reading **31**, this sitting's own `list_branches`). The v41 sequencing question is **moot**: the seventh check now concludes. What stands in the way is §2, not the timeout. **Recommendation: flip when `Y-28`+`Y-29`+`Y-30` land and one ancestor-of-`main` run reads 7/7.** | **owner** |
+> | 2 | **Stage-0 goldens** — all **nine** keepers have moved since capture; NWPP, SOCO, SPP have **no key**. Obligation = **6 re-captures + 3 new keys**. Not charterable while keepers move daily (R-AI). | queued |
+> | 3 | **G2 cannot be declared while keepers move daily** — "final model state" is not a state the calibration desks are in. The program is effectively re-parked at G1/G2 by calibration activity, not by this desk. | owner (recorded, not argued) |
+> | 4 | `CLAUDE.md` "seven ISOs" → nine | DOCS |
+>
+> ---
+>
+
 > # 🔴 **THE FAST TIER IS NOT RED — IT IS `cancelled` AT A 20-MINUTE TIMEOUT, AND THE BOUNDARY IS TWENTY SECONDS WIDE** — RECORDS-ONLY LANE **v41**, director pin **`78173793`**, sitting **2026-09-07**, director branch `claude/model-audit-director-onboard-rjjnbf`, `main` at the sitting's close **`c49e541d`** (**17:59:36Z**). 🟢 **This is the reading v40 could not take, and it changes the OBJECT, not the colour:** `Fast test tier` hits `ci.yml`'s `timeout-minutes: 20` and reports **`cancelled`** — not `failure` — on **20 of 20** completed runs created at or after **2026-09-07T16:47:43Z**, across **12** branches, at **20.3–20.4 min uniformly**; on the two ancestor-of-`main` runs read per-job, **the other six required checks are `success`** and the only `failure` is **FR-22, which is not in the set**. The boundary is **twenty seconds wide** (last short run created **16:47:23Z**, 11.6 min; first long **16:47:43Z**, 20.4 min) and the sole merge inside it is **PR #5556 → `248f087d` @ 16:47:29Z** — recorded as a **CANDIDATE, never as a verdict**. 🟢 **`Y-27` CHARTERED** on that fact. 🔴 **READING 30: `main` still `protected: false`** — Card 1 ruled **2026-09-06** and is **still not performed**. ⚪ **NO CAPTURE LANE IS CHARTERABLE: all SEVEN R-AI clocks are unexpired at 18:05Z**, and **v40's PJM row is CORRECTED IN PLACE** — PJM's shard resolves **REAL** to `3001f913` @ **2026-09-06T01:37:59Z**, a content touch, clock **2026-09-08T01:37Z**.
 >
 > **Records only.** No solve, no scoring, no registration, no keeper shard, no
