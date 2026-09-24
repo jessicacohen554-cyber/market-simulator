@@ -127,13 +127,10 @@ the sparse-safe skip in row 13 added no skips under the new cone. Wall time was 
 10 min each. (`main` reads 87 where the CI run read 86 because it had moved on to
 `fd04cfda`.)
 
-The 66 that remain:
+The 66 that remain (pytest's count: 58 `FAILED` + 8 `SUBFAILED`):
 
 | owner | count | tests |
 |---|---|---|
-| Y-28 | 49 | `test_persisted_identity` cache-key + solve-surface pins (9), `test_cache_solve_surface` sidecar (1), and the 39 per-mechanism `…default_cache_key…unmoved` / arming-key pins |
-| Y-29 | 13 | `test_gate_a_provenance` (1), `test_golden_manifest_provenance` (8), `test_bench_stamp_payload` (1), `test_ff_readiness_battery` (1), `test_forecast_parity` (2) |
+| Y-28 | 46 | 41 `FAILED`: the `test_persisted_identity` cache-key + solve-surface pins (9), `test_cache_solve_surface` sidecar (1), and 31 per-mechanism default/arming cache-key pins. Plus 5 `SUBFAILED`: `test_d67arm_pjm_requirement::…pre_d76_recipe…` (MISO/NYISO/NEISO/CAISO/ERCOT) |
+| Y-29 | 16 | 13 `FAILED`: `test_gate_a_provenance` (1), `test_golden_manifest_provenance` (8), `test_bench_stamp_payload` (1), `test_ff_readiness_battery` (1), `test_forecast_parity` (2). Plus 3 `SUBFAILED`: `test_calibration_verdict_price_unscored` on registered SOCO/NWPP runs |
 | routed, §2 | 4 | NYISO anchor ×2, CAISO ST_GAS peak, scope2 vendored parity |
-
-The `test_calibration_verdict_price_unscored` subtest failures CI reported (SOCO/NWPP
-registered runs) are Y-29's registry items too.
