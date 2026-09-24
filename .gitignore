@@ -3457,3 +3457,6 @@ results/calibration/rnwpp_20[0-9][0-9]/
 # Provenance only (rule 33(d)) — legs recorded by shard commit SHA in the RESULT doc.
 results/calibration/r_ercot_arm_20*/
 results/calibration/r_ercot_ctl_20*/
+# R-SPP (2026-09-24): per-year legs rspp_<year> + composite rspp_span, on local disk pending the owner's
+# promotion ruling (rule 31 [R-RETAIN]); legs pushed on claude/rspp-<year> (provenance SHAs in the RESULT doc).
+results/calibration/rspp_*/
