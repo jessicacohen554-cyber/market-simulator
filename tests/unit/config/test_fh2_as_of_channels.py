@@ -538,10 +538,10 @@ class TestPolicyAsOfRows(unittest.TestCase):
         for states in RGGI_MEMBER_STATES_BY_YEAR.values():
             self.assertNotIn("PA", states)
 
-    def test_2022_stays_absent_under_the_holdout_quarantine(self):
-        # The evolved-never-solved bridge year: its data is never read, and a
-        # row here would be an out-of-window intake (rule 22).
-        self.assertNotIn(2022, RGGI_MEMBER_STATES_BY_YEAR)
+    def test_2022_row_enrolls_virginia(self):
+        # [R-HOLDOUT] was removed 2026-09-09 and PJM solves 2022 (pjm-h22), so
+        # the quarantine that kept 2022 absent is spent: VA was a 2022 member.
+        self.assertIn("VA", RGGI_MEMBER_STATES_BY_YEAR[2022])
 
     def test_per_generator_membership_uses_the_2021_set(self):
         # Before the 2021 row existed this fell back to max(year) = the 2025,
