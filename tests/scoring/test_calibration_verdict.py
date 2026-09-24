@@ -734,10 +734,17 @@ class PriceAndDispatchTests(unittest.TestCase):
         """The threshold cannot be a fitted choice: no month lives near it.
 
         Every monthly coverage value the repo commits is either <= 0.3653 (a
-        staging hole) or >= 0.9911 (essentially complete). If a future intake
+        staging hole) or >= 0.9677 (essentially complete). If a future intake
         lands a month inside that gap, this test fails and the value stops
         being outcome-neutral — which is exactly when it needs re-deciding
         rather than silently keeping its current partition.
+
+        The upper edge was 0.9911 until 5e6d3224 (2026-09-13) staged MISO 2021
+        DA, whose October is 30/31 days (0.9677) because MISO's own archive
+        omits Oct 28. That is the "loses a day to the source's own publication
+        gap" case the threshold's rationale already names; every threshold in
+        (0.3654, 0.9677) yields the same partition, so 0.90 is still
+        outcome-neutral and the edge moves with the measurement (Y-30).
         """
         import json
 
@@ -758,11 +765,11 @@ class PriceAndDispatchTests(unittest.TestCase):
                     if isinstance(cov, dict) and cov.get("mon"):
                         vals += [float(c) for c in cov["mon"] if c is not None]
         self.assertTrue(vals, "no coverage vectors committed at all")
-        inside = [v for v in vals if 0.3654 < v < 0.9910]
+        inside = [v for v in vals if 0.3654 < v < 0.9677]
         self.assertEqual(
             inside, [], f"coverage values now sit near the threshold: {inside}"
         )
-        self.assertTrue(0.3654 < cv.PRICE_MONTH_COVERAGE_MIN < 0.9910)
+        self.assertTrue(0.3654 < cv.PRICE_MONTH_COVERAGE_MIN < 0.9677)
 
     def test_tail_skipped_without_ordc(self):
         rows = cv.score_price_tail(2024, {"lmp": {}}, "PJM")
