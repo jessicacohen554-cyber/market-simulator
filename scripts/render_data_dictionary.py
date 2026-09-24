@@ -115,6 +115,8 @@ DATATYPE_ORDER: tuple[str, ...] = (
     "nyiso-renewable-curtailment-monthly",
     "coal-basin-price",
     "coal-mining-ppi",
+    "coal-stocks",
+    "coal-receipts",
     "nyiso-reserve-requirements",
     "nyiso-operating-events",
     "nyiso-interface-flows",
@@ -918,6 +920,29 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "probing candidate series ids)."
         ),
     },
+    "coal-stocks": {
+        "summary": (
+            "Plant-level month-ending coal stockpile by coal rank, in short "
+            "tons (national; ISO resolved at read time from the plant registry)."
+        ),
+        "reconciles": (
+            'EIA-923 Schedule 2 ("Page 2 Coal Stocks Data") from the free '
+            "annual bulk ZIP. Rule 13: a year-Y budget reads the December Y-1 "
+            "opening stock only, never year Y's own stock path."
+        ),
+    },
+    "coal-receipts": {
+        "summary": (
+            "Plant-level monthly coal receipts (deliveries to plant), receipt "
+            "lots summed to plant x rank x month x purchase type (national)."
+        ),
+        "reconciles": (
+            'EIA-923 Page 5 ("Fuel Receipts and Costs"), coal subset. '
+            "Supersedes the incomplete `quantity` column of the legacy "
+            "eia923_monthly_fuel_costs extract for coal receipts. Rule 13: "
+            "year Y's own receipts are an outcome, not a delivery rate."
+        ),
+    },
     "nyiso-reserve-requirements": {
         "summary": (
             "NYISO's published locational operating-reserve requirements by "
@@ -1210,6 +1235,8 @@ NATIONAL_SCOPE: dict[str, str] = {
     "egrid": "national (EPA eGRID, by vintage year)",
     "coal-basin-price": "national/regional (EIA Annual Coal Report, by producing region)",
     "coal-mining-ppi": "national (BLS PPI, coal)",
+    "coal-stocks": "national (EIA-923 Schedule 2, by plant)",
+    "coal-receipts": "national (EIA-923 Page 5, by plant)",
 }
 
 NA = "n/a"

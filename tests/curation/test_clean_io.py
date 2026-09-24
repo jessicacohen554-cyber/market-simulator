@@ -104,7 +104,11 @@ ALL_DATATYPES = [
     "ps-water-state",
     # SCN-LOAD intake (2026-09-06, owner ruling S4 / card D-4): each ISO's
     # published long-term load forecast.
-    "load-forecast",
+    "load-forecast",  # SOCO coal-underdispatch intake (b0d7f1d8, PR #6468, 2026-09-22)
+    # registered these two in scripts/regenerate_clean.DATATYPES without
+    # re-freezing this snapshot; refreshed 2026-09-24 by lane Y-30.
+    "coal-stocks",
+    "coal-receipts",
 ]
 
 
