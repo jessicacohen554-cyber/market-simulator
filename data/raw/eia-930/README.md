@@ -40,7 +40,14 @@ EIA-930 (Hourly Electric Grid Monitor) extracts, three families:
 
 **No producing script found** for the `eia_demand_*`/`eia_fossil_mix_*`/
 `eia_generation_profiles*` legacy files — **hand-assembled, refetch
-procedure unknown.** Consumers: `scripts/curate_demand_profile.py`,
+procedure unknown.** *(2026-09-24, session I-NYISO: the construction of
+`eia_generation_profiles.parquet` was recovered —
+`scripts/data/reconstruct_eia_generation_profiles.py`, verify-only — and
+reproduces 40 of its 140 EIA-930 rows byte-exactly (every MISO row, SPP
+2021-2023, NYISO solar); the rest differ because EIA revised the source values
+after the table was built, so the table is still NOT reproducible end to end
+and was not extended to 2019/2020. See
+`docs/handoffs/FINDING-i-nyiso-2019-2021-intake-2026-09-24.md` §2.)* Consumers: `scripts/curate_demand_profile.py`,
 `scripts/render_data_dictionary.py`, `src/market_sim/config/constants.py`,
 `src/market_sim/data/eia_loader.py`.
 
