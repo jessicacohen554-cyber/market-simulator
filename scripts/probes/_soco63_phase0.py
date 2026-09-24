@@ -281,7 +281,6 @@ def c4_coal(bands_csv: Path, fleet_dir: Path, scale: float) -> None:
     from scripts.probes._soco61_phase0 import _rcf
 
     rcf = _rcf()
-    res = reach(bands_csv, fleet_dir, scale, None)
     for year in YEARS:
         e = rcf._eia930_frame(year, "SOCO", get_iso_config("SOCO"))
         ob = e[e["series"] == "coal"].sort_values("hour")["mw"].to_numpy(float)
