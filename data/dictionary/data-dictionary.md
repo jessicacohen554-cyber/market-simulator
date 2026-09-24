@@ -1919,7 +1919,7 @@ consumes. Schema:
 | `ch_mw` | `float64` | `MW` | no | EHA conventional-hydro capacity (CH_MW summed over the EHA plants in the row). Provenance/QA only — the LP uses EIA-860 nameplate. |
 | `mode` | `string` | `none` | yes | EHA operational Mode verbatim (Run-of-river, Canal/Conduit, Peaking, Intermediate Peaking, hybrids). Null when EHA leaves the plant unclassified and the completion rule decided the row. |
 | `shapeable` | `bool` | `none` | no | True = reservoir/peaking class (the plant can shape output within its monthly energy budget); False = run-of-river/canal class (output follows inflow — the RoR-split mechanism dispatches it flat at budget[g,m]/hours[m]). |
-| `method` | `string` | `none` | no | Which rule classified the row: eha_mode (EHA Mode present) \| hilarri_canal (HILARRI canal/conduit project type) \| corps_dam (dam owned/operated by the U.S. Army Corps of Engineers) \| hilarri_no_reservoir (no HILARRI reservoir association) \| hilarri_reservoir (reservoir-associated, operator-controlled). |
+| `method` | `string` | `none` | no | Which rule classified the row: eha_mode (EHA Mode present) \| hilarri_canal (HILARRI canal/conduit project type) \| corps_dam (dam owned/operated by the U.S. Army Corps of Engineers) \| hilarri_no_reservoir (no HILARRI reservoir association) \| hilarri_reservoir (reservoir-associated, operator-controlled) \| regulated_chain (listed in the ISO's registered regulated-chain table data/raw/<iso>-hydro/<iso>_hydro_chain.csv; shapeable, overrides the rest). |
 | `fc_dock` | `string` | `none` | yes | FERC licence docket (EHA FC_Dock), provenance. |
 | `dam_own` | `string` | `none` | yes | Dam owner at the plant's site (EHA Dam_Own), provenance for the corps_dam completion rule. |
 

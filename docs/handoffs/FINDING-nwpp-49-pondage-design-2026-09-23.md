@@ -189,3 +189,10 @@ evidence. That is `hydro_cascade_coupling`'s own data (K cell), not pondage.
 
 Nothing was solved. The committed artifacts are the pondage CSV, the NID subset, the two probes, the probe's
 JSON record and this doc.
+
+## 10. Owner ruling (2026-09-24) — superseding §6's recommendation
+
+"Adopt the same hydro stuff as other ISOs aside from the unique config due to cascade", clarified as
+**"RoR split, chain exempt"**. No keeper in any ISO arms pondage, so the arm being solved is
+`hydro_ror_split` with the registered chain exempt, **not** pondage (a2). Design, G-DRIFT, prediction
+and kill condition: `PRECOMMIT-nwpp-49-ror-split-2026-09-24.md`.

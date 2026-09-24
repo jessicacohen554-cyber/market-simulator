@@ -217,6 +217,47 @@ def static_clip(y: int, bound: dict[int, float], eligible) -> dict:
     }
 
 
+def ror_flat_clip(y: int, flat_ids: set[int]) -> dict:
+    """Pin ``flat_ids`` at their own monthly water (``hydro_ror_split``) on the proxy.
+
+    The pinned level is the mechanism's own: budget[g, m] / hours[m], clipped
+    to nameplate (``data.hydro.build_hydro_fleet``). Every other plant keeps
+    its pro-rata proxy, so the result bounds the effect from above in the same
+    way as :func:`static_clip`.
+    """
+    f = fleet_budget(y)
+    m = [f"m{i:02d}" for i in range(1, 13)]
+    moh = np.asarray(_hour_to_month_index(N), dtype=int)
+    hpm = np.bincount(moh, minlength=12).astype(float)
+    H = model_class(y, ("hydro",))
+    E = f[m].to_numpy(float)
+    share = E / np.where(E.sum(0) > 0, E.sum(0), 1.0)
+    delta = np.zeros(N)
+    n_hit, mw_hit = 0, 0.0
+    for i, r in enumerate(f.itertuples()):
+        if int(r.plant_id) not in flat_ids:
+            continue
+        p = share[i][moh] * H
+        flat = np.minimum(E[i] / hpm, float(r.max_mw))[moh]
+        delta += flat - p
+        n_hit += 1
+        mw_hit += float(r.max_mw)
+    H2 = H + delta
+    coal = model_class(y, COAL)
+    a_coal = e930(y, "coal")
+    return {
+        "n_plants_flat": n_hit,
+        "mw_flat": round(mw_hit, 1),
+        "hydro_intra_sd_keeper": round(_split(H)[1].std(), 1),
+        "hydro_intra_sd_arm": round(_split(H2)[1].std(), 1),
+        "hydro_twh_delta": round(delta.sum() / 1e6, 3),
+        "coal_r_keeper": round(_r(coal, a_coal), 3),
+        "coal_r_intra_keeper": round(_r(_split(coal)[1], _split(a_coal)[1]), 3),
+        "coal_r_if_coal_takes_all": round(_r(coal - delta, a_coal), 3),
+        "coal_r_intra_if_coal_takes_all": round(_r(_split(coal - delta)[1], _split(a_coal)[1]), 3),
+    }
+
+
 def measured_admissibility(nid_b: dict[int, float], band_b: dict[int, float]) -> list[dict]:
     """Would each CROHMS project's MEASURED generation satisfy a flat-inflow pondage row?
 
@@ -274,6 +315,12 @@ def main() -> None:
         res["clip_band_uncoupled_mainstem"][y] = static_clip(
             y, band_b, lambda p: p not in CASCADE_ROW
         )
+    # Owner ruling 2026-09-24: the RoR split, chain exempt (curate_hydro_plant_modes rule 0).
+    modes = Path("data/clean/hydro-plant-modes/NWPP/hydro-plant-modes.parquet")
+    if modes.exists():
+        mm = pd.read_parquet(modes)
+        flat_ids = set(mm.loc[~mm.shapeable, "plant_id"].astype(int))
+        res["ror_split_chain_exempt"] = {y: ror_flat_clip(y, flat_ids) for y in YEARS}
     adm = measured_admissibility(nid_b, band_b)
     res["measured_admissibility"] = adm
     res["measured_hydro_intra_sd"] = {y: round(_split(e930(y, "hydro"))[1].std(), 1) for y in YEARS}

@@ -78,7 +78,9 @@ columns:
       hilarri_canal (HILARRI canal/conduit project type) | corps_dam (dam
       owned/operated by the U.S. Army Corps of Engineers) |
       hilarri_no_reservoir (no HILARRI reservoir association) |
-      hilarri_reservoir (reservoir-associated, operator-controlled).
+      hilarri_reservoir (reservoir-associated, operator-controlled) |
+      regulated_chain (listed in the ISO's registered regulated-chain table
+      data/raw/<iso>-hydro/<iso>_hydro_chain.csv; shapeable, overrides the rest).
   - name: fc_dock
     dtype: string
     unit: none

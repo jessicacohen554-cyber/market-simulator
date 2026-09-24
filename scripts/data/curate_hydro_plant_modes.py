@@ -54,8 +54,13 @@ Cresta). This skill check is against the EXTERNAL labels only — no model
 residual enters the rule choice, and per rule 21 the rule re-derives only
 when the EHA/HILARRI sources update.
 
-Scope: DEFAULT_ISOS registers CAISO, PJM, NYISO, SPP, NEISO and MISO (the
-last three reviewed by hydro-5 — see the constant). Another ISO's lane must
+Rule 0 — ``regulated_chain`` — overrides rules 1-5 for a plant listed in the
+ISO's registered regulated-chain table (``data/raw/<iso>-hydro/<iso>_hydro_chain.csv``;
+NWPP only today): shapeable, because its inflow is an upstream release and its
+hydraulics belong to the cascade formulation. See ``CHAIN_REGISTRY``.
+
+Scope: DEFAULT_ISOS registers CAISO, PJM, NYISO, SPP, NEISO, MISO and NWPP
+(NEISO/MISO/SPP reviewed by hydro-5, NWPP by NWPP-49 — see the constant). Another ISO's lane must
 run and review the same validation for its BA before adding itself — the
 printed ``completion validation`` line IS that review, scored on the target
 BA's own labeled subset and never transferred (rule 25 ``[R-ISO-SCOPE]``).
@@ -103,7 +108,41 @@ DATATYPE = "hydro-plant-modes"
 # pattern does not fire on SPP/MISO's SWPA-marketed Corps peaking projects
 # (Keystone, Blakely Mountain, Degray), which is the correct outcome there —
 # rule 3's release-taker premise is a Sacramento-District fact, not a Corps one.
-DEFAULT_ISOS: tuple[str, ...] = ("CAISO", "PJM", "NYISO", "SPP", "NEISO", "MISO")
+#
+# NWPP (lane NWPP-49, 2026-09-24, owner ruling "RoR split, chain exempt"):
+# reviewed on NWPP's own labeled subset — 156/216 plants, 71.1 % of labeled MW
+# reproduced. The errors run the SAME direction as NEISO/MISO/SPP: the
+# completion UNDER-applies the flat treatment (6,239 MW of EHA-RoR it would
+# call shapeable) more than it over-applies it (2,787 MW of EHA-peaking it
+# would call RoR). The completion's one large flat verdict is Chief Joseph
+# (2,456 MW, a Corps dam with no HILARRI reservoir), which rule 0 below
+# assigns to the cascade anyway; off-chain completion-flat is ~0.13 GW.
+DEFAULT_ISOS: tuple[str, ...] = (
+    "CAISO",
+    "PJM",
+    "NYISO",
+    "SPP",
+    "NEISO",
+    "MISO",
+    "NWPP",
+)
+
+# Rule 0 (NWPP-49): a plant on a REGISTERED REGULATED CHAIN is shapeable,
+# whatever its EHA label. Registry: data/raw/<iso>-hydro/<iso>_hydro_chain.csv
+# (NWPP-32's reach table, a published transcription; one row per plant). An
+# ISO without that file is untouched, so the rule is data-driven and every
+# other ISO's partition is byte-identical.
+#   WHY: a chain plant's inflow is its upstream neighbour's SHAPED release, not
+#   a flat natural inflow, so the RoR premise ("output follows inflow, so hold
+#   it flat at the monthly water") does not hold — and it is measured not to:
+#   CROHMS hourly output at the EHA-"Run-of-river" chain plants McNary, John
+#   Day, The Dalles, Lower Granite, Little Goose and Lower Monumental carries a
+#   combined within-day sd of 414 / 421 / 372 MW (2023/24/25; John Day alone
+#   160-169 MW). Their hydraulics belong to the cascade formulation
+#   (ScenarioConfig.hydro_cascade_coupling), never to a flat pin (rule 19).
+#   Evidence: docs/handoffs/FINDING-nwpp-49-pondage-design-2026-09-23.md.
+#   DOF: zero — membership in a committed registry, no threshold.
+CHAIN_REGISTRY = "{tag}-hydro/{tag}_hydro_chain.csv"
 
 EHA_XLSX = "ornl-eha/ORNL_EHAHydroPlant_PublicFY2024.xlsx"
 HILARRI_CSV = "hilarri/HILARRI_v4.csv"
@@ -199,6 +238,19 @@ def _hilarri_flags(raw_root: Path, eha_ptids: pd.Series) -> pd.DataFrame:
         ),
     )
     return flags
+
+
+def _regulated_chain_ids(raw_root: Path, iso: str) -> set[int]:
+    """Return the EIA plant ids on the ISO's registered regulated chains (rule 0).
+
+    Empty when the ISO has no chain registry, which leaves its classification
+    exactly as rules 1-5 produce it.
+    """
+    tag = iso.lower()
+    path = raw_root / CHAIN_REGISTRY.format(tag=tag)
+    if not path.exists():
+        return set()
+    return set(pd.read_csv(path, usecols=["plant_id"])["plant_id"].astype(int))
 
 
 def _classify(eha: pd.DataFrame, flags: pd.DataFrame) -> pd.DataFrame:
@@ -306,6 +358,10 @@ def curate(
             )
             .reset_index()
         )
+        chain = _regulated_chain_ids(raw_root, iso)
+        on_chain = rows["plant_id"].isin(chain)
+        rows.loc[on_chain, "shapeable"] = True
+        rows.loc[on_chain, "method"] = "regulated_chain"
         rows.insert(0, "iso", iso.upper())
         # Schema dtypes are explicit, not inferred: the string columns can
         # arrive all-NaN (object/float) from a sparse source slice.
