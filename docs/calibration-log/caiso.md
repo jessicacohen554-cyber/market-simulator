@@ -15487,3 +15487,14 @@ it moves every CAMPD-binned ISO's keeper and re-keys their caches (rules 25 `[R-
 **Successor, named and costed but NOT launched:** an instrumented 2024 replay persisting the **P0
 dispatch MW** — the one artifact caiso-285 did not land — which splits the 270.3 MW between the
 decommit screen and `startup_aware` gap-merging exactly. One year, one shard, its own PRECOMMIT.
+
+## R-CAISO — 2026-09-24 — corrected backcast inputs (EIA-860 vintage, plant heat rates, short gas outages)
+
+Run `2026-09-24-caiso-r-inputs-vintage` (bundle `rcaiso_inputs_span`, 2022–2025, one shard per year at pin
+`18bb99b1`): the incumbent recipe plus `eia860_vintage_tracks_solve_year`, measured ST + CC heat rates, and
+short gas outages at hour grain, with offer curves unchanged. The CC derive now routes CEMS through
+`CAMPD_UNIT_PLANT_REMAP`, taking El Segundo off the class table. **NOT-YET on one row:** C1 2023 CC_REGULAR
+−5.36 TWh vs ±5.27 (incumbent −4.40); everything else holds. The incumbent, re-scored on the same benchmark,
+stays CALIBRATED. The cause is the standing CC-under-dispatch / over-import residual, which the new inputs
+expose. 2019–2021 are blocked on data intakes. Promotion open to the owner.
+`docs/handoffs/r-caiso/RESULT-r-caiso-2026-09-24.md`.
