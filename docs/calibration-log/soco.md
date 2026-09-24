@@ -1450,3 +1450,38 @@ not open G5 for incremental-HR bands alone) (2) decline
 claude/soco61-arm-*, claude/soco60-arm-*, claude/soco60-armB-*.
 Records: docs/handoffs/FINDING-soco-63-2026-09-24.md,
 scripts/probes/_soco63_phase0.py.
+
+## soco-64 — 2026-09-24
+
+MEASURED EVIDENCE FOR A CT START COST, AND WHY IT DOES NOT ANSWER THE G REASON
+-- PHASE 0 ONLY, ZERO LP. Owner reopen ruling blank: no field, no solve,
+_SOCO_OFFER_CURVE untouched. Keeper 2026-09-24-soco61-dark-unit unchanged.
+
+(a) No-load heat input: derive_unit_bands' c0 sits at LSL, not P=0; evaluated
+at P=0 the no-load share of full-load input (cap-wtd p50) is CT 0.17 quad /
+0.22 linear (18/74 quad negative), ST 0.05, CC 0.28 quad vs 0.01 linear, coal
+0.06 -- CT/CC are extrapolations from 60-100 % of HSL. (b) CEMS conduct: CT
+56 starts/unit-yr, 9 h median runs, 58 % of CT energy in runs <12 h; ST 9 /
+263 h, CC 19.5 / 105 h, coal 7 / 439 h. Model CT tranches run 8-10 h (matches);
+ST econ tranches cycle ~10 h on a committed boiler. (c) Start cost chosen ex
+ante = the NREL table already live (CT $20/MW); fuel-only measured $3.6/MW is a
+lower bound. (d) Greedy restack on keeper legs: arm B (field's own scope, CT
+econ/peak + CC peak) 2023 CT +5.23 -> +2.78, ST -5.50 -> -3.29 TWh (margins
+1.83/1.66 pp), per-plant CT 8.68 -> 6.86, ST 5.35 -> 3.36; C4 flat/better;
+x0.5/x2/v3 same direction. Non-selective arm A does not move ST (ST econ pays a
+bigger amortized start than CT). Joint arm J (SOCO-63 bands + no-load) FAILS
+2023 CT (+7.18, margin -0.01): CT joint band 0.98 = identity, CC carries the
+extrapolated no-load. (e) KEEPER CENSUS: the same NREL markup is ALREADY LIVE
+on 18 CT _committed (median $4.82, max $20/MWh) and 18 CC _committed tranches.
+(f) (a)-(c) do NOT answer SOCO-53's G reason (a market-design category, not an
+evidence gap). The census does bear on it: the keeper already runs the object;
+either the G is wrong as stated or the keeper is inconsistent. Consistent-G arm
+Z (strip committed markup): 2024 CC_REGULAR margin 0.81 -> 0.66.
+
+OWNER QUESTIONS: (1) reopen tranche_startup_amortization for SOCO as a
+cost-based start cost scoped by measured CEMS run length (arm B, NREL $20/MW,
+no new scalar)? recommendation yes, on the cost re-characterization only; if
+no, rule on arm Z for consistency. (2) decline 2026-09-20-soco53g-prb-own-iso
+(E13)? Leftover refs for the owner: claude/soco61-arm-*, claude/soco60-arm-*,
+claude/soco60-armB-*. Records: docs/handoffs/FINDING-soco-64-2026-09-24.md,
+scripts/probes/_soco64_phase0.py.
