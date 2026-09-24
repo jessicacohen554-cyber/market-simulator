@@ -1,11 +1,11 @@
 {
-  "artifact": "campd-unit-outages-shortgas-SPP.csv",
-  "artifact_rows": 6909,
+  "artifact": "campd-unit-outages-shortgas-MISO.csv",
+  "artifact_rows": 2380,
   "derive_invocation": {
     "fullstop_override_cf": 0.02,
     "fullstop_override_days": 5,
     "high_load_pctl": 0.85,
-    "iso": "SPP",
+    "iso": "MISO",
     "merit_order_guard": true,
     "min_inmerit_hours": 6,
     "min_outage_days": 1.0,
@@ -36,12 +36,12 @@
   ],
   "sidecar_schema_version": 1,
   "windows_by_start_year": {
-    "2019": 906,
-    "2020": 934,
-    "2021": 1160,
-    "2022": 1071,
-    "2023": 935,
-    "2024": 840,
-    "2025": 1063
+    "2019": 325,
+    "2020": 260,
+    "2021": 410,
+    "2022": 424,
+    "2023": 321,
+    "2024": 310,
+    "2025": 330
   }
 }
