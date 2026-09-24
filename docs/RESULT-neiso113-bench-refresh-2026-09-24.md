@@ -44,7 +44,26 @@ fields identical) → `--write`. After: **0 STALE**. `audit_keepers --iso NEISO`
 | C2 gas 2022 / 2023 / 2024 | 53.44→53.35 / 54.37→54.36 / 58.76→58.69 | all in band |
 | others (CC_REGULAR 2020/22/23, CT_PEAKER 2023) | ≤ 0.002 | — |
 
-Matches miso-267's census for NEISO (max |Δ classFull| 0.085, 2022 ST_GAS). The run
-payload's `volErr` heatmap (display only, not scored) still reflects the old frames.
+Matches miso-267's census for NEISO (max |Δ classFull| 0.085, 2022 ST_GAS).
+
+## 4. Run payload (charts) regenerated
+
+The keeper's real dispatch was recovered from the six hydro-5 leg commits (RESULT-hydro-5 §6
+SHAs, all `git_sha fda9ece3`; branches gone, commits still fetchable by SHA). The EIA-923
+frame of the old builder was rebuilt from `fda9ece3`'s `run_calibration_full.py` and
+**hash-verified** against the recorded `f55df779267d`. `build_payload` on (real dispatch,
+old frame) reproduces the committed payload in every field except `storage` (not
+frame-dependent, kept as committed). The same build on the new frame moves 7 fields, which
+were replaced in `runs/<id>.js` through `backcast_artifacts.encode_run_js` (unchanged-payload
+round-trip byte-identical first):
+
+| year | field | change |
+|---|---|---|
+| 2020, 2022, 2023, 2024 | `volErr` (heatmap actuals) | largest cell: 2022 ST_GAS Connecticut 0.187 → 0.098 TWh; all others < 0.005 TWh |
+| 2022 | `plants` | plant 546 loses its EIA-923 match (`b923` True → None; r 0.813 → 0.35 vs CEMS basis) |
+| 2022, 2023 | `co2` (C5a, reported-only) | 22.910 → 22.907 Mt; 21.894 → 21.893 Mt |
+
+Verdict after patch: CALIBRATED, grade summary unchanged. `audit_keepers --iso NEISO` PASS,
+parity OK, bench 0 STALE.
 
 **Record is this doc; no bundle, no solve, no promotion question.**
