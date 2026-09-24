@@ -1,6 +1,6 @@
 {
   "artifact": "campd-unit-outages-perunitdark-SOCO.csv",
-  "artifact_rows": 1120,
+  "artifact_rows": 2451,
   "derive_invocation": {
     "dark_unit_years": true,
     "fullstop_override_cf": 0.02,
@@ -16,6 +16,10 @@
     "per_unit_crosswalk": true,
     "short_windows": false,
     "years": [
+      2019,
+      2020,
+      2021,
+      2022,
       2023,
       2024,
       2025
@@ -23,12 +27,20 @@
   },
   "deriver": "scripts/data/derive_campd_unit_outages.py",
   "observed_years": [
+    2019,
+    2020,
+    2021,
+    2022,
     2023,
     2024,
     2025
   ],
   "sidecar_schema_version": 1,
   "windows_by_start_year": {
+    "2019": 382,
+    "2020": 312,
+    "2021": 341,
+    "2022": 296,
     "2023": 332,
     "2024": 356,
     "2025": 432

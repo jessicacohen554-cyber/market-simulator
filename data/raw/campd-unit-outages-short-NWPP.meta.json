@@ -1,6 +1,6 @@
 {
   "artifact": "campd-unit-outages-short-NWPP.csv",
-  "artifact_rows": 209,
+  "artifact_rows": 606,
   "derive_invocation": {
     "fullstop_override_cf": 0.02,
     "fullstop_override_days": 5,
@@ -15,6 +15,10 @@
     "per_unit_crosswalk": false,
     "short_windows": true,
     "years": [
+      2019,
+      2020,
+      2021,
+      2022,
       2023,
       2024,
       2025
@@ -22,12 +26,20 @@
   },
   "deriver": "scripts/data/derive_campd_unit_outages.py",
   "observed_years": [
+    2019,
+    2020,
+    2021,
+    2022,
     2023,
     2024,
     2025
   ],
   "sidecar_schema_version": 1,
   "windows_by_start_year": {
+    "2019": 112,
+    "2020": 86,
+    "2021": 104,
+    "2022": 95,
     "2023": 70,
     "2024": 61,
     "2025": 78

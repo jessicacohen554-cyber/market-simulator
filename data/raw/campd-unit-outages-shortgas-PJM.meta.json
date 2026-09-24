@@ -1,6 +1,6 @@
 {
   "artifact": "campd-unit-outages-shortgas-PJM.csv",
-  "artifact_rows": 1859,
+  "artifact_rows": 2105,
   "derive_invocation": {
     "fullstop_override_cf": 0.02,
     "fullstop_override_days": 5,
@@ -15,6 +15,7 @@
     "per_unit_crosswalk": false,
     "short_windows": true,
     "years": [
+      2019,
       2020,
       2021,
       2022,
@@ -25,6 +26,7 @@
   },
   "deriver": "scripts/data/derive_campd_unit_outages.py",
   "observed_years": [
+    2019,
     2020,
     2021,
     2022,
@@ -34,6 +36,7 @@
   ],
   "sidecar_schema_version": 1,
   "windows_by_start_year": {
+    "2019": 246,
     "2020": 283,
     "2021": 291,
     "2022": 409,

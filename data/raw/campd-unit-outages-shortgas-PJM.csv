@@ -1,6 +1,9 @@
 facility_name,facility_id,unit_id,unit_capacity_mw,plant_capacity_mw,unit_pct_of_plant,plant_group,capacity_source,outage_start,outage_end,duration_days,peer_units_online,total_units_at_plant
+Big Sandy,1353,BSU1,280.5,280.5,100.0,ST_GAS,eia_digits,2019-03-30,2019-04-02,3.1,0,1
+Big Sandy,1353,BSU1,280.5,280.5,100.0,ST_GAS,eia_digits,2019-08-04,2019-08-06,1.6,0,1
 Gilbert Generating Station,2393,04,70.0,441.0,15.9,CC_REGULAR,observed_peak,2025-08-12,2025-08-14,1.6,4,5
 Gilbert Generating Station,2393,04,70.0,441.0,15.9,CC_REGULAR,observed_peak,2025-08-15,2025-08-17,1.7,4,5
+Gilbert Generating Station,2393,05,56.0,385.0,14.5,CC_REGULAR,observed_peak,2019-06-27,2019-07-02,4.9,4,5
 Gilbert Generating Station,2393,05,69.0,441.0,15.6,CC_REGULAR,observed_peak,2025-08-12,2025-08-14,1.6,4,5
 Gilbert Generating Station,2393,06,70.0,441.0,15.9,CC_REGULAR,observed_peak,2025-08-12,2025-08-14,1.6,4,5
 Gilbert Generating Station,2393,06,70.0,441.0,15.9,CC_REGULAR,observed_peak,2025-08-15,2025-08-17,1.6,4,5
@@ -77,6 +80,9 @@ Bergen Generating Station,2398,2201,314.7,1400.8,22.5,CC_REGULAR,eia_exact_cc,20
 Bergen Generating Station,2398,2201,314.7,1400.8,22.5,CC_REGULAR,eia_exact_cc,2025-01-08,2025-01-10,1.9,5,6
 Bergen Generating Station,2398,2201,314.7,1400.8,22.5,CC_REGULAR,eia_exact_cc,2025-01-14,2025-01-18,3.7,5,6
 Bergen Generating Station,2398,2201,314.7,1400.8,22.5,CC_REGULAR,eia_exact_cc,2025-12-06,2025-12-08,2.6,5,6
+Linden Generating Station,2406,1101,338.9,1740.0,19.5,CC_REGULAR,eia_exact_cc,2019-01-30,2019-01-30,1.0,7,8
+Linden Generating Station,2406,1101,338.9,1740.0,19.5,CC_REGULAR,eia_exact_cc,2019-03-06,2019-03-11,4.2,7,8
+Linden Generating Station,2406,1101,338.9,1740.0,19.5,CC_REGULAR,eia_exact_cc,2019-05-10,2019-05-11,1.2,7,8
 Linden Generating Station,2406,1101,338.9,1740.0,19.5,CC_REGULAR,eia_exact_cc,2020-02-11,2020-02-14,3.1,7,8
 Linden Generating Station,2406,1101,338.9,1740.0,19.5,CC_REGULAR,eia_exact_cc,2020-02-15,2020-02-19,4.1,7,8
 Linden Generating Station,2406,1101,338.9,1740.0,19.5,CC_REGULAR,eia_exact_cc,2020-03-16,2020-03-18,1.1,7,8
@@ -98,6 +104,11 @@ Linden Generating Station,2406,1101,338.9,1740.0,19.5,CC_REGULAR,eia_exact_cc,20
 Linden Generating Station,2406,1101,338.9,1740.0,19.5,CC_REGULAR,eia_exact_cc,2024-05-17,2024-05-21,3.5,7,8
 Linden Generating Station,2406,1101,338.9,1740.0,19.5,CC_REGULAR,eia_exact_cc,2024-12-18,2024-12-21,2.4,7,8
 Linden Generating Station,2406,1101,338.9,1740.0,19.5,CC_REGULAR,eia_exact_cc,2025-02-21,2025-02-22,1.5,7,8
+Linden Generating Station,2406,1201,338.9,1740.0,19.5,CC_REGULAR,eia_exact_cc,2019-03-06,2019-03-08,1.2,7,8
+Linden Generating Station,2406,1201,338.9,1740.0,19.5,CC_REGULAR,eia_exact_cc,2019-04-23,2019-04-25,1.2,7,8
+Linden Generating Station,2406,1201,338.9,1740.0,19.5,CC_REGULAR,eia_exact_cc,2019-05-03,2019-05-06,3.4,7,8
+Linden Generating Station,2406,1201,338.9,1740.0,19.5,CC_REGULAR,eia_exact_cc,2019-05-10,2019-05-11,1.1,7,8
+Linden Generating Station,2406,1201,338.9,1740.0,19.5,CC_REGULAR,eia_exact_cc,2019-09-15,2019-09-20,4.4,7,8
 Linden Generating Station,2406,1201,338.9,1740.0,19.5,CC_REGULAR,eia_exact_cc,2020-02-10,2020-02-14,3.2,7,8
 Linden Generating Station,2406,1201,338.9,1740.0,19.5,CC_REGULAR,eia_exact_cc,2020-03-16,2020-03-18,1.2,7,8
 Linden Generating Station,2406,1201,338.9,1740.0,19.5,CC_REGULAR,eia_exact_cc,2021-09-18,2021-09-20,1.5,7,8
@@ -121,6 +132,7 @@ Linden Generating Station,2406,1201,338.9,1740.0,19.5,CC_REGULAR,eia_exact_cc,20
 Linden Generating Station,2406,1201,338.9,1740.0,19.5,CC_REGULAR,eia_exact_cc,2025-01-14,2025-01-15,1.0,7,8
 Linden Generating Station,2406,1201,338.9,1740.0,19.5,CC_REGULAR,eia_exact_cc,2025-01-23,2025-01-28,4.5,7,8
 Linden Generating Station,2406,1201,338.9,1740.0,19.5,CC_REGULAR,eia_exact_cc,2025-02-21,2025-02-23,1.6,7,8
+Linden Generating Station,2406,2101,338.9,1740.0,19.5,CC_REGULAR,eia_exact_cc,2019-01-30,2019-01-30,1.0,7,8
 Linden Generating Station,2406,2101,338.9,1740.0,19.5,CC_REGULAR,eia_exact_cc,2020-07-15,2020-07-18,2.4,7,8
 Linden Generating Station,2406,2101,338.9,1740.0,19.5,CC_REGULAR,eia_exact_cc,2020-12-17,2020-12-19,1.2,7,8
 Linden Generating Station,2406,2101,338.9,1740.0,19.5,CC_REGULAR,eia_exact_cc,2021-02-12,2021-02-16,3.5,7,8
@@ -145,6 +157,7 @@ Linden Generating Station,2406,2101,338.9,1740.0,19.5,CC_REGULAR,eia_exact_cc,20
 Linden Generating Station,2406,2101,338.9,1740.0,19.5,CC_REGULAR,eia_exact_cc,2024-12-18,2024-12-20,1.6,7,8
 Linden Generating Station,2406,2101,338.9,1740.0,19.5,CC_REGULAR,eia_exact_cc,2025-02-11,2025-02-12,1.4,7,8
 Linden Generating Station,2406,2101,338.9,1740.0,19.5,CC_REGULAR,eia_exact_cc,2025-02-19,2025-02-20,1.2,7,8
+Linden Generating Station,2406,2201,338.9,1740.0,19.5,CC_REGULAR,eia_exact_cc,2019-12-19,2019-12-20,1.0,7,8
 Linden Generating Station,2406,2201,338.9,1740.0,19.5,CC_REGULAR,eia_exact_cc,2020-12-18,2020-12-19,1.1,7,8
 Linden Generating Station,2406,2201,338.9,1740.0,19.5,CC_REGULAR,eia_exact_cc,2021-02-12,2021-02-16,3.8,7,8
 Linden Generating Station,2406,2201,338.9,1740.0,19.5,CC_REGULAR,eia_exact_cc,2021-10-10,2021-10-14,3.6,7,8
@@ -241,6 +254,7 @@ New Castle,3138,4,114.0,348.0,32.8,ST_GAS,eia_exact,2020-08-12,2020-08-15,3.3,2,
 New Castle,3138,4,114.0,348.0,32.8,ST_GAS,eia_exact,2020-09-28,2020-10-03,4.2,2,3
 New Castle,3138,4,114.0,348.0,32.8,ST_GAS,eia_exact,2021-06-27,2021-06-29,2.0,2,3
 New Castle,3138,4,114.0,348.0,32.8,ST_GAS,eia_exact,2024-02-21,2024-02-26,4.1,2,3
+New Castle,3138,5,136.0,348.0,39.1,ST_GAS,eia_exact,2019-07-12,2019-07-16,4.0,2,3
 New Castle,3138,5,136.0,348.0,39.1,ST_GAS,eia_exact,2020-06-07,2020-06-10,3.2,2,3
 New Castle,3138,5,136.0,348.0,39.1,ST_GAS,eia_exact,2020-10-05,2020-10-09,3.2,2,3
 New Castle,3138,5,136.0,348.0,39.1,ST_GAS,eia_exact,2021-07-24,2021-07-28,3.2,2,3
@@ -258,6 +272,11 @@ New Castle,3138,5,136.0,348.0,39.1,ST_GAS,eia_exact,2023-12-13,2023-12-15,1.5,2,
 New Castle,3138,5,136.0,348.0,39.1,ST_GAS,eia_exact,2023-12-15,2023-12-20,4.2,2,3
 New Castle,3138,5,136.0,348.0,39.1,ST_GAS,eia_exact,2024-02-15,2024-02-18,3.8,2,3
 New Castle,3138,5,136.0,348.0,39.1,ST_GAS,eia_exact,2024-04-28,2024-05-02,3.9,2,3
+Hunlock Creek Energy Center,3176,CT5,73.0,145.9,50.0,CC_REGULAR,eia_digits_cc,2019-05-23,2019-05-28,4.6,1,2
+Hunlock Creek Energy Center,3176,CT5,73.0,145.9,50.0,CC_REGULAR,eia_digits_cc,2019-05-28,2019-05-30,1.5,1,2
+Hunlock Creek Energy Center,3176,CT5,73.0,145.9,50.0,CC_REGULAR,eia_digits_cc,2019-07-13,2019-07-16,2.6,1,2
+Hunlock Creek Energy Center,3176,CT5,73.0,145.9,50.0,CC_REGULAR,eia_digits_cc,2019-09-02,2019-09-04,1.5,1,2
+Hunlock Creek Energy Center,3176,CT5,73.0,145.9,50.0,CC_REGULAR,eia_digits_cc,2019-09-22,2019-09-25,2.5,1,2
 Hunlock Creek Energy Center,3176,CT5,73.0,145.9,50.0,CC_REGULAR,eia_digits_cc,2020-03-23,2020-03-27,3.2,1,2
 Hunlock Creek Energy Center,3176,CT5,73.0,145.9,50.0,CC_REGULAR,eia_digits_cc,2020-03-31,2020-04-02,1.1,1,2
 Hunlock Creek Energy Center,3176,CT5,73.0,145.9,50.0,CC_REGULAR,eia_digits_cc,2020-10-21,2020-10-25,3.7,1,2
@@ -281,6 +300,14 @@ Hunlock Creek Generating LLC,3176,CT5,73.0,145.9,50.0,CC_REGULAR,eia_digits_cc,2
 Hunlock Creek Generating LLC,3176,CT5,73.0,145.9,50.0,CC_REGULAR,eia_digits_cc,2025-12-03,2025-12-05,1.2,1,2
 Hunlock Creek Generating LLC,3176,CT5,73.0,145.9,50.0,CC_REGULAR,eia_digits_cc,2025-12-12,2025-12-15,2.1,1,2
 Hunlock Creek Generating LLC,3176,CT5,73.0,145.9,50.0,CC_REGULAR,eia_digits_cc,2025-12-15,2025-12-19,4.2,1,2
+Hunlock Creek Energy Center,3176,CT6,73.0,145.9,50.0,CC_REGULAR,eia_digits_cc,2019-04-27,2019-05-02,4.5,1,2
+Hunlock Creek Energy Center,3176,CT6,73.0,145.9,50.0,CC_REGULAR,eia_digits_cc,2019-05-23,2019-05-28,4.6,1,2
+Hunlock Creek Energy Center,3176,CT6,73.0,145.9,50.0,CC_REGULAR,eia_digits_cc,2019-05-28,2019-05-30,1.5,1,2
+Hunlock Creek Energy Center,3176,CT6,73.0,145.9,50.0,CC_REGULAR,eia_digits_cc,2019-05-30,2019-06-04,4.8,1,2
+Hunlock Creek Energy Center,3176,CT6,73.0,145.9,50.0,CC_REGULAR,eia_digits_cc,2019-06-04,2019-06-06,1.7,1,2
+Hunlock Creek Energy Center,3176,CT6,73.0,145.9,50.0,CC_REGULAR,eia_digits_cc,2019-07-13,2019-07-16,2.6,1,2
+Hunlock Creek Energy Center,3176,CT6,73.0,145.9,50.0,CC_REGULAR,eia_digits_cc,2019-09-02,2019-09-04,1.5,1,2
+Hunlock Creek Energy Center,3176,CT6,73.0,145.9,50.0,CC_REGULAR,eia_digits_cc,2019-09-22,2019-09-25,2.5,1,2
 Hunlock Creek Energy Center,3176,CT6,73.0,145.9,50.0,CC_REGULAR,eia_digits_cc,2020-03-23,2020-03-27,3.2,1,2
 Hunlock Creek Energy Center,3176,CT6,73.0,145.9,50.0,CC_REGULAR,eia_digits_cc,2020-03-31,2020-04-02,1.1,1,2
 Hunlock Creek Energy Center,3176,CT6,73.0,145.9,50.0,CC_REGULAR,eia_digits_cc,2020-10-21,2020-10-25,3.7,1,2
@@ -309,6 +336,7 @@ Hunlock Creek Generating LLC,3176,CT6,73.0,145.9,50.0,CC_REGULAR,eia_digits_cc,2
 Hunlock Creek Generating LLC,3176,CT6,73.0,145.9,50.0,CC_REGULAR,eia_digits_cc,2025-12-03,2025-12-05,1.2,1,2
 Hunlock Creek Generating LLC,3176,CT6,73.0,145.9,50.0,CC_REGULAR,eia_digits_cc,2025-12-12,2025-12-15,2.1,1,2
 Hunlock Creek Generating LLC,3176,CT6,73.0,145.9,50.0,CC_REGULAR,eia_digits_cc,2025-12-15,2025-12-19,4.2,1,2
+Chesterfield Power Station,3797,**8A,242.0,1562.0,15.5,CC_REGULAR,observed_peak,2019-06-04,2019-06-06,2.3,3,6
 Chesterfield Power Station,3797,**8A,236.0,1557.0,15.2,CC_REGULAR,observed_peak,2020-09-03,2020-09-06,3.3,3,4
 Chesterfield Power Station,3797,**8A,232.0,1554.0,14.9,CC_REGULAR,observed_peak,2021-01-26,2021-01-28,2.6,3,4
 Chesterfield Power Station,3797,**8A,232.0,1554.0,14.9,CC_REGULAR,observed_peak,2021-12-12,2021-12-15,2.8,3,4
@@ -326,9 +354,15 @@ Chesterfield Power Station,3797,7,236.0,1536.0,15.4,CC_REGULAR,observed_peak,202
 Chesterfield Power Station,3797,7,236.0,1536.0,15.4,CC_REGULAR,observed_peak,2022-12-17,2022-12-20,3.8,3,4
 Chesterfield Power Station,3797,7,233.0,468.0,49.8,CC_REGULAR,observed_peak,2024-02-20,2024-02-22,2.9,1,2
 Chesterfield Power Station,3797,7,233.0,468.0,49.8,CC_REGULAR,observed_peak,2024-07-07,2024-07-11,4.9,1,2
+Possum Point Power Station,3804,6A,306.5,629.0,48.7,CC_REGULAR,eia_exact_cc,2019-01-30,2019-02-01,2.0,2,3
+Possum Point Power Station,3804,6A,306.5,629.0,48.7,CC_REGULAR,eia_exact_cc,2019-02-01,2019-02-02,1.1,2,3
+Possum Point Power Station,3804,6A,306.5,629.0,48.7,CC_REGULAR,eia_exact_cc,2019-05-19,2019-05-21,2.3,2,3
 Possum Point Power Station,3804,6A,306.5,613.0,50.0,CC_REGULAR,eia_exact_cc,2022-01-29,2022-02-02,3.1,1,2
 Possum Point Power Station,3804,6A,306.5,613.0,50.0,CC_REGULAR,eia_exact_cc,2022-12-26,2022-12-28,2.4,1,2
 Possum Point Power Station,3804,6A,306.5,613.0,50.0,CC_REGULAR,eia_exact_cc,2024-01-17,2024-01-19,2.1,1,2
+Possum Point Power Station,3804,6B,306.5,629.0,48.7,CC_REGULAR,eia_exact_cc,2019-01-31,2019-02-02,2.0,2,3
+Possum Point Power Station,3804,6B,306.5,629.0,48.7,CC_REGULAR,eia_exact_cc,2019-03-30,2019-04-03,3.7,2,3
+Possum Point Power Station,3804,6B,306.5,629.0,48.7,CC_REGULAR,eia_exact_cc,2019-09-30,2019-10-02,2.5,2,3
 Possum Point Power Station,3804,6B,306.5,613.0,50.0,CC_REGULAR,eia_exact_cc,2022-12-26,2022-12-28,2.4,1,2
 Possum Point Power Station,3804,6B,306.5,613.0,50.0,CC_REGULAR,eia_exact_cc,2024-01-17,2024-01-19,2.0,1,2
 Hay Road,7153,**3,192.4,1098.2,17.5,CC_REGULAR,eia_digits_cc,2022-01-07,2022-01-10,3.2,5,6
@@ -498,6 +532,11 @@ Pedricktown Cogeneration Plant,10099,001001,141.0,141.0,100.0,CC_REGULAR,observe
 Pedricktown Cogeneration Plant,10099,001001,141.0,141.0,100.0,CC_REGULAR,observed_peak,2022-03-30,2022-04-04,4.7,0,1
 Pedricktown Cogeneration Plant,10099,001001,141.0,141.0,100.0,CC_REGULAR,observed_peak,2022-04-04,2022-04-07,2.8,0,1
 Pixelle Specialty Solutions LLC,10244,B003,46.4,92.8,50.0,ST_CHP,optime_proxy,2024-09-08,2024-09-13,4.8,1,2
+Sayreville Power LP,10308,1001,162.0,326.0,49.7,CC_REGULAR,observed_peak,2019-03-26,2019-03-31,4.9,1,2
+Sayreville Power LP,10308,1001,162.0,326.0,49.7,CC_REGULAR,observed_peak,2019-04-03,2019-04-05,2.1,1,2
+Sayreville Power LP,10308,1001,162.0,326.0,49.7,CC_REGULAR,observed_peak,2019-04-30,2019-05-02,1.5,1,2
+Sayreville Power LP,10308,1001,162.0,326.0,49.7,CC_REGULAR,observed_peak,2019-05-30,2019-06-04,4.2,1,2
+Sayreville Power LP,10308,1001,162.0,326.0,49.7,CC_REGULAR,observed_peak,2019-09-16,2019-09-21,4.4,1,2
 Sayreville Power LP,10308,1001,164.0,329.0,49.8,CC_REGULAR,observed_peak,2020-01-07,2020-01-08,1.5,1,2
 Sayreville Power LP,10308,1001,164.0,329.0,49.8,CC_REGULAR,observed_peak,2020-04-15,2020-04-17,1.4,1,2
 Sayreville Power LP,10308,1001,164.0,329.0,49.8,CC_REGULAR,observed_peak,2020-06-29,2020-07-02,2.6,1,2
@@ -528,6 +567,12 @@ Sayreville Power LP,10308,1001,167.0,335.0,49.9,CC_REGULAR,observed_peak,2024-12
 Sayreville Power LP,10308,1001,167.0,335.0,49.9,CC_REGULAR,observed_peak,2025-01-14,2025-01-16,1.6,1,2
 Sayreville Power LP,10308,1001,167.0,335.0,49.9,CC_REGULAR,observed_peak,2025-03-25,2025-03-27,1.2,1,2
 Sayreville Power LP,10308,1001,167.0,335.0,49.9,CC_REGULAR,observed_peak,2025-12-30,2025-12-31,1.1,1,2
+Sayreville Power LP,10308,1002,164.0,326.0,50.3,CC_REGULAR,observed_peak,2019-03-26,2019-03-31,4.8,1,2
+Sayreville Power LP,10308,1002,164.0,326.0,50.3,CC_REGULAR,observed_peak,2019-04-03,2019-04-05,2.0,1,2
+Sayreville Power LP,10308,1002,164.0,326.0,50.3,CC_REGULAR,observed_peak,2019-08-15,2019-08-17,1.8,1,2
+Sayreville Power LP,10308,1002,164.0,326.0,50.3,CC_REGULAR,observed_peak,2019-08-17,2019-08-18,1.0,1,2
+Sayreville Power LP,10308,1002,164.0,326.0,50.3,CC_REGULAR,observed_peak,2019-08-31,2019-09-04,3.8,1,2
+Sayreville Power LP,10308,1002,164.0,326.0,50.3,CC_REGULAR,observed_peak,2019-09-16,2019-09-21,4.7,1,2
 Sayreville Power LP,10308,1002,165.0,329.0,50.2,CC_REGULAR,observed_peak,2020-01-07,2020-01-08,1.1,1,2
 Sayreville Power LP,10308,1002,165.0,329.0,50.2,CC_REGULAR,observed_peak,2020-06-29,2020-07-02,2.7,1,2
 Sayreville Power LP,10308,1002,167.0,334.0,50.0,CC_REGULAR,observed_peak,2021-02-08,2021-02-10,1.7,1,2
@@ -558,6 +603,10 @@ Hopewell Cogeneration Facility,10633,1,103.0,369.0,27.9,CC_CHP,observed_peak,202
 Hopewell Cogeneration Facility,10633,2,133.0,369.0,36.0,CC_CHP,eia_digits_cc,2024-01-17,2024-01-19,2.4,2,3
 Hopewell Cogeneration Facility,10633,2,133.0,369.0,36.0,CC_CHP,eia_digits_cc,2024-01-19,2024-01-22,2.2,2,3
 Hopewell Cogeneration Facility,10633,3,133.0,369.0,36.0,CC_CHP,eia_digits_cc,2024-01-17,2024-01-22,4.7,2,3
+"Camden Plant Holding, LLC",10751,002001,149.0,149.0,100.0,CC_REGULAR,observed_peak,2019-06-28,2019-07-02,3.6,0,1
+"Camden Plant Holding, LLC",10751,002001,149.0,149.0,100.0,CC_REGULAR,observed_peak,2019-07-12,2019-07-16,3.6,0,1
+"Camden Plant Holding, LLC",10751,002001,149.0,149.0,100.0,CC_REGULAR,observed_peak,2019-09-11,2019-09-16,4.5,0,1
+"Camden Plant Holding, LLC",10751,002001,149.0,149.0,100.0,CC_REGULAR,observed_peak,2019-10-02,2019-10-07,4.6,0,1
 "Camden Plant Holding, LLC",10751,002001,147.0,147.0,100.0,CC_REGULAR,observed_peak,2020-06-06,2020-06-09,2.8,0,1
 "Camden Plant Holding, LLC",10751,002001,147.0,147.0,100.0,CC_REGULAR,observed_peak,2020-06-29,2020-07-02,2.5,0,1
 "Camden Plant Holding, LLC",10751,002001,147.0,147.0,100.0,CC_REGULAR,observed_peak,2020-10-05,2020-10-10,4.5,0,1
@@ -588,6 +637,10 @@ Hopewell Cogeneration Facility,10633,3,133.0,369.0,36.0,CC_CHP,eia_digits_cc,202
 "Camden Plant Holding, LLC",10751,002001,149.0,149.0,100.0,CC_REGULAR,observed_peak,2025-06-28,2025-07-02,3.6,0,1
 "Camden Plant Holding, LLC",10751,002001,149.0,149.0,100.0,CC_REGULAR,observed_peak,2025-09-02,2025-09-05,2.7,0,1
 "Camden Plant Holding, LLC",10751,002001,149.0,149.0,100.0,CC_REGULAR,observed_peak,2025-09-25,2025-09-29,3.7,0,1
+Newark Bay Cogen,50385,1001,80.0,148.0,54.1,CC_REGULAR,observed_peak,2019-04-30,2019-05-02,1.9,1,2
+Newark Bay Cogen,50385,1001,80.0,148.0,54.1,CC_REGULAR,observed_peak,2019-07-17,2019-07-19,1.5,1,2
+Newark Bay Cogen,50385,1001,80.0,148.0,54.1,CC_REGULAR,observed_peak,2019-07-28,2019-08-01,3.5,1,2
+Newark Bay Cogen,50385,1001,80.0,148.0,54.1,CC_REGULAR,observed_peak,2019-10-02,2019-10-07,4.7,1,2
 Newark Bay Cogen,50385,1001,70.0,146.0,47.9,CC_REGULAR,observed_peak,2020-06-04,2020-06-09,4.5,1,2
 Newark Bay Cogen,50385,1001,70.0,146.0,47.9,CC_REGULAR,observed_peak,2020-06-29,2020-07-02,2.5,1,2
 Newark Bay Cogen,50385,1001,70.0,146.0,47.9,CC_REGULAR,observed_peak,2020-07-06,2020-07-08,1.3,1,2
@@ -596,6 +649,9 @@ Newark Bay Cogen,50385,1001,68.0,141.0,48.2,CC_REGULAR,observed_peak,2021-08-27,
 Newark Bay Cogen,50385,1001,68.0,141.0,48.2,CC_REGULAR,observed_peak,2021-09-15,2021-09-18,2.5,1,2
 Newark Bay Cogen,50385,1001,68.0,141.0,48.2,CC_REGULAR,observed_peak,2021-10-05,2021-10-07,1.2,1,2
 Newark Bay Cogen,50385,1001,68.0,141.0,48.2,CC_REGULAR,observed_peak,2021-10-07,2021-10-11,3.6,1,2
+Newark Bay Cogen,50385,2001,68.0,148.0,45.9,CC_REGULAR,observed_peak,2019-07-17,2019-07-19,1.5,1,2
+Newark Bay Cogen,50385,2001,68.0,148.0,45.9,CC_REGULAR,observed_peak,2019-07-28,2019-08-01,3.6,1,2
+Newark Bay Cogen,50385,2001,68.0,148.0,45.9,CC_REGULAR,observed_peak,2019-10-02,2019-10-07,4.8,1,2
 Newark Bay Cogen,50385,2001,76.0,146.0,52.1,CC_REGULAR,observed_peak,2020-06-04,2020-06-09,4.8,1,2
 Newark Bay Cogen,50385,2001,76.0,146.0,52.1,CC_REGULAR,observed_peak,2020-06-29,2020-07-02,2.5,1,2
 Newark Bay Cogen,50385,2001,76.0,146.0,52.1,CC_REGULAR,observed_peak,2020-07-06,2020-07-08,1.4,1,2
@@ -607,10 +663,12 @@ Newark Bay Cogen,50385,2001,73.0,141.0,51.8,CC_REGULAR,observed_peak,2021-10-05,
 Newark Bay Cogen,50385,2001,73.0,141.0,51.8,CC_REGULAR,observed_peak,2021-10-07,2021-10-11,3.6,1,2
 Pixelle Specialty Solutions,50397,038,34.5,103.6,33.3,ST_CHP,optime_proxy,2021-08-29,2021-09-02,4.4,2,3
 Pixelle Specialty Solutions,50397,038,34.5,103.6,33.3,ST_CHP,optime_proxy,2024-07-11,2024-07-13,2.2,2,3
+Pixelle Specialty Solutions,50397,039,34.5,103.6,33.3,ST_CHP,optime_proxy,2019-06-02,2019-06-06,4.2,2,3
 Pixelle Specialty Solutions,50397,039,34.5,103.6,33.3,ST_CHP,optime_proxy,2020-05-31,2020-06-05,4.9,2,3
 Pixelle Specialty Solutions,50397,039,34.5,103.6,33.3,ST_CHP,optime_proxy,2020-06-05,2020-06-06,1.1,2,3
 Pixelle Specialty Solutions,50397,039,34.5,103.6,33.3,ST_CHP,optime_proxy,2021-06-06,2021-06-11,4.8,2,3
 Pixelle Specialty Solutions,50397,039,34.5,103.6,33.3,ST_CHP,optime_proxy,2022-05-19,2022-05-20,1.2,2,3
+Kimberly-Clark Tissue Company,50410,034,34.6,69.2,50.0,CC_CHP,optime_proxy,2019-08-18,2019-08-20,2.3,1,2
 "GP Big Island, LLC",50479,6,7.9,7.9,100.0,ST_CHP,optime_proxy,2020-05-11,2020-05-13,2.2,0,1
 "GP Big Island, LLC",50479,6,7.9,7.9,100.0,ST_CHP,optime_proxy,2023-07-19,2023-07-20,1.3,0,1
 Eastman Chemical Company,50481,253-25,21.6,194.3,11.1,ST_CHP,optime_proxy,2020-07-06,2020-07-08,2.0,8,9
@@ -625,12 +683,20 @@ Eastman Chemical Company,50481,253-28,21.6,194.3,11.1,ST_CHP,optime_proxy,2020-0
 Eastman Chemical Company,50481,253-28,21.6,194.3,11.1,ST_CHP,optime_proxy,2021-07-18,2021-07-22,4.1,8,9
 Eastman Chemical Company,50481,253-28,21.6,194.3,11.1,ST_CHP,optime_proxy,2024-05-02,2024-05-03,1.5,8,9
 Eastman Chemical Company,50481,253-28,21.6,194.3,11.1,ST_CHP,optime_proxy,2025-05-13,2025-05-15,2.0,8,9
+Eastman Chemical Company,50481,253-29,21.6,194.3,11.1,ST_CHP,optime_proxy,2019-05-01,2019-05-03,1.5,8,9
+Eastman Chemical Company,50481,253-29,21.6,194.3,11.1,ST_CHP,optime_proxy,2019-07-30,2019-08-02,2.6,8,9
+Axiall Corporation Natrium Plant,50491,001,57.8,115.5,50.0,ST_CHP,optime_proxy,2019-05-29,2019-05-31,2.0,1,2
+Axiall Corporation Natrium Plant,50491,001,57.8,115.5,50.0,ST_CHP,optime_proxy,2019-09-03,2019-09-05,1.8,1,2
 Axiall Corporation Natrium Plant,50491,001,57.8,115.5,50.0,ST_CHP,optime_proxy,2020-01-29,2020-02-01,3.5,1,2
 Axiall Corporation Natrium Plant,50491,001,57.8,115.5,50.0,ST_CHP,optime_proxy,2022-03-01,2022-03-04,3.3,1,2
 Axiall Corporation Natrium Plant,50491,001,57.8,115.5,50.0,ST_CHP,optime_proxy,2022-03-07,2022-03-11,4.2,1,2
 Axiall Corporation Natrium Plant,50491,001,57.8,115.5,50.0,ST_CHP,optime_proxy,2022-05-31,2022-06-03,3.4,1,2
 Axiall Corporation Natrium Plant,50491,001,57.8,115.5,50.0,ST_CHP,optime_proxy,2022-10-02,2022-10-04,2.3,1,2
 Axiall Corporation Natrium Plant,50491,001,57.8,115.5,50.0,ST_CHP,optime_proxy,2025-07-27,2025-07-29,1.6,1,2
+Eagle Point Power Generation,50561,0001,136.0,277.0,49.1,CC_REGULAR,observed_peak,2019-01-31,2019-02-04,3.9,1,2
+Eagle Point Power Generation,50561,0001,136.0,277.0,49.1,CC_REGULAR,observed_peak,2019-04-30,2019-05-02,1.1,1,2
+Eagle Point Power Generation,50561,0001,136.0,277.0,49.1,CC_REGULAR,observed_peak,2019-05-03,2019-05-07,4.1,1,2
+Eagle Point Power Generation,50561,0001,136.0,277.0,49.1,CC_REGULAR,observed_peak,2019-09-06,2019-09-10,4.1,1,2
 Eagle Point Power Generation,50561,0001,131.0,266.0,49.2,CC_REGULAR,observed_peak,2020-01-07,2020-01-09,1.1,1,2
 Eagle Point Power Generation,50561,0001,131.0,266.0,49.2,CC_REGULAR,observed_peak,2020-06-01,2020-06-04,2.5,1,2
 Eagle Point Power Generation,50561,0001,131.0,266.0,49.2,CC_REGULAR,observed_peak,2020-06-06,2020-06-09,2.8,1,2
@@ -661,6 +727,11 @@ Eagle Point Power Generation,50561,0001,129.0,259.0,49.8,CC_REGULAR,observed_pea
 Eagle Point Power Generation,50561,0001,129.0,259.0,49.8,CC_REGULAR,observed_peak,2025-09-19,2025-09-23,3.7,1,2
 Eagle Point Power Generation,50561,0001,129.0,259.0,49.8,CC_REGULAR,observed_peak,2025-10-23,2025-10-26,2.5,1,2
 Eagle Point Power Generation,50561,0001,129.0,259.0,49.8,CC_REGULAR,observed_peak,2025-12-15,2025-12-16,1.1,1,2
+Eagle Point Power Generation,50561,0002,141.0,277.0,50.9,CC_REGULAR,observed_peak,2019-04-30,2019-05-01,1.0,1,2
+Eagle Point Power Generation,50561,0002,141.0,277.0,50.9,CC_REGULAR,observed_peak,2019-09-06,2019-09-10,4.0,1,2
+Eagle Point Power Generation,50561,0002,141.0,277.0,50.9,CC_REGULAR,observed_peak,2019-09-11,2019-09-14,2.5,1,2
+Eagle Point Power Generation,50561,0002,141.0,277.0,50.9,CC_REGULAR,observed_peak,2019-09-29,2019-10-01,2.5,1,2
+Eagle Point Power Generation,50561,0002,141.0,277.0,50.9,CC_REGULAR,observed_peak,2019-11-14,2019-11-18,3.5,1,2
 Eagle Point Power Generation,50561,0002,135.0,266.0,50.8,CC_REGULAR,observed_peak,2020-01-07,2020-01-08,1.0,1,2
 Eagle Point Power Generation,50561,0002,135.0,266.0,50.8,CC_REGULAR,observed_peak,2020-06-06,2020-06-09,3.3,1,2
 Eagle Point Power Generation,50561,0002,135.0,266.0,50.8,CC_REGULAR,observed_peak,2020-09-24,2020-09-26,1.2,1,2
@@ -689,12 +760,14 @@ Eagle Point Power Generation,50561,0002,130.0,259.0,50.2,CC_REGULAR,observed_pea
 Eagle Point Power Generation,50561,0002,130.0,259.0,50.2,CC_REGULAR,observed_peak,2025-09-19,2025-09-23,3.6,1,2
 Eagle Point Power Generation,50561,0002,130.0,259.0,50.2,CC_REGULAR,observed_peak,2025-10-23,2025-10-26,2.6,1,2
 Eagle Point Power Generation,50561,0002,130.0,259.0,50.2,CC_REGULAR,observed_peak,2025-12-15,2025-12-18,3.2,1,2
+"EFS Parlin Holdings, LLC",50799,001001,58.0,117.0,49.6,CC_REGULAR,observed_peak,2019-07-17,2019-07-19,1.7,1,2
 "EFS Parlin Holdings, LLC",50799,001001,58.0,117.0,49.6,CC_REGULAR,observed_peak,2020-07-06,2020-07-09,2.4,1,2
 "EFS Parlin Holdings, LLC",50799,001001,58.0,117.0,49.6,CC_REGULAR,observed_peak,2020-08-10,2020-08-15,4.7,1,2
 "EFS Parlin Holdings, LLC",50799,001001,58.0,117.0,49.6,CC_REGULAR,observed_peak,2020-08-25,2020-08-27,1.7,1,2
 "EFS Parlin Holdings, LLC",50799,001001,60.0,121.0,49.6,CC_REGULAR,observed_peak,2021-06-24,2021-06-28,3.7,1,2
 "EFS Parlin Holdings, LLC",50799,001001,57.0,115.0,49.6,CC_REGULAR,observed_peak,2022-06-15,2022-06-17,1.5,1,2
 "EFS Parlin Holdings, LLC",50799,001001,57.0,115.0,49.6,CC_REGULAR,observed_peak,2023-07-13,2023-07-17,3.7,1,2
+"EFS Parlin Holdings, LLC",50799,003001,59.0,117.0,50.4,CC_REGULAR,observed_peak,2019-07-17,2019-07-19,1.6,1,2
 "EFS Parlin Holdings, LLC",50799,003001,59.0,117.0,50.4,CC_REGULAR,observed_peak,2020-07-06,2020-07-09,2.5,1,2
 "EFS Parlin Holdings, LLC",50799,003001,59.0,117.0,50.4,CC_REGULAR,observed_peak,2020-08-25,2020-08-27,1.7,1,2
 "EFS Parlin Holdings, LLC",50799,003001,61.0,121.0,50.4,CC_REGULAR,observed_peak,2021-06-24,2021-06-28,3.8,1,2
@@ -714,9 +787,12 @@ Doswell Limited Partnership,52019,602,191.0,1259.0,15.2,CC_REGULAR,observed_peak
 Doswell Limited Partnership,52019,602,189.0,1275.0,14.8,CC_REGULAR,observed_peak,2024-07-11,2024-07-15,4.5,6,7
 Doswell Limited Partnership,52019,602,189.0,1275.0,14.8,CC_REGULAR,observed_peak,2024-09-13,2024-09-15,3.0,6,7
 Doswell Limited Partnership,52019,602,200.0,1285.0,15.6,CC_REGULAR,observed_peak,2025-11-13,2025-11-16,3.2,6,7
+Celanese Acetate LLC,52089,BLR010,5.4,27.2,20.0,ST_CHP,optime_proxy,2019-09-07,2019-09-11,4.0,4,5
+Celanese Acetate LLC,52089,BLR010,5.4,27.2,20.0,ST_CHP,optime_proxy,2019-09-11,2019-09-14,3.0,4,5
 Celanese Acetate LLC,52089,BLR011,5.4,27.2,20.0,ST_CHP,optime_proxy,2020-05-05,2020-05-08,3.3,4,5
 Celanese Acetate LLC,52089,BLR011,5.4,27.2,20.0,ST_CHP,optime_proxy,2022-08-02,2022-08-05,2.6,4,5
 Celanese Acetate LLC,52089,BLR011,5.4,27.2,20.0,ST_CHP,optime_proxy,2025-05-12,2025-05-13,1.1,4,5
+Celanese Acetate LLC,52089,BLR012,5.4,27.2,20.0,ST_CHP,optime_proxy,2019-06-04,2019-06-06,2.2,4,5
 Celanese Acetate LLC,52089,BLR012,5.4,27.2,20.0,ST_CHP,optime_proxy,2020-05-15,2020-05-20,4.8,4,5
 Celanese Acetate LLC,52089,BLR012,5.4,27.2,20.0,ST_CHP,optime_proxy,2020-05-28,2020-06-01,4.6,4,5
 Celanese Acetate LLC,52089,BLR012,5.4,27.2,20.0,ST_CHP,optime_proxy,2022-06-10,2022-06-15,4.3,4,5
@@ -724,6 +800,9 @@ Celanese Acetate LLC,52089,BLR012,5.4,27.2,20.0,ST_CHP,optime_proxy,2025-06-26,2
 Celanese Acetate LLC,52089,BLR012,5.4,27.2,20.0,ST_CHP,optime_proxy,2025-07-06,2025-07-08,2.0,4,5
 Celanese Acetate LLC,52089,BLR014,5.4,27.2,20.0,ST_CHP,optime_proxy,2020-06-30,2020-07-01,1.3,4,5
 Celanese Acetate LLC,52089,BLR014,5.4,27.2,20.0,ST_CHP,optime_proxy,2020-08-25,2020-08-28,2.8,4,5
+"Spruance Genco, LLC",54081,BLR03A,14.3,114.8,12.5,ST_CHP,optime_proxy,2019-04-30,2019-05-02,1.8,7,8
+"Spruance Genco, LLC",54081,BLR03A,14.3,114.8,12.5,ST_CHP,optime_proxy,2019-08-20,2019-08-22,2.3,7,8
+"Spruance Genco, LLC",54081,BLR03A,14.3,114.8,12.5,ST_CHP,optime_proxy,2019-12-12,2019-12-13,1.2,7,8
 "Spruance Operating Services, LLC",54081,BLR03A,28.7,114.8,25.0,ST_CHP,optime_proxy,2020-04-16,2020-04-20,4.0,3,4
 "Spruance Operating Services, LLC",54081,BLR03A,28.7,114.8,25.0,ST_CHP,optime_proxy,2021-01-02,2021-01-06,4.4,3,4
 "Spruance Operating Services, LLC",54081,BLR03A,28.7,114.8,25.0,ST_CHP,optime_proxy,2021-05-03,2021-05-05,2.1,3,4
@@ -731,15 +810,23 @@ Celanese Acetate LLC,52089,BLR014,5.4,27.2,20.0,ST_CHP,optime_proxy,2020-08-25,2
 "Spruance Operating Services, LLC",54081,BLR03A,28.7,114.8,25.0,ST_CHP,optime_proxy,2024-02-14,2024-02-18,4.2,3,4
 "Spruance Operating Services, LLC",54081,BLR03A,28.7,114.8,25.0,ST_CHP,optime_proxy,2024-05-16,2024-05-20,4.0,3,4
 "Spruance Operating Services, LLC",54081,BLR03A,28.7,114.8,25.0,ST_CHP,optime_proxy,2025-05-05,2025-05-07,2.6,3,4
+"Spruance Genco, LLC",54081,BLR03B,14.3,114.8,12.5,ST_CHP,optime_proxy,2019-08-01,2019-08-06,4.8,7,8
+"Spruance Genco, LLC",54081,BLR03B,14.3,114.8,12.5,ST_CHP,optime_proxy,2019-12-09,2019-12-11,2.3,7,8
 "Spruance Operating Services, LLC",54081,BLR03B,28.7,114.8,25.0,ST_CHP,optime_proxy,2022-04-22,2022-04-26,4.3,3,4
 "Spruance Operating Services, LLC",54081,BLR03B,28.7,114.8,25.0,ST_CHP,optime_proxy,2022-07-22,2022-07-26,3.7,3,4
 "Spruance Operating Services, LLC",54081,BLR03B,28.7,114.8,25.0,ST_CHP,optime_proxy,2024-07-12,2024-07-16,4.5,3,4
 "Spruance Operating Services, LLC",54081,BLR03B,28.7,114.8,25.0,ST_CHP,optime_proxy,2025-05-16,2025-05-17,1.1,3,4
+"Spruance Genco, LLC",54081,BLR04A,14.3,114.8,12.5,ST_CHP,optime_proxy,2019-04-28,2019-05-03,4.5,7,8
+"Spruance Genco, LLC",54081,BLR04A,14.3,114.8,12.5,ST_CHP,optime_proxy,2019-05-03,2019-05-07,4.1,7,8
+"Spruance Genco, LLC",54081,BLR04A,14.3,114.8,12.5,ST_CHP,optime_proxy,2019-12-08,2019-12-11,3.2,7,8
 "Spruance Operating Services, LLC",54081,BLR04A,28.7,114.8,25.0,ST_CHP,optime_proxy,2020-06-29,2020-06-30,1.1,3,4
 "Spruance Operating Services, LLC",54081,BLR04A,28.7,114.8,25.0,ST_CHP,optime_proxy,2021-05-17,2021-05-20,3.8,3,4
 "Spruance Operating Services, LLC",54081,BLR04A,28.7,114.8,25.0,ST_CHP,optime_proxy,2024-02-10,2024-02-13,3.5,3,4
 "Spruance Operating Services, LLC",54081,BLR04A,28.7,114.8,25.0,ST_CHP,optime_proxy,2025-08-13,2025-08-16,2.8,3,4
 "Spruance Operating Services, LLC",54081,BLR04A,28.7,114.8,25.0,ST_CHP,optime_proxy,2025-12-09,2025-12-13,4.8,3,4
+"Spruance Genco, LLC",54081,BLR04B,14.3,114.8,12.5,ST_CHP,optime_proxy,2019-04-28,2019-05-03,4.6,7,8
+"Spruance Genco, LLC",54081,BLR04B,14.3,114.8,12.5,ST_CHP,optime_proxy,2019-11-16,2019-11-20,3.9,7,8
+"Spruance Genco, LLC",54081,BLR04B,14.3,114.8,12.5,ST_CHP,optime_proxy,2019-12-12,2019-12-13,1.3,7,8
 "Spruance Operating Services, LLC",54081,BLR04B,28.7,114.8,25.0,ST_CHP,optime_proxy,2020-01-27,2020-01-28,1.5,3,4
 "Spruance Operating Services, LLC",54081,BLR04B,28.7,114.8,25.0,ST_CHP,optime_proxy,2020-10-20,2020-10-22,1.3,3,4
 "Spruance Operating Services, LLC",54081,BLR04B,28.7,114.8,25.0,ST_CHP,optime_proxy,2020-11-10,2020-11-12,2.2,3,4
@@ -763,6 +850,8 @@ Ingredion Incorporated Argo Plant,54556,B07,13.7,54.6,25.0,ST_CHP,optime_proxy,2
 Ingredion Incorporated Argo Plant,54556,B07,13.7,54.6,25.0,ST_CHP,optime_proxy,2022-07-22,2022-07-25,2.6,3,4
 Ingredion Incorporated Argo Plant,54556,B07,13.7,54.6,25.0,ST_CHP,optime_proxy,2023-07-12,2023-07-14,2.0,3,4
 Ingredion Incorporated Argo Plant,54556,B07,13.7,54.6,25.0,ST_CHP,optime_proxy,2025-06-26,2025-07-01,4.9,3,4
+Ingredion Incorporated Argo Plant,54556,B08,13.7,54.6,25.0,ST_CHP,optime_proxy,2019-05-29,2019-05-31,1.8,3,4
+Ingredion Incorporated Argo Plant,54556,B08,13.7,54.6,25.0,ST_CHP,optime_proxy,2019-05-31,2019-06-03,2.7,3,4
 Ingredion Incorporated Argo Plant,54556,B08,13.7,54.6,25.0,ST_CHP,optime_proxy,2020-04-23,2020-04-24,1.4,3,4
 Ingredion Incorporated Argo Plant,54556,B08,13.7,54.6,25.0,ST_CHP,optime_proxy,2020-09-29,2020-10-01,2.2,3,4
 Ingredion Incorporated Argo Plant,54556,B08,13.7,54.6,25.0,ST_CHP,optime_proxy,2021-05-04,2021-05-06,2.0,3,4
@@ -775,8 +864,11 @@ Ingredion Incorporated Argo Plant,54556,B10,13.7,54.6,25.0,ST_CHP,optime_proxy,2
 Ingredion Incorporated Argo Plant,54556,B10,13.7,54.6,25.0,ST_CHP,optime_proxy,2023-06-02,2023-06-04,2.4,3,4
 Ingredion Incorporated Argo Plant,54556,B10,13.7,54.6,25.0,ST_CHP,optime_proxy,2023-07-02,2023-07-04,2.0,3,4
 Ingredion Incorporated Argo Plant,54556,B10,13.7,54.6,25.0,ST_CHP,optime_proxy,2025-10-28,2025-10-30,1.7,3,4
+Grays Ferry Cogen Partnership,54785,25,56.6,191.6,29.5,ST_CHP,optime_proxy_steam,2019-06-03,2019-06-07,3.3,1,2
 Grays Ferry Cogen Partnership,54785,25,56.6,191.6,29.5,ST_CHP,optime_proxy_steam,2020-09-28,2020-09-30,2.8,1,2
 Grays Ferry Cogen Partnership,54785,25,56.6,191.6,29.5,ST_CHP,optime_proxy_steam,2025-05-15,2025-05-16,1.0,1,2
+"American Sugar Refining, Inc.",54795,C6,17.5,17.5,100.0,ST_CHP,optime_proxy,2019-08-16,2019-08-18,2.0,0,1
+"American Sugar Refining, Inc.",54795,C6,17.5,17.5,100.0,ST_CHP,optime_proxy,2019-11-11,2019-11-13,1.9,0,1
 "American Sugar Refining, Inc.",54795,C6,17.5,17.5,100.0,ST_CHP,optime_proxy,2020-01-18,2020-01-20,2.1,0,1
 "American Sugar Refining, Inc.",54795,C6,17.5,17.5,100.0,ST_CHP,optime_proxy,2020-06-05,2020-06-07,2.1,0,1
 "American Sugar Refining, Inc.",54795,C6,17.5,17.5,100.0,ST_CHP,optime_proxy,2020-07-03,2020-07-05,2.2,0,1
@@ -801,6 +893,7 @@ Grays Ferry Cogen Partnership,54785,25,56.6,191.6,29.5,ST_CHP,optime_proxy_steam
 "American Sugar Refining, Inc.",54795,C6,17.5,17.5,100.0,ST_CHP,optime_proxy,2024-12-21,2024-12-26,4.5,0,1
 "American Sugar Refining, Inc.",54795,C6,17.5,17.5,100.0,ST_CHP,optime_proxy,2025-12-12,2025-12-14,2.8,0,1
 "American Sugar Refining, Inc.",54795,C6,17.5,17.5,100.0,ST_CHP,optime_proxy,2025-12-30,2025-12-31,1.2,0,1
+Brandywine Power Facility,54832,1,144.4,288.8,50.0,CC_CHP,eia_exact_cc,2019-12-16,2019-12-19,2.1,1,2
 Brandywine Power Facility,54832,1,144.4,288.8,50.0,CC_CHP,eia_exact_cc,2020-01-18,2020-01-21,3.9,1,2
 Brandywine Power Facility,54832,1,144.4,288.8,50.0,CC_CHP,eia_exact_cc,2020-02-15,2020-02-19,4.1,1,2
 Brandywine Power Facility,54832,1,144.4,288.8,50.0,CC_CHP,eia_exact_cc,2020-02-27,2020-03-02,3.1,1,2
@@ -825,6 +918,8 @@ Brandywine Power Facility,54832,1,144.4,288.8,50.0,CC_CHP,eia_exact_cc,2024-03-2
 Brandywine Power Facility,54832,1,144.4,288.8,50.0,CC_CHP,eia_exact_cc,2025-02-19,2025-02-21,1.5,1,2
 Brandywine Power Facility,54832,1,144.4,288.8,50.0,CC_CHP,eia_exact_cc,2025-12-13,2025-12-14,2.0,1,2
 Brandywine Power Facility,54832,1,144.4,288.8,50.0,CC_CHP,eia_exact_cc,2025-12-15,2025-12-17,1.2,1,2
+Brandywine Power Facility,54832,2,144.4,288.8,50.0,CC_CHP,eia_exact_cc,2019-12-12,2019-12-16,3.3,1,2
+Brandywine Power Facility,54832,2,144.4,288.8,50.0,CC_CHP,eia_exact_cc,2019-12-17,2019-12-19,2.0,1,2
 Brandywine Power Facility,54832,2,144.4,288.8,50.0,CC_CHP,eia_exact_cc,2020-01-18,2020-01-21,3.8,1,2
 Brandywine Power Facility,54832,2,144.4,288.8,50.0,CC_CHP,eia_exact_cc,2020-02-15,2020-02-19,4.1,1,2
 Brandywine Power Facility,54832,2,144.4,288.8,50.0,CC_CHP,eia_exact_cc,2020-02-28,2020-03-02,2.6,1,2
@@ -851,6 +946,7 @@ Brandywine Power Facility,54832,2,144.4,288.8,50.0,CC_CHP,eia_exact_cc,2024-03-2
 Brandywine Power Facility,54832,2,144.4,288.8,50.0,CC_CHP,eia_exact_cc,2025-02-19,2025-02-21,1.6,1,2
 Brandywine Power Facility,54832,2,144.4,288.8,50.0,CC_CHP,eia_exact_cc,2025-12-13,2025-12-14,2.0,1,2
 Brandywine Power Facility,54832,2,144.4,288.8,50.0,CC_CHP,eia_exact_cc,2025-12-15,2025-12-17,1.2,1,2
+Gordonsville Power Station,54844,1,150.2,300.4,50.0,CC_REGULAR,eia_digits_cc,2019-09-11,2019-09-13,2.2,1,2
 Gordonsville Power Station,54844,1,150.2,300.4,50.0,CC_REGULAR,eia_digits_cc,2021-04-15,2021-04-16,1.4,1,2
 Gordonsville Power Station,54844,1,150.2,300.4,50.0,CC_REGULAR,eia_digits_cc,2021-06-04,2021-06-08,3.6,1,2
 Gordonsville Power Station,54844,1,150.2,300.4,50.0,CC_REGULAR,eia_digits_cc,2023-01-11,2023-01-13,2.5,1,2
@@ -862,6 +958,8 @@ Gordonsville Power Station,54844,2,150.2,300.4,50.0,CC_REGULAR,eia_digits_cc,202
 Gordonsville Power Station,54844,2,150.2,300.4,50.0,CC_REGULAR,eia_digits_cc,2024-10-26,2024-10-29,2.4,1,2
 Gordonsville Power Station,54844,2,150.2,300.4,50.0,CC_REGULAR,eia_digits_cc,2024-10-29,2024-11-02,4.0,1,2
 Gordonsville Power Station,54844,2,150.2,300.4,50.0,CC_REGULAR,eia_digits_cc,2025-03-04,2025-03-08,4.5,1,2
+Kendall Energy Facility,55131,GTG-1,323.0,1304.0,24.8,CC_REGULAR,observed_peak,2019-01-15,2019-01-16,1.1,3,4
+Kendall Energy Facility,55131,GTG-1,323.0,1304.0,24.8,CC_REGULAR,observed_peak,2019-05-03,2019-05-07,4.0,3,4
 Kendall Energy Facility,55131,GTG-1,322.0,1304.0,24.7,CC_REGULAR,observed_peak,2020-02-04,2020-02-09,4.6,3,4
 Kendall Energy Facility,55131,GTG-1,322.0,1304.0,24.7,CC_REGULAR,observed_peak,2020-05-07,2020-05-11,4.2,3,4
 Kendall Energy Facility,55131,GTG-1,322.0,1304.0,24.7,CC_REGULAR,observed_peak,2020-06-01,2020-06-04,2.8,3,4
@@ -881,6 +979,9 @@ Kendall Energy Facility,55131,GTG-1,320.0,1302.0,24.6,CC_REGULAR,observed_peak,2
 Kendall Energy Facility,55131,GTG-1,320.0,1302.0,24.6,CC_REGULAR,observed_peak,2024-07-16,2024-07-17,1.1,3,4
 Kendall Energy Facility,55131,GTG-1,330.0,1300.0,25.4,CC_REGULAR,observed_peak,2025-05-12,2025-05-13,1.1,3,4
 Kendall Energy Facility,55131,GTG-1,330.0,1300.0,25.4,CC_REGULAR,observed_peak,2025-10-23,2025-10-27,4.9,3,4
+Kendall Energy Facility,55131,GTG-2,329.0,1304.0,25.2,CC_REGULAR,observed_peak,2019-01-15,2019-01-16,1.1,3,4
+Kendall Energy Facility,55131,GTG-2,329.0,1304.0,25.2,CC_REGULAR,observed_peak,2019-06-27,2019-06-28,1.2,3,4
+Kendall Energy Facility,55131,GTG-2,329.0,1304.0,25.2,CC_REGULAR,observed_peak,2019-11-15,2019-11-20,4.1,3,4
 Kendall Energy Facility,55131,GTG-2,329.0,1304.0,25.2,CC_REGULAR,observed_peak,2020-05-07,2020-05-11,4.0,3,4
 Kendall Energy Facility,55131,GTG-2,329.0,1304.0,25.2,CC_REGULAR,observed_peak,2020-11-18,2020-11-20,1.6,3,4
 Kendall Energy Facility,55131,GTG-2,329.0,1298.0,25.3,CC_REGULAR,observed_peak,2021-06-29,2021-07-01,2.0,3,4
@@ -951,6 +1052,7 @@ Nelson Energy Center,55183,2,313.0,628.0,49.8,CC_REGULAR,observed_peak,2024-05-0
 Nelson Energy Center,55183,2,313.0,628.0,49.8,CC_REGULAR,observed_peak,2024-12-12,2024-12-15,2.7,1,2
 Nelson Energy Center,55183,2,314.0,630.0,49.8,CC_REGULAR,observed_peak,2025-09-13,2025-09-15,1.9,1,2
 Nelson Energy Center,55183,2,314.0,630.0,49.8,CC_REGULAR,observed_peak,2025-09-15,2025-09-16,1.2,1,2
+Cordova Energy Company,55188,1,295.0,592.0,49.8,CC_REGULAR,observed_peak,2019-04-23,2019-04-24,1.7,1,2
 Cordova Energy Company,55188,1,302.0,600.0,50.3,CC_REGULAR,observed_peak,2020-03-26,2020-03-31,4.9,1,2
 Cordova Energy Company,55188,1,302.0,600.0,50.3,CC_REGULAR,observed_peak,2020-05-28,2020-06-02,4.6,1,2
 Cordova Energy Company,55188,1,302.0,600.0,50.3,CC_REGULAR,observed_peak,2020-07-24,2020-07-27,2.2,1,2
@@ -1047,16 +1149,21 @@ Liberty Electric Power Plant,55231,0002,303.0,605.0,50.1,CC_REGULAR,observed_pea
 "Red Oak Power, LLC",55239,3,291.0,873.0,33.3,CC_REGULAR,observed_peak,2024-03-23,2024-03-28,4.2,2,3
 "Red Oak Power, LLC",55239,3,291.0,873.0,33.3,CC_REGULAR,observed_peak,2024-12-21,2024-12-23,1.2,2,3
 "Red Oak Power, LLC",55239,3,282.0,845.0,33.4,CC_REGULAR,observed_peak,2025-01-15,2025-01-19,4.5,2,3
+Covert Generating Station,55297,001,375.0,1231.0,30.5,CC_REGULAR,observed_peak,2019-02-23,2019-02-27,4.0,2,3
 New Covert Generating Project,55297,001,411.0,1237.0,33.2,CC_REGULAR,observed_peak,2021-08-10,2021-08-13,3.1,2,3
 Covert Generating Station,55297,001,413.0,1230.0,33.6,CC_REGULAR,observed_peak,2023-11-08,2023-11-10,2.8,2,3
 Covert Generating Station,55297,001,419.0,1239.0,33.8,CC_REGULAR,observed_peak,2024-07-09,2024-07-13,3.5,2,3
 Covert Generating Station,55297,001,419.0,1239.0,33.8,CC_REGULAR,observed_peak,2024-12-19,2024-12-21,2.1,2,3
 Covert Generating Station,55297,001,411.0,1234.0,33.3,CC_REGULAR,observed_peak,2025-12-16,2025-12-19,3.2,2,3
+Covert Generating Station,55297,002,431.0,1231.0,35.0,CC_REGULAR,observed_peak,2019-06-01,2019-06-06,4.2,2,3
 New Covert Generating Project,55297,002,415.0,1237.0,33.5,CC_REGULAR,observed_peak,2021-02-17,2021-02-18,1.0,2,3
 New Covert Generating Project,55297,002,415.0,1237.0,33.5,CC_REGULAR,observed_peak,2021-05-23,2021-05-28,4.7,2,3
 Covert Generating Station,55297,002,397.0,1228.0,32.3,CC_REGULAR,observed_peak,2022-01-29,2022-01-31,2.5,2,3
 Covert Generating Station,55297,002,408.0,1239.0,32.9,CC_REGULAR,observed_peak,2024-07-09,2024-07-12,2.5,2,3
 Covert Generating Station,55297,002,414.0,1234.0,33.5,CC_REGULAR,observed_peak,2025-09-26,2025-09-27,1.5,2,3
+Covert Generating Station,55297,003,425.0,1231.0,34.5,CC_REGULAR,observed_peak,2019-01-11,2019-01-14,3.1,2,3
+Covert Generating Station,55297,003,425.0,1231.0,34.5,CC_REGULAR,observed_peak,2019-11-07,2019-11-09,1.3,2,3
+Covert Generating Station,55297,003,425.0,1231.0,34.5,CC_REGULAR,observed_peak,2019-11-14,2019-11-15,1.7,2,3
 New Covert Generating Project,55297,003,411.0,1237.0,33.2,CC_REGULAR,observed_peak,2021-11-28,2021-11-30,1.8,2,3
 Covert Generating Station,55297,003,413.0,1228.0,33.6,CC_REGULAR,observed_peak,2022-12-04,2022-12-06,2.2,2,3
 Covert Generating Station,55297,003,412.0,1239.0,33.3,CC_REGULAR,observed_peak,2024-07-09,2024-07-13,3.6,2,3
@@ -1071,6 +1178,8 @@ Fairless Energy Center,55298,1A,333.0,1329.0,25.1,CC_REGULAR,observed_peak,2021-
 Fairless Energy Center,55298,1A,342.0,1346.0,25.4,CC_REGULAR,observed_peak,2022-05-14,2022-05-15,1.6,3,4
 Fairless Energy Center,55298,1A,342.0,1347.0,25.4,CC_REGULAR,observed_peak,2023-01-21,2023-01-25,3.9,3,4
 Fairless Energy Center,55298,1A,332.0,1319.0,25.2,CC_REGULAR,observed_peak,2024-05-23,2024-05-25,1.5,3,4
+Fairless Energy Center,55298,1B,341.0,1362.0,25.0,CC_REGULAR,observed_peak,2019-01-21,2019-01-23,1.2,3,4
+Fairless Energy Center,55298,1B,341.0,1362.0,25.0,CC_REGULAR,observed_peak,2019-10-02,2019-10-04,2.0,3,4
 Fairless Energy Center,55298,1B,337.0,1356.0,24.9,CC_REGULAR,observed_peak,2020-05-11,2020-05-13,2.8,3,4
 Fairless Energy Center,55298,1B,337.0,1356.0,24.9,CC_REGULAR,observed_peak,2020-12-17,2020-12-18,1.0,3,4
 Fairless Energy Center,55298,1B,328.0,1329.0,24.7,CC_REGULAR,observed_peak,2021-02-17,2021-02-19,2.9,3,4
@@ -1078,6 +1187,10 @@ Fairless Energy Center,55298,1B,328.0,1329.0,24.7,CC_REGULAR,observed_peak,2021-
 Fairless Energy Center,55298,1B,331.0,1346.0,24.6,CC_REGULAR,observed_peak,2022-05-14,2022-05-15,1.5,3,4
 Fairless Energy Center,55298,1B,333.0,1347.0,24.7,CC_REGULAR,observed_peak,2023-01-21,2023-01-25,3.8,3,4
 Fairless Energy Center,55298,1B,322.0,1319.0,24.4,CC_REGULAR,observed_peak,2024-05-23,2024-05-25,1.5,3,4
+Fairless Energy Center,55298,2A,339.0,1362.0,24.9,CC_REGULAR,observed_peak,2019-01-30,2019-01-31,1.1,3,4
+Fairless Energy Center,55298,2A,339.0,1362.0,24.9,CC_REGULAR,observed_peak,2019-02-01,2019-02-02,1.8,3,4
+Fairless Energy Center,55298,2A,339.0,1362.0,24.9,CC_REGULAR,observed_peak,2019-03-05,2019-03-08,2.7,3,4
+Fairless Energy Center,55298,2A,339.0,1362.0,24.9,CC_REGULAR,observed_peak,2019-05-31,2019-06-01,1.3,3,4
 Fairless Energy Center,55298,2A,337.0,1356.0,24.9,CC_REGULAR,observed_peak,2020-05-14,2020-05-16,2.3,3,4
 Fairless Energy Center,55298,2A,337.0,1356.0,24.9,CC_REGULAR,observed_peak,2020-10-21,2020-10-25,4.8,3,4
 Fairless Energy Center,55298,2A,333.0,1329.0,25.1,CC_REGULAR,observed_peak,2021-01-29,2021-02-01,3.1,3,4
@@ -1086,6 +1199,10 @@ Fairless Energy Center,55298,2A,333.0,1329.0,25.1,CC_REGULAR,observed_peak,2021-
 Fairless Energy Center,55298,2A,337.0,1346.0,25.0,CC_REGULAR,observed_peak,2022-01-07,2022-01-11,3.8,3,4
 Fairless Energy Center,55298,2A,337.0,1346.0,25.0,CC_REGULAR,observed_peak,2022-01-27,2022-01-28,1.5,3,4
 Fairless Energy Center,55298,2A,332.0,1319.0,25.2,CC_REGULAR,observed_peak,2024-09-20,2024-09-21,1.3,3,4
+Fairless Energy Center,55298,2B,341.0,1362.0,25.0,CC_REGULAR,observed_peak,2019-01-30,2019-01-31,1.1,3,4
+Fairless Energy Center,55298,2B,341.0,1362.0,25.0,CC_REGULAR,observed_peak,2019-01-31,2019-02-03,3.1,3,4
+Fairless Energy Center,55298,2B,341.0,1362.0,25.0,CC_REGULAR,observed_peak,2019-05-31,2019-06-01,1.3,3,4
+Fairless Energy Center,55298,2B,341.0,1362.0,25.0,CC_REGULAR,observed_peak,2019-12-18,2019-12-19,1.2,3,4
 Fairless Energy Center,55298,2B,340.0,1356.0,25.1,CC_REGULAR,observed_peak,2020-05-14,2020-05-16,2.2,3,4
 Fairless Energy Center,55298,2B,340.0,1356.0,25.1,CC_REGULAR,observed_peak,2020-10-21,2020-10-25,4.8,3,4
 Fairless Energy Center,55298,2B,335.0,1329.0,25.2,CC_REGULAR,observed_peak,2021-01-29,2021-02-01,3.0,3,4
@@ -1121,6 +1238,7 @@ Tenaska Virginia Generating Station,55439,CTGDB2,337.1,998.3,33.8,CC_REGULAR,eia
 Tenaska Virginia Generating Station,55439,CTGDB2,337.1,998.3,33.8,CC_REGULAR,eia_digits_cc,2022-12-17,2022-12-20,3.2,2,3
 Tenaska Virginia Generating Station,55439,CTGDB2,337.1,998.3,33.8,CC_REGULAR,eia_digits_cc,2022-12-23,2022-12-28,4.8,2,3
 Tenaska Virginia Generating Station,55439,CTGDB2,337.1,1002.3,33.6,CC_REGULAR,eia_digits_cc,2024-11-14,2024-11-15,1.1,2,3
+Tenaska Virginia Generating Station,55439,CTGDB3,337.1,1012.3,33.3,CC_REGULAR,eia_digits_cc,2019-08-04,2019-08-05,1.1,2,3
 Tenaska Virginia Generating Station,55439,CTGDB3,337.1,1007.3,33.5,CC_REGULAR,eia_digits_cc,2020-11-11,2020-11-16,4.8,2,3
 Tenaska Virginia Generating Station,55439,CTGDB3,337.1,1007.3,33.5,CC_REGULAR,eia_digits_cc,2020-12-09,2020-12-14,4.8,2,3
 Tenaska Virginia Generating Station,55439,CTGDB3,337.1,998.3,33.8,CC_REGULAR,eia_digits_cc,2022-01-07,2022-01-08,1.0,2,3
@@ -1138,6 +1256,8 @@ Lawrenceburg Energy Facility,55502,1,319.0,1284.0,24.8,CC_REGULAR,observed_peak,
 Lawrenceburg Energy Facility,55502,1,319.0,1284.0,24.8,CC_REGULAR,observed_peak,2023-09-11,2023-09-13,1.7,3,4
 Lawrenceburg Energy Facility,55502,2,350.0,1344.0,26.0,CC_REGULAR,observed_peak,2021-09-17,2021-09-20,3.2,3,4
 Lawrenceburg Energy Facility,55502,2,321.0,1282.0,25.0,CC_REGULAR,observed_peak,2024-05-04,2024-05-08,4.8,3,4
+Lawrenceburg Energy Facility,55502,3,328.0,1316.0,24.9,CC_REGULAR,observed_peak,2019-05-24,2019-05-26,2.6,3,4
+Lawrenceburg Energy Facility,55502,3,328.0,1316.0,24.9,CC_REGULAR,observed_peak,2019-09-20,2019-09-25,4.2,3,4
 Lawrenceburg Energy Facility,55502,3,331.0,1297.0,25.5,CC_REGULAR,observed_peak,2020-09-25,2020-09-27,2.3,3,4
 Lawrenceburg Energy Facility,55502,3,330.0,1344.0,24.6,CC_REGULAR,observed_peak,2021-03-15,2021-03-16,1.5,3,4
 Lawrenceburg Energy Facility,55502,3,322.0,1282.0,25.1,CC_REGULAR,observed_peak,2024-05-20,2024-05-22,2.6,3,4
@@ -1162,6 +1282,11 @@ Waterford Plant,55503,3,307.2,955.4,32.2,CC_REGULAR,eia_digits_cc,2024-03-16,202
 Fayette Power Company LLC,55516,CTG1,357.5,714.9,50.0,CC_REGULAR,eia_exact_cc,2021-04-27,2021-05-01,4.2,1,2
 Fayette Power Company LLC,55516,CTG1,357.5,714.9,50.0,CC_REGULAR,eia_exact_cc,2024-04-30,2024-05-02,1.3,1,2
 Fayette Power Company LLC,55516,CTG2,357.5,714.9,50.0,CC_REGULAR,eia_exact_cc,2020-05-02,2020-05-06,3.5,1,2
+York Energy Center,55524,1,232.0,1429.2,16.2,CC_REGULAR,observed_peak,2019-05-26,2019-05-29,2.3,4,5
+York Energy Center,55524,1,232.0,1429.2,16.2,CC_REGULAR,observed_peak,2019-09-08,2019-09-10,1.4,4,5
+York Energy Center,55524,1,232.0,1429.2,16.2,CC_REGULAR,observed_peak,2019-10-02,2019-10-07,4.1,4,5
+York Energy Center,55524,1,232.0,1429.2,16.2,CC_REGULAR,observed_peak,2019-11-14,2019-11-19,4.7,4,5
+York Energy Center,55524,1,232.0,1429.2,16.2,CC_REGULAR,observed_peak,2019-12-18,2019-12-19,1.3,4,5
 York Energy Center,55524,1,194.0,1419.2,13.7,CC_REGULAR,observed_peak,2020-05-23,2020-05-27,4.5,4,5
 York Energy Center,55524,1,198.0,1423.2,13.9,CC_REGULAR,observed_peak,2021-01-04,2021-01-08,3.4,4,5
 York Energy Center,55524,1,198.0,1423.2,13.9,CC_REGULAR,observed_peak,2021-04-06,2021-04-08,1.2,4,5
@@ -1181,6 +1306,12 @@ York Energy Center,55524,2,192.0,1415.2,13.6,CC_REGULAR,observed_peak,2022-06-15
 York Energy Center,55524,2,192.0,1415.2,13.6,CC_REGULAR,observed_peak,2022-11-16,2022-11-17,1.5,4,5
 York Energy Center,55524,2,192.0,1415.2,13.6,CC_REGULAR,observed_peak,2022-12-24,2022-12-28,3.7,4,5
 York Energy Center,55524,2,192.0,1415.2,13.6,CC_REGULAR,observed_peak,2024-03-21,2024-03-22,1.4,4,5
+York Energy Center,55524,3,209.6,1429.2,14.7,CC_REGULAR,eia_digits_cc,2019-02-27,2019-03-02,2.2,4,5
+York Energy Center,55524,3,209.6,1429.2,14.7,CC_REGULAR,eia_digits_cc,2019-05-09,2019-05-14,4.3,4,5
+York Energy Center,55524,3,209.6,1429.2,14.7,CC_REGULAR,eia_digits_cc,2019-05-26,2019-05-29,2.5,4,5
+York Energy Center,55524,3,209.6,1429.2,14.7,CC_REGULAR,eia_digits_cc,2019-09-08,2019-09-10,1.5,4,5
+York Energy Center,55524,3,209.6,1429.2,14.7,CC_REGULAR,eia_digits_cc,2019-10-02,2019-10-07,4.3,4,5
+York Energy Center,55524,3,209.6,1429.2,14.7,CC_REGULAR,eia_digits_cc,2019-11-14,2019-11-19,4.8,4,5
 York Energy Center,55524,3,209.6,1419.2,14.8,CC_REGULAR,eia_digits_cc,2020-05-23,2020-05-27,4.6,4,5
 York Energy Center,55524,3,209.6,1423.2,14.7,CC_REGULAR,eia_digits_cc,2021-01-12,2021-01-14,2.2,4,5
 York Energy Center,55524,3,209.6,1423.2,14.7,CC_REGULAR,eia_digits_cc,2021-05-20,2021-05-21,1.1,4,5
@@ -1190,7 +1321,10 @@ York Energy Center,55524,3,209.6,1415.2,14.8,CC_REGULAR,eia_digits_cc,2022-06-15
 York Energy Center,55524,3,209.6,1415.2,14.8,CC_REGULAR,eia_digits_cc,2022-12-24,2022-12-28,3.7,4,5
 York Energy Center,55524,3,209.6,1419.2,14.8,CC_REGULAR,eia_digits_cc,2023-07-05,2023-07-07,2.2,4,5
 York Energy Center,55524,3,209.6,1415.2,14.8,CC_REGULAR,eia_digits_cc,2024-05-21,2024-05-24,2.6,4,5
+York Energy Center,55524,5,410.3,1429.2,28.7,CC_REGULAR,eia_digits_cc,2019-05-23,2019-05-24,1.0,4,5
 York Energy Center,55524,5,410.3,1415.2,29.0,CC_REGULAR,eia_digits_cc,2022-01-25,2022-01-27,1.9,4,5
+York Energy Center,55524,6,410.3,1429.2,28.7,CC_REGULAR,eia_digits_cc,2019-07-27,2019-07-30,3.2,4,5
+York Energy Center,55524,6,410.3,1429.2,28.7,CC_REGULAR,eia_digits_cc,2019-12-11,2019-12-15,4.1,4,5
 York Energy Center,55524,6,410.3,1419.2,28.9,CC_REGULAR,eia_digits_cc,2020-12-08,2020-12-11,3.0,4,5
 York Energy Center,55524,6,410.3,1415.2,29.0,CC_REGULAR,eia_digits_cc,2022-01-30,2022-01-31,1.2,4,5
 York Energy Center,55524,6,410.3,1415.2,29.0,CC_REGULAR,eia_digits_cc,2022-12-24,2022-12-26,1.9,4,5
@@ -1204,6 +1338,8 @@ York Energy Center,55524,6,410.3,1415.2,29.0,CC_REGULAR,eia_digits_cc,2022-12-24
 "Lower Mount Bethel Energy, LLC",55667,CT01,337.0,683.0,49.3,CC_REGULAR,observed_peak,2023-06-27,2023-06-30,2.8,1,2
 "Lower Mount Bethel Energy, LLC",55667,CT01,334.0,668.0,50.0,CC_REGULAR,observed_peak,2024-10-24,2024-10-27,3.8,1,2
 "Lower Mount Bethel Energy, LLC",55667,CT01,334.0,668.0,50.0,CC_REGULAR,observed_peak,2024-12-12,2024-12-13,1.3,1,2
+"Lower Mount Bethel Energy, LLC",55667,CT02,329.0,663.0,49.6,CC_REGULAR,observed_peak,2019-04-22,2019-04-24,1.5,1,2
+"Lower Mount Bethel Energy, LLC",55667,CT02,329.0,663.0,49.6,CC_REGULAR,observed_peak,2019-04-25,2019-04-26,1.1,1,2
 "Lower Mount Bethel Energy, LLC",55667,CT02,335.0,674.0,49.7,CC_REGULAR,observed_peak,2020-06-08,2020-06-11,3.5,1,2
 "Lower Mount Bethel Energy, LLC",55667,CT02,335.0,674.0,49.7,CC_REGULAR,observed_peak,2020-08-23,2020-08-26,3.0,1,2
 "Lower Mount Bethel Energy, LLC",55667,CT02,335.0,674.0,49.7,CC_REGULAR,observed_peak,2020-11-29,2020-12-03,4.8,1,2
@@ -1211,6 +1347,9 @@ York Energy Center,55524,6,410.3,1415.2,29.0,CC_REGULAR,eia_digits_cc,2022-12-24
 "Lower Mount Bethel Energy, LLC",55667,CT02,368.0,707.0,52.1,CC_REGULAR,observed_peak,2021-02-01,2021-02-04,3.3,1,2
 "Lower Mount Bethel Energy, LLC",55667,CT02,368.0,707.0,52.1,CC_REGULAR,observed_peak,2021-08-27,2021-08-29,1.8,1,2
 "Lower Mount Bethel Energy, LLC",55667,CT02,336.0,734.0,45.8,CC_REGULAR,observed_peak,2022-11-20,2022-11-22,1.7,1,2
+Bethlehem Power Plant,55690,1,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2019-01-20,2019-01-23,3.2,5,6
+Bethlehem Power Plant,55690,1,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2019-02-01,2019-02-02,1.2,5,6
+Bethlehem Power Plant,55690,1,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2019-12-18,2019-12-20,1.8,5,6
 Bethlehem Power Plant,55690,1,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2020-12-18,2020-12-21,3.1,5,6
 Bethlehem Power Plant,55690,1,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2021-02-12,2021-02-17,4.9,5,6
 Bethlehem Power Plant,55690,1,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2021-04-13,2021-04-16,3.2,5,6
@@ -1224,6 +1363,11 @@ Bethlehem Power Plant,55690,1,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2023-05
 Bethlehem Power Plant,55690,1,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2023-07-16,2023-07-18,1.5,5,6
 Bethlehem Power Plant,55690,1,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2024-12-13,2024-12-15,1.9,5,6
 Bethlehem Power Plant,55690,1,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2025-12-03,2025-12-05,2.1,5,6
+Bethlehem Power Plant,55690,2,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2019-01-19,2019-01-23,4.2,5,6
+Bethlehem Power Plant,55690,2,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2019-02-01,2019-02-02,1.2,5,6
+Bethlehem Power Plant,55690,2,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2019-03-01,2019-03-05,3.5,5,6
+Bethlehem Power Plant,55690,2,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2019-05-02,2019-05-04,1.5,5,6
+Bethlehem Power Plant,55690,2,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2019-12-18,2019-12-19,1.2,5,6
 Bethlehem Power Plant,55690,2,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2020-12-18,2020-12-21,3.1,5,6
 Bethlehem Power Plant,55690,2,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2021-05-25,2021-05-27,2.4,5,6
 Bethlehem Power Plant,55690,2,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2021-09-19,2021-09-22,2.2,5,6
@@ -1234,6 +1378,9 @@ Bethlehem Power Plant,55690,2,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2022-01
 Bethlehem Power Plant,55690,2,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2022-02-05,2022-02-10,4.7,5,6
 Bethlehem Power Plant,55690,2,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2022-11-15,2022-11-19,3.9,5,6
 Bethlehem Power Plant,55690,2,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2024-04-15,2024-04-18,3.4,5,6
+Bethlehem Power Plant,55690,3,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2019-01-20,2019-01-23,3.3,5,6
+Bethlehem Power Plant,55690,3,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2019-02-01,2019-02-02,1.2,5,6
+Bethlehem Power Plant,55690,3,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2019-02-28,2019-03-05,4.5,5,6
 Bethlehem Power Plant,55690,3,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2020-12-18,2020-12-21,3.1,5,6
 Bethlehem Power Plant,55690,3,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2021-08-22,2021-08-24,2.4,5,6
 Bethlehem Power Plant,55690,3,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2021-12-15,2021-12-20,4.6,5,6
@@ -1243,6 +1390,10 @@ Bethlehem Power Plant,55690,3,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2022-01
 Bethlehem Power Plant,55690,3,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2022-02-05,2022-02-10,4.8,5,6
 Bethlehem Power Plant,55690,3,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2022-02-21,2022-02-24,2.7,5,6
 Bethlehem Power Plant,55690,3,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2023-02-03,2023-02-04,1.2,5,6
+Bethlehem Power Plant,55690,5,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2019-01-20,2019-01-22,1.8,5,6
+Bethlehem Power Plant,55690,5,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2019-01-31,2019-02-02,1.7,5,6
+Bethlehem Power Plant,55690,5,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2019-04-30,2019-05-02,1.2,5,6
+Bethlehem Power Plant,55690,5,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2019-05-29,2019-05-31,2.4,5,6
 Bethlehem Power Plant,55690,5,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2020-07-21,2020-07-25,4.0,5,6
 Bethlehem Power Plant,55690,5,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2020-12-18,2020-12-22,3.8,5,6
 Bethlehem Power Plant,55690,5,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2021-04-13,2021-04-16,3.2,5,6
@@ -1256,6 +1407,10 @@ Bethlehem Power Plant,55690,5,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2023-12
 Bethlehem Power Plant,55690,5,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2025-03-26,2025-03-28,1.6,5,6
 Bethlehem Power Plant,55690,5,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2025-05-05,2025-05-08,2.2,5,6
 Bethlehem Power Plant,55690,5,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2025-09-17,2025-09-19,1.6,5,6
+Bethlehem Power Plant,55690,6,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2019-01-18,2019-01-22,3.2,5,6
+Bethlehem Power Plant,55690,6,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2019-01-31,2019-02-02,1.7,5,6
+Bethlehem Power Plant,55690,6,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2019-04-30,2019-05-02,1.2,5,6
+Bethlehem Power Plant,55690,6,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2019-12-18,2019-12-20,2.0,5,6
 Bethlehem Power Plant,55690,6,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2020-07-21,2020-07-25,3.9,5,6
 Bethlehem Power Plant,55690,6,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2020-10-28,2020-10-29,1.1,5,6
 Bethlehem Power Plant,55690,6,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2020-12-18,2020-12-22,3.8,5,6
@@ -1274,6 +1429,9 @@ Bethlehem Power Plant,55690,6,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2025-05
 Bethlehem Power Plant,55690,6,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2025-07-11,2025-07-13,2.3,5,6
 Bethlehem Power Plant,55690,6,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2025-09-11,2025-09-14,3.0,5,6
 Bethlehem Power Plant,55690,6,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2025-11-12,2025-11-15,3.0,5,6
+Bethlehem Power Plant,55690,7,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2019-01-18,2019-01-22,3.3,5,6
+Bethlehem Power Plant,55690,7,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2019-01-31,2019-02-02,1.7,5,6
+Bethlehem Power Plant,55690,7,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2019-04-30,2019-05-04,3.7,5,6
 Bethlehem Power Plant,55690,7,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2020-07-21,2020-07-25,3.8,5,6
 Bethlehem Power Plant,55690,7,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2020-12-18,2020-12-22,4.2,5,6
 Bethlehem Power Plant,55690,7,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2021-01-01,2021-01-05,4.4,5,6
@@ -1286,15 +1444,18 @@ Bethlehem Power Plant,55690,7,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2022-01
 Bethlehem Power Plant,55690,7,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2022-01-21,2022-01-24,2.8,5,6
 Bethlehem Power Plant,55690,7,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2022-01-25,2022-01-30,4.8,5,6
 Bethlehem Power Plant,55690,7,192.2,1153.0,16.7,CC_REGULAR,eia_digits_cc,2022-12-24,2022-12-28,3.7,5,6
+Fremont Energy Center,55701,CT01,369.8,739.5,50.0,CC_REGULAR,eia_exact_cc,2019-12-17,2019-12-21,3.9,1,2
 Fremont Energy Center,55701,CT01,369.8,739.5,50.0,CC_REGULAR,eia_exact_cc,2021-10-15,2021-10-19,4.1,1,2
 Fremont Energy Center,55701,CT01,369.8,739.5,50.0,CC_REGULAR,eia_exact_cc,2023-07-07,2023-07-09,2.6,1,2
 Fremont Energy Center,55701,CT01,369.8,739.5,50.0,CC_REGULAR,eia_exact_cc,2023-12-16,2023-12-19,2.9,1,2
 Fremont Energy Center,55701,CT01,369.8,739.5,50.0,CC_REGULAR,eia_exact_cc,2023-12-21,2023-12-23,2.2,1,2
+Fremont Energy Center,55701,CT02,369.8,739.5,50.0,CC_REGULAR,eia_exact_cc,2019-09-15,2019-09-18,2.7,1,2
 Fremont Energy Center,55701,CT02,369.8,739.5,50.0,CC_REGULAR,eia_exact_cc,2020-07-22,2020-07-26,3.3,1,2
 Fremont Energy Center,55701,CT02,369.8,739.5,50.0,CC_REGULAR,eia_exact_cc,2021-10-15,2021-10-19,4.1,1,2
 Fremont Energy Center,55701,CT02,369.8,739.5,50.0,CC_REGULAR,eia_exact_cc,2023-06-18,2023-06-21,3.0,1,2
 Fremont Energy Center,55701,CT02,369.8,739.5,50.0,CC_REGULAR,eia_exact_cc,2023-12-16,2023-12-19,2.8,1,2
 Fremont Energy Center,55701,CT02,369.8,739.5,50.0,CC_REGULAR,eia_exact_cc,2023-12-21,2023-12-23,2.2,1,2
+Springdale Generating Station (55710),55710,3,278.0,556.0,50.0,CC_REGULAR,eia_digits_cc,2019-09-28,2019-10-02,4.3,1,2
 Springdale Generating Station (55710),55710,3,278.0,556.0,50.0,CC_REGULAR,eia_digits_cc,2021-12-13,2021-12-14,1.4,1,2
 Springdale Generating Station (55710),55710,3,278.0,556.0,50.0,CC_REGULAR,eia_digits_cc,2023-04-25,2023-04-28,2.4,1,2
 Springdale Generating Station (55710),55710,3,278.0,556.0,50.0,CC_REGULAR,eia_digits_cc,2023-12-18,2023-12-20,2.3,1,2
@@ -1303,17 +1464,21 @@ Springdale Generating Station (55710),55710,4,278.0,556.0,50.0,CC_REGULAR,eia_di
 Springdale Generating Station (55710),55710,4,278.0,556.0,50.0,CC_REGULAR,eia_digits_cc,2023-04-25,2023-04-28,2.7,1,2
 Springdale Generating Station (55710),55710,4,278.0,556.0,50.0,CC_REGULAR,eia_digits_cc,2023-10-30,2023-11-01,1.4,1,2
 Springdale Generating Station (55710),55710,4,278.0,556.0,50.0,CC_REGULAR,eia_digits_cc,2024-11-06,2024-11-08,1.8,1,2
+Hanging Rock Power Company LLC,55736,CTG1,317.1,1366.2,23.2,CC_REGULAR,eia_digits,2019-11-16,2019-11-19,3.8,3,4
 Hanging Rock Power Company LLC,55736,CTG1,317.1,1359.2,23.3,CC_REGULAR,eia_digits,2020-10-29,2020-11-01,2.8,3,4
 Hanging Rock Power Company LLC,55736,CTG1,317.1,1379.2,23.0,CC_REGULAR,eia_digits,2022-10-28,2022-10-29,1.8,3,4
 Hanging Rock Power Company LLC,55736,CTG1,317.1,1352.2,23.5,CC_REGULAR,eia_digits,2023-10-06,2023-10-09,4.0,3,4
 Hanging Rock Power Company LLC,55736,CTG1,317.1,1354.2,23.4,CC_REGULAR,eia_digits,2024-02-27,2024-03-01,3.2,3,4
+Hanging Rock Power Company LLC,55736,CTG2,317.1,1366.2,23.2,CC_REGULAR,eia_digits,2019-11-16,2019-11-19,3.7,3,4
 Hanging Rock Power Company LLC,55736,CTG2,317.1,1359.2,23.3,CC_REGULAR,eia_digits,2020-10-29,2020-11-01,2.8,3,4
 Hanging Rock Power Company LLC,55736,CTG2,317.1,1379.2,23.0,CC_REGULAR,eia_digits,2022-10-28,2022-10-29,1.6,3,4
 Hanging Rock Power Company LLC,55736,CTG2,317.1,1352.2,23.5,CC_REGULAR,eia_digits,2023-10-06,2023-10-09,3.9,3,4
 Hanging Rock Power Company LLC,55736,CTG2,317.1,1354.2,23.4,CC_REGULAR,eia_digits,2024-02-28,2024-03-02,2.9,3,4
 Hanging Rock Power Company LLC,55736,CTG2,317.1,1360.2,23.3,CC_REGULAR,eia_digits,2025-10-03,2025-10-05,2.8,3,4
+Hanging Rock Power Company LLC,55736,CTG3,364.0,1366.2,26.6,CC_REGULAR,observed_peak,2019-11-16,2019-11-19,3.4,3,4
 Hanging Rock Power Company LLC,55736,CTG3,363.0,1359.2,26.7,CC_REGULAR,observed_peak,2020-10-30,2020-11-01,2.8,3,4
 Hanging Rock Power Company LLC,55736,CTG3,359.0,1352.2,26.5,CC_REGULAR,observed_peak,2023-10-06,2023-10-09,3.2,3,4
+Hanging Rock Power Company LLC,55736,CTG4,368.0,1366.2,26.9,CC_REGULAR,observed_peak,2019-11-16,2019-11-19,3.5,3,4
 Hanging Rock Power Company LLC,55736,CTG4,362.0,1359.2,26.6,CC_REGULAR,observed_peak,2020-07-23,2020-07-24,1.8,3,4
 Hanging Rock Power Company LLC,55736,CTG4,362.0,1359.2,26.6,CC_REGULAR,observed_peak,2020-10-30,2020-11-01,2.8,3,4
 Hanging Rock Power Company LLC,55736,CTG4,359.0,1352.2,26.5,CC_REGULAR,observed_peak,2023-10-06,2023-10-09,3.0,3,4
@@ -1349,6 +1514,7 @@ Hanging Rock Power Company LLC,55736,CTG4,359.0,1352.2,26.5,CC_REGULAR,observed_
 "Marcus Hook Energy, LP",55801,0003,310.0,928.0,33.4,CC_CHP,observed_peak,2022-01-30,2022-02-01,2.0,2,3
 "Marcus Hook Energy, LP",55801,0003,310.0,928.0,33.4,CC_CHP,observed_peak,2022-10-19,2022-10-21,1.2,2,3
 "Marcus Hook Energy, LP",55801,0003,313.0,934.0,33.5,CC_CHP,observed_peak,2023-01-12,2023-01-15,2.2,2,3
+Warren County Power Station,55939,1A,500.0,1498.0,33.4,CC_REGULAR,observed_peak,2019-02-18,2019-02-22,3.5,2,3
 Warren County Power Station,55939,1A,500.0,1497.0,33.4,CC_REGULAR,observed_peak,2021-02-12,2021-02-16,3.6,2,3
 Warren County Power Station,55939,1A,500.0,1497.0,33.4,CC_REGULAR,observed_peak,2021-06-04,2021-06-09,4.7,2,3
 Warren County Power Station,55939,1A,500.0,1497.0,33.4,CC_REGULAR,observed_peak,2021-11-12,2021-11-16,4.1,2,3
@@ -1368,6 +1534,9 @@ Hunterstown Combined Cycle,55976,CT101,299.3,898.0,33.3,CC_REGULAR,eia_digits_cc
 Hunterstown Combined Cycle,55976,CT101,299.3,898.0,33.3,CC_REGULAR,eia_digits_cc,2024-07-16,2024-07-18,2.4,2,3
 Hunterstown Combined Cycle,55976,CT101,299.3,898.0,33.3,CC_REGULAR,eia_digits_cc,2025-11-18,2025-11-19,1.1,2,3
 Hunterstown Combined Cycle,55976,CT201,299.3,898.0,33.3,CC_REGULAR,eia_digits_cc,2021-07-26,2021-07-27,1.3,2,3
+Bear Garden Generating Station,56807,1A,272.9,559.0,48.8,CC_REGULAR,eia_exact_cc,2019-01-19,2019-01-21,2.3,1,2
+Bear Garden Generating Station,56807,1A,272.9,559.0,48.8,CC_REGULAR,eia_exact_cc,2019-05-09,2019-05-13,3.7,1,2
+Bear Garden Generating Station,56807,1A,272.9,559.0,48.8,CC_REGULAR,eia_exact_cc,2019-09-02,2019-09-07,4.4,1,2
 Bear Garden Generating Station,56807,1A,272.9,559.0,48.8,CC_REGULAR,eia_exact_cc,2020-10-05,2020-10-08,2.8,1,2
 Bear Garden Generating Station,56807,1A,272.9,559.0,48.8,CC_REGULAR,eia_exact_cc,2021-02-13,2021-02-17,4.0,1,2
 Bear Garden Generating Station,56807,1A,272.9,559.0,48.8,CC_REGULAR,eia_exact_cc,2022-02-21,2022-02-24,3.5,1,2
@@ -1377,6 +1546,8 @@ Bear Garden Generating Station,56807,1A,272.9,559.0,48.8,CC_REGULAR,eia_exact_cc
 Bear Garden Generating Station,56807,1A,272.9,559.0,48.8,CC_REGULAR,eia_exact_cc,2023-05-08,2023-05-10,1.7,1,2
 Bear Garden Generating Station,56807,1A,272.9,559.0,48.8,CC_REGULAR,eia_exact_cc,2023-11-14,2023-11-16,2.3,1,2
 Bear Garden Generating Station,56807,1A,272.9,559.0,48.8,CC_REGULAR,eia_exact_cc,2025-11-11,2025-11-13,1.8,1,2
+Bear Garden Generating Station,56807,1B,286.1,559.0,51.2,CC_REGULAR,eia_exact_cc,2019-01-21,2019-01-22,1.3,1,2
+Bear Garden Generating Station,56807,1B,286.1,559.0,51.2,CC_REGULAR,eia_exact_cc,2019-09-02,2019-09-07,4.5,1,2
 Bear Garden Generating Station,56807,1B,286.1,559.0,51.2,CC_REGULAR,eia_exact_cc,2020-06-09,2020-06-10,1.4,1,2
 Bear Garden Generating Station,56807,1B,286.1,559.0,51.2,CC_REGULAR,eia_exact_cc,2020-10-05,2020-10-08,2.9,1,2
 Bear Garden Generating Station,56807,1B,286.1,559.0,51.2,CC_REGULAR,eia_exact_cc,2021-02-13,2021-02-16,3.9,1,2
@@ -1386,6 +1557,8 @@ Bear Garden Generating Station,56807,1B,286.1,559.0,51.2,CC_REGULAR,eia_exact_cc
 Bear Garden Generating Station,56807,1B,286.1,559.0,51.2,CC_REGULAR,eia_exact_cc,2023-05-08,2023-05-10,1.8,1,2
 Bear Garden Generating Station,56807,1B,286.1,559.0,51.2,CC_REGULAR,eia_exact_cc,2023-11-14,2023-11-16,2.4,1,2
 Bear Garden Generating Station,56807,1B,286.1,559.0,51.2,CC_REGULAR,eia_exact_cc,2025-07-07,2025-07-08,1.8,1,2
+CPV St. Charles Energy Center,56846,GT1,387.7,775.3,50.0,CC_REGULAR,eia_digits_cc,2019-01-11,2019-01-12,1.5,1,2
+CPV St. Charles Energy Center,56846,GT1,387.7,775.3,50.0,CC_REGULAR,eia_digits_cc,2019-01-19,2019-01-22,3.2,1,2
 CPV St. Charles Energy Center,56846,GT1,387.7,775.3,50.0,CC_REGULAR,eia_digits_cc,2020-12-17,2020-12-22,4.9,1,2
 CPV St. Charles Energy Center,56846,GT1,387.7,775.3,50.0,CC_REGULAR,eia_digits_cc,2021-02-08,2021-02-10,1.8,1,2
 CPV St. Charles Energy Center,56846,GT1,387.7,775.3,50.0,CC_REGULAR,eia_digits_cc,2022-01-07,2022-01-10,2.8,1,2
@@ -1394,6 +1567,10 @@ CPV St. Charles Energy Center,56846,GT1,387.7,775.3,50.0,CC_REGULAR,eia_digits_c
 CPV St. Charles Energy Center,56846,GT1,387.7,775.3,50.0,CC_REGULAR,eia_digits_cc,2022-12-17,2022-12-20,3.0,1,2
 CPV St. Charles Energy Center,56846,GT1,387.7,775.3,50.0,CC_REGULAR,eia_digits_cc,2022-12-25,2022-12-28,3.0,1,2
 CPV St. Charles Energy Center,56846,GT1,387.7,775.3,50.0,CC_REGULAR,eia_digits_cc,2025-11-12,2025-11-13,1.8,1,2
+CPV St. Charles Energy Center,56846,GT2,387.7,775.3,50.0,CC_REGULAR,eia_digits_cc,2019-01-10,2019-01-12,1.5,1,2
+CPV St. Charles Energy Center,56846,GT2,387.7,775.3,50.0,CC_REGULAR,eia_digits_cc,2019-01-19,2019-01-22,3.2,1,2
+CPV St. Charles Energy Center,56846,GT2,387.7,775.3,50.0,CC_REGULAR,eia_digits_cc,2019-02-17,2019-02-19,1.4,1,2
+CPV St. Charles Energy Center,56846,GT2,387.7,775.3,50.0,CC_REGULAR,eia_digits_cc,2019-07-08,2019-07-11,2.1,1,2
 CPV St. Charles Energy Center,56846,GT2,387.7,775.3,50.0,CC_REGULAR,eia_digits_cc,2020-12-17,2020-12-22,4.9,1,2
 CPV St. Charles Energy Center,56846,GT2,387.7,775.3,50.0,CC_REGULAR,eia_digits_cc,2021-11-17,2021-11-21,4.4,1,2
 CPV St. Charles Energy Center,56846,GT2,387.7,775.3,50.0,CC_REGULAR,eia_digits_cc,2022-01-07,2022-01-10,2.7,1,2
@@ -1403,6 +1580,7 @@ CPV St. Charles Energy Center,56846,GT2,387.7,775.3,50.0,CC_REGULAR,eia_digits_c
 CPV St. Charles Energy Center,56846,GT2,387.7,775.3,50.0,CC_REGULAR,eia_digits_cc,2022-12-24,2022-12-25,1.0,1,2
 CPV St. Charles Energy Center,56846,GT2,387.7,775.3,50.0,CC_REGULAR,eia_digits_cc,2022-12-25,2022-12-28,3.0,1,2
 CPV St. Charles Energy Center,56846,GT2,387.7,775.3,50.0,CC_REGULAR,eia_digits_cc,2025-11-12,2025-11-13,1.8,1,2
+West Deptford Energy Station,56963,E101,377.3,754.6,50.0,CC_REGULAR,eia_exact_cc,2019-05-27,2019-05-28,1.5,1,2
 West Deptford Energy Station,56963,E101,377.3,754.6,50.0,CC_REGULAR,eia_exact_cc,2020-02-15,2020-02-18,3.9,1,2
 West Deptford Energy Station,56963,E101,377.3,754.6,50.0,CC_REGULAR,eia_exact_cc,2020-02-28,2020-03-01,2.0,1,2
 West Deptford Energy Station,56963,E101,377.3,754.6,50.0,CC_REGULAR,eia_exact_cc,2020-05-05,2020-05-08,2.1,1,2
@@ -1429,6 +1607,8 @@ West Deptford Energy Station,56963,E101,377.3,754.6,50.0,CC_REGULAR,eia_exact_cc
 West Deptford Energy Station,56963,E101,377.3,754.6,50.0,CC_REGULAR,eia_exact_cc,2025-07-23,2025-07-26,2.4,1,2
 West Deptford Energy Station,56963,E101,377.3,754.6,50.0,CC_REGULAR,eia_exact_cc,2025-10-05,2025-10-07,1.5,1,2
 West Deptford Energy Station,56963,E101,377.3,754.6,50.0,CC_REGULAR,eia_exact_cc,2025-12-10,2025-12-12,1.2,1,2
+West Deptford Energy Station,56963,E102,377.3,754.6,50.0,CC_REGULAR,eia_exact_cc,2019-04-05,2019-04-08,3.2,1,2
+West Deptford Energy Station,56963,E102,377.3,754.6,50.0,CC_REGULAR,eia_exact_cc,2019-05-27,2019-05-28,1.3,1,2
 West Deptford Energy Station,56963,E102,377.3,754.6,50.0,CC_REGULAR,eia_exact_cc,2020-02-15,2020-02-19,4.0,1,2
 West Deptford Energy Station,56963,E102,377.3,754.6,50.0,CC_REGULAR,eia_exact_cc,2020-02-28,2020-03-01,2.0,1,2
 West Deptford Energy Station,56963,E102,377.3,754.6,50.0,CC_REGULAR,eia_exact_cc,2020-05-05,2020-05-08,2.1,1,2
@@ -1457,6 +1637,9 @@ West Deptford Energy Station,56963,E102,377.3,754.6,50.0,CC_REGULAR,eia_exact_cc
 West Deptford Energy Station,56963,E102,377.3,754.6,50.0,CC_REGULAR,eia_exact_cc,2025-09-23,2025-09-25,1.5,1,2
 West Deptford Energy Station,56963,E102,377.3,754.6,50.0,CC_REGULAR,eia_exact_cc,2025-09-25,2025-09-29,3.5,1,2
 West Deptford Energy Station,56963,E102,377.3,754.6,50.0,CC_REGULAR,eia_exact_cc,2025-12-10,2025-12-12,1.2,1,2
+Garrison Energy Center,57349,1,361.0,361.0,100.0,CC_REGULAR,eia_digits_cc,2019-01-20,2019-01-22,2.0,0,1
+Garrison Energy Center,57349,1,361.0,361.0,100.0,CC_REGULAR,eia_digits_cc,2019-01-29,2019-01-31,1.2,0,1
+Garrison Energy Center,57349,1,361.0,361.0,100.0,CC_REGULAR,eia_digits_cc,2019-12-18,2019-12-19,1.1,0,1
 Garrison Energy Center,57349,1,361.0,361.0,100.0,CC_REGULAR,eia_digits_cc,2020-05-23,2020-05-27,4.1,0,1
 Garrison Energy Center,57349,1,361.0,361.0,100.0,CC_REGULAR,eia_digits_cc,2020-12-03,2020-12-07,4.9,0,1
 Garrison Energy Center,57349,1,361.0,361.0,100.0,CC_REGULAR,eia_digits_cc,2020-12-10,2020-12-14,4.9,0,1
@@ -1490,11 +1673,15 @@ St. Joseph Energy Center LLC,57794,CTG01A,383.0,766.0,50.0,CC_REGULAR,observed_p
 St. Joseph Energy Center LLC,57794,CTG01A,383.0,766.0,50.0,CC_REGULAR,observed_peak,2021-10-08,2021-10-10,2.5,1,2
 St. Joseph Energy Center LLC,57794,CTG01A,385.0,770.0,50.0,CC_REGULAR,observed_peak,2022-01-15,2022-01-17,2.1,1,2
 St. Joseph Energy Center LLC,57794,CTG01A,383.0,766.0,50.0,CC_REGULAR,observed_peak,2023-03-10,2023-03-11,1.4,1,2
+St. Joseph Energy Center LLC,57794,CTG01B,383.0,805.0,47.6,CC_REGULAR,observed_peak,2019-12-14,2019-12-18,4.2,1,2
 St. Joseph Energy Center LLC,57794,CTG01B,383.0,768.0,49.9,CC_REGULAR,observed_peak,2020-03-24,2020-03-26,2.2,1,2
 St. Joseph Energy Center LLC,57794,CTG01B,383.0,768.0,49.9,CC_REGULAR,observed_peak,2020-09-27,2020-09-29,2.1,1,2
 St. Joseph Energy Center LLC,57794,CTG01B,383.0,766.0,50.0,CC_REGULAR,observed_peak,2021-10-08,2021-10-10,2.4,1,2
 St. Joseph Energy Center LLC,57794,CTG01B,385.0,770.0,50.0,CC_REGULAR,observed_peak,2022-01-15,2022-01-17,2.1,1,2
 St. Joseph Energy Center LLC,57794,CTG01B,379.0,760.0,49.9,CC_REGULAR,observed_peak,2025-04-30,2025-05-03,2.9,1,2
+Woodbridge Energy Center,57839,0001,389.0,780.0,49.9,CC_REGULAR,observed_peak,2019-01-19,2019-01-23,4.0,1,2
+Woodbridge Energy Center,57839,0001,389.0,780.0,49.9,CC_REGULAR,observed_peak,2019-01-30,2019-02-01,2.1,1,2
+Woodbridge Energy Center,57839,0001,389.0,780.0,49.9,CC_REGULAR,observed_peak,2019-12-18,2019-12-20,2.0,1,2
 Woodbridge Energy Center,57839,0001,391.0,789.0,49.6,CC_REGULAR,observed_peak,2020-12-01,2020-12-02,1.2,1,2
 Woodbridge Energy Center,57839,0001,387.0,772.0,50.1,CC_REGULAR,observed_peak,2021-01-05,2021-01-06,1.2,1,2
 Woodbridge Energy Center,57839,0001,387.0,772.0,50.1,CC_REGULAR,observed_peak,2021-01-07,2021-01-11,3.2,1,2
@@ -1513,6 +1700,9 @@ Woodbridge Energy Center,57839,0001,381.0,767.0,49.7,CC_REGULAR,observed_peak,20
 Woodbridge Energy Center,57839,0001,381.0,767.0,49.7,CC_REGULAR,observed_peak,2024-11-06,2024-11-10,4.4,1,2
 Woodbridge Energy Center,57839,0001,384.0,778.0,49.4,CC_REGULAR,observed_peak,2025-01-07,2025-01-09,1.8,1,2
 Woodbridge Energy Center,57839,0001,384.0,778.0,49.4,CC_REGULAR,observed_peak,2025-01-14,2025-01-16,1.2,1,2
+Woodbridge Energy Center,57839,0002,391.0,780.0,50.1,CC_REGULAR,observed_peak,2019-01-19,2019-01-23,3.9,1,2
+Woodbridge Energy Center,57839,0002,391.0,780.0,50.1,CC_REGULAR,observed_peak,2019-01-30,2019-02-01,2.0,1,2
+Woodbridge Energy Center,57839,0002,391.0,780.0,50.1,CC_REGULAR,observed_peak,2019-12-18,2019-12-20,2.0,1,2
 Woodbridge Energy Center,57839,0002,398.0,789.0,50.4,CC_REGULAR,observed_peak,2020-12-01,2020-12-03,1.8,1,2
 Woodbridge Energy Center,57839,0002,398.0,789.0,50.4,CC_REGULAR,observed_peak,2020-12-17,2020-12-22,4.6,1,2
 Woodbridge Energy Center,57839,0002,385.0,772.0,49.9,CC_REGULAR,observed_peak,2021-01-05,2021-01-06,1.1,1,2
@@ -1553,9 +1743,11 @@ Newark Energy Center,58079,U002,371.0,740.0,50.1,CC_REGULAR,observed_peak,2024-0
 Newark Energy Center,58079,U002,371.0,740.0,50.1,CC_REGULAR,observed_peak,2024-09-20,2024-09-23,2.9,1,2
 Newark Energy Center,58079,U002,374.0,752.0,49.7,CC_REGULAR,observed_peak,2025-08-16,2025-08-18,2.2,1,2
 Newark Energy Center,58079,U002,374.0,752.0,49.7,CC_REGULAR,observed_peak,2025-12-09,2025-12-10,1.3,1,2
+Brunswick County Power Station,58260,1A,501.0,1505.0,33.3,CC_REGULAR,observed_peak,2019-12-11,2019-12-14,3.6,2,3
 Brunswick County Power Station,58260,1A,503.0,1511.0,33.3,CC_REGULAR,observed_peak,2020-03-17,2020-03-19,2.5,2,3
 Brunswick County Power Station,58260,1A,503.0,1511.0,33.3,CC_REGULAR,observed_peak,2020-05-27,2020-06-01,4.7,2,3
 Brunswick County Power Station,58260,1A,500.0,1516.0,33.0,CC_REGULAR,observed_peak,2021-01-24,2021-01-26,1.8,2,3
+Brunswick County Power Station,58260,1B,500.0,1505.0,33.2,CC_REGULAR,observed_peak,2019-12-11,2019-12-15,4.2,2,3
 Brunswick County Power Station,58260,1B,502.0,1511.0,33.2,CC_REGULAR,observed_peak,2020-03-17,2020-03-19,2.6,2,3
 Brunswick County Power Station,58260,1B,502.0,1511.0,33.2,CC_REGULAR,observed_peak,2020-12-08,2020-12-10,1.8,2,3
 Brunswick County Power Station,58260,1B,505.0,1516.0,33.3,CC_REGULAR,observed_peak,2021-01-24,2021-01-26,1.6,2,3
@@ -1565,6 +1757,7 @@ Brunswick County Power Station,58260,1B,501.0,1509.0,33.2,CC_REGULAR,observed_pe
 Brunswick County Power Station,58260,1B,501.0,1509.0,33.2,CC_REGULAR,observed_peak,2022-01-13,2022-01-18,4.7,2,3
 Brunswick County Power Station,58260,1B,501.0,1509.0,33.2,CC_REGULAR,observed_peak,2022-07-11,2022-07-13,2.5,2,3
 Brunswick County Power Station,58260,1B,501.0,1509.0,33.2,CC_REGULAR,observed_peak,2022-10-24,2022-10-27,2.8,2,3
+Brunswick County Power Station,58260,1C,504.0,1505.0,33.5,CC_REGULAR,observed_peak,2019-12-11,2019-12-14,3.4,2,3
 Brunswick County Power Station,58260,1C,506.0,1511.0,33.5,CC_REGULAR,observed_peak,2020-03-17,2020-03-19,2.4,2,3
 Brunswick County Power Station,58260,1C,511.0,1516.0,33.7,CC_REGULAR,observed_peak,2021-01-24,2021-01-26,1.5,2,3
 Brunswick County Power Station,58260,1C,504.0,1509.0,33.4,CC_REGULAR,observed_peak,2022-01-14,2022-01-19,4.8,2,3
@@ -1573,6 +1766,8 @@ Brunswick County Power Station,58260,1C,504.0,1509.0,33.4,CC_REGULAR,observed_pe
 Brunswick County Power Station,58260,1C,506.0,1515.0,33.4,CC_REGULAR,observed_peak,2023-11-29,2023-11-30,1.6,2,3
 Hamilton Liberty Generation Plant,58420,CT1,435.0,870.0,50.0,CC_REGULAR,eia_digits,2020-04-11,2020-04-15,4.5,1,2
 Hamilton Liberty Generation Plant,58420,CT1,435.0,870.0,50.0,CC_REGULAR,eia_digits,2023-10-06,2023-10-10,4.5,1,2
+Hamilton Liberty Generation Plant,58420,CT2,435.0,870.0,50.0,CC_REGULAR,eia_digits,2019-01-28,2019-01-31,3.1,1,2
+Hamilton Liberty Generation Plant,58420,CT2,435.0,870.0,50.0,CC_REGULAR,eia_digits,2019-03-23,2019-03-26,3.5,1,2
 Hamilton Liberty Generation Plant,58420,CT2,435.0,870.0,50.0,CC_REGULAR,eia_digits,2020-05-26,2020-05-28,2.2,1,2
 Hamilton Liberty Generation Plant,58420,CT2,435.0,870.0,50.0,CC_REGULAR,eia_digits,2022-04-19,2022-04-22,3.2,1,2
 Hamilton Liberty Generation Plant,58420,CT2,435.0,870.0,50.0,CC_REGULAR,eia_digits,2022-11-14,2022-11-18,4.8,1,2
@@ -1580,10 +1775,13 @@ Hamilton Liberty Generation Plant,58420,CT2,435.0,870.0,50.0,CC_REGULAR,eia_digi
 Hamilton Liberty Generation Plant,58420,CT2,435.0,870.0,50.0,CC_REGULAR,eia_digits,2024-04-08,2024-04-12,4.5,1,2
 Hamilton Liberty Generation Plant,58420,CT2,435.0,870.0,50.0,CC_REGULAR,eia_digits,2024-09-30,2024-10-04,4.3,1,2
 Hamilton Liberty Generation Plant,58420,CT2,435.0,870.0,50.0,CC_REGULAR,eia_digits,2025-09-08,2025-09-12,4.2,1,2
+Hamilton Patriot Generation Plant,58426,CT1,435.0,870.0,50.0,CC_REGULAR,eia_digits,2019-01-11,2019-01-14,3.6,1,2
+Hamilton Patriot Generation Plant,58426,CT1,435.0,870.0,50.0,CC_REGULAR,eia_digits,2019-11-30,2019-12-05,4.1,1,2
 Hamilton Patriot Generation Plant,58426,CT1,435.0,870.0,50.0,CC_REGULAR,eia_digits,2020-11-11,2020-11-14,3.0,1,2
 Hamilton Patriot Generation Plant,58426,CT1,435.0,870.0,50.0,CC_REGULAR,eia_digits,2020-11-15,2020-11-20,4.8,1,2
 Hamilton Patriot Generation Plant,58426,CT1,435.0,870.0,50.0,CC_REGULAR,eia_digits,2021-06-08,2021-06-09,1.7,1,2
 Hamilton Patriot Generation Plant,58426,CT1,435.0,870.0,50.0,CC_REGULAR,eia_digits,2022-10-30,2022-11-02,3.8,1,2
+Hamilton Patriot Generation Plant,58426,CT2,435.0,870.0,50.0,CC_REGULAR,eia_digits,2019-12-13,2019-12-18,4.6,1,2
 Hamilton Patriot Generation Plant,58426,CT2,435.0,870.0,50.0,CC_REGULAR,eia_digits,2020-01-18,2020-01-22,4.5,1,2
 Hamilton Patriot Generation Plant,58426,CT2,435.0,870.0,50.0,CC_REGULAR,eia_digits,2020-03-29,2020-04-02,4.5,1,2
 Hamilton Patriot Generation Plant,58426,CT2,435.0,870.0,50.0,CC_REGULAR,eia_digits,2020-06-01,2020-06-05,3.8,1,2
@@ -1595,11 +1793,15 @@ Hamilton Patriot Generation Plant,58426,CT2,435.0,870.0,50.0,CC_REGULAR,eia_digi
 "Potomac Energy Center, LLC",59004,CT1,406.0,812.0,50.0,CC_REGULAR,eia_digits_cc,2022-08-07,2022-08-08,2.0,1,2
 "Potomac Energy Center, LLC",59004,CT1,406.0,812.0,50.0,CC_REGULAR,eia_digits_cc,2022-08-09,2022-08-10,1.5,1,2
 "Potomac Energy Center, LLC",59004,CT1,406.0,812.0,50.0,CC_REGULAR,eia_digits_cc,2024-02-13,2024-02-15,1.7,1,2
+"Potomac Energy Center, LLC",59004,CT2,406.0,812.0,50.0,CC_REGULAR,eia_digits_cc,2019-07-08,2019-07-11,3.3,1,2
+"Potomac Energy Center, LLC",59004,CT2,406.0,812.0,50.0,CC_REGULAR,eia_digits_cc,2019-07-21,2019-07-25,4.2,1,2
+"Potomac Energy Center, LLC",59004,CT2,406.0,812.0,50.0,CC_REGULAR,eia_digits_cc,2019-08-05,2019-08-07,1.7,1,2
 "Potomac Energy Center, LLC",59004,CT2,406.0,812.0,50.0,CC_REGULAR,eia_digits_cc,2020-01-30,2020-01-31,1.5,1,2
 "Potomac Energy Center, LLC",59004,CT2,406.0,812.0,50.0,CC_REGULAR,eia_digits_cc,2020-03-29,2020-04-01,2.4,1,2
 "Potomac Energy Center, LLC",59004,CT2,406.0,812.0,50.0,CC_REGULAR,eia_digits_cc,2021-04-15,2021-04-16,1.4,1,2
 "Potomac Energy Center, LLC",59004,CT2,406.0,812.0,50.0,CC_REGULAR,eia_digits_cc,2022-08-09,2022-08-10,1.3,1,2
 "Potomac Energy Center, LLC",59004,CT2,406.0,812.0,50.0,CC_REGULAR,eia_digits_cc,2023-12-09,2023-12-12,3.4,1,2
+Wildcat Point Generation Facility,59220,CT1,556.8,1113.6,50.0,CC_REGULAR,eia_exact_cc,2019-01-08,2019-01-11,2.2,1,2
 Wildcat Point Generation Facility,59220,CT1,556.8,1113.6,50.0,CC_REGULAR,eia_exact_cc,2020-01-18,2020-01-22,3.5,1,2
 Wildcat Point Generation Facility,59220,CT1,556.8,1113.6,50.0,CC_REGULAR,eia_exact_cc,2020-05-26,2020-05-29,2.3,1,2
 Wildcat Point Generation Facility,59220,CT1,556.8,1113.6,50.0,CC_REGULAR,eia_exact_cc,2020-06-04,2020-06-06,1.3,1,2
@@ -1645,6 +1847,7 @@ Wildcat Point Generation Facility,59220,CT1,556.8,1113.6,50.0,CC_REGULAR,eia_exa
 Wildcat Point Generation Facility,59220,CT1,556.8,1113.6,50.0,CC_REGULAR,eia_exact_cc,2025-04-24,2025-04-26,1.3,1,2
 Wildcat Point Generation Facility,59220,CT1,556.8,1113.6,50.0,CC_REGULAR,eia_exact_cc,2025-09-15,2025-09-18,2.5,1,2
 Wildcat Point Generation Facility,59220,CT1,556.8,1113.6,50.0,CC_REGULAR,eia_exact_cc,2025-11-17,2025-11-20,2.1,1,2
+Wildcat Point Generation Facility,59220,CT2,556.8,1113.6,50.0,CC_REGULAR,eia_exact_cc,2019-01-08,2019-01-11,2.2,1,2
 Wildcat Point Generation Facility,59220,CT2,556.8,1113.6,50.0,CC_REGULAR,eia_exact_cc,2020-01-18,2020-01-22,3.5,1,2
 Wildcat Point Generation Facility,59220,CT2,556.8,1113.6,50.0,CC_REGULAR,eia_exact_cc,2020-06-04,2020-06-06,1.3,1,2
 Wildcat Point Generation Facility,59220,CT2,556.8,1113.6,50.0,CC_REGULAR,eia_exact_cc,2020-06-07,2020-06-10,3.2,1,2
@@ -1691,6 +1894,8 @@ Middletown Energy Center,59326,1,543.9,543.9,100.0,CC_REGULAR,eia_digits_cc,2021
 Middletown Energy Center,59326,1,543.9,543.9,100.0,CC_REGULAR,eia_digits_cc,2021-07-25,2021-07-29,3.8,0,1
 Middletown Energy Center,59326,1,543.9,543.9,100.0,CC_REGULAR,eia_digits_cc,2022-12-23,2022-12-27,3.5,0,1
 Middletown Energy Center,59326,1,543.9,543.9,100.0,CC_REGULAR,eia_digits_cc,2025-05-12,2025-05-14,1.8,0,1
+Oregon Clean Energy Center,59764,01,463.0,921.0,50.3,CC_REGULAR,observed_peak,2019-01-10,2019-01-13,3.1,1,2
+Oregon Clean Energy Center,59764,01,463.0,921.0,50.3,CC_REGULAR,observed_peak,2019-12-10,2019-12-13,3.0,1,2
 Oregon Clean Energy Center,59764,01,465.0,928.0,50.1,CC_REGULAR,observed_peak,2021-03-31,2021-04-02,1.3,1,2
 Oregon Clean Energy Center,59764,01,464.0,926.0,50.1,CC_REGULAR,observed_peak,2022-05-15,2022-05-17,1.8,1,2
 Oregon Clean Energy Center,59764,01,464.0,926.0,50.1,CC_REGULAR,observed_peak,2022-12-23,2022-12-24,1.2,1,2
@@ -1699,24 +1904,36 @@ Oregon Clean Energy Center,59764,02,457.0,916.0,49.9,CC_REGULAR,observed_peak,20
 Oregon Clean Energy Center,59764,02,463.0,928.0,49.9,CC_REGULAR,observed_peak,2021-03-31,2021-04-02,1.2,1,2
 Oregon Clean Energy Center,59764,02,462.0,926.0,49.9,CC_REGULAR,observed_peak,2022-03-07,2022-03-11,4.3,1,2
 Oregon Clean Energy Center,59764,02,462.0,926.0,49.9,CC_REGULAR,observed_peak,2022-12-24,2022-12-26,2.5,1,2
+Carroll County Energy,59773,1,382.0,798.2,47.9,CC_REGULAR,observed_peak,2019-05-17,2019-05-21,4.1,1,2
 Carroll County Energy,59773,1,378.0,794.2,47.6,CC_REGULAR,observed_peak,2024-03-22,2024-03-23,1.6,1,2
+Carroll County Energy,59773,2,416.2,798.2,52.1,CC_REGULAR,eia_digits_cc,2019-05-16,2019-05-21,4.6,1,2
+Moxie Freedom Generation Plant,59906,201,559.0,1109.0,50.4,CC_REGULAR,observed_peak,2019-01-30,2019-02-02,2.7,1,2
+Moxie Freedom Generation Plant,59906,201,559.0,1109.0,50.4,CC_REGULAR,observed_peak,2019-11-12,2019-11-14,2.0,1,2
+Moxie Freedom Generation Plant,59906,201,559.0,1109.0,50.4,CC_REGULAR,observed_peak,2019-12-20,2019-12-24,4.3,1,2
 Moxie Freedom Generation Plant,59906,201,546.0,1083.0,50.4,CC_REGULAR,observed_peak,2022-12-01,2022-12-03,1.8,1,2
 Moxie Freedom Generation Plant,59906,201,548.0,1091.0,50.2,CC_REGULAR,observed_peak,2023-12-10,2023-12-14,4.3,1,2
 Moxie Freedom Generation Plant,59906,201,548.0,1091.0,50.2,CC_REGULAR,observed_peak,2023-12-14,2023-12-18,4.0,1,2
+Moxie Freedom Generation Plant,59906,202,550.0,1109.0,49.6,CC_REGULAR,observed_peak,2019-07-27,2019-07-30,3.1,1,2
 Moxie Freedom Generation Plant,59906,202,539.0,1077.0,50.0,CC_REGULAR,observed_peak,2020-05-05,2020-05-06,1.3,1,2
 Moxie Freedom Generation Plant,59906,202,539.0,1077.0,50.0,CC_REGULAR,observed_peak,2020-05-11,2020-05-12,1.2,1,2
 Moxie Freedom Generation Plant,59906,202,539.0,1077.0,50.0,CC_REGULAR,observed_peak,2020-06-06,2020-06-08,2.1,1,2
 Moxie Freedom Generation Plant,59906,202,539.0,1077.0,50.0,CC_REGULAR,observed_peak,2020-12-02,2020-12-07,4.5,1,2
 Moxie Freedom Generation Plant,59906,202,537.0,1083.0,49.6,CC_REGULAR,observed_peak,2022-12-23,2022-12-26,2.9,1,2
 Moxie Freedom Generation Plant,59906,202,539.0,1080.0,49.9,CC_REGULAR,observed_peak,2025-04-24,2025-04-25,1.2,1,2
+Greensville County Power Station,59913,1A,595.0,1725.0,34.5,CC_REGULAR,observed_peak,2019-03-06,2019-03-08,1.2,2,3
 Greensville County Power Station,59913,1A,592.0,1726.0,34.3,CC_REGULAR,observed_peak,2020-12-07,2020-12-09,1.6,2,3
 Greensville County Power Station,59913,1A,593.0,1712.0,34.6,CC_REGULAR,observed_peak,2021-11-18,2021-11-21,2.8,2,3
 Greensville County Power Station,59913,1A,613.0,1768.0,34.7,CC_REGULAR,observed_peak,2025-04-07,2025-04-10,2.3,2,3
+Greensville County Power Station,59913,1B,565.0,1725.0,32.8,CC_REGULAR,observed_peak,2019-03-06,2019-03-08,1.4,2,3
+Greensville County Power Station,59913,1B,565.0,1725.0,32.8,CC_REGULAR,observed_peak,2019-11-07,2019-11-10,2.8,2,3
 Greensville County Power Station,59913,1B,574.0,1762.0,32.6,CC_REGULAR,observed_peak,2023-04-14,2023-04-19,4.5,2,3
 Greensville County Power Station,59913,1B,576.0,1768.0,32.6,CC_REGULAR,observed_peak,2025-04-04,2025-04-07,2.5,2,3
+Greensville County Power Station,59913,1C,565.0,1725.0,32.8,CC_REGULAR,observed_peak,2019-03-06,2019-03-08,1.2,2,3
 Greensville County Power Station,59913,1C,560.0,1712.0,32.7,CC_REGULAR,observed_peak,2021-05-26,2021-05-29,3.0,2,3
 Greensville County Power Station,59913,1C,576.0,1762.0,32.7,CC_REGULAR,observed_peak,2023-04-19,2023-04-23,4.0,2,3
 Greensville County Power Station,59913,1C,576.0,1762.0,32.7,CC_REGULAR,observed_peak,2023-04-24,2023-04-27,2.9,2,3
+Keys Energy Center,60302,11,415.3,830.6,50.0,CC_REGULAR,eia_exact_cc,2019-01-19,2019-01-21,2.5,1,2
+Keys Energy Center,60302,11,415.3,830.6,50.0,CC_REGULAR,eia_exact_cc,2019-02-20,2019-02-21,1.2,1,2
 Keys Energy Center,60302,11,415.3,830.6,50.0,CC_REGULAR,eia_exact_cc,2020-07-16,2020-07-17,1.0,1,2
 Keys Energy Center,60302,11,415.3,830.6,50.0,CC_REGULAR,eia_exact_cc,2022-01-11,2022-01-12,1.1,1,2
 Keys Energy Center,60302,11,415.3,830.6,50.0,CC_REGULAR,eia_exact_cc,2022-01-21,2022-01-25,3.6,1,2
@@ -1724,6 +1941,9 @@ Keys Energy Center,60302,11,415.3,830.6,50.0,CC_REGULAR,eia_exact_cc,2022-03-26,
 Keys Energy Center,60302,11,415.3,830.6,50.0,CC_REGULAR,eia_exact_cc,2022-12-17,2022-12-20,2.9,1,2
 Keys Energy Center,60302,11,415.3,830.6,50.0,CC_REGULAR,eia_exact_cc,2023-10-25,2023-10-29,4.0,1,2
 Keys Energy Center,60302,11,415.3,830.6,50.0,CC_REGULAR,eia_exact_cc,2025-03-26,2025-03-28,1.8,1,2
+Keys Energy Center,60302,12,415.3,830.6,50.0,CC_REGULAR,eia_exact_cc,2019-01-21,2019-01-23,1.9,1,2
+Keys Energy Center,60302,12,415.3,830.6,50.0,CC_REGULAR,eia_exact_cc,2019-02-09,2019-02-12,3.4,1,2
+Keys Energy Center,60302,12,415.3,830.6,50.0,CC_REGULAR,eia_exact_cc,2019-08-21,2019-08-25,4.0,1,2
 Keys Energy Center,60302,12,415.3,830.6,50.0,CC_REGULAR,eia_exact_cc,2022-01-11,2022-01-12,1.1,1,2
 Keys Energy Center,60302,12,415.3,830.6,50.0,CC_REGULAR,eia_exact_cc,2022-01-21,2022-01-25,3.8,1,2
 Keys Energy Center,60302,12,415.3,830.6,50.0,CC_REGULAR,eia_exact_cc,2022-12-17,2022-12-20,2.8,1,2
@@ -1742,6 +1962,8 @@ Keys Energy Center,60302,12,415.3,830.6,50.0,CC_REGULAR,eia_exact_cc,2024-05-21,
 "South Field Energy, LLC",60356,2,620.0,1240.0,50.0,CC_REGULAR,observed_peak,2024-06-16,2024-06-20,4.5,1,2
 "South Field Energy, LLC",60356,2,623.0,1247.0,50.0,CC_REGULAR,observed_peak,2025-04-23,2025-04-25,1.2,1,2
 "South Field Energy, LLC",60356,2,623.0,1247.0,50.0,CC_REGULAR,observed_peak,2025-11-09,2025-11-11,1.5,1,2
+Lackawanna Energy Center,60357,1,499.5,1498.5,33.3,CC_REGULAR,eia_digits,2019-01-21,2019-01-23,2.5,2,3
+Lackawanna Energy Center,60357,1,499.5,1498.5,33.3,CC_REGULAR,eia_digits,2019-01-31,2019-02-02,2.4,2,3
 Lackawanna Energy Center,60357,1,499.5,1498.5,33.3,CC_REGULAR,eia_digits,2020-04-01,2020-04-02,1.2,2,3
 Lackawanna Energy Center,60357,1,499.5,1498.5,33.3,CC_REGULAR,eia_digits,2022-10-29,2022-11-01,3.3,2,3
 Lackawanna Energy Center,60357,1,499.5,1498.5,33.3,CC_REGULAR,eia_digits,2022-11-01,2022-11-04,3.2,2,3
@@ -1749,46 +1971,68 @@ Lackawanna Energy Center,60357,1,499.5,1498.5,33.3,CC_REGULAR,eia_digits,2024-01
 Lackawanna Energy Center,60357,1,499.5,1498.5,33.3,CC_REGULAR,eia_digits,2024-09-10,2024-09-12,2.2,2,3
 Lackawanna Energy Center,60357,1,499.5,1498.5,33.3,CC_REGULAR,eia_digits,2025-09-26,2025-09-30,3.8,2,3
 Lackawanna Energy Center,60357,1,499.5,1498.5,33.3,CC_REGULAR,eia_digits,2025-12-12,2025-12-14,2.1,2,3
+Lackawanna Energy Center,60357,2,499.5,1498.5,33.3,CC_REGULAR,eia_digits,2019-02-01,2019-02-02,1.0,2,3
+Lackawanna Energy Center,60357,2,499.5,1498.5,33.3,CC_REGULAR,eia_digits,2019-12-19,2019-12-20,1.1,2,3
 Lackawanna Energy Center,60357,2,499.5,1498.5,33.3,CC_REGULAR,eia_digits,2022-10-29,2022-11-01,3.5,2,3
 Lackawanna Energy Center,60357,2,499.5,1498.5,33.3,CC_REGULAR,eia_digits,2022-11-18,2022-11-19,1.0,2,3
 Lackawanna Energy Center,60357,2,499.5,1498.5,33.3,CC_REGULAR,eia_digits,2022-12-23,2022-12-27,3.9,2,3
 Lackawanna Energy Center,60357,2,499.5,1498.5,33.3,CC_REGULAR,eia_digits,2024-05-19,2024-05-21,1.8,2,3
+Lackawanna Energy Center,60357,3,499.5,1498.5,33.3,CC_REGULAR,eia_digits,2019-01-21,2019-01-23,2.9,2,3
+Lackawanna Energy Center,60357,3,499.5,1498.5,33.3,CC_REGULAR,eia_digits,2019-06-05,2019-06-07,1.5,2,3
 Lackawanna Energy Center,60357,3,499.5,1498.5,33.3,CC_REGULAR,eia_digits,2020-05-27,2020-05-28,1.3,2,3
 Lackawanna Energy Center,60357,3,499.5,1498.5,33.3,CC_REGULAR,eia_digits,2021-04-13,2021-04-16,3.0,2,3
 Lackawanna Energy Center,60357,3,499.5,1498.5,33.3,CC_REGULAR,eia_digits,2022-06-12,2022-06-15,2.6,2,3
 Lackawanna Energy Center,60357,3,499.5,1498.5,33.3,CC_REGULAR,eia_digits,2022-06-21,2022-06-23,1.2,2,3
 Lackawanna Energy Center,60357,3,499.5,1498.5,33.3,CC_REGULAR,eia_digits,2022-06-29,2022-07-02,3.4,2,3
 Lackawanna Energy Center,60357,3,499.5,1498.5,33.3,CC_REGULAR,eia_digits,2022-07-03,2022-07-06,2.4,2,3
+Hummel Station,60368,CT1,398.1,1194.4,33.3,CC_REGULAR,eia_digits_cc,2019-12-11,2019-12-12,1.1,2,3
 Hummel Station,60368,CT1,398.1,1194.4,33.3,CC_REGULAR,eia_digits_cc,2020-03-16,2020-03-18,2.0,2,3
 Hummel Station,60368,CT1,398.1,1194.4,33.3,CC_REGULAR,eia_digits_cc,2020-05-25,2020-05-26,1.0,2,3
 Hummel Station,60368,CT1,398.1,1194.4,33.3,CC_REGULAR,eia_digits_cc,2023-05-13,2023-05-16,3.2,2,3
 Hummel Station,60368,CT1,398.1,1194.4,33.3,CC_REGULAR,eia_digits_cc,2025-04-10,2025-04-11,1.0,2,3
+Hummel Station,60368,CT2,398.1,1194.4,33.3,CC_REGULAR,eia_digits_cc,2019-12-12,2019-12-17,4.8,2,3
 Hummel Station,60368,CT2,398.1,1194.4,33.3,CC_REGULAR,eia_digits_cc,2020-02-15,2020-02-19,4.6,2,3
 Hummel Station,60368,CT2,398.1,1194.4,33.3,CC_REGULAR,eia_digits_cc,2020-06-05,2020-06-08,2.8,2,3
 Hummel Station,60368,CT2,398.1,1194.4,33.3,CC_REGULAR,eia_digits_cc,2023-05-15,2023-05-16,2.0,2,3
 Hummel Station,60368,CT2,398.1,1194.4,33.3,CC_REGULAR,eia_digits_cc,2025-10-06,2025-10-10,4.7,2,3
+Hummel Station,60368,CT3,398.1,1194.4,33.3,CC_REGULAR,eia_digits_cc,2019-05-24,2019-05-29,4.4,2,3
+Hummel Station,60368,CT3,398.1,1194.4,33.3,CC_REGULAR,eia_digits_cc,2019-06-04,2019-06-06,2.5,2,3
+Hummel Station,60368,CT3,398.1,1194.4,33.3,CC_REGULAR,eia_digits_cc,2019-10-01,2019-10-02,1.4,2,3
+Hummel Station,60368,CT3,398.1,1194.4,33.3,CC_REGULAR,eia_digits_cc,2019-11-08,2019-11-09,1.3,2,3
 Hummel Station,60368,CT3,398.1,1194.4,33.3,CC_REGULAR,eia_digits_cc,2020-05-15,2020-05-18,3.7,2,3
 Hummel Station,60368,CT3,398.1,1194.4,33.3,CC_REGULAR,eia_digits_cc,2021-06-09,2021-06-12,2.6,2,3
 Hummel Station,60368,CT3,398.1,1194.4,33.3,CC_REGULAR,eia_digits_cc,2021-08-30,2021-09-03,4.2,2,3
 Hummel Station,60368,CT3,398.1,1194.4,33.3,CC_REGULAR,eia_digits_cc,2023-05-15,2023-05-16,1.4,2,3
 Hummel Station,60368,CT3,398.1,1194.4,33.3,CC_REGULAR,eia_digits_cc,2023-11-14,2023-11-16,1.7,2,3
+"Clean Energy Future - Lordstown, LLC",60376,1,476.0,957.0,49.7,CC_REGULAR,observed_peak,2019-07-15,2019-07-18,2.9,1,2
 "Clean Energy Future - Lordstown, LLC",60376,1,478.0,959.0,49.8,CC_REGULAR,observed_peak,2022-12-23,2022-12-25,1.6,1,2
 "Clean Energy Future - Lordstown, LLC",60376,1,477.0,958.0,49.8,CC_REGULAR,observed_peak,2023-05-02,2023-05-05,2.8,1,2
 "Clean Energy Future - Lordstown, LLC",60376,1,479.0,960.0,49.9,CC_REGULAR,observed_peak,2024-11-07,2024-11-10,3.4,1,2
 "Clean Energy Future - Lordstown, LLC",60376,1,481.0,962.0,50.0,CC_REGULAR,observed_peak,2025-11-17,2025-11-22,4.7,1,2
+"Clean Energy Future - Lordstown, LLC",60376,2,481.0,957.0,50.3,CC_REGULAR,eia_digits_cc,2019-01-20,2019-01-22,2.2,1,2
+"Clean Energy Future - Lordstown, LLC",60376,2,481.0,957.0,50.3,CC_REGULAR,eia_digits_cc,2019-01-30,2019-01-31,1.6,1,2
 "Clean Energy Future - Lordstown, LLC",60376,2,481.0,959.0,50.2,CC_REGULAR,eia_digits_cc,2021-02-16,2021-02-18,2.4,1,2
 "Clean Energy Future - Lordstown, LLC",60376,2,481.0,959.0,50.2,CC_REGULAR,eia_digits_cc,2021-10-04,2021-10-08,4.6,1,2
 "Clean Energy Future - Lordstown, LLC",60376,2,481.0,959.0,50.2,CC_REGULAR,eia_digits_cc,2021-10-15,2021-10-16,1.8,1,2
 "Clean Energy Future - Lordstown, LLC",60376,2,481.0,958.0,50.2,CC_REGULAR,eia_digits_cc,2023-05-03,2023-05-06,3.4,1,2
 "Clean Energy Future - Lordstown, LLC",60376,2,481.0,960.0,50.1,CC_REGULAR,eia_digits_cc,2024-11-07,2024-11-11,3.7,1,2
 "Clean Energy Future - Lordstown, LLC",60376,2,481.0,962.0,50.0,CC_REGULAR,eia_digits_cc,2025-11-19,2025-11-21,2.9,1,2
+Tenaska Westmoreland Generating Station,60464,101,543.0,1087.0,50.0,CC_REGULAR,observed_peak,2019-01-22,2019-01-23,1.2,1,2
+Tenaska Westmoreland Generating Station,60464,101,543.0,1087.0,50.0,CC_REGULAR,observed_peak,2019-02-15,2019-02-19,4.1,1,2
+Tenaska Westmoreland Generating Station,60464,101,543.0,1087.0,50.0,CC_REGULAR,observed_peak,2019-02-19,2019-02-21,1.8,1,2
+Tenaska Westmoreland Generating Station,60464,101,543.0,1087.0,50.0,CC_REGULAR,observed_peak,2019-03-01,2019-03-04,3.0,1,2
+Tenaska Westmoreland Generating Station,60464,101,543.0,1087.0,50.0,CC_REGULAR,observed_peak,2019-05-29,2019-05-30,1.4,1,2
+Tenaska Westmoreland Generating Station,60464,101,543.0,1087.0,50.0,CC_REGULAR,observed_peak,2019-11-07,2019-11-08,1.0,1,2
 Tenaska Westmoreland Generating Station,60464,101,531.0,1068.0,49.7,CC_REGULAR,observed_peak,2020-05-10,2020-05-11,1.9,1,2
 Tenaska Westmoreland Generating Station,60464,101,531.0,1068.0,49.7,CC_REGULAR,observed_peak,2020-11-18,2020-11-19,1.5,1,2
 Tenaska Westmoreland Generating Station,60464,101,533.0,1067.0,50.0,CC_REGULAR,observed_peak,2025-10-29,2025-11-02,3.5,1,2
+Tenaska Westmoreland Generating Station,60464,102,544.0,1087.0,50.0,CC_REGULAR,observed_peak,2019-02-16,2019-02-19,3.4,1,2
+Tenaska Westmoreland Generating Station,60464,102,544.0,1087.0,50.0,CC_REGULAR,observed_peak,2019-05-30,2019-05-31,1.3,1,2
 Tenaska Westmoreland Generating Station,60464,102,537.0,1068.0,50.3,CC_REGULAR,observed_peak,2020-05-14,2020-05-18,3.5,1,2
 Tenaska Westmoreland Generating Station,60464,102,537.0,1068.0,50.3,CC_REGULAR,observed_peak,2020-11-18,2020-11-19,1.2,1,2
 Tenaska Westmoreland Generating Station,60464,102,532.0,1062.0,50.1,CC_REGULAR,observed_peak,2022-10-19,2022-10-21,1.5,1,2
 "CPV Fairview, LLC",60589,CT-1,598.5,1197.0,50.0,CC_REGULAR,eia_digits_cc,2020-11-17,2020-11-20,3.0,1,2
+"CPV Fairview, LLC",60589,CT-2,598.5,598.5,100.0,CC_REGULAR,eia_digits_cc,2019-12-14,2019-12-17,3.6,0,1
 "CPV Fairview, LLC",60589,CT-2,598.5,1197.0,50.0,CC_REGULAR,eia_digits_cc,2022-04-04,2022-04-07,3.0,1,2
 "CPV Fairview, LLC",60589,CT-2,598.5,1197.0,50.0,CC_REGULAR,eia_digits_cc,2022-05-13,2022-05-14,1.0,1,2
 "CPV Fairview, LLC",60589,CT-2,598.5,1197.0,50.0,CC_REGULAR,eia_digits_cc,2022-11-22,2022-11-23,1.5,1,2
@@ -1806,6 +2050,8 @@ Hickory Run Energy Station,61028,CT2,516.9,1038.8,49.8,CC_REGULAR,eia_digits_cc,
 Hickory Run Energy Station,61028,CT2,516.9,1043.8,49.5,CC_REGULAR,eia_digits_cc,2022-10-24,2022-10-27,2.4,1,2
 Hickory Run Energy Station,61028,CT2,516.9,1043.8,49.5,CC_REGULAR,eia_digits_cc,2022-12-23,2022-12-27,4.0,1,2
 Hickory Run Energy Station,61028,CT2,516.9,1033.8,50.0,CC_REGULAR,eia_digits_cc,2025-01-23,2025-01-26,3.0,1,2
+Birdsboro Power,61035,01,506.0,506.0,100.0,CC_REGULAR,observed_peak,2019-06-25,2019-06-27,2.5,0,1
+Birdsboro Power,61035,01,506.0,506.0,100.0,CC_REGULAR,observed_peak,2019-12-18,2019-12-21,2.7,0,1
 Birdsboro Power,61035,01,511.0,511.0,100.0,CC_REGULAR,observed_peak,2020-09-24,2020-09-25,1.2,0,1
 Birdsboro Power,61035,01,511.0,511.0,100.0,CC_REGULAR,observed_peak,2020-09-29,2020-09-30,1.2,0,1
 Birdsboro Power,61035,01,511.0,511.0,100.0,CC_REGULAR,observed_peak,2020-11-17,2020-11-18,1.6,0,1
