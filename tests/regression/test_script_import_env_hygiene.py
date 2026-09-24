@@ -42,13 +42,17 @@ from pathlib import Path
 from tests.helpers import REPO_ROOT
 
 # The scripts that carry a determinism pin, and the env keys each one applies.
+# MARKET_SIM_P1_BASIS_SEED joined both pins when PERF-C S1 gave the same-year
+# P1 seed its own env gate (it used to ride inside the cross-year gate) and
+# rule 36 [R-YEAR-ISOLATION] defaulted both off (d45d57f9, 2026-09-20).
 PINNING_SCRIPTS = {
     "capture_keeper_goldens": {
         "MARKET_SIM_HIGHS_THREADS",
         "MARKET_SIM_WARMSTART",
         "MARKET_SIM_WARMSTART_XYEAR",
+        "MARKET_SIM_P1_BASIS_SEED",
     },
-    "replay_keeper": {"MARKET_SIM_WARMSTART_XYEAR"},
+    "replay_keeper": {"MARKET_SIM_WARMSTART_XYEAR", "MARKET_SIM_P1_BASIS_SEED"},
 }
 
 

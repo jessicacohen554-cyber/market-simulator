@@ -4554,7 +4554,7 @@ def mirror_solve_year_gas_anchors(
     instead of positional: a future ``if flag: recorded_cfg = ...`` block lands
     above the return, so it can no longer silently get in front of the mirror.
     The self-consistency invariant is pinned by
-    ``tests/unit/scripts/test_recorded_config_gas_anchor_mirror.py``.
+    ``tests/unit/data/test_recorded_config_gas_anchor_mirror.py``.
 
     Gating mirrors ``run_year`` exactly — the solve kwarg OR the registered
     ``ScenarioConfig`` field, because ``replay_keeper.py --set`` writes the field

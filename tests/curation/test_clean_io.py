@@ -105,6 +105,12 @@ ALL_DATATYPES = [
     # SCN-LOAD intake (2026-09-06, owner ruling S4 / card D-4): each ISO's
     # published long-term load forecast.
     "load-forecast",
+    # The coal fuel-inventory intakes, miso-258 (coal-stocks, 3857d801) and
+    # miso-259 (coal-receipts, 43ab70d5, 2026-09-16), registered these two in
+    # scripts/regenerate_clean.DATATYPES without re-freezing this snapshot;
+    # refreshed 2026-09-24 by lane Y-30.
+    "coal-stocks",
+    "coal-receipts",
 ]
 
 

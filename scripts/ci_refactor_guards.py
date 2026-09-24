@@ -49,7 +49,12 @@ _EXCL_DIRS = (
     "scope2-lce-portfolio/",
 )
 _CODE_SUFFIXES = (".py", ".sh", ".bash", ".yml", ".yaml")
-_SCRIPT_REF_RE = re.compile(r"scripts/[\w/.\-]+\.py")
+# Left boundary: a match must not continue a longer path segment. Without it a
+# nested ``tests/unit/scripts/<name>`` path was read as a repo-root script
+# reference (the false positive recorded in
+# docs/handoffs/soco-desk-ledger-2026-09.md R-k). A ``./`` or ``${ROOT}/``
+# prefix still matches; a ``<word>/`` or ``<word>`` prefix does not.
+_SCRIPT_REF_RE = re.compile(r"(?<![\w\-]/)(?<![\w\-])scripts/[\w/.\-]+\.py")
 
 # The current residual — every dangling `scripts/*.py` reference the CODE scan
 # finds on the tree (2026-07-20). Each is a benign, tracked non-defect; a

@@ -120,6 +120,8 @@ snapshot).
 | carb-cap-schedule | — | n/a |
 | coal-basin-price | national/regional (EIA Annual Coal Report, by producing region) | n/a |
 | coal-mining-ppi | national (BLS PPI, coal) | n/a |
+| coal-stocks | national (EIA-923 Schedule 2, by plant) | n/a |
+| coal-receipts | national (EIA-923 Page 5, by plant) | n/a |
 | carbon-auction-results | — | n/a |
 | eia-aeo-fuel-prices | — | n/a |
 | ira-credit-parameters | — | n/a |
@@ -1308,6 +1310,59 @@ BLS Producer Price Index for coal (national, monthly). Schema:
 | `year` | `int64` | `none` | no | Calendar year. |
 | `month` | `int64` | `none` | no | Calendar month (1-12). |
 | `index_value` | `float64` | `index_1982_100` | no | PPI index value (base period varies by series; BLS convention, unscaled — not a dollar price. Use month-over-month / year-over-year ratios for the slope/elasticity cross-check, not the level.). |
+
+## coal-stocks
+
+Plant-level month-ending coal stockpile by coal rank, in short tons (national;
+ISO resolved at read time from the plant registry). Schema:
+[`schema/coal-stocks.schema.yaml`](schema/coal-stocks.schema.yaml).
+
+- **Keys:** `plant_id`, `energy_source`, `year`, `month`
+- **Reconciles:** EIA-923 Schedule 2 ("Page 2 Coal Stocks Data") from the free
+  annual bulk ZIP. Rule 13: a year-Y budget reads the December Y-1 opening
+  stock only, never year Y's own stock path.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `plant_id` | `int64` | `none` | no | EIA plant code. Mirrors the fleet / emissions / outages schemas so the four join, and is the key the bench parts and plant registry use. |
+| `energy_source` | `string` | `none` | no | EIA reported fuel type code for the coal rank held (BIT bituminous, SUB subbituminous, LIG lignite, WC waste coal, RC refined coal, SGC coal- derived synthesis gas). A plant holding two ranks reports two rows. |
+| `year` | `int64` | `year` | no | Calendar year of the reported month-ending stock. |
+| `month` | `int64` | `month` | no | Calendar month, 1-12, whose ENDING stock this row reports. |
+| `ending_stock_tons` | `float64` | `short_tons` | no | Stock of this coal rank physically held at the plant at month end, in short tons. Zero is a real reported value (a plant that holds no coal of that rank), not a gap. |
+| `plant_name` | `string` | `none` | yes | EIA plant name, carried for traceability only. |
+| `plant_state` | `string` | `none` | yes | Two-letter state postal code of the plant. |
+| `balancing_authority_code` | `string` | `none` | yes | EIA-reported balancing authority (e.g. MISO, PJM). Provenance only — ISO membership is resolved from the plant registry, not from this column, because BA code and modelled ISO zone disagree at several seams. |
+| `nerc_region` | `string` | `none` | yes | NERC region as reported by EIA. |
+| `eia_sector_number` | `int64` | `none` | yes | EIA sector (1 electric utility, 2 IPP non-CHP, 3 IPP CHP, 4/5 commercial, 6/7 industrial). Same field the PJM retirement-screen sector gate keys on. |
+| `physical_unit_label` | `string` | `none` | yes | EIA's own unit label for the reported quantity, retained so a future non-short-ton vintage cannot be silently mis-scaled. |
+
+## coal-receipts
+
+Plant-level monthly coal receipts (deliveries to plant), receipt lots summed to
+plant x rank x month x purchase type (national). Schema:
+[`schema/coal-receipts.schema.yaml`](schema/coal-receipts.schema.yaml).
+
+- **Keys:** `plant_id`, `energy_source`, `year`, `month`, `purchase_type`,
+  `primary_transportation_mode`
+- **Reconciles:** EIA-923 Page 5 ("Fuel Receipts and Costs"), coal subset.
+  Supersedes the incomplete `quantity` column of the legacy
+  eia923_monthly_fuel_costs extract for coal receipts. Rule 13: year Y's own
+  receipts are an outcome, not a delivery rate.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `plant_id` | `int64` | `none` | no | EIA plant code. Mirrors the coal-stocks / fleet / emissions / outages schemas so they all join, and is the key the bench parts and the plant registry use. |
+| `energy_source` | `string` | `none` | no | EIA reported fuel type code for the coal rank received (BIT bituminous, SUB subbituminous, LIG lignite, WC waste coal, RC refined coal, SGC coal-derived synthesis gas). Same vocabulary as coal-stocks, so receipts and stock join rank-for-rank. |
+| `year` | `int64` | `year` | no | Calendar year the receipt was reported in. |
+| `month` | `int64` | `month` | no | Calendar month, 1-12, the coal was received in. |
+| `purchase_type` | `string` | `none` | no | EIA purchase type of the delivery - C contract, NC new contract, S spot, T tolling. Retained as a key column because a contracted-tonnage-only delivery rate (a forward instrument, rather than a realised spot outcome) is one of the admissible budget constructions and cannot be reconstructed once the categories are summed together. |
+| `primary_transportation_mode` | `string` | `none` | no | EIA primary transportation mode (RR railroad, RV river, TR truck, CV conveyor, PL pipeline, GL Great Lakes, SP slurry pipeline, TC tramway, WT water unspecified, ...). Retained as a key column so a rail/logistics delivery-capacity construction stays available. Blank in the source becomes the sentinel "UNK" rather than null, so the column can carry a non-null key. |
+| `quantity_tons` | `float64` | `short_tons` | no | Coal received in this month at this plant for this rank / purchase type / transport mode, in short tons, summed over the underlying receipt lots. Zero is a real reported value, not a gap. |
+| `heat_content_mmbtu_per_ton` | `float64` | `mmbtu_per_short_ton` | yes | Quantity-weighted mean gross heat content of the coal received, MMBtu per short ton, over the lots summed into this row. This is what converts a tonnage budget into the MMBtu an LP energy-budget row is denominated in, so it is carried rather than assumed. Null where every underlying lot withheld it. |
+| `fuel_cost_cents_per_mmbtu` | `float64` | `cents_per_mmbtu` | yes | Quantity-weighted mean delivered fuel cost, cents per MMBtu, as EIA reports it. Provenance/diagnostic only - delivered coal prices for the model come from the existing F923 fuel-price path, not from here. Null where every underlying lot withheld it (EIA withholds cost for non-regulated respondents, so this is null far more often than the quantity is). |
+| `plant_name` | `string` | `none` | yes | EIA plant name, carried for traceability only. |
+| `plant_state` | `string` | `none` | yes | Two-letter state postal code of the plant. |
+| `balancing_authority_code` | `string` | `none` | yes | EIA-reported balancing authority (e.g. MISO, PJM). Provenance only - ISO membership is resolved from the plant registry, not from this column, because BA code and modelled ISO zone disagree at several seams. Absent in vintages before 2020. |
 
 ## nyiso-reserve-requirements
 
