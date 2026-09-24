@@ -1421,3 +1421,32 @@ price bands stay 1.0 (the only admissible route to the split)? (2) decline
 claude/soco61-arm-*, claude/soco60-arm-*, claude/soco60-armB-*.
 Records: docs/handoffs/FINDING-soco-62-2026-09-24.md,
 scripts/probes/_soco62_phase0.py.
+
+## soco-63 — 2026-09-24
+
+MEASURED INCREMENTAL-HR BANDS MOVE THE CT/ST SPLIT THE WRONG WAY -- PHASE 0
+ONLY, ZERO LP. Owner G5 ruling blank, so no field, no solve, _SOCO_OFFER_CURVE
+untouched. Keeper 2026-09-24-soco61-dark-unit unchanged.
+
+Framing: phys_* keys are consumed only by gas_offer_net_revenue_margin (OFF in
+SOCO), so "measured phys_* bands" are inert; a real arm must replace the
+multiplier bands. CEMS IO-slope derivation at UNIT grain (committed per-unit
+HR artifacts as class map; own-average normalization), cap-weighted p50:
+CT_PEAKER marg 0.759/0.754 of average, ST_GAS 0.942/0.990, CC 1.007/1.185,
+COAL 0.930/0.969; committed 1.078/1.080/1.032/1.043; CT coverage 91.7 %.
+Non-selective form, greedy re-stack on the keeper legs (arm minus greedy
+control): CT offer 34.00 -> 27.65 $/MWh below boilers 34.77; 2023 CT_PEAKER
++5.23 -> +18.48 TWh FAIL, 2023 ST_GAS -7.60 FAIL, 2024 CT_PEAKER +14.76 FAIL;
+C4 2024 coal NRMSE 0.235 -> 0.290; per-plant CT error 8.68 -> 19.62 TWh. x0.5
+and x2 same direction. Refused ST-only diagnostic reaches +0.44 of 5.50 TWh.
+Rule 14 fails: in a start-cost-free LP the average HR is the only carrier of CT
+no-load fuel; incremental HR is admissible only jointly with a CT start/no-load
+carrier (tranche_startup_amortization, G).
+
+OWNER QUESTIONS: (1) any new evidence to reopen tranche_startup_amortization
+(G) for SOCO jointly with measured incremental-HR bands? (recommendation: do
+not open G5 for incremental-HR bands alone) (2) decline
+2026-09-20-soco53g-prb-own-iso (E13)? Leftover refs for the owner:
+claude/soco61-arm-*, claude/soco60-arm-*, claude/soco60-armB-*.
+Records: docs/handoffs/FINDING-soco-63-2026-09-24.md,
+scripts/probes/_soco63_phase0.py.
