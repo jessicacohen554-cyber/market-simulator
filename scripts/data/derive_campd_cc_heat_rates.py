@@ -145,11 +145,19 @@ import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(REPO / "src"))
+sys.path.insert(0, str(REPO))
 
-from market_sim.config.iso_configs import get_iso_config  # noqa: E402
 from market_sim.config.paths import PROCESSED_DIR, RAW_DIR  # noqa: E402
 from market_sim.data import campd  # noqa: E402
-from market_sim.data.fleet import load_fleet_from_csv  # noqa: E402
+from scripts.lib.heat_rate_years import (  # noqa: E402
+    BACKCAST_YEARS,
+    backcast_fleets,
+    class_capacity,
+    class_heat_rates,
+    per_year_tables,
+    stack_year_tables,
+    union_fleet,
+)
 
 UNIT_LEVEL_DIR = RAW_DIR / "campd-unit-level"
 
@@ -204,104 +212,6 @@ _BOUNDARY_MAX: float = 1.25
 #: Reported-only comparison window: the near-HSL rate, for the reader's sense
 #: of the plant's range. NEVER the applied column (see the module docstring).
 _HSL_PCTILE: float = 90.0
-
-
-def provenance_fleet(
-    iso: str,
-    egrid_family_heat_rates: bool = False,
-    measured_ct_heat_rates: bool = False,
-    measured_st_heat_rates: bool = False,
-    measured_coal_heat_rates: bool = False,
-) -> list:
-    """Return the ISO's model fleet under a stated PROVENANCE recipe.
-
-    The flags move ``heat_rate`` on rows this artifact REPORTS against
-    (``model_heat_rate_egrid`` — what the swap replaces) and nothing that is
-    applied: the measured rate comes from CAMPD alone, and plant membership is
-    the model's own :data:`TARGET_CLASS` assignment, which no heat-rate flag
-    touches. They exist because an ISO whose keeper already carries them (SOCO
-    carries all four) would otherwise have its artifact report a delta against
-    a fleet nobody solves — the loader defaults — and a reader could not tell
-    what ``model_heat_rate_egrid`` meant.
-
-    Of the four, only ``egrid_family_heat_rates`` can reach a
-    :data:`TARGET_CLASS` row at all: the other three are each gated on their
-    own group (CT_PEAKER / ST_GAS / COAL), which is disjoint from this one by
-    construction, since a row resolves to exactly one group.
-
-    Args:
-        iso: ISO identifier, e.g. ``"SOCO"``.
-        egrid_family_heat_rates: Arm ``ScenarioConfig.egrid_family_heat_rates``.
-        measured_ct_heat_rates: Arm ``ScenarioConfig.measured_ct_heat_rates``.
-        measured_st_heat_rates: Arm ``ScenarioConfig.measured_st_heat_rates``.
-        measured_coal_heat_rates: Arm ``ScenarioConfig.measured_coal_heat_rates``.
-
-    Returns:
-        The loaded generator list.
-    """
-    return load_fleet_from_csv(
-        iso,
-        get_iso_config(iso),
-        egrid_family_heat_rates=egrid_family_heat_rates,
-        measured_ct_heat_rates=measured_ct_heat_rates,
-        measured_st_heat_rates=measured_st_heat_rates,
-        measured_coal_heat_rates=measured_coal_heat_rates,
-    )
-
-
-def target_plant_codes(iso: str, fleet: list | None = None) -> dict[int, float]:
-    """Return ``{plant_code: CC_REGULAR capacity MW}`` from the ISO's fleet.
-
-    A plant qualifies on having ANY :data:`TARGET_CLASS` generator, so a site
-    whose other units are boilers or peakers is included — its combined-cycle
-    machines are separated from them downstream by CAMPD ``unitType``.
-
-    Args:
-        iso: ISO identifier, e.g. ``"SOCO"``.
-        fleet: An already-loaded fleet (see :func:`provenance_fleet`). ``None``
-            loads the ISO's loader-default fleet.
-
-    Returns:
-        Mapping of plant code to the class capacity the model carries there.
-    """
-    fleet = load_fleet_from_csv(iso, get_iso_config(iso)) if fleet is None else fleet
-    caps: dict[int, float] = {}
-    for gen in fleet:
-        if gen.plant_group != TARGET_CLASS:
-            continue
-        code = int(gen.plant_code or 0)
-        if code:
-            caps[code] = caps.get(code, 0.0) + float(gen.pmax_mw)
-    return caps
-
-
-def model_heat_rates(iso: str, fleet: list | None = None) -> dict[int, float]:
-    """Return the ISO's CURRENT capacity-weighted eGRID heat rate per plant.
-
-    Written to the artifact alongside the measured rate so the table records
-    what it replaces and by how much — the provenance a later reader needs to
-    judge the swap without re-running anything.
-
-    Args:
-        iso: ISO identifier.
-        fleet: An already-loaded fleet (see :func:`provenance_fleet`). ``None``
-            loads the ISO's loader-default fleet.
-
-    Returns:
-        Mapping of plant code to its capacity-weighted model heat rate.
-    """
-    fleet = load_fleet_from_csv(iso, get_iso_config(iso)) if fleet is None else fleet
-    num: dict[int, float] = {}
-    den: dict[int, float] = {}
-    for gen in fleet:
-        if gen.plant_group != TARGET_CLASS:
-            continue
-        code = int(gen.plant_code or 0)
-        if not code:
-            continue
-        num[code] = num.get(code, 0.0) + float(gen.pmax_mw) * float(gen.heat_rate)
-        den[code] = den.get(code, 0.0) + float(gen.pmax_mw)
-    return {c: num[c] / den[c] for c in num if den[c] > 0}
 
 
 def parasitic_factors() -> dict[int, float]:
@@ -369,10 +279,10 @@ def _campd_cc_hours(iso: str, years: list[int], codes: set[int]) -> pd.DataFrame
     return pd.concat(frames, ignore_index=True)
 
 
-def boundary_ratios(
+def boundary_ratios_by_year(
     iso: str, pooled: pd.DataFrame, years: list[int]
-) -> dict[int, float]:
-    """Return ``{plant_code: mean CAMPD CC gross / EIA-923 CC net}``.
+) -> dict[int, dict[int, float]]:
+    """Return ``{year: {plant_code: CAMPD CC gross / EIA-923 CC net}}``.
 
     THE BOUNDARY GUARD (module docstring): the identity test that decides
     whether CAMPD's gross load speaks for the whole combined cycle or only for
@@ -386,8 +296,8 @@ def boundary_ratios(
         years: The CAMPD vintages pooled.
 
     Returns:
-        Mapping of plant code to its across-year mean ratio. A plant with no
-        EIA-923 CC row in any year is absent, and is flagged downstream.
+        One mapping per year; a plant with no EIA-923 CC row in a year is
+        absent from that year's mapping.
     """
     from market_sim.data import eia923
 
@@ -398,7 +308,7 @@ def boundary_ratios(
     spec.loader.exec_module(rcf)
     monthly = eia923.load_monthly_generation()
 
-    per_year: dict[int, list[float]] = {}
+    out: dict[int, dict[int, float]] = {}
     for year in years:
         frame = rcf._eia923_frame(year, monthly, iso)
         net = frame[frame["klass"] == TARGET_CLASS].set_index("plant_id")["annual_mwh"]
@@ -406,8 +316,21 @@ def boundary_ratios(
         for code, g in gross.items():
             n = float(net.get(int(code), float("nan")))
             if np.isfinite(n) and n > 0.0:
-                per_year.setdefault(int(code), []).append(float(g) / n)
-    return {c: float(np.mean(v)) for c, v in per_year.items() if v}
+                out.setdefault(int(year), {})[int(code)] = float(g) / n
+    return out
+
+
+def boundary_ratios(by_year: dict[int, dict[int, float]]) -> dict[int, float]:
+    """Return ``{plant_code: across-year mean ratio}`` from the per-year table.
+
+    The pooled row's guard. A plant with no EIA-923 CC row in any year is
+    absent, and is flagged downstream.
+    """
+    per_code: dict[int, list[float]] = {}
+    for mapping in by_year.values():
+        for code, ratio in mapping.items():
+            per_code.setdefault(code, []).append(ratio)
+    return {c: float(np.mean(v)) for c, v in per_code.items() if v}
 
 
 def unit_operating_heat_rates(pooled: pd.DataFrame) -> pd.DataFrame:
@@ -590,8 +513,8 @@ def main(argv: list[str] | None = None) -> int:
         "--years",
         nargs="+",
         type=int,
-        default=[2023, 2024, 2025],
-        help="CAMPD vintages to pool (default 2023 2024 2025)",
+        default=list(BACKCAST_YEARS),
+        help="CAMPD vintages to pool and slice (default 2019-2025)",
     )
     parser.add_argument("--out", default=None, help="Output CSV path override")
     parser.add_argument(
@@ -618,38 +541,69 @@ def main(argv: list[str] | None = None) -> int:
 
     iso = args.iso.upper()
     years = sorted(args.years)
-    fleet = provenance_fleet(
+    # F1 D4: the population is the UNION of the backcast fleets over every
+    # year (year-matched vintage + retiree channel), so a combined cycle that
+    # retired before 2023 is covered; the provenance recipe loads per year.
+    fleets = backcast_fleets(
         iso,
+        years,
         egrid_family_heat_rates=args.egrid_family_heat_rates,
         measured_ct_heat_rates=args.measured_ct_heat_rates,
         measured_st_heat_rates=args.measured_st_heat_rates,
         measured_coal_heat_rates=args.measured_coal_heat_rates,
     )
-    caps = target_plant_codes(iso, fleet)
+    union = union_fleet(fleets)
+    caps = class_capacity(union, TARGET_CLASS)
     if not caps:
         raise SystemExit(f"{iso}: model fleet carries no {TARGET_CLASS} generator")
     print(f"{iso}: {len(caps)} {TARGET_CLASS} plants, {sum(caps.values()):,.1f} MW")
 
     pooled = _campd_cc_hours(iso, years, set(caps))
-    boundary = boundary_ratios(iso, pooled, years)
+    by_year = boundary_ratios_by_year(iso, pooled, years)
     units = unit_operating_heat_rates(pooled)
     if units.empty:
         raise SystemExit(f"{iso}: no unit cleared the steady-hour screens")
+    factors = parasitic_factors()
     table = plant_table(
         units,
         iso,
         years,
         caps,
-        model_heat_rates(iso, fleet),
-        parasitic_factors(),
-        boundary,
+        class_heat_rates(union, TARGET_CLASS),
+        factors,
+        boundary_ratios(by_year),
     )
+
+    def _year_table(year: int) -> pd.DataFrame | None:
+        # The SAME estimator on year Y's hours alone (the unchanged
+        # _MIN_STEADY_HOURS gate), guarded by year Y's OWN boundary ratio.
+        year_units = unit_operating_heat_rates(pooled[pooled["year"] == year])
+        if year_units.empty:
+            return None
+        return plant_table(
+            year_units,
+            iso,
+            [year],
+            caps,
+            class_heat_rates(fleets.get(year, []), TARGET_CLASS),
+            factors,
+            by_year.get(year, {}),
+        )
+
+    table = stack_year_tables(table, per_year_tables(years, _year_table))
 
     out = (
         Path(args.out) if args.out else PROCESSED_DIR / f"campd_cc_heat_rates_{iso}.csv"
     )
     out.parent.mkdir(parents=True, exist_ok=True)
     table.to_csv(out, index=False)
+    print(
+        "  per-year rows: "
+        + ", ".join(
+            f"{y}:{int((table['year'] == y).sum())}" for y in sorted(set(table["year"]))
+        )
+    )
+    table = table[table["year"] == 0]
     ok = table[table["flag"] == "ok"]
     covered = float(ok["class_capacity_mw"].sum())
     total = float(sum(caps.values()))

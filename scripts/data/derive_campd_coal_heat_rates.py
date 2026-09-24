@@ -108,11 +108,19 @@ import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(REPO / "src"))
+sys.path.insert(0, str(REPO))
 
-from market_sim.config.iso_configs import get_iso_config  # noqa: E402
 from market_sim.config.paths import PROCESSED_DIR, RAW_DIR  # noqa: E402
 from market_sim.data import campd  # noqa: E402
-from market_sim.data.fleet import load_fleet_from_csv  # noqa: E402
+from scripts.lib.heat_rate_years import (  # noqa: E402
+    BACKCAST_YEARS,
+    backcast_fleets,
+    class_capacity,
+    class_heat_rates,
+    per_year_tables,
+    stack_year_tables,
+    union_fleet,
+)
 
 UNIT_LEVEL_DIR = RAW_DIR / "campd-unit-level"
 
@@ -163,101 +171,6 @@ _HR_MAX_NET: float = 27.0
 _HSL_PCTILE: float = 90.0
 
 
-def provenance_fleet(
-    iso: str,
-    egrid_family_heat_rates: bool = False,
-    measured_ct_heat_rates: bool = False,
-    measured_st_heat_rates: bool = False,
-) -> list:
-    """Return the ISO's model fleet under a stated PROVENANCE recipe.
-
-    The three flags move ``heat_rate`` on rows this artifact REPORTS against
-    (``model_heat_rate_egrid`` — what the swap replaces) and nothing that is
-    applied: the measured rate comes from CAMPD alone, and plant membership
-    ranks on ``pmax_mw``, which no heat-rate flag touches. They exist because
-    an ISO whose keeper already carries one of them (SOCO carries all three)
-    would otherwise have its artifact report a delta against a fleet nobody
-    solves — the loader defaults — and a reader could not tell what
-    ``model_heat_rate_egrid`` meant. The gas-steam sibling
-    (:mod:`scripts.data.derive_campd_gas_st_heat_rates`, soco-53e) takes the
-    first two for the same reason; ``measured_st_heat_rates`` is added here
-    because it exists now and a coal site's gas boilers share its plant code.
-
-    Neither ``measured_ct_heat_rates`` nor ``measured_st_heat_rates`` can
-    reach a :data:`TARGET_CLASS` row at all — each is gated on its own group —
-    so on this artifact's own population only ``egrid_family_heat_rates`` can
-    move a reported number.
-
-    Args:
-        iso: ISO identifier, e.g. ``"NWPP"``.
-        egrid_family_heat_rates: Arm ``ScenarioConfig.egrid_family_heat_rates``.
-        measured_ct_heat_rates: Arm ``ScenarioConfig.measured_ct_heat_rates``.
-        measured_st_heat_rates: Arm ``ScenarioConfig.measured_st_heat_rates``.
-
-    Returns:
-        The loaded generator list.
-    """
-    return load_fleet_from_csv(
-        iso,
-        get_iso_config(iso),
-        egrid_family_heat_rates=egrid_family_heat_rates,
-        measured_ct_heat_rates=measured_ct_heat_rates,
-        measured_st_heat_rates=measured_st_heat_rates,
-    )
-
-
-def target_plant_codes(iso: str, fleet: list | None = None) -> dict[int, float]:
-    """Return ``{plant_code: COAL capacity MW}`` from the ISO's model fleet.
-
-    A plant qualifies on having ANY :data:`TARGET_CLASS` generator, so a site
-    whose other units were converted to gas is included — its coal units are
-    separated from them downstream by CAMPD ``primaryFuelInfo``.
-
-    Args:
-        iso: ISO identifier, e.g. ``"NWPP"``.
-        fleet: An already-loaded fleet (see :func:`provenance_fleet`). ``None``
-            loads the ISO's loader-default fleet, the pre-soco-53f behaviour.
-
-    Returns:
-        Mapping of plant code to the class capacity the model carries there.
-    """
-    fleet = load_fleet_from_csv(iso, get_iso_config(iso)) if fleet is None else fleet
-    caps: dict[int, float] = {}
-    for gen in fleet:
-        if gen.plant_group != TARGET_CLASS:
-            continue
-        code = int(gen.plant_code or 0)
-        if code:
-            caps[code] = caps.get(code, 0.0) + float(gen.pmax_mw)
-    return caps
-
-
-def model_heat_rates(iso: str, fleet: list | None = None) -> dict[int, float]:
-    """Return the ISO's CURRENT capacity-weighted eGRID heat rate per plant.
-
-    Written to the artifact alongside the measured rate so the table records
-    what it replaces and by how much — the provenance a later reader needs to
-    judge the swap without re-running anything.
-
-    Args:
-        iso: ISO identifier.
-        fleet: An already-loaded fleet (see :func:`provenance_fleet`). ``None``
-            loads the ISO's loader-default fleet, the pre-soco-53f behaviour.
-    """
-    fleet = load_fleet_from_csv(iso, get_iso_config(iso)) if fleet is None else fleet
-    num: dict[int, float] = {}
-    den: dict[int, float] = {}
-    for gen in fleet:
-        if gen.plant_group != TARGET_CLASS:
-            continue
-        code = int(gen.plant_code or 0)
-        if not code:
-            continue
-        num[code] = num.get(code, 0.0) + float(gen.pmax_mw) * float(gen.heat_rate)
-        den[code] = den.get(code, 0.0) + float(gen.pmax_mw)
-    return {c: num[c] / den[c] for c in num if den[c] > 0}
-
-
 def parasitic_factors() -> dict[int, float]:
     """Return the committed ``{plant_id: net/gross}`` map, or ``{}`` if absent.
 
@@ -293,7 +206,8 @@ def unit_operating_heat_rates(
     Args:
         iso: ISO identifier.
         years: CAMPD vintages to pool.
-        codes: Plant codes to keep (from :func:`target_plant_codes`).
+        codes: Plant codes to keep (the target class across the backcast
+            fleet union, :func:`scripts.lib.heat_rate_years.union_fleet`).
 
     Returns:
         Columns ``plant_code``, ``plant_name``, ``unit_id``, ``gross_mwh``,
@@ -472,8 +386,8 @@ def main(argv: list[str] | None = None) -> int:
         "--years",
         nargs="+",
         type=int,
-        default=[2023, 2024, 2025],
-        help="CAMPD vintages to pool (default 2023 2024 2025)",
+        default=list(BACKCAST_YEARS),
+        help="CAMPD vintages to pool and slice (default 2019-2025)",
     )
     parser.add_argument("--out", default=None, help="Output CSV path override")
     parser.add_argument(
@@ -511,32 +425,53 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     iso = args.iso.upper()
 
-    fleet = provenance_fleet(
-        iso,
-        egrid_family_heat_rates=args.egrid_family_heat_rates,
-        measured_ct_heat_rates=args.measured_ct_heat_rates,
-        measured_st_heat_rates=args.measured_st_heat_rates,
-    )
-    caps = target_plant_codes(iso, fleet)
+    years = sorted(args.years)
+    # F1 D4: the target population is the UNION of the backcast fleets over
+    # every year (year-matched vintage + retiree channel), so a coal plant that
+    # retired before 2023 is covered; the provenance recipe is loaded per year.
+    recipe_flags = {
+        "egrid_family_heat_rates": args.egrid_family_heat_rates,
+        "measured_ct_heat_rates": args.measured_ct_heat_rates,
+        "measured_st_heat_rates": args.measured_st_heat_rates,
+    }
+    fleets = backcast_fleets(iso, years, **recipe_flags)
+    union = union_fleet(fleets)
+    caps = class_capacity(union, TARGET_CLASS)
     if not caps:
         raise SystemExit(f"{iso}: model fleet has no {TARGET_CLASS} plants")
     # The provenance recipe must not move the POPULATION — only the reported
     # rate. Asserted rather than assumed: a silent membership change would move
     # an APPLIED number (the gas-steam sibling's guard, soco-53e section 1.3).
-    plain_caps = target_plant_codes(iso)
-    if plain_caps != caps:
-        raise SystemExit(f"{iso}: the provenance recipe moved the plant population")
-    units = unit_operating_heat_rates(iso, args.years, set(caps))
+    if any(recipe_flags.values()):
+        plain_caps = class_capacity(
+            union_fleet(backcast_fleets(iso, years)), TARGET_CLASS
+        )
+        if plain_caps != caps:
+            raise SystemExit(f"{iso}: the provenance recipe moved the plant population")
+    factors = parasitic_factors()
+    units = unit_operating_heat_rates(iso, years, set(caps))
     if units.empty:
         raise SystemExit(f"{iso}: no unit cleared the steady-state screen")
-    table = plant_table(
-        units,
-        iso,
-        args.years,
-        caps,
-        model_heat_rates(iso, fleet),
-        parasitic_factors(),
+    pooled = plant_table(
+        units, iso, years, caps, class_heat_rates(union, TARGET_CLASS), factors
     )
+
+    def _year_table(year: int) -> pd.DataFrame | None:
+        # The SAME estimator on year Y's hours alone: a per-year row exists
+        # only where the unchanged _MIN_STEADY_HOURS gate clears on them.
+        year_units = unit_operating_heat_rates(iso, [year], set(caps))
+        if year_units.empty:
+            return None
+        return plant_table(
+            year_units,
+            iso,
+            [year],
+            caps,
+            class_heat_rates(fleets.get(year, []), TARGET_CLASS),
+            factors,
+        )
+
+    table = stack_year_tables(pooled, per_year_tables(years, _year_table))
     # Record WHICH fleet recipe the provenance columns were read under, so a
     # later reader can tell what "model_heat_rate_egrid" means without guessing.
     recipe = [
@@ -557,6 +492,13 @@ def main(argv: list[str] | None = None) -> int:
     )
     table.to_csv(out_path, index=False)
     print(f"wrote {out_path} ({len(table)} plant rows)")
+    print(
+        "  per-year rows: "
+        + ", ".join(
+            f"{y}:{int((table['year'] == y).sum())}" for y in sorted(set(table["year"]))
+        )
+    )
+    table = table[table["year"] == 0]
 
     ok = table[table["flag"] == "ok"]
     covered = float(ok["class_capacity_mw"].sum())

@@ -397,13 +397,15 @@ class TestApplicationSeam(unittest.TestCase):
 
     def test_default_config_cache_key_is_unchanged(self) -> None:
         """Rule: the field is cache-key-optional at its default (armed differs)."""
+        # F1: backcast-only; outside a backcast an armed flag is coerced off.
         base = ScenarioConfig().cache_key()
         self.assertEqual(
             base, ScenarioConfig(measured_chp_heat_rates=False).cache_key()
         )
-        self.assertNotEqual(
-            base, ScenarioConfig(measured_chp_heat_rates=True).cache_key()
-        )
+        self.assertEqual(base, ScenarioConfig(measured_chp_heat_rates=True).cache_key())
+        off = ScenarioConfig(mode="backcast", measured_chp_heat_rates=False)
+        on = ScenarioConfig(mode="backcast", measured_chp_heat_rates=True)
+        self.assertNotEqual(off.cache_key(), on.cache_key())
 
 
 class TestRunnerForwarding(unittest.TestCase):

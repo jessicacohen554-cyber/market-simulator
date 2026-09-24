@@ -49,7 +49,9 @@ from scripts.data.derive_campd_gas_st_heat_rates import (
 #: a number has to say so (rule 23 [R-FROZEN-DERIVE]).
 SOCO_MEASURED = {
     26: 11.0744,
-    2049: 10.3596,
+    # F1 (2026-09-24): the pooled window widened 2023-2025 -> 2019-2025; only
+    # 2049 carries pre-2023 steady hours, so only it moves (10.3596 -> 10.3494).
+    2049: 10.3494,
     728: 10.7966,
     10: 10.2073,
     3: 13.9845,
@@ -442,7 +444,9 @@ class TestCacheKeyRegistration(unittest.TestCase):
     """Default-off must be byte-identical off, armed must re-key."""
 
     def test_default_key_is_unmoved_and_armed_key_differs(self) -> None:
-        base = ScenarioConfig(iso="SOCO")
+        # F1: backcast-default ON and coerced off outside a backcast, so the
+        # "default-off" base is the explicit-False backcast (the pre-F1 key).
+        base = ScenarioConfig(iso="SOCO", mode="backcast", measured_st_heat_rates=False)
         armed = base.with_overrides(measured_st_heat_rates=True)
         self.assertNotEqual(base.cache_key(), armed.cache_key())
         # Registered at its frozen default, so an explicitly-False config keys
@@ -476,7 +480,8 @@ class TestConfigPlumbing(unittest.TestCase):
         # TestBackcastFleetSourcing below pins by source inspection. The seam
         # under test here is the one the CAMPD-binning ISOs will take when
         # their own lanes arm this field.
-        config = ScenarioConfig().with_overrides(
+        # F1: the flags are backcast-only (coerced off in a forecast config).
+        config = ScenarioConfig(mode="backcast").with_overrides(
             iso="NYISO", measured_st_heat_rates=True, use_campd_bins=True
         )
         seen: dict = {}
@@ -498,7 +503,8 @@ class TestConfigPlumbing(unittest.TestCase):
         import market_sim.data.fleet as fleet_pkg
         from market_sim.data.fleet.assembly import build_base_fleet
 
-        config = ScenarioConfig().with_overrides(
+        # F1: the flags are backcast-only (coerced off in a forecast config).
+        config = ScenarioConfig(mode="backcast").with_overrides(
             iso="SOCO", measured_st_heat_rates=True
         )
         calls: list[dict] = []

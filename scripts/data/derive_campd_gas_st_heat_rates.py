@@ -138,11 +138,17 @@ import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(REPO / "src"))
+sys.path.insert(0, str(REPO))
 
-from market_sim.config.iso_configs import get_iso_config  # noqa: E402
 from market_sim.config.paths import PROCESSED_DIR, RAW_DIR  # noqa: E402
 from market_sim.data import campd  # noqa: E402
-from market_sim.data.fleet import load_fleet_from_csv  # noqa: E402
+from scripts.lib.heat_rate_years import (  # noqa: E402
+    BACKCAST_YEARS,
+    backcast_fleets,
+    per_year_tables,
+    stack_year_tables,
+    union_fleet,
+)
 
 UNIT_LEVEL_DIR = RAW_DIR / "campd-unit-level"
 
@@ -212,12 +218,8 @@ _PAIR_RATIO_MAX: float = 2.0
 _HSL_PCTILE: float = 90.0
 
 
-def model_boiler_rows(
-    iso: str,
-    egrid_family_heat_rates: bool = False,
-    measured_ct_heat_rates: bool = False,
-) -> pd.DataFrame:
-    """Return the ISO's model BOILER rows, one per generator.
+def model_boiler_rows(fleet: list) -> pd.DataFrame:
+    """Return a model fleet's BOILER rows, one per generator.
 
     Columns ``plant_code``, ``unit_id``, ``generator_id``, ``plant_group``,
     ``pmax_mw``, ``heat_rate``. ``generator_id`` is the suffix of the loader's
@@ -225,28 +227,16 @@ def model_boiler_rows(
     code and is frequently — but not always — the CAMPD ``unitId`` as well.
 
     Args:
-        iso: ISO identifier, e.g. ``"SOCO"``.
-        egrid_family_heat_rates: Load the fleet with
-            ``ScenarioConfig.egrid_family_heat_rates`` armed. PROVENANCE ONLY —
-            it moves ``heat_rate``, which this artifact reports as
-            ``model_heat_rate_egrid`` (what the swap replaces), and NOTHING
-            that is applied. The measured rate comes from CAMPD alone, and the
-            pairing ranks on ``pmax_mw``, which no heat-rate flag touches.
-        measured_ct_heat_rates: Same, for
-            ``ScenarioConfig.measured_ct_heat_rates``. It cannot reach a boiler
-            row at all (it is gated on ``group == "CT_PEAKER"``); it is
-            accepted so the provenance load can reproduce an ISO's whole recipe
-            rather than a subset of it.
+        fleet: A loaded generator list — since F1 D4 the union of the ISO's
+            backcast fleets (:func:`scripts.lib.heat_rate_years.union_fleet`),
+            or one year's fleet for that year's provenance rate. Its provenance
+            recipe (``--egrid-family-heat-rates`` / ``--measured-ct-heat-rates``)
+            moves ``heat_rate`` — reported as ``model_heat_rate_egrid`` — and
+            NOTHING that is applied: the pairing ranks on ``pmax_mw``.
 
     Returns:
         One row per generator in :data:`BOILER_CLASSES`.
     """
-    fleet = load_fleet_from_csv(
-        iso,
-        get_iso_config(iso),
-        egrid_family_heat_rates=egrid_family_heat_rates,
-        measured_ct_heat_rates=measured_ct_heat_rates,
-    )
     rows: list[dict] = []
     for gen in fleet:
         if gen.plant_group not in BOILER_CLASSES:
@@ -265,7 +255,17 @@ def model_boiler_rows(
                 "heat_rate": float(gen.heat_rate),
             }
         )
-    return pd.DataFrame(rows)
+    return pd.DataFrame(
+        rows,
+        columns=[
+            "plant_code",
+            "unit_id",
+            "generator_id",
+            "plant_group",
+            "pmax_mw",
+            "heat_rate",
+        ],
+    )
 
 
 def target_plant_codes(iso: str, boilers: pd.DataFrame) -> dict[int, float]:
@@ -366,7 +366,7 @@ def campd_boiler_units(iso: str, years: list[int], codes: set[int]) -> pd.DataFr
             df = df[df["facilityId"].isin(codes)]
             df = df[_is_boiler(df["unitType"])]
             if not df.empty:
-                frames.append(df)
+                frames.append(df.assign(year=year))
     if not frames:
         raise SystemExit(f"{iso}: no CAMPD boiler hours at any {TARGET_CLASS} plant")
     pooled = pd.concat(frames, ignore_index=True).dropna(
@@ -617,8 +617,8 @@ def main(argv: list[str] | None = None) -> int:
         "--years",
         nargs="+",
         type=int,
-        default=[2023, 2024, 2025],
-        help="CAMPD vintages to pool (default 2023 2024 2025)",
+        default=list(BACKCAST_YEARS),
+        help="CAMPD vintages to pool and slice (default 2019-2025)",
     )
     parser.add_argument("--out", default=None, help="Output CSV path override")
     parser.add_argument(
@@ -657,30 +657,58 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     iso = args.iso.upper()
 
-    boilers = model_boiler_rows(
-        iso,
-        egrid_family_heat_rates=args.egrid_family_heat_rates,
-        measured_ct_heat_rates=args.measured_ct_heat_rates,
-    )
+    years = sorted(args.years)
+    # F1 D4: the population is the UNION of the backcast fleets over every
+    # year (year-matched vintage + retiree channel), so a gas-steam plant that
+    # retired before 2023 is covered; the provenance recipe loads per year.
+    recipe_flags = {
+        "egrid_family_heat_rates": args.egrid_family_heat_rates,
+        "measured_ct_heat_rates": args.measured_ct_heat_rates,
+    }
+    fleets = backcast_fleets(iso, years, **recipe_flags)
+    boilers = model_boiler_rows(union_fleet(fleets))
     # The pairing must not depend on the provenance recipe. It ranks on pmax,
     # which no heat-rate flag touches — asserted rather than assumed, because
     # a silent membership change would move an APPLIED number.
-    plain = model_boiler_rows(iso)
-    if not plain[["plant_code", "unit_id", "pmax_mw", "plant_group"]].equals(
-        boilers[["plant_code", "unit_id", "pmax_mw", "plant_group"]]
-    ):
-        raise SystemExit(f"{iso}: the provenance recipe moved the pairing population")
+    if any(recipe_flags.values()):
+        plain = model_boiler_rows(union_fleet(backcast_fleets(iso, years)))
+        if not plain[["plant_code", "unit_id", "pmax_mw", "plant_group"]].equals(
+            boilers[["plant_code", "unit_id", "pmax_mw", "plant_group"]]
+        ):
+            raise SystemExit(
+                f"{iso}: the provenance recipe moved the pairing population"
+            )
     caps = target_plant_codes(iso, boilers)
     if not caps:
         raise SystemExit(f"{iso}: model fleet has no {TARGET_CLASS} plants")
-    pooled = campd_boiler_units(iso, args.years, set(caps))
+    pooled = campd_boiler_units(iso, years, set(caps))
+    # ONE pairing, identified on the pooled hours and reused for every year's
+    # row: the pairing is structural (which CAMPD boiler is which model row),
+    # not a rate, so a year's rate must not re-pair on one year's p95.
     pairs = pair_units_to_rows(pooled, boilers)
     units = unit_operating_heat_rates(pooled, pairs)
     if units.empty:
         raise SystemExit(f"{iso}: no unit cleared the steady-state screen")
     model_hr = model_heat_rates(boilers)
     factors = parasitic_factors()
-    table = plant_table(units, iso, args.years, caps, model_hr, factors)
+    table = plant_table(units, iso, years, caps, model_hr, factors)
+
+    def _year_table(year: int) -> pd.DataFrame | None:
+        # The SAME estimator on year Y's hours alone: a per-year row exists
+        # only where the unchanged _MIN_STEADY_HOURS gate clears on them.
+        year_units = unit_operating_heat_rates(pooled[pooled["year"] == year], pairs)
+        if year_units.empty:
+            return None
+        return plant_table(
+            year_units,
+            iso,
+            [year],
+            caps,
+            model_heat_rates(model_boiler_rows(fleets.get(year, []))),
+            factors,
+        )
+
+    year_tables = per_year_tables(years, _year_table)
     # Record WHICH fleet recipe the provenance columns were read under, so a
     # later reader can tell what "model_heat_rate_egrid" means without guessing.
     recipe = [
@@ -715,7 +743,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.check_pairing:
         alt_pairs = pair_units_to_rows(pooled, boilers, exact_id_first=True)
         alt_units = unit_operating_heat_rates(pooled, alt_pairs)
-        alt = plant_table(alt_units, iso, args.years, caps, model_hr, factors)
+        alt = plant_table(alt_units, iso, years, caps, model_hr, factors)
         cols = ["plant_code", "heat_rate", "flag"]
         same = (
             table[cols].reset_index(drop=True).equals(alt[cols].reset_index(drop=True))
@@ -731,8 +759,22 @@ def main(argv: list[str] | None = None) -> int:
         if args.out
         else (PROCESSED_DIR / f"campd_st_heat_rates_{iso}.csv")
     )
-    table.to_csv(out_path, index=False)
-    print(f"\nwrote {out_path} ({len(table)} plant rows)")
+    stacked = stack_year_tables(
+        table,
+        {
+            y: t.assign(model_recipe=table["model_recipe"].iloc[0])
+            for y, t in year_tables.items()
+        },
+    )
+    stacked.to_csv(out_path, index=False)
+    print(f"\nwrote {out_path} ({len(stacked)} plant rows)")
+    print(
+        "  per-year rows: "
+        + ", ".join(
+            f"{y}:{int((stacked['year'] == y).sum())}"
+            for y in sorted(set(stacked["year"]))
+        )
+    )
 
     ok = table[table["flag"] == "ok"]
     covered = float(ok["class_capacity_mw"].sum())
