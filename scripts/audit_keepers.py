@@ -505,6 +505,12 @@ E11_META_PROVENANCE = {
     "years",
     "hours",
     "reuse",
+    # Y-29 (2026-09-24): mirror the two replay_keeper._IGNORE entries added
+    # after this set was last synced — free-text session provenance (ercot-261)
+    # and rule-32 composition provenance (pjm-d4-3). Neither selects a
+    # mechanism or maps to a solve kwarg; see the matching _IGNORE comments.
+    "model_changes_note",
+    "composed_from",
 }
 
 _E11_ABSENT = object()

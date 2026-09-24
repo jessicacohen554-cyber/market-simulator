@@ -735,6 +735,82 @@ DECLARATIONS: tuple[ParityDeclaration, ...] = (
         finding="docs/FINDING-caiso-ct-peaker-committed-measured-parity-2026-09.md",
         evidence=("src/market_sim/pipeline/backcast_config.py",),
     ),
+    # Three more promoter misses, filed by audit lane Y-29 (board v42 §4/§5,
+    # 2026-09-24). None of the promoting lanes (nyiso-232, nyiso-241 ->
+    # nyiso-247, miso-268) declared its field; each row below states the
+    # posture the mechanism's OWN record and code give, and routes the
+    # wire-forward vs BACKCAST_ONLY call to the owning desk (owner ruling R-X).
+    # No forecast consumer is invented.
+    #
+    # The two NYISO rows are the caiso_ct_peaker_committed_measured class
+    # exactly: a band re-grounded on the class's own CAMPD-measured `phys_*`
+    # conduct (a physical ratio that regenerates forward, so BACKCAST_ONLY
+    # would assert a non-regenerability the code does not claim — neither
+    # field is in scenarios._BACKCAST_ONLY_OVERLAY_FIELDS), substituted into
+    # the NYISO per-ISO merge curve that only pipeline/backcast_config.py
+    # builds. A forecast on the keeper config records the flag armed and still
+    # prices the pre-repair bands.
+    ParityDeclaration(
+        fields=("nyiso_ct_peaker_committed_measured",),
+        disposition=GAP,
+        why="nyiso-241 CT_PEAKER `committed` band grounded on its own measured "
+        "phys_committed (0.843) in place of the fitted 1.35 start hurdle, "
+        "which double-charged the start recovery tranche_startup_amortization "
+        "already pays; carried by the NYISO keeper since nyiso-247. Consumed "
+        "only in pipeline/backcast_config.py, the backcast config builder, so "
+        "a forecast on the keeper config still prices the min-load block at "
+        "1.35. Wire-forward vs an evidenced BACKCAST_ONLY is the forecast "
+        "desk's call with the NYISO desk (owner ruling R-X)",
+        finding="docs/handoffs/FINDING-y29-promotion-provenance-2026-09-24.md",
+        evidence=(
+            "src/market_sim/pipeline/backcast_config.py",
+            "docs/PRECOMMIT-nyiso247-fuel-invariance-limb-2026-09-20.md",
+        ),
+    ),
+    ParityDeclaration(
+        fields=("nyiso_st_gas_econ_bands_deleaked",),
+        disposition=GAP,
+        why="nyiso-232 third limb of the rule-25 [R-ISO-SCOPE] de-leak: the "
+        "_NYISO_OFFER_CURVE ST_GAS econ_low/econ_high re-grounded on the "
+        "measured steam marginal instead of the CC class's reach ratio. Armed "
+        "in the NYISO keeper (owner ruling 'Arm it') and consumed only in "
+        "pipeline/backcast_config.py, so a forecast on the keeper config "
+        "still prices ST_GAS on the leaked CC-derived bands. Wire-forward vs "
+        "an evidenced BACKCAST_ONLY is the forecast desk's call with the "
+        "NYISO desk (owner ruling R-X)",
+        finding="docs/handoffs/FINDING-y29-promotion-provenance-2026-09-24.md",
+        evidence=(
+            "src/market_sim/pipeline/backcast_config.py",
+            "docs/PRECOMMIT-nyiso247-fuel-invariance-limb-2026-09-20.md",
+        ),
+    ),
+    # The MISO row is NOT PARAMETER_OF its parent coal_fuel_inventory, though
+    # the field is a declared sub-gate of it (rule 19), because the parent's
+    # FORECAST_WIRED reading is a checker false positive: its only non-backcast
+    # "consumer" is the string key in data/input_completeness.py:235 (a
+    # completeness report), while scripts/run_calibration.py RAISES on the
+    # parent in any mode other than "backcast" ("that carry is not built
+    # yet"). PARAMETER_OF would inherit that false wiring. The record's own
+    # forward story (PRECOMMIT §2: "a forecast year's per-yard opening stock is
+    # the model's own carried per-yard inventory") is forward-derivable and not
+    # built, which is a GAP. The parent's misclassification is routed in the
+    # Y-29 FINDING, not repaired here.
+    ParityDeclaration(
+        fields=("coal_fuel_inventory_plant_grain",),
+        disposition=GAP,
+        why="miso-268 per-coal-YARD annual grain of coal_fuel_inventory "
+        "(Dec(Y-1) stock + mean Y-2..Y-1 receipts per yard), armed in the "
+        "MISO keeper. Its forward story is the model's own carried per-yard "
+        "inventory, which is not built: the backcast orchestrator raises on "
+        "the parent outside mode='backcast' and the forecast orchestrator "
+        "never builds the budget rows. Building the carry is the MISO desk's "
+        "and the forecast desk's call (owner ruling R-X)",
+        finding="docs/handoffs/FINDING-y29-promotion-provenance-2026-09-24.md",
+        evidence=(
+            _BACKCAST_ORCH,
+            "docs/PRECOMMIT-miso268-coal-yard-grain-2026-09-24.md",
+        ),
+    ),
 )
 
 
