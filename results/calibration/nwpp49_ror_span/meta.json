@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-22T22:59:37",
+  "timestamp": "2026-09-24T05:39:22",
   "iso": "NWPP",
   "years": [
     2023,
@@ -54,7 +54,8 @@
     "hydro_cascade_coupling": true,
     "hydro_dispatch_envelope": true,
     "hydro_min_flow_floor": true,
-    "nwpp_grid_carried_wind_served": true
+    "nwpp_grid_carried_wind_served": true,
+    "hydro_ror_split": true
   },
   "coal_bit_passthrough_sigmoid": false,
   "coal_bit_sigmoid_overrides": {},
@@ -335,27 +336,28 @@
   "btm_backfill_year": null,
   "shared_inputs": {
     "eia930": "../_shared/NWPP/eia930-e539ed483b64.parquet",
-    "eia923": "../_shared/NWPP/eia923-84bb6ac40d29.parquet",
+    "eia923": "../_shared/NWPP/eia923-0c4cb0be34ca.parquet",
     "campd": "../_shared/NWPP/campd-a5fde7813755.parquet",
     "unit_outages": "../_shared/NWPP/unit_outages-bde6b4666962.parquet",
     "unit_outages_short": "../_shared/NWPP/unit_outages_short-7bf36f8e0ce6.parquet",
     "unit_outages_partial": "../_shared/NWPP/unit_outages_partial-2ffd04f2448a.parquet",
     "unit_outages_e923": "../_shared/NWPP/unit_outages_e923-ffbc2ebbbef7.parquet",
-    "unit_outages_layup": "../_shared/NWPP/unit_outages_layup-75441d347875.parquet"
+    "unit_outages_layup": "../_shared/NWPP/unit_outages_layup-75441d347875.parquet",
+    "hydro_plant_modes": "../_shared/NWPP/hydro_plant_modes-142afad248b2.parquet"
   },
-  "git_sha": "f3a883cf",
-  "basis_sha": "f3a883cf6e26f4d2584d2faa9671d5cd6547edcc",
-  "highspy_version": "1.15.1",
+  "git_sha": "c2d5991c",
+  "basis_sha": "c2d5991ceece88d9ced57bfa84c0a88b98bc423d",
+  "highspy_version": "1.14.0",
   "environment": {
     "python_version": "3.11.15",
     "platform": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
     "packages": {
-      "highspy": "1.15.1",
+      "highspy": "1.14.0",
       "numpy": "2.4.6",
       "scipy": "1.17.1",
-      "pandas": "3.0.6",
-      "pyarrow": "25.0.1",
-      "pydantic": "2.13.5"
+      "pandas": "3.0.3",
+      "pyarrow": "24.0.0",
+      "pydantic": "2.13.4"
     },
     "cache_key_path_roots": [
       [
@@ -366,13 +368,13 @@
     "market_sim_data_root": ""
   },
   "composed_from": {
-    "nwpp47_gridwind_2023": [
+    "nwpp49_ror_2023": [
       2023
     ],
-    "nwpp47_gridwind_2024": [
+    "nwpp49_ror_2024": [
       2024
     ],
-    "nwpp47_gridwind_2025": [
+    "nwpp49_ror_2025": [
       2025
     ]
   }

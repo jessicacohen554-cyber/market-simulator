@@ -1,0 +1,15 @@
+{
+  "id": "2026-09-24-nwpp-49-ror-split",
+  "label": "nwpp 49 ror split",
+  "date": "2026-09-24",
+  "shorthand": "nwpp-49-ror-split",
+  "definition": "nwpp-49 RoR split, regulated chain exempt (PRECOMMIT-nwpp-49-ror-split-2026-09-24)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NWPP",
+  "file": "frontend/data/backcast/runs/2026-09-24-nwpp-49-ror-split.js",
+  "bundle": "results/calibration/nwpp49_ror_span"
+}
