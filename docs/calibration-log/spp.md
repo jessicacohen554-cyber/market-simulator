@@ -3906,3 +3906,17 @@ swapped an estimate for that year's own measurement.
 
 **Trap recorded**: `build_dof_ledger.py <bundle>` **WRITES** unless `--check` is passed; running it
 bare against the committed keeper rewrote its attestation (reverted immediately, keeper clean).
+
+## spp-76 — 2026-09-24 — the crossover is not a heat-rate defect (zero LP; measured-HR cells stay U, bounded)
+
+PRECOMMIT pushed at `27874eb7` before any number was read. The existing CAMPD derives were run
+`--iso SPP` into scratch. SPP's eGRID heat rates sit within 2–3 % of the metered net rate:
+CC −2.9 %, ST_GAS −2.8 %, coal −1.7 %. Coal's model rate is slightly *high*, the opposite of the
+hypothesis. A merit-order re-dispatch with the measured rates moves COAL_PRB by
++0.61 / −0.09 / −0.06 TWh in 2020 / 2021 / 2022 and the crossover gas price by +$0.02. The
+pre-registered two-sided test fails, so nothing was armed and no shard was launched.
+
+Two items routed, not built: (1) blended-plant rows at GRDA 165 and Hawthorn 2079 (a rule-14 level
+case for its own lane); (2) F923 January 2022 CC delivered gas at $147.15/MMBtu for Hawthorn and
+State Line MO, which survives into the offers. The crossover defect has no measured driver in the
+offer stack. Record: `docs/handoffs/RESULT-spp-76-crossover-heat-rates-2026-09-24.md`.

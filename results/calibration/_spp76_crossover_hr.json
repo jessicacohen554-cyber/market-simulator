@@ -1,0 +1,2768 @@
+{
+ "lane": "SPP-76",
+ "precommit_sha": "27874eb79804b84976558fb487a73ae0924a1311",
+ "base": "b024e34c506ff7737d964800489fc761dbb42631",
+ "years": {
+  "2019": {
+   "pooled_2023_2025": {
+    "year": 2019,
+    "bundle": "hydro5_spp_floor_rung",
+    "gas_price": 2.57,
+    "tag": "pooled",
+    "heat_rates": {
+     "CC_REGULAR": {
+      "pmax_mw": 9946.699999999999,
+      "covered_mw": 7989.6,
+      "hr_offer_cw": 6.7797268340253565,
+      "hr_offer_cw_measured": 6.656320310300472,
+      "fuel_cw": 2.4137813012265106,
+      "vom_cw": 2.0,
+      "mc_cw": 18.32880593703642,
+      "mc_cw_measured": 18.018751068341427
+     },
+     "ST_GAS": {
+      "pmax_mw": 9806.8,
+      "covered_mw": 9097.3,
+      "hr_offer_cw": 9.579000000000002,
+      "hr_offer_cw_measured": 9.466298157477222,
+      "fuel_cw": 2.731649914527155,
+      "vom_cw": 4.0,
+      "mc_cw": 30.166474531255624,
+      "mc_cw_measured": 29.95648453837295
+     },
+     "COAL_PRB": {
+      "pmax_mw": 19578.096999999998,
+      "covered_mw": 17319.1,
+      "hr_offer_cw": 9.895391741373027,
+      "hr_offer_cw_measured": 9.77630526356213,
+      "fuel_cw": 1.664445953839593,
+      "vom_cw": 4.5,
+      "mc_cw": 16.869397975069198,
+      "mc_cw_measured": 16.703898855372138
+     },
+     "COAL_LIGNITE": {
+      "pmax_mw": 2241.0,
+      "covered_mw": 1566.0,
+      "hr_offer_cw": 9.88202454618474,
+      "hr_offer_cw_measured": 9.907293127372728,
+      "fuel_cw": 1.8044138270782126,
+      "vom_cw": 4.5,
+      "mc_cw": 16.136778235551205,
+      "mc_cw_measured": 16.129994955194505
+     },
+     "CT_PEAKER": {
+      "pmax_mw": 10229.894098,
+      "covered_mw": 0.0,
+      "hr_offer_cw": 9.662108034670096,
+      "hr_offer_cw_measured": 9.662108034670096,
+      "fuel_cw": 2.713271064225061,
+      "vom_cw": 3.5,
+      "mc_cw": 29.78741567475488,
+      "mc_cw_measured": 29.78741567475488
+     }
+    },
+    "crossover_gas_price": {
+     "model": 2.798098685979464,
+     "measured": 2.820196574733242,
+     "cc_delivered_fuel_cw": 2.4137813012265106
+    },
+    "cc_share_behind_all_prb": {
+     "model": 0.0,
+     "measured": 0.0
+    },
+    "served_twh": 159.7880096435547,
+    "proxy": {
+     "CC_CHP": {
+      "p1_twh": 1.8328356742858887,
+      "proxy_model_twh": 1.8158308273254629,
+      "proxy_measured_twh": 1.7991786732155486,
+      "delta_twh": -0.016652154109914323
+     },
+     "CC_REGULAR": {
+      "p1_twh": 49.27224349975586,
+      "proxy_model_twh": 50.16479997474973,
+      "proxy_measured_twh": 49.6783846485862,
+      "delta_twh": -0.4864153261635229
+     },
+     "COAL": {
+      "p1_twh": 0.036741696298122406,
+      "proxy_model_twh": 0.036507580799998225,
+      "proxy_measured_twh": 0.035194872476253525,
+      "delta_twh": -0.0013127083237447004
+     },
+     "COAL_LIGNITE": {
+      "p1_twh": 11.081241607666016,
+      "proxy_model_twh": 11.752061810140265,
+      "proxy_measured_twh": 11.755856976699969,
+      "delta_twh": 0.003795166559703648
+     },
+     "COAL_PRB": {
+      "p1_twh": 75.22412109375,
+      "proxy_model_twh": 79.66890555121039,
+      "proxy_measured_twh": 80.6693157841943,
+      "delta_twh": 1.0004102329839022
+     },
+     "CT_CHP": {
+      "p1_twh": 0.5964364409446716,
+      "proxy_model_twh": 0.10217135348104633,
+      "proxy_measured_twh": 0.07769590711801407,
+      "delta_twh": -0.024475446363032272
+     },
+     "CT_PEAKER": {
+      "p1_twh": 14.484563827514648,
+      "proxy_model_twh": 12.174873260674307,
+      "proxy_measured_twh": 11.075238438946771,
+      "delta_twh": -1.0996348217275367
+     },
+     "ST_CHP": {
+      "p1_twh": 0.10760205239057541,
+      "proxy_model_twh": 0.03954842190455993,
+      "proxy_measured_twh": 0.03069741855228855,
+      "delta_twh": -0.008851003352271375
+     },
+     "ST_GAS": {
+      "p1_twh": 7.152230262756348,
+      "proxy_model_twh": 4.033317512195197,
+      "proxy_measured_twh": 4.666453572691489,
+      "delta_twh": 0.6331360604962921
+     }
+    }
+   },
+   "window_2019_2022": {
+    "year": 2019,
+    "bundle": "hydro5_spp_floor_rung",
+    "gas_price": 2.57,
+    "tag": "1922",
+    "heat_rates": {
+     "CC_REGULAR": {
+      "pmax_mw": 9946.699999999999,
+      "covered_mw": 7878.200000000001,
+      "hr_offer_cw": 6.7797268340253565,
+      "hr_offer_cw_measured": 6.713368066827763,
+      "fuel_cw": 2.4137813012265106,
+      "vom_cw": 2.0,
+      "mc_cw": 18.32880593703642,
+      "mc_cw_measured": 18.138528416783764
+     },
+     "ST_GAS": {
+      "pmax_mw": 9806.8,
+      "covered_mw": 8891.3,
+      "hr_offer_cw": 9.579000000000002,
+      "hr_offer_cw_measured": 9.626902858302266,
+      "fuel_cw": 2.731649914527155,
+      "vom_cw": 4.0,
+      "mc_cw": 30.166474531255624,
+      "mc_cw_measured": 30.358916461555292
+     },
+     "COAL_PRB": {
+      "pmax_mw": 19578.096999999998,
+      "covered_mw": 17319.1,
+      "hr_offer_cw": 9.895391741373027,
+      "hr_offer_cw_measured": 9.79200970152774,
+      "fuel_cw": 1.664445953839593,
+      "vom_cw": 4.5,
+      "mc_cw": 16.869397975069198,
+      "mc_cw_measured": 16.734555130675346
+     },
+     "COAL_LIGNITE": {
+      "pmax_mw": 2241.0,
+      "covered_mw": 1566.0,
+      "hr_offer_cw": 9.88202454618474,
+      "hr_offer_cw_measured": 9.812775611553935,
+      "fuel_cw": 1.8044138270782126,
+      "vom_cw": 4.5,
+      "mc_cw": 16.136778235551205,
+      "mc_cw_measured": 16.008917443352182
+     },
+     "CT_PEAKER": {
+      "pmax_mw": 10229.894098,
+      "covered_mw": 0.0,
+      "hr_offer_cw": 9.662108034670096,
+      "hr_offer_cw_measured": 9.662108034670096,
+      "fuel_cw": 2.713271064225061,
+      "vom_cw": 3.5,
+      "mc_cw": 29.78741567475488,
+      "mc_cw_measured": 29.78741567475488
+     }
+    },
+    "crossover_gas_price": {
+     "model": 2.798098685979464,
+     "measured": 2.8001251742105877,
+     "cc_delivered_fuel_cw": 2.4137813012265106
+    },
+    "cc_share_behind_all_prb": {
+     "model": 0.0,
+     "measured": 0.0
+    },
+    "served_twh": 159.7880096435547,
+    "proxy": {
+     "CC_CHP": {
+      "p1_twh": 1.8328356742858887,
+      "proxy_model_twh": 1.8158308273254629,
+      "proxy_measured_twh": 1.7897927866307912,
+      "delta_twh": -0.026038040694671683
+     },
+     "CC_REGULAR": {
+      "p1_twh": 49.27224349975586,
+      "proxy_model_twh": 50.16479997474973,
+      "proxy_measured_twh": 49.44118859621576,
+      "delta_twh": -0.7236113785339668
+     },
+     "COAL": {
+      "p1_twh": 0.036741696298122406,
+      "proxy_model_twh": 0.036507580799998225,
+      "proxy_measured_twh": 0.0353636543999987,
+      "delta_twh": -0.0011439263999995237
+     },
+     "COAL_LIGNITE": {
+      "p1_twh": 11.081241607666016,
+      "proxy_model_twh": 11.752061810140265,
+      "proxy_measured_twh": 11.895480056004477,
+      "delta_twh": 0.14341824586421065
+     },
+     "COAL_PRB": {
+      "p1_twh": 75.22412109375,
+      "proxy_model_twh": 79.66890555121039,
+      "proxy_measured_twh": 80.7570400398406,
+      "delta_twh": 1.0881344886302202
+     },
+     "CT_CHP": {
+      "p1_twh": 0.5964364409446716,
+      "proxy_model_twh": 0.10217135348104633,
+      "proxy_measured_twh": 0.0829754784792799,
+      "delta_twh": -0.01919587500176643
+     },
+     "CT_PEAKER": {
+      "p1_twh": 14.484563827514648,
+      "proxy_model_twh": 12.174873260674307,
+      "proxy_measured_twh": 11.42102636378558,
+      "delta_twh": -0.7538468968887273
+     },
+     "ST_CHP": {
+      "p1_twh": 0.10760205239057541,
+      "proxy_model_twh": 0.03954842190455993,
+      "proxy_measured_twh": 0.032392701931359,
+      "delta_twh": -0.007155719973200925
+     },
+     "ST_GAS": {
+      "p1_twh": 7.152230262756348,
+      "proxy_model_twh": 4.033317512195197,
+      "proxy_measured_twh": 4.332756615193053,
+      "delta_twh": 0.2994391029978562
+     }
+    }
+   }
+  },
+  "2020": {
+   "pooled_2023_2025": {
+    "year": 2020,
+    "bundle": "hydro5_spp_floor_rung",
+    "gas_price": 2.03,
+    "tag": "pooled",
+    "heat_rates": {
+     "CC_REGULAR": {
+      "pmax_mw": 9990.7,
+      "covered_mw": 8029.299999999999,
+      "hr_offer_cw": 6.778416056932948,
+      "hr_offer_cw_measured": 6.654921261601681,
+      "fuel_cw": 2.233226647207238,
+      "vom_cw": 2.0,
+      "mc_cw": 17.135321331943086,
+      "mc_cw_measured": 16.841408083680356
+     },
+     "ST_GAS": {
+      "pmax_mw": 9791.4,
+      "covered_mw": 9183.900000000001,
+      "hr_offer_cw": 9.578999999999999,
+      "hr_offer_cw_measured": 9.462526235672575,
+      "fuel_cw": 2.3619125407037034,
+      "vom_cw": 4.0,
+      "mc_cw": 26.62476022740078,
+      "mc_cw_measured": 26.330972330215943
+     },
+     "COAL_PRB": {
+      "pmax_mw": 19322.697,
+      "covered_mw": 17063.7,
+      "hr_offer_cw": 9.893905931640909,
+      "hr_offer_cw_measured": 9.777826948949913,
+      "fuel_cw": 1.6039548378676012,
+      "vom_cw": 4.5,
+      "mc_cw": 16.464949857686285,
+      "mc_cw_measured": 16.338073451258047
+     },
+     "COAL_LIGNITE": {
+      "pmax_mw": 2216.0,
+      "covered_mw": 1566.0,
+      "hr_offer_cw": 9.88503700722022,
+      "hr_offer_cw_measured": 9.910590658141826,
+      "fuel_cw": 2.362069109261624,
+      "vom_cw": 4.5,
+      "mc_cw": 18.98973396784137,
+      "mc_cw_measured": 18.976966673661277
+     },
+     "CT_PEAKER": {
+      "pmax_mw": 10259.194098,
+      "covered_mw": 0.0,
+      "hr_offer_cw": 9.661993511501453,
+      "hr_offer_cw_measured": 9.661993511501453,
+      "fuel_cw": 2.3527407143632453,
+      "vom_cw": 3.5000000000000004,
+      "mc_cw": 26.36894213922416,
+      "mc_cw_measured": 26.36894213922416
+     }
+    },
+    "crossover_gas_price": {
+     "model": 2.709980935099762,
+     "measured": 2.7322927084826483,
+     "cc_delivered_fuel_cw": 2.233226647207238
+    },
+    "cc_share_behind_all_prb": {
+     "model": 0.026933185011458846,
+     "measured": 0.0
+    },
+    "served_twh": 142.5003662109375,
+    "proxy": {
+     "CC_CHP": {
+      "p1_twh": 1.5531530380249023,
+      "proxy_model_twh": 1.4797536773575806,
+      "proxy_measured_twh": 1.498447350038434,
+      "delta_twh": 0.018693672680853632
+     },
+     "CC_REGULAR": {
+      "p1_twh": 47.19190979003906,
+      "proxy_model_twh": 48.59233994577083,
+      "proxy_measured_twh": 48.27968786872874,
+      "delta_twh": -0.3126520770420879
+     },
+     "COAL": {
+      "p1_twh": 0.03421112522482872,
+      "proxy_model_twh": 0.03370560203711677,
+      "proxy_measured_twh": 0.033276674462030115,
+      "delta_twh": -0.0004289275750866509
+     },
+     "COAL_LIGNITE": {
+      "p1_twh": 8.347749710083008,
+      "proxy_model_twh": 9.284221307491245,
+      "proxy_measured_twh": 9.247452405416494,
+      "delta_twh": -0.03676890207475051
+     },
+     "COAL_PRB": {
+      "p1_twh": 59.239280700683594,
+      "proxy_model_twh": 63.15718770192588,
+      "proxy_measured_twh": 63.76822468777149,
+      "delta_twh": 0.6110369858456105
+     },
+     "CT_CHP": {
+      "p1_twh": 0.5949618220329285,
+      "proxy_model_twh": 0.08971091850203367,
+      "proxy_measured_twh": 0.06695310054888984,
+      "delta_twh": -0.02275781795314382
+     },
+     "CT_PEAKER": {
+      "p1_twh": 15.876956939697266,
+      "proxy_model_twh": 13.939774603086455,
+      "proxy_measured_twh": 13.301037242753186,
+      "delta_twh": -0.6387373603332694
+     },
+     "ST_CHP": {
+      "p1_twh": 0.1417953073978424,
+      "proxy_model_twh": 0.06356776590854157,
+      "proxy_measured_twh": 0.047541358795441274,
+      "delta_twh": -0.0160264071131003
+     },
+     "ST_GAS": {
+      "p1_twh": 9.520343780517578,
+      "proxy_model_twh": 5.860102462417373,
+      "proxy_measured_twh": 6.2577432959822445,
+      "delta_twh": 0.397640833564871
+     }
+    }
+   },
+   "window_2019_2022": {
+    "year": 2020,
+    "bundle": "hydro5_spp_floor_rung",
+    "gas_price": 2.03,
+    "tag": "1922",
+    "heat_rates": {
+     "CC_REGULAR": {
+      "pmax_mw": 9990.7,
+      "covered_mw": 7897.9,
+      "hr_offer_cw": 6.778416056932948,
+      "hr_offer_cw_measured": 6.712049774288923,
+      "fuel_cw": 2.233226647207238,
+      "vom_cw": 2.0,
+      "mc_cw": 17.135321331943086,
+      "mc_cw_measured": 16.952817641012405
+     },
+     "ST_GAS": {
+      "pmax_mw": 9791.4,
+      "covered_mw": 9012.9,
+      "hr_offer_cw": 9.578999999999999,
+      "hr_offer_cw_measured": 9.626773860709191,
+      "fuel_cw": 2.3619125407037034,
+      "vom_cw": 4.0,
+      "mc_cw": 26.62476022740078,
+      "mc_cw_measured": 26.691626448279028
+     },
+     "COAL_PRB": {
+      "pmax_mw": 19322.697,
+      "covered_mw": 17063.7,
+      "hr_offer_cw": 9.893905931640909,
+      "hr_offer_cw_measured": 9.794153021821193,
+      "fuel_cw": 1.6039548378676012,
+      "vom_cw": 4.5,
+      "mc_cw": 16.464949857686285,
+      "mc_cw_measured": 16.37827892553568
+     },
+     "COAL_LIGNITE": {
+      "pmax_mw": 2216.0,
+      "covered_mw": 1566.0,
+      "hr_offer_cw": 9.88503700722022,
+      "hr_offer_cw_measured": 9.815006834608472,
+      "fuel_cw": 2.362069109261624,
+      "vom_cw": 4.5,
+      "mc_cw": 18.98973396784137,
+      "mc_cw_measured": 18.85719546635722
+     },
+     "CT_PEAKER": {
+      "pmax_mw": 10259.194098,
+      "covered_mw": 0.0,
+      "hr_offer_cw": 9.661993511501453,
+      "hr_offer_cw_measured": 9.661993511501453,
+      "fuel_cw": 2.3527407143632453,
+      "vom_cw": 3.5000000000000004,
+      "mc_cw": 26.36894213922416,
+      "mc_cw_measured": 26.36894213922416
+     }
+    },
+    "crossover_gas_price": {
+     "model": 2.709980935099762,
+     "measured": 2.7129386304491154,
+     "cc_delivered_fuel_cw": 2.233226647207238
+    },
+    "cc_share_behind_all_prb": {
+     "model": 0.026933185011458846,
+     "measured": 0.0
+    },
+    "served_twh": 142.5003662109375,
+    "proxy": {
+     "CC_CHP": {
+      "p1_twh": 1.5531530380249023,
+      "proxy_model_twh": 1.4797536773575806,
+      "proxy_measured_twh": 1.5060686833886336,
+      "delta_twh": 0.02631500603105314
+     },
+     "CC_REGULAR": {
+      "p1_twh": 47.19190979003906,
+      "proxy_model_twh": 48.59233994577083,
+      "proxy_measured_twh": 48.22849754817846,
+      "delta_twh": -0.3638423975923732
+     },
+     "COAL": {
+      "p1_twh": 0.03421112522482872,
+      "proxy_model_twh": 0.03370560203711677,
+      "proxy_measured_twh": 0.033273527999999566,
+      "delta_twh": -0.0004320740371171996
+     },
+     "COAL_LIGNITE": {
+      "p1_twh": 8.347749710083008,
+      "proxy_model_twh": 9.284221307491245,
+      "proxy_measured_twh": 9.434265010019582,
+      "delta_twh": 0.15004370252833701
+     },
+     "COAL_PRB": {
+      "p1_twh": 59.239280700683594,
+      "proxy_model_twh": 63.15718770192588,
+      "proxy_measured_twh": 63.95436159973464,
+      "delta_twh": 0.7971738978087604
+     },
+     "CT_CHP": {
+      "p1_twh": 0.5949618220329285,
+      "proxy_model_twh": 0.08971091850203367,
+      "proxy_measured_twh": 0.08110544104110198,
+      "delta_twh": -0.00860547746093168
+     },
+     "CT_PEAKER": {
+      "p1_twh": 15.876956939697266,
+      "proxy_model_twh": 13.939774603086455,
+      "proxy_measured_twh": 13.496676356444357,
+      "delta_twh": -0.44309824664209785
+     },
+     "ST_CHP": {
+      "p1_twh": 0.1417953073978424,
+      "proxy_model_twh": 0.06356776590854157,
+      "proxy_measured_twh": 0.05411956111105607,
+      "delta_twh": -0.009448204797485501
+     },
+     "ST_GAS": {
+      "p1_twh": 9.520343780517578,
+      "proxy_model_twh": 5.860102462417373,
+      "proxy_measured_twh": 5.7119962565791536,
+      "delta_twh": -0.1481062058382202
+     }
+    }
+   }
+  },
+  "2021": {
+   "pooled_2023_2025": {
+    "year": 2021,
+    "bundle": "hydro5_spp_floor_rung",
+    "gas_price": 3.72,
+    "tag": "pooled",
+    "heat_rates": {
+     "CC_REGULAR": {
+      "pmax_mw": 10065.2,
+      "covered_mw": 8103.799999999999,
+      "hr_offer_cw": 6.779871120295673,
+      "hr_offer_cw_measured": 6.659043691770573,
+      "fuel_cw": 6.3279158891694465,
+      "vom_cw": 2.0,
+      "mc_cw": 44.81876743212456,
+      "mc_cw_measured": 44.04918298740788
+     },
+     "ST_GAS": {
+      "pmax_mw": 9771.400000000001,
+      "covered_mw": 9264.9,
+      "hr_offer_cw": 9.579,
+      "hr_offer_cw_measured": 9.454159100735072,
+      "fuel_cw": 7.126770306294861,
+      "vom_cw": 4.0,
+      "mc_cw": 72.26733276399847,
+      "mc_cw_measured": 71.13383263675483
+     },
+     "COAL_PRB": {
+      "pmax_mw": 18457.896999999997,
+      "covered_mw": 17045.9,
+      "hr_offer_cw": 9.89803159952621,
+      "hr_offer_cw_measured": 9.777567239263941,
+      "fuel_cw": 1.5522503966221908,
+      "vom_cw": 4.500000000000001,
+      "mc_cw": 16.141761615559073,
+      "mc_cw_measured": 15.925896379423094
+     },
+     "COAL_LIGNITE": {
+      "pmax_mw": 2216.0,
+      "covered_mw": 1566.0,
+      "hr_offer_cw": 9.88503700722022,
+      "hr_offer_cw_measured": 9.910590658141826,
+      "fuel_cw": 2.4745713144750505,
+      "vom_cw": 4.5,
+      "mc_cw": 19.712148205790093,
+      "mc_cw_measured": 19.69687866068306
+     },
+     "CT_PEAKER": {
+      "pmax_mw": 10107.733098,
+      "covered_mw": 0.0,
+      "hr_offer_cw": 9.645583126091958,
+      "hr_offer_cw_measured": 9.645583126091958,
+      "fuel_cw": 6.999462921690472,
+      "vom_cw": 3.5,
+      "mc_cw": 71.26834255259932,
+      "mc_cw_measured": 71.26834255259932
+     }
+    },
+    "crossover_gas_price": {
+     "model": 2.634891306807683,
+     "measured": 2.6546203093686858,
+     "cc_delivered_fuel_cw": 6.3279158891694465
+    },
+    "cc_share_behind_all_prb": {
+     "model": 0.9688381545855298,
+     "measured": 0.9688381545855298
+    },
+    "served_twh": 140.05897521972656,
+    "proxy": {
+     "CC_CHP": {
+      "p1_twh": 0.9113948941230774,
+      "proxy_model_twh": 0.6040858718025716,
+      "proxy_measured_twh": 0.6355067307640134,
+      "delta_twh": 0.0314208589614419
+     },
+     "CC_REGULAR": {
+      "p1_twh": 28.25956153869629,
+      "proxy_model_twh": 28.912621573260346,
+      "proxy_measured_twh": 28.909602117193778,
+      "delta_twh": -0.0030194560665674506
+     },
+     "COAL": {
+      "p1_twh": 0.03620988503098488,
+      "proxy_model_twh": 0.03628630559999823,
+      "proxy_measured_twh": 0.03617001674863,
+      "delta_twh": -0.00011628885136823373
+     },
+     "COAL_LIGNITE": {
+      "p1_twh": 9.253273963928223,
+      "proxy_model_twh": 9.73170893497696,
+      "proxy_measured_twh": 9.71226963532562,
+      "delta_twh": -0.01943929965133965
+     },
+     "COAL_PRB": {
+      "p1_twh": 86.98270416259766,
+      "proxy_model_twh": 88.79394445662362,
+      "proxy_measured_twh": 88.70396126582405,
+      "delta_twh": -0.08998319079956413
+     },
+     "CT_CHP": {
+      "p1_twh": 0.5755188465118408,
+      "proxy_model_twh": 0.04035611236363557,
+      "proxy_measured_twh": 0.04281604118239107,
+      "delta_twh": 0.0024599288187554993
+     },
+     "CT_PEAKER": {
+      "p1_twh": 9.147978782653809,
+      "proxy_model_twh": 9.348169447154238,
+      "proxy_measured_twh": 9.131511736302436,
+      "delta_twh": -0.21665771085180155
+     },
+     "ST_CHP": {
+      "p1_twh": 0.09145542234182358,
+      "proxy_model_twh": 0.06769038595235143,
+      "proxy_measured_twh": 0.06491836134141378,
+      "delta_twh": -0.0027720246109376456
+     },
+     "ST_GAS": {
+      "p1_twh": 4.800870895385742,
+      "proxy_model_twh": 2.5241097982527307,
+      "proxy_measured_twh": 2.822216981304155,
+      "delta_twh": 0.2981071830514241
+     }
+    }
+   },
+   "window_2019_2022": {
+    "year": 2021,
+    "bundle": "hydro5_spp_floor_rung",
+    "gas_price": 3.72,
+    "tag": "1922",
+    "heat_rates": {
+     "CC_REGULAR": {
+      "pmax_mw": 10065.2,
+      "covered_mw": 7972.400000000001,
+      "hr_offer_cw": 6.779871120295673,
+      "hr_offer_cw_measured": 6.714710257379129,
+      "fuel_cw": 6.3279158891694465,
+      "vom_cw": 2.0,
+      "mc_cw": 44.81876743212456,
+      "mc_cw_measured": 44.42593378415455
+     },
+     "ST_GAS": {
+      "pmax_mw": 9771.400000000001,
+      "covered_mw": 9093.9,
+      "hr_offer_cw": 9.579,
+      "hr_offer_cw_measured": 9.62212340419771,
+      "fuel_cw": 7.126770306294861,
+      "vom_cw": 4.0,
+      "mc_cw": 72.26733276399847,
+      "mc_cw_measured": 72.42410704020027
+     },
+     "COAL_PRB": {
+      "pmax_mw": 18457.896999999997,
+      "covered_mw": 17045.9,
+      "hr_offer_cw": 9.89803159952621,
+      "hr_offer_cw_measured": 9.794806361400799,
+      "fuel_cw": 1.5522503966221908,
+      "vom_cw": 4.500000000000001,
+      "mc_cw": 16.141761615559073,
+      "mc_cw_measured": 15.951490556719461
+     },
+     "COAL_LIGNITE": {
+      "pmax_mw": 2216.0,
+      "covered_mw": 1566.0,
+      "hr_offer_cw": 9.88503700722022,
+      "hr_offer_cw_measured": 9.815006834608472,
+      "fuel_cw": 2.4745713144750505,
+      "vom_cw": 4.5,
+      "mc_cw": 19.712148205790093,
+      "mc_cw_measured": 19.570180968305063
+     },
+     "CT_PEAKER": {
+      "pmax_mw": 10107.733098,
+      "covered_mw": 0.0,
+      "hr_offer_cw": 9.645583126091958,
+      "hr_offer_cw_measured": 9.645583126091958,
+      "fuel_cw": 6.999462921690472,
+      "vom_cw": 3.5,
+      "mc_cw": 71.26834255259932,
+      "mc_cw_measured": 71.26834255259932
+     }
+    },
+    "crossover_gas_price": {
+     "model": 2.634891306807683,
+     "measured": 2.6365980631652945,
+     "cc_delivered_fuel_cw": 6.3279158891694465
+    },
+    "cc_share_behind_all_prb": {
+     "model": 0.9688381545855298,
+     "measured": 0.9688381545855298
+    },
+    "served_twh": 140.05897521972656,
+    "proxy": {
+     "CC_CHP": {
+      "p1_twh": 0.9113948941230774,
+      "proxy_model_twh": 0.6040858718025716,
+      "proxy_measured_twh": 0.6377959267352138,
+      "delta_twh": 0.033710054932642265
+     },
+     "CC_REGULAR": {
+      "p1_twh": 28.25956153869629,
+      "proxy_model_twh": 28.912621573260346,
+      "proxy_measured_twh": 28.754147900546364,
+      "delta_twh": -0.15847367271398008
+     },
+     "COAL": {
+      "p1_twh": 0.03620988503098488,
+      "proxy_model_twh": 0.03628630559999823,
+      "proxy_measured_twh": 0.03606067274863005,
+      "delta_twh": -0.00022563285136818013
+     },
+     "COAL_LIGNITE": {
+      "p1_twh": 9.253273963928223,
+      "proxy_model_twh": 9.73170893497696,
+      "proxy_measured_twh": 9.774066765070117,
+      "delta_twh": 0.042357830093156544
+     },
+     "COAL_PRB": {
+      "p1_twh": 86.98270416259766,
+      "proxy_model_twh": 88.79394445662362,
+      "proxy_measured_twh": 88.86579603933365,
+      "delta_twh": 0.0718515827100277
+     },
+     "CT_CHP": {
+      "p1_twh": 0.5755188465118408,
+      "proxy_model_twh": 0.04035611236363557,
+      "proxy_measured_twh": 0.04180630938398906,
+      "delta_twh": 0.0014501970203534948
+     },
+     "CT_PEAKER": {
+      "p1_twh": 9.147978782653809,
+      "proxy_model_twh": 9.348169447154238,
+      "proxy_measured_twh": 9.238877123753582,
+      "delta_twh": -0.10929232340065576
+     },
+     "ST_CHP": {
+      "p1_twh": 0.09145542234182358,
+      "proxy_model_twh": 0.06769038595235143,
+      "proxy_measured_twh": 0.06805671535394055,
+      "delta_twh": 0.00036632940158911513
+     },
+     "ST_GAS": {
+      "p1_twh": 4.800870895385742,
+      "proxy_model_twh": 2.5241097982527307,
+      "proxy_measured_twh": 2.6423654330609616,
+      "delta_twh": 0.11825563480823115
+     }
+    }
+   }
+  },
+  "2022": {
+   "pooled_2023_2025": {
+    "year": 2022,
+    "bundle": "hydro5_spp_floor_rung",
+    "gas_price": 6.45,
+    "tag": "pooled",
+    "heat_rates": {
+     "CC_REGULAR": {
+      "pmax_mw": 10074.500000000002,
+      "covered_mw": 8113.099999999999,
+      "hr_offer_cw": 6.780088173110327,
+      "hr_offer_cw_measured": 6.657334012880953,
+      "fuel_cw": 7.800522143059246,
+      "vom_cw": 2.0,
+      "mc_cw": 55.18912815507228,
+      "mc_cw_measured": 53.755041592000026
+     },
+     "ST_GAS": {
+      "pmax_mw": 9737.7,
+      "covered_mw": 9197.2,
+      "hr_offer_cw": 9.579,
+      "hr_offer_cw_measured": 9.462349356779349,
+      "fuel_cw": 7.111379288976921,
+      "vom_cw": 4.0,
+      "mc_cw": 72.11990220910992,
+      "mc_cw_measured": 71.2492356346916
+     },
+     "COAL_PRB": {
+      "pmax_mw": 18459.797,
+      "covered_mw": 17050.8,
+      "hr_offer_cw": 9.897356167394474,
+      "hr_offer_cw_measured": 9.776499642720061,
+      "fuel_cw": 1.9408250445671253,
+      "vom_cw": 4.500000000000001,
+      "mc_cw": 19.26290666491293,
+      "mc_cw_measured": 18.946949837367626
+     },
+     "COAL_LIGNITE": {
+      "pmax_mw": 2216.0,
+      "covered_mw": 1566.0,
+      "hr_offer_cw": 9.88503700722022,
+      "hr_offer_cw_measured": 9.910590658141826,
+      "fuel_cw": 2.2792392413827205,
+      "vom_cw": 4.5,
+      "mc_cw": 18.790567073297545,
+      "mc_cw_measured": 18.782198162367973
+     },
+     "CT_PEAKER": {
+      "pmax_mw": 10402.688097999999,
+      "covered_mw": 0.0,
+      "hr_offer_cw": 9.654372820946037,
+      "hr_offer_cw_measured": 9.654372820946037,
+      "fuel_cw": 8.520652897286219,
+      "vom_cw": 3.500000000000001,
+      "mc_cw": 87.18417579590106,
+      "mc_cw_measured": 87.18417579590106
+     }
+    },
+    "crossover_gas_price": {
+     "model": 3.201881180657448,
+     "measured": 3.225686936128295,
+     "cc_delivered_fuel_cw": 7.800522143059246
+    },
+    "cc_share_behind_all_prb": {
+     "model": 0.9000918541345652,
+     "measured": 0.858044159870539
+    },
+    "served_twh": 144.955322265625,
+    "proxy": {
+     "CC_CHP": {
+      "p1_twh": 1.087049961090088,
+      "proxy_model_twh": 0.737953318865709,
+      "proxy_measured_twh": 0.7806752594005072,
+      "delta_twh": 0.0427219405347982
+     },
+     "CC_REGULAR": {
+      "p1_twh": 28.415006637573242,
+      "proxy_model_twh": 29.039798269707543,
+      "proxy_measured_twh": 29.00018858441454,
+      "delta_twh": -0.03960968529300019
+     },
+     "COAL_LIGNITE": {
+      "p1_twh": 12.862932205200195,
+      "proxy_model_twh": 13.231771836488132,
+      "proxy_measured_twh": 13.231676578750793,
+      "delta_twh": -9.525773733854294e-05
+     },
+     "COAL_PRB": {
+      "p1_twh": 87.73987579345703,
+      "proxy_model_twh": 89.78515807147437,
+      "proxy_measured_twh": 89.72241602300421,
+      "delta_twh": -0.06274204847015441
+     },
+     "CT_CHP": {
+      "p1_twh": 0.5527019500732422,
+      "proxy_model_twh": 0.022982992987426308,
+      "proxy_measured_twh": 0.02101119457476334,
+      "delta_twh": -0.001971798412662967
+     },
+     "CT_PEAKER": {
+      "p1_twh": 8.985222816467285,
+      "proxy_model_twh": 9.380539113384705,
+      "proxy_measured_twh": 8.924565744009636,
+      "delta_twh": -0.4559733693750687
+     },
+     "ST_CHP": {
+      "p1_twh": 0.03884127736091614,
+      "proxy_model_twh": 0.0070457748289672615,
+      "proxy_measured_twh": 0.006127140341739054,
+      "delta_twh": -0.000918634487228208
+     },
+     "ST_GAS": {
+      "p1_twh": 5.27370023727417,
+      "proxy_model_twh": 2.7500801365465843,
+      "proxy_measured_twh": 3.268668989787161,
+      "delta_twh": 0.5185888532405766
+     }
+    }
+   },
+   "window_2019_2022": {
+    "year": 2022,
+    "bundle": "hydro5_spp_floor_rung",
+    "gas_price": 6.45,
+    "tag": "1922",
+    "heat_rates": {
+     "CC_REGULAR": {
+      "pmax_mw": 10074.500000000002,
+      "covered_mw": 7981.7,
+      "hr_offer_cw": 6.780088173110327,
+      "hr_offer_cw_measured": 6.7130028409302085,
+      "fuel_cw": 7.800522143059246,
+      "vom_cw": 2.0,
+      "mc_cw": 55.18912815507228,
+      "mc_cw_measured": 53.9547462998196
+     },
+     "ST_GAS": {
+      "pmax_mw": 9737.7,
+      "covered_mw": 9026.199999999999,
+      "hr_offer_cw": 9.579,
+      "hr_offer_cw_measured": 9.621876926128596,
+      "fuel_cw": 7.111379288976921,
+      "vom_cw": 4.0,
+      "mc_cw": 72.11990220910992,
+      "mc_cw_measured": 72.33227465667929
+     },
+     "COAL_PRB": {
+      "pmax_mw": 18459.797,
+      "covered_mw": 17050.8,
+      "hr_offer_cw": 9.897356167394474,
+      "hr_offer_cw_measured": 9.792995586452163,
+      "fuel_cw": 1.9408250445671253,
+      "vom_cw": 4.500000000000001,
+      "mc_cw": 19.26290666491293,
+      "mc_cw_measured": 18.913600815248845
+     },
+     "COAL_LIGNITE": {
+      "pmax_mw": 2216.0,
+      "covered_mw": 1566.0,
+      "hr_offer_cw": 9.88503700722022,
+      "hr_offer_cw_measured": 9.815006834608472,
+      "fuel_cw": 2.2792392413827205,
+      "vom_cw": 4.5,
+      "mc_cw": 18.790567073297545,
+      "mc_cw_measured": 18.65001287652734
+     },
+     "CT_PEAKER": {
+      "pmax_mw": 10402.688097999999,
+      "covered_mw": 0.0,
+      "hr_offer_cw": 9.654372820946037,
+      "hr_offer_cw_measured": 9.654372820946037,
+      "fuel_cw": 8.520652897286219,
+      "vom_cw": 3.500000000000001,
+      "mc_cw": 87.18417579590106,
+      "mc_cw_measured": 87.18417579590106
+     }
+    },
+    "crossover_gas_price": {
+     "model": 3.201881180657448,
+     "measured": 3.2037065386585724,
+     "cc_delivered_fuel_cw": 7.800522143059246
+    },
+    "cc_share_behind_all_prb": {
+     "model": 0.9000918541345652,
+     "measured": 0.9249695547567155
+    },
+    "served_twh": 144.955322265625,
+    "proxy": {
+     "CC_CHP": {
+      "p1_twh": 1.087049961090088,
+      "proxy_model_twh": 0.737953318865709,
+      "proxy_measured_twh": 0.7705762803566056,
+      "delta_twh": 0.03262296149089665
+     },
+     "CC_REGULAR": {
+      "p1_twh": 28.415006637573242,
+      "proxy_model_twh": 29.039798269707543,
+      "proxy_measured_twh": 29.00963573127917,
+      "delta_twh": -0.030162538428369908
+     },
+     "COAL_LIGNITE": {
+      "p1_twh": 12.862932205200195,
+      "proxy_model_twh": 13.231771836488132,
+      "proxy_measured_twh": 13.267475286255332,
+      "delta_twh": 0.035703449767200274
+     },
+     "COAL_PRB": {
+      "p1_twh": 87.73987579345703,
+      "proxy_model_twh": 89.78515807147437,
+      "proxy_measured_twh": 89.79566112750513,
+      "delta_twh": 0.010503056030750274
+     },
+     "CT_CHP": {
+      "p1_twh": 0.5527019500732422,
+      "proxy_model_twh": 0.022982992987426308,
+      "proxy_measured_twh": 0.023031661647524872,
+      "delta_twh": 4.866866009856676e-05
+     },
+     "CT_PEAKER": {
+      "p1_twh": 8.985222816467285,
+      "proxy_model_twh": 9.380539113384705,
+      "proxy_measured_twh": 9.21881017507218,
+      "delta_twh": -0.16172893831252494
+     },
+     "ST_CHP": {
+      "p1_twh": 0.03884127736091614,
+      "proxy_model_twh": 0.0070457748289672615,
+      "proxy_measured_twh": 0.006821621765565936,
+      "delta_twh": -0.00022415306340132612
+     },
+     "ST_GAS": {
+      "p1_twh": 5.27370023727417,
+      "proxy_model_twh": 2.7500801365465843,
+      "proxy_measured_twh": 2.8633176304016947,
+      "delta_twh": 0.11323749385511037
+     }
+    }
+   }
+  },
+  "2023": {
+   "pooled_2023_2025": {
+    "year": 2023,
+    "bundle": "hydro5_spp_floor_span",
+    "gas_price": 2.54,
+    "tag": "pooled",
+    "heat_rates": {
+     "CC_REGULAR": {
+      "pmax_mw": 10057.100000000002,
+      "covered_mw": 8101.6,
+      "hr_offer_cw": 7.394068587455929,
+      "hr_offer_cw_measured": 7.224692083277996,
+      "fuel_cw": 2.9582434524645884,
+      "vom_cw": 2.0,
+      "mc_cw": 23.88445424227221,
+      "mc_cw_measured": 23.362492313626845
+     },
+     "ST_GAS": {
+      "pmax_mw": 9719.0,
+      "covered_mw": 9212.5,
+      "hr_offer_cw": 10.876586761482727,
+      "hr_offer_cw_measured": 10.655369148360567,
+      "fuel_cw": 3.12147298280209,
+      "vom_cw": 4.0,
+      "mc_cw": 38.093153811619594,
+      "mc_cw_measured": 37.41690211481146
+     },
+     "COAL_PRB": {
+      "pmax_mw": 18476.297,
+      "covered_mw": 17064.3,
+      "hr_offer_cw": 10.288574739048606,
+      "hr_offer_cw_measured": 10.115918062709406,
+      "fuel_cw": 1.8744113638010655,
+      "vom_cw": 4.500000000000001,
+      "mc_cw": 19.147094218415624,
+      "mc_cw_measured": 18.799683886568328
+     },
+     "COAL_LIGNITE": {
+      "pmax_mw": 1560.0,
+      "covered_mw": 1560.0,
+      "hr_offer_cw": 10.662854276991812,
+      "hr_offer_cw_measured": 10.69745257452094,
+      "fuel_cw": 1.588391780821918,
+      "vom_cw": 4.499999999999999,
+      "mc_cw": 17.526688884120755,
+      "mc_cw_measured": 17.49682505705837
+     },
+     "CT_PEAKER": {
+      "pmax_mw": 10491.647098000001,
+      "covered_mw": 0.0,
+      "hr_offer_cw": 11.602765423123707,
+      "hr_offer_cw_measured": 11.602765423123707,
+      "fuel_cw": 2.965096794334507,
+      "vom_cw": 3.5,
+      "mc_cw": 37.91416769683121,
+      "mc_cw_measured": 37.91416769683121
+     }
+    },
+    "crossover_gas_price": {
+     "model": 2.9462833824868326,
+     "measured": 2.9705614474140303,
+     "cc_delivered_fuel_cw": 2.9582434524645884
+    },
+    "cc_share_behind_all_prb": {
+     "model": 0.0,
+     "measured": 0.028824070488007867
+    },
+    "served_twh": 145.49205017089844,
+    "proxy": {
+     "CC_CHP": {
+      "p1_twh": 1.844287633895874,
+      "proxy_model_twh": 1.8093635645631125,
+      "proxy_measured_twh": 1.8037637214228173,
+      "delta_twh": -0.005599843140295241
+     },
+     "CC_REGULAR": {
+      "p1_twh": 41.991092681884766,
+      "proxy_model_twh": 43.03488180504547,
+      "proxy_measured_twh": 43.7214605276859,
+      "delta_twh": 0.686578722640425
+     },
+     "COAL_LIGNITE": {
+      "p1_twh": 7.172382354736328,
+      "proxy_model_twh": 7.894087304162937,
+      "proxy_measured_twh": 7.832584568170036,
+      "delta_twh": -0.06150273599290103
+     },
+     "COAL_PRB": {
+      "p1_twh": 66.186279296875,
+      "proxy_model_twh": 70.0202803519055,
+      "proxy_measured_twh": 70.39705700329436,
+      "delta_twh": 0.3767766513888687
+     },
+     "CT_CHP": {
+      "p1_twh": 1.2145127058029175,
+      "proxy_model_twh": 1.161265190229527,
+      "proxy_measured_twh": 1.1495900894102236,
+      "delta_twh": -0.011675100819303421
+     },
+     "CT_PEAKER": {
+      "p1_twh": 16.656383514404297,
+      "proxy_model_twh": 15.006586850683648,
+      "proxy_measured_twh": 13.852845943886255,
+      "delta_twh": -1.153740906797394
+     },
+     "ST_CHP": {
+      "p1_twh": 0.317257285118103,
+      "proxy_model_twh": 0.26300996769895885,
+      "proxy_measured_twh": 0.23891671109388107,
+      "delta_twh": -0.02409325660507774
+     },
+     "ST_GAS": {
+      "p1_twh": 10.109853744506836,
+      "proxy_model_twh": 6.302572806409802,
+      "proxy_measured_twh": 6.4958292757353835,
+      "delta_twh": 0.1932564693255825
+     }
+    }
+   }
+  },
+  "2024": {
+   "pooled_2023_2025": {
+    "year": 2024,
+    "bundle": "hydro5_spp_floor_span",
+    "gas_price": 2.19,
+    "tag": "pooled",
+    "heat_rates": {
+     "CC_REGULAR": {
+      "pmax_mw": 9955.3,
+      "covered_mw": 8098.299999999999,
+      "hr_offer_cw": 7.379800622752453,
+      "hr_offer_cw_measured": 7.210692421824098,
+      "fuel_cw": 2.783187656859901,
+      "vom_cw": 2.0,
+      "mc_cw": 22.623009026347894,
+      "mc_cw_measured": 22.114547296157426
+     },
+     "ST_GAS": {
+      "pmax_mw": 9515.1,
+      "covered_mw": 8991.6,
+      "hr_offer_cw": 10.894718346703323,
+      "hr_offer_cw_measured": 10.623259744909479,
+      "fuel_cw": 2.986143899916553,
+      "vom_cw": 4.0,
+      "mc_cw": 36.862684905501304,
+      "mc_cw_measured": 36.02226365266484
+     },
+     "COAL_PRB": {
+      "pmax_mw": 18289.629999999997,
+      "covered_mw": 17223.98,
+      "hr_offer_cw": 10.280804395869076,
+      "hr_offer_cw_measured": 10.100657610872439,
+      "fuel_cw": 1.7687533079400517,
+      "vom_cw": 4.5,
+      "mc_cw": 18.40617739439568,
+      "mc_cw_measured": 18.077096743338107
+     },
+     "COAL_LIGNITE": {
+      "pmax_mw": 1560.0,
+      "covered_mw": 1560.0,
+      "hr_offer_cw": 10.662854276991812,
+      "hr_offer_cw_measured": 10.69745257452094,
+      "fuel_cw": 1.5904586933614333,
+      "vom_cw": 4.499999999999999,
+      "mc_cw": 17.534412774930644,
+      "mc_cw_measured": 17.51085965339019
+     },
+     "CT_PEAKER": {
+      "pmax_mw": 10564.521697999999,
+      "covered_mw": 0.0,
+      "hr_offer_cw": 11.574824795086794,
+      "hr_offer_cw_measured": 11.574824795086794,
+      "fuel_cw": 2.9212099778096308,
+      "vom_cw": 3.5,
+      "mc_cw": 37.53190876195383,
+      "mc_cw_measured": 37.53190876195383
+     }
+    },
+    "crossover_gas_price": {
+     "model": 2.802813767042319,
+     "measured": 2.8243572697625314,
+     "cc_delivered_fuel_cw": 2.783187656859901
+    },
+    "cc_share_behind_all_prb": {
+     "model": 0.04357243233518482,
+     "measured": 0.04357243233518482
+    },
+    "served_twh": 143.09954833984375,
+    "proxy": {
+     "CC_CHP": {
+      "p1_twh": 1.8594120740890503,
+      "proxy_model_twh": 1.830361532843546,
+      "proxy_measured_twh": 1.8315895318692779,
+      "delta_twh": 0.0012279990257318132
+     },
+     "CC_REGULAR": {
+      "p1_twh": 40.86136245727539,
+      "proxy_model_twh": 41.9037187854505,
+      "proxy_measured_twh": 42.393879806090936,
+      "delta_twh": 0.4901610206404328
+     },
+     "COAL_LIGNITE": {
+      "p1_twh": 6.462244987487793,
+      "proxy_model_twh": 7.124194492272339,
+      "proxy_measured_twh": 7.147273252008065,
+      "delta_twh": 0.02307875973572675
+     },
+     "COAL_PRB": {
+      "p1_twh": 60.40987014770508,
+      "proxy_model_twh": 64.2040565419168,
+      "proxy_measured_twh": 64.41700252300485,
+      "delta_twh": 0.21294598108805715
+     },
+     "CT_CHP": {
+      "p1_twh": 1.2348846197128296,
+      "proxy_model_twh": 1.1971644465353524,
+      "proxy_measured_twh": 1.191988245714339,
+      "delta_twh": -0.005176200821013423
+     },
+     "CT_PEAKER": {
+      "p1_twh": 19.104822158813477,
+      "proxy_model_twh": 17.317917007509514,
+      "proxy_measured_twh": 16.348983384606644,
+      "delta_twh": -0.9689336229028702
+     },
+     "ST_CHP": {
+      "p1_twh": 0.4205560088157654,
+      "proxy_model_twh": 0.37155871182399924,
+      "proxy_measured_twh": 0.35279639894054665,
+      "delta_twh": -0.01876231288345257
+     },
+     "ST_GAS": {
+      "p1_twh": 12.746399879455566,
+      "proxy_model_twh": 9.150583078966957,
+      "proxy_measured_twh": 9.41604145508431,
+      "delta_twh": 0.2654583761173524
+     }
+    }
+   }
+  },
+  "2025": {
+   "pooled_2023_2025": {
+    "year": 2025,
+    "bundle": "hydro5_spp_floor_span",
+    "gas_price": 3.52,
+    "tag": "pooled",
+    "heat_rates": {
+     "CC_REGULAR": {
+      "pmax_mw": 10047.779999999997,
+      "covered_mw": 8114.099999999999,
+      "hr_offer_cw": 7.388493274621449,
+      "hr_offer_cw_measured": 7.218868702444104,
+      "fuel_cw": 3.623111629173482,
+      "vom_cw": 2.0,
+      "mc_cw": 28.83773827570809,
+      "mc_cw_measured": 28.124615024744195
+     },
+     "ST_GAS": {
+      "pmax_mw": 10463.5,
+      "covered_mw": 9669.0,
+      "hr_offer_cw": 10.901530506452026,
+      "hr_offer_cw_measured": 10.617127825037894,
+      "fuel_cw": 3.6443216061586527,
+      "vom_cw": 4.0,
+      "mc_cw": 43.93584938942897,
+      "mc_cw_measured": 42.883862913000776
+     },
+     "COAL_PRB": {
+      "pmax_mw": 18484.75,
+      "covered_mw": 17250.1,
+      "hr_offer_cw": 10.23521987539764,
+      "hr_offer_cw_measured": 10.05688638193812,
+      "fuel_cw": 1.7144142056364324,
+      "vom_cw": 4.5,
+      "mc_cw": 18.04270449399998,
+      "mc_cw_measured": 17.688955003972378
+     },
+     "COAL_LIGNITE": {
+      "pmax_mw": 2210.0,
+      "covered_mw": 1560.0,
+      "hr_offer_cw": 10.552374013530397,
+      "hr_offer_cw_measured": 10.576796341198015,
+      "fuel_cw": 1.9218238813493722,
+      "vom_cw": 4.5,
+      "mc_cw": 18.683906279249527,
+      "mc_cw_measured": 18.68307968280948
+     },
+     "CT_PEAKER": {
+      "pmax_mw": 11846.6129,
+      "covered_mw": 0.0,
+      "hr_offer_cw": 11.219109145648876,
+      "hr_offer_cw_measured": 11.219109145648876,
+      "fuel_cw": 4.037445742579884,
+      "vom_cw": 3.4999999999999996,
+      "mc_cw": 49.31662321372244,
+      "mc_cw_measured": 49.31662321372244
+     }
+    },
+    "crossover_gas_price": {
+     "model": 2.7133280909998803,
+     "measured": 2.7347316721500046,
+     "cc_delivered_fuel_cw": 3.623111629173482
+    },
+    "cc_share_behind_all_prb": {
+     "model": 0.10782111624938756,
+     "measured": 0.10782111624938756
+    },
+    "served_twh": 152.19570922851562,
+    "proxy": {
+     "CC_CHP": {
+      "p1_twh": 1.912998914718628,
+      "proxy_model_twh": 1.8300491021261853,
+      "proxy_measured_twh": 1.8174834994488527,
+      "delta_twh": -0.012565602677332702
+     },
+     "CC_REGULAR": {
+      "p1_twh": 35.72917175292969,
+      "proxy_model_twh": 35.75992309588818,
+      "proxy_measured_twh": 36.2564989558803,
+      "delta_twh": 0.4965758599921241
+     },
+     "COAL_LIGNITE": {
+      "p1_twh": 6.806772232055664,
+      "proxy_model_twh": 7.486468447539902,
+      "proxy_measured_twh": 7.329628154695759,
+      "delta_twh": -0.1568402928441437
+     },
+     "COAL_PRB": {
+      "p1_twh": 79.94587707519531,
+      "proxy_model_twh": 83.11183357225953,
+      "proxy_measured_twh": 83.63766581901834,
+      "delta_twh": 0.5258322467588037
+     },
+     "CT_CHP": {
+      "p1_twh": 1.1476879119873047,
+      "proxy_model_twh": 1.090696969393862,
+      "proxy_measured_twh": 1.0784896456774755,
+      "delta_twh": -0.012207323716386454
+     },
+     "CT_PEAKER": {
+      "p1_twh": 15.099967002868652,
+      "proxy_model_twh": 14.540878049947981,
+      "proxy_measured_twh": 13.70025857479602,
+      "delta_twh": -0.8406194751519598
+     },
+     "ST_CHP": {
+      "p1_twh": 0.18131740391254425,
+      "proxy_model_twh": 0.1578274767293528,
+      "proxy_measured_twh": 0.15216306537921628,
+      "delta_twh": -0.005664411350136506
+     },
+     "ST_GAS": {
+      "p1_twh": 11.371919631958008,
+      "proxy_model_twh": 8.21804193650544,
+      "proxy_measured_twh": 8.223530935494411,
+      "delta_twh": 0.005488998988970183
+     }
+    }
+   }
+  }
+ },
+ "c1_rows_model_actual_twh": {
+  "CC_REGULAR|2019": [
+   49.079,
+   43.775
+  ],
+  "CC_CHP|2019": [
+   1.833,
+   1.607
+  ],
+  "CT_PEAKER|2019": [
+   13.491,
+   11.564
+  ],
+  "ST_GAS|2019": [
+   6.261,
+   11.508
+  ],
+  "ST_CHP|2019": [
+   0.036,
+   0.344
+  ],
+  "COAL_PRB|2019": [
+   75.224,
+   76.947
+  ],
+  "COAL_LIGNITE|2019": [
+   11.081,
+   12.741
+  ],
+  "COAL_BIT|2019": [
+   0.0,
+   0.045
+  ],
+  "CC_REGULAR|2020": [
+   47.021,
+   45.108
+  ],
+  "CC_CHP|2020": [
+   1.553,
+   1.593
+  ],
+  "CT_PEAKER|2020": [
+   15.033,
+   8.864
+  ],
+  "ST_GAS|2020": [
+   8.795,
+   14.321
+  ],
+  "ST_CHP|2020": [
+   0.034,
+   0.398
+  ],
+  "COAL_PRB|2020": [
+   59.239,
+   66.13
+  ],
+  "COAL_LIGNITE|2020": [
+   8.348,
+   10.832
+  ],
+  "COAL_BIT|2020": [
+   0.0,
+   0.036
+  ],
+  "CC_REGULAR|2021": [
+   27.936,
+   34.567
+  ],
+  "CC_CHP|2021": [
+   0.911,
+   1.382
+  ],
+  "CT_PEAKER|2021": [
+   8.96,
+   7.942
+  ],
+  "ST_GAS|2021": [
+   4.436,
+   8.782
+  ],
+  "ST_CHP|2021": [
+   0.091,
+   0.459
+  ],
+  "COAL_PRB|2021": [
+   86.983,
+   80.35
+  ],
+  "COAL_LIGNITE|2021": [
+   9.253,
+   10.485
+  ],
+  "COAL_BIT|2021": [
+   0.0,
+   0.035
+  ],
+  "CC_REGULAR|2022": [
+   28.243,
+   35.791
+  ],
+  "CC_CHP|2022": [
+   1.087,
+   1.444
+  ],
+  "CT_PEAKER|2022": [
+   8.867,
+   10.231
+  ],
+  "ST_GAS|2022": [
+   5.013,
+   10.429
+  ],
+  "ST_CHP|2022": [
+   0.032,
+   0.451
+  ],
+  "COAL_PRB|2022": [
+   87.74,
+   78.138
+  ],
+  "COAL_LIGNITE|2022": [
+   12.863,
+   12.615
+  ],
+  "COAL_BIT|2022": [
+   0.0,
+   0.043
+  ],
+  "CC_REGULAR|2023": [
+   41.635,
+   45.691
+  ],
+  "CC_CHP|2023": [
+   1.844,
+   1.732
+  ],
+  "CT_PEAKER|2023": [
+   15.968,
+   13.229
+  ],
+  "ST_GAS|2023": [
+   9.652,
+   15.107
+  ],
+  "ST_CHP|2023": [
+   0.317,
+   0.532
+  ],
+  "COAL_PRB|2023": [
+   66.186,
+   65.395
+  ],
+  "COAL_LIGNITE|2023": [
+   7.172,
+   9.38
+  ],
+  "COAL_BIT|2023": [
+   0.0,
+   0.035
+  ],
+  "CC_REGULAR|2024": [
+   40.485,
+   45.848
+  ],
+  "CC_CHP|2024": [
+   1.859,
+   1.867
+  ],
+  "CT_PEAKER|2024": [
+   18.992,
+   15.975
+  ],
+  "ST_GAS|2024": [
+   12.746,
+   20.083
+  ],
+  "ST_CHP|2024": [
+   0.169,
+   0.507
+  ],
+  "COAL_PRB|2024": [
+   60.41,
+   60.024
+  ],
+  "COAL_LIGNITE|2024": [
+   6.462,
+   8.674
+  ],
+  "COAL_BIT|2024": [
+   0.0,
+   0.035
+  ],
+  "CC_REGULAR|2025": [
+   35.729,
+   42.703
+  ],
+  "CC_CHP|2025": [
+   1.913,
+   1.829
+  ],
+  "CT_PEAKER|2025": [
+   14.464,
+   11.318
+  ],
+  "ST_GAS|2025": [
+   10.941,
+   20.128
+  ],
+  "ST_CHP|2025": [
+   0.14,
+   0.341
+  ],
+  "COAL_PRB|2025": [
+   79.946,
+   74.632
+  ],
+  "COAL_LIGNITE|2025": [
+   6.807,
+   8.859
+  ],
+  "COAL_BIT|2025": [
+   0.0,
+   0.039
+  ]
+ },
+ "measured_hr_plants": {
+  "cc_pooled": [
+   {
+    "plant_code": 55463,
+    "plant_name": "Redbud Power Plant",
+    "class_capacity_mw": 1433.6,
+    "heat_rate": 7.6898,
+    "model_heat_rate_egrid": 7.6912,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 55225,
+    "plant_name": "Oneta Energy Center",
+    "class_capacity_mw": 1086.4,
+    "heat_rate": 7.451,
+    "model_heat_rate_egrid": 7.5133,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 55146,
+    "plant_name": "Green Country Energy, LLC",
+    "class_capacity_mw": 783.0,
+    "heat_rate": 7.2728,
+    "model_heat_rate_egrid": 7.2575,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 55178,
+    "plant_name": "Dogwood Energy Facility",
+    "class_capacity_mw": 655.2,
+    "heat_rate": 7.3736,
+    "model_heat_rate_egrid": 7.3687,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 56458,
+    "plant_name": "Hobbs Generating Station",
+    "class_capacity_mw": 573.8,
+    "heat_rate": 7.5169,
+    "model_heat_rate_egrid": 7.5391,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 7296,
+    "plant_name": "State Line (MO)",
+    "class_capacity_mw": 538.3,
+    "heat_rate": 7.1026,
+    "model_heat_rate_egrid": 7.136,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 55664,
+    "plant_name": "Harrison County Power Project",
+    "class_capacity_mw": 514.4,
+    "heat_rate": 7.1704,
+    "model_heat_rate_egrid": 7.1875,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 55457,
+    "plant_name": "McClain Energy Facility",
+    "class_capacity_mw": 486.98,
+    "heat_rate": 10.7998,
+    "model_heat_rate_egrid": 6.8985,
+    "flag": "steam_not_metered"
+   },
+   {
+    "plant_code": 165,
+    "plant_name": "Grand River Dam Authority",
+    "class_capacity_mw": 480.7,
+    "heat_rate": 6.6676,
+    "model_heat_rate_egrid": 8.0188,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 55065,
+    "plant_name": "Mustang Station",
+    "class_capacity_mw": 464.8,
+    "heat_rate": 7.8057,
+    "model_heat_rate_egrid": 7.9144,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 2963,
+    "plant_name": "Northeastern",
+    "class_capacity_mw": 444.0,
+    "heat_rate": 11.4067,
+    "model_heat_rate_egrid": 12.2427,
+    "flag": "steam_not_metered"
+   },
+   {
+    "plant_code": 56610,
+    "plant_name": "Deer Creek Station",
+    "class_capacity_mw": 295.0,
+    "heat_rate": 8.0012,
+    "model_heat_rate_egrid": 8.053,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 3006,
+    "plant_name": "Anadarko",
+    "class_capacity_mw": 282.0,
+    "heat_rate": 8.7378,
+    "model_heat_rate_egrid": 9.309,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 1239,
+    "plant_name": "Riverton",
+    "class_capacity_mw": 252.2,
+    "heat_rate": 7.4163,
+    "model_heat_rate_egrid": 7.5584,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 2079,
+    "plant_name": "Hawthorn",
+    "class_capacity_mw": 241.8,
+    "heat_rate": 8.3754,
+    "model_heat_rate_egrid": 11.7901,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 8059,
+    "plant_name": "Comanche (8059)",
+    "class_capacity_mw": 233.0,
+    "heat_rate": 16.4423,
+    "model_heat_rate_egrid": 9.7378,
+    "flag": "steam_not_metered"
+   },
+   {
+    "plant_code": 8000,
+    "plant_name": "Beatrice",
+    "class_capacity_mw": 219.5,
+    "heat_rate": 8.826,
+    "model_heat_rate_egrid": 8.9189,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 201,
+    "plant_name": "Thomas Fitzhugh",
+    "class_capacity_mw": 162.0,
+    "heat_rate": 8.8224,
+    "model_heat_rate_egrid": 8.7888,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 50558,
+    "plant_name": "Frontier Generating Station",
+    "class_capacity_mw": 131.4,
+    "heat_rate": 8.2685,
+    "model_heat_rate_egrid": 8.1601,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 7887,
+    "plant_name": "Terry Bundy Generating Station",
+    "class_capacity_mw": 121.8,
+    "heat_rate": 9.9228,
+    "model_heat_rate_egrid": 7.3389,
+    "flag": "boundary_above_band"
+   }
+  ],
+  "cc_1922": [
+   {
+    "plant_code": 55463,
+    "plant_name": "Redbud Power Plant",
+    "class_capacity_mw": 1433.6,
+    "heat_rate": 7.6121,
+    "model_heat_rate_egrid": 7.6912,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 55225,
+    "plant_name": "Oneta Energy Center",
+    "class_capacity_mw": 1086.4,
+    "heat_rate": 7.4592,
+    "model_heat_rate_egrid": 7.5133,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 55146,
+    "plant_name": "Green Country Energy, LLC",
+    "class_capacity_mw": 783.0,
+    "heat_rate": 7.3902,
+    "model_heat_rate_egrid": 7.2575,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 55178,
+    "plant_name": "Dogwood Energy Facility",
+    "class_capacity_mw": 655.2,
+    "heat_rate": 7.3907,
+    "model_heat_rate_egrid": 7.3687,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 56458,
+    "plant_name": "Hobbs Generating Station",
+    "class_capacity_mw": 573.8,
+    "heat_rate": 8.0197,
+    "model_heat_rate_egrid": 7.5391,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 7296,
+    "plant_name": "State Line (MO)",
+    "class_capacity_mw": 538.3,
+    "heat_rate": 6.8442,
+    "model_heat_rate_egrid": 7.136,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 55664,
+    "plant_name": "Harrison County Power Project",
+    "class_capacity_mw": 514.4,
+    "heat_rate": 7.2433,
+    "model_heat_rate_egrid": 7.1875,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 55457,
+    "plant_name": "McClain Energy Facility",
+    "class_capacity_mw": 486.98,
+    "heat_rate": 10.7345,
+    "model_heat_rate_egrid": 6.8985,
+    "flag": "steam_not_metered"
+   },
+   {
+    "plant_code": 165,
+    "plant_name": "Grand River Dam Authority",
+    "class_capacity_mw": 480.7,
+    "heat_rate": 6.7685,
+    "model_heat_rate_egrid": 8.0188,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 55065,
+    "plant_name": "Mustang Station",
+    "class_capacity_mw": 464.8,
+    "heat_rate": 8.6502,
+    "model_heat_rate_egrid": 7.9144,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 2963,
+    "plant_name": "Northeastern",
+    "class_capacity_mw": 444.0,
+    "heat_rate": 12.6448,
+    "model_heat_rate_egrid": 12.2427,
+    "flag": "steam_not_metered"
+   },
+   {
+    "plant_code": 56610,
+    "plant_name": "Deer Creek Station",
+    "class_capacity_mw": 295.0,
+    "heat_rate": 8.0064,
+    "model_heat_rate_egrid": 8.053,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 3006,
+    "plant_name": "Anadarko",
+    "class_capacity_mw": 282.0,
+    "heat_rate": 8.7793,
+    "model_heat_rate_egrid": 9.309,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 1239,
+    "plant_name": "Riverton",
+    "class_capacity_mw": 252.2,
+    "heat_rate": 7.3342,
+    "model_heat_rate_egrid": 7.5584,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 2079,
+    "plant_name": "Hawthorn",
+    "class_capacity_mw": 241.8,
+    "heat_rate": 8.5201,
+    "model_heat_rate_egrid": 11.7901,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 8059,
+    "plant_name": "Comanche (8059)",
+    "class_capacity_mw": 233.0,
+    "heat_rate": 15.8064,
+    "model_heat_rate_egrid": 9.7378,
+    "flag": "steam_not_metered"
+   },
+   {
+    "plant_code": 8000,
+    "plant_name": "Beatrice",
+    "class_capacity_mw": 219.5,
+    "heat_rate": 8.9261,
+    "model_heat_rate_egrid": 8.9189,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 201,
+    "plant_name": "Thomas Fitzhugh",
+    "class_capacity_mw": 162.0,
+    "heat_rate": 8.9752,
+    "model_heat_rate_egrid": 8.7888,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 50558,
+    "plant_name": "Frontier Generating Station",
+    "class_capacity_mw": 131.4,
+    "heat_rate": 8.4161,
+    "model_heat_rate_egrid": 8.1601,
+    "flag": "steam_not_metered"
+   },
+   {
+    "plant_code": 7887,
+    "plant_name": "Terry Bundy Generating Station",
+    "class_capacity_mw": 121.8,
+    "heat_rate": 9.4449,
+    "model_heat_rate_egrid": 7.3389,
+    "flag": "boundary_above_band"
+   }
+  ],
+  "gas_st_pooled": [
+   {
+    "plant_code": 2956,
+    "plant_name": "Seminole (2956)",
+    "class_capacity_mw": 1521.5,
+    "heat_rate": 10.9668,
+    "model_heat_rate_egrid": 11.0678,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 6193,
+    "plant_name": "Harrington Station",
+    "class_capacity_mw": 1018.0,
+    "heat_rate": 10.703,
+    "model_heat_rate_egrid": 11.3237,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 2952,
+    "plant_name": "Muskogee",
+    "class_capacity_mw": 989.0,
+    "heat_rate": 11.1225,
+    "model_heat_rate_egrid": 11.6425,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 4940,
+    "plant_name": "Riverside (4940)",
+    "class_capacity_mw": 909.0,
+    "heat_rate": 12.329,
+    "model_heat_rate_egrid": 13.5419,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 3478,
+    "plant_name": "Wilkes Power Plant",
+    "class_capacity_mw": 883.0,
+    "heat_rate": 10.9088,
+    "model_heat_rate_egrid": 11.0695,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 3482,
+    "plant_name": "Jones Station",
+    "class_capacity_mw": 486.0,
+    "heat_rate": 10.349,
+    "model_heat_rate_egrid": 10.8064,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 3484,
+    "plant_name": "Nichols Station",
+    "class_capacity_mw": 457.0,
+    "heat_rate": 10.5871,
+    "model_heat_rate_egrid": 11.3368,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 2964,
+    "plant_name": "Southwestern",
+    "class_capacity_mw": 446.0,
+    "heat_rate": 12.0144,
+    "model_heat_rate_egrid": 12.6355,
+    "flag": "capacity_pairing_mismatch"
+   },
+   {
+    "plant_code": 2963,
+    "plant_name": "Northeastern",
+    "class_capacity_mw": 434.0,
+    "heat_rate": 12.8741,
+    "model_heat_rate_egrid": 12.2427,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 2951,
+    "plant_name": "Horseshoe Lake",
+    "class_capacity_mw": 377.0,
+    "heat_rate": 12.5278,
+    "model_heat_rate_egrid": 11.0366,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 3476,
+    "plant_name": "Knox Lee Power Plant",
+    "class_capacity_mw": 342.0,
+    "heat_rate": 10.5452,
+    "model_heat_rate_egrid": 10.6398,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 3008,
+    "plant_name": "Mooreland",
+    "class_capacity_mw": 322.0,
+    "heat_rate": 11.024,
+    "model_heat_rate_egrid": 12.8432,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 2965,
+    "plant_name": "Tulsa",
+    "class_capacity_mw": 322.0,
+    "heat_rate": 12.1582,
+    "model_heat_rate_egrid": 13.2107,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 2291,
+    "plant_name": "North Omaha Station",
+    "class_capacity_mw": 240.0,
+    "heat_rate": 12.4924,
+    "model_heat_rate_egrid": 11.133,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 1417,
+    "plant_name": "Lieberman Power Plant",
+    "class_capacity_mw": 208.0,
+    "heat_rate": 11.714,
+    "model_heat_rate_egrid": 11.9434,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 3485,
+    "plant_name": "Plant X",
+    "class_capacity_mw": 190.0,
+    "heat_rate": 9.6706,
+    "model_heat_rate_egrid": 10.7653,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 2454,
+    "plant_name": "Cunningham",
+    "class_capacity_mw": 183.0,
+    "heat_rate": 10.1767,
+    "model_heat_rate_egrid": 12.3992,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 1233,
+    "plant_name": "Fort Dodge aka Judson Large",
+    "class_capacity_mw": 148.7,
+    "heat_rate": 11.5863,
+    "model_heat_rate_egrid": 11.9441,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 2446,
+    "plant_name": "Maddox",
+    "class_capacity_mw": 117.0,
+    "heat_rate": 10.6769,
+    "model_heat_rate_egrid": 7.3015,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 1416,
+    "plant_name": "Arsenal Hill Power Plant",
+    "class_capacity_mw": 110.0,
+    "heat_rate": 12.1482,
+    "model_heat_rate_egrid": 7.3425,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 1235,
+    "plant_name": "Great Bend Station aka Arthur Mullergren",
+    "class_capacity_mw": 99.8,
+    "heat_rate": 12.1018,
+    "model_heat_rate_egrid": 12.819,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 2226,
+    "plant_name": "Canaday",
+    "class_capacity_mw": 99.3,
+    "heat_rate": 12.7175,
+    "model_heat_rate_egrid": 13.2879,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 1336,
+    "plant_name": "Garden City",
+    "class_capacity_mw": 97.3,
+    "heat_rate": 11.1682,
+    "model_heat_rate_egrid": 13.4226,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 1230,
+    "plant_name": "Cimarron River",
+    "class_capacity_mw": 52.1,
+    "heat_rate": 13.2206,
+    "model_heat_rate_egrid": 12.5241,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 1217,
+    "plant_name": "Earl F Wisdom",
+    "class_capacity_mw": 37.5,
+    "heat_rate": 14.1021,
+    "model_heat_rate_egrid": 19.362,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 1271,
+    "plant_name": "Coffeyville",
+    "class_capacity_mw": 37.0,
+    "heat_rate": 12.3003,
+    "model_heat_rate_egrid": 12.6859,
+    "flag": "capacity_pairing_mismatch"
+   },
+   {
+    "plant_code": 7013,
+    "plant_name": "East 12th Street",
+    "class_capacity_mw": 25.8,
+    "heat_rate": 13.3378,
+    "model_heat_rate_egrid": 13.1631,
+    "flag": "ok"
+   }
+  ],
+  "gas_st_1922": [
+   {
+    "plant_code": 2956,
+    "plant_name": "Seminole (2956)",
+    "class_capacity_mw": 1521.5,
+    "heat_rate": 11.2297,
+    "model_heat_rate_egrid": 11.0678,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 6193,
+    "plant_name": "Harrington Station",
+    "class_capacity_mw": 1018.0,
+    "heat_rate": 10.1745,
+    "model_heat_rate_egrid": 11.3237,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 2952,
+    "plant_name": "Muskogee",
+    "class_capacity_mw": 989.0,
+    "heat_rate": 11.4293,
+    "model_heat_rate_egrid": 11.6425,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 4940,
+    "plant_name": "Riverside (4940)",
+    "class_capacity_mw": 909.0,
+    "heat_rate": 12.6266,
+    "model_heat_rate_egrid": 13.5419,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 3478,
+    "plant_name": "Wilkes Power Plant",
+    "class_capacity_mw": 883.0,
+    "heat_rate": 10.9073,
+    "model_heat_rate_egrid": 11.0695,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 3482,
+    "plant_name": "Jones Station",
+    "class_capacity_mw": 486.0,
+    "heat_rate": 10.5721,
+    "model_heat_rate_egrid": 10.8064,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 3484,
+    "plant_name": "Nichols Station",
+    "class_capacity_mw": 457.0,
+    "heat_rate": 11.0337,
+    "model_heat_rate_egrid": 11.3368,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 2964,
+    "plant_name": "Southwestern",
+    "class_capacity_mw": 446.0,
+    "heat_rate": 12.0522,
+    "model_heat_rate_egrid": 12.6355,
+    "flag": "capacity_pairing_mismatch"
+   },
+   {
+    "plant_code": 2963,
+    "plant_name": "Northeastern",
+    "class_capacity_mw": 434.0,
+    "heat_rate": 11.5819,
+    "model_heat_rate_egrid": 12.2427,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 2951,
+    "plant_name": "Horseshoe Lake",
+    "class_capacity_mw": 377.0,
+    "heat_rate": 12.2609,
+    "model_heat_rate_egrid": 11.0366,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 3476,
+    "plant_name": "Knox Lee Power Plant",
+    "class_capacity_mw": 342.0,
+    "heat_rate": 11.1377,
+    "model_heat_rate_egrid": 10.6398,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 3008,
+    "plant_name": "Mooreland",
+    "class_capacity_mw": 322.0,
+    "heat_rate": 11.0991,
+    "model_heat_rate_egrid": 12.8432,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 2965,
+    "plant_name": "Tulsa",
+    "class_capacity_mw": 322.0,
+    "heat_rate": 12.7018,
+    "model_heat_rate_egrid": 13.2107,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 2291,
+    "plant_name": "North Omaha Station",
+    "class_capacity_mw": 240.0,
+    "heat_rate": 13.2645,
+    "model_heat_rate_egrid": 11.133,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 1417,
+    "plant_name": "Lieberman Power Plant",
+    "class_capacity_mw": 208.0,
+    "heat_rate": 12.0292,
+    "model_heat_rate_egrid": 11.9434,
+    "flag": "capacity_pairing_mismatch"
+   },
+   {
+    "plant_code": 3485,
+    "plant_name": "Plant X",
+    "class_capacity_mw": 190.0,
+    "heat_rate": 10.788,
+    "model_heat_rate_egrid": 10.7653,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 2454,
+    "plant_name": "Cunningham",
+    "class_capacity_mw": 183.0,
+    "heat_rate": 10.4942,
+    "model_heat_rate_egrid": 12.3992,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 1233,
+    "plant_name": "Fort Dodge aka Judson Large",
+    "class_capacity_mw": 148.7,
+    "heat_rate": 11.8837,
+    "model_heat_rate_egrid": 11.9441,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 2446,
+    "plant_name": "Maddox",
+    "class_capacity_mw": 117.0,
+    "heat_rate": 10.9242,
+    "model_heat_rate_egrid": 7.3015,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 1416,
+    "plant_name": "Arsenal Hill Power Plant",
+    "class_capacity_mw": 110.0,
+    "heat_rate": 13.2014,
+    "model_heat_rate_egrid": 7.3425,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 1235,
+    "plant_name": "Great Bend Station aka Arthur Mullergren",
+    "class_capacity_mw": 99.8,
+    "heat_rate": 11.4593,
+    "model_heat_rate_egrid": 12.819,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 2226,
+    "plant_name": "Canaday",
+    "class_capacity_mw": 99.3,
+    "heat_rate": 13.3065,
+    "model_heat_rate_egrid": 13.2879,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 1336,
+    "plant_name": "Garden City",
+    "class_capacity_mw": 97.3,
+    "heat_rate": 11.2255,
+    "model_heat_rate_egrid": 13.4226,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 1230,
+    "plant_name": "Cimarron River",
+    "class_capacity_mw": 52.1,
+    "heat_rate": 13.2934,
+    "model_heat_rate_egrid": 12.5241,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 1217,
+    "plant_name": "Earl F Wisdom",
+    "class_capacity_mw": 37.5,
+    "heat_rate": 14.0847,
+    "model_heat_rate_egrid": 19.362,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 1271,
+    "plant_name": "Coffeyville",
+    "class_capacity_mw": 37.0,
+    "heat_rate": 12.2898,
+    "model_heat_rate_egrid": 12.6859,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 7013,
+    "plant_name": "East 12th Street",
+    "class_capacity_mw": 25.8,
+    "heat_rate": 13.5325,
+    "model_heat_rate_egrid": 13.1631,
+    "flag": "ok"
+   }
+  ],
+  "coal_pooled": [
+   {
+    "plant_code": 6068,
+    "plant_name": "Jeffrey Energy Center",
+    "class_capacity_mw": 2178.8,
+    "heat_rate": 10.6359,
+    "model_heat_rate_egrid": 10.9326,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 6065,
+    "plant_name": "Iatan",
+    "class_capacity_mw": 1616.4,
+    "heat_rate": 9.872,
+    "model_heat_rate_egrid": 10.0289,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 1241,
+    "plant_name": "La Cygne",
+    "class_capacity_mw": 1437.8,
+    "heat_rate": 10.4675,
+    "model_heat_rate_egrid": 10.5864,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 6077,
+    "plant_name": "Gerald Gentleman Station",
+    "class_capacity_mw": 1365.0,
+    "heat_rate": 9.8689,
+    "model_heat_rate_egrid": 9.7922,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 6096,
+    "plant_name": "Nebraska City Station",
+    "class_capacity_mw": 1337.5,
+    "heat_rate": 10.1233,
+    "model_heat_rate_egrid": 10.3869,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 6194,
+    "plant_name": "Tolk Station",
+    "class_capacity_mw": 1067.0,
+    "heat_rate": 10.1724,
+    "model_heat_rate_egrid": 10.9675,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 6095,
+    "plant_name": "Sooner",
+    "class_capacity_mw": 1038.0,
+    "heat_rate": 11.224,
+    "model_heat_rate_egrid": 11.215,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 6139,
+    "plant_name": "Welsh Power Plant",
+    "class_capacity_mw": 1000.0,
+    "heat_rate": 11.1166,
+    "model_heat_rate_egrid": 11.6467,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 6469,
+    "plant_name": "Antelope Valley",
+    "class_capacity_mw": 900.0,
+    "heat_rate": 11.4695,
+    "model_heat_rate_egrid": 10.9744,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 2817,
+    "plant_name": "Leland Olds",
+    "class_capacity_mw": 660.0,
+    "heat_rate": 11.0903,
+    "model_heat_rate_egrid": 11.6833,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 56564,
+    "plant_name": "John W. Turk Jr. Power Plant",
+    "class_capacity_mw": 650.0,
+    "heat_rate": 9.4541,
+    "model_heat_rate_egrid": 9.7015,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 2079,
+    "plant_name": "Hawthorn",
+    "class_capacity_mw": 561.1,
+    "heat_rate": 10.2145,
+    "model_heat_rate_egrid": 11.7901,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 2952,
+    "plant_name": "Muskogee",
+    "class_capacity_mw": 521.0,
+    "heat_rate": 11.387,
+    "model_heat_rate_egrid": 11.6425,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 6138,
+    "plant_name": "Flint Creek Power Plant",
+    "class_capacity_mw": 494.0,
+    "heat_rate": 10.9047,
+    "model_heat_rate_egrid": 11.5056,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 1250,
+    "plant_name": "Lawrence Energy Center",
+    "class_capacity_mw": 491.3,
+    "heat_rate": 10.7739,
+    "model_heat_rate_egrid": 11.0279,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 165,
+    "plant_name": "Grand River Dam Authority",
+    "class_capacity_mw": 478.9,
+    "heat_rate": 12.3454,
+    "model_heat_rate_egrid": 8.0188,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 2963,
+    "plant_name": "Northeastern",
+    "class_capacity_mw": 460.0,
+    "heat_rate": 11.7081,
+    "model_heat_rate_egrid": 12.2427,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 6195,
+    "plant_name": "John Twitty Energy Center",
+    "class_capacity_mw": 459.0,
+    "heat_rate": 10.0605,
+    "model_heat_rate_egrid": 10.661,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 6772,
+    "plant_name": "Hugo",
+    "class_capacity_mw": 440.0,
+    "heat_rate": 11.6053,
+    "model_heat_rate_egrid": 12.8216,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 108,
+    "plant_name": "Holcomb",
+    "class_capacity_mw": 358.9,
+    "heat_rate": 10.3842,
+    "model_heat_rate_egrid": 10.6686,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 2291,
+    "plant_name": "North Omaha Station",
+    "class_capacity_mw": 323.9,
+    "heat_rate": 11.0022,
+    "model_heat_rate_egrid": 11.133,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 60,
+    "plant_name": "Gerald Whelan Energy Center",
+    "class_capacity_mw": 296.0,
+    "heat_rate": 10.2385,
+    "model_heat_rate_egrid": 10.4486,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 6064,
+    "plant_name": "Nearman Creek",
+    "class_capacity_mw": 243.0,
+    "heat_rate": 12.4734,
+    "model_heat_rate_egrid": 12.8344,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 2277,
+    "plant_name": "Sheldon",
+    "class_capacity_mw": 214.0,
+    "heat_rate": 11.3084,
+    "model_heat_rate_egrid": 11.9353,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 2240,
+    "plant_name": "Lon D Wright Power Plant",
+    "class_capacity_mw": 118.5,
+    "heat_rate": 11.6721,
+    "model_heat_rate_egrid": 9.3869,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 59,
+    "plant_name": "Platte",
+    "class_capacity_mw": 100.0,
+    "heat_rate": 12.1662,
+    "model_heat_rate_egrid": 12.8336,
+    "flag": "ok"
+   }
+  ],
+  "coal_1922": [
+   {
+    "plant_code": 6068,
+    "plant_name": "Jeffrey Energy Center",
+    "class_capacity_mw": 2178.8,
+    "heat_rate": 10.6443,
+    "model_heat_rate_egrid": 10.9326,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 6065,
+    "plant_name": "Iatan",
+    "class_capacity_mw": 1616.4,
+    "heat_rate": 9.3141,
+    "model_heat_rate_egrid": 10.0289,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 1241,
+    "plant_name": "La Cygne",
+    "class_capacity_mw": 1437.8,
+    "heat_rate": 10.4644,
+    "model_heat_rate_egrid": 10.5864,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 6077,
+    "plant_name": "Gerald Gentleman Station",
+    "class_capacity_mw": 1365.0,
+    "heat_rate": 10.0272,
+    "model_heat_rate_egrid": 9.7922,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 6096,
+    "plant_name": "Nebraska City Station",
+    "class_capacity_mw": 1337.5,
+    "heat_rate": 10.3435,
+    "model_heat_rate_egrid": 10.3869,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 6194,
+    "plant_name": "Tolk Station",
+    "class_capacity_mw": 1067.0,
+    "heat_rate": 10.6591,
+    "model_heat_rate_egrid": 10.9675,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 6095,
+    "plant_name": "Sooner",
+    "class_capacity_mw": 1038.0,
+    "heat_rate": 10.769,
+    "model_heat_rate_egrid": 11.215,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 6139,
+    "plant_name": "Welsh Power Plant",
+    "class_capacity_mw": 1000.0,
+    "heat_rate": 11.0485,
+    "model_heat_rate_egrid": 11.6467,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 6469,
+    "plant_name": "Antelope Valley",
+    "class_capacity_mw": 900.0,
+    "heat_rate": 11.2467,
+    "model_heat_rate_egrid": 10.9744,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 2817,
+    "plant_name": "Leland Olds",
+    "class_capacity_mw": 660.0,
+    "heat_rate": 11.0359,
+    "model_heat_rate_egrid": 11.6833,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 56564,
+    "plant_name": "John W. Turk Jr. Power Plant",
+    "class_capacity_mw": 650.0,
+    "heat_rate": 9.4804,
+    "model_heat_rate_egrid": 9.7015,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 2079,
+    "plant_name": "Hawthorn",
+    "class_capacity_mw": 561.1,
+    "heat_rate": 10.1895,
+    "model_heat_rate_egrid": 11.7901,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 2952,
+    "plant_name": "Muskogee",
+    "class_capacity_mw": 521.0,
+    "heat_rate": 11.5338,
+    "model_heat_rate_egrid": 11.6425,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 6138,
+    "plant_name": "Flint Creek Power Plant",
+    "class_capacity_mw": 494.0,
+    "heat_rate": 10.8418,
+    "model_heat_rate_egrid": 11.5056,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 1250,
+    "plant_name": "Lawrence Energy Center",
+    "class_capacity_mw": 491.3,
+    "heat_rate": 10.9799,
+    "model_heat_rate_egrid": 11.0279,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 165,
+    "plant_name": "Grand River Dam Authority",
+    "class_capacity_mw": 478.9,
+    "heat_rate": 12.8529,
+    "model_heat_rate_egrid": 8.0188,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 2963,
+    "plant_name": "Northeastern",
+    "class_capacity_mw": 460.0,
+    "heat_rate": 11.2506,
+    "model_heat_rate_egrid": 12.2427,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 6195,
+    "plant_name": "John Twitty Energy Center",
+    "class_capacity_mw": 459.0,
+    "heat_rate": 9.9434,
+    "model_heat_rate_egrid": 10.661,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 6772,
+    "plant_name": "Hugo",
+    "class_capacity_mw": 440.0,
+    "heat_rate": 12.6709,
+    "model_heat_rate_egrid": 12.8216,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 108,
+    "plant_name": "Holcomb",
+    "class_capacity_mw": 358.9,
+    "heat_rate": 10.4493,
+    "model_heat_rate_egrid": 10.6686,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 2291,
+    "plant_name": "North Omaha Station",
+    "class_capacity_mw": 323.9,
+    "heat_rate": 11.3365,
+    "model_heat_rate_egrid": 11.133,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 60,
+    "plant_name": "Gerald Whelan Energy Center",
+    "class_capacity_mw": 296.0,
+    "heat_rate": 10.581,
+    "model_heat_rate_egrid": 10.4486,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 6064,
+    "plant_name": "Nearman Creek",
+    "class_capacity_mw": 243.0,
+    "heat_rate": 12.0512,
+    "model_heat_rate_egrid": 12.8344,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 2277,
+    "plant_name": "Sheldon",
+    "class_capacity_mw": 214.0,
+    "heat_rate": 11.0875,
+    "model_heat_rate_egrid": 11.9353,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 2240,
+    "plant_name": "Lon D Wright Power Plant",
+    "class_capacity_mw": 118.5,
+    "heat_rate": 11.1468,
+    "model_heat_rate_egrid": 9.3869,
+    "flag": "ok"
+   },
+   {
+    "plant_code": 59,
+    "plant_name": "Platte",
+    "class_capacity_mw": 100.0,
+    "heat_rate": 12.5909,
+    "model_heat_rate_egrid": 12.8336,
+    "flag": "ok"
+   }
+  ]
+ },
+ "cc_fuel_jan2022_outliers_usd_mmbtu": {
+  "2079 Hawthorn": 147.15,
+  "7296 State Line (MO)": 147.15,
+  "55178 Dogwood": 47.94
+ }
+}
