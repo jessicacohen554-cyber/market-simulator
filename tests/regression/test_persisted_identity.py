@@ -395,7 +395,33 @@ PINNED_DEFAULT_CACHE_KEY = "547053bdfccd4264"
 # `gas_cc_ccs` unit. The cost is a one-time cache MISS; no keeper, sidecar,
 # determination or dashboard row moves, because committed artifacts are files,
 # not cache lookups, and no backcast keeper is re-solved by this lane.
-PINNED_BACKCAST_CACHE_KEY = "f61891696e671969"
+#
+# 2026-09-24 ADVANCED BY F1 (owner instruction 2026-09-24; docs/handoffs/
+# AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md §5.1 item 4).
+#   WHAT MOVED: six registered fields flip to a BACKCAST default of True —
+#   `eia860_vintage_tracks_solve_year` and `measured_{ct,coal,st,cc,chp}_heat_rates`
+#   — declared in `_CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS` with the frozen drop
+#   value left at "False", and coerced back to it by `__post_init__` whenever
+#   `mode != "backcast"`. So the bare BACKCAST config resolves True, enters the
+#   hash and takes a new key, while the forecast default key (above) is
+#   UNMOVED. Measured under `config_identity_only`: with the six fields set to
+#   False the backcast key reproduces the pre-F1 literal exactly, so these six
+#   fields are the whole of the move.
+#   WHAT IT COSTS: a one-time cache MISS per bare backcast config. Committed
+#   keeper bundles recorded each field explicitly (False) or not at all, and
+#   neither form moves their recorded key (asserted over every committed
+#   run_config by tests/unit/config/test_f1_backcast_heat_rate_vintage_defaults
+#   .py). Behaviour CHANGES for a new backcast — that is the repair; the
+#   R-<ISO> lanes re-solve every keeper year on it.
+#   BASE NOTE: this literal is measured on main at 8856302b, where
+#   `coal_mustrun_requires_measured_row` is still unregistered. Once Y-28
+#   (PR #6561, which registers it and moves this pin to 5c3581517d0a680d)
+#   lands, the F1 value on the combined base is 82031b392ddd276a — whichever
+#   PR merges second takes that literal.
+#   MERGE NOTE (2026-09-24): Y-28 merged first, so F1 takes the combined-base
+#   value 82031b392ddd276a, measured on the merge of origin/main into this
+#   branch — no other field moved.
+PINNED_BACKCAST_CACHE_KEY = "82031b392ddd276a"
 
 # Registered cache-key-optional fields whose backcast coercion is KNOWINGLY off
 # their default, each having paid for its re-key in the block above. Only these
@@ -417,6 +443,30 @@ _DECLARED_BACKCAST_COERCION_REKEYS: dict[str, str] = {
     "storage_entry_cost_normalized_rank": (
         "R-A arming 2026-08-31: same posture, same reason — the two are armed "
         "as one mechanism pair and coerced off together"
+    ),
+    "eia860_vintage_tracks_solve_year": (
+        "F1 2026-09-24: backcast-default ON, coerced to its frozen False outside "
+        "a backcast; the backcast re-key was paid at the pin above"
+    ),
+    "measured_ct_heat_rates": (
+        "F1 2026-09-24: backcast-default ON, coerced to its frozen False outside "
+        "a backcast; the backcast re-key was paid at the pin above"
+    ),
+    "measured_coal_heat_rates": (
+        "F1 2026-09-24: backcast-default ON, coerced to its frozen False outside "
+        "a backcast; the backcast re-key was paid at the pin above"
+    ),
+    "measured_st_heat_rates": (
+        "F1 2026-09-24: backcast-default ON, coerced to its frozen False outside "
+        "a backcast; the backcast re-key was paid at the pin above"
+    ),
+    "measured_cc_heat_rates": (
+        "F1 2026-09-24: backcast-default ON, coerced to its frozen False outside "
+        "a backcast; the backcast re-key was paid at the pin above"
+    ),
+    "measured_chp_heat_rates": (
+        "F1 2026-09-24: backcast-default ON, coerced to its frozen False outside "
+        "a backcast; the backcast re-key was paid at the pin above"
     ),
 }
 

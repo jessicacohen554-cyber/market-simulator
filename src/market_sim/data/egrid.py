@@ -112,6 +112,186 @@ def _egrid_path(vintage: int) -> Path:
     return FLEET_DIR / _EGRID_FILES[vintage]
 
 
+# ---------------------------------------------------------------------------
+# Plant heat rates by eGRID vintage — the ONE resolver (rule 19 [R-ONE-MECH])
+# ---------------------------------------------------------------------------
+#
+# F1 (docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md
+# §1 D1/D2). Before it, the EIA-860 build joined eGRID 2023's ``PLHTRT`` into
+# every generator table it wrote — the canonical snapshot, the within-window
+# retiree parquet — and the year-matched ``vintage_<Y>/`` tables it had
+# rescoped carried NO heat rate at all, so a 2019-2022 backcast priced 95-100 %
+# of every ISO's thermal MW at the ``HEAT_RATE_BINS`` asset-class table. The
+# join, the boundary repair and the retiree join now all resolve the eGRID
+# vintage through this block, so no solve-path caller names a workbook.
+
+# Physical window for an eGRID plant heat rate, Btu/kWh: below it a plant with
+# near-zero net generation reports a negative or absurd ``PLHTRT``, above it
+# the same. The plant-grain join and the prime-mover-family derive
+# (``scripts/data/derive_egrid_family_heat_rates``) share this ONE window so a
+# family rate is admitted on exactly the plant rate's terms. (Moved here from
+# ``scripts/data/process_eia860`` by F1, which re-exports it unchanged.)
+EGRID_HR_WINDOW_BTU_KWH: tuple[int, int] = (3_000, 30_000)
+
+
+def egrid_workbook_path(vintage: int) -> Path:
+    """Return the committed eGRID workbook for ``vintage`` (2018 ... 2024).
+
+    Raises:
+        KeyError: ``vintage`` has no committed workbook; resolve a calendar
+            year through :func:`egrid_vintage_for_year` first.
+    """
+    return _egrid_path(int(vintage))
+
+
+def egrid_sheet_name(kind: str, vintage: int) -> str:
+    """Return eGRID's sheet name for a sheet family and vintage.
+
+    eGRID names every sheet ``<KIND><YY>`` (``PLNT24``, ``UNT21``, ``GEN19``),
+    so the two-digit suffix is the vintage's — never a literal ``23``.
+
+    Args:
+        kind: The sheet family, e.g. ``"PLNT"``, ``"UNT"``, ``"GEN"``.
+        vintage: The eGRID vintage year.
+    """
+    return f"{kind.upper()}{int(vintage) % 100:02d}"
+
+
+def egrid_vintage_for_eia860_dir(eia860_dir: Path) -> int:
+    """Return the eGRID vintage that matches an EIA-860 source directory.
+
+    A year-matched ``vintage_<Y>/`` directory joins eGRID ``Y`` (through
+    :func:`egrid_vintage_for_year`, so a year past the latest workbook takes the
+    latest). Every other directory — the canonical 2025 Early Release snapshot
+    — joins the LATEST released vintage (currently eGRID 2024): the snapshot
+    describes the fleet as of the 2025 release, and eGRID 2024 is the most
+    recent measured year of that fleet's operation. There is no eGRID 2025.
+
+    Args:
+        eia860_dir: An EIA-860 directory (canonical or ``vintage_<Y>``).
+    """
+    name = Path(eia860_dir).name
+    if name.startswith("vintage_"):
+        try:
+            return egrid_vintage_for_year(int(name.split("_", 1)[1]))
+        except ValueError:
+            pass
+    return _LATEST_EGRID_VINTAGE
+
+
+def _plant_heat_rate_sheet(vintage: int) -> pd.Series:
+    """Return ``{ORISPL: PLHTRT in MMBtu/MWh}`` for one vintage, windowed.
+
+    Read through :func:`market_sim.data.egrid_sheets.read_egrid_sheet`, so the
+    workbook is parsed once per content and served from its parquet mirror
+    after that. Rows outside :data:`EGRID_HR_WINDOW_BTU_KWH` are dropped.
+    """
+    from market_sim.data.egrid_sheets import read_egrid_sheet
+
+    raw = read_egrid_sheet(
+        egrid_workbook_path(vintage),
+        egrid_sheet_name("PLNT", vintage),
+        ["ORISPL", "PLHTRT"],
+    )
+    hr = pd.to_numeric(raw["PLHTRT"], errors="coerce")
+    code = pd.to_numeric(raw["ORISPL"], errors="coerce")
+    lo, hi = EGRID_HR_WINDOW_BTU_KWH
+    keep = code.notna() & hr.notna() & (hr >= lo) & (hr <= hi)
+    out = pd.Series(
+        hr[keep].to_numpy(dtype=float) / 1000.0,
+        index=code[keep].astype("int64").to_numpy(),
+        name=int(vintage),
+    )
+    return out[~out.index.duplicated(keep="first")]
+
+
+_PLANT_HR_TABLE: pd.DataFrame | None = None
+
+
+def plant_heat_rate_table() -> pd.DataFrame:
+    """Return every committed vintage's plant heat rate, plant x vintage.
+
+    Index ``plant_id`` (eGRID ``ORISPL`` == EIA plant code), one column per
+    eGRID vintage in :data:`_EGRID_FILES`, values MMBtu per net MWh
+    (``PLHTRT / 1000``), NaN where the vintage publishes no in-window rate.
+    A vintage whose workbook is absent contributes an all-NaN column. Cached
+    for the process.
+    """
+    global _PLANT_HR_TABLE
+    if _PLANT_HR_TABLE is None:
+        cols = []
+        for vintage in sorted(_EGRID_FILES):
+            if not _egrid_path(vintage).exists():
+                logger.warning(
+                    "eGRID %d workbook absent; that vintage contributes no heat rates",
+                    vintage,
+                )
+                cols.append(pd.Series(dtype=float, name=vintage))
+                continue
+            cols.append(_plant_heat_rate_sheet(vintage))
+        table = pd.concat(cols, axis=1)
+        table.index.name = "plant_id"
+        _PLANT_HR_TABLE = table
+    return _PLANT_HR_TABLE
+
+
+def resolve_plant_heat_rates(
+    plant_ids: pd.Series,
+    target_vintage: int | pd.Series,
+    table: pd.DataFrame | None = None,
+) -> tuple[pd.Series, pd.Series]:
+    """Return each plant's eGRID heat rate at a target vintage, with fallback.
+
+    The fallback order is fixed and carries ZERO free parameters:
+
+    1. the target vintage's own in-window ``PLHTRT``;
+    2. else the plant's NEAREST vintage that publishes one, by absolute year
+       distance, a tie going to the EARLIER vintage (the rate that was on file
+       first — it cannot carry information from after the earlier year);
+    3. else NaN, and only then does the fleet loader reach the
+       ``HEAT_RATE_BINS`` asset-class table.
+
+    Rule 13 [R-MEASURED]: every value is a published measured plant rate, and
+    the vintage is selected by calendar year alone — never by a residual.
+
+    Args:
+        plant_ids: EIA plant codes (any numeric-coercible dtype).
+        target_vintage: One eGRID vintage for every row, or a per-row Series
+            aligned to ``plant_ids`` (the retiree join passes each unit's own
+            last operating year, already resolved to a vintage).
+        table: Override for :func:`plant_heat_rate_table` (tests).
+
+    Returns:
+        ``(heat_rate, source_vintage)`` — both aligned to ``plant_ids``;
+        ``heat_rate`` in MMBtu/MWh (NaN where no vintage covers the plant) and
+        ``source_vintage`` the eGRID vintage that supplied it (``<NA>`` where
+        none did).
+    """
+    table = plant_heat_rate_table() if table is None else table
+    codes = pd.to_numeric(plant_ids, errors="coerce")
+    if isinstance(target_vintage, pd.Series):
+        targets = pd.to_numeric(target_vintage, errors="coerce").reindex(codes.index)
+    else:
+        targets = pd.Series(int(target_vintage), index=codes.index)
+    hr = pd.Series(float("nan"), index=codes.index, dtype=float)
+    src = pd.Series(pd.NA, index=codes.index, dtype="Int64")
+    vintages = [int(v) for v in table.columns]
+    for target in sorted(targets.dropna().unique()):
+        rows = targets == target
+        order = sorted(vintages, key=lambda v: (abs(v - int(target)), v))
+        for vintage in order:
+            need = rows & hr.isna() & codes.notna()
+            if not need.any():
+                break
+            got = codes[need].map(table[vintage])
+            hit = got.notna()
+            if hit.any():
+                idx = got.index[hit]
+                hr.loc[idx] = got[hit].astype(float)
+                src.loc[idx] = vintage
+    return hr, src
+
+
 def _load_egrid_plant_co2_raw(vintage: int) -> pd.DataFrame:
     """Parse the eGRID workbook's plant sheet for a vintage (the raw path)."""
     sheet = f"PLNT{vintage % 100:02d}"

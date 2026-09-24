@@ -30,6 +30,12 @@ from pathlib import Path
 
 import pandas as pd
 
+from market_sim.data.egrid import (
+    EGRID_HR_WINDOW_BTU_KWH as _EGRID_HR_WINDOW_BTU_KWH,
+    egrid_vintage_for_eia860_dir,
+    egrid_vintage_for_year,
+    resolve_plant_heat_rates,
+)
 from market_sim.data.fleet import (
     BA_CODE_TO_ISO,
     EIA_860_CSV_COLUMNS,
@@ -132,13 +138,11 @@ _GENERATOR_COLUMN_MAP: dict[str, str] = {
 # a score.
 RETIREMENT_WINDOW_START: int = 2019
 
-# Physical window for an eGRID heat rate, Btu/kWh: below it a plant with
-# near-zero net generation reports a negative or absurd ``PLHTRT``, above it
-# the same. The plant-grain join (:func:`_join_egrid_heat_rate`) and the
-# prime-mover-family derive (``scripts/data/derive_egrid_family_heat_rates``)
-# share this ONE window so a family rate is admitted on exactly the plant
-# rate's terms.
-EGRID_HR_WINDOW_BTU_KWH: tuple[int, int] = (3_000, 30_000)
+# Physical window for an eGRID heat rate, Btu/kWh. Owned by
+# :mod:`market_sim.data.egrid` since F1 (the one heat-rate resolver) and
+# re-exported here unchanged, so the prime-mover-family derive's import keeps
+# resolving to the SAME object.
+EGRID_HR_WINDOW_BTU_KWH = _EGRID_HR_WINDOW_BTU_KWH
 
 # Output parquet of within-window retirees (mid-window plant exits the latest
 # operable EIA-860 vintage no longer carries). Same canonical schema as the
@@ -227,8 +231,13 @@ def extract_all_workbooks(zip_path: Path, out_dir: Path) -> int:
     return written
 
 
-def build_generator_table(zip_path: Path) -> pd.DataFrame:
-    """Return the canonical-schema generator table for the seven markets."""
+def build_generator_table(zip_path: Path, egrid_vintage: int) -> pd.DataFrame:
+    """Return the canonical-schema generator table for the seven markets.
+
+    ``egrid_vintage`` is the eGRID vintage the table's ``heat_rate`` joins
+    (:func:`_join_egrid_heat_rate`); the caller resolves it from the output
+    directory with :func:`market_sim.data.egrid.egrid_vintage_for_eia860_dir`.
+    """
     with zipfile.ZipFile(zip_path) as zf:
         plant_name = next(n for n in zf.namelist() if "Plant_Y" in n)
         gen_name = next(n for n in zf.namelist() if "Generator_Y" in n)
@@ -263,7 +272,7 @@ def build_generator_table(zip_path: Path) -> pd.DataFrame:
         df[col] = pd.to_numeric(df[col], errors="coerce")
     df["status"] = df["status"].astype("string").str.strip()
 
-    _join_egrid_heat_rate(df)
+    _join_egrid_heat_rate(df, egrid_vintage)
 
     return df[EIA_860_CSV_COLUMNS].reset_index(drop=True)
 
@@ -377,7 +386,7 @@ def rescope_generator_table_from_parquet(
     # the committed file carries that column.
     new_rows = df[df["balancing_authority_code"].astype(str).isin(added)].copy()
     if "heat_rate" in committed.columns:
-        _join_egrid_heat_rate(new_rows)
+        _join_egrid_heat_rate(new_rows, egrid_vintage_for_eia860_dir(vintage_dir))
     new_rows = new_rows.reindex(columns=committed.columns)
     # Write through pyarrow against the COMMITTED file's own schema, so the
     # appended rows take the committed column types field by field (a vintage
@@ -405,43 +414,128 @@ def rescope_generator_table_from_parquet(
     return len(committed), merged.num_rows, added
 
 
-def _join_egrid_heat_rate(df: pd.DataFrame) -> None:
-    """Add a plant-level ``heat_rate`` column (MMBtu/MWh) from eGRID PLNT23.
+def _join_egrid_heat_rate(df: pd.DataFrame, vintage: int | pd.Series) -> None:
+    """Add a plant-level ``heat_rate`` column (MMBtu/MWh) from eGRID ``PLHTRT``.
 
     The EIA-860 Generator_Y sheets carry no heat-rate column, so eGRID PLHTRT
     -- derived from CEMS fuel consumption -- is the source. It is plant-level,
     so every generator at a plant inherits the same value. Mutates ``df`` in
-    place (keyed on its ``plant_id`` column); where the join misses, the fleet
-    loader falls back to the vintage bin centers in HEAT_RATE_BINS.
-    """
-    from market_sim.config.paths import FLEET_DIR
+    place (keyed on its ``plant_id`` column).
 
-    egrid_path = FLEET_DIR / "egrid2023_data_rev2.xlsx"
-    if not egrid_path.exists():
-        logger.warning(
-            "eGRID workbook not found at %s; heat_rate left blank", egrid_path
-        )
-        df["heat_rate"] = pd.NA
+    **Vintage-aware (F1, AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24
+    §1 D1/D2).** ``vintage`` is the eGRID vintage the table describes: a
+    ``vintage_<Y>/`` table joins eGRID ``Y``, the canonical 2025 Early Release
+    snapshot joins the LATEST vintage (eGRID 2024 — there is no eGRID 2025;
+    :func:`market_sim.data.egrid.egrid_vintage_for_eia860_dir`), and the
+    within-window retiree parquet passes a PER-ROW Series, each unit's own last
+    operating year. This used to read ``egrid2023_data_rev2.xlsx`` for every
+    table, and the pre-2023 vintages carried no heat rate at all.
+
+    Fallback order, zero free parameters
+    (:func:`market_sim.data.egrid.resolve_plant_heat_rates`): the target
+    vintage's own in-window PLHTRT, else the plant's NEAREST eGRID vintage
+    (tie -> earlier), else NaN — and only a NaN reaches the fleet loader's
+    ``HEAT_RATE_BINS`` asset-class fallback, i.e. only a plant absent from
+    EVERY committed eGRID vintage (2018-2024).
+    """
+    if "plant_id" not in df.columns or df.empty:
+        df["heat_rate"] = pd.Series(dtype=float, index=df.index)
         return
-    egrid = pd.read_excel(
-        egrid_path, sheet_name="PLNT23", skiprows=1, usecols=["ORISPL", "PLHTRT"]
-    )
-    hr = pd.to_numeric(egrid["PLHTRT"], errors="coerce")
-    # Drop physically implausible plant heat rates -- negative or absurdly
-    # large values appear for plants with near-zero net generation.
-    lo, hi = EGRID_HR_WINDOW_BTU_KWH
-    egrid["PLHTRT"] = hr.where((hr >= lo) & (hr <= hi))
-    egrid_hr = (
-        egrid.dropna(subset=["ORISPL", "PLHTRT"])
-        .drop_duplicates("ORISPL")
-        .set_index("ORISPL")["PLHTRT"]
-    )
-    # Convert BTU/kWh -> MMBtu/MWh (divide by 1000).
-    df["heat_rate"] = df["plant_id"].map(egrid_hr) / 1000.0
-    matched = int(df["heat_rate"].notna().sum())
+    hr, src = resolve_plant_heat_rates(df["plant_id"], vintage)
+    df["heat_rate"] = hr
+    matched = int(hr.notna().sum())
+    target = vintage.reindex(src.index) if isinstance(vintage, pd.Series) else vintage
+    fallback = int((src.notna() & (src != target)).sum())
     logger.info(
-        "  joined eGRID heat rates: %d of %d generators matched", matched, len(df)
+        "  joined eGRID heat rates: %d of %d generators matched "
+        "(%d from a nearest-vintage fallback)",
+        matched,
+        len(df),
+        fallback,
     )
+
+
+def retiree_egrid_vintages(df: pd.DataFrame) -> pd.Series:
+    """Return each within-window retiree's eGRID vintage: its last operating year.
+
+    A retiree's ``planned_retirement_year`` carries its ACTUAL retirement year
+    (:func:`_project_retired_sheet`), which is the last calendar year the unit
+    operated in; :func:`market_sim.data.egrid.egrid_vintage_for_year` maps it
+    onto a committed eGRID vintage. A unit that retired so early in that year
+    that eGRID publishes no in-window rate for it falls to its nearest vintage
+    inside :func:`market_sim.data.egrid.resolve_plant_heat_rates` — no month
+    threshold is introduced (F1, zero free parameters).
+    """
+    years = pd.to_numeric(df["planned_retirement_year"], errors="coerce")
+    return years.map(lambda y: egrid_vintage_for_year(int(y)) if pd.notna(y) else pd.NA)
+
+
+def rejoin_heat_rate_in_place(path: Path, vintage: int | None = None) -> dict:
+    """Re-join ``heat_rate`` on a COMMITTED generator parquet, touching nothing else.
+
+    F1's regeneration route for the year-matched ``vintage_<Y>/`` tables, the
+    canonical snapshot and the within-window retiree parquet. Their raw release
+    zips are not all committed (and EIA prunes retirements from later
+    releases), so a rebuild from source could not reproduce their rows; this
+    reads the committed file through pyarrow and replaces ONLY the
+    ``heat_rate`` column (adding it where the vintage never carried one —
+    ``vintage_2018/2019/2021/2022`` — or carried it all-null — ``vintage_2020``).
+    Every other column and every row survives byte-for-byte, in order.
+
+    Rule 23 [R-FROZEN-DERIVE]: the trigger is a SOURCE-COMPLETENESS defect
+    (docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md
+    §1 D1/D2), never a residual.
+
+    Args:
+        path: An ``eia860_generators.parquet`` or
+            :data:`RETIRED_WITHIN_WINDOW_PARQUET`.
+        vintage: The eGRID vintage to join. ``None`` resolves it: the retiree
+            parquet joins per row (:func:`retiree_egrid_vintages`); every other
+            file joins :func:`market_sim.data.egrid.egrid_vintage_for_eia860_dir`
+            of its directory.
+
+    Returns:
+        A summary dict: rows, heat-rate rows before / after, and the vintage.
+    """
+    import pyarrow as pa
+    import pyarrow.parquet as pq
+
+    table = pq.read_table(path)
+    frame = table.select(
+        [c for c in ("plant_id", "planned_retirement_year") if c in table.column_names]
+    ).to_pandas()
+    before = (
+        table.num_rows - table.column("heat_rate").null_count
+        if "heat_rate" in table.column_names
+        else 0
+    )
+    if vintage is None:
+        target = (
+            retiree_egrid_vintages(frame)
+            if path.name == RETIRED_WITHIN_WINDOW_PARQUET
+            else egrid_vintage_for_eia860_dir(path.parent)
+        )
+    else:
+        target = int(vintage)
+    _join_egrid_heat_rate(frame, target)
+    column = pa.array(
+        frame["heat_rate"].to_numpy(dtype=float),
+        type=pa.float64(),
+        mask=frame["heat_rate"].isna().to_numpy(),
+    )
+    if "heat_rate" in table.column_names:
+        idx = table.column_names.index("heat_rate")
+        table = table.set_column(idx, pa.field("heat_rate", pa.float64()), column)
+    else:
+        table = table.append_column(pa.field("heat_rate", pa.float64()), column)
+    pq.write_table(table, path)
+    return {
+        "path": str(path),
+        "rows": table.num_rows,
+        "heat_rate_rows_before": before,
+        "heat_rate_rows_after": int(frame["heat_rate"].notna().sum()),
+        "egrid_vintage": "per-row" if isinstance(target, pd.Series) else int(target),
+    }
 
 
 # Within-window retiree schema: the canonical fleet columns (which now carry
@@ -617,7 +711,7 @@ def build_within_window_retirees(
     # The within-window retiree operated during the window; mark it OP so the
     # fleet loader keeps it -- the COD ramp owns the actual exit timing.
     df["status"] = "OP"
-    _join_egrid_heat_rate(df)
+    _join_egrid_heat_rate(df, retiree_egrid_vintages(df))
     df = df[_RETIRED_COLUMNS].reset_index(drop=True)
 
     if preserve is None or preserve.empty:
@@ -630,6 +724,60 @@ def build_within_window_retirees(
         [(pid, gid) not in kept for pid, gid in zip(df["plant_id"], df["generator_id"])]
     ]
     return pd.concat([preserve[_RETIRED_COLUMNS], fresh], ignore_index=True)
+
+
+def rescope_retired_window(
+    sources: list[Path],
+    out_dir: Path,
+    cutoff_year: int = RETIREMENT_WINDOW_START,
+) -> tuple[int, int, list[str]]:
+    """Append within-window retirees of balancing authorities the artifact predates.
+
+    **D3 (F1, AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24 §1/§3b).**
+    NWPP and SOCO returned ZERO retiree rows for every year. Root cause, at the
+    membership seam: :func:`build_within_window_retirees` filters the retired
+    sheet through :func:`_admit_footprint`, i.e. through ``BA_CODE_TO_ISO`` AS
+    IT STOOD WHEN THE ARTIFACT WAS BUILT, and every later write extended the
+    committed rows with ``--retired-extend`` (``preserve``) rather than
+    rebuilding — so the 17 NWPP BAs and ``SOCO``, registered after the build,
+    were never admitted. It is the same build-time-scope defect
+    :func:`rescope_generator_table_from_parquet` repairs for the operable
+    vintages, and it is repaired the same way: from the committed sheets, no
+    re-fetch, STRICTLY ADDITIVE.
+
+    Every committed row survives verbatim; only rows whose balancing authority
+    the committed artifact carries NO row for are appended — so no already
+    registered ISO's retiree set moves (the 2023-2025 gap for EXISTING BAs,
+    ``FINDING-xiso-fuelvintage-retiree-window-2026-09-09.md`` §2, stays out of
+    scope exactly as the 2023 -> 2019 widening left it). Rule 23
+    [R-FROZEN-DERIVE]: the trigger is a SCOPE change, never a residual.
+
+    Args:
+        sources: EIA-860 sources whose "Retired and Canceled" sheets supply
+            the exits, OLDEST FIRST (later sources win the per-unit de-dup).
+        out_dir: Directory holding the committed retiree parquet and the
+            canonical operable sheet.
+        cutoff_year: First retirement year the artifact supports.
+
+    Returns:
+        ``(rows_before, rows_after, added_bas)``.
+    """
+    out_path = out_dir / RETIRED_WITHIN_WINDOW_PARQUET
+    committed = pd.read_parquet(out_path)
+    fresh = build_within_window_retirees(
+        sources, out_dir / "eia860_generator_operable.parquet", cutoff_year
+    )
+    have = set(committed["balancing_authority_code"].dropna().astype(str))
+    new = fresh[~fresh["balancing_authority_code"].astype(str).isin(have)]
+    added = sorted(set(new["balancing_authority_code"].dropna().astype(str)))
+    merged = pd.concat(
+        [committed, new.reindex(columns=committed.columns)], ignore_index=True
+    )
+    for col in committed.columns:
+        if str(committed[col].dtype) != str(merged[col].dtype):
+            merged[col] = merged[col].astype(committed[col].dtype)
+    merged.to_parquet(out_path, index=False)
+    return len(committed), len(merged), added
 
 
 def main() -> None:
@@ -709,7 +857,40 @@ def main() -> None:
         "so the vintages that supplied the existing rows are no longer "
         "available to reproduce them.",
     )
+    parser.add_argument(
+        "--rejoin-heat-rate",
+        type=Path,
+        nargs="+",
+        default=None,
+        metavar="PARQUET",
+        help="F1: re-join the vintage-matched eGRID heat_rate on each named "
+        "committed generator parquet (a vintage_<Y>/eia860_generators.parquet, "
+        "the canonical one, or the within-window retiree parquet), leaving every "
+        "other column and row byte-identical. Runs this mode alone and exits.",
+    )
+    parser.add_argument(
+        "--rescope-retired-window",
+        type=Path,
+        nargs="+",
+        default=None,
+        metavar="SOURCE",
+        help="F1 D3: append the within-window retirees of balancing authorities "
+        "the committed retiree parquet predates (NWPP, SOCO), read from these "
+        "EIA-860 sources OLDEST FIRST. Strictly additive. Runs alone and exits.",
+    )
     args = parser.parse_args()
+
+    if args.rejoin_heat_rate:
+        for path in args.rejoin_heat_rate:
+            print(rejoin_heat_rate_in_place(path))
+        return
+
+    if args.rescope_retired_window:
+        before, after, added = rescope_retired_window(
+            args.rescope_retired_window, args.out_dir
+        )
+        print(f"retiree window: {before} -> {after} rows (+{', '.join(added)})")
+        return
 
     if args.rescope_from_parquet:
         for vintage_dir in args.rescope_from_parquet:
@@ -739,7 +920,7 @@ def main() -> None:
     count = extract_all_workbooks(args.zip, args.out_dir)
     logger.info("Wrote %d raw parquet sheets", count)
 
-    fleet = build_generator_table(args.zip)
+    fleet = build_generator_table(args.zip, egrid_vintage_for_eia860_dir(args.out_dir))
     fleet_path = args.out_dir / "eia860_generators.parquet"
     fleet.to_parquet(fleet_path, index=False)
 

@@ -374,7 +374,9 @@ class TestCacheKeyRegistration(unittest.TestCase):
     """Default-off must be byte-identical off, armed must re-key."""
 
     def test_default_key_is_unmoved_and_armed_key_differs(self) -> None:
-        base = ScenarioConfig(iso="SOCO")
+        # F1: backcast-default ON and coerced off outside a backcast, so the
+        # "default-off" base is the explicit-False backcast (the pre-F1 key).
+        base = ScenarioConfig(iso="SOCO", mode="backcast", measured_cc_heat_rates=False)
         armed = base.with_overrides(measured_cc_heat_rates=True)
         self.assertFalse(base.measured_cc_heat_rates)
         self.assertTrue(armed.measured_cc_heat_rates)

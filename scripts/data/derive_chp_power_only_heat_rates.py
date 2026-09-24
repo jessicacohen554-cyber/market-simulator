@@ -1,7 +1,7 @@
 """Derive measured per-plant POWER-ONLY heat rates for topping-cycle CHP classes.
 
 The measured replacement for the **steam-credited** heat rate eGRID gives a
-cogeneration plant. The model's offer heat rate is eGRID ``PLNT23.PLHTRT``
+cogeneration plant. The model's offer heat rate is eGRID ``PLNT<YY>.PLHTRT`` (the solve year's own vintage since F1)
 (``scripts/data/process_eia860._join_egrid_heat_rate``), and for a CHP plant
 eGRID does not publish that as total fuel per net MWh: it first removes the
 share of the plant's fuel it attributes to **useful thermal output**, so
@@ -100,7 +100,7 @@ topping population, both definitional and both frozen at derive time (rule 23
    It is a **share**, never a subtraction of MMBtu: that needs CEMS's fuel
    *composition* to be representative, never CEMS's *level* to equal eGRID's,
    so the denominator stays ``PLNGENAN`` and no re-basing is smuggled in
-   alongside the correction. It is measured at the SAME year as ``--vintage``
+   alongside the correction. It is measured at the SAME year as the row's eGRID vintage
    (no vintage mixing), it has NO threshold (a plant with no dark units gets
    ``dark_share = 0.0`` and a byte-identical rate, so the gate is a strict
    no-op wherever the phenomenon is absent — rule 5 ``[R-NO-MAGIC]``), and a
@@ -160,29 +160,33 @@ import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(REPO / "src"))
+sys.path.insert(0, str(REPO))
 
 from market_sim.config.constants import (  # noqa: E402
     EGRID_CC_HR_PHYSICAL_CEILING,
 )
-from market_sim.config.iso_configs import get_iso_config  # noqa: E402
 from market_sim.config.paths import PROCESSED_DIR, RAW_DIR  # noqa: E402
 from market_sim.data import campd  # noqa: E402
-from market_sim.data.fleet import load_fleet_from_csv  # noqa: E402
+from market_sim.data.egrid import (  # noqa: E402
+    egrid_sheet_name,
+    egrid_vintage_for_year,
+    egrid_workbook_path,
+)
+from market_sim.data.egrid_sheets import read_egrid_sheet  # noqa: E402
+from scripts.lib.heat_rate_years import (  # noqa: E402
+    BACKCAST_YEARS,
+    POOLED_YEAR,
+    backcast_fleets,
+    union_fleet,
+)
 
 UNIT_LEVEL_DIR = RAW_DIR / "campd-unit-level"
-EGRID_DIR = RAW_DIR / "fleet-egrid"
 
-#: eGRID vintage the model's own ``heat_rate`` column is joined from
-#: (``scripts/data/process_eia860._join_egrid_heat_rate`` reads PLNT23 of this
-#: workbook). The correction MUST come from the same vintage: the delta is
-#: "eGRID's CHP allocation, undone", and mixing vintages would smuggle a
-#: re-basing in alongside it.
-DEFAULT_EGRID_VINTAGE: int = 2023
-_EGRID_WORKBOOK: dict[int, str] = {
-    2022: "egrid2022_data.xlsx",
-    2023: "egrid2023_data_rev2.xlsx",
-    2024: "egrid2024_data.xlsx",
-}
+#: F1 D4: there is no single "applied vintage" any more. Each backcast year's
+#: fleet joins its OWN eGRID vintage (``process_eia860._join_egrid_heat_rate``
+#: via :func:`market_sim.data.egrid.egrid_vintage_for_year`), so each year's
+#: row is computed against THAT vintage — the correction must still come from
+#: the same vintage as the incumbent it undoes, and now it does per year.
 
 #: The topping-cycle CHP classes this artifact prices, and the CAMPD
 #: ``unitType`` family each draws its validation units from.
@@ -242,18 +246,15 @@ _CC_PREFIX = "combined cycle"
 _CT_PREFIX = "combustion turbine"
 
 
-def target_plants(
-    iso: str, cc_steam_part_capacity: bool = False
-) -> dict[tuple[int, str], float]:
-    """Return ``{(plant_code, class): capacity MW}`` for the ISO's topping CHP.
+def target_plants(fleet: list) -> dict[tuple[int, str], float]:
+    """Return ``{(plant_code, class): capacity MW}`` for a fleet's topping CHP.
 
     Keyed by the PAIR because one plant can host more than one CHP class, and
     the loader applies the rate per (plant, class) so a mixed facility's
-    out-of-scope rows are never repriced.
+    out-of-scope rows are never repriced. Since F1 D4 the fleet is the union
+    of the ISO's backcast fleets over every year, so a cogen that retired
+    before 2023 is in the population.
     """
-    fleet = load_fleet_from_csv(
-        iso, get_iso_config(iso), cc_steam_part_capacity=cc_steam_part_capacity
-    )
     caps: dict[tuple[int, str], float] = {}
     for gen in fleet:
         if gen.plant_group not in TARGET_CLASSES:
@@ -265,63 +266,23 @@ def target_plants(
     return caps
 
 
-def model_heat_rates(
-    iso: str, cc_steam_part_capacity: bool = False
-) -> dict[tuple[int, str], float]:
-    """Return the CURRENT capacity-weighted model heat rate per (plant, class).
+def fleet_heat_rates(fleet: list) -> dict[tuple[int, str], float]:
+    """Return the capacity-weighted heat rate per (plant, class) of a fleet.
 
-    The value the LP prices with today, read through the model's own loader —
-    so the artifact records exactly what it replaces, and the basis check below
-    compares like with like.
-    """
-    fleet = load_fleet_from_csv(
-        iso, get_iso_config(iso), cc_steam_part_capacity=cc_steam_part_capacity
-    )
-    num: dict[tuple[int, str], float] = {}
-    den: dict[tuple[int, str], float] = {}
-    for gen in fleet:
-        if gen.plant_group not in TARGET_CLASSES:
-            continue
-        code = int(gen.plant_code or 0)
-        if not code:
-            continue
-        key = (code, gen.plant_group)
-        num[key] = num.get(key, 0.0) + float(gen.pmax_mw) * float(gen.heat_rate)
-        den[key] = den.get(key, 0.0) + float(gen.pmax_mw)
-    return {k: num[k] / den[k] for k in num if den[k] > 0}
+    Called on a year's fleet loaded two ways: as the model prices it (the
+    ``model_heat_rate`` column — what the artifact replaces), and with the
+    legacy hand-factor CHP correction skipped (``basis_heat_rate``) — the
+    incumbent AT THE SEAM the measured rate replaces, i.e. after the eGRID join
+    and the boundary repairs but before
+    :func:`market_sim.data.chp._correct_chp_steam_credit_hr`.
 
-
-def basis_heat_rates(
-    iso: str, cc_steam_part_capacity: bool = False
-) -> dict[tuple[int, str], float]:
-    """Return the incumbent heat rate AT THE SEAM the measured rate replaces.
-
-    Identical to :func:`model_heat_rates` except that the legacy hand-factor
-    CHP correction is skipped — i.e. the eGRID join and the boundary repairs
-    have run, but :func:`market_sim.data.chp._correct_chp_steam_credit_hr` has
-    not. This is what :func:`apply_measured_chp_heat_rates` actually overwrites
-    (it runs first and hands the hand factor a ``skip_ids`` set), so it is the
-    rate the basis check below must compare eGRID's credited rate against.
-
-    WHY THIS IS NOT ``model_heat_rates`` (caiso-147): in the two ISOs that
+    WHY THE BASIS IS NOT THE MODEL RATE (caiso-147): in the two ISOs that
     carry the hand factor (``CHP_STEAM_CREDIT_HR_CORRECTION_ISOS`` = CAISO,
     PJM) the shipped rate is ``credited x 1.8`` for a sub-8.0 CT_CHP and
     ``max(credited x 1.15, 6.3)`` for a sub-6.0 CC_CHP, so EVERY hand-corrected
-    plant fails ``_BASIS_TOL`` and the artifact excludes precisely the
-    population the mechanism exists to fix. Measured in CAISO: 59 of the 65
-    ``basis_mismatch`` rows — 3,089 of 3,186 MW — were excluded by the hand
-    factor alone, leaving only the 14 plants it never touched. Comparing at
-    the seam restores the check's actual discriminating power: the six genuine
-    boundary-repair / ``HEAT_RATE_BINS``-fallback rows still fail it. In an ISO
-    without the hand factor (MISO) the two functions are identical and this
-    changes nothing.
+    plant fails ``_BASIS_TOL`` against it and the artifact would exclude
+    precisely the population the mechanism exists to fix.
     """
-    fleet = load_fleet_from_csv(
-        iso,
-        get_iso_config(iso),
-        apply_chp_steam_credit_correction=False,
-        cc_steam_part_capacity=cc_steam_part_capacity,
-    )
     num: dict[tuple[int, str], float] = {}
     den: dict[tuple[int, str], float] = {}
     for gen in fleet:
@@ -344,14 +305,13 @@ def egrid_chp_split(vintage: int) -> pd.DataFrame:
     ``net_mwh`` (``PLNGENAN``) and ``egrid_heat_rate`` (``PLHTRT``, Btu/kWh ->
     MMBtu/MWh).
     """
-    path = EGRID_DIR / _EGRID_WORKBOOK[vintage]
+    path = egrid_workbook_path(vintage)
     if not path.exists():
         raise SystemExit(f"eGRID workbook not on disk: {path}")
-    raw = pd.read_excel(
+    raw = read_egrid_sheet(
         path,
-        sheet_name=f"PLNT{str(vintage)[2:]}",
-        skiprows=1,
-        usecols=["ORISPL", "PNAME", "PLHTIAN", "CHPCHTI", "PLNGENAN", "PLHTRT"],
+        egrid_sheet_name("PLNT", vintage),
+        ["ORISPL", "PNAME", "PLHTIAN", "CHPCHTI", "PLNGENAN", "PLHTRT"],
     )
     out = pd.DataFrame(
         {
@@ -518,7 +478,9 @@ def plant_table(
                     klass,
                     credited,
                     power_only,
-                    therm / total,
+                    # A zero-heat row (seen in older eGRID vintages, F1) has
+                    # no CHP credit to undo: share 0.0 -> "no_chp_credit".
+                    therm / total if total > 0.0 else 0.0,
                     basis,
                     dark_unreconciled=(
                         not reconciled and float(rec["dark_fuel_share"]) > 0.0
@@ -530,8 +492,8 @@ def plant_table(
     out["iso"] = iso
     out["egrid_vintage"] = vintage
     out["source"] = (
-        f"EPA eGRID{vintage} plant sheet PLNT{str(vintage)[2:]} "
-        f"({_EGRID_WORKBOOK[vintage]}, data/raw/fleet-egrid) — heat_rate = "
+        f"EPA eGRID{vintage} plant sheet {egrid_sheet_name('PLNT', vintage)} "
+        f"({egrid_workbook_path(vintage).name}, data/raw/fleet-egrid) — heat_rate = "
         "(PLHTIAN + CHPCHTI) * (1 - dark_fuel_share) / PLNGENAN, i.e. the "
         "model's own incumbent PLHTRT = PLHTIAN/PLNGENAN with eGRID's "
         "published CHP useful-thermal heat-input allocation CHPCHTI added "
@@ -605,18 +567,59 @@ def _flag(
     return "ok"
 
 
+def pooled_rows(per_year: pd.DataFrame, iso: str) -> pd.DataFrame:
+    """Return one POOLED row per ``(plant_code, plant_group)`` (``year == 0``).
+
+    The pooled rate is the net-generation-weighted mean of the pair's ``ok``
+    per-year rates, i.e. ``sum(power-only heat) / sum(PLNGENAN)`` over the
+    years whose own row passed every gate — so it inherits every gate and adds
+    no parameter. It is what the loader applies in a solve year whose own row
+    is not ``ok`` (e.g. a year the plant is missing from that eGRID vintage).
+    A pair with no ``ok`` year is written with ``flag == "no_ok_year"``.
+    """
+    rows: list[dict] = []
+    for (code, klass), g in per_year.groupby(["plant_code", "plant_group"], sort=False):
+        ok = g[(g["flag"] == "ok") & (g["net_mwh"].astype(float) > 0.0)]
+        rec = {
+            "plant_code": int(code),
+            "plant_group": klass,
+            "plant_name": str(next((n for n in g["plant_name"] if n), "")),
+            "class_capacity_mw": float(g["class_capacity_mw"].iloc[0]),
+            "iso": iso,
+            "egrid_vintage": POOLED_YEAR,
+            "year": POOLED_YEAR,
+        }
+        if ok.empty:
+            rec.update(heat_rate=float("nan"), flag="no_ok_year")
+        else:
+            w = ok["net_mwh"].astype(float)
+            rec.update(
+                heat_rate=round(float((ok["heat_rate"] * w).sum() / w.sum()), 4),
+                net_mwh=round(float(w.sum()), 1),
+                flag="ok",
+            )
+        rec["source"] = (
+            "POOLED: net-generation-weighted mean of this (plant, class)'s ok "
+            "per-year rows (each against its own year's eGRID vintage); "
+            f"years {sorted(int(y) for y in ok['year'])}"
+        )
+        rows.append(rec)
+    return pd.DataFrame(rows)
+
+
 def main(argv: list[str] | None = None) -> int:
     """Derive and write the measured CHP power-only heat-rate artifact."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--iso", required=True, help="ISO name, e.g. MISO")
     parser.add_argument(
-        "--vintage",
+        "--years",
+        nargs="+",
         type=int,
-        default=DEFAULT_EGRID_VINTAGE,
-        choices=sorted(_EGRID_WORKBOOK),
+        default=list(BACKCAST_YEARS),
         help=(
-            "eGRID vintage (default 2023 — the vintage the model's own "
-            "heat_rate column is joined from)"
+            "Backcast years (default 2019-2025). Each year's row is computed "
+            "against that year's OWN eGRID vintage (2025 -> eGRID 2024), the "
+            "vintage its fleet's incumbent heat rate is joined from."
         ),
     )
     parser.add_argument(
@@ -645,7 +648,17 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     iso = args.iso.upper()
 
-    caps = target_plants(iso, args.cc_steam_part_capacity)
+    years = sorted(args.years)
+    # F1 D4: the population is the UNION of the ISO's backcast fleets over
+    # every year (year-matched vintage + retiree channel), so a cogen retired
+    # before 2023 is covered. Each year is loaded twice: as priced (the
+    # reported model rate) and at the replacement seam (the basis check).
+    flags = {"cc_steam_part_capacity": args.cc_steam_part_capacity}
+    fleets = backcast_fleets(iso, years, **flags)
+    basis_fleets = backcast_fleets(
+        iso, years, apply_chp_steam_credit_correction=False, **flags
+    )
+    caps = target_plants(union_fleet(fleets))
     if not caps:
         raise SystemExit(f"{iso}: model fleet has no topping-cycle CHP plants")
     codes = {code for code, _ in caps}
@@ -660,19 +673,36 @@ def main(argv: list[str] | None = None) -> int:
             "to all-fuel at any hybrid plant. Do not commit this output.",
             file=sys.stderr,
         )
-        cems, dark = {}, {}
-    else:
-        cems, dark = cems_annual_heat(iso, args.vintage, codes)
-    table = plant_table(
-        iso,
-        args.vintage,
-        caps,
-        model_heat_rates(iso, args.cc_steam_part_capacity),
-        basis_heat_rates(iso, args.cc_steam_part_capacity),
-        egrid_chp_split(args.vintage),
-        cems,
-        dark,
-    )
+    splits: dict[int, pd.DataFrame] = {}
+    meters: dict[int, tuple[dict[int, float], dict[int, float]]] = {}
+    year_tables: list[pd.DataFrame] = []
+    for year in years:
+        vintage = egrid_vintage_for_year(year)
+        if vintage not in splits:
+            splits[vintage] = egrid_chp_split(vintage)
+            # CEMS at the SAME year as the eGRID vintage (no vintage mixing).
+            meters[vintage] = (
+                ({}, {}) if args.no_cems else cems_annual_heat(iso, vintage, codes)
+            )
+        cems, dark = meters[vintage]
+        year_tables.append(
+            plant_table(
+                iso,
+                vintage,
+                caps,
+                fleet_heat_rates(fleets[year]),
+                fleet_heat_rates(basis_fleets[year]),
+                splits[vintage],
+                cems,
+                dark,
+            ).assign(year=year)
+        )
+    per_year = pd.concat(year_tables, ignore_index=True)
+    table = pd.concat([pooled_rows(per_year, iso), per_year], ignore_index=True)
+    cols = ["plant_code", "year"] + [
+        c for c in per_year.columns if c not in ("plant_code", "year")
+    ]
+    table = table[cols]
 
     out_path = (
         Path(args.out)
@@ -680,7 +710,15 @@ def main(argv: list[str] | None = None) -> int:
         else (PROCESSED_DIR / f"chp_power_only_heat_rates_{iso}.csv")
     )
     table.to_csv(out_path, index=False)
-    print(f"wrote {out_path} ({len(table)} (plant, class) rows)")
+    print(f"wrote {out_path} ({len(table)} (plant, class, year) rows)")
+    print(
+        "  ok rows per year: "
+        + ", ".join(
+            f"{y}:{int(((table['year'] == y) & (table['flag'] == 'ok')).sum())}"
+            for y in sorted(set(table["year"]))
+        )
+    )
+    table = table[table["year"] == POOLED_YEAR]
 
     ok = table[table["flag"] == "ok"]
     for klass in TARGET_CLASSES:

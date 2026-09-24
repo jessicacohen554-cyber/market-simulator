@@ -246,7 +246,8 @@ class TestConfigPlumbing(unittest.TestCase):
         import market_sim.data.fleet as fleet_pkg
         from market_sim.data.fleet.assembly import load_or_synthesize_bins
 
-        config = ScenarioConfig().with_overrides(
+        # F1: the flags are backcast-only (coerced off in a forecast config).
+        config = ScenarioConfig(mode="backcast").with_overrides(
             iso="NYISO", measured_ct_heat_rates=True, use_campd_bins=True
         )
         seen: dict = {}
@@ -268,7 +269,8 @@ class TestConfigPlumbing(unittest.TestCase):
         import market_sim.data.fleet as fleet_pkg
         from market_sim.data.fleet.assembly import build_base_fleet
 
-        config = ScenarioConfig().with_overrides(
+        # F1: the flags are backcast-only (coerced off in a forecast config).
+        config = ScenarioConfig(mode="backcast").with_overrides(
             iso="NYISO", measured_ct_heat_rates=True
         )
         calls: list[dict] = []

@@ -286,7 +286,11 @@ class TestCacheKeyRegistration(unittest.TestCase):
     """Default-off must be byte-identical off, armed must re-key."""
 
     def test_default_key_is_unmoved_and_armed_key_differs(self) -> None:
-        base = ScenarioConfig(iso="NWPP")
+        # F1: backcast-default ON and coerced off outside a backcast, so the
+        # "default-off" base is the explicit-False backcast (the pre-F1 key).
+        base = ScenarioConfig(
+            iso="NWPP", mode="backcast", measured_coal_heat_rates=False
+        )
         armed = base.with_overrides(measured_coal_heat_rates=True)
         self.assertNotEqual(base.cache_key(), armed.cache_key())
         # Registered at its frozen default, so an explicitly-False config keys
@@ -314,7 +318,8 @@ class TestConfigPlumbing(unittest.TestCase):
         import market_sim.data.fleet as fleet_pkg
         from market_sim.data.fleet.assembly import load_or_synthesize_bins
 
-        config = ScenarioConfig().with_overrides(
+        # F1: the flags are backcast-only (coerced off in a forecast config).
+        config = ScenarioConfig(mode="backcast").with_overrides(
             iso="NYISO", measured_coal_heat_rates=True, use_campd_bins=True
         )
         seen: dict = {}
@@ -336,7 +341,8 @@ class TestConfigPlumbing(unittest.TestCase):
         import market_sim.data.fleet as fleet_pkg
         from market_sim.data.fleet.assembly import build_base_fleet
 
-        config = ScenarioConfig().with_overrides(
+        # F1: the flags are backcast-only (coerced off in a forecast config).
+        config = ScenarioConfig(mode="backcast").with_overrides(
             iso="NYISO", measured_coal_heat_rates=True
         )
         calls: list[dict] = []

@@ -2980,6 +2980,47 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULT_FLIPS: tuple[tuple[str, str, str], ...] = (
     # key (--set f923_gas_price_plausibility_screen=false until the CLI flag
     # lands). Execution and every number: docs/handoffs/PRECOMMIT-spp-49-2026-09-08.md.
     ("2026-09-08", "f923_gas_price_plausibility_screen", "True"),
+    #
+    # F1, executing the OWNER INSTRUCTION of 2026-09-24 (verbatim, in
+    # docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md):
+    # "every iso ... using EIA 860 and plant specific heat rates for all model
+    # run years in the backcast ... it should be default for all ISOs to have
+    # correct vintage for all years including holdouts and be using plant heat
+    # rates not asset class". The SIXTH through ELEVENTH entries, landed as ONE
+    # event: the year-matched EIA-860 vintage and all five measured
+    # plant-heat-rate swaps become the BACKCAST default for every ISO.
+    #
+    # A REPAIR, NOT A TRANSFER (rule 25 [R-ISO-SCOPE] intact) and NOT a
+    # residual argument (rules 1/13/14). Every value each gate reaches is a
+    # published or metered per-plant input — each year's own EIA-860 release,
+    # each plant's own CAMPD meter / eGRID CHP split, per-ISO artifacts derived
+    # from each ISO's own plants — and the selection is by calendar year alone.
+    # Zero scalar fields, zero free parameters (rules 21/24).
+    #
+    # BEHAVIORAL, and NOT a same-key collision. The frozen declarations above
+    # stay "False", so a backcast config that resolves the new default no
+    # longer equals the drop value: it ENTERS the hash and takes its own key.
+    # Lands in TWO halves, exactly as capacity_screen_peak_measured_hindcast
+    # and f923_gas_price_plausibility_screen did: the flip, plus a
+    # __post_init__ coercion back to the frozen declaration whenever
+    # ``mode != "backcast"`` — so every forecast, hindcast and crossover
+    # config keeps its key and its behaviour byte-for-byte (the six fields
+    # are backcast-only by the owner's instruction; the hindcast lane keeps
+    # its explicit eia860_vintage_year pin). Every committed keeper recorded
+    # each field explicitly or not at all, and under (b'-1) neither form moves
+    # its recorded key — asserted over every committed run_config by
+    # tests/unit/config/test_f1_backcast_heat_rate_vintage_defaults.py. The
+    # BARE backcast key (PINNED_BACKCAST_CACHE_KEY) moves, by design; the
+    # forecast default key does not. An explicit False reaches the pre-F1
+    # posture and KEEPS the pre-flip key (--no-measured-{ct,coal,st,cc,chp}-
+    # heat-rates / --no-eia860-vintage-tracks-solve-year on
+    # run_calibration_full.py, or replay_keeper --set <field>=false).
+    ("2026-09-24", "eia860_vintage_tracks_solve_year", "True"),
+    ("2026-09-24", "measured_ct_heat_rates", "True"),
+    ("2026-09-24", "measured_coal_heat_rates", "True"),
+    ("2026-09-24", "measured_st_heat_rates", "True"),
+    ("2026-09-24", "measured_cc_heat_rates", "True"),
+    ("2026-09-24", "measured_chp_heat_rates", "True"),
 )
 
 # The default each field carried WHEN IT WAS REGISTERED, for the seven fields
@@ -3100,6 +3141,23 @@ _CAPACITY_SCREEN_PEAK_FROZEN_DECLARATION = _resolve_declared_default(
 _F923_SCREEN_FROZEN_DECLARATION = _resolve_declared_default(
     _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS["f923_gas_price_plausibility_screen"]
 )
+
+
+#: F1 (owner instruction 2026-09-24): the six backcast-default fields and the
+#: FROZEN drop value each is coerced back to outside ``mode == "backcast"``
+#: (``__post_init__``), resolved once from the ledger — the same "never a
+#: literal" discipline as :data:`_CAPACITY_SCREEN_PEAK_FROZEN_DECLARATION`.
+_BACKCAST_DEFAULT_FROZEN_DECLARATIONS: dict[str, object] = {
+    name: _resolve_declared_default(_CACHE_KEY_OPTIONAL_FIELD_DEFAULTS[name])
+    for name in (
+        "eia860_vintage_tracks_solve_year",
+        "measured_ct_heat_rates",
+        "measured_coal_heat_rates",
+        "measured_st_heat_rates",
+        "measured_cc_heat_rates",
+        "measured_chp_heat_rates",
+    )
+}
 
 
 def cache_key_drop_defaults() -> dict:
@@ -5291,7 +5349,9 @@ class ScenarioConfig:
     #   5,723 MW below EIA-930 metered coal peak. The COD ramp cannot repair
     #   this: it ages out units it is GIVEN, and a unit that retired before the
     #   snapshot was never given.
-    eia860_vintage_tracks_solve_year: bool = False
+    eia860_vintage_tracks_solve_year: bool = (
+        True  # F1 2026-09-24: backcast default; coerced off outside a backcast
+    )
     # ^ Per-solve-year EIA-860 vintage (backcast overlay, pjm-167 --
     # results/calibration/FINDING-pjm167-input-clock-2021-2022-2026-09-06.md
     # sec 3; PRECOMMIT-pjm167-fleet-vintage-screen-2026-09-06.md). The field
@@ -5399,7 +5459,9 @@ class ScenarioConfig:
     # outcome fed back to close a residual. Applied per generator by class, so
     # only the turbines of a mixed plant are repriced. See
     # docs/FINDING-nyiso88-peaker-heat-rate-2026-07-27.md sec 4.
-    measured_ct_heat_rates: bool = False
+    measured_ct_heat_rates: bool = (
+        True  # F1 2026-09-24: backcast default; coerced off outside a backcast
+    )
 
     # Measured COAL steady-state operating heat rates (nwpp-42, default OFF,
     # byte-identical off). scripts/data/derive_campd_coal_heat_rates.py ->
@@ -5440,7 +5502,9 @@ class ScenarioConfig:
     # Applied per generator BY CLASS, so a coal site's gas-converted boilers
     # keep the rate their own class assigns. See
     # docs/handoffs/PRECOMMIT-nwpp-42-2026-09-19.md.
-    measured_coal_heat_rates: bool = False
+    measured_coal_heat_rates: bool = (
+        True  # F1 2026-09-24: backcast default; coerced off outside a backcast
+    )
 
     # Measured ST_GAS steady-state operating heat rates (soco-53e, default OFF,
     # byte-identical off). scripts/data/derive_campd_gas_st_heat_rates.py ->
@@ -5484,7 +5548,9 @@ class ScenarioConfig:
     # strict no-op for an ISO with none. Applied per generator BY CLASS, so a
     # mixed steam site's coal boiler keeps the rate its own class assigns. See
     # docs/handoffs/PRECOMMIT-soco-53e-2026-09-19.md.
-    measured_st_heat_rates: bool = False
+    measured_st_heat_rates: bool = (
+        True  # F1 2026-09-24: backcast default; coerced off outside a backcast
+    )
 
     # Measured CAMPD steady-state operating heat rates for CC_REGULAR
     # (soco-57; default OFF, byte-identical off). The combined-cycle sibling
@@ -5512,7 +5578,9 @@ class ScenarioConfig:
     # [R-ISO-SCOPE]: a per-ISO artifact, a strict no-op for an ISO with none.
     # Applied per generator BY CLASS, and CC_CHP is deliberately out of scope.
     # See docs/handoffs/PRECOMMIT-soco-57-2026-09-20.md.
-    measured_cc_heat_rates: bool = False
+    measured_cc_heat_rates: bool = (
+        True  # F1 2026-09-24: backcast default; coerced off outside a backcast
+    )
 
     # Measured POWER-ONLY heat rates for topping-cycle CHP (miso-99; default
     # OFF, byte-identical off). eGRID's ``PLHTRT`` is the number the model
@@ -5535,7 +5603,9 @@ class ScenarioConfig:
     # Zero fitted parameters. See
     # scripts/data/derive_chp_power_only_heat_rates.py and
     # results/calibration/FINDING-miso99-chp-heat-rate-2026-07-28.md.
-    measured_chp_heat_rates: bool = False
+    measured_chp_heat_rates: bool = (
+        True  # F1 2026-09-24: backcast default; coerced off outside a backcast
+    )
 
     # eGRID IDENTITY-RECONCILED heat rates (nyiso-151; default OFF,
     # byte-identical off). A fossil plant the fleet knows by its EIA-860/923
@@ -20872,6 +20942,22 @@ class ScenarioConfig:
             and self.gas_plant_monthly_fuel_pricing
         ):
             self.f923_gas_price_plausibility_screen = _F923_SCREEN_FROZEN_DECLARATION
+
+        # F1 (owner instruction 2026-09-24): HALF 2 of the backcast-default arm.
+        # The year-matched EIA-860 vintage and the five measured plant-heat-rate
+        # swaps are the BACKCAST default for every ISO and nothing else: the
+        # owner's instruction is scoped to "all model run years in the
+        # backcast", the forecast keeps its latest snapshot, and the hindcast
+        # lane keeps its explicit eia860_vintage_year pin. So outside
+        # ``mode == "backcast"`` each is coerced back to its FROZEN declaration
+        # (False), which (b'-1) drops from the hash — every forecast, hindcast
+        # and crossover config keeps its key and its behaviour byte-for-byte.
+        # Measured before the flip over every committed run_config.json: no
+        # forecast or hindcast config armed any of the six, so the coercion
+        # removes nothing anyone had switched on.
+        if self.mode != "backcast":
+            for _name, _frozen in _BACKCAST_DEFAULT_FROZEN_DECLARATIONS.items():
+                setattr(self, _name, _frozen)
 
         # capx D59: the NYISO locality capacity-curve gate is likewise a
         # forecast-lane mechanism — coerced to the DATACLASS DEFAULT in a plain

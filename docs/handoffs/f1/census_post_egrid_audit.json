@@ -1,0 +1,8532 @@
+{
+ "isos": {
+  "CAISO": {
+   "operable": {
+    "canonical": {
+     "bins_mw": 1121.9,
+     "bins_share": 0.0387,
+     "null_mw": 655.0,
+     "null_share": 0.0226,
+     "residual": [
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 510.0,
+       "name": "El Segundo Energy Center LLC",
+       "plant_code": 57901
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 56.7,
+       "name": "Wellhead Power Panoche",
+       "plant_code": 55874
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 48.0,
+       "name": "Enchanted Rock Lodi",
+       "plant_code": 66638
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 4.5,
+       "name": "Keysight - Santa Rosa",
+       "plant_code": 65199
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 4.5,
+       "name": "Kaiser - LA",
+       "plant_code": 66146
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 3.1,
+       "name": "Kaiser - Woodland Hills",
+       "plant_code": 66148
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.8,
+       "name": "City of Tulare Water Facility",
+       "plant_code": 59395
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.6,
+       "name": "Anheuser Busch - Fairfield",
+       "plant_code": 66456
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.2,
+       "name": "CalTech - Pasadena Wilson Ave",
+       "plant_code": 65361
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.1,
+       "name": "Kaiser - Harbor City",
+       "plant_code": 66142
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.7,
+       "name": "Enloe Medical - Chico",
+       "plant_code": 65210
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.4,
+       "name": "GreenStruxure REP009, LLC",
+       "plant_code": 69191
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.3,
+       "name": "Life Technologies - Fremont",
+       "plant_code": 66145
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.1,
+       "name": "Redlands Community Hospital",
+       "plant_code": 66458
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "Saint Johns Health Center",
+       "plant_code": 50610
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "University of San Diego",
+       "plant_code": 65191
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "CalTech - Pasadena (PPA)",
+       "plant_code": 65193
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "SCC - San Jose",
+       "plant_code": 65196
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "DirecTV - Los Angeles",
+       "plant_code": 65200
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "AT&T - Redwood City",
+       "plant_code": 65204
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "AT&T - Gardena",
+       "plant_code": 65205
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "AT&T - Hawthorne",
+       "plant_code": 65206
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "AT&T - Hayward",
+       "plant_code": 65208
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "Comcast - Universal City",
+       "plant_code": 65211
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "AT&T - San Diego Trade Street",
+       "plant_code": 65360
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "San Diego Community College",
+       "plant_code": 66143
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "Taylor Farms - Schilling Place",
+       "plant_code": 66459
+      }
+     ],
+     "source": "canonical",
+     "thermal_mw": 28993.1
+    },
+    "vintage_2018": {
+     "bins_mw": 1020.5,
+     "bins_share": 0.0345,
+     "null_mw": 618.3,
+     "null_share": 0.0209,
+     "residual": [
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 510.0,
+       "name": "El Segundo Energy Center LLC",
+       "plant_code": 57901
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 40.0,
+       "name": "AltaGas Pomona Energy Inc.",
+       "plant_code": 50300
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 40.0,
+       "name": "Panoche Peaker",
+       "plant_code": 55874
+      },
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 27.3,
+       "name": "Wheelabrator Norwalk Energy",
+       "plant_code": 50876
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "Saint Johns Health Center",
+       "plant_code": 50610
+      }
+     ],
+     "source": "vintage_2018",
+     "thermal_mw": 29593.6
+    },
+    "vintage_2019": {
+     "bins_mw": 982.6,
+     "bins_share": 0.035,
+     "null_mw": 551.0,
+     "null_share": 0.0196,
+     "residual": [
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 510.0,
+       "name": "El Segundo Energy Center LLC",
+       "plant_code": 57901
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 40.0,
+       "name": "Panoche Peaker",
+       "plant_code": 55874
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "Saint Johns Health Center",
+       "plant_code": 50610
+      }
+     ],
+     "source": "vintage_2019",
+     "thermal_mw": 28040.8
+    },
+    "vintage_2020": {
+     "bins_mw": 981.2,
+     "bins_share": 0.0332,
+     "null_mw": 568.8,
+     "null_share": 0.0192,
+     "residual": [
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 510.0,
+       "name": "El Segundo Energy Center LLC",
+       "plant_code": 57901
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 56.7,
+       "name": "Panoche Peaker",
+       "plant_code": 55874
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.1,
+       "name": "EQX005.0 Toyama Fuel Cell",
+       "plant_code": 64756
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "Saint Johns Health Center",
+       "plant_code": 50610
+      }
+     ],
+     "source": "vintage_2020",
+     "thermal_mw": 29554.7
+    },
+    "vintage_2021": {
+     "bins_mw": 1004.2,
+     "bins_share": 0.0339,
+     "null_mw": 591.8,
+     "null_share": 0.02,
+     "residual": [
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 510.0,
+       "name": "El Segundo Energy Center LLC",
+       "plant_code": 57901
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 56.7,
+       "name": "Panoche Peaker",
+       "plant_code": 55874
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 4.5,
+       "name": "Keysight - Santa Rosa",
+       "plant_code": 65199
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.8,
+       "name": "City of Tulare Water Facility",
+       "plant_code": 59395
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.7,
+       "name": "Enloe Medical - Chico",
+       "plant_code": 65210
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.1,
+       "name": "EQX005.0 Toyama Fuel Cell",
+       "plant_code": 64756
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "Saint Johns Health Center",
+       "plant_code": 50610
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "University of San Diego",
+       "plant_code": 65191
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "AT&T San Diego",
+       "plant_code": 65192
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "CalTech - Pasadena (PPA)",
+       "plant_code": 65193
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "SCC - San Jose",
+       "plant_code": 65196
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "DirecTV - Los Angeles",
+       "plant_code": 65200
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "CalTech - Pasadena",
+       "plant_code": 65202
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "Beckton Dickenson - San Jose",
+       "plant_code": 65203
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "AT&T - Redwood City",
+       "plant_code": 65204
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "AT&T - Gardena",
+       "plant_code": 65205
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "AT&T - Hawthorne",
+       "plant_code": 65206
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "AT&T - Hayward",
+       "plant_code": 65208
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "Comcast - Universal City",
+       "plant_code": 65211
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "AT&T - San Diego Trade Street",
+       "plant_code": 65360
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "CalTech - Pasadena Wilson Ave",
+       "plant_code": 65361
+      }
+     ],
+     "source": "vintage_2021",
+     "thermal_mw": 29658.5
+    },
+    "vintage_2022": {
+     "bins_mw": 1259.2,
+     "bins_share": 0.0421,
+     "null_mw": 607.4,
+     "null_share": 0.0203,
+     "residual": [
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 510.0,
+       "name": "El Segundo Energy Center LLC",
+       "plant_code": 57901
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 56.7,
+       "name": "Panoche Peaker",
+       "plant_code": 55874
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 4.5,
+       "name": "Keysight - Santa Rosa",
+       "plant_code": 65199
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 4.5,
+       "name": "Kaiser - LA",
+       "plant_code": 66146
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 3.1,
+       "name": "Kaiser - Woodland Hills",
+       "plant_code": 66148
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.8,
+       "name": "City of Tulare Water Facility",
+       "plant_code": 59395
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.6,
+       "name": "Anheuser Busch - Fairfield",
+       "plant_code": 66456
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.1,
+       "name": "Kaiser - Harbor City",
+       "plant_code": 66142
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.7,
+       "name": "Enloe Medical - Chico",
+       "plant_code": 65210
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.3,
+       "name": "Life Technologies - Fremont",
+       "plant_code": 66145
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.1,
+       "name": "Redlands Community Hospital",
+       "plant_code": 66458
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "Saint Johns Health Center",
+       "plant_code": 50610
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "University of San Diego",
+       "plant_code": 65191
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "AT&T San Diego",
+       "plant_code": 65192
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "CalTech - Pasadena (PPA)",
+       "plant_code": 65193
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "SCC - San Jose",
+       "plant_code": 65196
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "DirecTV - Los Angeles",
+       "plant_code": 65200
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "CalTech - Pasadena",
+       "plant_code": 65202
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "Beckton Dickenson - San Jose",
+       "plant_code": 65203
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "AT&T - Redwood City",
+       "plant_code": 65204
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "AT&T - Gardena",
+       "plant_code": 65205
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "AT&T - Hawthorne",
+       "plant_code": 65206
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "AT&T - Hayward",
+       "plant_code": 65208
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "Comcast - Universal City",
+       "plant_code": 65211
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "AT&T - San Diego Trade Street",
+       "plant_code": 65360
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "CalTech - Pasadena Wilson Ave",
+       "plant_code": 65361
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "San Diego Community College",
+       "plant_code": 66143
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "Taylor Farms - Schilling Place",
+       "plant_code": 66459
+      }
+     ],
+     "source": "vintage_2022",
+     "thermal_mw": 29888.3
+    },
+    "vintage_2023": {
+     "bins_mw": 1010.5,
+     "bins_share": 0.0348,
+     "null_mw": 607.4,
+     "null_share": 0.0209,
+     "residual": [
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 510.0,
+       "name": "El Segundo Energy Center LLC",
+       "plant_code": 57901
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 56.7,
+       "name": "Panoche Peaker",
+       "plant_code": 55874
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 4.5,
+       "name": "Keysight - Santa Rosa",
+       "plant_code": 65199
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 4.5,
+       "name": "Kaiser - LA",
+       "plant_code": 66146
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 3.1,
+       "name": "Kaiser - Woodland Hills",
+       "plant_code": 66148
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.8,
+       "name": "City of Tulare Water Facility",
+       "plant_code": 59395
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.6,
+       "name": "Anheuser Busch - Fairfield",
+       "plant_code": 66456
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.1,
+       "name": "Kaiser - Harbor City",
+       "plant_code": 66142
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.7,
+       "name": "Enloe Medical - Chico",
+       "plant_code": 65210
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.3,
+       "name": "Life Technologies - Fremont",
+       "plant_code": 66145
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.1,
+       "name": "Redlands Community Hospital",
+       "plant_code": 66458
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "Saint Johns Health Center",
+       "plant_code": 50610
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "University of San Diego",
+       "plant_code": 65191
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "AT&T San Diego",
+       "plant_code": 65192
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "CalTech - Pasadena (PPA)",
+       "plant_code": 65193
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "SCC - San Jose",
+       "plant_code": 65196
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "DirecTV - Los Angeles",
+       "plant_code": 65200
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "CalTech - Pasadena",
+       "plant_code": 65202
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "Beckton Dickenson - San Jose",
+       "plant_code": 65203
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "AT&T - Redwood City",
+       "plant_code": 65204
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "AT&T - Gardena",
+       "plant_code": 65205
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "AT&T - Hawthorne",
+       "plant_code": 65206
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "AT&T - Hayward",
+       "plant_code": 65208
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "Comcast - Universal City",
+       "plant_code": 65211
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "AT&T - San Diego Trade Street",
+       "plant_code": 65360
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "CalTech - Pasadena Wilson Ave",
+       "plant_code": 65361
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "San Diego Community College",
+       "plant_code": 66143
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "Taylor Farms - Schilling Place",
+       "plant_code": 66459
+      }
+     ],
+     "source": "vintage_2023",
+     "thermal_mw": 29020.4
+    },
+    "vintage_2024": {
+     "bins_mw": 1110.4,
+     "bins_share": 0.0382,
+     "null_mw": 654.6,
+     "null_share": 0.0225,
+     "residual": [
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 510.0,
+       "name": "El Segundo Energy Center LLC",
+       "plant_code": 57901
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 56.7,
+       "name": "Wellhead Power Panoche",
+       "plant_code": 55874
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 48.0,
+       "name": "Enchanted Rock Lodi",
+       "plant_code": 66638
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 4.5,
+       "name": "Keysight - Santa Rosa",
+       "plant_code": 65199
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 4.5,
+       "name": "Kaiser - LA",
+       "plant_code": 66146
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 3.1,
+       "name": "Kaiser - Woodland Hills",
+       "plant_code": 66148
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.8,
+       "name": "City of Tulare Water Facility",
+       "plant_code": 59395
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.6,
+       "name": "Anheuser Busch - Fairfield",
+       "plant_code": 66456
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.2,
+       "name": "CalTech - Pasadena Wilson Ave",
+       "plant_code": 65361
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.1,
+       "name": "Kaiser - Harbor City",
+       "plant_code": 66142
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.7,
+       "name": "Enloe Medical - Chico",
+       "plant_code": 65210
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.3,
+       "name": "Life Technologies - Fremont",
+       "plant_code": 66145
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.1,
+       "name": "Redlands Community Hospital",
+       "plant_code": 66458
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "Saint Johns Health Center",
+       "plant_code": 50610
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "University of San Diego",
+       "plant_code": 65191
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "CalTech - Pasadena (PPA)",
+       "plant_code": 65193
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "SCC - San Jose",
+       "plant_code": 65196
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "DirecTV - Los Angeles",
+       "plant_code": 65200
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "Beckton Dickenson - San Jose",
+       "plant_code": 65203
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "AT&T - Redwood City",
+       "plant_code": 65204
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "AT&T - Gardena",
+       "plant_code": 65205
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "AT&T - Hawthorne",
+       "plant_code": 65206
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "AT&T - Hayward",
+       "plant_code": 65208
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "Comcast - Universal City",
+       "plant_code": 65211
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "AT&T - San Diego Trade Street",
+       "plant_code": 65360
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "San Diego Community College",
+       "plant_code": 66143
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "Taylor Farms - Schilling Place",
+       "plant_code": 66459
+      }
+     ],
+     "source": "vintage_2024",
+     "thermal_mw": 29062.7
+    }
+   },
+   "retirees": {
+    "2019": {
+     "bins_mw": 14.5,
+     "bins_share": 0.0065,
+     "null_mw": 14.5,
+     "null_share": 0.0065,
+     "residual": [
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 12.0,
+       "name": "Gaviota Oil Plant",
+       "plant_code": 50623
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.4,
+       "name": "UTS SJ1 LLC",
+       "plant_code": 57420
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.1,
+       "name": "EQX005.0 Toyama Fuel Cell",
+       "plant_code": 64756
+      }
+     ],
+     "retiree_units": 67,
+     "thermal_mw": 2229.3
+    },
+    "2020": {
+     "bins_mw": 14.7,
+     "bins_share": 0.0086,
+     "null_mw": 13.1,
+     "null_share": 0.0077,
+     "residual": [
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 12.0,
+       "name": "Gaviota Oil Plant",
+       "plant_code": 50623
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.1,
+       "name": "EQX005.0 Toyama Fuel Cell",
+       "plant_code": 64756
+      }
+     ],
+     "retiree_units": 67,
+     "thermal_mw": 1699.8
+    },
+    "2021": {
+     "bins_mw": 1.1,
+     "bins_share": 0.0011,
+     "null_mw": 1.1,
+     "null_share": 0.0011,
+     "residual": [
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.1,
+       "name": "EQX005.0 Toyama Fuel Cell",
+       "plant_code": 64756
+      }
+     ],
+     "retiree_units": 67,
+     "thermal_mw": 980.8
+    },
+    "2022": {
+     "bins_mw": 1.1,
+     "bins_share": 0.0011,
+     "null_mw": 1.1,
+     "null_share": 0.0011,
+     "residual": [
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.1,
+       "name": "EQX005.0 Toyama Fuel Cell",
+       "plant_code": 64756
+      }
+     ],
+     "retiree_units": 67,
+     "thermal_mw": 968.1
+    },
+    "2023": {
+     "bins_mw": 0.0,
+     "bins_share": 0.0,
+     "null_mw": 0.0,
+     "null_share": 0.0,
+     "residual": [],
+     "retiree_units": 67,
+     "thermal_mw": 964.6
+    },
+    "2024": {
+     "bins_mw": 0.0,
+     "bins_share": 0.0,
+     "null_mw": 0.0,
+     "null_share": 0.0,
+     "residual": [],
+     "retiree_units": 67,
+     "thermal_mw": 104.6
+    }
+   }
+  },
+  "ERCOT": {
+   "operable": {
+    "canonical": {
+     "bins_mw": 2986.3,
+     "bins_share": 0.0412,
+     "null_mw": 1735.2,
+     "null_share": 0.0239,
+     "residual": [
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 529.0,
+       "name": "Frontera Energy Center",
+       "plant_code": 55098
+      },
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 520.0,
+       "name": "Arthur Von Rosenberg",
+       "plant_code": 7512
+      },
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 495.0,
+       "name": "Hidalgo Energy Center",
+       "plant_code": 55545
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 180.0,
+       "name": "Timmerman Power Plant",
+       "plant_code": 66335
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 6.4,
+       "name": "OTHERChildrensPlano",
+       "plant_code": 69752
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.2,
+       "name": "WAL537",
+       "plant_code": 64796
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.2,
+       "name": "WAL1801",
+       "plant_code": 64884
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.2,
+       "name": "WAL5479",
+       "plant_code": 64958
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.2,
+       "name": "HEB_CPS00793",
+       "plant_code": 69751
+      }
+     ],
+     "source": "canonical",
+     "thermal_mw": 72476.1
+    },
+    "vintage_2018": {
+     "bins_mw": 1453.7,
+     "bins_share": 0.0208,
+     "null_mw": 1006.7,
+     "null_share": 0.0144,
+     "residual": [
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 478.0,
+       "name": "Arthur Von Rosenberg",
+       "plant_code": 7512
+      },
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 470.0,
+       "name": "Hidalgo Energy Center",
+       "plant_code": 55545
+      },
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 58.7,
+       "name": "Point Comfort Operations",
+       "plant_code": 52069
+      }
+     ],
+     "source": "vintage_2018",
+     "thermal_mw": 69909.7
+    },
+    "vintage_2019": {
+     "bins_mw": 1435.0,
+     "bins_share": 0.0203,
+     "null_mw": 988.0,
+     "null_share": 0.014,
+     "residual": [
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 518.0,
+       "name": "Arthur Von Rosenberg",
+       "plant_code": 7512
+      },
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 470.0,
+       "name": "Hidalgo Energy Center",
+       "plant_code": 55545
+      }
+     ],
+     "source": "vintage_2019",
+     "thermal_mw": 70538.9
+    },
+    "vintage_2020": {
+     "bins_mw": 1435.0,
+     "bins_share": 0.0203,
+     "null_mw": 988.0,
+     "null_share": 0.014,
+     "residual": [
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 518.0,
+       "name": "Arthur Von Rosenberg",
+       "plant_code": 7512
+      },
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 470.0,
+       "name": "Hidalgo Energy Center",
+       "plant_code": 55545
+      }
+     ],
+     "source": "vintage_2020",
+     "thermal_mw": 70683.2
+    },
+    "vintage_2021": {
+     "bins_mw": 2084.0,
+     "bins_share": 0.029,
+     "null_mw": 990.4,
+     "null_share": 0.0138,
+     "residual": [
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 518.0,
+       "name": "Arthur Von Rosenberg",
+       "plant_code": 7512
+      },
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 470.0,
+       "name": "Hidalgo Energy Center",
+       "plant_code": 55545
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.2,
+       "name": "WAL537",
+       "plant_code": 64796
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.2,
+       "name": "WAL5479",
+       "plant_code": 64958
+      }
+     ],
+     "source": "vintage_2021",
+     "thermal_mw": 71746.4
+    },
+    "vintage_2022": {
+     "bins_mw": 1736.2,
+     "bins_share": 0.024,
+     "null_mw": 1001.6,
+     "null_share": 0.0138,
+     "residual": [
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 518.0,
+       "name": "Arthur Von Rosenberg",
+       "plant_code": 7512
+      },
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 480.0,
+       "name": "Hidalgo Energy Center",
+       "plant_code": 55545
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.2,
+       "name": "WAL537",
+       "plant_code": 64796
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.2,
+       "name": "WAL1801",
+       "plant_code": 64884
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.2,
+       "name": "WAL5479",
+       "plant_code": 64958
+      }
+     ],
+     "source": "vintage_2022",
+     "thermal_mw": 72371.4
+    },
+    "vintage_2023": {
+     "bins_mw": 1990.6,
+     "bins_share": 0.0272,
+     "null_mw": 1543.6,
+     "null_share": 0.0211,
+     "residual": [
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 529.0,
+       "name": "Frontera Energy Center",
+       "plant_code": 55098
+      },
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 518.0,
+       "name": "Arthur Von Rosenberg",
+       "plant_code": 7512
+      },
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 493.0,
+       "name": "Hidalgo Energy Center",
+       "plant_code": 55545
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.2,
+       "name": "WAL537",
+       "plant_code": 64796
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.2,
+       "name": "WAL1801",
+       "plant_code": 64884
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.2,
+       "name": "WAL5479",
+       "plant_code": 64958
+      }
+     ],
+     "source": "vintage_2023",
+     "thermal_mw": 73306.3
+    },
+    "vintage_2024": {
+     "bins_mw": 2435.9,
+     "bins_share": 0.0329,
+     "null_mw": 1545.6,
+     "null_share": 0.0209,
+     "residual": [
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 529.0,
+       "name": "Frontera Energy Center",
+       "plant_code": 55098
+      },
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 518.0,
+       "name": "Arthur Von Rosenberg",
+       "plant_code": 7512
+      },
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 495.0,
+       "name": "Hidalgo Energy Center",
+       "plant_code": 55545
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.2,
+       "name": "WAL537",
+       "plant_code": 64796
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.2,
+       "name": "WAL1801",
+       "plant_code": 64884
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.2,
+       "name": "WAL5479",
+       "plant_code": 64958
+      }
+     ],
+     "source": "vintage_2024",
+     "thermal_mw": 73955.5
+    }
+   },
+   "retirees": {
+    "2019": {
+     "bins_mw": 354.2,
+     "bins_share": 0.2119,
+     "null_mw": 354.2,
+     "null_share": 0.2119,
+     "residual": [
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 292.0,
+       "name": "Sam Bertron",
+       "plant_code": 3468
+      },
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 58.7,
+       "name": "Point Comfort Operations",
+       "plant_code": 52069
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 3.5,
+       "name": "University of Texas at Dallas",
+       "plant_code": 54607
+      }
+     ],
+     "retiree_units": 38,
+     "thermal_mw": 1671.2
+    },
+    "2020": {
+     "bins_mw": 0.0,
+     "bins_share": 0.0,
+     "null_mw": 0.0,
+     "null_share": 0.0,
+     "residual": [],
+     "retiree_units": 38,
+     "thermal_mw": 841.4
+    },
+    "2021": {
+     "bins_mw": 0.0,
+     "bins_share": 0.0,
+     "null_mw": 0.0,
+     "null_share": 0.0,
+     "residual": [],
+     "retiree_units": 38,
+     "thermal_mw": 841.4
+    },
+    "2022": {
+     "bins_mw": 0.0,
+     "bins_share": 0.0,
+     "null_mw": 0.0,
+     "null_share": 0.0,
+     "residual": [],
+     "retiree_units": 38,
+     "thermal_mw": 841.4
+    },
+    "2023": {
+     "bins_mw": 0.0,
+     "bins_share": 0.0,
+     "null_mw": 0.0,
+     "null_share": 0.0,
+     "residual": [],
+     "retiree_units": 38,
+     "thermal_mw": 841.4
+    },
+    "2024": {
+     "bins_mw": 0.0,
+     "bins_share": 0.0,
+     "null_mw": 0.0,
+     "null_share": 0.0,
+     "residual": [],
+     "retiree_units": 38,
+     "thermal_mw": 1.4
+    }
+   }
+  },
+  "MISO": {
+   "operable": {
+    "canonical": {
+     "bins_mw": 3548.8,
+     "bins_share": 0.03,
+     "null_mw": 2877.9,
+     "null_share": 0.0243,
+     "residual": [
+      {
+       "fuels": [
+        "coal",
+        "gas_st",
+        "oil"
+       ],
+       "mw": 1128.6,
+       "name": "R S Nelson",
+       "plant_code": 1393
+      },
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 678.7,
+       "name": "Magnolia Power",
+       "plant_code": 67005
+      },
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 502.0,
+       "name": "Sabine River Operations",
+       "plant_code": 10789
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 145.0,
+       "name": "491 E 48th Street",
+       "plant_code": 7268
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 70.6,
+       "name": "West Marinette 34",
+       "plant_code": 7799
+      },
+      {
+       "fuels": [
+        "gas_st",
+        "oil"
+       ],
+       "mw": 65.9,
+       "name": "New Ulm",
+       "plant_code": 2001
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 42.2,
+       "name": "Indianola",
+       "plant_code": 1150
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 40.3,
+       "name": "Gas Turbine (IA)",
+       "plant_code": 1130
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 30.3,
+       "name": "Sycamore (WI)",
+       "plant_code": 3993
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 20.6,
+       "name": "Maquoketa 1",
+       "plant_code": 1162
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 17.0,
+       "name": "Gladstone",
+       "plant_code": 7119
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 16.8,
+       "name": "New Prague",
+       "plant_code": 1999
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 15.0,
+       "name": "Point Beach Nuclear Plant",
+       "plant_code": 4046
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 14.4,
+       "name": "Arrowhead Emergency Generating Station",
+       "plant_code": 70013
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 14.1,
+       "name": "City of Peru Water Street Generating Sta",
+       "plant_code": 68752
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 14.0,
+       "name": "Oliver",
+       "plant_code": 1735
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 13.5,
+       "name": "Frederic Diesel",
+       "plant_code": 4020
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 10.6,
+       "name": "Madelia",
+       "plant_code": 30
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 8.9,
+       "name": "Marshall (MI)",
+       "plant_code": 1844
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 5.6,
+       "name": "Winter",
+       "plant_code": 8013
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 5.4,
+       "name": "City of Peru Rail Generating Station",
+       "plant_code": 68751
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 5.1,
+       "name": "Hart",
+       "plant_code": 1827
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 5.1,
+       "name": "Maquoketa 2",
+       "plant_code": 7921
+      },
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 4.2,
+       "name": "Eunice LA Plant",
+       "plant_code": 66615
+      },
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 2.0,
+       "name": "Waupun Correctional Central Heating Plt",
+       "plant_code": 54407
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 2.0,
+       "name": "MBS Textbook Exchange",
+       "plant_code": 62647
+      }
+     ],
+     "source": "canonical",
+     "thermal_mw": 118363.4
+    },
+    "vintage_2018": {
+     "bins_mw": 2655.5,
+     "bins_share": 0.0205,
+     "null_mw": 2422.3,
+     "null_share": 0.0187,
+     "residual": [
+      {
+       "fuels": [
+        "coal",
+        "gas_st",
+        "oil"
+       ],
+       "mw": 1178.9,
+       "name": "R S Nelson",
+       "plant_code": 1393
+      },
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 502.0,
+       "name": "Sabine River Works",
+       "plant_code": 10789
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 136.0,
+       "name": "491 E 48th Street",
+       "plant_code": 7268
+      },
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 107.0,
+       "name": "Riverside",
+       "plant_code": 1081
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 70.4,
+       "name": "West Marinette 34",
+       "plant_code": 7799
+      },
+      {
+       "fuels": [
+        "gas_st",
+        "oil"
+       ],
+       "mw": 65.9,
+       "name": "New Ulm",
+       "plant_code": 2001
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 52.0,
+       "name": "Granite City",
+       "plant_code": 1910
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 51.2,
+       "name": "Indianola",
+       "plant_code": 1150
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 43.4,
+       "name": "Gas Turbine (IA)",
+       "plant_code": 1130
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 28.3,
+       "name": "Sycamore (WI)",
+       "plant_code": 3993
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 27.2,
+       "name": "Sheepskin",
+       "plant_code": 4059
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 17.4,
+       "name": "Portage",
+       "plant_code": 8019
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 17.0,
+       "name": "Gladstone",
+       "plant_code": 7119
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 16.8,
+       "name": "New Prague",
+       "plant_code": 1999
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 16.0,
+       "name": "Sixth Street Gas Turbine",
+       "plant_code": 6356
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 15.0,
+       "name": "Point Beach Nuclear Plant",
+       "plant_code": 4046
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 14.0,
+       "name": "Oliver",
+       "plant_code": 1735
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 13.5,
+       "name": "Frederic Diesel",
+       "plant_code": 4020
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 10.3,
+       "name": "Madelia",
+       "plant_code": 30
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 8.9,
+       "name": "Marshall (MI)",
+       "plant_code": 1844
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 5.6,
+       "name": "Winter",
+       "plant_code": 8013
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 5.1,
+       "name": "Hart",
+       "plant_code": 1827
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 5.0,
+       "name": "Danbury Diesel",
+       "plant_code": 55998
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 3.6,
+       "name": "Rayne",
+       "plant_code": 1456
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.8,
+       "name": "Par Sterile Products",
+       "plant_code": 50318
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 2.0,
+       "name": "Clinton",
+       "plant_code": 1818
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 2.0,
+       "name": "MBS Texbook Exchange",
+       "plant_code": 62647
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 1.5,
+       "name": "Primghar",
+       "plant_code": 1177
+      },
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 1.5,
+       "name": "Waupun Correctional Central Heating Plt",
+       "plant_code": 54407
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 1.1,
+       "name": "Wapsie Valley Creamery Back Up Generator",
+       "plant_code": 59379
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 0.9,
+       "name": "Crawfordsville Power Plant",
+       "plant_code": 1024
+      }
+     ],
+     "source": "vintage_2018",
+     "thermal_mw": 129434.6
+    },
+    "vintage_2019": {
+     "bins_mw": 2737.5,
+     "bins_share": 0.0215,
+     "null_mw": 2380.9,
+     "null_share": 0.0187,
+     "residual": [
+      {
+       "fuels": [
+        "coal",
+        "gas_st",
+        "oil"
+       ],
+       "mw": 1165.1,
+       "name": "R S Nelson",
+       "plant_code": 1393
+      },
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 502.0,
+       "name": "Sabine River Works",
+       "plant_code": 10789
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 145.0,
+       "name": "491 E 48th Street",
+       "plant_code": 7268
+      },
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 113.7,
+       "name": "Riverside",
+       "plant_code": 1081
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 71.6,
+       "name": "West Marinette 34",
+       "plant_code": 7799
+      },
+      {
+       "fuels": [
+        "gas_st",
+        "oil"
+       ],
+       "mw": 65.9,
+       "name": "New Ulm",
+       "plant_code": 2001
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 51.2,
+       "name": "Indianola",
+       "plant_code": 1150
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 42.4,
+       "name": "Gas Turbine (IA)",
+       "plant_code": 1130
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 36.4,
+       "name": "Sheepskin",
+       "plant_code": 4059
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 29.1,
+       "name": "Sycamore (WI)",
+       "plant_code": 3993
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 17.4,
+       "name": "Portage",
+       "plant_code": 8019
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 17.0,
+       "name": "Gladstone",
+       "plant_code": 7119
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 16.8,
+       "name": "New Prague",
+       "plant_code": 1999
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 16.0,
+       "name": "Sixth Street Gas Turbine",
+       "plant_code": 6356
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 15.0,
+       "name": "Point Beach Nuclear Plant",
+       "plant_code": 4046
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 14.0,
+       "name": "Oliver",
+       "plant_code": 1735
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 13.5,
+       "name": "Frederic Diesel",
+       "plant_code": 4020
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 10.3,
+       "name": "Madelia",
+       "plant_code": 30
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 8.9,
+       "name": "Marshall (MI)",
+       "plant_code": 1844
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 5.6,
+       "name": "Winter",
+       "plant_code": 8013
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 5.1,
+       "name": "Hart",
+       "plant_code": 1827
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 5.0,
+       "name": "Danbury Diesel",
+       "plant_code": 55998
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 3.6,
+       "name": "Rayne",
+       "plant_code": 1456
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.8,
+       "name": "Par Sterile Products",
+       "plant_code": 50318
+      },
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 2.0,
+       "name": "Waupun Correctional Central Heating Plt",
+       "plant_code": 54407
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 2.0,
+       "name": "MBS Texbook Exchange",
+       "plant_code": 62647
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 1.5,
+       "name": "Primghar",
+       "plant_code": 1177
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 1.1,
+       "name": "Wapsie Valley Creamery Back Up Generator",
+       "plant_code": 59379
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 0.9,
+       "name": "Crawfordsville Power Plant",
+       "plant_code": 1024
+      }
+     ],
+     "source": "vintage_2019",
+     "thermal_mw": 127204.6
+    },
+    "vintage_2020": {
+     "bins_mw": 3258.3,
+     "bins_share": 0.0254,
+     "null_mw": 2315.2,
+     "null_share": 0.018,
+     "residual": [
+      {
+       "fuels": [
+        "coal",
+        "gas_st",
+        "oil"
+       ],
+       "mw": 1139.1,
+       "name": "R S Nelson",
+       "plant_code": 1393
+      },
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 502.0,
+       "name": "Sabine River Works",
+       "plant_code": 10789
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 145.0,
+       "name": "491 E 48th Street",
+       "plant_code": 7268
+      },
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 116.5,
+       "name": "Riverside",
+       "plant_code": 1081
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 71.8,
+       "name": "West Marinette 34",
+       "plant_code": 7799
+      },
+      {
+       "fuels": [
+        "gas_st",
+        "oil"
+       ],
+       "mw": 65.9,
+       "name": "New Ulm",
+       "plant_code": 2001
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 51.2,
+       "name": "Indianola",
+       "plant_code": 1150
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 42.4,
+       "name": "Gas Turbine (IA)",
+       "plant_code": 1130
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 28.9,
+       "name": "Sycamore (WI)",
+       "plant_code": 3993
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 17.4,
+       "name": "Portage",
+       "plant_code": 8019
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 17.0,
+       "name": "Gladstone",
+       "plant_code": 7119
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 16.8,
+       "name": "New Prague",
+       "plant_code": 1999
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 16.0,
+       "name": "Sixth Street Gas Turbine",
+       "plant_code": 6356
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 15.0,
+       "name": "Point Beach Nuclear Plant",
+       "plant_code": 4046
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 14.0,
+       "name": "Oliver",
+       "plant_code": 1735
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 13.5,
+       "name": "Frederic Diesel",
+       "plant_code": 4020
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 10.6,
+       "name": "Madelia",
+       "plant_code": 30
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 8.9,
+       "name": "Marshall (MI)",
+       "plant_code": 1844
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 5.6,
+       "name": "Winter",
+       "plant_code": 8013
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 5.1,
+       "name": "Hart",
+       "plant_code": 1827
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 5.0,
+       "name": "Danbury Diesel",
+       "plant_code": 55998
+      },
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 2.0,
+       "name": "Waupun Correctional Central Heating Plt",
+       "plant_code": 54407
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 2.0,
+       "name": "MBS Texbook Exchange",
+       "plant_code": 62647
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 1.5,
+       "name": "Primghar",
+       "plant_code": 1177
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 1.1,
+       "name": "Wapsie Valley Creamery Back Up Generator",
+       "plant_code": 59379
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 0.9,
+       "name": "Crawfordsville Power Plant",
+       "plant_code": 1024
+      }
+     ],
+     "source": "vintage_2020",
+     "thermal_mw": 128288.4
+    },
+    "vintage_2021": {
+     "bins_mw": 2861.1,
+     "bins_share": 0.0227,
+     "null_mw": 2165.7,
+     "null_share": 0.0172,
+     "residual": [
+      {
+       "fuels": [
+        "coal",
+        "gas_st",
+        "oil"
+       ],
+       "mw": 1139.1,
+       "name": "R S Nelson",
+       "plant_code": 1393
+      },
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 502.0,
+       "name": "Sabine River Works",
+       "plant_code": 10789
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 145.0,
+       "name": "491 E 48th Street",
+       "plant_code": 7268
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 68.7,
+       "name": "West Marinette 34",
+       "plant_code": 7799
+      },
+      {
+       "fuels": [
+        "gas_st",
+        "oil"
+       ],
+       "mw": 65.9,
+       "name": "New Ulm",
+       "plant_code": 2001
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 42.2,
+       "name": "Indianola",
+       "plant_code": 1150
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 40.3,
+       "name": "Gas Turbine (IA)",
+       "plant_code": 1130
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 29.9,
+       "name": "Sycamore (WI)",
+       "plant_code": 3993
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 17.0,
+       "name": "Gladstone",
+       "plant_code": 7119
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 16.8,
+       "name": "New Prague",
+       "plant_code": 1999
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 16.0,
+       "name": "Sixth Street Gas Turbine",
+       "plant_code": 6356
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 15.0,
+       "name": "Point Beach Nuclear Plant",
+       "plant_code": 4046
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 14.0,
+       "name": "Oliver",
+       "plant_code": 1735
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 13.5,
+       "name": "Frederic Diesel",
+       "plant_code": 4020
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 10.6,
+       "name": "Madelia",
+       "plant_code": 30
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 8.9,
+       "name": "Marshall (MI)",
+       "plant_code": 1844
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 5.6,
+       "name": "Winter",
+       "plant_code": 8013
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 5.1,
+       "name": "Hart",
+       "plant_code": 1827
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 5.0,
+       "name": "Danbury Diesel",
+       "plant_code": 55998
+      },
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 2.0,
+       "name": "Waupun Correctional Central Heating Plt",
+       "plant_code": 54407
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 2.0,
+       "name": "MBS Textbook Exchange",
+       "plant_code": 62647
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 1.1,
+       "name": "Wapsie Valley Creamery Back Up Generator",
+       "plant_code": 59379
+      }
+     ],
+     "source": "vintage_2021",
+     "thermal_mw": 126021.8
+    },
+    "vintage_2022": {
+     "bins_mw": 2848.0,
+     "bins_share": 0.023,
+     "null_mw": 2160.4,
+     "null_share": 0.0175,
+     "residual": [
+      {
+       "fuels": [
+        "coal",
+        "gas_st",
+        "oil"
+       ],
+       "mw": 1132.6,
+       "name": "R S Nelson",
+       "plant_code": 1393
+      },
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 502.0,
+       "name": "Sabine River Operations",
+       "plant_code": 10789
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 145.0,
+       "name": "491 E 48th Street",
+       "plant_code": 7268
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 70.2,
+       "name": "West Marinette 34",
+       "plant_code": 7799
+      },
+      {
+       "fuels": [
+        "gas_st",
+        "oil"
+       ],
+       "mw": 65.9,
+       "name": "New Ulm",
+       "plant_code": 2001
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 42.2,
+       "name": "Indianola",
+       "plant_code": 1150
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 40.3,
+       "name": "Gas Turbine (IA)",
+       "plant_code": 1130
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 29.6,
+       "name": "Sycamore (WI)",
+       "plant_code": 3993
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 17.0,
+       "name": "Gladstone",
+       "plant_code": 7119
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 16.8,
+       "name": "New Prague",
+       "plant_code": 1999
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 16.0,
+       "name": "Sixth Street Gas Turbine",
+       "plant_code": 6356
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 15.0,
+       "name": "Point Beach Nuclear Plant",
+       "plant_code": 4046
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 14.0,
+       "name": "Oliver",
+       "plant_code": 1735
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 13.5,
+       "name": "Frederic Diesel",
+       "plant_code": 4020
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 10.6,
+       "name": "Madelia",
+       "plant_code": 30
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 8.9,
+       "name": "Marshall (MI)",
+       "plant_code": 1844
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 5.6,
+       "name": "Winter",
+       "plant_code": 8013
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 5.1,
+       "name": "Hart",
+       "plant_code": 1827
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 5.0,
+       "name": "Danbury Diesel",
+       "plant_code": 55998
+      },
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 2.0,
+       "name": "Waupun Correctional Central Heating Plt",
+       "plant_code": 54407
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 2.0,
+       "name": "MBS Textbook Exchange",
+       "plant_code": 62647
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 1.1,
+       "name": "Wapsie Valley Creamery Back Up Generator",
+       "plant_code": 59379
+      }
+     ],
+     "source": "vintage_2022",
+     "thermal_mw": 123597.5
+    },
+    "vintage_2023": {
+     "bins_mw": 2866.3,
+     "bins_share": 0.0237,
+     "null_mw": 2153.4,
+     "null_share": 0.0178,
+     "residual": [
+      {
+       "fuels": [
+        "coal",
+        "gas_st",
+        "oil"
+       ],
+       "mw": 1128.6,
+       "name": "R S Nelson",
+       "plant_code": 1393
+      },
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 502.0,
+       "name": "Sabine River Operations",
+       "plant_code": 10789
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 145.0,
+       "name": "491 E 48th Street",
+       "plant_code": 7268
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 68.5,
+       "name": "West Marinette 34",
+       "plant_code": 7799
+      },
+      {
+       "fuels": [
+        "gas_st",
+        "oil"
+       ],
+       "mw": 65.9,
+       "name": "New Ulm",
+       "plant_code": 2001
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 42.2,
+       "name": "Indianola",
+       "plant_code": 1150
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 40.3,
+       "name": "Gas Turbine (IA)",
+       "plant_code": 1130
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 29.8,
+       "name": "Sycamore (WI)",
+       "plant_code": 3993
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 20.6,
+       "name": "Maquoketa 1",
+       "plant_code": 1162
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 17.0,
+       "name": "Gladstone",
+       "plant_code": 7119
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 16.8,
+       "name": "New Prague",
+       "plant_code": 1999
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 15.0,
+       "name": "Point Beach Nuclear Plant",
+       "plant_code": 4046
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 14.0,
+       "name": "Oliver",
+       "plant_code": 1735
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 13.5,
+       "name": "Frederic Diesel",
+       "plant_code": 4020
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 10.6,
+       "name": "Madelia",
+       "plant_code": 30
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 8.9,
+       "name": "Marshall (MI)",
+       "plant_code": 1844
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 5.6,
+       "name": "Winter",
+       "plant_code": 8013
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 5.1,
+       "name": "Hart",
+       "plant_code": 1827
+      },
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 2.0,
+       "name": "Waupun Correctional Central Heating Plt",
+       "plant_code": 54407
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 2.0,
+       "name": "MBS Textbook Exchange",
+       "plant_code": 62647
+      }
+     ],
+     "source": "vintage_2023",
+     "thermal_mw": 120887.1
+    },
+    "vintage_2024": {
+     "bins_mw": 2850.6,
+     "bins_share": 0.0241,
+     "null_mw": 2179.7,
+     "null_share": 0.0184,
+     "residual": [
+      {
+       "fuels": [
+        "coal",
+        "gas_st",
+        "oil"
+       ],
+       "mw": 1128.6,
+       "name": "R S Nelson",
+       "plant_code": 1393
+      },
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 502.0,
+       "name": "Sabine River Operations",
+       "plant_code": 10789
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 145.0,
+       "name": "491 E 48th Street",
+       "plant_code": 7268
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 70.6,
+       "name": "West Marinette 34",
+       "plant_code": 7799
+      },
+      {
+       "fuels": [
+        "gas_st",
+        "oil"
+       ],
+       "mw": 65.9,
+       "name": "New Ulm",
+       "plant_code": 2001
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 42.2,
+       "name": "Indianola",
+       "plant_code": 1150
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 40.3,
+       "name": "Gas Turbine (IA)",
+       "plant_code": 1130
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 30.3,
+       "name": "Sycamore (WI)",
+       "plant_code": 3993
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 20.6,
+       "name": "Maquoketa 1",
+       "plant_code": 1162
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 17.0,
+       "name": "Gladstone",
+       "plant_code": 7119
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 16.8,
+       "name": "New Prague",
+       "plant_code": 1999
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 15.0,
+       "name": "Point Beach Nuclear Plant",
+       "plant_code": 4046
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 14.1,
+       "name": "City of Peru Water Street Generating Sta",
+       "plant_code": 68752
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 14.0,
+       "name": "Oliver",
+       "plant_code": 1735
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 13.5,
+       "name": "Frederic Diesel",
+       "plant_code": 4020
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 10.6,
+       "name": "Madelia",
+       "plant_code": 30
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 8.9,
+       "name": "Marshall (MI)",
+       "plant_code": 1844
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 5.6,
+       "name": "Winter",
+       "plant_code": 8013
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 5.4,
+       "name": "City of Peru Rail Generating Station",
+       "plant_code": 68751
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 5.1,
+       "name": "Hart",
+       "plant_code": 1827
+      },
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 4.2,
+       "name": "Eunice LA Plant",
+       "plant_code": 66615
+      },
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 2.0,
+       "name": "Waupun Correctional Central Heating Plt",
+       "plant_code": 54407
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 2.0,
+       "name": "MBS Textbook Exchange",
+       "plant_code": 62647
+      }
+     ],
+     "source": "vintage_2024",
+     "thermal_mw": 118365.1
+    }
+   },
+   "retirees": {
+    "2019": {
+     "bins_mw": 895.7,
+     "bins_share": 0.0784,
+     "null_mw": 895.7,
+     "null_share": 0.0784,
+     "residual": [
+      {
+       "fuels": [
+        "coal"
+       ],
+       "mw": 443.0,
+       "name": "Kenneth C Coleman",
+       "plant_code": 1381
+      },
+      {
+       "fuels": [
+        "coal"
+       ],
+       "mw": 154.9,
+       "name": "Taconite Harbor Energy Center",
+       "plant_code": 10075
+      },
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 116.5,
+       "name": "Riverside",
+       "plant_code": 1081
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 52.0,
+       "name": "Granite City",
+       "plant_code": 1910
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 36.4,
+       "name": "Sheepskin",
+       "plant_code": 4059
+      },
+      {
+       "fuels": [
+        "coal",
+        "oil"
+       ],
+       "mw": 24.1,
+       "name": "Crawfordsville Power Plant",
+       "plant_code": 1024
+      },
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 18.0,
+       "name": "White Pine Electric Power",
+       "plant_code": 10148
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 17.4,
+       "name": "Portage",
+       "plant_code": 8019
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 16.0,
+       "name": "Sixth Street Gas Turbine",
+       "plant_code": 6356
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 5.0,
+       "name": "Danbury Diesel",
+       "plant_code": 55998
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 3.8,
+       "name": "William Beaumont Hospital",
+       "plant_code": 50937
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 3.0,
+       "name": "Clinton",
+       "plant_code": 1818
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.8,
+       "name": "Par Sterile Products",
+       "plant_code": 50318
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.8,
+       "name": "Toca Plant",
+       "plant_code": 54705
+      }
+     ],
+     "retiree_units": 217,
+     "thermal_mw": 11419.6
+    },
+    "2020": {
+     "bins_mw": 837.9,
+     "bins_share": 0.1008,
+     "null_mw": 837.9,
+     "null_share": 0.1008,
+     "residual": [
+      {
+       "fuels": [
+        "coal"
+       ],
+       "mw": 443.0,
+       "name": "Kenneth C Coleman",
+       "plant_code": 1381
+      },
+      {
+       "fuels": [
+        "coal"
+       ],
+       "mw": 154.9,
+       "name": "Taconite Harbor Energy Center",
+       "plant_code": 10075
+      },
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 116.5,
+       "name": "Riverside",
+       "plant_code": 1081
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 36.4,
+       "name": "Sheepskin",
+       "plant_code": 4059
+      },
+      {
+       "fuels": [
+        "coal",
+        "oil"
+       ],
+       "mw": 24.1,
+       "name": "Crawfordsville Power Plant",
+       "plant_code": 1024
+      },
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 18.0,
+       "name": "White Pine Electric Power",
+       "plant_code": 10148
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 17.4,
+       "name": "Portage",
+       "plant_code": 8019
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 16.0,
+       "name": "Sixth Street Gas Turbine",
+       "plant_code": 6356
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 5.0,
+       "name": "Danbury Diesel",
+       "plant_code": 55998
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 3.8,
+       "name": "William Beaumont Hospital",
+       "plant_code": 50937
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.8,
+       "name": "Par Sterile Products",
+       "plant_code": 50318
+      }
+     ],
+     "retiree_units": 217,
+     "thermal_mw": 8308.9
+    },
+    "2021": {
+     "bins_mw": 337.7,
+     "bins_share": 0.0472,
+     "null_mw": 337.7,
+     "null_share": 0.0472,
+     "residual": [
+      {
+       "fuels": [
+        "coal"
+       ],
+       "mw": 154.9,
+       "name": "Taconite Harbor Energy Center",
+       "plant_code": 10075
+      },
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 116.5,
+       "name": "Riverside",
+       "plant_code": 1081
+      },
+      {
+       "fuels": [
+        "coal",
+        "oil"
+       ],
+       "mw": 24.1,
+       "name": "Crawfordsville Power Plant",
+       "plant_code": 1024
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 17.4,
+       "name": "Portage",
+       "plant_code": 8019
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 16.0,
+       "name": "Sixth Street Gas Turbine",
+       "plant_code": 6356
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 5.0,
+       "name": "Danbury Diesel",
+       "plant_code": 55998
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 3.8,
+       "name": "William Beaumont Hospital",
+       "plant_code": 50937
+      }
+     ],
+     "retiree_units": 217,
+     "thermal_mw": 7147.2
+    },
+    "2022": {
+     "bins_mw": 191.2,
+     "bins_share": 0.0359,
+     "null_mw": 191.2,
+     "null_share": 0.0359,
+     "residual": [
+      {
+       "fuels": [
+        "coal"
+       ],
+       "mw": 154.9,
+       "name": "Taconite Harbor Energy Center",
+       "plant_code": 10075
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 16.0,
+       "name": "Sixth Street Gas Turbine",
+       "plant_code": 6356
+      },
+      {
+       "fuels": [
+        "coal",
+        "oil"
+       ],
+       "mw": 11.5,
+       "name": "Crawfordsville Power Plant",
+       "plant_code": 1024
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 5.0,
+       "name": "Danbury Diesel",
+       "plant_code": 55998
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 3.8,
+       "name": "William Beaumont Hospital",
+       "plant_code": 50937
+      }
+     ],
+     "retiree_units": 217,
+     "thermal_mw": 5321.3
+    },
+    "2023": {
+     "bins_mw": 214.4,
+     "bins_share": 0.0656,
+     "null_mw": 182.4,
+     "null_share": 0.0558,
+     "residual": [
+      {
+       "fuels": [
+        "coal"
+       ],
+       "mw": 154.9,
+       "name": "Taconite Harbor Energy Center",
+       "plant_code": 10075
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 16.0,
+       "name": "Sixth Street Gas Turbine",
+       "plant_code": 6356
+      },
+      {
+       "fuels": [
+        "coal",
+        "oil"
+       ],
+       "mw": 11.5,
+       "name": "Crawfordsville Power Plant",
+       "plant_code": 1024
+      }
+     ],
+     "retiree_units": 217,
+     "thermal_mw": 3267.2
+    },
+    "2024": {
+     "bins_mw": 0.9,
+     "bins_share": 0.0004,
+     "null_mw": 0.9,
+     "null_share": 0.0004,
+     "residual": [
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 0.9,
+       "name": "Crawfordsville Power Plant",
+       "plant_code": 1024
+      }
+     ],
+     "retiree_units": 217,
+     "thermal_mw": 2298.7
+    }
+   }
+  },
+  "NEISO": {
+   "operable": {
+    "canonical": {
+     "bins_mw": 373.9,
+     "bins_share": 0.0189,
+     "null_mw": 373.9,
+     "null_share": 0.0189,
+     "residual": [
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 187.6,
+       "name": "GenConn Middletown LLC",
+       "plant_code": 57068
+      },
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 64.0,
+       "name": "Algonquin Windsor Locks",
+       "plant_code": 10567
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 63.0,
+       "name": "MMWEC Simple Cycle Gas Turbine",
+       "plant_code": 63559
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 14.0,
+       "name": "Derby Fuel Cell",
+       "plant_code": 62588
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 10.0,
+       "name": "Generate Colchester Fuel Cells, LLC",
+       "plant_code": 66053
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 7.4,
+       "name": "Subase Microgrid Project",
+       "plant_code": 59701
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 7.4,
+       "name": "Naval Sub Base New London Fuel Cell",
+       "plant_code": 61743
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 5.0,
+       "name": "South Windsor Fuel Cell",
+       "plant_code": 63302
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 3.6,
+       "name": "CoreSite - Somerville",
+       "plant_code": 66151
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.3,
+       "name": "Medtronic - New Haven",
+       "plant_code": 65198
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.2,
+       "name": "Medtronic - New Haven 2",
+       "plant_code": 65197
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.9,
+       "name": "Equinix - Billerica",
+       "plant_code": 65209
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.8,
+       "name": "Yale New Haven - New London",
+       "plant_code": 66455
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 1.5,
+       "name": "Stamford Health Tully Health Center",
+       "plant_code": 68586
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.2,
+       "name": "Connecticut College",
+       "plant_code": 66152
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "FDX010.0 FedEx Fuel Cell",
+       "plant_code": 64753
+      }
+     ],
+     "source": "canonical",
+     "thermal_mw": 19807.0
+    },
+    "vintage_2018": {
+     "bins_mw": 353.4,
+     "bins_share": 0.0155,
+     "null_mw": 258.4,
+     "null_share": 0.0113,
+     "residual": [
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 194.0,
+       "name": "GenConn Middletown LLC",
+       "plant_code": 57068
+      },
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 64.0,
+       "name": "Algonquin Windsor Locks",
+       "plant_code": 10567
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 0.4,
+       "name": "CJTS Energy Center",
+       "plant_code": 58365
+      }
+     ],
+     "source": "vintage_2018",
+     "thermal_mw": 22829.1
+    },
+    "vintage_2019": {
+     "bins_mw": 548.4,
+     "bins_share": 0.0228,
+     "null_mw": 258.4,
+     "null_share": 0.0108,
+     "residual": [
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 194.0,
+       "name": "GenConn Middletown LLC",
+       "plant_code": 57068
+      },
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 64.0,
+       "name": "Algonquin Windsor Locks",
+       "plant_code": 10567
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 0.4,
+       "name": "CJTS Energy Center",
+       "plant_code": 58365
+      }
+     ],
+     "source": "vintage_2019",
+     "thermal_mw": 24036.6
+    },
+    "vintage_2020": {
+     "bins_mw": 264.4,
+     "bins_share": 0.0112,
+     "null_mw": 264.4,
+     "null_share": 0.0112,
+     "residual": [
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 194.0,
+       "name": "GenConn Middletown LLC",
+       "plant_code": 57068
+      },
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 64.0,
+       "name": "Algonquin Windsor Locks",
+       "plant_code": 10567
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 5.0,
+       "name": "South Windsor Fuel Cell",
+       "plant_code": 63302
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "FDX010.0 FedEx Fuel Cell",
+       "plant_code": 64753
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 0.4,
+       "name": "CJTS Energy Center",
+       "plant_code": 58365
+      }
+     ],
+     "source": "vintage_2020",
+     "thermal_mw": 23690.5
+    },
+    "vintage_2021": {
+     "bins_mw": 264.0,
+     "bins_share": 0.0116,
+     "null_mw": 264.0,
+     "null_share": 0.0116,
+     "residual": [
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 187.6,
+       "name": "GenConn Middletown LLC",
+       "plant_code": 57068
+      },
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 64.0,
+       "name": "Algonquin Windsor Locks",
+       "plant_code": 10567
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 5.0,
+       "name": "South Windsor Fuel Cell",
+       "plant_code": 63302
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.3,
+       "name": "Medtronic - New Haven",
+       "plant_code": 65198
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.2,
+       "name": "Medtronic - New Haven 2",
+       "plant_code": 65197
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.9,
+       "name": "Equinix - Billerica",
+       "plant_code": 65209
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "FDX010.0 FedEx Fuel Cell",
+       "plant_code": 64753
+      }
+     ],
+     "source": "vintage_2021",
+     "thermal_mw": 22690.1
+    },
+    "vintage_2022": {
+     "bins_mw": 295.4,
+     "bins_share": 0.0131,
+     "null_mw": 295.4,
+     "null_share": 0.0131,
+     "residual": [
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 187.6,
+       "name": "GenConn Middletown LLC",
+       "plant_code": 57068
+      },
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 64.0,
+       "name": "Algonquin Windsor Locks",
+       "plant_code": 10567
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 10.0,
+       "name": "Generate Colchester Fuel Cells, LLC",
+       "plant_code": 66053
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 7.4,
+       "name": "Subase Microgrid Project",
+       "plant_code": 59701
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 7.4,
+       "name": "Naval Sub Base New London Fuel Cell",
+       "plant_code": 61743
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 5.0,
+       "name": "South Windsor Fuel Cell",
+       "plant_code": 63302
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 3.6,
+       "name": "CoreSite - Somerville",
+       "plant_code": 66151
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.3,
+       "name": "Medtronic - New Haven",
+       "plant_code": 65198
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.2,
+       "name": "Medtronic - New Haven 2",
+       "plant_code": 65197
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.9,
+       "name": "Equinix - Billerica",
+       "plant_code": 65209
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.8,
+       "name": "Yale New Haven - New London",
+       "plant_code": 66455
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.2,
+       "name": "Connecticut College",
+       "plant_code": 66152
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "FDX010.0 FedEx Fuel Cell",
+       "plant_code": 64753
+      }
+     ],
+     "source": "vintage_2022",
+     "thermal_mw": 22599.6
+    },
+    "vintage_2023": {
+     "bins_mw": 295.4,
+     "bins_share": 0.0134,
+     "null_mw": 295.4,
+     "null_share": 0.0134,
+     "residual": [
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 187.6,
+       "name": "GenConn Middletown LLC",
+       "plant_code": 57068
+      },
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 64.0,
+       "name": "Algonquin Windsor Locks",
+       "plant_code": 10567
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 10.0,
+       "name": "Generate Colchester Fuel Cells, LLC",
+       "plant_code": 66053
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 7.4,
+       "name": "Subase Microgrid Project",
+       "plant_code": 59701
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 7.4,
+       "name": "Naval Sub Base New London Fuel Cell",
+       "plant_code": 61743
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 5.0,
+       "name": "South Windsor Fuel Cell",
+       "plant_code": 63302
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 3.6,
+       "name": "CoreSite - Somerville",
+       "plant_code": 66151
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.3,
+       "name": "Medtronic - New Haven",
+       "plant_code": 65198
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.2,
+       "name": "Medtronic - New Haven 2",
+       "plant_code": 65197
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.9,
+       "name": "Equinix - Billerica",
+       "plant_code": 65209
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.8,
+       "name": "Yale New Haven - New London",
+       "plant_code": 66455
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.2,
+       "name": "Connecticut College",
+       "plant_code": 66152
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "FDX010.0 FedEx Fuel Cell",
+       "plant_code": 64753
+      }
+     ],
+     "source": "vintage_2023",
+     "thermal_mw": 22000.9
+    },
+    "vintage_2024": {
+     "bins_mw": 373.9,
+     "bins_share": 0.0182,
+     "null_mw": 373.9,
+     "null_share": 0.0182,
+     "residual": [
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 187.6,
+       "name": "GenConn Middletown LLC",
+       "plant_code": 57068
+      },
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 64.0,
+       "name": "Algonquin Windsor Locks",
+       "plant_code": 10567
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 63.0,
+       "name": "MMWEC Simple Cycle Gas Turbine",
+       "plant_code": 63559
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 14.0,
+       "name": "Derby Fuel Cell",
+       "plant_code": 62588
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 10.0,
+       "name": "Generate Colchester Fuel Cells, LLC",
+       "plant_code": 66053
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 7.4,
+       "name": "Subase Microgrid Project",
+       "plant_code": 59701
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 7.4,
+       "name": "Naval Sub Base New London Fuel Cell",
+       "plant_code": 61743
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 5.0,
+       "name": "South Windsor Fuel Cell",
+       "plant_code": 63302
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 3.6,
+       "name": "CoreSite - Somerville",
+       "plant_code": 66151
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.3,
+       "name": "Medtronic - New Haven",
+       "plant_code": 65198
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.2,
+       "name": "Medtronic - New Haven 2",
+       "plant_code": 65197
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.9,
+       "name": "Equinix - Billerica",
+       "plant_code": 65209
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.8,
+       "name": "Yale New Haven - New London",
+       "plant_code": 66455
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 1.5,
+       "name": "Stamford Health Tully Health Center",
+       "plant_code": 68586
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.2,
+       "name": "Connecticut College",
+       "plant_code": 66152
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "FDX010.0 FedEx Fuel Cell",
+       "plant_code": 64753
+      }
+     ],
+     "source": "vintage_2024",
+     "thermal_mw": 20593.9
+    }
+   },
+   "retirees": {
+    "2019": {
+     "bins_mw": 15.9,
+     "bins_share": 0.006,
+     "null_mw": 15.9,
+     "null_share": 0.006,
+     "residual": [
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 12.5,
+       "name": "Mead Rumford Cogen",
+       "plant_code": 10491
+      },
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 3.0,
+       "name": "Newark America Mill",
+       "plant_code": 57103
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 0.4,
+       "name": "CJTS Energy Center",
+       "plant_code": 58365
+      }
+     ],
+     "retiree_units": 57,
+     "thermal_mw": 2636.0
+    },
+    "2020": {
+     "bins_mw": 15.9,
+     "bins_share": 0.006,
+     "null_mw": 15.9,
+     "null_share": 0.006,
+     "residual": [
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 12.5,
+       "name": "Mead Rumford Cogen",
+       "plant_code": 10491
+      },
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 3.0,
+       "name": "Newark America Mill",
+       "plant_code": 57103
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 0.4,
+       "name": "CJTS Energy Center",
+       "plant_code": 58365
+      }
+     ],
+     "retiree_units": 57,
+     "thermal_mw": 2632.2
+    },
+    "2021": {
+     "bins_mw": 15.9,
+     "bins_share": 0.0061,
+     "null_mw": 15.9,
+     "null_share": 0.0061,
+     "residual": [
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 12.5,
+       "name": "Mead Rumford Cogen",
+       "plant_code": 10491
+      },
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 3.0,
+       "name": "Newark America Mill",
+       "plant_code": 57103
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 0.4,
+       "name": "CJTS Energy Center",
+       "plant_code": 58365
+      }
+     ],
+     "retiree_units": 57,
+     "thermal_mw": 2618.4
+    },
+    "2022": {
+     "bins_mw": 15.9,
+     "bins_share": 0.0085,
+     "null_mw": 15.9,
+     "null_share": 0.0085,
+     "residual": [
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 12.5,
+       "name": "Mead Rumford Cogen",
+       "plant_code": 10491
+      },
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 3.0,
+       "name": "Newark America Mill",
+       "plant_code": 57103
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 0.4,
+       "name": "CJTS Energy Center",
+       "plant_code": 58365
+      }
+     ],
+     "retiree_units": 57,
+     "thermal_mw": 1873.6
+    },
+    "2023": {
+     "bins_mw": 3.4,
+     "bins_share": 0.0019,
+     "null_mw": 3.4,
+     "null_share": 0.0019,
+     "residual": [
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 3.0,
+       "name": "Newark America Mill",
+       "plant_code": 57103
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 0.4,
+       "name": "CJTS Energy Center",
+       "plant_code": 58365
+      }
+     ],
+     "retiree_units": 57,
+     "thermal_mw": 1744.7
+    },
+    "2024": {
+     "bins_mw": 3.0,
+     "bins_share": 0.002,
+     "null_mw": 3.0,
+     "null_share": 0.002,
+     "residual": [
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 3.0,
+       "name": "Newark America Mill",
+       "plant_code": 57103
+      }
+     ],
+     "retiree_units": 57,
+     "thermal_mw": 1493.3
+    }
+   }
+  },
+  "NWPP": {
+   "operable": {
+    "canonical": {
+     "bins_mw": 400.8,
+     "bins_share": 0.0143,
+     "null_mw": 10.8,
+     "null_share": 0.0004,
+     "residual": [
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 5.6,
+       "name": "University of Montana CHP",
+       "plant_code": 69880
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 5.2,
+       "name": "Payson",
+       "plant_code": 7408
+      }
+     ],
+     "source": "canonical",
+     "thermal_mw": 27938.2
+    },
+    "vintage_2018": {
+     "bins_mw": 15.2,
+     "bins_share": 0.0005,
+     "null_mw": 9.2,
+     "null_share": 0.0003,
+     "residual": [
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 9.2,
+       "name": "Payson",
+       "plant_code": 7408
+      }
+     ],
+     "source": "vintage_2018",
+     "thermal_mw": 28321.3
+    },
+    "vintage_2019": {
+     "bins_mw": 251.6,
+     "bins_share": 0.0089,
+     "null_mw": 9.2,
+     "null_share": 0.0003,
+     "residual": [
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 9.2,
+       "name": "Payson",
+       "plant_code": 7408
+      }
+     ],
+     "source": "vintage_2019",
+     "thermal_mw": 28313.5
+    },
+    "vintage_2020": {
+     "bins_mw": 239.6,
+     "bins_share": 0.0091,
+     "null_mw": 9.2,
+     "null_share": 0.0003,
+     "residual": [
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 9.2,
+       "name": "Payson",
+       "plant_code": 7408
+      }
+     ],
+     "source": "vintage_2020",
+     "thermal_mw": 26463.6
+    },
+    "vintage_2021": {
+     "bins_mw": 233.6,
+     "bins_share": 0.0086,
+     "null_mw": 9.2,
+     "null_share": 0.0003,
+     "residual": [
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 9.2,
+       "name": "Payson",
+       "plant_code": 7408
+      }
+     ],
+     "source": "vintage_2021",
+     "thermal_mw": 27066.2
+    },
+    "vintage_2022": {
+     "bins_mw": 233.6,
+     "bins_share": 0.0085,
+     "null_mw": 9.2,
+     "null_share": 0.0003,
+     "residual": [
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 9.2,
+       "name": "Payson",
+       "plant_code": 7408
+      }
+     ],
+     "source": "vintage_2022",
+     "thermal_mw": 27416.1
+    },
+    "vintage_2023": {
+     "bins_mw": 233.6,
+     "bins_share": 0.0085,
+     "null_mw": 9.2,
+     "null_share": 0.0003,
+     "residual": [
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 9.2,
+       "name": "Payson",
+       "plant_code": 7408
+      }
+     ],
+     "source": "vintage_2023",
+     "thermal_mw": 27417.7
+    },
+    "vintage_2024": {
+     "bins_mw": 395.2,
+     "bins_share": 0.0141,
+     "null_mw": 5.2,
+     "null_share": 0.0002,
+     "residual": [
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 5.2,
+       "name": "Payson",
+       "plant_code": 7408
+      }
+     ],
+     "source": "vintage_2024",
+     "thermal_mw": 27964.7
+    }
+   },
+   "retirees": {
+    "2019": {
+     "bins_mw": 9.8,
+     "bins_share": 0.0162,
+     "null_mw": 9.8,
+     "null_share": 0.0162,
+     "residual": [
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 9.8,
+       "name": "Alden Bailey Power Plant",
+       "plant_code": 56223
+      }
+     ],
+     "retiree_units": 19,
+     "thermal_mw": 604.6
+    },
+    "2020": {
+     "bins_mw": 9.8,
+     "bins_share": 0.0162,
+     "null_mw": 9.8,
+     "null_share": 0.0162,
+     "residual": [
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 9.8,
+       "name": "Alden Bailey Power Plant",
+       "plant_code": 56223
+      }
+     ],
+     "retiree_units": 19,
+     "thermal_mw": 604.6
+    },
+    "2021": {
+     "bins_mw": 9.8,
+     "bins_share": 1.0,
+     "null_mw": 9.8,
+     "null_share": 1.0,
+     "residual": [
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 9.8,
+       "name": "Alden Bailey Power Plant",
+       "plant_code": 56223
+      }
+     ],
+     "retiree_units": 19,
+     "thermal_mw": 9.8
+    },
+    "2022": {
+     "bins_mw": 0.0,
+     "bins_share": null,
+     "null_mw": 0.0,
+     "null_share": null,
+     "residual": [],
+     "retiree_units": 19,
+     "thermal_mw": 0.0
+    },
+    "2023": {
+     "bins_mw": 0.0,
+     "bins_share": null,
+     "null_mw": 0.0,
+     "null_share": null,
+     "residual": [],
+     "retiree_units": 19,
+     "thermal_mw": 0.0
+    },
+    "2024": {
+     "bins_mw": 0.0,
+     "bins_share": null,
+     "null_mw": 0.0,
+     "null_share": null,
+     "residual": [],
+     "retiree_units": 19,
+     "thermal_mw": 0.0
+    }
+   }
+  },
+  "NYISO": {
+   "operable": {
+    "canonical": {
+     "bins_mw": 660.1,
+     "bins_share": 0.0249,
+     "null_mw": 656.1,
+     "null_share": 0.0247,
+     "residual": [
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 540.0,
+       "name": "Astoria Energy II",
+       "plant_code": 57664
+      },
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 60.0,
+       "name": "Allegany Cogen",
+       "plant_code": 7784
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 8.4,
+       "name": "SWM Fuel Cell",
+       "plant_code": 63661
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 7.5,
+       "name": "Certain Solar - Staten Island",
+       "plant_code": 65201
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 6.0,
+       "name": "Lincoln Medical and Mental Health Center",
+       "plant_code": 64291
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 6.0,
+       "name": "Orbit Bloom Fuel Cell",
+       "plant_code": 64350
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 5.0,
+       "name": "Fuel Cell 3245 Yates Avenue",
+       "plant_code": 64747
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 5.0,
+       "name": "Apple Staten Island - Industrial Loop",
+       "plant_code": 66457
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 5.0,
+       "name": "Apple Staten Island - Winant Place",
+       "plant_code": 66460
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 4.0,
+       "name": "Fuel Cell 18B Sneden Avenue",
+       "plant_code": 64749
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 3.5,
+       "name": "Fuel Cell 18A Sneden Avenue",
+       "plant_code": 64748
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.0,
+       "name": "Bloom-Altice Fuel Cell",
+       "plant_code": 64143
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.0,
+       "name": "Altice - Hicksville",
+       "plant_code": 65212
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.7,
+       "name": "Equinix - Elmsford",
+       "plant_code": 66150
+      }
+     ],
+     "source": "canonical",
+     "thermal_mw": 26534.7
+    },
+    "vintage_2018": {
+     "bins_mw": 600.0,
+     "bins_share": 0.0221,
+     "null_mw": 600.0,
+     "null_share": 0.0221,
+     "residual": [
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 540.0,
+       "name": "Astoria Energy II",
+       "plant_code": 57664
+      },
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 60.0,
+       "name": "Allegany Cogen",
+       "plant_code": 7784
+      }
+     ],
+     "source": "vintage_2018",
+     "thermal_mw": 27106.3
+    },
+    "vintage_2019": {
+     "bins_mw": 600.0,
+     "bins_share": 0.0222,
+     "null_mw": 600.0,
+     "null_share": 0.0222,
+     "residual": [
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 540.0,
+       "name": "Astoria Energy II",
+       "plant_code": 57664
+      },
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 60.0,
+       "name": "Allegany Cogen",
+       "plant_code": 7784
+      }
+     ],
+     "source": "vintage_2019",
+     "thermal_mw": 27044.2
+    },
+    "vintage_2020": {
+     "bins_mw": 619.5,
+     "bins_share": 0.0227,
+     "null_mw": 619.5,
+     "null_share": 0.0227,
+     "residual": [
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 540.0,
+       "name": "Astoria Energy II",
+       "plant_code": 57664
+      },
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 60.0,
+       "name": "Allegany Cogen",
+       "plant_code": 7784
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 6.0,
+       "name": "Orbit Bloom Fuel Cell",
+       "plant_code": 64350
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 4.0,
+       "name": "Lincoln Medical and Mental Health Center",
+       "plant_code": 64291
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 4.0,
+       "name": "Fuel Cell 18B Sneden Avenue",
+       "plant_code": 64749
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 3.5,
+       "name": "Fuel Cell 18A Sneden Avenue",
+       "plant_code": 64748
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.0,
+       "name": "Bloom-Altice Fuel Cell",
+       "plant_code": 64143
+      }
+     ],
+     "source": "vintage_2020",
+     "thermal_mw": 27254.6
+    },
+    "vintage_2021": {
+     "bins_mw": 637.4,
+     "bins_share": 0.0233,
+     "null_mw": 637.4,
+     "null_share": 0.0233,
+     "residual": [
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 540.0,
+       "name": "Astoria Energy II",
+       "plant_code": 57664
+      },
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 60.0,
+       "name": "Allegany Cogen",
+       "plant_code": 7784
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 8.4,
+       "name": "SWM Fuel Cell",
+       "plant_code": 63661
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 7.5,
+       "name": "Certain Solar - Staten Island",
+       "plant_code": 65201
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 6.0,
+       "name": "Orbit Bloom Fuel Cell",
+       "plant_code": 64350
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 4.0,
+       "name": "Lincoln Medical and Mental Health Center",
+       "plant_code": 64291
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 4.0,
+       "name": "Fuel Cell 18B Sneden Avenue",
+       "plant_code": 64749
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 3.5,
+       "name": "Fuel Cell 18A Sneden Avenue",
+       "plant_code": 64748
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.0,
+       "name": "Bloom-Altice Fuel Cell",
+       "plant_code": 64143
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.0,
+       "name": "Altice - Hicksville",
+       "plant_code": 65212
+      }
+     ],
+     "source": "vintage_2021",
+     "thermal_mw": 27320.6
+    },
+    "vintage_2022": {
+     "bins_mw": 654.1,
+     "bins_share": 0.024,
+     "null_mw": 654.1,
+     "null_share": 0.024,
+     "residual": [
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 540.0,
+       "name": "Astoria Energy II",
+       "plant_code": 57664
+      },
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 60.0,
+       "name": "Allegany Cogen",
+       "plant_code": 7784
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 8.4,
+       "name": "SWM Fuel Cell",
+       "plant_code": 63661
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 7.5,
+       "name": "Certain Solar - Staten Island",
+       "plant_code": 65201
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 6.0,
+       "name": "Orbit Bloom Fuel Cell",
+       "plant_code": 64350
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 5.0,
+       "name": "Fuel Cell 3245 Yates Avenue",
+       "plant_code": 64747
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 5.0,
+       "name": "Apple Staten Island - Industrial Loop",
+       "plant_code": 66457
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 5.0,
+       "name": "Apple Staten Island - Winant Place",
+       "plant_code": 66460
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 4.0,
+       "name": "Lincoln Medical and Mental Health Center",
+       "plant_code": 64291
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 4.0,
+       "name": "Fuel Cell 18B Sneden Avenue",
+       "plant_code": 64749
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 3.5,
+       "name": "Fuel Cell 18A Sneden Avenue",
+       "plant_code": 64748
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.0,
+       "name": "Bloom-Altice Fuel Cell",
+       "plant_code": 64143
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.0,
+       "name": "Altice - Hicksville",
+       "plant_code": 65212
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.7,
+       "name": "Equinix - Elmsford",
+       "plant_code": 66150
+      }
+     ],
+     "source": "vintage_2022",
+     "thermal_mw": 27268.6
+    },
+    "vintage_2023": {
+     "bins_mw": 654.1,
+     "bins_share": 0.0243,
+     "null_mw": 654.1,
+     "null_share": 0.0243,
+     "residual": [
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 540.0,
+       "name": "Astoria Energy II",
+       "plant_code": 57664
+      },
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 60.0,
+       "name": "Allegany Cogen",
+       "plant_code": 7784
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 8.4,
+       "name": "SWM Fuel Cell",
+       "plant_code": 63661
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 7.5,
+       "name": "Certain Solar - Staten Island",
+       "plant_code": 65201
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 6.0,
+       "name": "Orbit Bloom Fuel Cell",
+       "plant_code": 64350
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 5.0,
+       "name": "Fuel Cell 3245 Yates Avenue",
+       "plant_code": 64747
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 5.0,
+       "name": "Apple Staten Island - Industrial Loop",
+       "plant_code": 66457
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 5.0,
+       "name": "Apple Staten Island - Winant Place",
+       "plant_code": 66460
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 4.0,
+       "name": "Lincoln Medical and Mental Health Center",
+       "plant_code": 64291
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 4.0,
+       "name": "Fuel Cell 18B Sneden Avenue",
+       "plant_code": 64749
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 3.5,
+       "name": "Fuel Cell 18A Sneden Avenue",
+       "plant_code": 64748
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.0,
+       "name": "Bloom-Altice Fuel Cell",
+       "plant_code": 64143
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.0,
+       "name": "Altice - Hicksville",
+       "plant_code": 65212
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.7,
+       "name": "Equinix - Elmsford",
+       "plant_code": 66150
+      }
+     ],
+     "source": "vintage_2023",
+     "thermal_mw": 26946.4
+    },
+    "vintage_2024": {
+     "bins_mw": 660.1,
+     "bins_share": 0.0246,
+     "null_mw": 656.1,
+     "null_share": 0.0244,
+     "residual": [
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 540.0,
+       "name": "Astoria Energy II",
+       "plant_code": 57664
+      },
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 60.0,
+       "name": "Allegany Cogen",
+       "plant_code": 7784
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 8.4,
+       "name": "SWM Fuel Cell",
+       "plant_code": 63661
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 7.5,
+       "name": "Certain Solar - Staten Island",
+       "plant_code": 65201
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 6.0,
+       "name": "Lincoln Medical and Mental Health Center",
+       "plant_code": 64291
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 6.0,
+       "name": "Orbit Bloom Fuel Cell",
+       "plant_code": 64350
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 5.0,
+       "name": "Fuel Cell 3245 Yates Avenue",
+       "plant_code": 64747
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 5.0,
+       "name": "Apple Staten Island - Industrial Loop",
+       "plant_code": 66457
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 5.0,
+       "name": "Apple Staten Island - Winant Place",
+       "plant_code": 66460
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 4.0,
+       "name": "Fuel Cell 18B Sneden Avenue",
+       "plant_code": 64749
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 3.5,
+       "name": "Fuel Cell 18A Sneden Avenue",
+       "plant_code": 64748
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.0,
+       "name": "Bloom-Altice Fuel Cell",
+       "plant_code": 64143
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.0,
+       "name": "Altice - Hicksville",
+       "plant_code": 65212
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.7,
+       "name": "Equinix - Elmsford",
+       "plant_code": 66150
+      }
+     ],
+     "source": "vintage_2024",
+     "thermal_mw": 26879.3
+    }
+   },
+   "retirees": {
+    "2019": {
+     "bins_mw": 522.2,
+     "bins_share": 0.2542,
+     "null_mw": 522.2,
+     "null_share": 0.2542,
+     "residual": [
+      {
+       "fuels": [
+        "coal"
+       ],
+       "mw": 520.0,
+       "name": "Dunkirk Generating Plant",
+       "plant_code": 2554
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.2,
+       "name": "Hofstra University",
+       "plant_code": 51035
+      }
+     ],
+     "retiree_units": 45,
+     "thermal_mw": 2053.9
+    },
+    "2020": {
+     "bins_mw": 448.4,
+     "bins_share": 0.2728,
+     "null_mw": 445.0,
+     "null_share": 0.2708,
+     "residual": [
+      {
+       "fuels": [
+        "coal"
+       ],
+       "mw": 445.0,
+       "name": "Dunkirk Generating Plant",
+       "plant_code": 2554
+      }
+     ],
+     "retiree_units": 45,
+     "thermal_mw": 1643.5
+    },
+    "2021": {
+     "bins_mw": 449.2,
+     "bins_share": 0.4661,
+     "null_mw": 445.0,
+     "null_share": 0.4618,
+     "residual": [
+      {
+       "fuels": [
+        "coal"
+       ],
+       "mw": 445.0,
+       "name": "Dunkirk Generating Plant",
+       "plant_code": 2554
+      }
+     ],
+     "retiree_units": 45,
+     "thermal_mw": 963.7
+    },
+    "2022": {
+     "bins_mw": 445.0,
+     "bins_share": 0.4638,
+     "null_mw": 445.0,
+     "null_share": 0.4638,
+     "residual": [
+      {
+       "fuels": [
+        "coal"
+       ],
+       "mw": 445.0,
+       "name": "Dunkirk Generating Plant",
+       "plant_code": 2554
+      }
+     ],
+     "retiree_units": 45,
+     "thermal_mw": 959.5
+    },
+    "2023": {
+     "bins_mw": 0.0,
+     "bins_share": 0.0,
+     "null_mw": 0.0,
+     "null_share": 0.0,
+     "residual": [],
+     "retiree_units": 45,
+     "thermal_mw": 436.9
+    },
+    "2024": {
+     "bins_mw": 0.0,
+     "bins_share": 0.0,
+     "null_mw": 0.0,
+     "null_share": 0.0,
+     "residual": [],
+     "retiree_units": 45,
+     "thermal_mw": 21.3
+    }
+   }
+  },
+  "PJM": {
+   "operable": {
+    "canonical": {
+     "bins_mw": 1156.2,
+     "bins_share": 0.0086,
+     "null_mw": 894.8,
+     "null_share": 0.0066,
+     "residual": [
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 600.0,
+       "name": "MPH Elwood",
+       "plant_code": 69979
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 202.8,
+       "name": "Sayreville",
+       "plant_code": 2390
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 31.1,
+       "name": "Titus",
+       "plant_code": 3115
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 26.1,
+       "name": "Niles Power Plant",
+       "plant_code": 2861
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 25.2,
+       "name": "O H Hutchings",
+       "plant_code": 2848
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 3.4,
+       "name": "Morristown Medical Center",
+       "plant_code": 69547
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.0,
+       "name": "AT&T Middletown",
+       "plant_code": 65194
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.0,
+       "name": "Altice - Parsippany",
+       "plant_code": 65213
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.2,
+       "name": "MTHS Co-Gen Buildings",
+       "plant_code": 58825
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "Thornridge High School",
+       "plant_code": 55005
+      }
+     ],
+     "source": "canonical",
+     "thermal_mw": 134572.5
+    },
+    "vintage_2018": {
+     "bins_mw": 857.7,
+     "bins_share": 0.006,
+     "null_mw": 658.2,
+     "null_share": 0.0046,
+     "residual": [
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 314.0,
+       "name": "Joliet 9",
+       "plant_code": 874
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 200.0,
+       "name": "Sayreville",
+       "plant_code": 2390
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 30.6,
+       "name": "Lebanon",
+       "plant_code": 2921
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 27.0,
+       "name": "Titus",
+       "plant_code": 3115
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 25.0,
+       "name": "O H Hutchings",
+       "plant_code": 2848
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 25.0,
+       "name": "Niles Power Plant",
+       "plant_code": 2861
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 24.0,
+       "name": "FirstEnergy Eastlake",
+       "plant_code": 2837
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 6.0,
+       "name": "Seaside Heights Power Plant",
+       "plant_code": 58172
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 3.0,
+       "name": "Shelby Municipal Light Plant",
+       "plant_code": 2943
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.4,
+       "name": "Thornwood High School",
+       "plant_code": 55004
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.2,
+       "name": "MTHS Co-Gen Buildings",
+       "plant_code": 58825
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "Thornridge High School",
+       "plant_code": 55005
+      }
+     ],
+     "source": "vintage_2018",
+     "thermal_mw": 142200.5
+    },
+    "vintage_2019": {
+     "bins_mw": 882.8,
+     "bins_share": 0.0063,
+     "null_mw": 618.9,
+     "null_share": 0.0044,
+     "residual": [
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 314.0,
+       "name": "Joliet 9",
+       "plant_code": 874
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 200.0,
+       "name": "Sayreville",
+       "plant_code": 2390
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 27.0,
+       "name": "Titus",
+       "plant_code": 3115
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 25.3,
+       "name": "O H Hutchings",
+       "plant_code": 2848
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 25.0,
+       "name": "Niles Power Plant",
+       "plant_code": 2861
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 24.0,
+       "name": "FirstEnergy Eastlake",
+       "plant_code": 2837
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.4,
+       "name": "Thornwood High School",
+       "plant_code": 55004
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.2,
+       "name": "MTHS Co-Gen Buildings",
+       "plant_code": 58825
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "Thornridge High School",
+       "plant_code": 55005
+      }
+     ],
+     "source": "vintage_2019",
+     "thermal_mw": 140065.3
+    },
+    "vintage_2020": {
+     "bins_mw": 787.0,
+     "bins_share": 0.0057,
+     "null_mw": 594.9,
+     "null_share": 0.0043,
+     "residual": [
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 314.0,
+       "name": "Joliet 9",
+       "plant_code": 874
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 200.0,
+       "name": "Sayreville",
+       "plant_code": 2390
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 27.0,
+       "name": "Titus",
+       "plant_code": 3115
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 25.3,
+       "name": "O H Hutchings",
+       "plant_code": 2848
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 25.0,
+       "name": "Niles Power Plant",
+       "plant_code": 2861
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.4,
+       "name": "Thornwood High School",
+       "plant_code": 55004
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.2,
+       "name": "MTHS Co-Gen Buildings",
+       "plant_code": 58825
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "Thornridge High School",
+       "plant_code": 55005
+      }
+     ],
+     "source": "vintage_2020",
+     "thermal_mw": 138066.9
+    },
+    "vintage_2021": {
+     "bins_mw": 796.7,
+     "bins_share": 0.0056,
+     "null_mw": 620.6,
+     "null_share": 0.0044,
+     "residual": [
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 314.0,
+       "name": "Joliet 9",
+       "plant_code": 874
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 217.9,
+       "name": "Sayreville",
+       "plant_code": 2390
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 31.1,
+       "name": "Titus",
+       "plant_code": 3115
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 26.1,
+       "name": "Niles Power Plant",
+       "plant_code": 2861
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 25.3,
+       "name": "O H Hutchings",
+       "plant_code": 2848
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.0,
+       "name": "AT&T Middletown",
+       "plant_code": 65194
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.0,
+       "name": "Altice - Parsippany",
+       "plant_code": 65213
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.2,
+       "name": "MTHS Co-Gen Buildings",
+       "plant_code": 58825
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "Thornridge High School",
+       "plant_code": 55005
+      }
+     ],
+     "source": "vintage_2021",
+     "thermal_mw": 141761.0
+    },
+    "vintage_2022": {
+     "bins_mw": 948.9,
+     "bins_share": 0.0069,
+     "null_mw": 619.5,
+     "null_share": 0.0045,
+     "residual": [
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 314.0,
+       "name": "Joliet 9",
+       "plant_code": 874
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 216.9,
+       "name": "Sayreville",
+       "plant_code": 2390
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 31.1,
+       "name": "Titus",
+       "plant_code": 3115
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 26.1,
+       "name": "Niles Power Plant",
+       "plant_code": 2861
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 25.2,
+       "name": "O H Hutchings",
+       "plant_code": 2848
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.0,
+       "name": "AT&T Middletown",
+       "plant_code": 65194
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.0,
+       "name": "Altice - Parsippany",
+       "plant_code": 65213
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.2,
+       "name": "MTHS Co-Gen Buildings",
+       "plant_code": 58825
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "Thornridge High School",
+       "plant_code": 55005
+      }
+     ],
+     "source": "vintage_2022",
+     "thermal_mw": 138273.6
+    },
+    "vintage_2023": {
+     "bins_mw": 1261.3,
+     "bins_share": 0.0093,
+     "null_mw": 305.5,
+     "null_share": 0.0022,
+     "residual": [
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 216.9,
+       "name": "Sayreville",
+       "plant_code": 2390
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 31.1,
+       "name": "Titus",
+       "plant_code": 3115
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 26.1,
+       "name": "Niles Power Plant",
+       "plant_code": 2861
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 25.2,
+       "name": "O H Hutchings",
+       "plant_code": 2848
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.0,
+       "name": "AT&T Middletown",
+       "plant_code": 65194
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.0,
+       "name": "Altice - Parsippany",
+       "plant_code": 65213
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.2,
+       "name": "MTHS Co-Gen Buildings",
+       "plant_code": 58825
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "Thornridge High School",
+       "plant_code": 55005
+      }
+     ],
+     "source": "vintage_2023",
+     "thermal_mw": 135864.1
+    },
+    "vintage_2024": {
+     "bins_mw": 350.0,
+     "bins_share": 0.0026,
+     "null_mw": 88.6,
+     "null_share": 0.0007,
+     "residual": [
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 31.1,
+       "name": "Titus",
+       "plant_code": 3115
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 26.1,
+       "name": "Niles Power Plant",
+       "plant_code": 2861
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 25.2,
+       "name": "O H Hutchings",
+       "plant_code": 2848
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.0,
+       "name": "AT&T Middletown",
+       "plant_code": 65194
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.0,
+       "name": "Altice - Parsippany",
+       "plant_code": 65213
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.2,
+       "name": "MTHS Co-Gen Buildings",
+       "plant_code": 58825
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "Thornridge High School",
+       "plant_code": 55005
+      }
+     ],
+     "source": "vintage_2024",
+     "thermal_mw": 135400.2
+    }
+   },
+   "retirees": {
+    "2019": {
+     "bins_mw": 1029.5,
+     "bins_share": 0.0542,
+     "null_mw": 904.7,
+     "null_share": 0.0476,
+     "residual": [
+      {
+       "fuels": [
+        "coal"
+       ],
+       "mw": 519.0,
+       "name": "Dickerson",
+       "plant_code": 65284
+      },
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 314.0,
+       "name": "Joliet 9",
+       "plant_code": 874
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 30.6,
+       "name": "Lebanon",
+       "plant_code": 2921
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 24.0,
+       "name": "FirstEnergy Eastlake",
+       "plant_code": 2837
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 6.0,
+       "name": "North Wales Diesel",
+       "plant_code": 64983
+      },
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 4.0,
+       "name": "Akron Recycle Energy Plant",
+       "plant_code": 54265
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 3.0,
+       "name": "Shelby Municipal Light Plant",
+       "plant_code": 2943
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.6,
+       "name": "Saint Francis Hospital",
+       "plant_code": 50952
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.5,
+       "name": "Woodridge Greene Valley Treatment Plant",
+       "plant_code": 54987
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 1.0,
+       "name": "New Knoxville",
+       "plant_code": 7898
+      }
+     ],
+     "retiree_units": 373,
+     "thermal_mw": 18992.9
+    },
+    "2020": {
+     "bins_mw": 947.9,
+     "bins_share": 0.0681,
+     "null_mw": 871.1,
+     "null_share": 0.0626,
+     "residual": [
+      {
+       "fuels": [
+        "coal"
+       ],
+       "mw": 519.0,
+       "name": "Dickerson",
+       "plant_code": 65284
+      },
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 314.0,
+       "name": "Joliet 9",
+       "plant_code": 874
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 24.0,
+       "name": "FirstEnergy Eastlake",
+       "plant_code": 2837
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 6.0,
+       "name": "North Wales Diesel",
+       "plant_code": 64983
+      },
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 4.0,
+       "name": "Akron Recycle Energy Plant",
+       "plant_code": 54265
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.6,
+       "name": "Saint Francis Hospital",
+       "plant_code": 50952
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.5,
+       "name": "Woodridge Greene Valley Treatment Plant",
+       "plant_code": 54987
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 1.0,
+       "name": "New Knoxville",
+       "plant_code": 7898
+      }
+     ],
+     "retiree_units": 373,
+     "thermal_mw": 13919.6
+    },
+    "2021": {
+     "bins_mw": 403.4,
+     "bins_share": 0.0348,
+     "null_mw": 326.6,
+     "null_share": 0.0282,
+     "residual": [
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 314.0,
+       "name": "Joliet 9",
+       "plant_code": 874
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 6.0,
+       "name": "North Wales Diesel",
+       "plant_code": 64983
+      },
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 4.0,
+       "name": "Akron Recycle Energy Plant",
+       "plant_code": 54265
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.6,
+       "name": "Saint Francis Hospital",
+       "plant_code": 50952
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 1.0,
+       "name": "New Knoxville",
+       "plant_code": 7898
+      }
+     ],
+     "retiree_units": 373,
+     "thermal_mw": 11598.9
+    },
+    "2022": {
+     "bins_mw": 403.4,
+     "bins_share": 0.0385,
+     "null_mw": 326.6,
+     "null_share": 0.0312,
+     "residual": [
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 314.0,
+       "name": "Joliet 9",
+       "plant_code": 874
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 6.0,
+       "name": "North Wales Diesel",
+       "plant_code": 64983
+      },
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 4.0,
+       "name": "Akron Recycle Energy Plant",
+       "plant_code": 54265
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.6,
+       "name": "Saint Francis Hospital",
+       "plant_code": 50952
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 1.0,
+       "name": "New Knoxville",
+       "plant_code": 7898
+      }
+     ],
+     "retiree_units": 373,
+     "thermal_mw": 10466.7
+    },
+    "2023": {
+     "bins_mw": 403.8,
+     "bins_share": 0.0639,
+     "null_mw": 320.0,
+     "null_share": 0.0507,
+     "residual": [
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 314.0,
+       "name": "Joliet 9",
+       "plant_code": 874
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 6.0,
+       "name": "North Wales Diesel",
+       "plant_code": 64983
+      }
+     ],
+     "retiree_units": 373,
+     "thermal_mw": 6316.3
+    },
+    "2024": {
+     "bins_mw": 82.8,
+     "bins_share": 0.0653,
+     "null_mw": 6.0,
+     "null_share": 0.0047,
+     "residual": [
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 6.0,
+       "name": "North Wales Diesel",
+       "plant_code": 64983
+      }
+     ],
+     "retiree_units": 373,
+     "thermal_mw": 1268.5
+    }
+   }
+  },
+  "SOCO": {
+   "operable": {
+    "canonical": {
+     "bins_mw": 1045.6,
+     "bins_share": 0.0231,
+     "null_mw": 1045.6,
+     "null_share": 0.0231,
+     "residual": [
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 745.6,
+       "name": "Dahlberg",
+       "plant_code": 7709
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 297.5,
+       "name": "Hartwell Energy Facility",
+       "plant_code": 54538
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 1.3,
+       "name": "Inforum",
+       "plant_code": 54290
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 1.2,
+       "name": "Tech Square Microgrid",
+       "plant_code": 63775
+      }
+     ],
+     "source": "canonical",
+     "thermal_mw": 45331.8
+    },
+    "vintage_2018": {
+     "bins_mw": 1060.3,
+     "bins_share": 0.0215,
+     "null_mw": 1060.3,
+     "null_share": 0.0215,
+     "residual": [
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 746.9,
+       "name": "Dahlberg",
+       "plant_code": 7709
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 298.1,
+       "name": "Hartwell Energy Facility",
+       "plant_code": 54538
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 14.0,
+       "name": "Boulevard",
+       "plant_code": 732
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 1.3,
+       "name": "Inforum",
+       "plant_code": 54290
+      }
+     ],
+     "source": "vintage_2018",
+     "thermal_mw": 49421.7
+    },
+    "vintage_2019": {
+     "bins_mw": 1060.3,
+     "bins_share": 0.0224,
+     "null_mw": 1060.3,
+     "null_share": 0.0224,
+     "residual": [
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 746.9,
+       "name": "Dahlberg",
+       "plant_code": 7709
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 298.1,
+       "name": "Hartwell Energy Facility",
+       "plant_code": 54538
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 14.0,
+       "name": "Boulevard",
+       "plant_code": 732
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 1.3,
+       "name": "Inforum",
+       "plant_code": 54290
+      }
+     ],
+     "source": "vintage_2019",
+     "thermal_mw": 47437.8
+    },
+    "vintage_2020": {
+     "bins_mw": 1675.7,
+     "bins_share": 0.0353,
+     "null_mw": 1060.2,
+     "null_share": 0.0224,
+     "residual": [
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 745.6,
+       "name": "Dahlberg",
+       "plant_code": 7709
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 298.1,
+       "name": "Hartwell Energy Facility",
+       "plant_code": 54538
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 14.0,
+       "name": "Boulevard",
+       "plant_code": 732
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 1.3,
+       "name": "Inforum",
+       "plant_code": 54290
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 1.2,
+       "name": "Tech Square Microgrid",
+       "plant_code": 63775
+      }
+     ],
+     "source": "vintage_2020",
+     "thermal_mw": 47418.4
+    },
+    "vintage_2021": {
+     "bins_mw": 1060.2,
+     "bins_share": 0.0219,
+     "null_mw": 1060.2,
+     "null_share": 0.0219,
+     "residual": [
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 745.6,
+       "name": "Dahlberg",
+       "plant_code": 7709
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 298.1,
+       "name": "Hartwell Energy Facility",
+       "plant_code": 54538
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 14.0,
+       "name": "Boulevard",
+       "plant_code": 732
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 1.3,
+       "name": "Inforum",
+       "plant_code": 54290
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 1.2,
+       "name": "Tech Square Microgrid",
+       "plant_code": 63775
+      }
+     ],
+     "source": "vintage_2021",
+     "thermal_mw": 48322.1
+    },
+    "vintage_2022": {
+     "bins_mw": 1622.6,
+     "bins_share": 0.0347,
+     "null_mw": 1046.2,
+     "null_share": 0.0223,
+     "residual": [
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 745.6,
+       "name": "Dahlberg",
+       "plant_code": 7709
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 298.1,
+       "name": "Hartwell Energy Facility",
+       "plant_code": 54538
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 1.3,
+       "name": "Inforum",
+       "plant_code": 54290
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 1.2,
+       "name": "Tech Square Microgrid",
+       "plant_code": 63775
+      }
+     ],
+     "source": "vintage_2022",
+     "thermal_mw": 46819.8
+    },
+    "vintage_2023": {
+     "bins_mw": 1046.2,
+     "bins_share": 0.0217,
+     "null_mw": 1046.2,
+     "null_share": 0.0217,
+     "residual": [
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 745.6,
+       "name": "Dahlberg",
+       "plant_code": 7709
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 298.1,
+       "name": "Hartwell Energy Facility",
+       "plant_code": 54538
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 1.3,
+       "name": "Inforum",
+       "plant_code": 54290
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 1.2,
+       "name": "Tech Square Microgrid",
+       "plant_code": 63775
+      }
+     ],
+     "source": "vintage_2023",
+     "thermal_mw": 48126.6
+    },
+    "vintage_2024": {
+     "bins_mw": 1045.6,
+     "bins_share": 0.0231,
+     "null_mw": 1045.6,
+     "null_share": 0.0231,
+     "residual": [
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 745.6,
+       "name": "Dahlberg",
+       "plant_code": 7709
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 297.5,
+       "name": "Hartwell Energy Facility",
+       "plant_code": 54538
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 1.3,
+       "name": "Inforum",
+       "plant_code": 54290
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 1.2,
+       "name": "Tech Square Microgrid",
+       "plant_code": 63775
+      }
+     ],
+     "source": "vintage_2024",
+     "thermal_mw": 45358.7
+    }
+   },
+   "retirees": {
+    "2019": {
+     "bins_mw": 14.0,
+     "bins_share": 0.0036,
+     "null_mw": 14.0,
+     "null_share": 0.0036,
+     "residual": [
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 14.0,
+       "name": "Boulevard",
+       "plant_code": 732
+      }
+     ],
+     "retiree_units": 33,
+     "thermal_mw": 3860.6
+    },
+    "2020": {
+     "bins_mw": 14.0,
+     "bins_share": 0.0072,
+     "null_mw": 14.0,
+     "null_share": 0.0072,
+     "residual": [
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 14.0,
+       "name": "Boulevard",
+       "plant_code": 732
+      }
+     ],
+     "retiree_units": 33,
+     "thermal_mw": 1952.8
+    },
+    "2021": {
+     "bins_mw": 14.0,
+     "bins_share": 0.0072,
+     "null_mw": 14.0,
+     "null_share": 0.0072,
+     "residual": [
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 14.0,
+       "name": "Boulevard",
+       "plant_code": 732
+      }
+     ],
+     "retiree_units": 33,
+     "thermal_mw": 1952.8
+    },
+    "2022": {
+     "bins_mw": 14.0,
+     "bins_share": 0.0072,
+     "null_mw": 14.0,
+     "null_share": 0.0072,
+     "residual": [
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 14.0,
+       "name": "Boulevard",
+       "plant_code": 732
+      }
+     ],
+     "retiree_units": 33,
+     "thermal_mw": 1949.8
+    },
+    "2023": {
+     "bins_mw": 0.0,
+     "bins_share": 0.0,
+     "null_mw": 0.0,
+     "null_share": 0.0,
+     "residual": [],
+     "retiree_units": 33,
+     "thermal_mw": 142.8
+    },
+    "2024": {
+     "bins_mw": 0.0,
+     "bins_share": 0.0,
+     "null_mw": 0.0,
+     "null_share": 0.0,
+     "residual": [],
+     "retiree_units": 33,
+     "thermal_mw": 12.8
+    }
+   }
+  },
+  "SPP": {
+   "operable": {
+    "canonical": {
+     "bins_mw": 2645.1,
+     "bins_share": 0.0492,
+     "null_mw": 1577.6,
+     "null_share": 0.0293,
+     "residual": [
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 511.0,
+       "name": "J Lamar Stall Unit",
+       "plant_code": 56565
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 442.2,
+       "name": "Turtle Creek",
+       "plant_code": 64547
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "gas_st",
+        "oil"
+       ],
+       "mw": 231.9,
+       "name": "Lake Road (MO)",
+       "plant_code": 2098
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 151.2,
+       "name": "Standing Bear Lake",
+       "plant_code": 64548
+      },
+      {
+       "fuels": [
+        "gas_cc",
+        "gas_ct"
+       ],
+       "mw": 106.8,
+       "name": "Ponca City",
+       "plant_code": 7546
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 22.6,
+       "name": "Nebraska City # 1",
+       "plant_code": 2255
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 19.5,
+       "name": "Carrollton",
+       "plant_code": 2120
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 18.7,
+       "name": "Sabetha Power Plant",
+       "plant_code": 1320
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 16.1,
+       "name": "Goodland",
+       "plant_code": 1280
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 15.2,
+       "name": "Wamego",
+       "plant_code": 1328
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 14.0,
+       "name": "Larned",
+       "plant_code": 1299
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 12.2,
+       "name": "Nebraska City # 2",
+       "plant_code": 7555
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 7.3,
+       "name": "Stockton",
+       "plant_code": 1327
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 3.2,
+       "name": "Syracuse # 2",
+       "plant_code": 2256
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 3.0,
+       "name": "Sharon Spring",
+       "plant_code": 1324
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 1.6,
+       "name": "Osmond 1",
+       "plant_code": 69928
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 1.1,
+       "name": "Lyons",
+       "plant_code": 2253
+      }
+     ],
+     "source": "canonical",
+     "thermal_mw": 53814.8
+    },
+    "vintage_2018": {
+     "bins_mw": 1344.3,
+     "bins_share": 0.0245,
+     "null_mw": 994.2,
+     "null_share": 0.0181,
+     "residual": [
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 507.0,
+       "name": "J Lamar Stall Unit",
+       "plant_code": 56565
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "gas_st",
+        "oil"
+       ],
+       "mw": 243.2,
+       "name": "Lake Road (MO)",
+       "plant_code": 2098
+      },
+      {
+       "fuels": [
+        "gas_cc",
+        "gas_ct"
+       ],
+       "mw": 106.8,
+       "name": "Ponca City",
+       "plant_code": 7546
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 22.6,
+       "name": "Nebraska City # 1",
+       "plant_code": 2255
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 19.5,
+       "name": "Carrollton",
+       "plant_code": 2120
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 18.7,
+       "name": "Sabetha Power Plant",
+       "plant_code": 1320
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 16.1,
+       "name": "Goodland",
+       "plant_code": 1280
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 16.0,
+       "name": "Larned",
+       "plant_code": 1299
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 14.5,
+       "name": "Wamego",
+       "plant_code": 1328
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 11.8,
+       "name": "Nebraska City # 2",
+       "plant_code": 7555
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 5.0,
+       "name": "Stockton",
+       "plant_code": 1327
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 4.1,
+       "name": "Lakin Municipal",
+       "plant_code": 7393
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 3.2,
+       "name": "Syracuse # 2",
+       "plant_code": 2256
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.9,
+       "name": "Sharon Spring",
+       "plant_code": 1324
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 1.7,
+       "name": "Beaver City",
+       "plant_code": 2217
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 1.1,
+       "name": "Lyons",
+       "plant_code": 2253
+      }
+     ],
+     "source": "vintage_2018",
+     "thermal_mw": 54903.1
+    },
+    "vintage_2019": {
+     "bins_mw": 1277.4,
+     "bins_share": 0.0234,
+     "null_mw": 990.1,
+     "null_share": 0.0182,
+     "residual": [
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 507.0,
+       "name": "J Lamar Stall Unit",
+       "plant_code": 56565
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "gas_st",
+        "oil"
+       ],
+       "mw": 242.4,
+       "name": "Lake Road (MO)",
+       "plant_code": 2098
+      },
+      {
+       "fuels": [
+        "gas_cc",
+        "gas_ct"
+       ],
+       "mw": 106.8,
+       "name": "Ponca City",
+       "plant_code": 7546
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 22.6,
+       "name": "Nebraska City # 1",
+       "plant_code": 2255
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 19.5,
+       "name": "Carrollton",
+       "plant_code": 2120
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 18.7,
+       "name": "Sabetha Power Plant",
+       "plant_code": 1320
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 16.1,
+       "name": "Goodland",
+       "plant_code": 1280
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 16.0,
+       "name": "Larned",
+       "plant_code": 1299
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 15.2,
+       "name": "Wamego",
+       "plant_code": 1328
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 11.8,
+       "name": "Nebraska City # 2",
+       "plant_code": 7555
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 5.0,
+       "name": "Stockton",
+       "plant_code": 1327
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 3.2,
+       "name": "Syracuse # 2",
+       "plant_code": 2256
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 3.0,
+       "name": "Sharon Spring",
+       "plant_code": 1324
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 1.7,
+       "name": "Beaver City",
+       "plant_code": 2217
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 1.1,
+       "name": "Lyons",
+       "plant_code": 2253
+      }
+     ],
+     "source": "vintage_2019",
+     "thermal_mw": 54492.3
+    },
+    "vintage_2020": {
+     "bins_mw": 1303.9,
+     "bins_share": 0.0244,
+     "null_mw": 979.4,
+     "null_share": 0.0184,
+     "residual": [
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 511.0,
+       "name": "J Lamar Stall Unit",
+       "plant_code": 56565
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "gas_st",
+        "oil"
+       ],
+       "mw": 227.8,
+       "name": "Lake Road (MO)",
+       "plant_code": 2098
+      },
+      {
+       "fuels": [
+        "gas_cc",
+        "gas_ct"
+       ],
+       "mw": 106.8,
+       "name": "Ponca City",
+       "plant_code": 7546
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 22.6,
+       "name": "Nebraska City # 1",
+       "plant_code": 2255
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 19.5,
+       "name": "Carrollton",
+       "plant_code": 2120
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 18.7,
+       "name": "Sabetha Power Plant",
+       "plant_code": 1320
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 16.1,
+       "name": "Goodland",
+       "plant_code": 1280
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 16.0,
+       "name": "Larned",
+       "plant_code": 1299
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 15.2,
+       "name": "Wamego",
+       "plant_code": 1328
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 12.2,
+       "name": "Nebraska City # 2",
+       "plant_code": 7555
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 4.5,
+       "name": "Stockton",
+       "plant_code": 1327
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 3.2,
+       "name": "Syracuse # 2",
+       "plant_code": 2256
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 3.0,
+       "name": "Sharon Spring",
+       "plant_code": 1324
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 1.7,
+       "name": "Beaver City",
+       "plant_code": 2217
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 1.1,
+       "name": "Lyons",
+       "plant_code": 2253
+      }
+     ],
+     "source": "vintage_2020",
+     "thermal_mw": 53355.7
+    },
+    "vintage_2021": {
+     "bins_mw": 1339.5,
+     "bins_share": 0.025,
+     "null_mw": 984.2,
+     "null_share": 0.0184,
+     "residual": [
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 511.0,
+       "name": "J Lamar Stall Unit",
+       "plant_code": 56565
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "gas_st",
+        "oil"
+       ],
+       "mw": 232.6,
+       "name": "Lake Road (MO)",
+       "plant_code": 2098
+      },
+      {
+       "fuels": [
+        "gas_cc",
+        "gas_ct"
+       ],
+       "mw": 106.8,
+       "name": "Ponca City",
+       "plant_code": 7546
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 22.6,
+       "name": "Nebraska City # 1",
+       "plant_code": 2255
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 19.5,
+       "name": "Carrollton",
+       "plant_code": 2120
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 18.7,
+       "name": "Sabetha Power Plant",
+       "plant_code": 1320
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 16.1,
+       "name": "Goodland",
+       "plant_code": 1280
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 16.0,
+       "name": "Larned",
+       "plant_code": 1299
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 15.2,
+       "name": "Wamego",
+       "plant_code": 1328
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 12.2,
+       "name": "Nebraska City # 2",
+       "plant_code": 7555
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 4.5,
+       "name": "Stockton",
+       "plant_code": 1327
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 3.2,
+       "name": "Syracuse # 2",
+       "plant_code": 2256
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 3.0,
+       "name": "Sharon Spring",
+       "plant_code": 1324
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 1.7,
+       "name": "Beaver City",
+       "plant_code": 2217
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 1.1,
+       "name": "Lyons",
+       "plant_code": 2253
+      }
+     ],
+     "source": "vintage_2021",
+     "thermal_mw": 53573.3
+    },
+    "vintage_2022": {
+     "bins_mw": 1394.7,
+     "bins_share": 0.026,
+     "null_mw": 985.9,
+     "null_share": 0.0184,
+     "residual": [
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 511.0,
+       "name": "J Lamar Stall Unit",
+       "plant_code": 56565
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "gas_st",
+        "oil"
+       ],
+       "mw": 231.5,
+       "name": "Lake Road (MO)",
+       "plant_code": 2098
+      },
+      {
+       "fuels": [
+        "gas_cc",
+        "gas_ct"
+       ],
+       "mw": 106.8,
+       "name": "Ponca City",
+       "plant_code": 7546
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 22.6,
+       "name": "Nebraska City # 1",
+       "plant_code": 2255
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 19.5,
+       "name": "Carrollton",
+       "plant_code": 2120
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 18.7,
+       "name": "Sabetha Power Plant",
+       "plant_code": 1320
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 16.1,
+       "name": "Goodland",
+       "plant_code": 1280
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 16.0,
+       "name": "Larned",
+       "plant_code": 1299
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 15.2,
+       "name": "Wamego",
+       "plant_code": 1328
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 12.2,
+       "name": "Nebraska City # 2",
+       "plant_code": 7555
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 7.3,
+       "name": "Stockton",
+       "plant_code": 1327
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 3.2,
+       "name": "Syracuse # 2",
+       "plant_code": 2256
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 3.0,
+       "name": "Sharon Spring",
+       "plant_code": 1324
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 1.7,
+       "name": "Beaver City",
+       "plant_code": 2217
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 1.1,
+       "name": "Lyons",
+       "plant_code": 2253
+      }
+     ],
+     "source": "vintage_2022",
+     "thermal_mw": 53572.1
+    },
+    "vintage_2023": {
+     "bins_mw": 1610.1,
+     "bins_share": 0.0303,
+     "null_mw": 983.9,
+     "null_share": 0.0185,
+     "residual": [
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 511.0,
+       "name": "J Lamar Stall Unit",
+       "plant_code": 56565
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "gas_st",
+        "oil"
+       ],
+       "mw": 231.5,
+       "name": "Lake Road (MO)",
+       "plant_code": 2098
+      },
+      {
+       "fuels": [
+        "gas_cc",
+        "gas_ct"
+       ],
+       "mw": 106.8,
+       "name": "Ponca City",
+       "plant_code": 7546
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 22.6,
+       "name": "Nebraska City # 1",
+       "plant_code": 2255
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 19.5,
+       "name": "Carrollton",
+       "plant_code": 2120
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 18.7,
+       "name": "Sabetha Power Plant",
+       "plant_code": 1320
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 16.1,
+       "name": "Goodland",
+       "plant_code": 1280
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 15.2,
+       "name": "Wamego",
+       "plant_code": 1328
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 14.0,
+       "name": "Larned",
+       "plant_code": 1299
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 12.2,
+       "name": "Nebraska City # 2",
+       "plant_code": 7555
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 7.3,
+       "name": "Stockton",
+       "plant_code": 1327
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 3.2,
+       "name": "Syracuse # 2",
+       "plant_code": 2256
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 3.0,
+       "name": "Sharon Spring",
+       "plant_code": 1324
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 1.7,
+       "name": "Beaver City",
+       "plant_code": 2217
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 1.1,
+       "name": "Lyons",
+       "plant_code": 2253
+      }
+     ],
+     "source": "vintage_2023",
+     "thermal_mw": 53109.2
+    },
+    "vintage_2024": {
+     "bins_mw": 1551.1,
+     "bins_share": 0.0294,
+     "null_mw": 1001.7,
+     "null_share": 0.019,
+     "residual": [
+      {
+       "fuels": [
+        "gas_cc"
+       ],
+       "mw": 511.0,
+       "name": "J Lamar Stall Unit",
+       "plant_code": 56565
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "gas_st",
+        "oil"
+       ],
+       "mw": 249.3,
+       "name": "Lake Road (MO)",
+       "plant_code": 2098
+      },
+      {
+       "fuels": [
+        "gas_cc",
+        "gas_ct"
+       ],
+       "mw": 106.8,
+       "name": "Ponca City",
+       "plant_code": 7546
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 22.6,
+       "name": "Nebraska City # 1",
+       "plant_code": 2255
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 19.5,
+       "name": "Carrollton",
+       "plant_code": 2120
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 18.7,
+       "name": "Sabetha Power Plant",
+       "plant_code": 1320
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 16.1,
+       "name": "Goodland",
+       "plant_code": 1280
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 15.2,
+       "name": "Wamego",
+       "plant_code": 1328
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 14.0,
+       "name": "Larned",
+       "plant_code": 1299
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 12.2,
+       "name": "Nebraska City # 2",
+       "plant_code": 7555
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 7.3,
+       "name": "Stockton",
+       "plant_code": 1327
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 3.2,
+       "name": "Syracuse # 2",
+       "plant_code": 2256
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 3.0,
+       "name": "Sharon Spring",
+       "plant_code": 1324
+      },
+      {
+       "fuels": [
+        "gas_ct",
+        "oil"
+       ],
+       "mw": 1.7,
+       "name": "Beaver City",
+       "plant_code": 2217
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 1.1,
+       "name": "Lyons",
+       "plant_code": 2253
+      }
+     ],
+     "source": "vintage_2024",
+     "thermal_mw": 52676.9
+    }
+   },
+   "retirees": {
+    "2019": {
+     "bins_mw": 103.2,
+     "bins_share": 0.0506,
+     "null_mw": 48.5,
+     "null_share": 0.0238,
+     "residual": [
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 33.6,
+       "name": "Kansas City International",
+       "plant_code": 6144
+      },
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 6.0,
+       "name": "Synata Hugoton",
+       "plant_code": 58613
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 4.1,
+       "name": "Lakin Municipal",
+       "plant_code": 7393
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 3.8,
+       "name": "Mobile Unit",
+       "plant_code": 3346
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 1.0,
+       "name": "Arnold",
+       "plant_code": 2216
+      }
+     ],
+     "retiree_units": 40,
+     "thermal_mw": 2037.8
+    },
+    "2020": {
+     "bins_mw": 45.6,
+     "bins_share": 0.023,
+     "null_mw": 34.6,
+     "null_share": 0.0175,
+     "residual": [
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 33.6,
+       "name": "Kansas City International",
+       "plant_code": 6144
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 1.0,
+       "name": "Arnold",
+       "plant_code": 2216
+      }
+     ],
+     "retiree_units": 40,
+     "thermal_mw": 1980.2
+    },
+    "2021": {
+     "bins_mw": 12.0,
+     "bins_share": 0.0126,
+     "null_mw": 1.0,
+     "null_share": 0.001,
+     "residual": [
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 1.0,
+       "name": "Arnold",
+       "plant_code": 2216
+      }
+     ],
+     "retiree_units": 40,
+     "thermal_mw": 955.6
+    },
+    "2022": {
+     "bins_mw": 12.0,
+     "bins_share": 0.0126,
+     "null_mw": 1.0,
+     "null_share": 0.001,
+     "residual": [
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 1.0,
+       "name": "Arnold",
+       "plant_code": 2216
+      }
+     ],
+     "retiree_units": 40,
+     "thermal_mw": 955.6
+    },
+    "2023": {
+     "bins_mw": 0.0,
+     "bins_share": 0.0,
+     "null_mw": 0.0,
+     "null_share": 0.0,
+     "residual": [],
+     "retiree_units": 40,
+     "thermal_mw": 901.6
+    },
+    "2024": {
+     "bins_mw": 0.0,
+     "bins_share": 0.0,
+     "null_mw": 0.0,
+     "null_share": 0.0,
+     "residual": [],
+     "retiree_units": 40,
+     "thermal_mw": 32.6
+    }
+   }
+  }
+ },
+ "posture": "egrid",
+ "source": "audit"
+}

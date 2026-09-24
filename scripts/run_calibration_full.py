@@ -14912,6 +14912,38 @@ def main() -> None:
         "no-op for an ISO with no artifact.",
     )
     parser.add_argument(
+        "--eia860-vintage-tracks-solve-year",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Year-matched EIA-860 vintage per solve year (pjm-167; BACKCAST "
+        "DEFAULT ON since F1, owner instruction 2026-09-24). Each year reads its "
+        "own data/raw/eia-860/vintage_<Y>/ release (its eGRID-<Y> heat rates "
+        "joined since F1); a year with no vintage directory reads the canonical "
+        "snapshot. --no-eia860-vintage-tracks-solve-year reaches the pre-F1 "
+        "posture (canonical snapshot + COD ramp) and its cache key.",
+    )
+    parser.add_argument(
+        "--measured-cc-heat-rates",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="MEASURED CC_REGULAR steady-state operating heat rates (soco-57; "
+        "BACKCAST DEFAULT ON since F1). A CC_REGULAR generator whose plant the "
+        "committed artifact covers (campd_cc_heat_rates_<ISO>.csv, "
+        "scripts/data/derive_campd_cc_heat_rates.py) takes the solve year's own "
+        "CAMPD-measured rate, else its pooled 2019-2025 rate, ahead of eGRID. "
+        "--no-measured-cc-heat-rates reaches the pre-F1 posture.",
+    )
+    parser.add_argument(
+        "--measured-chp-heat-rates",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="MEASURED power-only CHP heat rates (miso-99; BACKCAST DEFAULT ON "
+        "since F1). A CC_CHP/CT_CHP generator the committed artifact covers "
+        "(chp_power_only_heat_rates_<ISO>.csv) takes (PLHTIAN + CHPCHTI) / "
+        "PLNGENAN from the solve year's own eGRID vintage, else its pooled rate. "
+        "--no-measured-chp-heat-rates reaches the pre-F1 posture.",
+    )
+    parser.add_argument(
         "--egrid-identity-heat-rates",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -15351,6 +15383,14 @@ def main() -> None:
             "benchmark_membership_vintage_union": (
                 args.benchmark_membership_vintage_union
             ),
+            # F1 (owner instruction 2026-09-24): the three backcast-default
+            # fields with no dedicated solve kwarg ride this bag, the route
+            # replay_keeper --set already uses. None (flag absent) leaves the
+            # ScenarioConfig default — ON in a backcast — untouched; the
+            # --no-... form reaches the pre-F1 posture and its key.
+            "eia860_vintage_tracks_solve_year": args.eia860_vintage_tracks_solve_year,
+            "measured_cc_heat_rates": args.measured_cc_heat_rates,
+            "measured_chp_heat_rates": args.measured_chp_heat_rates,
             "coal_warm_committed": True if args.coal_warm_committed else None,
             "committed_ramp_spread": args.committed_ramp_spread,
             "cc_duct_peaking": True if args.cc_duct_peaking else None,
