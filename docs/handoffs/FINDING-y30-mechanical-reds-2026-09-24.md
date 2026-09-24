@@ -114,11 +114,26 @@ in separate worktrees:
 
 | | ref | failed | errors | passed |
 |---|---|---|---|---|
-| before | `origin/main` `fd04cfda` | BEFORE_FAILED | BEFORE_ERRORS | BEFORE_PASSED |
-| after | this branch | AFTER_FAILED | AFTER_ERRORS | AFTER_PASSED |
+| before | `origin/main` `fd04cfda` | 87 | 2 | 10,181 |
+| after | this branch | 66 | 0 | 10,202 |
 
 Every remaining failure on the branch belongs to one of: Y-28 (cache-key /
 solve-surface pins), Y-29 (bench-stamp, FR-22 / forecast parity, gate-(a) markers,
 `price_unscored` registered runs), or §2 above.
 
-_(Fast-tier counts pending: both runs in progress at commit time; this section is filled in by the follow-up commit.)_
+**21 failures and both errors cleared, zero new failures** (set difference of the
+two `FAILED`/`ERROR` lists: empty on the after-only side). 70 skipped on both sides, so
+the sparse-safe skip in row 13 added no skips under the new cone. Wall time was about
+10 min each. (`main` reads 87 where the CI run read 86 because it had moved on to
+`fd04cfda`.)
+
+The 66 that remain:
+
+| owner | count | tests |
+|---|---|---|
+| Y-28 | 49 | `test_persisted_identity` cache-key + solve-surface pins (9), `test_cache_solve_surface` sidecar (1), and the 39 per-mechanism `…default_cache_key…unmoved` / arming-key pins |
+| Y-29 | 13 | `test_gate_a_provenance` (1), `test_golden_manifest_provenance` (8), `test_bench_stamp_payload` (1), `test_ff_readiness_battery` (1), `test_forecast_parity` (2) |
+| routed, §2 | 4 | NYISO anchor ×2, CAISO ST_GAS peak, scope2 vendored parity |
+
+The `test_calibration_verdict_price_unscored` subtest failures CI reported (SOCO/NWPP
+registered runs) are Y-29's registry items too.
