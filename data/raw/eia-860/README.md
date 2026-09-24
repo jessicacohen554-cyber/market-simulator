@@ -67,6 +67,14 @@ that dates a retirement at physical cessation instead of its paper date
 
 **Vintage snapshot completeness.** `vintage_2018`-`vintage_2022` carry the
 full sheet set; `vintage_2023` and `vintage_2024` carry the **operable sheet
-only** (no retired-and-canceled sheet). Consumers that walk the series must
+only** (no retired-and-canceled sheet) **plus `eia860_utility.parquet`**, added
+2026-09-24 by NWPP-51 (`docs/handoffs/PRECOMMIT-nwpp-51-2026-09-24.md` §10).
+The utility sheet was missing, so `eia860_costofservice_majority_plants` returned
+an EMPTY set whenever these vintages were active. It is Schedule 1 of EIA's own
+archive releases, `eia8602023.zip` (sha256 `1447e23e…9b46f`) and `eia8602024.zip`
+(sha256 `0aaae048…f12b`), processed by `process_eia860.extract_all_workbooks`.
+The same extraction reproduces the committed `owner`, `plant` and
+`generator_operable` sheets of both dirs frame-identically, so it is the same
+release. Nothing else in either dir was touched. Consumers that walk the series must
 treat a missing sheet as *no observation for that year*, never as evidence a
 unit was absent — the release year is simply a gap in that unit's history.
