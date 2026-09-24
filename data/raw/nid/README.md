@@ -85,3 +85,32 @@ mechanism (the `data-intake` skill's schema-first path).
 
 **Profile note:** `nid` carries no ISO name token, so `configs/data-profiles.yaml` attributes it to
 `shared` and every profile hydrates it. At 41 KB that is immaterial.
+
+---
+
+# NWPP hydro subset (lane NWPP-49, 2026-09-23)
+
+`nid_nwpp_hydro_dams.csv` — **231 structure rows / 194 distinct `NID ID`s**, the subset of the
+national export whose `NID ID` is named by an ORNL HILARRI v4 linkage row for an NWPP conventional-
+hydro plant (EHA FY2024 `Operational`, `BACode` in the 17 NWPP BAs, `CH_MW > 0`). Line 1 keeps the
+file's own vintage banner so `scripts/data/build_hydro_pondage.py::load_nid` reads it unchanged.
+
+* **Data vintage:** `Data Last Updated: 2026-9-11` (the same vintage as `nwpp_hydro_cascade_nid.csv`)
+* **Fetched:** 2026-09-23 from `https://nid.sec.usace.army.mil/api/nation/csv`
+* **National file:** 67,284,945 bytes, sha256
+  `6d3b6656dfd62bfc4277ab4a1b4dec3ad06ecdff40b20eed58a351c84467caaf` (not committed; re-fetchable)
+* **Fields retained:** exactly the builder's (`Dam Name`, `NID ID`, `State`, `Owner Names`,
+  `Primary Purpose`, `Normal Storage (Acre-Ft)`, `Max Storage (Acre-Ft)`, `Hydraulic Height (Ft)`,
+  `NID Height (Ft)`, `Surface Area (Acres)`) plus `River or Stream Name`, `Latitude`, `Longitude`
+  for identification.
+
+**Reproducibility gate (checked 2026-09-23):** `build_hydro_pondage.py --iso NWPP --nid-csv
+data/raw/nid/nid_nwpp_hydro_dams.csv` writes `data/raw/nwpp-hydro/nwpp_hydro_pondage.csv`
+**byte-identical** to the build from the full national file.
+
+Consumer: `data/raw/nwpp-hydro/nwpp_hydro_pondage.csv` → `data/hydro.py::load_hydro_pondage`
+(only when `ScenarioConfig.hydro_pondage_bound` is armed; it is not armed in any committed NWPP run).
+The two traps above (a `NID ID` is a project, not a structure; hydraulic height is often absent) apply
+unchanged and are handled by the builder's `groupby("NID ID").max()` and its labelled
+`nid_height_proxy` fallback. For NWPP, 11 of 168 plants (175.7 of 31,746.8 MW, 0.6 %) fall back
+to the labelled NID-height proxy; the rest carry a hydraulic height.
