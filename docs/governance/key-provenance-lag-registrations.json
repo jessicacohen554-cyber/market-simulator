@@ -7,6 +7,18 @@
       "registration_sha": "ee2275d2197965609fe23f79d0e3005e720beed3",
       "registered_by": "capx D91 (owner ruling Q64), 2026-09-09T03:06:51Z",
       "citation": "docs/handoffs/FINDING-capx-d91-2026-09-09.md; orphans: docs/handoffs/FINDING-capx-d92-2026-09-10.md §2"
+    },
+    {
+      "field": "caiso_dsw_lateevening_clean",
+      "registration_sha": "15beb03c68eb6409416cf35a19a7bfb9d08c975d",
+      "registered_by": "\"Repair three CI gates that are red on main itself\" (the caiso-269 field's repair), 2026-09-10T06:24:41Z",
+      "citation": "docs/handoffs/FINDING-capx-d93-2026-09-24.md Part 1(b): the four capx D92 legs results/ff-t3-neiso-golden/d92/*, solved at pinned aac390a6 (which lacks 15beb03c), reproduce under this undrop and no other single-field experiment"
+    },
+    {
+      "field": "coal_mustrun_requires_measured_row",
+      "registration_sha": "bb749a9418fdc95d4f256883e6ee60b040e89dbe",
+      "registered_by": "Y-28, 2026-09-24T15:33:23Z (the pjm-h14 field, f7d6112c)",
+      "citation": "docs/handoffs/FINDING-capx-d93-2026-09-24.md Part 3: zero keyed orphans at registration (all 9 carrying records have cache_key null); the row pre-classifies any pinned shard still solving on a pre-bb749a94 sha"
     }
   ]
 }
