@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-09-22-nwpp-47-grid-wind",
+  "run_id": "2026-09-24-nwpp-49-ror-split",
   "iso": "NWPP",
-  "label": "nwpp 47 grid wind",
+  "label": "nwpp 49 ror split",
   "target_years": [
     2023,
     2024,
@@ -22,7 +22,7 @@
   "determination": "NOT-YET",
   "reasons": [
     "undocumented out-of-tolerance (FAIL) criteria: dispatch_corr",
-    "PRICE UNSCORED \u2014 no actual_lmp.json block exists for NWPP, so C3a mean LMP, C3b price duration/shape and C3c price tail / scarcity (RT hourly) are NOT SCORED in any year (2023, 2024, 2025); this determination is scored on C1/C2/C4/C6/C8 ONLY and certifies NO price level, shape or tail (owner ruling card S2, 2026-09-13; rubric v3.8). It is not a CALIBRATED reading. Model system load-weighted mean LMP, MODEL-ONLY and UNVERIFIED \u2014 no measured reference exists to compare against: 2023: $50.70/MWh, 2024: $29.14/MWh, 2025: $30.44/MWh."
+    "PRICE UNSCORED \u2014 no actual_lmp.json block exists for NWPP, so C3a mean LMP, C3b price duration/shape and C3c price tail / scarcity (RT hourly) are NOT SCORED in any year (2023, 2024, 2025); this determination is scored on C1/C2/C4/C6/C8 ONLY and certifies NO price level, shape or tail (owner ruling card S2, 2026-09-13; rubric v3.8). It is not a CALIBRATED reading. Model system load-weighted mean LMP, MODEL-ONLY and UNVERIFIED \u2014 no measured reference exists to compare against: 2023: $50.69/MWh, 2024: $29.15/MWh, 2025: $30.46/MWh."
   ],
   "notes": [],
   "criteria": {
@@ -141,9 +141,9 @@
       "forced_share"
     ],
     "model_mean_lmp_by_year": {
-      "2023": 50.7,
-      "2024": 29.14,
-      "2025": 30.44
+      "2023": 50.69,
+      "2024": 29.15,
+      "2025": 30.46
     }
   }
 }

@@ -393,3 +393,18 @@ Records: `docs/handoffs/{FINDING,PRECOMMIT,RESULT}-nwpp-47-2026-09-22.md`,
 ---
 
 **Promoted 2026-09-23 (owner ruling):** `2026-09-22-nwpp-47-grid-wind` is NWPP keeper #5; the NWPP-46 predecessor was pruned (rule 35).
+
+## nwpp-49 — 2026-09-24 — RoR split, chain exempt → KEEPER #6
+
+`2026-09-24-nwpp-49-ror-split` (`results/calibration/nwpp49_ror_span`): the NWPP-47 recipe plus
+`hydro_ror_split`, with the 27 regulated-chain plants exempt via the new `regulated_chain` classifier
+rule. The pre-registered INERT limb fired in every year: hydro intra-day sd ratio 1.075/1.155/1.169 →
+1.074/1.153/1.167, because the reservoirs re-absorb the pinned plants' swing. Gates are identical to
+NWPP-47 (NOT-YET on {dispatch_corr}); every class moves ≤ 0.011 TWh. Promoted on structure under the
+owner's pre-authorization; NWPP-47 was pruned (rule 35). Pondage intake and design are recorded but
+not adopted. Records: `docs/handoffs/{FINDING-nwpp-49-pondage-design-2026-09-23,PRECOMMIT-nwpp-49-ror-split-2026-09-24,RESULT-nwpp-49-2026-09-24}.md`.
+
+---
+
+**Promoted 2026-09-24 (owner pre-authorization):** `2026-09-24-nwpp-49-ror-split` is NWPP keeper #6;
+the NWPP-47 predecessor was pruned (rule 35).
