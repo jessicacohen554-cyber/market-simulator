@@ -66,7 +66,9 @@ def _chp_by_plant(eia860_dir, year: int | None = None) -> "pd.Series":
 # ---------------------------------------------------------------------------
 
 
-def apply_measured_chp_heat_rates(generators: list, iso: str) -> frozenset[int]:
+def apply_measured_chp_heat_rates(
+    generators: list, iso: str, year: int | None = None
+) -> frozenset[int]:
     """Swap in the MEASURED power-only CHP heat rate where it covers (in place).
 
     Gated by ``ScenarioConfig.measured_chp_heat_rates``; ISO-generic, default
@@ -89,6 +91,8 @@ def apply_measured_chp_heat_rates(generators: list, iso: str) -> frozenset[int]:
     Args:
         generators: The ISO's loaded fleet, mutated in place.
         iso: ISO identifier.
+        year: The solve year (F1 D4): its own ``ok`` row wins, else the
+            pooled row; ``None`` reads the pooled rows only.
 
     Returns:
         ``id()`` of every generator whose heat rate was replaced. Empty when
@@ -96,7 +100,7 @@ def apply_measured_chp_heat_rates(generators: list, iso: str) -> frozenset[int]:
     """
     from market_sim.data.fleet import measured_chp_heat_rates
 
-    rates = measured_chp_heat_rates(iso)
+    rates = measured_chp_heat_rates(iso, year)
     if not rates:
         return frozenset()
     touched: set[int] = set()

@@ -43,10 +43,21 @@ _PRE_EXTENSION_ROWS = 477
 # ``planned_retirement_month`` joining EIA_860_CSV_COLUMNS, so its physical
 # column order is stale while its CONTENT is canonical. Consumers read by
 # name, so content is what this pins.
+# F1 (2026-09-24): re-pinned from b1f1a953...0627 (which covered heat_rate) to
+# the SAME rows' projection WITHOUT heat_rate, which F1 re-joins at each unit's
+# own eGRID vintage. Verified at the re-pin: the pre-F1 artifact reproduces the
+# old hash exactly, and its heat_rate-less projection equals the post-F1 one.
 _PRE_EXTENSION_SHA256 = (
-    "b1f1a953886b9d83e908f757c559aaafaf2e63f5f8500e5104a9c31ebe6d0627"
+    "11ba7b7aa669fed22aecaf8499ce362b8f05e890023c5dfd2d42e221749b0d2d"
 )
 _PRE_EXTENSION_BY_YEAR = {2023: (325, 9474.5), 2024: (152, 5413.0)}
+
+
+#: The balancing authorities F1 appended to the retiree artifact (NWPP's pool
+#: members and SOCO), which the pre-extension build never admitted.
+_F1_APPENDED_BAS = frozenset(
+    {"BPAT", "GCPD", "IPCO", "NEVP", "PACE", "PACW", "PGE", "SOCO", "WAUW"}
+)
 
 
 def _frame_sha256(frame: pd.DataFrame) -> str:
@@ -195,7 +206,15 @@ class TestCommittedArtifactInvariants(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.window = pd.read_parquet(WINDOW_PARQUET)
+        window = pd.read_parquet(WINDOW_PARQUET)
+        # F1 (2026-09-24) appended the NWPP / SOCO balancing authorities the
+        # artifact predated (``process_eia860.rescope_retired_window``, strictly
+        # additive) and re-joined ``heat_rate`` at each unit's own eGRID vintage.
+        # Neither moves a pre-extension row's identity, so these invariants are
+        # asserted over the pre-F1 BA set, ex the re-joined column.
+        cls.window = window[
+            ~window["balancing_authority_code"].astype(str).isin(_F1_APPENDED_BAS)
+        ].drop(columns=["heat_rate"])
 
     def test_pre_extension_rows_are_byte_identical(self):
         """The 2023+ subset still hashes to the pre-extension artifact.

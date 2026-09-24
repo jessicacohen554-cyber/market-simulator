@@ -21,7 +21,11 @@ from market_sim.data.fleet.eia860 import (
 # Riverside Energy Center: eGRID PLHTRT 14,963.7 Btu/kWh, reconciled from its own
 # UNT23 rows (CT-01 + CT-02 = 24,376,259 MMBtu over PLNGENAN 3,543,044 MWh).
 RIVERSIDE = 55641
-RIVERSIDE_RECONCILED = 6.880
+# F1 (2026-09-24): the repair now reads the ACTIVE table's own eGRID vintage, and
+# the canonical 2025 Early Release snapshot joins eGRID 2024 (was 2023). The
+# accepted set is unchanged ({7350, 55641}, still minimal); the reconciled
+# values are eGRID 2024's own arithmetic (eGRID 2023 gave 6.880 / 6.918).
+RIVERSIDE_RECONCILED = 6.836
 # Coyote Springs (PGE, OR, 296 MW CC, 1995): the SECOND provable instance,
 # reachable only since NWPP-20 (2026-09-14) put the NWPP footprint into the
 # EIA-860 generator table the detector scans. eGRID PLHTRT 13,795.8 Btu/kWh:
@@ -31,7 +35,7 @@ RIVERSIDE_RECONCILED = 6.880
 # PGE plant alone. All four conditions hold and the reconciled 6.918 sits
 # beside the sibling's own 6.894 — the same double-count pattern as Riverside.
 COYOTE_SPRINGS = 7350
-COYOTE_SPRINGS_RECONCILED = 6.918
+COYOTE_SPRINGS_RECONCILED = 6.808
 
 
 class TestEgridBoundaryRepairSet(unittest.TestCase):

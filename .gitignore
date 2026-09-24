@@ -3438,3 +3438,5 @@ results/calibration/spp78_*/
 # storage-dispatch-actuals source downloads (CAISO Outlook CSVs + DESR xlsx, ~177 MB):
 # re-fetch with scripts/data/build_storage_dispatch_actuals.py; identity in SHA256SUMS.txt
 data/raw/storage-dispatch-actuals/_source/
+# pjm-h22 per-year shard legs: kept out of main (rules 29(c)/32(d)); composites are registered.
+results/calibration/pjm_h22_rggi_20[0-9][0-9]/

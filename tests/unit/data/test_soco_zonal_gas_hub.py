@@ -87,7 +87,12 @@ def test_no_applier_is_armed_for_soco():
     """G8: no ScenarioConfig field reads this table, so no cache key moves."""
     from market_sim.config.scenarios import ScenarioConfig
 
-    fields = set(vars(ScenarioConfig()).keys())
+    # SOCO+gas fields that are NOT hub-table appliers, each confirmed not to
+    # read SOCO_ZONAL_GAS_HUB_PATH. soco_gas_st_campaign_commitment (soco-53d,
+    # 1b289fcf, 2026-09-19) is a gas-STEAM commitment floor read only by
+    # pipeline/commitment.py; the name heuristic below caught it (Y-30).
+    not_hub_appliers = {"soco_gas_st_campaign_commitment"}
+    fields = set(vars(ScenarioConfig()).keys()) - not_hub_appliers
     assert not any("soco" in name and "gas" in name for name in fields)
 
 

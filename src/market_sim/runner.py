@@ -1677,13 +1677,30 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         # very year. Needs the solved year (it selects on it), so it joins the
         # same year-threading predicate; default-off and byte-inert while off.
         _mvx = getattr(config, "mid_vintage_exit_carry", False)
+        # F1 D4: the measured heat-rate swaps reach the retiree channel too,
+        # at the solved year's own rate (default off outside a backcast).
+        _mhr = {
+            name: getattr(config, name, False)
+            for name in (
+                "measured_ct_heat_rates",
+                "measured_coal_heat_rates",
+                "measured_st_heat_rates",
+                "measured_cc_heat_rates",
+                "measured_chp_heat_rates",
+            )
+        }
         retired_within_window = load_retired_within_window(
             iso,
             iso_config,
-            year=int(config.weather_year) if (_rvs or _ppx or _mvx) else None,
+            year=(
+                int(config.weather_year)
+                if (_rvs or _ppx or _mvx or any(_mhr.values()))
+                else None
+            ),
             vintage_status_scope=_rvs,
             partial_plant_exit_carry=_ppx,
             mid_vintage_exit_carry=_mvx,
+            **_mhr,
         )
 
     campd_bins = load_or_synthesize_bins(config, iso, iso_config, retired_within_window)

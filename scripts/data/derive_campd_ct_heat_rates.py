@@ -90,11 +90,19 @@ import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(REPO / "src"))
+sys.path.insert(0, str(REPO))
 
-from market_sim.config.iso_configs import get_iso_config  # noqa: E402
 from market_sim.config.paths import PROCESSED_DIR, RAW_DIR  # noqa: E402
 from market_sim.data import campd  # noqa: E402
-from market_sim.data.fleet import load_fleet_from_csv  # noqa: E402
+from scripts.lib.heat_rate_years import (  # noqa: E402
+    BACKCAST_YEARS,
+    backcast_fleets,
+    class_capacity,
+    class_heat_rates,
+    per_year_tables,
+    stack_year_tables,
+    union_fleet,
+)
 
 UNIT_LEVEL_DIR = RAW_DIR / "campd-unit-level"
 
@@ -135,52 +143,6 @@ _HR_MIN: float = 6.0
 _HR_MAX: float = 25.0
 
 
-def target_plant_codes(iso: str) -> dict[int, float]:
-    """Return ``{plant_code: CT_PEAKER capacity MW}`` from the ISO's model fleet.
-
-    A plant qualifies on having ANY :data:`TARGET_CLASS` generator, so mixed
-    steam/CT and CC/CT facilities are included — their turbines are separated
-    from their other units downstream by CAMPD ``unitType``, which is the whole
-    reason this artifact can price them at all.
-
-    Args:
-        iso: ISO identifier, e.g. ``"NYISO"``.
-
-    Returns:
-        Mapping of plant code to the class capacity the model carries there.
-    """
-    fleet = load_fleet_from_csv(iso, get_iso_config(iso))
-    caps: dict[int, float] = {}
-    for gen in fleet:
-        if gen.plant_group != TARGET_CLASS:
-            continue
-        code = int(gen.plant_code or 0)
-        if code:
-            caps[code] = caps.get(code, 0.0) + float(gen.pmax_mw)
-    return caps
-
-
-def model_heat_rates(iso: str) -> dict[int, float]:
-    """Return the ISO's CURRENT capacity-weighted eGRID heat rate per plant.
-
-    Written to the artifact alongside the measured rate so the table records
-    what it replaces and by how much — the provenance a later reader needs to
-    judge the swap without re-running anything.
-    """
-    fleet = load_fleet_from_csv(iso, get_iso_config(iso))
-    num: dict[int, float] = {}
-    den: dict[int, float] = {}
-    for gen in fleet:
-        if gen.plant_group != TARGET_CLASS:
-            continue
-        code = int(gen.plant_code or 0)
-        if not code:
-            continue
-        num[code] = num.get(code, 0.0) + float(gen.pmax_mw) * float(gen.heat_rate)
-        den[code] = den.get(code, 0.0) + float(gen.pmax_mw)
-    return {c: num[c] / den[c] for c in num if den[c] > 0}
-
-
 def parasitic_factors() -> dict[int, float]:
     """Return the committed ``{plant_id: net/gross}`` map, or ``{}`` if absent.
 
@@ -206,7 +168,8 @@ def unit_loaded_heat_rates(iso: str, years: list[int], codes: set[int]) -> pd.Da
     Args:
         iso: ISO identifier.
         years: CAMPD vintages to pool.
-        codes: Plant codes to keep (from :func:`target_plant_codes`).
+        codes: Plant codes to keep (the target class's plants across the
+            backcast fleet union, :func:`scripts.lib.heat_rate_years.union_fleet`).
 
     Returns:
         Columns ``plant_code``, ``plant_name``, ``unit_id``, ``gross_mwh``,
@@ -376,34 +339,63 @@ def plant_table(
 
 
 def main(argv: list[str] | None = None) -> int:
-    """Derive and write the measured CT loaded-heat-rate artifact."""
+    """Derive and write the measured CT loaded-heat-rate artifact.
+
+    F1 D4 (docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md
+    §5.1 item 3): the target population is the UNION of the ISO's backcast
+    fleets over every year in ``--years`` (default 2019-2025, the program span)
+    — the year-matched EIA-860 vintage plus the retiree channel, as the
+    backcast default loads them — so a plant retired before 2023 is covered.
+    The artifact stacks the POOLED rate (``year == 0``) over every year with a
+    PER-YEAR rate (``year == Y``) wherever that year's hours ALONE clear the
+    unchanged :data:`_MIN_LOADED_HOURS` trust gate — no new threshold.
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--iso", required=True, help="ISO name, e.g. NYISO")
     parser.add_argument(
         "--years",
         nargs="+",
         type=int,
-        default=[2023, 2024, 2025],
-        help="CAMPD vintages to pool (default 2023 2024 2025)",
+        default=list(BACKCAST_YEARS),
+        help="CAMPD vintages to pool and slice (default 2019-2025)",
     )
     parser.add_argument("--out", default=None, help="Output CSV path override")
     parser.add_argument(
         "--detail",
         action="store_true",
-        help="ALSO write the per-unit table alongside the plant summary",
+        help="ALSO write the per-unit table (pooled) alongside the plant summary",
     )
     args = parser.parse_args(argv)
     iso = args.iso.upper()
+    years = sorted(args.years)
 
-    caps = target_plant_codes(iso)
+    fleets = backcast_fleets(iso, years)
+    union = union_fleet(fleets)
+    caps = class_capacity(union, TARGET_CLASS)
     if not caps:
         raise SystemExit(f"{iso}: model fleet has no {TARGET_CLASS} plants")
-    units = unit_loaded_heat_rates(iso, args.years, set(caps))
+    factors = parasitic_factors()
+    units = unit_loaded_heat_rates(iso, years, set(caps))
     if units.empty:
         raise SystemExit(f"{iso}: no unit cleared the loaded-window screen")
-    table = plant_table(
-        units, iso, args.years, caps, model_heat_rates(iso), parasitic_factors()
+    pooled = plant_table(
+        units, iso, years, caps, class_heat_rates(union, TARGET_CLASS), factors
     )
+
+    def _year_table(year: int) -> pd.DataFrame | None:
+        year_units = unit_loaded_heat_rates(iso, [year], set(caps))
+        if year_units.empty:
+            return None
+        return plant_table(
+            year_units,
+            iso,
+            [year],
+            caps,
+            class_heat_rates(fleets.get(year, []), TARGET_CLASS),
+            factors,
+        )
+
+    table = stack_year_tables(pooled, per_year_tables(years, _year_table))
 
     out_path = (
         Path(args.out)
@@ -413,6 +405,13 @@ def main(argv: list[str] | None = None) -> int:
     table.to_csv(out_path, index=False)
     print(f"wrote {out_path} ({len(table)} plant rows)")
 
+    print(
+        "  per-year rows: "
+        + ", ".join(
+            f"{y}:{int((table['year'] == y).sum())}" for y in sorted(set(table["year"]))
+        )
+    )
+    table = table[table["year"] == 0]
     ok = table[table["flag"] == "ok"]
     covered = float(ok["class_capacity_mw"].sum())
     total = float(sum(caps.values()))

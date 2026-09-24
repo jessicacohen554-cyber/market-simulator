@@ -41,3 +41,11 @@ year-scoped merge, so a back-year run leaves the other years' rows untouched.
 
 **Consumers:** `scripts/data/curate_egrid.py`, `scripts/data/curate_fleet.py`
 (ISO enrichment via `BACODE`), `scripts/data/derive_fossil_co2_rates.py`.
+
+**Heat-rate consumer (F1, 2026-09-24).** Every vintage is now read for plant
+heat rates through ONE resolver, `market_sim.data.egrid.resolve_plant_heat_rates`
+(year-matched vintage, nearest-vintage fallback, tie → earlier): the EIA-860
+join (`scripts/data/process_eia860.py`), the boundary repair
+(`data/fleet/eia860.py::_egrid_boundary_hr_repairs`, which reads the ACTIVE
+table's own vintage) and the per-year CHP power-only derive. No solve-path
+caller names a workbook or a `PLNT23` sheet any more.

@@ -1485,3 +1485,30 @@ no, rule on arm Z for consistency. (2) decline 2026-09-20-soco53g-prb-own-iso
 (E13)? Leftover refs for the owner: claude/soco61-arm-*, claude/soco60-arm-*,
 claude/soco60-armB-*. Records: docs/handoffs/FINDING-soco-64-2026-09-24.md,
 scripts/probes/_soco64_phase0.py.
+
+## soco-65 — 2026-09-24
+
+KEEPER START-MARKUP CENSUS ON ALL THREE YEARS -- NO/BLANK BRANCH, ZERO LP.
+Owner reopen ruling blank: no field, no solve. Keeper
+2026-09-24-soco61-dark-unit unchanged.
+
+Census (solved P1 mc - fleet_only mc_base, minus the same-plant econ/peak
+sibling; fleet rebuilt at the keeper's own sha 1d7edc1b because HEAD's
+heat-rate-vintage drift moves mc_base; reproduces SOCO-64's 2023 CT median
+$4.82 exactly). In EVERY year 2023/2024/2025: CT_PEAKER _committed 18/18
+marked (median $4.82 / $9.23 / $6.67, max $20/MWh; $0.85/0.46/0.36 M in the
+objective), CC_REGULAR _committed 18/18 (max $50; $10.2/14.0/23.1 M), plus
+CT_CHP 3/3 and CC_CHP 3/3 _committed (chp_startup_covered off). Every
+econ/peak tranche, all ST and all coal: exactly 0. The carrier is the core
+P1 bid-cost compute_monthly_markup, not the tranche_startup_amortization
+field (which only extends it to CT econ/peak + CC peak).
+
+G reason (SOCO-53 §2.4, quoted) and the keeper are inconsistent in all three
+years. OWNER QUESTION: (i) strip the _committed markup to honour G (SOCO-64
+arm Z: 2024 CC_REGULAR margin 0.81 -> 0.66; 2023 CT/ST 0.73/0.66), or (ii)
+amend G to "market PRICING use refused; cost-based start in the objective
+admissible" (no change; arm-B reopen then separately authorizable)?
+Recommendation (ii). (2) decline 2026-09-20-soco53g-prb-own-iso (E13)?
+Leftover refs: claude/soco61-arm-*, claude/soco60-arm-*, claude/soco60-armB-*.
+Records: docs/handoffs/FINDING-soco-65-2026-09-24.md,
+scripts/probes/_soco65_census.py.

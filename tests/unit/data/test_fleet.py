@@ -1702,8 +1702,15 @@ class TestLoadRetiredWithinWindow(unittest.TestCase):
     def test_neiso_includes_mystic_cc(self):
         retirees = load_retired_within_window("NEISO")
         self.assertTrue(retirees, "expected NEISO within-window retirees")
-        mystic = [g for g in retirees if int(g.plant_code) == 1588]
+        # 7934e92c (2026-09-09) widened the retiree window 2023 -> 2019, which
+        # correctly adds Mystic's 2021 exits (unit 7 steam + GT1, oil) to plant
+        # 1588. The CC assertions below are about the 2024 CC exit, so they
+        # scope to the in-2023+ rows; the 2021 rows are pinned separately.
+        plant = [g for g in retirees if int(g.plant_code) == 1588]
+        mystic = [g for g in plant if g.retirement_year >= 2023]
         self.assertTrue(mystic, "Mystic (plant 1588) should be a NEISO exit")
+        early = [g for g in plant if g.retirement_year < 2023]
+        self.assertTrue(all(g.retirement_year >= 2019 for g in early))
         for g in mystic:
             self.assertEqual(g.fuel_type, "gas_cc")
             self.assertEqual(g.plant_group, "CC_REGULAR")

@@ -76,6 +76,43 @@ human-read:
 
 Cache-epoch ledger (same-key invalidations)
 -------------------------------------------
+**Epoch 2026-09-24 — F1 (owner instruction 2026-09-24): vintage-matched eGRID
+heat rates in every EIA-860 table, and per-year measured heat-rate artifacts
+for every ISO. A SAME-KEY INVALIDATION for every config whose key the
+accompanying default flip does not move.** Record:
+``docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md`` §5.1
+and ``docs/handoffs/f1/``.
+
+**WHAT CHANGED (data, not config).** (1) ``heat_rate`` is re-joined in
+``vintage_2018``…``vintage_2024``/``eia860_generators.parquet`` (eGRID of the
+same year; 2018/2019/2021/2022 carried no column and 2020 an all-null one), the
+canonical snapshot (eGRID 2024, was 2023) and the within-window retiree parquet
+(each unit's last operating year), with a nearest-vintage fallback. (2) The
+retiree parquet gains the NWPP / SOCO balancing authorities it predated
+(append-only). (3) Every ``campd_{ct,coal,st,cc}_heat_rates_<ISO>.csv`` and
+``chp_power_only_heat_rates_<ISO>.csv`` is re-derived over 2019-2025 with
+per-year rows, and the boundary repair reads the active table's own eGRID
+vintage. None of these files is hashed, so no key moves on their account.
+
+**WHAT IS INVALIDATED.** Every cached ``results/<ISO>/<key>/`` bundle solved
+before this date whose fleet read any of those files: every backcast (all
+years), every hindcast pinned to a ``vintage_<Y>`` (whose 2019-2022 fleets were
+priced 95-100 % at the class table before), and every forecast (the canonical
+snapshot's heat rates now come from eGRID 2024). Committed keeper bundles are
+files, not cache lookups, and keep their numbers as pre-F1 evidence; the
+R-<ISO> lanes re-solve them.
+
+**WHAT IS NOT.** No LP code, no offer construction, no ``ScenarioConfig``
+default outside ``mode == "backcast"`` (the six backcast-default flips are
+KEY-moving and recorded at ``PINNED_BACKCAST_CACHE_KEY`` instead).
+
+**PROSE-ONLY, deliberately (no ``SolveEpoch``).** Every backcast whose inputs
+moved is re-solved by the R-<ISO> lanes the audit dispatches after F1 (one
+shard per year, 2019-2025), and every bare backcast key already moves with the
+default flip; a forecast re-solve is owed by each forecast lane on its own
+cadence. A ``SolveEpoch`` would re-key hindcast / forecast bundles that no lane
+is serving from cache today.
+
 **Epoch 2026-09-08 — capx D88 / owner ruling Q62: fleet ``unit_id`` uniqueness —
 a guard at the SoA seam and a vintage-stamped re-mint at CCS conversion. A TRUE
 SAME-KEY INVALIDATION: behaviour moves and NOT ONE KEY DOES, which is exactly

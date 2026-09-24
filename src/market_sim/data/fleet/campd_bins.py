@@ -248,14 +248,59 @@ def campd_ct_run_lengths(iso: str) -> dict[int, float]:
     }
 
 
-@lru_cache(maxsize=8)
-def measured_ct_heat_rates(iso: str) -> dict[int, float]:
+def _measured_rate_map(path: Path, year: int | None, class_keyed: bool = False) -> dict:
+    """Read one measured-heat-rate artifact into ``{key: rate}`` for a solve year.
+
+    F1 D4 (docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md
+    §5.1 item 3). Every measured artifact now carries a ``year`` column:
+    ``year == 0`` is the plant's POOLED rate over the whole 2019-2025 window and
+    ``year == Y`` its rate from year ``Y``'s hours alone, written only where
+    that year cleared the derive's own minimum-qualifying-hours trust gate
+    (``scripts/lib/heat_rate_years.py``). The rule, zero free parameters:
+
+    * the solve year's OWN ``flag == "ok"`` row where one exists;
+    * else the plant's POOLED ``ok`` row;
+    * else nothing — the plant keeps its eGRID rate.
+
+    ``year=None`` (a caller with no single solve year — a forecast, a derive's
+    provenance load) reads the pooled rows only. An artifact with no ``year``
+    column (a pre-F1 file) is all-pooled, so every older artifact reads exactly
+    as it always did.
+
+    Args:
+        path: The artifact CSV (must exist).
+        year: The solve year, or ``None``.
+        class_keyed: Key on ``(plant_code, plant_group)`` (the CHP artifact)
+            rather than on ``plant_code``.
+    """
+    df = pd.read_csv(path)
+    if "year" not in df.columns:
+        df["year"] = 0
+    rate = pd.to_numeric(df["heat_rate"], errors="coerce")
+    df = df[(df["flag"].astype(str) == "ok") & (rate > 0.0)]
+
+    def _key(r):
+        code = int(r.plant_code)
+        return (code, str(r.plant_group)) if class_keyed else code
+
+    out: dict = {}
+    for r in df[df["year"].astype(int) == 0].itertuples(index=False):
+        out[_key(r)] = float(r.heat_rate)
+    if year is not None:
+        for r in df[df["year"].astype(int) == int(year)].itertuples(index=False):
+            out[_key(r)] = float(r.heat_rate)
+    return out
+
+
+@lru_cache(maxsize=64)
+def measured_ct_heat_rates(iso: str, year: int | None = None) -> dict[int, float]:
     """Return ``{plant_code: measured loaded heat rate}`` for an ISO's CT_PEAKERs.
 
     Reads the committed CAMPD-measured artifact
     (``scripts/data/derive_campd_ct_heat_rates.py`` →
     ``data/raw/_processed-legacy/campd_ct_heat_rates_<ISO>.csv``): per-plant
-    MMBtu per **net** MWh at load, pooled 2023-2025 over CAMPD ``unitType ==
+    MMBtu per **net** MWh at load, the SOLVE YEAR's own rate else pooled 2019-2025 (F1,
+    :func:`_measured_rate_map`), over CAMPD ``unitType ==
     'Combustion turbine'`` units. It replaces the eGRID plant-average ANNUAL
     heat rate the fleet loader otherwise gives a peaker, which is neither a
     loaded rate nor — at a mixed steam/CT facility — the right technology's
@@ -269,23 +314,19 @@ def measured_ct_heat_rates(iso: str) -> dict[int, float]:
     path = PROCESSED_DIR / f"campd_ct_heat_rates_{iso.upper()}.csv"
     if not path.exists():
         return {}
-    df = pd.read_csv(path, usecols=["plant_code", "heat_rate", "flag"])
-    return {
-        int(r.plant_code): float(r.heat_rate)
-        for r in df.itertuples(index=False)
-        if str(r.flag) == "ok" and float(r.heat_rate) > 0.0
-    }
+    return _measured_rate_map(path, year)
 
 
-@lru_cache(maxsize=8)
-def measured_coal_heat_rates(iso: str) -> dict[int, float]:
+@lru_cache(maxsize=64)
+def measured_coal_heat_rates(iso: str, year: int | None = None) -> dict[int, float]:
     """Return ``{plant_code: measured operating heat rate}`` for an ISO's COAL.
 
     Reads the committed CAMPD-measured artifact
     (``scripts/data/derive_campd_coal_heat_rates.py`` →
     ``data/raw/_processed-legacy/campd_coal_heat_rates_<ISO>.csv``): per-plant
     MMBtu per **net** MWh over the plant's own steady-state operating hours,
-    pooled 2023-2025 over the CAMPD units whose ``primaryFuelInfo`` is a coal.
+    the SOLVE YEAR's own rate else pooled 2019-2025 (F1,
+    :func:`_measured_rate_map`), over the CAMPD units whose ``primaryFuelInfo`` is a coal.
     It replaces the eGRID plant-average ANNUAL heat rate the fleet loader
     otherwise gives a coal generator, which folds startup fuel, shutdown tails
     and the offline hours' fuel into the number that sets the plant's offer and
@@ -306,23 +347,19 @@ def measured_coal_heat_rates(iso: str) -> dict[int, float]:
     path = PROCESSED_DIR / f"campd_coal_heat_rates_{iso.upper()}.csv"
     if not path.exists():
         return {}
-    df = pd.read_csv(path, usecols=["plant_code", "heat_rate", "flag"])
-    return {
-        int(r.plant_code): float(r.heat_rate)
-        for r in df.itertuples(index=False)
-        if str(r.flag) == "ok" and float(r.heat_rate) > 0.0
-    }
+    return _measured_rate_map(path, year)
 
 
-@lru_cache(maxsize=8)
-def measured_cc_heat_rates(iso: str) -> dict[int, float]:
+@lru_cache(maxsize=64)
+def measured_cc_heat_rates(iso: str, year: int | None = None) -> dict[int, float]:
     """Return ``{plant_code: measured operating heat rate}`` for CC_REGULAR.
 
     Reads the committed CAMPD-measured artifact
     (``scripts/data/derive_campd_cc_heat_rates.py`` →
     ``data/raw/_processed-legacy/campd_cc_heat_rates_<ISO>.csv``): per-plant
     MMBtu per **net** MWh over the plant's own steady-state operating hours,
-    pooled 2023-2025 over the CAMPD units whose ``unitType`` is a combined
+    the SOLVE YEAR's own rate else pooled 2019-2025 (F1,
+    :func:`_measured_rate_map`), over the CAMPD units whose ``unitType`` is a combined
     cycle. It replaces the eGRID plant-average ANNUAL heat rate — or, at a
     multi-family site, the eGRID prime-mover-FAMILY rate — that the fleet
     loader otherwise gives a combined-cycle generator (CLAUDE.md rule 14
@@ -358,23 +395,19 @@ def measured_cc_heat_rates(iso: str) -> dict[int, float]:
     path = PROCESSED_DIR / f"campd_cc_heat_rates_{iso.upper()}.csv"
     if not path.exists():
         return {}
-    df = pd.read_csv(path, usecols=["plant_code", "heat_rate", "flag"])
-    return {
-        int(r.plant_code): float(r.heat_rate)
-        for r in df.itertuples(index=False)
-        if str(r.flag) == "ok" and float(r.heat_rate) > 0.0
-    }
+    return _measured_rate_map(path, year)
 
 
-@lru_cache(maxsize=8)
-def measured_st_heat_rates(iso: str) -> dict[int, float]:
+@lru_cache(maxsize=64)
+def measured_st_heat_rates(iso: str, year: int | None = None) -> dict[int, float]:
     """Return ``{plant_code: measured operating heat rate}`` for an ISO's ST_GAS.
 
     Reads the committed CAMPD-measured artifact
     (``scripts/data/derive_campd_gas_st_heat_rates.py`` →
     ``data/raw/_processed-legacy/campd_st_heat_rates_<ISO>.csv``): per-plant
     MMBtu per **net** MWh over the plant's own steady-state operating hours,
-    pooled 2023-2025 over the CAMPD boiler units the derive pairs to that
+    the SOLVE YEAR's own rate else pooled 2019-2025 (F1,
+    :func:`_measured_rate_map`), over the CAMPD boiler units the derive pairs to that
     plant's model ``ST_GAS`` rows. It replaces the eGRID plant-average ANNUAL
     heat rate the fleet loader otherwise gives a gas-fired steam boiler
     (CLAUDE.md rule 14 [R-ACCURATE]).
@@ -404,16 +437,13 @@ def measured_st_heat_rates(iso: str) -> dict[int, float]:
     path = PROCESSED_DIR / f"campd_st_heat_rates_{iso.upper()}.csv"
     if not path.exists():
         return {}
-    df = pd.read_csv(path, usecols=["plant_code", "heat_rate", "flag"])
-    return {
-        int(r.plant_code): float(r.heat_rate)
-        for r in df.itertuples(index=False)
-        if str(r.flag) == "ok" and float(r.heat_rate) > 0.0
-    }
+    return _measured_rate_map(path, year)
 
 
-@lru_cache(maxsize=8)
-def measured_chp_heat_rates(iso: str) -> dict[tuple[int, str], float]:
+@lru_cache(maxsize=64)
+def measured_chp_heat_rates(
+    iso: str, year: int | None = None
+) -> dict[tuple[int, str], float]:
     """Return ``{(plant_code, class): measured power-only heat rate}`` for CHP.
 
     Reads the committed measured artifact
@@ -440,12 +470,7 @@ def measured_chp_heat_rates(iso: str) -> dict[tuple[int, str], float]:
     path = PROCESSED_DIR / f"chp_power_only_heat_rates_{iso.upper()}.csv"
     if not path.exists():
         return {}
-    df = pd.read_csv(path, usecols=["plant_code", "plant_group", "heat_rate", "flag"])
-    return {
-        (int(r.plant_code), str(r.plant_group)): float(r.heat_rate)
-        for r in df.itertuples(index=False)
-        if str(r.flag) == "ok" and float(r.heat_rate) > 0.0
-    }
+    return _measured_rate_map(path, year, class_keyed=True)
 
 
 # Model plant_group -> CAMPD ramp-envelope family bucket. Mirrors the derive

@@ -618,18 +618,28 @@ def _egrid_boundary_hr_repairs() -> dict[int, float]:
     switch (which repoints :func:`active_eia860_dir`) recomputes against that
     vintage's own generator table instead of serving a stale set.
     """
-    from market_sim.config.paths import FLEET_DIR
+    from market_sim.data.egrid import (
+        egrid_vintage_for_eia860_dir,
+        egrid_workbook_path,
+    )
 
-    egrid_path = FLEET_DIR / "egrid2023_data_rev2.xlsx"
-    eia_path = active_eia860_dir() / EIA_860_PARQUET_NAME
+    # F1: the repair reads the eGRID vintage the ACTIVE generator table's
+    # ``heat_rate`` was joined from (vintage_<Y> -> eGRID Y, canonical ->
+    # the latest), never a hard-coded eGRID 2023 — a repair computed on one
+    # vintage and written over another vintage's rate would be a boundary
+    # mismatch of its own.
+    eia_dir = active_eia860_dir()
+    vintage = egrid_vintage_for_eia860_dir(eia_dir)
+    egrid_path = egrid_workbook_path(vintage)
+    eia_path = eia_dir / EIA_860_PARQUET_NAME
     if not egrid_path.exists() or not eia_path.exists():
         return {}
-    return _egrid_boundary_hr_repairs_for(egrid_path, eia_path)
+    return _egrid_boundary_hr_repairs_for(egrid_path, eia_path, vintage)
 
 
-@lru_cache(maxsize=4)
+@lru_cache(maxsize=16)
 def _egrid_boundary_hr_repairs_for(
-    egrid_path: Path, eia_path: Path
+    egrid_path: Path, eia_path: Path, vintage: int = 2023
 ) -> dict[int, float]:
     """Return the accepted repair set for one (eGRID, EIA-860) source pair.
 
@@ -656,7 +666,7 @@ def _egrid_boundary_hr_repairs_for(
     repairs = memoized_mapping(
         "egrid_boundary_hr_repairs",
         [egrid_path, eia_path],
-        lambda: _egrid_boundary_hr_repairs_compute(egrid_path, eia_path),
+        lambda: _egrid_boundary_hr_repairs_compute(egrid_path, eia_path, vintage),
         float,
     )
     if repairs:
@@ -669,7 +679,7 @@ def _egrid_boundary_hr_repairs_for(
 
 
 def _egrid_boundary_hr_repairs_compute(
-    egrid_path: Path, eia_path: Path
+    egrid_path: Path, eia_path: Path, vintage: int = 2023
 ) -> dict[int, float]:
     """Compute the accepted repair set for one (eGRID, EIA-860) source pair.
 
@@ -683,14 +693,16 @@ def _egrid_boundary_hr_repairs_compute(
     the same frames, without openpyxl on the solve path (wall-clock item A-2).
     """
     try:
+        from market_sim.data.egrid import egrid_sheet_name
+
         plants = read_egrid_sheet(
             egrid_path,
-            "PLNT23",
+            egrid_sheet_name("PLNT", vintage),
             ["ORISPL", "LAT", "LON", "PLHTIAN", "PLNGENAN", "PLHTRT"],
         )
         units = read_egrid_sheet(
             egrid_path,
-            "UNT23",
+            egrid_sheet_name("UNT", vintage),
             ["ORISPL", "HTIAN", "UNTYRONL"],
         )
         gens = pd.read_parquet(
@@ -1149,6 +1161,7 @@ def _rows_to_generators(
     cc_steam_part_capacity: bool = False,
     cc_steam_part_reclass: bool = False,
     egrid_family_heat_rates: bool = False,
+    heat_rate_year: int | None = None,
 ) -> list[Generator]:
     """Convert a normalized generator DataFrame into :class:`Generator` objects.
 
@@ -1165,6 +1178,12 @@ def _rows_to_generators(
     reads the derive's own table, so guarding the derive's input would make the
     demonstrated-peak table self-referential (a plant restored to its peak would
     then read as "at capacity" and drop from the next re-derive).
+
+    ``heat_rate_year`` is the SOLVE year the measured-heat-rate maps resolve
+    against (F1 D4): each measured artifact carries a per-year rate and a
+    pooled one, and the solve year's own ``ok`` rate wins where it exists
+    (:func:`market_sim.data.fleet.campd_bins._measured_rate_map`). ``None``
+    reads the pooled rates only.
 
     ``measured_ct_heat_rates`` (``ScenarioConfig.measured_ct_heat_rates``)
     swaps the eGRID plant-average annual heat rate for the CAMPD-measured
@@ -1240,7 +1259,9 @@ def _rows_to_generators(
     # to CT_PEAKER may take it, so a mixed steam/CT facility's boilers keep the
     # eGRID plant average while its turbines take their own measured rate.
     ct_heat_rates: dict[int, float] = (
-        _pkg_ns().measured_ct_heat_rates(iso) if measured_ct_heat_rates else {}
+        _pkg_ns().measured_ct_heat_rates(iso, heat_rate_year)
+        if measured_ct_heat_rates
+        else {}
     )
 
     # Measured COAL operating heat rates (config.measured_coal_heat_rates).
@@ -1251,7 +1272,9 @@ def _rows_to_generators(
     # or the ISO has no committed artifact, in which case every row keeps its
     # eGRID rate.
     coal_heat_rates: dict[int, float] = (
-        _pkg_ns().measured_coal_heat_rates(iso) if measured_coal_heat_rates else {}
+        _pkg_ns().measured_coal_heat_rates(iso, heat_rate_year)
+        if measured_coal_heat_rates
+        else {}
     )
 
     # Measured GAS-STEAM operating heat rates (config.measured_st_heat_rates).
@@ -1261,7 +1284,9 @@ def _rows_to_generators(
     # assigns. Empty when the flag is off or the ISO has no committed artifact,
     # in which case every row keeps its eGRID rate.
     st_heat_rates: dict[int, float] = (
-        _pkg_ns().measured_st_heat_rates(iso) if measured_st_heat_rates else {}
+        _pkg_ns().measured_st_heat_rates(iso, heat_rate_year)
+        if measured_st_heat_rates
+        else {}
     )
 
     # Measured COMBINED-CYCLE operating heat rates (config.measured_cc_heat_rates).
@@ -1272,7 +1297,9 @@ def _rows_to_generators(
     # construction. Empty when the flag is off or the ISO has no committed
     # artifact, in which case every row keeps its eGRID rate.
     cc_heat_rates: dict[int, float] = (
-        _pkg_ns().measured_cc_heat_rates(iso) if measured_cc_heat_rates else {}
+        _pkg_ns().measured_cc_heat_rates(iso, heat_rate_year)
+        if measured_cc_heat_rates
+        else {}
     )
 
     # Combined-cycle steam parts to restore (config.cc_steam_part_capacity).
@@ -1839,6 +1866,7 @@ def _load_fleet_from_parquet(
         cc_steam_part_capacity=cc_steam_part_capacity,
         cc_steam_part_reclass=cc_steam_part_reclass,
         egrid_family_heat_rates=egrid_family_heat_rates,
+        heat_rate_year=year,
     )
     if not generators:
         logger.warning("EIA-860 parquet has no generators for %s", iso)
@@ -1956,6 +1984,7 @@ def _load_fleet_from_clean(
         cc_steam_part_capacity=cc_steam_part_capacity,
         cc_steam_part_reclass=cc_steam_part_reclass,
         egrid_family_heat_rates=egrid_family_heat_rates,
+        heat_rate_year=year,
     )
     if not generators:
         logger.warning(
@@ -2331,10 +2360,11 @@ def load_fleet_from_csv(
             measured_ct_heat_rates=measured_ct_heat_rates,
             measured_coal_heat_rates=measured_coal_heat_rates,
             measured_st_heat_rates=measured_st_heat_rates,
-        measured_cc_heat_rates=measured_cc_heat_rates,
+            measured_cc_heat_rates=measured_cc_heat_rates,
             cc_steam_part_capacity=cc_steam_part_capacity,
             cc_steam_part_reclass=cc_steam_part_reclass,
             egrid_family_heat_rates=egrid_family_heat_rates,
+            heat_rate_year=year,
         )
         source = csv_path
         logger.info(
@@ -2356,7 +2386,7 @@ def load_fleet_from_csv(
             measured_ct_heat_rates=measured_ct_heat_rates,
             measured_coal_heat_rates=measured_coal_heat_rates,
             measured_st_heat_rates=measured_st_heat_rates,
-        measured_cc_heat_rates=measured_cc_heat_rates,
+            measured_cc_heat_rates=measured_cc_heat_rates,
             cc_steam_part_capacity=cc_steam_part_capacity,
             cc_steam_part_reclass=cc_steam_part_reclass,
             egrid_family_heat_rates=egrid_family_heat_rates,
@@ -2379,7 +2409,7 @@ def load_fleet_from_csv(
             measured_ct_heat_rates=measured_ct_heat_rates,
             measured_coal_heat_rates=measured_coal_heat_rates,
             measured_st_heat_rates=measured_st_heat_rates,
-        measured_cc_heat_rates=measured_cc_heat_rates,
+            measured_cc_heat_rates=measured_cc_heat_rates,
             cc_steam_part_capacity=cc_steam_part_capacity,
             cc_steam_part_reclass=cc_steam_part_reclass,
             egrid_family_heat_rates=egrid_family_heat_rates,
@@ -2404,7 +2434,7 @@ def load_fleet_from_csv(
     # below skips it (rule 19 [R-ONE-MECH]). Off, ``measured`` is empty and the
     # call below is byte-identical to what it always was.
     measured = (
-        _apply_measured_chp_heat_rates(generators, iso)
+        _apply_measured_chp_heat_rates(generators, iso, year)
         if measured_chp_heat_rates
         else frozenset()
     )
@@ -2811,6 +2841,11 @@ def load_retired_within_window(
     vintage_status_scope: bool = False,
     partial_plant_exit_carry: bool = False,
     mid_vintage_exit_carry: bool = False,
+    measured_ct_heat_rates: bool = False,
+    measured_coal_heat_rates: bool = False,
+    measured_st_heat_rates: bool = False,
+    measured_cc_heat_rates: bool = False,
+    measured_chp_heat_rates: bool = False,
 ) -> list[Generator]:
     """Load whole-plant exits that retired mid-backcast for an ISO.
 
@@ -2879,6 +2914,13 @@ def load_retired_within_window(
     oracle above, so an armed ``vintage_status_scope`` scopes both
     memberships uniformly (Dallman-3, OS in vintage_2023 and CAMPD-dark,
     stays out). Measured, zero fitted scalars, byte-inert while off.
+
+    ``measured_{ct,coal,st,cc,chp}_heat_rates`` (F1 D4): the SAME measured
+    heat-rate swaps the operable loader applies, at ``year``'s own rate else
+    the pooled one. Before F1 this channel never took them — so a retiree was
+    priced at its eGRID rate (or, absent from eGRID 2023, the class table)
+    even where its own CAMPD meter was in the artifact. Default off and
+    byte-identical off.
     """
     iso = iso.upper()
     data_dir = active_eia860_dir() if data_dir is None else Path(data_dir)
@@ -2978,7 +3020,18 @@ def load_retired_within_window(
             if df.empty:
                 return []
     df["chp"] = df["plant_id"].map(_chp_by_plant(path.parent, year)).fillna("N")
-    generators = _rows_to_generators(df, iso, iso_config)
+    generators = _rows_to_generators(
+        df,
+        iso,
+        iso_config,
+        measured_ct_heat_rates=measured_ct_heat_rates,
+        measured_coal_heat_rates=measured_coal_heat_rates,
+        measured_st_heat_rates=measured_st_heat_rates,
+        measured_cc_heat_rates=measured_cc_heat_rates,
+        heat_rate_year=year,
+    )
+    if measured_chp_heat_rates:
+        _apply_measured_chp_heat_rates(generators, iso, year)
     if partial_frame is not None:
         # Provenance stamp for the binning-aware exit-cohort routing
         # (miso-191, PREREG-miso191 §1-§2): mark exactly the leg-1
@@ -3026,6 +3079,11 @@ def load_mothballed_but_operating(
     data_dir: Path | None = None,
     year: int | None = None,
     partial_plant_exit_carry: bool = False,
+    measured_ct_heat_rates: bool = False,
+    measured_coal_heat_rates: bool = False,
+    measured_st_heat_rates: bool = False,
+    measured_cc_heat_rates: bool = False,
+    measured_chp_heat_rates: bool = False,
 ) -> list[Generator]:
     """Re-carry OA (mothballed) units that were OP in the year-matched vintage.
 
@@ -3141,7 +3199,20 @@ def load_mothballed_but_operating(
     # Plant-level CHP flag, exactly as the operable/retiree loaders join it
     # (that year's EIA-860 designation when the per-year lookup exists).
     carried["chp"] = carried["plant_id"].map(_chp_by_plant(data_dir, year)).fillna("N")
-    generators = _rows_to_generators(carried, iso, iso_config)
+    # F1 D4: the same measured heat-rate swaps the operable loader applies,
+    # at the solve year's own rate (default off, byte-identical off).
+    generators = _rows_to_generators(
+        carried,
+        iso,
+        iso_config,
+        measured_ct_heat_rates=measured_ct_heat_rates,
+        measured_coal_heat_rates=measured_coal_heat_rates,
+        measured_st_heat_rates=measured_st_heat_rates,
+        measured_cc_heat_rates=measured_cc_heat_rates,
+        heat_rate_year=year,
+    )
+    if measured_chp_heat_rates:
+        _apply_measured_chp_heat_rates(generators, iso, year)
     if generators:
         logger.info(
             "re-carried %d mothballed-but-operating units for %s %d "

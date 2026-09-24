@@ -199,3 +199,23 @@ meters replace class-default bin centres. Under rule 1 a gate regression is not 
       ruled (rule 31 trigger (i)), and they are not deleted.
 11. **Local parity gate:** `check_registry_payload_parity` reads RED locally, but only for those gitignored
     leg and control dirs (the rule-31 correction's local-walk case); nothing else is flagged.
+
+## 10. F1 landed in parallel — what it means for this keeper
+
+`RESULT-f1-backcast-heatrate-vintage-2026-09-24.md` (PR #6572) merged to `main` during this lane.
+
+**What F1 did:**
+1. Repaired the vintage eGRID join. This is the defect §6.1 routed: year-matched eGRID in every ISO-year
+   2019–2025.
+2. Re-derived `campd_{cc,st,coal}_heat_rates_SPP.csv` as a pooled 2019–25 row plus per-year rows. The
+   loader now prefers the solve year's own row.
+3. Flipped `measured_{ct,coal,st,cc,chp}_heat_rates` and `eia860_vintage_tracks_solve_year` **default-on
+   for backcasts**.
+
+**Consequences:**
+- **This keeper was solved on the pre-F1 inputs at `1e6c50da`.** It used the 2023–25 pooled artifact
+  (sha256s in `_spp78_shard_check.py`), and its 2019–22 uncovered rows were on bin centres.
+- **Replaying it at post-F1 HEAD will not reproduce these numbers.** F1 says the same of every ISO's
+  keeper.
+- **The promotion's direction is unaffected.** It is exactly F1's new default, so the named successor is
+  a post-F1 re-solve of this recipe: seven per-year shards on defaults with no `--set`, about 15 min wall.

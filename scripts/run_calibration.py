@@ -512,6 +512,25 @@ def _renewable_bound_is_delivered_pinned(iso: str, year: int) -> bool:
     )
 
 
+def _measured_heat_rate_flags(config: ScenarioConfig) -> dict[str, bool]:
+    """Return the five measured-heat-rate flags as loader keyword arguments.
+
+    F1 D4: the retiree and mothball channels take the SAME measured heat-rate
+    swaps the operable fleet loader does, read from one place so the three
+    call sites cannot drift (rule 24 [R-REGISTRY]).
+    """
+    return {
+        name: bool(getattr(config, name, False))
+        for name in (
+            "measured_ct_heat_rates",
+            "measured_coal_heat_rates",
+            "measured_st_heat_rates",
+            "measured_cc_heat_rates",
+            "measured_chp_heat_rates",
+        )
+    }
+
+
 def run_year(
     year: int,
     iso: str,
@@ -3826,6 +3845,9 @@ def run_year(
             # 9/2020, 1,209.2 GWh metered). Default-off; byte-inert while
             # off, and inert wherever the whole-plant retiree parquet exists.
             mid_vintage_exit_carry=getattr(config, "mid_vintage_exit_carry", False),
+            # F1 D4: the measured heat-rate swaps reach the retiree channel,
+            # at this solve year's own rate (the operable loader's flags).
+            **_measured_heat_rate_flags(config),
         )
         if config.mode == "backcast"
         else []
@@ -3849,6 +3871,7 @@ def run_year(
             # under the same vintage-OP oracle (Big Cajun 2-1, Warrick-2).
             # Default-off; byte-inert while off.
             partial_plant_exit_carry=getattr(config, "partial_plant_exit_carry", False),
+            **_measured_heat_rate_flags(config),
         )
 
     # Resolve the per-plant bin frame, then build the base fleet and the

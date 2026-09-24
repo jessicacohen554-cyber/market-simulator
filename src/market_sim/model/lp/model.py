@@ -22,7 +22,10 @@ from market_sim.model.lp.bounds import build_variable_bounds
 from market_sim.model.lp.costs import build_cost_vector
 from market_sim.model.lp.layout import VariableLayout
 from market_sim.model.lp.rows import build_constraints
-from market_sim.model.lp import p0_cache
+
+# Submodule edge, not the package: ``from market_sim.model.lp import p0_cache``
+# made lp.model depend on lp/__init__ (which imports lp.model) — an import cycle.
+import market_sim.model.lp.p0_cache as p0_cache
 
 if TYPE_CHECKING:  # quoted annotations only; runtime imports stay lazy (cycle break)
     from market_sim.model.lp import CrossYearBasis, DispatchResult

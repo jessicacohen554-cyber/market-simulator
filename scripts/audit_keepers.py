@@ -501,10 +501,23 @@ E11_META_PROVENANCE = {
     # ercot-256: the composite per-year recipe overlay (see the matching
     # replay_keeper._IGNORE entry). Provenance, never a solve kwarg.
     "config_partition_overrides",
+    # The two provenance keys replay_keeper._IGNORE gained after this mirror
+    # was last synced: the free-text model-changes note, and rule-32 shard
+    # composition provenance ({source bundle: [years]}, the "reuse" shape).
+    # Neither is a solve kwarg. Synced by lane Y-30 under
+    # tests/scoring/test_audit_keepers_lineage.py.
+    "model_changes_note",
+    "composed_from",
     "iso",
     "years",
     "hours",
     "reuse",
+    # Y-29 (2026-09-24): mirror the two replay_keeper._IGNORE entries added
+    # after this set was last synced — free-text session provenance (ercot-261)
+    # and rule-32 composition provenance (pjm-d4-3). Neither selects a
+    # mechanism or maps to a solve kwarg; see the matching _IGNORE comments.
+    "model_changes_note",
+    "composed_from",
 }
 
 _E11_ABSENT = object()
