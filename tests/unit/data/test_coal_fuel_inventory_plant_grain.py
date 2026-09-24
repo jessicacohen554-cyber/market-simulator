@@ -52,19 +52,31 @@ class CoalYardBudgetTest(CleanDirTestCase):
         write_clean(pd.DataFrame(stocks), "coal-stocks", year=2021, source="test")
         write_clean(
             pd.DataFrame([_stock_row(1001, 2022, 12, 999_999)]),
-            "coal-stocks", year=2022, source="test",
+            "coal-stocks",
+            year=2022,
+            source="test",
         )
         write_clean(
-            pd.DataFrame([_receipt_row(1001, 2020, 1, 600), _receipt_row(8841, 2020, 1, 100)]),
-            "coal-receipts", year=2020, source="test",
+            pd.DataFrame(
+                [_receipt_row(1001, 2020, 1, 600), _receipt_row(8841, 2020, 1, 100)]
+            ),
+            "coal-receipts",
+            year=2020,
+            source="test",
         )
         write_clean(
-            pd.DataFrame([_receipt_row(1001, 2021, 1, 1000), _receipt_row(8841, 2021, 1, 300)]),
-            "coal-receipts", year=2021, source="test",
+            pd.DataFrame(
+                [_receipt_row(1001, 2021, 1, 1000), _receipt_row(8841, 2021, 1, 300)]
+            ),
+            "coal-receipts",
+            year=2021,
+            source="test",
         )
         write_clean(
             pd.DataFrame([_receipt_row(1001, 2022, 1, 999_999)]),
-            "coal-receipts", year=2022, source="test",
+            "coal-receipts",
+            year=2022,
+            source="test",
         )
 
     def test_shared_yard_pools_its_served_plants_and_the_entity(self):
@@ -90,8 +102,12 @@ class CoalYardBudgetTest(CleanDirTestCase):
 
     def test_yard_budgets_sum_to_the_pooled_annual_identity(self):
         fleet = _coal_fleet([1001, 2001, 2002])
-        _, budget, *_ = build_coal_plant_budget(fleet, 2022, hours=_HOURS, reference_dir=self.ref)
-        pooled = build_coal_fuel_budget(fleet, 2022, hours=_HOURS, reference_dir=self.ref)
+        _, budget, *_ = build_coal_plant_budget(
+            fleet, 2022, hours=_HOURS, reference_dir=self.ref
+        )
+        pooled = build_coal_fuel_budget(
+            fleet, 2022, hours=_HOURS, reference_dir=self.ref
+        )
         self.assertAlmostEqual(float(budget.sum()), float(pooled[1].sum()))
 
 
@@ -104,17 +120,23 @@ class YardBindsWherePoolDoesNotTest(unittest.TestCase):
         fleet = _coal_fleet([1, 2], heat_rate=10.0, pmax=100.0, hours=self.T)
         # A is cheap (MC 20), B dear coal (MC 40), gas MC 50; demand 100 MW.
         demand = np.full((1, self.T), 100.0)
-        mc = np.vstack([np.full(self.T, 20.0), np.full(self.T, 40.0), np.full(self.T, 50.0)])
+        mc = np.vstack(
+            [np.full(self.T, 20.0), np.full(self.T, 40.0), np.full(self.T, 50.0)]
+        )
         base = dict(
-            wind_cf=np.zeros((1, self.T)), wind_cap=np.zeros(1),
-            solar_cf=np.zeros((1, self.T)), solar_cap=np.zeros(1),
+            wind_cf=np.zeros((1, self.T)),
+            wind_cap=np.zeros(1),
+            solar_cf=np.zeros((1, self.T)),
+            solar_cap=np.zeros(1),
         )
         pooled = np.full((1, 12), np.inf)
         pooled[0, 0] = 50_000.0  # loose: 5,000 MWh of coal against 2,400 wanted
         base.update(
-            coal_monthly_budget=pooled, coal_gen_idx=np.array([0, 1]),
+            coal_monthly_budget=pooled,
+            coal_gen_idx=np.array([0, 1]),
             coal_month_index=np.zeros(self.T, dtype=int),
-            coal_gen_hour_coeff=np.array([10.0, 10.0]), coal_group_index=np.array([0, 0]),
+            coal_gen_hour_coeff=np.array([10.0, 10.0]),
+            coal_group_index=np.array([0, 0]),
         )
         r0 = solve_dispatch(fleet, demand, mc=mc, T=self.T, **base)
         self.assertAlmostEqual(float(r0.dispatch[0].sum()), 2400.0, places=3)

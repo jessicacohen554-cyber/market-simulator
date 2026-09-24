@@ -401,7 +401,9 @@ def build_coal_plant_budget(
         if not stocks.empty
         else None
     )
-    stock_filers = set(int(p) for p in stocks["plant_id"]) if not stocks.empty else set()
+    stock_filers = (
+        set(int(p) for p in stocks["plant_id"]) if not stocks.empty else set()
+    )
     if not receipts.empty:
         rc = receipts.assign(
             _mmbtu=receipts["quantity_tons"] * receipts["heat_content_mmbtu_per_ton"]
