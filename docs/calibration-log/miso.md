@@ -15180,3 +15180,12 @@ Record `docs/FINDING-miso270-octnov2021-localized-2026-09-24.md`; probe
   (≥ 16.6 TWh-equiv headroom).
 * **Routed:** a cited minimum-operating-stock source; a per-seam split of the fall imports; north
   congestion.
+
+## R-MISO — 2026-09-24 — corrected backcast inputs, 2019–2025 (registered, NOT promoted)
+
+Runs `2026-09-24-rmiso-corrected-inputs` (A: keeper + F1 defaults + short-gas + unit-partial) and
+`2026-09-24-rmiso-arm-b-mid` (B: A + `mid_vintage_exit_carry`), seven single-year legs each.
+Multipliers unchanged. Both runs are NOT-YET on the full span (8/4/1/3), and the train tier leaves CALIBRATED (2023 C1 CC_REGULAR −10.38 TWh,
+C3a +10.0 %). B fixes 2019 C1 COAL_BIT (−13.17 TWh FAIL → PASS) by carrying the mid-year retirees the vintage
+default drops (3.1/1.0/1.5/2.8 GW in 2019–2022). S-2 fails: new slack sits inside the declared 2023/2024 Max Gen events.
+Escalated to the owner. Record: `docs/RESULT-rmiso-corrected-inputs-2019-2025-2026-09-24.md`.
