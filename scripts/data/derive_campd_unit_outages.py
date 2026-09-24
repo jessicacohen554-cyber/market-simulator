@@ -464,6 +464,64 @@ def _load_unit_year(state: str, year: int) -> pd.DataFrame:
     return df.dropna(subset=["hour"])
 
 
+def _unit_gross_years(
+    states: tuple[str, ...] | list[str], years: list[int]
+) -> set[tuple[int, str, int]]:
+    """Return ``{(facility, unit_id, year)}`` with positive CAMPD gross output.
+
+    Scans the run years plus one year either side (where a state-year extract
+    exists), keyed on the SAME split-plant remapped facility id the detector
+    loop uses. Feeds ``--dark-unit-years``: a unit dark for all of ``year`` is
+    admitted only when this set shows its own id producing in ``year - 1`` or
+    ``year + 1`` -- the evidence that the id is the unit's real monitoring
+    location rather than a retired or re-keyed stack.
+    """
+    out: set[tuple[int, str, int]] = set()
+    span = range(min(years) - 1, max(years) + 2)
+    for state in states:
+        for y in span:
+            df = _load_unit_year(state, y)
+            if df.empty or "grossLoad" not in df.columns:
+                continue
+            g = pd.to_numeric(df["grossLoad"], errors="coerce").fillna(0.0)
+            pos = df.loc[g > 0.0, ["facilityId", "unitId"]].drop_duplicates()
+            for f, u in zip(pos["facilityId"].astype(int), pos["unitId"].astype(str)):
+                f = campd.CAMPD_UNIT_PLANT_REMAP.get((f, u), f)
+                out.add((int(f), u.strip(), int(y)))
+    return out
+
+
+def _is_dark_unit_year(
+    rows: pd.DataFrame,
+    clock_len: int,
+    fac_id: int,
+    uid: object,
+    year: int,
+    unit_gross_years: set[tuple[int, str, int]],
+    peers_ran: bool,
+) -> bool:
+    """Return True when ``uid`` was dark for the whole of ``year`` (SOCO-61).
+
+    Every condition is categorical (no threshold, rules 21/24): CAMPD files a
+    row for every hour of the year under this unit id; no hour carries
+    positive ``opTime``; the SAME facility/unit id reported positive gross in
+    ``year - 1`` or ``year + 1``; and at least one peer unit at the facility
+    produced this year (a wholly dark PLANT belongs to the plant-grain
+    ``eia923_netzero`` hook, not here).
+    """
+    if not peers_ran or len(rows) < clock_len:
+        return False
+    op = pd.to_numeric(rows["opTime"], errors="coerce").fillna(0.0)
+    if float(op.max()) > 0.0:
+        return False
+    u = str(uid).strip()
+    return (fac_id, u, year - 1) in unit_gross_years or (
+        fac_id,
+        u,
+        year + 1,
+    ) in unit_gross_years
+
+
 def _load_standard_windows(
     path: Path,
 ) -> dict[tuple[int, str, int], list[tuple[pd.Timestamp, pd.Timestamp]]]:
@@ -1135,6 +1193,13 @@ def _write_outage_sidecar(
                     "merit_order_guard": bool(
                         getattr(args, "merit_order_guard", False)
                     ),
+                    # SOCO-61: recorded only when set, so every pre-existing
+                    # sidecar re-derives byte-identical.
+                    **(
+                        {"dark_unit_years": True}
+                        if getattr(args, "dark_unit_years", False)
+                        else {}
+                    ),
                     "no_inmerit_filter": bool(
                         getattr(args, "no_inmerit_filter", False)
                     ),
@@ -1287,6 +1352,25 @@ def main() -> None:
         ),
     )
     ap.add_argument(
+        "--dark-unit-years",
+        action="store_true",
+        help=(
+            "SOCO-61 (rule 14 [R-ACCURATE]), DEFAULT-OFF, requires "
+            "--per-unit-crosswalk: emit ONE full-year window for a unit that is "
+            "DARK for a whole calendar year -- CAMPD files a row for EVERY hour "
+            "of the year under that unit id with opTime 0 and no gross -- while "
+            "the SAME facility/unit id reported gross output in an adjacent "
+            "year and at least one peer unit at the facility ran that year. "
+            "Without this the unit falls through both layers: the per-unit "
+            "detector skips a never-producing unit (it cannot tell a real "
+            "full-year outage from a unit monitored under another id -- the "
+            "adjacent-year same-id record is what settles that), and the "
+            "eia923_netzero hook works at PLANT grain, so a running plant "
+            "hides it. Zero free parameters. Writes the '-perunitdark-' "
+            "companion, never an overwrite."
+        ),
+    )
+    ap.add_argument(
         "--out",
         default=None,
         help="Output CSV; defaults to data/raw/campd-unit-outages.csv "
@@ -1363,6 +1447,13 @@ def main() -> None:
     args = ap.parse_args()
     if args.short_windows and args.partial_windows:
         raise SystemExit("--short-windows and --partial-windows are mutually exclusive")
+    if args.dark_unit_years and (
+        not args.per_unit_crosswalk or args.short_windows or args.partial_windows
+    ):
+        raise SystemExit(
+            "--dark-unit-years requires --per-unit-crosswalk and the standard "
+            "(>= 5-day) extract (not --short-windows / --partial-windows)"
+        )
     short_gas = args.short_windows and args.short_window_groups == "gas"
     if args.short_window_groups == "gas" and not args.short_windows:
         raise SystemExit("--short-window-groups gas requires --short-windows")
@@ -1423,7 +1514,13 @@ def main() -> None:
             # SEPARATE companion (nyiso-175b), same discipline as the
             # -unitroute- path: never an overwrite, so the control leg keeps
             # reading byte-identical input and the delta is a single object.
-            fname = f"campd-unit-outages-perunit-{iso}.csv"
+            fname = (
+                # SOCO-61: the dark-unit-year windows ride their own
+                # companion so the '-perunit-' control stays byte-identical.
+                f"campd-unit-outages-perunitdark-{iso}.csv"
+                if args.dark_unit_years
+                else f"campd-unit-outages-perunit-{iso}.csv"
+            )
         elif args.mixed_gas_routing:
             # A SEPARATE companion path (miso-200): the incumbent extract is
             # never overwritten, so the two routings can be A/B'd as a single
@@ -1566,6 +1663,12 @@ def main() -> None:
     # (facility, year) -> any non-null CAMPD grossLoad seen; feeds the
     # net-zero-to-grid rule below (mirrors the benchmark's CAMPD backfill).
     campd_gross_seen: set[tuple[int, int]] = set()
+    # SOCO-61 --dark-unit-years: (facility, unit id, year) that reported ANY
+    # positive gross, over the run years AND one year either side, so a unit
+    # dark all of year Y can be matched to its own same-id output in Y-1/Y+1.
+    unit_gross_years: set[tuple[int, str, int]] = (
+        _unit_gross_years(states, args.years) if args.dark_unit_years else set()
+    )
     for state in states:
         for year in args.years:
             df = _load_unit_year(state, year)
@@ -1793,8 +1896,28 @@ def main() -> None:
                     # left to the statistical/facility layers — we cannot
                     # distinguish a real full-year outage from a unit monitored
                     # under another id, and have no capacity basis for it.
-                    if peaks[uid] <= 0.0 or derate_cap <= 0.0:
+                    # SOCO-61 --dark-unit-years settles exactly that doubt for
+                    # one case: the unit's OWN id files every hour dark this
+                    # year and produced in an adjacent year, with an EIA-860
+                    # capacity basis (derate_cap) and a peer that ran.
+                    dark_year = bool(
+                        args.dark_unit_years
+                        and peaks[uid] <= 0.0
+                        and derate_cap > 0.0
+                        and _is_dark_unit_year(
+                            fac[fac["unitId"].astype(str) == str(uid)],
+                            len(pd.date_range(f"{year}-01-01", horizon_end, freq="h")),
+                            int(fac_id),
+                            uid,
+                            year,
+                            unit_gross_years,
+                            any(o != uid for o in ran),
+                        )
+                    )
+                    if not dark_year and (peaks[uid] <= 0.0 or derate_cap <= 0.0):
                         continue
+                    if dark_year:
+                        cap_src = "campd_dark_unit_year"
                     # Route this unit's window to ITS model bin (non-ERCOT;
                     # ERCOT keeps the bin-sheet group verbatim and reroutes
                     # its split plants downstream in _unit_outage_target).
@@ -1864,7 +1987,20 @@ def main() -> None:
                     # (detect_cap), so the CC steam allocation — which lifts only
                     # the derate share — leaves every detected window unchanged.
                     plateau_factors: dict[tuple[int, int], float] = {}
-                    if args.partial_windows:
+                    if dark_year:
+                        # One window over the whole published year: the unit
+                        # never operated, so there is nothing to detect.
+                        windows = [
+                            (
+                                0,
+                                len(
+                                    pd.date_range(
+                                        f"{year}-01-01", horizon_end, freq="h"
+                                    )
+                                ),
+                            )
+                        ]
+                    elif args.partial_windows:
                         windows, plateau_factors = _partial_plateau_windows(
                             gross, detect_cap
                         )

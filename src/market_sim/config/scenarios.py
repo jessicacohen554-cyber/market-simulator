@@ -453,6 +453,10 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # pair as campd_per_unit_attribution, so the off path is byte-inert).
     # Registered IN THE SAME COMMIT as the field.
     "campd_outage_merit_order_guard",
+    # SOCO-61 dark-unit-year windows on the per-unit CAMPD companion (GATED
+    # default-off; selects '-perunitdark-' through the same resolver, so the
+    # off path is byte-inert). Registered IN THE SAME COMMIT as the field.
+    "campd_dark_unit_year_windows",
     # miso-188 retiree-channel vintage-status scope (GATED default-off; the
     # sole consumer threads it via getattr into
     # data/fleet/eia860.py::load_retired_within_window, so the off path is
@@ -2147,6 +2151,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by nyiso-177 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "campd_outage_merit_order_guard": "False",
+    # Added by SOCO-61 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
+    "campd_dark_unit_year_windows": "False",
     # Added by miso-188 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "retiree_vintage_status_scope": "False",
@@ -15831,6 +15838,26 @@ class ScenarioConfig:
     # companion and then the incumbent artifact, so no ISO but NYISO is
     # reachable today (rule 25 [R-ISO-SCOPE]).
     campd_outage_merit_order_guard: bool = False
+    # SOCO-61 (rule 14 [R-ACCURATE]) DARK-UNIT-YEAR WINDOWS on the per-unit
+    # CAMPD outage companion. The per-unit detector skips a unit that never
+    # produced in a year (it cannot tell a full-year outage from a unit
+    # monitored under another id) and the eia923_netzero hook is PLANT grain,
+    # so a unit dark for a whole year at a plant whose peers ran falls through
+    # both and is modelled fully available. Armed, the '-perunitdark-' extract
+    # (derive_campd_unit_outages.py --per-unit-crosswalk --dark-unit-years)
+    # adds ONE full-year window for such a unit, admitted only when its OWN
+    # CAMPD id files every hour of the year dark and reported gross output in
+    # an adjacent year, with an EIA-860 capacity basis and a peer that ran --
+    # every condition categorical, ZERO FREE PARAMETERS (rule 21). SOCO:
+    # exactly one unit-year, Lindsay Hill (55271) CT3, 313.1 MW, dark all of
+    # 2024 (0 operating hours of 8,784 rows; 642 / 308 GWh in 2023 / 2025).
+    # Regenerates for any year with a CAMPD filing (rule 13). Outage-extract
+    # half only: no tranche companion is derived for it. Has no meaning
+    # without campd_per_unit_attribution and is ignored under
+    # campd_outage_merit_order_guard. Byte-inert off: a separate file, never
+    # an overwrite, falling back to '-perunit-' where not derived.
+    # FINDING-soco-61-2026-09-24.md.
+    campd_dark_unit_year_windows: bool = False
 
     # Retiree-channel injection scoped by the EIA-860 vintage status oracle
     # (retiree_vintage_status_scope, off by default; miso-188,
