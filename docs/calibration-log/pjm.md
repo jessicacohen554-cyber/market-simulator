@@ -6588,3 +6588,7 @@ unchanged. Against: 2020 C3c tail count 2 → 0 vs 2 actual. Benchmark rebuild a
 (keeper actuals ≤ 0.2 TWh, vestigial `COAL` row gone, zero status changes). Off-PJM finding routed:
 CAISO 2025 h5076 (11.8 vs 29.9 GW). Record: `docs/RESULT-pjm-h19-demand-balance-screen-2026-09-23.md`,
 charter `docs/PRECOMMIT-pjm-h19-demand-balance-screen-2026-09-23.md`.
+
+**PROMOTED 2026-09-24** (owner: *"Promote"*). Keeper `2026-09-22-pjm-hydro2-ror-span` →
+**`2026-09-23-pjm-h19-dbs-span`** (+ touchpoint `2026-09-23-pjm-h19-dbs-touchpoint`). Rule-35 order;
+determination re-verified CALIBRATED; hydro-2 pair pruned; `audit_keepers --iso PJM` 0/0.
