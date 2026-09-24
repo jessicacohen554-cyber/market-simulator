@@ -133,7 +133,10 @@ def main(p146: Path) -> None:
         cc = out["years"][str(y)]["CC_REGULAR"]
         print(
             y,
-            {z: (cc[z]["keeper_err"], cc[z]["delta"], cc[z]["pred_err"]) for z in FOCUS},
+            {
+                z: (cc[z]["keeper_err"], cc[z]["delta"], cc[z]["pred_err"])
+                for z in FOCUS
+            },
             "class",
             cc["_class"],
         )

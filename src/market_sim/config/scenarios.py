@@ -3721,8 +3721,8 @@ class ScenarioConfig:
     # (fuel_trajectories.PJM_RGGI_ALLOWANCE_PRICE_PER_TONNE, metric-converted)
     # through the unified carbon resolver's adder path, membership-weighted
     # PER GENERATOR: an exact per-plant EIA-860 state test against
-    # RGGI_MEMBER_STATES_BY_YEAR (NJ/MD/DE all years; VA 2023 only — the
-    # 2024-01-01 exit), with the committed PJM_RGGI_ZONE_SHARE fractional
+    # RGGI_MEMBER_STATES_BY_YEAR (NJ/MD/DE all years 2020-2025; VA 2021-2023
+    # — joined 2021-01-01, exited 2024-01-01; 2020-2022 rows landed pjm-h22), with the committed PJM_RGGI_ZONE_SHARE fractional
     # fallback for synthetic rows (policy.cap_and_trade.
     # per_generator_membership). Zero fitted parameters — prices, membership
     # and emission rates are all measured inputs (rules 13/14). Deliberately
