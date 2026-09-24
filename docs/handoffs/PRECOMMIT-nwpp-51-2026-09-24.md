@@ -172,3 +172,42 @@ Sanity check: fed the keeper itself as the "arm", the evaluator exits INERT, as 
 
 Nothing was solved. The committed artifacts are the two probes, their JSON records, the evaluator
 and this doc.
+
+## 10. ADDENDUM: owner ruling and the utility-sheet intake (written before any leg is launched)
+
+**Owner ruling (2026-09-24):** "Add utility sheet then solve repaired."
+
+**Intake, zero LP:**
+
+* `data/raw/eia-860/vintage_{2023,2024}/eia860_utility.parquet` come from EIA's own archive zips:
+  * `eia8602023.zip`, sha256 `1447e23e608bea1523961542a90eb93ea86715067a37f211282541461049b46f`;
+  * `eia8602024.zip`, sha256 `0aaae04812cd4ab87a3e346bdf93848a3cc15053fd4dc2a4cf82d2aeac95f12b`.
+* They were extracted with `process_eia860.extract_all_workbooks`. The same extraction reproduces
+  the committed `owner`, `plant` and `generator_operable` sheets of both dirs **frame-identically**,
+  so this is the same release. Rows: 6,193 (2023) and 6,643 (2024). Columns are identical to the
+  canonical sheet.
+* Nothing else was added, and canonical entity types were **not** substituted.
+
+**Blast radius, measured:**
+
+* The utility sheet has one reader (`eia860.py:4102`).
+* A scan of 365 committed `run_config` / `meta` records finds exactly one run whose active directory
+  is vintage_2023 or vintage_2024: the SPP keeper `hydro5_spp_floor_span`. It arms none of the three
+  consumers (`coal_committed_takeorpay_regulated`, `coal_prb_committed_split`,
+  `miso_coal_night_floor`).
+* Confirmed directly: SPP fleet-only rebuilds with and without the file give identical digests
+  (2023 `ee3a845e…`, 2024 `9ad746e3…`). **Inert for every committed keeper.**
+
+**NWPP census re-run with the intake** (`results/calibration/_nwpp51_vintage_census_repaired.json`):
+
+* Colstrip no longer moves.
+* **Zero offer-price (mc) changes in any year.** The fuel switch and the §1 nameplate edits are the
+  whole change.
+* 2025 is byte-identical (`428020c25d1a…`).
+* The arm is therefore exactly the pre-registered `repaired` variant. `_nwpp51_gates.py` runs at its
+  default `--variant repaired`, unchanged.
+
+**Legs:** rule 36, one single-year shard each for 2023, 2024 and 2025. Each runs
+`replay_keeper.py results/calibration/nwpp49_ror_span --out-dir results/calibration/nwpp51_vint_<y>
+--years <y> --set eia860_vintage_tracks_solve_year=true`, pinned to the full SHA of the commit that
+carries this addendum and the intake.

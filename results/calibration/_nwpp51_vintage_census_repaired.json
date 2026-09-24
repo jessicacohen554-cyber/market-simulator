@@ -1,0 +1,2618 @@
+[
+ {
+  "year": 2023,
+  "n_units_off": 646,
+  "n_units_on": 629,
+  "digest_off": "1099378eacbaf0840940ce6b04504f7ceef082b3f0b8835e83d66e0596a95d5a",
+  "digest_on": "7e413d189a94a9b163071591b7cb9180b548c3f8fd082a141a6091e28430edba",
+  "byte_identical": false,
+  "n_added": 6,
+  "n_removed": 23,
+  "n_changed": 42,
+  "by_class": [
+   {
+    "klass": "CC_CHP",
+    "mw_off": 1217.645,
+    "avail_off": 7.8553,
+    "mw_on": 1221.025,
+    "avail_on": 7.8825,
+    "d_mw": 3.38,
+    "d_avail_twh": 0.0272
+   },
+   {
+    "klass": "CC_REGULAR",
+    "mw_off": 11751.12,
+    "avail_off": 78.3466,
+    "mw_on": 11794.3,
+    "avail_on": 78.6432,
+    "d_mw": 43.18,
+    "d_avail_twh": 0.2966
+   },
+   {
+    "klass": "COAL",
+    "mw_off": 8103.575,
+    "avail_off": 55.9733,
+    "mw_on": 9427.575,
+    "avail_on": 64.2933,
+    "d_mw": 1324.0,
+    "d_avail_twh": 8.3201
+   },
+   {
+    "klass": "CT_CHP",
+    "mw_off": 118.4681,
+    "avail_off": 0.8759,
+    "mw_on": 107.6071,
+    "avail_on": 0.8317,
+    "d_mw": -10.861,
+    "d_avail_twh": -0.0442
+   },
+   {
+    "klass": "CT_PEAKER",
+    "mw_off": 3626.882,
+    "avail_off": 22.4081,
+    "mw_on": 3082.238,
+    "avail_on": 22.9327,
+    "d_mw": -544.644,
+    "d_avail_twh": 0.5246
+   },
+   {
+    "klass": "ST_CHP",
+    "mw_off": 5.2146,
+    "avail_off": 0.0368,
+    "mw_on": 4.6164,
+    "avail_on": 0.037,
+    "d_mw": -0.5982,
+    "d_avail_twh": 0.0002
+   },
+   {
+    "klass": "ST_GAS",
+    "mw_off": 2142.5,
+    "avail_off": 13.3878,
+    "mw_on": 818.5,
+    "avail_on": 3.9585,
+    "d_mw": -1324.0,
+    "d_avail_twh": -9.4294
+   },
+   {
+    "klass": "oil",
+    "mw_off": 75.0,
+    "avail_off": 0.5755,
+    "mw_on": 73.0,
+    "avail_on": 0.5755,
+    "d_mw": -2.0,
+    "d_avail_twh": 0.0
+   }
+  ],
+  "by_plant": [
+   {
+    "plant": 7028,
+    "off": {
+     "CT_CHP": 15.86
+    },
+    "on": {
+     "CT_CHP": 10.985
+    },
+    "off_units": [
+     "CT_CHP_NWPP-EAST_p7028_committed",
+     "CT_CHP_NWPP-EAST_p7028_econlo",
+     "CT_CHP_NWPP-EAST_p7028_econhi",
+     "CT_CHP_NWPP-EAST_p7028_peak"
+    ],
+    "on_units": [
+     "CT_CHP_NWPP-EAST_p7028_committed",
+     "CT_CHP_NWPP-EAST_p7028_econlo",
+     "CT_CHP_NWPP-EAST_p7028_econhi",
+     "CT_CHP_NWPP-EAST_p7028_peak"
+    ],
+    "on_mc_by_unit": {
+     "CT_CHP_NWPP-EAST_p7028_committed": 91.442,
+     "CT_CHP_NWPP-EAST_p7028_econlo": 91.442,
+     "CT_CHP_NWPP-EAST_p7028_econhi": 91.442,
+     "CT_CHP_NWPP-EAST_p7028_peak": 91.442
+    },
+    "on_avail_twh_by_unit": {
+     "CT_CHP_NWPP-EAST_p7028_committed": 0.0392,
+     "CT_CHP_NWPP-EAST_p7028_econlo": 0.0183,
+     "CT_CHP_NWPP-EAST_p7028_econhi": 0.0183,
+     "CT_CHP_NWPP-EAST_p7028_peak": 0.0091
+    },
+    "avail_twh_off": 0.0879,
+    "avail_twh_on": 0.0849
+   },
+   {
+    "plant": 7111,
+    "off": {
+     "CT_PEAKER": 17.5
+    },
+    "on": {
+     "CT_PEAKER": 16.7
+    },
+    "off_units": [
+     "CT_PEAKER_NWPP-EAST_p7111_econlo",
+     "CT_PEAKER_NWPP-EAST_p7111_econhi",
+     "CT_PEAKER_NWPP-EAST_p7111_peak"
+    ],
+    "on_units": [
+     "CT_PEAKER_NWPP-EAST_p7111_econlo",
+     "CT_PEAKER_NWPP-EAST_p7111_econhi",
+     "CT_PEAKER_NWPP-EAST_p7111_peak"
+    ],
+    "on_mc_by_unit": {
+     "CT_PEAKER_NWPP-EAST_p7111_econlo": 92.208,
+     "CT_PEAKER_NWPP-EAST_p7111_econhi": 92.208,
+     "CT_PEAKER_NWPP-EAST_p7111_peak": 92.208
+    },
+    "on_avail_twh_by_unit": {
+     "CT_PEAKER_NWPP-EAST_p7111_econlo": 0.0608,
+     "CT_PEAKER_NWPP-EAST_p7111_econhi": 0.0548,
+     "CT_PEAKER_NWPP-EAST_p7111_peak": 0.0087
+    },
+    "avail_twh_off": 0.1138,
+    "avail_twh_on": 0.1243
+   },
+   {
+    "plant": 7408,
+    "off": {
+     "CT_PEAKER": 4.836
+    },
+    "on": {
+     "CT_PEAKER": 9.2
+    },
+    "off_units": [
+     "CT_PEAKER_NWPP-EAST_p7408_econlo",
+     "CT_PEAKER_NWPP-EAST_p7408_econhi"
+    ],
+    "on_units": [
+     "CT_PEAKER_NWPP-EAST_p7408_econlo",
+     "CT_PEAKER_NWPP-EAST_p7408_econhi",
+     "CT_PEAKER_NWPP-EAST_p7408_peak"
+    ],
+    "on_mc_by_unit": {
+     "CT_PEAKER_NWPP-EAST_p7408_econlo": 94.603,
+     "CT_PEAKER_NWPP-EAST_p7408_econhi": 94.603,
+     "CT_PEAKER_NWPP-EAST_p7408_peak": 94.603
+    },
+    "on_avail_twh_by_unit": {
+     "CT_PEAKER_NWPP-EAST_p7408_econlo": 0.0335,
+     "CT_PEAKER_NWPP-EAST_p7408_econhi": 0.0302,
+     "CT_PEAKER_NWPP-EAST_p7408_peak": 0.0048
+    },
+    "avail_twh_off": 0.036,
+    "avail_twh_on": 0.0685
+   },
+   {
+    "plant": 7605,
+    "off": {
+     "CC_REGULAR": 230.0
+    },
+    "on": {
+     "CC_REGULAR": 220.0
+    },
+    "off_units": [
+     "CC_REGULAR_NWPP-NW_p7605_committed",
+     "CC_REGULAR_NWPP-NW_p7605_econlo",
+     "CC_REGULAR_NWPP-NW_p7605_econhi"
+    ],
+    "on_units": [
+     "CC_REGULAR_NWPP-NW_p7605_committed",
+     "CC_REGULAR_NWPP-NW_p7605_econlo",
+     "CC_REGULAR_NWPP-NW_p7605_econhi"
+    ],
+    "on_mc_by_unit": {
+     "CC_REGULAR_NWPP-NW_p7605_committed": 38.179,
+     "CC_REGULAR_NWPP-NW_p7605_econlo": 38.179,
+     "CC_REGULAR_NWPP-NW_p7605_econhi": 38.179
+    },
+    "on_avail_twh_by_unit": {
+     "CC_REGULAR_NWPP-NW_p7605_committed": 1.0759,
+     "CC_REGULAR_NWPP-NW_p7605_econlo": 0.2306,
+     "CC_REGULAR_NWPP-NW_p7605_econhi": 0.2306
+    },
+    "avail_twh_off": 1.6069,
+    "avail_twh_on": 1.537
+   },
+   {
+    "plant": 7953,
+    "off": {
+     "CT_PEAKER": 227.34
+    },
+    "on": {
+     "CT_PEAKER": 287.5
+    },
+    "off_units": [
+     "CT_PEAKER_NWPP-INLAND_p7953_committed",
+     "CT_PEAKER_NWPP-INLAND_p7953_econlo",
+     "CT_PEAKER_NWPP-INLAND_p7953_econhi",
+     "CT_PEAKER_NWPP-INLAND_p7953_peak"
+    ],
+    "on_units": [
+     "CT_PEAKER_NWPP-INLAND_p7953_committed",
+     "CT_PEAKER_NWPP-INLAND_p7953_econlo",
+     "CT_PEAKER_NWPP-INLAND_p7953_econhi",
+     "CT_PEAKER_NWPP-INLAND_p7953_peak"
+    ],
+    "on_mc_by_unit": {
+     "CT_PEAKER_NWPP-INLAND_p7953_committed": 67.586,
+     "CT_PEAKER_NWPP-INLAND_p7953_econlo": 67.586,
+     "CT_PEAKER_NWPP-INLAND_p7953_econhi": 67.586,
+     "CT_PEAKER_NWPP-INLAND_p7953_peak": 67.586
+    },
+    "on_avail_twh_by_unit": {
+     "CT_PEAKER_NWPP-INLAND_p7953_committed": 0.9027,
+     "CT_PEAKER_NWPP-INLAND_p7953_econlo": 0.5716,
+     "CT_PEAKER_NWPP-INLAND_p7953_econhi": 0.5151,
+     "CT_PEAKER_NWPP-INLAND_p7953_peak": 0.1497
+    },
+    "avail_twh_off": 1.6915,
+    "avail_twh_on": 2.1391
+   },
+   {
+    "plant": 8066,
+    "off": {
+     "COAL": 1049.0,
+     "ST_GAS": 1070.0
+    },
+    "on": {
+     "COAL": 2119.0
+    },
+    "off_units": [
+     "ST_GAS_NWPP-EAST_p8066_committed",
+     "ST_GAS_NWPP-EAST_p8066_econlo",
+     "ST_GAS_NWPP-EAST_p8066_econhi",
+     "ST_GAS_NWPP-EAST_p8066_peak",
+     "COAL_NWPP-EAST_p8066_mustrun",
+     "COAL_NWPP-EAST_p8066_committed",
+     "COAL_NWPP-EAST_p8066_econlo",
+     "COAL_NWPP-EAST_p8066_econhi",
+     "COAL_NWPP-EAST_p8066_peak"
+    ],
+    "on_units": [
+     "COAL_NWPP-EAST_p8066_mustrun",
+     "COAL_NWPP-EAST_p8066_committed",
+     "COAL_NWPP-EAST_p8066_econlo",
+     "COAL_NWPP-EAST_p8066_econhi",
+     "COAL_NWPP-EAST_p8066_peak"
+    ],
+    "on_mc_by_unit": {
+     "COAL_NWPP-EAST_p8066_mustrun": 4.5,
+     "COAL_NWPP-EAST_p8066_committed": 4.5,
+     "COAL_NWPP-EAST_p8066_econlo": 42.622,
+     "COAL_NWPP-EAST_p8066_econhi": 42.622,
+     "COAL_NWPP-EAST_p8066_peak": 42.622
+    },
+    "on_avail_twh_by_unit": {
+     "COAL_NWPP-EAST_p8066_mustrun": 6.5206,
+     "COAL_NWPP-EAST_p8066_committed": 0.7245,
+     "COAL_NWPP-EAST_p8066_econlo": 3.8254,
+     "COAL_NWPP-EAST_p8066_econhi": 3.1299,
+     "COAL_NWPP-EAST_p8066_peak": 0.2898
+    },
+    "avail_twh_off": 14.7937,
+    "avail_twh_on": 14.4902
+   },
+   {
+    "plant": 8224,
+    "off": {
+     "COAL": 268.0,
+     "ST_GAS": 254.0
+    },
+    "on": {
+     "COAL": 522.0
+    },
+    "off_units": [
+     "ST_GAS_NWPP-SNV_p8224_committed",
+     "ST_GAS_NWPP-SNV_p8224_econlo",
+     "ST_GAS_NWPP-SNV_p8224_econhi",
+     "ST_GAS_NWPP-SNV_p8224_peak",
+     "COAL_NWPP-SNV_p8224_mustrun",
+     "COAL_NWPP-SNV_p8224_committed",
+     "COAL_NWPP-SNV_p8224_econlo",
+     "COAL_NWPP-SNV_p8224_econhi",
+     "COAL_NWPP-SNV_p8224_peak"
+    ],
+    "on_units": [
+     "COAL_NWPP-SNV_p8224_mustrun",
+     "COAL_NWPP-SNV_p8224_committed",
+     "COAL_NWPP-SNV_p8224_econlo",
+     "COAL_NWPP-SNV_p8224_econhi",
+     "COAL_NWPP-SNV_p8224_peak"
+    ],
+    "on_mc_by_unit": {
+     "COAL_NWPP-SNV_p8224_mustrun": 29.507,
+     "COAL_NWPP-SNV_p8224_committed": 29.507,
+     "COAL_NWPP-SNV_p8224_econlo": 61.476,
+     "COAL_NWPP-SNV_p8224_econhi": 61.476,
+     "COAL_NWPP-SNV_p8224_peak": 61.476
+    },
+    "on_avail_twh_by_unit": {
+     "COAL_NWPP-SNV_p8224_mustrun": 0.8391,
+     "COAL_NWPP-SNV_p8224_committed": 0.8391,
+     "COAL_NWPP-SNV_p8224_econlo": 0.1882,
+     "COAL_NWPP-SNV_p8224_econhi": 0.154,
+     "COAL_NWPP-SNV_p8224_peak": 0.0412
+    },
+    "avail_twh_off": 2.8674,
+    "avail_twh_on": 2.0616
+   },
+   {
+    "plant": 10504,
+    "off": {
+     "ST_CHP": 2.782
+    },
+    "on": {
+     "ST_CHP": 2.183
+    },
+    "off_units": [
+     "ST_CHP_NWPP-INLAND_p10504_committed"
+    ],
+    "on_units": [
+     "ST_CHP_NWPP-INLAND_p10504_committed"
+    ],
+    "on_mc_by_unit": {
+     "ST_CHP_NWPP-INLAND_p10504_committed": 32.025
+    },
+    "on_avail_twh_by_unit": {
+     "ST_CHP_NWPP-INLAND_p10504_committed": 0.0175
+    },
+    "avail_twh_off": 0.0173,
+    "avail_twh_on": 0.0175
+   },
+   {
+    "plant": 54374,
+    "off": {
+     "CT_CHP": 0.66
+    },
+    "on": {},
+    "off_units": [
+     "CT_CHP_NWPP-EAST_p54374_committed"
+    ],
+    "on_units": [],
+    "on_mc_by_unit": {},
+    "on_avail_twh_by_unit": {},
+    "avail_twh_off": 0.0,
+    "avail_twh_on": 0.0
+   },
+   {
+    "plant": 55179,
+    "off": {
+     "CC_REGULAR": 210.0
+    },
+    "on": {
+     "CC_REGULAR": 248.0
+    },
+    "off_units": [
+     "CC_REGULAR_NWPP-INLAND_p55179_committed",
+     "CC_REGULAR_NWPP-INLAND_p55179_peak"
+    ],
+    "on_units": [
+     "CC_REGULAR_NWPP-INLAND_p55179_committed",
+     "CC_REGULAR_NWPP-INLAND_p55179_econlo",
+     "CC_REGULAR_NWPP-INLAND_p55179_econhi",
+     "CC_REGULAR_NWPP-INLAND_p55179_peak"
+    ],
+    "on_mc_by_unit": {
+     "CC_REGULAR_NWPP-INLAND_p55179_committed": 34.099,
+     "CC_REGULAR_NWPP-INLAND_p55179_econlo": 34.099,
+     "CC_REGULAR_NWPP-INLAND_p55179_econhi": 34.099,
+     "CC_REGULAR_NWPP-INLAND_p55179_peak": 34.099
+    },
+    "on_avail_twh_by_unit": {
+     "CC_REGULAR_NWPP-INLAND_p55179_committed": 1.2953,
+     "CC_REGULAR_NWPP-INLAND_p55179_econlo": 0.1138,
+     "CC_REGULAR_NWPP-INLAND_p55179_econhi": 0.1138,
+     "CC_REGULAR_NWPP-INLAND_p55179_peak": 0.3275
+    },
+    "avail_twh_off": 1.5669,
+    "avail_twh_on": 1.8504
+   },
+   {
+    "plant": 55733,
+    "off": {
+     "CT_PEAKER": 185.12
+    },
+    "on": {
+     "CT_PEAKER": 195.1
+    },
+    "off_units": [
+     "CT_PEAKER_NWPP-INLAND_p55733_committed",
+     "CT_PEAKER_NWPP-INLAND_p55733_econlo",
+     "CT_PEAKER_NWPP-INLAND_p55733_econhi",
+     "CT_PEAKER_NWPP-INLAND_p55733_peak"
+    ],
+    "on_units": [
+     "CT_PEAKER_NWPP-INLAND_p55733_committed",
+     "CT_PEAKER_NWPP-INLAND_p55733_econlo",
+     "CT_PEAKER_NWPP-INLAND_p55733_econhi",
+     "CT_PEAKER_NWPP-INLAND_p55733_peak"
+    ],
+    "on_mc_by_unit": {
+     "CT_PEAKER_NWPP-INLAND_p55733_committed": 50.428,
+     "CT_PEAKER_NWPP-INLAND_p55733_econlo": 50.428,
+     "CT_PEAKER_NWPP-INLAND_p55733_econhi": 50.428,
+     "CT_PEAKER_NWPP-INLAND_p55733_peak": 50.428
+    },
+    "on_avail_twh_by_unit": {
+     "CT_PEAKER_NWPP-INLAND_p55733_committed": 0.9014,
+     "CT_PEAKER_NWPP-INLAND_p55733_econlo": 0.2359,
+     "CT_PEAKER_NWPP-INLAND_p55733_econhi": 0.2126,
+     "CT_PEAKER_NWPP-INLAND_p55733_peak": 0.1016
+    },
+    "avail_twh_off": 1.3773,
+    "avail_twh_on": 1.4516
+   },
+   {
+    "plant": 55841,
+    "off": {
+     "CC_REGULAR": 620.0,
+     "CT_PEAKER": 444.0
+    },
+    "on": {
+     "CC_REGULAR": 620.0
+    },
+    "off_units": [
+     "CC_REGULAR_NWPP-SNV_p55841_committed",
+     "CC_REGULAR_NWPP-SNV_p55841_econlo",
+     "CC_REGULAR_NWPP-SNV_p55841_econhi",
+     "CC_REGULAR_NWPP-SNV_p55841_peak",
+     "CT_PEAKER_NWPP-SNV_p55841_econlo",
+     "CT_PEAKER_NWPP-SNV_p55841_econhi",
+     "CT_PEAKER_NWPP-SNV_p55841_peak"
+    ],
+    "on_units": [
+     "CC_REGULAR_NWPP-SNV_p55841_committed",
+     "CC_REGULAR_NWPP-SNV_p55841_econlo",
+     "CC_REGULAR_NWPP-SNV_p55841_econhi",
+     "CC_REGULAR_NWPP-SNV_p55841_peak"
+    ],
+    "on_mc_by_unit": {
+     "CC_REGULAR_NWPP-SNV_p55841_committed": 61.603,
+     "CC_REGULAR_NWPP-SNV_p55841_econlo": 61.603,
+     "CC_REGULAR_NWPP-SNV_p55841_econhi": 61.603,
+     "CC_REGULAR_NWPP-SNV_p55841_peak": 61.603
+    },
+    "on_avail_twh_by_unit": {
+     "CC_REGULAR_NWPP-SNV_p55841_committed": 1.2848,
+     "CC_REGULAR_NWPP-SNV_p55841_econlo": 1.4606,
+     "CC_REGULAR_NWPP-SNV_p55841_econhi": 1.4606,
+     "CC_REGULAR_NWPP-SNV_p55841_peak": 0.302
+    },
+    "avail_twh_off": 4.508,
+    "avail_twh_on": 4.508
+   },
+   {
+    "plant": 56163,
+    "off": {
+     "CT_CHP": 1.77
+    },
+    "on": {},
+    "off_units": [
+     "CT_CHP_NWPP-EAST_p56163_committed"
+    ],
+    "on_units": [],
+    "on_mc_by_unit": {},
+    "on_avail_twh_by_unit": {},
+    "avail_twh_off": 0.0137,
+    "avail_twh_on": 0.0
+   },
+   {
+    "plant": 56312,
+    "off": {
+     "CT_CHP": 30.15
+    },
+    "on": {
+     "CT_CHP": 29.61
+    },
+    "off_units": [
+     "CT_CHP_NWPP-EAST_p56312_committed",
+     "CT_CHP_NWPP-EAST_p56312_econlo",
+     "CT_CHP_NWPP-EAST_p56312_econhi"
+    ],
+    "on_units": [
+     "CT_CHP_NWPP-EAST_p56312_committed",
+     "CT_CHP_NWPP-EAST_p56312_econlo",
+     "CT_CHP_NWPP-EAST_p56312_econhi"
+    ],
+    "on_mc_by_unit": {
+     "CT_CHP_NWPP-EAST_p56312_committed": 52.115,
+     "CT_CHP_NWPP-EAST_p56312_econlo": 52.115,
+     "CT_CHP_NWPP-EAST_p56312_econhi": 52.115
+    },
+    "on_avail_twh_by_unit": {
+     "CT_CHP_NWPP-EAST_p56312_committed": 0.2117,
+     "CT_CHP_NWPP-EAST_p56312_econlo": 0.0086,
+     "CT_CHP_NWPP-EAST_p56312_econhi": 0.0086
+    },
+    "avail_twh_off": 0.233,
+    "avail_twh_on": 0.2289
+   },
+   {
+    "plant": 56500,
+    "off": {
+     "CT_PEAKER": 118.7
+    },
+    "on": {
+     "CT_PEAKER": 113.3
+    },
+    "off_units": [
+     "CT_PEAKER_NWPP-SNV_p56500_econlo",
+     "CT_PEAKER_NWPP-SNV_p56500_econhi",
+     "CT_PEAKER_NWPP-SNV_p56500_peak"
+    ],
+    "on_units": [
+     "CT_PEAKER_NWPP-SNV_p56500_econlo",
+     "CT_PEAKER_NWPP-SNV_p56500_econhi",
+     "CT_PEAKER_NWPP-SNV_p56500_peak"
+    ],
+    "on_mc_by_unit": {
+     "CT_PEAKER_NWPP-SNV_p56500_econlo": 69.17,
+     "CT_PEAKER_NWPP-SNV_p56500_econhi": 69.17,
+     "CT_PEAKER_NWPP-SNV_p56500_peak": 69.17
+    },
+    "on_avail_twh_by_unit": {
+     "CT_PEAKER_NWPP-SNV_p56500_econlo": 0.4124,
+     "CT_PEAKER_NWPP-SNV_p56500_econhi": 0.3716,
+     "CT_PEAKER_NWPP-SNV_p56500_peak": 0.059
+    },
+    "avail_twh_off": 0.8832,
+    "avail_twh_on": 0.843
+   },
+   {
+    "plant": 57028,
+    "off": {
+     "CC_REGULAR": 303.32
+    },
+    "on": {
+     "CC_REGULAR": 318.5
+    },
+    "off_units": [
+     "CC_REGULAR_NWPP-INLAND_p57028_committed",
+     "CC_REGULAR_NWPP-INLAND_p57028_econlo",
+     "CC_REGULAR_NWPP-INLAND_p57028_econhi",
+     "CC_REGULAR_NWPP-INLAND_p57028_peak"
+    ],
+    "on_units": [
+     "CC_REGULAR_NWPP-INLAND_p57028_committed",
+     "CC_REGULAR_NWPP-INLAND_p57028_econlo",
+     "CC_REGULAR_NWPP-INLAND_p57028_econhi"
+    ],
+    "on_mc_by_unit": {
+     "CC_REGULAR_NWPP-INLAND_p57028_committed": 38.664,
+     "CC_REGULAR_NWPP-INLAND_p57028_econlo": 38.664,
+     "CC_REGULAR_NWPP-INLAND_p57028_econhi": 38.664
+    },
+    "on_avail_twh_by_unit": {
+     "CC_REGULAR_NWPP-INLAND_p57028_committed": 1.1767,
+     "CC_REGULAR_NWPP-INLAND_p57028_econlo": 0.282,
+     "CC_REGULAR_NWPP-INLAND_p57028_econhi": 0.282
+    },
+    "avail_twh_off": 1.6578,
+    "avail_twh_on": 1.7407
+   },
+   {
+    "plant": 57653,
+    "off": {
+     "CT_CHP": 3.016
+    },
+    "on": {
+     "CC_CHP": 3.38
+    },
+    "off_units": [
+     "CT_CHP_NWPP-NW_p57653_committed",
+     "CT_CHP_NWPP-NW_p57653_econlo",
+     "CT_CHP_NWPP-NW_p57653_econhi"
+    ],
+    "on_units": [
+     "CC_CHP_NWPP-NW_p57653_committed",
+     "CC_CHP_NWPP-NW_p57653_econlo",
+     "CC_CHP_NWPP-NW_p57653_econhi"
+    ],
+    "on_mc_by_unit": {
+     "CC_CHP_NWPP-NW_p57653_committed": 21.44,
+     "CC_CHP_NWPP-NW_p57653_econlo": 21.44,
+     "CC_CHP_NWPP-NW_p57653_econhi": 21.44
+    },
+    "on_avail_twh_by_unit": {
+     "CC_CHP_NWPP-NW_p57653_committed": 0.0188,
+     "CC_CHP_NWPP-NW_p57653_econlo": 0.0042,
+     "CC_CHP_NWPP-NW_p57653_econhi": 0.0042
+    },
+    "avail_twh_off": 0.0233,
+    "avail_twh_on": 0.0272
+   },
+   {
+    "plant": 67766,
+    "off": {
+     "CT_PEAKER": 165.6
+    },
+    "on": {},
+    "off_units": [
+     "CT_PEAKER_NWPP-INLAND_p67766_econlo",
+     "CT_PEAKER_NWPP-INLAND_p67766_econhi",
+     "CT_PEAKER_NWPP-INLAND_p67766_peak"
+    ],
+    "on_units": [],
+    "on_mc_by_unit": {},
+    "on_avail_twh_by_unit": {},
+    "avail_twh_off": 0.0,
+    "avail_twh_on": 0.0
+   },
+   {
+    "plant": 69880,
+    "off": {
+     "CT_PEAKER": 3.348,
+     "oil": 2.0
+    },
+    "on": {},
+    "off_units": [
+     "69880_STG",
+     "CT_PEAKER_NWPP-INLAND_p69880_econlo",
+     "CT_PEAKER_NWPP-INLAND_p69880_econhi"
+    ],
+    "on_units": [],
+    "on_mc_by_unit": {},
+    "on_avail_twh_by_unit": {},
+    "avail_twh_off": 0.0,
+    "avail_twh_on": 0.0
+   }
+  ],
+  "changed_units": [
+   {
+    "unit_id": "CC_REGULAR_NWPP-INLAND_p55179_committed",
+    "plant_off": 55179.0,
+    "klass_off": "CC_REGULAR",
+    "klass_on": "CC_REGULAR",
+    "pmax_off": 147.0,
+    "pmax_on": 173.6,
+    "mc_off": 34.0988,
+    "mc_on": 34.0988,
+    "avail_twh_off": 1.0968,
+    "avail_twh_on": 1.2953
+   },
+   {
+    "unit_id": "CC_REGULAR_NWPP-INLAND_p55179_peak",
+    "plant_off": 55179.0,
+    "klass_off": "CC_REGULAR",
+    "klass_on": "CC_REGULAR",
+    "pmax_off": 63.0,
+    "pmax_on": 43.896,
+    "mc_off": 34.0988,
+    "mc_on": 34.0988,
+    "avail_twh_off": 0.4701,
+    "avail_twh_on": 0.3275
+   },
+   {
+    "unit_id": "CC_REGULAR_NWPP-INLAND_p57028_committed",
+    "plant_off": 57028.0,
+    "klass_off": "CC_REGULAR",
+    "klass_on": "CC_REGULAR",
+    "pmax_off": 205.0443,
+    "pmax_on": 215.306,
+    "mc_off": 38.6636,
+    "mc_on": 38.6636,
+    "avail_twh_off": 1.1207,
+    "avail_twh_on": 1.1767
+   },
+   {
+    "unit_id": "CC_REGULAR_NWPP-INLAND_p57028_econhi",
+    "plant_off": 57028.0,
+    "klass_off": "CC_REGULAR",
+    "klass_on": "CC_REGULAR",
+    "pmax_off": 41.8582,
+    "pmax_on": 51.597,
+    "mc_off": 38.6636,
+    "mc_on": 38.6636,
+    "avail_twh_off": 0.2288,
+    "avail_twh_on": 0.282
+   },
+   {
+    "unit_id": "CC_REGULAR_NWPP-INLAND_p57028_econlo",
+    "plant_off": 57028.0,
+    "klass_off": "CC_REGULAR",
+    "klass_on": "CC_REGULAR",
+    "pmax_off": 41.8582,
+    "pmax_on": 51.597,
+    "mc_off": 38.6636,
+    "mc_on": 38.6636,
+    "avail_twh_off": 0.2288,
+    "avail_twh_on": 0.282
+   },
+   {
+    "unit_id": "CC_REGULAR_NWPP-NW_p7605_committed",
+    "plant_off": 7605.0,
+    "klass_off": "CC_REGULAR",
+    "klass_on": "CC_REGULAR",
+    "pmax_off": 161.0,
+    "pmax_on": 154.0,
+    "mc_off": 38.1789,
+    "mc_on": 38.1789,
+    "avail_twh_off": 1.1248,
+    "avail_twh_on": 1.0759
+   },
+   {
+    "unit_id": "CC_REGULAR_NWPP-NW_p7605_econhi",
+    "plant_off": 7605.0,
+    "klass_off": "CC_REGULAR",
+    "klass_on": "CC_REGULAR",
+    "pmax_off": 34.5,
+    "pmax_on": 33.0,
+    "mc_off": 38.1789,
+    "mc_on": 38.1789,
+    "avail_twh_off": 0.241,
+    "avail_twh_on": 0.2306
+   },
+   {
+    "unit_id": "CC_REGULAR_NWPP-NW_p7605_econlo",
+    "plant_off": 7605.0,
+    "klass_off": "CC_REGULAR",
+    "klass_on": "CC_REGULAR",
+    "pmax_off": 34.5,
+    "pmax_on": 33.0,
+    "mc_off": 38.1789,
+    "mc_on": 38.1789,
+    "avail_twh_off": 0.241,
+    "avail_twh_on": 0.2306
+   },
+   {
+    "unit_id": "COAL_NWPP-EAST_p8066_committed",
+    "plant_off": 8066.0,
+    "klass_off": "COAL",
+    "klass_on": "COAL",
+    "pmax_off": 52.45,
+    "pmax_on": 105.95,
+    "mc_off": 4.5,
+    "mc_on": 4.5,
+    "avail_twh_off": 0.3587,
+    "avail_twh_on": 0.7245
+   },
+   {
+    "unit_id": "COAL_NWPP-EAST_p8066_econhi",
+    "plant_off": 8066.0,
+    "klass_off": "COAL",
+    "klass_on": "COAL",
+    "pmax_off": 226.584,
+    "pmax_on": 457.704,
+    "mc_off": 42.6222,
+    "mc_on": 42.6222,
+    "avail_twh_off": 1.5494,
+    "avail_twh_on": 3.1299
+   },
+   {
+    "unit_id": "COAL_NWPP-EAST_p8066_econlo",
+    "plant_off": 8066.0,
+    "klass_off": "COAL",
+    "klass_on": "COAL",
+    "pmax_off": 276.936,
+    "pmax_on": 559.416,
+    "mc_off": 42.6222,
+    "mc_on": 42.6222,
+    "avail_twh_off": 1.8938,
+    "avail_twh_on": 3.8254
+   },
+   {
+    "unit_id": "COAL_NWPP-EAST_p8066_mustrun",
+    "plant_off": 8066.0,
+    "klass_off": "COAL",
+    "klass_on": "COAL",
+    "pmax_off": 472.05,
+    "pmax_on": 953.55,
+    "mc_off": 4.5,
+    "mc_on": 4.5,
+    "avail_twh_off": 3.228,
+    "avail_twh_on": 6.5206
+   },
+   {
+    "unit_id": "COAL_NWPP-EAST_p8066_peak",
+    "plant_off": 8066.0,
+    "klass_off": "COAL",
+    "klass_on": "COAL",
+    "pmax_off": 20.98,
+    "pmax_on": 42.38,
+    "mc_off": 42.6222,
+    "mc_on": 42.6222,
+    "avail_twh_off": 0.1435,
+    "avail_twh_on": 0.2898
+   },
+   {
+    "unit_id": "COAL_NWPP-SNV_p8224_committed",
+    "plant_off": 8224.0,
+    "klass_off": "COAL",
+    "klass_on": "COAL",
+    "pmax_off": 109.076,
+    "pmax_on": 212.454,
+    "mc_off": 29.5069,
+    "mc_on": 29.5069,
+    "avail_twh_off": 0.4308,
+    "avail_twh_on": 0.8391
+   },
+   {
+    "unit_id": "COAL_NWPP-SNV_p8224_econhi",
+    "plant_off": 8224.0,
+    "klass_off": "COAL",
+    "klass_on": "COAL",
+    "pmax_off": 20.0196,
+    "pmax_on": 38.9934,
+    "mc_off": 61.4763,
+    "mc_on": 61.4763,
+    "avail_twh_off": 0.0791,
+    "avail_twh_on": 0.154
+   },
+   {
+    "unit_id": "COAL_NWPP-SNV_p8224_econlo",
+    "plant_off": 8224.0,
+    "klass_off": "COAL",
+    "klass_on": "COAL",
+    "pmax_off": 24.4684,
+    "pmax_on": 47.6586,
+    "mc_off": 61.4763,
+    "mc_on": 61.4763,
+    "avail_twh_off": 0.0966,
+    "avail_twh_on": 0.1882
+   },
+   {
+    "unit_id": "COAL_NWPP-SNV_p8224_mustrun",
+    "plant_off": 8224.0,
+    "klass_off": "COAL",
+    "klass_on": "COAL",
+    "pmax_off": 109.076,
+    "pmax_on": 212.454,
+    "mc_off": 29.5069,
+    "mc_on": 29.5069,
+    "avail_twh_off": 0.4308,
+    "avail_twh_on": 0.8391
+   },
+   {
+    "unit_id": "COAL_NWPP-SNV_p8224_peak",
+    "plant_off": 8224.0,
+    "klass_off": "COAL",
+    "klass_on": "COAL",
+    "pmax_off": 5.36,
+    "pmax_on": 10.44,
+    "mc_off": 61.4763,
+    "mc_on": 61.4763,
+    "avail_twh_off": 0.0212,
+    "avail_twh_on": 0.0412
+   },
+   {
+    "unit_id": "CT_CHP_NWPP-EAST_p56312_committed",
+    "plant_off": 56312.0,
+    "klass_off": "CT_CHP",
+    "klass_on": "CT_CHP",
+    "pmax_off": 27.8888,
+    "pmax_on": 27.3892,
+    "mc_off": 52.115,
+    "mc_on": 52.115,
+    "avail_twh_off": 0.2156,
+    "avail_twh_on": 0.2117
+   },
+   {
+    "unit_id": "CT_CHP_NWPP-EAST_p56312_econhi",
+    "plant_off": 56312.0,
+    "klass_off": "CT_CHP",
+    "klass_on": "CT_CHP",
+    "pmax_off": 1.1306,
+    "pmax_on": 1.1104,
+    "mc_off": 52.115,
+    "mc_on": 52.115,
+    "avail_twh_off": 0.0087,
+    "avail_twh_on": 0.0086
+   },
+   {
+    "unit_id": "CT_CHP_NWPP-EAST_p56312_econlo",
+    "plant_off": 56312.0,
+    "klass_off": "CT_CHP",
+    "klass_on": "CT_CHP",
+    "pmax_off": 1.1306,
+    "pmax_on": 1.1104,
+    "mc_off": 52.115,
+    "mc_on": 52.115,
+    "avail_twh_off": 0.0087,
+    "avail_twh_on": 0.0086
+   },
+   {
+    "unit_id": "CT_CHP_NWPP-EAST_p7028_committed",
+    "plant_off": 7028.0,
+    "klass_off": "CT_CHP",
+    "klass_on": "CT_CHP",
+    "pmax_off": 7.32,
+    "pmax_on": 5.07,
+    "mc_off": 91.4416,
+    "mc_on": 91.4416,
+    "avail_twh_off": 0.0406,
+    "avail_twh_on": 0.0392
+   },
+   {
+    "unit_id": "CT_CHP_NWPP-EAST_p7028_econhi",
+    "plant_off": 7028.0,
+    "klass_off": "CT_CHP",
+    "klass_on": "CT_CHP",
+    "pmax_off": 3.416,
+    "pmax_on": 2.366,
+    "mc_off": 91.4416,
+    "mc_on": 91.4416,
+    "avail_twh_off": 0.0189,
+    "avail_twh_on": 0.0183
+   },
+   {
+    "unit_id": "CT_CHP_NWPP-EAST_p7028_econlo",
+    "plant_off": 7028.0,
+    "klass_off": "CT_CHP",
+    "klass_on": "CT_CHP",
+    "pmax_off": 3.416,
+    "pmax_on": 2.366,
+    "mc_off": 91.4416,
+    "mc_on": 91.4416,
+    "avail_twh_off": 0.0189,
+    "avail_twh_on": 0.0183
+   },
+   {
+    "unit_id": "CT_CHP_NWPP-EAST_p7028_peak",
+    "plant_off": 7028.0,
+    "klass_off": "CT_CHP",
+    "klass_on": "CT_CHP",
+    "pmax_off": 1.708,
+    "pmax_on": 1.183,
+    "mc_off": 91.4416,
+    "mc_on": 91.4416,
+    "avail_twh_off": 0.0095,
+    "avail_twh_on": 0.0091
+   },
+   {
+    "unit_id": "CT_PEAKER_NWPP-EAST_p7111_econhi",
+    "plant_off": 7111.0,
+    "klass_off": "CT_PEAKER",
+    "klass_on": "CT_PEAKER",
+    "pmax_off": 7.7143,
+    "pmax_on": 7.3617,
+    "mc_off": 92.2081,
+    "mc_on": 92.2081,
+    "avail_twh_off": 0.0502,
+    "avail_twh_on": 0.0548
+   },
+   {
+    "unit_id": "CT_PEAKER_NWPP-EAST_p7111_econlo",
+    "plant_off": 7111.0,
+    "klass_off": "CT_PEAKER",
+    "klass_on": "CT_PEAKER",
+    "pmax_off": 8.5606,
+    "pmax_on": 8.1693,
+    "mc_off": 92.2081,
+    "mc_on": 92.2081,
+    "avail_twh_off": 0.0557,
+    "avail_twh_on": 0.0608
+   },
+   {
+    "unit_id": "CT_PEAKER_NWPP-EAST_p7111_peak",
+    "plant_off": 7111.0,
+    "klass_off": "CT_PEAKER",
+    "klass_on": "CT_PEAKER",
+    "pmax_off": 1.225,
+    "pmax_on": 1.169,
+    "mc_off": 92.2081,
+    "mc_on": 92.2081,
+    "avail_twh_off": 0.008,
+    "avail_twh_on": 0.0087
+   },
+   {
+    "unit_id": "CT_PEAKER_NWPP-EAST_p7408_econhi",
+    "plant_off": 7408.0,
+    "klass_off": "CT_PEAKER",
+    "klass_on": "CT_PEAKER",
+    "pmax_off": 2.2923,
+    "pmax_on": 4.0555,
+    "mc_off": 94.6032,
+    "mc_on": 94.6032,
+    "avail_twh_off": 0.0171,
+    "avail_twh_on": 0.0302
+   },
+   {
+    "unit_id": "CT_PEAKER_NWPP-EAST_p7408_econlo",
+    "plant_off": 7408.0,
+    "klass_off": "CT_PEAKER",
+    "klass_on": "CT_PEAKER",
+    "pmax_off": 2.5437,
+    "pmax_on": 4.5005,
+    "mc_off": 94.6032,
+    "mc_on": 94.6032,
+    "avail_twh_off": 0.0189,
+    "avail_twh_on": 0.0335
+   },
+   {
+    "unit_id": "CT_PEAKER_NWPP-INLAND_p55733_committed",
+    "plant_off": 55733.0,
+    "klass_off": "CT_PEAKER",
+    "klass_on": "CT_PEAKER",
+    "pmax_off": 114.9595,
+    "pmax_on": 121.1571,
+    "mc_off": 50.4285,
+    "mc_on": 50.4285,
+    "avail_twh_off": 0.8553,
+    "avail_twh_on": 0.9014
+   },
+   {
+    "unit_id": "CT_PEAKER_NWPP-INLAND_p55733_econhi",
+    "plant_off": 55733.0,
+    "klass_off": "CT_PEAKER",
+    "klass_on": "CT_PEAKER",
+    "pmax_off": 27.1138,
+    "pmax_on": 28.5755,
+    "mc_off": 50.4285,
+    "mc_on": 50.4285,
+    "avail_twh_off": 0.2017,
+    "avail_twh_on": 0.2126
+   },
+   {
+    "unit_id": "CT_PEAKER_NWPP-INLAND_p55733_econlo",
+    "plant_off": 55733.0,
+    "klass_off": "CT_PEAKER",
+    "klass_on": "CT_PEAKER",
+    "pmax_off": 30.0883,
+    "pmax_on": 31.7104,
+    "mc_off": 50.4285,
+    "mc_on": 50.4285,
+    "avail_twh_off": 0.2239,
+    "avail_twh_on": 0.2359
+   },
+   {
+    "unit_id": "CT_PEAKER_NWPP-INLAND_p55733_peak",
+    "plant_off": 55733.0,
+    "klass_off": "CT_PEAKER",
+    "klass_on": "CT_PEAKER",
+    "pmax_off": 12.9584,
+    "pmax_on": 13.657,
+    "mc_off": 50.4285,
+    "mc_on": 50.4285,
+    "avail_twh_off": 0.0964,
+    "avail_twh_on": 0.1016
+   },
+   {
+    "unit_id": "CT_PEAKER_NWPP-INLAND_p7953_committed",
+    "plant_off": 7953.0,
+    "klass_off": "CT_PEAKER",
+    "klass_on": "CT_PEAKER",
+    "pmax_off": 95.9375,
+    "pmax_on": 121.325,
+    "mc_off": 67.5863,
+    "mc_on": 67.5863,
+    "avail_twh_off": 0.7138,
+    "avail_twh_on": 0.9027
+   },
+   {
+    "unit_id": "CT_PEAKER_NWPP-INLAND_p7953_econhi",
+    "plant_off": 7953.0,
+    "klass_off": "CT_PEAKER",
+    "klass_on": "CT_PEAKER",
+    "pmax_off": 54.7417,
+    "pmax_on": 69.2277,
+    "mc_off": 67.5863,
+    "mc_on": 67.5863,
+    "avail_twh_off": 0.4073,
+    "avail_twh_on": 0.5151
+   },
+   {
+    "unit_id": "CT_PEAKER_NWPP-INLAND_p7953_econlo",
+    "plant_off": 7953.0,
+    "klass_off": "CT_PEAKER",
+    "klass_on": "CT_PEAKER",
+    "pmax_off": 60.7471,
+    "pmax_on": 76.8223,
+    "mc_off": 67.5863,
+    "mc_on": 67.5863,
+    "avail_twh_off": 0.452,
+    "avail_twh_on": 0.5716
+   },
+   {
+    "unit_id": "CT_PEAKER_NWPP-INLAND_p7953_peak",
+    "plant_off": 7953.0,
+    "klass_off": "CT_PEAKER",
+    "klass_on": "CT_PEAKER",
+    "pmax_off": 15.9138,
+    "pmax_on": 20.125,
+    "mc_off": 67.5863,
+    "mc_on": 67.5863,
+    "avail_twh_off": 0.1184,
+    "avail_twh_on": 0.1497
+   },
+   {
+    "unit_id": "CT_PEAKER_NWPP-SNV_p56500_econhi",
+    "plant_off": 56500.0,
+    "klass_off": "CT_PEAKER",
+    "klass_on": "CT_PEAKER",
+    "pmax_off": 52.3253,
+    "pmax_on": 49.9449,
+    "mc_off": 69.1698,
+    "mc_on": 69.1698,
+    "avail_twh_off": 0.3893,
+    "avail_twh_on": 0.3716
+   },
+   {
+    "unit_id": "CT_PEAKER_NWPP-SNV_p56500_econlo",
+    "plant_off": 56500.0,
+    "klass_off": "CT_PEAKER",
+    "klass_on": "CT_PEAKER",
+    "pmax_off": 58.0657,
+    "pmax_on": 55.4241,
+    "mc_off": 69.1698,
+    "mc_on": 69.1698,
+    "avail_twh_off": 0.432,
+    "avail_twh_on": 0.4124
+   },
+   {
+    "unit_id": "CT_PEAKER_NWPP-SNV_p56500_peak",
+    "plant_off": 56500.0,
+    "klass_off": "CT_PEAKER",
+    "klass_on": "CT_PEAKER",
+    "pmax_off": 8.309,
+    "pmax_on": 7.931,
+    "mc_off": 69.1698,
+    "mc_on": 69.1698,
+    "avail_twh_off": 0.0618,
+    "avail_twh_on": 0.059
+   },
+   {
+    "unit_id": "ST_CHP_NWPP-INLAND_p10504_committed",
+    "plant_off": 10504.0,
+    "klass_off": "ST_CHP",
+    "klass_on": "ST_CHP",
+    "pmax_off": 2.7816,
+    "pmax_on": 2.1834,
+    "mc_off": 32.0252,
+    "mc_on": 32.0252,
+    "avail_twh_off": 0.0173,
+    "avail_twh_on": 0.0175
+   }
+  ],
+  "attr_diff": {
+   "CC_REGULAR_NWPP-INLAND_p55179_committed": {
+    "bin_nameplate_mw": [
+     "210.0",
+     "248.0"
+    ],
+    "emission_rate_co2": [
+     "0.40502725404299994",
+     "0.405027254043"
+    ],
+    "heat_rate": [
+     "7.105741298999999",
+     "7.105741299"
+    ],
+    "pmax_mw": [
+     "147.0",
+     "173.6"
+    ]
+   },
+   "CC_REGULAR_NWPP-INLAND_p55179_peak": {
+    "emission_rate_co2": [
+     "0.40502725404299994",
+     "0.405027254043"
+    ],
+    "heat_rate": [
+     "7.105741298999999",
+     "7.105741299"
+    ],
+    "pmax_mw": [
+     "63.0",
+     "43.895999999999994"
+    ]
+   },
+   "CC_REGULAR_NWPP-INLAND_p57028_committed": {
+    "bin_nameplate_mw": [
+     "303.32",
+     "318.5"
+    ],
+    "pmax_mw": [
+     "205.04431999999997",
+     "215.30599999999998"
+    ]
+   },
+   "CC_REGULAR_NWPP-INLAND_p57028_econhi": {
+    "pmax_mw": [
+     "41.85816000000001",
+     "51.59700000000001"
+    ]
+   },
+   "CC_REGULAR_NWPP-INLAND_p57028_econlo": {
+    "pmax_mw": [
+     "41.85816000000001",
+     "51.59700000000001"
+    ]
+   },
+   "CC_REGULAR_NWPP-NW_p7605_committed": {
+    "bin_nameplate_mw": [
+     "230.0",
+     "220.0"
+    ],
+    "pmax_mw": [
+     "161.0",
+     "154.0"
+    ]
+   },
+   "CC_REGULAR_NWPP-NW_p7605_econhi": {
+    "pmax_mw": [
+     "34.5",
+     "33.0"
+    ]
+   },
+   "CC_REGULAR_NWPP-NW_p7605_econlo": {
+    "pmax_mw": [
+     "34.5",
+     "33.0"
+    ]
+   },
+   "COAL_NWPP-EAST_p8066_committed": {
+    "bin_nameplate_mw": [
+     "1049.0",
+     "2119.0"
+    ],
+    "emission_rate_co2": [
+     "1.11511",
+     "1.1151099999999998"
+    ],
+    "heat_rate": [
+     "11.1511",
+     "11.151099999999998"
+    ],
+    "pmax_mw": [
+     "52.45",
+     "105.95"
+    ]
+   },
+   "COAL_NWPP-EAST_p8066_econhi": {
+    "emission_rate_co2": [
+     "1.11511",
+     "1.1151099999999998"
+    ],
+    "heat_rate": [
+     "11.1511",
+     "11.151099999999998"
+    ],
+    "pmax_mw": [
+     "226.58399999999997",
+     "457.70399999999995"
+    ]
+   },
+   "COAL_NWPP-EAST_p8066_econlo": {
+    "emission_rate_co2": [
+     "1.11511",
+     "1.1151099999999998"
+    ],
+    "heat_rate": [
+     "11.1511",
+     "11.151099999999998"
+    ],
+    "pmax_mw": [
+     "276.93600000000004",
+     "559.416"
+    ]
+   },
+   "COAL_NWPP-EAST_p8066_mustrun": {
+    "emission_rate_co2": [
+     "1.11511",
+     "1.1151099999999998"
+    ],
+    "heat_rate": [
+     "11.1511",
+     "11.151099999999998"
+    ],
+    "pmax_mw": [
+     "472.05",
+     "953.55"
+    ]
+   },
+   "COAL_NWPP-EAST_p8066_peak": {
+    "emission_rate_co2": [
+     "1.11511",
+     "1.1151099999999998"
+    ],
+    "heat_rate": [
+     "11.1511",
+     "11.151099999999998"
+    ],
+    "pmax_mw": [
+     "20.98",
+     "42.38"
+    ]
+   },
+   "COAL_NWPP-SNV_p8224_committed": {
+    "bin_nameplate_mw": [
+     "268.0",
+     "522.0"
+    ],
+    "pmax_mw": [
+     "109.07600000000001",
+     "212.45400000000004"
+    ]
+   },
+   "COAL_NWPP-SNV_p8224_econhi": {
+    "pmax_mw": [
+     "20.019599999999986",
+     "38.99339999999998"
+    ]
+   },
+   "COAL_NWPP-SNV_p8224_econlo": {
+    "pmax_mw": [
+     "24.468399999999985",
+     "47.65859999999998"
+    ]
+   },
+   "COAL_NWPP-SNV_p8224_mustrun": {
+    "pmax_mw": [
+     "109.07600000000001",
+     "212.454"
+    ]
+   },
+   "COAL_NWPP-SNV_p8224_peak": {
+    "pmax_mw": [
+     "5.359999999999999",
+     "10.44"
+    ]
+   },
+   "CT_CHP_NWPP-EAST_p56312_committed": {
+    "bin_nameplate_mw": [
+     "100.5",
+     "98.69999999999999"
+    ],
+    "emission_rate_co2": [
+     "0.3497912981370001",
+     "0.34979129813700005"
+    ],
+    "heat_rate": [
+     "6.1366894410000015",
+     "6.136689441000001"
+    ],
+    "pmax_mw": [
+     "27.888750000000005",
+     "27.38925"
+    ]
+   },
+   "CT_CHP_NWPP-EAST_p56312_econhi": {
+    "chp_grid_pmin_mw": [
+     "1.1306250000000002",
+     "1.1103750000000001"
+    ],
+    "emission_rate_co2": [
+     "0.3497912981370001",
+     "0.34979129813700005"
+    ],
+    "heat_rate": [
+     "6.1366894410000015",
+     "6.136689441000001"
+    ],
+    "pmax_mw": [
+     "1.1306250000000002",
+     "1.1103750000000001"
+    ]
+   },
+   "CT_CHP_NWPP-EAST_p56312_econlo": {
+    "chp_grid_pmin_mw": [
+     "1.1306250000000002",
+     "1.1103750000000001"
+    ],
+    "emission_rate_co2": [
+     "0.3497912981370001",
+     "0.34979129813700005"
+    ],
+    "heat_rate": [
+     "6.1366894410000015",
+     "6.136689441000001"
+    ],
+    "pmax_mw": [
+     "1.1306250000000002",
+     "1.1103750000000001"
+    ]
+   },
+   "CT_CHP_NWPP-EAST_p7028_committed": {
+    "bin_nameplate_mw": [
+     "24.4",
+     "16.9"
+    ],
+    "pmax_mw": [
+     "7.319999999999999",
+     "5.069999999999999"
+    ]
+   },
+   "CT_CHP_NWPP-EAST_p7028_econhi": {
+    "pmax_mw": [
+     "3.4159999999999995",
+     "2.366"
+    ]
+   },
+   "CT_CHP_NWPP-EAST_p7028_econlo": {
+    "chp_grid_pmin_mw": [
+     "0.22203999999999996",
+     "0.15378999999999995"
+    ],
+    "pmax_mw": [
+     "3.4159999999999995",
+     "2.366"
+    ]
+   },
+   "CT_CHP_NWPP-EAST_p7028_peak": {
+    "pmax_mw": [
+     "1.708",
+     "1.1829999999999998"
+    ]
+   },
+   "CT_PEAKER_NWPP-EAST_p7111_econhi": {
+    "pmax_mw": [
+     "7.714349999999999",
+     "7.361693999999999"
+    ]
+   },
+   "CT_PEAKER_NWPP-EAST_p7111_econlo": {
+    "pmax_mw": [
+     "8.560649999999999",
+     "8.169305999999999"
+    ]
+   },
+   "CT_PEAKER_NWPP-EAST_p7111_peak": {
+    "pmax_mw": [
+     "1.225",
+     "1.1689999999999998"
+    ]
+   },
+   "CT_PEAKER_NWPP-EAST_p7408_econhi": {
+    "emission_rate_co2": [
+     "0.6555",
+     "0.6555000000000001"
+    ],
+    "heat_rate": [
+     "11.5",
+     "11.500000000000002"
+    ],
+    "pmax_mw": [
+     "2.292264",
+     "4.055543999999999"
+    ]
+   },
+   "CT_PEAKER_NWPP-EAST_p7408_econlo": {
+    "emission_rate_co2": [
+     "0.6555",
+     "0.6555000000000001"
+    ],
+    "heat_rate": [
+     "11.5",
+     "11.500000000000002"
+    ],
+    "pmax_mw": [
+     "2.5437360000000004",
+     "4.500456"
+    ]
+   },
+   "CT_PEAKER_NWPP-INLAND_p55733_committed": {
+    "bin_nameplate_mw": [
+     "185.12",
+     "195.1"
+    ],
+    "pmax_mw": [
+     "114.95952000000001",
+     "121.15709999999999"
+    ]
+   },
+   "CT_PEAKER_NWPP-INLAND_p55733_econhi": {
+    "pmax_mw": [
+     "27.113785919999998",
+     "28.575516600000004"
+    ]
+   },
+   "CT_PEAKER_NWPP-INLAND_p55733_econlo": {
+    "pmax_mw": [
+     "30.088294079999997",
+     "31.71038340000001"
+    ]
+   },
+   "CT_PEAKER_NWPP-INLAND_p55733_peak": {
+    "pmax_mw": [
+     "12.958400000000001",
+     "13.657"
+    ]
+   },
+   "CT_PEAKER_NWPP-INLAND_p7953_committed": {
+    "bin_nameplate_mw": [
+     "227.34",
+     "287.5"
+    ],
+    "pmax_mw": [
+     "95.93748000000001",
+     "121.325"
+    ]
+   },
+   "CT_PEAKER_NWPP-INLAND_p7953_econhi": {
+    "pmax_mw": [
+     "54.74165327999999",
+     "69.2277"
+    ]
+   },
+   "CT_PEAKER_NWPP-INLAND_p7953_econlo": {
+    "pmax_mw": [
+     "60.747066719999985",
+     "76.82230000000001"
+    ]
+   },
+   "CT_PEAKER_NWPP-INLAND_p7953_peak": {
+    "pmax_mw": [
+     "15.913800000000002",
+     "20.125"
+    ]
+   },
+   "CT_PEAKER_NWPP-SNV_p56500_econhi": {
+    "emission_rate_co2": [
+     "0.4961753741249999",
+     "0.49617537412499985"
+    ],
+    "heat_rate": [
+     "8.704831124999998",
+     "8.704831124999997"
+    ],
+    "pmax_mw": [
+     "52.325334",
+     "49.94490600000002"
+    ]
+   },
+   "CT_PEAKER_NWPP-SNV_p56500_econlo": {
+    "emission_rate_co2": [
+     "0.4961753741249999",
+     "0.49617537412499985"
+    ],
+    "heat_rate": [
+     "8.704831124999998",
+     "8.704831124999997"
+    ],
+    "pmax_mw": [
+     "58.06566600000001",
+     "55.424094000000025"
+    ]
+   },
+   "CT_PEAKER_NWPP-SNV_p56500_peak": {
+    "emission_rate_co2": [
+     "0.4961753741249999",
+     "0.49617537412499985"
+    ],
+    "heat_rate": [
+     "8.704831124999998",
+     "8.704831124999997"
+    ],
+    "pmax_mw": [
+     "8.309",
+     "7.931000000000003"
+    ]
+   },
+   "ST_CHP_NWPP-INLAND_p10504_committed": {
+    "bin_nameplate_mw": [
+     "9.3",
+     "7.3"
+    ],
+    "emission_rate_co2": [
+     "0.321478874421",
+     "0.32147887442100004"
+    ],
+    "heat_rate": [
+     "6.203978278299999",
+     "6.2039782783"
+    ],
+    "pmax_mw": [
+     "2.7816300000000003",
+     "2.1834300000000004"
+    ]
+   }
+  }
+ },
+ {
+  "year": 2024,
+  "n_units_off": 641,
+  "n_units_on": 652,
+  "digest_off": "f897bdf9f92e02a65a98410cf4d4b1fb57db46137fd77c51ba3cd9fbc41ffa2d",
+  "digest_on": "c47c7275f33e6ebf2788276dbd55a249ed562988da5a7a6e80e9eceaf4862f70",
+  "byte_identical": false,
+  "n_added": 21,
+  "n_removed": 10,
+  "n_changed": 24,
+  "by_class": [
+   {
+    "klass": "CC_CHP",
+    "mw_off": 1217.645,
+    "avail_off": 8.4455,
+    "mw_on": 1221.025,
+    "avail_on": 8.4728,
+    "d_mw": 3.38,
+    "d_avail_twh": 0.0272
+   },
+   {
+    "klass": "CC_REGULAR",
+    "mw_off": 11751.12,
+    "avail_off": 75.6068,
+    "mw_on": 11753.23,
+    "avail_on": 75.62,
+    "d_mw": 2.11,
+    "d_avail_twh": 0.0132
+   },
+   {
+    "klass": "COAL",
+    "mw_off": 8103.575,
+    "avail_off": 57.7005,
+    "mw_on": 8357.575,
+    "avail_on": 59.5117,
+    "d_mw": 254.0,
+    "d_avail_twh": 1.8112
+   },
+   {
+    "klass": "CT_CHP",
+    "mw_off": 118.4681,
+    "avail_off": 0.8982,
+    "mw_on": 115.9921,
+    "avail_on": 0.8791,
+    "d_mw": -2.476,
+    "d_avail_twh": -0.0191
+   },
+   {
+    "klass": "CT_PEAKER",
+    "mw_off": 3626.882,
+    "avail_off": 24.6848,
+    "mw_on": 3645.334,
+    "avail_on": 24.847,
+    "d_mw": 18.452,
+    "d_avail_twh": 0.1622
+   },
+   {
+    "klass": "ST_CHP",
+    "mw_off": 5.2146,
+    "avail_off": 0.0368,
+    "mw_on": 4.6164,
+    "avail_on": 0.037,
+    "d_mw": -0.5982,
+    "d_avail_twh": 0.0002
+   },
+   {
+    "klass": "ST_GAS",
+    "mw_off": 2142.5,
+    "avail_off": 12.0013,
+    "mw_on": 1888.5,
+    "avail_on": 10.1923,
+    "d_mw": -254.0,
+    "d_avail_twh": -1.809
+   },
+   {
+    "klass": "oil",
+    "mw_off": 75.0,
+    "avail_off": 0.5755,
+    "mw_on": 78.4,
+    "avail_on": 0.6181,
+    "d_mw": 3.4,
+    "d_avail_twh": 0.0426
+   }
+  ],
+  "by_plant": [
+   {
+    "plant": 7953,
+    "off": {
+     "CT_PEAKER": 227.34
+    },
+    "on": {
+     "CT_PEAKER": 262.21
+    },
+    "off_units": [
+     "CT_PEAKER_NWPP-INLAND_p7953_committed",
+     "CT_PEAKER_NWPP-INLAND_p7953_econlo",
+     "CT_PEAKER_NWPP-INLAND_p7953_econhi",
+     "CT_PEAKER_NWPP-INLAND_p7953_peak"
+    ],
+    "on_units": [
+     "CT_PEAKER_NWPP-INLAND_p7953_committed",
+     "CT_PEAKER_NWPP-INLAND_p7953_econlo",
+     "CT_PEAKER_NWPP-INLAND_p7953_econhi",
+     "CT_PEAKER_NWPP-INLAND_p7953_peak"
+    ],
+    "on_mc_by_unit": {
+     "CT_PEAKER_NWPP-INLAND_p7953_committed": 33.724,
+     "CT_PEAKER_NWPP-INLAND_p7953_econlo": 33.724,
+     "CT_PEAKER_NWPP-INLAND_p7953_econhi": 33.724,
+     "CT_PEAKER_NWPP-INLAND_p7953_peak": 33.724
+    },
+    "on_avail_twh_by_unit": {
+     "CT_PEAKER_NWPP-INLAND_p7953_committed": 0.8233,
+     "CT_PEAKER_NWPP-INLAND_p7953_econlo": 0.5213,
+     "CT_PEAKER_NWPP-INLAND_p7953_econhi": 0.4698,
+     "CT_PEAKER_NWPP-INLAND_p7953_peak": 0.1366
+    },
+    "avail_twh_off": 1.6915,
+    "avail_twh_on": 1.9509
+   },
+   {
+    "plant": 8224,
+    "off": {
+     "COAL": 268.0,
+     "ST_GAS": 254.0
+    },
+    "on": {
+     "COAL": 522.0
+    },
+    "off_units": [
+     "ST_GAS_NWPP-SNV_p8224_committed",
+     "ST_GAS_NWPP-SNV_p8224_econlo",
+     "ST_GAS_NWPP-SNV_p8224_econhi",
+     "ST_GAS_NWPP-SNV_p8224_peak",
+     "COAL_NWPP-SNV_p8224_mustrun",
+     "COAL_NWPP-SNV_p8224_committed",
+     "COAL_NWPP-SNV_p8224_econlo",
+     "COAL_NWPP-SNV_p8224_econhi",
+     "COAL_NWPP-SNV_p8224_peak"
+    ],
+    "on_units": [
+     "COAL_NWPP-SNV_p8224_mustrun",
+     "COAL_NWPP-SNV_p8224_committed",
+     "COAL_NWPP-SNV_p8224_econlo",
+     "COAL_NWPP-SNV_p8224_econhi",
+     "COAL_NWPP-SNV_p8224_peak"
+    ],
+    "on_mc_by_unit": {
+     "COAL_NWPP-SNV_p8224_mustrun": 27.474,
+     "COAL_NWPP-SNV_p8224_committed": 27.474,
+     "COAL_NWPP-SNV_p8224_econlo": 56.845,
+     "COAL_NWPP-SNV_p8224_econhi": 56.845,
+     "COAL_NWPP-SNV_p8224_peak": 56.845
+    },
+    "on_avail_twh_by_unit": {
+     "COAL_NWPP-SNV_p8224_mustrun": 1.5149,
+     "COAL_NWPP-SNV_p8224_committed": 1.5149,
+     "COAL_NWPP-SNV_p8224_econlo": 0.3398,
+     "COAL_NWPP-SNV_p8224_econhi": 0.278,
+     "COAL_NWPP-SNV_p8224_peak": 0.0744
+    },
+    "avail_twh_off": 3.7199,
+    "avail_twh_on": 3.7221
+   },
+   {
+    "plant": 10504,
+    "off": {
+     "ST_CHP": 2.782
+    },
+    "on": {
+     "ST_CHP": 2.183
+    },
+    "off_units": [
+     "ST_CHP_NWPP-INLAND_p10504_committed"
+    ],
+    "on_units": [
+     "ST_CHP_NWPP-INLAND_p10504_committed"
+    ],
+    "on_mc_by_unit": {
+     "ST_CHP_NWPP-INLAND_p10504_committed": 19.4
+    },
+    "on_avail_twh_by_unit": {
+     "ST_CHP_NWPP-INLAND_p10504_committed": 0.0175
+    },
+    "avail_twh_off": 0.0173,
+    "avail_twh_on": 0.0175
+   },
+   {
+    "plant": 55733,
+    "off": {
+     "CT_PEAKER": 185.12
+    },
+    "on": {
+     "CT_PEAKER": 174.75
+    },
+    "off_units": [
+     "CT_PEAKER_NWPP-INLAND_p55733_committed",
+     "CT_PEAKER_NWPP-INLAND_p55733_econlo",
+     "CT_PEAKER_NWPP-INLAND_p55733_econhi",
+     "CT_PEAKER_NWPP-INLAND_p55733_peak"
+    ],
+    "on_units": [
+     "CT_PEAKER_NWPP-INLAND_p55733_committed",
+     "CT_PEAKER_NWPP-INLAND_p55733_econlo",
+     "CT_PEAKER_NWPP-INLAND_p55733_econhi",
+     "CT_PEAKER_NWPP-INLAND_p55733_peak"
+    ],
+    "on_mc_by_unit": {
+     "CT_PEAKER_NWPP-INLAND_p55733_committed": 29.287,
+     "CT_PEAKER_NWPP-INLAND_p55733_econlo": 29.287,
+     "CT_PEAKER_NWPP-INLAND_p55733_econhi": 29.287,
+     "CT_PEAKER_NWPP-INLAND_p55733_peak": 29.287
+    },
+    "on_avail_twh_by_unit": {
+     "CT_PEAKER_NWPP-INLAND_p55733_committed": 0.8074,
+     "CT_PEAKER_NWPP-INLAND_p55733_econlo": 0.2113,
+     "CT_PEAKER_NWPP-INLAND_p55733_econhi": 0.1904,
+     "CT_PEAKER_NWPP-INLAND_p55733_peak": 0.091
+    },
+    "avail_twh_off": 1.3773,
+    "avail_twh_on": 1.3002
+   },
+   {
+    "plant": 56312,
+    "off": {
+     "CT_CHP": 30.15
+    },
+    "on": {
+     "CT_CHP": 30.69
+    },
+    "off_units": [
+     "CT_CHP_NWPP-EAST_p56312_committed",
+     "CT_CHP_NWPP-EAST_p56312_econlo",
+     "CT_CHP_NWPP-EAST_p56312_econhi"
+    ],
+    "on_units": [
+     "CT_CHP_NWPP-EAST_p56312_committed",
+     "CT_CHP_NWPP-EAST_p56312_econlo",
+     "CT_CHP_NWPP-EAST_p56312_econhi"
+    ],
+    "on_mc_by_unit": {
+     "CT_CHP_NWPP-EAST_p56312_committed": 21.521,
+     "CT_CHP_NWPP-EAST_p56312_econlo": 21.521,
+     "CT_CHP_NWPP-EAST_p56312_econhi": 21.521
+    },
+    "on_avail_twh_by_unit": {
+     "CT_CHP_NWPP-EAST_p56312_committed": 0.2194,
+     "CT_CHP_NWPP-EAST_p56312_econlo": 0.0089,
+     "CT_CHP_NWPP-EAST_p56312_econhi": 0.0089
+    },
+    "avail_twh_off": 0.233,
+    "avail_twh_on": 0.2372
+   },
+   {
+    "plant": 56500,
+    "off": {
+     "CT_PEAKER": 118.7
+    },
+    "on": {
+     "CT_PEAKER": 116.0
+    },
+    "off_units": [
+     "CT_PEAKER_NWPP-SNV_p56500_econlo",
+     "CT_PEAKER_NWPP-SNV_p56500_econhi",
+     "CT_PEAKER_NWPP-SNV_p56500_peak"
+    ],
+    "on_units": [
+     "CT_PEAKER_NWPP-SNV_p56500_econlo",
+     "CT_PEAKER_NWPP-SNV_p56500_econhi",
+     "CT_PEAKER_NWPP-SNV_p56500_peak"
+    ],
+    "on_mc_by_unit": {
+     "CT_PEAKER_NWPP-SNV_p56500_econlo": 28.897,
+     "CT_PEAKER_NWPP-SNV_p56500_econhi": 28.897,
+     "CT_PEAKER_NWPP-SNV_p56500_peak": 28.897
+    },
+    "on_avail_twh_by_unit": {
+     "CT_PEAKER_NWPP-SNV_p56500_econlo": 0.4222,
+     "CT_PEAKER_NWPP-SNV_p56500_econhi": 0.3805,
+     "CT_PEAKER_NWPP-SNV_p56500_peak": 0.0604
+    },
+    "avail_twh_off": 0.8832,
+    "avail_twh_on": 0.8631
+   },
+   {
+    "plant": 57028,
+    "off": {
+     "CC_REGULAR": 303.32
+    },
+    "on": {
+     "CC_REGULAR": 305.43
+    },
+    "off_units": [
+     "CC_REGULAR_NWPP-INLAND_p57028_committed",
+     "CC_REGULAR_NWPP-INLAND_p57028_econlo",
+     "CC_REGULAR_NWPP-INLAND_p57028_econhi",
+     "CC_REGULAR_NWPP-INLAND_p57028_peak"
+    ],
+    "on_units": [
+     "CC_REGULAR_NWPP-INLAND_p57028_committed",
+     "CC_REGULAR_NWPP-INLAND_p57028_econlo",
+     "CC_REGULAR_NWPP-INLAND_p57028_econhi",
+     "CC_REGULAR_NWPP-INLAND_p57028_peak"
+    ],
+    "on_mc_by_unit": {
+     "CC_REGULAR_NWPP-INLAND_p57028_committed": 20.236,
+     "CC_REGULAR_NWPP-INLAND_p57028_econlo": 20.236,
+     "CC_REGULAR_NWPP-INLAND_p57028_econhi": 20.236,
+     "CC_REGULAR_NWPP-INLAND_p57028_peak": 20.236
+    },
+    "on_avail_twh_by_unit": {
+     "CC_REGULAR_NWPP-INLAND_p57028_committed": 1.2926,
+     "CC_REGULAR_NWPP-INLAND_p57028_econlo": 0.2706,
+     "CC_REGULAR_NWPP-INLAND_p57028_econhi": 0.2706,
+     "CC_REGULAR_NWPP-INLAND_p57028_peak": 0.0784
+    },
+    "avail_twh_off": 1.8989,
+    "avail_twh_on": 1.9121
+   },
+   {
+    "plant": 57298,
+    "off": {},
+    "on": {
+     "oil": 5.4
+    },
+    "off_units": [],
+    "on_units": [
+     "57298_1",
+     "57298_10",
+     "57298_11",
+     "57298_12",
+     "57298_13",
+     "57298_14",
+     "57298_15",
+     "57298_16",
+     "57298_17",
+     "57298_18",
+     "57298_2",
+     "57298_3",
+     "57298_4",
+     "57298_5",
+     "57298_6",
+     "57298_7",
+     "57298_8",
+     "57298_9"
+    ],
+    "on_mc_by_unit": {
+     "57298_1": 260.96,
+     "57298_10": 260.96,
+     "57298_11": 260.96,
+     "57298_12": 260.96,
+     "57298_13": 260.96,
+     "57298_14": 260.96,
+     "57298_15": 260.96,
+     "57298_16": 260.96,
+     "57298_17": 260.96,
+     "57298_18": 260.96,
+     "57298_2": 260.96,
+     "57298_3": 260.96,
+     "57298_4": 260.96,
+     "57298_5": 260.96,
+     "57298_6": 260.96,
+     "57298_7": 260.96,
+     "57298_8": 260.96,
+     "57298_9": 260.96
+    },
+    "on_avail_twh_by_unit": {
+     "57298_1": 0.0024,
+     "57298_10": 0.0024,
+     "57298_11": 0.0024,
+     "57298_12": 0.0024,
+     "57298_13": 0.0024,
+     "57298_14": 0.0024,
+     "57298_15": 0.0024,
+     "57298_16": 0.0024,
+     "57298_17": 0.0024,
+     "57298_18": 0.0024,
+     "57298_2": 0.0024,
+     "57298_3": 0.0024,
+     "57298_4": 0.0024,
+     "57298_5": 0.0024,
+     "57298_6": 0.0024,
+     "57298_7": 0.0024,
+     "57298_8": 0.0024,
+     "57298_9": 0.0024
+    },
+    "avail_twh_off": 0.0,
+    "avail_twh_on": 0.0426
+   },
+   {
+    "plant": 57653,
+    "off": {
+     "CT_CHP": 3.016
+    },
+    "on": {
+     "CC_CHP": 3.38
+    },
+    "off_units": [
+     "CT_CHP_NWPP-NW_p57653_committed",
+     "CT_CHP_NWPP-NW_p57653_econlo",
+     "CT_CHP_NWPP-NW_p57653_econhi"
+    ],
+    "on_units": [
+     "CC_CHP_NWPP-NW_p57653_committed",
+     "CC_CHP_NWPP-NW_p57653_econlo",
+     "CC_CHP_NWPP-NW_p57653_econhi"
+    ],
+    "on_mc_by_unit": {
+     "CC_CHP_NWPP-NW_p57653_committed": 13.507,
+     "CC_CHP_NWPP-NW_p57653_econlo": 13.507,
+     "CC_CHP_NWPP-NW_p57653_econhi": 13.507
+    },
+    "on_avail_twh_by_unit": {
+     "CC_CHP_NWPP-NW_p57653_committed": 0.0188,
+     "CC_CHP_NWPP-NW_p57653_econlo": 0.0042,
+     "CC_CHP_NWPP-NW_p57653_econhi": 0.0042
+    },
+    "avail_twh_off": 0.0233,
+    "avail_twh_on": 0.0272
+   },
+   {
+    "plant": 69880,
+    "off": {
+     "CT_PEAKER": 3.348,
+     "oil": 2.0
+    },
+    "on": {},
+    "off_units": [
+     "69880_STG",
+     "CT_PEAKER_NWPP-INLAND_p69880_econlo",
+     "CT_PEAKER_NWPP-INLAND_p69880_econhi"
+    ],
+    "on_units": [],
+    "on_mc_by_unit": {},
+    "on_avail_twh_by_unit": {},
+    "avail_twh_off": 0.0,
+    "avail_twh_on": 0.0
+   }
+  ],
+  "changed_units": [
+   {
+    "unit_id": "CC_REGULAR_NWPP-INLAND_p57028_committed",
+    "plant_off": 57028.0,
+    "klass_off": "CC_REGULAR",
+    "klass_on": "CC_REGULAR",
+    "pmax_off": 205.0443,
+    "pmax_on": 206.4707,
+    "mc_off": 20.2363,
+    "mc_on": 20.2363,
+    "avail_twh_off": 1.2837,
+    "avail_twh_on": 1.2926
+   },
+   {
+    "unit_id": "CC_REGULAR_NWPP-INLAND_p57028_econhi",
+    "plant_off": 57028.0,
+    "klass_off": "CC_REGULAR",
+    "klass_on": "CC_REGULAR",
+    "pmax_off": 41.8582,
+    "pmax_on": 43.2183,
+    "mc_off": 20.2363,
+    "mc_on": 20.2363,
+    "avail_twh_off": 0.2621,
+    "avail_twh_on": 0.2706
+   },
+   {
+    "unit_id": "CC_REGULAR_NWPP-INLAND_p57028_econlo",
+    "plant_off": 57028.0,
+    "klass_off": "CC_REGULAR",
+    "klass_on": "CC_REGULAR",
+    "pmax_off": 41.8582,
+    "pmax_on": 43.2183,
+    "mc_off": 20.2363,
+    "mc_on": 20.2363,
+    "avail_twh_off": 0.2621,
+    "avail_twh_on": 0.2706
+   },
+   {
+    "unit_id": "CC_REGULAR_NWPP-INLAND_p57028_peak",
+    "plant_off": 57028.0,
+    "klass_off": "CC_REGULAR",
+    "klass_on": "CC_REGULAR",
+    "pmax_off": 14.5594,
+    "pmax_on": 12.5226,
+    "mc_off": 20.2363,
+    "mc_on": 20.2363,
+    "avail_twh_off": 0.0911,
+    "avail_twh_on": 0.0784
+   },
+   {
+    "unit_id": "COAL_NWPP-SNV_p8224_committed",
+    "plant_off": 8224.0,
+    "klass_off": "COAL",
+    "klass_on": "COAL",
+    "pmax_off": 109.076,
+    "pmax_on": 212.454,
+    "mc_off": 27.474,
+    "mc_on": 27.474,
+    "avail_twh_off": 0.7778,
+    "avail_twh_on": 1.5149
+   },
+   {
+    "unit_id": "COAL_NWPP-SNV_p8224_econhi",
+    "plant_off": 8224.0,
+    "klass_off": "COAL",
+    "klass_on": "COAL",
+    "pmax_off": 20.0196,
+    "pmax_on": 38.9934,
+    "mc_off": 56.8446,
+    "mc_on": 56.8446,
+    "avail_twh_off": 0.1428,
+    "avail_twh_on": 0.278
+   },
+   {
+    "unit_id": "COAL_NWPP-SNV_p8224_econlo",
+    "plant_off": 8224.0,
+    "klass_off": "COAL",
+    "klass_on": "COAL",
+    "pmax_off": 24.4684,
+    "pmax_on": 47.6586,
+    "mc_off": 56.8446,
+    "mc_on": 56.8446,
+    "avail_twh_off": 0.1745,
+    "avail_twh_on": 0.3398
+   },
+   {
+    "unit_id": "COAL_NWPP-SNV_p8224_mustrun",
+    "plant_off": 8224.0,
+    "klass_off": "COAL",
+    "klass_on": "COAL",
+    "pmax_off": 109.076,
+    "pmax_on": 212.454,
+    "mc_off": 27.474,
+    "mc_on": 27.474,
+    "avail_twh_off": 0.7778,
+    "avail_twh_on": 1.5149
+   },
+   {
+    "unit_id": "COAL_NWPP-SNV_p8224_peak",
+    "plant_off": 8224.0,
+    "klass_off": "COAL",
+    "klass_on": "COAL",
+    "pmax_off": 5.36,
+    "pmax_on": 10.44,
+    "mc_off": 56.8446,
+    "mc_on": 56.8446,
+    "avail_twh_off": 0.0382,
+    "avail_twh_on": 0.0744
+   },
+   {
+    "unit_id": "CT_CHP_NWPP-EAST_p56312_committed",
+    "plant_off": 56312.0,
+    "klass_off": "CT_CHP",
+    "klass_on": "CT_CHP",
+    "pmax_off": 27.8888,
+    "pmax_on": 28.3883,
+    "mc_off": 21.5206,
+    "mc_on": 21.5206,
+    "avail_twh_off": 0.2156,
+    "avail_twh_on": 0.2194
+   },
+   {
+    "unit_id": "CT_CHP_NWPP-EAST_p56312_econhi",
+    "plant_off": 56312.0,
+    "klass_off": "CT_CHP",
+    "klass_on": "CT_CHP",
+    "pmax_off": 1.1306,
+    "pmax_on": 1.1509,
+    "mc_off": 21.5206,
+    "mc_on": 21.5206,
+    "avail_twh_off": 0.0087,
+    "avail_twh_on": 0.0089
+   },
+   {
+    "unit_id": "CT_CHP_NWPP-EAST_p56312_econlo",
+    "plant_off": 56312.0,
+    "klass_off": "CT_CHP",
+    "klass_on": "CT_CHP",
+    "pmax_off": 1.1306,
+    "pmax_on": 1.1509,
+    "mc_off": 21.5206,
+    "mc_on": 21.5206,
+    "avail_twh_off": 0.0087,
+    "avail_twh_on": 0.0089
+   },
+   {
+    "unit_id": "CT_PEAKER_NWPP-INLAND_p55733_committed",
+    "plant_off": 55733.0,
+    "klass_off": "CT_PEAKER",
+    "klass_on": "CT_PEAKER",
+    "pmax_off": 114.9595,
+    "pmax_on": 108.5198,
+    "mc_off": 29.2873,
+    "mc_on": 29.2873,
+    "avail_twh_off": 0.8553,
+    "avail_twh_on": 0.8074
+   },
+   {
+    "unit_id": "CT_PEAKER_NWPP-INLAND_p55733_econhi",
+    "plant_off": 55733.0,
+    "klass_off": "CT_PEAKER",
+    "klass_on": "CT_PEAKER",
+    "pmax_off": 27.1138,
+    "pmax_on": 25.5949,
+    "mc_off": 29.2873,
+    "mc_on": 29.2873,
+    "avail_twh_off": 0.2017,
+    "avail_twh_on": 0.1904
+   },
+   {
+    "unit_id": "CT_PEAKER_NWPP-INLAND_p55733_econlo",
+    "plant_off": 55733.0,
+    "klass_off": "CT_PEAKER",
+    "klass_on": "CT_PEAKER",
+    "pmax_off": 30.0883,
+    "pmax_on": 28.4028,
+    "mc_off": 29.2873,
+    "mc_on": 29.2873,
+    "avail_twh_off": 0.2239,
+    "avail_twh_on": 0.2113
+   },
+   {
+    "unit_id": "CT_PEAKER_NWPP-INLAND_p55733_peak",
+    "plant_off": 55733.0,
+    "klass_off": "CT_PEAKER",
+    "klass_on": "CT_PEAKER",
+    "pmax_off": 12.9584,
+    "pmax_on": 12.2325,
+    "mc_off": 29.2873,
+    "mc_on": 29.2873,
+    "avail_twh_off": 0.0964,
+    "avail_twh_on": 0.091
+   },
+   {
+    "unit_id": "CT_PEAKER_NWPP-INLAND_p7953_committed",
+    "plant_off": 7953.0,
+    "klass_off": "CT_PEAKER",
+    "klass_on": "CT_PEAKER",
+    "pmax_off": 95.9375,
+    "pmax_on": 110.6526,
+    "mc_off": 33.7238,
+    "mc_on": 33.7238,
+    "avail_twh_off": 0.7138,
+    "avail_twh_on": 0.8233
+   },
+   {
+    "unit_id": "CT_PEAKER_NWPP-INLAND_p7953_econhi",
+    "plant_off": 7953.0,
+    "klass_off": "CT_PEAKER",
+    "klass_on": "CT_PEAKER",
+    "pmax_off": 54.7417,
+    "pmax_on": 63.1381,
+    "mc_off": 33.7238,
+    "mc_on": 33.7238,
+    "avail_twh_off": 0.4073,
+    "avail_twh_on": 0.4698
+   },
+   {
+    "unit_id": "CT_PEAKER_NWPP-INLAND_p7953_econlo",
+    "plant_off": 7953.0,
+    "klass_off": "CT_PEAKER",
+    "klass_on": "CT_PEAKER",
+    "pmax_off": 60.7471,
+    "pmax_on": 70.0646,
+    "mc_off": 33.7238,
+    "mc_on": 33.7238,
+    "avail_twh_off": 0.452,
+    "avail_twh_on": 0.5213
+   },
+   {
+    "unit_id": "CT_PEAKER_NWPP-INLAND_p7953_peak",
+    "plant_off": 7953.0,
+    "klass_off": "CT_PEAKER",
+    "klass_on": "CT_PEAKER",
+    "pmax_off": 15.9138,
+    "pmax_on": 18.3547,
+    "mc_off": 33.7238,
+    "mc_on": 33.7238,
+    "avail_twh_off": 0.1184,
+    "avail_twh_on": 0.1366
+   },
+   {
+    "unit_id": "CT_PEAKER_NWPP-SNV_p56500_econhi",
+    "plant_off": 56500.0,
+    "klass_off": "CT_PEAKER",
+    "klass_on": "CT_PEAKER",
+    "pmax_off": 52.3253,
+    "pmax_on": 51.1351,
+    "mc_off": 28.8968,
+    "mc_on": 28.8968,
+    "avail_twh_off": 0.3893,
+    "avail_twh_on": 0.3805
+   },
+   {
+    "unit_id": "CT_PEAKER_NWPP-SNV_p56500_econlo",
+    "plant_off": 56500.0,
+    "klass_off": "CT_PEAKER",
+    "klass_on": "CT_PEAKER",
+    "pmax_off": 58.0657,
+    "pmax_on": 56.7449,
+    "mc_off": 28.8968,
+    "mc_on": 28.8968,
+    "avail_twh_off": 0.432,
+    "avail_twh_on": 0.4222
+   },
+   {
+    "unit_id": "CT_PEAKER_NWPP-SNV_p56500_peak",
+    "plant_off": 56500.0,
+    "klass_off": "CT_PEAKER",
+    "klass_on": "CT_PEAKER",
+    "pmax_off": 8.309,
+    "pmax_on": 8.12,
+    "mc_off": 28.8968,
+    "mc_on": 28.8968,
+    "avail_twh_off": 0.0618,
+    "avail_twh_on": 0.0604
+   },
+   {
+    "unit_id": "ST_CHP_NWPP-INLAND_p10504_committed",
+    "plant_off": 10504.0,
+    "klass_off": "ST_CHP",
+    "klass_on": "ST_CHP",
+    "pmax_off": 2.7816,
+    "pmax_on": 2.1834,
+    "mc_off": 19.3999,
+    "mc_on": 19.3999,
+    "avail_twh_off": 0.0173,
+    "avail_twh_on": 0.0175
+   }
+  ],
+  "attr_diff": {
+   "CC_REGULAR_NWPP-INLAND_p57028_committed": {
+    "bin_nameplate_mw": [
+     "303.32",
+     "305.43"
+    ],
+    "emission_rate_co2": [
+     "0.393963555753",
+     "0.39396355575300007"
+    ],
+    "heat_rate": [
+     "6.911641329",
+     "6.911641329000001"
+    ],
+    "pmax_mw": [
+     "205.04431999999997",
+     "206.47068"
+    ]
+   },
+   "CC_REGULAR_NWPP-INLAND_p57028_econhi": {
+    "emission_rate_co2": [
+     "0.393963555753",
+     "0.39396355575300007"
+    ],
+    "heat_rate": [
+     "6.911641329",
+     "6.911641329000001"
+    ],
+    "pmax_mw": [
+     "41.85816000000001",
+     "43.218345000000014"
+    ]
+   },
+   "CC_REGULAR_NWPP-INLAND_p57028_econlo": {
+    "emission_rate_co2": [
+     "0.393963555753",
+     "0.39396355575300007"
+    ],
+    "heat_rate": [
+     "6.911641329",
+     "6.911641329000001"
+    ],
+    "pmax_mw": [
+     "41.85816000000001",
+     "43.218345000000014"
+    ]
+   },
+   "CC_REGULAR_NWPP-INLAND_p57028_peak": {
+    "emission_rate_co2": [
+     "0.393963555753",
+     "0.39396355575300007"
+    ],
+    "heat_rate": [
+     "6.911641329",
+     "6.911641329000001"
+    ],
+    "pmax_mw": [
+     "14.55936",
+     "12.52263"
+    ]
+   },
+   "COAL_NWPP-SNV_p8224_committed": {
+    "bin_nameplate_mw": [
+     "268.0",
+     "522.0"
+    ],
+    "pmax_mw": [
+     "109.07600000000001",
+     "212.45400000000004"
+    ]
+   },
+   "COAL_NWPP-SNV_p8224_econhi": {
+    "pmax_mw": [
+     "20.019599999999986",
+     "38.99339999999998"
+    ]
+   },
+   "COAL_NWPP-SNV_p8224_econlo": {
+    "pmax_mw": [
+     "24.468399999999985",
+     "47.65859999999998"
+    ]
+   },
+   "COAL_NWPP-SNV_p8224_mustrun": {
+    "pmax_mw": [
+     "109.07600000000001",
+     "212.454"
+    ]
+   },
+   "COAL_NWPP-SNV_p8224_peak": {
+    "pmax_mw": [
+     "5.359999999999999",
+     "10.44"
+    ]
+   },
+   "CT_CHP_NWPP-EAST_p56312_committed": {
+    "bin_nameplate_mw": [
+     "100.5",
+     "102.30000000000001"
+    ],
+    "emission_rate_co2": [
+     "0.3497912981370001",
+     "0.349791298137"
+    ],
+    "heat_rate": [
+     "6.1366894410000015",
+     "6.136689441"
+    ],
+    "pmax_mw": [
+     "27.888750000000005",
+     "28.388250000000006"
+    ]
+   },
+   "CT_CHP_NWPP-EAST_p56312_econhi": {
+    "chp_grid_pmin_mw": [
+     "1.1306250000000002",
+     "1.1508750000000005"
+    ],
+    "emission_rate_co2": [
+     "0.3497912981370001",
+     "0.349791298137"
+    ],
+    "heat_rate": [
+     "6.1366894410000015",
+     "6.136689441"
+    ],
+    "pmax_mw": [
+     "1.1306250000000002",
+     "1.1508750000000005"
+    ]
+   },
+   "CT_CHP_NWPP-EAST_p56312_econlo": {
+    "chp_grid_pmin_mw": [
+     "1.1306250000000002",
+     "1.1508750000000005"
+    ],
+    "emission_rate_co2": [
+     "0.3497912981370001",
+     "0.349791298137"
+    ],
+    "heat_rate": [
+     "6.1366894410000015",
+     "6.136689441"
+    ],
+    "pmax_mw": [
+     "1.1306250000000002",
+     "1.1508750000000005"
+    ]
+   },
+   "CT_PEAKER_NWPP-INLAND_p55733_committed": {
+    "bin_nameplate_mw": [
+     "185.12",
+     "174.75"
+    ],
+    "pmax_mw": [
+     "114.95952000000001",
+     "108.51975"
+    ]
+   },
+   "CT_PEAKER_NWPP-INLAND_p55733_econhi": {
+    "pmax_mw": [
+     "27.113785919999998",
+     "25.594933499999996"
+    ]
+   },
+   "CT_PEAKER_NWPP-INLAND_p55733_econlo": {
+    "pmax_mw": [
+     "30.088294079999997",
+     "28.4028165"
+    ]
+   },
+   "CT_PEAKER_NWPP-INLAND_p55733_peak": {
+    "pmax_mw": [
+     "12.958400000000001",
+     "12.2325"
+    ]
+   },
+   "CT_PEAKER_NWPP-INLAND_p7953_committed": {
+    "bin_nameplate_mw": [
+     "227.34",
+     "262.21000000000004"
+    ],
+    "emission_rate_co2": [
+     "0.6173028182279999",
+     "0.6173028182279998"
+    ],
+    "heat_rate": [
+     "10.829874003999999",
+     "10.829874003999997"
+    ],
+    "pmax_mw": [
+     "95.93748000000001",
+     "110.65262000000003"
+    ]
+   },
+   "CT_PEAKER_NWPP-INLAND_p7953_econhi": {
+    "emission_rate_co2": [
+     "0.6173028182279999",
+     "0.6173028182279998"
+    ],
+    "heat_rate": [
+     "10.829874003999999",
+     "10.829874003999997"
+    ],
+    "pmax_mw": [
+     "54.74165327999999",
+     "63.138070320000004"
+    ]
+   },
+   "CT_PEAKER_NWPP-INLAND_p7953_econlo": {
+    "emission_rate_co2": [
+     "0.6173028182279999",
+     "0.6173028182279998"
+    ],
+    "heat_rate": [
+     "10.829874003999999",
+     "10.829874003999997"
+    ],
+    "pmax_mw": [
+     "60.747066719999985",
+     "70.06460968000002"
+    ]
+   },
+   "CT_PEAKER_NWPP-INLAND_p7953_peak": {
+    "emission_rate_co2": [
+     "0.6173028182279999",
+     "0.6173028182279998"
+    ],
+    "heat_rate": [
+     "10.829874003999999",
+     "10.829874003999997"
+    ],
+    "pmax_mw": [
+     "15.913800000000002",
+     "18.3547"
+    ]
+   },
+   "CT_PEAKER_NWPP-SNV_p56500_econhi": {
+    "pmax_mw": [
+     "52.325334",
+     "51.13512000000001"
+    ]
+   },
+   "CT_PEAKER_NWPP-SNV_p56500_econlo": {
+    "pmax_mw": [
+     "58.06566600000001",
+     "56.744880000000016"
+    ]
+   },
+   "CT_PEAKER_NWPP-SNV_p56500_peak": {
+    "pmax_mw": [
+     "8.309",
+     "8.120000000000003"
+    ]
+   },
+   "ST_CHP_NWPP-INLAND_p10504_committed": {
+    "bin_nameplate_mw": [
+     "9.3",
+     "7.3"
+    ],
+    "emission_rate_co2": [
+     "0.321478874421",
+     "0.32147887442100004"
+    ],
+    "heat_rate": [
+     "6.203978278299999",
+     "6.2039782783"
+    ],
+    "pmax_mw": [
+     "2.7816300000000003",
+     "2.1834300000000004"
+    ]
+   }
+  }
+ },
+ {
+  "year": 2025,
+  "n_units_off": 642,
+  "n_units_on": 642,
+  "digest_off": "428020c25d1ada65b9e09af6ab86b5bddab7b449aecb06530cabf14f96bc7a16",
+  "digest_on": "428020c25d1ada65b9e09af6ab86b5bddab7b449aecb06530cabf14f96bc7a16",
+  "byte_identical": true,
+  "n_added": 0,
+  "n_removed": 0,
+  "n_changed": 0,
+  "by_class": [],
+  "by_plant": [],
+  "changed_units": [],
+  "attr_diff": {}
+ }
+]
