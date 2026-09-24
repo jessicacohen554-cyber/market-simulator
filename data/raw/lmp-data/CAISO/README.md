@@ -258,3 +258,19 @@ the 2026-08-16 history rewrite stripped. A 2020 CAISO price basis does not
 exist and cannot be produced.
 
 Full record: `docs/FINDING-caiso274-2020-2021-intake-census-2026-09-10.md` §6.
+
+## 2026-09-24 (session i-caiso) — 2021 reference derived; boundary re-probed
+
+`actual_lmp.json` / `actual_lmp_hourly_CAISO.parquet` / `tail/actual_tail.json`
+now carry a CAISO **2021** record, derived from the committed 2021 aggregates by
+`derive_actual_lmp.py` under the new `CAISO_RETENTION_PARTIAL_YEARS = {2021}`:
+DA 5,977 h (Apr 27 – Dec 31), RT 5,713 h, each with a `*_cov` monthly coverage
+vector so the verdict's like-for-like month mask drops Jan–Apr (and RT August,
+0.6465) instead of reading them as full months. The C3c tail row records
+`rt_coverage 0.652` and is reported as a lower bound. Every other ISO-year and
+every other CAISO row is byte-identical.
+
+GroupZip `DAM_LMP_GRP` v12 re-probed 2026-09-24: 2019-06-01, 2020-06-01 and
+2021-08-12 return the 644-byte no-data envelope; 2021-09-01 returns 10.08 MB.
+**2019 and 2020 CAISO hub prices remain unobtainable on every known route.**
+

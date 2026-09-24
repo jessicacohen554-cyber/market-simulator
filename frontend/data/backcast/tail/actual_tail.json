@@ -1,6 +1,14 @@
 {
  "isos": {
   "CAISO": {
+   "2021": {
+    "da_coverage": 0.682,
+    "da_gt": 30,
+    "hours": 8760,
+    "rt_coverage": 0.652,
+    "rt_gt": 27,
+    "threshold": 200.0
+   },
    "2022": {
     "da_coverage": 1.0,
     "da_gt": 553,

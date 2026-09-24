@@ -1859,6 +1859,130 @@
         260.61
       ],
       "src_lw": "system hub hourly series load-weighted by measured system demand (eia_loader.load_demand)"
+    },
+    "2021": {
+      "da": 56.13,
+      "rt": 48.55,
+      "da_mon": [
+        null,
+        null,
+        null,
+        34.0,
+        31.2,
+        49.84,
+        67.44,
+        59.41,
+        66.08,
+        60.56,
+        57.26,
+        60.29
+      ],
+      "rt_mon": [
+        null,
+        null,
+        null,
+        30.68,
+        27.2,
+        40.59,
+        59.91,
+        48.1,
+        60.17,
+        53.27,
+        50.01,
+        51.48
+      ],
+      "da_pct": {
+        "min": -0.01,
+        "p1": 7.67,
+        "p5": 21.33,
+        "p10": 29.99,
+        "p25": 40.54,
+        "p50": 52.55,
+        "p75": 65.81,
+        "p90": 83.46,
+        "p95": 97.28,
+        "p99": 148.29,
+        "max": 598.91
+      },
+      "rt_pct": {
+        "min": -9.64,
+        "p1": 2.51,
+        "p5": 16.1,
+        "p10": 22.82,
+        "p25": 35.18,
+        "p50": 47.36,
+        "p75": 57.46,
+        "p90": 68.6,
+        "p95": 77.62,
+        "p99": 129.69,
+        "max": 998.08
+      },
+      "da_cov": {
+        "annual": 0.6823,
+        "mon": [
+          0.0,
+          0.0,
+          0.0,
+          0.1347,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "rt_cov": {
+        "annual": 0.6522,
+        "mon": [
+          0.0,
+          0.0,
+          0.0,
+          0.1347,
+          1.0,
+          1.0,
+          0.9987,
+          0.6465,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "src": "CAISO OASIS hub LMPs (PRC_LMP DAM / PRC_INTVL_LMP RTM hourly), load-weighted across TH_NP15/TH_ZP26/TH_SP15",
+      "rt_lw": 51.07,
+      "rt_lw_mon": [
+        null,
+        null,
+        null,
+        31.39,
+        28.26,
+        43.08,
+        63.55,
+        49.63,
+        63.89,
+        54.29,
+        50.71,
+        52.44
+      ],
+      "da_lw": 59.46,
+      "da_lw_mon": [
+        null,
+        null,
+        null,
+        34.85,
+        32.59,
+        54.2,
+        71.7,
+        62.51,
+        70.05,
+        61.89,
+        58.55,
+        61.56
+      ],
+      "src_lw": "system hub hourly series load-weighted by measured system demand (eia_loader.load_demand)"
     }
   },
   "NYISO": {
