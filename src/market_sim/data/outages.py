@@ -368,6 +368,7 @@ def unit_outage_csv_for_iso(
     per_unit_crosswalk: bool = False,
     merit_order_guard: bool = False,
     hour_grain: bool = False,
+    dark_unit_years: bool = False,
 ) -> Path:
     """Return the CAMPD unit-outage CSV path for an ISO.
 
@@ -425,6 +426,20 @@ def unit_outage_csv_for_iso(
     stop-the-line assertions prove the grain change cannot MOVE a detected
     window, only narrow it. Same discipline once more: a separate file, never an
     overwrite, and the ``-perunitmerit-`` extract when the companion is absent.
+
+    ``dark_unit_years`` (``ScenarioConfig.campd_dark_unit_year_windows``, GATED
+    default False; SOCO-61) selects the ``-perunitdark-`` companion: the SAME
+    per-unit extract, derived with the deriver's ``--dark-unit-years``, which
+    adds ONE full-year window for a unit whose own CAMPD id files every hour of
+    a year dark (opTime 0, no gross) while producing in an adjacent year, at a
+    plant whose peers ran. The per-unit detector skips a never-producing unit
+    and the ``eia923_netzero`` hook is plant-grain, so without it such a unit
+    is modelled fully available all year (SOCO: Lindsay Hill CT3, 313 MW, dark
+    all of 2024). It has no meaning without ``per_unit_crosswalk`` and is
+    ignored under ``merit_order_guard`` (no dark companion of the merit family
+    exists), so it is one more selector over the same artifact family (rule 19
+    ``[R-ONE-MECH]``). Zero free parameters. A separate file, never an
+    overwrite, and the ``-perunit-`` extract when the companion is absent.
     """
     base = (
         UNIT_OUTAGE_CSV
@@ -446,6 +461,14 @@ def unit_outage_csv_for_iso(
                     return alt
             alt = base.with_name(
                 f"campd-unit-outages-perunitmerit-{(iso or 'ERCOT').upper()}.csv"
+            )
+            if alt.exists():
+                return alt
+        if dark_unit_years:
+            # SOCO-61: the '-perunit-' extract plus the dark-unit-year windows.
+            # Falls through to '-perunit-' when not derived for the ISO.
+            alt = base.with_name(
+                f"campd-unit-outages-perunitdark-{(iso or 'ERCOT').upper()}.csv"
             )
             if alt.exists():
                 return alt
@@ -1112,6 +1135,7 @@ def unit_outage_derate_factors(
     per_unit_clip: bool = False,
     extract_basis_share: bool = False,
     hour_grain: bool = False,
+    dark_unit_years: bool = False,
     mid_vintage_exit_carry: bool = False,
     lp_bin_capacity: tuple[tuple[tuple[int, str], float], ...] | None = None,
 ) -> dict[tuple[int, str], np.ndarray]:
@@ -1140,7 +1164,12 @@ def unit_outage_derate_factors(
     """
     iso = (iso or "ERCOT").upper()
     csv_path = unit_outage_csv_for_iso(
-        iso, mixed_gas_routing, per_unit_crosswalk, merit_order_guard, hour_grain
+        iso,
+        mixed_gas_routing,
+        per_unit_crosswalk,
+        merit_order_guard,
+        hour_grain,
+        dark_unit_years=dark_unit_years,
     )
     df = _load_unit_outage_events(csv_path, iso)
     if df is None:

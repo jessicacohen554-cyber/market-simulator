@@ -1251,6 +1251,12 @@ def _apply_outage_overlays(
             hour_grain=bool(getattr(config, "campd_per_unit_attribution", False))
             and bool(getattr(config, "campd_outage_merit_order_guard", False))
             and bool(getattr(config, "unit_outage_window_hour_grain", False)),
+            # SOCO-61 (rule 14 [R-ACCURATE]): the SAME per-unit extract plus one
+            # full-year window per unit its own CAMPD id files dark all year
+            # while producing in an adjacent year. Predicated on the per-unit
+            # flag; selects '-perunitdark-' and is byte-inert while off.
+            dark_unit_years=bool(getattr(config, "campd_per_unit_attribution", False))
+            and bool(getattr(config, "campd_dark_unit_year_windows", False)),
             # miso-266: the dispatched bin's own capacity as the denominator.
             lp_bin_capacity=_lp_bins,
         )

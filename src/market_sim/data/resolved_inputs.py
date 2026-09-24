@@ -353,6 +353,10 @@ def _campd_unit_outages_block(config, iso: str) -> dict[str, Any]:
                 # day-grain extract for a run that consumed the
                 # '-perunitmerithour-' companion.
                 bool(getattr(config, "unit_outage_window_hour_grain", False)),
+                # SOCO-61: the dark-unit-year companion gate, same reason.
+                dark_unit_years=bool(
+                    getattr(config, "campd_dark_unit_year_windows", False)
+                ),
             )
         )
     except Exception:  # pragma: no cover - a probe never breaks the record
