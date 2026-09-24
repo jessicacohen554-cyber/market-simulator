@@ -107,7 +107,9 @@ def main() -> None:
         if not d.is_dir():
             print(f"skip {d} (absent)")
             continue
-        (d / "calibration_attestation.json").write_text(json.dumps(att, indent=1) + "\n")
+        (d / "calibration_attestation.json").write_text(
+            json.dumps(att, indent=1) + "\n"
+        )
         print(f"wrote {d}/calibration_attestation.json")
 
 
