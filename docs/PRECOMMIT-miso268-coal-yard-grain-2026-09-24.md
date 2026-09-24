@@ -141,3 +141,19 @@ integrity improves but gates regress that may still be a keeper"*). **Exception,
 than recommend:** if the train tier (2023–2025) determination leaves CALIBRATED.
 
 The promotion decision is the owner's (rule 31).
+
+## 6. Launch record (appended after the pin; §1–§5 unchanged)
+
+Launched 2026-09-24 04:31–04:33 UTC, all six pinned to
+`49c898c7ef38d3bea8f2c06d4e51d0a1051649a7`. Tagged `miso-268`, `shard`; auto-PR off.
+
+| year | shard session | branch | out-dir |
+|---|---|---|---|
+| 2020 | `session_017gXfE6wgfDz7KBRzh9euSW` | `claude/miso268-yard-2020` | `results/calibration/miso268_yard_2020` |
+| 2021 | `session_019BK6dkniGw1hqcQCGwZSEW` | `claude/miso268-yard-2021` | `results/calibration/miso268_yard_2021` |
+| 2022 | `session_01M4Pe6Yv6PsPfwTkqydTFFr` | `claude/miso268-yard-2022` | `results/calibration/miso268_yard_2022` |
+| 2023 | `session_01RWVTxGrnGE3GBzzWCgwNqE` | `claude/miso268-yard-2023` | `results/calibration/miso268_yard_2023` |
+| 2024 | `session_01V73KCiM2wqonBXgKSvcH9o` | `claude/miso268-yard-2024` | `results/calibration/miso268_yard_2024` |
+| 2025 | `session_019NQqHwQyDR4a8xxXuaidCC` | `claude/miso268-yard-2025` | `results/calibration/miso268_yard_2025` |
+
+`main` refreshed at launch (`ea0b5a8f`): no solve-path change since the pin; G-DRIFT holds.
