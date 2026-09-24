@@ -1,0 +1,669 @@
+{
+ "lane": "SPP-77",
+ "base": "f68160020fa0799eff408e1bd4b80f0cd7f5a017",
+ "precommit_sha": "cf8647e0a3075edac5f79c32b81a1e21fc62d4ca",
+ "flags_row_month_gt3x_class_median": {
+  "2019": [],
+  "2020": [
+   {
+    "month": 4,
+    "klass": "COAL_LIGNITE",
+    "n": 5,
+    "mw": 650.0,
+    "max_ratio": 3.233
+   },
+   {
+    "month": 5,
+    "klass": "COAL_LIGNITE",
+    "n": 5,
+    "mw": 650.0,
+    "max_ratio": 4.55
+   },
+   {
+    "month": 6,
+    "klass": "COAL_LIGNITE",
+    "n": 5,
+    "mw": 650.0,
+    "max_ratio": 4.083
+   },
+   {
+    "month": 7,
+    "klass": "COAL_LIGNITE",
+    "n": 5,
+    "mw": 650.0,
+    "max_ratio": 4.099
+   },
+   {
+    "month": 8,
+    "klass": "COAL_LIGNITE",
+    "n": 5,
+    "mw": 650.0,
+    "max_ratio": 4.105
+   },
+   {
+    "month": 10,
+    "klass": "COAL_LIGNITE",
+    "n": 5,
+    "mw": 650.0,
+    "max_ratio": 3.606
+   },
+   {
+    "month": 11,
+    "klass": "COAL_LIGNITE",
+    "n": 5,
+    "mw": 650.0,
+    "max_ratio": 3.69
+   }
+  ],
+  "2021": [
+   {
+    "month": 1,
+    "klass": "COAL_LIGNITE",
+    "n": 5,
+    "mw": 650.0,
+    "max_ratio": 3.944
+   },
+   {
+    "month": 2,
+    "klass": "COAL_LIGNITE",
+    "n": 5,
+    "mw": 650.0,
+    "max_ratio": 3.866
+   },
+   {
+    "month": 3,
+    "klass": "CC_REGULAR",
+    "n": 4,
+    "mw": 266.0,
+    "max_ratio": 3.753
+   },
+   {
+    "month": 3,
+    "klass": "COAL_LIGNITE",
+    "n": 5,
+    "mw": 650.0,
+    "max_ratio": 4.01
+   },
+   {
+    "month": 3,
+    "klass": "CT_PEAKER",
+    "n": 22,
+    "mw": 986.4,
+    "max_ratio": 4.369
+   },
+   {
+    "month": 3,
+    "klass": "ST_GAS",
+    "n": 4,
+    "mw": 97.6,
+    "max_ratio": 4.163
+   },
+   {
+    "month": 4,
+    "klass": "COAL_LIGNITE",
+    "n": 5,
+    "mw": 650.0,
+    "max_ratio": 4.158
+   },
+   {
+    "month": 5,
+    "klass": "COAL_LIGNITE",
+    "n": 5,
+    "mw": 650.0,
+    "max_ratio": 4.028
+   },
+   {
+    "month": 6,
+    "klass": "COAL_LIGNITE",
+    "n": 5,
+    "mw": 650.0,
+    "max_ratio": 3.322
+   },
+   {
+    "month": 7,
+    "klass": "COAL_LIGNITE",
+    "n": 5,
+    "mw": 650.0,
+    "max_ratio": 3.105
+   },
+   {
+    "month": 8,
+    "klass": "COAL_LIGNITE",
+    "n": 5,
+    "mw": 650.0,
+    "max_ratio": 3.192
+   },
+   {
+    "month": 9,
+    "klass": "COAL_LIGNITE",
+    "n": 5,
+    "mw": 650.0,
+    "max_ratio": 4.032
+   }
+  ],
+  "2022": [
+   {
+    "month": 1,
+    "klass": "CC_REGULAR",
+    "n": 10,
+    "mw": 1425.9,
+    "max_ratio": 25.319
+   },
+   {
+    "month": 1,
+    "klass": "COAL_LIGNITE",
+    "n": 5,
+    "mw": 650.0,
+    "max_ratio": 3.057
+   },
+   {
+    "month": 1,
+    "klass": "CT_CHP",
+    "n": 11,
+    "mw": 42.05,
+    "max_ratio": 27.062
+   },
+   {
+    "month": 1,
+    "klass": "CT_PEAKER",
+    "n": 244,
+    "mw": 3480.877,
+    "max_ratio": 21.379
+   },
+   {
+    "month": 1,
+    "klass": "ST_GAS",
+    "n": 40,
+    "mw": 542.2,
+    "max_ratio": 8.539
+   },
+   {
+    "month": 2,
+    "klass": "COAL_LIGNITE",
+    "n": 5,
+    "mw": 650.0,
+    "max_ratio": 3.192
+   },
+   {
+    "month": 11,
+    "klass": "COAL_LIGNITE",
+    "n": 5,
+    "mw": 650.0,
+    "max_ratio": 4.583
+   }
+  ],
+  "2023": [
+   {
+    "month": 11,
+    "klass": "CT_PEAKER",
+    "n": 3,
+    "mw": 38.0,
+    "max_ratio": 3.493
+   },
+   {
+    "month": 12,
+    "klass": "CC_REGULAR",
+    "n": 4,
+    "mw": 118.5,
+    "max_ratio": 3.657
+   },
+   {
+    "month": 12,
+    "klass": "CT_PEAKER",
+    "n": 6,
+    "mw": 83.4,
+    "max_ratio": 3.277
+   }
+  ],
+  "2024": [
+   {
+    "month": 1,
+    "klass": "CT_PEAKER",
+    "n": 4,
+    "mw": 323.8,
+    "max_ratio": 3.849
+   },
+   {
+    "month": 3,
+    "klass": "CC_REGULAR",
+    "n": 8,
+    "mw": 338.9,
+    "max_ratio": 5.142
+   },
+   {
+    "month": 3,
+    "klass": "CT_PEAKER",
+    "n": 10,
+    "mw": 407.2,
+    "max_ratio": 4.479
+   },
+   {
+    "month": 9,
+    "klass": "CT_PEAKER",
+    "n": 4,
+    "mw": 323.8,
+    "max_ratio": 3.009
+   },
+   {
+    "month": 11,
+    "klass": "CC_REGULAR",
+    "n": 4,
+    "mw": 119.4,
+    "max_ratio": 3.884
+   },
+   {
+    "month": 11,
+    "klass": "CT_PEAKER",
+    "n": 7,
+    "mw": 369.2,
+    "max_ratio": 3.761
+   }
+  ],
+  "2025": [
+   {
+    "month": 2,
+    "klass": "CC_REGULAR",
+    "n": 4,
+    "mw": 121.8,
+    "max_ratio": 3.168
+   },
+   {
+    "month": 11,
+    "klass": "CT_PEAKER",
+    "n": 4,
+    "mw": 442.2,
+    "max_ratio": 5.468
+   },
+   {
+    "month": 11,
+    "klass": "ST_GAS",
+    "n": 4,
+    "mw": 240.0,
+    "max_ratio": 3.514
+   },
+   {
+    "month": 12,
+    "klass": "CT_PEAKER",
+    "n": 4,
+    "mw": 442.2,
+    "max_ratio": 4.406
+   },
+   {
+    "month": 12,
+    "klass": "ST_GAS",
+    "n": 4,
+    "mw": 240.0,
+    "max_ratio": 3.112
+   }
+  ]
+ },
+ "cc_jan_2022_by_plant_top": [
+  {
+   "plant": 2079,
+   "pmax": 234.7,
+   "fuel_jan": 147.153,
+   "fuel_feb": 4.346
+  },
+  {
+   "plant": 7296,
+   "pmax": 536.0,
+   "fuel_jan": 147.153,
+   "fuel_feb": 6.574
+  },
+  {
+   "plant": 55178,
+   "pmax": 655.2,
+   "fuel_jan": 47.943,
+   "fuel_feb": 5.196
+  },
+  {
+   "plant": 165,
+   "pmax": 477.0,
+   "fuel_jan": 9.019,
+   "fuel_feb": 6.581
+  },
+  {
+   "plant": 3006,
+   "pmax": 282.0,
+   "fuel_jan": 8.962,
+   "fuel_feb": 11.844
+  },
+  {
+   "plant": 7887,
+   "pmax": 118.5,
+   "fuel_jan": 7.397,
+   "fuel_feb": 7.939
+  },
+  {
+   "plant": 8000,
+   "pmax": 219.5,
+   "fuel_jan": 6.517,
+   "fuel_feb": 7.413
+  },
+  {
+   "plant": 55457,
+   "pmax": 491.0,
+   "fuel_jan": 6.16,
+   "fuel_feb": 7.319
+  }
+ ],
+ "patch_MO_2022_01_to_US_merit_redispatch": {
+  "year": 2022,
+  "rows_repriced": 314,
+  "mw_repriced": 5077.820051919542,
+  "classes": {
+   "CC_CHP": {
+    "p1_twh": 1.087049961090088,
+    "proxy_ctrl_twh": 0.737953318865709,
+    "delta_twh": -0.0018690057628259528
+   },
+   "CC_REGULAR": {
+    "p1_twh": 28.415006637573242,
+    "proxy_ctrl_twh": 29.039798269707543,
+    "delta_twh": 0.08025949760651961
+   },
+   "COAL_LIGNITE": {
+    "p1_twh": 12.862932205200195,
+    "proxy_ctrl_twh": 13.231771836488132,
+    "delta_twh": -0.005185488084400073
+   },
+   "COAL_PRB": {
+    "p1_twh": 87.73987579345703,
+    "proxy_ctrl_twh": 89.78515807147437,
+    "delta_twh": -0.011325870409622789
+   },
+   "CT_CHP": {
+    "p1_twh": 0.5527019500732422,
+    "proxy_ctrl_twh": 0.022982992987426308,
+    "delta_twh": 1.2611534949985071e-05
+   },
+   "CT_PEAKER": {
+    "p1_twh": 8.985222816467285,
+    "proxy_ctrl_twh": 9.380539113384705,
+    "delta_twh": -0.051209256396373734
+   },
+   "ST_CHP": {
+    "p1_twh": 0.03884127736091614,
+    "proxy_ctrl_twh": 0.0070457748289672615,
+    "delta_twh": 0.0013717243946999933
+   },
+   "ST_GAS": {
+    "p1_twh": 5.27370023727417,
+    "proxy_ctrl_twh": 2.7500801365465843,
+    "delta_twh": -0.012054212882954161
+   }
+  }
+ },
+ "raw_f923_MO_2022_01": [
+  {
+   "plant_id": 2079,
+   "price_per_mmbtu": 5.411,
+   "quantity": 30946
+  },
+  {
+   "plant_id": 2098,
+   "price_per_mmbtu": 4.439,
+   "quantity": 169382
+  },
+  {
+   "plant_id": 2104,
+   "price_per_mmbtu": 4.392,
+   "quantity": 45780
+  },
+  {
+   "plant_id": 2161,
+   "price_per_mmbtu": 4.739,
+   "quantity": 144883
+  },
+  {
+   "plant_id": 6074,
+   "price_per_mmbtu": 4.338,
+   "quantity": 914
+  },
+  {
+   "plant_id": 6195,
+   "price_per_mmbtu": 4.739,
+   "quantity": 250510
+  },
+  {
+   "plant_id": 6223,
+   "price_per_mmbtu": 124.446,
+   "quantity": 64482
+  },
+  {
+   "plant_id": 7296,
+   "price_per_mmbtu": 4.202,
+   "quantity": 694427
+  },
+  {
+   "plant_id": 7604,
+   "price_per_mmbtu": 50.349,
+   "quantity": 899187
+  },
+  {
+   "plant_id": 7848,
+   "price_per_mmbtu": 61.518,
+   "quantity": 202913
+  },
+  {
+   "plant_id": 7964,
+   "price_per_mmbtu": 166.077,
+   "quantity": 8296
+  }
+ ],
+ "division_peer_discriminator_hits_gt2_top": [
+  {
+   "state": "MO",
+   "year": 2022,
+   "month": 1,
+   "p": 152.45,
+   "peer": 5.985,
+   "us": 6.41,
+   "r_peer": 25.472,
+   "r_us": 23.783
+  },
+  {
+   "state": "WY",
+   "year": 2021,
+   "month": 2,
+   "p": 48.54,
+   "peer": 4.765,
+   "us": 18.06,
+   "r_peer": 10.187,
+   "r_us": 2.688
+  },
+  {
+   "state": "NM",
+   "year": 2021,
+   "month": 2,
+   "p": 24.82,
+   "peer": 4.765,
+   "us": 18.06,
+   "r_peer": 5.209,
+   "r_us": 1.374
+  },
+  {
+   "state": "ID",
+   "year": 2019,
+   "month": 3,
+   "p": 21.62,
+   "peer": 4.22,
+   "us": 3.6,
+   "r_peer": 5.123,
+   "r_us": 6.006
+  },
+  {
+   "state": "NE",
+   "year": 2021,
+   "month": 2,
+   "p": 65.69,
+   "peer": 13.2,
+   "us": 18.06,
+   "r_peer": 4.977,
+   "r_us": 3.637
+  },
+  {
+   "state": "KS",
+   "year": 2021,
+   "month": 2,
+   "p": 65.23,
+   "peer": 13.2,
+   "us": 18.06,
+   "r_peer": 4.942,
+   "r_us": 3.612
+  },
+  {
+   "state": "KS",
+   "year": 2021,
+   "month": 3,
+   "p": 10.86,
+   "peer": 2.72,
+   "us": 3.44,
+   "r_peer": 3.993,
+   "r_us": 3.157
+  },
+  {
+   "state": "MD",
+   "year": 2025,
+   "month": 1,
+   "p": 27.48,
+   "peer": 6.9,
+   "us": 6.21,
+   "r_peer": 3.983,
+   "r_us": 4.425
+  },
+  {
+   "state": "MA",
+   "year": 2024,
+   "month": 3,
+   "p": 7.77,
+   "peer": 2.145,
+   "us": 2.27,
+   "r_peer": 3.622,
+   "r_us": 3.423
+  },
+  {
+   "state": "NE",
+   "year": 2025,
+   "month": 11,
+   "p": 13.82,
+   "peer": 3.9,
+   "us": 4.04,
+   "r_peer": 3.544,
+   "r_us": 3.421
+  },
+  {
+   "state": "NE",
+   "year": 2024,
+   "month": 11,
+   "p": 9.11,
+   "peer": 2.595,
+   "us": 2.71,
+   "r_peer": 3.511,
+   "r_us": 3.362
+  },
+  {
+   "state": "AK",
+   "year": 2024,
+   "month": 5,
+   "p": 6.37,
+   "peer": 1.92,
+   "us": 2.36,
+   "r_peer": 3.318,
+   "r_us": 2.699
+  }
+ ],
+ "POSTHOC_reference_vs_own_state_prints": {
+  "n_cells": 2663,
+  "median": 0.9859940630450549,
+  "top": [
+   {
+    "state": "MO",
+    "year": 2022,
+    "month": 1,
+    "ref": 147.153,
+    "f923_qw": 29.093,
+    "n": 11,
+    "ref_over_own_prints": 5.058
+   },
+   {
+    "state": "IA",
+    "year": 2019,
+    "month": 2,
+    "ref": 7.153,
+    "f923_qw": 2.976,
+    "n": 9,
+    "ref_over_own_prints": 2.403
+   },
+   {
+    "state": "MT",
+    "year": 2024,
+    "month": 8,
+    "ref": 1.12,
+    "f923_qw": 0.497,
+    "n": 2,
+    "ref_over_own_prints": 2.252
+   },
+   {
+    "state": "MT",
+    "year": 2024,
+    "month": 3,
+    "ref": 2.722,
+    "f923_qw": 1.349,
+    "n": 2,
+    "ref_over_own_prints": 2.018
+   },
+   {
+    "state": "IL",
+    "year": 2024,
+    "month": 1,
+    "ref": 6.284,
+    "f923_qw": 3.124,
+    "n": 8,
+    "ref_over_own_prints": 2.012
+   },
+   {
+    "state": "MT",
+    "year": 2024,
+    "month": 7,
+    "ref": 2.114,
+    "f923_qw": 1.094,
+    "n": 3,
+    "ref_over_own_prints": 1.933
+   }
+  ],
+  "n_outside_0.5_2.0": 16,
+  "uri_2021_02": [
+   {
+    "state": "KS",
+    "ref": 62.963,
+    "f923_qw": 60.037,
+    "ref_over_own_prints": 1.049
+   },
+   {
+    "state": "NE",
+    "ref": 63.407,
+    "f923_qw": 62.124,
+    "ref_over_own_prints": 1.021
+   },
+   {
+    "state": "NM",
+    "ref": 23.958,
+    "f923_qw": 23.827,
+    "ref_over_own_prints": 1.005
+   },
+   {
+    "state": "TX",
+    "ref": 59.73,
+    "f923_qw": 45.965,
+    "ref_over_own_prints": 1.299
+   },
+   {
+    "state": "WY",
+    "ref": 46.853,
+    "f923_qw": 46.139,
+    "ref_over_own_prints": 1.015
+   }
+  ]
+ }
+}
