@@ -6444,6 +6444,8 @@ def solve_and_persist(
         # demand-build flag that arrives through prb_overrides under a
         # replay_keeper --set probe), so it resolves through the same helper.
         _nwpp_grid_wind = _caiso_demand_flag("nwpp_grid_carried_wind_served")
+        # pjm-h19: the balance-identity demand screen is the same class.
+        _demand_balance = _caiso_demand_flag("demand_balance_screen")
         # td_loss_factor is the SAME defect class as the two flags above and
         # needs the same treatment (nyiso-87). It is not a solve_and_persist
         # kwarg, so a `--set td_loss_factor=X` probe can only arrive through
@@ -6475,6 +6477,7 @@ def solve_and_persist(
             caiso_supply_consistent_demand=_supply_consistent,
             ercot_tie_zonal_interchange=_ercot_tie_zonal,
             nwpp_grid_carried_wind_served=_nwpp_grid_wind,
+            demand_balance_screen=_demand_balance,
         )
         # Must-run residual classes (biomass / other-gas / ...) are netted out
         # of demand for the LP and re-added as pseudo-units in the dispatch

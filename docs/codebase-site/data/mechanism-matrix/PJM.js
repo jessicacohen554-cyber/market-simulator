@@ -48,6 +48,7 @@ window.MECH_MATRIX_SHARDS.PJM = {
     ercot_ruc_commitment_floor: { cell: "." },
     ercot_as_held_requirement: { cell: "." },
     ercot_as_held_location: { cell: "." },
+    demand_balance_screen: { cell: "O", ev: "pjm-h19 (2026-09-23) SOLVED, REGISTERED, PROMOTION UNRULED. Runs 2026-09-23-pjm-h19-dbs-span (2023-25, CALIBRATED 8/8) + -touchpoint (2020-22, NOT-YET), six per-year shards at 2d57aa20. Every PRECOMMIT prediction held: 2020 C3b FAIL->PASS 0.212->0.155; 2020 C3a +19.0% -> +14.5% (still FAIL); VOLL shed 41,679 MWh -> 0; 2021/22/23/25 bit-identical to the keeper (G0); zero status changes; D-diagnostic fail sets unchanged. Against: 2020 C3c tail count 2 -> 0 vs 2 actual. docs/RESULT-pjm-h19-demand-balance-screen-2026-09-23.md." },
     nwpp_grid_carried_wind_served: { cell: "." },
     ercot_tie_zonal_interchange: { cell: "." },
     ercot_offer_swcap_clip: { cell: "." },

@@ -6572,3 +6572,19 @@ FAILs). G1 MW limb fails on a nameplate-sized bar (disclosed, not amended). Six 
 `152c546a`; 2023's former blocker (gitignored `pjm-da-virtuals` corpus) closed by per-shard re-fetch
 with `pjm_da_virtual_bids` left true. Owner ruling 2026-09-23: "Promote it". Record:
 `docs/RESULT-hydro-2-pjm-2026-09-22.md`.
+
+## pjm-h19 — 2026-09-23 — `demand_balance_screen`: the 2020 phantom-load repair, every prediction held; promotion UNRULED
+
+Card A of pjm-h18. New ISO-agnostic, default-off `ScenarioConfig.demand_balance_screen`
+(`data/eia930/demand.py::_screen_demand_balance`): repair an hour whose demand reverses by more than
+the BA-year's own Tukey far-out hourly ramp AND whose `|D − (NG − TI)|` exceeds both neighbours'.
+Zero fitted parameters (rule 14). Bar declared before the census; v1 (degenerate, IQR 0) and v2
+(blamed a correct CAISO 2019 hour) retired pre-solve. Census over every ISO-year 2018–2025: in PJM's
+span, exactly 2020 h5003/h5031/h5383 + 2024 h7787. Six per-year shards at `2d57aa20`, composed,
+benchmark rebuilt, registered `2026-09-23-pjm-h19-dbs-span` (CALIBRATED 8/8) + `-touchpoint`
+(NOT-YET). **2020 C3b FAIL → PASS 0.212 → 0.155; 2020 C3a +19.0 % → +14.5 % (still FAIL);
+VOLL shed 41,679 MWh → 0; 2021/22/23/25 bit-identical (G0).** Zero status changes, D-fail sets
+unchanged. Against: 2020 C3c tail count 2 → 0 vs 2 actual. Benchmark rebuild adopted `ad42fe43`
+(keeper actuals ≤ 0.2 TWh, vestigial `COAL` row gone, zero status changes). Off-PJM finding routed:
+CAISO 2025 h5076 (11.8 vs 29.9 GW). Record: `docs/RESULT-pjm-h19-demand-balance-screen-2026-09-23.md`,
+charter `docs/PRECOMMIT-pjm-h19-demand-balance-screen-2026-09-23.md`.

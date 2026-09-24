@@ -1230,6 +1230,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # the wind the pool supply carries, a different demand array, and hashes
     # distinctly. Registered IN THE SAME COMMIT as the field.
     "nwpp_grid_carried_wind_served",
+    # pjm-h19 EIA-930 balance-identity demand screen (GATED default off):
+    # dropped from the hash at its default so every pre-existing cache key
+    # stays byte-stable (the off path never calls the screen); an armed run
+    # serves a repaired demand array and hashes distinctly. Registered IN
+    # THE SAME COMMIT as the field.
+    "demand_balance_screen",
     # ercot-236 SWCAP offer clip (GATED default off): dropped from the hash
     # at its default so every pre-existing cache key stays byte-stable (the
     # off path never enters the clip block — byte-identical by construction);
@@ -2369,6 +2375,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "ercot_tie_zonal_interchange": "False",
     "nwpp_grid_carried_wind_served": "False",
+    # Added by pjm-h19 WITH the field (the nyiso-119 discipline).
+    "demand_balance_screen": "False",
     # Added by ercot-236 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "ercot_offer_swcap_clip": "False",
@@ -19153,6 +19161,17 @@ class ScenarioConfig:
     # definition, never a level rescale; regenerates for any year the
     # EIA-930 pool frame exists. FINDING-nwpp-47-2026-09-22.md.
     nwpp_grid_carried_wind_served: bool = False
+    # pjm-h19 EIA-930 balance-identity demand repair (GATED default off,
+    # ISO-agnostic, ZERO fitted scalars). Repairs an hour whose metered
+    # Demand makes an isolated reversal larger than the BA-year's own Tukey
+    # far-out hourly ramp (Q3 + 3*IQR of |dD|, the published convention) AND
+    # departs from its neighbours more than the independent balance
+    # measurement NG - TI does. Interpolated like the sibling spike/dropout
+    # screens. Rule 14 [R-ACCURATE] source-data repair, the high-side twin of
+    # nyiso-99's demand_dropout_screen; regenerates for any year EIA-930
+    # publishes. data.eia930.demand._screen_demand_balance;
+    # docs/PRECOMMIT-pjm-h19-demand-balance-screen-2026-09-23.md.
+    demand_balance_screen: bool = False
     # caiso-205 ADAPTIVE-EXPECTATION storage offer, the CAISO leg of the
     # ercot-221 family (owner order caiso-205 branch 1 over the caiso-204
     # recorded Phase-0 G-BOOT FAIL — the ercot-188/213/215/221 pattern:
@@ -22412,6 +22431,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_adaptive_fixed_point": 1,
     "ercot_tie_zonal_interchange": 1,
     "nwpp_grid_carried_wind_served": 1,
+    "demand_balance_screen": 1,
     "ercot_offer_swcap_clip": 1,
     "caiso_storage_adaptive_expectation": 1,
     "caiso_adaptive_half_life_days": 2,

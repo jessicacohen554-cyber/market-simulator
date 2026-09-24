@@ -1,0 +1,576 @@
+{
+ "bar": "PRECOMMIT-pjm-h19 \u00a72 (v2)",
+ "iso_years": {
+  "ERCOT-2018": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "ERCOT-2019": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "ERCOT-2020": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "ERCOT-2021": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "ERCOT-2022": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "ERCOT-2023": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "ERCOT-2024": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "ERCOT-2025": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "CAISO-2018": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "CAISO-2019": {
+   "status": "ok",
+   "n_flagged": 17,
+   "hours": [
+    {
+     "hour": 1041,
+     "demand_raw": 14012.0,
+     "prev": 24590.0,
+     "next": 23928.0,
+     "ng_minus_ti": 25488.0,
+     "repaired": 24259.0,
+     "utc": "2019-02-13 18:00:00"
+    },
+    {
+     "hour": 1045,
+     "demand_raw": 14112.0,
+     "prev": 24438.0,
+     "next": 24732.0,
+     "ng_minus_ti": 24850.0,
+     "repaired": 24585.0,
+     "utc": "2019-02-13 22:00:00"
+    },
+    {
+     "hour": 1067,
+     "demand_raw": 15095.0,
+     "prev": 25800.0,
+     "next": 24977.0,
+     "ng_minus_ti": 24525.0,
+     "repaired": 25388.5,
+     "utc": "2019-02-14 20:00:00"
+    },
+    {
+     "hour": 1185,
+     "demand_raw": 13519.0,
+     "prev": 23665.0,
+     "next": 21447.0,
+     "ng_minus_ti": 24376.0,
+     "repaired": 22556.0,
+     "utc": "2019-02-19 18:00:00"
+    },
+    {
+     "hour": 1191,
+     "demand_raw": 12197.0,
+     "prev": 19684.0,
+     "next": 22134.0,
+     "ng_minus_ti": 20806.0,
+     "repaired": 20909.0,
+     "utc": "2019-02-20 00:00:00"
+    },
+    {
+     "hour": 2390,
+     "demand_raw": 12193.0,
+     "prev": 21304.0,
+     "next": 21973.0,
+     "ng_minus_ti": 21006.0,
+     "repaired": 21638.5,
+     "utc": "2019-04-10 23:00:00"
+    },
+    {
+     "hour": 2410,
+     "demand_raw": 12224.0,
+     "prev": 24142.0,
+     "next": 22887.0,
+     "ng_minus_ti": 21478.0,
+     "repaired": 23514.5,
+     "utc": "2019-04-11 19:00:00"
+    },
+    {
+     "hour": 2412,
+     "demand_raw": 12693.0,
+     "prev": 22887.0,
+     "next": 22805.0,
+     "ng_minus_ti": 23170.0,
+     "repaired": 22846.0,
+     "utc": "2019-04-11 21:00:00"
+    },
+    {
+     "hour": 2528,
+     "demand_raw": 13370.0,
+     "prev": 24034.0,
+     "next": 23917.0,
+     "ng_minus_ti": 23682.0,
+     "repaired": 23975.5,
+     "utc": "2019-04-16 17:00:00"
+    },
+    {
+     "hour": 3060,
+     "demand_raw": 14009.0,
+     "prev": 24408.0,
+     "next": 24944.0,
+     "ng_minus_ti": 24244.0,
+     "repaired": 24676.0,
+     "utc": "2019-05-08 21:00:00"
+    },
+    {
+     "hour": 3081,
+     "demand_raw": 13845.0,
+     "prev": 25366.0,
+     "next": 25011.0,
+     "ng_minus_ti": 25702.0,
+     "repaired": 25188.5,
+     "utc": "2019-05-09 18:00:00"
+    },
+    {
+     "hour": 3084,
+     "demand_raw": 13843.0,
+     "prev": 24757.0,
+     "next": 24838.0,
+     "ng_minus_ti": 24685.0,
+     "repaired": 24797.5,
+     "utc": "2019-05-09 21:00:00"
+    },
+    {
+     "hour": 8499,
+     "demand_raw": 27201.0,
+     "prev": 20875.0,
+     "next": 20718.0,
+     "ng_minus_ti": 17110.0,
+     "repaired": 20796.5,
+     "utc": "2019-12-21 12:00:00"
+    },
+    {
+     "hour": 8508,
+     "demand_raw": 27201.0,
+     "prev": 22654.0,
+     "next": 22266.0,
+     "ng_minus_ti": 20030.0,
+     "repaired": 22460.0,
+     "utc": "2019-12-21 21:00:00"
+    },
+    {
+     "hour": 8523,
+     "demand_raw": 27201.0,
+     "prev": 20295.0,
+     "next": 19997.0,
+     "ng_minus_ti": 16664.0,
+     "repaired": 20146.0,
+     "utc": "2019-12-22 12:00:00"
+    },
+    {
+     "hour": 8525,
+     "demand_raw": 27201.0,
+     "prev": 19997.0,
+     "next": 21334.0,
+     "ng_minus_ti": 16906.0,
+     "repaired": 20665.5,
+     "utc": "2019-12-22 14:00:00"
+    },
+    {
+     "hour": 8527,
+     "demand_raw": 27201.0,
+     "prev": 21334.0,
+     "next": 22741.0,
+     "ng_minus_ti": 19577.0,
+     "repaired": 22037.5,
+     "utc": "2019-12-22 16:00:00"
+    }
+   ]
+  },
+  "CAISO-2020": {
+   "status": "ok",
+   "n_flagged": 1,
+   "hours": [
+    {
+     "hour": 6730,
+     "demand_raw": 13807.0,
+     "prev": 26018.0,
+     "next": 25573.0,
+     "ng_minus_ti": 6347.0,
+     "repaired": 25795.5,
+     "utc": "2020-10-08 19:00:00"
+    }
+   ]
+  },
+  "CAISO-2021": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "CAISO-2022": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "CAISO-2023": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "CAISO-2024": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "CAISO-2025": {
+   "status": "ok",
+   "n_flagged": 1,
+   "hours": [
+    {
+     "hour": 5076,
+     "demand_raw": 11819.0,
+     "prev": 29881.0,
+     "next": 29886.0,
+     "ng_minus_ti": 28047.0,
+     "repaired": 29883.5,
+     "utc": "2025-07-31 21:00:00"
+    }
+   ]
+  },
+  "NYISO-2018": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "NYISO-2019": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "NYISO-2020": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "NYISO-2021": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "NYISO-2022": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "NYISO-2023": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "NYISO-2024": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "NYISO-2025": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "NEISO-2018": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "NEISO-2019": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "NEISO-2020": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "NEISO-2021": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "NEISO-2022": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "NEISO-2023": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "NEISO-2024": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "NEISO-2025": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "MISO-2018": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "MISO-2019": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "MISO-2020": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "MISO-2021": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "MISO-2022": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "MISO-2023": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "MISO-2024": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "MISO-2025": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "PJM-2018": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "PJM-2019": {
+   "status": "ok",
+   "n_flagged": 2,
+   "hours": [
+    {
+     "hour": 8031,
+     "demand_raw": 103428.0,
+     "prev": 86378.0,
+     "next": 89476.0,
+     "ng_minus_ti": 87978.0,
+     "repaired": 87927.0,
+     "utc": "2019-12-01 21:00:00"
+    },
+    {
+     "hour": 8296,
+     "demand_raw": 155276.0,
+     "prev": 98466.0,
+     "next": 108808.0,
+     "ng_minus_ti": 107783.0,
+     "repaired": 103637.0,
+     "utc": "2019-12-12 22:00:00"
+    }
+   ]
+  },
+  "PJM-2020": {
+   "status": "ok",
+   "n_flagged": 3,
+   "hours": [
+    {
+     "hour": 5003,
+     "demand_raw": 192229.0,
+     "prev": 127489.0,
+     "next": 136631.0,
+     "ng_minus_ti": 135564.0,
+     "repaired": 132060.0,
+     "utc": "2020-07-28 17:00:00"
+    },
+    {
+     "hour": 5031,
+     "demand_raw": 176085.0,
+     "prev": 139527.0,
+     "next": 141853.0,
+     "ng_minus_ti": 141358.0,
+     "repaired": 140690.0,
+     "utc": "2020-07-29 21:00:00"
+    },
+    {
+     "hour": 5383,
+     "demand_raw": 138575.0,
+     "prev": 95297.0,
+     "next": 103352.0,
+     "ng_minus_ti": 102845.0,
+     "repaired": 99324.5,
+     "utc": "2020-08-13 13:00:00"
+    }
+   ]
+  },
+  "PJM-2021": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "PJM-2022": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "PJM-2023": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "PJM-2024": {
+   "status": "ok",
+   "n_flagged": 1,
+   "hours": [
+    {
+     "hour": 7787,
+     "demand_raw": 56260.0,
+     "prev": 94812.0,
+     "next": 95482.0,
+     "ng_minus_ti": 96156.0,
+     "repaired": 95147.0,
+     "utc": "2024-11-21 17:00:00"
+    }
+   ]
+  },
+  "PJM-2025": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "SPP-2018": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "SPP-2019": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "SPP-2020": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "SPP-2021": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "SPP-2022": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "SPP-2023": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "SPP-2024": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "SPP-2025": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "SOCO-2018": {
+   "status": "no frame"
+  },
+  "SOCO-2019": {
+   "status": "no frame"
+  },
+  "SOCO-2020": {
+   "status": "no frame"
+  },
+  "SOCO-2021": {
+   "status": "no frame"
+  },
+  "SOCO-2022": {
+   "status": "no frame"
+  },
+  "SOCO-2023": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "SOCO-2024": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "SOCO-2025": {
+   "status": "ok",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "NWPP-2018": {
+   "status": "no frame"
+  },
+  "NWPP-2019": {
+   "status": "no frame"
+  },
+  "NWPP-2020": {
+   "status": "no frame"
+  },
+  "NWPP-2021": {
+   "status": "no frame"
+  },
+  "NWPP-2022": {
+   "status": "no frame"
+  },
+  "NWPP-2023": {
+   "status": "inert by construction (no single-BA balance frame)",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "NWPP-2024": {
+   "status": "inert by construction (no single-BA balance frame)",
+   "n_flagged": 0,
+   "hours": []
+  },
+  "NWPP-2025": {
+   "status": "inert by construction (no single-BA balance frame)",
+   "n_flagged": 0,
+   "hours": []
+  }
+ }
+}

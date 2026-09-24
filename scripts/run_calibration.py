@@ -3049,6 +3049,7 @@ def run_year(
             nwpp_grid_carried_wind_served=getattr(
                 config, "nwpp_grid_carried_wind_served", False
             ),
+            demand_balance_screen=getattr(config, "demand_balance_screen", False),
         )
     wind_cf, wind_cap, solar_cf, solar_cap = load_renewable_profiles(
         iso, year, iso_config, config

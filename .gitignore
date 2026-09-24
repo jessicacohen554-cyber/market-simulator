@@ -3373,3 +3373,6 @@ results/calibration/miso267_dbd_2022/
 results/calibration/miso267_dbd_2023/
 results/calibration/miso267_dbd_2024/
 results/calibration/miso267_dbd_2025/
+
+# pjm-h19 per-year shard legs: parent-local only (rule 32(d) / 31); composites are what reach main.
+results/calibration/pjm_h19_dbs_20[0-9][0-9]/
