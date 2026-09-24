@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-09-24 — Docs: nine registered regions, CAISO's five zones (audit desk v42 follow-up)
+
+Docs only — no code, no data, no registry; no cache key moves.
+
+- **`CLAUDE.md`, `model-methodology-spec.md`, `README.md` now name all nine regions** registered in
+  `config/iso_configs.py`. NWPP (a pool of 17 WECC balancing authorities, 5 whole-BA zones) and SOCO
+  (the Southern Company balancing authority, 3 zones, no LMP market) were registered 2026-09-14 but
+  the top-level docs still said "seven ISOs". Verified against `get_iso_config` at `a125f5dc`.
+- **`CLAUDE.md` said CAISO had 3 zones + the WECC import node; it has 5** (NP15, ZP26, LA_BASIN,
+  SDGE, SP15_rest). The spec already had the right count.
+- **The `DATA PROFILE` list in `CLAUDE.md` now includes `spp`, `nwpp`, `soco`**, which
+  `configs/data-profiles.yaml` has declared since those regions were registered.
+- **`docs/multi-iso/README.md` and `docs/codebase/08-config-reference.md` were already current**, so
+  they are unchanged.
+
 ## 2026-09-16 — NWPP r#9: the zero-baseline guard lands, and the first NWPP solve is issued
 
 Desk refresh r#9 (`docs/handoffs/nwpp-desk-ledger-2026-09.md`). Docs only — no code, no data, no
