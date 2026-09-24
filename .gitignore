@@ -3448,3 +3448,8 @@ results/calibration/rcaiso_inputs_2022/
 results/calibration/rcaiso_inputs_2023/
 results/calibration/rcaiso_inputs_2024/
 results/calibration/rcaiso_inputs_2025/
+
+# R-NWPP per-year shard legs (rule 32(d) / 29(c)): composed into rnwpp_span; the legs stay off main.
+# Provenance SHAs: 2019 45d6c3bc57bcffdcde5a17c0af330084d1e01a5e, 2023 e90513088dadaa799462b899101a6edb5000ac20,
+# 2024 350bd57a8e1e02a442dfe8e1578ae829cb31a950, 2025 cc3746809e68df0f47d93e2f18ecd3a0cdb2517b (shard branches are transport, rule 33(f)).
+results/calibration/rnwpp_20[0-9][0-9]/
