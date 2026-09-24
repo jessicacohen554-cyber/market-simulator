@@ -590,4 +590,5 @@ DECLARED: dict[str, str | dict[str, str]] = {
     "HYDRO_PONDAGE_EXTRA_NID_BY_PLANT": {"NYISO": "73646e5fe6e706c5"},
     "PPA_COST_RECOVERY_YR": "aafb960da52cba28",
     "REGIONAL_RENEWABLE_CF": "2f3d60ae0f2c3b34",
+    "ISO_MEMBERSHIP_DROPS_CURRENT_BA_RECODE": {"SOCO": "38d36ce273c7be1c"},
 }

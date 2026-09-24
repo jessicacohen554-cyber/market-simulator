@@ -109,6 +109,30 @@ EIA930_GAS_FOLDS_GEO_BIOMASS: frozenset[str] = frozenset({"CAISO"})
 # anchor and are unchanged. (calibration_verdict names these CEMS_GAS_ANCHOR_*.)
 EIA930_NG_CELL_CORRUPT: frozenset[str] = frozenset({"CAISO"})
 
+# BAs whose EIA-930 "Natural Gas" cell is MEASURED NOT to fold in the 923
+# OTHER + biomass that is absent from the BA's own "Other" series, so
+# :func:`gas_foldin_deflation` must return 0 for them. The deflation's premise
+# ("923 other+biomass not in 930 Other leaked into NG") is a hypothesis about
+# WHERE that energy sits in 930; it can also sit nowhere in 930 at all —
+# behind-the-meter mill self-generation the BA never meters. The two are told
+# apart by the gas cell itself: a fold of F TWh makes 930 gas exceed the 923 gas
+# classes by ~F.
+#
+# SOCO (lane SOCO-60, 2026-09-23, rule 25 — SOCO's own data only; probe
+# scripts/probes/_soco60b_phase0.py): the deflation would subtract 6.35 TWh
+# (2024; 923 biomass 9.30 + OTHER -0.48 - 930 Other 2.48), i.e. assert 930 gas
+# holds 6.35 TWh of biomass. Measured, 930 SOCO gas vs the 923 gas classes of
+# the plants in the SOCO BA (FULL, CHP host steam included) is 125.06/127.88,
+# 125.88/126.08, 120.99/121.89, 130.64/130.96, 129.59/130.23, 126.08/129.54 TWh
+# in 2019-2024 — 930 gas is AT OR BELOW 923 gas in every year, so there is no
+# room for any fold, let alone 6-7 TWh. SOCO's 923 biomass is 82 % / 84 %
+# CHP-flagged (2023 / 2024) and 60 % black liquor (BLQ 5.14 / 5.56 of 8.82 /
+# 9.32 TWh) — pulp-mill recovery-boiler generation the BA does not meter. Applying the
+# deflation fired the combined reconcile at x0.956 (2024) on every SOCO fossil
+# class — coal included, where 930 and 923 agree to 0.7 %. Benchmark-only:
+# no solve reads this.
+EIA930_GAS_FOLD_REFUTED: frozenset[str] = frozenset({"SOCO"})
+
 # First VINTAGE year the corruption contaminates: the hourly gas actual
 # (fuelRows / C4) switches to the CEMS+cogen basis from this vintage; earlier
 # years keep 930.
@@ -142,7 +166,12 @@ def gas_foldin_deflation(classfull: dict, e930: dict, iso: str) -> float:
       clean BA and yields the full model other+biomass for a total-fold BA.
     * **Legacy bundle** (no ``other`` series): fall back to the per-ISO
       :data:`EIA930_GAS_FOLDS_GEO_BIOMASS` allowlist. Coal never folds.
+
+    A BA in :data:`EIA930_GAS_FOLD_REFUTED` returns 0: its gas cell is measured
+    not to carry the fold (SOCO-60).
     """
+    if iso in EIA930_GAS_FOLD_REFUTED:
+        return 0.0
     model_other_bio = float(classfull.get("OTHER", 0.0)) + float(
         classfull.get("biomass", 0.0)
     )

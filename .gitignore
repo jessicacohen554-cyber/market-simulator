@@ -3295,6 +3295,18 @@ results/calibration/miso266_arm_*/
 # miso-266 composed spans (rule 31 [R-RETAIN] / rule 32(d)).
 results/calibration/miso266_ctl_span/
 results/calibration/miso266_arm_span/
+
+# ---------------------------------------------------------------------------
+# SOCO-59 (2026-09-22) — the 2025 hydro-hole repair + SOCO's EIA-930 PS split.
+# The composed arm, results/calibration/soco59_hydro_split, IS committed.
+# Its three per-year shard legs are NOT (rule 32 [R-SHARD] (d)); rule 31
+# [R-RETAIN]: gitignoring discharges that duty — never `rm`.
+# Leg SHAs (rule 33 [R-SHARD-ARCHIVE] (d) — provenance, NOT a durability
+# claim; cost any recovery as a re-solve):
+#   soco59_arm_2023  0ba91f581a2c3655a74a6686f371407098fe9595
+#   soco59_arm_2024  ca09c2772717ab5436e456077c414f3f5cd81db1
+#   soco59_arm_2025  52c8f3ce6fcc696fe544dcbc41473e463e609c55
+results/calibration/soco59_arm_20[0-9][0-9]/
 # nwpp-46 per-year shard legs: kept on local disk (rule 31 [R-RETAIN] — never deleted)
 # but OUT of main (rule 32(d) [R-SHARD] — only the composed span is registered).
 # Recover a leg by its immutable shard SHA (rule 33(d), provenance not durability):
@@ -3376,3 +3388,9 @@ results/calibration/miso267_dbd_2025/
 
 # pjm-h19 per-year shard legs: parent-local only (rule 32(d) / 31); composites are what reach main.
 results/calibration/pjm_h19_dbs_20[0-9][0-9]/
+# SOCO-60 (2026-09-23) — merged hydro recipe (hydro_ror_split + hydro_eia930_monthly).
+# Per-year shard legs are NOT committed (rule 32 [R-SHARD] (d)); rule 31
+# [R-RETAIN]: gitignoring discharges that duty — never `rm`. Only the composed
+# span is committed. Leg SHAs are recorded in FINDING-soco-60 (provenance only).
+results/calibration/soco60_arm_20[0-9][0-9]/
+results/calibration/soco60_armB_20[0-9][0-9]/
