@@ -271,3 +271,13 @@ a named defect.
 - **Promotion cost:**
   - While this session is alive: zero LP (register, promote, audit, prune).
   - After it ends: seven shards of ~10–25 min each, run in parallel.
+
+### 9.7 Owner ruling (2026-09-24): "Don't promote"
+
+**Not promoted.** It is also not a keeper candidate under the owner's standing test ("structural
+integrity improves but gates regress may still be a keeper"): the structural leg itself regresses,
+since the arm adds a new rule-17 D-4 FAIL at Lake Road (2098) in all seven years. The keeper stays
+`2026-09-22-hydro-5-spp-floor`. Nothing was registered, so nothing needs pruning. The local bundles
+may now be removed under rule 31 trigger (i); they are gitignored and die with the container.
+Cell `chp_steam_following` moves O → **R** (owner-declined). Re-open only in the scoped form: the
+level swap limited to non-cycling hosts.
