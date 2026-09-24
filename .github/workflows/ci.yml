@@ -498,6 +498,10 @@ jobs:
           # 7.1 MiB): test_cache_config_agreement's committed-corpus replay
           # reads every tracked run_config.json, and the nyiso223 shard
           # artifacts under that root raised FileNotFoundError outside the cone.
+          # Same lane added /data/raw/spp-hsl/spp_wind_curtailment_annual.csv:
+          # SPP-67's test_spp67_year_own_curtailment_rate reads it through
+          # renewables._spp_wind_reference_curtailment_rate, whose missing-file
+          # branch returns None — 7 fast-tier reds, not input drift.
           sparse-checkout-cone-mode: false
           sparse-checkout: |
             /*
@@ -578,6 +582,7 @@ jobs:
             /data/raw/ercot-AS/ercot_*_as_by_restype_hourly.parquet
             /data/raw/ercot/ASPLANNP433_*.parquet
             /data/raw/load-forecast/
+            /data/raw/spp-hsl/spp_wind_curtailment_annual.csv
             /data/raw/ercot/ercot_2024_ordc_reserves_hourly.parquet
             /data/raw/CAISO-AS/asreq_ALL_2023*.csv
             /data/raw/CAISO-AS/asreq_ALL_2024*.csv
