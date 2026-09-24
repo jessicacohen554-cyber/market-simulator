@@ -3431,3 +3431,5 @@ results/calibration/pjm_h20_cardc_span/
 # 2022 d1e73eec637ea6d2b2809fc8d68bd5a7bc9107c1 2023 68e15a52335740c4f1cebcbef30a7418088067ac
 # 2024 1f04a2a95935e5bdcfdd77efa2b64de308378ce9 2025 c2525bf29fb128e696dd3dbd150c7abef12353bf
 results/calibration/miso268_yard_20[0-9][0-9]/
+
+!results/calibration/pjm_h22_rggi_2022/**
