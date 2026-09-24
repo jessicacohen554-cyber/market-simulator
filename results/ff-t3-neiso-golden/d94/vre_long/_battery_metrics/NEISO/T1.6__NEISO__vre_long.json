@@ -1,0 +1,31 @@
+{
+  "rung_id": "T1.6:NEISO:vre_long",
+  "test_id": "T1.6",
+  "iso": "NEISO",
+  "rung_label": "vre_long",
+  "overrides": {
+    "entry_rate_limits": false
+  },
+  "status": "ok",
+  "metrics": {
+    "coal_twh": 0.0,
+    "gas_cc_twh": 294.8396,
+    "co2_mt_total": 159.6764,
+    "lw_price": 61.298,
+    "scarcity_hours": 0,
+    "entry_thermal_gw": 8.4371,
+    "renewable_build_gw": 33.0,
+    "total_build_gw": 42.1571,
+    "retired_thermal_gw": 4.788,
+    "economic_retired_thermal_gw": 2.6941,
+    "exogenous_retired_thermal_gw": 0.1432,
+    "reserve_margin_final": 0.05575,
+    "rps_dual_over_acp": 1.0,
+    "storage_fleet_mw": 3355.0,
+    "storage_cap_value_per_mw": 0.38343,
+    "storage_fleet_avg_elcc": 0.88937,
+    "storage_new_longdur_share": 1.0,
+    "net_cone": 108.94
+  },
+  "cached": false
+}
