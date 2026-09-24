@@ -234,6 +234,13 @@ def extend_ba(
 
     new_rows = build_new_rows(ba, fuel_cols, years, halves)
     new_rows = new_rows[list(existing.columns)]
+    # A fuel column the source taxonomy lacks arrives all-``pd.NA`` (object);
+    # left as-is, the concat below upcasts that column of the COMMITTED rows
+    # float32 -> float64. Cast every new column to the extract's own dtype so
+    # the existing rows stay byte-identical (I-SOCO, 2026-09-24).
+    for col, dtype in existing.dtypes.items():
+        if new_rows[col].dtype != dtype:
+            new_rows[col] = pd.to_numeric(new_rows[col]).astype(dtype)
 
     combined = pd.concat([new_rows, existing], ignore_index=True)
     before = len(combined)
