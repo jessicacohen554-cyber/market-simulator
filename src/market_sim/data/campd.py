@@ -253,6 +253,34 @@ ISO_MERIT_PANEL_STATES: dict[str, tuple[str, ...]] = {
     # Desert Star re-derive is STRICTLY ADDITIVE (candidate sha da33e509..,
     # layup companion byte-identical). NV is read for DETECTION only.
     "CAISO": ("CA",),
+    # SPP and SOCO (F2, 2026-09-24): pinned to the states whose extracts
+    # EXISTED when every committed SPP / SOCO guarded extract was identified.
+    # F2 landed CO 2019-2025 (listed in ISO_STATES["SPP"] for completeness; no
+    # SPP fleet combustion unit files there) and FL 2019-2025 (SOCO's three
+    # panhandle fleet plants, none of which files CEMS rows in 2019-2025).
+    # Both are DETECTION coverage only. Left unpinned, the fleet-blind panel
+    # would have admitted every Colorado unit into SPP's clearing-cost panel
+    # and all of Florida's (FPL, Duke FL, TECO, ...) into SOCO's -- measured:
+    # SPP short-gas 2023-2025 moved by 13 windows at 5 ST_GAS/CC plants with
+    # no SPP source-data change. Pinning restores the pre-landing scope exactly
+    # (rule 23 [R-FROZEN-DERIVE]); the caiso-198 construction verbatim.
+    # docs/handoffs/FINDING-f2-campd-outage-coverage-2026-09-24.md §3.
+    "SPP": (
+        "AR",
+        "IA",
+        "KS",
+        "LA",
+        "MN",
+        "MO",
+        "MT",
+        "ND",
+        "NE",
+        "NM",
+        "OK",
+        "SD",
+        "TX",
+    ),
+    "SOCO": ("AL", "GA", "MS"),
 }
 
 # CEMS-to-EIA split-plant remap: units that report CAMPD under a *legacy*
