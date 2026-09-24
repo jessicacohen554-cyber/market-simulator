@@ -289,6 +289,64 @@
      "delta": -10.4
     }
    }
+  },
+  "2020": {
+   "CC_REGULAR": {
+    "AEP_Ohio": {
+     "actual": 54.95,
+     "keeper_err": 2.46,
+     "arm_err": 3.25,
+     "delta": 0.79
+    },
+    "ATSI": {
+     "actual": 15.28,
+     "keeper_err": -0.83,
+     "arm_err": -0.55,
+     "delta": 0.28
+    },
+    "Central_PA": {
+     "actual": 75.5,
+     "keeper_err": -0.18,
+     "arm_err": 1.15,
+     "delta": 1.33
+    },
+    "ComEd": {
+     "actual": 13.09,
+     "keeper_err": -1.66,
+     "arm_err": -1.2,
+     "delta": 0.46
+    },
+    "Dominion": {
+     "actual": 56.58,
+     "keeper_err": -10.51,
+     "arm_err": -8.89,
+     "delta": 1.62
+    },
+    "EMAAC": {
+     "actual": 38.14,
+     "keeper_err": 12.95,
+     "arm_err": 2.69,
+     "delta": -10.26
+    },
+    "SWMAAC": {
+     "actual": 11.77,
+     "keeper_err": -2.71,
+     "arm_err": -4.61,
+     "delta": -1.9
+    },
+    "West_APS": {
+     "actual": 19.65,
+     "keeper_err": 1.11,
+     "arm_err": 1.32,
+     "delta": 0.21
+    },
+    "_bench_total": {
+     "actual": 284.96,
+     "keeper_err": 0.63,
+     "arm_err": -6.84,
+     "delta": -7.47
+    }
+   }
   }
  },
  "what": "pjm-h22 Card E result \u2014 per-zone, per-class TWh: keeper vs RGGI arm vs actual. ZERO LP."
