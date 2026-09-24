@@ -74,6 +74,27 @@ def verify(bundle: Path) -> dict:
         if rec.get("sha256") and rec["sha256"] != sha:
             raise SystemExit(f"{key}: run read sha {rec['sha256']}, disk {sha}")
         hashes[key] = {"path": rec["path"], "sha256": sha[:16]}
+    # The short / short-gas / partial families are not recorded in
+    # resolved_inputs by the runner; hash the files their resolvers name so the
+    # attestation still pins what the armed families read.
+    from market_sim.data.outages import (  # noqa: PLC0415
+        unit_outage_short_csv_for_iso,
+        unit_outage_short_gas_csv_for_iso,
+        unit_partial_outage_csv_for_iso,
+    )
+
+    for key, fn in (
+        ("unit_outage_short", unit_outage_short_csv_for_iso),
+        ("unit_outage_short_gas", unit_outage_short_gas_csv_for_iso),
+        ("unit_partial_outage", unit_partial_outage_csv_for_iso),
+    ):
+        p = Path(fn("SOCO"))
+        if not p.exists():
+            raise SystemExit(f"{key}: {p} missing -- the armed family reads nothing")
+        hashes[key] = {
+            "path": str(p.relative_to(_ROOT)),
+            "sha256": hashlib.sha256(p.read_bytes()).hexdigest()[:16],
+        }
     return {"outage_inputs": hashes}
 
 

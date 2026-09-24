@@ -1512,3 +1512,20 @@ Recommendation (ii). (2) decline 2026-09-20-soco53g-prb-own-iso (E13)?
 Leftover refs: claude/soco61-arm-*, claude/soco60-arm-*, claude/soco60-armB-*.
 Records: docs/handoffs/FINDING-soco-65-2026-09-24.md,
 scripts/probes/_soco65_census.py.
+## r-soco — 2026-09-24
+
+SOCO RE-SOLVED ON THE CORRECTED BACKCAST INPUTS (audit AUDIT-backcast-inputs-860-heatrate-outage
+§5.3.8, after F1 #6572 + F2 #6569). Keeper soco61 + year-matched EIA-860 (2023/2024 vintages, 2025
+canonical), measured CHP heat rates, CAMPD short-coal / short-gas / partial outage families;
+multipliers unchanged. Three year-isolated shards, composed at zero LP.
+
+RESULT (run 2026-09-24-r-soco-corrected-inputs, REGISTERED, promotion owner-pending): determination
+unchanged (PHYSICALLY-CALIBRATED, PRICE UNSCORED); C1 14/14 free 10/10, C2/C4/C6/C8 PASS, grade
+5/5/0, DOF n_residual 1. Better: 2024 CC_REGULAR +2.19 -> +1.09 pp; CHP on EIA-923 every year.
+Worse: 2024 CT_PEAKER +0.98 -> +1.85 pp (+2.17 TWh); 2025 unserved 267.4 -> 813.8 MWh; 2025 ST_GAS
+forced share 18.3 -> 20.2 %.
+
+2019-2022 NOT SOLVABLE: SOCO has no pre-2023 EIA-930 / FERC-714 / seam / gas-hub / solar-shape /
+renewable-capacity inputs (addition plan manifest row 9 never landed) - routed as an intake lane.
+Residual class-table CTs Dahlberg 7709 / Hartwell 54538 (1,045 MW) are an EPA<->EIA facility-id
+crosswalk defect (CAMD 7765 / 70454) - routed. Records: docs/handoffs/r-soco/.
