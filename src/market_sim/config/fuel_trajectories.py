@@ -1357,6 +1357,19 @@ CARBON_PRICE_PATHS: dict[str, dict[int, float]] = {
 # search, and the carbon-auction README's own rule is that no price or metadata
 # is ever inferred). That is a data-intake item for the lane that spends the
 # 2020/2021 touchpoints, not a modelling question.
+# CLOSED 2026-09-24 (i-caiso, the 2019-2021 intake): 2019-2021 ADDED. SAME
+# RECIPE, ZERO FREE PARAMETERS — the four CA-Quebec joint auctions of the
+# calendar year, Current Auction settlement price (USD) read directly from each
+# joint Summary Results Report PDF (hosted by the MELCC at
+# environnement.gouv.qc.ca/changements/carbone/ventes-encheres/, reachable where
+# ww2.arb.ca.gov is not), simple mean rounded half-up to the cent:
+#   2019: #18 Feb $15.73, #19 May $17.45, #20 Aug $17.16, #21 Nov $17.00 -> $16.84
+#   2020: #22 Feb $17.87, #23 May $16.68, #24 Aug $16.68, #25 Nov $16.93 -> $17.04
+#   2021: #26 Feb $17.80, #27 May $18.80, #28 Aug $23.30, #29 Nov $28.26 -> $22.04
+# (the 27th/May-2021 ambiguity named above is resolved by the PDF: $18.80.)
+# Per-auction rows + PDF URLs: carbon-auction-results.csv. The recipe was
+# verified against the incumbent rows first: recomputing 2022/2023/2024 from
+# that CSV reproduces 28.45 / 33.03 / 35.23 exactly.
 # NYISO is a RGGI state: every in-state fossil unit surrenders one RGGI CO2
 # allowance per (short) ton emitted, so the auction clearing price enters
 # marginal cost exactly as the CARB allowance does for CAISO. Each year is the
@@ -1440,12 +1453,22 @@ CARBON_PRICE_PATHS: dict[str, dict[int, float]] = {
 # source that blocks automated fetches (see the carbon-auction-results raw
 # README), so its 2018-2022 block is a separate CAISO-lane intake (rule 25
 # [R-ISO-SCOPE]) and remains an open gap for any CAISO out-of-training year.
+# (Closed 2026-09-24 by i-caiso for 2019-2021 — see the CAISO block above; 2018
+# remains absent.)
 #
 # NYISO stores the PUBLISHED short-ton clearing price; NEISO stores it
 # METRIC-CONVERTED (x 1.10231) — the harmonization asymmetry documented above is
 # preserved exactly for the new years.
 STATE_CARBON_PRICE_BY_ISO: dict[str, dict[int, float]] = {
-    "CAISO": {2022: 28.45, 2023: 33.03, 2024: 35.23, 2025: 28.06},
+    "CAISO": {
+        2019: 16.84,
+        2020: 17.04,
+        2021: 22.04,
+        2022: 28.45,
+        2023: 33.03,
+        2024: 35.23,
+        2025: 28.06,
+    },
     "NYISO": {
         2018: 4.41,
         2019: 5.42,

@@ -374,6 +374,12 @@ CAISO_SUPPLY_CONSISTENT_DEMAND_DIR: Path = (
     REFERENCE_DIR / "caiso-supply-consistent-demand"
 )
 
+# CAISO "Today's Outlook" historical 5-minute fuel mix (large/small hydro, ...),
+# raw yearly CSVs fetched by scripts/data/fetch_caiso_outlook_fuelsource.py. The
+# measured source for the EIA-930 CISO NG: WAT gap (2019-10 .. 2020-08), read by
+# data.eia930.caiso_hydro_backfill (i-caiso, 2026-09-24).
+CAISO_OUTLOOK_FUELSOURCE_DIR: Path = RAW_DATA_DIR / "caiso-outlook-fuelsource"
+
 # ---------------------------------------------------------------------------
 # Raw/clean layout. ``RAW_DIR`` is now live and identical to ``RAW_DATA_DIR``
 # (the W1 relocation made data/raw the single raw root). ``CLEAN_DIR`` /

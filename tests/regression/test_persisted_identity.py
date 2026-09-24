@@ -678,9 +678,28 @@ _DECLARED_BACKCAST_COERCION_REKEYS: dict[str, str] = {
 #   reads membership in an armed path, and the 2019 rows are what let the
 #   RGGI keeper recipe solve 2019 with Delaware and Maryland priced (before,
 #   2019 fell back to the 2025 set and a None price -> zero adder).
+# 2026-09-24 CAISO ADVANCED (i-caiso, the 2019-2021 intake) — TWO CAISO ROWS
+#   GAIN 2019-2021 KEYS; NO EXISTING YEAR'S VALUE MOVED.
+#   WHAT MOVED: `solve_surface_register.py --diff origin/main` -> worktree:
+#   "310 -> 310 names; 2 value(s) moved", both reaching CAISO ONLY (per-ISO
+#   totals ERCOT/MISO/PJM/NYISO/NEISO/SPP/NWPP/SOCO 0):
+#     * `STATE_CARBON_PRICE_BY_ISO["CAISO"]` +2019/2020/2021 = 16.84 / 17.04 /
+#       22.04 $/t — the four CA-Quebec joint auctions' settlement-price mean,
+#       read from each joint Summary Results Report PDF (fuel_trajectories.py
+#       cites them); the recipe reproduces 2022/2023/2024 exactly.
+#     * `NUCLEAR_MONTHLY_CF_BY_YEAR["CAISO"]` +2019/2020/2021 via
+#       `derive_nuclear_monthly_cf.py --isos CAISO --years 2019 2020 2021`;
+#       `--years 2019..2025 --check` passes, so 2022-2025 are unchanged.
+#   Both names are already ledgered for CAISO (caiso-262), so no new
+#   LEDGERED_SURFACE_MOVES_BY_ISO entry is owed. Rebased onto the R-PJM
+#   all-six advance above (2026-09-25); only CAISO's digest moves here.
+#   WHAT IT COSTS: a CAISO cache miss only. A 2022-2025 solve reads its own
+#   year's row from each table and none of those moved, so a re-solve of any
+#   committed CAISO bundle reproduces it; the new rows are read only by a
+#   2019-2021 solve, which previously resolved $0/t and a static nuclear CF.
 PINNED_SURFACE_ROWS_BY_ISO: dict[str, tuple[str, int]] = {
     "ERCOT": ("f7eb5b223ed7501e", 231),
-    "CAISO": ("88af0eef72c1512b", 206),
+    "CAISO": ("1f52716f0e774460", 206),
     "MISO": ("f3b6eb45df6c7a40", 212),
     "PJM": ("26c3bd73b4d63ce4", 216),
     "NYISO": ("ede243cc587b692d", 213),

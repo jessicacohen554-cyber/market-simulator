@@ -2604,6 +2604,16 @@ NUCLEAR_MONTHLY_CF_BY_YEAR: dict[str, dict[int, list[float]]] = {
         # (the two units refuel on alternating spring/fall cycles), which is
         # the level anchor a 2022 rung would otherwise smear into the static
         # seasonal pattern.
+        # 2019-2021 ADDED 2026-09-24 (i-caiso, the 2019-2021 intake): same
+        # producer, same source, same recipe — `derive_nuclear_monthly_cf.py
+        # --isos CAISO --years 2019 2020 2021`; `--years 2022 2023 2024 2025
+        # --check` passed in the same session, so no existing year's values
+        # moved. The dips are Diablo Canyon's refuelling outages (fall 2019,
+        # fall 2020, spring 2021), measured rather than smeared into a static
+        # seasonal CF.
+        2019: [1.00, 0.66, 0.68, 0.96, 1.00, 1.00, 1.00, 1.00, 0.85, 0.50, 0.50, 0.67],
+        2020: [1.00, 0.95, 1.00, 1.00, 0.96, 1.00, 0.77, 0.96, 0.99, 0.26, 0.49, 0.51],
+        2021: [0.77, 0.53, 0.50, 0.57, 1.00, 1.00, 1.00, 1.00, 1.00, 0.72, 0.90, 1.00],
         2022: [0.99, 0.98, 0.88, 0.54, 1.00, 1.00, 1.00, 1.00, 1.00, 0.73, 0.58, 1.00],
         2023: [0.96, 1.00, 0.92, 1.00, 1.00, 1.00, 1.00, 0.99, 0.96, 0.47, 0.66, 0.83],
         2024: [1.00, 1.00, 1.00, 0.60, 0.62, 1.00, 1.00, 0.99, 0.94, 0.98, 1.00, 1.00],

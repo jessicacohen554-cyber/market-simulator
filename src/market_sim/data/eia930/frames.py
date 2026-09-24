@@ -275,6 +275,22 @@ def _screen_fuel_spikes(
     return _screen_fuel_spike_columns(frame, ba_code=ba_code, year=year)
 
 
+def _repair_measured_gaps(
+    frame: pd.DataFrame | None, ba_code: str, year: int
+) -> pd.DataFrame | None:
+    """Fill registered measured gaps (after the unit-slip screen) on the way out.
+
+    Thin seam over
+    :func:`market_sim.data.eia930.caiso_hydro_backfill.repair_measured_gaps`
+    (the EIA-930 CISO ``NG: WAT`` hole, 2019-10 .. 2020-08, repaired from
+    CAISO's own measured fuel mix). A BA or year with no registered source
+    returns the frame object unchanged.
+    """
+    from market_sim.data.eia930.caiso_hydro_backfill import repair_measured_gaps
+
+    return repair_measured_gaps(frame, ba_code, year)
+
+
 def _eia_hourly_frame_raw(ba_code: str, year: int) -> pd.DataFrame | None:
     """Return the strict BA-year frame BEFORE the ``NG:`` unit-slip screen.
 
@@ -334,7 +350,11 @@ def _eia_hourly_frame(ba_code: str, year: int) -> pd.DataFrame | None:
     full 8760-hour series. A pool code (``_POOL_HOURLY_MEMBERS``) returns the
     members' UTC-joined sum via :func:`_pool_hourly_frame`.
     """
-    return _screen_fuel_spikes(_eia_hourly_frame_raw(ba_code, year), ba_code, year)
+    return _repair_measured_gaps(
+        _screen_fuel_spikes(_eia_hourly_frame_raw(ba_code, year), ba_code, year),
+        ba_code,
+        year,
+    )
 
 
 def _screen_pool_member_frame(
@@ -601,7 +621,7 @@ def _eia_hourly_frame_filled(ba_code: str, year: int) -> pd.DataFrame | None:
         .reset_index()
         .rename(columns={"index": "UTC time"})
     )
-    return _screen_fuel_spikes(out, ba_code, year)
+    return _repair_measured_gaps(_screen_fuel_spikes(out, ba_code, year), ba_code, year)
 
 
 # EIA-930 long-format (API) region ``type`` code -> wide extract column, for

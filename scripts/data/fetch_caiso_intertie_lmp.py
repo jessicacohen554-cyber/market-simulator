@@ -46,6 +46,8 @@ Usage:
     python scripts/data/fetch_caiso_intertie_lmp.py --years 2023 2024 2025
     # aged-out years, from the folded OASIS GroupZip windows (caiso-261):
     python scripts/data/fetch_caiso_intertie_lmp.py --from-grp-windows --years 2022
+    # GroupZip-folded years whose windows are gone, from the tracked aggregate:
+    python scripts/data/fetch_caiso_intertie_lmp.py --from-hourly-aggregate --years 2021
 
 ``--from-grp-windows`` (caiso-261, 2026-09-06) builds the same delivered nodal
 LMP from the per-day ``dam_grp_{Ymd}_{Ymd}.csv`` windows that
@@ -206,6 +208,51 @@ def _raw_from_grp_windows(node: str, year: int) -> pd.DataFrame | None:
     return pd.concat(frames, ignore_index=True)
 
 
+def _raw_from_hourly_aggregate(node: str, year: int) -> pd.DataFrame | None:
+    """Long-form PRC_LMP rows for ``node`` in ``year`` from the committed aggregate.
+
+    i-caiso (2026-09-24). The GroupZip fold (``fold_caiso_oasis_grp_zips``)
+    keeps the intertie nodes MALIN_5_N101 / CAPTJACK_5_N003 /
+    PALOVRDE_ASR-APND in the TRACKED ``CAISO_dam_hourly_<year>.csv`` aggregate
+    with their ``MCE`` / ``MCC`` / ``MCL`` components, while the per-day
+    ``dam_grp_*`` windows ``--from-grp-windows`` reads are extract-and-discard
+    and are no longer on disk. DAM is hourly, so the aggregate IS the window's
+    content for those nodes; melting it back to long form feeds
+    :func:`_to_hourly_nodal_lmp` exactly what the window route fed it.
+    Verified before use: rebuilding 2022 (8,759 h) and the 1,560 committed 2021
+    hours this way reproduces the committed parquet to the 4-decimal rounding
+    (max |diff| 1e-4, zero hours differ by more than 1e-3). Adjacent-year files
+    are read for the local-calendar edges and rows are kept to the local
+    Pacific ``year``. Returns ``None`` when no aggregate carries the node.
+    """
+    from scripts.data.fold_caiso_oasis_grp_zips import LMP_DIR
+
+    frames = []
+    for y in (year - 1, year, year + 1):
+        path = LMP_DIR / f"CAISO_dam_hourly_{y}.csv"
+        if not path.exists():
+            continue
+        df = pd.read_csv(path)
+        frames.append(df[df["node"] == node])
+    if not frames:
+        return None
+    df = pd.concat(frames, ignore_index=True)
+    local = pd.to_datetime(df["interval_start_gmt"], utc=True).dt.tz_convert(CAISO_TZ)
+    df = df[(local.dt.year == year).to_numpy()]
+    comps = [c for c in _DELIVERED_LMP_COMPONENTS if c in df.columns]
+    if df.empty or not comps:
+        return None
+    long = df.melt(
+        id_vars=["interval_start_gmt", "node"],
+        value_vars=comps,
+        var_name="LMP_TYPE",
+        value_name="MW",
+    )
+    return long.rename(
+        columns={"interval_start_gmt": "INTERVALSTARTTIME_GMT", "node": "NODE"}
+    )
+
+
 def _to_hourly_nodal_lmp(df: pd.DataFrame, year: int) -> np.ndarray | None:
     """Raw OASIS PRC_LMP rows -> (8760,) delivered nodal LMP on the local calendar.
 
@@ -293,6 +340,12 @@ def main() -> None:
         action="store_true",
         help="build from the folded OASIS GroupZip windows instead of the per-node API",
     )
+    ap.add_argument(
+        "--from-hourly-aggregate",
+        action="store_true",
+        help="build from the tracked CAISO_dam_hourly_<year>.csv aggregate "
+        "(GroupZip-folded years 2021/2022, whose windows are discarded)",
+    )
     args = ap.parse_args()
 
     if args.probe:
@@ -311,11 +364,14 @@ def main() -> None:
             series = []
             for node in nodes:
                 print(f"=== {year} {hub} {node} ===", flush=True)
-                raw = (
-                    _raw_from_grp_windows(node, year)
-                    if args.from_grp_windows
-                    else _fetch_node_year(node, year, args.window, args.sleep, deadline)
-                )
+                if args.from_hourly_aggregate:
+                    raw = _raw_from_hourly_aggregate(node, year)
+                elif args.from_grp_windows:
+                    raw = _raw_from_grp_windows(node, year)
+                else:
+                    raw = _fetch_node_year(
+                        node, year, args.window, args.sleep, deadline
+                    )
                 if raw is None:
                     print(f"  {node}: no data — skipped", file=sys.stderr)
                     continue
