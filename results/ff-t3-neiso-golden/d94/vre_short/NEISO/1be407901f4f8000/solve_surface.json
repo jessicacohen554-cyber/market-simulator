@@ -1,0 +1,11 @@
+{
+  "epochs": [],
+  "fingerprint": "729f41f94d91f5ff",
+  "git_sha": "924017c8",
+  "iso": "NEISO",
+  "moved": {
+    "RGGI_MEMBER_STATES_BY_YEAR": "94d8b85ac442ecfd"
+  },
+  "rows": 199,
+  "schema": 1
+}

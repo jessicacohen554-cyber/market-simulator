@@ -1,0 +1,62 @@
+{
+  "adequacy_requirement_mw": 27341.264,
+  "announced_derates": [],
+  "bridge": false,
+  "capacity_reserve_position": 1.006089,
+  "ccs_retrofits": [],
+  "confirmed_derates": [],
+  "entry_decided_mw_by_tech": {},
+  "entry_pipeline": [],
+  "firm_clean_accredited_mw": 1396.472,
+  "firm_clean_mw": 1899.5,
+  "fleet_by_fuel_after": {
+    "biomass": 1047.2,
+    "gas_cc": 3347.1116,
+    "gas_cc_ccs": 6866.29914,
+    "gas_ct": 1404.914528,
+    "gas_st": 63.61,
+    "nuclear": 3355.4,
+    "oil": 5083.6
+  },
+  "fleet_by_fuel_before": {
+    "biomass": 1047.2,
+    "gas_cc": 3347.1116,
+    "gas_cc_ccs": 6866.29914,
+    "gas_ct": 1404.914528,
+    "gas_st": 63.61,
+    "nuclear": 3355.4,
+    "oil": 5083.6
+  },
+  "floor_retained": [],
+  "hindcast": false,
+  "iso": "NEISO",
+  "ledger_version": 1,
+  "locality_capacity": [],
+  "mode": "forecast",
+  "peak_demand_mw": 26580.866,
+  "pipeline_events": [],
+  "renewable_additions": [],
+  "renewable_credit_applied": {
+    "solar": 0.18,
+    "wind": 0.16
+  },
+  "reserve_margin": 0.03487,
+  "retirements": [],
+  "rps_dual": 50.0,
+  "screen_adequacy_requirement_mw": 27341.264,
+  "screen_entering_firm_mw": 27507.742,
+  "screen_peak_demand_mw": 26580.866,
+  "screen_reserve_position": 1.006089,
+  "solar_cap_mw": 8700.0,
+  "solve_counts": {
+    "P0": 1,
+    "P1": 1,
+    "P2": 0
+  },
+  "storage_additions": [],
+  "storage_firm_mw": 2263.825,
+  "storage_power_mw": 2635.0,
+  "thermal_additions": [],
+  "wind_cap_mw": 4400.0,
+  "year": 2034
+}
