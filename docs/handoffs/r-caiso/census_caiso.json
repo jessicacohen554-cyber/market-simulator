@@ -1,0 +1,2317 @@
+{
+ "fleet": {
+  "keeper": {
+   "2019": {
+    "class_table_mw": 606.9,
+    "class_table_plants": [
+     {
+      "fuel": "gas_cc",
+      "mw": 510.0,
+      "name": "El Segundo Energy Center LLC",
+      "plant_code": 57901
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 56.7,
+      "name": "Wellhead Power Panoche",
+      "plant_code": 55874
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 12.0,
+      "name": "Gaviota Oil Plant",
+      "plant_code": 50623
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "name": "Keysight - Santa Rosa",
+      "plant_code": 65199
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 3.1,
+      "name": "Kaiser - Woodland Hills",
+      "plant_code": 66148
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 2.8,
+      "name": "City of Tulare Water Facility",
+      "plant_code": 59395
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 2.2,
+      "name": "CalTech - Pasadena Wilson Ave",
+      "plant_code": 65361
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 2.1,
+      "name": "Kaiser - Harbor City",
+      "plant_code": 66142
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.4,
+      "name": "UTS SJ1 LLC",
+      "plant_code": 57420
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.1,
+      "name": "EQX005.0 Toyama Fuel Cell",
+      "plant_code": 64756
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "Saint Johns Health Center",
+      "plant_code": 50610
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "University of San Diego",
+      "plant_code": 65191
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "CalTech - Pasadena (PPA)",
+      "plant_code": 65193
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "SCC - San Jose",
+      "plant_code": 65196
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "DirecTV - Los Angeles",
+      "plant_code": 65200
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Redwood City",
+      "plant_code": 65204
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Gardena",
+      "plant_code": 65205
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Hawthorne",
+      "plant_code": 65206
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Hayward",
+      "plant_code": 65208
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - San Diego Trade Street",
+      "plant_code": 65360
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "Taylor Farms - Schilling Place",
+      "plant_code": 66459
+     }
+    ],
+    "class_table_share": 0.0204,
+    "eia860_source": "canonical",
+    "mw_by_fuel": {
+     "coal": 50.0,
+     "gas_cc": 15853.4,
+     "gas_ct": 9400.5,
+     "gas_st": 4256.8,
+     "oil": 139.7
+    },
+    "mw_weighted_hr_by_fuel": {
+     "coal": 5.577,
+     "gas_cc": 7.585,
+     "gas_ct": 10.165,
+     "gas_st": 15.595,
+     "oil": 14.853
+    },
+    "thermal_mw": 29700.4
+   },
+   "2020": {
+    "class_table_mw": 612.3,
+    "class_table_plants": [
+     {
+      "fuel": "gas_cc",
+      "mw": 510.0,
+      "name": "El Segundo Energy Center LLC",
+      "plant_code": 57901
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 56.7,
+      "name": "Wellhead Power Panoche",
+      "plant_code": 55874
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 12.0,
+      "name": "Gaviota Oil Plant",
+      "plant_code": 50623
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "name": "Keysight - Santa Rosa",
+      "plant_code": 65199
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "name": "Kaiser - LA",
+      "plant_code": 66146
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 3.1,
+      "name": "Kaiser - Woodland Hills",
+      "plant_code": 66148
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 2.8,
+      "name": "City of Tulare Water Facility",
+      "plant_code": 59395
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 2.2,
+      "name": "CalTech - Pasadena Wilson Ave",
+      "plant_code": 65361
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 2.1,
+      "name": "Kaiser - Harbor City",
+      "plant_code": 66142
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.3,
+      "name": "Life Technologies - Fremont",
+      "plant_code": 66145
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.1,
+      "name": "EQX005.0 Toyama Fuel Cell",
+      "plant_code": 64756
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "Saint Johns Health Center",
+      "plant_code": 50610
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "University of San Diego",
+      "plant_code": 65191
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "CalTech - Pasadena (PPA)",
+      "plant_code": 65193
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "SCC - San Jose",
+      "plant_code": 65196
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "DirecTV - Los Angeles",
+      "plant_code": 65200
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Redwood City",
+      "plant_code": 65204
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Gardena",
+      "plant_code": 65205
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Hawthorne",
+      "plant_code": 65206
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Hayward",
+      "plant_code": 65208
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - San Diego Trade Street",
+      "plant_code": 65360
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "San Diego Community College",
+      "plant_code": 66143
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "Taylor Farms - Schilling Place",
+      "plant_code": 66459
+     }
+    ],
+    "class_table_share": 0.02,
+    "eia860_source": "canonical",
+    "mw_by_fuel": {
+     "coal": 50.0,
+     "gas_cc": 17086.4,
+     "gas_ct": 9511.6,
+     "gas_st": 3776.8,
+     "oil": 139.7
+    },
+    "mw_weighted_hr_by_fuel": {
+     "coal": 5.577,
+     "gas_cc": 7.583,
+     "gas_ct": 10.101,
+     "gas_st": 15.516,
+     "oil": 14.853
+    },
+    "thermal_mw": 30564.5
+   },
+   "2021": {
+    "class_table_mw": 604.1,
+    "class_table_plants": [
+     {
+      "fuel": "gas_cc",
+      "mw": 510.0,
+      "name": "El Segundo Energy Center LLC",
+      "plant_code": 57901
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 56.7,
+      "name": "Wellhead Power Panoche",
+      "plant_code": 55874
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "name": "Keysight - Santa Rosa",
+      "plant_code": 65199
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "name": "Kaiser - LA",
+      "plant_code": 66146
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 3.1,
+      "name": "Kaiser - Woodland Hills",
+      "plant_code": 66148
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 2.8,
+      "name": "City of Tulare Water Facility",
+      "plant_code": 59395
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 2.2,
+      "name": "CalTech - Pasadena Wilson Ave",
+      "plant_code": 65361
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 2.1,
+      "name": "Kaiser - Harbor City",
+      "plant_code": 66142
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.7,
+      "name": "Enloe Medical - Chico",
+      "plant_code": 65210
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.3,
+      "name": "Life Technologies - Fremont",
+      "plant_code": 66145
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.1,
+      "name": "Redlands Community Hospital",
+      "plant_code": 66458
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.1,
+      "name": "EQX005.0 Toyama Fuel Cell",
+      "plant_code": 64756
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "Saint Johns Health Center",
+      "plant_code": 50610
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "University of San Diego",
+      "plant_code": 65191
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "CalTech - Pasadena (PPA)",
+      "plant_code": 65193
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "SCC - San Jose",
+      "plant_code": 65196
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "DirecTV - Los Angeles",
+      "plant_code": 65200
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Redwood City",
+      "plant_code": 65204
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Gardena",
+      "plant_code": 65205
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Hawthorne",
+      "plant_code": 65206
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Hayward",
+      "plant_code": 65208
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "Comcast - Universal City",
+      "plant_code": 65211
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - San Diego Trade Street",
+      "plant_code": 65360
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "San Diego Community College",
+      "plant_code": 66143
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "Taylor Farms - Schilling Place",
+      "plant_code": 66459
+     }
+    ],
+    "class_table_share": 0.0202,
+    "eia860_source": "canonical",
+    "mw_by_fuel": {
+     "coal": 50.0,
+     "gas_cc": 16383.4,
+     "gas_ct": 9504.4,
+     "gas_st": 3776.8,
+     "oil": 139.7
+    },
+    "mw_weighted_hr_by_fuel": {
+     "coal": 5.577,
+     "gas_cc": 7.532,
+     "gas_ct": 10.047,
+     "gas_st": 15.516,
+     "oil": 14.853
+    },
+    "thermal_mw": 29854.3
+   },
+   "2022": {
+    "class_table_mw": 606.7,
+    "class_table_plants": [
+     {
+      "fuel": "gas_cc",
+      "mw": 510.0,
+      "name": "El Segundo Energy Center LLC",
+      "plant_code": 57901
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 56.7,
+      "name": "Wellhead Power Panoche",
+      "plant_code": 55874
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "name": "Keysight - Santa Rosa",
+      "plant_code": 65199
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "name": "Kaiser - LA",
+      "plant_code": 66146
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 3.1,
+      "name": "Kaiser - Woodland Hills",
+      "plant_code": 66148
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 2.8,
+      "name": "City of Tulare Water Facility",
+      "plant_code": 59395
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 2.6,
+      "name": "Anheuser Busch - Fairfield",
+      "plant_code": 66456
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 2.2,
+      "name": "CalTech - Pasadena Wilson Ave",
+      "plant_code": 65361
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 2.1,
+      "name": "Kaiser - Harbor City",
+      "plant_code": 66142
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.7,
+      "name": "Enloe Medical - Chico",
+      "plant_code": 65210
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.3,
+      "name": "Life Technologies - Fremont",
+      "plant_code": 66145
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.1,
+      "name": "Redlands Community Hospital",
+      "plant_code": 66458
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.1,
+      "name": "EQX005.0 Toyama Fuel Cell",
+      "plant_code": 64756
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "Saint Johns Health Center",
+      "plant_code": 50610
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "University of San Diego",
+      "plant_code": 65191
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "CalTech - Pasadena (PPA)",
+      "plant_code": 65193
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "SCC - San Jose",
+      "plant_code": 65196
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "DirecTV - Los Angeles",
+      "plant_code": 65200
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Redwood City",
+      "plant_code": 65204
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Gardena",
+      "plant_code": 65205
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Hawthorne",
+      "plant_code": 65206
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Hayward",
+      "plant_code": 65208
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "Comcast - Universal City",
+      "plant_code": 65211
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - San Diego Trade Street",
+      "plant_code": 65360
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "San Diego Community College",
+      "plant_code": 66143
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "Taylor Farms - Schilling Place",
+      "plant_code": 66459
+     }
+    ],
+    "class_table_share": 0.0203,
+    "eia860_source": "canonical",
+    "mw_by_fuel": {
+     "coal": 50.0,
+     "gas_cc": 16383.4,
+     "gas_ct": 9555.8,
+     "gas_st": 3776.8,
+     "oil": 139.7
+    },
+    "mw_weighted_hr_by_fuel": {
+     "coal": 5.577,
+     "gas_cc": 7.52,
+     "gas_ct": 10.102,
+     "gas_st": 15.516,
+     "oil": 14.853
+    },
+    "thermal_mw": 29905.7
+   },
+   "2023": {
+    "class_table_mw": 607.0,
+    "class_table_plants": [
+     {
+      "fuel": "gas_cc",
+      "mw": 510.0,
+      "name": "El Segundo Energy Center LLC",
+      "plant_code": 57901
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 56.7,
+      "name": "Wellhead Power Panoche",
+      "plant_code": 55874
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "name": "Keysight - Santa Rosa",
+      "plant_code": 65199
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "name": "Kaiser - LA",
+      "plant_code": 66146
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 3.1,
+      "name": "Kaiser - Woodland Hills",
+      "plant_code": 66148
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 2.8,
+      "name": "City of Tulare Water Facility",
+      "plant_code": 59395
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 2.6,
+      "name": "Anheuser Busch - Fairfield",
+      "plant_code": 66456
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 2.2,
+      "name": "CalTech - Pasadena Wilson Ave",
+      "plant_code": 65361
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 2.1,
+      "name": "Kaiser - Harbor City",
+      "plant_code": 66142
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.7,
+      "name": "Enloe Medical - Chico",
+      "plant_code": 65210
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.4,
+      "name": "GreenStruxure REP009, LLC",
+      "plant_code": 69191
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.3,
+      "name": "Life Technologies - Fremont",
+      "plant_code": 66145
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.1,
+      "name": "Redlands Community Hospital",
+      "plant_code": 66458
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "Saint Johns Health Center",
+      "plant_code": 50610
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "University of San Diego",
+      "plant_code": 65191
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "CalTech - Pasadena (PPA)",
+      "plant_code": 65193
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "SCC - San Jose",
+      "plant_code": 65196
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "DirecTV - Los Angeles",
+      "plant_code": 65200
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Redwood City",
+      "plant_code": 65204
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Gardena",
+      "plant_code": 65205
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Hawthorne",
+      "plant_code": 65206
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Hayward",
+      "plant_code": 65208
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "Comcast - Universal City",
+      "plant_code": 65211
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - San Diego Trade Street",
+      "plant_code": 65360
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "San Diego Community College",
+      "plant_code": 66143
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "Taylor Farms - Schilling Place",
+      "plant_code": 66459
+     }
+    ],
+    "class_table_share": 0.0203,
+    "eia860_source": "canonical",
+    "mw_by_fuel": {
+     "coal": 50.0,
+     "gas_cc": 16383.4,
+     "gas_ct": 9555.2,
+     "gas_st": 3776.8,
+     "oil": 139.7
+    },
+    "mw_weighted_hr_by_fuel": {
+     "coal": 5.577,
+     "gas_cc": 7.537,
+     "gas_ct": 10.081,
+     "gas_st": 15.516,
+     "oil": 14.853
+    },
+    "thermal_mw": 29905.1
+   },
+   "2024": {
+    "class_table_mw": 655.0,
+    "class_table_plants": [
+     {
+      "fuel": "gas_cc",
+      "mw": 510.0,
+      "name": "El Segundo Energy Center LLC",
+      "plant_code": 57901
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 56.7,
+      "name": "Wellhead Power Panoche",
+      "plant_code": 55874
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 48.0,
+      "name": "Enchanted Rock Lodi",
+      "plant_code": 66638
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "name": "Keysight - Santa Rosa",
+      "plant_code": 65199
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "name": "Kaiser - LA",
+      "plant_code": 66146
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 3.1,
+      "name": "Kaiser - Woodland Hills",
+      "plant_code": 66148
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 2.8,
+      "name": "City of Tulare Water Facility",
+      "plant_code": 59395
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 2.6,
+      "name": "Anheuser Busch - Fairfield",
+      "plant_code": 66456
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 2.2,
+      "name": "CalTech - Pasadena Wilson Ave",
+      "plant_code": 65361
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 2.1,
+      "name": "Kaiser - Harbor City",
+      "plant_code": 66142
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.7,
+      "name": "Enloe Medical - Chico",
+      "plant_code": 65210
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.4,
+      "name": "GreenStruxure REP009, LLC",
+      "plant_code": 69191
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.3,
+      "name": "Life Technologies - Fremont",
+      "plant_code": 66145
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.1,
+      "name": "Redlands Community Hospital",
+      "plant_code": 66458
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "Saint Johns Health Center",
+      "plant_code": 50610
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "University of San Diego",
+      "plant_code": 65191
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "CalTech - Pasadena (PPA)",
+      "plant_code": 65193
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "SCC - San Jose",
+      "plant_code": 65196
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "DirecTV - Los Angeles",
+      "plant_code": 65200
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Redwood City",
+      "plant_code": 65204
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Gardena",
+      "plant_code": 65205
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Hawthorne",
+      "plant_code": 65206
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Hayward",
+      "plant_code": 65208
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "Comcast - Universal City",
+      "plant_code": 65211
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - San Diego Trade Street",
+      "plant_code": 65360
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "San Diego Community College",
+      "plant_code": 66143
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "Taylor Farms - Schilling Place",
+      "plant_code": 66459
+     }
+    ],
+    "class_table_share": 0.0225,
+    "eia860_source": "canonical",
+    "mw_by_fuel": {
+     "coal": 50.0,
+     "gas_cc": 16383.4,
+     "gas_ct": 9593.2,
+     "gas_st": 2946.8,
+     "oil": 119.7
+    },
+    "mw_weighted_hr_by_fuel": {
+     "coal": 5.577,
+     "gas_cc": 7.533,
+     "gas_ct": 10.061,
+     "gas_st": 14.41,
+     "oil": 15.868
+    },
+    "thermal_mw": 29093.1
+   },
+   "2025": {
+    "class_table_mw": 655.0,
+    "class_table_plants": [
+     {
+      "fuel": "gas_cc",
+      "mw": 510.0,
+      "name": "El Segundo Energy Center LLC",
+      "plant_code": 57901
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 56.7,
+      "name": "Wellhead Power Panoche",
+      "plant_code": 55874
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 48.0,
+      "name": "Enchanted Rock Lodi",
+      "plant_code": 66638
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "name": "Keysight - Santa Rosa",
+      "plant_code": 65199
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "name": "Kaiser - LA",
+      "plant_code": 66146
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 3.1,
+      "name": "Kaiser - Woodland Hills",
+      "plant_code": 66148
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 2.8,
+      "name": "City of Tulare Water Facility",
+      "plant_code": 59395
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 2.6,
+      "name": "Anheuser Busch - Fairfield",
+      "plant_code": 66456
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 2.2,
+      "name": "CalTech - Pasadena Wilson Ave",
+      "plant_code": 65361
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 2.1,
+      "name": "Kaiser - Harbor City",
+      "plant_code": 66142
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.7,
+      "name": "Enloe Medical - Chico",
+      "plant_code": 65210
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.4,
+      "name": "GreenStruxure REP009, LLC",
+      "plant_code": 69191
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.3,
+      "name": "Life Technologies - Fremont",
+      "plant_code": 66145
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.1,
+      "name": "Redlands Community Hospital",
+      "plant_code": 66458
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "Saint Johns Health Center",
+      "plant_code": 50610
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "University of San Diego",
+      "plant_code": 65191
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "CalTech - Pasadena (PPA)",
+      "plant_code": 65193
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "SCC - San Jose",
+      "plant_code": 65196
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "DirecTV - Los Angeles",
+      "plant_code": 65200
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Redwood City",
+      "plant_code": 65204
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Gardena",
+      "plant_code": 65205
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Hawthorne",
+      "plant_code": 65206
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Hayward",
+      "plant_code": 65208
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "Comcast - Universal City",
+      "plant_code": 65211
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - San Diego Trade Street",
+      "plant_code": 65360
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "San Diego Community College",
+      "plant_code": 66143
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "Taylor Farms - Schilling Place",
+      "plant_code": 66459
+     }
+    ],
+    "class_table_share": 0.0226,
+    "eia860_source": "canonical",
+    "mw_by_fuel": {
+     "coal": 50.0,
+     "gas_cc": 16383.4,
+     "gas_ct": 9578.2,
+     "gas_st": 2858.8,
+     "oil": 122.7
+    },
+    "mw_weighted_hr_by_fuel": {
+     "coal": 5.577,
+     "gas_cc": 7.533,
+     "gas_ct": 10.098,
+     "gas_st": 14.316,
+     "oil": 15.665
+    },
+    "thermal_mw": 28993.1
+   }
+  },
+  "treatment": {
+   "2019": {
+    "class_table_mw": 551.0,
+    "class_table_plants": [
+     {
+      "fuel": "gas_cc",
+      "mw": 510.0,
+      "name": "El Segundo Energy Center LLC",
+      "plant_code": 57901
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 40.0,
+      "name": "Panoche Peaker",
+      "plant_code": 55874
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "Saint Johns Health Center",
+      "plant_code": 50610
+     }
+    ],
+    "class_table_share": 0.0196,
+    "eia860_source": "vintage_2019",
+    "mw_by_fuel": {
+     "coal": 50.0,
+     "gas_cc": 14937.6,
+     "gas_ct": 9153.2,
+     "gas_st": 3698.8,
+     "oil": 201.2
+    },
+    "mw_weighted_hr_by_fuel": {
+     "coal": 5.581,
+     "gas_cc": 7.482,
+     "gas_ct": 10.198,
+     "gas_st": 12.271,
+     "oil": 15.308
+    },
+    "thermal_mw": 28040.8
+   },
+   "2020": {
+    "class_table_mw": 568.8,
+    "class_table_plants": [
+     {
+      "fuel": "gas_cc",
+      "mw": 510.0,
+      "name": "El Segundo Energy Center LLC",
+      "plant_code": 57901
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 56.7,
+      "name": "Panoche Peaker",
+      "plant_code": 55874
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.1,
+      "name": "EQX005.0 Toyama Fuel Cell",
+      "plant_code": 64756
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "Saint Johns Health Center",
+      "plant_code": 50610
+     }
+    ],
+    "class_table_share": 0.0192,
+    "eia860_source": "vintage_2020",
+    "mw_by_fuel": {
+     "coal": 50.0,
+     "gas_cc": 16366.8,
+     "gas_ct": 9292.9,
+     "gas_st": 3698.8,
+     "oil": 146.2
+    },
+    "mw_weighted_hr_by_fuel": {
+     "coal": 5.553,
+     "gas_cc": 7.57,
+     "gas_ct": 10.163,
+     "gas_st": 11.444,
+     "oil": 14.05
+    },
+    "thermal_mw": 29554.7
+   },
+   "2021": {
+    "class_table_mw": 591.8,
+    "class_table_plants": [
+     {
+      "fuel": "gas_cc",
+      "mw": 510.0,
+      "name": "El Segundo Energy Center LLC",
+      "plant_code": 57901
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 56.7,
+      "name": "Panoche Peaker",
+      "plant_code": 55874
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "name": "Keysight - Santa Rosa",
+      "plant_code": 65199
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 2.8,
+      "name": "City of Tulare Water Facility",
+      "plant_code": 59395
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.7,
+      "name": "Enloe Medical - Chico",
+      "plant_code": 65210
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.1,
+      "name": "EQX005.0 Toyama Fuel Cell",
+      "plant_code": 64756
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "Saint Johns Health Center",
+      "plant_code": 50610
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "University of San Diego",
+      "plant_code": 65191
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T San Diego",
+      "plant_code": 65192
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "CalTech - Pasadena (PPA)",
+      "plant_code": 65193
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "SCC - San Jose",
+      "plant_code": 65196
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "DirecTV - Los Angeles",
+      "plant_code": 65200
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "CalTech - Pasadena",
+      "plant_code": 65202
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "Beckton Dickenson - San Jose",
+      "plant_code": 65203
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Redwood City",
+      "plant_code": 65204
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Gardena",
+      "plant_code": 65205
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Hawthorne",
+      "plant_code": 65206
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Hayward",
+      "plant_code": 65208
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "Comcast - Universal City",
+      "plant_code": 65211
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - San Diego Trade Street",
+      "plant_code": 65360
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "CalTech - Pasadena Wilson Ave",
+      "plant_code": 65361
+     }
+    ],
+    "class_table_share": 0.02,
+    "eia860_source": "vintage_2021",
+    "mw_by_fuel": {
+     "coal": 50.0,
+     "gas_cc": 16394.4,
+     "gas_ct": 9369.5,
+     "gas_st": 3698.8,
+     "oil": 145.8
+    },
+    "mw_weighted_hr_by_fuel": {
+     "coal": 5.558,
+     "gas_cc": 7.528,
+     "gas_ct": 10.035,
+     "gas_st": 12.537,
+     "oil": 13.877
+    },
+    "thermal_mw": 29658.5
+   },
+   "2022": {
+    "class_table_mw": 607.4,
+    "class_table_plants": [
+     {
+      "fuel": "gas_cc",
+      "mw": 510.0,
+      "name": "El Segundo Energy Center LLC",
+      "plant_code": 57901
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 56.7,
+      "name": "Panoche Peaker",
+      "plant_code": 55874
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "name": "Keysight - Santa Rosa",
+      "plant_code": 65199
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "name": "Kaiser - LA",
+      "plant_code": 66146
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 3.1,
+      "name": "Kaiser - Woodland Hills",
+      "plant_code": 66148
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 2.8,
+      "name": "City of Tulare Water Facility",
+      "plant_code": 59395
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 2.6,
+      "name": "Anheuser Busch - Fairfield",
+      "plant_code": 66456
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 2.1,
+      "name": "Kaiser - Harbor City",
+      "plant_code": 66142
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.7,
+      "name": "Enloe Medical - Chico",
+      "plant_code": 65210
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.3,
+      "name": "Life Technologies - Fremont",
+      "plant_code": 66145
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.1,
+      "name": "Redlands Community Hospital",
+      "plant_code": 66458
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "Saint Johns Health Center",
+      "plant_code": 50610
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "University of San Diego",
+      "plant_code": 65191
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T San Diego",
+      "plant_code": 65192
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "CalTech - Pasadena (PPA)",
+      "plant_code": 65193
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "SCC - San Jose",
+      "plant_code": 65196
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "DirecTV - Los Angeles",
+      "plant_code": 65200
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "CalTech - Pasadena",
+      "plant_code": 65202
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "Beckton Dickenson - San Jose",
+      "plant_code": 65203
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Redwood City",
+      "plant_code": 65204
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Gardena",
+      "plant_code": 65205
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Hawthorne",
+      "plant_code": 65206
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Hayward",
+      "plant_code": 65208
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "Comcast - Universal City",
+      "plant_code": 65211
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - San Diego Trade Street",
+      "plant_code": 65360
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "CalTech - Pasadena Wilson Ave",
+      "plant_code": 65361
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "San Diego Community College",
+      "plant_code": 66143
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "Taylor Farms - Schilling Place",
+      "plant_code": 66459
+     }
+    ],
+    "class_table_share": 0.0203,
+    "eia860_source": "vintage_2022",
+    "mw_by_fuel": {
+     "coal": 50.0,
+     "gas_cc": 16484.1,
+     "gas_ct": 9509.6,
+     "gas_st": 3698.8,
+     "oil": 145.8
+    },
+    "mw_weighted_hr_by_fuel": {
+     "coal": 5.555,
+     "gas_cc": 7.478,
+     "gas_ct": 10.137,
+     "gas_st": 12.066,
+     "oil": 12.558
+    },
+    "thermal_mw": 29888.3
+   },
+   "2023": {
+    "class_table_mw": 607.4,
+    "class_table_plants": [
+     {
+      "fuel": "gas_cc",
+      "mw": 510.0,
+      "name": "El Segundo Energy Center LLC",
+      "plant_code": 57901
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 56.7,
+      "name": "Panoche Peaker",
+      "plant_code": 55874
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "name": "Keysight - Santa Rosa",
+      "plant_code": 65199
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "name": "Kaiser - LA",
+      "plant_code": 66146
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 3.1,
+      "name": "Kaiser - Woodland Hills",
+      "plant_code": 66148
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 2.8,
+      "name": "City of Tulare Water Facility",
+      "plant_code": 59395
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 2.6,
+      "name": "Anheuser Busch - Fairfield",
+      "plant_code": 66456
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 2.1,
+      "name": "Kaiser - Harbor City",
+      "plant_code": 66142
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.7,
+      "name": "Enloe Medical - Chico",
+      "plant_code": 65210
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.3,
+      "name": "Life Technologies - Fremont",
+      "plant_code": 66145
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.1,
+      "name": "Redlands Community Hospital",
+      "plant_code": 66458
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "Saint Johns Health Center",
+      "plant_code": 50610
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "University of San Diego",
+      "plant_code": 65191
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T San Diego",
+      "plant_code": 65192
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "CalTech - Pasadena (PPA)",
+      "plant_code": 65193
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "SCC - San Jose",
+      "plant_code": 65196
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "DirecTV - Los Angeles",
+      "plant_code": 65200
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "CalTech - Pasadena",
+      "plant_code": 65202
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "Beckton Dickenson - San Jose",
+      "plant_code": 65203
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Redwood City",
+      "plant_code": 65204
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Gardena",
+      "plant_code": 65205
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Hawthorne",
+      "plant_code": 65206
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Hayward",
+      "plant_code": 65208
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "Comcast - Universal City",
+      "plant_code": 65211
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - San Diego Trade Street",
+      "plant_code": 65360
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "CalTech - Pasadena Wilson Ave",
+      "plant_code": 65361
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "San Diego Community College",
+      "plant_code": 66143
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "Taylor Farms - Schilling Place",
+      "plant_code": 66459
+     }
+    ],
+    "class_table_share": 0.0209,
+    "eia860_source": "vintage_2023",
+    "mw_by_fuel": {
+     "coal": 50.0,
+     "gas_cc": 16430.4,
+     "gas_ct": 9549.9,
+     "gas_st": 2868.8,
+     "oil": 121.3
+    },
+    "mw_weighted_hr_by_fuel": {
+     "coal": 5.613,
+     "gas_cc": 7.544,
+     "gas_ct": 10.16,
+     "gas_st": 12.108,
+     "oil": 12.837
+    },
+    "thermal_mw": 29020.4
+   },
+   "2024": {
+    "class_table_mw": 654.6,
+    "class_table_plants": [
+     {
+      "fuel": "gas_cc",
+      "mw": 510.0,
+      "name": "El Segundo Energy Center LLC",
+      "plant_code": 57901
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 56.7,
+      "name": "Wellhead Power Panoche",
+      "plant_code": 55874
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 48.0,
+      "name": "Enchanted Rock Lodi",
+      "plant_code": 66638
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "name": "Keysight - Santa Rosa",
+      "plant_code": 65199
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "name": "Kaiser - LA",
+      "plant_code": 66146
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 3.1,
+      "name": "Kaiser - Woodland Hills",
+      "plant_code": 66148
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 2.8,
+      "name": "City of Tulare Water Facility",
+      "plant_code": 59395
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 2.6,
+      "name": "Anheuser Busch - Fairfield",
+      "plant_code": 66456
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 2.2,
+      "name": "CalTech - Pasadena Wilson Ave",
+      "plant_code": 65361
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 2.1,
+      "name": "Kaiser - Harbor City",
+      "plant_code": 66142
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.7,
+      "name": "Enloe Medical - Chico",
+      "plant_code": 65210
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.3,
+      "name": "Life Technologies - Fremont",
+      "plant_code": 66145
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.1,
+      "name": "Redlands Community Hospital",
+      "plant_code": 66458
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "Saint Johns Health Center",
+      "plant_code": 50610
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "University of San Diego",
+      "plant_code": 65191
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "CalTech - Pasadena (PPA)",
+      "plant_code": 65193
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "SCC - San Jose",
+      "plant_code": 65196
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "DirecTV - Los Angeles",
+      "plant_code": 65200
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "Beckton Dickenson - San Jose",
+      "plant_code": 65203
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Redwood City",
+      "plant_code": 65204
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Gardena",
+      "plant_code": 65205
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Hawthorne",
+      "plant_code": 65206
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Hayward",
+      "plant_code": 65208
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "Comcast - Universal City",
+      "plant_code": 65211
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - San Diego Trade Street",
+      "plant_code": 65360
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "San Diego Community College",
+      "plant_code": 66143
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "Taylor Farms - Schilling Place",
+      "plant_code": 66459
+     }
+    ],
+    "class_table_share": 0.0225,
+    "eia860_source": "vintage_2024",
+    "mw_by_fuel": {
+     "coal": 50.0,
+     "gas_cc": 16461.4,
+     "gas_ct": 9571.3,
+     "gas_st": 2858.8,
+     "oil": 121.2
+    },
+    "mw_weighted_hr_by_fuel": {
+     "coal": 5.577,
+     "gas_cc": 7.535,
+     "gas_ct": 10.061,
+     "gas_st": 12.375,
+     "oil": 15.808
+    },
+    "thermal_mw": 29062.7
+   },
+   "2025": {
+    "class_table_mw": 655.0,
+    "class_table_plants": [
+     {
+      "fuel": "gas_cc",
+      "mw": 510.0,
+      "name": "El Segundo Energy Center LLC",
+      "plant_code": 57901
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 56.7,
+      "name": "Wellhead Power Panoche",
+      "plant_code": 55874
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 48.0,
+      "name": "Enchanted Rock Lodi",
+      "plant_code": 66638
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "name": "Keysight - Santa Rosa",
+      "plant_code": 65199
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "name": "Kaiser - LA",
+      "plant_code": 66146
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 3.1,
+      "name": "Kaiser - Woodland Hills",
+      "plant_code": 66148
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 2.8,
+      "name": "City of Tulare Water Facility",
+      "plant_code": 59395
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 2.6,
+      "name": "Anheuser Busch - Fairfield",
+      "plant_code": 66456
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 2.2,
+      "name": "CalTech - Pasadena Wilson Ave",
+      "plant_code": 65361
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 2.1,
+      "name": "Kaiser - Harbor City",
+      "plant_code": 66142
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.7,
+      "name": "Enloe Medical - Chico",
+      "plant_code": 65210
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.4,
+      "name": "GreenStruxure REP009, LLC",
+      "plant_code": 69191
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.3,
+      "name": "Life Technologies - Fremont",
+      "plant_code": 66145
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.1,
+      "name": "Redlands Community Hospital",
+      "plant_code": 66458
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "Saint Johns Health Center",
+      "plant_code": 50610
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "University of San Diego",
+      "plant_code": 65191
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "CalTech - Pasadena (PPA)",
+      "plant_code": 65193
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "SCC - San Jose",
+      "plant_code": 65196
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "DirecTV - Los Angeles",
+      "plant_code": 65200
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Redwood City",
+      "plant_code": 65204
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Gardena",
+      "plant_code": 65205
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Hawthorne",
+      "plant_code": 65206
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - Hayward",
+      "plant_code": 65208
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "Comcast - Universal City",
+      "plant_code": 65211
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "AT&T - San Diego Trade Street",
+      "plant_code": 65360
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "San Diego Community College",
+      "plant_code": 66143
+     },
+     {
+      "fuel": "gas_ct",
+      "mw": 1.0,
+      "name": "Taylor Farms - Schilling Place",
+      "plant_code": 66459
+     }
+    ],
+    "class_table_share": 0.0226,
+    "eia860_source": "canonical",
+    "mw_by_fuel": {
+     "coal": 50.0,
+     "gas_cc": 16383.4,
+     "gas_ct": 9578.2,
+     "gas_st": 2858.8,
+     "oil": 122.7
+    },
+    "mw_weighted_hr_by_fuel": {
+     "coal": 5.577,
+     "gas_cc": 7.502,
+     "gas_ct": 10.098,
+     "gas_st": 11.728,
+     "oil": 15.665
+    },
+    "thermal_mw": 28993.1
+   }
+  }
+ },
+ "iso": "CAISO",
+ "outages": {
+  "partial": {
+   "2019": {
+    "mwh": 0.0,
+    "windows": 0
+   },
+   "2020": {
+    "mwh": 0.0,
+    "windows": 0
+   },
+   "2021": {
+    "mwh": 0.0,
+    "windows": 0
+   },
+   "2022": {
+    "mwh": 0.0,
+    "windows": 0
+   },
+   "2023": {
+    "mwh": 0.0,
+    "windows": 0
+   },
+   "2024": {
+    "mwh": 0.0,
+    "windows": 0
+   },
+   "2025": {
+    "mwh": 0.0,
+    "windows": 0
+   }
+  },
+  "short-coal": {
+   "2019": {
+    "mwh": 0.0,
+    "windows": 0
+   },
+   "2020": {
+    "mwh": 0.0,
+    "windows": 0
+   },
+   "2021": {
+    "mwh": 0.0,
+    "windows": 0
+   },
+   "2022": {
+    "mwh": 0.0,
+    "windows": 0
+   },
+   "2023": {
+    "mwh": 0.0,
+    "windows": 0
+   },
+   "2024": {
+    "mwh": 0.0,
+    "windows": 0
+   },
+   "2025": {
+    "mwh": 0.0,
+    "windows": 0
+   }
+  },
+  "short-gas": {
+   "2019": {
+    "mwh": 5854747.0,
+    "windows": 398
+   },
+   "2020": {
+    "mwh": 5030004.0,
+    "windows": 320
+   },
+   "2021": {
+    "mwh": 4293228.0,
+    "windows": 296
+   },
+   "2022": {
+    "mwh": 5583838.0,
+    "windows": 404
+   },
+   "2023": {
+    "mwh": 5279774.0,
+    "windows": 402
+   },
+   "2024": {
+    "mwh": 5652722.0,
+    "windows": 361
+   },
+   "2025": {
+    "mwh": 7653547.0,
+    "windows": 435
+   }
+  },
+  "std (armed)": {
+   "2019": {
+    "mwh": 42628723.0,
+    "windows": 576
+   },
+   "2020": {
+    "mwh": 40368362.0,
+    "windows": 555
+   },
+   "2021": {
+    "mwh": 42470602.0,
+    "windows": 603
+   },
+   "2022": {
+    "mwh": 35856778.0,
+    "windows": 496
+   },
+   "2023": {
+    "mwh": 39428633.0,
+    "windows": 584
+   },
+   "2024": {
+    "mwh": 46750327.0,
+    "windows": 499
+   },
+   "2025": {
+    "mwh": 58064532.0,
+    "windows": 670
+   }
+  }
+ }
+}

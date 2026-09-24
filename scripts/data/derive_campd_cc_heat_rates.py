@@ -268,6 +268,23 @@ def _campd_cc_hours(iso: str, years: list[int], codes: set[int]) -> pd.DataFrame
             ],
         )
         df["facilityId"] = pd.to_numeric(df["facilityId"], errors="coerce")
+        # CEMS-to-EIA split-plant routing (campd.CAMPD_UNIT_PLANT_REMAP): a
+        # repowered CC whose CTs still file CEMS under the legacy boiler ORIS
+        # (El Segundo 330 -> 57901, Alamitos 315 -> 62115, Huntington Beach
+        # 335 -> 62116, Astoria Energy II 55375 -> 57664) is re-keyed to the
+        # EIA plant it belongs to BEFORE the fleet filter, exactly as the
+        # outage and emissions derives already do. Without it El Segundo
+        # (510 MW, no eGRID row in any vintage) matched no fleet plant and
+        # stayed at the HEAT_RATE_BINS class table (R-CAISO phase 0,
+        # docs/handoffs/r-caiso/PRECOMMIT-r-caiso-2026-09-24.md §2).
+        fac = df["facilityId"].fillna(-1).astype(int)
+        uid = df["unitId"].astype(str)
+        at_split = fac.isin(campd.CAMPD_SPLIT_FACILITIES)
+        if at_split.any():
+            df.loc[at_split, "facilityId"] = [
+                campd.CAMPD_UNIT_PLANT_REMAP.get((f, u), f)
+                for f, u in zip(fac[at_split], uid[at_split])
+            ]
         df = df[df["facilityId"].isin(codes)]
         df = df[_is_cc_unit(df["unitType"])]
         if not df.empty:
