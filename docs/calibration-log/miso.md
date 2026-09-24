@@ -15137,3 +15137,10 @@ covered). Keeper shard, both partition tiers (bundle path corrected), gate-(a) r
 stamps (cell `O` → `K`) and §5.4 header re-keyed; status rebuilt (MISO **CALIBRATED**). The
 incoming stores were verified (audit E1) BEFORE `prune_iso_runs.py --iso MISO --force-uncite`
 removed `2026-09-22-hydro-5-miso-ror`. After: `audit_keepers` 0/0. Record: RESULT-miso267 §8.
+
+## miso-268 — 2026-09-24
+
+Keeper → `2026-09-24-miso-268-coal-yard` (owner ruling). Single delta `coal_fuel_inventory_plant_grain=true`
+(per-coal-yard annual fuel rows). C1 passes every year (2022 PRB +10.04 → −0.24, CC_REGULAR −8.99 → −3.66 TWh);
+C3a 2022 −8.4 % PASS. Open: C3a 2020 +13.4 %, C3b 2021 0.309. Train tier CALIBRATED unchanged.
+Record: `docs/RESULT-miso268-coal-yard-grain-2026-09-24.md`.
