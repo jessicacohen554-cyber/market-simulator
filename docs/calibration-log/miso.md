@@ -15144,3 +15144,21 @@ Keeper → `2026-09-24-miso-268-coal-yard` (owner ruling). Single delta `coal_fu
 (per-coal-yard annual fuel rows). C1 passes every year (2022 PRB +10.04 → −0.24, CC_REGULAR −8.99 → −3.66 TWh);
 C3a 2022 −8.4 % PASS. Open: C3a 2020 +13.4 %, C3b 2021 0.309. Train tier CALIBRATED unchanged.
 Record: `docs/RESULT-miso268-coal-yard-grain-2026-09-24.md`.
+
+## miso-269 (2026-09-24) — the two held-out failures measured at zero LP; no admissible lever, no solve
+
+Keeper `2026-09-24-miso-268-coal-yard` unchanged. Nothing solved, registered or promoted. Record
+`docs/FINDING-miso269-held-out-objects-no-admissible-lever-2026-09-24.md`; probes
+`scripts/probes/_miso269_{feb2021_gas,transport_static,feb2021_setter}_phase0.py`.
+
+* **C3b 2021 (0.309):** keeper Feb-2021 gas is $0.73–1.01/MMBtu in the Chicago zones on non-storm
+  days (traded $2.5–4.0) and $11–16 elsewhere (HH $2.6–3.7). The first is a construction defect of
+  `miso_winter_citygate_daily` in storm months (median shape factor 0.154 Feb-2021, 0.465
+  Jan-2024, 0.647 Dec-2022); the second confirms FINDING-miso268 §1 for the non-Chicago zones.
+* **Ruled gas convention (`gas_variable_transport`, O):** static re-merit adverse — C3b 2021
+  0.309 → 0.583, C3a 2020 +14.2 → +16.3 %. miso-224's print-over-hub wedge no longer exists on
+  the current keeper.
+* **C3a 2020 overnight:** coal floors force 0.2–0.4 % of coal energy (D-2); no floor lever. Offer
+  level is the band-multiplier channel, the owner's.
+* **Escalated:** storm-month gas convention; whether the marginal ruling covers thin
+  extreme-event prints. Oct–Nov 2021 (32 % of the C3b SSE) left for a successor.

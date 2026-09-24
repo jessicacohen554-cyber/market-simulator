@@ -1,0 +1,1932 @@
+{
+ "year": 2021,
+ "keeper": "miso268_yard_span",
+ "n_gas_rows": 1614,
+ "chicago_zones": [
+  "MISO-East",
+  "MISO-Illinois",
+  "MISO-Indiana"
+ ],
+ "gas_cap_mw_chicago": 29011,
+ "gas_cap_mw_other": 40114,
+ "monthly": [
+  {
+   "month": 1,
+   "model_gas_chicago_zones": 3.095,
+   "model_gas_other_zones": 3.21,
+   "chicago_print_mean_calendar": NaN,
+   "henry_hub_mean_calendar": NaN,
+   "model_price_lw": 32.34
+  },
+  {
+   "month": 2,
+   "model_gas_chicago_zones": 5.73,
+   "model_gas_other_zones": 20.056,
+   "chicago_print_mean_calendar": 22.714,
+   "henry_hub_mean_calendar": 5.144,
+   "model_price_lw": 74.5
+  },
+  {
+   "month": 3,
+   "model_gas_chicago_zones": 3.12,
+   "model_gas_other_zones": 3.095,
+   "chicago_print_mean_calendar": 2.472,
+   "henry_hub_mean_calendar": 2.561,
+   "model_price_lw": 31.68
+  },
+  {
+   "month": 4,
+   "model_gas_chicago_zones": 3.017,
+   "model_gas_other_zones": 3.069,
+   "chicago_print_mean_calendar": 2.547,
+   "henry_hub_mean_calendar": 2.589,
+   "model_price_lw": 32.75
+  },
+  {
+   "month": 5,
+   "model_gas_chicago_zones": 3.253,
+   "model_gas_other_zones": 3.385,
+   "chicago_print_mean_calendar": 2.765,
+   "henry_hub_mean_calendar": 2.879,
+   "model_price_lw": 33.98
+  },
+  {
+   "month": 6,
+   "model_gas_chicago_zones": 3.531,
+   "model_gas_other_zones": 3.629,
+   "chicago_print_mean_calendar": 3.151,
+   "henry_hub_mean_calendar": 3.217,
+   "model_price_lw": 34.78
+  },
+  {
+   "month": 7,
+   "model_gas_chicago_zones": 4.0,
+   "model_gas_other_zones": 4.147,
+   "chicago_print_mean_calendar": 3.612,
+   "henry_hub_mean_calendar": 3.799,
+   "model_price_lw": 40.78
+  },
+  {
+   "month": 8,
+   "model_gas_chicago_zones": 4.235,
+   "model_gas_other_zones": 4.415,
+   "chicago_print_mean_calendar": 3.927,
+   "henry_hub_mean_calendar": 4.042,
+   "model_price_lw": 44.32
+  },
+  {
+   "month": 9,
+   "model_gas_chicago_zones": 5.274,
+   "model_gas_other_zones": 5.346,
+   "chicago_print_mean_calendar": 4.839,
+   "henry_hub_mean_calendar": 5.068,
+   "model_price_lw": 38.9
+  },
+  {
+   "month": 10,
+   "model_gas_chicago_zones": 5.829,
+   "model_gas_other_zones": 5.912,
+   "chicago_print_mean_calendar": 5.241,
+   "henry_hub_mean_calendar": 5.466,
+   "model_price_lw": 47.47
+  },
+  {
+   "month": 11,
+   "model_gas_chicago_zones": 5.346,
+   "model_gas_other_zones": 5.665,
+   "chicago_print_mean_calendar": 4.981,
+   "henry_hub_mean_calendar": 5.047,
+   "model_price_lw": 47.08
+  },
+  {
+   "month": 12,
+   "model_gas_chicago_zones": 4.436,
+   "model_gas_other_zones": 5.098,
+   "chicago_print_mean_calendar": 3.622,
+   "henry_hub_mean_calendar": 3.77,
+   "model_price_lw": 41.96
+  }
+ ],
+ "daily": [
+  {
+   "date": "2021-01-01",
+   "model_gas_chicago_zones": 3.019,
+   "model_gas_other_zones": 3.09,
+   "model_gas_all": 3.06,
+   "chicago_citygate_print": NaN,
+   "henry_hub_print": NaN,
+   "chicago_shape_factor": 0.9752,
+   "model_price_lw": 31.4
+  },
+  {
+   "date": "2021-01-02",
+   "model_gas_chicago_zones": 3.019,
+   "model_gas_other_zones": 3.09,
+   "model_gas_all": 3.06,
+   "chicago_citygate_print": NaN,
+   "henry_hub_print": NaN,
+   "chicago_shape_factor": 0.9752,
+   "model_price_lw": 31.97
+  },
+  {
+   "date": "2021-01-03",
+   "model_gas_chicago_zones": 3.019,
+   "model_gas_other_zones": 3.09,
+   "model_gas_all": 3.06,
+   "chicago_citygate_print": NaN,
+   "henry_hub_print": NaN,
+   "chicago_shape_factor": 0.9752,
+   "model_price_lw": 31.61
+  },
+  {
+   "date": "2021-01-04",
+   "model_gas_chicago_zones": 3.019,
+   "model_gas_other_zones": 3.09,
+   "model_gas_all": 3.06,
+   "chicago_citygate_print": 2.49,
+   "henry_hub_print": 2.57,
+   "chicago_shape_factor": 0.9752,
+   "model_price_lw": 31.93
+  },
+  {
+   "date": "2021-01-05",
+   "model_gas_chicago_zones": 3.019,
+   "model_gas_other_zones": 3.292,
+   "model_gas_all": 3.177,
+   "chicago_citygate_print": 2.59,
+   "henry_hub_print": 2.72,
+   "chicago_shape_factor": 0.9752,
+   "model_price_lw": 33.81
+  },
+  {
+   "date": "2021-01-06",
+   "model_gas_chicago_zones": 3.14,
+   "model_gas_other_zones": 3.28,
+   "model_gas_all": 3.221,
+   "chicago_citygate_print": 2.58,
+   "henry_hub_print": 2.7,
+   "chicago_shape_factor": 1.0144,
+   "model_price_lw": 33.31
+  },
+  {
+   "date": "2021-01-07",
+   "model_gas_chicago_zones": 3.128,
+   "model_gas_other_zones": 3.34,
+   "model_gas_all": 3.251,
+   "chicago_citygate_print": 2.64,
+   "henry_hub_print": 2.73,
+   "chicago_shape_factor": 1.0105,
+   "model_price_lw": 37.72
+  },
+  {
+   "date": "2021-01-08",
+   "model_gas_chicago_zones": 3.2,
+   "model_gas_other_zones": 3.292,
+   "model_gas_all": 3.254,
+   "chicago_citygate_print": 2.61,
+   "henry_hub_print": 2.73,
+   "chicago_shape_factor": 1.034,
+   "model_price_lw": 37.53
+  },
+  {
+   "date": "2021-01-09",
+   "model_gas_chicago_zones": 3.164,
+   "model_gas_other_zones": 3.292,
+   "model_gas_all": 3.239,
+   "chicago_citygate_print": 2.61,
+   "henry_hub_print": 2.73,
+   "chicago_shape_factor": 1.0222,
+   "model_price_lw": 36.93
+  },
+  {
+   "date": "2021-01-10",
+   "model_gas_chicago_zones": 3.164,
+   "model_gas_other_zones": 3.292,
+   "model_gas_all": 3.239,
+   "chicago_citygate_print": 2.61,
+   "henry_hub_print": 2.73,
+   "chicago_shape_factor": 1.0222,
+   "model_price_lw": 35.57
+  },
+  {
+   "date": "2021-01-11",
+   "model_gas_chicago_zones": 3.164,
+   "model_gas_other_zones": 3.221,
+   "model_gas_all": 3.197,
+   "chicago_citygate_print": 2.56,
+   "henry_hub_print": 2.65,
+   "chicago_shape_factor": 1.0222,
+   "model_price_lw": 33.54
+  },
+  {
+   "date": "2021-01-12",
+   "model_gas_chicago_zones": 3.103,
+   "model_gas_other_zones": 3.435,
+   "model_gas_all": 3.296,
+   "chicago_citygate_print": 2.73,
+   "henry_hub_print": 2.83,
+   "chicago_shape_factor": 1.0027,
+   "model_price_lw": 34.81
+  },
+  {
+   "date": "2021-01-13",
+   "model_gas_chicago_zones": 3.31,
+   "model_gas_other_zones": 3.352,
+   "model_gas_all": 3.334,
+   "chicago_citygate_print": 2.63,
+   "henry_hub_print": 2.75,
+   "chicago_shape_factor": 1.0692,
+   "model_price_lw": 34.27
+  },
+  {
+   "date": "2021-01-14",
+   "model_gas_chicago_zones": 3.188,
+   "model_gas_other_zones": 3.352,
+   "model_gas_all": 3.283,
+   "chicago_citygate_print": 2.64,
+   "henry_hub_print": 2.74,
+   "chicago_shape_factor": 1.0301,
+   "model_price_lw": 31.48
+  },
+  {
+   "date": "2021-01-15",
+   "model_gas_chicago_zones": 3.2,
+   "model_gas_other_zones": 3.399,
+   "model_gas_all": 3.316,
+   "chicago_citygate_print": 2.65,
+   "henry_hub_print": 2.79,
+   "chicago_shape_factor": 1.034,
+   "model_price_lw": 31.59
+  },
+  {
+   "date": "2021-01-16",
+   "model_gas_chicago_zones": 3.213,
+   "model_gas_other_zones": 3.399,
+   "model_gas_all": 3.321,
+   "chicago_citygate_print": 2.65,
+   "henry_hub_print": 2.79,
+   "chicago_shape_factor": 1.0379,
+   "model_price_lw": 31.98
+  },
+  {
+   "date": "2021-01-17",
+   "model_gas_chicago_zones": 3.213,
+   "model_gas_other_zones": 3.399,
+   "model_gas_all": 3.321,
+   "chicago_citygate_print": 2.65,
+   "henry_hub_print": 2.79,
+   "chicago_shape_factor": 1.0379,
+   "model_price_lw": 32.03
+  },
+  {
+   "date": "2021-01-18",
+   "model_gas_chicago_zones": 3.213,
+   "model_gas_other_zones": 3.399,
+   "model_gas_all": 3.321,
+   "chicago_citygate_print": 2.65,
+   "henry_hub_print": 2.79,
+   "chicago_shape_factor": 1.0379,
+   "model_price_lw": 34.57
+  },
+  {
+   "date": "2021-01-19",
+   "model_gas_chicago_zones": 3.213,
+   "model_gas_other_zones": 3.15,
+   "model_gas_all": 3.176,
+   "chicago_citygate_print": 2.45,
+   "henry_hub_print": 2.57,
+   "chicago_shape_factor": 1.0379,
+   "model_price_lw": 31.29
+  },
+  {
+   "date": "2021-01-20",
+   "model_gas_chicago_zones": 2.97,
+   "model_gas_other_zones": 3.055,
+   "model_gas_all": 3.019,
+   "chicago_citygate_print": 2.36,
+   "henry_hub_print": 2.42,
+   "chicago_shape_factor": 0.9596,
+   "model_price_lw": 29.22
+  },
+  {
+   "date": "2021-01-21",
+   "model_gas_chicago_zones": 2.861,
+   "model_gas_other_zones": 2.96,
+   "model_gas_all": 2.918,
+   "chicago_citygate_print": 2.43,
+   "henry_hub_print": 2.43,
+   "chicago_shape_factor": 0.9243,
+   "model_price_lw": 26.97
+  },
+  {
+   "date": "2021-01-22",
+   "model_gas_chicago_zones": 2.946,
+   "model_gas_other_zones": 2.912,
+   "model_gas_all": 2.926,
+   "chicago_citygate_print": 2.38,
+   "henry_hub_print": 2.42,
+   "chicago_shape_factor": 0.9517,
+   "model_price_lw": 31.32
+  },
+  {
+   "date": "2021-01-23",
+   "model_gas_chicago_zones": 2.885,
+   "model_gas_other_zones": 2.912,
+   "model_gas_all": 2.901,
+   "chicago_citygate_print": 2.38,
+   "henry_hub_print": 2.42,
+   "chicago_shape_factor": 0.9322,
+   "model_price_lw": 30.9
+  },
+  {
+   "date": "2021-01-24",
+   "model_gas_chicago_zones": 2.885,
+   "model_gas_other_zones": 2.912,
+   "model_gas_all": 2.901,
+   "chicago_citygate_print": 2.38,
+   "henry_hub_print": 2.42,
+   "chicago_shape_factor": 0.9322,
+   "model_price_lw": 30.5
+  },
+  {
+   "date": "2021-01-25",
+   "model_gas_chicago_zones": 2.885,
+   "model_gas_other_zones": 3.126,
+   "model_gas_all": 3.025,
+   "chicago_citygate_print": 2.49,
+   "henry_hub_print": 2.54,
+   "chicago_shape_factor": 0.9322,
+   "model_price_lw": 29.69
+  },
+  {
+   "date": "2021-01-26",
+   "model_gas_chicago_zones": 3.019,
+   "model_gas_other_zones": 3.245,
+   "model_gas_all": 3.15,
+   "chicago_citygate_print": 2.58,
+   "henry_hub_print": 2.63,
+   "chicago_shape_factor": 0.9752,
+   "model_price_lw": 30.59
+  },
+  {
+   "date": "2021-01-27",
+   "model_gas_chicago_zones": 3.128,
+   "model_gas_other_zones": 3.292,
+   "model_gas_all": 3.223,
+   "chicago_citygate_print": 2.62,
+   "henry_hub_print": 2.71,
+   "chicago_shape_factor": 1.0105,
+   "model_price_lw": 33.72
+  },
+  {
+   "date": "2021-01-28",
+   "model_gas_chicago_zones": 3.176,
+   "model_gas_other_zones": 3.28,
+   "model_gas_all": 3.237,
+   "chicago_citygate_print": 2.59,
+   "henry_hub_print": 2.6,
+   "chicago_shape_factor": 1.0262,
+   "model_price_lw": 32.5
+  },
+  {
+   "date": "2021-01-29",
+   "model_gas_chicago_zones": 3.14,
+   "model_gas_other_zones": 3.185,
+   "model_gas_all": 3.166,
+   "chicago_citygate_print": 2.62,
+   "henry_hub_print": 2.67,
+   "chicago_shape_factor": 1.0144,
+   "model_price_lw": 32.01
+  },
+  {
+   "date": "2021-01-30",
+   "model_gas_chicago_zones": 3.176,
+   "model_gas_other_zones": 3.185,
+   "model_gas_all": 3.182,
+   "chicago_citygate_print": 2.62,
+   "henry_hub_print": 2.67,
+   "chicago_shape_factor": 1.0262,
+   "model_price_lw": 29.37
+  },
+  {
+   "date": "2021-01-31",
+   "model_gas_chicago_zones": 3.176,
+   "model_gas_other_zones": 3.185,
+   "model_gas_all": 3.182,
+   "chicago_citygate_print": 2.62,
+   "henry_hub_print": 2.67,
+   "chicago_shape_factor": 1.0262,
+   "model_price_lw": 28.42
+  },
+  {
+   "date": "2021-02-01",
+   "model_gas_chicago_zones": 0.755,
+   "model_gas_other_zones": 12.031,
+   "model_gas_all": 7.299,
+   "chicago_citygate_print": 2.77,
+   "henry_hub_print": 2.86,
+   "chicago_shape_factor": 0.1153,
+   "model_price_lw": 45.1
+  },
+  {
+   "date": "2021-02-02",
+   "model_gas_chicago_zones": 0.799,
+   "model_gas_other_zones": 13.483,
+   "model_gas_all": 8.16,
+   "chicago_citygate_print": 2.96,
+   "henry_hub_print": 3.18,
+   "chicago_shape_factor": 0.1219,
+   "model_price_lw": 50.24
+  },
+  {
+   "date": "2021-02-03",
+   "model_gas_chicago_zones": 0.853,
+   "model_gas_other_zones": 12.557,
+   "model_gas_all": 7.645,
+   "chicago_citygate_print": 2.85,
+   "henry_hub_print": 2.91,
+   "chicago_shape_factor": 0.1303,
+   "model_price_lw": 45.16
+  },
+  {
+   "date": "2021-02-04",
+   "model_gas_chicago_zones": 0.822,
+   "model_gas_other_zones": 12.476,
+   "model_gas_all": 7.585,
+   "chicago_citygate_print": 2.95,
+   "henry_hub_print": 2.92,
+   "chicago_shape_factor": 0.1255,
+   "model_price_lw": 37.89
+  },
+  {
+   "date": "2021-02-05",
+   "model_gas_chicago_zones": 0.851,
+   "model_gas_other_zones": 14.486,
+   "model_gas_all": 8.763,
+   "chicago_citygate_print": 3.5,
+   "henry_hub_print": 3.39,
+   "chicago_shape_factor": 0.1299,
+   "model_price_lw": 41.85
+  },
+  {
+   "date": "2021-02-06",
+   "model_gas_chicago_zones": 1.009,
+   "model_gas_other_zones": 14.486,
+   "model_gas_all": 8.83,
+   "chicago_citygate_print": 3.5,
+   "henry_hub_print": 3.39,
+   "chicago_shape_factor": 0.1541,
+   "model_price_lw": 44.81
+  },
+  {
+   "date": "2021-02-07",
+   "model_gas_chicago_zones": 1.009,
+   "model_gas_other_zones": 14.486,
+   "model_gas_all": 8.83,
+   "chicago_citygate_print": 3.5,
+   "henry_hub_print": 3.39,
+   "chicago_shape_factor": 0.1541,
+   "model_price_lw": 48.86
+  },
+  {
+   "date": "2021-02-08",
+   "model_gas_chicago_zones": 1.009,
+   "model_gas_other_zones": 14.125,
+   "model_gas_all": 8.62,
+   "chicago_citygate_print": 3.18,
+   "henry_hub_print": 3.18,
+   "chicago_shape_factor": 0.1541,
+   "model_price_lw": 50.75
+  },
+  {
+   "date": "2021-02-09",
+   "model_gas_chicago_zones": 0.917,
+   "model_gas_other_zones": 13.924,
+   "model_gas_all": 8.465,
+   "chicago_citygate_print": 3.28,
+   "henry_hub_print": 3.2,
+   "chicago_shape_factor": 0.14,
+   "model_price_lw": 45.73
+  },
+  {
+   "date": "2021-02-10",
+   "model_gas_chicago_zones": 0.946,
+   "model_gas_other_zones": 15.568,
+   "model_gas_all": 9.431,
+   "chicago_citygate_print": 3.99,
+   "henry_hub_print": 3.68,
+   "chicago_shape_factor": 0.1444,
+   "model_price_lw": 49.55
+  },
+  {
+   "date": "2021-02-11",
+   "model_gas_chicago_zones": 1.15,
+   "model_gas_other_zones": 25.516,
+   "model_gas_all": 15.29,
+   "chicago_citygate_print": 8.06,
+   "henry_hub_print": 5.88,
+   "chicago_shape_factor": 0.1757,
+   "model_price_lw": 65.92
+  },
+  {
+   "date": "2021-02-12",
+   "model_gas_chicago_zones": 2.324,
+   "model_gas_other_zones": 24.171,
+   "model_gas_all": 15.002,
+   "chicago_citygate_print": 129.52,
+   "henry_hub_print": 6.0,
+   "chicago_shape_factor": 0.3548,
+   "model_price_lw": 76.3
+  },
+  {
+   "date": "2021-02-13",
+   "model_gas_chicago_zones": 31.609,
+   "model_gas_other_zones": 24.171,
+   "model_gas_all": 27.293,
+   "chicago_citygate_print": 129.52,
+   "henry_hub_print": 6.0,
+   "chicago_shape_factor": 5.702,
+   "model_price_lw": 153.12
+  },
+  {
+   "date": "2021-02-14",
+   "model_gas_chicago_zones": 31.609,
+   "model_gas_other_zones": 24.171,
+   "model_gas_all": 27.293,
+   "chicago_citygate_print": 129.52,
+   "henry_hub_print": 6.0,
+   "chicago_shape_factor": 5.702,
+   "model_price_lw": 140.71
+  },
+  {
+   "date": "2021-02-15",
+   "model_gas_chicago_zones": 31.609,
+   "model_gas_other_zones": 24.171,
+   "model_gas_all": 27.293,
+   "chicago_citygate_print": 129.52,
+   "henry_hub_print": 6.0,
+   "chicago_shape_factor": 5.702,
+   "model_price_lw": 177.05
+  },
+  {
+   "date": "2021-02-16",
+   "model_gas_chicago_zones": 31.609,
+   "model_gas_other_zones": 42.06,
+   "model_gas_all": 37.674,
+   "chicago_citygate_print": 22.08,
+   "henry_hub_print": 16.96,
+   "chicago_shape_factor": 5.702,
+   "model_price_lw": 224.37
+  },
+  {
+   "date": "2021-02-17",
+   "model_gas_chicago_zones": 6.366,
+   "model_gas_other_zones": 85.037,
+   "model_gas_all": 52.019,
+   "chicago_citygate_print": 18.82,
+   "henry_hub_print": 23.61,
+   "chicago_shape_factor": 0.9721,
+   "model_price_lw": 233.93
+  },
+  {
+   "date": "2021-02-18",
+   "model_gas_chicago_zones": 5.426,
+   "model_gas_other_zones": 32.601,
+   "model_gas_all": 21.196,
+   "chicago_citygate_print": 6.22,
+   "henry_hub_print": 7.5,
+   "chicago_shape_factor": 0.8285,
+   "model_price_lw": 106.22
+  },
+  {
+   "date": "2021-02-19",
+   "model_gas_chicago_zones": 1.793,
+   "model_gas_other_zones": 20.06,
+   "model_gas_all": 12.394,
+   "chicago_citygate_print": 3.94,
+   "henry_hub_print": 4.99,
+   "chicago_shape_factor": 0.2738,
+   "model_price_lw": 65.08
+  },
+  {
+   "date": "2021-02-20",
+   "model_gas_chicago_zones": 1.136,
+   "model_gas_other_zones": 20.06,
+   "model_gas_all": 12.118,
+   "chicago_citygate_print": 3.94,
+   "henry_hub_print": 4.99,
+   "chicago_shape_factor": 0.1735,
+   "model_price_lw": 62.48
+  },
+  {
+   "date": "2021-02-21",
+   "model_gas_chicago_zones": 1.136,
+   "model_gas_other_zones": 20.06,
+   "model_gas_all": 12.118,
+   "chicago_citygate_print": 3.94,
+   "henry_hub_print": 4.99,
+   "chicago_shape_factor": 0.1735,
+   "model_price_lw": 55.05
+  },
+  {
+   "date": "2021-02-22",
+   "model_gas_chicago_zones": 1.136,
+   "model_gas_other_zones": 13.163,
+   "model_gas_all": 8.115,
+   "chicago_citygate_print": 2.72,
+   "henry_hub_print": 2.84,
+   "chicago_shape_factor": 0.1735,
+   "model_price_lw": 36.39
+  },
+  {
+   "date": "2021-02-23",
+   "model_gas_chicago_zones": 0.784,
+   "model_gas_other_zones": 12.274,
+   "model_gas_all": 7.452,
+   "chicago_citygate_print": 2.72,
+   "henry_hub_print": 2.79,
+   "chicago_shape_factor": 0.1197,
+   "model_price_lw": 39.44
+  },
+  {
+   "date": "2021-02-24",
+   "model_gas_chicago_zones": 0.784,
+   "model_gas_other_zones": 11.701,
+   "model_gas_all": 7.119,
+   "chicago_citygate_print": 2.68,
+   "henry_hub_print": 2.75,
+   "chicago_shape_factor": 0.1197,
+   "model_price_lw": 38.6
+  },
+  {
+   "date": "2021-02-25",
+   "model_gas_chicago_zones": 0.773,
+   "model_gas_other_zones": 11.368,
+   "model_gas_all": 6.921,
+   "chicago_citygate_print": 2.53,
+   "henry_hub_print": 2.69,
+   "chicago_shape_factor": 0.118,
+   "model_price_lw": 40.24
+  },
+  {
+   "date": "2021-02-26",
+   "model_gas_chicago_zones": 0.729,
+   "model_gas_other_zones": 11.118,
+   "model_gas_all": 6.758,
+   "chicago_citygate_print": 2.59,
+   "henry_hub_print": 2.65,
+   "chicago_shape_factor": 0.1114,
+   "model_price_lw": 36.93
+  },
+  {
+   "date": "2021-02-27",
+   "model_gas_chicago_zones": 0.747,
+   "model_gas_other_zones": 11.118,
+   "model_gas_all": 6.765,
+   "chicago_citygate_print": 2.59,
+   "henry_hub_print": 2.65,
+   "chicago_shape_factor": 0.114,
+   "model_price_lw": 39.12
+  },
+  {
+   "date": "2021-02-28",
+   "model_gas_chicago_zones": 0.747,
+   "model_gas_other_zones": 11.118,
+   "model_gas_all": 6.765,
+   "chicago_citygate_print": 2.59,
+   "henry_hub_print": 2.65,
+   "chicago_shape_factor": 0.114,
+   "model_price_lw": 35.17
+  },
+  {
+   "date": "2021-03-01",
+   "model_gas_chicago_zones": 3.221,
+   "model_gas_other_zones": 3.196,
+   "model_gas_all": 3.207,
+   "chicago_citygate_print": 2.65,
+   "henry_hub_print": 2.7,
+   "chicago_shape_factor": 1.0474,
+   "model_price_lw": 34.67
+  },
+  {
+   "date": "2021-03-02",
+   "model_gas_chicago_zones": 3.424,
+   "model_gas_other_zones": 3.397,
+   "model_gas_all": 3.409,
+   "chicago_citygate_print": 2.79,
+   "henry_hub_print": 2.83,
+   "chicago_shape_factor": 1.0716,
+   "model_price_lw": 33.42
+  },
+  {
+   "date": "2021-03-03",
+   "model_gas_chicago_zones": 3.412,
+   "model_gas_other_zones": 3.385,
+   "model_gas_all": 3.397,
+   "chicago_citygate_print": 2.76,
+   "henry_hub_print": 2.84,
+   "chicago_shape_factor": 1.1282,
+   "model_price_lw": 37.55
+  },
+  {
+   "date": "2021-03-04",
+   "model_gas_chicago_zones": 3.329,
+   "model_gas_other_zones": 3.302,
+   "model_gas_all": 3.314,
+   "chicago_citygate_print": 2.66,
+   "henry_hub_print": 2.76,
+   "chicago_shape_factor": 1.1161,
+   "model_price_lw": 32.97
+  },
+  {
+   "date": "2021-03-05",
+   "model_gas_chicago_zones": 3.245,
+   "model_gas_other_zones": 3.22,
+   "model_gas_all": 3.23,
+   "chicago_citygate_print": 2.66,
+   "henry_hub_print": 2.68,
+   "chicago_shape_factor": 1.0757,
+   "model_price_lw": 35.94
+  },
+  {
+   "date": "2021-03-06",
+   "model_gas_chicago_zones": 3.245,
+   "model_gas_other_zones": 3.22,
+   "model_gas_all": 3.23,
+   "chicago_citygate_print": 2.66,
+   "henry_hub_print": 2.68,
+   "chicago_shape_factor": 1.0757,
+   "model_price_lw": 32.11
+  },
+  {
+   "date": "2021-03-07",
+   "model_gas_chicago_zones": 3.245,
+   "model_gas_other_zones": 3.22,
+   "model_gas_all": 3.23,
+   "chicago_citygate_print": 2.66,
+   "henry_hub_print": 2.68,
+   "chicago_shape_factor": 1.0757,
+   "model_price_lw": 29.54
+  },
+  {
+   "date": "2021-03-08",
+   "model_gas_chicago_zones": 3.186,
+   "model_gas_other_zones": 3.16,
+   "model_gas_all": 3.171,
+   "chicago_citygate_print": 2.45,
+   "henry_hub_print": 2.56,
+   "chicago_shape_factor": 1.0757,
+   "model_price_lw": 31.46
+  },
+  {
+   "date": "2021-03-09",
+   "model_gas_chicago_zones": 3.126,
+   "model_gas_other_zones": 3.101,
+   "model_gas_all": 3.112,
+   "chicago_citygate_print": 2.43,
+   "henry_hub_print": 2.55,
+   "chicago_shape_factor": 0.9907,
+   "model_price_lw": 29.29
+  },
+  {
+   "date": "2021-03-10",
+   "model_gas_chicago_zones": 3.126,
+   "model_gas_other_zones": 3.101,
+   "model_gas_all": 3.112,
+   "chicago_citygate_print": 2.53,
+   "henry_hub_print": 2.6,
+   "chicago_shape_factor": 0.9827,
+   "model_price_lw": 28.65
+  },
+  {
+   "date": "2021-03-11",
+   "model_gas_chicago_zones": 3.221,
+   "model_gas_other_zones": 3.196,
+   "model_gas_all": 3.207,
+   "chicago_citygate_print": 2.55,
+   "henry_hub_print": 2.64,
+   "chicago_shape_factor": 1.0231,
+   "model_price_lw": 31.61
+  },
+  {
+   "date": "2021-03-12",
+   "model_gas_chicago_zones": 3.162,
+   "model_gas_other_zones": 3.137,
+   "model_gas_all": 3.147,
+   "chicago_citygate_print": 2.48,
+   "henry_hub_print": 2.59,
+   "chicago_shape_factor": 1.0312,
+   "model_price_lw": 35.21
+  },
+  {
+   "date": "2021-03-13",
+   "model_gas_chicago_zones": 3.162,
+   "model_gas_other_zones": 3.137,
+   "model_gas_all": 3.147,
+   "chicago_citygate_print": 2.48,
+   "henry_hub_print": 2.59,
+   "chicago_shape_factor": 1.0029,
+   "model_price_lw": 32.01
+  },
+  {
+   "date": "2021-03-14",
+   "model_gas_chicago_zones": 3.162,
+   "model_gas_other_zones": 3.137,
+   "model_gas_all": 3.147,
+   "chicago_citygate_print": 2.48,
+   "henry_hub_print": 2.59,
+   "chicago_shape_factor": 1.0029,
+   "model_price_lw": 28.94
+  },
+  {
+   "date": "2021-03-15",
+   "model_gas_chicago_zones": 3.078,
+   "model_gas_other_zones": 3.054,
+   "model_gas_all": 3.064,
+   "chicago_citygate_print": 2.48,
+   "henry_hub_print": 2.52,
+   "chicago_shape_factor": 1.0029,
+   "model_price_lw": 33.48
+  },
+  {
+   "date": "2021-03-16",
+   "model_gas_chicago_zones": 2.983,
+   "model_gas_other_zones": 2.959,
+   "model_gas_all": 2.969,
+   "chicago_citygate_print": 2.4,
+   "henry_hub_print": 2.5,
+   "chicago_shape_factor": 1.0029,
+   "model_price_lw": 37.93
+  },
+  {
+   "date": "2021-03-17",
+   "model_gas_chicago_zones": 3.102,
+   "model_gas_other_zones": 3.078,
+   "model_gas_all": 3.088,
+   "chicago_citygate_print": 2.43,
+   "henry_hub_print": 2.51,
+   "chicago_shape_factor": 0.9705,
+   "model_price_lw": 33.65
+  },
+  {
+   "date": "2021-03-18",
+   "model_gas_chicago_zones": 2.923,
+   "model_gas_other_zones": 2.9,
+   "model_gas_all": 2.91,
+   "chicago_citygate_print": 2.35,
+   "henry_hub_print": 2.46,
+   "chicago_shape_factor": 0.9827,
+   "model_price_lw": 29.54
+  },
+  {
+   "date": "2021-03-19",
+   "model_gas_chicago_zones": 3.019,
+   "model_gas_other_zones": 2.995,
+   "model_gas_all": 3.005,
+   "chicago_citygate_print": 2.32,
+   "henry_hub_print": 2.45,
+   "chicago_shape_factor": 0.9503,
+   "model_price_lw": 31.56
+  },
+  {
+   "date": "2021-03-20",
+   "model_gas_chicago_zones": 3.019,
+   "model_gas_other_zones": 2.995,
+   "model_gas_all": 3.005,
+   "chicago_citygate_print": 2.32,
+   "henry_hub_print": 2.45,
+   "chicago_shape_factor": 0.9382,
+   "model_price_lw": 28.26
+  },
+  {
+   "date": "2021-03-21",
+   "model_gas_chicago_zones": 3.019,
+   "model_gas_other_zones": 2.995,
+   "model_gas_all": 3.005,
+   "chicago_citygate_print": 2.32,
+   "henry_hub_print": 2.45,
+   "chicago_shape_factor": 0.9382,
+   "model_price_lw": 26.96
+  },
+  {
+   "date": "2021-03-22",
+   "model_gas_chicago_zones": 3.042,
+   "model_gas_other_zones": 3.018,
+   "model_gas_all": 3.029,
+   "chicago_citygate_print": 2.37,
+   "henry_hub_print": 2.49,
+   "chicago_shape_factor": 0.9382,
+   "model_price_lw": 32.47
+  },
+  {
+   "date": "2021-03-23",
+   "model_gas_chicago_zones": 3.054,
+   "model_gas_other_zones": 3.03,
+   "model_gas_all": 3.04,
+   "chicago_citygate_print": 2.47,
+   "henry_hub_print": 2.49,
+   "chicago_shape_factor": 0.9584,
+   "model_price_lw": 30.24
+  },
+  {
+   "date": "2021-03-24",
+   "model_gas_chicago_zones": 3.054,
+   "model_gas_other_zones": 3.03,
+   "model_gas_all": 3.04,
+   "chicago_citygate_print": 2.34,
+   "henry_hub_print": 2.45,
+   "chicago_shape_factor": 0.9988,
+   "model_price_lw": 29.9
+  },
+  {
+   "date": "2021-03-25",
+   "model_gas_chicago_zones": 3.007,
+   "model_gas_other_zones": 2.983,
+   "model_gas_all": 2.993,
+   "chicago_citygate_print": 2.39,
+   "henry_hub_print": 2.47,
+   "chicago_shape_factor": 0.9463,
+   "model_price_lw": 35.33
+  },
+  {
+   "date": "2021-03-26",
+   "model_gas_chicago_zones": 3.007,
+   "model_gas_other_zones": 2.983,
+   "model_gas_all": 2.993,
+   "chicago_citygate_print": 2.3,
+   "henry_hub_print": 2.47,
+   "chicago_shape_factor": 0.9665,
+   "model_price_lw": 35.17
+  },
+  {
+   "date": "2021-03-27",
+   "model_gas_chicago_zones": 3.007,
+   "model_gas_other_zones": 2.983,
+   "model_gas_all": 2.993,
+   "chicago_citygate_print": 2.3,
+   "henry_hub_print": 2.47,
+   "chicago_shape_factor": 0.9301,
+   "model_price_lw": 30.8
+  },
+  {
+   "date": "2021-03-28",
+   "model_gas_chicago_zones": 3.007,
+   "model_gas_other_zones": 2.983,
+   "model_gas_all": 2.993,
+   "chicago_citygate_print": 2.3,
+   "henry_hub_print": 2.47,
+   "chicago_shape_factor": 0.9301,
+   "model_price_lw": 27.46
+  },
+  {
+   "date": "2021-03-29",
+   "model_gas_chicago_zones": 3.078,
+   "model_gas_other_zones": 3.054,
+   "model_gas_all": 3.064,
+   "chicago_citygate_print": 2.33,
+   "henry_hub_print": 2.51,
+   "chicago_shape_factor": 0.9301,
+   "model_price_lw": 28.74
+  },
+  {
+   "date": "2021-03-30",
+   "model_gas_chicago_zones": 3.042,
+   "model_gas_other_zones": 3.018,
+   "model_gas_all": 3.029,
+   "chicago_citygate_print": 2.41,
+   "henry_hub_print": 2.46,
+   "chicago_shape_factor": 0.9422,
+   "model_price_lw": 27.75
+  },
+  {
+   "date": "2021-03-31",
+   "model_gas_chicago_zones": 3.007,
+   "model_gas_other_zones": 2.983,
+   "model_gas_all": 2.993,
+   "chicago_citygate_print": 2.55,
+   "henry_hub_print": 2.49,
+   "chicago_shape_factor": 0.9746,
+   "model_price_lw": 29.52
+  },
+  {
+   "date": "2021-10-01",
+   "model_gas_chicago_zones": 5.963,
+   "model_gas_other_zones": 6.048,
+   "model_gas_all": 6.013,
+   "chicago_citygate_print": 5.28,
+   "henry_hub_print": 5.58,
+   "chicago_shape_factor": 1.029,
+   "model_price_lw": 56.13
+  },
+  {
+   "date": "2021-10-02",
+   "model_gas_chicago_zones": 5.963,
+   "model_gas_other_zones": 6.048,
+   "model_gas_all": 6.013,
+   "chicago_citygate_print": 5.28,
+   "henry_hub_print": 5.58,
+   "chicago_shape_factor": 1.0061,
+   "model_price_lw": 55.19
+  },
+  {
+   "date": "2021-10-03",
+   "model_gas_chicago_zones": 5.963,
+   "model_gas_other_zones": 6.048,
+   "model_gas_all": 6.013,
+   "chicago_citygate_print": 5.28,
+   "henry_hub_print": 5.58,
+   "chicago_shape_factor": 1.0061,
+   "model_price_lw": 54.51
+  },
+  {
+   "date": "2021-10-04",
+   "model_gas_chicago_zones": 6.165,
+   "model_gas_other_zones": 6.253,
+   "model_gas_all": 6.216,
+   "chicago_citygate_print": 5.75,
+   "henry_hub_print": 5.88,
+   "chicago_shape_factor": 1.0061,
+   "model_price_lw": 60.5
+  },
+  {
+   "date": "2021-10-05",
+   "model_gas_chicago_zones": 6.771,
+   "model_gas_other_zones": 6.868,
+   "model_gas_all": 6.827,
+   "chicago_citygate_print": 6.05,
+   "henry_hub_print": 6.23,
+   "chicago_shape_factor": 1.0956,
+   "model_price_lw": 60.33
+  },
+  {
+   "date": "2021-10-06",
+   "model_gas_chicago_zones": 6.378,
+   "model_gas_other_zones": 6.469,
+   "model_gas_all": 6.431,
+   "chicago_citygate_print": 5.75,
+   "henry_hub_print": 5.95,
+   "chicago_shape_factor": 1.1528,
+   "model_price_lw": 55.93
+  },
+  {
+   "date": "2021-10-07",
+   "model_gas_chicago_zones": 6.069,
+   "model_gas_other_zones": 6.156,
+   "model_gas_all": 6.12,
+   "chicago_citygate_print": 5.42,
+   "henry_hub_print": 5.69,
+   "chicago_shape_factor": 1.0956,
+   "model_price_lw": 55.85
+  },
+  {
+   "date": "2021-10-08",
+   "model_gas_chicago_zones": 5.804,
+   "model_gas_other_zones": 5.887,
+   "model_gas_all": 5.852,
+   "chicago_citygate_print": 5.18,
+   "henry_hub_print": 5.66,
+   "chicago_shape_factor": 1.0328,
+   "model_price_lw": 54.26
+  },
+  {
+   "date": "2021-10-09",
+   "model_gas_chicago_zones": 5.804,
+   "model_gas_other_zones": 5.887,
+   "model_gas_all": 5.852,
+   "chicago_citygate_print": 5.18,
+   "henry_hub_print": 5.66,
+   "chicago_shape_factor": 0.987,
+   "model_price_lw": 43.01
+  },
+  {
+   "date": "2021-10-10",
+   "model_gas_chicago_zones": 5.804,
+   "model_gas_other_zones": 5.887,
+   "model_gas_all": 5.852,
+   "chicago_citygate_print": 5.18,
+   "henry_hub_print": 5.66,
+   "chicago_shape_factor": 0.987,
+   "model_price_lw": 42.2
+  },
+  {
+   "date": "2021-10-11",
+   "model_gas_chicago_zones": 5.804,
+   "model_gas_other_zones": 5.887,
+   "model_gas_all": 5.852,
+   "chicago_citygate_print": 5.08,
+   "henry_hub_print": 5.42,
+   "chicago_shape_factor": 0.987,
+   "model_price_lw": 48.83
+  },
+  {
+   "date": "2021-10-12",
+   "model_gas_chicago_zones": 5.676,
+   "model_gas_other_zones": 5.757,
+   "model_gas_all": 5.723,
+   "chicago_citygate_print": 5.11,
+   "henry_hub_print": 5.36,
+   "chicago_shape_factor": 0.968,
+   "model_price_lw": 50.08
+  },
+  {
+   "date": "2021-10-13",
+   "model_gas_chicago_zones": 5.91,
+   "model_gas_other_zones": 5.994,
+   "model_gas_all": 5.959,
+   "chicago_citygate_print": 5.18,
+   "henry_hub_print": 5.45,
+   "chicago_shape_factor": 0.9737,
+   "model_price_lw": 43.65
+  },
+  {
+   "date": "2021-10-14",
+   "model_gas_chicago_zones": 6.293,
+   "model_gas_other_zones": 6.382,
+   "model_gas_all": 6.345,
+   "chicago_citygate_print": 5.62,
+   "henry_hub_print": 5.83,
+   "chicago_shape_factor": 0.987,
+   "model_price_lw": 50.64
+  },
+  {
+   "date": "2021-10-15",
+   "model_gas_chicago_zones": 5.782,
+   "model_gas_other_zones": 5.865,
+   "model_gas_all": 5.83,
+   "chicago_citygate_print": 5.0,
+   "henry_hub_print": 5.46,
+   "chicago_shape_factor": 1.0709,
+   "model_price_lw": 46.86
+  },
+  {
+   "date": "2021-10-16",
+   "model_gas_chicago_zones": 5.782,
+   "model_gas_other_zones": 5.865,
+   "model_gas_all": 5.83,
+   "chicago_citygate_print": 5.0,
+   "henry_hub_print": 5.46,
+   "chicago_shape_factor": 0.9527,
+   "model_price_lw": 37.33
+  },
+  {
+   "date": "2021-10-17",
+   "model_gas_chicago_zones": 5.782,
+   "model_gas_other_zones": 5.865,
+   "model_gas_all": 5.83,
+   "chicago_citygate_print": 5.0,
+   "henry_hub_print": 5.46,
+   "chicago_shape_factor": 0.9527,
+   "model_price_lw": 40.37
+  },
+  {
+   "date": "2021-10-18",
+   "model_gas_chicago_zones": 5.325,
+   "model_gas_other_zones": 5.401,
+   "model_gas_all": 5.369,
+   "chicago_citygate_print": 4.81,
+   "henry_hub_print": 5.08,
+   "chicago_shape_factor": 0.9527,
+   "model_price_lw": 41.29
+  },
+  {
+   "date": "2021-10-19",
+   "model_gas_chicago_zones": 5.113,
+   "model_gas_other_zones": 5.186,
+   "model_gas_all": 5.155,
+   "chicago_citygate_print": 4.63,
+   "henry_hub_print": 4.78,
+   "chicago_shape_factor": 0.9165,
+   "model_price_lw": 40.0
+  },
+  {
+   "date": "2021-10-20",
+   "model_gas_chicago_zones": 5.177,
+   "model_gas_other_zones": 5.25,
+   "model_gas_all": 5.219,
+   "chicago_citygate_print": 4.83,
+   "henry_hub_print": 4.79,
+   "chicago_shape_factor": 0.8822,
+   "model_price_lw": 42.43
+  },
+  {
+   "date": "2021-10-21",
+   "model_gas_chicago_zones": 5.251,
+   "model_gas_other_zones": 5.326,
+   "model_gas_all": 5.294,
+   "chicago_citygate_print": 4.92,
+   "henry_hub_print": 4.92,
+   "chicago_shape_factor": 0.9203,
+   "model_price_lw": 44.49
+  },
+  {
+   "date": "2021-10-22",
+   "model_gas_chicago_zones": 5.421,
+   "model_gas_other_zones": 5.498,
+   "model_gas_all": 5.466,
+   "chicago_citygate_print": 4.98,
+   "henry_hub_print": 5.07,
+   "chicago_shape_factor": 0.9375,
+   "model_price_lw": 54.31
+  },
+  {
+   "date": "2021-10-23",
+   "model_gas_chicago_zones": 5.421,
+   "model_gas_other_zones": 5.498,
+   "model_gas_all": 5.466,
+   "chicago_citygate_print": 4.98,
+   "henry_hub_print": 5.07,
+   "chicago_shape_factor": 0.9489,
+   "model_price_lw": 45.48
+  },
+  {
+   "date": "2021-10-24",
+   "model_gas_chicago_zones": 5.421,
+   "model_gas_other_zones": 5.498,
+   "model_gas_all": 5.466,
+   "chicago_citygate_print": 4.98,
+   "henry_hub_print": 5.07,
+   "chicago_shape_factor": 0.9489,
+   "model_price_lw": 38.82
+  },
+  {
+   "date": "2021-10-25",
+   "model_gas_chicago_zones": 6.08,
+   "model_gas_other_zones": 6.167,
+   "model_gas_all": 6.13,
+   "chicago_citygate_print": 5.63,
+   "henry_hub_print": 5.6,
+   "chicago_shape_factor": 0.9489,
+   "model_price_lw": 48.64
+  },
+  {
+   "date": "2021-10-26",
+   "model_gas_chicago_zones": 5.942,
+   "model_gas_other_zones": 6.027,
+   "model_gas_all": 5.991,
+   "chicago_citygate_print": 5.58,
+   "henry_hub_print": 5.59,
+   "chicago_shape_factor": 1.0728,
+   "model_price_lw": 43.55
+  },
+  {
+   "date": "2021-10-27",
+   "model_gas_chicago_zones": 6.282,
+   "model_gas_other_zones": 6.372,
+   "model_gas_all": 6.334,
+   "chicago_citygate_print": 5.82,
+   "henry_hub_print": 5.86,
+   "chicago_shape_factor": 1.0632,
+   "model_price_lw": 47.83
+  },
+  {
+   "date": "2021-10-28",
+   "model_gas_chicago_zones": 6.038,
+   "model_gas_other_zones": 6.124,
+   "model_gas_all": 6.088,
+   "chicago_citygate_print": 5.43,
+   "henry_hub_print": 5.62,
+   "chicago_shape_factor": 1.109,
+   "model_price_lw": 45.44
+  },
+  {
+   "date": "2021-10-29",
+   "model_gas_chicago_zones": 5.836,
+   "model_gas_other_zones": 5.919,
+   "model_gas_all": 5.884,
+   "chicago_citygate_print": 5.18,
+   "henry_hub_print": 5.36,
+   "chicago_shape_factor": 1.0347,
+   "model_price_lw": 42.12
+  },
+  {
+   "date": "2021-10-30",
+   "model_gas_chicago_zones": 5.836,
+   "model_gas_other_zones": 5.919,
+   "model_gas_all": 5.884,
+   "chicago_citygate_print": 5.18,
+   "henry_hub_print": 5.36,
+   "chicago_shape_factor": 0.987,
+   "model_price_lw": 43.66
+  },
+  {
+   "date": "2021-10-31",
+   "model_gas_chicago_zones": 5.836,
+   "model_gas_other_zones": 5.919,
+   "model_gas_all": 5.884,
+   "chicago_citygate_print": 5.18,
+   "henry_hub_print": 5.36,
+   "chicago_shape_factor": 0.987,
+   "model_price_lw": 37.73
+  },
+  {
+   "date": "2021-11-01",
+   "model_gas_chicago_zones": 5.526,
+   "model_gas_other_zones": 5.857,
+   "model_gas_all": 5.718,
+   "chicago_citygate_print": 5.13,
+   "henry_hub_print": 5.17,
+   "chicago_shape_factor": 1.0328,
+   "model_price_lw": 54.64
+  },
+  {
+   "date": "2021-11-02",
+   "model_gas_chicago_zones": 5.643,
+   "model_gas_other_zones": 5.98,
+   "model_gas_all": 5.838,
+   "chicago_citygate_print": 5.35,
+   "henry_hub_print": 5.36,
+   "chicago_shape_factor": 1.0229,
+   "model_price_lw": 61.38
+  },
+  {
+   "date": "2021-11-03",
+   "model_gas_chicago_zones": 5.918,
+   "model_gas_other_zones": 6.272,
+   "model_gas_all": 6.123,
+   "chicago_citygate_print": 5.54,
+   "henry_hub_print": 5.59,
+   "chicago_shape_factor": 1.0667,
+   "model_price_lw": 63.87
+  },
+  {
+   "date": "2021-11-04",
+   "model_gas_chicago_zones": 6.066,
+   "model_gas_other_zones": 6.429,
+   "model_gas_all": 6.277,
+   "chicago_citygate_print": 5.54,
+   "henry_hub_print": 5.59,
+   "chicago_shape_factor": 1.1046,
+   "model_price_lw": 60.39
+  },
+  {
+   "date": "2021-11-05",
+   "model_gas_chicago_zones": 5.833,
+   "model_gas_other_zones": 6.182,
+   "model_gas_all": 6.036,
+   "chicago_citygate_print": 5.54,
+   "henry_hub_print": 5.59,
+   "chicago_shape_factor": 1.1046,
+   "model_price_lw": 46.87
+  },
+  {
+   "date": "2021-11-06",
+   "model_gas_chicago_zones": 5.833,
+   "model_gas_other_zones": 6.182,
+   "model_gas_all": 6.036,
+   "chicago_citygate_print": 5.54,
+   "henry_hub_print": 5.59,
+   "chicago_shape_factor": 1.1046,
+   "model_price_lw": 44.5
+  },
+  {
+   "date": "2021-11-07",
+   "model_gas_chicago_zones": 5.833,
+   "model_gas_other_zones": 6.182,
+   "model_gas_all": 6.036,
+   "chicago_citygate_print": 5.54,
+   "henry_hub_print": 5.59,
+   "chicago_shape_factor": 1.1046,
+   "model_price_lw": 40.16
+  },
+  {
+   "date": "2021-11-08",
+   "model_gas_chicago_zones": 5.855,
+   "model_gas_other_zones": 6.204,
+   "model_gas_all": 6.058,
+   "chicago_citygate_print": 5.54,
+   "henry_hub_print": 5.59,
+   "chicago_shape_factor": 1.1046,
+   "model_price_lw": 46.19
+  },
+  {
+   "date": "2021-11-09",
+   "model_gas_chicago_zones": 5.378,
+   "model_gas_other_zones": 5.7,
+   "model_gas_all": 5.565,
+   "chicago_citygate_print": 5.54,
+   "henry_hub_print": 5.59,
+   "chicago_shape_factor": 1.1046,
+   "model_price_lw": 49.52
+  },
+  {
+   "date": "2021-11-10",
+   "model_gas_chicago_zones": 4.828,
+   "model_gas_other_zones": 5.116,
+   "model_gas_all": 4.995,
+   "chicago_citygate_print": 5.54,
+   "henry_hub_print": 5.59,
+   "chicago_shape_factor": 1.1046,
+   "model_price_lw": 40.64
+  },
+  {
+   "date": "2021-11-11",
+   "model_gas_chicago_zones": 5.092,
+   "model_gas_other_zones": 5.397,
+   "model_gas_all": 5.269,
+   "chicago_citygate_print": 4.74,
+   "henry_hub_print": 4.8,
+   "chicago_shape_factor": 1.1046,
+   "model_price_lw": 37.13
+  },
+  {
+   "date": "2021-11-12",
+   "model_gas_chicago_zones": 5.262,
+   "model_gas_other_zones": 5.576,
+   "model_gas_all": 5.444,
+   "chicago_citygate_print": 4.72,
+   "henry_hub_print": 4.91,
+   "chicago_shape_factor": 0.9451,
+   "model_price_lw": 39.02
+  },
+  {
+   "date": "2021-11-13",
+   "model_gas_chicago_zones": 5.262,
+   "model_gas_other_zones": 5.576,
+   "model_gas_all": 5.444,
+   "chicago_citygate_print": 4.72,
+   "henry_hub_print": 4.91,
+   "chicago_shape_factor": 0.9411,
+   "model_price_lw": 44.19
+  },
+  {
+   "date": "2021-11-14",
+   "model_gas_chicago_zones": 5.262,
+   "model_gas_other_zones": 5.576,
+   "model_gas_all": 5.444,
+   "chicago_citygate_print": 4.72,
+   "henry_hub_print": 4.91,
+   "chicago_shape_factor": 0.9411,
+   "model_price_lw": 47.52
+  },
+  {
+   "date": "2021-11-15",
+   "model_gas_chicago_zones": 5.05,
+   "model_gas_other_zones": 5.352,
+   "model_gas_all": 5.225,
+   "chicago_citygate_print": 4.55,
+   "henry_hub_print": 4.71,
+   "chicago_shape_factor": 0.9411,
+   "model_price_lw": 57.23
+  },
+  {
+   "date": "2021-11-16",
+   "model_gas_chicago_zones": 5.41,
+   "model_gas_other_zones": 5.733,
+   "model_gas_all": 5.597,
+   "chicago_citygate_print": 4.94,
+   "henry_hub_print": 5.06,
+   "chicago_shape_factor": 0.9072,
+   "model_price_lw": 46.81
+  },
+  {
+   "date": "2021-11-17",
+   "model_gas_chicago_zones": 5.103,
+   "model_gas_other_zones": 5.408,
+   "model_gas_all": 5.28,
+   "chicago_citygate_print": 4.78,
+   "henry_hub_print": 4.79,
+   "chicago_shape_factor": 0.985,
+   "model_price_lw": 41.73
+  },
+  {
+   "date": "2021-11-18",
+   "model_gas_chicago_zones": 5.241,
+   "model_gas_other_zones": 5.554,
+   "model_gas_all": 5.422,
+   "chicago_citygate_print": 4.78,
+   "henry_hub_print": 4.79,
+   "chicago_shape_factor": 0.9531,
+   "model_price_lw": 49.21
+  },
+  {
+   "date": "2021-11-19",
+   "model_gas_chicago_zones": 5.188,
+   "model_gas_other_zones": 5.498,
+   "model_gas_all": 5.367,
+   "chicago_citygate_print": 4.78,
+   "henry_hub_print": 4.79,
+   "chicago_shape_factor": 0.9531,
+   "model_price_lw": 50.73
+  },
+  {
+   "date": "2021-11-20",
+   "model_gas_chicago_zones": 5.188,
+   "model_gas_other_zones": 5.498,
+   "model_gas_all": 5.367,
+   "chicago_citygate_print": 4.78,
+   "henry_hub_print": 4.79,
+   "chicago_shape_factor": 0.9531,
+   "model_price_lw": 51.01
+  },
+  {
+   "date": "2021-11-21",
+   "model_gas_chicago_zones": 5.188,
+   "model_gas_other_zones": 5.498,
+   "model_gas_all": 5.367,
+   "chicago_citygate_print": 4.78,
+   "henry_hub_print": 4.79,
+   "chicago_shape_factor": 0.9531,
+   "model_price_lw": 41.32
+  },
+  {
+   "date": "2021-11-22",
+   "model_gas_chicago_zones": 5.113,
+   "model_gas_other_zones": 5.419,
+   "model_gas_all": 5.291,
+   "chicago_citygate_print": 4.78,
+   "henry_hub_print": 4.79,
+   "chicago_shape_factor": 0.9531,
+   "model_price_lw": 54.15
+  },
+  {
+   "date": "2021-11-23",
+   "model_gas_chicago_zones": 5.241,
+   "model_gas_other_zones": 5.554,
+   "model_gas_all": 5.422,
+   "chicago_citygate_print": 4.78,
+   "henry_hub_print": 4.79,
+   "chicago_shape_factor": 0.9531,
+   "model_price_lw": 45.0
+  },
+  {
+   "date": "2021-11-24",
+   "model_gas_chicago_zones": 5.219,
+   "model_gas_other_zones": 5.531,
+   "model_gas_all": 5.4,
+   "chicago_citygate_print": 4.78,
+   "henry_hub_print": 4.79,
+   "chicago_shape_factor": 0.9531,
+   "model_price_lw": 39.46
+  },
+  {
+   "date": "2021-11-25",
+   "model_gas_chicago_zones": 5.219,
+   "model_gas_other_zones": 5.531,
+   "model_gas_all": 5.4,
+   "chicago_citygate_print": 4.78,
+   "henry_hub_print": 4.79,
+   "chicago_shape_factor": 0.9531,
+   "model_price_lw": 39.67
+  },
+  {
+   "date": "2021-11-26",
+   "model_gas_chicago_zones": 5.219,
+   "model_gas_other_zones": 5.531,
+   "model_gas_all": 5.4,
+   "chicago_citygate_print": 4.78,
+   "henry_hub_print": 4.79,
+   "chicago_shape_factor": 0.9531,
+   "model_price_lw": 42.26
+  },
+  {
+   "date": "2021-11-27",
+   "model_gas_chicago_zones": 5.219,
+   "model_gas_other_zones": 5.531,
+   "model_gas_all": 5.4,
+   "chicago_citygate_print": 4.78,
+   "henry_hub_print": 4.79,
+   "chicago_shape_factor": 0.9531,
+   "model_price_lw": 39.97
+  },
+  {
+   "date": "2021-11-28",
+   "model_gas_chicago_zones": 5.219,
+   "model_gas_other_zones": 5.531,
+   "model_gas_all": 5.4,
+   "chicago_citygate_print": 4.78,
+   "henry_hub_print": 4.79,
+   "chicago_shape_factor": 0.9531,
+   "model_price_lw": 44.63
+  },
+  {
+   "date": "2021-11-29",
+   "model_gas_chicago_zones": 5.188,
+   "model_gas_other_zones": 5.498,
+   "model_gas_all": 5.367,
+   "chicago_citygate_print": 4.73,
+   "henry_hub_print": 4.86,
+   "chicago_shape_factor": 0.9531,
+   "model_price_lw": 44.97
+  },
+  {
+   "date": "2021-11-30",
+   "model_gas_chicago_zones": 4.785,
+   "model_gas_other_zones": 5.071,
+   "model_gas_all": 4.951,
+   "chicago_citygate_print": 4.14,
+   "henry_hub_print": 4.51,
+   "chicago_shape_factor": 0.9431,
+   "model_price_lw": 48.27
+  },
+  {
+   "date": "2021-12-01",
+   "model_gas_chicago_zones": 5.049,
+   "model_gas_other_zones": 5.89,
+   "model_gas_all": 5.537,
+   "chicago_citygate_print": 3.94,
+   "henry_hub_print": 4.23,
+   "chicago_shape_factor": 1.1382,
+   "model_price_lw": 41.14
+  },
+  {
+   "date": "2021-12-02",
+   "model_gas_chicago_zones": 4.805,
+   "model_gas_other_zones": 5.575,
+   "model_gas_all": 5.252,
+   "chicago_citygate_print": 3.84,
+   "henry_hub_print": 4.04,
+   "chicago_shape_factor": 1.0832,
+   "model_price_lw": 42.42
+  },
+  {
+   "date": "2021-12-03",
+   "model_gas_chicago_zones": 4.683,
+   "model_gas_other_zones": 5.179,
+   "model_gas_all": 4.971,
+   "chicago_citygate_print": 3.75,
+   "henry_hub_print": 3.86,
+   "chicago_shape_factor": 1.0557,
+   "model_price_lw": 42.99
+  },
+  {
+   "date": "2021-12-04",
+   "model_gas_chicago_zones": 4.574,
+   "model_gas_other_zones": 5.179,
+   "model_gas_all": 4.925,
+   "chicago_citygate_print": 3.75,
+   "henry_hub_print": 3.86,
+   "chicago_shape_factor": 1.031,
+   "model_price_lw": 40.22
+  },
+  {
+   "date": "2021-12-05",
+   "model_gas_chicago_zones": 4.574,
+   "model_gas_other_zones": 5.179,
+   "model_gas_all": 4.925,
+   "chicago_citygate_print": 3.75,
+   "henry_hub_print": 3.86,
+   "chicago_shape_factor": 1.031,
+   "model_price_lw": 35.63
+  },
+  {
+   "date": "2021-12-06",
+   "model_gas_chicago_zones": 4.574,
+   "model_gas_other_zones": 5.001,
+   "model_gas_all": 4.822,
+   "chicago_citygate_print": 3.48,
+   "henry_hub_print": 3.63,
+   "chicago_shape_factor": 1.031,
+   "model_price_lw": 42.31
+  },
+  {
+   "date": "2021-12-07",
+   "model_gas_chicago_zones": 4.244,
+   "model_gas_other_zones": 4.919,
+   "model_gas_all": 4.636,
+   "chicago_citygate_print": 3.56,
+   "henry_hub_print": 3.64,
+   "chicago_shape_factor": 0.9567,
+   "model_price_lw": 52.82
+  },
+  {
+   "date": "2021-12-08",
+   "model_gas_chicago_zones": 4.342,
+   "model_gas_other_zones": 5.179,
+   "model_gas_all": 4.828,
+   "chicago_citygate_print": 3.57,
+   "henry_hub_print": 3.79,
+   "chicago_shape_factor": 0.9787,
+   "model_price_lw": 52.36
+  },
+  {
+   "date": "2021-12-09",
+   "model_gas_chicago_zones": 4.354,
+   "model_gas_other_zones": 5.015,
+   "model_gas_all": 4.738,
+   "chicago_citygate_print": 3.46,
+   "henry_hub_print": 3.66,
+   "chicago_shape_factor": 0.9815,
+   "model_price_lw": 40.17
+  },
+  {
+   "date": "2021-12-10",
+   "model_gas_chicago_zones": 4.22,
+   "model_gas_other_zones": 4.988,
+   "model_gas_all": 4.665,
+   "chicago_citygate_print": 3.57,
+   "henry_hub_print": 3.67,
+   "chicago_shape_factor": 0.9512,
+   "model_price_lw": 38.22
+  },
+  {
+   "date": "2021-12-11",
+   "model_gas_chicago_zones": 4.354,
+   "model_gas_other_zones": 4.988,
+   "model_gas_all": 4.722,
+   "chicago_citygate_print": 3.57,
+   "henry_hub_print": 3.67,
+   "chicago_shape_factor": 0.9815,
+   "model_price_lw": 35.15
+  },
+  {
+   "date": "2021-12-12",
+   "model_gas_chicago_zones": 4.354,
+   "model_gas_other_zones": 4.988,
+   "model_gas_all": 4.722,
+   "chicago_citygate_print": 3.57,
+   "henry_hub_print": 3.67,
+   "chicago_shape_factor": 0.9815,
+   "model_price_lw": 35.2
+  },
+  {
+   "date": "2021-12-13",
+   "model_gas_chicago_zones": 4.354,
+   "model_gas_other_zones": 5.534,
+   "model_gas_all": 5.039,
+   "chicago_citygate_print": 3.9,
+   "henry_hub_print": 3.96,
+   "chicago_shape_factor": 0.9815,
+   "model_price_lw": 45.25
+  },
+  {
+   "date": "2021-12-14",
+   "model_gas_chicago_zones": 4.756,
+   "model_gas_other_zones": 5.07,
+   "model_gas_all": 4.938,
+   "chicago_citygate_print": 3.39,
+   "henry_hub_print": 3.65,
+   "chicago_shape_factor": 1.0722,
+   "model_price_lw": 38.08
+  },
+  {
+   "date": "2021-12-15",
+   "model_gas_chicago_zones": 4.134,
+   "model_gas_other_zones": 5.179,
+   "model_gas_all": 4.741,
+   "chicago_citygate_print": 3.59,
+   "henry_hub_print": 3.75,
+   "chicago_shape_factor": 0.932,
+   "model_price_lw": 35.36
+  },
+  {
+   "date": "2021-12-16",
+   "model_gas_chicago_zones": 4.378,
+   "model_gas_other_zones": 5.015,
+   "model_gas_all": 4.748,
+   "chicago_citygate_print": 3.59,
+   "henry_hub_print": 3.75,
+   "chicago_shape_factor": 0.987,
+   "model_price_lw": 39.56
+  },
+  {
+   "date": "2021-12-17",
+   "model_gas_chicago_zones": 4.378,
+   "model_gas_other_zones": 5.07,
+   "model_gas_all": 4.78,
+   "chicago_citygate_print": 3.59,
+   "henry_hub_print": 3.75,
+   "chicago_shape_factor": 0.987,
+   "model_price_lw": 51.2
+  },
+  {
+   "date": "2021-12-18",
+   "model_gas_chicago_zones": 4.378,
+   "model_gas_other_zones": 5.07,
+   "model_gas_all": 4.78,
+   "chicago_citygate_print": 3.59,
+   "henry_hub_print": 3.75,
+   "chicago_shape_factor": 0.987,
+   "model_price_lw": 47.18
+  },
+  {
+   "date": "2021-12-19",
+   "model_gas_chicago_zones": 4.378,
+   "model_gas_other_zones": 5.07,
+   "model_gas_all": 4.78,
+   "chicago_citygate_print": 3.59,
+   "henry_hub_print": 3.75,
+   "chicago_shape_factor": 0.987,
+   "model_price_lw": 41.45
+  },
+  {
+   "date": "2021-12-20",
+   "model_gas_chicago_zones": 4.378,
+   "model_gas_other_zones": 5.343,
+   "model_gas_all": 4.938,
+   "chicago_citygate_print": 3.59,
+   "henry_hub_print": 3.75,
+   "chicago_shape_factor": 0.987,
+   "model_price_lw": 47.49
+  },
+  {
+   "date": "2021-12-21",
+   "model_gas_chicago_zones": 4.378,
+   "model_gas_other_zones": 5.411,
+   "model_gas_all": 4.978,
+   "chicago_citygate_print": 3.59,
+   "henry_hub_print": 3.75,
+   "chicago_shape_factor": 0.987,
+   "model_price_lw": 46.29
+  },
+  {
+   "date": "2021-12-22",
+   "model_gas_chicago_zones": 4.378,
+   "model_gas_other_zones": 5.398,
+   "model_gas_all": 4.97,
+   "chicago_citygate_print": 3.59,
+   "henry_hub_print": 3.75,
+   "chicago_shape_factor": 0.987,
+   "model_price_lw": 48.68
+  },
+  {
+   "date": "2021-12-23",
+   "model_gas_chicago_zones": 4.378,
+   "model_gas_other_zones": 4.865,
+   "model_gas_all": 4.661,
+   "chicago_citygate_print": 3.59,
+   "henry_hub_print": 3.75,
+   "chicago_shape_factor": 0.987,
+   "model_price_lw": 40.36
+  },
+  {
+   "date": "2021-12-24",
+   "model_gas_chicago_zones": 4.378,
+   "model_gas_other_zones": 4.865,
+   "model_gas_all": 4.661,
+   "chicago_citygate_print": 3.59,
+   "henry_hub_print": 3.75,
+   "chicago_shape_factor": 0.987,
+   "model_price_lw": 34.54
+  },
+  {
+   "date": "2021-12-25",
+   "model_gas_chicago_zones": 4.378,
+   "model_gas_other_zones": 4.865,
+   "model_gas_all": 4.661,
+   "chicago_citygate_print": 3.59,
+   "henry_hub_print": 3.75,
+   "chicago_shape_factor": 0.987,
+   "model_price_lw": 36.77
+  },
+  {
+   "date": "2021-12-26",
+   "model_gas_chicago_zones": 4.378,
+   "model_gas_other_zones": 4.865,
+   "model_gas_all": 4.661,
+   "chicago_citygate_print": 3.59,
+   "henry_hub_print": 3.75,
+   "chicago_shape_factor": 0.987,
+   "model_price_lw": 37.18
+  },
+  {
+   "date": "2021-12-27",
+   "model_gas_chicago_zones": 4.378,
+   "model_gas_other_zones": 4.714,
+   "model_gas_all": 4.573,
+   "chicago_citygate_print": 3.59,
+   "henry_hub_print": 3.75,
+   "chicago_shape_factor": 0.987,
+   "model_price_lw": 38.43
+  },
+  {
+   "date": "2021-12-28",
+   "model_gas_chicago_zones": 4.378,
+   "model_gas_other_zones": 4.537,
+   "model_gas_all": 4.47,
+   "chicago_citygate_print": 3.59,
+   "henry_hub_print": 3.75,
+   "chicago_shape_factor": 0.987,
+   "model_price_lw": 42.01
+  },
+  {
+   "date": "2021-12-29",
+   "model_gas_chicago_zones": 4.378,
+   "model_gas_other_zones": 4.646,
+   "model_gas_all": 4.534,
+   "chicago_citygate_print": 3.59,
+   "henry_hub_print": 3.75,
+   "chicago_shape_factor": 0.987,
+   "model_price_lw": 48.94
+  },
+  {
+   "date": "2021-12-30",
+   "model_gas_chicago_zones": 4.378,
+   "model_gas_other_zones": 5.22,
+   "model_gas_all": 4.867,
+   "chicago_citygate_print": 3.67,
+   "henry_hub_print": 3.72,
+   "chicago_shape_factor": 0.987,
+   "model_price_lw": 46.17
+  },
+  {
+   "date": "2021-12-31",
+   "model_gas_chicago_zones": 4.476,
+   "model_gas_other_zones": 5.22,
+   "model_gas_all": 4.908,
+   "chicago_citygate_print": 3.67,
+   "henry_hub_print": 3.72,
+   "chicago_shape_factor": 1.009,
+   "model_price_lw": 37.21
+  }
+ ]
+}

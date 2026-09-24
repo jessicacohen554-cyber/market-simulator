@@ -5764,6 +5764,19 @@ loss.
 
 ### 5.4 MISO — keeper `2026-09-24-miso-268-coal-yard` (**PROMOTED 2026-09-24, miso-268**, on the owner ruling *"Is this a recommended keeper candidate? If so plz promote"*; single delta on miso-267: `coal_fuel_inventory_plant_grain=true`, one annual coal-fuel row per coal yard at its own stock + prior receipts; C1 passes every year (2022 COAL_PRB +10.04 → −0.24, CC_REGULAR −8.99 → −3.66 TWh), C3a 2022 −8.4 % PASS; open: C3a 2020 +13.4 % (overnight price body), C3b 2021 0.309 (February); record `docs/RESULT-miso268-coal-yard-grain-2026-09-24.md`)
 
+> **QUEUE STAMP miso-269 (2026-09-24) — ZERO LP, NO SOLVE EARNED, keeper unchanged.** Both
+> held-out objects measured on the current keeper (`FINDING-miso269-held-out-objects-no-admissible-lever-2026-09-24.md`).
+> (1) **C3b 2021:** the Feb gas array is wrong both ways — Chicago zones $0.73–1.01/MMBtu on
+> non-storm days (below the traded $2.5–4.0; `winter_citygate_daily` normalizes by a
+> storm-dominated calendar mean), other zones $11–16 (F923 storm level smeared). Same defect in
+> Jan-2024 and Dec-2022. (2) The ruled `gas_variable_transport` form is **adverse** statically
+> (C3b 2021 0.309 → 0.583; C3a 2020 +14.2 → +16.3 %): miso-224's print wedge is gone on today's
+> keeper, and it passes the thin $129.52 Uri print through. (3) **C3a 2020 overnight:** coal floors
+> force 0.2–0.4 % of coal (D-2), so no floor lever; what remains is the coal econ **offer** level,
+> reachable only through the rule-1 band-multiplier channel (owner's). **Owner decisions pending:**
+> the storm-month gas convention; whether the marginal ruling covers extreme-event prints.
+> **Successor, unlocalized:** Oct–Nov 2021 low by $13–21 (32 % of C3b SSE), not a gas object.
+
 **Predecessor header, kept as history:** keeper `2026-09-23-miso-267-dispatched-bin` (**PROMOTED 2026-09-23, miso-267**, on the owner ruling *"Is this a recommended keeper candidate? If so plz promote"*; single delta on hydro-5: `unit_outage_dispatched_bin_denominator=true`, the outage-derate denominator becomes the LP's own per-bin pmax; an exact gate wash — every determination and grade summary unchanged, C1 2020 COAL_BIT closes, 2022 fails C1 twice and C3a once; record `docs/RESULT-miso267-dispatched-bin-on-hydro5-2026-09-23.md`)
 
 **Predecessor header, kept as history:** keeper `2026-09-22-hydro-5-miso-ror` (**PROMOTED 2026-09-23, hydro-5**, on the owner ruling *"If so plz promote"*; single delta on miso-264: `hydro_ror_split=true`, ~59 % of MISO hydro energy flat at its own monthly water; hours at 0 MW 62–565 → 0; same held-out-year failing set as miso-264 minus 2022 C1 COAL_PRB; record `docs/RESULT-hydro-5-2026-09-22.md`)
