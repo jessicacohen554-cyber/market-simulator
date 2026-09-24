@@ -118,3 +118,13 @@ What would change this, routed rather than acted on:
 
 Nothing was solved, so no bundle exists. The committed artifacts are the probe, its JSON record, the
 USGS intake and this doc.
+
+## 6. Owner ruling (2026-09-24)
+
+"Go with your recommendation." That means:
+
+* **No solve.** The 7 links stay uncoupled and the side-inflow gate stays frozen.
+* **The fish-spill floor is not chartered.** It stays a routed structural item only.
+* **C4 moves to day-to-day placement and Jim Bridger's coal inputs**, starting with card D2
+  (`eia860_vintage_tracks_solve_year` for NWPP). D2 is armed as a rule-14 accuracy fix, not as a C4
+  lever, and the C1 CC_REGULAR risk is stated.
