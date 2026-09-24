@@ -67,3 +67,54 @@ is routed, not built, and **no shard is launched**.
 
 Expected direction if a lever did exist: raises supply in low hours → C3a 2020 down; C1/C2 2022
 must be checked. Not solved unless §3 admits.
+
+---
+
+## 5. ADDENDUM — the CHP arm, chartered by the owner (2026-09-24, verbatim: "Yes charter the CHP fix")
+
+Written after the zero-LP RESULT (`RESULT-spp-75-gas-low-side-2026-09-23.md`) and **before any
+shard is launched**. The owner overrode the 50 % bar of §2; the arm is chartered on structure
+(rule 1), not on reach.
+
+**Single delta.** `chp_steam_floor_p25: false → true`, the existing registered level source on the
+one `MECH_CHP_STEAM` floor (rule 19). No new field, no code change, zero new DOF (rule 21:
+`steam_level_cf` is a committed column of `thermal_tranches_SPP.csv`).
+
+**Shards (rules 32/34/36).** Seven, one per year 2019–2025, pinned to one 40-char SHA. Each shard
+solves **its own control and arm** in its own container (no reliance on form 4):
+
+```
+python scripts/replay_keeper.py results/calibration/<K> --years <Y> \
+  --out-dir results/calibration/spp75_ctl_<Y> --note "SPP-75 control, <Y>"
+python scripts/replay_keeper.py results/calibration/<K> --years <Y> --set chp_steam_floor_p25=true \
+  --out-dir results/calibration/spp75_chp_<Y> --note "SPP-75 arm: chp_steam_floor_p25, <Y>"
+python scripts/probes/_spp75_shard_check.py --year <Y> --keeper results/calibration/<K> \
+  --control results/calibration/spp75_ctl_<Y> --arm results/calibration/spp75_chp_<Y>
+```
+
+`<K>` = `hydro5_spp_floor_rung` for 2019–2022, `hydro5_spp_floor_span` for 2023–2025 (the two
+recipes differ; each year replays its own). The check must pass (control = keeper recipe;
+arm = control + exactly the one flag) before a push. Both bundles, including
+`dispatch/<Y>_P1.parquet`, are pushed to the shard's own branch by `.gitignore` negation and a plain
+`git add`.
+
+**Predictions (arm − control), every year unless stated.**
+
+| # | quantity | prediction |
+|---|---|---|
+| Q1 | CHP classes, annual | +1.0 to +2.2 TWh (floor +245 MW, less the CHP output already above the old floor) |
+| Q2 | CHP MW in measured RT≤0 hours | +180 to +250 MW (2020 control ≈ 158 → arm ≈ 380) |
+| Q3 | wind MW in RT≤0 hours | falls, by 60–100 % of Q2 (wind is marginal there) |
+| Q4 | demand-weighted mean price | falls, by less than $0.30/MWh |
+| Q5 | C3a 2020 | moves down by < 1 pp and **stays FAIL** |
+| Q6 | status flips | no C1/C2/C3a/C3b row changes status in 2023–2025; C2 gas 2022 direction not predicted |
+| Q7 | control reproduces its keeper | max \|Δ class TWh\| < 0.05 (both warm-start knobs default off since rule 36; a larger number is reported, not hidden) |
+
+**Structural gate (K-1, over-forcing; decides the recommendation, not the residual).** The arm's
+CHP output must not exceed what was measured:
+- CHP MW in RT≤0 hours ≤ the measured CHP group's (CAMPD gross): 437 / 453 / 431 / 424 MW for 2019–2022;
+- annual mean CHP MW ≤ EIA-923 SWPP gas CHP=Y: 522 / 551 / 520 / 538 / 595 / 615 MW for 2019–2024
+  (2025's EIA-923 vintage is partial, 361 rows, so 2025 is reported, not gated).
+
+Pass in every gated year → recommend promotion on structure. Any exceedance → recommend against,
+and report the plant. The owner decides either way (rule 31).
