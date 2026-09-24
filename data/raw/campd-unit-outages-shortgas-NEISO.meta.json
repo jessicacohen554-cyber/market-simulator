@@ -1,19 +1,19 @@
 {
-  "artifact": "campd-partial-outages-SPP.csv",
-  "artifact_rows": 204,
+  "artifact": "campd-unit-outages-shortgas-NEISO.csv",
+  "artifact_rows": 864,
   "derive_invocation": {
     "fullstop_override_cf": 0.02,
     "fullstop_override_days": 5,
     "high_load_pctl": 0.85,
-    "iso": "SPP",
-    "merit_order_guard": false,
-    "min_inmerit_hours": 24,
-    "min_outage_days": 5.0,
+    "iso": "NEISO",
+    "merit_order_guard": true,
+    "min_inmerit_hours": 6,
+    "min_outage_days": 1.0,
     "mixed_gas_routing": false,
     "no_inmerit_filter": false,
-    "partial_windows": true,
+    "partial_windows": false,
     "per_unit_crosswalk": false,
-    "short_windows": false,
+    "short_windows": true,
     "years": [
       2019,
       2020,
@@ -36,12 +36,12 @@
   ],
   "sidecar_schema_version": 1,
   "windows_by_start_year": {
-    "2019": 36,
-    "2020": 29,
-    "2021": 17,
-    "2022": 37,
-    "2023": 18,
-    "2024": 41,
-    "2025": 26
+    "2019": 138,
+    "2020": 115,
+    "2021": 135,
+    "2022": 134,
+    "2023": 119,
+    "2024": 99,
+    "2025": 124
   }
 }
