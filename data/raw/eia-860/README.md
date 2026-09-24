@@ -78,3 +78,20 @@ The same extraction reproduces the committed `owner`, `plant` and
 release. Nothing else in either dir was touched. Consumers that walk the series must
 treat a missing sheet as *no observation for that year*, never as evidence a
 unit was absent — the release year is simply a gap in that unit's history.
+
+**Heat rates are vintage-matched (F1, 2026-09-24).** Every
+`eia860_generators.parquet` carries a plant-level `heat_rate` (MMBtu/MWh) joined
+from eGRID `PLHTRT` of the MATCHING vintage — `vintage_<Y>/` from eGRID `Y`, the
+canonical 2025 Early Release from eGRID 2024 (the latest; there is no eGRID
+2025), and `eia860_generator_retired_within_window.parquet` from each unit's last
+operating year — with a nearest-vintage fallback (tie → earlier), so only a plant
+absent from EVERY eGRID vintage 2018-2024 is left null for the loader's
+`HEAT_RATE_BINS` fallback. Before F1, `vintage_2018/2019/2021/2022` carried no
+`heat_rate` column and `vintage_2020` an all-null one, so a 2019-2022 backcast
+priced 95-100 % of thermal MW at the asset-class table
+(`docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md` §1 D1).
+Regenerate with
+`python scripts/data/process_eia860.py --rejoin-heat-rate <parquet> ...`, which
+rewrites ONLY the `heat_rate` column. The same session appended the NWPP and SOCO
+balancing authorities' within-window retirees the retiree parquet predated
+(`--rescope-retired-window`, strictly additive; audit §1 D3).
