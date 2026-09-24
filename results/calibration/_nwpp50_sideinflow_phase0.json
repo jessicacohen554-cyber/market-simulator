@@ -1,0 +1,390 @@
+{
+ "identity_out_minus_gen_minus_spill": {
+  "BON": {
+   "other_kcfs": 9.024,
+   "other_pct_of_out": 6.26
+  },
+  "CHJ": {
+   "other_kcfs": 0.0,
+   "other_pct_of_out": 0.0
+  },
+  "DWR": {
+   "other_kcfs": 0.1,
+   "other_pct_of_out": 2.52
+  },
+  "GCL": {
+   "other_kcfs": -0.003,
+   "other_pct_of_out": -0.0
+  },
+  "IHR": {
+   "other_kcfs": 0.598,
+   "other_pct_of_out": 1.51
+  },
+  "JDA": {
+   "other_kcfs": 1.053,
+   "other_pct_of_out": 0.77
+  },
+  "LGS": {
+   "other_kcfs": 0.464,
+   "other_pct_of_out": 1.2
+  },
+  "LMN": {
+   "other_kcfs": 0.627,
+   "other_pct_of_out": 1.61
+  },
+  "LWG": {
+   "other_kcfs": 0.409,
+   "other_pct_of_out": 1.03
+  },
+  "MCN": {
+   "other_kcfs": 4.278,
+   "other_pct_of_out": 3.23
+  },
+  "PRD": {
+   "other_kcfs": 0.172,
+   "other_pct_of_out": 0.19
+  },
+  "RIS": {
+   "other_kcfs": 0.007,
+   "other_pct_of_out": 0.01
+  },
+  "RRH": {
+   "other_kcfs": 0.136,
+   "other_pct_of_out": 0.16
+  },
+  "TDA": {
+   "other_kcfs": 4.757,
+   "other_pct_of_out": 3.59
+  },
+  "WAN": {
+   "other_kcfs": 1.146,
+   "other_pct_of_out": 1.23
+  },
+  "WEL": {
+   "other_kcfs": 0.885,
+   "other_pct_of_out": 1.03
+  }
+ },
+ "gate_out_basis": {
+  "CHJ": {
+   "stop_months": 0,
+   "max_floor_pct": 1.8
+  },
+  "WEL": {
+   "stop_months": 0,
+   "max_floor_pct": 0.4
+  },
+  "RRH": {
+   "stop_months": 6,
+   "max_floor_pct": 3.3
+  },
+  "RIS": {
+   "stop_months": 0,
+   "max_floor_pct": 0.0
+  },
+  "WAN": {
+   "stop_months": 0,
+   "max_floor_pct": 0.0
+  },
+  "PRD": {
+   "stop_months": 13,
+   "max_floor_pct": 3.5
+  },
+  "MCN": {
+   "stop_months": 6,
+   "max_floor_pct": 3.8
+  },
+  "JDA": {
+   "stop_months": 3,
+   "max_floor_pct": 4.9
+  },
+  "TDA": {
+   "stop_months": 15,
+   "max_floor_pct": 8.4
+  },
+  "BON": {
+   "stop_months": 0,
+   "max_floor_pct": 0.0
+  },
+  "LWG": {
+   "stop_months": 0,
+   "max_floor_pct": 0.0
+  },
+  "LGS": {
+   "stop_months": 13,
+   "max_floor_pct": 6.8
+  },
+  "LMN": {
+   "stop_months": 1,
+   "max_floor_pct": 2.6
+  },
+  "IHR": {
+   "stop_months": 0,
+   "max_floor_pct": 1.9
+  }
+ },
+ "gate_gen_plus_spill_basis": {
+  "CHJ": {
+   "stop_months": 0,
+   "max_floor_pct": 1.8
+  },
+  "WEL": {
+   "stop_months": 0,
+   "max_floor_pct": 1.4
+  },
+  "RRH": {
+   "stop_months": 2,
+   "max_floor_pct": 2.8
+  },
+  "RIS": {
+   "stop_months": 0,
+   "max_floor_pct": 0.0
+  },
+  "WAN": {
+   "stop_months": 0,
+   "max_floor_pct": 0.1
+  },
+  "PRD": {
+   "stop_months": 2,
+   "max_floor_pct": 2.2
+  },
+  "MCN": {
+   "stop_months": 17,
+   "max_floor_pct": 6.8
+  },
+  "JDA": {
+   "stop_months": 1,
+   "max_floor_pct": 2.6
+  },
+  "TDA": {
+   "stop_months": 26,
+   "max_floor_pct": 11.4
+  },
+  "BON": {
+   "stop_months": 0,
+   "max_floor_pct": 0.0
+  },
+  "LWG": {
+   "stop_months": 0,
+   "max_floor_pct": 0.0
+  },
+  "LGS": {
+   "stop_months": 14,
+   "max_floor_pct": 7.2
+  },
+  "LMN": {
+   "stop_months": 2,
+   "max_floor_pct": 2.8
+  },
+  "IHR": {
+   "stop_months": 0,
+   "max_floor_pct": 1.8
+  }
+ },
+ "tributary_closure": {
+  "JDA->TDA": {
+   "no_spill_months": 21,
+   "no_spill_mean_pct": -4.42,
+   "no_spill_range_pct": [
+    -5.7,
+    -2.11
+   ],
+   "spill_months": 15,
+   "spill_mean_pct": -8.76,
+   "spill_range_pct": [
+    -11.1,
+    -6.2
+   ]
+  },
+  "MCN->JDA": {
+   "no_spill_months": 17,
+   "no_spill_mean_pct": 0.32,
+   "no_spill_range_pct": [
+    -4.21,
+    4.33
+   ],
+   "spill_months": 19,
+   "spill_mean_pct": 0.72,
+   "spill_range_pct": [
+    -5.54,
+    4.39
+   ]
+  },
+  "PRD+IHR->MCN": {
+   "no_spill_months": 13,
+   "no_spill_mean_pct": -0.9,
+   "no_spill_range_pct": [
+    -4.86,
+    1.63
+   ],
+   "spill_months": 23,
+   "spill_mean_pct": -1.55,
+   "spill_range_pct": [
+    -5.31,
+    8.41
+   ]
+  },
+  "TDA_out_over_usgs_14105700": {
+   "min": 0.782,
+   "max": 1.206,
+   "months_outside_2pct": 27,
+   "months": 36
+  },
+  "PRD_out_over_usgs_12472800": {
+   "min": 0.945,
+   "max": 1.036,
+   "months_outside_2pct": 7,
+   "months": 36
+  }
+ },
+ "keeper_row_slack": {
+  "2023_BON": {
+   "hours_dual_gt_1": 0,
+   "hours_pond_at_0": 8760,
+   "hours_pond_at_B": 0,
+   "spill_mean_kcfs": 48.6
+  },
+  "2023_WEL": {
+   "hours_dual_gt_1": 0,
+   "hours_pond_at_0": 8758,
+   "hours_pond_at_B": 0,
+   "spill_mean_kcfs": 6.4
+  },
+  "2023_CHJ": {
+   "hours_dual_gt_1": 0,
+   "hours_pond_at_0": 8710,
+   "hours_pond_at_B": 0,
+   "spill_mean_kcfs": 1.5
+  },
+  "2023_IHR": {
+   "hours_dual_gt_1": 0,
+   "hours_pond_at_0": 8727,
+   "hours_pond_at_B": 0,
+   "spill_mean_kcfs": 18.5
+  },
+  "2023_RIS": {
+   "hours_dual_gt_1": 0,
+   "hours_pond_at_0": 8758,
+   "hours_pond_at_B": 0,
+   "spill_mean_kcfs": 10.3
+  },
+  "2024_BON": {
+   "hours_dual_gt_1": 0,
+   "hours_pond_at_0": 8760,
+   "hours_pond_at_B": 0,
+   "spill_mean_kcfs": 46.6
+  },
+  "2024_WEL": {
+   "hours_dual_gt_1": 0,
+   "hours_pond_at_0": 8757,
+   "hours_pond_at_B": 0,
+   "spill_mean_kcfs": 4.2
+  },
+  "2024_CHJ": {
+   "hours_dual_gt_1": 0,
+   "hours_pond_at_0": 8535,
+   "hours_pond_at_B": 0,
+   "spill_mean_kcfs": 0.1
+  },
+  "2024_IHR": {
+   "hours_dual_gt_1": 0,
+   "hours_pond_at_0": 8686,
+   "hours_pond_at_B": 0,
+   "spill_mean_kcfs": 16.8
+  },
+  "2024_RIS": {
+   "hours_dual_gt_1": 0,
+   "hours_pond_at_0": 8760,
+   "hours_pond_at_B": 0,
+   "spill_mean_kcfs": 6.6
+  },
+  "2025_BON": {
+   "hours_dual_gt_1": 0,
+   "hours_pond_at_0": 8760,
+   "hours_pond_at_B": 0,
+   "spill_mean_kcfs": 47.4
+  },
+  "2025_WEL": {
+   "hours_dual_gt_1": 0,
+   "hours_pond_at_0": 8754,
+   "hours_pond_at_B": 0,
+   "spill_mean_kcfs": 4.1
+  },
+  "2025_CHJ": {
+   "hours_dual_gt_1": 5808,
+   "hours_pond_at_0": 8197,
+   "hours_pond_at_B": 1,
+   "spill_mean_kcfs": 0.0
+  },
+  "2025_IHR": {
+   "hours_dual_gt_1": 0,
+   "hours_pond_at_0": 8760,
+   "hours_pond_at_B": 0,
+   "spill_mean_kcfs": 17.0
+  },
+  "2025_RIS": {
+   "hours_dual_gt_1": 0,
+   "hours_pond_at_0": 8755,
+   "hours_pond_at_B": 0,
+   "spill_mean_kcfs": 5.7
+  }
+ },
+ "pond_hours_of_measured_avg_outflow": {
+  "CHJ": {
+   "hours": 3.84,
+   "coupled": true
+  },
+  "WEL": {
+   "hours": 7.02,
+   "coupled": true
+  },
+  "RRH": {
+   "hours": 3.9,
+   "coupled": false
+  },
+  "RIS": {
+   "hours": 1.0,
+   "coupled": true
+  },
+  "WAN": {
+   "hours": 12.13,
+   "coupled": false
+  },
+  "PRD": {
+   "hours": 5.13,
+   "coupled": false
+  },
+  "MCN": {
+   "hours": 7.56,
+   "coupled": false
+  },
+  "JDA": {
+   "hours": 14.72,
+   "coupled": false
+  },
+  "TDA": {
+   "hours": 1.97,
+   "coupled": false
+  },
+  "BON": {
+   "hours": 6.92,
+   "coupled": true
+  },
+  "LWG": {
+   "hours": 11.22,
+   "coupled": false
+  },
+  "LGS": {
+   "hours": 13.56,
+   "coupled": false
+  },
+  "LMN": {
+   "hours": 4.67,
+   "coupled": false
+  },
+  "IHR": {
+   "hours": 5.92,
+   "coupled": true
+  }
+ }
+}
