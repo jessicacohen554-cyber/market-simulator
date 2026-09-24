@@ -1356,3 +1356,40 @@ prune_iso_runs.py --force-uncite: 2026-09-22-soco58-warm-committed (outgoing) an
 2026-09-22-soco-h4-hydro-min (ARM 1, not promoted). 2026-09-20-soco53g-prb-own-iso deliberately kept
 (--keep), as in every prior SOCO promotion: its disposal awaits an owner ruling, so E13 fires for it
 alone. build_status --iso SOCO rebuilt; matrix shard re-stamped (hydro_ror_split O -> K).
+
+## soco-61 — 2026-09-24
+
+A 313 MW CC TURBINE THAT DID NOT RUN IN 2024 WAS MODELLED FULLY AVAILABLE.
+Tenaska Lindsay Hill (55271) CT3 filed all 8,784 CAMPD hours of 2024 dark (0
+operating hours; 642 / 308 GWh in 2023 / 2025). The per-unit outage deriver
+skips a never-producing unit and the eia923_netzero hook is plant-grain, so the
+keeper carried it fully available and the plant ran +1.73 TWh over EIA-923.
+
+PHASE 0 MEASURED THE THREE ROUTED LEADS FIRST. The big over-dispatched CC
+plants (E B Harris, H A Franklin, Central Alabama) run BELOW their measured
+capability -- economic, not availability. Coal runs at 0.35-0.70 of its model
+availability -- merit order, no availability lever. ST/CC fuel separation still
+has no forward-regenerable input. Lindsay Hill was the only over-dispatched CC
+plant whose model capability exceeded what it delivered.
+
+THE REPAIR: new field campd_dark_unit_year_windows + deriver flag
+--dark-unit-years (categorical, zero free parameters): one full-year window
+when a unit's own id is dark every hour of the year, produced in an adjacent
+year, and a peer ran. The -perunitdark- extract is the -perunit- extract
+re-derived BYTE-IDENTICALLY plus one row.
+
+RESULT (run 2026-09-24-soco61-dark-unit, PROMOTED, three year-isolated shards
+composed at zero LP): 2023/2025 identical to the keeper; 2024 Lindsay Hill
+3.485 -> 1.651 TWh (actual 1.752). No status moved: C1 14/14 / free 10/10,
+C2/C4/C6/C8 PASS, C3 unscorable, grade 5/5/0, DOF 13/1. 2024 CC_REGULAR +4.43 ->
++3.14 TWh, share +2.7 -> +2.2 pp (margin 0.3 -> 0.8 pp); CC per-plant
+sum|model-923| 11.07 -> 9.28 TWh; C4 2024 coal NRMSE 0.240 -> 0.235. WORSE:
+2024 CT_PEAKER +1.73 -> +2.36 TWh. 12/12 predictions in band.
+
+ROUTED: 2023 ST_GAS / CT_PEAKER are now the thinnest rows (0.7-0.8 pp); the CC
+economic over-dispatch (E B Harris +2.0, H A Franklin +1.5) has no admissible
+input. Outgoing keeper 2026-09-23-soco60-boundary-span pruned (rule 35). E13 for
+2026-09-20-soco53g-prb-own-iso still unruled (recommendation: decline).
+Records: docs/handoffs/PRECOMMIT-soco-61-2026-09-24.md,
+docs/handoffs/FINDING-soco-61-2026-09-24.md, scripts/gen_soco61_attestation.py,
+scripts/probes/soco61_compose_span.py, scripts/probes/_soco61_phase0.py.

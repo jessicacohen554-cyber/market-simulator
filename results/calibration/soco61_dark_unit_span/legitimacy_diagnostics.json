@@ -1,6 +1,6 @@
 {
  "schema": "legitimacy-diagnostics/v1",
- "bundle": "/home/user/market-simulator/results/calibration/soco60_boundary_span",
+ "bundle": "/home/user/market-simulator/results/calibration/soco61_dark_unit_span",
  "iso": "SOCO",
  "years": [
   2023,
@@ -105,30 +105,30 @@
     {
      "year": 2024,
      "class": "CC_REGULAR",
-     "profile_r": 0.97,
-     "model_offpeak_cv": 0.033,
+     "profile_r": 0.967,
+     "model_offpeak_cv": 0.03,
      "actual_offpeak_cv": 0.056,
-     "cv_ratio": 0.586,
+     "cv_ratio": 0.532,
      "gated": false,
      "verdict": "pass"
     },
     {
      "year": 2024,
      "class": "COAL_BIT",
-     "profile_r": 0.945,
-     "model_offpeak_cv": 0.031,
+     "profile_r": 0.95,
+     "model_offpeak_cv": 0.032,
      "actual_offpeak_cv": 0.042,
-     "cv_ratio": 0.742,
+     "cv_ratio": 0.762,
      "gated": true,
      "verdict": "pass"
     },
     {
      "year": 2024,
      "class": "COAL_PRB",
-     "profile_r": 0.961,
+     "profile_r": 0.963,
      "model_offpeak_cv": 0.114,
      "actual_offpeak_cv": 0.122,
-     "cv_ratio": 0.934,
+     "cv_ratio": 0.93,
      "gated": true,
      "verdict": "pass"
     },
@@ -145,20 +145,20 @@
     {
      "year": 2024,
      "class": "CT_PEAKER",
-     "profile_r": 0.966,
-     "model_offpeak_cv": 0.966,
+     "profile_r": 0.968,
+     "model_offpeak_cv": 0.928,
      "actual_offpeak_cv": 1.181,
-     "cv_ratio": 0.818,
+     "cv_ratio": 0.785,
      "gated": true,
      "verdict": "pass"
     },
     {
      "year": 2024,
      "class": "ST_GAS",
-     "profile_r": 0.959,
-     "model_offpeak_cv": 0.768,
+     "profile_r": 0.963,
+     "model_offpeak_cv": 0.774,
      "actual_offpeak_cv": 0.263,
-     "cv_ratio": 2.918,
+     "cv_ratio": 2.939,
      "gated": true,
      "verdict": "pass"
     },
@@ -304,9 +304,9 @@
      "year": 2024,
      "class": "CT_CHP",
      "mechanism": "chp_steam",
-     "forced_twh": 0.0243,
-     "class_total_twh": 1.0944,
-     "share_of_class": 0.0222
+     "forced_twh": 0.0239,
+     "class_total_twh": 1.0955,
+     "share_of_class": 0.0218
     },
     {
      "year": 2024,
@@ -320,9 +320,9 @@
      "year": 2024,
      "class": "ST_GAS",
      "mechanism": "soco_gas_st_campaign_commitment",
-     "forced_twh": 0.4797,
-     "class_total_twh": 2.8019,
-     "share_of_class": 0.1712
+     "forced_twh": 0.4813,
+     "class_total_twh": 2.9858,
+     "share_of_class": 0.1612
     },
     {
      "year": 2024,
@@ -443,10 +443,10 @@
      "year": 2024,
      "class": "CC_REGULAR",
      "forced_twh": 0.0,
-     "class_total_twh": 118.2961,
+     "class_total_twh": 117.0389,
      "forced_share": 0.0,
      "limit": 0.3,
-     "load_share": 0.4741,
+     "load_share": 0.4691,
      "immaterial": false,
      "lower_bound": true,
      "upper_bound": false,
@@ -456,7 +456,7 @@
      "year": 2024,
      "class": "COAL",
      "forced_twh": 0.0,
-     "class_total_twh": 29.2319,
+     "class_total_twh": 29.6367,
      "forced_share": 0.0,
      "limit": 0.3,
      "load_share": 0.1588,
@@ -469,10 +469,10 @@
      "year": 2024,
      "class": "CT_PEAKER",
      "forced_twh": 0.0,
-     "class_total_twh": 7.035,
+     "class_total_twh": 7.6991,
      "forced_share": 0.0,
      "limit": 0.15,
-     "load_share": 0.0282,
+     "load_share": 0.0309,
      "immaterial": false,
      "lower_bound": true,
      "upper_bound": false,
@@ -481,9 +481,9 @@
     {
      "year": 2024,
      "class": "ST_GAS",
-     "forced_twh": 0.4797,
-     "class_total_twh": 2.8019,
-     "forced_share": 0.1712,
+     "forced_twh": 0.4813,
+     "class_total_twh": 2.9858,
+     "forced_share": 0.1612,
      "limit": 0.3,
      "load_share": 0.0335,
      "immaterial": false,
@@ -671,7 +671,7 @@
      "floor": "chp_steam",
      "window": "h0-23",
      "plant": "",
-     "floored_twh": 0.948,
+     "floored_twh": 0.9476,
      "offwindow_twh": 0.0,
      "offwindow_share": 0.0,
      "binding_hours": "",
@@ -687,7 +687,7 @@
      "plant": "7697",
      "floored_twh": 0.4812,
      "offwindow_twh": "",
-     "offwindow_share": 0.5076,
+     "offwindow_share": 0.5078,
      "binding_hours": 8064,
      "measured_median_mw": 135.995,
      "measured_zero_share": 0.0073,
@@ -701,7 +701,7 @@
      "plant": "7698",
      "floored_twh": 0.4424,
      "offwindow_twh": "",
-     "offwindow_share": 0.4667,
+     "offwindow_share": 0.4669,
      "binding_hours": 8760,
      "measured_median_mw": 117.249,
      "measured_zero_share": 0.0063,
@@ -713,7 +713,7 @@
      "floor": "soco_gas_st_campaign_commitment \u00d7 ST_GAS",
      "window": "h0-23",
      "plant": "",
-     "floored_twh": 0.4797,
+     "floored_twh": 0.4813,
      "offwindow_twh": 0.0,
      "offwindow_share": 0.0,
      "binding_hours": "",
@@ -727,12 +727,12 @@
      "floor": "soco_gas_st_campaign_commitment \u00d7 ST_GAS",
      "window": "h0-23",
      "plant": "728",
-     "floored_twh": 0.1066,
+     "floored_twh": 0.1036,
      "offwindow_twh": "",
-     "offwindow_share": 0.2222,
-     "binding_hours": 2189,
-     "measured_median_mw": 153.332,
-     "measured_zero_share": 0.0484,
+     "offwindow_share": 0.2153,
+     "binding_hours": 2131,
+     "measured_median_mw": 145.262,
+     "measured_zero_share": 0.0497,
      "verdict": "pass"
     },
     {
@@ -917,31 +917,31 @@
    "passed": true,
    "rows": [
     {
-     "bundle": "soco60_boundary_span",
+     "bundle": "soco61_dark_unit_span",
      "check": "ct_deployment_overlay",
      "value": false,
      "verdict": "pass"
     },
     {
-     "bundle": "soco60_boundary_span",
+     "bundle": "soco61_dark_unit_span",
      "check": "reliability_deployment_overlay",
      "value": false,
      "verdict": "pass"
     },
     {
-     "bundle": "soco60_boundary_span",
+     "bundle": "soco61_dark_unit_span",
      "check": "ct_mustrun_per_plant",
      "value": false,
      "verdict": "pass"
     },
     {
-     "bundle": "soco60_boundary_span",
+     "bundle": "soco61_dark_unit_span",
      "check": "ordc_reliability_deployment_mw",
      "value": null,
      "verdict": "pass"
     },
     {
-     "bundle": "soco60_boundary_span",
+     "bundle": "soco61_dark_unit_span",
      "check": "caiso_gas_commitment_floor",
      "value": false,
      "verdict": "pass"

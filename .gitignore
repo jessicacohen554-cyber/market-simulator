@@ -3413,3 +3413,9 @@ results/calibration/_shared/SPP/eia923-919c193d6f8d.parquet
 results/calibration/_shared/SPP/eia923-9b1e375afedc.parquet
 results/calibration/_shared/SPP/eia923-a6c17fafb327.parquet
 results/calibration/_shared/SPP/eia923-c11b7680b559.parquet
+
+# SOCO-61 (2026-09-24) per-year shard legs: kept out of main (rule 32(d)); the
+# composite results/calibration/soco61_dark_unit_span IS committed. Never rm (rule 31).
+# Provenance only (rule 33(d)), not a recovery route: 2023 4cc73989f8d1db9af0efd11149a93dba92d19328,
+# 2024 b13d473e15b907f49beb4574ec0601084c07e9eb, 2025 418c7be6e6b92ae2039a319b011a4eefb1bc4cf6.
+results/calibration/soco61_arm_20[0-9][0-9]/

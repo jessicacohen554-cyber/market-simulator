@@ -12,6 +12,7 @@
     "coal_prb_passthrough_sigmoid": true,
     "coal_prb_passthrough_tiered": true,
     "coal_prb_sigmoid_overrides": {
+      "campd_dark_unit_year_windows": true,
       "campd_per_unit_attribution": true,
       "coal_warm_committed": true,
       "gas_basis_differential_measured_by_year": true,
@@ -33,7 +34,7 @@
       "2024": 2.19,
       "2025": 3.52
     },
-    "git_sha": "eab5c585",
+    "git_sha": "1d7edc1b",
     "hours": 8760,
     "iso": "SOCO",
     "nyiso_dynamic_reserve_requirements": null,
@@ -56,9 +57,9 @@
     ]
   },
   "composed_from": [
-    "soco60_armB_2023",
-    "soco60_armB_2024",
-    "soco60_armB_2025"
+    "soco61_arm_2023",
+    "soco61_arm_2024",
+    "soco61_arm_2025"
   ],
   "environment": {
     "cache_key_path_roots": [
@@ -69,67 +70,67 @@
     ],
     "market_sim_data_root": "",
     "packages": {
-      "highspy": "1.15.1",
+      "highspy": "1.14.0",
       "numpy": "2.4.6",
-      "pandas": "3.0.6",
-      "pyarrow": "25.0.1",
-      "pydantic": "2.13.5",
+      "pandas": "3.0.3",
+      "pyarrow": "24.0.0",
+      "pydantic": "2.13.4",
       "scipy": "1.17.1"
     },
     "platform": "Linux-6.18.44-fc-v37-x86_64-with-glibc2.39",
     "python_version": "3.11.15"
   },
   "git": {
-    "basis_sha": "eab5c585b4316c3de50bb82c724e30c47bf32202",
-    "branch": "HEAD",
+    "basis_sha": "1d7edc1b6ae5eaa3cfa83af7260e1d3560ff41e7",
+    "branch": "claude/soco61-arm-2023",
     "changed_files": [],
     "diffstat": "",
     "dirty": false,
-    "sha": "eab5c585"
+    "sha": "1d7edc1b"
   },
-  "model_changes_note": "SOCO-60 span 2023-2025: merged hydro recipe (keeper soco-h4-hydro-ror's hydro_ror_split + SOCO-59's hydro_eia930_monthly with EIA930_PS_SPLIT_COMPLETE_FROM[SOCO]=2025) plus SOCO's benchmark plant-boundary repair (ISO_MEMBERSHIP_DROPS_CURRENT_BA_RECODE: former Gulf Power plants recoded to FPL leave SOCO's membership) and gas-fold refusal (EIA930_GAS_FOLD_REFUTED); three year-isolated shards composed at zero LP (rule 36)",
+  "model_changes_note": "SOCO-61 SPAN 2023-2025: campd_dark_unit_year_windows=true on keeper 2026-09-23-soco60-boundary-span (the -perunitdark- SOCO outage extract: the -perunit- extract plus ONE full-year 2024 window for Lindsay Hill 55271 CT3, 313.1 MW, which its own CAMPD id files dark all of 2024). Three year-isolated shards (rule 36) composed at zero LP; 2023/2025 identical to the keeper, 2024 Lindsay Hill 3.485 -> 1.651 TWh.",
   "per_leg_provenance": {
     "2023": {
       "git": {
-        "basis_sha": "eab5c585b4316c3de50bb82c724e30c47bf32202",
-        "branch": "HEAD",
+        "basis_sha": "1d7edc1b6ae5eaa3cfa83af7260e1d3560ff41e7",
+        "branch": "claude/soco61-arm-2023",
         "changed_files": [],
         "diffstat": "",
         "dirty": false,
-        "sha": "eab5c585"
+        "sha": "1d7edc1b"
       },
-      "timestamp": "2026-09-23T05:07:41"
+      "timestamp": "2026-09-24T04:39:03"
     },
     "2024": {
       "git": {
-        "basis_sha": "eab5c585b4316c3de50bb82c724e30c47bf32202",
-        "branch": "HEAD",
+        "basis_sha": "1d7edc1b6ae5eaa3cfa83af7260e1d3560ff41e7",
+        "branch": "claude/soco61-arm-2024",
         "changed_files": [],
         "diffstat": "",
         "dirty": false,
-        "sha": "eab5c585"
+        "sha": "1d7edc1b"
       },
-      "timestamp": "2026-09-23T05:07:42"
+      "timestamp": "2026-09-24T04:39:00"
     },
     "2025": {
       "git": {
-        "basis_sha": "eab5c585b4316c3de50bb82c724e30c47bf32202",
-        "branch": "HEAD",
+        "basis_sha": "1d7edc1b6ae5eaa3cfa83af7260e1d3560ff41e7",
+        "branch": "claude/soco61-arm-2025",
         "changed_files": [],
         "diffstat": "",
         "dirty": false,
-        "sha": "eab5c585"
+        "sha": "1d7edc1b"
       },
-      "timestamp": "2026-09-23T05:08:00"
+      "timestamp": "2026-09-24T04:39:02"
     }
   },
   "resolved_inputs": {
     "campd_unit_outages": {
       "armed": true,
-      "bytes": 109600,
-      "path": "data/raw/campd-unit-outages-perunit-SOCO.csv",
+      "bytes": 109731,
+      "path": "data/raw/campd-unit-outages-perunitdark-SOCO.csv",
       "present": true,
-      "sha256": "feca7dfc08f2d3c7dd7b9e1205d289e31a120558123a8ce17db4613846924ef2"
+      "sha256": "3b3e5a0d2f0e4523c1a8688bbf2e682e2b8d62c7a62183af87f402787db05c02"
     },
     "hydro_plant_modes": {
       "classified_plants": 45,
@@ -241,6 +242,7 @@
     "caiso_zonal_gas_basis": false,
     "caiso_zonal_loss_surface": false,
     "campd_bins_path": "/home/user/market-simulator/data/raw/reference/custom-bin-assignments.csv",
+    "campd_dark_unit_year_windows": true,
     "campd_outage_merit_order_guard": false,
     "campd_per_unit_attribution": true,
     "capacity_adequacy_requirement_published_by_iso": null,
@@ -415,6 +417,7 @@
     "datacenter_load_factor": 0.85,
     "datacenter_load_path": "off",
     "datacenter_percentile": 0.5,
+    "demand_balance_screen": false,
     "demand_growth_path": "mid",
     "demand_growth_percentile": 0.5,
     "demand_growth_rate": 0.01,
@@ -1167,7 +1170,7 @@
   "solve_surface": {
     "epochs": [],
     "fingerprint": "af11cd9f5c35e18c",
-    "git_sha": "eab5c585",
+    "git_sha": "1d7edc1b",
     "iso": "SOCO",
     "moved": {
       "ISO_MEMBERSHIP_DROPS_CURRENT_BA_RECODE": "b15e5dc2d0858d7d"
@@ -1175,5 +1178,5 @@
     "rows": 185,
     "schema": 1
   },
-  "timestamp": "2026-09-23T05:07:41"
+  "timestamp": "2026-09-24T04:39:03"
 }
