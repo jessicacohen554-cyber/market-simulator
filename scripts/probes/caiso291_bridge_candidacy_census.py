@@ -65,27 +65,26 @@ def _read_p0_prices(bundle: Path, year: int) -> tuple[list[str], np.ndarray]:
 
 
 def rebuild_state(bundle: Path, iso: str, year: int):
-    """``run_year(fleet_only=True)`` on the bundle's OWN meta.json flags."""
-    import inspect
+    """``run_year(fleet_only=True)`` on the bundle's OWN recorded recipe.
 
+    The kwargs come from :func:`scripts.lib.bundle_fleet.full_run_year_kwargs`
+    (the strict ``replay_keeper.run_year_kwargs`` mapping, caiso-243 §7.3 /
+    caiso-244) plus :func:`scripts.replay_keeper.derived_run_year_inputs` —
+    never a by-parameter-name filter over ``meta.json``, which silently drops
+    every key whose ``run_year`` kwarg is spelled differently (above all
+    ``coal_prb_sigmoid_overrides`` -> ``prb_overrides``). Converted by lane
+    Y-30 (2026-09-24) under ``tests/regression/test_run_year_kwargs_recipe.py``.
+    """
+    from scripts.lib.bundle_fleet import bundle_gas_price, full_run_year_kwargs
+    from scripts.replay_keeper import derived_run_year_inputs
     from scripts.run_calibration import run_year
 
     meta = json.loads((bundle / "meta.json").read_text())
-    params = inspect.signature(run_year).parameters
-    skip = {
-        "year",
-        "iso",
-        "hours",
-        "gas_price",
-        "ttc_overrides",
-        "fleet_only",
-        "xyear_cache",
-        "must_run_mw",
-    }
-    kwargs = {k: v for k, v in meta.items() if k in params and k not in skip}
-    gas = meta.get("gas_prices", {})
-    gp = float(gas.get(str(year), gas.get(year, 0.0)))
-    return run_year(year, iso, int(meta.get("hours", 8760)), gp, {}, fleet_only=True, **kwargs)
+    kwargs = full_run_year_kwargs(meta)
+    kwargs.update(derived_run_year_inputs(bundle, year))
+    return run_year(
+        year, iso, int(meta.get("hours", 8760)), bundle_gas_price(meta, year), **kwargs
+    )
 
 
 def _belly_mask(bundle: Path, year: int, T: int, decile: float):
@@ -112,8 +111,13 @@ def _belly_mask(bundle: Path, year: int, T: int, decile: float):
     return mask, nl
 
 
-def census(bundle: Path, iso: str, year: int, belly_decile: float = 0.10,
-           force_startup_aware: bool | None = None) -> dict:
+def census(
+    bundle: Path,
+    iso: str,
+    year: int,
+    belly_decile: float = 0.10,
+    force_startup_aware: bool | None = None,
+) -> dict:
     """Replay the candidacy loop over the keeper's committed P0, with counters.
 
     Rows are joined to the rebuilt fleet **BY unit_id, never positionally**
@@ -164,9 +168,9 @@ def census(bundle: Path, iso: str, year: int, belly_decile: float = 0.10,
     unmapped_scope: list[str] = []
     for g, gen in enumerate(fleet):
         u = str(gen.unit_id)
-        scoped = (
-            not gen.plant_group.endswith("_CHP")
-            and gen.fuel_type in ("gas_cc", "gas_ct")
+        scoped = not gen.plant_group.endswith("_CHP") and gen.fuel_type in (
+            "gas_cc",
+            "gas_ct",
         )
         j = side_ix.get(u)
         if j is None:
@@ -198,23 +202,57 @@ def census(bundle: Path, iso: str, year: int, belly_decile: float = 0.10,
     worst = float(np.max(excess)) if n_gen else 0.0
     rows_viol = np.where((excess > 1e-6).any(axis=1))[0]
     viol_examples = [
-        {"unit_id": str(fleet[g].unit_id), "pmax": float(pmax[g]),
-         "p0_max": float(p0[g].max()), "avail_min": float(avail[g].min())}
+        {
+            "unit_id": str(fleet[g].unit_id),
+            "pmax": float(pmax[g]),
+            "p0_max": float(p0[g].max()),
+            "avail_min": float(avail[g].min()),
+        }
         for g in rows_viol[:6]
     ]
 
     # ---- belly mask: lowest decile of model net load (committed P1 system sidecar)
     belly, net_load = _belly_mask(bundle, year, T, belly_decile)
 
-    c = {k: 0 for k in (
-        "gaps_total", "gaps_physical", "gaps_not_econ_eligible", "gaps_da_cap",
-        "gaps_restart_fail", "gaps_candidate", "units_scoped", "units_econ_eligible",
-        "units_no_params", "units_lt2_runs", "units_no_runs", "runs_detected",
-        "runs_kept")}
-    cb = {k: 0 for k in ("gaps_total", "gaps_physical", "gaps_not_econ_eligible",
-                         "gaps_da_cap", "gaps_restart_fail", "gaps_candidate")}
-    mwh = {k: 0.0 for k in ("physical", "da_cap", "restart_fail", "candidate",
-                            "not_econ_eligible")}
+    c = {
+        k: 0
+        for k in (
+            "gaps_total",
+            "gaps_physical",
+            "gaps_not_econ_eligible",
+            "gaps_da_cap",
+            "gaps_restart_fail",
+            "gaps_candidate",
+            "units_scoped",
+            "units_econ_eligible",
+            "units_no_params",
+            "units_lt2_runs",
+            "units_no_runs",
+            "runs_detected",
+            "runs_kept",
+        )
+    }
+    cb = {
+        k: 0
+        for k in (
+            "gaps_total",
+            "gaps_physical",
+            "gaps_not_econ_eligible",
+            "gaps_da_cap",
+            "gaps_restart_fail",
+            "gaps_candidate",
+        )
+    }
+    mwh = {
+        k: 0.0
+        for k in (
+            "physical",
+            "da_cap",
+            "restart_fail",
+            "candidate",
+            "not_econ_eligible",
+        )
+    }
     gap_len_belly: list[int] = []
 
     plant_pmax: dict[str, float] = {}
@@ -224,7 +262,10 @@ def census(bundle: Path, iso: str, year: int, belly_decile: float = 0.10,
             plant_pmax[key] = plant_pmax.get(key, 0.0) + pmax[g]
 
     for g, gen in enumerate(fleet):
-        if gen.plant_group.endswith("_CHP") or gen.fuel_type not in ("gas_cc", "gas_ct"):
+        if gen.plant_group.endswith("_CHP") or gen.fuel_type not in (
+            "gas_cc",
+            "gas_ct",
+        ):
             continue
         resolved = _ra_bridge_unit_params(gen, float(fa.heat_rate[g]))
         if resolved is None:
@@ -233,7 +274,8 @@ def census(bundle: Path, iso: str, year: int, belly_decile: float = 0.10,
         c["units_scoped"] += 1
         min_down, startup_per_mw = resolved
         econ_eligible = (
-            startup_bridge and startup_per_mw > 0.0
+            startup_bridge
+            and startup_per_mw > 0.0
             and min_down >= RA_BRIDGE_ECON_MIN_DOWN_HOURS
         )
         if econ_eligible:
@@ -244,7 +286,8 @@ def census(bundle: Path, iso: str, year: int, belly_decile: float = 0.10,
             gz = int(zone_idx[g])
             pg = max(float(pmax[g]), 1.0)
             runs = [
-                (s, e) for s, e in runs
+                (s, e)
+                for s, e in runs
                 if float(np.sum((p0_px[gz, s:e] - mc_base[g, s:e]) * p0[g, s:e])) / pg
                 >= startup_per_mw
             ]
@@ -256,7 +299,11 @@ def census(bundle: Path, iso: str, year: int, belly_decile: float = 0.10,
             c["units_lt2_runs"] += 1
             continue
         is_bin = getattr(gen, "is_campd_bin", False)
-        fp = plant_pmax.get(gen.unit_id.rpartition("_")[0], pmax[g]) if is_bin else pmax[g]
+        fp = (
+            plant_pmax.get(gen.unit_id.rpartition("_")[0], pmax[g])
+            if is_bin
+            else pmax[g]
+        )
         target_mw = min(frac * fp, pmax[g])
         zone = int(zone_idx[g])
         for (_, end_prev), (start_next, _) in zip(runs[:-1], runs[1:]):
@@ -295,12 +342,18 @@ def census(bundle: Path, iso: str, year: int, belly_decile: float = 0.10,
     # ---- EXACTNESS CHECK against the shipped function on the identical inputs.
     screen_stats: dict = {}
     real = caiso_ra_mustoffer_min_gen(
-        p0, fa, fleet, frac,
+        p0,
+        fa,
+        fleet,
+        frac,
         p1_prices=p0_px if (startup_bridge or startup_aware) else None,
         base_mc=mc_base if (startup_bridge or startup_aware) else None,
-        startup_bridge=startup_bridge, bridge_decommit=bridge_decommit,
-        surplus_floor_value=0.0, startup_aware=startup_aware,
-        release_hours=None, startup_lead_hours=startup_lead,
+        startup_bridge=startup_bridge,
+        bridge_decommit=bridge_decommit,
+        surplus_floor_value=0.0,
+        startup_aware=startup_aware,
+        release_hours=None,
+        startup_lead_hours=startup_lead,
         screen_stats=screen_stats,
     )
     runs_match = (
@@ -313,16 +366,20 @@ def census(bundle: Path, iso: str, year: int, belly_decile: float = 0.10,
         "year": year,
         "status": "OK" if ok else "FAILED",
         "join": {
-            "sidecar_rows": len(uids), "fleet_rows": n_gen,
+            "sidecar_rows": len(uids),
+            "fleet_rows": n_gen,
             "bridge_scope_rows_unmapped": len(unmapped_scope),
             "unmapped_examples": unmapped_scope[:5],
-            "pmax_violations": viol, "worst_pmax_excess_mw": worst,
+            "pmax_violations": viol,
+            "worst_pmax_excess_mw": worst,
             "pmax_violation_rows": int(rows_viol.size),
             "pmax_violation_examples": viol_examples,
         },
         "posture": {
-            "min_load_frac": frac, "startup_bridge": startup_bridge,
-            "bridge_decommit": bridge_decommit, "startup_aware": startup_aware,
+            "min_load_frac": frac,
+            "startup_bridge": startup_bridge,
+            "bridge_decommit": bridge_decommit,
+            "startup_aware": startup_aware,
             "startup_trajectory": startup_lead is not None,
             "da_horizon_hours": DA_COMMITMENT_HORIZON_HOURS,
             "econ_min_down_hours": RA_BRIDGE_ECON_MIN_DOWN_HOURS,
@@ -336,7 +393,8 @@ def census(bundle: Path, iso: str, year: int, belly_decile: float = 0.10,
             "p90": float(np.percentile(gl, 90)) if gl.size else None,
             "max": int(gl.max()) if gl.size else None,
             "frac_gt_da_horizon": float(np.mean(gl > DA_COMMITMENT_HORIZON_HOURS))
-            if gl.size else None,
+            if gl.size
+            else None,
         },
         "shipped_screen": {
             "runs_detected": screen_stats.get("runs_detected"),
@@ -344,17 +402,21 @@ def census(bundle: Path, iso: str, year: int, belly_decile: float = 0.10,
             "runs_dropped": screen_stats.get("runs_dropped"),
             "drop_rate": (
                 screen_stats.get("runs_dropped", 0) / screen_stats["runs_detected"]
-                if screen_stats.get("runs_detected") else None
+                if screen_stats.get("runs_detected")
+                else None
             ),
             "replay_reproduces": runs_match,
         },
         "floored_rows": int((real > 0).any(axis=1).sum()),
         "belly_mean_floor_mw": (
             float(real[:, belly].sum() / max(int(belly.sum()), 1))
-            if belly is not None else None
+            if belly is not None
+            else None
         ),
         "belly_hours": int(belly.sum()) if belly is not None else None,
-        "belly_net_load_mw_mean": float(net_load[belly].mean()) if belly is not None else None,
+        "belly_net_load_mw_mean": float(net_load[belly].mean())
+        if belly is not None
+        else None,
     }
 
 
@@ -364,8 +426,11 @@ def main() -> None:
     ap.add_argument("--iso", default="CAISO")
     ap.add_argument("--years", nargs="+", type=int, default=[2024])
     ap.add_argument("--json-out", default=None)
-    ap.add_argument("--counterfactual", action="store_true",
-                    help="also census with the startup_aware run screen forced OFF (diagnostic only)")
+    ap.add_argument(
+        "--counterfactual",
+        action="store_true",
+        help="also census with the startup_aware run screen forced OFF (diagnostic only)",
+    )
     a = ap.parse_args()
     logging.basicConfig(level=logging.ERROR)
     out = []
