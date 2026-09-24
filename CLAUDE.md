@@ -16,7 +16,7 @@ re-send the entire updated artifact in one block, not a diff or an addendum.
 
 ## What This Is
 
-LP-based electricity market dispatch simulator. Forecasting model (2026–2050) with a historical-backcast mode for calibration. Multi-ISO: seven ISOs registered in `config/iso_configs.py` — ERCOT (7 zones, 6 carry load; the calibrated reference), CAISO (3 zones + WECC import node), PJM (8 zones), MISO (6 zones), NYISO (5 zones), NEISO (4 zones + HQ import node), SPP (2 zones) — sharing one ISO-agnostic LP. Hourly 8760 dispatch, parameterized scenario system.
+LP-based electricity market dispatch simulator. Forecasting model (2026–2050) with a historical-backcast mode for calibration. Multi-region: nine regions registered in `config/iso_configs.py` — ERCOT (7 zones, 6 carry load; the calibrated reference), CAISO (5 zones + WECC import node), PJM (8 zones), MISO (6 zones), NYISO (5 zones), NEISO (4 zones + HQ import node), SPP (2 zones), NWPP (5 whole-BA zones; a pool of 17 WECC balancing authorities, not an ISO) and SOCO (3 zones; the Southern Company balancing authority, no LMP market) — sharing one ISO-agnostic LP. "ISO" below means any registered region. Hourly 8760 dispatch, parameterized scenario system.
 
 **Forecast vs backcast:** the model forecasts by default; the switch is the explicit `ScenarioConfig.mode` field (`"forecast"`/`"backcast"`), never inferred from other parameters. Historic overlays — CAMPD outage windows, F923 delivered fuel prices, **same-year plant-specific CEMS emission rates**, weather-year pinning — are **backcast/calibration only**; never treat them as the forecast methodology. (Forecast-year emission rates for existing units are *derived from* multi-year CAMPD history conditioned on model-simulated operation — a rule-13-admissible measured input, not an overlay; see `docs/handoffs/emissions-co2-rate-plan-2026-07.md`.)
 
@@ -29,7 +29,7 @@ LP-based electricity market dispatch simulator. Forecasting model (2026–2050) 
 
 ```
 src/market_sim/
-  config/    → ScenarioConfig, constants, 6-ISO topology, on-disk path registry, reserve/interchange specs, crosswalks, taxonomy
+  config/    → ScenarioConfig, constants, 9-region topology, on-disk path registry, reserve/interchange specs, crosswalks, taxonomy
   data/      → source loaders & derived inputs (demand, fleet/CAMPD binning, renewables, fuel, outages, hydro, emissions, offer curves, capacity/reserve inputs)
   model/     → the ISO-agnostic LP: dispatch (LP core, duals=price), commitment, transmission, storage, capacity evolution, ancillary
   policy/    → IRA, RPS, carbon / cap-and-trade, EAC, constraints
@@ -916,7 +916,7 @@ traps: `docs/fast-clone.md`. (Never measure pack size with `--mirror` against
 GitHub: `refs/pull/*` still pins the pre-rewrite objects, ~20 GiB.)
 
 - **Every handoff prompt declares its profile** on its own line —
-  `DATA PROFILE: <code|shared|ercot|caiso|pjm|miso|nyiso|neiso|all>`. Omitted
+  `DATA PROFILE: <code|shared|ercot|caiso|pjm|miso|nyiso|neiso|spp|nwpp|soco|all>`. Omitted
   means `code`. A session hydrates with
   `python3 scripts/hydrate_data.py --profile <name>`, and may widen later at any
   time; hydration is incremental.

@@ -6,7 +6,8 @@ from 2026→2050, with a historical-backcast mode for calibration against EIA-93
 CAMPD, eGRID and EIA-923 actuals.
 
 - **Solver:** HiGHS via `highspy` (pure LP, no MIP). Prices are LP duals.
-- **ISOs:** ERCOT (calibrated reference) plus CAISO, PJM, MISO, NYISO, NEISO.
+- **Regions:** ERCOT (calibrated reference) plus CAISO, PJM, MISO, NYISO, NEISO,
+  SPP, the NWPP pool (17 WECC balancing authorities) and the SOCO balancing authority.
 - **Methodology:** see [`model-methodology-spec.md`](model-methodology-spec.md).
 - **Working instructions / conventions:** see [`CLAUDE.md`](CLAUDE.md) and
   [`CONVENTIONS.md`](CONVENTIONS.md).
@@ -118,7 +119,7 @@ market-simulator/
   methodology (LP formulation, pricing, capacity evolution, calibration).
 - [`docs/codebase/README.md`](docs/codebase/README.md) — the code-derived
   engineering reference (what the code actually does, page by page).
-- [`docs/multi-iso/README.md`](docs/multi-iso/README.md) — the seven-ISO topology
+- [`docs/multi-iso/README.md`](docs/multi-iso/README.md) — the nine-region topology
   and per-ISO addition protocol.
 - [`docs/forecast-development-plan-2026-07.md`](docs/forecast-development-plan-2026-07.md)
   — the forecast program (tier ladder, lanes, waves, prompt pack).
