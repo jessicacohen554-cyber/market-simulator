@@ -118,3 +118,18 @@ CHP output must not exceed what was measured:
 
 Pass in every gated year → recommend promotion on structure. Any exceedance → recommend against,
 and report the plant. The owner decides either way (rule 31).
+
+### 5.1 Launch record (appended after the shards were created, 2026-09-24)
+
+All seven pinned to `79dcc45ad97c8d6bdb7e4f2da3df72a31398a9f5` (the commit carrying §5 and the
+self-check), tagged `spp-75`; branches `claude/spp75-chp-<Y>`.
+
+| year | keeper bundle | shard session |
+|---|---|---|
+| 2019 | hydro5_spp_floor_rung | `session_01HgmHmpwH1Fzun3xWpe3opR` |
+| 2020 | hydro5_spp_floor_rung | `session_01G3QQBFU9dWanVq6eNLhJgR` |
+| 2021 | hydro5_spp_floor_rung | `session_01UppPYC7RLhFAAp3aZgLGC6` |
+| 2022 | hydro5_spp_floor_rung | `session_016tZ96GEp5Z21xHxNrn73zD` |
+| 2023 | hydro5_spp_floor_span | `session_011YqJTzVJK9CbGeA7AqhuE9` |
+| 2024 | hydro5_spp_floor_span | `session_01Y8oeetJFd8dvqrUhbEjYAG` |
+| 2025 | hydro5_spp_floor_span | `session_01WFiErjX8ZN3xu1TAFTeuES` |
