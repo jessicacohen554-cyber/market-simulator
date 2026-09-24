@@ -10,6 +10,8 @@ the trap on the names that motivated it, through the same ``iso_for_name`` /
 
 from __future__ import annotations
 
+import re
+
 import pytest
 
 from scripts import hydrate_data
@@ -112,9 +114,15 @@ def test_soco_token_collides_with_no_other_raw_name(isos):
     soco_named = {
         seg for p in paths for seg in p.split("/")[2:] if "soco" in seg.lower()
     }
-    allowed_stems = ("soco",)
+    # A COLLISION is `soco` embedded in a longer word (`socorro`, `prosocol`);
+    # a SOCO-owned name carries it as a delimited token at any position. The
+    # original stem check (`startswith("soco")` or `_soco_`) was narrower than
+    # the naming conventions SOCO intakes then used — suffix-delimited
+    # `campd-unit-outages-perunit-SOCO.meta.json`, `thermal_tranches_SOCO.csv`
+    # — every one of them SOCO's own (Y-30, 2026-09-24, measured on the tree).
+    token = re.compile(r"(?<![a-z])soco(?![a-z])")
     for seg in soco_named:
-        assert seg.lower().startswith(allowed_stems) or "_soco_" in seg.lower(), seg
+        assert token.search(seg.lower()), seg
 
 
 def test_no_earlier_iso_claims_a_soco_name(isos):
