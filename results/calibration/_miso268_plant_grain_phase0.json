@@ -1,0 +1,408 @@
+[
+ {
+  "year": 2020,
+  "n_yards_rowed": 78,
+  "n_gens_rowed": 760,
+  "n_gens_unrowed": 40,
+  "coal_twh_model": 192.16,
+  "coal_twh_rowed": 191.795,
+  "yard_budget_twh_eq": 329.25,
+  "pooled_annual_budget_mmbtu": 3646170173.0,
+  "yard_budget_sum_mmbtu": 3662028231.0,
+  "model_burn_mmbtu": 2133213467.0,
+  "yards_over": 13,
+  "excess_twh_eq": 2.643,
+  "excess_by_class_twh_eq": {
+   "COAL": 0.055,
+   "COAL_BIT": 1.142,
+   "COAL_LIGNITE": 0.0,
+   "COAL_PRB": 1.446
+  },
+  "slack_twh_eq_at_unbound_yards": 137.98,
+  "top_yards_twh_eq": [
+   {
+    "yard_pos": 12,
+    "excess_twh": 0.852,
+    "model_twh": 0.981,
+    "budget_twh_eq": 0.129
+   },
+   {
+    "yard_pos": 29,
+    "excess_twh": 0.427,
+    "model_twh": 0.673,
+    "budget_twh_eq": 0.246
+   },
+   {
+    "yard_pos": 24,
+    "excess_twh": 0.357,
+    "model_twh": 0.971,
+    "budget_twh_eq": 0.614
+   },
+   {
+    "yard_pos": 62,
+    "excess_twh": 0.258,
+    "model_twh": 2.727,
+    "budget_twh_eq": 2.468
+   },
+   {
+    "yard_pos": 35,
+    "excess_twh": 0.282,
+    "model_twh": 1.736,
+    "budget_twh_eq": 1.454
+   },
+   {
+    "yard_pos": 43,
+    "excess_twh": 0.178,
+    "model_twh": 1.743,
+    "budget_twh_eq": 1.565
+   },
+   {
+    "yard_pos": 26,
+    "excess_twh": 0.095,
+    "model_twh": 1.786,
+    "budget_twh_eq": 1.691
+   },
+   {
+    "yard_pos": 9,
+    "excess_twh": 0.056,
+    "model_twh": 1.826,
+    "budget_twh_eq": 1.77
+   }
+  ],
+  "_n_yard_keys": 84
+ },
+ {
+  "year": 2021,
+  "n_yards_rowed": 77,
+  "n_gens_rowed": 751,
+  "n_gens_unrowed": 49,
+  "coal_twh_model": 247.543,
+  "coal_twh_rowed": 247.117,
+  "yard_budget_twh_eq": 291.52,
+  "pooled_annual_budget_mmbtu": 3320224820.0,
+  "yard_budget_sum_mmbtu": 3329608037.0,
+  "model_burn_mmbtu": 2822455232.0,
+  "yards_over": 20,
+  "excess_twh_eq": 11.764,
+  "excess_by_class_twh_eq": {
+   "COAL": 0.08,
+   "COAL_BIT": 1.816,
+   "COAL_LIGNITE": 1.179,
+   "COAL_PRB": 8.689
+  },
+  "slack_twh_eq_at_unbound_yards": 56.93,
+  "top_yards_twh_eq": [
+   {
+    "yard_pos": 34,
+    "excess_twh": 2.371,
+    "model_twh": 2.924,
+    "budget_twh_eq": 0.553
+   },
+   {
+    "yard_pos": 26,
+    "excess_twh": 1.451,
+    "model_twh": 2.626,
+    "budget_twh_eq": 1.175
+   },
+   {
+    "yard_pos": 24,
+    "excess_twh": 1.187,
+    "model_twh": 1.348,
+    "budget_twh_eq": 0.161
+   },
+   {
+    "yard_pos": 57,
+    "excess_twh": 0.884,
+    "model_twh": 4.587,
+    "budget_twh_eq": 3.703
+   },
+   {
+    "yard_pos": 0,
+    "excess_twh": 1.04,
+    "model_twh": 2.886,
+    "budget_twh_eq": 1.846
+   },
+   {
+    "yard_pos": 23,
+    "excess_twh": 0.841,
+    "model_twh": 13.949,
+    "budget_twh_eq": 13.108
+   },
+   {
+    "yard_pos": 25,
+    "excess_twh": 0.82,
+    "model_twh": 12.425,
+    "budget_twh_eq": 11.605
+   },
+   {
+    "yard_pos": 12,
+    "excess_twh": 0.631,
+    "model_twh": 0.716,
+    "budget_twh_eq": 0.085
+   }
+  ],
+  "_n_yard_keys": 84
+ },
+ {
+  "year": 2022,
+  "n_yards_rowed": 71,
+  "n_gens_rowed": 680,
+  "n_gens_unrowed": 103,
+  "coal_twh_model": 234.578,
+  "coal_twh_rowed": 234.158,
+  "yard_budget_twh_eq": 243.82,
+  "pooled_annual_budget_mmbtu": 2782162623.0,
+  "yard_budget_sum_mmbtu": 2792444015.0,
+  "model_burn_mmbtu": 2681738829.0,
+  "yards_over": 27,
+  "excess_twh_eq": 19.005,
+  "excess_by_class_twh_eq": {
+   "COAL": 0.083,
+   "COAL_BIT": 3.6,
+   "COAL_LIGNITE": 0.0,
+   "COAL_PRB": 15.321
+  },
+  "slack_twh_eq_at_unbound_yards": 30.45,
+  "top_yards_twh_eq": [
+   {
+    "yard_pos": 21,
+    "excess_twh": 3.919,
+    "model_twh": 11.513,
+    "budget_twh_eq": 7.594
+   },
+   {
+    "yard_pos": 29,
+    "excess_twh": 2.418,
+    "model_twh": 2.782,
+    "budget_twh_eq": 0.364
+   },
+   {
+    "yard_pos": 52,
+    "excess_twh": 1.625,
+    "model_twh": 5.446,
+    "budget_twh_eq": 3.822
+   },
+   {
+    "yard_pos": 22,
+    "excess_twh": 1.645,
+    "model_twh": 2.741,
+    "budget_twh_eq": 1.096
+   },
+   {
+    "yard_pos": 20,
+    "excess_twh": 1.332,
+    "model_twh": 1.332,
+    "budget_twh_eq": 0.0
+   },
+   {
+    "yard_pos": 13,
+    "excess_twh": 1.053,
+    "model_twh": 7.646,
+    "budget_twh_eq": 6.593
+   },
+   {
+    "yard_pos": 44,
+    "excess_twh": 1.024,
+    "model_twh": 10.166,
+    "budget_twh_eq": 9.142
+   },
+   {
+    "yard_pos": 14,
+    "excess_twh": 0.803,
+    "model_twh": 1.832,
+    "budget_twh_eq": 1.029
+   }
+  ],
+  "_n_yard_keys": 84
+ },
+ {
+  "year": 2023,
+  "n_yards_rowed": 66,
+  "n_gens_rowed": 636,
+  "n_gens_unrowed": 138,
+  "coal_twh_model": 182.861,
+  "coal_twh_rowed": 181.436,
+  "yard_budget_twh_eq": 257.66,
+  "pooled_annual_budget_mmbtu": 2897140711.0,
+  "yard_budget_sum_mmbtu": 2914957283.0,
+  "model_burn_mmbtu": 2052617649.0,
+  "yards_over": 11,
+  "excess_twh_eq": 2.329,
+  "excess_by_class_twh_eq": {
+   "COAL": 0.012,
+   "COAL_BIT": 0.575,
+   "COAL_LIGNITE": 0.191,
+   "COAL_PRB": 1.55
+  },
+  "slack_twh_eq_at_unbound_yards": 79.67,
+  "top_yards_twh_eq": [
+   {
+    "yard_pos": 49,
+    "excess_twh": 0.594,
+    "model_twh": 4.12,
+    "budget_twh_eq": 3.526
+   },
+   {
+    "yard_pos": 38,
+    "excess_twh": 0.438,
+    "model_twh": 3.235,
+    "budget_twh_eq": 2.797
+   },
+   {
+    "yard_pos": 13,
+    "excess_twh": 0.41,
+    "model_twh": 1.813,
+    "budget_twh_eq": 1.403
+   },
+   {
+    "yard_pos": 45,
+    "excess_twh": 0.261,
+    "model_twh": 3.386,
+    "budget_twh_eq": 3.124
+   },
+   {
+    "yard_pos": 54,
+    "excess_twh": 0.191,
+    "model_twh": 2.461,
+    "budget_twh_eq": 2.271
+   },
+   {
+    "yard_pos": 3,
+    "excess_twh": 0.132,
+    "model_twh": 1.211,
+    "budget_twh_eq": 1.079
+   },
+   {
+    "yard_pos": 48,
+    "excess_twh": 0.127,
+    "model_twh": 4.828,
+    "budget_twh_eq": 4.701
+   },
+   {
+    "yard_pos": 10,
+    "excess_twh": 0.106,
+    "model_twh": 0.78,
+    "budget_twh_eq": 0.674
+   }
+  ],
+  "_n_yard_keys": 83
+ },
+ {
+  "year": 2024,
+  "n_yards_rowed": 63,
+  "n_gens_rowed": 611,
+  "n_gens_unrowed": 156,
+  "coal_twh_model": 168.442,
+  "coal_twh_rowed": 168.032,
+  "yard_budget_twh_eq": 270.28,
+  "pooled_annual_budget_mmbtu": 3018422175.0,
+  "yard_budget_sum_mmbtu": 3037425100.0,
+  "model_burn_mmbtu": 1888380158.0,
+  "yards_over": 4,
+  "excess_twh_eq": 0.492,
+  "excess_by_class_twh_eq": {
+   "COAL_BIT": 0.442,
+   "COAL_LIGNITE": 0.0,
+   "COAL_PRB": 0.05
+  },
+  "slack_twh_eq_at_unbound_yards": 102.86,
+  "top_yards_twh_eq": [
+   {
+    "yard_pos": 37,
+    "excess_twh": 0.338,
+    "model_twh": 3.006,
+    "budget_twh_eq": 2.668
+   },
+   {
+    "yard_pos": 2,
+    "excess_twh": 0.1,
+    "model_twh": 1.001,
+    "budget_twh_eq": 0.901
+   },
+   {
+    "yard_pos": 57,
+    "excess_twh": 0.05,
+    "model_twh": 0.05,
+    "budget_twh_eq": 0.0
+   },
+   {
+    "yard_pos": 62,
+    "excess_twh": 0.003,
+    "model_twh": 0.005,
+    "budget_twh_eq": 0.002
+   }
+  ],
+  "_n_yard_keys": 82
+ },
+ {
+  "year": 2025,
+  "n_yards_rowed": 57,
+  "n_gens_rowed": 548,
+  "n_gens_unrowed": 211,
+  "coal_twh_model": 199.161,
+  "coal_twh_rowed": 199.161,
+  "yard_budget_twh_eq": 236.83,
+  "pooled_annual_budget_mmbtu": 2690513919.0,
+  "yard_budget_sum_mmbtu": 2707691177.0,
+  "model_burn_mmbtu": 2276978019.0,
+  "yards_over": 16,
+  "excess_twh_eq": 9.376,
+  "excess_by_class_twh_eq": {
+   "COAL_BIT": 3.344,
+   "COAL_LIGNITE": 0.0,
+   "COAL_PRB": 6.032
+  },
+  "slack_twh_eq_at_unbound_yards": 47.79,
+  "top_yards_twh_eq": [
+   {
+    "yard_pos": 15,
+    "excess_twh": 3.49,
+    "model_twh": 15.923,
+    "budget_twh_eq": 12.433
+   },
+   {
+    "yard_pos": 31,
+    "excess_twh": 1.178,
+    "model_twh": 2.774,
+    "budget_twh_eq": 1.596
+   },
+   {
+    "yard_pos": 1,
+    "excess_twh": 0.73,
+    "model_twh": 1.355,
+    "budget_twh_eq": 0.625
+   },
+   {
+    "yard_pos": 4,
+    "excess_twh": 0.787,
+    "model_twh": 2.173,
+    "budget_twh_eq": 1.386
+   },
+   {
+    "yard_pos": 3,
+    "excess_twh": 0.632,
+    "model_twh": 5.401,
+    "budget_twh_eq": 4.769
+   },
+   {
+    "yard_pos": 33,
+    "excess_twh": 0.421,
+    "model_twh": 2.551,
+    "budget_twh_eq": 2.13
+   },
+   {
+    "yard_pos": 25,
+    "excess_twh": 0.438,
+    "model_twh": 5.049,
+    "budget_twh_eq": 4.611
+   },
+   {
+    "yard_pos": 10,
+    "excess_twh": 0.324,
+    "model_twh": 2.244,
+    "budget_twh_eq": 1.921
+   }
+  ],
+  "_n_yard_keys": 81
+ }
+]
