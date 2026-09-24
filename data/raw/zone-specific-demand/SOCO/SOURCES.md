@@ -291,3 +291,35 @@ a zonal spine would be adding level and essentially no shape.**
 documents; SEC EDGAR filings are public; MEAG's Annual Information Statement is a public
 continuing-disclosure filing; EIA-861 is public domain; PUDL is CC-BY-4.0. See
 `docs/data-licensing.md`.
+
+## 2019-2022 (I-SOCO, 2026-09-24)
+
+`soco_ferc714_hourly_planning_area_demand_2019-2022.parquet` — the same eight
+respondents, 2019-01-01T00 .. 2022-12-31T23 UTC, 280,505 rows, sliced from the
+PUDL nightly (`Last-Modified: 2026-09-24T08:18:29Z`, 255,526,300 bytes) by the
+now-committed instrument that reproduces SOCO-11's hand slice:
+
+    python scripts/data/slice_soco_ferc714_pudl.py --pudl-dir <dir> --first-year 2019 --last-year 2022
+
+**Proof on the committed window.** `--first-year 2023 --last-year 2025 --check`
+against today's nightly: 0 rows only-committed, 0 only-regenerated, and
+`datetime_utc`, `respondent_id_ferc714`, `respondent_name_ferc714`,
+`eia_code`, `timezone`, **`demand_reported_mwh` (the consumed series)** and the
+imputation code identical in all 210,431 rows (same row order).
+`demand_imputed_pudl_mwh` — PUDL's own derived column, carried for
+transparency and read by nothing — differs by at most 1.06 MWh (relative
+1.6e-4) between the two nightlies; the committed 2023-2025 file is left as
+landed.
+
+`scripts/data/curate_zonal_shares.py` now reads every present file in
+`_SOCO_FERC714_FILES` (local 2022 ends at 2023-01-01T05 UTC, inside the
+2023-2025 file). **The 2023/2024/2025 share matrices are byte-identical**
+(old parser + old 930 extract vs new parser + both files + extended extract).
+2019-2022 assemble all 8,760 hours; mean shares AL / GA / MS 0.286 / 0.651 /
+0.063 (2019) .. 0.306 / 0.636 / 0.059 (2022).
+
+**PowerSouth caution extends backward.** PowerSouth (respondent 1, a
+falsifier, not in the five-respondent map) was its own BA (`AEC`) until
+2021-09-01 (the SOCO interchange book's `AEC` leg ends that hour, and the
+EIA-860 vintages code its plants `AEC` through 2021) — so for 2019 .. Aug-2021
+the EIA-930 `SOCO` demand level excludes PowerSouth load by construction.
