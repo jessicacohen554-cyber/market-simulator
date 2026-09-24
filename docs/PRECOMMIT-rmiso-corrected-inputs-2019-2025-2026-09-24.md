@@ -187,3 +187,20 @@ Prep: `uv sync`; `hydrate_data.py --profile miso`; `curate_coal_stocks.py`; `cur
 `git add`, bundle incl. `dispatch/<Y>_P1.parquet` (rule 34(a)). Parent: fetch by SHA,
 `git ls-tree` > 0, re-run the check, compose (`_rmiso_compose_span.py`), `stamp_config_partition
 --check`, register, score vs the keeper, write the RESULT.
+
+## 7. Launch record (appended after the pin; §1–§6 unchanged)
+
+Launched 2026-09-24 19:15–19:17 UTC, all seven pinned to
+`6a8d17947c9fb3da0eac081eaa10408cb581863a` (this document's commit). Tagged `r-miso`, `shard`;
+auto-PR off. Each pushes its bundle (with `dispatch/<Y>_P1.parquet`) plus the
+`results/calibration/_shared/MISO/` captures its `meta.json` names.
+
+| year | shard session | branch | out-dir |
+|---|---|---|---|
+| 2019 | `session_01NU6w97UHvbLYSiYb54Q3Sv` | `claude/rmiso-2019` | `results/calibration/rmiso_2019` |
+| 2020 | `session_01TegVbT2eiz7XMY99ZG9V6H` | `claude/rmiso-2020` | `results/calibration/rmiso_2020` |
+| 2021 | `session_01C3xEiMxRDmRZrvkLyb5VX6` | `claude/rmiso-2021` | `results/calibration/rmiso_2021` |
+| 2022 | `session_01FSntQEmqV27LX5p6cHVYMn` | `claude/rmiso-2022` | `results/calibration/rmiso_2022` |
+| 2023 | `session_01RUkATQseefLk1mKTuWSvt2` | `claude/rmiso-2023` | `results/calibration/rmiso_2023` |
+| 2024 | `session_01QSTednV5x2UFSUJMmSqk5c` | `claude/rmiso-2024` | `results/calibration/rmiso_2024` |
+| 2025 | `session_01NkXi5Wuz5kCzJqYvXHUxoe` | `claude/rmiso-2025` | `results/calibration/rmiso_2025` |
