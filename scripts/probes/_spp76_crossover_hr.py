@@ -45,7 +45,15 @@ BUNDLES = {
     **{y: "hydro5_spp_floor_span" for y in (2023, 2024, 2025)},
 }
 # Hard-stop gas prices (lane brief): a rebuild on any other price is the wrong recipe.
-GAS = {2019: 2.57, 2020: 2.03, 2021: 3.72, 2022: 6.45, 2023: 2.54, 2024: 2.19, 2025: 3.52}
+GAS = {
+    2019: 2.57,
+    2020: 2.03,
+    2021: 3.72,
+    2022: 6.45,
+    2023: 2.54,
+    2024: 2.19,
+    2025: 3.52,
+}
 THERMAL_PREFIXES = ("COAL", "CC_", "CT_", "ST_")
 ARTIFACT_CLASS = {"CC_REGULAR": "cc", "ST_GAS": "gas_st"}  # COAL* -> "coal"
 REPORT_CLASSES = ("CC_REGULAR", "ST_GAS", "COAL_PRB", "COAL_LIGNITE", "CT_PEAKER")
@@ -96,7 +104,7 @@ def main() -> int:
     bundle = REPO / "results/calibration" / BUNDLES[y]
 
     from scripts.lib.bundle_fleet import bundle_gas_price, reconstruct_bundle_fleet
-    from scripts.run_calibration_full import _coal_supply_class, _tranche_band
+    from scripts.run_calibration_full import _coal_supply_class
 
     meta_gas = bundle_gas_price(json.loads((bundle / "meta.json").read_text()), y)
     if abs(meta_gas - GAS[y]) > 0.005:
@@ -120,12 +128,13 @@ def main() -> int:
     groups = fa.plant_group
     klass = np.array(
         [
-            _coal_supply_class(int(codes[i])) if str(groups[i]) == "COAL" else str(groups[i])
+            _coal_supply_class(int(codes[i]))
+            if str(groups[i]) == "COAL"
+            else str(groups[i])
             for i in range(len(fa.unit_ids))
         ],
         dtype=object,
     )
-    band = np.array([_tranche_band(str(u)) for u in fa.unit_ids], dtype=object)
     th = np.array([str(k).startswith(THERMAL_PREFIXES) for k in klass])
 
     measured = load_measured(args.hr_dir, args.tag)
@@ -156,7 +165,9 @@ def main() -> int:
             "mc_cw": float(np.average(mc[s].mean(axis=1), weights=w)),
             "mc_cw_measured": float(
                 np.average(
-                    (mc[s] + hr[s, None] * fuel[s] * (ratio[s, None] - 1.0)).mean(axis=1),
+                    (mc[s] + hr[s, None] * fuel[s] * (ratio[s, None] - 1.0)).mean(
+                        axis=1
+                    ),
                     weights=w,
                 )
             ),
@@ -177,7 +188,9 @@ def main() -> int:
 
     # ---- 3. merit re-dispatch of the served thermal energy
     ch = pd.read_parquet(bundle / "hourly" / f"class_hourly_{y}.parquet")
-    ch = ch[(ch["pass"] == "P1") & ch["klass"].astype(str).str.startswith(THERMAL_PREFIXES)]
+    ch = ch[
+        (ch["pass"] == "P1") & ch["klass"].astype(str).str.startswith(THERMAL_PREFIXES)
+    ]
     T = mc.shape[1]
     served = ch.groupby("hour")["mw"].sum().reindex(range(T), fill_value=0.0).to_numpy()
     p1 = (ch.groupby("klass")["mw"].sum() / 1e6).to_dict()
@@ -219,7 +232,14 @@ def main() -> int:
         "proxy": proxy,
     }
     args.out.write_text(json.dumps(out, indent=1))
-    print(json.dumps({k: out[k] for k in ("year", "crossover_gas_price", "cc_share_behind_all_prb")}))
+    print(
+        json.dumps(
+            {
+                k: out[k]
+                for k in ("year", "crossover_gas_price", "cc_share_behind_all_prb")
+            }
+        )
+    )
     for k in REPORT_CLASSES:
         if k in proxy:
             print(k, proxy[k])
