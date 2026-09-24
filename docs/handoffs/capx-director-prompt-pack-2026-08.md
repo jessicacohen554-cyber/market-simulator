@@ -10699,3 +10699,241 @@ head VERBATIM, the full promotion chain the row was stale across, and the promot
 document. Lead your close with the gate's exit code and the four id transitions. Rule 27 [R-PUSH]:
 push exact on-disk bytes and verify the pushed blob.
 ```
+
+---
+
+## r#65 NOTE
+
+Three charters, issued 2026-09-24 at main `40f4ed7a` against ledger §0bj. The desk launched all three
+itself (owner's standing preference). Each prompt below was sent verbatim, and each session is
+pinned to the director commit that carries this pack.
+
+* **GATE-(a) RE-KEY r#65** (Q34): six ISOs, plus SPP's marker claim. Fable, `code`.
+* **D93** (Q66): the key-provenance lag class rule, plus the G6 registration of
+  `coal_mustrun_requires_measured_row`. Opus, `code`.
+* **D94** (Q67): `neiso-t3`'s FC-6 driver battery re-measured on the post-D77 basis. Opus, `neiso`.
+
+**Collision map.** The three touch disjoint files: `program-status.json` / `check_key_provenance.py` +
+`scenarios.py` + tests / `results/ff-t3-neiso-golden/d94/` + `ff-verdicts.json`.
+D94's payloads interact with D93's registration, and its charter handles that. **NEXT FREE LABEL: D95.**
+
+**Rules that changed since the r#64 charters and bind all three:** rule 29 `[R-SCREEN]`'s screen
+regime is REMOVED (clauses (b)/(c) survive); rules 32–35 (`[R-SHARD]`, `[R-SHARD-ARCHIVE]` incl.
+(f) "a shard branch is transport, not storage", `[R-SHARD-PROMOTABLE]`, `[R-PROMOTE]`); rule 36
+`[R-YEAR-ISOLATION]` binds BACKCASTS only and leaves a forecast horizon one indivisible invocation.
+
+---
+
+## GATE-(a) RE-KEY r#65 — six ISOs and SPP's marker (Fable, code, zero LP)
+
+```
+You are the capx gate-(a) re-key lane (r#65) for jessicacohen554-cyber/market-simulator.
+MODEL: Fable. DATA PROFILE: code. Branch: claude/capx-gate-a-rekey-r65, fresh off origin/main.
+Binding charter: docs/handoffs/capx-director-prompt-pack-2026-08.md "GATE-(a) RE-KEY r#65"; ledger §0bj.
+ONE ACT, ZERO LP. No solve, no scoring, no registration, no keeper edit, no marker edit, no other
+desk's file. You edit frontend/data/forecast/program-status.json and nothing else, plus your record.
+
+WHY. scripts/check_gate_a_provenance.py is EXIT 1 at main 40f4ed7a on SIX ISOs, the nineteenth
+firing of the standing Q34 duty. The desk read at that pin:
+  CAISO row 2026-09-12-caiso-275-gascoupling        -> live 2026-09-20-caiso-290-leftedge
+  ERCOT row 2026-09-09-ercot265-receipts-fallback   -> live 2026-09-19-ercot266-mer-five-year
+  NEISO row 2026-09-09-neiso-108-fuelvintage        -> live 2026-09-22-hydro-5-neiso-ror
+  NYISO row 2026-09-09-nyiso-221-fuelvintage-span   -> live 2026-09-22-nyiso-hydro3-ror-split
+  PJM   row 2026-09-11-pjm-d4-4-gasoutage           -> live 2026-09-23-pjm-h19-dbs-span
+  SPP   row 2026-09-12-spp-36-shortwindow-span      -> live 2026-09-22-hydro-5-spp-floor
+  SPP   ALSO: row claims marker complete=False; calibration-complete.json holds complete=True
+        (declared 2026-09-13, owner ruling in session spp-40, "Complete then run").
+** DO NOT TRUST THOSE IDS. ** Read every fact LIVE at your HEAD. If your HEAD disagrees, YOUR HEAD IS
+RIGHT: re-key to it and say so. For each row, state the FULL chain of promotions it was stale across
+(read the keeper shard's own history fields and the calibration logs), not a single arrow.
+MISO is green (miso-267 re-keyed it 2026-09-23, commit 1b175ce9). Its act is your worked example:
+read `git show 1b175ce9`.
+
+METHOD.
+ 1. Per ISO, read live and cite: keeper id (frontend/data/backcast/keepers/<ISO>.json); BOTH blocks
+    of frontend/data/backcast/calibration-complete.json; determination from the committed status
+    sidecar frontend/data/backcast/status/<ISO>.js (NOT a re-score; you compute no verdict); the
+    promotion instrument AS A DOCUMENT.
+ 2. TARGETED STRING EDIT of each row's `detail`, `read_live_at` and `corrected_by` leaves, plus the
+    row's top-level `keeper` / `marker_complete` fields. ** NEVER a json.dumps round-trip. ** The file
+    is a hand-maintained seed wrapped verbatim; reserializing reformats every other desk's row.
+ 3. Preserve prior text. Each `corrected_by` is a chain, so prepend your sentence with "Supersedes:".
+ 4. Touch ONLY the rows that fail at your HEAD.
+
+SPP IS THE ONE ROW WHERE A STATUS MOVES, AND IT MOVES BECAUSE THE MARKER DID, NOT BECAUSE YOU DID.
+The guard calls a gate "closed on a marker the ISO holds" the verdict-flipping half of F-5. Re-derive
+SPP's leg (a) on the LITERAL §2.1b(2)(a) test: the keeper is CALIBRATED per its committed status
+sidecar, AND the ISO holds `complete`. The precedent for a (a) flip done as a records act is D56-R
+(docs/handoffs/FINDING-capx-d56r-nyiso-redeclaration-2026-09-05.md). Follow it. Cite the owner
+instrument verbatim from calibration-complete.json. STOP GATE: if SPP's committed status sidecar does
+NOT read CALIBRATED for the live keeper, do NOT flip. Re-key identity and marker text only, leave
+status fail, and report the contradiction between marker and keeper. That is the owner's to rule.
+For every other ISO, if re-keying would move a leg status, a determination or a grade: STOP, report.
+
+STOP GATES (as r#64): an ISO already green at your HEAD is not re-keyed, because asserting a
+supersession that did not happen is a false record. If CAISO's marker entry names a keeper other than
+its live one (at 40f4ed7a it named caiso-288 while the shard names caiso-290), REPORT it and do not
+repair it. It belongs to the CAISO lane and the audit board.
+Notes (not reds): NWPP and SOCO have keeper shards and no board row. Owner ruling Q68 (2026-09-24)
+adds their rows only AFTER each declares backcast `complete`. Do NOT add them.
+
+Score-after-rebase: this lane scores nothing, but rebase onto origin/main immediately before push and
+re-run the gate AFTER the rebase. A promotion can land mid-lane.
+EXIT: check_gate_a_provenance.py EXIT 0 on all seven rows at your final HEAD; the diff touches only
+the failing rows of one file (plus your record, docs/handoffs/FINDING-capx-gate-a-rekey-r65-2026-09-24.md,
+carrying per ISO the before/after `detail` head verbatim, the chain, and the instrument). Open a PR to
+main. Lead your close with the gate's exit code, the six id transitions and SPP's (a) status before and
+after. Rule 27 [R-PUSH]: push exact on-disk bytes; verify the pushed blob (program-status.json is
+large). If you defer anything, name a LIVE owner or state that none exists.
+```
+
+---
+
+## D93 — the key-provenance lag CLASS RULE, and the G6 registration (Opus, code)
+
+```
+You are the D93 lane for jessicacohen554-cyber/market-simulator.
+MODEL: Opus. DATA PROFILE: code. Branch: claude/capx-d93-key-lag-class, fresh off origin/main.
+Authority: OWNER RULING Q66 (2026-09-24, capx ledger §0bj / §3): "Class rule."
+Binding charter: docs/handoffs/capx-director-prompt-pack-2026-08.md "D93". ZERO LP.
+Rule 27 [R-PUSH]: this lane edits src/market_sim/ (core scope). Edit locally, push exact bytes, and
+blob-verify every file of 300+ lines after the push.
+
+READ FIRST: docs/handoffs/FINDING-capx-d92-2026-09-10.md §2 (the seven-record diagnosis and the
+recipe) · docs/handoffs/FINDING-capx-d91-2026-09-09.md (R1 registration, G6, the payload-driven vs
+dataclass-driven census) · docs/handoffs/FINDING-capx-d85-key-provenance-2026-09-07.md ·
+scripts/check_key_provenance.py and its exceptions / unregistered-baseline records (read their
+`what_this_is_not` blocks).
+
+STATE AT 40f4ed7a (verify, don't trust): check_key_provenance EXIT 1, 11 failures —
+  10 x G1_UNKNOWN: docs/handoffs/scn-ws5b-neiso/{ALL-CLEAN,CAP-STATE-TIGHT,CARB-HI,CES-P60,CES-T80}
+     results/ff-t3-neiso-golden/d90-rescore, results/ff-t3-neiso-golden/d92/{base,carbon_plus25,gaspm5,gasup150}
+  1 x G6: coal_mustrun_requires_measured_row (added by PJM lane pjm-h14, docs/RESULT-pjm-h14-2026-09-20.md),
+     absent from 235 committed payloads, NOT in scenarios.py::_CACHE_KEY_OPTIONAL_FIELDS.
+
+PART 1 — DIAGNOSE BEFORE YOU ENCODE ANYTHING. The ten are NOT one population:
+ (a) The six pre-D91 records (scn-ws5b-neiso/* minus REF, and d90-rescore). D92 showed that each one
+     reproduces its recorded literal under {"undrop": ["pjm_seam_neighbour_hourly_ladder"]}.
+     Re-verify that at your HEAD.
+ (b) D92's four d92/* legs. D92 measured them REPRODUCING on 2026-09-10, and they CONTAIN
+     pjm_seam_neighbour_hourly_ladder. So they are not lag records of that class. Something since
+     2026-09-10 moved their keys. Name it by experiment, as D91 did, with a single-field drop search
+     over the fields absent from their payload. Expect coal_mustrun_requires_measured_row (the G6
+     field) and test it rather than assume it. If it IS that field, then its registration (Part 3)
+     should return all four to green on its own, and that is your proof. If it is NOT, STOP and
+     report. Do not widen the class rule to absorb an unexplained record.
+
+PART 2 — THE CLASS RULE (Q66). In check_key_provenance.py, a record is classified `lag` (not
+UNKNOWN, not a failure) iff ALL of: its payload lacks the named registered field; the field's
+registration commit is not an ancestor of the record's recorded solve sha (or, where the record
+carries no sha, a DECLARED fallback you state in the PRECOMMIT); and the recorded key reproduces
+EXACTLY under the undrop of that field. Encode it as DATA: a small committed table of
+{field, registration_sha} pairs seeded with pjm_seam_neighbour_hourly_ladder / ee2275d2 (VERIFY that
+sha in history; the clone is shallow, so `git fetch --unshallow` or `--deepen` as needed). Every
+future registration then adds one row, not N records. A `lag` classification must print as a
+REPORTED line, never silently. A record that satisfies the payload/sha legs but does NOT reproduce
+under the undrop stays a FAILURE: that is a real defect wearing the lag signature.
+TESTS, BOTH DIRECTIONS (D91's doctrine, "a gate seen only green is indistinguishable from one that
+cannot fail"): a synthetic lag record classifies lag; the same record with a perturbed literal fails;
+a record carrying the field fails normally; a post-registration sha fails normally.
+Do NOT append to key-provenance-exceptions.json or to the unregistered baseline. Both records forbid
+it.
+
+PART 3 — THE G6 REGISTRATION. Register coal_mustrun_requires_measured_row in
+_CACHE_KEY_OPTIONAL_FIELDS and _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS at its FROZEN default "False", as
+D91's R1 did for pjm_seam_neighbour_hourly_ladder. This is a REGISTRATION, not a default flip. The
+dataclass default stays False and an armed run keys distinctly. Before editing, COUNT the orphans:
+committed configs solved after the field landed and before your registration. List them. After your
+edit they either reproduce, or fall under Part 2's class with a new table row ({field, your
+registration sha}). The latter can only be known after merge, so write the row as the lane's last act
+and say so. Run the cache-key pin tests (tests/**/test_persisted_identity.py and the pins D91 names)
+and report red before → red after.
+Rule 28 [R-MECH-MATRIX] does not fire: no new mechanism, and the row already exists. Rule 24
+[R-REGISTRY] is the reason this lane exists.
+
+PRE-DECLARE in docs/handoffs/PRECOMMIT-capx-d93-2026-09-24.md BEFORE editing code: the expected
+failure count after each part, and the Part 1(b) attribution you expect. Push it first.
+Collision: any concurrent lane adding a ScenarioConfig field edits the same _CACHE_KEY blocks, so
+rebase immediately before push. Concurrent capx lanes: the gate-(a) re-key (program-status.json only)
+and D94 (a neiso solve lane; it will record which side of your registration its pin sits).
+EXIT: check_key_provenance EXIT 0 at your final HEAD, or EXIT 1 with every residual named with an
+owner. docs/handoffs/FINDING-capx-d93-2026-09-24.md leading with the before/after failure table, the
+Part 1(b) attribution, and the both-direction test proof. Open a PR to main. If you defer anything,
+name a LIVE owner or state that none exists.
+```
+
+---
+
+## D94 — `neiso-t3`'s FC-6 driver battery on the post-D77 basis (Opus, neiso)
+
+```
+You are the D94 lane for jessicacohen554-cyber/market-simulator.
+MODEL: Opus. DATA PROFILE: neiso (python3 scripts/hydrate_data.py --profile neiso).
+Branch: claude/capx-d94-fc6-driver-battery, fresh off origin/main.
+Authority: OWNER RULING Q67 (2026-09-24, capx ledger §0bj / §3): "Charter D94 now."
+Binding charter: docs/handoffs/capx-director-prompt-pack-2026-08.md "D94".
+
+WHY. capx D92 (docs/handoffs/FINDING-capx-d92-2026-09-10.md §4) found that the pre-D77 CCS
+emission-rate seam SUPPRESSED the model's carbon response. The FC-6 paired-P1 margin went from 10.50 to
+50.92 Mt when re-based on post-D77 arms. D92 re-based the PAIRED half of FC-6 on `neiso-t3` and
+explicitly carried the DRIVER-BATTERY input byte-identical (its PRECOMMIT §1.5):
+  results/ff-t3-neiso-golden/bau-d46/fc6/driver-battery-neiso-2026-09-03.json
+That is the T1.6 ladder (RPS/ACP vs VRE supply, rungs vre_short / vre_long, 2026-2050), solved
+2026-09-03 on the pre-D77 basis. Both rungs read rps_dual_over_acp = 1.0, and FC-6 reports T1.6a/b as
+VACUOUS CAVEAT. D92 §9.8: "HAS NO LIVE OWNER." You are the owner. The director checked the scope:
+`neiso-t3` is the ONLY bare T3 verdict, so this is one battery on one verdict, not a board sweep.
+
+READ FIRST: FINDING-capx-d92 (§1.5, §4, §5, §6, §11) and PRECOMMIT-capx-d92-2026-09-10.md + Addenda
+A/B. Pay particular attention to §3 of the PRECOMMIT: `run_driver_battery.py --paired-arm` builds
+from reference_config UNPINNED and would solve a THIRD recipe. `neiso-t3`'s recipe carries two pins,
+ccs_retrofit_vom_adder 8.0 and ccs_retrofit_fixed_cost_co2_scaling False (the two UNIDENTIFIED DOF
+entries). Every rung you solve MUST carry both pins so the FC-6 block describes the same model the
+verdict describes. State in the PRECOMMIT exactly how you pass them.
+Also read scripts/run_driver_battery.py and scripts/forecast_verdict.py (--driver-battery).
+
+PART 1 — PRE-DECLARE, AND PUSH BEFORE ANY LP: docs/handoffs/PRECOMMIT-capx-d94-2026-09-24.md with the
+pinned recipe, the G-DRIFT plan (below), and graded-in-advance predictions per rung: co2_mt_total,
+retired_thermal_gw, reserve_margin_final, rps_dual_over_acp, and whether T1.6a/T1.6b stay vacuous.
+State direction AND rough magnitude. D92's standard: a prediction that can only be graded charitably
+is not a prediction, and a declared near-certainty is worth nothing and must be labelled as one.
+
+PART 2 — G-DRIFT. Form 4 on a recorded-key basis audits CONFIG drift only (D88, D90-R). D92's
+same-container control at a post-D77 HEAD returned exactly zero drift against d90-rescore. Your
+control is the committed `neiso-t3` primary (d92/base, key dd8203a8bf1546b9). If your rung
+configs differ from it by anything other than the rung override (entry_rate_limits) and fields that
+land at their frozen default, list every difference before solving. KEY INTERACTION: capx D93 is
+concurrently registering coal_mustrun_requires_measured_row in the cache key. Record whether your
+pinned SHA contains D93's registration. Either side is acceptable. Recording it is not optional.
+
+PART 3 — SOLVE, IN SHARDS (rule 32 [R-SHARD]: this session NEVER runs an LP). Two rungs, and each is
+ONE indivisible 2026-2050 invocation (a forecast horizon is an evolution chain: rule 12, and rule 36
+[R-YEAR-ISOLATION] (c) leaves it unsharded by year). Launch the two rungs as two concurrent shards
+via mcp__Claude_Code_Remote__create_session, following rule 32(c) to the letter: source_revision =
+your pushed PRECOMMIT's FULL 40-char SHA, and the first hard stop is `git rev-parse HEAD` == that
+sha. No rebase, pull or sync. Each shard gets its own --out-dir
+results/ff-t3-neiso-golden/d94/<rung>/ and its own branch, and pushes its FULL bundle under rule 34
+(the .gitignore negation plus a plain `git add`, never `-f`, never `git add -A`). It edits nothing
+under src/ or scripts/ and never touches frontend/data/**. "A shard that stops with a clear report is
+a SUCCESS; a shard that repairs infrastructure is a FAILURE." Each leg is measured at ~30-47 min, so
+state that budget in the shard prompt (rule 32(b): longer single shard, never a fan-out). Tell each
+shard to report container preflight / memory peak lines, wall time and its key. The parent fetches,
+verifies (config signature + both pins), then archives each shard (rule 33). The parent lands what
+must survive on main before its PR merges (rule 33(f)).
+
+PART 4 — RE-SCORE. First re-run forecast_verdict.py over the COMMITTED inputs and confirm it
+reproduces the standing `neiso-t3` exactly (D90-R Addendum A.2's controlled-swap practice). Then swap
+ONLY --driver-battery for your new battery JSON and re-score. Preserve the prior at
+`neiso-t3-pre-d94` byte-equal (the suffixed-key convention; bare key = current). Follow D90-R
+Addendum B's FC-7 four-clause rule literally if FC-7 moves. Score and register AFTER your final
+rebase. A rebase after scoring re-stamps `scored_at_sha` via an artifact-only re-score before merge.
+You are the SOLE writer of frontend/data/forecast/ff-verdicts.json this window.
+
+REPORT at full magnitude, both directions: per rung, the pre-D77 (2026-09-03) → post-D77 value of
+every battery metric; whether T1.6a/b stay vacuous (and, if the ACP still caps the dual at 1.0 in
+both rungs, say that the ladder CANNOT discriminate on this basis, and name what would); and the
+verdict transition. RULE 31 [R-RETAIN]: never rm a solved bundle; ask the promotion question in your
+close. Rule 27: blob-verify every file of 300+ lines. If you defer anything, name a LIVE owner or state
+that none exists.
+EXIT: docs/handoffs/FINDING-capx-d94-2026-09-24.md leading with the verdict transition, the
+predictions graded, and the per-rung table. Open a PR to main.
+```
