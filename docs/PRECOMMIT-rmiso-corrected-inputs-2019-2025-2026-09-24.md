@@ -224,3 +224,37 @@ auto-PR off. Each pushes its bundle (with `dispatch/<Y>_P1.parquet`) plus the
 | 2024 | `session_01Pd1oeu1tqT6WE67XryYtqk` | `claude/rmiso-2024-b` |
 
 2022 (`session_01FSntQEmqV27LX5p6cHVYMn`) was still actively solving (P0 25.5 min) and was left alive.
+
+## 9. ADDENDUM — arm B: `mid_vintage_exit_carry` (written after run A scored; §1–§8 unchanged)
+
+**Run A is registered as solved** (`2026-09-24-rmiso-corrected-inputs`, bundle
+`results/calibration/rmiso_span`, legs §7/§8) and its numbers stand at full magnitude in the RESULT.
+
+**Why an arm B.** Scoring run A surfaced 2019 C1 COAL_BIT −13.17 TWh and a −3.09 TWh 2020 nuclear
+move. MISO's own matrix cell for `mid_vintage_exit_carry` (SPP-48, recorded before this lane)
+already names the cause: under `eia860_vintage_tracks_solve_year` a plant that retires DURING the
+vintage year is absent from both of that vintage's sheets. My §2.2 rule-19 check tested for
+DUPLICATE units and could not see MISSING ones. That was a defect in my phase 0, not a finding
+about the residual. The carry is the documented companion of the parent flag F1 armed. It has
+zero free parameters (each exit month is the plant's own EIA-860 retirement field) and it
+REPLACES a hole rather than stacking (rule 19). Zero-LP census of what it injects (`load_retired_within_window`, carry on vs off):
+
+| year | units | MW | largest |
+|---|---:|---:|---|
+| 2019 | 33 | 3,094 | Coffeen 895, Havana 411, Duck Creek 410, Presque Isle 359, HMP&L 312 |
+| 2020 | 28 | 1,027 | Duane Arnold (nuclear) 601, NRG Sterlington 113 |
+| 2021 | 20 | 1,504 | Dolet Hills 635, Genoa 308, R Gallagher 280 |
+| 2022 | 12 | 2,831 | Palisades (nuclear) 768, E D Edwards 560, Meramec 835 (all units), Trenton Channel 495 |
+| 2023–2025 | 0 | 0 | — |
+
+The basis is rule 14 (these plants ran for part of the year and the model deleted them), not the
+residual. Arm B is reported whether it helps or hurts any gate.
+
+**Recipe B** = recipe A + `mid_vintage_exit_carry=true`. Everything else is identical. Seven shards, one
+per year. 2023–2025 inject nothing, so those legs must reproduce run A's class totals (a
+determinism check; any difference is reported). The shard check runs with
+`--extra-flag mid_vintage_exit_carry`. Branches `claude/rmiso-b-<Y>`, out-dirs
+`results/calibration/rmiso_b_<Y>`. The decision rule is §5, unchanged. Run A's train-tier regression (2023 C1
+CC_REGULAR −10.38 TWh, C3a +10.0 %) is NOT addressed by arm B (0 MW there). Its zero-LP
+localization is a vintage CC-membership change (vintage_2023 carries −488 MW raw gas_cc vs the
+canonical snapshot: Magnolia Power −679, Edwardsport −481, Cottonwood +565). It is reported and routed.

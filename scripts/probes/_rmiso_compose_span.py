@@ -129,6 +129,8 @@ MUST_AGREE = (
     "unit_outage_short_windows_gas",
     "unit_partial_outage_windows",
     "unit_outage_maxgen_events",
+    # R-MISO arm B (PRECOMMIT §9): the SPP-48 mid-vintage-year exit carry.
+    "mid_vintage_exit_carry",
 )
 
 #: Fields the DATA forces to differ, with the value each leg must carry. Stated

@@ -182,7 +182,16 @@ def main() -> int:
     ap.add_argument("--leg", required=True)
     ap.add_argument("--year", type=int, required=True)
     ap.add_argument("--log", required=True, help="the leg's solve log")
+    ap.add_argument(
+        "--extra-flag",
+        action="append",
+        default=[],
+        help="an additional pre-registered ScenarioConfig flag the arm sets False -> True "
+        "(arm B: mid_vintage_exit_carry, PRECOMMIT §9)",
+    )
     args = ap.parse_args()
+    for name in args.extra_flag:
+        EXPECTED[name] = (False, True)
     leg = ROOT / args.leg
     ok = check_recipe(leg, args.year)
     ok &= check_vintage(args.year)
