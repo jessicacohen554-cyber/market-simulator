@@ -168,3 +168,13 @@ drops them from the benchmark and the injection, but not from the vintage-source
 The 2023 C1 rows still pass, and the defect is reported at full magnitude here. The repair (LP fleet
 membership follows the EIA-930 BA boundary by date, together with PowerSouth's 2021-09-01 join) and a
 2023 re-solve ride with the 2019–2022 legs.
+
+**Third rebase, onto `main` @ `a669e4a4` (2026-09-25).** New solve-path hunks since `9d450455`, all
+INERT for SOCO:
+
+| hunk | reason |
+|---|---|
+| `scenarios.py` `COAL_SIGMOID_DEFAULTS` MISO / PJM rows re-derived (R-MISO) | looked up by `(config.iso, supply)`; no SOCO row moved |
+| `model/interchange/spec.py` 2019 seam ladders | MISO's priced seams; SOCO serves measured `Total interchange` |
+| `fuel_trajectories.py` / `capacity_market.py` 2019 RGGI + PJM zone rows | PJM / RGGI only |
+| `_validation-source/actual_lmp*` | MISO price reference |
