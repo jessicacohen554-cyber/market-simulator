@@ -6654,3 +6654,12 @@ still runs to its rail (all-coal +23.7 TWh, COAL_BIT +21.89 vs +19.23, CC_REGULA
 the pjm-168 offer-ordering finding re-earned on clean inputs. Partial-derate not armed (0 windows at HEAD);
 F2 std/short-coal re-derive measured, not installed (owner decision). Promotion question OPEN.
 Record: `docs/RESULT-r-pjm-corrected-inputs-2019-2025-2026-09-24.md`.
+
+## R-PJM-2 — 2026-09-25 — PROMOTED: the RGGI keeper on corrected inputs, 2019–2025
+
+Owner ruling "Yes promote". New keeper `2026-09-25-pjm-r-pjm-2` (bundle `rpjm2_span`): the h22 RGGI recipe plus
+year-matched EIA-860 and measured coal/ST/CC heat rates, 2019 added (2019 RGGI rows landed: MD/DE, 5.97 $/t).
+Determination unchanged year-for-year vs h22 on the same benchmark: 2023–25 NOT-YET on C1 alone (CC_REGULAR
+2024 −14.36 TWh vs −13.61). 2021 coal over-run persists (+25.70 TWh COAL_BIT), CC −17.42 newly FAIL; 2020 improves
+(+29.23 → +21.45). Pruned h22 span/touchpoint and r-pjm-corrected (rule 35). Record:
+`docs/RESULT-r-pjm-2-rggi-keeper-corrected-inputs-2026-09-25.md`.
