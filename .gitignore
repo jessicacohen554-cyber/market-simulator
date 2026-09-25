@@ -3524,3 +3524,8 @@ results/calibration/rsocob2_20*/
 
 # R-PJM2-CS per-year shard legs: kept out of main (rule 32(d)); the composite rpjm2cs_span is registered.
 results/calibration/rpjm2cs_20*/
+
+# miso-272 per-year arm legs (shards push them on their own branches; the parent keeps them out of main
+# and composes miso272_span from them, rule 32(d)/34(a)). Kept on local disk until the owner rules (rule 31).
+results/calibration/miso272_arm_*/
+results/calibration/miso272b_arm_*/

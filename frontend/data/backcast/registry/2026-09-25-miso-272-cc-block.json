@@ -1,0 +1,19 @@
+{
+  "id": "2026-09-25-miso-272-cc-block",
+  "label": "miso 272 cc block",
+  "date": "2026-09-25",
+  "shorthand": "miso-272-cc-block",
+  "definition": "miso-272 arm 2019: CC block summer rating",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-09-25-miso-272-cc-block.js",
+  "bundle": "results/calibration/miso272_span"
+}

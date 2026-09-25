@@ -282,6 +282,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # armed run carries a different FLEET (one unit's fuel/class/VOM/CO2/EFORd
     # move) and so gets a distinct key.
     "cc_steam_part_reclass",
+    # Combined-cycle block rated on ONE row (miso-272, default off): dropped
+    # from the hash at its default so every pre-existing cached run keeps its
+    # key; an armed run carries a different FLEET (a block's blank-CT nameplate
+    # fill is replaced by its reported block rating) and so gets a distinct key.
+    "cc_block_summer_rating",
     # T1-X crossover boundary + forward AEO gas path (FF-0E, plan §2.2): dropped
     # from the hash at their defaults (None / "mid") so every pre-existing
     # cached run keeps its key; a crossover run sets a non-None boundary and so
@@ -2100,6 +2105,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "egrid_steam_collapse_heat_rates": "False",
     "cc_steam_part_capacity": "False",
     "cc_steam_part_reclass": "False",
+    "cc_block_summer_rating": "False",
     "crossover_forward_year": "None",
     "crossover_forward_gas_path": "'mid'",
     "crossover_solve_year_weather": "False",
@@ -5761,6 +5767,37 @@ class ScenarioConfig:
     # to changed conditions; no residual is consulted and no share is estimated.
     # See results/calibration/FINDING-neiso83-stonybrook-ca1-2026-08-05.md.
     cc_steam_part_reclass: bool = False
+
+    # Combined-cycle block rated on ONE row (miso-272; default OFF,
+    # byte-identical off). Some EIA-860 filers report a combined-cycle block's
+    # WHOLE net summer rating on its steam-part (``CA``) row and leave every
+    # gas-turbine (``CT``) sibling's summer rating blank; the loader's
+    # "summer, else nameplate" rule then carries the block's rating PLUS each
+    # blank CT's nameplate. MISO 1004 Edwardsport (IGCC): 555 MW reported
+    # (595 in 2019-2022) against a 331.5 MW CA nameplate, CTs blank, so the
+    # fleet carried 1,036-1,068 MW for a 555-595 MW machine in every year.
+    # When True, a block qualifies iff (same plant, same non-empty ``Unit
+    # Code``, operating) it has >= 1 CT and >= 1 CA row, every CT summer is
+    # blank, every CA summer is positive and at least one exceeds its own
+    # nameplate (impossible for one generator — EIA-860's schema bound), and
+    # no CA row is NG-fuelled; the block's reported total is then allocated
+    # across its rows by nameplate (``fleet.eia860._cc_block_summer_ratings``).
+    # NG blocks are EXCLUDED (miso-272 v2): the merchant-CC guard and the
+    # ``cc_capacity_reconcile`` cap already bound them by MEASURED CAMPD
+    # capability, which outranks the published rating — MISO's six NG blocks
+    # (55218, 55220, 55380, 55418, 55467, 55620) run above their summer rating
+    # 51-4,143 h/yr (rule 13; v1 cut them and under-rated them). Rule 19
+    # [R-ONE-MECH]: one construction per plant. MISO reach 2019-2025: 1004
+    # Edwardsport only (syngas IGCC; CAMPD max 480 MW gross corroborates the
+    # 555 MW block rating). Rule 13/14: every number is an
+    # EIA-860 field of the vintage loaded, regenerating for any year; ZERO free
+    # parameters. Requires ``unit_outage_dispatched_bin_denominator`` under a
+    # non-ERCOT historic outage overlay (enforced at the point of use,
+    # ``fleet.arrays``): the reconstructed outage-capacity map is built without
+    # this reconciliation and would divide by the phantom. Implemented on the
+    # EIA-860 parquet path only (the CSV override / clean seam raise). See
+    # docs/PRECOMMIT-miso272-cc-block-summer-rating-2026-09-25.md.
+    cc_block_summer_rating: bool = False
 
     # Forward emission-control retrofit channel (Tier 2; default OFF).
     # docs/handoffs/emission-control-retrofit-forward-channel-2026-07.md

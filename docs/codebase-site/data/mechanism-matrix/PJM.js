@@ -27,6 +27,7 @@ window.MECH_MATRIX_SHARDS.PJM = {
   cells: {
     cc_steam_part_capacity: { cell: "." },
     cc_steam_part_reclass: { cell: "." },
+    cc_block_summer_rating: { cell: "U" },
     use_campd_bins: { cell: "K" },
     coal_subclass_at_load: { cell: "O", ev: "COAL-SUB (2026-09-25) zero-LP proof: 2023-2025 byte-identical; 2019-2022 move the former generic-bucket plants (11 in 2019, 5,373 MW) plus, 2019-2021, reliability-floor min_gen on limb-mates (876, 879; 3118/3943/3944 in 2019) \u2014 a counterfactual rebuild handing the old code the same ranks reproduces the new fleet exactly. The recipe's offer_curve_overrides.COAL (a DOF-ledger entry) reached only generic-bucket plants and is retired by the translation. Carried by the next PJM keeper re-solve." },
     thermal_tranche_artifact_coverage: { cell: "O", ev: "xiso-5 §3 (ST_GAS 0/10 code-proven vintage) + §4.3; xiso-6 2026-08-25 (FINDING-xiso6-tranche-vintage-sidecar-2026-08-25.md): vintage sidecar backfilled + arm-over-gap guard armed at bins_to_fleet — cell UNCHANGED" },

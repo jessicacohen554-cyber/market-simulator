@@ -1718,6 +1718,199 @@ def _cc_steam_part_generators(eia860_dir: Path) -> frozenset[tuple[int, str]]:
     return frozenset(out)
 
 
+#: Combined-cycle prime movers that make up a block for the block-summer-rating
+#: reconciliation (:func:`_cc_block_summer_ratings`): the gas turbine (``CT``)
+#: and the steam part (``CA``) of a combined cycle, per EIA-860's own codes.
+_CC_BLOCK_PRIME_MOVERS: tuple[str, str] = ("CT", "CA")
+
+
+@lru_cache(maxsize=16)
+def _cc_block_summer_ratings(eia860_dir: Path) -> dict[tuple[int, str], float]:
+    """``{(plant_code, generator_id): MW}`` for blocks rated on ONE row.
+
+    ``ScenarioConfig.cc_block_summer_rating`` (miso-272). Some EIA-860 filers
+    report a combined-cycle block's whole net summer rating on the steam part's
+    (``CA``) row and leave every gas-turbine (``CT``) sibling's summer rating
+    blank. The loader's ``pmax = net summer, else nameplate`` rule then carries
+    the block TWICE: once as the ``CA`` row's block total, and again as each
+    blank ``CT`` row's nameplate fill. The IGCC convention is the clearest
+    case — MISO 1004 Edwardsport's ``ST``/``CA`` row reports 555 MW (595 in
+    2019-2022) against its own 331.5 MW nameplate while ``CT1``/``CT2``
+    (240.6 MW each) are blank, so the fleet carried a 1,036 MW machine for a
+    555 MW block, the 481 MW excess being a phantom that has never existed.
+
+    Reads the raw EIA-860 operable sheet in ``eia860_dir`` (the processed
+    generator parquet does not carry ``Unit Code``; the same bridge as
+    :func:`_cc_steam_part_generators`). A block is the operating (``OP``) rows
+    of one ``(plant, Unit Code)`` with prime mover in
+    :data:`_CC_BLOCK_PRIME_MOVERS`, and it qualifies iff ALL of:
+
+    * a non-empty ``Unit Code`` (EIA-860's own statement the rows are one
+      machine), at least one ``CT`` row and at least one ``CA`` row;
+    * EVERY ``CT`` row's summer rating is blank or non-positive;
+    * EVERY ``CA`` row reports a positive summer rating, and at least one
+      exceeds its own nameplate by more than :data:`_CC_NAMEPLATE_GUARD_TOL` —
+      a physical impossibility for a single generator (EIA-860's schema:
+      summer capability <= nameplate), so the row can only be the block's;
+    * NO ``CA`` row's ``Energy Source 1`` is ``NG``. A natural-gas block is
+      already owned by the merchant-CC guard
+      (:func:`_reconcile_cc_pmax_to_nameplate`) and the ``cc_capacity_reconcile``
+      demonstrated-peak cap, which bound it by its MEASURED CAMPD capability —
+      and measured capability outranks the published rating here: MISO's six
+      NG blocks run above their reported summer rating for 51-4,143 hours a
+      year (CAMPD 2023, gross x 0.97), so replacing the measured bound with the
+      published one would under-rate them (rule 13; miso-272 v1, RESULT §3).
+      Rule 19 [R-ONE-MECH]: one construction per plant, and for gas blocks it
+      is the measured one. What remains is the block the guard cannot reach —
+      MISO 1004 Edwardsport's syngas IGCC, whose CAMPD record (max 480 MW
+      gross, 2023) corroborates the 555 MW block rating and refutes the
+      1,036 MW the fill carried.
+
+    The block's reported summer total (the sum of its ``CA`` ratings) is then
+    allocated across ALL of the block's rows in proportion to nameplate, so
+    each unit keeps its own share of the block — the share the CAMPD outage
+    extracts and every per-unit consumer key on — and the block sums to exactly
+    what EIA-860 reports. Zero free parameters: every number is an EIA-860
+    field of the vintage being loaded (rules 21/24), and the construction
+    regenerates for any vintage and responds to a re-rate (rule 13). Rule 14
+    ``[R-ACCURATE]``'s misalignment exception, reconciled rather than guessed:
+    the published datum is right, it is simply filed on a block boundary while
+    the loader reads it on a generator boundary.
+
+    Rule 19 ``[R-ONE-MECH]``: this replaces the nameplate fill at its source,
+    so the downstream merchant-CC guard (:func:`_reconcile_cc_pmax_to_nameplate`)
+    and the ``cc_capacity_reconcile`` cap see a block already at its published
+    rating and do not fire on it — one construction binds per plant, never two.
+
+    Returns an empty dict when the sheet is absent or unreadable, so the fleet
+    is unchanged.
+    """
+    path = Path(eia860_dir) / "eia860_generator_operable.parquet"
+    if not path.exists():
+        return {}
+    cols = [
+        "Plant Code",
+        "Generator ID",
+        "Prime Mover",
+        "Unit Code",
+        "Status",
+        "Nameplate Capacity (MW)",
+        "Summer Capacity (MW)",
+        "Energy Source 1",
+    ]
+    try:
+        raw = pd.read_parquet(path, columns=cols)
+    except Exception:
+        logger.warning(
+            "EIA-860 operable sheet at %s is unreadable — no CC block summer "
+            "ratings resolved",
+            path,
+        )
+        return {}
+    raw = raw.copy()
+    raw.columns = [str(c).strip() for c in raw.columns]
+    pm = raw["Prime Mover"].astype(str).str.strip().str.upper()
+    uc = raw["Unit Code"].astype(str).str.strip()
+    status = raw["Status"].astype(str).str.strip().str.upper()
+    has_uc = (uc != "") & (uc.str.lower() != "nan")
+    keep = pm.isin(_CC_BLOCK_PRIME_MOVERS) & has_uc & (status == "OP")
+    blk = pd.DataFrame(
+        {
+            "plant": pd.to_numeric(raw["Plant Code"], errors="coerce"),
+            "gen": raw["Generator ID"].astype(str).str.strip(),
+            "pm": pm,
+            "uc": uc,
+            "np": pd.to_numeric(raw["Nameplate Capacity (MW)"], errors="coerce"),
+            "su": pd.to_numeric(raw["Summer Capacity (MW)"], errors="coerce"),
+            "es": raw["Energy Source 1"].astype(str).str.strip().str.upper(),
+        }
+    )[keep]
+    blk = blk[blk["plant"].notna()]
+    out: dict[tuple[int, str], float] = {}
+    n_blocks = 0
+    for (plant, _unit), grp in blk.groupby(["plant", "uc"], sort=True):
+        ct = grp[grp["pm"] == "CT"]
+        ca = grp[grp["pm"] == "CA"]
+        if ct.empty or ca.empty:
+            continue
+        if (ct["su"].fillna(0.0) > 0.0).any():
+            continue  # a CT carries its own rating: component filing, not block
+        if not (ca["su"].fillna(0.0) > 0.0).all():
+            continue
+        if not (ca["su"] > ca["np"] * _CC_NAMEPLATE_GUARD_TOL).any():
+            continue  # no row reports more than its own nameplate
+        if (ca["es"] == "NG").any():
+            continue  # gas block: owned by the measured CC guard / cap (rule 19)
+        np_sum = float(grp["np"].fillna(0.0).sum())
+        if np_sum <= 0.0:
+            continue
+        total = float(ca["su"].sum())
+        n_blocks += 1
+        for _, row in grp.iterrows():
+            share = float(row["np"]) / np_sum if pd.notna(row["np"]) else 0.0
+            out[(int(plant), str(row["gen"]))] = total * share
+    logger.info(
+        "EIA-860: %d combined-cycle block(s) rated on one row resolved for the "
+        "cc_block_summer_rating reconciliation (%s)",
+        n_blocks,
+        Path(eia860_dir).name,
+    )
+    return out
+
+
+def _apply_cc_block_summer_rating(
+    df: pd.DataFrame, eia860_dir: Path, iso: str
+) -> pd.DataFrame:
+    """Rewrite block rows' ``net_summer_capacity_mw`` to their allocated rating.
+
+    See :func:`_cc_block_summer_ratings`. Only rows present in the resolved map
+    move; every other row is returned byte-identical. Logs one line per plant
+    naming the MW the reconciliation removes relative to the loader's
+    ``summer, else nameplate`` fill.
+    """
+    ratings = _cc_block_summer_ratings(Path(eia860_dir))
+    if not ratings or df.empty:
+        return df
+    keys = list(
+        zip(
+            pd.to_numeric(df["plant_id"], errors="coerce"),
+            df["generator_id"].astype(str).str.strip(),
+        )
+    )
+    new = [ratings.get((int(p), g)) if pd.notna(p) else None for p, g in keys]
+    hit = np.array([v is not None for v in new], dtype=bool)
+    if not hit.any():
+        return df
+    df = df.copy()
+    summer = pd.to_numeric(df["net_summer_capacity_mw"], errors="coerce")
+    nameplate = pd.to_numeric(df["nameplate_capacity_mw"], errors="coerce")
+    before = summer.where(summer > 0.0, nameplate).fillna(0.0)
+    after = pd.Series([v if v is not None else np.nan for v in new], index=df.index)
+    df.loc[hit, "net_summer_capacity_mw"] = after[hit]
+    moved = (
+        pd.DataFrame(
+            {
+                "plant": pd.to_numeric(df["plant_id"], errors="coerce")[hit],
+                "before": before[hit],
+                "after": after[hit],
+            }
+        )
+        .groupby("plant")[["before", "after"]]
+        .sum()
+    )
+    for plant, row in moved.iterrows():
+        logger.info(
+            "%s: CC block summer rating (plant %d): %.1f MW carried -> %.1f MW "
+            "reported block rating (%.1f MW nameplate-fill phantom removed)",
+            iso,
+            int(plant),
+            float(row["before"]),
+            float(row["after"]),
+            float(row["before"] - row["after"]),
+        )
+    return df
+
+
 def cc_steam_part_generators(
     eia860_dir: Path | None = None,
 ) -> frozenset[tuple[int, str]]:
@@ -1860,6 +2053,7 @@ def _load_fleet_from_parquet(
     cc_steam_part_capacity: bool = False,
     cc_steam_part_reclass: bool = False,
     egrid_family_heat_rates: bool = False,
+    cc_block_summer_rating: bool = False,
 ) -> list[Generator] | None:
     """Load an ISO's fleet from the committed EIA-860 generator parquet.
 
@@ -1867,6 +2061,9 @@ def _load_fleet_from_parquet(
     are filtered to the ISO via their ``balancing_authority_code``. Returns
     ``None`` when the parquet is missing or yields no thermal generators.
     ``apply_cc_summer_guard`` is forwarded to :func:`_rows_to_generators`.
+    ``cc_block_summer_rating`` (``ScenarioConfig.cc_block_summer_rating``)
+    reconciles combined-cycle blocks rated on one row before the row loop —
+    see :func:`_cc_block_summer_ratings`. Default off and byte-identical off.
     """
     if not parquet_path.exists():
         return None
@@ -1918,6 +2115,15 @@ def _load_fleet_from_parquet(
                 )
             )
             df["operating_month"] = [months.get(k) for k in keys]
+
+    # Combined-cycle blocks rated on ONE row (config.cc_block_summer_rating,
+    # miso-272; default off, byte-identical off): the block's reported summer
+    # total is allocated across its rows by nameplate BEFORE the row loop's
+    # "summer, else nameplate" fill can add the blank CT rows on top of it.
+    # Upstream of the CC guard, so the guard sees a reconciled block and never
+    # fires on it (rule 19 [R-ONE-MECH]).
+    if cc_block_summer_rating:
+        df = _apply_cc_block_summer_rating(df, parquet_path.parent, iso)
 
     generators = _rows_to_generators(
         df,
@@ -2293,6 +2499,7 @@ def load_fleet_from_csv(
     cc_steam_part_reclass: bool = False,
     egrid_family_heat_rates: bool = False,
     egrid_steam_collapse_heat_rates: bool = False,
+    cc_block_summer_rating: bool = False,
 ) -> list[Generator]:
     """Load an ISO's thermal generation fleet.
 
@@ -2393,6 +2600,16 @@ def load_fleet_from_csv(
             construction covers (rule 19). See
             :func:`apply_egrid_steam_collapse_heat_rates`. Default off and
             byte-identical off.
+        cc_block_summer_rating: When True (``ScenarioConfig.
+            cc_block_summer_rating``), a combined-cycle block whose EIA-860
+            filing reports the whole block's summer rating on its steam-part
+            row and leaves every gas-turbine row blank is carried at that
+            reported rating, allocated across the block's rows by nameplate,
+            instead of the rating PLUS the blank rows' nameplate fill. See
+            :func:`_cc_block_summer_ratings`. Implemented on the EIA-860
+            parquet path only; the per-ISO CSV override and the clean seam
+            raise rather than silently ignore it (rule 24). Default off and
+            byte-identical off.
 
     Returns:
         The ISO's thermal fleet as a list of :class:`Generator` objects.
@@ -2413,6 +2630,12 @@ def load_fleet_from_csv(
 
     csv_path = data_dir / f"generators_{iso.lower()}.csv"
     source: Path | None
+    if cc_block_summer_rating and (csv_path.exists() or _use_clean()):
+        raise NotImplementedError(
+            "cc_block_summer_rating is implemented on the EIA-860 parquet path "
+            "only; the per-ISO CSV override / clean fleet seam carries no Unit "
+            "Code to identify a block (rule 24: refuse rather than no-op)"
+        )
     if csv_path.exists():
         # Per-ISO override CSV always wins (an explicit manual escape hatch),
         # regardless of the clean seam.
@@ -2478,6 +2701,7 @@ def load_fleet_from_csv(
             cc_steam_part_capacity=cc_steam_part_capacity,
             cc_steam_part_reclass=cc_steam_part_reclass,
             egrid_family_heat_rates=egrid_family_heat_rates,
+            cc_block_summer_rating=cc_block_summer_rating,
         )
         if from_parquet is None:
             raise FileNotFoundError(
