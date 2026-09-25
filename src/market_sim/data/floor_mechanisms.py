@@ -320,6 +320,7 @@ MECH_ABLATION_KEPT: frozenset[int] = D2_EXEMPT_MECHS | {MECH_FIRM_IMPORT, MECH_N
 EXTRA_ZERO_FORCING_FIELDS: dict[str, object] = {
     "wefor_residual": None,
     "wefor_residual_groups": None,
+    "wefor_residual_short_screened_coal": False,
     "wefor_multiplier": 1.0,
 }
 

@@ -2034,6 +2034,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # keeper's True) is non-default and keeps its key unchanged. SHARED field
     # -- very end, per HOUSE-3.
     "coal_mustrun_requires_measured_row",
+    # Short-screened coal WEFOR relief (miso-273, default off): dropped from
+    # the hash at its default so every pre-existing cached run keeps its key;
+    # an armed run carries different coal availability and gets a distinct
+    # key. SHARED field -- very end, per HOUSE-3.
+    "wefor_residual_short_screened_coal",
 )
 
 # The DEFAULT each ``_CACHE_KEY_OPTIONAL_FIELDS`` member is registered at, as the
@@ -2756,6 +2761,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by SPP-71 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "coal_sync_ensemble_level": "False",
+    # Added by miso-273 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
+    "wefor_residual_short_screened_coal": "False",
 }
 
 
@@ -12530,6 +12538,27 @@ class ScenarioConfig:
     # availability-capped; CC was already over; coal relief just lets gas
     # displace it).
     wefor_residual_groups: frozenset[str] | None = None
+
+    # Short-screened coal WEFOR relief (miso-273, default off). The statistical
+    # WEFOR carries every forced outage, sub-5-day ones included; for a coal
+    # unit-year that passed the short family's SHORT_BASELOAD_CF when-operable
+    # guard, those sub-5-day stops are MEASURED by unit_outage_short_windows, so
+    # the full statistical term counts them twice (rule 19 [R-ONE-MECH]) — the
+    # coal twin of miso-271's gas finding. When True, each coal bin takes
+    # wefor_eff = (1 - s) * wefor + s * min(wefor, wefor_residual), where s is
+    # the bin's screened capacity share (the screened units' extract MW over the
+    # dispatched bin's pmax, clipped at 1 — the short overlay's own numerator and
+    # denominator; outages.short_screened_coal_shares). Unscreened (cycling)
+    # coal keeps the full statistical term. Reads the derive output
+    # campd-unit-outages-short-screened-<ISO>.csv (derive_campd_unit_outages.py
+    # --short-windows --emit-screened-set; rule 23: new output, same source,
+    # same guard). ZERO free parameters: it reuses wefor_residual, whose value
+    # is identified by the caiso-187 residual formula max(0, W - X) on the ISO's
+    # own fleet (docs/PRECOMMIT-miso273-short-screened-coal-wefor-2026-09-25.md).
+    # Requires outage_source="historic", wefor_residual set,
+    # unit_outage_short_windows and unit_outage_dispatched_bin_denominator
+    # (fail-closed in fleet.arrays). Non-ERCOT only.
+    wefor_residual_short_screened_coal: bool = False
 
     # Legacy gas-steam (ST_GAS) summer reliability treatment. When
     # gas_st_summer_mustrun > 0, the base (non-peak) ST_GAS tranches carry a

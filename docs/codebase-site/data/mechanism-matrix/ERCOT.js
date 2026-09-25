@@ -148,6 +148,7 @@ window.MECH_MATRIX_SHARDS.ERCOT = {
     fleet_zone_vintage_coords: { cell: "U", ev: "PJM-NEXT (2026-09-25) added the row; this ISO\u2019s exposure is not measured \u2014 U: UNTESTED. Rule 28(d): no verdict transfers." },
     nyiso_ldc_generator_delivered_gas: { cell: ".", ev: "n/a — NYISO-exclusive (config.iso gate); row minted by NYISO-STGAS-2023 (2026-09-25). Rule 28(d): nothing transfers." },
     wefor_residual: { cell: "K", ev: "registration only — read from the ERCOT keeper's run_config.json (0.02); no ERCOT evidence, no verdict" },
+    wefor_residual_short_screened_coal: { cell: "U" },
     cc_winter_capability_basis: { cell: "U" },
     cc_capacity_reconcile: { cell: "U" },
     cc_capacity_reconcile_path: { cell: "U" },
