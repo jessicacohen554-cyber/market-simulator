@@ -3521,3 +3521,6 @@ results/calibration/rcaiso2_ccid_*/
 results/calibration/nwppnext_20[0-9][0-9]/
 # R-SOCO-B2 shard legs: kept out of main (rule 32(d)); composite registered
 results/calibration/rsocob2_20*/
+
+# R-PJM2-CS per-year shard legs: kept out of main (rule 32(d)); the composite rpjm2cs_span is registered.
+results/calibration/rpjm2cs_20*/

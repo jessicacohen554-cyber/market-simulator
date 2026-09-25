@@ -52,7 +52,12 @@ def check_recipes(legs: dict[str, list[int]]) -> None:
         (year,) = years
         cfg = json.loads((CAL / name / "run_config.json").read_text())
         inc = json.loads((KEEPER / f"run_config_{year}.json").read_text())
-        a, k = cfg["scenario_config"], inc["scenario_config"]
+        a, k = cfg["scenario_config"], dict(inc["scenario_config"])
+        # The keeper's resolved offer curve still names the legacy bare COAL
+        # band; COAL-SUB drops it (every subclass carries its own band).
+        k["offer_curve_by_group"] = fold_legacy_coal_key(
+            dict(k.get("offer_curve_by_group") or {}), covered=COAL_CLASSES
+        )
         diff = {
             x: (k.get(x), a.get(x))
             for x in set(a) | set(k)

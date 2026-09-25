@@ -36,3 +36,10 @@ merged, so it is an ancestor of `main`). Five v1 shards hit hard stop 1 and stop
 - 2021 / 2024 / 2025 v2: solving. 2022 / 2023 v2: waiting for container capacity.
 - v3 relaunch for 2019 / 2020 adds the hydro-modes curate step and a one-heavy-process rule:
   2019 `session_01CNy1qVn74MRUpx1Qr8MV3V`, 2020 `session_012qwxpdikWgHduvgJhSRc9V`.
+
+## Legs landed (verified 2026-09-25 05:0xZ)
+
+| year | shard commit (provenance) | files | recipe check | class TWh vs keeper |
+|---|---|---|---|---|
+| 2021 | `77877b565af55172c5a7530c6b13c980501fed90` | 17 (incl. `dispatch/2021_P1.parquet`) | OK (bare COAL folded) | COAL 16.97 → 0; COAL_BIT +11.25; COAL_PRB +4.98 (Waukegan); coal family total −0.73; CC_REGULAR +0.60 |
+| 2024 | `d4772ab2c1e7221d6477b3c9da105b80b310bc20` | 17 (incl. `dispatch/2024_P1.parquet`) | OK | every class byte-equal to the keeper (as G-DRIFT predicted) |
