@@ -3532,3 +3532,8 @@ results/calibration/miso272b_arm_*/
 results/calibration/_soco67/
 # soco-67 shard legs: kept out of main (rule 32(d)); composite soco67_span is what registers
 results/calibration/soco67_20[0-9][0-9]/
+# NWPP-NEXT-2 per-year shard legs (rule 32(d): only the composite reaches main).
+# Provenance (rule 33(d), not a recovery route): nwppnext2_2019 @ 04da2d426a6c753e32b7a1eec30944c4dbc36989,
+# nwppnext2_2021 @ 40419b9f2fcd6b047060028ca3325eeeb2495548; further legs recorded in the RESULT doc.
+results/calibration/nwppnext2_20*/
+results/calibration/nwppnext2h_20*/
