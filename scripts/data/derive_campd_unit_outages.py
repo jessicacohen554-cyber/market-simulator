@@ -1244,6 +1244,14 @@ def _write_outage_sidecar(
                         if getattr(args, "dark_unit_years", False)
                         else {}
                     ),
+                    # R-ERCOT-5: recorded only when set, same discipline, so a
+                    # --hour-grain companion's sidecar says so and every
+                    # pre-existing sidecar re-derives byte-identical.
+                    **(
+                        {"hour_grain": True}
+                        if getattr(args, "hour_grain", False)
+                        else {}
+                    ),
                     "no_inmerit_filter": bool(
                         getattr(args, "no_inmerit_filter", False)
                     ),

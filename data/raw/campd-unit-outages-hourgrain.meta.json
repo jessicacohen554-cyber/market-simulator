@@ -1,0 +1,52 @@
+{
+  "artifact": "campd-unit-outages-hourgrain.csv",
+  "artifact_rows": 6700,
+  "derive_invocation": {
+    "fullstop_override_cf": 0.02,
+    "fullstop_override_days": 5,
+    "high_load_pctl": 0.85,
+    "hour_grain": true,
+    "iso": "ERCOT",
+    "merit_order_guard": true,
+    "min_inmerit_hours": 24,
+    "min_outage_days": 5.0,
+    "mixed_gas_routing": false,
+    "no_inmerit_filter": false,
+    "partial_windows": false,
+    "per_unit_crosswalk": false,
+    "short_windows": false,
+    "years": [
+      2019,
+      2020,
+      2021,
+      2022,
+      2023,
+      2024,
+      2025,
+      2026
+    ]
+  },
+  "deriver": "scripts/data/derive_campd_unit_outages.py",
+  "observed_years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025,
+    2026
+  ],
+  "sidecar_schema_version": 1,
+  "windows_by_start_year": {
+    "2019": 825,
+    "2020": 972,
+    "2021": 998,
+    "2022": 744,
+    "2023": 601,
+    "2024": 734,
+    "2025": 655,
+    "2026": 316
+  },
+  "r_ercot5_carry_2018": "The 855 rows starting in 2018 are carried VERBATIM from campd-unit-outages.csv with empty outage_start_hour/outage_end_hour: the 2018 CAMPD unit vintage is gitignored (BLOAT-S2) so the deriver cannot re-detect them here, and the loader falls back to the day-granular reconstruction per row when the hours are null (outages.unit_outage_event_window). Whole-file base-column projection == the incumbent extract."
+}
