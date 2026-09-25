@@ -1,7 +1,7 @@
 {
   "as_reserve_formula": false,
   "as_reserve_withholding": false,
-  "basis_sha": "455e002177738e8291a84da08f76123336b7dabc",
+  "basis_sha": "422915ca0efe89475800617de6b6e2a83a0dbc02",
   "battery_dispatch_adder": 0.0,
   "btm_backfill_year": null,
   "caiso_asymmetric_path_ratings": null,
@@ -89,9 +89,13 @@
   "commitment_screen_coal": true,
   "committed_band_measured_basis": null,
   "composed_from": [
-    "rsoco_2023",
-    "rsoco_2024",
-    "rsoco_2025"
+    "rsocob2_2019",
+    "rsocob2_2020",
+    "rsocob2_2021",
+    "rsocob2_2022",
+    "rsocob2_2023",
+    "rsocob2_2024",
+    "rsocob2_2025"
   ],
   "ct_drag_overrides": {},
   "ct_intermediate_cf_threshold": null,
@@ -196,13 +200,17 @@
   "gas_offer_margin_zonal_anchor": false,
   "gas_offer_margin_zonal_anchor_vintage": false,
   "gas_prices": {
+    "2019": 2.57,
+    "2020": 2.03,
+    "2021": 3.72,
+    "2022": 6.45,
     "2023": 2.54,
     "2024": 2.19,
     "2025": 3.52
   },
   "gas_st_drag_overrides": {},
   "gas_st_netload_drag": false,
-  "git_sha": "455e0021",
+  "git_sha": "422915ca0",
   "highspy_version": "1.14.0",
   "hours": 8760,
   "hydro_backfill_year": 2024,
@@ -335,9 +343,9 @@
   "retiree_cems_cap": false,
   "scarcity_price_overlay": null,
   "shared_inputs": {
-    "campd": "../_shared/SOCO/campd-7300d70e0a25.parquet",
-    "eia923": "../_shared/SOCO/eia923-ed8b34e900d9.parquet",
-    "eia930": "../_shared/SOCO/eia930-af1df2c6e425.parquet",
+    "campd": "../_shared/SOCO/campd-4ca0922e7d18.parquet",
+    "eia923": "../_shared/SOCO/eia923-6cb26c5d3591.parquet",
+    "eia930": "../_shared/SOCO/eia930-d7140cd69033.parquet",
     "hydro_plant_modes": "../_shared/SOCO/hydro_plant_modes-ea00e49bf5be.parquet",
     "unit_outages": "../_shared/SOCO/unit_outages-62f21ae3c85d.parquet",
     "unit_outages_e923": "../_shared/SOCO/unit_outages_e923-05959454d2f7.parquet",
@@ -362,7 +370,7 @@
   "temp_derate_mean_anchored": false,
   "temp_derate_slope_ct_chp": null,
   "temp_derate_slope_st_chp": null,
-  "timestamp": "2026-09-24T17:54:06",
+  "timestamp": "2026-09-25T04:14:36",
   "tranche_startup_amortization": false,
   "tranche_startup_conditional_runs": false,
   "tranche_startup_measured_runs": false,
@@ -376,6 +384,10 @@
   "vre_curtailment_oversupply_allocation": null,
   "wind_ptc_vintage_offers": false,
   "years": [
+    2019,
+    2020,
+    2021,
+    2022,
     2023,
     2024,
     2025

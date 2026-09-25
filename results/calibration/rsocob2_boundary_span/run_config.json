@@ -35,11 +35,15 @@
     "ercot_dam_as_scarcity_threshold": 150.0,
     "ercot_rtordpa_overlay": false,
     "gas_prices": {
+      "2019": 2.57,
+      "2020": 2.03,
+      "2021": 3.72,
+      "2022": 6.45,
       "2023": 2.54,
       "2024": 2.19,
       "2025": 3.52
     },
-    "git_sha": "455e0021",
+    "git_sha": "422915ca0",
     "hours": 8760,
     "iso": "SOCO",
     "nyiso_dynamic_reserve_requirements": null,
@@ -56,15 +60,23 @@
     "td_loss_factor": 0.0,
     "temp_dependent_derate": false,
     "years": [
+      2019,
+      2020,
+      2021,
+      2022,
       2023,
       2024,
       2025
     ]
   },
   "composed_from": [
-    "rsoco_2023",
-    "rsoco_2024",
-    "rsoco_2025"
+    "rsocob2_2019",
+    "rsocob2_2020",
+    "rsocob2_2021",
+    "rsocob2_2022",
+    "rsocob2_2023",
+    "rsocob2_2024",
+    "rsocob2_2025"
   ],
   "environment": {
     "cache_key_path_roots": [
@@ -86,47 +98,91 @@
     "python_version": "3.11.15"
   },
   "git": {
-    "basis_sha": "455e002177738e8291a84da08f76123336b7dabc",
-    "branch": "claude/rsoco-2023",
+    "basis_sha": "422915ca0efe89475800617de6b6e2a83a0dbc02",
+    "branch": "claude/rsocob2-2019",
     "changed_files": [],
     "diffstat": "",
     "dirty": false,
-    "sha": "455e0021"
+    "sha": "422915ca0"
   },
-  "model_changes_note": "R-SOCO 2023: soco61 keeper + F1/F2 corrected backcast inputs (year-matched EIA-860, plant heat rates incl. CHP, CAMPD short-coal/short-gas/partial windows); multipliers unchanged",
+  "model_changes_note": "R-SOCO-B2 2019: R-SOCO keeper recipe on the repaired SOCO BA boundary (R1 2019 interchange sign, R2 Gulf recode drop, R3 PowerSouth join 2021-09-01, R4 Gulf exit dated 2022-07-13 12:00 UTC); multipliers unchanged",
   "per_leg_provenance": {
-    "2023": {
+    "2019": {
       "git": {
-        "basis_sha": "455e002177738e8291a84da08f76123336b7dabc",
-        "branch": "claude/rsoco-2023",
+        "basis_sha": "422915ca0efe89475800617de6b6e2a83a0dbc02",
+        "branch": "claude/rsocob2-2019",
         "changed_files": [],
         "diffstat": "",
         "dirty": false,
-        "sha": "455e0021"
+        "sha": "422915ca0"
       },
-      "timestamp": "2026-09-24T17:54:06"
+      "timestamp": "2026-09-25T04:14:36"
+    },
+    "2020": {
+      "git": {
+        "basis_sha": "422915ca0efe89475800617de6b6e2a83a0dbc02",
+        "branch": "claude/rsocob2-2020",
+        "changed_files": [],
+        "diffstat": "",
+        "dirty": false,
+        "sha": "422915ca0"
+      },
+      "timestamp": "2026-09-25T04:28:39"
+    },
+    "2021": {
+      "git": {
+        "basis_sha": "422915ca0efe89475800617de6b6e2a83a0dbc02",
+        "branch": "claude/rsocob2-2021",
+        "changed_files": [],
+        "diffstat": "",
+        "dirty": false,
+        "sha": "422915ca0"
+      },
+      "timestamp": "2026-09-25T04:28:59"
+    },
+    "2022": {
+      "git": {
+        "basis_sha": "422915ca0efe89475800617de6b6e2a83a0dbc02",
+        "branch": "claude/rsocob2-2022",
+        "changed_files": [],
+        "diffstat": "",
+        "dirty": false,
+        "sha": "422915ca0"
+      },
+      "timestamp": "2026-09-25T04:28:41"
+    },
+    "2023": {
+      "git": {
+        "basis_sha": "422915ca0efe89475800617de6b6e2a83a0dbc02",
+        "branch": "claude/rsocob2-2023",
+        "changed_files": [],
+        "diffstat": "",
+        "dirty": false,
+        "sha": "422915ca0"
+      },
+      "timestamp": "2026-09-25T04:29:43"
     },
     "2024": {
       "git": {
-        "basis_sha": "455e002177738e8291a84da08f76123336b7dabc",
-        "branch": "claude/rsoco-2024",
+        "basis_sha": "422915ca0efe89475800617de6b6e2a83a0dbc02",
+        "branch": "claude/rsocob2-2024",
         "changed_files": [],
         "diffstat": "",
         "dirty": false,
-        "sha": "455e0021"
+        "sha": "422915ca0"
       },
-      "timestamp": "2026-09-24T17:52:07"
+      "timestamp": "2026-09-25T04:34:33"
     },
     "2025": {
       "git": {
-        "basis_sha": "455e002177738e8291a84da08f76123336b7dabc",
-        "branch": "claude/rsoco-2025",
+        "basis_sha": "422915ca0efe89475800617de6b6e2a83a0dbc02",
+        "branch": "claude/rsocob2-2025",
         "changed_files": [],
         "diffstat": "",
         "dirty": false,
-        "sha": "455e0021"
+        "sha": "422915ca0"
       },
-      "timestamp": "2026-09-24T17:52:08"
+      "timestamp": "2026-09-25T04:31:59"
     }
   },
   "resolved_inputs": {
@@ -642,7 +698,7 @@
     "gas_offer_net_revenue_margin": false,
     "gas_plant_monthly_fuel_pricing": false,
     "gas_price_factor": 1.0,
-    "gas_price_override": 2.54,
+    "gas_price_override": 2.57,
     "gas_price_path": "mid",
     "gas_seasonality": true,
     "gas_st_committed_hr_mult": 1.32,
@@ -1167,7 +1223,7 @@
     "vre_curtailment_oversupply_allocation": false,
     "vre_procurement_additions_enabled": false,
     "vre_reference_rate_year_own": false,
-    "weather_year": 2023,
+    "weather_year": 2019,
     "wefor_multiplier": 0.7,
     "wefor_residual": null,
     "wefor_residual_groups": null,
@@ -1175,15 +1231,18 @@
   },
   "solve_surface": {
     "epochs": [],
-    "fingerprint": "84cc9d912581fc0c",
-    "git_sha": "455e0021",
+    "fingerprint": "2dd251fe1ded018e",
+    "git_sha": "422915ca0",
     "iso": "SOCO",
     "moved": {
+      "EIA930_INTERCHANGE_SIGN_INVERTED_WINDOWS_UTC": "5aa0d68a2b2c9bf3",
+      "ISO_BA_EXITS": "202a36b38936dc72",
+      "ISO_BA_JOINS": "3f57a70bddc10043",
       "ISO_MEMBERSHIP_DROPS_CURRENT_BA_RECODE": "b15e5dc2d0858d7d",
-      "RGGI_MEMBER_STATES_BY_YEAR": "94d8b85ac442ecfd"
+      "RGGI_MEMBER_STATES_BY_YEAR": "e432156b179ff182"
     },
-    "rows": 185,
+    "rows": 188,
     "schema": 1
   },
-  "timestamp": "2026-09-24T17:54:06"
+  "timestamp": "2026-09-25T04:14:36"
 }

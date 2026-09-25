@@ -1544,3 +1544,23 @@ with `--keep`.
 - **E13:** `audit_keepers --check` PASS, 0 failures. SOCO E13 is clean. The one SOCO warning is
   the E11 lineage note: soco61's bundle has already been retention-pruned.
 - The ruling makes the decline explicit on the record. Git history holds the pruned run.
+
+## r-soco-b2 — 2026-09-25
+
+SOCO BA BOUNDARY SETTLED AND 2019-2025 SOLVED. FINDING: the former Gulf Power plants AND load sat inside
+SOCO's EIA-930 BA until hour-ending UTC 2022-07-13 12:00 (FERC-714 residual -1,700 MW step; Gulf Power
+185's last filed hour; hourly CEMS fit b_gulf 0.83-0.89 -> 0.014). Owner ruling (C) "dated exit", hour
+grain: constants.ISO_BA_EXITS dates R-SOCO-B's R2 (fleet hour mask from row 4637 of 2022; benchmark July
+2022 by CAMPD in-BA share; vintage_2022 +2 Santa Rosa rows via --admit-plant). Only SOCO's key moves.
+
+Seven year-isolated shards at 422915ca, composed at zero LP. E2 exact (2024/2025 = old keeper 0.0000
+TWh; 2023 = R-SOCO-B leg 0.0000). B1 930/923 fossil 0.982/0.991/0.982/0.985/1.002/0.981 (2019-2024),
+B2 passes every year.
+
+RESULT (run 2026-09-25-r-soco-b2-boundary, PROMOTED 2026-09-25 on the owner's standing ruling;
+2026-09-24-r-soco-corrected-inputs pruned per rule 35): C1/C2/C4/C8 PASS 2019-2022 + 2024, C6 PASS,
+C3 UNSCORABLE; lone miss 2023 C1 CT_PEAKER +7.22 TWh / +3.0pp (tol 7.26 / 3pp) -> NOT-YET (was
+PHYSICALLY-CALIBRATED). Promoted on structure (rules 1/14). Unserved 0 in 2019-2024, 813.8 MWh 2025
+(inherited). Next lever: 2023 CT_PEAKER over-dispatch. Records: docs/handoffs/r-soco/{FINDING,PRECOMMIT,
+RESULT}-r-soco-b2-*.md. Leftover refs for the owner: claude/rsocob2-2019..2025, claude/rsocob-2021,
+claude/r-soco-b-hold (superseded, never lands), claude/soco61-arm-*, claude/soco60-arm-*, claude/soco60-armB-*.

@@ -2,7 +2,7 @@
  "free_parameters": {
   "schema": "dof-ledger/v1",
   "seeded": "2026-07-04 S5 governance session \u2014 audit \u00a73 class-C table + W1d residual-identified/forecast-risk markers (docs/model-legitimacy-audit-2026-07.md; CLAUDE.md rule 20)",
-  "n_entries": 17,
+  "n_entries": 21,
   "n_residual": 1,
   "entries": [
    {
@@ -234,6 +234,34 @@
     "identification": "measured-physical",
     "n_scalars": 0,
     "basis": "CAMPD sub-5-day gas-side full stops under the merit-order guard (campd-unit-outages-shortgas-SOCO.csv). Frozen deriver, F2."
+   },
+   {
+    "name": "EIA930_INTERCHANGE_SIGN_INVERTED_WINDOWS_UTC",
+    "value": true,
+    "identification": "measured-physical",
+    "n_scalars": 0,
+    "basis": "R1. EIA's published SOCO Total interchange is the exact negative of NG - D in every hour UTC 2019-01-01 07:00..2019-09-11 05:00 (6,071 h; the nine-DIBA book corroborates at corr -1.0000); negated at the frame seam. Owner ruling (A)."
+   },
+   {
+    "name": "ISO_MEMBERSHIP_DROPS_CURRENT_BA_RECODE (LP fleet)",
+    "value": true,
+    "identification": "measured-physical",
+    "n_scalars": 0,
+    "basis": "R2. The SOCO-60 membership partition (plants the current EIA-860 codes to another BA) now also reaches the vintage LP fleet, DATED by ISO_BA_EXITS (R-SOCO-B2): the former Gulf Power plants leave from hour-ending UTC 2022-07-13 12:00 (2,524.9 MW off the 2023 fleet)."
+   },
+   {
+    "name": "ISO_BA_EXITS",
+    "value": true,
+    "identification": "measured-physical",
+    "n_scalars": 0,
+    "basis": "R4 (R-SOCO-B2). The former Gulf Power plants and load were inside SOCO's EIA-930 BA until hour-ending UTC 2022-07-13 12:00 (FERC-714 load step, Gulf Power's last FERC-714 hour, hourly CEMS fit 0.83-0.89 -> 0.014); members through the exit in fleet (hour mask) and benchmark (July 2022 by CAMPD in-BA share): 1,826.6 MW in 2019-2020, 2,760.8 MW in 2021-2022. Owner ruling (C), hour grain."
+   },
+   {
+    "name": "ISO_BA_JOINS",
+    "value": true,
+    "identification": "measured-physical",
+    "n_scalars": 0,
+    "basis": "R3. PowerSouth (AEC) joined the SOCO BA on 2021-09-01 (its interchange leg stops; EIA-860 and EIA-923 book it AEC through 2021, SOCO from 2022). Fleet admitted from September 2021; benchmark excludes it before. Owner ruling (B)."
    }
   ]
  },
@@ -244,15 +272,15 @@
   "no_fit_to_price_residuals": true,
   "no_pinning_to_actuals": true,
   "outage_filter_exogenous_net_load": true,
-  "attested_by": "R-SOCO (lane; audit AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24 \u00a75.3.8). Against keeper 2026-09-24-soco61-dark-unit, the only changes are the owner-mandated backcast INPUT corrections. They are machine-verified by execution in scripts/gen_rsoco_attestation.py: the year-matched EIA-860 vintage (2023 -> vintage_2023, 2024 -> vintage_2024, 2025 -> canonical) with year-matched eGRID heat rates (F1); measured power-only CHP heat rates (F1); and the CAMPD short-coal, short-gas and unit-partial outage families (F2). Outage inputs read, sha256-verified against disk: campd_unit_outages data/raw/campd-unit-outages-perunitdark-SOCO.csv (ae0912a9d70e6bec); unit_outage_short data/raw/campd-unit-outages-short-SOCO.csv (3f9c371c04baef45); unit_outage_short_gas data/raw/campd-unit-outages-shortgas-SOCO.csv (13cee3d95dddbb1a); unit_partial_outage data/raw/campd-partial-outages-SOCO.csv (dde155f9f4f5e3cd). RULES 13/14: every input is a measured physical availability or heat-rate record that regenerates for any year; nothing measured about dispatch is fed back. RULES 21/24/25: each is a categorical registered ScenarioConfig switch onto SOCO's own data, n_scalars 0. RULE 1(c): NO offer-curve band moved; every offer_curve_by_group band is the keeper's (1.0), and AUTHORIZED PRICE TUNING IS DECLARED NONE (SOCO has no price benchmark). INHERITED, re-verified on this bundle by gen_soco60b_attestation.py: SOCO-60 (lane). Against keeper 2026-09-22-soco-h4-hydro-ror, THREE things move, each machine-verified by execution in this script. (1) HYDRO, owner ruling 2026-09-23 ('merge the two recipes'): hydro_eia930_monthly=True with hydro_backfill_year=2024 and EIA930_PS_SPLIT_COMPLETE_FROM['SOCO']=2025 (SOCO-59's repair) on top of the keeper's hydro_ror_split \u2014 one pipeline, the RoR flat level read off the repinned budget (rule 19). Budgets: 2023/2024 byte-identical to the keeper's (6.815 / 6.3015 TWh; their EIA-930 column folds pumped-storage discharge and the pin is refused); 2025 6.329 -> 5.9258 TWh, 2025's own clean EIA-930 level. (2) B1 PLANT BOUNDARY: ISO_MEMBERSHIP_DROPS_CURRENT_BA_RECODE['SOCO'] drops 7 plants the current EIA-860 recodes to FPL (the former Gulf Power fleet) at the single membership seam the benchmark and the must-run injection both read. EIA-930 SOCO excludes them: 930/923 fossil after the drop reads 1.002 / 0.981 (2023/2024); the model's own fleet census (current EIA-860 BA == SOCO) and its demand (EIA-930 SOCO demand + metered net exports = 930 SOCO net generation) never carried them. Solve-affecting only via the injection (Perdido landfill gas, ~0.015 TWh/yr biomass); SOCO's cache key moves. (3) B2 GAS FOLD: EIA930_GAS_FOLD_REFUTED={'SOCO'} \u2014 930 SOCO gas 129.59 / 126.08 TWh vs 923 gas classes 130.23 / 129.54: no room for the 6-7 TWh of biomass the deflation assumed folded; benchmark-only. RULE 1 / CHECK F: B1 and B2 are benchmark repairs that flip the sole failing row; if that were their only argument they would not be taken. They rest on six years of EIA-930 SOCO accounting, and they make three rows WORSE (COAL_PRB, COAL_BIT, 2024 CT_PEAKER) \u2014 reported at full magnitude, not absorbed. RULE 13: nothing measured about dispatch is fed back; the membership is a published plant attribute and the fold test reads EIA-930's own gas cell. RULES 21/24/25: zero free parameters, two per-ISO registry rows, no other ISO moves. GATE G17: SOCO has no price benchmark; every offer_curve_by_group band is 1.0, AUTHORIZED PRICE TUNING IS DECLARED NONE (no authorized_price_tuning key, SOCO convention)."
+  "attested_by": "R-SOCO-B / R-SOCO-B2 (lanes; owner rulings (A)/(B)/(C) 2026-09-25). Against keeper 2026-09-24-r-soco-corrected-inputs the recipe is UNCHANGED; the only changes are four boundary repairs, machine-verified by execution in scripts/gen_rsocob_attestation.py: R1 the 2019 EIA-930 SOCO Total interchange sign window (constants.EIA930_INTERCHANGE_SIGN_INVERTED_WINDOWS_UTC); R2 the SOCO-60 current-BA-recode partition extended to the LP fleet (former Gulf Power plants); R3 PowerSouth's 2021-09-01 join (constants.ISO_BA_JOINS); R4 R2 DATED to Gulf's measured exit, hour-ending UTC 2022-07-13 12:00 (constants.ISO_BA_EXITS). Every leg solved at 422915ca0efe; all three new solve-surface rows present at their live hashes; 2019 demand-with-interchange 245.097 TWh. RULES 13/14: each is a published record reconciled to the boundary EIA-930 measures SOCO's load on; nothing measured about dispatch is fed back. RULES 21/24/25: registry rows, zero scalars, SOCO only. RULE 1(c): no offer-curve band moved; AUTHORIZED PRICE TUNING IS DECLARED NONE. INHERITED: R-SOCO (lane; audit AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24 \u00a75.3.8). Against keeper 2026-09-24-soco61-dark-unit, the only changes are the owner-mandated backcast INPUT corrections. They are machine-verified by execution in scripts/gen_rsoco_attestation.py: the year-matched EIA-860 vintage (2023 -> vintage_2023, 2024 -> vintage_2024, 2025 -> canonical) with year-matched eGRID heat rates (F1); measured power-only CHP heat rates (F1); and the CAMPD short-coal, short-gas and unit-partial outage families (F2). Outage inputs read, sha256-verified against disk: campd_unit_outages data/raw/campd-unit-outages-perunitdark-SOCO.csv (ae0912a9d70e6bec); unit_outage_short data/raw/campd-unit-outages-short-SOCO.csv (3f9c371c04baef45); unit_outage_short_gas data/raw/campd-unit-outages-shortgas-SOCO.csv (13cee3d95dddbb1a); unit_partial_outage data/raw/campd-partial-outages-SOCO.csv (dde155f9f4f5e3cd). RULES 13/14: every input is a measured physical availability or heat-rate record that regenerates for any year; nothing measured about dispatch is fed back. RULES 21/24/25: each is a categorical registered ScenarioConfig switch onto SOCO's own data, n_scalars 0. RULE 1(c): NO offer-curve band moved; every offer_curve_by_group band is the keeper's (1.0), and AUTHORIZED PRICE TUNING IS DECLARED NONE (SOCO has no price benchmark). INHERITED, re-verified on this bundle by gen_soco60b_attestation.py: SOCO-60 (lane). Against keeper 2026-09-22-soco-h4-hydro-ror, THREE things move, each machine-verified by execution in this script. (1) HYDRO, owner ruling 2026-09-23 ('merge the two recipes'): hydro_eia930_monthly=True with hydro_backfill_year=2024 and EIA930_PS_SPLIT_COMPLETE_FROM['SOCO']=2025 (SOCO-59's repair) on top of the keeper's hydro_ror_split \u2014 one pipeline, the RoR flat level read off the repinned budget (rule 19). Budgets: 2023/2024 byte-identical to the keeper's (6.815 / 6.3015 TWh; their EIA-930 column folds pumped-storage discharge and the pin is refused); 2025 6.329 -> 5.9258 TWh, 2025's own clean EIA-930 level. (2) B1 PLANT BOUNDARY: ISO_MEMBERSHIP_DROPS_CURRENT_BA_RECODE['SOCO'] drops 7 plants the current EIA-860 recodes to FPL (the former Gulf Power fleet) at the single membership seam the benchmark and the must-run injection both read. EIA-930 SOCO excludes them: 930/923 fossil after the drop reads 1.002 / 0.981 (2023/2024); the model's own fleet census (current EIA-860 BA == SOCO) and its demand (EIA-930 SOCO demand + metered net exports = 930 SOCO net generation) never carried them. Solve-affecting only via the injection (Perdido landfill gas, ~0.015 TWh/yr biomass); SOCO's cache key moves. (3) B2 GAS FOLD: EIA930_GAS_FOLD_REFUTED={'SOCO'} \u2014 930 SOCO gas 129.59 / 126.08 TWh vs 923 gas classes 130.23 / 129.54: no room for the 6-7 TWh of biomass the deflation assumed folded; benchmark-only. RULE 1 / CHECK F: B1 and B2 are benchmark repairs that flip the sole failing row; if that were their only argument they would not be taken. They rest on six years of EIA-930 SOCO accounting, and they make three rows WORSE (COAL_PRB, COAL_BIT, 2024 CT_PEAKER) \u2014 reported at full magnitude, not absorbed. RULE 13: nothing measured about dispatch is fed back; the membership is a published plant attribute and the fold test reads EIA-930's own gas cell. RULES 21/24/25: zero free parameters, two per-ISO registry rows, no other ISO moves. GATE G17: SOCO has no price benchmark; every offer_curve_by_group band is 1.0, AUTHORIZED PRICE TUNING IS DECLARED NONE (no authorized_price_tuning key, SOCO convention)."
  },
  "disclosures": {
-  "precommit": "docs/handoffs/r-soco/PRECOMMIT-r-soco-2026-09-24.md",
+  "precommit": "docs/handoffs/r-soco/PRECOMMIT-r-soco-b-2026-09-25.md; docs/handoffs/r-soco/PRECOMMIT-r-soco-b2-2026-09-25.md",
   "benchmark_repair_moves_every_soco_run": "B1/B2 change SOCO's shared bench parts, so every SOCO run's C1 reads move with this registration, not only this run's.",
   "rows_made_worse": "COAL_PRB, COAL_BIT and 2024 CT_PEAKER move away from their actuals on the repaired benchmark.",
   "ror_clip_2025": "5 RoR plant-months clipped to nameplate after the 2025 repin: 5.4 GWh.",
   "eia930_wat_gap": "SOCO NG: WAT missing 2024-11-25..12-31 (1,343 h).",
   "d79_note": "ISO_MEMBERSHIP_DROPS_CURRENT_BA_RECODE declared at False so SOCO's key moves.",
-  "rsoco_scope": "2023-2025 only. SOCO has no 2019-2022 EIA-930 / FERC-714 / seam / gas-hub / solar-shape inputs (the addition plan's manifest row 9 never landed), so those years cannot be solved; routed as a data-intake lane. Residual class-table heat rates: Dahlberg (7709) and Hartwell (54538), 1,045 MW CT. Both file CAMPD under different CAMD facility ids (7765 / 70454), an EPA-EIA crosswalk defect that is routed, not fixed here."
+  "rsoco_scope": "2019-2025, one year-isolated shard per year (rule 36). The 2019-2022 inputs landed in I-SOCO (FINDING-i-soco-2019-2022-intake-2026-09-24). Recorded, not repaired: the 2019 hour 7148/7149 demand spike/dropout pair (35,329 / 6,913 MW); PowerSouth's Sep-Dec 2021 hydro budget (EIA-923 books it AEC, <= 0.01 TWh). Residual class-table heat rates Dahlberg (7709) / Hartwell (54538), 1,045 MW CT, an EPA-EIA facility-id crosswalk defect, routed."
  }
 }
