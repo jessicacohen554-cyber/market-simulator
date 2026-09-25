@@ -710,6 +710,11 @@
   "dof_added": 0,
   "multipliers": "unchanged from the keeper (offer_curve_by_group sha c5ab11d9b26d2abf)",
   "version": "v2 (PRECOMMIT \u00a79): predicate scoped to non-NG blocks; MISO reach = 1004 Edwardsport only",
-  "v1_withdrawn": "2026-09-25-miso-272-cc-block (all 7 plants) \u2014 under-rated measured NG capability (rule 13)"
+  "v1_withdrawn": "2026-09-25-miso-272-cc-block (all 7 plants) \u2014 under-rated measured NG capability (rule 13)",
+  "promotion": {
+   "ruling": "Is this a recommended keeper candidate? If so plz promote. If structural integrity improves but gates regress that may still be a keeper..",
+   "date": "2026-09-25",
+   "superseded": "2026-09-25-miso-271-wefor-stack"
+  }
  }
 }
