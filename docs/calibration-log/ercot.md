@@ -14606,3 +14606,21 @@ differenced against a superseded availability envelope.
 
 Records: `docs/handoffs/PRECOMMIT-r-ercot-2019-2025-inputs-2026-09-24.md`,
 `docs/handoffs/RESULT-r-ercot-2019-2025-inputs-2026-09-24.md`.
+
+**PROMOTED 2026-09-25 — owner instruction, verbatim: *"Yes promote"*** (against this session's hold recommendation).
+- New keeper: `2026-09-24-r-inputs-2019-2025` (bundle `results/calibration/r_ercot_arm_span`, years 2019–2025).
+- Supersedes `2026-09-19-ercot266-mer-five-year`.
+
+Rule 35 was followed in order:
+- **(b)** Year union enumerated before the prune: {2021..2025}. The incoming keeper covers {2019..2025}.
+- **(e)** Keeper shard and `calibration-complete.json` re-keyed; status rebuilt; `audit_keepers --iso ERCOT` E1 resolved.
+- Only then was the old keeper pruned with `prune_iso_runs --iso ERCOT --force-uncite`, which removed all three stores.
+- `audit_keepers` afterwards: **PASS, 0 / 0**.
+
+**ERCOT's headline moves CALIBRATED → NOT-YET.** The 2023 carve-out fails C3b at 0.232; the forward span 2024–2025 stays CALIBRATED. The D-5(b) worse-determination escalation was put to the owner before the ruling.
+
+The `frontier` and `frontier_touchpoint` declarations **lapsed**. Their stated basis was "ERCOT calibrated" and "2021 + 2022 calibrated", which no longer holds. Both are moved verbatim into `frontier_history`, and the owner may re-declare them.
+
+Matrix: the eight tested cells move O → K, and the shard is re-stamped.
+
+**New finding, recorded in the keeper shard:** the ERCOT 60-Day DAM thermal-availability CSVs carry only 2021–2025 at HEAD. `calibration-complete.json`'s intake_log records a 2018–2022 derive (+7,304 rows), so the back-years were derived once and are no longer on main. A re-derive is owed, and it is the leading fix for 2019/2020.
