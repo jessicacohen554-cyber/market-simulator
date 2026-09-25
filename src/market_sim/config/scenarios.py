@@ -466,6 +466,9 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # the '-memberrepair-' companion through the same resolver, so the off path
     # is byte-inert). Registered IN THE SAME COMMIT as the field.
     "unit_outage_membership_repair",
+    # PJM-NEXT-2 card 3: nuclear dormancy defers to the solved vintage's exit
+    # record (GATED default-off; byte-inert off). Same commit as the field.
+    "nuclear_dormancy_defers_to_vintage_exit",
     # soco-67 pre-commercial window clip on the >= 5-day CAMPD unit-outage
     # overlay (GATED default-off; the extract is read unchanged while off, so
     # the off path is byte-inert). Registered IN THE SAME COMMIT as the field.
@@ -2196,6 +2199,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by PJM-NEXT-2 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "unit_outage_membership_repair": "False",
+    "nuclear_dormancy_defers_to_vintage_exit": "False",
     # Added by soco-67 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "unit_outage_precod_clip": "False",
@@ -16055,6 +16059,20 @@ class ScenarioConfig:
     # falling back to the standard extract where not derived.
     # docs/PRECOMMIT-pjm-next-2-card1-outage-membership-2026-09-25.md.
     unit_outage_membership_repair: bool = False
+    # PJM-NEXT-2 card 3 (rule 19 [R-ONE-MECH], rule 14 [R-ACCURATE]).
+    # NUCLEAR_DORMANT_UNTIL zeroes a nuclear unit in every backcast year before
+    # its restart year -- written for the Crane/TMI-1 restart, which EIA-860
+    # 2025 carries as OP while it is physically dormant. Under
+    # mid_vintage_exit_carry the 2019 vintage injects TMI-1 as a unit that
+    # OPERATED until its Sept-2019 exit, and the dormancy rule then zeroed it
+    # for the whole year (0 MWh vs ~5 TWh measured; model nuclear 271.98 vs
+    # 277.92 TWh). Armed, a unit flagged mid_vintage_exit_unit is exempt from
+    # the dormancy zeroing (its exit month's retirement mask still removes it
+    # afterwards). The nuclear monthly-CF derive already excludes the dormant
+    # plant's generation AND capacity, so nothing double-counts. ZERO free
+    # parameters. PJM 2019 is the only unit-year it reaches in the keeper.
+    # docs/PRECOMMIT-pjm-next-2-card3-tmi-dormancy-2026-09-25.md.
+    nuclear_dormancy_defers_to_vintage_exit: bool = False
     # soco-67 (rule 19 [R-ONE-MECH], rule 14 [R-ACCURATE]) PRE-COMMERCIAL
     # WINDOW CLIP on the >= 5-day CAMPD unit-outage overlay. The deriver fills
     # a unit's hours ABSENT from the CAMPD record as dark, so a unit that

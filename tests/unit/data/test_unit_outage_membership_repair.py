@@ -111,3 +111,46 @@ def test_deriver_membership_speaks_the_artifact_coal_token():
         assert artifact_class(sub) in QUALIFYING_PLANT_GROUPS
     src = (_ROOT / "scripts/data/derive_campd_unit_outages.py").read_text()
     assert "ag = artifact_class(g.plant_group)" in src
+
+
+class TestNuclearDormancyDefersToVintageExit:
+    """PJM-NEXT-2 card 3: a mid-vintage-exit nuclear unit is not dormancy-zeroed."""
+
+    @staticmethod
+    def _run(flag: bool, mid: bool):
+        import numpy as np
+
+        from market_sim.data.fleet import Generator
+        from market_sim.data.fleet.arrays import _nuclear_monthly
+
+        g = Generator(
+            unit_id="8011_1",
+            name="TMI",
+            zone="PJM_Central_PA",
+            fuel_type="nuclear",
+            pmax_mw=802.8,
+            plant_code=8011,
+        )
+        g.mid_vintage_exit_unit = mid
+        av = np.ones((1, 48))
+        cfg = ScenarioConfig(
+            iso="PJM",
+            mode="backcast",
+            nuclear_dormancy_defers_to_vintage_exit=flag,
+        )
+        _nuclear_monthly([g], av, 48, "PJM", 2019, cfg)
+        return av
+
+    def test_registered_default_off(self):
+        assert ScenarioConfig().nuclear_dormancy_defers_to_vintage_exit is False
+        assert (
+            cache_key_drop_defaults()["nuclear_dormancy_defers_to_vintage_exit"]
+            is False
+        )
+
+    def test_off_keeps_the_dormancy_zeroing(self):
+        assert self._run(False, True).max() == 0.0
+
+    def test_armed_exempts_only_the_vintage_exit_unit(self):
+        assert self._run(True, True).max() > 0.0
+        assert self._run(True, False).max() == 0.0
