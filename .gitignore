@@ -3511,3 +3511,11 @@ results/calibration/miso271_ctl_20*/
 
 # R-CAISO-2 per-year shard legs: kept out of main (rule 32(d)); on local disk until the owner rules (rule 31)
 results/calibration/rcaiso2_ccid_*/
+# NWPP-NEXT (2026-09-25) per-year shard legs, composed into the registered keeper
+# bundle results/calibration/nwppnext_span (rule 32(d): per-year dirs stay out of
+# main). Provenance only (rule 33(d)) — shard branches are transport, not storage:
+#   2019 37315fe2899cc70f4e4910af7fe7d929acbb7874  2020 32c099efd1d6abc2943c430d31fd3056594a9321
+#   2021 3b26689ecf9cdf598803a92abfd9f3427230d142  2022 6afde394b71a6a3e0636c1cf4eb8ac61a74cf043
+#   2023 7d97a5def389017cc42638d8644fd0daf0a41403  2024 30f673dbc893ff006793b636d224cc3822adf1a8
+#   2025 b6a96c0cebca50a1a099a3bee7a6c86a2b76e609
+results/calibration/nwppnext_20[0-9][0-9]/

@@ -432,3 +432,19 @@ Records: `docs/handoffs/{PRECOMMIT,RESULT}-r-nwpp-2019-2025-inputs-2026-09-24.md
 **Promoted 2026-09-25 (owner ruling "Yes promote"):** `2026-09-24-rnwpp-inputs-span` is NWPP keeper #7. It covers
 2019 and 2021–2025, a superset of the outgoing keeper's {2023, 2024, 2025} (rule 35(c)). The NWPP-49 predecessor
 was pruned (rule 35), with `audit_keepers` E1 run before the prune and E13 after it (both PASS).
+
+## nwpp-next — 2026-09-25 — FERC 714 PSEI fill + partial-plant exit carry, 2019–2025 (PROMOTED, keeper #8)
+
+- **Run and determination:** `2026-09-25-nwpp-next-ferc714-partial` is the R-NWPP recipe plus two measured-input
+  repairs:
+  - the pool member gap guard, filling PSEI's missing EIA-930 demand from FERC 714 reconciled to PSEI's own basis;
+  - `partial_plant_exit_carry`.
+
+  NOT-YET on {fuelmix, dispatch_corr}, the same gates as the keeper, and **no gate regresses**.
+- **Per year:**
+  - 2021–2025 criterion rows are identical to the keeper.
+  - 2019 stays within PASS.
+  - **2020 is solved for the first time and passes C1, C2, C4 and C8.**
+- **Promotion:** promoted on the owner's standing instruction to promote a recommended candidate.
+  `2026-09-24-rnwpp-inputs-span` was pruned.
+- **Records:** `docs/handoffs/{PRECOMMIT,RESULT}-nwpp-next-ferc714-partialcarry-2019-2025-2026-09-25.md`.
