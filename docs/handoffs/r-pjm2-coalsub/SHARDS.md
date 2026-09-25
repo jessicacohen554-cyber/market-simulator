@@ -60,3 +60,7 @@ left PENDING. v3: 2022 `session_01KsL3ruKYWorRHSxcdBLygT`, 2023 `session_0111UC4
 | 2022 | `e2aeb98d153a7e3eb8f23b123eb85172f4c0faa7` | 17 | COAL 3.70 → 0; COAL_BIT +3.17; coal family −0.53; CC_REGULAR +0.25; CT_PEAKER +0.11 |
 
 5 of 7 legs verified on parent disk (2019–2022, 2024). 2023 / 2025 v3 shards still PENDING on container capacity.
+
+## 07:35Z — 2023 / 2025 v3 never left PENDING (2 h 15 m) — recreated as v4
+
+2023 `session_013VY4v2cq2U1e6We1cVfVJJ`, 2025 `session_013RFEKXe9966zYTWqu9uPw1`.
