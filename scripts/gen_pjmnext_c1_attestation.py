@@ -74,7 +74,9 @@ def build() -> dict:
 def main() -> int:
     """CLI entry point."""
     out = Path(sys.argv[1])
-    (out / "calibration_attestation.json").write_text(json.dumps(build(), indent=2) + "\n")
+    (out / "calibration_attestation.json").write_text(
+        json.dumps(build(), indent=2) + "\n"
+    )
     print(f"wrote {out / 'calibration_attestation.json'}")
     return 0
 

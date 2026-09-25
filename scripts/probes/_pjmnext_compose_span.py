@@ -78,7 +78,9 @@ def check_recipes(legs: dict[str, list[int]]) -> None:
         ) == json.dumps(_drop_bare_coal(k.get("offer_curve_by_group")), sort_keys=True):
             diff.discard("offer_curve_by_group")
         if diff:
-            raise SystemExit(f"ABORT: {name} differs from keeper {year} in {sorted(diff)}")
+            raise SystemExit(
+                f"ABORT: {name} differs from keeper {year} in {sorted(diff)}"
+            )
         off = [x for x in MUST_BE_TRUE if a.get(x) is not True]
         if off:
             raise SystemExit(f"ABORT: {name} has {off} not True")
@@ -90,11 +92,21 @@ def check_recipes(legs: dict[str, list[int]]) -> None:
         if recorded != [year]:
             raise SystemExit(f"ABORT: {name} records years {recorded}, claims [{year}]")
         surfaces.add((cfg.get("solve_surface") or {}).get("fingerprint"))
-        sha = cfg.get("resolved_inputs", {}).get("campd_unit_outages", {}).get("sha256", "?")
-        print(f"  {name:20s} year={year} outages sha={sha[:12]} basis={cfg['git']['basis_sha'][:8]}")
+        sha = (
+            cfg.get("resolved_inputs", {})
+            .get("campd_unit_outages", {})
+            .get("sha256", "?")
+        )
+        print(
+            f"  {name:20s} year={year} outages sha={sha[:12]} basis={cfg['git']['basis_sha'][:8]}"
+        )
     if len(surfaces) != 1:
-        raise SystemExit(f"ABORT: legs disagree on solve-surface fingerprint: {surfaces}")
-    print("  OK — every leg is keeper + the three card-1 flags; offers unchanged; one surface.")
+        raise SystemExit(
+            f"ABORT: legs disagree on solve-surface fingerprint: {surfaces}"
+        )
+    print(
+        "  OK — every leg is keeper + the three card-1 flags; offers unchanged; one surface."
+    )
 
 
 def main() -> int:
