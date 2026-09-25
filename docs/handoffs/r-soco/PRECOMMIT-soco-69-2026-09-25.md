@@ -140,3 +140,20 @@ If the owner promotes, rule 35 prunes `2026-09-25-soco68-summer-basis`. The inco
 - **Composite.** The parent composes `soco69_span` and lands it on `main` via the lane PR. The per-year dirs are
   gitignored in the parent.
 - **Cost.** Any leg not landed is costed as a re-solve, ~3–15 min of LP per year.
+
+## 7. Addendum: G-DRIFT at the solve SHA (rule 29(b)), recorded before any shard ran
+
+The instrument in FINDING §0 ran at `d5d5e0e8`. `main` then advanced before this document was pinned, so the
+solve-path diff `d5d5e0e8..<pinned SHA>` over `src/market_sim`, `scripts/run_calibration*.py`,
+`scripts/replay_keeper.py`, `scripts/lib` and `data/raw/{_validation-source,reference,_processed-legacy}` was also
+classified:
+
+| file | change | classification |
+|---|---|---|
+| `config/scenarios.py` | the field `wefor_residual_short_screened_coal` | INERT: default `False`, absent from the keeper recipe and from the eight `--set` fields |
+| `data/fleet/arrays.py` | a relief gated on that field | INERT: the same gate |
+| `data/outages.py` | the helper `short_screened_coal_shares`, read only inside that gate | INERT: the same gate |
+| `data/floor_mechanisms.py` | a registry entry for that field | INERT: the same gate |
+
+The one new field is miso-273's, and its matrix row is miso-273's duty. **All hunks are INERT, so form 4 stands
+and the committed `soco68_span` remains the control.**
