@@ -17971,6 +17971,27 @@ cause of the rung's C3a 2020 / C3b 2020–2022 failures, and with demand (SPP-72
   `scuc_load_pocket_commitment`) stay `U`, but a successor proposing any of them for C3a/C3b
   must first beat this bound.
 
+**DO-NOT-REDO, added by SPP-80 (2026-09-25, THE 2022+ UPPER-TERCILE PREMIUM, DATA INTAKE, ZERO LP —
+`docs/handoffs/FINDING-spp-80-upper-tercile-premium-2026-09-25.md`).** SPP-79's upper-tercile object
+(RT p67–p99, ex-Feb; HR/HH 12.5–13.7 in 2019–21 → 16.4 / 21.0 in 2023–24), split by measurement into
+hub MEC / MCC / MLC (new `actual_lmp_components_hourly_zonal_SPP.parquet`), RTBM MCP and binding
+constraints (now 2019–2025), GenMix net load, EIA-923 delivered fuel and SPP MMU SOM markups:
+- **Congestion does not own it.** Hub MCC + MLC in the upper tercile is −$1.6 to +$3.8, negative in
+  2023 (ΔHR −0.22 / +0.74 in 2023 / 2024), even though SPP-wide congestion tripled.
+- **Scarcity does not own it; it fell.** Scarcity-priced hours dropped 12–15 % → 3–5 % (ΔHR −0.7 to
+  −0.9). The ramp (2022-03-01) and uncertainty (2023-07-06) products carry $3–5 and ~$0/MW.
+- **Markup does not own it.** 2023–24 on-peak markups (−12.27 / −11.01) are SPP's lowest recorded.
+  Markup owns 2022 only (coal +$21).
+- **Tightness does not own it.** Upper-tercile net load is flat (26.5–28.4 GW), and MEC/HH rose
+  +2–4 in **every** net-load band.
+- **Gas basis owns 32 % (2023) / 59 % (2024) of it**, and the model already carries delivered gas
+  (SPP-74).
+- **Left over: +3.2 / +3.4 HR on delivered gas (≈ $9.5 / $10.6/MWh)**, stack-wide and year-specific.
+  **No measured driver can carry SPP-79's body-lever pairing.** Do not re-open congestion,
+  scarcity/ORDC, markup or net-load quantity as the upper-tercile object. Re-open only on a
+  measured marginal-unit heat-rate mix, an intra-day gas cost series, or ramp-product dispatch
+  evidence.
+
 **DO-NOT-REDO, added by SPP-79 (2026-09-25, THE 2019–21 C3a OVER-LEVEL, ZERO LP —
 `docs/handoffs/FINDING-spp-79-c3a-is-a-cancellation-2026-09-25.md`).** On the R-SPP keeper
 (`2026-09-24-r-spp-corrected-inputs`), the 2019–21 C3a over-level is **not a year-specific defect**:

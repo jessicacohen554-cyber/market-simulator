@@ -122,3 +122,14 @@ Prices*, where the trailing "SPP" means *Settlement Point Prices*. The zip membe
 `rpt.00013060.0000000000000000.DAMLZHBSPP_2023.xlsx`, an ERCOT MIS report id, and
 `scripts/hydrate_data.py:186-191` warns that a bare `spp` token "would also claim ERCOT's
 settlement-point zips". It is not on this route and was never part of this corpus.
+
+## Appended 2026-09-25 by lane SPP-80 — the hub price COMPONENTS (MCC / MLC) from the same files
+
+The monthly wide settlement-location files this route serves (`{DA-LMP,RTBM-LMP}-MONTHLY-SL-YYYYMM.csv`,
+live per-month for the current window, range-read out of `/<yr>/<yr>.zip` for archived years) carry three
+`Price Type` rows per settlement location — `LMP`, `MCC`, `MLC` (measured 2026-09-25 on
+`rtbm-lmp-by-location` `/2025/07/RTBM-LMP-MONTHLY-SL-202507.csv`). The committed hub sidecars kept only
+`LMP`. `scripts/data/fetch_spp_hub_lmp_components.py` re-reads the same files for 2019–2025 through the
+builder's own functions and keeps all three for the two hubs, landing
+`data/raw/_validation-source/actual_lmp_components_hourly_zonal_SPP.parquet` (row and checksum in that
+directory's README). Its `lmp` column reproduces the committed zonal file bit-exactly.
