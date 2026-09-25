@@ -1,6 +1,5 @@
 """Tests for emissions accounting from dispatch results."""
 
-import importlib.util
 import unittest
 
 import numpy as np
@@ -13,7 +12,6 @@ from market_sim.results.emissions import (
     compute_so2,
     startup_co2_tons,
 )
-from tests.helpers import REPO_ROOT
 
 
 class TestStartupCo2Tons(unittest.TestCase):
@@ -104,45 +102,6 @@ class TestComputeFossilAvgRate(unittest.TestCase):
 
         np.testing.assert_allclose(result, [0.5, 0.0])
         self.assertTrue(np.all(np.isfinite(result)))
-
-
-class TestVendoredParityScope2(unittest.TestCase):
-    """The scope2-lce-portfolio vendored copy matches the upstream function.
-
-    The LCE portfolio tool is import-isolated (it never imports
-    ``market_sim``), so the parity check lives here on the market_sim side:
-    the vendored module is pure numpy and is loaded by file path only.
-    """
-
-    VENDORED_PATH = (
-        REPO_ROOT
-        / "scope2-lce-portfolio"
-        / "src"
-        / "lce_portfolio"
-        / "vendored"
-        / "fossil_avg_rate.py"
-    )
-
-    def _load_vendored(self):
-        spec = importlib.util.spec_from_file_location(
-            "_vendored_fossil_avg_rate", self.VENDORED_PATH
-        )
-        module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(module)
-        return module
-
-    def test_vendored_copy_produces_identical_outputs(self):
-        vendored = self._load_vendored()
-        rng = np.random.default_rng(42)
-        dispatch = rng.uniform(0.0, 500.0, size=(9, 48))
-        dispatch[:, 7] = 0.0  # a zero-dispatch hour exercises the 0.0 branch
-        rates = rng.uniform(0.0, 1.2, size=9)
-        rates[[1, 4, 6]] = 0.0  # zero-carbon units
-
-        np.testing.assert_array_equal(
-            compute_fossil_avg_rate(dispatch, rates),
-            vendored.compute_fossil_avg_rate(dispatch, rates),
-        )
 
 
 class TestComputeNox(unittest.TestCase):

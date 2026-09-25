@@ -1,5 +1,11 @@
 # Scope 2 Hourly LCE Portfolio Tool — pointer
 
+> **REMOVED 2026-09-18.** The owner deleted the `scope2-lce-portfolio/` directory
+> (`8f0d41df`), and on 2026-09-25 approved removing the market_sim-side
+> vendored-parity test (`TestVendoredParityScope2`) that had outlived it
+> (audit desk Y-30, `docs/handoffs/FINDING-y30-mechanical-reds-2026-09-24.md` §2.3).
+> The text below is historical; its links no longer resolve.
+
 > This is a **pointer doc**. The tool itself is a **separate, self-contained
 > project** and is the *only* place its code lives. The market LP solver in
 > `src/market_sim/` is **not** part of it and must stay untouched.

@@ -83,7 +83,6 @@ jobs:
             /docs/
             /frontend/
             /results/
-            /scope2-lce-portfolio/
             /data/dictionary/
             /data/raw/*.csv
             /data/raw/*.parquet

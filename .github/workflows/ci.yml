@@ -515,7 +515,6 @@ jobs:
             /frontend/
             /results/
             /shard-artifacts/
-            /scope2-lce-portfolio/
             /data/dictionary/
             /data/raw/*.csv
             /data/raw/*.parquet
