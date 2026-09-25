@@ -14,5 +14,6 @@
   ],
   "iso": "NWPP",
   "file": "frontend/data/backcast/runs/2026-09-24-rnwpp-inputs-span.js",
-  "bundle": "results/calibration/rnwpp_span"
+  "bundle": "results/calibration/rnwpp_span",
+  "market_story": "COAL: the fleet is the coal that actually operated each year (Colstrip 1-2 and Centralia 1 through 2019, Jim Bridger 1-2 on coal through 2023, North Valmy 1 through 2024), each at its own measured CEMS heat rate; regulated take-or-pay coal runs baseload because its owners commit it on contract, not on the spot price. CT_PEAKER: peakers are priced at their measured CEMS heat rates (10.7-11.1 MMBtu/MWh, not the 8.9 class value), so they clear only in the hours scarcity actually calls them. CC_REGULAR: combined cycles set the margin behind hydro; the model's shortfall against EIA-923 is the open demand-basis gap (EIA-930 under-books PGE/BPAT/PACW gas), not a CC offer effect. OUTAGES: measured CAMPD full, short (1-5 day) coal and partial-derate windows remove capacity when the units were physically unavailable."
 }

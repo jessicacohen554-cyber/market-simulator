@@ -426,3 +426,9 @@ Result: NOT-YET on {fuelmix, dispatch_corr}.
 * C4 coal r: 0.671 / 0.622 / 0.687 (+0.011 / +0.004 / +0.049). 2019/21/22 pass (0.774 / 0.740 / 0.772).
 
 Records: `docs/handoffs/{PRECOMMIT,RESULT}-r-nwpp-2019-2025-inputs-2026-09-24.md`.
+
+---
+
+**Promoted 2026-09-25 (owner ruling "Yes promote"):** `2026-09-24-rnwpp-inputs-span` is NWPP keeper #7. It covers
+2019 and 2021–2025, a superset of the outgoing keeper's {2023, 2024, 2025} (rule 35(c)). The NWPP-49 predecessor
+was pruned (rule 35), with `audit_keepers` E1 run before the prune and E13 after it (both PASS).
