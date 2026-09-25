@@ -155,3 +155,16 @@ INERT for SOCO:
 | `scripts/lib/key_provenance.py` | provenance tooling, not on the solve path |
 | `calibration_reference.json` / `NWPP_*_renewable_capacity.csv` | NWPP rows only |
 | `results/cache.py` | ERCOT epoch prose |
+
+## Found after promotion — the 2023 leg carries the former Gulf Power fleet (OPEN)
+
+Measured 2026-09-25 (`fleet_only`, keeper recipe, 2023): with `eia860_vintage_tracks_solve_year` on,
+`vintage_2023` codes the former Gulf Power plants to SOCO, so the LP fleet carries **2,525 MW** that
+EIA-930's SOCO demand has never included: Crist 641 (1,858 MW, ST_GAS/CT), Lansing Smith 643 (652 MW,
+CC), Pea Ridge 7715 (12 MW) and Perdido 57502 (3 MW). The canonical-snapshot posture carried none of
+them, because the current EIA-860 codes them to FPL. `ISO_MEMBERSHIP_DROPS_CURRENT_BA_RECODE` already
+drops them from the benchmark and the injection, but not from the vintage-sourced LP fleet. 2024
+(`vintage_2024` recodes them to FPL) and 2025 are clean; every 2019–2022 vintage carries them.
+The 2023 C1 rows still pass, and the defect is reported at full magnitude here. The repair (LP fleet
+membership follows the EIA-930 BA boundary by date, together with PowerSouth's 2021-09-01 join) and a
+2023 re-solve ride with the 2019–2022 legs.
