@@ -97,3 +97,21 @@ products, not as a year zip.
 - `https://portal.spp.org/file-browser-api/download/rtbm-mcp?path=%2F2023%2F2023.zip` (47,156,480 B), `…%2F2024%2F2024.zip` (47,605,298 B): only the `RTBM_MCP_<yr>.csv.zip` annual-roll-up member landed. `…?path=%2F2025%2F2025AnnualRollup%2FRTBM_MCP_2025.csv.zip` (3,255,073 B).
 - `https://portal.spp.org/file-browser-api/download/da-mcp?path=%2F2023%2F2023.zip` (418,589 B), `…%2F2024%2F2024.zip` (417,669 B) landed whole; `…?path=%2F2025%2F<mm>%2FDA-MCP-2025MMDD0100.csv` ×365 landed under `da-mcp-2025/`.
 - Producer: `scripts/data/fetch_spp_alt_portal.py --only or-mcp`. Checksums: `SHA256SUMS.txt` (new).
+
+## Appended 2026-09-25 by lane SPP-80 — RTBM and DA MCPs 2019–2022 (landed)
+
+- RTBM: `https://portal.spp.org/file-browser-api/download/rtbm-mcp?path=%2F<yr>%2F<yr>.zip`
+  (2019 39,487,625 B · 2020 39,836,815 B · 2021 40,240,738 B · 2022 45,111,097 B); only the
+  `<yr>/<yr>AnnualRollup/RTBM_MCP_<yr>.csv.zip` member landed (2,768,789 / 2,796,437 /
+  2,787,862 / 2,413,800 B), range-read as SPP-14 did for 2023–2024. The 2022 roll-up folder
+  also carries two half-year files (`RTBM_MCP_2022-0101-0517.csv.zip`,
+  `RTBM_MCP_2022-0518-1231csv.zip`); the full-year `RTBM_MCP_2022.csv.zip` spans
+  2022-01-01 06:05Z → 2023-01-01 06:00Z (521,825 rows) and is the one landed.
+- DA: `https://portal.spp.org/file-browser-api/download/da-mcp?path=%2F<yr>%2F<yr>.zip`, landed
+  whole as `da-mcp-<yr>.zip` (364,665 / 386,866 / 463,733 / 418,932 B), same convention as 2023–24.
+- **Schema drift across the span (measured, not assumed):** 2019–2021 carry
+  `RegUPService, RegDNService, RegUpMile, RegDNMile, Spin, Supp`; 2022 adds `RAMPUP, RAMPDN`
+  (upper-case headers); 2023 adds `UncUP` and a system-wide `SPP` reserve zone alongside 1–5.
+  First non-zero RT ramp-up MCP 2022-03-01 (the SOM-stated launch date); first non-zero
+  uncertainty MCP 2023-10-09 (product implemented 2023-07-06, 2023 SOM PDF p.120).
+- Checksums appended to `SHA256SUMS.txt`. Producer and use as in the binding-constraint row.

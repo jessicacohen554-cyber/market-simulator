@@ -160,3 +160,7 @@ file listing beside this README is the authority — not either section's "Lande
 
 `SHA256SUMS.txt` beside this file was regenerated over the **merged** directory, so it covers
 every file here, from either landing.
+
+## Span extended to 2019 — lane SPP-80, 2026-09-25
+
+The RTBM and DA operating-reserve MCP roll-ups for **2019, 2020, 2021 and 2022** are now landed beside 2023–2025, fetched over the same anonymous portal route, unmodified. URLs, member names, byte counts and the measured schema drift are in `SOURCES.md` (SPP-80 appendix), and sha256 values are in `SHA256SUMS.txt`. Use: `docs/handoffs/FINDING-spp-80-upper-tercile-premium-2026-09-25.md`.
