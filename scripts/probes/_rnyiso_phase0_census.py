@@ -42,7 +42,10 @@ REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "src"))
 
-BUNDLE = REPO / "results/calibration/hydro3_nyiso_ror_span"
+#: The keeper whose recipe is rebuilt. Was ``hydro3_nyiso_ror_span`` (pruned at the
+#: 2026-09-25 promotion, rule 35); ``--bundle`` selects another. Both recipes differ only in
+#: the F1 flags, which the ``pre`` posture forces back to the pre-F1 values anyway.
+BUNDLE = REPO / "results/calibration/rnyiso_span"
 F1_FLAGS = (
     "eia860_vintage_tracks_solve_year",
     "measured_ct_heat_rates",
@@ -165,7 +168,11 @@ def main() -> None:
     ap.add_argument("--postures", nargs="+", default=["pre", "post"])
     ap.add_argument("--out", required=True)
     ap.add_argument("--diagnostic-solar-substitution", action="store_true")
+    ap.add_argument("--bundle", type=Path, default=None, help="keeper bundle (default: BUNDLE)")
     args = ap.parse_args()
+    if args.bundle is not None:
+        global BUNDLE
+        BUNDLE = args.bundle
     if args.diagnostic_solar_substitution:
         import market_sim.data.renewables as ren
 

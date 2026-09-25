@@ -1,0 +1,2137 @@
+{
+ "pre_2021": {
+  "eia860_dir": "eia-860",
+  "eia860_vintage_year": null,
+  "flags": {
+   "eia860_vintage_tracks_solve_year": false,
+   "measured_ct_heat_rates": true,
+   "measured_coal_heat_rates": false,
+   "measured_st_heat_rates": false,
+   "measured_cc_heat_rates": false,
+   "measured_chp_heat_rates": true,
+   "egrid_identity_heat_rates": true,
+   "egrid_family_heat_rates": true,
+   "egrid_steam_collapse_heat_rates": true,
+   "unit_partial_outage_windows": false,
+   "unit_outage_short_windows": false,
+   "unit_outage_short_windows_gas": false,
+   "mode": "backcast"
+  },
+  "thermal_mw": 28201.4,
+  "bin_mw": 295.7,
+  "by_class": {
+   "CC_CHP": {
+    "mw": 3686.4,
+    "hr": 9.9058,
+    "bin_mw": 0.0
+   },
+   "CC_REGULAR": {
+    "mw": 7405.6,
+    "hr": 8.5569,
+    "bin_mw": 0.0
+   },
+   "COAL": {
+    "mw": 1487.0,
+    "hr": 11.7059,
+    "bin_mw": 234.0
+   },
+   "CT_CHP": {
+    "mw": 370.8,
+    "hr": 8.7983,
+    "bin_mw": 0.0
+   },
+   "CT_PEAKER": {
+    "mw": 3034.0,
+    "hr": 14.6248,
+    "bin_mw": 55.7
+   },
+   "ST_CHP": {
+    "mw": 323.5,
+    "hr": 7.6574,
+    "bin_mw": 0.0
+   },
+   "ST_GAS": {
+    "mw": 8902.4,
+    "hr": 16.9734,
+    "bin_mw": 0.0
+   },
+   "oil": {
+    "mw": 2991.7,
+    "hr": 15.3929,
+    "bin_mw": 6.0
+   }
+  },
+  "plants": {
+   "2504": {
+    "name": "74th Street",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 37.8,
+    "hr": 19.0057,
+    "bin_mw": 0.0
+   },
+   "2512": {
+    "name": "East Hampton",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 25.2,
+    "hr": 12.8167,
+    "bin_mw": 0.0
+   },
+   "2514": {
+    "name": "Glenwood",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 104.1,
+    "hr": 18.0032,
+    "bin_mw": 0.0
+   },
+   "2516": {
+    "name": "Northport",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 1604.0,
+    "hr": 16.2105,
+    "bin_mw": 0.0
+   },
+   "2517": {
+    "name": "Port Jefferson",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 480.6,
+    "hr": 17.0339,
+    "bin_mw": 0.0
+   },
+   "2518": {
+    "name": "Shoreham",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 65.7,
+    "hr": 19.0381,
+    "bin_mw": 0.0
+   },
+   "2519": {
+    "name": "South Hampton",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 8.5,
+    "hr": 29.5901,
+    "bin_mw": 0.0
+   },
+   "2520": {
+    "name": "Southold",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 10.0,
+    "hr": 22.2857,
+    "bin_mw": 0.0
+   },
+   "2528": {
+    "name": "Harris Lake",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 4.0,
+    "hr": 10.8077,
+    "bin_mw": 0.0
+   },
+   "2594": {
+    "name": "Oswego Harbor Power",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 1613.5,
+    "hr": 14.9014,
+    "bin_mw": 0.0
+   },
+   "2678": {
+    "name": "Plant No 1 Freeport",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 4.2,
+    "hr": 14.0,
+    "bin_mw": 0.0
+   },
+   "2679": {
+    "name": "Plant No 2 Freeport",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 65.8,
+    "hr": 11.4292,
+    "bin_mw": 0.0
+   },
+   "2681": {
+    "name": "Greenport",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 5.4,
+    "hr": 9.0,
+    "bin_mw": 0.0
+   },
+   "7146": {
+    "name": "Wading River",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 240.6,
+    "hr": 17.6878,
+    "bin_mw": 0.0
+   },
+   "8007": {
+    "name": "Holtsville",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 532.3,
+    "hr": 16.1458,
+    "bin_mw": 0.0
+   },
+   "50744": {
+    "name": "Sterling Power Plant",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 45.0,
+    "hr": 19.1046,
+    "bin_mw": 0.0
+   },
+   "52091": {
+    "name": "NewYork-Presbyterian Brooklyn Methodist",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 2.8,
+    "hr": 13.68,
+    "bin_mw": 0.0
+   },
+   "52168": {
+    "name": "Riverbay",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 15.1,
+    "hr": 4.5021,
+    "bin_mw": 0.0
+   },
+   "54808": {
+    "name": "New York University Central Plant",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 7.5,
+    "hr": 10.3362,
+    "bin_mw": 0.0
+   },
+   "55787": {
+    "name": "Shoreham Energy LLC",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 85.0,
+    "hr": 10.1958,
+    "bin_mw": 0.0
+   },
+   "55969": {
+    "name": "Hawkeye Energy Greenport LLC",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 54.5,
+    "hr": 10.9626,
+    "bin_mw": 0.0
+   },
+   "56141": {
+    "name": "Jamaica Bay Peaking",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 47.3,
+    "hr": 10.9501,
+    "bin_mw": 0.0
+   },
+   "61414": {
+    "name": "NY Times Daily Production Facility",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 12.0,
+    "hr": 11.2763,
+    "bin_mw": 0.0
+   },
+   "64291": {
+    "name": "Lincoln Medical and Mental Health Center",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 6.0,
+    "hr": 13.5,
+    "bin_mw": 6.0
+   },
+   "2485": {
+    "name": "South Cairo",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 21.3,
+    "hr": 15.507,
+    "bin_mw": 0.0
+   },
+   "55243": {
+    "name": "Astoria Gas Turbines",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 439.4,
+    "hr": 15.133,
+    "bin_mw": 0.0
+   },
+   "2496": {
+    "name": "Hudson Avenue",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 41.1,
+    "hr": 23.6028,
+    "bin_mw": 0.0
+   },
+   "2480": {
+    "name": "Danskammer Generating Station committed",
+    "cls": "ST_GAS",
+    "fuel": "gas_st",
+    "mw": 497.3,
+    "hr": 17.2792,
+    "bin_mw": 0.0
+   },
+   "2487": {
+    "name": "Coxsackie econlo",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 19.8,
+    "hr": 18.15,
+    "bin_mw": 0.0
+   },
+   "2490": {
+    "name": "Arthur Kill Generating Station committed",
+    "cls": "ST_GAS",
+    "fuel": "gas_st",
+    "mw": 876.6,
+    "hr": 16.8344,
+    "bin_mw": 0.0
+   },
+   "2493": {
+    "name": "East River committed",
+    "cls": "CT_CHP",
+    "fuel": "gas_ct",
+    "mw": 615.3,
+    "hr": 8.0724,
+    "bin_mw": 0.0
+   },
+   "2494": {
+    "name": "Gowanus Gas Turbines Generating committed",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 282.0,
+    "hr": 19.2554,
+    "bin_mw": 0.0
+   },
+   "2499": {
+    "name": "Narrows Gas Turbines Generating committed",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 269.0,
+    "hr": 18.4297,
+    "bin_mw": 0.0
+   },
+   "2500": {
+    "name": "Ravenswood committed",
+    "cls": "ST_GAS",
+    "fuel": "gas_st",
+    "mw": 1993.3,
+    "hr": 16.7627,
+    "bin_mw": 0.0
+   },
+   "2503": {
+    "name": "59th Street committed",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 14.5,
+    "hr": 15.7947,
+    "bin_mw": 0.0
+   },
+   "2511": {
+    "name": "E F Barrett committed",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 653.6,
+    "hr": 16.9219,
+    "bin_mw": 0.0
+   },
+   "2527": {
+    "name": "Greenidge Generation LLC committed",
+    "cls": "ST_GAS",
+    "fuel": "gas_st",
+    "mw": 104.5,
+    "hr": 15.7962,
+    "bin_mw": 0.0
+   },
+   "2539": {
+    "name": "Bethlehem Energy Center committed",
+    "cls": "CC_REGULAR",
+    "fuel": "gas_cc",
+    "mw": 893.1,
+    "hr": 7.3424,
+    "bin_mw": 0.0
+   },
+   "2625": {
+    "name": "Bowline Point committed",
+    "cls": "ST_GAS",
+    "fuel": "gas_st",
+    "mw": 1159.6,
+    "hr": 15.8362,
+    "bin_mw": 0.0
+   },
+   "2628": {
+    "name": "Hillburn committed",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 33.1,
+    "hr": 18.1857,
+    "bin_mw": 0.0
+   },
+   "2632": {
+    "name": "Shoemaker committed",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 33.0,
+    "hr": 18.1057,
+    "bin_mw": 0.0
+   },
+   "2682": {
+    "name": "S A Carlson committed",
+    "cls": "ST_GAS",
+    "fuel": "gas_st",
+    "mw": 87.0,
+    "hr": 12.7226,
+    "bin_mw": 0.0
+   },
+   "2695": {
+    "name": "Charles P Keller econlo",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 28.8,
+    "hr": 34.362,
+    "bin_mw": 0.0
+   },
+   "7314": {
+    "name": "Richard M Flynn committed",
+    "cls": "CC_REGULAR",
+    "fuel": "gas_cc",
+    "mw": 108.2,
+    "hr": 8.0411,
+    "bin_mw": 0.0
+   },
+   "7784": {
+    "name": "Allegany Cogen peak",
+    "cls": "CC_REGULAR",
+    "fuel": "gas_cc",
+    "mw": 67.0,
+    "hr": 18.947,
+    "bin_mw": 0.0
+   },
+   "7869": {
+    "name": "Glenwood Landing committed",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 85.1,
+    "hr": 11.6152,
+    "bin_mw": 0.0
+   },
+   "7909": {
+    "name": "Vernon Boulevard committed",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 79.9,
+    "hr": 11.6593,
+    "bin_mw": 0.0
+   },
+   "7910": {
+    "name": "Joseph J Seymour Power Project committed",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 79.9,
+    "hr": 11.7627,
+    "bin_mw": 0.0
+   },
+   "7912": {
+    "name": "Brentwood committed",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 45.0,
+    "hr": 11.4487,
+    "bin_mw": 0.0
+   },
+   "7913": {
+    "name": "Hell Gate committed",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 79.5,
+    "hr": 11.9062,
+    "bin_mw": 0.0
+   },
+   "7914": {
+    "name": "Harlem River Yard committed",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 79.5,
+    "hr": 11.6587,
+    "bin_mw": 0.0
+   },
+   "7915": {
+    "name": "North 1st committed",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 46.0,
+    "hr": 11.591,
+    "bin_mw": 0.0
+   },
+   "8006": {
+    "name": "Roseton Generating Facility committed",
+    "cls": "ST_GAS",
+    "fuel": "gas_st",
+    "mw": 1222.0,
+    "hr": 16.6159,
+    "bin_mw": 0.0
+   },
+   "8053": {
+    "name": "Pouch committed",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 44.7,
+    "hr": 11.2407,
+    "bin_mw": 0.0
+   },
+   "8906": {
+    "name": "Astoria Generating Station committed",
+    "cls": "ST_GAS",
+    "fuel": "gas_st",
+    "mw": 923.2,
+    "hr": 17.7452,
+    "bin_mw": 0.0
+   },
+   "10025": {
+    "name": "RED-Rochester, LLC committed",
+    "cls": "ST_CHP",
+    "fuel": "gas_st",
+    "mw": 2.8,
+    "hr": 3.2907,
+    "bin_mw": 0.0
+   },
+   "10190": {
+    "name": "Castleton Energy Center committed",
+    "cls": "CC_REGULAR",
+    "fuel": "gas_cc",
+    "mw": 71.2,
+    "hr": 9.6711,
+    "bin_mw": 0.0
+   },
+   "10521": {
+    "name": "Lederle Laboratories committed",
+    "cls": "CC_CHP",
+    "fuel": "gas_cc",
+    "mw": 6.2,
+    "hr": 5.184,
+    "bin_mw": 0.0
+   },
+   "10617": {
+    "name": "CH Resources Beaver Falls econc00",
+    "cls": "CC_CHP",
+    "fuel": "gas_cc",
+    "mw": 34.1,
+    "hr": 16.418,
+    "bin_mw": 0.0
+   },
+   "10620": {
+    "name": "Carthage Energy LLC peak",
+    "cls": "CC_REGULAR",
+    "fuel": "gas_cc",
+    "mw": 53.6,
+    "hr": 21.0034,
+    "bin_mw": 0.0
+   },
+   "10621": {
+    "name": "CH Resources Syracuse peak",
+    "cls": "CC_REGULAR",
+    "fuel": "gas_cc",
+    "mw": 102.7,
+    "hr": 20.0458,
+    "bin_mw": 0.0
+   },
+   "10725": {
+    "name": "Selkirk Cogen econc00",
+    "cls": "CC_CHP",
+    "fuel": "gas_cc",
+    "mw": 199.4,
+    "hr": 13.1069,
+    "bin_mw": 0.0
+   },
+   "50006": {
+    "name": "Linden Cogen Plant committed",
+    "cls": "CC_CHP",
+    "fuel": "gas_cc",
+    "mw": 757.8,
+    "hr": 10.7532,
+    "bin_mw": 0.0
+   },
+   "50203": {
+    "name": "US Gypsum Oakfield committed",
+    "cls": "CT_CHP",
+    "fuel": "gas_ct",
+    "mw": 1.5,
+    "hr": 5.6073,
+    "bin_mw": 0.0
+   },
+   "50292": {
+    "name": "Bethpage Power Plant committed",
+    "cls": "CC_REGULAR",
+    "fuel": "gas_cc",
+    "mw": 223.7,
+    "hr": 12.3653,
+    "bin_mw": 0.0
+   },
+   "50368": {
+    "name": "Cornell University Central Heat committed",
+    "cls": "CC_CHP",
+    "fuel": "gas_cc",
+    "mw": 12.7,
+    "hr": 4.1172,
+    "bin_mw": 0.0
+   },
+   "50427": {
+    "name": "Bronx Zoo committed",
+    "cls": "CT_CHP",
+    "fuel": "gas_ct",
+    "mw": 0.5,
+    "hr": 5.8639,
+    "bin_mw": 0.0
+   },
+   "50449": {
+    "name": "Indeck Silver Springs Energy Center econc00",
+    "cls": "CC_CHP",
+    "fuel": "gas_cc",
+    "mw": 32.8,
+    "hr": 14.9613,
+    "bin_mw": 0.0
+   },
+   "50450": {
+    "name": "Indeck Oswego Energy Center econc00",
+    "cls": "CC_CHP",
+    "fuel": "gas_cc",
+    "mw": 37.1,
+    "hr": 15.0327,
+    "bin_mw": 0.0
+   },
+   "50451": {
+    "name": "Indeck Yerkes Energy Center econc00",
+    "cls": "CC_CHP",
+    "fuel": "gas_cc",
+    "mw": 28.2,
+    "hr": 16.908,
+    "bin_mw": 0.0
+   },
+   "50458": {
+    "name": "Indeck Corinth Energy Center committed",
+    "cls": "CC_CHP",
+    "fuel": "gas_cc",
+    "mw": 144.1,
+    "hr": 9.2387,
+    "bin_mw": 0.0
+   },
+   "50978": {
+    "name": "Carr Street Generating Station committed",
+    "cls": "CC_REGULAR",
+    "fuel": "gas_cc",
+    "mw": 80.0,
+    "hr": 8.719,
+    "bin_mw": 0.0
+   },
+   "54034": {
+    "name": "Rensselaer Cogen peak",
+    "cls": "CC_REGULAR",
+    "fuel": "gas_cc",
+    "mw": 78.0,
+    "hr": 19.7788,
+    "bin_mw": 0.0
+   },
+   "54041": {
+    "name": "Lockport Energy Associates LP econc00",
+    "cls": "CC_CHP",
+    "fuel": "gas_cc",
+    "mw": 48.9,
+    "hr": 17.4046,
+    "bin_mw": 0.0
+   },
+   "54076": {
+    "name": "Indeck Olean Energy Center econc00",
+    "cls": "CC_CHP",
+    "fuel": "gas_cc",
+    "mw": 45.5,
+    "hr": 14.3287,
+    "bin_mw": 0.0
+   },
+   "54099": {
+    "name": "Ticonderoga Mill committed",
+    "cls": "ST_CHP",
+    "fuel": "gas_st",
+    "mw": 11.9,
+    "hr": 4.3413,
+    "bin_mw": 0.0
+   },
+   "54114": {
+    "name": "Kennedy International Airport Cogen committed",
+    "cls": "CC_CHP",
+    "fuel": "gas_cc",
+    "mw": 122.7,
+    "hr": 10.5248,
+    "bin_mw": 0.0
+   },
+   "54131": {
+    "name": "World Generation X committed",
+    "cls": "CC_CHP",
+    "fuel": "gas_cc",
+    "mw": 42.7,
+    "hr": 9.7332,
+    "bin_mw": 0.0
+   },
+   "54149": {
+    "name": "Stony Brook Cogen Plant committed",
+    "cls": "CT_CHP",
+    "fuel": "gas_ct",
+    "mw": 44.5,
+    "hr": 11.3988,
+    "bin_mw": 0.0
+   },
+   "54547": {
+    "name": "Sithe Independence Station committed",
+    "cls": "CC_CHP",
+    "fuel": "gas_cc",
+    "mw": 1157.8,
+    "hr": 8.7886,
+    "bin_mw": 0.0
+   },
+   "54574": {
+    "name": "Saranac Facility committed",
+    "cls": "CC_REGULAR",
+    "fuel": "gas_cc",
+    "mw": 251.5,
+    "hr": 11.213,
+    "bin_mw": 0.0
+   },
+   "54592": {
+    "name": "Massena Energy Facility peak",
+    "cls": "CC_REGULAR",
+    "fuel": "gas_cc",
+    "mw": 53.6,
+    "hr": 19.7571,
+    "bin_mw": 0.0
+   },
+   "54593": {
+    "name": "Batavia Power Plant peak",
+    "cls": "CC_REGULAR",
+    "fuel": "gas_cc",
+    "mw": 42.9,
+    "hr": 22.7471,
+    "bin_mw": 0.0
+   },
+   "54914": {
+    "name": "Brooklyn Navy Yard Cogeneration committed",
+    "cls": "CC_CHP",
+    "fuel": "gas_cc",
+    "mw": 312.9,
+    "hr": 8.8028,
+    "bin_mw": 0.0
+   },
+   "55375": {
+    "name": "Astoria Energy committed",
+    "cls": "CC_REGULAR",
+    "fuel": "gas_cc",
+    "mw": 610.4,
+    "hr": 7.3103,
+    "bin_mw": 0.0
+   },
+   "55405": {
+    "name": "Athens Generating Plant committed",
+    "cls": "CC_REGULAR",
+    "fuel": "gas_cc",
+    "mw": 1064.7,
+    "hr": 6.6201,
+    "bin_mw": 0.0
+   },
+   "55699": {
+    "name": "Bayswater Peaking Facility LLC committed",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 55.8,
+    "hr": 12.4007,
+    "bin_mw": 0.0
+   },
+   "55786": {
+    "name": "Edgewood Energy LLC committed",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 85.0,
+    "hr": 12.0475,
+    "bin_mw": 0.0
+   },
+   "56032": {
+    "name": "Equus Freeport Power committed",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 94.0,
+    "hr": 11.5094,
+    "bin_mw": 0.0
+   },
+   "56188": {
+    "name": "Pinelawn Power LLC committed",
+    "cls": "CC_REGULAR",
+    "fuel": "gas_cc",
+    "mw": 82.0,
+    "hr": 9.3652,
+    "bin_mw": 0.0
+   },
+   "56196": {
+    "name": "Zeltmann committed",
+    "cls": "CC_REGULAR",
+    "fuel": "gas_cc",
+    "mw": 560.0,
+    "hr": 6.5885,
+    "bin_mw": 0.0
+   },
+   "56234": {
+    "name": "Caithness Long Island Energy Center committed",
+    "cls": "CC_REGULAR",
+    "fuel": "gas_cc",
+    "mw": 361.7,
+    "hr": 7.025,
+    "bin_mw": 0.0
+   },
+   "56259": {
+    "name": "Empire Generating Co LLC committed",
+    "cls": "CC_CHP",
+    "fuel": "gas_cc",
+    "mw": 652.4,
+    "hr": 8.6414,
+    "bin_mw": 0.0
+   },
+   "56940": {
+    "name": "CPV Valley Energy Center committed",
+    "cls": "CC_REGULAR",
+    "fuel": "gas_cc",
+    "mw": 696.1,
+    "hr": 7.7183,
+    "bin_mw": 0.0
+   },
+   "56964": {
+    "name": "Bayonne Energy Center committed",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 598.1,
+    "hr": 12.4835,
+    "bin_mw": 0.0
+   },
+   "57185": {
+    "name": "Cricket Valley Energy committed",
+    "cls": "CC_REGULAR",
+    "fuel": "gas_cc",
+    "mw": 1086.9,
+    "hr": 8.6063,
+    "bin_mw": 0.0
+   },
+   "57664": {
+    "name": "Astoria Energy II committed",
+    "cls": "CC_REGULAR",
+    "fuel": "gas_cc",
+    "mw": 650.0,
+    "hr": 8.5357,
+    "bin_mw": 0.0
+   },
+   "57789": {
+    "name": "Peak Power 1 Cogen committed",
+    "cls": "CT_CHP",
+    "fuel": "gas_ct",
+    "mw": 1.6,
+    "hr": 10.9958,
+    "bin_mw": 0.0
+   },
+   "57798": {
+    "name": "OBP Cogen committed",
+    "cls": "CT_CHP",
+    "fuel": "gas_ct",
+    "mw": 2.7,
+    "hr": 5.6991,
+    "bin_mw": 0.0
+   },
+   "58167": {
+    "name": "William Floyd School District committed",
+    "cls": "CT_CHP",
+    "fuel": "gas_ct",
+    "mw": 0.8,
+    "hr": 7.0089,
+    "bin_mw": 0.0
+   },
+   "58186": {
+    "name": "HVCC Cogen Plant committed",
+    "cls": "CT_CHP",
+    "fuel": "gas_ct",
+    "mw": 1.5,
+    "hr": 14.8723,
+    "bin_mw": 0.0
+   },
+   "58507": {
+    "name": "Montefieor Medical Center Moses Division committed",
+    "cls": "CT_CHP",
+    "fuel": "gas_ct",
+    "mw": 1.1,
+    "hr": 15.2453,
+    "bin_mw": 0.0
+   },
+   "59453": {
+    "name": "Albany Medical Ctr Cogen Plant committed",
+    "cls": "CT_CHP",
+    "fuel": "gas_ct",
+    "mw": 2.3,
+    "hr": 6.9088,
+    "bin_mw": 0.0
+   },
+   "61238": {
+    "name": "New York Presbyterian Hospital- 68th Street committed",
+    "cls": "CT_CHP",
+    "fuel": "gas_ct",
+    "mw": 1.8,
+    "hr": 10.7452,
+    "bin_mw": 0.0
+   },
+   "61488": {
+    "name": "NYU LANGONE HEALTH committed",
+    "cls": "CT_CHP",
+    "fuel": "gas_ct",
+    "mw": 1.8,
+    "hr": 16.8614,
+    "bin_mw": 0.0
+   },
+   "62456": {
+    "name": "Regeneron Tarrytown econlo",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 1.4,
+    "hr": 6.6646,
+    "bin_mw": 0.0
+   },
+   "62576": {
+    "name": "MER Queens econlo",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 1.1,
+    "hr": 8.9511,
+    "bin_mw": 0.0
+   },
+   "63236": {
+    "name": "Kings Plaza Total Energy Plant (TEP) committed",
+    "cls": "CT_CHP",
+    "fuel": "gas_ct",
+    "mw": 4.3,
+    "hr": 11.9856,
+    "bin_mw": 0.0
+   },
+   "63647": {
+    "name": "SDM000 Clarkson Fuel Cell econlo",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 1.7,
+    "hr": 6.6634,
+    "bin_mw": 0.0
+   },
+   "63648": {
+    "name": "NHH003 Clarkson Fuel Cell econlo",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 0.5,
+    "hr": 6.539,
+    "bin_mw": 0.0
+   },
+   "63661": {
+    "name": "SWM Fuel Cell econlo",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 8.4,
+    "hr": 10.89,
+    "bin_mw": 7.8
+   },
+   "64143": {
+    "name": "Bloom-Altice Fuel Cell econlo",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 1.9,
+    "hr": 9.0,
+    "bin_mw": 1.9
+   },
+   "64350": {
+    "name": "Orbit Bloom Fuel Cell econlo",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 5.6,
+    "hr": 9.0,
+    "bin_mw": 5.6
+   },
+   "64747": {
+    "name": "Fuel Cell 3245 Yates Avenue econlo",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 4.7,
+    "hr": 9.0,
+    "bin_mw": 4.7
+   },
+   "64748": {
+    "name": "Fuel Cell 18A Sneden Avenue econlo",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 3.3,
+    "hr": 9.0,
+    "bin_mw": 3.3
+   },
+   "64749": {
+    "name": "Fuel Cell 18B Sneden Avenue econlo",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 3.7,
+    "hr": 9.0,
+    "bin_mw": 3.7
+   },
+   "65201": {
+    "name": "Certain Solar - Staten Island econlo",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 7.5,
+    "hr": 10.89,
+    "bin_mw": 7.0
+   },
+   "65212": {
+    "name": "Altice - Hicksville econlo",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 1.9,
+    "hr": 9.0,
+    "bin_mw": 1.9
+   },
+   "66150": {
+    "name": "Equinix - Elmsford econlo",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 1.6,
+    "hr": 9.0,
+    "bin_mw": 1.6
+   },
+   "66457": {
+    "name": "Apple Staten Island - Industrial Loop econlo",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 4.7,
+    "hr": 9.0,
+    "bin_mw": 4.7
+   },
+   "66460": {
+    "name": "Apple Staten Island - Winant Place econlo",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 4.7,
+    "hr": 9.0,
+    "bin_mw": 4.7
+   },
+   "2535": {
+    "name": "Cayuga Operating Company mustrun",
+    "cls": "COAL",
+    "fuel": "coal",
+    "mw": 290.6,
+    "hr": 13.0176,
+    "bin_mw": 0.0
+   },
+   "51035": {
+    "name": "Hofstra University econlo",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 2.0,
+    "hr": 11.5,
+    "bin_mw": 2.0
+   },
+   "6082": {
+    "name": "Somerset Operating Co LLC mustrun",
+    "cls": "COAL",
+    "fuel": "coal",
+    "mw": 676.4,
+    "hr": 11.8596,
+    "bin_mw": 0.0
+   },
+   "54564": {
+    "name": "General Mills Inc econlo",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 3.2,
+    "hr": 9.0,
+    "bin_mw": 3.2
+   },
+   "2554": {
+    "name": "Dunkirk Generating Plant mustrun",
+    "cls": "COAL",
+    "fuel": "coal",
+    "mw": 520.0,
+    "hr": 10.773,
+    "bin_mw": 234.0
+   },
+   "52056": {
+    "name": "Nassau Energy Corp committed",
+    "cls": "CC_CHP",
+    "fuel": "gas_cc",
+    "mw": 32.5,
+    "hr": 11.2155,
+    "bin_mw": 0.0
+   },
+   "8009": {
+    "name": "Auburn State Street econlo",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 4.9,
+    "hr": 9.8276,
+    "bin_mw": 0.0
+   },
+   "62424": {
+    "name": "Iola Powerhouse & Cogeneration Facility econlo",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 3.9,
+    "hr": 9.0,
+    "bin_mw": 3.9
+   }
+  },
+  "n_units": 826
+ },
+ "post_2021": {
+  "eia860_dir": "vintage_2021",
+  "eia860_vintage_year": null,
+  "flags": {
+   "eia860_vintage_tracks_solve_year": true,
+   "measured_ct_heat_rates": true,
+   "measured_coal_heat_rates": true,
+   "measured_st_heat_rates": true,
+   "measured_cc_heat_rates": true,
+   "measured_chp_heat_rates": true,
+   "egrid_identity_heat_rates": true,
+   "egrid_family_heat_rates": true,
+   "egrid_steam_collapse_heat_rates": true,
+   "unit_partial_outage_windows": false,
+   "unit_outage_short_windows": false,
+   "unit_outage_short_windows_gas": false,
+   "mode": "backcast"
+  },
+  "thermal_mw": 26950.4,
+  "bin_mw": 35.1,
+  "by_class": {
+   "CC_CHP": {
+    "mw": 3623.6,
+    "hr": 9.7018,
+    "bin_mw": 0.0
+   },
+   "CC_REGULAR": {
+    "mw": 7387.1,
+    "hr": 8.5616,
+    "bin_mw": 0.0
+   },
+   "CT_CHP": {
+    "mw": 376.4,
+    "hr": 8.8311,
+    "bin_mw": 0.0
+   },
+   "CT_PEAKER": {
+    "mw": 3132.0,
+    "hr": 14.5262,
+    "bin_mw": 31.1
+   },
+   "ST_CHP": {
+    "mw": 346.5,
+    "hr": 7.6727,
+    "bin_mw": 0.0
+   },
+   "ST_GAS": {
+    "mw": 8870.9,
+    "hr": 15.814,
+    "bin_mw": 0.0
+   },
+   "oil": {
+    "mw": 3213.9,
+    "hr": 21.1615,
+    "bin_mw": 4.0
+   }
+  },
+  "plants": {
+   "2485": {
+    "name": "South Cairo",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 18.1,
+    "hr": 13.971,
+    "bin_mw": 0.0
+   },
+   "2494": {
+    "name": "Gowanus Gas Turbines Generating",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 547.8,
+    "hr": 18.3605,
+    "bin_mw": 0.0
+   },
+   "2496": {
+    "name": "Hudson Avenue",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 27.8,
+    "hr": 29.6733,
+    "bin_mw": 0.0
+   },
+   "2504": {
+    "name": "74th Street",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 37.8,
+    "hr": 14.4158,
+    "bin_mw": 0.0
+   },
+   "2512": {
+    "name": "East Hampton",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 25.2,
+    "hr": 11.5377,
+    "bin_mw": 0.0
+   },
+   "2514": {
+    "name": "Glenwood",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 104.1,
+    "hr": 15.7425,
+    "bin_mw": 0.0
+   },
+   "2516": {
+    "name": "Northport",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 1604.0,
+    "hr": 15.9053,
+    "bin_mw": 0.0
+   },
+   "2517": {
+    "name": "Port Jefferson",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 480.6,
+    "hr": 15.4783,
+    "bin_mw": 0.0
+   },
+   "2518": {
+    "name": "Shoreham",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 65.7,
+    "hr": 19.0381,
+    "bin_mw": 0.0
+   },
+   "2519": {
+    "name": "South Hampton",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 8.5,
+    "hr": 29.5901,
+    "bin_mw": 0.0
+   },
+   "2520": {
+    "name": "Southold",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 10.0,
+    "hr": 22.624,
+    "bin_mw": 0.0
+   },
+   "2528": {
+    "name": "Harris Lake",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 4.0,
+    "hr": 10.8077,
+    "bin_mw": 0.0
+   },
+   "2594": {
+    "name": "Oswego Harbor Power",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 1631.2,
+    "hr": 26.9059,
+    "bin_mw": 0.0
+   },
+   "2678": {
+    "name": "Plant No 1 Freeport",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 4.2,
+    "hr": 10.8148,
+    "bin_mw": 0.0
+   },
+   "2679": {
+    "name": "Plant No 2 Freeport",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 65.8,
+    "hr": 11.5064,
+    "bin_mw": 0.0
+   },
+   "2681": {
+    "name": "Greenport",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 5.4,
+    "hr": 9.0,
+    "bin_mw": 0.0
+   },
+   "2695": {
+    "name": "Charles P Keller",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 28.8,
+    "hr": 22.5432,
+    "bin_mw": 0.0
+   },
+   "7146": {
+    "name": "Wading River",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 240.6,
+    "hr": 13.7344,
+    "bin_mw": 0.0
+   },
+   "8007": {
+    "name": "Holtsville",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 532.3,
+    "hr": 15.0496,
+    "bin_mw": 0.0
+   },
+   "50744": {
+    "name": "Sterling Power Plant",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 45.0,
+    "hr": 19.062,
+    "bin_mw": 0.0
+   },
+   "52091": {
+    "name": "NewYork-Presbyterian Brooklyn Methodist Hospital",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 2.8,
+    "hr": 9.0,
+    "bin_mw": 0.0
+   },
+   "52168": {
+    "name": "Riverbay",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 16.1,
+    "hr": 3.6356,
+    "bin_mw": 0.0
+   },
+   "55787": {
+    "name": "Shoreham Energy LLC",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 85.0,
+    "hr": 9.7636,
+    "bin_mw": 0.0
+   },
+   "55969": {
+    "name": "Hawkeye Energy Greenport LLC",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 54.3,
+    "hr": 10.6167,
+    "bin_mw": 0.0
+   },
+   "61414": {
+    "name": "NY Times Daily Production Facility",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 12.0,
+    "hr": 11.6931,
+    "bin_mw": 0.0
+   },
+   "63544": {
+    "name": "Fordham University",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 0.8,
+    "hr": 13.4706,
+    "bin_mw": 0.0
+   },
+   "64291": {
+    "name": "Lincoln Medical and Mental Health Center",
+    "cls": "oil",
+    "fuel": "oil",
+    "mw": 4.0,
+    "hr": 13.5,
+    "bin_mw": 4.0
+   },
+   "2480": {
+    "name": "Danskammer Generating Station committed",
+    "cls": "ST_GAS",
+    "fuel": "gas_st",
+    "mw": 497.3,
+    "hr": 15.8159,
+    "bin_mw": 0.0
+   },
+   "2487": {
+    "name": "West Coxsackie econlo",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 20.2,
+    "hr": 15.1265,
+    "bin_mw": 0.0
+   },
+   "2490": {
+    "name": "Arthur Kill Generating Station committed",
+    "cls": "ST_GAS",
+    "fuel": "gas_st",
+    "mw": 872.2,
+    "hr": 16.1882,
+    "bin_mw": 0.0
+   },
+   "2493": {
+    "name": "East River committed",
+    "cls": "CT_CHP",
+    "fuel": "gas_ct",
+    "mw": 638.6,
+    "hr": 8.0712,
+    "bin_mw": 0.0
+   },
+   "2499": {
+    "name": "Narrows Gas Turbines Generating committed",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 291.5,
+    "hr": 18.4297,
+    "bin_mw": 0.0
+   },
+   "2500": {
+    "name": "Ravenswood committed",
+    "cls": "ST_GAS",
+    "fuel": "gas_st",
+    "mw": 2040.5,
+    "hr": 15.6518,
+    "bin_mw": 0.0
+   },
+   "2503": {
+    "name": "59th Street committed",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 13.1,
+    "hr": 15.7947,
+    "bin_mw": 0.0
+   },
+   "2511": {
+    "name": "E F Barrett committed",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 653.6,
+    "hr": 16.7328,
+    "bin_mw": 0.0
+   },
+   "2527": {
+    "name": "Greenidge Generation LLC committed",
+    "cls": "ST_GAS",
+    "fuel": "gas_st",
+    "mw": 104.5,
+    "hr": 15.5162,
+    "bin_mw": 0.0
+   },
+   "2539": {
+    "name": "Bethlehem Energy Center committed",
+    "cls": "CC_REGULAR",
+    "fuel": "gas_cc",
+    "mw": 893.1,
+    "hr": 7.3161,
+    "bin_mw": 0.0
+   },
+   "2625": {
+    "name": "Bowline Point committed",
+    "cls": "ST_GAS",
+    "fuel": "gas_st",
+    "mw": 1159.6,
+    "hr": 15.2274,
+    "bin_mw": 0.0
+   },
+   "2628": {
+    "name": "Hillburn committed",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 33.1,
+    "hr": 18.1857,
+    "bin_mw": 0.0
+   },
+   "2632": {
+    "name": "Shoemaker committed",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 33.0,
+    "hr": 18.1057,
+    "bin_mw": 0.0
+   },
+   "2682": {
+    "name": "S A Carlson committed",
+    "cls": "ST_GAS",
+    "fuel": "gas_st",
+    "mw": 87.0,
+    "hr": 12.8294,
+    "bin_mw": 0.0
+   },
+   "7314": {
+    "name": "Richard M Flynn committed",
+    "cls": "CC_REGULAR",
+    "fuel": "gas_cc",
+    "mw": 108.2,
+    "hr": 8.3286,
+    "bin_mw": 0.0
+   },
+   "7784": {
+    "name": "Allegany Cogen peak",
+    "cls": "CC_REGULAR",
+    "fuel": "gas_cc",
+    "mw": 67.0,
+    "hr": 18.947,
+    "bin_mw": 0.0
+   },
+   "7869": {
+    "name": "Glenwood Landing committed",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 85.1,
+    "hr": 11.6152,
+    "bin_mw": 0.0
+   },
+   "7909": {
+    "name": "Vernon Boulevard committed",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 79.9,
+    "hr": 11.6593,
+    "bin_mw": 0.0
+   },
+   "7910": {
+    "name": "Joseph J Seymour Power Project committed",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 79.9,
+    "hr": 11.7627,
+    "bin_mw": 0.0
+   },
+   "7912": {
+    "name": "Brentwood committed",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 46.0,
+    "hr": 11.4487,
+    "bin_mw": 0.0
+   },
+   "7913": {
+    "name": "Hell Gate committed",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 79.9,
+    "hr": 11.9062,
+    "bin_mw": 0.0
+   },
+   "7914": {
+    "name": "Harlem River Yard committed",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 79.9,
+    "hr": 11.6587,
+    "bin_mw": 0.0
+   },
+   "7915": {
+    "name": "North 1st committed",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 46.0,
+    "hr": 11.591,
+    "bin_mw": 0.0
+   },
+   "8006": {
+    "name": "Roseton Generating Facility committed",
+    "cls": "ST_GAS",
+    "fuel": "gas_st",
+    "mw": 1204.7,
+    "hr": 15.6318,
+    "bin_mw": 0.0
+   },
+   "8053": {
+    "name": "Pouch committed",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 45.1,
+    "hr": 11.2407,
+    "bin_mw": 0.0
+   },
+   "8906": {
+    "name": "Astoria Generating Station econlo",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 932.4,
+    "hr": 14.0718,
+    "bin_mw": 0.0
+   },
+   "10025": {
+    "name": "RED-Rochester, LLC committed",
+    "cls": "ST_CHP",
+    "fuel": "gas_st",
+    "mw": 2.2,
+    "hr": 3.3614,
+    "bin_mw": 0.0
+   },
+   "10190": {
+    "name": "Castleton Energy Center committed",
+    "cls": "CC_REGULAR",
+    "fuel": "gas_cc",
+    "mw": 71.2,
+    "hr": 9.6072,
+    "bin_mw": 0.0
+   },
+   "10521": {
+    "name": "Lederle Laboratories committed",
+    "cls": "CC_CHP",
+    "fuel": "gas_cc",
+    "mw": 6.2,
+    "hr": 5.183,
+    "bin_mw": 0.0
+   },
+   "10617": {
+    "name": "CH Resources Beaver Falls econc00",
+    "cls": "CC_CHP",
+    "fuel": "gas_cc",
+    "mw": 34.1,
+    "hr": 16.418,
+    "bin_mw": 0.0
+   },
+   "10620": {
+    "name": "Carthage Energy LLC peak",
+    "cls": "CC_REGULAR",
+    "fuel": "gas_cc",
+    "mw": 53.6,
+    "hr": 20.6548,
+    "bin_mw": 0.0
+   },
+   "10621": {
+    "name": "CH Resources Syracuse peak",
+    "cls": "CC_REGULAR",
+    "fuel": "gas_cc",
+    "mw": 102.7,
+    "hr": 18.5148,
+    "bin_mw": 0.0
+   },
+   "10725": {
+    "name": "Selkirk Cogen econc00",
+    "cls": "CC_CHP",
+    "fuel": "gas_cc",
+    "mw": 199.4,
+    "hr": 13.1069,
+    "bin_mw": 0.0
+   },
+   "50006": {
+    "name": "Linden Cogen Plant committed",
+    "cls": "CC_CHP",
+    "fuel": "gas_cc",
+    "mw": 757.8,
+    "hr": 10.1765,
+    "bin_mw": 0.0
+   },
+   "50203": {
+    "name": "US Gypsum Oakfield committed",
+    "cls": "CT_CHP",
+    "fuel": "gas_ct",
+    "mw": 1.5,
+    "hr": 5.5965,
+    "bin_mw": 0.0
+   },
+   "50292": {
+    "name": "Bethpage Power Plant committed",
+    "cls": "CC_REGULAR",
+    "fuel": "gas_cc",
+    "mw": 197.5,
+    "hr": 11.2757,
+    "bin_mw": 0.0
+   },
+   "50368": {
+    "name": "Cornell University Central Heat committed",
+    "cls": "CC_CHP",
+    "fuel": "gas_cc",
+    "mw": 12.7,
+    "hr": 3.6025,
+    "bin_mw": 0.0
+   },
+   "50427": {
+    "name": "Bronx Zoo committed",
+    "cls": "CT_CHP",
+    "fuel": "gas_ct",
+    "mw": 0.5,
+    "hr": 5.8714,
+    "bin_mw": 0.0
+   },
+   "50449": {
+    "name": "Indeck Silver Springs Energy Center econc00",
+    "cls": "CC_CHP",
+    "fuel": "gas_cc",
+    "mw": 32.8,
+    "hr": 14.9613,
+    "bin_mw": 0.0
+   },
+   "50450": {
+    "name": "Indeck Oswego Energy Center econc00",
+    "cls": "CC_CHP",
+    "fuel": "gas_cc",
+    "mw": 37.1,
+    "hr": 15.0327,
+    "bin_mw": 0.0
+   },
+   "50451": {
+    "name": "Indeck Yerkes Energy Center econc00",
+    "cls": "CC_CHP",
+    "fuel": "gas_cc",
+    "mw": 28.2,
+    "hr": 16.908,
+    "bin_mw": 0.0
+   },
+   "50458": {
+    "name": "Indeck Corinth Energy Center committed",
+    "cls": "CC_CHP",
+    "fuel": "gas_cc",
+    "mw": 144.1,
+    "hr": 9.134,
+    "bin_mw": 0.0
+   },
+   "50978": {
+    "name": "Carr Street Generating Station committed",
+    "cls": "CC_REGULAR",
+    "fuel": "gas_cc",
+    "mw": 122.6,
+    "hr": 8.9483,
+    "bin_mw": 0.0
+   },
+   "52056": {
+    "name": "Nassau Energy Corp committed",
+    "cls": "CC_CHP",
+    "fuel": "gas_cc",
+    "mw": 35.8,
+    "hr": 11.4113,
+    "bin_mw": 0.0
+   },
+   "54034": {
+    "name": "Rensselaer Cogen peak",
+    "cls": "CC_REGULAR",
+    "fuel": "gas_cc",
+    "mw": 78.0,
+    "hr": 20.3886,
+    "bin_mw": 0.0
+   },
+   "54041": {
+    "name": "Lockport Energy Associates LP econc00",
+    "cls": "CC_CHP",
+    "fuel": "gas_cc",
+    "mw": 48.9,
+    "hr": 17.4046,
+    "bin_mw": 0.0
+   },
+   "54076": {
+    "name": "Indeck Olean Energy Center econc00",
+    "cls": "CC_CHP",
+    "fuel": "gas_cc",
+    "mw": 45.5,
+    "hr": 14.3287,
+    "bin_mw": 0.0
+   },
+   "54099": {
+    "name": "Ticonderoga Mill committed",
+    "cls": "ST_CHP",
+    "fuel": "gas_st",
+    "mw": 11.9,
+    "hr": 4.4497,
+    "bin_mw": 0.0
+   },
+   "54114": {
+    "name": "Kennedy International Airport Cogen committed",
+    "cls": "CC_CHP",
+    "fuel": "gas_cc",
+    "mw": 125.6,
+    "hr": 10.5248,
+    "bin_mw": 0.0
+   },
+   "54131": {
+    "name": "Fortistar North Tonawanda committed",
+    "cls": "CC_CHP",
+    "fuel": "gas_cc",
+    "mw": 42.7,
+    "hr": 9.7332,
+    "bin_mw": 0.0
+   },
+   "54149": {
+    "name": "Stony Brook Cogen Plant committed",
+    "cls": "CT_CHP",
+    "fuel": "gas_ct",
+    "mw": 44.5,
+    "hr": 11.3988,
+    "bin_mw": 0.0
+   },
+   "54547": {
+    "name": "Sithe Independence Station committed",
+    "cls": "CC_CHP",
+    "fuel": "gas_cc",
+    "mw": 1086.1,
+    "hr": 8.4527,
+    "bin_mw": 0.0
+   },
+   "54574": {
+    "name": "Saranac Facility committed",
+    "cls": "CC_REGULAR",
+    "fuel": "gas_cc",
+    "mw": 251.5,
+    "hr": 11.0863,
+    "bin_mw": 0.0
+   },
+   "54592": {
+    "name": "Massena Energy Facility peak",
+    "cls": "CC_REGULAR",
+    "fuel": "gas_cc",
+    "mw": 53.6,
+    "hr": 18.9459,
+    "bin_mw": 0.0
+   },
+   "54593": {
+    "name": "Batavia Power Plant peak",
+    "cls": "CC_REGULAR",
+    "fuel": "gas_cc",
+    "mw": 42.9,
+    "hr": 21.5483,
+    "bin_mw": 0.0
+   },
+   "54808": {
+    "name": "New York University Central Plant committed",
+    "cls": "CC_CHP",
+    "fuel": "gas_cc",
+    "mw": 6.6,
+    "hr": 11.3326,
+    "bin_mw": 0.0
+   },
+   "54914": {
+    "name": "Brooklyn Navy Yard Cogeneration committed",
+    "cls": "CC_CHP",
+    "fuel": "gas_cc",
+    "mw": 312.9,
+    "hr": 8.8028,
+    "bin_mw": 0.0
+   },
+   "55243": {
+    "name": "Astoria Gas Turbines econlo",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 420.4,
+    "hr": 15.1404,
+    "bin_mw": 0.0
+   },
+   "55375": {
+    "name": "Astoria Energy committed",
+    "cls": "CC_REGULAR",
+    "fuel": "gas_cc",
+    "mw": 610.4,
+    "hr": 7.343,
+    "bin_mw": 0.0
+   },
+   "55405": {
+    "name": "Athens Generating Plant committed",
+    "cls": "CC_REGULAR",
+    "fuel": "gas_cc",
+    "mw": 1064.7,
+    "hr": 6.7708,
+    "bin_mw": 0.0
+   },
+   "55699": {
+    "name": "Bayswater Peaking Facility LLC committed",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 52.8,
+    "hr": 12.4007,
+    "bin_mw": 0.0
+   },
+   "55786": {
+    "name": "Edgewood Energy LLC committed",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 85.0,
+    "hr": 12.0475,
+    "bin_mw": 0.0
+   },
+   "56032": {
+    "name": "Equus Freeport Power committed",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 94.0,
+    "hr": 11.5094,
+    "bin_mw": 0.0
+   },
+   "56141": {
+    "name": "Jamaica Bay Peaking econlo",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 53.9,
+    "hr": 13.0166,
+    "bin_mw": 0.0
+   },
+   "56188": {
+    "name": "Pinelawn Power LLC committed",
+    "cls": "CC_REGULAR",
+    "fuel": "gas_cc",
+    "mw": 82.0,
+    "hr": 8.7194,
+    "bin_mw": 0.0
+   },
+   "56196": {
+    "name": "500MW CC committed",
+    "cls": "CC_REGULAR",
+    "fuel": "gas_cc",
+    "mw": 528.0,
+    "hr": 6.8567,
+    "bin_mw": 0.0
+   },
+   "56234": {
+    "name": "Caithness Long Island Energy Center committed",
+    "cls": "CC_REGULAR",
+    "fuel": "gas_cc",
+    "mw": 361.7,
+    "hr": 7.1847,
+    "bin_mw": 0.0
+   },
+   "56259": {
+    "name": "Empire Generating Co LLC committed",
+    "cls": "CC_CHP",
+    "fuel": "gas_cc",
+    "mw": 652.4,
+    "hr": 8.6414,
+    "bin_mw": 0.0
+   },
+   "56940": {
+    "name": "CPV Valley Energy Center committed",
+    "cls": "CC_REGULAR",
+    "fuel": "gas_cc",
+    "mw": 696.1,
+    "hr": 7.9604,
+    "bin_mw": 0.0
+   },
+   "56964": {
+    "name": "Bayonne Energy Center committed",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 607.4,
+    "hr": 12.4835,
+    "bin_mw": 0.0
+   },
+   "57185": {
+    "name": "Cricket Valley Energy committed",
+    "cls": "CC_REGULAR",
+    "fuel": "gas_cc",
+    "mw": 1086.9,
+    "hr": 8.6318,
+    "bin_mw": 0.0
+   },
+   "57664": {
+    "name": "Astoria Energy II committed",
+    "cls": "CC_REGULAR",
+    "fuel": "gas_cc",
+    "mw": 650.0,
+    "hr": 8.5357,
+    "bin_mw": 0.0
+   },
+   "57789": {
+    "name": "Peak Power 1 Cogen committed",
+    "cls": "CT_CHP",
+    "fuel": "gas_ct",
+    "mw": 1.6,
+    "hr": 10.9958,
+    "bin_mw": 0.0
+   },
+   "57798": {
+    "name": "OBP Cogen committed",
+    "cls": "CT_CHP",
+    "fuel": "gas_ct",
+    "mw": 2.7,
+    "hr": 5.6806,
+    "bin_mw": 0.0
+   },
+   "58157": {
+    "name": "University of Rochester committed",
+    "cls": "ST_CHP",
+    "fuel": "gas_st",
+    "mw": 2.4,
+    "hr": 6.3894,
+    "bin_mw": 0.0
+   },
+   "58167": {
+    "name": "William Floyd School District committed",
+    "cls": "CT_CHP",
+    "fuel": "gas_ct",
+    "mw": 0.8,
+    "hr": 7.0089,
+    "bin_mw": 0.0
+   },
+   "58186": {
+    "name": "HVCC Cogen Plant committed",
+    "cls": "CT_CHP",
+    "fuel": "gas_ct",
+    "mw": 1.5,
+    "hr": 14.8723,
+    "bin_mw": 0.0
+   },
+   "58507": {
+    "name": "Montefieor Medical Center Moses Division committed",
+    "cls": "CT_CHP",
+    "fuel": "gas_ct",
+    "mw": 2.0,
+    "hr": 15.2453,
+    "bin_mw": 0.0
+   },
+   "58815": {
+    "name": "Hilton NY Co Gen Plant committed",
+    "cls": "CT_CHP",
+    "fuel": "gas_ct",
+    "mw": 0.5,
+    "hr": 11.7835,
+    "bin_mw": 0.0
+   },
+   "59453": {
+    "name": "Albany Medical Ctr Cogen Plant committed",
+    "cls": "CT_CHP",
+    "fuel": "gas_ct",
+    "mw": 2.4,
+    "hr": 5.7597,
+    "bin_mw": 0.0
+   },
+   "61238": {
+    "name": "NY - Presbyt. Hospital - 525 E 68TH St committed",
+    "cls": "CT_CHP",
+    "fuel": "gas_ct",
+    "mw": 1.8,
+    "hr": 10.7452,
+    "bin_mw": 0.0
+   },
+   "61488": {
+    "name": "NYU LANGONE HEALTH committed",
+    "cls": "CT_CHP",
+    "fuel": "gas_ct",
+    "mw": 1.8,
+    "hr": 16.8614,
+    "bin_mw": 0.0
+   },
+   "62456": {
+    "name": "Regeneron Tarrytown econlo",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 1.4,
+    "hr": 6.6646,
+    "bin_mw": 0.0
+   },
+   "62576": {
+    "name": "MER Queens econlo",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 1.1,
+    "hr": 8.9511,
+    "bin_mw": 0.0
+   },
+   "62920": {
+    "name": "Burrstone Energy Center committed",
+    "cls": "CT_CHP",
+    "fuel": "gas_ct",
+    "mw": 2.1,
+    "hr": 11.5797,
+    "bin_mw": 0.0
+   },
+   "63236": {
+    "name": "Kings Plaza Total Energy Plant (TEP) committed",
+    "cls": "CT_CHP",
+    "fuel": "gas_ct",
+    "mw": 4.3,
+    "hr": 11.9856,
+    "bin_mw": 0.0
+   },
+   "63647": {
+    "name": "SDM000 Clarkson Fuel Cell econlo",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 1.7,
+    "hr": 6.6634,
+    "bin_mw": 0.0
+   },
+   "63648": {
+    "name": "NHH003 Clarkson Fuel Cell econlo",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 0.5,
+    "hr": 6.539,
+    "bin_mw": 0.0
+   },
+   "63661": {
+    "name": "SWM Fuel Cell econlo",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 8.4,
+    "hr": 10.89,
+    "bin_mw": 7.8
+   },
+   "64143": {
+    "name": "Bloom-Altice Fuel Cell econlo",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 1.9,
+    "hr": 9.0,
+    "bin_mw": 1.9
+   },
+   "64350": {
+    "name": "Orbit Bloom Fuel Cell econlo",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 5.6,
+    "hr": 9.0,
+    "bin_mw": 5.6
+   },
+   "64748": {
+    "name": "Fuel Cell 18A Sneden Avenue econlo",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 3.3,
+    "hr": 9.0,
+    "bin_mw": 3.3
+   },
+   "64749": {
+    "name": "Fuel Cell 18B Sneden Avenue econlo",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 3.7,
+    "hr": 9.0,
+    "bin_mw": 3.7
+   },
+   "65201": {
+    "name": "Certain Solar - Staten Island econlo",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 7.5,
+    "hr": 10.89,
+    "bin_mw": 7.0
+   },
+   "65212": {
+    "name": "Altice - Hicksville econlo",
+    "cls": "CT_PEAKER",
+    "fuel": "gas_ct",
+    "mw": 1.9,
+    "hr": 9.0,
+    "bin_mw": 1.9
+   }
+  },
+  "n_units": 805
+ }
+}

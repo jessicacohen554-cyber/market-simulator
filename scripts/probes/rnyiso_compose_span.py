@@ -26,6 +26,11 @@ Usage::
     python3 scripts/probes/rnyiso_compose_span.py \\
         --legs results/calibration/rnyiso_{2022,2023,2024,2025} \\
         --out  results/calibration/rnyiso_span
+
+    # leg acceptance only (R-NYISO-2021: a held-out year registered on its own and
+    # stamped to the keeper, never composed into it):
+    python3 scripts/probes/rnyiso_compose_span.py --check-only \\
+        --legs results/calibration/rnyiso_2021
 """
 
 from __future__ import annotations
@@ -41,8 +46,13 @@ if str(_REPO) not in sys.path:  # run as a script, like every other probe
 
 from scripts.probes.nyiso238_compose_span import compose as _compose  # noqa: E402
 
-KEEPER = _REPO / "results" / "calibration" / "hydro3_nyiso_ror_span"
-PIN = "e95436d5024fc14096eed558d6dd15a65128e524"
+#: The keeper the legs are checked against. R-NYISO checked its 2022-2025 legs against
+#: ``hydro3_nyiso_ror_span`` (pinned ``e95436d5``); that bundle was pruned at the
+#: 2026-09-25 promotion, so R-NYISO-2021 checks against the promoted keeper, whose
+#: offer block is byte-identical to hydro3's (R-NYISO S1).
+KEEPER = _REPO / "results" / "calibration" / "rnyiso_span"
+#: R-NYISO-2021 PRECOMMIT (docs/PRECOMMIT-r-nyiso-2021-2026-09-25.md) commit SHA.
+PIN = "24cf43280f3b07f3755e82d42dd33138a5a00e9e"
 #: (resolved scenario_config field, required value) -- PRECOMMIT §6 S1.
 EXPECTED = (
     ("eia860_vintage_tracks_solve_year", True),
@@ -63,13 +73,27 @@ INPUT_SHA = {
 }
 
 
-def _offer_block(rc: dict) -> str:
-    """Canonical JSON of every offer-curve surface a run_config carries."""
+#: The ONE key a HEAD solve may lack relative to the keeper: #6611 retired the bare
+#: ``COAL`` class, so ``scenarios._retire_bare_coal_class`` folds (drops) it when the
+#: four subclasses are also present -- which they are in the keeper, with their own
+#: bands. No NYISO unit reads it (0 coal units 2020-2024; R-NYISO-2021 PRECOMMIT §3).
+FOLDED_KEYS = ("COAL",)
+
+
+def _offer_block(rc: dict, fold: bool = False) -> str:
+    """Canonical JSON of every offer-curve surface a run_config carries.
+
+    ``fold=True`` drops :data:`FOLDED_KEYS` from ``offer_curve_by_group`` (used on
+    the keeper side, which was solved before the bare-coal fold existed).
+    """
     sc = rc.get("scenario_config") or {}
     cf = rc.get("calibration_flags") or {}
+    ocg = sc.get("offer_curve_by_group")
+    if fold and isinstance(ocg, dict):
+        ocg = {k: v for k, v in ocg.items() if k not in FOLDED_KEYS}
     return json.dumps(
         {
-            "offer_curve_by_group": sc.get("offer_curve_by_group"),
+            "offer_curve_by_group": ocg,
             "offer_curve_overrides": cf.get("offer_curve_overrides"),
             "offer_curve_deltas": cf.get("offer_curve_deltas"),
         },
@@ -79,7 +103,9 @@ def _offer_block(rc: dict) -> str:
 
 def check_legs(legs: list[Path]) -> None:
     """Fail loud if any leg misses the PRECOMMIT's S0-S2 acceptance."""
-    keeper_offers = _offer_block(json.loads((KEEPER / "run_config.json").read_text()))
+    keeper_offers = _offer_block(
+        json.loads((KEEPER / "run_config.json").read_text()), fold=True
+    )
     bad: list[str] = []
     for leg in legs:
         rc = json.loads((leg / "run_config.json").read_text())
@@ -111,10 +137,15 @@ def main() -> None:
     """Check every leg, then compose the span bundle."""
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--legs", nargs="+", required=True)
-    ap.add_argument("--out", required=True)
+    ap.add_argument("--out")
+    ap.add_argument("--check-only", action="store_true", help="S0-S2 only; compose nothing")
     args = ap.parse_args()
     legs = [Path(x) for x in args.legs]
     check_legs(legs)
+    if args.check_only:
+        return
+    if not args.out:
+        ap.error("--out is required unless --check-only")
     _compose(legs, Path(args.out))
 
 
