@@ -222,3 +222,18 @@ Promotion is the owner's decision (rule 31).
    - the std-unitroute extract's 2023–25 drift (New Ulm, Waterford);
    - the pre-existing failures on `main`: 4 in `tests/unit/config` and 1 in the SOCO dark-unit test, all identical
      without this lane's changes.
+
+## 8. Launch record (appended after the pin; §1–§7 unchanged)
+
+Launched 2026-09-25 18:50–18:52 UTC. All 7 shards are pinned to `09b152c5099445b13e717eb0dab22947224d78a4`, tagged
+`miso-273` / `shard`, with auto-PR off. Each shard pushes branch `claude/miso273-arm-<Y>` from out-dir `miso273_arm_<Y>`.
+
+| year | session |
+|---|---|
+| 2022 (launched first, the slow leg) | `session_015FEb8LdsS21kVfebEu98rp` |
+| 2019 | `session_01E4ZvQCkJzkTMARbFK7Sbtf` |
+| 2020 | `session_01AvVjDjkomTffJfW2C6sXsf` |
+| 2021 | `session_01WNq6CHBx6K8XyrobnXCpp3` |
+| 2023 | `session_01UmTckb132nRLY1kPo22FBJ` |
+| 2024 | `session_01FuSstmwzzVT8Zb9divrjy5` |
+| 2025 | `session_01CxqStmGat7Qr4XB5r1Pexk` |
