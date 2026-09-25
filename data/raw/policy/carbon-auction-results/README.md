@@ -93,6 +93,12 @@ program,year,quarter,auction_date,auction_number,clearing_price,price_unit,allow
 - [x] RGGI — 12/12 quarters, 2023-2025, exact dates + full volumes.
 - [x] CARB — 10/12 quarters, 2023-2025, prices only (no volumes); 2 gaps
       logged above as MANUAL DOWNLOADS NEEDED.
+- [x] CARB 2019 — 4/4 quarters (joint auctions #18-#21), added 2026-09-24
+      (i-caiso). Current Auction settlement price (USD) read directly from each
+      CA-Quebec joint Summary Results Report PDF, hosted by the MELCC at
+      `environnement.gouv.qc.ca/changements/carbone/ventes-encheres/` (reachable
+      where `ww2.arb.ca.gov` is not) — the same provenance the caiso-274 2020/2021
+      rows carry. Feeds `STATE_CARBON_PRICE_BY_ISO["CAISO"][2019]` = $16.84/t.
 
 ## Consumer
 

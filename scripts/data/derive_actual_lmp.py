@@ -217,6 +217,18 @@ CAISO_MIN_HOURS = 6500
 # not derived from today's date) so the deriver stays deterministic.
 CAISO_PARTIAL_YEARS: frozenset[int] = frozenset({2026})
 CAISO_MIN_HOURS_PARTIAL = 2000
+# Years short by IRRECOVERABLE ARCHIVE RETENTION rather than by publication or a
+# failed fetch (i-caiso, 2026-09-24). 2021: OASIS GroupZip served trade dates
+# from 2021-04-27 when the committed aggregates were crawled (caiso-263/274) and
+# serves none before 2021-09 today (re-probed 2026-09-24: 2021-08-12 no data,
+# 2021-09-01 served), so Jan 1 - Apr 26 can never be fetched and the committed
+# DAM file (5,977 h) cannot clear ``CAISO_MIN_HOURS``. Same floor as
+# ``CAISO_PARTIAL_YEARS``; the difference is that these records ALSO carry the
+# ``da_cov``/``rt_cov`` vectors (:func:`_coverage`) the verdict's like-for-like
+# month mask reads (``calibration_verdict._covered_months``), so a month the
+# archive holds only a few days of is dropped from C3a/C3b rather than read as a
+# full month. Kept a separate set so the 2026 record stays byte-identical.
+CAISO_RETENTION_PARTIAL_YEARS: frozenset[int] = frozenset({2021})
 
 # Duration-curve percentile levels for the ``da_pct`` / ``rt_pct`` records.
 _PCT_LEVELS = (1, 5, 10, 25, 50, 75, 90, 95, 99)
@@ -361,7 +373,11 @@ def _caiso_system_series(name: str, year: int) -> pd.Series | None:
     if not set(CAISO_HUB_WEIGHTS) <= set(wide.columns):
         return None
     wide = wide[list(CAISO_HUB_WEIGHTS)].dropna()
-    floor = CAISO_MIN_HOURS_PARTIAL if year in CAISO_PARTIAL_YEARS else CAISO_MIN_HOURS
+    floor = (
+        CAISO_MIN_HOURS_PARTIAL
+        if year in CAISO_PARTIAL_YEARS | CAISO_RETENTION_PARTIAL_YEARS
+        else CAISO_MIN_HOURS
+    )
     if len(wide) < floor:
         return None
     w = np.array(list(CAISO_HUB_WEIGHTS.values()))
@@ -410,9 +426,20 @@ def _caiso(year: int) -> tuple[dict, pd.DataFrame] | None:
         parts[key] = round(float(ser.mean()), 2)
         parts[f"{key}_mon"] = _by_month(ser.to_numpy(), pd.Series(ser.index).dt.month)
         parts[f"{key}_pct"] = _pct(d)
+        if year in CAISO_RETENTION_PARTIAL_YEARS:
+            parts[f"{key}_cov"] = _coverage(d, _month_of_hour())
     rec = {
         k: parts[k]
-        for k in ("da", "rt", "da_mon", "rt_mon", "da_pct", "rt_pct")
+        for k in (
+            "da",
+            "rt",
+            "da_mon",
+            "rt_mon",
+            "da_pct",
+            "rt_pct",
+            "da_cov",
+            "rt_cov",
+        )
         if k in parts
     }
     rec["src"] = CAISO_SRC

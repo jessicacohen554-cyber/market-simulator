@@ -104,6 +104,53 @@ class TestToHourlyNodalLmp(unittest.TestCase):
         self.assertAlmostEqual(out[0], 11.0)  # MCE + MCC, no loss row present
 
 
+class TestFromHourlyAggregate(unittest.TestCase):
+    """The ``--from-hourly-aggregate`` route (i-caiso): the tracked GroupZip-folded
+    ``CAISO_dam_hourly_<year>.csv`` melted back to long form."""
+
+    def test_melts_components_and_keeps_local_year(self):
+        import tempfile
+        from pathlib import Path
+        from unittest import mock
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            pd.DataFrame(
+                {
+                    # 07:00 UTC Jan 1 2021 is 23:00 PST Dec 31 2020 -> dropped.
+                    "interval_start_gmt": [
+                        "2021-01-01 07:00:00+00:00",
+                        "2021-01-01 08:00:00+00:00",
+                        "2021-01-01 08:00:00+00:00",
+                    ],
+                    "node": ["MALIN_5_N101", "MALIN_5_N101", "TH_NP15_GEN-APND"],
+                    "LMP": [0.0, 12.5, 30.0],
+                    "MCC": [0.0, 1.0, 0.0],
+                    "MCE": [0.0, 12.0, 30.0],
+                    "MCL": [0.0, -0.5, 0.0],
+                }
+            ).to_csv(root / "CAISO_dam_hourly_2021.csv", index=False)
+            import scripts.data.fold_caiso_oasis_grp_zips as fold
+
+            with mock.patch.object(fold, "LMP_DIR", root):
+                raw = fil._raw_from_hourly_aggregate("MALIN_5_N101", 2021)
+        self.assertEqual(sorted(raw["LMP_TYPE"].unique()), ["MCC", "MCE", "MCL"])
+        out = fil._to_hourly_nodal_lmp(raw, 2021)
+        self.assertAlmostEqual(out[0], 12.5)  # MCE + MCC + MCL
+        self.assertEqual(int(np.isfinite(out).sum()), 1)
+
+    def test_absent_aggregate_returns_none(self):
+        import tempfile
+        from pathlib import Path
+        from unittest import mock
+
+        import scripts.data.fold_caiso_oasis_grp_zips as fold
+
+        with tempfile.TemporaryDirectory() as tmp:
+            with mock.patch.object(fold, "LMP_DIR", Path(tmp)):
+                self.assertIsNone(fil._raw_from_hourly_aggregate("MALIN_5_N101", 2019))
+
+
 class TestNodeMap(unittest.TestCase):
     def test_two_model_hubs_present(self):
         self.assertEqual(set(fil.INTERTIE_NODES), {"MALIN", "PALOVRDE"})

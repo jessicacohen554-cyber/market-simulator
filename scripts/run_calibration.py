@@ -5860,6 +5860,10 @@ def run_year(
             "demand": demand,
             "mc_base": mc_base,
             "fuel_prices": fuel_prices,
+            # The year's topology-extended ISOConfig (external nodes, corridor
+            # zones): ``fleet_arrays.zone_idx`` indexes ITS zone_names, which
+            # the base ``get_iso_config(iso)`` does not carry.
+            "iso_config": iso_config,
         }
 
     # caiso-157's fail-fast guard, WIRED (caiso-188). An armed mechanism whose
