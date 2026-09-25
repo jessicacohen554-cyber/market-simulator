@@ -639,6 +639,10 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # (default-off, byte-identical at its default because the loader then reads
     # the unchanged flat extract, so dropped from the hash there).
     "ercot_partial_outage_shaped_derate",
+    # R-ERCOT-4 day-grain guard on the shaped layer: same treatment (default-off,
+    # byte-identical at its default because the loader then reads the unchanged
+    # shaped extract, so dropped from the hash there).
+    "ercot_partial_outage_day_guard",
     # ERCOT-111 measured incremental-heat-rate floor on the COAL econ ramp.
     # Default-off and byte-identical for every existing config (with the gate
     # off no offer-curve band is touched), so it is dropped from the hash at its
@@ -2276,6 +2280,7 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     "ercot_dam_availability_event_cap_reconciliation": "False",
     "ercot_dam_availability_event_cap_unit_scoped": "False",
     "ercot_partial_outage_shaped_derate": "False",
+    "ercot_partial_outage_day_guard": "False",
     "coal_econ_marginal_hr_bound": "False",
     "ercot_wind_zone_shape": "False",
     "gas_offer_net_revenue_margin": "False",
@@ -3368,6 +3373,7 @@ _BACKCAST_ONLY_OVERLAY_FIELDS: dict[str, str] = {
     "ercot_dam_availability_event_cap_reconciliation": "measured DAM-award event-cap reconciliation",
     "ercot_dam_availability_event_cap_unit_scoped": "measured unit-scoped event-cap composition",
     "ercot_partial_outage_shaped_derate": "measured day-shaped partial-outage plateau derate",
+    "ercot_partial_outage_day_guard": "measured day-shaped partial-outage derate, same-day CEMS guard",
     "pjm_dam_availability": "measured PJM DAM availability record",
     "pjm_measured_outage_event_cap": "measured PJM published-outage event cap (remove-only)",
     "ercot_noncampd_plant_availability": "measured availability for non-CAMPD plants",
@@ -13949,6 +13955,27 @@ class ScenarioConfig:
     # docs/PRECOMMIT-ercot185-fault3-partial-layer-construction-2026-08-09.md
     ercot_partial_outage_shaped_derate: bool = False
 
+    # R-ERCOT-4 day-grain guard on the shaped partial-outage layer (default off,
+    # ERCOT backcast-only; acts only with ercot_partial_outage_shaped_derate).
+    # The shaped detector finds plateaus and scales each day's derate off a
+    # centered 7-day rolling median of daily-max CF, so a cycling coal plant's
+    # FULL-LOAD days inside a low-loading week are capped anyway — Martin Lake
+    # 2021-10-20/21 capped at 0.385 while its own CEMS shows all three units at
+    # ~860 MW, the sole driver of the model's Oct-2021 scarcity event. Armed,
+    # the loader reads data/raw/campd-partial-outages-shaped-dayguard.csv
+    # (derive_partial_outages.py --emit-shaped-dayguard): the SAME plateaus and
+    # sub-window tiling, with each day's derate floored at the plant's OWN
+    # same-day measured ceiling, shaped(d) >= min(1, dmax[d] / ref) — a plant is
+    # never capped below what it measurably ran that day. Every quantity is the
+    # frozen detector's own (dmax, ref), so zero new scalars (rules 21/23). It is
+    # a net LIFT on the capped days, so ercot-185's SP-6 median-preservation is
+    # replaced for this extract by the day-grain floor property, asserted in the
+    # deriver. Falls back to the unguarded shaped extract when the file is
+    # absent. Forecast untouched (measured CAMPD overlay).
+    # docs/handoffs/FINDING-r-ercot-4-validation-years-2026-09-25.md;
+    # docs/handoffs/PRECOMMIT-r-ercot-4-day-guard-2026-09-25.md
+    ercot_partial_outage_day_guard: bool = False
+
     # ERCOT CAMPD-blind per-plant availability (default off, ERCOT backcast-gated
     # — ERCOT-71). Restores measured availability for the ERCOT gas plants ABSENT
     # from the TX CAMPD extract (Kiamichi 55501, Hidalgo 55545, Arthur Von
@@ -22927,6 +22954,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_dam_availability_event_cap_reconciliation": 3,
     "ercot_dam_availability_event_cap_unit_scoped": 3,
     "ercot_partial_outage_shaped_derate": 3,
+    "ercot_partial_outage_day_guard": 3,
     "maxgen_emergency_tier_pricing": 3,
     "gas_price_override": 3,
     "f923_gas_price_plausibility_screen": 1,

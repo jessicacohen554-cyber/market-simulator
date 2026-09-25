@@ -512,6 +512,41 @@ def _detect_shaped(
     return out
 
 
+def detect_shaped_dayguard(
+    cf: np.ndarray,
+) -> list[tuple[int, int, np.ndarray, np.ndarray]]:
+    """Return ``[(start_day, end_day_excl, guarded derate, day floor), ...]``.
+
+    The R-ERCOT-4 day-grain guard on :func:`detect_shaped`: the SAME plateaus
+    over the SAME day spans with the SAME normalized profile, except that no
+    day's derate may sit below the plant's OWN same-day measured ceiling::
+
+        floor(d)   = round(min(1, dmax[d] / ref), 3)
+        guarded(d) = max(shaped(d), floor(d))
+
+    ``shaped`` scales every day off ``sm``, the centered ``_SMOOTH_DAYS`` rolling
+    median of daily maxima, so a cycling plant's full-load days inside a
+    low-loading week are capped at the week's level even though its own CEMS
+    record shows it ran at ceiling that day (Martin Lake 2021-10-20/21: shaped
+    0.385 vs measured 0.997). Availability is never below what a plant
+    measurably produced, so the floor is the detector's own statistic applied at
+    the detector's own grain; every quantity (``dmax``, ``ref``) is the frozen
+    detector's, so zero new scalars enter (rules 21/23). It is a net LIFT on the
+    capped days, so the ercot-185 SP-6 median-preservation does not hold for
+    this variant; the deriver asserts ``guarded >= floor`` instead.
+    docs/handoffs/FINDING-r-ercot-4-validation-years-2026-09-25.md.
+    """
+    st = _plateau_state(cf)
+    if st is None:
+        return []
+    dmax, ref, _sm, _partial = st
+    out: list[tuple[int, int, np.ndarray, np.ndarray]] = []
+    for i, j, prof in _detect_shaped(cf, normalize=True):
+        floor = np.round(np.minimum(1.0, np.asarray(dmax[i:j], dtype=float) / ref), 3)
+        out.append((i, j, np.maximum(prof, floor), floor))
+    return out
+
+
 # ---------------------------------------------------------------------------
 # Merit-order guard: economic layup vs mechanical outage (neiso-64)
 # ---------------------------------------------------------------------------
