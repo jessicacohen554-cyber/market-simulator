@@ -10937,3 +10937,188 @@ that none exists.
 EXIT: docs/handoffs/FINDING-capx-d94-2026-09-24.md leading with the verdict transition, the
 predictions graded, and the per-rung table. Open a PR to main.
 ```
+
+---
+
+## r#66 NOTE
+
+Four charters, issued 2026-09-25 at main `a1b8ebd9` against ledger §0bk, all dispatched by the desk. They write disjoint files. **NEXT FREE LABEL: D98.**
+
+---
+
+## GATE-(a) RE-KEY r#66 — five ISOs (Opus, code, zero LP)
+
+```
+You are the capx gate-(a) re-key lane (r#66) for jessicacohen554-cyber/market-simulator.
+MODEL: Opus. DATA PROFILE: code. Branch: claude/capx-gate-a-rekey-r66, fresh off origin/main.
+Binding charter: docs/handoffs/capx-director-prompt-pack-2026-08.md "GATE-(a) RE-KEY r#66"; ledger §0bk.
+ONE ACT, ZERO LP. You edit frontend/data/forecast/program-status.json and nothing else, plus your record.
+
+WHY. scripts/check_gate_a_provenance.py is EXIT 1 at main a1b8ebd9 on FIVE ISOs. This is the twentieth
+firing of the standing Q34 duty. Every row went stale because an R-* input-vintage promotion did not
+re-key it. The desk read:
+  CAISO row 2026-09-20-caiso-290-leftedge     -> live 2026-09-24-caiso-r-inputs-vintage
+  ERCOT row 2026-09-19-ercot266-mer-five-year -> live 2026-09-24-r-inputs-2019-2025
+  MISO  row 2026-09-24-miso-268-coal-yard     -> live 2026-09-24-rmiso-arm-b-mid
+  NEISO row 2026-09-22-hydro-5-neiso-ror      -> live 2026-09-24-r-neiso-inputs-2019
+  PJM   row 2026-09-24-pjm-h22-rggi-span      -> live 2026-09-25-pjm-r-pjm-2
+** DO NOT TRUST THOSE IDS. ** Read every fact LIVE at your HEAD, and if your HEAD disagrees, re-key to
+your HEAD and say so. The backcast track is promoting several times a day. So re-run the gate AFTER your
+final rebase, and re-key any row that went stale while you worked. Name the full promotion chain for each
+row.
+
+WORKED EXAMPLES: `git show 1b175ce9` (miso-267) and the r#65 re-key (PR #6582,
+docs/handoffs/FINDING-capx-gate-a-rekey-r65-2026-09-24.md). Follow that method exactly:
+ 1. Per ISO, read live and cite: the keeper (keepers/<ISO>.json), BOTH blocks of
+    calibration-complete.json, the determination from the committed status/<ISO>.js (NOT a re-score),
+    and the promotion instrument as a DOCUMENT.
+ 2. TARGETED STRING EDIT of the row's `detail`, `read_live_at` and `corrected_by` leaves, plus its
+    top-level `keeper` / `marker_complete` fields. NEVER a json.dumps round-trip.
+ 3. Preserve the prior text. Each `corrected_by` is a chain, so prepend with "Supersedes:".
+ 4. Touch ONLY the rows that fail at your HEAD. NWPP/SOCO notes are not reds: owner ruling Q68 adds their
+    rows only after each declares `complete`.
+STOP GATES: an ISO already green at your HEAD is not re-keyed. If re-keying would move a leg status (the
+marker or the determination changed, e.g. an ISO entering or leaving `complete`), re-derive leg (a) on the
+literal §2.1b(2)(a) test ONLY where the owner's marker instrument is cited verbatim (the D56-R / r#65
+SPP precedent). Otherwise STOP and report that row. Report and do not repair any marker entry that names
+a keeper other than the live one.
+EXIT: check_gate_a_provenance.py EXIT 0 at your final HEAD, and a record at
+docs/handoffs/FINDING-capx-gate-a-rekey-r66-2026-09-25.md. Open a PR to main. Lead your close with the exit
+code and the id transitions. Rule 27: push exact bytes and verify the pushed blob. If you defer anything,
+name a LIVE owner or state that none exists.
+```
+
+---
+
+## D95 — D94's two key-provenance UNKNOWNs (Opus, code, zero LP)
+
+```
+You are the D95 lane for jessicacohen554-cyber/market-simulator.
+MODEL: Opus. DATA PROFILE: code. Branch: claude/capx-d95-d94-key-unknowns, fresh off origin/main. ZERO LP.
+Binding charter: docs/handoffs/capx-director-prompt-pack-2026-08.md "D95"; ledger §0bk.
+
+WHY. scripts/check_key_provenance.py is EXIT 1 at main a1b8ebd9: "2 mismatch(es) reproduce under NO recipe".
+Both are capx's own records:
+  results/ff-t3-neiso-golden/d94/vre_short/run_config.json  recorded 1be407901f4f8000
+  results/ff-t3-neiso-golden/d94/vre_long/run_config.json   recorded df7b178ae9ccbe41
+Both were solved at pin 924017c856780bd4b7e989624d621e621c215f75, and D94 (FINDING-capx-d94-2026-09-24.md
+§3/§5) measured both REPRODUCING their own keys at its merge. So something that landed on main after
+924017c8 has moved them.
+
+READ FIRST: FINDING-capx-d93-2026-09-24.md (the Q66 class rule, encoded as one table row per registration),
+FINDING-capx-d91-2026-09-09.md (single-field drop search), and the check_key_provenance.py ladder.
+
+PART 1: ATTRIBUTE BY EXPERIMENT. Diff scenarios.py _CACHE_KEY_OPTIONAL_FIELDS* and config/solve_surface*
+between 924017c8 and HEAD (deepen the shallow clone as needed). Run the D91 single-field drop search over
+every ScenarioConfig field absent from those two payloads. Test the surface fingerprint (D79) separately:
+a solve-surface registry row that re-derived after 924017c8 is a DIFFERENT class from an unregistered-field
+lag. Name the cause with the reproducing literal.
+PART 2: DISPOSE.
+ (a) If it is an unregistered-field lag of the Q66 class, add ONE table row {field, registration_sha} and
+     prove it both directions with tests, D93's pattern.
+ (b) If it is a field that is STILL unregistered (a live G6-class defect that the census is blind to,
+     because the payload predates the field), register it at its frozen default as D91 R1 did, then (a).
+ (c) If it is a surface re-key, say which registry row moved, which ISOs it re-keys, and whether an
+     existing exception class covers it. Do NOT invent a class. Report it for an owner card.
+ (d) If no single cause reproduces: STOP and report. Never append to key-provenance-exceptions.json.
+Pre-declare the expected attribution in docs/handoffs/PRECOMMIT-capx-d95-2026-09-25.md and push it
+before editing code. Rule 27: blob-verify every file of 300+ lines. Concurrent capx lane D96 will solve
+NEW neiso-t3 legs at a later pin. Its records must reproduce under your final rules, so check them if they
+land before you merge.
+EXIT: check_key_provenance EXIT 0, or every residual named with a LIVE owner.
+docs/handoffs/FINDING-capx-d95-2026-09-25.md leads with the attribution and the before/after census line.
+Open a PR to main.
+```
+
+---
+
+## D96 — neiso-t3 onto post-F1, Q69 (Opus, neiso)
+
+```
+You are the D96 lane for jessicacohen554-cyber/market-simulator.
+MODEL: Opus. DATA PROFILE: neiso (python3 scripts/hydrate_data.py --profile neiso).
+Branch: claude/capx-d96-neiso-t3-postf1, fresh off origin/main.
+Authority: OWNER RULING Q69 (2026-09-25, capx ledger §0bk / §3): "Re-solve now."
+Binding charter: docs/handoffs/capx-director-prompt-pack-2026-08.md "D96".
+
+WHY. capx D94 (docs/handoffs/FINDING-capx-d94-2026-09-24.md §3, §6.2, §7(a)) found `neiso-t3` on TWO
+data vintages. Its FC-6 driver battery (d94/) is post-F1: F1 is the eGRID-2024 heat-rate update, merged
+2026-09-24, whose own note says it invalidates every forecast at the same key. Its primary bundle, its
+paired arms and its FC-5 table (d92/{base,carbon_plus25,gaspm5,gasup150}) are pre-F1. D94's same-HEAD
+control measured the drift: 293 trajectory cells, cumulative CO2 154.4195 -> 151.2747 Mt (-2.04 %),
+2030 CCS 6,648.3 -> 6,979.7 MW. You put the whole verdict back on one vintage.
+
+READ FIRST: FINDING-capx-d94 (whole), FINDING-capx-d92 + PRECOMMIT-capx-d92 with Addenda A/B (the four-leg
+recipe, the two neiso-t3 pins ccs_retrofit_vom_adder 8.0 and ccs_retrofit_fixed_cost_co2_scaling False,
+the controlled-swap scorer practice, and the FC-7 four-clause rule), and F1's own merge note/record.
+
+PART 1: PRECOMMIT, PUSHED BEFORE ANY LP (docs/handoffs/PRECOMMIT-capx-d96-2026-09-25.md). The four legs
+are identical to D92's recipe, both pins included, with only the HEAD changed. Include a G-DRIFT hunk
+audit of 924017c8..your pin (D94's pin; its vre_short is your natural same-vintage control for `base`).
+Pre-declare per leg: cumulative CO2, 2030 CCS MW, RM2050 and the FC-6 paired-P1 margin, each with
+direction AND magnitude. Also predict whether ANY FC status moves, and label near-certainties as such.
+EXPECTATION TO BEAT: `base` should land near D94's vre_short (151.27 Mt), since both run one recipe on one
+vintage. Say in advance how close, and what a miss would mean.
+PART 2: SOLVE, IN SHARDS (rule 32; this session never runs an LP). Four legs, each ONE indivisible
+2026-2050 invocation (rule 36(c): a forecast horizon is never sharded by year). Launch four concurrent
+shards per rule 32(c): source_revision = your pushed PRECOMMIT's full 40-char SHA, with the first hard stop
+`git rev-parse HEAD` == that SHA and no rebase/pull/sync. Give each its own --out-dir
+results/ff-t3-neiso-golden/d96/<leg>/ and its own branch, and have it push its FULL bundle (rule 34: a
+.gitignore negation plus plain `git add`, never -f and never -A). No edits under src/ or scripts/, never
+touch frontend/data/**, no PR. "A shard that stops with a clear report is a SUCCESS; a shard that repairs
+infrastructure is a FAILURE." Budget ~30-47 min per leg, and state it. Each shard REPORTS its key, wall
+time and the preflight/memory-peak lines. The parent fetches, verifies the config signature + both pins,
+lands what must survive on main (rule 33(f)), and only then archives each shard.
+PART 3: RE-SCORE. Re-run forecast_verdict.py over the COMMITTED inputs first and confirm it reproduces the
+standing neiso-t3 exactly. Then swap the primary bundle, the paired arms and the FC-5 table onto d96, and
+keep the d94 driver battery. Re-author FC-5 exactly as D92 §6 did. Preserve the prior at
+`neiso-t3-pre-d96` byte-equal. Follow the FC-7 four-clause rule literally if FC-7 moves. Score and register
+AFTER your final rebase; a rebase after scoring re-stamps scored_at_sha artifact-only. You are the SOLE
+writer of ff-verdicts.json this window.
+KEY PROVENANCE: concurrent lane D95 is attributing the two d94 UNKNOWNs. Your four new run_configs must
+reproduce their own keys at your merge. Report the census line before and after.
+REPORT every leg at full magnitude, both directions, plus the verdict transition. Rule 31: never rm a solved
+bundle, and ask the promotion question. Rule 27: blob-verify every file of 300+ lines. If you defer
+anything, name a LIVE owner or state that none exists.
+EXIT: docs/handoffs/FINDING-capx-d96-2026-09-25.md leads with the verdict transition, the predictions
+graded, and the per-leg table. Open a PR to main.
+```
+
+---
+
+## D97 — T1.6 re-point DESIGN, Q70 (Fable, code, zero LP)
+
+```
+You are the D97 lane for jessicacohen554-cyber/market-simulator.
+MODEL: Fable. DATA PROFILE: code (widen to neiso only if you need to READ inputs). ZERO LP. Branch:
+claude/capx-d97-t16-design, fresh off origin/main.
+Authority: OWNER RULING Q70 (2026-09-25, capx ledger §0bk / §3): "Design lane first."
+Binding charter: docs/handoffs/capx-director-prompt-pack-2026-08.md "D97".
+
+WHY. The FC-6 driver-battery ladder T1.6 ("RPS/ACP vs VRE supply, short -> long") cannot discriminate in
+NEISO. capx D94 (FINDING-capx-d94-2026-09-24.md §1.1) measured this on the neiso-t3 golden recipe. Its lever,
+entry_rate_limits True -> False, leaves NEISO wind+solar at 33.0 GW in BOTH rungs, and the REC dual sits at
+the $50 ACP in every year of both. So T1.6a/T1.6b read VACUOUS CAVEAT. Q27 (capx ledger §3) is the
+precedent ruling class for re-pointing a ladder. Read it, and read D35 (the P2 re-scope) as the worked
+example of re-pointing an FC-6 element.
+
+THE DESIGN QUESTION: which REAL driver moves NEISO's VRE supply, so that the pre-registered expectations
+"REC dual <= ACP" and "REC dual falls as VRE builds toward the target" become TESTABLE? Candidates to
+evaluate, not to assume: the RPS target level itself, VRE capex / ATB cost vintage, the offshore-wind
+pipeline (known additions), interconnection / entry caps specific to NEISO, the ACP level. For each
+candidate, work out by CODE READING and zero-LP arithmetic (committed d94/d92 trajectories, entry-screen
+margins):
+  (1) does it reach NEISO VRE entry at all (trace the seam in capacity evolution);
+  (2) the expected direction and rough size of the VRE response;
+  (3) whether the REC dual can leave the ACP ceiling in the rung;
+  (4) whether it is a real forward driver (rule 1 / rule 13), never a knob chosen to make T1.6 pass.
+      Selecting a lever BECAUSE it makes the gate pass is the fitted-mechanism selection rule 1 forbids,
+      so say why each candidate is a legitimate driver independent of the outcome.
+Then PRE-DECLARE the recommended ladder: its rungs, overrides and expectations, the cost (legs x ~35 min),
+and what a vacuous result would mean.
+BOUNDARIES: no solve, no edit under src/ or scripts/, no scorer change, no ff-verdicts edit. D96 is
+concurrently re-solving neiso-t3 and is the sole ff-verdicts writer.
+EXIT: docs/handoffs/DESIGN-capx-d97-t16-repoint-2026-09-25.md, ending in ONE owner card: the recommended
+re-point, the alternatives, and "retire T1.6 for NEISO" as the named fallback. Open a PR to main. If you
+defer anything, name a LIVE owner or state that none exists.
+```
