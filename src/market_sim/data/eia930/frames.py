@@ -389,7 +389,7 @@ def _screen_fuel_spikes(
 
     The import is deferred because ``actuals`` imports this module at module
     level; this is the same cycle, and the same remedy, as
-    :func:`_pool_hourly_frame`'s local import of ``_screen_demand_dropouts``.
+    :func:`_pool_member_demand`'s local import of ``_screen_demand_dropouts``.
 
     ``None`` passes through so the callers' "year unavailable" contract is
     untouched. The screen COPIES before it edits, which stays load-bearing
@@ -461,6 +461,71 @@ def _repair_inverted_interchange(df: pd.DataFrame, ba_code: str) -> pd.DataFrame
     return out
 
 
+# The balance columns a double-booked remote fuel column is removed from. The
+# interchange columns are deliberately absent: the member's tie book already
+# carries the plant's energy as an import, which is exactly why its demand
+# counts it twice (constants.EIA930_REMOTE_GENERATION_DOUBLE_BOOKED).
+_DOUBLE_BOOKED_BALANCE_COLUMNS: tuple[str, ...] = (
+    "Net generation",
+    "Net generation (Adjusted)",
+    "Demand",
+    "Demand (Adjusted)",
+)
+
+
+def _repair_double_booked_generation(df: pd.DataFrame, ba_code: str) -> pd.DataFrame:
+    """Remove a member's REGISTERED double-booked remote generation.
+
+    The registry :data:`~market_sim.config.constants.
+    EIA930_REMOTE_GENERATION_DOUBLE_BOOKED` names, per BA, a published fuel
+    column that is a jointly-owned plant's energy another BA already books in
+    full (PSEI ``NG: COL`` = its Colstrip share, which NWMT books; lane
+    NWPP-NEXT-2). The column is subtracted, hour by hour, from the member's
+    ``Net generation`` and ``Demand`` (raw and Adjusted) and then zeroed;
+    ``Total interchange`` is untouched, so ``D = NG - TI`` still holds for the
+    member and a pool sum books the plant exactly once. A NaN in the fuel
+    column subtracts nothing; a NaN balance cell stays NaN. Rule 14
+    [R-ACCURATE] source repair; zero fitted parameters; the raw extract is
+    never modified.
+
+    A BA with no registry entry, or a frame without the registered column, is
+    returned UNCHANGED (the same object), so every other BA is byte-identical.
+    Otherwise a copy is returned; the input is never edited in place.
+    """
+    from market_sim.config.constants import EIA930_REMOTE_GENERATION_DOUBLE_BOOKED
+
+    booked = EIA930_REMOTE_GENERATION_DOUBLE_BOOKED.get(ba_code)
+    if not booked or not any(col in df.columns for col in booked):
+        return df
+    out = df.copy()
+    for column in booked:
+        if column not in out.columns:
+            continue
+        remote = pd.to_numeric(out[column], errors="coerce")
+        take = remote.fillna(0.0)
+        for balance in _DOUBLE_BOOKED_BALANCE_COLUMNS:
+            if balance in out.columns:
+                out[balance] = out[balance] - take
+        out[column] = remote.where(remote.isna(), 0.0)
+    return out
+
+
+def _repair_published_extract(df: pd.DataFrame, ba_code: str) -> pd.DataFrame:
+    """Apply every registered source repair to a ``<BA> hourly`` extract.
+
+    The one seam every reader that takes an extract straight off disk goes
+    through (the strict frame, the gap-filled reconstruction, the pool member
+    frames and the hourly benchmark), so no reader can see one repair without
+    the other: the published sign-inverted interchange windows
+    (:func:`_repair_inverted_interchange`) and the double-booked remote
+    generation (:func:`_repair_double_booked_generation`). Both return the
+    input object unchanged for an unregistered BA.
+    """
+    return _repair_double_booked_generation(
+        _repair_inverted_interchange(df, ba_code), ba_code
+    )
+
+
 def _eia_hourly_frame_raw(ba_code: str, year: int) -> pd.DataFrame | None:
     """Return the strict BA-year frame BEFORE the ``NG:`` unit-slip screen.
 
@@ -489,7 +554,7 @@ def _eia_hourly_frame_raw(ba_code: str, year: int) -> pd.DataFrame | None:
     path = _eia_hourly_path(ba_code)
     if not path.exists():
         return None
-    df = _repair_inverted_interchange(pd.read_parquet(path), ba_code)
+    df = _repair_published_extract(pd.read_parquet(path), ba_code)
     local = df["Local date"]
     df = df[
         (local.dt.year == year) & ~((local.dt.month == 2) & (local.dt.day == 29))
@@ -619,12 +684,88 @@ def _pool_member_frames(pool: str, year: int) -> dict[str, pd.DataFrame] | None:
         if not path.exists():
             logger.warning("%s pool: member extract missing: %s", pool, path.name)
             return None
-        df = pd.read_parquet(path).drop_duplicates(subset="UTC time")
+        df = _repair_published_extract(pd.read_parquet(path), member)
+        df = df.drop_duplicates(subset="UTC time")
         df = df.set_index(pd.DatetimeIndex(df["UTC time"])).reindex(utc)
         out[member] = _screen_pool_member_frame(
             df.reset_index(drop=True), member=member, year=year
         )
     return out
+
+
+def _mask_unbalanced_demand(df: pd.DataFrame) -> np.ndarray:
+    """Return the member's ``Demand (Adjusted)`` with non-balance hours as NaN.
+
+    EIA-930 demand is the balance ``NG - TI``. An hour whose ``Total
+    interchange (Adjusted)`` is missing while ``Demand (Adjusted)`` equals
+    ``Net generation (Adjusted)`` exactly is not a balance: the missing
+    interchange was taken as zero and the published demand is just the
+    member's generation (lane NWPP-NEXT-2: PSEI 2021-08-02 .. 08-16, 336
+    hours, 1,699 MW mean below its FERC 714 load; measured in no other member
+    or year of 2019-2025). Such an hour is a MISSING demand reading, so the
+    pool's gap guard treats it as one. Zero fitted parameters: two published
+    columns and an exact equality.
+    """
+    d = df["Demand (Adjusted)"].to_numpy(dtype=float).copy()
+    if (
+        "Total interchange (Adjusted)" not in df.columns
+        or "Net generation (Adjusted)" not in df.columns
+    ):
+        return d
+    ti = df["Total interchange (Adjusted)"].to_numpy(dtype=float)
+    ng = df["Net generation (Adjusted)"].to_numpy(dtype=float)
+    unbalanced = np.isnan(ti) & ~np.isnan(d) & (d == ng)
+    d[unbalanced] = np.nan
+    return d
+
+
+def _pool_member_demand(
+    df: pd.DataFrame,
+    utc: pd.DatetimeIndex,
+    *,
+    pool: str,
+    member: str,
+    year: int,
+) -> np.ndarray | None:
+    """Return ONE pool member's hourly demand exactly as the pool sums it.
+
+    The single construction both the pool's system demand
+    (:func:`_pool_hourly_frame`) and its zonal regroup
+    (``scripts/data/curate_zonal_shares.parse_nwpp_shares``) read, so the
+    system total and its parts cannot drift apart (rule 19 ``[R-ONE-MECH]``;
+    before lane NWPP-NEXT-2 the regroup still interpolated PSEI's 2020 year,
+    17.28 TWh, while the pool summed its FERC 714 fill). In order:
+
+    * generation-only members (:data:`_POOL_GENERATION_ONLY_BAS`) are 0.0;
+    * non-balance hours are masked (:func:`_mask_unbalanced_demand`);
+    * **gap guard** [R-ACCURATE]: interpolation bridges at most
+      :data:`_HOURLY_FRAME_MAX_GAP` hours, the single-BA frame's own bar; a
+      longer hole takes the member's measured substitute
+      (:func:`_measured_member_demand`) or refuses the pool (``None``, logged
+      at ERROR) — never a straight line drawn across weeks;
+    * the exact-zero dropout screen.
+    """
+    from market_sim.data.eia930.demand import _screen_demand_dropouts
+
+    if member in _POOL_GENERATION_ONLY_BAS:
+        return np.zeros(HOURS_PER_YEAR, dtype=float)
+    d = _mask_unbalanced_demand(df)
+    if _longest_nan_run(d) > _HOURLY_FRAME_MAX_GAP:
+        d = _measured_member_demand(d, utc, member=member, year=year)
+    if _longest_nan_run(d) > _HOURLY_FRAME_MAX_GAP:
+        logger.error(
+            "%s pool %d: member %s demand has a %d h gap (> %d h) and no "
+            "measured substitute covers it -- refusing the pool rather than "
+            "interpolating it",
+            pool,
+            year,
+            member,
+            _longest_nan_run(d),
+            _HOURLY_FRAME_MAX_GAP,
+        )
+        return None
+    d = pd.Series(d).interpolate().bfill().ffill().to_numpy(dtype=float)
+    return _screen_demand_dropouts(d, ba_code=member, year=year)
 
 
 @lru_cache(maxsize=8)
@@ -688,7 +829,6 @@ def _pool_hourly_frame(pool: str, year: int) -> pd.DataFrame | None:
     members = _pool_member_frames(pool, year)
     if members is None:
         return None
-    from market_sim.data.eia930.demand import _screen_demand_dropouts
 
     clock = members[_POOL_CLOCK_BA[pool]]
     out = pd.DataFrame({c: clock[c].to_numpy() for c in _POOL_CLOCK_COLUMNS})
@@ -697,31 +837,9 @@ def _pool_hourly_frame(pool: str, year: int) -> pd.DataFrame | None:
     net_gen = np.zeros(HOURS_PER_YEAR, dtype=float)
     utc = pd.DatetimeIndex(clock["UTC time"])
     for member, df in members.items():
-        d = df["Demand (Adjusted)"].to_numpy(dtype=float)
-        if member in _POOL_GENERATION_ONLY_BAS:
-            d = np.zeros(HOURS_PER_YEAR, dtype=float)
-        else:
-            # Gap guard [R-ACCURATE]: interpolation bridges at most
-            # _HOURLY_FRAME_MAX_GAP hours, the single-BA frame's own bar. A
-            # longer hole takes the member's measured substitute or refuses
-            # the pool — never a straight line drawn across weeks (PSEI 2020:
-            # 8,659 of 8,760 hours missing; 2019: a 192 h run).
-            if _longest_nan_run(d) > _HOURLY_FRAME_MAX_GAP:
-                d = _measured_member_demand(d, utc, member=member, year=year)
-            if _longest_nan_run(d) > _HOURLY_FRAME_MAX_GAP:
-                logger.error(
-                    "%s pool %d: member %s demand has a %d h gap (> %d h) and "
-                    "no measured substitute covers it -- refusing the pool "
-                    "rather than interpolating it",
-                    pool,
-                    year,
-                    member,
-                    _longest_nan_run(d),
-                    _HOURLY_FRAME_MAX_GAP,
-                )
-                return None
-            d = pd.Series(d).interpolate().bfill().ffill().to_numpy(dtype=float)
-            d = _screen_demand_dropouts(d, ba_code=member, year=year)
+        d = _pool_member_demand(df, utc, pool=pool, member=member, year=year)
+        if d is None:
+            return None
         demand += d
         ng_raw = df["Net generation (Adjusted)"].to_numpy(dtype=float)
         if _longest_nan_run(ng_raw) > _HOURLY_FRAME_MAX_GAP:
@@ -802,7 +920,7 @@ def _eia_hourly_frame_filled(ba_code: str, year: int) -> pd.DataFrame | None:
     path = _eia_hourly_path(ba_code)
     if not path.exists():
         return None
-    df = _repair_inverted_interchange(pd.read_parquet(path), ba_code)
+    df = _repair_published_extract(pd.read_parquet(path), ba_code)
     if "Local time" not in df.columns:
         return None
     local = df["Local date"]

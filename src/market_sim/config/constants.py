@@ -2319,6 +2319,39 @@ EIA930_INTERCHANGE_SIGN_INVERTED_WINDOWS_UTC: dict[str, tuple[tuple[str, str], .
     "SOCO": (("2019-01-01 07:00", "2019-09-11 05:00"),)
 }
 
+# --- EIA-930 remote generation booked by TWO balancing authorities ------------
+# Per EIA-930 BA code: ``{fuel column: BA that already books the same plants}``.
+# The listed member's published fuel column is energy from a jointly-owned plant
+# that sits physically in (and is fully booked as net generation by) the other
+# BA; the member ALSO books its ownership share as its own net generation, and
+# its ``Total interchange`` still carries the same energy as an import, so its
+# ``Demand = NG - TI`` counts that share twice. At the frame-construction seam
+# (``data.eia930.frames._repair_double_booked_generation``) the column is
+# subtracted from the member's ``Net generation`` and ``Demand`` (raw and
+# Adjusted) and zeroed; ``Total interchange`` is untouched, so the member's
+# balance identity is preserved and a pool sum books the plant once. The raw
+# extract is never modified. Zero free parameters: the subtracted series is the
+# member's own published column, hour by hour (rules 21 / 24); rule 14
+# [R-ACCURATE] source repair.
+#
+# PSEI ``NG: COL`` -> NWMT (lane NWPP-NEXT-2, 2026-09-25;
+# ``docs/handoffs/FINDING-nwppnext2-psei-basis-2026-09-25.md``). Puget Sound
+# Energy owns shares of Colstrip 1-4 (CAMPD ORIS 6076, Montana, NWMT BA). NWMT
+# books ALL of Colstrip: NWMT ``NG: COL`` 14.167 TWh in 2019 against CAMPD
+# Colstrip gross 14.777 TWh. PSEI books 4.475 / 2.163 / 0.003 / 0.000 TWh of
+# ``NG: COL`` in 2019 / 2020 / 2021 / 2022+ (its ~32 % share, then nothing
+# from 2021-01-01, when its EIA-930 basis changed). Over 8,351 hours of 2019
+# PSEI's Demand excess over its independently filed FERC 714 planning-area
+# load (clock-aligned, lag -1 h) tracks that column with r 0.927, slope 0.903,
+# and removing it cuts the excess's hourly sd from 183 MW to 71 MW; FERC 714
+# PSE load (2.78 GW) and every neighbouring member's demand are continuous
+# across 2020/2021, so the 1.21x EIA-930/FERC 714 basis of 2019-2020 is this
+# double booking, not a boundary change. Re-derive only when the source
+# extract changes (rule 23 [R-FROZEN-DERIVE]).
+EIA930_REMOTE_GENERATION_DOUBLE_BOOKED: dict[str, dict[str, str]] = {
+    "PSEI": {"NG: COL": "NWMT"},
+}
+
 # --- ISO plant membership: drop plants the current EIA-860 recodes elsewhere --
 # ``run_calibration_full._iso_plant_ids`` is the single membership seam the
 # EIA-923 benchmark frame, its class shares and the must-run (biomass / OTHER)

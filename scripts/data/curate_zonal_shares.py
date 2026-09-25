@@ -989,9 +989,9 @@ def parse_nwpp_shares(year: int, zone_names: list[str]) -> np.ndarray | None:
         or ``None`` when any member extract for ``year`` is unavailable (a pool
         is never served from a subset).
     """
-    from market_sim.data.eia930.demand import _screen_demand_dropouts
     from market_sim.data.eia930.frames import (
-        _POOL_GENERATION_ONLY_BAS,
+        _POOL_CLOCK_BA,
+        _pool_member_demand,
         _pool_member_frames,
     )
     from market_sim.data.zone_assignment import _NWPP_BA_ZONES
@@ -1003,6 +1003,7 @@ def parse_nwpp_shares(year: int, zone_names: list[str]) -> np.ndarray | None:
 
     index = {zone: i for i, zone in enumerate(zone_names)}
     demand = np.zeros((len(zone_names), HOURS_PER_YEAR), dtype=float)
+    utc = pd.DatetimeIndex(members[_POOL_CLOCK_BA["NWPP"]]["UTC time"])
     for ba, frame in members.items():
         zone = _NWPP_BA_ZONES.get(ba)
         if zone is None or zone not in index:
@@ -1010,11 +1011,14 @@ def parse_nwpp_shares(year: int, zone_names: list[str]) -> np.ndarray | None:
             # dropped silently: its load would vanish from the denominator.
             logger.warning("NWPP member %s maps outside %s; skipping", ba, zone_names)
             return None
-        series = frame["Demand (Adjusted)"].to_numpy(dtype=float)
-        if ba in _POOL_GENERATION_ONLY_BAS or np.isnan(series).all():
-            continue  # generation-only BA: exactly 0.0 load, every hour
-        series = pd.Series(series).interpolate().bfill().ffill().to_numpy(dtype=float)
-        demand[index[zone]] += _screen_demand_dropouts(series, ba_code=ba, year=year)
+        # The pool's OWN per-member construction (gap guard + FERC 714
+        # substitute + non-balance mask + dropout screen), so the regroup
+        # reproduces the system total by construction (lane NWPP-NEXT-2).
+        series = _pool_member_demand(frame, utc, pool="NWPP", member=ba, year=year)
+        if series is None:
+            logger.warning("NWPP %d: member %s demand refused; skipping", year, ba)
+            return None
+        demand[index[zone]] += series
 
     total = demand.sum(axis=0)
     if not np.isfinite(total).all() or (total <= 0.0).any():
