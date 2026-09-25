@@ -45,6 +45,7 @@
 - **miso-272 `cc_block_summer_rating`** (scenarios.py field + cache-key tables; eia860.py; assembly.py / run_calibration.py kwarg plumbing; arrays.py point-of-use guard): default-off, absent from the ERCOT recipe; the arrays.py guard is `not is_ercot` — **INERT**.
 - **EIA-930 remote-generation double-booking repair** (constants.py table, frames.py, actuals.py rename): keyed to `PSEI` only; ERCO has no entry — **INERT** (and benchmark-side).
 - **`_validation-source`**: SPP parquets + NWPP `calibration_reference.json` rows, README — another ISO — **INERT**.
+- **Addendum (rebase onto main `99f7e804` before pinning):** two further hunks on the path — soco-67 `unit_outage_precod_clip` (outages.py `clip_precod_unit_windows`, arrays.py kwarg) and `nyiso_ldc_generator_delivered_gas` (fuel/basis/nyiso.py, scenarios.py, run_calibration.py, solve_surface_declared.py, forecast_parity_registry.py). Both default-off fields absent from the ERCOT recipe; the NYISO one is NYISO-keyed — **INERT**. Re-checked by a second A/A null at the rebased HEAD (below).
 - Nothing LIVE, nothing UNDETERMINED. **Form 4 is valid**: the arm is differenced against the committed keeper numbers. The only other change on the solve path is this arm's own (off-path byte-identical by the A/A null).
 
 ## 4. Sealed predictions (arm vs keeper, per year)
