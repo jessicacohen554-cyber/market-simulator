@@ -1,34 +1,47 @@
 {
-  "run_id": "2026-09-24-r-soco-corrected-inputs",
+  "run_id": "2026-09-25-r-soco-b2-boundary",
   "iso": "SOCO",
-  "label": "r soco corrected inputs",
+  "label": "r soco b2 boundary",
   "target_years": [
+    2019,
+    2020,
+    2021,
+    2022,
     2023,
     2024,
     2025
   ],
   "scorable_years": [
+    2019,
+    2020,
+    2021,
+    2022,
     2023,
     2024,
     2025
   ],
   "data_blocked_years": [],
   "price_reference_blocked_years": [
+    2019,
+    2020,
+    2021,
+    2022,
     2023,
     2024,
     2025
   ],
   "rubric_version": 3.8,
-  "determination": "PHYSICALLY-CALIBRATED (PRICE UNSCORED)",
+  "determination": "NOT-YET",
   "reasons": [
-    "PRICE UNSCORED \u2014 no actual_lmp.json block exists for SOCO, so C3a mean LMP, C3b price duration/shape and C3c price tail / scarcity (RT hourly) are NOT SCORED in any year (2023, 2024, 2025); this determination is scored on C1/C2/C4/C6/C8 ONLY and certifies NO price level, shape or tail (owner ruling card S2, 2026-09-13; rubric v3.8). It is not a CALIBRATED reading. Model system load-weighted mean LMP, MODEL-ONLY and UNVERIFIED \u2014 no measured reference exists to compare against: 2023: $31.63/MWh, 2024: $29.56/MWh, 2025: $66.22/MWh."
+    "undocumented out-of-tolerance (FAIL) criteria: fuelmix",
+    "PRICE UNSCORED \u2014 no actual_lmp.json block exists for SOCO, so C3a mean LMP, C3b price duration/shape and C3c price tail / scarcity (RT hourly) are NOT SCORED in any year (2019, 2020, 2021, 2022, 2023, 2024, 2025); this determination is scored on C1/C2/C4/C6/C8 ONLY and certifies NO price level, shape or tail (owner ruling card S2, 2026-09-13; rubric v3.8). It is not a CALIBRATED reading. Model system load-weighted mean LMP, MODEL-ONLY and UNVERIFIED \u2014 no measured reference exists to compare against: 2019: $31.85/MWh, 2020: $26.47/MWh, 2021: $38.59/MWh, 2022: $64.79/MWh, 2023: $32.58/MWh, 2024: $29.56/MWh, 2025: $66.22/MWh."
   ],
   "notes": [],
   "criteria": {
     "fuelmix": {
       "label": "C1 fuel-mix by class (grid-delivered)",
       "tier": "load-bearing",
-      "status": "PASS"
+      "status": "FAIL"
     },
     "sysvol": {
       "label": "C2 system volume (gas/coal families)",
@@ -77,16 +90,20 @@
   },
   "grade_summary": {
     "scored": 5,
-    "target_grade": 5,
+    "target_grade": 4,
     "commercial_grade": 0,
     "ledgered": 0,
-    "fails": 0
+    "fails": 1
   },
   "reported": {
     "co2": {
       "label": "C5a CO2 vs eGRID (REPORTED-ONLY, v2.9 \u2014 see the CRITERIA note)",
       "years": {
-        "2023": "-3.4%",
+        "2019": "-4.9%",
+        "2020": "-5.3%",
+        "2021": "+2.5%",
+        "2022": "+2.0%",
+        "2023": "-2.2%",
         "2024": "-5.6%",
         "2025": "+3.4%"
       }
@@ -94,6 +111,10 @@
     "diurnal_amplitude": {
       "label": "D-A diurnal price amplitude, hour-of-day (REPORTED-ONLY, BAND-FREE, v3.5 \u2014 no external comparable exists to band it; see the note)",
       "years": {
+        "2019": "no committed measured hod profile",
+        "2020": "no committed measured hod profile",
+        "2021": "no committed measured hod profile",
+        "2022": "no committed measured hod profile",
         "2023": "no committed measured hod profile",
         "2024": "no committed measured hod profile",
         "2025": "no committed measured hod profile"
@@ -116,14 +137,14 @@
       "ST_CHP"
     ],
     "all": {
-      "pass": 14,
-      "total": 14
+      "pass": 41,
+      "total": 42
     },
     "free": {
-      "pass": 10,
-      "total": 10
+      "pass": 29,
+      "total": 30
     },
-    "headline": "C1 all 14/14 \u00b7 free 10/10"
+    "headline": "C1 all 41/42 \u00b7 free 29/30"
   },
   "price_unscored": {
     "basis": "no actual_lmp.json block for SOCO",
@@ -140,7 +161,11 @@
       "forced_share"
     ],
     "model_mean_lmp_by_year": {
-      "2023": 31.63,
+      "2019": 31.85,
+      "2020": 26.47,
+      "2021": 38.59,
+      "2022": 64.79,
+      "2023": 32.58,
       "2024": 29.56,
       "2025": 66.22
     }

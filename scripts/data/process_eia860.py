@@ -280,6 +280,7 @@ def build_generator_table(zip_path: Path, egrid_vintage: int) -> pd.DataFrame:
 def rescope_generator_table_from_parquet(
     vintage_dir: Path,
     admit_bas: tuple[str, ...] = (),
+    admit_plants: tuple[int, ...] = (),
 ) -> tuple[int, int, list[str]]:
     """Re-derive ``eia860_generators.parquet`` from a vintage's OWN committed sheets.
 
@@ -325,10 +326,22 @@ def rescope_generator_table_from_parquet(
     rows only from the join year and masks them offline before the join month
     (``market_sim.data.ba_membership``).
 
+    **``admit_plants`` — plants that LEFT a modelled region mid-year** (lane
+    R-SOCO-B2, owner ruling (C) 2026-09-25; ``constants.ISO_BA_EXITS``). A plant
+    that was inside a region until an exit hour in year Y may already be coded
+    to its destination BA in vintage Y (SOCO: Santa Rosa 55242 is ``FPL`` in
+    vintage 2022 although it left SOCO's BA on 2022-07-13), so the modelled-BA
+    filter dropped it. Passing its plant code appends ONLY that plant's rows not
+    already committed, by the same construction; no other row is appended. The
+    fleet loader admits it only while it is an exit member and masks it offline
+    from the exit hour (``market_sim.data.ba_membership``).
+
     Args:
         vintage_dir: An ``eia-860`` vintage directory (or the canonical snapshot).
         admit_bas: Extra EIA BA codes to append (joining BAs only; see above).
             Empty keeps the original behaviour byte-for-byte.
+        admit_plants: Plant codes to append (dated-exit members only; see
+            above). Empty keeps the original behaviour byte-for-byte.
 
     Returns:
         ``(rows_before, rows_after, added_bas)``.
@@ -360,9 +373,12 @@ def rescope_generator_table_from_parquet(
         df["plant_id"].map(ba_by_plant).astype("string").str.strip()
     )
     joining = df[df["balancing_authority_code"].isin(admit_bas)]
+    exiting = df[pd.to_numeric(df["plant_id"], errors="coerce").isin(admit_plants)]
     df = _admit_footprint(df, plant)
     if admit_bas:
         df = pd.concat([df, joining])
+    if admit_plants:
+        df = pd.concat([df, exiting])
 
     df["plant_id"] = df["plant_id"].astype("int64")
     df["generator_id"] = df["generator_id"].map(_stringify)
@@ -378,6 +394,11 @@ def rescope_generator_table_from_parquet(
 
     def _keys(frame: pd.DataFrame) -> set[tuple[int, str]]:
         return set(
+            zip(frame["plant_id"].astype("int64"), frame["generator_id"].astype(str))
+        )
+
+    def _keys_list(frame: pd.DataFrame) -> list[tuple[int, str]]:
+        return list(
             zip(frame["plant_id"].astype("int64"), frame["generator_id"].astype(str))
         )
 
@@ -408,6 +429,13 @@ def rescope_generator_table_from_parquet(
         # Only the named joining BAs — never another region's rows.
         added = [ba for ba in added if ba in admit_bas]
     new_rows = df[df["balancing_authority_code"].astype(str).isin(added)].copy()
+    if admit_plants:
+        # Only the named exiting plants' rows the committed file lacks.
+        have = _keys(committed)
+        mine = df[df["plant_id"].isin(admit_plants)]
+        mine = mine[[k not in have for k in _keys_list(mine)]]
+        new_rows = mine.copy() if not admit_bas else pd.concat([new_rows, mine])
+        added = sorted(set(added) | set(mine["balancing_authority_code"].astype(str)))
     if "heat_rate" in committed.columns:
         _join_egrid_heat_rate(new_rows, egrid_vintage_for_eia860_dir(vintage_dir))
     new_rows = new_rows.reindex(columns=committed.columns)
@@ -842,6 +870,16 @@ def main() -> None:
         "No other BA's rows are appended.",
     )
     parser.add_argument(
+        "--admit-plant",
+        nargs="+",
+        type=int,
+        default=(),
+        metavar="PLANT",
+        help="With --rescope-from-parquet: append ONLY these plants' rows the "
+        "committed table lacks (dated-exit members, constants.ISO_BA_EXITS; e.g. "
+        "Santa Rosa 55242 into vintage_2022). No other row is appended.",
+    )
+    parser.add_argument(
         "--retired-window-from",
         type=Path,
         nargs="+",
@@ -927,7 +965,7 @@ def main() -> None:
     if args.rescope_from_parquet:
         for vintage_dir in args.rescope_from_parquet:
             before, after, added = rescope_generator_table_from_parquet(
-                vintage_dir, tuple(args.admit_ba)
+                vintage_dir, tuple(args.admit_ba), tuple(args.admit_plant)
             )
             note = f" (+{', '.join(added)})" if added else " (no BA added)"
             print(f"{vintage_dir.name}: {before} -> {after} generator rows{note}")

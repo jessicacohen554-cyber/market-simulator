@@ -76,6 +76,21 @@ human-read:
 
 Cache-epoch ledger (same-key invalidations)
 -------------------------------------------
+**Epoch 2026-09-25 (b) — R-SOCO-B2: the Gulf Power exit is DATED (owner ruling
+(C), hour grain). KEY-MOVING for SOCO only.** Record:
+``docs/handoffs/r-soco/FINDING-r-soco-b2-boundary-2026-09-25.md`` and
+``PRECOMMIT-r-soco-b2-2026-09-25.md``. WHAT CHANGED: ``ISO_BA_EXITS``
+(``{"SOCO": {"FPL": "2022-07-13 12:00"}}``) dates R-SOCO-B's R2 — the former
+Gulf Power plants are SOCO members until hour-ending UTC 2022-07-13 12:00 in the
+LP fleet (hour mask, row 4637 of 2022) and in the EIA-923 benchmark (July 2022
+scaled by the plants' CAMPD in-BA share); ``vintage_2022/eia860_generators
+.parquet`` gains Santa Rosa 55242's two FPL-coded rows (strictly additive). The
+table is DECLARED at the inert ``{}``, so SOCO's key moves. WHAT IS
+INVALIDATED: SOCO backcasts reading 2019-2022. WHAT IS NOT: every other ISO
+(the helpers return empty for an unregistered region; FPL is not a modelled BA
+so no other loader admits the appended rows) and SOCO 2023+ (the exit precedes
+them). **PROSE + KEY MOVE** (no ``SolveEpoch``).
+
 **Epoch 2026-09-25 — R-SOCO-B: SOCO's balancing-authority boundary (owner
 rulings (A) and (B), 2026-09-25). KEY-MOVING for SOCO only, so NOT a same-key
 invalidation; recorded here because part of it is a code-level change a value

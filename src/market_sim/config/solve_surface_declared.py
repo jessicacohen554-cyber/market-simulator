@@ -595,4 +595,5 @@ DECLARED: dict[str, str | dict[str, str]] = {
     "ISO_BA_JOINS": {"SOCO": "a4d0fee78b233797"},
     "COAL_ARTIFACT_FAMILY": "e1fc364feeda8ad8",
     "COAL_CLASSES": "debae8c77579f94d",
+    "ISO_BA_EXITS": {"SOCO": "a4d0fee78b233797"},
 }

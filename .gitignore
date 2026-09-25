@@ -3519,3 +3519,5 @@ results/calibration/rcaiso2_ccid_*/
 #   2023 7d97a5def389017cc42638d8644fd0daf0a41403  2024 30f673dbc893ff006793b636d224cc3822adf1a8
 #   2025 b6a96c0cebca50a1a099a3bee7a6c86a2b76e609
 results/calibration/nwppnext_20[0-9][0-9]/
+# R-SOCO-B2 shard legs: kept out of main (rule 32(d)); composite registered
+results/calibration/rsocob2_20*/

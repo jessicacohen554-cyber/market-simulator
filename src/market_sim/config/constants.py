@@ -2358,6 +2358,11 @@ ISO_MEMBERSHIP_DROPS_CURRENT_BA_RECODE: dict[str, bool] = {"SOCO": True}
 # 652 MW CC, Pea Ridge 7715 12 MW, Perdido 57502 3 MW) and 641 as 924 MW of
 # COAL + 643 in 2019. Vintage 2024 and the canonical snapshot already code
 # them FPL, so 2024/2025 are unchanged by construction.
+# CORRECTED 2026-09-25 (lane R-SOCO-B2, owner ruling (C)): "EIA-930's SOCO
+# demand never included them" is FALSE before hour-ending UTC 2022-07-13 12:00
+# — Gulf's load and plants were inside SOCO's EIA-930 BA until then. The drop
+# is therefore DATED by ``ISO_BA_EXITS`` below: it applies from that hour on
+# (2023+ all year, 2022 from the stamp) and not before.
 
 # --- Balancing authorities that JOINED a modelled region mid-backcast --------
 # ``{iso: {joining_ba: (year, month)}}``: the EIA-930 BA code whose load and
@@ -2391,6 +2396,39 @@ ISO_MEMBERSHIP_DROPS_CURRENT_BA_RECODE: dict[str, bool] = {"SOCO": True}
 # table by ``scripts/data/process_eia860.py --rescope-from-parquet
 # data/raw/eia-860/vintage_2021 --admit-ba AEC``.
 ISO_BA_JOINS: dict[str, dict[str, tuple[int, int]]] = {"SOCO": {"AEC": (2021, 9)}}
+
+# --- Balancing authorities that plants/load LEFT a modelled region to ---------
+# ``{iso: {destination_ba: first_hour_outside}}`` — the twin of
+# ``ISO_BA_JOINS`` for an EXIT. The plants that leave are exactly those the
+# ``ISO_MEMBERSHIP_DROPS_CURRENT_BA_RECODE`` partition selects whose CURRENT
+# EIA-860 BA code is ``destination_ba``; that partition is now DATED: before
+# the exit they are members (their load was inside ``iso``'s EIA-930 demand).
+# ``first_hour_outside`` is the first row OUTSIDE the region, written as the
+# region's EIA-930 extract's own hour-ending ``UTC time`` stamp (the same clock
+# convention as ``EIA930_INTERCHANGE_SIGN_INVERTED_WINDOWS_UTC``). Hour grain
+# (owner ruling (C), 2026-09-25, "Hour grain"): the LP fleet masks the exit
+# year's rows at and after the stamp; the monthly EIA-923 benchmark keeps the
+# split month's share measured by the plants' own CAMPD gross load before the
+# stamp (hour share of the month for a plant CAMPD does not carry). Read ONLY
+# by ``data.ba_membership`` (rule 19 [R-ONE-MECH]); zero free parameters, the
+# stamp is measured (rules 21 / 24); per-ISO (rule 25).
+#
+# SOCO (lane R-SOCO-B2, 2026-09-25, owner ruling (C) "(C) dated exit"): the
+# former Gulf Power plants (Crist 641, Lansing Smith 643, Pea Ridge 7715,
+# Standby 50310, Santa Rosa 55242, Perdido 57502, and three solar plants) and
+# Gulf's load left the Southern Company BA for FPL's at hour-ending UTC
+# 2022-07-13 12:00. Measured three independent ways
+# (docs/handoffs/r-soco/FINDING-r-soco-b2-boundary-2026-09-25.md, reproduced by
+# scripts/probes/_rsocob2_gulf_exit.py): (1) SOCO 930 demand minus the five
+# SOCO-footprint FERC-714 respondents steps down ~1,700 MW (= Gulf Power's own
+# FERC-714 load) on 2022-07-13 while FPL's 930 demand steps up; (2) Gulf Power
+# (FERC-714 respondent 185) files its last hour at 2022-07-13 10:00 UTC
+# hour-beginning; (3) an hourly least-squares fit of SOCO 930 fossil net
+# generation on CAMPD gross load loads the Gulf units at 0.83-0.89 in every
+# period before the stamp and 0.014 after. Restoring them for the in-BA period
+# closes the SOCO-60 B1/B2 checks (930/923 fossil 0.982 / 0.991 / 0.982 / 0.985
+# for 2019-2022). Re-derive only when a source changes (rule 23).
+ISO_BA_EXITS: dict[str, dict[str, str]] = {"SOCO": {"FPL": "2022-07-13 12:00"}}
 
 # --- Hydro hourly deliverability envelope (caiso-72 STEP-2) ------------------
 # Percentile of the measured EIA-930 NG:WAT hourly output, per (month x

@@ -4236,6 +4236,46 @@ def generators_to_fleet_arrays(
                     float(pmax[first > 1].sum()),
                 )
 
+    # Balancing-authority EXIT hour mask (lane R-SOCO-B2, owner ruling (C)
+    # 2026-09-25, hour grain; constants.ISO_BA_EXITS). The twin of the join
+    # mask: a recoded plant still inside the region for part of its exit year
+    # (admitted by the fleet loader, ``ba_membership.exit_member_plants``) is
+    # offline from the first LP row at or after its exit stamp, because the
+    # region's EIA-930 demand stops including its load then (SOCO: the former
+    # Gulf Power plants, to FPL at hour-ending UTC 2022-07-13 12:00, row 4637).
+    # min_gen scaled likewise. Backcast-only; an empty map for every other
+    # region and year, so they are byte-identical.
+    if (
+        config is not None
+        and getattr(config, "mode", "forecast") == "backcast"
+        and _cod_year is not None
+        and _iso is not None
+    ):
+        from market_sim.data.ba_membership import ba_exit_first_outside_row
+
+        _exit = ba_exit_first_outside_row(_iso, int(_cod_year))
+        if _exit:
+            last = np.array(
+                [_exit.get(int(g.plant_code), hours) for g in generators], dtype=int
+            )
+            if (last < hours).any():
+                member = (np.arange(hours)[np.newaxis, :] < last[:, np.newaxis]).astype(
+                    float
+                )
+                availability *= member
+                if min_gen is not None:
+                    min_gen *= member
+                    clear_where_unfloored(min_gen_mech, min_gen)
+                logger.info(
+                    "BA exit (%s %s): %d unit(s), %.0f MW leave the region at "
+                    "LP row %d",
+                    _iso,
+                    _cod_year,
+                    int((last < hours).sum()),
+                    float(pmax[last < hours].sum()),
+                    int(last.min()),
+                )
+
     # Measured ramp/fast-start capability (GATED config.measured_ramp_capability,
     # default off): reconcile the class 10-minute fractions against the
     # ramp-capability clean datatype (EIA-860 "10M" fast-start floor + CAMPD

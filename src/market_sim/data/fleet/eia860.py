@@ -47,6 +47,7 @@ from market_sim.config.plant_taxonomy import (
 )
 from market_sim.data.ba_membership import (
     drop_current_ba_recoded_rows,
+    exit_member_plants,
     joining_ba_codes,
 )
 from market_sim.data.coal import _coal_class_for, coal_subclass
@@ -1834,6 +1835,18 @@ def _operating_month_by_unit(eia860_dir) -> dict[tuple[int, str], int]:
     return out
 
 
+def _exit_member_mask(df: pd.DataFrame, iso: str, year: int | None) -> pd.Series:
+    """Rows whose plant is a dated-exit member of ``iso`` in ``year``.
+
+    ``constants.ISO_BA_EXITS`` via ``ba_membership.exit_member_plants``; all
+    False for every unregistered region and for ``year=None``.
+    """
+    members = exit_member_plants(iso, year)
+    if not members or "plant_id" not in df.columns:
+        return pd.Series(False, index=df.index)
+    return pd.to_numeric(df["plant_id"], errors="coerce").isin(members)
+
+
 def _load_fleet_from_parquet(
     parquet_path: Path,
     iso: str,
@@ -1868,12 +1881,17 @@ def _load_fleet_from_parquet(
     codes = ba_codes(iso) + joining_ba_codes(iso, year)
     if codes and "balancing_authority_code" in df.columns:
         ba = df["balancing_authority_code"].astype(str).str.strip()
-        df = df[ba.isin(codes)]
+        # Plus the recoded plants still inside the region for part of ``year``
+        # (constants.ISO_BA_EXITS, lane R-SOCO-B2): a vintage may already code
+        # one to its destination BA before it left (SOCO: Santa Rosa 55242 is
+        # FPL in vintage 2022; its post-exit hours are masked in fleet.arrays).
+        # Empty for every other region and year, so their filter is unchanged.
+        df = df[ba.isin(codes) | _exit_member_mask(df, iso, year)]
     # One membership rule for benchmark, injection and fleet (rule 19): plants
     # the CURRENT EIA-860 recodes out of the region leave the vintage fleet too
     # (constants.ISO_MEMBERSHIP_DROPS_CURRENT_BA_RECODE — SOCO's former Gulf
     # Power plants). Same object back for every unregistered region.
-    df = drop_current_ba_recoded_rows(df, iso)
+    df = drop_current_ba_recoded_rows(df, iso, year=year)
 
     # Join the plant-level CHP flag (dropped from the processed generators
     # parquet) from the raw EIA-860 operable sheet, so gas cogens are grouped
@@ -3094,7 +3112,7 @@ def load_retired_within_window(
         return []
     df = pd.concat(frames, ignore_index=True) if len(frames) > 1 else frames[0]
     # Same membership rule as the operable loader (rule 19; SOCO Gulf plants).
-    df = drop_current_ba_recoded_rows(df, iso)
+    df = drop_current_ba_recoded_rows(df, iso, year=year)
     if df.empty:
         return []
 
@@ -3271,9 +3289,9 @@ def load_mothballed_but_operating(
     codes = ba_codes(iso)
     if codes and "balancing_authority_code" in snap.columns:
         ba = snap["balancing_authority_code"].astype(str).str.strip()
-        snap = snap[ba.isin(codes)]
+        snap = snap[ba.isin(codes) | _exit_member_mask(snap, iso, year)]
     # Same membership rule as the operable loader (rule 19; SOCO Gulf plants).
-    snap = drop_current_ba_recoded_rows(snap, iso)
+    snap = drop_current_ba_recoded_rows(snap, iso, year=year)
     status = snap["status"].astype(str).str.strip().str.upper()
     # OA only by default (out of service, expected to return — the mothball
     # status the Cottonwood charter scopes this channel to); OS/SB join the

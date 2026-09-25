@@ -40,9 +40,20 @@ if str(_REPO) not in sys.path:
 from scripts.probes.rsoco_compose_span import assert_lane  # noqa: E402
 from scripts.probes.soco55_compose_span import ROOT, compose as _compose  # noqa: E402
 
-#: The two registry rows this lane adds; declared at their inert SOCO values, so a
-#: leg solved on the repaired code carries them in ``solve_surface.moved``.
-NEW_SURFACE_ROWS = ("EIA930_INTERCHANGE_SIGN_INVERTED_WINDOWS_UTC", "ISO_BA_JOINS")
+#: The registry rows this lane adds (R-SOCO-B2 added ``ISO_BA_EXITS``); declared at
+#: their inert SOCO values, so a leg solved on the repaired code carries them in
+#: ``solve_surface.moved``.
+NEW_SURFACE_ROWS = (
+    "EIA930_INTERCHANGE_SIGN_INVERTED_WINDOWS_UTC",
+    "ISO_BA_JOINS",
+    "ISO_BA_EXITS",
+)
+#: R-SOCO-B2: the Gulf plants are SOCO members through 2022 and leave at LP row 4637
+#: of 2022 (hour-ending UTC 2022-07-13 12:00; constants.ISO_BA_EXITS).
+GULF_LAST_MEMBER_YEAR = 2022
+GULF_EXIT_ROW_2022 = 4637
+#: Gulf thermal plants carried by every vintage 2019-2022 (Crist, Lansing Smith).
+GULF_CORE = {641, 643}
 #: Former Gulf Power plants (current EIA-860 codes them FPL).
 GULF = {641, 643, 7715, 50310, 55242, 57502, 63754, 64757, 65036}
 #: PowerSouth thermal plants carried by vintage_2021 (McWilliams, McIntosh).
@@ -85,11 +96,29 @@ def assert_repairs(legs: list[Path], pinned_sha: str) -> dict:
         fleet = pd.read_parquet(leg / "dispatch" / f"{year}_P1_fleet.parquet")
         codes = {c for c in (_plant_code(u) for u in fleet["unit_id"]) if c is not None}
         gulf = sorted(codes & GULF)
-        if gulf:
+        ev = {"units": int(len(fleet)), "gulf_plants": gulf}
+        if year > GULF_LAST_MEMBER_YEAR and gulf:
             raise SystemExit(
                 f"{leg.name}: Gulf plants still in the solved fleet: {gulf}"
             )
-        ev = {"units": int(len(fleet)), "gulf_units": 0}
+        if year <= GULF_LAST_MEMBER_YEAR and not GULF_CORE <= set(gulf):
+            raise SystemExit(
+                f"{leg.name}: Gulf plants missing before the exit: {gulf}"
+            )
+        if year == GULF_LAST_MEMBER_YEAR:
+            disp = pd.read_parquet(leg / "dispatch" / f"{year}_P1.parquet")
+            ucol = "unit_id" if "unit_id" in disp.columns else disp.columns[0]
+            mwcol = next(c for c in ("mw", "MW", "dispatch_mw") if c in disp.columns)
+            hcol = next(c for c in ("hour", "t") if c in disp.columns)
+            sub = disp[disp[ucol].map(_plant_code).isin(GULF)]
+            pre = float(sub.loc[sub[hcol] < GULF_EXIT_ROW_2022, mwcol].sum())
+            post = float(sub.loc[sub[hcol] >= GULF_EXIT_ROW_2022, mwcol].abs().sum())
+            if post > 1e-6 or pre <= 0.0:
+                raise SystemExit(
+                    f"{leg.name}: Gulf dispatch before the exit {pre:.1f} MWh (want "
+                    f"> 0), after {post:.3f} MWh (want 0)"
+                )
+            ev.update(gulf_pre_exit_gwh=round(pre / 1e3, 1), gulf_post_exit_mwh=post)
         aec = codes & AEC_THERMAL
         if year < 2021 and aec:
             raise SystemExit(
