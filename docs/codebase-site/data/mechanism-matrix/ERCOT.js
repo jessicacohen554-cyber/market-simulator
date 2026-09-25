@@ -145,6 +145,7 @@ window.MECH_MATRIX_SHARDS.ERCOT = {
     iso_ba_exit_membership: { cell: "U", ev: "R-SOCO-B2 (2026-09-25) row seed \u2014 U: UNTESTED for ERCOT. Built and armed for SOCO only (constants.ISO_BA_EXITS = {\"SOCO\": {\"FPL\": \"2022-07-13 12:00\"}}); rules 25 [R-ISO-SCOPE] / 28(d): no SOCO verdict fills this cell. A ERCOT lane that finds plants and load leaving its footprint mid-backcast (EIA-930 demand step vs FERC-714, CEMS fit) registers its own exit." },
     mid_vintage_exit_carry: { cell: "U", ev: "SPP-48 (2026-09-19) cross-ISO blast-radius census, no verdict minted \u2014 U: UNTESTED, and INERT AT HEAD (ERCOT does not arm eia860_vintage_tracks_solve_year). Potential exposure: 1 plant, 11.3 GWh (Newgulf Cogen 50137). SEPARATE PRE-EXISTING GAP REPORTED, NOT THIS FLAG\u2019S: Newgulf is absent from the CANONICAL retiree parquet too \u2014 a different defect, filed not fixed. Rules 25 / 28(d): no verdict or parameter transfers." },
     fleet_zone_vintage_coords: { cell: "U", ev: "PJM-NEXT (2026-09-25) added the row; this ISO\u2019s exposure is not measured \u2014 U: UNTESTED. Rule 28(d): no verdict transfers." },
+    nyiso_ldc_generator_delivered_gas: { cell: ".", ev: "n/a — NYISO-exclusive (config.iso gate); row minted by NYISO-STGAS-2023 (2026-09-25). Rule 28(d): nothing transfers." },
     wefor_residual: { cell: "K", ev: "registration only — read from the ERCOT keeper's run_config.json (0.02); no ERCOT evidence, no verdict" },
     cc_winter_capability_basis: { cell: "U" },
     cc_capacity_reconcile: { cell: "U" },

@@ -491,6 +491,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # via zone_assignment.set_fleet_zone_vintage_coords, so the off path is
     # byte-inert). Registered IN THE SAME COMMIT as the field.
     "fleet_zone_vintage_coords",
+    # NYISO-STGAS-2023 LDC-served generator delivery leg (GATED default-off; the
+    # single consumer, fuel.apply_nyiso_ldc_generator_delivered_gas, reads it via
+    # getattr and returns before touching fuel_prices when it is off, so the off
+    # path is byte-inert). Registered IN THE SAME COMMIT as the field.
+    "nyiso_ldc_generator_delivered_gas",
     # caiso-186 published seasonal capability basis for combined cycles (GATED
     # default-off; every consumer reads it via getattr, and it additionally
     # requires cc_nameplate_summer_derate, so the off path is byte-inert).
@@ -2200,6 +2205,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by PJM-NEXT WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "fleet_zone_vintage_coords": "False",
+    # Added by NYISO-STGAS-2023 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
+    "nyiso_ldc_generator_delivered_gas": "False",
     # Added by caiso-186 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "cc_winter_capability_basis": "False",
@@ -18141,6 +18149,26 @@ class ScenarioConfig:
     # market_sim.data.fuel.apply_nyiso_downstate_ct_gas_daily.
     nyiso_downstate_ct_gas_daily: bool = False
 
+    # Tier 3 (calibration) — LDC-SERVED GENERATOR DELIVERY LEG (NYISO-STGAS-2023,
+    # 2026-09-25, owner ruling on the lane's lever question). Every NYISO gas
+    # unit is priced at its zone's pipeline hub, the COMMODITY; a plant that
+    # EIA-860 Schedule 2 records as LDC-served ("Natural Gas LDC Name") also pays
+    # that LDC's filed power-generation transportation charge to carry the gas
+    # from the city gate (rule 14 [R-ACCURATE]). When on, every gas row other
+    # than CT_PEAKER (the CT daily leg already SETS those; rule 19) at a plant
+    # whose active-vintage EIA-860 LDC has a filed rate in
+    # data/raw/gas-prices/nyiso_ldc_generator_transport_monthly.csv, and whose
+    # capacity meets that class's filed threshold, is priced hub x filed loss
+    # factor + filed transport. Intaken: Con Edison PSC No. 9 SC 9 Rate D(2)
+    # (>= 50 MW generators; 1.92 c/therm + 0.5 % losses; the customer-specific
+    # Value Added Charge is not published and is omitted, so the leg is a lower
+    # bound). LDCs whose generator class is not intaken stay on the hub — a
+    # stated scope limit. Zero free parameters (rules 21 / 24); forward-native
+    # filed tariff (rule 13); an additive delivery leg on the hub, not a second
+    # hub (rule 19). See
+    # market_sim.data.fuel.apply_nyiso_ldc_generator_delivered_gas.
+    nyiso_ldc_generator_delivered_gas: bool = False
+
     # Tier 3 (calibration) — PJM per-zone gas basis. PJM is priced off a single
     # ISO-wide delivered-gas series, so every gas-CC carries the same marginal
     # cost, all 8 zones clear at one LMP (0.000 zonal spread in every hour), no
@@ -22975,6 +23003,7 @@ TIER_TAGS: dict[str, int] = {
     "nyiso_zonal_gas_basis": 3,
     "nyiso_downstate_ct_gas_basis": 3,
     "nyiso_downstate_ct_gas_daily": 3,
+    "nyiso_ldc_generator_delivered_gas": 3,
     "pjm_zonal_gas_basis": 3,
     "miso_zonal_gas_basis": 3,
     "miso_zonal_gas_basis_skip_923_priced": 3,

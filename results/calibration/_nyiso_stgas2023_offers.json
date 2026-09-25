@@ -1,0 +1,4078 @@
+{
+ "2021": {
+  "shapes": {
+   "mc": [
+    805,
+    8760
+   ],
+   "avail": [
+    805,
+    8760
+   ],
+   "min_gen": [
+    805,
+    8760
+   ]
+  },
+  "hh": 3.72,
+  "plants": {
+   "2480": {
+    "zone": "Capital_Hudson",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_Capital_Hudson_p2480_committed",
+     "ST_GAS_Capital_Hudson_p2480_econlo",
+     "ST_GAS_Capital_Hudson_p2480_econhi",
+     "ST_GAS_Capital_Hudson_p2480_peak"
+    ],
+    "pmax_mw": 497.3,
+    "tranche_pmax": [
+     153.2,
+     134.8,
+     134.8,
+     74.6
+    ],
+    "tranche_hr": [
+     11.105,
+     10.576,
+     10.576,
+     44.421
+    ],
+    "tranche_mc_mean": [
+     58.38,
+     56.06,
+     56.06,
+     204.61
+    ],
+    "avail_mean": 0.1849,
+    "avail_mon": [
+     0.181,
+     0.181,
+     0.163,
+     0.169,
+     0.163,
+     0.227,
+     0.209,
+     0.211,
+     0.204,
+     0.163,
+     0.167,
+     0.181
+    ],
+    "offer_mean": 79.06,
+    "offer_min_tranche_mon": [
+     51.34,
+     73.21,
+     42.71,
+     41.48,
+     44.32,
+     46.73,
+     54.22,
+     59.4,
+     65.38,
+     68.5,
+     70.83,
+     56.24
+    ],
+    "floor_mwh_twh": 0.0002,
+    "floor_by_mech_twh": {
+     "4": 0.0002
+    },
+    "model_zone_price_mean": 44.47,
+    "hours_cheapest_tranche_below_model_price": 223,
+    "hours_weighted_offer_below_model_price": 17
+   },
+   "2490": {
+    "zone": "NYC",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_NYC_p2490_committed",
+     "ST_GAS_NYC_p2490_econlo",
+     "ST_GAS_NYC_p2490_econhi",
+     "ST_GAS_NYC_p2490_peak"
+    ],
+    "pmax_mw": 860.1,
+    "tranche_pmax": [
+     255.4,
+     237.8,
+     237.8,
+     129.0
+    ],
+    "tranche_hr": [
+     11.346,
+     10.805,
+     10.805,
+     45.383
+    ],
+    "tranche_mc_mean": [
+     49.34,
+     47.43,
+     47.43,
+     169.48
+    ],
+    "avail_mean": 0.276,
+    "avail_mon": [
+     0.185,
+     0.098,
+     0.113,
+     0.131,
+     0.274,
+     0.493,
+     0.732,
+     0.606,
+     0.365,
+     0.152,
+     0.051,
+     0.092
+    ],
+    "offer_mean": 41.79,
+    "offer_min_tranche_mon": [
+     42.51,
+     66.31,
+     33.68,
+     32.43,
+     35.33,
+     37.79,
+     45.44,
+     50.73,
+     56.84,
+     60.03,
+     62.41,
+     47.51
+    ],
+    "floor_mwh_twh": 0.3458,
+    "floor_by_mech_twh": {
+     "4": 0.3458
+    },
+    "model_zone_price_mean": 45.53,
+    "hours_cheapest_tranche_below_model_price": 3613,
+    "hours_weighted_offer_below_model_price": 3093
+   },
+   "2500": {
+    "zone": "NYC",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_NYC_p2500_committed",
+     "ST_GAS_NYC_p2500_econlo",
+     "ST_GAS_NYC_p2500_econhi",
+     "ST_GAS_NYC_p2500_peak"
+    ],
+    "pmax_mw": 1731.5,
+    "tranche_pmax": [
+     351.5,
+     560.1,
+     560.1,
+     259.7
+    ],
+    "tranche_hr": [
+     11.969,
+     11.399,
+     11.399,
+     47.877
+    ],
+    "tranche_mc_mean": [
+     50.31,
+     48.3,
+     48.3,
+     176.86
+    ],
+    "avail_mean": 0.681,
+    "avail_mon": [
+     0.632,
+     0.632,
+     0.645,
+     0.731,
+     0.731,
+     0.916,
+     0.776,
+     0.754,
+     0.8,
+     0.45,
+     0.479,
+     0.628
+    ],
+    "offer_mean": 67.99,
+    "offer_min_tranche_mon": [
+     43.16,
+     67.49,
+     33.85,
+     32.53,
+     35.59,
+     38.19,
+     46.26,
+     51.84,
+     58.29,
+     61.65,
+     64.16,
+     48.44
+    ],
+    "floor_mwh_twh": 1.7177,
+    "floor_by_mech_twh": {
+     "4": 1.7177
+    },
+    "model_zone_price_mean": 45.53,
+    "hours_cheapest_tranche_below_model_price": 2245,
+    "hours_weighted_offer_below_model_price": 58
+   },
+   "2511": {
+    "zone": "Long_Island",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_Long_Island_p2511_committed",
+     "ST_GAS_Long_Island_p2511_econlo",
+     "ST_GAS_Long_Island_p2511_econhi",
+     "ST_GAS_Long_Island_p2511_peak"
+    ],
+    "pmax_mw": 372.2,
+    "tranche_pmax": [
+     56.2,
+     130.1,
+     130.1,
+     55.8
+    ],
+    "tranche_hr": [
+     10.865,
+     10.348,
+     10.348,
+     43.462
+    ],
+    "tranche_mc_mean": [
+     57.03,
+     54.76,
+     54.76,
+     200.11
+    ],
+    "avail_mean": 0.6216,
+    "avail_mon": [
+     0.722,
+     0.739,
+     0.344,
+     0.421,
+     0.696,
+     0.916,
+     0.916,
+     0.916,
+     0.781,
+     0.322,
+     0.33,
+     0.367
+    ],
+    "offer_mean": 76.91,
+    "offer_min_tranche_mon": [
+     50.15,
+     71.55,
+     41.7,
+     40.5,
+     43.28,
+     45.64,
+     52.96,
+     58.03,
+     63.88,
+     66.94,
+     69.22,
+     54.94
+    ],
+    "floor_mwh_twh": 0.531,
+    "floor_by_mech_twh": {
+     "4": 0.531
+    },
+    "model_zone_price_mean": 46.89,
+    "hours_cheapest_tranche_below_model_price": 1364,
+    "hours_weighted_offer_below_model_price": 73
+   },
+   "2516": {
+    "zone": "Long_Island",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_Long_Island_p2516_committed",
+     "ST_GAS_Long_Island_p2516_econlo",
+     "ST_GAS_Long_Island_p2516_econhi",
+     "ST_GAS_Long_Island_p2516_peak"
+    ],
+    "pmax_mw": 1592.2,
+    "tranche_pmax": [
+     409.2,
+     472.1,
+     472.1,
+     238.8
+    ],
+    "tranche_hr": [
+     11.214,
+     10.68,
+     10.68,
+     44.856
+    ],
+    "tranche_mc_mean": [
+     58.58,
+     56.24,
+     56.24,
+     206.25
+    ],
+    "avail_mean": 0.425,
+    "avail_mon": [
+     0.615,
+     0.474,
+     0.291,
+     0.128,
+     0.24,
+     0.465,
+     0.716,
+     0.831,
+     0.724,
+     0.205,
+     0.192,
+     0.217
+    ],
+    "offer_mean": 79.34,
+    "offer_min_tranche_mon": [
+     51.48,
+     73.57,
+     42.76,
+     41.52,
+     44.39,
+     46.82,
+     54.38,
+     59.61,
+     65.65,
+     68.8,
+     71.16,
+     56.43
+    ],
+    "floor_mwh_twh": 1.5531,
+    "floor_by_mech_twh": {
+     "4": 1.5531
+    },
+    "model_zone_price_mean": 46.89,
+    "hours_cheapest_tranche_below_model_price": 554,
+    "hours_weighted_offer_below_model_price": 72
+   },
+   "2517": {
+    "zone": "Long_Island",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_Long_Island_p2517_committed",
+     "ST_GAS_Long_Island_p2517_econlo",
+     "ST_GAS_Long_Island_p2517_econhi",
+     "ST_GAS_Long_Island_p2517_peak"
+    ],
+    "pmax_mw": 385.0,
+    "tranche_pmax": [
+     50.0,
+     138.6,
+     138.6,
+     57.8
+    ],
+    "tranche_hr": [
+     11.611,
+     11.058,
+     11.058,
+     46.442
+    ],
+    "tranche_mc_mean": [
+     60.43,
+     58.0,
+     58.0,
+     213.32
+    ],
+    "avail_mean": 0.3436,
+    "avail_mon": [
+     0.342,
+     0.299,
+     0.403,
+     0.267,
+     0.117,
+     0.412,
+     0.752,
+     0.746,
+     0.392,
+     0.314,
+     0.047,
+     0.019
+    ],
+    "offer_mean": 81.62,
+    "offer_min_tranche_mon": [
+     53.08,
+     75.94,
+     44.05,
+     42.76,
+     45.73,
+     48.25,
+     56.08,
+     61.49,
+     67.75,
+     71.01,
+     73.45,
+     58.2
+    ],
+    "floor_mwh_twh": 0.0,
+    "floor_by_mech_twh": {},
+    "model_zone_price_mean": 46.89,
+    "hours_cheapest_tranche_below_model_price": 330,
+    "hours_weighted_offer_below_model_price": 68
+   },
+   "2527": {
+    "zone": "Upstate_West",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_Upstate_West_p2527_committed",
+     "ST_GAS_Upstate_West_p2527_econlo",
+     "ST_GAS_Upstate_West_p2527_econhi",
+     "ST_GAS_Upstate_West_p2527_peak"
+    ],
+    "pmax_mw": 104.5,
+    "tranche_pmax": [
+     68.0,
+     10.4,
+     10.4,
+     15.7
+    ],
+    "tranche_hr": [
+     10.771,
+     10.258,
+     10.258,
+     43.085
+    ],
+    "tranche_mc_mean": [
+     45.8,
+     44.04,
+     44.04,
+     156.3
+    ],
+    "avail_mean": 0.8029,
+    "avail_mon": [
+     0.813,
+     0.813,
+     0.731,
+     0.731,
+     0.731,
+     0.916,
+     0.916,
+     0.916,
+     0.916,
+     0.612,
+     0.731,
+     0.813
+    ],
+    "offer_mean": 60.99,
+    "offer_min_tranche_mon": [
+     39.37,
+     61.97,
+     30.99,
+     29.8,
+     32.55,
+     34.89,
+     42.15,
+     47.18,
+     52.98,
+     56.0,
+     58.26,
+     44.12
+    ],
+    "floor_mwh_twh": 0.0,
+    "floor_by_mech_twh": {},
+    "model_zone_price_mean": 14.18,
+    "hours_cheapest_tranche_below_model_price": 499,
+    "hours_weighted_offer_below_model_price": 165
+   },
+   "2625": {
+    "zone": "Capital_Hudson",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_Capital_Hudson_p2625_committed",
+     "ST_GAS_Capital_Hudson_p2625_econlo",
+     "ST_GAS_Capital_Hudson_p2625_econhi",
+     "ST_GAS_Capital_Hudson_p2625_peak"
+    ],
+    "pmax_mw": 1159.6,
+    "tranche_pmax": [
+     243.5,
+     371.1,
+     371.1,
+     173.9
+    ],
+    "tranche_hr": [
+     10.727,
+     10.216,
+     10.216,
+     42.908
+    ],
+    "tranche_mc_mean": [
+     56.12,
+     53.88,
+     53.88,
+     197.38
+    ],
+    "avail_mean": 0.1679,
+    "avail_mon": [
+     0.094,
+     0.247,
+     0.052,
+     0.017,
+     0.039,
+     0.296,
+     0.485,
+     0.378,
+     0.102,
+     0.183,
+     0.0,
+     0.123
+    ],
+    "offer_mean": 27.64,
+    "offer_min_tranche_mon": [
+     49.33,
+     70.46,
+     40.99,
+     39.8,
+     42.54,
+     44.87,
+     52.1,
+     57.11,
+     62.89,
+     65.9,
+     68.15,
+     54.06
+    ],
+    "floor_mwh_twh": 0.0364,
+    "floor_by_mech_twh": {
+     "4": 0.0364
+    },
+    "model_zone_price_mean": 44.47,
+    "hours_cheapest_tranche_below_model_price": 475,
+    "hours_weighted_offer_below_model_price": 5914
+   },
+   "2682": {
+    "zone": "Upstate_West",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_Upstate_West_p2682_committed",
+     "ST_GAS_Upstate_West_p2682_econlo",
+     "ST_GAS_Upstate_West_p2682_econhi",
+     "ST_GAS_Upstate_West_p2682_peak"
+    ],
+    "pmax_mw": 45.0,
+    "tranche_pmax": [
+     13.5,
+     12.4,
+     12.4,
+     6.8
+    ],
+    "tranche_hr": [
+     10.328,
+     9.836,
+     9.836,
+     41.31
+    ],
+    "tranche_mc_mean": [
+     44.54,
+     42.86,
+     42.86,
+     150.34
+    ],
+    "avail_mean": 0.0072,
+    "avail_mon": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.049,
+     0.038,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "offer_mean": 0.91,
+    "offer_min_tranche_mon": [
+     38.42,
+     59.48,
+     30.39,
+     29.25,
+     31.89,
+     34.13,
+     41.09,
+     45.91,
+     51.47,
+     54.37,
+     56.54,
+     42.97
+    ],
+    "floor_mwh_twh": 0.0,
+    "floor_by_mech_twh": {},
+    "model_zone_price_mean": 14.18,
+    "hours_cheapest_tranche_below_model_price": 551,
+    "hours_weighted_offer_below_model_price": 6992
+   },
+   "8006": {
+    "zone": "Capital_Hudson",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_Capital_Hudson_p8006_committed",
+     "ST_GAS_Capital_Hudson_p8006_econlo",
+     "ST_GAS_Capital_Hudson_p8006_econhi",
+     "ST_GAS_Capital_Hudson_p8006_peak"
+    ],
+    "pmax_mw": 1204.7,
+    "tranche_pmax": [
+     163.8,
+     430.1,
+     430.1,
+     180.7
+    ],
+    "tranche_hr": [
+     11.039,
+     10.514,
+     10.514,
+     44.158
+    ],
+    "tranche_mc_mean": [
+     58.14,
+     55.84,
+     55.84,
+     203.51
+    ],
+    "avail_mean": 0.0451,
+    "avail_mon": [
+     0.097,
+     0.017,
+     0.0,
+     0.0,
+     0.01,
+     0.221,
+     0.055,
+     0.119,
+     0.011,
+     0.009,
+     0.0,
+     0.002
+    ],
+    "offer_mean": 6.07,
+    "offer_min_tranche_mon": [
+     51.15,
+     72.89,
+     42.56,
+     41.35,
+     44.17,
+     46.56,
+     54.01,
+     59.16,
+     65.1,
+     68.2,
+     70.52,
+     56.02
+    ],
+    "floor_mwh_twh": 0.0,
+    "floor_by_mech_twh": {},
+    "model_zone_price_mean": 44.47,
+    "hours_cheapest_tranche_below_model_price": 253,
+    "hours_weighted_offer_below_model_price": 8026
+   },
+   "8906": {
+    "zone": "NYC",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_NYC_p8906_committed",
+     "ST_GAS_NYC_p8906_econlo",
+     "ST_GAS_NYC_p8906_econhi",
+     "ST_GAS_NYC_p8906_peak"
+    ],
+    "pmax_mw": 918.8,
+    "tranche_pmax": [
+     103.8,
+     338.6,
+     338.6,
+     137.8
+    ],
+    "tranche_hr": [
+     9.922,
+     9.449,
+     9.449,
+     39.687
+    ],
+    "tranche_mc_mean": [
+     44.9,
+     43.23,
+     43.23,
+     149.8
+    ],
+    "avail_mean": 0.3774,
+    "avail_mon": [
+     0.252,
+     0.463,
+     0.409,
+     0.283,
+     0.388,
+     0.514,
+     0.541,
+     0.578,
+     0.56,
+     0.308,
+     0.123,
+     0.118
+    ],
+    "offer_mean": 59.4,
+    "offer_min_tranche_mon": [
+     38.97,
+     59.13,
+     31.26,
+     30.16,
+     32.7,
+     34.85,
+     41.54,
+     46.17,
+     51.51,
+     54.3,
+     56.38,
+     43.35
+    ],
+    "floor_mwh_twh": 0.5051,
+    "floor_by_mech_twh": {
+     "4": 0.5051
+    },
+    "model_zone_price_mean": 45.53,
+    "hours_cheapest_tranche_below_model_price": 5575,
+    "hours_weighted_offer_below_model_price": 128
+   }
+  },
+  "class_offer": {
+   "CC_REGULAR": {
+    "mw": 7387.1,
+    "mw_weighted_mc": 40.38,
+    "mw_weighted_hr": 8.562,
+    "NYC": {
+     "mw": 2056.9,
+     "mc": 32.17,
+     "hr": 7.517
+    },
+    "Long_Island": {
+     "mw": 702.4,
+     "mc": 43.02,
+     "hr": 8.386
+    },
+    "Capital_Hudson": {
+     "mw": 3890.0,
+     "mc": 40.93,
+     "hr": 7.954
+    }
+   },
+   "CT_PEAKER": {
+    "mw": 3132.0,
+    "mw_weighted_mc": 63.68,
+    "mw_weighted_hr": 14.526,
+    "NYC": {
+     "mw": 2214.4,
+     "mc": 60.74,
+     "hr": 14.637
+    },
+    "Long_Island": {
+     "mw": 787.9,
+     "mc": 70.49,
+     "hr": 14.108
+    },
+    "Capital_Hudson": {
+     "mw": 86.3,
+     "mc": 85.91,
+     "hr": 17.439
+    }
+   },
+   "ST_GAS": {
+    "mw": 8870.9,
+    "mw_weighted_mc": 72.88,
+    "mw_weighted_hr": 15.814,
+    "NYC": {
+     "mw": 3510.4,
+     "mc": 65.33,
+     "hr": 16.011
+    },
+    "Long_Island": {
+     "mw": 2349.4,
+     "mc": 79.33,
+     "hr": 15.937
+    },
+    "Capital_Hudson": {
+     "mw": 2861.6,
+     "mc": 77.45,
+     "hr": 15.5
+    }
+   },
+   "CC_CHP": {
+    "mw": 3623.6,
+    "mw_weighted_mc": 42.12,
+    "mw_weighted_hr": 9.702,
+    "NYC": {
+     "mw": 1217.6,
+     "mc": 40.78,
+     "hr": 9.788
+    },
+    "Capital_Hudson": {
+     "mw": 1002.1,
+     "mc": 47.89,
+     "hr": 9.579
+    }
+   }
+  }
+ },
+ "2022": {
+  "shapes": {
+   "mc": [
+    803,
+    8760
+   ],
+   "avail": [
+    803,
+    8760
+   ],
+   "min_gen": [
+    803,
+    8760
+   ]
+  },
+  "hh": 6.45,
+  "plants": {
+   "2480": {
+    "zone": "Capital_Hudson",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_Capital_Hudson_p2480_committed",
+     "ST_GAS_Capital_Hudson_p2480_econlo",
+     "ST_GAS_Capital_Hudson_p2480_econhi",
+     "ST_GAS_Capital_Hudson_p2480_peak"
+    ],
+    "pmax_mw": 497.3,
+    "tranche_pmax": [
+     153.2,
+     134.8,
+     134.8,
+     74.6
+    ],
+    "tranche_hr": [
+     11.105,
+     10.576,
+     10.576,
+     44.421
+    ],
+    "tranche_mc_mean": [
+     108.14,
+     103.56,
+     103.56,
+     396.53
+    ],
+    "avail_mean": 0.0825,
+    "avail_mon": [
+     0.063,
+     0.063,
+     0.063,
+     0.057,
+     0.057,
+     0.074,
+     0.133,
+     0.221,
+     0.071,
+     0.057,
+     0.062,
+     0.063
+    ],
+    "offer_mean": 148.91,
+    "offer_min_tranche_mon": [
+     146.8,
+     89.77,
+     77.99,
+     96.32,
+     109.76,
+     104.04,
+     104.77,
+     117.37,
+     98.81,
+     82.12,
+     83.53,
+     129.05
+    ],
+    "floor_mwh_twh": 0.0008,
+    "floor_by_mech_twh": {
+     "4": 0.0008
+    },
+    "model_zone_price_mean": 85.13,
+    "hours_cheapest_tranche_below_model_price": 891,
+    "hours_weighted_offer_below_model_price": 81
+   },
+   "2490": {
+    "zone": "NYC",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_NYC_p2490_committed",
+     "ST_GAS_NYC_p2490_econlo",
+     "ST_GAS_NYC_p2490_econhi",
+     "ST_GAS_NYC_p2490_peak"
+    ],
+    "pmax_mw": 865.3,
+    "tranche_pmax": [
+     257.0,
+     239.3,
+     239.3,
+     129.8
+    ],
+    "tranche_hr": [
+     11.574,
+     11.023,
+     11.023,
+     46.296
+    ],
+    "tranche_mc_mean": [
+     91.26,
+     87.47,
+     87.47,
+     330.11
+    ],
+    "avail_mean": 0.3477,
+    "avail_mon": [
+     0.115,
+     0.489,
+     0.384,
+     0.214,
+     0.299,
+     0.375,
+     0.578,
+     0.583,
+     0.532,
+     0.136,
+     0.167,
+     0.309
+    ],
+    "offer_mean": 104.28,
+    "offer_min_tranche_mon": [
+     132.51,
+     73.07,
+     60.8,
+     79.9,
+     93.91,
+     87.94,
+     88.71,
+     101.83,
+     82.49,
+     65.1,
+     66.89,
+     114.01
+    ],
+    "floor_mwh_twh": 0.4383,
+    "floor_by_mech_twh": {
+     "4": 0.4383
+    },
+    "model_zone_price_mean": 87.38,
+    "hours_cheapest_tranche_below_model_price": 3829,
+    "hours_weighted_offer_below_model_price": 1731
+   },
+   "2500": {
+    "zone": "NYC",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_NYC_p2500_committed",
+     "ST_GAS_NYC_p2500_econlo",
+     "ST_GAS_NYC_p2500_econhi",
+     "ST_GAS_NYC_p2500_peak"
+    ],
+    "pmax_mw": 1730.2,
+    "tranche_pmax": [
+     351.2,
+     559.7,
+     559.7,
+     259.5
+    ],
+    "tranche_hr": [
+     11.679,
+     11.122,
+     11.122,
+     46.714
+    ],
+    "tranche_mc_mean": [
+     89.4,
+     85.62,
+     85.62,
+     327.68
+    ],
+    "avail_mean": 0.1298,
+    "avail_mon": [
+     0.082,
+     0.153,
+     0.141,
+     0.041,
+     0.0,
+     0.01,
+     0.325,
+     0.29,
+     0.047,
+     0.17,
+     0.138,
+     0.153
+    ],
+    "offer_mean": 75.23,
+    "offer_min_tranche_mon": [
+     130.64,
+     71.96,
+     59.57,
+     78.85,
+     92.99,
+     86.96,
+     87.74,
+     100.98,
+     81.47,
+     63.91,
+     65.72,
+     104.37
+    ],
+    "floor_mwh_twh": 0.327,
+    "floor_by_mech_twh": {
+     "4": 0.327
+    },
+    "model_zone_price_mean": 87.38,
+    "hours_cheapest_tranche_below_model_price": 4310,
+    "hours_weighted_offer_below_model_price": 3544
+   },
+   "2511": {
+    "zone": "Long_Island",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_Long_Island_p2511_committed",
+     "ST_GAS_Long_Island_p2511_econlo",
+     "ST_GAS_Long_Island_p2511_econhi",
+     "ST_GAS_Long_Island_p2511_peak"
+    ],
+    "pmax_mw": 372.2,
+    "tranche_pmax": [
+     56.2,
+     130.1,
+     130.1,
+     55.8
+    ],
+    "tranche_hr": [
+     10.869,
+     10.352,
+     10.352,
+     43.477
+    ],
+    "tranche_mc_mean": [
+     104.63,
+     100.21,
+     100.21,
+     383.28
+    ],
+    "avail_mean": 0.5433,
+    "avail_mon": [
+     0.394,
+     0.763,
+     0.386,
+     0.341,
+     0.338,
+     0.443,
+     0.583,
+     0.835,
+     0.569,
+     0.495,
+     0.622,
+     0.765
+    ],
+    "offer_mean": 143.34,
+    "offer_min_tranche_mon": [
+     140.22,
+     87.86,
+     76.33,
+     94.28,
+     107.43,
+     101.83,
+     102.55,
+     114.87,
+     96.71,
+     80.38,
+     81.76,
+     116.25
+    ],
+    "floor_mwh_twh": 0.4641,
+    "floor_by_mech_twh": {
+     "4": 0.4641
+    },
+    "model_zone_price_mean": 88.0,
+    "hours_cheapest_tranche_below_model_price": 1785,
+    "hours_weighted_offer_below_model_price": 126
+   },
+   "2516": {
+    "zone": "Long_Island",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_Long_Island_p2516_committed",
+     "ST_GAS_Long_Island_p2516_econlo",
+     "ST_GAS_Long_Island_p2516_econhi",
+     "ST_GAS_Long_Island_p2516_peak"
+    ],
+    "pmax_mw": 1592.2,
+    "tranche_pmax": [
+     409.2,
+     472.1,
+     472.1,
+     238.8
+    ],
+    "tranche_hr": [
+     11.215,
+     10.681,
+     10.681,
+     44.858
+    ],
+    "tranche_mc_mean": [
+     107.56,
+     103.0,
+     103.0,
+     395.06
+    ],
+    "avail_mean": 0.349,
+    "avail_mon": [
+     0.349,
+     0.211,
+     0.197,
+     0.226,
+     0.327,
+     0.585,
+     0.709,
+     0.576,
+     0.253,
+     0.233,
+     0.141,
+     0.363
+    ],
+    "offer_mean": 147.98,
+    "offer_min_tranche_mon": [
+     144.27,
+     90.25,
+     78.36,
+     96.88,
+     110.45,
+     104.67,
+     105.41,
+     118.13,
+     99.39,
+     82.53,
+     83.96,
+     119.55
+    ],
+    "floor_mwh_twh": 1.2755,
+    "floor_by_mech_twh": {
+     "4": 1.2755
+    },
+    "model_zone_price_mean": 88.0,
+    "hours_cheapest_tranche_below_model_price": 1113,
+    "hours_weighted_offer_below_model_price": 108
+   },
+   "2517": {
+    "zone": "Long_Island",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_Long_Island_p2517_committed",
+     "ST_GAS_Long_Island_p2517_econlo",
+     "ST_GAS_Long_Island_p2517_econhi",
+     "ST_GAS_Long_Island_p2517_peak"
+    ],
+    "pmax_mw": 385.0,
+    "tranche_pmax": [
+     50.0,
+     138.6,
+     138.6,
+     57.8
+    ],
+    "tranche_hr": [
+     11.831,
+     11.268,
+     11.268,
+     47.324
+    ],
+    "tranche_mc_mean": [
+     113.19,
+     108.38,
+     108.38,
+     416.49
+    ],
+    "avail_mean": 0.4811,
+    "avail_mon": [
+     0.416,
+     0.416,
+     0.409,
+     0.374,
+     0.414,
+     0.697,
+     0.756,
+     0.617,
+     0.506,
+     0.374,
+     0.374,
+     0.416
+    ],
+    "offer_mean": 155.22,
+    "offer_min_tranche_mon": [
+     151.92,
+     94.93,
+     82.39,
+     101.92,
+     116.24,
+     110.14,
+     110.92,
+     124.34,
+     104.57,
+     86.79,
+     88.29,
+     125.84
+    ],
+    "floor_mwh_twh": 0.0,
+    "floor_by_mech_twh": {},
+    "model_zone_price_mean": 88.0,
+    "hours_cheapest_tranche_below_model_price": 588,
+    "hours_weighted_offer_below_model_price": 78
+   },
+   "2527": {
+    "zone": "Upstate_West",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_Upstate_West_p2527_committed",
+     "ST_GAS_Upstate_West_p2527_econlo",
+     "ST_GAS_Upstate_West_p2527_econhi",
+     "ST_GAS_Upstate_West_p2527_peak"
+    ],
+    "pmax_mw": 104.5,
+    "tranche_pmax": [
+     68.0,
+     10.4,
+     10.4,
+     15.7
+    ],
+    "tranche_hr": [
+     10.931,
+     10.411,
+     10.411,
+     43.725
+    ],
+    "tranche_mc_mean": [
+     72.35,
+     69.44,
+     69.44,
+     255.92
+    ],
+    "avail_mean": 0.789,
+    "avail_mon": [
+     0.813,
+     0.813,
+     0.731,
+     0.731,
+     0.731,
+     0.916,
+     0.916,
+     0.916,
+     0.916,
+     0.684,
+     0.487,
+     0.813
+    ],
+    "offer_mean": 98.52,
+    "offer_min_tranche_mon": [
+     111.89,
+     55.75,
+     44.15,
+     62.2,
+     75.43,
+     69.79,
+     70.52,
+     82.91,
+     64.65,
+     48.22,
+     50.95,
+     94.48
+    ],
+    "floor_mwh_twh": 0.0,
+    "floor_by_mech_twh": {},
+    "model_zone_price_mean": 35.03,
+    "hours_cheapest_tranche_below_model_price": 900,
+    "hours_weighted_offer_below_model_price": 447
+   },
+   "2625": {
+    "zone": "Capital_Hudson",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_Capital_Hudson_p2625_committed",
+     "ST_GAS_Capital_Hudson_p2625_econlo",
+     "ST_GAS_Capital_Hudson_p2625_econhi",
+     "ST_GAS_Capital_Hudson_p2625_peak"
+    ],
+    "pmax_mw": 1159.6,
+    "tranche_pmax": [
+     243.5,
+     371.1,
+     371.1,
+     173.9
+    ],
+    "tranche_hr": [
+     10.721,
+     10.211,
+     10.211,
+     42.885
+    ],
+    "tranche_mc_mean": [
+     102.8,
+     98.44,
+     98.44,
+     377.66
+    ],
+    "avail_mean": 0.2203,
+    "avail_mon": [
+     0.635,
+     0.62,
+     0.113,
+     0.0,
+     0.027,
+     0.06,
+     0.509,
+     0.303,
+     0.024,
+     0.064,
+     0.086,
+     0.217
+    ],
+    "offer_mean": 60.62,
+    "offer_min_tranche_mon": [
+     137.9,
+     86.26,
+     74.89,
+     92.59,
+     105.56,
+     100.04,
+     100.75,
+     112.91,
+     94.99,
+     78.88,
+     80.24,
+     114.26
+    ],
+    "floor_mwh_twh": 0.0319,
+    "floor_by_mech_twh": {
+     "4": 0.0319
+    },
+    "model_zone_price_mean": 85.13,
+    "hours_cheapest_tranche_below_model_price": 1438,
+    "hours_weighted_offer_below_model_price": 5460
+   },
+   "2682": {
+    "zone": "Upstate_West",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_Upstate_West_p2682_committed",
+     "ST_GAS_Upstate_West_p2682_econlo",
+     "ST_GAS_Upstate_West_p2682_econhi",
+     "ST_GAS_Upstate_West_p2682_peak"
+    ],
+    "pmax_mw": 45.0,
+    "tranche_pmax": [
+     13.5,
+     12.4,
+     12.4,
+     6.8
+    ],
+    "tranche_hr": [
+     13.107,
+     12.483,
+     12.483,
+     52.43
+    ],
+    "tranche_mc_mean": [
+     84.41,
+     80.95,
+     80.95,
+     302.17
+    ],
+    "avail_mean": 0.0095,
+    "avail_mon": [
+     0.0,
+     0.0,
+     0.044,
+     0.0,
+     0.0,
+     0.0,
+     0.068,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "offer_mean": 1.86,
+    "offer_min_tranche_mon": [
+     132.26,
+     65.28,
+     51.38,
+     73.02,
+     88.88,
+     82.12,
+     82.99,
+     97.86,
+     75.95,
+     56.25,
+     59.53,
+     103.29
+    ],
+    "floor_mwh_twh": 0.0,
+    "floor_by_mech_twh": {},
+    "model_zone_price_mean": 35.03,
+    "hours_cheapest_tranche_below_model_price": 455,
+    "hours_weighted_offer_below_model_price": 8305
+   },
+   "8006": {
+    "zone": "Capital_Hudson",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_Capital_Hudson_p8006_committed",
+     "ST_GAS_Capital_Hudson_p8006_econlo",
+     "ST_GAS_Capital_Hudson_p8006_econhi",
+     "ST_GAS_Capital_Hudson_p8006_peak"
+    ],
+    "pmax_mw": 605.7,
+    "tranche_pmax": [
+     82.4,
+     216.2,
+     216.2,
+     90.9
+    ],
+    "tranche_hr": [
+     10.63,
+     10.124,
+     10.124,
+     42.521
+    ],
+    "tranche_mc_mean": [
+     103.45,
+     99.12,
+     99.12,
+     375.97
+    ],
+    "avail_mean": 0.0648,
+    "avail_mon": [
+     0.307,
+     0.023,
+     0.0,
+     0.0,
+     0.013,
+     0.0,
+     0.038,
+     0.327,
+     0.0,
+     0.0,
+     0.0,
+     0.057
+    ],
+    "offer_mean": 15.19,
+    "offer_min_tranche_mon": [
+     138.25,
+     87.04,
+     75.77,
+     93.32,
+     106.19,
+     100.71,
+     101.41,
+     113.47,
+     95.7,
+     79.73,
+     81.08,
+     114.81
+    ],
+    "floor_mwh_twh": 0.0302,
+    "floor_by_mech_twh": {
+     "4": 0.0302
+    },
+    "model_zone_price_mean": 85.13,
+    "hours_cheapest_tranche_below_model_price": 1330,
+    "hours_weighted_offer_below_model_price": 8145
+   },
+   "8906": {
+    "zone": "NYC",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_NYC_p8906_committed",
+     "ST_GAS_NYC_p8906_econlo",
+     "ST_GAS_NYC_p8906_econhi",
+     "ST_GAS_NYC_p8906_peak"
+    ],
+    "pmax_mw": 923.2,
+    "tranche_pmax": [
+     104.3,
+     340.2,
+     340.2,
+     138.5
+    ],
+    "tranche_hr": [
+     9.922,
+     9.449,
+     9.449,
+     39.687
+    ],
+    "tranche_mc_mean": [
+     79.64,
+     76.42,
+     76.42,
+     282.07
+    ],
+    "avail_mean": 0.4411,
+    "avail_mon": [
+     0.418,
+     0.244,
+     0.374,
+     0.426,
+     0.454,
+     0.539,
+     0.706,
+     0.707,
+     0.579,
+     0.396,
+     0.199,
+     0.231
+    ],
+    "offer_mean": 107.63,
+    "offer_min_tranche_mon": [
+     114.67,
+     64.81,
+     54.29,
+     70.67,
+     82.68,
+     77.56,
+     78.22,
+     89.47,
+     72.89,
+     57.98,
+     59.52,
+     92.36
+    ],
+    "floor_mwh_twh": 0.5933,
+    "floor_by_mech_twh": {
+     "4": 0.5933
+    },
+    "model_zone_price_mean": 87.38,
+    "hours_cheapest_tranche_below_model_price": 6154,
+    "hours_weighted_offer_below_model_price": 988
+   }
+  },
+  "class_offer": {
+   "CC_REGULAR": {
+    "mw": 7387.1,
+    "mw_weighted_mc": 73.29,
+    "mw_weighted_hr": 8.588,
+    "NYC": {
+     "mw": 2056.9,
+     "mc": 58.58,
+     "hr": 7.516
+    },
+    "Long_Island": {
+     "mw": 702.4,
+     "mc": 80.86,
+     "hr": 8.485
+    },
+    "Capital_Hudson": {
+     "mw": 3890.0,
+     "mc": 75.74,
+     "hr": 7.922
+    }
+   },
+   "CT_PEAKER": {
+    "mw": 3187.7,
+    "mw_weighted_mc": 140.35,
+    "mw_weighted_hr": 14.613,
+    "NYC": {
+     "mw": 2240.8,
+     "mc": 142.5,
+     "hr": 14.416
+    },
+    "Long_Island": {
+     "mw": 815.7,
+     "mc": 135.06,
+     "hr": 14.924
+    },
+    "Capital_Hudson": {
+     "mw": 86.3,
+     "mc": 162.2,
+     "hr": 17.439
+    }
+   },
+   "ST_GAS": {
+    "mw": 8280.2,
+    "mw_weighted_mc": 133.75,
+    "mw_weighted_hr": 15.77,
+    "NYC": {
+     "mw": 3518.7,
+     "mc": 119.31,
+     "hr": 15.885
+    },
+    "Long_Island": {
+     "mw": 2349.4,
+     "mc": 148.43,
+     "hr": 15.99
+    },
+    "Capital_Hudson": {
+     "mw": 2262.6,
+     "mc": 142.93,
+     "hr": 15.306
+    }
+   },
+   "CC_CHP": {
+    "mw": 3587.5,
+    "mw_weighted_mc": 73.52,
+    "mw_weighted_hr": 9.665,
+    "NYC": {
+     "mw": 1217.2,
+     "mc": 74.92,
+     "hr": 9.831
+    },
+    "Capital_Hudson": {
+     "mw": 1002.1,
+     "mc": 88.41,
+     "hr": 9.475
+    }
+   }
+  }
+ },
+ "2023": {
+  "shapes": {
+   "mc": [
+    791,
+    8760
+   ],
+   "avail": [
+    791,
+    8760
+   ],
+   "min_gen": [
+    791,
+    8760
+   ]
+  },
+  "hh": 2.54,
+  "plants": {
+   "2480": {
+    "zone": "Capital_Hudson",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_Capital_Hudson_p2480_committed",
+     "ST_GAS_Capital_Hudson_p2480_econlo",
+     "ST_GAS_Capital_Hudson_p2480_econhi",
+     "ST_GAS_Capital_Hudson_p2480_peak"
+    ],
+    "pmax_mw": 497.3,
+    "tranche_pmax": [
+     153.2,
+     134.8,
+     134.8,
+     74.6
+    ],
+    "tranche_hr": [
+     11.105,
+     10.576,
+     10.576,
+     44.421
+    ],
+    "tranche_mc_mean": [
+     48.88,
+     47.11,
+     47.11,
+     160.05
+    ],
+    "avail_mean": 0.1901,
+    "avail_mon": [
+     0.181,
+     0.189,
+     0.163,
+     0.172,
+     0.163,
+     0.221,
+     0.212,
+     0.204,
+     0.267,
+     0.163,
+     0.167,
+     0.181
+    ],
+    "offer_mean": 64.6,
+    "offer_min_tranche_mon": [
+     60.24,
+     65.71,
+     49.48,
+     44.28,
+     41.48,
+     41.09,
+     44.3,
+     39.46,
+     41.03,
+     41.0,
+     49.56,
+     49.13
+    ],
+    "floor_mwh_twh": 0.0007,
+    "floor_by_mech_twh": {
+     "4": 0.0007
+    },
+    "model_zone_price_mean": 33.13,
+    "hours_cheapest_tranche_below_model_price": 169,
+    "hours_weighted_offer_below_model_price": 24
+   },
+   "2490": {
+    "zone": "NYC",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_NYC_p2490_committed",
+     "ST_GAS_NYC_p2490_econlo",
+     "ST_GAS_NYC_p2490_econhi",
+     "ST_GAS_NYC_p2490_peak"
+    ],
+    "pmax_mw": 884.9,
+    "tranche_pmax": [
+     262.8,
+     244.7,
+     244.7,
+     132.7
+    ],
+    "tranche_hr": [
+     11.523,
+     10.975,
+     10.975,
+     46.093
+    ],
+    "tranche_mc_mean": [
+     34.66,
+     33.57,
+     33.57,
+     103.7
+    ],
+    "avail_mean": 0.6758,
+    "avail_mon": [
+     0.614,
+     0.524,
+     0.731,
+     0.731,
+     0.731,
+     0.815,
+     0.849,
+     0.916,
+     0.485,
+     0.41,
+     0.731,
+     0.559
+    ],
+    "offer_mean": 44.39,
+    "offer_min_tranche_mon": [
+     47.19,
+     52.86,
+     36.02,
+     30.63,
+     27.72,
+     27.32,
+     30.65,
+     25.62,
+     27.26,
+     27.22,
+     36.11,
+     35.66
+    ],
+    "floor_mwh_twh": 0.8711,
+    "floor_by_mech_twh": {
+     "4": 0.8711
+    },
+    "model_zone_price_mean": 33.95,
+    "hours_cheapest_tranche_below_model_price": 4217,
+    "hours_weighted_offer_below_model_price": 1091
+   },
+   "2500": {
+    "zone": "NYC",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_NYC_p2500_committed",
+     "ST_GAS_NYC_p2500_econlo",
+     "ST_GAS_NYC_p2500_econhi",
+     "ST_GAS_NYC_p2500_peak"
+    ],
+    "pmax_mw": 1730.3,
+    "tranche_pmax": [
+     351.3,
+     559.8,
+     559.8,
+     259.5
+    ],
+    "tranche_hr": [
+     11.881,
+     11.315,
+     11.315,
+     47.523
+    ],
+    "tranche_mc_mean": [
+     32.93,
+     31.84,
+     31.84,
+     101.47
+    ],
+    "avail_mean": 0.6424,
+    "avail_mon": [
+     0.635,
+     0.635,
+     0.571,
+     0.583,
+     0.571,
+     0.715,
+     0.884,
+     0.715,
+     0.69,
+     0.522,
+     0.552,
+     0.635
+    ],
+    "offer_mean": 42.51,
+    "offer_min_tranche_mon": [
+     46.73,
+     41.64,
+     35.21,
+     29.65,
+     26.65,
+     26.23,
+     29.67,
+     24.49,
+     26.18,
+     26.13,
+     35.3,
+     34.83
+    ],
+    "floor_mwh_twh": 1.6193,
+    "floor_by_mech_twh": {
+     "4": 1.6193
+    },
+    "model_zone_price_mean": 33.95,
+    "hours_cheapest_tranche_below_model_price": 5485,
+    "hours_weighted_offer_below_model_price": 1342
+   },
+   "2511": {
+    "zone": "Long_Island",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_Long_Island_p2511_committed",
+     "ST_GAS_Long_Island_p2511_econlo",
+     "ST_GAS_Long_Island_p2511_econhi",
+     "ST_GAS_Long_Island_p2511_peak"
+    ],
+    "pmax_mw": 372.2,
+    "tranche_pmax": [
+     56.2,
+     130.1,
+     130.1,
+     55.8
+    ],
+    "tranche_hr": [
+     10.925,
+     10.405,
+     10.405,
+     43.699
+    ],
+    "tranche_mc_mean": [
+     47.16,
+     45.46,
+     45.46,
+     153.98
+    ],
+    "avail_mean": 0.5767,
+    "avail_mon": [
+     0.624,
+     0.514,
+     0.336,
+     0.488,
+     0.604,
+     0.659,
+     0.916,
+     0.916,
+     0.75,
+     0.336,
+     0.336,
+     0.433
+    ],
+    "offer_mean": 62.0,
+    "offer_min_tranche_mon": [
+     59.19,
+     54.02,
+     48.6,
+     43.49,
+     40.73,
+     40.35,
+     43.5,
+     38.74,
+     40.28,
+     40.25,
+     48.68,
+     48.25
+    ],
+    "floor_mwh_twh": 0.4927,
+    "floor_by_mech_twh": {
+     "4": 0.4927
+    },
+    "model_zone_price_mean": 34.96,
+    "hours_cheapest_tranche_below_model_price": 872,
+    "hours_weighted_offer_below_model_price": 50
+   },
+   "2516": {
+    "zone": "Long_Island",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_Long_Island_p2516_committed",
+     "ST_GAS_Long_Island_p2516_econlo",
+     "ST_GAS_Long_Island_p2516_econhi",
+     "ST_GAS_Long_Island_p2516_peak"
+    ],
+    "pmax_mw": 1592.2,
+    "tranche_pmax": [
+     409.2,
+     472.1,
+     472.1,
+     238.8
+    ],
+    "tranche_hr": [
+     11.175,
+     10.643,
+     10.643,
+     44.7
+    ],
+    "tranche_mc_mean": [
+     47.86,
+     46.13,
+     46.13,
+     157.13
+    ],
+    "avail_mean": 0.3211,
+    "avail_mon": [
+     0.16,
+     0.255,
+     0.162,
+     0.207,
+     0.179,
+     0.48,
+     0.819,
+     0.382,
+     0.379,
+     0.268,
+     0.249,
+     0.309
+    ],
+    "offer_mean": 63.22,
+    "offer_min_tranche_mon": [
+     60.17,
+     54.88,
+     49.34,
+     44.11,
+     41.29,
+     40.89,
+     44.12,
+     39.25,
+     40.83,
+     40.8,
+     49.42,
+     48.98
+    ],
+    "floor_mwh_twh": 1.1734,
+    "floor_by_mech_twh": {
+     "4": 1.1734
+    },
+    "model_zone_price_mean": 34.96,
+    "hours_cheapest_tranche_below_model_price": 515,
+    "hours_weighted_offer_below_model_price": 48
+   },
+   "2517": {
+    "zone": "Long_Island",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_Long_Island_p2517_committed",
+     "ST_GAS_Long_Island_p2517_econlo",
+     "ST_GAS_Long_Island_p2517_econhi",
+     "ST_GAS_Long_Island_p2517_peak"
+    ],
+    "pmax_mw": 385.0,
+    "tranche_pmax": [
+     50.0,
+     138.6,
+     138.6,
+     57.8
+    ],
+    "tranche_hr": [
+     12.096,
+     11.52,
+     11.52,
+     48.383
+    ],
+    "tranche_mc_mean": [
+     51.28,
+     49.41,
+     49.41,
+     169.55
+    ],
+    "avail_mean": 0.7456,
+    "avail_mon": [
+     0.813,
+     0.813,
+     0.731,
+     0.731,
+     0.731,
+     0.916,
+     0.837,
+     0.916,
+     0.409,
+     0.507,
+     0.731,
+     0.813
+    ],
+    "offer_mean": 67.67,
+    "offer_min_tranche_mon": [
+     64.6,
+     58.88,
+     52.88,
+     47.22,
+     44.17,
+     43.74,
+     47.24,
+     41.96,
+     43.67,
+     43.64,
+     52.97,
+     52.5
+    ],
+    "floor_mwh_twh": 0.0,
+    "floor_by_mech_twh": {},
+    "model_zone_price_mean": 34.96,
+    "hours_cheapest_tranche_below_model_price": 175,
+    "hours_weighted_offer_below_model_price": 28
+   },
+   "2527": {
+    "zone": "Upstate_West",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_Upstate_West_p2527_committed",
+     "ST_GAS_Upstate_West_p2527_econlo",
+     "ST_GAS_Upstate_West_p2527_econhi",
+     "ST_GAS_Upstate_West_p2527_peak"
+    ],
+    "pmax_mw": 104.5,
+    "tranche_pmax": [
+     68.0,
+     10.4,
+     10.4,
+     15.7
+    ],
+    "tranche_hr": [
+     10.871,
+     10.353,
+     10.353,
+     43.482
+    ],
+    "tranche_mc_mean": [
+     31.55,
+     30.57,
+     30.57,
+     92.78
+    ],
+    "avail_mean": 0.7831,
+    "avail_mon": [
+     0.813,
+     0.813,
+     0.731,
+     0.731,
+     0.731,
+     0.552,
+     0.916,
+     0.916,
+     0.916,
+     0.731,
+     0.731,
+     0.813
+    ],
+    "offer_mean": 39.57,
+    "offer_min_tranche_mon": [
+     43.42,
+     48.77,
+     32.89,
+     27.8,
+     25.06,
+     24.67,
+     27.82,
+     23.07,
+     24.68,
+     24.58,
+     32.96,
+     32.54
+    ],
+    "floor_mwh_twh": 0.0,
+    "floor_by_mech_twh": {},
+    "model_zone_price_mean": 23.0,
+    "hours_cheapest_tranche_below_model_price": 1910,
+    "hours_weighted_offer_below_model_price": 749
+   },
+   "2625": {
+    "zone": "Capital_Hudson",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_Capital_Hudson_p2625_committed",
+     "ST_GAS_Capital_Hudson_p2625_econlo",
+     "ST_GAS_Capital_Hudson_p2625_econhi",
+     "ST_GAS_Capital_Hudson_p2625_peak"
+    ],
+    "pmax_mw": 1159.6,
+    "tranche_pmax": [
+     243.5,
+     371.1,
+     371.1,
+     173.9
+    ],
+    "tranche_hr": [
+     10.631,
+     10.124,
+     10.124,
+     42.522
+    ],
+    "tranche_mc_mean": [
+     45.75,
+     44.1,
+     44.1,
+     149.69
+    ],
+    "avail_mean": 0.1214,
+    "avail_mon": [
+     0.01,
+     0.149,
+     0.019,
+     0.021,
+     0.013,
+     0.103,
+     0.377,
+     0.247,
+     0.124,
+     0.116,
+     0.171,
+     0.108
+    ],
+    "offer_mean": 16.9,
+    "offer_min_tranche_mon": [
+     57.45,
+     52.42,
+     47.15,
+     42.18,
+     39.49,
+     39.12,
+     42.19,
+     37.55,
+     39.06,
+     39.03,
+     47.23,
+     46.81
+    ],
+    "floor_mwh_twh": 0.0519,
+    "floor_by_mech_twh": {
+     "4": 0.0519
+    },
+    "model_zone_price_mean": 33.13,
+    "hours_cheapest_tranche_below_model_price": 392,
+    "hours_weighted_offer_below_model_price": 6416
+   },
+   "2682": {
+    "zone": "Upstate_West",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_Upstate_West_p2682_committed",
+     "ST_GAS_Upstate_West_p2682_econlo",
+     "ST_GAS_Upstate_West_p2682_econhi",
+     "ST_GAS_Upstate_West_p2682_peak"
+    ],
+    "pmax_mw": 45.0,
+    "tranche_pmax": [
+     13.5,
+     12.4,
+     12.4,
+     6.8
+    ],
+    "tranche_hr": [
+     9.825,
+     9.357,
+     9.357,
+     39.299
+    ],
+    "tranche_mc_mean": [
+     30.14,
+     29.29,
+     29.29,
+     83.3
+    ],
+    "avail_mean": 0.006,
+    "avail_mon": [
+     0.0,
+     0.0,
+     0.027,
+     0.006,
+     0.0,
+     0.0,
+     0.018,
+     0.019,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "offer_mean": 0.5,
+    "offer_min_tranche_mon": [
+     41.6,
+     37.43,
+     32.07,
+     27.48,
+     25.0,
+     24.65,
+     27.49,
+     23.21,
+     24.66,
+     24.57,
+     32.14,
+     31.76
+    ],
+    "floor_mwh_twh": 0.0,
+    "floor_by_mech_twh": {},
+    "model_zone_price_mean": 23.0,
+    "hours_cheapest_tranche_below_model_price": 2033,
+    "hours_weighted_offer_below_model_price": 8463
+   },
+   "8006": {
+    "zone": "Capital_Hudson",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_Capital_Hudson_p8006_committed",
+     "ST_GAS_Capital_Hudson_p8006_econlo",
+     "ST_GAS_Capital_Hudson_p8006_econhi",
+     "ST_GAS_Capital_Hudson_p8006_peak"
+    ],
+    "pmax_mw": 1222.5,
+    "tranche_pmax": [
+     166.3,
+     436.4,
+     436.4,
+     183.4
+    ],
+    "tranche_hr": [
+     10.838,
+     10.322,
+     10.322,
+     43.353
+    ],
+    "tranche_mc_mean": [
+     47.17,
+     45.48,
+     45.48,
+     153.14
+    ],
+    "avail_mean": 0.0729,
+    "avail_mon": [
+     0.0,
+     0.056,
+     0.049,
+     0.102,
+     0.0,
+     0.04,
+     0.448,
+     0.012,
+     0.124,
+     0.018,
+     0.009,
+     0.015
+    ],
+    "offer_mean": 7.66,
+    "offer_min_tranche_mon": [
+     59.1,
+     53.97,
+     48.6,
+     43.53,
+     40.79,
+     40.41,
+     43.54,
+     38.81,
+     40.35,
+     40.32,
+     48.68,
+     48.25
+    ],
+    "floor_mwh_twh": 0.0012,
+    "floor_by_mech_twh": {
+     "4": 0.0012
+    },
+    "model_zone_price_mean": 33.13,
+    "hours_cheapest_tranche_below_model_price": 240,
+    "hours_weighted_offer_below_model_price": 7686
+   },
+   "8906": {
+    "zone": "NYC",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_NYC_p8906_committed",
+     "ST_GAS_NYC_p8906_econlo",
+     "ST_GAS_NYC_p8906_econhi",
+     "ST_GAS_NYC_p8906_peak"
+    ],
+    "pmax_mw": 923.2,
+    "tranche_pmax": [
+     104.3,
+     340.2,
+     340.2,
+     138.5
+    ],
+    "tranche_hr": [
+     9.922,
+     9.449,
+     9.449,
+     39.687
+    ],
+    "tranche_mc_mean": [
+     31.51,
+     30.6,
+     30.6,
+     88.75
+    ],
+    "avail_mean": 0.3248,
+    "avail_mon": [
+     0.29,
+     0.179,
+     0.262,
+     0.181,
+     0.329,
+     0.407,
+     0.842,
+     0.56,
+     0.428,
+     0.097,
+     0.051,
+     0.252
+    ],
+    "offer_mean": 36.37,
+    "offer_min_tranche_mon": [
+     43.03,
+     38.78,
+     33.41,
+     28.77,
+     26.27,
+     25.92,
+     28.79,
+     24.46,
+     25.87,
+     25.83,
+     33.48,
+     33.1
+    ],
+    "floor_mwh_twh": 0.4368,
+    "floor_by_mech_twh": {
+     "4": 0.4368
+    },
+    "model_zone_price_mean": 33.95,
+    "hours_cheapest_tranche_below_model_price": 7156,
+    "hours_weighted_offer_below_model_price": 2129
+   }
+  },
+  "class_offer": {
+   "CC_REGULAR": {
+    "mw": 7419.1,
+    "mw_weighted_mc": 30.83,
+    "mw_weighted_hr": 8.514,
+    "NYC": {
+     "mw": 2088.9,
+     "mc": 21.46,
+     "hr": 7.42
+    },
+    "Long_Island": {
+     "mw": 702.4,
+     "mc": 35.49,
+     "hr": 8.379
+    },
+    "Capital_Hudson": {
+     "mw": 3890.0,
+     "mc": 33.8,
+     "hr": 7.9
+    }
+   },
+   "CT_PEAKER": {
+    "mw": 2750.2,
+    "mw_weighted_mc": 72.69,
+    "mw_weighted_hr": 14.681,
+    "NYC": {
+     "mw": 1802.8,
+     "mc": 77.5,
+     "hr": 14.647
+    },
+    "Long_Island": {
+     "mw": 816.2,
+     "mc": 64.34,
+     "hr": 14.658
+    },
+    "Capital_Hudson": {
+     "mw": 86.3,
+     "mc": 72.6,
+     "hr": 17.99
+    }
+   },
+   "ST_GAS": {
+    "mw": 8916.7,
+    "mw_weighted_mc": 54.13,
+    "mw_weighted_hr": 15.779,
+    "NYC": {
+     "mw": 3538.4,
+     "mc": 42.18,
+     "hr": 16.011
+    },
+    "Long_Island": {
+     "mw": 2349.4,
+     "mc": 63.76,
+     "hr": 16.026
+    },
+    "Capital_Hudson": {
+     "mw": 2879.4,
+     "mc": 61.7,
+     "hr": 15.325
+    }
+   },
+   "CC_CHP": {
+    "mw": 3586.5,
+    "mw_weighted_mc": 29.64,
+    "mw_weighted_hr": 9.653,
+    "NYC": {
+     "mw": 1216.2,
+     "mc": 26.69,
+     "hr": 9.659
+    },
+    "Capital_Hudson": {
+     "mw": 1002.1,
+     "mc": 38.64,
+     "hr": 9.561
+    }
+   }
+  }
+ },
+ "2024": {
+  "shapes": {
+   "mc": [
+    784,
+    8760
+   ],
+   "avail": [
+    784,
+    8760
+   ],
+   "min_gen": [
+    784,
+    8760
+   ]
+  },
+  "hh": 2.19,
+  "plants": {
+   "2480": {
+    "zone": "Capital_Hudson",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_Capital_Hudson_p2480_committed",
+     "ST_GAS_Capital_Hudson_p2480_econlo",
+     "ST_GAS_Capital_Hudson_p2480_econhi",
+     "ST_GAS_Capital_Hudson_p2480_peak"
+    ],
+    "pmax_mw": 497.3,
+    "tranche_pmax": [
+     153.2,
+     134.8,
+     134.8,
+     74.6
+    ],
+    "tranche_hr": [
+     11.105,
+     10.576,
+     10.576,
+     44.421
+    ],
+    "tranche_mc_mean": [
+     47.7,
+     46.21,
+     46.21,
+     141.72
+    ],
+    "avail_mean": 0.1901,
+    "avail_mon": [
+     0.181,
+     0.181,
+     0.169,
+     0.163,
+     0.164,
+     0.24,
+     0.257,
+     0.212,
+     0.203,
+     0.163,
+     0.163,
+     0.185
+    ],
+    "offer_mean": 60.99,
+    "offer_min_tranche_mon": [
+     80.45,
+     41.76,
+     39.5,
+     39.2,
+     40.57,
+     42.48,
+     40.86,
+     39.72,
+     40.52,
+     41.21,
+     46.51,
+     61.38
+    ],
+    "floor_mwh_twh": 0.0,
+    "floor_by_mech_twh": {
+     "4": 0.0
+    },
+    "model_zone_price_mean": 37.06,
+    "hours_cheapest_tranche_below_model_price": 546,
+    "hours_weighted_offer_below_model_price": 69
+   },
+   "2490": {
+    "zone": "NYC",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_NYC_p2490_committed",
+     "ST_GAS_NYC_p2490_econlo",
+     "ST_GAS_NYC_p2490_econhi",
+     "ST_GAS_NYC_p2490_peak"
+    ],
+    "pmax_mw": 883.6,
+    "tranche_pmax": [
+     262.4,
+     244.3,
+     244.3,
+     132.5
+    ],
+    "tranche_hr": [
+     11.489,
+     10.942,
+     10.942,
+     45.958
+    ],
+    "tranche_mc_mean": [
+     39.96,
+     38.8,
+     38.8,
+     112.75
+    ],
+    "avail_mean": 0.3909,
+    "avail_mon": [
+     0.471,
+     0.21,
+     0.286,
+     0.286,
+     0.227,
+     0.528,
+     0.722,
+     0.43,
+     0.415,
+     0.286,
+     0.146,
+     0.677
+    ],
+    "offer_mean": 44.64,
+    "offer_min_tranche_mon": [
+     74.23,
+     34.2,
+     31.86,
+     31.55,
+     32.97,
+     34.95,
+     33.27,
+     32.08,
+     32.91,
+     33.63,
+     39.11,
+     54.5
+    ],
+    "floor_mwh_twh": 0.5032,
+    "floor_by_mech_twh": {
+     "4": 0.5032
+    },
+    "model_zone_price_mean": 38.25,
+    "hours_cheapest_tranche_below_model_price": 3601,
+    "hours_weighted_offer_below_model_price": 1768
+   },
+   "2500": {
+    "zone": "NYC",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_NYC_p2500_committed",
+     "ST_GAS_NYC_p2500_econlo",
+     "ST_GAS_NYC_p2500_econhi",
+     "ST_GAS_NYC_p2500_peak"
+    ],
+    "pmax_mw": 1726.3,
+    "tranche_pmax": [
+     350.4,
+     558.5,
+     558.5,
+     259.0
+    ],
+    "tranche_hr": [
+     11.576,
+     11.024,
+     11.024,
+     46.302
+    ],
+    "tranche_mc_mean": [
+     37.23,
+     36.07,
+     36.07,
+     110.04
+    ],
+    "avail_mean": 0.2278,
+    "avail_mon": [
+     0.142,
+     0.148,
+     0.128,
+     0.137,
+     0.151,
+     0.418,
+     0.637,
+     0.394,
+     0.159,
+     0.128,
+     0.142,
+     0.142
+    ],
+    "offer_mean": 47.4,
+    "offer_min_tranche_mon": [
+     69.97,
+     31.61,
+     29.25,
+     28.93,
+     30.36,
+     32.36,
+     30.67,
+     29.47,
+     30.31,
+     31.03,
+     36.55,
+     52.06
+    ],
+    "floor_mwh_twh": 0.5729,
+    "floor_by_mech_twh": {
+     "4": 0.5729
+    },
+    "model_zone_price_mean": 38.25,
+    "hours_cheapest_tranche_below_model_price": 5652,
+    "hours_weighted_offer_below_model_price": 1412
+   },
+   "2511": {
+    "zone": "Long_Island",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_Long_Island_p2511_committed",
+     "ST_GAS_Long_Island_p2511_econlo",
+     "ST_GAS_Long_Island_p2511_econhi",
+     "ST_GAS_Long_Island_p2511_peak"
+    ],
+    "pmax_mw": 372.2,
+    "tranche_pmax": [
+     56.2,
+     130.1,
+     130.1,
+     55.8
+    ],
+    "tranche_hr": [
+     10.961,
+     10.439,
+     10.439,
+     43.843
+    ],
+    "tranche_mc_mean": [
+     46.48,
+     45.02,
+     45.02,
+     138.59
+    ],
+    "avail_mean": 0.7126,
+    "avail_mon": [
+     0.722,
+     0.719,
+     0.649,
+     0.649,
+     0.482,
+     0.813,
+     0.91,
+     0.916,
+     0.834,
+     0.489,
+     0.651,
+     0.722
+    ],
+    "offer_mean": 59.28,
+    "offer_min_tranche_mon": [
+     76.46,
+     40.85,
+     38.62,
+     38.32,
+     39.68,
+     41.57,
+     39.97,
+     38.83,
+     39.62,
+     40.3,
+     45.54,
+     60.22
+    ],
+    "floor_mwh_twh": 0.6088,
+    "floor_by_mech_twh": {
+     "4": 0.6088
+    },
+    "model_zone_price_mean": 38.62,
+    "hours_cheapest_tranche_below_model_price": 1573,
+    "hours_weighted_offer_below_model_price": 170
+   },
+   "2516": {
+    "zone": "Long_Island",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_Long_Island_p2516_committed",
+     "ST_GAS_Long_Island_p2516_econlo",
+     "ST_GAS_Long_Island_p2516_econhi",
+     "ST_GAS_Long_Island_p2516_peak"
+    ],
+    "pmax_mw": 1592.2,
+    "tranche_pmax": [
+     409.2,
+     472.1,
+     472.1,
+     238.8
+    ],
+    "tranche_hr": [
+     11.159,
+     10.628,
+     10.628,
+     44.637
+    ],
+    "tranche_mc_mean": [
+     46.69,
+     45.2,
+     45.2,
+     140.46
+    ],
+    "avail_mean": 0.4445,
+    "avail_mon": [
+     0.356,
+     0.294,
+     0.188,
+     0.35,
+     0.472,
+     0.679,
+     0.83,
+     0.664,
+     0.468,
+     0.389,
+     0.331,
+     0.302
+    ],
+    "offer_mean": 59.87,
+    "offer_min_tranche_mon": [
+     77.21,
+     40.96,
+     38.69,
+     38.38,
+     39.76,
+     41.68,
+     40.05,
+     38.9,
+     39.7,
+     40.4,
+     45.73,
+     60.67
+    ],
+    "floor_mwh_twh": 1.6244,
+    "floor_by_mech_twh": {
+     "4": 1.6244
+    },
+    "model_zone_price_mean": 38.62,
+    "hours_cheapest_tranche_below_model_price": 1245,
+    "hours_weighted_offer_below_model_price": 158
+   },
+   "2517": {
+    "zone": "Long_Island",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_Long_Island_p2517_committed",
+     "ST_GAS_Long_Island_p2517_econlo",
+     "ST_GAS_Long_Island_p2517_econhi",
+     "ST_GAS_Long_Island_p2517_peak"
+    ],
+    "pmax_mw": 385.0,
+    "tranche_pmax": [
+     50.0,
+     138.6,
+     138.6,
+     57.8
+    ],
+    "tranche_hr": [
+     12.038,
+     11.465,
+     11.465,
+     48.153
+    ],
+    "tranche_mc_mean": [
+     49.41,
+     47.8,
+     47.8,
+     150.57
+    ],
+    "avail_mean": 0.8039,
+    "avail_mon": [
+     0.813,
+     0.81,
+     0.731,
+     0.731,
+     0.737,
+     0.916,
+     0.809,
+     0.916,
+     0.91,
+     0.731,
+     0.734,
+     0.813
+    ],
+    "offer_mean": 63.42,
+    "offer_min_tranche_mon": [
+     82.33,
+     43.22,
+     40.77,
+     40.44,
+     41.93,
+     44.01,
+     42.25,
+     41.0,
+     41.87,
+     42.62,
+     48.37,
+     64.49
+    ],
+    "floor_mwh_twh": 0.0,
+    "floor_by_mech_twh": {},
+    "model_zone_price_mean": 38.62,
+    "hours_cheapest_tranche_below_model_price": 561,
+    "hours_weighted_offer_below_model_price": 107
+   },
+   "2527": {
+    "zone": "Upstate_West",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_Upstate_West_p2527_committed",
+     "ST_GAS_Upstate_West_p2527_econlo",
+     "ST_GAS_Upstate_West_p2527_econhi",
+     "ST_GAS_Upstate_West_p2527_peak"
+    ],
+    "pmax_mw": 104.5,
+    "tranche_pmax": [
+     68.0,
+     10.4,
+     10.4,
+     15.7
+    ],
+    "tranche_hr": [
+     10.768,
+     10.255,
+     10.255,
+     43.072
+    ],
+    "tranche_mc_mean": [
+     33.73,
+     32.83,
+     32.83,
+     90.33
+    ],
+    "avail_mean": 0.7881,
+    "avail_mon": [
+     0.813,
+     0.81,
+     0.731,
+     0.731,
+     0.737,
+     0.613,
+     0.916,
+     0.916,
+     0.91,
+     0.731,
+     0.734,
+     0.813
+    ],
+    "offer_mean": 41.06,
+    "offer_min_tranche_mon": [
+     66.04,
+     28.52,
+     26.33,
+     26.04,
+     27.37,
+     29.22,
+     27.65,
+     26.54,
+     27.32,
+     27.98,
+     33.13,
+     47.55
+    ],
+    "floor_mwh_twh": 0.0,
+    "floor_by_mech_twh": {},
+    "model_zone_price_mean": 33.57,
+    "hours_cheapest_tranche_below_model_price": 5744,
+    "hours_weighted_offer_below_model_price": 2073
+   },
+   "2625": {
+    "zone": "Capital_Hudson",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_Capital_Hudson_p2625_committed",
+     "ST_GAS_Capital_Hudson_p2625_econlo",
+     "ST_GAS_Capital_Hudson_p2625_econhi",
+     "ST_GAS_Capital_Hudson_p2625_peak"
+    ],
+    "pmax_mw": 1159.6,
+    "tranche_pmax": [
+     243.5,
+     371.1,
+     371.1,
+     173.9
+    ],
+    "tranche_hr": [
+     10.927,
+     10.406,
+     10.406,
+     43.706
+    ],
+    "tranche_mc_mean": [
+     45.8,
+     44.34,
+     44.34,
+     137.61
+    ],
+    "avail_mean": 0.2188,
+    "avail_mon": [
+     0.269,
+     0.039,
+     0.009,
+     0.009,
+     0.059,
+     0.295,
+     0.733,
+     0.248,
+     0.076,
+     0.075,
+     0.128,
+     0.676
+    ],
+    "offer_mean": 25.86,
+    "offer_min_tranche_mon": [
+     75.68,
+     40.18,
+     37.96,
+     37.66,
+     39.01,
+     40.89,
+     39.3,
+     38.17,
+     38.96,
+     39.64,
+     44.86,
+     59.49
+    ],
+    "floor_mwh_twh": 0.0855,
+    "floor_by_mech_twh": {
+     "4": 0.0855
+    },
+    "model_zone_price_mean": 37.06,
+    "hours_cheapest_tranche_below_model_price": 959,
+    "hours_weighted_offer_below_model_price": 5673
+   },
+   "2682": {
+    "zone": "Upstate_West",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_Upstate_West_p2682_committed",
+     "ST_GAS_Upstate_West_p2682_econlo",
+     "ST_GAS_Upstate_West_p2682_econhi",
+     "ST_GAS_Upstate_West_p2682_peak"
+    ],
+    "pmax_mw": 45.0,
+    "tranche_pmax": [
+     13.5,
+     12.4,
+     12.4,
+     6.8
+    ],
+    "tranche_hr": [
+     10.242,
+     9.754,
+     9.754,
+     40.967
+    ],
+    "tranche_mc_mean": [
+     34.49,
+     33.65,
+     33.65,
+     87.93
+    ],
+    "avail_mean": 0.0125,
+    "avail_mon": [
+     0.049,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.098,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "offer_mean": 0.57,
+    "offer_min_tranche_mon": [
+     63.89,
+     29.67,
+     27.59,
+     27.3,
+     28.57,
+     30.34,
+     28.84,
+     27.78,
+     28.52,
+     29.16,
+     34.05,
+     47.77
+    ],
+    "floor_mwh_twh": 0.0,
+    "floor_by_mech_twh": {},
+    "model_zone_price_mean": 33.57,
+    "hours_cheapest_tranche_below_model_price": 4864,
+    "hours_weighted_offer_below_model_price": 8706
+   },
+   "8006": {
+    "zone": "Capital_Hudson",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_Capital_Hudson_p8006_committed",
+     "ST_GAS_Capital_Hudson_p8006_econlo",
+     "ST_GAS_Capital_Hudson_p8006_econhi",
+     "ST_GAS_Capital_Hudson_p8006_peak"
+    ],
+    "pmax_mw": 1222.5,
+    "tranche_pmax": [
+     166.3,
+     436.4,
+     436.4,
+     183.4
+    ],
+    "tranche_hr": [
+     11.168,
+     10.636,
+     10.636,
+     44.67
+    ],
+    "tranche_mc_mean": [
+     47.13,
+     45.64,
+     45.64,
+     140.98
+    ],
+    "avail_mean": 0.0785,
+    "avail_mon": [
+     0.178,
+     0.0,
+     0.0,
+     0.009,
+     0.0,
+     0.158,
+     0.383,
+     0.166,
+     0.037,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "offer_mean": 7.52,
+    "offer_min_tranche_mon": [
+     77.68,
+     41.4,
+     39.12,
+     38.82,
+     40.2,
+     42.12,
+     40.49,
+     39.34,
+     40.14,
+     40.84,
+     46.17,
+     61.13
+    ],
+    "floor_mwh_twh": 0.0,
+    "floor_by_mech_twh": {},
+    "model_zone_price_mean": 37.06,
+    "hours_cheapest_tranche_below_model_price": 661,
+    "hours_weighted_offer_below_model_price": 7767
+   },
+   "8906": {
+    "zone": "NYC",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_NYC_p8906_committed",
+     "ST_GAS_NYC_p8906_econlo",
+     "ST_GAS_NYC_p8906_econhi",
+     "ST_GAS_NYC_p8906_peak"
+    ],
+    "pmax_mw": 923.2,
+    "tranche_pmax": [
+     104.3,
+     340.2,
+     340.2,
+     138.5
+    ],
+    "tranche_hr": [
+     9.922,
+     9.449,
+     9.449,
+     39.687
+    ],
+    "tranche_mc_mean": [
+     37.1,
+     36.11,
+     36.11,
+     99.51
+    ],
+    "avail_mean": 0.4313,
+    "avail_mon": [
+     0.182,
+     0.232,
+     0.327,
+     0.326,
+     0.331,
+     0.717,
+     0.773,
+     0.58,
+     0.391,
+     0.497,
+     0.339,
+     0.47
+    ],
+    "offer_mean": 45.73,
+    "offer_min_tranche_mon": [
+     65.16,
+     32.28,
+     30.26,
+     29.99,
+     31.22,
+     32.92,
+     31.48,
+     30.45,
+     31.17,
+     31.78,
+     36.52,
+     49.81
+    ],
+    "floor_mwh_twh": 0.5801,
+    "floor_by_mech_twh": {
+     "4": 0.5801
+    },
+    "model_zone_price_mean": 38.25,
+    "hours_cheapest_tranche_below_model_price": 5039,
+    "hours_weighted_offer_below_model_price": 1518
+   }
+  },
+  "class_offer": {
+   "CC_REGULAR": {
+    "mw": 7416.6,
+    "mw_weighted_mc": 31.22,
+    "mw_weighted_hr": 8.534,
+    "NYC": {
+     "mw": 2099.9,
+     "mc": 25.53,
+     "hr": 7.423
+    },
+    "Long_Island": {
+     "mw": 731.5,
+     "mc": 35.27,
+     "hr": 8.589
+    },
+    "Capital_Hudson": {
+     "mw": 3890.0,
+     "mc": 32.01,
+     "hr": 7.926
+    }
+   },
+   "CT_PEAKER": {
+    "mw": 2695.4,
+    "mw_weighted_mc": 82.57,
+    "mw_weighted_hr": 14.767,
+    "NYC": {
+     "mw": 1747.7,
+     "mc": 86.73,
+     "hr": 14.412
+    },
+    "Long_Island": {
+     "mw": 812.8,
+     "mc": 77.85,
+     "hr": 15.432
+    },
+    "Capital_Hudson": {
+     "mw": 90.0,
+     "mc": 68.16,
+     "hr": 17.769
+    }
+   },
+   "ST_GAS": {
+    "mw": 8911.4,
+    "mw_weighted_mc": 54.8,
+    "mw_weighted_hr": 15.804,
+    "NYC": {
+     "mw": 3533.2,
+     "mc": 47.67,
+     "hr": 15.786
+    },
+    "Long_Island": {
+     "mw": 2349.4,
+     "mc": 60.36,
+     "hr": 16.005
+    },
+    "Capital_Hudson": {
+     "mw": 2879.4,
+     "mc": 59.68,
+     "hr": 15.692
+    }
+   },
+   "CC_CHP": {
+    "mw": 3650.8,
+    "mw_weighted_mc": 32.26,
+    "mw_weighted_hr": 9.979,
+    "NYC": {
+     "mw": 1208.8,
+     "mc": 33.55,
+     "hr": 10.462
+    },
+    "Capital_Hudson": {
+     "mw": 1002.1,
+     "mc": 37.42,
+     "hr": 9.642
+    }
+   }
+  }
+ },
+ "2025": {
+  "shapes": {
+   "mc": [
+    823,
+    8760
+   ],
+   "avail": [
+    823,
+    8760
+   ],
+   "min_gen": [
+    823,
+    8760
+   ]
+  },
+  "hh": 3.52,
+  "plants": {
+   "2480": {
+    "zone": "Capital_Hudson",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_Capital_Hudson_p2480_committed",
+     "ST_GAS_Capital_Hudson_p2480_econlo",
+     "ST_GAS_Capital_Hudson_p2480_econhi",
+     "ST_GAS_Capital_Hudson_p2480_peak"
+    ],
+    "pmax_mw": 497.3,
+    "tranche_pmax": [
+     153.2,
+     134.8,
+     134.8,
+     74.6
+    ],
+    "tranche_hr": [
+     11.291,
+     10.754,
+     10.754,
+     45.165
+    ],
+    "tranche_mc_mean": [
+     78.29,
+     75.35,
+     75.35,
+     263.33
+    ],
+    "avail_mean": 0.0758,
+    "avail_mon": [
+     0.061,
+     0.061,
+     0.061,
+     0.057,
+     0.055,
+     0.105,
+     0.15,
+     0.114,
+     0.069,
+     0.055,
+     0.059,
+     0.061
+    ],
+    "offer_mean": 104.45,
+    "offer_min_tranche_mon": [
+     168.18,
+     96.14,
+     68.31,
+     62.15,
+     57.2,
+     56.71,
+     62.73,
+     55.55,
+     51.45,
+     56.66,
+     65.5,
+     103.55
+    ],
+    "floor_mwh_twh": 0.0001,
+    "floor_by_mech_twh": {
+     "4": 0.0001
+    },
+    "model_zone_price_mean": 58.25,
+    "hours_cheapest_tranche_below_model_price": 1180,
+    "hours_weighted_offer_below_model_price": 131
+   },
+   "2490": {
+    "zone": "NYC",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_NYC_p2490_committed",
+     "ST_GAS_NYC_p2490_econlo",
+     "ST_GAS_NYC_p2490_econhi",
+     "ST_GAS_NYC_p2490_peak"
+    ],
+    "pmax_mw": 876.6,
+    "tranche_pmax": [
+     260.4,
+     242.4,
+     242.4,
+     131.5
+    ],
+    "tranche_hr": [
+     11.061,
+     10.534,
+     10.534,
+     44.243
+    ],
+    "tranche_mc_mean": [
+     61.14,
+     58.99,
+     58.99,
+     196.61
+    ],
+    "avail_mean": 0.4507,
+    "avail_mon": [
+     0.496,
+     0.505,
+     0.284,
+     0.329,
+     0.349,
+     0.732,
+     0.853,
+     0.681,
+     0.386,
+     0.22,
+     0.182,
+     0.39
+    ],
+    "offer_mean": 75.44,
+    "offer_min_tranche_mon": [
+     149.92,
+     79.35,
+     52.09,
+     46.05,
+     41.2,
+     40.73,
+     46.62,
+     39.58,
+     35.57,
+     40.68,
+     49.33,
+     86.61
+    ],
+    "floor_mwh_twh": 0.5755,
+    "floor_by_mech_twh": {
+     "4": 0.5755
+    },
+    "model_zone_price_mean": 59.72,
+    "hours_cheapest_tranche_below_model_price": 5178,
+    "hours_weighted_offer_below_model_price": 2366
+   },
+   "2500": {
+    "zone": "NYC",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_NYC_p2500_committed",
+     "ST_GAS_NYC_p2500_econlo",
+     "ST_GAS_NYC_p2500_econhi",
+     "ST_GAS_NYC_p2500_peak"
+    ],
+    "pmax_mw": 1724.8,
+    "tranche_pmax": [
+     350.1,
+     558.0,
+     558.0,
+     258.7
+    ],
+    "tranche_hr": [
+     11.321,
+     10.782,
+     10.782,
+     45.284
+    ],
+    "tranche_mc_mean": [
+     54.81,
+     52.86,
+     52.86,
+     177.73
+    ],
+    "avail_mean": 0.1157,
+    "avail_mon": [
+     0.105,
+     0.008,
+     0.003,
+     0.047,
+     0.003,
+     0.177,
+     0.496,
+     0.229,
+     0.053,
+     0.124,
+     0.09,
+     0.041
+    ],
+    "offer_mean": 25.81,
+    "offer_min_tranche_mon": [
+     93.06,
+     78.7,
+     50.8,
+     44.63,
+     39.66,
+     39.17,
+     45.2,
+     38.01,
+     33.89,
+     39.12,
+     47.98,
+     85.14
+    ],
+    "floor_mwh_twh": 0.2908,
+    "floor_by_mech_twh": {
+     "4": 0.2908
+    },
+    "model_zone_price_mean": 59.72,
+    "hours_cheapest_tranche_below_model_price": 6059,
+    "hours_weighted_offer_below_model_price": 6474
+   },
+   "2511": {
+    "zone": "Long_Island",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_Long_Island_p2511_committed",
+     "ST_GAS_Long_Island_p2511_econlo",
+     "ST_GAS_Long_Island_p2511_econhi",
+     "ST_GAS_Long_Island_p2511_peak"
+    ],
+    "pmax_mw": 372.2,
+    "tranche_pmax": [
+     56.2,
+     130.1,
+     130.1,
+     55.8
+    ],
+    "tranche_hr": [
+     11.44,
+     10.895,
+     10.895,
+     45.758
+    ],
+    "tranche_mc_mean": [
+     74.6,
+     71.9,
+     71.9,
+     245.26
+    ],
+    "avail_mean": 0.6955,
+    "avail_mon": [
+     0.813,
+     0.813,
+     0.731,
+     0.731,
+     0.668,
+     0.811,
+     0.916,
+     0.916,
+     0.9,
+     0.34,
+     0.34,
+     0.378
+    ],
+    "offer_mean": 98.31,
+    "offer_min_tranche_mon": [
+     110.38,
+     98.3,
+     70.1,
+     63.86,
+     58.84,
+     58.35,
+     64.44,
+     57.17,
+     53.01,
+     58.3,
+     67.25,
+     103.83
+    ],
+    "floor_mwh_twh": 0.5941,
+    "floor_by_mech_twh": {
+     "4": 0.5941
+    },
+    "model_zone_price_mean": 60.22,
+    "hours_cheapest_tranche_below_model_price": 1163,
+    "hours_weighted_offer_below_model_price": 153
+   },
+   "2516": {
+    "zone": "Long_Island",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_Long_Island_p2516_committed",
+     "ST_GAS_Long_Island_p2516_econlo",
+     "ST_GAS_Long_Island_p2516_econhi",
+     "ST_GAS_Long_Island_p2516_peak"
+    ],
+    "pmax_mw": 1592.2,
+    "tranche_pmax": [
+     409.2,
+     472.1,
+     472.1,
+     238.8
+    ],
+    "tranche_hr": [
+     11.022,
+     10.498,
+     10.498,
+     44.09
+    ],
+    "tranche_mc_mean": [
+     71.13,
+     68.52,
+     68.52,
+     235.56
+    ],
+    "avail_mean": 0.4532,
+    "avail_mon": [
+     0.285,
+     0.249,
+     0.204,
+     0.231,
+     0.342,
+     0.682,
+     0.916,
+     0.787,
+     0.553,
+     0.402,
+     0.366,
+     0.404
+    ],
+    "offer_mean": 94.25,
+    "offer_min_tranche_mon": [
+     105.6,
+     93.96,
+     66.79,
+     60.78,
+     55.94,
+     55.47,
+     61.34,
+     54.33,
+     50.33,
+     55.42,
+     64.05,
+     99.29
+    ],
+    "floor_mwh_twh": 1.6562,
+    "floor_by_mech_twh": {
+     "4": 1.6562
+    },
+    "model_zone_price_mean": 60.22,
+    "hours_cheapest_tranche_below_model_price": 1817,
+    "hours_weighted_offer_below_model_price": 200
+   },
+   "2517": {
+    "zone": "Long_Island",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_Long_Island_p2517_committed",
+     "ST_GAS_Long_Island_p2517_econlo",
+     "ST_GAS_Long_Island_p2517_econhi",
+     "ST_GAS_Long_Island_p2517_peak"
+    ],
+    "pmax_mw": 385.0,
+    "tranche_pmax": [
+     50.0,
+     138.6,
+     138.6,
+     57.8
+    ],
+    "tranche_hr": [
+     12.015,
+     11.443,
+     11.443,
+     48.061
+    ],
+    "tranche_mc_mean": [
+     76.81,
+     73.96,
+     73.96,
+     256.04
+    ],
+    "avail_mean": 0.6838,
+    "avail_mon": [
+     0.416,
+     0.665,
+     0.731,
+     0.731,
+     0.731,
+     0.916,
+     0.916,
+     0.916,
+     0.916,
+     0.466,
+     0.392,
+     0.416
+    ],
+    "offer_mean": 101.64,
+    "offer_min_tranche_mon": [
+     114.38,
+     101.69,
+     72.08,
+     65.52,
+     60.25,
+     59.74,
+     66.13,
+     58.49,
+     54.13,
+     59.68,
+     69.08,
+     107.5
+    ],
+    "floor_mwh_twh": 0.0,
+    "floor_by_mech_twh": {},
+    "model_zone_price_mean": 60.22,
+    "hours_cheapest_tranche_below_model_price": 877,
+    "hours_weighted_offer_below_model_price": 122
+   },
+   "2527": {
+    "zone": "Upstate_West",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_Upstate_West_p2527_committed",
+     "ST_GAS_Upstate_West_p2527_econlo",
+     "ST_GAS_Upstate_West_p2527_econhi",
+     "ST_GAS_Upstate_West_p2527_peak"
+    ],
+    "pmax_mw": 104.5,
+    "tranche_pmax": [
+     68.0,
+     10.4,
+     10.4,
+     15.7
+    ],
+    "tranche_hr": [
+     11.139,
+     10.608,
+     10.608,
+     44.555
+    ],
+    "tranche_mc_mean": [
+     43.22,
+     41.93,
+     41.93,
+     124.85
+    ],
+    "avail_mean": 0.7665,
+    "avail_mon": [
+     0.813,
+     0.813,
+     0.731,
+     0.731,
+     0.731,
+     0.745,
+     0.916,
+     0.916,
+     0.916,
+     0.731,
+     0.559,
+     0.597
+    ],
+    "offer_mean": 51.14,
+    "offer_min_tranche_mon": [
+     133.15,
+     61.8,
+     34.35,
+     28.3,
+     24.17,
+     24.54,
+     28.84,
+     23.99,
+     18.6,
+     24.54,
+     31.57,
+     69.11
+    ],
+    "floor_mwh_twh": 0.0,
+    "floor_by_mech_twh": {},
+    "model_zone_price_mean": 51.4,
+    "hours_cheapest_tranche_below_model_price": 7398,
+    "hours_weighted_offer_below_model_price": 6128
+   },
+   "2625": {
+    "zone": "Capital_Hudson",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_Capital_Hudson_p2625_committed",
+     "ST_GAS_Capital_Hudson_p2625_econlo",
+     "ST_GAS_Capital_Hudson_p2625_econhi",
+     "ST_GAS_Capital_Hudson_p2625_peak"
+    ],
+    "pmax_mw": 1159.6,
+    "tranche_pmax": [
+     243.5,
+     371.1,
+     371.1,
+     173.9
+    ],
+    "tranche_hr": [
+     10.672,
+     10.163,
+     10.163,
+     42.686
+    ],
+    "tranche_mc_mean": [
+     68.69,
+     66.16,
+     66.16,
+     227.88
+    ],
+    "avail_mean": 0.2599,
+    "avail_mon": [
+     0.712,
+     0.336,
+     0.085,
+     0.044,
+     0.001,
+     0.29,
+     0.534,
+     0.482,
+     0.0,
+     0.0,
+     0.056,
+     0.565
+    ],
+    "offer_mean": 48.71,
+    "offer_min_tranche_mon": [
+     102.06,
+     90.79,
+     64.49,
+     58.67,
+     53.98,
+     53.53,
+     59.21,
+     52.43,
+     48.55,
+     53.48,
+     61.83,
+     95.95
+    ],
+    "floor_mwh_twh": 0.0997,
+    "floor_by_mech_twh": {
+     "4": 0.0997
+    },
+    "model_zone_price_mean": 58.25,
+    "hours_cheapest_tranche_below_model_price": 1969,
+    "hours_weighted_offer_below_model_price": 4758
+   },
+   "2682": {
+    "zone": "Upstate_West",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_Upstate_West_p2682_committed",
+     "ST_GAS_Upstate_West_p2682_econlo",
+     "ST_GAS_Upstate_West_p2682_econhi",
+     "ST_GAS_Upstate_West_p2682_peak"
+    ],
+    "pmax_mw": 45.0,
+    "tranche_pmax": [
+     13.5,
+     12.4,
+     12.4,
+     6.8
+    ],
+    "tranche_hr": [
+     10.242,
+     9.754,
+     9.754,
+     40.967
+    ],
+    "tranche_mc_mean": [
+     36.52,
+     35.54,
+     35.54,
+     98.21
+    ],
+    "avail_mean": 0.007,
+    "avail_mon": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.038,
+     0.0,
+     0.0,
+     0.045
+    ],
+    "offer_mean": 0.85,
+    "offer_min_tranche_mon": [
+     73.99,
+     58.06,
+     32.82,
+     27.26,
+     23.46,
+     23.8,
+     27.75,
+     23.29,
+     18.34,
+     23.8,
+     30.27,
+     64.5
+    ],
+    "floor_mwh_twh": 0.0,
+    "floor_by_mech_twh": {},
+    "model_zone_price_mean": 51.4,
+    "hours_cheapest_tranche_below_model_price": 7562,
+    "hours_weighted_offer_below_model_price": 8739
+   },
+   "8006": {
+    "zone": "Capital_Hudson",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_Capital_Hudson_p8006_committed",
+     "ST_GAS_Capital_Hudson_p8006_econlo",
+     "ST_GAS_Capital_Hudson_p8006_econhi",
+     "ST_GAS_Capital_Hudson_p8006_peak"
+    ],
+    "pmax_mw": 1222.0,
+    "tranche_pmax": [
+     166.2,
+     436.3,
+     436.3,
+     183.3
+    ],
+    "tranche_hr": [
+     11.423,
+     10.88,
+     10.88,
+     45.694
+    ],
+    "tranche_mc_mean": [
+     74.09,
+     71.39,
+     71.39,
+     244.5
+    ],
+    "avail_mean": 0.315,
+    "avail_mon": [
+     0.066,
+     0.031,
+     0.06,
+     0.359,
+     0.359,
+     0.631,
+     0.82,
+     0.501,
+     0.204,
+     0.297,
+     0.119,
+     0.306
+    ],
+    "offer_mean": 56.66,
+    "offer_min_tranche_mon": [
+     109.82,
+     97.75,
+     69.6,
+     63.37,
+     58.35,
+     57.86,
+     63.95,
+     56.68,
+     52.53,
+     57.81,
+     66.75,
+     103.28
+    ],
+    "floor_mwh_twh": 0.0002,
+    "floor_by_mech_twh": {
+     "4": 0.0002
+    },
+    "model_zone_price_mean": 58.25,
+    "hours_cheapest_tranche_below_model_price": 912,
+    "hours_weighted_offer_below_model_price": 3616
+   },
+   "8906": {
+    "zone": "NYC",
+    "n_tranches": 4,
+    "unit_ids": [
+     "ST_GAS_NYC_p8906_committed",
+     "ST_GAS_NYC_p8906_econlo",
+     "ST_GAS_NYC_p8906_econhi",
+     "ST_GAS_NYC_p8906_peak"
+    ],
+    "pmax_mw": 923.2,
+    "tranche_pmax": [
+     104.3,
+     340.2,
+     340.2,
+     138.5
+    ],
+    "tranche_hr": [
+     9.922,
+     9.449,
+     9.449,
+     39.687
+    ],
+    "tranche_mc_mean": [
+     52.68,
+     50.97,
+     50.97,
+     160.4
+    ],
+    "avail_mean": 0.3936,
+    "avail_mon": [
+     0.066,
+     0.083,
+     0.233,
+     0.455,
+     0.14,
+     0.858,
+     0.901,
+     0.666,
+     0.215,
+     0.536,
+     0.431,
+     0.121
+    ],
+    "offer_mean": 55.18,
+    "offer_min_tranche_mon": [
+     86.2,
+     73.62,
+     49.16,
+     43.75,
+     39.4,
+     38.97,
+     44.26,
+     37.95,
+     34.34,
+     38.93,
+     46.69,
+     79.26
+    ],
+    "floor_mwh_twh": 0.5293,
+    "floor_by_mech_twh": {
+     "4": 0.5293
+    },
+    "model_zone_price_mean": 59.72,
+    "hours_cheapest_tranche_below_model_price": 6288,
+    "hours_weighted_offer_below_model_price": 3310
+   }
+  },
+  "class_offer": {
+   "CC_REGULAR": {
+    "mw": 7466.6,
+    "mw_weighted_mc": 47.66,
+    "mw_weighted_hr": 8.509,
+    "NYC": {
+     "mw": 2099.9,
+     "mc": 37.78,
+     "hr": 7.473
+    },
+    "Long_Island": {
+     "mw": 731.5,
+     "mc": 55.41,
+     "hr": 8.471
+    },
+    "Capital_Hudson": {
+     "mw": 3890.0,
+     "mc": 51.66,
+     "hr": 7.918
+    }
+   },
+   "CT_PEAKER": {
+    "mw": 3037.7,
+    "mw_weighted_mc": 123.08,
+    "mw_weighted_hr": 15.021,
+    "NYC": {
+     "mw": 2076.3,
+     "mc": 127.59,
+     "hr": 14.88
+    },
+    "Long_Island": {
+     "mw": 812.8,
+     "mc": 119.19,
+     "hr": 15.418
+    },
+    "Capital_Hudson": {
+     "mw": 89.6,
+     "mc": 107.34,
+     "hr": 17.767
+    }
+   },
+   "ST_GAS": {
+    "mw": 8902.4,
+    "mw_weighted_mc": 86.19,
+    "mw_weighted_hr": 15.689,
+    "NYC": {
+     "mw": 3524.6,
+     "mc": 72.89,
+     "hr": 15.456
+    },
+    "Long_Island": {
+     "mw": 2349.4,
+     "mc": 96.1,
+     "hr": 15.976
+    },
+    "Capital_Hudson": {
+     "mw": 2878.9,
+     "mc": 96.16,
+     "hr": 15.746
+    }
+   },
+   "CC_CHP": {
+    "mw": 3649.0,
+    "mw_weighted_mc": 46.28,
+    "mw_weighted_hr": 9.943,
+    "NYC": {
+     "mw": 1207.0,
+     "mc": 49.78,
+     "hr": 10.339
+    },
+    "Capital_Hudson": {
+     "mw": 1002.1,
+     "mc": 60.18,
+     "hr": 9.659
+    }
+   }
+  }
+ }
+}
