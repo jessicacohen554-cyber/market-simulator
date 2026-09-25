@@ -136,7 +136,9 @@ columns:
       (2026-09-25) adds "rt_marginal_interval_share_digitized" (share of RT
       intervals each technology segment was marginal, digitized from the SOM
       "Generation on the margin, real-time" bars, fraction) and
-      "rt_implied_heat_rate" (the MMU's annual implied heat rate, btu_per_kwh).
+      "rt_implied_heat_rate" (the MMU's annual implied heat rate, btu_per_kwh),
+      and "gas_hub_price_annual_avg" on the "panhandle_eastern" /
+      "southern_star" / "henry_hub" segments (usd_per_mmbtu).
   - name: value
     dtype: float64
     unit: mixed
@@ -148,7 +150,8 @@ columns:
     nullable: false
     description: >-
       One of "fraction", "count", "usd_per_mwh", "usd_per_kw_yr", "mw", "usd",
-      "btu_per_kwh" (SPP MMU implied heat rate, added by SPP-81).
+      "btu_per_kwh" (SPP MMU implied heat rate), "usd_per_mmbtu" (SPP MMU gas-hub
+      averages); both added by SPP-81.
   - name: source_doc
     dtype: string
     unit: none

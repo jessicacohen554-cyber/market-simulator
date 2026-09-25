@@ -171,5 +171,10 @@ MCP is 2023-10-09.
   annual RT implied heat rate ((RT price − representative VOM) / gas price), as
   printed in prose, 2020–2025. The 2024 SOM restates 2023 (nearly 11,000 → over
   12,600); both are in `note`.
+- `gas_hub_price_annual_avg` (unit `usd_per_mmbtu`; segments `panhandle_eastern` /
+  `southern_star` / `henry_hub`): the SOM's printed annual hub averages, 2019–2025
+  ("Fuel price indices and energy prices"). The only public Mid-Continent hub series
+  this lane found; SPP-81 uses it to test whether spot gas at SPP's own hubs ran above
+  the EIA-923 delivered price.
 - Consumer: `scripts/probes/_spp81_residual_upper_tercile.py` /
   `docs/handoffs/FINDING-spp-81-residual-upper-tercile-2026-09-25.md`.
