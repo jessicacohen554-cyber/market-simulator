@@ -503,7 +503,37 @@ COMPLETENESS_DIR = DATA_DIR / "completeness"
 #       is unreachable by every ISO that has a block, which is every registered
 #       ISO. NO SOLVE RAN — scorer-side only. PRECOMMIT/FINDING:
 #       docs/handoffs/{PRECOMMIT,FINDING}-soco-22-2026-09-13.md.
-RUBRIC_VERSION = 3.8
+# v3.9 — 2026-09-25 owner ruling C8-SUBCLASS ("Yes" to the open question of
+#       docs/handoffs/RESULT-coal-sub-2026-09-25.md §6, PR #6619 — "Keep
+#       family-level C8, or move C8 to per-subclass?"), completing the owner's
+#       COAL-SUB instruction "we need to completely eliminate the class Coal
+#       From the model altogether all coal should be sorted into its subclass".
+#       C8 SCORES EACH COAL SUBCLASS AS ITS OWN CLASS: COAL_BIT / COAL_PRB /
+#       COAL_LIGNITE / COAL_WC each carry their own D-2 forced share and class
+#       denominator, their own >= PROTECTIVE_MIN_LOAD_FRAC materiality test on
+#       max(model, actual) subclass energy against ISO load, their own
+#       FORCED_SHARE_MERCHANT_MAX cap, and their own grounded-above-budget
+#       escalation (D-4 provenance + D-1 shape — D-1 already emitted per
+#       subclass). NO NEW CONSTANT and no threshold moves: the change is where
+#       the class line is drawn. It lives in the DIAGNOSTICS, not here —
+#       legitimacy_diagnostics.aggregate_floors_by_plant stops folding the
+#       plant-class vote onto the coal family, and a pre-COAL-SUB floors npz
+#       is re-split to its subclass by unit_id (_resplit_legacy_coal). This
+#       scorer already iterated whatever D-2 summary rows the artifact
+#       carries and looked materiality up by that row's own class in gmModel /
+#       classFull, which carry the subclasses, so no scoring path changes.
+#       PLANT_GROUP_MEMBERS and COAL_FAMILY_KEYS stay as READERS of the
+#       historical record: an artifact written before v3.9 still reads its one
+#       coal-family row as before. D-4 is untouched — every coal-mechanism
+#       window is class-agnostic ((mech, None) in D4_WINDOWS), so no window or
+#       cap was keyed on COAL and nothing had to be carried to the subclasses.
+#       Every registered run's committed legitimacy_diagnostics.json was
+#       re-split in place (legitimacy_diagnostics.py --resplit-coal-d2, zero
+#       LP: committed run payload + fleet_only floors; non-coal rows
+#       byte-identical; per-year family cross-check recorded under
+#       coal_subclass_resplit). Effect at amendment, all registered runs:
+#       docs/handoffs/RESULT-c8-coal-subclass-2026-09-25.md.
+RUBRIC_VERSION = 3.9
 
 # Statuses (per criterion-year and aggregated).
 PASS, CAVEAT, FAIL, SKIPPED = "PASS", "CAVEAT", "FAIL", "SKIPPED"
@@ -864,8 +894,10 @@ PROTECTIVE_MIN_LOAD_FRAC = 0.02
 # over its forced-energy budget — a wider test than a fixed class tuple, and
 # the one CLAUDE.md rule 20 [R-FORCED-BUDGET] actually requires.)
 # D-2 rows/summary label classes by CAMPD plant_group (the floor-attribution
-# vocabulary: coal plants are "COAL" in every artifact written before COAL-SUB
-# 2026-09-25; after it the D-2 row carries the unit's coal subclass directly),
+# vocabulary: coal plants are "COAL" in every artifact written before rubric
+# v3.9 2026-09-25; after it the D-2 row carries the unit's coal subclass
+# directly and each subclass is its own C8 class — this bridge now serves only
+# the historical record),
 # while the run payload's gmModel and the bench classFull carry the
 # scored-class rank split. _class_load_share bridges the historical family
 # token to its members (mirrors config/plant_taxonomy.COAL_CLASSES; kept
@@ -2798,13 +2830,21 @@ def _class_load_share(klass: str, ypay: dict, ybench: dict) -> float | None:
     cf = ybench.get("classFull") or {}
     m = float(gm.get(klass, 0.0))
     a = float(cf.get(klass) or 0.0)
-    if m == 0.0 and a == 0.0 and klass in PLANT_GROUP_MEMBERS:
+    if klass in PLANT_GROUP_MEMBERS:
         # The class label is a CAMPD plant-group aggregate (D-2 vocabulary)
         # whose energy the payload/bench carry under the scored-class split —
         # sum the members so the coal fleet is not read as 0 % of load (v2.8).
+        # v3.9: the family is the members PLUS the aggregate's own key, and
+        # the sum is taken unconditionally. The v2.8 bridge fired only when
+        # the aggregate key read 0.0 on both sides, but a pre-COAL-SUB payload
+        # carries the former generic bucket under ``COAL`` (SPP 2019: 0.0389
+        # TWh, one 4.7 MW sugar-mill cogen), so the bridge stayed shut and the
+        # whole ~90 TWh SPP coal fleet read as 0.0 % of load and was SKIPPED-
+        # immaterial in 2019-2021 — the v2.8 blindness by another route. Only
+        # an artifact still carrying a legacy family row reaches this.
         members = PLANT_GROUP_MEMBERS[klass]
-        m = sum(float(gm.get(c, 0.0)) for c in members)
-        a = sum(float(cf.get(c) or 0.0) for c in members)
+        m += sum(float(gm.get(c, 0.0)) for c in members)
+        a += sum(float(cf.get(c) or 0.0) for c in members)
     _, a_gen = _gen_totals(ypay, ybench)
     load = _total_load(ypay, a_gen)
     if load <= 0:

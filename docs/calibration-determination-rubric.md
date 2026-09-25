@@ -886,6 +886,19 @@ gate cannot be silently re-armed.
   promotion. (Wired 2026-07-07: the CAISO-58 CT_PEAKER `ra_mustoffer_bridge` and
   NYISO-53 `reliability_floor × ST_GAS` shares — both ~60 % — now FAIL with an
   *explicit* "no declared D-4 window" diagnosis rather than a flat over-cap fail.)
+- **Coal is scored per SUBCLASS (v3.9, owner ruling C8-SUBCLASS 2026-09-25):**
+  `COAL_BIT`, `COAL_PRB`, `COAL_LIGNITE` and `COAL_WC` are each a C8 class in
+  their own right — each with its own D-2 forced share and class denominator,
+  its own ≥ 2 %-of-load materiality test on max(model, actual) **subclass**
+  energy, its own 30 % merchant cap and its own grounded-above-budget
+  escalation (D-1 already emitted per subclass; every coal-mechanism D-4
+  window is class-agnostic, so no window moved). An over-cap subclass can no
+  longer hide inside a coal family whose pooled share passes, and a subclass
+  below 2 % of load is `SKIPPED`-immaterial even where coal as a whole is
+  material. No constant was added or moved. An artifact written before v3.9
+  carries one legacy `COAL` family row per year and still reads as the family
+  (`PLANT_GROUP_MEMBERS`); every registered run's artifact was re-split in
+  place by `legitimacy_diagnostics.py --resplit-coal-d2` (zero LP).
 - **Failure classification:** `MODEL MISS` (stacked-floor creep / a floor
   fitting the class, or an above-cap class failing the provenance/shape
   escalation). Essentially never ledgerable. `SKIPPED` when the
@@ -1278,6 +1291,29 @@ down to.
 > change. Ratifying this one after the fact does not license the next one.
 
 ## 9. Version history
+
+- **v3.9 (2026-09-25, owner ruling C8-SUBCLASS — "Yes" to the open question of
+  `docs/handoffs/RESULT-coal-sub-2026-09-25.md` §6, "Keep family-level C8, or
+  move C8 to per-subclass?")** — **C8 scores each coal subclass as its own
+  class** (`COAL_BIT` / `COAL_PRB` / `COAL_LIGNITE` / `COAL_WC`): own D-2 forced
+  share and denominator, own ≥ 2 %-of-load materiality on max(model, actual)
+  subclass energy, own 30 % merchant cap, own grounded-above-budget escalation
+  (§1 C8). **No constant added or moved; no D-4 window keyed on coal existed**
+  (every coal-mechanism window is `(mech, None)`). The change is in
+  `legitimacy_diagnostics.aggregate_floors_by_plant` (the coal-family fold of
+  the plant-class vote is deleted, rule 26) plus `_resplit_legacy_coal`
+  (a pre-COAL-SUB floors npz is re-split by `unit_id` against a `fleet_only`
+  rebuild — exact, never positional). The scorer already iterated the
+  artifact's own class rows; its one change repairs the legacy family
+  reader, whose v2.8 member-bridge stayed shut whenever a pre-COAL-SUB
+  payload carried a non-zero generic-bucket `COAL` value — SPP 2019–2021 coal
+  (~74–96 TWh) had been read as 0.0 % of load and `SKIPPED`-immaterial. Every
+  registered run's `legitimacy_diagnostics.json` was re-split in place,
+  zero LP (`--resplit-coal-d2`: committed run payload + `fleet_only` floors;
+  non-coal rows byte-identical; per-year family cross-check recorded under
+  `coal_subclass_resplit`). **Effect: no C8 status and no determination
+  changes on any registered run**; per-subclass shares, the SPP un-blinding
+  and the cross-check are in `docs/handoffs/RESULT-c8-coal-subclass-2026-09-25.md`.
 
 - **v3.5 (2026-08-25, owner decision — session xiso-amplitude-rubric-card;
   the owner selected option (B) of
