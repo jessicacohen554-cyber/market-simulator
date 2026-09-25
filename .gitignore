@@ -3552,3 +3552,5 @@ results/calibration/_pjmnext_*/
 /results/ff-t3-neiso-golden/d96/*/NEISO/*/hourly/
 /results/ff-t3-neiso-golden/d96/*/NEISO/*/year_*_floor_retentions.json
 /results/ff-t3-neiso-golden/d96/*.log
+
+!results/ff-t3-neiso-golden/d96/base/**
