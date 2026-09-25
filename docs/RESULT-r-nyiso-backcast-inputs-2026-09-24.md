@@ -163,3 +163,24 @@ exactly, and the incumbent is pruned in the promoting session.
 
 **OWNER QUESTION: promote `2026-09-24-nyiso-r-inputs-860vintage` as the NYISO keeper
 (superseding `2026-09-22-nyiso-hydro3-ror-split`)?**
+
+## 8. Promotion — EXECUTED 2026-09-25 on the owner's ruling *"Yes promote"*
+
+Rule 35 `[R-PROMOTE]`, executed in order:
+
+1. **Year union enumerated before the prune:** {2022, 2023, 2024, 2025} on both sidecars. The
+   incoming keeper covers it exactly.
+2. **Promoted:**
+   - `keepers/NYISO.json` → `2026-09-24-nyiso-r-inputs-860vintage`, with a lineage record and the E11
+     recipe-change declaration;
+   - `calibration-complete.json` `complete.NYISO.keeper` re-keyed (determination NOT-YET unchanged);
+   - the forecast board's NYISO gate-(a) row re-keyed;
+   - the matrix shard keeper stamp and the §5.5 prose header;
+   - `status/NYISO.js` rebuilt;
+   - the NYISO MAC sidecars rebuilt from the new keeper.
+3. **Verified before deleting:** `audit_keepers --iso NYISO` → E1 / E11 clean. The only failure was
+   E13, i.e. the outgoing run still being registered.
+4. **Pruned** `2026-09-22-nyiso-hydro3-ror-split` (sidecar, payload, bundle) via
+   `prune_iso_runs.py --iso NYISO --force-uncite` (rule 35 (d)). Its id stays cited as history.
+   `audit_keepers` then passes with 0 failures. The one warning is E11 "former bundle not on disk",
+   which is inherent after a prune.

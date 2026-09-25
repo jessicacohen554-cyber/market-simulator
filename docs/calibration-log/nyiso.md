@@ -14828,3 +14828,28 @@ bundle rather than a fresh solve.
 written for the refused form were **REVERTED, not committed default-off** — a refused mechanism that
 still parses is a re-armable answer key. `scenarios.py` and `offer_curves.py` are byte-identical to
 `origin/main`. The derive, its artifact and the probes stay as the measurement record.
+
+## R-NYISO — 2026-09-24/25 — keeper re-solved on corrected backcast inputs; PROMOTED
+
+**Owner instruction** (2026-09-24, audit §5.3.6): every backcast year on the year-correct EIA-860
+vintage, plant-specific heat rates and granular CAMPD outages. **Owner ruling** (2026-09-25):
+*"Yes promote"*.
+
+- **New keeper** `2026-09-24-nyiso-r-inputs-860vintage` (bundle `results/calibration/rnyiso_span`),
+  superseding `2026-09-22-nyiso-hydro3-ror-split`, which was pruned in this session (rule 35 (a);
+  year union {2022–2025} enumerated before the prune and covered exactly).
+- **The change:** the incumbent recipe, replayed on the F1 inputs (year-matched EIA-860 vintage +
+  measured coal/ST/CC heat rates). Offer curves are byte-identical and no DOF was added. It was
+  solved as four year-isolated shards pinned at `e95436d5` and composed at zero LP.
+- **Determination:** NOT-YET → NOT-YET, failing C1 and C3c in both.
+  - The 2022 phantom coal is gone: 0.665 TWh → 0.
+  - Class-table-priced thermal MW falls from 296 to 51–56.
+  - Hourly price MAE improves in every year.
+  - C1-2023 ST_GAS worsens from +3.61 to +4.99 TWh. This was pre-registered: ST_GAS's heat rate
+    falls 7 % under the measured rates. It is root-caused, not re-tuned.
+- **2019–2021 were not solved: DATA-BLOCKED.**
+  - `eia_generation_profiles` starts at 2021, and I-NYISO (#6587) could not rebuild it.
+  - The NYISO reserve requirements before 2022 are landed by #6587. **2021 becomes solvable once
+    #6587 merges.**
+- **Records:** `docs/PRECOMMIT-r-nyiso-backcast-inputs-2026-09-24.md` and
+  `docs/RESULT-r-nyiso-backcast-inputs-2026-09-24.md`.

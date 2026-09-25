@@ -3,7 +3,7 @@
   "label": "nyiso r inputs 860vintage",
   "date": "2026-09-24",
   "shorthand": "nyiso-r-inputs-860vintage",
-  "definition": "R-NYISO 2022: incumbent 2026-09-22-nyiso-hydro3-ror-split recipe replayed on corrected backcast inputs (F1 year-matched EIA-860 vintage + measured coal/ST/CC heat rates); offer curves unchanged. PRECOMMIT-r-nyiso-backcast-inputs-2026-09-24.md",
+  "definition": "R-NYISO (KEEPER, promoted 2026-09-25): incumbent 2026-09-22-nyiso-hydro3-ror-split recipe re-solved 2022-2025 on the F1 corrected backcast inputs (year-matched EIA-860 vintage + measured coal/ST/CC heat rates); offer curves unchanged, zero new DOF. Four year-isolated shards composed at zero LP. docs/RESULT-r-nyiso-backcast-inputs-2026-09-24.md",
   "years": [
     2022,
     2023,

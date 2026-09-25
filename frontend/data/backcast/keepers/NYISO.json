@@ -1,8 +1,8 @@
 {
  "iso": "NYISO",
- "keeper": "2026-09-22-nyiso-hydro3-ror-split",
- "promotion_note": "PROMOTED 2026-09-22 (session hydro-3) on the OWNER'S RULINGS, verbatim: '1' (promote hydro_ror_split, the 2022 G2 hydro-energy miss reported and attributed to the Central-East seam) and 'Is this a recommended keeper candidate? If so plz promote. If structural integrity improves but gates regress that may still be a keeper.' \u2014 given with the pre-registered stop (PRECOMMIT-hydro-3 P-A/P-B) already FIRED and reported. NYISO keeper -> 2026-09-22-nyiso-hydro3-ror-split (bundle results/calibration/hydro3_nyiso_ror_span), superseding 2026-09-20-nyiso247-fuel-invariance-disarm. DELTA: hydro_ror_split=true on the incumbent recipe, nothing else (hydro_budget_nameplate_aware stays False: it moves 0.0 GWh in 2022). G-DRIFT 42d75053 -> aaaaeb61 ALL INERT. Rule 36: four year-isolated shards pinned 57e3c77f, composed at zero LP (scripts/probes/hydro3_compose_span.py). STRUCTURE: hydro p05 moves toward the measured NYISO actual in 2023/2024 (+20/+48 MW) and p95 moves down toward it in every year (-65/-14/-22/-77 MW), reproducing hydro-1's arm B exactly. REPORTED AGAINST ITSELF: (a) G2 2022 -0.1227 % (31.4 GWh) of hydro energy \u2014 additional reservoir SPILL in the months the incumbent already spills 629 GWh, i.e. nyiso-237's fabricated <=$0 Upstate_West hours (docs/FINDING-hydro-3-nyiso-2022-g2-is-seam-spill-2026-09-22.md); (b) C1 2023 ST_GAS crosses PASS->FAIL at the band edge, +3.59 -> +3.61 TWh / +3.0 pp against +/-3 pp \u2014 the row nyiso-247 left with no room; (c) with C3c no longer the lone failure the determination falls CALIBRATED -> NOT-YET. Record: docs/RESULT-hydro-3-nyiso-ror-split-promotion-2026-09-22.md. RECIPE CHANGES DECLARED (E11): hydro_ror_split False -> True (the lane's delta); composed_from nyiso247_fuelinv_{2022..2025} -> hydro3_nyiso_ror_{2022..2025} (provenance of the four year-isolated legs, not a solve input).",
- "determination_note": "READ THIS BEFORE READING THE DETERMINATION. Registered full span (2022-2025): NOT-YET \u2014 FALLEN 2026-09-22 from CALIBRATED on hydro-3's promotion of hydro_ror_split, accepted on the owner's ruling that a structural improvement may be a keeper even when gates regress. Failing: C1 (2023 ST_GAS +3.61 TWh / +3.0 pp, share out of band by a hair) and C3c (unchanged tail: model 17/0/0/3 h > $300 vs 101/10/13/42 actual), which is no longer a LONE failure and so is not auto-ledgered. Passing: C2, C3a, C3b, C4, C6, C8. The fastest route back is the 2023 ST_GAS over-dispatch (nyiso-247 moved it to the boundary), not hydro.",
+ "keeper": "2026-09-24-nyiso-r-inputs-860vintage",
+ "promotion_note": "PROMOTED 2026-09-25 (session R-NYISO) on the OWNER'S RULING, verbatim: 'Yes promote' -- in reply to docs/RESULT-r-nyiso-backcast-inputs-2026-09-24.md sec. 7, which asked whether to promote this run. NYISO keeper -> 2026-09-24-nyiso-r-inputs-860vintage (bundle results/calibration/rnyiso_span), superseding 2026-09-22-nyiso-hydro3-ror-split. THE CHANGE IS AN INPUT CORRECTION, NOT A MECHANISM: the incumbent recipe replayed on the F1 backcast foundation (owner instruction 2026-09-24, docs/handoffs/AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md sec. 5.3.6) -- year-matched EIA-860 vintage + measured CAMPD coal/ST/CC heat rates (CT/CHP already measured, now per-year rows). Offer curves byte-identical to the incumbent (rule 1(c)). F2 moved nothing NYISO reads. Rule 36: four year-isolated shards pinned e95436d5, composed at zero LP (scripts/probes/rnyiso_compose_span.py, leg acceptance S0-S3 all PASS). G-DRIFT 57e3c77f -> 92100753: no LIVE-OTHER hunk. STRUCTURE: 0.665 TWh of phantom 2022 COAL_PRB (Somerset/Dunkirk/Cayuga, retired by 2020) removed; class-table-priced thermal MW 296 -> 51-56 (2022-2024); hourly price MAE improves in every year. REPORTED AGAINST ITSELF: C1-2023 ST_GAS worsens +3.61 -> +4.99 TWh (+3.0 -> +4.1 pp) as pre-registered (ST_GAS HR -7 % under measured rates) -- root-caused (the overstated eGRID rate was compensating for the ST_GAS offer/floor object), not re-tuned. Determination NOT-YET -> NOT-YET (C1 + C3c). 2019-2021 NOT solved (DATA-BLOCKED: eia_generation_profiles starts 2021; NYISO reserve requirements pre-2022 in PR #6587). RECIPE CHANGES DECLARED (E11): eia860_vintage_tracks_solve_year False -> True, measured_coal_heat_rates None/False -> True, measured_st_heat_rates None/False -> True, measured_cc_heat_rates False -> True (the F1 backcast defaults, also passed explicitly via replay_keeper --set so they appear in prb_overrides / coal_prb_sigmoid_overrides); composed_from hydro3_nyiso_ror_{2022..2025} -> rnyiso_{2022..2025} (provenance of the four year-isolated legs, not a solve input). Record: docs/RESULT-r-nyiso-backcast-inputs-2026-09-24.md.",
+ "determination_note": "READ THIS BEFORE READING THE DETERMINATION. Registered full span (2022-2025): NOT-YET, UNCHANGED by this promotion (the incumbent was NOT-YET on the same two criteria). Failing: C1 (2023 ST_GAS +4.99 TWh / +4.1 pp, volume and share out of band; +3.61 / +3.0 pp under the incumbent) and C3c (price tail, no longer the lone failure). C2, C3a, C3b, C4, C6, C8 PASS in every year. The C1 regression is the pre-registered consequence of pricing ST_GAS at its measured CAMPD operating heat rate; the open root-cause item is the ST_GAS offer position / reliability-floor scaffolding it exposed (docs/RESULT-r-nyiso-backcast-inputs-2026-09-24.md sec. 4).",
  "de_designation_history": {
   "date": "2026-07-26",
   "former_keeper": "2026-07-26-nyiso-75-solar-shape",
@@ -11,9 +11,9 @@
   "finding": "docs/FINDING-nyiso-ordc-span-reliability-floor-2026-07-26.md"
  },
  "superseded": {
-  "date": "2026-09-22",
-  "former_keeper": "2026-09-20-nyiso247-fuel-invariance-disarm",
-  "reason": "superseded by hydro-3's arming of hydro_ror_split (run-of-river-class plants dispatch flat at their own EIA-923 monthly water; ORNL-EHA/HILARRI classifier after hydro-1's HYBRID-label repair, 94 RoR / 70 reservoir). Single delta on the incumbent recipe, zero DOF; three stores pruned in the promoting session (rule 35(a)).",
+  "date": "2026-09-25",
+  "former_keeper": "2026-09-22-nyiso-hydro3-ror-split",
+  "reason": "superseded by R-NYISO's re-solve of the same recipe on the F1 corrected backcast inputs (year-matched EIA-860 vintage + measured coal/ST/CC heat rates), owner ruling 'Yes promote' 2026-09-25. Zero mechanisms added or removed, offer curves byte-identical, zero new DOF; three stores pruned in the promoting session (rule 35(a)).",
   "year_set_before_prune": [
    2022,
    2023,
@@ -26,32 +26,32 @@
    2024,
    2025
   ],
-  "prune_status": "PRUNED 2026-09-22 in the promoting session (rule 35(a))",
+  "prune_status": "PRUNED 2026-09-25 in the promoting session (rule 35(a))",
   "prior_superseded": {
-   "date": "2026-09-20",
-   "former_keeper": "2026-09-19-nyiso241-ct-committed-measured",
-   "reason": "superseded by nyiso-247's disarm of gas_offer_net_revenue_margin's fuel-invariance limb, refuted on the NYISO MIS P-27 offer book: the armed term makes the offer's implied heat rate FALL as delivered gas rises where the market's RISES. The outgoing keeper's three stores (registry sidecar, runs payload, bundle dir) were pruned in the promoting session per rule 35 [R-PROMOTE] (a); git history is the record for the bytes, and its recipe survives verbatim in the incoming keeper minus exactly that one mechanism.",
+   "date": "2026-09-22",
+   "former_keeper": "2026-09-20-nyiso247-fuel-invariance-disarm",
+   "reason": "superseded by hydro-3's arming of hydro_ror_split (run-of-river-class plants dispatch flat at their own EIA-923 monthly water; ORNL-EHA/HILARRI classifier after hydro-1's HYBRID-label repair, 94 RoR / 70 reservoir). Single delta on the incumbent recipe, zero DOF; three stores pruned in the promoting session (rule 35(a)).",
+   "year_set_before_prune": [
+    2022,
+    2023,
+    2024,
+    2025
+   ],
+   "year_set_after": [
+    2022,
+    2023,
+    2024,
+    2025
+   ],
+   "prune_status": "PRUNED 2026-09-22 in the promoting session (rule 35(a))",
    "prior_superseded": {
-    "date": "2026-09-19",
-    "former_keeper": "2026-09-17-nyiso240-bench-attribution",
-    "reason": "superseded by nyiso-241's grounding of CT_PEAKER's `committed` band on NYISO's own measured phys_committed 0.843, in place of a transferred 1.35 resting on a three-way NYISO/CAISO/NEISO citation ring in which no ISO cites a measurement, and which double-charges a start the tranche_startup_amortization mechanism already recovers at $12-16/MWh. Rules 14 / 19 / 21 / 25; zero free parameters; exact confinement (22 rows, max |delta| $0.00 elsewhere). The registered determination falls CALIBRATED -> NOT-YET on two 2022 crossings (C3a -9.7 -> -10.8 %, C3b 0.196 -> 0.201), accepted under rule 14's discovered-bug clause: the ~94 missing RT scarcity hours in 2022 (model 7 vs 101 actual > $300) are worth more than twice the $0.84/MWh this repair moves, so the old band was masking an absent price tail rather than holding up a real price level.",
-    "year_set_before_prune": [
-     2022,
-     2023,
-     2024,
-     2025
-    ],
-    "year_set_after": [
-     2022,
-     2023,
-     2024,
-     2025
-    ],
-    "prune_status": "PRUNED 2026-09-19 in the promoting session (rule 35(a))",
+    "date": "2026-09-20",
+    "former_keeper": "2026-09-19-nyiso241-ct-committed-measured",
+    "reason": "superseded by nyiso-247's disarm of gas_offer_net_revenue_margin's fuel-invariance limb, refuted on the NYISO MIS P-27 offer book: the armed term makes the offer's implied heat rate FALL as delivered gas rises where the market's RISES. The outgoing keeper's three stores (registry sidecar, runs payload, bundle dir) were pruned in the promoting session per rule 35 [R-PROMOTE] (a); git history is the record for the bytes, and its recipe survives verbatim in the incoming keeper minus exactly that one mechanism.",
     "prior_superseded": {
      "date": "2026-09-19",
-     "former_keeper": "2026-09-17-nyiso239-bench-oil-basis",
-     "reason": "superseded by the nyiso-240 benchmark boundary repairs (R1 EIA-923 withheld months, R2 dual-fuel oil class re-attribution) on the owner's explicit ruling to promote. THE MODEL IS IDENTICAL AND NO LP WAS SPENT -- the incoming bundle is this keeper's own four per-year shard bundles re-fetched by full SHA, re-composed and re-rendered, so the dispatch is bit-for-bit the same and G-1 replay fidelity is preserved by construction. What changed is the C1 benchmark: an EIA-923 respondent's withheld months are now filled from CAMPD (the annual-floor backfill is blind to them), and a dual-fuel plant's oil MWh are booked to the class its units are modelled in. Determination UNCHANGED at CALIBRATED (grade 7, fails 0, C3c the lone ledgered caveat) with ZERO C1 status flips; the gain is MARGIN -- 2022 CC_REGULAR headroom 0.05 -> 1.07 pp of a +-3.0 pp band. Cross-ISO census run BEFORE landing: zero of the eight ISO determinations flip.",
+     "former_keeper": "2026-09-17-nyiso240-bench-attribution",
+     "reason": "superseded by nyiso-241's grounding of CT_PEAKER's `committed` band on NYISO's own measured phys_committed 0.843, in place of a transferred 1.35 resting on a three-way NYISO/CAISO/NEISO citation ring in which no ISO cites a measurement, and which double-charges a start the tranche_startup_amortization mechanism already recovers at $12-16/MWh. Rules 14 / 19 / 21 / 25; zero free parameters; exact confinement (22 rows, max |delta| $0.00 elsewhere). The registered determination falls CALIBRATED -> NOT-YET on two 2022 crossings (C3a -9.7 -> -10.8 %, C3b 0.196 -> 0.201), accepted under rule 14's discovered-bug clause: the ~94 missing RT scarcity hours in 2022 (model 7 vs 101 actual > $300) are worth more than twice the $0.84/MWh this repair moves, so the old band was masking an absent price tail rather than holding up a real price level.",
      "year_set_before_prune": [
       2022,
       2023,
@@ -66,26 +66,44 @@
      ],
      "prune_status": "PRUNED 2026-09-19 in the promoting session (rule 35(a))",
      "prior_superseded": {
-      "date": "2026-09-17",
-      "former_keeper": "2026-09-16-nyiso-238-hydro-budget",
-      "reason": "superseded by the nyiso-239 benchmark gas/oil attribution repair on the owner's explicit ruling to promote. The MODEL is identical -- this is that keeper's recipe replayed byte-faithfully (G-1 worst deviation 5.0e-7 TWh over four years); what changed is the C1 benchmark's reconcile family, which now spans gas+coal+oil on both sides. Determination NOT-YET -> CALIBRATED with zero PASS -> FAIL flips.",
+      "date": "2026-09-19",
+      "former_keeper": "2026-09-17-nyiso239-bench-oil-basis",
+      "reason": "superseded by the nyiso-240 benchmark boundary repairs (R1 EIA-923 withheld months, R2 dual-fuel oil class re-attribution) on the owner's explicit ruling to promote. THE MODEL IS IDENTICAL AND NO LP WAS SPENT -- the incoming bundle is this keeper's own four per-year shard bundles re-fetched by full SHA, re-composed and re-rendered, so the dispatch is bit-for-bit the same and G-1 replay fidelity is preserved by construction. What changed is the C1 benchmark: an EIA-923 respondent's withheld months are now filled from CAMPD (the annual-floor backfill is blind to them), and a dual-fuel plant's oil MWh are booked to the class its units are modelled in. Determination UNCHANGED at CALIBRATED (grade 7, fails 0, C3c the lone ledgered caveat) with ZERO C1 status flips; the gain is MARGIN -- 2022 CC_REGULAR headroom 0.05 -> 1.07 pp of a +-3.0 pp band. Cross-ISO census run BEFORE landing: zero of the eight ISO determinations flip.",
+      "year_set_before_prune": [
+       2022,
+       2023,
+       2024,
+       2025
+      ],
+      "year_set_after": [
+       2022,
+       2023,
+       2024,
+       2025
+      ],
+      "prune_status": "PRUNED 2026-09-19 in the promoting session (rule 35(a))",
       "prior_superseded": {
-       "date": "2026-09-13",
-       "former_keeper": "2026-09-13-nyiso231-anchor-span",
-       "reason": "superseded by the nyiso-232 promotion of nyiso_st_gas_econ_bands_deleaked, on the owner's explicit ruling \"Arm it\". The incoming keeper carries all four registered years (2022-2025) in ONE bundle, so the year set is unchanged and rule 35 [R-PROMOTE] (c) is met by the bundle itself. Pruned in this session per rule 35(a) via --force-uncite, which rule 35(d) names as the INTENDED route rather than a safety override (the guard exists to make the operator look, and the year-set enumeration above is the looking). Rule 31 [R-RETAIN]'s trigger (i) is met: the owner has ruled on promotion. Git history is the record for the bytes, and this id stays cited as history here and in calibration-complete.json and the RESULT doc.",
-       "year_set_before_prune": [
-        2022,
-        2023,
-        2024,
-        2025
-       ],
-       "year_set_after": [
-        2022,
-        2023,
-        2024,
-        2025
-       ],
-       "prune_status": "PRUNED 2026-09-13 in the promoting session (rule 35(a))"
+       "date": "2026-09-17",
+       "former_keeper": "2026-09-16-nyiso-238-hydro-budget",
+       "reason": "superseded by the nyiso-239 benchmark gas/oil attribution repair on the owner's explicit ruling to promote. The MODEL is identical -- this is that keeper's recipe replayed byte-faithfully (G-1 worst deviation 5.0e-7 TWh over four years); what changed is the C1 benchmark's reconcile family, which now spans gas+coal+oil on both sides. Determination NOT-YET -> CALIBRATED with zero PASS -> FAIL flips.",
+       "prior_superseded": {
+        "date": "2026-09-13",
+        "former_keeper": "2026-09-13-nyiso231-anchor-span",
+        "reason": "superseded by the nyiso-232 promotion of nyiso_st_gas_econ_bands_deleaked, on the owner's explicit ruling \"Arm it\". The incoming keeper carries all four registered years (2022-2025) in ONE bundle, so the year set is unchanged and rule 35 [R-PROMOTE] (c) is met by the bundle itself. Pruned in this session per rule 35(a) via --force-uncite, which rule 35(d) names as the INTENDED route rather than a safety override (the guard exists to make the operator look, and the year-set enumeration above is the looking). Rule 31 [R-RETAIN]'s trigger (i) is met: the owner has ruled on promotion. Git history is the record for the bytes, and this id stays cited as history here and in calibration-complete.json and the RESULT doc.",
+        "year_set_before_prune": [
+         2022,
+         2023,
+         2024,
+         2025
+        ],
+        "year_set_after": [
+         2022,
+         2023,
+         2024,
+         2025
+        ],
+        "prune_status": "PRUNED 2026-09-13 in the promoting session (rule 35(a))"
+       }
       }
      }
     }
