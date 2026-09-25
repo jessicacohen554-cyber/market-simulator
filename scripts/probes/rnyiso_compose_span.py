@@ -52,7 +52,7 @@ from scripts.probes.nyiso238_compose_span import compose as _compose  # noqa: E4
 #: offer block is byte-identical to hydro3's (R-NYISO S1).
 KEEPER = _REPO / "results" / "calibration" / "rnyiso_span"
 #: R-NYISO-2021 PRECOMMIT (docs/PRECOMMIT-r-nyiso-2021-2026-09-25.md) commit SHA.
-PIN = "__PIN__"
+PIN = "24cf43280f3b07f3755e82d42dd33138a5a00e9e"
 #: (resolved scenario_config field, required value) -- PRECOMMIT §6 S1.
 EXPECTED = (
     ("eia860_vintage_tracks_solve_year", True),
