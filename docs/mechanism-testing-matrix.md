@@ -17973,6 +17973,40 @@ cause of the rung's C3a 2020 / C3b 2020–2022 failures, and with demand (SPP-72
   `scuc_load_pocket_commitment`) stay `U`, but a successor proposing any of them for C3a/C3b
   must first beat this bound.
 
+**DO-NOT-REDO, added by SPP-81b (2026-09-25, WHO IS MARGINAL IN THE 2023–24 UPPER TERCILE, ZERO LP —
+`docs/handoffs/FINDING-spp-81-upper-tercile-residual-2026-09-25.md`).** SPP-81's second session.
+**The ~3.3 HR has no structural owner. Its owner is UNIDENTIFIED, and it is not a heat rate.**
+- **It is a level, not a heat rate.** The real upper-tercile MEC barely tracks monthly delivered gas
+  (slope 0.27 in 2019–20; the keeper's is 3.3–4.8). Held at the base slope, it is
+  **+$13.8 / +17.1 / +20.9 per MWh** (2023 / 24 / 25).
+- **The keeper already reproduces the real class shift.** Gas-set share rose 77 → 84 % and setter
+  offer HR rose +0.3. The gap is **uniform across the keeper's setter class** (+8.6 to +15.1 $/MWh).
+- **Measured HR matches CAMPD.** Per plant, offer ÷ CAMPD upper-tercile HR is the 0.93 channel and
+  nothing else, year-invariant. Incremental HR (7.7–8.2) is *below* average HR (8.8–9.1), so a
+  part-load or incremental-HR repair would lower the price.
+- **Timing and wind don't own it.** Tercile hours did not move into the evening ramp (HE17–21
+  27–31 % every year), and the premium appears in every wind-share band. The commitment/bridge cells
+  stay R.
+- **Several candidates are closed, measured:** the class-aware fuel donor pool
+  (merit ΔP +0.02 / −0.03 $/MWh in 2023–24), fast-start pricing (MMU: "very little change" in
+  revenue, ~2.9 GW, 95–96 % cleared DA), and committed-gas tightness (CAMPD online 13.8 / 14.2 →
+  16.1 / 15.9 GW, flat headroom).
+- **New source: SPP RTBM offers (`historical-offers`, 22 days/yr, range-read, nothing landed).**
+  - Offers did **not** rise: q90 was $50.6 / 40.1 in 2019 / 20 and $48.4 / 42.3 in 2023 / 24.
+  - MEC's position in the ≥ $10 offered stack stepped **0.670 / 0.671 / 0.680 / 0.707 → 0.788 /
+    0.824** (2019–24). About +7.5 GW more offered sub-MEC capacity sat unused, at lower net load.
+    The position is invariant to the five-minute snapshot.
+  - The keeper's position is flat (0.635 / 0.667 → 0.646 / 0.654).
+  - Binding-constraint mass explains about +0.02 / +0.03 of the step. **Correction to SPP-80:** hub
+    MCC ≈ 0 does not by itself exclude congestion from the MEC under SPP's distributed reference,
+    but the measured share is minor.
+- **SPP-79's coupling stands. No PRECOMMIT.**
+  - Do not re-open heat-rate, part-load, class-mix, hour-timing, wind-share, class-aware donor-pool
+    or fast-start-pricing leads for this object.
+  - Re-open only on a split of the +7.5 GW "offered below MEC, not setting price" into
+    dispatched / online-at-limit / offline (RTBM resource dispatch joined on masked RCode), on
+    five-minute ramp-limit evidence, or on a direct reference-bus congestion loading of the MEC.
+
 **DO-NOT-REDO, added by SPP-81 (2026-09-25, THE RESIDUAL UPPER-TERCILE OBJECT, DATA INTAKE, ZERO LP —
 `docs/handoffs/FINDING-spp-81-residual-upper-tercile-2026-09-25.md`).** SPP-80's residual (+3.19 / +3.43 HR on
 delivered gas, 2023 / 2024), measured against its three named candidates on SPP-80's exact hour set:
