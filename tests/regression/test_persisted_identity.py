@@ -721,13 +721,23 @@ _DECLARED_BACKCAST_COERCION_REKEYS: dict[str, str] = {
 #   year's row from each table and none of those moved, so a re-solve of any
 #   committed CAISO bundle reproduces it; the new rows are read only by a
 #   2019-2021 solve, which previously resolved $0/t and a static nuclear CF.
+# 2026-09-25 ALL SIX ADVANCED (soco-67, porting the repair main owes) — ONE ROW
+#   ADDED, NO VALUE MOVED. NWPP-NEXT-2 (#6645, merged 2026-09-25) added
+#   constants.EIA930_REMOTE_GENERATION_DOUBLE_BOOKED (NWPP/PSEI Colstrip share)
+#   without declaring it, so main itself went red on the cache-key registration
+#   guard and on these six pins. `solve_surface_register.py --diff 9241a212` ->
+#   worktree: "315 -> 316 names; 0 value(s) moved, 1 added". The name is now
+#   declared at its live hash (`--declare-missing`, which moves no key), and each
+#   ISO's surface gains that one row: +1 row everywhere, fingerprints advance.
+#   WHAT IT COSTS: nothing solved — no registry value moved, so no committed
+#   bundle's numbers change; the digest moves only because the row set grew.
 PINNED_SURFACE_ROWS_BY_ISO: dict[str, tuple[str, int]] = {
-    "ERCOT": ("693e45713f9d969c", 233),
-    "CAISO": ("f595f11775baf556", 208),
-    "MISO": ("2bd8ffa308659c46", 214),
-    "PJM": ("db5546cdc27e2f36", 218),
-    "NYISO": ("066ec59d081609d8", 215),
-    "NEISO": ("d2d76036034ff03e", 201),
+    "ERCOT": ("e81bc2748990b1e3", 234),
+    "CAISO": ("490ff78425f818f7", 209),
+    "MISO": ("932cc6e2132cc8ce", 215),
+    "PJM": ("31e84b1db802efc6", 219),
+    "NYISO": ("de96e0a38fe2c2c5", 216),
+    "NEISO": ("8f90ae4dca904a66", 202),
 }
 
 

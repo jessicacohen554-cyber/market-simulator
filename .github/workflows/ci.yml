@@ -152,11 +152,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          # DATA-FREE CHECKOUT (see header): this job reads no data/raw.
+          # DATA-FREE CHECKOUT (see header): this job reads no data/raw, with
+          # ONE exception: the 188 KB committed price reference actual_lmp.json.
+          # calibration_verdict._price_reference_absent is fail-closed on an
+          # unreadable reference, so without it every no-price ISO (SOCO, NWPP)
+          # re-scores as CALIBRATED-WITH-CAVEATS and S1 reports its status part
+          # stale against the verdict a provisioned checkout computes (soco-67).
           sparse-checkout-cone-mode: false
           sparse-checkout: |
             /*
-            !/data/raw/
+            !/data/raw/*
+            /data/raw/_validation-source/
+            !/data/raw/_validation-source/*
+            /data/raw/_validation-source/actual_lmp.json
       - name: Set up uv + Python
         uses: astral-sh/setup-uv@v5
         with:

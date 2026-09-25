@@ -1564,3 +1564,23 @@ PHYSICALLY-CALIBRATED). Promoted on structure (rules 1/14). Unserved 0 in 2019-2
 (inherited). Next lever: 2023 CT_PEAKER over-dispatch. Records: docs/handoffs/r-soco/{FINDING,PRECOMMIT,
 RESULT}-r-soco-b2-*.md. Leftover refs for the owner: claude/rsocob2-2019..2025, claude/rsocob-2021,
 claude/r-soco-b-hold (superseded, never lands), claude/soco61-arm-*, claude/soco60-arm-*, claude/soco60-armB-*.
+
+## soco-67 — 2026-09-25
+
+2023 CT_PEAKER OVER-DISPATCH ATTRIBUTED AND PARTLY CLOSED; PROMOTED. G-DRIFT (measured, zero LP): every LP input
+bit-identical at HEAD vs keeper sha 422915ca in all seven years (corrected in RESULT §4: the COAL-SUB relabel is
+live for 2019/2020 class REPORTING, not dispatch). Attribution: the +7.2 TWh 2023 CT excess sits at five GA/AL IPP
+CTs (Tenaska GA, Calhoun, Walton, Baconton, Washington Co.) cycled daily by the model; CC_REGULAR is at its
+availability ceiling in 6,922 h and every CT hour; measured CC output exceeds model CC availability 4.0 TWh (class) /
+9.1 TWh (plant). One ceiling is a rule-19 double count: Barry unit 8 (747 MW, absent from CAMPD before 2023-10-01,
+first output 2023-12-12) carried a 2023-01-01..12-12 outage window while the COD ramp already held its A3 block
+(COD 2023-11) offline. New gated field unit_outage_precod_clip (zero free parameters) clips such a window to its
+bin's EIA-860 COD month.
+
+RESULT (run 2026-09-25-soco67-precod-clip, seven year-isolated shards at b2397ae0, PROMOTED on the owner's standing
+ruling; 2026-09-25-r-soco-b2-boundary pruned per rule 35): Barry CC 2023 availability 4.38 -> 7.20 TWh (solved
+7.15; 923 net 7.34); 2023 CC +2.14, CT -1.27, COAL_PRB -0.51, ST_GAS -0.30 TWh; other years dispatch-identical.
+2023 C1 CT_PEAKER +7.22/+3.0pp FAIL -> +5.95/+2.5pp PASS; C1-C8 all PASS (C3 unscorable) -> PHYSICALLY-CALIBRATED
+(PRICE UNSCORED). Next lever: CC capability basis (6.76 / 7.67 TWh residual 2023/2024). Records:
+docs/handoffs/r-soco/{FINDING,PRECOMMIT,RESULT}-soco-67-2026-09-25.md. Leftover refs for the owner:
+claude/soco67-2019..2025.

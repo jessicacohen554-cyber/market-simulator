@@ -1,0 +1,19 @@
+{
+  "id": "2026-09-25-soco67-precod-clip",
+  "label": "soco67 precod clip",
+  "date": "2026-09-25",
+  "shorthand": "soco67-precod-clip",
+  "definition": "soco-67 2019: R-SOCO-B2 keeper recipe + unit_outage_precod_clip (Barry unit 8 pre-COD window clipped to its EIA-860 COD month; rule 19)",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "SOCO",
+  "file": "frontend/data/backcast/runs/2026-09-25-soco67-precod-clip.js",
+  "bundle": "results/calibration/soco67_span"
+}

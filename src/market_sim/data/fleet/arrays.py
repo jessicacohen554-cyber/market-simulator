@@ -1286,6 +1286,10 @@ def _apply_outage_overlays(
             and bool(getattr(config, "campd_dark_unit_year_windows", False)),
             # miso-266: the dispatched bin's own capacity as the denominator.
             lp_bin_capacity=_lp_bins,
+            # soco-67 (rule 19 [R-ONE-MECH]): drop a new unit's pre-commercial
+            # window hours, which the COD ramp below already holds offline.
+            # Byte-inert while off (the extract is read unchanged).
+            precod_clip=bool(getattr(config, "unit_outage_precod_clip", False)),
         )
         # DAM-first outage precedence (backcast overlay, gated per ISO). Where an
         # ISO publishes its own availability instrument, use it IN PLACE OF the
