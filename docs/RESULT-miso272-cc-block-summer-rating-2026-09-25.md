@@ -135,3 +135,24 @@ never received a container and was archived. All 15 shards are archived: 7 v1, 7
    the fix, against a true 50 %. Hot Spring already sits at 61 %.
 3. **C3a 2019/2020.** Only the owner's rule-1 coal band multiplier reaches it (owner decision).
 4. **C3b 2021.** Waits on owner decision D1, the storm-month gas convention.
+
+## 6. Promotion executed (rule 35) — 2026-09-25
+
+The owner ruled, verbatim: *"Is this a recommended keeper candidate? If so plz promote. If structural integrity
+improves but gates regress that may still be a keeper.."*
+
+1. **Year set checked before any deletion.** Outgoing {2019–2025}, incoming {2019–2025}: covered, so the promotion
+   does not shrink the year set (rule 35(c)).
+2. **Promoted.** `keepers/MISO.json` now names `2026-09-25-miso-272-edwardsport-block`.
+   - Both `config_partition` tiers were re-keyed to `miso272b_span`, and the partition is byte-identical.
+   - The ISO headline was re-verified on the live scorer: **CALIBRATED** (train tier 8/7/1/0).
+   - `status/MISO.js` was rebuilt.
+   - The attestation was stamped with the ruling.
+   - The matrix keeper stamp was updated, `cc_block_summer_rating` moved O → **K**, and the §5.4 header was updated.
+   - MISO has no `calibration-complete.json` entry, so there was nothing to re-key there.
+3. **Verified.** `audit_keepers --iso MISO` resolved the incoming keeper. The only failures were E13 for the two
+   superseded runs, cleared in step 4.
+4. **Deleted.** `prune_iso_runs.py --iso MISO --force-uncite` removed `2026-09-25-miso-271-wefor-stack`
+   (`miso271_span`) and the withdrawn v1 `2026-09-25-miso-272-cc-block` (`miso272_span`), each with its sidecar and
+   payload. Git history holds them.
+5. **After.** `audit_keepers --iso MISO` PASS (0 failures). Registry parity shows no committed RED; the only unmapped dirs are this session's gitignored per-year legs on local disk (rule 31).
