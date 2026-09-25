@@ -3542,3 +3542,13 @@ results/calibration/pjmnext_c1_20*/
 results/calibration/pjmnext_ctl_20*/
 results/calibration/_pjmnext_keeper_union/
 results/calibration/_pjmnext_*/
+
+# capx D96 (2026-09-25, owner ruling Q69): neiso-t3 re-solved post-F1. The per-year
+# cache parquets / npz / hourly sidecars stay OFF main (rule 29(c) / rule 33(f)); the slim
+# bundle (summary, run_config, config.yaml, solve_surface.json, 25 evolution ledgers) lands.
+# The shards push their FULL out-dirs to their own branches via a negation (rule 34(a)).
+/results/ff-t3-neiso-golden/d96/*/NEISO/*/*.parquet
+/results/ff-t3-neiso-golden/d96/*/NEISO/*/*.npz
+/results/ff-t3-neiso-golden/d96/*/NEISO/*/hourly/
+/results/ff-t3-neiso-golden/d96/*/NEISO/*/year_*_floor_retentions.json
+/results/ff-t3-neiso-golden/d96/*.log
