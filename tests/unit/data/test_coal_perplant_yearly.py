@@ -64,7 +64,7 @@ def _gen(unit_id: str, pmax: float) -> Generator:
         eford=0.05,
         online_year=1980,
         is_campd_bin=True,
-        plant_group="COAL",
+        plant_group="COAL_BIT",
         bin_label="X",
         plant_code=PLANT,
     )

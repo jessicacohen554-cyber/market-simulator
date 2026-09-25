@@ -203,7 +203,7 @@ class TestTheFleetBackedLoadersRekey:
             return [
                 SimpleNamespace(
                     plant_code=1234,
-                    plant_group="COAL",
+                    plant_group="COAL_BIT",
                     unit_id="1234_1",
                     pmax_mw=100.0 * marker,
                 )

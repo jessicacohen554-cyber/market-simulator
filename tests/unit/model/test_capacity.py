@@ -245,7 +245,7 @@ def _binned(unit_id, plant_code, pmax, pmin=0.0, nameplate=0.0, fuel="coal"):
         pmax_mw=pmax,
         pmin_mw=pmin,
         is_campd_bin=True,
-        plant_group="COAL",
+        plant_group="COAL_BIT",
         plant_code=plant_code,
         bin_nameplate_mw=nameplate,
     )

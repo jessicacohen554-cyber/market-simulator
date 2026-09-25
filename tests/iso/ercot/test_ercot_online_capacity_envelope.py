@@ -168,7 +168,7 @@ class TestOnlineCapacityEnvelopeBuilder(unittest.TestCase):
                 fuel_type="coal",
                 pmax_mw=800.0,
                 pmin_mw=0.0,
-                plant_group="COAL",
+                plant_group="COAL_BIT",
                 plant_code=3,
             ),
         ]
@@ -279,7 +279,7 @@ class TestExtremePeakResolvedVariant(unittest.TestCase):
                 fuel_type="coal",
                 pmax_mw=800.0,
                 pmin_mw=0.0,
-                plant_group="COAL",
+                plant_group="COAL_BIT",
                 plant_code=3,
             ),
         ]
@@ -421,7 +421,7 @@ class TestMeasuredFleetBasisVariant(unittest.TestCase):
                 fuel_type="coal",
                 pmax_mw=800.0,
                 pmin_mw=0.0,
-                plant_group="COAL",
+                plant_group="COAL_BIT",
                 plant_code=3,
             ),
         ]

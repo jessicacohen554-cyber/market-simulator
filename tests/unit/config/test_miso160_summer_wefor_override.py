@@ -144,8 +144,8 @@ class TestSummerWeforShareOverride(unittest.TestCase):
         self.assertGreater(float(armed[shoulder].mean()), float(base[shoulder].mean()))
 
     def test_coal_stays_exempt(self):
-        base = _availability("COAL", "coal", None)
-        armed = _availability("COAL", "coal", R_STAR)
+        base = _availability("COAL_BIT", "coal", None)
+        armed = _availability("COAL_BIT", "coal", R_STAR)
         np.testing.assert_array_equal(base, armed)
 
 

@@ -614,7 +614,7 @@ class PrbPassthroughSigmoidTest(unittest.TestCase):
             pmax_mw=100.0,
             heat_rate=10.0,
             coal_supply="prb",
-            plant_group="COAL",
+            plant_group="COAL_BIT",
         )
         arrays = generators_to_fleet_arrays([gen], ["z"], hours=4)
         fuel_prices = np.full((1, 4), 2.0)  # fuel cost = 10 * 2 = 20 $/MWh
@@ -678,7 +678,7 @@ class BitPassthroughSigmoidTest(unittest.TestCase):
                 pmax_mw=100.0,
                 heat_rate=10.0,
                 coal_supply=supply,
-                plant_group="COAL",
+                plant_group="COAL_BIT",
             )
 
         bit_pt = np.array([0.85, 1.2])
@@ -713,7 +713,7 @@ class BitPassthroughSigmoidTest(unittest.TestCase):
                 pmax_mw=100.0,
                 heat_rate=10.0,
                 coal_supply="bituminous",
-                plant_group="COAL",
+                plant_group="COAL_BIT",
             )
 
         pt = {"bituminous": np.array([0.61, 0.95, 1.2])}
@@ -765,7 +765,7 @@ class BitPassthroughSigmoidTest(unittest.TestCase):
                 pmax_mw=100.0,
                 heat_rate=10.0,
                 coal_supply="bituminous",
-                plant_group="COAL",
+                plant_group="COAL_BIT",
                 plant_code=plant_code,
             )
 
@@ -797,7 +797,7 @@ class BitPassthroughSigmoidTest(unittest.TestCase):
                 pmax_mw=100.0,
                 heat_rate=10.0,
                 coal_supply=supply,
-                plant_group="COAL",
+                plant_group="COAL_BIT",
             )
 
         lig_pt = np.array([0.72, 0.95])
