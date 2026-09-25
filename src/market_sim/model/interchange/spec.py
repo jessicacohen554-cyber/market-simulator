@@ -3019,6 +3019,20 @@ CAISO_PER_HUB_NEIGHBORS: dict[str, CaisoHubNeighbor] = {
     ),
 }
 
+# R-CAISO-3 (``ScenarioConfig.caiso_intertie_gap_fill_measured_gas``): the US
+# state whose EIA N3045 "natural gas price sold to electric power consumers"
+# monthly series (data/raw/gas-prices/eia_delivered_gas_electric_power_by_state_
+# monthly_2018-2026.csv) is the measured regional gas operand of each hub's
+# retention-gap fill. A LOCATION crosswalk, not a fitted choice: the Palo Verde
+# switchyard (PALOVRDE_ASR-APND) is in Maricopa County, Arizona; the Malin
+# substation (MALIN_5_N101, COI) is in Klamath County, Oregon (CAISO OASIS
+# pnode descriptions; EIA-860 plant coordinates of the host plants). Declared
+# ex ante and never swept (rule 1 [R-STRUCT] (c)).
+CAISO_INTERTIE_HUB_GAS_STATE: dict[str, str] = {
+    "PALOVRDE": "AZ",
+    "MALIN": "OR",
+}
+
 
 # --- NYISO-specific interchange constants ---
 
