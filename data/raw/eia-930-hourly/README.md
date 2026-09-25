@@ -19,7 +19,7 @@ the BA reports. Consumed by `src/market_sim/data/eia_loader.py`
 | PJM | PJM | 2018-01-01 .. 2026-06-30 (2019-2021 backfilled 2026-07-06; 2018 backfilled 2026-07-08) |
 | CISO | CAISO | 2018-01-01 .. 2026-06-30 (2019-2021 backfilled 2026-07-06; 2018 + H1-2026 landed 2026-07-08; **2022 filled 2026-07-31**) |
 | MISO | MISO | 2018-01-01 .. 2026-06-30 (2019-2021 backfilled 2026-07-06; 2018 + H1-2026 landed 2026-07-08; **2022 filled 2026-07-31**) |
-| SOCO | — (Southern Co, not a modeled ISO) | 2022-12-31 .. 2025-12-31 |
+| SOCO | SOCO (Southern Co balancing authority) | 2018-12-31 .. 2025-12-31 (**2019-2022 folded in 2026-09-24, I-SOCO**, from the committed BALANCE archive by `scripts/data/extend_eia930_hourly_from_balance.py --ba SOCO --year 2019 --year 2020 --year 2021 --year 2022`; see below) |
 | FLA | — (Florida, not a modeled ISO) | 2022-12-31 .. 2025-01-31 |
 | BPAT | — (NWPP, not a modeled ISO) | 2019-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11; 2019-2022 added 2026-09-24, R-NWPP) |
 | PACE | — (NWPP, not a modeled ISO) | 2019-01-01 .. 2025-12-31 (derived 2026-09-13, NWPP-11; 2019-2022 added 2026-09-24, R-NWPP) |
@@ -330,3 +330,34 @@ missing for **8,659 of 8,784 hours of 2020** (raw `Demand`: 8,734 missing) and f
 The NWPP pool frame's member fill interpolates across gaps with no maximum, so
 2020 pool demand would be a linear bridge over ~100 points — NWPP 2020 is
 therefore not a solvable backcast year from this archive (lane R-NWPP PRECOMMIT).
+
+## SOCO 2019-2022 (I-SOCO, 2026-09-24)
+
+`SOCO hourly.parquet` gained 35,057 rows (local 2019-01-01 .. 2022-12-31) from
+`../eia-930/EIA930_BALANCE_{2019..2022}_{Jan_Jun,Jul_Dec}.parquet`, folded in by
+the committed extend path; the 26,304 committed 2023-2025 rows and the file's
+column dtypes are **byte-identical** afterwards (`extend_ba` now casts the
+all-NA new-taxonomy columns `NG: BAT/PS/SNB/OES` to the extract's own float32
+instead of letting the concat upcast them). **Same-producer proof:** the
+BALANCE path regenerates every committed row of the legacy-taxonomy era
+(2023-01 .. 2024-06, 13,134 rows) exactly on every value column; its only
+difference is the committed file's own `Hour` label (1..7) on the seven local
+2022-12-31 rows the extend keeps untouched. From 2024-07 the two routes diverge
+(EIA's taxonomy revamp and later revisions) — irrelevant here, since no
+2023-2025 row is rewritten.
+
+Measured defects AT SOURCE, carried unmodified (raw is immutable):
+
+* **2019: 25 NaN hours** in `Demand` / `NG:*` (the loader bridges them and
+  says so) and a 6,913 MW minimum-demand hour against a ~16 GW floor in every
+  other year.
+* **2019 Jan-Aug `Total interchange` is SIGN-INVERTED.** Monthly TI is the
+  negative of both `Net generation - Demand` and the sum of the nine DIBA legs
+  (Jan -300 vs +300 GWh ... Aug -369 vs +369); from September on all three
+  agree. Annual: TI -1.588 TWh vs legs +6.640 TWh. EIA's live
+  `EIA930_BALANCE_2019_Jan_Jun.csv` (Last-Modified 2026-09-24) carries the same
+  inversion, so it is the publisher's, not this archive's. 2020-2022 TI equals
+  the sum of legs to 0.001 TWh. **The SOCO solve serves `Total interchange` as
+  its seam (`eia930.envelopes.soco_net_interchange`), so a 2019 SOCO solve
+  would read Jan-Aug as net import — routed to the solve lane, not repaired
+  here.**

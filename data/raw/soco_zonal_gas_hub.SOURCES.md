@@ -124,3 +124,24 @@ fixed here. This table needs no conversion at all.
 * **Not armed.** No `ScenarioConfig` field is added and no applier reads this
   file, so no cache key moves (plan §7 gate **G8**). Arming it is SOCO-40's or a
   later lever's call.
+
+## 2019-2022 (I-SOCO, 2026-09-24)
+
+The derive's `YEARS` widened from 2023-2025 to 2019-2025 — a source-coverage
+extension, not a re-derivation (rule 23): both committed inputs
+(`_processed-legacy/eia923_monthly_fuel_costs.parquet`, 2018+; `gas-prices/
+henry_hub_monthly.csv`, 1997+) already spanned the new years and the
+construction is unchanged. `python scripts/data/derive_soco_zonal_gas_hub.py`
+now writes 21 rows; **all 9 committed 2023-2025 rows are byte-identical**.
+The zone lookup maps 25 / 26 / 27 / 28 gas plants in 2019 / 2020 / 2021 / 2022
+(28 / 29 / 29 in 2023-2025); one plant (EIA 7) burns only in 2019-2022.
+
+| zone | 2019 | 2020 | 2021 | 2022 |
+|---|---:|---:|---:|---:|
+| SOCO_AL | 0.426 | 0.484 | 0.366 | 1.035 |
+| SOCO_GA | 0.341 | 0.336 | 0.329 | 1.253 |
+| SOCO_MS | 0.143 | 0.213 | 0.076 | 0.073 |
+
+$/MMBtu over Henry Hub. 2022's 1.180 $/MMBtu cross-zone range (GA +1.25 vs MS
++0.07) is the widest of the seven years; it is the measured per-plant
+delivered price in the year Henry Hub averaged 6.45, reported as measured.

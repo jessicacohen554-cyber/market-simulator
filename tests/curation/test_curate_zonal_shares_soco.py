@@ -322,6 +322,28 @@ def test_clock_offset_tail_is_filled_not_rejected(soco_raw):
     assert np.allclose(shares[:, -1], shares[:, last_measured], atol=1e-12)
 
 
+def test_year_split_across_the_two_committed_pulls(soco_raw):
+    """A local year whose hours straddle the two committed files assembles whole.
+
+    I-SOCO (2026-09-24) landed 2019-2022 as a sibling of the 2023-2025 pull.
+    Local 2022 ends at 2023-01-01T05 UTC, i.e. inside the 2023-2025 file, so
+    the parser must read every present file, not just one.
+    """
+    soco_dir = _write_ferc714_fixture(soco_raw, _YEAR, _even(1000.0))
+    full = pd.read_parquet(soco_dir / czs._SOCO_FERC714_FILE)
+    cut = full["datetime_utc"].sort_values().unique()[HOURS_PER_YEAR - 5]
+    later, earlier = full[full["datetime_utc"] >= cut], full[full["datetime_utc"] < cut]
+    later.to_parquet(soco_dir / czs._SOCO_FERC714_FILE, index=False)
+    other = next(n for n in czs._SOCO_FERC714_FILES if n != czs._SOCO_FERC714_FILE)
+    earlier.to_parquet(soco_dir / other, index=False)
+    shares = czs.parse_soco_shares(_YEAR, _ZONES)
+    assert shares is not None
+    assert np.abs(shares.sum(axis=0) - 1.0).max() < 1e-9
+    # Only the later file present -> the year is refused, not half-built.
+    (soco_dir / other).unlink()
+    assert czs.parse_soco_shares(_YEAR, _ZONES) is None
+
+
 def test_gap_larger_than_the_clock_offset_returns_none(soco_raw):
     """One hour past the structural shortfall and the year is refused."""
     _write_ferc714_fixture(

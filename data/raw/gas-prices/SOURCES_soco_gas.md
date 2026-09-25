@@ -115,3 +115,21 @@ ICE/NGI product. The monthly EIA state delivered-to-EP series above is the
 reachable measured input, and a SOCO winter-gas tail overlay — if one is ever
 wanted — has **no free daily source** behind it today. Recorded for owner review
 alongside the licensing note in `README.md` / `docs/data-licensing.md` §5.
+
+## 2019-2022 (I-SOCO, 2026-09-24)
+
+`eia_delivered_gas_{AL,GA,MS}_monthly_2019-2022.csv`, cut from the SAME
+committed `eia_N3045<ST>3m_2026-09-13.xls` workbooks (no fetch) by the
+now-committed transcription instrument:
+
+    python scripts/data/cut_eia_state_delivered_gas_xls.py --state AL GA MS \
+        --pull-date 2026-09-13 --first-year 2019 --last-year 2022
+
+**Proof:** the same command with `--first-year 2023 --last-year 2025 --check`
+regenerates all three committed 2023-2025 CSVs **byte-for-byte** (CRLF and
+all). Cross-check against the all-state table: **144 of 144 state-months
+agree, NA pattern included.** EIA withholds most of the window: AL and MS
+publish **2022 only** (12 of 48 months), GA 2019, 2020, 2022 and Mar-2021 only
+(39 of 48). Nothing is filled. These CSVs feed only
+`derive_soco_zonal_gas_hub.py --cross-check`; the zone basis the solve reads
+is the per-plant EIA-923 route (`../soco_zonal_gas_hub.SOURCES.md`).

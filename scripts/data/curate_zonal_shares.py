@@ -722,9 +722,16 @@ _SOCO_RESPONDENT_ZONE_GROUPS: dict[int, str] = {
     210: "SOCO_GA",  # Municipal Electric Authority of Georgia (13100)
 }
 
-# The committed FERC-714 pull (SOCO-11).  One file, all years, sliced per year
-# by the UTC->local map below.
+# The committed FERC-714 pulls, sliced per year by the UTC->local map below.
+# SOCO-11 landed 2023-2025; I-SOCO (2026-09-24) landed 2019-2022 with the same
+# construction (``scripts/data/slice_soco_ferc714_pudl.py``).  Every present
+# file is read and concatenated: a local year's first/last hours sit in the
+# neighbouring UTC file (local 2022 ends at 2023-01-01T05 UTC).
 _SOCO_FERC714_FILE: str = "soco_ferc714_hourly_planning_area_demand_2023-2025.parquet"
+_SOCO_FERC714_FILES: tuple[str, ...] = (
+    "soco_ferc714_hourly_planning_area_demand_2019-2022.parquet",
+    _SOCO_FERC714_FILE,
+)
 
 # FERC's filed value.  PUDL also ships ``demand_imputed_pudl_mwh``, which is
 # PUDL's OWN derived column (flagged on 550 of 210,431 rows, differing by more
@@ -805,8 +812,8 @@ def _soco_utc_to_local_hoy(period_utc: pd.Series, year: int) -> pd.Series | None
 def parse_soco_shares(year: int, zone_names: list[str]) -> np.ndarray | None:
     """Parse the FERC-714 planning-area parquet -> ``(n_zones, 8760)`` shares.
 
-    Reads ``data/raw/zone-specific-demand/SOCO/`` +
-    :data:`_SOCO_FERC714_FILE`, keeps the five cited respondents
+    Reads every present ``data/raw/zone-specific-demand/SOCO/`` file in
+    :data:`_SOCO_FERC714_FILES`, keeps the five cited respondents
     (:data:`_SOCO_RESPONDENT_ZONE_GROUPS`), maps ``datetime_utc`` onto the
     model's local hour-of-year through SOCO's own EIA-930 frame
     (:func:`_soco_utc_to_local_hoy`), sums each zone's respondents and
@@ -830,13 +837,26 @@ def parse_soco_shares(year: int, zone_names: list[str]) -> np.ndarray | None:
     capacity share, not a load share, and ~5 points away from the measured
     AL/GA split this parser produces).
     """
-    path = ZONE_DEMAND_DIR / "SOCO" / _SOCO_FERC714_FILE
-    if not path.exists():
-        logger.warning("SOCO FERC-714 demand file not found (%s); skipping", path)
+    paths = [
+        ZONE_DEMAND_DIR / "SOCO" / name
+        for name in _SOCO_FERC714_FILES
+        if (ZONE_DEMAND_DIR / "SOCO" / name).exists()
+    ]
+    if not paths:
+        logger.warning(
+            "SOCO FERC-714 demand files not found (%s); skipping",
+            ZONE_DEMAND_DIR / "SOCO" / _SOCO_FERC714_FILE,
+        )
         return None
-    df = pd.read_parquet(
-        path,
-        columns=["datetime_utc", "respondent_id_ferc714", _SOCO_DEMAND_COLUMN],
+    df = pd.concat(
+        [
+            pd.read_parquet(
+                path,
+                columns=["datetime_utc", "respondent_id_ferc714", _SOCO_DEMAND_COLUMN],
+            )
+            for path in paths
+        ],
+        ignore_index=True,
     )
     respondent = pd.to_numeric(df["respondent_id_ferc714"], errors="coerce")
     df = df[respondent.isin(_SOCO_RESPONDENT_ZONE_GROUPS)].copy()

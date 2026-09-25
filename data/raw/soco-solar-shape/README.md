@@ -114,3 +114,12 @@ wind generators / 0.0 MW**, and the EIA-930 `SOCO` extract reports `NG: WND` as
 **exactly 0.0 in every one of the 26,257 hours it publishes** for 2023–2025 (the
 column exists; it is not null, it is zero). There is no series to shape and
 nothing to split, so a wind builder here would divide by zero.
+
+## 2019-2022 (I-SOCO, 2026-09-24)
+
+`soco_{2019,2020,2021,2022}_solar_zone_shape.parquet` built by the same command
+(`--years 2019 2020 2021 2022 --reconcile`); every year places at a zero-hour
+best shift against EIA-930 `NG: SUN` (r 0.967 / 0.984 / 0.977 / 0.986). The
+same run rebuilt 2023-2025 and those frames equal the committed files exactly
+(only parquet writer-metadata bytes differ), so the committed 2023-2025 files
+were kept. Record: `docs/handoffs/FINDING-i-soco-2019-2022-intake-2026-09-24.md`.

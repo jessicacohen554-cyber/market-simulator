@@ -119,7 +119,11 @@ EIA923_PATH: Path = (
 )
 HENRY_HUB_PATH: Path = RAW_DATA_DIR / "gas-prices" / "henry_hub_monthly.csv"
 GAS_PRICES_DIR: Path = RAW_DATA_DIR / "gas-prices"
-YEARS: tuple[int, ...] = (2023, 2024, 2025)
+# 2023-2025 by SOCO-32; widened to the 2019-2022 backcast years by I-SOCO
+# (2026-09-24) — a SOURCE-COVERAGE extension, not a re-derivation (rule 23):
+# both committed inputs already span 2018+, the construction is unchanged and
+# every 2023-2025 row regenerates byte-identically.
+YEARS: tuple[int, ...] = (2019, 2020, 2021, 2022, 2023, 2024, 2025)
 FUEL_GROUP = "Natural Gas"
 
 # EIA's pipeline-quality heat content, used ONLY by --cross-check to put
@@ -170,7 +174,7 @@ AL_MIX_NOTE = (
 
 
 def load_zone_months() -> pd.DataFrame:
-    """Return per-zone, per-month delivered gas price and Henry Hub, 2023-2025.
+    """Return per-zone, per-month delivered gas price and Henry Hub over :data:`YEARS`.
 
     Returns:
         A frame with ``zone``, ``year``, ``month``, ``price`` (quantity-weighted
@@ -315,11 +319,11 @@ def cross_check() -> None:
     )
     months = load_zone_months()
     for zone, state in (("SOCO_AL", "AL"), ("SOCO_GA", "GA"), ("SOCO_MS", "MS")):
-        path = GAS_PRICES_DIR / f"eia_delivered_gas_{state}_monthly_2023-2025.csv"
-        if not path.exists():
-            print(f"  {zone:12s} state series absent ({path.name})")
+        paths = sorted(GAS_PRICES_DIR.glob(f"eia_delivered_gas_{state}_monthly_*.csv"))
+        if not paths:
+            print(f"  {zone:12s} state series absent (eia_delivered_gas_{state}_*)")
             continue
-        series = pd.read_csv(path)
+        series = pd.concat([pd.read_csv(path) for path in paths], ignore_index=True)
         series["year"] = series["period"].str[:4].astype(int)
         series["month"] = series["period"].str[5:7].astype(int)
         series["value"] = pd.to_numeric(series["value"], errors="coerce")
@@ -381,7 +385,7 @@ def report(months: pd.DataFrame, rows: list[dict[str, object]]) -> None:
                 f"(range {centred.max() - centred.min():.3f} $/MMBtu)"
             )
     burned = months.groupby("zone")["quantity"].sum()
-    print("\n  MMBtu burned 2023-2025 by zone:")
+    print(f"\n  MMBtu burned {YEARS[0]}-{YEARS[-1]} by zone:")
     for zone in zone_names:
         if zone in burned:
             print(f"    {zone:12s} {burned[zone]:,.0f}")

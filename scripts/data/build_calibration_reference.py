@@ -297,16 +297,14 @@ CALIBRATION_YEARS_BY_ISO: dict[str, tuple[int, ...]] = {
     # series (rule 13). It returns when a measured PSEI 2020 load lands.
     "NWPP": (2019, 2021, 2022, 2023, 2024, 2025),
     # SOCO (registered 2026-09-14 lane SOCO-20; this block landed 2026-09-16 by
-    # lane SOCO-31). 2023-2025 is the whole span the DATA supports, not a tier
-    # choice: ``data/raw/eia-930-hourly/SOCO hourly.parquet`` carries 26,304
-    # rows = three years, so ``pre_window_series("SOCO", y)`` is None for 2019,
-    # 2020, 2021 and 2022 (measured this lane, printed by
-    # ``curate_demand_profile`` as ``[skip ] SOCO <y>``) and the per-BA
-    # partition ``_demand_totals`` reads cannot be written for them. The
-    # EIA-923 vintage agrees: the committed net-generation parquet carries SOCO
-    # rows back to 2018, but with no demand series there is nothing to pair
-    # them with. Extending the span is a SOCO-11-class fetch of more EIA-930
-    # years, not a reference-block edit.
+    # lane SOCO-31 for 2023-2025, the span the EIA-930 extract then carried).
+    # Widened to 2019-2025 by lane I-SOCO (2026-09-24, owner instruction: every
+    # ISO's backcast covers 2019-2025): ``SOCO hourly.parquet`` now carries
+    # 2019-2022 folded in from the committed BALANCE archive by
+    # ``extend_eia930_hourly_from_balance.py`` (the legacy-era rows of which
+    # reproduce the committed 2023-01..2024-06 rows exactly), and the committed
+    # EIA-923 net-generation parquet already carried SOCO back to 2018. Every
+    # 2023-2025 block and CSV regenerates byte-identically.
     #
     # THE PRICE SIDE IS ABSENT BY RULING, NOT BY OVERSIGHT, AND IT IS NOT A GAP
     # FOR A LATER LANE TO CLOSE WITH A SUBSTITUTE. Southern Company publishes
@@ -327,7 +325,7 @@ CALIBRATION_YEARS_BY_ISO: dict[str, tuple[int, ...]] = {
     # market's hub -- MISO-South, a PJM or TVA proxy, an EIA state average
     # dressed as a price -- is the load proxy rule 13 ``[R-MEASURED]`` forbids
     # and stays refused (plan gate G17; the desk has refused it twice).
-    "SOCO": (2023, 2024, 2025),
+    "SOCO": (2019, 2020, 2021, 2022, 2023, 2024, 2025),
 }
 
 # Measured Henry Hub natural-gas spot price, annual average ($/MMBtu).
