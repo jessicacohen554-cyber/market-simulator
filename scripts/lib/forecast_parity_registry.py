@@ -811,6 +811,24 @@ DECLARATIONS: tuple[ParityDeclaration, ...] = (
             "docs/PRECOMMIT-miso268-coal-yard-grain-2026-09-24.md",
         ),
     ),
+    # PJM-NEXT card 1 (2026-09-25) armed spp-49's benchmark membership union
+    # in the PJM keeper. It is SCORING, not a mechanism: it widens which
+    # plants' EIA-923 generation enter the backcast ACTUALS
+    # (run_calibration_full._iso_plant_ids) and never touches the LP, so a
+    # forecast — which has no measured actuals to score against — has nothing
+    # for it to reach.
+    ParityDeclaration(
+        fields=("benchmark_membership_vintage_union",),
+        disposition=BACKCAST_ONLY,
+        why="spp-49 benchmark-side plant membership union: widens the EIA-923 "
+        "backcast ACTUALS to the solve year's EIA-860 BA cohort; scoring-only, "
+        "no LP effect, so a forecast (no measured actuals) has no consumer by "
+        "design",
+        evidence=(
+            "scripts/run_calibration_full.py",
+            "docs/PRECOMMIT-pjm-next-c1-year-correct-membership-2026-09-25.md",
+        ),
+    ),
 )
 
 
