@@ -116,3 +116,13 @@ seven shard sessions are archived.
 plant-specific heat rates, and 2019 added to the keeper's year set. The training span keeps CALIBRATED
 with zero status changes. The 2021 coal over-run it exposes is a true finding (offers), not a regression
 to be tuned away. The 2021 C1 CC PASS → FAIL is the cost, reported at full magnitude.
+
+## 9. Addendum — rebased onto `main` after pjm-h22 promotion (2026-09-25)
+
+`main` now carries keeper `2026-09-24-pjm-h22-rggi-span` (RGGI allowance pricing on the h19 recipe). This
+run was solved on the **h19** recipe (pinned `8e2993a9`, before the promotion), so it answers "h19 + the F1
+inputs", not "h22 + the F1 inputs" (PRECOMMIT §8: the two deltas are orthogonal). Promoting the corrected
+inputs onto the current keeper therefore needs one more 7-shard solve: the h22 recipe plus the four F1 flags.
+The rebase kept `main`'s benchmark parts for 2020–2025 (the keeper's). Re-scored on them, this run's
+per-year determinations are **unchanged** (2019–22 NOT-YET, 2023–25 CALIBRATED). The mechanism-matrix
+header keeps the h22 keeper stamp; the five R-PJM cell notes merged cleanly.
