@@ -3546,3 +3546,12 @@ results/calibration/_pjmnext_*/
 # soco-68 probe scratch + shard legs: kept out of main (rule 32(d)); composite soco68_span is what registers
 results/calibration/_soco68/
 results/calibration/soco68_20[0-9][0-9]/
+# NYISO-STGAS-2023 (2026-09-25): the four per-year shard legs composed into results/calibration/nyisostg_span
+# stay OUT of main (rule 32(d)); the registered composite is the record. Provenance only (rule 33(d)), leg SHAs:
+#   nyisostg_2022 50a175125ae02b4398e829da62c9e4b6625b8624 · nyisostg_2023 a557f13d7c0d65067361b6f2e6b13fb8808268fa
+#   nyisostg_2024 1bff2c3017fc41a4b2a647fe5a94359287666691 · nyisostg_2025 56e086fd5109ac3527aa97061b9bd08d2a1a0191
+#   (2021 leg e1e5815b3c975005c78efa31a398342b9a50bc6a is registered as results/calibration/nyisostg_2021)
+results/calibration/nyisostg_2022/
+results/calibration/nyisostg_2023/
+results/calibration/nyisostg_2024/
+results/calibration/nyisostg_2025/
