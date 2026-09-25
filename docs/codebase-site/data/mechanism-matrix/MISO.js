@@ -52,6 +52,7 @@ window.MECH_MATRIX_SHARDS.MISO = {
     ercot_as_held_location: { cell: "." },
     demand_balance_screen: { cell: "I", ev: "pjm-h19 phase 0 (zero LP): zero flagged hours in every MISO year 2018-2025 on the loader output." },
     nwpp_grid_carried_wind_served: { cell: "." },
+    nwpp_demand_plant_basis: { cell: "." },
     ercot_tie_zonal_interchange: { cell: "." },
     ercot_offer_swcap_clip: { cell: "." },
     ercot_offer_surface_cleared_share_rt_room: { cell: "." },

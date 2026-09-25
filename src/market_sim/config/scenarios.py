@@ -1257,6 +1257,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # the wind the pool supply carries, a different demand array, and hashes
     # distinctly. Registered IN THE SAME COMMIT as the field.
     "nwpp_grid_carried_wind_served",
+    # NWPP-NEXT-3 plant-basis demand anchor (GATED default off): dropped from
+    # the hash at its default so every pre-existing cache key stays
+    # byte-stable (the off path never reads the artifact); an armed run
+    # serves a different demand array and hashes distinctly. Registered IN
+    # THE SAME COMMIT as the field.
+    "nwpp_demand_plant_basis",
     # pjm-h19 EIA-930 balance-identity demand screen (GATED default off):
     # dropped from the hash at its default so every pre-existing cache key
     # stays byte-stable (the off path never calls the screen); an armed run
@@ -2434,6 +2440,8 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "ercot_tie_zonal_interchange": "False",
     "nwpp_grid_carried_wind_served": "False",
+    # Added by NWPP-NEXT-3 WITH the field (the nyiso-119 discipline).
+    "nwpp_demand_plant_basis": "False",
     # Added by pjm-h19 WITH the field (the nyiso-119 discipline).
     "demand_balance_screen": "False",
     # Added by ercot-236 WITH the field, in the same commit as its
@@ -19455,6 +19463,20 @@ class ScenarioConfig:
     # definition, never a level rescale; regenerates for any year the
     # EIA-930 pool frame exists. FINDING-nwpp-47-2026-09-22.md.
     nwpp_grid_carried_wind_served: bool = False
+    # NWPP-NEXT-3 plant-basis demand anchor (GATED default off, NWPP-only,
+    # backcast-measured, ZERO fitted scalars). Owner ruling 2026-09-25 on
+    # FINDING-nwpp-45 §8 = framing 2: anchor the served requirement to the
+    # plant basis C1 scores on — EIA-930 hourly shape, EIA-923 plant energy.
+    # Per EIA-930 fuel family the served schedule's footprint series is
+    # rescaled additively to its annual grid-delivered EIA-923 plant total
+    # (data/raw/reference/nwpp_plant_basis_energy.csv, derived from the
+    # committed bench parts by scripts/data/derive_nwpp_plant_basis_energy.py)
+    # on its own EIA-930 hourly shape. Closes EIA-930's under-book of the
+    # footprint's own fossil plants (FINDING-nwpp-47 §3). Rule 14 misalignment
+    # reconciliation of a measured input; requires
+    # nwpp_grid_carried_wind_served. A year the artifact lacks FAILS rather
+    # than falling back. envelopes.nwpp_plant_basis_correction.
+    nwpp_demand_plant_basis: bool = False
     # pjm-h19 EIA-930 balance-identity demand repair (GATED default off,
     # ISO-agnostic, ZERO fitted scalars). Repairs an hour whose metered
     # Demand makes an isolated reversal larger than the BA-year's own Tukey
@@ -22793,6 +22815,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_adaptive_fixed_point": 1,
     "ercot_tie_zonal_interchange": 1,
     "nwpp_grid_carried_wind_served": 1,
+    "nwpp_demand_plant_basis": 1,
     "demand_balance_screen": 1,
     "ercot_offer_swcap_clip": 1,
     "caiso_storage_adaptive_expectation": 1,

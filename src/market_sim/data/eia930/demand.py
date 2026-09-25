@@ -1122,6 +1122,7 @@ def load_demand(
     caiso_supply_consistent_demand: bool = False,
     ercot_tie_zonal_interchange: bool = False,
     nwpp_grid_carried_wind_served: bool = False,
+    nwpp_demand_plant_basis: bool = False,
     demand_balance_screen: bool = False,
 ) -> np.ndarray:
     """Load hourly ISO demand and allocate it across zones.
@@ -1211,6 +1212,13 @@ def load_demand(
             export leg whose energy the pool's own wind supply carries
             (NWPP-47; see :func:`~market_sim.data.eia930.envelopes.
             nwpp_net_interchange`). Default ``False`` is byte-identical.
+        nwpp_demand_plant_basis: NWPP only — anchor each EIA-930 fuel
+            family's annual energy in the served schedule to the EIA-923
+            plant basis, keeping its EIA-930 hourly shape (NWPP-NEXT-3; see
+            :func:`~market_sim.data.eia930.envelopes.
+            nwpp_plant_basis_correction`). Requires
+            ``nwpp_grid_carried_wind_served``. Default ``False`` is
+            byte-identical.
         demand_balance_screen: repair isolated demand readings that break the
             EIA-930 balance identity (pjm-h19; see
             :func:`_screen_demand_balance`). Applied to the frame-sourced
@@ -1307,9 +1315,11 @@ def load_demand(
         # (P9 / playbook §8.2; the priced node is the forward mechanism, used
         # under --priced-interchange where include_interchange is False). No
         # per-zone tie attribution yet, so the scalar is spread by load share.
-        if iso == "NWPP" and nwpp_grid_carried_wind_served:
+        if iso == "NWPP" and (nwpp_grid_carried_wind_served or nwpp_demand_plant_basis):
             measured_ix = _SCALAR_INTERCHANGE_ISOS[iso](
-                year, grid_carried_wind_served=True
+                year,
+                grid_carried_wind_served=nwpp_grid_carried_wind_served,
+                plant_basis=nwpp_demand_plant_basis,
             )
         else:
             measured_ix = _SCALAR_INTERCHANGE_ISOS[iso](year)

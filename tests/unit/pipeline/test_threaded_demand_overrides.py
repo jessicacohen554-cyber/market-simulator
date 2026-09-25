@@ -40,6 +40,7 @@ _DEMAND_AFFECTING_FIELDS: tuple[str, ...] = (
     "caiso_supply_consistent_demand",
     "caiso_demand_clock_realign",
     "nwpp_grid_carried_wind_served",
+    "nwpp_demand_plant_basis",
     "demand_balance_screen",
 )
 

@@ -17,7 +17,7 @@ import pandas as pd
 
 from market_sim.config.constants import HOURS_PER_YEAR
 from market_sim.config.interchange_config import CAISO_IMPORT_TRANCHE_HUB
-from market_sim.config.paths import ISO_TRANSMISSION_DIR, RAW_DIR
+from market_sim.config.paths import ISO_TRANSMISSION_DIR, RAW_DIR, REFERENCE_DIR
 
 from .frames import (
     _ISO_TO_HOURLY_BA,
@@ -1878,8 +1878,157 @@ def _nwpp_grid_pool_carried_wind(year: int) -> np.ndarray:
     return frame["NG: WND"].fillna(0.0).to_numpy(dtype=float)
 
 
+# NWPP-NEXT-3 plant-basis anchor (``ScenarioConfig.nwpp_demand_plant_basis``).
+# Committed artifact: per (year, EIA-930 fuel family) annual grid-delivered
+# EIA-923 plant energy of the footprint's plants, derived from the NWPP bench
+# parts' ``classFull`` by scripts/data/derive_nwpp_plant_basis_energy.py.
+NWPP_PLANT_BASIS_ENERGY_PATH: Path = REFERENCE_DIR / "nwpp_plant_basis_energy.csv"
+
+# Benchmark class -> the EIA-930 ``NG: <family>`` fuel family that books it.
+# Every classFull class must appear; the derive script fails on an unmapped
+# one. ``OTH`` is EIA-930's ``NG: OTH`` + ``NG: OIL`` (the benchmark books
+# NWPP's oil-fired MWh in the dual-fuel host's own class, so the two EIA-930
+# cells are one family here).
+NWPP_PLANT_BASIS_CLASS_FAMILY: dict[str, str] = {
+    "COAL_BIT": "COL",
+    "COAL_PRB": "COL",
+    "COAL_WC": "COL",
+    "COAL_LIGNITE": "COL",
+    "CC_CHP": "NG",
+    "CC_REGULAR": "NG",
+    "CT_CHP": "NG",
+    "CT_PEAKER": "NG",
+    "ST_CHP": "NG",
+    "ST_GAS": "NG",
+    "OTHER_FOSSIL": "NG",
+    "nuclear": "NUC",
+    "hydro": "WAT",
+    "solar": "SUN",
+    "wind": "WND",
+    "OTHER": "OTH",
+    "biomass": "OTH",
+    "oil": "OTH",
+}
+
+# EIA-930 pool-frame columns summed into each family's footprint series.
+_NWPP_PLANT_BASIS_FAMILY_COLUMNS: dict[str, tuple[str, ...]] = {
+    "COL": ("NG: COL",),
+    "NG": ("NG: NG",),
+    "NUC": ("NG: NUC",),
+    "WAT": ("NG: WAT",),
+    "SUN": ("NG: SUN",),
+    "WND": ("NG: WND",),
+    "OTH": ("NG: OTH", "NG: OIL"),
+}
+
+
+# Families whose benchmark IS the EIA-930 series (the variable renewables:
+# ``render_calibration_html`` routes wind / solar ``classFull`` to the EIA-930
+# grid series via ``actuals_source``), so the two bases are the same number
+# and the anchor leaves them untouched. Skipping them also keeps the raw
+# ``NG: WND`` column's unit-slip spikes (e.g. +1,087,589 MW at 2019 h3204) out
+# of any hourly shape.
+_NWPP_PLANT_BASIS_EIA930_NATIVE: frozenset[str] = frozenset({"SUN", "WND"})
+
+
+class NwppPlantBasisUnavailableError(ValueError):
+    """The plant-basis anchor is armed for a year the artifact does not carry."""
+
+
+def _nwpp_plant_basis_energy(year: int) -> dict[str, float]:
+    """Return ``{family: MWh}`` for ``year`` from the committed plant-basis artifact.
+
+    Raises :class:`NwppPlantBasisUnavailableError` when the file or the year
+    is absent — an armed run never silently falls back to the EIA-930 basis.
+    """
+    path = NWPP_PLANT_BASIS_ENERGY_PATH
+    if not path.exists():
+        raise NwppPlantBasisUnavailableError(f"{path} missing")
+    table = pd.read_csv(path)
+    rows = table[table["year"] == int(year)]
+    if rows.empty:
+        raise NwppPlantBasisUnavailableError(
+            f"{path.name} carries no row for {year} "
+            "(scripts/data/derive_nwpp_plant_basis_energy.py)"
+        )
+    return {str(f): float(t) * 1e6 for f, t in zip(rows["family"], rows["twh"])}
+
+
+def nwpp_plant_basis_correction(
+    year: int, frame: pd.DataFrame, grid_sw: np.ndarray
+) -> np.ndarray:
+    """Return the hourly MW that moves the served schedule onto the plant basis.
+
+    Owner ruling on ``FINDING-nwpp-45`` §8 = **framing 2** (session NWPP-NEXT-3,
+    2026-09-25): anchor the requirement to the plant basis C1 scores on —
+    **EIA-930 hourly shape, EIA-923 plant energy**. The NWPP-20 served schedule
+    makes the requirement the footprint's EIA-930 net generation
+    (``Σ₁₇ NG_adj − GRID's Southwest legs``); EIA-930 under-books the fossil
+    output of the footprint's own plants (BPAT / PGE / PACW / PSEI / PACE gas at
+    0.53–0.94 of CEMS against 0.95–1.03 in the control BAs, ``FINDING-nwpp-47``
+    §3), while the model's non-thermal supply and the benchmark are on the
+    EIA-923 basis. Per EIA-930 fuel family ``f`` the footprint series is
+    ``S_f`` (``NG: <f>``; for ``NG`` less ``grid_sw``, GRID's Southwest gas
+    legs; ``OTH`` = ``NG: OTH`` + ``NG: OIL``) and the correction is::
+
+        Δ_f[t] = (E_f − Σ_t S_f) · max(S_f[t], 0) / Σ_t max(S_f, 0)
+
+    with ``E_f`` the family's annual plant-basis energy from
+    :data:`NWPP_PLANT_BASIS_ENERGY_PATH`. Each family's annual energy lands on
+    its plant-basis total while keeping the EIA-930 hourly shape. A family
+    with no artifact row for ``year`` (on a preliminary EIA-923 vintage the
+    derive script writes only the bench's repaired fossil families) is left
+    on EIA-930. Wind and
+    solar are skipped (:data:`_NWPP_PLANT_BASIS_EIA930_NATIVE`: their
+    benchmark is the EIA-930 series itself); ``NG: BAT`` is untouched (no
+    plant-basis row). Negative hours (unit-slip prints) get no share of the
+    correction. Returned as
+    ``Σ_f Δ_f`` (export-positive, i.e. added to what the fleet serves).
+    Zero free parameters: every term is a measured series or a measured total.
+    """
+    energy = _nwpp_plant_basis_energy(year)
+    unknown = sorted(set(energy) - set(_NWPP_PLANT_BASIS_FAMILY_COLUMNS))
+    if unknown:
+        raise NwppPlantBasisUnavailableError(
+            f"{NWPP_PLANT_BASIS_ENERGY_PATH.name} {year}: unknown families {unknown}"
+        )
+    correction = np.zeros(len(frame), dtype=float)
+    for fam, target in energy.items():
+        if fam in _NWPP_PLANT_BASIS_EIA930_NATIVE:
+            continue
+        cols = _NWPP_PLANT_BASIS_FAMILY_COLUMNS[fam]
+        missing = [c for c in cols if c not in frame.columns]
+        if missing:
+            raise NwppPlantBasisUnavailableError(
+                f"NWPP {year} pool frame lacks {missing} for family {fam}"
+            )
+        series = sum(frame[c].fillna(0.0).to_numpy(dtype=float) for c in cols)
+        if fam == "NG":
+            series = series - grid_sw
+        shape = np.clip(series, 0.0, None)
+        if shape.sum() <= 0.0:
+            raise NwppPlantBasisUnavailableError(
+                f"NWPP {year}: family {fam} has no positive EIA-930 hours"
+            )
+        gap = target - float(series.sum())
+        correction += gap * shape / float(shape.sum())
+        logger.info(
+            "NWPP %d plant-basis anchor %s: EIA-930 %.3f TWh -> plant basis "
+            "%.3f TWh (%+.3f)",
+            year,
+            fam,
+            float(series.sum()) / 1e6,
+            target / 1e6,
+            gap / 1e6,
+        )
+    return correction
+
+
 def nwpp_net_interchange(
-    year: int, *, grid_carried_wind_served: bool = False
+    year: int,
+    *,
+    grid_carried_wind_served: bool = False,
+    plant_basis: bool = False,
 ) -> np.ndarray | None:
     """Return the NWPP footprint's hourly net export (MW, export-positive), or ``None``.
 
@@ -1940,6 +2089,12 @@ def nwpp_net_interchange(
     carried wind is added back, so the requirement serves the export of every
     resource the supply carries. Zero free parameters: one measured series,
     already in the pool frame. Off, the return is byte-identical.
+    ``plant_basis`` (``ScenarioConfig.nwpp_demand_plant_basis``, GATED
+    default off; session NWPP-NEXT-3, owner ruling framing 2 on
+    ``FINDING-nwpp-45`` §8): add :func:`nwpp_plant_basis_correction`, which
+    moves each EIA-930 fuel family's annual energy onto the EIA-923 plant
+    basis while keeping its EIA-930 hourly shape. Requires
+    ``grid_carried_wind_served``. Off, the return is byte-identical.
     ``None`` when the pool frame for ``year`` is unavailable.
     """
     frame = _eia_hourly_frame_filled("NWPP", year)
@@ -1951,6 +2106,14 @@ def nwpp_net_interchange(
     grid_sw = _nwpp_grid_external_legs(year, pd.DatetimeIndex(frame["UTC time"]))
     if grid_carried_wind_served:
         grid_sw = grid_sw - _nwpp_grid_pool_carried_wind(year)
+    if plant_basis:
+        if not grid_carried_wind_served:
+            # The anchor books every remaining Southwest leg to the gas family;
+            # that attribution holds only once the wind leg is served.
+            raise ValueError(
+                "nwpp_demand_plant_basis requires nwpp_grid_carried_wind_served"
+            )
+        return position - grid_sw + nwpp_plant_basis_correction(year, frame, grid_sw)
     return position - grid_sw
 
 
