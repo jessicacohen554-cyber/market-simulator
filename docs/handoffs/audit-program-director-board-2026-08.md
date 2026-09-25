@@ -1,5 +1,22 @@
 # Model Audit Program — Director Status Board (2026-08)
 
+> # 🟡 **SIX OWNER RULINGS ON THE Y-29 / Y-30 CARDS — AND CARD 1 IS REVERSED: BRANCH PROTECTION STAYS OFF** — DIRECTOR RECORDS **v43**, sitting **2026-09-25**, director branch `claude/vibrant-galileo-fatfnh`. **`Y-31` chartered and dispatched to execute rulings R-BA … R-BE.**
+>
+> | id | card | ruling (owner, 2026-09-25) | executed by |
+> |---|---|---|---|
+> | **R-BA** | Y-30 §2.3: scope2 vendored-parity test | **Approve removal.** `TestVendoredParityScope2` deleted; dead `/scope2-lce-portfolio/` sparse-cone line dropped from `ci.yml` + `perf-a-ci-probe.yml`; pointer doc marked REMOVED | director, this sitting |
+> | **R-BB** | Y-29 §2: `2026-09-20-soco53g-prb-own-iso` | **Decline + prune** (rule 31 trigger (i)); clears SOCO E13 | `Y-31` |
+> | **R-BC** | Y-29 §1.3: NYISO `complete` on a NOT-YET keeper | **Apply Q5: withdraw** NYISO's `complete` entry; NYISO gate-(a) leg → fail | `Y-31` |
+> | **R-BD** | Y-29 §1.2: SPP gate-(a) leg fail → pass | **Confirmed** as Y-29 landed it | nothing owed |
+> | **R-BE** | Y-29 §4: three held test edits | **Approve all three** (nine-keeper parity set; SOCO/NWPP price-unscored class test; ff-readiness keeper ids read from the shards + SPP in the `complete` set) | `Y-31` |
+> | **R-BF** | Y-29 §6: promotion-completeness check | **Build it, gating**: `scripts/check_promotion_completeness.py` as a CI job that FAILS a PR changing an ISO's keeper unless the same PR re-keys gate (a) + `complete`, shows 0 FR-22 unaccounted and passes E13 for that ISO; added to the calibration-report skill's promotion checklist | `Y-31` |
+> | **R-BG** | **Card 1 — branch protection** | **KEEP OFF.** This **reverses** the 2026-09-06 ruling ("flip now, checks required, strict OFF"). `main` stays `protected: false`; every CI job, R-BF's included, is advisory in effect. **The series' "protected: false" reading count is CLOSED at 32**: it is no longer an open item, and later records do not re-raise it unless the owner reopens it. | recorded |
+>
+> **Consequence stated, not argued:** with R-BG, R-BF "gating" means a red CI job on the promoting PR, not a blocked merge. What stops promotion debt from piling up now is the promoter reading its own PR's red. G2 leg 4 (the flip) is therefore **withdrawn** as a G2 condition until the owner reopens it.
+>
+> ---
+>
+
 > # 🔴 **SEVENTEEN DAYS DARK: THE REQUIRED SET IS 2 OF 7 — THE DEFAULT CACHE KEY HAS MOVED, SIX SOLVE-SURFACE PINS HAVE MOVED, AND EVERY KEEPER-PROVENANCE GATE IS RED ON PROMOTION DEBT** — DIRECTOR REFRESH **v42**, sitting **2026-09-24 ~15:30Z**, pin **`40f4ed7a`** (`main` tip, merge of PR #6550). Director branch `claude/vibrant-galileo-fatfnh`. **Three lanes chartered and dispatched: `Y-28` (cache-key + solve-surface identity), `Y-29` (keeper-promotion provenance debt), `Y-30` (mechanical reds).** 🔴 **READING 31: `main` still `protected: false`.**
 >
 > **Records + dispatch.** No solve, no scoring, no registration, no keeper shard, no

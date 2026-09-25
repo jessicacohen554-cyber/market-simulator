@@ -7671,3 +7671,9 @@ your branch when done.
     promotion owes its gate-(a) re-key, `calibration-complete.json` re-key and golden-manifest
     partition in the same PR — Y-29 is asked to propose making `audit_keepers` / the
     calibration-report skill check this at promotion time so the debt stops accruing.
+- 2026-09-25 — **DIRECTOR RECORDS v43 — six owner rulings on the Y-29/Y-30 cards (R-BA … R-BG).**
+  R-BA scope2 parity test removed (director). R-BB decline+prune `soco53g`; R-BC apply Q5 and
+  withdraw NYISO `complete`; R-BE approve the three held test edits; R-BF build
+  `check_promotion_completeness.py` as a gating CI job — all four executed by **Y-31**. R-BD SPP
+  gate-(a) pass confirmed. **R-BG: branch protection KEPT OFF, reversing Card 1 (2026-09-06).**
+  G2 leg 4 is withdrawn as a gate condition until the owner reopens it; CI stays advisory.
