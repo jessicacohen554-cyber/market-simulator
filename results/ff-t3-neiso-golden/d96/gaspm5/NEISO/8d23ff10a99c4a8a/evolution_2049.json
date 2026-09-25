@@ -1,0 +1,117 @@
+{
+  "adequacy_requirement_mw": 33334.631,
+  "announced_derates": [],
+  "bridge": false,
+  "capacity_reserve_position": 1.005347,
+  "ccs_retrofits": [],
+  "confirmed_derates": [],
+  "entry_decided_mw_by_tech": {
+    "solar": 1089.4,
+    "wind": 712.6
+  },
+  "entry_pipeline": [
+    {
+      "cod_year": 2051,
+      "decision_year": 2049,
+      "event": "decided",
+      "kind": "vre",
+      "mw": 712.6,
+      "seq": 0,
+      "tech": "wind",
+      "zone": "North"
+    },
+    {
+      "cod_year": 2051,
+      "decision_year": 2049,
+      "event": "decided",
+      "kind": "vre",
+      "mw": 1089.4,
+      "seq": 1,
+      "tech": "solar",
+      "zone": "Connecticut"
+    },
+    {
+      "cod_year": 2049,
+      "decision_year": 2047,
+      "event": "commissioned",
+      "kind": "vre",
+      "mw": 712.6,
+      "seq": 0,
+      "tech": "wind",
+      "zone": "North"
+    },
+    {
+      "cod_year": 2049,
+      "decision_year": 2047,
+      "event": "commissioned",
+      "kind": "vre",
+      "mw": 1089.4,
+      "seq": 1,
+      "tech": "solar",
+      "zone": "Connecticut"
+    }
+  ],
+  "firm_clean_accredited_mw": 1396.472,
+  "firm_clean_mw": 1899.5,
+  "fleet_by_fuel_after": {
+    "biomass": 1047.2,
+    "gas_cc": 7924.03348,
+    "gas_cc_ccs": 2273.22469,
+    "gas_ct": 3786.202936,
+    "gas_st": 63.61,
+    "nuclear": 3355.4,
+    "oil": 5083.6
+  },
+  "fleet_by_fuel_before": {
+    "biomass": 1047.2,
+    "gas_cc": 7924.03348,
+    "gas_cc_ccs": 2273.22469,
+    "gas_ct": 3786.202936,
+    "gas_st": 63.61,
+    "nuclear": 3355.4,
+    "oil": 5083.6
+  },
+  "floor_retained": [],
+  "hindcast": false,
+  "iso": "NEISO",
+  "ledger_version": 1,
+  "locality_capacity": [],
+  "mode": "forecast",
+  "peak_demand_mw": 32407.55,
+  "pipeline_events": [],
+  "renewable_additions": [
+    {
+      "mw": 712.6,
+      "tech": "wind",
+      "zone": "North"
+    },
+    {
+      "mw": 1089.4,
+      "tech": "solar",
+      "zone": "Connecticut"
+    }
+  ],
+  "renewable_credit_applied": {
+    "solar": 0.18,
+    "wind": 0.16
+  },
+  "reserve_margin": 0.043676,
+  "retirements": [],
+  "rps_dual": 50.0,
+  "screen_adequacy_requirement_mw": 33334.631,
+  "screen_entering_firm_mw": 33512.878,
+  "screen_peak_demand_mw": 32407.55,
+  "screen_reserve_position": 1.005347,
+  "solar_cap_mw": 23789.4,
+  "solve_counts": {
+    "P0": 1,
+    "P1": 1,
+    "P2": 0
+  },
+  "storage_additions": [],
+  "storage_firm_mw": 2263.825,
+  "storage_power_mw": 2635.0,
+  "thermal_additions": [],
+  "wind_cap_mw": 12112.6,
+  "year": 2049
+}
