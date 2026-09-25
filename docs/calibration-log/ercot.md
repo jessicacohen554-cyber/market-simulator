@@ -14645,3 +14645,20 @@ The owner asked for both follow-ups ("Both").
 Matrix cell `measured_chp_heat_rates` K → O, pending the owner ruling. **Recommendation: promote the CHP-off run.**
 
 Record: `docs/handoffs/RESULT-r-ercot-2-dam-backyears-chp-test-2026-09-25.md`.
+
+## R-ERCOT-3 — 2026-09-25 — promotion
+
+The owner ruled **"Promote, prune fallback"** on the R-ERCOT-2 question.
+
+- **Keeper:** `2026-09-25-r-ercot2-chp-off` (2019–2025, bundle `results/calibration/r_ercot2_chpoff_span`), superseding `2026-09-24-r-inputs-2019-2025`.
+- **Rule 35(b):** the ERCOT year union was read from all three sidecars before the prune: {2019..2025}. The incoming keeper covers all seven years.
+- **Re-verified from committed artifacts, no solve:**
+  - {2024, 2025}: CALIBRATED.
+  - {2023}: CALIBRATED (C3b 0.137, C3a −3.7 %).
+  - Train tier {2023–2025}: **CALIBRATED**.
+  - Validation, non-gating: 2022 CALIBRATED; 2021 / 2020 / 2019 NOT-YET.
+- **Re-keyed:** `keepers/ERCOT.json` (with an `r_ercot2_extension` block) and `calibration-complete.json`. `status/ERCOT.js` was rebuilt.
+- **Pruned (three stores each):** `2026-09-24-r-inputs-2019-2025` and the fallback `2026-09-24-r-ercot2-dam-restored`. `audit_keepers --iso ERCOT` reads 0 / 0.
+- **Matrix:** `measured_chp_heat_rates` O → **R** on ERCOT's bin path; the shard and the §5.1 header are re-stamped.
+
+**ERCOT's headline moves NOT-YET → CALIBRATED.** The frontier declarations stay in `frontier_history`, because the owner did not ask to re-declare them.
