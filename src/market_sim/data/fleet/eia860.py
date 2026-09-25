@@ -446,15 +446,42 @@ def _assign_zones(
     else:
         fallback_zone = iso
 
+    # PJM-NEXT fleet_zone_vintage_coords (GATED default-off; set per solve by
+    # zone_assignment.set_fleet_zone_vintage_coords): before the fallback, a
+    # plant eGRID 2023 lacks is zoned from the ACTIVE EIA-860 vintage's own
+    # plant coordinates. Fallback branch only — an eGRID-placed plant is never
+    # re-zoned; empty dict (byte-identical) while off.
+    from market_sim.data.zone_assignment import (
+        fleet_zone_vintage_coords_active,
+        vintage_coords_zone_lookup,
+    )
+
+    vintage_lookup = (
+        vintage_coords_zone_lookup(iso) if fleet_zone_vintage_coords_active() else {}
+    )
+
     zones: list[str] = []
     missing = 0
+    vintage_placed = 0
     for rec in records:
         oris = _record_oris(rec)
         zone = zone_lookup.get(oris) if oris is not None else None
+        if zone is None and oris is not None and oris in vintage_lookup:
+            zone = vintage_lookup[oris]
+            vintage_placed += 1
         if zone is None:
             zone = fallback_zone
             missing += 1
         zones.append(zone)
+
+    if vintage_placed:
+        logger.info(
+            "fleet_zone_vintage_coords (%s): %d of %d generators absent from the "
+            "eGRID lookup zoned from the active EIA-860 vintage's coordinates",
+            iso,
+            vintage_placed,
+            len(records),
+        )
 
     if missing:
         logger.warning(

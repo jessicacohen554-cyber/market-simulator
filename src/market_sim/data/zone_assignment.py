@@ -1274,8 +1274,13 @@ _EIA860_SUPPLEMENT_ISOS: frozenset[str] = frozenset(
 )
 
 
-def _eia860_ba_zones(iso: str) -> dict[int, str]:
+def _eia860_ba_zones(iso: str, plant_path: "Path | None" = None) -> dict[int, str]:
     """Return ``{oris: zone}`` for the ISO's plants from the EIA-860 plant file.
+
+    ``plant_path`` (default the canonical :data:`_EIA860_PLANT_PATH`) selects
+    which EIA-860 plant file is read; :func:`vintage_coords_zone_lookup` passes
+    the ACTIVE vintage's own file so a plant that exists only in a historical
+    vintage is zoned by the same rule (PJM-NEXT, ``fleet_zone_vintage_coords``).
 
     The EIA-860 plant file carries current latitude/longitude and
     balancing-authority codes, so it covers plants too new for the eGRID
@@ -1295,9 +1300,10 @@ def _eia860_ba_zones(iso: str) -> dict[int, str]:
 
     Returns an empty dict when the EIA-860 plant file is unavailable.
     """
-    if not _EIA860_PLANT_PATH.exists():
+    plant_path = _EIA860_PLANT_PATH if plant_path is None else Path(plant_path)
+    if not plant_path.exists():
         return {}
-    df = pd.read_parquet(_EIA860_PLANT_PATH)
+    df = pd.read_parquet(plant_path)
     ba = df["Balancing Authority Code"].astype(str).str.strip()
     if iso == "NWPP":
         # Whole-BA zoning (gate G18) under the footprint admission predicate
@@ -1342,6 +1348,65 @@ def _eia860_ba_zones(iso: str) -> dict[int, str]:
             continue
         out[oris] = _zone_from_location(iso, float(lat), float(lon), None, None)
     return out
+
+
+# PJM-NEXT (2026-09-25) ``ScenarioConfig.fleet_zone_vintage_coords`` — the
+# process-wide switch, set ONCE per solve at the two config seams
+# (``scripts/run_calibration.py::run_year`` and ``runner.py``), the
+# ``config.topology_variant`` / ``paths.set_eia860_vintage`` pattern. Plumbing,
+# never a knob: the registered ScenarioConfig field is the source of truth.
+_FLEET_ZONE_VINTAGE_COORDS: bool = False
+
+
+def set_fleet_zone_vintage_coords(active: bool) -> None:
+    """Arm/disarm the fleet's active-vintage coordinate zoning for this process.
+
+    Called only from the per-solve config seams with the value of
+    ``ScenarioConfig.fleet_zone_vintage_coords``. Idempotent.
+    """
+    global _FLEET_ZONE_VINTAGE_COORDS
+    _FLEET_ZONE_VINTAGE_COORDS = bool(active)
+
+
+def fleet_zone_vintage_coords_active() -> bool:
+    """Return True when the fleet's active-vintage coordinate zoning is armed."""
+    return _FLEET_ZONE_VINTAGE_COORDS
+
+
+@lru_cache(maxsize=32)
+def _vintage_coords_zone_lookup_cached(iso: str, plant_path: str) -> dict[int, str]:
+    """Cache-bearing core of :func:`vintage_coords_zone_lookup`."""
+    return _eia860_ba_zones(iso, Path(plant_path))
+
+
+def vintage_coords_zone_lookup(iso: str) -> dict[int, str]:
+    """``{oris: zone}`` from the ACTIVE EIA-860 vintage's own plant coordinates.
+
+    THE DEFECT (PJM-NEXT phase 0, 2026-09-25, zero LP). The fleet zones each
+    plant from the eGRID-2023 lookup, and a plant eGRID 2023 lacks falls to the
+    ISO's pinned default zone. For PJM — which is not in
+    :data:`_EIA860_SUPPLEMENT_ISOS` — every plant that retired before eGRID
+    2023's year lands in ``PJM_AEP_Ohio`` whatever its real location: under
+    ``eia860_vintage_tracks_solve_year`` the keeper's own 2019-2021 fleets carry
+    2.9-3.8 GW so mis-zoned (Will County -> ComEd, Cheswick -> West_APS, Avon
+    Lake -> ATSI, Chambers/Logan -> EMAAC), and ``mid_vintage_exit_carry``'s
+    2019-2022 rows would add up to 4.8 GW more. The solved year's OWN EIA-860
+    plant file carries each such plant's latitude/longitude and BA code, so it
+    is zoned here by the same coordinate rule the supplement applies (PJM's
+    coords-only branch borrows the nearest eGRID PJM plant's FIPS, 98.3 %
+    leave-one-out agreement).
+
+    Consulted ONLY in the fleet's fallback branch (:func:`market_sim.data.fleet.
+    eia860._assign_zones`), after the eGRID/supplement lookup has missed: it
+    never re-zones a plant eGRID places and never changes membership (the
+    benchmark's population is ``build_zone_lookup``'s keys, untouched here).
+    Zero free parameters (rule 21): EIA's own published coordinates through the
+    existing zone rules. Returns an empty dict when the plant file is absent.
+    """
+    from market_sim.config.paths import active_eia860_dir
+
+    path = active_eia860_dir() / _EIA860_PLANT_PATH.name
+    return dict(_vintage_coords_zone_lookup_cached(iso.upper(), str(path)))
 
 
 def plant_state_lookup(iso: str) -> dict[int, str]:
