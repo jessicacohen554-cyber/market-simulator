@@ -105,6 +105,7 @@ from market_sim.data.fuel import (  # noqa: E402
     apply_miso_zonal_gas_basis,
     apply_nyiso_downstate_ct_gas_basis,
     apply_nyiso_downstate_ct_gas_daily,
+    apply_nyiso_ldc_generator_delivered_gas,
     apply_nyiso_zonal_gas_basis,
     apply_pjm_zonal_gas_basis,
     apply_plant_monthly_fuel_prices,
@@ -4621,6 +4622,11 @@ def run_year(
     # oil-parity min. No-op unless nyiso_downstate_ct_gas_daily is set (NYISO
     # only). See fuel.apply_nyiso_downstate_ct_gas_daily.
     apply_nyiso_downstate_ct_gas_daily(fuel_prices, fleet_arrays, config, year)
+    # NYC gas-steam LDC delivery leg (NYISO-STGAS-2023): add each crosswalked
+    # NYC ST_GAS plant's LDC line-loss gross-up + filed transport rate on top of
+    # the hub the overlays above set. Same order: before the dual-fuel oil-parity
+    # min. No-op unless nyiso_ldc_generator_delivered_gas is set (NYISO only).
+    apply_nyiso_ldc_generator_delivered_gas(fuel_prices, fleet_arrays, config, year)
     # ERCOT per-zone gas-hub basis: shift each gas unit to its zone's measured
     # regional hub (Waha-cheap West/Permian, dearer North/East-Texas and South)
     # so the merit order stops over-running DFW/North CCs on flat Waha-discounted

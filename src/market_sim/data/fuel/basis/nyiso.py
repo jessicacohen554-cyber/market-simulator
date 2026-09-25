@@ -692,3 +692,168 @@ def apply_nyiso_downstate_ct_gas_daily(
         float(hi),
         list(by_zone),
     )
+
+
+# NYISO LDC-served GENERATOR delivery leg (nyiso_ldc_generator_delivered_gas;
+# NYISO-STGAS-2023, 2026-09-25). The model prices every NYISO gas unit at a
+# pipeline hub (the COMMODITY), which omits the delivery charge an LDC-served
+# generator pays its local distribution company to carry that gas from the city
+# gate to the plant (rule 14 [R-ACCURATE]). WHICH plants are LDC-served is read
+# from EIA-860 Schedule 2's published ``Natural Gas LDC Name`` at the ACTIVE
+# vintage — no plant list in code (rule 24). WHAT each LDC charges its
+# power-generation transportation class, and the facility size that class
+# applies from, is the LDC's own filed tariff, one table keyed by that EIA-860
+# LDC name.
+NYISO_LDC_GENERATOR_TRANSPORT_PATH: Path = (
+    GAS_PRICES_DIR / "nyiso_ldc_generator_transport_monthly.csv"
+)
+EIA860_LDC_NAME_COLUMN: str = "Natural Gas LDC Name"
+
+
+class LdcGeneratorTransportDataError(RuntimeError):
+    """An armed LDC delivery leg found no filed rate for a needed month."""
+
+
+def eia860_plant_gas_ldc(plant_codes: "np.ndarray | list[int]") -> dict[int, str]:
+    """Return ``{plant_code: EIA-860 Natural Gas LDC Name}`` at the active vintage.
+
+    Reads ``eia860_plant.parquet`` from :func:`market_sim.config.paths.
+    active_eia860_dir` (the year-matched vintage under
+    ``eia860_vintage_tracks_solve_year``, else the canonical release). Plants
+    with no LDC (pipeline-connected, or not a gas plant) are omitted.
+    """
+    from market_sim.config.paths import active_eia860_dir
+
+    path = active_eia860_dir() / "eia860_plant.parquet"
+    frame = pd.read_parquet(path, columns=["Plant Code", EIA860_LDC_NAME_COLUMN])
+    codes = {int(c) for c in plant_codes}
+    frame = frame[frame["Plant Code"].isin(codes)].dropna(
+        subset=[EIA860_LDC_NAME_COLUMN]
+    )
+    return {
+        int(r["Plant Code"]): str(r[EIA860_LDC_NAME_COLUMN]).strip().upper()
+        for _, r in frame.iterrows()
+    }
+
+
+def ldc_generator_transport_monthly(
+    year: int, path: Path | None = None
+) -> dict[str, tuple[np.ndarray, np.ndarray, float]]:
+    """Return ``{EIA-860 LDC name: (loss_factor[12], transport_usd_mmbtu[12], min_plant_mw)}``.
+
+    Read from :data:`NYISO_LDC_GENERATOR_TRANSPORT_PATH` — each LDC's filed
+    power-generation transportation rate, its loss allowance as a multiplicative
+    factor on the commodity, and the facility rating the class applies from, one
+    row per (LDC, year, month). An LDC with no row for ``year`` is absent.
+
+    Raises :class:`LdcGeneratorTransportDataError` when an LDC carries some
+    months of ``year`` but not all twelve (a partial year is never filled).
+    """
+    table = pd.read_csv(path or NYISO_LDC_GENERATOR_TRANSPORT_PATH)
+    table = table[table["year"] == year]
+    out: dict[str, tuple[np.ndarray, np.ndarray, float]] = {}
+    for ldc, grp in table.groupby("ldc_eia860_name"):
+        g = grp.set_index("month")
+        loss = g["loss_factor"].reindex(range(1, 13)).to_numpy(dtype=float)
+        rate = g["transport_usd_per_mmbtu"].reindex(range(1, 13)).to_numpy(dtype=float)
+        if np.isnan(loss).any() or np.isnan(rate).any():
+            raise LdcGeneratorTransportDataError(
+                f"nyiso_ldc_generator_delivered_gas {year}: {ldc} has a filed "
+                "transport rate for only part of the year"
+            )
+        out[str(ldc).strip().upper()] = (loss, rate, float(g["min_plant_mw"].max()))
+    return out
+
+
+def apply_nyiso_ldc_generator_delivered_gas(
+    fuel_prices: np.ndarray,
+    fleet: FleetArrays,
+    config: ScenarioConfig,
+    year: int,
+) -> None:
+    """Add the filed LDC delivery charge to LDC-served generators' hub gas price.
+
+    The model prices a NYISO gas unit at its zone's pipeline hub — the
+    commodity — through :func:`apply_nyiso_zonal_gas_basis` and the daily hub
+    overlay. A generator EIA-860 records as LDC-served also pays that LDC's
+    power-generation transportation charge to carry the gas from the city gate
+    (rule 14 [R-ACCURATE]). For every gas row (other than ``CT_PEAKER``) at a
+    plant whose EIA-860 LDC has a filed rate in
+    :data:`NYISO_LDC_GENERATOR_TRANSPORT_PATH`, and whose model capacity meets
+    that class's filed facility threshold, this sets
+
+        delivered[h] = hub[h] x loss_factor[month] + transport[month]
+
+    i.e. the commodity grossed up by the filed loss allowance plus the filed
+    volumetric transport charge. It is an ADDITIVE delivery leg on the hub the
+    other overlays set, not a second hub (rule 19 [R-ONE-MECH]: the zonal basis
+    owns the commodity, this owns the delivery); ``CT_PEAKER`` rows are left to
+    :func:`apply_nyiso_downstate_ct_gas_daily`, which already SETS their
+    delivered price, so nothing is counted twice. Population by the unit's
+    published LDC and the tariff's own size criterion, never by a class list
+    (the rule 18 [R-PHYSICS] discipline). Pipeline-connected plants (no EIA-860
+    LDC) and LDCs with no intaken tariff are untouched: a stated scope limit.
+    Zero free parameters (rules 21 / 24); forward-native (rule 13).
+
+    Runs after :func:`apply_nyiso_downstate_ct_gas_daily` and before the
+    dual-fuel oil-parity min, so oil parity still caps any winter spike. Gated
+    on ``config.nyiso_ldc_generator_delivered_gas`` and ``config.iso ==
+    "NYISO"`` (off by default), so every other ISO and every run without the
+    flag is byte-identical. Raises :class:`LdcGeneratorTransportDataError` if
+    armed on a year with no filed rate for an intaken LDC that serves a model
+    plant. Mutates ``fuel_prices`` in place.
+    """
+    if not getattr(config, "nyiso_ldc_generator_delivered_gas", False):
+        return
+    if config.iso != "NYISO":
+        return
+    if fleet.plant_group is None:
+        return
+    plant_group = np.asarray(fleet.plant_group)
+    is_gas = np.isin(fleet.fuel_type_idx, _GAS_FUEL_IDX) & (plant_group != "CT_PEAKER")
+    codes = np.asarray(fleet.plant_code).astype(int)
+    pmax = np.asarray(fleet.pmax, dtype=float)
+    plant_ldc = eia860_plant_gas_ldc(np.unique(codes[is_gas]))
+    table_ldcs = set(
+        pd.read_csv(NYISO_LDC_GENERATOR_TRANSPORT_PATH)["ldc_eia860_name"]
+        .astype(str)
+        .str.strip()
+        .str.upper()
+    )
+    served = {p: ldc for p, ldc in plant_ldc.items() if ldc in table_ldcs}
+    if not served:
+        return
+    legs = ldc_generator_transport_monthly(year)
+    month_of_hour = _month_index(fuel_prices.shape[1])
+    n_rows = 0
+    plants_hit: list[int] = []
+    adds: list[float] = []
+    for plant, ldc in sorted(served.items()):
+        if ldc not in legs:
+            raise LdcGeneratorTransportDataError(
+                f"nyiso_ldc_generator_delivered_gas {year}: plant {plant} is served "
+                f"by {ldc}, which has no filed transport rate for {year}"
+            )
+        loss, rate, min_mw = legs[ldc]
+        if float(pmax[codes == plant].sum()) < min_mw:
+            continue  # below the class's filed facility rating
+        rows = np.nonzero(is_gas & (codes == plant))[0]
+        before = fuel_prices[rows, :].copy()
+        fuel_prices[rows, :] = np.maximum(
+            before * loss[month_of_hour][np.newaxis, :]
+            + rate[month_of_hour][np.newaxis, :],
+            _GAS_PRICE_FLOOR,
+        )
+        adds.append(float((fuel_prices[rows, :] - before).mean()))
+        plants_hit.append(plant)
+        n_rows += int(rows.size)
+    if n_rows == 0:
+        return
+    logger.info(
+        "NYISO LDC generator delivery leg (%d): %d gas unit rows at plants %s "
+        "lifted by hub x filed loss + filed LDC transport (mean add %.3f $/MMBtu)",
+        year,
+        n_rows,
+        plants_hit,
+        float(np.mean(adds)),
+    )
