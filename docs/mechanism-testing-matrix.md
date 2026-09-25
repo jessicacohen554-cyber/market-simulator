@@ -17973,6 +17973,37 @@ cause of the rung's C3a 2020 / C3b 2020–2022 failures, and with demand (SPP-72
   `scuc_load_pocket_commitment`) stay `U`, but a successor proposing any of them for C3a/C3b
   must first beat this bound.
 
+**DO-NOT-REDO, added by SPP-82 (2026-09-25, THE +7.5 GW "OFFERED BUT NOT SETTING PRICE", ZERO LP —
+`docs/handoffs/FINDING-spp-82-offered-not-setting-2026-09-25.md`).** **The owner is offline,
+available, UNCOMMITTED capacity. It is a commitment state, and no admissible representation exists
+today.**
+- **No resource-level join exists.** No public SPP product carries a masked RCode except the offer
+  files. The `0_`/`1_` prefix is not a status flag. The full portal product list was surveyed.
+  **Do not re-survey without a new product.**
+- **The aggregate split works.** The RTBM offer file lists every resource, offline included. On
+  SPP-81b's exact sample, the floor on offline ≥ $10 MW below MEC (B10 − SPP's published online
+  thermal capacity) rises **7.5 / 8.2 → 15.8 / 15.6 GW** (2019 / 20 → 2023 / 24). Over the same
+  pairs:
+  - online thermal capacity is flat (31.9 / 31.4 → 30.7 / 31.2 GW);
+  - online headroom rises only +0.7 GW;
+  - thermal generation falls 1.4 GW;
+  - outage is flat.
+
+  The split is (c) offline ≈ +8 GW, i.e. all of the step (rigorous worst case ≥ +2.3 GW); (b) online
+  at limit ≤ +0.7; (a) dispatched fell.
+- **Five-minute ramp spikes carry ~8–10 %** (mean − median MEC +$1.5; position at the interval median
+  still +0.125 / +0.136). **The step also appears in DA's own upper tercile** (per MMBtu 13.6 / 12.0 →
+  15.5 / 15.0), so it is not an RT-only object.
+- **Rule 13 closes the obvious lever.** Pinning the LP to SPP's measured online capacity feeds back a
+  commitment OUTCOME and is forbidden. The admissible form is a commitment-state structure with
+  measured per-class commitment costs, which SPP does not publish (SPP-73). The commitment bridges
+  stay **R**; they also have the wrong sign, since they force MW on rather than taking cheap
+  offline MW out of the price-setting stack.
+- **SPP-79's constraint stands: a body lever alone breaks 2023–25 C3a.** Re-open only on (i) a
+  published per-class SPP commitment-cost source or (ii) a design lane for commitment state in the
+  LP. The zero-LP successor (the keeper's available ≥ $10 MW vs SPP online `C_th`) is named in the
+  FINDING §7.
+
 **DO-NOT-REDO, added by SPP-81b (2026-09-25, WHO IS MARGINAL IN THE 2023–24 UPPER TERCILE, ZERO LP —
 `docs/handoffs/FINDING-spp-81-upper-tercile-residual-2026-09-25.md`).** SPP-81's second session.
 **The ~3.3 HR has no structural owner. Its owner is UNIDENTIFIED, and it is not a heat rate.**
