@@ -2355,6 +2355,15 @@ def _iso_plant_ids(
         # together. Off for every other ISO: byte-identical.
         base = base - _eia860_current_ba_recoded(iso)
     if year is not None:
+        # R-SOCO-B2 (owner ruling (C), constants.ISO_BA_EXITS): the recode drop
+        # is DATED — a recoded plant still inside the region for part of
+        # ``year`` stays a member (SOCO: the former Gulf Power plants through
+        # 2022; their post-exit hours are cut in _eia923_frame). Empty (no-op)
+        # for every region ISO_BA_EXITS does not name.
+        from market_sim.data.ba_membership import exit_member_plants
+
+        base = base | exit_member_plants(iso, int(year))
+    if year is not None:
         # R-SOCO-B: a joining BA's plants are outside the region before its
         # join year. Empty (no-op) for every region ISO_BA_JOINS does not name.
         outside = {
@@ -2445,6 +2454,26 @@ def _eia923_frame(
             for i, c in enumerate(cols):
                 before = (first > (i + 1)).fillna(False).to_numpy(dtype=bool)
                 df.loc[before, c] = 0.0
+            df.loc[hit, "netgen_annual_mwh"] = df.loc[hit, cols].sum(axis=1)
+    # R-SOCO-B2 (owner ruling (C), hour grain; constants.ISO_BA_EXITS): in an
+    # exiting plant's exit year its months after the split month are zeroed,
+    # the split month keeps the plant's measured in-region share (its own CAMPD
+    # gross load before the exit hour), and its annual is re-summed. Empty map
+    # (no-op) for every region and year ISO_BA_EXITS does not reach.
+    from market_sim.data.ba_membership import ba_exit_month_share
+
+    _exit = ba_exit_month_share(iso, int(year))
+    if _exit:
+        split = df["plant_id"].map({p: m for p, (m, _s) in _exit.items()})
+        share = df["plant_id"].map({p: sh for p, (_m, sh) in _exit.items()})
+        hit = split.notna().to_numpy(dtype=bool)
+        if hit.any():
+            df = df.copy()
+            for i, c in enumerate(cols):
+                after = (split < (i + 1)).fillna(False).to_numpy(dtype=bool)
+                at = (split == (i + 1)).fillna(False).to_numpy(dtype=bool)
+                df.loc[after, c] = 0.0
+                df.loc[at, c] = df.loc[at, c] * share[at]
             df.loc[hit, "netgen_annual_mwh"] = df.loc[hit, cols].sum(axis=1)
     agg = {"netgen_annual_mwh": "sum", **{c: "sum" for c in cols}}
     grouped = df.groupby(["plant_id", "klass"], as_index=False).agg(agg)
