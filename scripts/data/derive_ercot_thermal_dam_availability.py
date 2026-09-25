@@ -412,24 +412,56 @@ def main() -> None:
     ap.add_argument("--out", type=Path, default=DEFAULT_OUT)
     ap.add_argument("--hourly-out", type=Path, default=DEFAULT_HOURLY_OUT)
     ap.add_argument("--site-hourly-out", type=Path, default=DEFAULT_SITE_HOURLY_OUT)
+    ap.add_argument(
+        "--write-years",
+        type=int,
+        nargs="+",
+        default=None,
+        help="MERGE mode: derive over --years (the rating-fallback pool) but "
+        "write only these years' rows, keeping every other year already in the "
+        "outputs byte-frozen. Default (unset) keeps the historical behaviour of "
+        "writing exactly --years, now also MERGED: rows of years outside "
+        "--years are preserved instead of dropped. R-ERCOT-2 (2026-09-25): the "
+        "former full-file REPLACE is how the 2018-2020 back-years recorded in "
+        "calibration-complete.json's intake_log went missing from main.",
+    )
     args = ap.parse_args()
 
+    write_years = [int(y) for y in (args.write_years or args.years)]
     triples = derive_years(list(args.years))
-    out = pd.concat([p[0] for p in triples], ignore_index=True).sort_values(
-        ["date", "class"]
-    )
+
+    def _merge_csv(path: Path, new: pd.DataFrame) -> pd.DataFrame:
+        """Keep existing rows of years not being written; replace the rest."""
+        new = new[new["date"].str[:4].astype(int).isin(write_years)]
+        if not path.exists():
+            return new
+        old = pd.read_csv(path)
+        old = old[~old["date"].astype(str).str[:4].astype(int).isin(write_years)]
+        return pd.concat([old, new], ignore_index=True)
+
+    out = _merge_csv(
+        args.out, pd.concat([p[0] for p in triples], ignore_index=True)
+    ).sort_values(["date", "class"])
     args.out.write_text(out.to_csv(index=False))
-    hourly = pd.concat([p[1] for p in triples], ignore_index=True).sort_values(
-        ["date", "class"]
-    )
+    hourly = _merge_csv(
+        args.hourly_out, pd.concat([p[1] for p in triples], ignore_index=True)
+    ).sort_values(["date", "class"])
     args.hourly_out.write_text(hourly.to_csv(index=False))
-    site_hourly = pd.concat([p[2] for p in triples], ignore_index=True).sort_values(
-        ["date", "class", "site", "he"]
-    )
+    site_hourly = pd.concat([p[2] for p in triples], ignore_index=True)
+    site_hourly = site_hourly[
+        site_hourly["date"].astype(str).str[:4].astype(int).isin(write_years)
+    ]
+    if args.site_hourly_out.exists():
+        old_site = pd.read_parquet(args.site_hourly_out)
+        old_site = old_site[
+            ~old_site["date"].astype(str).str[:4].astype(int).isin(write_years)
+        ]
+        site_hourly = pd.concat([old_site, site_hourly], ignore_index=True)
+    site_hourly = site_hourly.sort_values(["date", "class", "site", "he"])
     args.site_hourly_out.parent.mkdir(parents=True, exist_ok=True)
     site_hourly.to_parquet(args.site_hourly_out, index=False)
     he_cols = [f"he{h:02d}" for h in range(1, 25)]
-    for y in args.years:
+    for y in write_years:
         yr = out[out["date"].str.startswith(str(y))]
         for cls, g in yr.groupby("class"):
             print(
@@ -449,7 +481,7 @@ def main() -> None:
             )
     print(f"wrote {args.out}")
     print(f"wrote {args.hourly_out}")
-    for y in args.years:
+    for y in write_years:
         sy = site_hourly[site_hourly["date"].str.startswith(str(y))]
         print(
             f"{y} site-hour: {len(sy)} rows, "
