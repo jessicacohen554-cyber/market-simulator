@@ -14,9 +14,8 @@ Inherited header (R-MISO): run by each R-MISO shard AFTER its single-year solve 
 HARD checks:
 
 1. **recipe** — the leg's recorded ``scenario_config`` for ``--year`` differs from
-   the keeper's per-year recipe (2019 has no keeper leg: compared against the
-   keeper's 2020 config, validation tier) by EXACTLY :data:`EXPECTED` (the F1
-   backcast defaults + the two outage arms). Year-driven fields
+   the keeper's per-year recipe by EXACTLY :data:`EXPECTED` (miso-271: the
+   two wefor fields for an arm leg, nothing for a control leg). Year-driven fields
    (:data:`YEAR_DRIVEN`) are excluded for 2019 only. A field present only in the
    leg (added after the keeper solved) is allowed only at its dataclass default.
 2. **vintage** — ``resolve_backcast_eia860_vintage`` resolves the solve year and
@@ -32,8 +31,8 @@ minus the committed keeper (2019: no keeper year, skipped).
 
 Usage::
 
-    python scripts/probes/_rmiso_shard_check.py --leg results/calibration/rmiso_2021 \\
-        --year 2021 --log solve_2021.log
+    python scripts/probes/_miso271_shard_check.py --leg results/calibration/miso271_arm_2021 \\
+        --year 2021 --log solve_2021.log --groups CC_REGULAR ST_CHP ST_GAS
 """
 
 from __future__ import annotations
@@ -58,55 +57,6 @@ KEEPER = ROOT / "results/calibration/rmiso_b_span"
 #: Filled by main(): the arm's pre-registered delta (PRECOMMIT §4), empty for --control.
 EXPECTED: dict[str, tuple] = {}
 ARM_GROUPS: list[str] = []  # set from --groups (the PRECOMMIT's G-IDENT scope, sorted)
-YEAR_DRIVEN`) are excluded for 2019 only. A field present only in the
-   leg (added after the keeper solved) is allowed only at its dataclass default.
-2. **vintage** — ``resolve_backcast_eia860_vintage`` resolves the solve year and
-   ``data/raw/eia-860/vintage_<Y>/`` exists for 2019-2024 (2025 reads canonical).
-3. **inputs** — every pinned input file's sha256 equals :data:`INPUT_SHA` (the
-   outage families, the interchange and hub-LMP inputs this lane landed).
-4. **hydro classifier** — same partition sha the keeper solved on.
-5. **log** — the solve log carries each armed mechanism's application line
-   (:data:`LOG_MARKERS`), so no armed flag silently no-opped.
-
-Reported (never a stop): per-class TWh and load-weighted internal price, leg
-minus the committed keeper (2019: no keeper year, skipped).
-
-Usage::
-
-    python scripts/probes/_rmiso_shard_check.py --leg results/calibration/rmiso_2021 \\
-        --year 2021 --log solve_2021.log
-"""
-
-from __future__ import annotations
-
-import argparse
-import dataclasses
-import hashlib
-import json
-import sys
-from pathlib import Path
-
-import pandas as pd
-
-ROOT = Path(__file__).resolve().parents[2]
-for p in (str(ROOT), str(ROOT / "src"), str(Path(__file__).resolve().parent)):
-    if p not in sys.path:
-        sys.path.insert(0, p)
-
-from _hydro5_shard_check import CLASSIFIER_SHA, classifier_sha  # noqa: E402
-
-KEEPER = ROOT / "results/calibration/rmiso_b_span"
-EXPECTED: dict[str, tuple] = {
-    # F1 (#6572) backcast defaults — ON by default in backcast; the keeper
-    # recorded them False (ct / chp were already armed in the keeper).
-    "eia860_vintage_tracks_solve_year": (False, True),
-    "measured_coal_heat_rates": (False, True),
-    "measured_st_heat_rates": (False, True),
-    "measured_cc_heat_rates": (False, True),
-    # The two outage arms (audit §5.3.3).
-    "unit_outage_short_windows_gas": (False, True),
-    "unit_partial_outage_windows": (False, True),
-}
 YEAR_DRIVEN = {"gas_offer_margin_anchor", "gas_price_override", "weather_year", "ordc_mcl_mw", "ordc_voll"}
 INPUT_SHA: dict[str, str] = {
     # Pinned at the PRECOMMIT (docs/PRECOMMIT-rmiso-corrected-inputs-2019-2025-2026-09-24.md §3).
@@ -167,6 +117,16 @@ def check_recipe(leg: Path, year: int) -> bool:
     }
     kyear = year if (KEEPER / f"run_config_{year}.json").exists() else 2020
     a, k = _scenario(leg, year), _scenario(KEEPER, kyear)
+    # COAL-SUB (declared LIVE in PRECOMMIT §3): HEAD folds the keeper's bare
+    # ``COAL`` offer curve away. Tolerated ONLY when it equals ``COAL_BIT`` (the
+    # recipe's own identity), so a real multiplier move still FAILS.
+    kc = dict(k.get("offer_curve_by_group") or {})
+    if "COAL" in kc and "COAL" not in (a.get("offer_curve_by_group") or {}):
+        if kc["COAL"] != kc.get("COAL_BIT"):
+            print("COAL fold: keeper COAL != COAL_BIT -> not tolerated")
+        else:
+            kc.pop("COAL")
+            k = {**k, "offer_curve_by_group": kc}
     skip = YEAR_DRIVEN if kyear != year else set()
     def _n(v):
         return sorted(v) if isinstance(v, (list, tuple, set, frozenset)) else v
