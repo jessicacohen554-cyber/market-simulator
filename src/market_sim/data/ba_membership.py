@@ -158,9 +158,7 @@ def exit_member_plants(iso: str, year: int | None) -> frozenset[int]:
     """
     if year is None:
         return frozenset()
-    return frozenset(
-        p for p, s in ba_exit_stamps(iso).items() if int(year) <= s.year
-    )
+    return frozenset(p for p, s in ba_exit_stamps(iso).items() if int(year) <= s.year)
 
 
 def _region_clock(iso: str, year: int) -> pd.DataFrame | None:
@@ -256,9 +254,7 @@ def _exit_plant_cems(
     for st in states:
         f = CAMPD_UNIT_LEVEL_DIR / f"{st}_{int(year)}.parquet"
         if f.exists():
-            c = pd.read_parquet(
-                f, columns=["facilityId", "date", "hour", "grossLoad"]
-            )
+            c = pd.read_parquet(f, columns=["facilityId", "date", "hour", "grossLoad"])
             c["facilityId"] = pd.to_numeric(c["facilityId"], errors="coerce")
             frames.append(c[c["facilityId"].isin(plants)])
     if not frames:

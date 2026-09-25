@@ -4259,9 +4259,9 @@ def generators_to_fleet_arrays(
                 [_exit.get(int(g.plant_code), hours) for g in generators], dtype=int
             )
             if (last < hours).any():
-                member = (
-                    np.arange(hours)[np.newaxis, :] < last[:, np.newaxis]
-                ).astype(float)
+                member = (np.arange(hours)[np.newaxis, :] < last[:, np.newaxis]).astype(
+                    float
+                )
                 availability *= member
                 if min_gen is not None:
                     min_gen *= member
