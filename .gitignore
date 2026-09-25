@@ -3508,3 +3508,6 @@ results/calibration/rpjm2_20[0-9][0-9]/
 # miso-271 per-year shard legs (rule 29(c)/31: kept on local disk, never on main; the composite is registered)
 results/calibration/miso271_arm_20*/
 results/calibration/miso271_ctl_20*/
+
+# R-CAISO-2 per-year shard legs: kept out of main (rule 32(d)); on local disk until the owner rules (rule 31)
+results/calibration/rcaiso2_ccid_*/
