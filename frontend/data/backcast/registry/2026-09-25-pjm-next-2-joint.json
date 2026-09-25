@@ -1,0 +1,19 @@
+{
+  "id": "2026-09-25-pjm-next-2-joint",
+  "label": "pjm next 2 joint",
+  "date": "2026-09-25",
+  "shorthand": "pjm-next-2-joint",
+  "definition": "PJM-NEXT-2 joint arm, 2019",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-09-25-pjm-next-2-joint.js",
+  "bundle": "results/calibration/pjmnext2_joint_span"
+}
