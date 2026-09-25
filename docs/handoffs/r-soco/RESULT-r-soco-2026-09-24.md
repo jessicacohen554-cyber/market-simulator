@@ -145,3 +145,13 @@ Rule 35 `[R-PROMOTE]`, in order:
 
 SOCO has no `calibration-complete.json` entry, so nothing was re-keyed there. The matrix shard is
 re-stamped with the new keeper and gates, and its four cells move O → **K**.
+
+**Second rebase, onto `main` @ `ec7c08d0` (2026-09-25).** New solve-path hunks since `3321109c`, all
+INERT for SOCO:
+
+| hunk | reason |
+|---|---|
+| R-ERCOT `fleet/campd_bins.py` per-year bin heat rates + `run_calibration.py` threading | only reached under `config.use_campd_bins and iso == "ERCOT"` |
+| `scripts/lib/key_provenance.py` | provenance tooling, not on the solve path |
+| `calibration_reference.json` / `NWPP_*_renewable_capacity.csv` | NWPP rows only |
+| `results/cache.py` | ERCOT epoch prose |
