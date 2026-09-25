@@ -14882,3 +14882,18 @@ too.
 - Every determination. Nothing was re-scored.
 
 **Re-entry** requires a new explicit owner declaration on a CALIBRATED keeper.
+
+## NYISO-STGAS-2023 — 2026-09-25 — Con Ed generator delivery leg; keeper promoted; NYISO CALIBRATED
+
+- **Lever** (owner ruling on the lane's question): `nyiso_ldc_generator_delivered_gas`.
+  - EIA-860 Con Ed-served gas generators (≥ 50 MW, non-CT) pay Con Ed PSC No. 9 SC 9 Rate D(2):
+    1.92 ¢/therm + 0.5 % losses.
+  - Zero DOF; 42 rows at 6 NYC plants.
+- **Result:** keeper `2026-09-25-nyiso-stgas-ldc-leg` (2022–2025) plus stamped
+  `2026-09-25-nyiso-stgas-ldc-2021`. NOT-YET → **CALIBRATED** (C3c ledgered).
+  - C1-2023 ST_GAS +4.99 → +3.17 TWh (PASS).
+  - C3a improves every year.
+  - C8 ST_GAS forced share up (2023 12.2 → 15.2 %), PASS.
+- **Superseded and pruned:** `2026-09-24-nyiso-r-inputs-860vintage`.
+- **Record:** `docs/RESULT-nyiso-stgas-2023-ldc-leg-2026-09-25.md`.
+- **Owner-held:** reinstating the withdrawn `complete` marker on the now-CALIBRATED keeper.

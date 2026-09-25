@@ -1,0 +1,17 @@
+{
+ "id": "2026-09-25-nyiso-stgas-ldc-leg",
+ "label": "nyiso stgas ldc leg",
+ "date": "2026-09-25",
+ "shorthand": "nyiso-stgas-ldc-leg",
+ "definition": "NYISO keeper recipe (2026-09-24-nyiso-r-inputs-860vintage) plus ONE field, nyiso_ldc_generator_delivered_gas: gas generators that EIA-860 records as Con Edison-served (>= 50 MW, non-CT) pay Con Ed's filed SC 9 Rate D(2) power-generation transport (1.92 c/therm + 0.5% losses) on top of the Transco Z6 hub. Zero free parameters; offer curves unchanged. Record: docs/RESULT-nyiso-stgas-2023-ldc-leg-2026-09-25.md.",
+ "years": [
+  2022,
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "NYISO",
+ "file": "frontend/data/backcast/runs/2026-09-25-nyiso-stgas-ldc-leg.js",
+ "bundle": "results/calibration/nyisostg_span",
+ "market_story": "ST_GAS: NYC's divested steam plants (Ravenswood, Astoria, Arthur Kill) buy gas at Transco Z6 NY and pay Con Edison to deliver it; with that cost they sit at parity with Long Island / Hudson steam and run mostly in summer peaks and for in-city reliability, not all year. CC_REGULAR: NYC's Con Ed-served CCs carry the same small delivery charge, shifting a little energy to upstate CCs."
+}
