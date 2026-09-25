@@ -7677,3 +7677,16 @@ your branch when done.
   `check_promotion_completeness.py` as a gating CI job — all four executed by **Y-31**. R-BD SPP
   gate-(a) pass confirmed. **R-BG: branch protection KEPT OFF, reversing Card 1 (2026-09-06).**
   G2 leg 4 is withdrawn as a gate condition until the owner reopens it; CI stays advisory.
+- 2026-09-25 — **Y-31 EXECUTED R-BB / R-BC / R-BE / R-BF** (one PR, branch `claude/y31-owner-rulings`).
+  **R-BB:** `soco53g` had already been pruned by the R-SOCO promotion (`adf4498a`). The decline is
+  recorded in `calibration-log/soco.md`, and SOCO E13 is clean (`audit_keepers --check` PASS, 0
+  failures). **R-BC:** `complete.NYISO` moved to `withdrawn.NYISO`, with the prior entry nested whole.
+  NYISO gate (a) goes pass → fail. The keeper is untouched, and so is `frontier` (routed).
+  `check_gate_a_provenance` was red on main **before** this lane: five rows (CAISO / ERCOT / MISO /
+  NEISO / PJM) were missed by the 2026-09-24/25 R-* promoters. This lane re-keyed them, identity
+  only, and the check now exits 0 on 7 rows. **Found and routed, not acted on:** CAISO, PJM and NEISO
+  hold `complete` on keepers that read NOT-YET at run level. NEISO's train tier is CALIBRATED. Whether
+  Q5 applies to them is the owner's call. **R-BE:** the three test edits landed and pass.
+  **R-BF:** `scripts/check_promotion_completeness.py` plus tests, and CI job `promotion-completeness`
+  (fails on `pull_request`, advisory under R-BG). The skill checklist gained item 4. Replayed against
+  the pre-lane `main` with base `1c446924~1`, the job fails on exactly the five stale gate-(a) rows.
