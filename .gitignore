@@ -3487,3 +3487,7 @@ results/calibration/rnyiso_2022/
 results/calibration/rnyiso_2023/
 results/calibration/rnyiso_2024/
 results/calibration/rnyiso_2025/
+
+# R-ERCOT-2 per-year shard legs (rule 32(d)): kept out of main; composites are registered.
+results/calibration/r_ercot2_chpoff_20*/
+results/calibration/r_ercot2_dam_20*/
