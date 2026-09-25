@@ -1,0 +1,6 @@
+{
+ "CC_REGULAR": {"committed": 1.212469, "econ_low": 0.9547, "econ_high": 1.097905},
+ "CC_CHP": {"committed": 1.097905, "econ_low": 1.116999, "econ_high": 1.136093},
+ "CT_PEAKER": {"committed": 1.288845, "econ_low": 0.9547, "econ_high": 0.9547},
+ "ST_GAS": {"committed": 0.849683, "econ_low": 1.021529, "econ_high": 1.14564, "peak": 1.14564}
+}
