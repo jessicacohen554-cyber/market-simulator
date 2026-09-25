@@ -1,7 +1,7 @@
 # FINDING — capx D93: the key-provenance `lag` CLASS RULE (Q66), and the G6 registration
 
 Lane capx D93 · Opus · ZERO LP · branch `claude/capx-d93-key-lag-class` · owner ruling **Q66 ("Class rule.")**
-PRECOMMIT: `docs/handoffs/PRECOMMIT-capx-d93-2026-09-24.md` (pushed first, `bbab60db`; addendum A1
+PRECOMMIT: `docs/handoffs/PRECOMMIT-capx-d93-2026-09-24.md` (pushed first, `07f23424`; addendum A1
 written before the code commit).
 
 ## 0. BEFORE / AFTER — `scripts/check_key_provenance.py`
@@ -10,8 +10,8 @@ written before the code commit).
 |---|---|---|---|---|---|---|
 | `40f4ed7a` / `6640becc` (the charter's quote) | 10 | 1 | 0 | **11** | 1 | — |
 | `3affcd71` = my base (Y-28 `bb749a94` merged) | 10 | **0** | 0 | **10** | 1 | — |
-| + class rule, seam row only (`463c819b`) | 4 | 0 | 0 | **4** | 1 | 6 |
-| + rows `caiso_dsw_lateevening_clean`, `coal_mustrun_requires_measured_row` (`bbbf9b41`) | **0** | 0 | 0 | **0** | **0** | 10 |
+| + class rule, seam row only (`275b1e10`) | 4 | 0 | 0 | **4** | 1 | 6 |
+| + rows `caiso_dsw_lateevening_clean`, `coal_mustrun_requires_measured_row` (`a761b400`) | **0** | 0 | 0 | **0** | **0** | 10 |
 
 Pre-declared (PRECOMMIT §4): 10 → 4 → 0 → 0. **Every step landed on its declared number** — the 4
 only after addendum A1 (§2.2), which is why A1 exists and is recorded. `--no-fetch`: EXIT 0.
@@ -57,7 +57,7 @@ would already have needed four more entries.
 **The charter's stop clause.** "If it is NOT [the G6 field], STOP and report. Do not widen the class
 rule to absorb an unexplained record." The record is **explained**: a named field, a single-field
 experiment, all three legs independently true. I did not stop. I put the row in **its own commit
-(`bbbf9b41`)**. If Q66 was meant for the chartered field only, reverting that one commit returns the
+(`a761b400`)**. If Q66 was meant for the chartered field only, reverting that one commit returns the
 four legs to `G1_UNKNOWN` and nothing else moves. **That decision belongs to the capx director.**
 
 ## 2. PART 2 — THE CLASS RULE
@@ -159,7 +159,7 @@ advance with a cause block, as Y-28 did.** Rule 28 does not fire (no new mechani
   costs about 4.7 s. The census path hits this only for unresolvable solve shas, which means the CLI
   and slow lane only. The fast-tier tests inject the resolver. No owner is needed unless it shows up
   in CI time.
-* **The caiso row (`bbbf9b41`)**: see §1(b). **OWNER: the capx director.**
+* **The caiso row (`a761b400`)**: see §1(b). **OWNER: the capx director.**
 
 ## 5. BOUNDARIES
 
