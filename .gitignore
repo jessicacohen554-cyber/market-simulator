@@ -3472,3 +3472,5 @@ results/calibration/rspp_20*/
 # results/calibration/rmiso_span is what gets registered.
 results/calibration/rmiso_20*/**
 results/calibration/rmiso_b_20*/**
+# R-PJM per-year shard legs: kept out of main (rules 29(c)/32(d)); the composite rpjm_inputs_span is registered.
+results/calibration/rpjm_inputs_20[0-9][0-9]/

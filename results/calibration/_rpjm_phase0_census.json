@@ -1,0 +1,782 @@
+{
+ "isos": {
+  "PJM": {
+   "operable": {
+    "2019": {
+     "bins_mw": 360.1,
+     "bins_share": 0.0026,
+     "null_mw": 279.6,
+     "null_share": 0.002,
+     "residual": [
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 200.0,
+       "name": "Sayreville",
+       "plant_code": 2390
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 27.0,
+       "name": "Titus",
+       "plant_code": 3115
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 25.0,
+       "name": "Niles Power Plant",
+       "plant_code": 2861
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 24.0,
+       "name": "FirstEnergy Eastlake",
+       "plant_code": 2837
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.4,
+       "name": "Thornwood High School",
+       "plant_code": 55004
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.2,
+       "name": "MTHS Co-Gen Buildings",
+       "plant_code": 58825
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "Thornridge High School",
+       "plant_code": 55005
+      }
+     ],
+     "source": "vintage_2019",
+     "thermal_mw": 140065.3
+    },
+    "2020": {
+     "bins_mw": 409.7,
+     "bins_share": 0.003,
+     "null_mw": 255.6,
+     "null_share": 0.0019,
+     "residual": [
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 200.0,
+       "name": "Sayreville",
+       "plant_code": 2390
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 27.0,
+       "name": "Titus",
+       "plant_code": 3115
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 25.0,
+       "name": "Niles Power Plant",
+       "plant_code": 2861
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.4,
+       "name": "Thornwood High School",
+       "plant_code": 55004
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.2,
+       "name": "MTHS Co-Gen Buildings",
+       "plant_code": 58825
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "Thornridge High School",
+       "plant_code": 55005
+      }
+     ],
+     "source": "vintage_2020",
+     "thermal_mw": 138066.9
+    },
+    "2021": {
+     "bins_mw": 457.4,
+     "bins_share": 0.0032,
+     "null_mw": 281.3,
+     "null_share": 0.002,
+     "residual": [
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 217.9,
+       "name": "Sayreville",
+       "plant_code": 2390
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 31.1,
+       "name": "Titus",
+       "plant_code": 3115
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 26.1,
+       "name": "Niles Power Plant",
+       "plant_code": 2861
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.0,
+       "name": "AT&T Middletown",
+       "plant_code": 65194
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.0,
+       "name": "Altice - Parsippany",
+       "plant_code": 65213
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.2,
+       "name": "MTHS Co-Gen Buildings",
+       "plant_code": 58825
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "Thornridge High School",
+       "plant_code": 55005
+      }
+     ],
+     "source": "vintage_2021",
+     "thermal_mw": 141761.0
+    },
+    "2022": {
+     "bins_mw": 571.7,
+     "bins_share": 0.0041,
+     "null_mw": 280.3,
+     "null_share": 0.002,
+     "residual": [
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 216.9,
+       "name": "Sayreville",
+       "plant_code": 2390
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 31.1,
+       "name": "Titus",
+       "plant_code": 3115
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 26.1,
+       "name": "Niles Power Plant",
+       "plant_code": 2861
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.0,
+       "name": "AT&T Middletown",
+       "plant_code": 65194
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.0,
+       "name": "Altice - Parsippany",
+       "plant_code": 65213
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.2,
+       "name": "MTHS Co-Gen Buildings",
+       "plant_code": 58825
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "Thornridge High School",
+       "plant_code": 55005
+      }
+     ],
+     "source": "vintage_2022",
+     "thermal_mw": 138273.6
+    },
+    "2023": {
+     "bins_mw": 442.1,
+     "bins_share": 0.0033,
+     "null_mw": 280.3,
+     "null_share": 0.0021,
+     "residual": [
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 216.9,
+       "name": "Sayreville",
+       "plant_code": 2390
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 31.1,
+       "name": "Titus",
+       "plant_code": 3115
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 26.1,
+       "name": "Niles Power Plant",
+       "plant_code": 2861
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.0,
+       "name": "AT&T Middletown",
+       "plant_code": 65194
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.0,
+       "name": "Altice - Parsippany",
+       "plant_code": 65213
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.2,
+       "name": "MTHS Co-Gen Buildings",
+       "plant_code": 58825
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "Thornridge High School",
+       "plant_code": 55005
+      }
+     ],
+     "source": "vintage_2023",
+     "thermal_mw": 135864.1
+    },
+    "2024": {
+     "bins_mw": 210.8,
+     "bins_share": 0.0016,
+     "null_mw": 63.4,
+     "null_share": 0.0005,
+     "residual": [
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 31.1,
+       "name": "Titus",
+       "plant_code": 3115
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 26.1,
+       "name": "Niles Power Plant",
+       "plant_code": 2861
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.0,
+       "name": "AT&T Middletown",
+       "plant_code": 65194
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.0,
+       "name": "Altice - Parsippany",
+       "plant_code": 65213
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.2,
+       "name": "MTHS Co-Gen Buildings",
+       "plant_code": 58825
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "Thornridge High School",
+       "plant_code": 55005
+      }
+     ],
+     "source": "vintage_2024",
+     "thermal_mw": 135400.2
+    },
+    "2025": {
+     "bins_mw": 1017.0,
+     "bins_share": 0.0076,
+     "null_mw": 869.6,
+     "null_share": 0.0065,
+     "residual": [
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 600.0,
+       "name": "MPH Elwood",
+       "plant_code": 69979
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 202.8,
+       "name": "Sayreville",
+       "plant_code": 2390
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 31.1,
+       "name": "Titus",
+       "plant_code": 3115
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 26.1,
+       "name": "Niles Power Plant",
+       "plant_code": 2861
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 3.4,
+       "name": "Morristown Medical Center",
+       "plant_code": 69547
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.0,
+       "name": "AT&T Middletown",
+       "plant_code": 65194
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 2.0,
+       "name": "Altice - Parsippany",
+       "plant_code": 65213
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.2,
+       "name": "MTHS Co-Gen Buildings",
+       "plant_code": 58825
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.0,
+       "name": "Thornridge High School",
+       "plant_code": 55005
+      }
+     ],
+     "source": "canonical",
+     "thermal_mw": 134572.5
+    }
+   },
+   "retirees": {
+    "2019": {
+     "bins_mw": 1029.5,
+     "bins_share": 0.0542,
+     "null_mw": 904.7,
+     "null_share": 0.0476,
+     "residual": [
+      {
+       "fuels": [
+        "coal"
+       ],
+       "mw": 519.0,
+       "name": "Dickerson",
+       "plant_code": 65284
+      },
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 314.0,
+       "name": "Joliet 9",
+       "plant_code": 874
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 30.6,
+       "name": "Lebanon",
+       "plant_code": 2921
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 24.0,
+       "name": "FirstEnergy Eastlake",
+       "plant_code": 2837
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 6.0,
+       "name": "North Wales Diesel",
+       "plant_code": 64983
+      },
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 4.0,
+       "name": "Akron Recycle Energy Plant",
+       "plant_code": 54265
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 3.0,
+       "name": "Shelby Municipal Light Plant",
+       "plant_code": 2943
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.6,
+       "name": "Saint Francis Hospital",
+       "plant_code": 50952
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.5,
+       "name": "Woodridge Greene Valley Treatment Plant",
+       "plant_code": 54987
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 1.0,
+       "name": "New Knoxville",
+       "plant_code": 7898
+      }
+     ],
+     "retiree_units": 373,
+     "thermal_mw": 18992.9
+    },
+    "2020": {
+     "bins_mw": 947.9,
+     "bins_share": 0.0681,
+     "null_mw": 871.1,
+     "null_share": 0.0626,
+     "residual": [
+      {
+       "fuels": [
+        "coal"
+       ],
+       "mw": 519.0,
+       "name": "Dickerson",
+       "plant_code": 65284
+      },
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 314.0,
+       "name": "Joliet 9",
+       "plant_code": 874
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 24.0,
+       "name": "FirstEnergy Eastlake",
+       "plant_code": 2837
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 6.0,
+       "name": "North Wales Diesel",
+       "plant_code": 64983
+      },
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 4.0,
+       "name": "Akron Recycle Energy Plant",
+       "plant_code": 54265
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.6,
+       "name": "Saint Francis Hospital",
+       "plant_code": 50952
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.5,
+       "name": "Woodridge Greene Valley Treatment Plant",
+       "plant_code": 54987
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 1.0,
+       "name": "New Knoxville",
+       "plant_code": 7898
+      }
+     ],
+     "retiree_units": 373,
+     "thermal_mw": 13919.6
+    },
+    "2021": {
+     "bins_mw": 403.4,
+     "bins_share": 0.0348,
+     "null_mw": 326.6,
+     "null_share": 0.0282,
+     "residual": [
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 314.0,
+       "name": "Joliet 9",
+       "plant_code": 874
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 6.0,
+       "name": "North Wales Diesel",
+       "plant_code": 64983
+      },
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 4.0,
+       "name": "Akron Recycle Energy Plant",
+       "plant_code": 54265
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.6,
+       "name": "Saint Francis Hospital",
+       "plant_code": 50952
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 1.0,
+       "name": "New Knoxville",
+       "plant_code": 7898
+      }
+     ],
+     "retiree_units": 373,
+     "thermal_mw": 11598.9
+    },
+    "2022": {
+     "bins_mw": 403.4,
+     "bins_share": 0.0385,
+     "null_mw": 326.6,
+     "null_share": 0.0312,
+     "residual": [
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 314.0,
+       "name": "Joliet 9",
+       "plant_code": 874
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 6.0,
+       "name": "North Wales Diesel",
+       "plant_code": 64983
+      },
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 4.0,
+       "name": "Akron Recycle Energy Plant",
+       "plant_code": 54265
+      },
+      {
+       "fuels": [
+        "gas_ct"
+       ],
+       "mw": 1.6,
+       "name": "Saint Francis Hospital",
+       "plant_code": 50952
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 1.0,
+       "name": "New Knoxville",
+       "plant_code": 7898
+      }
+     ],
+     "retiree_units": 373,
+     "thermal_mw": 10466.7
+    },
+    "2023": {
+     "bins_mw": 403.8,
+     "bins_share": 0.0639,
+     "null_mw": 320.0,
+     "null_share": 0.0507,
+     "residual": [
+      {
+       "fuels": [
+        "gas_st"
+       ],
+       "mw": 314.0,
+       "name": "Joliet 9",
+       "plant_code": 874
+      },
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 6.0,
+       "name": "North Wales Diesel",
+       "plant_code": 64983
+      }
+     ],
+     "retiree_units": 373,
+     "thermal_mw": 6316.3
+    },
+    "2024": {
+     "bins_mw": 82.8,
+     "bins_share": 0.0653,
+     "null_mw": 6.0,
+     "null_share": 0.0047,
+     "residual": [
+      {
+       "fuels": [
+        "oil"
+       ],
+       "mw": 6.0,
+       "name": "North Wales Diesel",
+       "plant_code": 64983
+      }
+     ],
+     "retiree_units": 373,
+     "thermal_mw": 1268.5
+    }
+   }
+  }
+ },
+ "posture": "backcast-default",
+ "source": "tracked"
+}

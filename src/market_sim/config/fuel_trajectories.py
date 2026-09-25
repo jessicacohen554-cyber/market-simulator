@@ -1486,6 +1486,7 @@ STATE_CARBON_PRICE_BY_ISO: dict[str, dict[int, float]] = {
 # years, VA 2023 only, exact per-plant EIA-860 state test with the committed
 # PJM_RGGI_ZONE_SHARE fallback) is applied at the mc seam via
 # policy.cap_and_trade.per_generator_membership.
+#   2019: $5.42/short ton  -> $5.97/t   (A43-A46)
 #   2020: $6.41/short ton  -> $7.07/t   (A47-A50)
 #   2021: $9.47/short ton  -> $10.44/t  (A51-A54)
 #   2022: $13.46/short ton -> $14.84/t  (A55-A58)
@@ -1498,7 +1499,10 @@ STATE_CARBON_PRICE_BY_ISO: dict[str, dict[int, float]] = {
 # data/raw/policy/carbon-auction-results/carbon-auction-results.csv (RGGI, Inc.
 # "Allowance Prices and Volumes"), converted x 1.10231 on the rounded mean
 # exactly as 2023-2025 were. Zero free parameters.
+# 2019 ADDED (R-PJM, 2026-09-25), same recipe and source; equals NEISO's 2019
+# metric value 5.97.
 PJM_RGGI_ALLOWANCE_PRICE_PER_TONNE: dict[int, float] = {
+    2019: 5.97,
     2020: 7.07,
     2021: 10.44,
     2022: 14.84,

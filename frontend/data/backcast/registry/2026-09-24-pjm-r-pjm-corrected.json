@@ -1,0 +1,19 @@
+{
+  "id": "2026-09-24-pjm-r-pjm-corrected",
+  "label": "pjm r pjm corrected",
+  "date": "2026-09-24",
+  "shorthand": "pjm-r-pjm-corrected",
+  "definition": "R-PJM corrected inputs (F1 vintage + measured HR + F2 outages), 2019",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-09-24-pjm-r-pjm-corrected.js",
+  "bundle": "results/calibration/rpjm_inputs_span"
+}
