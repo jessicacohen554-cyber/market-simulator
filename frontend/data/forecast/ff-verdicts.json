@@ -4846,8 +4846,8 @@
     "epochs": [],
     "git_sha": "aac390a6"
    },
-   "scored_at_sha": "7d167ed85777",
-   "scored_at_date": "2026-09-24T19:56:06Z",
+   "scored_at_sha": "a08ae14ab710",
+   "scored_at_date": "2026-09-25T01:01:38Z",
    "cache_epoch": "dd8203a8bf1546b9",
    "run_id": "neiso-2026-2050-t3-golden3-d92-base",
    "session": "capx-D94 (FC-6 driver battery re-measured on the neiso-t3 golden recipe, post-D77 basis; owner ruling Q67)",
