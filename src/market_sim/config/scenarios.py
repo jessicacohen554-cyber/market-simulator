@@ -477,6 +477,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # byte-inert). Registered IN THE SAME COMMIT as the field (the
     # nyiso-119 / caiso-186 discipline).
     "mid_vintage_exit_carry",
+    # PJM-NEXT active-vintage coordinate zoning for plants eGRID 2023 lacks
+    # (GATED default-off; consulted only in the fleet's fallback-zone branch
+    # via zone_assignment.set_fleet_zone_vintage_coords, so the off path is
+    # byte-inert). Registered IN THE SAME COMMIT as the field.
+    "fleet_zone_vintage_coords",
     # caiso-186 published seasonal capability basis for combined cycles (GATED
     # default-off; every consumer reads it via getattr, and it additionally
     # requires cc_nameplate_summer_derate, so the off path is byte-inert).
@@ -2175,6 +2180,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by SPP-48 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "mid_vintage_exit_carry": "False",
+    # Added by PJM-NEXT WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
+    "fleet_zone_vintage_coords": "False",
     # Added by caiso-186 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 discipline).
     "cc_winter_capability_basis": "False",
@@ -16065,6 +16073,36 @@ class ScenarioConfig:
     # Retired-and-Canceled sheet at all, and 2025 has no vintage directory, so
     # the channel is inert by construction in all three scored years.
     mid_vintage_exit_carry: bool = False
+
+    # ACTIVE-VINTAGE COORDINATE ZONING for plants eGRID 2023 lacks (PJM-NEXT,
+    # 2026-09-25; GATED default-off, armed per recipe). Rule 14 [R-ACCURATE] is
+    # its whole basis, and the residual is not.
+    #
+    # THE DEFECT. The fleet zones each plant from the eGRID-2023 lookup
+    # (zone_assignment.build_zone_lookup) and sends a plant eGRID lacks to the
+    # ISO's pinned default zone. For the ISOs in _EIA860_SUPPLEMENT_ISOS the
+    # canonical EIA-860 plant file fills most of that gap; PJM is not one of
+    # them, and no ISO's supplement reads a HISTORICAL vintage. So a plant that
+    # retired before eGRID 2023's year is placed in the default zone whatever
+    # its real location. Measured at zero LP on the R-PJM-2 keeper's own fleet
+    # (scripts/probes/_pjmnext_mvx_phase0.py): 2019 / 2020 / 2021 carry 3,824 /
+    # 3,561 / 2,900 MW in the WRONG zone (Will County -> ComEd, Cheswick ->
+    # West_APS, Avon Lake -> ATSI, Chambers / Logan -> EMAAC, all in
+    # PJM_AEP_Ohio), and mid_vintage_exit_carry's 2019-2022 rows would add up to
+    # 4.8 GW more (Bruce Mansfield, Three Mile Island, B L England).
+    #
+    # THE MECHANISM. In the fallback branch only (fleet/eia860._assign_zones),
+    # the plant is zoned from the ACTIVE EIA-860 vintage's own plant file
+    # coordinates through the SAME zone rules the supplement applies
+    # (zone_assignment.vintage_coords_zone_lookup). An eGRID-placed plant is
+    # never re-zoned and membership never changes (the benchmark population is
+    # build_zone_lookup's keys, untouched), so the only units that move are the
+    # ones that currently land in the fallback zone (rule 19 [R-ONE-MECH]: one
+    # zone rule, one more coordinate source). Zero free parameters (rules
+    # 21 / 24): EIA's own published coordinates. Not backcast-keyed: the same
+    # construction reads whatever EIA-860 directory is active, canonical in a
+    # forecast, so it regenerates forward (rule 13).
+    fleet_zone_vintage_coords: bool = False
 
     # PUBLISHED seasonal capability basis for combined cycles
     # (cc_winter_capability_basis, off by default; caiso-186). Acts ONLY

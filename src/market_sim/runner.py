@@ -1400,6 +1400,11 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     set_caiso_fsno_partition(
         iso == "CAISO" and getattr(config, "caiso_fsno_subzonal_topology", False)
     )
+    # PJM-NEXT fleet_zone_vintage_coords: armed per solve, like the partition
+    # above, before the first fleet load reads the zone lookup.
+    from market_sim.data.zone_assignment import set_fleet_zone_vintage_coords
+
+    set_fleet_zone_vintage_coords(getattr(config, "fleet_zone_vintage_coords", False))
 
     iso_config = get_iso_config(iso)
     # Apply ISO-level scenario defaults (e.g. CAISO negative_renewable_offers)

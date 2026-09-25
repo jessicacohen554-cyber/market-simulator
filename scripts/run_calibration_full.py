@@ -9839,7 +9839,19 @@ def build_benchmark_frames(bundle: Path) -> tuple[str, dict[str, "pd.DataFrame"]
                 _mustrun_chp_btm = True
                 break
         if not _bench_vintage_union:
-            for _blk in (_cfg, _cfg.get("calibration_flags") or {}):
+            # PJM-NEXT: a replay_keeper ``--set`` lands the flag in the generic
+            # override bag and the resolved ``scenario_config``, never at the
+            # top level — reading only the top two blocks silently rebuilt an
+            # armed bundle on the canonical-only population (the very split
+            # this recovery exists to prevent), so all four places are read.
+            _flags = _cfg.get("calibration_flags") or {}
+            for _blk in (
+                _cfg,
+                _flags,
+                _flags.get("coal_prb_sigmoid_overrides") or {},
+                _cfg.get("scenario_config") or {},
+                meta.get("coal_prb_sigmoid_overrides") or {},
+            ):
                 if isinstance(_blk, dict) and _blk.get(
                     "benchmark_membership_vintage_union"
                 ):
