@@ -3561,3 +3561,6 @@ results/calibration/nwppnext3_20*/
 # the keeper bundle results/calibration/neiso114b_span. Leg provenance SHAs are in
 # docs/handoffs/neiso114/RESULT-neiso114-2026-09-25.md section 6 (rule 33(d)).
 results/calibration/neiso114b_20*/
+
+# miso-273 per-year arm legs (rule 32(d): composite only reaches main; bytes provenance in PRECOMMIT §8)
+results/calibration/miso273_arm_*/
