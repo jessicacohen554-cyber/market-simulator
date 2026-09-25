@@ -3542,3 +3542,7 @@ results/calibration/pjmnext_c1_20*/
 results/calibration/pjmnext_ctl_20*/
 results/calibration/_pjmnext_keeper_union/
 results/calibration/_pjmnext_*/
+
+# soco-68 probe scratch + shard legs: kept out of main (rule 32(d)); composite soco68_span is what registers
+results/calibration/_soco68/
+results/calibration/soco68_20[0-9][0-9]/
