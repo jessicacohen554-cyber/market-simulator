@@ -3530,3 +3530,5 @@ results/calibration/rpjm2cs_20*/
 results/calibration/miso272_arm_*/
 results/calibration/miso272b_arm_*/
 results/calibration/_soco67/
+# soco-67 shard legs: kept out of main (rule 32(d)); composite soco67_span is what registers
+results/calibration/soco67_20[0-9][0-9]/
