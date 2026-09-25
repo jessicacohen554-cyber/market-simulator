@@ -3557,3 +3557,7 @@ results/calibration/nyisostg_2024/
 results/calibration/nyisostg_2025/
 # NWPP-NEXT-3 per-year shard legs (rule 32(d): kept out of main; the composite nwppnext3_span is registered).
 results/calibration/nwppnext3_20*/
+# neiso-115 (2026-09-25): neiso-114 arm B single-year legs (rule 36), composed into
+# the keeper bundle results/calibration/neiso114b_span. Leg provenance SHAs are in
+# docs/handoffs/neiso114/RESULT-neiso114-2026-09-25.md section 6 (rule 33(d)).
+results/calibration/neiso114b_20*/
