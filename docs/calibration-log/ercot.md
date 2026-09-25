@@ -14624,3 +14624,24 @@ The `frontier` and `frontier_touchpoint` declarations **lapsed**. Their stated b
 Matrix: the eight tested cells move O → K, and the shard is re-stamped.
 
 **New finding, recorded in the keeper shard:** the ERCOT 60-Day DAM thermal-availability CSVs carry only 2021–2025 at HEAD. `calibration-complete.json`'s intake_log records a 2018–2022 derive (+7,304 rows), so the back-years were derived once and are no longer on main. A re-derive is owed, and it is the leading fix for 2019/2020.
+
+## R-ERCOT-2 — 2026-09-25
+
+The owner asked for both follow-ups ("Both").
+- **(B) DAM data restored.** The ERCOT 60-Day DAM thermal availability rows for 2018–2020 had been dropped from `main` because the derive replaced its whole file. The derive now merges by year (`--write-years`), and the 2021–2025 rows are byte-frozen.
+- **(A) CHP-off test.** Nine shards at `8beff24d`.
+
+**Two runs are REGISTERED and neither is promoted:**
+- `2026-09-25-r-ercot2-chp-off`: the keeper recipe with only `measured_chp_heat_rates=false`, 2019–2025.
+- `2026-09-24-r-ercot2-dam-restored`: the keeper recipe unchanged, with 2019/2020 re-solved.
+
+**Result:**
+- **CHP-off returns the train tier to CALIBRATED.** 2023 C3b goes 0.232 → 0.137. The pre-registered P2 is confirmed.
+- **The DAM data fixes most of 2019/2020.** C3a goes +364 % → +110 % and +114 % → +22 %; slack goes 101 → 7 GWh and 11 → 0.
+- **2019/2020 are still NOT-YET, on COAL_PRB −10.7 / −13.8 TWh.** Coal offer levels are measured on later years' SCED curves; that is the next object.
+
+**Structural finding (rule 19):** on ERCOT's curated bins the F1 power-only CHP rate double-charges host steam, which the bins already carve into a separate must-run tranche.
+
+Matrix cell `measured_chp_heat_rates` K → O, pending the owner ruling. **Recommendation: promote the CHP-off run.**
+
+Record: `docs/handoffs/RESULT-r-ercot-2-dam-backyears-chp-test-2026-09-25.md`.

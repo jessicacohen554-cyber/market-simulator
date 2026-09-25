@@ -1,0 +1,19 @@
+{
+  "id": "2026-09-25-r-ercot2-chp-off",
+  "label": "r ercot2 chp off",
+  "date": "2026-09-25",
+  "shorthand": "r-ercot2-chp-off",
+  "definition": "R-ERCOT-2 CHPOFF 2025: keeper 2026-09-24-r-inputs-2019-2025 recipe with measured_chp_heat_rates=false (CHP composition test) \u2014 PRECOMMIT-r-ercot-2-dam-backyears-chp-test-2026-09-25",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-09-25-r-ercot2-chp-off.js",
+  "bundle": "results/calibration/r_ercot2_chpoff_span"
+}
