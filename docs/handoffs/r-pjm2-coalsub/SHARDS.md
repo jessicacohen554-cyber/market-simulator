@@ -54,3 +54,9 @@ merged, so it is an ancestor of `main`). Five v1 shards hit hard stop 1 and stop
 Recipe check OK on 2019/2020/2021/2024. 2025 v2 failed at load (same OOM pattern as 2020 v2); 2022/2023 v2 never
 left PENDING. v3: 2022 `session_01KsL3ruKYWorRHSxcdBLygT`, 2023 `session_0111UC4YT7exYybZY7fGPj57`,
 2025 `session_01TkRN51LFBitT7ZCp1GBq7R`. Shards whose bytes are in hand are archived.
+
+## 06:07Z — 2022 landed
+
+| 2022 | `e2aeb98d153a7e3eb8f23b123eb85172f4c0faa7` | 17 | COAL 3.70 → 0; COAL_BIT +3.17; coal family −0.53; CC_REGULAR +0.25; CT_PEAKER +0.11 |
+
+5 of 7 legs verified on parent disk (2019–2022, 2024). 2023 / 2025 v3 shards still PENDING on container capacity.
