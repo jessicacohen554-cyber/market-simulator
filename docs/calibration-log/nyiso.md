@@ -14853,3 +14853,32 @@ vintage, plant-specific heat rates and granular CAMPD outages. **Owner ruling** 
     #6587 merges.**
 - **Records:** `docs/PRECOMMIT-r-nyiso-backcast-inputs-2026-09-24.md` and
   `docs/RESULT-r-nyiso-backcast-inputs-2026-09-24.md`.
+
+## Y-31 — 2026-09-25 — owner ruling R-BC: the `complete` marker WITHDRAWN (Q5, fourth time); keeper UNTOUCHED
+
+**Ruling** (director board v43, 2026-09-25, card Y-29 §1.3): *apply Q5: withdraw*. The Q5
+uniform rule is owner r#12, 2026-08-30: *"a `complete` marker cannot stand on a NOT-YET
+keeper"*. Y-29 reported the conflict on `2026-09-22-nyiso-hydro3-ror-split`. That keeper was then
+superseded by R-NYISO's promotion of `2026-09-24-nyiso-r-inputs-860vintage`, which also reads
+**NOT-YET** (8 / 6 / 0 / 2, from `status/NYISO.js`). The rule therefore applies to the live keeper
+too.
+
+**The record** uses the same form as nyiso-193 (2026-09-05) and Q5-W (2026-08-30):
+- `calibration-complete.json`: `complete.NYISO` moves to `withdrawn.NYISO`, which records:
+  - withdrawal date 2026-09-25;
+  - `keeper_at_withdrawal` = the live keeper;
+  - the ruling citation;
+  - the prior entry nested whole as `prior_record_complete_entry`. Nothing is erased.
+- The forecast board changes in the same commit. In `program-status.json`, NYISO gate (a) goes
+  **pass → fail**, `closed_on` goes `[] → ['a']`, and `marker_complete` goes `True → False`. The
+  audit block `y31_nyiso_q5_withdrawal` is added. `check_gate_a_provenance.py --iso NYISO`
+  passes.
+
+**What did not move:**
+- The keeper designation (`keepers/NYISO.json`).
+- `frontier`. The ruling names `complete` only. The prior withdrawals removed both, so whether
+  `frontier` follows is **routed to the NYISO desk / owner**.
+- Legs (b)/(c)/(d).
+- Every determination. Nothing was re-scored.
+
+**Re-entry** requires a new explicit owner declaration on a CALIBRATED keeper.
