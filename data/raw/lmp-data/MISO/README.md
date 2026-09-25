@@ -122,6 +122,13 @@ below), 2023, 2024, 2025 (RT + DA, gzip), 2026 H1 (chunks).
 own October-2021 DA archive holds 30 members covering Oct 1-31 *minus the 28th*,
 a gap in the publisher's archive rather than in the fetch.
 
+**2019 IS NOW STAGED** (2026-09-24, R-MISO — the owner's 2019-2025 backcast span,
+`AUDIT-backcast-inputs-860-heatrate-outage-2026-09-24.md` §5.3.3) from the same monthly
+family, no credential: `fetch_miso_hub_lmp.py --years 2019` → DA 365/365, RT 365/365
+(2,920 hub-day rows each, 53 chunks per market). Reduced by `derive_miso_hub_lmp.py
+--years 2019` + `build_miso_lmp_reference.py --years 2019`; every other year's rows
+preserved byte-for-byte (merge contract).
+
 This supersedes the previous statement here that the two years "cannot be staged
 without the key", and the claim in
 `docs/FINDING-miso254-lmp-2020-2021-route-audit-2026-09-12.md` that

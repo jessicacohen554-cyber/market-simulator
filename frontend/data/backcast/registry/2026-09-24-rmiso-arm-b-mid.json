@@ -1,0 +1,19 @@
+{
+  "id": "2026-09-24-rmiso-arm-b-mid",
+  "label": "rmiso arm b mid",
+  "date": "2026-09-24",
+  "shorthand": "rmiso-arm-b-mid",
+  "definition": "R-MISO arm B (mid_vintage_exit_carry) 2019",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-09-24-rmiso-arm-b-mid.js",
+  "bundle": "results/calibration/rmiso_b_span"
+}

@@ -2,10 +2,10 @@ iso,supply,n_plants,n_priced,fob_mmbtu,deliv_mmbtu,hr_coal,floor,ceil,gas_mid,ga
 ERCOT,prb,6,6,0.846,2.014,11.37,0.585,1.0,3.418,2.5,PRB
 ERCOT,prb_follower,6,6,0.846,2.014,11.37,0.509,1.0,3.418,2.5,PRB
 ERCOT,lignite,3,3,1.411,1.411,10.9,0.871,1.0,2.295,2.5,TX
-MISO,prb,38,38,0.846,2.014,10.6,0.687,1.0,3.187,2.5,PRB
-MISO,prb_follower,38,38,0.846,2.014,10.6,0.598,1.0,3.187,2.5,PRB
-MISO,bituminous,17,17,2.18,2.565,10.75,0.532,1.0,4.115,1.092,"ENC,IL,IN,KY,ND"
-MISO,lignite,2,2,1.768,1.768,11.25,0.738,1.0,2.969,2.5,ND
+MISO,prb,38,38,0.846,2.014,10.62,0.686,1.0,3.192,2.5,PRB
+MISO,prb_follower,38,38,0.846,2.014,10.62,0.597,1.0,3.192,2.5,PRB
+MISO,bituminous,17,17,2.18,2.565,10.42,0.549,1.0,3.989,1.126,"ENC,IL,IN,KY,ND"
+MISO,lignite,2,2,1.768,1.768,11.52,0.72,1.0,3.041,2.5,ND
 NEISO,bituminous,1,1,4.524,5.322,11.34,0.5,1.0,9.006,2.5,APP
 PJM,subbituminous,2,2,0.846,2.014,12.36,0.77,1.0,3.715,2.5,PRB
 PJM,bituminous,29,29,3.661,4.307,11.02,0.5,1.0,7.08,1.0,"ESC,IN,KY,MD,OH,PA,VA,WV"

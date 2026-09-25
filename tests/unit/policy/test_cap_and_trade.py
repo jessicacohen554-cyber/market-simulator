@@ -101,17 +101,26 @@ class TestMembership:
             RGGI_MEMBER_STATES_BY_YEAR,
         )
 
+        # R-PJM 2026-09-25: 2019 predates NJ's return and VA's entry.
+        assert "NJ" not in RGGI_MEMBER_STATES_BY_YEAR[2019]
+        assert "VA" not in RGGI_MEMBER_STATES_BY_YEAR[2019]
+        assert {"MD", "DE"} <= RGGI_MEMBER_STATES_BY_YEAR[2019]
         assert "NJ" in RGGI_MEMBER_STATES_BY_YEAR[2020]
         assert "VA" not in RGGI_MEMBER_STATES_BY_YEAR[2020]
         assert "VA" in RGGI_MEMBER_STATES_BY_YEAR[2022]
         dominion_idx = 5
-        for year, expected in [(2020, 0.0), (2021, 0.9893), (2022, 0.9894)]:
+        for year, expected in [
+            (2019, 0.0),
+            (2020, 0.0),
+            (2021, 0.9893),
+            (2022, 0.9894),
+        ]:
             res = resolve_carbon_program(
                 ScenarioConfig(iso="PJM", mode="backcast"), year
             )
             assert res.membership[dominion_idx] == pytest.approx(expected)
         for zone, shares in PJM_RGGI_ZONE_SHARE.items():
-            assert set(shares) == set(range(2020, 2026)), zone
+            assert set(shares) == set(range(2019, 2026)), zone
 
 
 class TestNoProgram:
@@ -188,6 +197,7 @@ class TestPjmGatedAllowance:
     @pytest.mark.parametrize(
         "year,expected",
         [
+            (2019, 5.97),
             (2020, 7.07),
             (2021, 10.44),
             (2022, 14.84),
@@ -204,11 +214,11 @@ class TestPjmGatedAllowance:
         assert res.price_adder == pytest.approx(expected)
 
     def test_gate_off_series_year_outside_registry_stays_zero(self):
-        # 2019 has no registered PJM price (pjm-h22 landed 2020-2022 only) —
-        # the gated lookup must return 0, not invent an anchor (rule 13).
+        # 2018 has no registered PJM price (the registry starts at 2019, R-PJM)
+        # — the gated lookup must return 0, not invent an anchor (rule 13).
         res = resolve_carbon_program(
             ScenarioConfig(iso="PJM", mode="backcast", pjm_rggi_allowance_pricing=True),
-            2019,
+            2018,
         )
         assert res.price_adder == 0.0
 
@@ -244,7 +254,7 @@ class TestPjmGatedAllowance:
             assert len(prices) == 4
             mean_short_ton = round(sum(prices) / 4, 2)
             assert round(mean_short_ton * 1.10231, 2) == pytest.approx(value)
-        assert set(PJM_RGGI_ALLOWANCE_PRICE_PER_TONNE) == set(range(2020, 2026))
+        assert set(PJM_RGGI_ALLOWANCE_PRICE_PER_TONNE) == set(range(2019, 2026))
 
     def test_gate_is_backcast_only(self):
         # Forecast years stay on projected_price, which has no PJM anchor

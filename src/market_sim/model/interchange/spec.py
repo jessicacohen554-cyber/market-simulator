@@ -1960,6 +1960,36 @@ MISO_SEAM_LADDER_BY_YEAR: dict[int, dict[str, dict[str, tuple[float, ...]]]] = {
     # Anchor: MISO hub DA mean $22.99 (2020, 8,760 priced hours) / $40.97
     # (2021, 8,739). Derive-script notes: none — the same-seam no-wash ordering
     # holds naturally in both years, with no clamp.
+    #
+    # 2019 added by R-MISO (2026-09-24, AUDIT-backcast-inputs-860-heatrate-
+    # outage-2026-09-24 §5.3.3, the owner's 2019-2025 span). RULE 23 BASIS: the
+    # SOURCE DATA EXTENDED to 2019 in this lane — MISO 2019 DA/RT hub LMPs
+    # (`fetch_miso_hub_lmp.py --years 2019`, the monthly `*_pr_xls` route,
+    # 365/365 days) and MISO 2019 BA-to-BA interchange
+    # (`fetch_eia930_interchange.py --ba MISO --source bulk --years 2019
+    # --merge`, 11 DIBAs x 8,759 h; every pre-existing row byte-identical).
+    # Verbatim from the frozen derive script; the 2020 row above re-derives at
+    # HEAD unchanged. Offline P9: PJM +36.61 vs +36.55, SPP +5.92 vs +5.92,
+    # South -2.84 vs -2.85, Manitoba +7.88 vs +7.86 TWh. Anchor: MISO hub DA
+    # mean $26.98. No neighbour overlay (same data boundary as 2020-2022).
+    2019: {
+        "PJM": {
+            "import": (11.21, 13.54, 16.73, 21.02, 25.14, 30.54, 39.29, 60.16),
+            "export": (11.01, 11.01, 11.01, 11.01, 11.01, 11.01, 11.01, 11.01),
+        },
+        "SPP": {
+            "import": (20.67, 26.45, 35.15, 50.35, 110.58, 195.17, 195.17, 195.17),
+            "export": (16.35, 13.51, 12.56, 11.01, 11.01, 11.01, 11.01, 11.01),
+        },
+        "South": {
+            "import": (29.25, 32.94, 38.07, 44.55, 54.66, 77.38, 130.42, 195.17),
+            "export": (26.24, 23.80, 21.70, 19.86, 17.92, 16.19, 14.73, 13.46),
+        },
+        "Manitoba": {
+            "import": (20.43, 23.26, 25.08, 27.61, 32.34, 195.17, 195.17, 195.17),
+            "export": (16.81, 15.09, 11.01, 11.01, 11.01, 11.01, 11.01, 11.01),
+        },
+    },
     2020: {
         "PJM": {
             "import": (8.09, 8.09, 10.14, 14.14, 17.88, 21.60, 26.74, 37.26),
@@ -2859,8 +2889,8 @@ PJM_SEAM_LADDER_BY_YEAR: dict[int, dict[str, dict[str, tuple[float, ...]]]] = {
 # COVERAGE — a row exists IFF the solve can arm it. Carolinas / TVA / LGEE are
 # absent in every year: SERC publishes no hub or nodal price, the same DATA
 # boundary derive_miso_seam_ladders states for SOCO/TVA, and those seams keep
-# their incumbent own-hub ladder untouched. MISO is absent in 2019 and 2021 (no
-# measured series) and in 2022 (ONE contiguous 525 h outage in the zonal DA,
+# their incumbent own-hub ladder untouched. MISO is absent in 2021 (no full
+# measured series; 2019 landed 2026-09-24, R-MISO) and in 2022 (ONE contiguous 525 h outage in the zonal DA,
 # far past the repo-standard limit=3 interpolation) — full coverage or nothing,
 # because _inject_seam_ladder applies one ladder per seam-year and a
 # partially-derived row would be a row the solve never uses. Every omission
@@ -2880,6 +2910,16 @@ PJM_SEAM_LADDER_NEIGHBOUR_HOURLY_BY_YEAR: dict[
     int, dict[str, dict[str, tuple[float, ...]]]
 ] = {
     2019: {
+        # MISO 2019 ADDED 2026-09-24 by R-MISO (rule 23: SOURCE DATA EXTENDED —
+        # that lane landed MISO's 2019 hub LMPs, so the MISO-facing zonal DA this
+        # row's spread reads now covers 2019 in full). Verbatim from
+        # derive_pjm_seam_ladders.derive_neighbour_hourly(2019), the frozen script;
+        # the NYISO row re-derives unchanged. Inert for every registered PJM run
+        # (none carries 2019); routed to R-PJM, which solves 2019.
+        "MISO": {
+            "import": (65.45, 65.45, 65.45, 65.45, 65.45, 65.45, 65.45, 65.45),
+            "export": (26.17, 8.69, 2.5, -0.64, -2.64, -4.7, -8.99, -19.78),
+        },
         "NYISO": {
             "import": (16.65, 74.19, 94.04, 94.04, 94.04, 94.04, 94.04, 94.04),
             "export": (9.45, 4.54, 1.2, -1.25, -4.19, -10.9, -38.31, -62.01),
