@@ -210,3 +210,20 @@ promotion decision is the owner's (rule 31).
    - the std-unitroute / short-coal extracts do not reproduce at HEAD;
    - the 8 pre-existing `tests/unit/config` failures, identical on unmodified `main`, including the unregistered
      NWPP `EIA930_REMOTE_GENERATION_DOUBLE_BOOKED` solve-surface declaration.
+
+## 8. Launch record (appended after the pin; §1–§7 unchanged)
+
+Launched 2026-09-25 07:00–07:02 UTC. All 7 shards are pinned to `8e85889b5f8b46e6a5ec9c710eb66274fd5ccc87`, tagged
+`miso-272` / `shard`, with auto-PR off. Each runs a harness-tracked background solve and waits in the same turn.
+Each builds the three curate partitions first, then pushes its full bundle via a `.gitignore` negation and a plain
+`git add` (rule 34(a)).
+
+| leg | session | branch / out-dir |
+|---|---|---|
+| arm 2019 | `session_018mDD5mqb6fRgkSfxfL2W4m` | `claude/miso272-arm-2019` / `miso272_arm_2019` |
+| arm 2020 | `session_01ATcbUj6TayUFYLN8ufe71D` | `claude/miso272-arm-2020` |
+| arm 2021 | `session_01Qt7sjBW3xVLuea5wWhibMq` | `claude/miso272-arm-2021` |
+| arm 2022 | `session_01NamRp7fn5LnVqgDiq3eTnE` | `claude/miso272-arm-2022` |
+| arm 2023 | `session_01MyTHMuMHWzCaD5AjFFU854` | `claude/miso272-arm-2023` |
+| arm 2024 | `session_01TpLwT3jaKT8K6gfCsCCxKz` | `claude/miso272-arm-2024` |
+| arm 2025 | `session_012UQHWz8dusum5EmachNCsQ` | `claude/miso272-arm-2025` |
