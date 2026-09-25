@@ -2,8 +2,9 @@
 
 This addendum was written **before any relaunched solve**. The original PRECOMMIT is
 `docs/PRECOMMIT-pjm-next-c1-year-correct-membership-2026-09-25.md`. Recipe, predictions, DOF and
-the G-DRIFT audit are unchanged; only the G1 wording changes. The code and data at the new pin are
-byte-identical, on the solve path, to the first launch's pin `7f095384`.
+the G-DRIFT audit are unchanged; only the G1 wording changes. **The relaunch pins the SAME commit
+`7f0953845350089732892f83248726d4b04fb84f`**, so the §3 G-DRIFT audit stays valid (`main` has since moved on the
+solve path). This addendum lives on a later commit, so the relaunch prompts carry the corrected G1 verbatim.
 
 ## What went wrong in the first launch (the parent's own prompt defects, not model results)
 
