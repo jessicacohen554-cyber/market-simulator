@@ -266,7 +266,16 @@ def keeper_sweep():
 # with no consumer and no declaration reds this test immediately.
 
 
-def test_all_seven_keepers_resolve(keeper_sweep):
+def test_all_nine_keepers_resolve(keeper_sweep):
+    # NINE since SOCO and NWPP carry designated keepers (keeper shards
+    # frontend/data/backcast/keepers/{SOCO,NWPP}.json). Both resolve CLEAN --
+    # 45 / 43 armed, 0 UNACCOUNTED (Y-29 read, 2026-09-24) -- so they add no
+    # exemption and the strong zero-unaccounted form below applies to them
+    # unchanged. Rule 26 [R-DELETE]: the seven-ISO set and the function's own
+    # "seven" name are replaced, not hedged (owner ruling R-BE, director board
+    # v43, 2026-09-25; proposal docs/handoffs/FINDING-y29-promotion-provenance-
+    # 2026-09-24.md §4; executed by audit lane Y-31).
+    #
     # SEVEN since SPP-20 registered SPP as the seventh ISO (2026-09-06) and the
     # SPP desk designated a keeper: the sweep reads the keeper shards, so SPP
     # entered it the moment frontend/data/backcast/keepers/SPP.json landed and
@@ -288,6 +297,8 @@ def test_all_seven_keepers_resolve(keeper_sweep):
         "NEISO",
         "MISO",
         "SPP",
+        "SOCO",
+        "NWPP",
     }
     for rep in reports:
         assert rep.errors == [], rep.iso

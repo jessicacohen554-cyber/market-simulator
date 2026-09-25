@@ -316,12 +316,23 @@ class UnreachableTests(unittest.TestCase):
 class RegisteredRunsTests(unittest.TestCase):
     """No registered run reaches the class — the durable byte-identity guard."""
 
+    # SOCO and NWPP now register runs that legitimately carry the no-price
+    # class (no actual_lmp.json block exists for either). This test was written
+    # before any such run was registered, so it skips their sidecars and asserts
+    # every other sidecar belongs to a price-bearing ISO; the class itself is
+    # pinned by test_no_block_registered_runs_reach_the_class below (owner
+    # ruling R-BE, director board v43, 2026-09-25; proposal
+    # docs/handoffs/FINDING-y29-promotion-provenance-2026-09-24.md §4).
+
     def test_no_registered_run_carries_the_block(self):
         sidecars = sorted(cv.REGISTRY_DIR.glob("*.json"))
         self.assertTrue(sidecars, "no registered runs found")
         for p in sidecars:
             iso = json.loads(p.read_text()).get("iso")
+            if iso in _NO_BLOCK_ISOS:
+                continue
             with self.subTest(run=p.stem, iso=iso):
+                self.assertIn(iso, _REGISTERED_ISOS)
                 self.assertFalse(cv._price_reference_absent(iso))
                 v = cv.determine(p.stem)
                 self.assertNotIn("price_unscored", v)
@@ -330,6 +341,25 @@ class RegisteredRunsTests(unittest.TestCase):
                     (cv.PHYSICALLY_CALIBRATED, cv.PHYSICALLY_CALIBRATED_CAVEATS),
                 )
                 self.assertFalse(
+                    any(r.startswith("PRICE UNSCORED") for r in v["reasons"])
+                )
+
+    def test_no_block_registered_runs_reach_the_class(self):
+        sidecars = [
+            p
+            for p in sorted(cv.REGISTRY_DIR.glob("*.json"))
+            if json.loads(p.read_text()).get("iso") in _NO_BLOCK_ISOS
+        ]
+        for p in sidecars:
+            iso = json.loads(p.read_text()).get("iso")
+            with self.subTest(run=p.stem, iso=iso):
+                self.assertTrue(cv._price_reference_absent(iso))
+                v = cv.determine(p.stem)
+                self.assertIn("price_unscored", v)
+                self.assertNotIn(
+                    v["determination"], (cv.CALIBRATED, cv.CALIBRATED_CAVEATS)
+                )
+                self.assertTrue(
                     any(r.startswith("PRICE UNSCORED") for r in v["reasons"])
                 )
 
