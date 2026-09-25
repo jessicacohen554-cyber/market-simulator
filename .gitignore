@@ -3537,3 +3537,8 @@ results/calibration/soco67_20[0-9][0-9]/
 # nwppnext2_2021 @ 40419b9f2fcd6b047060028ca3325eeeb2495548; further legs recorded in the RESULT doc.
 results/calibration/nwppnext2_20*/
 results/calibration/nwppnext2h_20*/
+# PJM-NEXT card 1 per-year shard legs (rule 32(d): only the composite reaches main)
+results/calibration/pjmnext_c1_20*/
+results/calibration/pjmnext_ctl_20*/
+results/calibration/_pjmnext_keeper_union/
+results/calibration/_pjmnext_*/

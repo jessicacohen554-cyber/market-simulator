@@ -6,6 +6,35 @@ newest at the BOTTOM. Only this lane's sessions append here, so parallel
 per-ISO calibration sessions never conflict (the per-ISO lane convention,
 2026-07-19; see `frontend/data/backcast/keepers/README.md`).
 
+
+## PJM-NEXT card 1 — 2026-09-25
+
+**PROMOTED** `2026-09-25-pjm-r-pjm-2` → **`2026-09-25-pjm-next-c1`** (bundle `pjmnext_c1_span`, 2019–2025) on the owner's
+ruling (*"If structural integrity improves but gates regress that may still be a keeper"*).
+
+**Delta.** Three year-correct-membership repairs, all measured inputs, zero free parameters: `mid_vintage_exit_carry`,
+**`fleet_zone_vintage_coords`** (new: plants absent from eGRID 2023 were mis-zoned to `PJM_AEP_Ohio`, 2.9–3.8 GW in
+2019–21), and `benchmark_membership_vintage_union` (the EIA-923 actuals gain COAL_BIT +8.8 / +8.3 / +7.8 / +4.5 TWh in
+2019–22).
+
+**Result.** Zero criterion flips on the same benchmark. 2023–25 NOT-YET on C1 alone (CC_REGULAR 2024 −14.68). This
+card's COAL_BIT effect vs a same-pin control is −4.94 / −8.55 / −9.83 / +0.28 TWh.
+
+**Row-level coal rise vs the committed keeper is COAL-SUB, not this card.** 2022 COAL_BIT flips to FAIL at +10.33. The
+G-DRIFT LIVE hunk was isolated by 4 control solves.
+
+**Traps recorded.**
+- G1 must never require a log line the runner does not print (the vintage dir), nor a count measured on a different
+  basis (log rows vs LP units).
+- A full `regenerate_clean.py` in a shard starves the swapfile and OOM-kills PJM years. Regenerate only what the solve
+  names.
+- The keeper bundle on main lacks a root `system.parquet`; rebuild it from `hourly/system_<y>` (byte-equal) before any
+  `--rebuild-benchmark`.
+
+TMI dispatches 0 MWh in 2019 despite the carry, which is a nuclear-path successor.
+
+Record: `docs/RESULT-pjm-next-c1-year-correct-membership-2026-09-25.md`.
+
 ## 2026-07-19 — PJM DAM outage/availability data intake (no solve)
 
 Owner-authorized data-intake session (branch `claude/pjm-dam-data-intake-19dqnf`):
