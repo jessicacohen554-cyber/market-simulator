@@ -3502,3 +3502,5 @@ results/calibration/r_ercot2_dam_20*/
 
 # R-PJM-2 per-year shard legs: kept out of main (rules 29(c)/32(d)); the composite is registered.
 results/calibration/rpjm2_20[0-9][0-9]/
+# R-SOCO-B per-year shard legs (rule 29(c)/32(d)): kept out of main; the composite is registered.
+/results/calibration/rsocob_20*/
