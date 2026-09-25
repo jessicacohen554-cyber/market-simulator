@@ -644,6 +644,141 @@ def _load_unit_outage_events(csv_path: Path, iso: str) -> pd.DataFrame | None:
     return pd.read_csv(csv_path)
 
 
+@lru_cache(maxsize=None)
+def _campd_record_units(state: str, year: int) -> frozenset[tuple[int, str]] | None:
+    """``(facility_id, unit_id)`` pairs present in one CAMPD unit-level state-year file.
+
+    Presence means the unit filed ANY hourly row that year (output or not), so a
+    monitored-but-idle unit counts and only a unit the record did not yet carry
+    is absent. ``None`` when the state-year extract does not exist.
+    """
+    path = CAMPD_UNIT_LEVEL_DIR / f"{state}_{year}.parquet"
+    if not path.exists():
+        return None
+    df = pd.read_parquet(path, columns=["facilityId", "unitId"]).drop_duplicates()
+    return frozenset(
+        (int(f), str(u).strip()) for f, u in zip(df["facilityId"], df["unitId"])
+    )
+
+
+@lru_cache(maxsize=None)
+def _eia860_plant_states(eia860_dir: str) -> dict[int, str]:
+    """``{plant_code: state}`` from the active EIA-860 generator table (cache key = dir)."""
+    path = Path(eia860_dir) / "eia860_generators.parquet"
+    if not path.exists():
+        return {}
+    df = pd.read_parquet(path, columns=["plant_id", "state"]).dropna()
+    return {int(p): str(s).strip().upper() for p, s in zip(df["plant_id"], df["state"])}
+
+
+def clip_precod_unit_windows(df: pd.DataFrame) -> pd.DataFrame:
+    """Remove the pre-commercial hours of a new unit's CAMPD outage window (soco-67).
+
+    ``ScenarioConfig.unit_outage_precod_clip`` (GATED, default off). The COD
+    ramp (``data/fleet/arrays.py``, applied last) already holds a bin's
+    not-yet-commercial constituents offline at their EIA-860 operating month
+    (``cod_ramp.bin_online_fraction``). The CAMPD deriver fills a unit's hours
+    ABSENT from the record as dark, so a unit that enters the record before its
+    first output gets a window from the start of its record year — and the
+    overlay then removes the same not-yet-built capacity a second time, from the
+    constituents that DID exist (rule 19 ``[R-ONE-MECH]``). Measured case, SOCO
+    2023: Barry (3) unit 8 is absent from CAMPD 2019-2022, first files a row on
+    2023-10-01 and first produces on 2023-12-12; its bin's new constituents
+    A3C1/A3ST reach commercial operation in 2023-11 (EIA-860); the window
+    2023-01-01..12-12 plus the COD ramp left Barry's combined cycle 4.38 TWh of
+    availability against its own EIA-923 net output of 7.34 TWh.
+
+    A window is PRE-COMMERCIAL when BOTH hold, each categorical:
+
+    (i) its unit is new to the CAMPD record — absent from the plant's state
+        file in every earlier year the record carries (at least one earlier
+        year must exist, else nothing is established and the row stands); and
+    (ii) its own bin ``(plant, BIN_GROUP_TO_FUEL[group])`` has an EIA-860
+        constituent (``cod_ramp.load_unit_cod_map``, the map the COD ramp
+        reads, active vintage) whose operating month begins after the window
+        start.
+
+    Its hours before the EARLIEST such month-start are removed — the row is
+    dropped when that instant is at or past its end — because in those hours
+    every new constituent is already offline under the COD ramp. The earliest
+    (not the latest) instant is the conservative choice: after it, whether the
+    window's unit is the one that came online is not identified, so the window
+    stands. ZERO free parameters (rule 21); regenerates for any year with a CAMPD
+    filing and an EIA-860 vintage (rule 13); backcast-only, as the overlay is.
+    Only ``outage_start`` (and ``outage_start_hour`` when present) and
+    ``duration_days`` move; every other column is untouched.
+    """
+    from market_sim.config.paths import active_eia860_dir
+    from market_sim.data.cod_ramp import load_unit_cod_map
+    from market_sim.data.fleet.eia860 import BIN_GROUP_TO_FUEL
+
+    if df is None or df.empty:
+        return df
+    cod_map = load_unit_cod_map()
+    states = _eia860_plant_states(str(active_eia860_dir()))
+    record_years = sorted(
+        int(p.stem.rsplit("_", 1)[1])
+        for p in CAMPD_UNIT_LEVEL_DIR.glob("*_*.parquet")
+        if p.stem.rsplit("_", 1)[1].isdigit()
+    )
+    out = df.copy()
+    has_hour = "outage_start_hour" in out.columns
+    keep = np.ones(len(out), dtype=bool)
+    clipped = dropped = 0
+    for i, r in enumerate(out.itertuples(index=False)):
+        fuel = BIN_GROUP_TO_FUEL.get(str(r.plant_group))
+        units = cod_map.get((int(r.facility_id), fuel)) if fuel else None
+        if not units:
+            continue
+        start = pd.Timestamp(r.outage_start)
+        stop = pd.Timestamp(r.outage_end) + pd.Timedelta(days=1)
+        cods = sorted(
+            pd.Timestamp(int(u[1]), int(u[2]), 1)
+            for u in units
+            if int(u[1]) > 0 and 1 <= int(u[2]) <= 12
+        )
+        later = [c for c in cods if c > start]
+        if not later:
+            continue
+        state = states.get(int(r.facility_id))
+        if not state:
+            continue
+        earlier = [y for y in record_years if y < start.year]
+        if not earlier:
+            continue
+        key = (int(r.facility_id), str(r.unit_id).strip())
+        seen = False
+        for y in earlier:
+            present = _campd_record_units(state, y)
+            if present is not None and key in present:
+                seen = True
+                break
+        if seen:
+            continue
+        c = later[0]
+        if c >= stop:
+            keep[i] = False
+            dropped += 1
+            continue
+        out.iat[i, out.columns.get_loc("outage_start")] = c.strftime("%Y-%m-%d")
+        if has_hour:
+            out.iat[i, out.columns.get_loc("outage_start_hour")] = 0
+        if "duration_days" in out.columns:
+            end = pd.Timestamp(r.outage_end)
+            out.iat[i, out.columns.get_loc("duration_days")] = round(
+                (end - c).total_seconds() / 86400.0, 1
+            )
+        clipped += 1
+    if clipped or dropped:
+        logger.info(
+            "unit-outage pre-COD clip: %d window(s) clipped to their bin's "
+            "commercial-operation month, %d dropped as wholly pre-commercial",
+            clipped,
+            dropped,
+        )
+    return out[keep]
+
+
 # The bin groups whose LP capacity fleet_to_bins raises to full EIA-860
 # nameplate under ScenarioConfig.cc_nameplate_summer_derate — and therefore the
 # only groups the ``cc_nameplate_basis`` denominator repair moves. Kept next to
@@ -1149,6 +1284,7 @@ def unit_outage_derate_factors(
     dark_unit_years: bool = False,
     mid_vintage_exit_carry: bool = False,
     lp_bin_capacity: tuple[tuple[tuple[int, str], float], ...] | None = None,
+    precod_clip: bool = False,
 ) -> dict[tuple[int, str], np.ndarray]:
     """Return ``{(plant_code, plant_group): (hours,) availability multiplier}``.
 
@@ -1191,6 +1327,11 @@ def unit_outage_derate_factors(
     basis = (
         _extract_basis_index(df) if (extract_basis_share and iso != "ERCOT") else None
     )
+    if precod_clip:
+        # soco-67 (rule 19 [R-ONE-MECH]): the COD ramp alone owns a not-yet-
+        # commercial unit's absence; see clip_precod_unit_windows. After the
+        # basis index, so the index keeps its unfiltered-extract contract.
+        df = clip_precod_unit_windows(df)
     df = df[df["duration_days"] >= UNIT_OUTAGE_MIN_DAYS]
     return _unit_outage_factors_from_events(
         df,

@@ -462,6 +462,10 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     # default-off; selects '-perunitdark-' through the same resolver, so the
     # off path is byte-inert). Registered IN THE SAME COMMIT as the field.
     "campd_dark_unit_year_windows",
+    # soco-67 pre-commercial window clip on the >= 5-day CAMPD unit-outage
+    # overlay (GATED default-off; the extract is read unchanged while off, so
+    # the off path is byte-inert). Registered IN THE SAME COMMIT as the field.
+    "unit_outage_precod_clip",
     # miso-188 retiree-channel vintage-status scope (GATED default-off; the
     # sole consumer threads it via getattr into
     # data/fleet/eia860.py::load_retired_within_window, so the off path is
@@ -2181,6 +2185,9 @@ _CACHE_KEY_OPTIONAL_FIELD_DEFAULTS: dict[str, str] = {
     # Added by SOCO-61 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "campd_dark_unit_year_windows": "False",
+    # Added by soco-67 WITH the field, in the same commit as its
+    # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
+    "unit_outage_precod_clip": "False",
     # Added by miso-188 WITH the field, in the same commit as its
     # _CACHE_KEY_OPTIONAL_FIELDS entry (the nyiso-119 / caiso-186 discipline).
     "retiree_vintage_status_scope": "False",
@@ -16016,6 +16023,24 @@ class ScenarioConfig:
     # an overwrite, falling back to '-perunit-' where not derived.
     # FINDING-soco-61-2026-09-24.md.
     campd_dark_unit_year_windows: bool = False
+    # soco-67 (rule 19 [R-ONE-MECH], rule 14 [R-ACCURATE]) PRE-COMMERCIAL
+    # WINDOW CLIP on the >= 5-day CAMPD unit-outage overlay. The deriver fills
+    # a unit's hours ABSENT from the CAMPD record as dark, so a unit that
+    # enters the record before its first output carries a window from the start
+    # of its record year -- while the COD ramp (data/fleet/arrays.py, applied
+    # last) already holds the same not-yet-commercial capacity offline at its
+    # EIA-860 operating month. The overlay then removes it a SECOND time, from
+    # the constituents that did exist. Armed, a window is clipped to its bin's
+    # earliest EIA-860 constituent COD after the window start (dropped when
+    # wholly before it) iff its unit is absent from every earlier year of the
+    # CAMPD record -- both conditions categorical, ZERO FREE PARAMETERS
+    # (rule 21). SOCO 2023: Barry (3) unit 8, absent 2019-2022, first row
+    # 2023-10-01, first output 2023-12-12, A3 COD 2023-11 -- Barry CC
+    # availability 4.38 -> 7.20 TWh against its own EIA-923 net 7.34.
+    # Regenerates wherever a CAMPD filing and an EIA-860 vintage exist
+    # (rule 13); backcast-only, as the overlay is. Byte-inert off.
+    # FINDING-soco-67 / data/outages.py::clip_precod_unit_windows.
+    unit_outage_precod_clip: bool = False
 
     # Retiree-channel injection scoped by the EIA-860 vintage status oracle
     # (retiree_vintage_status_scope, off by default; miso-188,
